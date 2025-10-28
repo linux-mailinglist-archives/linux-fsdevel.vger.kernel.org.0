@@ -1,201 +1,314 @@
-Return-Path: <linux-fsdevel+bounces-65928-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65929-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C960AC153BA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Oct 2025 15:48:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 930A9C15675
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Oct 2025 16:22:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7E243BB99E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Oct 2025 14:43:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED0A53B0CEA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Oct 2025 15:20:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4BA9339718;
-	Tue, 28 Oct 2025 14:42:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2359C340D93;
+	Tue, 28 Oct 2025 15:20:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="kRojUPzf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qq+aDogl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from YT6PR01CU002.outbound.protection.outlook.com (mail-canadacentralazon11022140.outbound.protection.outlook.com [40.107.193.140])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 640FA338905;
-	Tue, 28 Oct 2025 14:42:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.193.140
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761662579; cv=fail; b=UMsaHHCWzxn/T2+rNB3W6aNyBjQbUmUFmnIFkC99y74bXL+nFRpeBwHjl/Z3L5uQdrHNJA7R4pjhn95TYmnpjukFU2pzGnW67dZU9yyl3Y4IhV9ns8d4KlKjrWPXcLBACUJTb8LiFTjv0yicVEA0Zkn1wSuApCar5yC57eov9Zs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761662579; c=relaxed/simple;
-	bh=g0XFwbQmZgxZB92VFDcTudQ6A3cYLtOVQAKgk/O+Le0=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Ads9UXRYUhnNOYAje7vP+Qb5rgsbqYCcqJ27DdP6HBISKSAGeLzS4q2/LTRfFeAJRrElAhLEqkhMwP8st3RaDCdTTIPUbzSJqlYNEgjPjnQrbN4BTut3PxMt/WHaxZKO7r4g2QB1YtxLqtw6mWx1TwZRODI3dNwqbitQQ4+cKgk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=kRojUPzf; arc=fail smtp.client-ip=40.107.193.140
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pD5SXaGTeZWZEB8kC59uAqWV7FtDqnuMJKa6P7ftcgQoCRNdPM/6nKWc451iAErA0bue4blZK9aL16RG1bvvXWgtukXELiVW6Wd67dbB+gRGcG7YTvs6Uovha1Xr5ObQVUl6H56uPe73Cx/Cv8vIHlkP8Xro4EDgo8J2uLn8HxD/9TkXEdIg+RJyszIQAzl/MmLUCnJChdwbPQsUHukaowTZmuzWd8rLS55cL3EoBczsVpqqjnn5H9sUoiZOV/Xxqo839b6/Qwk0sUUQAjm4RuzmIco1TYOmP2upRpcpIUSqa3R3LmJHf0SzXp3Nhy7IN1eS4uNjp1AHlmrYlvMf+g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=I1LvJuUb5FWOPKJ5OQj0Wj8mtYu4ihD59ySETqHtU/Q=;
- b=SbTm0qTgYVtVmICd9CloACN40VB1CFg6lEq/EpGshHImguL3mvCtl/chuvLpZqzP8yGjHRUddZ2h6H5j66mC6EdwTK13cTaFMCzEEZ6RfvGz1ewvFiXohyoh7Fp1Ipn48CGs76Ecq6X/NldP/BI9AHZODNOXUgyHTDg414U11pBJERCLfipkjE79z+AGXnYFhCCUMWnGxW42NvJKwdGZz26a9KG2Kp1/0neTJpNdlfXy3RaUpOUHlMMeXorAYn1PWXB1CDRwJCN8U7KEtxnrE9y7KUjAMhBGDVLAx8SLXhKU+hcLDUsrFxPhUNdSqZZAw+NocOuXd3JTUoG7zccrsA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=efficios.com; dmarc=pass action=none header.from=efficios.com;
- dkim=pass header.d=efficios.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=I1LvJuUb5FWOPKJ5OQj0Wj8mtYu4ihD59ySETqHtU/Q=;
- b=kRojUPzfoIrU57962wz0Askfe10spCEUjEEDCnoUlPDckmP41Kvnao5NsQMlUm6vBBNd6Ea5kFAs+VO9RS2L51XdyIIGUvw9xc3LHy9dJLvtuF9qOYTUAu9u9q8wjs5OTM1JG7RdHBkSc/p6FwWJbtIbHyix/zQEdJy6R62FYvZqInLbDXN2u5PzRqfneE7AwA586Nt9ziOijfLf5qY3/ICTj4/7d1NVhiz/gIa5gRJYTv563J41BBlBJqWITf9bSgTXOjQlqqPi5NQlExpmwpetGQc0qbZ6Jozv4YIQ3t2yS9oRWgsVnoKT1tqgH+3aGBp1bw6fxEWRLNA9v2/6zg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=efficios.com;
-Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:be::5)
- by YT4PR01MB11475.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:15a::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.19; Tue, 28 Oct
- 2025 14:42:54 +0000
-Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::50f1:2e3f:a5dd:5b4]) by YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::50f1:2e3f:a5dd:5b4%2]) with mapi id 15.20.9275.013; Tue, 28 Oct 2025
- 14:42:53 +0000
-Message-ID: <0fccf3c6-c11e-475c-9669-356928846aaa@efficios.com>
-Date: Tue, 28 Oct 2025 10:42:51 -0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: [patch V5 12/12] select: Convert to scoped user access
-To: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- linux-fsdevel@vger.kernel.org, kernel test robot <lkp@intel.com>,
- Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org,
- Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- linuxppc-dev@lists.ozlabs.org, Paul Walmsley <pjw@kernel.org>,
- Palmer Dabbelt <palmer@dabbelt.com>, linux-riscv@lists.infradead.org,
- Heiko Carstens <hca@linux.ibm.com>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>, linux-s390@vger.kernel.org,
- Andrew Cooper <andrew.cooper3@citrix.com>,
- David Laight <david.laight.linux@gmail.com>,
- Julia Lawall <Julia.Lawall@inria.fr>, Nicolas Palix <nicolas.palix@imag.fr>,
- Peter Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>,
- Davidlohr Bueso <dave@stgolabs.net>, =?UTF-8?Q?Andr=C3=A9_Almeida?=
- <andrealmeid@igalia.com>
-References: <20251027083700.573016505@linutronix.de>
- <20251027083745.862419776@linutronix.de>
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Content-Language: en-US
-In-Reply-To: <20251027083745.862419776@linutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: YT4P288CA0050.CANP288.PROD.OUTLOOK.COM
- (2603:10b6:b01:d2::8) To YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:be::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69CA733F8DC;
+	Tue, 28 Oct 2025 15:20:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761664812; cv=none; b=U4QxA6zwuaIZVu8bbOnGlL+ZHIEMfqAZzipnKW6ZolmLo8vcPnTGruwCoVMHvJHTa3/x9aLly2LKn31IAsaAqjCQZYbA3RVQP3KEwzxdxJ1DQC4JDnXxuwTza3OZPbQCq1FSQQa3m06PTGIno1U7q2KsWaGKJwquUDL7o4NnL/I=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761664812; c=relaxed/simple;
+	bh=v9Rv1HV3ikERpxpW7AFoVZzI5l2h0fNjA8LM+9vK5U4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HnXQHB4OBCQzqBTJebwgXNdIs3hUPL8QPzGH81+DX2aTHOW/uKpxNT9lH/WO6h1oVHh1DIh8IWT4zciDz0tvQKPr18uBGWD4tIdoYWY/Yl7pSJakorMtg9WK1G1p79RdBcxwuHdmD9dJLpe46QQc7++nl1MojpZOQZtTONR1tA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qq+aDogl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11D2CC4CEE7;
+	Tue, 28 Oct 2025 15:20:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761664812;
+	bh=v9Rv1HV3ikERpxpW7AFoVZzI5l2h0fNjA8LM+9vK5U4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Qq+aDoglEAEQeZj43j1Ad6bErXdWun4BUqRgwXwoPFKAf/z011GLNFY7bIPgOKkBw
+	 0xwuuW7/3ijghyDkNnHVsZVgy+w2I86WF+S0DFH6R6pou2EiYfmwr1OR+91OsYR2cC
+	 YzsGU/+kV1g+48Y9C2KzvIeVZ8bpGhcgJbx+hdSZIgRcSTo3ye1jcxTBgPLG+538s7
+	 tvNOfs8wSga3jNoEnPPnBTYKW7kSRn40U5+aWQEF0jb8/kccNi01lfrQRf/VbEOg1O
+	 ZmAFI+7NoT6i575j/FD4+FLa4JZ1mOfawv9/MV9efOtLb7W99c5tz5Mbv03wOPlsVW
+	 Fh4aS/RkNfevg==
+Date: Tue, 28 Oct 2025 16:20:04 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
+	Jeff Layton <jlayton@kernel.org>, Jann Horn <jannh@google.com>, Mike Yuan <me@yhndnzj.com>, 
+	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, Lennart Poettering <mzxreary@0pointer.de>, 
+	Daan De Meyer <daan.j.demeyer@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
+	Amir Goldstein <amir73il@gmail.com>, Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
+	bpf@vger.kernel.org, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Netdev <netdev@vger.kernel.org>
+Subject: Re: [PATCH v3 17/70] nstree: add listns()
+Message-ID: <20251028-landhaus-akademie-875cd140fbbb@brauner>
+References: <20251024-work-namespace-nstree-listns-v3-0-b6241981b72b@kernel.org>
+ <20251024-work-namespace-nstree-listns-v3-17-b6241981b72b@kernel.org>
+ <481c973c-3ae5-4184-976e-96ab633dd09a@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: YT2PR01MB9175:EE_|YT4PR01MB11475:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7975e0fd-c85c-4e29-467e-08de16304657
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?KzRTenpJRFE3VVhKMGx0NG9TSENHS0JodkRrTS93KzVkOVYwMVhXRWZrRUVJ?=
- =?utf-8?B?QkNwYUpSOUhpdDlXQW9CbHIzOWdvMWdUSVIzVXh4VE4yVFlyVUFiaEUwQm90?=
- =?utf-8?B?SzgxdFpWUXFuQ3pFYnU4VWk5QXczS2hzc0EvZFFRRU9nTFExZGJCaXc1Z0ZI?=
- =?utf-8?B?UUkwbmVBYjFibG56T1d5UHJ5cHlNM083Y3V5WEdMUk5XUkFPRzNqOGVIK3ZS?=
- =?utf-8?B?UTFBQmJUbThsZjNpRkZ1Unp1NUoxWHQ2NG5zeFJ1WXEzZTltSTJPZHlISWtp?=
- =?utf-8?B?VnIxaTZiVGVRdEVscGRtaWJnUk5ySTExcW5CSlZQNW91VGtZZkkxMWJ0aVZK?=
- =?utf-8?B?bGtFN2djN21odExtbjRHblRsQlhwWll4WnpMdGVNRFc3Mkk5eHZRczljV0o5?=
- =?utf-8?B?UmNRVWFCK1FpVEMxNEZSa3g0MVR1Y095eXBsUDNMTUJTSVRJYThnWisrRzV6?=
- =?utf-8?B?UWcxR2s1dHRFL1hnK25sMTVhcjlrbXRoS00vZ0xVaGRDbE5GRHFPQUZwZDZ2?=
- =?utf-8?B?Zzc3bndsdnMvU0pkZlJhRmVFTURja0lyVEs4QU1xdWlQN2VIcW5VdU9OQ204?=
- =?utf-8?B?YjE5bTI1NDlJajhiSjhnNXJUbjBGZ3FCaXRBdFZJSzBTUUN0RmlWTzZoL0xT?=
- =?utf-8?B?dDlkR3VnOXhhYXJtSkd3bzZXREhPRGxyMDdhV0UxU0tBQkRrQWRzZkF3ZE8y?=
- =?utf-8?B?Rkd4WG9hOHhiZkdUcVBUYXlkeU5VYnY1WXRYdGMyL09jOXlYSWUvMVJKNDRz?=
- =?utf-8?B?L3RMRkVxc2ZVaWpGRE0wRktlc0RrRG93V3ROMm9jRmhLellEWUdDM1BqbDhl?=
- =?utf-8?B?Z2JuRHd5MlgxQzhLYUphMzU3bnpmdzdmY1lNZ3Z2WTFXSUpVbFhsZjNwS2Zv?=
- =?utf-8?B?MUZkNlhHRzQvbCtMcXZMbXF1eTNVZ1lBMXpkL0xINm8zcnhzZUlXMjZmZzFV?=
- =?utf-8?B?aUNnK01lSEdlRGxRM2FrVGEvbmYySmljd3R1QWtZVWMxRk1MN29YdEk2MWtD?=
- =?utf-8?B?TEx0b1dENDE2ejcvL1lpanMwRVJ0MlQ3OGxCSTNMRkFNWURoYndGc2V5WFZV?=
- =?utf-8?B?a0hXY0RseHNUbTNLaHEyOVA4S0Jxejd3SUpmTTI4NFkyT0tzZTR3dU8wd0ht?=
- =?utf-8?B?WUxXS0pHTjF4K1k5bWRkTUo5QUtnckJQN0tBTU45dnNQOG9WMFQ0USttMkRh?=
- =?utf-8?B?WUJjeXl1ZlVnbVVoT1ZIcklvcFJFTjNoeEpBQUhFQVZWczU5OEFrRjZXeWtE?=
- =?utf-8?B?aGsxblU3VGJ0eUo4M0hGR1ovMllGS0ZoNHRWNXdPSGJSb1Vha0NrZTFRN2Ix?=
- =?utf-8?B?dnNRQWhnb0FOYVRoUEZVTjN4a0JmWm01WmZNeXJoeXhoS2dpVHYxMlk5SVMr?=
- =?utf-8?B?aGlXWUhjbWVLNllNOEcrTUNXS0VKcDRLMFN3UDJ6WlFDWU05K0xTQkNFeWxF?=
- =?utf-8?B?ZTlQRmZENG1vcXdiU21PbU1mUHRIaGs1T041aENndytqT0R1b3dEUVBEOXpt?=
- =?utf-8?B?VFcvbityWTZqWlFPUklKZUwreXE2QjlQSFBwdy90OGFCTUVhbVpWVnNSZVk4?=
- =?utf-8?B?Sjg4MjZjTzhBL0xtbHQvKzZ4RUZ1ZzYya1hReUh2WmVzMUswZjB2WUEzZVpN?=
- =?utf-8?B?WDN4QUtKRVRkWGZ6bWtaWHE5SFJBTGpoWFVjVm9RTExlcnFuR1NNZytlUkZy?=
- =?utf-8?B?eE1OSjdraWd6VFUycDArdFJCdUs5dDl1ajRNTzdNN21lQjZUTHJkczNVNHdL?=
- =?utf-8?B?MGdmK0h3QVZKZW9UQVZLbFdzRk56VEtFRVd1b0JkNWhjUTdmdVlyb1g1cm1T?=
- =?utf-8?B?bVpaVGJ1RklDZ0UxS1ZCbEZ1NHVtU0dMNC9QZTdHUzE1WUo1N3c0djAzdjNJ?=
- =?utf-8?B?THBJSFFDdGl6cDVYNWRJZXF6OHJOSWd4eWdHVWhvazg4MXc9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(1800799024)(376014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?b0VTQlVTWTNLemZUcS9GdUJVUzNoWW80QUdxUjZnU3dTcXl5OERWMGs0c1Nl?=
- =?utf-8?B?L3BNUWhmUHpTYUJNUDJYN2FEK0ZmRVNnNVBkb3FBeGdFWWVNUTVIampmN3B3?=
- =?utf-8?B?TlJ1eGhOZFFsdGYrbzl1TEwrWFFLYk04LzR6WWwvT2ovc3oyYmk3b0NEbEpj?=
- =?utf-8?B?VFVIb0wzeTBBUk9TSEZBdUpnZWdDQ1pPcDR1d0lPTDZVc2U5Nm9XS0cwU3Rq?=
- =?utf-8?B?N2FiL1J2UWFqcHczNXk3WEV1Z0k0ck5QZnVQU2s4NkIwLzIzZVVTMVVmbVVV?=
- =?utf-8?B?dkYzekNkTkNhZHhJdm1MaDdqRkMzelB1eGJHT0Z1c0NUV2p5OHY1REI5M0Uz?=
- =?utf-8?B?RWFRd0R3Y0JpM3RzRm95bzdST3lDTlRscXFISjlWQ3BPRVZsZ0lxUEp3Kytk?=
- =?utf-8?B?ZmZtUEhITW5acnhlclVCM1ErMkkwMmp1dUk1N3N4c0Q5TW81UThaMHlFcmF1?=
- =?utf-8?B?TmFPRlp4dXJMb1JOWFdaVkxDNktXVmR5Y09pRkR1M0FZc2w4elVPSXdJR29P?=
- =?utf-8?B?QjBlWSsrZ0wza0EzaEZlMUFUU0tXS1hhbDdJNWVnamt1NG9tZG4vdGhxdjNv?=
- =?utf-8?B?REd6M3V1QzBFSUdaQ0ZqZjluYVk1NWtIaEhJZm5KNklpQVRiWE9kTGNFdWF2?=
- =?utf-8?B?REdBRzlDYzZiRUFaRzZZd3BlVmlLdDhLNTlTS05OVDRxdzFNWjNCUmJlcm1C?=
- =?utf-8?B?WmRtNWd2cGplaFNaMXVYQXBhSnF6UG5zb2pxOHpKd0t6VmdtU0ZsTGxvdFFR?=
- =?utf-8?B?YnBJWENBNWY0RTRsYlZsbldqKzI3dm1MbzVIa2Nxd0ZDWFU1OHc4R0R1MjM4?=
- =?utf-8?B?eVlsSGNtbGl2cnkrb0ljdVJvRGVCek5Balo3cDlWREh2VGRwdEx2dmwvd3Bh?=
- =?utf-8?B?UUtKNDhvV3I3L1NHMGNsbis0RGxmeS94bGdPR3JTWHBZQUVYOVBQd3ZQVnAv?=
- =?utf-8?B?bC9ZaEwrWkVWUWJuZlFWOE1oZ0RESGRxMGNnWldSdG5sV3RwRCs2aTlZNUhQ?=
- =?utf-8?B?Vyt6cG5JdHAxdXNBdENVdjhyMXFwWm9YMTczbkhoUldLUXhVUkxWcDVWMENM?=
- =?utf-8?B?RTRMZ0V6UkFtQXpMZWJYaUw4WjhHc3BDQzBsdlJjcncvS0dkVkc4bjlXMUpZ?=
- =?utf-8?B?a3MrQWhwcmNjT1o1bWtvNnBMSVloRHdQMStlUGZhSm1wNzlMSGY2Mm9XWWVs?=
- =?utf-8?B?dGphbVNTc0QxdkN1VEJJYVMwM3RaeHU3YXhpdTRMbXptYmxXOGFkRDFhMUpB?=
- =?utf-8?B?aDJrR3FsZXJEdEFvdGRabk4wV3pwcVlESExGK3QzTUVXYU1MWlo5Uk9mM2ZC?=
- =?utf-8?B?dXJQR1hZZHZtcXYvdXBTV21HckR5dnU2clk1cWkvOGUzeEdmUHdhdTFpcUo0?=
- =?utf-8?B?aFNKOW03dTA3clRkdWwxekRSUjVhWXhVY29veDlxTUxxSURvZGJNaldBVTVO?=
- =?utf-8?B?ZkZDZTlUamdOU09hN3ppYXZWR2s0L3hmWG5NazcvdEdjWEM4VjVHTlRGR3Q4?=
- =?utf-8?B?MjRuQUVvaG50STFHOW5ZNUZqbC9lSy9hNGtYZ3NCMkR6RE5HMWRSaUVyUk5C?=
- =?utf-8?B?Rzc2dEkvN3BnMGF0RWRGeFY1N1J2V3ByeFhScnZlZmVKWDVhNGdsRVlvWXhw?=
- =?utf-8?B?dmVhNnI5d3J0Yk5uSkFXc0FZZGovakpwUGhGV05IdTVKbFZER0NURnVkaytI?=
- =?utf-8?B?anRMWjI5TU9US0dxVDVZeGsrNGpvb25aYzFvUzZvT3hKWk0yUkpaaHhsZi85?=
- =?utf-8?B?Tk9KL0FIYzNHZ3hCbE9aSnZWVlk4Y3BiSHpJQW1hWG1ZNU5kaHZsR0hKelh5?=
- =?utf-8?B?dDRia0pnMFhORmxFQWcwcWlXQWczS01qTWVKbUNYQ2l2bFRiNEVXeGdGREpm?=
- =?utf-8?B?eVErbHhOeTZsOURqS1FnTE1lM002UUpCUHd5YjdxM1l3bDQ0eHM3VmFvd2Ur?=
- =?utf-8?B?WEpUQ01tZUJBUW9Md3Z4REFENjFFVHU1R28rby9BbkZBK1c2ZktOb3lLWW9T?=
- =?utf-8?B?MytuRGt1YXhrTXFMZlZob0RvMnQzN09LYmU4M0xEUy96SDhwM2FjdVl2bmFQ?=
- =?utf-8?B?RTBDOG1SblJYaHhJS0ZZSkw3V3hJV3lSTmJLM1lKc0gxTys4WExGVkE2dGpV?=
- =?utf-8?B?MWtSbWZoWmJrM2NyU3JXRHgyNlRXL2t3QUJEcGNjQTI0S090RmNlUWNiZ0Zu?=
- =?utf-8?Q?mB9cUw2u1/yc+quB+x0tVW8=3D?=
-X-OriginatorOrg: efficios.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7975e0fd-c85c-4e29-467e-08de16304657
-X-MS-Exchange-CrossTenant-AuthSource: YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2025 14:42:53.5001
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4f278736-4ab6-415c-957e-1f55336bd31e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: esqtzi6thdvkmIUsuPgq17zq216FckkYMHDTWN1Lskvvz0KOG7sCpNA52dB/AzBLsX/XGRkntyQ22m4Df6OmEqV05VllszfwDxMDPGH7fLc=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: YT4PR01MB11475
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <481c973c-3ae5-4184-976e-96ab633dd09a@app.fastmail.com>
 
-On 2025-10-27 04:44, Thomas Gleixner wrote:
+On Fri, Oct 24, 2025 at 04:06:57PM +0200, Arnd Bergmann wrote:
+> On Fri, Oct 24, 2025, at 12:52, Christian Brauner wrote:
+> > Add a new listns() system call that allows userspace to iterate through
+> > namespaces in the system. This provides a programmatic interface to
+> > discover and inspect namespaces, enhancing existing namespace apis.
+> 
+> I double-checked that the ABI is well-formed and works the same
+> way on all supported architectures, though I did not check the functional
+> aspects.
+> 
+> Acked-by: Arnd Bergmann <arnd@arndb.de>
+> 
+> One small thing I noticed:
+> 
+> > +SYSCALL_DEFINE4(listns, const struct ns_id_req __user *, req,
+> > +		u64 __user *, ns_ids, size_t, nr_ns_ids, unsigned int, flags)
+> > +{
+> > +	struct klistns klns __free(klistns_free) = {};
+> > +	const size_t maxcount = 1000000;
+> > +	struct ns_id_req kreq;
+> > +	ssize_t ret;
+> > +
+> > +	if (flags)
+> > +		return -EINVAL;
+> > +
+> > +	if (unlikely(nr_ns_ids > maxcount))
+> > +		return -EOVERFLOW;
+> > +
+> > +	if (!access_ok(ns_ids, nr_ns_ids * sizeof(*ns_ids)))
+> > +		return -EFAULT;
+> 
+> I'm a bit worried about hardcoding the maxcount value here, which
+> seems to limit both the size of the allocation and prevent overflowing
+> the multiplication of the access_ok() argument, though that isn't
+> completely clear from the implementation.
+> 
+> Allowing 8MB of vmalloc space to be filled can be bad on 32-bit
+> systems that may only have 100MB in total. The access_ok() check
+> looks like it tries to provide an early-fail error return but
+> should not actually be needed since there is a single copy_to_user()
+> in the end, and that is more likely to fail for unmapped memory than
+> an access_ok() failure.
+> 
+> Would it make sense to just drop the kvmalloc() completely and
+> instead put_user() the output values individually? That way you
+> can avoid both a hardwired limit and a potential DoS from vmalloc
+> exhaustion.
 
-> Replace the open coded implementation with the scoped user access guard.
-Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Initially this wasn't possible because we walked all of this completely
+with only rcu protection. But now that we always have to take a passive
+reference its possible to do what you suggest. This would mean
+ping-ponging the rcu_read_lock()/rcu_read_unlock() but that's probably
+fine. How do you feel about the following?: 
 
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
+diff --git a/kernel/nstree.c b/kernel/nstree.c
+index 1455573e774e..e4c8508e97c7 100644
+--- a/kernel/nstree.c
++++ b/kernel/nstree.c
+@@ -382,7 +382,7 @@ u64 __ns_tree_gen_id(struct ns_common *ns, u64 id)
+ }
+ 
+ struct klistns {
+-	u64 *kns_ids;
++	u64 __user *uns_ids;
+ 	u32 nr_ns_ids;
+ 	u64 last_ns_id;
+ 	u64 user_ns_id;
+@@ -395,9 +395,8 @@ static void __free_klistns_free(const struct klistns *kls)
+ {
+ 	if (kls->user_ns_id != LISTNS_CURRENT_USER)
+ 		put_user_ns(kls->user_ns);
+-	if (kls->first_ns)
++	if (kls->first_ns && kls->first_ns->ops)
+ 		kls->first_ns->ops->put(kls->first_ns);
+-	kvfree(kls->kns_ids);
+ }
+ 
+ #define NS_ALL (PID_NS | USER_NS | MNT_NS | UTS_NS | IPC_NS | NET_NS | CGROUP_NS | TIME_NS)
+@@ -429,18 +428,13 @@ static int copy_ns_id_req(const struct ns_id_req __user *req,
+ }
+ 
+ static inline int prepare_klistns(struct klistns *kls, struct ns_id_req *kreq,
+-				  size_t nr_ns_ids)
++				  u64 __user *ns_ids, size_t nr_ns_ids)
+ {
+ 	kls->last_ns_id = kreq->ns_id;
+ 	kls->user_ns_id = kreq->user_ns_id;
+-	kls->nr_ns_ids = nr_ns_ids;
+-	kls->ns_type = kreq->ns_type;
+-
+-	kls->kns_ids = kvmalloc_array(nr_ns_ids, sizeof(*kls->kns_ids),
+-				      GFP_KERNEL_ACCOUNT);
+-	if (!kls->kns_ids)
+-		return -ENOMEM;
+-
++	kls->nr_ns_ids	= nr_ns_ids;
++	kls->ns_type	= kreq->ns_type;
++	kls->uns_ids	= ns_ids;
+ 	return 0;
+ }
+ 
+@@ -459,8 +453,9 @@ static struct ns_common *lookup_ns_owner_at(u64 ns_id, struct ns_common *owner)
+ 	node = owner->ns_owner_tree.rb_node;
+ 
+ 	while (node) {
+-		struct ns_common *ns = node_to_ns_owner(node);
++		struct ns_common *ns;
+ 
++		ns = node_to_ns_owner(node);
+ 		if (ns_id <= ns->ns_id) {
+ 			ret = ns;
+ 			if (ns_id == ns->ns_id)
+@@ -494,7 +489,7 @@ static struct ns_common *lookup_ns_id(u64 mnt_ns_id, int ns_type)
+ 
+ static ssize_t do_listns_userns(struct klistns *kls)
+ {
+-	u64 *ns_ids = kls->kns_ids;
++	u64 __user *ns_ids = kls->uns_ids;
+ 	size_t nr_ns_ids = kls->nr_ns_ids;
+ 	struct ns_common *ns = NULL, *first_ns = NULL;
+ 	const struct list_head *head;
+@@ -525,7 +520,9 @@ static ssize_t do_listns_userns(struct klistns *kls)
+ 	ret = 0;
+ 	head = &to_ns_common(kls->user_ns)->ns_owner;
+ 	userns_capable = ns_capable_noaudit(kls->user_ns, CAP_SYS_ADMIN);
+-	guard(rcu)();
++
++	rcu_read_lock();
++
+ 	if (!first_ns)
+ 		first_ns = list_entry_rcu(head->next, typeof(*ns), ns_owner_entry);
+ 	for (ns = first_ns; &ns->ns_owner_entry != head && nr_ns_ids;
+@@ -534,19 +531,28 @@ static ssize_t do_listns_userns(struct klistns *kls)
+ 			continue;
+ 		if (!ns_get_unless_inactive(ns))
+ 			continue;
++
++		rcu_read_unlock();
++
+ 		if (userns_capable || is_current_namespace(ns) ||
+ 		    ((ns->ns_type == CLONE_NEWUSER) && ns_capable_noaudit(to_user_ns(ns), CAP_SYS_ADMIN))) {
+-			*ns_ids = ns->ns_id;
+-			ns_ids++;
++			if (put_user(ns->ns_id, ns_ids + ret))
++				return -EINVAL;
+ 			nr_ns_ids--;
+ 			ret++;
+ 		}
++
+ 		if (need_resched())
+-			cond_resched_rcu();
++			cond_resched();
++
++		rcu_read_lock();
++
+ 		/* doesn't sleep */
+-		ns->ops->put(ns);
++		if (ns->ops)
++			ns->ops->put(ns);
+ 	}
+ 
++	rcu_read_unlock();
+ 	return ret;
+ }
+ 
+@@ -626,7 +632,7 @@ static inline bool ns_common_is_head(struct ns_common *ns,
+ 
+ static ssize_t do_listns(struct klistns *kls)
+ {
+-	u64 *ns_ids = kls->kns_ids;
++	u64 __user *ns_ids = kls->uns_ids;
+ 	size_t nr_ns_ids = kls->nr_ns_ids;
+ 	struct ns_common *ns, *first_ns = NULL;
+ 	struct ns_tree *ns_tree = NULL;
+@@ -659,7 +665,8 @@ static ssize_t do_listns(struct klistns *kls)
+ 	else
+ 		head = &ns_unified_list;
+ 
+-	guard(rcu)();
++	rcu_read_lock();
++
+ 	if (!first_ns)
+ 		first_ns = first_ns_common(head, ns_tree);
+ 
+@@ -669,6 +676,9 @@ static ssize_t do_listns(struct klistns *kls)
+ 			continue;
+ 		if (!ns_get_unless_inactive(ns))
+ 			continue;
++
++		rcu_read_unlock();
++
+ 		/* Check permissions */
+ 		if (!ns->ops)
+ 			user_ns = NULL;
+@@ -679,16 +689,22 @@ static ssize_t do_listns(struct klistns *kls)
+ 		if (ns_capable_noaudit(user_ns, CAP_SYS_ADMIN) ||
+ 		    is_current_namespace(ns) ||
+ 		    ((ns->ns_type == CLONE_NEWUSER) && ns_capable_noaudit(to_user_ns(ns), CAP_SYS_ADMIN))) {
+-			*ns_ids++ = ns->ns_id;
++			if (put_user(ns->ns_id, ns_ids + ret))
++				return -EINVAL;
+ 			nr_ns_ids--;
+ 			ret++;
+ 		}
+ 		if (need_resched())
+-			cond_resched_rcu();
++			cond_resched();
++
++		rcu_read_lock();
++
+ 		/* doesn't sleep */
+-		ns->ops->put(ns);
++		if (ns->ops)
++			ns->ops->put(ns);
+ 	}
+ 
++	rcu_read_unlock();
+ 	return ret;
+ }
+ 
+@@ -713,19 +729,12 @@ SYSCALL_DEFINE4(listns, const struct ns_id_req __user *, req,
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = prepare_klistns(&klns, &kreq, nr_ns_ids);
++	ret = prepare_klistns(&klns, &kreq, ns_ids, nr_ns_ids);
+ 	if (ret)
+ 		return ret;
+ 
+ 	if (kreq.user_ns_id)
+-		ret = do_listns_userns(&klns);
+-	else
+-		ret = do_listns(&klns);
+-	if (ret <= 0)
+-		return ret;
++		return do_listns_userns(&klns);
+ 
+-	if (copy_to_user(ns_ids, klns.kns_ids, ret * sizeof(*ns_ids)))
+-		return -EFAULT;
+-
+-	return ret;
++	return do_listns(&klns);
+ }
 
