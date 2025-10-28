@@ -1,90 +1,90 @@
-Return-Path: <linux-fsdevel+bounces-65910-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65911-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6AD6C14B28
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Oct 2025 13:49:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DECF7C14B73
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Oct 2025 13:55:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 622E81B22938
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Oct 2025 12:49:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D76C9407BC0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Oct 2025 12:53:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E9CC33032A;
-	Tue, 28 Oct 2025 12:48:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC4C632F773;
+	Tue, 28 Oct 2025 12:53:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="HtaJBjZT"
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="o7QR7l/R"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89A21306B0C
-	for <linux-fsdevel@vger.kernel.org>; Tue, 28 Oct 2025 12:48:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1AD330147E
+	for <linux-fsdevel@vger.kernel.org>; Tue, 28 Oct 2025 12:53:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761655711; cv=none; b=BziqAHt5dyo3Zcx30W5DFaoKLMVKPn7UZ0AgJZnZLFO9csTXjOZx0Rji/G5kw/E+Jh9nx0+oSSvU3zLQwJHjVPmbQJOLWW9yhx04aZqfFBfmuql/8Tz79i5+PVla2t6ylm0ELBusrRlNy7acX2PLRQ8xQuOFFyJ0WAUwrOVHTVo=
+	t=1761655982; cv=none; b=Pe8xQzoe+pYW97ZyY3HjDNPis0HGvXKvhx61zbsd0Z63cnNWv5I89YMz4U2PbxyAeBpcHuP/scaPcFD0qIOnMD1p2igMjs8eo+TQjy54tdcJbq8NPmf1WZRxtk5AWUHcMkUyGmvq0MWVGibZOBwDIDZ647lS8QTh3ckSPNcmnzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761655711; c=relaxed/simple;
-	bh=gCnXXMQ8+yEkwBLJ50Cu/DQrX5xFcQ3EXfOwIcPhh30=;
+	s=arc-20240116; t=1761655982; c=relaxed/simple;
+	bh=+3vPaDsnNL8heSTGQITQySDS23M0o5dLkagTN8ShR9E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E41lIFOu8OGTt3Usr3oGoAhJpGGqtVRphRqN5cVU0ilWq0KHgV0njNCuLj1s9gLPuuiDeXdj898jg3+/p26kdRd953zoJhiN5yBZKPm7IqBilIvBciWgxKtcK7oU6HTj2uB7Eh9lfuc00+93K/W/A1P8mPMwgA4bbibumajP1CQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=HtaJBjZT; arc=none smtp.client-ip=209.85.219.42
+	 Content-Type:Content-Disposition:In-Reply-To; b=RhLGVS14eksUKCF9PXiPvU9uadrJk3zwBroCGwtr7AqnYqRta6LTSh17A71h/xBhRetO4y2TxDOA9WXF5htgd4NEQpf7B13Zr8zYFx4icEd7+8AAKTDB9sRShklRaIndpWa6g/pgx9oTKgpQzN5Rh9XNRJ/5mhN5nYXInqAPFu0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=o7QR7l/R; arc=none smtp.client-ip=209.85.219.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-78e4056623fso59355126d6.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Oct 2025 05:48:29 -0700 (PDT)
+Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-87fbc6d98a9so32761856d6.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Oct 2025 05:53:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1761655708; x=1762260508; darn=vger.kernel.org;
+        d=ziepe.ca; s=google; t=1761655980; x=1762260780; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Olopx85j++3FTIQ4p47k6xJ/f5lMguJl5tBEftSDYws=;
-        b=HtaJBjZT/raqwscTxIjkznlmEulX2sj3GBKKVysGgV/I4gvR3LZGMDdNc1ulwbPDeT
-         /L7RvkJBKdFSfVsvAMwa3Rve7wy2tptRPGeZj0SwGF+4RUAeOx3OTRYxrem5SMo7E8Ai
-         2iKC5CNZfCuvv9fLmrN1EoDNDwLnHQnUXZz9KWdJ4KzvGg/JYu4KEthxpJ/APNc6BHHF
-         A5+FIVt1U2rlV/JfSLBMzQyqaGaifiyfhxDYujWfj0Osnm3koOamkWTWz2Bs66HFaatT
-         kuDGGZS4wO83ByLjdiydmjeOCr96VqOmOIqIsAatfqmxzuhY8Vx+IklcuHcrZkfWWz90
-         5V0w==
+        bh=7CqgmoumiIO/LqZvmbvABjwYG8sY5r9jILlhcKrm4Ms=;
+        b=o7QR7l/RcnzhMMWrC+iO7b3J3CZ0SUbCMtZvxpEAUu6jsnUYavb8PWPeBXQ2nlFd7U
+         SnCwfRbZCGNOydBsVkw6/Q4FSnrzT8PHcUsrF4rXGf/1Ntsji7jr2ylHEvqqx+3FH/Fn
+         /dV2NQ0FyiEvm4RS6HpIAp6LiC62QKSUNtXs3+pdsHtJEaK4RUB3f1ktieiUYW9/Son8
+         03FPqQkIHNHsmlqdkKRLpwV+E0GAVAgg9sdpykFEAyCFZGVdNEZZMeirWPeo+sYb4D8H
+         UgZQ9fq0DDO00uVOp2p0iEd91CdZU/Q/MoIl4Z/4y7n2zrnGEt5EZcyWLZ2cUE5uMhQk
+         tk/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761655708; x=1762260508;
+        d=1e100.net; s=20230601; t=1761655980; x=1762260780;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Olopx85j++3FTIQ4p47k6xJ/f5lMguJl5tBEftSDYws=;
-        b=IERvxDDmiQblMWr9Nj0P+uEWEwBE/5TGHDFSyhxptaMv6zk3oSw8pRExO1diS2+Vna
-         5OM3s0F9ZZxJIW8nhYeZeuAheBL+A54pG6I5OyjrrKG+9hWA9VActl/iQmXTa9OLICp0
-         a9itHrZ4dZ3QCU296QRqVCbLGUmXMensHJaWaHV5KnIVTLLqEOOOzDpPSLyjs0FXTo/u
-         0FG0GeQbpPUy99sZ4JcAKpr/C8dBasyNRGXLpdZYn2kQEVIqFQVQDxeYT2KluxYI8/pV
-         sq4CmbsWXLeU+Oka2XlmqmOdtSqUlfNWBkufWAU62yY1DSn/PEjF6IolkfDzIChPJo0b
-         SvQw==
-X-Forwarded-Encrypted: i=1; AJvYcCVUV68C6n6ZrZzIum6gC6NXPyh0LkKiKflIcWM+pnbdZcIu0tbXwDF+qIP3M00EksIQTsGI6AqofGq59APE@vger.kernel.org
-X-Gm-Message-State: AOJu0YyH6trN1ZCHJiRHZTBW1KAN5dERbStqYSFefo/gJzeeP8N3wXdV
-	jwiY4ELfIsAsGYfmOPiszpiRjrEmZGtt5SzDC5SIXX9A5kUMQlpunoUGY955ywoT1jQ=
-X-Gm-Gg: ASbGncsP5pdp4lVn0fqCg4e6o3RT3jtuYXqbxc+QFbAqWVGnnS08MK1OFKOq/fCYQGB
-	i3mo6dhCTbPqvUJDbPxLw8W3/ifHSLwA2tXtLtgOeVPdhj4hJgv441lW3nY5nhcARM192KwEGVs
-	lOtcvHXcJhnDBNXpoyd6ML7DmQbVoLFwwBFxBYPMhxf7RQMe9FLmH2XGZvo4JcVkNCEVtdtFlTk
-	FoMd9YCOYPLYF0HLU4m3fE/8aWdLKbZiroblMrvpzesGnEROCMUgtyIFYtDUepbw+ndFhbU+aF0
-	XX7OsNxsjqnJRQpVcJFKfwBXTbnR1P21+Q1yR0iW54raJasLVqrY2Ne+xTXA9xoqusaAO3A1R27
-	DcJQ8pCkWRMvGZ8wFwbx/x1Z8MoU4GjpguDvZvlmyb5Wl1HgGVlnF1Y6VadFMwFDdYZmfEHKVJ4
-	w1EwkLjV0PP5jJg44/wEIhcEzeUf67+MsVNIqBa60WpL0XWg==
-X-Google-Smtp-Source: AGHT+IHiUNJHwvr/nLoj/e7qPf6JckrC19yXD6gHtAA14Gx8htpJ7qO77Enxzi9C2v+UJSUvbdZfVQ==
-X-Received: by 2002:ad4:5c65:0:b0:87c:1889:6a7f with SMTP id 6a1803df08f44-87ffb000afdmr37515826d6.5.1761655708162;
-        Tue, 28 Oct 2025 05:48:28 -0700 (PDT)
+        bh=7CqgmoumiIO/LqZvmbvABjwYG8sY5r9jILlhcKrm4Ms=;
+        b=NDy2vglBwCvhBNo6A1nMEELGMFMr4mOtwhnobezJfrJd9rqu1ZKbQ9IM2Jb+X75bdI
+         orB+p3SPcbUDkdemeIE9+9FiDQZjLqi3rreI17fTPKh0eWui/5e/aipt0Ymd4p4ul+ef
+         PNg0fgQdLmGFPJPl+piYEgpuZlFw5LrOq+OlgnuSUaEgXOBIsT3O5F/T84eCmoEk/K1K
+         9ydCxYtOCfhRzp4ksQxAp6VLO+8J/YwE9boKx8CQcbMM7JixPDnl1gvA1Bfu3WLWvNEh
+         k9Po8THrb1+iGHgN8bKeT/Amdt5ldwkEs8OmfvshOjKpVjhbNTw5O8DR4bhvSbM0YdlT
+         X16g==
+X-Forwarded-Encrypted: i=1; AJvYcCVTMQZOrmLXX/MenhQ0ewKd8CDhO6O/vJwmYglDXrALEGR1hQvPIQgtKZFa4Kk/JsQmqrutH+3F4FH71Lvz@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywrw6ivKkqrxXkLoLJiVsrvnLbzmfIjM7ZK7D9nl7rLB23q43u+
+	1RY674qf++fdfYbDsNaLzebZBMdARiRLj40FklqrmDcvoYjdW5hOMg9clibAbFexEnU=
+X-Gm-Gg: ASbGncvYYcEPHJwQ+QWaMribW9gZO5sHTJR8g+ys/WAiqnlk0EPN4c+pp60wVOIUByT
+	vA4umuR3pJpkBrOvSk8oEEozdsUz2Tw5I/qlGchqdG8ihHHtq+z/j0t+0bbfbv2e2/FYp9bVOOM
+	DMHwhh0EgZS5p3ojHTj6Ybv9SoiC1S+eMJX9cFvoUkdjPDjh6pcxgpSfvMKKKg/GeA/+xsuN+4r
+	FVgz3aVgzANw1U8YbSVDKx5JfEVdIGbQRyKDGFWQ9Oyn8spcbXeqSiBYykws0JGaGaOUPcGh36n
+	2Lb+7kZMF+b/2MRuRD4htz6ZKrKYAqH7FmdysLE4K0ZEtnurNxpHJJfGOQNO239w1+ileOKC1V3
+	pDqkkhmes9FY6ii0bAY1EP6+LNeZjJz6Qu5E8lkc/szqzeZhlBdgD3HiNniYvJVA6OM1g3/upu2
+	d9NYl2DiMJM96yprZ23czz/23nqSeK6AlLFOm+4RrDc0FfUw==
+X-Google-Smtp-Source: AGHT+IH+xZpvPIbhKx7mJgf5LQY0C/zJpDpvmdyPQ1VJnfhZtNoMsQ1XOGKSORZ38fLIo5wpD093Tw==
+X-Received: by 2002:a05:6214:262d:b0:809:5095:4153 with SMTP id 6a1803df08f44-87ffb10cd22mr39426046d6.31.1761655979645;
+        Tue, 28 Oct 2025 05:52:59 -0700 (PDT)
 Received: from ziepe.ca (hlfxns017vw-47-55-120-4.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.120.4])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-87fc48e08d3sm76769836d6.19.2025.10.28.05.48.18
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-87fc48abea7sm79249956d6.0.2025.10.28.05.52.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Oct 2025 05:48:23 -0700 (PDT)
+        Tue, 28 Oct 2025 05:52:55 -0700 (PDT)
 Received: from jgg by wakko with local (Exim 4.97)
 	(envelope-from <jgg@ziepe.ca>)
-	id 1vDj7a-00000004Oq0-01nS;
-	Tue, 28 Oct 2025 09:48:18 -0300
-Date: Tue, 28 Oct 2025 09:48:17 -0300
+	id 1vDjBs-00000004Orq-30qI;
+	Tue, 28 Oct 2025 09:52:44 -0300
+Date: Tue, 28 Oct 2025 09:52:44 -0300
 From: Jason Gunthorpe <jgg@ziepe.ca>
 To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
+Cc: David Hildenbrand <david@redhat.com>, Gregory Price <gourry@gourry.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
 	Christian Borntraeger <borntraeger@linux.ibm.com>,
 	Janosch Frank <frankja@linux.ibm.com>,
 	Claudio Imbrenda <imbrenda@linux.ibm.com>,
-	David Hildenbrand <david@redhat.com>,
 	Alexander Gordeev <agordeev@linux.ibm.com>,
 	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
 	Heiko Carstens <hca@linux.ibm.com>,
@@ -108,7 +108,6 @@ Cc: Andrew Morton <akpm@linux-foundation.org>,
 	Matthew Brost <matthew.brost@intel.com>,
 	Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
 	Byungchul Park <byungchul@sk.com>,
-	Gregory Price <gourry@gourry.net>,
 	Ying Huang <ying.huang@linux.alibaba.com>,
 	Alistair Popple <apopple@nvidia.com>,
 	Pedro Falcato <pfalcato@suse.de>,
@@ -117,12 +116,18 @@ Cc: Andrew Morton <akpm@linux-foundation.org>,
 	kvm@vger.kernel.org, linux-s390@vger.kernel.org,
 	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
 	linux-mm@kvack.org
-Subject: Re: [RFC PATCH 00/12] remove is_swap_[pte, pmd]() + non-swap
- confusion
-Message-ID: <20251028124817.GH760669@ziepe.ca>
-References: <cover.1761288179.git.lorenzo.stoakes@oracle.com>
- <20251027160923.GF760669@ziepe.ca>
- <8d4da271-472b-4a32-9e51-3ff4d8c2e232@lucifer.local>
+Subject: Re: [RFC PATCH 05/12] fs/proc/task_mmu: refactor pagemap_pmd_range()
+Message-ID: <20251028125244.GI760669@ziepe.ca>
+References: <2ce1da8c64bf2f831938d711b047b2eba0fa9f32.1761288179.git.lorenzo.stoakes@oracle.com>
+ <aPu4LWGdGSQR_xY0@gourry-fedora-PF4VCD3F>
+ <76348b1f-2626-4010-8269-edd74a936982@lucifer.local>
+ <aPvPiI4BxTIzasq1@gourry-fedora-PF4VCD3F>
+ <3f3e5582-d707-41d0-99a7-4e9c25f1224d@lucifer.local>
+ <aPvjfo1hVlb_WBcz@gourry-fedora-PF4VCD3F>
+ <20251027161146.GG760669@ziepe.ca>
+ <27a5ea4e-155c-40d1-87d7-e27e98b4871d@lucifer.local>
+ <dac763e0-3912-439d-a9c3-6e54bf3329c6@redhat.com>
+ <a813aa51-cc5c-4375-9146-31699b4be4ca@lucifer.local>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -131,176 +136,55 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8d4da271-472b-4a32-9e51-3ff4d8c2e232@lucifer.local>
+In-Reply-To: <a813aa51-cc5c-4375-9146-31699b4be4ca@lucifer.local>
 
-On Mon, Oct 27, 2025 at 05:33:57PM +0000, Lorenzo Stoakes wrote:
-> (Note I never intended this to be an RFC, it was only because of
-> series-likely-to-be-dropped causing nasty conflicts this isn't an 'out
-> there' series rather a practical submission).
-> 
-> To preface, as I said elsewhere, I intend to do more on this, renaming
-> swp_entry_t to probably leaf_entry_t (thanks Gregory!)
-> 
-> The issue is no matter how I do this people will theorise different
-> approaches, I'm trying to practically find a way forward that works
-> iteratively.
-
-It is why I suggested that swp_entry_t is the name we have (for this
-series at least) and lean into it as the proper name for the abstract
-idea of a multi-type'd value. Having a following series to rename
-"swp_entry_t" to some "leaf entry" will resolve the poor naming.
-
-But for now, "swp_entry_t" does not mean *swap* entry, it means "leaf
-entry with a really bad type name".
-
-And swpent_* is the namespace prefix for things dealing with
-swp_entry_t.
-
-If done consistently then the switch to leaf entry naming is just a
-simple mass rename of swpent/leafent.
-
-> > That suggests functions like this:
+On Mon, Oct 27, 2025 at 04:38:05PM +0000, Lorenzo Stoakes wrote:
+> On Mon, Oct 27, 2025 at 05:31:54PM +0100, David Hildenbrand wrote:
+> > >
+> > > I don't love the union.
+> > >
+> > > How would we determine what type it is, we'd have to have some
+> > > generic_leaf_entry_t type or something to contain the swap type field and then
+> > > cast and... is it worth it?
+> > >
+> > > Intent of non-present was to refer to not-swap swapentry. It's already a
+> > > convention that exists, e.g. is_pmd_non_present_folio_entry().
 > >
-> > swpent_is_swap()
-> > swpent_is_migration()
-> > ..
-> 
-> The _whole point_ of this series is to separate out the idea that you're
-> dealing with swap entries so I don't like swpent as a name obviously.
-
-As you say we can't fix everything at once, but if you do the above
-and then rename the end state would be
-
-leafent_is_swap()
-leafent_is_migration()
- ..
-
-And that seems like a good end state.
-
-So pick the small steps, either lean into swpent in this series as the
-place holder for leafent in the next..
-
-Or this seems like a good idea too:
-
-> We could also just pre-empt and prefix functions with leafent_is_swap() if
-> you prefer.
-> 
-> We could even do:
-> 
-> /* TODO: Rename swap_entry_t to leaf_entry_t */
-> typedef swap_entry_t leaf_entry_t;
->
-> And use the new type right away.
-
-Then the followup series is cleaning away swap_entry_t as a name.
-
-> > /* True if the pte is a swpent_is_swap() */
-> > static inline bool swpent_get_swap_pte(pte_t pte, swp_entry_t *entryp)
-> > {
-> >    if (pte_present(pte))
-> >         return false;
-> >    *swpent = pte_to_swp_entry(pte);
-> >    return swpent_is_swap(*swpent);
-> > }
-> 
-> I already implement in the series a pte_to_swp_entry_or_zero() function
-
-I saw, but I don't think it is a great name.. It doesn't really give
-"zero" it gives a swp_entry_t that doesn't pass any of the
-swpent_is_XX() functions. ie a none type.
-
-> that goes one further - checks pte_present() for you, if pte_none() you
-> just get an empty swap entry, so this can be:
-
-And I was hoping to see a path to get rid of the pte_none() stuff, or
-at least on most arches. It is pretty pointless to check for pte_none
-if the arch has a none-pte that already is 0..
-
-So pte_none can be more like:
-   swpent_is_none(pte_to_swp_entry(pte))
-
-Where pte_to_swp_entry is just some bit maths with no conditionals.
-
-> > I also think it will be more readable to keep all these things under a
-> > swpent namespace instead of using unstructured english names.
-> 
-> Nope. Again, the whole point of the series is to avoid referencing
-> swap. swpent_xxx() is just eliminating the purpose of the series right?
-> 
-> Yes it sucks that the type name is what it is, but this is an iterative
-> process.
-
-Sure, but don't add a bunch of new names with *no namespace*. As above
-either accept swpent is a placeholder for leafent in the next series,
-or do this:
-
-> But as above, we could pre-empt future changes and prefix with a
-> leafent_*() prefix if that works for you?
-
-Which seems like a good idea to me.
-
-> > I'd expect a safe function should be more like
+> > Just noting that this was a recent addition (still not upstream) that
+> > essentially says "there is a folio here, but it's not in an ordinary present
+> > page table entry.
 > >
-> >    *swpent = pte_to_swp_entry_safe(pte);
-> >    return swpent_is_swap(*swpent);
-> >
-> > Where "safe" means that if the PTE is None or Present then
-> > swpent_is_XX() == false. Ie it returns a 0 swpent and 0 swpent is
-> > always nothing.
+> > So we could change that to something better.
 > 
-> Not sure it's really 'safe', the name is unfortunate, but you could read
-> this as 'always get a valid swap entry to operate on'...
-
-My suggestion was the leaf entry has a type {none, swap, migration, etc}
-
-And this _safe version returns the none type'd leaf entry for a
-present pte.
-
-We move toward eliminating the idea of pte_none by saying a
-non-present pte is always a leaf_entry and what we call a "none pte"
-is a "none leaf entry"
-
-> leaf_entry_t leafent_from_pte()...?
-
-Probably this one?
-> > static inline bool get_pte_swap_entry(pte_t pte, swp_entry_t *entryp)
-> > {
-> >    return swpent_is_swap(*swpent = pte_to_swp_entry_safe(pte));
-> > }
+> Yeah but leaf_entry_t encapsulates BOTH swap and non-swap entries.
 > 
-> I absolutely hate that embedded assignment, but this is equivalent to what
-> I suggested above, so agreed this is a good suggestion broadly.
+> So that's nice.
 > 
-> >
-> > Maybe it doesn't even need an inline at that point?
-> 
-> Don't understand what you mean by that. It's in a header file?
+> What do you propose calling non-swap leaf entries? It starts spiralling down a
+> bit there.
 
-I mean just write it like this in the callers:
+You don't even ask that question.
 
-  swp_entry_t leafent = pte_to_swp_entry_safe(pte);
+You have a leaf entry. It has a type.
 
-  if (swpent_is_swap(leafent)) {
-  }
+What you are calling a "swap entry" is a "leaf entry of swap type".
 
-It is basically the same # lines as the helper version.
+The union helps encode in the type system what code is operating on
+what type of the leaf entry.
 
-> > > * is_huge_pmd() - Determines if a PMD contains either a present transparent
-> > >   huge page entry or a huge non-present entry. This again simplifies a lot
-> > >   of logic that simply open-coded this.
-> >
-> > is_huge_or_swpent_pmd() would be nicer, IMHO. I think it is surprising
-> > when any of these APIs accept swap entries without being explicit
-> 
-> Again, I'm not going to reference swap in a series intended to eliminate
-> this, it defeats the purpose.
-> 
-> And the non-present (or whatever you want to call it) entry _is_ huge. So
-> it's just adding more confusion that way IMO.
+It seems pretty simple.
+ 
+> And it's really common to have logic asserting it's actually a swap entry
+> vs. not etc.
 
-Then this:
+leafent_is_swap(ent) - meaning is a "leaf entry of swap type".
 
-  pmd_is_present_or_leafent(pmd)
+> 1. we keep the non-present terminology as a better way of referring
+>    to non-swap entries.
+
+I vastly prefer you leap ahead and start using leaf_entry
+terminology. We don't need a temporary name we are going to throw
+away.
 
 Jason
 
