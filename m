@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-65851-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65852-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83760C126D7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Oct 2025 01:57:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70C86C12796
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Oct 2025 02:03:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 30A605476AB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Oct 2025 00:53:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C52A83A252A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Oct 2025 00:53:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF2A933FE10;
-	Tue, 28 Oct 2025 00:46:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70313341ACB;
+	Tue, 28 Oct 2025 00:46:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="hzjac2Xc"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="BJ6n5q/J"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4705121A425;
-	Tue, 28 Oct 2025 00:46:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DCDB21A444;
+	Tue, 28 Oct 2025 00:46:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761612389; cv=none; b=c8UJt4N1MSranItWtGuFaI/ibBCzwXwElnfRTklDuN/segRKTvSz3udmgka3dtrYMBdOyDzlJ7+6X2vfNjARHfzGrEAyB37A25uF76QgJid5uSHPkZzhe5m3tChXVaN2Oi/WBhmDbXkPMlVrY+2KYSm4mOd6kd43qsC339DWE50=
+	t=1761612389; cv=none; b=l2J5fh36SV+GoTA5Oujut+wrPESdmmKAR3dWsep886FUlvsuFuel84N/QLwY3gq5p5qEdi33mt8KODbG0JtDRKeBFK6fW/1t19o/s5cmqAe5Ik0vqanY5K+Yo2RbbQnWeWbfCovirhjCJt7uJWjq6CBB25lI2Z4PzZ01YexnZtM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1761612389; c=relaxed/simple;
-	bh=9AS75eVlweTY+v6fpHuTI3Q7t//pHwL//inAnhQncd4=;
+	bh=Jw8zwnPuRNXAUEy6/iRRNrO3Vb7wl9+VqF98zG0jrso=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pEc4vU3lPV6ZkrmMNahz3rTwdMHs5+wIx7lmWeCJJ2Tson8O0mwKRJ9O8qJcbe32WW3JqxIJhel3Sx3vNiRzsnjhDrv1LIhqq5xhDC60lRLDlBcnqh6z+SqQy8peni80xccmvD4jBT7D03qTzAjGs6tcAA8jV/xj3vPSL33isx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=hzjac2Xc; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=ofKqeM7cQF8RQWoBuzCjvX72Ee4ulffc61/mNzSlZZAjqQy62IqWFYF8l8l39DQYMJdybhK5Ypgnkhhrg1Sy9Tzu/yq65apL5tEiKItLfN1O0kVaJteqJEYM/Th5FiKOuNPzQrHaFPyrwFabS12NocDNfQOY8DBXGKKx6RJR/SA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=BJ6n5q/J; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=NrCfZqIGx2QtH4dFK91zKO0X/du0eTzDDHu7mpHeJ3A=; b=hzjac2XcGzM7vx6iy4y4pMHz7c
-	YvrOiKioiAMxlbKNayPq4Ci26DiSpne6cnBNtmW+PLi+Kv8TU/AsNrBvRWrH1/5ldEiEjzGsgYT9Y
-	IFR2pYeIQR8b3auleenkSDmUSrEBPVfba1zbhVxMZpn6n9kXEYebKk4iat9MYD76Fp50cGZDcwWl1
-	YT4NMiUHbR7zMRs0ZK2mIRrFZ6vKUaZEuVVKEVl5muqIIV0dirc1zNd7KtC3X3UXCWDEX6GuzxIAe
-	WhEqFSEgQtKL9A51iu67xl8y+9dVwt7439McsK0XJGIhua2TYgNXwyGzWjrp8cr1EeelG0+qOB4dX
-	/DrdQ/KQ==;
+	bh=cNupE5WP11QDcgvbWMAmFaE1TAZeWcI3mGTR58jAFHY=; b=BJ6n5q/JJc/d0w54hGGOhLn4B4
+	v5hSfTaNqMn/MiiifDqppfBCBOb0ZVucm7VNLPLNUTXAmCtPk04TpjhJdbcmMfFi12ehwp9x7Tu9N
+	25fE4WvqrtoziAxn4kvNRcEXvv0VG2Znr9eshnw62e6lv0kHWroVzADqIYdNLgC8Pj4f4Cjz/nodZ
+	dJrDpFZgg0r3fNg/wNU/zBvoCEf8hVXBHqC95Nn72/Afrdrnn/kM3020nXRRefdHrJs9G7RfEcaSr
+	uLIsJJez9qxNFtGAtnz1iIL04x3/wr/C0ak96GHJ7xUPlyW/JvnXib9q5WXHINEZEYlLbiW037w9i
+	99vxjDdA==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vDXqs-00000001eca-474A;
+	id 1vDXqt-00000001edd-0w8x;
 	Tue, 28 Oct 2025 00:46:19 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
@@ -67,9 +67,9 @@ Cc: torvalds@linux-foundation.org,
 	selinux@vger.kernel.org,
 	borntraeger@linux.ibm.com,
 	bpf@vger.kernel.org
-Subject: [PATCH v2 41/50] hypfs: switch hypfs_create_str() to returning int
-Date: Tue, 28 Oct 2025 00:46:00 +0000
-Message-ID: <20251028004614.393374-42-viro@zeniv.linux.org.uk>
+Subject: [PATCH v2 42/50] hypfs: swich hypfs_create_u64() to returning int
+Date: Tue, 28 Oct 2025 00:46:01 +0000
+Message-ID: <20251028004614.393374-43-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20251028004614.393374-1-viro@zeniv.linux.org.uk>
 References: <20251028004614.393374-1-viro@zeniv.linux.org.uk>
@@ -82,143 +82,149 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Every single caller only cares about PTR_ERR_OR_ZERO() of return value...
+same story as for hypfs_create_str()
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
  arch/s390/hypfs/hypfs.h         |  3 +--
- arch/s390/hypfs/hypfs_diag_fs.c | 40 +++++++++------------------------
- arch/s390/hypfs/hypfs_vm_fs.c   |  6 ++---
- arch/s390/hypfs/inode.c         |  9 ++++----
- 4 files changed, 18 insertions(+), 40 deletions(-)
+ arch/s390/hypfs/hypfs_diag_fs.c | 20 ++++++++++----------
+ arch/s390/hypfs/hypfs_vm_fs.c   | 15 ++++++---------
+ arch/s390/hypfs/inode.c         |  9 ++++-----
+ 4 files changed, 21 insertions(+), 26 deletions(-)
 
 diff --git a/arch/s390/hypfs/hypfs.h b/arch/s390/hypfs/hypfs.h
-index 4dc2e068e0ff..0d109d956015 100644
+index 0d109d956015..2bb7104124ca 100644
 --- a/arch/s390/hypfs/hypfs.h
 +++ b/arch/s390/hypfs/hypfs.h
-@@ -25,8 +25,7 @@ extern struct dentry *hypfs_mkdir(struct dentry *parent, const char *name);
- extern struct dentry *hypfs_create_u64(struct dentry *dir, const char *name,
- 				       __u64 value);
+@@ -22,8 +22,7 @@
  
--extern struct dentry *hypfs_create_str(struct dentry *dir, const char *name,
--				       char *string);
-+extern int hypfs_create_str(struct dentry *dir, const char *name, char *string);
+ extern struct dentry *hypfs_mkdir(struct dentry *parent, const char *name);
  
- /* LPAR Hypervisor */
- extern int hypfs_diag_init(void);
+-extern struct dentry *hypfs_create_u64(struct dentry *dir, const char *name,
+-				       __u64 value);
++extern int hypfs_create_u64(struct dentry *dir, const char *name, __u64 value);
+ 
+ extern int hypfs_create_str(struct dentry *dir, const char *name, char *string);
+ 
 diff --git a/arch/s390/hypfs/hypfs_diag_fs.c b/arch/s390/hypfs/hypfs_diag_fs.c
-index ede951dc0085..2178e6060a5d 100644
+index 2178e6060a5d..83c9426df08e 100644
 --- a/arch/s390/hypfs/hypfs_diag_fs.c
 +++ b/arch/s390/hypfs/hypfs_diag_fs.c
-@@ -228,8 +228,7 @@ static int hypfs_create_cpu_files(struct dentry *cpus_dir, void *cpu_info)
- 			return PTR_ERR(rc);
+@@ -204,7 +204,7 @@ static int hypfs_create_cpu_files(struct dentry *cpus_dir, void *cpu_info)
+ {
+ 	struct dentry *cpu_dir;
+ 	char buffer[TMP_SIZE];
+-	void *rc;
++	int rc;
+ 
+ 	snprintf(buffer, TMP_SIZE, "%d", cpu_info__cpu_addr(diag204_get_info_type(),
+ 							    cpu_info));
+@@ -214,18 +214,18 @@ static int hypfs_create_cpu_files(struct dentry *cpus_dir, void *cpu_info)
+ 	rc = hypfs_create_u64(cpu_dir, "mgmtime",
+ 			      cpu_info__acc_time(diag204_get_info_type(), cpu_info) -
+ 			      cpu_info__lp_time(diag204_get_info_type(), cpu_info));
+-	if (IS_ERR(rc))
+-		return PTR_ERR(rc);
++	if (rc)
++		return rc;
+ 	rc = hypfs_create_u64(cpu_dir, "cputime",
+ 			      cpu_info__lp_time(diag204_get_info_type(), cpu_info));
+-	if (IS_ERR(rc))
+-		return PTR_ERR(rc);
++	if (rc)
++		return rc;
+ 	if (diag204_get_info_type() == DIAG204_INFO_EXT) {
+ 		rc = hypfs_create_u64(cpu_dir, "onlinetime",
+ 				      cpu_info__online_time(diag204_get_info_type(),
+ 							    cpu_info));
+-		if (IS_ERR(rc))
+-			return PTR_ERR(rc);
++		if (rc)
++			return rc;
  	}
  	diag224_idx2name(cpu_info__ctidx(diag204_get_info_type(), cpu_info), buffer);
--	rc = hypfs_create_str(cpu_dir, "type", buffer);
--	return PTR_ERR_OR_ZERO(rc);
-+	return hypfs_create_str(cpu_dir, "type", buffer);
- }
+ 	return hypfs_create_str(cpu_dir, "type", buffer);
+@@ -263,7 +263,7 @@ static int hypfs_create_phys_cpu_files(struct dentry *cpus_dir, void *cpu_info)
+ {
+ 	struct dentry *cpu_dir;
+ 	char buffer[TMP_SIZE];
+-	void *rc;
++	int rc;
  
- static void *hypfs_create_lpar_files(struct dentry *systems_dir, void *part_hdr)
-@@ -276,8 +275,7 @@ static int hypfs_create_phys_cpu_files(struct dentry *cpus_dir, void *cpu_info)
- 	if (IS_ERR(rc))
- 		return PTR_ERR(rc);
+ 	snprintf(buffer, TMP_SIZE, "%i", phys_cpu__cpu_addr(diag204_get_info_type(),
+ 							    cpu_info));
+@@ -272,8 +272,8 @@ static int hypfs_create_phys_cpu_files(struct dentry *cpus_dir, void *cpu_info)
+ 		return PTR_ERR(cpu_dir);
+ 	rc = hypfs_create_u64(cpu_dir, "mgmtime",
+ 			      phys_cpu__mgm_time(diag204_get_info_type(), cpu_info));
+-	if (IS_ERR(rc))
+-		return PTR_ERR(rc);
++	if (rc)
++		return rc;
  	diag224_idx2name(phys_cpu__ctidx(diag204_get_info_type(), cpu_info), buffer);
--	rc = hypfs_create_str(cpu_dir, "type", buffer);
--	return PTR_ERR_OR_ZERO(rc);
-+	return hypfs_create_str(cpu_dir, "type", buffer);
+ 	return hypfs_create_str(cpu_dir, "type", buffer);
  }
- 
- static void *hypfs_create_phys_files(struct dentry *parent_dir, void *phys_hdr)
-@@ -316,41 +314,25 @@ int hypfs_diag_create_files(struct dentry *root)
- 		return rc;
- 
- 	systems_dir = hypfs_mkdir(root, "systems");
--	if (IS_ERR(systems_dir)) {
--		rc = PTR_ERR(systems_dir);
--		goto err_out;
--	}
-+	if (IS_ERR(systems_dir))
-+		return PTR_ERR(systems_dir);
- 	time_hdr = (struct x_info_blk_hdr *)buffer;
- 	part_hdr = time_hdr + info_blk_hdr__size(diag204_get_info_type());
- 	for (i = 0; i < info_blk_hdr__npar(diag204_get_info_type(), time_hdr); i++) {
- 		part_hdr = hypfs_create_lpar_files(systems_dir, part_hdr);
--		if (IS_ERR(part_hdr)) {
--			rc = PTR_ERR(part_hdr);
--			goto err_out;
--		}
-+		if (IS_ERR(part_hdr))
-+			return PTR_ERR(part_hdr);
- 	}
- 	if (info_blk_hdr__flags(diag204_get_info_type(), time_hdr) &
- 	    DIAG204_LPAR_PHYS_FLG) {
- 		ptr = hypfs_create_phys_files(root, part_hdr);
--		if (IS_ERR(ptr)) {
--			rc = PTR_ERR(ptr);
--			goto err_out;
--		}
-+		if (IS_ERR(ptr))
-+			return PTR_ERR(ptr);
- 	}
- 	hyp_dir = hypfs_mkdir(root, "hyp");
--	if (IS_ERR(hyp_dir)) {
--		rc = PTR_ERR(hyp_dir);
--		goto err_out;
--	}
--	ptr = hypfs_create_str(hyp_dir, "type", "LPAR Hypervisor");
--	if (IS_ERR(ptr)) {
--		rc = PTR_ERR(ptr);
--		goto err_out;
--	}
--	rc = 0;
--
--err_out:
--	return rc;
-+	if (IS_ERR(hyp_dir))
-+		return PTR_ERR(hyp_dir);
-+	return hypfs_create_str(hyp_dir, "type", "LPAR Hypervisor");
- }
- 
- /* Diagnose 224 functions */
 diff --git a/arch/s390/hypfs/hypfs_vm_fs.c b/arch/s390/hypfs/hypfs_vm_fs.c
-index 6011289afa8c..e8a32d66062b 100644
+index e8a32d66062b..a149a9f92e40 100644
 --- a/arch/s390/hypfs/hypfs_vm_fs.c
 +++ b/arch/s390/hypfs/hypfs_vm_fs.c
-@@ -100,11 +100,9 @@ int hypfs_vm_create_files(struct dentry *root)
+@@ -19,10 +19,9 @@
+ 
+ #define ATTRIBUTE(dir, name, member) \
+ do { \
+-	void *rc; \
+-	rc = hypfs_create_u64(dir, name, member); \
+-	if (IS_ERR(rc)) \
+-		return PTR_ERR(rc); \
++	int rc = hypfs_create_u64(dir, name, member); \
++	if (rc) \
++		return rc; \
+ } while (0)
+ 
+ static int hypfs_vm_create_guest(struct dentry *systems_dir,
+@@ -85,7 +84,7 @@ static int hypfs_vm_create_guest(struct dentry *systems_dir,
+ 
+ int hypfs_vm_create_files(struct dentry *root)
+ {
+-	struct dentry *dir, *file;
++	struct dentry *dir;
+ 	struct diag2fc_data *data;
+ 	unsigned int count = 0;
+ 	int rc, i;
+@@ -110,11 +109,9 @@ int hypfs_vm_create_files(struct dentry *root)
  		rc = PTR_ERR(dir);
  		goto failed;
  	}
--	file = hypfs_create_str(dir, "type", "z/VM Hypervisor");
+-	file = hypfs_create_u64(dir, "count", data->lcpus);
 -	if (IS_ERR(file)) {
 -		rc = PTR_ERR(file);
-+	rc = hypfs_create_str(dir, "type", "z/VM Hypervisor");
++	rc = hypfs_create_u64(dir, "count", data->lcpus);
 +	if (rc)
  		goto failed;
 -	}
  
- 	/* physical cpus */
- 	dir = hypfs_mkdir(root, "cpus");
+ 	/* guests */
+ 	dir = hypfs_mkdir(root, "systems");
 diff --git a/arch/s390/hypfs/inode.c b/arch/s390/hypfs/inode.c
-index a4dc8e13d999..c5e2d8932b88 100644
+index c5e2d8932b88..6a80ab2692be 100644
 --- a/arch/s390/hypfs/inode.c
 +++ b/arch/s390/hypfs/inode.c
-@@ -398,24 +398,23 @@ struct dentry *hypfs_create_u64(struct dentry *dir,
+@@ -377,8 +377,7 @@ static struct dentry *hypfs_create_update_file(struct dentry *dir)
  	return dentry;
  }
  
--struct dentry *hypfs_create_str(struct dentry *dir,
--				const char *name, char *string)
-+int hypfs_create_str(struct dentry *dir, const char *name, char *string)
+-struct dentry *hypfs_create_u64(struct dentry *dir,
+-				const char *name, __u64 value)
++int hypfs_create_u64(struct dentry *dir, const char *name, __u64 value)
  {
  	char *buffer;
- 	struct dentry *dentry;
- 
- 	buffer = kmalloc(strlen(string) + 2, GFP_KERNEL);
+ 	char tmp[TMP_SIZE];
+@@ -387,15 +386,15 @@ struct dentry *hypfs_create_u64(struct dentry *dir,
+ 	snprintf(tmp, TMP_SIZE, "%llu\n", (unsigned long long int)value);
+ 	buffer = kstrdup(tmp, GFP_KERNEL);
  	if (!buffer)
 -		return ERR_PTR(-ENOMEM);
 +		return -ENOMEM;
- 	sprintf(buffer, "%s\n", string);
  	dentry =
  	    hypfs_create_file(dir, name, buffer, S_IFREG | REG_FILE_MODE);
  	if (IS_ERR(dentry)) {
@@ -231,7 +237,7 @@ index a4dc8e13d999..c5e2d8932b88 100644
 +	return 0;
  }
  
- static const struct file_operations hypfs_file_ops = {
+ int hypfs_create_str(struct dentry *dir, const char *name, char *string)
 -- 
 2.47.3
 
