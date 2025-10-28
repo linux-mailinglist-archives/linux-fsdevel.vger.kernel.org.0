@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-65881-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65882-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57F47C13975
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Oct 2025 09:46:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDD5EC13981
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Oct 2025 09:47:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8AD4F4EB2B2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Oct 2025 08:46:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E57DD1883B2B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Oct 2025 08:47:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 058392D97AA;
-	Tue, 28 Oct 2025 08:46:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3DE72DA77F;
+	Tue, 28 Oct 2025 08:46:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ugptnf0t"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="opZtxCUz"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A1652D8DDF;
-	Tue, 28 Oct 2025 08:46:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18996201278;
+	Tue, 28 Oct 2025 08:46:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761641164; cv=none; b=s2I6dG32rNn0SO9jjaoz0GtnDkIbEQ5bZeHYHJWPGwsvDwDwJ49OaEfOO4be8Oqmy3PjhV/IGqrEDbpHehWVXcVlBkRflMNMQzMeyOgEIGT4C1YC11Hdz6sAiEIfvnRZtkBV9OCUxTamA7ngDG3kBEl2WrubBh16P01UyBNCMjU=
+	t=1761641169; cv=none; b=BFC/K+1Pi9XMZ7XDrlO/i3xjDub091wRe+KLgkWoFAOuenVuk/3GEqcE/MyBR1GMJJOJvjs5oF5bpz7FxokWSBoEfyF7miK+5Iw2XspWTSMlMjwjfHG0+0jpu5wERRFk8r2bbZkvzdAAcSlYmS3vlgvV2vg7jjT3/vBkSRcTcwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761641164; c=relaxed/simple;
-	bh=iCVEjflOE4r84IPd8NVIEeGZIqP+XdFrXHNnZM49L+Y=;
+	s=arc-20240116; t=1761641169; c=relaxed/simple;
+	bh=gKW3Kch+DxwyOQ6E7K86XC06vlBSYTzRLn7iujbu9A0=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=HFildR+Bx5US/WpC0iGiW6rRGvgQGHznc3t5A9vkNGuFsM+bAxTPuu+O2+lx0Fcgd2CAgEROwRljxsdQgZgaRZHxQVU/5Vv4qGl9ab2x6cqcZPTPPotVD+VpLiu+RzAEqTIQc+VZqKZC2TOZfalaVNTtRCch1rO4uKU6rzCNfU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ugptnf0t; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FB76C4CEFF;
-	Tue, 28 Oct 2025 08:46:00 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=i7Kj5D/g9GiHXiNGxHfuqlJtIMUfU/rUuORfuu7ohyZC/tD+X4Il6wanKk9FMvwFO3QaQ3hUsOxh1qiaMDbymY4/VDu+ENtyhhreFXTfBXOiVqOnPAswuHpC5WejBJIpGfkFDOZm5Ejj2/CTCGvXjy+m93z3eB8q6CHyXe/214k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=opZtxCUz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B2B5C4CEE7;
+	Tue, 28 Oct 2025 08:46:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761641163;
-	bh=iCVEjflOE4r84IPd8NVIEeGZIqP+XdFrXHNnZM49L+Y=;
+	s=k20201202; t=1761641168;
+	bh=gKW3Kch+DxwyOQ6E7K86XC06vlBSYTzRLn7iujbu9A0=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=Ugptnf0tSHJEUrKUliV4GGWQz6fHj/ybnNqPXoad0oDYPVyWmQerbnbwr5ef/vrQ7
-	 SYAWC+IO2N/6ENvLAKRuo3+iT4sse5f66asP0I+r1Gs9HDK8URON5W0GvSnBeRBY+4
-	 dnJi24b1OhphzMSB2ZBhThL14Eyxt3te2aP2dWvqAsH6nVDmyvReU/l9fxKDGPSxMV
-	 jtjkhT5AOklZWmpCE3VGFTAoUwMN6/5Wb30VfDHJOKp6GC1CcpDgoPPkfJSeZS+8rJ
-	 exybIP/Q++/ttcCSpQ2/AdGVcXTTG0hdRsV1USgXbimFw7s3ngwo5mm+mIElJjZPpa
-	 6Fy6FriStOmpw==
+	b=opZtxCUzzJ/2kSKbZ3zAcnoKuWThg4OLPSoBuDBv6BJxsEbhlozP0bAWJuFhLXWw6
+	 LFeSA9z+wcWLwapl+CuH/Jkvd9AeOnv+SRGhtOIUfWTTpKnGkvxWpRGYU690PtpbBA
+	 LbFHfImuKq8yTKJedTe+AE7sBkLSUeKju1pIOHULLeEXy00MIEb/ChkNKmd05zpxe1
+	 dPFoafggWacHsD6J1cR14GJMQrL3Qg8TVilMmGsh9VvO92XPK8Am/rVRGcRCw9JGn1
+	 CixBSkA70Ta3+l7Obzqxdewt0E+DaQ5MjkUDXnQ9sSNySoyUu5GwC9kdwYjII5g+Ez
+	 YHrCUfdyKg9qA==
 From: Christian Brauner <brauner@kernel.org>
-Date: Tue, 28 Oct 2025 09:45:46 +0100
-Subject: [PATCH 01/22] pidfs: use guard() for task_lock
+Date: Tue, 28 Oct 2025 09:45:47 +0100
+Subject: [PATCH 02/22] pidfs: fix PIDFD_INFO_COREDUMP handling
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251028-work-coredump-signal-v1-1-ca449b7b7aa0@kernel.org>
+Message-Id: <20251028-work-coredump-signal-v1-2-ca449b7b7aa0@kernel.org>
 References: <20251028-work-coredump-signal-v1-0-ca449b7b7aa0@kernel.org>
 In-Reply-To: <20251028-work-coredump-signal-v1-0-ca449b7b7aa0@kernel.org>
 To: linux-fsdevel@vger.kernel.org
@@ -68,41 +68,58 @@ Cc: Oleg Nesterov <oleg@redhat.com>, Amir Goldstein <amir73il@gmail.com>,
  =?utf-8?q?Zbigniew_J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-96507
-X-Developer-Signature: v=1; a=openpgp-sha256; l=787; i=brauner@kernel.org;
- h=from:subject:message-id; bh=iCVEjflOE4r84IPd8NVIEeGZIqP+XdFrXHNnZM49L+Y=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQyNB2c4NiXnaRaN3lJxAePfRkHNNQFv8dbXetONkz5t
- vaKkt3ljlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgImYZjMyPGa/+o9X3Oiq69yN
- lg3bqzh2qIZuL1ks/5ud2ffyCv8TNxgZLizTPzSrOe5OvVSdg773u/zt6VZtL6qCpiVkrswPdCr
- hAAA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1573; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=gKW3Kch+DxwyOQ6E7K86XC06vlBSYTzRLn7iujbu9A0=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQyNB38dubvguT8tefdd3G0GkjmR+ad2hzmGe7jmiyRz
+ c9zaF9kRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwERYvjEyrGmwmGe44ec07onx
+ LTOWqJt+5PjyOeyPg+OyEj/ddf3f7zAy/Iw4kZHus9rgg1+N1Hz3cK0Pc2wct7/mPrAsr+LCFK6
+ THAA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-Use a guard().
+When PIDFD_INFO_COREDUMP is requested we raise it unconditionally in the
+returned mask even if no coredump actually did take place. This was
+done because we assumed that the later check whether ->coredump_mask as
+non-zero detects that it is zero and then retrieves the dumpability
+settings from the task's mm. This has issues though becuase there are
+tasks that might not have any mm. Also it's just not very cleanly
+implemented. Fix this.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- fs/pidfs.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ fs/pidfs.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
 diff --git a/fs/pidfs.c b/fs/pidfs.c
-index 0ef5b47d796a..c2f0b7091cd7 100644
+index c2f0b7091cd7..c0f410903c3f 100644
 --- a/fs/pidfs.c
 +++ b/fs/pidfs.c
-@@ -356,13 +356,12 @@ static long pidfd_info(struct file *file, unsigned int cmd, unsigned long arg)
+@@ -335,8 +335,9 @@ static long pidfd_info(struct file *file, unsigned int cmd, unsigned long arg)
+ 	}
+ 
+ 	if (mask & PIDFD_INFO_COREDUMP) {
+-		kinfo.mask |= PIDFD_INFO_COREDUMP;
+ 		kinfo.coredump_mask = READ_ONCE(attr->__pei.coredump_mask);
++		if (kinfo.coredump_mask)
++			kinfo.mask |= PIDFD_INFO_COREDUMP;
+ 	}
+ 
+ 	task = get_pid_task(pid, PIDTYPE_PID);
+@@ -355,12 +356,13 @@ static long pidfd_info(struct file *file, unsigned int cmd, unsigned long arg)
+ 	if (!c)
  		return -ESRCH;
  
- 	if ((kinfo.mask & PIDFD_INFO_COREDUMP) && !(kinfo.coredump_mask)) {
--		task_lock(task);
-+		guard(task_lock)(task);
+-	if ((kinfo.mask & PIDFD_INFO_COREDUMP) && !(kinfo.coredump_mask)) {
++	if ((mask & PIDFD_INFO_COREDUMP) && !kinfo.coredump_mask) {
+ 		guard(task_lock)(task);
  		if (task->mm) {
  			unsigned long flags = __mm_flags_get_dumpable(task->mm);
  
  			kinfo.coredump_mask = pidfs_coredump_mask(flags);
++			kinfo.mask |= PIDFD_INFO_COREDUMP;
  		}
--		task_unlock(task);
  	}
  
- 	/* Unconditionally return identifiers and credentials, the rest only on request */
 
 -- 
 2.47.3
