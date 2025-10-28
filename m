@@ -1,190 +1,118 @@
-Return-Path: <linux-fsdevel+bounces-65911-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65912-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DECF7C14B73
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Oct 2025 13:55:00 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5270BC14B76
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Oct 2025 13:55:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D76C9407BC0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Oct 2025 12:53:10 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B5DB34ED4C1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Oct 2025 12:53:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC4C632F773;
-	Tue, 28 Oct 2025 12:53:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 278DB33031D;
+	Tue, 28 Oct 2025 12:53:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="o7QR7l/R"
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="Up+wUdpU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1AD330147E
-	for <linux-fsdevel@vger.kernel.org>; Tue, 28 Oct 2025 12:53:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20C051397;
+	Tue, 28 Oct 2025 12:53:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761655982; cv=none; b=Pe8xQzoe+pYW97ZyY3HjDNPis0HGvXKvhx61zbsd0Z63cnNWv5I89YMz4U2PbxyAeBpcHuP/scaPcFD0qIOnMD1p2igMjs8eo+TQjy54tdcJbq8NPmf1WZRxtk5AWUHcMkUyGmvq0MWVGibZOBwDIDZ647lS8QTh3ckSPNcmnzI=
+	t=1761656030; cv=none; b=Q5r8UcDAnJ316GVC7RwhYjIFU0Qkbo0dvFiWTKLZNPddl4ykNltKJ5Rggj9EpOuYxOuuWZXm2rwhHAmem9GUtaIoWjUp2lfqJlQwDBQngXmvgbDdGZUdIPZJLjFx/U3iRcaxTgVcLZhnDH1ehJceuhZmKkiK57BTTvK2cPiOtLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761655982; c=relaxed/simple;
-	bh=+3vPaDsnNL8heSTGQITQySDS23M0o5dLkagTN8ShR9E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RhLGVS14eksUKCF9PXiPvU9uadrJk3zwBroCGwtr7AqnYqRta6LTSh17A71h/xBhRetO4y2TxDOA9WXF5htgd4NEQpf7B13Zr8zYFx4icEd7+8AAKTDB9sRShklRaIndpWa6g/pgx9oTKgpQzN5Rh9XNRJ/5mhN5nYXInqAPFu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=o7QR7l/R; arc=none smtp.client-ip=209.85.219.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-87fbc6d98a9so32761856d6.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Oct 2025 05:53:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1761655980; x=1762260780; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7CqgmoumiIO/LqZvmbvABjwYG8sY5r9jILlhcKrm4Ms=;
-        b=o7QR7l/RcnzhMMWrC+iO7b3J3CZ0SUbCMtZvxpEAUu6jsnUYavb8PWPeBXQ2nlFd7U
-         SnCwfRbZCGNOydBsVkw6/Q4FSnrzT8PHcUsrF4rXGf/1Ntsji7jr2ylHEvqqx+3FH/Fn
-         /dV2NQ0FyiEvm4RS6HpIAp6LiC62QKSUNtXs3+pdsHtJEaK4RUB3f1ktieiUYW9/Son8
-         03FPqQkIHNHsmlqdkKRLpwV+E0GAVAgg9sdpykFEAyCFZGVdNEZZMeirWPeo+sYb4D8H
-         UgZQ9fq0DDO00uVOp2p0iEd91CdZU/Q/MoIl4Z/4y7n2zrnGEt5EZcyWLZ2cUE5uMhQk
-         tk/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761655980; x=1762260780;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7CqgmoumiIO/LqZvmbvABjwYG8sY5r9jILlhcKrm4Ms=;
-        b=NDy2vglBwCvhBNo6A1nMEELGMFMr4mOtwhnobezJfrJd9rqu1ZKbQ9IM2Jb+X75bdI
-         orB+p3SPcbUDkdemeIE9+9FiDQZjLqi3rreI17fTPKh0eWui/5e/aipt0Ymd4p4ul+ef
-         PNg0fgQdLmGFPJPl+piYEgpuZlFw5LrOq+OlgnuSUaEgXOBIsT3O5F/T84eCmoEk/K1K
-         9ydCxYtOCfhRzp4ksQxAp6VLO+8J/YwE9boKx8CQcbMM7JixPDnl1gvA1Bfu3WLWvNEh
-         k9Po8THrb1+iGHgN8bKeT/Amdt5ldwkEs8OmfvshOjKpVjhbNTw5O8DR4bhvSbM0YdlT
-         X16g==
-X-Forwarded-Encrypted: i=1; AJvYcCVTMQZOrmLXX/MenhQ0ewKd8CDhO6O/vJwmYglDXrALEGR1hQvPIQgtKZFa4Kk/JsQmqrutH+3F4FH71Lvz@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywrw6ivKkqrxXkLoLJiVsrvnLbzmfIjM7ZK7D9nl7rLB23q43u+
-	1RY674qf++fdfYbDsNaLzebZBMdARiRLj40FklqrmDcvoYjdW5hOMg9clibAbFexEnU=
-X-Gm-Gg: ASbGncvYYcEPHJwQ+QWaMribW9gZO5sHTJR8g+ys/WAiqnlk0EPN4c+pp60wVOIUByT
-	vA4umuR3pJpkBrOvSk8oEEozdsUz2Tw5I/qlGchqdG8ihHHtq+z/j0t+0bbfbv2e2/FYp9bVOOM
-	DMHwhh0EgZS5p3ojHTj6Ybv9SoiC1S+eMJX9cFvoUkdjPDjh6pcxgpSfvMKKKg/GeA/+xsuN+4r
-	FVgz3aVgzANw1U8YbSVDKx5JfEVdIGbQRyKDGFWQ9Oyn8spcbXeqSiBYykws0JGaGaOUPcGh36n
-	2Lb+7kZMF+b/2MRuRD4htz6ZKrKYAqH7FmdysLE4K0ZEtnurNxpHJJfGOQNO239w1+ileOKC1V3
-	pDqkkhmes9FY6ii0bAY1EP6+LNeZjJz6Qu5E8lkc/szqzeZhlBdgD3HiNniYvJVA6OM1g3/upu2
-	d9NYl2DiMJM96yprZ23czz/23nqSeK6AlLFOm+4RrDc0FfUw==
-X-Google-Smtp-Source: AGHT+IH+xZpvPIbhKx7mJgf5LQY0C/zJpDpvmdyPQ1VJnfhZtNoMsQ1XOGKSORZ38fLIo5wpD093Tw==
-X-Received: by 2002:a05:6214:262d:b0:809:5095:4153 with SMTP id 6a1803df08f44-87ffb10cd22mr39426046d6.31.1761655979645;
-        Tue, 28 Oct 2025 05:52:59 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-47-55-120-4.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.120.4])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-87fc48abea7sm79249956d6.0.2025.10.28.05.52.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Oct 2025 05:52:55 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1vDjBs-00000004Orq-30qI;
-	Tue, 28 Oct 2025 09:52:44 -0300
-Date: Tue, 28 Oct 2025 09:52:44 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: David Hildenbrand <david@redhat.com>, Gregory Price <gourry@gourry.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Janosch Frank <frankja@linux.ibm.com>,
-	Claudio Imbrenda <imbrenda@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>, Zi Yan <ziy@nvidia.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
-	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
-	Lance Yang <lance.yang@linux.dev>,
-	Kemeng Shi <shikemeng@huaweicloud.com>,
-	Kairui Song <kasong@tencent.com>, Nhat Pham <nphamcs@gmail.com>,
-	Baoquan He <bhe@redhat.com>, Chris Li <chrisl@kernel.org>,
-	Peter Xu <peterx@redhat.com>, Matthew Wilcox <willy@infradead.org>,
-	Leon Romanovsky <leon@kernel.org>,
-	Muchun Song <muchun.song@linux.dev>,
-	Oscar Salvador <osalvador@suse.de>,
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>, Jann Horn <jannh@google.com>,
-	Matthew Brost <matthew.brost@intel.com>,
-	Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
-	Byungchul Park <byungchul@sk.com>,
-	Ying Huang <ying.huang@linux.alibaba.com>,
-	Alistair Popple <apopple@nvidia.com>,
-	Pedro Falcato <pfalcato@suse.de>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>,
-	Rik van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>,
-	kvm@vger.kernel.org, linux-s390@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [RFC PATCH 05/12] fs/proc/task_mmu: refactor pagemap_pmd_range()
-Message-ID: <20251028125244.GI760669@ziepe.ca>
-References: <2ce1da8c64bf2f831938d711b047b2eba0fa9f32.1761288179.git.lorenzo.stoakes@oracle.com>
- <aPu4LWGdGSQR_xY0@gourry-fedora-PF4VCD3F>
- <76348b1f-2626-4010-8269-edd74a936982@lucifer.local>
- <aPvPiI4BxTIzasq1@gourry-fedora-PF4VCD3F>
- <3f3e5582-d707-41d0-99a7-4e9c25f1224d@lucifer.local>
- <aPvjfo1hVlb_WBcz@gourry-fedora-PF4VCD3F>
- <20251027161146.GG760669@ziepe.ca>
- <27a5ea4e-155c-40d1-87d7-e27e98b4871d@lucifer.local>
- <dac763e0-3912-439d-a9c3-6e54bf3329c6@redhat.com>
- <a813aa51-cc5c-4375-9146-31699b4be4ca@lucifer.local>
+	s=arc-20240116; t=1761656030; c=relaxed/simple;
+	bh=36eCAB+0sW4xMVrmbFJUt0Jd2fPKRpcz4N2tZkYaW0A=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=rzu6VicV0uNtFAIuhOauEi+0+rfayARE1KvnJpKa36rVlu88k75IwanD7U0ZEyKPnunTYH6KCzgPxwFewoFdYu1h5C9F1Rvwx5UEcLApH+z1+O56XtGGWPkXLGzMHgUzTT3nfNnk18OwmkWzPmMSfaLEA4IXhcjXYh38qoo/Tjw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=Up+wUdpU; arc=none smtp.client-ip=198.37.111.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1761656026;
+	bh=36eCAB+0sW4xMVrmbFJUt0Jd2fPKRpcz4N2tZkYaW0A=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=Up+wUdpUE3fM2XmpjOk/4MC2BBN7QcGfqCN/Y30XMtMGeEdr6sS2keJncZnoHtIxc
+	 DUSL0fv5TOME1iHo/0QPy6kCQ/EbzsX/nDu9ZkF/OyKG2r+VSTgHBrf5rWvr3odv+A
+	 bnk/Q+3IpimJ4Pj5aehK+pn8AFKPoritDfPNvoVo=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 04C181C00EE;
+	Tue, 28 Oct 2025 08:53:45 -0400 (EDT)
+Message-ID: <66300d81c5e127e3bca8c6c4d997da386b142004.camel@HansenPartnership.com>
+Subject: Re: [PATCH v2 22/50] convert efivarfs
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org
+Cc: torvalds@linux-foundation.org, brauner@kernel.org, jack@suse.cz, 
+ raven@themaw.net, miklos@szeredi.hu, neil@brown.name,
+ a.hindborg@kernel.org,  linux-mm@kvack.org, linux-efi@vger.kernel.org,
+ ocfs2-devel@lists.linux.dev,  kees@kernel.org, rostedt@goodmis.org,
+ gregkh@linuxfoundation.org,  linux-usb@vger.kernel.org,
+ paul@paul-moore.com, casey@schaufler-ca.com, 
+ linuxppc-dev@lists.ozlabs.org, john.johansen@canonical.com, 
+ selinux@vger.kernel.org, borntraeger@linux.ibm.com, bpf@vger.kernel.org
+Date: Tue, 28 Oct 2025 08:53:45 -0400
+In-Reply-To: <20251028004614.393374-23-viro@zeniv.linux.org.uk>
+References: <20251028004614.393374-1-viro@zeniv.linux.org.uk>
+	 <20251028004614.393374-23-viro@zeniv.linux.org.uk>
+Autocrypt: addr=James.Bottomley@HansenPartnership.com;
+ prefer-encrypt=mutual;
+ keydata=mQENBE58FlABCADPM714lRLxGmba4JFjkocqpj1/6/Cx+IXezcS22azZetzCXDpm2MfNElecY3qkFjfnoffQiw5rrOO0/oRSATOh8+2fmJ6el7naRbDuh+i8lVESfdlkoqX57H5R8h/UTIp6gn1mpNlxjQv6QSZbl551zQ1nmkSVRbA5TbEp4br5GZeJ58esmYDCBwxuFTsSsdzbOBNthLcudWpJZHURfMc0ew24By1nldL9F37AktNcCipKpC2U0NtGlJjYPNSVXrCd1izxKmO7te7BLP+7B4DNj1VRnaf8X9+VIApCi/l4Kdx+ZR3aLTqSuNsIMmXUJ3T8JRl+ag7kby/KBp+0OpotABEBAAG0N0phbWVzIEJvdHRvbWxleSA8SmFtZXMuQm90dG9tbGV5QEhhbnNlblBhcnRuZXJzaGlwLmNvbT6JAVgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAhkBFiEE1WBuc8i0YnG+rZrfgUrkfCFIVNYFAmBLmY0FCRs1hL0ACgkQgUrkfCFIVNaEiQgAg18F4G7PGWQ68xqnIrccke7Reh5thjUz6kQIii6Dh64BDW6/UvXn20UxK2uSs/0TBLO81k1mV4c6rNE+H8b7IEjieGR9frBsp/+Q01JpToJfzzMUY7ZTDV1IXQZ+AY9L7vRzyimnJHx0Ba4JTlAyHB+Ly5i4Ab2+uZcnNfBXquWrG3oPWz+qPK88LJLya5Jxse1m1QT6R/isDuPivBzntLOooxPk+Cwf5sFAAJND+idTAzWzslexr9j7rtQ1UW6FjO4CvK9yVNz7dgG6FvEZl6J/HOr1rivtGgpCZTBzKNF8jg034n49zGfKkkzWLuXbPUOp3/oGfsKv8pnEu1c2GbQpSmFtZXMgQm90dG9tbGV5IDxqZWpiQGxpbnV4LnZuZXQuaWJtLmNvbT6JAVYEEwEIAEACGwMHCwkIBwMCAQYVC
+	AIJCgsEFgIDAQIeAQIXgBYhBNVgbnPItGJxvq2a34FK5HwhSFTWBQJgS5mXBQkbNYS9AAoJEIFK5HwhSFTWEYEH/1YZpV+1uCI2MVz0wTRlnO/3OW/xnyigrw+K4cuO7MToo0tHJb/qL9CBJ2ddG6q+GTnF5kqUe87t7M7rSrIcAkIZMbJmtIbKk0j5EstyYqlE1HzvpmssGpg/8uJBBuWbU35af1ubKCjUs1+974mYXkfLmS0a6h+cG7atVLmyClIc2frd3o0zHF9+E7BaB+HQzT4lheQAXv9KI+63ksnbBpcZnS44t6mi1lzUE65+Am1z+1KJurF2Qbj4AkICzJjJa0bXa9DmFunjPhLbCU160LppaG3OksxuNOTkGCo/tEotDOotZNBYejWaXN2nr9WrH5hDfQ5zLayfKMtLSd33T9u0IUphbWVzIEJvdHRvbWxleSA8amVqYkBrZXJuZWwub3JnPokBVQQTAQgAPwIbAwYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AWIQTVYG5zyLRicb6tmt+BSuR8IUhU1gUCYEuZmAUJGzWEvQAKCRCBSuR8IUhU1gacCAC+QZN+RQd+FOoh5g884HQm8S07ON0/2EMiaXBiL6KQb5yP3w2PKEhug3+uPzugftUfgPEw6emRucrFFpwguhriGhB3pgWJIrTD4JUevrBgjEGOztJpbD73bLLyitSiPQZ6OFVOqIGhdqlc3n0qoNQ45n/w3LMVj6yP43SfBQeQGEdq4yHQxXPs0XQCbmr6Nf2p8mNsIKRYf90fCDmABH1lfZxoGJH/frQOBCJ9bMRNCNy+aFtjd5m8ka5M7gcDvM7TAsKhD5O5qFs4aJHGajF4gCGoWmXZGrISQvrNl9kWUhgsvoPqb2OTTeAQVRuV8C4FQamxzE3MRNH25j6s/qujtCRKYW1lcyBCb3R0b21sZXkgPGplamJAbGludXguaWJtLmNvbT6JAVQEEwEIAD
+	4CGwMFCwkIBwIGFQoJCAsCBBYCAwECHgECF4AWIQTVYG5zyLRicb6tmt+BSuR8IUhU1gUCYEuZmQUJGzWEvQAKCRCBSuR8IUhU1kyHB/9VIOkf8RapONUdZ+7FgEpDgESE/y3coDeeb8jrtJyeefWCA0sWU8GSc9KMcMoSUetUreB+fukeVTe/f2NcJ87Bkq5jUEWff4qsbqf5PPM+wlD873StFc6mP8koy8bb7QcH3asH9fDFXUz7Oz5ubI0sE8+qD+Pdlk5qmLY5IiZ4D98V239nrKIhDymcuL7VztyWfdFSnbVXmumIpi79Ox536P2aMe3/v+1jAsFQOIjThMo/2xmLkQiyacB2veMcBzBkcair5WC7SBgrz2YsMCbC37X7crDWmCI3xEuwRAeDNpmxhVCb7jEvigNfRWQ4TYQADdC4KsilPfuW8Edk/8tPtCVKYW1lcyBCb3R0b21sZXkgPEpCb3R0b21sZXlAT2Rpbi5jb20+iQEfBDABAgAJBQJXI+B0Ah0gAAoJEIFK5HwhSFTWzkwH+gOg1UG/oB2lc0DF3lAJPloSIDBW38D3rezXTUiJtAhenWrH2Cl/ejznjdTukxOcuR1bV8zxR9Zs9jhUin2tgCCxIbrdvFIoYilMMRKcue1q0IYQHaqjd7ko8BHn9UysuX8qltJFar0BOClIlH95gdKWJbK46mw7bsXeD66N9IhAsOMJt6mSJmUdIOMuKy4dD4X3adegKMmoTRvHOndZQClTZHiYt5ECRPO534Lb/gyKAKQkFiwirsgx11ZSx3zGlw28brco6ohSLMBylna/Pbbn5hII86cjrCXWtQ4mE0Y6ofeFjpmMdfSRUxy6LHYd3fxVq9PoAJTv7vQ6bLTDFNa0KkphbWVzIEJvdHRvbWxleSA8SkJvdHRvbWxleUBQYXJhbGxlbHMuY29tPokBHwQwAQIACQUCVyPgjAIdIAAKCRCBSuR8IUhU1tXiB/9D9OOU8qB
+	CZPxkxB6ofp0j0pbZppRe6iCJ+btWBhSURz25DQzQNu5GVBRQt1Us6v3PPGU1cEWi5WL935nw+1hXPIVB3x8hElvdCO2aU61bMcpFd138AFHMHJ+emboKHblnhuY5+L1OlA1QmPw6wQooCor1h113lZiBZGrPFxjRYbWYVQmVaM6zhkiGgIkzQw/g9v57nAzYuBhFjnVHgmmu6/B0N8z6xD5sSPCZSjYSS38UG9w189S8HVr4eg54jReIEvLPRaxqVEnsoKmLisryyaw3EpqZcYAWoX0Am+58CXq3j5OvrCvbyqQIWFElba3Ka/oT7CnTdo/SUL/jPNobtCxKYW1lcyBCb3R0b21sZXkgPGplamJAaGFuc2VucGFydG5lcnNoaXAuY29tPokBVwQTAQgAQRYhBNVgbnPItGJxvq2a34FK5HwhSFTWBQJjg2eQAhsDBQkbNYS9BQsJCAcCAiICBhUKCQgLAgQWAgMBAh4HAheAAAoJEIFK5HwhSFTWbtAH/087y9vzXYAHMPbjd8etB/I3OEFKteFacXBRBRDKXI9ZqK5F/xvd1fuehwQWl2Y/sivD4cSAP0iM/rFOwv9GLyrr82pD/GV/+1iXt9kjlLY36/1U2qoyAczY+jsS72aZjWwcO7Og8IYTaRzlqif9Zpfj7Q0Q1e9SAefMlakI6dcZTSlZWaaXCefdPBCc7BZ0SFY4kIg0iqKaagdgQomwW61nJZ+woljMjgv3HKOkiJ+rcB/n+/moryd8RnDhNmvYASheazYvUwaF/aMj5rIb/0w5p6IbFax+wGF5RmH2U5NeUlhIkTodUF/P7g/cJf4HCL+RA1KU/xS9o8zrAOeut2+4UgRaZ7bmEwgqhkjOPQMBBwIDBH4GsIgL0yQij5S5ISDZmlR7qDQPcWUxMVx6zVPsAoITdjKFjaDmUATkS+l5zmiCrUBcJ6MBavPiYQ4kqn4/xwaJAbMEGAEIACYCGwIWIQTVYG5zyLRi
+	cb6tmt+BSuR8IUhU1gUCZag0LwUJDwLkSQCBdiAEGRMIAB0WIQTnYEDbdso9F2cI+arnQslM7pishQUCWme25gAKCRDnQslM7pishdi9AQDyOvLYOBkylBqiTlJrMnGCCsWgGZwPpKq3e3s7JQ/xBAEAlx29pPY5z0RLyIDUsjf9mtkSNTaeaQ6TIjDrFa+8XH8JEIFK5HwhSFTWkasH/j7LL9WH9dRfwfTwuMMj1/KGzjU/4KFIu4uKxDaevKpGS7sDx4F56mafCdGD8u4+ri6bJr/3mmuzIdyger0vJdRlTrnpX3ONXvR57p1JHgCljehE1ZB0RCzIk0vKhdt8+CDBQWfKbbKBTmzA7wR68raMQb2D7nQ9d0KXXbtr7Hag29yj92aUAZ/sFoe9RhDOcRUptdYyPKU1JHgJyc0Z7HwNjRSJ4lKJSKP+Px0/XxT3gV3LaDLtHuHa2IujLEAKcPzTr5DOV+xsgA3iSwTYI6H5aEe+ZRv/rA4sdjqRiVpo2d044aCUFUNQ3PiIHPAZR3KK5O64m6+BJMDXBvgSsMy4VgRaZ7clEggqhkjOPQMBBwIDBMfuMuE+PECbOoYjkD0Teno7TDbcgxJNgPV7Y2lQbNBnexMLOEY6/xJzRi1Xm/o9mOyZ+VIj8h4G5V/eWSntNkwDAQgHiQE8BBgBCAAmAhsMFiEE1WBuc8i0YnG+rZrfgUrkfCFIVNYFAmWoNBwFCQ8C4/cACgkQgUrkfCFIVNZs4AgAnIjU1QEPLdpotiy3X01sKUO+hvcT3/Cd6g55sJyKJ5/U0o3f8fdSn6MWPhi1m62zbAxcLJFiTZ3OWNCZAMEvwHrXFb684Ey6yImQ9gm2dG2nVuCzr1+9gIaMSBeZ+4kUJqhdWSJjrNLQG38GbnBuYOJUD+x6oJ2AT10/mQfBVZ3qWDQXr/je2TSf0OIXaWyG6meG5yTqOEv0eaTH22yBb1nbodoZkmlMMb56jzRGZuorhFE06
+	N0Eb0kiGz5cCIrHZoH10dHWoa7/Z+AzfL0caOKjcmsnUPcmcrqmWzJTEibLA81z15GBCrldfQVt+dF7Us2kc0hKUgaWeI8Gv4CzwLkCDQRUdhaZARAApeF9gbNSBBudW8xeMQIiB/CZwK4VOEP7nGHZn3UsWemsvE9lvjbFzbqcIkbUp2V6ExM5tyEgzio2BavLe1ZJGHVaKkL3cKLABoYi/yBLEnogPFzzYfK2fdipm2G+GhLaqfDxtAQ7cqXeo1TCsZLSvjD+kLVV1TvKlaHS8tUCh2oUyR7fTbv6WHi5H8DLyR0Pnbt9E9/Gcs1j11JX+MWJ7jset2FVDsB5U1LM70AjhXiDiQCtNJzKaqKdMei8zazWS50iMKKeo4m/adWBjG/8ld3fQ7/Hcj6Opkh8xPaCnmgDZovYGavw4Am2tjRqE6G6rPQpS0we5I6lSsKNBP/2FhLmI9fnsBnZC1l1NrASRSX1BK0xf4LYB2Ww3fYQmbbApAUBbWZ/1aQoc2ECKbSK9iW0gfZ8rDggfMw8nzpmEEExl0hU6wtJLymyDV+QGoPx5KwYK/6qAUNJQInUYz8z2ERM/HOI09Zu3jiauFBDtouSIraX/2DDvTf7Lfe1+ihARFSlp64kEMAsjKutNBK2u5oj4H7hQ7zD+BvWLHxMgysOtYYtwggweOrM/k3RndsZ/z3nsGqF0ggct1VLuH2eznDksI+KkZ3Bg0WihQyJ7Z9omgaQAyRDFct+jnJsv2Iza+xIvPei+fpbGNAyFvj0e+TsZoQGcC34/ipGwze651UAEQEAAYkBHwQoAQIACQUCVT6BaAIdAwAKCRCBSuR8IUhU1p5QCAC7pgjOM17Hxwqz9mlGELilYqjzNPUoZt5xslcTFGxj/QWNzu0K8gEQPePnc5dTfumzWL077nxhdKYtoqwm2C6fOmXiJBZx6khBfRqctUvN2DlOB6dFf5I+1QT9TRBvceGzw01E4Gi0xjWKAB6OII
+	MAdnPcDVFzaXJdlAAJdjfg/lyJtAyxifflG8NnXJ3elwGqoBso84XBNWWzbc5VKmatzhYLOvXtfzDhu4mNPv/z7S1HTtRguI0NlH5RVBzSvfzybin9hysE3/+r3C0HJ2xiOHzucNAmG03aztzZYDMTbKQW4bQqeD5MJxT68vBYu8MtzfIe41lSLpb/qlwq1qg0iQElBBgBAgAPBQJUdhaZAhsMBQkA7U4AAAoJEIFK5HwhSFTW3YgH/AyJL2rlCvGrkLcas94ND9Pmn0cUlVrPl7wVGcIV+6I4nrw6u49TyqNMmsYam2YpjervJGgbvIbMzoHFCREi6R9XyUsw5w7GCRoWegw2blZYi5A52xe500+/RruG//MKfOtVUotu3N+u7FcXaYAg9gbYeGNZCV70vI+cnFgq0AEJRdjidzfCWVKPjafTo7jHeFxX7Q22kUfWOkMzzhoDbFg0jPhVYNiEXpNyXCwirzvKA7bvFwZPlRkbfihaiXDE7QKIUtQ10i5kw4C9rqDKwx8F0PaWDRF9gGaKd7/IJGHJaac/OcSJ36zxgkNgLsVX5GUroJ2GaZcR7W9Vppj5H+C4UgRkuRyTEwgqhkjOPQMBBwIDBOySomnsW2SkApXv1zUBaD38dFEj0LQeDEMdSE7bm1fnrdjAYt0f/CtbUUiDaPodQk2qeHzOP6wA/2K6rrjwNIWJAT0EGAEIACcDGyAEFiEE1WBuc8i0YnG+rZrfgUrkfCFIVNYFAmWoM/gFCQSxfmUACgkQgUrkfCFIVNZhTgf/VQxtQ5rgu2aoXh2KOH6naGzPKDkYDJ/K7XCJAq3nJYEpYN8G+F8mL/ql0hrihAsHfjmoDOlt+INa3AcG3v0jDZIMEzmcjAlu7g5NcXS3kntcMHgw3dCgE9eYDaKGipUCubdXvBaZWU6AUlTldaB8FE6u7It7+UO+IW4/L+KpLYKs8V5POInu2rqahlm7vgxY5iv4Txz4EvCW2e4dAlG
+	8mT2Eh9SkH+YVOmaKsajgZgrBxA7fWmGoxXswEVxJIFj3vW7yNc0C5HaUdYa5iGOMs4kg2ht4s7yy7NRQuh7BifWjo6BQ6k4S1H+6axZucxhSV1L6zN9d+lr3Xo/vy1unzA==
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.3 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a813aa51-cc5c-4375-9146-31699b4be4ca@lucifer.local>
 
-On Mon, Oct 27, 2025 at 04:38:05PM +0000, Lorenzo Stoakes wrote:
-> On Mon, Oct 27, 2025 at 05:31:54PM +0100, David Hildenbrand wrote:
-> > >
-> > > I don't love the union.
-> > >
-> > > How would we determine what type it is, we'd have to have some
-> > > generic_leaf_entry_t type or something to contain the swap type field and then
-> > > cast and... is it worth it?
-> > >
-> > > Intent of non-present was to refer to not-swap swapentry. It's already a
-> > > convention that exists, e.g. is_pmd_non_present_folio_entry().
-> >
-> > Just noting that this was a recent addition (still not upstream) that
-> > essentially says "there is a folio here, but it's not in an ordinary present
-> > page table entry.
-> >
-> > So we could change that to something better.
-> 
-> Yeah but leaf_entry_t encapsulates BOTH swap and non-swap entries.
-> 
-> So that's nice.
-> 
-> What do you propose calling non-swap leaf entries? It starts spiralling down a
-> bit there.
+On Tue, 2025-10-28 at 00:45 +0000, Al Viro wrote:
+> Initially filesystem is populated with d_alloc_name() + d_add().
+> That becomes d_alloc_name() + d_make_persistent() + dput().
+> Dynamic creation is switched to d_make_persistent();
+> removal - to simple_unlink() (no point open-coding it in
+> efivarfs_unlink(), better call it there)
+>=20
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 
-You don't even ask that question.
+The patch looks fine to me ... you can add an ack if you're collecting
+them, but don't bother if you're not.
 
-You have a leaf entry. It has a type.
+This caught my eye, though:
 
-What you are calling a "swap entry" is a "leaf entry of swap type".
+[...]
+> @@ -278,7 +278,8 @@ static int efivarfs_create_dentry(struct
+> super_block *sb, efi_char16_t *name16,
+> =C2=A0	inode->i_private =3D entry;
+> =C2=A0	i_size_write(inode, size + sizeof(__u32)); /* attributes +
+> data */
+> =C2=A0	inode_unlock(inode);
+> -	d_add(dentry, inode);
+> +	d_make_persistent(dentry, inode);
+> +	dput(dentry);
 
-The union helps encode in the type system what code is operating on
-what type of the leaf entry.
+That dput looks misplaced in a creation routine and this is a common
+pattern in pseudo filesystems that either pre-populate the dentry state
+or create effectively unused dentries on other changes.  I know not
+every pseudo filesystem does this, but it did make me wonder if it
+should have it's own API, say d_create_persistent()?
 
-It seems pretty simple.
- 
-> And it's really common to have logic asserting it's actually a swap entry
-> vs. not etc.
+Regards,
 
-leafent_is_swap(ent) - meaning is a "leaf entry of swap type".
+James
 
-> 1. we keep the non-present terminology as a better way of referring
->    to non-swap entries.
-
-I vastly prefer you leap ahead and start using leaf_entry
-terminology. We don't need a temporary name we are going to throw
-away.
-
-Jason
 
