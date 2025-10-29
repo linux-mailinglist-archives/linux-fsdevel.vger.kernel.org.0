@@ -1,89 +1,67 @@
-Return-Path: <linux-fsdevel+bounces-66175-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66176-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B876EC182F7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 04:29:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47BADC1845E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 06:11:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D69A1C66B81
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 03:29:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D76F33B3F46
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 05:11:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 832BA2E7F07;
-	Wed, 29 Oct 2025 03:28:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D9582F692E;
+	Wed, 29 Oct 2025 05:11:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WKsdSKIt"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="E4trfwDo"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 691D827D77D
-	for <linux-fsdevel@vger.kernel.org>; Wed, 29 Oct 2025 03:28:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBD7F2F6190;
+	Wed, 29 Oct 2025 05:10:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761708519; cv=none; b=pgvreBYwXeQZAB1hm6eeQtlHXTXsYeS6ap1J23Z7T9kxVihJWclRcdRF5o4Bu5R4tqG0bXbmkeNCF9cAzwKkMBGNnjGbVyjS1Jxo3+IVmQT7lzmduluxiyq/j4H8SjAuXWvKDvSAw3PI6/x/Oo0eJVs+cErV0v6/likYW2Nt+z0=
+	t=1761714662; cv=none; b=XC7DQgPrhVpUvjMUQFUXO4xn0lMokLMZCM9HWAidDBjsnge67ovU1/EbFBPoA2W4f7lb1ON8KjTvD/DzFNHd6rZNOdMUdNqmsTeUWbhAjNqJAo4IfXjAewi9VYEMnKPvAJ9TZqAnwwCIZl9oRl/lOK30YRVf8Y7cZNLkl/dB+8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761708519; c=relaxed/simple;
-	bh=uK0Ge79ImFTTS7GqiWcbUy+z6bqmI9L8dyHzWiVaw7g=;
+	s=arc-20240116; t=1761714662; c=relaxed/simple;
+	bh=EhgwbRktNMne9VHsUlO/1oxrBnTgDJDYSBE51Al1m0M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Sgg2dX5Xv0YgnS/rB8sJSSe6HCY9OtcYTYzrGyiPUVruYVrsAs71Bp1V63P+OBqvQ0S0hT5uiT/x/76dLWtWMn4U8MjCqHRYB6BASpusr6MMKI+Lu/qyXhxBuhEWE0/p8ymwSOa7wEqOqKU8E6NOBJ4kuGHfM861toyZvZWzgUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WKsdSKIt; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-33badfbbc48so8512561a91.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Oct 2025 20:28:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761708518; x=1762313318; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=myjSnTBkH1I5KQfjqAoij4FYA0X2tqCwC7K0bbUx6vM=;
-        b=WKsdSKItOP53AOipmLk4BlSvppjX4I1ti+kwl29Ll0ZLjREyLWKAlbRoJDldCxwzPA
-         xCxorqimDv4fMQbJguEz7Rrt1bDxeQyXfN1IuAGcFpr1oG4FAjnZMGmRORCwTqoFlIGs
-         l8N53hmJfLNsQJ/C/mAfb7GEjTK4ac1ugV9Q5YjIMEppyUxxUMZfUgcZsGB77VfsmrJK
-         0hsqQYLnOfWyQYYWDJzN2jvpgZRIV4KVAyXq9BmreDC/avh+3SEDenw5Ady+AQB9zeJV
-         QejGzaLytm2rKzUiQz26HMJNbZnQB0EX0vjgR+Mp25n8NEmCbDO4NTpF0vr4bHOSBCQB
-         3aBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761708518; x=1762313318;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=myjSnTBkH1I5KQfjqAoij4FYA0X2tqCwC7K0bbUx6vM=;
-        b=YkyF4VC9DUcHhAcnvsrV3btyyrM+4FBmdD6pEQz+K4P70gm5XvxOyoDoMoSz5n6my+
-         SBR60H8ZRjU3Odj//K/9H7csnSGVT71/fjBTMdeXDGcJ+9HNu+ZMoR7oNLArvK/eFH//
-         18j5N8jiUXQ1ejAuTDJZWBs6mp8FU8xvO4QDfL6JzIkScR8UlNTSNCfrIVlUrHba+O3O
-         GcmPNoKC/6BqS+fHGlV2P3vCS86VkgGKQSpYGPYx6Or0bGWmgvaaCTmwV8KNNraefLYn
-         3TcKm2qY3IgnHsFkH1d4GsfDAs4NPWsvvraHhdR+SsJHx6fpUaROgm4qceornTvnJ3Ev
-         3bpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX1TyO4Q8X0GxYJ5kZdJXQV0fcgPLqPX5c+fIV9nfhAFctC5GqpgpOwQxCxjNYz+s/8DVGEIN4pKCw05gMb@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdnbZbzOCgnLgnHvo8VgWtWreGY17rJezdVMwpgxUwWwo71PZ3
-	i0EILBSTjIjN81LaLegGBI5kGUAO/WS8xVZkF+5QpdaVflXf+pWO6n6Ui9WVEWNT
-X-Gm-Gg: ASbGncuLCtwZ0GKwLk2v74YmOJkQYEe4+Usu8kDL/Z8KScG3pjvNPm7l6u5ODqH0yeq
-	mqc/xsB3adB26fElA4Ip5OKtKh9GfTE3C+N56QG8kJmFcGJ0V0cQFDfe9OmmLklGSpxrLduXrKQ
-	RaTb4j9UoyK49Em4UUxeuuH5joSNCPOekHNDaovJPx7hWjzF0lBpab9lZUxqRBs8jxAwh4b5SUo
-	CSHI6Nyu2ALW7DmLxLzh1rOgZ4DJErJ0xTJu3u5MtNJYePviJy8CKBZsasvMJNYJKnHAZxraP/R
-	iARJ0UJGU/08MZ2vreX1EAlc3W9Ny8dmYQnBNc7SJXmxbhaIvIuVqKm1yYx3FcNtYzbWh5nF/gH
-	PyKnS1kOnVgNECMSkHwAQhPU6cEsk7Pegle8jkqZXHeCQXCB6lGDMhen2OdJoFZRkcPj2CsIEEx
-	ZTTh9mk2yydat30sOFl7JR8n5pMxmluj6IOaG5cxwFOnKcJw==
-X-Google-Smtp-Source: AGHT+IE+shhFrtBhmLuIBVFI3puPOu377u7uarNKu4E76VsuPFISVfuzPCA3UmXQVUS6K+bAe4aLCg==
-X-Received: by 2002:a17:902:da85:b0:262:cd8c:bfa8 with SMTP id d9443c01a7336-294deed21abmr17081115ad.34.1761708517614;
-        Tue, 28 Oct 2025 20:28:37 -0700 (PDT)
-Received: from brajesh ([2401:4900:16aa:e584:a673:aa72:32da:dbb])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498d40a7esm135335605ad.70.2025.10.28.20.28.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Oct 2025 20:28:37 -0700 (PDT)
-Date: Wed, 29 Oct 2025 08:58:30 +0530
-From: Brajesh Patil <brajeshpatil11@gmail.com>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: miklos@szeredi.hu, stefanha@redhat.com, vgoyal@redhat.com, 
-	eperezma@redhat.com, virtualization@lists.linux.dev, virtio-fs@lists.linux.dev, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, skhan@linuxfoundation.org, 
-	linux-kernel-mentees@lists.linux.dev, david.hunter.linux@gmail.com, khalid@kernel.org
-Subject: Re: [PATCH] fuse: virtio_fs: add checks for FUSE protocol compliance
-Message-ID: <c7zugpb4pzquasx67zypnuk2irxvb7cp5puwuw3rncy6gb5wdn@qigavsewium3>
-References: <20251028200311.40372-1-brajeshpatil11@gmail.com>
- <20251028200755.GJ6174@frogsfrogsfrogs>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gNIOYxjso9ky0lvobauEww5/mT495S9sq+Vql5NTVQ0bQx7JdVdZ6U0BHHJpxzwF0DlSPIWseBTvd7y+P1aoKBpgdoRQqZPdEUDkTpLDO696aZW5bzkjyPshLLVx17zSic265wRXD3KYQ6Z2ilOCc2TgE7qaZEoXY3t8TVRhmdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=E4trfwDo; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=/BYNoVmF3YbRiY0Hi/9O43xTzLl3/EW8MXOY/56GuA0=; b=E4trfwDo1S01UKwsa2CrgAOcSE
+	ptoeCiFK8So4wlImp/8pjz/VBvtXHnB8B5MDyRYvg1yqGLdg6Tf92LaQjfNi1cdedAP3agZ1WbcNp
+	Toh2ZJ7N4fK8LWTgaEb9En4+6sGHZB9iL6nmh7258KhX1IkLOZPj8HC/XgwqzmmEtafzypODzG5bt
+	fwomHrB116rASJMqP4x4UdJNY2tD4SGar04GPmSHSEnVu+68QC/yQYWY/mzF2frEWxOl8gDK0uEy9
+	OVrO/Ud3CraTGrePIC97bq2rxP3pXsm5U9cT7uuVndAVbke/jLFpn9/5dW08qyUL1FvIPrqIxPapE
+	7bfmXpZQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vDySS-00000000Yic-41sk;
+	Wed, 29 Oct 2025 05:10:53 +0000
+Date: Wed, 29 Oct 2025 05:10:52 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc: linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org,
+	brauner@kernel.org, jack@suse.cz, raven@themaw.net,
+	miklos@szeredi.hu, neil@brown.name, a.hindborg@kernel.org,
+	linux-mm@kvack.org, linux-efi@vger.kernel.org,
+	ocfs2-devel@lists.linux.dev, kees@kernel.org, rostedt@goodmis.org,
+	gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+	paul@paul-moore.com, casey@schaufler-ca.com,
+	linuxppc-dev@lists.ozlabs.org, john.johansen@canonical.com,
+	selinux@vger.kernel.org, borntraeger@linux.ibm.com,
+	bpf@vger.kernel.org
+Subject: Re: [PATCH v2 06/50] primitives for maintaining persisitency
+Message-ID: <20251029051052.GR2441659@ZenIV>
+References: <20251028004614.393374-1-viro@zeniv.linux.org.uk>
+ <20251028004614.393374-7-viro@zeniv.linux.org.uk>
+ <6d69842d102a496a9729924358c0267f00b170f3.camel@HansenPartnership.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -92,87 +70,48 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251028200755.GJ6174@frogsfrogsfrogs>
+In-Reply-To: <6d69842d102a496a9729924358c0267f00b170f3.camel@HansenPartnership.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Tue, Oct 28, 2025 at 01:07:55PM -0700, Darrick J. Wong wrote:
-> On Wed, Oct 29, 2025 at 01:33:11AM +0530, Brajesh Patil wrote:
-> > Add validation in virtio-fs to ensure the server follows the FUSE
-> > protocol for response headers, addressing the existing TODO for
-> > verifying protocol compliance.
-> > 
-> > Add checks for fuse_out_header to verify:
-> >  - oh->unique matches req->in.h.unique
-> >  - FUSE_INT_REQ_BIT is not set
-> >  - error codes are valid
-> >  - oh->len does not exceed the expected size
-> > 
-> > Signed-off-by: Brajesh Patil <brajeshpatil11@gmail.com>
-> > ---
-> >  fs/fuse/virtio_fs.c | 30 +++++++++++++++++++++++++-----
-> >  1 file changed, 25 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
-> > index 6bc7c97b017d..52e8338bf436 100644
-> > --- a/fs/fuse/virtio_fs.c
-> > +++ b/fs/fuse/virtio_fs.c
-> > @@ -764,14 +764,34 @@ static void virtio_fs_request_complete(struct fuse_req *req,
-> >  {
-> >  	struct fuse_args *args;
-> >  	struct fuse_args_pages *ap;
-> > -	unsigned int len, i, thislen;
-> > +	struct fuse_out_header *oh;
-> > +	unsigned int len, i, thislen, expected_len = 0;
-> >  	struct folio *folio;
-> >  
-> > -	/*
-> > -	 * TODO verify that server properly follows FUSE protocol
-> > -	 * (oh.uniq, oh.len)
-> > -	 */
-> > +	oh = &req->out.h;
-> > +
-> > +	if (oh->unique == 0)
-> > +		pr_warn_once("notify through fuse-virtio-fs not supported");
-> > +
-> > +	if ((oh->unique & ~FUSE_INT_REQ_BIT) != req->in.h.unique)
-> > +		pr_warn_ratelimited("virtio-fs: unique mismatch, expected: %llu got %llu\n",
-> > +				    req->in.h.unique, oh->unique & ~FUSE_INT_REQ_BIT);
+On Tue, Oct 28, 2025 at 08:38:00AM -0400, James Bottomley wrote:
+> On Tue, 2025-10-28 at 00:45 +0000, Al Viro wrote:
+> [...]
+> > +void d_make_discardable(struct dentry *dentry)
+> > +{
+> > +	spin_lock(&dentry->d_lock);
+> > +	dentry->d_flags &= ~DCACHE_PERSISTENT;
+> > +	dentry->d_lockref.count--;
+> > +	rcu_read_lock();
+> > +	finish_dput(dentry);
+> > +}
+> > +EXPORT_SYMBOL(d_make_discardable);
 > 
-> Er... shouldn't these be rejecting the response somehow?  Instead of
-> warning that something's amiss but continuing with known bad data?
-> 
-> --D
->
+> I was going to ask why you don't have a WARN_ON if the dentry is not
+> persistent here.  Fortunately I read the next patch which gives the
+> explanation and saw that you do do this in patch 50.  For those of us
+> who have a very linear way of reading and responding to patches, it
+> would have been helpful to put a comment at the top saying something
+> like persistency will be checked when all callers are converted, which
+> you can replace in patch 50.
 
-Right, continuing here is unsafe.
+Point...  How about
+void d_make_discardable(struct dentry *dentry)
+{
+	spin_lock(&dentry->d_lock);
+	/*
+	 * By the end of the series we'll add 
+	 * WARN_ON(!(dentry->d_flags & DCACHE_PERSISTENT);
+	 * here, but while object removal is done by a few common helpers,
+	 * object creation tends to be open-coded (if nothing else, new inode
+	 * needs to be set up), so adding a warning from the very beginning 
+	 * would make for much messier patch series.  
+	 */
+	dentry->d_flags &= ~DCACHE_PERSISTENT;
+	dentry->d_lockref.count--;
+	rcu_read_lock();  
+	finish_dput(dentry);
+}
 
-I plan to update the code so that in case of any header validation
-failure (e.g. unique mismatch, invalid error, length mismatch), it
-should skip copying data and jump directly to the section that marks
-request as complete
-
-Does this seem like a feasible approach?
-
-> > +
-> > +	WARN_ON_ONCE(oh->unique & FUSE_INT_REQ_BIT);
-> > +
-> > +	if (oh->error <= -ERESTARTSYS || oh->error > 0)
-> > +		pr_warn_ratelimited("virtio-fs: invalid error code from server: %d\n",
-> > +				    oh->error);
-> > +
-> >  	args = req->args;
-> > +
-> > +	for (i = 0; i < args->out_numargs; i++)
-> > +		expected_len += args->out_args[i].size;
-> > +
-> > +	if (oh->len > sizeof(*oh) + expected_len)
-> > +		pr_warn("FUSE reply too long! got=%u expected<=%u\n",
-> > +			oh->len, (unsigned int)(sizeof(*oh) + expected_len));
-> > +
-> >  	copy_args_from_argbuf(args, req);
-> >  
-> >  	if (args->out_pages && args->page_zeroing) {
-> > -- 
-> > 2.43.0
-> > 
-> > 
+at that point of the series, with comment replaced with WARN_ON() in
+#50?
 
