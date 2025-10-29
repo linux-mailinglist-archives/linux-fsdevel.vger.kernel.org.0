@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-66251-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66252-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84AD7C1A456
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 13:37:17 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75A16C1A516
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 13:44:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 314E035802D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 12:37:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A451D567D57
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 12:37:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9695837573C;
-	Wed, 29 Oct 2025 12:23:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E53437DBCA;
+	Wed, 29 Oct 2025 12:23:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L+FPOYdD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t7f8dpUq"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D96F4374AC7;
-	Wed, 29 Oct 2025 12:23:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 922F833FE10;
+	Wed, 29 Oct 2025 12:23:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761740632; cv=none; b=WPKGcaR6PI9eaH1RyxKB2B8JoLM5wdFwjo3fHkUVOcgiEvQz9lr4AEO1YqCHGT5uIUEPuLOrmcUNE3ycBMrzdfqMMEX65/Yh0RVR1dT7hTYQUxjowlhqF3Mvwvt+G1/c5UsTvU0JDV2b/InN4fEhFoK6SwExfmd7a7QIY4CY+E4=
+	t=1761740636; cv=none; b=jz5xUJR3CohAtxRUc5VWgwz4K0huUlXv3qiOjgjSrTsH+hMRtr/QLu0pKX0QjIF6qBJk21XDpen6SC918A4IqrFGY0a7FCzXs+oYkYUbrosP7AfVAwwNxfbNPxSqr6SA1XyyhVasyDioMjSIURKc2kol3rqLNDboENUbiDWLVRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761740632; c=relaxed/simple;
-	bh=WU3OpDiHSBOB5eonlPoaP8MJGbmszqupW5dQlbeASiQ=;
+	s=arc-20240116; t=1761740636; c=relaxed/simple;
+	bh=NAhtGlBVfCqrlTfWbGN1zDMklE1n7EKY3e8ekT2vQ0Y=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=S33/7oW74O+w+08CyoQ4yMTVMnbval5G0l6RK63vEHZjre8FFcS8fziydVaPbkttUpqBk1DVR/6kHCv3BD9YNhkbvVtX3hf/nrr7wo4h1wflK4tr9tE7AHSn2cis5zuKIFF5f9pdMgtbTKYvFzSf2KyVCTRoIdt+YvZKnnc/w9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L+FPOYdD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9E86C4CEF7;
-	Wed, 29 Oct 2025 12:23:46 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=JhuOkxSg+BSMdaOjVovTkByBtKg+XT+8tYHzs6brixxq6uavKgSJqxAX4LmQTP3fPRJ99ApA6yLkj8BPx1miLJjhF6Vx7Voc0aP610p0SMMVrAXcaGWtvz/Z31w8SskqymEEeKvfQr0lmqAgs4NFDHZ7gyym3Gew5pJJfySijFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t7f8dpUq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD1FFC116C6;
+	Wed, 29 Oct 2025 12:23:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761740631;
-	bh=WU3OpDiHSBOB5eonlPoaP8MJGbmszqupW5dQlbeASiQ=;
+	s=k20201202; t=1761740636;
+	bh=NAhtGlBVfCqrlTfWbGN1zDMklE1n7EKY3e8ekT2vQ0Y=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=L+FPOYdDZZo/BeqdGByNQMyfLG+Kt3tsoH4nlwcYDBngbxLfcUNmcdy72T3ESY8vc
-	 tUVDct/m8Yf0qHEJWYNBdijhe9KJiyqJWc2J1iIxOAHSmNEyAHKI353ZgMaZQG4ny1
-	 JU+yzCCtO1QLxuQH43CvxXsKaPJSM4DxpZHh9rWSGz04YMCuq4ZdQN+ZzCKhpHu9yv
-	 AAniDr3nyH9eQXFAYDbiLLnP/gngImUYjUVo0A7u71h4mj9Sgz+ye7fPZNih6oi6o3
-	 JoVb9axV76IKue0Hvs/zVesjl0NYVF08xgcwEn9pL7rAfQFtbkZZVs72XD1iGQ6TrW
-	 bS5QO96N53biw==
+	b=t7f8dpUqrToN/S01fEg9EHPoYdthuRIQm/lkdy+Knu3x+t/dWgLvbKLCWKJ5QTv9j
+	 LPBO6QZmM7Hyqhj0ueNJaMxK/B4zlX3c+WE2fJk6Mn3yODXOK24Cb4UXJVqMxjvjey
+	 7PubgLvGyAlqsVbEvFaQICW6QijkwsHM0nwli8O1o5L3l6h9rF9zrM1sHgaFdsFj1X
+	 1hpMRw2pBm14Aw7DrKAIswbHAd/tRI7E6m3+0oLqn/rQhleQaSCLGJ9zJlc2HBOUyL
+	 7LckxTZQnJ522DmL4HWrC4855gB7JW8gUhSK/XcLv01AwKmJ9kqB1FBkWgArxW7GOl
+	 UyvmvNU4r74YQ==
 From: Christian Brauner <brauner@kernel.org>
-Date: Wed, 29 Oct 2025 13:20:51 +0100
-Subject: [PATCH v4 38/72] selftests/namespaces: add listns() wrapper
+Date: Wed, 29 Oct 2025 13:20:52 +0100
+Subject: [PATCH v4 39/72] selftests/namespaces: first listns() test
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251029-work-namespace-nstree-listns-v4-38-2e6f823ebdc0@kernel.org>
+Message-Id: <20251029-work-namespace-nstree-listns-v4-39-2e6f823ebdc0@kernel.org>
 References: <20251029-work-namespace-nstree-listns-v4-0-2e6f823ebdc0@kernel.org>
 In-Reply-To: <20251029-work-namespace-nstree-listns-v4-0-2e6f823ebdc0@kernel.org>
 To: linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
@@ -69,63 +69,113 @@ Cc: Jann Horn <jannh@google.com>, Mike Yuan <me@yhndnzj.com>,
  netdev@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-96507
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1405; i=brauner@kernel.org;
- h=from:subject:message-id; bh=WU3OpDiHSBOB5eonlPoaP8MJGbmszqupW5dQlbeASiQ=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQysfVVdReE/1/FyLN48bEbkRMnXWbZf/ajzmV5y1t3v
- Uw5G7bZdZSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAExklTPDP2s15dW+nUo7fc+8
- 5VmatXTmF7eU1k9PnLMOLWVr3WO/ToGRYZLvxf+n1+UF/au6zbfzCb+6S4NNZua2v8/FVV4KTt0
- TxAcA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3148; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=NAhtGlBVfCqrlTfWbGN1zDMklE1n7EKY3e8ekT2vQ0Y=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQysfVNMElPMuu0teRxffdT9+ACt4pvvDHf3nEqv9BwP
+ nTya//OjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIm0BDAy/PRi9viwvK+q5N8d
+ 8eWRz3a4nmy4755t/1vwp8HrrVe43Rj+J/H7h/5x1XukuuH6qtmVhb01aWnh5iW/94lo9FabNnZ
+ yAgA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-Add a wrapper for the listns() system call.
+Test basic listns() functionality with the unified namespace tree.
+List all active namespaces globally.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- tools/testing/selftests/namespaces/wrappers.h | 35 +++++++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
+ tools/testing/selftests/namespaces/.gitignore    |  1 +
+ tools/testing/selftests/namespaces/Makefile      |  3 +-
+ tools/testing/selftests/namespaces/listns_test.c | 57 ++++++++++++++++++++++++
+ 3 files changed, 60 insertions(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/namespaces/wrappers.h b/tools/testing/selftests/namespaces/wrappers.h
+diff --git a/tools/testing/selftests/namespaces/.gitignore b/tools/testing/selftests/namespaces/.gitignore
+index 100cc5bfef04..5065f07e92c9 100644
+--- a/tools/testing/selftests/namespaces/.gitignore
++++ b/tools/testing/selftests/namespaces/.gitignore
+@@ -2,3 +2,4 @@ nsid_test
+ file_handle_test
+ init_ino_test
+ ns_active_ref_test
++listns_test
+diff --git a/tools/testing/selftests/namespaces/Makefile b/tools/testing/selftests/namespaces/Makefile
+index 5cea938cdde8..de708f4df159 100644
+--- a/tools/testing/selftests/namespaces/Makefile
++++ b/tools/testing/selftests/namespaces/Makefile
+@@ -2,9 +2,10 @@
+ CFLAGS += -Wall -O0 -g $(KHDR_INCLUDES) $(TOOLS_INCLUDES)
+ LDLIBS += -lcap
+ 
+-TEST_GEN_PROGS := nsid_test file_handle_test init_ino_test ns_active_ref_test
++TEST_GEN_PROGS := nsid_test file_handle_test init_ino_test ns_active_ref_test listns_test
+ 
+ include ../lib.mk
+ 
+ $(OUTPUT)/ns_active_ref_test: ../filesystems/utils.c
++$(OUTPUT)/listns_test: ../filesystems/utils.c
+ 
+diff --git a/tools/testing/selftests/namespaces/listns_test.c b/tools/testing/selftests/namespaces/listns_test.c
 new file mode 100644
-index 000000000000..9741a64a5b1d
+index 000000000000..cb42827d3dfe
 --- /dev/null
-+++ b/tools/testing/selftests/namespaces/wrappers.h
-@@ -0,0 +1,35 @@
++++ b/tools/testing/selftests/namespaces/listns_test.c
+@@ -0,0 +1,57 @@
 +// SPDX-License-Identifier: GPL-2.0
-+
++#define _GNU_SOURCE
++#include <errno.h>
++#include <fcntl.h>
++#include <limits.h>
++#include <sched.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
 +#include <linux/nsfs.h>
-+#include <linux/types.h>
++#include <sys/ioctl.h>
++#include <sys/stat.h>
 +#include <sys/syscall.h>
++#include <sys/types.h>
++#include <sys/wait.h>
 +#include <unistd.h>
++#include "../kselftest_harness.h"
++#include "../filesystems/utils.h"
++#include "wrappers.h"
 +
-+#ifndef __SELFTESTS_NAMESPACES_WRAPPERS_H__
-+#define __SELFTESTS_NAMESPACES_WRAPPERS_H__
-+
-+#ifndef __NR_listns
-+	#if defined __alpha__
-+		#define __NR_listns 580
-+	#elif defined _MIPS_SIM
-+		#if _MIPS_SIM == _MIPS_SIM_ABI32	/* o32 */
-+			#define __NR_listns 4470
-+		#endif
-+		#if _MIPS_SIM == _MIPS_SIM_NABI32	/* n32 */
-+			#define __NR_listns 6470
-+		#endif
-+		#if _MIPS_SIM == _MIPS_SIM_ABI64	/* n64 */
-+			#define __NR_listns 5470
-+		#endif
-+	#else
-+		#define __NR_listns 470
-+	#endif
-+#endif
-+
-+static inline int sys_listns(const struct ns_id_req *req, __u64 *ns_ids,
-+			     size_t nr_ns_ids, unsigned int flags)
++/*
++ * Test basic listns() functionality with the unified namespace tree.
++ * List all active namespaces globally.
++ */
++TEST(listns_basic_unified)
 +{
-+	return syscall(__NR_listns, req, ns_ids, nr_ns_ids, flags);
++	struct ns_id_req req = {
++		.size = sizeof(req),
++		.spare = 0,
++		.ns_id = 0,
++		.ns_type = 0,  /* All types */
++		.spare2 = 0,
++		.user_ns_id = 0,  /* Global listing */
++	};
++	__u64 ns_ids[100];
++	ssize_t ret;
++
++	ret = sys_listns(&req, ns_ids, ARRAY_SIZE(ns_ids), 0);
++	if (ret < 0) {
++		if (errno == ENOSYS)
++			SKIP(return, "listns() not supported");
++		TH_LOG("listns failed: %s (errno=%d)", strerror(errno), errno);
++		ASSERT_TRUE(false);
++	}
++
++	/* Should find at least the initial namespaces */
++	ASSERT_GT(ret, 0);
++	TH_LOG("Found %zd active namespaces", ret);
++
++	/* Verify all returned IDs are non-zero */
++	for (ssize_t i = 0; i < ret; i++) {
++		ASSERT_NE(ns_ids[i], 0);
++		TH_LOG("  [%zd] ns_id: %llu", i, (unsigned long long)ns_ids[i]);
++	}
 +}
 +
-+#endif /* __SELFTESTS_NAMESPACES_WRAPPERS_H__ */
++TEST_HARNESS_MAIN
 
 -- 
 2.47.3
