@@ -1,54 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-66156-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66157-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF4B0C17E26
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 02:25:52 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FF45C17E2C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 02:25:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3F8EF501C57
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 01:25:19 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 11E764FFE85
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 01:25:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C91A62DA759;
-	Wed, 29 Oct 2025 01:25:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18DB52D9ED8;
+	Wed, 29 Oct 2025 01:25:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eBzq9Tcu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CZmnDIiD"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C9B91C5F10;
-	Wed, 29 Oct 2025 01:25:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F2BD17B50F;
+	Wed, 29 Oct 2025 01:25:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761701108; cv=none; b=UKnlwIf5cbqyj3xBtcpvSI3XXKrFjO+9dnAC5a2XPzHiH+Wj2dYC2vufOFkPnXBTV0aA4eAlwuy7aA+/Oe0KZlzVurRRIUaeqKfZkEobPd0gX5tN/hqide9mnOzCXwDnRZOU6e8MgVQ/lHW5+FTSMMAE05CVq886kfV5MA2xzx8=
+	t=1761701123; cv=none; b=spgcRPZ9KxzsAMc34vHr5Csj7AIKnPW/86voKPVIbNmKaWvZl8SBIZcPhh8ONu0Eq4qQhzk3ypT5NU02MEy3ctlZfdf1Jgfl5X2/L4zT3jc+2EUymERar8tKmlK+PSqnBEad3WKWoHVwfnV8RoHTB7qqYWvKGL7rvS5xElSLkUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761701108; c=relaxed/simple;
-	bh=C/rreA4wbCjadbp0Lt1a+0twJk7qDOlqVSBr+21NEA8=;
+	s=arc-20240116; t=1761701123; c=relaxed/simple;
+	bh=HbjdJjbr1HrNUs5EwpAM9CoIjerHgkWB3FFp0rKj3Pw=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fgHXL2o74A0RWgJe8FYnR4RMABG+c1405vpinUdFi04Pu4swOTRYt/1dwKI7Fgty4O/Y8XA9FJXrIvFzSj8Yll09OtVd66+L/OS4EET5yjJghAQM1FdGUmTa/a07XorWmdVFzG7tc/YmCySdbDny+7Wf5W6u5+gS7Kf7RL1n3y0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eBzq9Tcu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6616C4CEE7;
-	Wed, 29 Oct 2025 01:25:07 +0000 (UTC)
+	 MIME-Version:Content-Type; b=q22/ftJlHIVbCigJszJRFHLtHDh3CxIX/gDFkrNq25eoXAAV56cTngeoj9dV5yioR0Kana/LwXOc1Y4lsghisgpiYtSpH61fgAAS5Sv+SlahY9yT+K5YcXjC66JCSpRrhP6mJ0k4JYBwGvNo2hYHx+IFmG14Qr/nJV1xFIFXjUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CZmnDIiD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CE8EC4CEE7;
+	Wed, 29 Oct 2025 01:25:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761701107;
-	bh=C/rreA4wbCjadbp0Lt1a+0twJk7qDOlqVSBr+21NEA8=;
+	s=k20201202; t=1761701123;
+	bh=HbjdJjbr1HrNUs5EwpAM9CoIjerHgkWB3FFp0rKj3Pw=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=eBzq9TcuMyuJVpvzXTmqmeBceb8uEDqxMQpNLLZo+7D3hf9ZtHDBkKfLg/jgHJ7bk
-	 V4p4XWv+Rgg9SwFPWAhSFEsszuR5spu6cCcBUkKVh0Vl/ekjygJt2wKmQoWotn+lJQ
-	 e+/f9IFcudOMBDU60JBZCDe4hP4NzxNOEoiOO4SFlna8Hw7cY6oXNhW4asJ4ex1M0X
-	 1YKqY3DCfpAwhj9VpYLcYp17ZZzQ04zqciOLU6RmCN0AhGNaIaq3trea/V+QvNbYOb
-	 rGyFTLi+44OP4Ldq85mkxZ6v5WIk8Rd/beJlwKWWXCEQJV3bVpme9Wd/9uQMRCVCd1
-	 55aeAs59jNlUA==
-Date: Tue, 28 Oct 2025 18:25:07 -0700
-Subject: [PATCH 18/33] generic/338: skip test if we can't mount with
- strictatime
+	b=CZmnDIiD5mDdkqPqTf045Rl2wyAQ8SjX0B3blYhuU3cxYY3Dcpkd7/lkrNQQfWdWj
+	 elrUPewMfTHb232dO6vehbBVf2eppO+Qa7wEKpXCaMQ8bF5qq2tmg+9+J3P1AnYZ23
+	 TUg8Ne60iD8r9/NLek12dGzMSr1q9+cNtFbh3NBAPM/yJQ16O9lhBvKI7bb4+ex9yT
+	 gdtcAUCPI4EvE7h2+MgaUNcv3PWl7z9LQu4VSdAeQf0f2IBsb+K9B2ArcYTmnlPo7X
+	 vF56gxxJCVeWG5YAM8dE7RrzzdgQOqDNIqPyxngKouhLZLch0Cc9pmNV3SB5l4RVjh
+	 iQ6UfoOduuUCw==
+Date: Tue, 28 Oct 2025 18:25:22 -0700
+Subject: [PATCH 19/33] generic/563: fuse doesn't support cgroup-aware
+ writeback accounting
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: djwong@kernel.org, zlang@redhat.com
 Cc: neal@gompa.dev, fstests@vger.kernel.org, linux-ext4@vger.kernel.org,
  linux-fsdevel@vger.kernel.org, joannelkoong@gmail.com, bernd@bsbernd.com
-Message-ID: <176169820315.1433624.14341009274441357914.stgit@frogsfrogsfrogs>
+Message-ID: <176169820334.1433624.1868204402938471160.stgit@frogsfrogsfrogs>
 In-Reply-To: <176169819804.1433624.11241650941850700038.stgit@frogsfrogsfrogs>
 References: <176169819804.1433624.11241650941850700038.stgit@frogsfrogsfrogs>
 Precedence: bulk
@@ -62,26 +62,28 @@ Content-Transfer-Encoding: 7bit
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-If we can't mount a filesystem with strictatime, skip this test.
+fuse_bdi_init disables writeback accounting on its bdi, so there's no
+point in trying to measure the accounting for any block devices that the
+fuse server might have open.
 
 Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- tests/generic/338 |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tests/generic/563 |    2 ++
+ 1 file changed, 2 insertions(+)
 
 
-diff --git a/tests/generic/338 b/tests/generic/338
-index d138c023960f8d..450f34889b96ef 100755
---- a/tests/generic/338
-+++ b/tests/generic/338
-@@ -36,7 +36,7 @@ _dmerror_init
+diff --git a/tests/generic/563 b/tests/generic/563
+index 1246226d9430ce..1fd2a81cdffa5d 100755
+--- a/tests/generic/563
++++ b/tests/generic/563
+@@ -34,6 +34,8 @@ _cleanup()
+ _require_scratch_nocheck
+ _require_cgroup2 io
+ _require_loop
++[[ "$FSTYP" =~ fuse* ]] && \
++	_notrun "fuse doesn't support cgroup writeback accounting"
  
- # Use strictatime mount option here to force atime updates, which could help
- # trigger the NULL pointer dereference on ext4 more easily
--_dmerror_mount "-o strictatime"
-+_dmerror_mount "-o strictatime" || _notrun "could not mount with strictatime"
- _dmerror_load_error_table
- 
- # flush dmerror block device buffers and drop all caches, force reading from
+ # cgroup v2 writeback is only support on block devices so far
+ _require_block_device $SCRATCH_DEV
 
 
