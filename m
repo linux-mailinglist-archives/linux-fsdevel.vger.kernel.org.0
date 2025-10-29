@@ -1,67 +1,66 @@
-Return-Path: <linux-fsdevel+bounces-66173-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66174-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AB9BC1829B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 04:21:00 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0694DC182B9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 04:24:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1CB14075DB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 03:20:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E62A14E8A4C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 03:24:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 799FB2D7DDA;
-	Wed, 29 Oct 2025 03:20:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2F2B2EC562;
+	Wed, 29 Oct 2025 03:24:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gvernon.com header.i=@gvernon.com header.b="wLMobtNT"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="XcXd34Uj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16870278E53
-	for <linux-fsdevel@vger.kernel.org>; Wed, 29 Oct 2025 03:20:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44F3078F2B;
+	Wed, 29 Oct 2025 03:24:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761708046; cv=none; b=BgAoUkRtVnAlXnUPAaa9rkAcvXMmZ/EF0CS1s24knSnNtY5LV9ZIMwe+IbkbaQzUcW9lPvKfjotbc4YS2cHW1kOIXnC5WZ8M9PaFciRHiDclTHW27HKSV3BtgN0csDMtFVrCL6I9w1eZKDX8JLDhwxz78sUZBnrKlup19/MEwvI=
+	t=1761708254; cv=none; b=dHd7HWpIxzq6+MXGmsPOSMkOOUTw9wlnjUwVrKcKIWyZ/kxd6JUfMpNREdkQKdw1FrAMxa8v5Jow4Qsc9lxrkw3w+y8WZ5tA9Qgkz1L/ZnzW58Cn15DppWcb0BiNpi2lmSN2Jh6L7TlwCNYC7o4s/c58iceFu0fE7fkd9paNNn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761708046; c=relaxed/simple;
-	bh=7zBBbCK/11p1K8q2HQ9YDAqZdwiUdhGSicGrtvuJ10Q=;
+	s=arc-20240116; t=1761708254; c=relaxed/simple;
+	bh=3kU3w3v+1u/nUSOObGzhFYNXx/3gI0FR3AhIQTfeUHQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d0eJj7LRwZpLl/Wf0aqljrybKVxJD3PK4wpIWtEPjCdWoovOjkeZAESV7udRdeEo7yWspVtsYHqrlUFwvBLogx9VngAxtWQwSXOh5Rj4fFgO76+kBc3Wc3ky0b+znMFDkd5fPCR82PHqte+K42Rsund0AkdBjTDsSfYMw6NNaaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gvernon.com; spf=pass smtp.mailfrom=gvernon.com; dkim=pass (2048-bit key) header.d=gvernon.com header.i=@gvernon.com header.b=wLMobtNT; arc=none smtp.client-ip=91.218.175.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gvernon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gvernon.com
-Date: Wed, 29 Oct 2025 03:20:37 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gvernon.com; s=key1;
-	t=1761708032;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Au77/twQcxrXaUBROjg2lxUxQuqN9PbdITbfFhgx28o=;
-	b=wLMobtNTNCvdrlKpw0Ugdf8ZJVRD0Zn9stgwbNsp6i7sBFo/I4qKh8KGCsGm4SFoy/CJ94
-	g2n+8FSxAESruZEt8r4FkAc/3SobUjRdQBnJk/gRQ93MIPJUsxUjOMWnF1Nbr58mf5Au6O
-	ocpzSN+Voe9kNhs3V+JdVBlpdM9dtOKL6UOboSuPjjaWq261NhHmRGSdOkJwmEjz8YrAFg
-	H5nfZWZJwwqM9CoojxhwE+dlD2R69ntpSO9u6DiJ7VcB/EEd2T+Y5M6fv633pcteQdkri+
-	dE8OCO0XtULGr1WFxcOYa0H2bR8KAfRRkuWxbB98l1LWlIw5mTU3Ragr8jBLXA==
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: George Anthony Vernon <contact@gvernon.com>
-To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc: Viacheslav Dubeyko <slava@dubeyko.com>,
-	Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
-	"glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
-	"frank.li@vivo.com" <frank.li@vivo.com>,
-	"skhan@linuxfoundation.org" <skhan@linuxfoundation.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-kernel-mentees@lists.linux.dev" <linux-kernel-mentees@lists.linux.dev>,
-	"syzbot+97e301b4b82ae803d21b@syzkaller.appspotmail.com" <syzbot+97e301b4b82ae803d21b@syzkaller.appspotmail.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] hfs: Validate CNIDs in hfs_read_inode
-Message-ID: <aQGIBSZkIWr4Ym7I@Bertha>
-References: <20251003024544.477462-1-contact@gvernon.com>
- <405569eb2e0ec4ce2afa9c331eb791941d0cf726.camel@ibm.com>
- <aOB3fME3Q4GfXu0O@Bertha>
- <6ec98658418f12b85e5161d28a59c48a68388b76.camel@dubeyko.com>
- <559c331f-4838-49fb-95aa-2d1498c8a41e@I-love.SAKURA.ne.jp>
+	 Content-Type:Content-Disposition:In-Reply-To; b=CZ4kvJAju1k9lEPXQgtgy0Dp2fkDGzinVhR0dey59GxvPXcVsdYOG3hWh/4uF0dWopFwMjS0vklREwYTuJTaKLUKIaneIuVRAfxBpONMIG/PBUHK73hxoaOSwTuXgharJKi5liyBSZMk5Vm8FiIIORdsBieKBlOLqLNbewotecU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=XcXd34Uj; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=/74EwcCNII2uB0u4CPJWojlcJa9JLtb0FVKMbO2Wykg=; b=XcXd34Uj7enu+oskIPJPOtc2sW
+	+JUVmiqxAcaM83jJ33Kj00wrrLLwo9mF6yh+svt4+qcE1PgJRBuN1EjWahP1tsM29WdL0OMW4u/zI
+	wtsAkFC3DMZiEmRlreDEn6/IgmA37eL1BXSnR3JtjGswJcK3NCUEauvGde4K+59f8KsJEo6T5yKwq
+	t4bKDSK3qMusrrsuHwPazN+I9d3szv/tBoGXBSjlJL/knw65vXnnJOFJhIz3yUjx4i5Ghlc/+rHgG
+	7zcbEOG1Ix7lCoeZLSwiWl97ry3iG7ZT6wVMc9hHzyolLyGaE7QLp2JbVftwMF2LmmAKECmJ3Nj5R
+	/es8Sg3A==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vDwn6-0000000DcBo-2Wtj;
+	Wed, 29 Oct 2025 03:24:04 +0000
+Date: Wed, 29 Oct 2025 03:24:04 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Paul Moore <paul@paul-moore.com>
+Cc: linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org,
+	brauner@kernel.org, jack@suse.cz, raven@themaw.net,
+	miklos@szeredi.hu, neil@brown.name, a.hindborg@kernel.org,
+	linux-mm@kvack.org, linux-efi@vger.kernel.org,
+	ocfs2-devel@lists.linux.dev, kees@kernel.org, rostedt@goodmis.org,
+	gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+	casey@schaufler-ca.com, linuxppc-dev@lists.ozlabs.org,
+	john.johansen@canonical.com, selinux@vger.kernel.org,
+	borntraeger@linux.ibm.com, bpf@vger.kernel.org
+Subject: Re: [PATCH v2 35/50] convert selinuxfs
+Message-ID: <20251029032404.GQ2441659@ZenIV>
+References: <20251028004614.393374-1-viro@zeniv.linux.org.uk>
+ <20251028004614.393374-36-viro@zeniv.linux.org.uk>
+ <CAHC9VhRQNmPZ3Sz496WPgQp-OkijiF7GgmHuR+=Kn3qBE6nj6Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -70,63 +69,21 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <559c331f-4838-49fb-95aa-2d1498c8a41e@I-love.SAKURA.ne.jp>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <CAHC9VhRQNmPZ3Sz496WPgQp-OkijiF7GgmHuR+=Kn3qBE6nj6Q@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Hi Tetsuo,
+On Tue, Oct 28, 2025 at 08:02:39PM -0400, Paul Moore wrote:
 
-On Thu, Oct 09, 2025 at 09:57:33PM +0900, Tetsuo Handa wrote:
-> I found this patch. Please CC: me when posting V2.
+> I suppose the kill_litter_super()->kill_anon_super() should probably
+> be pulled out into another patch as it's not really related to the
+> d_make_persistent() change,
 
-Sorry I forgot to CC you last time :)
+It very much is related - anything persistent left at ->kill_sb() time
+will be taken out by generic_shutdown_super().  If all pinned objects
+in there are marked persistent, kill_litter_super() becomes equivalent
+to kill_anon_super() for that fs.
 
-> I'm not suggesting this change. Therefore, Cc: might match.
-
-Sure, I have added a CC tag for you in V2 which I'm currently testing.
-
-> further sanity check). Unless
-> 
-> >>>
-> >>>> +{
-> >>>> +	if (likely(cnid >= HFS_FIRSTUSER_CNID))
-> >>>> +		return true;
-> >>>> +
-> >>>> +	switch (cnid) {
-> >>>> +	case HFS_POR_CNID:
-> 
-> we disable HFS_POR_CNID case (which I guess it is wrong to do so),
-> we shall hit BUG() in hfs_write_inode().
-> 
-> >>>> +	case HFS_ROOT_CNID:
-> >>>> +		return type == HFS_CDR_DIR;
-> >>>> +	case HFS_EXT_CNID:
-> >>>> +	case HFS_CAT_CNID:
-> >>>> +	case HFS_BAD_CNID:
-> >>>> +	case HFS_EXCH_CNID:
-> >>>> +		return type == HFS_CDR_FIL;
-> >>>> +	default:
-> >>>> +		return false;
-> >>>
->
-> I think that removing this BUG() now is wrong.
-
-I think HFS_POR_CNID case should be disallowed. There is no real
-underlying file with that CNID. If we ever found a record with that CNID
-it would mean the filesystem image was broken, and if we ever try to
-write a record with that CNID, it means we screwed up.
-
-> Without my patch, the inode number of the record retrieved as a
-> result of hfs_cat_find_brec(HFS_ROOT_CNID) can be HFS_POR_CNID or
-> greater than HFS_FIRSTUSER_CNID, which I think is a logical error
-> in the filesystem image.
-> 
-> Your patch is incomplete. Please also apply my patch.
-> 
-I agree your check is good to catch root inode's i_ino > 15 (is this
-reachable?) and I'd like to add it. Would you be happy if I make a
-2-part patch series with your patch second, keeping your sign-off on it?
-
-Thanks,
-
-George
+Sure, we can switch to kill_anon_super() in a separate later patch,
+but conversion to d_make_persistent() will be a hard prereq for it.
+No point splitting that one line, IMO...
 
