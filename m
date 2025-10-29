@@ -1,104 +1,136 @@
-Return-Path: <linux-fsdevel+bounces-66381-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66382-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CE3CC1D954
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 23:25:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA112C1D9EA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 23:52:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE26F18970EC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 22:25:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8635E3B20C5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 22:52:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6E0331AF18;
-	Wed, 29 Oct 2025 22:25:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 385912E0904;
+	Wed, 29 Oct 2025 22:52:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d+mUQNyU"
+	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="U/1Mrizc";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="zbyYgRyR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from fout-b1-smtp.messagingengine.com (fout-b1-smtp.messagingengine.com [202.12.124.144])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20D3E20010A;
-	Wed, 29 Oct 2025 22:25:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A0E41F4617
+	for <linux-fsdevel@vger.kernel.org>; Wed, 29 Oct 2025 22:52:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761776710; cv=none; b=JePHbgiMuXwHMg1zZijjnKJ8awrSCtpqUJObcMYgEyo1CjVhGrJPkb2Rl1jph7EjruxuTxr4FZBsZ82aLWdsUMhzbmnlxCZB/FDIxlnKnjUcu5smDCC4iFu8PNsDUSrrnmt65YQUvTaGzX8S6fayd6u5FlKA9+CaYTaUGbI1XyE=
+	t=1761778328; cv=none; b=mInXi/ZHGn4KVzgX8YDKVidPDM2z4lgP4cSySnKRi6mzqTXAPXvhLCIP25tVVubl7BDdnQXLQ94J4AOfk6CGkGaT0q6ZIJlRWuB+UouW2ZRMmTiK7Rb9yS3f8Yvu/CgTh4Vq/dWiBPxFyDNl2yXWfzxpT1fTRdT9oQLhi+WCJuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761776710; c=relaxed/simple;
-	bh=sqvfi/doKW71ktQYpInEihkU2K+gkdzBjz9/lAlE59k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cmJYa1XcHGf8o+z1XRrV7KTm/pOJEoz3R6ilzVaKOpa22zryTCK4NrGb0Y4CZYcuf4ZP6lCoDNXctRJnAs3f1FU0fbcoofdzTOCy5HQHiLGLxg/UxINN9qI9PPE8G24jk2COqKvh8wVtMt4COBryt2cG5b2wqtevFV/bvVz69Fw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d+mUQNyU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C12DCC4CEF7;
-	Wed, 29 Oct 2025 22:25:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761776708;
-	bh=sqvfi/doKW71ktQYpInEihkU2K+gkdzBjz9/lAlE59k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=d+mUQNyUwZcCuR4LY2Eb5uQYQsXxzWjtLpGeDw3/tvYm+N/N2B7O2AU7ev9fLXQNK
-	 bozrXEA9n2lRo3ylRAzvFDNtrOIiVlCrU0YfyHzHgHIj7EnS6EVCsE8L2e5a2Fk8j/
-	 RDsBLu3lheyolvbPIZTlMVGq11tKGa+m5QShVWiud6G31E6r2OQJ+7gMuD/z6HVm1e
-	 NIiyY89aOtpHfNE0ohhiOabkvWkdsQOEjbzBlxGkrrt5C5vSORUNmdJdFedWneqpex
-	 +DApzaU16P7eAExvj1Es2JQ4LQb1nJ5lhK1IVrElcnp3KT+2rbj9GWuneWjtFmfTd8
-	 EGQawCQwRXoqA==
-Date: Wed, 29 Oct 2025 23:25:04 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
-	David Sterba <dsterba@suse.com>
-Subject: Re: [PATCH] fs/pipe: stop duplicating union pipe_index declaration
-Message-ID: <20251029-wobei-rezept-bd53e76bb05b@brauner>
-References: <20251023082142.2104456-1-linux@rasmusvillemoes.dk>
- <20251029-redezeit-reitz-1fa3f3b4e171@brauner>
- <20251029173828.GA1669504@ax162>
+	s=arc-20240116; t=1761778328; c=relaxed/simple;
+	bh=deA0DiIE5efWlAdXjFuyqOvN8FxOGJRmivXUibIMey8=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=c2oN1YQAmGecN8CWd5KR3U2hJVFgidgQgHs2QRrPLFkN2dMaWE/Ka43ZHXI/l17RlMCpm+FI0Rrq6YOAajoDV+XB1fOwlWP6fpdeJqzjlV5nLVCv/yvCreuiFtvQuMvBK6zyzo3m4WpF/3o7hlDeD/mKhB2Bc9+diQuR38q14ds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=U/1Mrizc; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=zbyYgRyR; arc=none smtp.client-ip=202.12.124.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+	by mailfout.stl.internal (Postfix) with ESMTP id 1077A1D00083;
+	Wed, 29 Oct 2025 18:52:05 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-02.internal (MEProxy); Wed, 29 Oct 2025 18:52:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to; s=fm3; t=
+	1761778324; x=1761864724; bh=RYiVv8xvv0qUhm3BTODhXe407n96GIIqZ4l
+	yKcyAF8I=; b=U/1MrizcfTK6J8N4za+bJk1ljOH99k5iall1YLsVaTyRr1GTg8F
+	DzpHpBPMrtieCD7Wp1+lP6Tz5Bf1ISs6LwuWn2nfBRCILMkRQvOZfCx6fqblX25P
+	uVEg2jGcyNibIBer5laPSZztazi1GDCBlQllYyqUNMna28XpPkVF+376ZZf+Bd1X
+	3Yw43ZyWfWnUxtUlO2ojDV/Fq8KTvWCbTYb6Cd5yee52jaabGJ2VfDCOh5LWkeLp
+	wNC39XFINT6lTdNc36FbiPgRDn1hH2fkp7Hcv7GdWvrccGlwZ3MO1nGlIoFUgc/l
+	iQvpCFWNalfPn2CFG6cRHsxLWr6Hi804gSw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1761778324; x=
+	1761864724; bh=RYiVv8xvv0qUhm3BTODhXe407n96GIIqZ4lyKcyAF8I=; b=z
+	byYgRyRBqzDJt8548sjBdkqOsDnCSaj2qSg3LubhRT6sNA1hQgJ6q+z5LrEMzPBZ
+	xTsLjwTFoiY7axgsC0fyxr4atzCUSPsb7yR6zitPiS5/AP/b2NUgHjrEBxtcSX4h
+	k7J+TipUc54NIRVLBeQ/ykJ4K18PI1tKe/X2S7Uz3qYoIsUgAbEvpK/HI7wnD76I
+	vbZ+On98RZTbyg8qU4Jw/SUNIBa2tHHVgo4qCho2uZpeMjlOfJ8cXblOLX58At5/
+	BYm3GAa/ndchzy3kJtNQEUz6remDowJzS+mLjjlYrXrZAjaf92p8dAhSq13DdVb8
+	6XUFXj5ANImSVhg0R1/hg==
+X-ME-Sender: <xms:lJoCaXWhzmIeFUO4Q2tl6obIGCKQWejq_fe7_OzRBR_0_vv6AxFsmA>
+    <xme:lJoCaaj7FZQQs-0S4BX8o4znP2MgTw1ZFDFn29prgePvn1hngpsffxbJeYX7Z3Xdh
+    ag36QGNXgenvLjKvDCj0YzZY-TqUOaeQjjMi_cooAK5RJdjtw>
+X-ME-Received: <xmr:lJoCaSaNXYp-Ql-Jol8SxGvl6XVKVsKbcnBVGmI3pYb_ACOifKnMfZjlgREhCxjfVBsND2MQ2gF5RkGE7kjdIs6XhheV8EQZ5nqAiu_JPssb>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduieegleekucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurheptgfgggfhvfevufgjfhffkfhrsehtqhertddttdejnecuhfhrohhmpefpvghilheu
+    rhhofihnuceonhgvihhlsgesohifnhhmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnh
+    epffevjeeljeehueejgeehleelueevudehjeekgeevueffteevhfefvedtueeugfejnecu
+    ffhomhgrihhnpehgihhthhhusgdrtghomhdpkhgvrhhnvghlrdhorhhgnecuvehluhhsth
+    gvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhgvihhlsgesohifnhhm
+    rghilhdrnhgvthdpnhgspghrtghpthhtohepiedpmhhouggvpehsmhhtphhouhhtpdhrtg
+    hpthhtohepvhhirhhoseiivghnihhvrdhlihhnuhigrdhorhhgrdhukhdprhgtphhtthho
+    pehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpth
+    htohepjhgrtghksehsuhhsvgdrtgiipdhrtghpthhtohepjhhlrgihthhonheskhgvrhhn
+    vghlrdhorhhgpdhrtghpthhtohepsghrrghunhgvrheskhgvrhhnvghlrdhorhhgpdhrtg
+    hpthhtoheprghmihhrjeefihhlsehgmhgrihhlrdgtohhm
+X-ME-Proxy: <xmx:lJoCaXpBewiVzqeJnh9pqHDbMqNg3dgFLsul-jLMV_30rXvvdQKRTQ>
+    <xmx:lJoCafNYCm2J_DQ4p9y7ejNf2abQVQqlWKLVzZB3780238_9SvPHGw>
+    <xmx:lJoCaaqfBQLuru_YUV-1v2w903cwf5wMsDA-nqVP2R36lJ4y6g4OUQ>
+    <xmx:lJoCaceLRM56gD8KH7FfYar0w0ajRyMkjcWoz8iB8drxyjmxdcGGwg>
+    <xmx:lJoCabMh3bdb4EAMQVkS-k0TpvtDU1DIf5H4D6kj1DJioJ56JdKOjShj>
+Feedback-ID: iab3e480c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 29 Oct 2025 18:52:02 -0400 (EDT)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251029173828.GA1669504@ax162>
+From: NeilBrown <neilb@ownmail.net>
+To: "Christian Brauner" <brauner@kernel.org>
+Cc: "Alexander Viro" <viro@zeniv.linux.org.uk>,
+ "Amir Goldstein" <amir73il@gmail.com>, "Jeff Layton" <jlayton@kernel.org>,
+ "Jan Kara" <jack@suse.cz>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3 00/14] Create and use APIs to centralise locking for
+ directory ops.y
+In-reply-to: <20251029-management-wortkarg-8231c147605d@brauner>
+References: <20251022044545.893630-1-neilb@ownmail.net>,
+ <20251029-management-wortkarg-8231c147605d@brauner>
+Date: Thu, 30 Oct 2025 09:51:58 +1100
+Message-id: <176177831849.1793333.1164390907191667489@noble.neil.brown.name>
+Reply-To: NeilBrown <neil@brown.name>
 
-On Wed, Oct 29, 2025 at 10:38:28AM -0700, Nathan Chancellor wrote:
-> Hi Christian,
-> 
-> On Wed, Oct 29, 2025 at 02:41:06PM +0100, Christian Brauner wrote:
-> > On Thu, 23 Oct 2025 10:21:42 +0200, Rasmus Villemoes wrote:
-> > > Now that we build with -fms-extensions, union pipe_index can be
-> > > included as an anonymous member in struct pipe_inode_info, avoiding
-> > > the duplication.
-> > > 
-> > > 
-> > 
-> > Applied to the vfs-6.19.misc branch of the vfs/vfs.git tree.
-> > Patches in the vfs-6.19.misc branch should appear in linux-next soon.
-> > 
-> > Please report any outstanding bugs that were missed during review in a
-> > new review to the original patch series allowing us to drop it.
-> > 
-> > It's encouraged to provide Acked-bys and Reviewed-bys even though the
-> > patch has now been applied. If possible patch trailers will be updated.
-> > 
-> > Note that commit hashes shown below are subject to change due to rebase,
-> > trailer updates or similar. If in doubt, please check the listed branch.
-> > 
-> > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-> > branch: vfs-6.19.misc
-> > 
-> > [1/1] fs/pipe: stop duplicating union pipe_index declaration
-> >       https://git.kernel.org/vfs/vfs/c/ade24f8214fe
-> 
-> As you may have noticed since I do not actually see this pushed, this
-> change requires the '-fms-extensions' change that we are carrying in the
-> kbuild tree for 6.19.
-> 
->   https://git.kernel.org/kbuild/c/778740ee2d00e5c04d0c8ffd9c3beea89b1ec554
+On Thu, 30 Oct 2025, Christian Brauner wrote:
+> On Wed, Oct 22, 2025 at 03:41:34PM +1100, NeilBrown wrote:
+> > following is v3 of this patch set with a few changes as suggested by Amir=
+.=20
+> > See particularly patches 06 09 13
+> >=20
+> > Whole series can be found in "pdirops" branch of
+> >    https://github.com/neilbrown/linux.git
+> >=20
+> > v2: https://lore.kernel.org/all/20251015014756.2073439-1-neilb@ownmail.ne=
+t/
+>=20
+> Are you resending with the dput() fixup or did you want me to just fix
+> this up?
+>=20
 
-Meh, I thought it was already enabled.
-Are you pushing this as a new feature for v6.19 or is Linus ok with
-enabling this still during v6.18?
+Thanks for asking.
+I will resend later today - and to a larger audience covering all the
+code I touch.
+I ran a test over NFS and hit a crash which has distracted me, but it is
+in unrelated code (localio) so doesn't affect this series.
+
+Thanks,
+NeilBrown
 
