@@ -1,75 +1,74 @@
-Return-Path: <linux-fsdevel+bounces-66373-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66374-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6424CC1D656
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 22:14:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DA56C1D686
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 22:18:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA6F2189C68A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 21:14:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 781D4189BB20
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 21:18:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B66A3191C0;
-	Wed, 29 Oct 2025 21:13:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2E3931A541;
+	Wed, 29 Oct 2025 21:18:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nCYmfsCb"
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="OrXIMLKk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B84603161AA
-	for <linux-fsdevel@vger.kernel.org>; Wed, 29 Oct 2025 21:13:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C70D319859
+	for <linux-fsdevel@vger.kernel.org>; Wed, 29 Oct 2025 21:18:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761772432; cv=none; b=SmoURprHvtTfx8oSeEHmw8wiKzqzCsfcs42JAAM1o3Jh1yeBpMnsNHrTGFITJzZQFF5ULZJvReyT05LNucdRUxpEyLC4Nnv4lYsouv0jW9vBHVHRQ5LNITV9/15PI5OAH5yEgpSPkUuU1WNC46PAVNFFsNkiXIrJDajOb3HUPLo=
+	t=1761772696; cv=none; b=rde/+fTqXZeAeRB5lIy5lbPe2FM/CpzgeO6zlcpbHaabEi4778VNHqgXHqx0Z+pnj4wswSt+Ydaz9wB4E/4+s9C6nOJKTQQh5ITcFJMD29g0RWKFNACiIJwR6U3CXhBiusdF1NBf1wUwDbmLcVxbuofJnUVPIeHs0ZAUYmGqQ7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761772432; c=relaxed/simple;
-	bh=JEkVL2yw/xHlwVM5DiMfV/wkuCa8mgAwcpgYx81B7GM=;
+	s=arc-20240116; t=1761772696; c=relaxed/simple;
+	bh=Yx7YCqrIwLLNoev+bUFlTb0b8ZV7lL4i+OuQquokGLc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WxuKgU2zhFHdDGrmDPZnULaM4Jsk6/D0+O1NPc7uloXK5ptep3NGDq1Ri62T9HGdsgHEN2AxThGq/AhCX7gj8o4wV9dJCbo/1fVuhWOMyGGmZbVmXLfOEYeJGT53k/71g6xfMbVYjAw0TjKlP94UUR4RR1bfsNx3gRMkO+dN1LE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nCYmfsCb; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-592f1988a2dso1590158e87.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Oct 2025 14:13:50 -0700 (PDT)
+	 To:Cc:Content-Type; b=ByHxztHTRb+iKX9xwlfVS+QntF7mFMJjVm62hOqDCkYgJmEusRzwPxoe7J5gxcabU56p5L+gxpj52/1i2Ll8++4P8BpsnZAKuJxOiSLCHFHUwPqciJnnUm8Qz7MzwR+XBzcBbecOZCF/2JLVM3tF+x7HaBUlcBjDBuHEUMJ2zLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=OrXIMLKk; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b403bb7843eso72624366b.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Oct 2025 14:18:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761772429; x=1762377229; darn=vger.kernel.org;
+        d=soleen.com; s=google; t=1761772693; x=1762377493; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=JEkVL2yw/xHlwVM5DiMfV/wkuCa8mgAwcpgYx81B7GM=;
-        b=nCYmfsCbMA9NzQaa64kEC4baExLRtapT8fdvk0MH1d4zIRtbMvV0rLZ/ptvT0vq5CH
-         +HkkqrBp5hoG9mo4GWeyy0x7qGtAdVpMS8K3dMJpsG8R4Gt+JjDASlsjGYQqmymIoVyT
-         A6Sryrmiwb5pfkfJp9gETz5OEwTM4FvK/RviWFqKH+bjnkpz5JWpDmMTDjF4RehWZFUL
-         PWQrbsWOFTWFRGCylRTz4MVqnJZ/baSDn+D5saaFFFU3XmtfX799iUDrSmrCGfm9+ds4
-         P9T3r0jAjxlhY13vVHr/97QV9jAZlnFLnIVoGydDVThAbYOXAg19krfWu3pizUwtsxj8
-         vr8A==
+        bh=Yx7YCqrIwLLNoev+bUFlTb0b8ZV7lL4i+OuQquokGLc=;
+        b=OrXIMLKkrp7DfkKf8u5C371FaFZkrQnQpAtJ1FNMIk1D4mU4QcnKvL7dcxblcbfQnS
+         UMXdkavb/z2j9k9Ut7V0md2e+izDzctO7rasupE/dMr3NFmxXlxHPFv7XGElk30pyf+n
+         /CnkKAOldLUP9HfUHGiC7OK+FYVWIodeoqTTZDu514FANVQ3kv7HLKGRbKf68egNqmNu
+         cd+RWoHY6rh5fUoUT51ht2UvIiimO19Jb1psh1ftMrb7zNeSxGVrulB9+fAQAnEngObK
+         80bRf16Nze9ejWTWOsjsAFiSsAahUzmcX43wAnMli6sXPCsMuNn0V4g+G8ljys477+Cy
+         ZguQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761772429; x=1762377229;
+        d=1e100.net; s=20230601; t=1761772693; x=1762377493;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=JEkVL2yw/xHlwVM5DiMfV/wkuCa8mgAwcpgYx81B7GM=;
-        b=f3z7lw3d6Da7NcHYMJOs5cFie23Jz5ZxbCjTT18l0qsx7d7Keq4iWWFSpmoVTKwlCC
-         ctsidgWd2LkH1Chx3M9pjtNfquk2+06oY9G2H26LGDNgmeQS0bd1rzaU8ejFHRLZIgdc
-         whbTO91t4G3Kgaw0LdBryLhVNJKbIbvb4qXagiv+PxjhbHqEyCaG/CZSoTDAdHtWnKQX
-         sq/S5X1oz1Lj6aHQFa40NyPWoi0PTOeSmaMhwib2aV0p4WoZi7xfQOhVSqL80s8+9mrd
-         xTvvlAM+BVkluxKado5Occ89YyTHeyoFshmeFv5mtFUHVPqa02NCf82F8vnvlSNxtM8P
-         27lg==
-X-Forwarded-Encrypted: i=1; AJvYcCUvu0+QQyemEmlid2ovwqyZ1DuFljjPP1+qWdmynN6jrLRFLnQpRzUZxHQGL3ncorGb+rxMXC8aUXDRbdjQ@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQF+w2hlAKE1NtLQ7c2ZY6ek7W94cN8SfxYIweo9YRox1/lCZE
-	yHc/1p8l2Q2h5Z1JE1LVjOOcin7Mib7cWVKfLyAqJ9cfWL67Qb9HeEjOC4CGdx7gtI32SEBdDqZ
-	VnU3+cPixDqPeKVxJeSwRGPaOK4FMPsoWLkykWIcv
-X-Gm-Gg: ASbGncsyOIYNeIxccs7hLHEziklvAZ79kPxd54ZSTA0pUBvXo6mhZGxACkVTCssY8gt
-	sO0eF1N9jUXDH/Km7TxQVjR0ORoVnefrmxP7MGmU6jO1YweGxUvIZz7NLQ2UqsQkEcPY7Pf8Flh
-	YmZvP+pheAjJMDa+WSRkMZSwPZ8NjnPQtzHqN0hdqxZ6GKQrusoVPjR7Zu7PktVDjT74JMx/IZ9
-	lhT9hNZNDERdNql1Fn/vDy6vo2A2P8eDR6Z5YJxTuKxpHyMWGshCGzWnp67HyarWXMs6MxAnbCS
-	D4UxsQ==
-X-Google-Smtp-Source: AGHT+IHZQoB9yL+ldFaXMM1bMXJiwccZfdn7OWdIICrdEFPtCJ4NB2qUJ+qk4p2BEZhWEpH+XIXLyp9M3uzoemzEy4A=
-X-Received: by 2002:a05:6512:3ca2:b0:58b:75:8fc6 with SMTP id
- 2adb3069b0e04-59416d8ce02mr294670e87.19.1761772428439; Wed, 29 Oct 2025
- 14:13:48 -0700 (PDT)
+        bh=Yx7YCqrIwLLNoev+bUFlTb0b8ZV7lL4i+OuQquokGLc=;
+        b=qGJRMBg2vfmdYp/Du0I1PkT8ukCWMrdfAljyZ81ADLVG53Ee1uGPSd+jaJXjps+Ry9
+         mNzgQEkzSWUXLeXaBpyih1DflhyzCa46Mgric3zpJ8vYkI+Lw8ZQakaKEojSRzTei3Hd
+         8adu4KJ5zZSLSS4wRDeJHoyHHb7aXMTPXBmo6h7DMvB8a1EX9dFGvWvovA6axpHBETpx
+         hjQzTfQCZEkyaGH960czfpprX/XTVxHTEFF+wM+43jIi/cV42yn0lLubQjlSO/Fx1o6W
+         MC9OaSAEjWkrpLk5JewyKV2jUe6Mz+6tynq/9pxBcnjvcuEs+LpCkCsxlC44QSIDFh4P
+         JDAA==
+X-Forwarded-Encrypted: i=1; AJvYcCXV+Obh/qxJ42UwQDRn90zfdFfzs2ehgquu6+B7F2vXKrNJv+Z6h8jokAGGehJ/E2csrp8dQsLqadbPooJ/@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgEWe8tkNxlP44U+wIF+0lup9c+UGpseqJJJM6pHJURj9EraUl
+	4WBdbJOvbCJhzHxVZTQRjg1bKRWtAdX6t47OoVqAmNQpqyPyQAqY6IIR7liG93H+79arNSvijZM
+	s74zKDhFRz/QIWKa2tp3yMkIInYlYQbsOWmbj5qyY7A==
+X-Gm-Gg: ASbGncvioNS4cCYEs4UMrKYceQYSZeBqGNwxiVm/eWw7JTcfGNrGbA05pf/jZ2DvAct
+	V8ZMentE71nc1n/y4p9Y1b//xEO/qtfjOl7TsNh1RxP2YqMM74T90iaCycZDef9Ijn/5C7jeWRJ
+	nNP2EqkdBZUGHKzUoUtNde67+a0tl5y/Wvbcir1TrqF0jhyJKZfLowEzXHBIOPPQZnfhtcZe4bp
+	z93dItvwmCqBBWuPE8TqPfxiKttT8+42mAmRwvGtvVkU6VCcf2YC7QqXQ==
+X-Google-Smtp-Source: AGHT+IFiSSmBV0jU0Ss8+B5QBA6lJtv5vF8blJP/ha+JWFJmpNgyZxdpZA+HlfE38+Jb0bhjX5O65LmIxIHlrRfKiu4=
+X-Received: by 2002:a17:907:9721:b0:b3f:f207:b755 with SMTP id
+ a640c23a62f3a-b7053b2a721mr51136966b.6.1761772692799; Wed, 29 Oct 2025
+ 14:18:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -78,15 +77,15 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20250929010321.3462457-1-pasha.tatashin@soleen.com>
  <20250929010321.3462457-15-pasha.tatashin@soleen.com> <mafs0tszhcyrw.fsf@kernel.org>
- <CA+CK2bBVSX26TKwgLkXCDop5u3e9McH3sQMascT47ZwwrwraOw@mail.gmail.com>
-In-Reply-To: <CA+CK2bBVSX26TKwgLkXCDop5u3e9McH3sQMascT47ZwwrwraOw@mail.gmail.com>
-From: David Matlack <dmatlack@google.com>
-Date: Wed, 29 Oct 2025 14:13:20 -0700
-X-Gm-Features: AWmQ_bnOObc6BWBaYvrzlZGN0Gzs0AQqmxe0DWfFCoP14pNjDRBJcsWZpskW2fo
-Message-ID: <CALzav=frK48c1=nsbVJ4EvqqOqr33pUArP4G17su0hxOYveALw@mail.gmail.com>
+ <CA+CK2bBVSX26TKwgLkXCDop5u3e9McH3sQMascT47ZwwrwraOw@mail.gmail.com> <CALzav=frK48c1=nsbVJ4EvqqOqr33pUArP4G17su0hxOYveALw@mail.gmail.com>
+In-Reply-To: <CALzav=frK48c1=nsbVJ4EvqqOqr33pUArP4G17su0hxOYveALw@mail.gmail.com>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Wed, 29 Oct 2025 17:17:35 -0400
+X-Gm-Features: AWmQ_bn6VS1Xxu1QPUMyT4niSsaGvQIJZtr8QMKM1ksd66d84DVSx7b_KujGEQk
+Message-ID: <CA+CK2bDUDryK6xZt5u-cMv+eR8ZWC82Phu9F2fS8DMnac5ritg@mail.gmail.com>
 Subject: Re: [PATCH v4 14/30] liveupdate: luo_session: Add ioctls for file
  preservation and state management
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
+To: David Matlack <dmatlack@google.com>
 Cc: Pratyush Yadav <pratyush@kernel.org>, jasonmiu@google.com, graf@amazon.com, 
 	changyuanl@google.com, rppt@kernel.org, rientjes@google.com, corbet@lwn.net, 
 	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, 
@@ -114,27 +113,35 @@ Cc: Pratyush Yadav <pratyush@kernel.org>, jasonmiu@google.com, graf@amazon.com,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 29, 2025 at 1:13=E2=80=AFPM Pasha Tatashin
-<pasha.tatashin@soleen.com> wrote:
+On Wed, Oct 29, 2025 at 5:13=E2=80=AFPM David Matlack <dmatlack@google.com>=
+ wrote:
+>
+> On Wed, Oct 29, 2025 at 1:13=E2=80=AFPM Pasha Tatashin
+> <pasha.tatashin@soleen.com> wrote:
+>
+> > Simplified uAPI Proposal
+> > The simplest uAPI would look like this:
+> > IOCTLs on /dev/liveupdate (to create and retrieve session FDs):
+> > LIVEUPDATE_IOCTL_CREATE_SESSION
+> > LIVEUPDATE_IOCTL_RETRIEVE_SESSION
+>
+> > - If everything succeeds, the session becomes an empty "outgoing"
+> > session. It can then be closed and discarded or reused for the next
+> > live update by preserving new FDs into it.
+>
+> I think it would be useful to cleanly separate incoming and outgoing
+> sessions. The only way to get an outgoing session is with
+> LIVEUPDATE_IOCTL_CREATE_SESSION. Incoming sessions can be retrieved
+> with LIVEUPDATE_IOCTL_RETRIEVE_SESSION.
+>
+> It is fine and expected for incoming and outgoing sessions to have the
+> same name. But they are different sessions. This way, the kernel can
+> easily keep track of incoming and outgoing sessions separately, and
+> there is not need to "transition" and session from incoming to
+> outgoing.
 
-> Simplified uAPI Proposal
-> The simplest uAPI would look like this:
-> IOCTLs on /dev/liveupdate (to create and retrieve session FDs):
-> LIVEUPDATE_IOCTL_CREATE_SESSION
-> LIVEUPDATE_IOCTL_RETRIEVE_SESSION
+Yes, good idea, I was thinking of recycling finished and empty
+sessions, but it will only add complications.
 
-> - If everything succeeds, the session becomes an empty "outgoing"
-> session. It can then be closed and discarded or reused for the next
-> live update by preserving new FDs into it.
-
-I think it would be useful to cleanly separate incoming and outgoing
-sessions. The only way to get an outgoing session is with
-LIVEUPDATE_IOCTL_CREATE_SESSION. Incoming sessions can be retrieved
-with LIVEUPDATE_IOCTL_RETRIEVE_SESSION.
-
-It is fine and expected for incoming and outgoing sessions to have the
-same name. But they are different sessions. This way, the kernel can
-easily keep track of incoming and outgoing sessions separately, and
-there is not need to "transition" and session from incoming to
-outgoing.
+Pasha
 
