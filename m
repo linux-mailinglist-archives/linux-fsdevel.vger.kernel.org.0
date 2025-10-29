@@ -1,150 +1,170 @@
-Return-Path: <linux-fsdevel+bounces-66334-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66345-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05F46C1C727
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 18:30:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3F13C1C935
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 18:50:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10369664DCC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 15:59:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8DF3622F26
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 17:10:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50F2733A03A;
-	Wed, 29 Oct 2025 15:58:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F7BF34BA33;
+	Wed, 29 Oct 2025 17:10:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dqQJSL0c"
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="PuKPezly";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="YDVmwxA5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from flow-b3-smtp.messagingengine.com (flow-b3-smtp.messagingengine.com [202.12.124.138])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39F45311964
-	for <linux-fsdevel@vger.kernel.org>; Wed, 29 Oct 2025 15:58:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9ABE481DD;
+	Wed, 29 Oct 2025 17:10:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761753536; cv=none; b=F3xZAB4WUwinMcic1rKToz0eFlGOG0eeQxEdwawdeIbZIXMhQIL6BGj3vtJeWr8dLPnHMvObKK6POREqu/hB0THfh+G6tS/QNaUFTDd3mTx9yiCJNR23auNbvhlh3sC68XIN1psVGWOpNLEfc8G+LwBn21d4HB7IuG7qRC/r9b8=
+	t=1761757855; cv=none; b=G/A15CYhlWTzN+hVnpdBC2H9WAQmnonjS2n8gTK/nxzO+MEOPpfgeDvOHjlNO4s81nWp+oughGVbefNUEoPFBAHWTz+PzZfixFZnvZtjJOTZOOKR6d5k5sYvN6GyBsuM3rV3nSVz8UHEHAL4D+FlouSrbjU14wUp6bv4HFsn41g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761753536; c=relaxed/simple;
-	bh=tPzwOV7GvDpR5Xi6HBtXCUHPQBBKe8WKMdp/yKCjpiU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mB/Q0W2cUtUMAEKOjuFQnhsqH6z+U4siRgjVPTjgUw4ID4MDuYOgtG1R3bTfZ8m2EWKpW1OpqMq0NDMTIEJIfuAe4Bj+YGa309Xo5GBnnQ4k/Q/es7gzx6ht4tHsdj2hSTmo9Ax/8oUNBEtlZVeZcyBJNYiBE7/sAWV4gtzD8F4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dqQJSL0c; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-7a28c7e3577so76050b3a.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Oct 2025 08:58:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761753534; x=1762358334; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=MwxrExpiKXBKK+ITlQ6foefTYgM8fnPgsDyzvsZJuN8=;
-        b=dqQJSL0cde3zct34IDioKcpml5cSDJiX5DBjAXwMS5+O10h9VSDCTp231V+o50yaHa
-         /pEAmUzsxxh0yxU+NO+wQ3YMejdtnq+unVXWVITg+SnfBTmen5K1jQo1W4MMi4xda/+f
-         U70SeIvuGan9MrlgMezrcsrJm4XJ1mVPtSrP74v4SfvvJi+dBeLA0Df7kNbKD5MHrOYk
-         Tg9f0qZEzUsFJmrzc5WO7JJ9iBqwgRt0+nffaBMkQP2+CPCzyDdzH5d6jf8NY1csfH8z
-         nZOVk1Gy8393qfno8c+cUaa0d+LWBpMMOKnw2PWD+LIlcNz09xwfhvrrpAXrjvqMzsOf
-         nR+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761753534; x=1762358334;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MwxrExpiKXBKK+ITlQ6foefTYgM8fnPgsDyzvsZJuN8=;
-        b=msVJT10tKlA+USDm8ifPGob2V+K9NTLOyEt4eUcYgMBNaagfmiW++GVqnPVDTSu5J/
-         kAQvA8tvaamhIq9QV6ONtsAzliVBCljGmcfbdk5ew3Ej3Q7XCIj3YhLzGXWiKIctEgkK
-         7ukYAe/QAbdXuqS75s+cQXUYQXTt4IIMRPr80RXGQOlw97inmlwXC2kI0W6N3CurmW5G
-         mpaCnsk3GtuOE11MfPbbUQBj5E+9ysBeKRLiy/+kPiVIMy5SxXQZFMkzHREotsXS0ieC
-         dQUCFvud6h0siiGLLzkKcwiyM2S8ZY8uFBbjwwCbydJYbcSvftTV1rrWa4qBXDC4HKAK
-         Vv3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVHSiu9dLaddRBDzzbKlx8RSNl1683LtSdR/isZkgbBWOGdigWDYuYRb2mOZ9L51OSCCSZCx+GWEPzXc/XY@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHNa8Kqk1Cyn94OouaTSNcZo/bYXRhv6oQstIOVJ5q9zGzvqcA
-	OwvmAimT007C9xNBgDbJDbgX8fmSF7elZ4QsepQGtGtTZ9bma241TwX0
-X-Gm-Gg: ASbGnctgo0/Jq3kuDRp+DUzfiVPtDTTaIrjbaoAmbE2iieHA80l6wfoSo7ChL5fMI0T
-	+5YOlnHkwo5AwCgb4U1wniUY4Npi1kx4aU8ktNkHXaTQgartoVQG2U5T9RJi/zgnFmPfs7SAldd
-	8hb++XgYGAGDRoBKB84XYLeYmUmvbEKMZjNmnMcfeiMCoBYHMi2q2QcKpoQ+j1VhLStbkEZUHEw
-	FDuOjrwV+a+SrnmJp5KRu1NGz/Yec/LsN2omKF5wyYlVvIn1lw0HcedI87bhEm7+DMsBsfdDxj5
-	nX4u4DiovS205/wt47kjKp3cbY21bTs29x7zGws5pp95DNsw1nA1sm64kOUEq1vRyjJW4HGjEy6
-	cvvY6io8q1HWU/thuSH4LWFJnK7vBkt4KiDi8GkLbdHPmSAK3th4Q4F7yXaDFDeedU6YH5tuMP3
-	kAjGqzLUAG3Ucf3fPchDEEiGB2PH4XFtTDhVuNUfk0MGj+OFrYPQYG1GojaKUhtyImWUgg5Q9Mg
-	t/yu4drg9Yp2qURqn5YQk++tr5t7KtB70Gdxp9MyzRL/v6KmECyZ/sUe3KPcW3gq1FA
-X-Google-Smtp-Source: AGHT+IEDUOVYU4FbtZmNjoIisTx8ifKNOJtO/21KsW1AgRzDGmjWuA4/mf+B5T+NZ/lyYpe4qwFN0Q==
-X-Received: by 2002:a05:6a00:7589:b0:7a5:396d:76af with SMTP id d2e1a72fcca58-7a5396d7d19mr2988818b3a.18.1761753534501;
-        Wed, 29 Oct 2025 08:58:54 -0700 (PDT)
-Received: from ?IPV6:2a00:79e0:2e7c:8:8b41:6bc3:2074:828c? ([2a00:79e0:2e7c:8:8b41:6bc3:2074:828c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a414069164sm15874564b3a.45.2025.10.29.08.58.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Oct 2025 08:58:54 -0700 (PDT)
-Message-ID: <ea07dede-5baa-41e5-ad5d-a9f6a90ac6e8@gmail.com>
-Date: Wed, 29 Oct 2025 08:58:52 -0700
+	s=arc-20240116; t=1761757855; c=relaxed/simple;
+	bh=BJkfjQWAVBhXj+eVlG7sIDPUXrM4mtu11fTyqizrGYI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VPVrw4ue+UgqYXscCD37kmIMAfcnZYcAgkhagrzewzHjv7BUTjKQi9F7IHpg/yCwvq1Y+Hu7SZDZOa/WccVCSlFzDqtG7pZDNWYvTPNzOnNo5GrFPvAJdeeHe7sVd5VtF+GHZlBioeSvppEnLwmvcX8MpfQLo2/Pnvo4uDbVPvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=PuKPezly; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=YDVmwxA5; arc=none smtp.client-ip=202.12.124.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
+	by mailflow.stl.internal (Postfix) with ESMTP id A0A32130037A;
+	Wed, 29 Oct 2025 13:10:50 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-06.internal (MEProxy); Wed, 29 Oct 2025 13:10:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm1; t=1761757850; x=
+	1761765050; bh=60bBq5IIwMjb0a7pvkC94ERZqp+DD7+pnKJsuAq/LCw=; b=P
+	uKPezlySAYOoFeK12sfyCSmkoWdrEnbnG0g5S2Coyv5LMdvXgvsDCmM44I8CSTSp
+	9bFIK9UGItinH5OvGS9KsSllF5qYIFi3+aqk7R+HL2BHOwR+eRg5dS2IW64tj7Ou
+	e3DH94kl5xQggG+Bl7kK9oqFcTTDmIPoMFGd+FtjorzURIBmALPKiICL+dg0HQJI
+	3khE4DDAQjGrl3USb9bUaHRz7Y2gHOHORDB1PukkmeD0laF8n6kUr1nGDOQrc5yi
+	GBYZteNjZs5dXC9p6CJAaxhZ5fL8Z3xNUDaBq1dHqUwCt4wgEzruOznaIthwFxDy
+	I/dUsvhb96fneKpJasiBQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1761757850; x=1761765050; bh=60bBq5IIwMjb0a7pvkC94ERZqp+DD7+pnKJ
+	suAq/LCw=; b=YDVmwxA5juNSdkfC6gTj5fXjErDO2LwaC/xFaMBOJtQhNKaUOtW
+	sTT4HSUES4Nyi3qSdkJV4wMFr6PMK2MQbJqaylbA+jw0te64A8X7T321gnAr2hT/
+	r/kD1ZcVN0LHIA4u+ZB+ytk+kPgi4r954pS4pxYvCjMn5YBqwr8fIW4IyYRet2A9
+	Xc+XjcumRU9wvw4/S8rGmeWWjXrNTLL5OGkF18/o5Ee8i055TKIyasBb0T9rmfAl
+	mXEO17hWtFlemZC6lNVZoOortg6T9zgN44ydznaYxy8LJFWneyhl0NHJ4WG5QhJd
+	1VS2m0QSp8fgtN8uK81a10EOXECflnI+rrA==
+X-ME-Sender: <xms:mEoCacEUnMQhiExXjUB4pIZ--Bn-4wv7TJ4IsSQEquj7XCzc6Z7zvg>
+    <xme:mEoCadBSp2M4kTdv8_9pMESGiq45XxTWBumC8KMJptp30-9PyStDYD9zBP0fIAoRU
+    edc2Ko_R2QSagUSjRBdYLyaQYEnk9rvBVZxDeZ9IutLgkcBcoLsSqk>
+X-ME-Received: <xmr:mEoCaYUyE90O4bXlKsfln2cY1aMntSGLBBELjtTLeluUD_jkutxybVmRM7mvHQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduieegvdelucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvdenucfhrhhomhepmfhirhihlhcu
+    ufhhuhhtshgvmhgruhcuoehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgeqnecugg
+    ftrfgrthhtvghrnhepjeehueefuddvgfejkeeivdejvdegjefgfeeiteevfffhtddvtdel
+    udfhfeefffdunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
+    homhepkhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvpdhnsggprhgtphhtthhopeeg
+    gedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepughjfihonhhgsehkvghrnhgvlh
+    drohhrghdprhgtphhtthhopehhuhhghhgusehgohhoghhlvgdrtghomhdprhgtphhtthho
+    pegrkhhpmheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohepug
+    grvhhiugesrhgvughhrghtrdgtohhmpdhrtghpthhtohepfihilhhlhiesihhnfhhrrggu
+    vggrugdrohhrghdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrgh
+    druhhkpdhrtghpthhtohepsghrrghunhgvrheskhgvrhhnvghlrdhorhhgpdhrtghpthht
+    oheplhhorhgvnhiiohdrshhtohgrkhgvshesohhrrggtlhgvrdgtohhmpdhrtghpthhtoh
+    eplhhirghmrdhhohiflhgvthhtsehorhgrtghlvgdrtghomh
+X-ME-Proxy: <xmx:mEoCacyF1RHVcLYRyFT4ZQDb1NNgXDOsB6KNvUHlEmfjAXEn2bWj3w>
+    <xmx:mEoCaV6pztrEFaqdCJZva8ahBL9HhMEY7MOrHpN-4vGFCgfrnjolqg>
+    <xmx:mEoCaWZGqLI9Hf_Fglz7txSaT3RQ5YDkSAoAxCEdp-l3xFHBWbO7TQ>
+    <xmx:mEoCaTN4Pel5vb9e79uW_KKdyBjAMTX85I0kv0O6VEZmyJtTVseF2Q>
+    <xmx:mkoCaYAoznBpCEKhVJp9uKe260T7Urz4KZ0Z3cNh6JDnOlIH9fALLPZg>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 29 Oct 2025 13:10:47 -0400 (EDT)
+Date: Wed, 29 Oct 2025 17:10:45 +0000
+From: Kiryl Shutsemau <kirill@shutemov.name>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Hugh Dickins <hughd@google.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, 
+	Matthew Wilcox <willy@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
+	Michal Hocko <mhocko@suse.com>, Rik van Riel <riel@surriel.com>, 
+	Harry Yoo <harry.yoo@oracle.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Shakeel Butt <shakeel.butt@linux.dev>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Dave Chinner <david@fromorbit.com>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv2 2/2] mm/truncate: Unmap large folio on split failure
+Message-ID: <iqzgqvkin6istylyqqias7bwulhh2s6l6aqepssk6ptfu5dddy@q2rfk3wewcbz>
+References: <20251023093251.54146-1-kirill@shutemov.name>
+ <20251023093251.54146-3-kirill@shutemov.name>
+ <9c7ae4c5-cc63-f11f-c5b0-5d539df153e1@google.com>
+ <qte6322kbhn3xydiukyitgn73lbepaqlhqq43mdwhyycgdeuho@5b6wty5mcclt>
+ <eaa8023f-f3e1-239d-a020-52f50df873e7@google.com>
+ <xsjoxeleyacvqxmxmrw6dxzvo7ilfo7uuvlyli5kohfy4ay6uh@hsrz5jtkgpzp>
+ <20251029151947.GM6174@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: fall back from direct to buffered I/O when stable writes are
- required
-To: Christoph Hellwig <hch@lst.de>, Carlos Maiolino <cem@kernel.org>,
- Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, "Martin K. Petersen"
- <martin.petersen@oracle.com>, linux-kernel@vger.kernel.org,
- linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-raid@vger.kernel.org, linux-block@vger.kernel.org
-References: <20251029071537.1127397-1-hch@lst.de>
-Content-Language: en-US
-From: Bart Van Assche <bart.vanassche@gmail.com>
-In-Reply-To: <20251029071537.1127397-1-hch@lst.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251029151947.GM6174@frogsfrogsfrogs>
 
-On 10/29/25 12:15 AM, Christoph Hellwig wrote:
-> we've had a long standing issue that direct I/O to and from devices that
-> require stable writes can corrupt data because the user memory can be
-> modified while in flight.  This series tries to address this by falling
-> back to uncached buffered I/O.  Given that this requires an extra copy it
-> is usually going to be a slow down, especially for very high bandwith
-> use cases, so I'm not exactly happy about.
+On Wed, Oct 29, 2025 at 08:19:47AM -0700, Darrick J. Wong wrote:
+> On Wed, Oct 29, 2025 at 10:21:53AM +0000, Kiryl Shutsemau wrote:
+> > On Wed, Oct 29, 2025 at 02:12:48AM -0700, Hugh Dickins wrote:
+> > > On Mon, 27 Oct 2025, Kiryl Shutsemau wrote:
+> > > > On Mon, Oct 27, 2025 at 03:10:29AM -0700, Hugh Dickins wrote:
+> > > ...
+> > > > 
+> > > > > Aside from shmem/tmpfs, it does seem to me that this patch is
+> > > > > doing more work than it needs to (but how many lines of source
+> > > > > do we want to add to avoid doing work in the failed split case?):
+> > > > > 
+> > > > > The intent is to enable SIGBUS beyond EOF: but the changes are
+> > > > > being applied unnecessarily to hole-punch in addition to truncation.
+> > > > 
+> > > > I am not sure much it should apply to hole-punch. Filesystem folks talk
+> > > > about writing to a folio beyond round_up(i_size, PAGE_SIZE) being
+> > > > problematic for correctness. I have no clue if the same applies to
+> > > > writing to hole-punched parts of the folio.
+> > > > 
+> > > > Dave, any comments?
+> > > > 
+> > > > Hm. But if it is problematic it has be caught on fault. We don't do
+> > > > this. It will be silently mapped.
+> > > 
+> > > There are strict rules about what happens beyond i_size, hence this
+> > > patch.  But hole-punch has no persistent "i_size" to define it, and
+> > > silently remapping in a fresh zeroed page is the correct behaviour.
+> > 
+> > I missed that we seems to be issuing vm_ops->page_mkwrite() on remaping
+> > the page, so it is not completely silent for filesystem and can do its
+> > thing to re-allocate metadata (or whatever) after hole-punch.
+> > 
+> > So, I see unmap on punch-hole being justified.
 > 
-> I suspect we need a way to opt out of this for applications that know
-> what they are doing, and I can think of a few ways to do that:
-> 
-> 1a) Allow a mount option to override the behavior
-> 
-> 	This allows the sysadmin to get back to the previous state.
-> 	This is fairly easy to implement, but the scope might be to wide.
-> 
-> 1b) Sysfs attribute
-> 
-> 	Same as above.  Slightly easier to modify, but a more unusual
-> 	interface.
-> 
-> 2) Have a per-inode attribute
-> 
-> 	Allows to set it on a specific file.  Would require an on-disk
-> 	format change for the usual attr options.
-> 
-> 3) Have a fcntl or similar to allow an application to override it
-> 
-> 	Fine granularity.  Requires application change.  We might not
-> 	allow any application to force this as it could be used to inject
-> 	corruption.
-> 
-> In other words, they are all kinda horrible.
+> Most hole punching implementations in filesystems will take i_rwsem and
+> mmap_invalidate lock, flush the range to disk and unmap the pagecache
+> for all the fsblocks around that range, and only then update the file
+> space mappings.  If the unmap fails because a PMD couldn't be split,
+> then we'll just return that error to userspace and they can decide what
+> to do when fallocate() fails.
 
-Hi Christoph,
+Unmap does not fail and PMD can be split at any time. But split of large
+folios can fail if there's an external pin on it.
 
-Has the opposite been considered: only fall back to buffered I/O for 
-buggy software that modifies direct I/O buffers before I/O has
-completed?
-
-Regarding selecting the direct I/O behavior for a process, how about
-introducing a new prctl() flag and introducing a new command-line
-utility that follows the style of ionice and sets the new flag before
-any code runs in the started process?
-
-Thanks,
-
-Bart.
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
