@@ -1,56 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-66179-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66180-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE218C185D1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 06:56:19 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74155C185E9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 07:02:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 48B9D35110B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 05:56:19 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B0D7B4F1A0E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 06:01:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDE112F7466;
-	Wed, 29 Oct 2025 05:56:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 606742FB962;
+	Wed, 29 Oct 2025 06:01:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CWhga3VV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CiNLTNpq"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25D3A1DC9B5
-	for <linux-fsdevel@vger.kernel.org>; Wed, 29 Oct 2025 05:56:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB7F02E975A;
+	Wed, 29 Oct 2025 06:01:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761717374; cv=none; b=EHP1PWPlrFigHxYMrhl56QQqKkU9MMNcrZVnzl7axEMHpNzbyJ5Fwo8YKwapYa6UrmyjdBY8EjBcDyAqSHG+n0uFM8o7KwZ+33B0qIQbUOs7uUsDGsMIHdZw6X1AdAnMYAG8uoMuGQUhxegNyP5mmafGrKMWEOuoQ4C/nR9cujM=
+	t=1761717670; cv=none; b=HFXdC3vcdToJlHSrTgsLn02RvV9LQjGZvBRtbZ+A2yG0DBbv1PxivyL3xP/xof2ny+4NBiAW+YxvF/sC2NawMz2gqXZvlDVqB2H4qq3qQGq8q3E5X31WuVPHSoxvtiJYxbHCPXjf49aAl3AbRYVm23wD1PWQar8JhiAiZ3VcKXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761717374; c=relaxed/simple;
-	bh=ulhF2ABZf2nzezUVPBRL+Mb3aNuLGrCdxIbaTHpMlKg=;
+	s=arc-20240116; t=1761717670; c=relaxed/simple;
+	bh=ZI/8Bq9jwlWaFkJKy1t3Vn35o5/zoty1As8rh0A7Mgk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JMNqBsN57WNGBDtgjyUUDVild55SJEeHCqX2HDITCPonLT+pwb87noq987ilQkLv6g8kz397hdDVSXd2XIWABri3ARSHgnwj8SSOsyQnZO3kwnJADMQXZDKhMUfkyXTbwi9Zf4bqT50+SOCf5/8Q92DfzWS8DystHuri9PvU4MY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CWhga3VV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6103C4CEF7;
-	Wed, 29 Oct 2025 05:56:13 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=n7wfvVe5tTPDyO73/XXGPq3c4F6zxEZuzyDmWneXX40oQEbEwAL2Vafnzn4S62NkF7FReJimd+Kk88vw/LHfm801w+Wo9Vytr3FiT7Qq/GJ3Hz18NM7uGgvjDySvMeH19QiUM6D/k1GcJR6vi4HGQLCMMf8+VMOMG5T/33NRpeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CiNLTNpq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06EFFC4CEF7;
+	Wed, 29 Oct 2025 06:01:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761717373;
-	bh=ulhF2ABZf2nzezUVPBRL+Mb3aNuLGrCdxIbaTHpMlKg=;
+	s=k20201202; t=1761717669;
+	bh=ZI/8Bq9jwlWaFkJKy1t3Vn35o5/zoty1As8rh0A7Mgk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CWhga3VV2PqUDyMQWjrCKAj6tmPGFkaQ30AT/Y9S2Xo3Mrol6X2PsnG0o9TXg4CzP
-	 j4Lki3cVXMAz4CjubFCcKFXRj3XHVsZk6UIZYG7MFohu6xaV1KX84Pz76ssS0qys7i
-	 uLjGx8YgIYsNEyPpHIOeZXaVr0gmgYuoqj0lpmG5l/14Hr5oWeJTA/D/MK66eGYDr4
-	 spql79X6YapXB004HYn8r5mXTbUjvA5xMbA4V4mNka9w5mypOtqTLtYhGFivPp3D+G
-	 W6AAZ7Wf2UQnVYsXbgoNgMNWEyWQq/aY/OONc5+qZ+xVeKvCJtOgdkgXd0N0nmHO5+
-	 ZP7ewCPHFAshQ==
-Date: Tue, 28 Oct 2025 22:56:13 -0700
+	b=CiNLTNpqiiR16vTDiciK1fs6YkVHx5vrRoPgsswMnF0FNi8Gq/628PIELz5beHsux
+	 Ye1mTu8zj9AVydqL/0+J33J+gc7Kf+IQSMEAXXDVGwceV9zYxiHtODtIQ6UL58cNKr
+	 88rP/h9Bb8vTnzzXOJjqwLtIFCKOro+deHKfcmtDZ5Smbr+t9oRaY9iYPr7C80/Mz0
+	 xtJXJsNo5cQJfRU+AQawOKb3rmm1HeAovFOK2RWeP0rcRVxeVAqy9lWpgoUUFbwFou
+	 Nw3cEEwjtW0GhCOZir3VmxvEvXRifXX6+F+MLPXfgytWxYdp+r+706D4ginRg4lXM+
+	 dNZooM5E1dz0A==
+Date: Tue, 28 Oct 2025 23:01:08 -0700
 From: "Darrick J. Wong" <djwong@kernel.org>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: brauner@kernel.org, bfoster@redhat.com, hch@infradead.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] iomap: rename bytes_pending/bytes_accounted to
- bytes_submitted/bytes_not_submitted
-Message-ID: <20251029055613.GQ4015566@frogsfrogsfrogs>
-References: <20251028181133.1285219-1-joannelkoong@gmail.com>
- <20251028181133.1285219-2-joannelkoong@gmail.com>
+To: Brajesh Patil <brajeshpatil11@gmail.com>
+Cc: miklos@szeredi.hu, stefanha@redhat.com, vgoyal@redhat.com,
+	eperezma@redhat.com, virtualization@lists.linux.dev,
+	virtio-fs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
+	linux-kernel-mentees@lists.linux.dev, david.hunter.linux@gmail.com,
+	khalid@kernel.org
+Subject: Re: [PATCH] fuse: virtio_fs: add checks for FUSE protocol compliance
+Message-ID: <20251029060108.GR4015566@frogsfrogsfrogs>
+References: <20251028200311.40372-1-brajeshpatil11@gmail.com>
+ <20251028200755.GJ6174@frogsfrogsfrogs>
+ <c7zugpb4pzquasx67zypnuk2irxvb7cp5puwuw3rncy6gb5wdn@qigavsewium3>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -59,161 +63,96 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251028181133.1285219-2-joannelkoong@gmail.com>
+In-Reply-To: <c7zugpb4pzquasx67zypnuk2irxvb7cp5puwuw3rncy6gb5wdn@qigavsewium3>
 
-On Tue, Oct 28, 2025 at 11:11:32AM -0700, Joanne Koong wrote:
-> As mentioned by Brian in [1], the naming "bytes_pending" and
-> "bytes_accounting" may be confusing and could be better named. Rename
-> this to "bytes_submitted" and "bytes_not_submitted" to make it more
-> clear that these are bytes we passed to the IO helper to read in.
+On Wed, Oct 29, 2025 at 08:58:30AM +0530, Brajesh Patil wrote:
+> On Tue, Oct 28, 2025 at 01:07:55PM -0700, Darrick J. Wong wrote:
+> > On Wed, Oct 29, 2025 at 01:33:11AM +0530, Brajesh Patil wrote:
+> > > Add validation in virtio-fs to ensure the server follows the FUSE
+> > > protocol for response headers, addressing the existing TODO for
+> > > verifying protocol compliance.
+> > > 
+> > > Add checks for fuse_out_header to verify:
+> > >  - oh->unique matches req->in.h.unique
+> > >  - FUSE_INT_REQ_BIT is not set
+> > >  - error codes are valid
+> > >  - oh->len does not exceed the expected size
+> > > 
+> > > Signed-off-by: Brajesh Patil <brajeshpatil11@gmail.com>
+> > > ---
+> > >  fs/fuse/virtio_fs.c | 30 +++++++++++++++++++++++++-----
+> > >  1 file changed, 25 insertions(+), 5 deletions(-)
+> > > 
+> > > diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
+> > > index 6bc7c97b017d..52e8338bf436 100644
+> > > --- a/fs/fuse/virtio_fs.c
+> > > +++ b/fs/fuse/virtio_fs.c
+> > > @@ -764,14 +764,34 @@ static void virtio_fs_request_complete(struct fuse_req *req,
+> > >  {
+> > >  	struct fuse_args *args;
+> > >  	struct fuse_args_pages *ap;
+> > > -	unsigned int len, i, thislen;
+> > > +	struct fuse_out_header *oh;
+> > > +	unsigned int len, i, thislen, expected_len = 0;
+> > >  	struct folio *folio;
+> > >  
+> > > -	/*
+> > > -	 * TODO verify that server properly follows FUSE protocol
+> > > -	 * (oh.uniq, oh.len)
+> > > -	 */
+> > > +	oh = &req->out.h;
+> > > +
+> > > +	if (oh->unique == 0)
+> > > +		pr_warn_once("notify through fuse-virtio-fs not supported");
+> > > +
+> > > +	if ((oh->unique & ~FUSE_INT_REQ_BIT) != req->in.h.unique)
+> > > +		pr_warn_ratelimited("virtio-fs: unique mismatch, expected: %llu got %llu\n",
+> > > +				    req->in.h.unique, oh->unique & ~FUSE_INT_REQ_BIT);
+> > 
+> > Er... shouldn't these be rejecting the response somehow?  Instead of
+> > warning that something's amiss but continuing with known bad data?
+> > 
+> > --D
+> >
 > 
-> [1] https://lore.kernel.org/linux-fsdevel/aPuz4Uop66-jRpN-@bfoster/
+> Right, continuing here is unsafe.
 > 
-> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> I plan to update the code so that in case of any header validation
+> failure (e.g. unique mismatch, invalid error, length mismatch), it
+> should skip copying data and jump directly to the section that marks
+> request as complete
+> 
+> Does this seem like a feasible approach?
 
-Looks fine to me, though it's gonna be hard for me to figure out what's
-going on in patch 2 because first I have to go find this 6.19 iomap
-branch that everyone's talking about...
-
-Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
+Yeah, I think you can just set req->out.h.error to some errno (EIO?) and
+jump to fuse_request_end, sort of like what fuse_dev_do_write sort of
+does.  I think that sends the errno back to whatever code initiated the
+request.  I don't know if virtiofs should be throwing an error back to
+the server?
 
 --D
 
-> ---
->  fs/iomap/buffered-io.c | 38 ++++++++++++++++++++------------------
->  1 file changed, 20 insertions(+), 18 deletions(-)
-> 
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index 72196e5021b1..4c0d66612a67 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -364,16 +364,16 @@ static void iomap_read_init(struct folio *folio)
->  	}
->  }
->  
-> -static void iomap_read_end(struct folio *folio, size_t bytes_pending)
-> +static void iomap_read_end(struct folio *folio, size_t bytes_submitted)
->  {
->  	struct iomap_folio_state *ifs;
->  
->  	/*
-> -	 * If there are no bytes pending, this means we are responsible for
-> +	 * If there are no bytes submitted, this means we are responsible for
->  	 * unlocking the folio here, since no IO helper has taken ownership of
->  	 * it.
->  	 */
-> -	if (!bytes_pending) {
-> +	if (!bytes_submitted) {
->  		folio_unlock(folio);
->  		return;
->  	}
-> @@ -381,10 +381,11 @@ static void iomap_read_end(struct folio *folio, size_t bytes_pending)
->  	ifs = folio->private;
->  	if (ifs) {
->  		bool end_read, uptodate;
-> -		size_t bytes_accounted = folio_size(folio) - bytes_pending;
-> +		size_t bytes_not_submitted = folio_size(folio) -
-> +				bytes_submitted;
->  
->  		spin_lock_irq(&ifs->state_lock);
-> -		ifs->read_bytes_pending -= bytes_accounted;
-> +		ifs->read_bytes_pending -= bytes_not_submitted;
->  		/*
->  		 * If !ifs->read_bytes_pending, this means all pending reads
->  		 * by the IO helper have already completed, which means we need
-> @@ -401,7 +402,7 @@ static void iomap_read_end(struct folio *folio, size_t bytes_pending)
->  }
->  
->  static int iomap_read_folio_iter(struct iomap_iter *iter,
-> -		struct iomap_read_folio_ctx *ctx, size_t *bytes_pending)
-> +		struct iomap_read_folio_ctx *ctx, size_t *bytes_submitted)
->  {
->  	const struct iomap *iomap = &iter->iomap;
->  	loff_t pos = iter->pos;
-> @@ -442,9 +443,9 @@ static int iomap_read_folio_iter(struct iomap_iter *iter,
->  			folio_zero_range(folio, poff, plen);
->  			iomap_set_range_uptodate(folio, poff, plen);
->  		} else {
-> -			if (!*bytes_pending)
-> +			if (!*bytes_submitted)
->  				iomap_read_init(folio);
-> -			*bytes_pending += plen;
-> +			*bytes_submitted += plen;
->  			ret = ctx->ops->read_folio_range(iter, ctx, plen);
->  			if (ret)
->  				return ret;
-> @@ -468,39 +469,40 @@ void iomap_read_folio(const struct iomap_ops *ops,
->  		.pos		= folio_pos(folio),
->  		.len		= folio_size(folio),
->  	};
-> -	size_t bytes_pending = 0;
-> +	size_t bytes_submitted = 0;
->  	int ret;
->  
->  	trace_iomap_readpage(iter.inode, 1);
->  
->  	while ((ret = iomap_iter(&iter, ops)) > 0)
-> -		iter.status = iomap_read_folio_iter(&iter, ctx, &bytes_pending);
-> +		iter.status = iomap_read_folio_iter(&iter, ctx,
-> +				&bytes_submitted);
->  
->  	if (ctx->ops->submit_read)
->  		ctx->ops->submit_read(ctx);
->  
-> -	iomap_read_end(folio, bytes_pending);
-> +	iomap_read_end(folio, bytes_submitted);
->  }
->  EXPORT_SYMBOL_GPL(iomap_read_folio);
->  
->  static int iomap_readahead_iter(struct iomap_iter *iter,
-> -		struct iomap_read_folio_ctx *ctx, size_t *cur_bytes_pending)
-> +		struct iomap_read_folio_ctx *ctx, size_t *cur_bytes_submitted)
->  {
->  	int ret;
->  
->  	while (iomap_length(iter)) {
->  		if (ctx->cur_folio &&
->  		    offset_in_folio(ctx->cur_folio, iter->pos) == 0) {
-> -			iomap_read_end(ctx->cur_folio, *cur_bytes_pending);
-> +			iomap_read_end(ctx->cur_folio, *cur_bytes_submitted);
->  			ctx->cur_folio = NULL;
->  		}
->  		if (!ctx->cur_folio) {
->  			ctx->cur_folio = readahead_folio(ctx->rac);
->  			if (WARN_ON_ONCE(!ctx->cur_folio))
->  				return -EINVAL;
-> -			*cur_bytes_pending = 0;
-> +			*cur_bytes_submitted = 0;
->  		}
-> -		ret = iomap_read_folio_iter(iter, ctx, cur_bytes_pending);
-> +		ret = iomap_read_folio_iter(iter, ctx, cur_bytes_submitted);
->  		if (ret)
->  			return ret;
->  	}
-> @@ -532,19 +534,19 @@ void iomap_readahead(const struct iomap_ops *ops,
->  		.pos	= readahead_pos(rac),
->  		.len	= readahead_length(rac),
->  	};
-> -	size_t cur_bytes_pending;
-> +	size_t cur_bytes_submitted;
->  
->  	trace_iomap_readahead(rac->mapping->host, readahead_count(rac));
->  
->  	while (iomap_iter(&iter, ops) > 0)
->  		iter.status = iomap_readahead_iter(&iter, ctx,
-> -					&cur_bytes_pending);
-> +					&cur_bytes_submitted);
->  
->  	if (ctx->ops->submit_read)
->  		ctx->ops->submit_read(ctx);
->  
->  	if (ctx->cur_folio)
-> -		iomap_read_end(ctx->cur_folio, cur_bytes_pending);
-> +		iomap_read_end(ctx->cur_folio, cur_bytes_submitted);
->  }
->  EXPORT_SYMBOL_GPL(iomap_readahead);
->  
-> -- 
-> 2.47.3
-> 
+> > > +
+> > > +	WARN_ON_ONCE(oh->unique & FUSE_INT_REQ_BIT);
+> > > +
+> > > +	if (oh->error <= -ERESTARTSYS || oh->error > 0)
+> > > +		pr_warn_ratelimited("virtio-fs: invalid error code from server: %d\n",
+> > > +				    oh->error);
+> > > +
+> > >  	args = req->args;
+> > > +
+> > > +	for (i = 0; i < args->out_numargs; i++)
+> > > +		expected_len += args->out_args[i].size;
+> > > +
+> > > +	if (oh->len > sizeof(*oh) + expected_len)
+> > > +		pr_warn("FUSE reply too long! got=%u expected<=%u\n",
+> > > +			oh->len, (unsigned int)(sizeof(*oh) + expected_len));
+> > > +
+> > >  	copy_args_from_argbuf(args, req);
+> > >  
+> > >  	if (args->out_pages && args->page_zeroing) {
+> > > -- 
+> > > 2.43.0
+> > > 
+> > > 
 
