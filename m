@@ -1,53 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-66155-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66156-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E4F4C17E4F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 02:26:44 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF4B0C17E26
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 02:25:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58FB73B5B3B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 01:25:01 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3F8EF501C57
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 01:25:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5076F2DBF5B;
-	Wed, 29 Oct 2025 01:24:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C91A62DA759;
+	Wed, 29 Oct 2025 01:25:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nE2j5XNG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eBzq9Tcu"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C6EB2D738B;
-	Wed, 29 Oct 2025 01:24:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C9B91C5F10;
+	Wed, 29 Oct 2025 01:25:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761701093; cv=none; b=Gu8myGEf697JhT3MDBWa5kHcgINLa3bm+PFqYXr4Gsa4461I+uf/jwUkLkZ6XDDW7mwinhUZ522ooTEqqR2DgUvB03i+tsTpPKyr9gxT6jyT+CSUW4ex1+929CneuvGXmny/pYghe8TsYnZmlfaV06jflK/GijzvmJl7eqXRuiU=
+	t=1761701108; cv=none; b=UKnlwIf5cbqyj3xBtcpvSI3XXKrFjO+9dnAC5a2XPzHiH+Wj2dYC2vufOFkPnXBTV0aA4eAlwuy7aA+/Oe0KZlzVurRRIUaeqKfZkEobPd0gX5tN/hqide9mnOzCXwDnRZOU6e8MgVQ/lHW5+FTSMMAE05CVq886kfV5MA2xzx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761701093; c=relaxed/simple;
-	bh=PSWcrJ5A3ipx2xL02tAE4hnd7U7TY/92KjJmQG5okOE=;
+	s=arc-20240116; t=1761701108; c=relaxed/simple;
+	bh=C/rreA4wbCjadbp0Lt1a+0twJk7qDOlqVSBr+21NEA8=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TU4d1XvBMil4xzgZr2VrLQ+tvuFGj5Rc9ga6QA1HJDcNdflMCpatcSKkh7NChBvQbIXqp7HkQ9l/1Hk5nOGlzKO6NPR5Iot5tk+nvZZt6CYDgF0PjzAJu/27tsLB/7dFQF5gVxGsEJHGCdcCsRKrI+VKXtI4iOdLSiyH2TwX2Gw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nE2j5XNG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23E20C4CEE7;
-	Wed, 29 Oct 2025 01:24:52 +0000 (UTC)
+	 MIME-Version:Content-Type; b=fgHXL2o74A0RWgJe8FYnR4RMABG+c1405vpinUdFi04Pu4swOTRYt/1dwKI7Fgty4O/Y8XA9FJXrIvFzSj8Yll09OtVd66+L/OS4EET5yjJghAQM1FdGUmTa/a07XorWmdVFzG7tc/YmCySdbDny+7Wf5W6u5+gS7Kf7RL1n3y0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eBzq9Tcu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6616C4CEE7;
+	Wed, 29 Oct 2025 01:25:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761701092;
-	bh=PSWcrJ5A3ipx2xL02tAE4hnd7U7TY/92KjJmQG5okOE=;
+	s=k20201202; t=1761701107;
+	bh=C/rreA4wbCjadbp0Lt1a+0twJk7qDOlqVSBr+21NEA8=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=nE2j5XNGTypErO8LGGYO92xtwKEr8cIazqyGjVAkIx/UVxAh8HdK+JFguQT/vkWZ3
-	 m90gXxDRpBSlPzyqNN05ab3jW4NcqXrYWcESqJGpgNJQ3xi+jUYIy5LfnXWQd/3O05
-	 rMLCzLCSAYX+G9sSnVb+mK66xPqrIAzVrqd8ugwhV29H8XYhPC+Ta3NxIrnUiko7zo
-	 IwC0wi2zCFpuWDfVC2oKX3hzG0v4vHClSOuAcuxqYbuzI7ZkSG2DEXlnWeR7or8900
-	 OMyH+0stLQ913fNBP41uomJ9KgCOuPRVFyjM1AGJK18krGu6K9D2vTjCxoY1JVj3d3
-	 HnJJAq/c8tUJg==
-Date: Tue, 28 Oct 2025 18:24:51 -0700
-Subject: [PATCH 17/33] ext4/045: don't run the long dirent test on fuse2fs
+	b=eBzq9TcuMyuJVpvzXTmqmeBceb8uEDqxMQpNLLZo+7D3hf9ZtHDBkKfLg/jgHJ7bk
+	 V4p4XWv+Rgg9SwFPWAhSFEsszuR5spu6cCcBUkKVh0Vl/ekjygJt2wKmQoWotn+lJQ
+	 e+/f9IFcudOMBDU60JBZCDe4hP4NzxNOEoiOO4SFlna8Hw7cY6oXNhW4asJ4ex1M0X
+	 1YKqY3DCfpAwhj9VpYLcYp17ZZzQ04zqciOLU6RmCN0AhGNaIaq3trea/V+QvNbYOb
+	 rGyFTLi+44OP4Ldq85mkxZ6v5WIk8Rd/beJlwKWWXCEQJV3bVpme9Wd/9uQMRCVCd1
+	 55aeAs59jNlUA==
+Date: Tue, 28 Oct 2025 18:25:07 -0700
+Subject: [PATCH 18/33] generic/338: skip test if we can't mount with
+ strictatime
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: djwong@kernel.org, zlang@redhat.com
 Cc: neal@gompa.dev, fstests@vger.kernel.org, linux-ext4@vger.kernel.org,
  linux-fsdevel@vger.kernel.org, joannelkoong@gmail.com, bernd@bsbernd.com
-Message-ID: <176169820296.1433624.772708549799292809.stgit@frogsfrogsfrogs>
+Message-ID: <176169820315.1433624.14341009274441357914.stgit@frogsfrogsfrogs>
 In-Reply-To: <176169819804.1433624.11241650941850700038.stgit@frogsfrogsfrogs>
 References: <176169819804.1433624.11241650941850700038.stgit@frogsfrogsfrogs>
 Precedence: bulk
@@ -61,46 +62,26 @@ Content-Transfer-Encoding: 7bit
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-fuse2fs doesn't create htree indices for directories because libext2fs
-doesn't support creating them.  When testing the kernel driver this test
-runs in a few seconds, but on fuse2fs it takes ten minutes to create the
-small directory with minimally sized names, and three hours more to
-create a very large directory with long names.
-
-This is silly for a test that really just wants to make sure that we can
-create a directory with a lot of child subdirectories.  Skip the long
-test on fuse2fs.  We probably don't even need the long test.
+If we can't mount a filesystem with strictatime, skip this test.
 
 Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- tests/ext4/045 |   12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ tests/generic/338 |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 
-diff --git a/tests/ext4/045 b/tests/ext4/045
-index 15b2541ee342fa..1ccb33dc361682 100755
---- a/tests/ext4/045
-+++ b/tests/ext4/045
-@@ -84,10 +84,18 @@ workout()
+diff --git a/tests/generic/338 b/tests/generic/338
+index d138c023960f8d..450f34889b96ef 100755
+--- a/tests/generic/338
++++ b/tests/generic/338
+@@ -36,7 +36,7 @@ _dmerror_init
  
- # main
- DIR_NUM=65537
--DIR_LEN=( $SHORT_DIR $LONG_DIR )
-+DIR_LEN=( $SHORT_DIR )
-+# fuse2fs doesn't actually write htree indices to large directories, which
-+# means this test becomes excruciatingly slow when the dirent names are long.
-+# Skip the test to reduce the runtime from ~3.5h to about 15 minutes.
-+if [[ ! "$FSTYP" =~ fuse* ]]; then
-+	DIR_LEN+=( $LONG_DIR )
-+fi
- PARENT_DIR="$SCRATCH_MNT/subdir"
+ # Use strictatime mount option here to force atime updates, which could help
+ # trigger the NULL pointer dereference on ext4 more easily
+-_dmerror_mount "-o strictatime"
++_dmerror_mount "-o strictatime" || _notrun "could not mount with strictatime"
+ _dmerror_load_error_table
  
--for ((i = 0; i < 2; i++)); do
-+echo "${DIR_LEN[*]}" >> $seqres.full
-+
-+for ((i = 0; i < ${#DIR_LEN[@]}; i++)); do
-        workout $DIR_NUM ${DIR_LEN[$i]} $PARENT_DIR
- done
- 
+ # flush dmerror block device buffers and drop all caches, force reading from
 
 
