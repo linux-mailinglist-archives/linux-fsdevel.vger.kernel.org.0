@@ -1,101 +1,112 @@
-Return-Path: <linux-fsdevel+bounces-66186-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66187-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1F07C18959
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 08:07:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BD2DC18A2D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 08:17:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9DD6188E5DA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 07:07:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1CF34032CA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 07:16:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC45830C626;
-	Wed, 29 Oct 2025 07:06:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B907E225413;
+	Wed, 29 Oct 2025 07:15:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="unOtjp34"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C07A7309EF2;
-	Wed, 29 Oct 2025 07:06:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B8BD2EAB6E;
+	Wed, 29 Oct 2025 07:15:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761721602; cv=none; b=m3C8yZjXCwcuLyAe1n0LScKLD5AFzJYsZ8Zb+ZJ1gx7FTGezu0x5QZc/PKCH5kzmts/zLAkVAm11cUSrZJE38UtVbWQXLnd6aG4khxQiUsU+wRM/bPNqM6Hlhwrj3/0VWEJAbnAcScmwUl6tPtFMDfoeHkX6rJFZAJ2ynsNR3Aw=
+	t=1761722148; cv=none; b=AaTZ0MG78HJG0hzpNZOjHp2c/+4OQC81M9ZwbExaxxQDdKHvjBglpO+mEevObLAJIZGdx52/i4rWFhxQZ8oD9V+f4bLRH7LXC963B/LYiGXrOY2hPyj6gXhbwF7a7np04STCjLIHlV460AAiCTfPmvFyOb4GdSLkP2aqrPZg+tg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761721602; c=relaxed/simple;
-	bh=9/SnsoO/WS+8t0J3jBEAceX5RkSw9F4ltTtJY/0MQ+Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c5TiURF1id5XiXPT16lcIMOCaCj2pikmYCoLmVKojA6eAYWKRXGZftOiJqmWOCSYOHZ0T7ZuDjsNglkUOd8JGUOmIr8K+1uNLm6/7+/ybLVQY8CpGab4bqLWBMTEa/IPq+zUhqD8XHz//O0jtO5UHbZBBk61pOThfxFtbous9aY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id D391C227AAC; Wed, 29 Oct 2025 08:06:21 +0100 (CET)
-Date: Wed, 29 Oct 2025 08:06:18 +0100
+	s=arc-20240116; t=1761722148; c=relaxed/simple;
+	bh=yZKhiI7yW59VjaibrV8WlKczNrTXwgpVL1Hqfy0Ml6U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fGwKRXQuCh7ocSItWjBPhGneN8HhcjnyMsqWlpMtwUmLTESyQWDUs/KBUDWFkHRxnXLQcYpzWVsXUSBCL5jMrLzBhWFf1G8WgrgpFuyOQBHfvTsNOe/TDi9RloizhVND6FjzrzQjVNATDJ705ErZbsk9ZYAaaLKt7z5M18IMUOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=unOtjp34; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=pGSdhEJSZvDrK3O/D2tpX+dSUnmxDXrzhVWJRnpdQbI=; b=unOtjp34uIMdQazWggIA/0P44g
+	1X/NiBNImaua28Vln58j9HZMkWr0kD4Azw4124vEikj1/VIghjjLNq8xsRzO2c70F3ydlnwqBEZY0
+	cA3bMQFuppHpoO2P9suKCMDDsOJ9wKsxShVJy1OsYrIr8s7C81+qNcVGkQuXh3Xyae10T9ExM0292
+	OrHzIcAJ+Faj711UvqPM0kyPkyCwzYeT9KsUbYU5tUl5t7oOr0Be085bpa0Y3cPKsTcHJ4HHqRSvs
+	8qxlBdrSn+HGHuCYiq/JwuJlmQvH+ZmlH5pGHcBsFkTFB1qsq/8mKJ3KnpEy5/womMC3nm/oIIBn/
+	05Vl2C6A==;
+Received: from 2a02-8389-2341-5b80-d601-7564-c2e0-491c.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:d601:7564:c2e0:491c] helo=localhost)
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vE0PG-000000002OV-3lCn;
+	Wed, 29 Oct 2025 07:15:43 +0000
 From: Christoph Hellwig <hch@lst.de>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: Carlos Llamas <cmllamas@google.com>, Keith Busch <kbusch@kernel.org>,
-	Keith Busch <kbusch@meta.com>, linux-block@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	linux-ext4@vger.kernel.org, hch@lst.de, axboe@kernel.dk,
-	Hannes Reinecke <hare@suse.de>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: Re: [PATCHv4 5/8] iomap: simplify direct io validity check
-Message-ID: <20251029070618.GA29697@lst.de>
-References: <20250827141258.63501-1-kbusch@meta.com> <20250827141258.63501-6-kbusch@meta.com> <aP-c5gPjrpsn0vJA@google.com> <aP-hByAKuQ7ycNwM@kbusch-mbp> <aQFIGaA5M4kDrTlw@google.com> <20251028225648.GA1639650@google.com> <20251028230350.GB1639650@google.com>
+To: Carlos Maiolino <cem@kernel.org>,
+	Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	linux-kernel@vger.kernel.org,
+	linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-raid@vger.kernel.org,
+	linux-block@vger.kernel.org
+Subject: fall back from direct to buffered I/O when stable writes are required
+Date: Wed, 29 Oct 2025 08:15:01 +0100
+Message-ID: <20251029071537.1127397-1-hch@lst.de>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251028230350.GB1639650@google.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-I think we need to take a step back and talk about what alignment
-we're talking about here, as there are two dimensions to it.
+Hi all,
 
-The first dimension is: disk alignment vs memory alignment.
+we've had a long standing issue that direct I/O to and from devices that
+require stable writes can corrupt data because the user memory can be
+modified while in flight.  This series tries to address this by falling
+back to uncached buffered I/O.  Given that this requires an extra copy it
+is usually going to be a slow down, especially for very high bandwith
+use cases, so I'm not exactly happy about.
 
-Disk alignment:
-  Direct I/O obviously needs to be aligned to on-disk sectors to have
-  a chance to work, as that is the lowest possible granularity of access.
+I suspect we need a way to opt out of this for applications that know
+what they are doing, and I can think of a few ways to do that:
 
-  For fіle systems that write out of place we also need to align writes
-  to the logical block size of the file system.
+1a) Allow a mount option to override the behavior
 
-  With blk-crypto we need to align to the DUN if it is larger than the
-  disk-sector dize.
+	This allows the sysadmin to get back to the previous state.
+	This is fairly easy to implement, but the scope might be to wide.
 
-Memory alignment:
+1b) Sysfs attribute
 
-  This is the alignment of the buffer in-memory.  Hardware only really
-  cares about this when DMA engines discard the lowest bits, so a typical
-  hardware alignment requirement is to only require a dword (4 byte)
-  alignment.   For drivers that process the payload in software such
-  low alignment have a tendency to cause bugs as they're not written
-  thinking about it.  Similarly for any additional processing like
-  encryption, parity or checksums.
+	Same as above.  Slightly easier to modify, but a more unusual
+	interface.
 
-The second dimension is for the entire operation vs individual vectors,
-this has implications both for the disk and memory alignment.  Keith
-has done work there recently to relax the alignment of the vectors to
-only require the memory alignment, so that preadv/pwritev-like calls
-can have lots of unaligned segments.
+2) Have a per-inode attribute
 
-I think it's the latter that's tripping up here now.  Hard coding these
-checks in the file systems seem like a bad idea, we really need to
-advertise them in the queue limits, which is complicated by the fact that
-we only want to do that for bios using block layer encryption. i.e., we
-probably need a separate queue limit that mirrors dma_alignment, but only
-for encrypted bios, and which is taken into account in the block layer
-splitting and communicated up by file systems only for encrypted bios.
-For blk-crypto-fallback we'd need DUN alignment so that the algorithms
-just work (assuming the crypto API can't scatter over misaligned
-segments), but for hardware blk-crypto I suspect that the normal DMA
-engine rules apply, and we don't need to restrict alignment.
+	Allows to set it on a specific file.  Would require an on-disk
+	format change for the usual attr options.
 
+3) Have a fcntl or similar to allow an application to override it
+
+	Fine granularity.  Requires application change.  We might not
+	allow any application to force this as it could be used to inject
+	corruption.
+
+In other words, they are all kinda horrible.
+
+Diffstat:
+ fs/ext4/file.c      |    2 -
+ fs/xfs/xfs_file.c   |   59 +++++++++++++++++++++++++++++++++++++++++++---------
+ fs/xfs/xfs_iops.c   |    6 +++++
+ include/linux/fs.h  |   11 +++++----
+ io_uring/io_uring.c |    2 -
+ 5 files changed, 63 insertions(+), 17 deletions(-)
 
