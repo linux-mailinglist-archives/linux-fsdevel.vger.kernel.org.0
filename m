@@ -1,193 +1,158 @@
-Return-Path: <linux-fsdevel+bounces-66369-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66370-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 598C4C1D38A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 21:37:33 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6209FC1D42C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 21:44:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A207F34C8B8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 20:37:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3ED054E1FF3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 20:44:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A051E351FAE;
-	Wed, 29 Oct 2025 20:37:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4179536334B;
+	Wed, 29 Oct 2025 20:44:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n09xHDXm"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZIT8FZH5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F024F2773F0;
-	Wed, 29 Oct 2025 20:37:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF5D835A141
+	for <linux-fsdevel@vger.kernel.org>; Wed, 29 Oct 2025 20:44:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761770238; cv=none; b=HmsyDxRkuQsdAUmQod9gGK6GzejumHTAgx4DX7cX7D4KI7nUjAjoZYXyztaLDalMujEEVPG2whan6zwhuXLX57wNpKpfa1BGI/H3en7iDknh08Wzjm/xGrBIk5o9yZcMk1q30GmBS9h2uPD30ak79ZaK3XpYDIqxnYIJARapjOI=
+	t=1761770667; cv=none; b=D+JKwcWE9dUIS2joaFxqvt6xdNEDzD38Zal21AnCvJmAACT1anqqAiNYx3WcA0/k5QVDKM/FqObwPDG9BHAaomB/dYLj6MkAk3uw+R/03CRwryvpemG7KZFtir78yEzLn5hLvVZGqymVRUP+TKEMcTAzs54EYwfhCX+0ls1Bw0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761770238; c=relaxed/simple;
-	bh=IpX/Efp/7aa50ROsEckRQKklVIBMT4CdHzNQdUOYZSM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=n9k6SuxD6RwO+4n4JYxRIg46q7d2Dl79ZugxQfUGMqODdkmRpIECV+cu+zFC2Bn4D+cB8R75WeAHJSVaRDhdt6vch3ftZ1oAmsNoly0jvTLDkzKQTCveBZtDP4xwJPV0CxwOCc8PSdkX3xWp/kLs6i5gv8ZycbaFF5cUY1pV9Hk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n09xHDXm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0922EC4CEF7;
-	Wed, 29 Oct 2025 20:37:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761770237;
-	bh=IpX/Efp/7aa50ROsEckRQKklVIBMT4CdHzNQdUOYZSM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=n09xHDXm0NQvt/2Ihe4zZw4wfbyxmW01sr5F8oIz0+NnVpvOvmas9ZSUBNZuoBGN8
-	 yEUJexJrt6G+WaI+v6LoH9gHjUpBA5BgORDfuZmGBbK3TrpvucNv6D2Vzm5utrHI4q
-	 pBUL8cT3REaEsOervShr6BCXoflf/q4Zf7hRGKWQfXn9qeY6JQuwrG/JnTCqUmOgc5
-	 hT3dN0/xAkSwkHPBtLgg673vpsvLCHWXvgFnnNtDwNVoukqqWeY37QF3Bn8d4S9NOe
-	 mYI5z05LwzeakeUjJcmVfE5NKNLhG1ADoKaEcjy+z5rYJLGUcRLtFsViiwUYIno+Xw
-	 B2KC49VWJpNWw==
-From: Pratyush Yadav <pratyush@kernel.org>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: pratyush@kernel.org,  jasonmiu@google.com,  graf@amazon.com,
-  changyuanl@google.com,  rppt@kernel.org,  dmatlack@google.com,
-  rientjes@google.com,  corbet@lwn.net,  rdunlap@infradead.org,
-  ilpo.jarvinen@linux.intel.com,  kanie@linux.alibaba.com,
-  ojeda@kernel.org,  aliceryhl@google.com,  masahiroy@kernel.org,
-  akpm@linux-foundation.org,  tj@kernel.org,  yoann.congal@smile.fr,
-  mmaurer@google.com,  roman.gushchin@linux.dev,  chenridong@huawei.com,
-  axboe@kernel.dk,  mark.rutland@arm.com,  jannh@google.com,
-  vincent.guittot@linaro.org,  hannes@cmpxchg.org,
-  dan.j.williams@intel.com,  david@redhat.com,  joel.granados@kernel.org,
-  rostedt@goodmis.org,  anna.schumaker@oracle.com,  song@kernel.org,
-  zhangguopeng@kylinos.cn,  linux@weissschuh.net,
-  linux-kernel@vger.kernel.org,  linux-doc@vger.kernel.org,
-  linux-mm@kvack.org,  gregkh@linuxfoundation.org,  tglx@linutronix.de,
-  mingo@redhat.com,  bp@alien8.de,  dave.hansen@linux.intel.com,
-  x86@kernel.org,  hpa@zytor.com,  rafael@kernel.org,  dakr@kernel.org,
-  bartosz.golaszewski@linaro.org,  cw00.choi@samsung.com,
-  myungjoo.ham@samsung.com,  yesanishhere@gmail.com,
-  Jonathan.Cameron@huawei.com,  quic_zijuhu@quicinc.com,
-  aleksander.lobakin@intel.com,  ira.weiny@intel.com,
-  andriy.shevchenko@linux.intel.com,  leon@kernel.org,  lukas@wunner.de,
-  bhelgaas@google.com,  wagi@kernel.org,  djeffery@redhat.com,
-  stuart.w.hayes@gmail.com,  lennart@poettering.net,  brauner@kernel.org,
-  linux-api@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
-  saeedm@nvidia.com,  ajayachandra@nvidia.com,  jgg@nvidia.com,
-  parav@nvidia.com,  leonro@nvidia.com,  witu@nvidia.com,
-  hughd@google.com,  skhawaja@google.com,  chrisl@kernel.org,
-  steven.sistare@oracle.com
-Subject: Re: [PATCH v4 14/30] liveupdate: luo_session: Add ioctls for file
- preservation and state management
-In-Reply-To: <20250929010321.3462457-15-pasha.tatashin@soleen.com> (Pasha
-	Tatashin's message of "Mon, 29 Sep 2025 01:03:05 +0000")
-References: <20250929010321.3462457-1-pasha.tatashin@soleen.com>
-	<20250929010321.3462457-15-pasha.tatashin@soleen.com>
-Date: Wed, 29 Oct 2025 21:37:06 +0100
-Message-ID: <mafs0pla5cuml.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1761770667; c=relaxed/simple;
+	bh=/nRyrHH69bDwdkUwV+ZvUiMlkERSxLC5qY0L4yNkpAA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rqKO2JP02B/6FvE95ncwlphdP9HlRDeoh3rY1DmUiClj7sZo4g0X75mH4GlMiqnq2fVXJ3kOA2khUDBGwn0gE7LTsbpyeOHIUc80GMhygKKOgHbbLKvv7nC7fX7fDJmYM97nLsiI55lYtnXYXxeAG+FLpKYXdbiA60YwtX3Km0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZIT8FZH5; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-378f010bf18so14819131fa.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Oct 2025 13:44:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761770664; x=1762375464; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/nRyrHH69bDwdkUwV+ZvUiMlkERSxLC5qY0L4yNkpAA=;
+        b=ZIT8FZH51950wDS/bjbvoKGOA8qhHonV7KO9v4ASHE/9xRn3ynMtghPFcpBjOistJH
+         2lDJC8qO5e33qWIzdICHnbPQyQbleSTxhRTXXmBRLGOGCyZzy+q1Sd+c4kD9S/keZClS
+         MZt8ZPz7P4MLIzfxWg2TmnOnQZh1igfmm8ZEeJ8srgrqVAyq+4zbSyFWUbE7XBWoPObj
+         jw6yyodMDdTkDAscIF6SN8BwOhAbZUdl9M4vi15xPNeKdSfMqdZWqtIpGdFgtw+Sa8tW
+         WjRpVWRJwEG8tvxYBPzUBdlm27ROSFhNUxSh/hDPDKJJLfUfuJmwJAxMt1X6eC6zK8u7
+         BRWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761770664; x=1762375464;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/nRyrHH69bDwdkUwV+ZvUiMlkERSxLC5qY0L4yNkpAA=;
+        b=A4TVOf+p2yAxF1T15TZOkMd9TRFmpwUEcKljtaCLN0wrWQTuPwa0Sn2FCpR3HDhRol
+         1Y5+P0Iy8z3gDE1XJ3TcrL1+s3sanhU0/bEwvC2pzXKyNPTxJ7+6SZLfyrmv+wX4Fh8j
+         Z0XG9nfau05Iiq79mCznbhlREEIecUrDV6KxEXA4G5PEdXWYSU330I916wfnx1KJ5WAx
+         /+EhnuonFJMLZSUSQXxH5APfK6DHvhryhZ4XPYdrhsGk1OzOjPniDIbcZTY13mEUipGZ
+         WtbwrGzDF8xqsehu5otGCixgCDdw65qQ+fIpPB58sYeCTrniflAV5KLbFMLjrGdOli+i
+         Ef0A==
+X-Forwarded-Encrypted: i=1; AJvYcCVjW5WTsozjO255rYLoDQBKfafcJXvQQsKMmwc38/kB7tl2CLQn7BDCEwlF9IUGwJgiMkyBIsEI1FFlyuJ6@vger.kernel.org
+X-Gm-Message-State: AOJu0YytaTT45IUD+68iMLKQFticYGpU4Ff+z0NLhJGD4EX3OfPw+6Rg
+	fr/b3moKlTs6JJ2ONzaS9vcPAx682WdhD0ki5noqYF6kHLtFJlbAbtJRx32GPH0GCNmCMdDf9PV
+	xRzszE1v9Kit6FKGl4yHDJgCvsuOMeK74UWxe7PhX
+X-Gm-Gg: ASbGncvRUpdjK5XHhZuTIXnGmgoNrjdr6w7zxxpduDeHF3RFJ+0R7IqFbouefYFBeNK
+	KxUH8q1DKTfs1rY/tLFLZnzyKf5JNVyE+rlzALzXKupekG32ShBJyc6KfOr58sDBkbufkNtg7tO
+	T8qXgFv8kzDyx78SFHElpldunDFaczeke/hvqQDAMWz+FnJ0ziREiwxTONXIm/Jym/qQMl7588M
+	OL0Ys2GNrJG7Y6k4vior8Bi31EuHwUsyYw8T0RdOD1s8LWM1EaO9VmB76TZ
+X-Google-Smtp-Source: AGHT+IFRYtH5XfTJnxxGfkJO0Gi6f1H2nFBXWvOk+OBKFsn98ppWQIAtWYQQwdGEa9VK8XbxcXnwXcPQMdyC3mUpVtI=
+X-Received: by 2002:a05:651c:32a6:b0:378:d020:b6b3 with SMTP id
+ 38308e7fff4ca-37a1068ccefmr2106821fa.7.1761770663502; Wed, 29 Oct 2025
+ 13:44:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20250929010321.3462457-1-pasha.tatashin@soleen.com>
+ <20250929010321.3462457-15-pasha.tatashin@soleen.com> <mafs0tszhcyrw.fsf@kernel.org>
+ <CA+CK2bBVSX26TKwgLkXCDop5u3e9McH3sQMascT47ZwwrwraOw@mail.gmail.com>
+In-Reply-To: <CA+CK2bBVSX26TKwgLkXCDop5u3e9McH3sQMascT47ZwwrwraOw@mail.gmail.com>
+From: David Matlack <dmatlack@google.com>
+Date: Wed, 29 Oct 2025 13:43:56 -0700
+X-Gm-Features: AWmQ_blzsfm8AU4aSmOo38Baxqd-QolYtNvPxHfj3yJKEB0u3KTJVZdMqBMfTX4
+Message-ID: <CALzav=d_Gmb8xKCwWCGsQQrdxHJrnk5VP-8hvO6FugUP7_ukAw@mail.gmail.com>
+Subject: Re: [PATCH v4 14/30] liveupdate: luo_session: Add ioctls for file
+ preservation and state management
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: Pratyush Yadav <pratyush@kernel.org>, jasonmiu@google.com, graf@amazon.com, 
+	changyuanl@google.com, rppt@kernel.org, rientjes@google.com, corbet@lwn.net, 
+	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, 
+	ojeda@kernel.org, aliceryhl@google.com, masahiroy@kernel.org, 
+	akpm@linux-foundation.org, tj@kernel.org, yoann.congal@smile.fr, 
+	mmaurer@google.com, roman.gushchin@linux.dev, chenridong@huawei.com, 
+	axboe@kernel.dk, mark.rutland@arm.com, jannh@google.com, 
+	vincent.guittot@linaro.org, hannes@cmpxchg.org, dan.j.williams@intel.com, 
+	david@redhat.com, joel.granados@kernel.org, rostedt@goodmis.org, 
+	anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn, 
+	linux@weissschuh.net, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-mm@kvack.org, gregkh@linuxfoundation.org, tglx@linutronix.de, 
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, 
+	hpa@zytor.com, rafael@kernel.org, dakr@kernel.org, 
+	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com, 
+	myungjoo.ham@samsung.com, yesanishhere@gmail.com, Jonathan.Cameron@huawei.com, 
+	quic_zijuhu@quicinc.com, aleksander.lobakin@intel.com, ira.weiny@intel.com, 
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
+	stuart.w.hayes@gmail.com, lennart@poettering.net, brauner@kernel.org, 
+	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, saeedm@nvidia.com, 
+	ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com, leonro@nvidia.com, 
+	witu@nvidia.com, hughd@google.com, skhawaja@google.com, chrisl@kernel.org, 
+	steven.sistare@oracle.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Pasha,
-
-On Mon, Sep 29 2025, Pasha Tatashin wrote:
-
-> Introducing the userspace interface and internal logic required to
-> manage the lifecycle of file descriptors within a session. Previously, a
-> session was merely a container; this change makes it a functional
-> management unit.
+On Wed, Oct 29, 2025 at 1:13=E2=80=AFPM Pasha Tatashin
+<pasha.tatashin@soleen.com> wrote:
+> On Wed, Oct 29, 2025 at 3:07=E2=80=AFPM Pratyush Yadav <pratyush@kernel.o=
+rg> wrote:
+> > Also, I think the model we should have is to only allow new sessions in
+> > normal state. Currently luo_session_create() allows creating a new
+> > session in updated state. This would end up mixing sessions from a
+> > previous boot and sessions from current boot. I don't really see a
+> > reason for that and I think the userspace should first call finish
+> > before starting new serialization. Keeps things simpler.
 >
-> The following capabilities are added:
+> It does. However, yesterday Jason Gunthorpe suggested that we simplify
+> the uapi, at least for the initial landing, by removing the state
+> machine during boot and allowing new sessions to be created at any
+> time. This would also mean separating the incoming and outgoing
+> sessions and removing the ioctl() call used to bring the machine into
+> a normal state; instead, only individual sessions could be brought
+> into a 'normal' state.
 >
-> A new set of ioctl commands are added, which operate on the file
-> descriptor returned by CREATE_SESSION. This allows userspace to:
-> - LIVEUPDATE_SESSION_PRESERVE_FD: Add a file descriptor to a session
->   to be preserved across the live update.
-> - LIVEUPDATE_SESSION_UNPRESERVE_FD: Remove a previously added file
->   descriptor from the session.
-> - LIVEUPDATE_SESSION_RESTORE_FD: Retrieve a preserved file in the
->   new kernel using its unique token.
+> Simplified uAPI Proposal
+> The simplest uAPI would look like this:
+> IOCTLs on /dev/liveupdate (to create and retrieve session FDs):
+> LIVEUPDATE_IOCTL_CREATE_SESSION
+> LIVEUPDATE_IOCTL_RETRIEVE_SESSION
 >
-> A state machine for each individual session, distinct from the global
-> LUO state. This enables more granular control, allowing userspace to
-> prepare or freeze specific sessions independently. This is managed via:
-> - LIVEUPDATE_SESSION_SET_EVENT: An ioctl to send PREPARE, FREEZE,
->   CANCEL, or FINISH events to a single session.
-> - LIVEUPDATE_SESSION_GET_STATE: An ioctl to query the current state
->   of a single session.
->
-> The global subsystem callbacks (luo_session_prepare, luo_session_freeze)
-> are updated to iterate through all existing sessions. They now trigger
-> the appropriate per-session state transitions for any sessions that
-> haven't already been transitioned individually by userspace.
->
-> The session's .release handler is enhanced to be state-aware. When a
-> session's file descriptor is closed, it now correctly cancels or
-> finishes the session based on its current state before freeing all
-> associated file resources, preventing resource leaks.
->
-> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
-> ---
-[...]
-> +static int luo_session_restore_fd(struct luo_session *session,
-> +				  struct luo_ucmd *ucmd)
-> +{
-> +	struct liveupdate_session_restore_fd *argp = ucmd->cmd;
-> +	struct file *file;
-> +	int ret;
-> +
-> +	guard(rwsem_read)(&luo_state_rwsem);
-> +	if (!liveupdate_state_updated())
-> +		return -EBUSY;
-> +
-> +	argp->fd = get_unused_fd_flags(O_CLOEXEC);
-> +	if (argp->fd < 0)
-> +		return argp->fd;
-> +
-> +	guard(mutex)(&session->mutex);
-> +
-> +	/* Session might have already finished independatly from global state */
-> +	if (session->state != LIVEUPDATE_STATE_UPDATED)
-> +		return -EBUSY;
-> +
-> +	ret = luo_retrieve_file(session, argp->token, &file);
+> IOCTLs on session FDs:
+> LIVEUPDATE_CMD_SESSION_PRESERVE_FD
+> LIVEUPDATE_CMD_SESSION_RETRIEVE_FD
+> LIVEUPDATE_CMD_SESSION_FINISH
 
-The retrieve behaviour here causes some nastiness.
+Should we drop LIVEUPDATE_CMD_SESSION_FINISH and do this work in
+close(session_fd)? close() can return an error.
 
-When the session is deserialized by luo_session_deserialize(), all the
-files get added to the session's files_list. Now when a process
-retrieves the session after kexec and restores a file, the file
-handler's retrieve callback is invoked, deserializing and restoring the
-file. Once deserialization is done, the callback usually frees up the
-metadata. All this is fine.
+I think this cleans up a few parts of the uAPI:
 
-The problem is that the file stays on on the files_list. When the
-process closes the session FD, the unpreserve callback is invoked for
-all files.
-
-The unpreserve callback should undo what preserve did. That is, free up
-serialization data. After a file is restored post-kexec, the things to
-free up are different. For example, on a memfd, the folios won't be
-pinned anymore. So invoking unpreserve on a retrieved file doesn't work
-and causes UAF or other invalid behaviour.
-
-I think you should treat retrieve as a unpreserve as well, and remove
-the file from the session's list.
-
-Side note: I see that a lot of code in luo_file.c works with the session
-data structures directly. For example, luo_file_deserialize() adds the
-file to session->files_list. I think the code would be a lot cleaner and
-maintainable if the concerns were clearly separated.
-luo_file_deserialize() should focus on deserializing a file given a
-compatible and data, and all the dealing with the session's state should
-be done by luo_session_deserialize().
-
-luo_file_deserialize() is just an example, but I think the idea can be
-applied in more places.
-
-[...]
-
--- 
-Regards,
-Pratyush Yadav
+ - One less ioctl.
+ - The only way to get an outgoing session would be through
+LIVEUPDATE_IOCTL_CREATE_SESSION. The kernel does not have to deal with
+an empty incoming session "becoming" an outgoing session (as described
+below).
+ - The kernel can properly leak the session and its resources by
+refusing to close the session file.
 
