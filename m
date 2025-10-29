@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-66239-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66240-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BA34C1A435
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 13:36:32 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47AD4C1A4AA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 13:40:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 679BD189F323
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 12:32:20 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 62349580DA2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 12:32:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91F57346E6B;
-	Wed, 29 Oct 2025 12:22:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB63235A120;
+	Wed, 29 Oct 2025 12:22:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sCHsGA/4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KcTr1YOJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1D40346E60;
-	Wed, 29 Oct 2025 12:22:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 248CC283124;
+	Wed, 29 Oct 2025 12:22:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761740571; cv=none; b=naLUjtdDr8KRvfiI3OJ3tvcu1YInYak73zuzPTym6UDRy7o8q7Jk4rUkQL4B1xuO9YcF6rILSV17KR70mKOton83buU+Tzh0C6Gm+lO3sqN5e6jYZWXfIblS4VID1/0j5c0BEWz39wxeAdbcqSfGNq3NJXl5mqx1F7J7vnQfQ7U=
+	t=1761740576; cv=none; b=s75F9MXVGiCLB+L68dntyFHW/SiHPV3YE2q+tQ42FAM62ZbuJnB2TWx4m02PVDZVTk83TJzXIgx9w5L8Qb0hFzO2iGZDN1w9ibcJR55n5dmzMiAexflOR8I2OEYP1qex+999ON1nAOlY7abMc0+06DFeisZNzRg9fL5DLpJUmik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761740571; c=relaxed/simple;
-	bh=e8EI0iOiQx8fHK9+00tBtoOgGlNpcvVChJMa2f3XulI=;
+	s=arc-20240116; t=1761740576; c=relaxed/simple;
+	bh=9GvGWgJa/IpvNzb6FhYrFg2g1xbeoNS/+Dh15oRdkuU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=MhwSHViMOVhxFGdNFdxV9LUX62ylYdk7D31qEQ/vuj8YXuMjhEWv2ZHb8HjJpHJITSjCfhdqn/5EK+Paz6jJJbwBcRoYmxajinE0OpbydmqjyD4UzH6m1vvsfzWe4scroLueWZmqv984JENSg7F4hkoRlwfERtLNg4sZVEdOMA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sCHsGA/4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CE57C4CEF7;
-	Wed, 29 Oct 2025 12:22:45 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=bfpcY8lP+2njJpY3J45AqcKVCu6s2eUwOGvyAvl9eZ3n9Ljv85jUHECl92iA3F5q0QNUXEh0OYcA2EiDNG6C34rDlgeWMcCL1XE3hCTGBkxO3S9FGHJ59Sdq6VmimZOrq8rvOU8OtHnBPhsDNr7xJQYlHbkyY3HIRb80bjiXst8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KcTr1YOJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00362C4CEFD;
+	Wed, 29 Oct 2025 12:22:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761740570;
-	bh=e8EI0iOiQx8fHK9+00tBtoOgGlNpcvVChJMa2f3XulI=;
+	s=k20201202; t=1761740575;
+	bh=9GvGWgJa/IpvNzb6FhYrFg2g1xbeoNS/+Dh15oRdkuU=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=sCHsGA/4hrBYx/I2LULBDsifN8HT60yBLZGQk+tlxDNdDIXbCglZjwwMZxAKawZTt
-	 M4qjzLAD3cO8tb7i/83H3wLHRHWiBG909EciDRAucGuuin9C+TM8NXxmgXNqlzuujm
-	 dlcJx1Ng4Zxef7Abz6AEzIGyhv1qeXLSzq+xzRVxBwJTkRmRtvSszigruN17Xe4hvR
-	 iJrlg79bqytz1GHdMzctqkJwmxJC3LGplKNxgkD8FFogq9UJWic77cNMQRxalmOr+7
-	 mFXDJDY4fguWUaYq4Qfm++eLm4XKKo+NCxKQueJVxMwZBkXPsnXelFHw4jIF3aBppr
-	 K48kcsHNJZZiA==
+	b=KcTr1YOJeFBS7wVRIDRzzut5Bb3GTA0vh7YIWTEcMGonTOgOgNWfyILHOX7q6TmAc
+	 jzF70xcKFeRw2rmAdgQMJDjcJ5f0tOwQUIbYu+olvMonx053ka94OoYIgopN5YM/cI
+	 IZ86UxvY3aSCZTMbZtAkjcIcjoUFyUZDmYv1uLj6p2A17iChMUDgQmJz01/RnCLlqf
+	 XxZFBCvtWGzSMYdJejevswgb5M2uO+sWSoV12HTFk71jD3GwfXtvZiNVfOSeNt5TQm
+	 bZS2WT98YT8gWl6JZD+S+rxq0JOQxtGJPs2Rq0AiX/yNmw09w//eJETCEjwwgL+Z3K
+	 OphDjvAEaCVGA==
 From: Christian Brauner <brauner@kernel.org>
-Date: Wed, 29 Oct 2025 13:20:39 +0100
-Subject: [PATCH v4 26/72] selftests/namespaces: fourth active reference
+Date: Wed, 29 Oct 2025 13:20:40 +0100
+Subject: [PATCH v4 27/72] selftests/namespaces: fifth active reference
  count tests
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -53,7 +53,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251029-work-namespace-nstree-listns-v4-26-2e6f823ebdc0@kernel.org>
+Message-Id: <20251029-work-namespace-nstree-listns-v4-27-2e6f823ebdc0@kernel.org>
 References: <20251029-work-namespace-nstree-listns-v4-0-2e6f823ebdc0@kernel.org>
 In-Reply-To: <20251029-work-namespace-nstree-listns-v4-0-2e6f823ebdc0@kernel.org>
 To: linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
@@ -70,34 +70,34 @@ Cc: Jann Horn <jannh@google.com>, Mike Yuan <me@yhndnzj.com>,
  netdev@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-96507
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2891; i=brauner@kernel.org;
- h=from:subject:message-id; bh=e8EI0iOiQx8fHK9+00tBtoOgGlNpcvVChJMa2f3XulI=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQysfUKvHvrtuZkvNh919X+T/ee2LGmKKZX7dmpMEfGt
- M0P8goCO0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACbS7czI8Mf/pUHcSkeZaTVS
- HwXazpTH3Hpx78KJ+qKdn3TsbRhXVjMytK63jGzc9clz7fRIq//Bxfu3d2bf3p//l60hxH5Zx4V
- 2ZgA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2433; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=9GvGWgJa/IpvNzb6FhYrFg2g1xbeoNS/+Dh15oRdkuU=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQysfUW/O7h4E7OnRoqzPnd/fEfQ/8Pdzdf/Pvug7GDo
+ sN3ps1fOkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACZyTYeR4YUlR3dmuXB8z4f1
+ c04Umisl/w62YBJe4PrI2LrAefqLbIb/NQdNfomsPr8v4eaG+uwnxRdsttruKnL1NOab5T8vdl8
+ JCwA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-Test user namespace active ref tracking via credential lifecycle.
+Test PID namespace active ref tracking
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- .../selftests/namespaces/ns_active_ref_test.c      | 90 ++++++++++++++++++++++
- 1 file changed, 90 insertions(+)
+ .../selftests/namespaces/ns_active_ref_test.c      | 82 ++++++++++++++++++++++
+ 1 file changed, 82 insertions(+)
 
 diff --git a/tools/testing/selftests/namespaces/ns_active_ref_test.c b/tools/testing/selftests/namespaces/ns_active_ref_test.c
-index c2e34de7a3a9..396066e641da 100644
+index 396066e641da..f4e92b772f70 100644
 --- a/tools/testing/selftests/namespaces/ns_active_ref_test.c
 +++ b/tools/testing/selftests/namespaces/ns_active_ref_test.c
-@@ -276,4 +276,94 @@ TEST(ns_active_with_multiple_processes)
- 	ASSERT_TRUE(WIFEXITED(status));
+@@ -366,4 +366,86 @@ TEST(userns_active_ref_lifecycle)
+ 	ASSERT_TRUE(errno == ENOENT || errno == ESTALE);
  }
  
 +/*
-+ * Test user namespace active ref tracking via credential lifecycle
++ * Test PID namespace active ref tracking
 + */
-+TEST(userns_active_ref_lifecycle)
++TEST(pidns_active_ref_lifecycle)
 +{
 +	struct file_handle *handle;
 +	int mount_id;
@@ -117,52 +117,44 @@ index c2e34de7a3a9..396066e641da 100644
 +		/* Child process */
 +		close(pipefd[0]);
 +
-+		/* Create new user namespace */
-+		ret = unshare(CLONE_NEWUSER);
++		/* Create new PID namespace */
++		ret = unshare(CLONE_NEWPID);
 +		if (ret < 0) {
 +			close(pipefd[1]);
 +			exit(1);
 +		}
 +
-+		/* Set up uid/gid mappings */
-+		int uid_map_fd = open("/proc/self/uid_map", O_WRONLY);
-+		int gid_map_fd = open("/proc/self/gid_map", O_WRONLY);
-+		int setgroups_fd = open("/proc/self/setgroups", O_WRONLY);
-+
-+		if (uid_map_fd >= 0 && gid_map_fd >= 0 && setgroups_fd >= 0) {
-+			write(setgroups_fd, "deny", 4);
-+			close(setgroups_fd);
-+
-+			char mapping[64];
-+			snprintf(mapping, sizeof(mapping), "0 %d 1", getuid());
-+			write(uid_map_fd, mapping, strlen(mapping));
-+			close(uid_map_fd);
-+
-+			snprintf(mapping, sizeof(mapping), "0 %d 1", getgid());
-+			write(gid_map_fd, mapping, strlen(mapping));
-+			close(gid_map_fd);
-+		}
-+
-+		/* Get file handle */
-+		fd = open("/proc/self/ns/user", O_RDONLY);
-+		if (fd < 0) {
++		/* Fork to actually enter the PID namespace */
++		pid_t child = fork();
++		if (child < 0) {
 +			close(pipefd[1]);
 +			exit(1);
 +		}
 +
-+		handle = (struct file_handle *)buf;
-+		handle->handle_bytes = MAX_HANDLE_SZ;
-+		ret = name_to_handle_at(fd, "", handle, &mount_id, AT_EMPTY_PATH);
-+		close(fd);
++		if (child == 0) {
++			/* Grandchild - in new PID namespace */
++			fd = open("/proc/self/ns/pid", O_RDONLY);
++			if (fd < 0) {
++				exit(1);
++			}
 +
-+		if (ret < 0) {
++			handle = (struct file_handle *)buf;
++			handle->handle_bytes = MAX_HANDLE_SZ;
++			ret = name_to_handle_at(fd, "", handle, &mount_id, AT_EMPTY_PATH);
++			close(fd);
++
++			if (ret < 0) {
++				exit(1);
++			}
++
++			/* Send handle to grandparent */
++			write(pipefd[1], buf, sizeof(*handle) + handle->handle_bytes);
 +			close(pipefd[1]);
-+			exit(1);
++			exit(0);
 +		}
 +
-+		/* Send handle to parent */
-+		write(pipefd[1], buf, sizeof(*handle) + handle->handle_bytes);
-+		close(pipefd[1]);
++		/* Wait for grandchild */
++		waitpid(child, NULL, 0);
 +		exit(0);
 +	}
 +
@@ -178,7 +170,7 @@ index c2e34de7a3a9..396066e641da 100644
 +	ASSERT_GT(ret, 0);
 +	handle = (struct file_handle *)buf;
 +
-+	/* Namespace should be inactive after all tasks exit */
++	/* Namespace should be inactive after all processes exit */
 +	fd = open_by_handle_at(FD_NSFS_ROOT, handle, O_RDONLY);
 +	ASSERT_LT(fd, 0);
 +	ASSERT_TRUE(errno == ENOENT || errno == ESTALE);
