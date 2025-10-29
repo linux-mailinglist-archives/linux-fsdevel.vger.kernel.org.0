@@ -1,110 +1,182 @@
-Return-Path: <linux-fsdevel+bounces-66385-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66386-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DD10C1DB04
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Oct 2025 00:31:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1947EC1DB64
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Oct 2025 00:45:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 992A434C109
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 23:31:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF05D405E39
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 23:44:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC33A2F7AAF;
-	Wed, 29 Oct 2025 23:31:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 657DF31DDB8;
+	Wed, 29 Oct 2025 23:44:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AZcfr205"
+	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="GhjEouVc";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="FVJBB8ko"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from flow-b4-smtp.messagingengine.com (flow-b4-smtp.messagingengine.com [202.12.124.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 199FA3BB48;
-	Wed, 29 Oct 2025 23:31:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74D2B31BC96;
+	Wed, 29 Oct 2025 23:44:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761780662; cv=none; b=nttYP8zrRZUUhDi/ET+0jKwAnDK6UldiI/Wbns4tPfCcataxGqF1tk4FXWtynQVqGGjTTrUlNM35jfJwwyP12tBmquimLoPl5GhpAtFNPzWUjeq147Rz5P7sJHXg2oc5ob9tSQymfhzJOkmDF1CDc7d3sA3ozO32UewyzHBg5n8=
+	t=1761781475; cv=none; b=KOzLg0FCs1dL7UJFkRihYP8m6oV2jO/EUQ6I4KVA4Y8Lpgvqc9/3tcECapSRqK26/LsFrcHUyXBDZXdTrAGjC7K1jklTn8OeiJsfJgXLXahlqh1ZNWcoIJ+hWy8TOcW8ZTdysjrY0lybQ6V4HYPgQYnIVH9AHvbU0bxRaeEcEnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761780662; c=relaxed/simple;
-	bh=FFcXZ2cb/XjMuGnx91GbjCOjmPAcuSjcJLN/pfLNp1Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OOQicuJhxNl9fLR6ZyyOKpU7E70t8pT84KM9th9YBYLNO/rEdLeNNSanQo6c1wEd6VTfYx1QR5ZW1sRlVeSlMKUa1/vNB76LK3kMBcFo3PWBoxfbfXxdzENdiNOhWvCOEmjTsKpzoE3lzUi9Wz+yb9kcpA98dTQqEqTXbWNqUhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AZcfr205; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC16FC4CEF7;
-	Wed, 29 Oct 2025 23:30:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761780661;
-	bh=FFcXZ2cb/XjMuGnx91GbjCOjmPAcuSjcJLN/pfLNp1Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AZcfr205L0UopF7u7tnrCsH6qJK59fEUrwAVJwAFt7u14UVWD23sZ1C8cj7yut8TE
-	 oUS5cS8Gdh6VeW2UnkYglEqFIIkRNzifcZqpOWwecMkvx15IiosmvQQtlvI2yDmIo4
-	 mbV+BSE7zepHXvlEWjWhUbXQlaeet9a5JXG8pZd4qLrMaS3d1OH5FqIVY6C/GWoa8i
-	 4RgUICCZJr7OxQE/G9laSTIB3J419IN+AH0CcoJkHm93v4UJotSbmCiUzcE6iWdHSk
-	 xJbRMTmsvLuZlZd2RfT9561yGc4K9ZDoFMFd2OpMca6UyhmSt5UdW7nuoajlJcZGbj
-	 jFD6+tAHBbEcw==
-Date: Wed, 29 Oct 2025 16:30:57 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Christian Brauner <brauner@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-kbuild@vger.kernel.org, David Sterba <dsterba@suse.com>
-Subject: Re: [PATCH] fs/pipe: stop duplicating union pipe_index declaration
-Message-ID: <20251029233057.GA3441561@ax162>
-References: <20251023082142.2104456-1-linux@rasmusvillemoes.dk>
- <20251029-redezeit-reitz-1fa3f3b4e171@brauner>
- <20251029173828.GA1669504@ax162>
- <20251029-wobei-rezept-bd53e76bb05b@brauner>
- <CAHk-=wjGcos7LACF0J40x-Dwf4beOYj+mhptD+xcLte1RG91Ug@mail.gmail.com>
- <20251030-zuruf-linken-d20795719609@brauner>
+	s=arc-20240116; t=1761781475; c=relaxed/simple;
+	bh=w1kCxW1iy8c7ihHn/8+NGQc8R16rrkANmzgDW8z4SK8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sodaNFZAmJTLBnbyHbwkbewZV6SZLFlYP4ZNlrAkG8wdB3YBBNHv7lgLe5YjeUhlbigX9v6dkQ1AgUjxMdXOJW6mbod6+0xslwrnszmdNqYz7+Uvj3KjHeA5Ao22li/apQOm0HioiuLC1d8fFW4NHx/YFuWbya3REI1vdX3KSGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=GhjEouVc; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=FVJBB8ko; arc=none smtp.client-ip=202.12.124.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
+Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
+	by mailflow.stl.internal (Postfix) with ESMTP id 7E41A1300085;
+	Wed, 29 Oct 2025 19:44:31 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-09.internal (MEProxy); Wed, 29 Oct 2025 19:44:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
+	cc:cc:content-transfer-encoding:content-type:date:date:from:from
+	:in-reply-to:message-id:mime-version:reply-to:reply-to:subject
+	:subject:to:to; s=fm3; t=1761781471; x=1761788671; bh=3x5QrKJbAU
+	5RZlYDSzt8Tpga/kvzXZxC49Muc/R7QZE=; b=GhjEouVcRX5SJnd2xC8PpJrDd4
+	5gkLEdREwDoq8sl+DBfc/BmSP3BbU8Mna/yRQ0mJT+YerlIyKxQnHG9JNIdfdvWG
+	SEgIFc0Ia63eBD42oxiyZb0QhCz9o3xmVx7jBrsXRZ49p5n5OOlsWj0hSQbFvZeF
+	z5AqkgCSiUEnM/CNER15/xVrFQ90ZlFLCV40LolbJNPKakcnQHHX35eus1VgipNz
+	9mrDLPYpRiymWw5AnPf2k2bnhd7JdUrzezStmq3NbcceOpamzP50amLIRGUUtc2B
+	NQQQo5tUZY5nwh3gZyBpQY/zBR5ZdH71eGZNqzcpALYYSRkPCqHmOjsoY3pA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm3; t=1761781471; x=1761788671; bh=3x5QrKJbAU5RZlYDSzt8Tpga/kvz
+	XZxC49Muc/R7QZE=; b=FVJBB8kohSZHiLJIbGPXBDlmftX29JM9LBAqg79dTWqk
+	yz1+x4bVzMixLyeUBD6UMAtReNbi/HZFEx46Wq6nfklVi17Cy2HK6aBAMR8ZX5NJ
+	r7/Uf2cBjw48pz8C6vmTnu0Q/8zEPGqjc0doo38FNUGDuD3FfJh72Mu6sRMeVYQp
+	Dv65nNKDg5/a2VSp3rxOwLbG3KmZl6lhfRoiCJkDROdMh7QUeHeeU6DWJRwt7UNn
+	LoItIfP1jQ3FLUiMoV4dzXKGdNizDLgTl4FqI5Ll5IBSQIyTOHMZXZd9jUSvHBaP
+	xpcmVAlz4RvT6v0XDGGxxzdoHjf9otwjESBsILdBQA==
+X-ME-Sender: <xms:3aYCacW0EklVbBr52odzgwMIFadqVZiY_9E7tudg5vTOUlukGR89QQ>
+    <xme:3aYCaTdYh1VR4XWnn3OEfjhVRMW9llb0r_xZdVgEPJBMwC0guDDC5CXJvsrDKgSU3
+    O7sPHab5vsYfOwx2ifIrmOdATuza71bDXE5CgYxiEzhilZdiA>
+X-ME-Received: <xmr:3aYCaROZCepQe3Hu21UI6QwqCD0nSkfSZsBAwHrWmKgYq6O-H3DBzXb5QvKORxj1yfDg4BDFbGwZ_wxSs6RKBleyvZEnJ0v1TFpLhCQQZgBx>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduieehtdekucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhephffvvefufffkofhrggfgsedtkeertdertddtnecuhfhrohhmpefpvghilheurhho
+    fihnuceonhgvihhlsgesohifnhhmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnhepge
+    etfeegtddtvdeigfegueevfeelleelgfejueefueektdelieeikeevtdelveelnecuvehl
+    uhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhgvihhlsgesoh
+    ifnhhmrghilhdrnhgvthdpnhgspghrtghpthhtohepgedupdhmohguvgepshhmthhpohhu
+    thdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpdhrtg
+    hpthhtohepshgvlhhinhhugiesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthho
+    pehlihhnuhigqdigfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplh
+    hinhhugidquhhnihhonhhfshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthho
+    pehlihhnuhigqdhsvggtuhhrihhthidqmhhoughulhgvsehvghgvrhdrkhgvrhhnvghlrd
+    horhhgpdhrtghpthhtoheplhhinhhugidqnhhfshesvhhgvghrrdhkvghrnhgvlhdrohhr
+    ghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdroh
+    hrghdprhgtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghl
+    rdhorhhgpdhrtghpthhtoheplhhinhhugidqtghifhhssehvghgvrhdrkhgvrhhnvghlrd
+    horhhg
+X-ME-Proxy: <xmx:3aYCadIU3g7PRNyg0QpRBi516BNZpWSYBI7wNvYksLhLN5HboYbfKg>
+    <xmx:3aYCaUi8yMV9Wi329iHBU0ZD5tJV3Inub4fLYJfrLtuvM8baE8Z65g>
+    <xmx:3aYCaTfdaKHZTaBO_Bu6_k6dJq0TTIMOZXGLZvFcx2pwEZqLY08rbw>
+    <xmx:3aYCaU7RSF_CkX0ckxw-AONs1hAD9ap10WIuJvbkwYEEi3Piz-5pGg>
+    <xmx:36YCaR9pl7VkHXdYi10atgXk7DONC_H6TEfCcxqFVlKz7Swud_TD-zUd>
+Feedback-ID: iab3e480c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 29 Oct 2025 19:44:19 -0400 (EDT)
+From: NeilBrown <neilb@ownmail.net>
+To: "Alexander Viro" <viro@zeniv.linux.org.uk>,
+	"Christian Brauner" <brauner@kernel.org>,
+	"Amir Goldstein" <amir73il@gmail.com>
+Cc: "Jan Kara" <jack@suse.cz>,	linux-fsdevel@vger.kernel.org,
+	Jeff Layton <jlayton@kernel.org>,	Chris Mason <clm@fb.com>,
+	David Sterba <dsterba@suse.com>,	David Howells <dhowells@redhat.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,	Tyler Hicks <code@tyhicks.com>,
+	Miklos Szeredi <miklos@szeredi.hu>,	Chuck Lever <chuck.lever@oracle.com>,
+	Olga Kornievskaia <okorniev@redhat.com>,	Dai Ngo <Dai.Ngo@oracle.com>,
+	Namjae Jeon <linkinjeon@kernel.org>,	Steve French <smfrench@gmail.com>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Carlos Maiolino <cem@kernel.org>,
+	John Johansen <john.johansen@canonical.com>,
+	Paul Moore <paul@paul-moore.com>,	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Stephen Smalley <stephen.smalley.work@gmail.com>,
+	Ondrej Mosnacek <omosnace@redhat.com>,	Mateusz Guzik <mjguzik@gmail.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Stefan Berger <stefanb@linux.ibm.com>,
+	"Darrick J. Wong" <djwong@kernel.org>,	linux-kernel@vger.kernel.org,
+	netfs@lists.linux.dev,	ecryptfs@vger.kernel.org,
+	linux-nfs@vger.kernel.org,	linux-unionfs@vger.kernel.org,
+	linux-cifs@vger.kernel.org,	linux-xfs@vger.kernel.org,
+	apparmor@lists.ubuntu.com,	linux-security-module@vger.kernel.org,
+	selinux@vger.kernel.org
+Subject: [PATCH v4 00/14] Create and use APIs to centralise locking for directory ops.
+Date: Thu, 30 Oct 2025 10:31:00 +1100
+Message-ID: <20251029234353.1321957-1-neilb@ownmail.net>
+X-Mailer: git-send-email 2.50.0.107.gf914562f5916.dirty
+Reply-To: NeilBrown <neil@brown.name>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251030-zuruf-linken-d20795719609@brauner>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 30, 2025 at 12:13:11AM +0100, Christian Brauner wrote:
-> I'm fine either way. @Nathan, if you just want to give Linus the patch
-> if it's small enough or just want to give me a stable branch I can pull
-> I'll be content. Thanks!
+Hi all,
 
-I do not care either way but I created a shared branch/tag since it was
-easy enough to do. If Linus wants to take these directly for -rc4, I am
-fine with that as well.
+ this series is the next part of my effort to change directory-op
+ locking to allow multiple concurrent ops in a directory.  Ultimately we
+ will (in my plan) lock the target dentry(s) rather than the whole
+ parent directory.
 
-Cheers,
-Nathan
+ To help with changing the locking protocol, this series centralises
+ locking and lookup in some helpers.  The various helpers are introduced
+ and then used in the same patch - roughly one patch per helper though
+ with various exceptions.
 
-The following changes since commit 3a8660878839faadb4f1a6dd72c3179c1df56787:
+ I haven't introduced these helpers into the various filesystems that
+ Al's tree-in-dcache series is changing.  That series introduces and
+ uses similar helpers tuned to the specific needs of that set of
+ filesystems.  Ultimately all the helpers will use the same backends
+ which can then be adjusted when it is time to change the locking
+ protocol.
 
-  Linux 6.18-rc1 (2025-10-12 13:42:36 -0700)
+ One change that deserves highlighting is in patch 13 where vfs_mkdir()
+ is changed to unlock the parent on failure, as well as the current
+ behaviour of dput()ing the dentry on failure.  Once this change is in
+ place, the final step of both create and an remove sequences only
+ requires the target dentry, not the parent.  So e.g.  end_creating() is
+ only given the dentry (which may be IS_ERR() after vfs_mkdir()).  This
+ helps establish the pattern that it is the dentry that is being locked
+ and unlocked (the lock is currently held on dentry->d_parent->d_inode,
+ but that can change).
 
-are available in the Git repository at:
+ Please review the changes I've made to your respective code areas and
+ let us know of any problems.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/kbuild/linux.git tags/kbuild-ms-extensions-6.19
+Thanks,
+NeilBrown
 
-for you to fetch changes up to c4781dc3d1cf0e017e1f290607ddc56cfe187afc:
 
-  Kbuild: enable -fms-extensions (2025-10-29 16:23:47 -0700)
-
-----------------------------------------------------------------
-Shared branch between Kbuild and other trees for enabling '-fms-extensions' for 6.19
-
-Signed-off-by: Nathan Chancellor <nathan@kernel.org>
-
-----------------------------------------------------------------
-Nathan Chancellor (1):
-      jfs: Rename _inline to avoid conflict with clang's '-fms-extensions'
-
-Rasmus Villemoes (1):
-      Kbuild: enable -fms-extensions
-
- Makefile                   | 3 +++
- fs/jfs/jfs_incore.h        | 6 +++---
- scripts/Makefile.extrawarn | 4 +++-
- 3 files changed, 9 insertions(+), 4 deletions(-)
+ [PATCH v4 01/14] debugfs: rename end_creating() to
+ [PATCH v4 02/14] VFS: introduce start_dirop() and end_dirop()
+ [PATCH v4 03/14] VFS: tidy up do_unlinkat()
+ [PATCH v4 04/14] VFS/nfsd/cachefiles/ovl: add start_creating() and
+ [PATCH v4 05/14] VFS/nfsd/cachefiles/ovl: introduce start_removing()
+ [PATCH v4 06/14] VFS: introduce start_creating_noperm() and
+ [PATCH v4 07/14] VFS: introduce start_removing_dentry()
+ [PATCH v4 08/14] VFS: add start_creating_killable() and
+ [PATCH v4 09/14] VFS/nfsd/ovl: introduce start_renaming() and
+ [PATCH v4 10/14] VFS/ovl/smb: introduce start_renaming_dentry()
+ [PATCH v4 11/14] Add start_renaming_two_dentries()
+ [PATCH v4 12/14] ecryptfs: use new start_creating/start_removing APIs
+ [PATCH v4 13/14] VFS: change vfs_mkdir() to unlock on failure.
+ [PATCH v4 14/14] VFS: introduce end_creating_keep()
 
