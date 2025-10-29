@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-66238-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66239-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42852C1A498
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 13:39:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BA34C1A435
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 13:36:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3F012560EE1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 12:31:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 679BD189F323
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 12:32:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4A623596F9;
-	Wed, 29 Oct 2025 12:22:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91F57346E6B;
+	Wed, 29 Oct 2025 12:22:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jnw1aMB2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sCHsGA/4"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDDA4310624;
-	Wed, 29 Oct 2025 12:22:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1D40346E60;
+	Wed, 29 Oct 2025 12:22:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761740566; cv=none; b=omEqrFqggUoE2gjRplVFXnPl2ylX5D1DE90Y2s9061OGNDjf+PIx4Jh7zbWuBeiOa0StW6uVuEuOYCHhbwP+JBGB4PhoY3WV+9BJVse7gCT5FzhfbcX9+TzmMs4LFpT0vcsRFfIxqsJz00cm4You5fAABx5y1Dn1qaARqFlwhW8=
+	t=1761740571; cv=none; b=naLUjtdDr8KRvfiI3OJ3tvcu1YInYak73zuzPTym6UDRy7o8q7Jk4rUkQL4B1xuO9YcF6rILSV17KR70mKOton83buU+Tzh0C6Gm+lO3sqN5e6jYZWXfIblS4VID1/0j5c0BEWz39wxeAdbcqSfGNq3NJXl5mqx1F7J7vnQfQ7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761740566; c=relaxed/simple;
-	bh=aUj6NRVDEfXAvY88G+wOpYmY1IAUvRXs+4FwCz1W+QY=;
+	s=arc-20240116; t=1761740571; c=relaxed/simple;
+	bh=e8EI0iOiQx8fHK9+00tBtoOgGlNpcvVChJMa2f3XulI=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=f/U0XpyapGBmoyqD4U+xpQ8PrTd5DZF42YFvL+s+7SKuOZw+UdUfwjF/dw7lqKgEQuIGxJ1ZR/OaL/POl2dSY+U0GLNkXQ1JKSvRf66TofvwjNmaL8YkL6FOPZHmDp64mYO+wfFKs/eVEpTkOWaVc0W8NlAtOsIqz9mAvOcr0gw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jnw1aMB2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1471CC4CEFD;
-	Wed, 29 Oct 2025 12:22:40 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=MhwSHViMOVhxFGdNFdxV9LUX62ylYdk7D31qEQ/vuj8YXuMjhEWv2ZHb8HjJpHJITSjCfhdqn/5EK+Paz6jJJbwBcRoYmxajinE0OpbydmqjyD4UzH6m1vvsfzWe4scroLueWZmqv984JENSg7F4hkoRlwfERtLNg4sZVEdOMA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sCHsGA/4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CE57C4CEF7;
+	Wed, 29 Oct 2025 12:22:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761740565;
-	bh=aUj6NRVDEfXAvY88G+wOpYmY1IAUvRXs+4FwCz1W+QY=;
+	s=k20201202; t=1761740570;
+	bh=e8EI0iOiQx8fHK9+00tBtoOgGlNpcvVChJMa2f3XulI=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=jnw1aMB2/mFYOeS4oJ7GrQyGWmVZBCpi/0ToK43HUjZMLS3fWTnMTDCOwA7yRosiC
-	 2rga7pe3YBN5aG0HYr264QwmwGInYFeMLwL6ewlDX5Z2MQpqhd6aE4y/+WpTOSeHfx
-	 hp3EL+ygd6CMjN5hN/RleS7csNqh0oifawdtxGDNEPlCX2LRM0OmIpWXIazuHBQObm
-	 beMMkXnegQ+gc+1mmzT6lX3VZDxmXVinM8hzm/bytSrKnOwdXwtW2/RKFGAnLotXjz
-	 8C5TgXL33PqrZpoFQLV3iZG4uD5wN/9LdIbMEJSE7L+9ftLofCHfSEHkYwfm++XJtZ
-	 xJ3rCi2djX46g==
+	b=sCHsGA/4hrBYx/I2LULBDsifN8HT60yBLZGQk+tlxDNdDIXbCglZjwwMZxAKawZTt
+	 M4qjzLAD3cO8tb7i/83H3wLHRHWiBG909EciDRAucGuuin9C+TM8NXxmgXNqlzuujm
+	 dlcJx1Ng4Zxef7Abz6AEzIGyhv1qeXLSzq+xzRVxBwJTkRmRtvSszigruN17Xe4hvR
+	 iJrlg79bqytz1GHdMzctqkJwmxJC3LGplKNxgkD8FFogq9UJWic77cNMQRxalmOr+7
+	 mFXDJDY4fguWUaYq4Qfm++eLm4XKKo+NCxKQueJVxMwZBkXPsnXelFHw4jIF3aBppr
+	 K48kcsHNJZZiA==
 From: Christian Brauner <brauner@kernel.org>
-Date: Wed, 29 Oct 2025 13:20:38 +0100
-Subject: [PATCH v4 25/72] selftests/namespaces: third active reference
+Date: Wed, 29 Oct 2025 13:20:39 +0100
+Subject: [PATCH v4 26/72] selftests/namespaces: fourth active reference
  count tests
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -53,7 +53,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251029-work-namespace-nstree-listns-v4-25-2e6f823ebdc0@kernel.org>
+Message-Id: <20251029-work-namespace-nstree-listns-v4-26-2e6f823ebdc0@kernel.org>
 References: <20251029-work-namespace-nstree-listns-v4-0-2e6f823ebdc0@kernel.org>
 In-Reply-To: <20251029-work-namespace-nstree-listns-v4-0-2e6f823ebdc0@kernel.org>
 To: linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
@@ -70,73 +70,83 @@ Cc: Jann Horn <jannh@google.com>, Mike Yuan <me@yhndnzj.com>,
  netdev@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-96507
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3551; i=brauner@kernel.org;
- h=from:subject:message-id; bh=aUj6NRVDEfXAvY88G+wOpYmY1IAUvRXs+4FwCz1W+QY=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQysfW+Wf21aMLcuFV1TJZp4Zq9bszFGZe/PIqPW7jMQ
- t8xdcq2jlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIk8fMHwz+qY5PIH8hK36kVc
- gi6fnhcccSP464xly9Zbvohv3egSv47hN/vb8I9H0wpNd4s5cf21tfpoEnVdhI/5nHbiVZ46vSJ
- /dgA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2891; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=e8EI0iOiQx8fHK9+00tBtoOgGlNpcvVChJMa2f3XulI=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQysfUKvHvrtuZkvNh919X+T/ee2LGmKKZX7dmpMEfGt
+ M0P8goCO0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACbS7czI8Mf/pUHcSkeZaTVS
+ HwXazpTH3Hpx78KJ+qKdn3TsbRhXVjMytK63jGzc9clz7fRIq//Bxfu3d2bf3p//l60hxH5Zx4V
+ 2ZgA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-Test that a namespace remains active while a process is using it,
-even after the creating process exits.
+Test user namespace active ref tracking via credential lifecycle.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- .../selftests/namespaces/ns_active_ref_test.c      | 124 +++++++++++++++++++++
- 1 file changed, 124 insertions(+)
+ .../selftests/namespaces/ns_active_ref_test.c      | 90 ++++++++++++++++++++++
+ 1 file changed, 90 insertions(+)
 
 diff --git a/tools/testing/selftests/namespaces/ns_active_ref_test.c b/tools/testing/selftests/namespaces/ns_active_ref_test.c
-index 7cade298c754..c2e34de7a3a9 100644
+index c2e34de7a3a9..396066e641da 100644
 --- a/tools/testing/selftests/namespaces/ns_active_ref_test.c
 +++ b/tools/testing/selftests/namespaces/ns_active_ref_test.c
-@@ -152,4 +152,128 @@ TEST(ns_inactive_after_exit)
- 	ASSERT_TRUE(errno == ENOENT || errno == ESTALE);
+@@ -276,4 +276,94 @@ TEST(ns_active_with_multiple_processes)
+ 	ASSERT_TRUE(WIFEXITED(status));
  }
  
 +/*
-+ * Test that a namespace remains active while a process is using it,
-+ * even after the creating process exits.
++ * Test user namespace active ref tracking via credential lifecycle
 + */
-+TEST(ns_active_with_multiple_processes)
++TEST(userns_active_ref_lifecycle)
 +{
 +	struct file_handle *handle;
 +	int mount_id;
 +	int ret;
 +	int fd;
 +	int pipefd[2];
-+	int syncpipe[2];
-+	pid_t pid1, pid2;
++	pid_t pid;
 +	int status;
 +	char buf[sizeof(*handle) + MAX_HANDLE_SZ];
-+	char sync_byte;
 +
-+	/* Create pipes for communication */
 +	ASSERT_EQ(pipe(pipefd), 0);
-+	ASSERT_EQ(pipe(syncpipe), 0);
 +
-+	pid1 = fork();
-+	ASSERT_GE(pid1, 0);
++	pid = fork();
++	ASSERT_GE(pid, 0);
 +
-+	if (pid1 == 0) {
-+		/* First child - creates namespace */
++	if (pid == 0) {
++		/* Child process */
 +		close(pipefd[0]);
-+		close(syncpipe[1]);
 +
-+		/* Create new network namespace */
-+		ret = unshare(CLONE_NEWNET);
++		/* Create new user namespace */
++		ret = unshare(CLONE_NEWUSER);
 +		if (ret < 0) {
 +			close(pipefd[1]);
-+			close(syncpipe[0]);
 +			exit(1);
 +		}
 +
-+		/* Open and get handle */
-+		fd = open("/proc/self/ns/net", O_RDONLY);
++		/* Set up uid/gid mappings */
++		int uid_map_fd = open("/proc/self/uid_map", O_WRONLY);
++		int gid_map_fd = open("/proc/self/gid_map", O_WRONLY);
++		int setgroups_fd = open("/proc/self/setgroups", O_WRONLY);
++
++		if (uid_map_fd >= 0 && gid_map_fd >= 0 && setgroups_fd >= 0) {
++			write(setgroups_fd, "deny", 4);
++			close(setgroups_fd);
++
++			char mapping[64];
++			snprintf(mapping, sizeof(mapping), "0 %d 1", getuid());
++			write(uid_map_fd, mapping, strlen(mapping));
++			close(uid_map_fd);
++
++			snprintf(mapping, sizeof(mapping), "0 %d 1", getgid());
++			write(gid_map_fd, mapping, strlen(mapping));
++			close(gid_map_fd);
++		}
++
++		/* Get file handle */
++		fd = open("/proc/self/ns/user", O_RDONLY);
 +		if (fd < 0) {
 +			close(pipefd[1]);
-+			close(syncpipe[0]);
 +			exit(1);
 +		}
 +
@@ -147,76 +157,31 @@ index 7cade298c754..c2e34de7a3a9 100644
 +
 +		if (ret < 0) {
 +			close(pipefd[1]);
-+			close(syncpipe[0]);
 +			exit(1);
 +		}
 +
 +		/* Send handle to parent */
 +		write(pipefd[1], buf, sizeof(*handle) + handle->handle_bytes);
 +		close(pipefd[1]);
-+
-+		/* Wait for signal before exiting */
-+		read(syncpipe[0], &sync_byte, 1);
-+		close(syncpipe[0]);
 +		exit(0);
 +	}
 +
-+	/* Parent reads handle */
++	/* Parent */
 +	close(pipefd[1]);
 +	ret = read(pipefd[0], buf, sizeof(buf));
 +	close(pipefd[0]);
-+	ASSERT_GT(ret, 0);
 +
++	waitpid(pid, &status, 0);
++	ASSERT_TRUE(WIFEXITED(status));
++	ASSERT_EQ(WEXITSTATUS(status), 0);
++
++	ASSERT_GT(ret, 0);
 +	handle = (struct file_handle *)buf;
 +
-+	/* Create second child that will keep namespace active */
-+	pid2 = fork();
-+	ASSERT_GE(pid2, 0);
-+
-+	if (pid2 == 0) {
-+		/* Second child - reopens the namespace */
-+		close(syncpipe[0]);
-+		close(syncpipe[1]);
-+
-+		/* Open the namespace via handle */
-+		fd = open_by_handle_at(FD_NSFS_ROOT, handle, O_RDONLY);
-+		if (fd < 0) {
-+			exit(1);
-+		}
-+
-+		/* Join the namespace */
-+		ret = setns(fd, CLONE_NEWNET);
-+		close(fd);
-+		if (ret < 0) {
-+			exit(1);
-+		}
-+
-+		/* Sleep to keep namespace active */
-+		sleep(1);
-+		exit(0);
-+	}
-+
-+	/* Let second child enter the namespace */
-+	usleep(100000); /* 100ms */
-+
-+	/* Signal first child to exit */
-+	close(syncpipe[0]);
-+	sync_byte = 'X';
-+	write(syncpipe[1], &sync_byte, 1);
-+	close(syncpipe[1]);
-+
-+	/* Wait for first child */
-+	waitpid(pid1, &status, 0);
-+	ASSERT_TRUE(WIFEXITED(status));
-+
-+	/* Namespace should still be active because second child is using it */
++	/* Namespace should be inactive after all tasks exit */
 +	fd = open_by_handle_at(FD_NSFS_ROOT, handle, O_RDONLY);
-+	ASSERT_GE(fd, 0);
-+	close(fd);
-+
-+	/* Wait for second child */
-+	waitpid(pid2, &status, 0);
-+	ASSERT_TRUE(WIFEXITED(status));
++	ASSERT_LT(fd, 0);
++	ASSERT_TRUE(errno == ENOENT || errno == ESTALE);
 +}
 +
  TEST_HARNESS_MAIN
