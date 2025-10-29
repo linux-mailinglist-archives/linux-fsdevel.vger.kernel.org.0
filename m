@@ -1,53 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-66163-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66164-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DBF5C17EAC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 02:30:19 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76AC7C17E64
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 02:27:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A2791890C21
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 01:27:30 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 672794E9B59
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 01:27:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8C561B983F;
-	Wed, 29 Oct 2025 01:26:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1C492DA75C;
+	Wed, 29 Oct 2025 01:27:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nUV47oh5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F7dV5Lpd"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A6022D7D2F;
-	Wed, 29 Oct 2025 01:26:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 020C926B77D;
+	Wed, 29 Oct 2025 01:27:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761701217; cv=none; b=eIsarq+Vhwsj/bP15UWBs8YafQrv/cDxw9Gc3vIQoeAiE0T2uDoAgYD7TUqLaBZsIFXpHU9p8ngXQwvnb2PFGty/Q2rlGHy1BuxzALkX57YWIvBxUz7BdtB1YDMZLOomdrCoWxkUhS4EJxNSV2D/V6BedftTjD3RVGE/5BTB7IE=
+	t=1761701233; cv=none; b=ILLEeYXdm6aF+wefdxJE5gfeEGj0kwVpX78sen6x809PXYE7YhfqHfD9AWqyAzxjZSvmBDDFVIUg4E2VoGWh9FYM8Apl927Y6I3PZfgGOxr0cWvgIJdMI9veleeTs891rROfq3sVpEq0Rm1ZBf6rZ/WEGCnD6c8k9BlAWgs4hMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761701217; c=relaxed/simple;
-	bh=sF/WMkmxIjUjxjyEM06cGd64xKHP7iIsYRCFiudwWtY=;
+	s=arc-20240116; t=1761701233; c=relaxed/simple;
+	bh=fgS8DdeOIPEtBO8mbTuzeWkNUjC8RXn7GH0I8jIGHL4=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GeLluGwVayc04JFSDGFqAcSgRkepIRE9KUb5A/crJU93vbI0pFRpeYc3fL32jLDIoyREjypBBwTNbs8iOzpGxjbcov9Yq7Rd6Z0tcYazNG7PL69qvriXX3h12xzS9GtAAdzaJXLHKy1NvRhssy82366SH6V4JMhOOod+V75QHwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nUV47oh5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB5AEC4CEE7;
-	Wed, 29 Oct 2025 01:26:56 +0000 (UTC)
+	 MIME-Version:Content-Type; b=FuGtx79BrMAszE2ExswROjpfvZEtwXcKeF4tv2XD/GzEWKzNCFh5Di7C2P8ke1VkRWuMxfFThgt7vbP/tADN6LsXDUl/QbHi9opYwWS/5ThFfqvEj7ipEvYzcXfSZyJubouc9w0T1BBV/TbcQng8OhDb1/vjbcYlDhZivGq0r0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F7dV5Lpd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75F8FC4CEE7;
+	Wed, 29 Oct 2025 01:27:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761701216;
-	bh=sF/WMkmxIjUjxjyEM06cGd64xKHP7iIsYRCFiudwWtY=;
+	s=k20201202; t=1761701232;
+	bh=fgS8DdeOIPEtBO8mbTuzeWkNUjC8RXn7GH0I8jIGHL4=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=nUV47oh5TK+bjnLWfY22OoArEnsanZXT/f2ZXTC4ZpXaOpVEZDQD7lhmHaHKfsoHg
-	 u1vBbsba2CSUr7JvgkIf7UaLs1D35XJ8+xfOeDt1pT82C9PncYsD/0uCFVWA0enyH8
-	 XuQudM9jMXfCdxBKNZqkECve05JxDi/tFaREwH6TwNKD+icgAc7vvPgwrpZR1P7bk5
-	 GKqVaswbVlwYl8hf9jLZ5ihyMdkOkRxAt6qEGjE39ukCdjpukfoimKOZmOCHClm0WD
-	 +WwEfmMkuHzMSDE9dWKoq+5ILjhAE+wGPsDnEIBTJznFWiDv8v9VyawSQZQASeX1Ku
-	 i49oU902LMXVQ==
-Date: Tue, 28 Oct 2025 18:26:56 -0700
-Subject: [PATCH 25/33] ext4/001: check for fiemap support
+	b=F7dV5LpdiSAfsVT/eZcBQ/t92yiXXmSyh4Rrm0hRzFx5iI7b66/v6jFczQEEIqpP2
+	 qiU6PDFVjE6K4D0FC3VGnUIvB58P5BkamqzZ31Q6BHil5tUThT0GXGhrPOP+cCt4c0
+	 eFMFkWhy2AJ4y6hVQFbfOgtCdjlLAzZfsNptC3Ymm2nCjOKdi0gJH60IkRdWiYprPm
+	 X+5sLf1IX0PB3P3IVs9/5NGKNyb8dyNubkfaI1Wlbl1IuubbMc4NaVzwMFGkkdZGlF
+	 L7vA/A+sqGM+HqPusmkayO/ZVG+aFY9eXvLKAQX/mNFz6yMHjYoN0xMbIF7TMQ0dXu
+	 UnbqDGV1h5dlA==
+Date: Tue, 28 Oct 2025 18:27:12 -0700
+Subject: [PATCH 26/33] generic/622: check that strictatime/lazytime actually
+ work
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: djwong@kernel.org, zlang@redhat.com
 Cc: neal@gompa.dev, fstests@vger.kernel.org, linux-ext4@vger.kernel.org,
  linux-fsdevel@vger.kernel.org, joannelkoong@gmail.com, bernd@bsbernd.com
-Message-ID: <176169820443.1433624.1207652848964687224.stgit@frogsfrogsfrogs>
+Message-ID: <176169820461.1433624.4704430685173473309.stgit@frogsfrogsfrogs>
 In-Reply-To: <176169819804.1433624.11241650941850700038.stgit@frogsfrogsfrogs>
 References: <176169819804.1433624.11241650941850700038.stgit@frogsfrogsfrogs>
 Precedence: bulk
@@ -61,26 +62,29 @@ Content-Transfer-Encoding: 7bit
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-fuse2fs only supports fiemap in iomap mode, so disable this test when
-it's present.
+Make sure that we can mount with these options before testing their
+behaviors.
 
 Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- tests/ext4/001 |    1 +
- 1 file changed, 1 insertion(+)
+ tests/generic/622 |    4 ++++
+ 1 file changed, 4 insertions(+)
 
 
-diff --git a/tests/ext4/001 b/tests/ext4/001
-index 1990746aa58764..1ec35a76ea8721 100755
---- a/tests/ext4/001
-+++ b/tests/ext4/001
-@@ -19,6 +19,7 @@ _exclude_fs ext3
+diff --git a/tests/generic/622 b/tests/generic/622
+index a67931ad877fde..559943d5403805 100755
+--- a/tests/generic/622
++++ b/tests/generic/622
+@@ -88,6 +88,10 @@ _require_xfs_io_command "syncfs"
+ # test that timestamp updates aren't persisted when they shouldn't be.
  
- _require_xfs_io_command "falloc"
- _require_xfs_io_command "fzero"
-+_require_xfs_io_command "fiemap"
- _require_test
+ _scratch_mkfs &>> $seqres.full
++_try_scratch_mount -o strictatime || _notrun "strictatime not supported"
++_scratch_unmount
++_try_scratch_mount -o lazytime || _notrun "lazytime not supported"
++_scratch_unmount
+ _scratch_mount
  
- # Select appropriate golden output based on mount options
+ # Create the test file for which we'll update and check the timestamps.
 
 
