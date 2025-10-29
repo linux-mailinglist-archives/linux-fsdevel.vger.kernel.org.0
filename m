@@ -1,53 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-65975-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65976-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22C36C17900
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 01:38:16 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E219C1790F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 01:38:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E47CF342113
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 00:38:03 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A16D14F747E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 00:38:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C54E32D0292;
-	Wed, 29 Oct 2025 00:37:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F0F32D0C7F;
+	Wed, 29 Oct 2025 00:38:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KbZAX4mW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hD4jImx8"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CF6219E99F;
-	Wed, 29 Oct 2025 00:37:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E42BB2D0292;
+	Wed, 29 Oct 2025 00:38:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761698276; cv=none; b=JhhEtsusLN09CTx1Ke4slFPwIun36+fOttlz+l+JxOtR9IiNJAMdtp/IkUGe4x/+s/OTl6oGphn1OO9sNefikgKfMYYHImIdMCediyjnGBEf/O8cy7vPuQJlXIDDoSv8d8xds51XD7rMPIvVe6Hh5YPN5USTBpcKzTCBBmaxXCU=
+	t=1761698292; cv=none; b=tVlswQGkz8eSVReIbFaEd1Fsrs4WZh4yjEarwCFDBUcojLt6LVZFwZl+AWBedatZxcIvngS9dUa+NZTDFmrMoayLFF05IjqF4QEBref80+H4duiZpm5wl7W4zsihnzfHoMP+3VdspljwKYmecpc1xIN2ZkDBFdvkRJTeqbENwtU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761698276; c=relaxed/simple;
-	bh=/br5Wdgw3v8NjB4BQ3E1Mm/Zqo5SHGKIIWUE6svTXCI=;
+	s=arc-20240116; t=1761698292; c=relaxed/simple;
+	bh=Xy+EQR183KsgFUPM48U+6KP3vfalzxWmBDt3QfdF0A8=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hAaYf4aji3YUh2p1TloJAtk5tjr1IduJQQ/KvB/cZLbx0g8VkYpdA7HXqe6oXhC+Z+qjdDpfV2KC3OWO4XKUja0tKJB0s9nRqUkOpN5xV+XQ3er5ggzzz1x03pd8HwHbw/9fAMoD0EpE8ktCtiP++ff9MhdUU9bJAV93bW4PbMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KbZAX4mW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A06A9C4CEE7;
-	Wed, 29 Oct 2025 00:37:55 +0000 (UTC)
+	 MIME-Version:Content-Type; b=iMMgKvj5d1bk2J6KgGUTv9VZ/sfJ5W3gR2oRafect5tqedO1ZMe28w+nWNY1n41BT2HrGQUkB78XHf+oX7vRJD7PPE55vlglwaUA7/8ZM8Jw9kLXUo5pPgznfmT0Uv9/NsHVYf3UFsM5Y7s5Scrsqrk3N95MeqWO8/JsNyGirAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hD4jImx8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63B6FC4CEE7;
+	Wed, 29 Oct 2025 00:38:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761698275;
-	bh=/br5Wdgw3v8NjB4BQ3E1Mm/Zqo5SHGKIIWUE6svTXCI=;
+	s=k20201202; t=1761698291;
+	bh=Xy+EQR183KsgFUPM48U+6KP3vfalzxWmBDt3QfdF0A8=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=KbZAX4mWUCyFKwe8JJvvFcpvl4beeWcUlafpjeLTQrNpMJB9lw/xfBLwD1Mt6XyXq
-	 tOlCvwKd9+HoGg34I+Xtb+wKvztajFaYLn8efFpreZf+7u/cVdtV/rCHQH/f0ZtZ4M
-	 cwrqqRASqaZW4hbY2q+vSVxOEbyosoDzTANV/pabEBp+ljom8DQf3zPsod7GOm0ENg
-	 vvTavg8xu+LcLcKZBHROryiT0QOkwpHK2d9nF2JOlgjlCAGaEAlYEA1Gps5Wwn7Mnz
-	 BNdckzAaZoQ+qCSfrzVWJBJuJAg2RPvBKLfC9txdSEtctQEeJas7jtgq+N8zfwfFiW
-	 uZBKPfXSQBwKg==
-Date: Tue, 28 Oct 2025 17:37:55 -0700
-Subject: [PATCHSET v6 1/8] fuse: general bug fixes
+	b=hD4jImx8I0DKkmMjIYfRsrwx1Et/79n45tE4vioEBz+j2J4VbzjgTF0+lWTDcKP+Z
+	 WvwAtGfpmHRRwHARth+HsME5sZbGMlb7lLiC5d+e7NK/nek7jDer6Yt+37FqJKoODK
+	 1nYwSv3adY3NUt49xVlSgwjNS1ED6WvQnoHwHzI5satCyvBrQX4uFJoHtpncxlMKYk
+	 fBgNL9vwfBlR/JNNnLg3EshgSaNEIkR2Kj2pGRmuhnkqwdKhFmujFRFq1QbQBH1uST
+	 rR2aSJoLLSv+/shre07CsYayr+YbHuY8+5JhK3FcyNVKHQ+masU7/spCatV0VUT3He
+	 +zRd0aV1Xtssw==
+Date: Tue, 28 Oct 2025 17:38:10 -0700
+Subject: [PATCHSET v6 2/8] iomap: cleanups ahead of adding fuse support
 From: "Darrick J. Wong" <djwong@kernel.org>
-To: djwong@kernel.org, miklos@szeredi.hu
-Cc: joannelkoong@gmail.com, joannelkoong@gmail.com, bernd@bsbernd.com,
- neal@gompa.dev, linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Message-ID: <176169809222.1424347.16562281526870178424.stgit@frogsfrogsfrogs>
+To: djwong@kernel.org, miklos@szeredi.hu, brauner@kernel.org
+Cc: linux-ext4@vger.kernel.org, hch@lst.de, linux-fsdevel@vger.kernel.org
+Message-ID: <176169809564.1424591.2699278742364464313.stgit@frogsfrogsfrogs>
 In-Reply-To: <20251029002755.GK6174@frogsfrogsfrogs>
 References: <20251029002755.GK6174@frogsfrogsfrogs>
 Precedence: bulk
@@ -61,8 +60,9 @@ Content-Transfer-Encoding: 7bit
 
 Hi all,
 
-Here's a collection of fixes that I *think* are bugs in fuse, along with
-some scattered improvements.
+In preparation for making fuse use the fs/iomap code for regular file
+data IO, fix a few bugs in fuse and apply a couple of tweaks to iomap.
+These patches can go in immediately.
 
 If you're going to start using this code, I strongly recommend pulling
 from my git trees, which are linked below.
@@ -73,20 +73,12 @@ Comments and questions are, as always, welcome.
 --D
 
 kernel git tree:
-https://git.kernel.org/cgit/linux/kernel/git/djwong/xfs-linux.git/log/?h=fuse-fixes
+https://git.kernel.org/cgit/linux/kernel/git/djwong/xfs-linux.git/log/?h=iomap-fuse-prep
 ---
 Commits in this patchset:
- * fuse: flush pending fuse events before aborting the connection
- * fuse: signal that a fuse inode should exhibit local fs behaviors
- * fuse: implement file attributes mask for statx
- * fuse: update file mode when updating acls
- * fuse: propagate default and file acls on creation
+ * iomap: allow NULL swap info bdev when activating swapfile
 ---
- fs/fuse/fuse_i.h |   62 ++++++++++++++++++++++++++++++-
- fs/fuse/acl.c    |  108 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
- fs/fuse/dev.c    |   35 ++++++++++++++++++
- fs/fuse/dir.c    |   96 +++++++++++++++++++++++++++++++++++++-----------
- fs/fuse/inode.c  |   15 +++++++-
- 5 files changed, 289 insertions(+), 27 deletions(-)
+ fs/iomap/swapfile.c |   17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
 
