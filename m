@@ -1,54 +1,71 @@
-Return-Path: <linux-fsdevel+bounces-66292-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66293-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28E50C1AB57
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 14:32:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A2CDC1AAE1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 14:29:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB79C5847DC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 13:05:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 251EB62528E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 13:06:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93AD733B6DC;
-	Wed, 29 Oct 2025 12:55:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D20FD3451B4;
+	Wed, 29 Oct 2025 12:55:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RHEAk1qp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ur6Ekr2s"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3B7C33B6C6;
-	Wed, 29 Oct 2025 12:55:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7B79275AFD;
+	Wed, 29 Oct 2025 12:55:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761742506; cv=none; b=JHess36fMOImz8HAcW0k4hh+5NUQmcxUWpxwpRnqsWOhTS7dk54vrRHTzcQi27evND/aK1cOYpeiy9qYNzI5fRwMj584iy1dUZr8dY0kVvLrAKOockb6q4o+Ze7c7niIW30VMejUXniNPza9+KUBNt6Uv8a9aNVCHzKt7mZhb+s=
+	t=1761742535; cv=none; b=F/EERNzyoCEgj24pHswBSjvSc24dBhHzsSRfJwLPgf+7lmPRls37TlK6IKK4MYpIm/cbAG1DyzqTE1iefIzT6Pz8fr21swtDYacpTr/WWkrS6CxCcCADt4FqNnrmwnMasVQouc90ofkCVf6AbSteUY74MEO0gGhNP3MWHTEN6DM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761742506; c=relaxed/simple;
-	bh=9XYrlklpk/Hc4NE8fb0wzosrDo4q6wloCH7mewEvvLs=;
+	s=arc-20240116; t=1761742535; c=relaxed/simple;
+	bh=0CzE2vJmUarjE3+QMrd+j0mHeIz5jGi5cgcCV2j7Gto=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oSiDwFwsI8QnTOYtLEyxRjpg/nNeVlbXiOD4EFlSVGxp3CbPXvDB2GPGFXf3Z234Ii4X2WHMKiJf6pQYSQ3HaX/DVB78fzzkfb19H/jd8cmww8s1nfbGd58ZCbQpSRHxIKfOVXteN1irWEBiJu++YB+PXHMDJ/BExxGm52Cwf/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RHEAk1qp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E58C5C4CEF7;
-	Wed, 29 Oct 2025 12:55:01 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=FkZn9sfhZTevY7ZKAozwJ3nCEW28qJ4zDK0KZq7rHfxW5pjH94st+ANQVaXmvpF1TFBECS/RtFRkmin48jMm5NVlz+KNj/3SJXlJFklvUJYr/G6Ok72BBhKrnXsj1I5f5ik6cfSo+yFL0fUDs0Q9AanY7jFxyT+2TkJBVvlNRsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ur6Ekr2s; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EA4FC4CEF7;
+	Wed, 29 Oct 2025 12:55:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761742503;
-	bh=9XYrlklpk/Hc4NE8fb0wzosrDo4q6wloCH7mewEvvLs=;
+	s=k20201202; t=1761742535;
+	bh=0CzE2vJmUarjE3+QMrd+j0mHeIz5jGi5cgcCV2j7Gto=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RHEAk1qpC+8HX5MR5u6QfDqE42C9CRG3RdDExDGZ4MvXBtfCQack36vPhGsV0uWD8
-	 /PO3hH+L7UCbhTUGFEZ/au20foGy/k1/DEfYmZMORmp9huDFcU1NIUj9rTvGtkWOSL
-	 9YswO2xZWuEfthP37KUCBpDyTbnVn4MdE8yfJ004bbmiJXqc2iJcsVptv+Cgpq5z9Z
-	 RSTlJkUaFeLaiRRdH2x47/NtNb7s2T3DeE2pGvNXBpUGyq5wsUipmzSLHPLQwNo7ai
-	 pXQVSImgqj4b0sNa6pGJ8oo3oR1nTU2bioIt6lLXGd5R5qaxgRFC6QhEYtE0lvvQEO
-	 rFS2UjqMrgbbQ==
-Date: Wed, 29 Oct 2025 13:54:59 +0100
+	b=ur6Ekr2sxpK9kC1PNi5PiLCDzlSRO6FM0+oaVL0Fz8YUh5SxgvQXiBvK9gL9vzX1y
+	 FJHfJrBxfhcUwe5dZlRw6ODhiRJl/EJm2rWbu5QrVsPtIdVs3alSnIez2tiAIWH6/h
+	 ox/2F95UyuvJYNXfLY2SCq3uBNnh9JIw+5PQXbGVm6nDZmKCjPdaqJF4gD6WZNIxfM
+	 +O9W7KhgM63n0OUdWoExlc/9tbhDAscPQvz7uiqUs93Re9GNmMrnQsoYwuL1lG1HkW
+	 z3MMcgndaOWm17okctdlh7QveqspiHKAXE5wiW4Qgxh8V7dEAnzHTEFQv2U98huZ28
+	 lcdMvlRM8I1iw==
+Date: Wed, 29 Oct 2025 13:55:24 +0100
 From: Christian Brauner <brauner@kernel.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 1/2] fs: push list presence check into inode_io_list_del()
-Message-ID: <20251029-aufweichen-pechschwarz-7eba2f4f6ffb@brauner>
-References: <20251022143112.3303937-1-mjguzik@gmail.com>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Chuck Lever <chuck.lever@oracle.com>, 
+	Alexander Aring <alex.aring@gmail.com>, Trond Myklebust <trondmy@kernel.org>, 
+	Anna Schumaker <anna@kernel.org>, Steve French <sfrench@samba.org>, 
+	Paulo Alcantara <pc@manguebit.org>, Ronnie Sahlberg <ronniesahlberg@gmail.com>, 
+	Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>, 
+	Bharath SM <bharathsm@microsoft.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, 
+	David Howells <dhowells@redhat.com>, Tyler Hicks <code@tyhicks.com>, NeilBrown <neil@brown.name>, 
+	Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
+	Amir Goldstein <amir73il@gmail.com>, Namjae Jeon <linkinjeon@kernel.org>, 
+	Steve French <smfrench@gmail.com>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	Carlos Maiolino <cem@kernel.org>, Kuniyuki Iwashima <kuniyu@google.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org, 
+	linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, netfs@lists.linux.dev, 
+	ecryptfs@vger.kernel.org, linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	netdev@vger.kernel.org
+Subject: Re: [PATCH v3 00/13] vfs: recall-only directory delegations for knfsd
+Message-ID: <20251029-visuell-gluthitze-e321cef788d0@brauner>
+References: <20251021-dir-deleg-ro-v3-0-a08b1cde9f4c@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -57,51 +74,25 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251022143112.3303937-1-mjguzik@gmail.com>
+In-Reply-To: <20251021-dir-deleg-ro-v3-0-a08b1cde9f4c@kernel.org>
 
-On Wed, Oct 22, 2025 at 04:31:11PM +0200, Mateusz Guzik wrote:
-> For consistency with sb routines.
+On Tue, Oct 21, 2025 at 11:25:35AM -0400, Jeff Layton wrote:
+> Behold, another version of directory delegations. This version contains
+> support for recall-only delegations. Support for CB_NOTIFY will be
+> forthcoming (once the client-side patches have caught up).
 > 
-> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
-> ---
+> This main differences in this version are bugfixes, but the last patch
+> adds a more formal API for userland to request a delegation. That
+> support is optional. We can drop it and the rest of the series should be
+> fine.
+> 
+> My main interest in making delegations available to userland is to allow
+> testing this support without nfsd. I have an xfstest ready to submit for
+> this if that support looks acceptable. If it is, then I'll also plan to
+> submit an update for fcntl(2).
+> 
+> Christian, Chuck mentioned he was fine with you merging the nfsd bits
+> too, if you're willing to take the whole pile.
 
-Hm, what is this based on? It doesn't apply to vfs-6.19.inode at all.
-Could you please resend?
-
->  fs/fs-writeback.c | 3 +++
->  fs/inode.c        | 4 +---
->  2 files changed, 4 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-> index f784d8b09b04..5dccbe5fb09d 100644
-> --- a/fs/fs-writeback.c
-> +++ b/fs/fs-writeback.c
-> @@ -1349,6 +1349,9 @@ void inode_io_list_del(struct inode *inode)
->  {
->  	struct bdi_writeback *wb;
->  
-> +	if (list_empty(&inode->i_io_list))
-> +		return;
-> +
->  	wb = inode_to_wb_and_lock_list(inode);
->  	spin_lock(&inode->i_lock);
->  
-> diff --git a/fs/inode.c b/fs/inode.c
-> index 3153d725859c..274350095537 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -789,9 +789,7 @@ static void evict(struct inode *inode)
->  	BUG_ON(!(inode_state_read_once(inode) & I_FREEING));
->  	BUG_ON(!list_empty(&inode->i_lru));
->  
-> -	if (!list_empty(&inode->i_io_list))
-> -		inode_io_list_del(inode);
-> -
-> +	inode_io_list_del(inode);
->  	inode_sb_list_del(inode);
->  
->  	spin_lock(&inode->i_lock);
-> -- 
-> 2.34.1
-> 
+Absolutely!
 
