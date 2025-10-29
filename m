@@ -1,74 +1,74 @@
-Return-Path: <linux-fsdevel+bounces-66370-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66371-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6209FC1D42C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 21:44:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D1819C1D52B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 21:57:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3ED054E1FF3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 20:44:40 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8D7554E1AD2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 20:57:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4179536334B;
-	Wed, 29 Oct 2025 20:44:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D2B730FF1C;
+	Wed, 29 Oct 2025 20:57:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZIT8FZH5"
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="hk0iIWun"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF5D835A141
-	for <linux-fsdevel@vger.kernel.org>; Wed, 29 Oct 2025 20:44:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBE6030DEBF
+	for <linux-fsdevel@vger.kernel.org>; Wed, 29 Oct 2025 20:57:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761770667; cv=none; b=D+JKwcWE9dUIS2joaFxqvt6xdNEDzD38Zal21AnCvJmAACT1anqqAiNYx3WcA0/k5QVDKM/FqObwPDG9BHAaomB/dYLj6MkAk3uw+R/03CRwryvpemG7KZFtir78yEzLn5hLvVZGqymVRUP+TKEMcTAzs54EYwfhCX+0ls1Bw0k=
+	t=1761771469; cv=none; b=cvJ7Ag/TWOX5JtqKmtyHle+wMZFjRkOpGBdlO4Rdz1voF3h3C1qCQh0nrV9oOpZ1+12JgHkE/wkAAW9HrMxHRVDUgO2pl8+EkP1L19cRBJvk4LFefnYYU0pcQhqQBGB4NurgdAqdmCPQdj/MpSF04m2ewU78OC0j4F+6lezVbCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761770667; c=relaxed/simple;
-	bh=/nRyrHH69bDwdkUwV+ZvUiMlkERSxLC5qY0L4yNkpAA=;
+	s=arc-20240116; t=1761771469; c=relaxed/simple;
+	bh=kVNbgrwJqbn7N+8Q84bXyTlZt5UuYWGOW5gvGcx+ks4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rqKO2JP02B/6FvE95ncwlphdP9HlRDeoh3rY1DmUiClj7sZo4g0X75mH4GlMiqnq2fVXJ3kOA2khUDBGwn0gE7LTsbpyeOHIUc80GMhygKKOgHbbLKvv7nC7fX7fDJmYM97nLsiI55lYtnXYXxeAG+FLpKYXdbiA60YwtX3Km0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZIT8FZH5; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-378f010bf18so14819131fa.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Oct 2025 13:44:25 -0700 (PDT)
+	 To:Cc:Content-Type; b=hoB1q+CSKf9Van9o2+Dt64Utpv52rwlPIT3s2f/W00lR9Df1KjFMBeBeQwb0uwsvFiVhcP135xUDIygtkOMCTm9xYt0aiSpyUbVWnMgGKv+yuQ1Rr4ytM1jot+WyxvR5o9NBbqjrzFr0dN1zbnQbw2lM4Hhqa9bqUBOJU95YEZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=hk0iIWun; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-63bad3cd668so525083a12.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Oct 2025 13:57:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761770664; x=1762375464; darn=vger.kernel.org;
+        d=soleen.com; s=google; t=1761771466; x=1762376266; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=/nRyrHH69bDwdkUwV+ZvUiMlkERSxLC5qY0L4yNkpAA=;
-        b=ZIT8FZH51950wDS/bjbvoKGOA8qhHonV7KO9v4ASHE/9xRn3ynMtghPFcpBjOistJH
-         2lDJC8qO5e33qWIzdICHnbPQyQbleSTxhRTXXmBRLGOGCyZzy+q1Sd+c4kD9S/keZClS
-         MZt8ZPz7P4MLIzfxWg2TmnOnQZh1igfmm8ZEeJ8srgrqVAyq+4zbSyFWUbE7XBWoPObj
-         jw6yyodMDdTkDAscIF6SN8BwOhAbZUdl9M4vi15xPNeKdSfMqdZWqtIpGdFgtw+Sa8tW
-         WjRpVWRJwEG8tvxYBPzUBdlm27ROSFhNUxSh/hDPDKJJLfUfuJmwJAxMt1X6eC6zK8u7
-         BRWQ==
+        bh=CuiAC7OKtA+UPyYMr+UMd+A8BNjdLWXyrqC7LzVZISg=;
+        b=hk0iIWun7T0BHLLHJJOZ0GzYo9fP4fQe4pLx/FoT0IXyb9+F33vZSZJK+Cq7748k07
+         5O3cfoFIlj5ogkNxfyjudSnK2wi802y7GEAuQOImtX9Y4OFzWKHchiT6JVP2a+KZCEH8
+         cSjU95CyZY4/J63wzHlqIfQhCJCnAcg+1EVZxIXa26grdk2QDG63VtsaJJHGREmiZlk/
+         B5mmEpZtI34kWoq3MZILtjUu6Uk+NIGwLGN+5cnpZMIcX/8VOHtbRlXBNnBverIXmY0h
+         KUCh1gQqw2RZiTndB/MBypT2DVxDbDDDPYq73ZDmGuMzufGZi3rCpKC9G/4d9nO3BeNJ
+         PVcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761770664; x=1762375464;
+        d=1e100.net; s=20230601; t=1761771466; x=1762376266;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=/nRyrHH69bDwdkUwV+ZvUiMlkERSxLC5qY0L4yNkpAA=;
-        b=A4TVOf+p2yAxF1T15TZOkMd9TRFmpwUEcKljtaCLN0wrWQTuPwa0Sn2FCpR3HDhRol
-         1Y5+P0Iy8z3gDE1XJ3TcrL1+s3sanhU0/bEwvC2pzXKyNPTxJ7+6SZLfyrmv+wX4Fh8j
-         Z0XG9nfau05Iiq79mCznbhlREEIecUrDV6KxEXA4G5PEdXWYSU330I916wfnx1KJ5WAx
-         /+EhnuonFJMLZSUSQXxH5APfK6DHvhryhZ4XPYdrhsGk1OzOjPniDIbcZTY13mEUipGZ
-         WtbwrGzDF8xqsehu5otGCixgCDdw65qQ+fIpPB58sYeCTrniflAV5KLbFMLjrGdOli+i
-         Ef0A==
-X-Forwarded-Encrypted: i=1; AJvYcCVjW5WTsozjO255rYLoDQBKfafcJXvQQsKMmwc38/kB7tl2CLQn7BDCEwlF9IUGwJgiMkyBIsEI1FFlyuJ6@vger.kernel.org
-X-Gm-Message-State: AOJu0YytaTT45IUD+68iMLKQFticYGpU4Ff+z0NLhJGD4EX3OfPw+6Rg
-	fr/b3moKlTs6JJ2ONzaS9vcPAx682WdhD0ki5noqYF6kHLtFJlbAbtJRx32GPH0GCNmCMdDf9PV
-	xRzszE1v9Kit6FKGl4yHDJgCvsuOMeK74UWxe7PhX
-X-Gm-Gg: ASbGncvRUpdjK5XHhZuTIXnGmgoNrjdr6w7zxxpduDeHF3RFJ+0R7IqFbouefYFBeNK
-	KxUH8q1DKTfs1rY/tLFLZnzyKf5JNVyE+rlzALzXKupekG32ShBJyc6KfOr58sDBkbufkNtg7tO
-	T8qXgFv8kzDyx78SFHElpldunDFaczeke/hvqQDAMWz+FnJ0ziREiwxTONXIm/Jym/qQMl7588M
-	OL0Ys2GNrJG7Y6k4vior8Bi31EuHwUsyYw8T0RdOD1s8LWM1EaO9VmB76TZ
-X-Google-Smtp-Source: AGHT+IFRYtH5XfTJnxxGfkJO0Gi6f1H2nFBXWvOk+OBKFsn98ppWQIAtWYQQwdGEa9VK8XbxcXnwXcPQMdyC3mUpVtI=
-X-Received: by 2002:a05:651c:32a6:b0:378:d020:b6b3 with SMTP id
- 38308e7fff4ca-37a1068ccefmr2106821fa.7.1761770663502; Wed, 29 Oct 2025
- 13:44:23 -0700 (PDT)
+        bh=CuiAC7OKtA+UPyYMr+UMd+A8BNjdLWXyrqC7LzVZISg=;
+        b=jIjYGTkyk9CsEGnn//OopHuC0QfUWVe+DXdsK1PM0Roq6Gf5SKbBUbwGtChz9lrlKF
+         Buk+bh5wolKdUhD/bFflAUWtAXUhtmE2wyAL7OnkbSSPmn0GDEwM3/zpkPrPem77+elo
+         409f9blGd+WAPwQU5HKe3LckawJD/X//UA+80xWmAEH4u8gcAwfgsk6//UtlQqjyN58D
+         kV3Uyn71iN6+tFdHqgmSzg2gJ8D+IhiMr9iPQlknFA+CwxoEhqABA9bImoIRIp9rNtje
+         N/vdC6VwnFcg/8+J0x/YLFR1joE+Fh3CZ5Zy+zj4J5GBaq0L5w/OnGMzwNR6WCpovtsw
+         R+nQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX71km89SMp0YUhOWeuhgedPpW52J5GRFlBcwCB83Ffp8qCJqE41Pnv71krNLZd+qY+33mmPr6I3svQBOG+@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRE6NcBllUUAqhp32BOTks1/UjpT7EjYQdW8yphS8eHsYh5kxo
+	y94tccl36U6PuvKza2s7O50kOx3kpaqmoopkB2Rl0MEu83aIrsIkx5Nf51oM4fdPl+Kaf6rtYjS
+	yKgoXIjgbbMMvPalf8I7R2EjyWk6oG8VCeIZw3q6Nqw==
+X-Gm-Gg: ASbGncuYLbekMehEVL4pQDvbO/cb9iunJbd5A1KeraoegkWQ6j4xgCcJvbqD2+gYZi3
+	URNYBQFHdcLgdYZh+hrKUpfp8UG+W7t1yaweFUHKJDUVdPIJLEOMtjjvcb227whEL69RGkZsiDL
+	iMB9d7XId8ZaeOGGmMx6x9w2CggE7gxzZL3lWKvikqDFiR0gcxAwoNv3HYJMXxbiADrGg8naWi2
+	oiumL1hPirMhRzUWDRQcUstSfKMGQhk3rSJsNAcRiJgZEaMsj4dADewgQ==
+X-Google-Smtp-Source: AGHT+IG1L1CklcYrT3HJAsT3NVI2g7bIUPxqqj/65m77k2dZAOZ3fC4M2LmVzxUPHERR8OTwMl8fTbOBKlBu6jPbapM=
+X-Received: by 2002:a05:6402:43cc:b0:63c:84e:614f with SMTP id
+ 4fb4d7f45d1cf-64044254e3emr3585778a12.18.1761771466076; Wed, 29 Oct 2025
+ 13:57:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -77,15 +77,15 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20250929010321.3462457-1-pasha.tatashin@soleen.com>
  <20250929010321.3462457-15-pasha.tatashin@soleen.com> <mafs0tszhcyrw.fsf@kernel.org>
- <CA+CK2bBVSX26TKwgLkXCDop5u3e9McH3sQMascT47ZwwrwraOw@mail.gmail.com>
-In-Reply-To: <CA+CK2bBVSX26TKwgLkXCDop5u3e9McH3sQMascT47ZwwrwraOw@mail.gmail.com>
-From: David Matlack <dmatlack@google.com>
-Date: Wed, 29 Oct 2025 13:43:56 -0700
-X-Gm-Features: AWmQ_blzsfm8AU4aSmOo38Baxqd-QolYtNvPxHfj3yJKEB0u3KTJVZdMqBMfTX4
-Message-ID: <CALzav=d_Gmb8xKCwWCGsQQrdxHJrnk5VP-8hvO6FugUP7_ukAw@mail.gmail.com>
+ <CA+CK2bBVSX26TKwgLkXCDop5u3e9McH3sQMascT47ZwwrwraOw@mail.gmail.com> <CALzav=d_Gmb8xKCwWCGsQQrdxHJrnk5VP-8hvO6FugUP7_ukAw@mail.gmail.com>
+In-Reply-To: <CALzav=d_Gmb8xKCwWCGsQQrdxHJrnk5VP-8hvO6FugUP7_ukAw@mail.gmail.com>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Wed, 29 Oct 2025 16:57:09 -0400
+X-Gm-Features: AWmQ_bmg8lfgTlZTUn7wdsm2doiok4izVO4pilRQtGY6Hx2FX2qYt9rGJfmSrxU
+Message-ID: <CA+CK2bDMcCtDom1XQOx0U6yTg3Azr4jzSTpUo=WKgvTVOh5oog@mail.gmail.com>
 Subject: Re: [PATCH v4 14/30] liveupdate: luo_session: Add ioctls for file
  preservation and state management
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
+To: David Matlack <dmatlack@google.com>
 Cc: Pratyush Yadav <pratyush@kernel.org>, jasonmiu@google.com, graf@amazon.com, 
 	changyuanl@google.com, rppt@kernel.org, rientjes@google.com, corbet@lwn.net, 
 	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, 
@@ -113,46 +113,58 @@ Cc: Pratyush Yadav <pratyush@kernel.org>, jasonmiu@google.com, graf@amazon.com,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 29, 2025 at 1:13=E2=80=AFPM Pasha Tatashin
-<pasha.tatashin@soleen.com> wrote:
-> On Wed, Oct 29, 2025 at 3:07=E2=80=AFPM Pratyush Yadav <pratyush@kernel.o=
-rg> wrote:
-> > Also, I think the model we should have is to only allow new sessions in
-> > normal state. Currently luo_session_create() allows creating a new
-> > session in updated state. This would end up mixing sessions from a
-> > previous boot and sessions from current boot. I don't really see a
-> > reason for that and I think the userspace should first call finish
-> > before starting new serialization. Keeps things simpler.
+On Wed, Oct 29, 2025 at 4:44=E2=80=AFPM David Matlack <dmatlack@google.com>=
+ wrote:
 >
-> It does. However, yesterday Jason Gunthorpe suggested that we simplify
-> the uapi, at least for the initial landing, by removing the state
-> machine during boot and allowing new sessions to be created at any
-> time. This would also mean separating the incoming and outgoing
-> sessions and removing the ioctl() call used to bring the machine into
-> a normal state; instead, only individual sessions could be brought
-> into a 'normal' state.
+> On Wed, Oct 29, 2025 at 1:13=E2=80=AFPM Pasha Tatashin
+> <pasha.tatashin@soleen.com> wrote:
+> > On Wed, Oct 29, 2025 at 3:07=E2=80=AFPM Pratyush Yadav <pratyush@kernel=
+.org> wrote:
+> > > Also, I think the model we should have is to only allow new sessions =
+in
+> > > normal state. Currently luo_session_create() allows creating a new
+> > > session in updated state. This would end up mixing sessions from a
+> > > previous boot and sessions from current boot. I don't really see a
+> > > reason for that and I think the userspace should first call finish
+> > > before starting new serialization. Keeps things simpler.
+> >
+> > It does. However, yesterday Jason Gunthorpe suggested that we simplify
+> > the uapi, at least for the initial landing, by removing the state
+> > machine during boot and allowing new sessions to be created at any
+> > time. This would also mean separating the incoming and outgoing
+> > sessions and removing the ioctl() call used to bring the machine into
+> > a normal state; instead, only individual sessions could be brought
+> > into a 'normal' state.
+> >
+> > Simplified uAPI Proposal
+> > The simplest uAPI would look like this:
+> > IOCTLs on /dev/liveupdate (to create and retrieve session FDs):
+> > LIVEUPDATE_IOCTL_CREATE_SESSION
+> > LIVEUPDATE_IOCTL_RETRIEVE_SESSION
+> >
+> > IOCTLs on session FDs:
+> > LIVEUPDATE_CMD_SESSION_PRESERVE_FD
+> > LIVEUPDATE_CMD_SESSION_RETRIEVE_FD
+> > LIVEUPDATE_CMD_SESSION_FINISH
 >
-> Simplified uAPI Proposal
-> The simplest uAPI would look like this:
-> IOCTLs on /dev/liveupdate (to create and retrieve session FDs):
-> LIVEUPDATE_IOCTL_CREATE_SESSION
-> LIVEUPDATE_IOCTL_RETRIEVE_SESSION
+> Should we drop LIVEUPDATE_CMD_SESSION_FINISH and do this work in
+> close(session_fd)? close() can return an error.
 >
-> IOCTLs on session FDs:
-> LIVEUPDATE_CMD_SESSION_PRESERVE_FD
-> LIVEUPDATE_CMD_SESSION_RETRIEVE_FD
-> LIVEUPDATE_CMD_SESSION_FINISH
+> I think this cleans up a few parts of the uAPI:
+>
+>  - One less ioctl.
+>  - The only way to get an outgoing session would be through
+> LIVEUPDATE_IOCTL_CREATE_SESSION. The kernel does not have to deal with
+> an empty incoming session "becoming" an outgoing session (as described
+> below).
+>  - The kernel can properly leak the session and its resources by
+> refusing to close the session file.
 
-Should we drop LIVEUPDATE_CMD_SESSION_FINISH and do this work in
-close(session_fd)? close() can return an error.
 
-I think this cleans up a few parts of the uAPI:
-
- - One less ioctl.
- - The only way to get an outgoing session would be through
-LIVEUPDATE_IOCTL_CREATE_SESSION. The kernel does not have to deal with
-an empty incoming session "becoming" an outgoing session (as described
-below).
- - The kernel can properly leak the session and its resources by
-refusing to close the session file.
+I was considering this. But, in AFAIK even if close() fails, the FD is
+still closed, therefore, I am not aware of any existing api that
+relies on close() to fail. The finish or (set event if we decide to
+expands events in the future) should be a separate ioctl() and close()
+should release FD unconditionally as it still would do even if return
+failure from release()
 
