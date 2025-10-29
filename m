@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-66268-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66269-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E258AC1A951
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 14:16:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8FB3C1A945
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 14:16:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEEFC427C72
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 12:44:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7173A561FD1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 12:44:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FC5532936E;
-	Wed, 29 Oct 2025 12:25:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAB5434F472;
+	Wed, 29 Oct 2025 12:25:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="alegEg+W"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QJ42iSYi"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CBE532721D;
-	Wed, 29 Oct 2025 12:25:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4017A329391;
+	Wed, 29 Oct 2025 12:25:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761740718; cv=none; b=iDZxmPAZLED/X3/mehEOstZzuXDpC69dXpRoDdaBR0leuPqidO7Mc3rcnCjPzPCOySxVGZ1qJTkmIpEyuR4tVW6YmjF/B2hFCLyFf23MTnw3fNIashDrJHAggVByXBRFJcpjHxKO0vGj0SS3gWTt8uZW5prOXxtvwiUz0+axYBM=
+	t=1761740722; cv=none; b=JCV2O2lC+BRfIQdjzQf2EAhBphltzoCgLaBvyXAiNmV3RYTc4jc0Old4NUvR/uVzSI5V53XxTJUWgVx2x8Nl03RNYrjXbXh7c+qNAiXY9QEZaGEPDSrOFMtESGnBt27EqcVYdS7f0cxesAQIzMTnrHs3QOGxlozLch21UegjuMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761740718; c=relaxed/simple;
-	bh=YEySNnwHHlcAx8fWB+paH4j8S+yvwldW7xKcAutT9lM=;
+	s=arc-20240116; t=1761740722; c=relaxed/simple;
+	bh=M5JYL/ItXnif2Vw7+GSIT6vFRcZ0KyLdqVkykps56SU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=aXttWv/mfMzrk2+Orc0HZ0csS60qHX0Ayo1TREvDgqI2Bb0UXKBJpPLsGE7G2M4LLXaw9/fiu9uBeS0erUWPsG9HFPnUuHODDjrawzJWAdReLm8KcO8YWpTiZvr/yZnZzkoB+0gH1DZcoq+3ySaE0rnMykFnDG9b84ti0TSqiv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=alegEg+W; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABF2BC4CEF7;
-	Wed, 29 Oct 2025 12:25:12 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=KEWBdAXAhwS8GTQHATO3V+ABmgWZmXndotZVel6aBAXduTswGmor7e7jq6kts9kzSZ+eMwFy5HvH6EsrxyqEur3kA3ycowb24gYt9bd396qsqUM7U+mL6c1g7MXg0qMR/jEvlBecQnkqIUHLyHskWn+ANTagel2/NnBulKQaE5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QJ42iSYi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94822C4CEFD;
+	Wed, 29 Oct 2025 12:25:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761740717;
-	bh=YEySNnwHHlcAx8fWB+paH4j8S+yvwldW7xKcAutT9lM=;
+	s=k20201202; t=1761740722;
+	bh=M5JYL/ItXnif2Vw7+GSIT6vFRcZ0KyLdqVkykps56SU=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=alegEg+WcJzxaHq0d3Mu8J/r0uwNGYiPGYY6J50eS9OgmZdIDS1rOhiMcZ8Ue6AQV
-	 5Ma4HSSoCyxrfDHOQ19AnfRTtvVGfbjifJsz6TjkRAOzaSSTuyhgNp0k9xGZzQ+/Q5
-	 Zs19Ss1bmLsB2cB8Vl901HKmXv31WAU4Qg0tYQUOQlYJxjpyBfaer9b3wIkhnNUPct
-	 xsq0Bw5xSSPDKfwq/k/7GPyk36Nig28WnY6GnmOTB29o77K9HXzCEBuV/+GgryEY1W
-	 bvAp7IbI3uJjvS2APMhb32HnzguypJIA8tDFlkBXH4/esX2eBgQ320w8wxTb7oWwWN
-	 Hk0i71EbikrrQ==
+	b=QJ42iSYiEc0/SyvSVlMLEFslZsDmPFkoufbTXhoF8eA1/9D3aerbubBsP7uwRRQTj
+	 ijj4DpmiN1CrJs58YtxNOexc9bBbTbEUOWoXLREV3paCtBOtfU8VsfRKB0yCLW+Hlm
+	 ZJ2XEorkEUzezWDkqDi5J4WK+IsdWxWfJWD9pJzP39I+BMb1aHRh4H+VZUuy7yr+62
+	 /XJoyPpMMtLtmekHz2DBC8NQjvzoao0P7juPfC9BbzSfoBvfkSm0u4WhSffniub+1L
+	 0drIWd5BM7rBQYxNxYjE6tCpo1gyKeD1Adki6AY2cGzEYJq8rxjTSfRY9ZPuLTTeZ2
+	 us23UfdlMp5kg==
 From: Christian Brauner <brauner@kernel.org>
-Date: Wed, 29 Oct 2025 13:21:08 +0100
-Subject: [PATCH v4 55/72] selftests/namespaces: first inactive namespace
+Date: Wed, 29 Oct 2025 13:21:09 +0100
+Subject: [PATCH v4 56/72] selftests/namespaces: second inactive namespace
  resurrection test
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -53,7 +53,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251029-work-namespace-nstree-listns-v4-55-2e6f823ebdc0@kernel.org>
+Message-Id: <20251029-work-namespace-nstree-listns-v4-56-2e6f823ebdc0@kernel.org>
 References: <20251029-work-namespace-nstree-listns-v4-0-2e6f823ebdc0@kernel.org>
 In-Reply-To: <20251029-work-namespace-nstree-listns-v4-0-2e6f823ebdc0@kernel.org>
 To: linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
@@ -70,113 +70,130 @@ Cc: Jann Horn <jannh@google.com>, Mike Yuan <me@yhndnzj.com>,
  netdev@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-96507
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3689; i=brauner@kernel.org;
- h=from:subject:message-id; bh=YEySNnwHHlcAx8fWB+paH4j8S+yvwldW7xKcAutT9lM=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQysfW32czN1b10LU/Q+8wn9tSeqffV3Tlexbxa2XdB2
- ecQu25aRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwESOlTL8j7TxDCn4xve3Mcln
- TVTt9abCeypL0sJuf+Vza/TcpuM/gZFh8p8DnIb5gpJ2V1r6emZI6b3tl4usYLr65dLSoj1LlV+
- wAwA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4149; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=M5JYL/ItXnif2Vw7+GSIT6vFRcZ0KyLdqVkykps56SU=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQysfUbrJ9/6Vgc76cNQlJ1u7707VtZsk97wYKImLCiF
+ d56/5zYO0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACZyUIuR4cCMs8nh2nov4u78
+ EtqVHFjQ+3H6761crjE9+5qPL4oM38zIsP5/wvqSpG97G63clD/fk/vrdu1zxHRuhyDLz96hUg+
+ 42AA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-Test basic SIOCGSKNS functionality. Create a socket and verify SIOCGSKNS
-returns the correct network namespace.
+Test that socket file descriptors keep network namespaces active. Create
+a network namespace, create a socket in it, then exit the namespace. The
+namespace should remain active while the socket FD is held.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- tools/testing/selftests/namespaces/.gitignore      |  1 +
- tools/testing/selftests/namespaces/Makefile        |  9 ++-
- .../testing/selftests/namespaces/siocgskns_test.c  | 72 ++++++++++++++++++++++
- 3 files changed, 81 insertions(+), 1 deletion(-)
+ .../testing/selftests/namespaces/siocgskns_test.c  | 126 +++++++++++++++++++++
+ 1 file changed, 126 insertions(+)
 
-diff --git a/tools/testing/selftests/namespaces/.gitignore b/tools/testing/selftests/namespaces/.gitignore
-index 17f9c675a60b..aeb5f2711ff6 100644
---- a/tools/testing/selftests/namespaces/.gitignore
-+++ b/tools/testing/selftests/namespaces/.gitignore
-@@ -4,3 +4,4 @@ init_ino_test
- ns_active_ref_test
- listns_test
- listns_permissions_test
-+siocgskns_test
-diff --git a/tools/testing/selftests/namespaces/Makefile b/tools/testing/selftests/namespaces/Makefile
-index 2dd22bc68b89..d456505189cd 100644
---- a/tools/testing/selftests/namespaces/Makefile
-+++ b/tools/testing/selftests/namespaces/Makefile
-@@ -2,11 +2,18 @@
- CFLAGS += -Wall -O0 -g $(KHDR_INCLUDES) $(TOOLS_INCLUDES)
- LDLIBS += -lcap
- 
--TEST_GEN_PROGS := nsid_test file_handle_test init_ino_test ns_active_ref_test listns_test listns_permissions_test
-+TEST_GEN_PROGS := nsid_test \
-+		  file_handle_test \
-+		  init_ino_test \
-+		  ns_active_ref_test \
-+		  listns_test \
-+		  listns_permissions_test \
-+		  siocgskns_test
- 
- include ../lib.mk
- 
- $(OUTPUT)/ns_active_ref_test: ../filesystems/utils.c
- $(OUTPUT)/listns_test: ../filesystems/utils.c
- $(OUTPUT)/listns_permissions_test: ../filesystems/utils.c
-+$(OUTPUT)/siocgskns_test: ../filesystems/utils.c
- 
 diff --git a/tools/testing/selftests/namespaces/siocgskns_test.c b/tools/testing/selftests/namespaces/siocgskns_test.c
-new file mode 100644
-index 000000000000..0c9098624cd4
---- /dev/null
+index 0c9098624cd4..0ad5e39b7e16 100644
+--- a/tools/testing/selftests/namespaces/siocgskns_test.c
 +++ b/tools/testing/selftests/namespaces/siocgskns_test.c
-@@ -0,0 +1,72 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#define _GNU_SOURCE
-+#include <errno.h>
-+#include <fcntl.h>
-+#include <limits.h>
-+#include <sched.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <sys/ioctl.h>
-+#include <sys/socket.h>
-+#include <sys/stat.h>
-+#include <sys/types.h>
-+#include <sys/wait.h>
-+#include <unistd.h>
-+#include <linux/if.h>
-+#include <linux/sockios.h>
-+#include <linux/nsfs.h>
-+#include <arpa/inet.h>
-+#include "../kselftest_harness.h"
-+#include "../filesystems/utils.h"
-+#include "wrappers.h"
-+
-+#ifndef SIOCGSKNS
-+#define SIOCGSKNS 0x894C
-+#endif
-+
-+#ifndef FD_NSFS_ROOT
-+#define FD_NSFS_ROOT -10003
-+#endif
-+
-+#ifndef FILEID_NSFS
-+#define FILEID_NSFS 0xf1
-+#endif
-+
+@@ -69,4 +69,130 @@ TEST(siocgskns_basic)
+ 	close(current_netns_fd);
+ }
+ 
 +/*
-+ * Test basic SIOCGSKNS functionality.
-+ * Create a socket and verify SIOCGSKNS returns the correct network namespace.
++ * Test that socket file descriptors keep network namespaces active.
++ * Create a network namespace, create a socket in it, then exit the namespace.
++ * The namespace should remain active while the socket FD is held.
 + */
-+TEST(siocgskns_basic)
++TEST(siocgskns_keeps_netns_active)
 +{
-+	int sock_fd, netns_fd, current_netns_fd;
-+	struct stat st1, st2;
++	int sock_fd, netns_fd, test_fd;
++	int ipc_sockets[2];
++	pid_t pid;
++	int status;
++	struct stat st;
 +
-+	/* Create a TCP socket */
-+	sock_fd = socket(AF_INET, SOCK_STREAM, 0);
-+	ASSERT_GE(sock_fd, 0);
++	EXPECT_EQ(socketpair(AF_LOCAL, SOCK_STREAM | SOCK_CLOEXEC, 0, ipc_sockets), 0);
 +
-+	/* Use SIOCGSKNS to get network namespace */
++	pid = fork();
++	ASSERT_GE(pid, 0);
++
++	if (pid == 0) {
++		/* Child: create new netns and socket */
++		close(ipc_sockets[0]);
++
++		if (unshare(CLONE_NEWNET) < 0) {
++			TH_LOG("unshare(CLONE_NEWNET) failed: %s", strerror(errno));
++			close(ipc_sockets[1]);
++			exit(1);
++		}
++
++		/* Create a socket in the new network namespace */
++		sock_fd = socket(AF_INET, SOCK_DGRAM, 0);
++		if (sock_fd < 0) {
++			TH_LOG("socket() failed: %s", strerror(errno));
++			close(ipc_sockets[1]);
++			exit(1);
++		}
++
++		/* Send socket FD to parent via SCM_RIGHTS */
++		struct msghdr msg = {0};
++		struct iovec iov = {0};
++		char buf[1] = {'X'};
++		char cmsg_buf[CMSG_SPACE(sizeof(int))];
++
++		iov.iov_base = buf;
++		iov.iov_len = 1;
++		msg.msg_iov = &iov;
++		msg.msg_iovlen = 1;
++		msg.msg_control = cmsg_buf;
++		msg.msg_controllen = sizeof(cmsg_buf);
++
++		struct cmsghdr *cmsg = CMSG_FIRSTHDR(&msg);
++		cmsg->cmsg_level = SOL_SOCKET;
++		cmsg->cmsg_type = SCM_RIGHTS;
++		cmsg->cmsg_len = CMSG_LEN(sizeof(int));
++		memcpy(CMSG_DATA(cmsg), &sock_fd, sizeof(int));
++
++		if (sendmsg(ipc_sockets[1], &msg, 0) < 0) {
++			close(sock_fd);
++			close(ipc_sockets[1]);
++			exit(1);
++		}
++
++		close(sock_fd);
++		close(ipc_sockets[1]);
++		exit(0);
++	}
++
++	/* Parent: receive socket FD */
++	close(ipc_sockets[1]);
++
++	struct msghdr msg = {0};
++	struct iovec iov = {0};
++	char buf[1];
++	char cmsg_buf[CMSG_SPACE(sizeof(int))];
++
++	iov.iov_base = buf;
++	iov.iov_len = 1;
++	msg.msg_iov = &iov;
++	msg.msg_iovlen = 1;
++	msg.msg_control = cmsg_buf;
++	msg.msg_controllen = sizeof(cmsg_buf);
++
++	ssize_t n = recvmsg(ipc_sockets[0], &msg, 0);
++	close(ipc_sockets[0]);
++	ASSERT_EQ(n, 1);
++
++	struct cmsghdr *cmsg = CMSG_FIRSTHDR(&msg);
++	ASSERT_NE(cmsg, NULL);
++	ASSERT_EQ(cmsg->cmsg_type, SCM_RIGHTS);
++
++	memcpy(&sock_fd, CMSG_DATA(cmsg), sizeof(int));
++
++	/* Wait for child to exit */
++	waitpid(pid, &status, 0);
++	ASSERT_TRUE(WIFEXITED(status));
++	if (WEXITSTATUS(status) != 0)
++		SKIP(close(sock_fd); return, "Child failed to create namespace");
++
++	/* Get network namespace from socket */
 +	netns_fd = ioctl(sock_fd, SIOCGSKNS);
 +	if (netns_fd < 0) {
 +		close(sock_fd);
@@ -185,21 +202,27 @@ index 000000000000..0c9098624cd4
 +		ASSERT_GE(netns_fd, 0);
 +	}
 +
-+	/* Get current network namespace */
-+	current_netns_fd = open("/proc/self/ns/net", O_RDONLY);
-+	ASSERT_GE(current_netns_fd, 0);
++	ASSERT_EQ(fstat(netns_fd, &st), 0);
 +
-+	/* Verify they match */
-+	ASSERT_EQ(fstat(netns_fd, &st1), 0);
-+	ASSERT_EQ(fstat(current_netns_fd, &st2), 0);
-+	ASSERT_EQ(st1.st_ino, st2.st_ino);
-+
-+	close(sock_fd);
++	/*
++	 * Namespace should still be active because socket FD keeps it alive.
++	 * Try to access it via /proc/self/fd/<fd>.
++	 */
++	char path[64];
++	snprintf(path, sizeof(path), "/proc/self/fd/%d", netns_fd);
++	test_fd = open(path, O_RDONLY);
++	ASSERT_GE(test_fd, 0);
++	close(test_fd);
 +	close(netns_fd);
-+	close(current_netns_fd);
++
++	/* Close socket - namespace should become inactive */
++	close(sock_fd);
++
++	/* Try SIOCGSKNS again - should fail since socket is closed */
++	ASSERT_LT(ioctl(sock_fd, SIOCGSKNS), 0);
 +}
 +
-+TEST_HARNESS_MAIN
+ TEST_HARNESS_MAIN
 
 -- 
 2.47.3
