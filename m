@@ -1,156 +1,101 @@
-Return-Path: <linux-fsdevel+bounces-66185-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66186-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4550C18963
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 08:07:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1F07C18959
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 08:07:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AB8534F3D97
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 07:02:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9DD6188E5DA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 07:07:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAC6030C358;
-	Wed, 29 Oct 2025 07:02:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j29ntzDM"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC45830C626;
+	Wed, 29 Oct 2025 07:06:42 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AED202ECE85
-	for <linux-fsdevel@vger.kernel.org>; Wed, 29 Oct 2025 07:02:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C07A7309EF2;
+	Wed, 29 Oct 2025 07:06:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761721333; cv=none; b=Y/MCuiOra3mF0qjp2iL8BcUC4tuYMwM5y8bk0oofYRtwCocmrRonWcBXbWbbCpCnU7I/zGBLdk58/SUwVRqv/x7xkCx9dkehdUH8K38niTXcpIPoyppDRM4X7uhpxAfMKahwk9OlzzLU3e3CnV7Yjm5x/bPGhXCuNkFU+E6sDbc=
+	t=1761721602; cv=none; b=m3C8yZjXCwcuLyAe1n0LScKLD5AFzJYsZ8Zb+ZJ1gx7FTGezu0x5QZc/PKCH5kzmts/zLAkVAm11cUSrZJE38UtVbWQXLnd6aG4khxQiUsU+wRM/bPNqM6Hlhwrj3/0VWEJAbnAcScmwUl6tPtFMDfoeHkX6rJFZAJ2ynsNR3Aw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761721333; c=relaxed/simple;
-	bh=bOMMbexI6aDIrNtf5vFEnbq7xQbKAIAvzY9lE5k/XRM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SI40E7IbcpC6c5xdGczifpJ4H1tgWaxSWz0Hnxf41PF+IOvqPrEUX2JHBExYgB7B+21u9oYfukShXy+9qjpyYxYn/ncqdq6om6mmehupwN/dc6oMONd8OlScx+ndqFR9DPyEp2DTrbceauVYu3/RMWsCqWnoOEK7S/AJTP+mx4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j29ntzDM; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b6d83bf1077so424227366b.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Oct 2025 00:02:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761721330; x=1762326130; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WJozr33q7O27eAQclKBlJRIBGxacAxdnJElnx38SopM=;
-        b=j29ntzDMrMILNznyMnLaFNonyxUQlkI17x0SAIP+O3S3kkRi6A5wz4D8Sh4N6ipdP5
-         bXNJXLez1aVZ9szkbqccEd65LzvkN8QJFNy29rRUEaRL2S1fTqWSrAlNnLNLkx5AG+rk
-         Yh9Xg2JEralnbPrlvuVekssLc4/FLAxJBPNLj8K6NLZqJKv2mvsshXtIC+HRo+Hm5EH6
-         inOLl3GfFrmR/sEI7AD1KVrW29YDyiHfIUtSQkHRoG3gBQlu9w/RSkS3mLAG0SV4P7ol
-         q4O2r8FzF55Z4oFF63Pw/GV2F1psb4ALwL+c6Mqu8zS+Kcmixkt3E349qPGnB8v/pk/T
-         rciA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761721330; x=1762326130;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WJozr33q7O27eAQclKBlJRIBGxacAxdnJElnx38SopM=;
-        b=rKCS+9Q8lktMNmJlN3A4QSQ254Du2ugeBuheRwE8w+P8cu5JY7nbwKy1V+eSbJH17Y
-         fXeVMjgksUTvzWlpbhdkPVcvE1F5CJ9Bkj1NoO8o+KfkB6rCIPwmrFq218F4qzvDvq8q
-         AjQyC2DUgs1+TOBunlZF/JStTB0zaq9z2keBURsRF2ivE9wL90Wroeyo13JQGucA2Ews
-         Y1+iAhVAZUrjZ5H/fE0hLKesVLL/if7NE3o71aHUfrwyDBxoIHbkiwnJgowwwhUL1Ouo
-         MD/mdYEfY+Z62MY4OeneT5AT1SN34JC2Gy2ktVB2aYppW/rjv4Z6XMw5VNt1K9ciFihp
-         E8vQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV5CYC6rkRecprkmux3Ln7fiorm3t8rpnNpUnxAJvoI5wlL6wVkvtv3lKfbipYhd2tG0mSyMzDMzcHsQgE1@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsXd++0tCByhazLHKfGgXeXhwBf8iPch28Afl4ovDJE2zI46KJ
-	f6HdZgM5DrW0BZIvhbxZInqKH6JLWjreQg1t1wHYKXCJOuF2QcRl7V+q
-X-Gm-Gg: ASbGncs+oSZhP5v1mKGdWJBhKDugi9B/Q51Uab58RGOLqgAt55+vpRZDF+6o7qsMjor
-	IyemmJBkmQz5s7ezH8k2e4NPE9PKCKoAlHwH4z9XrDg96swYxJ/HN/b1Yf7Lq4a0RMDP8ZTviMK
-	qXjWFDUBjEsapvfCKKWYMo/FBFbAN8ky2lMSADdxGsgh3dtBFdjkenSaEJXfnRwCE8MRelqAOwx
-	diZjkczoY/V9/J5dh5If6SeKd9hqazkynMXFW/CGfsMCd55r1wcosCrHOXT19S2xFy1/4z2BmFR
-	Bez8Q5ibY8GWEVCszKVib0av8RTyKlu5Z7pKnZWmv+7pwFoac65mkYChGc971Izq+zGZ+SpCZSp
-	94bUPGgh61OM87cViOAtWejHBu2vGQC2dCDll4H8avanrikk02amxy47d4e1V+QX+26vn0bS+i8
-	TY
-X-Google-Smtp-Source: AGHT+IGTI1ZIZClWng4yye7JAJ7wCJzANK4Z/hes/dqfq35lpCLXUzEK0uKqA6TU/xduUI8nwCqpug==
-X-Received: by 2002:a17:907:971b:b0:b0d:ee43:d762 with SMTP id a640c23a62f3a-b703d2cdeadmr175477166b.4.1761721329730;
-        Wed, 29 Oct 2025 00:02:09 -0700 (PDT)
-Received: from localhost ([212.73.77.104])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-b6d853386d8sm1318508566b.18.2025.10.29.00.02.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Oct 2025 00:02:09 -0700 (PDT)
-From: Askar Safin <safinaskar@gmail.com>
-To: brauner@kernel.org
-Cc: amir73il@gmail.com,
-	arnd@arndb.de,
-	bpf@vger.kernel.org,
-	cgroups@vger.kernel.org,
-	cyphar@cyphar.com,
-	daan.j.demeyer@gmail.com,
-	edumazet@google.com,
-	hannes@cmpxchg.org,
-	jack@suse.cz,
-	jannh@google.com,
-	jlayton@kernel.org,
-	josef@toxicpanda.com,
-	kuba@kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	me@yhndnzj.com,
-	mzxreary@0pointer.de,
-	netdev@vger.kernel.org,
-	tglx@linutronix.de,
-	tj@kernel.org,
-	viro@zeniv.linux.org.uk,
-	zbyszek@in.waw.pl
-Subject: Re: [PATCH v3 11/70] ns: add active reference count
-Date: Wed, 29 Oct 2025 10:02:01 +0300
-Message-ID: <20251029070201.2327405-1-safinaskar@gmail.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251024-work-namespace-nstree-listns-v3-11-b6241981b72b@kernel.org>
-References: <20251024-work-namespace-nstree-listns-v3-11-b6241981b72b@kernel.org>
+	s=arc-20240116; t=1761721602; c=relaxed/simple;
+	bh=9/SnsoO/WS+8t0J3jBEAceX5RkSw9F4ltTtJY/0MQ+Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c5TiURF1id5XiXPT16lcIMOCaCj2pikmYCoLmVKojA6eAYWKRXGZftOiJqmWOCSYOHZ0T7ZuDjsNglkUOd8JGUOmIr8K+1uNLm6/7+/ybLVQY8CpGab4bqLWBMTEa/IPq+zUhqD8XHz//O0jtO5UHbZBBk61pOThfxFtbous9aY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id D391C227AAC; Wed, 29 Oct 2025 08:06:21 +0100 (CET)
+Date: Wed, 29 Oct 2025 08:06:18 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: Carlos Llamas <cmllamas@google.com>, Keith Busch <kbusch@kernel.org>,
+	Keith Busch <kbusch@meta.com>, linux-block@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-ext4@vger.kernel.org, hch@lst.de, axboe@kernel.dk,
+	Hannes Reinecke <hare@suse.de>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: Re: [PATCHv4 5/8] iomap: simplify direct io validity check
+Message-ID: <20251029070618.GA29697@lst.de>
+References: <20250827141258.63501-1-kbusch@meta.com> <20250827141258.63501-6-kbusch@meta.com> <aP-c5gPjrpsn0vJA@google.com> <aP-hByAKuQ7ycNwM@kbusch-mbp> <aQFIGaA5M4kDrTlw@google.com> <20251028225648.GA1639650@google.com> <20251028230350.GB1639650@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251028230350.GB1639650@google.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-Christian Brauner <brauner@kernel.org>:
-> Currently namespace file handles allow much broader access to namespaces
-> than what is currently possible via (1)-(4). The reason is that
+I think we need to take a step back and talk about what alignment
+we're talking about here, as there are two dimensions to it.
 
-There is no any (4) here.
+The first dimension is: disk alignment vs memory alignment.
 
+Disk alignment:
+  Direct I/O obviously needs to be aligned to on-disk sectors to have
+  a chance to work, as that is the lowest possible granularity of access.
 
-> On current kernels a namespace is visible to userspace in the
-> following cases:
-[...]
-> (3) The namespace is a hierarchical namespace type and is the parent of
->     a single or multiple child namespaces.
-[...]
-> To handle this nicely we introduce an active reference count which
-> tracks (1)-(3). This is easy to do as all of these things are already
-[...]
-> + * Inactive -> Active:
-> + *   When walking a hierarchical namespace tree upwards and reopening
-> + *   parent namespaces via NS_GET_PARENT that only exist because they
-> + *   are a parent of an actively used namespace it is possible to
-> + *   necrobump an inactive namespace back to the active state.
+  For fіle systems that write out of place we also need to align writes
+  to the logical block size of the file system.
 
-These quoted parts contradict to each other. You say "we introduce an
-active reference count which tracks (1)-(3)", and (3) says "The namespace
-is a hierarchical namespace type and is the parent of a single or multiple
-child namespaces". I. e. active reference will count such parents. But then
-in code you say:
+  With blk-crypto we need to align to the DUN if it is larger than the
+  disk-sector dize.
 
-> + * Inactive -> Active:
-> + *   When walking a hierarchical namespace tree upwards and reopening
-> + *   parent namespaces via NS_GET_PARENT that only exist because they
-> + *   are a parent of an actively used namespace it is possible to
-> + *   necrobump an inactive namespace back to the active state.
+Memory alignment:
 
-I. e. now you say that such parents are inactive and can become active.
+  This is the alignment of the buffer in-memory.  Hardware only really
+  cares about this when DMA engines discard the lowest bits, so a typical
+  hardware alignment requirement is to only require a dword (4 byte)
+  alignment.   For drivers that process the payload in software such
+  low alignment have a tendency to cause bugs as they're not written
+  thinking about it.  Similarly for any additional processing like
+  encryption, parity or checksums.
 
+The second dimension is for the entire operation vs individual vectors,
+this has implications both for the disk and memory alignment.  Keith
+has done work there recently to relax the alignment of the vectors to
+only require the memory alignment, so that preadv/pwritev-like calls
+can have lots of unaligned segments.
 
+I think it's the latter that's tripping up here now.  Hard coding these
+checks in the file systems seem like a bad idea, we really need to
+advertise them in the queue limits, which is complicated by the fact that
+we only want to do that for bios using block layer encryption. i.e., we
+probably need a separate queue limit that mirrors dma_alignment, but only
+for encrypted bios, and which is taken into account in the block layer
+splitting and communicated up by file systems only for encrypted bios.
+For blk-crypto-fallback we'd need DUN alignment so that the algorithms
+just work (assuming the crypto API can't scatter over misaligned
+segments), but for hardware blk-crypto I suspect that the normal DMA
+engine rules apply, and we don't need to restrict alignment.
 
-
--- 
-Askar Safin
 
