@@ -1,54 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-66159-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66160-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99533C17E76
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 02:27:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 86977C17E86
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 02:28:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E23E3BF1BD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 01:26:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A846424B62
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 01:26:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 883822D3A96;
-	Wed, 29 Oct 2025 01:25:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D23562DCBE3;
+	Wed, 29 Oct 2025 01:26:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TARMES09"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u76deHDb"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA47D22097;
-	Wed, 29 Oct 2025 01:25:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 377F417B50F;
+	Wed, 29 Oct 2025 01:26:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761701155; cv=none; b=mrBHafgHLqpbHVWXVSJO04OR/NoaknLpEi5YetBcnVm+9hdoV1MZVNfDGcL1SHNrJKBD2sYMe4hEYj9lMhcKFxrktPBwWVQenxwxnZfJBk9OYnDjBqqeYsS8F0Fl5mA905aGaCXkd5iJsk78bvTtks+fCVzCJEp7TbcOwf1Poxk=
+	t=1761701170; cv=none; b=Y0fEUmE7axWjsY3OtmNADIs1DFHZ7EBAQJtlTe0HEqG4KV75gHnPlxq0xP6RU7Sw+Vcd9L0Xu3omzBzt5kEpaKPTeeGkbZl6ecRv/SRUmZxqV/ZnLCNFK537UMqAGKny27lzc0enPYIXLyVYgNWImy0rOM8RIWgQbrBaRzV5Pyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761701155; c=relaxed/simple;
-	bh=W3qHOb6bxQfl6RwpNnCmyR8oJ2btf0ZiQgjo9qUtdWY=;
+	s=arc-20240116; t=1761701170; c=relaxed/simple;
+	bh=hUHJFKYLZEZ+IUyvfur5PQlHIEU4MhhpjofEf+fTMSk=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SFGifnmwrigjbUdRJo4hTJw34ixs/3BVuSgOKPdcctdmwAycun4xejRbCtfXRwuUNlM6DHxqjpHyJaVSQDOHXOF3qb8nWPR0f0RHzsO5U/mEvjXx6v/JU3cxyi5CTOoYfg/SJAc/vtGhaanIBqmOYs4i+UeC3jRwt8v5UtDBuNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TARMES09; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76CD1C4CEE7;
-	Wed, 29 Oct 2025 01:25:54 +0000 (UTC)
+	 MIME-Version:Content-Type; b=sPqC6lWeqtLO9J5I4NxSgEPyWfK1n8wyaaB1Rflcq3O8k61ZWoAJugc5P1iLWiqc9TRsWF3663knvHHQaW/8tpVxXcahkbjFiRtd9CAAysLcpu9kgU53htPqT5HhJlbCFSdDI2b7NunPNM4XdeVufRlzZS0N+ogEjjjmpMdGq/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u76deHDb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FE3DC4CEFD;
+	Wed, 29 Oct 2025 01:26:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761701154;
-	bh=W3qHOb6bxQfl6RwpNnCmyR8oJ2btf0ZiQgjo9qUtdWY=;
+	s=k20201202; t=1761701170;
+	bh=hUHJFKYLZEZ+IUyvfur5PQlHIEU4MhhpjofEf+fTMSk=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=TARMES09CcXqFTgzucntd6/t6AoLoSYhMT4m+3jPBd5KemA/0T9PH3SNJbUj9i27a
-	 RDO7LBJssDk+E+Xg6C2aW75aNtOvnpg4auB111PSBXjt/jzGdgl7d/K8DD0q5XH+wg
-	 F9iYUXlMPRWqZhzd5zeAQeLCa39w/btM7XQVhI/nrUZJi5/HdkvCi+UOAfZEvTTdsc
-	 RclZGJq6bgZCIKluDZ2VlWP7u/yfJWwf1O6K31qgZuX5l67IhbH1QBFvhPiWC2kCfO
-	 jaVYPz05vZFuloA7AWukc0ohVThH19LpLNBhOISvzKzAFKhqVReRyGVGJix9RT1sa+
-	 LhDaw2dR5S/YA==
-Date: Tue, 28 Oct 2025 18:25:54 -0700
-Subject: [PATCH 21/33] ext4/046: don't run this test if dioread_nolock not
- supported
+	b=u76deHDbnNI7v4pCBmDvTpHlaLKrYxtm4JllaUkOtizaXuTPq5xY/9XUcUeWf9TnM
+	 WUeCOtxnM4oRB2gelPJiy/uNVXpi++mpda01YDtWbIXOPfNgCgcirXcGdEuY3npO53
+	 JYnRHs9R6B8xJ+CEJ7XDVStF//pQ5AkjXKsjXM6bNlNThwJSgbNotkTYLq0MPmSzbH
+	 7MZvcSo2YOaNZrkMAuSyisRdB1VCAtYf99DH0AVlWIKbzfu958wzVnNHzxgI8Nw3j9
+	 oWRSHSe0YIehWAL3o/WFp6VqXr7xw1+ctJHbvG9Ow9WyyuEvyqY+ErWb6DM5gxMjx0
+	 noLyLg97Id2AQ==
+Date: Tue, 28 Oct 2025 18:26:09 -0700
+Subject: [PATCH 22/33] generic/631: don't run test if we can't mount overlayfs
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: djwong@kernel.org, zlang@redhat.com
 Cc: neal@gompa.dev, fstests@vger.kernel.org, linux-ext4@vger.kernel.org,
  linux-fsdevel@vger.kernel.org, joannelkoong@gmail.com, bernd@bsbernd.com
-Message-ID: <176169820371.1433624.14663347479683854110.stgit@frogsfrogsfrogs>
+Message-ID: <176169820388.1433624.12333256574549591904.stgit@frogsfrogsfrogs>
 In-Reply-To: <176169819804.1433624.11241650941850700038.stgit@frogsfrogsfrogs>
 References: <176169819804.1433624.11241650941850700038.stgit@frogsfrogsfrogs>
 Precedence: bulk
@@ -62,34 +61,70 @@ Content-Transfer-Encoding: 7bit
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-This test checks that directio reads still work ok if nolock is enabled.
-Therefore, if the filesystem driver won't mount with dioread_nolock,
-skip the test because its preconditions are not satisfied.
+This test fails on fuse2fs with the following:
 
++mount: /opt/merged0: wrong fs type, bad option, bad superblock on overlay, missing codepage or helper program, or other error.
++       dmesg(1) may have more information after failed mount system call.
+
+dmesg logs the following:
+
+[  764.775172] overlayfs: upper fs does not support tmpfile.
+[  764.777707] overlayfs: upper fs does not support RENAME_WHITEOUT.
+
+From this, it's pretty clear why the test fails -- overlayfs checks that
+the upper filesystem (fuse2fs) supports RENAME_WHITEOUT and O_TMPFILE.
+fuse2fs doesn't support either of these, so the mount fails and then the
+test goes wild.
+
+Instead of doing that, let's do an initial test mount with the same
+options as the workers, and _notrun if that first mount doesn't succeed.
+
+Fixes: 210089cfa00315 ("generic: test a deadlock in xfs_rename when whiteing out files")
 Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- tests/ext4/046 |    8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+ tests/generic/631 |   22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
 
-diff --git a/tests/ext4/046 b/tests/ext4/046
-index 60d33550e3db59..2e770830ab0c5e 100755
---- a/tests/ext4/046
-+++ b/tests/ext4/046
-@@ -24,13 +24,7 @@ _require_scratch_size $((6 * 1024 * 1024)) #kB
+diff --git a/tests/generic/631 b/tests/generic/631
+index 72bf85e30bdd4b..64e2f911fdd10e 100755
+--- a/tests/generic/631
++++ b/tests/generic/631
+@@ -64,6 +64,26 @@ stop_workers() {
+ 	done
+ }
  
- _scratch_mkfs >> $seqres.full 2>&1
- if ! _try_scratch_mount "-o dioread_nolock" >> $seqres.full 2>&1; then
--	err_str="can't mount with dioread_nolock if block size != PAGE_SIZE"
--	_check_dmesg_for ${err_str}
--	if [ $? -eq 0 ]; then
--		_notrun "mount failed, ext4 doesn't support bs < ps with dioread_nolock"
--	else
--		_fail "mount failed with dioread_nolock"
--	fi
-+	_notrun "mount failed, ext4 doesn't support dioread_nolock"
- fi
++require_overlayfs() {
++	local tag="check"
++	local mergedir="$SCRATCH_MNT/merged$tag"
++	local l="lowerdir=$SCRATCH_MNT/lowerdir:$SCRATCH_MNT/lowerdir1"
++	local u="upperdir=$SCRATCH_MNT/upperdir$tag"
++	local w="workdir=$SCRATCH_MNT/workdir$tag"
++	local i="index=off"
++
++	rm -rf $SCRATCH_MNT/merged$tag
++	rm -rf $SCRATCH_MNT/upperdir$tag
++	rm -rf $SCRATCH_MNT/workdir$tag
++	mkdir $SCRATCH_MNT/merged$tag
++	mkdir $SCRATCH_MNT/workdir$tag
++	mkdir $SCRATCH_MNT/upperdir$tag
++
++	_mount -t overlay overlay -o "$l,$u,$w,$i" $mergedir || \
++		_notrun "cannot mount overlayfs"
++	umount $mergedir
++}
++
+ worker() {
+ 	local tag="$1"
+ 	local mergedir="$SCRATCH_MNT/merged$tag"
+@@ -91,6 +111,8 @@ worker() {
+ 	rm -f $SCRATCH_MNT/workers/$tag
+ }
  
- # Get blksz
++require_overlayfs
++
+ for i in $(seq 0 $((4 + LOAD_FACTOR)) ); do
+ 	worker $i &
+ done
 
 
