@@ -1,124 +1,83 @@
-Return-Path: <linux-fsdevel+bounces-66317-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66304-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D78E4C1B87A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 16:04:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BD2CC1B999
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 16:20:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EAFD1887517
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 14:59:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C63156555B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 13:52:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 512D92DAFAC;
-	Wed, 29 Oct 2025 14:57:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE19335505D;
+	Wed, 29 Oct 2025 13:42:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="P8pSUfFi"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UlX3/Neg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17A572D321D
-	for <linux-fsdevel@vger.kernel.org>; Wed, 29 Oct 2025 14:57:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D275B35503B;
+	Wed, 29 Oct 2025 13:42:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761749868; cv=none; b=iQ1SMhLi1cQscBm5xmO5RgUSAWsSywy6NyxKvq9J278oXjB8jzPqE4V7VGgy1vtwi20k4Nc3/cPNuaJBU0XBfOrruwiEBS6r52o5Q77pVFGPwiaMlX09KezzTa4RVvL5llqctEK9dhFICAVuUxtVugh00CqE41hPaYmSt50YnxU=
+	t=1761745346; cv=none; b=o80XkQFgXdV8HZdJ5OgIVsZ/ek8jm3WtB87yNTWi+D7W3TRjnlBZhPLILjVYYkio/kdXKIF0DYLE+CX2xPLB8P9Y/N8un6If9EyGFyGtphHORb5Ayf9GCRIvLOmlvUXk73iPnZ5JCsvaJZnhO/nBjS1qggzcePJA4hqorTeeU7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761749868; c=relaxed/simple;
-	bh=sW0fcO523ng4pGFY9aQJooiGcb2xLELRhF6pvb9Out4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VZn2ig1cU1VFwxEuDG41aYELizkea3W4vOxFpqxzuFYMVT7anMB+VOe4zy7Kpx4lW06IYFMfGAYopRf34NP00/torGD04Rwh1C1SCINuc2Cj1Rh9pXDUBsAyqfHAf81zc+oGWYarVj7bB2Kjn7dFlED3E5cCtJhcF0EuzG2baBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=P8pSUfFi; arc=none smtp.client-ip=209.85.160.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4ea12242d2eso340611cf.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Oct 2025 07:57:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761749866; x=1762354666; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=d1yPrZJAtYC54ch5kkR2jlvgWTejLF7D5+gBaBiHJFI=;
-        b=P8pSUfFiXDPDvWHmEXuinZOCNdErarnp4POZ0SOm+Nft/ANiXqnl82D1ltOuvaxP2s
-         RH0K4kWiEOjHoyP3J6XC7Vv3EFYLm+P9ul8yKQuoRy8/xTCUNl6MSBeb+CmCWHSPd3Sb
-         JcTJlOBlIgMdppqp1oVg9pEjoUbvzy6XrklLosfX6s5Kb0Cu56C8gBleV0aVVFRKDPe4
-         sJZU483KkhPOrqeiIjJFnj4l5NNwWSxVfdReZGU7PYWWlG3Kzti3eXuhCBOq86OLRrlz
-         7wCz5egdwKvC6zV5PHkrbqNTTZPrHe55bfZvOf9W1rE+KJAu9Rm6qI+EOx5Ke3jEFoDT
-         NoYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761749866; x=1762354666;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=d1yPrZJAtYC54ch5kkR2jlvgWTejLF7D5+gBaBiHJFI=;
-        b=LmH9S31g+wV7ZlQ6J1zhp4ETzMBuAv4s6k1J68/n8QOJx3prVPQx00lyzveCpnmySj
-         rAwDER2LTY5IPaNEFcgCKNTe9N1ydpwU+HPGkhha60AEEZR8kBXWkk0E4M4smDzHkBCt
-         xB7hhAltDW9/HnFtQ5Ho6qcBdzreQ2rkFsrCVkYg9y2xRZoP/RHBLj3O/9fU/pRP/eKh
-         LWjKaw20bERfNiFO4MLtOO09Oie7vUWtZIgskhbJ28u/f+7W5ScTByUv1nLu+1xEQf/4
-         /9TYpOvPwprxM0qSwZnF4UGxqWLOui8D2871cNIL3iXAiBpMUiX1kFy731UD6yBH5pfR
-         FNlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVns/ih8tKpe5cBvOakux6FckgpJE/H/4HQif5hx56i3/aMJIN9dtpOx5Pk9rrgL9BYzHLqQFK4O+Nez3Qt@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNw67mZfbAwOfzcGRRFE9SlpmGwEM61kC3juWDa9xhl/WTPo8a
-	n/M7Gdcgk2onkUP6yUTobFSYwwQMfWNiPRXGwW29uWEVDyDRBEIlxKgrlM1iOnyeUN8d0ztj8q+
-	mrF6bAs71ZICH3TdsJq/FLAlXayvDYA8It4Vx9gGU
-X-Gm-Gg: ASbGncuMO+leDAJ2ATCW71zEJ/1CLZ9q0WWDItF1UdzO4M1at+7RxdMwW1oTg4+44JO
-	c8EYZNVDFIpNMcbRE1QokPkadxX7j4vzgmwhCryS3RSBUDrc3D/zG7VujesKB09h7c0zSTf7dK0
-	vrfS8upiM+AYcKJvoebsd0RT+nqAW1OjWhPQmrQ1IJHtym3zmx4T3x2GdpXkuB8cFtml+7fACK3
-	GhtdYgK9KOEsdvGCEeuYWZLmV9droifoChbOwnURpvNl6tXn39DaVklmvVyNHN9C5GDwuDwciyX
-	aRLc+MMgRq3OOv28xHjgDe+ppg==
-X-Google-Smtp-Source: AGHT+IHJk1Z4xsEEl6nhEK364d+WNrqkglBzi78RQdt59uckdBYZ7htllhsIgZwt9bC5EN7/2oXDuEWCE2gLHAXeC4U=
-X-Received: by 2002:a05:622a:11c8:b0:4e4:d480:ef3a with SMTP id
- d75a77b69052e-4ed165a8088mr6994811cf.13.1761749865638; Wed, 29 Oct 2025
- 07:57:45 -0700 (PDT)
+	s=arc-20240116; t=1761745346; c=relaxed/simple;
+	bh=76AtYLNQ1Gb/fR9DQRDYv8CtcVfoHaZgTGBfqdc1qGM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RdbP/SHm63YXuju/hHrP2ATKWAL7CSZljZqJIn/modOyw+JIWF3qwOH9XyeT0SG3O3A4Zy5uQYJ2eB9YJ8G7thKx/h1qtSxEhswzVuFA1rPycjvGiKI7lnClVYJrposa6ek7/A4D4dz3u+BL91oTz5GE4FtdKKUDQOA4e5o0bz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UlX3/Neg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BEC9C4CEFF;
+	Wed, 29 Oct 2025 13:42:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761745346;
+	bh=76AtYLNQ1Gb/fR9DQRDYv8CtcVfoHaZgTGBfqdc1qGM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UlX3/NegS26E/3MnqJgLqCAkl3WXfP4RWIqGvoECJ5SwaTs1Iwl1R+84g1dVM0GfM
+	 dKWq6fF3WXaXe0nM2rQ7vCTIPyYm54d6uncrmi1JcdT8YgdQ9pxEJK7YBmbqHYnghy
+	 hmPJVIijHF2QcB5dmAxwghVevg5jfgN+Igkshvtd6E8+F/Xwv3HpKQH3wwTvReCbv6
+	 TPaWvzCzYw5YEo15zrfMSh3opGmtIyer9oSnj1r0SGuInYNPaLxj/qgV01yl8aRJTl
+	 nQ8Zl3bDOlOW92FgzTXrbQx2EsmXDtc2Uk5CbHQdtWemLc8Qn1y9PD25Xt1/igO5uu
+	 FZnRLXzXOJ7bw==
+Date: Wed, 29 Oct 2025 14:42:21 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Nathan Chancellor <nathan@kernel.org>, 
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	David Sterba <dsterba@suse.com>, Nicolas Schier <nsc@kernel.org>
+Subject: Re: [PATCH] fs/pipe: stop duplicating union pipe_index declaration
+Message-ID: <20251029-mailen-neueinstellung-3e0d445134c2@brauner>
+References: <20251023082142.2104456-1-linux@rasmusvillemoes.dk>
+ <20251023164408.GB2090923@ax162>
+ <CAHk-=wg6mxof1=egFUDTNEj3__tCWLTbKjYLzxipVCn6ndXr+g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251026203611.1608903-1-surenb@google.com> <aP8XMZ_DfJEvrNxL@infradead.org>
- <CAJuCfpH1Nmnvmg--T2nYQ4r25pgJhDEo=2-GAXMjWaFU5vH7LQ@mail.gmail.com> <aQHdG_4yk0-o0iEY@infradead.org>
-In-Reply-To: <aQHdG_4yk0-o0iEY@infradead.org>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Wed, 29 Oct 2025 07:57:34 -0700
-X-Gm-Features: AWmQ_blGYfe_lFn4eY8RCcDjRQso5Ijs05VisPx1zbBZudE9r4ISvY1EtlCdvh4
-Message-ID: <CAJuCfpFPDPaQdHW3fy46fsNczyqje0W8BemHSfroeawB1-SRpQ@mail.gmail.com>
-Subject: Re: [PATCH v2 0/8] Guaranteed CMA
-To: Christoph Hellwig <hch@infradead.org>
-Cc: akpm@linux-foundation.org, david@redhat.com, lorenzo.stoakes@oracle.com, 
-	Liam.Howlett@oracle.com, vbabka@suse.cz, alexandru.elisei@arm.com, 
-	peterx@redhat.com, sj@kernel.org, rppt@kernel.org, mhocko@suse.com, 
-	corbet@lwn.net, axboe@kernel.dk, viro@zeniv.linux.org.uk, brauner@kernel.org, 
-	jack@suse.cz, willy@infradead.org, m.szyprowski@samsung.com, 
-	robin.murphy@arm.com, hannes@cmpxchg.org, zhengqi.arch@bytedance.com, 
-	shakeel.butt@linux.dev, axelrasmussen@google.com, yuanchu@google.com, 
-	weixugc@google.com, minchan@kernel.org, linux-mm@kvack.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	iommu@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wg6mxof1=egFUDTNEj3__tCWLTbKjYLzxipVCn6ndXr+g@mail.gmail.com>
 
-On Wed, Oct 29, 2025 at 2:23=E2=80=AFAM Christoph Hellwig <hch@infradead.or=
-g> wrote:
->
-> On Mon, Oct 27, 2025 at 12:51:17PM -0700, Suren Baghdasaryan wrote:
-> > I'm guessing you missed my reply to your comment in the previous
-> > submission: https://lore.kernel.org/all/CAJuCfpFs5aKv8E96YC_pasNjH6=3De=
-ukTuS2X8f=3DnBGiiuE0Nwhg@mail.gmail.com/
-> > Please check it out and follow up here or on the original thread.
->
-> I didn't feel to comment on it.  Please don't just build abstractions
-> on top of abstractions for no reason.  If you later have to introduce
-> them add them when they are actually needed.
+On Thu, Oct 23, 2025 at 06:48:13AM -1000, Linus Torvalds wrote:
+> On Thu, 23 Oct 2025 at 06:44, Nathan Chancellor <nathan@kernel.org> wrote:
+> >
+> > Yeah, this would also be a good conversion example so we could include
+> > it in kbuild-next with the appropriate Acks. We probably do not want to
+> > take too many other conversions in the initial pull. If people really
+> > want to use this in other places for 6.19, we should probably do a
+> > shared branch for these changes that maintainers could pull into their
+> > own trees.
+> 
+> Yes. This is a good example of what the use case is and why we're
+> doing this extension. So Ack both on including it as such, and on the
+> whole "let's not go overboard with other conversions" thing.
 
-Ok, if it makes it easier to review the code, I'll do it. So, I can:
-1. merge cleancache code (patch 1) with the GCMA code (patch 7). This
-way all the logic will be together.
-2. . LRU additiona (patch 2) and readahead support (patch 3) can stay
-as incremental additions to GCMA, sysfs interface (patch 4) and
-cleancache documentation (
-
-
->
+WHAT??? We're actually doing that? This is fscking lovely! I thought
+this would never fly and so I actually never proposed it. Who do I have
+to hug for doing this? I'm a very happy boy right now.
 
