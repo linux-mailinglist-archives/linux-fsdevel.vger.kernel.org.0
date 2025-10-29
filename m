@@ -1,59 +1,45 @@
-Return-Path: <linux-fsdevel+bounces-66199-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66200-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AC9FC1940F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 09:59:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DBED9C193A6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 09:55:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D3C646328C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 08:39:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8699C3BEA75
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 08:41:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5594314A99;
-	Wed, 29 Oct 2025 08:38:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="EmNuX50m"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B45B3203AF;
+	Wed, 29 Oct 2025 08:40:56 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED4F431BC96
-	for <linux-fsdevel@vger.kernel.org>; Wed, 29 Oct 2025 08:38:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7550E31813F;
+	Wed, 29 Oct 2025 08:40:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761727117; cv=none; b=M6jpZko4V7WBzB2Ktr+BZwIrbOjPHZ8KgEOoQV+h2ndnvqcPYRFmHF01+I8GCAB2PE4QzZ1+/vZLwnElCvEkDGqLvmsSOLnop2NGWxAEEBo/PMY1AZZWK1jWWs1MJDXOrHPu2rLPpGmJR4hgRzdn9vUuyikzdhLD84YVJEez0BM=
+	t=1761727256; cv=none; b=D3Vy5GQLWE8f1tuagbZa3Uu9YdH7mgUG9DXu33cxjt3+s3Nci0jj9QZ5iWt9cWUKUWuEgTeKOs0kLGXtwH/F5cqJf/7nf+Gi6WNfmNBr4Dhj9uGBrVnxf30DU6XrWSeAiI8qYcbQYRgJ1A50KEwLXTSGWPkKHHGNXs8VnMvZYoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761727117; c=relaxed/simple;
-	bh=jHPG79cIDQermeWXk/s2cLoLNk52B2qBOCVNl8677w0=;
+	s=arc-20240116; t=1761727256; c=relaxed/simple;
+	bh=cJ6lGh0X/sfsTenSXdTKo7lZOHBpLhQNyryFxqwBznY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lDH+olEQsmauj3I7I8aroMteRmK8lxBVMRMWM6HGgYsYMlUGODzJtztv/AFbsoCCxmFKMKzR66jPE5IbN8ZSh9UOnRG3Vy1RoNBSnjMGv3txAvSfuGCJOZUQMjl6xIIaFxkmWTCzdXtQURwfZRwvlaNzr8kJwN7HFd5SLJghmH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=EmNuX50m; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=hCBTh/EI0EiKLF+ah3/EfOIkVq5xEqJkXgS154QDQPs=; b=EmNuX50mMm2Hux4eQW1RK1tb61
-	8rJTX2n8h9AwnHPjmo5df3e1DKvMSepMqDWJxac3rbAoayHy1iqeZrZAsg6F3V5HvsQc59ThecqOG
-	Z+sQLybmnEMuqXnp1By2CqCOSL5nmN52VnPNkmfFXjII2aqra5acozO9z5TXwxc/ddMTy2gj1Ltej
-	6AgEnCJ4ppNN4lUJnb2dPrPrFrHMpi8jOlNZJ4flhk2y/ZF2R5Db3OB9W6GqRk53QLlAt3LQQX3oC
-	0JSFMtDVczwq69sAGCoXvC8MN8UGbKEciwW+oUauAxKjn5PEH8YGSC75jra2tSN86jOPQIuZv9ZKY
-	JDxdEuEQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vE1hS-00000000Kz5-1nFC;
-	Wed, 29 Oct 2025 08:38:34 +0000
-Date: Wed, 29 Oct 2025 01:38:34 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: brauner@kernel.org, bfoster@redhat.com, hch@infradead.org,
-	djwong@kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] iomap: fix race when reading in all bytes of a
- folio
-Message-ID: <aQHSig7TWRQyRDi7@infradead.org>
-References: <20251028181133.1285219-1-joannelkoong@gmail.com>
- <20251028181133.1285219-3-joannelkoong@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QPMCI9uiGRn1q4aL+XbQt9XoEvb/55cr7TQJoo+Ir8sfZ4O76r1V5DHnvEWiNUq9UIrVt5wVqvQnEPgqou0EGuTuLbNVET9mjGQm8zi8yMK2ucmlaN1t1D3+trceL507gCuprkqUM/2nyDO/JXCYrzW8C8oWU3ACafRAupyT4Yc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 13ECA227A88; Wed, 29 Oct 2025 09:40:49 +0100 (CET)
+Date: Wed, 29 Oct 2025 09:40:48 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: miklos@szeredi.hu, brauner@kernel.org, linux-ext4@vger.kernel.org,
+	hch@lst.de, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 1/1] iomap: allow NULL swap info bdev when activating
+ swapfile
+Message-ID: <20251029084048.GA32095@lst.de>
+References: <176169809564.1424591.2699278742364464313.stgit@frogsfrogsfrogs> <176169809588.1424591.6275994842604794287.stgit@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -62,14 +48,23 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251028181133.1285219-3-joannelkoong@gmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <176169809588.1424591.6275994842604794287.stgit@frogsfrogsfrogs>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Tue, Oct 28, 2025 at 11:11:33AM -0700, Joanne Koong wrote:
-> +		 * add a +1 bias. We'll subtract the bias and any uptodate/zeroed
-> +		 * ranges that did not require IO in iomap_read_end() after we're
+On Tue, Oct 28, 2025 at 05:44:26PM -0700, Darrick J. Wong wrote:
+> From: Darrick J. Wong <djwong@kernel.org>
+> 
+> All current users of the iomap swapfile activation mechanism are block
+> device filesystems.  This means that claim_swapfile will set
+> swap_info_struct::bdev to inode->i_sb->s_bdev of the swap file.
+> 
+> However, in the future there could be fuse+iomap filesystems that are
+> block device based but don't set s_bdev.  In this case, sis::bdev will
+> be set to NULL when we enter iomap_swapfile_activate, and we can pick
+> up a bdev from the first iomap mapping that the filesystem provides.
 
-Two overly long lines here.
+Could, or will be?  I find the way the swapfiles work right now
+disgusting to start with, but extending that bypass to fuse seems
+even worse.
 
-Otherwise this looks good.
 
