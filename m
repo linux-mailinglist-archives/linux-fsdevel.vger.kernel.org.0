@@ -1,50 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-66219-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66220-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3ECBBC1A315
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 13:26:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0BE0C1A31E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 13:26:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3770F1A679EB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 12:23:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76D6F465D15
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 12:23:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FB353491D0;
-	Wed, 29 Oct 2025 12:21:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F46634AAF0;
+	Wed, 29 Oct 2025 12:21:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WfQoxu1F"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QysMhgKF"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 811E12FB97F;
-	Wed, 29 Oct 2025 12:21:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 830F233FE26;
+	Wed, 29 Oct 2025 12:21:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761740468; cv=none; b=rjv9q1yID4UWUicP7vPFYPyDbDtmiFwsCzVyzIypNOAmnqpvCXscarXF9ot9JmyaFpibyn2CjmHnAhsU1jSFxivh8yG0oDDvgnhn+jmxlxHu2PoIkwsHqMlq1Us/+GYgMcT2MHT63UZ9K/Pb7TjwkHpMX8YnWk8z4/4TFIfOO5E=
+	t=1761740473; cv=none; b=Rkrv4rkH1zuxVcCHjW8upE0+4ERu5u2pBtvDS/n75Fiv+cLOZ5iUAMMB0rXV/hxiHt0GLjom7U9/2/d/R1ABYJddFKx0D4p2z1N+rSti9EW+TnzH7Lb8xb6D5FpzQ+qqsqKeSrvQ0j5ejTLehMn2RQTAt9nQnoOLuxKoButqqTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761740468; c=relaxed/simple;
-	bh=74AZcYyOqxtykIDy/RGdL2vrgfuHMaAEm8WcGrCjYG4=;
+	s=arc-20240116; t=1761740473; c=relaxed/simple;
+	bh=7aAHCcaecm2VZuosAD5WF6qVRIAZipjG6VYIR7g9o5A=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=nlLuSfMIH1El+mf3G0LeryfsNB4qXjSrdn4AdGZJdmRQNJ7R/0rTUTu9lolOv5LIe6YtXqxtnVClB7wlo+LNDPLsKoiO6Hh/cxGPP2mmOK3ZWNe/+s35KzYQyO+kFlQ/UiMPrOvSxBF+f9xblYj0d8gP3SgVYZCtkNybff/3crQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WfQoxu1F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A15AEC4CEF7;
-	Wed, 29 Oct 2025 12:21:03 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=apxAi+fDO18A+/Wb5XruGVKIl7zD1jVSWUifCR5+OQWzdRK7KdLT5qLGqhXoqZwxySRjP/YOdeq+lfBtllx2joPvoQnP21PvEGNvH+N6hfKi/gDdPaOpTE+M4cwye+TvkKympTkTlCCZURzHLRXj4asTo0anbDFIBUB/kzfWfi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QysMhgKF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D29FCC4CEFD;
+	Wed, 29 Oct 2025 12:21:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761740468;
-	bh=74AZcYyOqxtykIDy/RGdL2vrgfuHMaAEm8WcGrCjYG4=;
+	s=k20201202; t=1761740473;
+	bh=7aAHCcaecm2VZuosAD5WF6qVRIAZipjG6VYIR7g9o5A=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=WfQoxu1Fr9KYAvKbDOOFWpWqct56ailzDn7rYJrmQcCmqex2sTmgVVJdaUgMJd7jR
-	 zUK0WJXtwHIQCYchtlLhLvyFt+R9rWgpy8GAdudjXuVJxkbatU+0lcPSb7j8reC8vg
-	 s+ZFK607951sMTW298wUZExI1zvQCYzIZACT1f4hiEo7iTcIYRm129/vUf4NOSKZid
-	 0PQijqpEub6FXD5Tvl+8KVmu0pw0pSVHOv1fqURHJTGYXJg75usobwxNmrVU0exGBf
-	 COXQ2J7FoeCOzaIYzFB/n/KDYf/5yob4Wu13iDymNtp2BWVPrJG/74F/HdwEumCwkH
-	 QWF5IbdtjzypQ==
+	b=QysMhgKFHXy+MbUYKRoJBcQAac5y/bDxpqUezj32fQNyI1ospix3GKtZNRo8cTuaL
+	 frTVDYkKXcs4INnd4JpKF5D/fLX6NarWdNZo6PyGySNW7JJdwb8mIf+dVqPAM7adfF
+	 X1qsUD9d1ZdaKmfu3AU+IsTO1jpdDiSjmDVOhxWkMD1SiQOTSwZyLo0Mxtvn4TRtpG
+	 dZKTnppgKq4vfhEOPga9jVHTR9V3Z6SOAZqWw+zuWZ54CXYaz2+5ycU9MN/LKYO7K8
+	 8QmnA1n3c+PO/eyotADLbyuwAWmuGFX0seIcUzTCiLOhzw0OO0GSJTH3GG+XvxamWM
+	 KLR8cY+ipwHSQ==
 From: Christian Brauner <brauner@kernel.org>
-Date: Wed, 29 Oct 2025 13:20:19 +0100
-Subject: [PATCH v4 06/72] cgroup: add cgroup namespace to tree after owner
- is set
+Date: Wed, 29 Oct 2025 13:20:20 +0100
+Subject: [PATCH v4 07/72] nstree: simplify return
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -53,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251029-work-namespace-nstree-listns-v4-6-2e6f823ebdc0@kernel.org>
+Message-Id: <20251029-work-namespace-nstree-listns-v4-7-2e6f823ebdc0@kernel.org>
 References: <20251029-work-namespace-nstree-listns-v4-0-2e6f823ebdc0@kernel.org>
 In-Reply-To: <20251029-work-namespace-nstree-listns-v4-0-2e6f823ebdc0@kernel.org>
 To: linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
@@ -70,41 +69,37 @@ Cc: Jann Horn <jannh@google.com>, Mike Yuan <me@yhndnzj.com>,
  netdev@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-96507
-X-Developer-Signature: v=1; a=openpgp-sha256; l=835; i=brauner@kernel.org;
- h=from:subject:message-id; bh=74AZcYyOqxtykIDy/RGdL2vrgfuHMaAEm8WcGrCjYG4=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQysfV82Nh2Kt3x2J19H7L4Igs2fGiJibvRJv+M5c3Za
- CEX1sqEjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgImk6zH89+T+NDUtwqmBQe2V
- T7LH+6mxXs4s5d78Cp/O6SjIXXrvzcjQ3mBQfeJvdcVpj9OHb03c5Jgqsbd70ZVYGxlR0bVP9vx
- jBQA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=670; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=7aAHCcaecm2VZuosAD5WF6qVRIAZipjG6VYIR7g9o5A=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQysfVcODejdaHzbpMbPAs38qVqKF9WX6B2l3+J9f/Xe
+ UXvzfLDO0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACYy9RojQ5P0yY+z/5X5n/m0
+ 5KaMtuBP/gUv9t868nHF1YYcBhNrxy+MDLsV0qM3hPBe2bfY+ffVjyEaOzae2nDzxPPWA2+cZ6r
+ G93ICAA==
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-Otherwise we trip VFS_WARN_ON_ONC() in __ns_tree_add_raw().
+node_to_ns() checks for NULL and the assert isn't really helpful and
+will have to be dropped later anyway.
 
-Fixes: 7c6059398533 ("cgroup: support ns lookup")
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- kernel/cgroup/namespace.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/nstree.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-diff --git a/kernel/cgroup/namespace.c b/kernel/cgroup/namespace.c
-index fdbe57578e68..db9617556dd7 100644
---- a/kernel/cgroup/namespace.c
-+++ b/kernel/cgroup/namespace.c
-@@ -30,7 +30,6 @@ static struct cgroup_namespace *alloc_cgroup_ns(void)
- 	ret = ns_common_init(new_ns);
- 	if (ret)
- 		return ERR_PTR(ret);
--	ns_tree_add(new_ns);
- 	return no_free_ptr(new_ns);
- }
+diff --git a/kernel/nstree.c b/kernel/nstree.c
+index b24a320a11a6..369fd1675c6a 100644
+--- a/kernel/nstree.c
++++ b/kernel/nstree.c
+@@ -194,11 +194,6 @@ struct ns_common *ns_tree_lookup_rcu(u64 ns_id, int ns_type)
+ 			break;
+ 	} while (read_seqretry(&ns_tree->ns_tree_lock, seq));
  
-@@ -86,6 +85,7 @@ struct cgroup_namespace *copy_cgroup_ns(u64 flags,
- 	new_ns->ucounts = ucounts;
- 	new_ns->root_cset = cset;
- 
-+	ns_tree_add(new_ns);
- 	return new_ns;
+-	if (!node)
+-		return NULL;
+-
+-	VFS_WARN_ON_ONCE(node_to_ns(node)->ns_type != ns_type);
+-
+ 	return node_to_ns(node);
  }
  
 
