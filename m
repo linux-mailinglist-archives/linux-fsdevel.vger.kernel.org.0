@@ -1,53 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-66044-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66045-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAA9FC17ADB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 01:56:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 48B25C17AE4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 01:56:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BD1804E13A9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 00:56:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C81174F6CF1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 00:56:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 788F12D7386;
-	Wed, 29 Oct 2025 00:55:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F6E7283124;
+	Wed, 29 Oct 2025 00:56:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="avTNAAz8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="URmmCKOB"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC0BB283124;
-	Wed, 29 Oct 2025 00:55:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5F212D6E52;
+	Wed, 29 Oct 2025 00:56:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761699355; cv=none; b=coXaFiAoCm0hL+/r6ch0/sN8T8cCstYdYYKghH35lRsZx65fMzNprXiiG9DcVPVAAgFZEhbCXWFj/XiV2DER9Y0gxANwSbdxz7Ikpx5GLJGMOkn1bm8BXIctaInprl/C5ZIElQ3e0QufDRn9tzbRHCamxJthXM7rSUdwr7dasQM=
+	t=1761699371; cv=none; b=iljVZGUnf0IDlDWGDN0I4mvOL/C9sX41IrzreIoDUs/o6GZFnbOxOWM5tttmM/b2zGtVwau8iiZfdq5xv9Hg/ZtSULR1Ebg4giuvPAhqWKrMvYyGkLEEZ+7PBBWNqfwGawpO9/3PWIjPptJ+9VL1nq3o00n8e12NlUxi5252yUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761699355; c=relaxed/simple;
-	bh=7g+5/4r3I8rw3h4kyv1UhF40zToYoORq9Z2w4GKbh9w=;
+	s=arc-20240116; t=1761699371; c=relaxed/simple;
+	bh=EwlQqZwMF8og8fyrn3UebAlAr8Dma2gtQGsGHHMAh3A=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=q/FrypKxUmr31LX29hh5M0OBgdrhQJRfdAQ0D6Q915/7Vzqq8Qoe0Srhp8vCTnfrO18eAZKImLnCM1oxo0VfeO0VRIOySvVH24aoXGmnmRZqBxRYgDIMqZj+eq8UUvDSno86n8TSWfHvUdAZhQ2kVo26trBe0C3geowsSmH//KU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=avTNAAz8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4A0DC4CEE7;
-	Wed, 29 Oct 2025 00:55:55 +0000 (UTC)
+	 MIME-Version:Content-Type; b=ADVTNYMAgrQ8HJ2Q9t1H/9dRTYYQZD81XSVm+dDVaZuJOv5HRlLxwo1rNjKFYNASVmn2Sq87tKgL7gc3G++Hn7BQzaTfIEWfQ56hucLbRN9FetrU6q9YeWJD+ZJuqBrWkeWxhIcRnMzxJrccVH58gpARA3raRyObo1qgGF0Mw1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=URmmCKOB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40368C4CEE7;
+	Wed, 29 Oct 2025 00:56:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761699355;
-	bh=7g+5/4r3I8rw3h4kyv1UhF40zToYoORq9Z2w4GKbh9w=;
+	s=k20201202; t=1761699371;
+	bh=EwlQqZwMF8og8fyrn3UebAlAr8Dma2gtQGsGHHMAh3A=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=avTNAAz8QjLCKoRiUb+iLj0HPktBuO6xl8FCND8wfjdRAp8/wcdMlN+9TOvxJkL7w
-	 BHzdzf25htr+QdMuSpaKM1I4C7SDY7SYnIusacOBZt1Offa5wXKNvDNp0G4wEY9Ctl
-	 Ict+753XZtpFw18PfXbwDpctzCGG84d54+y5G+2sldyBlpN9ZMdiM7kzuQvla2GyNb
-	 L3T+9vLGuRZVX9dVyKWla6KHN93ogBxLyw5NbW1Jj1hd94VbGI01SsHx3wCfz2MotW
-	 ObBg5+TCxffwdxAi+ew29xcFrtkY0saNfPPsmwh+4KfCwIfe/NxHm9pHLlcMpvWHrb
-	 SgpzHPM1And5Q==
-Date: Tue, 28 Oct 2025 17:55:55 -0700
-Subject: [PATCH 8/9] fuse: update ctime when updating acls on an iomap inode
+	b=URmmCKOB/dEBtt5/FcP1tK7Qc4m106KrK6vdPGLjMc8F6YLfJ119kpOy8d06t2RGe
+	 /pnNYzsZ3Shju0NshMDVgBX1L0Iso7hGtFL6rIypCXmk9NK1FP7WenmfLVvrHqFWZB
+	 ljKnxH/LiOOBRBptMkea+WcXCfS2wgRD9TWX1mYTgi5UBjkMlM78OumcnklQpyg8nk
+	 sK9JaHfAZKixtayIqeZcIWgg+G8YatVacGY7xg+Obhzzh1tRdDj1K8Bi37Mo2OJYVc
+	 W9I/5kyh0M3P9xJ6n3bXzKTbXV8vN1cUDmTYScvPBJamIcqU/YCweoBUSk91d2q03F
+	 cDPtjM7LdiNkA==
+Date: Tue, 28 Oct 2025 17:56:10 -0700
+Subject: [PATCH 9/9] fuse: always cache ACLs when using iomap
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: djwong@kernel.org, miklos@szeredi.hu
 Cc: joannelkoong@gmail.com, bernd@bsbernd.com, neal@gompa.dev,
  linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Message-ID: <176169811764.1426244.5194845806307778812.stgit@frogsfrogsfrogs>
+Message-ID: <176169811785.1426244.13970477450791549525.stgit@frogsfrogsfrogs>
 In-Reply-To: <176169811533.1426244.7175103913810588669.stgit@frogsfrogsfrogs>
 References: <176169811533.1426244.7175103913810588669.stgit@frogsfrogsfrogs>
 Precedence: bulk
@@ -61,52 +61,98 @@ Content-Transfer-Encoding: 7bit
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-In iomap mode, the fuse kernel driver is in charge of updating file
-attributes, so we need to update ctime after an ACL change.
+Keep ACLs cached in memory when we're using iomap, so that we don't have
+to make a round trip to the fuse server.  This might want to become a
+FUSE_ATTR_ flag.
 
 Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- fs/fuse/acl.c |   17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
+ fs/fuse/acl.c     |   12 +++++++++---
+ fs/fuse/dir.c     |   11 ++++++++---
+ fs/fuse/readdir.c |    3 ++-
+ 3 files changed, 19 insertions(+), 7 deletions(-)
 
 
 diff --git a/fs/fuse/acl.c b/fs/fuse/acl.c
-index 4ba65ded008649..bdd209b9908c2d 100644
+index bdd209b9908c2d..633a73be710b2f 100644
 --- a/fs/fuse/acl.c
 +++ b/fs/fuse/acl.c
-@@ -111,6 +111,7 @@ int fuse_set_acl(struct mnt_idmap *idmap, struct dentry *dentry,
- 	struct fuse_conn *fc = get_fuse_conn(inode);
- 	const char *name;
- 	umode_t mode = inode->i_mode;
-+	const bool is_iomap = fuse_inode_has_iomap(inode);
- 	int ret;
- 
- 	if (fuse_is_bad(inode))
-@@ -182,10 +183,24 @@ int fuse_set_acl(struct mnt_idmap *idmap, struct dentry *dentry,
- 			ret = 0;
+@@ -213,10 +213,16 @@ int fuse_set_acl(struct mnt_idmap *idmap, struct dentry *dentry,
+ 	if (fc->posix_acl) {
+ 		/*
+ 		 * Fuse daemons without FUSE_POSIX_ACL never cached POSIX ACLs
+-		 * and didn't invalidate attributes. Retain that behavior.
++		 * and didn't invalidate attributes. Retain that behavior
++		 * except for iomap, where we assume that only the source of
++		 * ACL changes is userspace.
+ 		 */
+-		forget_all_cached_acls(inode);
+-		fuse_invalidate_attr(inode);
++		if (!ret && is_iomap) {
++			set_cached_acl(inode, type, acl);
++		} else {
++			forget_all_cached_acls(inode);
++			fuse_invalidate_attr(inode);
++		}
  	}
  
--	/* If we scheduled a mode update above, push that to userspace now. */
- 	if (!ret) {
- 		struct iattr attr = { };
+ 	return ret;
+diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+index 4fc66ff0231089..55a46612e3677c 100644
+--- a/fs/fuse/dir.c
++++ b/fs/fuse/dir.c
+@@ -261,7 +261,8 @@ static int fuse_dentry_revalidate(struct inode *dir, const struct qstr *name,
+ 		    fuse_stale_inode(inode, outarg.generation, &outarg.attr))
+ 			goto invalid;
  
-+		/*
-+		 * When we're running in iomap mode, we need to update mode and
-+		 * ctime ourselves instead of letting the fuse server figure
-+		 * that out.
-+		 */
-+		if (is_iomap) {
-+			attr.ia_valid |= ATTR_CTIME;
-+			inode_set_ctime_current(inode);
-+			attr.ia_ctime = inode_get_ctime(inode);
-+		}
+-		forget_all_cached_acls(inode);
++		if (!fuse_inode_has_iomap(inode))
++			forget_all_cached_acls(inode);
+ 		fuse_change_attributes(inode, &outarg.attr, NULL,
+ 				       ATTR_TIMEOUT(&outarg),
+ 				       attr_version);
+@@ -1463,7 +1464,8 @@ static int fuse_update_get_attr(struct mnt_idmap *idmap, struct inode *inode,
+ 		sync = time_before64(fi->i_time, get_jiffies_64());
+ 
+ 	if (sync) {
+-		forget_all_cached_acls(inode);
++		if (!fuse_inode_has_iomap(inode))
++			forget_all_cached_acls(inode);
+ 		/* Try statx if a field not covered by regular stat is wanted */
+ 		if (!fc->no_statx && (request_mask & ~STATX_BASIC_STATS)) {
+ 			err = fuse_do_statx(idmap, inode, file, stat);
+@@ -1641,6 +1643,9 @@ static int fuse_access(struct inode *inode, int mask)
+ 
+ static int fuse_perm_getattr(struct inode *inode, int mask)
+ {
++	if (fuse_inode_has_iomap(inode))
++		return 0;
 +
-+		/*
-+		 * If we scheduled a mode update above, push that to userspace
-+		 * now.
-+		 */
- 		if (mode != inode->i_mode) {
- 			attr.ia_valid |= ATTR_MODE;
- 			attr.ia_mode = mode;
+ 	if (mask & MAY_NOT_BLOCK)
+ 		return -ECHILD;
+ 
+@@ -2318,7 +2323,7 @@ static int fuse_setattr(struct mnt_idmap *idmap, struct dentry *entry,
+ 		 * If filesystem supports acls it may have updated acl xattrs in
+ 		 * the filesystem, so forget cached acls for the inode.
+ 		 */
+-		if (fc->posix_acl)
++		if (fc->posix_acl && !is_iomap)
+ 			forget_all_cached_acls(inode);
+ 
+ 		/* Directory mode changed, may need to revalidate access */
+diff --git a/fs/fuse/readdir.c b/fs/fuse/readdir.c
+index 45dd932eb03a5e..f7c2a45f23678e 100644
+--- a/fs/fuse/readdir.c
++++ b/fs/fuse/readdir.c
+@@ -224,7 +224,8 @@ static int fuse_direntplus_link(struct file *file,
+ 		fi->nlookup++;
+ 		spin_unlock(&fi->lock);
+ 
+-		forget_all_cached_acls(inode);
++		if (!fuse_inode_has_iomap(inode))
++			forget_all_cached_acls(inode);
+ 		fuse_change_attributes(inode, &o->attr, NULL,
+ 				       ATTR_TIMEOUT(o),
+ 				       attr_version);
 
 
