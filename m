@@ -1,53 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-66150-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66151-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78494C17E5B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 02:27:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A3759C17E5E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 02:27:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A20B1AA23C7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 01:24:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B74851880541
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 01:24:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5D292DA759;
-	Wed, 29 Oct 2025 01:23:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61E1C2D7DDF;
+	Wed, 29 Oct 2025 01:23:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="do+XtJPl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eukyjwYa"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 252A22D0C6C;
-	Wed, 29 Oct 2025 01:23:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B833B275860;
+	Wed, 29 Oct 2025 01:23:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761701014; cv=none; b=mUIs71aRJUD7vgiitKuA/Q3DGHQ6uI/kFzQ36I0EsgbBy6Qs2mnZzUhEgBh3adWmmBz6eSncVacFQAYVwOUz2ou+GSvO8FLmiuHFQRViEDidgGoL3MldbB6qLd/b9rEztVI8fYKPdZfyUa/Nz/Xs27EFm8bEij3g483caTpfOdE=
+	t=1761701029; cv=none; b=bFYCNTQOaYRuURnjiTzQbzhDNjvrOD8Wrr4VkWaTvC9sKA4HPMIoc9N5o7LUzZJH1g/af+Jslbs4GGuhQPr9Bhw8C7Kggylu4ExB8d1D8R+dX73o0n481Cl5Rzl5kLwXQRzXsltS92vYhIJzcD6C+fPxQd/x+gc2IgZpv7+x6z0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761701014; c=relaxed/simple;
-	bh=83oD5rW9TripMRrAxC03ZYG7iyBohHwCrvG+6UYefdc=;
+	s=arc-20240116; t=1761701029; c=relaxed/simple;
+	bh=hax4QP2eXrJkUbKJOKeQqEuKJLOyButCQqH1du74J5Y=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fH1CovBDSIjq4YY2uykWSMNX8zbS4x/Q++O4ub5zwbJ7DTKItyZ2B15yBsPUAA0B3Pyy/WwW1eT5ZYnwLO79Gt27eOdGCsDU2ku0lyMpqkCa0VU154mYg/NMAeGLs/oefsJC0PsvwETfDGKNsXx4f4/giAAwMH4c5B3ZkNaPa4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=do+XtJPl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01449C4CEE7;
-	Wed, 29 Oct 2025 01:23:33 +0000 (UTC)
+	 MIME-Version:Content-Type; b=m0fAzeQNYZ2Tz4rbp4B7aessNv7Ub5DYjAi9pq5wTbZXlosKHHaKPi2V8zZNUnmVngaq9V8eo6FRcsUSfQJ85+yWuSUa3t+h87dbxqVJYwaqvbtdqbZCelG/z7A44IeFSr0O4sWva/+e2IH1Nu0dYnxm1DGeMIq/zaeoyr4+GXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eukyjwYa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F322C4CEE7;
+	Wed, 29 Oct 2025 01:23:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761701014;
-	bh=83oD5rW9TripMRrAxC03ZYG7iyBohHwCrvG+6UYefdc=;
+	s=k20201202; t=1761701029;
+	bh=hax4QP2eXrJkUbKJOKeQqEuKJLOyButCQqH1du74J5Y=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=do+XtJPlLIkCo2RF2a5VcUaBuxcukwQUBtcWhgX1G/XBDajqIUKl3mwkpbyQsi75E
-	 CR1cG8E5RUaoFeWoovqjkqduVc6f+kcnBmRxU+mdqEsgmocF2L2Yu4GwX412lrU1V+
-	 Lyg1yUJfyljy5Pvewl9Ikz9NYqmh1NmDXq/xJdFwB6yPjpmQ0OQF9iHhgva8nqZim0
-	 LQdGYXZu4/9zRsedO/FYNjPlUNnaIpc6cvo1rnPM695eaauaA+hQMLPgfCJzQy3DrT
-	 wvhCKZCXelYTDuPEYN6fiWAYKpJIpfdoylc6dV343Lxog6ZPIm4IhKUNPcnhD5kjSS
-	 mzpT54OdvG+3w==
-Date: Tue, 28 Oct 2025 18:23:33 -0700
-Subject: [PATCH 12/33] generic/732: disable for fuse.ext4
+	b=eukyjwYaR3eDbLZeeV6mvocoYLM8HPgQ3RkLNhByvJAW9wMIUmDIEHNGYxWDtUqMi
+	 3TdyFol1yKzfJzGM+YOq8r8jb/h/4gOupKiiKxvybY/UVsMXkjPlJvIC3yVLfWghx6
+	 VIikDDbaFROqx3W8Ic6NfVN3oN1dutzihbPqS0j1LrF9uNaEQKuQPyDnWfqN7ppeFa
+	 2VnPTgngMW5wn3O+fDwilCaLu6CbELCgEvUkHv5xBtyFoZ8dcpHWBAroBdT9lYR3kM
+	 YX59P08VxII+BI+ZUp0hkpBxs4JmmjKOS3gOqbfGg2sF4m27hOhFFMK09FZJ3Zr0Nx
+	 rndNSZynFDThg==
+Date: Tue, 28 Oct 2025 18:23:49 -0700
+Subject: [PATCH 13/33] defrag: fix ext4 defrag ioctl test
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: djwong@kernel.org, zlang@redhat.com
 Cc: neal@gompa.dev, fstests@vger.kernel.org, linux-ext4@vger.kernel.org,
  linux-fsdevel@vger.kernel.org, joannelkoong@gmail.com, bernd@bsbernd.com
-Message-ID: <176169820202.1433624.7967857427780514888.stgit@frogsfrogsfrogs>
+Message-ID: <176169820221.1433624.1369544788981212640.stgit@frogsfrogsfrogs>
 In-Reply-To: <176169819804.1433624.11241650941850700038.stgit@frogsfrogsfrogs>
 References: <176169819804.1433624.11241650941850700038.stgit@frogsfrogsfrogs>
 Precedence: bulk
@@ -61,28 +61,28 @@ Content-Transfer-Encoding: 7bit
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-fuse2fs (when installed as a mount.fuse.ext4 helper program) doesn't
-handle the case where someone tries to mount the same device multiple
-times because there's no way for userspace to find an existing mount and
-bind mount it to the new mountpoint like the kernel does.
+ioctl() can return ENOTTY if the ioctl number isn't recognized at all.
+Change _require_defrag to _notrun the test if the ext4 defrag ioctl
+isn't recognised at all.
 
 Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- tests/generic/732 |    1 +
- 1 file changed, 1 insertion(+)
+ common/defrag |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 
-diff --git a/tests/generic/732 b/tests/generic/732
-index 83caa0bc915c32..dd985c3006ee07 100755
---- a/tests/generic/732
-+++ b/tests/generic/732
-@@ -27,6 +27,7 @@ _cleanup()
- _exclude_fs nfs
- _exclude_fs overlay
- _exclude_fs tmpfs
-+_exclude_fs fuse.ext[234]
- 
- _require_test
- _require_scratch
+diff --git a/common/defrag b/common/defrag
+index c054e62bde6f4d..43ec07ddd4ac2a 100644
+--- a/common/defrag
++++ b/common/defrag
+@@ -19,7 +19,7 @@ _require_defrag()
+ 	$XFS_IO_PROG -f -c "pwrite -b $bsize 0 $bsize" $testfile > /dev/null
+ 	cp $testfile $donorfile
+ 	echo $testfile | $here/src/e4compact -v -f $donorfile | \
+-		grep -q "err:95"
++		grep -q -E "err:(95|25)"
+ 	if [ $? -eq 0 ]; then
+ 		rm -f $testfile $donorfile 2>&1 > /dev/null
+ 		_notrun "$FSTYP test filesystem doesn't support online defrag"
 
 
