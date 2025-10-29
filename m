@@ -1,142 +1,113 @@
-Return-Path: <linux-fsdevel+bounces-66306-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66307-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 371A6C1B4AB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 15:39:55 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2F6FC1B2FD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 15:25:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8FF644E8D2F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 14:04:41 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 67D3F56448C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 14:09:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D1E423FC54;
-	Wed, 29 Oct 2025 13:55:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7338D1F4169;
+	Wed, 29 Oct 2025 14:01:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tm+5stKC"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YjfqrzVj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A27B1C5D46
-	for <linux-fsdevel@vger.kernel.org>; Wed, 29 Oct 2025 13:55:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21B462F85B
+	for <linux-fsdevel@vger.kernel.org>; Wed, 29 Oct 2025 14:01:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761746146; cv=none; b=Nz1gz1IPg7qEYGMGda0eTUWx9iDl2jKvvxUKlyQKg9/XQSTsz3A6uHKqJnodD3iclM2AIE/v7/qaTawNSg5tucdp6knoV9m4gdtrH2SinrXl+MvH3+GSO3RFbkpStY7CDJp6TzWajV8BN9qWDzJ3BSZ3qDE00Uz1vQA0mOwzuVw=
+	t=1761746514; cv=none; b=rd3ZtrK1L02B4uJ0hV9bsUA7sqxpwUtbsv7dwQSkHOtP+2CCWOekfwe65C30g0eOm/R17vBqx5g16rPlIea5VdQ9W+rVn1tUaOhM0FcMvPKjHT/rsPX23pTgb9jnlh5gp4LLCLyD1vK2f812s1kw+fFk7NTFBly4LyBiOlMi3Lw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761746146; c=relaxed/simple;
-	bh=kDjiYYa+XoKtrZgKJjxdI4my5UeWml8agUmpTGGgvQo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=K2wc93sKJkHjX1XASnBHump9zqUutPJskbtCbwqeMUQstU55iiNnHHOtf+IzEU2h9jBfkEEjKWX1UL6b7dQTziYjM+m4s/VNAS+MfsTW8slGxAs4zLAlYpAcxbAyC31CerdeLLfkLiBe98wqZctFGC6z4Il6kPPWxVn2u7xsHL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Tm+5stKC; arc=none smtp.client-ip=209.85.208.47
+	s=arc-20240116; t=1761746514; c=relaxed/simple;
+	bh=+rTwBXkrk8jd67gFcjP3VAxT3XoRYyLkGViTbqEXWs0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CiPL275768eixEfckgzGvNiQvYCpmieVdma+0uqZKMsRPkmVYqwb0JuneOLLUxKtK2v31ddMn+Cx2NC5XKlNBlXeNCEuUfvDW3XlaGcLdpyZfeL5iixcgfJf0B8SGfYpzHhCz24UnBoFxBnrhxlN2xBInNwPeuPVh/yhpiFbX1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YjfqrzVj; arc=none smtp.client-ip=209.85.128.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-63c556b4e0cso6167700a12.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Oct 2025 06:55:44 -0700 (PDT)
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-47721293fd3so4524355e9.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Oct 2025 07:01:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761746143; x=1762350943; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=IInKCL3RDPRCGSLvZWACn/czzIIKwfck9D0q9Pkvxck=;
-        b=Tm+5stKC4jStX8LWJV6ob8xXcVXT3OPf6isMYwc+r53zVEoP6tEEx37NENs3EPNlRG
-         QTumnQYeTXYqo77NjtoKpp7BfffV3mxkynnnpbryh+C7Nax6Gvcm6ACmgfwKZ4RkSR2A
-         Pgb0rcUUhj3c4HahEJFvo9MCcAaB38h8fA+a4oDvo/YEV68m8nBeSyTpLKtbreXsIqUD
-         2efSH+ttZizbQDxDm1tUnfbf5eVJ4AeC74zB4zngz9EjtNQJk+SVm1NuSJ6IXa/DVKlm
-         6oqfpLu69btXiSyj4I2WLDd5tLFp4OSpNxglEYjXBf1iv3f9NIdO5jNl64hjCx+dC55e
-         oUbw==
+        d=gmail.com; s=20230601; t=1761746511; x=1762351311; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2rMYPcT0vUjf262H+Q8TuoH4jAzWuzkQrPmzc5xLpsU=;
+        b=YjfqrzVjhhhucthl9z1qe16KLN3fXmAbc90ghSJWldWPaPDBJDg8NTVrjmZnCn/SMW
+         3JykydyotCYl9nyN4yDMQcGd+rUXRdi9E/28vHYzAZPGfisQ0qTNkbv1sptZR9ks3qIW
+         65GOc2z1gFPnP0ZxxL5BuuKk971jcRH+n295cwlvc2Y+DIAPyzWRbePWABdTtZh8T9MT
+         EgfgilYjZMuKvYgJ9Dmge+byslyU6+omUrbvYx7PJKwv6+y9WTSWAgQyp3PH/YhOXfsM
+         oDmRv5xSz8xexf5YQm/ogLIn5UIcm8X6bRn7M3S+Rmendve1iSj8LTEiIqZMDzEYmcgL
+         bdYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761746143; x=1762350943;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IInKCL3RDPRCGSLvZWACn/czzIIKwfck9D0q9Pkvxck=;
-        b=M0PleWqemSFhxEZh9E+cDoEaKkSRRjuG60XvVjw+jTl9GPerAa/zcnFwyRBLPsjPHy
-         iVPJjguIikX7xpVUy9JLX/Ydlk/PA1MYvllDZkPx33kMPCvDZ27Wt5HWDbFBSpYoWxfw
-         Q2aj7ypIKZ7p7NpFSw8UVVflHJR8JUk2NOKCdn1rEgHfKXDARf7bz1d8n75Gdu7UmnVE
-         D1d4FO/TmIKh3u0iw7P3zQ8PvLyJaHucBgzsRW18B98poo1oYgsqgO8YqjvWH5JjOhJK
-         KmV7aLp03bkkEqOfGzIBkNfSFraZqxNg+oJ7Z1LHY+GATD5oxFCP/mhjS5Olzzl9TJWK
-         HMGg==
-X-Forwarded-Encrypted: i=1; AJvYcCXtDQ8whS8LnfB840PqIeB9W7CgAL+RHDumAtvLKtdh0SWVMChPrIsgvR1KCEYdwqzCugvJaM8honAF+6vK@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdCaCa5h+YKm+k1XdTt1CzW7tysFNGnhhUDjpedc2Bp7cME5W5
-	j8SY4buyxfgTyFJ3Tw/nDQ0cIKSoQ5Xd5RRZ8kOI8SuCyX1HuWGdG5ah
-X-Gm-Gg: ASbGncs/GoHTS0bHiVRJelz6U8jCtU7LXNIWFchTtZSbS7iXpv3+ymMmZqEPlqOUkFD
-	+8u5ZuH0v4047o0CNuDRnpCo1QiobOR7DIZKKDp8JJPC9o3OT+sAj7nxCGBovR4DNCqdrgJYVYF
-	GYr3Lz76pruT4NWfs7zeugfNf6Pss/iNy4ifohBNnCQJDPbqW78scpeJyHbjL6RN/cO0K5DXCUn
-	sKVHOu+Ce0F73CKDsRYxikxEZLtOsORqa5HuIbFz/iezOr9a74wKaVQyum4g+Rnyn177hItiS9l
-	N9zB377SoyL2x39e6blo0YsQXK1UZdfNVGXeSw0kBh+3Kj61Icx2mFChAchkGW6cG4hGblJ/fL8
-	Vfuhssv6QlPNFuWBO9bRalall60zZrJpzDsX4/6Q1OakPHfTxlvOVVWSGbdTgz6OgmcMlB8KLsO
-	fzbXR/EG6cM+++8pC49cAkypTapmiXFKhJYWtLX8h25Jk6Fb5q/KZvGtIJF1Q=
-X-Google-Smtp-Source: AGHT+IHGF8rgk9jMOle8qoaOj44dzw/iGjaOwXckf8wSylKdB6FkqWuzCorlot8CB5ukyGmS0ZQuNw==
-X-Received: by 2002:a05:6402:2353:b0:63c:3c63:75ed with SMTP id 4fb4d7f45d1cf-6404425113dmr2611515a12.22.1761746143277;
-        Wed, 29 Oct 2025 06:55:43 -0700 (PDT)
-Received: from f.. (cst-prg-14-82.cust.vodafone.cz. [46.135.14.82])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63e7ef82b6esm12043982a12.11.2025.10.29.06.55.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Oct 2025 06:55:42 -0700 (PDT)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: brauner@kernel.org
-Cc: viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [WIP RFC PATCH] fs: hide names_cachep behind runtime_const machinery
-Date: Wed, 29 Oct 2025 14:55:38 +0100
-Message-ID: <20251029135538.658951-1-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1761746511; x=1762351311;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2rMYPcT0vUjf262H+Q8TuoH4jAzWuzkQrPmzc5xLpsU=;
+        b=or8lgb1d8MvPvJzSBDhlkqmceBp5CSS89zPqTvNeBaOJhkZcmulg5e5mAdD8Z/BDZp
+         GqBN8Tci6yvnIn50toA9+vgCPrD4AO7e/WdB/KmJk9ncglcn2ssCxgMGMgz+2ji5ad0G
+         o6ER9hICejkoF+bvNSvWV45CFMnnh5R9S8SLkR3n0UsiXv2ZYk6vAuEMuPla9Uvi9woO
+         pLR/JoHmdwYlhi/zvO0sTorHHOct4yzWEa8cANveRuHKJ3ixf/B3OTo/XBU3pe1C+5ud
+         91bgsPc4uU7H3zAg6WrU7xp834nPLn3pI/ENZRM0hgI9PO1NHJSAkkEWpXdL67YX99XW
+         050w==
+X-Gm-Message-State: AOJu0YyzqTbpqVkF/K6tEL/Umv9yqK3sdCjTalezs3pfBS+/BrsPXC2+
+	wn4A2ZTkm01Bptx4c9wiTs1Mr5kmzMsk2MRqafPQcvcwarKQn2NxmfEY
+X-Gm-Gg: ASbGncv3ouIKDvDU+b6BSt9mVm6hASxbEJXX4upkHplBWJrG8b8r0I0ndZj2BAXk7XN
+	pzrZOpQOrMSJpx/wTYgJDadxIP8QDO0Nce6srYQgw4VoUEkNsoQHP3lr4fIBcrjkoXJq6EWiBF4
+	otcAATF8jPD+3dt9kvjwg8T9mmFte5DfNGYiRdPJRHLZEB9MBtVIBt/DVCxF7XaxRtAzwYNBAVZ
+	5e9Ix3vhL4797MDAI0WaBLeJmBOCdBSnWi82uEyHMsNR9QD4qaswiYAnFwxBYTZs6miVZUMhUhh
+	1RSa2AQi6eo/QP8bFfYg8osUijmXTn9kXL/nXtoxio6gH1BaaygnQoMNzkVmcVthpd9deak33zl
+	7DM2cpQ9lUirQESBUwCmoxozFvp18TN2iRmwT2+g5rY+bUbm5dLPbgJh8HEC7UcV8IYbaSSqJM8
+	0FypahrgStTe6Xbjpu55Mr0cvryDEiPqUcxFnYgzfTcbH+VTMbwqwCJLuRwCBzJiyIXg==
+X-Google-Smtp-Source: AGHT+IGtuSHh0+Byv59OFxIgZzhRPw4PiAXZpC1qk/p0PcjfnUKrIOrNIC2+YkX1CVaDZipa6oiEYQ==
+X-Received: by 2002:a05:600d:830f:b0:475:d91d:28fb with SMTP id 5b1f17b1804b1-477180f3b54mr46255965e9.4.1761746510979;
+        Wed, 29 Oct 2025 07:01:50 -0700 (PDT)
+Received: from ?IPV6:2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c? ([2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47725bd740dsm303775e9.0.2025.10.29.07.01.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 Oct 2025 07:01:50 -0700 (PDT)
+Message-ID: <455fe1cb-bff1-4716-add7-cc4edecc98d2@gmail.com>
+Date: Wed, 29 Oct 2025 14:01:46 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/8] io_uring/uring_cmd: add
+ io_uring_cmd_import_fixed_full()
+To: Joanne Koong <joannelkoong@gmail.com>, miklos@szeredi.hu, axboe@kernel.dk
+Cc: linux-fsdevel@vger.kernel.org, bschubert@ddn.com,
+ io-uring@vger.kernel.org, xiaobing.li@samsung.com, csander@purestorage.com,
+ kernel-team@meta.com
+References: <20251027222808.2332692-1-joannelkoong@gmail.com>
+ <20251027222808.2332692-2-joannelkoong@gmail.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20251027222808.2332692-2-joannelkoong@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-All path lookups end up allocating and freeing a buffer. The namei cache
-is created and at boot time and remains constant, meaning there is no
-reason to spend a cacheline to load the pointer.
+On 10/27/25 22:28, Joanne Koong wrote:
+> Add an API for fetching the registered buffer associated with a
+> io_uring cmd. This is useful for callers who need access to the buffer
+> but do not have prior knowledge of the buffer's user address or length.
 
-I verified this boots on x86-64.
+Joanne, is it needed because you don't want to pass {offset,size}
+via fuse uapi? It's often more convenient to allocate and register
+one large buffer and let requests to use subchunks. Shouldn't be
+different for performance, but e.g. if you try to overlay it onto
+huge pages it'll be severely overaccounted.
 
-The problem is that when building I get the following:
-ld: warning: orphan section `runtime_ptr_names_cachep' from `vmlinux.o' being placed in section `runtime_ptr_names_cachep'
-
-I don't know what's up with that yet, but I will sort it out. Before I
-put any effort into it I need to know if the idea looks fine.
-
----
- fs/dcache.c        | 1 +
- include/linux/fs.h | 5 +++--
- 2 files changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/fs/dcache.c b/fs/dcache.c
-index 035cccbc9276..786d09798313 100644
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -3265,6 +3265,7 @@ void __init vfs_caches_init(void)
- {
- 	names_cachep = kmem_cache_create_usercopy("names_cache", PATH_MAX, 0,
- 			SLAB_HWCACHE_ALIGN|SLAB_PANIC, 0, PATH_MAX, NULL);
-+	runtime_const_init(ptr, names_cachep);
- 
- 	dcache_init();
- 	inode_init();
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 68c4a59ec8fb..08ea27340309 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2960,8 +2960,9 @@ extern void __init vfs_caches_init(void);
- 
- extern struct kmem_cache *names_cachep;
- 
--#define __getname()		kmem_cache_alloc(names_cachep, GFP_KERNEL)
--#define __putname(name)		kmem_cache_free(names_cachep, (void *)(name))
-+#define __const_names_cachep	runtime_const_ptr(names_cachep)
-+#define __getname()		kmem_cache_alloc(__const_names_cachep, GFP_KERNEL)
-+#define __putname(name)		kmem_cache_free(__const_names_cachep, (void *)(name))
- 
- extern struct super_block *blockdev_superblock;
- static inline bool sb_is_blkdev_sb(struct super_block *sb)
 -- 
-2.34.1
+Pavel Begunkov
 
 
