@@ -1,120 +1,142 @@
-Return-Path: <linux-fsdevel+bounces-65973-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65974-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 083ADC177C4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 01:11:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3B77C178A6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 01:28:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E61441C80D93
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 00:11:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35AAA3B5AAA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 00:28:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27CCC1E9B31;
-	Wed, 29 Oct 2025 00:10:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D358E285042;
+	Wed, 29 Oct 2025 00:27:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="evHEHdUk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LTwTWK7K"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EB1B1BCA1C
-	for <linux-fsdevel@vger.kernel.org>; Wed, 29 Oct 2025 00:10:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3769E3A1CD;
+	Wed, 29 Oct 2025 00:27:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761696644; cv=none; b=lrtuhr1iPV7gMOUEolJJ5NSZhuj7O98D2nQBVd7U/mUWxIi+7jUjHibLN/au1jHgrUgjRxo7NodxehprSHlVkvHdaCoGIANl4OfLEO0ZyqWwaD2Z80+tJ3ARbXlJ44/qpuEyWyjNsch/6rCCSKDt55IG/E3ZrJs9yQyOcAL8F3U=
+	t=1761697676; cv=none; b=KTjps5I6AaVx/ho1YRjMxHoMiCuZXiixOSz+la9Ff6hUFBJtAetBo6TckKvEFWGwIZKjgjmhGKe4ZpUPBV7g7eyL8HMairQnNVnTLs1H9RgVEhSh5t+0YaovUlx2mXF8yGRV7KADh0vSLxY0F8VngLP71Peaw4uwbI0rXIztqr0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761696644; c=relaxed/simple;
-	bh=QloRiWksfwupmAUdBgNLV/svbMoFmzJRlSMrdXPaxnQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QyT/7SHJV04G2G87wbYgDbF3XaMTR+sPIP6koTuT4WLz6IrU5Dhcg5R5eKs+xHb/4zREL+ncvDGic/WDvzGF+6u49Ng2azr6LX6PE88qaY7PuHyRoQxs1rL2PBzaVKLZ+l2NUrOM12KsRpGpHMsbJPNoJFDh9GX3cDL9x8uVDJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=evHEHdUk; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-34029cd0cbdso1857675a91.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Oct 2025 17:10:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1761696642; x=1762301442; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OAeYT3sIf5J+urxpWRZdGCYWbbcmjWbjfXki2vhXqBo=;
-        b=evHEHdUkGc41clD3/HvS6TCsRDFkA9q6MEZ+Ee8ikmU90EW0nwK1uXakOJknKdIEYw
-         UPOMfeEvBNhKrHjLjHr7xIYCpdId2KHIvvTrAsza0xQeogPNi8UwwvqaI96FT8ITZ8vQ
-         uzFC0R7kneeJXGfF8/cqcxLa3ozJQN2E70B69L9NShTl9bB++pcLxc0q3bhCZ6JHhbk2
-         c7LXeRcZcT65SzKjp7o+Ph+jEW+BDN8aORwZ2Q6/pPfvCmUIvEEXu+nEyBOVi1hFu8Rr
-         SUBY5Gz0grZxmej8kpSYf3nSsLE60De2XMA1fzyVirRng1clt1tCPFYnLsbjXnIXjkwS
-         8jyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761696642; x=1762301442;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OAeYT3sIf5J+urxpWRZdGCYWbbcmjWbjfXki2vhXqBo=;
-        b=lZVC8lC8UjQyaTGr6uWln9H7WcySL2OjEkvFqE8cbjUydHP2chDPOYs19h576/DoVn
-         3ubUfp3y7IKVgDdCvCJYp7rtCr+/fGMSPzVZMujKqFGDxibxLcg0TeKqXZwYNBJCLlQF
-         GVZaJadbod9wQF9vC3jH5iQPFJcYuax5BQbmt0XsO3ObO3hfxLMpUVuT4z1tqNsJZ+xN
-         dhQU0rOama2ahNcoGbiN8xhyxGHJBo+DEEYJKINIYwud/lBfIATLSHeAqvZsjF656d9t
-         k3vYJRx+h5pQSxlqnEAea+zboYvmQJWjD27SAobW7hha29SpfSUeeG5i04LWZ9bZCdS4
-         BUnw==
-X-Gm-Message-State: AOJu0YzLAtcVpXJumeb9QgXUcXOxGzVySzlukYobmKg7km6JINeBhI+M
-	dAsEJ81Ek0SFGzZO+ka+w5yJrSldoNk5GHfkFdiAHc4zeRL7UJy6hRa3dOax2h/2uhwfALSUwUY
-	jUboQC13r0kXMioprvB3fGfxHCaB9I93ZYYN3euRp
-X-Gm-Gg: ASbGncuPtzCZ03lbVWqXeyWznkOC5cWaC0pWC67lG6Q+qxLk5X8b3XwyBLLyQZFFbfJ
-	njkdzUXQCnzKr6lRW7rM3f4SRGYYwHydvxhxEJaIAMhm36Z2GYzvJcUBbnoM5enh3Tipd8Yvz/y
-	sQCVSjq/hXzKSIS8KKsPjWm4XgqfnghvphIju0kHg0wYHxL6exnJOEIKXjioVlwsUKd4ZaW83QD
-	IqF9MW/D/Y4fQkiT2wZCmGW1apznNBQNphtAS1wv2SmIyrZxKYNowV0Bd4v
-X-Google-Smtp-Source: AGHT+IGhjs8q4GiygXwr6DCqhQXMqWhNs5oaPfnq5KAn4id0agHe+xmdqRLWlZPNOFZ/N+dUgAnaM8QQHq+RXzkh3rE=
-X-Received: by 2002:a17:90b:4c8c:b0:32e:d600:4fdb with SMTP id
- 98e67ed59e1d1-3403a2a1014mr987268a91.18.1761696641654; Tue, 28 Oct 2025
- 17:10:41 -0700 (PDT)
+	s=arc-20240116; t=1761697676; c=relaxed/simple;
+	bh=zK3Uedm3CZT16mNFd3TLzP0KpphAljz+7EQ6t2r7+5o=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=hqIkm4nYn+1NrujyenCfDCuX4YAPeBlv8s8LNOA0TQpx5xt7KtiW0G139HBqpGDwlPMybDqwO9jFV1yO3g7chhPtwZP3iwf9xXsDuzYXEW07taGShF4Ili7qPdzFGdNMfC7Cy63qWNQL4SmXgx69OtC/gs9a14B2uoYW4X6x0qQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LTwTWK7K; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B15BDC4CEE7;
+	Wed, 29 Oct 2025 00:27:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761697675;
+	bh=zK3Uedm3CZT16mNFd3TLzP0KpphAljz+7EQ6t2r7+5o=;
+	h=Date:From:To:Cc:Subject:From;
+	b=LTwTWK7KX1zpnlqe/hjz/Vdmzy2raENMMYQ1i2hul9i80oVFqxaBZzVmsGM0nfrrQ
+	 pZSMlgZlNiWrpGnFgdQl53f2r81d96SOwg1QMmC0GGV0apUsAcrwolOFTE9Yv09evX
+	 jauWvhpxYxDmPKwB3R8mNKaKZp0osb0QVDyOdHPbsK2bN9+MmyHg6Fsg5ePDUIJozx
+	 /xJduDXU/sgFm0T59u19hsxPbUDoqePwiD0dmGY+vDqoonSgG8PMFRKczr/N16s9wJ
+	 IrGSjRekAJk63zxlxkDp7lF6P0oYikagrGb07wVGVfFp5jLNkUOZEFQMDmSnHAQ5YJ
+	 N4aXeAT6ydn4g==
+Date: Tue, 28 Oct 2025 17:27:55 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Bernd Schubert <bernd@bsbernd.com>,
+	Joanne Koong <joannelkoong@gmail.com>,
+	linux-ext4 <linux-ext4@vger.kernel.org>,
+	Theodore Ts'o <tytso@mit.edu>, Neal Gompa <neal@gompa.dev>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Jeff Layton <jlayton@kernel.org>
+Subject: [PATCHBOMB v6] fuse: containerize ext4 for safer operation
+Message-ID: <20251029002755.GK6174@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251028004614.393374-1-viro@zeniv.linux.org.uk> <20251028004614.393374-49-viro@zeniv.linux.org.uk>
-In-Reply-To: <20251028004614.393374-49-viro@zeniv.linux.org.uk>
-From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 28 Oct 2025 20:10:29 -0400
-X-Gm-Features: AWmQ_bnyVa46lrJnSEC4p7b8a6-fhgKBPo6xvMl8XVNnPJL6uMjYjs2dxSO45Ps
-Message-ID: <CAHC9VhRX6kqFbbKuOoKOLLve6c+7TN3=fXHrtXyj=osfNYd+2A@mail.gmail.com>
-Subject: Re: [PATCH v2 48/50] convert securityfs
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org, 
-	brauner@kernel.org, jack@suse.cz, raven@themaw.net, miklos@szeredi.hu, 
-	neil@brown.name, a.hindborg@kernel.org, linux-mm@kvack.org, 
-	linux-efi@vger.kernel.org, ocfs2-devel@lists.linux.dev, kees@kernel.org, 
-	rostedt@goodmis.org, gregkh@linuxfoundation.org, linux-usb@vger.kernel.org, 
-	casey@schaufler-ca.com, linuxppc-dev@lists.ozlabs.org, 
-	john.johansen@canonical.com, selinux@vger.kernel.org, 
-	borntraeger@linux.ibm.com, bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Mon, Oct 27, 2025 at 8:46=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk> w=
-rote:
->
-> securityfs uses simple_recursive_removal(), but does not bother to mark
-> dentries persistent.  This is the only place where it still happens; get
-> rid of that irregularity.
->
-> * use simple_{start,done}_creating() and d_make_persitent(); kill_litter_=
-super()
-> use was already gone, since we empty the filesystem instance before it ge=
-ts
-> shut down.
->
-> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-> ---
->  security/inode.c | 33 ++++++++++++---------------------
->  1 file changed, 12 insertions(+), 21 deletions(-)
+Look ma, no more RFC tag!
 
-Much cleaner now.
+This is the sixth public draft of a prototype to connect the Linux fuse
+driver to fs-iomap for regular file IO operations to and from files
+whose contents persist to locally attached storage devices.  With this
+release, I show that it's possible to build a fuse server for a real
+filesystem (ext4) that runs entirely in userspace yet maintains most of
+its performance.  Furthermore, I also show that the userspace program
+runs with minimal privilege, which means that we no longer need to have
+filesystem metadata parsing be a privileged (== risky) operation.
 
-Acked-by: Paul Moore <paul@paul-moore.com>
+Why would you want to do that?  Most filesystem drivers are seriously
+vulnerable to metadata parsing attacks, as syzbot has shown repeatedly
+over almost a decade of its existence.  Faulty code can lead to total
+kernel compromise, and I think there's a very strong incentive to move
+all that parsing out to userspace where we can containerize the fuse
+server process.
 
---=20
-paul-moore.com
+willy's folios conversion project (and to a certain degree RH's new
+mount API) have also demonstrated that treewide changes to the core
+mm/pagecache/fs code are very very difficult to pull off and take years
+because you have to understand every filesystem's bespoke use of that
+core code.  Eeeugh.
+
+The fuse command plumbing is very simple -- the ->iomap_begin,
+->iomap_end, and iomap ->ioend calls within iomap are turned into
+upcalls to the fuse server via a trio of new fuse commands.  Pagecache
+writeback is now a directio write.  The fuse server is now able to
+upsert mappings into the kernel for cached access (== zero upcalls for
+rereads and pure overwrites!) and the iomap cache revalidation code
+works.
+
+At this stage I still get about 95% of the kernel ext4 driver's
+streaming directio performance on streaming IO, and 110% of its
+streaming buffered IO performance.  Random buffered IO is about 85% as
+fast as the kernel.  Random direct IO is about 80% as fast as the
+kernel; see the cover letter for the fuse2fs iomap changes for more
+details.  Unwritten extent conversions on random direct writes are
+especially painful for fuse+iomap (~90% more overhead) due to upcall
+overhead.  And that's with (now dynamic) debugging turned on!
+
+These items have been addressed since the fifth RFC:
+
+1. After seven months of work, I can get seven of my 15 or so testing
+   profiles to pass fstests, most days.  There are a few flakey tests
+   like generic/347 that (I think) sometimes fail because there's no
+   journalling in jbd2.  That's better than kernel ext4, which never
+   gets all the way to passing here.
+
+2. Swap files, filesystem freeze and thaw, and shutdowns now work.
+
+3. fuse4fs can now use PSI information as a clue that it's time for it
+   to flush its caches and evict them.
+
+There are some warts remaining:
+
+a. I would like to start a discussion about how the design review of
+   this code should be structured, and how might I go about creating new
+   userspace filesystem servers -- lightweight new ones based off the
+   existing userspace tools?  Or by merging lklfuse?
+
+b. ext4 doesn't support out of place writes so I don't know if that
+   actually works correctly.
+
+c. fuse2fs doesn't support the ext4 journal.  Urk.
+
+d. There's a VERY large quantity of fuse2fs improvements that need to be
+   applied before we get to the fuse-iomap parts.  I'm not sending these
+   (or the fstests changes) to keep the size of the patchbomb at
+   "unreasonably large". :P  As a result, the fstests and e2fsprogs
+   postings are very targeted.
+
+I'll work on these in November, but now I'm much more serious about
+getting this merged for 6.19 now that the LTS is past and the coast is
+clear.
+
+--Darrick
 
