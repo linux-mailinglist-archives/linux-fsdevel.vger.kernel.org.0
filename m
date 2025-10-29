@@ -1,54 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-66008-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66009-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC951C179EE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 01:46:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BFCFEC179F4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 01:47:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1401B4F533A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 00:46:38 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 52D314F689C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 00:46:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDA432D24B6;
-	Wed, 29 Oct 2025 00:46:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 297702D320E;
+	Wed, 29 Oct 2025 00:46:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d8eTWoK9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QOvfUcBR"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DA8E1DF271;
-	Wed, 29 Oct 2025 00:46:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 813CE1DF97F;
+	Wed, 29 Oct 2025 00:46:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761698792; cv=none; b=jFUUxZoWJnNyFwRJrC/LSkWfEDo3qc19Js1HiuyTzqyuilybhfksAMifbBgWxbwUs2lids8OPbNxiA9rQWZQxQl8oh+1m5Pd8t3j8UqQnEvfhD9jA5cj/ysFpBN3ApG023u/07QoXqsqtGw8V/MKDD44VBYvIhsr+mXyblhJPTQ=
+	t=1761698807; cv=none; b=IuH2PWTurLD6z5V8Lvb06J2INY87jShdAuzVHGDAH3TMUQgw9JDspqT2LMmqScH+CHpM2/h96PNife9D7JXAuEwY9rPvdU+Sqsxw7hL2b/eY5T2HJS7QqG/Hmp1dOIxX6F4MTjFZx2/sTtcE2vcp7AXFBaZUrNqVsgTj3D2SOTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761698792; c=relaxed/simple;
-	bh=FofNxs2r+4QLMYA9s+6AZzWt8mPi6o2JBesvtrkp5Ec=;
+	s=arc-20240116; t=1761698807; c=relaxed/simple;
+	bh=2LmwfvKdPH4UfqgRzQ5g3TsySXd3HELJcrBIonfmsMc=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TqmMRnzIoMXMGDWxcup6GWhf5jyiAy/puiAWMl9icftNC6iyWfapxN3fW2OjQ+/Y4BTTtcqcjAr5chWyzRmdCcWfq4zKDctJ+hryHghQi1WwqhijoYvug+Hzq2EnEZk4PAUySImK6J7nXxJgqvfoVww7Cvy3MI/YzTNOBfvwiTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d8eTWoK9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B74A2C4CEE7;
-	Wed, 29 Oct 2025 00:46:31 +0000 (UTC)
+	 MIME-Version:Content-Type; b=nberRiyfNg7gqS/+sYBPVvR7EFFtU1GKJaYp+ArupnFUP/SBOZFkhDEGYtYqDLhBmF4cDayiX1LOAaucNuwXdZZrD0SGPECesimbDiTet+MQiQfY6dwo27lLAo2Mvi/1KyTdWZzJGpycqzzJxh6rgUw9G1mips2IxCjlw8MnUPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QOvfUcBR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BEEBC4CEFD;
+	Wed, 29 Oct 2025 00:46:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761698791;
-	bh=FofNxs2r+4QLMYA9s+6AZzWt8mPi6o2JBesvtrkp5Ec=;
+	s=k20201202; t=1761698807;
+	bh=2LmwfvKdPH4UfqgRzQ5g3TsySXd3HELJcrBIonfmsMc=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=d8eTWoK9Op6GxrBbN6hJxuG5egwUTKUB2v/aulU8wqbLRCbIzqIBWQ8kBpdYZk+M5
-	 ghoXKMpIlNwcxJb/S7xs0WProv9o3Ff1OWsLB9+vil9aPIf0PTUz7CWc7TA1mml+HU
-	 z912z9wyd6sC052unku63O5Tb793nCxL+KOMYQBaYymf7Ns2Vm4VF0YxMGQNKQhA8A
-	 fqtEC52uBC5cOj6d3jeFdDBxHHWEX3okpDwMM3ijxKngUSfz0sqs35o8/S3Gaa6cko
-	 a8QSTmUhmv+1c3VRFt0MiZMVYkPKfl/q1Aqjje/0HVEXXcnTlQBF0wn/Z9Fyb5TySq
-	 pd+q1bqSCEL4A==
-Date: Tue, 28 Oct 2025 17:46:31 -0700
-Subject: [PATCH 06/31] fuse: flush events and send FUSE_SYNCFS and
- FUSE_DESTROY on unmount
+	b=QOvfUcBR0myq3/7BB0Y8piMuRkG9qg8KoImWy5TZKLTkOEyLqNVssmIwxKXj3uwwi
+	 JY5AqgFkbr1MYv3V95n1tBcqucQ3xUy63zi80C1g062Mo9YoSOhoniPXSB2dBweS12
+	 IXQfD2f+veqn+ZeHu3GtpkE7Dd5VvT/asvR5oKwan1Oc7NnSHY3bCL5Fux7O4cHCGk
+	 Shq0Dmk8jrre1En+IaujWit72llUP8v2JcC3dk2DPEk+sk7nRsXxeGEYDUID4kgT7k
+	 WmxtBt1OFGuDAlUuQoDizErOINHe0wKDA3JFo1kFOR7vVenHMNjLa76nG94lh60L96
+	 LhELK55za+X1A==
+Date: Tue, 28 Oct 2025 17:46:46 -0700
+Subject: [PATCH 07/31] fuse: create a per-inode flag for toggling iomap
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: djwong@kernel.org, miklos@szeredi.hu
 Cc: joannelkoong@gmail.com, bernd@bsbernd.com, neal@gompa.dev,
  linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Message-ID: <176169810481.1424854.17462269885414881579.stgit@frogsfrogsfrogs>
+Message-ID: <176169810502.1424854.13869957103489591272.stgit@frogsfrogsfrogs>
 In-Reply-To: <176169810144.1424854.11439355400009006946.stgit@frogsfrogsfrogs>
 References: <176169810144.1424854.11439355400009006946.stgit@frogsfrogsfrogs>
 Precedence: bulk
@@ -62,134 +61,205 @@ Content-Transfer-Encoding: 7bit
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-At unmount time, there are a few things that we need to ask the fuse
-server to do.
-
-First, we need to flush queued events to userspace to give the fuse
-server a chance to process the events.  This is how we make sure that
-the server processes FUSE_RELEASE events before the connection goes
-down.
-
-Second, to ensure that all those metadata updates are persisted to disk
-before tell the fuse server to destroy itself, send FUSE_SYNCFS after
-waiting for the queued events.
-
-Finally, we need to send FUSE_DESTROY to the fuse server so that it
-closes the filesystem and the device fds before unmount returns.  That
-way, a script that does something like "umount /dev/sda ; e2fsck -fn
-/dev/sda" will not fail the e2fsck because the fd closure races with
-e2fsck startup.  Obviously, we need to wait for FUSE_SYNCFS.
-
-This is a major behavior change and who knows what might break existing
-code, so we hide it behind iomap mode.
+Create a per-inode flag to control whether or not this inode actually
+uses iomap.  This is required for non-regular files because iomap
+doesn't apply there; and enables fuse filesystems to provide some
+non-iomap files if desired.
 
 Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- fs/fuse/fuse_i.h     |    8 ++++++++
- fs/fuse/file_iomap.c |   29 +++++++++++++++++++++++++++++
- fs/fuse/inode.c      |    9 +++++++--
- 3 files changed, 44 insertions(+), 2 deletions(-)
+ fs/fuse/fuse_i.h          |   17 ++++++++++++++++
+ include/uapi/linux/fuse.h |    3 +++
+ fs/fuse/file.c            |    1 +
+ fs/fuse/file_iomap.c      |   49 +++++++++++++++++++++++++++++++++++++++++++++
+ fs/fuse/inode.c           |   26 ++++++++++++++++++------
+ 5 files changed, 90 insertions(+), 6 deletions(-)
 
 
 diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index 274de907257d94..839d4f2ada4656 100644
+index 839d4f2ada4656..c7aeb324fe599e 100644
 --- a/fs/fuse/fuse_i.h
 +++ b/fs/fuse/fuse_i.h
-@@ -1430,6 +1430,9 @@ int fuse_init_fs_context_submount(struct fs_context *fsc);
-  */
- void fuse_conn_destroy(struct fuse_mount *fm);
+@@ -257,6 +257,8 @@ enum {
+ 	 * or the fuse server has an exclusive "lease" on distributed fs
+ 	 */
+ 	FUSE_I_EXCLUSIVE,
++	/* Use iomap for this inode */
++	FUSE_I_IOMAP,
+ };
  
-+/* Send the FUSE_DESTROY command. */
-+void fuse_send_destroy(struct fuse_mount *fm);
+ struct fuse_conn;
+@@ -1717,11 +1719,26 @@ extern const struct fuse_backing_ops fuse_iomap_backing_ops;
+ 
+ void fuse_iomap_mount(struct fuse_mount *fm);
+ void fuse_iomap_unmount(struct fuse_mount *fm);
 +
- /* Drop the connection and free the fuse mount */
- void fuse_mount_destroy(struct fuse_mount *fm);
- 
-@@ -1711,9 +1714,14 @@ static inline bool fuse_has_iomap(const struct inode *inode)
- }
- 
- extern const struct fuse_backing_ops fuse_iomap_backing_ops;
++void fuse_iomap_init_reg_inode(struct inode *inode, unsigned attr_flags);
++void fuse_iomap_init_nonreg_inode(struct inode *inode, unsigned attr_flags);
++void fuse_iomap_evict_inode(struct inode *inode);
 +
-+void fuse_iomap_mount(struct fuse_mount *fm);
-+void fuse_iomap_unmount(struct fuse_mount *fm);
++static inline bool fuse_inode_has_iomap(const struct inode *inode)
++{
++	const struct fuse_inode *fi = get_fuse_inode(inode);
++
++	return test_bit(FUSE_I_IOMAP, &fi->state);
++}
  #else
  # define fuse_iomap_enabled(...)		(false)
  # define fuse_has_iomap(...)			(false)
-+# define fuse_iomap_mount(...)			((void)0)
-+# define fuse_iomap_unmount(...)		((void)0)
+ # define fuse_iomap_mount(...)			((void)0)
+ # define fuse_iomap_unmount(...)		((void)0)
++# define fuse_iomap_init_reg_inode(...)		((void)0)
++# define fuse_iomap_init_nonreg_inode(...)	((void)0)
++# define fuse_iomap_evict_inode(...)		((void)0)
++# define fuse_inode_has_iomap(...)		(false)
  #endif
  
  #endif /* _FS_FUSE_I_H */
+diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+index e571f8ceecbfad..e949bfe022c3b0 100644
+--- a/include/uapi/linux/fuse.h
++++ b/include/uapi/linux/fuse.h
+@@ -243,6 +243,7 @@
+  *
+  *  7.99
+  *  - add FUSE_IOMAP and iomap_{begin,end,ioend} for regular file operations
++ *  - add FUSE_ATTR_IOMAP to enable iomap for specific inodes
+  */
+ 
+ #ifndef _LINUX_FUSE_H
+@@ -583,9 +584,11 @@ struct fuse_file_lock {
+  *
+  * FUSE_ATTR_SUBMOUNT: Object is a submount root
+  * FUSE_ATTR_DAX: Enable DAX for this file in per inode DAX mode
++ * FUSE_ATTR_IOMAP: Use iomap for this inode
+  */
+ #define FUSE_ATTR_SUBMOUNT      (1 << 0)
+ #define FUSE_ATTR_DAX		(1 << 1)
++#define FUSE_ATTR_IOMAP		(1 << 2)
+ 
+ /**
+  * Open flags
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index f1ef77a0be05bb..42c85c19f3b13b 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -3135,6 +3135,7 @@ void fuse_init_file_inode(struct inode *inode, unsigned int flags)
+ 	init_waitqueue_head(&fi->page_waitq);
+ 	init_waitqueue_head(&fi->direct_io_waitq);
+ 
++	fuse_iomap_init_reg_inode(inode, flags);
+ 	if (IS_ENABLED(CONFIG_FUSE_DAX))
+ 		fuse_dax_inode_init(inode, flags);
+ }
 diff --git a/fs/fuse/file_iomap.c b/fs/fuse/file_iomap.c
-index e4fea3bdc0c2ce..1b9e1bf2f799a3 100644
+index 1b9e1bf2f799a3..fc0d5f135bacf9 100644
 --- a/fs/fuse/file_iomap.c
 +++ b/fs/fuse/file_iomap.c
-@@ -606,3 +606,32 @@ const struct fuse_backing_ops fuse_iomap_backing_ops = {
- 	.may_close = fuse_iomap_may_close,
- 	.post_open = fuse_iomap_post_open,
- };
+@@ -635,3 +635,52 @@ void fuse_iomap_unmount(struct fuse_mount *fm)
+ 	fuse_flush_requests_and_wait(fc);
+ 	fuse_send_destroy(fm);
+ }
 +
-+void fuse_iomap_mount(struct fuse_mount *fm)
++static inline void fuse_inode_set_iomap(struct inode *inode)
 +{
-+	struct fuse_conn *fc = fm->fc;
++	struct fuse_inode *fi = get_fuse_inode(inode);
 +
-+	/*
-+	 * Enable syncfs for iomap fuse servers so that we can send a final
-+	 * flush at unmount time.  This also means that we can support
-+	 * freeze/thaw properly.
-+	 */
-+	fc->sync_fs = true;
++	set_bit(FUSE_I_IOMAP, &fi->state);
 +}
 +
-+void fuse_iomap_unmount(struct fuse_mount *fm)
++static inline void fuse_inode_clear_iomap(struct inode *inode)
 +{
-+	struct fuse_conn *fc = fm->fc;
++	struct fuse_inode *fi = get_fuse_inode(inode);
 +
-+	/*
-+	 * Flush all pending commands, then issue a syncfs, flush the syncfs,
-+	 * and send a destroy command.  This gives the fuse server a chance to
-+	 * process all the pending releases, write the last bits of metadata
-+	 * changes to disk, and close the iomap block devices before we return
-+	 * from the umount call.
-+	 */
-+	fuse_flush_requests_and_wait(fc);
-+	sync_filesystem(fm->sb);
-+	fuse_flush_requests_and_wait(fc);
-+	fuse_send_destroy(fm);
++	clear_bit(FUSE_I_IOMAP, &fi->state);
++}
++
++void fuse_iomap_init_nonreg_inode(struct inode *inode, unsigned attr_flags)
++{
++	struct fuse_conn *conn = get_fuse_conn(inode);
++	struct fuse_inode *fi = get_fuse_inode(inode);
++
++	ASSERT(!S_ISREG(inode->i_mode));
++
++	if (conn->iomap && (attr_flags & FUSE_ATTR_IOMAP))
++		set_bit(FUSE_I_EXCLUSIVE, &fi->state);
++}
++
++void fuse_iomap_init_reg_inode(struct inode *inode, unsigned attr_flags)
++{
++	struct fuse_conn *conn = get_fuse_conn(inode);
++	struct fuse_inode *fi = get_fuse_inode(inode);
++
++	ASSERT(S_ISREG(inode->i_mode));
++
++	if (conn->iomap && (attr_flags & FUSE_ATTR_IOMAP)) {
++		set_bit(FUSE_I_EXCLUSIVE, &fi->state);
++		fuse_inode_set_iomap(inode);
++	}
++}
++
++void fuse_iomap_evict_inode(struct inode *inode)
++{
++	struct fuse_conn *conn = get_fuse_conn(inode);
++	struct fuse_inode *fi = get_fuse_inode(inode);
++
++	if (fuse_inode_has_iomap(inode))
++		fuse_inode_clear_iomap(inode);
++	if (conn->iomap && fuse_inode_is_exclusive(inode))
++		clear_bit(FUSE_I_EXCLUSIVE, &fi->state);
 +}
 diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index eec711302a4a13..271356fa3be3ea 100644
+index 271356fa3be3ea..9b9e7b2dd0d928 100644
 --- a/fs/fuse/inode.c
 +++ b/fs/fuse/inode.c
-@@ -632,7 +632,7 @@ static void fuse_umount_begin(struct super_block *sb)
- 		retire_super(sb);
+@@ -196,6 +196,8 @@ static void fuse_evict_inode(struct inode *inode)
+ 		WARN_ON(!list_empty(&fi->write_files));
+ 		WARN_ON(!list_empty(&fi->queued_writes));
+ 	}
++
++	fuse_iomap_evict_inode(inode);
  }
  
--static void fuse_send_destroy(struct fuse_mount *fm)
-+void fuse_send_destroy(struct fuse_mount *fm)
- {
- 	if (fm->fc->conn_init) {
- 		FUSE_ARGS(args);
-@@ -1471,6 +1471,9 @@ static void process_init_reply(struct fuse_mount *fm, struct fuse_args *args,
- 
- 		init_server_timeout(fc, timeout);
- 
-+		if (fc->iomap)
-+			fuse_iomap_mount(fm);
-+
- 		fm->sb->s_bdi->ra_pages =
- 				min(fm->sb->s_bdi->ra_pages, ra_pages);
- 		fc->minor = arg->minor;
-@@ -2106,7 +2109,9 @@ void fuse_conn_destroy(struct fuse_mount *fm)
- {
- 	struct fuse_conn *fc = fm->fc;
- 
--	if (fc->destroy) {
-+	if (fc->iomap) {
-+		fuse_iomap_unmount(fm);
-+	} else if (fc->destroy) {
- 		/*
- 		 * Flush all pending requests (most of which will be
- 		 * FUSE_RELEASE) before sending FUSE_DESTROY, because the fuse
+ static int fuse_reconfigure(struct fs_context *fsc)
+@@ -428,20 +430,32 @@ static void fuse_init_inode(struct inode *inode, struct fuse_attr *attr,
+ 	inode->i_size = attr->size;
+ 	inode_set_mtime(inode, attr->mtime, attr->mtimensec);
+ 	inode_set_ctime(inode, attr->ctime, attr->ctimensec);
+-	if (S_ISREG(inode->i_mode)) {
++	switch (inode->i_mode & S_IFMT) {
++	case S_IFREG:
+ 		fuse_init_common(inode);
+ 		fuse_init_file_inode(inode, attr->flags);
+-	} else if (S_ISDIR(inode->i_mode))
++		break;
++	case S_IFDIR:
+ 		fuse_init_dir(inode);
+-	else if (S_ISLNK(inode->i_mode))
++		fuse_iomap_init_nonreg_inode(inode, attr->flags);
++		break;
++	case S_IFLNK:
+ 		fuse_init_symlink(inode);
+-	else if (S_ISCHR(inode->i_mode) || S_ISBLK(inode->i_mode) ||
+-		 S_ISFIFO(inode->i_mode) || S_ISSOCK(inode->i_mode)) {
++		fuse_iomap_init_nonreg_inode(inode, attr->flags);
++		break;
++	case S_IFCHR:
++	case S_IFBLK:
++	case S_IFIFO:
++	case S_IFSOCK:
+ 		fuse_init_common(inode);
+ 		init_special_inode(inode, inode->i_mode,
+ 				   new_decode_dev(attr->rdev));
+-	} else
++		fuse_iomap_init_nonreg_inode(inode, attr->flags);
++		break;
++	default:
+ 		BUG();
++		break;
++	}
+ 	/*
+ 	 * Ensure that we don't cache acls for daemons without FUSE_POSIX_ACL
+ 	 * so they see the exact same behavior as before.
 
 
