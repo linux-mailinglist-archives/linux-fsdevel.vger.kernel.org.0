@@ -1,95 +1,132 @@
-Return-Path: <linux-fsdevel+bounces-66303-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66305-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77718C1B847
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 16:02:43 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F331C1B282
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 15:20:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AF2D642A8D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 13:50:25 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8F974581729
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 13:57:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33117350D57;
-	Wed, 29 Oct 2025 13:41:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B0122BDC34;
+	Wed, 29 Oct 2025 13:50:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fvv0r33w"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Afb8UI02"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63A39350A34;
-	Wed, 29 Oct 2025 13:41:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 429B929B78D
+	for <linux-fsdevel@vger.kernel.org>; Wed, 29 Oct 2025 13:50:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761745273; cv=none; b=EeOWfIjjB+83FmXeNITvGXoiKJI17qKlSokrZ3lLhtwzPI7+OpsYLM2WW77X1Gcv4mIO8SqZizG+NwSHd3rZG0V6cWaGEsnAdSL5+hCg/SaRElkfooHSdGCOcWXTB0Mg1xLafN4ol72CLv+2AjjK8bZjfVKo0s7XDbM97aTzZec=
+	t=1761745802; cv=none; b=thOKoKJMm4BwAr0Ck5OM1bnscI4eWOOjrMyt5j8F6iVJJc/78+fwt2o5kEOjZ29dtK0WR2rK5XItpI2w6ui7IeGmqDwxPmqdPDuatyGfbNWnqYTR7fGZAa60y2yIkanxtzHDmDhTga/ngv0scPwCERmaPrUs+jU2WZfaTyRkGYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761745273; c=relaxed/simple;
-	bh=tovzWB7nFqgmLeScDZvmPqsvNB+Fj3C3M7MNwv8PzaE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=K45XM6Hc2u/s3iRHJiYncrZtPOKzwwdveCfLHh4UzKILPVElT/jd+qGHoGVl2mD19Oa+c6aP8H7fJnGzxLZ+4OaNsuBqEBoy7nw9oukQxWKhINzqDtX/C0L+5xMYKBI15+lS3gaq2hZanxWPSz+2utol9V5XMWi0ZwDcei9btT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fvv0r33w; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85460C4CEF7;
-	Wed, 29 Oct 2025 13:41:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761745272;
-	bh=tovzWB7nFqgmLeScDZvmPqsvNB+Fj3C3M7MNwv8PzaE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Fvv0r33wyc7i/3jjjiVPhHGvbxi+sjdK/7TbW8C3Z/3ACpnJavm7U3aeQl9ji9BZz
-	 RP6KE9LBMKbfMArVv+6v3PWf3yw5AfQuAK4Y0Jlpb+9yerExHK5sC51iGcU43vvJII
-	 e1chZldZW6OvO6+CZ+98MB/8kz2av6HH5T5sLpxdjIAQRep03eBWeY6UB/grFrOBzp
-	 ZV550JozoBlDDXzgbNxCfuffuaTNk9oD6rlW+Og6iBC9dCopXwPZP8c9YH1dktXS7z
-	 tP+8NUc+tHiDG8UayhkREFFUUb7ffT9AKes+Bk0I9rpAaFGPxaQfswwh3IwD+wzwRj
-	 ehOT6glsr3DNQ==
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	linux-fsdevel@vger.kernel.org,
+	s=arc-20240116; t=1761745802; c=relaxed/simple;
+	bh=m5z8JwAcfPmz681g9ABLx9yKpNSDTqrw6F26lbhDvRc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pB15/+R482zJoV6Vmp8j/9nHHYnBLG1JGjqMlZ1Jhrs7/D9SVP0OyjUqdd7mEahyVqOa0IKv4/sdtfRl5BGJFBebqmP/AibFk7s7rQbmA2njJI9jCqQnjVyXWPZk33XYg4irJGdOnfC2xjEHNYHlmtnxGNXoJyCmBtB2LNbVlm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Afb8UI02; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b3e9d633b78so263420166b.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Oct 2025 06:50:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761745799; x=1762350599; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=XHRvKX7a1plwcuYKpnQYNjnuqWx3QMHmBPMlGSav5BA=;
+        b=Afb8UI02AXrYVevWsAtuzoS7GiUcBDBvlbZ+CojX7oWf/w2ZNKOkEZEZEeClAP6IRR
+         rIIPb0F160BD8pVIghA40fY99xPcKlU8Oa/EKu+IeCiPxqnsknPOt8yhybfsC2s3dIw8
+         iVGZhUk/mU0kCL/I6tlqRQ1I2yFXEHvFEZUdrKoxOSSXpPEMCZzwDxZgbR+4LqZgWvsP
+         IqW00AXXnl3bYa2cOBwlMlPzVv3njnZaL+tWlKDBUMMmmGcF+AqXZ1WWZOAIcf/DZBoi
+         fa+dOiafFd9seuRMa1YYhzGBarptxNHkma8ZaKP8kf+LvuMc0YiXFKC8H+2j7pADimtY
+         lkMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761745799; x=1762350599;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XHRvKX7a1plwcuYKpnQYNjnuqWx3QMHmBPMlGSav5BA=;
+        b=F1A95LcLnMMyR5qL/uEtgWRih4c9stXpqk4v0KMJFDtfUetEB3tqnTAXoJO/WCZ8kV
+         k/90D/wYhgF4jR2M8I91ZDFRtiuQBE5jnham2HvTyux+HC8rX7GVvVtDtARmefM0Pbp/
+         SCdABwUiHhNnzFq+eBWv1DuGHoNCY0lKj8nPF5zTTtyGhPB3WqtPlc8wFekRTc3HAHbS
+         TUQq01/LV9o6+3Vq5Fyk7KM7/0ZknqFRigGbBCG2DrpupHmxlhW21JKs3bx7YhT/tNQH
+         Lyrs6vPMtsgkKx0qG6dymSnA/U7riXSDNodIruCPv4emh6dpG7ZpMVlnzhAo5mIdqpuF
+         Nggg==
+X-Forwarded-Encrypted: i=1; AJvYcCVbWRtPffOfQHPlo2KQ/np1NPN3Ll8urIwVf3FrLmeHsF36JMi/CzoGlxCTzjmUZRapN4HIQR/lsa7+Qtq1@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdBz7neb4+oG4kDWfxqyUWRitkh/LG+poOCruJTGy1OaMlXSSH
+	1i3nElWKWrUB5Qtkti7j/PZdrHbmyMz5Hrqm2YGlUs7trFG+XHmuSCR3
+X-Gm-Gg: ASbGnctltf/DsyQTkyvJgnLwZjqWWUsnULWrO6gUOHXgtLp8+X6+026fW6xludi+iqX
+	DuMb7oSzqdky9PIw2c4m510oth9OZD9TWUJNuTl3HrBup6O/mvXC4oFPZod6Sw5IXJ1exUOPFuE
+	bAjHQ+ey9YaXGwbxEpbDlmpC41seKqilKE3bzaDmn7lur1p9ks751+hNSk1E8ui571uOZieEKMA
+	4HZwOIbfXrdlC7wr+XNuTQGDXwy12TG7tbPM1O6jOEg2SqcyLqK9K1PnalIkaHzu1k6xIi6daZS
+	GARi8+yrqSDiS5Cp7BRRNi6MnkGu5Z1dvPrkR3OlnzIop11eYXe64g7IKzl8ZNB7+Fd1FnDoAlL
+	8EXlUNmTBMNbYs3OrBBTpYGwZDDPnrmuydgJntElyIFtieFEQVTora12Q7QC7aaId9sFYct+T6u
+	HieOpjb16VRz/1BYGOerfXy91ixeIyV2DBG3LhqFcoartQTQNz
+X-Google-Smtp-Source: AGHT+IEisyenenOnF/O/4pE9L/Z9/7BlvbLNLGDTC1ejEMocq+xGj3sGbfBlGXhWWmAIhGAmK+J0OA==
+X-Received: by 2002:a17:907:7213:b0:b3f:f6d:1d9e with SMTP id a640c23a62f3a-b6dbbe71b02mr842226166b.6.1761745799422;
+        Wed, 29 Oct 2025 06:49:59 -0700 (PDT)
+Received: from f.. (cst-prg-14-82.cust.vodafone.cz. [46.135.14.82])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b6dad195456sm900898166b.72.2025.10.29.06.49.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Oct 2025 06:49:58 -0700 (PDT)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: brauner@kernel.org
+Cc: viro@zeniv.linux.org.uk,
+	jack@suse.cz,
 	linux-kernel@vger.kernel.org,
-	linux-kbuild@vger.kernel.org,
-	Nathan Chancellor <nathan@kernel.org>,
-	David Sterba <dsterba@suse.com>
-Subject: Re: [PATCH] fs/pipe: stop duplicating union pipe_index declaration
-Date: Wed, 29 Oct 2025 14:41:06 +0100
-Message-ID: <20251029-redezeit-reitz-1fa3f3b4e171@brauner>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251023082142.2104456-1-linux@rasmusvillemoes.dk>
-References: <20251023082142.2104456-1-linux@rasmusvillemoes.dk>
+	linux-fsdevel@vger.kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH] fs: touch up predicts in putname()
+Date: Wed, 29 Oct 2025 14:49:52 +0100
+Message-ID: <20251029134952.658450-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1008; i=brauner@kernel.org; h=from:subject:message-id; bh=tovzWB7nFqgmLeScDZvmPqsvNB+Fj3C3M7MNwv8PzaE=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQySRbP9vwlcGNbz0IuBvHPkxc43qlcFbDo2643NtcLd vuxfy6y6ChlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZgIWwLDPyXv+dJnRFK41256 radga708f8rL/bMrWE6ws/isCpM8qcjI0MNS9/DPvTkX5rFOufv4pYCJTviPx1+edFSZtTM832u axQAA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-On Thu, 23 Oct 2025 10:21:42 +0200, Rasmus Villemoes wrote:
-> Now that we build with -fms-extensions, union pipe_index can be
-> included as an anonymous member in struct pipe_inode_info, avoiding
-> the duplication.
-> 
-> 
+1. we already expect the refcount is 1.
+2. path creation predicts name == iname
 
-Applied to the vfs-6.19.misc branch of the vfs/vfs.git tree.
-Patches in the vfs-6.19.misc branch should appear in linux-next soon.
+I verified this straightens out the asm, no functional changes.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+---
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+random annoyance i noticed while profiling
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+ fs/namei.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.19.misc
+diff --git a/fs/namei.c b/fs/namei.c
+index ba29ec7b67c5..4692f25e7cd9 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -282,7 +282,7 @@ void putname(struct filename *name)
+ 		return;
+ 
+ 	refcnt = atomic_read(&name->refcnt);
+-	if (refcnt != 1) {
++	if (unlikely(refcnt != 1)) {
+ 		if (WARN_ON_ONCE(!refcnt))
+ 			return;
+ 
+@@ -290,7 +290,7 @@ void putname(struct filename *name)
+ 			return;
+ 	}
+ 
+-	if (name->name != name->iname) {
++	if (unlikely(name->name != name->iname)) {
+ 		__putname(name->name);
+ 		kfree(name);
+ 	} else
+-- 
+2.34.1
 
-[1/1] fs/pipe: stop duplicating union pipe_index declaration
-      https://git.kernel.org/vfs/vfs/c/ade24f8214fe
 
