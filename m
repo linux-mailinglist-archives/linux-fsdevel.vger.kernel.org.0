@@ -1,53 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-66058-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66059-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20451C17B47
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 01:59:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 33B13C17B4C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 02:00:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 491801889E6E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 01:00:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3640F188EA65
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 01:00:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CFB02D7DCE;
-	Wed, 29 Oct 2025 00:59:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6188524BD1A;
+	Wed, 29 Oct 2025 00:59:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="udNK0s8y"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kHAYP7Dd"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 015002D3EF6;
-	Wed, 29 Oct 2025 00:59:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB7061CAA7D;
+	Wed, 29 Oct 2025 00:59:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761699575; cv=none; b=ibXBxJE33VS3BIdO5vwivQx/Xr44Ha43OuNsQNeaCBespUxhPLiEqniG2LVM8BhzxaTRLghRx7UwTMRUK0f425qQ4RLwzl38hBwOPtIr4bcs8tIzLfaWF1bl5RrJP4AwSKr4lvM/ITy+En4HgUYbu7wB5wdLFH0WgGNIqi78mMw=
+	t=1761699590; cv=none; b=bFuPwFQTWxDvBSq7I01GGRzXt1WcHlCe4UfSyufbj8PONxEXQVBv04HYQ7RjRqSEi2x4r4hmojAD+B1QCl/JCY70dC0hWzDdRdSOJGO80OXFVnSp/1JO2hDaz93LTpvypr0pWkMbdmMCjtbrTWUe3Qa/sJttrK8NlqEAJeqnV3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761699575; c=relaxed/simple;
-	bh=c9JuMoqz4nKf4IT1K/OyWoXTk12T+gJb4Aam2lV0Uvk=;
+	s=arc-20240116; t=1761699590; c=relaxed/simple;
+	bh=SxP6pXlk3pMkHrs1XlKtpue/Z4Jxb/m9D8C3qNDx6Tc=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rZBpzRBFlfYI/2Uauys6a1Q9b9Ed9UvesTgOUzD848nAJ5JpeK+kdTtQu/PQbqOzE/l/qTcqo1F3ESj8NIQnDaxRr3svALLOunu/ufuYH937ZO3eDiVAWLohxoAoMyl3hh1BvtrvxGELDHL68dd+ZeY0ELiP1Uz2h+KKOAQm1Ok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=udNK0s8y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91E86C4CEE7;
-	Wed, 29 Oct 2025 00:59:34 +0000 (UTC)
+	 MIME-Version:Content-Type; b=MrNI7o4qtPT1V3NP+GL5/DIOU171lOmcCtxKvNf5CmU64DFsJLtV0DEmCxhdCLjezDnfAgct+j3eaHKWVxcW5O/PbNEDEhbuWV4U3by718xKBHJZiniGA9qdieOmEoRF6tQwW4JenhzMHbUOguLfTH4PDBfciK3/B9pbwX2cRM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kHAYP7Dd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 357EEC4CEE7;
+	Wed, 29 Oct 2025 00:59:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761699574;
-	bh=c9JuMoqz4nKf4IT1K/OyWoXTk12T+gJb4Aam2lV0Uvk=;
+	s=k20201202; t=1761699590;
+	bh=SxP6pXlk3pMkHrs1XlKtpue/Z4Jxb/m9D8C3qNDx6Tc=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=udNK0s8yDRdCRisPbdBWd/4B1F2RZ8UtzfgoVWs7XBJ8JKp5jvaVceBZNCAXlFTf+
-	 U9exWHw9tD2ek+qaapJUuF2mOsj7UYQMx51HozT9WJn7ZtFy6jLvPF3Hk2FRqAvWyZ
-	 3Me0GWw8bVve4oJvMH96wWIpiUydOFGdbwwCuD6Cq9qFkpucOeqptxDXunk2aik7MD
-	 zx4AHZvJRVuspdjCvfOZ1mldjTtq17WY8lamGe6uMnc7JudjwaE7sivWxCB54k5xTb
-	 wuToPTnhoq3Oeg/Bys2j6Uj+jSh9dJWYtXKNRP8urHsydKBzd6piyO2cbctcPKl0cx
-	 lGROOiBUOQHGw==
-Date: Tue, 28 Oct 2025 17:59:34 -0700
-Subject: [PATCH 01/22] libfuse: bump kernel and library ABI versions
+	b=kHAYP7DdhsW/vjE1vNon8iyZPPdvIWW5xZLXhuESBcM4fesg9ACeiy4ejRFmNDntt
+	 9pkRltavpl+8fAuP1WGnv81X28O7MAIPIQUeA/wG4N4VhWij0eGCaXXSQ/5xhwVT2P
+	 1VDTySR4I/o7SNrAt748J2j1beC2cjdvPqQFWJd3ZPBZNE/uMzMJsMjKhWMWB0blyJ
+	 vIlhZZX8s38KTUJr6LQTi/yZOFwmmZt/txeyRDW3sVUU9DtP9PtSxqCBLRgU1FnSWu
+	 qKyir+8TK2XRQJT+oSbCz1OcT3dJUdtMAxaSsG8NWU0dACHDyjaUmOe0Sfvu/jvZ7y
+	 5C2ieyFs75cEw==
+Date: Tue, 28 Oct 2025 17:59:49 -0700
+Subject: [PATCH 02/22] libfuse: add kernel gates for FUSE_IOMAP
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: djwong@kernel.org, bschubert@ddn.com
 Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  bernd@bsbernd.com, miklos@szeredi.hu, joannelkoong@gmail.com, neal@gompa.dev
-Message-ID: <176169813551.1427432.14472849364340575034.stgit@frogsfrogsfrogs>
+Message-ID: <176169813569.1427432.5266892141831578605.stgit@frogsfrogsfrogs>
 In-Reply-To: <176169813437.1427432.15345189583850708968.stgit@frogsfrogsfrogs>
 References: <176169813437.1427432.15345189583850708968.stgit@frogsfrogsfrogs>
 Precedence: bulk
@@ -61,99 +61,104 @@ Content-Transfer-Encoding: 7bit
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Bump the kernel ABI version to 7.99 and the libfuse ABI version to 3.99
-to start our development.  This patch exists to avoid confusion during
-the prototyping stage.
+Add some flags to query and request kernel support for filesystem iomap
+for regular files.
 
 Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- include/fuse_kernel.h  |    4 +++-
- ChangeLog.rst          |   12 +++++++++++-
- lib/fuse_versionscript |    3 +++
- lib/meson.build        |    2 +-
- meson.build            |    2 +-
- 5 files changed, 19 insertions(+), 4 deletions(-)
+ include/fuse_common.h |    5 +++++
+ include/fuse_kernel.h |    3 +++
+ lib/fuse_lowlevel.c   |   12 +++++++++++-
+ 3 files changed, 19 insertions(+), 1 deletion(-)
 
 
+diff --git a/include/fuse_common.h b/include/fuse_common.h
+index 041188ec7fa732..9d53354de78868 100644
+--- a/include/fuse_common.h
++++ b/include/fuse_common.h
+@@ -512,6 +512,11 @@ struct fuse_loop_config_v1 {
+  */
+ #define FUSE_CAP_OVER_IO_URING (1UL << 31)
+ 
++/**
++ * Client supports using iomap for regular file operations
++ */
++#define FUSE_CAP_IOMAP (1ULL << 32)
++
+ /**
+  * Ioctl flags
+  *
 diff --git a/include/fuse_kernel.h b/include/fuse_kernel.h
-index 94621f68a5cc8d..cf4a5f1a35c98b 100644
+index cf4a5f1a35c98b..80ac8c09d2dd64 100644
 --- a/include/fuse_kernel.h
 +++ b/include/fuse_kernel.h
-@@ -239,6 +239,8 @@
-  *  7.45
-  *  - add FUSE_COPY_FILE_RANGE_64
+@@ -241,6 +241,7 @@
   *  - add struct fuse_copy_file_range_out
-+ *
-+ *  7.99
+  *
+  *  7.99
++ *  - add FUSE_IOMAP and iomap_{begin,end,ioend} for regular file operations
   */
  
  #ifndef _LINUX_FUSE_H
-@@ -274,7 +276,7 @@
- #define FUSE_KERNEL_VERSION 7
+@@ -449,6 +450,7 @@ struct fuse_file_lock {
+  * FUSE_OVER_IO_URING: Indicate that client supports io-uring
+  * FUSE_REQUEST_TIMEOUT: kernel supports timing out requests.
+  *			 init_out.request_timeout contains the timeout (in secs)
++ * FUSE_IOMAP: Client supports iomap for regular file operations
+  */
+ #define FUSE_ASYNC_READ		(1 << 0)
+ #define FUSE_POSIX_LOCKS	(1 << 1)
+@@ -496,6 +498,7 @@ struct fuse_file_lock {
+ #define FUSE_ALLOW_IDMAP	(1ULL << 40)
+ #define FUSE_OVER_IO_URING	(1ULL << 41)
+ #define FUSE_REQUEST_TIMEOUT	(1ULL << 42)
++#define FUSE_IOMAP		(1ULL << 43)
  
- /** Minor version number of this interface */
--#define FUSE_KERNEL_MINOR_VERSION 45
-+#define FUSE_KERNEL_MINOR_VERSION 99
+ /**
+  * CUSE INIT request/reply flags
+diff --git a/lib/fuse_lowlevel.c b/lib/fuse_lowlevel.c
+index d420b257b9dd78..913a2d910504e1 100644
+--- a/lib/fuse_lowlevel.c
++++ b/lib/fuse_lowlevel.c
+@@ -2746,7 +2746,10 @@ _do_init(fuse_req_t req, const fuse_ino_t nodeid, const void *op_in,
+ 			se->conn.capable_ext |= FUSE_CAP_NO_EXPORT_SUPPORT;
+ 		if (inargflags & FUSE_OVER_IO_URING)
+ 			se->conn.capable_ext |= FUSE_CAP_OVER_IO_URING;
+-
++		if (inargflags & FUSE_IOMAP)
++			se->conn.capable_ext |= FUSE_CAP_IOMAP;
++		/* Don't let anyone touch iomap until the end of the patchset. */
++		se->conn.capable_ext &= ~FUSE_CAP_IOMAP;
+ 	} else {
+ 		se->conn.max_readahead = 0;
+ 	}
+@@ -2792,6 +2795,9 @@ _do_init(fuse_req_t req, const fuse_ino_t nodeid, const void *op_in,
+ 		       FUSE_CAP_READDIRPLUS_AUTO);
+ 	LL_SET_DEFAULT(1, FUSE_CAP_OVER_IO_URING);
  
- /** The node ID of the root inode */
- #define FUSE_ROOT_ID 1
-diff --git a/ChangeLog.rst b/ChangeLog.rst
-index 505d9dba84100f..bdb133a5f7db74 100644
---- a/ChangeLog.rst
-+++ b/ChangeLog.rst
-@@ -1,4 +1,14 @@
--libfuse 3.18
-+libfuse 3.99
++	/* servers need to opt-in to iomap explicitly */
++	LL_SET_DEFAULT(0, FUSE_CAP_IOMAP);
 +
-+libfuse 3.99-rc0 (2025-07-18)
-+===============================
-+
-+* Add prototypes of iomap and syncfs (djwong)
-+
-+libfuse 3.18-rc0 (2025-07-18)
-+===============================
-+
-+* Add statx, among other things (djwong)
+ 	/* This could safely become default, but libfuse needs an API extension
+ 	 * to support it
+ 	 * LL_SET_DEFAULT(1, FUSE_CAP_SETXATTR_EXT);
+@@ -2909,6 +2915,8 @@ _do_init(fuse_req_t req, const fuse_ino_t nodeid, const void *op_in,
+ 		outargflags |= FUSE_REQUEST_TIMEOUT;
+ 		outarg.request_timeout = se->conn.request_timeout;
+ 	}
++	if (se->conn.want_ext & FUSE_CAP_IOMAP)
++		outargflags |= FUSE_IOMAP;
  
- libfuse 3.17.1-rc0 (2024-02.10)
- ===============================
-diff --git a/lib/fuse_versionscript b/lib/fuse_versionscript
-index 2feafcf83860c5..96a94e43f73909 100644
---- a/lib/fuse_versionscript
-+++ b/lib/fuse_versionscript
-@@ -218,6 +218,9 @@ FUSE_3.18 {
- 		fuse_fs_statx;
- } FUSE_3.17;
- 
-+FUSE_3.99 {
-+} FUSE_3.18;
-+
- # Local Variables:
- # indent-tabs-mode: t
- # End:
-diff --git a/lib/meson.build b/lib/meson.build
-index fcd95741c9d374..8efe71abfabc9e 100644
---- a/lib/meson.build
-+++ b/lib/meson.build
-@@ -49,7 +49,7 @@ libfuse = library('fuse3',
-                   dependencies: deps,
-                   install: true,
-                   link_depends: 'fuse_versionscript',
--                  c_args: [ '-DFUSE_USE_VERSION=317',
-+                  c_args: [ '-DFUSE_USE_VERSION=399',
-                             '-DFUSERMOUNT_DIR="@0@"'.format(fusermount_path) ],
-                   link_args: ['-Wl,--version-script,' + meson.current_source_dir()
-                               + '/fuse_versionscript' ])
-diff --git a/meson.build b/meson.build
-index e3c7eeba64fd64..8359a489c351b9 100644
---- a/meson.build
-+++ b/meson.build
-@@ -1,5 +1,5 @@
- project('libfuse3', ['c'],
--        version: '3.18.0-rc0',  # Version with RC suffix
-+        version: '3.99.0-rc0',  # Version with RC suffix
-         meson_version: '>= 0.60.0',
-         default_options: [
-             'buildtype=debugoptimized',
+ 	outarg.max_readahead = se->conn.max_readahead;
+ 	outarg.max_write = se->conn.max_write;
+@@ -2943,6 +2951,8 @@ _do_init(fuse_req_t req, const fuse_ino_t nodeid, const void *op_in,
+ 		if (se->conn.want_ext & FUSE_CAP_PASSTHROUGH)
+ 			fuse_log(FUSE_LOG_DEBUG, "   max_stack_depth=%u\n",
+ 				outarg.max_stack_depth);
++		if (se->conn.want_ext & FUSE_CAP_IOMAP)
++			fuse_log(FUSE_LOG_DEBUG, "   iomap=1\n");
+ 	}
+ 	if (arg->minor < 5)
+ 		outargsize = FUSE_COMPAT_INIT_OUT_SIZE;
 
 
