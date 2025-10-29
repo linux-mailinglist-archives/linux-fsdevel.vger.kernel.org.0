@@ -1,50 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-66282-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66284-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19520C1A71A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 13:59:02 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96FACC1A624
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 13:52:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A4A6B506BEF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 12:51:22 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E9B94358827
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 12:52:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F21E93678D7;
-	Wed, 29 Oct 2025 12:26:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB47E36E343;
+	Wed, 29 Oct 2025 12:26:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M8OBkH8p"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mCi5gfVQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 443C83678C0;
-	Wed, 29 Oct 2025 12:26:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EEAA3683B9;
+	Wed, 29 Oct 2025 12:26:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761740789; cv=none; b=Bh8q/rWSKWftShQx3YYdVtpw9ARWisSgkSkgHmMVNVLBAOosVLlsZRXXXepnPkPBRncTGWbVJuEvgMe/ODe66H24zTQSSaF2mdheCk6TIN7rVR4nPNdla3z9UmadNu5XZE+BKO86GuXAD0yru0nJyukiN80SFk0zi/1SW1lOgMM=
+	t=1761740799; cv=none; b=qvbDwA8HBzsrViMPA8W+1e7gqpTRlnQ3xKBYs+h9OUybjI1nylpBYE6sF5j/JFqAhr3g2vj1LLK3YHSeY7nX7H/9EOMEIuHWHRvUWKqHFEOSKvyzj8X7HfQpuvXG0N7yhT9H30mxlrRVt/FL5f3UyUt2oWSsPqhjpkoiYdmh+SA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761740789; c=relaxed/simple;
-	bh=wjpkLSx2K2iB/mWZZQZcuIqQ514ywG7UHLGyzr0x04k=;
+	s=arc-20240116; t=1761740799; c=relaxed/simple;
+	bh=g358ZvosiSM60y9eCxcqiXUo4S81KVXpq23srWS/+30=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ncLRibd+KFTYXoDOzwtgF+SinqRAlyGtxWgatpnfa/Jj2Waa9GtiOlT5Bhct/JlbI5GLMUakV9Pk/Tu6qswF3tnFau7D71Oa6fAHDzZwERhEmKSe5en2+qtOv7iU9DsfqEBS462kvlE8Axs+FVEvTsZKAptB9bsG0s160etYxQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M8OBkH8p; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2920BC4CEFF;
-	Wed, 29 Oct 2025 12:26:23 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=hoiuttsab3iBg8Efsxkc/Ai4MT1iFWdCfvvIf4ILrRJ+tXpHh6wM0DR0hYB6rmTDSCadPe2GCI1vwVfuM8Pq7hfSlqZMiOi7F16MZkrDCK7IvOMs14+s9sH3mLKgqBml4hprlkHgHM23lOZM1riSrJTU4rqoW5BH4LrKRIX/ACE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mCi5gfVQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F3B3C4CEF7;
+	Wed, 29 Oct 2025 12:26:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761740788;
-	bh=wjpkLSx2K2iB/mWZZQZcuIqQ514ywG7UHLGyzr0x04k=;
+	s=k20201202; t=1761740799;
+	bh=g358ZvosiSM60y9eCxcqiXUo4S81KVXpq23srWS/+30=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=M8OBkH8piqK2Y5pAot3tsHUlnkJCbJUyH9a+5eGu2e17vFEOcAAurdN8Hr3VfvRdX
-	 GVpBmcARBaj+i8KpD35MPKBtrx2qlcH9s6XLQon3bbKg8X4Y/6kLwlJPRFCJ736o2U
-	 yJt2YoqyU4nkzHXcgEMHvDIqYW9sPAFwxywceW8AvAsDvggkjBscLb/cRRlnrRJogU
-	 TXMR2yZWM+3z+UxpbveAaTexHcKSq59wmAu8bUjZl+vMn2Z9+MxROxstPN/mKNxXEz
-	 tQhEz3/UvYKdrgnxJCtx2iLxGT+8wkl4jnJ0Sj0EEWiZ3SwZkNLKH1uqrKGdX9L2+/
-	 Ud5lTlmtZJk1w==
+	b=mCi5gfVQ1ogC3uJvRobyxHX0o38fMzvhkOBgOQIL6/LApcATtRvNmQof/SAeBoBNQ
+	 AYSIeNo01+s3UM+SAdSEZqDRijlDB6AuVWhEgDEvcSEyzzGJZ6cWVSuVXKlQP+8N4g
+	 rzGgIONmyCV3EjatMIAMnHeayERsTlq0k9jk3xGT0cfn6bhlzitUzmet5Cctfy4Ao9
+	 r/mKQfQtw3yAVO4KMSYWIzSSzRk5LLnV1MCGk/SOHMiyuy5Kfsck52QfEA8E4tBpj1
+	 qYKqQEyOt2/90KVzyr45GjNZWtfwy1MRh5sgUq3B34+64oEmtZXGF6AKRQ58e9fsXc
+	 TXnZDZD+kdZuw==
 From: Christian Brauner <brauner@kernel.org>
-Date: Wed, 29 Oct 2025 13:21:22 +0100
-Subject: [PATCH v4 69/72] selftests/namespace: third threaded active
- reference count test
+Date: Wed, 29 Oct 2025 13:21:24 +0100
+Subject: [PATCH v4 71/72] selftests/namespace: add stress test
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -53,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251029-work-namespace-nstree-listns-v4-69-2e6f823ebdc0@kernel.org>
+Message-Id: <20251029-work-namespace-nstree-listns-v4-71-2e6f823ebdc0@kernel.org>
 References: <20251029-work-namespace-nstree-listns-v4-0-2e6f823ebdc0@kernel.org>
 In-Reply-To: <20251029-work-namespace-nstree-listns-v4-0-2e6f823ebdc0@kernel.org>
 To: linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
@@ -70,361 +69,690 @@ Cc: Jann Horn <jannh@google.com>, Mike Yuan <me@yhndnzj.com>,
  netdev@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-96507
-X-Developer-Signature: v=1; a=openpgp-sha256; l=11371; i=brauner@kernel.org;
- h=from:subject:message-id; bh=wjpkLSx2K2iB/mWZZQZcuIqQ514ywG7UHLGyzr0x04k=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQysU14rPMrrcN2Fq9Zqo3RgZCJT6cGrc/NXN5xIWgV1
- 4YlOrMiOkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACYiycfIcPa2b7Pe3k1lb07U
- 9GWHenDtnzpdniX/6d9Jm9I4vtf/+cvwP2d9+d78OU8DxF+GXvwffkbDS2CtwoM/E/y93zxM7vn
- ykR0A
+X-Developer-Signature: v=1; a=openpgp-sha256; l=18002; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=g358ZvosiSM60y9eCxcqiXUo4S81KVXpq23srWS/+30=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQysU244mfp277OuGWemdr7LfsfalhwpkrFVHfGKr1I5
+ WK9lbG5o5SFQYyLQVZMkcWh3SRcbjlPxWajTA2YOaxMIEMYuDgFYCI5bIwM+/8tatdJvv7urIF0
+ eayC6CL2uSody7wyg/SiC6S4fs85yPDPYL/yV4lvTZ/ns14RuLDx5ZcXEyyW3/q9an7b5iVF6cH
+ M7AA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-Test that namespaces become inactive after subprocess with multiple
-threads exits. Create a subprocess that unshares user and network
-namespaces, then creates two threads that share those namespaces. Verify
-that after all threads and subprocess exit, the namespaces are no longer
-listed by listns() and cannot be opened by open_by_handle_at().
+Stress tests for namespace active reference counting.
+
+These tests validate that the active reference counting system can
+handle high load scenarios including rapid namespace
+creation/destruction, large numbers of concurrent namespaces, and
+various edge cases under stress.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- .../selftests/namespaces/ns_active_ref_test.c      | 319 +++++++++++++++++++++
- 1 file changed, 319 insertions(+)
+ tools/testing/selftests/namespaces/.gitignore    |   1 +
+ tools/testing/selftests/namespaces/Makefile      |   4 +-
+ tools/testing/selftests/namespaces/stress_test.c | 626 +++++++++++++++++++++++
+ 3 files changed, 630 insertions(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/namespaces/ns_active_ref_test.c b/tools/testing/selftests/namespaces/ns_active_ref_test.c
-index 24dc8ef106b9..093268f0efaa 100644
---- a/tools/testing/selftests/namespaces/ns_active_ref_test.c
-+++ b/tools/testing/selftests/namespaces/ns_active_ref_test.c
-@@ -9,6 +9,7 @@
- #include <string.h>
- #include <linux/nsfs.h>
- #include <sys/mount.h>
-+#include <sys/socket.h>
- #include <sys/stat.h>
- #include <sys/types.h>
- #include <sys/wait.h>
-@@ -2350,4 +2351,322 @@ TEST(thread_ns_fd_keeps_active)
- 	ASSERT_TRUE(errno == ENOENT || errno == ESTALE);
- }
+diff --git a/tools/testing/selftests/namespaces/.gitignore b/tools/testing/selftests/namespaces/.gitignore
+index 0091a7dfff20..f6dcf769f150 100644
+--- a/tools/testing/selftests/namespaces/.gitignore
++++ b/tools/testing/selftests/namespaces/.gitignore
+@@ -6,3 +6,4 @@ listns_test
+ listns_permissions_test
+ siocgskns_test
+ cred_change_test
++stress_test
+diff --git a/tools/testing/selftests/namespaces/Makefile b/tools/testing/selftests/namespaces/Makefile
+index 5d73f8dde6a0..3c776740f3ac 100644
+--- a/tools/testing/selftests/namespaces/Makefile
++++ b/tools/testing/selftests/namespaces/Makefile
+@@ -9,7 +9,8 @@ TEST_GEN_PROGS := nsid_test \
+ 		  listns_test \
+ 		  listns_permissions_test \
+ 		  siocgskns_test \
+-		  cred_change_test
++		  cred_change_test \
++		  stress_test
  
-+/* Structure for thread data in subprocess */
-+struct thread_sleep_data {
-+	int syncfd_read;
-+};
-+
-+static void *thread_sleep_and_wait(void *arg)
-+{
-+	struct thread_sleep_data *data = (struct thread_sleep_data *)arg;
-+	char sync_byte;
-+
-+	/* Wait for signal to exit - read will unblock when pipe is closed */
-+	(void)read(data->syncfd_read, &sync_byte, 1);
-+	return NULL;
-+}
+ include ../lib.mk
+ 
+@@ -18,4 +19,5 @@ $(OUTPUT)/listns_test: ../filesystems/utils.c
+ $(OUTPUT)/listns_permissions_test: ../filesystems/utils.c
+ $(OUTPUT)/siocgskns_test: ../filesystems/utils.c
+ $(OUTPUT)/cred_change_test: ../filesystems/utils.c
++$(OUTPUT)/stress_test: ../filesystems/utils.c
+ 
+diff --git a/tools/testing/selftests/namespaces/stress_test.c b/tools/testing/selftests/namespaces/stress_test.c
+new file mode 100644
+index 000000000000..dd7df7d6cb27
+--- /dev/null
++++ b/tools/testing/selftests/namespaces/stress_test.c
+@@ -0,0 +1,626 @@
++// SPDX-License-Identifier: GPL-2.0
++#define _GNU_SOURCE
++#include <errno.h>
++#include <fcntl.h>
++#include <limits.h>
++#include <sched.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <sys/ioctl.h>
++#include <sys/socket.h>
++#include <sys/stat.h>
++#include <sys/syscall.h>
++#include <sys/types.h>
++#include <sys/wait.h>
++#include <unistd.h>
++#include <linux/nsfs.h>
++#include "../kselftest_harness.h"
++#include "../filesystems/utils.h"
++#include "wrappers.h"
 +
 +/*
-+ * Test that namespaces become inactive after subprocess with multiple threads exits.
-+ * Create a subprocess that unshares user and network namespaces, then creates two
-+ * threads that share those namespaces. Verify that after all threads and subprocess
-+ * exit, the namespaces are no longer listed by listns() and cannot be opened by
-+ * open_by_handle_at().
++ * Stress tests for namespace active reference counting.
++ *
++ * These tests validate that the active reference counting system can handle
++ * high load scenarios including rapid namespace creation/destruction, large
++ * numbers of concurrent namespaces, and various edge cases under stress.
 + */
-+TEST(thread_subprocess_ns_inactive_after_all_exit)
++
++/*
++ * Test rapid creation and destruction of user namespaces.
++ * Create and destroy namespaces in quick succession to stress the
++ * active reference tracking and ensure no leaks occur.
++ */
++TEST(rapid_namespace_creation_destruction)
 +{
-+	int pipefd[2];
-+	int sv[2];
-+	pid_t pid;
-+	int status;
-+	__u64 user_id, net_id;
-+	struct file_handle *user_handle, *net_handle;
-+	char user_buf[sizeof(*user_handle) + MAX_HANDLE_SZ];
-+	char net_buf[sizeof(*net_handle) + MAX_HANDLE_SZ];
-+	char sync_byte;
-+	int ret;
-+
-+	ASSERT_EQ(pipe(pipefd), 0);
-+	ASSERT_EQ(socketpair(AF_UNIX, SOCK_STREAM, 0, sv), 0);
-+
-+	pid = fork();
-+	ASSERT_GE(pid, 0);
-+
-+	if (pid == 0) {
-+		/* Child process */
-+		close(pipefd[0]);
-+		close(sv[0]);
-+
-+		/* Create user namespace with mappings */
-+		if (setup_userns() < 0) {
-+			fprintf(stderr, "Child: setup_userns() failed: %s\n", strerror(errno));
-+			close(pipefd[1]);
-+			close(sv[1]);
-+			exit(1);
-+		}
-+		fprintf(stderr, "Child: setup_userns() succeeded\n");
-+
-+		/* Get user namespace ID */
-+		int user_fd = open("/proc/self/ns/user", O_RDONLY);
-+		if (user_fd < 0) {
-+			fprintf(stderr, "Child: open(/proc/self/ns/user) failed: %s\n", strerror(errno));
-+			close(pipefd[1]);
-+			close(sv[1]);
-+			exit(1);
-+		}
-+
-+		if (ioctl(user_fd, NS_GET_ID, &user_id) < 0) {
-+			fprintf(stderr, "Child: ioctl(NS_GET_ID) for user ns failed: %s\n", strerror(errno));
-+			close(user_fd);
-+			close(pipefd[1]);
-+			close(sv[1]);
-+			exit(1);
-+		}
-+		close(user_fd);
-+		fprintf(stderr, "Child: user ns ID = %llu\n", (unsigned long long)user_id);
-+
-+		/* Unshare network namespace */
-+		if (unshare(CLONE_NEWNET) < 0) {
-+			fprintf(stderr, "Child: unshare(CLONE_NEWNET) failed: %s\n", strerror(errno));
-+			close(pipefd[1]);
-+			close(sv[1]);
-+			exit(1);
-+		}
-+		fprintf(stderr, "Child: unshare(CLONE_NEWNET) succeeded\n");
-+
-+		/* Get network namespace ID */
-+		int net_fd = open("/proc/self/ns/net", O_RDONLY);
-+		if (net_fd < 0) {
-+			fprintf(stderr, "Child: open(/proc/self/ns/net) failed: %s\n", strerror(errno));
-+			close(pipefd[1]);
-+			close(sv[1]);
-+			exit(1);
-+		}
-+
-+		if (ioctl(net_fd, NS_GET_ID, &net_id) < 0) {
-+			fprintf(stderr, "Child: ioctl(NS_GET_ID) for net ns failed: %s\n", strerror(errno));
-+			close(net_fd);
-+			close(pipefd[1]);
-+			close(sv[1]);
-+			exit(1);
-+		}
-+		close(net_fd);
-+		fprintf(stderr, "Child: net ns ID = %llu\n", (unsigned long long)net_id);
-+
-+		/* Send namespace IDs to parent */
-+		if (write(pipefd[1], &user_id, sizeof(user_id)) != sizeof(user_id)) {
-+			fprintf(stderr, "Child: write(user_id) failed: %s\n", strerror(errno));
-+			exit(1);
-+		}
-+		if (write(pipefd[1], &net_id, sizeof(net_id)) != sizeof(net_id)) {
-+			fprintf(stderr, "Child: write(net_id) failed: %s\n", strerror(errno));
-+			exit(1);
-+		}
-+		close(pipefd[1]);
-+		fprintf(stderr, "Child: sent namespace IDs to parent\n");
-+
-+		/* Create two threads that share the namespaces */
-+		pthread_t thread1, thread2;
-+		struct thread_sleep_data data;
-+		data.syncfd_read = sv[1];
-+
-+		int ret_thread = pthread_create(&thread1, NULL, thread_sleep_and_wait, &data);
-+		if (ret_thread != 0) {
-+			fprintf(stderr, "Child: pthread_create(thread1) failed: %s\n", strerror(ret_thread));
-+			close(sv[1]);
-+			exit(1);
-+		}
-+		fprintf(stderr, "Child: created thread1\n");
-+
-+		ret_thread = pthread_create(&thread2, NULL, thread_sleep_and_wait, &data);
-+		if (ret_thread != 0) {
-+			fprintf(stderr, "Child: pthread_create(thread2) failed: %s\n", strerror(ret_thread));
-+			close(sv[1]);
-+			pthread_cancel(thread1);
-+			exit(1);
-+		}
-+		fprintf(stderr, "Child: created thread2\n");
-+
-+		/* Wait for threads to complete - they will unblock when parent writes */
-+		fprintf(stderr, "Child: waiting for threads to exit\n");
-+		pthread_join(thread1, NULL);
-+		fprintf(stderr, "Child: thread1 exited\n");
-+		pthread_join(thread2, NULL);
-+		fprintf(stderr, "Child: thread2 exited\n");
-+
-+		close(sv[1]);
-+
-+		/* Exit - namespaces should become inactive */
-+		fprintf(stderr, "Child: all threads joined, exiting with success\n");
-+		exit(0);
-+	}
-+
-+	/* Parent process */
-+	close(pipefd[1]);
-+	close(sv[1]);
-+
-+	TH_LOG("Parent: waiting to read namespace IDs from child");
-+
-+	/* Read namespace IDs from child */
-+	ret = read(pipefd[0], &user_id, sizeof(user_id));
-+	if (ret != sizeof(user_id)) {
-+		TH_LOG("Parent: failed to read user_id, ret=%d, errno=%s", ret, strerror(errno));
-+		close(pipefd[0]);
-+		sync_byte = 'X';
-+		(void)write(sv[0], &sync_byte, 1);
-+		close(sv[0]);
-+		waitpid(pid, NULL, 0);
-+		SKIP(return, "Failed to read user namespace ID from child");
-+	}
-+
-+	ret = read(pipefd[0], &net_id, sizeof(net_id));
-+	close(pipefd[0]);
-+	if (ret != sizeof(net_id)) {
-+		TH_LOG("Parent: failed to read net_id, ret=%d, errno=%s", ret, strerror(errno));
-+		sync_byte = 'X';
-+		(void)write(sv[0], &sync_byte, 1);
-+		close(sv[0]);
-+		waitpid(pid, NULL, 0);
-+		SKIP(return, "Failed to read network namespace ID from child");
-+	}
-+
-+	TH_LOG("Child created user ns %llu and net ns %llu with 2 threads",
-+	       (unsigned long long)user_id, (unsigned long long)net_id);
-+
-+	/* Construct file handles */
-+	user_handle = (struct file_handle *)user_buf;
-+	user_handle->handle_bytes = sizeof(struct nsfs_file_handle);
-+	user_handle->handle_type = FILEID_NSFS;
-+	struct nsfs_file_handle *user_fh = (struct nsfs_file_handle *)user_handle->f_handle;
-+	user_fh->ns_id = user_id;
-+	user_fh->ns_type = 0;
-+	user_fh->ns_inum = 0;
-+
-+	net_handle = (struct file_handle *)net_buf;
-+	net_handle->handle_bytes = sizeof(struct nsfs_file_handle);
-+	net_handle->handle_type = FILEID_NSFS;
-+	struct nsfs_file_handle *net_fh = (struct nsfs_file_handle *)net_handle->f_handle;
-+	net_fh->ns_id = net_id;
-+	net_fh->ns_type = 0;
-+	net_fh->ns_inum = 0;
-+
-+	/* Verify namespaces are active while subprocess and threads are alive */
-+	TH_LOG("Verifying namespaces are active while subprocess with threads is running");
-+	int user_fd = open_by_handle_at(FD_NSFS_ROOT, user_handle, O_RDONLY);
-+	ASSERT_GE(user_fd, 0);
-+
-+	int net_fd = open_by_handle_at(FD_NSFS_ROOT, net_handle, O_RDONLY);
-+	ASSERT_GE(net_fd, 0);
-+
-+	close(user_fd);
-+	close(net_fd);
-+
-+	/* Also verify they appear in listns() */
-+	TH_LOG("Verifying namespaces appear in listns() while active");
 +	struct ns_id_req req = {
-+		.size = sizeof(struct ns_id_req),
++		.size = sizeof(req),
 +		.spare = 0,
 +		.ns_id = 0,
 +		.ns_type = CLONE_NEWUSER,
 +		.spare2 = 0,
 +		.user_ns_id = 0,
 +	};
-+	__u64 ns_ids[256];
-+	int nr_ids = sys_listns(&req, ns_ids, 256, 0);
-+	if (nr_ids < 0) {
-+		TH_LOG("listns() not available, skipping listns verification");
-+	} else {
-+		/* Check if user_id is in the list */
-+		int found_user = 0;
-+		for (int i = 0; i < nr_ids; i++) {
-+			if (ns_ids[i] == user_id) {
-+				found_user = 1;
-+				break;
-+			}
-+		}
-+		ASSERT_TRUE(found_user);
-+		TH_LOG("User namespace found in listns() as expected");
++	__u64 ns_ids_before[256], ns_ids_after[256];
++	ssize_t ret_before, ret_after;
++	int i;
 +
-+		/* Check network namespace */
-+		req.ns_type = CLONE_NEWNET;
-+		nr_ids = sys_listns(&req, ns_ids, 256, 0);
-+		if (nr_ids >= 0) {
-+			int found_net = 0;
-+			for (int i = 0; i < nr_ids; i++) {
-+				if (ns_ids[i] == net_id) {
-+					found_net = 1;
-+					break;
-+				}
++	/* Get baseline count of active user namespaces */
++	ret_before = sys_listns(&req, ns_ids_before, ARRAY_SIZE(ns_ids_before), 0);
++	if (ret_before < 0) {
++		if (errno == ENOSYS)
++			SKIP(return, "listns() not supported");
++		ASSERT_GE(ret_before, 0);
++	}
++
++	TH_LOG("Baseline: %zd active user namespaces", ret_before);
++
++	/* Rapidly create and destroy 100 user namespaces */
++	for (i = 0; i < 100; i++) {
++		pid_t pid = fork();
++		ASSERT_GE(pid, 0);
++
++		if (pid == 0) {
++			/* Child: create user namespace and immediately exit */
++			if (setup_userns() < 0)
++				exit(1);
++			exit(0);
++		}
++
++		/* Parent: wait for child */
++		int status;
++		waitpid(pid, &status, 0);
++		ASSERT_TRUE(WIFEXITED(status));
++		ASSERT_EQ(WEXITSTATUS(status), 0);
++	}
++
++	/* Verify we're back to baseline (no leaked namespaces) */
++	ret_after = sys_listns(&req, ns_ids_after, ARRAY_SIZE(ns_ids_after), 0);
++	ASSERT_GE(ret_after, 0);
++
++	TH_LOG("After 100 rapid create/destroy cycles: %zd active user namespaces", ret_after);
++	ASSERT_EQ(ret_before, ret_after);
++}
++
++/*
++ * Test creating many concurrent namespaces.
++ * Verify that listns() correctly tracks all of them and that they all
++ * become inactive after processes exit.
++ */
++TEST(many_concurrent_namespaces)
++{
++	struct ns_id_req req = {
++		.size = sizeof(req),
++		.spare = 0,
++		.ns_id = 0,
++		.ns_type = CLONE_NEWUSER,
++		.spare2 = 0,
++		.user_ns_id = 0,
++	};
++	__u64 ns_ids_before[512], ns_ids_during[512], ns_ids_after[512];
++	ssize_t ret_before, ret_during, ret_after;
++	pid_t pids[50];
++	int num_children = 50;
++	int i;
++	int sv[2];
++
++	/* Get baseline */
++	ret_before = sys_listns(&req, ns_ids_before, ARRAY_SIZE(ns_ids_before), 0);
++	if (ret_before < 0) {
++		if (errno == ENOSYS)
++			SKIP(return, "listns() not supported");
++		ASSERT_GE(ret_before, 0);
++	}
++
++	TH_LOG("Baseline: %zd active user namespaces", ret_before);
++
++	ASSERT_EQ(socketpair(AF_UNIX, SOCK_STREAM, 0, sv), 0);
++
++	/* Create many children, each with their own user namespace */
++	for (i = 0; i < num_children; i++) {
++		pids[i] = fork();
++		ASSERT_GE(pids[i], 0);
++
++		if (pids[i] == 0) {
++			/* Child: create user namespace and wait for parent signal */
++			char c;
++
++			close(sv[0]);
++
++			if (setup_userns() < 0) {
++				close(sv[1]);
++				exit(1);
 +			}
-+			ASSERT_TRUE(found_net);
-+			TH_LOG("Network namespace found in listns() as expected");
++
++			/* Signal parent we're ready */
++			if (write(sv[1], &c, 1) != 1) {
++				close(sv[1]);
++				exit(1);
++			}
++
++			/* Wait for parent signal to exit */
++			if (read(sv[1], &c, 1) != 1) {
++				close(sv[1]);
++				exit(1);
++			}
++
++			close(sv[1]);
++			exit(0);
 +		}
 +	}
 +
-+	/* Signal threads to exit */
-+	TH_LOG("Signaling threads to exit");
-+	sync_byte = 'X';
-+	/* Write two bytes - one for each thread */
-+	ASSERT_EQ(write(sv[0], &sync_byte, 1), 1);
-+	ASSERT_EQ(write(sv[0], &sync_byte, 1), 1);
++	close(sv[1]);
++
++	/* Wait for all children to signal ready */
++	for (i = 0; i < num_children; i++) {
++		char c;
++		if (read(sv[0], &c, 1) != 1) {
++			/* If we fail to read, kill all children and exit */
++			close(sv[0]);
++			for (int j = 0; j < num_children; j++)
++				kill(pids[j], SIGKILL);
++			for (int j = 0; j < num_children; j++)
++				waitpid(pids[j], NULL, 0);
++			ASSERT_TRUE(false);
++		}
++	}
++
++	/* List namespaces while all children are running */
++	ret_during = sys_listns(&req, ns_ids_during, ARRAY_SIZE(ns_ids_during), 0);
++	ASSERT_GE(ret_during, 0);
++
++	TH_LOG("With %d children running: %zd active user namespaces", num_children, ret_during);
++
++	/* Should have at least num_children more namespaces than baseline */
++	ASSERT_GE(ret_during, ret_before + num_children);
++
++	/* Signal all children to exit */
++	for (i = 0; i < num_children; i++) {
++		char c = 'X';
++		if (write(sv[0], &c, 1) != 1) {
++			/* If we fail to write, kill remaining children */
++			close(sv[0]);
++			for (int j = i; j < num_children; j++)
++				kill(pids[j], SIGKILL);
++			for (int j = 0; j < num_children; j++)
++				waitpid(pids[j], NULL, 0);
++			ASSERT_TRUE(false);
++		}
++	}
++
 +	close(sv[0]);
 +
-+	/* Wait for child process to exit */
-+	waitpid(pid, &status, 0);
-+	ASSERT_TRUE(WIFEXITED(status));
-+	if (WEXITSTATUS(status) != 0) {
-+		TH_LOG("Child process failed with exit code %d", WEXITSTATUS(status));
-+		SKIP(return, "Child process failed");
++	/* Wait for all children */
++	for (i = 0; i < num_children; i++) {
++		int status;
++		waitpid(pids[i], &status, 0);
++		ASSERT_TRUE(WIFEXITED(status));
 +	}
 +
-+	TH_LOG("Subprocess and all threads have exited successfully");
++	/* Verify we're back to baseline */
++	ret_after = sys_listns(&req, ns_ids_after, ARRAY_SIZE(ns_ids_after), 0);
++	ASSERT_GE(ret_after, 0);
 +
-+	/* Verify namespaces are now inactive - open_by_handle_at should fail */
-+	TH_LOG("Verifying namespaces are inactive after subprocess and threads exit");
-+	user_fd = open_by_handle_at(FD_NSFS_ROOT, user_handle, O_RDONLY);
-+	ASSERT_LT(user_fd, 0);
-+	TH_LOG("User namespace inactive as expected: %s (errno=%d)",
-+	       strerror(errno), errno);
-+	ASSERT_TRUE(errno == ENOENT || errno == ESTALE);
++	TH_LOG("After all children exit: %zd active user namespaces", ret_after);
++	ASSERT_EQ(ret_before, ret_after);
++}
 +
-+	net_fd = open_by_handle_at(FD_NSFS_ROOT, net_handle, O_RDONLY);
-+	ASSERT_LT(net_fd, 0);
-+	TH_LOG("Network namespace inactive as expected: %s (errno=%d)",
-+	       strerror(errno), errno);
-+	ASSERT_TRUE(errno == ENOENT || errno == ESTALE);
++/*
++ * Test rapid namespace creation with different namespace types.
++ * Create multiple types of namespaces rapidly to stress the tracking system.
++ */
++TEST(rapid_mixed_namespace_creation)
++{
++	struct ns_id_req req = {
++		.size = sizeof(req),
++		.spare = 0,
++		.ns_id = 0,
++		.ns_type = 0,  /* All types */
++		.spare2 = 0,
++		.user_ns_id = 0,
++	};
++	__u64 ns_ids_before[512], ns_ids_after[512];
++	ssize_t ret_before, ret_after;
++	int i;
 +
-+	/* Verify namespaces do NOT appear in listns() */
-+	TH_LOG("Verifying namespaces do NOT appear in listns() when inactive");
-+	memset(&req, 0, sizeof(req));
-+	req.size = sizeof(struct ns_id_req);
-+	req.ns_type = CLONE_NEWUSER;
-+	nr_ids = sys_listns(&req, ns_ids, 256, 0);
-+	if (nr_ids >= 0) {
-+		int found_user = 0;
-+		for (int i = 0; i < nr_ids; i++) {
-+			if (ns_ids[i] == user_id) {
-+				found_user = 1;
-+				break;
-+			}
++	/* Get baseline count */
++	ret_before = sys_listns(&req, ns_ids_before, ARRAY_SIZE(ns_ids_before), 0);
++	if (ret_before < 0) {
++		if (errno == ENOSYS)
++			SKIP(return, "listns() not supported");
++		ASSERT_GE(ret_before, 0);
++	}
++
++	TH_LOG("Baseline: %zd active namespaces (all types)", ret_before);
++
++	/* Rapidly create and destroy namespaces with multiple types */
++	for (i = 0; i < 50; i++) {
++		pid_t pid = fork();
++		ASSERT_GE(pid, 0);
++
++		if (pid == 0) {
++			/* Child: create multiple namespace types */
++			if (setup_userns() < 0)
++				exit(1);
++
++			/* Create additional namespace types */
++			if (unshare(CLONE_NEWNET) < 0)
++				exit(1);
++			if (unshare(CLONE_NEWUTS) < 0)
++				exit(1);
++			if (unshare(CLONE_NEWIPC) < 0)
++				exit(1);
++
++			exit(0);
 +		}
-+		ASSERT_FALSE(found_user);
-+		TH_LOG("User namespace correctly not listed in listns()");
 +
-+		/* Check network namespace */
-+		req.ns_type = CLONE_NEWNET;
-+		nr_ids = sys_listns(&req, ns_ids, 256, 0);
-+		if (nr_ids >= 0) {
-+			int found_net = 0;
-+			for (int i = 0; i < nr_ids; i++) {
-+				if (ns_ids[i] == net_id) {
-+					found_net = 1;
-+					break;
++		/* Parent: wait for child */
++		int status;
++		waitpid(pid, &status, 0);
++		ASSERT_TRUE(WIFEXITED(status));
++	}
++
++	/* Verify we're back to baseline */
++	ret_after = sys_listns(&req, ns_ids_after, ARRAY_SIZE(ns_ids_after), 0);
++	ASSERT_GE(ret_after, 0);
++
++	TH_LOG("After 50 rapid mixed namespace cycles: %zd active namespaces", ret_after);
++	ASSERT_EQ(ret_before, ret_after);
++}
++
++/*
++ * Test nested namespace creation under stress.
++ * Create deeply nested namespace hierarchies and verify proper cleanup.
++ */
++TEST(nested_namespace_stress)
++{
++	struct ns_id_req req = {
++		.size = sizeof(req),
++		.spare = 0,
++		.ns_id = 0,
++		.ns_type = CLONE_NEWUSER,
++		.spare2 = 0,
++		.user_ns_id = 0,
++	};
++	__u64 ns_ids_before[512], ns_ids_after[512];
++	ssize_t ret_before, ret_after;
++	int i;
++
++	/* Get baseline */
++	ret_before = sys_listns(&req, ns_ids_before, ARRAY_SIZE(ns_ids_before), 0);
++	if (ret_before < 0) {
++		if (errno == ENOSYS)
++			SKIP(return, "listns() not supported");
++		ASSERT_GE(ret_before, 0);
++	}
++
++	TH_LOG("Baseline: %zd active user namespaces", ret_before);
++
++	/* Create 20 processes, each with nested user namespaces */
++	for (i = 0; i < 20; i++) {
++		pid_t pid = fork();
++		ASSERT_GE(pid, 0);
++
++		if (pid == 0) {
++			int userns_fd;
++			uid_t orig_uid = getuid();
++			int depth;
++
++			/* Create nested user namespaces (up to 5 levels) */
++			for (depth = 0; depth < 5; depth++) {
++				userns_fd = get_userns_fd(0, (depth == 0) ? orig_uid : 0, 1);
++				if (userns_fd < 0)
++					exit(1);
++
++				if (setns(userns_fd, CLONE_NEWUSER) < 0) {
++					close(userns_fd);
++					exit(1);
 +				}
++				close(userns_fd);
 +			}
-+			ASSERT_FALSE(found_net);
-+			TH_LOG("Network namespace correctly not listed in listns()");
++
++			exit(0);
 +		}
++
++		/* Parent: wait for child */
++		int status;
++		waitpid(pid, &status, 0);
++		ASSERT_TRUE(WIFEXITED(status));
++	}
++
++	/* Verify we're back to baseline */
++	ret_after = sys_listns(&req, ns_ids_after, ARRAY_SIZE(ns_ids_after), 0);
++	ASSERT_GE(ret_after, 0);
++
++	TH_LOG("After 20 nested namespace hierarchies: %zd active user namespaces", ret_after);
++	ASSERT_EQ(ret_before, ret_after);
++}
++
++/*
++ * Test listns() pagination under stress.
++ * Create many namespaces and verify pagination works correctly.
++ */
++TEST(listns_pagination_stress)
++{
++	struct ns_id_req req = {
++		.size = sizeof(req),
++		.spare = 0,
++		.ns_id = 0,
++		.ns_type = CLONE_NEWUSER,
++		.spare2 = 0,
++		.user_ns_id = 0,
++	};
++	pid_t pids[30];
++	int num_children = 30;
++	int i;
++	int sv[2];
++	__u64 all_ns_ids[512];
++	int total_found = 0;
++
++	ASSERT_EQ(socketpair(AF_UNIX, SOCK_STREAM, 0, sv), 0);
++
++	/* Create many children with user namespaces */
++	for (i = 0; i < num_children; i++) {
++		pids[i] = fork();
++		ASSERT_GE(pids[i], 0);
++
++		if (pids[i] == 0) {
++			char c;
++			close(sv[0]);
++
++			if (setup_userns() < 0) {
++				close(sv[1]);
++				exit(1);
++			}
++
++			/* Signal parent we're ready */
++			if (write(sv[1], &c, 1) != 1) {
++				close(sv[1]);
++				exit(1);
++			}
++
++			/* Wait for parent signal to exit */
++			if (read(sv[1], &c, 1) != 1) {
++				close(sv[1]);
++				exit(1);
++			}
++
++			close(sv[1]);
++			exit(0);
++		}
++	}
++
++	close(sv[1]);
++
++	/* Wait for all children to signal ready */
++	for (i = 0; i < num_children; i++) {
++		char c;
++		if (read(sv[0], &c, 1) != 1) {
++			/* If we fail to read, kill all children and exit */
++			close(sv[0]);
++			for (int j = 0; j < num_children; j++)
++				kill(pids[j], SIGKILL);
++			for (int j = 0; j < num_children; j++)
++				waitpid(pids[j], NULL, 0);
++			ASSERT_TRUE(false);
++		}
++	}
++
++	/* Paginate through all namespaces using small batch sizes */
++	req.ns_id = 0;
++	while (1) {
++		__u64 batch[5];  /* Small batch size to force pagination */
++		ssize_t ret;
++
++		ret = sys_listns(&req, batch, ARRAY_SIZE(batch), 0);
++		if (ret < 0) {
++			if (errno == ENOSYS) {
++				close(sv[0]);
++				for (i = 0; i < num_children; i++)
++					kill(pids[i], SIGKILL);
++				for (i = 0; i < num_children; i++)
++					waitpid(pids[i], NULL, 0);
++				SKIP(return, "listns() not supported");
++			}
++			ASSERT_GE(ret, 0);
++		}
++
++		if (ret == 0)
++			break;
++
++		/* Store results */
++		for (i = 0; i < ret && total_found < 512; i++) {
++			all_ns_ids[total_found++] = batch[i];
++		}
++
++		/* Update cursor for next batch */
++		if (ret == ARRAY_SIZE(batch))
++			req.ns_id = batch[ret - 1];
++		else
++			break;
++	}
++
++	TH_LOG("Paginated through %d user namespaces", total_found);
++
++	/* Verify no duplicates in pagination */
++	for (i = 0; i < total_found; i++) {
++		for (int j = i + 1; j < total_found; j++) {
++			if (all_ns_ids[i] == all_ns_ids[j]) {
++				TH_LOG("Found duplicate ns_id: %llu at positions %d and %d",
++				       (unsigned long long)all_ns_ids[i], i, j);
++				ASSERT_TRUE(false);
++			}
++		}
++	}
++
++	/* Signal all children to exit */
++	for (i = 0; i < num_children; i++) {
++		char c = 'X';
++		if (write(sv[0], &c, 1) != 1) {
++			close(sv[0]);
++			for (int j = i; j < num_children; j++)
++				kill(pids[j], SIGKILL);
++			for (int j = 0; j < num_children; j++)
++				waitpid(pids[j], NULL, 0);
++			ASSERT_TRUE(false);
++		}
++	}
++
++	close(sv[0]);
++
++	/* Wait for all children */
++	for (i = 0; i < num_children; i++) {
++		int status;
++		waitpid(pids[i], &status, 0);
 +	}
 +}
 +
- TEST_HARNESS_MAIN
++/*
++ * Test concurrent namespace operations.
++ * Multiple processes creating, querying, and destroying namespaces concurrently.
++ */
++TEST(concurrent_namespace_operations)
++{
++	struct ns_id_req req = {
++		.size = sizeof(req),
++		.spare = 0,
++		.ns_id = 0,
++		.ns_type = 0,
++		.spare2 = 0,
++		.user_ns_id = 0,
++	};
++	__u64 ns_ids_before[512], ns_ids_after[512];
++	ssize_t ret_before, ret_after;
++	pid_t pids[20];
++	int num_workers = 20;
++	int i;
++
++	/* Get baseline */
++	ret_before = sys_listns(&req, ns_ids_before, ARRAY_SIZE(ns_ids_before), 0);
++	if (ret_before < 0) {
++		if (errno == ENOSYS)
++			SKIP(return, "listns() not supported");
++		ASSERT_GE(ret_before, 0);
++	}
++
++	TH_LOG("Baseline: %zd active namespaces", ret_before);
++
++	/* Create worker processes that do concurrent operations */
++	for (i = 0; i < num_workers; i++) {
++		pids[i] = fork();
++		ASSERT_GE(pids[i], 0);
++
++		if (pids[i] == 0) {
++			/* Each worker: create namespaces, list them, repeat */
++			int iterations;
++
++			for (iterations = 0; iterations < 10; iterations++) {
++				int userns_fd;
++				__u64 temp_ns_ids[100];
++				ssize_t ret;
++
++				/* Create a user namespace */
++				userns_fd = get_userns_fd(0, getuid(), 1);
++				if (userns_fd < 0)
++					continue;
++
++				/* List namespaces */
++				ret = sys_listns(&req, temp_ns_ids, ARRAY_SIZE(temp_ns_ids), 0);
++				(void)ret;
++
++				close(userns_fd);
++
++				/* Small delay */
++				usleep(1000);
++			}
++
++			exit(0);
++		}
++	}
++
++	/* Wait for all workers */
++	for (i = 0; i < num_workers; i++) {
++		int status;
++		waitpid(pids[i], &status, 0);
++		ASSERT_TRUE(WIFEXITED(status));
++		ASSERT_EQ(WEXITSTATUS(status), 0);
++	}
++
++	/* Verify we're back to baseline */
++	ret_after = sys_listns(&req, ns_ids_after, ARRAY_SIZE(ns_ids_after), 0);
++	ASSERT_GE(ret_after, 0);
++
++	TH_LOG("After concurrent operations: %zd active namespaces", ret_after);
++	ASSERT_EQ(ret_before, ret_after);
++}
++
++/*
++ * Test namespace churn - continuous creation and destruction.
++ * Simulates high-churn scenarios like container orchestration.
++ */
++TEST(namespace_churn)
++{
++	struct ns_id_req req = {
++		.size = sizeof(req),
++		.spare = 0,
++		.ns_id = 0,
++		.ns_type = CLONE_NEWUSER | CLONE_NEWNET | CLONE_NEWUTS,
++		.spare2 = 0,
++		.user_ns_id = 0,
++	};
++	__u64 ns_ids_before[512], ns_ids_after[512];
++	ssize_t ret_before, ret_after;
++	int cycle;
++
++	/* Get baseline */
++	ret_before = sys_listns(&req, ns_ids_before, ARRAY_SIZE(ns_ids_before), 0);
++	if (ret_before < 0) {
++		if (errno == ENOSYS)
++			SKIP(return, "listns() not supported");
++		ASSERT_GE(ret_before, 0);
++	}
++
++	TH_LOG("Baseline: %zd active namespaces", ret_before);
++
++	/* Simulate churn: batches of namespaces created and destroyed */
++	for (cycle = 0; cycle < 10; cycle++) {
++		pid_t batch_pids[10];
++		int i;
++
++		/* Create batch */
++		for (i = 0; i < 10; i++) {
++			batch_pids[i] = fork();
++			ASSERT_GE(batch_pids[i], 0);
++
++			if (batch_pids[i] == 0) {
++				/* Create multiple namespace types */
++				if (setup_userns() < 0)
++					exit(1);
++				if (unshare(CLONE_NEWNET) < 0)
++					exit(1);
++				if (unshare(CLONE_NEWUTS) < 0)
++					exit(1);
++
++				/* Keep namespaces alive briefly */
++				usleep(10000);
++				exit(0);
++			}
++		}
++
++		/* Wait for batch to complete */
++		for (i = 0; i < 10; i++) {
++			int status;
++			waitpid(batch_pids[i], &status, 0);
++		}
++	}
++
++	/* Verify we're back to baseline */
++	ret_after = sys_listns(&req, ns_ids_after, ARRAY_SIZE(ns_ids_after), 0);
++	ASSERT_GE(ret_after, 0);
++
++	TH_LOG("After 10 churn cycles (100 namespace sets): %zd active namespaces", ret_after);
++	ASSERT_EQ(ret_before, ret_after);
++}
++
++TEST_HARNESS_MAIN
 
 -- 
 2.47.3
