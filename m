@@ -1,54 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-66167-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66168-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BB89C17EB8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 02:32:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73BD0C17EA0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 02:29:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2AE01885EAD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 01:28:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46D983A795F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 01:28:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A4442DC35A;
-	Wed, 29 Oct 2025 01:28:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B64932DA751;
+	Wed, 29 Oct 2025 01:28:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h0kxmKrf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="giqBXMw1"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDCFA2DA762;
-	Wed, 29 Oct 2025 01:27:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10E5C2D949A;
+	Wed, 29 Oct 2025 01:28:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761701279; cv=none; b=WOw2hpBfbz8tWXiSH+Nlcn6NUK56tEYl/tmbFgLCEidSGnDJYFDYHJwvgarzHqOCmxCR5UoVaXGdaBkon1ipxdG3IT4WhAKxMsaeBBBgAcfBKD4dtCNyREMGrODdseroTXvEXqH+F4lYaGXa+Twuo5lkDF3Q24YKe1dZiWTDfjg=
+	t=1761701295; cv=none; b=uHeoq4iMB8r5XAbjz3McGXfmY54LarMTyvl/GNN6IQHpuHaA817/GEpj6WkFFpBvBEk6zRBjDY36ok+RoD+YscxTD4szMCywYOMMP/Xm/7FxaHeiIczJmABV/al/vjStXAPzeoorVvofNZ619hG6aOzA7enUOXUfiuL8/+Zs2dY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761701279; c=relaxed/simple;
-	bh=gYg3xJmroh4AWpwLCWJU4+6aAJwC7hj8Vb77PM5YnZQ=;
+	s=arc-20240116; t=1761701295; c=relaxed/simple;
+	bh=enAaloAOVhmS1NOoUM2RHc8qdlOJGs7yuoNDpfDqBRQ=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dI2FW707TYNTeb1QAOjPRaeCaYSOep5GMKcXF+fmhYpDyxp0oV8F9VQa+u4QzRcNN0G1ZUD53a9VT1tvCa5cfcymQv2qIPEgqyRHOajAQ4K2IHo/6LtgfkliUeQBCwVrCY4qo7Zi1PjtSdnrpqDiHyS8ADXOyBATI+Cuyq3xjyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h0kxmKrf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BBE2C4CEE7;
-	Wed, 29 Oct 2025 01:27:59 +0000 (UTC)
+	 MIME-Version:Content-Type; b=JYKIQCZew948Cd7D3FT5OBsOJdookxpgb7+PJo4tNyKvlv6t9IVBc40dcmcP6NilVHp0//b9drEddU9C4oiF4U2IlYY5xYuQ9ZAN/Cw2ghAdTpednYPQz7mD09TIZv+MRggBrTUZstEeW/GIUsdRbKkj4NQpEbz+eezhTyIIhUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=giqBXMw1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBCBFC4CEE7;
+	Wed, 29 Oct 2025 01:28:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761701279;
-	bh=gYg3xJmroh4AWpwLCWJU4+6aAJwC7hj8Vb77PM5YnZQ=;
+	s=k20201202; t=1761701294;
+	bh=enAaloAOVhmS1NOoUM2RHc8qdlOJGs7yuoNDpfDqBRQ=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=h0kxmKrf2EZvJfBwRx9yMXMjns7WxsZNJ7P4HRc2CkjNpK7dWZ5ly24l+fpfjhcAX
-	 yuufFbrMFrBtoJQH/Pna8PoRz4fXNvIbNzNh4R5EZfnEkBHJLuJRgFUSaTCUF7OXgJ
-	 St7WE/yIBy5Pr7Ys8AIH58WPRmskEqLOT+vGxZR7yQKmKmL0qJGvzzRf9pZTBzeZGo
-	 MWL1lwerwcpsi6vPHgn4o7zm4wTGD08s4bJwrskN5CoUFiIqNhsRzuGmHejvvx0nCX
-	 /0y5AtusciwallvY8P4yDXj+//aRvYOTRb0ueCas1aCPhS9oFqJWRz4vsNo3pRg0JL
-	 xOgXwa2TGf2wA==
-Date: Tue, 28 Oct 2025 18:27:58 -0700
-Subject: [PATCH 29/33] ext4/006: fix this test
+	b=giqBXMw1biZgkcJihzdcGmca0peY8eE6fYUU/vVOAs3rcDThDSGdKq8PWCljAG2jX
+	 rZw67E8WLIa4DnETFj3jkToJ/itTh99owFCAdkPNf91OUO4L9fPggeRxOgcm2wpi7A
+	 2DRVl7lJLc5LuO5VGOk2L1iEOteEmf5r0A/k4DfUWbSKHutQLaeL3Np+mhbDlPvg68
+	 /LjwsgeRjRw7v+fTQp8Sr6yl9TF9Y+zXdTklai1ExIH8Kz9gTR7NOv0qfb6hT/JPeq
+	 rbxeE2ajWqlgC8lCMzWKARHcMWA4/ZpqvfRiYvVQUCo8HC6JvDqvaYtA4sZbZttZjG
+	 BgoPu/ZUle1Xw==
+Date: Tue, 28 Oct 2025 18:28:14 -0700
+Subject: [PATCH 30/33] ext4/009: fix ENOSPC errors
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: djwong@kernel.org, zlang@redhat.com
-Cc: fstests@vger.kernel.org, neal@gompa.dev, fstests@vger.kernel.org,
- linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- joannelkoong@gmail.com, bernd@bsbernd.com
-Message-ID: <176169820517.1433624.3685054089532382459.stgit@frogsfrogsfrogs>
+Cc: neal@gompa.dev, fstests@vger.kernel.org, linux-ext4@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, joannelkoong@gmail.com, bernd@bsbernd.com
+Message-ID: <176169820536.1433624.5204379993641116218.stgit@frogsfrogsfrogs>
 In-Reply-To: <176169819804.1433624.11241650941850700038.stgit@frogsfrogsfrogs>
 References: <176169819804.1433624.11241650941850700038.stgit@frogsfrogsfrogs>
 Precedence: bulk
@@ -62,60 +61,63 @@ Content-Transfer-Encoding: 7bit
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-This test fails with:
+This test periodically fails with:
 
-    --- tests/ext4/006.out      2025-04-30 16:20:44.427339499 -0700
-    +++ /var/tmp/fstests/ext4/006.out.bad       2025-09-12 14:46:22.697238872 -0700
-    @@ -1,3 +1,4 @@
-     QA output created by 006
-     See interesting results in RESULT_DIR/006.full
-    +e2fsck did not fix everything
-     finished fuzzing
+    --- tests/ext4/009.out      2025-04-30 16:20:44.428030637 -0700
+    +++ /var/tmp/fstests/ext4/009.out.bad       2025-09-12 15:30:44.929374431 -0700
+    @@ -9,4 +9,5 @@
+     + repair fs
+     + mount image (2)
+     + modify files (2)
+    +fallocate: No space left on device
+     + check fs (2)
+    ...
 
-The reason for this is that the $ROUND2_LOG file has five lines in it:
+This can happen if the amount of space requested by fallocate exceeds
+the number of reserved blocks in the filesystem.  Reduce the fallocation
+requests a little bit to prevent this.
 
-    ++ mount image (2)
-    ++ chattr -R -i
-    ++ test scratch
-    ++ modify scratch
-    +++ stressing filesystem
-    ++ unmount
-
-When I wrote this test there were more things that common/fuzzy tried to
-do.  Commit 9bab148bb3c7db reduced the _scratch_fuzz_modify output from
-3 lines to 1, which accounts for the discrepancy.
-
-Fix this by counting the lines that do /not/ start with two pluses and
-failing if there's at least one such line.
-
-Cc: <fstests@vger.kernel.org> # v2023.02.26
-Fixes: 9bab148bb3c7db ("common/fuzzy: exercise the filesystem a little harder after repairing")
 Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- tests/ext4/006 |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ tests/ext4/009 |   11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
 
-diff --git a/tests/ext4/006 b/tests/ext4/006
-index 2ece22a4bd1ed8..3379ab77de30fb 100755
---- a/tests/ext4/006
-+++ b/tests/ext4/006
-@@ -125,13 +125,15 @@ _scratch_fuzz_modify >> $ROUND2_LOG 2>&1
- echo "++ unmount" >> $ROUND2_LOG
- umount "${SCRATCH_MNT}" >> $ROUND2_LOG 2>&1
+diff --git a/tests/ext4/009 b/tests/ext4/009
+index 71e59f90e4b844..867e0cdefd4223 100755
+--- a/tests/ext4/009
++++ b/tests/ext4/009
+@@ -45,7 +45,8 @@ for i in `seq 1 $((nr_groups * 8))`; do
+ done
+ blksz="$(stat -f -c '%s' "${SCRATCH_MNT}")"
+ freeblks="$(stat -f -c '%a' "${SCRATCH_MNT}")"
+-$XFS_IO_PROG -f -c "falloc 0 $((blksz * freeblks))" "${SCRATCH_MNT}/bigfile2" >> $seqres.full
++fallocblks=$((freeblks * 95 / 100))
++$XFS_IO_PROG -f -c "falloc 0 $((blksz * fallocblks))" "${SCRATCH_MNT}/bigfile2" >> $seqres.full
+ umount "${SCRATCH_MNT}"
  
-+echo "======= round2" >> $seqres.full
- cat "$ROUND2_LOG" >> $seqres.full
-+echo "=======" >> $seqres.full
+ echo "+ make some files"
+@@ -67,7 +68,9 @@ _scratch_mount
  
- echo "++ check fs (2)" >> $seqres.full
- _check_scratch_fs >> $seqres.full 2>&1
+ echo "+ modify files"
+ b_bytes="$(stat -c '%B' "${SCRATCH_MNT}/bigfile")"
+-$XFS_IO_PROG -f -c "falloc 0 $((blksz * freeblks))" "${SCRATCH_MNT}/bigfile" >> $seqres.full 2> /dev/null
++freeblks="$(stat -f -c '%a' "${SCRATCH_MNT}")"
++fallocblks=$((freeblks * 95 / 100))
++$XFS_IO_PROG -f -c "falloc 0 $((blksz * fallocblks))" "${SCRATCH_MNT}/bigfile" >> $seqres.full 2> /dev/null
+ after="$(stat -c '%b' "${SCRATCH_MNT}/bigfile")"
+ echo "$((after * b_bytes))" lt "$((blksz * freeblks / 4))" >> $seqres.full
+ test "$((after * b_bytes))" -lt "$((blksz * freeblks / 4))" || _fail "falloc should fail"
+@@ -80,7 +83,9 @@ echo "+ mount image (2)"
+ _scratch_mount
  
- grep -E -q '(did not fix|makes no progress)' $seqres.full && echo "e2fsck failed" | tee -a $seqres.full
--if [ "$(wc -l < "$ROUND2_LOG")" -ne 7 ]; then
-+if [ "$(grep -v '^++' "$ROUND2_LOG" | wc -l)" -gt 0 ]; then
- 	echo "e2fsck did not fix everything" | tee -a $seqres.full
- fi
- echo "finished fuzzing" | tee -a "$seqres.full"
+ echo "+ modify files (2)"
+-$XFS_IO_PROG -f -c "falloc 0 $((blksz * freeblks))" "${SCRATCH_MNT}/bigfile" >> $seqres.full
++freeblks="$(stat -f -c '%a' "${SCRATCH_MNT}")"
++fallocblks=$((freeblks * 95 / 100))
++$XFS_IO_PROG -f -c "falloc 0 $((blksz * fallocblks))" "${SCRATCH_MNT}/bigfile" >> $seqres.full
+ umount "${SCRATCH_MNT}"
+ 
+ echo "+ check fs (2)"
 
 
