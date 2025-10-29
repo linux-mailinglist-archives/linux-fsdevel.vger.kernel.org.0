@@ -1,60 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-66180-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66181-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74155C185E9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 07:02:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D2CCC18607
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 07:04:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B0D7B4F1A0E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 06:01:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FD57403541
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 06:03:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 606742FB962;
-	Wed, 29 Oct 2025 06:01:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27D042FC034;
+	Wed, 29 Oct 2025 06:03:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CiNLTNpq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qjHEvG/q"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB7F02E975A;
-	Wed, 29 Oct 2025 06:01:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D92C189F3B;
+	Wed, 29 Oct 2025 06:03:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761717670; cv=none; b=HFXdC3vcdToJlHSrTgsLn02RvV9LQjGZvBRtbZ+A2yG0DBbv1PxivyL3xP/xof2ny+4NBiAW+YxvF/sC2NawMz2gqXZvlDVqB2H4qq3qQGq8q3E5X31WuVPHSoxvtiJYxbHCPXjf49aAl3AbRYVm23wD1PWQar8JhiAiZ3VcKXc=
+	t=1761717800; cv=none; b=moklZwZ+jZp6BM4EinMz3kubkGU+vmdUYA2he18q9oS592ybhyqqHMWcKvUiWPggCrbsHJ2q733WKF7TSPZ4RnZE+R38jkUMXkgwIzqODXkitb6gruf+18xOFVMtE2DISATD6Mg04TacDeLOLeFq+vF8bJEUFjlcTrYGx/I2Q04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761717670; c=relaxed/simple;
-	bh=ZI/8Bq9jwlWaFkJKy1t3Vn35o5/zoty1As8rh0A7Mgk=;
+	s=arc-20240116; t=1761717800; c=relaxed/simple;
+	bh=m/Z5rZ/2RLbxQL9Irw7zainaqUlp824NkhHvbWSEq54=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n7wfvVe5tTPDyO73/XXGPq3c4F6zxEZuzyDmWneXX40oQEbEwAL2Vafnzn4S62NkF7FReJimd+Kk88vw/LHfm801w+Wo9Vytr3FiT7Qq/GJ3Hz18NM7uGgvjDySvMeH19QiUM6D/k1GcJR6vi4HGQLCMMf8+VMOMG5T/33NRpeA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CiNLTNpq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06EFFC4CEF7;
-	Wed, 29 Oct 2025 06:01:09 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=dbVwDyEK6gpG0y1cIOWa1W0WVaBXC91EAo3JAgANaO11mfJKnWKJifS19lXBi4cSWYeTww9uPrWbwHN+Qc7j3g1d+p6LszLTv4IqwjQiOnY/b6LtLWJZcra/6L67hZfySzQM+AVqlKY+i4vNXcD/cspDdwWI18RIiG/WY9NzGlo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qjHEvG/q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14AFAC4CEF7;
+	Wed, 29 Oct 2025 06:03:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761717669;
-	bh=ZI/8Bq9jwlWaFkJKy1t3Vn35o5/zoty1As8rh0A7Mgk=;
+	s=k20201202; t=1761717800;
+	bh=m/Z5rZ/2RLbxQL9Irw7zainaqUlp824NkhHvbWSEq54=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CiNLTNpqiiR16vTDiciK1fs6YkVHx5vrRoPgsswMnF0FNi8Gq/628PIELz5beHsux
-	 Ye1mTu8zj9AVydqL/0+J33J+gc7Kf+IQSMEAXXDVGwceV9zYxiHtODtIQ6UL58cNKr
-	 88rP/h9Bb8vTnzzXOJjqwLtIFCKOro+deHKfcmtDZ5Smbr+t9oRaY9iYPr7C80/Mz0
-	 xtJXJsNo5cQJfRU+AQawOKb3rmm1HeAovFOK2RWeP0rcRVxeVAqy9lWpgoUUFbwFou
-	 Nw3cEEwjtW0GhCOZir3VmxvEvXRifXX6+F+MLPXfgytWxYdp+r+706D4ginRg4lXM+
-	 dNZooM5E1dz0A==
-Date: Tue, 28 Oct 2025 23:01:08 -0700
+	b=qjHEvG/qooFngb8LnwuYbYsZzFqesd6gbuvsgs9YXEBwitUtDADw1m9bLtILmNvSW
+	 AjvGxnBlj8sxABXfnNQRvZinUFW5yk+NW+hfyPTTCWxdFmCKvEVzyoKLvyxUw9vjtl
+	 DD7HBOrDRxjGsuIricND2w4sr1n/5ETVnE5RYRJKYI27ZxUFDqameDdavaYNlxzB2l
+	 p/9iFysyA3NmWDUso2orSDVvygtVJJ9zL5JNpu8J2+IOkqVZiRdfJiNWlWYn4ESQje
+	 ZCnDUroofUzdsi0bO/9OevATVclFWt3S7Sw+clNDtV/pnevRbf0zJFO/lUamBJ7wVv
+	 8e85dplTS0JZA==
+Date: Tue, 28 Oct 2025 23:03:19 -0700
 From: "Darrick J. Wong" <djwong@kernel.org>
-To: Brajesh Patil <brajeshpatil11@gmail.com>
-Cc: miklos@szeredi.hu, stefanha@redhat.com, vgoyal@redhat.com,
-	eperezma@redhat.com, virtualization@lists.linux.dev,
-	virtio-fs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linux.dev, david.hunter.linux@gmail.com,
-	khalid@kernel.org
-Subject: Re: [PATCH] fuse: virtio_fs: add checks for FUSE protocol compliance
-Message-ID: <20251029060108.GR4015566@frogsfrogsfrogs>
-References: <20251028200311.40372-1-brajeshpatil11@gmail.com>
- <20251028200755.GJ6174@frogsfrogsfrogs>
- <c7zugpb4pzquasx67zypnuk2irxvb7cp5puwuw3rncy6gb5wdn@qigavsewium3>
+To: zlang@redhat.com
+Cc: neal@gompa.dev, fstests@vger.kernel.org, linux-ext4@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, joannelkoong@gmail.com,
+	bernd@bsbernd.com
+Subject: Re: [PATCH 31/33] ext4/022: enabl
+Message-ID: <20251029060319.GT6170@frogsfrogsfrogs>
+References: <176169819804.1433624.11241650941850700038.stgit@frogsfrogsfrogs>
+ <176169820554.1433624.16533934556600338284.stgit@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -63,96 +59,511 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c7zugpb4pzquasx67zypnuk2irxvb7cp5puwuw3rncy6gb5wdn@qigavsewium3>
+In-Reply-To: <176169820554.1433624.16533934556600338284.stgit@frogsfrogsfrogs>
 
-On Wed, Oct 29, 2025 at 08:58:30AM +0530, Brajesh Patil wrote:
-> On Tue, Oct 28, 2025 at 01:07:55PM -0700, Darrick J. Wong wrote:
-> > On Wed, Oct 29, 2025 at 01:33:11AM +0530, Brajesh Patil wrote:
-> > > Add validation in virtio-fs to ensure the server follows the FUSE
-> > > protocol for response headers, addressing the existing TODO for
-> > > verifying protocol compliance.
-> > > 
-> > > Add checks for fuse_out_header to verify:
-> > >  - oh->unique matches req->in.h.unique
-> > >  - FUSE_INT_REQ_BIT is not set
-> > >  - error codes are valid
-> > >  - oh->len does not exceed the expected size
-> > > 
-> > > Signed-off-by: Brajesh Patil <brajeshpatil11@gmail.com>
-> > > ---
-> > >  fs/fuse/virtio_fs.c | 30 +++++++++++++++++++++++++-----
-> > >  1 file changed, 25 insertions(+), 5 deletions(-)
-> > > 
-> > > diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
-> > > index 6bc7c97b017d..52e8338bf436 100644
-> > > --- a/fs/fuse/virtio_fs.c
-> > > +++ b/fs/fuse/virtio_fs.c
-> > > @@ -764,14 +764,34 @@ static void virtio_fs_request_complete(struct fuse_req *req,
-> > >  {
-> > >  	struct fuse_args *args;
-> > >  	struct fuse_args_pages *ap;
-> > > -	unsigned int len, i, thislen;
-> > > +	struct fuse_out_header *oh;
-> > > +	unsigned int len, i, thislen, expected_len = 0;
-> > >  	struct folio *folio;
-> > >  
-> > > -	/*
-> > > -	 * TODO verify that server properly follows FUSE protocol
-> > > -	 * (oh.uniq, oh.len)
-> > > -	 */
-> > > +	oh = &req->out.h;
-> > > +
-> > > +	if (oh->unique == 0)
-> > > +		pr_warn_once("notify through fuse-virtio-fs not supported");
-> > > +
-> > > +	if ((oh->unique & ~FUSE_INT_REQ_BIT) != req->in.h.unique)
-> > > +		pr_warn_ratelimited("virtio-fs: unique mismatch, expected: %llu got %llu\n",
-> > > +				    req->in.h.unique, oh->unique & ~FUSE_INT_REQ_BIT);
-> > 
-> > Er... shouldn't these be rejecting the response somehow?  Instead of
-> > warning that something's amiss but continuing with known bad data?
-> > 
-> > --D
-> >
-> 
-> Right, continuing here is unsafe.
-> 
-> I plan to update the code so that in case of any header validation
-> failure (e.g. unique mismatch, invalid error, length mismatch), it
-> should skip copying data and jump directly to the section that marks
-> request as complete
-> 
-> Does this seem like a feasible approach?
+On Tue, Oct 28, 2025 at 06:28:30PM -0700, Darrick J. Wong wrote:
+> From: Darrick J. Wong <djwong@kernel.org>
 
-Yeah, I think you can just set req->out.h.error to some errno (EIO?) and
-jump to fuse_request_end, sort of like what fuse_dev_do_write sort of
-does.  I think that sends the errno back to whatever code initiated the
-request.  I don't know if virtiofs should be throwing an error back to
-the server?
+What a commit message!
+
+ext4/022: adjust to fuse2fs i_extra_size behavior
+
+fuse2fs doesn't get fancy about changing i_extra_size in response to
+changes in the xattr structure, so it needs a separate .out file to
+reflect that.
+
+Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 
 --D
 
-> > > +
-> > > +	WARN_ON_ONCE(oh->unique & FUSE_INT_REQ_BIT);
-> > > +
-> > > +	if (oh->error <= -ERESTARTSYS || oh->error > 0)
-> > > +		pr_warn_ratelimited("virtio-fs: invalid error code from server: %d\n",
-> > > +				    oh->error);
-> > > +
-> > >  	args = req->args;
-> > > +
-> > > +	for (i = 0; i < args->out_numargs; i++)
-> > > +		expected_len += args->out_args[i].size;
-> > > +
-> > > +	if (oh->len > sizeof(*oh) + expected_len)
-> > > +		pr_warn("FUSE reply too long! got=%u expected<=%u\n",
-> > > +			oh->len, (unsigned int)(sizeof(*oh) + expected_len));
-> > > +
-> > >  	copy_args_from_argbuf(args, req);
-> > >  
-> > >  	if (args->out_pages && args->page_zeroing) {
-> > > -- 
-> > > 2.43.0
-> > > 
-> > > 
+> 
+> ---
+>  tests/ext4/022             |    9 +
+>  tests/ext4/022.cfg         |    1 
+>  tests/ext4/022.out.default |    0 
+>  tests/ext4/022.out.fuse2fs |  432 ++++++++++++++++++++++++++++++++++++++++++++
+>  4 files changed, 442 insertions(+)
+>  create mode 100644 tests/ext4/022.cfg
+>  rename tests/ext4/{022.out => 022.out.default} (100%)
+>  create mode 100644 tests/ext4/022.out.fuse2fs
+> 
+> 
+> diff --git a/tests/ext4/022 b/tests/ext4/022
+> index eb04cc9d900069..5440c9f7947d16 100755
+> --- a/tests/ext4/022
+> +++ b/tests/ext4/022
+> @@ -6,6 +6,7 @@
+>  #
+>  # Test extending of i_extra_isize code
+>  #
+> +seqfull=$0
+>  . ./common/preamble
+>  _begin_fstest auto quick attr dangerous
+>  
+> @@ -21,6 +22,14 @@ do_setfattr()
+>  _exclude_fs ext2
+>  _exclude_fs ext3
+>  
+> +features=""
+> +if [[ "$FSTYP" =~ fuse.ext[234] ]]; then
+> +	# fuse2fs doesn't change extra_isize after inode creation
+> +	features="fuse2fs"
+> +fi
+> +_link_out_file "$features"
+> +
+> +
+>  _require_scratch
+>  _require_dumpe2fs
+>  _require_command "$DEBUGFS_PROG" debugfs
+> diff --git a/tests/ext4/022.cfg b/tests/ext4/022.cfg
+> new file mode 100644
+> index 00000000000000..16f2eaa224bc50
+> --- /dev/null
+> +++ b/tests/ext4/022.cfg
+> @@ -0,0 +1 @@
+> +fuse2fs: fuse2fs
+> diff --git a/tests/ext4/022.out b/tests/ext4/022.out.default
+> similarity index 100%
+> rename from tests/ext4/022.out
+> rename to tests/ext4/022.out.default
+> diff --git a/tests/ext4/022.out.fuse2fs b/tests/ext4/022.out.fuse2fs
+> new file mode 100644
+> index 00000000000000..9dfe65eff48e08
+> --- /dev/null
+> +++ b/tests/ext4/022.out.fuse2fs
+> @@ -0,0 +1,432 @@
+> +QA output created by 022
+> +
+> +# file: SCRATCH_MNT/couple_xattrs
+> +user.0="aa"
+> +user.1="aa"
+> +user.2="aa"
+> +user.3="aa"
+> +
+> +# file: SCRATCH_MNT/just_enough_xattrs
+> +user.0="aa"
+> +user.1="aa"
+> +user.2="aa"
+> +user.3="aa"
+> +user.4="aa"
+> +user.5="aa"
+> +user.6="aa"
+> +
+> +# file: SCRATCH_MNT/one_extra_xattr
+> +user.0="aa"
+> +user.1="aa"
+> +user.2="aa"
+> +user.3="aa"
+> +user.4="aa"
+> +user.5="aa"
+> +user.6="aa"
+> +user.7="aa"
+> +
+> +# file: SCRATCH_MNT/full_xattrs
+> +user.0="aa"
+> +user.1="aa"
+> +user.2="aa"
+> +user.3="aa"
+> +user.4="aa"
+> +user.5="aa"
+> +user.6="aa"
+> +user.7="aa"
+> +user.8="aa"
+> +user.9="aa"
+> +
+> +# file: SCRATCH_MNT/one_extra_xattr_ext
+> +user.0="aa"
+> +user.1="aa"
+> +user.2="aa"
+> +user.3="aa"
+> +user.4="aa"
+> +user.5="aa"
+> +user.6="aa"
+> +user.7="aa"
+> +user.e0="01234567890123456789012345678901234567890123456789"
+> +
+> +# file: SCRATCH_MNT/full_xattrs_ext
+> +user.0="aa"
+> +user.10="aa"
+> +user.1="aa"
+> +user.2="aa"
+> +user.3="aa"
+> +user.4="aa"
+> +user.5="aa"
+> +user.6="aa"
+> +user.7="aa"
+> +user.8="aa"
+> +user.9="aa"
+> +
+> +# file: SCRATCH_MNT/full_xattrs_almost_full_ext
+> +user.0="aa"
+> +user.100="aa"
+> +user.101="aa"
+> +user.102="aa"
+> +user.103="aa"
+> +user.104="aa"
+> +user.105="aa"
+> +user.106="aa"
+> +user.107="aa"
+> +user.108="aa"
+> +user.109="aa"
+> +user.10="aa"
+> +user.110="aa"
+> +user.111="aa"
+> +user.112="aa"
+> +user.113="aa"
+> +user.114="aa"
+> +user.115="aa"
+> +user.116="aa"
+> +user.117="aa"
+> +user.118="aa"
+> +user.119="aa"
+> +user.11="aa"
+> +user.120="aa"
+> +user.121="aa"
+> +user.122="aa"
+> +user.123="aa"
+> +user.124="aa"
+> +user.125="aa"
+> +user.126="aa"
+> +user.127="aa"
+> +user.128="aa"
+> +user.129="aa"
+> +user.12="aa"
+> +user.130="aa"
+> +user.131="aa"
+> +user.132="aa"
+> +user.133="aa"
+> +user.134="aa"
+> +user.135="aa"
+> +user.136="aa"
+> +user.137="aa"
+> +user.138="aa"
+> +user.139="aa"
+> +user.13="aa"
+> +user.140="aa"
+> +user.141="aa"
+> +user.142="aa"
+> +user.143="aa"
+> +user.144="aa"
+> +user.145="aa"
+> +user.146="aa"
+> +user.147="aa"
+> +user.148="aa"
+> +user.149="aa"
+> +user.14="aa"
+> +user.150="aa"
+> +user.151="aa"
+> +user.152="aa"
+> +user.153="aa"
+> +user.154="aa"
+> +user.155="aa"
+> +user.156="aa"
+> +user.157="aa"
+> +user.158="aa"
+> +user.159="aa"
+> +user.15="aa"
+> +user.160="aa"
+> +user.161="aa"
+> +user.162="aa"
+> +user.163="aa"
+> +user.164="aa"
+> +user.165="aa"
+> +user.166="aa"
+> +user.167="aa"
+> +user.168="aa"
+> +user.169="aa"
+> +user.16="aa"
+> +user.170="aa"
+> +user.171="aa"
+> +user.172="aa"
+> +user.173="aa"
+> +user.174="aa"
+> +user.175="aa"
+> +user.176="aa"
+> +user.177="aa"
+> +user.17="aa"
+> +user.18="aa"
+> +user.19="aa"
+> +user.1="aa"
+> +user.20="aa"
+> +user.21="aa"
+> +user.22="aa"
+> +user.23="aa"
+> +user.24="aa"
+> +user.25="aa"
+> +user.26="aa"
+> +user.27="aa"
+> +user.28="aa"
+> +user.29="aa"
+> +user.2="aa"
+> +user.30="aa"
+> +user.31="aa"
+> +user.32="aa"
+> +user.33="aa"
+> +user.34="aa"
+> +user.35="aa"
+> +user.36="aa"
+> +user.37="aa"
+> +user.38="aa"
+> +user.39="aa"
+> +user.3="aa"
+> +user.40="aa"
+> +user.41="aa"
+> +user.42="aa"
+> +user.43="aa"
+> +user.44="aa"
+> +user.45="aa"
+> +user.46="aa"
+> +user.47="aa"
+> +user.48="aa"
+> +user.49="aa"
+> +user.4="aa"
+> +user.50="aa"
+> +user.51="aa"
+> +user.52="aa"
+> +user.53="aa"
+> +user.54="aa"
+> +user.55="aa"
+> +user.56="aa"
+> +user.57="aa"
+> +user.58="aa"
+> +user.59="aa"
+> +user.5="aa"
+> +user.60="aa"
+> +user.61="aa"
+> +user.62="aa"
+> +user.63="aa"
+> +user.64="aa"
+> +user.65="aa"
+> +user.66="aa"
+> +user.67="aa"
+> +user.68="aa"
+> +user.69="aa"
+> +user.6="aa"
+> +user.70="aa"
+> +user.71="aa"
+> +user.72="aa"
+> +user.73="aa"
+> +user.74="aa"
+> +user.75="aa"
+> +user.76="aa"
+> +user.77="aa"
+> +user.78="aa"
+> +user.79="aa"
+> +user.7="aa"
+> +user.80="aa"
+> +user.81="aa"
+> +user.82="aa"
+> +user.83="aa"
+> +user.84="aa"
+> +user.85="aa"
+> +user.86="aa"
+> +user.87="aa"
+> +user.88="aa"
+> +user.89="aa"
+> +user.8="aa"
+> +user.90="aa"
+> +user.91="aa"
+> +user.92="aa"
+> +user.93="aa"
+> +user.94="aa"
+> +user.95="aa"
+> +user.96="aa"
+> +user.97="aa"
+> +user.98="aa"
+> +user.99="aa"
+> +user.9="aa"
+> +
+> +# file: SCRATCH_MNT/full_xattrs_full_ext
+> +user.0="aa"
+> +user.100="aa"
+> +user.101="aa"
+> +user.102="aa"
+> +user.103="aa"
+> +user.104="aa"
+> +user.105="aa"
+> +user.106="aa"
+> +user.107="aa"
+> +user.108="aa"
+> +user.109="aa"
+> +user.10="aa"
+> +user.110="aa"
+> +user.111="aa"
+> +user.112="aa"
+> +user.113="aa"
+> +user.114="aa"
+> +user.115="aa"
+> +user.116="aa"
+> +user.117="aa"
+> +user.118="aa"
+> +user.119="aa"
+> +user.11="aa"
+> +user.120="aa"
+> +user.121="aa"
+> +user.122="aa"
+> +user.123="aa"
+> +user.124="aa"
+> +user.125="aa"
+> +user.126="aa"
+> +user.127="aa"
+> +user.128="aa"
+> +user.129="aa"
+> +user.12="aa"
+> +user.130="aa"
+> +user.131="aa"
+> +user.132="aa"
+> +user.133="aa"
+> +user.134="aa"
+> +user.135="aa"
+> +user.136="aa"
+> +user.137="aa"
+> +user.138="aa"
+> +user.139="aa"
+> +user.13="aa"
+> +user.140="aa"
+> +user.141="aa"
+> +user.142="aa"
+> +user.143="aa"
+> +user.144="aa"
+> +user.145="aa"
+> +user.146="aa"
+> +user.147="aa"
+> +user.148="aa"
+> +user.149="aa"
+> +user.14="aa"
+> +user.150="aa"
+> +user.151="aa"
+> +user.152="aa"
+> +user.153="aa"
+> +user.154="aa"
+> +user.155="aa"
+> +user.156="aa"
+> +user.157="aa"
+> +user.158="aa"
+> +user.159="aa"
+> +user.15="aa"
+> +user.160="aa"
+> +user.161="aa"
+> +user.162="aa"
+> +user.163="aa"
+> +user.164="aa"
+> +user.165="aa"
+> +user.166="aa"
+> +user.167="aa"
+> +user.168="aa"
+> +user.169="aa"
+> +user.16="aa"
+> +user.170="aa"
+> +user.171="aa"
+> +user.172="aa"
+> +user.173="aa"
+> +user.174="aa"
+> +user.175="aa"
+> +user.176="aa"
+> +user.177="aa"
+> +user.178="aa"
+> +user.17="aa"
+> +user.18="aa"
+> +user.19="aa"
+> +user.1="aa"
+> +user.20="aa"
+> +user.21="aa"
+> +user.22="aa"
+> +user.23="aa"
+> +user.24="aa"
+> +user.25="aa"
+> +user.26="aa"
+> +user.27="aa"
+> +user.28="aa"
+> +user.29="aa"
+> +user.2="aa"
+> +user.30="aa"
+> +user.31="aa"
+> +user.32="aa"
+> +user.33="aa"
+> +user.34="aa"
+> +user.35="aa"
+> +user.36="aa"
+> +user.37="aa"
+> +user.38="aa"
+> +user.39="aa"
+> +user.3="aa"
+> +user.40="aa"
+> +user.41="aa"
+> +user.42="aa"
+> +user.43="aa"
+> +user.44="aa"
+> +user.45="aa"
+> +user.46="aa"
+> +user.47="aa"
+> +user.48="aa"
+> +user.49="aa"
+> +user.4="aa"
+> +user.50="aa"
+> +user.51="aa"
+> +user.52="aa"
+> +user.53="aa"
+> +user.54="aa"
+> +user.55="aa"
+> +user.56="aa"
+> +user.57="aa"
+> +user.58="aa"
+> +user.59="aa"
+> +user.5="aa"
+> +user.60="aa"
+> +user.61="aa"
+> +user.62="aa"
+> +user.63="aa"
+> +user.64="aa"
+> +user.65="aa"
+> +user.66="aa"
+> +user.67="aa"
+> +user.68="aa"
+> +user.69="aa"
+> +user.6="aa"
+> +user.70="aa"
+> +user.71="aa"
+> +user.72="aa"
+> +user.73="aa"
+> +user.74="aa"
+> +user.75="aa"
+> +user.76="aa"
+> +user.77="aa"
+> +user.78="aa"
+> +user.79="aa"
+> +user.7="aa"
+> +user.80="aa"
+> +user.81="aa"
+> +user.82="aa"
+> +user.83="aa"
+> +user.84="aa"
+> +user.85="aa"
+> +user.86="aa"
+> +user.87="aa"
+> +user.88="aa"
+> +user.89="aa"
+> +user.8="aa"
+> +user.90="aa"
+> +user.91="aa"
+> +user.92="aa"
+> +user.93="aa"
+> +user.94="aa"
+> +user.95="aa"
+> +user.96="aa"
+> +user.97="aa"
+> +user.98="aa"
+> +user.99="aa"
+> +user.9="aa"
+> +Size of extra inode fields: 640
+> +Size of extra inode fields: 640
+> +Size of extra inode fields: 640
+> +Size of extra inode fields: 640
+> +Size of extra inode fields: 640
+> +Size of extra inode fields: 640
+> +Size of extra inode fields: 640
+> +Size of extra inode fields: 640
+> +Size of extra inode fields: 640
+> 
+> 
 
