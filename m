@@ -1,267 +1,129 @@
-Return-Path: <linux-fsdevel+bounces-66285-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66286-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCC3FC1A642
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 13:52:34 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6ACFFC1A7D1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 14:04:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 52D0E3588AC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 12:52:34 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6B75C585723
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 12:56:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA00C36E37F;
-	Wed, 29 Oct 2025 12:26:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0AB825393C;
+	Wed, 29 Oct 2025 12:32:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="efcNJ+8u"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FJgv2viE"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 142EE36E364;
-	Wed, 29 Oct 2025 12:26:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B542286897;
+	Wed, 29 Oct 2025 12:32:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761740804; cv=none; b=dUmlNxkuZ2nlMcAtr5LpA03TKpna64U/GnolDi9fYx3/j2BwELeO8suRxa5GIwJ8pMh9AhYZ4jOyQjihty19GCFCTqqqG7qAnxxtpE8O/r+noVGnVgOdjwO0MS8tM1iW2AKJCnfa1AUOn8c3BpasmkXfqHR2d9pU7BfrnZmOX08=
+	t=1761741130; cv=none; b=Lp8pGDwcgUgXiz947EE4avYXs3COHPuLEZewnARs//rUFBOg9W82B6x48qO/BSAsSb9VJuaqQ7XeczvvlqUtRztxnRT1YdxgguA27jElRAtPADgQuRKT6f720oQ0dQ8sIUNpRQEw6R+Jp8/9VNsVsi2EZ56Nmzl5w9/MKVldBNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761740804; c=relaxed/simple;
-	bh=QwDkSH3kLhu9Ya7BrIayv5fawfziMOL3Z/w1iCrFClA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=kgnelzXUPcVlxlSI7qSUeg5IWGVj4exXoycE66qhMr2t5kWuA57SPUL+buhxzIhm7HPnsFZNq5mdtrbbogR2El/pA328n+n22Qk5gkT+rWhywcXvaxNAe5bDCwGGj6ZgWF11vwUDwOu0Sy82GwGgZVcup2UMHAVzrx2H6GrWmo4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=efcNJ+8u; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81FF3C4CEFD;
-	Wed, 29 Oct 2025 12:26:39 +0000 (UTC)
+	s=arc-20240116; t=1761741130; c=relaxed/simple;
+	bh=bwJ2LDA4HRhC+HobQk4QKdidu746ps7rOg5uVjEgqro=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eTUNaKa8j06erUvGhX7TforPocf92nki/K/gBbtMHEI6jWsQDZ1B1CzmVjBcuyhkR8Oah1HoHoMBIRwJ35FMif4Aoe1YcetR1cJBjDR9He01sIbdv4JN/jGPPqaycJHZDO4J/vgYLz8DC3vBixVcCV8CPTHLFoSBGga5ZA5mxxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FJgv2viE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71C35C4CEF7;
+	Wed, 29 Oct 2025 12:32:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761740803;
-	bh=QwDkSH3kLhu9Ya7BrIayv5fawfziMOL3Z/w1iCrFClA=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=efcNJ+8uAGYgVJbZ2+NBccn0ZQjG0fPIeB9bz8Nq0SvOmbsmZbWL2tJv0RmtWuAcT
-	 6zjksw5gEJUS3CTWxDoMFibgLEB6AUF2Q7gb2xiMSUXtFtWn/R23M4jOL7ltrbeb/u
-	 ol8T5k8j2uI36alxuWbyjFpN2yh7nG2YVvLZ2jnHaycmO1CiR3Mgvg7JyP2LGmIYiG
-	 +rZ9q07n80+XgXbYUo7iiqhpAueRLthbXqwJfOlMJ3cZZDTiz5X3Rv/FWRu7/ys5fc
-	 plACgDT26f5t1kqpEDGrpKLNv9NHobqbxbvmjqzWpAzf61uvI7d9JY44s3T43Yd6fv
-	 x+fe2AFckhDvw==
+	s=k20201202; t=1761741129;
+	bh=bwJ2LDA4HRhC+HobQk4QKdidu746ps7rOg5uVjEgqro=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FJgv2viE4T0S7HMJU6Yh7xCC80x72PQjEKuQzhXPuI+TXewfU5c5NVc/W52pu7PQ7
+	 e5k/ft0v6KR0Wb16oe7Q37oPx+ZQEeGi6s/xnccQrVaKwi91vkHYJXFRUReY/IZ3nc
+	 4T97Tr1tWM9CQOEhIqJfxhtbk/zLt8h/HLZx2l64WfT7BRo8ZITf3nhN7slWoTc8dt
+	 oNjOLZpMChg/E6wI6M2RLrWSalIRfMVI6zvruFfFi5MDVHjLMgws2oM92LLZVguItY
+	 uScNW57JyDgVNiPgPx/zywwoqvGhxQ/EvK2QveGnFjEJ4jUyqupUot16mS9/hUiRZe
+	 sv6QR5mXH2ACw==
+Date: Wed, 29 Oct 2025 13:32:04 +0100
 From: Christian Brauner <brauner@kernel.org>
-Date: Wed, 29 Oct 2025 13:21:25 +0100
-Subject: [PATCH v4 72/72] selftests/namespace: test listns() pagination
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org, Brian Foster <bfoster@redhat.com>, 
+	linux-xfs@vger.kernel.org, linux-mm@kvack.org, hch@infradead.org, djwong@kernel.org, 
+	willy@infradead.org
+Subject: Re: [PATCH v5 0/7] iomap: zero range folio batch support
+Message-ID: <20251029-entrichten-anrollen-b9eb57a2914f@brauner>
+References: <20251003134642.604736-1-bfoster@redhat.com>
+ <20251007-kittel-tiefbau-c3cc06b09439@brauner>
+ <CAJnrk1Yp-z8U7WjH81Eh3wrvuc5erZ2fUjZZa2urb-OhAe_nig@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251029-work-namespace-nstree-listns-v4-72-2e6f823ebdc0@kernel.org>
-References: <20251029-work-namespace-nstree-listns-v4-0-2e6f823ebdc0@kernel.org>
-In-Reply-To: <20251029-work-namespace-nstree-listns-v4-0-2e6f823ebdc0@kernel.org>
-To: linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
- Jeff Layton <jlayton@kernel.org>
-Cc: Jann Horn <jannh@google.com>, Mike Yuan <me@yhndnzj.com>, 
- =?utf-8?q?Zbigniew_J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, 
- Lennart Poettering <mzxreary@0pointer.de>, 
- Daan De Meyer <daan.j.demeyer@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
- Amir Goldstein <amir73il@gmail.com>, Tejun Heo <tj@kernel.org>, 
- Johannes Weiner <hannes@cmpxchg.org>, Thomas Gleixner <tglx@linutronix.de>, 
- Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
- linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, bpf@vger.kernel.org, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- netdev@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, 
- Christian Brauner <brauner@kernel.org>
-X-Mailer: b4 0.15-dev-96507
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5137; i=brauner@kernel.org;
- h=from:subject:message-id; bh=QwDkSH3kLhu9Ya7BrIayv5fawfziMOL3Z/w1iCrFClA=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQysU2Q6TYOOrAk4Uqv2a6PU97OSDk4V3iXc2lF9qw7V
- 9bLNs/f0VHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCRr7cY/ns7ZRsJZzbwPppe
- 8cv9zwKpRUsNd3+Z+mvKtucPDonOmLybkWGV8ufIx7KLt98y1tn/RHRfXY2bu71myPa+d+eblx/
- 4ncAFAA==
-X-Developer-Key: i=brauner@kernel.org; a=openpgp;
- fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJnrk1Yp-z8U7WjH81Eh3wrvuc5erZ2fUjZZa2urb-OhAe_nig@mail.gmail.com>
 
-Minimal test case to reproduce KASAN out-of-bounds in listns pagination.
+On Mon, Oct 20, 2025 at 05:14:07PM -0700, Joanne Koong wrote:
+> On Tue, Oct 7, 2025 at 4:12 AM Christian Brauner <brauner@kernel.org> wrote:
+> >
+> > On Fri, 03 Oct 2025 09:46:34 -0400, Brian Foster wrote:
+> > > Only minor changes in v5 to the XFS errortag patch. I've kept the R-b
+> > > tags because the fundamental logic is the same, but the errortag
+> > > mechanism has been reworked and so that one needed a rebase (which turns
+> > > out much simpler). A second look certainly couldn't hurt, but otherwise
+> > > the associated fstest still works as expected.
+> > >
+> > > Note that the force zeroing fstests test has since been merged as
+> > > xfs/131. Otherwise I still have some followup patches to this work re:
+> > > the ext4 on iomap work, but it would be nice to move this along before
+> > > getting too far ahead with that.
+> > >
+> > > [...]
+> >
+> > Applied to the vfs-6.19.iomap branch of the vfs/vfs.git tree.
+> > Patches in the vfs-6.19.iomap branch should appear in linux-next soon.
+> >
+> > Please report any outstanding bugs that were missed during review in a
+> > new review to the original patch series allowing us to drop it.
+> >
+> > It's encouraged to provide Acked-bys and Reviewed-bys even though the
+> > patch has now been applied. If possible patch trailers will be updated.
+> >
+> > Note that commit hashes shown below are subject to change due to rebase,
+> > trailer updates or similar. If in doubt, please check the listed branch.
+> >
+> > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+> > branch: vfs-6.19.iomap
+> >
+> > [1/7] filemap: add helper to look up dirty folios in a range
+> >       https://git.kernel.org/vfs/vfs/c/757f5ca76903
+> > [2/7] iomap: remove pos+len BUG_ON() to after folio lookup
+> >       https://git.kernel.org/vfs/vfs/c/e027b6ecb710
+> > [3/7] iomap: optional zero range dirty folio processing
+> >       https://git.kernel.org/vfs/vfs/c/5a9a21cb7706
+> 
+> Hi Christian,
+> 
+> Thanks for all your work with managing the vfs iomap branch. I noticed
+> for vfs-6.19.iomap, this series was merged after a prior patch in the
+> branch that had changed the iomap_iter_advance() interface [1]. As
+> such for the merging ordering, I think this 3rd patch needs this minor
+> patch-up to be compatible with the change made in [1], if you're able
+> to fold this in:
+> 
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index 72196e5021b1..36ee3290669a 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -867,7 +867,8 @@ static int iomap_write_begin(struct iomap_iter *iter,
+>         if (folio_pos(folio) > iter->pos) {
+>                 len = min_t(u64, folio_pos(folio) - iter->pos,
+>                                  iomap_length(iter));
+> -               status = iomap_iter_advance(iter, &len);
+> +               status = iomap_iter_advance(iter, len);
+> +               len = iomap_length(iter);
+>                 if (status || !len)
+>                         goto out_unlock;
 
-Signed-off-by: Christian Brauner <brauner@kernel.org>
----
- tools/testing/selftests/namespaces/.gitignore      |   1 +
- tools/testing/selftests/namespaces/Makefile        |   4 +-
- .../selftests/namespaces/listns_pagination_bug.c   | 138 +++++++++++++++++++++
- 3 files changed, 142 insertions(+), 1 deletion(-)
-
-diff --git a/tools/testing/selftests/namespaces/.gitignore b/tools/testing/selftests/namespaces/.gitignore
-index f6dcf769f150..f4d2209ca4e4 100644
---- a/tools/testing/selftests/namespaces/.gitignore
-+++ b/tools/testing/selftests/namespaces/.gitignore
-@@ -7,3 +7,4 @@ listns_permissions_test
- siocgskns_test
- cred_change_test
- stress_test
-+listns_pagination_bug
-diff --git a/tools/testing/selftests/namespaces/Makefile b/tools/testing/selftests/namespaces/Makefile
-index 3c776740f3ac..01569e0abbdb 100644
---- a/tools/testing/selftests/namespaces/Makefile
-+++ b/tools/testing/selftests/namespaces/Makefile
-@@ -10,7 +10,8 @@ TEST_GEN_PROGS := nsid_test \
- 		  listns_permissions_test \
- 		  siocgskns_test \
- 		  cred_change_test \
--		  stress_test
-+		  stress_test \
-+		  listns_pagination_bug
- 
- include ../lib.mk
- 
-@@ -20,4 +21,5 @@ $(OUTPUT)/listns_permissions_test: ../filesystems/utils.c
- $(OUTPUT)/siocgskns_test: ../filesystems/utils.c
- $(OUTPUT)/cred_change_test: ../filesystems/utils.c
- $(OUTPUT)/stress_test: ../filesystems/utils.c
-+$(OUTPUT)/listns_pagination_bug: ../filesystems/utils.c
- 
-diff --git a/tools/testing/selftests/namespaces/listns_pagination_bug.c b/tools/testing/selftests/namespaces/listns_pagination_bug.c
-new file mode 100644
-index 000000000000..da7d33f96397
---- /dev/null
-+++ b/tools/testing/selftests/namespaces/listns_pagination_bug.c
-@@ -0,0 +1,138 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#define _GNU_SOURCE
-+#include <errno.h>
-+#include <sched.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <sys/socket.h>
-+#include <sys/wait.h>
-+#include <unistd.h>
-+#include "../kselftest_harness.h"
-+#include "../filesystems/utils.h"
-+#include "wrappers.h"
-+
-+/*
-+ * Minimal test case to reproduce KASAN out-of-bounds in listns pagination.
-+ *
-+ * The bug occurs when:
-+ * 1. Filtering by a specific namespace type (e.g., CLONE_NEWUSER)
-+ * 2. Using pagination (req.ns_id != 0)
-+ * 3. The lookup_ns_id_at() call in do_listns() passes ns_type=0 instead of
-+ *    the filtered type, causing it to search the unified tree and potentially
-+ *    return a namespace of the wrong type.
-+ */
-+TEST(pagination_with_type_filter)
-+{
-+	struct ns_id_req req = {
-+		.size = sizeof(req),
-+		.spare = 0,
-+		.ns_id = 0,
-+		.ns_type = CLONE_NEWUSER,  /* Filter by user namespace */
-+		.spare2 = 0,
-+		.user_ns_id = 0,
-+	};
-+	pid_t pids[10];
-+	int num_children = 10;
-+	int i;
-+	int sv[2];
-+	__u64 first_batch[3];
-+	ssize_t ret;
-+
-+	ASSERT_EQ(socketpair(AF_UNIX, SOCK_STREAM, 0, sv), 0);
-+
-+	/* Create children with user namespaces */
-+	for (i = 0; i < num_children; i++) {
-+		pids[i] = fork();
-+		ASSERT_GE(pids[i], 0);
-+
-+		if (pids[i] == 0) {
-+			char c;
-+			close(sv[0]);
-+
-+			if (setup_userns() < 0) {
-+				close(sv[1]);
-+				exit(1);
-+			}
-+
-+			/* Signal parent we're ready */
-+			if (write(sv[1], &c, 1) != 1) {
-+				close(sv[1]);
-+				exit(1);
-+			}
-+
-+			/* Wait for parent signal to exit */
-+			if (read(sv[1], &c, 1) != 1) {
-+				close(sv[1]);
-+				exit(1);
-+			}
-+
-+			close(sv[1]);
-+			exit(0);
-+		}
-+	}
-+
-+	close(sv[1]);
-+
-+	/* Wait for all children to signal ready */
-+	for (i = 0; i < num_children; i++) {
-+		char c;
-+		if (read(sv[0], &c, 1) != 1) {
-+			close(sv[0]);
-+			for (int j = 0; j < num_children; j++)
-+				kill(pids[j], SIGKILL);
-+			for (int j = 0; j < num_children; j++)
-+				waitpid(pids[j], NULL, 0);
-+			ASSERT_TRUE(false);
-+		}
-+	}
-+
-+	/* First batch - this should work */
-+	ret = sys_listns(&req, first_batch, 3, 0);
-+	if (ret < 0) {
-+		if (errno == ENOSYS) {
-+			close(sv[0]);
-+			for (i = 0; i < num_children; i++)
-+				kill(pids[i], SIGKILL);
-+			for (i = 0; i < num_children; i++)
-+				waitpid(pids[i], NULL, 0);
-+			SKIP(return, "listns() not supported");
-+		}
-+		ASSERT_GE(ret, 0);
-+	}
-+
-+	TH_LOG("First batch returned %zd entries", ret);
-+
-+	if (ret == 3) {
-+		__u64 second_batch[3];
-+
-+		/* Second batch - pagination triggers the bug */
-+		req.ns_id = first_batch[2];  /* Continue from last ID */
-+		ret = sys_listns(&req, second_batch, 3, 0);
-+
-+		TH_LOG("Second batch returned %zd entries", ret);
-+		ASSERT_GE(ret, 0);
-+	}
-+
-+	/* Signal all children to exit */
-+	for (i = 0; i < num_children; i++) {
-+		char c = 'X';
-+		if (write(sv[0], &c, 1) != 1) {
-+			close(sv[0]);
-+			for (int j = i; j < num_children; j++)
-+				kill(pids[j], SIGKILL);
-+			for (int j = 0; j < num_children; j++)
-+				waitpid(pids[j], NULL, 0);
-+			ASSERT_TRUE(false);
-+		}
-+	}
-+
-+	close(sv[0]);
-+
-+	/* Cleanup */
-+	for (i = 0; i < num_children; i++) {
-+		int status;
-+		waitpid(pids[i], &status, 0);
-+	}
-+}
-+
-+TEST_HARNESS_MAIN
-
--- 
-2.47.3
-
+Thank you! Folded as requested!
 
