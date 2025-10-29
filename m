@@ -1,53 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-66091-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66092-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46F51C17C33
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 02:08:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A453C17C4B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 02:08:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22CEB400F3E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 01:08:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82E8A1A2408C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 01:08:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A21A52D8365;
-	Wed, 29 Oct 2025 01:08:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49EE82D8767;
+	Wed, 29 Oct 2025 01:08:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y6otWS8D"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HJgBlTy0"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 087C716EB42;
-	Wed, 29 Oct 2025 01:08:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A55F02D6630;
+	Wed, 29 Oct 2025 01:08:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761700091; cv=none; b=Vx6GwfKVBwzafBqFKlpubhbkLfTVevguR8NTFefn2Q3Y/UNxa+HdPyvhnB/JHHk6Z1GwEpUlzDxDRPKR7VzliMvZYBU5GWhjXNYs+9vIHKkasedSxItxudOlX5gwWCoZssJL44crRFCfJEYNIZwUByDtkw6IGAU9fa1TkL4X2Hw=
+	t=1761700106; cv=none; b=NRpwew8lpRcWiAwFoAusWTx61XGnDScJ2ZWTuou13NTPN/YJrHbS8faElxhUm67RIJ6cm/I1ncmVYLTrZudsnzgGxgYoRDKqQC0Lged8weuCVYO2hQDan7C506OQaqWK9VJmJ7orqM6l32zII3udNpKC7ZvjmLjtOtT2lXlZO0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761700091; c=relaxed/simple;
-	bh=XjoMnYHkqQ36akbHFVIn5GZa32QxWvBvYWNqq/aPB14=;
+	s=arc-20240116; t=1761700106; c=relaxed/simple;
+	bh=W0BSAq0kch4ETggpujxawJCbgCplZSSE9k0VO+TgaIk=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rTyHtta6OAbCWzlGd69mKU/4H9LX/jMX2P9/VucfwPe7T7MTWleCy1s2qcIbKUw2d9/aYX9jGAmWqFk2DCuXZW4RS2R9zsxBgEQA9Jb7qOyiDjfkbmVtNDoxPu7hMzVaFIBZ7YULxX7PXYn6rW2IVz3HxC54YdxsePgKyslYqNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y6otWS8D; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 769C1C4CEE7;
-	Wed, 29 Oct 2025 01:08:10 +0000 (UTC)
+	 MIME-Version:Content-Type; b=vA8IfIP9tjLBhFtEg2vJ813fAmG2j19p3Z22CdgxdYor0vFi2DHVBomrzi7+s35m1GLuvfuA2sIz4T2TA/2hdRBVAUTtCOuxttjehEO9sjFMlQKoVH2YSxTbxiiC6/vY+Slps4pUktYPr3GdMthpcsvQZlTfMXYPK1UXBwZ9wiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HJgBlTy0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24CBBC4CEE7;
+	Wed, 29 Oct 2025 01:08:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761700090;
-	bh=XjoMnYHkqQ36akbHFVIn5GZa32QxWvBvYWNqq/aPB14=;
+	s=k20201202; t=1761700106;
+	bh=W0BSAq0kch4ETggpujxawJCbgCplZSSE9k0VO+TgaIk=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=Y6otWS8Dr2/7bgohTUIvMCi+qJvLlf+GIQVFSlDDeMnUXa7COn4OE//PtQZ44IgV8
-	 XEs6o/3thFquHZwB1mgLt8s3kXSM8DHBy6K+snEzPOD0iYavm9q8ZSoH7QzH/FvdiZ
-	 ad+7qLCTgHqHaIklo8hC519rJk8wMKwdCJYm9Mcz4Q9GUR49Zw431Uq0+r51ve6/kq
-	 EuJWeh4pb+6u78MuhjNOHfb25bhE8WUPvB038R/LJzw51WRPQwuJqMZ3EdntxKT34c
-	 euQrRZT6RsBSET5VtFLwME3j9AAWKS5ZabnMH/amHkbcseDb6Qi5B3gZznq8k0ReGv
-	 He03zrqZVBxmA==
-Date: Tue, 28 Oct 2025 18:08:10 -0700
-Subject: [PATCH 4/5] libfuse: enable setting iomap block device block size
+	b=HJgBlTy0oV9SfhiIXsJ4Vq8TBjJWhfpL/ladUZK8UioxRUFd0UC3+RaeIl9vKYR2I
+	 ugN/N7b53CiCliiEzL3jV4Z6+SZ3lLZLGPPNHBeBWguWVTdroub7YrZBr440FCCGDc
+	 G72dwx8tzaW1ryFA6ZBGvxSgovoe1LXWNzSRmoCPHCgD5jBM2+WUF9ugeVgiTdYFps
+	 7ab7Glc9GYFQiwgh+Hw/HOYTxECXVtq16GgOd1NLUFnqSKDk3CW2fTAHZa/or0CYRj
+	 CvIGnIS5GwL8r6xn3xpkFfDu7J0OF/Qox5cF94qgJhyT9y+CJ4mTU42pRDbNyLO1Rs
+	 QkfS8w9rhJjIQ==
+Date: Tue, 28 Oct 2025 18:08:25 -0700
+Subject: [PATCH 5/5] fuservicemount: create loop devices for regular files
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: djwong@kernel.org, bschubert@ddn.com
 Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  bernd@bsbernd.com, miklos@szeredi.hu, joannelkoong@gmail.com, neal@gompa.dev
-Message-ID: <176169814922.1428772.8400025430143585718.stgit@frogsfrogsfrogs>
+Message-ID: <176169814940.1428772.13665592936257476002.stgit@frogsfrogsfrogs>
 In-Reply-To: <176169814833.1428772.4461258885999504499.stgit@frogsfrogsfrogs>
 References: <176169814833.1428772.4461258885999504499.stgit@frogsfrogsfrogs>
 Precedence: bulk
@@ -61,97 +61,132 @@ Content-Transfer-Encoding: 7bit
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Create a means for an unprivileged fuse server to set the block size of
-a block device that it previously opened and associated with the fuse
-connection.
+If a fuse server asks fuservicemount to open a regular file, try to
+create an auto-clear loop device so that the fuse server can use iomap.
 
 Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- include/fuse_kernel.h   |    7 +++++++
- include/fuse_lowlevel.h |   12 ++++++++++++
- lib/fuse_lowlevel.c     |   11 +++++++++++
- lib/fuse_versionscript  |    1 +
- 4 files changed, 31 insertions(+)
+ include/fuse_service.h      |    6 ++++++
+ include/fuse_service_priv.h |    3 ++-
+ lib/fuse_service.c          |    5 ++++-
+ util/mount_service.c        |   34 ++++++++++++++++++++++++++++++++++
+ 4 files changed, 46 insertions(+), 2 deletions(-)
 
 
-diff --git a/include/fuse_kernel.h b/include/fuse_kernel.h
-index 0638d774d36cbc..adf23f4214223b 100644
---- a/include/fuse_kernel.h
-+++ b/include/fuse_kernel.h
-@@ -1172,6 +1172,11 @@ struct fuse_iomap_support {
- 	uint64_t	padding;
- };
- 
-+struct fuse_iomap_backing_info {
-+	uint32_t	backing_id;
-+	uint32_t	blocksize;
-+};
-+
- /* Device ioctls: */
- #define FUSE_DEV_IOC_MAGIC		229
- #define FUSE_DEV_IOC_CLONE		_IOR(FUSE_DEV_IOC_MAGIC, 0, uint32_t)
-@@ -1181,6 +1186,8 @@ struct fuse_iomap_support {
- #define FUSE_DEV_IOC_ADD_IOMAP		_IO(FUSE_DEV_IOC_MAGIC, 99)
- #define FUSE_DEV_IOC_IOMAP_SUPPORT	_IOR(FUSE_DEV_IOC_MAGIC, 99, \
- 					     struct fuse_iomap_support)
-+#define FUSE_DEV_IOC_IOMAP_SET_BLOCKSIZE _IOW(FUSE_DEV_IOC_MAGIC, 99, \
-+					      struct fuse_iomap_backing_info)
- 
- struct fuse_lseek_in {
- 	uint64_t	fh;
-diff --git a/include/fuse_lowlevel.h b/include/fuse_lowlevel.h
-index a93f3e27f6ef6d..63477ec4eeff33 100644
---- a/include/fuse_lowlevel.h
-+++ b/include/fuse_lowlevel.h
-@@ -2729,6 +2729,18 @@ uint64_t fuse_lowlevel_discover_iomap(int fd);
-  */
- int fuse_lowlevel_add_iomap(int fd);
+diff --git a/include/fuse_service.h b/include/fuse_service.h
+index 47080a75bc9ab6..906f36434d2243 100644
+--- a/include/fuse_service.h
++++ b/include/fuse_service.h
+@@ -95,6 +95,12 @@ int fuse_service_take_fusedev(struct fuse_service *sfp);
+ int fuse_service_parse_cmdline_opts(struct fuse_args *args,
+ 				    struct fuse_cmdline_opts *opts);
  
 +/**
-+ * Set the block size of an open block device that has been opened for use with
-+ * iomap.
-+ *
-+ * @param fd open file descriptor to a fuse device
-+ * @param dev_index device index returned by fuse_lowlevel_iomap_device_add
-+ * @param blocksize block size in bytes
-+ * @return 0 on success, -1 on failure with errno set
++ * If the file opened is a regular file, try to create a loop device for it.
++ * If successful, the loop device is returned; if not, the regular file is.
 + */
-+int fuse_lowlevel_iomap_set_blocksize(int fd, int dev_index,
-+				      unsigned int blocksize);
++#define FUSE_SERVICE_REQUEST_FILE_TRYLOOP	(1U << 0)
 +
- #ifdef __cplusplus
+ /**
+  * Ask the mount.service helper to open a file on behalf of the fuse server.
+  *
+diff --git a/include/fuse_service_priv.h b/include/fuse_service_priv.h
+index ce2e194ccf0be6..6fc7d59c363ea8 100644
+--- a/include/fuse_service_priv.h
++++ b/include/fuse_service_priv.h
+@@ -58,7 +58,8 @@ static inline size_t sizeof_fuse_service_requested_file(size_t pathlen)
+ 	return sizeof(struct fuse_service_requested_file) + pathlen + 1;
  }
- #endif
-diff --git a/lib/fuse_lowlevel.c b/lib/fuse_lowlevel.c
-index 51c609761494af..60d2b28bbef683 100644
---- a/lib/fuse_lowlevel.c
-+++ b/lib/fuse_lowlevel.c
-@@ -4995,3 +4995,14 @@ int fuse_lowlevel_add_iomap(int fd)
- {
- 	return ioctl(fd, FUSE_DEV_IOC_ADD_IOMAP);
- }
-+
-+int fuse_lowlevel_iomap_set_blocksize(int fd, int dev_index,
-+				      unsigned int blocksize)
-+{
-+	struct fuse_iomap_backing_info fbi = {
-+		.backing_id = dev_index,
-+		.blocksize = blocksize,
-+	};
-+
-+	return ioctl(fd, FUSE_DEV_IOC_IOMAP_SET_BLOCKSIZE, &fbi);
-+}
-diff --git a/lib/fuse_versionscript b/lib/fuse_versionscript
-index 2adab40e0eab1f..d34b68903faa33 100644
---- a/lib/fuse_versionscript
-+++ b/lib/fuse_versionscript
-@@ -256,6 +256,7 @@ FUSE_3.99 {
- 		fuse_service_request_file;
- 		fuse_service_send_goodbye;
- 		fuse_service_take_fusedev;
-+		fuse_lowlevel_iomap_set_blocksize;
- } FUSE_3.18;
  
- # Local Variables:
+-#define FUSE_SERVICE_OPEN_FLAGS		(0)
++#define FUSE_SERVICE_OPEN_TRYLOOP	(1U << 0)
++#define FUSE_SERVICE_OPEN_FLAGS		(FUSE_SERVICE_OPEN_TRYLOOP)
+ 
+ struct fuse_service_open_command {
+ 	struct fuse_service_packet p;
+diff --git a/lib/fuse_service.c b/lib/fuse_service.c
+index 48633640c1c41b..af23ec06ac60a1 100644
+--- a/lib/fuse_service.c
++++ b/lib/fuse_service.c
+@@ -152,7 +152,7 @@ int fuse_service_receive_file(struct fuse_service *sf, const char *path,
+ 	return recv_requested_file(sf->sockfd, path, fdp);
+ }
+ 
+-#define FUSE_SERVICE_REQUEST_FILE_FLAGS	(0)
++#define FUSE_SERVICE_REQUEST_FILE_FLAGS	(FUSE_SERVICE_REQUEST_FILE_TRYLOOP)
+ 
+ int fuse_service_request_file(struct fuse_service *sf, const char *path,
+ 			      int open_flags, mode_t create_mode,
+@@ -177,6 +177,9 @@ int fuse_service_request_file(struct fuse_service *sf, const char *path,
+ 		return -1;
+ 	}
+ 
++	if (request_flags & FUSE_SERVICE_REQUEST_FILE_TRYLOOP)
++		rqflags |= FUSE_SERVICE_OPEN_TRYLOOP;
++
+ 	cmd = calloc(1, iov.iov_len);
+ 	if (!cmd) {
+ 		perror("fuse: alloc service file request");
+diff --git a/util/mount_service.c b/util/mount_service.c
+index e3410d524167a4..e62183800043e8 100644
+--- a/util/mount_service.c
++++ b/util/mount_service.c
+@@ -25,15 +25,20 @@
+ #include <limits.h>
+ #include <sys/stat.h>
+ #include <arpa/inet.h>
++#ifdef HAVE_STRUCT_LOOP_CONFIG_INFO
++# include <linux/loop.h>
++#endif
+ 
+ #include "mount_util.h"
+ #include "util.h"
+ #include "fuse_i.h"
+ #include "fuse_service_priv.h"
++#include "fuse_loopdev.h"
+ #include "mount_service.h"
+ 
+ #define FUSE_KERN_DEVICE_ENV	"FUSE_KERN_DEVICE"
+ #define FUSE_DEV		"/dev/fuse"
++#define LOOPCTL			"/dev/loop-control"
+ 
+ struct mount_service {
+ 	/* alleged fuse subtype based on -t cli argument */
+@@ -542,6 +547,35 @@ static int mount_service_handle_open_cmd(struct mount_service *mo,
+ 		return mount_service_send_file_error(mo, error, oc->path);
+ 	}
+ 
++	if (request_flags & FUSE_SERVICE_OPEN_TRYLOOP) {
++		int loop_fd = -1;
++
++		ret = fuse_loopdev_setup(fd, ntohl(oc->open_flags), oc->path,
++					 5, &loop_fd, NULL);
++		if (ret) {
++			/*
++			 * If the setup function returned EBUSY, there is
++			 * already a loop device backed by this file, so we
++			 * must return an error.  For any other type of error
++			 * we'll send back the first file we opened.
++			 */
++			if (errno == EBUSY) {
++				ret = mount_service_send_file_error(mo, errno,
++						oc->path);
++				close(fd);
++				return ret;
++			}
++		} else if (loop_fd >= 0) {
++			/*
++			 * Send back the loop device instead of the file.
++			 */
++			ret = mount_service_send_file(mo, oc->path, loop_fd);
++			close(loop_fd);
++			close(fd);
++			return ret;
++		}
++	}
++
+ 	ret = mount_service_send_file(mo, oc->path, fd);
+ 	close(fd);
+ 	return ret;
 
 
