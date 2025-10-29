@@ -1,54 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-66113-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66114-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00975C17D07
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 02:16:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE766C17D13
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 02:16:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7BAB404683
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 01:14:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D1391C845A6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 01:15:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEB842DC331;
-	Wed, 29 Oct 2025 01:13:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81E6C2DC76A;
+	Wed, 29 Oct 2025 01:14:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b8g8T+Tz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="teKkQWJK"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 527581BCA1C;
-	Wed, 29 Oct 2025 01:13:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC5EB2D94B6;
+	Wed, 29 Oct 2025 01:14:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761700435; cv=none; b=IgEp71sQRWlaZJZcv4CiugqcLM6a9LQVDR8Kjpxf3g77ZpD12LsfcqzFKwKS/i4BQIfhrGUgsAQbgrZNm55xjCjfZ3VpnQBTHarwJJ6uiIiodW0N4qOtejUtOlKoOGFYGX03AgkYYHUheeIQ/K+JZqnCmF6gz2Nxt5tqWeF77Wk=
+	t=1761700451; cv=none; b=DwFgaJRXfejzNvGt+ntbxvGPURV2ibcKrq50TRokJByfCHYRa2y5YlkkN1Fj5LoyufYYKcv50tQUEs1C6dGGS+FXokk6Vf9tSludBfefPGrwDsWjE6FCTjqZKXCj3yZr770BXGvnf7l8l14tyQXmq91K71CAVsRlT5tgE3W6thY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761700435; c=relaxed/simple;
-	bh=AXSX2yPIqCaRjoGLzOeqK3Rc58T1RoAHWxSALkMZB5E=;
+	s=arc-20240116; t=1761700451; c=relaxed/simple;
+	bh=DlO/eP36BsGUVGjbkpR3NKOExbnY6nlM614CdBWJbGQ=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CgOCReu8S6TediFDPhDauII7+x5ymx4Rpe+DCWG3hTU+SY+jtHtphgAu+p4t9sVawnE7cUstXfIiQHa6QyK7p/9wDHalZ3opY2MW+WYugfQN8iGhB9mv9pY2yQo0aWYLQDnd4F0EHCeS/iEQy2EmGtZfrzboR7IaMuVY9rWLZLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b8g8T+Tz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2CF3C4CEE7;
-	Wed, 29 Oct 2025 01:13:54 +0000 (UTC)
+	 MIME-Version:Content-Type; b=hWLMgImANwwuA8XXloGpB7JJwzT8FNM+O3uZawYwUfyZTSQZ7mGk2I3raMCO3J97AH1O4y9DhXvlONaUZxZfuAcXuwhtO8sJiNL6ujJKJ/qynnQevRjuxGgnLS4lP2AqHAEAVTScS+mQpup6byJZXhf3nvbvXi+mNDFIZyro+Ns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=teKkQWJK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EB80C4CEE7;
+	Wed, 29 Oct 2025 01:14:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761700434;
-	bh=AXSX2yPIqCaRjoGLzOeqK3Rc58T1RoAHWxSALkMZB5E=;
+	s=k20201202; t=1761700450;
+	bh=DlO/eP36BsGUVGjbkpR3NKOExbnY6nlM614CdBWJbGQ=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=b8g8T+TzNP78gJnnKbnZBZx4Sq7WnV/YxgLqv15Dgmt3YXvs+JOFxI8bqtTOdkVRk
-	 QhnSaPSkNjupZEgpjbAkqF0kbRp+u+hnEI+lfxK5Gte/cEwuXfT9gjpaaKXRFT3nzq
-	 rqAYBWZei0R1jCbb3A3/sfp+UeLpXwmfTfzt9v0Yoaay88YNqly0l9L2i5Xem00q3D
-	 xD53wCtMR6d/smv/x0gglu1+IBGpWjG/jw2Ivgc2oT8m414uIYp2gPRzzpKA7LP0fU
-	 QZSOz3gmYUpzdImlF9mvPSlfB528400sMkCVWAAs1qWNDWQ6cfYbl9+nJKdkaUjKPt
-	 Gqj98hpDx/0BQ==
-Date: Tue, 28 Oct 2025 18:13:54 -0700
-Subject: [PATCH 02/11] fuse2fs: skip permission checking on utimens when iomap
- is enabled
+	b=teKkQWJK7NwQDP0i9XTxdY65+X3DCHR9qz25wcVuPiJ71a6X534CgvGMruB5Hi2ag
+	 m9F/FfjPoLIumuSV/y1tZK6PwEZGKMH+rcYbTcOucemcpaLlPrFDYIy/j60aV3iXjZ
+	 J2NMJpbrjcSVMye5yLVW32oylqoKNkT4KtGUgfj7rbGa/vOpnx8XoGJGCRHjCXVsdo
+	 uwglWFZFtJib+ry+nXcsAWWyDph+DLnnntKP4uniJzzJpizlYEpf9Z/VuKUAqci55K
+	 3rxUps8RQOd31SfedlfRG0nx0ylScKDe/A67etNnKbFX/ctLWKPbu0IV3C7qmxY7tc
+	 VDt2SvtGnJxlg==
+Date: Tue, 28 Oct 2025 18:14:09 -0700
+Subject: [PATCH 03/11] fuse2fs: let the kernel tell us about acl/mode updates
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: tytso@mit.edu
 Cc: linux-fsdevel@vger.kernel.org, joannelkoong@gmail.com, bernd@bsbernd.com,
  neal@gompa.dev, miklos@szeredi.hu, linux-ext4@vger.kernel.org
-Message-ID: <176169818256.1430380.1484675885063509219.stgit@frogsfrogsfrogs>
+Message-ID: <176169818275.1430380.13779724718780277203.stgit@frogsfrogsfrogs>
 In-Reply-To: <176169818170.1430380.13590456647130347042.stgit@frogsfrogsfrogs>
 References: <176169818170.1430380.13590456647130347042.stgit@frogsfrogsfrogs>
 Precedence: bulk
@@ -62,66 +61,60 @@ Content-Transfer-Encoding: 7bit
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-When iomap is enabled, the kernel is in charge of enforcing permissions
-checks on timestamp updates for files.  We needn't do that in userspace
-anymore.
+When the kernel is running in iomap mode, it will also manage all the
+ACL updates and the resulting file mode changes for us.  Disable the
+manual implementation of it in fuse2fs.
 
 Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- fuse4fs/fuse4fs.c |   11 +++++++----
- misc/fuse2fs.c    |   11 +++++++----
- 2 files changed, 14 insertions(+), 8 deletions(-)
+ fuse4fs/fuse4fs.c |    4 ++--
+ misc/fuse2fs.c    |    4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
 
 diff --git a/fuse4fs/fuse4fs.c b/fuse4fs/fuse4fs.c
-index 641fa0648b7a29..aeb3040c04b221 100644
+index aeb3040c04b221..74b262b293eabc 100644
 --- a/fuse4fs/fuse4fs.c
 +++ b/fuse4fs/fuse4fs.c
-@@ -5263,13 +5263,16 @@ static int fuse4fs_utimens(struct fuse4fs *ff, const struct fuse_ctx *ctxt,
+@@ -2499,7 +2499,7 @@ static int fuse4fs_propagate_default_acls(struct fuse4fs *ff, ext2_ino_t parent,
+ 	size_t deflen;
+ 	int ret;
  
- 	/*
- 	 * ext4 allows timestamp updates of append-only files but only if we're
--	 * setting to current time
-+	 * setting to current time.  If iomap is enabled, the kernel does the
-+	 * permission checking for timestamp updates; skip the access check.
+-	if (!ff->acl || S_ISDIR(mode))
++	if (!ff->acl || S_ISDIR(mode) || fuse4fs_iomap_enabled(ff))
+ 		return 0;
+ 
+ 	ret = fuse4fs_getxattr(ff, parent, XATTR_NAME_POSIX_ACL_DEFAULT, &def,
+@@ -3925,7 +3925,7 @@ static int fuse4fs_chmod(struct fuse4fs *ff, fuse_req_t req, ext2_ino_t ino,
+ 	 * of the user's groups, but FUSE only tells us about the primary
+ 	 * group.
  	 */
- 	if (aact == TA_NOW && mact == TA_NOW)
- 		access |= A_OK;
--	ret = fuse4fs_inum_access(ff, ctxt, ino, access);
--	if (ret)
--		return ret;
-+	if (!fuse4fs_iomap_enabled(ff)) {
-+		ret = fuse4fs_inum_access(ff, ctxt, ino, access);
-+		if (ret)
-+			return ret;
-+	}
- 
- 	if (aact != TA_OMIT)
- 		EXT4_INODE_SET_XTIME(i_atime, &atime, inode);
+-	if (!fuse4fs_is_superuser(ff, ctxt)) {
++	if (!fuse4fs_iomap_enabled(ff) && !fuse4fs_is_superuser(ff, ctxt)) {
+ 		ret = fuse4fs_in_file_group(ff, req, inode);
+ 		if (ret < 0)
+ 			return ret;
 diff --git a/misc/fuse2fs.c b/misc/fuse2fs.c
-index 9fda7663583f71..283a9abdc1963c 100644
+index 283a9abdc1963c..30fe10ef25da1d 100644
 --- a/misc/fuse2fs.c
 +++ b/misc/fuse2fs.c
-@@ -4917,13 +4917,16 @@ static int op_utimens(const char *path, const struct timespec ctv[2],
+@@ -2301,7 +2301,7 @@ static int propagate_default_acls(struct fuse2fs *ff, ext2_ino_t parent,
+ 	size_t deflen;
+ 	int ret;
  
- 	/*
- 	 * ext4 allows timestamp updates of append-only files but only if we're
--	 * setting to current time
-+	 * setting to current time.  If iomap is enabled, the kernel does the
-+	 * permission checking for timestamp updates; skip the access check.
+-	if (!ff->acl || S_ISDIR(mode))
++	if (!ff->acl || S_ISDIR(mode) || fuse2fs_iomap_enabled(ff))
+ 		return 0;
+ 
+ 	ret = __getxattr(ff, parent, XATTR_NAME_POSIX_ACL_DEFAULT, &def,
+@@ -3630,7 +3630,7 @@ static int op_chmod(const char *path, mode_t mode, struct fuse_file_info *fi)
+ 	 * of the user's groups, but FUSE only tells us about the primary
+ 	 * group.
  	 */
- 	if (ctv[0].tv_nsec == UTIME_NOW && ctv[1].tv_nsec == UTIME_NOW)
- 		access |= A_OK;
--	ret = check_inum_access(ff, ino, access);
--	if (ret)
--		goto out;
-+	if (!fuse2fs_iomap_enabled(ff)) {
-+		ret = check_inum_access(ff, ino, access);
-+		if (ret)
-+			goto out;
-+	}
- 
- 	err = fuse2fs_read_inode(fs, ino, &inode);
- 	if (err) {
+-	if (!is_superuser(ff, ctxt)) {
++	if (!fuse2fs_iomap_enabled(ff) && !is_superuser(ff, ctxt)) {
+ 		ret = in_file_group(ctxt, &inode);
+ 		if (ret < 0)
+ 			goto out;
 
 
