@@ -1,53 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-65997-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65998-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E258C1799F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 01:43:56 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA310C179A5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 01:44:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD6E04015C7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 00:43:44 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 60B98355938
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 00:44:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1F8427B34F;
-	Wed, 29 Oct 2025 00:43:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DB412D323F;
+	Wed, 29 Oct 2025 00:43:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b58waeWA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="seTmrVh1"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47C862D2388;
-	Wed, 29 Oct 2025 00:43:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B31A22C3277;
+	Wed, 29 Oct 2025 00:43:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761698620; cv=none; b=Eos56Sb99GGnzPhLm6wAmgwG6yDdsZImlEhHugiz3OZCCpwrF8m1Gq+g4g5zYBC4xDkELzhxFb4MrwngFB4kTZovoDMQb6K8jrb47qCMRXOCpsxjz8UJVWBGDJaEwgxCfLRlIldnCCx3/yiToghlA3GFXf3/eKmNnhaTDgrMOs4=
+	t=1761698635; cv=none; b=NqO/7FV5mFWrY6UIJEbprpjuv/8MIhUjb5T7hng8SUb3066404rZjCfi+j4PLTtjM5w84AuJEwq5oGKVRbiOIoNZ7JoOTVUv2HUKiarHJAY4cX0zLGC0xYSPvM6MizCYV3c5mjChTNkF13MnWU5P4pY1+yfwVbNoU2VrOaffSJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761698620; c=relaxed/simple;
-	bh=OXpf+dR2fREEvyAApXEHNaiLTYLqbihu5K0F3+19zPI=;
+	s=arc-20240116; t=1761698635; c=relaxed/simple;
+	bh=SWTMEt3z0VXKoppTdA3QABPVO46ZAplSRpO0+Arv/Z4=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WZMkPFr/o6ZvXC32oM1lbx1VakygmX0Xz5sDyV9Wo8rldc0+TDmZtswA9JFhk6HirMrM3FaB7GUn2Ge+x8aQz8HJmUKiyiKHc/O/GGVpF37yx05zDHBiVxxNSIxs1FIdJ9p9Zmrr0XC2Qe4bdU1KUi3ZOwR+L6XqD2pg/UJCUTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b58waeWA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B55ECC4CEE7;
-	Wed, 29 Oct 2025 00:43:39 +0000 (UTC)
+	 MIME-Version:Content-Type; b=AqIdZvQRguqzKaH2KWKgrDCqe1JgF7sbITqAPxKqYp5a4eToyLsKi9qfnCsX/skkoHjeUHCpPNvbkZDTDbC83YBwIkeOvAaBUBIJC0W4drpfThB7mEEmW6nnVI/thw1N2oonvByaQpnLzoCZIMGHhWXvfrtP7E2MpnV1YqszVR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=seTmrVh1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BD43C4CEE7;
+	Wed, 29 Oct 2025 00:43:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761698619;
-	bh=OXpf+dR2fREEvyAApXEHNaiLTYLqbihu5K0F3+19zPI=;
+	s=k20201202; t=1761698635;
+	bh=SWTMEt3z0VXKoppTdA3QABPVO46ZAplSRpO0+Arv/Z4=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=b58waeWAXdnVobUVeqqzRJ8pdaxOw54Os4xFKck4XXerwEpj5huYuVZvjbHOO7M6J
-	 6Ih9nf35w5PdyQ+HZk3uk9YJIXXeCn/sfnXVhQuoiJ70rjypqA/ta+EsGaCIDcpgwy
-	 uNjulMxEmOzwa/7cjcp2WRo4BszVIJ+OdXvcWqH4mTPZy4DvzMipIsjOVSAHWz4Voi
-	 3O/+38vt7xbxSOXf6+vQ1OSJt1g0I8sCUpWRSFLDJgESyMIMlMMFQrpu85Rf+bBMox
-	 FPIqG7t+D2hdXYACFMjVFZq8vahAUBnXlqJRgmWEN5Uw5nsL29Midqtoxz7RICYFby
-	 Plg1oSP9f2I3w==
-Date: Tue, 28 Oct 2025 17:43:39 -0700
-Subject: [PATCH 3/5] fuse: implement file attributes mask for statx
+	b=seTmrVh1mZCKLHQxYs5nZIt3X4CYRbCP2jSWbhuDuLML4VKA6aIWm3iOYoOWnjZ0F
+	 xQrtzaqnsXsJmaJq5QhhMnXPr66WiuEZJAwdS/ychNmJ4vXq3VxEBdHkF+5Berf7vo
+	 e/C5VbwChpyCN6v+YbYUNVgJN7g0QEeuYRMdHyJq0SwF4y1TldNezalgxKtSG7kZ94
+	 iSicuF8tjG9vPvfJ4b2kdgVbsEpRuuL8rMx90TtLlD5wTKzmz96WazwzFcbPZt4QBn
+	 xg1US/qPce9gCXimFUZc1/s/HC0v4KXJ3I0HYBZJLgITrjagjiuB/h5TZI2Y2rg6Un
+	 WYjO26vCUzPGg==
+Date: Tue, 28 Oct 2025 17:43:54 -0700
+Subject: [PATCH 4/5] fuse: update file mode when updating acls
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: djwong@kernel.org, miklos@szeredi.hu
-Cc: joannelkoong@gmail.com, joannelkoong@gmail.com, bernd@bsbernd.com,
- neal@gompa.dev, linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Message-ID: <176169809317.1424347.1031452366030061035.stgit@frogsfrogsfrogs>
+Cc: joannelkoong@gmail.com, bernd@bsbernd.com, neal@gompa.dev,
+ linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Message-ID: <176169809339.1424347.12261722424900811903.stgit@frogsfrogsfrogs>
 In-Reply-To: <176169809222.1424347.16562281526870178424.stgit@frogsfrogsfrogs>
 References: <176169809222.1424347.16562281526870178424.stgit@frogsfrogsfrogs>
 Precedence: bulk
@@ -61,109 +61,118 @@ Content-Transfer-Encoding: 7bit
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Actually copy the attributes/attributes_mask from userspace.  Ignore
-file attributes bits that the VFS sets (or doesn't set) on its own.
+If someone sets ACLs on a file that can be expressed fully as Unix DAC
+mode bits, most local filesystems will then update the mode bits and
+drop the ACL xattr to reduce inefficiency in the file access paths.
+Let's do that too.  Note that means that we can setacl and end up with
+no ACL xattrs, so we also need to tolerate ENODATA returns from
+fuse_removexattr.
+
+Note that here we define a "local" fuse filesystem as one that uses
+fuseblk mode; we'll shortly add fuse servers that use iomap for the file
+IO path to that list.
 
 Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
-Reviewed-by: Joanne Koong <joannelkoong@gmail.com>
 ---
- fs/fuse/fuse_i.h |   37 +++++++++++++++++++++++++++++++++++++
- fs/fuse/dir.c    |    4 ++++
- fs/fuse/inode.c  |    4 ++++
- 3 files changed, 45 insertions(+)
+ fs/fuse/fuse_i.h |    2 +-
+ fs/fuse/acl.c    |   43 ++++++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 43 insertions(+), 2 deletions(-)
 
 
 diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index a8068bee90af57..8c47d103c8ffa6 100644
+index 8c47d103c8ffa6..d550937770e16e 100644
 --- a/fs/fuse/fuse_i.h
 +++ b/fs/fuse/fuse_i.h
-@@ -140,6 +140,10 @@ struct fuse_inode {
- 	/** Version of last attribute change */
- 	u64 attr_version;
+@@ -1050,7 +1050,7 @@ static inline struct fuse_mount *get_fuse_mount(struct inode *inode)
+ 	return get_fuse_mount_super(inode->i_sb);
+ }
  
-+	/** statx file attributes */
-+	u64 statx_attributes;
-+	u64 statx_attributes_mask;
-+
- 	union {
- 		/* read/write io cache (regular file only) */
- 		struct {
-@@ -1235,6 +1239,39 @@ void fuse_change_attributes_common(struct inode *inode, struct fuse_attr *attr,
- 				   u64 attr_valid, u32 cache_mask,
- 				   u64 evict_ctr);
+-static inline struct fuse_conn *get_fuse_conn(struct inode *inode)
++static inline struct fuse_conn *get_fuse_conn(const struct inode *inode)
+ {
+ 	return get_fuse_mount_super(inode->i_sb)->fc;
+ }
+diff --git a/fs/fuse/acl.c b/fs/fuse/acl.c
+index 8f484b105f13ab..72bb4c94079b7b 100644
+--- a/fs/fuse/acl.c
++++ b/fs/fuse/acl.c
+@@ -11,6 +11,18 @@
+ #include <linux/posix_acl.h>
+ #include <linux/posix_acl_xattr.h>
  
 +/*
-+ * These statx attribute flags are set by the VFS so mask them out of replies
-+ * from the fuse server for local filesystems.  Nonlocal filesystems are
-+ * responsible for enforcing and advertising these flags themselves.
++ * If this fuse server behaves like a local filesystem, we can implement the
++ * kernel's optimizations for ACLs for local filesystems instead of passing
++ * the ACL requests straight through to another server.
 + */
-+#define FUSE_STATX_LOCAL_VFS_ATTRIBUTES (STATX_ATTR_IMMUTABLE | \
-+					 STATX_ATTR_APPEND)
-+
-+/*
-+ * These statx attribute flags are set by the VFS so mask them out of replies
-+ * from the fuse server.
-+ */
-+#define FUSE_STATX_VFS_ATTRIBUTES (STATX_ATTR_AUTOMOUNT | STATX_ATTR_DAX | \
-+				   STATX_ATTR_MOUNT_ROOT)
-+
-+static inline u64 fuse_statx_attributes_mask(const struct inode *inode,
-+					     const struct fuse_statx *sx)
++static inline bool fuse_inode_has_local_acls(const struct inode *inode)
 +{
-+	if (fuse_inode_is_exclusive(inode))
-+		return sx->attributes_mask & ~(FUSE_STATX_VFS_ATTRIBUTES |
-+					       FUSE_STATX_LOCAL_VFS_ATTRIBUTES);
-+	return sx->attributes_mask & ~FUSE_STATX_VFS_ATTRIBUTES;
++	const struct fuse_conn *fc = get_fuse_conn(inode);
++
++	return fc->posix_acl && fuse_inode_is_exclusive(inode);
 +}
 +
-+static inline u64 fuse_statx_attributes(const struct inode *inode,
-+					const struct fuse_statx *sx)
-+{
-+	if (fuse_inode_is_exclusive(inode))
-+		return sx->attributes & ~(FUSE_STATX_VFS_ATTRIBUTES |
-+					  FUSE_STATX_LOCAL_VFS_ATTRIBUTES);
-+	return sx->attributes & ~FUSE_STATX_VFS_ATTRIBUTES;
-+}
+ static struct posix_acl *__fuse_get_acl(struct fuse_conn *fc,
+ 					struct inode *inode, int type, bool rcu)
+ {
+@@ -98,6 +110,7 @@ int fuse_set_acl(struct mnt_idmap *idmap, struct dentry *dentry,
+ 	struct inode *inode = d_inode(dentry);
+ 	struct fuse_conn *fc = get_fuse_conn(inode);
+ 	const char *name;
++	umode_t mode = inode->i_mode;
+ 	int ret;
+ 
+ 	if (fuse_is_bad(inode))
+@@ -113,6 +126,18 @@ int fuse_set_acl(struct mnt_idmap *idmap, struct dentry *dentry,
+ 	else
+ 		return -EINVAL;
+ 
++	/*
++	 * If the ACL can be represented entirely with changes to the mode
++	 * bits, then most filesystems will update the mode bits and delete
++	 * the ACL xattr.
++	 */
++	if (acl && type == ACL_TYPE_ACCESS &&
++	    fuse_inode_has_local_acls(inode)) {
++		ret = posix_acl_update_mode(idmap, inode, &mode, &acl);
++		if (ret)
++			return ret;
++	}
 +
- u32 fuse_get_cache_mask(struct inode *inode);
- 
- /**
-diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index ecaec0fea3a132..636d47a5127ca1 100644
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -1271,6 +1271,8 @@ static int fuse_do_statx(struct mnt_idmap *idmap, struct inode *inode,
- 		stat->result_mask = sx->mask & (STATX_BASIC_STATS | STATX_BTIME);
- 		stat->btime.tv_sec = sx->btime.tv_sec;
- 		stat->btime.tv_nsec = min_t(u32, sx->btime.tv_nsec, NSEC_PER_SEC - 1);
-+		stat->attributes |= fuse_statx_attributes(inode, sx);
-+		stat->attributes_mask |= fuse_statx_attributes_mask(inode, sx);
- 		fuse_fillattr(idmap, inode, &attr, stat);
- 		stat->result_mask |= STATX_TYPE;
- 	}
-@@ -1375,6 +1377,8 @@ static int fuse_update_get_attr(struct mnt_idmap *idmap, struct inode *inode,
- 			stat->btime = fi->i_btime;
- 			stat->result_mask |= STATX_BTIME;
- 		}
-+		stat->attributes = fi->statx_attributes;
-+		stat->attributes_mask = fi->statx_attributes_mask;
- 	}
- 
- 	return err;
-diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index d048d634ef46f5..76e5b7f5c980c2 100644
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -286,6 +286,10 @@ void fuse_change_attributes_common(struct inode *inode, struct fuse_attr *attr,
- 			fi->i_btime.tv_sec = sx->btime.tv_sec;
- 			fi->i_btime.tv_nsec = sx->btime.tv_nsec;
- 		}
+ 	if (acl) {
+ 		unsigned int extra_flags = 0;
+ 		/*
+@@ -143,7 +168,7 @@ int fuse_set_acl(struct mnt_idmap *idmap, struct dentry *dentry,
+ 		 * through POSIX ACLs. Such daemons don't expect setgid bits to
+ 		 * be stripped.
+ 		 */
+-		if (fc->posix_acl &&
++		if (fc->posix_acl && mode == inode->i_mode &&
+ 		    !in_group_or_capable(idmap, inode,
+ 					 i_gid_into_vfsgid(idmap, inode)))
+ 			extra_flags |= FUSE_SETXATTR_ACL_KILL_SGID;
+@@ -152,6 +177,22 @@ int fuse_set_acl(struct mnt_idmap *idmap, struct dentry *dentry,
+ 		kfree(value);
+ 	} else {
+ 		ret = fuse_removexattr(inode, name);
++		/* If the acl didn't exist to start with that's fine. */
++		if (ret == -ENODATA)
++			ret = 0;
++	}
 +
-+		fi->statx_attributes = fuse_statx_attributes(inode, sx);
-+		fi->statx_attributes_mask = fuse_statx_attributes_mask(inode,
-+								       sx);
++	/* If we scheduled a mode update above, push that to userspace now. */
++	if (!ret) {
++		struct iattr attr = { };
++
++		if (mode != inode->i_mode) {
++			attr.ia_valid |= ATTR_MODE;
++			attr.ia_mode = mode;
++		}
++
++		if (attr.ia_valid)
++			ret = fuse_do_setattr(idmap, dentry, &attr, NULL);
  	}
  
- 	if (attr->blksize)
+ 	if (fc->posix_acl) {
 
 
