@@ -1,53 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-65982-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65983-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 158B8C17936
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 01:40:04 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9432C1793C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 01:40:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 403541C67A09
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 00:40:18 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C1A2F4E8311
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 00:40:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 927262D0600;
-	Wed, 29 Oct 2025 00:39:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44F7E2D0292;
+	Wed, 29 Oct 2025 00:40:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uyR835hf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g6Leeu7k"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAF05260587;
-	Wed, 29 Oct 2025 00:39:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D314268C40;
+	Wed, 29 Oct 2025 00:40:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761698386; cv=none; b=fMAqdjjparikcMtIXQXC879/HjX5KIa40HerOlxvQefcSJGfd9K5aqP7vnIgDGiBPVwIRrZdCHgPuUINEBibwYbDwyYN+QlZ5oFTOLgG8jXTnn+NZcKi3i1Kqt8GiUhVop1BO4B3AQsd9hscc4ZhSfisujWy+TcUGWrt5MNpatY=
+	t=1761698401; cv=none; b=ZNVzLJCG5h690FayjFmh1QDNl0h0ZcvyUemtvCVKRgQdgKzgCYOsgqoWyrgbSCHJkmFpQDUXzcl+SCBdqajWCB2+9pe2urKVdpVYjRNYuW8LZLk7/RdsgV+76tNC11pdWzKkTfOMRJccEORI1bbRdPJsrG5BZcDetnd+oQ3pMCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761698386; c=relaxed/simple;
-	bh=cV85r8TI58ghQWVOM9oRzPnpN9ZwFUBp8GADB45qry4=;
+	s=arc-20240116; t=1761698401; c=relaxed/simple;
+	bh=kwRF23NGdQBGblTa+PkkvO8QIaFr1Wa4S9jqSoNaybA=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lpI7xrwyEAcCMlrPW8sgpiAkoaY5LqyZ9yXwQfJ7IiDIGxqtWFNDdK/hCx3euGk1Xmbh3iCQm4+jDwkS0BKyzKej19Q1Brzykdu6eVVD+5SmECBg+iOGZWhQPUJLg66KOmZS8vPANgOr6vppSi9XhklhdrWnbM53G5YQqfyXDuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uyR835hf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DEEBC4CEFD;
-	Wed, 29 Oct 2025 00:39:45 +0000 (UTC)
+	 MIME-Version:Content-Type; b=pdOwvii2NJjH34KQU3Nl+h3MCkQ9fvqlndIAg0JtYojl8aT+vXNZqz5z6IVgbD06iHb/P/0p1M7piXh9S2R1QNTG3fFQZkgTv0ZuUnjm6zBWRm9nM6k6nPgodbvKg5Bn+sWCP1ek/Gxx4Fo7ip+licUvNmW5In4utHIYFDTOoco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g6Leeu7k; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DBE0C4CEE7;
+	Wed, 29 Oct 2025 00:40:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761698385;
-	bh=cV85r8TI58ghQWVOM9oRzPnpN9ZwFUBp8GADB45qry4=;
+	s=k20201202; t=1761698401;
+	bh=kwRF23NGdQBGblTa+PkkvO8QIaFr1Wa4S9jqSoNaybA=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=uyR835hfInbhT3ApRWmQbsV5YK4i63NovI0hOjD2Aw4QnaaXML8/icBX1Quh7gm2V
-	 OGWRJ0/7/1a4sQS3FaaNenlm0GeF1jqlpS/TN5leDkzZhmK+82Y38YoJJiOnvkAp54
-	 +vg3tBfwcHIVX6V/LQyu9/Mzt71pJmhqIqOUJG7CN5pOJ4Q7pTu+GdOZ4xCuRna/Pi
-	 Tz1kHj/+E0x0Hg1RPynkRy/HAN1uydoLzAy93oRdfpjuQw070Vk97/x0KhPDBmEo3m
-	 r7ozNT6PevtKxl9ibx9RrcP88pt/z6hkW+cDUiV/pH3uMQw8cPumfia5lDNpelS08r
-	 F5EbcVrqb8m1A==
-Date: Tue, 28 Oct 2025 17:39:45 -0700
-Subject: [PATCHSET v6 8/8] fuse: run fuse servers as a contained service
+	b=g6Leeu7klDOohjYOgp8C1o1LDjSVBxTvUm+grU1MqE6X84rgfne8Zp0ihf4jPRk5g
+	 ZidPn0urMu9zs8CGYbcA5ksxcv7mYTrTlnOUTnwC2ST5f+SewAPuKPS6VBFdIw+HR3
+	 i5ucIKqahMRjnzePvDm80UMClbRT7E1gjftGTRx+0LBa10ZU3FGc8GTroLfhiIWVVK
+	 AfHY6OhgHDPx2L2pcITOOXkTUrVloZW0IUum+fjfmTmuKphChjbeu7dZ5mQCM7M8up
+	 fimDTyTvgbzl9H39aVDLyws5O+3O29yVo1Uh/Jv49iOSG2YICiKua43xVT0dPKqXwK
+	 hsrp8ofsTKc7A==
+Date: Tue, 28 Oct 2025 17:40:00 -0700
+Subject: [PATCHSET v6 1/5] libfuse: allow servers to use iomap for better file
+ IO performance
 From: "Darrick J. Wong" <djwong@kernel.org>
-To: djwong@kernel.org, miklos@szeredi.hu
-Cc: joannelkoong@gmail.com, bernd@bsbernd.com, neal@gompa.dev,
- linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Message-ID: <176169812502.1427080.11949246505492038165.stgit@frogsfrogsfrogs>
+To: djwong@kernel.org, bschubert@ddn.com
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ bernd@bsbernd.com, miklos@szeredi.hu, joannelkoong@gmail.com, neal@gompa.dev
+Message-ID: <176169813437.1427432.15345189583850708968.stgit@frogsfrogsfrogs>
 In-Reply-To: <20251029002755.GK6174@frogsfrogsfrogs>
 References: <20251029002755.GK6174@frogsfrogsfrogs>
 Precedence: bulk
@@ -61,36 +62,63 @@ Content-Transfer-Encoding: 7bit
 
 Hi all,
 
-This patchset defines the necessary communication protocols and library
-code so that users can mount fuse servers that run in unprivileged
-systemd service containers.  That in turn allows unprivileged untrusted
-mounts, because the worst that can happen is that a malicious image
-crashes the fuse server and the mount dies, instead of corrupting the
-kernel.  As part of the delegation, add a new ioctl allowing any process
-with an open fusedev fd to ask for permission for anyone with that
-fusedev fd to use iomap.
+This series connects libfuse to the iomap-enabled fuse driver in Linux to get
+fuse servers out of the business of handling file I/O themselves.  By keeping
+the IO path mostly within the kernel, we can dramatically improve the speed of
+disk-based filesystems.  This enables us to move all the filesystem metadata
+parsing code out of the kernel and into userspace, which means that we can
+containerize them for security without losing a lot of performance.
 
 If you're going to start using this code, I strongly recommend pulling
 from my git trees, which are linked below.
 
-This has been running on the djcloud for months with no problems.  Enjoy!
+With a bit of luck, this should all go splendidly.
 Comments and questions are, as always, welcome.
 
 --D
 
 kernel git tree:
-https://git.kernel.org/cgit/linux/kernel/git/djwong/xfs-linux.git/log/?h=fuse-service-container
+https://git.kernel.org/cgit/linux/kernel/git/djwong/xfs-linux.git/log/?h=fuse-iomap-fileio
 ---
 Commits in this patchset:
- * fuse: allow privileged mount helpers to pre-approve iomap usage
- * fuse: set iomap backing device block size
+ * libfuse: bump kernel and library ABI versions
+ * libfuse: add kernel gates for FUSE_IOMAP
+ * libfuse: add fuse commands for iomap_begin and end
+ * libfuse: add upper level iomap commands
+ * libfuse: add a lowlevel notification to add a new device to iomap
+ * libfuse: add upper-level iomap add device function
+ * libfuse: add iomap ioend low level handler
+ * libfuse: add upper level iomap ioend commands
+ * libfuse: add a reply function to send FUSE_ATTR_* to the kernel
+ * libfuse: connect high level fuse library to fuse_reply_attr_iflags
+ * libfuse: support direct I/O through iomap
+ * libfuse: don't allow hardlinking of iomap files in the upper level fuse library
+ * libfuse: allow discovery of the kernel's iomap capabilities
+ * libfuse: add lower level iomap_config implementation
+ * libfuse: add upper level iomap_config implementation
+ * libfuse: add low level code to invalidate iomap block device ranges
+ * libfuse: add upper-level API to invalidate parts of an iomap block device
+ * libfuse: add atomic write support
+ * libfuse: create a helper to transform an open regular file into an open loopdev
+ * libfuse: add swapfile support for iomap files
+ * libfuse: add lower-level filesystem freeze, thaw, and shutdown requests
+ * libfuse: add upper-level filesystem freeze, thaw, and shutdown events
 ---
- fs/fuse/fuse_dev_i.h      |   32 +++++++++++++++++++--
- fs/fuse/fuse_i.h          |   12 ++++++++
- include/uapi/linux/fuse.h |    8 +++++
- fs/fuse/dev.c             |   13 +++++----
- fs/fuse/file_iomap.c      |   67 ++++++++++++++++++++++++++++++++++++++++++++-
- fs/fuse/inode.c           |   18 ++++++++----
- 6 files changed, 134 insertions(+), 16 deletions(-)
+ include/fuse.h          |  101 ++++++++
+ include/fuse_common.h   |  141 +++++++++++
+ include/fuse_kernel.h   |  130 ++++++++++
+ include/fuse_loopdev.h  |   27 ++
+ include/fuse_lowlevel.h |  278 ++++++++++++++++++++++
+ ChangeLog.rst           |   12 +
+ include/meson.build     |    4 
+ lib/fuse.c              |  584 +++++++++++++++++++++++++++++++++++++++++++----
+ lib/fuse_loopdev.c      |  403 ++++++++++++++++++++++++++++++++
+ lib/fuse_lowlevel.c     |  437 ++++++++++++++++++++++++++++++++++-
+ lib/fuse_versionscript  |   21 ++
+ lib/meson.build         |    5 
+ meson.build             |   13 +
+ 13 files changed, 2080 insertions(+), 76 deletions(-)
+ create mode 100644 include/fuse_loopdev.h
+ create mode 100644 lib/fuse_loopdev.c
 
 
