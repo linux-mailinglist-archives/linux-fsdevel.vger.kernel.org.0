@@ -1,53 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-66119-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66120-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2AEDC17D32
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 02:17:03 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57781C17D04
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 02:16:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACE851897B56
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 01:16:01 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 55BB24FA4BD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 01:15:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDA812D7DDF;
-	Wed, 29 Oct 2025 01:15:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD0CD2DA75C;
+	Wed, 29 Oct 2025 01:15:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ILTFJ4qi"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M8fRyteY"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21F701F419A;
-	Wed, 29 Oct 2025 01:15:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ED3526CE02;
+	Wed, 29 Oct 2025 01:15:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761700529; cv=none; b=cv0WeemiRxjVTK94M4w4ZnSaliPWD81y8JX32Ba8XZ25ac30VTyj7kcRAUhJdR0+/aVViOgEd5ZhJhh+sLmTsTrjWy59tF0/vw1c8iZStMHeKwIbmWjKDm/3UADeLTg0C5J5amAsyXnIyTrMgY0zHy3Uy/73sdFtCIWPlcQc/hs=
+	t=1761700545; cv=none; b=fiseV+htSUPSPF4+/gjb/dmGFvhic7d55mXHGUvFHdPA2bSxiSrOji/daaCPvT4LbsherEAehiwVEfZSEu6AhCtIXk5bh3BLgKH6I2aFFaUWp+zehYNsACRBKDAkpXpBWEC6UHcd4iYw50OxadxJ8TCq/tx9veT5oqlaMuj1o0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761700529; c=relaxed/simple;
-	bh=3Vly51GnP5EPf0OzaZg9DEpiNAN9emU+1wcT00fPm+c=;
+	s=arc-20240116; t=1761700545; c=relaxed/simple;
+	bh=bCycYQj7wjDYLi/0ss9Q/QEDoGgg7SCtfh3XnDbAAxM=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Q8Xvw5U+/7OktDLLVilO5wp4sKsjCAvzMzCSGR1YP3N6nK+jPwizzQHJvlleUmzLkQjA63v07ci1MUVgo/3IC+NeHnPreN2snyyGoA5/+Fum10ObBmMFzjsg5jRHnqczduvmApo0E8bodEm0Dx13rpMN41cAnZYv373zjOlEww8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ILTFJ4qi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED0CFC4CEE7;
-	Wed, 29 Oct 2025 01:15:28 +0000 (UTC)
+	 MIME-Version:Content-Type; b=L8VkJ88XULntvyPzu8hf9KINLtmtZMcd1q0nNLE/ABOfUthNofoUrjqcfL0EgVQMouI6hGP3d5ObbHLeVg8UaKLmiH0IOI6o7/2/i3oEZ1+62kwi3apyAtjdl6dK4nWy1HpKh67hrJ+rHOF5LvkyFdAxY20bvtjbg47PnIkv7n4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M8fRyteY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E9E7C4CEE7;
+	Wed, 29 Oct 2025 01:15:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761700529;
-	bh=3Vly51GnP5EPf0OzaZg9DEpiNAN9emU+1wcT00fPm+c=;
+	s=k20201202; t=1761700544;
+	bh=bCycYQj7wjDYLi/0ss9Q/QEDoGgg7SCtfh3XnDbAAxM=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=ILTFJ4qi2TDGu9NYrv2W5yx922kzkzojOCyl62YCt40tqRBLmiHru7evxnT2Iq2+E
-	 oChZp7iY/VYf761NsH7BjBepiVr4B3bdKsr+1e1OiXYDDW8qjjpkwrYIpeuFZgX+ll
-	 eM5EftxpZ4BNN2WmDsau1FNF4rUL7wVcWnVrGneoWad4wz+nwJE7L2FSmLzcNcma3S
-	 2ek+wMdMErv+/leS5ySpFR3nEvqmWYPIWD0LR1w/neVMMr9fRgTxUtvIO6pbuSfNV5
-	 e4RShA6nVnK53nDYVmDi+P55BfHFgDWnt+k4tbidc8c6ebLYk3zcy1cprZ1PnELjDC
-	 kdOw22yHPJJaA==
-Date: Tue, 28 Oct 2025 18:15:28 -0700
-Subject: [PATCH 08/11] fuse2fs: enable syncfs
+	b=M8fRyteY6BGN1TE6hUhWOfwktnycwLNEsGQsGT7jkGOrItmP464SbnjEdiFrip5tT
+	 Fk79DlGEdeaWFgPMMtrWEkKk79OnazPYm0H4t47kY1y3mBoNN+Bfoe7zPI+HIN0qoT
+	 MoprAOwBYvjj8NDp5QIJLsEFoco9eZyBAR4Pa5N0ElovKbG8i3gilv3nVkfD+9gA4T
+	 CQkruBIDYsNI3+dKszfeN5rdv3mijraoZDzMVfgqkD7mXDUOacrM+h8BOAuJgV29t+
+	 nQOz5gUsBpuiuI2B0WYDUN6HVPsur22wzjuVDumwaKNDAaF/yU3CvyF+O0MBhpPmr0
+	 SDM5SaQOuxSqQ==
+Date: Tue, 28 Oct 2025 18:15:44 -0700
+Subject: [PATCH 09/11] fuse2fs: skip the gdt write in op_destroy if syncfs is
+ working
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: tytso@mit.edu
 Cc: linux-fsdevel@vger.kernel.org, joannelkoong@gmail.com, bernd@bsbernd.com,
  neal@gompa.dev, miklos@szeredi.hu, linux-ext4@vger.kernel.org
-Message-ID: <176169818368.1430380.11990499926700329921.stgit@frogsfrogsfrogs>
+Message-ID: <176169818387.1430380.2413109895614955629.stgit@frogsfrogsfrogs>
 In-Reply-To: <176169818170.1430380.13590456647130347042.stgit@frogsfrogsfrogs>
 References: <176169818170.1430380.13590456647130347042.stgit@frogsfrogsfrogs>
 Precedence: bulk
@@ -61,117 +62,118 @@ Content-Transfer-Encoding: 7bit
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Enable syncfs calls in fuse2fs.
+As an umount-time performance enhancement, don't bother to write the
+group descriptor tables in op_destroy if we know that op_syncfs will do
+it for us.  That only happens if iomap is enabled.
 
 Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- fuse4fs/fuse4fs.c |   32 ++++++++++++++++++++++++++++++++
- misc/fuse2fs.c    |   34 ++++++++++++++++++++++++++++++++++
- 2 files changed, 66 insertions(+)
+ fuse4fs/fuse4fs.c |   19 ++++++++++++++++---
+ misc/fuse2fs.c    |   19 ++++++++++++++++---
+ 2 files changed, 32 insertions(+), 6 deletions(-)
 
 
 diff --git a/fuse4fs/fuse4fs.c b/fuse4fs/fuse4fs.c
-index cafee29991bff6..ac8696aab65af4 100644
+index ac8696aab65af4..e6a96717dfe415 100644
 --- a/fuse4fs/fuse4fs.c
 +++ b/fuse4fs/fuse4fs.c
-@@ -6271,7 +6271,38 @@ static void op_shutdownfs(fuse_req_t req, fuse_ino_t ino, uint64_t flags)
- 	int ret;
+@@ -275,6 +275,7 @@ struct fuse4fs {
+ 	int dirsync;
+ 	int translate_inums;
+ 	int iomap_passthrough_options;
++	int write_gdt_on_destroy;
  
- 	ret = ioctl_shutdown(ff, ctxt, NULL, NULL, 0);
-+	fuse_reply_err(req, -ret);
-+}
+ 	enum fuse4fs_opstate opstate;
+ 	int logfd;
+@@ -1840,9 +1841,11 @@ static void op_destroy(void *userdata)
+ 		if (fs->super->s_error_count)
+ 			fs->super->s_state |= EXT2_ERROR_FS;
+ 		ext2fs_mark_super_dirty(fs);
+-		err = ext2fs_set_gdt_csum(fs);
+-		if (err)
+-			translate_error(fs, 0, err);
++		if (ff->write_gdt_on_destroy) {
++			err = ext2fs_set_gdt_csum(fs);
++			if (err)
++				translate_error(fs, 0, err);
++		}
  
-+static void op_syncfs(fuse_req_t req, fuse_ino_t ino)
-+{
-+	struct fuse4fs *ff = fuse4fs_get(req);
-+	ext2_filsys fs;
-+	errcode_t err;
-+	int ret = 0;
+ 		err = ext2fs_flush2(fs, 0);
+ 		if (err)
+@@ -6301,6 +6304,15 @@ static void op_syncfs(fuse_req_t req, fuse_ino_t ino)
+ 		}
+ 	}
+ 
++	/*
++	 * When iomap is enabled, the kernel will call syncfs right before
++	 * calling the destroy method.  If any syncfs succeeds, then we know
++	 * that there will be a last syncfs and that it will write the GDT, so
++	 * destroy doesn't need to waste time doing that.
++	 */
++	if (fuse4fs_iomap_enabled(ff))
++		ff->write_gdt_on_destroy = 0;
 +
-+	FUSE4FS_CHECK_CONTEXT(req);
-+	fs = fuse4fs_start(ff);
-+
-+	if (ff->opstate == F4OP_WRITABLE) {
-+		if (fs->super->s_error_count)
-+			fs->super->s_state |= EXT2_ERROR_FS;
-+		ext2fs_mark_super_dirty(fs);
-+		err = ext2fs_set_gdt_csum(fs);
-+		if (err) {
-+			ret = translate_error(fs, 0, err);
-+			goto out_unlock;
-+		}
-+
-+		err = ext2fs_flush2(fs, 0);
-+		if (err) {
-+			ret = translate_error(fs, 0, err);
-+			goto out_unlock;
-+		}
-+	}
-+
-+out_unlock:
-+	fuse4fs_finish(ff, ret);
+ out_unlock:
+ 	fuse4fs_finish(ff, ret);
  	fuse_reply_err(req, -ret);
- }
+@@ -8051,6 +8063,7 @@ int main(int argc, char *argv[])
+ 		.loop_fd = -1,
  #endif
-@@ -7568,6 +7599,7 @@ static struct fuse_lowlevel_ops fs_ops = {
- 	.freezefs = op_freezefs,
- 	.unfreezefs = op_unfreezefs,
- 	.shutdownfs = op_shutdownfs,
-+	.syncfs = op_syncfs,
- #endif
- #ifdef HAVE_FUSE_IOMAP
- 	.iomap_begin = op_iomap_begin,
+ 		.translate_inums = 1,
++		.write_gdt_on_destroy = 1,
+ 	};
+ 	errcode_t err;
+ 	FILE *orig_stderr = stderr;
 diff --git a/misc/fuse2fs.c b/misc/fuse2fs.c
-index 10673aaed60dea..b6ede4bcb32c27 100644
+index b6ede4bcb32c27..91b48f5d68b0db 100644
 --- a/misc/fuse2fs.c
 +++ b/misc/fuse2fs.c
-@@ -5829,6 +5829,39 @@ static int op_shutdownfs(const char *path, uint64_t flags)
+@@ -268,6 +268,7 @@ struct fuse2fs {
+ 	int acl;
+ 	int dirsync;
+ 	int iomap_passthrough_options;
++	int write_gdt_on_destroy;
  
- 	return ioctl_shutdown(ff, NULL, NULL);
- }
-+
-+static int op_syncfs(const char *path)
-+{
-+	struct fuse2fs *ff = fuse2fs_get();
-+	ext2_filsys fs;
-+	errcode_t err;
-+	int ret = 0;
-+
-+	FUSE2FS_CHECK_CONTEXT(ff);
-+	dbg_printf(ff, "%s: path=%s\n", __func__, path);
-+	fs = fuse2fs_start(ff);
-+
-+	if (ff->opstate == F2OP_WRITABLE) {
-+		if (fs->super->s_error_count)
-+			fs->super->s_state |= EXT2_ERROR_FS;
-+		ext2fs_mark_super_dirty(fs);
-+		err = ext2fs_set_gdt_csum(fs);
-+		if (err) {
-+			ret = translate_error(fs, 0, err);
-+			goto out_unlock;
+ 	enum fuse2fs_opstate opstate;
+ 	int logfd;
+@@ -1667,9 +1668,11 @@ static void op_destroy(void *p EXT2FS_ATTR((unused)))
+ 		if (fs->super->s_error_count)
+ 			fs->super->s_state |= EXT2_ERROR_FS;
+ 		ext2fs_mark_super_dirty(fs);
+-		err = ext2fs_set_gdt_csum(fs);
+-		if (err)
+-			translate_error(fs, 0, err);
++		if (ff->write_gdt_on_destroy) {
++			err = ext2fs_set_gdt_csum(fs);
++			if (err)
++				translate_error(fs, 0, err);
 +		}
-+
-+		err = ext2fs_flush2(fs, 0);
-+		if (err) {
-+			ret = translate_error(fs, 0, err);
-+			goto out_unlock;
-+		}
-+	}
-+
-+out_unlock:
-+	fuse2fs_finish(ff, ret);
-+	return ret;
-+}
- #endif
  
- #ifdef HAVE_FUSE_IOMAP
-@@ -7114,6 +7147,7 @@ static struct fuse_operations fs_ops = {
- 	.freezefs = op_freezefs,
- 	.unfreezefs = op_unfreezefs,
- 	.shutdownfs = op_shutdownfs,
-+	.syncfs = op_syncfs,
+ 		err = ext2fs_flush2(fs, 0);
+ 		if (err)
+@@ -5858,6 +5861,15 @@ static int op_syncfs(const char *path)
+ 		}
+ 	}
+ 
++	/*
++	 * When iomap is enabled, the kernel will call syncfs right before
++	 * calling the destroy method.  If any syncfs succeeds, then we know
++	 * that there will be a last syncfs and that it will write the GDT, so
++	 * destroy doesn't need to waste time doing that.
++	 */
++	if (fuse2fs_iomap_enabled(ff))
++		ff->write_gdt_on_destroy = 0;
++
+ out_unlock:
+ 	fuse2fs_finish(ff, ret);
+ 	return ret;
+@@ -7494,6 +7506,7 @@ int main(int argc, char *argv[])
+ #ifdef HAVE_FUSE_LOOPDEV
+ 		.loop_fd = -1,
  #endif
- #ifdef HAVE_FUSE_IOMAP
- 	.iomap_begin = op_iomap_begin,
++		.write_gdt_on_destroy = 1,
+ 	};
+ 	errcode_t err;
+ 	FILE *orig_stderr = stderr;
 
 
