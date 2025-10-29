@@ -1,156 +1,295 @@
-Return-Path: <linux-fsdevel+bounces-66359-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66360-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A12CC1CDB7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 19:59:30 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A88C4C1CE00
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 20:04:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59B0C1A2013F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 18:58:39 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 385C04E316C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 19:02:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 408F33587A4;
-	Wed, 29 Oct 2025 18:57:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4E2D3590BD;
+	Wed, 29 Oct 2025 19:02:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="WpREBCTr"
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="hQOdvw+f"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EE17345CAD;
-	Wed, 29 Oct 2025 18:57:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C53E2F12CC
+	for <linux-fsdevel@vger.kernel.org>; Wed, 29 Oct 2025 19:02:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761764276; cv=none; b=SGlQ2Rwu6CezcRd3+k4C3Ca5CElfrx0X0p1vAONSt34KlijPO+nNdoHvOVfH5aIKvfBPlODs7KK5cjqt32a6fX0CLVzIQohHpycyR8b3eqNInvYkwsB7KkIMRp0L89/hPFXtFaZ1yn3HehIWA1dg90zTcTATAJD2Jzb1YcuPziU=
+	t=1761764553; cv=none; b=qUGKX8vdsBscgYiGloI6EpqwI4k3SKd1UNLSig9XcFVwDGVxxSqid0CwO7OBo8mJVq3zolGZh34URmY9bsGmekUi7/VIkK+b1nxXMAVxtkcyVGiTDAoDCu3VRW89mvN5XDcc265fw2BA3lpY+o2QgI2wfYbB07gI2M9E/BKC0XU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761764276; c=relaxed/simple;
-	bh=8noeVAfbXhFfJwZ+aw/7c91dsuSaX7XCpkJyS1Z6pPw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=KQSJ1nB79wzbAE9zzIlzVctw91IZemI1IlbYkEWDL4fMDlBSZsOs+sCP6GKTS+I5TCWlaALLAdP9Rl8MbUy2rLAoj6tvCl7BXe1z/+BF95NB/R76rrvm5dSd5zWila6SI0kp8spZIuvpoLNwoAeE4zRpdHwpEMrzC0VmrX6kl9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=WpREBCTr; arc=none smtp.client-ip=198.37.111.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1761764273;
-	bh=8noeVAfbXhFfJwZ+aw/7c91dsuSaX7XCpkJyS1Z6pPw=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=WpREBCTrohUDCBJ3IIu8cpoqlN2RMaYcE17yYfxQn4g7wi3KJqaOrWCEV3DveRGSW
-	 66vruqzhuO2xQrIC1Q+Tx02Z+XnqjOj0Gbf2vxAy2dhjiPE+1CdpNBoRpk7awAiQpD
-	 h61Jbb/pUJGaGV8jpw+12bQcglQetL6wk16QzlLg=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 7D5DE1C0069;
-	Wed, 29 Oct 2025 14:57:52 -0400 (EDT)
-Message-ID: <9f079d0c8cffb150c0decb673a12bfe1b835efc9.camel@HansenPartnership.com>
-Subject: Re: [PATCH v2 22/50] convert efivarfs
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Ard Biesheuvel <ardb@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org, 
- brauner@kernel.org, jack@suse.cz, raven@themaw.net, miklos@szeredi.hu, 
- neil@brown.name, a.hindborg@kernel.org, linux-mm@kvack.org, 
- linux-efi@vger.kernel.org, ocfs2-devel@lists.linux.dev, kees@kernel.org, 
- rostedt@goodmis.org, gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-  paul@paul-moore.com, casey@schaufler-ca.com,
- linuxppc-dev@lists.ozlabs.org,  john.johansen@canonical.com,
- selinux@vger.kernel.org, borntraeger@linux.ibm.com,  bpf@vger.kernel.org
-Date: Wed, 29 Oct 2025 14:57:51 -0400
-In-Reply-To: <CAMj1kXF6tvg6+CL_1x7h0HK1PoSGtxDjc0LQ1abGQBd5qrbffg@mail.gmail.com>
-References: <20251028004614.393374-1-viro@zeniv.linux.org.uk>
-	 <20251028004614.393374-23-viro@zeniv.linux.org.uk>
-	 <66300d81c5e127e3bca8c6c4d997da386b142004.camel@HansenPartnership.com>
-	 <20251028174540.GN2441659@ZenIV> <20251028210805.GP2441659@ZenIV>
-	 <CAMj1kXF6tvg6+CL_1x7h0HK1PoSGtxDjc0LQ1abGQBd5qrbffg@mail.gmail.com>
-Autocrypt: addr=James.Bottomley@HansenPartnership.com;
- prefer-encrypt=mutual;
- keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-User-Agent: Evolution 3.50.3 
+	s=arc-20240116; t=1761764553; c=relaxed/simple;
+	bh=yO1Opye+qc3JYrzAXa0i9zBPEzqerL6uatQVYdTfnV0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W3gpJza5k4MTtlWQ0cLmRZzn8olcSAQoUfYJnDxp0eZwSl/95wOCsShFQP3yjxaArSiZ4JYCIHBJu3XlWLj1uQB2K2NUMmBIA10mKMsj5g4J8JILyuQQALn69pdKct1YF3FQElKbrAEQTeZm3gnHhtQzOyi4lcY+0hMY0v/myCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=hQOdvw+f; arc=none smtp.client-ip=209.85.222.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7f04816589bso16419685a.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Oct 2025 12:02:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1761764550; x=1762369350; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6sw72SXv9wDgu6p9YjUITDDH7nA95nOzLTT0dvLDWRw=;
+        b=hQOdvw+fj+jtW3r9+9NQ13s4GPkZMNozPxyPEu1z69B9zHbOzVBVBC/HmpoVTc6TFm
+         XvluiZHSkJGugnIq3ge2wwgua5RECtQs4Dn7/foiznF5m7TzSO2E3ubURTfduC5u3Bt/
+         OXckmY5CXqsXNnsustPUZjAjWCX8BW7g05MwaObJbOr99OPm3uy4hUo7QIRVjgiiBKVt
+         P00ybNGq2huXk6cI8WLt3aRtjmyiR79fsLO17PrT3TLOms7vmHG2Ihkr6QMsUjE7aaUQ
+         vfqvSn55K+ikFm9NVJhqDZai3a9ifjYRKURJQ4vWLurIFAb7Yi7023pPF6tUWScBt5fj
+         2BQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761764550; x=1762369350;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6sw72SXv9wDgu6p9YjUITDDH7nA95nOzLTT0dvLDWRw=;
+        b=vFEF6EH65E+ux6+9Qsy1YqvmHrOudOtqFrw9usj1HveQ5Rtp/edfxV77nYjjZAocIb
+         UIOuvHXlqVx/v9QrgtxCKQHy32o+4PPwORoQz4xtzkOMTiXeDiv1Smqbj7Va5VMu9d13
+         rK+oKIo3dSUbFpF0eUPjV5/7Lc9YPNwgFTSRU66iRaGRT53pipMC4jfPXPIXVOb4PpOe
+         dX9/4vvCPqemTjNfIeBM7Whiczjr7DhIMCdcIoNVQ+nZYd80cBeF86scrVWeBgZaKHB/
+         iJ8vIWFkQ9mX2H8fuMocsbiOWCdktLG5Bb6+sCciL/5fEhc4PL62lt1dtQLyNRTRC5hr
+         sFHg==
+X-Forwarded-Encrypted: i=1; AJvYcCVVOOimTlODeAV8j0rUthZ2fMHbYafsm1dJtmfh21NL+2S5HsqQ5TLzwQDv+cg5ULmiBrcKWMV7I4ak5oA3@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8d/rE59fy3Ed2qsApV+fQCs8muatXNr6di/rUJdUxujzAHJPj
+	UNGqY2YGeKDOY8tGN1eLZ7WEIX1gFH4w+eigwLd/WiUBDxjQ8d3g1fSL/3CcZN2ZxdY=
+X-Gm-Gg: ASbGncsLslmE0ClWyDrWh2uqQB3nm1zIJAfZal4Fv0a8IdF3OYbrUaAQ6egK39adeL4
+	Iw21lpv+GC2C2IFyRz9ChS8WtqKpKi/X7prlHr6q+NiVaDyKi6qHNimQvPGeZlxIX2QdkwnTFZ/
+	hed7kHD2HGiWbtd79nMx2gPdFAETpCWbYnod1iVCiKpl7kGA89VHN/iqgAj2qrZRgeFY8ck4nWd
+	TzvSyWVqGBuhOnaMxOrnujKMBNzlBh8zmpovYlc2g8B/mmtLYmbO9dzHpmdMPrnsNPkcvtu3bFg
+	pVGLePHqKi1cDT9n+vV60np7bjpIJ1vxftsbJlw35UjfxkVdgKgNsJgRj6+l4GSf4ZF7WqycWdT
+	1fxDWdzp8N8bNlOh3QbniLDsMyemVRxSNnqB2WtSprytgs9NRP5a7orNeKXao4IhaLwwv7g7qan
+	Xd/xbcVpKHeIoPTKwyHZ4FJ7dsxzH3eN+9CsrXH0HBlsh9Aw==
+X-Google-Smtp-Source: AGHT+IFEZVVWBSeU6miQg9ukzVA2Omdwgy9xE3uJN2mdElXkmiiS2fX8FwhQFoumPSYknIKRu1v6vg==
+X-Received: by 2002:a05:620a:2915:b0:8a2:234a:17be with SMTP id af79cd13be357-8aa2c08ed8emr119910685a.7.1761764549800;
+        Wed, 29 Oct 2025 12:02:29 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-47-55-120-4.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.120.4])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-89f254a6461sm1145536585a.30.2025.10.29.12.02.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Oct 2025 12:02:29 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1vEBRE-000000051Qy-2L0s;
+	Wed, 29 Oct 2025 16:02:28 -0300
+Date: Wed, 29 Oct 2025 16:02:28 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Muchun Song <muchun.song@linux.dev>,
+	Oscar Salvador <osalvador@suse.de>,
+	David Hildenbrand <david@redhat.com>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Axel Rasmussen <axelrasmussen@google.com>,
+	Yuanchu Xie <yuanchu@google.com>, Wei Xu <weixugc@google.com>,
+	Peter Xu <peterx@redhat.com>, Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Kees Cook <kees@kernel.org>, Matthew Wilcox <willy@infradead.org>,
+	John Hubbard <jhubbard@nvidia.com>,
+	Leon Romanovsky <leon@kernel.org>, Zi Yan <ziy@nvidia.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+	Lance Yang <lance.yang@linux.dev>, Xu Xin <xu.xin16@zte.com.cn>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	Jann Horn <jannh@google.com>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
+	Byungchul Park <byungchul@sk.com>,
+	Gregory Price <gourry@gourry.net>,
+	Ying Huang <ying.huang@linux.alibaba.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	Pedro Falcato <pfalcato@suse.de>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	David Rientjes <rientjes@google.com>,
+	Rik van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>,
+	Kemeng Shi <shikemeng@huaweicloud.com>,
+	Kairui Song <kasong@tencent.com>, Nhat Pham <nphamcs@gmail.com>,
+	Baoquan He <bhe@redhat.com>, Chris Li <chrisl@kernel.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Qi Zheng <zhengqi.arch@bytedance.com>, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH 1/4] mm: declare VMA flags by bit
+Message-ID: <20251029190228.GS760669@ziepe.ca>
+References: <cover.1761757731.git.lorenzo.stoakes@oracle.com>
+ <a94b3842778068c408758686fbb5adcb91bdbc3c.1761757731.git.lorenzo.stoakes@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a94b3842778068c408758686fbb5adcb91bdbc3c.1761757731.git.lorenzo.stoakes@oracle.com>
 
-T24gVHVlLCAyMDI1LTEwLTI4IGF0IDIyOjM0ICswMTAwLCBBcmQgQmllc2hldXZlbCB3cm90ZToK
-PiBPbiBUdWUsIDI4IE9jdCAyMDI1IGF0IDIyOjA4LCBBbCBWaXJvIDx2aXJvQHplbml2LmxpbnV4
-Lm9yZy51az4KPiB3cm90ZToKPiA+IAo+ID4gT24gVHVlLCBPY3QgMjgsIDIwMjUgYXQgMDU6NDU6
-NDBQTSArMDAwMCwgQWwgVmlybyB3cm90ZToKPiA+IAo+ID4gPiBGV0lXLCBoYXZpbmcgYSBzcGVj
-aWFsIHBhdGggZm9yICJ3ZSBhcmUgaW4gZm9vZnNfZmlsbF9zdXBlcigpLAo+ID4gPiBmdWNrIHRo
-ZSBsb2NraW5nIC0gbm9ib2R5J3MgZ29pbmcgdG8gYWNjZXNzIGl0IGFueXdheSIgaXMgbm90IGEK
-PiA+ID4gZ3JlYXQgaWRlYSwgc2ltcGx5IGJlY2F1c2UgdGhlIGhlbHBlcnMgdGVuZCB0byBnZXQg
-cmV1c2VkIG9uCj4gPiA+IGNvZGVwYXRocyB3aGVyZSB3ZSBjYW4ndCBjdXQgY29ybmVycyB0aGF0
-IHdheS4KPiA+IAo+ID4gwqDCoMKgwqDCoMKgwqAgQlRXLCBsb29raW5nIHRocm91Z2ggZWZpdmFy
-ZnMgY29kZWJhc2Ugbm93Li4uICpib3RoKgo+ID4gY2FsbGVycyBvZiBlZml2YXJmc19jcmVhdGVf
-ZGVudHJ5KCkgZW5kIHVwIGRvaW5nIGRjYWNoZSBsb29rdXBzLAo+ID4gd2l0aCB2YXJpb3VzbHkg
-Y29udm9sdXRlZCBjYWxsIGNoYWlucy7CoCBMb29rOgo+ID4gZWZpdmFyZnNfY2hlY2tfbWlzc2lu
-ZygpIGhhcyBhbiBleHBsaWNpdCB0cnlfbG9va3VwX25vcGVybSgpIGJlZm9yZQo+ID4gdGhlIGNh
-bGwgb2YgZWZpdmFyZnNfY3JlYXRlX2RlbnRyeSgpLiBlZml2YXJmc19jYWxsYmFjaygpIGRvZXNu
-J3QsCj4gPiBidXQgaXQncyBjYWxsZWQgdmlhCj4gPiDCoMKgwqDCoMKgwqDCoCBlZml2YXJfaW5p
-dChlZml2YXJmc19jYWxsYmFjaywgc2IsIHRydWUpCj4gPiBhbmQgd2l0aCB0aGUgbGFzdCBhcmd1
-bWVudCBiZWluZyB0cnVlIGVmaXZhcl9pbml0KCkgd2lsbCBwcmVjZWRlCj4gPiB0aGUgY2FsbCBv
-ZiB0aGUgY2FsbGJhY2sgd2l0aCBlZml2YXJmc192YXJpYWJsZV9pc19wcmVzZW50KCkuwqAKPiA+
-IEd1ZXNzIHdoYXQgZG9lcyB0aGF0IHRoaW5nIChuZXZlciB1c2VkIGFueXdoZXJlIGVsc2UpIGRv
-P8KgIFJpZ2h0LAo+ID4gdGhlIGNhbGwgb2YgdHJ5X2xvb2t1cF9ub3Blcm0oKS4KPiA+IAo+ID4g
-V2h5IGRvIHdlIGJvdGhlciB3aXRoIHRoYXQ/wqAgV2hhdCdzIHdyb25nIHdpdGggaGF2aW5nCj4g
-PiBlZml2YXJmc19jcmVhdGVfZGVudHJ5KCkgcmV0dXJuaW5nIC1FRVhJU1QgaW4gY2FzZSBvZiBk
-ZW50cnkKPiA+IGFscmVhZHkgYmVpbmcgdGhlcmUgYW5kIHR1cm5pbmcgdGhlIGNodW5rIGluIGVm
-aXZhcl9pbml0KCkgaW50bwo+ID4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoCBlcnIgPSBmdW5jKHZhcmlhYmxlX25hbWUsIHZlbmRvcl9ndWlkLAo+ID4gwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqAgdmFyaWFibGVfbmFtZV9zaXplLCBkYXRhKTsKPiA+IMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgaWYgKGVyciA9PSAtRUVYSVNUKSB7Cj4gPiDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoCBpZiAoZHVwbGljYXRlX2NoZWNrKQo+ID4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgCj4gPiBk
-dXBfdmFyaWFibGVfYnVnKHZhcmlhYmxlX25hbWUsCj4gPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgCj4gPiAmdmVuZG9yX2d1aWQsCj4gPiDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgCj4g
-PiB2YXJpYWJsZV9uYW1lX3NpemUpOwo+ID4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgZWxzZQo+ID4gwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgIGVyciA9IDA7Cj4gPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgIH0KPiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqAgaWYgKGVycikKPiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHN0YXR1cyA9IEVGSV9OT1RfRk9VTkQ7Cj4gPiBOb3Rl
-IHRoYXQgYm90aCBwb3NzaWJsZSBjYWxsYmFja3MgYmVjb21lIGFsbW9zdCBpZGVudGljYWwgYW5k
-IEkKPiA+IHdvdWxkbid0IGJlIHN1cnByaXNlZCBpZiB0aGF0ICJhbG1vc3QiIGlzIGFjdHVhbGx5
-ICJjb21wbGV0ZWx5Ii4uLsKgCj4gPiA8Y2hlY2tzPiB5ZXAuCj4gPiAKPiAKPiBJJ2xsIGxldCBK
-YW1lcyByZXNwb25kIHRvIHRoZSBzcGVjaWZpY3Mgb2YgeW91ciBzdWdnZXN0aW9uLCBidXQgSSds
-bAo+IGp1c3Qgbm90ZSB0aGF0IHRoaXMgY29kZSBoYXMgYSByYXRoZXIgY29udm9sdXRlZCBoaXN0
-b3J5LCBhcyB3ZSB1c2VkCj4gdG8gaGF2ZSB0d28gc2VwYXJhdGUgcHNldWRvLWZpbGVzeXN0ZW0g
-ZHJpdmVycywgdXAgdW50aWwgYSBmZXcgeWVhcnMKPiBhZ286IHRoZSBzeXNmcyBiYXNlZCAnZWZp
-dmFycycgYW5kIHRoaXMgZWZpdmFyZnMgZHJpdmVyLiBHaXZlbiB0aGF0Cj4gbW9kaWZpY2F0aW9u
-cyBpbiBvbmUgbmVlZGVkIHRvIGJlIHZpc2libGUgaW4gdGhlIG90aGVyLCB0aGV5IHNoYXJlZCBh
-Cj4gbGlua2VkIGxpc3QgdGhhdCBzaGFkb3dlZCB0aGUgc3RhdGUgb2YgdGhlIHVuZGVybHlpbmcg
-dmFyaWFibGUgc3RvcmUuCj4gJ2VmaXZhcnMnIHdhcyByZW1vdmVkIHllYXJzIGFnbywgYnV0IGl0
-IHdhcyBvbmx5IHJlY2VudGx5IHRoYXQgSmFtZXMKPiByZXBsYWNlZCB0aGUgbGlua2VkIGxpc3Qg
-aW4gdGhpcyBkcml2ZXIgd2l0aCB0aGUgZGVudHJ5IGNhY2hlIGFzIHRoZQo+IHNoYWRvdyBtZWNo
-YW5pc20uCgpJIHRoaW5rIHRoaXMgYWxsIGxvb2tzIE9LLiAgVGhlIHJlYXNvbiBmb3IgdGhlIGNv
-bnZvbHV0aW9uIGlzIHRoYXQKc2ltcGxlX3N0YXJ0L2RvbmVfY3JlYXRpbmcoKSBkaWRuJ3QgZXhp
-c3Qgd2hlbiBJIGRpZCB0aGUgY29udmVyc2lvbiAuLi4KYWx0aG91Z2ggaWYgdGhleSBoYWQsIEkn
-bSBub3Qgc3VyZSBJJ2QgaGF2ZSB0aG91Z2h0IG9mIHJld29ya2luZwplZml2YXJmc19jcmVhdGVf
-ZGVudHJ5IHRvIHVzZSB0aGVtLiAgSSB0cmllZCB0byB1cGRhdGUgc29tZSByZWR1bmRhbnQKYml0
-cywgYnV0IGl0IHdhc24ndCB0aGUgZm9jdXMgb2Ygd2hhdCBJIHdhcyB0cnlpbmcgdG8gZml4LgoK
-U28gSSB0aGluayB0aGUgY2xlYW51cCB3b3JrcyBhbmQgbG9va3MgbmljZS4KCj4gCj4gUmVseWlu
-ZyBvbiB0aGUgLUVFWElTVCByZXR1cm4gdmFsdWUgdG8gZGV0ZWN0IGR1cGxpY2F0ZXMsIGFuZAo+
-IGNvbWJpbmluZyB0aGUgdHdvIGNhbGxiYWNrcyBzZWVtIGxpa2UgbmVhdCBvcHRpbWl6YXRpb25z
-IHRvIG1lLCBzbwo+IAo+IEFja2VkLWJ5OiBBcmQgQmllc2hldXZlbCA8YXJkYkBrZXJuZWwub3Jn
-Pgo+IAo+IGJ1dCBJIGhhdmUgdG8gY29uZmVzcyBJIGFtIHNsaWdodGx5IG91dCBvZiBteSBkZXB0
-aCB3aGVuIGl0IGNvbWVzIHRvCj4gVkZTIHN0dWZmLgoKWWVzLCBhY2sgdG9vLgoKUmVnYXJkcywK
-CkphbWVzCgoK
+On Wed, Oct 29, 2025 at 05:49:35PM +0000, Lorenzo Stoakes wrote:
+> We declare a sparse-bitwise type vma_flag_t which ensures that users can't
+> pass around invalid VMA flags by accident and prepares for future work
+> towards VMA flags being a bitmap where we want to ensure bit values are
+> type safe.
 
+Does sparse attach the type to the enum item? Normal C says the enum
+item's type is always 'int' if the value fits in int..
+
+And I'm not sure bitwise rules work quite the way you'd like for this
+enum, it was ment for things that are |'d..
+
+I have seen an agressively abuse-resistent technique before, I don't
+really recommend it, but FYI:
+
+struct vma_bits {
+  u8 VMA_READ_BIT;
+  u8 VMA_WRITE_BIT;
+  ..
+};
+#define VMA_BIT(bit_name) BIT(offsetof(struct vma_bits, bit_name))
+
+> Finally, we have to update some rather silly if-deffery found in
+> mm/task_mmu.c which would otherwise break.
+> 
+> Additionally, update the VMA userland testing vma_internal.h header to
+> include these changes.
+> 
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> ---
+>  fs/proc/task_mmu.c               |   4 +-
+>  include/linux/mm.h               | 286 +++++++++++++++++---------
+>  tools/testing/vma/vma_internal.h | 341 +++++++++++++++++++++++++++----
+
+Maybe take the moment to put them in some vma_flags.h and then can
+that be included from tools/testing to avoid this copying??
+
+> +/**
+> + * vma_flag_t - specifies an individual VMA flag by bit number.
+> + *
+> + * This value is made type safe by sparse to avoid passing invalid flag values
+> + * around.
+> + */
+> +typedef int __bitwise vma_flag_t;
+> +
+> +enum {
+> +	/* currently active flags */
+> +	VMA_READ_BIT = (__force vma_flag_t)0,
+> +	VMA_WRITE_BIT = (__force vma_flag_t)1,
+> +	VMA_EXEC_BIT = (__force vma_flag_t)2,
+> +	VMA_SHARED_BIT = (__force vma_flag_t)3,
+> +
+> +	/* mprotect() hardcodes VM_MAYREAD >> 4 == VM_READ, and so for r/w/x bits. */
+> +	VMA_MAYREAD_BIT = (__force vma_flag_t)4, /* limits for mprotect() etc */
+> +	VMA_MAYWRITE_BIT = (__force vma_flag_t)5,
+> +	VMA_MAYEXEC_BIT = (__force vma_flag_t)6,
+> +	VMA_MAYSHARE_BIT = (__force vma_flag_t)7,
+> +
+> +	VMA_GROWSDOWN_BIT = (__force vma_flag_t)8, /* general info on the segment */
+> +#ifdef CONFIG_MMU
+> +	VMA_UFFD_MISSING_BIT = (__force vma_flag_t)9, /* missing pages tracking */
+> +#else
+> +	/* nommu: R/O MAP_PRIVATE mapping that might overlay a file mapping */
+> +	VMA_MAYOVERLAY_BIT = (__force vma_flag_t)9,
+> +#endif
+> +	/* Page-ranges managed without "struct page", just pure PFN */
+> +	VMA_PFNMAP_BIT = (__force vma_flag_t)10,
+> +
+> +	VMA_MAYBE_GUARD_BIT = (__force vma_flag_t)11,
+> +
+> +	VMA_UFFD_WP_BIT = (__force vma_flag_t)12, /* wrprotect pages tracking */
+> +
+> +	VMA_LOCKED_BIT = (__force vma_flag_t)13,
+> +	VMA_IO_BIT = (__force vma_flag_t)14, /* Memory mapped I/O or similar */
+> +
+> +	/* Used by madvise() */
+> +	VMA_SEQ_READ_BIT = (__force vma_flag_t)15, /* App will access data sequentially */
+> +	VMA_RAND_READ_BIT = (__force vma_flag_t)16, /* App will not benefit from clustered reads */
+> +
+> +	VMA_DONTCOPY_BIT = (__force vma_flag_t)17, /* Do not copy this vma on fork */
+> +	VMA_DONTEXPAND_BIT = (__force vma_flag_t)18, /* Cannot expand with mremap() */
+> +	VMA_LOCKONFAULT_BIT = (__force vma_flag_t)19, /* Lock pages covered when faulted in */
+> +	VMA_ACCOUNT_BIT = (__force vma_flag_t)20, /* Is a VM accounted object */
+> +	VMA_NORESERVE_BIT = (__force vma_flag_t)21, /* should the VM suppress accounting */
+> +	VMA_HUGETLB_BIT = (__force vma_flag_t)22, /* Huge TLB Page VM */
+> +	VMA_SYNC_BIT = (__force vma_flag_t)23, /* Synchronous page faults */
+> +	VMA_ARCH_1_BIT = (__force vma_flag_t)24, /* Architecture-specific flag */
+> +	VMA_WIPEONFORK_BIT = (__force vma_flag_t)25, /* Wipe VMA contents in child. */
+> +	VMA_DONTDUMP_BIT = (__force vma_flag_t)26, /* Do not include in the core dump */
+> +
+> +#ifdef CONFIG_MEM_SOFT_DIRTY
+> +	VMA_SOFTDIRTY_BIT = (__force vma_flag_t)27, /* Not soft dirty clean area */
+> +#endif
+> +
+> +	VMA_MIXEDMAP_BIT = (__force vma_flag_t)28, /* Can contain struct page and pure PFN pages */
+> +	VMA_HUGEPAGE_BIT = (__force vma_flag_t)29, /* MADV_HUGEPAGE marked this vma */
+> +	VMA_NOHUGEPAGE_BIT = (__force vma_flag_t)30, /* MADV_NOHUGEPAGE marked this vma */
+> +	VMA_MERGEABLE_BIT = (__force vma_flag_t)31, /* KSM may merge identical pages */
+> +
+> +#ifdef CONFIG_64BIT
+> +	/* These bits are reused, we define specific uses below. */
+> +#ifdef CONFIG_ARCH_USES_HIGH_VMA_FLAGS
+> +	VMA_HIGH_ARCH_0_BIT = (__force vma_flag_t)32,
+> +	VMA_HIGH_ARCH_1_BIT = (__force vma_flag_t)33,
+> +	VMA_HIGH_ARCH_2_BIT = (__force vma_flag_t)34,
+> +	VMA_HIGH_ARCH_3_BIT = (__force vma_flag_t)35,
+> +	VMA_HIGH_ARCH_4_BIT = (__force vma_flag_t)36,
+> +	VMA_HIGH_ARCH_5_BIT = (__force vma_flag_t)37,
+> +	VMA_HIGH_ARCH_6_BIT = (__force vma_flag_t)38,
+> +#endif
+> +
+> +	VMA_ALLOW_ANY_UNCACHED_BIT = (__force vma_flag_t)39,
+> +	VMA_DROPPABLE_BIT = (__force vma_flag_t)40,
+> +
+> +#ifdef CONFIG_HAVE_ARCH_USERFAULTFD_MINOR
+> +	VMA_UFFD_MINOR_BIT = (__force vma_flag_t)41,
+> +#endif
+> +
+> +	VMA_SEALED_BIT = (__force vma_flag_t)42,
+> +#endif /* CONFIG_64BIT */
+> +};
+> +
+> +#define VMA_BIT(bit)	BIT((__force int)bit)
+
+> -/* mprotect() hardcodes VM_MAYREAD >> 4 == VM_READ, and so for r/w/x bits. */
+> -#define VM_MAYREAD	0x00000010	/* limits for mprotect() etc */
+> -#define VM_MAYWRITE	0x00000020
+> -#define VM_MAYEXEC	0x00000040
+> -#define VM_MAYSHARE	0x00000080
+> +#define VM_MAYREAD	VMA_BIT(VMA_MAYREAD_BIT)
+> +#define VM_MAYWRITE	VMA_BIT(VMA_MAYWRITE_BIT)
+> +#define VM_MAYEXEC	VMA_BIT(VMA_MAYEXEC_BIT)
+> +#define VM_MAYSHARE	VMA_BIT(VMA_MAYSHARE_BIT)
+
+I suggest removing some of this duplication..
+
+#define DECLARE_VMA_BIT(name, bitno) \
+    NAME ## _BIT = (__force vma_flag_t)bitno,
+    NAME = BIT(bitno),
+
+enum {
+   DECLARE_VMA_BIT(VMA_READ, 0),
+}
+
+Especially since the #defines and enum need to have matching #ifdefs.
+
+It is OK to abuse the enum like the above, C won't get mad and works
+better in gdb/clangd.
+
+Later you can have a variation of the macro for your first sytem
+word/second system word idea.
+
+Otherwise I think this is a great thing to do, thanks!
+
+Jason
 
