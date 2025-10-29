@@ -1,53 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-66116-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66117-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A47DDC17D16
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 02:16:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 45DB2C17D1B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 02:16:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 721A94255B4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 01:14:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 283564257D0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 01:15:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E96502DAFC7;
-	Wed, 29 Oct 2025 01:14:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EE682DA762;
+	Wed, 29 Oct 2025 01:14:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qzRsETtR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WuoVuQ+U"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DDCA1BCA1C;
-	Wed, 29 Oct 2025 01:14:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A058B2D9EEA;
+	Wed, 29 Oct 2025 01:14:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761700482; cv=none; b=elmAIPUw988oE9HT0FDmPr5A3d7QwuSwQRKnzW61a2Q+KypU80pOcjP6LhTEQUoFza0MWb+qLi9VqGZf43koMz9dTHUC7u5g8nBo7enSZCregx/LKevS7Mt9RkbsDFEwnyeiedAeBnl7Vwdbq94EGPBOiwT22WJB2JLQ3SjifOo=
+	t=1761700497; cv=none; b=EXXF5CHpT1aOXcSVuNnrXDSEyx9AwaWEzAXoQojVvGn52D5swVxSIDT1yRLrkiywPmhu+jvouhCowemNT9YTuY6CrtcDSdZJKRKbf5VCD6trwO4JWg1MGMDCWGHTuU/DNMLnmclApl2EEGhg35EveY+JWV3r+ypKnhAHjbluyhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761700482; c=relaxed/simple;
-	bh=4UovTnEkjek0g8v+qyn5wDQWRwWR7grdffoBTtS7nZw=;
+	s=arc-20240116; t=1761700497; c=relaxed/simple;
+	bh=sMf6D2z633UWR6vZ9TBo2dC0KXCJ9+QLWwDc8Hqbd64=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=O1TIhCBov9ta5+24a2nIpXKczdXLr4YiryoKoP+kkoRVWWNW8nXfJJrsqj4HxKxZmFe/tpJeDNRYUdiVCtUzgdHBEpBtX6e8DVUhz7+04Bgbvq8YD3Pv68UHveDgLaGx4GqTS46xjq0iU7wabdRvtLl9m0sm44MwpHcTu4/KhQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qzRsETtR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4E13C4CEE7;
-	Wed, 29 Oct 2025 01:14:41 +0000 (UTC)
+	 MIME-Version:Content-Type; b=Qn2fkjP2KFoZSlWJOCPH/lxWQfoT0WM6cHnDo+/Dl9sy8bDBBAvOTJ3+tq/BEficmDTbONDgCkbIjP1cluKsa3KT5UZjCTGHIssTrc2Io34d5B/iZh+MVOCVA2kWkI0pUHigAiN8takmNDrE2RPjsb1Xai47+5CVgtAAy+sJaP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WuoVuQ+U; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72096C4CEE7;
+	Wed, 29 Oct 2025 01:14:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761700481;
-	bh=4UovTnEkjek0g8v+qyn5wDQWRwWR7grdffoBTtS7nZw=;
+	s=k20201202; t=1761700497;
+	bh=sMf6D2z633UWR6vZ9TBo2dC0KXCJ9+QLWwDc8Hqbd64=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=qzRsETtR/sDidh5EgGMYxNIbsD7vI/g09hDypfZfnogckmYIasosn2bUPQ74p/kpZ
-	 BCarQm2DGH7yphF4yWzjdnJS1SWSeCvykb/Q3fjzCrjNGKUHCRc3wivfgsf2ovDjoJ
-	 EUoYyc59sBbVjyPIO3KJxY51XcNDqbTGqGdUtNaWyyAjLh9nxG6ar9XB+qEiyTFpky
-	 3XakAPld7DMQaXzs8Wy/NX6Fag7s5x1eH8Pdcq36DJ6NcW+j02YLnRw/FadgC7Radt
-	 0xx8MaD1jf8ljzRgjOHrYto2m0e6pTrmCkhxwdeaKZnXnsbqqNHydhXlRqk4b8tZ8r
-	 VJq7wO7gc/VNg==
-Date: Tue, 28 Oct 2025 18:14:41 -0700
-Subject: [PATCH 05/11] fuse2fs: debug timestamp updates
+	b=WuoVuQ+UNn7LmVK9vwwDkYo6BveyT2JPqs0GGPGaQaL+n2KzGDewBUH2iwFxanMtY
+	 ZXOmlApe5Z/Xbdm9KsfQZ6T/mUY87XgAVwzO0bpeABfLN42CHHNMbql0ZFbv//mUpw
+	 MYu0/2YQL/Ox08BOS6qVzVKE5dC2Pz7s1K5bVqRPa7+J5odT42cx0CE0MX54BA2e9m
+	 BHTAXEfASnwa913rHbpbCAB2bTcf/9wZnYJK0GcDfiMlN7W1ih+Lkn4NK8cxD/3X9Y
+	 MUxhSiCHHWdYd6V2ejTvWWCN4QbkporBHEqakXGW327X/QZTZR1bX98HTJ6MPaifyP
+	 XYfMHRrV4oUOA==
+Date: Tue, 28 Oct 2025 18:14:57 -0700
+Subject: [PATCH 06/11] fuse2fs: use coarse timestamps for iomap mode
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: tytso@mit.edu
 Cc: linux-fsdevel@vger.kernel.org, joannelkoong@gmail.com, bernd@bsbernd.com,
  neal@gompa.dev, miklos@szeredi.hu, linux-ext4@vger.kernel.org
-Message-ID: <176169818312.1430380.14612165762844822973.stgit@frogsfrogsfrogs>
+Message-ID: <176169818331.1430380.10138568938764887209.stgit@frogsfrogsfrogs>
 In-Reply-To: <176169818170.1430380.13590456647130347042.stgit@frogsfrogsfrogs>
 References: <176169818170.1430380.13590456647130347042.stgit@frogsfrogsfrogs>
 Precedence: bulk
@@ -61,388 +61,503 @@ Content-Transfer-Encoding: 7bit
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Add tracing for timestamp updates to files.
+In iomap mode, the kernel is responsible for maintaining timestamps
+because file writes don't upcall to fuse2fs.  The kernel's predicate for
+deciding if [cm]time should be updated bases its decisions off [cm]time
+being an exact match for the coarse clock (instead of checking that
+[cm]time < coarse_clock) which means that fuse2fs setting a fine-grained
+timestamp that is slightly ahead of the coarse clock can result in
+timestamps appearing to go backwards.  generic/423 doesn't like seeing
+btime > ctime from statx, so we'll use the coarse clock in iomap mode.
 
 Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- misc/fuse2fs.c |   97 +++++++++++++++++++++++++++++++++++---------------------
- 1 file changed, 61 insertions(+), 36 deletions(-)
+ fuse4fs/fuse4fs.c |  110 +++++++++++++++++++++++++++++++----------------------
+ misc/fuse2fs.c    |   34 ++++++++++++----
+ 2 files changed, 90 insertions(+), 54 deletions(-)
 
 
-diff --git a/misc/fuse2fs.c b/misc/fuse2fs.c
-index fe6410a42a17ff..f77d778aec24ec 100644
---- a/misc/fuse2fs.c
-+++ b/misc/fuse2fs.c
-@@ -864,7 +864,8 @@ static void increment_version(struct ext2_inode_large *inode)
+diff --git a/fuse4fs/fuse4fs.c b/fuse4fs/fuse4fs.c
+index 7570950ca2458d..cafee29991bff6 100644
+--- a/fuse4fs/fuse4fs.c
++++ b/fuse4fs/fuse4fs.c
+@@ -1004,8 +1004,24 @@ static inline void fuse4fs_dump_extents(struct fuse4fs *ff, ext2_ino_t ino,
+ 	ext2fs_extent_free(extents);
+ }
+ 
+-static void get_now(struct timespec *now)
++static void fuse4fs_get_now(struct fuse4fs *ff, struct timespec *now)
+ {
++#ifdef CLOCK_REALTIME_COARSE
++	/*
++	 * In iomap mode, the kernel is responsible for maintaining timestamps
++	 * because file writes don't upcall to fuse4fs.  The kernel's predicate
++	 * for deciding if [cm]time should be updated bases its decisions off
++	 * [cm]time being an exact match for the coarse clock (instead of
++	 * checking that [cm]time < coarse_clock) which means that fuse4fs
++	 * setting a fine-grained timestamp that is slightly ahead of the
++	 * coarse clock can result in timestamps appearing to go backwards.
++	 * generic/423 doesn't like seeing btime > ctime from statx, so we'll
++	 * use the coarse clock in iomap mode.
++	 */
++	if (fuse4fs_iomap_enabled(ff) &&
++	    !clock_gettime(CLOCK_REALTIME_COARSE, now))
++		return;
++#endif
+ #ifdef CLOCK_REALTIME
+ 	if (!clock_gettime(CLOCK_REALTIME, now))
+ 		return;
+@@ -1028,11 +1044,12 @@ static void increment_version(struct ext2_inode_large *inode)
  		inode->i_version_hi = ver >> 32;
  }
  
 -static void init_times(struct ext2_inode_large *inode)
-+static void fuse2fs_init_timestamps(struct fuse2fs *ff, ext2_ino_t ino,
++static void fuse4fs_init_timestamps(struct fuse4fs *ff,
 +				    struct ext2_inode_large *inode)
  {
  	struct timespec now;
  
-@@ -874,11 +875,15 @@ static void init_times(struct ext2_inode_large *inode)
+-	get_now(&now);
++	fuse4fs_get_now(ff, &now);
+ 	EXT4_INODE_SET_XTIME(i_atime, &now, inode);
+ 	EXT4_INODE_SET_XTIME(i_ctime, &now, inode);
  	EXT4_INODE_SET_XTIME(i_mtime, &now, inode);
- 	EXT4_EINODE_SET_XTIME(i_crtime, &now, inode);
+@@ -1040,14 +1057,15 @@ static void init_times(struct ext2_inode_large *inode)
  	increment_version(inode);
-+
-+	dbg_printf(ff, "%s: ino=%u time %ld:%lu\n", __func__, ino, now.tv_sec,
-+		   now.tv_nsec);
  }
  
 -static int update_ctime(ext2_filsys fs, ext2_ino_t ino,
 -			struct ext2_inode_large *pinode)
-+static int fuse2fs_update_ctime(struct fuse2fs *ff, ext2_ino_t ino,
++static int fuse4fs_update_ctime(struct fuse4fs *ff, ext2_ino_t ino,
 +				struct ext2_inode_large *pinode)
  {
-+	ext2_filsys fs = ff->fs;
- 	errcode_t err;
+-	errcode_t err;
  	struct timespec now;
  	struct ext2_inode_large inode;
-@@ -889,6 +894,10 @@ static int update_ctime(ext2_filsys fs, ext2_ino_t ino,
++	ext2_filsys fs = ff->fs;
++	errcode_t err;
+ 
+-	get_now(&now);
++	fuse4fs_get_now(ff, &now);
+ 
+ 	/* If user already has a inode buffer, just update that */
  	if (pinode) {
- 		increment_version(pinode);
- 		EXT4_INODE_SET_XTIME(i_ctime, &now, pinode);
-+
-+		dbg_printf(ff, "%s: ino=%u ctime %ld:%lu\n", __func__, ino,
-+			   now.tv_sec, now.tv_nsec);
-+
- 		return 0;
- 	}
- 
-@@ -900,6 +909,9 @@ static int update_ctime(ext2_filsys fs, ext2_ino_t ino,
- 	increment_version(&inode);
- 	EXT4_INODE_SET_XTIME(i_ctime, &now, &inode);
- 
-+	dbg_printf(ff, "%s: ino=%u ctime %ld:%lu\n", __func__, ino,
-+		   now.tv_sec, now.tv_nsec);
-+
- 	err = fuse2fs_write_inode(fs, ino, &inode);
- 	if (err)
- 		return translate_error(fs, ino, err);
-@@ -907,8 +919,9 @@ static int update_ctime(ext2_filsys fs, ext2_ino_t ino,
+@@ -1071,12 +1089,13 @@ static int update_ctime(ext2_filsys fs, ext2_ino_t ino,
  	return 0;
  }
  
 -static int update_atime(ext2_filsys fs, ext2_ino_t ino)
-+static int fuse2fs_update_atime(struct fuse2fs *ff, ext2_ino_t ino)
++static int fuse4fs_update_atime(struct fuse4fs *ff, ext2_ino_t ino)
  {
-+	ext2_filsys fs = ff->fs;
- 	errcode_t err;
+-	errcode_t err;
  	struct ext2_inode_large inode, *pinode;
  	struct timespec atime, mtime, now;
-@@ -927,6 +940,10 @@ static int update_atime(ext2_filsys fs, ext2_ino_t ino)
- 	dmtime = mtime.tv_sec + ((double)mtime.tv_nsec / NSEC_PER_SEC);
- 	dnow = now.tv_sec + ((double)now.tv_nsec / NSEC_PER_SEC);
++	ext2_filsys fs = ff->fs;
+ 	double datime, dmtime, dnow;
++	errcode_t err;
  
-+	dbg_printf(ff, "%s: ino=%u atime %ld:%lu mtime %ld:%lu now %ld:%lu\n",
-+		   __func__, ino, atime.tv_sec, atime.tv_nsec, mtime.tv_sec,
-+		   mtime.tv_nsec, now.tv_sec, now.tv_nsec);
-+
- 	/*
- 	 * If atime is newer than mtime and atime hasn't been updated in thirty
- 	 * seconds, skip the atime update.  Same idea as Linux "relatime".  Use
-@@ -943,9 +960,10 @@ static int update_atime(ext2_filsys fs, ext2_ino_t ino)
+ 	err = fuse4fs_read_inode(fs, ino, &inode);
+ 	if (err)
+@@ -1085,7 +1104,7 @@ static int update_atime(ext2_filsys fs, ext2_ino_t ino)
+ 	pinode = &inode;
+ 	EXT4_INODE_GET_XTIME(i_atime, &atime, pinode);
+ 	EXT4_INODE_GET_XTIME(i_mtime, &mtime, pinode);
+-	get_now(&now);
++	fuse4fs_get_now(ff, &now);
+ 
+ 	datime = atime.tv_sec + ((double)atime.tv_nsec / NSEC_PER_SEC);
+ 	dmtime = mtime.tv_sec + ((double)mtime.tv_nsec / NSEC_PER_SEC);
+@@ -1107,15 +1126,16 @@ static int update_atime(ext2_filsys fs, ext2_ino_t ino)
  	return 0;
  }
  
 -static int update_mtime(ext2_filsys fs, ext2_ino_t ino,
 -			struct ext2_inode_large *pinode)
-+static int fuse2fs_update_mtime(struct fuse2fs *ff, ext2_ino_t ino,
++static int fuse4fs_update_mtime(struct fuse4fs *ff, ext2_ino_t ino,
 +				struct ext2_inode_large *pinode)
  {
-+	ext2_filsys fs = ff->fs;
- 	errcode_t err;
+-	errcode_t err;
  	struct ext2_inode_large inode;
  	struct timespec now;
-@@ -955,6 +973,10 @@ static int update_mtime(ext2_filsys fs, ext2_ino_t ino,
++	ext2_filsys fs = ff->fs;
++	errcode_t err;
+ 
+ 	if (pinode) {
+-		get_now(&now);
++		fuse4fs_get_now(ff, &now);
  		EXT4_INODE_SET_XTIME(i_mtime, &now, pinode);
  		EXT4_INODE_SET_XTIME(i_ctime, &now, pinode);
  		increment_version(pinode);
-+
-+		dbg_printf(ff, "%s: ino=%u mtime/ctime %ld:%lu\n",
-+			   __func__, ino, now.tv_sec, now.tv_nsec);
-+
- 		return 0;
- 	}
- 
-@@ -967,6 +989,9 @@ static int update_mtime(ext2_filsys fs, ext2_ino_t ino,
- 	EXT4_INODE_SET_XTIME(i_ctime, &now, &inode);
- 	increment_version(&inode);
- 
-+	dbg_printf(ff, "%s: ino=%u mtime/ctime %ld:%lu\n",
-+		   __func__, ino, now.tv_sec, now.tv_nsec);
-+
- 	err = fuse2fs_write_inode(fs, ino, &inode);
+@@ -1126,7 +1146,7 @@ static int update_mtime(ext2_filsys fs, ext2_ino_t ino,
  	if (err)
  		return translate_error(fs, ino, err);
-@@ -2222,7 +2247,7 @@ static int op_readlink(const char *path, char *buf, size_t len)
+ 
+-	get_now(&now);
++	fuse4fs_get_now(ff, &now);
+ 	EXT4_INODE_SET_XTIME(i_mtime, &now, &inode);
+ 	EXT4_INODE_SET_XTIME(i_ctime, &now, &inode);
+ 	increment_version(&inode);
+@@ -2416,7 +2436,7 @@ static void op_readlink(fuse_req_t req, fuse_ino_t fino)
  	buf[len] = 0;
  
- 	if (fuse2fs_is_writeable(ff)) {
+ 	if (fuse4fs_is_writeable(ff)) {
 -		ret = update_atime(fs, ino);
-+		ret = fuse2fs_update_atime(ff, ino);
++		ret = fuse4fs_update_atime(ff, ino);
  		if (ret)
  			goto out;
  	}
-@@ -2496,7 +2521,7 @@ static int op_mknod(const char *path, mode_t mode, dev_t dev)
+@@ -2685,7 +2705,7 @@ static void op_mknod(fuse_req_t req, fuse_ino_t fino, const char *name,
  		goto out2;
  	}
  
 -	ret = update_mtime(fs, parent, NULL);
-+	ret = fuse2fs_update_mtime(ff, parent, NULL);
++	ret = fuse4fs_update_mtime(ff, parent, NULL);
  	if (ret)
  		goto out2;
  
-@@ -2519,7 +2544,7 @@ static int op_mknod(const char *path, mode_t mode, dev_t dev)
+@@ -2708,7 +2728,7 @@ static void op_mknod(fuse_req_t req, fuse_ino_t fino, const char *name,
  	}
  
  	inode.i_generation = ff->next_generation++;
 -	init_times(&inode);
-+	fuse2fs_init_timestamps(ff, child, &inode);
- 	err = fuse2fs_write_inode(fs, child, &inode);
++	fuse4fs_init_timestamps(ff, &inode);
+ 	err = fuse4fs_write_inode(fs, child, &inode);
  	if (err) {
  		ret = translate_error(fs, child, err);
-@@ -2605,7 +2630,7 @@ static int op_mkdir(const char *path, mode_t mode)
+@@ -2770,7 +2790,7 @@ static void op_mkdir(fuse_req_t req, fuse_ino_t fino, const char *name,
  		goto out2;
  	}
  
 -	ret = update_mtime(fs, parent, NULL);
-+	ret = fuse2fs_update_mtime(ff, parent, NULL);
++	ret = fuse4fs_update_mtime(ff, parent, NULL);
  	if (ret)
  		goto out2;
  
-@@ -2632,7 +2657,7 @@ static int op_mkdir(const char *path, mode_t mode)
+@@ -2796,7 +2816,7 @@ static void op_mkdir(fuse_req_t req, fuse_ino_t fino, const char *name,
  	if (parent_sgid)
  		inode.i_mode |= S_ISGID;
  	inode.i_generation = ff->next_generation++;
 -	init_times(&inode);
-+	fuse2fs_init_timestamps(ff, child, &inode);
++	fuse4fs_init_timestamps(ff, &inode);
  
- 	err = fuse2fs_write_inode(fs, child, &inode);
+ 	err = fuse4fs_write_inode(fs, child, &inode);
  	if (err) {
-@@ -2715,7 +2740,7 @@ static int fuse2fs_unlink(struct fuse2fs *ff, const char *path,
- 	if (err)
- 		return translate_error(fs, dir, err);
- 
--	ret = update_mtime(fs, dir, NULL);
-+	ret = fuse2fs_update_mtime(ff, dir, NULL);
- 	if (ret)
- 		return ret;
- 
-@@ -2806,7 +2831,7 @@ static int remove_inode(struct fuse2fs *ff, ext2_ino_t ino)
- 			ext2fs_set_dtime(fs, EXT2_INODE(&inode));
+@@ -3147,7 +3167,7 @@ static int fuse4fs_remove_inode(struct fuse4fs *ff, ext2_ino_t ino)
+ 		inode.i_links_count--;
  	}
  
 -	ret = update_ctime(fs, ino, &inode);
-+	ret = fuse2fs_update_ctime(ff, ino, &inode);
++	ret = fuse4fs_update_ctime(ff, ino, &inode);
  	if (ret)
  		return ret;
  
-@@ -2976,7 +3001,7 @@ static int __op_rmdir(struct fuse2fs *ff, const char *path)
+@@ -3219,7 +3239,7 @@ static int fuse4fs_unlink(struct fuse4fs *ff, ext2_ino_t parent,
+ 		goto out;
+ 	}
+ 
+-	ret = update_mtime(fs, parent, NULL);
++	ret = fuse4fs_update_mtime(ff, parent, NULL);
+ 	if (ret)
+ 		goto out;
+ out:
+@@ -3353,7 +3373,7 @@ static int fuse4fs_rmdir(struct fuse4fs *ff, ext2_ino_t parent,
  			goto out;
  		}
  		ext2fs_dec_nlink(EXT2_INODE(&inode));
 -		ret = update_mtime(fs, rds.parent, &inode);
-+		ret = fuse2fs_update_mtime(ff, rds.parent, &inode);
++		ret = fuse4fs_update_mtime(ff, rds.parent, &inode);
  		if (ret)
  			goto out;
- 		err = fuse2fs_write_inode(fs, rds.parent, &inode);
-@@ -3073,7 +3098,7 @@ static int op_symlink(const char *src, const char *dest)
+ 		err = fuse4fs_write_inode(fs, rds.parent, &inode);
+@@ -3457,7 +3477,7 @@ static void op_symlink(fuse_req_t req, const char *target, fuse_ino_t fino,
  	}
  
  	/* Update parent dir's mtime */
 -	ret = update_mtime(fs, parent, NULL);
-+	ret = fuse2fs_update_mtime(ff, parent, NULL);
++	ret = fuse4fs_update_mtime(ff, parent, NULL);
  	if (ret)
  		goto out2;
  
-@@ -3097,7 +3122,7 @@ static int op_symlink(const char *src, const char *dest)
- 	fuse2fs_set_uid(&inode, ctxt->uid);
- 	fuse2fs_set_gid(&inode, gid);
+@@ -3480,7 +3500,7 @@ static void op_symlink(fuse_req_t req, const char *target, fuse_ino_t fino,
+ 	fuse4fs_set_uid(&inode, ctxt->uid);
+ 	fuse4fs_set_gid(&inode, gid);
  	inode.i_generation = ff->next_generation++;
 -	init_times(&inode);
-+	fuse2fs_init_timestamps(ff, child, &inode);
++	fuse4fs_init_timestamps(ff, &inode);
  
- 	err = fuse2fs_write_inode(fs, child, &inode);
+ 	err = fuse4fs_write_inode(fs, child, &inode);
  	if (err) {
-@@ -3382,11 +3407,11 @@ static int op_rename(const char *from, const char *to,
+@@ -3711,11 +3731,11 @@ static void op_rename(fuse_req_t req, fuse_ino_t from_parent, const char *from,
  	}
  
  	/* Update timestamps */
 -	ret = update_ctime(fs, from_ino, NULL);
-+	ret = fuse2fs_update_ctime(ff, from_ino, NULL);
++	ret = fuse4fs_update_ctime(ff, from_ino, NULL);
  	if (ret)
- 		goto out2;
+ 		goto out;
  
 -	ret = update_mtime(fs, to_dir_ino, NULL);
-+	ret = fuse2fs_update_mtime(ff, to_dir_ino, NULL);
++	ret = fuse4fs_update_mtime(ff, to_dir_ino, NULL);
  	if (ret)
- 		goto out2;
+ 		goto out;
  
-@@ -3480,7 +3505,7 @@ static int op_link(const char *src, const char *dest)
+@@ -3794,7 +3814,7 @@ static void op_link(fuse_req_t req, fuse_ino_t child_fino,
  	}
  
  	ext2fs_inc_nlink(fs, EXT2_INODE(&inode));
--	ret = update_ctime(fs, ino, &inode);
-+	ret = fuse2fs_update_ctime(ff, ino, &inode);
+-	ret = update_ctime(fs, child, &inode);
++	ret = fuse4fs_update_ctime(ff, child, &inode);
  	if (ret)
  		goto out2;
  
-@@ -3499,7 +3524,7 @@ static int op_link(const char *src, const char *dest)
+@@ -3811,7 +3831,7 @@ static void op_link(fuse_req_t req, fuse_ino_t child_fino,
  		goto out2;
  	}
  
 -	ret = update_mtime(fs, parent, NULL);
-+	ret = fuse2fs_update_mtime(ff, parent, NULL);
++	ret = fuse4fs_update_mtime(ff, parent, NULL);
  	if (ret)
  		goto out2;
  
-@@ -3647,7 +3672,7 @@ static int op_chmod(const char *path, mode_t mode, struct fuse_file_info *fi)
- 
- 	inode.i_mode = new_mode;
- 
--	ret = update_ctime(fs, ino, &inode);
-+	ret = fuse2fs_update_ctime(ff, ino, &inode);
- 	if (ret)
- 		goto out;
- 
-@@ -3714,7 +3739,7 @@ static int op_chown(const char *path, uid_t owner, gid_t group,
- 		fuse2fs_set_gid(&inode, group);
- 	}
- 
--	ret = update_ctime(fs, ino, &inode);
-+	ret = fuse2fs_update_ctime(ff, ino, &inode);
- 	if (ret)
- 		goto out;
- 
-@@ -3844,7 +3869,7 @@ static int fuse2fs_truncate(struct fuse2fs *ff, ext2_ino_t ino, off_t new_size)
+@@ -4047,7 +4067,7 @@ static int fuse4fs_truncate(struct fuse4fs *ff, ext2_ino_t ino, off_t new_size)
  	if (err)
  		return translate_error(fs, ino, err);
  
 -	ret = update_mtime(fs, ino, NULL);
-+	ret = fuse2fs_update_mtime(ff, ino, NULL);
++	ret = fuse4fs_update_mtime(ff, ino, NULL);
  	if (ret)
  		return ret;
  
-@@ -4072,7 +4097,7 @@ static int op_read(const char *path EXT2FS_ATTR((unused)), char *buf,
+@@ -4249,7 +4269,7 @@ static void op_read(fuse_req_t req, fuse_ino_t fino EXT2FS_ATTR((unused)),
  	}
  
- 	if (fh->check_flags != X_OK && fuse2fs_is_writeable(ff)) {
+ 	if (fh->check_flags != X_OK && fuse4fs_is_writeable(ff)) {
 -		ret = update_atime(fs, fh->ino);
-+		ret = fuse2fs_update_atime(ff, fh->ino);
++		ret = fuse4fs_update_atime(ff, fh->ino);
  		if (ret)
  			goto out;
  	}
-@@ -4156,7 +4181,7 @@ static int op_write(const char *path EXT2FS_ATTR((unused)),
+@@ -4323,7 +4343,7 @@ static void op_write(fuse_req_t req, fuse_ino_t fino EXT2FS_ATTR((unused)),
  		goto out;
  	}
  
 -	ret = update_mtime(fs, fh->ino, NULL);
-+	ret = fuse2fs_update_mtime(ff, fh->ino, NULL);
++	ret = fuse4fs_update_mtime(ff, fh->ino, NULL);
  	if (ret)
  		goto out;
  
-@@ -4518,7 +4543,7 @@ static int op_setxattr(const char *path EXT2FS_ATTR((unused)),
+@@ -4770,7 +4790,7 @@ static void op_setxattr(fuse_req_t req, fuse_ino_t fino, const char *key,
  		goto out2;
  	}
  
 -	ret = update_ctime(fs, ino, NULL);
-+	ret = fuse2fs_update_ctime(ff, ino, NULL);
++	ret = fuse4fs_update_ctime(ff, ino, NULL);
  out2:
  	err = ext2fs_xattrs_close(&h);
  	if (!ret && err)
-@@ -4612,7 +4637,7 @@ static int op_removexattr(const char *path, const char *key)
+@@ -4864,7 +4884,7 @@ static void op_removexattr(fuse_req_t req, fuse_ino_t fino, const char *key)
  		goto out2;
  	}
  
 -	ret = update_ctime(fs, ino, NULL);
-+	ret = fuse2fs_update_ctime(ff, ino, NULL);
++	ret = fuse4fs_update_ctime(ff, ino, NULL);
  out2:
  	err = ext2fs_xattrs_close(&h);
  	if (err && !ret)
-@@ -4730,7 +4755,7 @@ static int op_readdir(const char *path EXT2FS_ATTR((unused)), void *buf,
+@@ -5011,7 +5031,7 @@ static void __op_readdir(fuse_req_t req, fuse_ino_t fino, size_t size,
  	}
  
- 	if (fuse2fs_is_writeable(ff)) {
+ 	if (fuse4fs_is_writeable(ff)) {
 -		ret = update_atime(i.fs, fh->ino);
-+		ret = fuse2fs_update_atime(ff, fh->ino);
++		ret = fuse4fs_update_atime(i.ff, fh->ino);
  		if (ret)
  			goto out;
  	}
-@@ -4835,7 +4860,7 @@ static int op_create(const char *path, mode_t mode, struct fuse_file_info *fp)
- 		goto out2;
- 	}
+@@ -5111,7 +5131,7 @@ static void op_create(fuse_req_t req, fuse_ino_t fino, const char *name,
+ 			goto out2;
+ 		}
  
--	ret = update_mtime(fs, parent, NULL);
-+	ret = fuse2fs_update_mtime(ff, parent, NULL);
- 	if (ret)
- 		goto out2;
- 
-@@ -4866,7 +4891,7 @@ static int op_create(const char *path, mode_t mode, struct fuse_file_info *fp)
+-		ret = update_mtime(fs, parent, NULL);
++		ret = fuse4fs_update_mtime(ff, parent, NULL);
+ 		if (ret)
+ 			goto out2;
+ 	} else {
+@@ -5152,7 +5172,7 @@ static void op_create(fuse_req_t req, fuse_ino_t fino, const char *name,
  	}
  
  	inode.i_generation = ff->next_generation++;
 -	init_times(&inode);
-+	fuse2fs_init_timestamps(ff, child, &inode);
- 	err = fuse2fs_write_inode(fs, child, &inode);
++	fuse4fs_init_timestamps(ff, &inode);
+ 	err = fuse4fs_write_inode(fs, child, &inode);
  	if (err) {
  		ret = translate_error(fs, child, err);
-@@ -4950,7 +4975,7 @@ static int op_utimens(const char *path, const struct timespec ctv[2],
- 	if (tv[1].tv_nsec != UTIME_OMIT)
- 		EXT4_INODE_SET_XTIME(i_mtime, &tv[1], &inode);
- #endif /* UTIME_OMIT */
+@@ -5231,7 +5251,7 @@ static int fuse4fs_utimens(struct fuse4fs *ff, const struct fuse_ctx *ctxt,
+ 	int ret = 0;
+ 
+ 	if (to_set & (FUSE_SET_ATTR_ATIME_NOW | FUSE_SET_ATTR_MTIME_NOW))
+-		get_now(&now);
++		fuse4fs_get_now(ff, &now);
+ 
+ 	if (to_set & FUSE_SET_ATTR_ATIME_NOW) {
+ 		atime = now;
+@@ -5369,7 +5389,7 @@ static void op_setattr(fuse_req_t req, fuse_ino_t fino, struct stat *attr,
+ 	}
+ 
+ 	/* Update ctime for any attribute change */
 -	ret = update_ctime(fs, ino, &inode);
-+	ret = fuse2fs_update_ctime(ff, ino, &inode);
++	ret = fuse4fs_update_ctime(ff, ino, &inode);
  	if (ret)
  		goto out;
  
-@@ -5018,7 +5043,7 @@ static int ioctl_setflags(struct fuse2fs *ff, struct fuse2fs_file_handle *fh,
+@@ -5451,7 +5471,7 @@ static int ioctl_setflags(struct fuse4fs *ff, const struct fuse_ctx *ctxt,
  	if (ret)
  		return ret;
  
 -	ret = update_ctime(fs, fh->ino, &inode);
-+	ret = fuse2fs_update_ctime(ff, fh->ino, &inode);
++	ret = fuse4fs_update_ctime(ff, fh->ino, &inode);
  	if (ret)
  		return ret;
  
-@@ -5065,7 +5090,7 @@ static int ioctl_setversion(struct fuse2fs *ff, struct fuse2fs_file_handle *fh,
+@@ -5504,7 +5524,7 @@ static int ioctl_setversion(struct fuse4fs *ff, const struct fuse_ctx *ctxt,
  
- 	inode.i_generation = generation;
+ 	inode.i_generation = *indata;
  
 -	ret = update_ctime(fs, fh->ino, &inode);
-+	ret = fuse2fs_update_ctime(ff, fh->ino, &inode);
++	ret = fuse4fs_update_ctime(ff, fh->ino, &inode);
  	if (ret)
  		return ret;
  
-@@ -5196,7 +5221,7 @@ static int ioctl_fssetxattr(struct fuse2fs *ff, struct fuse2fs_file_handle *fh,
+@@ -5640,7 +5660,7 @@ static int ioctl_fssetxattr(struct fuse4fs *ff, const struct fuse_ctx *ctxt,
  	if (ext2fs_inode_includes(inode_size, i_projid))
  		inode.i_projid = fsx->fsx_projid;
  
 -	ret = update_ctime(fs, fh->ino, &inode);
-+	ret = fuse2fs_update_ctime(ff, fh->ino, &inode);
++	ret = fuse4fs_update_ctime(ff, fh->ino, &inode);
  	if (ret)
  		return ret;
  
-@@ -5468,7 +5493,7 @@ static int fuse2fs_allocate_range(struct fuse2fs *ff,
+@@ -5936,7 +5956,7 @@ static int fuse4fs_allocate_range(struct fuse4fs *ff,
  		}
  	}
  
 -	err = update_mtime(fs, fh->ino, &inode);
-+	err = fuse2fs_update_mtime(ff, fh->ino, &inode);
++	err = fuse4fs_update_mtime(ff, fh->ino, &inode);
  	if (err)
  		return err;
  
-@@ -5641,7 +5666,7 @@ static int fuse2fs_punch_range(struct fuse2fs *ff,
+@@ -6109,7 +6129,7 @@ static int fuse4fs_punch_range(struct fuse4fs *ff,
  			return translate_error(fs, fh->ino, err);
  	}
  
 -	err = update_mtime(fs, fh->ino, &inode);
-+	err = fuse2fs_update_mtime(ff, fh->ino, &inode);
++	err = fuse4fs_update_mtime(ff, fh->ino, &inode);
  	if (err)
  		return err;
  
+@@ -8271,7 +8291,7 @@ static int __translate_error(ext2_filsys fs, ext2_ino_t ino, errcode_t err,
+ 			error_message(err), func, line);
+ 
+ 	/* Make a note in the error log */
+-	get_now(&now);
++	fuse4fs_get_now(ff, &now);
+ 	ext2fs_set_tstamp(fs->super, s_last_error_time, now.tv_sec);
+ 	fs->super->s_last_error_ino = ino;
+ 	fs->super->s_last_error_line = line;
+diff --git a/misc/fuse2fs.c b/misc/fuse2fs.c
+index f77d778aec24ec..de712461492e05 100644
+--- a/misc/fuse2fs.c
++++ b/misc/fuse2fs.c
+@@ -840,8 +840,24 @@ static inline void fuse2fs_dump_extents(struct fuse2fs *ff, ext2_ino_t ino,
+ 	ext2fs_extent_free(extents);
+ }
+ 
+-static void get_now(struct timespec *now)
++static void fuse2fs_get_now(struct fuse2fs *ff, struct timespec *now)
+ {
++#ifdef CLOCK_REALTIME_COARSE
++	/*
++	 * In iomap mode, the kernel is responsible for maintaining timestamps
++	 * because file writes don't upcall to fuse2fs.  The kernel's predicate
++	 * for deciding if [cm]time should be updated bases its decisions off
++	 * [cm]time being an exact match for the coarse clock (instead of
++	 * checking that [cm]time < coarse_clock) which means that fuse2fs
++	 * setting a fine-grained timestamp that is slightly ahead of the
++	 * coarse clock can result in timestamps appearing to go backwards.
++	 * generic/423 doesn't like seeing btime > ctime from statx, so we'll
++	 * use the coarse clock in iomap mode.
++	 */
++	if (fuse2fs_iomap_enabled(ff) &&
++	    !clock_gettime(CLOCK_REALTIME_COARSE, now))
++		return;
++#endif
+ #ifdef CLOCK_REALTIME
+ 	if (!clock_gettime(CLOCK_REALTIME, now))
+ 		return;
+@@ -869,7 +885,7 @@ static void fuse2fs_init_timestamps(struct fuse2fs *ff, ext2_ino_t ino,
+ {
+ 	struct timespec now;
+ 
+-	get_now(&now);
++	fuse2fs_get_now(ff, &now);
+ 	EXT4_INODE_SET_XTIME(i_atime, &now, inode);
+ 	EXT4_INODE_SET_XTIME(i_ctime, &now, inode);
+ 	EXT4_INODE_SET_XTIME(i_mtime, &now, inode);
+@@ -888,7 +904,7 @@ static int fuse2fs_update_ctime(struct fuse2fs *ff, ext2_ino_t ino,
+ 	struct timespec now;
+ 	struct ext2_inode_large inode;
+ 
+-	get_now(&now);
++	fuse2fs_get_now(ff, &now);
+ 
+ 	/* If user already has a inode buffer, just update that */
+ 	if (pinode) {
+@@ -934,7 +950,7 @@ static int fuse2fs_update_atime(struct fuse2fs *ff, ext2_ino_t ino)
+ 	pinode = &inode;
+ 	EXT4_INODE_GET_XTIME(i_atime, &atime, pinode);
+ 	EXT4_INODE_GET_XTIME(i_mtime, &mtime, pinode);
+-	get_now(&now);
++	fuse2fs_get_now(ff, &now);
+ 
+ 	datime = atime.tv_sec + ((double)atime.tv_nsec / NSEC_PER_SEC);
+ 	dmtime = mtime.tv_sec + ((double)mtime.tv_nsec / NSEC_PER_SEC);
+@@ -969,7 +985,7 @@ static int fuse2fs_update_mtime(struct fuse2fs *ff, ext2_ino_t ino,
+ 	struct timespec now;
+ 
+ 	if (pinode) {
+-		get_now(&now);
++		fuse2fs_get_now(ff, &now);
+ 		EXT4_INODE_SET_XTIME(i_mtime, &now, pinode);
+ 		EXT4_INODE_SET_XTIME(i_ctime, &now, pinode);
+ 		increment_version(pinode);
+@@ -984,7 +1000,7 @@ static int fuse2fs_update_mtime(struct fuse2fs *ff, ext2_ino_t ino,
+ 	if (err)
+ 		return translate_error(fs, ino, err);
+ 
+-	get_now(&now);
++	fuse2fs_get_now(ff, &now);
+ 	EXT4_INODE_SET_XTIME(i_mtime, &now, &inode);
+ 	EXT4_INODE_SET_XTIME(i_ctime, &now, &inode);
+ 	increment_version(&inode);
+@@ -4965,9 +4981,9 @@ static int op_utimens(const char *path, const struct timespec ctv[2],
+ 	tv[1] = ctv[1];
+ #ifdef UTIME_NOW
+ 	if (tv[0].tv_nsec == UTIME_NOW)
+-		get_now(tv);
++		fuse2fs_get_now(ff, tv);
+ 	if (tv[1].tv_nsec == UTIME_NOW)
+-		get_now(tv + 1);
++		fuse2fs_get_now(ff, tv + 1);
+ #endif /* UTIME_NOW */
+ #ifdef UTIME_OMIT
+ 	if (tv[0].tv_nsec != UTIME_OMIT)
+@@ -7708,7 +7724,7 @@ static int __translate_error(ext2_filsys fs, ext2_ino_t ino, errcode_t err,
+ 			error_message(err), func, line);
+ 
+ 	/* Make a note in the error log */
+-	get_now(&now);
++	fuse2fs_get_now(ff, &now);
+ 	ext2fs_set_tstamp(fs->super, s_last_error_time, now.tv_sec);
+ 	fs->super->s_last_error_ino = ino;
+ 	fs->super->s_last_error_line = line;
 
 
