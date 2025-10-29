@@ -1,277 +1,177 @@
-Return-Path: <linux-fsdevel+bounces-66205-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66206-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40FC2C197BD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 10:51:12 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF3D3C19811
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 10:55:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 24D50583F5D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 09:42:35 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3105150372F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 09:46:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D27D6328639;
-	Wed, 29 Oct 2025 09:40:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53BAB2F6596;
+	Wed, 29 Oct 2025 09:46:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3sTXMxsI";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Qu2A8dkh"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oTPyymV1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FE96223DF6;
-	Wed, 29 Oct 2025 09:40:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFF442DA757
+	for <linux-fsdevel@vger.kernel.org>; Wed, 29 Oct 2025 09:45:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761730857; cv=none; b=HXqi5u1xCQbJ1ujpBS6JHGeGNLFFU6S2thNC0HnXd/gVyYg77Pv8gmNy+4/klBF07IsdJW0DdvKw3rMAyzCPDwOvP3I/ZtqYV1bjCQcdrLHrW7Lcoag3x2ACXjktLkO4z0X1TaHiq3NxET6R1v4kK8V78ANMGf7LJQnTIJX1WBc=
+	t=1761731159; cv=none; b=XqhufNzSRgJTYxdT5Jj5wk2B+qMXnMeXxH0Ii7elFrDRmvUGHgI5hLA8lNBz+AtFNRhcDuhcZKOQEJgXGD1Vd1EJ1J+UJlaM2N3dGLcedatmlPsGJnFJxlhKEqpwDVniQEngHfzxksix3m2aARUkc4XEqxDKLZqflcEDrxet5tE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761730857; c=relaxed/simple;
-	bh=u+zy8gS8LtPNCO8qdvvpzDPNEtqY0yPY4jb12c6HQVQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=gRY2/U7MdYQ/2OLEmyFk48UUWUrmFNHI9qZRZpQDHiJsDhTWVrCxkLe6tUqEif3tdc6K53ldDYBRa+/nkmi7FhL0dR9ls/MtqREZckkDXfu0qGAiLpke3YzoMNdFHMErA3SqAw5sl7u15UFFBQIe+x/A+v3HsG1sgoMg2tpNjDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3sTXMxsI; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Qu2A8dkh; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1761730853;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EFO/V4h4fszx7JmKEX4+pQ6W25t5QSCTuaQ3p7c5bTk=;
-	b=3sTXMxsIKprUjnsDC66p+RBYJd9y6TZ1M3AyJLTlStJ+fElxuoiyQSYqwAmRVPl9VCYYPv
-	e8LoYCTUGlmJz3YFZqzz44NvoEOGiy/HMpmKljmKvp24Xo/prnzqfa7/3zvwo9yekzvhre
-	yYozK/wb82vBfLPgjnmd5TLh17uFgGvr/0Gqkf1SgjaUWdbprblGt269I+L1TvWs7Gayln
-	Iwd81TagqU8MwWufrGABN3adYripPGFZF4G9Zur3J4UTbrqOMQwefmFc0M5wmTe/7FOd9B
-	W/+bAHiStdDK9PNOl3peIdUp5EXACfesjCznurUapyJ3iIjnSjUcdIuZbtYeNg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1761730853;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EFO/V4h4fszx7JmKEX4+pQ6W25t5QSCTuaQ3p7c5bTk=;
-	b=Qu2A8dkhT2JhVGdB5ITQtPpq5eKRqmyaPGfzBMENu1kheISQNRLH52GqMZHNnXGu4rwWXY
-	EQqPF2Atk1+ec1Dg==
-To: Yann Ylavic <ylavic.dev@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linus Torvalds
- <torvalds@linux-foundation.org>, kernel test robot <lkp@intel.com>,
- Russell King <linux@armlinux.org.uk>,
- linux-arm-kernel@lists.infradead.org, x86@kernel.org, Madhavan Srinivasan
- <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Nicholas
- Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>,
- linuxppc-dev@lists.ozlabs.org, Paul
- Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
- linux-riscv@lists.infradead.org, Heiko Carstens <hca@linux.ibm.com>,
- Christian Borntraeger <borntraeger@linux.ibm.com>, Sven Schnelle
- <svens@linux.ibm.com>, linux-s390@vger.kernel.org, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Andrew Cooper
- <andrew.cooper3@citrix.com>, David Laight <david.laight.linux@gmail.com>,
- Julia Lawall <Julia.Lawall@inria.fr>, Nicolas Palix
- <nicolas.palix@imag.fr>, Peter Zijlstra <peterz@infradead.org>, Darren
- Hart <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>,
- =?utf-8?Q?Andr=C3=A9?=
- Almeida <andrealmeid@igalia.com>, Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan
- Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
-Subject: [patch V6 02/12] uaccess: Provide ASM GOTO safe wrappers for
- unsafe_*_user()
-In-Reply-To: <87jz0fuinj.ffs@tglx>
-References: <20251027083700.573016505@linutronix.de>
- <20251027083745.231716098@linutronix.de>
- <CAKQ1sVO9YmWqo2uzk7NbssgWuwnQ-o4Yf2+bCP8UmHAU3u8KmQ@mail.gmail.com>
- <87jz0fuinj.ffs@tglx>
-Date: Wed, 29 Oct 2025 10:40:52 +0100
-Message-ID: <877bweujtn.ffs@tglx>
+	s=arc-20240116; t=1761731159; c=relaxed/simple;
+	bh=+eG+DZh4Mcc3z1uy4MNUctOCZyufRjLsNAdxEe98Jz8=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=Ow1GK2HvWpFPV1ux9YJi2nar1Tah65L3gmZs7kUmhogYiROAbtW19kWrjmerXhQdkTZzyuKZQgnXMZ5zfIiiqmzAz+1HBKNrzErFLCZhSDOlansXpB0KLpW8POyvTYqBVXKtNUo4K0opSLCpYcs+1bhIbHrkeXVQ6PPghBCoPJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oTPyymV1; arc=none smtp.client-ip=209.85.128.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-780fe76f457so70725407b3.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Oct 2025 02:45:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761731157; x=1762335957; darn=vger.kernel.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=7/9ZZO0rhubaMghlPDWYbVAhM+q6Jydtc36d3XX5xX8=;
+        b=oTPyymV1cMSv99kCQqg/jKHU2+by0oW/w97dRRMHDohPhEWOZeFfe5d/Wi5lve69XN
+         cHV3X9/wNEFGYFg/dsMOUXLgmMk5yEimY0aD6nzV8RXg4uvdnsbEuHMZAeeo8dUutw+5
+         upTGuE/qPGQV2fgKmIdrM5SI+hD2TwMVTtrT24NlVlcYwktUrb0r1lwnU0nrfvIFHikX
+         Sg5s4KlEcO/GGUIHYvMvyw9Q0+af1lLobxIuNmS1aE48SDXVE9VNae7GmKg9TNpFGi+W
+         Zfzh8qDXE/AW9BJoQc/eAxbeW9V7/K/SQwGnGUEjLLFm5nRM3BhyqqAiZTaFk8NmrFrF
+         PTPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761731157; x=1762335957;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7/9ZZO0rhubaMghlPDWYbVAhM+q6Jydtc36d3XX5xX8=;
+        b=KN7DwV85XauXIaPOt/bmAar3uUSwaGhDKASluJbgVqKIGDDkafjuVTKyATpmjQhKeX
+         ThtVP+/cljuXI8IO9+pKWMALYm2kLUIkP/+UAiLfpO2fRwEpHKi3G1INIu1nOOKGDNWH
+         Fezv1CaLZp3dlgziMDk11Q+gtxjCc72UYPqGGfEi56UpK5ZHxD648kqFijeJaSwnaY1L
+         ebAigkWs/el2pDDm+Sw78+Am1T0ZXZ25x6pCYqkCudb/2Wi4H2Mq4mOyrQUjZ1PHO0Xj
+         XySJUTZ4w19ZmETS78dEnawqaJ5s9HFcKS27/XmntAysjxeNaD0Rd06d8UHjjOo/XJwD
+         KQrg==
+X-Forwarded-Encrypted: i=1; AJvYcCVdHaY/WN7U4w5DUdO7mwgOxJiv/NC/xNf9CxLur1M8TnxAybP74kRA6nNjQ+4MybGjo4dmFlJhyyVt1iVL@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDjMaj4bjtjVhcIYBpvW0SntLXjKqRjKz17YCbZNDp+eZQkhMz
+	61RDEaD1vkX0I+x/nFSIkjsqT39uak/ZquqnNz9lGcPdCrmip/KSshQyID9AA1dCXQ==
+X-Gm-Gg: ASbGncsWLEtMcflAn6la/2PFAd55Y0lWCgQzH4kqyUqmD4l5wCCX4Rw21fm0Gqz3UQ0
+	aGgtggEeNem2mgO0SrLWbBQlZ8RM+c7XI8d+z7Drj5ijsndCiX49ZldyqgcU4MxkDtIpEwZBV3X
+	G9H76Yo9/U/cNMvyKnYfgbQbKKnCq5aJhu+lpZV5nAHdF5k3C/kxmV/vrQwAw16+5mLmTIDNofF
+	DUroxF9+67GFVFFEUtIb3QNu5Iyeqxm8fnue5iD3LWthqEkO0KqiEZSxr0yIyRM/hjpNa13YBXT
+	fGDz1JL4MrFHDaoarLusQqhxDr/T5jsnbk4V4wh8lq3GVb47Cs22TS+9/Ursqu8s8PpSetYrKZV
+	Eryvr306AyLyE0harV0X+ZYUWObm4Qd4KnI+zBvsbDLYO5MHFr3GSzkM0N7P9SYHQ73IbZk/HuA
+	7wft99xev6w8tVtCWHK8113rB/UFkPhfyiw948iOX3aPr/VVfoHalILzmflw5r
+X-Google-Smtp-Source: AGHT+IEeP09fuX5a6/tVT4haAmvdF3K7vyTy354JjeQP1tfCemInfRx1yyo5g0HaztI92HwXX6vV3g==
+X-Received: by 2002:a05:690c:4a05:b0:783:7081:c479 with SMTP id 00721157ae682-786293b13admr37307107b3.65.1761731156381;
+        Wed, 29 Oct 2025 02:45:56 -0700 (PDT)
+Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-785ed199f95sm34481207b3.28.2025.10.29.02.45.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Oct 2025 02:45:55 -0700 (PDT)
+Date: Wed, 29 Oct 2025 02:45:52 -0700 (PDT)
+From: Hugh Dickins <hughd@google.com>
+To: Kiryl Shutsemau <kirill@shutemov.name>
+cc: Andrew Morton <akpm@linux-foundation.org>, 
+    David Hildenbrand <david@redhat.com>, Hugh Dickins <hughd@google.com>, 
+    Matthew Wilcox <willy@infradead.org>, 
+    Alexander Viro <viro@zeniv.linux.org.uk>, 
+    Christian Brauner <brauner@kernel.org>, 
+    Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+    "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+    Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, 
+    Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
+    Rik van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>, 
+    Johannes Weiner <hannes@cmpxchg.org>, 
+    Shakeel Butt <shakeel.butt@linux.dev>, 
+    Baolin Wang <baolin.wang@linux.alibaba.com>, 
+    "Darrick J. Wong" <djwong@kernel.org>, Dave Chinner <david@fromorbit.com>, 
+    linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv3 1/2] mm/memory: Do not populate page table entries
+ beyond i_size
+In-Reply-To: <hw5hjbmt65aefgfz5cqsodpduvlkc6fmlbmwemvoknuehhgml2@orbho2mz52sv>
+Message-ID: <9e2750bf-7945-cc71-b9b3-632f03d89a55@google.com>
+References: <20251027115636.82382-1-kirill@shutemov.name> <20251027115636.82382-2-kirill@shutemov.name> <20251027153323.5eb2d97a791112f730e74a21@linux-foundation.org> <hw5hjbmt65aefgfz5cqsodpduvlkc6fmlbmwemvoknuehhgml2@orbho2mz52sv>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
 
-ASM GOTO is miscompiled by GCC when it is used inside a auto cleanup scope:
+On Tue, 28 Oct 2025, Kiryl Shutsemau wrote:
+> On Mon, Oct 27, 2025 at 03:33:23PM -0700, Andrew Morton wrote:
+> > On Mon, 27 Oct 2025 11:56:35 +0000 Kiryl Shutsemau <kirill@shutemov.name> wrote:
+> > 
+> > > From: Kiryl Shutsemau <kas@kernel.org>
+> > > 
+> > > Accesses within VMA, but beyond i_size rounded up to PAGE_SIZE are
+> > > supposed to generate SIGBUS.
+> > > 
+> > > Recent changes attempted to fault in full folio where possible. They did
+> > > not respect i_size, which led to populating PTEs beyond i_size and
+> > > breaking SIGBUS semantics.
+> > > 
+> > > Darrick reported generic/749 breakage because of this.
+> > > 
+> > > However, the problem existed before the recent changes. With huge=always
+> > > tmpfs, any write to a file leads to PMD-size allocation. Following the
+> > > fault-in of the folio will install PMD mapping regardless of i_size.
+> > > 
+> > > Fix filemap_map_pages() and finish_fault() to not install:
+> > >   - PTEs beyond i_size;
+> > >   - PMD mappings across i_size;
+> > > 
+> > > Make an exception for shmem/tmpfs that for long time intentionally
+> > > mapped with PMDs across i_size.
 
-bool foo(u32 __user *p, u32 val)
-{
-	scoped_guard(pagefault)
-		unsafe_put_user(val, p, efault);
-	return true;
-efault:
-	return false;
-}
+Thanks for the v3 patches, which do now suit huge tmpfs.
+Not beautiful, but no longer regressing.
 
- e80:	e8 00 00 00 00       	call   e85 <foo+0x5>
- e85:	65 48 8b 05 00 00 00 00 mov    %gs:0x0(%rip),%rax
- e8d:	83 80 04 14 00 00 01 	addl   $0x1,0x1404(%rax)   // pf_disable++
- e94:	89 37                	mov    %esi,(%rdi)
- e96:	83 a8 04 14 00 00 01 	subl   $0x1,0x1404(%rax)   // pf_disable--
- e9d:	b8 01 00 00 00       	mov    $0x1,%eax           // success
- ea2:	e9 00 00 00 00       	jmp    ea7 <foo+0x27>      // ret
- ea7:	31 c0                	xor    %eax,%eax           // fail
- ea9:	e9 00 00 00 00       	jmp    eae <foo+0x2e>      // ret
+> > > 
+> > > Signed-off-by: Kiryl Shutsemau <kas@kernel.org>
+> > > Fixes: 19773df031bc ("mm/fault: try to map the entire file folio in finish_fault()")
+> > > Fixes: 357b92761d94 ("mm/filemap: map entire large folio faultaround")
+> > > Fixes: 01c70267053d ("fs: add a filesystem flag for THPs")
+> > 
+> > Multiple Fixes: are confusing.
+> > 
+> > We have two 6.18-rcX targets and one from 2020.  Are we asking people
+> > to backport this all the way back to 2020?  If so I'd suggest the
+> > removal of the more recent Fixes: targets.
+> 
+> Okay, fair enough.
+> 
+> > Also, is [2/2] to be backported?  The changelog makes it sound that way,
+> > but no Fixes: was identified?
+> 
+> Looking at split-on-truncate history, looks like this is the right
+> commit to point to:
+> 
+> Fixes: b9a8a4195c7d ("truncate,shmem: Handle truncates that split large folios")
 
-which is broken as it leaks the pagefault disable counter on failure.
+I agree that's the right Fixee for 2/2: the one which introduced
+splitting a large folio to non-shmem filesystems in 5.17.
 
-Clang at least fails the build.
+But you're giving yourself too hard a time of backporting with your
+5.10 Fixee 01c70267053d for 1/2: the only filesystem which set the
+flag then was tmpfs, which you're now excepting.  The flag got
+renamed later (in 5.16) and then in 5.17 at last there was another
+filesystem to set it.  So, this 1/2 would be
 
-Linus suggested to add a local label into the macro scope and let that
-jump to the actual caller supplied error label.
+Fixes: 6795801366da ("xfs: Support large folios")
 
-       	__label__ local_label;                                  \
-        arch_unsafe_get_user(x, ptr, local_label);              \
-	if (0) {                                                \
-	local_label:                                            \
-		goto label;                                     \
-
-That works for both GCC and clang.
-
-clang:
-
- c80:	0f 1f 44 00 00       	   nopl   0x0(%rax,%rax,1)	
- c85:	65 48 8b 0c 25 00 00 00 00 mov    %gs:0x0,%rcx
- c8e:	ff 81 04 14 00 00    	   incl   0x1404(%rcx)	   // pf_disable++
- c94:	31 c0                	   xor    %eax,%eax        // set retval to false
- c96:	89 37                      mov    %esi,(%rdi)      // write
- c98:	b0 01                	   mov    $0x1,%al         // set retval to true
- c9a:	ff 89 04 14 00 00    	   decl   0x1404(%rcx)     // pf_disable--
- ca0:	2e e9 00 00 00 00    	   cs jmp ca6 <foo+0x26>   // ret
-
-The exception table entry points correctly to c9a
-
-GCC:
-
- f70:   e8 00 00 00 00          call   f75 <baz+0x5>
- f75:   65 48 8b 05 00 00 00 00 mov    %gs:0x0(%rip),%rax
- f7d:   83 80 04 14 00 00 01    addl   $0x1,0x1404(%rax)  // pf_disable++
- f84:   8b 17                   mov    (%rdi),%edx
- f86:   89 16                   mov    %edx,(%rsi)
- f88:   83 a8 04 14 00 00 01    subl   $0x1,0x1404(%rax) // pf_disable--
- f8f:   b8 01 00 00 00          mov    $0x1,%eax         // success
- f94:   e9 00 00 00 00          jmp    f99 <baz+0x29>    // ret
- f99:   83 a8 04 14 00 00 01    subl   $0x1,0x1404(%rax) // pf_disable--
- fa0:   31 c0                   xor    %eax,%eax         // fail
- fa2:   e9 00 00 00 00          jmp    fa7 <baz+0x37>    // ret
-
-The exception table entry points correctly to f99
-
-So both compilers optimize out the extra goto and emit correct and
-efficient code.
-
-Provide a generic wrapper to do that to avoid modifying all the affected
-architecture specific implementation with that workaround.
-
-The only change required for architectures is to rename unsafe_*_user() to
-arch_unsafe_*_user(). That's done in subsequent changes.
-
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
----
-V5a: Use put in __put_kernel_nofault() - Yann
----
- include/linux/uaccess.h |   72 +++++++++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 68 insertions(+), 4 deletions(-)
-
---- a/include/linux/uaccess.h
-+++ b/include/linux/uaccess.h
-@@ -518,7 +518,34 @@ long strncpy_from_user_nofault(char *dst
- 		long count);
- long strnlen_user_nofault(const void __user *unsafe_addr, long count);
- 
--#ifndef __get_kernel_nofault
-+#ifdef arch_get_kernel_nofault
-+/*
-+ * Wrap the architecture implementation so that @label can be outside of a
-+ * cleanup() scope. A regular C goto works correctly, but ASM goto does
-+ * not. Clang rejects such an attempt, but GCC silently emits buggy code.
-+ */
-+#define __get_kernel_nofault(dst, src, type, label)		\
-+do {								\
-+	__label__ local_label;					\
-+	arch_get_kernel_nofault(dst, src, type, local_label);	\
-+	if (0) {						\
-+	local_label:						\
-+		goto label;					\
-+	}							\
-+} while (0)
-+
-+#define __put_kernel_nofault(dst, src, type, label)		\
-+do {								\
-+	__label__ local_label;					\
-+	arch_put_kernel_nofault(dst, src, type, local_label);	\
-+	if (0) {						\
-+	local_label:						\
-+		goto label;					\
-+	}							\
-+} while (0)
-+
-+#elif !defined(__get_kernel_nofault) /* arch_get_kernel_nofault */
-+
- #define __get_kernel_nofault(dst, src, type, label)	\
- do {							\
- 	type __user *p = (type __force __user *)(src);	\
-@@ -535,7 +562,8 @@ do {							\
- 	if (__put_user(data, p))			\
- 		goto label;				\
- } while (0)
--#endif
-+
-+#endif  /* !__get_kernel_nofault */
- 
- /**
-  * get_kernel_nofault(): safely attempt to read from a location
-@@ -549,7 +577,42 @@ do {							\
- 	copy_from_kernel_nofault(&(val), __gk_ptr, sizeof(val));\
- })
- 
--#ifndef user_access_begin
-+#ifdef user_access_begin
-+
-+#ifdef arch_unsafe_get_user
-+/*
-+ * Wrap the architecture implementation so that @label can be outside of a
-+ * cleanup() scope. A regular C goto works correctly, but ASM goto does
-+ * not. Clang rejects such an attempt, but GCC silently emits buggy code.
-+ *
-+ * Some architectures use internal local labels already, but this extra
-+ * indirection here is harmless because the compiler optimizes it out
-+ * completely in any case. This construct just ensures that the ASM GOTO
-+ * target is always in the local scope. The C goto 'label' works correct
-+ * when leaving a cleanup() scope.
-+ */
-+#define unsafe_get_user(x, ptr, label)			\
-+do {							\
-+	__label__ local_label;				\
-+	arch_unsafe_get_user(x, ptr, local_label);	\
-+	if (0) {					\
-+	local_label:					\
-+		goto label;				\
-+	}						\
-+} while (0)
-+
-+#define unsafe_put_user(x, ptr, label)			\
-+do {							\
-+	__label__ local_label;				\
-+	arch_unsafe_put_user(x, ptr, local_label);	\
-+	if (0) {					\
-+	local_label:					\
-+		goto label;				\
-+	}						\
-+} while (0)
-+#endif /* arch_unsafe_get_user */
-+
-+#else /* user_access_begin */
- #define user_access_begin(ptr,len) access_ok(ptr, len)
- #define user_access_end() do { } while (0)
- #define unsafe_op_wrap(op, err) do { if (unlikely(op)) goto err; } while (0)
-@@ -559,7 +622,8 @@ do {							\
- #define unsafe_copy_from_user(d,s,l,e) unsafe_op_wrap(__copy_from_user(d,s,l),e)
- static inline unsigned long user_access_save(void) { return 0UL; }
- static inline void user_access_restore(unsigned long flags) { }
--#endif
-+#endif /* !user_access_begin */
-+
- #ifndef user_write_access_begin
- #define user_write_access_begin user_access_begin
- #define user_write_access_end user_access_end
+> 
+> It moves split logic from shmem-specific to generic truncate.
+> 
+> As with the first patch, it will not be a trivial backport, but I am
+> around to help with this.
+> 
+> -- 
+>   Kiryl Shutsemau / Kirill A. Shutemov
 
