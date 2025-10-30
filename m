@@ -1,60 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-66409-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66410-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7FFDC1E208
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Oct 2025 03:30:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B9B4C1E21A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Oct 2025 03:31:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0B4F44E5F6F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Oct 2025 02:29:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E82F618857B4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Oct 2025 02:31:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37E83325734;
-	Thu, 30 Oct 2025 02:29:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14B88329C68;
+	Thu, 30 Oct 2025 02:31:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ey4KdRw1"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="oj/IxwZx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
+Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB10632570F
-	for <linux-fsdevel@vger.kernel.org>; Thu, 30 Oct 2025 02:29:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CD07329C4D
+	for <linux-fsdevel@vger.kernel.org>; Thu, 30 Oct 2025 02:31:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761791391; cv=none; b=SBk2h64NJUrT84g3e2mIG0i8/6iXA0NsStQZgnuYVfvzKNaD7VEw5Kcw8JLumcyqESl6rJ0JPHxDzqtjQSHMb5SHADC4R4XarWw/yW/ucuNUT8QtV6R4fhYlwHnGfHkNIpxTLR30KSwPaXKVaVhKIhaL0MKRggV7SL+FaN9lpMg=
+	t=1761791488; cv=none; b=Sp6tFLuaZ1NgIL5z8YFNNCaVD6/ODh1jNYb3DSlFe8NQdvefjjkzsJcDjF0MS3MCvyjUsTZjaY26lqXFkTzkhlgREV9Mm+Y7ElbMoHqoTktgGjypskJ+B55t/N23xVrAkm07Rx3UHJ+i+KN7jGqc8JwMIUHoFxDW2zYG84nYCI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761791391; c=relaxed/simple;
-	bh=hHRxN5CiY7Gx4QWe8wmAeGr4/YKu9bFUbFH+1qPXlZo=;
+	s=arc-20240116; t=1761791488; c=relaxed/simple;
+	bh=HYCWhzkmmxHErBQ1GkwvcVFu94mXGWZn/YZIGdqpS4A=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=M2p29xMw6XCUEeI1sI4NfdxUysLHG8/9BnOlaESU97wnjEcC8xwAYbPZ/8HCZRx/4EmH6ILIfp4dGswEk69R4ocx2VynBYEtZ8x6Vgrem0Tyr36S0gpHOqssbSlttV1jKphMpqGt4HYD9SmcChxSTntF5meiDBfxGOYgzGHyWxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ey4KdRw1; arc=none smtp.client-ip=95.215.58.176
+	 In-Reply-To:Content-Type; b=iJSanWdDmBB0sUKv1VAEUoa2cvYDhQHwG7NzQILLkHd8kLMsBguQuQTHou4S5Qxwtmw2ymlByDy43LibMIW9zdCsFa3UbGOSDcWpk3GhQbYaGac+W57fb/KHR1zI3xbFaNFe9K8Wj13SdEQntq0BLvdCsnTGvQa64g0ZH9+Psjo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=oj/IxwZx; arc=none smtp.client-ip=95.215.58.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <d2103b59-5cff-48a8-9eb8-ff9498dbde5e@linux.dev>
+Message-ID: <17dea8a6-b473-44da-82d2-d84223b7cdf1@linux.dev>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761791386;
+	t=1761791484;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=V0oJwA47yZHkVimWM2fyRJ3wZQiGsiQFxNLLyULBfMc=;
-	b=ey4KdRw1uackh5jZSEHqNgwTXAarUS+0SAPTiqv/KcQLBg4KotGPjRf/1EkmmkTz2iObFv
-	hesUQa0gME5/gVXfROWM2yrGQBsjQJP45DO4uw8/+syG1ANQyRDi3FpTUdyOc2iOpbUEEY
-	PuJnRNLHVgG58H7igkVaOKV2JtwmF2c=
-Date: Thu, 30 Oct 2025 10:29:33 +0800
+	bh=Gg4L5oAgYBz25YzLH6kOdzXmTMAfYlJEqOAX4aq55Yw=;
+	b=oj/IxwZxyaupSvCLMQpNxLfuw7iq585mKCxt6iInm0NvZqxAaK8/HNxYFqEw9lvOX+MYbV
+	NsbYr5c5G7phrIlLb6EihUTZUI01NJBIzVYe+4bW4MhClIsxGEw9uX1IkzVx7LCNH566dB
+	+B0rDKkAh6TBO9Oprm8pAr6FeFFLIIY=
+Date: Thu, 30 Oct 2025 10:31:12 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v4 2/3] mm/memory-failure: improve large block size folio
- handling.
+Subject: Re: [PATCH v4 3/3] mm/huge_memory: fix kernel-doc comments for
+ folio_split() and related.
 Content-Language: en-US
 To: Zi Yan <ziy@nvidia.com>
-Cc: kernel@pankajraghav.com, akpm@linux-foundation.org, mcgrof@kernel.org,
- nao.horiguchi@gmail.com, jane.chu@oracle.com,
+Cc: kernel@pankajraghav.com, jane.chu@oracle.com, akpm@linux-foundation.org,
+ mcgrof@kernel.org, nao.horiguchi@gmail.com, david@redhat.com,
  Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
  Baolin Wang <baolin.wang@linux.alibaba.com>,
  "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
@@ -63,12 +63,12 @@ Cc: kernel@pankajraghav.com, akpm@linux-foundation.org, mcgrof@kernel.org,
  "Matthew Wilcox (Oracle)" <willy@infradead.org>,
  Wei Yang <richard.weiyang@gmail.com>, Yang Shi <shy828301@gmail.com>,
  linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, david@redhat.com
+ linux-mm@kvack.org
 References: <20251030014020.475659-1-ziy@nvidia.com>
- <20251030014020.475659-3-ziy@nvidia.com>
+ <20251030014020.475659-4-ziy@nvidia.com>
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 From: Lance Yang <lance.yang@linux.dev>
-In-Reply-To: <20251030014020.475659-3-ziy@nvidia.com>
+In-Reply-To: <20251030014020.475659-4-ziy@nvidia.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Migadu-Flow: FLOW_OUT
@@ -76,94 +76,133 @@ X-Migadu-Flow: FLOW_OUT
 
 
 On 2025/10/30 09:40, Zi Yan wrote:
-> Large block size (LBS) folios cannot be split to order-0 folios but
-> min_order_for_folio(). Current split fails directly, but that is not
-> optimal. Split the folio to min_order_for_folio(), so that, after split,
-> only the folio containing the poisoned page becomes unusable instead.
+> try_folio_split_to_order(), folio_split, __folio_split(), and
+> __split_unmapped_folio() do not have correct kernel-doc comment format.
+> Fix them.
 > 
-> For soft offline, do not split the large folio if its min_order_for_folio()
-> is not 0. Since the folio is still accessible from userspace and premature
-> split might lead to potential performance loss.
-> 
-> Suggested-by: Jane Chu <jane.chu@oracle.com>
 > Signed-off-by: Zi Yan <ziy@nvidia.com>
-> Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
 > Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> Acked-by: David Hildenbrand <david@redhat.com>
 > ---
 
-LGTM! Feel free to add:
+LGTM.
 
 Reviewed-by: Lance Yang <lance.yang@linux.dev>
 
->   mm/memory-failure.c | 31 +++++++++++++++++++++++++++----
->   1 file changed, 27 insertions(+), 4 deletions(-)
+>   include/linux/huge_mm.h | 10 ++++++----
+>   mm/huge_memory.c        | 27 +++++++++++++++------------
+>   2 files changed, 21 insertions(+), 16 deletions(-)
 > 
-> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-> index f698df156bf8..acc35c881547 100644
-> --- a/mm/memory-failure.c
-> +++ b/mm/memory-failure.c
-> @@ -1656,12 +1656,13 @@ static int identify_page_state(unsigned long pfn, struct page *p,
->    * there is still more to do, hence the page refcount we took earlier
->    * is still needed.
+> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+> index 34f8d8453bf3..cbb2243f8e56 100644
+> --- a/include/linux/huge_mm.h
+> +++ b/include/linux/huge_mm.h
+> @@ -386,9 +386,9 @@ static inline int split_huge_page_to_order(struct page *page, unsigned int new_o
+>   	return split_huge_page_to_list_to_order(page, NULL, new_order);
+>   }
+>   
+> -/*
+> - * try_folio_split_to_order - try to split a @folio at @page to @new_order using
+> - * non uniform split.
+> +/**
+> + * try_folio_split_to_order() - try to split a @folio at @page to @new_order
+> + * using non uniform split.
+>    * @folio: folio to be split
+>    * @page: split to @new_order at the given page
+>    * @new_order: the target split order
+> @@ -398,7 +398,7 @@ static inline int split_huge_page_to_order(struct page *page, unsigned int new_o
+>    * folios are put back to LRU list. Use min_order_for_split() to get the lower
+>    * bound of @new_order.
+>    *
+> - * Return: 0: split is successful, otherwise split failed.
+> + * Return: 0 - split is successful, otherwise split failed.
 >    */
-> -static int try_to_split_thp_page(struct page *page, bool release)
-> +static int try_to_split_thp_page(struct page *page, unsigned int new_order,
-> +		bool release)
+>   static inline int try_folio_split_to_order(struct folio *folio,
+>   		struct page *page, unsigned int new_order)
+> @@ -486,6 +486,8 @@ static inline spinlock_t *pud_trans_huge_lock(pud_t *pud,
+>   /**
+>    * folio_test_pmd_mappable - Can we map this folio with a PMD?
+>    * @folio: The folio to test
+> + *
+> + * Return: true - @folio can be mapped, false - @folio cannot be mapped.
+>    */
+>   static inline bool folio_test_pmd_mappable(struct folio *folio)
 >   {
->   	int ret;
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index 0e24bb7e90d0..381a49c5ac3f 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -3567,8 +3567,9 @@ static void __split_folio_to_order(struct folio *folio, int old_order,
+>   		ClearPageCompound(&folio->page);
+>   }
 >   
->   	lock_page(page);
-> -	ret = split_huge_page(page);
-> +	ret = split_huge_page_to_order(page, new_order);
->   	unlock_page(page);
+> -/*
+> - * It splits an unmapped @folio to lower order smaller folios in two ways.
+> +/**
+> + * __split_unmapped_folio() - splits an unmapped @folio to lower order folios in
+> + * two ways: uniform split or non-uniform split.
+>    * @folio: the to-be-split folio
+>    * @new_order: the smallest order of the after split folios (since buddy
+>    *             allocator like split generates folios with orders from @folio's
+> @@ -3603,8 +3604,8 @@ static void __split_folio_to_order(struct folio *folio, int old_order,
+>    * folio containing @page. The caller needs to unlock and/or free after-split
+>    * folios if necessary.
+>    *
+> - * For !uniform_split, when -ENOMEM is returned, the original folio might be
+> - * split. The caller needs to check the input folio.
+> + * Return: 0 - successful, <0 - failed (if -ENOMEM is returned, @folio might be
+> + * split but not to @new_order, the caller needs to check)
+>    */
+>   static int __split_unmapped_folio(struct folio *folio, int new_order,
+>   		struct page *split_at, struct xa_state *xas,
+> @@ -3722,8 +3723,8 @@ bool uniform_split_supported(struct folio *folio, unsigned int new_order,
+>   	return true;
+>   }
 >   
->   	if (ret && release)
-> @@ -2280,6 +2281,9 @@ int memory_failure(unsigned long pfn, int flags)
->   	folio_unlock(folio);
+> -/*
+> - * __folio_split: split a folio at @split_at to a @new_order folio
+> +/**
+> + * __folio_split() - split a folio at @split_at to a @new_order folio
+>    * @folio: folio to split
+>    * @new_order: the order of the new folio
+>    * @split_at: a page within the new folio
+> @@ -3741,7 +3742,7 @@ bool uniform_split_supported(struct folio *folio, unsigned int new_order,
+>    * 1. for uniform split, @lock_at points to one of @folio's subpages;
+>    * 2. for buddy allocator like (non-uniform) split, @lock_at points to @folio.
+>    *
+> - * return: 0: successful, <0 failed (if -ENOMEM is returned, @folio might be
+> + * Return: 0 - successful, <0 - failed (if -ENOMEM is returned, @folio might be
+>    * split but not to @new_order, the caller needs to check)
+>    */
+>   static int __folio_split(struct folio *folio, unsigned int new_order,
+> @@ -4130,14 +4131,13 @@ int __split_huge_page_to_list_to_order(struct page *page, struct list_head *list
+>   				unmapped);
+>   }
 >   
->   	if (folio_test_large(folio)) {
-> +		const int new_order = min_order_for_split(folio);
-> +		int err;
-> +
->   		/*
->   		 * The flag must be set after the refcount is bumped
->   		 * otherwise it may race with THP split.
-> @@ -2294,7 +2298,16 @@ int memory_failure(unsigned long pfn, int flags)
->   		 * page is a valid handlable page.
->   		 */
->   		folio_set_has_hwpoisoned(folio);
-> -		if (try_to_split_thp_page(p, false) < 0) {
-> +		err = try_to_split_thp_page(p, new_order, /* release= */ false);
-> +		/*
-> +		 * If splitting a folio to order-0 fails, kill the process.
-> +		 * Split the folio regardless to minimize unusable pages.
-> +		 * Because the memory failure code cannot handle large
-> +		 * folios, this split is always treated as if it failed.
-> +		 */
-> +		if (err || new_order) {
-> +			/* get folio again in case the original one is split */
-> +			folio = page_folio(p);
->   			res = -EHWPOISON;
->   			kill_procs_now(p, pfn, flags, folio);
->   			put_page(p);
-> @@ -2621,7 +2634,17 @@ static int soft_offline_in_use_page(struct page *page)
->   	};
->   
->   	if (!huge && folio_test_large(folio)) {
-> -		if (try_to_split_thp_page(page, true)) {
-> +		const int new_order = min_order_for_split(folio);
-> +
-> +		/*
-> +		 * If new_order (target split order) is not 0, do not split the
-> +		 * folio at all to retain the still accessible large folio.
-> +		 * NOTE: if minimizing the number of soft offline pages is
-> +		 * preferred, split it to non-zero new_order like it is done in
-> +		 * memory_failure().
-> +		 */
-> +		if (new_order || try_to_split_thp_page(page, /* new_order= */ 0,
-> +						       /* release= */ true)) {
->   			pr_info("%#lx: thp split failed\n", pfn);
->   			return -EBUSY;
->   		}
+> -/*
+> - * folio_split: split a folio at @split_at to a @new_order folio
+> +/**
+> + * folio_split() - split a folio at @split_at to a @new_order folio
+>    * @folio: folio to split
+>    * @new_order: the order of the new folio
+>    * @split_at: a page within the new folio
+> - *
+> - * return: 0: successful, <0 failed (if -ENOMEM is returned, @folio might be
+> - * split but not to @new_order, the caller needs to check)
+> + * @list: after-split folios are added to @list if not null, otherwise to LRU
+> + *        list
+>    *
+>    * It has the same prerequisites and returns as
+>    * split_huge_page_to_list_to_order().
+> @@ -4151,6 +4151,9 @@ int __split_huge_page_to_list_to_order(struct page *page, struct list_head *list
+>    * [order-4, {order-3}, order-3, order-5, order-6, order-7, order-8].
+>    *
+>    * After split, folio is left locked for caller.
+> + *
+> + * Return: 0 - successful, <0 - failed (if -ENOMEM is returned, @folio might be
+> + * split but not to @new_order, the caller needs to check)
+>    */
+>   int folio_split(struct folio *folio, unsigned int new_order,
+>   		struct page *split_at, struct list_head *list)
 
 
