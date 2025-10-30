@@ -1,191 +1,234 @@
-Return-Path: <linux-fsdevel+bounces-66441-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66442-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83292C1F419
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Oct 2025 10:23:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A215C1F467
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Oct 2025 10:25:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90DE7402E73
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Oct 2025 09:21:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2385F4002AB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Oct 2025 09:24:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D9232F6189;
-	Thu, 30 Oct 2025 09:21:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DB683431EA;
+	Thu, 30 Oct 2025 09:23:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="yb70e5pX";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="bQYGv3cg";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="SENs5ZAR";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="D1Om1QgN"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RMm2TUmj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6810278E5D
-	for <linux-fsdevel@vger.kernel.org>; Thu, 30 Oct 2025 09:21:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ADE534027D
+	for <linux-fsdevel@vger.kernel.org>; Thu, 30 Oct 2025 09:23:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761816094; cv=none; b=ZCb0YAdXc4NhdT19poFlvP8uQMt+DLnzNFkgHHDfXacLfIS4CDqBLWLYUn7OCWh91HIfv++atLTx14DgHhwaRX/W25RvMdu5QVcqmgPw4lobc7cid5ripboDhm0mKc2ne/x2smb2G1gxjzTTm7H9Jdzhv1bw/kFLZv4izkRhk0s=
+	t=1761816211; cv=none; b=mtnOZawPE31azpr+lldMsJRnZSnEb7Jlkjioi/W8WfgWUiJ+8D4z+plXQOlDoTKQQWN8nlkirGtQVWZEKJLhujhgin2dGWPqQZBdyIQFmnxDHTJnGz6+ynNUm8gKA7rcvHFJaS1/k+4/RKGr5ysQ6PRwTHE8G+WLs+cwYU4mRLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761816094; c=relaxed/simple;
-	bh=mey37MteCDHBKJI5h/hOYw2OFoMf57tziUJBushSKbg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=poq/AnWcl7dnhosUEJsrb59J+IMTT9jLFNDPiF4yXoGG9dWrgmCuwOITpFxu3o7S31nGboqsjR4Ol3StZSkY6aio64cNHKP5eF0k+f4af0QC+oFADaDFcQL4DndiVHNFNMhRnlcvqrS8Ww8gOzWTT97TMXgPqjK8nUJkuT1KkX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=yb70e5pX; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=bQYGv3cg; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=SENs5ZAR; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=D1Om1QgN; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id D475F1FB7D;
-	Thu, 30 Oct 2025 09:21:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1761816091; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1761816211; c=relaxed/simple;
+	bh=q5e0PewDJWJAm5bYsQrRzWZlQkB90I/0h1IKPLuo8uE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=StX+JifjywlDI7/4TgAe9LtHT7KGJhNoqPIlTQydgXs4tTe4veYb2Tpc0FjlxaDNChJ4qBpQZGZGNMA0yur2cqrrfnDCNXooG9sLbAew8jmw9hv4bvN7D7acitjgqMw3uLSAkm9CEXssFB13Rkb0idgjAVmm4HSEvm99LT08VZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RMm2TUmj; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761816209;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Pvbv2sklXqmoaX+CK0LqtKadq+enVVZtpxET8db+orM=;
-	b=yb70e5pXF1TSbHliSdhzU3Llt1VmZKKcDTNC/6CNt5y/+aUSCNMETsFWMGG9laeunI3zha
-	6ZN56WI/iqRb8tBEfMEeOFE4VwVWdIaTyz5B13G2YEhtLjZ06FXu0aBnYsmCO467rBAAwB
-	Sxdd6GMIjPYVrn43yhh5Lq+W49eVJf8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1761816091;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Pvbv2sklXqmoaX+CK0LqtKadq+enVVZtpxET8db+orM=;
-	b=bQYGv3cg2BN0E3sU1leFaAdQKlZLzlu/pyNyDgR16feEWr5utq8wS6opSGpJuTyzzC5+xU
-	2cQQ+JKPldVI+UAw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1761816090; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Pvbv2sklXqmoaX+CK0LqtKadq+enVVZtpxET8db+orM=;
-	b=SENs5ZARRKtMsQstswlC6k3Ri9VRb3EQoLveYJ0c8Y/NMW9l6Cyp74VPaiVu8BkZgXY2gf
-	oRMik1WzpSYZMrQ+zRn2vD9tVgdh+uGpqQHLUdfXZs3+xB8S4Ivj/tJjkCD8k3iuJvWru7
-	rnJFC4OPjqd0wl2/e/xbb1+VUOc9P+0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1761816090;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Pvbv2sklXqmoaX+CK0LqtKadq+enVVZtpxET8db+orM=;
-	b=D1Om1QgNI6GI/63fEoin48YVV1OZR8lOZM+Q8UGhBGL6D35c7ontH3sT7KTaT/igiKgyWR
-	UscOSE/YMOHoHcAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CAD291396A;
-	Thu, 30 Oct 2025 09:21:30 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id IcR/MRouA2l8agAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 30 Oct 2025 09:21:30 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 6160CA0AD6; Thu, 30 Oct 2025 10:21:30 +0100 (CET)
-Date: Thu, 30 Oct 2025 10:21:30 +0100
-From: Jan Kara <jack@suse.cz>
-To: Alexander Monakov <amonakov@ispras.ru>
-Cc: Alejandro Colomar <alx@kernel.org>, linux-man@vger.kernel.org, 
-	Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v1] man/man2/flock.2: Mention non-atomicity w.r.t close
-Message-ID: <xvwzokj7inyw4x2brbuprosk5i2w53p3qjerkcjfsy6lg43krm@gp65tt2tg4kw>
-References: <181d561860e52955b29fe388ad089bde4f67241a.1760627023.git.amonakov@ispras.ru>
+	bh=e4JeRqvX7ZbkSQVSnZTmzlKVFPz7NTFo+cG7lq/is1Y=;
+	b=RMm2TUmjHqWUhgIBkozxt7wbY9J929OZRBZIzNrxNIbedUCY0X1a1rWeXOD31AfJZWAl0M
+	lShDJbWjJv/BpUbhwVk28ZiQoeRqApo5Sw3W4+Yfl62TsZMWNMdlDlm0UMyoYjjdbgKtyr
+	eD9AupnA/3ehVIfUUU/srDqVn+V5VmM=
+Received: from mail-yw1-f198.google.com (mail-yw1-f198.google.com
+ [209.85.128.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-329-cHlswrgEMkKZXfbxXu7Mew-1; Thu, 30 Oct 2025 05:23:25 -0400
+X-MC-Unique: cHlswrgEMkKZXfbxXu7Mew-1
+X-Mimecast-MFC-AGG-ID: cHlswrgEMkKZXfbxXu7Mew_1761816204
+Received: by mail-yw1-f198.google.com with SMTP id 00721157ae682-7848b193cc5so36358047b3.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Oct 2025 02:23:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761816204; x=1762421004;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=e4JeRqvX7ZbkSQVSnZTmzlKVFPz7NTFo+cG7lq/is1Y=;
+        b=Md/MgUGPHBKdW0/v/wvAGULVGDtMILvT4wSphZPbC4YttQYF6czZdrUYc9PaWTZMOd
+         hS9CQiyxDDG3naCRPrty7wOoxBBvVE95qdeaPpbZQiC8DxW0YHh24Ozpi/KPBciSJ+/d
+         FCC0XSTSNjWq9n0XCGEEYL6JcsJP7I6neNcuLmW6mAj9veLn1GzY4QPu/HkezYSz40nR
+         Wa3DEjXAVb0oxkdV2Hj9RR838PsX+4U7Fzlder3eFflaE1haQg63xccl2fKtG+WEtTWx
+         1uayIZlmL2JL+bEj7lpS9TRJpW1KYE31FxCUcT3x81QBHtIjlOYsX8yfPj1rFdCpaQI5
+         wYAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXJKzbzTk+6zmgxHZFss60SaLgM69+HNCGNgAYBGBkS73TT8d4cCiciF7U/2BSCpExjVN/I9zgLCpr7lPN4@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5ySzGDYxQk68HrpPyumEN+tgSxjfdJUxzYxGCpPxuHfW/UK+Y
+	pIjhNS1Yeo4cshFYIwwBQlEPtTClGyJZYfu8ZDwmSCY7peZAPMfki3LrGFn71atZQXuwQQTL+su
+	YlTaiAd3EXKAfW3VP/wL4kryL4sIlv0ydxhEZ7W84jBE5uBA3YbalFn8nKKaYHdF4raEX9gzegH
+	QNqgQfHnaeg4nHooT4HVZO5OaUnB/HgF+8i+ZVbx1EvQ==
+X-Gm-Gg: ASbGncvp2CZhVNgFEwhXHuEbq279qnlCowb72izAeZhKwUXn00oc1HQNNQtt1HxMZKG
+	XnVLtrNjD4rQATMP5oGP3zHwTQJyQywVtRBICDWsb0UTb0E59asmn/RceyU3bg+pa1kDodbuTD8
+	N59CA+lujevEDCckgCvJPI91882DBBH9o/wyBupEdfv9CAogR81JANPM/fIVLcDOFS9DbLgA==
+X-Received: by 2002:a05:690e:1206:b0:63f:7c9d:d378 with SMTP id 956f58d0204a3-63f828c2c02mr2020857d50.5.1761816204070;
+        Thu, 30 Oct 2025 02:23:24 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFvrSCrTEgMrUbOgoPl2KJmDrRVI+3ODtqSsbueHVsh8YG17MM43WMAy3K8Q32MQ0B0IGUbciac4I47u/HJ0wk=
+X-Received: by 2002:a05:690e:1206:b0:63f:7c9d:d378 with SMTP id
+ 956f58d0204a3-63f828c2c02mr2020849d50.5.1761816203673; Thu, 30 Oct 2025
+ 02:23:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <181d561860e52955b29fe388ad089bde4f67241a.1760627023.git.amonakov@ispras.ru>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MISSING_XM_UA(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	RCPT_COUNT_FIVE(0.00)[5];
-	FROM_EQ_ENVFROM(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
+References: <cover.1761757731.git.lorenzo.stoakes@oracle.com>
+ <CAA1CXcCiS37Kw78pam3=htBX5FvtbFOWvYNA0nPWLyE93HPtwA@mail.gmail.com>
+ <4e6d3f7b-551f-4cbf-8c00-2b9bb1f54d68@lucifer.local> <CAA1CXcBP1MYdBi55kdF83B5OD6uMoFmyKP95mWJx7gkwZDQxKg@mail.gmail.com>
+In-Reply-To: <CAA1CXcBP1MYdBi55kdF83B5OD6uMoFmyKP95mWJx7gkwZDQxKg@mail.gmail.com>
+From: Nico Pache <npache@redhat.com>
+Date: Thu, 30 Oct 2025 03:22:57 -0600
+X-Gm-Features: AWmQ_bmooqAizSQnE4QAHs6kTItRvcGPa4RG2-OLEQL1ZfORrpkhGIXAfBnMCHk
+Message-ID: <CAA1CXcAwpD0fruWm280+66GQsMyk6LhJTo=_xUu1fzCTELjC1Q@mail.gmail.com>
+Subject: Re: [PATCH 0/4] initial work on making VMA flags a bitmap
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Muchun Song <muchun.song@linux.dev>, 
+	Oscar Salvador <osalvador@suse.de>, David Hildenbrand <david@redhat.com>, 
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
+	Axel Rasmussen <axelrasmussen@google.com>, Yuanchu Xie <yuanchu@google.com>, 
+	Wei Xu <weixugc@google.com>, Peter Xu <peterx@redhat.com>, Ingo Molnar <mingo@redhat.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
+	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, Kees Cook <kees@kernel.org>, 
+	Matthew Wilcox <willy@infradead.org>, Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>, 
+	Leon Romanovsky <leon@kernel.org>, Zi Yan <ziy@nvidia.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Ryan Roberts <ryan.roberts@arm.com>, 
+	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>, Lance Yang <lance.yang@linux.dev>, 
+	Xu Xin <xu.xin16@zte.com.cn>, Chengming Zhou <chengming.zhou@linux.dev>, 
+	Jann Horn <jannh@google.com>, Matthew Brost <matthew.brost@intel.com>, 
+	Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>, 
+	Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>, 
+	Ying Huang <ying.huang@linux.alibaba.com>, Alistair Popple <apopple@nvidia.com>, 
+	Pedro Falcato <pfalcato@suse.de>, Shakeel Butt <shakeel.butt@linux.dev>, 
+	David Rientjes <rientjes@google.com>, Rik van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>, 
+	Kemeng Shi <shikemeng@huaweicloud.com>, Kairui Song <kasong@tencent.com>, 
+	Nhat Pham <nphamcs@gmail.com>, Baoquan He <bhe@redhat.com>, Chris Li <chrisl@kernel.org>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Qi Zheng <zhengqi.arch@bytedance.com>, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-mm@kvack.org, Alice Ryhl <aliceryhl@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu 16-10-25 18:22:36, Alexander Monakov wrote:
-> Ideally one should be able to use flock to synchronize with another
-> process (or thread) closing that file, for instance before attempting
-> to execve it (as execve of a file open for writing fails with ETXTBSY).
-> 
-> Unfortunately, on Linux it is not reliable, because in the process of
-> closing a file its locks are dropped before the refcounts of the file
-> (as well as its underlying filesystem) are decremented, creating a race
-> window where execve of the just-unlocked file sees it as if still open.
-> 
-> Linux developers have indicated that it is not easy to fix, and the
-> appropriate course of action for now is to document this limitation.
-> 
-> Link: <https://lore.kernel.org/linux-fsdevel/68c99812-e933-ce93-17c0-3fe3ab01afb8@ispras.ru/>
-> 
-> Signed-off-by: Alexander Monakov <amonakov@ispras.ru>
+On Thu, Oct 30, 2025 at 3:20=E2=80=AFAM Nico Pache <npache@redhat.com> wrot=
+e:
+>
+> On Thu, Oct 30, 2025 at 2:34=E2=80=AFAM Lorenzo Stoakes
+> <lorenzo.stoakes@oracle.com> wrote:
+> >
+> > +cc Alice - could you help look at this? It seems I have broken the rus=
+t
+> > bindings here :)
+>
+> From a first glance it looks trivial to fix, there are a bunch of
+> bindings of the VM_* flags.
+>
+> for example
+>
+> kernel/mm/virt.rs:    pub const MIXEDMAP: vm_flags_t =3D
+> bindings::VM_MIXEDMAP as vm_flags_t;
+>
+> I believe this just needs to be converted to
+> 'bindings::VM_MIXEDMAP_BIT' if I understand your series correctly
+> (havent fully looked at the details).
 
-The change looks good to me. Feel free to add:
+On second thought, I think i'm wrong here.
+>
+> >
+> > Thanks!
+> >
+> > On Wed, Oct 29, 2025 at 09:07:07PM -0600, Nico Pache wrote:
+> > > Hey Lorenzo,
+> > >
+> > > I put your patchset into the Fedora Koji system to run some CI on it =
+for you.
+> > >
+> > > It failed to build due to what looks like some Rust bindings.
+> > >
+> > > Heres the build: https://koji.fedoraproject.org/koji/taskinfo?taskID=
+=3D138547842
+> > >
+> > > And x86 build logs:
+> > > https://kojipkgs.fedoraproject.org//work/tasks/7966/138547966/build.l=
+og
+> > >
+> > > The error is pretty large but here's a snippet if you want an idea
+> > >
+> > > error[E0425]: cannot find value `VM_READ` in crate `bindings`
+> > >    --> rust/kernel/mm/virt.rs:399:44
+> > >     |
+> > > 399 |     pub const READ: vm_flags_t =3D bindings::VM_READ as vm_flag=
+s_t;
+> > >     |                                            ^^^^^^^ not found in=
+ `bindings`
+> > > error[E0425]: cannot find value `VM_WRITE` in crate `bindings`
+> > >    --> rust/kernel/mm/virt.rs:402:45
+> > >     |
+> > > 402 |     pub const WRITE: vm_flags_t =3D bindings::VM_WRITE as vm_fl=
+ags_t;
+> > >     |                                             ^^^^^^^^ not found
+> > > in `bindings`
+> > > error[E0425]: cannot find value `VM_EXEC` in crate `bindings`
+> > >      --> rust/kernel/mm/virt.rs:405:44
+> > >       |
+> > >   405 |     pub const EXEC: vm_flags_t =3D bindings::VM_EXEC as vm_fl=
+ags_t;
+> > >       |                                            ^^^^^^^ help: a
+> > > constant with a similar name exists: `ET_EXEC`
+> > >       |
+> > >      ::: /builddir/build/BUILD/kernel-6.18.0-build/kernel-6.18-rc3-16=
+-ge53642b87a4f/linux-6.18.0-0.rc3.e53642b87a4f.31.bitvma.fc44.x86_64/rust/b=
+indings/bindings_generated.rs:13881:1
+> > >       |
+> > > 13881 | pub const ET_EXEC: u32 =3D 2;
+> > >       | ---------------------- similarly named constant `ET_EXEC` def=
+ined here
+> > > error[E0425]: cannot find value `VM_SHARED` in crate `bindings`
+> > >    --> rust/kernel/mm/virt.rs:408:46
+> > >     |
+> > > 408 |     pub const SHARED: vm_flags_t =3D bindings::VM_SHARED as vm_=
+flags_t;
+> > >     |                                              ^^^^^^^^^ not foun=
+d
+> > > in `bindings`
+> > >
+> > > In the next version Ill do the same and continue with the CI testing =
+for you!
+> >
+> > Thanks much appreciated :)
+> >
+> > It seems I broke the rust bindings (clearly), have pinged Alice to have=
+ a
+> > look!
+> >
+> > May try and repro my side to see if there's something trivial that I co=
+uld
+> > take a look at.
+> >
+> > I ran this through mm self tests, allmodconfig + a bunch of other check=
+s
+> > but ofc enabling rust was not one, I should probably update my scripts =
+[0]
+> > to do that too :)
+>
+> Ah cool, thanks for sharing your scripts, Ill take a look into those!
+>
+> Cheers,
+> -- Nico
+> >
+> > Cheers, Lorenzo
+> >
+> > [0]:https://github.com/lorenzo-stoakes/review-scripts
+> >
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-> ---
->  man/man2/flock.2 | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
-> 
-> diff --git a/man/man2/flock.2 b/man/man2/flock.2
-> index b424b3267..793eaa3bd 100644
-> --- a/man/man2/flock.2
-> +++ b/man/man2/flock.2
-> @@ -245,6 +245,21 @@ .SH NOTES
->  and occurs on many other implementations.)
->  .\" Kernel 2.5.21 changed things a little: during lock conversion
->  .\" it is now the highest priority process that will get the lock -- mtk
-> +.P
-> +Release of a lock when a file descriptor is closed
-> +is not sequenced after all observable effects of
-> +.BR close (2).
-> +For example, if one process writes a file while holding an exclusive lock,
-> +then closes that file, and another process blocks placing a shared lock
-> +on that file to wait until it is closed, it may observe that subsequent
-> +.BR execve (2)
-> +of that file fails with
-> +.BR ETXTBSY ,
-> +and
-> +.BR umount (2)
-> +of its underlying filesystem fails with
-> +.BR EBUSY ,
-> +as if the file is still open in the first process.
->  .SH SEE ALSO
->  .BR flock (1),
->  .BR close (2),
-> 
-> Range-diff against v0:
-> -:  --------- > 1:  181d56186 man/man2/flock.2: Mention non-atomicity w.r.t close
-> -- 
-> 2.49.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
 
