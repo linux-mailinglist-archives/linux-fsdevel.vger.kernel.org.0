@@ -1,370 +1,311 @@
-Return-Path: <linux-fsdevel+bounces-66500-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66502-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 878B8C213EF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Oct 2025 17:41:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2680FC214E1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Oct 2025 17:52:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B2C274EE1B6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Oct 2025 16:38:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C19B5402E7F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Oct 2025 16:45:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D4F82DE1E0;
-	Thu, 30 Oct 2025 16:38:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D8C72DA779;
+	Thu, 30 Oct 2025 16:44:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N3J6CJlG"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="X5vONgJ3";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="EXtA9u+3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9523627F00A;
-	Thu, 30 Oct 2025 16:38:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761842307; cv=none; b=GxKrBUmh7YHpP/9dcyrn6ii7gGxsoWkix7K5OtIOyFovMBZc45Y9q/aXJXeOp0hc0IQsNb/0+6D5DnzF5Og5eBropUaqJISjdVxAt17U1SYb6BbLJteIxvDTW/HzUAW63VoRBo7R9vVlHMx8VXou4LCO4k2M0CYrM9Xhu7ogW1E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761842307; c=relaxed/simple;
-	bh=U30GzCcZQSgByZ0Vk2dS8MT2M8hgaMbL/AWaAA+Wu1o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kA6TulgtbeghnonvmnqwjvgLArKT0GiHSN8IH9OdkP+6JKNBcskCMS+nLLTkrlaG8FliLn42nO0OPfiPjAD7Nn3vN+aO9JFjKIfHePJ52dW8WXSdWD+fVhN4WW48xgAsGw7O9R0jUd4pncS2Z99RBPyIhCnKDXdHhxSL3BagX7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N3J6CJlG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22FEFC4CEF1;
-	Thu, 30 Oct 2025 16:38:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761842307;
-	bh=U30GzCcZQSgByZ0Vk2dS8MT2M8hgaMbL/AWaAA+Wu1o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=N3J6CJlGSP8KX1d+g0H0JNHswvddpr2dMeOqhfQO63WmjehcCyjRGNNslVVf0D4Zs
-	 OBo2Uhxuf/6h1yvRJW0T7PY6kpJG6MD0jLDiKtlIHX9nvyATngpJLuOSRdWhqXi5lE
-	 wCcleWjxhLu6gsAGAFZ6AG7f4nzzd5Jex/fG5rJEPMMQF2qfwmaJDh1V1k8EU2TVN/
-	 oacitd/0yRou5ofT1qg70NumZDvjExmns2G5OmSu1xiHImqXmCNpCilj21AT0BBfLt
-	 kdd+nCZN5Zm8Ssg1r3I3mRtQSJXcito+eVEwdk0JWUY2WEFridezT1whkhdXzBdHwo
-	 swmMxLwyyyDrA==
-Date: Thu, 30 Oct 2025 09:38:26 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: cem@kernel.org
-Cc: linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH 02/19] docs: discuss autonomous self healing in the xfs
- online repair design doc
-Message-ID: <20251030163826.GN3356773@frogsfrogsfrogs>
-References: <176117744372.1025409.2163337783918942983.stgit@frogsfrogsfrogs>
- <176117744541.1025409.747197958715254738.stgit@frogsfrogsfrogs>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7670D2E6CDA;
+	Thu, 30 Oct 2025 16:44:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761842695; cv=fail; b=XCAHe0sZHAN/Gf6SnYov4C/UgpNj7GfmUCiXXo8cDK62/2+xIsXd+k4i3ZudPJW+ysQ50+P5adhtPDGW9Z9urxbKgSG4b7N4zMTsXoJBY/GP6/8jHi+wk2Eteq/dB9gV36VzUjpxVE144dQrKhQTOXOceaYsjmYO5/4OWoJRt3E=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761842695; c=relaxed/simple;
+	bh=fd9p+LZvkb5bf6cGrJTRMr/Ot5QDN86u0iMBhVkl4u0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=YYUSjBKyIgU3qVVR3bgXLq9XMkkwV4h4OQDS0t4yb1BbHQrYDNtnObho9RrT+N2rnJdNGcJlUXvaM0Mu2k4heWO4ENwMwwwE8vSncjTORHM5N28rBIS8RnaWzxCFSzgjEebwyMR6FUKcHpD3F3DxgRMnWX2M+5HbSC3IJqgBQ+4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=X5vONgJ3; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=EXtA9u+3; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59UFsXMA002052;
+	Thu, 30 Oct 2025 16:44:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=fd9p+LZvkb5bf6cGrJ
+	TRMr/Ot5QDN86u0iMBhVkl4u0=; b=X5vONgJ3n1YKARLYW8KC8DtPKwOUZjE79W
+	EEMC6hmuBJ6gMhBL/bkpVReko/JxuExClX0XRbFcMcIiKGAPAl3gtnhbuzD9NJ0e
+	UPuZX27Hic2N2TkxHcB/3MeAstjzXK+75+x0X+XJKHdVZ3vikY8Udf5p7VFymqr2
+	fRsUkwhpOI+nZe4oTvOq4N1Jqp8y9DKFcokqnRpn1fhQARgRfqyIAMLsMJY6bB31
+	XpyDkPF2ByC5LUkLUm/JpHidVPKfoNboRgDDXU3iA5lowopLqiF46/5dOPA2K4EN
+	FTTyhmf434YK70XsJyns4ZLHQNE8gTjPyaz9jr5aY/MuyvQJ8T/Q==
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4a4b2qg4w3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 30 Oct 2025 16:44:06 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 59UGLmtu034068;
+	Thu, 30 Oct 2025 16:44:05 GMT
+Received: from bl0pr03cu003.outbound.protection.outlook.com (mail-eastusazon11012002.outbound.protection.outlook.com [52.101.53.2])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4a34edm0b3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 30 Oct 2025 16:44:05 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=IoH46PaeECQEqwbfHmNiKG6pFolb4ClW8tH/IYj/D2INz6ldvW5ZdQ1C7+zjIepeUAgeRCnFdKZm95lnYu6foOX9xvco9xrIUzUbx619jjkyiF3g4w4m+6N/+obHuUguy9WSg9xA9rbbxH17n5xXCoO/WIokNXnpUfJgjJnww3V28K6BX6rzOT6PWJoGvCbgyVU7z1arhjNANfNUalt+bLGA8GaGvNEE7g5pk8G7ecO5fOJ+MwerxxuLl+iJt5nHg2+imuldege/6i/FdKf3BptPwmQHGIC8PlnoiZt21wlZZrDJArVas2NSg28UUTr/Nj7YodX8ZfoKRCIJbxosiQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fd9p+LZvkb5bf6cGrJTRMr/Ot5QDN86u0iMBhVkl4u0=;
+ b=PDtllTZ3ZBPLxP32HR9zM58rtdBMXJ1QXAfLzGxSwWkMefGAWkwJ/omR4+JePNuKF8onNsfHSAqvREGll98E28aI3sB1yEt99dywXDM6KsJan9CeRQRIuAGstxTzsPG7MaqVMVTa7qGt7kOwmSS4nSDRWqKWFdPL1ZF64Xjlcx8FF//Ik4s4TG09TDw4CcG8xttW9aHwYdVrRr4FGWM+g8NjC7hX6CdZ7Z9C0hOGX/U6t+ESkDePrfuYPcmSfvHCWk9zYliGcQAJimhV3AWWjPoxHfuMKiQsQBP137bUH20I5W8CyqAryYe0Q47vL4ys2BBXW4WeMa0vhsjFYEUcxA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fd9p+LZvkb5bf6cGrJTRMr/Ot5QDN86u0iMBhVkl4u0=;
+ b=EXtA9u+3XLYnvDzum4oN4EZztQ4qU3aWAQDus4L93Hcg0i0AtQosnmAFJq4ERfKSIiiWg5dQm5oWEBnqV+P8yVUUbG5rLb9vFrAhr0dpQfKZffKN9TZGlQLuNbzpx2OgaTyUzGhhUYNI+/oFc9XSVt5l3qUpBV01x8uN4VH/CLM=
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
+ by IA3PR10MB8516.namprd10.prod.outlook.com (2603:10b6:208:57d::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.14; Thu, 30 Oct
+ 2025 16:44:00 +0000
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2%2]) with mapi id 15.20.9253.018; Thu, 30 Oct 2025
+ 16:43:59 +0000
+Date: Thu, 30 Oct 2025 16:43:57 +0000
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Pedro Falcato <pfalcato@suse.de>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Jonathan Corbet <corbet@lwn.net>, David Hildenbrand <david@redhat.com>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Jann Horn <jannh@google.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, Andrei Vagin <avagin@gmail.com>
+Subject: Re: [PATCH 1/3] mm: introduce VM_MAYBE_GUARD and make visible for
+ guard regions
+Message-ID: <053f3a04-9195-4f8d-8959-42e0c3ba077b@lucifer.local>
+References: <cover.1761756437.git.lorenzo.stoakes@oracle.com>
+ <7de40603015dee82970f5d37332a6d5af7532063.1761756437.git.lorenzo.stoakes@oracle.com>
+ <xnsn5rfqigbm5ryjtbf2rtfotneiwygzesvyfdxiqrzlyzljdr@tmbht4ggnjcv>
+ <61ae955e-310d-488e-b350-59bb809f06e1@lucifer.local>
+ <c736tssdw3z57kamh6eqc23gr575q375n2o2nnszih64afnaf7@zwbqremsbhwf>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c736tssdw3z57kamh6eqc23gr575q375n2o2nnszih64afnaf7@zwbqremsbhwf>
+X-ClientProxiedBy: LO4P123CA0473.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:1a8::10) To DM4PR10MB8218.namprd10.prod.outlook.com
+ (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <176117744541.1025409.747197958715254738.stgit@frogsfrogsfrogs>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|IA3PR10MB8516:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0c7e2ee4-492d-43b6-fc41-08de17d38699
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?iibl83KRTuEYSrnIrMsmuVssYNH7CYpTvUw8hB6lRXignkjmH7S4RqCwYjex?=
+ =?us-ascii?Q?b+YI4ymnoPp9wlttCLGaZUCqqb8rnOk1kQfYpXRloSxrB8Jrnjm+YvA0+zw8?=
+ =?us-ascii?Q?jdELUUmNUqkLrByw6uHpJrkc4dwQLPuYzdfUl0Cm4SOcKAkWOQRWiJsqIrjQ?=
+ =?us-ascii?Q?Y7GXUg/yOwfR4Cgf89d47tHN3nrBKiDKPzsZ4j4S8w8p7A6lD2KXtlsj6X/i?=
+ =?us-ascii?Q?UdlpqG/w39JMVVqP9b7RNb+pt7KDiqeSXm2rR5eyXwW/Xkj8ZuBHjd2IRjhz?=
+ =?us-ascii?Q?cmWnu6KnP022OShtzLbYm86Aq94KgjEQ0rllXR+qFusNtSRa1Gcd+wy4V2m9?=
+ =?us-ascii?Q?9ghBxxxsdeAWPKP4QhLqvlZwf9d+dFOZxnmvk5v/SPu4LuAGmAKDFrKhsqdy?=
+ =?us-ascii?Q?DAtN1lb0V1ndSQFm75WRpAc0zR/aDAzF+/kx9Wy2BtfPW62H/TmPOBGRDjLH?=
+ =?us-ascii?Q?S1P/VWLfPuVKBPBlNy/BDOrmjmzwUaaSx/VDsP+72hbLWdk3KCNZVYurSvpu?=
+ =?us-ascii?Q?r4xxzWs6uiWoz/VC0rewz/5snPIZKJ6DLQ9MFbfleBsohX/xG/OfR9+dUZSz?=
+ =?us-ascii?Q?Qst21lm82nIr9GVop17Acoue55CItstFGNwb9Gg2FECyJxSKp03DYYgpmeue?=
+ =?us-ascii?Q?jpX5uj66IMRpVhEtl+pYP/WUugZnv9uDKaJUw1SSAbN5w10aMT4ugFTTSNcv?=
+ =?us-ascii?Q?+G30bnNdKQQ1HIReHn67yfd+WYqZ4/27K2fR9b+nXmusuUHNGU0/PTTB8jl4?=
+ =?us-ascii?Q?kRMwrvLnrjwrSd/Ifn9+AFx33P6Tt49G+zB4K9whdvwzyoiOrV8ddy++N+1p?=
+ =?us-ascii?Q?gqf35tGM/XTbssiZ7cuxMyfFG0JPJwM1il7ChqEHI02ISdak9RF+DATb8Wco?=
+ =?us-ascii?Q?AfSAkQ/bZtThScWJyxIWB6JQ4IJDjbFdD7R5MkG6zTN+Q/gE/jGKwn/KOf9S?=
+ =?us-ascii?Q?saGWlQ4t2y+xHr9q1aVaw3DQzBK28sFAr8oxWXQf1aJGhT1Q6tQlnu2gJxcf?=
+ =?us-ascii?Q?lXxTFsGmJbK52lcbSXvxe1UQZ7IJ/hnbA76uNb5/Bwb5fdPyIIlE5e28jEjK?=
+ =?us-ascii?Q?2Q12AlDdZrgnyHz3ucgB6+X9chPc8jNtua4t8067Ypg3dRS9q2YEoMdAJKWO?=
+ =?us-ascii?Q?A/AuiZyCt6KOZaSHWKPVFQH62e+avf+mX0vHvoyZJIDZcrQFYPVMgFeht+3O?=
+ =?us-ascii?Q?0DlnDEjCG9/vx7NSNOPaA4qXQGK2uajKY5jYgV5Auu9/UqhqTIhqPRw8baRW?=
+ =?us-ascii?Q?JuQL5sWB9F+TNctT5VOSz9/VWSFIzLo9oVHYf8Q28jdlNwtZTpHVGXaNk2PU?=
+ =?us-ascii?Q?IerPlPC4w6x57zcF3yClYN8YZzhkjCvqonJhkSkOMs9bjz052n4h+QYwz5B1?=
+ =?us-ascii?Q?wqQJtfZ4JsUL6CMDvwHsV826i7/4rVkzSEQj4WxrVrqyIJG3pMY3VOecY/op?=
+ =?us-ascii?Q?nfEsOjsIOWNunL5CbSiS2TYymjUDU42V?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?wGSppetnz9/IkY7y6jQGRij6mZrOYK8gWGRD3+rKFaG/KpirqWX/Ws+WdjyL?=
+ =?us-ascii?Q?qX7C19R3GGMnxbtU6+3FlIOfoVEikeNc5D7jTM4E64hEr5ipPXI1jrsv8U+O?=
+ =?us-ascii?Q?ctmCaSk8cev7p+BRL8H/W+WhSNGOlrol4fAIfTMAK9cPLToxYGTg4GxBT/eq?=
+ =?us-ascii?Q?tJR3ipNRRGx7d621IzXkSG00gtOqBcHBktF/h5M187ShQxSNOlw0qgvtW0ed?=
+ =?us-ascii?Q?cmhn755Fatri22aHvwgAL56pnXe9HT2Pl8/Tqj0dHLLx6wVd4Edrf1UFhz0E?=
+ =?us-ascii?Q?zsEAPhe0XgR+cNO/llcU+fxitoo0PUROqxEPJRl2eb3037YaWv6fyqrFpiqe?=
+ =?us-ascii?Q?4ym9DMvc4yz/Ac02rl5PCtk37sptk5pPUzE08thwC4Q2FXMKlWjHSwcGz9cL?=
+ =?us-ascii?Q?zoGdPV5XnrGaYsSZgp7W2k5Wq/pdtZAkoAjuemeld3aKGhNlXJ//6ff9Wijt?=
+ =?us-ascii?Q?oqybulG2zkukcoaZOOOHkCFvWKtzFIo+ivRxiuTZ1jurYQ1p8Efy139u85dD?=
+ =?us-ascii?Q?oOpKI2lFTUCTTlgxjDbIXfBtlYcj/9u8HEg2FEQPxbnoAMBHiwp80uvGDfJS?=
+ =?us-ascii?Q?I27V+clkuMbsU22BDpp0qd3Y8iJpR52KY5NDMKtAPBLySCK4zz8/C1i315Wa?=
+ =?us-ascii?Q?UaZiBjBr/ChcftlfF3a3iWrvj8gqZkarewYo5H5HyHckkQx1QaMGOr9FSbB8?=
+ =?us-ascii?Q?pP0HTPge6MpukW0ZQj6LUgFKGVzZDvTzXSml9v4w150WVhLPay3Ox9wWDMXL?=
+ =?us-ascii?Q?5MjQWV4pBWHQfqtp98p+CCGN/clz89/ngKma9DwJWySnKk84oCJv10Y/2yvo?=
+ =?us-ascii?Q?Qa4egQ/jzw+flOO0tKDeV7I32P0g/DF9vlhb/NHtxugou6b//JpdygJcSsuv?=
+ =?us-ascii?Q?QDguB3oLP/uQaAi94LP4L9b0MwY6WhRbyjZ/hz2IGRo5lquQhqBgm8au2ysp?=
+ =?us-ascii?Q?1bis+kaCV1ohsuMdbNMOBYhl1XtkOY9/E6E/OIDFUGkcE6CvvFbtM8kiTVus?=
+ =?us-ascii?Q?q/7lcKpAo/tuNO9+myeGUeDKMP5A6TtjEppj5j+fQNelgXwUGNaZzHKAdMgE?=
+ =?us-ascii?Q?yPC79FvzRYPevOR0sM7wMi5DcNa/lregc+bsbagIAW/GQCkFcBYBVRLg5Jsh?=
+ =?us-ascii?Q?EHVu6Ta6wRBd5hu3FXtK1t/HwbN7NhX+tQWKmtM9q7PaxcC6H3CjmQW5h5CE?=
+ =?us-ascii?Q?3s2UCby394hXbTrHwuIuOLwoTc60fCHWBW1aUWS8ZOaZHeIEiKtYDET8U4Qq?=
+ =?us-ascii?Q?pg+vbxmG0FdFNlHxyVg99nARrnfnJJkgj5ecZD7ktATuvUq1E7kuwX8IFEti?=
+ =?us-ascii?Q?eNH1RVj7TUNwB+SU0R6GyvIPaYndUhaarEQL3RDObkiDUNM81sSCHF/nd5OS?=
+ =?us-ascii?Q?5XETFxTHgUGbsxGo6vgwHcmkyMwXfTq1DKm9E5Nbpr/deApD6u8GBMdt2Ukg?=
+ =?us-ascii?Q?vc6kHoPokaWTN9ywU9LGsHNYSagGNuY5yAZk7Zw2zs24I4vb3sbaIiVFpvot?=
+ =?us-ascii?Q?jBsA2skddRl7j5qfbqqyhme+WvXFW9RV0uXemwEx02HW/BSzafiIXXjTsM5I?=
+ =?us-ascii?Q?134U+V6Ebnl8SjFsxRZEp5653+5jMENjfOz7EZ/L3usqW24kuGhbxR5CX+bS?=
+ =?us-ascii?Q?Ow=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	3KoGhKGHAiaIE2SPUk9Xa5BRL1kVpt9TRncVEA0zsLbXUUYe73r9dAW9aTGgF81N2LNnzGTABZx/Zd152epjxCIMEUDfO+MdFnP3aryzLSZ64sKOy2UteFI3jC7If10wNi3ssCqHDN8oB+AsUd3HqrkCAUVtekd+NPDuCeInKlUNAcr7V8DTqN3qQWoVcqqFBLEbRLQtUe3Iv9iAkARtNqhU+BeChNnE3d3GNTal4v0s/ZSuM7bt+G9HXcDdBVEanyQn9eeDR3+qJMbiKIdsJg5D5mkZFWAYDQrCxCSSIhG6WyEhvPGkGdBtGser3XvqSzW614V5snJFO9hDc7pgzOmw4DGYkeSVww3kg4VK934tm14lwrqqYbUUUdzVFhrGx1ZUfDu7JKjjLs3+Z59nL1AE9FaVZVXTY+VBDpa7ja4ZNAxkVuGy1asdibPLbXnfklcrGz7AuKSkKZ57ygnLSXQJ7fxOnXEDaAQdpSmw2GTYx4lYOmPO47VCrltd4oosBBpeUxNR4rlXuBJxJWiZb4FefDDDchqeiOQn/NxRIYEyjXXuPlk3/eTV/zf1YgDGFqmOxOJA7dY/uGrzj8vsgZh+lH1/OX/d5p1f0RCSW3I=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0c7e2ee4-492d-43b6-fc41-08de17d38699
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Oct 2025 16:43:59.7586
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: reDnLhiNouJHkVSBU1WxMZ2C1RzvycRGqfhRn296YqfKzRTBnw3DOwAnT+HzujX8Jw+YBy2SljFxKmFj19bAgFxCarRZC6wR0jND7h+BtRo=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA3PR10MB8516
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-10-30_05,2025-10-29_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 adultscore=0 malwarescore=0
+ mlxscore=0 phishscore=0 mlxlogscore=999 spamscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2510240000
+ definitions=main-2510300138
+X-Authority-Analysis: v=2.4 cv=MYVhep/f c=1 sm=1 tr=0 ts=690395d6 b=1 cx=c_pps
+ a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=x6icFKpwvdMA:10 a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=T5IFE8nSnVq3Yj-IeCkA:9 a=CjuIK1q_8ugA:10 cc=ntf awl=host:13657
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDMwMDEzMCBTYWx0ZWRfXwN0HgDCtOPuW
+ vDC2KuCP6RgO7ZzXwL3qkxMpj6NL0B10TeFwiWxwlXDN2iOfLRNepKLk0nuAYrwkapB746OH+le
+ 4vTuQEXOSGH0aR845t6Jy3bMCj+irZ3Pne5pbCLKFnl7/yBS2nrnaRzpwZX8jw7qs7YhjFnc2Dy
+ SJNGml3RZxakE7oRiHmxBO65GteJiSwD79FaT4rNNWThXmMZxUY741hRSApwtrCRKj3hGLqo8qX
+ vvlzrKw4CqFKMxgjMYk137sPtfBg4UwLmTzRd2eCXcaBrn8V8bqEAe6Jy5nQ4sUiJ1gkiMWdF93
+ fddxZc4yJYB8ioWVBiIU/FFuJZ+S+PrPVjrAGN7Nj87cn7XshoTv1WYXZOWePioutVrKHynUHIP
+ TwqdvNttFbpBcYTSKJ/Nnn822UvO80DvMu2hAo7zs+RqnOhMbWM=
+X-Proofpoint-ORIG-GUID: -23-ZMy76qWmtx4BbXml7mbGwT1GXMLV
+X-Proofpoint-GUID: -23-ZMy76qWmtx4BbXml7mbGwT1GXMLV
 
-On Wed, Oct 22, 2025 at 05:01:07PM -0700, Darrick J. Wong wrote:
-> From: Darrick J. Wong <djwong@kernel.org>
-> 
-> Update the XFS online repair document to describe the motivation and
-> design of the autonomous filesystem healing agent known as xfs_healer.
-> 
-> Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
+On Thu, Oct 30, 2025 at 04:31:56PM +0000, Pedro Falcato wrote:
+> On Thu, Oct 30, 2025 at 04:23:58PM +0000, Lorenzo Stoakes wrote:
+> > On Thu, Oct 30, 2025 at 04:16:20PM +0000, Pedro Falcato wrote:
+> > > On Wed, Oct 29, 2025 at 04:50:31PM +0000, Lorenzo Stoakes wrote:
+> > > > Currently, if a user needs to determine if guard regions are present in a
+> > > > range, they have to scan all VMAs (or have knowledge of which ones might
+> > > > have guard regions).
+> > > >
+> > > > Since commit 8e2f2aeb8b48 ("fs/proc/task_mmu: add guard region bit to
+> > > > pagemap") and the related commit a516403787e0 ("fs/proc: extend the
+> > > > PAGEMAP_SCAN ioctl to report guard regions"), users can use either
+> > > > /proc/$pid/pagemap or the PAGEMAP_SCAN functionality to perform this
+> > > > operation at a virtual address level.
+> > > >
+> > > > This is not ideal, and it gives no visibility at a /proc/$pid/smaps level
+> > > > that guard regions exist in ranges.
+> > > >
+> > > > This patch remedies the situation by establishing a new VMA flag,
+> > > > VM_MAYBE_GUARD, to indicate that a VMA may contain guard regions (it is
+> > > > uncertain because we cannot reasonably determine whether a
+> > > > MADV_GUARD_REMOVE call has removed all of the guard regions in a VMA, and
+> > > > additionally VMAs may change across merge/split).
+> > > >
+> > > > We utilise 0x800 for this flag which makes it available to 32-bit
+> > > > architectures also, a flag that was previously used by VM_DENYWRITE, which
+> > > > was removed in commit 8d0920bde5eb ("mm: remove VM_DENYWRITE") and hasn't
+> > > > bee reused yet.
+> > > >
+> > > > The MADV_GUARD_INSTALL madvise() operation now must take an mmap write
+> > > > lock (and also VMA write lock) whereas previously it did not, but this
+> > > > seems a reasonable overhead.
+> > >
+> > > Do you though? Could it be possible to simply atomically set the flag with
+> > > the read lock held? This would make it so we can't split the VMA (and tightly
+> >
+> > VMA flags are not accessed atomically so no I don't think we can do that in any
+> > workable way.
+> >
+>
+> FWIW I think you could work it as an atomic flag and treat those races as benign
+> (this one, at least).
 
-/me decides (or rather it was pointed out to me) that there's a kernel
-component to xfs_healer, but no explicit discussion of it in section 5
-("Kernel Algorithms and Data Structures").  Also given the frequency of
-the question "why not reuse fsnotify?" I'll address the reasons for that
-here.
+It's not benign as we need to ensure that page tables are correctly propagated
+on fork.
 
-I've added the following text, which will appear in the next revision:
+>
+> > I also don't think it's at all necessary, see below.
+> >
+> > > define what "may have a guard page"), but it sounds much better than introducing
+> > > lock contention. I don't think it is reasonable to add a write lock to a feature
+> > > that may be used by such things as thread stack allocation, malloc, etc.
+> >
+> > What lock contention? It's per-VMA so the contention is limited to the VMA in
+> > question, and only over the span of time you are setting the gaurd region.
+>
+> Don't we always need to take the mmap write lock when grabbing a VMA write
+> lock as well?
 
- 5. Kernel Algorithms and Data Structures
- ========================================
+Yup. But at the same time you're doing the kind of operations that'd use this
+you'd already be taking the lock anyway.
 
-<snip>
+You don't hold it for long and you won't be doing this any more often than you'd
+be doing other write operations, which you're also not going to be holding up
+faults on other VMAs either (they can access other VMAs despite mmap write lock
+being held), so I don't think there's ay issue here.
 
-+Health Monitoring
-+-----------------
-+
-+A self-correcting filesystem responds to observations of problems by scheduling
-+repairs of the affected areas.
-+The filesystem must therefore create event objects in response to stimuli
-+(metadata corruption, file I/O errors, etc.) and dispatch these events to
-+downstream consumers.
-+Downstream consumers that are in the kernel itself are easy to implement with
-+the ``xfs_hooks`` infrastructure created for other parts of online repair; these
-+are basically indirect function calls.
-+
-+However, the decision to translate an adverse metadata health report into a
-+repair should be made by userspace, and the actual scheduling done by userspace.
-+Some users (e.g. containers) would prefer to fast-fail the container and restart
-+it on another node at a previous checkpoint.
-+For workloads running in isolation, repairs may be preferable; either way this
-+is something the system administrator knows, and not the kernel.
-+A userspace agent (``xfs_healer``, described later) will collect events from the
-+kernel and dispatch them appropriately.
-+
-+Exporting health events to userspace requires the creation of a new component,
-+known as the health monitor.
-+Because the monitor exposes itself to userspace to deliver information, a file
-+descriptor is the natural abstraction to use here.
-+The health monitor hooks all the relevant sources of metadata health events.
-+Upon activation of the hook, a new event object is created and added to a queue.
-+When the agent reads from the fd, event objects are pulled from the start of the
-+queue and formatted into the user's buffer.
-+The events are freed, and the read call returns to userspace to allow the agent
-+to perform some work.
-+Memory usage is constrained on a per-fd basis to prevent memory exhaustion; if
-+an event must be discarded, a special "lost event" event is delivered to the
-+agent.
-+
-+In short, health events are captured, queued, and eventually copied out to
-+userspace for dispatching.
-+
-+**Question**: Why use a pseudofile and not use existing notification methods?
-+
-+*Answer*: The pseudofile is a private filesystem interface only available to
-+processes with the CAP_SYS_ADMIN priviledge and the ability to open the root
-+directory.
-+Being private gives the kernel and ``xfs_healer`` the flexibility to change
-+or update the event format in the future without worrying about backwards
-+compatibility.
-+Using existing notifications means that the event format would be frozen in
-+the public fsnotify UAPI forever, which would affect two subsystems.
-+
-+The pseudofile can also accept ioctls, which gives ``xfs_healer`` a solid
-+means to validate that prior to a repair, its reopened mountpoint is actually
-+the same filesystem that is being monitored.
-+
-+**Question**: Why not reuse fs/notify?
-+
-+*Answer*: It's much simpler for the healthmon code to manage its own queue of
-+events and to wake up readers instead of reusing fsnotify because that's the
-+only part of fsnotify that would use.
-+
-+Before I get started, an introduction: fsnotify expects its users (e.g.
-+fanotify) to implement quite a bit of functionality; all it provides is a
-+wrapper around a simple queue and a lot of code to convey information about the
-+calling process to that user.
-+fanotify has to actually implement all the queue management code on its own,
-+and so would healthmon.
-+
-+So if healthmon used fsnotify, it would have to create its own fsnotify group
-+structure.
-+For our purposes, the group is a very large wrapper around a linked list, some
-+counters, and a mutex.
-+The group object is critical for ensuring that sees only its own events, and
-+that nobody else (e.g. regular fanotify) ever sees these events.
-+There's a lot more in there for controlling whether fanotify reports pids,
-+groups, file handles, etc. that healthmon doesn't care about.
-+
-+Starting from the fsnotify() function call:
-+
-+ - I /think/ we'd have to define a new "data type", which itself is just a plain
-+   int but I think they correspond to FSNOTIFY_EVENT_* values which themselves
-+   are actually part of an enum.
-+   The data type controls the typecasting options for the ``void *data``
-+   parameter, which I guess is how I'd pass the healthmon event info from the
-+   hooks into the fsnotify mechanism and back out to the healthmon code.
-+
-+ - Each filesystem that wants to do this probably has to add their own
-+   FSNOTIFY_EVENT_{XFS,BTRFS,BFS} data type value because that's a casting
-+   decision that's made inside the main fsnotify code.
-+   I think this can be avoided if each fs is careful never to leak events
-+   outside of the group.
-+   Either way, it's harder to follow the data flows here because fsnotify can
-+   only take and pass around ``void *`` pointers, and it makes various indirect
-+   function calls to manage events.
-+   Contrast this with doing everything with typed pointers and direct calls
-+   within ``xfs_healthmon.c``.
-+
-+ - Since healthmon is both producer and consumer of fsnotify events, we can
-+   probably define our own "mask" value.
-+   It's a relief that we don't have to interact with fanotify, because fanotify
-+   has used up 22 of its 32 mask bits.
-+
-+Once healthmon gets an event into fsnotify, fsnotify will call back (into
-+healthmon!) to tell it that it got an event.
-+From there, the fsnotify implementation (healthmon) has to allocate an event
-+object and add it to the event queue in the group, which is what it already does
-+now.
-+Overflow control is up to the fsnotify implementation, which healthmon already
-+implements.
-+
-+After the event is queued, the fsnotify implementation also has to implement its
-+own read file op to dequeue an event and copy it to the userspace buffer in
-+whatever format it likes.
-+Again, healthmon already does all this.
-+
-+In the end, replacing the homegrown event dispatching in healthmon with fsnotify
-+would make the data flows much harder to understand, and all we gain is a
-+generic event dispatcher that relies on indirect function calls instead of
-+direct ones.
-+We still have to implement the queuing discipline ourselves! :(
-+
-+**Future Work Question**: Should these events be exposed through the fanotify
-+filesystem error event interface?
-+
-+*Answer*: Yes.
-+fanotify is much more careful about filtering out events to processes that
-+aren't running with privileges.
-+These processes should have a means to receive simple notifications about
-+file errors.
-+However, this will require coordination between fanotify, ext4, and XFS, and
-+is (for now) outside the scope of this project.
+>
+> > When allocating thread stacks you'll be mapping things into memory which... take
+> > the write lock. malloc() if it goes to the kernel will also take the write lock.
+> >
+>
+> But yes, good point, you're already serializing anyway. I don't think this is
+> a big deal.
 
---D
+Indeed
 
-> ---
->  .../filesystems/xfs/xfs-online-fsck-design.rst     |  102 ++++++++++++++++++++
->  1 file changed, 100 insertions(+), 2 deletions(-)
-> 
-> 
-> diff --git a/Documentation/filesystems/xfs/xfs-online-fsck-design.rst b/Documentation/filesystems/xfs/xfs-online-fsck-design.rst
-> index 189d1f5f40788d..bdbf338a9c9f0c 100644
-> --- a/Documentation/filesystems/xfs/xfs-online-fsck-design.rst
-> +++ b/Documentation/filesystems/xfs/xfs-online-fsck-design.rst
-> @@ -166,9 +166,12 @@ The current XFS tools leave several problems unsolved:
->     malicious actors **exploit quirks of Unicode** to place misleading names
->     in directories.
->  
-> +8. **Site Reliability and Support Engineers** would like to reduce the
-> +   frequency of incidents requiring **manual intervention**.
-> +
->  Given this definition of the problems to be solved and the actors who would
->  benefit, the proposed solution is a third fsck tool that acts on a running
-> -filesystem.
-> +filesystem, and an autononmous agent that fixes problems as they arise.
->  
->  This new third program has three components: an in-kernel facility to check
->  metadata, an in-kernel facility to repair metadata, and a userspace driver
-> @@ -203,6 +206,13 @@ Even if a piece of filesystem metadata can only be regenerated by scanning the
->  entire system, the scan can still be done in the background while other file
->  operations continue.
->  
-> +The autonomous self healing agent should listen for metadata health impact
-> +reports coming from the kernel and automatically schedule repairs for the
-> +damaged metadata.
-> +If the required repairs are larger in scope than a single metadata structure,
-> +``xfs_scrub`` should be invoked to perform a full analysis.
-> +``xfs_healer`` is the name of this program.
-> +
->  In summary, online fsck takes advantage of resource sharding and redundant
->  metadata to enable targeted checking and repair operations while the system
->  is running.
-> @@ -850,11 +860,16 @@ variable in the following service files:
->  * ``xfs_scrub_all_fail.service``
->  
->  The decision to enable the background scan is left to the system administrator.
-> -This can be done by enabling either of the following services:
-> +This can be done system-wide by enabling either of the following services:
->  
->  * ``xfs_scrub_all.timer`` on systemd systems
->  * ``xfs_scrub_all.cron`` on non-systemd systems
->  
-> +To enable online repair for specific filesystems, the ``autofsck``
-> +filesystem property should be set to ``repair``.
-> +To enable only scanning, the property should be set to ``check``.
-> +To disable online fsck entirely, the property should be set to ``none``.
-> +
->  This automatic weekly scan is configured out of the box to perform an
->  additional media scan of all file data once per month.
->  This is less foolproof than, say, storing file data block checksums, but much
-> @@ -897,6 +912,36 @@ notifications and initiate a repair?
->  *Answer*: These questions remain unanswered, but should be a part of the
->  conversation with early adopters and potential downstream users of XFS.
->  
-> +Autonomous Self Healing
-> +-----------------------
-> +
-> +The autonomous self healing agent is a background system service that starts
-> +when the filesystem is mounted and runs until unmount.
-> +When starting up, the agent opens a special pseudofile under the specific
-> +mount.
-> +When the filesystem generates new adverse health events, the events will be
-> +made available for reading via the special pseudofile.
-> +The events need not be limited to metadata concerns; they can also reflect
-> +events outside of the filesystem's direct control such as file I/O errors.
-> +
-> +The agent reads these events in a loop and responds to the events
-> +appropriately.
-> +For a single trouble report about metadata, the agent initiates a targeted
-> +repair of the specific structure.
-> +If that repair fails or the agent observes too many metadata trouble reports
-> +over a short interval, it should then initiate a full scan of the filesystem
-> +via the ``xfs_scrub`` service.
-> +
-> +The decision to enable the background scan is left to the system administrator.
-> +This can be done system-wide by enabling the following services:
-> +
-> +* ``xfs_healer@.service`` on systemd systems
-> +
-> +To enable autonomous healing for specific filesystems, the ``autofsck``
-> +filesystem property should be set to ``repair``.
-> +To disable self healing, the property should be set to ``check``,
-> +``optimize``, or ``none``.
-> +
->  5. Kernel Algorithms and Data Structures
->  ========================================
->  
-> @@ -5071,6 +5116,59 @@ and report what has been lost.
->  For media errors in blocks owned by files, parent pointers can be used to
->  construct file paths from inode numbers for user-friendly reporting.
->  
-> +Autonomous Self Healing
-> +-----------------------
-> +
-> +When a filesystem mounts, the Linux kernel initiates a uevent describing the
-> +mount and the path to the data device.
-> +A udev rule determines the initial mountpoint from the data device path
-> +and starts a mount-specific ``xfs_healer`` service instance.
-> +The ``xfs_healer`` service opens the mountpoint and issues the
-> +XFS_IOC_HEALTH_MONITOR ioctl to open a special health monitoring file.
-> +After that is set up, the mountpoint is closed to avoid pinning the mount.
-> +
-> +The health monitoring file hooks certain points of the filesystem so that it
-> +may receive events about metadata health, filesystem shutdowns, media errors,
-> +file I/O errors, and unmounting of the filesystem.
-> +Events are queued up for each health monitor file and encoded into a
-> +``struct xfs_health_monitor_event`` object when the agent calls ``read()`` on
-> +the file.
-> +All health events are dispatched to a background threadpool to reduce stalls
-> +in the main event loop.
-> +Events can be logged into the system log for further analysis.
-> +
-> +For metadata health events, the specific details are used to construct a call
-> +to the scrub ioctl.
-> +The filesystem mountpoint is reopened, and the kernel is called.
-> +If events are lost or the repairs fail, a full scan will be initiated by
-> +starting up an ``xfs_scrub@.service`` for the given mountpoint.
-> +
-> +A filesystem shutdown causes all future repair work to cease, and an unmount
-> +causes the agent to exit.
-> +
-> +**Question**: Why use a pseudofile and not use existing notification methods?
-> +
-> +*Answer*: The pseudofile is a private filesystem interface only available to
-> +processes with the CAP_SYS_ADMIN priviledge.
-> +Being private gives the kernel and ``xfs_healer`` the flexibility to change
-> +or update the event format in the future without worrying about backwards
-> +compatibility.
-> +Using existing notifications means that the event format would be frozen in
-> +public UAPI forever.
-> +
-> +The pseudofile can also accept ioctls, which gives ``xfs_healer`` a solid
-> +means to validate that prior to a repair, its reopened mountpoint is actually
-> +the same filesystem that is being monitored.
-> +
-> +**Future Work Question**: Should the healer daemon also register a dbus
-> +listener and publish events there?
-> +
-> +*Answer*: This is unclear -- if there's a demand for system monitoring daemons
-> +to consume this information and make decisions, then yes, this could be wired
-> +up in ``xfs_healer``.
-> +On the other hand, systemd is in the middle of a transition to varlink, so
-> +it makes more sense to wait and see what happens.
-> +
->  7. Conclusion and Future Work
->  =============================
->  
-> 
-> 
+>
+> > So I think you're overly worried about an operation that a. isn't going to be
+> > something that happens all that often, b. when it does, it's at a time when
+> > you'd be taking write locks anyway and c. won't contend important stuff like
+> > page faults for any VMA other than the one having the the guard region
+> > installed.
+>
+> Yep, thanks.
+
+No problemo, you can get yourself into sticky situations with lock contention
+but I think this is not one! :)
+
+>
+> --
+> Pedro
+
+Cheers, Lorenzo
 
