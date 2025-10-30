@@ -1,318 +1,233 @@
-Return-Path: <linux-fsdevel+bounces-66403-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66404-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52C1EC1DFB9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Oct 2025 02:06:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 426CCC1E09E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Oct 2025 02:40:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D13124E3C08
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Oct 2025 01:06:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 598AE189A835
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Oct 2025 01:41:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BAA423D7DD;
-	Thu, 30 Oct 2025 01:06:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F033728D8D0;
+	Thu, 30 Oct 2025 01:40:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OiDXEoao"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="mQaUXYed"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from MW6PR02CU001.outbound.protection.outlook.com (mail-westus2azon11012015.outbound.protection.outlook.com [52.101.48.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E25E01FBEA8
-	for <linux-fsdevel@vger.kernel.org>; Thu, 30 Oct 2025 01:06:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761786369; cv=none; b=j1zqZC4dwr9gHHfcbiuk3QILokyA68k0NuYuFuj2bXUrArhuiyMTIhz/0jq7RXixejie8KwDYp7wWCDjQhnEHUjZ7XupV8hBFToKqzZjeSnudeCxLqcIqzbKoGG6i43P87ArBmI1FiVEgFay17m4JRoHPslGXspvYgh/nCpmaGg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761786369; c=relaxed/simple;
-	bh=adiu93DlzwcW02RQQQEztmqHCSRUMOCuSZmyc7Gnwl0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HVAHEYYE9H0VAm1ohaGvrsrqfPiwmoCCKjlRj+7fE3YWYficXbMRyun0z5sVSxtYS+QrZGrvzLwOVoWrwyAu4J6PXYNK0xQejke24OVt1Qrw83Zg54lA1PFSJ2pDUa5lWLlcLAdQXVHC3cvwukK0BsCVS/EuNWj47ITlEeqCvCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OiDXEoao; arc=none smtp.client-ip=209.85.160.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4eccff716f4so94821cf.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Oct 2025 18:06:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761786366; x=1762391166; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YeisVXfwZ0KrQFCLeQpidsEhsQ07SALEwA1Kf0DOiTM=;
-        b=OiDXEoaonjoGJBDJoWeeDFCs+MtiNfuycoVOgA9ir0+Vk822TS+TQuK0Hrxje4EJ8q
-         mumRov7VBe2W2hNJmQ+kqdQUsoxPzFbTVTD5Q/N+mNb6cpJeyqXwjOndqvLv7z7lScOO
-         FJg281QPUdQ0+Jb7UHqnrK6xoZZhulgXfR6eowbNDyJqmEHgSt9EsKM9Rsix8mjyhIHn
-         yetMKF9PxhvR6s8r5tfuPepy/nxaUJhj28Up6ocGDin1GYYHywV/HQVc5gvmlUItqNz/
-         fs2ILuyvNr5s7K3XfjJjuyPqm8mztFLDwz3hpW3EmShg2XF0OeYNMo6VTBzQTc6JBf8x
-         bMKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761786366; x=1762391166;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YeisVXfwZ0KrQFCLeQpidsEhsQ07SALEwA1Kf0DOiTM=;
-        b=FJSiPG2+mBj7QB97ePoJaw2f7nwLvTGWjWDs6MA14wTOxnelQd+bMaF3S4SwyRL/xJ
-         a4XtP2M1X0+qDlfcXZUCYE3GiXeflS5MXUTNf77rB4BK9sEgDjSvgjfW6SJXfZ4pDIWw
-         A2Jav8+lBy7hUuf2ErODV7pubHztnGnbKmkJ1uDt1dqqpRVHnFTfb7zeCEOEbxkOglhS
-         Ez5a6MDM7aykk2hTr8aqMeuER94pf+PEq5IFQfTXtMQxL86kMlHx+nBpayRNTfR1QmyR
-         UZuV+hVbRMdinbgFiAYTw5mRYCqge/8/PZoZj0qIDhAwcvWPxs0rnlva1c2GmJaoE6AO
-         qQQg==
-X-Forwarded-Encrypted: i=1; AJvYcCVRtJVaH5MqD4RRShIP0/ynAwK/QtC/qwmjDuYn2kSiK95ZKeL3xL1sotzo0gox7jhrr9p3YBgZ2njAQiJ7@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/0FdKWDN4QOW3pJmCx6KNr6ShHdiZVpNYWFjjxRvTQFZjAKKn
-	hKu8+dlGiZ4nnfI0yhYU6AZ2qyIFOL+Oi58Qb8FD//oKqDruqBDYb4jyrDWqlBjdGn+J7gRxVou
-	N/tPUOuHHeMClqOgtWkUnzY4dhIEggYolDSBvU5V2
-X-Gm-Gg: ASbGncs2rOLEZxpLw08KYIYcqm8SzFWM9Yuht7rdMYuefJ+GEV9+qu0+TQhiLnAVkeg
-	a3WmV1orlvpSXq9ZqAOReIm65b0DuKYockTbr1klL6W/OyK6k+U8Y6mfhdLZDeREX4Bu8kosz7D
-	0litzYD3sj83KLdIDwc5Ia+nYmkNlVYyFvx7fbfbITEqCU32GIaVio8clqd1WqGYpnuOZ9JH0t2
-	u1rJ5jA6nFn2z47JSq3sHaRpHzM31JHPbfaMtgMuwq8Z0SN4PtJQFzZHGw=
-X-Google-Smtp-Source: AGHT+IEXE/t7QfqvUm8ZaTuQf2esMJpzDPElyDqBGV0RGdjV360thSADyS4N9hyRQjOYV3uhrbmzYlXY5QHiRxHN85o=
-X-Received: by 2002:ac8:59cd:0:b0:4e8:85ac:f7a7 with SMTP id
- d75a77b69052e-4ed23bf1436mr1717491cf.9.1761786365282; Wed, 29 Oct 2025
- 18:06:05 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4DC5288C3F;
+	Thu, 30 Oct 2025 01:40:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.48.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761788430; cv=fail; b=uCuEfFuEi+M7r/ozfvEOdMhkICXzfw04aVLIoRZhJqPQB8+C2nSdX85En6ezxn8dNCa52PXRqMaOKjyddAxcIqSkEC3trNTeOAl4dUQ0YX+Xj+gD9U6fsxdzpHWX3K/H1AIirnrmN61RFUdgkrfwzVb/GW4tj/tIGyAsXuFBkGk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761788430; c=relaxed/simple;
+	bh=SLozQB6VYkeMApldKyHFlLnCgGQLuPxAOqv3gNIUEKc=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=Fd+VW0kA158CEaQ7vW5LEZs79E5EJaY48K2Xt9aweawWQa8zkeMsF6kN3zTXq7t26oioaV0jm6v9WOAcbHSRYobzADoiF+deNfSmTpTlO7SMUol8fN0umkNFSn2zm2bh5sAWiklYVOYndUiQSb+/OR+AcIQdsZEUDmhmw2dXojQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=mQaUXYed; arc=fail smtp.client-ip=52.101.48.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=mXmGAIvdh4ocAk0gqzNRTawQDr0kehlrQu0dBIL29zs2yp/smw3yNGlxpTtEZJjZB5SFkZJXpAU3+bLXCfZyqu6U4PsqPVQj0Bk4u+astozrEttLOrnQxzagCIraAGf6oFId3AzOh9xqsZBOb03CDFYiJiLCKOtmYoxTxL07zplcH2SuiUmdtDGykMUrr3lyrzhflUZ4F0Xm3msJPNn2pU9Fk2oUs+Sz0Z8MVHNzKLjl6f+vA2DDX4d1V1lVSxQCzZBO2jhsr0qLpnnzeu9vxVcvyOWnoRnaNYnbEtHv7WG7XQrejWeQvJxfupBg77Lr6PvnbQ3M46mYQuzMNKg2BA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=2KV7sKEfvRxLIWD5On0kNmek7awOlqO6DQ9GAfZt0m4=;
+ b=mDar8BRGEG/MPBUakHCNF8mP0J7cJ827ePSE0gIPqtkfnXg6sE0J8v8l/BHrN/sPAoN8RMdMsddeisolGsMG1jB4mqiAA78ZY3I/5sMI6u+GAVPOlqWI6uva+y3ymQWOeUU+JPAxjbgxWl3oM5g4YLXeU6bcZO0mqGsN6/OCEEwd6bJv9RcffNqfHf235tj3WZegYA3eQu8UJN+E8tjzZLCa8+VVOrWQIDYuYQhwFiO75B4F0LAw8hZXbqBjmCgyeWQvGR4F7cGywG3fkbGoPHQiiTPa+ujc0SoU9aWMudX5F2UzDKCId8deyU2X54361BlRjvt+58rKmUWYqYVe+A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2KV7sKEfvRxLIWD5On0kNmek7awOlqO6DQ9GAfZt0m4=;
+ b=mQaUXYedGSu4AknnFLubO+sade1toa0EhjBCu0t0wiHf8I/HPx1F8SzeK013kWYnBcZ06SdskNF7zDfhHqleoKsqTYWt6EA/yIw9hXw6yzTodMYV6n3GP8XiRESbovWoLzO6LiF+gt1IA6/v6DmVu8zO2To/IJbhxipi7xnQM+CasVen9qT+AHJRFUpdbi25S+QmJ/H/p/UdO36J2JZAi7lmT51DpBUevJJzbgBWxVGqsefkf61LUMGT63W42BoL782aOh4R/5uUCuKdfu4SkdziHr77rA/HVLacNkKjbT1GvHmSv+FlokZy0miG4zuZYhA58MomZIQQuIziUVipKg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
+ IA1PR12MB8261.namprd12.prod.outlook.com (2603:10b6:208:3f7::7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9275.14; Thu, 30 Oct 2025 01:40:23 +0000
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a%5]) with mapi id 15.20.9275.013; Thu, 30 Oct 2025
+ 01:40:23 +0000
+From: Zi Yan <ziy@nvidia.com>
+To: linmiaohe@huawei.com,
+	david@redhat.com,
+	jane.chu@oracle.com
+Cc: kernel@pankajraghav.com,
+	ziy@nvidia.com,
+	akpm@linux-foundation.org,
+	mcgrof@kernel.org,
+	nao.horiguchi@gmail.com,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Nico Pache <npache@redhat.com>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Dev Jain <dev.jain@arm.com>,
+	Barry Song <baohua@kernel.org>,
+	Lance Yang <lance.yang@linux.dev>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Wei Yang <richard.weiyang@gmail.com>,
+	Yang Shi <shy828301@gmail.com>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: [PATCH v4 0/3] Optimize folio split in memory failure
+Date: Wed, 29 Oct 2025 21:40:17 -0400
+Message-ID: <20251030014020.475659-1-ziy@nvidia.com>
+X-Mailer: git-send-email 2.43.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BL1PR13CA0362.namprd13.prod.outlook.com
+ (2603:10b6:208:2c0::7) To DS7PR12MB9473.namprd12.prod.outlook.com
+ (2603:10b6:8:252::5)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1761756437.git.lorenzo.stoakes@oracle.com> <7de40603015dee82970f5d37332a6d5af7532063.1761756437.git.lorenzo.stoakes@oracle.com>
-In-Reply-To: <7de40603015dee82970f5d37332a6d5af7532063.1761756437.git.lorenzo.stoakes@oracle.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Wed, 29 Oct 2025 18:05:54 -0700
-X-Gm-Features: AWmQ_blocebJr4y0y6DBwQJ-I85ZwTlE3oPMzhX8CLpjz_qVxCW5kze5g7B-HN8
-Message-ID: <CAJuCfpEefC1nAQ6TgKcq7osX4Zyr_dLhiR5W0So=CReed+LSuw@mail.gmail.com>
-Subject: Re: [PATCH 1/3] mm: introduce VM_MAYBE_GUARD and make visible for
- guard regions
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>, 
-	David Hildenbrand <david@redhat.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, Michal Hocko <mhocko@suse.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Jann Horn <jannh@google.com>, 
-	Pedro Falcato <pfalcato@suse.de>, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
-	linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	Andrei Vagin <avagin@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|IA1PR12MB8261:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9de13090-f4fb-40cd-28ff-08de17554ada
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?jxCyw0T4P7psYAHpYrnTtawk2fRhXWBltlsfivwWHPoYJnsc2Vjlzs8n8BYf?=
+ =?us-ascii?Q?rNARCKi3yKBV3P+pyXUSnFGDoRp5pkfmCiKijC+xYvOBclA3J2+7lVBMopeK?=
+ =?us-ascii?Q?QpfMCCtiSJQtNOEwa+el3wC82FiWQwI71tLvoPqz9+a265MNoFhdp/b9NBXV?=
+ =?us-ascii?Q?an9YiEt8r32/LRyujYRA57cry+KafUbP5YZmaB7zeO9ck4+Lo2EY8R6RSy2Y?=
+ =?us-ascii?Q?i5QjUbbR5ouB7XNvKh4rXyv5tOL+z1kxvgPmni2Fu38eO96quJ7yyBaTzP7q?=
+ =?us-ascii?Q?0LJBmuOMxxdf06ONkWSDZ5RK8ZaMjX415x6QLGGUHPvPIa2hkTIMwnXIzMrz?=
+ =?us-ascii?Q?QKvysKq94HNwGIkCtolOM4iueLe+r8hMfFxmDhcNQbVN9bzSDlfPNlqWgHc8?=
+ =?us-ascii?Q?3imPTfo+is9082RrOIMYfEhBWJDPWAQ68sI6jRoZVinfwKU3sD9H336rcmNk?=
+ =?us-ascii?Q?OjNTJ2JJ8dAvE0bUfWvCb/03Cogoaya1oV4SOa/FPHDOLwY7DyT9zuahVZq8?=
+ =?us-ascii?Q?f5YWG+LDK07JyxWtItXwnzdBOVTdL4wurqIyew8aiDF7WNPe798hWlFWj/m+?=
+ =?us-ascii?Q?DyFA4WGFMCUtpSfQleIGUJmDrMQfLpD/sMsIBB8qKZ0ujChXRmK+K37cLL2X?=
+ =?us-ascii?Q?NZx8BJdGS71Zz09+f+KN2YbUuOu9vY+CFwG8aU1gvfPAUhzIm0bJ4FrHuBqx?=
+ =?us-ascii?Q?2gx7zDaiIP7VCUPNl43oY6YzlwvcTgRYRvXdynpToC3HQ3FvO/o4Z0xO2okL?=
+ =?us-ascii?Q?so0t8xKrLVU998Z1i1RSmc5LO2SOfBgc4TQTCsbuMbFNT8ja8nmRrnOUQBZg?=
+ =?us-ascii?Q?5yIz+ZzD1RK43ozctGXDq0TZcNp0lOe4lC6IjBVmx2h4M7bTPykmg8O8q4yS?=
+ =?us-ascii?Q?2aOBovUH2b+0UBicFp6Xm8NDun9JEhpTkI4l1R/Jy2+w3+IgrjXDYun4V8KS?=
+ =?us-ascii?Q?AMzmw1Eud14sFbbHyC/zqlAQpogrpxOn1B3vN1YnuHmZX56i0Oi1XijGkZXp?=
+ =?us-ascii?Q?4vlib9pondI23gQPaxdzLzUTDGC26p1pSAdp3aE/Nv0XQhmfpjf2ofizGpkK?=
+ =?us-ascii?Q?MOuVz81ypWRSbxIlntHrVyP3bPK5ZNGbN9tQQk1CF3OgGc7MYRw1wJ84L3yk?=
+ =?us-ascii?Q?/qBlmbV4lpMQUQQt8v77JYOqPbfcBBIlSpFbzyW20wlGpU4kALjIFrqsAFHZ?=
+ =?us-ascii?Q?Zrh9YItQjkd75NYJ3Sw5eXqx/g2L5H/m2L9bpPJ3OXii1fN9QpcdSGZ43D+v?=
+ =?us-ascii?Q?aWoP9WH3g7w9BnLGdhCUbIxy6anY3no00bg3bAiJ71E9Ibvlm3Klr5ryIiis?=
+ =?us-ascii?Q?1rzyivwfCbTAVvOfLkupVCLfAjvzdd3wnTOBlKk0svL87yRN0KsS6o7Tkmfz?=
+ =?us-ascii?Q?rZBN7Y+RmecalgBKu4WskLpszQla3vsCqA1/d8ATO7hjyCOUVOWqyagsw/IQ?=
+ =?us-ascii?Q?NnBgbPC+3ZChYCmYgMvdZM7ptZR+Go31NJCoWYOzljTFwD9Iysd09Q=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Oupb5KVQdzb98JjAd0N86dg2a8q8HRiGv3azzESUc2DYV2aS6wibyW+FQ9YL?=
+ =?us-ascii?Q?nLSM9EmZrJehwSlv1JkwOwLZzrDKLnDgz/FLJktQjXLqsmPg+/b+uQihfv2m?=
+ =?us-ascii?Q?MoufbPjT+hKU2RhkiVjbE0nuEExKcg88iqyEIG9oa88GLHra5l2EMzts9tNs?=
+ =?us-ascii?Q?BAKZH1wDR7Eb69ArY+v1VQgtJJRcd7g4E5nqS+2V3dtiR4gpjvlkuQTHdkiV?=
+ =?us-ascii?Q?8Wgt/iYI9/2ExEyFLkmYQLwtwyuNvG6ldQ1l42UCqtfU0vlaxvQ3cstd1sxc?=
+ =?us-ascii?Q?Ne+ysP1vMeZ3QvLzJ/FcfgzdkNXLAhCkWv4vLCiI1XNDNw+xykf+bvR+NI2I?=
+ =?us-ascii?Q?Hh75Ih7Y7vJy+lagH2rjyLv4Hbx6Lq+b+ZWWJKA3poKHpDEyBKFD7mwaOPaH?=
+ =?us-ascii?Q?W1I/oefl0+EOD9YOD3WtyjGlvL44EPueF/oxYCH/cl9OMWkWIwdoSPDWAitm?=
+ =?us-ascii?Q?4z5uLKCg+bp9O9mlpIO4EQljGOi5LMIttmXKI8uSfptlByuvsr8BUVYKYQTd?=
+ =?us-ascii?Q?LBvxT60zRGg6FehLhahn61dH2xPDNMaCGETRirVeEfHKw6Ceznm/NwHVjJXo?=
+ =?us-ascii?Q?eWFSknVAvYF2C+vvopw8jS3fpYa3gkGTsCNmtE2IPdT6ZnD71P6782dO7b7Y?=
+ =?us-ascii?Q?HZUTvpJnf1SlslwmTCyMTfI9ztv8zk8WEXYPPFApgtQrIAbQNkOZYrpxzL0c?=
+ =?us-ascii?Q?NARZDqPxWBl/STJPgefYp3UKP/voAxlprt8EPnXpNN7eMKI90u3cXtEFazGz?=
+ =?us-ascii?Q?RjJWrVZDplARNmzAmuT0EuXy8DKoX2+u24lp0pJ37J+ICBxxpcYOspEWrx//?=
+ =?us-ascii?Q?NwuJtq+rOplBIHfO914tsbDUg7XYyOP6KWTJxwdIgHb3Jhb4SpZw3zWGWnFM?=
+ =?us-ascii?Q?zRmjg0cCdj4XGOpR5rOwwsZHDv1ix/ewwM+JbgGrwRiM8Bg0r0wBgaULVb/1?=
+ =?us-ascii?Q?B8vbMFvuRhjiVQIpp1AA1gtwJfZB34AafS2uNbZaXoubN/sUIb0IRZ3tOgxN?=
+ =?us-ascii?Q?zrXXF71ZLeQyrDghnbEapKsBrp52ja+UE/o4ATZY9kypzwMgoYc8x/Oh17EK?=
+ =?us-ascii?Q?Kyw8AXujXDRGD49JgNADA2N0ZLOke4yGYqqRqLkp/6gid17RWjF7OVwfCnDE?=
+ =?us-ascii?Q?PicNkEJ9q0zkC1irgB8R74JnVJoSM2h70N0vPX7kkeHee9pvO1d8ZWnsyj9M?=
+ =?us-ascii?Q?d/5LPfaWQxDO7QTkS5v1+Mh7E3lNYYOlO+sXhzdWXlkOMsjuAuc3K2ADKEhu?=
+ =?us-ascii?Q?W7Yqt1bCuH0AVkFF+RfRKady58cSlxAxem+WHQws37i1Kc3sWrS4V2nxoZ6M?=
+ =?us-ascii?Q?uR5dP02luMmtDIHUbc8Wv7rE40W3l+yHXuo/q8tvtpe7rnRSitw2Ha5dBJIz?=
+ =?us-ascii?Q?DfpmquJix+5PIkbcZ771t8Eju+k6goMStco2QFmUUJxhhlE4kr+gBxFRnDVU?=
+ =?us-ascii?Q?02pnuWVBDy29JQ2S0fP69VjnS1OVMYRl8hRCzeY5Tk7Wja/rDNn6efvxMTi+?=
+ =?us-ascii?Q?+G+ClMKIjrKsBhleHcohoQ4JtKrs9cTSky3FT7LRfIvWGpiKqA7mEz7yg0Ne?=
+ =?us-ascii?Q?s/SNm2ehAlEd30dF6bqzrQ0PrfuyOUsiYHDukjt0?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9de13090-f4fb-40cd-28ff-08de17554ada
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Oct 2025 01:40:23.0460
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: RNdCN/2GaONCa0+7v/XG6yVUXwYxuKyJuAcBCSBtrV0PcI3sFAL8C/gJ2InKmK7X
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB8261
 
-On Wed, Oct 29, 2025 at 9:51=E2=80=AFAM Lorenzo Stoakes
-<lorenzo.stoakes@oracle.com> wrote:
->
-> Currently, if a user needs to determine if guard regions are present in a
-> range, they have to scan all VMAs (or have knowledge of which ones might
-> have guard regions).
->
-> Since commit 8e2f2aeb8b48 ("fs/proc/task_mmu: add guard region bit to
-> pagemap") and the related commit a516403787e0 ("fs/proc: extend the
-> PAGEMAP_SCAN ioctl to report guard regions"), users can use either
-> /proc/$pid/pagemap or the PAGEMAP_SCAN functionality to perform this
-> operation at a virtual address level.
->
-> This is not ideal, and it gives no visibility at a /proc/$pid/smaps level
-> that guard regions exist in ranges.
->
-> This patch remedies the situation by establishing a new VMA flag,
-> VM_MAYBE_GUARD, to indicate that a VMA may contain guard regions (it is
-> uncertain because we cannot reasonably determine whether a
-> MADV_GUARD_REMOVE call has removed all of the guard regions in a VMA, and
-> additionally VMAs may change across merge/split).
+Hi all,
 
-nit: I know I suck at naming but I think VM_MAY_HAVE_GUARDS would
-better represent the meaning.
+This patchset is a follow-up of "[PATCH v3] mm/huge_memory: do not change
+split_huge_page*() target order silently."[1] and
+[PATCH v4] mm/huge_memory: preserve PG_has_hwpoisoned if a folio is split
+to >0 order[2], since both are separated out as hotfixes. It improves how
+memory failure code handles large block size(LBS) folios with
+min_order_for_split() > 0. By splitting a large folio containing HW
+poisoned pages to min_order_for_split(), the after-split folios without
+HW poisoned pages could be freed for reuse. To achieve this, folio split
+code needs to set has_hwpoisoned on after-split folios containing HW
+poisoned pages and it is done in the hotfix in [2].
 
->
-> We utilise 0x800 for this flag which makes it available to 32-bit
-> architectures also, a flag that was previously used by VM_DENYWRITE, whic=
-h
-> was removed in commit 8d0920bde5eb ("mm: remove VM_DENYWRITE") and hasn't
-> bee reused yet.
+This patchset includes:
+1. A patch adds split_huge_page_to_order(),
+2. Patch 2 and Patch 3 of "[PATCH v2 0/3] Do not change split folio target
+   order"[3],
 
-s/bee/been
-but I'm not even sure the above paragraph has to be included in the
-changelog. It's a technical detail IMHO.
+This patchset is based on mm-new.
 
->
-> The MADV_GUARD_INSTALL madvise() operation now must take an mmap write
-> lock (and also VMA write lock) whereas previously it did not, but this
-> seems a reasonable overhead.
+Changelog
+===
+From V3[4]:
+1. Patch, mm/huge_memory: preserve PG_has_hwpoisoned if a folio is split
+   to >0 order, is sent separately as a hotfix[2].
+2. made newly added new_order const in memory_failure() and
+   soft_offline_in_use_page().
+3. explained in a comment why in memory_failure() after-split >0 order
+   folios are still treated as if the split failed.
 
-I guess this is because it is modifying vm_flags now?
 
->
-> We also update the smaps logic and documentation to identify these VMAs.
->
-> Another major use of this functionality is that we can use it to identify
-> that we ought to copy page tables on fork.
->
-> For anonymous mappings this is inherent, however since commit f807123d578=
-d
->  ("mm: allow guard regions in file-backed and read-only mappings") which
->  allowed file-backed guard regions, we have unfortunately had to enforce
-> this behaviour by settings vma->anon_vma to force page table copying.
->
-> The existence of this flag removes the need for this, so we simply update
-> vma_needs_copy() to check for this flag instead.
->
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+From V2[3]:
+1. Patch 1 is sent separately as a hotfix[1].
+2. set has_hwpoisoned on after-split folios if any contains HW poisoned
+   pages.
+3. added split_huge_page_to_order().
+4. added a missing newline after variable decalaration.
+5. added /* release= */ to try_to_split_thp_page().
+6. restructured try_to_split_thp_page() in memory_failure().
+7. fixed a typo.
+8. reworded the comment in soft_offline_in_use_page() for better
+   understanding.
 
-Overall, makes sense to me and I think we could use it.
 
-Reviewed-by: Suren Baghdasaryan <surenb@google.com>
+Link: https://lore.kernel.org/all/20251017013630.139907-1-ziy@nvidia.com/ [1]
+Link: https://lore.kernel.org/all/20251023030521.473097-1-ziy@nvidia.com/ [2]
+Link: https://lore.kernel.org/all/20251016033452.125479-1-ziy@nvidia.com/ [3]
+Link: https://lore.kernel.org/all/20251022033531.389351-1-ziy@nvidia.com/ [4]
 
-It would be nice to have a way for userspace to reset this flag if it
-confirms that the VMA does not really have any guards (using say
-PAGEMAP_SCAN) but I think such an API can be abused.
+Zi Yan (3):
+  mm/huge_memory: add split_huge_page_to_order()
+  mm/memory-failure: improve large block size folio handling.
+  mm/huge_memory: fix kernel-doc comments for folio_split() and related.
 
-> ---
->  Documentation/filesystems/proc.rst |  1 +
->  fs/proc/task_mmu.c                 |  1 +
->  include/linux/mm.h                 |  1 +
->  include/trace/events/mmflags.h     |  1 +
->  mm/madvise.c                       | 22 ++++++++++++++--------
->  mm/memory.c                        |  4 ++++
->  tools/testing/vma/vma_internal.h   |  1 +
->  7 files changed, 23 insertions(+), 8 deletions(-)
->
-> diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesyste=
-ms/proc.rst
-> index 0b86a8022fa1..b8a423ca590a 100644
-> --- a/Documentation/filesystems/proc.rst
-> +++ b/Documentation/filesystems/proc.rst
-> @@ -591,6 +591,7 @@ encoded manner. The codes are the following:
->      sl    sealed
->      lf    lock on fault pages
->      dp    always lazily freeable mapping
-> +    gu    maybe contains guard regions (if not set, definitely doesn't)
->      =3D=3D    =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->
->  Note that there is no guarantee that every flag and associated mnemonic =
-will
-> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-> index fc35a0543f01..db16ed91c269 100644
-> --- a/fs/proc/task_mmu.c
-> +++ b/fs/proc/task_mmu.c
-> @@ -1146,6 +1146,7 @@ static void show_smap_vma_flags(struct seq_file *m,=
- struct vm_area_struct *vma)
->                 [ilog2(VM_MAYSHARE)]    =3D "ms",
->                 [ilog2(VM_GROWSDOWN)]   =3D "gd",
->                 [ilog2(VM_PFNMAP)]      =3D "pf",
-> +               [ilog2(VM_MAYBE_GUARD)] =3D "gu",
->                 [ilog2(VM_LOCKED)]      =3D "lo",
->                 [ilog2(VM_IO)]          =3D "io",
->                 [ilog2(VM_SEQ_READ)]    =3D "sr",
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index aada935c4950..f963afa1b9de 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -296,6 +296,7 @@ extern unsigned int kobjsize(const void *objp);
->  #define VM_UFFD_MISSING        0
->  #endif /* CONFIG_MMU */
->  #define VM_PFNMAP      0x00000400      /* Page-ranges managed without "s=
-truct page", just pure PFN */
-> +#define VM_MAYBE_GUARD 0x00000800      /* The VMA maybe contains guard r=
-egions. */
->  #define VM_UFFD_WP     0x00001000      /* wrprotect pages tracking */
->
->  #define VM_LOCKED      0x00002000
-> diff --git a/include/trace/events/mmflags.h b/include/trace/events/mmflag=
-s.h
-> index aa441f593e9a..a6e5a44c9b42 100644
-> --- a/include/trace/events/mmflags.h
-> +++ b/include/trace/events/mmflags.h
-> @@ -213,6 +213,7 @@ IF_HAVE_PG_ARCH_3(arch_3)
->         {VM_UFFD_MISSING,               "uffd_missing"  },              \
->  IF_HAVE_UFFD_MINOR(VM_UFFD_MINOR,      "uffd_minor"    )               \
->         {VM_PFNMAP,                     "pfnmap"        },              \
-> +       {VM_MAYBE_GUARD,                "maybe_guard"   },              \
->         {VM_UFFD_WP,                    "uffd_wp"       },              \
->         {VM_LOCKED,                     "locked"        },              \
->         {VM_IO,                         "io"            },              \
-> diff --git a/mm/madvise.c b/mm/madvise.c
-> index fb1c86e630b6..216ae6ed344e 100644
-> --- a/mm/madvise.c
-> +++ b/mm/madvise.c
-> @@ -1141,15 +1141,22 @@ static long madvise_guard_install(struct madvise_=
-behavior *madv_behavior)
->                 return -EINVAL;
->
->         /*
-> -        * If we install guard markers, then the range is no longer
-> -        * empty from a page table perspective and therefore it's
-> -        * appropriate to have an anon_vma.
-> +        * It would be confusing for anonymous mappings to have page tabl=
-e
-> +        * entries but no anon_vma established, so ensure that it is.
-> +        */
-> +       if (vma_is_anonymous(vma))
-> +               anon_vma_prepare(vma);
-> +
-> +       /*
-> +        * Indicate that the VMA may contain guard regions, making it vis=
-ible to
-> +        * the user that a VMA may contain these, narrowing down the rang=
-e which
-> +        * must be scanned in order to detect them.
->          *
-> -        * This ensures that on fork, we copy page tables correctly.
-> +        * This additionally causes page tables to be copied on fork rega=
-rdless
-> +        * of whether the VMA is anonymous or not, correctly preserving t=
-he
-> +        * guard region page table entries.
->          */
-> -       err =3D anon_vma_prepare(vma);
-> -       if (err)
-> -               return err;
-> +       vm_flags_set(vma, VM_MAYBE_GUARD);
->
->         /*
->          * Optimistically try to install the guard marker pages first. If=
- any
-> @@ -1709,7 +1716,6 @@ static enum madvise_lock_mode get_lock_mode(struct =
-madvise_behavior *madv_behavi
->         case MADV_POPULATE_READ:
->         case MADV_POPULATE_WRITE:
->         case MADV_COLLAPSE:
-> -       case MADV_GUARD_INSTALL:
->         case MADV_GUARD_REMOVE:
->                 return MADVISE_MMAP_READ_LOCK;
->         case MADV_DONTNEED:
-> diff --git a/mm/memory.c b/mm/memory.c
-> index 4c3a7e09a159..a2c79ee43d68 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -1478,6 +1478,10 @@ vma_needs_copy(struct vm_area_struct *dst_vma, str=
-uct vm_area_struct *src_vma)
->         if (src_vma->anon_vma)
->                 return true;
->
-> +       /* Guard regions have momdified page tables that require copying.=
- */
-> +       if (src_vma->vm_flags & VM_MAYBE_GUARD)
-> +               return true;
-> +
->         /*
->          * Don't copy ptes where a page fault will fill them correctly.  =
-Fork
->          * becomes much lighter when there are big shared or private read=
-only
-> diff --git a/tools/testing/vma/vma_internal.h b/tools/testing/vma/vma_int=
-ernal.h
-> index d873667704e8..e40c93edc5a7 100644
-> --- a/tools/testing/vma/vma_internal.h
-> +++ b/tools/testing/vma/vma_internal.h
-> @@ -56,6 +56,7 @@ extern unsigned long dac_mmap_min_addr;
->  #define VM_MAYEXEC     0x00000040
->  #define VM_GROWSDOWN   0x00000100
->  #define VM_PFNMAP      0x00000400
-> +#define VM_MAYBE_GUARD 0x00000800
->  #define VM_LOCKED      0x00002000
->  #define VM_IO           0x00004000
->  #define VM_SEQ_READ    0x00008000      /* App will access data sequentia=
-lly */
-> --
-> 2.51.0
->
+ include/linux/huge_mm.h | 22 ++++++++++++++++------
+ mm/huge_memory.c        | 27 +++++++++++++++------------
+ mm/memory-failure.c     | 31 +++++++++++++++++++++++++++----
+ 3 files changed, 58 insertions(+), 22 deletions(-)
+
+-- 
+2.43.0
+
 
