@@ -1,98 +1,163 @@
-Return-Path: <linux-fsdevel+bounces-66491-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66492-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BA72C21060
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Oct 2025 16:48:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 42803C2116E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Oct 2025 17:06:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69336464AC5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Oct 2025 15:46:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 621383BA3B5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Oct 2025 16:05:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59FB22D738E;
-	Thu, 30 Oct 2025 15:46:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BF5A3655E0;
+	Thu, 30 Oct 2025 16:05:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o1SzNsdp"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CDvt75El"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FC8537A3B4;
-	Thu, 30 Oct 2025 15:46:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3303B1DB15F
+	for <linux-fsdevel@vger.kernel.org>; Thu, 30 Oct 2025 16:05:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761839192; cv=none; b=q9o4Kj8g0DrJM/BwyLhJRHBHlZd3R53Q0hRUyzRC9eyyUUdl4d2q96UPMVHas3nLutwsHR8zuyKIwpiPE0mcZq6MqhRhaGO6Ge2Jn6W/0g3Dp75xrscInwUUDWRE6TYacahAuw6t2eth9HbA92ruIeWBxweH8nhq+HZfJ7qtwjU=
+	t=1761840310; cv=none; b=oKQeKZM49XGsghDEB14fmAEwOfisMoyBbcRsTH27faGdYg9ig0WHbmntzVk48Bc5lJq8iajFY9hvjkni7BCjuRqjLuGnMdJe9WlBSVoCNZJUhlXBFPUPeGZ9P27SsiKX8wenaHDZTL/SI1rzO9A4j8vskLznY0wPlLK/vRaxNhg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761839192; c=relaxed/simple;
-	bh=O/MqUXCRBsW16T+2gZ3rWCpjPcBmGWYAl4TCaK+lbCg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LPSOhkgxUKkh3nYrzaEkwtjgA1fHXoeOo8zKwp24HnQIE2bR2jebLYLcGzePRab92HcHO2knou83DyhcUFxDmuxiinw3p/GyB+DgN8hm7wB4y4Gz5S230v+bC5xDmckUnXJ/ZKnK/vzstfwPP9JFmSSMJLrh3r1hCuWmFsaWOfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o1SzNsdp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACFF2C4CEFF;
-	Thu, 30 Oct 2025 15:46:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761839192;
-	bh=O/MqUXCRBsW16T+2gZ3rWCpjPcBmGWYAl4TCaK+lbCg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=o1SzNsdp5hbJDctJABv9DD+krmMc+E7r+PzqKq+suUwPLPF2TnoDV97v51iZBhQQF
-	 edKwc1fRvaceCyNvbBbLZdP7MIEs0B4Mz2XmTMyL1k2yIlYW7kymvud3qbDnatsq31
-	 rGyz5mZOqxo94hgiBfIipp7MThtcOqLAY4AziBY1Ui61TZedHbo3buIszUfISRrUAv
-	 CdxUoLHzvsg5zhcm0JeesYZSAtHIpYBkK3AwdMVDIWu72EekccXSOERPt3oyEwmiWL
-	 +we2VxkBPIaV/T5/KRbYxQUsCqvk3nZFLhtYJ70Pofduob5Y8MTbffjVNLN5IdRqgS
-	 a+CdDxqxwa/Qw==
-Message-ID: <0fcabf65-e24e-4f7b-9217-15344c926dee@kernel.org>
-Date: Thu, 30 Oct 2025 16:46:24 +0100
+	s=arc-20240116; t=1761840310; c=relaxed/simple;
+	bh=c9b8XC/fH65U9UHUGq3SmXgvpJYhZ/Lo5B2qlcSERQ0=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=uxMbpZZaaqA1thAVxH2D2CSYq8xw/QOcZWn951gr318A6lmpJHhVHcw5v7WbdojSXo5UpenSvtxcYkxJBHjtSQNtWqtbGXDwe6ZzdrWgrstEL5A8VQzOBTGUtdqzAWgi0GaGYuSL/sMTHrqyvlhLdWXN4AqD9NMbL5Euiiu3xoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CDvt75El; arc=none smtp.client-ip=209.85.221.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
+Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-3f7b5c27d41so852118f8f.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Oct 2025 09:05:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761840306; x=1762445106; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=c9b8XC/fH65U9UHUGq3SmXgvpJYhZ/Lo5B2qlcSERQ0=;
+        b=CDvt75ElY3hdyLEZnu5e1h6J5sMfYbfZLViMq0FtvdBo6f3AztmUt90lVbhofK72EK
+         b745wROqFofANCzBlhNHxm2KN+pTzU7kvyPTuPbvqLi1LG6nKhZqILpjkBgZPRq3kQuZ
+         eyaOBe6qbuD9b0wvX7pcUmBDcYD2CI22Sy3ewlxtzOTvkRQlq2xVjXPpNff1VPHu7hCt
+         ohJUvsZxnM6hRmARijIiA/iL77tvS5Cr/S5iPd0vUw9HVrbfAcdYfOiY0/wb2ZB398fe
+         i0MBwZqx3tS3Cn0LlwnHMPfjgclAImjU3fkpRYKslFfi8jX2Sc0EZmrHnTIGFrth8N0S
+         fUZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761840307; x=1762445107;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=c9b8XC/fH65U9UHUGq3SmXgvpJYhZ/Lo5B2qlcSERQ0=;
+        b=Yg8aGUNT2fKYiz45imOYSOIa0g4+vibqcxD8fybvc9Hf5gKXwphRujLHO8v5nDOoKR
+         mBCtiJzUzVjr4dFpBOBBhBbFHGTl+xel39I6KT641ubww+odHEqd5lyq4fRKZxNJ4VJ8
+         MkUZkIHQRSm/q8+cYMX7XzvftrEMRZxbiSwP7T/f6C4GGsLCNkE93UHU26Ba17hLvwdd
+         UM7a9NeRkJ+vL8TMQIzPpwAcq6wGYAVekxp5/irkH0l3nV1snop3iVH3eUMm0JB0Ml+U
+         +nWmzARMvbyUCaLY88lryk3CJnRqfs6bHRmnsNwKlakWnaV6yjcpDBV3sfp1OFyI++4o
+         8AFw==
+X-Forwarded-Encrypted: i=1; AJvYcCX82RHFicm8LDHBlSKpsDGNh7Ui3/kdRTdp9q/ElkFF615dLIhafYG66rYW48eOy9o8s3+cNKk8w4IG+AwD@vger.kernel.org
+X-Gm-Message-State: AOJu0YzoeDu4/IeRAGkR5WD4bw4157+p5LBdfsWfeDzeBuF5ZelD5CNI
+	esdd7YU+pRlpGh1eu2SWwBKyhMskU/FTlooxSPmgbqYV6GVycKAzM9aKj9q3B04xk2hWcvBXpxD
+	rl0rR974L/l9AKA==
+X-Google-Smtp-Source: AGHT+IHjMaURNuY5ADspjcwjcl/WRoZFYO9bioemMflpQGaxNDVvaG4JDdR/nXAPdbz/Yfz+Utvfc7Y4KaunSA==
+X-Received: from wmbz6.prod.google.com ([2002:a05:600c:c086:b0:471:6089:1622])
+ (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6000:2408:b0:429:8b8a:c32b with SMTP id ffacd0b85a97d-429b4c83176mr3266075f8f.22.1761840306279;
+ Thu, 30 Oct 2025 09:05:06 -0700 (PDT)
+Date: Thu, 30 Oct 2025 16:05:05 +0000
+In-Reply-To: <e25867b6-ffc0-4c7c-9635-9b3f47b186ca@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v12 2/4] `AlwaysRefCounted` is renamed to `RefCounted`.
-To: Oliver Mangold <oliver.mangold@pm.me>, Miguel Ojeda <ojeda@kernel.org>
-Cc: Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
- Benno Lossin <lossin@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Leon Romanovsky <leon@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
- Stephen Boyd <sboyd@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- Asahi Lina <lina+kernel@asahilina.net>, rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linux-pm@vger.kernel.org, linux-pci@vger.kernel.org
-References: <20251001-unique-ref-v12-0-fa5c31f0c0c4@pm.me>
- <20251001-unique-ref-v12-2-fa5c31f0c0c4@pm.me>
-From: Danilo Krummrich <dakr@kernel.org>
-Content-Language: en-US
-In-Reply-To: <20251001-unique-ref-v12-2-fa5c31f0c0c4@pm.me>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20250924151101.2225820-4-patrick.roy@campus.lmu.de>
+ <20250924152214.7292-1-roypat@amazon.co.uk> <20250924152214.7292-3-roypat@amazon.co.uk>
+ <e25867b6-ffc0-4c7c-9635-9b3f47b186ca@intel.com>
+X-Mailer: aerc 0.21.0
+Message-ID: <DDVS9ITBCE2Z.RSTLCU79EX8G@google.com>
+Subject: Re: [PATCH v7 06/12] KVM: guest_memfd: add module param for disabling
+ TLB flushing
+From: Brendan Jackman <jackmanb@google.com>
+To: Dave Hansen <dave.hansen@intel.com>, "Roy, Patrick" <roypat@amazon.co.uk>
+Cc: "pbonzini@redhat.com" <pbonzini@redhat.com>, "corbet@lwn.net" <corbet@lwn.net>, 
+	"maz@kernel.org" <maz@kernel.org>, "oliver.upton@linux.dev" <oliver.upton@linux.dev>, 
+	"joey.gouly@arm.com" <joey.gouly@arm.com>, "suzuki.poulose@arm.com" <suzuki.poulose@arm.com>, 
+	"yuzenghui@huawei.com" <yuzenghui@huawei.com>, "catalin.marinas@arm.com" <catalin.marinas@arm.com>, 
+	"will@kernel.org" <will@kernel.org>, "tglx@linutronix.de" <tglx@linutronix.de>, 
+	"mingo@redhat.com" <mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>, 
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "x86@kernel.org" <x86@kernel.org>, 
+	"hpa@zytor.com" <hpa@zytor.com>, "luto@kernel.org" <luto@kernel.org>, 
+	"peterz@infradead.org" <peterz@infradead.org>, "willy@infradead.org" <willy@infradead.org>, 
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, "david@redhat.com" <david@redhat.com>, 
+	"lorenzo.stoakes@oracle.com" <lorenzo.stoakes@oracle.com>, 
+	"Liam.Howlett@oracle.com" <Liam.Howlett@oracle.com>, "vbabka@suse.cz" <vbabka@suse.cz>, 
+	"rppt@kernel.org" <rppt@kernel.org>, "surenb@google.com" <surenb@google.com>, "mhocko@suse.com" <mhocko@suse.com>, 
+	"song@kernel.org" <song@kernel.org>, "jolsa@kernel.org" <jolsa@kernel.org>, "ast@kernel.org" <ast@kernel.org>, 
+	"daniel@iogearbox.net" <daniel@iogearbox.net>, "andrii@kernel.org" <andrii@kernel.org>, 
+	"martin.lau@linux.dev" <martin.lau@linux.dev>, "eddyz87@gmail.com" <eddyz87@gmail.com>, 
+	"yonghong.song@linux.dev" <yonghong.song@linux.dev>, 
+	"john.fastabend@gmail.com" <john.fastabend@gmail.com>, "kpsingh@kernel.org" <kpsingh@kernel.org>, 
+	"sdf@fomichev.me" <sdf@fomichev.me>, "haoluo@google.com" <haoluo@google.com>, "jgg@ziepe.ca" <jgg@ziepe.ca>, 
+	"jhubbard@nvidia.com" <jhubbard@nvidia.com>, "peterx@redhat.com" <peterx@redhat.com>, 
+	"jannh@google.com" <jannh@google.com>, "pfalcato@suse.de" <pfalcato@suse.de>, 
+	"shuah@kernel.org" <shuah@kernel.org>, "seanjc@google.com" <seanjc@google.com>, 
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
+	"bpf@vger.kernel.org" <bpf@vger.kernel.org>, 
+	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>, "Cali, Marco" <xmarcalx@amazon.co.uk>, 
+	"Kalyazin, Nikita" <kalyazin@amazon.co.uk>, "Thomson, Jack" <jackabt@amazon.co.uk>, 
+	"derekmn@amazon.co.uk" <derekmn@amazon.co.uk>, "tabba@google.com" <tabba@google.com>, 
+	"ackerleytng@google.com" <ackerleytng@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 10/1/25 11:03 AM, Oliver Mangold wrote:
->  rust/kernel/auxiliary.rs        |  7 +++++-
->  rust/kernel/device.rs           |  9 ++++++--
->  rust/kernel/device/property.rs  |  7 +++++-
->  rust/kernel/drm/device.rs       |  9 ++++++--
->  rust/kernel/drm/gem/mod.rs      |  7 +++++-
->  rust/kernel/pci.rs              |  7 +++++-
->  rust/kernel/platform.rs         |  7 +++++-
+On Thu Sep 25, 2025 at 6:27 PM UTC, Dave Hansen wrote:
+> On 9/24/25 08:22, Roy, Patrick wrote:
+>> Add an option to not perform TLB flushes after direct map manipulations.
+>
+> I'd really prefer this be left out for now. It's a massive can of worms.
+> Let's agree on something that works and has well-defined behavior before
+> we go breaking it on purpose.
 
-Acked-by: Danilo Krummrich <dakr@kernel.org>
+As David pointed out in the MM Alignment Session yesterday, I might be
+able to help here. In [0] I've proposed a way to break up the direct map
+by ASI's "sensitivity" concept, which is weaker than the "totally absent
+from the direct map" being proposed here, but it has kinda similar
+implementation challenges.
 
-@Miguel: Please expect a minor conflict with the drm-rust tree for the DRM GEM
-changes.
+Basically it introduces a thing called a "freetype" that extends the
+idea of migratetype. Like the existing idea of migratetype, it's used to
+physically group pages when allocating, and you can index free pages by
+it, i.e. each freetype gets its own freelist. But it can also encode
+other information than mobility (and the other stuff that's encoded in
+migratetype...).
+
+Could it make sense to use that logic to just have entire pageblocks
+that are absent from the direct map? Then when allocating memory for the
+guest_memfd we get it from one of those pageblocks. Then we only have to
+flush the TLB if there's no memory left in pageblocks of this freetype
+(so the allocator has to flip another pageblock over to the "no direct
+map" freetype, after removing it from the direct map).
+
+I haven't yet investigated this properly, I'll start doing that now.
+But I thought I'd immediately drop this note in case anyone can
+immediately see a reason why this doesn't work.
+
+[0] https://lore.kernel.org/all/20250924-b4-asi-page-alloc-v1-0-2d861768041f@google.com/T/#t
+
+BTW, I think if the skip-flush flag is the only thing blocking this
+patchset, it would be great to merge it without it. Even if that means
+it's no use for Firecracker usecases that doesn't mean the underlying
+feature isn't valuable for _someone_. Then we can figure out how to make
+it work for Firecracker afterwards, one way or another.
+
+(Just to be transparent: my nefarious ulterior motive is that it would
+give me an angle to start merging code that will eventually support ASI.
+But, I'm serious that there are probably users who would like this
+feature even if it's slow!)
 
