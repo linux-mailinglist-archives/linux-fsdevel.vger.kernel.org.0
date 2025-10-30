@@ -1,80 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-66418-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66419-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FDE2C1E6E4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Oct 2025 06:32:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31C69C1E7AD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Oct 2025 06:59:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E91C34E619E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Oct 2025 05:32:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B82818917F1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Oct 2025 05:59:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E7CD2F39BF;
-	Thu, 30 Oct 2025 05:32:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="pWZ489wE"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B064F31A049;
+	Thu, 30 Oct 2025 05:58:58 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7673D1D6BB;
-	Thu, 30 Oct 2025 05:32:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CE4317736;
+	Thu, 30 Oct 2025 05:58:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761802347; cv=none; b=Pj/2/lGDES0xsDnRCxn4sMD4z0kZc8PWAeTgg3TT1zT/8KD/yQfC6acoCnUsA5PR56DnxO/G8vSOMpbGmlm1f9NLuwmQ4s0/T3iZkxP9ZD4sYJZgeemsG+EIZ9nCBGxDF137MU+MWyWUxIPMQ59g71dHoA8E5WIev+M869G0rWs=
+	t=1761803938; cv=none; b=bYbc3C83/9j1LqIMD6knIxNo6dcZU5LKi5K8D+9mGQhnsu55PT/1FSj8wctMbrukK/LqAl6AOlGAycljn+UJ0hsqgi72Cn8hr7WWNhy3Mq6S5HLWfULbn1E99Y0yPz3Tgra0O3RIaJgkl0SI7VQSz0p/vcuotcr5jLgRbQB9Xpw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761802347; c=relaxed/simple;
-	bh=RKZ55e/BX3Bsy8j/0XAduETGE5FWfV4zDbi6AF2gqjA=;
+	s=arc-20240116; t=1761803938; c=relaxed/simple;
+	bh=GBlgjLNeJz65AJOmnVZrgtZCqCiQlYkuYzXXuncYbGQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tc+K2iDQSXPcvEmEQIBmDfC5mRctw6ILtjLA5lYMt1wlQQzC/R+5UncTFFhXtPcEo3jLY2lnMUmgt2yvdC92n/Db73QMD5pCqL81mBe4qt6B/kog7ZO3PZKrFNYEwKRwqNv5aRfYB9PRigSHIpP12lMdcTXPruguUeG0H4RoXqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=pWZ489wE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66130C4CEF1;
-	Thu, 30 Oct 2025 05:32:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1761802347;
-	bh=RKZ55e/BX3Bsy8j/0XAduETGE5FWfV4zDbi6AF2gqjA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pWZ489wE0/m49sWPsV/Rq7Bz2NYaTqU6b90Ymhx8VEoudj0uV9WaKuBWHmU1WM/O/
-	 xHxhdceQwVt+HGjb6niSCPHuQjJXzAwL234wCbKVKiqhVjf1ULVAxCbXZwSilitsRx
-	 Mpjs6IhZxNwipGykTOUfLGAGdCRTODuSqIbQP0QE=
-Date: Thu, 30 Oct 2025 06:32:24 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: NeilBrown <neil@brown.name>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
-	Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
-	David Howells <dhowells@redhat.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, Tyler Hicks <code@tyhicks.com>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Olga Kornievskaia <okorniev@redhat.com>,
-	Dai Ngo <Dai.Ngo@oracle.com>, Namjae Jeon <linkinjeon@kernel.org>,
-	Steve French <smfrench@gmail.com>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=bzcVOaZ2AsmTF6V4ApmCE47ldFVlgiWB2WEwhL997duCDni7OW2eYRDiFZnR5XzxyqtUD/UNXqBPmd9EQNf1ppnWR40QBk9K9m/6COZLMvW1RRpjK+HlL4TmAWPe7I+x+qmerynIb2AymCdqlGJqU1nPykpqEyuBKcADQVOQsF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 83FC2227AAA; Thu, 30 Oct 2025 06:58:51 +0100 (CET)
+Date: Thu, 30 Oct 2025 06:58:51 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Qu Wenruo <wqu@suse.com>
+Cc: Christoph Hellwig <hch@lst.de>, "Darrick J. Wong" <djwong@kernel.org>,
 	Carlos Maiolino <cem@kernel.org>,
-	John Johansen <john.johansen@canonical.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Stephen Smalley <stephen.smalley.work@gmail.com>,
-	Ondrej Mosnacek <omosnace@redhat.com>,
-	Mateusz Guzik <mjguzik@gmail.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Stefan Berger <stefanb@linux.ibm.com>,
-	"Darrick J. Wong" <djwong@kernel.org>, linux-kernel@vger.kernel.org,
-	netfs@lists.linux.dev, ecryptfs@vger.kernel.org,
-	linux-nfs@vger.kernel.org, linux-unionfs@vger.kernel.org,
-	linux-cifs@vger.kernel.org, linux-xfs@vger.kernel.org,
-	apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
-	selinux@vger.kernel.org
-Subject: Re: [PATCH v4 01/14] debugfs: rename end_creating() to
- debugfs_end_creating()
-Message-ID: <2025103013-overcome-jailhouse-538b@gregkh>
-References: <20251029234353.1321957-1-neilb@ownmail.net>
- <20251029234353.1321957-2-neilb@ownmail.net>
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-raid@vger.kernel.org,
+	linux-block@vger.kernel.org, linux-btrfs@vger.kernel.org
+Subject: Re: [PATCH 4/4] xfs: fallback to buffered I/O for direct I/O when
+ stable writes are required
+Message-ID: <20251030055851.GA12703@lst.de>
+References: <20251029071537.1127397-1-hch@lst.de> <20251029071537.1127397-5-hch@lst.de> <20251029155306.GC3356773@frogsfrogsfrogs> <20251029163555.GB26985@lst.de> <8f384c85-e432-445e-afbf-0d9953584b05@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -83,23 +53,30 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251029234353.1321957-2-neilb@ownmail.net>
+In-Reply-To: <8f384c85-e432-445e-afbf-0d9953584b05@suse.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Thu, Oct 30, 2025 at 10:31:01AM +1100, NeilBrown wrote:
-> From: NeilBrown <neil@brown.name>
-> 
-> By not using the generic end_creating() name here we are free to use it
-> more globally for a more generic function.
-> This should have been done when start_creating() was renamed.
-> 
-> For consistency, also rename failed_creating().
-> 
-> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-> Reviewed-by: Jeff Layton <jlayton@kernel.org>
-> Signed-off-by: NeilBrown <neil@brown.name>
-> ---
->  fs/debugfs/inode.c | 26 +++++++++++++-------------
->  1 file changed, 13 insertions(+), 13 deletions(-)
+On Thu, Oct 30, 2025 at 07:53:30AM +1030, Qu Wenruo wrote:
+> Yep, a common helper will help, or even integrate the check into 
+> __iomap_dio_rw().
 
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Having the check in __iomap_dio_rw would be a last resort, because at
+the point we've already done direct I/O specific locking we'd need to
+unwind from, making the fallback slower than we'd have to.
+
+> However I'm not sure if a warning will be that useful.
+>
+> If the warning is only outputted once like here, it doesn't show the ino 
+> number to tell which file is affected.
+> If the warning is shown every time, it will flood the dmesg.
+
+While the flag is set on the address_space it is global (or semi global
+for separate storage pools like the XFS RT device), so the inode number
+doesn't really matter too much.
+
+> It will be much straightforward if there is some flag allowing us to return 
+> error directly if true zero-copy direct IO can not be executed.
+
+I don't really understand this part.
+
 
