@@ -1,154 +1,166 @@
-Return-Path: <linux-fsdevel+bounces-66510-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66511-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAF39C218A9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Oct 2025 18:45:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF997C2190F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Oct 2025 18:54:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75A911A63F70
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Oct 2025 17:43:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0FF151A6186A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Oct 2025 17:55:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B37836B987;
-	Thu, 30 Oct 2025 17:42:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE3C436C248;
+	Thu, 30 Oct 2025 17:54:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EBZw2Dsq"
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="N+Bjn4dc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D00B836A61B
-	for <linux-fsdevel@vger.kernel.org>; Thu, 30 Oct 2025 17:42:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D90236CA8B
+	for <linux-fsdevel@vger.kernel.org>; Thu, 30 Oct 2025 17:54:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761846168; cv=none; b=aq8CHZlQsTYsdbPCQR/qFGOjHAw2XCgB/6gOiSztKGzAPU2OLOfNZVIXXmF/2TwnDVwSnAk0lYiphOeNvxFw444RzrtR1BwvG5mHLixti8tEOcljwAjnsKc315RNSo07EggdQ4eDpzm55QPozdOB6jLbvMxWYoytkO21wz2eYVM=
+	t=1761846866; cv=none; b=KVX5c7WHmPOUHSOb8VAE8wa2UQ1UZsbVdQEBwPIHitALhf6XXTkRdEIe0Vi/Z8Q+/Cs8mL85natd8XJjHZLPl93CbTUk1yQa/TrnX1r/1BhgFiwN/9/uRSWQYmBsr6We3js0H3bijJ5jomCxaNtNeJMWrerJBBWIGKfXbNp+WDg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761846168; c=relaxed/simple;
-	bh=b1POjuns61tfvPvDtbqhXxCP3k6/ikC6HAP/XOZbGzE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pNolz0zITCuhH/tTwFhl7ziyZMAlN1/ODM4gfcjYbZwcLhIw4zONkBCwa10Z0Xxk4uPA52WWsTKKSTeikEFfpHzQ1rQ6teMUsoKvXKFqzLg+kH3YNZqcjCpy+zFtd5rZyjCvdMZdWmtJBJULKgvlwR6yTod/9QteV6mOdzmRlb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EBZw2Dsq; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3ee15b5435bso1060193f8f.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Oct 2025 10:42:46 -0700 (PDT)
+	s=arc-20240116; t=1761846866; c=relaxed/simple;
+	bh=Ot7VKAWVA6U63aveIdvENPMHR/fzA9s/Q7X9vk9yVwU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W/z9/yju46tZbP12OUM4fSHGp/4GoJf2q3+NV7LggTwdsHLZXluAPIDGkriUbHKBXZCIdAJmnGRIUll1W0J8Yq+1QD7heOok89FhbHPqKIiJyc2bcvW58LtP9Mt1vRIWmB/q8q4LqqIpVX49TFLX3LCm1t9ss2yytwOo+kS2054=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=N+Bjn4dc; arc=none smtp.client-ip=209.85.219.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-8738c6fdbe8so16552246d6.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Oct 2025 10:54:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761846165; x=1762450965; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FYfzDRGnnPlhr93W60j8zTUhCMGw1L+Yzwlr2e0Jw3s=;
-        b=EBZw2DsqQj1Imt6n7CY0ZfuBSSij4+LJSuMCDgoELWGEJ/HTzaWmA5/kjdHVtBtw0p
-         6OHhe8VLUdmEoBRgh5mR3NzXQw49eT77a5IplHqdFI5LlwEJXQnSi9H+QAq3pV8cjNtJ
-         ddia7WS6z067axa4iukqH/C3J9v7qeEn1omtjIsz5bppSdNPX7pJgSTLHM0ssNxkt6IO
-         3u0tZ5jg86huXFlhSBEbXo/V+8x9KUhqma7yvL/z0Yf3Hs7e3+nnQQjxRejX/rY3yfbi
-         1YkYw6bevF8WfQQiqu5yLl4n5wknaXeeKXR4/va4li4nqnPA9gD1dJVyf5BwJCx+ClJg
-         tpPw==
+        d=ziepe.ca; s=google; t=1761846863; x=1762451663; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=xnGHUYavdaKYzYofeQc3x2iVgQ4gD7UndQ+CtCjwQis=;
+        b=N+Bjn4dcHxxWfAqV5hI3zJl3PYNYCY0uv75DXJhSXvCmXBbvQfPNU1WBIEBGisZ36d
+         V2ODdNFGqlmq0qf3nwfIjp8XNEy1TF+bglyj04noDoCc1VIGLJg5MxROuTF3Eex2G6L6
+         tDhihRmak7FM9v4o5Y97AqUVjwogUChlcbtnGp45XUXTE477CB902zHsT4UjtoKX1ykr
+         jcXG5mavr9wVgbR2zKc9i+VrSKd80EAOpmO0dKi0yMioQRgA+ABo4sazB7U2xPvp7d4E
+         /j3GaBnfE2+Tl89HZjnDxNV2p1M3TagBhUHGfVRaSdIf1bMaBKUtSOn2Bdr/Bp1zIgy4
+         w39A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761846165; x=1762450965;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FYfzDRGnnPlhr93W60j8zTUhCMGw1L+Yzwlr2e0Jw3s=;
-        b=PQCKzRlat++mhDajYlpffSjNkThqMgaGtohXi5qfOHjK/PzDNsWK64YGGjWeyrpa1H
-         riZ5bCWYkR5dIiapYyi2UmeoheeqRbVZGE8etFk1ABCP8ZSTKX2ah2VbRtaN0TyT8r2f
-         2Y2aF0Wk22Y5TOb4NQA1Q13SD5CqudBwHwlCSGT4Xas23LcuEf7PDwFrTYk2IVtHmJI9
-         J22oL+dfdkTqK06CusvR2X06qqgUyZ79XVfg46MwOH584DaOtfxIZyBdOxr1d5I5RuQN
-         XTX/1rLQGm2ebFgy1wus81UbbYne/YW3Jb7E67HL1MCdFTx6BghsyfJTZq5/D3nBO6t3
-         ak1w==
-X-Forwarded-Encrypted: i=1; AJvYcCXDsE8ycN09J3d7fhyUq0RbRWtE5XyjE1djkOQtmZuA0OYu+lNqNrEbXkCIwNUYOyAIIfVFG+oTdZ3Tm/ms@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYOjFalf9zrbeuxVVD69yEthJWhn7Yxm/oInbktcEHTcqU8mQ7
-	sRyDGul77vkt0rda7NxniXfO54ZIRYeJ0XXTiQEfvS86HkxKuEyU5seB
-X-Gm-Gg: ASbGncvP7vtiAuWML1OyjZXBFD3d/xpQL9OTFMQyGLqO00z/nvoQlfcaD/8uWQKgVJX
-	VriF84zXB7GfIJSvZnHkXQ1+m0FVsrsQPtSZsiRzB3MG4KplhRNif+MXhAq5woNqLc42SK0mi66
-	ch96LUNyJWrM09mrbrFsEyNyypGvwtmlAofqtbF6DQeAXJdWF9sdr0JksjyHyhxNORac9e6Lawz
-	1/FxtFQ25Z9xpe+Nvp780TJDTu+nDht076yUcxettBY8V4LVp9NmITVerJOb9KCf1eacOzbA275
-	WBxtPlMRzmQ5jRFavUSiygRczuWl250eBBKPCVaYMmFtlV5t6nGsb8fWZrx2ea+vCff3Lh3YVvx
-	EwT9ogx9f8s+12mcL8UmmUFNM40X8eITixm/jV2Cagdx2iZk+BU+KLsKu88RTgL34ZPxMp7E440
-	bb1ehSymfruoJ21JCS0Meqi0LA9Mw3BeZvUyRch2EqPd5f1/eT4h/6aGb+Qe0OCRkurvvJe9rx
-X-Google-Smtp-Source: AGHT+IFe4aCtij33QC4DH0aHd6JDe3xOjq1gI+3SwZ3GsAwAZoN8IDEcyy5P82TSWws9qdvpdK86XA==
-X-Received: by 2002:a05:600c:190d:b0:46f:aac5:daf with SMTP id 5b1f17b1804b1-477308dbefdmr6098625e9.35.1761846164760;
-        Thu, 30 Oct 2025 10:42:44 -0700 (PDT)
-Received: from ?IPV6:2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c? ([2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952db99asm33502479f8f.32.2025.10.30.10.42.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 Oct 2025 10:42:44 -0700 (PDT)
-Message-ID: <dbc88b2f-bfee-474e-ba7a-609c544eadde@gmail.com>
-Date: Thu, 30 Oct 2025 17:42:41 +0000
+        d=1e100.net; s=20230601; t=1761846863; x=1762451663;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xnGHUYavdaKYzYofeQc3x2iVgQ4gD7UndQ+CtCjwQis=;
+        b=mH5fpwWG8ULta9E7FnGDxaitVIfUDE2KMjfNmCFGvsctjd21BJAinkHi2SuptwmXYb
+         sBH1BKQ3AgthOAtZjDLIT4mcLo05RFP2etCPyq5GfpMJL886Dsl7E1xiRuaDpZe9n4xI
+         DjK7hyGzLISRXRx+gq2qzbMMSD/d4j3az3++MjBNAP76cDAiAVA37GiOVTrgghJlCWda
+         1ELpMhwP+ZEcsCuKNRvpUECCjXlgnCMLifNII4QZ9OqI0P+vlvidtl/2ijGZTD5FRaN/
+         w2rZFGhbOZx18gbNLjkye0I8YhV8Oo1gFcmjozz0sPuavAP2xtHEreC5ZDlF1NxV6Nv5
+         b+YQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXTeA4sMiQYgL8WTsuaNmackIWjA3j6YRGVNNTTwwd2IvZMLB9Qzj37Wdh0H+jd9cLu9ADVIww8oshfY3a4@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1+P9vKhAhuEpFYP4kMx+nK3ENDWgWd83vX4tBy7CIaGi89lQr
+	68qnUWC7z0QG9fwAxLKv4+Lcaa8qLI+Y5BkwRdBKl3QhT1RE+UvrLVK85qp8trBl+s0=
+X-Gm-Gg: ASbGncvA4yh5JDHaReXLrCCuhak/dcsBWV0nIEnOYnnSSrdxrE86ot8DeY9KO0j7TOs
+	dqM7IJnKl/T7qvYC+bCj79E9Z3YqVLeXZVWO4V75mSB9G9AreecS+SB6bJk34FecO6Ufm3p9mP5
+	7zG8GKxUJngw3mj0Yj2LoKWTJ6uQvq9GfTQfyGBPSh5Kmh6GfYw+feJIhAZevB/oSKtGNOQf4zF
+	q6PkXK7b0l0E1MPhT5fb8BbJ3KbMSkZDFSHff5Xv7+P8XI1PSH+cNCp2QbPMJSeBMh/T03WNROM
+	LpiENrBJQEUD3IJZdk2nvLZUqgmtyeQ+cs4xT0qyPH12BLCXS+b1MzbISzEMj2ZUYR0GwciW4tu
+	tvvM2lhHO5/BHHV4iKswBDlSqYaADWyTlvVJVhodlqao6jpvBlB5D0JVotXjb97HT2IOzv/NZoi
+	r65lTBritFVPldKZCpkAgAMcALZy5myAGsys5Tf7cpVZFpuw==
+X-Google-Smtp-Source: AGHT+IFT5Fmbku/PhtCEDW1KeFw5jyVfP+ejaWvNde5H/+ME0TqKpHB8wRouWON1EINpWnQqdBBBmg==
+X-Received: by 2002:ad4:5ca5:0:b0:87c:2095:c582 with SMTP id 6a1803df08f44-8801aca0a1bmr63713946d6.18.1761846863017;
+        Thu, 30 Oct 2025 10:54:23 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-47-55-120-4.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.120.4])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4eba387a61bsm115313061cf.36.2025.10.30.10.54.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Oct 2025 10:54:22 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1vEWqr-00000005AuU-2aX4;
+	Thu, 30 Oct 2025 14:54:21 -0300
+Date: Thu, 30 Oct 2025 14:54:21 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Muchun Song <muchun.song@linux.dev>,
+	Oscar Salvador <osalvador@suse.de>,
+	David Hildenbrand <david@redhat.com>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Axel Rasmussen <axelrasmussen@google.com>,
+	Yuanchu Xie <yuanchu@google.com>, Wei Xu <weixugc@google.com>,
+	Peter Xu <peterx@redhat.com>, Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Kees Cook <kees@kernel.org>, Matthew Wilcox <willy@infradead.org>,
+	John Hubbard <jhubbard@nvidia.com>,
+	Leon Romanovsky <leon@kernel.org>, Zi Yan <ziy@nvidia.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+	Lance Yang <lance.yang@linux.dev>, Xu Xin <xu.xin16@zte.com.cn>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	Jann Horn <jannh@google.com>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
+	Byungchul Park <byungchul@sk.com>,
+	Gregory Price <gourry@gourry.net>,
+	Ying Huang <ying.huang@linux.alibaba.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	Pedro Falcato <pfalcato@suse.de>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	David Rientjes <rientjes@google.com>,
+	Rik van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>,
+	Kemeng Shi <shikemeng@huaweicloud.com>,
+	Kairui Song <kasong@tencent.com>, Nhat Pham <nphamcs@gmail.com>,
+	Baoquan He <bhe@redhat.com>, Chris Li <chrisl@kernel.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Qi Zheng <zhengqi.arch@bytedance.com>, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH 4/4] mm: introduce and use VMA flag test helpers
+Message-ID: <20251030175421.GC1204670@ziepe.ca>
+References: <cover.1761757731.git.lorenzo.stoakes@oracle.com>
+ <c038237ee2796802f8c766e0f5c0d2c5b04f4490.1761757731.git.lorenzo.stoakes@oracle.com>
+ <20251029192214.GT760669@ziepe.ca>
+ <0dd5029f-d464-4c59-aac9-4b3e9d0a3438@lucifer.local>
+ <20251030125234.GA1204670@ziepe.ca>
+ <a7161d7d-7445-4015-8821-b32c469d6eaf@lucifer.local>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/8] io_uring/uring_cmd: add
- io_uring_cmd_import_fixed_full()
-To: Bernd Schubert <bschubert@ddn.com>, Joanne Koong <joannelkoong@gmail.com>
-Cc: "miklos@szeredi.hu" <miklos@szeredi.hu>, "axboe@kernel.dk"
- <axboe@kernel.dk>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
- "xiaobing.li@samsung.com" <xiaobing.li@samsung.com>,
- "csander@purestorage.com" <csander@purestorage.com>,
- "kernel-team@meta.com" <kernel-team@meta.com>
-References: <20251027222808.2332692-1-joannelkoong@gmail.com>
- <20251027222808.2332692-2-joannelkoong@gmail.com>
- <455fe1cb-bff1-4716-add7-cc4edecc98d2@gmail.com>
- <CAJnrk1ZaGkEdWwhR=4nQe4kQOp6KqQQHRoS7GbTRcwnKrR5A3g@mail.gmail.com>
- <3bddaa1e-b4a0-4f0a-8b30-05a2cb8fd1fd@ddn.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <3bddaa1e-b4a0-4f0a-8b30-05a2cb8fd1fd@ddn.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a7161d7d-7445-4015-8821-b32c469d6eaf@lucifer.local>
 
-On 10/29/25 19:59, Bernd Schubert wrote:
-> On 10/29/25 19:37, Joanne Koong wrote:
->> On Wed, Oct 29, 2025 at 7:01 AM Pavel Begunkov <asml.silence@gmail.com> wrote:
->>>
->>> On 10/27/25 22:28, Joanne Koong wrote:
->>>> Add an API for fetching the registered buffer associated with a
->>>> io_uring cmd. This is useful for callers who need access to the buffer
->>>> but do not have prior knowledge of the buffer's user address or length.
->>>
->>> Joanne, is it needed because you don't want to pass {offset,size}
->>> via fuse uapi? It's often more convenient to allocate and register
->>> one large buffer and let requests to use subchunks. Shouldn't be
->>> different for performance, but e.g. if you try to overlay it onto
->>> huge pages it'll be severely overaccounted.
->>>
->>
->> Hi Pavel,
->>
->> Yes, I was thinking this would be a simpler interface than the
->> userspace caller having to pass in the uaddr and size on every
->> request. Right now the way it is structured is that userspace
->> allocates a buffer per request, then registers all those buffers. On
->> the kernel side when it fetches the buffer, it'll always fetch the
->> whole buffer (eg offset is 0 and size is the full size).
->>
->> Do you think it is better to allocate one large buffer and have the
->> requests use subchunks? My worry with this is that it would lead to
->> suboptimal cache locality when servers offload handling requests to
->> separate thread workers. From a code perspective it seems a bit
->> simpler to have each request have its own buffer, but it wouldn't be
->> much more complicated to have it all be part of one large buffer.
+On Thu, Oct 30, 2025 at 02:03:02PM +0000, Lorenzo Stoakes wrote:
+
+> Yeah, OK well your point has been made here, the compiler _is_ smart enough
+> to save us here :)
 > 
-> I don't think it would be a huge issue to let userspace allocate a large
-> buffer and to distribute it among requests - there is nothing in the
-> kernel side to be done for that?
+> Let's avoid this first word stuff altogether then.
 
-You can, but unless I missed something with this patchset you'd need
-to register it N times, which is not terrible but have memory
-overaccounting problems and feels less flexible.
+I suggest to add some helpers to the general include/linux/bitmap.h
+"subsystem" that lets it help do this:
 
-> (I think I had even done that for the 1st io-uring patches and removed
-> it because there were other issues and I wanted to keep the initial code
-> simple).
+#define BITMAP_OR_BITS(type, member, bit1, bit2, bit3) 
 
--- 
-Pavel Begunkov
+returns a type with the bitmap array member initialized to those bits
 
+Then some other bitmap helpers that are doing the specific maths you
+want..
+
+* bitmap_and_eq(src1, src2, src3, nbits)  true if *src1 & *src2 == *src3
+* bitmap_and_eq_zero(src1, src2, nbits)   true if *src1 & *src1 == 0
+etc
+
+Jason
 
