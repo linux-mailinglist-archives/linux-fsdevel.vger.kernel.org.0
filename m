@@ -1,304 +1,339 @@
-Return-Path: <linux-fsdevel+bounces-66522-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66523-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02E41C220E0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Oct 2025 20:48:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BDD7C22345
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Oct 2025 21:20:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 50AB04ED8AF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Oct 2025 19:47:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB8AD1890FCD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Oct 2025 20:19:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A26F312813;
-	Thu, 30 Oct 2025 19:47:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 155A133554B;
+	Thu, 30 Oct 2025 20:16:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="OCTfVO2M";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="LqkoTXjx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iJAjgcIy"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3A312459F8;
-	Thu, 30 Oct 2025 19:47:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761853671; cv=fail; b=jL5eJZAHwzzmihG0cEi8mjOAJjv5JVcRriG4vE0DQYPdmWL9HcNOOSsF5q2GrpeEggKcktOPlICzBd93ckKG5dovbp5Y5aJtZ+i9xn22JoxScHkA95LumXyFHfInMPiJR+T06HyHbsJpF561WWUSvuetlZC62C4Z1BW7IEwaOgs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761853671; c=relaxed/simple;
-	bh=4qe1XrML60Me4zvwPEzfIunYey9WBs0s0iGZE5W1hQk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=BUxyglbY/1McFuMzQ1SdfqZw4hWyKNb6c2G/Ie71gjxAL2eriswF/416N7t1zBIQ1IbGv60ogM62N3p9KiliCbOzxhwFycP/sXLTVUz2Pei1gwVXdL2EGXNzoN3e+OiB4jfUdmUTDEV50ynvZEhk+UYjbnmthLuWRpiRs0trPB8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=OCTfVO2M; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=LqkoTXjx; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59UIUIs2010492;
-	Thu, 30 Oct 2025 19:47:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=4qe1XrML60Me4zvwPE
-	zfIunYey9WBs0s0iGZE5W1hQk=; b=OCTfVO2MmA+QFIfntL+nk2nIBps6ZAmO/c
-	+GkAyPYQwGQAfcpJJLLph73Qv4wVHcwm07s5vK1sEsXLqO1wtkh0nFeuqbC2TsUF
-	+ff3WKpJueM1Llwh6YPmWIZGBe07jnsbU/z+lsmSJWFg8mtxbBxuJ3HdZ/g2cBI9
-	264OzzBHDOQKus0pKn51ctHUZf83Jlf0p6Kg5Uh/EOvxn/XpPLZtrqKLCE1UZ7ZH
-	aBFoEkJsDAgPG4K9v+XT7WknFsbTOi8EilTUxUWZtZDozqgMGkbw3sJRO/qUKkYl
-	PPyWVZlt8EdV/fbsqN5/eaP4KFSrJmazaY2HrMEldZLlEeYvDE7w==
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4a4dbdg6au-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 30 Oct 2025 19:47:31 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 59UI642b004146;
-	Thu, 30 Oct 2025 19:47:30 GMT
-Received: from sn4pr2101cu001.outbound.protection.outlook.com (mail-southcentralusazon11012061.outbound.protection.outlook.com [40.93.195.61])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4a33wn42f6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 30 Oct 2025 19:47:30 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=rsYr+YZ94Sl53WdWGUZgfc1XzIDmhu8L2Ucy5Q8N+wJ19Y3ObciSdcqukscBTbXR/t4q+mKc+duDC9P3IPRUPBkNkaznCkJJFUt8rD+lDjnaa19v9cw65/ZblBRGrYD0KlX0UC2MlnhN3JfJiGxbEFIBuWjaCx77y3EgyV5o2n+rJKnT5t+eNiuAMwCDiRj6HADlOq55a+O2csgJp3QRMnBhllB2zUN6vcrXi3E+3T5kHrpoUOWdXTd/RS5QTzQnKTtXDTvB89um4GsXpiFgCdAC+slLMgxcaOquKii+2VE4wNasB8jA/l61FIvkoWwZw2h5fNtLhmcfYq1D/+HGyw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4qe1XrML60Me4zvwPEzfIunYey9WBs0s0iGZE5W1hQk=;
- b=BjwyAu7Ixj2tDlwKiQ0MsDCvYTlG/VV1q/KKTrvPza+mW2YmGemnzih34ft/0+B9sJxxKjwXAzAr/yxpVEvhB8n/P/lZU/QVizu1uKxtgVuQQe6/zwQf1YEECTZOWfGxesSKlW6xCoqEVE2SVU4s4VVNA/QddfUtaeCuZG4xUCZz5s66DKZHfWNeFnMgSflOYm9fSjBJH+2I9Kjb87JmEmm/ysWKe9tthyp5Rb5KgsHO0/m0MK4Ch0jNZjS2Caxo+BQdNETEwOA+/gnTn1oDksk72WpHTv++Az6YsxGE92NT5pTLAKUY/hLhgk3aDK0Eq4uOG7hrpoN0yvDrGRVlgg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4qe1XrML60Me4zvwPEzfIunYey9WBs0s0iGZE5W1hQk=;
- b=LqkoTXjx9zVXf+d2k7Bbz/sm/u5m44MsBBqQi+T4A90jmSPrEdCfYWgOEOC2kcrLC0ttYTO6uG+7BNzA0YLabcYGvAbfK898hFAC8+U1sgTJjpd1aX8o2LmZx2+E9/iCmDQ+LV7W6cYnGKWf+tFYPVYwaC+lMYJXV8cXLoxnv24=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by SJ2PR10MB7110.namprd10.prod.outlook.com (2603:10b6:a03:4cd::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.16; Thu, 30 Oct
- 2025 19:47:25 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2%2]) with mapi id 15.20.9253.018; Thu, 30 Oct 2025
- 19:47:25 +0000
-Date: Thu, 30 Oct 2025 19:47:23 +0000
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Pedro Falcato <pfalcato@suse.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jonathan Corbet <corbet@lwn.net>, David Hildenbrand <david@redhat.com>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Mike Rapoport <rppt@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Jann Horn <jannh@google.com>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, Andrei Vagin <avagin@gmail.com>,
-        Barry Song <21cnbao@gmail.com>
-Subject: Re: [PATCH 1/3] mm: introduce VM_MAYBE_GUARD and make visible for
- guard regions
-Message-ID: <88b72728-fa3f-4a70-9ea2-40ff50673047@lucifer.local>
-References: <cover.1761756437.git.lorenzo.stoakes@oracle.com>
- <7de40603015dee82970f5d37332a6d5af7532063.1761756437.git.lorenzo.stoakes@oracle.com>
- <xnsn5rfqigbm5ryjtbf2rtfotneiwygzesvyfdxiqrzlyzljdr@tmbht4ggnjcv>
- <61ae955e-310d-488e-b350-59bb809f06e1@lucifer.local>
- <c736tssdw3z57kamh6eqc23gr575q375n2o2nnszih64afnaf7@zwbqremsbhwf>
- <053f3a04-9195-4f8d-8959-42e0c3ba077b@lucifer.local>
- <72ee2324-d599-44b6-92ce-ed0afafed78f@suse.cz>
- <3ae457cd-6c18-4870-a617-7f937b107cb4@suse.cz>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3ae457cd-6c18-4870-a617-7f937b107cb4@suse.cz>
-X-ClientProxiedBy: LO4P123CA0668.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:316::14) To DM4PR10MB8218.namprd10.prod.outlook.com
- (2603:10b6:8:1cc::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61658329E72;
+	Thu, 30 Oct 2025 20:16:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761855370; cv=none; b=T899x1uOVgLxFQK3THSCFBBdo5J4xEsJRFzpPghZiaXd89JiPeUtAi1ujY1QhqcvG5qxBJ5DfA4+rDaeqC/LM1bwyJGCw6z7ySy9igM9443hgudg++RanG3FStop2I6eAjTXZllRkDpCN0goAbHV5/LRKdKRAIfU7omZ/TkRJro=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761855370; c=relaxed/simple;
+	bh=NFhS8y04Uno2/m3fPDesXi//8LacIlAzMsLpQRPrKrY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Mdu/eyuWfrS1EOgZmvrn1t1BlZa9hPbSO7//yLZXJ25zqoDyr31TjmfstqrSdj45siZ4YO9i8Gyvkf3GY4febnGW41BBF8LjfPG/F2NsRoa5y0/rp9tVt3rh+u+UvvfbT6oklA0VX+woMiL70N1n2xadW130kwNYm4rMDhNYheo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iJAjgcIy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74A07C4CEF1;
+	Thu, 30 Oct 2025 20:16:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761855367;
+	bh=NFhS8y04Uno2/m3fPDesXi//8LacIlAzMsLpQRPrKrY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iJAjgcIy6lt1pJy4T2C7SkqCyNceaUN9qQv/Uto0Gdlt86rT9AgZ4N+I+LnSJcIp5
+	 H8GKOpJ5VlReMrbPx0t/7CU7Ck7jieexK6lqbX3AFIE5PPaB5u5wZHrVaZVzKDSsrv
+	 NS1h16DO85aaj+kViR2gwC5itM908CfvQc1v37BQq/5wPvjUoPGlmvDRjrI7+16arU
+	 0SaSy9XB97sQUXZDSxkSmLp7a1+GTlhNqKOI2BNd7o0cXYjTs+GXkddX4HElGNlqrC
+	 ukxcmAzqCtjJJJITds4AWnB5MrwqC9sLORDg4eJyGIpQ51RSc1MWm3WNXnAqzWpO77
+	 0km+WFWZvrKYg==
+Date: Thu, 30 Oct 2025 21:16:02 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Ard Biesheuvel <ardb@kernel.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, linux-efi@vger.kernel.org, 
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	David Sterba <dsterba@suse.com>
+Subject: Re: fms extension (Was: [PATCH] fs/pipe: stop duplicating union
+ pipe_index declaration)
+Message-ID: <20251030-zukunft-reduzieren-323e5f33dca6@brauner>
+References: <20251023082142.2104456-1-linux@rasmusvillemoes.dk>
+ <20251029-redezeit-reitz-1fa3f3b4e171@brauner>
+ <20251029173828.GA1669504@ax162>
+ <20251029-wobei-rezept-bd53e76bb05b@brauner>
+ <CAHk-=wjGcos7LACF0J40x-Dwf4beOYj+mhptD+xcLte1RG91Ug@mail.gmail.com>
+ <20251030-zuruf-linken-d20795719609@brauner>
+ <20251029233057.GA3441561@ax162>
+ <20251030-meerjungfrau-getrocknet-7b46eacc215d@brauner>
+ <CAMj1kXHP14_F1xUYHfUzvtoNJjPEQM9yLaoKQX=v4j3-YyAn=A@mail.gmail.com>
+ <20251030172918.GA417112@ax162>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|SJ2PR10MB7110:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6852d255-6ce5-41a1-b1a8-08de17ed26a0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?82QV93kmXdXAvhvQmIJhwEPfjoncS64Vjheh2yCEZGSlVdGfzt+Ci5tYlDNT?=
- =?us-ascii?Q?6nclsvptzVcvAsMgRWw0s6fwj4ue8PWQzcnsbU2A1ZVePww9cjVR5z/6roEg?=
- =?us-ascii?Q?kwtDYTqlFpUGSWzIT1qflWjNWkOV0fbjBUYbyaERQGSXkf7YBrYP/iAjgJFe?=
- =?us-ascii?Q?Og0DoSwOORx8meCztHEGvsgGD/AIbXsWED/O6A7OlPym2L2FMCwmg2a3eL/W?=
- =?us-ascii?Q?1peKW+NMtgCbBB3eNekIDWrDZiN7B/cBetBIwrrxFkjGoi7rXqJH7/zNeBzJ?=
- =?us-ascii?Q?wojYz8vIOf0AFvXB4ZjT+5iVKApl9DxEUFmvxn8HNaGEapRK6MUK9swXetiv?=
- =?us-ascii?Q?c6698E2Ai/8P+Notf7fOr5c0zDyCXgE75VxnkVO597pK/79RAHzG2F4Ck8MY?=
- =?us-ascii?Q?kkUw7ZLSlKuLScGYr/LMoYnqeWgHBNlu2sqHm6mXy3EDSvLtgN7MQS47mCnf?=
- =?us-ascii?Q?gbBFNS175CWDAeQ2xO9oMNmbFvYq2s6ef0RKO+fj1R+8zXxtecJQQIuajjVn?=
- =?us-ascii?Q?/rlSogUUxTydDXjPCsMz4nv7+AGnTz2CbeNUPOObEaGAW5ZaIXkWIwhk8Tx/?=
- =?us-ascii?Q?zHVpYac7kkeXbe0UFDRhiVxCtNbi8oOFPS57Wbv8LmVsUZcwy2Bs1npg0Q6W?=
- =?us-ascii?Q?1DdhLl1uVIBk21GYAnZyvWkUWI8oNGkqDi2/cOCukwNlp85is4hzZ4k+7umZ?=
- =?us-ascii?Q?NPcG8tlklPz4DwkaP+pDYIqcBN1PTw3O0EhNuF+vkiUYG+LHZChbciRjozdP?=
- =?us-ascii?Q?5ooqrAOfreja5+pLRSL7sV9yqu2IHBUcxiWqzJSr9c8e80mFQ/QdcSDCnWkS?=
- =?us-ascii?Q?nQ6qFalHmjghGQFpPleoDAOpLfNMTXGePk7sn2lF/1ovCJZTamMkacKfOhxc?=
- =?us-ascii?Q?taio4jZqCfTZRDWPy69NNIHimH5J8D6xRjsVeisHmvpALS+y3j9EE6ZnacGQ?=
- =?us-ascii?Q?EOofdWJLWSuvr+OWtX/sxzkG6cHDaErGs3kSJebSs1ML3vp0zTgULVANVAB2?=
- =?us-ascii?Q?x/clGAeoszrsWn7rulPM5KytwaUKMKXbQORc1DTU2vXv0JApOy/0ah/Oas0n?=
- =?us-ascii?Q?sxkSf8/OMXDmU/SWrbw/Vw2svHJj6CMtMXEJqcje6einLrpky0Q3X/C10kp6?=
- =?us-ascii?Q?BCVeNNcodCVDQoOs2yltveOGqSOKcAVOu0/657jX7Njxqq2wekiYjjlTRKRp?=
- =?us-ascii?Q?aQ1nvJ0TF7cCDTq3HEHPm5+WK+kQcP8kk2Ov9Z2Nqn03/mqYmUgJPXYQyWhB?=
- =?us-ascii?Q?HvJv0S35loi7aCXJVV8uC9nzBs/sFWaBx2xbCmknwoaX98000OWKZxYuUcfd?=
- =?us-ascii?Q?Xw4pOtISlF7gTavvWH6R/6h9lSqRx6Q7qTaBQpnT3JrDFG+2ScH98P6xFWtE?=
- =?us-ascii?Q?ff6IZC27LsQxHj6Jhgo5u/Xeh+s4T0esxMDohTcjYRUFUoxdJecCFeVScRgM?=
- =?us-ascii?Q?sBLXTmheCBvDIU+KGN4VP/ISMyVSRfaz?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?F6NBlXkikz7zie1JyBGhg34Y45XF7NAGRZ5dXfUiSciMUrhXkcAtaqBwqPjr?=
- =?us-ascii?Q?IhWqMZPMfwJDheDB1z//8Y/HGCm8Tilul+Ly4U/0JaWoti5vBDUQD2U4rVnI?=
- =?us-ascii?Q?m+Dr6HZeNHBlVElsP0KVnEZXvgQoZK0T6+NaaL/IzbmO/zd9tUf8eK8PhTZ3?=
- =?us-ascii?Q?FA4AEBS+tyzBGIlkCoFxEzMOOsOoRazLixO+gz6GtpdihLs4x2T7R/lfNLKl?=
- =?us-ascii?Q?h7IY+2ZxxmXCTfvTx4NTaAYeN5HAyNpqmN9SNC9PsXb/sMfush7Qeg5o4oDA?=
- =?us-ascii?Q?I2JG+trqPkGWjVegOTuOeyudbvfZubc8pRA7d6mWPGTAj11BJ7eL9b8ZYTN7?=
- =?us-ascii?Q?pu2qh/HaUbebGb4cZd//OsIW5VdBlm9zLQzAgUrj4yd7s66Ji+v71gWPRhNC?=
- =?us-ascii?Q?OwM3iZW7uy5N70LuRhIRBK5qn7SpAQqaqTCIbA/qZcmYWzVAnhTCnVtCSksM?=
- =?us-ascii?Q?/4UOUIRonPEY0D7PgvxnGIRR1C040Fl7uE+nsfJeEMqdfgwB2us0t9b3DWJN?=
- =?us-ascii?Q?VgUyKf5S0Tm86UFaBuT+ZlwtTVEBWj82udj4H5332Ss37HnHGjeFzcts5YvI?=
- =?us-ascii?Q?1HUv5jvMjYbymaaEfPD8Zd9W79XVpO2TUqRaqZyFIHGzZNFRqnhkxc/QYNCZ?=
- =?us-ascii?Q?3maSOcSPNIYhreRt4DoFFqxsTj4UBKbdkmW70KXRidokFOW5Y/14dnS3dvQ3?=
- =?us-ascii?Q?5nJKvw5C1AEFeNpLbpKg0x27bMArLyEDr4P+kRAn6mhixlrrrjikG5rY2cWL?=
- =?us-ascii?Q?B3jFFDGm2uIuYLx8hXUUvhuOSJ2fPAd0D97UuVXX3Qo7yPQYGQKVOXpMrWJB?=
- =?us-ascii?Q?hxG96M/2bC2H0BzWk9Fwe9dNC7AHR388R/wPdKooMmv8G4qKHWqA+ZJTfhXD?=
- =?us-ascii?Q?shEa9GpMrx+EgS5hi7Uf2ykMvrtpR/niqpl6zutf51nzuH8ypcGAUJI1OgPT?=
- =?us-ascii?Q?vmb2culth3PeR+usc49IetgzOg+WilizHxDdb937tqNjIlNlQoQ2J63WUIEJ?=
- =?us-ascii?Q?i+DYIF70YfrXiJTsKEjJGrTdr+ObYQuUXeLEPZloHmMvdeDMBsuGtahrGm2x?=
- =?us-ascii?Q?67tUkBh+oXXt3QQTrfUdE+cY7TJIcGYxRf3DR3J9X4ZzI2SnlWaPlXeaeO+Y?=
- =?us-ascii?Q?MZbNk8wVhJ87EWyfIVtBVK0RmJGXol7RWSCZuU3BTcqxVUJ5L1vViVLxH0iM?=
- =?us-ascii?Q?qgzPbDkqMwmPqKBYhIS8L0sGkqYFIAC1735FCB0DRgPuR36X1okmMpMu3v/Z?=
- =?us-ascii?Q?kVfjEimzmhNf7o3+w0JdAF3/r3/gHmM/A2QJi/1ZFD+DpfLljqss7Uks7ieF?=
- =?us-ascii?Q?I+DtxDnchGqlaipQgB4d0c34i86qNZXJlff0A6UymCQ+6No5UV3w5kDvj2U5?=
- =?us-ascii?Q?88OwFfd3Nk78VrIrYQzx+dGxhyhs7fktQZFJ5EjvFqeHFtv1Ji2wuKAJIQlh?=
- =?us-ascii?Q?7qw+5uLu4Z54EeqGWhCRe+T14dra5nxaHKYI/TEW2haHpLkZnTaexCGHDQJy?=
- =?us-ascii?Q?Si9PDUGlOOQ7tJsxaHQUHZZkJe+sJAMM6L/RWLedIS/XenBbexATyT2Fda3H?=
- =?us-ascii?Q?Yst9RgkKmanHMxgOSQBINpIkRXcbcE/YN5nhyMXG9S0VK7Jdi+k2+EPNwov4?=
- =?us-ascii?Q?zg=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	456mmikjiko9E9iuoceqroAAE6qISXpzymH+kEDWq6Sy1so19MgN5Kvj3a4ta/NI4JKvkpPct8ztwPjKMcUMxz/zRRASW0bE58lkGnGWPMtyS+Ga2MKn9HM5pdFOpTJtPc/ePESc/4iKF4VW8HMfCVklsb5pyrW4yvnK9KBv6CAfxQwQ11xbVzpEtdmjtTgTICVO9fTyc/+T6obmme5fwOPkgWFiA4jMi+Lh0pP8W0C1/piLn7DHv6qqhsm45ia5cC+f2d0jsMZi4qLNMYO10XZ5xj9nHrB2jItaQRoNY956m+O+go+gMovFGMZOMPRX2zFWvcvaRQKhZtUxUlOkbcFYqVQ0Zbw2z7wKIHu1UnOlxVVUF26amJnhD6UOvq4Sepca5cpygJTdVtZRDmP36D8+xmpUrUpKNCMmEfnODAmItU0OOIJN2gL+xYUC/4IHqznAHlY9ic03DKDhDlX84z8dAKHMUQ3IIC2FduGrjzvESm1WOi0JzM3G/OczeFllpJf1oxjZQPQ+6x8lvNSHIP0JM59JipsbC2ifqcWwWbj/1qe3p0l2xI/kPBoTT/H8qcpm25Xo26Af3UaHxtyp+m6QPOHUoDC3C4fqKPbWV4s=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6852d255-6ce5-41a1-b1a8-08de17ed26a0
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Oct 2025 19:47:25.6608
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: CxCF6triFnpFXZrE8d1RmtqUo/JGN8A9Y+xTVkHjy3MlcTQEz5ylKBgOEpt1G5PvYQfvr1F+7NtIZLifTx9+VzIaQVy4OIouXJmbq0Ltz0o=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR10MB7110
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-10-30_06,2025-10-29_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 bulkscore=0 suspectscore=0
- malwarescore=0 mlxlogscore=999 adultscore=0 mlxscore=0 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2510240000
- definitions=main-2510300166
-X-Proofpoint-GUID: naI5UXiF_PPyv2pQQ6FDafJU1HTigSPD
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDMwMDE1NCBTYWx0ZWRfX6wm7vC5gMFlc
- 63v0tVFUYi6gX5s/oQ3MbxVjkj9N1qz93IkqsuWSqbVuxuxCmfMCUfIDfqWuOhdKwYs6Tc8rDKv
- eadwGuV7RsfSaojtcj3axId4+nj27Q0teHoq8bFwDPQBZppqfzkwmB2VZmyw6iLnC4++pi8jAMp
- HiOaZGIGPW1Pq2N4n3LbGtaSxdHyuLuEOyh8x6eyTKhjsWFFuvkGHqBe6COxIt+9YhvRnQpKlyt
- Iep5a2l51TJegb31g0lq5eJJiUZrYsmbB8TlIZDpVG/DhNBjW2mVerew8PMa1hhZ5y5iL6ioBBp
- tWKuwbf6v7mExGKR8ezrybUTxavoLUyz6K02ID/KTl4u1ab2aahug8nPMsvZO4EYch7imnSqOCz
- I20QiHvcbD1e81H12DLvolRk35r8kw==
-X-Authority-Analysis: v=2.4 cv=HOjO14tv c=1 sm=1 tr=0 ts=6903c0d3 cx=c_pps
- a=XiAAW1AwiKB2Y8Wsi+sD2Q==:117 a=XiAAW1AwiKB2Y8Wsi+sD2Q==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=x6icFKpwvdMA:10 a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=0vmmzv1oPUPr4CyveQMA:9 a=CjuIK1q_8ugA:10 a=nl4s5V0KI7Kw-pW0DWrs:22
- a=pHzHmUro8NiASowvMSCR:22 a=xoEH_sTeL_Rfw54TyV31:22
-X-Proofpoint-ORIG-GUID: naI5UXiF_PPyv2pQQ6FDafJU1HTigSPD
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251030172918.GA417112@ax162>
 
-On Thu, Oct 30, 2025 at 07:47:34PM +0100, Vlastimil Babka wrote:
-> On 10/30/25 19:31, Vlastimil Babka wrote:
-> > On 10/30/25 17:43, Lorenzo Stoakes wrote:
-> >> On Thu, Oct 30, 2025 at 04:31:56PM +0000, Pedro Falcato wrote:
-> >>> On Thu, Oct 30, 2025 at 04:23:58PM +0000, Lorenzo Stoakes wrote:
-> >>> > On Thu, Oct 30, 2025 at 04:16:20PM +0000, Pedro Falcato wrote:
-> >>> > > On Wed, Oct 29, 2025 at 04:50:31PM +0000, Lorenzo Stoakes wrote:
-> >>> > > > Currently, if a user needs to determine if guard regions are present in a
-> >>> > > > range, they have to scan all VMAs (or have knowledge of which ones might
-> >>> > > > have guard regions).
-> >>> > > >
-> >>> > > > Since commit 8e2f2aeb8b48 ("fs/proc/task_mmu: add guard region bit to
-> >>> > > > pagemap") and the related commit a516403787e0 ("fs/proc: extend the
-> >>> > > > PAGEMAP_SCAN ioctl to report guard regions"), users can use either
-> >>> > > > /proc/$pid/pagemap or the PAGEMAP_SCAN functionality to perform this
-> >>> > > > operation at a virtual address level.
-> >>> > > >
-> >>> > > > This is not ideal, and it gives no visibility at a /proc/$pid/smaps level
-> >>> > > > that guard regions exist in ranges.
-> >>> > > >
-> >>> > > > This patch remedies the situation by establishing a new VMA flag,
-> >>> > > > VM_MAYBE_GUARD, to indicate that a VMA may contain guard regions (it is
-> >>> > > > uncertain because we cannot reasonably determine whether a
-> >>> > > > MADV_GUARD_REMOVE call has removed all of the guard regions in a VMA, and
-> >>> > > > additionally VMAs may change across merge/split).
-> >>> > > >
-> >>> > > > We utilise 0x800 for this flag which makes it available to 32-bit
-> >>> > > > architectures also, a flag that was previously used by VM_DENYWRITE, which
-> >>> > > > was removed in commit 8d0920bde5eb ("mm: remove VM_DENYWRITE") and hasn't
-> >>> > > > bee reused yet.
-> >>> > > >
-> >>> > > > The MADV_GUARD_INSTALL madvise() operation now must take an mmap write
-> >>> > > > lock (and also VMA write lock) whereas previously it did not, but this
-> >>> > > > seems a reasonable overhead.
-> >>> > >
-> >>> > > Do you though? Could it be possible to simply atomically set the flag with
-> >>> > > the read lock held? This would make it so we can't split the VMA (and tightly
-> >>> >
-> >>> > VMA flags are not accessed atomically so no I don't think we can do that in any
-> >>> > workable way.
-> >>> >
-> >>>
-> >>> FWIW I think you could work it as an atomic flag and treat those races as benign
-> >>> (this one, at least).
-> >>
-> >> It's not benign as we need to ensure that page tables are correctly propagated
-> >> on fork.
-> >
-> > Could we use MADVISE_VMA_READ_LOCK mode (would be actually an improvement
-> > over the current MADVISE_MMAP_READ_LOCK), together with the atomic flag
-> > setting? I think the places that could race with us to cause RMW use vma
-> > write lock so that would be excluded. Fork AFAICS unfortunately doesn't (for
-> > the oldmm) and it probably would't make sense to start doing it. Maybe we
-> > could think of something to deal with this special case...
->
-> During discussion with Pedro off-list I realized fork takes mmap lock for
-> write on the old mm, so if we kept taking mmap sem for read, then vma lock
-> for read in addition (which should be cheap enough, also we'd only need it
-> in case VM_MAYBE_GUARD is not yet set), and set the flag atomicaly, perhaps
-> that would cover all non-bening races?
->
->
+On Thu, Oct 30, 2025 at 10:29:18AM -0700, Nathan Chancellor wrote:
+> On Thu, Oct 30, 2025 at 02:38:50PM +0100, Ard Biesheuvel wrote:
+> > On Thu, 30 Oct 2025 at 14:23, Christian Brauner <brauner@kernel.org> wrote:
+> > >
+> > > On Wed, Oct 29, 2025 at 04:30:57PM -0700, Nathan Chancellor wrote:
+> > > > On Thu, Oct 30, 2025 at 12:13:11AM +0100, Christian Brauner wrote:
+> > > > > I'm fine either way. @Nathan, if you just want to give Linus the patch
+> > > > > if it's small enough or just want to give me a stable branch I can pull
+> > > > > I'll be content. Thanks!
+> > > >
+> > > > I do not care either way but I created a shared branch/tag since it was
+> > > > easy enough to do. If Linus wants to take these directly for -rc4, I am
+> > > > fine with that as well.
+> > > >
+> > > > Cheers,
+> > > > Nathan
+> > > >
+> > > > The following changes since commit 3a8660878839faadb4f1a6dd72c3179c1df56787:
+> > > >
+> > > >   Linux 6.18-rc1 (2025-10-12 13:42:36 -0700)
+> > > >
+> > > > are available in the Git repository at:
+> > > >
+> > > >   git://git.kernel.org/pub/scm/linux/kernel/git/kbuild/linux.git tags/kbuild-ms-extensions-6.19
+> > >
+> > > Thanks, I pulled this and placed it into a branch that I can base other
+> > > branches on.
+> > >
+> > > _But_, I'm already running into problems. :)
+> > >
+> > ...
+> > >
+> > > Because struct cgroup_namespace embeddds struct ns_common and it
+> > > proliferates via mm stuff into the efi code.
+> > >
+> > > So the EFI cod has it's own KBUILD_CFLAGS. It does:
+> > >
+> > > # non-x86 reuses KBUILD_CFLAGS, x86 does not
+> > > cflags-y                        := $(KBUILD_CFLAGS)
+> > >
+> > > <snip>
+> > >
+> > > KBUILD_CFLAGS                   := $(subst $(CC_FLAGS_FTRACE),,$(cflags-y)) \
+> > >                                    -Os -DDISABLE_BRANCH_PROFILING \
+> > >                                    -include $(srctree)/include/linux/hidden.h \
+> > >                                    -D__NO_FORTIFY \
+> > >                                    -ffreestanding \
+> > >                                    -fno-stack-protector \
+> > >                                    $(call cc-option,-fno-addrsig) \
+> > >                                    -D__DISABLE_EXPORTS
+> > >
+> > > which means x86 doesn't get -fms-extension breaking the build. If I
+> > > manually insert:
+> > >
+> > > diff --git a/drivers/firmware/efi/libstub/Makefile b/drivers/firmware/efi/libstub/Makefile
+> > > index 94b05e4451dd..4ad2f8f42134 100644
+> > > --- a/drivers/firmware/efi/libstub/Makefile
+> > > +++ b/drivers/firmware/efi/libstub/Makefile
+> > > @@ -42,6 +42,8 @@ KBUILD_CFLAGS                 := $(subst $(CC_FLAGS_FTRACE),,$(cflags-y)) \
+> > >                                    -ffreestanding \
+> > >                                    -fno-stack-protector \
+> > >                                    $(call cc-option,-fno-addrsig) \
+> > > +                                  -fms-extensions \
+> > > +                                  -Wno-microsoft-anon-tag \
+> > >                                    -D__DISABLE_EXPORTS
+> > >
+> > > The build works...
+> > >
+> > > I think we need to decide how to fix this now because as soon as someone
+> > > makes use of the extension that is indirectly included by that libstub
+> > > thing we're fscked.
+> > 
+> > Unless anyone is feeling brave and wants to untangle the x86 command
+> > line delta between the stub and core kernel, I suggest we just add
+> > these flags just like you proposed (assuming all supported compilers
+> > tolerate their presence)
+> 
+> There are several other places in the kernel that blow away
+> KBUILD_CFLAGS like this that will need the same fix (I went off of
+> searching for -std=gnu11, as that was needed in many places to fix GCC
+> 15). It is possible that we might want to take the opportunity to unify
+> these flags into something like KBUILD_DIALECT_CFLAGS but for now, I
+> just bothered with adding the flags in the existing places.
 
-We take VMA write lock in dup_mmap() on each mpnt (old VMA).
+That should hopefully do it. Can you update the shared branch with that
+and then tell me when I can repull?
 
-We take the VMA write lock (vma_start_write()) for each mpnt.
-
-We then vm_area_dup() the mpnt to the new VMA before calling:
-
-copy_page_range()
--> vma_needs_copy()
-
-Which is where the check is done.
-
-So we are holding the VMA write lock, so a VMA read lock should suffice no?
-
-For belts + braces we could atomically read the flag in vma_needs_copy(),
-though note it's intended VM_COPY_ON_FORK could have more than one flag.
-
-We could drop that for now and be explicit.
+> 
+> diff --git a/arch/arm64/kernel/vdso32/Makefile b/arch/arm64/kernel/vdso32/Makefile
+> index ffa3536581f6..9d0efed91414 100644
+> --- a/arch/arm64/kernel/vdso32/Makefile
+> +++ b/arch/arm64/kernel/vdso32/Makefile
+> @@ -63,7 +63,7 @@ VDSO_CFLAGS += -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
+>                 $(filter -Werror,$(KBUILD_CPPFLAGS)) \
+>                 -Werror-implicit-function-declaration \
+>                 -Wno-format-security \
+> -               -std=gnu11
+> +               -std=gnu11 -fms-extensions
+>  VDSO_CFLAGS  += -O2
+>  # Some useful compiler-dependent flags from top-level Makefile
+>  VDSO_CFLAGS += $(call cc32-option,-Wno-pointer-sign)
+> @@ -71,6 +71,7 @@ VDSO_CFLAGS += -fno-strict-overflow
+>  VDSO_CFLAGS += $(call cc32-option,-Werror=strict-prototypes)
+>  VDSO_CFLAGS += -Werror=date-time
+>  VDSO_CFLAGS += $(call cc32-option,-Werror=incompatible-pointer-types)
+> +VDSO_CFLAGS += $(if $(CONFIG_CC_IS_CLANG),-Wno-microsoft-anon-tag)
+>  
+>  # Compile as THUMB2 or ARM. Unwinding via frame-pointers in THUMB2 is
+>  # unreliable.
+> diff --git a/arch/loongarch/vdso/Makefile b/arch/loongarch/vdso/Makefile
+> index d8316f993482..c0cc3ca5da9f 100644
+> --- a/arch/loongarch/vdso/Makefile
+> +++ b/arch/loongarch/vdso/Makefile
+> @@ -19,7 +19,7 @@ ccflags-vdso := \
+>  cflags-vdso := $(ccflags-vdso) \
+>  	-isystem $(shell $(CC) -print-file-name=include) \
+>  	$(filter -W%,$(filter-out -Wa$(comma)%,$(KBUILD_CFLAGS))) \
+> -	-std=gnu11 -O2 -g -fno-strict-aliasing -fno-common -fno-builtin \
+> +	-std=gnu11 -fms-extensions -O2 -g -fno-strict-aliasing -fno-common -fno-builtin \
+>  	-fno-stack-protector -fno-jump-tables -DDISABLE_BRANCH_PROFILING \
+>  	$(call cc-option, -fno-asynchronous-unwind-tables) \
+>  	$(call cc-option, -fno-stack-protector)
+> diff --git a/arch/parisc/boot/compressed/Makefile b/arch/parisc/boot/compressed/Makefile
+> index 17c42d718eb3..f8481e4e9d21 100644
+> --- a/arch/parisc/boot/compressed/Makefile
+> +++ b/arch/parisc/boot/compressed/Makefile
+> @@ -18,7 +18,7 @@ KBUILD_CFLAGS += -fno-PIE -mno-space-regs -mdisable-fpregs -Os
+>  ifndef CONFIG_64BIT
+>  KBUILD_CFLAGS += -mfast-indirect-calls
+>  endif
+> -KBUILD_CFLAGS += -std=gnu11
+> +KBUILD_CFLAGS += -std=gnu11 -fms-extensions
+>  
+>  LDFLAGS_vmlinux := -X -e startup --as-needed -T
+>  $(obj)/vmlinux: $(obj)/vmlinux.lds $(addprefix $(obj)/, $(OBJECTS)) $(LIBGCC) FORCE
+> diff --git a/arch/powerpc/boot/Makefile b/arch/powerpc/boot/Makefile
+> index c47b78c1d3e7..f1a4761ebd44 100644
+> --- a/arch/powerpc/boot/Makefile
+> +++ b/arch/powerpc/boot/Makefile
+> @@ -70,7 +70,7 @@ BOOTCPPFLAGS	:= -nostdinc $(LINUXINCLUDE)
+>  BOOTCPPFLAGS	+= -isystem $(shell $(BOOTCC) -print-file-name=include)
+>  
+>  BOOTCFLAGS	:= $(BOOTTARGETFLAGS) \
+> -		   -std=gnu11 \
+> +		   -std=gnu11 -fms-extensions \
+>  		   -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
+>  		   -fno-strict-aliasing -O2 \
+>  		   -msoft-float -mno-altivec -mno-vsx \
+> @@ -86,6 +86,7 @@ BOOTARFLAGS	:= -crD
+>  
+>  ifdef CONFIG_CC_IS_CLANG
+>  BOOTCFLAGS += $(CLANG_FLAGS)
+> +BOOTCFLAGS += -Wno-microsoft-anon-tag
+>  BOOTAFLAGS += $(CLANG_FLAGS)
+>  endif
+>  
+> diff --git a/arch/s390/Makefile b/arch/s390/Makefile
+> index b4769241332b..8578361133a4 100644
+> --- a/arch/s390/Makefile
+> +++ b/arch/s390/Makefile
+> @@ -22,7 +22,7 @@ KBUILD_AFLAGS_DECOMPRESSOR := $(CLANG_FLAGS) -m64 -D__ASSEMBLY__
+>  ifndef CONFIG_AS_IS_LLVM
+>  KBUILD_AFLAGS_DECOMPRESSOR += $(if $(CONFIG_DEBUG_INFO),$(aflags_dwarf))
+>  endif
+> -KBUILD_CFLAGS_DECOMPRESSOR := $(CLANG_FLAGS) -m64 -O2 -mpacked-stack -std=gnu11
+> +KBUILD_CFLAGS_DECOMPRESSOR := $(CLANG_FLAGS) -m64 -O2 -mpacked-stack -std=gnu11 -fms-extensions
+>  KBUILD_CFLAGS_DECOMPRESSOR += -DDISABLE_BRANCH_PROFILING -D__NO_FORTIFY
+>  KBUILD_CFLAGS_DECOMPRESSOR += -D__DECOMPRESSOR
+>  KBUILD_CFLAGS_DECOMPRESSOR += -Wno-pointer-sign
+> @@ -35,6 +35,7 @@ KBUILD_CFLAGS_DECOMPRESSOR += $(call cc-disable-warning, address-of-packed-membe
+>  KBUILD_CFLAGS_DECOMPRESSOR += $(if $(CONFIG_DEBUG_INFO),-g)
+>  KBUILD_CFLAGS_DECOMPRESSOR += $(if $(CONFIG_DEBUG_INFO_DWARF4), $(call cc-option, -gdwarf-4,))
+>  KBUILD_CFLAGS_DECOMPRESSOR += $(if $(CONFIG_CC_NO_ARRAY_BOUNDS),-Wno-array-bounds)
+> +KBUILD_CFLAGS_DECOMPRESSOR += $(if $(CONFIG_CC_IS_CLANG),-Wno-microsoft-anon-tag)
+>  
+>  UTS_MACHINE	:= s390x
+>  STACK_SIZE	:= $(if $(CONFIG_KASAN),65536,$(if $(CONFIG_KMSAN),65536,16384))
+> diff --git a/arch/s390/purgatory/Makefile b/arch/s390/purgatory/Makefile
+> index bd39b36e7bd6..0c196a5b194a 100644
+> --- a/arch/s390/purgatory/Makefile
+> +++ b/arch/s390/purgatory/Makefile
+> @@ -13,7 +13,7 @@ CFLAGS_sha256.o := -D__NO_FORTIFY
+>  $(obj)/mem.o: $(srctree)/arch/s390/lib/mem.S FORCE
+>  	$(call if_changed_rule,as_o_S)
+>  
+> -KBUILD_CFLAGS := -std=gnu11 -fno-strict-aliasing -Wall -Wstrict-prototypes
+> +KBUILD_CFLAGS := -std=gnu11 -fms-extensions -fno-strict-aliasing -Wall -Wstrict-prototypes
+>  KBUILD_CFLAGS += -Wno-pointer-sign -Wno-sign-compare
+>  KBUILD_CFLAGS += -fno-zero-initialized-in-bss -fno-builtin -ffreestanding
+>  KBUILD_CFLAGS += -Os -m64 -msoft-float -fno-common
+> @@ -21,6 +21,7 @@ KBUILD_CFLAGS += -fno-stack-protector
+>  KBUILD_CFLAGS += -DDISABLE_BRANCH_PROFILING
+>  KBUILD_CFLAGS += -D__DISABLE_EXPORTS
+>  KBUILD_CFLAGS += $(CLANG_FLAGS)
+> +KBUILD_CFLAGS += $(if $(CONFIG_CC_IS_CLANG),-Wno-microsoft-anon-tag)
+>  KBUILD_CFLAGS += $(call cc-option,-fno-PIE)
+>  KBUILD_AFLAGS := $(filter-out -DCC_USING_EXPOLINE,$(KBUILD_AFLAGS))
+>  KBUILD_AFLAGS += -D__DISABLE_EXPORTS
+> diff --git a/arch/x86/Makefile b/arch/x86/Makefile
+> index 4db7e4bf69f5..e20e25b8b16c 100644
+> --- a/arch/x86/Makefile
+> +++ b/arch/x86/Makefile
+> @@ -48,7 +48,8 @@ endif
+>  
+>  # How to compile the 16-bit code.  Note we always compile for -march=i386;
+>  # that way we can complain to the user if the CPU is insufficient.
+> -REALMODE_CFLAGS	:= -std=gnu11 -m16 -g -Os -DDISABLE_BRANCH_PROFILING -D__DISABLE_EXPORTS \
+> +REALMODE_CFLAGS	:= -std=gnu11 -fms-extensions -m16 -g -Os \
+> +		   -DDISABLE_BRANCH_PROFILING -D__DISABLE_EXPORTS \
+>  		   -Wall -Wstrict-prototypes -march=i386 -mregparm=3 \
+>  		   -fno-strict-aliasing -fomit-frame-pointer -fno-pic \
+>  		   -mno-mmx -mno-sse $(call cc-option,-fcf-protection=none)
+> @@ -60,6 +61,7 @@ REALMODE_CFLAGS += $(cc_stack_align4)
+>  REALMODE_CFLAGS += $(CLANG_FLAGS)
+>  ifdef CONFIG_CC_IS_CLANG
+>  REALMODE_CFLAGS += -Wno-gnu
+> +REALMODE_CFLAGS += -Wno-microsoft-anon-tag
+>  endif
+>  export REALMODE_CFLAGS
+>  
+> diff --git a/arch/x86/boot/compressed/Makefile b/arch/x86/boot/compressed/Makefile
+> index 74657589264d..68f9d7a1683b 100644
+> --- a/arch/x86/boot/compressed/Makefile
+> +++ b/arch/x86/boot/compressed/Makefile
+> @@ -25,7 +25,7 @@ targets := vmlinux vmlinux.bin vmlinux.bin.gz vmlinux.bin.bz2 vmlinux.bin.lzma \
+>  # avoid errors with '-march=i386', and future flags may depend on the target to
+>  # be valid.
+>  KBUILD_CFLAGS := -m$(BITS) -O2 $(CLANG_FLAGS)
+> -KBUILD_CFLAGS += -std=gnu11
+> +KBUILD_CFLAGS += -std=gnu11 -fms-extensions
+>  KBUILD_CFLAGS += -fno-strict-aliasing -fPIE
+>  KBUILD_CFLAGS += -Wundef
+>  KBUILD_CFLAGS += -DDISABLE_BRANCH_PROFILING
+> @@ -36,7 +36,10 @@ KBUILD_CFLAGS += -mno-mmx -mno-sse
+>  KBUILD_CFLAGS += -ffreestanding -fshort-wchar
+>  KBUILD_CFLAGS += -fno-stack-protector
+>  KBUILD_CFLAGS += $(call cc-disable-warning, address-of-packed-member)
+> -KBUILD_CFLAGS += $(call cc-disable-warning, gnu)
+> +ifdef CONFIG_CC_IS_CLANG
+> +KBUILD_CFLAGS += -Wno-gnu
+> +KBUILD_CFLAGS += -Wno-microsoft-anon-tag
+> +endif
+>  KBUILD_CFLAGS += -Wno-pointer-sign
+>  KBUILD_CFLAGS += -fno-asynchronous-unwind-tables
+>  KBUILD_CFLAGS += -D__DISABLE_EXPORTS
+> diff --git a/drivers/firmware/efi/libstub/Makefile b/drivers/firmware/efi/libstub/Makefile
+> index 94b05e4451dd..7d15a85d579f 100644
+> --- a/drivers/firmware/efi/libstub/Makefile
+> +++ b/drivers/firmware/efi/libstub/Makefile
+> @@ -11,12 +11,12 @@ cflags-y			:= $(KBUILD_CFLAGS)
+>  
+>  cflags-$(CONFIG_X86_32)		:= -march=i386
+>  cflags-$(CONFIG_X86_64)		:= -mcmodel=small
+> -cflags-$(CONFIG_X86)		+= -m$(BITS) -D__KERNEL__ -std=gnu11 \
+> +cflags-$(CONFIG_X86)		+= -m$(BITS) -D__KERNEL__ -std=gnu11 -fms-extensions \
+>  				   -fPIC -fno-strict-aliasing -mno-red-zone \
+>  				   -mno-mmx -mno-sse -fshort-wchar \
+>  				   -Wno-pointer-sign \
+>  				   $(call cc-disable-warning, address-of-packed-member) \
+> -				   $(call cc-disable-warning, gnu) \
+> +				   $(if $(CONFIG_CC_IS_CLANG),-Wno-gnu -Wno-microsoft-anon-tag) \
+>  				   -fno-asynchronous-unwind-tables \
+>  				   $(CLANG_FLAGS)
+>  
 
