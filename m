@@ -1,184 +1,221 @@
-Return-Path: <linux-fsdevel+bounces-66458-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66459-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A6DAC1FDD8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Oct 2025 12:43:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFADFC1FE38
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Oct 2025 12:53:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B41A1424706
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Oct 2025 11:43:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A8B11883F3E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Oct 2025 11:52:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB3BD342CBB;
-	Thu, 30 Oct 2025 11:43:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92A8033FE34;
+	Thu, 30 Oct 2025 11:51:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="e6eub5k+"
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="vfrNgpMm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from canpmsgout06.his.huawei.com (canpmsgout06.his.huawei.com [113.46.200.221])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 692AF632
-	for <linux-fsdevel@vger.kernel.org>; Thu, 30 Oct 2025 11:43:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E26A33509D;
+	Thu, 30 Oct 2025 11:51:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761824610; cv=none; b=TQ85Cgd8v7+0s/N8pqmCXxbLkjdiXFqmCFt/iMoIzHTYLQBOHs45sH4yLiZqfF3lS1GQyHC5xAT+2q4TzjEFvfurU0CsHFkvMPyBMLUB7d4SJdZ2N6GUCS8pIo36/Cqc+JXr9UGsTETN9sQ7537NdQwaomVccHnd/0WiXbRAu0o=
+	t=1761825109; cv=none; b=Wbkdic4QHonvHXKT3mfKE6hFEVSMA8i0HiWcxPYt3WtHtS44yjbijH90QscUhr4SgWmeLb4sgTmrcd8+jeEl2A/BWpGczPaLIIalV+/yXFg9TXTSzrk70UtSphNMyvPLId8QRoOZ1G5iU3EMqP2qO7H5KtudgdpAY4rftvE1kls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761824610; c=relaxed/simple;
-	bh=8K202zcT/5Asm+XAnj+oZfeb7i++8K1HRzH59kLoZlc=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=E+1InJlZ+YhYRxM8mTZk8PitocPTBWFd8I8HSBIGGnfDORuz/x68/rDjKIT12CVpiTARAz57iIq6TeyJXyMq3h1ESAhKIA0pnfc5btardHWHzwVM5Tbdq0J6UWOBZgSeo5Ud4E3LTh6YWlU8Qid9JEbMEJ0MA5w7L5IzIeD/nmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=e6eub5k+; arc=none smtp.client-ip=209.85.221.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-429b51f3fd8so376359f8f.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Oct 2025 04:43:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761824607; x=1762429407; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=nDSI58A/HQKOUf6eeXjJJOZLO/JqDx1ROCyXyTZAY7w=;
-        b=e6eub5k+S99WJGRdh3tMlYUvQRHbfhXapbdzJLS42qfE5/7K7jEApuqdBsz5RD+aG6
-         KsVtxKTip2zxubSN7O7gGykzcshX9Jba+DCbkxmt3h2UeoH9GUV6Rjk8yp0CYLLPRAz+
-         3ryGYmpRZLOnXJlb3r44zO7glDOUp5ziTMDX3KHo5xm1WEh8Daboaq1al6GeL4b3nKKR
-         z7JrDM96WlVI0/NvzmwBw9c5/t6YK8pV3tFPZT7ucSkB9es4eXNmzI+5GhmN8mvLCOZk
-         wIiN0aZ4IGLj26y9lX9pZ8p/O5DrL9wFIAgN5ikhYnYq8PjyOPffgWjEukr1W7py3d7z
-         R1uw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761824607; x=1762429407;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nDSI58A/HQKOUf6eeXjJJOZLO/JqDx1ROCyXyTZAY7w=;
-        b=rz1icI9tr0RvcoJXuuKIVAasybrqYSzqmJpNwb4GJVTkKLDa2nmUFSoIxlM6yJpi34
-         BsEqyv+egi3+NIK9+f3xkqo8jOw+Sx7CZ9dnDgDODNPotvZG9rRkn5+AnR+20isK/swf
-         4Yzda68wrwNxpe8UIVgVShQXd7KFphYFm/wsFT0KTeD+wMfLmBmw8OfQU5IE8GOX/NtG
-         KTKqA1/WbTAAehy6/nUcVb1MEq5BAijHjr7IKzV69MNgZ7YeMQJzLalLeKwDS8b9VRUs
-         A6bZqS+SbMpA0Fj0NP8DmVRaaU8Byp5Qywzj9PwCfjcEVW7Y+Xi1kyszoSY4BF8bRYi9
-         4qpg==
-X-Forwarded-Encrypted: i=1; AJvYcCXbQymHK7aCoH20fxliFEfPlJHjymO7eMp1HFiuqxJ+VZgjsRL6pML05NgvBIzH7uQ+b+dTAXcrRbmS4cq+@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyh6kq1qCNf9x7K4Sjycy9EkFPgQEJ4AWfx4ZPtKCJU7yi0iUbT
-	LahVhVON1C7LvMu9n1AaI1lDrR3L3kBsoYxZLc2Gug0CzNi2CV18Z6iP0k38mkxmFFccY+vCFrE
-	XX3zu5WlNnmlMRESxYQ==
-X-Google-Smtp-Source: AGHT+IHzjpoD898gBgMNPMdZP5uEYogpZiJA8uErDROog5MEOI5DpnJbAzYLVH3kmqrIf4gyzUsqqY51Um1rkCk=
-X-Received: from wrme11.prod.google.com ([2002:adf:e38b:0:b0:3ec:e23c:988f])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6000:290f:b0:429:58f:325 with SMTP id ffacd0b85a97d-429aef830c6mr5166773f8f.24.1761824606490;
- Thu, 30 Oct 2025 04:43:26 -0700 (PDT)
-Date: Thu, 30 Oct 2025 11:43:25 +0000
-In-Reply-To: <4e6d3f7b-551f-4cbf-8c00-2b9bb1f54d68@lucifer.local>
+	s=arc-20240116; t=1761825109; c=relaxed/simple;
+	bh=XQ1oXMaxqZeGMDaRBoHQ0jpp2R37p8bd1pWjG1h0TH0=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=PIcO+bIFldVwZzoqZq9UezRF5bOylOreCe+dBPj7TuP/6ASDCu4LU0DimXrwYkDKioPo4Ud0EumLkLrPmOlum9OQbXoYUMykh+VsAaGipJePrEsDYmi+X6VoTICkH3GdCc2+3B47FlK/WPz2fLTHK1NsUKmQBmUggGM8l6kHxac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=vfrNgpMm; arc=none smtp.client-ip=113.46.200.221
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=Nh5loDZHBR2aksoB6uCQ/lMUHV6h0uNP+3aSbia5tGc=;
+	b=vfrNgpMmkXgqbSYfXZ3V1v/bCK4I7My7du3Bzz5TlGXy1XzzpH2MFNVJMJI3OCgPBKhBVZXdF
+	nlp7F4g3hndm89KyhSUDGx5XXHusPtS018Vd17K1Jk5ywxYCb+JSNtpA7AUQBgCiyB1MLrmRNTx
+	dV10jOoc4Slzkv8KnnJCCn8=
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by canpmsgout06.his.huawei.com (SkyGuard) with ESMTPS id 4cy2WP21CYzRhRF;
+	Thu, 30 Oct 2025 19:51:13 +0800 (CST)
+Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
+	by mail.maildlp.com (Postfix) with ESMTPS id 1B70B147B7D;
+	Thu, 30 Oct 2025 19:51:43 +0800 (CST)
+Received: from kwepemq500010.china.huawei.com (7.202.194.235) by
+ dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 30 Oct 2025 19:51:38 +0800
+Received: from [10.173.125.37] (10.173.125.37) by
+ kwepemq500010.china.huawei.com (7.202.194.235) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 30 Oct 2025 19:51:36 +0800
+Subject: Re: [RFC PATCH v1 0/3] Userspace MFR Policy via memfd
+To: Harry Yoo <harry.yoo@oracle.com>, Jiaqi Yan <jiaqiyan@google.com>
+CC: =?UTF-8?Q?=e2=80=9cWilliam_Roche?= <william.roche@oracle.com>, "Ackerley
+ Tng" <ackerleytng@google.com>, <jgg@nvidia.com>, <akpm@linux-foundation.org>,
+	<ankita@nvidia.com>, <dave.hansen@linux.intel.com>, <david@redhat.com>,
+	<duenwen@google.com>, <jane.chu@oracle.com>, <jthoughton@google.com>,
+	<linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-mm@kvack.org>, <muchun.song@linux.dev>, <nao.horiguchi@gmail.com>,
+	<osalvador@suse.de>, <peterx@redhat.com>, <rientjes@google.com>,
+	<sidhartha.kumar@oracle.com>, <tony.luck@intel.com>,
+	<wangkefeng.wang@huawei.com>, <willy@infradead.org>
+References: <20250118231549.1652825-1-jiaqiyan@google.com>
+ <20250919155832.1084091-1-william.roche@oracle.com>
+ <CACw3F521fi5HWhCKi_KrkNLXkw668HO4h8+DjkP2+vBuK-=org@mail.gmail.com>
+ <aPjXdP63T1yYtvkq@hyeyoo>
+ <CACw3F50As2jPzy1rRjzpm3uKOALjX_9WmKxMPGnQcok96OfQkA@mail.gmail.com>
+ <aQBqGupCN_v8ysMX@hyeyoo>
+From: Miaohe Lin <linmiaohe@huawei.com>
+Message-ID: <d3d35586-c63f-c1be-c95e-fbd7aafd43f3@huawei.com>
+Date: Thu, 30 Oct 2025 19:51:36 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <cover.1761757731.git.lorenzo.stoakes@oracle.com>
- <CAA1CXcCiS37Kw78pam3=htBX5FvtbFOWvYNA0nPWLyE93HPtwA@mail.gmail.com> <4e6d3f7b-551f-4cbf-8c00-2b9bb1f54d68@lucifer.local>
-Message-ID: <aQNPXcxcxcX3Lwv0@google.com>
-Subject: Re: [PATCH 0/4] initial work on making VMA flags a bitmap
-From: Alice Ryhl <aliceryhl@google.com>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Nico Pache <npache@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Muchun Song <muchun.song@linux.dev>, Oscar Salvador <osalvador@suse.de>, 
-	David Hildenbrand <david@redhat.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
-	Michal Hocko <mhocko@suse.com>, Axel Rasmussen <axelrasmussen@google.com>, 
-	Yuanchu Xie <yuanchu@google.com>, Wei Xu <weixugc@google.com>, Peter Xu <peterx@redhat.com>, 
-	Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, Kees Cook <kees@kernel.org>, 
-	Matthew Wilcox <willy@infradead.org>, Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>, 
-	Leon Romanovsky <leon@kernel.org>, Zi Yan <ziy@nvidia.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Ryan Roberts <ryan.roberts@arm.com>, 
-	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>, Lance Yang <lance.yang@linux.dev>, 
-	Xu Xin <xu.xin16@zte.com.cn>, Chengming Zhou <chengming.zhou@linux.dev>, 
-	Jann Horn <jannh@google.com>, Matthew Brost <matthew.brost@intel.com>, 
-	Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>, 
-	Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>, 
-	Ying Huang <ying.huang@linux.alibaba.com>, Alistair Popple <apopple@nvidia.com>, 
-	Pedro Falcato <pfalcato@suse.de>, Shakeel Butt <shakeel.butt@linux.dev>, 
-	David Rientjes <rientjes@google.com>, Rik van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>, 
-	Kemeng Shi <shikemeng@huaweicloud.com>, Kairui Song <kasong@tencent.com>, 
-	Nhat Pham <nphamcs@gmail.com>, Baoquan He <bhe@redhat.com>, Chris Li <chrisl@kernel.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Qi Zheng <zhengqi.arch@bytedance.com>, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org
+MIME-Version: 1.0
+In-Reply-To: <aQBqGupCN_v8ysMX@hyeyoo>
 Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ kwepemq500010.china.huawei.com (7.202.194.235)
 
-On Thu, Oct 30, 2025 at 08:33:10AM +0000, Lorenzo Stoakes wrote:
-> +cc Alice - could you help look at this? It seems I have broken the rust
-> bindings here :)
+On 2025/10/28 15:00, Harry Yoo wrote:
+> On Mon, Oct 27, 2025 at 09:17:31PM -0700, Jiaqi Yan wrote:
+>> On Wed, Oct 22, 2025 at 6:09 AM Harry Yoo <harry.yoo@oracle.com> wrote:
+>>>
+>>> On Mon, Oct 13, 2025 at 03:14:32PM -0700, Jiaqi Yan wrote:
+>>>> On Fri, Sep 19, 2025 at 8:58 AM “William Roche <william.roche@oracle.com> wrote:
+>>>>>
+>>>>> From: William Roche <william.roche@oracle.com>
+>>>>>
+>>>>> Hello,
+>>>>>
+>>>>> The possibility to keep a VM using large hugetlbfs pages running after a memory
+>>>>> error is very important, and the possibility described here could be a good
+>>>>> candidate to address this issue.
+>>>>
+>>>> Thanks for expressing interest, William, and sorry for getting back to
+>>>> you so late.
+>>>>
+>>>>>
+>>>>> So I would like to provide my feedback after testing this code with the
+>>>>> introduction of persistent errors in the address space: My tests used a VM
+>>>>> running a kernel able to provide MFD_MF_KEEP_UE_MAPPED memfd segments to the
+>>>>> test program provided with this project. But instead of injecting the errors
+>>>>> with madvise calls from this program, I get the guest physical address of a
+>>>>> location and inject the error from the hypervisor into the VM, so that any
+>>>>> subsequent access to the location is prevented directly from the hypervisor
+>>>>> level.
+>>>>
+>>>> This is exactly what VMM should do: when it owns or manages the VM
+>>>> memory with MFD_MF_KEEP_UE_MAPPED, it is then VMM's responsibility to
+>>>> isolate guest/VCPUs from poisoned memory pages, e.g. by intercepting
+>>>> such memory accesses.
+>>>>
+>>>>>
+>>>>> Using this framework, I realized that the code provided here has a problem:
+>>>>> When the error impacts a large folio, the release of this folio doesn't isolate
+>>>>> the sub-page(s) actually impacted by the poison. __rmqueue_pcplist() can return
+>>>>> a known poisoned page to get_page_from_freelist().
+>>>>
+>>>> Just curious, how exactly you can repro this leaking of a known poison
+>>>> page? It may help me debug my patch.
+>>>>
+>>>>>
+>>>>> This revealed some mm limitations, as I would have expected that the
+>>>>> check_new_pages() mechanism used by the __rmqueue functions would filter these
+>>>>> pages out, but I noticed that this has been disabled by default in 2023 with:
+>>>>> [PATCH] mm, page_alloc: reduce page alloc/free sanity checks
+>>>>> https://lore.kernel.org/all/20230216095131.17336-1-vbabka@suse.cz
+>>>>
+>>>> Thanks for the reference. I did turned on CONFIG_DEBUG_VM=y during dev
+>>>> and testing but didn't notice any WARNING on "bad page"; It is very
+>>>> likely I was just lucky.
+>>>>
+>>>>>
+>>>>>
+>>>>> This problem seems to be avoided if we call take_page_off_buddy(page) in the
+>>>>> filemap_offline_hwpoison_folio_hugetlb() function without testing if
+>>>>> PageBuddy(page) is true first.
+>>>>
+>>>> Oh, I think you are right, filemap_offline_hwpoison_folio_hugetlb
+>>>> shouldn't call take_page_off_buddy(page) depend on PageBuddy(page) or
+>>>> not. take_page_off_buddy will check PageBuddy or not, on the page_head
+>>>> of different page orders. So maybe somehow a known poisoned page is
+>>>> not taken off from buddy allocator due to this?
+>>>
+>>> Maybe it's the case where the poisoned page is merged to a larger page,
+>>> and the PGTY_buddy flag is set on its buddy of the poisoned page, so
+>>> PageBuddy() returns false?:
+>>>
+>>>   [ free page A ][ free page B (poisoned) ]
+>>>
+>>> When these two are merged, then we set PGTY_buddy on page A but not on B.
+>>
+>> Thanks Harry!
+>>
+>> It is indeed this case. I validate by adding some debug prints in
+>> take_page_off_buddy:
+>>
+>> [ 193.029423] Memory failure: 0x2800200: [yjq] PageBuddy=0 after drain_all_pages
+>> [ 193.029426] 0x2800200: [yjq] order=0, page_order=0, PageBuddy(page_head)=0
+>> [ 193.029428] 0x2800200: [yjq] order=1, page_order=0, PageBuddy(page_head)=0
+>> [ 193.029429] 0x2800200: [yjq] order=2, page_order=0, PageBuddy(page_head)=0
+>> [ 193.029430] 0x2800200: [yjq] order=3, page_order=0, PageBuddy(page_head)=0
+>> [ 193.029431] 0x2800200: [yjq] order=4, page_order=0, PageBuddy(page_head)=0
+>> [ 193.029432] 0x2800200: [yjq] order=5, page_order=0, PageBuddy(page_head)=0
+>> [ 193.029434] 0x2800200: [yjq] order=6, page_order=0, PageBuddy(page_head)=0
+>> [ 193.029435] 0x2800200: [yjq] order=7, page_order=0, PageBuddy(page_head)=0
+>> [ 193.029436] 0x2800200: [yjq] order=8, page_order=0, PageBuddy(page_head)=0
+>> [ 193.029437] 0x2800200: [yjq] order=9, page_order=0, PageBuddy(page_head)=0
+>> [ 193.029438] 0x2800200: [yjq] order=10, page_order=10, PageBuddy(page_head)=1
+>>
+>> In this case, page for 0x2800200 is hwpoisoned, and its buddy page is
+>> 0x2800000 with order 10.
 > 
-> Thanks!
+> Woohoo, I got it right!
 > 
-> On Wed, Oct 29, 2025 at 09:07:07PM -0600, Nico Pache wrote:
-> > Hey Lorenzo,
-> >
-> > I put your patchset into the Fedora Koji system to run some CI on it for you.
-> >
-> > It failed to build due to what looks like some Rust bindings.
-> >
-> > Heres the build: https://koji.fedoraproject.org/koji/taskinfo?taskID=138547842
-> >
-> > And x86 build logs:
-> > https://kojipkgs.fedoraproject.org//work/tasks/7966/138547966/build.log
-> >
-> > The error is pretty large but here's a snippet if you want an idea
-> >
-> > error[E0425]: cannot find value `VM_READ` in crate `bindings`
-> >    --> rust/kernel/mm/virt.rs:399:44
-> >     |
-> > 399 |     pub const READ: vm_flags_t = bindings::VM_READ as vm_flags_t;
-> >     |                                            ^^^^^^^ not found in `bindings`
-> > error[E0425]: cannot find value `VM_WRITE` in crate `bindings`
-> >    --> rust/kernel/mm/virt.rs:402:45
-> >     |
-> > 402 |     pub const WRITE: vm_flags_t = bindings::VM_WRITE as vm_flags_t;
-> >     |                                             ^^^^^^^^ not found
-> > in `bindings`
-> > error[E0425]: cannot find value `VM_EXEC` in crate `bindings`
-> >      --> rust/kernel/mm/virt.rs:405:44
-> >       |
-> >   405 |     pub const EXEC: vm_flags_t = bindings::VM_EXEC as vm_flags_t;
-> >       |                                            ^^^^^^^ help: a
-> > constant with a similar name exists: `ET_EXEC`
-> >       |
-> >      ::: /builddir/build/BUILD/kernel-6.18.0-build/kernel-6.18-rc3-16-ge53642b87a4f/linux-6.18.0-0.rc3.e53642b87a4f.31.bitvma.fc44.x86_64/rust/bindings/bindings_generated.rs:13881:1
-> >       |
-> > 13881 | pub const ET_EXEC: u32 = 2;
-> >       | ---------------------- similarly named constant `ET_EXEC` defined here
-> > error[E0425]: cannot find value `VM_SHARED` in crate `bindings`
-> >    --> rust/kernel/mm/virt.rs:408:46
-> >     |
-> > 408 |     pub const SHARED: vm_flags_t = bindings::VM_SHARED as vm_flags_t;
-> >     |                                              ^^^^^^^^^ not found
-> > in `bindings`
-> >
-> > In the next version Ill do the same and continue with the CI testing for you!
+>>> But even after fixing that we need to fix the race condition.
+>>
+>> What exactly is the race condition you are referring to?
 > 
-> Thanks much appreciated :)
-> 
-> It seems I broke the rust bindings (clearly), have pinged Alice to have a
-> look!
-> 
-> May try and repro my side to see if there's something trivial that I could
-> take a look at.
-> 
-> I ran this through mm self tests, allmodconfig + a bunch of other checks
-> but ofc enabling rust was not one, I should probably update my scripts [0]
-> to do that too :)
-> 
-> Cheers, Lorenzo
-> 
-> [0]:https://github.com/lorenzo-stoakes/review-scripts
+> When you free a high-order page, the buddy allocator doesn't not check
+> PageHWPoison() on the page and its subpages. It checks PageHWPoison()
+> only when you free a base (order-0) page, see free_pages_prepare().
 
-I can help convert the Rust bindings to work with this approach. I see
-there is a nice and simple vma_test() method for checking a flag, but I
-don't see any equivalent method for setting or unsetting a given bit.
-What would be the best function for Rust to call to set or unset a given
-bit in the vma flags?
+I think we might could check PageHWPoison() for subpages as what free_page_is_bad()
+does. If any subpage has HWPoisoned flag set, simply drop the folio. Even we could
+do it better -- Split the folio and let healthy subpages join the buddy while reject
+the hwpoisoned one.
 
-Alice
+> 
+> AFAICT there is nothing that prevents the poisoned page to be
+> allocated back to users because the buddy doesn't check PageHWPoison()
+> on allocation as well (by default).
+> 
+> So rather than freeing the high-order page as-is in
+> dissolve_free_hugetlb_folio(), I think we have to split it to base pages
+> and then free them one by one.
+
+It might not be worth to do that as this would significantly increase the overhead
+of the function while memory failure event is really rare.
+
+Thanks both.
+.
+
+> 
+> That way, free_pages_prepare() will catch that it's poisoned and won't
+> add it back to the freelist. Otherwise there will always be a window
+> where the poisoned page can be allocated to users - before it's taken
+> off from the buddy.
+> 
+
 
