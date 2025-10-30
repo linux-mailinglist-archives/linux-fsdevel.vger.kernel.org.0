@@ -1,438 +1,267 @@
-Return-Path: <linux-fsdevel+bounces-66452-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66454-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF677C1F97A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Oct 2025 11:37:40 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C690AC1FA4C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Oct 2025 11:51:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FBC542201C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Oct 2025 10:36:08 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5ECAA4E9138
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Oct 2025 10:51:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C15353546EC;
-	Thu, 30 Oct 2025 10:36:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD71A34DB57;
+	Thu, 30 Oct 2025 10:50:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="k4HVyVuN"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bsLfCX6W"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DE2433F38D;
-	Thu, 30 Oct 2025 10:35:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6787831691B
+	for <linux-fsdevel@vger.kernel.org>; Thu, 30 Oct 2025 10:50:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761820560; cv=none; b=tDZEuMeLSF34trGT7UruVueHufB7CiepbGQx6OM0TdfD7gotkQgRpj37kXpal9dTIO05k4GKZJPnPvbgvnLxjW5Pvk/EM5L/PKliUyrkXMy7sPpo3w7Tc5WQeCdlnA/4XeEgoZMZK0ihpNkuS1QkDiZEXemRv7rtqVXwumnqb9s=
+	t=1761821459; cv=none; b=ozPgvgtgAqM8cpCQMT+akpoCggKK0YlJr1DO+kOU+qwWoOEBULPSwSWPN7/pLjnX4F9LpaonG5oZU085un2utaE0LtztHhAxNM7IiubF2C0SpC46RGkwbeo6De29co+5M1lZ3cXeCTBTCaJXtN9GBvWFkUfpv+uw1wiDoCp+LEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761820560; c=relaxed/simple;
-	bh=2tLmz2RfagcHvJXfShoCwKo3Od5ndbpSAsQ3/2PwjG8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UxCqkr+cS4xyy0bUd1bTVmz20hF9UTv76ec5DeWpR4doJ19ts7blloKRFGCNx7w6KqhIxvn2jIOVTsI4vitKbfCJngCUse9apD35233usvnX5QckMhJi+I5gRD26gm5eAyKM2QZEKZYTcanU0TCLTQWSzXkLtrjWXMikiQxqMec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=k4HVyVuN; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761820556; x=1793356556;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=2tLmz2RfagcHvJXfShoCwKo3Od5ndbpSAsQ3/2PwjG8=;
-  b=k4HVyVuNkrLjfFy1yNAyJIAVx8Li/yCWdA6LxcFjfWpoepArZShX70L+
-   f8Fn9gi9hmEmCS4WCsELr75NE7L057l5AFT8G94bu1A1RlQwKvvLKflfY
-   3A+b9ZdT3PFkKtLC0FY5zm3N5QeiCRgyDypgqcyUA2dgg+U4AhlKOKJE5
-   B8Gc2T5Huv1dNBUOQ9l0oi+B/SunH7+5ymfHDI0xMIV3V72odpI3Il56M
-   4vDNycuPEEfz0NQ5RKA869sra/oodqNeB8g0PVxM8tKljPDFMtxAWEZXq
-   tfSh2IiF96n9xrgLGVf07mqAuLILSz+N7XbcdtkxAYAps4nEZh0OoLuOg
-   Q==;
-X-CSE-ConnectionGUID: 7xQp7H6jSA2sYJvRmidfbg==
-X-CSE-MsgGUID: tE6o33GWRtG3hkiPUuNMzg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11597"; a="74558063"
-X-IronPort-AV: E=Sophos;i="6.19,266,1754982000"; 
-   d="scan'208";a="74558063"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 03:35:56 -0700
-X-CSE-ConnectionGUID: ekCfp4eET3mJZLKFjZ9v3w==
-X-CSE-MsgGUID: 6CppBvM4TBmk47j9dudZdQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,266,1754982000"; 
-   d="scan'208";a="186007838"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by orviesa008.jf.intel.com with ESMTP; 30 Oct 2025 03:35:54 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vEQ0W-000Lq0-1f;
-	Thu, 30 Oct 2025 10:35:52 +0000
-Date: Thu, 30 Oct 2025 18:34:58 +0800
-From: kernel test robot <lkp@intel.com>
-To: Mateusz Guzik <mjguzik@gmail.com>, brauner@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, viro@zeniv.linux.org.uk, jack@suse.cz,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	torvalds@linux-foundation.org, pfalcato@suse.de,
+	s=arc-20240116; t=1761821459; c=relaxed/simple;
+	bh=Z65r92Iy2Q3CoYFPJWy7LQqKUZs3WILjXTH/na653E8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ntibJHvsn23uV1LnIavPoIZ6GPXsNhimX40rRUyFtEUVHyVcnw0EUUYxY5MSxJTrtrzJcJD4SFXf7LYvUcBIWW/yS5ZwawFFlzQLehbMJsydUgfbQ+dqWWZpTBT6UO+GCWIqr2K2+T66MDE+fXXOJzWynArqq71wZtJTw8t9sww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bsLfCX6W; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-63e0abe71a1so1709539a12.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Oct 2025 03:50:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761821456; x=1762426256; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Htru6j8PSSiIR1VQ1fEimOHGXjE7Hw+9EJBZAr9lACM=;
+        b=bsLfCX6WFDWoEhgmDxgKUjd9MnX8pT+XuMyA/N9LC824zh36H+nMPPOBtSTSu3WDdf
+         /jYMZcK8YHQpa1XY6kf69wAwA+i1GSLnKhBWv4BaA43/ozsiJCDVl8eViurasw3jH7sk
+         opbI1FDCJ+V0scR2kNZH4/7EMyohf+rrZpaClJupYApdJezUHyqb/4zAYRrBqCV64/Dh
+         skY5t/76NoAcNQGwpB4Fr4xB4t7MtS6hZha2kY+xLqqgZwRBTORoeSr3jvQhLeYNoVgT
+         z2u9wTFIOsp5lyejizPdOfyrsmyXC2wyE9F2mxkxRfpqKFGb8H2DyfeEjKan90KSO5D7
+         yGeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761821456; x=1762426256;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Htru6j8PSSiIR1VQ1fEimOHGXjE7Hw+9EJBZAr9lACM=;
+        b=hFf07Zi1AygNILemDSWNgUymAlctzqh5b2uJRD0nsOL30yy8PzwesCEUcEI4soYIWQ
+         2arV7a8/vNnq9ZbW8C90cL8qiS1MZ5jNzhrY0qh/gKneMaEQq7SZNJSvMeIE9E6cw2AF
+         5f3AcUpM4twcmYeO17m3pjGmZAwaq/o4f945gBefRKJgWA4byyt5DFInOR2HGYgzzSsy
+         Mb/yYAzo9vbIGZj92+byQuWYZS8bEbpBdYAueLESwNPTpLT0HGEXtIqN2eVlaegciIvD
+         K2BPS3BGHnUeXAmw0HvQ8+FIqjQOsrmxNNTb7LOoq9A1hMq61U4nVg2q1LGb5M+mWHvK
+         FLDw==
+X-Forwarded-Encrypted: i=1; AJvYcCW4vD+bK8CQoOubPWEJ+3mo8CJH9pN2wTQwH8T1AQsmjf4J4Ch15JUaRRdMcNH9buh59y/6yItQPCG2Gj9l@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2dxsMuoaaacpCwCMzA3FKafBL+2qlhHXmxGh1HX2AbqadYw9Q
+	Z8ZNL/W6LRv42bmu+Rrzwq1T/f3VfIE1HskcgzL7hTtyShKwyV8L70C3
+X-Gm-Gg: ASbGnctoBN0rkSrfepYlTjtV4deaMAmZNru1Kn+LT5vg+ciNYMhRPL3A7QQIq51cRhy
+	+U8stFfahet5131VlV7LbpVH7n6wiAOc+vl4ELr31F/9uB0344WkosoQMh4AhGGdyXVPhFMQP3Z
+	BmXBhTisjj94pssyQ3wmtLvCzuDNIRSdz8g2KQXvvEQ3klhzOh8WzETMtj652j2W98v8xWtJoZ3
+	pNwJEdUTFk7TlTpBxBL9trMVmMVYY0rVvgHj0zgSWDjUP+t02rvNbRCWtQPWoT1E1VwBc9Ut8UK
+	otyemlBmANI0u2P4vc6h5MuuXdTA4IGS17wkp9rMiqMhl52rTX9fsNbsBIzScXpLA4B8A2Gpvsp
+	A2M+vdiMTJ9Ixb4SYjvAlsOaebfxB6pPMVkIWAN/OEPPzxcKWdPg1JpvBAJ0uJxtkIRjOsmDSoD
+	8w/QKZcGB04Iz2O+3vYTU878XDLC2+Xgw4WrYDArLPaFI4MZRaocKS8014nE45vh+f2AQwLQ==
+X-Google-Smtp-Source: AGHT+IFbURpoPAGpRiSRMFRlNznYmuKDxQh8Pl5N/zDoikMkUdg3+md8B44MHCxo/RRseAvJFoFKhg==
+X-Received: by 2002:a05:6402:4311:b0:63e:1e85:6e71 with SMTP id 4fb4d7f45d1cf-64044197c7dmr5303481a12.6.1761821455320;
+        Thu, 30 Oct 2025 03:50:55 -0700 (PDT)
+Received: from f.. (cst-prg-14-82.cust.vodafone.cz. [46.135.14.82])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63e7efd0c1fsm14567185a12.37.2025.10.30.03.50.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Oct 2025 03:50:54 -0700 (PDT)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: brauner@kernel.org
+Cc: viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	torvalds@linux-foundation.org,
+	pfalcato@suse.de,
 	Mateusz Guzik <mjguzik@gmail.com>
-Subject: Re: [PATCH v2] fs: hide names_cachep behind runtime access machinery
-Message-ID: <202510301819.TojcyrUJ-lkp@intel.com>
-References: <20251030085949.787504-1-mjguzik@gmail.com>
+Subject: [PATCH v3] fs: hide names_cachep behind runtime access machinery
+Date: Thu, 30 Oct 2025 11:50:47 +0100
+Message-ID: <20251030105048.801379-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251030085949.787504-1-mjguzik@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Mateusz,
+The var is used twice for every path lookup, while the cache is
+initialized early and stays valid for the duration.
 
-kernel test robot noticed the following build errors:
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+---
 
-[auto build test ERROR on arnd-asm-generic/master]
-[also build test ERROR on linus/master brauner-vfs/vfs.all linux/master v6.18-rc3 next-20251030]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+ACHTUNG WARNING POZOR UWAGA Блять: the namei cache can be used by
+modules while the runtime machinery does not work with them. I did some
+testing and ifdef MODULE seems to work around the probnlem, but perhaps
+someone with build-fu could chime in? I verified with a hello world
+module that this works fine, but maybe I missed a case.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Mateusz-Guzik/fs-hide-names_cachep-behind-runtime-access-machinery/20251030-170230
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/arnd/asm-generic.git master
-patch link:    https://lore.kernel.org/r/20251030085949.787504-1-mjguzik%40gmail.com
-patch subject: [PATCH v2] fs: hide names_cachep behind runtime access machinery
-config: m68k-allnoconfig (https://download.01.org/0day-ci/archive/20251030/202510301819.TojcyrUJ-lkp@intel.com/config)
-compiler: m68k-linux-gcc (GCC) 15.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251030/202510301819.TojcyrUJ-lkp@intel.com/reproduce)
+v3:
+- fix compilation failure on longarch as reported by kernel test robot,
+  used their repro script to confirm
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510301819.TojcyrUJ-lkp@intel.com/
+v2:
+- ifdef on module usage -- the runtime thing does *not* work with modules
+- patch up the section warn, thanks to Pedro for spotting what's up with
+  the problem
 
-All errors (new ones prefixed by >>):
+Linus cc'ed as he added the runtime thing + dcache usage in the first place.
 
-   In file included from include/linux/workqueue.h:9,
-                    from include/linux/mm_types.h:19,
-                    from include/linux/mmzone.h:22,
-                    from include/linux/gfp.h:7,
-                    from include/linux/slab.h:16,
-                    from fs/namei.c:20:
-   fs/namei.c: In function 'getname_flags':
->> include/linux/fs.h:2965:33: error: implicit declaration of function 'runtime_const_ptr' [-Wimplicit-function-declaration]
-    2965 | #define __names_cachep          runtime_const_ptr(names_cachep)
-         |                                 ^~~~~~~~~~~~~~~~~
-   include/linux/alloc_tag.h:239:16: note: in definition of macro 'alloc_hooks_tag'
-     239 |         typeof(_do_alloc) _res;                                         \
-         |                ^~~~~~~~~
-   include/linux/slab.h:739:49: note: in expansion of macro 'alloc_hooks'
-     739 | #define kmem_cache_alloc(...)                   alloc_hooks(kmem_cache_alloc_noprof(__VA_ARGS__))
-         |                                                 ^~~~~~~~~~~
-   include/linux/fs.h:2968:33: note: in expansion of macro 'kmem_cache_alloc'
-    2968 | #define __getname()             kmem_cache_alloc(__names_cachep, GFP_KERNEL)
-         |                                 ^~~~~~~~~~~~~~~~
-   include/linux/fs.h:2968:50: note: in expansion of macro '__names_cachep'
-    2968 | #define __getname()             kmem_cache_alloc(__names_cachep, GFP_KERNEL)
-         |                                                  ^~~~~~~~~~~~~~
-   fs/namei.c:146:18: note: in expansion of macro '__getname'
-     146 |         result = __getname();
-         |                  ^~~~~~~~~
->> include/linux/fs.h:2965:33: error: passing argument 1 of 'kmem_cache_alloc_noprof' makes pointer from integer without a cast [-Wint-conversion]
-    2965 | #define __names_cachep          runtime_const_ptr(names_cachep)
-         |                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-         |                                 |
-         |                                 int
-   include/linux/alloc_tag.h:239:16: note: in definition of macro 'alloc_hooks_tag'
-     239 |         typeof(_do_alloc) _res;                                         \
-         |                ^~~~~~~~~
-   include/linux/slab.h:739:49: note: in expansion of macro 'alloc_hooks'
-     739 | #define kmem_cache_alloc(...)                   alloc_hooks(kmem_cache_alloc_noprof(__VA_ARGS__))
-         |                                                 ^~~~~~~~~~~
-   include/linux/fs.h:2968:33: note: in expansion of macro 'kmem_cache_alloc'
-    2968 | #define __getname()             kmem_cache_alloc(__names_cachep, GFP_KERNEL)
-         |                                 ^~~~~~~~~~~~~~~~
-   include/linux/fs.h:2968:50: note: in expansion of macro '__names_cachep'
-    2968 | #define __getname()             kmem_cache_alloc(__names_cachep, GFP_KERNEL)
-         |                                                  ^~~~~~~~~~~~~~
-   fs/namei.c:146:18: note: in expansion of macro '__getname'
-     146 |         result = __getname();
-         |                  ^~~~~~~~~
-   include/linux/slab.h:737:50: note: expected 'struct kmem_cache *' but argument is of type 'int'
-     737 | void *kmem_cache_alloc_noprof(struct kmem_cache *cachep,
-         |                               ~~~~~~~~~~~~~~~~~~~^~~~~~
->> include/linux/fs.h:2965:33: error: passing argument 1 of 'kmem_cache_alloc_noprof' makes pointer from integer without a cast [-Wint-conversion]
-    2965 | #define __names_cachep          runtime_const_ptr(names_cachep)
-         |                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-         |                                 |
-         |                                 int
-   include/linux/alloc_tag.h:243:24: note: in definition of macro 'alloc_hooks_tag'
-     243 |                 _res = _do_alloc;                                       \
-         |                        ^~~~~~~~~
-   include/linux/slab.h:739:49: note: in expansion of macro 'alloc_hooks'
-     739 | #define kmem_cache_alloc(...)                   alloc_hooks(kmem_cache_alloc_noprof(__VA_ARGS__))
-         |                                                 ^~~~~~~~~~~
-   include/linux/fs.h:2968:33: note: in expansion of macro 'kmem_cache_alloc'
-    2968 | #define __getname()             kmem_cache_alloc(__names_cachep, GFP_KERNEL)
-         |                                 ^~~~~~~~~~~~~~~~
-   include/linux/fs.h:2968:50: note: in expansion of macro '__names_cachep'
-    2968 | #define __getname()             kmem_cache_alloc(__names_cachep, GFP_KERNEL)
-         |                                                  ^~~~~~~~~~~~~~
-   fs/namei.c:146:18: note: in expansion of macro '__getname'
-     146 |         result = __getname();
-         |                  ^~~~~~~~~
-   include/linux/slab.h:737:50: note: expected 'struct kmem_cache *' but argument is of type 'int'
-     737 | void *kmem_cache_alloc_noprof(struct kmem_cache *cachep,
-         |                               ~~~~~~~~~~~~~~~~~~~^~~~~~
->> include/linux/fs.h:2965:33: error: passing argument 1 of 'kmem_cache_alloc_noprof' makes pointer from integer without a cast [-Wint-conversion]
-    2965 | #define __names_cachep          runtime_const_ptr(names_cachep)
-         |                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-         |                                 |
-         |                                 int
-   include/linux/alloc_tag.h:246:24: note: in definition of macro 'alloc_hooks_tag'
-     246 |                 _res = _do_alloc;                                       \
-         |                        ^~~~~~~~~
-   include/linux/slab.h:739:49: note: in expansion of macro 'alloc_hooks'
-     739 | #define kmem_cache_alloc(...)                   alloc_hooks(kmem_cache_alloc_noprof(__VA_ARGS__))
-         |                                                 ^~~~~~~~~~~
-   include/linux/fs.h:2968:33: note: in expansion of macro 'kmem_cache_alloc'
-    2968 | #define __getname()             kmem_cache_alloc(__names_cachep, GFP_KERNEL)
-         |                                 ^~~~~~~~~~~~~~~~
-   include/linux/fs.h:2968:50: note: in expansion of macro '__names_cachep'
-    2968 | #define __getname()             kmem_cache_alloc(__names_cachep, GFP_KERNEL)
-         |                                                  ^~~~~~~~~~~~~~
-   fs/namei.c:146:18: note: in expansion of macro '__getname'
-     146 |         result = __getname();
-         |                  ^~~~~~~~~
-   include/linux/slab.h:737:50: note: expected 'struct kmem_cache *' but argument is of type 'int'
-     737 | void *kmem_cache_alloc_noprof(struct kmem_cache *cachep,
-         |                               ~~~~~~~~~~~~~~~~~~~^~~~~~
-   In file included from fs/namei.c:22:
->> include/linux/fs.h:2965:33: error: passing argument 1 of 'kmem_cache_free' makes pointer from integer without a cast [-Wint-conversion]
-    2965 | #define __names_cachep          runtime_const_ptr(names_cachep)
-         |                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-         |                                 |
-         |                                 int
-   include/linux/fs.h:2969:49: note: in expansion of macro '__names_cachep'
-    2969 | #define __putname(name)         kmem_cache_free(__names_cachep, (void *)(name))
-         |                                                 ^~~~~~~~~~~~~~
-   fs/namei.c:163:25: note: in expansion of macro '__putname'
-     163 |                         __putname(result);
-         |                         ^~~~~~~~~
-   include/linux/slab.h:774:41: note: expected 'struct kmem_cache *' but argument is of type 'int'
-     774 | void kmem_cache_free(struct kmem_cache *s, void *objp);
-         |                      ~~~~~~~~~~~~~~~~~~~^
->> include/linux/fs.h:2965:33: error: passing argument 1 of 'kmem_cache_free' makes pointer from integer without a cast [-Wint-conversion]
-    2965 | #define __names_cachep          runtime_const_ptr(names_cachep)
-         |                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-         |                                 |
-         |                                 int
-   include/linux/fs.h:2969:49: note: in expansion of macro '__names_cachep'
-    2969 | #define __putname(name)         kmem_cache_free(__names_cachep, (void *)(name))
-         |                                                 ^~~~~~~~~~~~~~
-   fs/namei.c:169:25: note: in expansion of macro '__putname'
-     169 |                         __putname(result);
-         |                         ^~~~~~~~~
-   include/linux/slab.h:774:41: note: expected 'struct kmem_cache *' but argument is of type 'int'
-     774 | void kmem_cache_free(struct kmem_cache *s, void *objp);
-         |                      ~~~~~~~~~~~~~~~~~~~^
->> include/linux/fs.h:2965:33: error: passing argument 1 of 'kmem_cache_free' makes pointer from integer without a cast [-Wint-conversion]
-    2965 | #define __names_cachep          runtime_const_ptr(names_cachep)
-         |                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-         |                                 |
-         |                                 int
-   include/linux/fs.h:2969:49: note: in expansion of macro '__names_cachep'
-    2969 | #define __putname(name)         kmem_cache_free(__names_cachep, (void *)(name))
-         |                                                 ^~~~~~~~~~~~~~
-   fs/namei.c:191:25: note: in expansion of macro '__putname'
-     191 |                         __putname(kname);
-         |                         ^~~~~~~~~
-   include/linux/slab.h:774:41: note: expected 'struct kmem_cache *' but argument is of type 'int'
-     774 | void kmem_cache_free(struct kmem_cache *s, void *objp);
-         |                      ~~~~~~~~~~~~~~~~~~~^
->> include/linux/fs.h:2965:33: error: passing argument 1 of 'kmem_cache_free' makes pointer from integer without a cast [-Wint-conversion]
-    2965 | #define __names_cachep          runtime_const_ptr(names_cachep)
-         |                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-         |                                 |
-         |                                 int
-   include/linux/fs.h:2969:49: note: in expansion of macro '__names_cachep'
-    2969 | #define __putname(name)         kmem_cache_free(__names_cachep, (void *)(name))
-         |                                                 ^~~~~~~~~~~~~~
-   fs/namei.c:197:25: note: in expansion of macro '__putname'
-     197 |                         __putname(kname);
-         |                         ^~~~~~~~~
-   include/linux/slab.h:774:41: note: expected 'struct kmem_cache *' but argument is of type 'int'
-     774 | void kmem_cache_free(struct kmem_cache *s, void *objp);
-         |                      ~~~~~~~~~~~~~~~~~~~^
->> include/linux/fs.h:2965:33: error: passing argument 1 of 'kmem_cache_free' makes pointer from integer without a cast [-Wint-conversion]
-    2965 | #define __names_cachep          runtime_const_ptr(names_cachep)
-         |                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-         |                                 |
-         |                                 int
-   include/linux/fs.h:2969:49: note: in expansion of macro '__names_cachep'
-    2969 | #define __putname(name)         kmem_cache_free(__names_cachep, (void *)(name))
-         |                                                 ^~~~~~~~~~~~~~
-   fs/namei.c:203:25: note: in expansion of macro '__putname'
-     203 |                         __putname(kname);
-         |                         ^~~~~~~~~
-   include/linux/slab.h:774:41: note: expected 'struct kmem_cache *' but argument is of type 'int'
-     774 | void kmem_cache_free(struct kmem_cache *s, void *objp);
-         |                      ~~~~~~~~~~~~~~~~~~~^
->> include/linux/fs.h:2965:33: error: passing argument 1 of 'kmem_cache_free' makes pointer from integer without a cast [-Wint-conversion]
-    2965 | #define __names_cachep          runtime_const_ptr(names_cachep)
-         |                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-         |                                 |
-         |                                 int
-   include/linux/fs.h:2969:49: note: in expansion of macro '__names_cachep'
-    2969 | #define __putname(name)         kmem_cache_free(__names_cachep, (void *)(name))
-         |                                                 ^~~~~~~~~~~~~~
-   fs/namei.c:208:25: note: in expansion of macro '__putname'
-     208 |                         __putname(kname);
-         |                         ^~~~~~~~~
-   include/linux/slab.h:774:41: note: expected 'struct kmem_cache *' but argument is of type 'int'
-     774 | void kmem_cache_free(struct kmem_cache *s, void *objp);
-         |                      ~~~~~~~~~~~~~~~~~~~^
-   fs/namei.c: In function 'getname_kernel':
->> include/linux/fs.h:2965:33: error: passing argument 1 of 'kmem_cache_alloc_noprof' makes pointer from integer without a cast [-Wint-conversion]
-    2965 | #define __names_cachep          runtime_const_ptr(names_cachep)
-         |                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-         |                                 |
-         |                                 int
-   include/linux/alloc_tag.h:239:16: note: in definition of macro 'alloc_hooks_tag'
-     239 |         typeof(_do_alloc) _res;                                         \
-         |                ^~~~~~~~~
-   include/linux/slab.h:739:49: note: in expansion of macro 'alloc_hooks'
-     739 | #define kmem_cache_alloc(...)                   alloc_hooks(kmem_cache_alloc_noprof(__VA_ARGS__))
-         |                                                 ^~~~~~~~~~~
-   include/linux/fs.h:2968:33: note: in expansion of macro 'kmem_cache_alloc'
-    2968 | #define __getname()             kmem_cache_alloc(__names_cachep, GFP_KERNEL)
-         |                                 ^~~~~~~~~~~~~~~~
-   include/linux/fs.h:2968:50: note: in expansion of macro '__names_cachep'
-    2968 | #define __getname()             kmem_cache_alloc(__names_cachep, GFP_KERNEL)
-         |                                                  ^~~~~~~~~~~~~~
-   fs/namei.c:249:18: note: in expansion of macro '__getname'
-     249 |         result = __getname();
-         |                  ^~~~~~~~~
-   include/linux/slab.h:737:50: note: expected 'struct kmem_cache *' but argument is of type 'int'
-     737 | void *kmem_cache_alloc_noprof(struct kmem_cache *cachep,
-         |                               ~~~~~~~~~~~~~~~~~~~^~~~~~
->> include/linux/fs.h:2965:33: error: passing argument 1 of 'kmem_cache_alloc_noprof' makes pointer from integer without a cast [-Wint-conversion]
-    2965 | #define __names_cachep          runtime_const_ptr(names_cachep)
-         |                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-         |                                 |
-         |                                 int
-   include/linux/alloc_tag.h:243:24: note: in definition of macro 'alloc_hooks_tag'
-     243 |                 _res = _do_alloc;                                       \
-         |                        ^~~~~~~~~
-   include/linux/slab.h:739:49: note: in expansion of macro 'alloc_hooks'
-     739 | #define kmem_cache_alloc(...)                   alloc_hooks(kmem_cache_alloc_noprof(__VA_ARGS__))
-         |                                                 ^~~~~~~~~~~
-   include/linux/fs.h:2968:33: note: in expansion of macro 'kmem_cache_alloc'
-    2968 | #define __getname()             kmem_cache_alloc(__names_cachep, GFP_KERNEL)
-         |                                 ^~~~~~~~~~~~~~~~
-   include/linux/fs.h:2968:50: note: in expansion of macro '__names_cachep'
-    2968 | #define __getname()             kmem_cache_alloc(__names_cachep, GFP_KERNEL)
-         |                                                  ^~~~~~~~~~~~~~
-   fs/namei.c:249:18: note: in expansion of macro '__getname'
-     249 |         result = __getname();
-         |                  ^~~~~~~~~
-   include/linux/slab.h:737:50: note: expected 'struct kmem_cache *' but argument is of type 'int'
-     737 | void *kmem_cache_alloc_noprof(struct kmem_cache *cachep,
-         |                               ~~~~~~~~~~~~~~~~~~~^~~~~~
->> include/linux/fs.h:2965:33: error: passing argument 1 of 'kmem_cache_alloc_noprof' makes pointer from integer without a cast [-Wint-conversion]
-    2965 | #define __names_cachep          runtime_const_ptr(names_cachep)
-         |                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-         |                                 |
-         |                                 int
-   include/linux/alloc_tag.h:246:24: note: in definition of macro 'alloc_hooks_tag'
-     246 |                 _res = _do_alloc;                                       \
-         |                        ^~~~~~~~~
-   include/linux/slab.h:739:49: note: in expansion of macro 'alloc_hooks'
-     739 | #define kmem_cache_alloc(...)                   alloc_hooks(kmem_cache_alloc_noprof(__VA_ARGS__))
-         |                                                 ^~~~~~~~~~~
-   include/linux/fs.h:2968:33: note: in expansion of macro 'kmem_cache_alloc'
-    2968 | #define __getname()             kmem_cache_alloc(__names_cachep, GFP_KERNEL)
-         |                                 ^~~~~~~~~~~~~~~~
-   include/linux/fs.h:2968:50: note: in expansion of macro '__names_cachep'
-    2968 | #define __getname()             kmem_cache_alloc(__names_cachep, GFP_KERNEL)
-         |                                                  ^~~~~~~~~~~~~~
-   fs/namei.c:249:18: note: in expansion of macro '__getname'
-     249 |         result = __getname();
-         |                  ^~~~~~~~~
-   include/linux/slab.h:737:50: note: expected 'struct kmem_cache *' but argument is of type 'int'
-     737 | void *kmem_cache_alloc_noprof(struct kmem_cache *cachep,
-         |                               ~~~~~~~~~~~~~~~~~~~^~~~~~
->> include/linux/fs.h:2965:33: error: passing argument 1 of 'kmem_cache_free' makes pointer from integer without a cast [-Wint-conversion]
-    2965 | #define __names_cachep          runtime_const_ptr(names_cachep)
-         |                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-         |                                 |
-         |                                 int
-   include/linux/fs.h:2969:49: note: in expansion of macro '__names_cachep'
-    2969 | #define __putname(name)         kmem_cache_free(__names_cachep, (void *)(name))
-         |                                                 ^~~~~~~~~~~~~~
-   fs/namei.c:261:25: note: in expansion of macro '__putname'
-     261 |                         __putname(result);
-         |                         ^~~~~~~~~
-   include/linux/slab.h:774:41: note: expected 'struct kmem_cache *' but argument is of type 'int'
-     774 | void kmem_cache_free(struct kmem_cache *s, void *objp);
-         |                      ~~~~~~~~~~~~~~~~~~~^
->> include/linux/fs.h:2965:33: error: passing argument 1 of 'kmem_cache_free' makes pointer from integer without a cast [-Wint-conversion]
-    2965 | #define __names_cachep          runtime_const_ptr(names_cachep)
-         |                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-         |                                 |
-         |                                 int
-   include/linux/fs.h:2969:49: note: in expansion of macro '__names_cachep'
-    2969 | #define __putname(name)         kmem_cache_free(__names_cachep, (void *)(name))
-         |                                                 ^~~~~~~~~~~~~~
-   fs/namei.c:267:17: note: in expansion of macro '__putname'
-     267 |                 __putname(result);
-         |                 ^~~~~~~~~
-   include/linux/slab.h:774:41: note: expected 'struct kmem_cache *' but argument is of type 'int'
-     774 | void kmem_cache_free(struct kmem_cache *s, void *objp);
-         |                      ~~~~~~~~~~~~~~~~~~~^
-   fs/namei.c: In function 'putname':
->> include/linux/fs.h:2965:33: error: passing argument 1 of 'kmem_cache_free' makes pointer from integer without a cast [-Wint-conversion]
-    2965 | #define __names_cachep          runtime_const_ptr(names_cachep)
-         |                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-         |                                 |
-         |                                 int
-   include/linux/fs.h:2969:49: note: in expansion of macro '__names_cachep'
-    2969 | #define __putname(name)         kmem_cache_free(__names_cachep, (void *)(name))
-         |                                                 ^~~~~~~~~~~~~~
-   fs/namei.c:294:17: note: in expansion of macro '__putname'
-     294 |                 __putname(name->name);
-         |                 ^~~~~~~~~
-   include/linux/slab.h:774:41: note: expected 'struct kmem_cache *' but argument is of type 'int'
-     774 | void kmem_cache_free(struct kmem_cache *s, void *objp);
-         |                      ~~~~~~~~~~~~~~~~~~~^
->> include/linux/fs.h:2965:33: error: passing argument 1 of 'kmem_cache_free' makes pointer from integer without a cast [-Wint-conversion]
-    2965 | #define __names_cachep          runtime_const_ptr(names_cachep)
-         |                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-         |                                 |
-         |                                 int
-   include/linux/fs.h:2969:49: note: in expansion of macro '__names_cachep'
-    2969 | #define __putname(name)         kmem_cache_free(__names_cachep, (void *)(name))
-         |                                                 ^~~~~~~~~~~~~~
-   fs/namei.c:297:17: note: in expansion of macro '__putname'
-     297 |                 __putname(name);
-         |                 ^~~~~~~~~
-   include/linux/slab.h:774:41: note: expected 'struct kmem_cache *' but argument is of type 'int'
-     774 | void kmem_cache_free(struct kmem_cache *s, void *objp);
-         |                      ~~~~~~~~~~~~~~~~~~~^
-..
+Per the above the machinery does not support kernel modules and I have
+no interest in spending time to extend it.
 
+I tried to add a compilation time warn should someone compile a module
+with it, but there is no shared header so I decided to drop the matter.
 
-vim +/runtime_const_ptr +2965 include/linux/fs.h
+Should someone(tm) make this work for modules I'm not going to protest.
 
-  2958	
-  2959	/*
-  2960	 * XXX The runtime_const machinery does not support modules at the moment.
-  2961	 */
-  2962	#ifdef MODULE
-  2963	#define __names_cachep		names_cachep
-  2964	#else
-> 2965	#define __names_cachep		runtime_const_ptr(names_cachep)
-  2966	#endif
-  2967	
-> 2968	#define __getname()		kmem_cache_alloc(__names_cachep, GFP_KERNEL)
-  2969	#define __putname(name)		kmem_cache_free(__names_cachep, (void *)(name))
-  2970	
+Vast majority of actual usage is coming from core kernel, which *is*
+getting the new treatment and I don't think the ifdef is particularly
+nasty.
 
+ fs/dcache.c                       |  1 +
+ include/asm-generic/vmlinux.lds.h |  3 ++-
+ include/linux/fs.h                | 13 +++++++++++--
+ 3 files changed, 14 insertions(+), 3 deletions(-)
+
+diff --git a/fs/dcache.c b/fs/dcache.c
+index 035cccbc9276..786d09798313 100644
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -3265,6 +3265,7 @@ void __init vfs_caches_init(void)
+ {
+ 	names_cachep = kmem_cache_create_usercopy("names_cache", PATH_MAX, 0,
+ 			SLAB_HWCACHE_ALIGN|SLAB_PANIC, 0, PATH_MAX, NULL);
++	runtime_const_init(ptr, names_cachep);
+ 
+ 	dcache_init();
+ 	inode_init();
+diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
+index dcdbd962abd6..c7d85c80111c 100644
+--- a/include/asm-generic/vmlinux.lds.h
++++ b/include/asm-generic/vmlinux.lds.h
+@@ -939,7 +939,8 @@
+ 
+ #define RUNTIME_CONST_VARIABLES						\
+ 		RUNTIME_CONST(shift, d_hash_shift)			\
+-		RUNTIME_CONST(ptr, dentry_hashtable)
++		RUNTIME_CONST(ptr, dentry_hashtable)			\
++		RUNTIME_CONST(ptr, names_cachep)
+ 
+ /* Alignment must be consistent with (kunit_suite *) in include/kunit/test.h */
+ #define KUNIT_TABLE()							\
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 68c4a59ec8fb..1095aff77a89 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2960,8 +2960,17 @@ extern void __init vfs_caches_init(void);
+ 
+ extern struct kmem_cache *names_cachep;
+ 
+-#define __getname()		kmem_cache_alloc(names_cachep, GFP_KERNEL)
+-#define __putname(name)		kmem_cache_free(names_cachep, (void *)(name))
++/*
++ * XXX The runtime_const machinery does not support modules at the moment.
++ */
++#ifdef MODULE
++#define __names_cachep		names_cachep
++#else
++#define __names_cachep		runtime_const_ptr(names_cachep)
++#endif
++
++#define __getname()		kmem_cache_alloc(__names_cachep, GFP_KERNEL)
++#define __putname(name)		kmem_cache_free(__names_cachep, (void *)(name))
+ 
+ extern struct super_block *blockdev_superblock;
+ static inline bool sb_is_blkdev_sb(struct super_block *sb)
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.34.1
+
+
+ fs/dcache.c                       |  3 +--
+ include/asm-generic/vmlinux.lds.h |  3 ++-
+ include/linux/fs.h                | 15 +++++++++++++--
+ 3 files changed, 16 insertions(+), 5 deletions(-)
+
+diff --git a/fs/dcache.c b/fs/dcache.c
+index 035cccbc9276..ef83323276f0 100644
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -35,8 +35,6 @@
+ #include "internal.h"
+ #include "mount.h"
+ 
+-#include <asm/runtime-const.h>
+-
+ /*
+  * Usage:
+  * dcache->d_inode->i_lock protects:
+@@ -3265,6 +3263,7 @@ void __init vfs_caches_init(void)
+ {
+ 	names_cachep = kmem_cache_create_usercopy("names_cache", PATH_MAX, 0,
+ 			SLAB_HWCACHE_ALIGN|SLAB_PANIC, 0, PATH_MAX, NULL);
++	runtime_const_init(ptr, names_cachep);
+ 
+ 	dcache_init();
+ 	inode_init();
+diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
+index dcdbd962abd6..c7d85c80111c 100644
+--- a/include/asm-generic/vmlinux.lds.h
++++ b/include/asm-generic/vmlinux.lds.h
+@@ -939,7 +939,8 @@
+ 
+ #define RUNTIME_CONST_VARIABLES						\
+ 		RUNTIME_CONST(shift, d_hash_shift)			\
+-		RUNTIME_CONST(ptr, dentry_hashtable)
++		RUNTIME_CONST(ptr, dentry_hashtable)			\
++		RUNTIME_CONST(ptr, names_cachep)
+ 
+ /* Alignment must be consistent with (kunit_suite *) in include/kunit/test.h */
+ #define KUNIT_TABLE()							\
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 68c4a59ec8fb..cfaabd4824f2 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -50,6 +50,8 @@
+ #include <linux/unicode.h>
+ 
+ #include <asm/byteorder.h>
++#include <asm/runtime-const.h>
++
+ #include <uapi/linux/fs.h>
+ 
+ struct backing_dev_info;
+@@ -2960,8 +2962,17 @@ extern void __init vfs_caches_init(void);
+ 
+ extern struct kmem_cache *names_cachep;
+ 
+-#define __getname()		kmem_cache_alloc(names_cachep, GFP_KERNEL)
+-#define __putname(name)		kmem_cache_free(names_cachep, (void *)(name))
++/*
++ * XXX The runtime_const machinery does not support modules at the moment.
++ */
++#ifdef MODULE
++#define __names_cachep		names_cachep
++#else
++#define __names_cachep		runtime_const_ptr(names_cachep)
++#endif
++
++#define __getname()		kmem_cache_alloc(__names_cachep, GFP_KERNEL)
++#define __putname(name)		kmem_cache_free(__names_cachep, (void *)(name))
+ 
+ extern struct super_block *blockdev_superblock;
+ static inline bool sb_is_blkdev_sb(struct super_block *sb)
+-- 
+2.34.1
+
 
