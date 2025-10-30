@@ -1,71 +1,71 @@
-Return-Path: <linux-fsdevel+bounces-66535-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66537-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94550C22B85
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 00:38:48 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D9BAC22BBB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 00:42:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 535F91A23976
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Oct 2025 23:38:43 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9223C4E47FE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Oct 2025 23:41:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7AB733E368;
-	Thu, 30 Oct 2025 23:38:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E855340286;
+	Thu, 30 Oct 2025 23:41:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="Ox4MPwGj";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="hEN6xMm3"
+	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="Pc73YfLW";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="KWbkt+uk"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from flow-b7-smtp.messagingengine.com (flow-b7-smtp.messagingengine.com [202.12.124.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DA5F30F95A;
-	Thu, 30 Oct 2025 23:38:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08F142C11CB;
+	Thu, 30 Oct 2025 23:41:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761867483; cv=none; b=gGNdEzgZSaSKv4ZIHfAUDFhERv77A1lokAqTaJfHkX2yCQC//yl59ttEMAl+BSGbtC7km1+z3WymlNw4Aiaql7o62x99XJnRcohk1xtkzQrJ2FJDKqhoLz9vdvBMfByZ8fcSz221v9G2q8bdDEBI5LdQvgxaQJ0eh23hRH7OBjk=
+	t=1761867696; cv=none; b=VkriFrzvPO8LC3mJ3OQZWev3XTaK3dV8ifqaWrD3Zrn3s2GtGro79qBmw8lPMgI/mJ3BG/2eqmL4fxp2uAzx5DOb2bahuJz8J47t1lZ8TdMb8snbpHsVgoVhC75EkjP2KdfWc82DsrGAFzBPipqdEqZybtFVL/hobtQ52IDccos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761867483; c=relaxed/simple;
-	bh=1JFznHwJ9SmoMKBcNVs4nFsIbrQIPYx/MgpAl4L7FeE=;
+	s=arc-20240116; t=1761867696; c=relaxed/simple;
+	bh=s8qJUitOPA47j/+WNL0JxWMSGHgP2Ys3toCWUcFEg8w=;
 	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=liWDuDSzQAW2jyLizSbx2d98u7gpcw0hjF/DTDenn6F2u/GfUAH7+WfAEjWRFlWD96IuYkdl4oeCMlFzW21QSpCl4F2BKoGWJBs74/nMCd+/W5BtnECBaCw3zQPOQ1HjqQFeH/TFnQTYsRPaRqzff51FUdfTYhprDq9pTFe9fls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=Ox4MPwGj; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=hEN6xMm3; arc=none smtp.client-ip=202.12.124.142
+	 References:Date:Message-id; b=jBGzbEnyx7JcwPkR/GnWVNVO/fFiDaiarDmS0GMkYa+nTLOjTRbG6+AmFwpUpthQnXw2pYTzFTJblHCpXcd6E1pdoYgLGigno57+kxXso8FhUX3MsGDp1NJZq534Djh01hDHKlR4Asdwq0R32cO7BDmO0cJmfhGdpKYiTt//YuM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=Pc73YfLW; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=KWbkt+uk; arc=none smtp.client-ip=202.12.124.142
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
-Received: from phl-compute-11.internal (phl-compute-11.internal [10.202.2.51])
-	by mailflow.stl.internal (Postfix) with ESMTP id 661A61300302;
-	Thu, 30 Oct 2025 19:37:59 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-11.internal (MEProxy); Thu, 30 Oct 2025 19:38:00 -0400
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+	by mailflow.stl.internal (Postfix) with ESMTP id 5577013000CC;
+	Thu, 30 Oct 2025 19:41:33 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-03.internal (MEProxy); Thu, 30 Oct 2025 19:41:34 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
 	cc:cc:content-transfer-encoding:content-type:content-type:date
 	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
 	:references:reply-to:reply-to:subject:subject:to:to; s=fm3; t=
-	1761867479; x=1761874679; bh=ARXwRWPRXeSKN/a2GX42QMZWqyYh6A4I7nh
-	hSoUQkaA=; b=Ox4MPwGjPlU7Jlj9LlcQHN5imiEuc2ynryxgmpyWdO9AP2GCH+R
-	Ph1E/ZCQWxDX+zS3gkmj968ICezZUL5iUXVYOa92K5R8JK9SxFuJajrw9BEus8vu
-	aYC320qfxLOrmDrt69pRh6it4iX/g0+3kPqCNTfNu7eH/OVortH3sHVcfTOtiM2p
-	dIYJwgZyMhDpA4zqryLJshkZz3stXt/gFhsbYTXtPUhCD4/dJeZqOfZ38X60aStf
-	RjSQAfCKs3YwhBx4JrBfRPuIIDBk7hqgQxSxcj9zSZ+6fSh+evUr6KKlst0VwHXU
-	yWVypFKp6izNluJDDVz5+9JgWBB+DpKPZxA==
+	1761867693; x=1761874893; bh=YJ19THsgVSpeJzD7ckpZErclcEybeF1XkFe
+	eDx68jLs=; b=Pc73YfLWNJ3JZUpAFftBu85kxypozmP3ZD5/OjTIW4+78wVgHrd
+	APjipNv1sLLaH83N9CHHyy0YUsn+ICUZ8366jLzMiaCndf/ZhTomsa5n1s9d6Sx2
+	lYsvb7wfgqbkIVJuAe1dBNKfCb5GOJ67VWz2SLmSPeKDyfdXFu+FqA3YKI1/DesJ
+	Z6JFLw0AL8cUm4vpkhv/9eKmgu5/NPfq1a1t/7uQOJ+9taGLDFExAZxNvYM0Pu/p
+	nEM0vIT2wO5ddSYbSoswgRyAp9USqLc1l03EAeQ5kAo7VStg502Gz9bAKsLaWFEy
+	XR9a+RjpomdVL30ntbZj9FLNztubWKwwDNA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:content-type:date:date:feedback-id:feedback-id
 	:from:from:in-reply-to:in-reply-to:message-id:mime-version
 	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1761867479; x=
-	1761874679; bh=ARXwRWPRXeSKN/a2GX42QMZWqyYh6A4I7nhhSoUQkaA=; b=h
-	EN6xMm3YCBXxlazAcYuvL9ksO67U4EaE05UPUSkIDkxcR103gn6B4NW6RIbdke7d
-	KRmJv65M7ixo5BCvipseLsEQveJUlN/h2yS6BtBKniOya/PdkvMEwXLyLrlkP552
-	+3Jg7g8K/FKHwG00gXwelqzzir6QF79i2nFmly56TRaMq/J32k64kG5+oeNxvsz9
-	mK10xF1caEsIRvleuQpTSRyPJ5p/QEzGcl9I/sZII+doXn4a1H0djy3LWtuDmvAr
-	TDmYW3tqaw1hGK7hkngNP+rNbdUvLusHQH7mxOsye/cAhLNGCqLhzuPNbVILbLVT
-	6L30TBF6xwUv5c5Uy2OaQ==
-X-ME-Sender: <xms:1PYDaUL3uN_ZYS5DyOozVcOf0w2OrQqbxc-4QWbx1bN9L-wzAX5fCQ>
-    <xme:1PYDaXD1SYvuISc6YaixLM10IEYXN2KIrCSQs1A1ClNyiRazCd19f093favA5c40M
-    7-GoGTkXglLhNP2wygqo_IMPU_LnRCTLyHeWXPNtpEDtSq92Ik>
-X-ME-Received: <xmr:1PYDaVjAswXVecq4gQBB7tBXRAXS9uKaQM3AJIJWpLFVLitLTqK0YV4vkp04YsFF7HY-Tyt-_42MD1WfmnTd_UutGUpms5WF5ukAHv0sREF3>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduieejleehucetufdoteggodetrf
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1761867693; x=
+	1761874893; bh=YJ19THsgVSpeJzD7ckpZErclcEybeF1XkFeeDx68jLs=; b=K
+	Wbkt+ukMftFT8/uCW0USbi5pG4WHh6mJfTHeCqce3pv0oFhjHpCPue1rZ7m6jpGK
+	kDIQc87wInw1uQS67C9fn6tSIfa9dvZS0lf1ZUuvTRQC3fMrWiUZTSTB/gaoiNYp
+	eMXdNg/C3Gs1SGhHB91KSi53z6Bt9umyjijt0poClQlNoQFep71J8UB5U0pUPgZk
+	l9/crQcz5MBp95fjC4FaOHBqvqxU2qe+uS5um8Wcbem+YxI5OKo3xoZMxKyD9tz3
+	0ccbyuRHaKP9IPF4ReakWchgno7XrttHF2+6FA1RiM6e2LmHEnzzb7kWTkAe6DQ4
+	exJ6EyGKjlKNkD4sY+H2Q==
+X-ME-Sender: <xms:rPcDaZ8fz2PV7rMm0ZSYArsKSJ75ceExcgCJ6QGyjQRKO5KBTq8nPQ>
+    <xme:rPcDaQmzuIyO28wxwNQwfudDj_CV47r-uovIjzlv4bUJkjMusrInjlEArZ7k-UwLI
+    HAc48WwcRI1vfCPp3MElGN-CErojabz0OZDD46_wQzL8799Zw>
+X-ME-Received: <xmr:rPcDaX3wPZf_7EgJjGns4r24abu2VRs0WJIogDD88n5dRmdBmesekvHkBU1FVszWCB6vmtuXogZ7a40oqlM_9oHkO0wg6GQDgpt5pOJAwPuz>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduieejleeiucetufdoteggodetrf
     dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
     rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
     gurheptgfgggfhvfevufgjfhffkfhrsehtqhertddttdejnecuhfhrohhmpefpvghilheu
@@ -83,14 +83,14 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduieejleehucetufdote
     drohhrghdprhgtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhn
     vghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqtghifhhssehvghgvrhdrkhgvrhhnvg
     hlrdhorhhg
-X-ME-Proxy: <xmx:1fYDaTPLNL_ZEx6UpYyzZGqNns6xiAnXEaWnIZ-9kiMvQ5TwdxKZYg>
-    <xmx:1fYDaZWJ-wE55i1JUYw1GO0K8brT1sqaUxavUZGGa6qqQxvthHQaxA>
-    <xmx:1fYDaQB1efCWq9QdJbyUhsAVgatruja8Z9S4VftpC7YwW4emP6XvQQ>
-    <xmx:1fYDaeMHBC1QLhzVp0K3e_aClaQU--eFsbH2gQSnpE7T81tLe4kikw>
-    <xmx:1_YDaVuNHJi2PkRkaZXi_thHraFG9qYrLgP6Q09afVQ-wZchIw1OZNeh>
+X-ME-Proxy: <xmx:rPcDafSIaFYl-RgHoqcs0t7YrKDZ2gioLPgi-mlU48SQlKTTMBJOIA>
+    <xmx:rPcDacK6aitOy-K4GZOFYzD9IizJlaKR_2q4A8eMNjCKjpMIUTwCHA>
+    <xmx:rPcDaSnTe9Z_0l91HNTze7DZRYuxwKs7F3DOvRPNBgkt8xRriYRBIQ>
+    <xmx:rPcDaVj1apibW2cs8riW6YdfSEBfeA_ytKnNM-17ym5kitOJlMeFcg>
+    <xmx:rfcDaZmZWSefDAP2LqnLmEPokPLWMSLY_fExqU3FZVX4WsNL0DMUw6Zo>
 Feedback-ID: iab3e480c:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 30 Oct 2025 19:37:46 -0400 (EDT)
+ 30 Oct 2025 19:41:22 -0400 (EDT)
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
@@ -130,96 +130,58 @@ Cc: "Christian Brauner" <brauner@kernel.org>,
  linux-cifs@vger.kernel.org, linux-xfs@vger.kernel.org,
  apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
  selinux@vger.kernel.org
-Subject: Re: [PATCH v4 11/14] Add start_renaming_two_dentries()
-In-reply-to: <20251030062214.GW2441659@ZenIV>
+Subject:
+ Re: [PATCH v4 12/14] ecryptfs: use new start_creating/start_removing APIs
+In-reply-to: <20251030062420.GX2441659@ZenIV>
 References: <20251029234353.1321957-1-neilb@ownmail.net>,
- <20251029234353.1321957-12-neilb@ownmail.net>,
- <20251030062214.GW2441659@ZenIV>
-Date: Fri, 31 Oct 2025 10:37:44 +1100
-Message-id: <176186746483.1793333.1130347070516464496@noble.neil.brown.name>
+ <20251029234353.1321957-13-neilb@ownmail.net>,
+ <20251030062420.GX2441659@ZenIV>
+Date: Fri, 31 Oct 2025 10:41:20 +1100
+Message-id: <176186768028.1793333.3200874180667501034@noble.neil.brown.name>
 Reply-To: NeilBrown <neil@brown.name>
 
 On Thu, 30 Oct 2025, Al Viro wrote:
-> On Thu, Oct 30, 2025 at 10:31:11AM +1100, NeilBrown wrote:
+> On Thu, Oct 30, 2025 at 10:31:12AM +1100, NeilBrown wrote:
 >=20
-> > +++ b/fs/debugfs/inode.c
+> > +static struct dentry *ecryptfs_start_creating_dentry(struct dentry *dent=
+ry)
+> >  {
+> > -	struct dentry *lower_dir_dentry;
+> > +	struct dentry *parent =3D dget_parent(dentry->d_parent);
 >=20
-> Why does debugfs_change_name() need any of that horror?  Seriously, WTF?
-> This is strictly a name change on a filesystem that never, ever moves
-> anything from one directory to another.
-
-"horror" is clearly in the eye of the beholder, and not a helpful
-description...
-
-Is there anything in this use of start_renaming_two_dentries() which is
-harmful?  I agree that not all of the functionality is needed in this
-case, but some of it is.
-
-Would you prefer we also add
-   start_renaming_two_dentries_with_same_parent()
-or similar?
-
->=20
-> IMO struct renamedata is a fucking eyesore, but that aside, this:
->=20
-> > @@ -539,22 +540,30 @@ static int sel_make_policy_nodes(struct selinux_fs_=
-info *fsi,
-> >  	if (ret)
-> >  		goto out;
-> > =20
-> > -	lock_rename(tmp_parent, fsi->sb->s_root);
-> > +	rd.old_parent =3D tmp_parent;
-> > +	rd.new_parent =3D fsi->sb->s_root;
-> > =20
-> >  	/* booleans */
-> > -	d_exchange(tmp_bool_dir, fsi->bool_dir);
-> > +	ret =3D start_renaming_two_dentries(&rd, tmp_bool_dir, fsi->bool_dir);
-> > +	if (!ret) {
-> > +		d_exchange(tmp_bool_dir, fsi->bool_dir);
-> > =20
-> > -	swap(fsi->bool_num, bool_num);
-> > -	swap(fsi->bool_pending_names, bool_names);
-> > -	swap(fsi->bool_pending_values, bool_values);
-> > +		swap(fsi->bool_num, bool_num);
-> > +		swap(fsi->bool_pending_names, bool_names);
-> > +		swap(fsi->bool_pending_values, bool_values);
-> > =20
-> > -	fsi->bool_dir =3D tmp_bool_dir;
-> > +		fsi->bool_dir =3D tmp_bool_dir;
-> > +		end_renaming(&rd);
-> > +	}
-> > =20
-> >  	/* classes */
-> > -	d_exchange(tmp_class_dir, fsi->class_dir);
-> > -	fsi->class_dir =3D tmp_class_dir;
-> > +	ret =3D start_renaming_two_dentries(&rd, tmp_class_dir, fsi->class_dir);
-> > +	if (ret =3D=3D 0) {
-> > +		d_exchange(tmp_class_dir, fsi->class_dir);
-> > +		fsi->class_dir =3D tmp_class_dir;
-> > =20
-> > -	unlock_rename(tmp_parent, fsi->sb->s_root);
-> > +		end_renaming(&rd);
-> > +	}
-> > =20
-> >  out:
-> >  	sel_remove_old_bool_data(bool_num, bool_names, bool_values);
->=20
-> is very interesting - suddenly you get two non-overlapping scopes instead o=
-f one.
-> Why is that OK?
+> "Grab the reference to grandparent"?
 >=20
 
-From the perspective of code performing lookup of these names, two
-consecutive lookups would not be locked so they could see
-inconsistencies anyway.
-From the perspective of code changing these names, that is protected by
-selinux_state.policy_mutex which is held across the combined operation.
-A readdir could possibly see the old inum for one name and the new inum
-for the other name.  I don't imagine this would be a problem.
+That's somewhat embarrassing :-(
 
-I have added a comment to the commit message to highlight this.
+Fixed as below.
+Thanks a lot!
 
-Thanks,
 NeilBrown
+
+diff --git a/fs/ecryptfs/inode.c b/fs/ecryptfs/inode.c
+index b3702105d236..6a5bca89e752 100644
+--- a/fs/ecryptfs/inode.c
++++ b/fs/ecryptfs/inode.c
+@@ -26,7 +26,7 @@
+=20
+ static struct dentry *ecryptfs_start_creating_dentry(struct dentry *dentry)
+ {
+-	struct dentry *parent =3D dget_parent(dentry->d_parent);
++	struct dentry *parent =3D dget_parent(dentry);
+ 	struct dentry *ret;
+=20
+ 	ret =3D start_creating_dentry(ecryptfs_dentry_to_lower(parent),
+@@ -37,7 +37,7 @@ static struct dentry *ecryptfs_start_creating_dentry(struct=
+ dentry *dentry)
+=20
+ static struct dentry *ecryptfs_start_removing_dentry(struct dentry *dentry)
+ {
+-	struct dentry *parent =3D dget_parent(dentry->d_parent);
++	struct dentry *parent =3D dget_parent(dentry);
+ 	struct dentry *ret;
+=20
+ 	ret =3D start_removing_dentry(ecryptfs_dentry_to_lower(parent),
+
 
 
