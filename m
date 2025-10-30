@@ -1,102 +1,98 @@
-Return-Path: <linux-fsdevel+bounces-66486-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66487-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E383CC20C6E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Oct 2025 15:57:55 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A03BC20BFF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Oct 2025 15:54:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2F2C189B9E4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Oct 2025 14:52:34 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B12F634F751
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Oct 2025 14:54:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F017327FD7D;
-	Thu, 30 Oct 2025 14:51:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 717A127F195;
+	Thu, 30 Oct 2025 14:54:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eQk1KEPL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QVAcSh2C"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 333522773F9;
-	Thu, 30 Oct 2025 14:51:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C90C8280339;
+	Thu, 30 Oct 2025 14:54:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761835913; cv=none; b=eAWSo8Xv0PV/xgGVFZzKrCZF3o6uGBDotSNMBscJ5aMQ0tAZVKhVbSN4vNhZ70pX7TUdd2MrxNGztVadJVQn1dXn09JBGPxumyJxIjPnrjWtdLC4xYQ0eEjSjED82r0il5epMHmsZuY/IzN+yUZzdcE08PbtPLiMQr1qNJMngck=
+	t=1761836043; cv=none; b=mkckmMYWwyDd2QSvncJDY7seGCn7zYCUtUxFW2swpIfj45h09AiPGiW7tidabqXiOTM9g7DSMx5JYNjl/rsirQe2k7FD5h8kc4v5OGOew11l1WbQ07W9y4BH1ALXJEvBfkLZNAUTR3+4dF3vWAQ6466Ch7+WG23r1vxppBH8lYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761835913; c=relaxed/simple;
-	bh=WKwjBQEqXFPKO+WzYJAtU397ptDKk7qO+md5aDf4qeI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=g+lImkSjRg8fBNcIP8qM82K+9mGVlSGppCxwkE4CF3mUanGenAw5nvcjRnk4wEcldle+q6ctZ3RBFQgM/sKEtSVJGVaf/d8PkM/MpIoGcMSTl/H+ZfrqwiHqRGLiMLMUaxeT+orle5NrxPtznXLI5Y8S4iEtyrS672Q+UByCSeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eQk1KEPL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A797C4CEF1;
-	Thu, 30 Oct 2025 14:51:45 +0000 (UTC)
+	s=arc-20240116; t=1761836043; c=relaxed/simple;
+	bh=drLHSEC02D0yr/3ysfWgeMxuedIDEgF+UPiFBRUgmrk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nPReWK6KgMEBg/ePVMneEmwXvM7tUT+9TmfNtRiNa6D4znSLSg/onNO0PMxt6LDR7DCa8FIZDi4SCTQ/OGVGjJOm/X6h+rMwNyTVlgN9c9Zi8AARA7QyiiHDI5dokKZUIqC013Lm6hiTAAuppzdNjA3WCQ0EUIa4EuePiKI7+HM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QVAcSh2C; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35B00C4CEF1;
+	Thu, 30 Oct 2025 14:54:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761835912;
-	bh=WKwjBQEqXFPKO+WzYJAtU397ptDKk7qO+md5aDf4qeI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=eQk1KEPLZSr8AEWd/EU8u+Rrrky9aVBOpC7OJb24MtNAy8lk0RV3tvhMD4m4ACHgr
-	 fMlATft9Er2BS36a8xMX9gPc8K4bBTSuSpOK5p3EBHonicaJ4mGIeI7f3kztqcEmTe
-	 SRD8UsdgXC55zByvBL2GPf9BGZR+5Z6bCWvWJ48Guof+RmgX8uZh/na2+7gRavwx5/
-	 5rqNlDqOvtDtHZ7DFY/4iS63rM4nUKvfa0DBlZL9xCA/LxOOXy0Wuh1dST1pH8CTe/
-	 Ds9vTfVN/js3WH8pZd2wSp+qSUJy5qicslENSC1jFjvj8vnfDDjb5Z40aSUNg9UkYL
-	 AfUfkjCtX7Bqg==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: Oliver Mangold <oliver.mangold@pm.me>, Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,
- Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Benno
- Lossin <lossin@kernel.org>, Danilo Krummrich <dakr@kernel.org>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Dave Ertman
- <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, Leon
- Romanovsky <leon@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David
- Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Alexander
- Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
- Jan Kara <jack@suse.cz>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Viresh Kumar
- <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd
- <sboyd@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, Krzysztof
- =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Asahi Lina
- <lina+kernel@asahilina.net>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-block@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-pm@vger.kernel.org, linux-pci@vger.kernel.org, Oliver Mangold
- <oliver.mangold@pm.me>
-Subject: Re: [PATCH v12 0/4] New trait OwnableRefCounted for ARef<->Owned
- conversion.
-In-Reply-To: <20251001-unique-ref-v12-0-fa5c31f0c0c4@pm.me>
-References: <20251001-unique-ref-v12-0-fa5c31f0c0c4@pm.me>
-Date: Thu, 30 Oct 2025 15:51:38 +0100
-Message-ID: <87v7jw8mth.fsf@t14s.mail-host-address-is-not-set>
+	s=k20201202; t=1761836043;
+	bh=drLHSEC02D0yr/3ysfWgeMxuedIDEgF+UPiFBRUgmrk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QVAcSh2C6GGrlksscgPR9IidFuWvYd1r0DRrykn0OrALJ+/CYv/gLtAVGTS9YdX54
+	 gjy7b5Lvczlokukjj1kqL4VPLGbULtGNSt7iHThfwuHw0t9qbtopKOiLpDIgnrzmkl
+	 nvLpF6JSeQ4caIEmnjKrQwnM/fZ63IX0prsjVdiHfRglzQ7BdE60ALsUQnX55m8Dx5
+	 MGt1/8NquDsBpvuQY7NTv24YiEugaQXaXl2v4u5sQG+qC6wq09yfCMmAXWUF8tEN1/
+	 kg1W3NY3W7mNBTNZJ/D7XlTzdOxmGPx1WKSn+SxCof2P8Xm2+UvAR5KkJv2vtqn+Uo
+	 W+Fw8p0L6bA/Q==
+Date: Thu, 30 Oct 2025 07:54:02 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: miklos@szeredi.hu, brauner@kernel.org, linux-ext4@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 1/1] iomap: allow NULL swap info bdev when activating
+ swapfile
+Message-ID: <20251030145402.GV4015566@frogsfrogsfrogs>
+References: <176169809564.1424591.2699278742364464313.stgit@frogsfrogsfrogs>
+ <176169809588.1424591.6275994842604794287.stgit@frogsfrogsfrogs>
+ <20251029084048.GA32095@lst.de>
+ <20251029143823.GL6174@frogsfrogsfrogs>
+ <20251030060008.GB12727@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251030060008.GB12727@lst.de>
 
-Hi Oliver,
-Oliver Mangold <oliver.mangold@pm.me> writes:
+On Thu, Oct 30, 2025 at 07:00:08AM +0100, Christoph Hellwig wrote:
+> On Wed, Oct 29, 2025 at 07:38:23AM -0700, Darrick J. Wong wrote:
+> > > > However, in the future there could be fuse+iomap filesystems that are
+> > > > block device based but don't set s_bdev.  In this case, sis::bdev will
+> > > > be set to NULL when we enter iomap_swapfile_activate, and we can pick
+> > > > up a bdev from the first iomap mapping that the filesystem provides.
+> > > 
+> > > Could, or will be?  I find the way the swapfiles work right now
+> > > disgusting to start with, but extending that bypass to fuse seems
+> > > even worse.
+> > 
+> > Yes, "Could", in the sense that a subsequent fuse patch wires up sending
+> > FUSE_IOMAP_BEGIN to the fuse server to ask for layouts for swapfiles,
+> > and the fuse server can reply with a mapping or EOPNOTSUPP to abort the
+> > swapon.  (There's a separate FUSE_IOMAP_IOEND req at deactivation time).
+> 
+> Maybe spell that out.
 
-> This allows to convert between ARef<T> and Owned<T> by
-> implementing the new trait OwnedRefCounted.
->
-> This way we will have a shared/unique reference counting scheme
-> for types with built-in refcounts in analogy to Arc/UniqueArc.
->
-> Signed-off-by: Oliver Mangold <oliver.mangold@pm.me>
+Will do.
 
-I rebased your series on top of v6.18-rc3 and pushed it here [1]. I also
-added some commits with review feedback.
+> > "Already does" in the sense that fuse already supports swapfiles(!) if
+> > your filesystem implements FUSE_BMAP and attaches via fuseblk (aka
+> > ntfs3g).
+> 
+> Yikes.  This is just such an amazingly bad idea.
 
-Best regards,
-Andreas Hindborg
+Swapfiles in general (including doing it via iomap)?  Or just the magic
+hooboo of "turn on this fugly bmapping call and bammo the kernel can
+take over your file at any time!!" ?
 
-[1] https://github.com/metaspace/linux/tree/ownable-v12
-
+--D
 
