@@ -1,221 +1,149 @@
-Return-Path: <linux-fsdevel+bounces-66459-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66460-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFADFC1FE38
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Oct 2025 12:53:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2B7EC1FE93
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Oct 2025 13:02:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A8B11883F3E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Oct 2025 11:52:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7370E423E10
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Oct 2025 12:02:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92A8033FE34;
-	Thu, 30 Oct 2025 11:51:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C0133002C1;
+	Thu, 30 Oct 2025 12:02:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="vfrNgpMm"
+	dkim=pass (1024-bit key) header.d=demonlair.co.uk header.i=geoff@demonlair.co.uk header.b="Ufb36xN+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from canpmsgout06.his.huawei.com (canpmsgout06.his.huawei.com [113.46.200.221])
+Received: from sender-op-o19.zoho.eu (sender-op-o19.zoho.eu [136.143.169.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E26A33509D;
-	Thu, 30 Oct 2025 11:51:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.221
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761825109; cv=none; b=Wbkdic4QHonvHXKT3mfKE6hFEVSMA8i0HiWcxPYt3WtHtS44yjbijH90QscUhr4SgWmeLb4sgTmrcd8+jeEl2A/BWpGczPaLIIalV+/yXFg9TXTSzrk70UtSphNMyvPLId8QRoOZ1G5iU3EMqP2qO7H5KtudgdpAY4rftvE1kls=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761825109; c=relaxed/simple;
-	bh=XQ1oXMaxqZeGMDaRBoHQ0jpp2R37p8bd1pWjG1h0TH0=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=PIcO+bIFldVwZzoqZq9UezRF5bOylOreCe+dBPj7TuP/6ASDCu4LU0DimXrwYkDKioPo4Ud0EumLkLrPmOlum9OQbXoYUMykh+VsAaGipJePrEsDYmi+X6VoTICkH3GdCc2+3B47FlK/WPz2fLTHK1NsUKmQBmUggGM8l6kHxac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=vfrNgpMm; arc=none smtp.client-ip=113.46.200.221
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=Nh5loDZHBR2aksoB6uCQ/lMUHV6h0uNP+3aSbia5tGc=;
-	b=vfrNgpMmkXgqbSYfXZ3V1v/bCK4I7My7du3Bzz5TlGXy1XzzpH2MFNVJMJI3OCgPBKhBVZXdF
-	nlp7F4g3hndm89KyhSUDGx5XXHusPtS018Vd17K1Jk5ywxYCb+JSNtpA7AUQBgCiyB1MLrmRNTx
-	dV10jOoc4Slzkv8KnnJCCn8=
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by canpmsgout06.his.huawei.com (SkyGuard) with ESMTPS id 4cy2WP21CYzRhRF;
-	Thu, 30 Oct 2025 19:51:13 +0800 (CST)
-Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
-	by mail.maildlp.com (Postfix) with ESMTPS id 1B70B147B7D;
-	Thu, 30 Oct 2025 19:51:43 +0800 (CST)
-Received: from kwepemq500010.china.huawei.com (7.202.194.235) by
- dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 30 Oct 2025 19:51:38 +0800
-Received: from [10.173.125.37] (10.173.125.37) by
- kwepemq500010.china.huawei.com (7.202.194.235) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 30 Oct 2025 19:51:36 +0800
-Subject: Re: [RFC PATCH v1 0/3] Userspace MFR Policy via memfd
-To: Harry Yoo <harry.yoo@oracle.com>, Jiaqi Yan <jiaqiyan@google.com>
-CC: =?UTF-8?Q?=e2=80=9cWilliam_Roche?= <william.roche@oracle.com>, "Ackerley
- Tng" <ackerleytng@google.com>, <jgg@nvidia.com>, <akpm@linux-foundation.org>,
-	<ankita@nvidia.com>, <dave.hansen@linux.intel.com>, <david@redhat.com>,
-	<duenwen@google.com>, <jane.chu@oracle.com>, <jthoughton@google.com>,
-	<linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-mm@kvack.org>, <muchun.song@linux.dev>, <nao.horiguchi@gmail.com>,
-	<osalvador@suse.de>, <peterx@redhat.com>, <rientjes@google.com>,
-	<sidhartha.kumar@oracle.com>, <tony.luck@intel.com>,
-	<wangkefeng.wang@huawei.com>, <willy@infradead.org>
-References: <20250118231549.1652825-1-jiaqiyan@google.com>
- <20250919155832.1084091-1-william.roche@oracle.com>
- <CACw3F521fi5HWhCKi_KrkNLXkw668HO4h8+DjkP2+vBuK-=org@mail.gmail.com>
- <aPjXdP63T1yYtvkq@hyeyoo>
- <CACw3F50As2jPzy1rRjzpm3uKOALjX_9WmKxMPGnQcok96OfQkA@mail.gmail.com>
- <aQBqGupCN_v8ysMX@hyeyoo>
-From: Miaohe Lin <linmiaohe@huawei.com>
-Message-ID: <d3d35586-c63f-c1be-c95e-fbd7aafd43f3@huawei.com>
-Date: Thu, 30 Oct 2025 19:51:36 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 902E71B983F
+	for <linux-fsdevel@vger.kernel.org>; Thu, 30 Oct 2025 12:02:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.169.19
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761825750; cv=pass; b=LfXcKphSxj/n6u4PZKlWKYuV0+VQ6kJDQVWmIh4RJYK/J41EvOyq8R/1D6OWI7iB/TLCTNfvrkl7vOFJFTWnL4graVE6bXOgoCkdtFmRDqWNZqh5eEOLX5gdPNC8f1RmQSzndXRk5DD1MeDeGJ/UAUkjqZk5/4WOI5eaSF53k+A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761825750; c=relaxed/simple;
+	bh=84iQb1dwCxC9xyLsfKemUeFDBxUHPjVNNi+3KgD/8cA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rGs1Gpyq/eG0MbdV9x5+AlJTe1OYEC0RWzeK4+NG/dFRLvWGnSFKNXJWK5nxoUnYak1XoroQBw53sqA4d1Q6ESc9RBjtFuKXnpNITdLPbxt/D3EIiW+yizXcWZXZEzAdlNptQr/heFibKxLkKuXZwezzAExre9bwDOa57dMr3OM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=demonlair.co.uk; spf=pass smtp.mailfrom=demonlair.co.uk; dkim=pass (1024-bit key) header.d=demonlair.co.uk header.i=geoff@demonlair.co.uk header.b=Ufb36xN+; arc=pass smtp.client-ip=136.143.169.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=demonlair.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=demonlair.co.uk
+ARC-Seal: i=1; a=rsa-sha256; t=1761825631; cv=none; 
+	d=zohomail.eu; s=zohoarc; 
+	b=Q8wrnbr+0lfEvwTSqeyHL3Em7bzliJUURbPvs5hnVRyLqY2+d7w7GNwBO5kh0k5URJmU89T7xNdN/fXk3FeYE5Yd4yXIaIVipX0oT+YxWzFGvZMszCjfUl6IOStM/ZkKWY3JpgEMBexG6p0tGZ84sMJdksvVh23FtuerOsfOyNo=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.eu; s=zohoarc; 
+	t=1761825631; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=EB0cp732OsDDfGOv/Hf8MnYe8fEWnlwPkpeCR1Zt+zo=; 
+	b=aoRdijVbvJYUfeufQw9Z8itd/Ye8AzamDWPy/YZdQnCHkiVd8Czk0IRy3pO+xNlifw6o3JdD1o6hFK96mR3bmC56m9llP3vAGuw0quQzk19fER4Vhgc/sEfZcqoiRK9DQGLl/o5OMUgrgGLIw3ldBX86FFSZNyzcaK5NtFGkPfI=
+ARC-Authentication-Results: i=1; mx.zohomail.eu;
+	dkim=pass  header.i=demonlair.co.uk;
+	spf=pass  smtp.mailfrom=geoff@demonlair.co.uk;
+	dmarc=pass header.from=<geoff@demonlair.co.uk>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1761825631;
+	s=zmail; d=demonlair.co.uk; i=geoff@demonlair.co.uk;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=EB0cp732OsDDfGOv/Hf8MnYe8fEWnlwPkpeCR1Zt+zo=;
+	b=Ufb36xN+wsixKFppcR3FAeR8y8d0qKpHvgwwklV+AfMJV+Rb7Jw+vfudTsIET5LD
+	E9lNthtSwhk4yb4lIj4mgzEDFdKP6K3UbPZXMa9ZZk+Yn2csO20u50E5fMq+lJqaRzQ
+	NA+Etv36fZzmADqlaC7kLvfN66NsAPFhM+qdXuDE=
+Received: by mx.zoho.eu with SMTPS id 1761825628575601.0401082169022;
+	Thu, 30 Oct 2025 13:00:28 +0100 (CET)
+Message-ID: <5ac7fb86-07a2-4fc6-959e-524ff54afebf@demonlair.co.uk>
+Date: Thu, 30 Oct 2025 12:00:26 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <aQBqGupCN_v8ysMX@hyeyoo>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
+User-Agent: Mozilla Thunderbird
+Subject: Re: fall back from direct to buffered I/O when stable writes are
+ required
+Content-Language: en-GB
+To: Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>
+Cc: Carlos Maiolino <cem@kernel.org>, Christian Brauner <brauner@kernel.org>,
+ Jan Kara <jack@suse.cz>, "Martin K. Petersen" <martin.petersen@oracle.com>,
+ linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-raid@vger.kernel.org,
+ linux-block@vger.kernel.org
+References: <20251029071537.1127397-1-hch@lst.de>
+ <aQNJ4iQ8vOiBQEW2@dread.disaster.area>
+From: Geoff Back <geoff@demonlair.co.uk>
+In-Reply-To: <aQNJ4iQ8vOiBQEW2@dread.disaster.area>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- kwepemq500010.china.huawei.com (7.202.194.235)
+X-ZohoMailClient: External
 
-On 2025/10/28 15:00, Harry Yoo wrote:
-> On Mon, Oct 27, 2025 at 09:17:31PM -0700, Jiaqi Yan wrote:
->> On Wed, Oct 22, 2025 at 6:09 AM Harry Yoo <harry.yoo@oracle.com> wrote:
->>>
->>> On Mon, Oct 13, 2025 at 03:14:32PM -0700, Jiaqi Yan wrote:
->>>> On Fri, Sep 19, 2025 at 8:58 AM “William Roche <william.roche@oracle.com> wrote:
->>>>>
->>>>> From: William Roche <william.roche@oracle.com>
->>>>>
->>>>> Hello,
->>>>>
->>>>> The possibility to keep a VM using large hugetlbfs pages running after a memory
->>>>> error is very important, and the possibility described here could be a good
->>>>> candidate to address this issue.
->>>>
->>>> Thanks for expressing interest, William, and sorry for getting back to
->>>> you so late.
->>>>
->>>>>
->>>>> So I would like to provide my feedback after testing this code with the
->>>>> introduction of persistent errors in the address space: My tests used a VM
->>>>> running a kernel able to provide MFD_MF_KEEP_UE_MAPPED memfd segments to the
->>>>> test program provided with this project. But instead of injecting the errors
->>>>> with madvise calls from this program, I get the guest physical address of a
->>>>> location and inject the error from the hypervisor into the VM, so that any
->>>>> subsequent access to the location is prevented directly from the hypervisor
->>>>> level.
->>>>
->>>> This is exactly what VMM should do: when it owns or manages the VM
->>>> memory with MFD_MF_KEEP_UE_MAPPED, it is then VMM's responsibility to
->>>> isolate guest/VCPUs from poisoned memory pages, e.g. by intercepting
->>>> such memory accesses.
->>>>
->>>>>
->>>>> Using this framework, I realized that the code provided here has a problem:
->>>>> When the error impacts a large folio, the release of this folio doesn't isolate
->>>>> the sub-page(s) actually impacted by the poison. __rmqueue_pcplist() can return
->>>>> a known poisoned page to get_page_from_freelist().
->>>>
->>>> Just curious, how exactly you can repro this leaking of a known poison
->>>> page? It may help me debug my patch.
->>>>
->>>>>
->>>>> This revealed some mm limitations, as I would have expected that the
->>>>> check_new_pages() mechanism used by the __rmqueue functions would filter these
->>>>> pages out, but I noticed that this has been disabled by default in 2023 with:
->>>>> [PATCH] mm, page_alloc: reduce page alloc/free sanity checks
->>>>> https://lore.kernel.org/all/20230216095131.17336-1-vbabka@suse.cz
->>>>
->>>> Thanks for the reference. I did turned on CONFIG_DEBUG_VM=y during dev
->>>> and testing but didn't notice any WARNING on "bad page"; It is very
->>>> likely I was just lucky.
->>>>
->>>>>
->>>>>
->>>>> This problem seems to be avoided if we call take_page_off_buddy(page) in the
->>>>> filemap_offline_hwpoison_folio_hugetlb() function without testing if
->>>>> PageBuddy(page) is true first.
->>>>
->>>> Oh, I think you are right, filemap_offline_hwpoison_folio_hugetlb
->>>> shouldn't call take_page_off_buddy(page) depend on PageBuddy(page) or
->>>> not. take_page_off_buddy will check PageBuddy or not, on the page_head
->>>> of different page orders. So maybe somehow a known poisoned page is
->>>> not taken off from buddy allocator due to this?
->>>
->>> Maybe it's the case where the poisoned page is merged to a larger page,
->>> and the PGTY_buddy flag is set on its buddy of the poisoned page, so
->>> PageBuddy() returns false?:
->>>
->>>   [ free page A ][ free page B (poisoned) ]
->>>
->>> When these two are merged, then we set PGTY_buddy on page A but not on B.
+On 30/10/2025 11:20, Dave Chinner wrote:
+> On Wed, Oct 29, 2025 at 08:15:01AM +0100, Christoph Hellwig wrote:
+>> Hi all,
 >>
->> Thanks Harry!
->>
->> It is indeed this case. I validate by adding some debug prints in
->> take_page_off_buddy:
->>
->> [ 193.029423] Memory failure: 0x2800200: [yjq] PageBuddy=0 after drain_all_pages
->> [ 193.029426] 0x2800200: [yjq] order=0, page_order=0, PageBuddy(page_head)=0
->> [ 193.029428] 0x2800200: [yjq] order=1, page_order=0, PageBuddy(page_head)=0
->> [ 193.029429] 0x2800200: [yjq] order=2, page_order=0, PageBuddy(page_head)=0
->> [ 193.029430] 0x2800200: [yjq] order=3, page_order=0, PageBuddy(page_head)=0
->> [ 193.029431] 0x2800200: [yjq] order=4, page_order=0, PageBuddy(page_head)=0
->> [ 193.029432] 0x2800200: [yjq] order=5, page_order=0, PageBuddy(page_head)=0
->> [ 193.029434] 0x2800200: [yjq] order=6, page_order=0, PageBuddy(page_head)=0
->> [ 193.029435] 0x2800200: [yjq] order=7, page_order=0, PageBuddy(page_head)=0
->> [ 193.029436] 0x2800200: [yjq] order=8, page_order=0, PageBuddy(page_head)=0
->> [ 193.029437] 0x2800200: [yjq] order=9, page_order=0, PageBuddy(page_head)=0
->> [ 193.029438] 0x2800200: [yjq] order=10, page_order=10, PageBuddy(page_head)=1
->>
->> In this case, page for 0x2800200 is hwpoisoned, and its buddy page is
->> 0x2800000 with order 10.
-> 
-> Woohoo, I got it right!
-> 
->>> But even after fixing that we need to fix the race condition.
->>
->> What exactly is the race condition you are referring to?
-> 
-> When you free a high-order page, the buddy allocator doesn't not check
-> PageHWPoison() on the page and its subpages. It checks PageHWPoison()
-> only when you free a base (order-0) page, see free_pages_prepare().
+>> we've had a long standing issue that direct I/O to and from devices that
+>> require stable writes can corrupt data because the user memory can be
+>> modified while in flight.  This series tries to address this by falling
+>> back to uncached buffered I/O.  Given that this requires an extra copy it
+>> is usually going to be a slow down, especially for very high bandwith
+>> use cases, so I'm not exactly happy about.
+> How many applications actually have this problem? I've not heard of
+> anyone encoutnering such RAID corruption problems on production
+> XFS filesystems -ever-, so it cannot be a common thing.
+>
+> So, what applications are actually tripping over this, and why can't
+> these rare instances be fixed instead of penalising the vast
+> majority of users who -don't have a problem to begin with-?
+I don't claim to have deep knowledge of what's going on here, but if I
+understand correctly the problem occurs only if the process submitting
+the direct I/O is breaking the semantic "contract" by modifying the page
+after submitting the I/O but before it completes.  Since the page
+referenced by the I/O is supposed to be immutable until the I/O
+completes, what about marking the page read only at time of submission
+and restoring the original page permissions after the I/O completes? 
+Then if the process writes to the page (triggering a fault) make a copy
+of the page that can be mapped back as writeable for the process - i.e.
+normal copy-on-write behaviour - and write a once-per-process dmesg
+warning that the process broke the direct I/O "contract".  And maybe tag
+the process with a flag that forces all future "direct I/O" requests
+made by that process to be automatically made buffered?
 
-I think we might could check PageHWPoison() for subpages as what free_page_is_bad()
-does. If any subpage has HWPoisoned flag set, simply drop the folio. Even we could
-do it better -- Split the folio and let healthy subpages join the buddy while reject
-the hwpoisoned one.
+That way, processes that behave correctly still get direct I/O, and
+those that do break the rules get degraded to buffered I/O.
 
-> 
-> AFAICT there is nothing that prevents the poisoned page to be
-> allocated back to users because the buddy doesn't check PageHWPoison()
-> on allocation as well (by default).
-> 
-> So rather than freeing the high-order page as-is in
-> dissolve_free_hugetlb_folio(), I think we have to split it to base pages
-> and then free them one by one.
+Unfortunately I don't know enough to know what the performance impact of
+changing the page permissions for every direct I/O would be.
 
-It might not be worth to do that as this would significantly increase the overhead
-of the function while memory failure event is really rare.
+>
+>> I suspect we need a way to opt out of this for applications that know
+>> what they are doing, and I can think of a few ways to do that:
+> ....
+>
+>> In other words, they are all kinda horrible.
+> Forcing a performance regression on users, then telling them "you
+> need to work around the performance regression" is a pretty horrible
+> thing to do in the first place. Given that none of the workarounds
+> are any better, perhaps this approach should be discarded and some
+> other way of addressin the problem be considered?
+>
+> How about we do it the other way around? If the application is known
+> to corrupt stable page based block devices, then perhaps they should
+> be setting a "DIO is not supported" option somewhere. None of them
+> are pretty, but instead of affecting the whole world, it only
+> affects the rare applications that trigger this DIO issue.
+>
+> That seems like a much better way to deal with the issue to me;
+> most users are completely unaffected, and never have to worry about
+> (or even know about) this workaround for a very specific type of
+> weird application behaviour...
+Yes, I completely agree that we should not be penalising processes that
+obey the direct I/O rules for the benefit of those that do not.
 
-Thanks both.
-.
+>
+> -Dave.
+>
+Regards,
 
-> 
-> That way, free_pages_prepare() will catch that it's poisoned and won't
-> add it back to the freelist. Otherwise there will always be a window
-> where the poisoned page can be allocated to users - before it's taken
-> off from the buddy.
-> 
+Geoff.
 
 
