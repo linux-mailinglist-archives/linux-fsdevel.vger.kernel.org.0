@@ -1,43 +1,43 @@
-Return-Path: <linux-fsdevel+bounces-66552-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66549-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD7E5C2369B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 07:35:24 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19399C23674
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 07:31:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECDF53A4A01
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 06:32:00 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B27EA4E3177
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 06:31:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46B30309EF8;
-	Fri, 31 Oct 2025 06:31:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 301032FB621;
+	Fri, 31 Oct 2025 06:31:26 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E0E72E6125;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5966F239E61;
 	Fri, 31 Oct 2025 06:31:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761892286; cv=none; b=Zttol9tuderhy2pFz7+UQ1wwJPP+FmtbOPb0IlgRRArb5AUSGS0IDVWv9MWv41JdHnjCxrNFiM2HM3l42KnOPNRGQScuMP6HEck5xw6RfypkFEHurjTI+QYoW05J+kZ3JPhaxyqJ0uf7cdhbNb8RnmbxQlb3V8HoWawvQB+lJ0c=
+	t=1761892285; cv=none; b=bUb4T82IH9qoc6hVvvy/nfbmb4qFTtzZXd7EQJEhVfKMdspki445dSolhD+3Q/Z5VBFf5w87RWFOduyZ7GiyyIsTSzDs9795OH4LNCj1fjIhlTAHf4QdNOMMR4r5SW/t3oN3ql404YNFfu3Ny+YAgv8MxkzeeTi1fcZbQJ56lgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761892286; c=relaxed/simple;
-	bh=W6rXC4yik0dnsYjY60VbMqpNeSek+IzWHWPrGzxVmnQ=;
+	s=arc-20240116; t=1761892285; c=relaxed/simple;
+	bh=o44F4mLmP19tNT6q7Oqbg6UcUMAts5UKj4rziyYtqm0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oRBPr4CxpBbdlF5Hw3wPFmxEKmGCf6eXm3ZEEfApKS0H3nCZjYGWqEhld0dM5BORg/9WEAJEWUP0jd+Ex9jv7uKM+RvDKK4DND8x9xir6LItUGCEEuEl2i9lzkp7dCS9UYgynvsbdeowZnBTGD7i/136HF4jObriiWFPDOZFM7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+	 MIME-Version; b=tR+BRT5sNRAro4XNkHLG6vGHMy42fYzPOKAPxAvS2LUI0bw3VJbdLb+PBLAabNg0p6S5fuK3NvNZHN8n//Bxol5HVclASd7HrLAVCmK6aBAbNs7WOS4PgTtLsg/9Gg1oijtiVjOiA0roRMLWhVyWyDuCKubeZEzO6IMJHHUIULo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
 Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cyWLh2nclzKHM0T;
-	Fri, 31 Oct 2025 14:30:20 +0800 (CST)
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cyWMj17vkzYQtkN;
+	Fri, 31 Oct 2025 14:31:13 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 154031A1B8E;
+	by mail.maildlp.com (Postfix) with ESMTP id 248E01A1B8A;
 	Fri, 31 Oct 2025 14:31:21 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.50.85.155])
-	by APP2 (Coremail) with SMTP id Syh0CgBHnESuVwRpEFrWCA--.33311S6;
-	Fri, 31 Oct 2025 14:31:20 +0800 (CST)
+	by APP2 (Coremail) with SMTP id Syh0CgBHnESuVwRpEFrWCA--.33311S7;
+	Fri, 31 Oct 2025 14:31:21 +0800 (CST)
 From: Zhang Yi <yi.zhang@huaweicloud.com>
 To: linux-ext4@vger.kernel.org
 Cc: linux-fsdevel@vger.kernel.org,
@@ -49,9 +49,9 @@ Cc: linux-fsdevel@vger.kernel.org,
 	yi.zhang@huaweicloud.com,
 	libaokun1@huawei.com,
 	yangerkun@huawei.com
-Subject: [PATCH 2/4] ext4: check for conflicts when caching extents
-Date: Fri, 31 Oct 2025 14:29:03 +0800
-Message-ID: <20251031062905.4135909-3-yi.zhang@huaweicloud.com>
+Subject: [PATCH 3/4] ext4: adjust the debug info in ext4_es_cache_extent()
+Date: Fri, 31 Oct 2025 14:29:04 +0800
+Message-ID: <20251031062905.4135909-4-yi.zhang@huaweicloud.com>
 X-Mailer: git-send-email 2.46.1
 In-Reply-To: <20251031062905.4135909-1-yi.zhang@huaweicloud.com>
 References: <20251031062905.4135909-1-yi.zhang@huaweicloud.com>
@@ -62,13 +62,13 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgBHnESuVwRpEFrWCA--.33311S6
-X-Coremail-Antispam: 1UD129KBjvJXoWxAw1fAF13tF45KFWrAw13Jwb_yoW5CrWDpr
-	ZIkr15Jrn3WwnI9ayfAa1UXr1fKa18GrW7C34fKw1S9a45Zry3KF1jyFyjvF95XFW8Xr1a
-	vF4Fkr18Ga1UJrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID:Syh0CgBHnESuVwRpEFrWCA--.33311S7
+X-Coremail-Antispam: 1UD129KBjvJXoWruw4fCr43Ary5Cw4rCFy8Zrb_yoW8Jr1Dpa
+	s3CF1UJr1rZ3yq9a4xGr48Jr13Way8GrW7JrZ3tw1ruay8ZryrKF1qyFyYvFyUXFWxXw4a
+	vF40kw1UWa1jy3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
 	9KBjDU0xBIdaVrnRJUUUm014x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_Jryl82xGYIkIc2
-	x26xkF7I0E14v26r4j6ryUM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JrWl82xGYIkIc2
+	x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0
 	Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJw
 	A2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAS
 	0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2
@@ -79,94 +79,42 @@ X-Coremail-Antispam: 1UD129KBjvJXoWxAw1fAF13tF45KFWrAw13Jwb_yoW5CrWDpr
 	kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY
 	6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0x
 	vEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVj
-	vjDU0xZFpf9x0JUczV8UUUUU=
+	vjDU0xZFpf9x0JUHWlkUUUUU=
 X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
 From: Zhang Yi <yi.zhang@huawei.com>
 
-Since ext4_es_cache_extent() can only be used to load on-disk extents
-and does not permit modifying extents, it is not possible to overwrite
-an extent of a different type. To prevent misuse of the interface, the
-current implementation checks only the first existing extent but does
-not verify all extents within the range to be inserted, as doing so
-would be time-consuming in highly fragmented scenarios. Furthermore,
-adding such checks to __es_remove_extent() would complicate its logic.
-Therefore, a full check can be performed in debug mode to ensure that
-the function does not overwrite any valuable extents.
+Print a trace point after successfully inserting an extent in the
+ext4_es_cache_extent() function. Additionally, similar to other extent
+cache operation functions, call ext4_print_pending_tree() to display the
+extent debug information of the inode when in ES_DEBUG mode.
 
 Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 ---
- fs/ext4/extents_status.c | 50 +++++++++++++++++++++++++++++++++++++---
- 1 file changed, 47 insertions(+), 3 deletions(-)
+ fs/ext4/extents_status.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/fs/ext4/extents_status.c b/fs/ext4/extents_status.c
-index f9546ecf7340..55103c331b6b 100644
+index 55103c331b6b..ae25a3888de4 100644
 --- a/fs/ext4/extents_status.c
 +++ b/fs/ext4/extents_status.c
-@@ -985,6 +985,48 @@ void ext4_es_insert_extent(struct inode *inode, ext4_lblk_t lblk,
- 	return;
- }
+@@ -1052,7 +1052,6 @@ void ext4_es_cache_extent(struct inode *inode, ext4_lblk_t lblk,
+ 	newes.es_lblk = lblk;
+ 	newes.es_len = len;
+ 	ext4_es_store_pblock_status(&newes, pblk, status);
+-	trace_ext4_es_cache_extent(inode, &newes);
  
-+#ifdef CONFIG_EXT4_DEBUG
-+/*
-+ * If we find an extent that already exists during caching extents, its
-+ * status must match the one to be cached. Otherwise, the extent status
-+ * tree may have been corrupted.
-+ */
-+static void ext4_es_cache_extent_check(struct inode *inode,
-+		struct extent_status *es, struct extent_status *newes)
-+{
-+	unsigned int status = ext4_es_type(newes);
-+	struct rb_node *node;
-+
-+	if (ext4_es_type(es) != status)
-+		goto conflict;
-+
-+	while ((node = rb_next(&es->rb_node)) != NULL) {
-+		es = rb_entry(node, struct extent_status, rb_node);
-+
-+		if (es->es_lblk >= newes->es_lblk + newes->es_len)
-+			break;
-+		if (ext4_es_type(es) != status)
-+			goto conflict;
-+	}
-+	return;
-+
-+conflict:
-+	ext4_warning_inode(inode,
-+			   "ES cache extent failed: add [%d,%d,%llu,0x%x] conflict with existing [%d,%d,%llu,0x%x]\n",
-+			   newes->es_lblk, newes->es_len, ext4_es_pblock(newes),
-+			   ext4_es_status(newes), es->es_lblk, es->es_len,
-+			   ext4_es_pblock(es), ext4_es_status(es));
-+
-+	WARN_ON_ONCE(1);
-+}
-+#else
-+static void ext4_es_cache_extent_check(struct inode __maybe_unused *inode,
-+		struct extent_status *es, struct extent_status *newes)
-+{
-+	WARN_ON_ONCE(ext4_es_type(es) != ext4_es_type(newes));
-+}
-+#endif
-+
- /*
-  * ext4_es_cache_extent() inserts extent information into the extent status
-  * tree. If 'overwrite' is not set, it inserts extent only if there isn't
-@@ -1022,9 +1064,11 @@ void ext4_es_cache_extent(struct inode *inode, ext4_lblk_t lblk,
- 	if (es && es->es_lblk <= end) {
- 		if (!overwrite)
- 			goto unlock;
--
--		/* Only extents of the same type can be overwritten. */
--		WARN_ON_ONCE(ext4_es_type(es) != status);
-+		/*
-+		 * Check whether the overwrites are safe. Only extents
-+		 * of the same type can be overwritten.
-+		 */
-+		ext4_es_cache_extent_check(inode, es, &newes);
- 		if (__es_remove_extent(inode, lblk, end, NULL, NULL))
+ 	if (!len)
+ 		return;
+@@ -1073,6 +1072,8 @@ void ext4_es_cache_extent(struct inode *inode, ext4_lblk_t lblk,
  			goto unlock;
  	}
+ 	__es_insert_extent(inode, &newes, NULL);
++	trace_ext4_es_cache_extent(inode, &newes);
++	ext4_es_print_tree(inode);
+ unlock:
+ 	write_unlock(&EXT4_I(inode)->i_es_lock);
+ }
 -- 
 2.46.1
 
