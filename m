@@ -1,155 +1,90 @@
-Return-Path: <linux-fsdevel+bounces-66587-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66588-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77673C2524C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 14:02:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B42FC25339
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 14:11:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F39463BC404
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 13:01:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C23A3B4A6A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 13:10:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B779E34AAF4;
-	Fri, 31 Oct 2025 13:01:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78EA334A789;
+	Fri, 31 Oct 2025 13:10:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Qd3JmRsd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFD913271E9;
-	Fri, 31 Oct 2025 13:00:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B353D33FE0B;
+	Fri, 31 Oct 2025 13:10:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761915661; cv=none; b=ixe060j1cZvEV3tCnEzQ7XMEU4nBtdHP7pPQrFNEgcnx/GjV79ediZ4YejnkNvjrB0wv0KRkZ5kiN06Zi/Orw0MhKO/dsFhDmGjMxmLawdRwCQN9kk/97gMORtnZjS5mJZM0ZIkAU1Cagyp3QYrS48vANtHDdgS5YTqN42l3V4s=
+	t=1761916252; cv=none; b=caZsDe+a2eYrQK6rUN3pVy7DnZesH8Gth15JIP5zEUcgTsn/8WMCo10KSTuproyQg3Za0xh8nE0FNMvwAW/UY+KHoTUKnNfSzXIsZW/KKDmuI+5ewU41b6JIcma4sP+/V3ZxDjrBWdGM4ka0OT9QmGv+/TXC9NMI7wLXaysTerE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761915661; c=relaxed/simple;
-	bh=ZEn/aGQHjkZVe82YckT2+K8RU6xxfrWAYS8r175AALM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G/S2IWEIxQ+O3iZ4tvPor45Lpp0HranXvT+dq/DUX1hLfZ0g7DDisphrtA5SrlMj4FVlnh/CrYpg3GGzDEnzN3EZA4zY1dzF7u4wfVw2Nn45ye0ifIE7y1HN4ngzsekYFa+b8SsSmN3s0KdANma/34TgzGoP69t0sobLgpev1gI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id E8C55227A88; Fri, 31 Oct 2025 14:00:50 +0100 (CET)
-Date: Fri, 31 Oct 2025 14:00:50 +0100
+	s=arc-20240116; t=1761916252; c=relaxed/simple;
+	bh=d8DIrFuPSaOjc4gU5jpd3qXM5vfAeTqyV+X1w+DNHmc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qn+VQjpFkWyuv3NRaAmaXhDqJ/NponQ08HUxrU0/FfPhH+fIFdm/5FTQNDQeMN9XgJ5hwqEEek56eZCxhFP0jumwDxaxA0tTy8i4x81wjHALH+fgJVBjUsxawUOBVkwY9Ol7OfyUzbqHJP92XMP5bnY98fZZHup1Knnf5Uo9hxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Qd3JmRsd; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=9Q02G2J1neC1yB0Vmu0Ckbnf3KxxBChg1op+imde7V4=; b=Qd3JmRsdGk7S4Xtmb4UPQA1Gze
+	++Nu4w2TSGu2GkCreSjxMgIENbKVVkWqi/cJWUx8nfulZJyiIrVrymTIHMPdq584z+YtSJkbBJsQl
+	1RT9e1Ai9a60Hl8b/gSi8KerpFW98gmVx7uDfvsNiGHMsp4SCzL0j+7x6lzgZvRxjZ/o5BrFnkHsP
+	WUvHhpoq0+PZtv4djEJf5XEGTft3LruRkjdI93E/vtBJwCi+Y0OJBd1CdEq27WZNIt8DV46MlasS6
+	bsXM1A8RGSvvxvKElxSU/vssykjayyLiErDLrD4g3GxS5zDSZ8fxz7NcQAW+6YmGkzVFvF/8lSWIl
+	6pLYoAIw==;
+Received: from [2001:4bb8:2dc:10e5:1f29:7b81:1da3:7ada] (helo=localhost)
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vEou0-0000000699K-3267;
+	Fri, 31 Oct 2025 13:10:49 +0000
 From: Christoph Hellwig <hch@lst.de>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Christoph Hellwig <hch@lst.de>, Carlos Maiolino <cem@kernel.org>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-raid@vger.kernel.org,
-	linux-block@vger.kernel.org
-Subject: Re: fall back from direct to buffered I/O when stable writes are
- required
-Message-ID: <20251031130050.GA15719@lst.de>
-References: <20251029071537.1127397-1-hch@lst.de> <aQNJ4iQ8vOiBQEW2@dread.disaster.area> <20251030143324.GA31550@lst.de> <aQPyVtkvTg4W1nyz@dread.disaster.area>
+To: Christian Brauner <brauner@kernel.org>,
+	Carlos Maiolino <cem@kernel.org>
+Cc: "Darrick J. Wong" <djwong@kernel.org>,
+	Qu Wenruo <wqu@suse.com>,
+	linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: alloc misaligned vectors for zoned XFS v2
+Date: Fri, 31 Oct 2025 14:10:25 +0100
+Message-ID: <20251031131045.1613229-1-hch@lst.de>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aQPyVtkvTg4W1nyz@dread.disaster.area>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Fri, Oct 31, 2025 at 10:18:46AM +1100, Dave Chinner wrote:
-> I'm not asking about btrfs - I'm asking about actual, real world
-> problems reported in production XFS environments.
+Hi all,
 
-The same things applies once we have checksums with PI.  But it seems
-like you don't want to listen anyway.
+this series enables the new block layer support for misaligned
+individual vectors for zoned XFS.
 
-> > For RAID you probably won't see too many reports, as with RAID the
-> > problem will only show up as silent corruption long after a rebuild
-> > rebuild happened that made use of the racy data.
-> 
-> Yet we are not hearing about this, either. Nobody is reporting that
-> their data is being found to be corrupt days/weeks/months/years down
-> the track.
-> 
-> This is important, because software RAID5 is pretty much the -only-
-> common usage of BLK_FEAT_STABLE_WRITES that users are exposed to.
+The first patch is the from Qu and supposedly already applied to
+the vfs iomap 6.19 branch, but I can't find it there.  The next
+two are small fixups for it, and the last one makes use of this
+new functionality in XFS.
 
-RAID5 bounce buffers by default.  It has a tunable to disable that:
+Note: the first patch replaces the patch of the same name in the
+vfs iomap-6.19 branch.
 
-https://sbsfaq.com/qnap-fails-to-reveal-data-corruption-bug-that-affects-all-4-bay-and-higher-nas-devices/
+Changes since v1:
+ - squash the first patches
+ - trace the new flag (based on a patch from Darrick)
 
-and once that was turned on it pretty much immediately caused data
-corruption:
-
-https://sbsfaq.com/qnap-fails-to-reveal-data-corruption-bug-that-affects-all-4-bay-and-higher-nas-devices/
-https://sbsfaq.com/synology-nas-confirmed-to-have-same-data-corruption-bug-as-qnap/
-
-> This patch set is effectively disallowing direct IO for anyone
-> using software RAID5. That is simply not an acceptible outcome here.
-
-Quite contrary, fixing this properly allows STABLE_WRITES to actually
-work without bouncing in lower layers and at least get efficient
-buffered I/O.
-
-> 
-> > With checksums
-> > it is much easier to reproduce and trivially shown by various xfstests.
-> 
-> Such as? 
-
-Basically anything using fsstress long enough plus a few others.
-
-> 
-> > With increasing storage capacities checksums are becoming more and
-> > more important, and I'm trying to get Linux in general and XFS
-> > specifically to use them well.
-> 
-> So when XFS implements checksums and that implementation is
-> incompatible with Direct IO, then we can talk about disabling Direct
-> IO on XFS when that feature is enabled. But right now, that feature
-> does not exist, and ....
-
-Every Linux file system supports checksums with PI capable device.
-I'm trying to make it actually work for all case and perform well for a
-while.
-
-> 
-> > Right now I don't think anyone is
-> > using PI with XFS or any Linux file system given the amount of work
-> > I had to put in to make it work well, and how often I see regressions
-> > with it.
-> 
-> .... as you say, "nobody is using PI with XFS".
-> 
-> So patchset is a "fix" for a problem that no-one is actually having
-> right now.
-
-I'm making it work.
-
-> Modifying an IO buffer whilst a DIO is in flight on that buffer has
-> -always- been an application bug.
-
-Says who?
-
-> It is a vector for torn writes
-> that don't get detected until the next read. It is a vector for
-> in-memory data corruption of read buffers.
-
-That assumes that particular use case cares about torn writes.  We've
-never ever documented any such requirement.  We can't just make that
-up 20+ years later.
-
-> Indeed, it does not matter if the underlying storage asserts
-> BLK_FEAT_STABLE_WRITES or not, modifying DIO buffers that are under
-> IO will (eventually) result in data corruption.
-
-It doesn't if that's not your assumption.  But more importantly with
-RAID5 if you modify them you do not primarily corrupt your own data,
-but other data in the stripe.  It is a way how a malicious user can
-corrupt other users data.
-
-> Hence, by your
-> logic, we should disable Direct IO for everyone.
-
-That's your weird logic, not mine.
-
+Diffstat:
+ fs/iomap/direct-io.c  |   17 +++++++++++++++--
+ fs/iomap/trace.h      |    7 ++++---
+ fs/xfs/xfs_file.c     |   21 +++++++++++----------
+ include/linux/iomap.h |    8 ++++++++
+ 4 files changed, 38 insertions(+), 15 deletions(-)
 
