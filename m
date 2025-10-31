@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-66623-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66624-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E398CC26D1F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 20:48:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BEE8C26DDA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 21:08:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6B2FC4F345E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 19:48:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F02E18927B9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 20:08:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43BBD3191DC;
-	Fri, 31 Oct 2025 19:48:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13C70327203;
+	Fri, 31 Oct 2025 20:07:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jhLrkMJ1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eEbaFUeP"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D115274B42;
-	Fri, 31 Oct 2025 19:48:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 525A02222A0;
+	Fri, 31 Oct 2025 20:07:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761940096; cv=none; b=df2PrBIFfzyqCHk9aC5vB9ho72vUBktfGxDJnNs0cNLolPBz37UIQilApPqK28ohaQxWWVqDRSxkM8+R4tN5rtrjkQnKGwXKADVNIxT2sd8CRj1kb7KmYEmbcU4UpxCedSxgWCGOCPwnd4saSbKCXSO7933rv1qWTZdrK+C6YcM=
+	t=1761941259; cv=none; b=c6tHZ3XKZuyrl4kAzorwHFc8Aj6K1Bc6uhuJ8lTeUvxgeLfAa4Q7216FzvpJpo20bO2/3ZPu8tevBQMcqg0vJOYPhNzdc0E2YmEBdLeVjHjB+c0PQEIayEG1YYe2EsB0pBCl3/SNk6CZL/Msq5NiWS3/zArZecTd0yvYxKGK79c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761940096; c=relaxed/simple;
-	bh=3XMdMiV5/Fkf0a0hQ2bHKVTveLYXM6aobfgWUzIzlyM=;
+	s=arc-20240116; t=1761941259; c=relaxed/simple;
+	bh=wQet1zpVA979LHOCAKnvDe4vIz5lgogB/RiA4rvDzcE=;
 	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=U6Akil2SV/DsNL6RJCPw8YIP7iJvJ1owol2CNCdBuUPQlRq9t89GNE4gFWRqOPKorgdftPJekszAKzAeoo7rfL7MnP1bbjOsQSXMBIvEPtWA86Va+5D5cABiVz4d5H/98L5hsT1OS+Y9dynIduw/ncYMhVCaOObwDyUTnbfTQbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jhLrkMJ1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B39D8C4CEE7;
-	Fri, 31 Oct 2025 19:48:11 +0000 (UTC)
+	 MIME-Version:Content-Type; b=m8FISJOWvVyUX0TB0stp3DukBwNCanqtuY6ZUkYqeJGS8rDvLfC72cxOC8rNwoPIdykX7ht7jIPNbp2aOeqXkBtpeW4bZCpk0BBmINjwn79OodpS1hKW2ntjF7591LLaFt7HHYtSV60RwnkrvNfByFrZe1d5qDibZpXXPdsruUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eEbaFUeP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EC5FC4CEE7;
+	Fri, 31 Oct 2025 20:07:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761940096;
-	bh=3XMdMiV5/Fkf0a0hQ2bHKVTveLYXM6aobfgWUzIzlyM=;
+	s=k20201202; t=1761941258;
+	bh=wQet1zpVA979LHOCAKnvDe4vIz5lgogB/RiA4rvDzcE=;
 	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=jhLrkMJ1Xr02uFTfEx/frXtknVpDmVQfc9O4keDaTkipOQ9UC1Zl+VCqb/XHpjJHh
-	 lQQVWqtGbfmN+B56AGTydSbzItiFwivMka5zoMEb7wi2z26fZoRbHzGZY8u4dld9Od
-	 XVUCpBVPQH2+rCLmX2+N8eUbM4jMy9/KcKhLJMKbkftUEMt3kMETRqJ8HDQPt3XMdS
-	 hg6CyFsDb3ZDPaxbBhzVHVkM7RzbaYxsYNDtsNKPDiRl1ijnkAdS/KwKr8uh9QTXm8
-	 Rcpa0l5VB5wzJfKbLCJBlJ3G4CL7pI1J6FfYAXpE44Jurnor7XhX5BjXzbIDDZf5uy
-	 4J5wAbgnhUBeg==
-Date: Fri, 31 Oct 2025 13:48:10 -0600 (MDT)
+	b=eEbaFUePEqsqd1xqvFj6PfHBe6jOCi2lEMdH8TycHl0Q5Auluk8S2lpJXmv9TxFx6
+	 NusxPnTpJc0X0f0CeYGgWHWJPP+pm9H5h9r65gPGw/KCR077Hi6MKNwd20DNPMNN6b
+	 WeahrAxPZQa10FjP/DdR4c+HK/1h5x2nUAasMuSHcOITJAiV483CzwcXL5NGIqys+P
+	 mY145nVNkpzIC2zpwBWy190cfG4RZuldrQmgNpuR1kKC8i8XpoLRbm6nuQrl1TbMCc
+	 xrhLxkelxND1eIrhNaB+SV+lyaoUFqxJyBOJ8iEADXR4rSsgSzl+qs3Ga+6/bKM9QS
+	 dwrww+Tnxquiw==
+Date: Fri, 31 Oct 2025 14:07:32 -0600 (MDT)
 From: Paul Walmsley <pjw@kernel.org>
-To: Deepak Gupta <debug@rivosinc.com>
+To: Deepak Gupta <debug@rivosinc.com>, Andy Chiu <andybnac@gmail.com>
 cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
     Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
@@ -70,16 +70,17 @@ cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
     linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
     linux-arch@vger.kernel.org, linux-doc@vger.kernel.org, 
     linux-kselftest@vger.kernel.org, alistair.francis@wdc.com, 
-    richard.henderson@linaro.org, jim.shu@sifive.com, andybnac@gmail.com, 
-    kito.cheng@sifive.com, charlie@rivosinc.com, atishp@rivosinc.com, 
-    evan@rivosinc.com, cleger@rivosinc.com, alexghiti@rivosinc.com, 
-    samitolvanen@google.com, broonie@kernel.org, rick.p.edgecombe@intel.com, 
-    rust-for-linux@vger.kernel.org, Zong Li <zong.li@sifive.com>
-Subject: Re: [PATCH v22 10/28] riscv/mm: Implement map_shadow_stack()
- syscall
-In-Reply-To: <20251023-v5_user_cfi_series-v22-10-1935270f7636@rivosinc.com>
-Message-ID: <020e2f6e-9c1b-648e-3017-31eb8a89c493@kernel.org>
-References: <20251023-v5_user_cfi_series-v22-0-1935270f7636@rivosinc.com> <20251023-v5_user_cfi_series-v22-10-1935270f7636@rivosinc.com>
+    richard.henderson@linaro.org, jim.shu@sifive.com, 
+    Andy Chiu <andybnac@gmail.com>, kito.cheng@sifive.com, 
+    charlie@rivosinc.com, atishp@rivosinc.com, evan@rivosinc.com, 
+    cleger@rivosinc.com, alexghiti@rivosinc.com, samitolvanen@google.com, 
+    broonie@kernel.org, rick.p.edgecombe@intel.com, 
+    rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v22 17/28] riscv/signal: save and restore of shadow stack
+ for signal
+In-Reply-To: <20251023-v5_user_cfi_series-v22-17-1935270f7636@rivosinc.com>
+Message-ID: <a8f469b8-5750-dfec-2390-09bad4515f99@kernel.org>
+References: <20251023-v5_user_cfi_series-v22-0-1935270f7636@rivosinc.com> <20251023-v5_user_cfi_series-v22-17-1935270f7636@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -92,33 +93,40 @@ On Thu, 23 Oct 2025, Deepak Gupta via B4 Relay wrote:
 
 > From: Deepak Gupta <debug@rivosinc.com>
 > 
-> As discussed extensively in the changelog for the addition of this
-> syscall on x86 ("x86/shstk: Introduce map_shadow_stack syscall") the
-> existing mmap() and madvise() syscalls do not map entirely well onto the
-> security requirements for shadow stack memory since they lead to windows
-> where memory is allocated but not yet protected or stacks which are not
-> properly and safely initialised. Instead a new syscall map_shadow_stack()
-> has been defined which allocates and initialises a shadow stack page.
+> Save shadow stack pointer in sigcontext structure while delivering signal.
+> Restore shadow stack pointer from sigcontext on sigreturn.
 > 
-> This patch implements this syscall for riscv. riscv doesn't require token
-> to be setup by kernel because user mode can do that by itself. However to
-> provide compatibility and portability with other architectues, user mode
-> can specify token set flag.
+> As part of save operation, kernel uses `ssamoswap` to save snapshot of
+> current shadow stack on shadow stack itself (can be called as a save
+> token). During restore on sigreturn, kernel retrieves token from top of
+> shadow stack and validates it. This allows that user mode can't arbitrary
+> pivot to any shadow stack address without having a token and thus provide
+> strong security assurance between signaly delivery and sigreturn window.
 > 
-> Reviewed-by: Zong Li <zong.li@sifive.com>
+> Use ABI compatible way of saving/restoring shadow stack pointer into
+> signal stack. This follows what Vector extension, where extra registers
+> are placed in a form of extension header + extension body in the stack.
+> The extension header indicates the size of the extra architectural
+> states plus the size of header itself, and a magic identifier of the
+> extension. Then, the extensions body contains the new architectural
+> states in the form defined by uapi.
+> 
+> Signed-off-by: Andy Chiu <andy.chiu@sifive.com>
 > Signed-off-by: Deepak Gupta <debug@rivosinc.com>
 
-This patch introduces a 'checkpatch.pl --strict' message:
+This patch causes some 'checkpatch.pl --strict' messages:
+
+CHECK: Comparison to NULL could be written "!saved_shstk_ptr"
+#271: FILE: arch/riscv/kernel/usercfi.c:186:
++	if (saved_shstk_ptr == NULL)
 
 CHECK: Lines should not end with a '('
-#78: FILE: arch/riscv/kernel/usercfi.c:36:
-+	asm goto(
+#300: FILE: arch/riscv/kernel/usercfi.c:215:
++		pr_info_ratelimited(
 
-I'll fix it up here in the event that v22 goes in, but please do the same 
-on your side in case a new version is needed.
+I've fixed them up here in the event that v22 goes in, but please do the 
+same on your side in case a new version is needed.
 
-
-thanks,
 
 - Paul
 
