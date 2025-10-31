@@ -1,57 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-66558-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66559-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4FEDC23AA6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 09:06:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2050AC23C1D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 09:22:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6F33C4F5A45
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 08:02:07 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2CC194FA8ED
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 08:11:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F05C2EA755;
-	Fri, 31 Oct 2025 08:01:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 587D632F778;
+	Fri, 31 Oct 2025 08:06:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Ns0KtGiD"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="FBw4eMw1"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D68AD285C8C
-	for <linux-fsdevel@vger.kernel.org>; Fri, 31 Oct 2025 08:01:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9A2432F75D;
+	Fri, 31 Oct 2025 08:06:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761897709; cv=none; b=DYkthTOmckVx5OyTNQMvyW+RBV76Wx3pjdadWuRiooQE6HxljrLXsvJ8M5rwIgQyNcQMjPxul4v+Li4CU0KTma2kgSRZG2lZY9asMPR+ZZOHJPb7StIy4LgdbtefAzibjSAecZuapbB4ADFglHibD1dhSP+fvBde+nTOhAhe/+E=
+	t=1761897979; cv=none; b=SDNRhha2mwuOzijp4ZdFttTqMYzzflC8+tr9ZBnVUXlSWayrfzj2FK/mighaaSGCgnO4reYxZbNHlvp9tANDOjgUn1xTUQIep17dBWMHd9d9xlDuY2gTula8DYg62XDOG6NlID6nZjFaUVA8QafBaVjLXzwYirjAGgNNkezlJAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761897709; c=relaxed/simple;
-	bh=IInPoNmws1rdwXIAe3FmjkR9o9o9vMLnVNh6++y47I0=;
+	s=arc-20240116; t=1761897979; c=relaxed/simple;
+	bh=YOmqd7Qrk+F4D8q0rLPzB0CBi5WACVgF9sV3TVqmWIg=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=JBCQhrtAAir3wuPuApRvU4m5d7klQ+zS6o7WrBrpzXwv5vzhZ2GhbJvGrEHi+MmBR18hO+z4ftZ4WVMQPn0gT7/9JTD61cmG7j4ZCGuzJymy1YnCNuFp/ykoT/JbycW47LY50Ysl7wbAbBqQU4uV4fN/X3wdNqTWNXP0K1OYlF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=Ns0KtGiD; arc=none smtp.client-ip=62.89.141.173
+	 Content-Disposition; b=ufNo7PjY3MEIl/52JBCVphhZqbQ1HCHfFBFgkhzp4xV0K3t4eqtPfghZt3R8wUcjgD29D6J+S+2mIGODu6IQ/rIkRTboJLrAOvOW8l1lCkE5/FOi3PI+RsRuUNXiRXnpIgVqIs6fawuwlkpbmGt0aroZ42WnHy0JdQ7wPeVSUOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=FBw4eMw1; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
 	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
 	Content-ID:Content-Description:In-Reply-To:References;
-	bh=3DM/dnRi4Pb9aakgkXCg1k+a94BMm3RihQal5PYu6eM=; b=Ns0KtGiDeRdbgCeKoDqulTn0S5
-	ic+7rXLXomGIFVwL03C8eWx+JSomdWFexIjlqO0QaI3M1LG0FCQ00jMvM1PKl5WH0KA6loXbGIpfS
-	q01WOYz1stbyVBv3SjttlUlAhw20gLND3IAHdO3aToVmfshrfc5NN+zXOvvnUTI3V5QO//LhRsFh9
-	4b13JbMcSRHrhh/kbh5J5r3WLjCj8O+3Kuh262mnmckWqvswTWbNC7Vfk+HVIpLtHqgx2ZFSNqa1w
-	Ve4PWd9OKQuKEnfNlpNy/JAWtXO2QWLFCqt8PIJJRCNxTJAcnz6cEsgQ65L7Hs2o1JGKZ141oL4VY
-	L3wT87xw==;
+	bh=WPFFDy+O21qt5q+XeU/u9iNgDfB/U0qzznfTB3bhtnc=; b=FBw4eMw1Vx0Qh4TP6exSRzkH+I
+	jBARV0LN2URl9D9PexOkwawI2ujFhiUUMO26dWxK8PnzWyUsz7brlYu/0GdRurrr5QfTUodGZZz6f
+	Tu92KgwEC4UAmaEOiu4lqK6oIncuT709zXQNEprQ2oAoEupORU0G9QlVrigKgYsHBYvHD7dszu1XF
+	jkjt1fv0FTO/oVNmzLg0IFbVEQ/HFYkiRgeMxBNX2k3vrmbohon2YHIPWlXSFtW3LSJsEY0Cry+9+
+	wF/u650IFMcFN5u/wXyg8Go8zAz3us5jr5ijJasDB8A6TfPOCif/gWAxckkBrw3iNXMfPUOjNDkbY
+	3P4GgnuQ==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vEk4v-0000000Gr5p-0MBC;
-	Fri, 31 Oct 2025 08:01:45 +0000
-Date: Fri, 31 Oct 2025 08:01:45 +0000
+	id 1vEk9H-0000000GtOa-322w;
+	Fri, 31 Oct 2025 08:06:15 +0000
+Date: Fri, 31 Oct 2025 08:06:15 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
-To: audit@kernel.org
+To: audit@vger.kernel.org
 Cc: Linus Torvalds <torvalds@linux-foundation.org>,
 	linux-fsdevel@vger.kernel.org, Paul Moore <paul@paul-moore.com>
-Subject: [RFC] audit reporting (or not reporting) pathnames on early failures
- in syscalls
-Message-ID: <20251031080145.GA2441659@ZenIV>
+Subject: [viro@zeniv.linux.org.uk: [RFC] audit reporting (or not reporting)
+ pathnames on early failures in syscalls]
+Message-ID: <20251031080615.GB2441659@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -62,7 +62,9 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-[and now with the right list address - sorry]
+OK, that's two misspellings of the list name already;-/
+
+Al, deeply embarrassed and crawling to get some sleep...
 
 ----- Forwarded message from Al Viro <viro@zeniv.linux.org.uk> -----
 
