@@ -1,80 +1,80 @@
-Return-Path: <linux-fsdevel+bounces-66544-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66545-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F79BC23063
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 03:33:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6A2CC230AE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 03:41:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 888354F13BA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 02:32:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 599F2404A5D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 02:41:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B4682D7DE5;
-	Fri, 31 Oct 2025 02:32:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52D0C3081AB;
+	Fri, 31 Oct 2025 02:41:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jNNeqXve"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="br1+UGyd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16F742EF65C
-	for <linux-fsdevel@vger.kernel.org>; Fri, 31 Oct 2025 02:32:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23AE62C3271
+	for <linux-fsdevel@vger.kernel.org>; Fri, 31 Oct 2025 02:41:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761877940; cv=none; b=g203jXo5Clh6Xxwbsd9gjfxJer1BF1duEIo6QgD9f5vRykEg1F8icNuiZrSZlT/aXx3aGexMJuGGi363i/JJDwCUL2fFmnkBQ8H44hDJwzu/rshzCpDvsrDazNaFNGZ9azx6VydgmLx2oj+UBKk98YZrrmU9WUn1NFlt/Opx1aU=
+	t=1761878499; cv=none; b=DYGmUTSOo6Jbit7Bkdi+mmqTf0+EP+nQ2A6p4QK6SDMwuFBk7dzhLeOJELQ7+bSiaZ+u8GrNvP9ZHDinknxIk1Jb7jcUGVMd8cI2+UUBanpPT0FXeTJfgndqWkTWkkE7jFHJwbYHWCzroNBIlF1WS8TKsaGJtMcgRXYTl2kYwk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761877940; c=relaxed/simple;
-	bh=p5yxsag2OECAEXhQk/zhvc5agc1YOH3y+Ya/dxbEMtA=;
+	s=arc-20240116; t=1761878499; c=relaxed/simple;
+	bh=2u+ToT4fF4FadWMbfDJ+MqfqCPPK4iSxquVlDoG35QA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BerA8ZP2Txbja21l2Jfh2aH34MsxnYvZK7ELOKaW6k9rLeNglu2LgU1HUIMwJ86HSmyHWtbk8Vhog7lGTqs6FyiLFssmDBmDB9mQCBuNfqCwCKLfHjMywUanRVy2heoIV9PVeqBNSXk6qZoevTC2K9F+ZyyoTz6BpWcqyxu+sPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jNNeqXve; arc=none smtp.client-ip=209.85.128.52
+	 Content-Type:Content-Disposition:In-Reply-To; b=aMk+fFx2VthyPZtraXiDBbw+Vj/hy2KF32z3n+8LFbPxrx4FGp96a1bu/OubsS2DjV/G3XEm55yqVFMU+fjZL1ZT/qq3J/H9bRLczFGEXclOGcAMh52TjnZBTIwnfsBouCAxK+j+p0ZEwqYc5+bGr78qWjfOfh28WC9uv3gwDHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=br1+UGyd; arc=none smtp.client-ip=209.85.218.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-47114a40161so19090445e9.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Oct 2025 19:32:16 -0700 (PDT)
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-b4539dddd99so422576766b.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Oct 2025 19:41:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761877934; x=1762482734; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1761878496; x=1762483296; darn=vger.kernel.org;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=QV9/aau8/kBCbnurL+VQAEoEEwOJQQtoJW0VC7kNSaw=;
-        b=jNNeqXvePL7g6NWhRIMtpomQg+dLCXwIWc+FiZyuCJviVFRqudOhs1pixnLtj+UIzv
-         PrSJ6qA8wrZ5RdG6bTxc3O9AG5YGko04Y2ghM/mVLvY5fS3WJzqFYzt1Xe/LLAVuT5Yq
-         u/1YyF8yUwOr35z06ImlgQ2hK+WYwwOgQAbzuobRdKTC+XAdz5xOg3HFasFgz62Q9NNO
-         R9EusmYVq7Y0gMsfqOzdpGe4M1UGw/KnvB2R4QXAeA2RnpWmSeg8R8i0ZgB9ufTxPhhS
-         nvs8Xf9EaLYa7Vh+NSDOCDHFtiQLLjkgopDmjB4G1NJMpHRGUsaRjfVR6OswIbLeFLl9
-         i74g==
+        bh=D8K4f+qBwafVznhIbPVk3RvAHNaTQKFSCyEiTyB6/Js=;
+        b=br1+UGydjZeR7RfirmrzEThgo/pYw2KNaNfuHtaOQY9DnKNwFLgs9cbBMQ52mcUAtI
+         3Is+2LsBi3lWXGGYC4hNchKp0SP4BOF3hcvd5ig6DMBO+grmfHj1c1E2JOyg6lG1PxW5
+         Wz4wiZLQP2K/RvIY6l15eaFLoWnpb2nDmUmzrtwF4Ab2LxJWDLzl4MgesD3tcWuHsKDi
+         wNyf37VfW9cL/OZqTZKzKNFlQ53xamlJb9AziWmz2WSb2K9FpZOdh4vbQbpRCGeRBeXu
+         gXF0nz5B/Ed7BP2HBCAMd2Wldr5qK5ZaQhJ4m+XD9/ARYkrbzqj6TlHvfLHcDvC54Lu3
+         x6Pw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761877934; x=1762482734;
+        d=1e100.net; s=20230601; t=1761878496; x=1762483296;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=QV9/aau8/kBCbnurL+VQAEoEEwOJQQtoJW0VC7kNSaw=;
-        b=gdM0dnxMgzgcgP+EqwivVCbiMuzCkN21O1+AlaR7nh6BpMQ1Bf/3YakHdChckriEMh
-         mWXfOK6muVFlDITHBgccEqo2I+L271KGB52VgQa624rAftjZI3FvRyxeOuqQzp4fHiSM
-         MGSQYY52H5yruJ/K8Eiru8C/j7xQEf4zCowClbvTW5jcTlm4sB8e1+o4EUzd00SNSYE1
-         oF8hKlArbHkbRsHnszeeXF2xvwxh2/WncyIqluNXhlMzAoYXOHHj0G2ut5ppygnLLqxz
-         9qQ8neUK33N7S4qb2PjeyBdujopwVlbsf12J3bws8nhWrbVQl/EQadEtq/JuJt8ESGoO
-         7/MQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXMgpDWmMpHxZx15V0RvBC2RdML0oXbFcGjwDbRp57hIMdDQ5an+V/AegbDJ+9nJCGR7n+I48j0BauD2g+r@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHI956kRxyjUo744GB8KnMxYMvyyqX+8gjFseX96ufzweF5uA7
-	68YdtM+ZrKluydsb76D4tVamdrNREzuNonHQHkD/e2pIx3ZFkF+/59g5
-X-Gm-Gg: ASbGnctQbse2kYo4eAT6SW3TRlqNI0X1oQi0sv4iXILeNWuHI0zthqUnWmxjMbM2mg2
-	oTA8Ve3ftTdSudY3NvAmA3bgljuKGYL36qo3uFdYJXk/EbiSEFLHu2Jknlc18M7I5k/6hfp6dqn
-	0ukYxLs8kVlENdVbDbbiclrLGR/O39ozlbXISJIYFLZzXyW/3jIFoMzMIVefQeVy9RUES0fECay
-	YPLKLnGWlukE3ZeVYCiYeRbrWmZtma/SMS6Z0p8NlUp3vIuZXUJNcYPBaC5w1uKibgYVcv5QlyL
-	uD5lglXvDAov95YoesEc6LYjxDuMQ+ZqLrDAb817UoxQ71LBhjR2NHmnkDDaOuN33+6vvTSluAI
-	7ZwJHFSB+DZXx4ZzqIOtIx6+DfOMMXs3F/nkdEZqU6Ml1O1G5H0rcUlqVm2Kb0c1pKvspBv8eQD
-	LosyLXVQzGTiOYl5d7IELw
-X-Google-Smtp-Source: AGHT+IGDjmSI9ZsALv2eCXVZl/4MAYrL8m6rIPSbY8ME0ISG3yZXFfPvYoXo+3p6G3qEwgFPt/dYzw==
-X-Received: by 2002:a05:6000:4387:b0:429:b1e4:1f74 with SMTP id ffacd0b85a97d-429bd683753mr1506395f8f.20.1761877933879;
-        Thu, 30 Oct 2025 19:32:13 -0700 (PDT)
+        bh=D8K4f+qBwafVznhIbPVk3RvAHNaTQKFSCyEiTyB6/Js=;
+        b=rWpyb0QUqREm3OwoEo+cNGeUcUVeTHgcbuY7wDTyOAw1rWsIKXlAmdxas4QwwxE+i3
+         JJ7LxoD7fHfystkMtFsCPnEQgoT0IfDwTCtmOlU03NaRPbm/yOXjnXnEuQXkYJuCE/Ko
+         yEqaG9Eaonr8GraFdTRAD1uImJaxE2UQlWh9OT9DE1k9wI+GX9O73+aexcWKwDjG1dLL
+         H9X/hkN+l6KcHh01u+uYq2z+l80qkQwS13uKBfLnndJGdt9O/VcDo8Ob8FmmrH4jDo5o
+         mqs5py7j6FguKmq+mq32mNJAdmIGJX0xMUS+k13vF5EiDl+HUSYBbCL6Q7NJEa90tp2v
+         AhSA==
+X-Forwarded-Encrypted: i=1; AJvYcCUl03pkOD4GNuMkW41Lxg6WLcIwzyHl7OQlg5NmnE/MV4d4rLjWzRaCMoPPeRz23Qq//hRNBvNRFqTPvUI+@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsPn0355ovE7FehRV3pS1trbbmPH0wn7ZU82TA0QYFuXdA26Kq
+	Vw0YOlGJfwBZP5UBqUaXKYYFeFaxomYjQp2KFBrwtcCZMHUYYyw2gBbw
+X-Gm-Gg: ASbGncvi+NNJnXckQXq/z+KCWCPWChENswd+CSWwD0ITqwySAp0wLEDPcWWMcpZzEPK
+	wNMG9aMu4skqL5Y7IyRkCRjVfhQ0ofw9MvCNF+f1XIsYnTl5ll4DPlG9LzV/5O5qg2X2lOkWS6m
+	PLW1Qg/cFKqmZ2suP6LSBypgwHLU43+KERfnRxO3dic1uddd3/XVRjhFDdEVNsz4pWxGkSQV2YB
+	4FcwzYVE8RQvHrYe2qTyhA3ZolSbmHIwozreslOlDGBrSZfEER2UhQ+mAB7tdfFA2HezoMXdC/m
+	vi6lxHLn1tTuc1RNBWgx7sTTJZV3MZRCopCiXQzAIHwI6AFKojEb5oUZbXqHzy2b9/5+ZOOSRu6
+	B/lMUwFUEmOG/HiSsSpyIEVMED5O8mgfjguJwMnSzlNx2yqW3EEJtc8lbZeN5Ii4iW8UU8LHK6T
+	w3xwd0oI2d4A==
+X-Google-Smtp-Source: AGHT+IG1AXC7Sm6OYw7C1ZASw22VMDmIY0Y536r5bQC6IFq1Acx29vK0ChgCjRiB9igtB/mts8AWKg==
+X-Received: by 2002:a17:907:d90:b0:b47:70bf:645 with SMTP id a640c23a62f3a-b7070844419mr177169766b.58.1761878496225;
+        Thu, 30 Oct 2025 19:41:36 -0700 (PDT)
 Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429c13f192fsm735011f8f.38.2025.10.30.19.32.13
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b70779ac3casm49556966b.24.2025.10.30.19.41.35
         (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 30 Oct 2025 19:32:13 -0700 (PDT)
-Date: Fri, 31 Oct 2025 02:32:12 +0000
+        Thu, 30 Oct 2025 19:41:35 -0700 (PDT)
+Date: Fri, 31 Oct 2025 02:41:35 +0000
 From: Wei Yang <richard.weiyang@gmail.com>
 To: Zi Yan <ziy@nvidia.com>
 Cc: linmiaohe@huawei.com, david@redhat.com, jane.chu@oracle.com,
@@ -90,11 +90,12 @@ Cc: linmiaohe@huawei.com, david@redhat.com, jane.chu@oracle.com,
 	Wei Yang <richard.weiyang@gmail.com>,
 	Yang Shi <shy828301@gmail.com>, linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v4 1/3] mm/huge_memory: add split_huge_page_to_order()
-Message-ID: <20251031023212.mghlthnfscnxkfhj@master>
+Subject: Re: [PATCH v4 2/3] mm/memory-failure: improve large block size folio
+ handling.
+Message-ID: <20251031024135.r37lpni2vw32wkiy@master>
 Reply-To: Wei Yang <richard.weiyang@gmail.com>
 References: <20251030014020.475659-1-ziy@nvidia.com>
- <20251030014020.475659-2-ziy@nvidia.com>
+ <20251030014020.475659-3-ziy@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -103,16 +104,25 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251030014020.475659-2-ziy@nvidia.com>
+In-Reply-To: <20251030014020.475659-3-ziy@nvidia.com>
 User-Agent: NeoMutt/20170113 (1.7.2)
 
-On Wed, Oct 29, 2025 at 09:40:18PM -0400, Zi Yan wrote:
->When caller does not supply a list to split_huge_page_to_list_to_order(),
->use split_huge_page_to_order() instead.
+On Wed, Oct 29, 2025 at 09:40:19PM -0400, Zi Yan wrote:
+>Large block size (LBS) folios cannot be split to order-0 folios but
+>min_order_for_folio(). Current split fails directly, but that is not
+>optimal. Split the folio to min_order_for_folio(), so that, after split,
+>only the folio containing the poisoned page becomes unusable instead.
 >
+>For soft offline, do not split the large folio if its min_order_for_folio()
+>is not 0. Since the folio is still accessible from userspace and premature
+>split might lead to potential performance loss.
+>
+>Suggested-by: Jane Chu <jane.chu@oracle.com>
 >Signed-off-by: Zi Yan <ziy@nvidia.com>
->Acked-by: David Hildenbrand <david@redhat.com>
+>Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
 >Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+
+Looks reasonable.
 
 Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
 
