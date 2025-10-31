@@ -1,282 +1,138 @@
-Return-Path: <linux-fsdevel+bounces-66612-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66613-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 134BEC264ED
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 18:15:28 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 654ADC26641
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 18:36:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 718AE3B1EFB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 17:10:39 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id DFC86352264
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 17:36:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5285301707;
-	Fri, 31 Oct 2025 17:10:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAF3627144A;
+	Fri, 31 Oct 2025 17:30:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A7bJCxaf"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xlTcVDMM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 304392FBDE7;
-	Fri, 31 Oct 2025 17:10:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3C37258EC3
+	for <linux-fsdevel@vger.kernel.org>; Fri, 31 Oct 2025 17:30:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761930633; cv=none; b=lHg3yNElAufslVUxpgyztHqd5pcQuv5QOlLs5I2VXtEN6LqyGA3vGOrnnyJkgU/p6QjtvRn0Fud9tQuBA2xBxfiJqrm14vUfSZwDb4tQ3kwhQLcSHUcPksVxFJXx9AJC19kmuR5BtKddcyQbIWHA5CpGAu8bJ2OebehBoPx4USI=
+	t=1761931817; cv=none; b=ckUNgQwWzZ/u9h6XEH4VxTpUG7q8jW4mHtDRvlhPAGVNrs1vMv/WzYfz94PkEdaaVqrUymjQwHgRUIYe8Bj0TPnhc9tuFje5hsjdEZ++FPzdBR8WgI37E1WTdMeEzVGaf2UorlkcTuLG3w6nSgO4afetT8ngJZcVQU7A8ixM8Ak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761930633; c=relaxed/simple;
-	bh=kuhuOItW6uCdq+fz4WAGlCR/9/yrgL18hnM08e2tvT0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MtEqqw5E8tDpHP4jiXbRz4zceXCxw5UBGTiggViwJRzZof25BADHsMbPIoyELBdHz5ejjAMvj5TAa8HeNANuYe+NkVN79c+eF4DFPHAeaOOSdTf9uOlOMsIj7nH6CAhogchlJiFK2Ykj6yDsoCyY+g2J1+TLTspfHGlzv3XNvZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A7bJCxaf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E087C4CEE7;
-	Fri, 31 Oct 2025 17:10:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761930632;
-	bh=kuhuOItW6uCdq+fz4WAGlCR/9/yrgL18hnM08e2tvT0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=A7bJCxafB8yPUn2jVPwgovpqDrVyVDoHd1YNY1T80hnSeh8dB9VqjFtr3DrJsOMJU
-	 iJsOygh3GjzMbnxoVGB5JHsZsmehUrmuvZ205PFnK/yMZs1A305ZYYeZbTU5jAUmf4
-	 PKqc783tCN/gsomjhIpBF9hPdwuGlM1e7QgFQHERkU0SaQlluZ4StXkPX9aWXYw2E+
-	 cCzBHIVooqg1urkmH5S7bCyXJamyHb61jQ4RpJNuY/3QooEsgi75BNsCSUljrTx76S
-	 UIyEyoFu9S+Tz41de0e9ICA2Eu1b2z7obn7gy/Kzk14eu3lpQkgVh+99fUY+MluoCr
-	 vZx88QEfFlFcA==
-Received: by pali.im (Postfix)
-	id 2FF9677A; Fri, 31 Oct 2025 18:10:27 +0100 (CET)
-Date: Fri, 31 Oct 2025 18:10:27 +0100
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To: Alejandro Colomar <alx@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, linux-man@vger.kernel.org,
-	"G. Branden Robinson" <branden@debian.org>,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3] man/man3/readdir.3, man/man3type/stat.3type: Improve
- documentation about .d_ino and .st_ino
-Message-ID: <20251031171027.nhpwrm7ih4fdkfns@pali>
-References: <h7mdd3ecjwbxjlrj2wdmoq4zw4ugwqclzonli5vslh6hob543w@hbay377rxnjd>
- <bfa7e72ea17ed369a1cf7589675c35728bb53ae4.1761907223.git.alx@kernel.org>
- <75ug4vsltx6tiwmt7m4rquh7uxsbpqqgopxjj7ethfkkdsmt7v@ycgd272ybqto>
- <grzxwjrxlneaus735jhwh2buo2nvmj2c4iospzmh7rcfs5czel@qjlb5czusc52>
+	s=arc-20240116; t=1761931817; c=relaxed/simple;
+	bh=ELK/TPtUoa0DdzfjuQJxQqd/fmBurZBKRSXbJIZQLus=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=f0jC1AnR8mwN9cd39f7wWeKq1IRH5CCOWCynewXmqo0n4xIQMmGFDW2V+WgEBFxo09WGriwWmWLptlA4q3y2L7AQQdx9fm9LPdIXP+fzxtSa62SZzxDBbLN+I6r6VsY3UNbMi8f3HVeEdwyQbhW/8VnaagiHmZ1HSx/VJEnn9vU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xlTcVDMM; arc=none smtp.client-ip=209.85.221.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
+Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-427015f63faso1485304f8f.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 31 Oct 2025 10:30:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761931813; x=1762536613; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8smNPhdFrk3F9UsFWfFOTzaD0PFIjf/jPl9FFvNvth4=;
+        b=xlTcVDMM2YXWR1LtabsCI+fB7WxqP/BNGHnliygKqFjwb59VituBUODZN1s/r/j7LZ
+         du8UJEaeZWkJblBUuqdirmTdbacpiHAx4twPldzTYbNbBoYDCQ9FfMNVRWkDAyjcEp9G
+         VnuOdx2g5GNGlXD4wmOalAtM+oMDs0akUUdQz3DW6CTXd9MfvTLab+OkNJZSj51jdWq5
+         E2JTNX9xt1uVWpzcWaELLrnfwEbKx0glh+eyIDMLENshEB64nz6eacBkPzv78Cn42AmY
+         Cwkt7NbGfh2GaG11aiPezj6Y7a9Bg2AFHaCfoUl1eglXUaM/oKEURdSt47gJ/32LFIN5
+         gGpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761931813; x=1762536613;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8smNPhdFrk3F9UsFWfFOTzaD0PFIjf/jPl9FFvNvth4=;
+        b=tqEi0O/o7Kr7L2wUnoYnwELUP4FD5sh3XkcE7wRhNj4dn1dQ3XhR2I2x2D85ViylMo
+         NohUacKK7oaqJ9na/UO1JsUvycD/Gb+uZxYXix7W2cz0l/FDHXkXIbs+Nc/V57hxQE2n
+         kiogkBeYK1GpDtMgzQsFfRdu4PI2PgGWZt3CczcdTuaYG1ta/0DhPgFtE6kDgI1W/Kmy
+         CEuX7ihXSyrgiRHhVIad454HcZhLRQH2hl4H7dJ/CWNGGpLOTGjbDE6pzX5twmLVhQX2
+         2bdjWg0CqzOQjwe9xDwdDsLD3l/XH6C89i4F1nyP3VWYBe9K88Q2FpNKFz7U+hQm9MYi
+         kjRA==
+X-Forwarded-Encrypted: i=1; AJvYcCWjJ3d/0dFht7vOd6EC5hbWqVX2EMzqbfFsELT+4yKbMOuoZxeOUvIRIyytRJQ/s4YZW/LJRWPAXvVPciaR@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6G6qzZ9vQ8CzpVjL+6t8sQpCT9mhZigvID0UGrAMN+4vsn3BV
+	wSlwEYaS25BQcY2fgA47LNd/NM9iSlJH63jO/oHKFdQn2mfsKILSTMnzSmhYzSBQjSusIhRrKva
+	OqP2C+E7W8Vp1oA==
+X-Google-Smtp-Source: AGHT+IGAlLQK0HkJ6COX6kdvZKn0Ro2fXbdMSgyDJ0pItor316xsKGfib1jQEkdwcGXkq1m1difB1/UltgkgBQ==
+X-Received: from wmwp25.prod.google.com ([2002:a05:600d:8319:b0:477:c8e:1959])
+ (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600d:8310:b0:477:326c:b33f with SMTP id 5b1f17b1804b1-477326cb6d3mr20439815e9.16.1761931812961;
+ Fri, 31 Oct 2025 10:30:12 -0700 (PDT)
+Date: Fri, 31 Oct 2025 17:30:12 +0000
+In-Reply-To: <20250924152214.7292-2-roypat@amazon.co.uk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <grzxwjrxlneaus735jhwh2buo2nvmj2c4iospzmh7rcfs5czel@qjlb5czusc52>
-User-Agent: NeoMutt/20180716
+Mime-Version: 1.0
+References: <20250924151101.2225820-4-patrick.roy@campus.lmu.de>
+ <20250924152214.7292-1-roypat@amazon.co.uk> <20250924152214.7292-2-roypat@amazon.co.uk>
+X-Mailer: aerc 0.21.0
+Message-ID: <DDWOP8GKHESP.2EOY2HGM9RXHU@google.com>
+Subject: Re: [PATCH v7 05/12] KVM: guest_memfd: Add flag to remove from direct map
+From: Brendan Jackman <jackmanb@google.com>
+To: "Roy, Patrick" <roypat@amazon.co.uk>
+Cc: "pbonzini@redhat.com" <pbonzini@redhat.com>, "corbet@lwn.net" <corbet@lwn.net>, 
+	"maz@kernel.org" <maz@kernel.org>, "oliver.upton@linux.dev" <oliver.upton@linux.dev>, 
+	"joey.gouly@arm.com" <joey.gouly@arm.com>, "suzuki.poulose@arm.com" <suzuki.poulose@arm.com>, 
+	"yuzenghui@huawei.com" <yuzenghui@huawei.com>, "catalin.marinas@arm.com" <catalin.marinas@arm.com>, 
+	"will@kernel.org" <will@kernel.org>, "tglx@linutronix.de" <tglx@linutronix.de>, 
+	"mingo@redhat.com" <mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>, 
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "x86@kernel.org" <x86@kernel.org>, 
+	"hpa@zytor.com" <hpa@zytor.com>, "luto@kernel.org" <luto@kernel.org>, 
+	"peterz@infradead.org" <peterz@infradead.org>, "willy@infradead.org" <willy@infradead.org>, 
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, "david@redhat.com" <david@redhat.com>, 
+	"lorenzo.stoakes@oracle.com" <lorenzo.stoakes@oracle.com>, 
+	"Liam.Howlett@oracle.com" <Liam.Howlett@oracle.com>, "vbabka@suse.cz" <vbabka@suse.cz>, 
+	"rppt@kernel.org" <rppt@kernel.org>, "surenb@google.com" <surenb@google.com>, "mhocko@suse.com" <mhocko@suse.com>, 
+	"song@kernel.org" <song@kernel.org>, "jolsa@kernel.org" <jolsa@kernel.org>, "ast@kernel.org" <ast@kernel.org>, 
+	"daniel@iogearbox.net" <daniel@iogearbox.net>, "andrii@kernel.org" <andrii@kernel.org>, 
+	"martin.lau@linux.dev" <martin.lau@linux.dev>, "eddyz87@gmail.com" <eddyz87@gmail.com>, 
+	"yonghong.song@linux.dev" <yonghong.song@linux.dev>, 
+	"john.fastabend@gmail.com" <john.fastabend@gmail.com>, "kpsingh@kernel.org" <kpsingh@kernel.org>, 
+	"sdf@fomichev.me" <sdf@fomichev.me>, "haoluo@google.com" <haoluo@google.com>, "jgg@ziepe.ca" <jgg@ziepe.ca>, 
+	"jhubbard@nvidia.com" <jhubbard@nvidia.com>, "peterx@redhat.com" <peterx@redhat.com>, 
+	"jannh@google.com" <jannh@google.com>, "pfalcato@suse.de" <pfalcato@suse.de>, 
+	"shuah@kernel.org" <shuah@kernel.org>, "seanjc@google.com" <seanjc@google.com>, 
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
+	"bpf@vger.kernel.org" <bpf@vger.kernel.org>, 
+	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>, "Cali, Marco" <xmarcalx@amazon.co.uk>, 
+	"Kalyazin, Nikita" <kalyazin@amazon.co.uk>, "Thomson, Jack" <jackabt@amazon.co.uk>, 
+	"derekmn@amazon.co.uk" <derekmn@amazon.co.uk>, "tabba@google.com" <tabba@google.com>, 
+	"ackerleytng@google.com" <ackerleytng@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Friday 31 October 2025 12:31:41 Alejandro Colomar wrote:
-> Hi Jan, Pali,
-> 
-> On Fri, Oct 31, 2025 at 11:56:19AM +0100, Jan Kara wrote:
-> > On Fri 31-10-25 11:44:14, Alejandro Colomar wrote:
-> > > Suggested-by: Pali Rohár <pali@kernel.org>
-> > > Co-authored-by: Pali Rohár <pali@kernel.org>
-> > > Co-authored-by: Jan Kara <jack@suse.cz>
-> > > Cc: "G. Branden Robinson" <branden@debian.org>
-> > > Cc: <linux-fsdevel@vger.kernel.org>
-> > > Signed-off-by: Alejandro Colomar <alx@kernel.org>
-> > > ---
-> > > 
-> > > Hi Jan,
-> > > 
-> > > I've put your suggestions into the patch.  I've also removed the
-> > > sentence about POSIX, as Pali discussed with Branden.
-> > > 
-> > > At the bottom of the email is the range-diff against the previous
-> > > version.
-> > 
-> > Thanks! The patch looks good. Feel free to add:
-> > 
-> > Reviewed-by: Jan Kara <jack@suse.cz>
-> 
-> Thanks!
-> 
-> Pali, would you mind signing the patch?  One you do, I'll merge.
+On Wed Sep 24, 2025 at 3:22 PM UTC, Patrick Roy wrote:
+> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+> index 1d0585616aa3..73a15cade54a 100644
+> --- a/include/linux/kvm_host.h
+> +++ b/include/linux/kvm_host.h
+> @@ -731,6 +731,12 @@ static inline bool kvm_arch_has_private_mem(struct kvm *kvm)
+>  bool kvm_arch_supports_gmem_mmap(struct kvm *kvm);
+>  #endif
+>  
+> +#ifdef CONFIG_KVM_GUEST_MEMFD
+> +#ifndef kvm_arch_gmem_supports_no_direct_map
+> +#define kvm_arch_gmem_supports_no_direct_map can_set_direct_map
+> +#endif
+> +#endif /* CONFIG_KVM_GUEST_MEMFD */
 
-Hello, yes, that this fine.
+The test robot seems happy so I think I'm probably mistaken here, but
+AFAICS can_set_direct_map only exists when ARCH_HAS_SET_DIRECT_MAP,
+which powerpc doesn't set.
 
-Reviewed-by: Pali Rohár <pali@kernel.org>
-
-
-For future improvements, it would be nice to adjust also other manpages
-which refers to inode numbers:
-
-  git grep -E '\<st_ino\>|\<stx_ino\>|\<d_ino\>'
-
-> 
-> Cheers,
-> Alex
-> 
-> > 
-> > 								Honza
-> > 
-> > > 
-> > > 
-> > > Have a lovely day!
-> > > Alex
-> > > 
-> > >  man/man3/readdir.3      | 19 ++++++++++++++++++-
-> > >  man/man3type/stat.3type | 20 +++++++++++++++++++-
-> > >  2 files changed, 37 insertions(+), 2 deletions(-)
-> > > 
-> > > diff --git a/man/man3/readdir.3 b/man/man3/readdir.3
-> > > index e1c7d2a6a..220643795 100644
-> > > --- a/man/man3/readdir.3
-> > > +++ b/man/man3/readdir.3
-> > > @@ -58,7 +58,24 @@ .SH DESCRIPTION
-> > >  structure are as follows:
-> > >  .TP
-> > >  .I .d_ino
-> > > -This is the inode number of the file.
-> > > +This is the inode number of the file
-> > > +in the filesystem containing
-> > > +the directory on which
-> > > +.BR readdir ()
-> > > +was called.
-> > > +If the directory entry is the mount point,
-> > > +then
-> > > +.I .d_ino
-> > > +differs from
-> > > +.I .st_ino
-> > > +returned by
-> > > +.BR stat (2)
-> > > +on this file:
-> > > +.I .d_ino
-> > > +is the inode number of the mount point,
-> > > +while
-> > > +.I .st_ino
-> > > +is the inode number of the root directory of the mounted filesystem.
-> > >  .TP
-> > >  .I .d_off
-> > >  The value returned in
-> > > diff --git a/man/man3type/stat.3type b/man/man3type/stat.3type
-> > > index 76ee3765d..ea9acc5ec 100644
-> > > --- a/man/man3type/stat.3type
-> > > +++ b/man/man3type/stat.3type
-> > > @@ -66,7 +66,25 @@ .SH DESCRIPTION
-> > >  macros may be useful to decompose the device ID in this field.)
-> > >  .TP
-> > >  .I .st_ino
-> > > -This field contains the file's inode number.
-> > > +This field contains the file's inode number
-> > > +in the filesystem on
-> > > +.IR .st_dev .
-> > > +If
-> > > +.BR stat (2)
-> > > +was called on the mount point,
-> > > +then
-> > > +.I .st_ino
-> > > +differs from
-> > > +.I .d_ino
-> > > +returned by
-> > > +.BR readdir (3)
-> > > +for the corresponding directory entry in the parent directory.
-> > > +In this case,
-> > > +.I .st_ino
-> > > +is the inode number of the root directory of the mounted filesystem,
-> > > +while
-> > > +.I .d_ino
-> > > +is the inode number of the mount point in the parent filesystem.
-> > >  .TP
-> > >  .I .st_mode
-> > >  This field contains the file type and mode.
-> > > 
-> > > Range-diff against v2:
-> > > 1:  d3eeebe81 ! 1:  bfa7e72ea man/man3/readdir.3, man/man3type/stat.3type: Improve documentation about .d_ino and .st_ino
-> > >     @@ Commit message
-> > >      
-> > >          Suggested-by: Pali Rohár <pali@kernel.org>
-> > >          Co-authored-by: Pali Rohár <pali@kernel.org>
-> > >     +    Co-authored-by: Jan Kara <jack@suse.cz>
-> > >          Cc: "G. Branden Robinson" <branden@debian.org>
-> > >          Cc: <linux-fsdevel@vger.kernel.org>
-> > >          Signed-off-by: Alejandro Colomar <alx@kernel.org>
-> > >     @@ man/man3/readdir.3: .SH DESCRIPTION
-> > >       .TP
-> > >       .I .d_ino
-> > >      -This is the inode number of the file.
-> > >     -+This is the inode number of the file,
-> > >     -+which belongs to the filesystem
-> > >     -+.I .st_dev
-> > >     -+(see
-> > >     -+.BR stat (3type))
-> > >     -+of the directory on which
-> > >     ++This is the inode number of the file
-> > >     ++in the filesystem containing
-> > >     ++the directory on which
-> > >      +.BR readdir ()
-> > >      +was called.
-> > >      +If the directory entry is the mount point,
-> > >      +then
-> > >      +.I .d_ino
-> > >      +differs from
-> > >     -+.IR .st_ino :
-> > >     ++.I .st_ino
-> > >     ++returned by
-> > >     ++.BR stat (2)
-> > >     ++on this file:
-> > >      +.I .d_ino
-> > >     -+is the inode number of the underlying mount point,
-> > >     ++is the inode number of the mount point,
-> > >      +while
-> > >      +.I .st_ino
-> > >     -+is the inode number of the mounted file system.
-> > >     -+According to POSIX,
-> > >     -+this Linux behavior is considered to be a bug,
-> > >     -+but is nevertheless conforming.
-> > >     ++is the inode number of the root directory of the mounted filesystem.
-> > >       .TP
-> > >       .I .d_off
-> > >       The value returned in
-> > >     @@ man/man3type/stat.3type: .SH DESCRIPTION
-> > >       .TP
-> > >       .I .st_ino
-> > >      -This field contains the file's inode number.
-> > >     -+This field contains the file's inode number,
-> > >     -+which belongs to the
-> > >     ++This field contains the file's inode number
-> > >     ++in the filesystem on
-> > >      +.IR .st_dev .
-> > >      +If
-> > >      +.BR stat (2)
-> > >      +was called on the mount point,
-> > >      +then
-> > >     -+.I .d_ino
-> > >     -+differs from
-> > >     -+.IR .st_ino :
-> > >     -+.I .d_ino
-> > >     -+is the inode number of the underlying mount point,
-> > >     -+while
-> > >      +.I .st_ino
-> > >     -+is the inode number of the mounted file system.
-> > >     ++differs from
-> > >     ++.I .d_ino
-> > >     ++returned by
-> > >     ++.BR readdir (3)
-> > >     ++for the corresponding directory entry in the parent directory.
-> > >     ++In this case,
-> > >     ++.I .st_ino
-> > >     ++is the inode number of the root directory of the mounted filesystem,
-> > >     ++while
-> > >     ++.I .d_ino
-> > >     ++is the inode number of the mount point in the parent filesystem.
-> > >       .TP
-> > >       .I .st_mode
-> > >       This field contains the file type and mode.
-> > > 
-> > > base-commit: f305f7647d5cf62e7e764fb7a25c4926160c594f
-> > > -- 
-> > > 2.51.0
-> > > 
-> > -- 
-> > Jan Kara <jack@suse.com>
-> > SUSE Labs, CR
-> 
-> -- 
-> <https://www.alejandro-colomar.es>
-> Use port 80 (that is, <...:80/>).
+If this is indeed an issue I think it can be fixed by just defining
+can_set_direct_map() to false when !ARCH_HAS_SET_DIRECT_MAP.
 
