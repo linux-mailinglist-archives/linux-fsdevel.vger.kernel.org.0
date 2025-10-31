@@ -1,79 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-66615-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66616-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 110C2C266CE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 18:42:57 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6A1BC2677F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 18:48:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 807DA352397
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 17:42:56 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 885F14FAC3E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 17:43:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11746301707;
-	Fri, 31 Oct 2025 17:42:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 526F527FB37;
+	Fri, 31 Oct 2025 17:42:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GVm4+fJH"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XtNJBG+z"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D8CB2D661C
-	for <linux-fsdevel@vger.kernel.org>; Fri, 31 Oct 2025 17:42:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51EB9302770
+	for <linux-fsdevel@vger.kernel.org>; Fri, 31 Oct 2025 17:42:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761932557; cv=none; b=V64qnM5bd/NU2funsLDX4FMH4dD9+XE1+3IJntLL7AmTu9tsXtaX8Q0VQeV/qO83fyguNGBvoLRtqtDlD8eg8NZM7F0GTmc5GCdOyXreqnnLm5kftEhTa+kB4UqjWUdQMKGqarcAQS+Tq4EhPb8M3hGXWJTwC61wjfkGsZ2qiYs=
+	t=1761932560; cv=none; b=l+lyXNUyySLtHx9vYFtSUPsbUwVTAwJyiWMTBBPMJ3fdvSUjr+jUebw2PmO77O3U/Vzi+CB7P/YTuOY7exO/AbIuYTF3gOt9odFZwDHCx7KsYaVcBwwrFcd1X+DnK15VfrDdLpY9bCqY9RArbwjMe5ph+ORlNhJcgXubJU5aTTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761932557; c=relaxed/simple;
-	bh=d1R4iL+4wvoOBAD0zobayWZrPssfeYHyl9iEv1Doqgs=;
+	s=arc-20240116; t=1761932560; c=relaxed/simple;
+	bh=eCYShfRX0rHI6sx8cr4A4kN5N77l6dX/sdpeOCW1NVU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hqvttPlf0Tljcifv5fb70SmX8jA7hPJuE1m6JnUIBWeGAVoxl0FP+auBa0jTu1D9U93a6cl8txoVFOyug2yY478cPBiG4LxmYLGXs/KqcW/wikeb3kidEV8Sf4AcpB/H2EvPEoWPEZH0OIG/8nkbt5MZhpc8uH+7RQTA6MUQXso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GVm4+fJH; arc=none smtp.client-ip=209.85.128.42
+	 MIME-Version; b=OD9NFj7tOal1y8rLrFNHc6o7F0Ps9O7jtCe0U1+yB6/8uHLsRqBEKq9y9Zfu2U+P/cvGNbgu38MWJbB0dgF4W9/V+t50H+jqFsh6kgGmsDQvgkMEfBVQ1D8PS3Z/J7L2Bo3/c8C7bKux8ShFTsaEfCVvu4bqRqoO0Pt867QKlS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XtNJBG+z; arc=none smtp.client-ip=209.85.128.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-47721293fd3so14844435e9.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 31 Oct 2025 10:42:35 -0700 (PDT)
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-47112a73785so18371205e9.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 31 Oct 2025 10:42:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761932554; x=1762537354; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1761932556; x=1762537356; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=q/LvF/A8PwnfUK+jfwgeT95AEzwYHe3M659qwoSt/Tk=;
-        b=GVm4+fJH4xGqJgS0JGLjbndRVra8Fy6W2+MDizEaXlsZHzEfiI1CiUlhlVhHBLra47
-         l5nHMuaeC8KvDybVLr5Xtr+ld3yNx2UWu06XxVI1JvT198VXHTyuuNxaKPWjlB8dkQmg
-         gY+ywyAKChkvO5ZmkZmVD1jd5nalHtqiG7ZpWu29WMr0wSeESadgcxUV08N/GAQQpQmY
-         DZScKLqPvHjTBl2EJUiPLkH5kZo1xh1EtN4EsrjqbVeWQZePzKs4WCumnNm/ZLd+SbCJ
-         881tqlxPk9DfwQka+j02oyPZ+n/WUVtmZ0Bsrgodwpx+AJBt+Xz6xmkQ6Cc23JkKVsgP
-         WLyA==
+        bh=/JFfpBNltudBh1dcawvKJ9buR3KdRpsYCaA9EH+988I=;
+        b=XtNJBG+zq/eb8mLDXbsh48azjhXUeHWDCxawc+rT/MWGnG7ZWPX+/Rwria25WJECTS
+         DjMtXWk1KyyPxvONvxc7NP1eoG5QbN4BvqzJm6hQj5nq2UER3CyajMdZF1DqyRt91mY8
+         YfWB/KacRhL8c0RYJmRYm+O40bL/anjDGaPwQZ8DYUSjzpj9BrB/1f7u24Jj0BNkolnv
+         OshqoODm/SEpzBoRqYpcu8gkFJYt6IyVSpijdJ7IW1KFZZpG7jyNSCUBCW4LEQgOAcna
+         FjVa8Vc4vRHSDqlqCo9IhuQ6Bp4DFj7PrClXeFsb3ZNB72elh7hReScbH+JQ2dbIV0CR
+         iusg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761932554; x=1762537354;
+        d=1e100.net; s=20230601; t=1761932556; x=1762537356;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=q/LvF/A8PwnfUK+jfwgeT95AEzwYHe3M659qwoSt/Tk=;
-        b=a7LCoAX1jjBaKomEqWLwuTASRSGGqpTk+PvQw8D1v/lt6xFGLLOIm7BGYEXfEJrNc+
-         q58+2CFy1nRR7YPhgIhxWoa3qC19SITIQmDy5tNRE1KkZkJrxQkPs+sP9EkqYeKQfwD2
-         FBh5BmuBqZDfHfPftD1FpnG1vYP+ur+rvn3TBQtkhJpJ5WT0XjC/WS4uJ47XAGazuHn2
-         muC5k98IyRJbGdWQFZZs0w6vCRCJWsxKdusXgZZ8YGte2Q7KacWRiXxdeTrjI/jvtrdg
-         rSUY9/B369TcvD+thtTrZn7c7FaQyTDG6Wo4MaKW6DtWS0ad+Y3s+sprripGYDTENfwx
-         qqug==
-X-Forwarded-Encrypted: i=1; AJvYcCWv6q3KHjb82nSE5IEFq1vNb2HnCDZ3Y1nvFR58x97pJjFu9Aj4s8L4G9jzp2p6lwoRPVG+0fj1bh/pDMRJ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yye67RJa0QVpHyO/78mNgnQXim2kifQQUxtMcow/V5IMpqCRYiV
-	QK2fiGGLz7fcQ2wPTFILzjW718Bxinb2GsZB1QWMB6yzVPCL2F0hn0gR
-X-Gm-Gg: ASbGnctKReu3kUEZhrR6uiLW4QTWeQf/eDV3CCYrURVlseOLLjFlbA7NpqGyA08I4Mt
-	cPAEXqWt3oZVV9w7dqjZCkXmpV3xAevuQkwKUEBCh+pdLx7S1iifdiL1mHArzrEMqSPeB+O22CM
-	mk/9vdZBTgOPXD+uuhu/cIZZQVKKveFcSLJH3JNUCilZHU+pVSg4VIsRIBgqk9wOJC22bV63DSc
-	kw+ipmd9ODwUjbjZZsFjwKcIy/C2XSPrT4FoogQVEDNq8sfnZPg4jfVF1tNCvjjlIdixtfy4Cuo
-	OcmBE3K/faTDg0Bq8swvnrW4yIYYiipGaeMM59u/7e9v082K0alwv2DqznJPirx44a2YjV72Fq2
-	RIp95eIneehX3grfxQilftlhgnUSMtcpj2mdx2cfIurBwsZduU3TJ4yg86KkZKXhQ2kJK57JbbD
-	ltH8RtXPClnB4fc5UIKSTrFrYuXFVAP6qXNrvHbly374m83g0gIq593v78Su0=
-X-Google-Smtp-Source: AGHT+IEgGIpbEqFITIYD0jLuHMu6DCril9HILvlfeFDEOAO0cMDvZU9V83iSt7M2m7bKdOQ6MWIqbA==
-X-Received: by 2002:a7b:ca54:0:b0:475:dc32:5600 with SMTP id 5b1f17b1804b1-477262e8fd6mr61275235e9.19.1761932553429;
-        Fri, 31 Oct 2025 10:42:33 -0700 (PDT)
+        bh=/JFfpBNltudBh1dcawvKJ9buR3KdRpsYCaA9EH+988I=;
+        b=jpfZdHsY9wOCk9k53KvIl7SuSr0jGuAzDeAVdECPM+g0us3zkDpA/aTT6+HaNEsaqL
+         NlAg39HyG5Ad7KMNoYqLym7qV2GYUCWEswuO428pvj/39cfXPlZHkQX9rmBm1M3iWk02
+         XOBsK8WCJ5bSzupQnNZbXtKsMpCWhKpuJkHCKMX8BtoPKOvjegnMZrddtBrjtM+3CIFc
+         qR31a8AFeDPsuPm1Zd/AIlrL+cebhIcRhF69s2Hipod6pWA6t7wSkoHiwFabpqaNKilZ
+         mopXgS4VpHn947DVoBkVh/Hznzg1UL/NRG9V0NQ21Y9niTC+UtI/9253VbdqXHgL6USJ
+         euLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXEHxjKTxdkjHCmbQaELmh1qmvfgnxYHKGyh+HqiEe3PTZB3zGVu2BcPKKRLttQRICuUUXM4FXIYnLlFaFZ@vger.kernel.org
+X-Gm-Message-State: AOJu0YzznitlJAJrzTSetM17UojQ5kA9Ewn0WJohc6HIj0ZRMguwAmmq
+	tN+RqXejxyLQ3Cpxrvy9SRzkFm62ZxOXhxt1z8XtaAGhcZEThkbCbNhK
+X-Gm-Gg: ASbGncuFU7jURe/Fmp76a7RPNOMfZFXM138BN1UMQ09so3bBKIIoQBhq0k8aDHb9ZpV
+	h6FtB+H6Z/7LOUTYqjNTpriNtNT3R3TkElZZFazZZMiu86v8doKlz8dSnbdFwpYTz6Vlzc+RRRw
+	SIhVnoaJHX2sremnafc3NUlBiTQUD7i62XndZ6qusS58DqjED6e7cLT1NwN1AK2vkzJR3zrtCUB
+	qK6/JP36mk9osL3m0sTs+ggMwkNyPc3OGykITUSPAiF89jEgJ23EpN3UGZmX5brMwdW54TGuOfZ
+	TDd/VxfP2eR7j7yku+56KKlzGJpb4RxC68ALGpk8z8X77CqJC/rytz1ioiJzMa+lZTkFHfxCUaO
+	Qqte2VTmPhueIGhivwO/xNTGvxrezMCSCsQCoBwZFieM2KjP6Jq/IumwSFHi6FAtVlpGnGTaG3+
+	Z0/Fzn/jC0jHLjMnpONi1j2oNZYsQ13jhsT5SRG2/DGUgq1SEFXr8640kKU5A=
+X-Google-Smtp-Source: AGHT+IFbNYPa3KcCa7VpnDiT2uVnaGmXVOevywcNwvqIGQkDf6aVOLWVM/y4XkNRP6N+RMNcb2Nb7g==
+X-Received: by 2002:a05:600d:6359:b0:475:de14:db1e with SMTP id 5b1f17b1804b1-477346ec27emr19014905e9.24.1761932556254;
+        Fri, 31 Oct 2025 10:42:36 -0700 (PDT)
 Received: from f.. (cst-prg-14-82.cust.vodafone.cz. [46.135.14.82])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4773c53eafbsm6728865e9.12.2025.10.31.10.42.31
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4773c53eafbsm6728865e9.12.2025.10.31.10.42.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Oct 2025 10:42:32 -0700 (PDT)
+        Fri, 31 Oct 2025 10:42:35 -0700 (PDT)
 From: Mateusz Guzik <mjguzik@gmail.com>
 To: torvalds@linux-foundation.org
 Cc: brauner@kernel.org,
@@ -84,9 +84,9 @@ Cc: brauner@kernel.org,
 	tglx@linutronix.de,
 	pfalcato@suse.de,
 	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH 1/3] x86: fix access_ok() and valid_user_address() using wrong USER_PTR_MAX in modules
-Date: Fri, 31 Oct 2025 18:42:18 +0100
-Message-ID: <20251031174220.43458-2-mjguzik@gmail.com>
+Subject: [PATCH 2/3] runtime-const: split headers between accessors and fixup; disable for modules
+Date: Fri, 31 Oct 2025 18:42:19 +0100
+Message-ID: <20251031174220.43458-3-mjguzik@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251031174220.43458-1-mjguzik@gmail.com>
 References: <CAHk-=wjRA8G9eOPWa_Njz4NAk3gZNvdt0WAHZfn3iXfcVsmpcA@mail.gmail.com>
@@ -99,86 +99,432 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-[real commit message will land here later]
+risv and x86 covered as a POC
 ---
- arch/x86/include/asm/uaccess_64.h | 17 +++++++++--------
- arch/x86/kernel/cpu/common.c      |  8 +++++---
- 2 files changed, 14 insertions(+), 11 deletions(-)
+ .../include/asm/runtime-const-accessors.h     | 151 ++++++++++++++++++
+ arch/riscv/include/asm/runtime-const.h        | 142 +---------------
+ .../x86/include/asm/runtime-const-accessors.h |  45 ++++++
+ arch/x86/include/asm/runtime-const.h          |  38 +----
+ 4 files changed, 200 insertions(+), 176 deletions(-)
+ create mode 100644 arch/riscv/include/asm/runtime-const-accessors.h
+ create mode 100644 arch/x86/include/asm/runtime-const-accessors.h
 
-diff --git a/arch/x86/include/asm/uaccess_64.h b/arch/x86/include/asm/uaccess_64.h
-index c8a5ae35c871..f60c0ed147c3 100644
---- a/arch/x86/include/asm/uaccess_64.h
-+++ b/arch/x86/include/asm/uaccess_64.h
-@@ -12,13 +12,14 @@
- #include <asm/cpufeatures.h>
- #include <asm/page.h>
- #include <asm/percpu.h>
--#include <asm/runtime-const.h>
- 
--/*
-- * Virtual variable: there's no actual backing store for this,
-- * it can purely be used as 'runtime_const_ptr(USER_PTR_MAX)'
-- */
--extern unsigned long USER_PTR_MAX;
-+extern unsigned long user_ptr_max;
-+#ifdef MODULE
-+#define __user_ptr_max_accessor	user_ptr_max
-+#else
-+#include <asm/runtime-const.h>
-+#define __user_ptr_max_accessor	runtime_const_ptr(user_ptr_max)
-+#endif
- 
- #ifdef CONFIG_ADDRESS_MASKING
- /*
-@@ -54,7 +55,7 @@ static inline unsigned long __untagged_addr_remote(struct mm_struct *mm,
- #endif
- 
- #define valid_user_address(x) \
--	likely((__force unsigned long)(x) <= runtime_const_ptr(USER_PTR_MAX))
-+	likely((__force unsigned long)(x) <= __user_ptr_max_accessor)
- 
- /*
-  * Masking the user address is an alternative to a conditional
-@@ -67,7 +68,7 @@ static inline void __user *mask_user_address(const void __user *ptr)
- 	asm("cmp %1,%0\n\t"
- 	    "cmova %1,%0"
- 		:"=r" (ret)
--		:"r" (runtime_const_ptr(USER_PTR_MAX)),
-+		:"r" (__user_ptr_max_accessor),
- 		 "0" (ptr));
- 	return ret;
- }
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 3ff9682d8bc4..f338f5e9adfc 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -78,6 +78,9 @@
- DEFINE_PER_CPU_READ_MOSTLY(struct cpuinfo_x86, cpu_info);
- EXPORT_PER_CPU_SYMBOL(cpu_info);
- 
-+unsigned long user_ptr_max __ro_after_init;
-+EXPORT_SYMBOL(user_ptr_max);
+diff --git a/arch/riscv/include/asm/runtime-const-accessors.h b/arch/riscv/include/asm/runtime-const-accessors.h
+new file mode 100644
+index 000000000000..5b8e0349ee0d
+--- /dev/null
++++ b/arch/riscv/include/asm/runtime-const-accessors.h
+@@ -0,0 +1,151 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _ASM_RISCV_RUNTIME_CONST_ACCESSORS_H
++#define _ASM_RISCV_RUNTIME_CONST_ACCESSORS_H
 +
- u32 elf_hwcap2 __read_mostly;
++#ifdef MODULE
++#error "this functionality is not available for modules"
++#endif
++
++#ifdef CONFIG_32BIT
++#define runtime_const_ptr(sym)					\
++({								\
++	typeof(sym) __ret;					\
++	asm_inline(".option push\n\t"				\
++		".option norvc\n\t"				\
++		"1:\t"						\
++		"lui	%[__ret],0x89abd\n\t"			\
++		"addi	%[__ret],%[__ret],-0x211\n\t"		\
++		".option pop\n\t"				\
++		".pushsection runtime_ptr_" #sym ",\"a\"\n\t"	\
++		".long 1b - .\n\t"				\
++		".popsection"					\
++		: [__ret] "=r" (__ret));			\
++	__ret;							\
++})
++#else
++/*
++ * Loading 64-bit constants into a register from immediates is a non-trivial
++ * task on riscv64. To get it somewhat performant, load 32 bits into two
++ * different registers and then combine the results.
++ *
++ * If the processor supports the Zbkb extension, we can combine the final
++ * "slli,slli,srli,add" into the single "pack" instruction. If the processor
++ * doesn't support Zbkb but does support the Zbb extension, we can
++ * combine the final "slli,srli,add" into one instruction "add.uw".
++ */
++#define RISCV_RUNTIME_CONST_64_PREAMBLE				\
++	".option push\n\t"					\
++	".option norvc\n\t"					\
++	"1:\t"							\
++	"lui	%[__ret],0x89abd\n\t"				\
++	"lui	%[__tmp],0x1234\n\t"				\
++	"addiw	%[__ret],%[__ret],-0x211\n\t"			\
++	"addiw	%[__tmp],%[__tmp],0x567\n\t"			\
++
++#define RISCV_RUNTIME_CONST_64_BASE				\
++	"slli	%[__tmp],%[__tmp],32\n\t"			\
++	"slli	%[__ret],%[__ret],32\n\t"			\
++	"srli	%[__ret],%[__ret],32\n\t"			\
++	"add	%[__ret],%[__ret],%[__tmp]\n\t"			\
++
++#define RISCV_RUNTIME_CONST_64_ZBA				\
++	".option push\n\t"					\
++	".option arch,+zba\n\t"					\
++	".option norvc\n\t"					\
++	"slli	%[__tmp],%[__tmp],32\n\t"			\
++	"add.uw %[__ret],%[__ret],%[__tmp]\n\t"			\
++	"nop\n\t"						\
++	"nop\n\t"						\
++	".option pop\n\t"					\
++
++#define RISCV_RUNTIME_CONST_64_ZBKB				\
++	".option push\n\t"					\
++	".option arch,+zbkb\n\t"				\
++	".option norvc\n\t"					\
++	"pack	%[__ret],%[__ret],%[__tmp]\n\t"			\
++	"nop\n\t"						\
++	"nop\n\t"						\
++	"nop\n\t"						\
++	".option pop\n\t"					\
++
++#define RISCV_RUNTIME_CONST_64_POSTAMBLE(sym)			\
++	".option pop\n\t"					\
++	".pushsection runtime_ptr_" #sym ",\"a\"\n\t"		\
++	".long 1b - .\n\t"					\
++	".popsection"						\
++
++#if defined(CONFIG_RISCV_ISA_ZBA) && defined(CONFIG_TOOLCHAIN_HAS_ZBA)	\
++	&& defined(CONFIG_RISCV_ISA_ZBKB)
++#define runtime_const_ptr(sym)						\
++({									\
++	typeof(sym) __ret, __tmp;					\
++	asm_inline(RISCV_RUNTIME_CONST_64_PREAMBLE			\
++		ALTERNATIVE_2(						\
++			RISCV_RUNTIME_CONST_64_BASE,			\
++			RISCV_RUNTIME_CONST_64_ZBA,			\
++			0, RISCV_ISA_EXT_ZBA, 1,			\
++			RISCV_RUNTIME_CONST_64_ZBKB,			\
++			0, RISCV_ISA_EXT_ZBKB, 1			\
++		)							\
++		RISCV_RUNTIME_CONST_64_POSTAMBLE(sym)			\
++		: [__ret] "=r" (__ret), [__tmp] "=r" (__tmp));		\
++	__ret;								\
++})
++#elif defined(CONFIG_RISCV_ISA_ZBA) && defined(CONFIG_TOOLCHAIN_HAS_ZBA)
++#define runtime_const_ptr(sym)						\
++({									\
++	typeof(sym) __ret, __tmp;					\
++	asm_inline(RISCV_RUNTIME_CONST_64_PREAMBLE			\
++		ALTERNATIVE(						\
++			RISCV_RUNTIME_CONST_64_BASE,			\
++			RISCV_RUNTIME_CONST_64_ZBA,			\
++			0, RISCV_ISA_EXT_ZBA, 1				\
++		)							\
++		RISCV_RUNTIME_CONST_64_POSTAMBLE(sym)			\
++		: [__ret] "=r" (__ret), [__tmp] "=r" (__tmp));		\
++	__ret;								\
++})
++#elif defined(CONFIG_RISCV_ISA_ZBKB)
++#define runtime_const_ptr(sym)						\
++({									\
++	typeof(sym) __ret, __tmp;					\
++	asm_inline(RISCV_RUNTIME_CONST_64_PREAMBLE			\
++		ALTERNATIVE(						\
++			RISCV_RUNTIME_CONST_64_BASE,			\
++			RISCV_RUNTIME_CONST_64_ZBKB,			\
++			0, RISCV_ISA_EXT_ZBKB, 1			\
++		)							\
++		RISCV_RUNTIME_CONST_64_POSTAMBLE(sym)			\
++		: [__ret] "=r" (__ret), [__tmp] "=r" (__tmp));		\
++	__ret;								\
++})
++#else
++#define runtime_const_ptr(sym)						\
++({									\
++	typeof(sym) __ret, __tmp;					\
++	asm_inline(RISCV_RUNTIME_CONST_64_PREAMBLE			\
++		RISCV_RUNTIME_CONST_64_BASE				\
++		RISCV_RUNTIME_CONST_64_POSTAMBLE(sym)			\
++		: [__ret] "=r" (__ret), [__tmp] "=r" (__tmp));		\
++	__ret;								\
++})
++#endif
++#endif
++
++#define runtime_const_shift_right_32(val, sym)			\
++({								\
++	u32 __ret;						\
++	asm_inline(".option push\n\t"				\
++		".option norvc\n\t"				\
++		"1:\t"						\
++		SRLI " %[__ret],%[__val],12\n\t"		\
++		".option pop\n\t"				\
++		".pushsection runtime_shift_" #sym ",\"a\"\n\t"	\
++		".long 1b - .\n\t"				\
++		".popsection"					\
++		: [__ret] "=r" (__ret)				\
++		: [__val] "r" (val));				\
++	__ret;							\
++})
++
++#endif /* _ASM_RISCV_RUNTIME_CONST_ACCESSORS_H */
+diff --git a/arch/riscv/include/asm/runtime-const.h b/arch/riscv/include/asm/runtime-const.h
+index d766e2b9e6df..14994be81487 100644
+--- a/arch/riscv/include/asm/runtime-const.h
++++ b/arch/riscv/include/asm/runtime-const.h
+@@ -11,147 +11,7 @@
  
- /* Number of siblings per CPU package */
-@@ -2575,14 +2578,13 @@ void __init arch_cpu_finalize_init(void)
- 	alternative_instructions();
+ #include <linux/uaccess.h>
  
- 	if (IS_ENABLED(CONFIG_X86_64)) {
--		unsigned long USER_PTR_MAX = TASK_SIZE_MAX;
+-#ifdef CONFIG_32BIT
+-#define runtime_const_ptr(sym)					\
+-({								\
+-	typeof(sym) __ret;					\
+-	asm_inline(".option push\n\t"				\
+-		".option norvc\n\t"				\
+-		"1:\t"						\
+-		"lui	%[__ret],0x89abd\n\t"			\
+-		"addi	%[__ret],%[__ret],-0x211\n\t"		\
+-		".option pop\n\t"				\
+-		".pushsection runtime_ptr_" #sym ",\"a\"\n\t"	\
+-		".long 1b - .\n\t"				\
+-		".popsection"					\
+-		: [__ret] "=r" (__ret));			\
+-	__ret;							\
+-})
+-#else
+-/*
+- * Loading 64-bit constants into a register from immediates is a non-trivial
+- * task on riscv64. To get it somewhat performant, load 32 bits into two
+- * different registers and then combine the results.
+- *
+- * If the processor supports the Zbkb extension, we can combine the final
+- * "slli,slli,srli,add" into the single "pack" instruction. If the processor
+- * doesn't support Zbkb but does support the Zbb extension, we can
+- * combine the final "slli,srli,add" into one instruction "add.uw".
+- */
+-#define RISCV_RUNTIME_CONST_64_PREAMBLE				\
+-	".option push\n\t"					\
+-	".option norvc\n\t"					\
+-	"1:\t"							\
+-	"lui	%[__ret],0x89abd\n\t"				\
+-	"lui	%[__tmp],0x1234\n\t"				\
+-	"addiw	%[__ret],%[__ret],-0x211\n\t"			\
+-	"addiw	%[__tmp],%[__tmp],0x567\n\t"			\
 -
-+		user_ptr_max = TASK_SIZE_MAX;
- 		/*
- 		 * Enable this when LAM is gated on LASS support
- 		if (cpu_feature_enabled(X86_FEATURE_LAM))
- 			USER_PTR_MAX = (1ul << 63) - PAGE_SIZE;
- 		 */
--		runtime_const_init(ptr, USER_PTR_MAX);
-+		runtime_const_init(ptr, user_ptr_max);
+-#define RISCV_RUNTIME_CONST_64_BASE				\
+-	"slli	%[__tmp],%[__tmp],32\n\t"			\
+-	"slli	%[__ret],%[__ret],32\n\t"			\
+-	"srli	%[__ret],%[__ret],32\n\t"			\
+-	"add	%[__ret],%[__ret],%[__tmp]\n\t"			\
+-
+-#define RISCV_RUNTIME_CONST_64_ZBA				\
+-	".option push\n\t"					\
+-	".option arch,+zba\n\t"					\
+-	".option norvc\n\t"					\
+-	"slli	%[__tmp],%[__tmp],32\n\t"			\
+-	"add.uw %[__ret],%[__ret],%[__tmp]\n\t"			\
+-	"nop\n\t"						\
+-	"nop\n\t"						\
+-	".option pop\n\t"					\
+-
+-#define RISCV_RUNTIME_CONST_64_ZBKB				\
+-	".option push\n\t"					\
+-	".option arch,+zbkb\n\t"				\
+-	".option norvc\n\t"					\
+-	"pack	%[__ret],%[__ret],%[__tmp]\n\t"			\
+-	"nop\n\t"						\
+-	"nop\n\t"						\
+-	"nop\n\t"						\
+-	".option pop\n\t"					\
+-
+-#define RISCV_RUNTIME_CONST_64_POSTAMBLE(sym)			\
+-	".option pop\n\t"					\
+-	".pushsection runtime_ptr_" #sym ",\"a\"\n\t"		\
+-	".long 1b - .\n\t"					\
+-	".popsection"						\
+-
+-#if defined(CONFIG_RISCV_ISA_ZBA) && defined(CONFIG_TOOLCHAIN_HAS_ZBA)	\
+-	&& defined(CONFIG_RISCV_ISA_ZBKB)
+-#define runtime_const_ptr(sym)						\
+-({									\
+-	typeof(sym) __ret, __tmp;					\
+-	asm_inline(RISCV_RUNTIME_CONST_64_PREAMBLE			\
+-		ALTERNATIVE_2(						\
+-			RISCV_RUNTIME_CONST_64_BASE,			\
+-			RISCV_RUNTIME_CONST_64_ZBA,			\
+-			0, RISCV_ISA_EXT_ZBA, 1,			\
+-			RISCV_RUNTIME_CONST_64_ZBKB,			\
+-			0, RISCV_ISA_EXT_ZBKB, 1			\
+-		)							\
+-		RISCV_RUNTIME_CONST_64_POSTAMBLE(sym)			\
+-		: [__ret] "=r" (__ret), [__tmp] "=r" (__tmp));		\
+-	__ret;								\
+-})
+-#elif defined(CONFIG_RISCV_ISA_ZBA) && defined(CONFIG_TOOLCHAIN_HAS_ZBA)
+-#define runtime_const_ptr(sym)						\
+-({									\
+-	typeof(sym) __ret, __tmp;					\
+-	asm_inline(RISCV_RUNTIME_CONST_64_PREAMBLE			\
+-		ALTERNATIVE(						\
+-			RISCV_RUNTIME_CONST_64_BASE,			\
+-			RISCV_RUNTIME_CONST_64_ZBA,			\
+-			0, RISCV_ISA_EXT_ZBA, 1				\
+-		)							\
+-		RISCV_RUNTIME_CONST_64_POSTAMBLE(sym)			\
+-		: [__ret] "=r" (__ret), [__tmp] "=r" (__tmp));		\
+-	__ret;								\
+-})
+-#elif defined(CONFIG_RISCV_ISA_ZBKB)
+-#define runtime_const_ptr(sym)						\
+-({									\
+-	typeof(sym) __ret, __tmp;					\
+-	asm_inline(RISCV_RUNTIME_CONST_64_PREAMBLE			\
+-		ALTERNATIVE(						\
+-			RISCV_RUNTIME_CONST_64_BASE,			\
+-			RISCV_RUNTIME_CONST_64_ZBKB,			\
+-			0, RISCV_ISA_EXT_ZBKB, 1			\
+-		)							\
+-		RISCV_RUNTIME_CONST_64_POSTAMBLE(sym)			\
+-		: [__ret] "=r" (__ret), [__tmp] "=r" (__tmp));		\
+-	__ret;								\
+-})
+-#else
+-#define runtime_const_ptr(sym)						\
+-({									\
+-	typeof(sym) __ret, __tmp;					\
+-	asm_inline(RISCV_RUNTIME_CONST_64_PREAMBLE			\
+-		RISCV_RUNTIME_CONST_64_BASE				\
+-		RISCV_RUNTIME_CONST_64_POSTAMBLE(sym)			\
+-		: [__ret] "=r" (__ret), [__tmp] "=r" (__tmp));		\
+-	__ret;								\
+-})
+-#endif
+-#endif
+-
+-#define runtime_const_shift_right_32(val, sym)			\
+-({								\
+-	u32 __ret;						\
+-	asm_inline(".option push\n\t"				\
+-		".option norvc\n\t"				\
+-		"1:\t"						\
+-		SRLI " %[__ret],%[__val],12\n\t"		\
+-		".option pop\n\t"				\
+-		".pushsection runtime_shift_" #sym ",\"a\"\n\t"	\
+-		".long 1b - .\n\t"				\
+-		".popsection"					\
+-		: [__ret] "=r" (__ret)				\
+-		: [__val] "r" (val));				\
+-	__ret;							\
+-})
++#include <asm/runtime-const-accessors.h>
  
- 		/*
- 		 * Make sure the first 2MB area is not mapped by huge pages
+ #define runtime_const_init(type, sym) do {			\
+ 	extern s32 __start_runtime_##type##_##sym[];		\
+diff --git a/arch/x86/include/asm/runtime-const-accessors.h b/arch/x86/include/asm/runtime-const-accessors.h
+new file mode 100644
+index 000000000000..4c411bc3cb32
+--- /dev/null
++++ b/arch/x86/include/asm/runtime-const-accessors.h
+@@ -0,0 +1,45 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _ASM_RUNTIME_CONST_ACCESSORS_H
++#define _ASM_RUNTIME_CONST_ACCESSORS_H
++
++#ifdef MODULE
++#error "this functionality is not available for modules"
++#endif
++
++#ifdef __ASSEMBLY__
++
++.macro RUNTIME_CONST_PTR sym reg
++	movq	$0x0123456789abcdef, %\reg
++	1:
++	.pushsection runtime_ptr_\sym, "a"
++	.long	1b - 8 - .
++	.popsection
++.endm
++
++#else /* __ASSEMBLY__ */
++
++#define runtime_const_ptr(sym) ({				\
++	typeof(sym) __ret;					\
++	asm_inline("mov %1,%0\n1:\n"				\
++		".pushsection runtime_ptr_" #sym ",\"a\"\n\t"	\
++		".long 1b - %c2 - .\n"				\
++		".popsection"					\
++		:"=r" (__ret)					\
++		:"i" ((unsigned long)0x0123456789abcdefull),	\
++		 "i" (sizeof(long)));				\
++	__ret; })
++
++// The 'typeof' will create at _least_ a 32-bit type, but
++// will happily also take a bigger type and the 'shrl' will
++// clear the upper bits
++#define runtime_const_shift_right_32(val, sym) ({		\
++	typeof(0u+(val)) __ret = (val);				\
++	asm_inline("shrl $12,%k0\n1:\n"				\
++		".pushsection runtime_shift_" #sym ",\"a\"\n\t"	\
++		".long 1b - 1 - .\n"				\
++		".popsection"					\
++		:"+r" (__ret));					\
++	__ret; })
++
++#endif /* __ASSEMBLY__ */
++#endif
+diff --git a/arch/x86/include/asm/runtime-const.h b/arch/x86/include/asm/runtime-const.h
+index 8d983cfd06ea..15d67e2bfc96 100644
+--- a/arch/x86/include/asm/runtime-const.h
++++ b/arch/x86/include/asm/runtime-const.h
+@@ -2,41 +2,9 @@
+ #ifndef _ASM_RUNTIME_CONST_H
+ #define _ASM_RUNTIME_CONST_H
+ 
+-#ifdef __ASSEMBLY__
+-
+-.macro RUNTIME_CONST_PTR sym reg
+-	movq	$0x0123456789abcdef, %\reg
+-	1:
+-	.pushsection runtime_ptr_\sym, "a"
+-	.long	1b - 8 - .
+-	.popsection
+-.endm
+-
+-#else /* __ASSEMBLY__ */
+-
+-#define runtime_const_ptr(sym) ({				\
+-	typeof(sym) __ret;					\
+-	asm_inline("mov %1,%0\n1:\n"				\
+-		".pushsection runtime_ptr_" #sym ",\"a\"\n\t"	\
+-		".long 1b - %c2 - .\n"				\
+-		".popsection"					\
+-		:"=r" (__ret)					\
+-		:"i" ((unsigned long)0x0123456789abcdefull),	\
+-		 "i" (sizeof(long)));				\
+-	__ret; })
+-
+-// The 'typeof' will create at _least_ a 32-bit type, but
+-// will happily also take a bigger type and the 'shrl' will
+-// clear the upper bits
+-#define runtime_const_shift_right_32(val, sym) ({		\
+-	typeof(0u+(val)) __ret = (val);				\
+-	asm_inline("shrl $12,%k0\n1:\n"				\
+-		".pushsection runtime_shift_" #sym ",\"a\"\n\t"	\
+-		".long 1b - 1 - .\n"				\
+-		".popsection"					\
+-		:"+r" (__ret));					\
+-	__ret; })
++#include <asm/runtime-const-accessors.h>
+ 
++#ifndef __ASSEMBLY__
+ #define runtime_const_init(type, sym) do {		\
+ 	extern s32 __start_runtime_##type##_##sym[];	\
+ 	extern s32 __stop_runtime_##type##_##sym[];	\
+@@ -70,5 +38,5 @@ static inline void runtime_const_fixup(void (*fn)(void *, unsigned long),
+ 	}
+ }
+ 
+-#endif /* __ASSEMBLY__ */
++#endif /* !__ASSEMBLY__ */
+ #endif
 -- 
 2.34.1
 
