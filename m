@@ -1,76 +1,115 @@
-Return-Path: <linux-fsdevel+bounces-66579-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66580-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39CD5C24EFE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 13:11:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85BCBC24F28
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 13:14:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E9C94067E3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 12:10:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCFE91894C47
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 12:13:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09BE2348453;
-	Fri, 31 Oct 2025 12:08:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C28763451BD;
+	Fri, 31 Oct 2025 12:12:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WzcQcnSs"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SzrUNkry"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6281A3469ED;
-	Fri, 31 Oct 2025 12:08:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EB2E12B93
+	for <linux-fsdevel@vger.kernel.org>; Fri, 31 Oct 2025 12:12:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761912488; cv=none; b=k+LIGzA7DP/ABgff3opyO3PzM1ZHEnpdOjNMEpAUVcATTRU40qy2VYhfQXvoHyQmJilCeoHVnO1x9GCHnHeLn+9O1jv3ccD7fN5TBrQymYLqdSDWGL6UlLzrwQMpRAE24mpIvGjw6qrXpjrq4nHNZkCi3Xa/vfSAkvFOQmZF9wo=
+	t=1761912761; cv=none; b=jXofjhmn7N8CQ5JIsXK90lydjldV1PYFkcyQyFpwXkQ7wRwWhvfj3yE/vokmcl2mkERrbbn8pwMof8cUDykbNdImngPdC28QAwO80UukkJ7wmG9bHb2vxTzzT8xOvTieFEewidof52+FNnOjhA/KZlALEUyrbOpmsNvuD4TE93k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761912488; c=relaxed/simple;
-	bh=upDbNS2Fw5shVpSa7tWtmSpwKwbvt3duFmThsc1Tilg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ATcnSwA1NfafCxK19TkJubh1cMLh4WDag7PNdZJgFMhsNuyjQGgEqDehrCcuekQ1ORTB0s0BxbZkbob+xWCmRWQMtpOwv5hAkLCOZ14D0bQ1WX6Jc/Uzac0qiRqNzcPOZVFzbwWBGnoM97SWoj2s+Vu2U2zFsOGhvagcRhqZemw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WzcQcnSs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1A62C4CEE7;
-	Fri, 31 Oct 2025 12:08:02 +0000 (UTC)
+	s=arc-20240116; t=1761912761; c=relaxed/simple;
+	bh=61ZOKlDmwQ3wxJizUynx4s/JDByTKWCZ3U2GIY5wCn0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AVPBS9Rpar/OFTRXiAu8xCAsEufVQyByoIl9zxG5nvfFZFGDjvWaFB+vMFOQexhskEp5o/8B/NMnWoRyLOJ1O5iWu7RvgC4/tOixR5QCNElYPrP0IxuT9Imc0Vpqf7L85qw2nQf5eSkQi16lde50qBNDWPJCLGbniiukiUHMk4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SzrUNkry; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1421EC4CEE7;
+	Fri, 31 Oct 2025 12:12:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761912484;
-	bh=upDbNS2Fw5shVpSa7tWtmSpwKwbvt3duFmThsc1Tilg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WzcQcnSsE4zfavSWDBk/CVvt3X8g5nr4L4uLckrJTajgbIwoLvPqawi2585UroxG4
-	 HRaUG56tuqxfv7lATHzXgELbPhvoEFA2CF3sYUgRommAbXL4jgrur7IqVz9PzbOmhC
-	 5H7McJsSBeUKCWmEQBf7liXPSaTqbzB/gwh6XWs5e5gvKx+YyiV+THSgMfR8z9+/us
-	 oQf4i7POxykLnWwBhG1DPHxuk/iKHq1RGI3H26ufsOMz2shfudJ1t6A5ZT26D0wzf4
-	 RqOPyq7+W0NZO7YvQi8liUOl/cQL2qk7JjZGGCzVwBwJIxcIQ+0vWMFzgn3X5PpDDH
-	 guf8dZMF4IXSg==
-Date: Fri, 31 Oct 2025 13:08:00 +0100
+	s=k20201202; t=1761912761;
+	bh=61ZOKlDmwQ3wxJizUynx4s/JDByTKWCZ3U2GIY5wCn0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=SzrUNkryi/jRZaZxUDIC/GXrM1eVTxr1euraeSbH1FmSuBwcAmY6kDz6wzZT/IcuG
+	 v3cPSSBq9mzj/07weBC40F/5ofaYS+12STVJvqb/Ksh0HK39IAY7dLd9PyWonhQZqD
+	 kiFLsNNOiJQy9UJd/l3usA1mAQb76bFe/izcRz5+UEUQUMlZk8Tvthi1vL4PHW3lJp
+	 awRiIXYHutXdeJ7DX/DQ5kQDXTJmSKU5SZFCmiGRmYdlrD7eYhrR+E6Rke25Kowbs3
+	 he0M3o3cwsUalmw3LDa7pwsZkZJGbEoIaLdQMB1G2RRX2/9CfRGDM/Tp3cr87IZbw+
+	 dBUoamWKm60SQ==
 From: Christian Brauner <brauner@kernel.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, viro@zeniv.linux.org.uk, jack@suse.cz, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, pfalcato@suse.de
-Subject: Re: [PATCH v4] fs: hide names_cachep behind runtime access machinery
-Message-ID: <20251031-liehen-weltoffen-cddb6394cc14@brauner>
-References: <20251030105242.801528-1-mjguzik@gmail.com>
- <CAHk-=wj5o+BPgrUNase4tOuzbBMmiqyiYO9apO9Ou-M_M1-tKQ@mail.gmail.com>
- <CAGudoHG_WYnoqAYgN2P5LcjyT6r-vORgeAG2EHbHoH+A-PvDUA@mail.gmail.com>
- <CAHk-=wgGFUAPb7z5RzUq=jxRh2PO7yApd9ujMnC5OwXa-_e3Qw@mail.gmail.com>
- <CAGudoHH817CKv0ts4dO08j5FOfEAWtvoBeoT06KarjzOh_U6ug@mail.gmail.com>
+To: linux-fsdevel@vger.kernel.org,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc: Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH 00/10] Add and use folio_next_pos()
+Date: Fri, 31 Oct 2025 13:12:03 +0100
+Message-ID: <20251031-chaostheorie-lautlos-f2dee81d337b@brauner>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20251024170822.1427218-1-willy@infradead.org>
+References: <20251024170822.1427218-1-willy@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAGudoHH817CKv0ts4dO08j5FOfEAWtvoBeoT06KarjzOh_U6ug@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2235; i=brauner@kernel.org; h=from:subject:message-id; bh=61ZOKlDmwQ3wxJizUynx4s/JDByTKWCZ3U2GIY5wCn0=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSyLN8Sx7SB18v2meX1KcU/GR+7ti7JavryVtyV7yx39 /y6m0e2dZSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzEkIeRYdeK8Of59/bsfjit OESk9vfEBq75i3Q6Du1IfRok2nyqmo2R4epq8dyJLCui94dZ3roykVW4TnZp5rLV7PmKHh/qDjh 7sQEA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-> I wonder if it would make sense to bypass the problem by moving the
-> pathname handling routines to a different header -- might be useful in
-> its own right to slim down the kitchen sink that fs.h turned out to
-> be, but that's another bikeshed-y material.
+On Fri, 24 Oct 2025 18:08:08 +0100, Matthew Wilcox (Oracle) wrote:
+> It's relatively common in filesystems to want to know the end of the
+> current folio we're looking at.  So common in fact that btrfs has its own
+> helper for that.  Lift that helper to filemap and use it everywhere that
+> I've noticed it could be used.  This actually fixes a long-standing bug
+> in ocfs2 on 32-bit systems with files larger than 2GiB.  Presumably this
+> is not a common configuration, but I've marked it for backport anyway.
+> 
+> [...]
 
-fs.h needs to be split up. It's on my ToDo but let's just say there's a
-lot of stuff on it so it's not really high-priority. If you have a good
-reason to move something out of there by my guest. It would be
-appreciated!
+I'm moving this into a separate topic branch for now in case any
+filesystems would like to base off of this.
+
+---
+
+Applied to the vfs-6.19.folio branch of the vfs/vfs.git tree.
+Patches in the vfs-6.19.folio branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.19.folio
+
+[01/10] filemap: Add folio_next_pos()
+        https://git.kernel.org/vfs/vfs/c/4511fd86db6f
+[02/10] btrfs: Use folio_next_pos()
+        https://git.kernel.org/vfs/vfs/c/48f3784b17d9
+[03/10] buffer: Use folio_next_pos()
+        https://git.kernel.org/vfs/vfs/c/6870892b6437
+[04/10] ext4: Use folio_next_pos()
+        https://git.kernel.org/vfs/vfs/c/4db47b252190
+[05/10] f2fs: Use folio_next_pos()
+        https://git.kernel.org/vfs/vfs/c/4fcafa30b70a
+[06/10] gfs2: Use folio_next_pos()
+        https://git.kernel.org/vfs/vfs/c/5f0fc785322d
+[07/10] iomap: Use folio_next_pos()
+        https://git.kernel.org/vfs/vfs/c/ac9752080475
+[08/10] netfs: Use folio_next_pos()
+        https://git.kernel.org/vfs/vfs/c/2408900d408a
+[09/10] xfs: Use folio_next_pos()
+        https://git.kernel.org/vfs/vfs/c/ac0a11113de3
+[10/10] mm: Use folio_next_pos()
+        https://git.kernel.org/vfs/vfs/c/60a70e61430b
 
