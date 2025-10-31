@@ -1,199 +1,657 @@
-Return-Path: <linux-fsdevel+bounces-66554-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66555-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E56FC236B3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 07:38:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08580C23840
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 08:15:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0615189A446
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 06:38:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30A073A63AC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 07:15:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDAAC2F9DBC;
-	Fri, 31 Oct 2025 06:37:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62CE2328624;
+	Fri, 31 Oct 2025 07:15:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="btC5pFhw"
+	dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b="YUKnFl1b"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yx1-f42.google.com (mail-yx1-f42.google.com [74.125.224.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B6FA2E6125
-	for <linux-fsdevel@vger.kernel.org>; Fri, 31 Oct 2025 06:37:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D5CD328B70;
+	Fri, 31 Oct 2025 07:15:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.157.23.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761892672; cv=none; b=MIygNioDEgOb4vfEHC7pmanjIUihs8S+76nksHN4zuqbn8EQ4PKeZbJvwEgc5PZAcKQcbuAZip2w8sjsrwnUG2xNoYop0mAWM9AZ2TUMcC5rfbwggLc0ooKgCNkTpZkMhGKuNeaMfJtcliZvEGMAfsnfwLGezqGQJ7ZJZAoaC8o=
+	t=1761894937; cv=none; b=V2ds0xqdDqRta9KaqtQ/NQixaMhISfXB9+LwUb8vh575UrkYi3rpMvAieUt4JACR/B0pkLLkW/eM2sXc2pjoMuWO4c026m5tLxqlddy1dGS3dvEpwMciCwWBGpE1qCbEVCNYW8FnXPLUTHz4KSCwleZH7oDtfJPt086XK5LSuaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761892672; c=relaxed/simple;
-	bh=2Ad22H+YKv3fYSdPT9lbgu9VOjM2ntNDuMEpDFLqgtw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cOz24fwRqBhTtlu9KsPZZdkZm622eBY5iif80Bplnc0+DiXHFAX15DiLIMSAoDXkjZmyhWziFRxyEQSwx4/OwbXsdMaik/WmtCLN0w5QGJHKnp09B3KreZRlClz5IZH+6cxveQjo6TAWDMdoTKwqqjMc/kEKksETkvGqp1f6r2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=btC5pFhw; arc=none smtp.client-ip=74.125.224.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yx1-f42.google.com with SMTP id 956f58d0204a3-63bcfcb800aso2135062d50.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Oct 2025 23:37:50 -0700 (PDT)
+	s=arc-20240116; t=1761894937; c=relaxed/simple;
+	bh=9gjK2wHVEI2cwyP19ZSa7HGwPtmu5ioiCQrU6rWBP2g=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=aiGXuTwxL8zaRA9HTsU7tjvGm9PW4bAzGD8pBQinW5SvczJ8vClNv4GtSkI3SXy7lyE/kWfTAuw8eDoHgjOMhXII/XwpTUe+EMNTM3ZA5nJETKhaB4vyE/R+1MdL/VqJlosA2wMLxqUTnKSJ0KI55K9s/T+IMmAjna2KgQ/uxbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com; spf=pass smtp.mailfrom=paragon-software.com; dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b=YUKnFl1b; arc=none smtp.client-ip=35.157.23.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paragon-software.com
+Received: from relayfre-01.paragon-software.com (unknown [176.12.100.13])
+	by relayaws-01.paragon-software.com (Postfix) with ESMTPS id 1930C1E39;
+	Fri, 31 Oct 2025 07:12:17 +0000 (UTC)
+Authentication-Results: relayaws-01.paragon-software.com;
+	dkim=pass (1024-bit key; unprotected) header.d=paragon-software.com header.i=@paragon-software.com header.b=YUKnFl1b;
+	dkim-atps=neutral
+Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
+	by relayfre-01.paragon-software.com (Postfix) with ESMTPS id 4ABE731;
+	Fri, 31 Oct 2025 07:15:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761892669; x=1762497469; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kS/Ba8wi03ja6q2G16rK+mBdR0oPZku80viIJSVlHq8=;
-        b=btC5pFhw9xkOhNITbRDEeX7IBMIZfwYedGjRscgJPL5mMye3/SMxm9v29/ac19vzwa
-         dfn+IkIVJgQ+WMC3khNXLZ/sAn8v2ZWJzzt4+lYibX0NFt5ohfLfAe88GKdp8C7ATn3h
-         NWXy1qWWHI/aocmoy/uBTMz/tBTNShHJHaXE9sypj30n8Rt5VnOeGtxAV3Z1w1NlCP0P
-         KK9xOks9qIIXQIOdqIi1yYlXq4PNaF9XjaF7KP6j9h+/mI1fdV/f4820a3lPFvwcSNKC
-         TGZ/zLnCd+MF54M+dO8vkYPhQAOr4zg20T+w3VqEnRRvET27VeU137sewizuwgVlnG6y
-         ZBHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761892669; x=1762497469;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kS/Ba8wi03ja6q2G16rK+mBdR0oPZku80viIJSVlHq8=;
-        b=OTtNEyppmCESgUftojTcNFwm7gbgeMdg8/zWEZC1iEsupJ86G8FrU/Okl0BQkX59zJ
-         QXqaVzG8IYvl1FfD0zJtg5UhnsbEAHIMmezF0kCGqGeg5iWNq+IKVOEJEbSh0sSZcDrB
-         W9szUTVRYtt21hqIOHmvDf5Zomd3BAV77xpE5C4BBQylw+J8XhuK8ojRPzDlVN2LMUkC
-         t9JFm3u0SkDhvzgIuq0KPWbEVL1exRH5M0MpyUvrKvmguDJAw0E/r+HNjVqsp6m0tn/j
-         xumyDOUbLi9CetPOy65F/4FrQYE5/h+twH5gc/wS4jFFxCfp8zpPnIsus51FamH4LiaW
-         +GaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV0jJgBQDjMFFQOPUUUHRz35ub/+HMhPJn882EwZVbdEETtI58nX3CWI1Yp0FO2SJZDPhG//JvAV2Uw06od@vger.kernel.org
-X-Gm-Message-State: AOJu0YyG5h4V893tSvQEj1ObaYvWFcod0l1JyV/DYkEOgoaOgEWNyaAk
-	RsqltszWzJTH4wQMkFlO7DaxEgHR8ycFCDsxtPpYjcdaNZeHFxyBwWlK
-X-Gm-Gg: ASbGncux6ExEWoRmAGtQQ3CEYuRKqJkDywpeJWCWC6ypJPzUgwOMZz5jmpIe5GwYylY
-	hrbOdk3Z27zRkZHrRU3BgRo+QUTlam4OK0nB35nXyBuT4Qgg7PqRcSqA6WgA0YF5s1ExFA7T05l
-	e2rbfs3qMpstH9s8x+L1Ktw58WWFgDSnwyQgviFCm1WclzDj/D0WSJ1HzObcOwjALg/opqIq8K8
-	tYksJ9SeolQYsxRu6a+H9iFPiYIwnRjm5Hk+/vn2BcmdBsTjPFJCgawjs1AokwreyXS5l7ksOL/
-	rb14yPzCDHxNPJtTUhSbWNDwfaa+VvU/83v3DPYI9Sgq2O6YvhvT800Hj/ceV/SdCnn/vCSR/4d
-	cQ1qIsqVrzdWcGmpiHwEmr7lM5k3LslHE2Fx7o+ixvsLz9EtqVLEgIKo3HvgK4SaFqMErrR1m82
-	+AcV7h9mC7RPzcApSDBqWi8fhebtf6Z6H+opN4rT4=
-X-Google-Smtp-Source: AGHT+IE8N0NuNxDPSMdh3gqIxDWFygZpV4mjnnnjXKw/xdAOq6rsstqv2KVKzg0erHaerfWTmEpODA==
-X-Received: by 2002:a05:690e:282:b0:63f:8734:36a0 with SMTP id 956f58d0204a3-63f92272105mr1346690d50.21.1761892669464;
-        Thu, 30 Oct 2025 23:37:49 -0700 (PDT)
-Received: from vegg ([2402:a00:163:2ce9:84ab:c8ef:8e7:edf3])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-7864c667d3dsm2850837b3.42.2025.10.30.23.37.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Oct 2025 23:37:48 -0700 (PDT)
-Date: Fri, 31 Oct 2025 12:07:40 +0530
-From: Brajesh Patil <brajeshpatil11@gmail.com>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: miklos@szeredi.hu, stefanha@redhat.com, vgoyal@redhat.com,
-	eperezma@redhat.com, virtualization@lists.linux.dev,
-	virtio-fs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linux.dev, david.hunter.linux@gmail.com,
-	khalid@kernel.org
-Subject: Re: [PATCH] fuse: virtio_fs: add checks for FUSE protocol compliance
-Message-ID: <20251031063740.tyeewgtp7zo2gdi3@vegg>
-References: <20251028200311.40372-1-brajeshpatil11@gmail.com>
- <20251028200755.GJ6174@frogsfrogsfrogs>
- <c7zugpb4pzquasx67zypnuk2irxvb7cp5puwuw3rncy6gb5wdn@qigavsewium3>
- <20251029060108.GR4015566@frogsfrogsfrogs>
+	d=paragon-software.com; s=mail; t=1761894926;
+	bh=OpCFc2u6CH7glT0gDsjbR3AmVOrBe58fnilqPfGxNr8=;
+	h=From:To:CC:Subject:Date;
+	b=YUKnFl1b5TDAt+3QqxQrOc9/kPMtIiwf/qQl6BIoX1oNdbMJtcpFgaC7phHzXuUrb
+	 XQB37UKTkaO17R7pfv/hxt5lTKOVzjjthrIzxUP14h+Ugge1pBwr9aGfSR010yZqlv
+	 YYukDhQ4PUjs6VssO79T/jXD5cgo2Zp/brQUOHNo=
+Received: from localhost.localdomain (172.30.20.190) by
+ vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.7; Fri, 31 Oct 2025 10:15:25 +0300
+From: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+To: <ntfs3@lists.linux.dev>
+CC: <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Subject: [PATCH] fs/ntfs3: remove ntfs_bio_pages and use page cache for compressed I/O
+Date: Fri, 31 Oct 2025 08:15:16 +0100
+Message-ID: <20251031071516.3604-1-almaz.alexandrovich@paragon-software.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251029060108.GR4015566@frogsfrogsfrogs>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: vdlg-exch-02.paragon-software.com (172.30.1.105) To
+ vdlg-exch-02.paragon-software.com (172.30.1.105)
 
-On Tue, Oct 28, 2025 at 11:01:08PM -0700, Darrick J. Wong wrote:
-> On Wed, Oct 29, 2025 at 08:58:30AM +0530, Brajesh Patil wrote:
-> > On Tue, Oct 28, 2025 at 01:07:55PM -0700, Darrick J. Wong wrote:
-> > > On Wed, Oct 29, 2025 at 01:33:11AM +0530, Brajesh Patil wrote:
-> > > > Add validation in virtio-fs to ensure the server follows the FUSE
-> > > > protocol for response headers, addressing the existing TODO for
-> > > > verifying protocol compliance.
-> > > > 
-> > > > Add checks for fuse_out_header to verify:
-> > > >  - oh->unique matches req->in.h.unique
-> > > >  - FUSE_INT_REQ_BIT is not set
-> > > >  - error codes are valid
-> > > >  - oh->len does not exceed the expected size
-> > > > 
-> > > > Signed-off-by: Brajesh Patil <brajeshpatil11@gmail.com>
-> > > > ---
-> > > >  fs/fuse/virtio_fs.c | 30 +++++++++++++++++++++++++-----
-> > > >  1 file changed, 25 insertions(+), 5 deletions(-)
-> > > > 
-> > > > diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
-> > > > index 6bc7c97b017d..52e8338bf436 100644
-> > > > --- a/fs/fuse/virtio_fs.c
-> > > > +++ b/fs/fuse/virtio_fs.c
-> > > > @@ -764,14 +764,34 @@ static void virtio_fs_request_complete(struct fuse_req *req,
-> > > >  {
-> > > >  	struct fuse_args *args;
-> > > >  	struct fuse_args_pages *ap;
-> > > > -	unsigned int len, i, thislen;
-> > > > +	struct fuse_out_header *oh;
-> > > > +	unsigned int len, i, thislen, expected_len = 0;
-> > > >  	struct folio *folio;
-> > > >  
-> > > > -	/*
-> > > > -	 * TODO verify that server properly follows FUSE protocol
-> > > > -	 * (oh.uniq, oh.len)
-> > > > -	 */
-> > > > +	oh = &req->out.h;
-> > > > +
-> > > > +	if (oh->unique == 0)
-> > > > +		pr_warn_once("notify through fuse-virtio-fs not supported");
-> > > > +
-> > > > +	if ((oh->unique & ~FUSE_INT_REQ_BIT) != req->in.h.unique)
-> > > > +		pr_warn_ratelimited("virtio-fs: unique mismatch, expected: %llu got %llu\n",
-> > > > +				    req->in.h.unique, oh->unique & ~FUSE_INT_REQ_BIT);
-> > > 
-> > > Er... shouldn't these be rejecting the response somehow?  Instead of
-> > > warning that something's amiss but continuing with known bad data?
-> > > 
-> > > --D
-> > >
-> > 
-> > Right, continuing here is unsafe.
-> > 
-> > I plan to update the code so that in case of any header validation
-> > failure (e.g. unique mismatch, invalid error, length mismatch), it
-> > should skip copying data and jump directly to the section that marks
-> > request as complete
-> > 
-> > Does this seem like a feasible approach?
-> 
-> Yeah, I think you can just set req->out.h.error to some errno (EIO?) and
-> jump to fuse_request_end, sort of like what fuse_dev_do_write sort of
-> does.  I think that sends the errno back to whatever code initiated the
-> request.  I don't know if virtiofs should be throwing an error back to
-> the server?
-> 
-> --D
-> 
+Replace the use of ntfs_bio_pages with the disk page cache for reading and
+writing compressed files. This slightly improves performance when reading
+compressed data and simplifies the I/O logic.
 
-I think it is okay to set oh.error in fuse_dev_do_write as it is a server side
-reply. But as virtio_fs is on the client side and oh.error has been set by
-virtiofsd, I think so we should not overwrite oh.error. Instead, if we
-encounter an error in any of the if conditions, skip copying arguments and jump
-to the line clear_bit(FR_SENT, &req->flags).
+When an XPRESS or LZX compressed file is opened for writing, it is now
+decompressed into a normal file before modification. A new argument (`int copy`)
+is added to ni_read_frame() to handle writing of decompressed and mapped data.
 
-> > > > +
-> > > > +	WARN_ON_ONCE(oh->unique & FUSE_INT_REQ_BIT);
-> > > > +
-> > > > +	if (oh->error <= -ERESTARTSYS || oh->error > 0)
-> > > > +		pr_warn_ratelimited("virtio-fs: invalid error code from server: %d\n",
-> > > > +				    oh->error);
-> > > > +
-> > > >  	args = req->args;
-> > > > +
-> > > > +	for (i = 0; i < args->out_numargs; i++)
-> > > > +		expected_len += args->out_args[i].size;
-> > > > +
-> > > > +	if (oh->len > sizeof(*oh) + expected_len)
-> > > > +		pr_warn("FUSE reply too long! got=%u expected<=%u\n",
-> > > > +			oh->len, (unsigned int)(sizeof(*oh) + expected_len));
-> > > > +
-> > > >  	copy_args_from_argbuf(args, req);
-> > > >  
-> > > >  	if (args->out_pages && args->page_zeroing) {
-> > > > -- 
-> > > > 2.43.0
-> > > > 
-> > > > 
+Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+---
+ fs/ntfs3/attrib.c  |   4 +-
+ fs/ntfs3/file.c    |   6 +-
+ fs/ntfs3/frecord.c | 151 ++++++++++++---------------------------------
+ fs/ntfs3/fsntfs.c  | 123 +++++++++++++++++-------------------
+ fs/ntfs3/inode.c   |   1 -
+ fs/ntfs3/ntfs_fs.h |  20 ++++--
+ 6 files changed, 114 insertions(+), 191 deletions(-)
+
+diff --git a/fs/ntfs3/attrib.c b/fs/ntfs3/attrib.c
+index eced9013a881..d0373254f82a 100644
+--- a/fs/ntfs3/attrib.c
++++ b/fs/ntfs3/attrib.c
+@@ -1457,7 +1457,6 @@ int attr_wof_frame_info(struct ntfs_inode *ni, struct ATTRIB *attr,
+ 		pgoff_t index = vbo[i] >> PAGE_SHIFT;
+ 
+ 		if (index != folio->index) {
+-			struct page *page = &folio->page;
+ 			u64 from = vbo[i] & ~(u64)(PAGE_SIZE - 1);
+ 			u64 to = min(from + PAGE_SIZE, wof_size);
+ 
+@@ -1467,8 +1466,7 @@ int attr_wof_frame_info(struct ntfs_inode *ni, struct ATTRIB *attr,
+ 			if (err)
+ 				goto out1;
+ 
+-			err = ntfs_bio_pages(sbi, run, &page, 1, from,
+-					     to - from, REQ_OP_READ);
++			err = ntfs_read_run(sbi, run, addr, from, to - from);
+ 			if (err) {
+ 				folio->index = -1;
+ 				goto out1;
+diff --git a/fs/ntfs3/file.c b/fs/ntfs3/file.c
+index 7471a4bbb438..60eb90bff955 100644
+--- a/fs/ntfs3/file.c
++++ b/fs/ntfs3/file.c
+@@ -59,7 +59,7 @@ static int ntfs_ioctl_get_volume_label(struct ntfs_sb_info *sbi, u8 __user *buf)
+ 
+ static int ntfs_ioctl_set_volume_label(struct ntfs_sb_info *sbi, u8 __user *buf)
+ {
+-	u8 user[FSLABEL_MAX] = {0};
++	u8 user[FSLABEL_MAX] = { 0 };
+ 	int len;
+ 
+ 	if (!capable(CAP_SYS_ADMIN))
+@@ -1039,7 +1039,7 @@ static ssize_t ntfs_compress_write(struct kiocb *iocb, struct iov_iter *from)
+ 
+ 		if (!frame_uptodate && off) {
+ 			err = ni_read_frame(ni, frame_vbo, pages,
+-					    pages_per_frame);
++					    pages_per_frame, 0);
+ 			if (err) {
+ 				for (ip = 0; ip < pages_per_frame; ip++) {
+ 					folio = page_folio(pages[ip]);
+@@ -1104,7 +1104,7 @@ static ssize_t ntfs_compress_write(struct kiocb *iocb, struct iov_iter *from)
+ 
+ 			if (off || (to < i_size && (to & (frame_size - 1)))) {
+ 				err = ni_read_frame(ni, frame_vbo, pages,
+-						    pages_per_frame);
++						    pages_per_frame, 0);
+ 				if (err) {
+ 					for (ip = 0; ip < pages_per_frame;
+ 					     ip++) {
+diff --git a/fs/ntfs3/frecord.c b/fs/ntfs3/frecord.c
+index e44181185526..4a7d56c06dcb 100644
+--- a/fs/ntfs3/frecord.c
++++ b/fs/ntfs3/frecord.c
+@@ -2105,7 +2105,7 @@ int ni_readpage_cmpr(struct ntfs_inode *ni, struct folio *folio)
+ 		pages[i] = pg;
+ 	}
+ 
+-	err = ni_read_frame(ni, frame_vbo, pages, pages_per_frame);
++	err = ni_read_frame(ni, frame_vbo, pages, pages_per_frame, 0);
+ 
+ out1:
+ 	for (i = 0; i < pages_per_frame; i++) {
+@@ -2175,17 +2175,9 @@ int ni_decompress_file(struct ntfs_inode *ni)
+ 	 */
+ 	index = 0;
+ 	for (vbo = 0; vbo < i_size; vbo += bytes) {
+-		u32 nr_pages;
+ 		bool new;
+ 
+-		if (vbo + frame_size > i_size) {
+-			bytes = i_size - vbo;
+-			nr_pages = (bytes + PAGE_SIZE - 1) >> PAGE_SHIFT;
+-		} else {
+-			nr_pages = pages_per_frame;
+-			bytes = frame_size;
+-		}
+-
++		bytes = vbo + frame_size > i_size ? (i_size - vbo) : frame_size;
+ 		end = bytes_to_cluster(sbi, vbo + bytes);
+ 
+ 		for (vcn = vbo >> sbi->cluster_bits; vcn < end; vcn += clen) {
+@@ -2210,15 +2202,7 @@ int ni_decompress_file(struct ntfs_inode *ni)
+ 			pages[i] = pg;
+ 		}
+ 
+-		err = ni_read_frame(ni, vbo, pages, pages_per_frame);
+-
+-		if (!err) {
+-			down_read(&ni->file.run_lock);
+-			err = ntfs_bio_pages(sbi, &ni->file.run, pages,
+-					     nr_pages, vbo, bytes,
+-					     REQ_OP_WRITE);
+-			up_read(&ni->file.run_lock);
+-		}
++		err = ni_read_frame(ni, vbo, pages, pages_per_frame, 1);
+ 
+ 		for (i = 0; i < pages_per_frame; i++) {
+ 			unlock_page(pages[i]);
+@@ -2408,20 +2392,19 @@ static int decompress_lzx_xpress(struct ntfs_sb_info *sbi, const char *cmpr,
+  * Pages - Array of locked pages.
+  */
+ int ni_read_frame(struct ntfs_inode *ni, u64 frame_vbo, struct page **pages,
+-		  u32 pages_per_frame)
++		  u32 pages_per_frame, int copy)
+ {
+ 	int err;
+ 	struct ntfs_sb_info *sbi = ni->mi.sbi;
+ 	u8 cluster_bits = sbi->cluster_bits;
+ 	char *frame_ondisk = NULL;
+ 	char *frame_mem = NULL;
+-	struct page **pages_disk = NULL;
+ 	struct ATTR_LIST_ENTRY *le = NULL;
+ 	struct runs_tree *run = &ni->file.run;
+ 	u64 valid_size = ni->i_valid;
+ 	u64 vbo_disk;
+ 	size_t unc_size;
+-	u32 frame_size, i, npages_disk, ondisk_size;
++	u32 frame_size, i, ondisk_size;
+ 	struct page *pg;
+ 	struct ATTRIB *attr;
+ 	CLST frame, clst_data;
+@@ -2513,7 +2496,7 @@ int ni_read_frame(struct ntfs_inode *ni, u64 frame_vbo, struct page **pages,
+ 		err = attr_wof_frame_info(ni, attr, run, frame64, frames,
+ 					  frame_bits, &ondisk_size, &vbo_data);
+ 		if (err)
+-			goto out2;
++			goto out1;
+ 
+ 		if (frame64 == frames) {
+ 			unc_size = 1 + ((i_size - 1) & (frame_size - 1));
+@@ -2524,7 +2507,7 @@ int ni_read_frame(struct ntfs_inode *ni, u64 frame_vbo, struct page **pages,
+ 
+ 		if (ondisk_size > frame_size) {
+ 			err = -EINVAL;
+-			goto out2;
++			goto out1;
+ 		}
+ 
+ 		if (!attr->non_res) {
+@@ -2545,10 +2528,7 @@ int ni_read_frame(struct ntfs_inode *ni, u64 frame_vbo, struct page **pages,
+ 					   ARRAY_SIZE(WOF_NAME), run, vbo_disk,
+ 					   vbo_data + ondisk_size);
+ 		if (err)
+-			goto out2;
+-		npages_disk = (ondisk_size + (vbo_disk & (PAGE_SIZE - 1)) +
+-			       PAGE_SIZE - 1) >>
+-			      PAGE_SHIFT;
++			goto out1;
+ #endif
+ 	} else if (is_attr_compressed(attr)) {
+ 		/* LZNT compression. */
+@@ -2582,60 +2562,37 @@ int ni_read_frame(struct ntfs_inode *ni, u64 frame_vbo, struct page **pages,
+ 		if (clst_data >= NTFS_LZNT_CLUSTERS) {
+ 			/* Frame is not compressed. */
+ 			down_read(&ni->file.run_lock);
+-			err = ntfs_bio_pages(sbi, run, pages, pages_per_frame,
+-					     frame_vbo, ondisk_size,
+-					     REQ_OP_READ);
++			err = ntfs_read_run(sbi, run, frame_mem, frame_vbo,
++					    ondisk_size);
+ 			up_read(&ni->file.run_lock);
+ 			goto out1;
+ 		}
+ 		vbo_disk = frame_vbo;
+-		npages_disk = (ondisk_size + PAGE_SIZE - 1) >> PAGE_SHIFT;
+ 	} else {
+ 		__builtin_unreachable();
+ 		err = -EINVAL;
+ 		goto out1;
+ 	}
+ 
+-	pages_disk = kcalloc(npages_disk, sizeof(*pages_disk), GFP_NOFS);
+-	if (!pages_disk) {
++	/* Allocate memory to read compressed data to. */
++	frame_ondisk = kvmalloc(ondisk_size, GFP_KERNEL);
++	if (!frame_ondisk) {
+ 		err = -ENOMEM;
+-		goto out2;
+-	}
+-
+-	for (i = 0; i < npages_disk; i++) {
+-		pg = alloc_page(GFP_KERNEL);
+-		if (!pg) {
+-			err = -ENOMEM;
+-			goto out3;
+-		}
+-		pages_disk[i] = pg;
+-		lock_page(pg);
++		goto out1;
+ 	}
+ 
+ 	/* Read 'ondisk_size' bytes from disk. */
+ 	down_read(&ni->file.run_lock);
+-	err = ntfs_bio_pages(sbi, run, pages_disk, npages_disk, vbo_disk,
+-			     ondisk_size, REQ_OP_READ);
++	err = ntfs_read_run(sbi, run, frame_ondisk, vbo_disk, ondisk_size);
+ 	up_read(&ni->file.run_lock);
+ 	if (err)
+-		goto out3;
+-
+-	/*
+-	 * To simplify decompress algorithm do vmap for source and target pages.
+-	 */
+-	frame_ondisk = vmap(pages_disk, npages_disk, VM_MAP, PAGE_KERNEL_RO);
+-	if (!frame_ondisk) {
+-		err = -ENOMEM;
+-		goto out3;
+-	}
++		goto out2;
+ 
+-	/* Decompress: Frame_ondisk -> frame_mem. */
+ #ifdef CONFIG_NTFS3_LZX_XPRESS
+ 	if (run != &ni->file.run) {
+ 		/* LZX or XPRESS */
+-		err = decompress_lzx_xpress(
+-			sbi, frame_ondisk + (vbo_disk & (PAGE_SIZE - 1)),
+-			ondisk_size, frame_mem, unc_size, frame_size);
++		err = decompress_lzx_xpress(sbi, frame_ondisk, ondisk_size,
++					    frame_mem, unc_size, frame_size);
+ 	} else
+ #endif
+ 	{
+@@ -2653,24 +2610,21 @@ int ni_read_frame(struct ntfs_inode *ni, u64 frame_vbo, struct page **pages,
+ 		memset(frame_mem + ok, 0, frame_size - ok);
+ 	}
+ 
+-	vunmap(frame_ondisk);
+-
+-out3:
+-	for (i = 0; i < npages_disk; i++) {
+-		pg = pages_disk[i];
+-		if (pg) {
+-			unlock_page(pg);
+-			put_page(pg);
+-		}
+-	}
+-	kfree(pages_disk);
+-
+ out2:
++	kvfree(frame_ondisk);
++out1:
+ #ifdef CONFIG_NTFS3_LZX_XPRESS
+ 	if (run != &ni->file.run)
+ 		run_free(run);
++	if (!err && copy) {
++		/* We are called from 'ni_decompress_file' */
++		/* Copy decompressed LZX or XPRESS data into new place. */
++		down_read(&ni->file.run_lock);
++		err = ntfs_write_run(sbi, &ni->file.run, frame_mem, frame_vbo,
++				     frame_size);
++		up_read(&ni->file.run_lock);
++	}
+ #endif
+-out1:
+ 	vunmap(frame_mem);
+ out:
+ 	for (i = 0; i < pages_per_frame; i++) {
+@@ -2697,13 +2651,11 @@ int ni_write_frame(struct ntfs_inode *ni, struct page **pages,
+ 	u64 frame_vbo = folio_pos(folio);
+ 	CLST frame = frame_vbo >> frame_bits;
+ 	char *frame_ondisk = NULL;
+-	struct page **pages_disk = NULL;
+ 	struct ATTR_LIST_ENTRY *le = NULL;
+ 	char *frame_mem;
+ 	struct ATTRIB *attr;
+ 	struct mft_inode *mi;
+ 	u32 i;
+-	struct page *pg;
+ 	size_t compr_size, ondisk_size;
+ 	struct lznt *lznt;
+ 
+@@ -2738,34 +2690,18 @@ int ni_write_frame(struct ntfs_inode *ni, struct page **pages,
+ 		goto out;
+ 	}
+ 
+-	pages_disk = kcalloc(pages_per_frame, sizeof(struct page *), GFP_NOFS);
+-	if (!pages_disk) {
+-		err = -ENOMEM;
+-		goto out;
+-	}
+-
+-	for (i = 0; i < pages_per_frame; i++) {
+-		pg = alloc_page(GFP_KERNEL);
+-		if (!pg) {
+-			err = -ENOMEM;
+-			goto out1;
+-		}
+-		pages_disk[i] = pg;
+-		lock_page(pg);
+-	}
+-
+-	/* To simplify compress algorithm do vmap for source and target pages. */
+-	frame_ondisk = vmap(pages_disk, pages_per_frame, VM_MAP, PAGE_KERNEL);
++	/* Allocate memory to write compressed data to. */
++	frame_ondisk = kvmalloc(frame_size, GFP_KERNEL);
+ 	if (!frame_ondisk) {
+ 		err = -ENOMEM;
+-		goto out1;
++		goto out;
+ 	}
+ 
+ 	/* Map in-memory frame for read-only. */
+ 	frame_mem = vmap(pages, pages_per_frame, VM_MAP, PAGE_KERNEL_RO);
+ 	if (!frame_mem) {
+ 		err = -ENOMEM;
+-		goto out2;
++		goto out1;
+ 	}
+ 
+ 	mutex_lock(&sbi->compress.mtx_lznt);
+@@ -2781,7 +2717,7 @@ int ni_write_frame(struct ntfs_inode *ni, struct page **pages,
+ 		if (!lznt) {
+ 			mutex_unlock(&sbi->compress.mtx_lznt);
+ 			err = -ENOMEM;
+-			goto out3;
++			goto out2;
+ 		}
+ 
+ 		sbi->compress.lznt = lznt;
+@@ -2818,25 +2754,16 @@ int ni_write_frame(struct ntfs_inode *ni, struct page **pages,
+ 		goto out2;
+ 
+ 	down_read(&ni->file.run_lock);
+-	err = ntfs_bio_pages(sbi, &ni->file.run,
+-			     ondisk_size < frame_size ? pages_disk : pages,
+-			     pages_per_frame, frame_vbo, ondisk_size,
+-			     REQ_OP_WRITE);
++	err = ntfs_write_run(sbi, &ni->file.run,
++			     ondisk_size < frame_size ? frame_ondisk :
++							frame_mem,
++			     frame_vbo, ondisk_size);
+ 	up_read(&ni->file.run_lock);
+ 
+-out3:
+-	vunmap(frame_mem);
+ out2:
+-	vunmap(frame_ondisk);
++	vunmap(frame_mem);
+ out1:
+-	for (i = 0; i < pages_per_frame; i++) {
+-		pg = pages_disk[i];
+-		if (pg) {
+-			unlock_page(pg);
+-			put_page(pg);
+-		}
+-	}
+-	kfree(pages_disk);
++	kvfree(frame_ondisk);
+ out:
+ 	return err;
+ }
+diff --git a/fs/ntfs3/fsntfs.c b/fs/ntfs3/fsntfs.c
+index 5ae910e9ecbd..a65b66c349e8 100644
+--- a/fs/ntfs3/fsntfs.c
++++ b/fs/ntfs3/fsntfs.c
+@@ -1479,99 +1479,86 @@ int ntfs_write_bh(struct ntfs_sb_info *sbi, struct NTFS_RECORD_HEADER *rhdr,
+ }
+ 
+ /*
+- * ntfs_bio_pages - Read/write pages from/to disk.
++ * ntfs_read_write_run - Read/Write disk's page cache.
+  */
+-int ntfs_bio_pages(struct ntfs_sb_info *sbi, const struct runs_tree *run,
+-		   struct page **pages, u32 nr_pages, u64 vbo, u32 bytes,
+-		   enum req_op op)
++int ntfs_read_write_run(struct ntfs_sb_info *sbi, const struct runs_tree *run,
++			void *buf, u64 vbo, size_t bytes, int wr)
+ {
+-	int err = 0;
+-	struct bio *new, *bio = NULL;
+ 	struct super_block *sb = sbi->sb;
+-	struct block_device *bdev = sb->s_bdev;
+-	struct page *page;
++	struct address_space *mapping = sb->s_bdev->bd_mapping;
+ 	u8 cluster_bits = sbi->cluster_bits;
+-	CLST lcn, clen, vcn, vcn_next;
+-	u32 add, off, page_idx;
++	CLST vcn_next, vcn = vbo >> cluster_bits;
++	CLST lcn, clen;
+ 	u64 lbo, len;
+-	size_t run_idx;
+-	struct blk_plug plug;
++	size_t idx;
++	u32 off, op;
++	struct page *page;
++	char *kaddr;
+ 
+ 	if (!bytes)
+ 		return 0;
+ 
+-	blk_start_plug(&plug);
++	if (!run_lookup_entry(run, vcn, &lcn, &clen, &idx))
++		return -ENOENT;
+ 
+-	/* Align vbo and bytes to be 512 bytes aligned. */
+-	lbo = (vbo + bytes + 511) & ~511ull;
+-	vbo = vbo & ~511ull;
+-	bytes = lbo - vbo;
++	if (lcn == SPARSE_LCN)
++		return -EINVAL;
+ 
+-	vcn = vbo >> cluster_bits;
+-	if (!run_lookup_entry(run, vcn, &lcn, &clen, &run_idx)) {
+-		err = -ENOENT;
+-		goto out;
+-	}
+ 	off = vbo & sbi->cluster_mask;
+-	page_idx = 0;
+-	page = pages[0];
++	lbo = ((u64)lcn << cluster_bits) + off;
++	len = ((u64)clen << cluster_bits) - off;
+ 
+ 	for (;;) {
+-		lbo = ((u64)lcn << cluster_bits) + off;
+-		len = ((u64)clen << cluster_bits) - off;
+-new_bio:
+-		new = bio_alloc(bdev, nr_pages - page_idx, op, GFP_NOFS);
+-		if (bio) {
+-			bio_chain(bio, new);
+-			submit_bio(bio);
+-		}
+-		bio = new;
+-		bio->bi_iter.bi_sector = lbo >> 9;
++		/* Read range [lbo, lbo+len). */
++		page = read_mapping_page(mapping, lbo >> PAGE_SHIFT, NULL);
+ 
+-		while (len) {
+-			off = vbo & (PAGE_SIZE - 1);
+-			add = off + len > PAGE_SIZE ? (PAGE_SIZE - off) : len;
++		if (IS_ERR(page))
++			return PTR_ERR(page);
+ 
+-			if (bio_add_page(bio, page, add, off) < add)
+-				goto new_bio;
++		off = offset_in_page(lbo);
++		op = PAGE_SIZE - off;
+ 
+-			if (bytes <= add)
+-				goto out;
+-			bytes -= add;
+-			vbo += add;
++		if (op > len)
++			op = len;
++		if (op > bytes)
++			op = bytes;
+ 
+-			if (add + off == PAGE_SIZE) {
+-				page_idx += 1;
+-				if (WARN_ON(page_idx >= nr_pages)) {
+-					err = -EINVAL;
+-					goto out;
+-				}
+-				page = pages[page_idx];
+-			}
++		kaddr = kmap_local_page(page);
++		if (wr) {
++			memcpy(kaddr + off, buf, op);
++			set_page_dirty(page);
++		} else {
++			memcpy(buf, kaddr + off, op);
++			flush_dcache_page(page);
++		}
++		kunmap_local(kaddr);
++		put_page(page);
+ 
+-			if (len <= add)
+-				break;
+-			len -= add;
+-			lbo += add;
++		bytes -= op;
++		if (!bytes)
++			return 0;
++
++		buf += op;
++		len -= op;
++		if (len) {
++			/* next volume's page. */
++			lbo += op;
++			continue;
+ 		}
+ 
++		/* get next range. */
+ 		vcn_next = vcn + clen;
+-		if (!run_get_entry(run, ++run_idx, &vcn, &lcn, &clen) ||
++		if (!run_get_entry(run, ++idx, &vcn, &lcn, &clen) ||
+ 		    vcn != vcn_next) {
+-			err = -ENOENT;
+-			goto out;
++			return -ENOENT;
+ 		}
+-		off = 0;
+-	}
+-out:
+-	if (bio) {
+-		if (!err)
+-			err = submit_bio_wait(bio);
+-		bio_put(bio);
+-	}
+-	blk_finish_plug(&plug);
+ 
+-	return err;
++		if (lcn == SPARSE_LCN)
++			return -EINVAL;
++
++		lbo = ((u64)lcn << cluster_bits);
++		len = ((u64)clen << cluster_bits);
++	}
+ }
+ 
+ /*
+diff --git a/fs/ntfs3/inode.c b/fs/ntfs3/inode.c
+index 439078106cc6..53b51659b3a4 100644
+--- a/fs/ntfs3/inode.c
++++ b/fs/ntfs3/inode.c
+@@ -2106,7 +2106,6 @@ const struct address_space_operations ntfs_aops = {
+ 
+ const struct address_space_operations ntfs_aops_cmpr = {
+ 	.read_folio	= ntfs_read_folio,
+-	.readahead	= ntfs_readahead,
+ 	.dirty_folio	= block_dirty_folio,
+ 	.direct_IO	= ntfs_direct_IO,
+ };
+diff --git a/fs/ntfs3/ntfs_fs.h b/fs/ntfs3/ntfs_fs.h
+index 6a7594d3f3eb..86f825cf1c29 100644
+--- a/fs/ntfs3/ntfs_fs.h
++++ b/fs/ntfs3/ntfs_fs.h
+@@ -570,7 +570,7 @@ int ni_fiemap(struct ntfs_inode *ni, struct fiemap_extent_info *fieinfo,
+ int ni_readpage_cmpr(struct ntfs_inode *ni, struct folio *folio);
+ int ni_decompress_file(struct ntfs_inode *ni);
+ int ni_read_frame(struct ntfs_inode *ni, u64 frame_vbo, struct page **pages,
+-		  u32 pages_per_frame);
++		  u32 pages_per_frame, int copy);
+ int ni_write_frame(struct ntfs_inode *ni, struct page **pages,
+ 		   u32 pages_per_frame);
+ int ni_remove_name(struct ntfs_inode *dir_ni, struct ntfs_inode *ni,
+@@ -633,9 +633,21 @@ int ntfs_get_bh(struct ntfs_sb_info *sbi, const struct runs_tree *run, u64 vbo,
+ 		u32 bytes, struct ntfs_buffers *nb);
+ int ntfs_write_bh(struct ntfs_sb_info *sbi, struct NTFS_RECORD_HEADER *rhdr,
+ 		  struct ntfs_buffers *nb, int sync);
+-int ntfs_bio_pages(struct ntfs_sb_info *sbi, const struct runs_tree *run,
+-		   struct page **pages, u32 nr_pages, u64 vbo, u32 bytes,
+-		   enum req_op op);
++int ntfs_read_write_run(struct ntfs_sb_info *sbi, const struct runs_tree *run,
++			void *buf, u64 vbo, size_t bytes, int wr);
++static inline int ntfs_read_run(struct ntfs_sb_info *sbi,
++				const struct runs_tree *run, void *buf, u64 vbo,
++				size_t bytes)
++{
++	return ntfs_read_write_run(sbi, run, buf, vbo, bytes, 0);
++}
++static inline int ntfs_write_run(struct ntfs_sb_info *sbi,
++				 const struct runs_tree *run, void *buf,
++				 u64 vbo, size_t bytes)
++{
++	return ntfs_read_write_run(sbi, run, buf, vbo, bytes, 1);
++}
++
+ int ntfs_bio_fill_1(struct ntfs_sb_info *sbi, const struct runs_tree *run);
+ int ntfs_vbo_to_lbo(struct ntfs_sb_info *sbi, const struct runs_tree *run,
+ 		    u64 vbo, u64 *lbo, u64 *bytes);
+-- 
+2.43.0
+
 
