@@ -1,138 +1,138 @@
-Return-Path: <linux-fsdevel+bounces-66613-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66614-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 654ADC26641
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 18:36:53 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E1F1C26779
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 18:47:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id DFC86352264
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 17:36:52 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0C2794F7996
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 17:42:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAF3627144A;
-	Fri, 31 Oct 2025 17:30:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46A592BEC26;
+	Fri, 31 Oct 2025 17:42:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xlTcVDMM"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QO6XF6au"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3C37258EC3
-	for <linux-fsdevel@vger.kernel.org>; Fri, 31 Oct 2025 17:30:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0412D2AF1D
+	for <linux-fsdevel@vger.kernel.org>; Fri, 31 Oct 2025 17:42:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761931817; cv=none; b=ckUNgQwWzZ/u9h6XEH4VxTpUG7q8jW4mHtDRvlhPAGVNrs1vMv/WzYfz94PkEdaaVqrUymjQwHgRUIYe8Bj0TPnhc9tuFje5hsjdEZ++FPzdBR8WgI37E1WTdMeEzVGaf2UorlkcTuLG3w6nSgO4afetT8ngJZcVQU7A8ixM8Ak=
+	t=1761932554; cv=none; b=P3PbQzHJRTSISVv5VIbBY7AZZpfqnts1yKacDOjddAqSzTswj3LB68/s2tviktfI3gBkVRZJyB5sGOiZmK4yY/Scj6WIFJPQNhj+ZaZ9LS5sbyQJp3ciLvQED7+t78WnSNugK6jPchzbkJaZ2Ki0mVDbKdxHG35+nTQ/kYOY4Qc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761931817; c=relaxed/simple;
-	bh=ELK/TPtUoa0DdzfjuQJxQqd/fmBurZBKRSXbJIZQLus=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=f0jC1AnR8mwN9cd39f7wWeKq1IRH5CCOWCynewXmqo0n4xIQMmGFDW2V+WgEBFxo09WGriwWmWLptlA4q3y2L7AQQdx9fm9LPdIXP+fzxtSa62SZzxDBbLN+I6r6VsY3UNbMi8f3HVeEdwyQbhW/8VnaagiHmZ1HSx/VJEnn9vU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xlTcVDMM; arc=none smtp.client-ip=209.85.221.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
-Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-427015f63faso1485304f8f.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 31 Oct 2025 10:30:14 -0700 (PDT)
+	s=arc-20240116; t=1761932554; c=relaxed/simple;
+	bh=DYEF8MbETkWa1W+FmO2hraZ9Nh0ThE32WSIYF5X0sVM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=u/vRqRsCnqNYMPnUhpeg6XIhRoSsrlZjLBlp/pT1Gzo3s5bgnm6gA/V3gZtSUCh1Kj8dXx+2hR0X3EjbEvI5cQ5ykgtu+8UlwcYK5crLsQg6eHk0EnpoY5tVp5LocwmIaixzb7w/7jZrsgsbmfBeh+RNWyxakaBujTjuCdSiBEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QO6XF6au; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-46e6a689bd0so24443575e9.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 31 Oct 2025 10:42:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761931813; x=1762536613; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8smNPhdFrk3F9UsFWfFOTzaD0PFIjf/jPl9FFvNvth4=;
-        b=xlTcVDMM2YXWR1LtabsCI+fB7WxqP/BNGHnliygKqFjwb59VituBUODZN1s/r/j7LZ
-         du8UJEaeZWkJblBUuqdirmTdbacpiHAx4twPldzTYbNbBoYDCQ9FfMNVRWkDAyjcEp9G
-         VnuOdx2g5GNGlXD4wmOalAtM+oMDs0akUUdQz3DW6CTXd9MfvTLab+OkNJZSj51jdWq5
-         E2JTNX9xt1uVWpzcWaELLrnfwEbKx0glh+eyIDMLENshEB64nz6eacBkPzv78Cn42AmY
-         Cwkt7NbGfh2GaG11aiPezj6Y7a9Bg2AFHaCfoUl1eglXUaM/oKEURdSt47gJ/32LFIN5
-         gGpg==
+        d=gmail.com; s=20230601; t=1761932551; x=1762537351; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QdJDBEnJpKm6jWCOTYuhfQ0SBELeMNdpfOIkxeoe/+Y=;
+        b=QO6XF6auYASGT3E0wDe/HhKPVe5KKKIUJE4K+ZF9V55X9Qd2DU/bLidv+XyfHZIOPU
+         RQ+W7PQGYQOUyYll6P/8idNGT8YWXbxt/cedkkqwOKU9hGUVv7evpquTG8FKq3zL+Soi
+         DJplxRYULqtzgrNHcKlbPZOgmEL2J6gZ+y7ezxb9q6n7iheSyt2g5RKu5EhfeR8sD8dN
+         JWOVAhKMMaytQiXI67JhF6dtjBfAuv+IYEia0YkhYF6XBpuDVXhbhxPEJB4gwq4y8lFx
+         5x6bRnM1ZK1XvJkHnsp5SEnbDQ5qhm0rZFC1sm6vhHrliAeeJlvmfUYQMWVbvlYI6TWw
+         tigw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761931813; x=1762536613;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8smNPhdFrk3F9UsFWfFOTzaD0PFIjf/jPl9FFvNvth4=;
-        b=tqEi0O/o7Kr7L2wUnoYnwELUP4FD5sh3XkcE7wRhNj4dn1dQ3XhR2I2x2D85ViylMo
-         NohUacKK7oaqJ9na/UO1JsUvycD/Gb+uZxYXix7W2cz0l/FDHXkXIbs+Nc/V57hxQE2n
-         kiogkBeYK1GpDtMgzQsFfRdu4PI2PgGWZt3CczcdTuaYG1ta/0DhPgFtE6kDgI1W/Kmy
-         CEuX7ihXSyrgiRHhVIad454HcZhLRQH2hl4H7dJ/CWNGGpLOTGjbDE6pzX5twmLVhQX2
-         2bdjWg0CqzOQjwe9xDwdDsLD3l/XH6C89i4F1nyP3VWYBe9K88Q2FpNKFz7U+hQm9MYi
-         kjRA==
-X-Forwarded-Encrypted: i=1; AJvYcCWjJ3d/0dFht7vOd6EC5hbWqVX2EMzqbfFsELT+4yKbMOuoZxeOUvIRIyytRJQ/s4YZW/LJRWPAXvVPciaR@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6G6qzZ9vQ8CzpVjL+6t8sQpCT9mhZigvID0UGrAMN+4vsn3BV
-	wSlwEYaS25BQcY2fgA47LNd/NM9iSlJH63jO/oHKFdQn2mfsKILSTMnzSmhYzSBQjSusIhRrKva
-	OqP2C+E7W8Vp1oA==
-X-Google-Smtp-Source: AGHT+IGAlLQK0HkJ6COX6kdvZKn0Ro2fXbdMSgyDJ0pItor316xsKGfib1jQEkdwcGXkq1m1difB1/UltgkgBQ==
-X-Received: from wmwp25.prod.google.com ([2002:a05:600d:8319:b0:477:c8e:1959])
- (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600d:8310:b0:477:326c:b33f with SMTP id 5b1f17b1804b1-477326cb6d3mr20439815e9.16.1761931812961;
- Fri, 31 Oct 2025 10:30:12 -0700 (PDT)
-Date: Fri, 31 Oct 2025 17:30:12 +0000
-In-Reply-To: <20250924152214.7292-2-roypat@amazon.co.uk>
+        d=1e100.net; s=20230601; t=1761932551; x=1762537351;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QdJDBEnJpKm6jWCOTYuhfQ0SBELeMNdpfOIkxeoe/+Y=;
+        b=RUHRldRzXpa2IXU3eBFSiki17Y/kIyNHcGXo8UtxuSaDblwDxDKMzzyngYEVkK4YSJ
+         JNl11R7ddOcPB9cpiI9PYTjEBGvdEwq38+F1twlDLP8HoJgeBdVNysTWzZCCCxU7Hb00
+         hg+1FOmgN9yhGBKpd72y7/sYHly5Pw0/bhxmwRUkXuX3PoMVPa9Tkbuyabp3sa0gkp21
+         xZVaRmL4rT04VLBj1sQi52wV19I2zup5xuwG+aBNqMb4E4n5LfKPGushOD33wztkVstE
+         AcUto2S4fptye9yXCEQT52yhU+MjyT7PYN3vukA0hxy1TysPMzH2Pzm8jRh7BxSbo+mh
+         tJaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUOGDWXTB4QZ8QzhuF4vqACwXbvw5nijhCqwqfbGhJPuZHydDMs8zahsWtOvC5xPFJy3mfF+gFKJYM+CTnt@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQiL6BmZWo3ybICUp5nrKF3qSgbKMI66cCYBhN+CxNdDahkh8w
+	BsbCbf1mgqfqB2yf0kGAhhhrRkDWyR2yYt23QOXjDCRO+2enzfoxYTzO
+X-Gm-Gg: ASbGncsWHrg5jkvO2rwX/p5HHu6ycV4hCaX4VjsUUdf5uPYNj8Pf49OXlk/gVDjJ8WT
+	m/1G+sDWs0oYaxfwRt4FLiPjrSPd6mI6hxrIzfleSlJCY+i4pX9llBpwckksZ3wtS0UENlREL6l
+	O7uDNtuZQepQDNavwzYK9IqiQAtcnWs2ma4EMXuZYROF+1KSQQlrgDBxp8vcD+3lie9Dc5va/3T
+	UOzl1I4nWwMSmfmcIacgxPc2NIVbv4+AxA5IOBfIe3608OOz/sS1Jw233hoWKwi6BvdhErONbAE
+	ywThzJj7mJZWKjrDY2bXR3f8gBZUSVfZAfEMMVOJLoYGZkOcd0pG1o2pdlmE1WvzKJFWKpzq74R
+	NaLhaulMAq48Sm8nYrBS/BPd1z4p8qNOM9N3awn78f5bSkKCqKhBGadz/9KHHl7pQyE272OVOxK
+	wDTFb04qrD6qLi9l3+byQsDycnxLKLR+HabUc/H2E2JgrN02eCWnhHh1aNs6o=
+X-Google-Smtp-Source: AGHT+IGAkZg8kAklapkT4C/4gT42mCirvSfZPUgZIn6r0X6eqd/Q4MaOuVsA9Z1qVisGwmh3i9a7ZQ==
+X-Received: by 2002:a05:600c:5292:b0:475:dc85:4667 with SMTP id 5b1f17b1804b1-477307c2af0mr46578475e9.15.1761932550959;
+        Fri, 31 Oct 2025 10:42:30 -0700 (PDT)
+Received: from f.. (cst-prg-14-82.cust.vodafone.cz. [46.135.14.82])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4773c53eafbsm6728865e9.12.2025.10.31.10.42.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 31 Oct 2025 10:42:30 -0700 (PDT)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: torvalds@linux-foundation.org
+Cc: brauner@kernel.org,
+	viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	tglx@linutronix.de,
+	pfalcato@suse.de,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [WIP RFC PATCH 0/3] runtime-const header split and whatnot
+Date: Fri, 31 Oct 2025 18:42:17 +0100
+Message-ID: <20251031174220.43458-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <CAHk-=wjRA8G9eOPWa_Njz4NAk3gZNvdt0WAHZfn3iXfcVsmpcA@mail.gmail.com>
+References: <CAHk-=wjRA8G9eOPWa_Njz4NAk3gZNvdt0WAHZfn3iXfcVsmpcA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250924151101.2225820-4-patrick.roy@campus.lmu.de>
- <20250924152214.7292-1-roypat@amazon.co.uk> <20250924152214.7292-2-roypat@amazon.co.uk>
-X-Mailer: aerc 0.21.0
-Message-ID: <DDWOP8GKHESP.2EOY2HGM9RXHU@google.com>
-Subject: Re: [PATCH v7 05/12] KVM: guest_memfd: Add flag to remove from direct map
-From: Brendan Jackman <jackmanb@google.com>
-To: "Roy, Patrick" <roypat@amazon.co.uk>
-Cc: "pbonzini@redhat.com" <pbonzini@redhat.com>, "corbet@lwn.net" <corbet@lwn.net>, 
-	"maz@kernel.org" <maz@kernel.org>, "oliver.upton@linux.dev" <oliver.upton@linux.dev>, 
-	"joey.gouly@arm.com" <joey.gouly@arm.com>, "suzuki.poulose@arm.com" <suzuki.poulose@arm.com>, 
-	"yuzenghui@huawei.com" <yuzenghui@huawei.com>, "catalin.marinas@arm.com" <catalin.marinas@arm.com>, 
-	"will@kernel.org" <will@kernel.org>, "tglx@linutronix.de" <tglx@linutronix.de>, 
-	"mingo@redhat.com" <mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>, 
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "x86@kernel.org" <x86@kernel.org>, 
-	"hpa@zytor.com" <hpa@zytor.com>, "luto@kernel.org" <luto@kernel.org>, 
-	"peterz@infradead.org" <peterz@infradead.org>, "willy@infradead.org" <willy@infradead.org>, 
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, "david@redhat.com" <david@redhat.com>, 
-	"lorenzo.stoakes@oracle.com" <lorenzo.stoakes@oracle.com>, 
-	"Liam.Howlett@oracle.com" <Liam.Howlett@oracle.com>, "vbabka@suse.cz" <vbabka@suse.cz>, 
-	"rppt@kernel.org" <rppt@kernel.org>, "surenb@google.com" <surenb@google.com>, "mhocko@suse.com" <mhocko@suse.com>, 
-	"song@kernel.org" <song@kernel.org>, "jolsa@kernel.org" <jolsa@kernel.org>, "ast@kernel.org" <ast@kernel.org>, 
-	"daniel@iogearbox.net" <daniel@iogearbox.net>, "andrii@kernel.org" <andrii@kernel.org>, 
-	"martin.lau@linux.dev" <martin.lau@linux.dev>, "eddyz87@gmail.com" <eddyz87@gmail.com>, 
-	"yonghong.song@linux.dev" <yonghong.song@linux.dev>, 
-	"john.fastabend@gmail.com" <john.fastabend@gmail.com>, "kpsingh@kernel.org" <kpsingh@kernel.org>, 
-	"sdf@fomichev.me" <sdf@fomichev.me>, "haoluo@google.com" <haoluo@google.com>, "jgg@ziepe.ca" <jgg@ziepe.ca>, 
-	"jhubbard@nvidia.com" <jhubbard@nvidia.com>, "peterx@redhat.com" <peterx@redhat.com>, 
-	"jannh@google.com" <jannh@google.com>, "pfalcato@suse.de" <pfalcato@suse.de>, 
-	"shuah@kernel.org" <shuah@kernel.org>, "seanjc@google.com" <seanjc@google.com>, 
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
-	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
-	"bpf@vger.kernel.org" <bpf@vger.kernel.org>, 
-	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>, "Cali, Marco" <xmarcalx@amazon.co.uk>, 
-	"Kalyazin, Nikita" <kalyazin@amazon.co.uk>, "Thomson, Jack" <jackabt@amazon.co.uk>, 
-	"derekmn@amazon.co.uk" <derekmn@amazon.co.uk>, "tabba@google.com" <tabba@google.com>, 
-	"ackerleytng@google.com" <ackerleytng@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Wed Sep 24, 2025 at 3:22 PM UTC, Patrick Roy wrote:
-> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-> index 1d0585616aa3..73a15cade54a 100644
-> --- a/include/linux/kvm_host.h
-> +++ b/include/linux/kvm_host.h
-> @@ -731,6 +731,12 @@ static inline bool kvm_arch_has_private_mem(struct kvm *kvm)
->  bool kvm_arch_supports_gmem_mmap(struct kvm *kvm);
->  #endif
->  
-> +#ifdef CONFIG_KVM_GUEST_MEMFD
-> +#ifndef kvm_arch_gmem_supports_no_direct_map
-> +#define kvm_arch_gmem_supports_no_direct_map can_set_direct_map
-> +#endif
-> +#endif /* CONFIG_KVM_GUEST_MEMFD */
+So I slapped together what I described into a WIP patchset.
 
-The test robot seems happy so I think I'm probably mistaken here, but
-AFAICS can_set_direct_map only exists when ARCH_HAS_SET_DIRECT_MAP,
-which powerpc doesn't set.
+The runtime header treatment so far only done for x86 and riscv.
 
-If this is indeed an issue I think it can be fixed by just defining
-can_set_direct_map() to false when !ARCH_HAS_SET_DIRECT_MAP.
+I verified things still compile with this in fs.h:
+#ifndef MODULE
+#include <asm/runtime-const-accessors.h>
+#endif
+
+The -accessors suffix is not my favourite, but I don't have a better
+name.
+
+If this looks like I'm going to do the needful(tm).
+
+Mateusz Guzik (3):
+  x86: fix access_ok() and valid_user_address() using wrong USER_PTR_MAX
+    in modules
+  runtime-const: split headers between accessors and fixup; disable for
+    modules
+  fs: hide names_cachep behind runtime access machinery
+
+ .../include/asm/runtime-const-accessors.h     | 151 ++++++++++++++++++
+ arch/riscv/include/asm/runtime-const.h        | 142 +---------------
+ .../x86/include/asm/runtime-const-accessors.h |  45 ++++++
+ arch/x86/include/asm/runtime-const.h          |  38 +----
+ arch/x86/include/asm/uaccess_64.h             |  17 +-
+ arch/x86/kernel/cpu/common.c                  |   8 +-
+ fs/dcache.c                                   |   1 +
+ include/asm-generic/vmlinux.lds.h             |   3 +-
+ include/linux/fs.h                            |  17 +-
+ 9 files changed, 232 insertions(+), 190 deletions(-)
+ create mode 100644 arch/riscv/include/asm/runtime-const-accessors.h
+ create mode 100644 arch/x86/include/asm/runtime-const-accessors.h
+
+-- 
+2.34.1
+
 
