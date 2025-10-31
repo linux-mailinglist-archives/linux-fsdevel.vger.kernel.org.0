@@ -1,168 +1,147 @@
-Return-Path: <linux-fsdevel+bounces-66642-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66644-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27E82C272A6
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 01 Nov 2025 00:13:24 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40F43C272FB
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 01 Nov 2025 00:32:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A5021B264C4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 23:13:37 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ACC724E8336
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 23:32:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D3AE32AABC;
-	Fri, 31 Oct 2025 23:13:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F19532C950;
+	Fri, 31 Oct 2025 23:32:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pkN8RXiA"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OZmjR12q"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87E67329E4B
-	for <linux-fsdevel@vger.kernel.org>; Fri, 31 Oct 2025 23:13:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB86A2EFD92;
+	Fri, 31 Oct 2025 23:32:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761952385; cv=none; b=YHSWnNElv0IU9Hx4inJh1QkI57FM1NVybNAgJw0hR1Q9CtqzJBICM6T3lT3JnwBooZCqIDS/Xm89de7mYmIuUpf6PRdEElPacoJtCa22AcHnOBQgWQjp7cuxF9d9EuppW/RfYijNMrZTHvSnqpCeBxtpDoEKmLRKU0g6k4gzRNI=
+	t=1761953531; cv=none; b=dMi6AMroHfYxYqVEXS7wXKW+Zyx4v1UuZQPrHbow+f0XfymNsXPykzed9ska8oEuFAq5XG/+3GUNvdRDzDl8IPDS13wV3yOLfcaXD8E5tTzX0mmpKYOeRqmER6bKMxBmBYROspJOMma/U+hfm05+dCMW6dkRAx9X1QePFcBSwUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761952385; c=relaxed/simple;
-	bh=gY82JgAv1A8rYj9MCaiZVHVrEMWrbrCoiDwppP0oGWg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qoCPc3jcmMnh0lAqhva+7sdpYJ4bcnvULtSW9YNcXSD6bmszP5elDWrmyzlSAisLGaX0VN5C8VN4+yVvrKJWjDwf+jAxUc75dMI3cYF2L4o+3N3tXX0KCLwflbcBstl88HWzahAPhn0QEi2l9XwGTZVkd+fLf4wR0O9NCj9CXx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pkN8RXiA; arc=none smtp.client-ip=209.85.160.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4ea12242d2eso82061cf.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 31 Oct 2025 16:13:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761952382; x=1762557182; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gY82JgAv1A8rYj9MCaiZVHVrEMWrbrCoiDwppP0oGWg=;
-        b=pkN8RXiAjdXxo7BRN5+terCdOCJFnliS5crjawRNQ5x3UOuShVrfTVS7/ndcHb9rK5
-         XPJ77kaAfE9BoNEsCAXr+3d7DjfbmCPZOQqZf+0sLjvImi4VgycqCUfkOtLOAmTdrDqM
-         3Bv9NiHCI/pUxNMCL0SOrzD13yYc80M8iJDj/Pn7SZ3hbTAkVzseB+I44xaHwZHA25UG
-         b+hXRc179Gp9+IkCuj9XXiHOpqoqvqHp3E5Ukq/gnBpfTc2s78WdqUj0cUM4lPrlaEwI
-         mHUfMlzOadgUghqvFM4HClQq/fB5XEAjzx7T87V82BTE+F1ZZ4+GhbaYdFyLbY/HG3NT
-         Ad3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761952382; x=1762557182;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gY82JgAv1A8rYj9MCaiZVHVrEMWrbrCoiDwppP0oGWg=;
-        b=b9ckl0JORl9pfcfVeAszJfQbqo02to5G3lmtnhwVQoGhODoS+spaoF3ygN5GI2WHJV
-         oLhk+rShCGUyAOjzIIXzNFQL7L63ut9yvknzWbjOZywnQHhaUxOBHU0Wj066OWqicZm1
-         naBKE4p7vbrSJUuOWZ2eC0IHIXA75KA8Yx+WCCOkUUnLqHGqdpT2y+uXLnbd37mETA+5
-         EVJ68QVQlTL4X4Wp8xCCRKMvSeK4nSoR6qdLnNqKiG+Qsq+EGd2ImDHsxdvudyxXzeqT
-         6zPfOZ0FcfFk8ONERN/FbaCHV0jVXEL56r8wZ+OT3Pti8YZGEW5MspK35+4tPyN1n8i6
-         aqfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW6j/uUtHhGi91qFoe/kylOdOpLyainhDP+Xdo7ZuBSs6q8fvCnQ+kkNiIA6I1yKZ2lfGhv2g1vWK25vrVX@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmE+ZCtI8l5USWn3Mwp3LhoDJp1YICqyLyGkb/069FDVOIv8ql
-	jWug8HUGTJGlzHELIdnoSyXZ8Aggth2Vr4GdjOSHKChr7mGtiWfrngT/vP03iChabzrrkxy+XsF
-	oNWIO3LYA4YyND7S0sRNe5YYVwuCoEXp7RK9HDECJ
-X-Gm-Gg: ASbGnctxc26LtCycEFMXkfHrEjW2id+h+M39s0wexB0io5pg5Bu1QlRiMrcCfXFVlbT
-	KWl9dFmhkKcL3P+L9J4ppgbCWJXRCnHskg94EFOt0MWB2AWBJ0w6Bo+XyNHIJed8K37fyz5D1nV
-	VUt40475L6lk1kPlfxi4O6jSrnTxapxvWML9ACPV2upQtRerUBFheIiLKY3XpEXUFiOAPcU0fhp
-	uSbqEkPW7vEcxEygYgCAzvdvRVTNxwqPLvDAleSEPmH6+Modq5dzUx6OL0=
-X-Google-Smtp-Source: AGHT+IENbX2I9QLWCzbGqCz+aeN8c925eFyi708BVOjF22TIfxJHEaH3VCvZrnHqn6i5au9Z3HH9DEYcpuxXzSR6lhg=
-X-Received: by 2002:a05:622a:1991:b0:4b3:1617:e617 with SMTP id
- d75a77b69052e-4ed424d7c14mr1098221cf.11.1761952382100; Fri, 31 Oct 2025
- 16:13:02 -0700 (PDT)
+	s=arc-20240116; t=1761953531; c=relaxed/simple;
+	bh=h+r0tqFwhhtjNk7d58FTTkux3ySidbSHA65iwckG4zY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GqI0R0dqWhxRJmTs6DEOp5Bi0SsxAH4eP+SPUvYenW5ap0/Pg8bswVB77QD5VvI1ZE1/HNbYTsrxjrYYfew2MNiAeMwMHnO1NbXgYcYspyTw/HQUkgFNDwszVgbCQXnFgzWLEo2GwNjKs1fWGVZ+e3Kv5Nhm1MphH02rD3AE/5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OZmjR12q; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761953530; x=1793489530;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=h+r0tqFwhhtjNk7d58FTTkux3ySidbSHA65iwckG4zY=;
+  b=OZmjR12q/3j4bWzWVTzMSXKEdCVgF9lHX8t3LUtTpCNTGX7l+HCbbmwM
+   ++M5FVL53LNOv61iPqJ3kFUMbfz684TCUEY0mxWKGSdFLRPUcZ76lmADu
+   MacQSr/LNw/9N6mXsGtpp8+n94Giltnq8PeLxzykVsahxmh1Ow80/ATYy
+   VAK47shw/5in5t6zYsP4wimRLcOa0Xw+FgrDzZ8+P0358+CTTIVS5Dg7A
+   UGZp1vyqcm5Nq9PEQB/5rfqBCFLU+iDNqn6v8+2SSahljKW+SvRQESVQq
+   lE4Dncc5P9nLkz22lWEWgvDc5Sm/vKG9SOStIL+4+/kz2f4MMvj9J68hU
+   A==;
+X-CSE-ConnectionGUID: u27puJaOTOW+Aoa6zKTbhw==
+X-CSE-MsgGUID: njfkjZegTKC89lYefjH7tw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11599"; a="63140428"
+X-IronPort-AV: E=Sophos;i="6.19,270,1754982000"; 
+   d="scan'208";a="63140428"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 16:32:09 -0700
+X-CSE-ConnectionGUID: 2PAsw1AfSUqU0iBpZvJi8Q==
+X-CSE-MsgGUID: zUGAZRtjTl2DJjLHGudMnw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,270,1754982000"; 
+   d="scan'208";a="186686652"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by fmviesa008.fm.intel.com with ESMTP; 31 Oct 2025 16:32:07 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vEyaU-000Nii-0P;
+	Fri, 31 Oct 2025 23:31:58 +0000
+Date: Sat, 1 Nov 2025 07:30:11 +0800
+From: kernel test robot <lkp@intel.com>
+To: Mateusz Guzik <mjguzik@gmail.com>, torvalds@linux-foundation.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, brauner@kernel.org,
+	viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, tglx@linutronix.de, pfalcato@suse.de,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: Re: [PATCH 3/3] fs: hide names_cachep behind runtime access machinery
+Message-ID: <202511010731.B5nbGjbm-lkp@intel.com>
+References: <20251031174220.43458-4-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1761756437.git.lorenzo.stoakes@oracle.com>
- <7de40603015dee82970f5d37332a6d5af7532063.1761756437.git.lorenzo.stoakes@oracle.com>
- <xnsn5rfqigbm5ryjtbf2rtfotneiwygzesvyfdxiqrzlyzljdr@tmbht4ggnjcv>
- <61ae955e-310d-488e-b350-59bb809f06e1@lucifer.local> <c736tssdw3z57kamh6eqc23gr575q375n2o2nnszih64afnaf7@zwbqremsbhwf>
- <053f3a04-9195-4f8d-8959-42e0c3ba077b@lucifer.local> <72ee2324-d599-44b6-92ce-ed0afafed78f@suse.cz>
- <3ae457cd-6c18-4870-a617-7f937b107cb4@suse.cz> <88b72728-fa3f-4a70-9ea2-40ff50673047@lucifer.local>
- <a3bcac19-78b7-4918-81b3-641a65a19a9d@suse.cz>
-In-Reply-To: <a3bcac19-78b7-4918-81b3-641a65a19a9d@suse.cz>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Fri, 31 Oct 2025 16:12:51 -0700
-X-Gm-Features: AWmQ_bnVgpHA3Q0hYHvJgIIm_FpBFlpB9mdVzh6mL8zZeBp2jS4PiSvnDoBUG6c
-Message-ID: <CAJuCfpEs1JTywfZNPrVmeTHUUyK+7waCU9fqfur2Q_xxx7hacw@mail.gmail.com>
-Subject: Re: [PATCH 1/3] mm: introduce VM_MAYBE_GUARD and make visible for
- guard regions
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Pedro Falcato <pfalcato@suse.de>, 
-	Andrew Morton <akpm@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>, 
-	David Hildenbrand <david@redhat.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
-	Mike Rapoport <rppt@kernel.org>, Michal Hocko <mhocko@suse.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Jann Horn <jannh@google.com>, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
-	linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	Andrei Vagin <avagin@gmail.com>, Barry Song <21cnbao@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251031174220.43458-4-mjguzik@gmail.com>
 
-On Thu, Oct 30, 2025 at 2:48=E2=80=AFPM Vlastimil Babka <vbabka@suse.cz> wr=
-ote:
->
-> On 10/30/25 20:47, Lorenzo Stoakes wrote:
-> > On Thu, Oct 30, 2025 at 07:47:34PM +0100, Vlastimil Babka wrote:
-> >> >
-> >> > Could we use MADVISE_VMA_READ_LOCK mode (would be actually an improv=
-ement
-> >> > over the current MADVISE_MMAP_READ_LOCK), together with the atomic f=
-lag
-> >> > setting? I think the places that could race with us to cause RMW use=
- vma
-> >> > write lock so that would be excluded. Fork AFAICS unfortunately does=
-n't (for
-> >> > the oldmm) and it probably would't make sense to start doing it. May=
-be we
-> >> > could think of something to deal with this special case...
-> >>
-> >> During discussion with Pedro off-list I realized fork takes mmap lock =
-for
-> >> write on the old mm, so if we kept taking mmap sem for read, then vma =
-lock
-> >> for read in addition (which should be cheap enough, also we'd only nee=
-d it
-> >> in case VM_MAYBE_GUARD is not yet set), and set the flag atomicaly, pe=
-rhaps
-> >> that would cover all non-bening races?
-> >>
-> >>
-> >
-> > We take VMA write lock in dup_mmap() on each mpnt (old VMA).
->
-> Ah yes I thought it was the new one.
->
-> > We take the VMA write lock (vma_start_write()) for each mpnt.
-> >
-> > We then vm_area_dup() the mpnt to the new VMA before calling:
-> >
-> > copy_page_range()
-> > -> vma_needs_copy()
-> >
-> > Which is where the check is done.
-> >
-> > So we are holding the VMA write lock, so a VMA read lock should suffice=
- no?
->
-> Yeah, even better!
->
-> > For belts + braces we could atomically read the flag in vma_needs_copy(=
-),
-> > though note it's intended VM_COPY_ON_FORK could have more than one flag=
-.
-> >
-> > We could drop that for now and be explicit.
->
-> Great!
+Hi Mateusz,
 
-Overall, I think it should be possible to set this flag atomically
-under VMA read-lock. However, if you introduce new vm_flags
-manipulation functions, please make sure they can't be used for other
-vm_flags. In Android I've seen several "interesting" attempts to
-update vm_flags under a read-lock (specifically in the page-fault
-path) and had to explain why that's a bad idea.
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on arnd-asm-generic/master]
+[also build test WARNING on linus/master brauner-vfs/vfs.all v6.18-rc3 next-20251031]
+[cannot apply to linux/master]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Mateusz-Guzik/x86-fix-access_ok-and-valid_user_address-using-wrong-USER_PTR_MAX-in-modules/20251101-054539
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/arnd/asm-generic.git master
+patch link:    https://lore.kernel.org/r/20251031174220.43458-4-mjguzik%40gmail.com
+patch subject: [PATCH 3/3] fs: hide names_cachep behind runtime access machinery
+config: um-allnoconfig (https://download.01.org/0day-ci/archive/20251101/202511010731.B5nbGjbm-lkp@intel.com/config)
+compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project d1c086e82af239b245fe8d7832f2753436634990)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251101/202511010731.B5nbGjbm-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202511010731.B5nbGjbm-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from fs/dcache.c:38:
+   In file included from ./arch/um/include/generated/asm/runtime-const.h:1:
+>> include/asm-generic/runtime-const.h:11:9: warning: 'runtime_const_ptr' macro redefined [-Wmacro-redefined]
+      11 | #define runtime_const_ptr(sym) (sym)
+         |         ^
+   arch/x86/include/asm/runtime-const-accessors.h:21:9: note: previous definition is here
+      21 | #define runtime_const_ptr(sym) ({                               \
+         |         ^
+   In file included from fs/dcache.c:38:
+   In file included from ./arch/um/include/generated/asm/runtime-const.h:1:
+>> include/asm-generic/runtime-const.h:12:9: warning: 'runtime_const_shift_right_32' macro redefined [-Wmacro-redefined]
+      12 | #define runtime_const_shift_right_32(val, sym) ((u32)(val)>>(sym))
+         |         ^
+   arch/x86/include/asm/runtime-const-accessors.h:35:9: note: previous definition is here
+      35 | #define runtime_const_shift_right_32(val, sym) ({               \
+         |         ^
+   2 warnings generated.
+
+
+vim +/runtime_const_ptr +11 include/asm-generic/runtime-const.h
+
+e78298556ee5d8 Linus Torvalds 2024-06-04   4  
+e78298556ee5d8 Linus Torvalds 2024-06-04   5  /*
+e78298556ee5d8 Linus Torvalds 2024-06-04   6   * This is the fallback for when the architecture doesn't
+e78298556ee5d8 Linus Torvalds 2024-06-04   7   * support the runtime const operations.
+e78298556ee5d8 Linus Torvalds 2024-06-04   8   *
+e78298556ee5d8 Linus Torvalds 2024-06-04   9   * We just use the actual symbols as-is.
+e78298556ee5d8 Linus Torvalds 2024-06-04  10   */
+e78298556ee5d8 Linus Torvalds 2024-06-04 @11  #define runtime_const_ptr(sym) (sym)
+e78298556ee5d8 Linus Torvalds 2024-06-04 @12  #define runtime_const_shift_right_32(val, sym) ((u32)(val)>>(sym))
+e78298556ee5d8 Linus Torvalds 2024-06-04  13  #define runtime_const_init(type,sym) do { } while (0)
+e78298556ee5d8 Linus Torvalds 2024-06-04  14  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
