@@ -1,123 +1,284 @@
-Return-Path: <linux-fsdevel+bounces-66596-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66597-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB48DC25CCE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 16:17:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C928EC25D22
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 16:24:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C810418896C4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 15:14:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 476AE1891D0F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 15:24:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85B4A25B1D2;
-	Fri, 31 Oct 2025 15:13:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BCF32D190C;
+	Fri, 31 Oct 2025 15:23:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ei/9L18U"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xlaf9i5o"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BAF95227
-	for <linux-fsdevel@vger.kernel.org>; Fri, 31 Oct 2025 15:13:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86A1C2D0C99;
+	Fri, 31 Oct 2025 15:23:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761923621; cv=none; b=jHcuksVkt4CJD6w1axJWmNmrmX2oXcVi8l60YVORAm+56wVKInOtVOyHmvLTNeskza5hoP9j1tEPqy4eOGo5U3WS7/BoaiW7drKYSgKBF3/6Q0DeoyzmEJCVIYJ0JNAZb2KYzyhHE81qgSEw6hi8yK5AAS3HHbUxZ6aP39OvAMg=
+	t=1761924205; cv=none; b=utFepgiZ4NEbD70kGKgRrivDjNBOW6nIBl0xnkNSJ3hSSzEwvO0IKxIHk+ZnNA7YHWyuFJkhWKV2xj8cnlC03o/QUi9ynROkDDNsHLXW0assxEAXnby3gxkT1w+nSCfaYEy1N0kCISpvVhlahXb8LdfLJa2/HIQPWZXelOT6DdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761923621; c=relaxed/simple;
-	bh=uKzyL+jmwyriXmBvdMLiERXr9o5a0ykNZSCadruR89w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZERd9ovjdanY2qujgBBWX0OWDy2fUQgFLVNs1tf2Q7mwJCjdZFFfUIbpFCHnolMNbfN+X11vfturlDwJ+YJJxnPZl6rn9xMYw3jLfo/QaLA5X1Vvgn6FejlEuXR13EVYV+EbeUTq16FczIlCtXH8JZT4tFq0S8xHg0lsqUyF0U0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ei/9L18U; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-b708b01dc04so1761566b.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 31 Oct 2025 08:13:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761923617; x=1762528417; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uKzyL+jmwyriXmBvdMLiERXr9o5a0ykNZSCadruR89w=;
-        b=ei/9L18U5HkAuC9pc7V+xpXWsUgxKwYYi76s8mjMJOfjpKLNPLrG1xRUFGf6ZM3Vg/
-         PPzWJHhyzrdZHoIfAivQJRkY48f04jO7pvm30/huXE8fAauISJbBapC4GJ8y9rkdC3yZ
-         G4GbO705BixBaKye/Cd4CYUVq0FOjFfnEe/C3O+VjFGb77lpwz03E2s6SqtQ4PUrsjKR
-         +ravYwt74R7uuM0gnIH1BT5tEeOU9Tu1DJcWw2ow0d+hc4zkp19JMH16HlAa72LEVRgJ
-         CCEEHUYRZBc3972zh3VVFxySnZ46+evH6rwuXYZ60dn81RL5VUw3NMNrFedjr1K10CV8
-         gjIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761923617; x=1762528417;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uKzyL+jmwyriXmBvdMLiERXr9o5a0ykNZSCadruR89w=;
-        b=Gq9AMnt2YnCeyhV5YW0ptdd4Uarq6BW82hQPDhCsMd1KBFoaaJjVzNbIXg+HiaCuDb
-         G8fa4n3z6tJv5WZLmarHitp5ZermIqkC6sD9+WT7Toy2+aoCjS1zzjtbAEFGqpCZve4r
-         9HwzWJt80Yh3DBckj0DuocR+y95Mb4IFrA0bUwyExLB56/52mhfFhCrW4VCHk0QEiMlS
-         qRApapoC5ZqG00g4ITMzpu29L2QTg9LbgrGZKysNgthc3GcJ1Xig38iXt05hUVbxtJmd
-         5X6+TtJvOBgFKHK5hv356t7roHL2tycWycda0Rbb4/yP/ANtsDF2u1uQpov+7cj1n4+n
-         BVdg==
-X-Forwarded-Encrypted: i=1; AJvYcCUQVit1cnO3orq+W2DRwmg9dYWhA1+udOjpXapjAzY2iWOniRItFbPahAOXrWgX82PbNR2ND8psa5as6Utm@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbZgkwZ8cwNOMifmZRxr/MpvjB8XFznaPJlcl+X+mZKqUq9NnE
-	Swqzf+lwpToVyOUQ+0Lq1rDJa1gNfDheDWY20ARbuJMeQKj1VsRWGnipYvAI5lxHm7LWlGaVWYu
-	I355V+SznvRwcy0a0pORfFqvHhTAgdyk=
-X-Gm-Gg: ASbGncufxjKHkhojeG9USR4YJocKLs42mVOF5CFu9oH8UWuJqQg0t3fX3d2dFWUqjNP
-	iFDfOxaZAzmw58J+UL3PKycXs0TfLeVHNwA6LdYLRxsD737l9jhQH3IJh02BvtW6+B1TZARn+zn
-	g9PW5iatM1+4I/nCZ6/y3ongSPk8Og41y6tV1ePZ6xk/mCEKUItRR9UT88B/ZF81ZaStHTpEy8G
-	WjLOThqNNFtxnCDnGaagL7t0+2nrQf8DdAO8UgpIxTQz73bPCD4DJ7hDLKyOn6hX9J+Gb+JztmY
-	BQsjyDenNUkCXJHSPI1q8F8hgQ==
-X-Google-Smtp-Source: AGHT+IFi6RrdmaEHmhz0DYmgTu3lth1+AIc+wR+yR6AFvkMfxIA2Fs0w32EasIWGWhuV3loaspaSUVluO52UjOA6gbA=
-X-Received: by 2002:a17:907:72c8:b0:b64:76fc:ea5c with SMTP id
- a640c23a62f3a-b707082fb5cmr400438766b.52.1761923617081; Fri, 31 Oct 2025
- 08:13:37 -0700 (PDT)
+	s=arc-20240116; t=1761924205; c=relaxed/simple;
+	bh=y9raUuBig5N4WyKFwF7uynqetobG8lw/9Bb0lLpRhMc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NYyR0ey77voVINfoPfdn6pIEyAHRcsr8TTM6t0nS1DnTANQ5jA6ojfSOWUjDWGAC0q9NWe5ocgktDeNo14iAqXwgaI+f/yOncENWVFWpJWiBWm6fCt/rflO/7p53rBdpk7CwUJm150yfsutMHbHIvbJUF7lMTtEHA3fLpmBwick=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xlaf9i5o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05852C4CEFB;
+	Fri, 31 Oct 2025 15:23:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761924205;
+	bh=y9raUuBig5N4WyKFwF7uynqetobG8lw/9Bb0lLpRhMc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Xlaf9i5oR0S7ayGjVLYAdO0rAXqp0TCWBIgi1ozuDP8Ag9OO9CwaMAbyFaBkX/zk4
+	 ZoEkrcF8Ca5oJrI4tyic6/jVwGMtJIy17vDZAM0rRqocl9UxKX35BxW/+5vucymJw3
+	 CajRFuxHtUgqrVtsQSBMx6diaMV0s90p4UW0NC1YN6t7Eva99PCjkqZRq3Irv5WbDU
+	 xrFqlhfvs9PM7/y2T4o3Ltu46Yv5BN6CAEpMLCL1YjnbinDAgPzeEuLKsHQlekRHTG
+	 uO59ATG8DqFqbVLAKEYQm6s+K1YFjHBtaqOqtznsDsKc6i0vvEfpCby4aett/c3dRO
+	 o3ltSsAPfpweg==
+Date: Fri, 31 Oct 2025 08:23:24 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Yongpeng Yang <yangyongpeng.storage@gmail.com>
+Cc: Namjae Jeon <linkinjeon@kernel.org>,
+	Sungjong Seo <sj1557.seo@samsung.com>,
+	OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+	Jan Kara <jack@suse.cz>, Carlos Maiolino <cem@kernel.org>,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	Yongpeng Yang <yangyongpeng@xiaomi.com>
+Subject: Re: [PATCH] fix missing sb_min_blocksize() return value checks in
+ some filesystems
+Message-ID: <20251031152324.GN6174@frogsfrogsfrogs>
+References: <20251031141528.1084112-1-yangyongpeng.storage@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251030105242.801528-1-mjguzik@gmail.com> <CAHk-=wj5o+BPgrUNase4tOuzbBMmiqyiYO9apO9Ou-M_M1-tKQ@mail.gmail.com>
- <CAGudoHG_WYnoqAYgN2P5LcjyT6r-vORgeAG2EHbHoH+A-PvDUA@mail.gmail.com>
- <CAHk-=wgGFUAPb7z5RzUq=jxRh2PO7yApd9ujMnC5OwXa-_e3Qw@mail.gmail.com>
- <CAGudoHH817CKv0ts4dO08j5FOfEAWtvoBeoT06KarjzOh_U6ug@mail.gmail.com> <20251031-liehen-weltoffen-cddb6394cc14@brauner>
-In-Reply-To: <20251031-liehen-weltoffen-cddb6394cc14@brauner>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Fri, 31 Oct 2025 16:13:25 +0100
-X-Gm-Features: AWmQ_bl0QFNEHVEZqDt4NaeU-OmVLetqVQSG0lX8hIbhRTQHi4GhBcBiGlX77rE
-Message-ID: <CAGudoHE-9R0ZfFk-bE9TBhejkmZE3Hu2sT0gGiy=i_1_He=9GA@mail.gmail.com>
-Subject: Re: [PATCH v4] fs: hide names_cachep behind runtime access machinery
-To: Christian Brauner <brauner@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, pfalcato@suse.de
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251031141528.1084112-1-yangyongpeng.storage@gmail.com>
 
-On Fri, Oct 31, 2025 at 1:08=E2=80=AFPM Christian Brauner <brauner@kernel.o=
-rg> wrote:
->
-> > I wonder if it would make sense to bypass the problem by moving the
-> > pathname handling routines to a different header -- might be useful in
-> > its own right to slim down the kitchen sink that fs.h turned out to
-> > be, but that's another bikeshed-y material.
->
-> fs.h needs to be split up. It's on my ToDo but let's just say there's a
-> lot of stuff on it so it's not really high-priority. If you have a good
-> reason to move something out of there by my guest. It would be
-> appreciated!
+On Fri, Oct 31, 2025 at 10:15:27PM +0800, Yongpeng Yang wrote:
+> From: Yongpeng Yang <yangyongpeng@xiaomi.com>
+> 
+> When emulating an nvme device on qemu with both logical_block_size and
+> physical_block_size set to 8 KiB, but without format, a kernel panic
+> was triggered during the early boot stage while attempting to mount a
+> vfat filesystem.
+> 
+> [95553.682035] EXT4-fs (nvme0n1): unable to set blocksize
+> [95553.684326] EXT4-fs (nvme0n1): unable to set blocksize
+> [95553.686501] EXT4-fs (nvme0n1): unable to set blocksize
+> [95553.696448] ISOFS: unsupported/invalid hardware sector size 8192
+> [95553.697117] ------------[ cut here ]------------
+> [95553.697567] kernel BUG at fs/buffer.c:1582!
+> [95553.697984] Oops: invalid opcode: 0000 [#1] SMP NOPTI
+> [95553.698602] CPU: 0 UID: 0 PID: 7212 Comm: mount Kdump: loaded Not tainted 6.18.0-rc2+ #38 PREEMPT(voluntary)
+> [95553.699511] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
+> [95553.700534] RIP: 0010:folio_alloc_buffers+0x1bb/0x1c0
+> [95553.701018] Code: 48 8b 15 e8 93 18 02 65 48 89 35 e0 93 18 02 48 83 c4 10 5b 41 5c 41 5d 41 5e 41 5f 5d 31 d2 31 c9 31 f6 31 ff c3 cc cc cc cc <0f> 0b 90 66 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 0f
+> [95553.702648] RSP: 0018:ffffd1b0c676f990 EFLAGS: 00010246
+> [95553.703132] RAX: ffff8cfc4176d820 RBX: 0000000000508c48 RCX: 0000000000000001
+> [95553.703805] RDX: 0000000000002000 RSI: 0000000000000000 RDI: 0000000000000000
+> [95553.704481] RBP: ffffd1b0c676f9c8 R08: 0000000000000000 R09: 0000000000000000
+> [95553.705148] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000001
+> [95553.705816] R13: 0000000000002000 R14: fffff8bc8257e800 R15: 0000000000000000
+> [95553.706483] FS:  000072ee77315840(0000) GS:ffff8cfdd2c8d000(0000) knlGS:0000000000000000
+> [95553.707248] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [95553.707782] CR2: 00007d8f2a9e5a20 CR3: 0000000039d0c006 CR4: 0000000000772ef0
+> [95553.708439] PKRU: 55555554
+> [95553.708734] Call Trace:
+> [95553.709015]  <TASK>
+> [95553.709266]  __getblk_slow+0xd2/0x230
+> [95553.709641]  ? find_get_block_common+0x8b/0x530
+> [95553.710084]  bdev_getblk+0x77/0xa0
+> [95553.710449]  __bread_gfp+0x22/0x140
+> [95553.710810]  fat_fill_super+0x23a/0xfc0
+> [95553.711216]  ? __pfx_setup+0x10/0x10
+> [95553.711580]  ? __pfx_vfat_fill_super+0x10/0x10
+> [95553.712014]  vfat_fill_super+0x15/0x30
+> [95553.712401]  get_tree_bdev_flags+0x141/0x1e0
+> [95553.712817]  get_tree_bdev+0x10/0x20
+> [95553.713177]  vfat_get_tree+0x15/0x20
+> [95553.713550]  vfs_get_tree+0x2a/0x100
+> [95553.713910]  vfs_cmd_create+0x62/0xf0
+> [95553.714273]  __do_sys_fsconfig+0x4e7/0x660
+> [95553.714669]  __x64_sys_fsconfig+0x20/0x40
+> [95553.715062]  x64_sys_call+0x21ee/0x26a0
+> [95553.715453]  do_syscall_64+0x80/0x670
+> [95553.715816]  ? __fs_parse+0x65/0x1e0
+> [95553.716172]  ? fat_parse_param+0x103/0x4b0
+> [95553.716587]  ? vfs_parse_fs_param_source+0x21/0xa0
+> [95553.717034]  ? __do_sys_fsconfig+0x3d9/0x660
+> [95553.717548]  ? __x64_sys_fsconfig+0x20/0x40
+> [95553.717957]  ? x64_sys_call+0x21ee/0x26a0
+> [95553.718360]  ? do_syscall_64+0xb8/0x670
+> [95553.718734]  ? __x64_sys_fsconfig+0x20/0x40
+> [95553.719141]  ? x64_sys_call+0x21ee/0x26a0
+> [95553.719545]  ? do_syscall_64+0xb8/0x670
+> [95553.719922]  ? x64_sys_call+0x1405/0x26a0
+> [95553.720317]  ? do_syscall_64+0xb8/0x670
+> [95553.720702]  ? __x64_sys_close+0x3e/0x90
+> [95553.721080]  ? x64_sys_call+0x1b5e/0x26a0
+> [95553.721478]  ? do_syscall_64+0xb8/0x670
+> [95553.721841]  ? irqentry_exit+0x43/0x50
+> [95553.722211]  ? exc_page_fault+0x90/0x1b0
+> [95553.722681]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> [95553.723166] RIP: 0033:0x72ee774f3afe
+> [95553.723562] Code: 73 01 c3 48 8b 0d 0a 33 0f 00 f7 d8 64 89 01 48 83 c8 ff c3 0f 1f 84 00 00 00 00 00 f3 0f 1e fa 49 89 ca b8 af 01 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d da 32 0f 00 f7 d8 64 89 01 48
+> [95553.725188] RSP: 002b:00007ffe97148978 EFLAGS: 00000246 ORIG_RAX: 00000000000001af
+> [95553.725892] RAX: ffffffffffffffda RBX: 00005dcfe53d0080 RCX: 000072ee774f3afe
+> [95553.726526] RDX: 0000000000000000 RSI: 0000000000000006 RDI: 0000000000000003
+> [95553.727176] RBP: 00007ffe97148ac0 R08: 0000000000000000 R09: 000072ee775e7ac0
+> [95553.727818] R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> [95553.728459] R13: 00005dcfe53d04b0 R14: 000072ee77670b00 R15: 00005dcfe53d1a28
+> [95553.729086]  </TASK>
+> 
+> The panic occurs as follows:
+> 1. logical_block_size is 8KiB, causing {struct super_block *sb}->s_blocksize
+> is initialized to 0.
+> vfat_fill_super
+>  - fat_fill_super
+>   - sb_min_blocksize
+>    - sb_set_blocksize //return 0 when size is 8KiB.
+> 2. __bread_gfp is called with size == 0, causing folio_alloc_buffers() to
+> compute an offset equal to folio_size(folio), which triggers a BUG_ON.
+> fat_fill_super
+>  - sb_bread
+>   - __bread_gfp  // size == {struct super_block *sb}->s_blocksize == 0
+>    - bdev_getblk
+>     - __getblk_slow
+>      - grow_buffers
+>       - grow_dev_folio
+>        - folio_alloc_buffers  // size == 0
+>         - folio_set_bh //offset == folio_size(folio) and panic
+> 
+> To fix this issue, add proper return value checks for sb_min_blocksize()
+> in vfat, exfat, isofs, and xfs.
+> 
+> Signed-off-by: Yongpeng Yang <yangyongpeng@xiaomi.com>
+> ---
+>  fs/exfat/super.c   | 7 ++++++-
+>  fs/fat/inode.c     | 9 +++++++--
+>  fs/isofs/inode.c   | 5 +++++
+>  fs/xfs/xfs_super.c | 8 ++++++--
+>  4 files changed, 24 insertions(+), 5 deletions(-)
+> 
+> diff --git a/fs/exfat/super.c b/fs/exfat/super.c
+> index 7f9592856bf7..fea41732354e 100644
+> --- a/fs/exfat/super.c
+> +++ b/fs/exfat/super.c
+> @@ -431,9 +431,14 @@ static int exfat_read_boot_sector(struct super_block *sb)
+>  {
+>  	struct boot_sector *p_boot;
+>  	struct exfat_sb_info *sbi = EXFAT_SB(sb);
+> +	int blocksize;
+>  
+>  	/* set block size to read super block */
+> -	sb_min_blocksize(sb, 512);
+> +	blocksize = sb_min_blocksize(sb, 512);
+> +	if (!blocksize) {
+> +		exfat_err(sb, "unable to set blocksize");
+> +		return -EINVAL;
+> +	}
+>  
+>  	/* read boot sector */
+>  	sbi->boot_bh = sb_bread(sb, 0);
+> diff --git a/fs/fat/inode.c b/fs/fat/inode.c
+> index 9648ed097816..d22eec4f17b2 100644
+> --- a/fs/fat/inode.c
+> +++ b/fs/fat/inode.c
+> @@ -1535,7 +1535,7 @@ int fat_fill_super(struct super_block *sb, struct fs_context *fc,
+>  		   void (*setup)(struct super_block *))
+>  {
+>  	struct fat_mount_options *opts = fc->fs_private;
+> -	int silent = fc->sb_flags & SB_SILENT;
+> +	int silent = fc->sb_flags & SB_SILENT, blocksize;
+>  	struct inode *root_inode = NULL, *fat_inode = NULL;
+>  	struct inode *fsinfo_inode = NULL;
+>  	struct buffer_head *bh;
+> @@ -1595,8 +1595,13 @@ int fat_fill_super(struct super_block *sb, struct fs_context *fc,
+>  
+>  	setup(sb); /* flavour-specific stuff that needs options */
+>  
+> +	error = -EINVAL;
+> +	blocksize = sb_min_blocksize(sb, 512);
+> +	if (!blocksize) {
+> +		fat_msg(sb, KERN_ERR, "unable to set blocksize");
+> +		goto out_fail;
+> +	}
+>  	error = -EIO;
+> -	sb_min_blocksize(sb, 512);
+>  	bh = sb_bread(sb, 0);
+>  	if (bh == NULL) {
+>  		fat_msg(sb, KERN_ERR, "unable to read boot sector");
+> diff --git a/fs/isofs/inode.c b/fs/isofs/inode.c
+> index 6f0e6b19383c..ad3143d4066b 100644
+> --- a/fs/isofs/inode.c
+> +++ b/fs/isofs/inode.c
+> @@ -610,6 +610,11 @@ static int isofs_fill_super(struct super_block *s, struct fs_context *fc)
+>  		goto out_freesbi;
+>  	}
+>  	opt->blocksize = sb_min_blocksize(s, opt->blocksize);
+> +	if (!opt->blocksize) {
+> +		printk(KERN_ERR
+> +		       "ISOFS: unable to set blocksize\n");
+> +		goto out_freesbi;
+> +	}
+>  
+>  	sbi->s_high_sierra = 0; /* default is iso9660 */
+>  	sbi->s_session = opt->session;
+> diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
+> index e85a156dc17d..b6e52861378f 100644
+> --- a/fs/xfs/xfs_super.c
+> +++ b/fs/xfs/xfs_super.c
+> @@ -1642,7 +1642,7 @@ xfs_fs_fill_super(
+>  {
+>  	struct xfs_mount	*mp = sb->s_fs_info;
+>  	struct inode		*root;
+> -	int			flags = 0, error;
+> +	int			flags = 0, error, blocksize;
+>  
+>  	mp->m_super = sb;
+>  
+> @@ -1662,7 +1662,11 @@ xfs_fs_fill_super(
+>  	if (error)
+>  		return error;
+>  
+> -	sb_min_blocksize(sb, BBSIZE);
+> +	blocksize = sb_min_blocksize(sb, BBSIZE);
 
-I slept on it and I think the pragmatic way forward is to split up
-runtime-const.h instead.
+Hrmm... sb_min_blocksize clamps its argument (512) up to the bdev lba
+size, which could fail.  That's unlikely given that XFS sets FS_LBS and
+there shouldn't be a file->private_data; but this function is fallible
+so let's not just ignore the return value.
 
-The code to emit patchable access has very little requirements in
-terms header files. In contrast, the code to do the patching can pull
-in all kinds of headers with riscv being a great example.
+The changes look correct to me, but shouldn't this have a fixes tag?
+I could guess at:
 
-While I ran into problems with fs.h on riscv specifically, one has to
-expect the pre-existing mess will be posing an issue in other places
-should they try to use the machinery.
+Cc: <stable@vger.kernel.org> # v6.15
+Fixes: a64e5a596067bd ("bdev: add back PAGE_SIZE block size validation for sb_set_blocksize()")
 
-So I think runtime-const-accessors.h (pardon the long name) for things
-like fs.h would be the way forward, regardless of what happens with
-the latter in the long run. I'm going to hack it up later.
+Either way,
+Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
+
+--D
+
+> +	if (!blocksize) {
+> +		xfs_err(mp, "unable to set blocksize");
+> +		return -EINVAL;
+> +	}
+>  	sb->s_xattr = xfs_xattr_handlers;
+>  	sb->s_export_op = &xfs_export_operations;
+>  #ifdef CONFIG_XFS_QUOTA
+> -- 
+> 2.43.0
+> 
+> 
 
