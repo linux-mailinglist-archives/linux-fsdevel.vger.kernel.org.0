@@ -1,89 +1,109 @@
-Return-Path: <linux-fsdevel+bounces-66563-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66564-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02D2BC24277
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 10:29:00 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 323D3C242FF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 10:35:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EC895673C6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 09:18:36 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B425D4EAADE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 09:35:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B367330B0A;
-	Fri, 31 Oct 2025 09:18:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42338329E7C;
+	Fri, 31 Oct 2025 09:35:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NTbfp2cb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C714330305;
-	Fri, 31 Oct 2025 09:18:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D603F2E092D;
+	Fri, 31 Oct 2025 09:35:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761902307; cv=none; b=ZjdHfg86dlkBC3WMTCXFBWUHlwE0PMp7y7phSLeNActxITfHwnovyMWNbopR4zngdl3Xs97fJmXJMBGcdH3mXRQd9d7IJadWM6ezlq8y8r6caGUX40smweELac5HFfLYfzG5MmH08vp8FLOWHu/C/7r4C+KrZi/BIA2qiSojtMM=
+	t=1761903328; cv=none; b=Iln0mk4TZauBOlKl0Q0UAXGnR5ohOBZY5dofLec9/xyqG3piJURh6/ZNaVE4GLBt2x0/aqUIjgu0WgAxjlxFAFe5jGSNXhwBLthKYeKyTFhtt9sT/63KET6xEuzJaxpaCYW1lxXKxysXaAW0dLzdmN9/VwIPV8pPDOF3M34qO/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761902307; c=relaxed/simple;
-	bh=QSgD+O92En9+Myk3lhAO0vJmvltIk/8SqFaNAmHxHH4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JrcmtZ6tTfbW//5NUWwk0ETvTesEFx20z3k5bRiLFCLK0nKuNCQbTD57xY3lH97Loyx8GmF0AyyiNZkDTllPXQqnly93SaO38vRz7yGaFd8PMzcwO6tBeSQX/ZVdjYWczoWUhWyZqLmn6NgtRekKs1LjINcgik/48RmK6iIyTOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id B3534227AAC; Fri, 31 Oct 2025 10:18:20 +0100 (CET)
-Date: Fri, 31 Oct 2025 10:18:20 +0100
+	s=arc-20240116; t=1761903328; c=relaxed/simple;
+	bh=cvipCw2+AlJ57NnMQhMYyhmLL9VjA0gIYpcYjquQoBw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jlOiBEAi98jCXLqR8ID+tp14W97NvzPnIIrd3//3aoUkut9E7h4K4aDvu2fjLxERqUJ5gO7S017nKUoe9lqVW1dvIZ3DNZCXVOiPxFgCp0nWMElQRPXV9fkXm0g78KQrIGVcbBtkQhrNGCCGzaUrzd6ld0SPrDTht9pzddN0yNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=NTbfp2cb; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=IzxoBLtZptFWlFdxYZIHYSOPY03LpnAZh+l14rPj8Jg=; b=NTbfp2cbP6O6sGXkbScnzjglXB
+	pbAgTSoPb87GWLEFV0nQfOKC59NW54HS+r3/eQ/ax5kmxVKaUbcTW42n4B274bix1savWZfkxMKPr
+	aAVq2K8VkvwCt4LhHKFmyVXopRpTSObAmN6UccBH0oq3w3U5vvUrjHH/9uNYlo7Y+6NOSk94LVf8g
+	gUCxnM5safupGnaY11uSGylAdtFeTMKKbhGTS+JwJ4c1ofKolaDDqgcTSfqaHhvpARHWRlcL2moVO
+	/j9BME6/32LA5URc26kmkCJI+g1mClPaQcBh4ZlyZBEG5sjv7FKz/Ef2OoszeH2Wwr3RisJXoINiK
+	GWyHrqBg==;
+Received: from [2001:4bb8:2dc:1001:a959:25cf:98e9:329b] (helo=localhost)
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vElXW-00000005ook-3cUB;
+	Fri, 31 Oct 2025 09:35:23 +0000
 From: Christoph Hellwig <hch@lst.de>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: Christoph Hellwig <hch@lst.de>, Carlos Llamas <cmllamas@google.com>,
-	Keith Busch <kbusch@kernel.org>, Keith Busch <kbusch@meta.com>,
-	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org,
-	axboe@kernel.dk, Hannes Reinecke <hare@suse.de>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: Re: [PATCHv4 5/8] iomap: simplify direct io validity check
-Message-ID: <20251031091820.GA9508@lst.de>
-References: <20250827141258.63501-1-kbusch@meta.com> <20250827141258.63501-6-kbusch@meta.com> <aP-c5gPjrpsn0vJA@google.com> <aP-hByAKuQ7ycNwM@kbusch-mbp> <aQFIGaA5M4kDrTlw@google.com> <20251028225648.GA1639650@google.com> <20251028230350.GB1639650@google.com> <20251029070618.GA29697@lst.de> <20251030174015.GC1624@sol>
+To: Jens Axboe <axboe@kernel.dk>,
+	Eric Biggers <ebiggers@kernel.org>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: Christoph Lameter <cl@gentwo.org>,
+	David Rientjes <rientjes@google.com>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Harry Yoo <harry.yoo@oracle.com>,
+	linux-block@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-fscrypt@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: move blk-crypto-fallback to sit above the block layer
+Date: Fri, 31 Oct 2025 10:34:30 +0100
+Message-ID: <20251031093517.1603379-1-hch@lst.de>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251030174015.GC1624@sol>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Thu, Oct 30, 2025 at 10:40:15AM -0700, Eric Biggers wrote:
-> Allowing DIO segments to be aligned (in memory address and/or length) to
-> less than crypto_data_unit_size on encrypted files has been attempted
-> and discussed before.  Read the cover letter of
-> https://lore.kernel.org/linux-fscrypt/20220128233940.79464-1-ebiggers@kernel.org/
+Hi all,
 
-Hmm, where does "First, it
-necessarily causes it to be possible that crypto data units span bvecs.
-Splits cannot occur at such locations; however the block layer currently
-assumes that bios can be split at any bvec boundary.? come from?  The
-block layer splits at arbitrary boundaries that don't need any kind of
-bvec alignment.
+in the past we had various discussions that doing the blk-crypto fallback
+below the block layer causes all kinds of problems due to very late
+splitting and communicating up features.
 
-> We eventually decided to proceed with DIO support without it, since it
-> would have added a lot of complexity.  It would have made the bio
-> splitting code in the block layer split bios at boundaries where the
-> length isn't aligned to crypto_data_unit_size, it would have caused a
-> lot of trouble for blk-crypto-fallback, and it even would have been
-> incompatible with some of the hardware drivers (e.g. ufs-exynos.c).
+This series turns that call chain upside down by requiring the caller to
+call into blk-crypto using a new submit_bio wrapper instead so that only
+hardware encryption bios are passed through the block layer as such.
 
-Ok, if hardware drivers can't handle it that's a good argument.  I can
-see why handling it in the software case is very annoying, but non-stupid
-hardware should not be affected.  Stupid me assuming UFS might not be
-dead stupid of course.
+While doings this I also noticed that the existing blk-crypto-fallback
+code does various unprotected memory allocations which this converts to
+mempools, or from loops of mempool allocations to the new safe batch
+mempool allocator.
 
-> It also didn't seem to be all that useful, and it would have introduced
-> edge cases that don't get tested much.  All reachable to unprivileged
-> userspace code too, of course.
+There might be future avenues for optimization by using high order
+folio allocations that match the file systems preferred folio size,
+but for that'd probably want a batch folio allocator first, in addition
+to deferring it to avoid scope creep.
 
-xfstests just started exercising this and we're getting lots of interesting
-reports (for the non-fscrypt case).
-
+Diffstat:
+ block/blk-core.c            |   10 -
+ block/blk-crypto-fallback.c |  437 ++++++++++++++++++++------------------------
+ block/blk-crypto-internal.h |   31 +--
+ block/blk-crypto.c          |   65 ++----
+ fs/buffer.c                 |    3 
+ fs/crypto/bio.c             |   89 +++++---
+ fs/ext4/page-io.c           |    3 
+ fs/ext4/readpage.c          |    9 
+ fs/f2fs/data.c              |    4 
+ fs/f2fs/file.c              |    3 
+ fs/iomap/direct-io.c        |    3 
+ include/linux/blk-crypto.h  |   16 +
+ include/linux/mempool.h     |    7 
+ mm/mempool.c                |  173 ++++++++++++-----
+ 14 files changed, 464 insertions(+), 389 deletions(-)
 
