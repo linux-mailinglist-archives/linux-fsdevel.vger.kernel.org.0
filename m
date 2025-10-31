@@ -1,54 +1,61 @@
-Return-Path: <linux-fsdevel+bounces-66584-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66585-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A0B2C250D7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 13:40:28 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0F2FC250DD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 13:40:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1353406D37
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 12:39:37 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6B9AE4E6230
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 12:40:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D47A133FE15;
-	Fri, 31 Oct 2025 12:39:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 246E4346FD5;
+	Fri, 31 Oct 2025 12:40:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z+mxzDpw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GhnYEr3U"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DEFC335569
-	for <linux-fsdevel@vger.kernel.org>; Fri, 31 Oct 2025 12:39:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7861033DEDC;
+	Fri, 31 Oct 2025 12:40:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761914372; cv=none; b=Po7fhkLQeManN51z7QNwi6CcDzqWeIgOtQbAAZFW9JLWeOkkj6a6yzn6fVuD2SpU2SCAwf9uw8rjZ4kTKNMpgGIuLeLtvbfsz8So6ubiBKi4E+e2pyPU9fe82rJgsb4193uxGuQGF47gb6++DJku8i2ofvnW3x8cfYmFBsCqCI0=
+	t=1761914424; cv=none; b=gOEG+U6qpHjDk5IH89K2gcpwvBUQwcv183MWo84kW+keT+dyRqkYFNR+G4Y+6iCPjl/XYN8Uoobn24S/whmGN2dz2S7o3ZQ66+YSXaH1PSoY/6q6ssmA9hG3Enf6yDNbF0doQNVRY6gcfdBxCsmdzLuNXVsv3sIXJu0+fD0NYY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761914372; c=relaxed/simple;
-	bh=sDDhumZ7pDaQZP4Vv3keDVFBeuoND2GQiVNJ3Njlv7w=;
+	s=arc-20240116; t=1761914424; c=relaxed/simple;
+	bh=TOyX+7MqV/0YgmsMT9EYGXpJ0gAINF6nVC++khICWC8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sX9uYvMJnBQkYVpeiGYuaIwcuswAhXifo0zSsUfAaGWqgrB1jawFEbDEZs7xyNo/Or+/NfXHpHrWzrdI4qJEoGCg87dOYYOVfkCrW9+l7de12JyJ1LBTEHQQ9X27qU3yoxoExdk8EHHMB2D3ePvuJd6Y+WKgsIQbv63c7Bk9Vgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z+mxzDpw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EF61C4CEE7;
-	Fri, 31 Oct 2025 12:39:30 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=qdpcygJH/x/XRPoD6S6sO3Q3D+HbCvEce97ZoDM4W1N/UGzKcdSjEJEYEdGawqRUH+SI4G3nKd1caUMOVmNIwKFBZtoud3ButFoQYofKI375CpT1L5TS94Oj02nGwerYpDC770QftPOyiBLrUz1PDr5En4Xcd6ntZJZSDfxsQbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GhnYEr3U; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51EAFC4CEF8;
+	Fri, 31 Oct 2025 12:40:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761914371;
-	bh=sDDhumZ7pDaQZP4Vv3keDVFBeuoND2GQiVNJ3Njlv7w=;
+	s=k20201202; t=1761914424;
+	bh=TOyX+7MqV/0YgmsMT9EYGXpJ0gAINF6nVC++khICWC8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Z+mxzDpweUBpRT3I+RVb22M5bxT7GAicCl4XYe625kHCaWiyDjFzQvD2P1247F4iL
-	 dCcv1t7MKm7ihLtSGtvQZGfq6Aasld5CD9gsgO7o6loqYaItmGiwF2kMzjZy0uZuu2
-	 0dHUWEeuWZm2VSmRxlAmonT5zTIjsHfabIizH1dyOI2Ewqey5XhtODtf1+/G1OzgdQ
-	 lsEEkOGXjWZqhJE0UQZ9oRJC20Tccz/uHrUcedevJ+EK33SGCFx5BNKeLox20LAKu/
-	 yanTdVib3pTthR6K64WHofF7iHwrk1Uqm+ieOPKELxED/HSE9QMMpxlEJmuPY7EW6D
-	 dYdFPPvZHmIAQ==
-Date: Fri, 31 Oct 2025 13:39:28 +0100
+	b=GhnYEr3U5JIUE/hWiy5w1R76XbDn+yH35KUz15ECPn3pBmZ8QnliZMK/TxQCFITaQ
+	 R5R8pY27R9Mo5WkZJyRJlqqQS5JtcS4sER2m7whvS38KdkJvrFINsJfqeBh9Bzap/l
+	 MU3I2bi1LkyM29IrZaGmcufQgVL3OgIhNrED36rIu9T7vC9/9/4njflhyoQvZ8N9oK
+	 hRZJQiIHwblXbkcB+k6Ptnpu1s2ffwgE/SeI11pYMpQPt82QqraQqEMofg0B73Y0Zc
+	 Zv1zkXtva2QyTSF5NzoRA9diimBVTLS9pjImmM1eXc/+8pOosm+gMgfYRzVQsYggD9
+	 CLL/dM7mY1VUg==
+Date: Fri, 31 Oct 2025 13:40:20 +0100
 From: Christian Brauner <brauner@kernel.org>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: bfoster@redhat.com, hch@infradead.org, djwong@kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3 0/2] vfs-6.19.iomap commit 51311f045375 fixups
-Message-ID: <20251031-gasflasche-degradieren-af75b5711388@brauner>
-References: <20251028181133.1285219-1-joannelkoong@gmail.com>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Qu Wenruo <wqu@suse.com>, "Darrick J. Wong" <djwong@kernel.org>, 
+	Carlos Maiolino <cem@kernel.org>, linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Pankaj Raghav <p.raghav@samsung.com>
+Subject: Re: [PATCH 1/4] iomap: add IOMAP_DIO_FSBLOCK_ALIGNED flag
+Message-ID: <20251031-medikament-bunker-993b02d1beed@brauner>
+References: <20251023135559.124072-1-hch@lst.de>
+ <20251023135559.124072-2-hch@lst.de>
+ <20251027161027.GS3356773@frogsfrogsfrogs>
+ <c4cc53b4-cc1a-4269-b67c-817a0d7f3929@suse.com>
+ <20251029074450.GB30412@lst.de>
+ <d5d33754-ecd3-43f0-a917-909cd1c2ab3e@suse.com>
+ <20251029081516.GA31592@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -57,50 +64,19 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251028181133.1285219-1-joannelkoong@gmail.com>
+In-Reply-To: <20251029081516.GA31592@lst.de>
 
-On Tue, Oct 28, 2025 at 11:11:31AM -0700, Joanne Koong wrote:
-> These are two fixups for commit 51311f045375 ("iomap: track pending read
-> bytes more optimally") in the vfs-6.19.iomap branch. It would be great
-> if these could get folded into that original commit, if possible.
+On Wed, Oct 29, 2025 at 09:15:16AM +0100, Christoph Hellwig wrote:
+> On Wed, Oct 29, 2025 at 06:30:47PM +1030, Qu Wenruo wrote:
+> > Patch 2 and 3 look good to me. Thank for catching the missing pos/length 
+> > checks.
+> >
+> > If you like you can even fold the fixes into this one.
+> 
+> That would be best.  I just want to hear from Christian if he's fine
+> with rebasing, as he said he already applied your original patch.
+> Although it still hasn't shown up in the tree anyway.
 
-It's possible. However, your rename patch will mean that it'll cascade a
-bunch of merge conflicts for following patches in your earlier series.
-IOW, that can't be cleanly folded.
-
-So really the race fix should go first and be folded into 51311f045375
-and I think that can be done without causing a bunch of conflicts.
-
-The rename patch can go on top of what's in vfs-6.19.iomap as that's
-really not fixing a bug as in "breaks something" but a cleanup.
-
-Let me know if that works.
-
-> 
-> The fix for the race was locally tested by running generic/051 in a loop on an
-> xfs filesystem with 1k block size, as reported by Brian in [1].
-> 
-> Thanks,
-> Joanne
-> 
-> [1] https://lore.kernel.org/linux-fsdevel/20250926002609.1302233-1-joannelkoong@gmail.com/T/#t 
-> 
-> Changelog:
-> v2 -> v3:
-> Fix the race by adding a bias instead of returning from iomap_read_end() early.
-> 
-> v2: https://lore.kernel.org/linux-fsdevel/20251027181245.2657535-1-joannelkoong@gmail.com/
-> v1: https://lore.kernel.org/linux-fsdevel/20251024215008.3844068-1-joannelkoong@gmail.com/#t
-> 
-> Joanne Koong (2):
->   iomap: rename bytes_pending/bytes_accounted to
->     bytes_submitted/bytes_not_submitted
->   iomap: fix race when reading in all bytes of a folio
-> 
->  fs/iomap/buffered-io.c | 75 +++++++++++++++++++++++++++++++-----------
->  1 file changed, 56 insertions(+), 19 deletions(-)
-> 
-> -- 
-> 2.47.3
-> 
+Yeah, it's prior to -rc4. I'm usually fine with that and no one's really
+came and said that they need this thing stable.
 
