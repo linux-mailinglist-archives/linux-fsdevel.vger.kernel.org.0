@@ -1,201 +1,112 @@
-Return-Path: <linux-fsdevel+bounces-66561-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66562-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73775C23CF9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 09:30:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 12AE2C23F28
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 09:56:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA7D51887B43
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 08:31:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 775161A20DC3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 08:56:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0A092EDD75;
-	Fri, 31 Oct 2025 08:30:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="eatq96c3"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 541433164D8;
+	Fri, 31 Oct 2025 08:55:31 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from esa5.hgst.iphmx.com (esa5.hgst.iphmx.com [216.71.153.144])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6006830F951;
-	Fri, 31 Oct 2025 08:30:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.71.153.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 742B13176EF
+	for <linux-fsdevel@vger.kernel.org>; Fri, 31 Oct 2025 08:55:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761899408; cv=none; b=QKaESQWkUtX/KSfjI68D+EKeZHHT9vB8SGmbStE1/XHXsHRA7+y94h+Smr8rH0tEJEqgH/qO+omGFwPpLisoT6soAmfj8msbhA8IdMNkgRGrrAHvQVbjIgDFlB6gVTsGdF6J90Nym2JjuSLRTyF0nFJfDpYVbI4D4dTas0mv/as=
+	t=1761900931; cv=none; b=AxL47CdQVlg4M1/42+yTFF5vobAAi/BTRaDH69xn4Foud/5Qpm6F4aUkxpxRK/+O30U2Crr7FeDDS47/C/iC4uTMjksRCGVIQfY0byuLPdSGme/p2UYZCfWxzeJCU1n1TYOEb11w80ISt4tfG9Q5rhGMpIhqLOQuh9UpcULMPek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761899408; c=relaxed/simple;
-	bh=j4C7cyamyKgvsuDDQde9W86J7YZV/Xt3hz7KoyxBKl8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hLGR08IiJ70edYIaNtImL5W3+RZEYvCzD7icKkqycL8o7k76P0SIQJ6rdxtVKLrt9sOn7WjRf3aogaHDOdWQkAciWazu1tNkmy6mRfYAUKECygXDC0VTYO2vuQweu3oNRA5UrTzK0PpMmcFvlH8LWGJ+Rb1mbvcWE9mo42aLBZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com; spf=pass smtp.mailfrom=wdc.com; dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b=eatq96c3; arc=none smtp.client-ip=216.71.153.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wdc.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1761899407; x=1793435407;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=j4C7cyamyKgvsuDDQde9W86J7YZV/Xt3hz7KoyxBKl8=;
-  b=eatq96c3WdFwI+T7++DzLEDqhcdfh3pyK/3pHIdH6wlT8m9NEsJ75HNT
-   T4liz9uSr4sUlVxvpd6Z50wcIKypJHrVetN4AUib9C0evKF/KsoiOFZmk
-   cSY5/tkKL4scKXjGv+VpaPkSUaMGCwi76l4HDagrC7/ZbdCaCG2qWBwjE
-   r/aLcbpF1nQp1iYShxU7ETpgniBo4gibpUQVKPOO5oPgMKK/X51329C3G
-   m3dvBnumqmMGjm/VVRmA2wInSY0pFgiovd16ws0vHsqSfZ7VtzLRYdNxK
-   yXwyN2C+70lQkWG3ZWs/ApLxqbopOwutncmp0/lDQcx0PylZdBtR+g80T
-   A==;
-X-CSE-ConnectionGUID: AJhUr+OaSwqVCyC8saEp+g==
-X-CSE-MsgGUID: t2W1Nap7SziMdWDVFxFx0Q==
-X-IronPort-AV: E=Sophos;i="6.19,268,1754928000"; 
-   d="scan'208";a="134260587"
-Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep03.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 31 Oct 2025 16:30:04 +0800
-IronPort-SDR: 6904738b_iX5NWxEhp3pRhKOPQ+wUD/tjnOAFGODAioszSbkEB6gVAy4
- QLa6KXGECMZQ5DeST0CWW6CD5KZsQVnEPhogWYA==
-Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep03.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 31 Oct 2025 01:30:03 -0700
-WDCIronportException: Internal
-Received: from wdap-s2ed6nrh3f.ad.shared (HELO gcv.wdc.com) ([10.224.178.7])
-  by uls-op-cesaip01.wdc.com with ESMTP; 31 Oct 2025 01:30:02 -0700
-From: Hans Holmberg <hans.holmberg@wdc.com>
-To: linux-xfs@vger.kernel.org
-Cc: Carlos Maiolino <cem@kernel.org>,
-	"Darrick J . Wong" <djwong@kernel.org>,
-	Christoph Hellwig <hch@lst.de>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Hans Holmberg <hans.holmberg@wdc.com>
-Subject: [PATCH] xfs: remove xarray mark for reclaimable zones
-Date: Fri, 31 Oct 2025 09:29:48 +0100
-Message-ID: <20251031082948.128062-1-hans.holmberg@wdc.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1761900931; c=relaxed/simple;
+	bh=yKJia9ig9B/6F1hYjOmDx4MH0LEy2pBuagFT2leWtpE=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=tP0SaPvMuNLOzmVM8skj+LtPnWKGIvTnKJhRWhcWiUAGcrx1GSPY/oEkBLxxrH2tH0jTMKbC2CzY73RNv4sc67e81qiWDWb9GQMaZSNYMsvfeNjPsF2YC8nCsX38iRUhnHJA+53S0NxKL8GooUuclCGSmLMXoGcCcqudTarfgbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-9435917adb9so225510239f.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 31 Oct 2025 01:55:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761900928; x=1762505728;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vQznDTewHzt7+x/YG9L0Jd10kp8tx1TfNBen+HEnewQ=;
+        b=jTv7ZZu5GpRztF0oHCzO7NuoT7xN3sZyev1TNF8OJaqo0UIV4n7UGi8/vabeh5QntB
+         ZvYYgtJj+9/sk9h7GJlKaRcAuEYGpPXGL+xx43BboBijfJf+Npqg4lKnq2R7lCIziYL4
+         JL3zU44+wAyEPGPNgTI8WKiaBIGVA2P0nAbkprrQllDIVq7gzPmPQh8E0QiC9riJGlCT
+         40DLtoQwKrn3TTV9PnLQitqJKu1DVm/JCojN7jxkSbgaDhL6HrJDYKHojibbGNjq4wgD
+         FuWHaBsDvx9c8rr+KywZ1SJb665ciUwWUZQOzAQmpHXVPOuhKOdqq8sPtdiSiTJ38tCH
+         Rt4g==
+X-Gm-Message-State: AOJu0YyFP/nP9u1Pn8ACn+//kVWcxJ3XQVPAk0GB8Cx+I+Ke4cdkt/5h
+	5yBQ4Seobf8pwMOl34r/RUSfdvyf50p76P5lo8C4nGqg4rfeWrSfip920FbtQVTINp2F2X2om9V
+	tmnXN35N3E4VMqIsS95SvvxABgDWUhsrUp1oVFliBRJQ6fBI0hfd2pBvD9pc=
+X-Google-Smtp-Source: AGHT+IGN0FNZi7bjppFgoPLB5NtNJOF6wA2T4eKlOvcfmIP1GS399KhMwT/MT6NeCXq8YnHjmGhpHmQGtwidwTeKMvVqhISXsqsC
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:1a28:b0:430:ad98:981f with SMTP id
+ e9e14a558f8ab-4330d14382cmr45224415ab.4.1761900928655; Fri, 31 Oct 2025
+ 01:55:28 -0700 (PDT)
+Date: Fri, 31 Oct 2025 01:55:28 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <69047980.050a0220.e9cb8.0006.GAE@google.com>
+Subject: [syzbot] Monthly fs report (Oct 2025)
+From: syzbot <syzbot+list0377cc5e08cc9b971109@syzkaller.appspotmail.com>
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-We can easily check if there are any reclaimble zones by just looking
-at the used counters in the reclaim buckets, so do that to free up the
-xarray mark we currently use for this purpose.
+Hello fs maintainers/developers,
 
-Signed-off-by: Hans Holmberg <hans.holmberg@wdc.com>
+This is a 31-day syzbot report for the fs subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/fs
+
+During the period, 5 new issues were detected and 1 were fixed.
+In total, 59 issues are still open and 398 have already been fixed.
+
+Some of the still happening issues:
+
+Ref  Crashes Repro Title
+<1>  7013    Yes   BUG: sleeping function called from invalid context in hook_sb_delete
+                   https://syzkaller.appspot.com/bug?extid=12479ae15958fc3f54ec
+<2>  6890    Yes   WARNING in inc_nlink (3)
+                   https://syzkaller.appspot.com/bug?extid=2b3af42c0644df1e4da9
+<3>  6341    Yes   possible deadlock in input_event (2)
+                   https://syzkaller.appspot.com/bug?extid=d4c06e848a1c1f9f726f
+<4>  4584    Yes   INFO: task hung in path_openat (7)
+                   https://syzkaller.appspot.com/bug?extid=950a0cdaa2fdd14f5bdc
+<5>  4464    Yes   BUG: unable to handle kernel NULL pointer dereference in filemap_read_folio (4)
+                   https://syzkaller.appspot.com/bug?extid=09b7d050e4806540153d
+<6>  4309    Yes   WARNING in path_noexec (2)
+                   https://syzkaller.appspot.com/bug?extid=a9391462075ffb9f77c6
+<7>  3776    Yes   INFO: task hung in __iterate_supers
+                   https://syzkaller.appspot.com/bug?extid=b10aefdd9ef275e9368d
+<8>  3646    Yes   INFO: task hung in page_cache_ra_unbounded (2)
+                   https://syzkaller.appspot.com/bug?extid=265e1cae90f8fa08f14d
+<9>  2852    Yes   KASAN: use-after-free Read in hpfs_get_ea
+                   https://syzkaller.appspot.com/bug?extid=fa88eb476e42878f2844
+<10> 2314    Yes   INFO: task hung in filename_create (4)
+                   https://syzkaller.appspot.com/bug?extid=72c5cf124089bc318016
+
 ---
- fs/xfs/libxfs/xfs_rtgroup.h  |  6 ------
- fs/xfs/xfs_zone_alloc.c      | 26 ++++++++++++++++++++++----
- fs/xfs/xfs_zone_gc.c         |  2 +-
- fs/xfs/xfs_zone_priv.h       |  1 +
- fs/xfs/xfs_zone_space_resv.c |  2 +-
- 5 files changed, 25 insertions(+), 12 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/fs/xfs/libxfs/xfs_rtgroup.h b/fs/xfs/libxfs/xfs_rtgroup.h
-index d36a6ae0abe5..1ac7a4764813 100644
---- a/fs/xfs/libxfs/xfs_rtgroup.h
-+++ b/fs/xfs/libxfs/xfs_rtgroup.h
-@@ -58,12 +58,6 @@ struct xfs_rtgroup {
-  */
- #define XFS_RTG_FREE			XA_MARK_0
- 
--/*
-- * For zoned RT devices this is set on groups that are fully written and that
-- * have unused blocks.  Used by the garbage collection to pick targets.
-- */
--#define XFS_RTG_RECLAIMABLE		XA_MARK_1
--
- static inline struct xfs_rtgroup *to_rtg(struct xfs_group *xg)
- {
- 	return container_of(xg, struct xfs_rtgroup, rtg_group);
-diff --git a/fs/xfs/xfs_zone_alloc.c b/fs/xfs/xfs_zone_alloc.c
-index 23cdab4515bb..a0486a1473d2 100644
---- a/fs/xfs/xfs_zone_alloc.c
-+++ b/fs/xfs/xfs_zone_alloc.c
-@@ -103,9 +103,6 @@ xfs_zone_account_reclaimable(
- 		 */
- 		trace_xfs_zone_emptied(rtg);
- 
--		if (!was_full)
--			xfs_group_clear_mark(xg, XFS_RTG_RECLAIMABLE);
--
- 		spin_lock(&zi->zi_used_buckets_lock);
- 		if (!was_full)
- 			xfs_zone_remove_from_bucket(zi, rgno, from_bucket);
-@@ -127,7 +124,6 @@ xfs_zone_account_reclaimable(
- 		xfs_zone_add_to_bucket(zi, rgno, to_bucket);
- 		spin_unlock(&zi->zi_used_buckets_lock);
- 
--		xfs_group_set_mark(xg, XFS_RTG_RECLAIMABLE);
- 		if (zi->zi_gc_thread && xfs_zoned_need_gc(mp))
- 			wake_up_process(zi->zi_gc_thread);
- 	} else if (to_bucket != from_bucket) {
-@@ -142,6 +138,28 @@ xfs_zone_account_reclaimable(
- 	}
- }
- 
-+/*
-+ * Check if we have any zones that can be reclaimed by looking at the entry
-+ * counters for the zone buckets.
-+ */
-+bool
-+xfs_zoned_have_reclaimable(
-+	struct xfs_zone_info	*zi)
-+{
-+	int i;
-+
-+	spin_lock(&zi->zi_used_buckets_lock);
-+	for (i = 0; i < XFS_ZONE_USED_BUCKETS; i++) {
-+		if (zi->zi_used_bucket_entries[i]) {
-+			spin_unlock(&zi->zi_used_buckets_lock);
-+			return true;
-+		}
-+	}
-+	spin_unlock(&zi->zi_used_buckets_lock);
-+
-+	return false;
-+}
-+
- static void
- xfs_open_zone_mark_full(
- 	struct xfs_open_zone	*oz)
-diff --git a/fs/xfs/xfs_zone_gc.c b/fs/xfs/xfs_zone_gc.c
-index 109877d9a6bf..683835626d48 100644
---- a/fs/xfs/xfs_zone_gc.c
-+++ b/fs/xfs/xfs_zone_gc.c
-@@ -173,7 +173,7 @@ xfs_zoned_need_gc(
- 	s64			available, free, threshold;
- 	s32			remainder;
- 
--	if (!xfs_group_marked(mp, XG_TYPE_RTG, XFS_RTG_RECLAIMABLE))
-+	if (!xfs_zoned_have_reclaimable(mp->m_zone_info))
- 		return false;
- 
- 	available = xfs_estimate_freecounter(mp, XC_FREE_RTAVAILABLE);
-diff --git a/fs/xfs/xfs_zone_priv.h b/fs/xfs/xfs_zone_priv.h
-index 4322e26dd99a..ce7f0e2f4598 100644
---- a/fs/xfs/xfs_zone_priv.h
-+++ b/fs/xfs/xfs_zone_priv.h
-@@ -113,6 +113,7 @@ struct xfs_open_zone *xfs_open_zone(struct xfs_mount *mp,
- 
- int xfs_zone_gc_reset_sync(struct xfs_rtgroup *rtg);
- bool xfs_zoned_need_gc(struct xfs_mount *mp);
-+bool xfs_zoned_have_reclaimable(struct xfs_zone_info *zi);
- int xfs_zone_gc_mount(struct xfs_mount *mp);
- void xfs_zone_gc_unmount(struct xfs_mount *mp);
- 
-diff --git a/fs/xfs/xfs_zone_space_resv.c b/fs/xfs/xfs_zone_space_resv.c
-index 9cd38716fd25..4cb6bf4f9586 100644
---- a/fs/xfs/xfs_zone_space_resv.c
-+++ b/fs/xfs/xfs_zone_space_resv.c
-@@ -174,7 +174,7 @@ xfs_zoned_reserve_available(
- 		 * processing a pending GC request give up as we're fully out
- 		 * of space.
- 		 */
--		if (!xfs_group_marked(mp, XG_TYPE_RTG, XFS_RTG_RECLAIMABLE) &&
-+		if (!xfs_zoned_have_reclaimable(mp->m_zone_info) &&
- 		    !xfs_is_zonegc_running(mp))
- 			break;
- 
--- 
-2.34.1
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
 
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
 
