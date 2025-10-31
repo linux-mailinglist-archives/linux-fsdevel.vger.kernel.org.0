@@ -1,77 +1,101 @@
-Return-Path: <linux-fsdevel+bounces-66643-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66645-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8B16C27301
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 01 Nov 2025 00:32:27 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDFEAC2732C
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 01 Nov 2025 00:36:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70C8C3AF3D7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 23:32:18 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6A9394E6789
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 23:36:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1118932D0CF;
-	Fri, 31 Oct 2025 23:32:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 206D032C92E;
+	Fri, 31 Oct 2025 23:36:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NLosEy4N"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EkFMuYBt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCF4C32AAA6;
-	Fri, 31 Oct 2025 23:32:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BED4528C035
+	for <linux-fsdevel@vger.kernel.org>; Fri, 31 Oct 2025 23:36:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761953531; cv=none; b=MABFPNufSdtW2L/zq7Ed2H/0gGMfffvVwSooV4gkzW37TJNo+A6nCLjOEzazID4JQy3pgTWdsx1HpAqS/l35tJB3O+3uvGeC5o7OiTXhqJz8NVRgA3dtdnE3vqClBTRyTTbHYQ3z1ZaCrYZgBHA3Wiw0kYE7s8x+FbE0vDgFayU=
+	t=1761953775; cv=none; b=a63QT2NHjv271U1AFGY0ROdr/CR8uQSu5jTucCMg3qZ4FUJzMA3bnU0qIwXsSvL35xo4xQFhT8bNcXFi0GwgQ7EXCaETfAMgH/O8liZHnLWtrzQ9KWgY0Eb34VbUQzLvNl4TkZou+KdP4YHxjLa+C68pXOluhk7ZD4ObTQl+KVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761953531; c=relaxed/simple;
-	bh=MwRqjYevjHFcBpDOSWwiArO9qAZtX88K8HrrBcDQxzY=;
+	s=arc-20240116; t=1761953775; c=relaxed/simple;
+	bh=5tpVy1uLPjO9L4IvdDbxj0H5zRze4NtqyVZfxvjL6pM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ewv9RcUdMNNYgRCA/8bsRY857wj+dnJV8N3lwy9FbcmsxTpCKGq4QDZaq4VcEE65EETMv/igkZeBUQ9S1ab2qriMoN6l733CjwwOorIzoUnRDWEkyg8NGfjMUr84htsytaU7qP+pHeKPuhF5VEcv9eXa1jZP0r/lSbeI+3bnkBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NLosEy4N; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761953530; x=1793489530;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=MwRqjYevjHFcBpDOSWwiArO9qAZtX88K8HrrBcDQxzY=;
-  b=NLosEy4N/rgKsrx+16421kLXQsiiIPfYovUXHLdm4jClOSxMxuO0jjNU
-   T8NypExJ43hiSa43mjWJrJ80b5C9rjIyNPkDuNZTNHz/wHyXnOsVNKqhU
-   CmjN9Zz46UO6Ne2onrHwRXGmANJT5O+FdmdBgBRGVhvFWzJoD7y08TpKZ
-   x9nY8R3v96pdVO6cC+FlA3YRm4kqdjaBd44wD+oew+WweEb4t93fKGibl
-   634//YUGWI3NOyZwDrndRRe5Er1LN43liCkSwxBZBEX7GY4cUs0ewnm9S
-   h/wznW89roTKLHVj+vyv9IyqAqgLP0qlieHJEU2yuKeb0OOpvV7Snepxm
-   w==;
-X-CSE-ConnectionGUID: RckVz+bUSGGq8kGKIGL0/w==
-X-CSE-MsgGUID: BAdpuifDSEW1ruYWDg2RGg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11599"; a="75469904"
-X-IronPort-AV: E=Sophos;i="6.19,270,1754982000"; 
-   d="scan'208";a="75469904"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 16:32:09 -0700
-X-CSE-ConnectionGUID: IeMUZ8jbTCebYwi2GKEtAg==
-X-CSE-MsgGUID: MHEqQcFDQjOm8xC89SORPA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,270,1754982000"; 
-   d="scan'208";a="209912693"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by fmviesa002.fm.intel.com with ESMTP; 31 Oct 2025 16:32:07 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vEybE-000Nik-20;
-	Fri, 31 Oct 2025 23:32:04 +0000
-Date: Sat, 1 Nov 2025 07:30:27 +0800
-From: kernel test robot <lkp@intel.com>
-To: Mateusz Guzik <mjguzik@gmail.com>, torvalds@linux-foundation.org
-Cc: oe-kbuild-all@lists.linux.dev, brauner@kernel.org,
-	viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, tglx@linutronix.de, pfalcato@suse.de,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: Re: [PATCH 3/3] fs: hide names_cachep behind runtime access machinery
-Message-ID: <202511010706.nuASkMjZ-lkp@intel.com>
-References: <20251031174220.43458-4-mjguzik@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=N7FBNEVaZlGkrlFRPR2b9ri+viCp2KSOtzMjgGoMEB1z1j1gRWRT65yuQ1oEGPHowmM36pyfyULvtidySp5OAHPdrqjruWDHBZ5zCHZoy9M2LQaLoA17Ddx2HJNpfNv93mzFnI3QUWKwRvZ/xEYfS1MH2vma042mOIS6ZiVYZ/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EkFMuYBt; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-63c3d913b3bso5184690a12.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 31 Oct 2025 16:36:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761953772; x=1762558572; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4Eq4jvviKUAzs1+1SoozEwcB6MMHVfZDN8rnqvceNns=;
+        b=EkFMuYBt5mbk0dg5torxAZZYkFXftu4scvFem/ixbrVeowkwWNGo8zDtYA/0M+EqNh
+         GrHYxZfgJvgTy/G+X2XWwsWf8H4xJAkcmzidxstHAB2Q/CqctEVuaY9YST0GODpJGWyl
+         BXlEZ/P4odD4yGGAo87logE2ZpExFfeeVo/TTxXW00OK90wj/3gPiBr0gaE/FHd9+8pz
+         IT2iWhXQHClWtCZXbvxpIHwEnyjLqT1wT+7v9nSCkREI1FZXtHUN75czDiBZD6cckGO/
+         aVUZFFqMSQanNRoH35u7t0wbK6SHO5fRnAJb8/XwE8BfN+mUlmyHYPimnFMT9t/oHh1f
+         NBtQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761953772; x=1762558572;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=4Eq4jvviKUAzs1+1SoozEwcB6MMHVfZDN8rnqvceNns=;
+        b=FdqOWf1r433ZxQMOOtoo0CeMlIMOoLv7xOhdr2o6tb/xQgRW0P9KDgy/HBYLWTkyUi
+         EVoi5jNQr/hn0SBB8auy2Mg72kc2LCS+E7t/lSz25CnnTYKeyywbqefYngUvOwysZY4D
+         cBRfI/I2O/zWYKYC4oCqWaTHiIIzFwSYv9wdmC4+EENvV3yxo6JGQ6bzh2LS4OFEXnUN
+         d8OBIj6rklQfo95ytqIgll2sHBbvvEMLqlZVw0jk35SvH1iUcQUU3bk40g47cKqrW9zR
+         ryHUsPZcRCshNDxEjDygOn+RX5kShZe3Ci24pJdm6O8yrO0WARUg2RFY2aooRU5dU+3u
+         o20Q==
+X-Forwarded-Encrypted: i=1; AJvYcCX0l0mPtMUZSdrQ3JeOtzrPT3Ve4319aH42784SlOpP73SwqBhzDrnEKdr1dj6fISmr3IjbJacvXQCz4EMJ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyy/B7Kpmx8EKJiApI5tNpw1dVcKZ+vWc2fvHVTRC8JoRvkNa5T
+	VewL25a/Q9WEm4Tm97P7xF7AvdjEvL4hUdQU51aejtnWnYfqeoXf3SNX
+X-Gm-Gg: ASbGncvpZfcck5yKSdYC1ys07HodeGWL8fNPIoEM2No2kNQ2L1NdZnHdQ34qcbnSS0S
+	roYebMUtKiXIBpSh4TWEZAe6GMKwx+NW1NioqIwI0+32oTtbJOxl84utOzJzl/jikC7QPRKv73V
+	YHj9cWE2fz/EdoAsbJinbR3wUbDjN0MduLXerzaMwTVzo1eyJM/NBpmcInttPnO9goq9tGOS9cz
+	wCPODZcUeqPfsIq4Qg+CYXymTTPV+96jPmYdatiAAXNlZvsmi/rZt/UdygxssT1kmGAUvpX5CIh
+	+lrnKfTo2e7bi8UQxzc1FSu9eKhIE5yEGu/WHF1hV508+ImIVSwgJRllc1i3Wwp72i71rOJv4Ti
+	vN7fQT8sUrsWEZKEb0bqN2K+gVuKvnGBI7f6x4Ii+dgU6kpAcy9fbZhskRRN1EJLzglPkv8KOQy
+	ukzpNTg2gK6w==
+X-Google-Smtp-Source: AGHT+IE9oiA7ZS+LrMufBrhbfjlMC2OP7kCQdowNH5Jt1ngMTD0p89JzaMQE80nXkCPgIOmTZL/sqg==
+X-Received: by 2002:a05:6402:510c:b0:63c:334c:fbc8 with SMTP id 4fb4d7f45d1cf-6407701851bmr4563108a12.17.1761953771822;
+        Fri, 31 Oct 2025 16:36:11 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6409012a6a2sm1126819a12.23.2025.10.31.16.36.10
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 31 Oct 2025 16:36:10 -0700 (PDT)
+Date: Fri, 31 Oct 2025 23:36:10 +0000
+From: Wei Yang <richard.weiyang@gmail.com>
+To: Zi Yan <ziy@nvidia.com>
+Cc: linmiaohe@huawei.com, david@redhat.com, jane.chu@oracle.com,
+	kernel@pankajraghav.com, akpm@linux-foundation.org,
+	mcgrof@kernel.org, nao.horiguchi@gmail.com,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+	Lance Yang <lance.yang@linux.dev>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Wei Yang <richard.weiyang@gmail.com>,
+	Yang Shi <shy828301@gmail.com>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v5 3/3] mm/huge_memory: fix kernel-doc comments for
+ folio_split() and related.
+Message-ID: <20251031233610.ftpqyeosb4cedwtp@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20251031162001.670503-1-ziy@nvidia.com>
+ <20251031162001.670503-4-ziy@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -80,63 +104,75 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251031174220.43458-4-mjguzik@gmail.com>
+In-Reply-To: <20251031162001.670503-4-ziy@nvidia.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 
-Hi Mateusz,
+On Fri, Oct 31, 2025 at 12:20:01PM -0400, Zi Yan wrote:
+[...]
+>diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+>index 0e24bb7e90d0..ad2fc52651a6 100644
+>--- a/mm/huge_memory.c
+>+++ b/mm/huge_memory.c
+>@@ -3567,8 +3567,9 @@ static void __split_folio_to_order(struct folio *folio, int old_order,
+> 		ClearPageCompound(&folio->page);
+> }
+> 
+>-/*
+>- * It splits an unmapped @folio to lower order smaller folios in two ways.
+>+/**
+>+ * __split_unmapped_folio() - splits an unmapped @folio to lower order folios in
+>+ * two ways: uniform split or non-uniform split.
+>  * @folio: the to-be-split folio
+>  * @new_order: the smallest order of the after split folios (since buddy
+>  *             allocator like split generates folios with orders from @folio's
+>@@ -3589,22 +3590,22 @@ static void __split_folio_to_order(struct folio *folio, int old_order,
+>  *    uniform_split is false.
+>  *
+>  * The high level flow for these two methods are:
+>- * 1. uniform split: a single __split_folio_to_order() is called to split the
+>- *    @folio into @new_order, then we traverse all the resulting folios one by
+>- *    one in PFN ascending order and perform stats, unfreeze, adding to list,
+>- *    and file mapping index operations.
+>- * 2. non-uniform split: in general, folio_order - @new_order calls to
+>- *    __split_folio_to_order() are made in a for loop to split the @folio
+>- *    to one lower order at a time. The resulting small folios are processed
+>- *    like what is done during the traversal in 1, except the one containing
+>- *    @page, which is split in next for loop.
+>+ * 1. uniform split: @xas is split with no expectation of failure and a single
+>+ *    __split_folio_to_order() is called to split the @folio into @new_order
+>+ *    along with stats update.
+>+ * 2. non-uniform split: folio_order - @new_order calls to
+>+ *    __split_folio_to_order() are expected to be made in a for loop to split
+>+ *    the @folio to one lower order at a time. The folio containing @page is
 
-kernel test robot noticed the following build errors:
+Hope it is not annoying.
 
-[auto build test ERROR on arnd-asm-generic/master]
-[also build test ERROR on linus/master brauner-vfs/vfs.all v6.18-rc3 next-20251031]
-[cannot apply to linux/master]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+The parameter's name is @split_at, maybe we misuse it?
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Mateusz-Guzik/x86-fix-access_ok-and-valid_user_address-using-wrong-USER_PTR_MAX-in-modules/20251101-054539
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/arnd/asm-generic.git master
-patch link:    https://lore.kernel.org/r/20251031174220.43458-4-mjguzik%40gmail.com
-patch subject: [PATCH 3/3] fs: hide names_cachep behind runtime access machinery
-config: alpha-allnoconfig (https://download.01.org/0day-ci/archive/20251101/202511010706.nuASkMjZ-lkp@intel.com/config)
-compiler: alpha-linux-gcc (GCC) 15.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251101/202511010706.nuASkMjZ-lkp@intel.com/reproduce)
+s/containing @page/containing @split_at/
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202511010706.nuASkMjZ-lkp@intel.com/
+>+ *    split in each iteration. @xas is split into half in each iteration and
+>+ *    can fail. A failed @xas split leaves split folios as is without merging
+>+ *    them back.
+>  *
+>  * After splitting, the caller's folio reference will be transferred to the
+>  * folio containing @page. The caller needs to unlock and/or free after-split
 
-All errors (new ones prefixed by >>):
+The same above.
 
-   In file included from include/linux/huge_mm.h:7,
-                    from include/linux/mm.h:1016,
-                    from include/linux/pid_namespace.h:7,
-                    from include/linux/ptrace.h:10,
-                    from arch/alpha/kernel/asm-offsets.c:11:
->> include/linux/fs.h:54:10: fatal error: asm/runtime-const-accessors.h: No such file or directory
-      54 | #include <asm/runtime-const-accessors.h>
-         |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   compilation terminated.
-   make[3]: *** [scripts/Makefile.build:182: arch/alpha/kernel/asm-offsets.s] Error 1
-   make[3]: Target 'prepare' not remade because of errors.
-   make[2]: *** [Makefile:1282: prepare0] Error 2
-   make[2]: Target 'prepare' not remade because of errors.
-   make[1]: *** [Makefile:248: __sub-make] Error 2
-   make[1]: Target 'prepare' not remade because of errors.
-   make: *** [Makefile:248: __sub-make] Error 2
-   make: Target 'prepare' not remade because of errors.
+And probably there is another one in above this comment(not shown here).
 
-
-vim +54 include/linux/fs.h
-
-    51	
-    52	#include <asm/byteorder.h>
-    53	#ifndef MODULE
-  > 54	#include <asm/runtime-const-accessors.h>
-    55	#endif
-    56	
+>  * folios if necessary.
+>  *
+>- * For !uniform_split, when -ENOMEM is returned, the original folio might be
+>- * split. The caller needs to check the input folio.
+>+ * Return: 0 - successful, <0 - failed (if -ENOMEM is returned, @folio might be
+>+ * split but not to @new_order, the caller needs to check)
+>  */
+> static int __split_unmapped_folio(struct folio *folio, int new_order,
+> 		struct page *split_at, struct xa_state *xas,
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Wei Yang
+Help you, Help me
 
