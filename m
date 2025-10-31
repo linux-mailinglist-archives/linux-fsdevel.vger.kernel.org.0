@@ -1,196 +1,123 @@
-Return-Path: <linux-fsdevel+bounces-66595-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66596-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50762C25A8B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 15:48:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB48DC25CCE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 16:17:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9FE3462E90
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 14:47:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C810418896C4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 15:14:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4885426F477;
-	Fri, 31 Oct 2025 14:45:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85B4A25B1D2;
+	Fri, 31 Oct 2025 15:13:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JK50iEgo"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ei/9L18U"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D6111EB9E1
-	for <linux-fsdevel@vger.kernel.org>; Fri, 31 Oct 2025 14:45:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BAF95227
+	for <linux-fsdevel@vger.kernel.org>; Fri, 31 Oct 2025 15:13:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761921944; cv=none; b=JnrSz99u+M/C6iXHe8u/p44Yxj5Nwwwcy1liwtKUoizBuZ/BTs882k1oEdVvAWCSKC9oBGdpYdfx2nLYEcQSS6ugd2VsnOS9EmOMYKDQ7OytMzjpe3vmiqH3LuPGPfH5QBFDP4dqRd29GIPmJ1+45zHggvyvoV4AZ377N0CzcNk=
+	t=1761923621; cv=none; b=jHcuksVkt4CJD6w1axJWmNmrmX2oXcVi8l60YVORAm+56wVKInOtVOyHmvLTNeskza5hoP9j1tEPqy4eOGo5U3WS7/BoaiW7drKYSgKBF3/6Q0DeoyzmEJCVIYJ0JNAZb2KYzyhHE81qgSEw6hi8yK5AAS3HHbUxZ6aP39OvAMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761921944; c=relaxed/simple;
-	bh=s/h+xeadJlbYtXcDkYDQSaTnoitNRuKIJsoQoIQocw8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RUGUD2+8eAWHrghTjVkszpO7lK2aDp8jogERi/eJmsoKvgtmp1wAv90XkjIN9MSl2ZSYogz8NpXhkge0HynrV9y35ARwtowYNqeRTIMyFmxh3FOzZSPMKMTtme5a0zrTQP+0U44+vB10fHgzJviccVOhuXwzb/MXB1NBUCZ903I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JK50iEgo; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761921938;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DX4abzNNClk60Xm9uZ5i2oidpiAB527b9PJpwtS6gkQ=;
-	b=JK50iEgoBDySFsceRO4m5gBJKfTCx1HoiPuU5AsGc7EbevbkVMl68+/v6NboSUHHZWm52S
-	REBPWOLZDVb9/Mh2tGCwOUNEQgeVKXL4db1Bxn+9aHG96SVKsaUbKBcVDhrbjLc0ybuXXF
-	0ILaWg5K2A4b0ttxmqryRrVcJkU1Hhc=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-381-Hp1EnfCVMieKYgQTZUtNsA-1; Fri,
- 31 Oct 2025 10:45:33 -0400
-X-MC-Unique: Hp1EnfCVMieKYgQTZUtNsA-1
-X-Mimecast-MFC-AGG-ID: Hp1EnfCVMieKYgQTZUtNsA_1761921931
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1ABCC1954B00;
-	Fri, 31 Oct 2025 14:45:31 +0000 (UTC)
-Received: from madcap2.tricolour.ca (unknown [10.22.76.12])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C01A41954128;
-	Fri, 31 Oct 2025 14:45:28 +0000 (UTC)
-Date: Fri, 31 Oct 2025 10:45:25 -0400
-From: Richard Guy Briggs <rgb@redhat.com>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: audit@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-fsdevel@vger.kernel.org, Paul Moore <paul@paul-moore.com>,
-	Linux-Audit Mailing List <linux-audit@lists.linux-audit.osci.io>
-Subject: Re: [viro@zeniv.linux.org.uk: [RFC] audit reporting (or not
- reporting) pathnames on early failures in syscalls]
-Message-ID: <aQTLhZGOkufsFs9W@madcap2.tricolour.ca>
-References: <20251031080615.GB2441659@ZenIV>
+	s=arc-20240116; t=1761923621; c=relaxed/simple;
+	bh=uKzyL+jmwyriXmBvdMLiERXr9o5a0ykNZSCadruR89w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZERd9ovjdanY2qujgBBWX0OWDy2fUQgFLVNs1tf2Q7mwJCjdZFFfUIbpFCHnolMNbfN+X11vfturlDwJ+YJJxnPZl6rn9xMYw3jLfo/QaLA5X1Vvgn6FejlEuXR13EVYV+EbeUTq16FczIlCtXH8JZT4tFq0S8xHg0lsqUyF0U0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ei/9L18U; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-b708b01dc04so1761566b.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 31 Oct 2025 08:13:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761923617; x=1762528417; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uKzyL+jmwyriXmBvdMLiERXr9o5a0ykNZSCadruR89w=;
+        b=ei/9L18U5HkAuC9pc7V+xpXWsUgxKwYYi76s8mjMJOfjpKLNPLrG1xRUFGf6ZM3Vg/
+         PPzWJHhyzrdZHoIfAivQJRkY48f04jO7pvm30/huXE8fAauISJbBapC4GJ8y9rkdC3yZ
+         G4GbO705BixBaKye/Cd4CYUVq0FOjFfnEe/C3O+VjFGb77lpwz03E2s6SqtQ4PUrsjKR
+         +ravYwt74R7uuM0gnIH1BT5tEeOU9Tu1DJcWw2ow0d+hc4zkp19JMH16HlAa72LEVRgJ
+         CCEEHUYRZBc3972zh3VVFxySnZ46+evH6rwuXYZ60dn81RL5VUw3NMNrFedjr1K10CV8
+         gjIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761923617; x=1762528417;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uKzyL+jmwyriXmBvdMLiERXr9o5a0ykNZSCadruR89w=;
+        b=Gq9AMnt2YnCeyhV5YW0ptdd4Uarq6BW82hQPDhCsMd1KBFoaaJjVzNbIXg+HiaCuDb
+         G8fa4n3z6tJv5WZLmarHitp5ZermIqkC6sD9+WT7Toy2+aoCjS1zzjtbAEFGqpCZve4r
+         9HwzWJt80Yh3DBckj0DuocR+y95Mb4IFrA0bUwyExLB56/52mhfFhCrW4VCHk0QEiMlS
+         qRApapoC5ZqG00g4ITMzpu29L2QTg9LbgrGZKysNgthc3GcJ1Xig38iXt05hUVbxtJmd
+         5X6+TtJvOBgFKHK5hv356t7roHL2tycWycda0Rbb4/yP/ANtsDF2u1uQpov+7cj1n4+n
+         BVdg==
+X-Forwarded-Encrypted: i=1; AJvYcCUQVit1cnO3orq+W2DRwmg9dYWhA1+udOjpXapjAzY2iWOniRItFbPahAOXrWgX82PbNR2ND8psa5as6Utm@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbZgkwZ8cwNOMifmZRxr/MpvjB8XFznaPJlcl+X+mZKqUq9NnE
+	Swqzf+lwpToVyOUQ+0Lq1rDJa1gNfDheDWY20ARbuJMeQKj1VsRWGnipYvAI5lxHm7LWlGaVWYu
+	I355V+SznvRwcy0a0pORfFqvHhTAgdyk=
+X-Gm-Gg: ASbGncufxjKHkhojeG9USR4YJocKLs42mVOF5CFu9oH8UWuJqQg0t3fX3d2dFWUqjNP
+	iFDfOxaZAzmw58J+UL3PKycXs0TfLeVHNwA6LdYLRxsD737l9jhQH3IJh02BvtW6+B1TZARn+zn
+	g9PW5iatM1+4I/nCZ6/y3ongSPk8Og41y6tV1ePZ6xk/mCEKUItRR9UT88B/ZF81ZaStHTpEy8G
+	WjLOThqNNFtxnCDnGaagL7t0+2nrQf8DdAO8UgpIxTQz73bPCD4DJ7hDLKyOn6hX9J+Gb+JztmY
+	BQsjyDenNUkCXJHSPI1q8F8hgQ==
+X-Google-Smtp-Source: AGHT+IFi6RrdmaEHmhz0DYmgTu3lth1+AIc+wR+yR6AFvkMfxIA2Fs0w32EasIWGWhuV3loaspaSUVluO52UjOA6gbA=
+X-Received: by 2002:a17:907:72c8:b0:b64:76fc:ea5c with SMTP id
+ a640c23a62f3a-b707082fb5cmr400438766b.52.1761923617081; Fri, 31 Oct 2025
+ 08:13:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251031080615.GB2441659@ZenIV>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+References: <20251030105242.801528-1-mjguzik@gmail.com> <CAHk-=wj5o+BPgrUNase4tOuzbBMmiqyiYO9apO9Ou-M_M1-tKQ@mail.gmail.com>
+ <CAGudoHG_WYnoqAYgN2P5LcjyT6r-vORgeAG2EHbHoH+A-PvDUA@mail.gmail.com>
+ <CAHk-=wgGFUAPb7z5RzUq=jxRh2PO7yApd9ujMnC5OwXa-_e3Qw@mail.gmail.com>
+ <CAGudoHH817CKv0ts4dO08j5FOfEAWtvoBeoT06KarjzOh_U6ug@mail.gmail.com> <20251031-liehen-weltoffen-cddb6394cc14@brauner>
+In-Reply-To: <20251031-liehen-weltoffen-cddb6394cc14@brauner>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Fri, 31 Oct 2025 16:13:25 +0100
+X-Gm-Features: AWmQ_bl0QFNEHVEZqDt4NaeU-OmVLetqVQSG0lX8hIbhRTQHi4GhBcBiGlX77rE
+Message-ID: <CAGudoHE-9R0ZfFk-bE9TBhejkmZE3Hu2sT0gGiy=i_1_He=9GA@mail.gmail.com>
+Subject: Re: [PATCH v4] fs: hide names_cachep behind runtime access machinery
+To: Christian Brauner <brauner@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, pfalcato@suse.de
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2025-10-31 08:06, Al Viro wrote:
-> OK, that's two misspellings of the list name already;-/
+On Fri, Oct 31, 2025 at 1:08=E2=80=AFPM Christian Brauner <brauner@kernel.o=
+rg> wrote:
+>
+> > I wonder if it would make sense to bypass the problem by moving the
+> > pathname handling routines to a different header -- might be useful in
+> > its own right to slim down the kitchen sink that fs.h turned out to
+> > be, but that's another bikeshed-y material.
+>
+> fs.h needs to be split up. It's on my ToDo but let's just say there's a
+> lot of stuff on it so it's not really high-priority. If you have a good
+> reason to move something out of there by my guest. It would be
+> appreciated!
 
-Adding the audit userspace list to get Steve Grubb's certification take on this.
+I slept on it and I think the pragmatic way forward is to split up
+runtime-const.h instead.
 
-> Al, deeply embarrassed and crawling to get some sleep...
-> 
-> ----- Forwarded message from Al Viro <viro@zeniv.linux.org.uk> -----
-> 
-> Date: Fri, 31 Oct 2025 07:58:56 +0000
-> From: Al Viro <viro@zeniv.linux.org.uk>
-> To: linux-audit@vger.kernel.org
-> Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-fsdevel@vger.kernel.org, Paul Moore <paul@paul-moore.com>
-> Subject: [RFC] audit reporting (or not reporting) pathnames on early failures in syscalls
-> 
-> 	FWIW, I've just noticed that a patch in the series I'd been
-> reordering had the following chunk:
-> @@ -1421,20 +1421,16 @@ static int do_sys_openat2(int dfd, const char __user *filename,
->                           struct open_how *how)
->  {
->         struct open_flags op;
-> -       struct filename *tmp;
->         int err, fd;
->  
->         err = build_open_flags(how, &op);
->         if (unlikely(err))
->                 return err;
->  
-> -       tmp = getname(filename);
-> -       if (IS_ERR(tmp))
-> -               return PTR_ERR(tmp);
-> -
->         fd = get_unused_fd_flags(how->flags);
->         if (likely(fd >= 0)) {
-> -               struct file *f = do_filp_open(dfd, tmp, &op);
-> +               struct filename *name __free(putname) = getname(filename);
-> +               struct file *f = do_filp_open(dfd, name, &op);
->                 if (IS_ERR(f)) {
->                         put_unused_fd(fd);
->                         fd = PTR_ERR(f);
-> 
-> 	From the VFS or userland POV there's no problem - we would get a
-> different error reported e.g. in case when *both* EMFILE and ENAMETOOLONG
-> would be applicable, but that's perfectly fine.  However, from the audit
-> POV it changes behaviour.
-> 
-> 	Consider behaviour of openat2(2).
-> 1.  we do sanity checks on the last ('usize') argument.  If they
-> fail, we are done.
-> 2.  we copy struct open_how from userland ('how' argument).
-> If copyin fails, we are done.
-> 3.  we do sanity checks on how->flags, how->resolve and how->mode.
-> If they fail, we are done.
-> 4.  we copy the pathname to be opened from userland ('filename' argument).
-> If that fails, or if the pathname is either empty or too long, we are done.
-> 5.  we reserve an unused file descriptor.  If that fails, we are done.
-> 6.  we allocate an empty struct file.  If that fails, we are done.
-> 7.  we finally get around to the business - finding and opening the damn thing.
-> Which also can fail, of course.
-> 
-> 	We are expected to be able to produce a record of failing
-> syscall.  If we fail on step 4, well, the lack of pathname to come with
-> the record is to be expected - we have failed to get it, after all.
-> The same goes for failures on steps 1..3 - we hadn't gotten around to
-> looking at the pathname yet, so there's no pathname to report.	What (if
-> anything) makes "insane how->flags" different from "we have too many
-> descriptors opened already"?  The contents of the pathname is equally
-> irrelevant in both cases.  Yet in the latter case (failure at step 5)
-> the pathname would get reported.  Do we need to preserve that behaviour?
-> 
-> 	Because the patch quoted above would change it.  It puts the failure
-> to allocate a descriptor into the same situation as failures on steps 1..3.
-> 
-> 	As far as I can see, there are three possible approaches:
-> 
-> 1) if the current kernel imports the pathname before some check, that shall
-> always remain that way, no matter what.  Audit might be happy, but nobody
-> else would - we'll need to document that constraint and watch out for such
-> regressions.  And I'm pretty sure that over the years there had been
-> other such changes that went into mainline unnoticed.
-> 
-> 2) reordering is acceptable.  Of course, the pathname import must happen
-> before we start using it, but that's the only real constraint.  That would
-> mean the least headache for everyone other than audit folks.
-> 
-> 3) import the pathnames as early as possible.  It would mean a non-trivial
-> amount of churn, but it's at least a definite policy - validity of change
-> depends only on the resulting code, not the comparison with the earlier
-> state, as it would in case (1).  From QoI POV it's as nice as audit folks
-> could possibly ask, but it would cause quite a bit of churn to get there.
-> Not impossible to do, but I would rather not go there without a need.
-> Said that, struct filename handling is mostly a decent match to CLASS()
-> machinery, and all required churn wouldn't be hard to fold into conversion
-> to that.
-> 
-> 	My preference would be (2), obviously.	However, it really depends
-> upon the kind of requirements audit users have.  Note that currently the
-> position of pathname import in the sequence is not documented anywhere,
-> so there's not much audit users can rely upon other than "the current
-> behaviour is such-and-such, let's hope it doesn't change"... ;-/
-> 
-> 	Comments?
-> 
-> 
-> ----- End forwarded message -----
-> 
+The code to emit patchable access has very little requirements in
+terms header files. In contrast, the code to do the patching can pull
+in all kinds of headers with riscv being a great example.
 
-- RGB
+While I ran into problems with fs.h on riscv specifically, one has to
+expect the pre-existing mess will be posing an issue in other places
+should they try to use the machinery.
 
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-Upstream IRC: SunRaycer
-Voice: +1.613.860 2354 SMS: +1.613.518.6570
-
+So I think runtime-const-accessors.h (pardon the long name) for things
+like fs.h would be the way forward, regardless of what happens with
+the latter in the long run. I'm going to hack it up later.
 
