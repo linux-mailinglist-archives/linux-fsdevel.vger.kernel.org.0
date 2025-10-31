@@ -1,49 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-66564-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66565-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 323D3C242FF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 10:35:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CD3DC24359
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 10:39:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B425D4EAADE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 09:35:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E51183B922B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 09:35:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42338329E7C;
-	Fri, 31 Oct 2025 09:35:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3516032ED51;
+	Fri, 31 Oct 2025 09:35:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NTbfp2cb"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IYwDYIwc"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D603F2E092D;
-	Fri, 31 Oct 2025 09:35:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91A452E092D;
+	Fri, 31 Oct 2025 09:35:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761903328; cv=none; b=Iln0mk4TZauBOlKl0Q0UAXGnR5ohOBZY5dofLec9/xyqG3piJURh6/ZNaVE4GLBt2x0/aqUIjgu0WgAxjlxFAFe5jGSNXhwBLthKYeKyTFhtt9sT/63KET6xEuzJaxpaCYW1lxXKxysXaAW0dLzdmN9/VwIPV8pPDOF3M34qO/g=
+	t=1761903332; cv=none; b=A7RZznLkQJO05q8XtwDvRayiXkZUYZdXxfT+/UMHnzmAV/ZZtj01TEWKF+rLyJSx8XhWcFKn86h6pkLtIX+nDiJG7lMokUBWzJTJqpPdx4SZt10zfQQyj5AGveDcY5xgkWaIGCl4ELbCyOHJQB8G2iQtjFfeipPxn4+TagRqr0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761903328; c=relaxed/simple;
-	bh=cvipCw2+AlJ57NnMQhMYyhmLL9VjA0gIYpcYjquQoBw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jlOiBEAi98jCXLqR8ID+tp14W97NvzPnIIrd3//3aoUkut9E7h4K4aDvu2fjLxERqUJ5gO7S017nKUoe9lqVW1dvIZ3DNZCXVOiPxFgCp0nWMElQRPXV9fkXm0g78KQrIGVcbBtkQhrNGCCGzaUrzd6ld0SPrDTht9pzddN0yNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=NTbfp2cb; arc=none smtp.client-ip=198.137.202.133
+	s=arc-20240116; t=1761903332; c=relaxed/simple;
+	bh=65OeWv1EjMDC7E/eLwDPlThKen/QNw+GYNtDvKHqvBM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=POOWmaQI7L41rz+/YlGLzoFrd+ktBxsoT43SIuvXFvR0fyYDuRtNvxZYVaH4J55DZQTMHuF06uweJbYsVjSs3utcZZ8pECCJmA26pkxR2T43TEwVvX/ZUXGyi8G54XcuXQWpiktak3DkhsVrGNwKHlJLZkRUd2mHdCnD31iDEM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=IYwDYIwc; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=IzxoBLtZptFWlFdxYZIHYSOPY03LpnAZh+l14rPj8Jg=; b=NTbfp2cbP6O6sGXkbScnzjglXB
-	pbAgTSoPb87GWLEFV0nQfOKC59NW54HS+r3/eQ/ax5kmxVKaUbcTW42n4B274bix1savWZfkxMKPr
-	aAVq2K8VkvwCt4LhHKFmyVXopRpTSObAmN6UccBH0oq3w3U5vvUrjHH/9uNYlo7Y+6NOSk94LVf8g
-	gUCxnM5safupGnaY11uSGylAdtFeTMKKbhGTS+JwJ4c1ofKolaDDqgcTSfqaHhvpARHWRlcL2moVO
-	/j9BME6/32LA5URc26kmkCJI+g1mClPaQcBh4ZlyZBEG5sjv7FKz/Ef2OoszeH2Wwr3RisJXoINiK
-	GWyHrqBg==;
+	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
+	:Reply-To:Content-Type:Content-ID:Content-Description;
+	bh=b2coAJCg92j+BeJ5vt0cc/6wfrBqktDNumrNdVrqDsQ=; b=IYwDYIwcriYDIrrFeQIzb7kO0k
+	UkviU7sNtRj3uONw6ejFOURGcwB/Pqj0NT86rFkNlFVvCJ7lgjgg5Bvof3WL9JDgxV/OX45jDy/mP
+	34sx/yS5GVjEvtRAqm7mwYyZY2alSd94bOWvreQq74u+v38x1P8WwQ82JWemUC4oXPL0g9ua6gTzs
+	tbbChKXJNKuprtMfsVEmVlD6TSfcnlT0Yu1y232RDdmZc+izl9KcFOsr2K14/gJna8039unYSCJTJ
+	THCj1aAT2X4lj4zlPOOTaYCDnS87OmqzHzLHD5sM+qaVDAefll3A7c0mJR9ptd3prCZP0Kz+kC3xQ
+	mxBi6OLg==;
 Received: from [2001:4bb8:2dc:1001:a959:25cf:98e9:329b] (helo=localhost)
 	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vElXW-00000005ook-3cUB;
-	Fri, 31 Oct 2025 09:35:23 +0000
+	id 1vElXb-00000005opN-384m;
+	Fri, 31 Oct 2025 09:35:28 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Jens Axboe <axboe@kernel.dk>,
 	Eric Biggers <ebiggers@kernel.org>,
@@ -57,10 +58,12 @@ Cc: Christoph Lameter <cl@gentwo.org>,
 	linux-fsdevel@vger.kernel.org,
 	linux-fscrypt@vger.kernel.org,
 	linux-mm@kvack.org
-Subject: move blk-crypto-fallback to sit above the block layer
-Date: Fri, 31 Oct 2025 10:34:30 +0100
-Message-ID: <20251031093517.1603379-1-hch@lst.de>
+Subject: [PATCH 1/9] mempool: update kerneldoc comments
+Date: Fri, 31 Oct 2025 10:34:31 +0100
+Message-ID: <20251031093517.1603379-2-hch@lst.de>
 X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20251031093517.1603379-1-hch@lst.de>
+References: <20251031093517.1603379-1-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -70,40 +73,80 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Hi all,
+Use proper formatting, use full sentences and reduce some verbosity in
+function parameter descriptions.
 
-in the past we had various discussions that doing the blk-crypto fallback
-below the block layer causes all kinds of problems due to very late
-splitting and communicating up features.
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ mm/mempool.c | 36 +++++++++++++++++-------------------
+ 1 file changed, 17 insertions(+), 19 deletions(-)
 
-This series turns that call chain upside down by requiring the caller to
-call into blk-crypto using a new submit_bio wrapper instead so that only
-hardware encryption bios are passed through the block layer as such.
+diff --git a/mm/mempool.c b/mm/mempool.c
+index 1c38e873e546..d7c55a98c2be 100644
+--- a/mm/mempool.c
++++ b/mm/mempool.c
+@@ -372,18 +372,15 @@ int mempool_resize(mempool_t *pool, int new_min_nr)
+ EXPORT_SYMBOL(mempool_resize);
+ 
+ /**
+- * mempool_alloc - allocate an element from a specific memory pool
+- * @pool:      pointer to the memory pool which was allocated via
+- *             mempool_create().
+- * @gfp_mask:  the usual allocation bitmask.
++ * mempool_alloc - allocate an element from a memory pool
++ * @pool:	pointer to the memory pool
++ * @gfp_mask:	GFP_* flags.
+  *
+- * this function only sleeps if the alloc_fn() function sleeps or
+- * returns NULL. Note that due to preallocation, this function
+- * *never* fails when called from process contexts. (it might
+- * fail if called from an IRQ context.)
+- * Note: using __GFP_ZERO is not supported.
++ * Note: This function only sleeps if the alloc_fn callback sleeps or returns
++ * %NULL.  Using __GFP_ZERO is not supported.
+  *
+- * Return: pointer to the allocated element or %NULL on error.
++ * Return: pointer to the allocated element or %NULL on error. This function
++ * never returns %NULL when @gfp_mask allows sleeping.
+  */
+ void *mempool_alloc_noprof(mempool_t *pool, gfp_t gfp_mask)
+ {
+@@ -456,11 +453,10 @@ EXPORT_SYMBOL(mempool_alloc_noprof);
+ 
+ /**
+  * mempool_alloc_preallocated - allocate an element from preallocated elements
+- *                              belonging to a specific memory pool
+- * @pool:      pointer to the memory pool which was allocated via
+- *             mempool_create().
++ *                              belonging to a memory pool
++ * @pool:	pointer to the memory pool
+  *
+- * This function is similar to mempool_alloc, but it only attempts allocating
++ * This function is similar to mempool_alloc(), but it only attempts allocating
+  * an element from the preallocated elements. It does not sleep and immediately
+  * returns if no preallocated elements are available.
+  *
+@@ -492,12 +488,14 @@ void *mempool_alloc_preallocated(mempool_t *pool)
+ EXPORT_SYMBOL(mempool_alloc_preallocated);
+ 
+ /**
+- * mempool_free - return an element to the pool.
+- * @element:   pool element pointer.
+- * @pool:      pointer to the memory pool which was allocated via
+- *             mempool_create().
++ * mempool_free - return an element to a mempool
++ * @element:	pointer to element
++ * @pool:	pointer to the memory pool
++ *
++ * Returns @elem to @pool if its needs replenishing, else free it using
++ * the free_fn callback in @pool.
+  *
+- * this function only sleeps if the free_fn() function sleeps.
++ * This function only sleeps if the free_fn callback sleeps.
+  */
+ void mempool_free(void *element, mempool_t *pool)
+ {
+-- 
+2.47.3
 
-While doings this I also noticed that the existing blk-crypto-fallback
-code does various unprotected memory allocations which this converts to
-mempools, or from loops of mempool allocations to the new safe batch
-mempool allocator.
-
-There might be future avenues for optimization by using high order
-folio allocations that match the file systems preferred folio size,
-but for that'd probably want a batch folio allocator first, in addition
-to deferring it to avoid scope creep.
-
-Diffstat:
- block/blk-core.c            |   10 -
- block/blk-crypto-fallback.c |  437 ++++++++++++++++++++------------------------
- block/blk-crypto-internal.h |   31 +--
- block/blk-crypto.c          |   65 ++----
- fs/buffer.c                 |    3 
- fs/crypto/bio.c             |   89 +++++---
- fs/ext4/page-io.c           |    3 
- fs/ext4/readpage.c          |    9 
- fs/f2fs/data.c              |    4 
- fs/f2fs/file.c              |    3 
- fs/iomap/direct-io.c        |    3 
- include/linux/blk-crypto.h  |   16 +
- include/linux/mempool.h     |    7 
- mm/mempool.c                |  173 ++++++++++++-----
- 14 files changed, 464 insertions(+), 389 deletions(-)
 
