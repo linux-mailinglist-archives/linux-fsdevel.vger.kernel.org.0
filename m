@@ -1,188 +1,819 @@
-Return-Path: <linux-fsdevel+bounces-66634-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66635-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECFCDC26FFB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 22:19:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9618FC27091
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 22:29:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E13184273D9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 21:19:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C1513A89EB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 21:28:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D75D031158A;
-	Fri, 31 Oct 2025 21:19:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A77973161AA;
+	Fri, 31 Oct 2025 21:28:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HmChgljY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L//SSLMg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB90530DECF
-	for <linux-fsdevel@vger.kernel.org>; Fri, 31 Oct 2025 21:19:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02BEF30649A
+	for <linux-fsdevel@vger.kernel.org>; Fri, 31 Oct 2025 21:28:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761945574; cv=none; b=YRsVsbM4MVl16Rgt57mhqffH4aGjp4i+8jUJu4nrWspf5g4eQVkRoJUu4J7oeVHVTHPjjRf95ArajRfZJhwm2EFD/wFb/v6LQpURo4UZMfN/7gvWZaiIuR8PDaZxgZq4CB7JG0UQDyiYmNgPXaAtUN4GC04nL/uMh0xRO4h+SOE=
+	t=1761946123; cv=none; b=Gb9oodTbZE0gdtx69X5ZG9E/zFkFpnWLTyyITJs1y80qDDKkMoB+rGeUBauaZ65HIq9RlwiBCBtGXtEkMxcQZqfx/x2AdEfVh95+wzTo/TrSownk3j8p9CuOAW6QxuFxKcE9qrvi79wBgjdEOn87zzAjSfgO/g0EKvb8BxpAP84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761945574; c=relaxed/simple;
-	bh=b/0txVgfYDXr/8G1IrSggcm94wwGv37ITJn01zowz0A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iuO7edAxK0BQSFhfQJZTx3NNMbR9p+dCG6ahRNSMAU/yDI8MvAHerYlwt3so5gjUafQ3XTvLpt6Ogo1YYUX5TvTFNp7mWss/0uonleoqexDutt+JRIaRnSQo7AtFluz9SYhCE0mFuqSZIfSjMAYucxkXun6qyGywrTUmZ2PVv6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HmChgljY; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4ed0f3d4611so25366641cf.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 31 Oct 2025 14:19:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761945571; x=1762550371; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=b/0txVgfYDXr/8G1IrSggcm94wwGv37ITJn01zowz0A=;
-        b=HmChgljYltwGvumIYedYT0UPVDEKc62OUExzn7ENBdouQ7QL0t1iFalMZRBe1ia4xt
-         cUIDSB9LYQaL4w1V8/fnO/jBzTn7Dm64hxWb10VLquZpfJcDe6YilsciEcGId48M1tkK
-         pllc2s3IYLnAYDNCl979+aejycMO4gt+MYmfH1opQaCXVo/1UfLY7jb8k2VoAMkmHslI
-         oppMpE/gGv1t95tBv1Z3W5+FalHqHaCSI6yuzsCLXP6S71QZq4c/zQtUVpZ0yXYCfKFE
-         dnwGB33eM0eRiE99SnNzILP7ontF5YloTLrm2SjK7FcGXdcO2jNfjphFTSbkQPfoDEdc
-         xfHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761945571; x=1762550371;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=b/0txVgfYDXr/8G1IrSggcm94wwGv37ITJn01zowz0A=;
-        b=uXMK8NAVZ5MFY8OC758pwPzmprhcPTbs2nDBy+FQsbnXhETfRTCcRmU91N3TI8oa6i
-         yOHNM8VOD3rYj75y3XsQBDs+8XAnON34rrEcsmHWQ+s36xeptDczUpfdad9I37uH4WEh
-         oYjSWP3sfr+99L5oV97wu7jxRSwfpHWTVkVZFq3fiLq7XcUqj+WMb7Nd2cl4UFMWD3Zn
-         LVjiRgok/no0ykU5fXrrUHpBdXZa86JXjy7HNPcbAadwsp/0Go+HCO/zUzTJDEC1PMmV
-         lvRI/XQBnseuozmgU2ps2fc5HIXrO62W9lLrVi2B+bOhz+HEzrQbivo/CvGbAVOFdWhT
-         7XGA==
-X-Forwarded-Encrypted: i=1; AJvYcCXDM/zD+99kZK7FFy6HH74KsOV0qDQt9u0FxBWBHG233CgPjKl9mw5U3EXPyhmB7zI1YZHdenZXf763HJ2m@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUthHkr03nk7j137QwQBcooEvGSGXPZi2NhQ3DvJV7aIFp8f06
-	gQllY7hHHUIudRld0IKBfiOg/1Q1U7NT9PeoB5lX0XwxThbkMbvZ/c6CVh7JRcANyH/y2RLWQUF
-	xHoTXCgH+xa+hIuCnpMfW/xjH8gBBoL0e35zR
-X-Gm-Gg: ASbGncuFgwnxyV0wkaCnpoaDt3ehU9jMQtIx1XK5MKLZmDV3xH8dFiUbcakocER8e7v
-	c1tpzxlPvzo51SC3YBn+EqVB/cyv+zp2xFziL94ysGr7hewdCLJtH1blOtQFhaOuIlIgFMR5pwa
-	CP5jgsUOgS7DSQbh7Aws4UREXx9AQirwdVt2qDEBWtNOg+N1xzt5JPLtwyc2DFyDA2VS2SznVak
-	ll06bai+xAyXUnPDiKY64YmPqihs/+2zjZSvRJQZe1IlAKh8CzBQ3So0FdPlIS51tphDl5IfucV
-	MCglq7LKr0DKGQHhinkwEd8dkhchzlX59yB7av8Qxw4=
-X-Google-Smtp-Source: AGHT+IFJX2P1M70apw0nFyQz4o0INv/KHKAgN8dqmKmpRSuAuyAxUdXHsgwFTW9goOpBIvI5l1w3EEQR36rpTyq5w94=
-X-Received: by 2002:a05:622a:347:b0:4e8:9ad9:f3da with SMTP id
- d75a77b69052e-4ed30df9500mr47279601cf.30.1761945571467; Fri, 31 Oct 2025
- 14:19:31 -0700 (PDT)
+	s=arc-20240116; t=1761946123; c=relaxed/simple;
+	bh=jucEz8l01BVOZdQWk4s2G1ut4lafu6zFuY94u/8jXPI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M+9s7x3kxPvgRa3El+cxv/X7TtaMuoQmOtcSSbsRy+PLIX0TwqvfAPRPCsTopmKDZLEsWUme9iNvm0MLcVFCehzGTAuu5dvDbqKGcyj9CuE5SByjY+JW9+S12GV447msHrGYzvHW0UEowTuPEXngwweTdZuMMPTLMNDhfczu25g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L//SSLMg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A9A3C4CEE7;
+	Fri, 31 Oct 2025 21:28:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761946122;
+	bh=jucEz8l01BVOZdQWk4s2G1ut4lafu6zFuY94u/8jXPI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=L//SSLMgnZAyhVcVZGkHR0hc24kS6twGYqERiqybVzRMX35wfoqTVPFw5aTfCGSQ0
+	 VEagGstkMPeXYqR/U6RPz7TLpVqJ06pLYaT4/rhRUBDGH9Ro0O+vTz/LVhBqz40Vzg
+	 E74uTbcZFm1JwxfLoC8+FOBG42S8JOkJ/5D+oymu58vnVzfKRIUgf1Cdb37MCUyYZE
+	 qD6rU4aE6gik0JDenIvajb81gMwaWXrEVd7avccMBfOSjFORiR2G6orNk5Z/dGNSfv
+	 vfgZjetsx+9txe5PxUrgXLs22w2ZbAMuv1khuSjCC32qT9DFh33uDcTtsrvna5KwDB
+	 m1rXDaWV8QAGQ==
+Date: Fri, 31 Oct 2025 21:28:40 +0000
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Nanzhe Zhao <nzzhao@126.com>
+Cc: linux-f2fs@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
+	Matthew Wilcox <willy@infradead.org>, Chao Yu <chao@kernel.org>,
+	Yi Zhang <yi.zhang@huawei.com>, Barry Song <21cnbao@gmail.com>
+Subject: Re: [RFC PATCH 9/9] f2fs: Enable buffered read/write path large
+ folios support for normal and atomic file with iomap
+Message-ID: <aQUqCEfjAXubdRQk@google.com>
+References: <20250813092131.44762-1-nzzhao@126.com>
+ <20250813092131.44762-10-nzzhao@126.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251027222808.2332692-1-joannelkoong@gmail.com>
- <20251027222808.2332692-2-joannelkoong@gmail.com> <455fe1cb-bff1-4716-add7-cc4edecc98d2@gmail.com>
- <CAJnrk1ZaGkEdWwhR=4nQe4kQOp6KqQQHRoS7GbTRcwnKrR5A3g@mail.gmail.com>
- <9f0debb1-ce0e-4085-a3fe-0da7a8fd76a6@gmail.com> <96c4d33d-4f56-4937-bae7-9bda17f3264f@ddn.com>
- <CAJnrk1ah68G4NpDj8A41tX6J2M+NB6jNAUYdWEzTD3N_QrDJ_g@mail.gmail.com> <ebecc186-b5fd-4c55-a253-64c889f17062@ddn.com>
-In-Reply-To: <ebecc186-b5fd-4c55-a253-64c889f17062@ddn.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Fri, 31 Oct 2025 14:19:20 -0700
-X-Gm-Features: AWmQ_bno1ir54lWZLYFEmmRVsOwsvUudIz7RjkLPQJK6DmEHw0maxvDwvgL9E94
-Message-ID: <CAJnrk1bNX27dZNNg-u0_8NVNdDWi+99ohUuk7kY3sZb_P47hfQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/8] io_uring/uring_cmd: add io_uring_cmd_import_fixed_full()
-To: Bernd Schubert <bschubert@ddn.com>
-Cc: Pavel Begunkov <asml.silence@gmail.com>, "miklos@szeredi.hu" <miklos@szeredi.hu>, 
-	"axboe@kernel.dk" <axboe@kernel.dk>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
-	"io-uring@vger.kernel.org" <io-uring@vger.kernel.org>, 
-	"xiaobing.li@samsung.com" <xiaobing.li@samsung.com>, 
-	"csander@purestorage.com" <csander@purestorage.com>, "kernel-team@meta.com" <kernel-team@meta.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250813092131.44762-10-nzzhao@126.com>
 
-On Fri, Oct 31, 2025 at 3:27=E2=80=AFAM Bernd Schubert <bschubert@ddn.com> =
-wrote:
->
-> On 10/31/25 00:50, Joanne Koong wrote:
-> > On Thu, Oct 30, 2025 at 3:24=E2=80=AFPM Bernd Schubert <bschubert@ddn.c=
-om> wrote:
-> >>
-> >> On 10/30/25 19:06, Pavel Begunkov wrote:
-> >>> On 10/29/25 18:37, Joanne Koong wrote:
-> >>>> On Wed, Oct 29, 2025 at 7:01=E2=80=AFAM Pavel Begunkov <asml.silence=
-@gmail.com> wrote:
-> >>>>>
-> >>>>> On 10/27/25 22:28, Joanne Koong wrote:
-> >>>>>> Add an API for fetching the registered buffer associated with a
-> >>>>>> io_uring cmd. This is useful for callers who need access to the bu=
-ffer
-> >>>>>> but do not have prior knowledge of the buffer's user address or le=
-ngth.
-> >>>>>
-> >>>>> Joanne, is it needed because you don't want to pass {offset,size}
-> >>>>> via fuse uapi? It's often more convenient to allocate and register
-> >>>>> one large buffer and let requests to use subchunks. Shouldn't be
-> >>>>> different for performance, but e.g. if you try to overlay it onto
-> >>>>> huge pages it'll be severely overaccounted.
-> >>>>>
-> >>>>
-> >>>> Hi Pavel,
-> >>>>
-> >>>> Yes, I was thinking this would be a simpler interface than the
-> >>>> userspace caller having to pass in the uaddr and size on every
-> >>>> request. Right now the way it is structured is that userspace
-> >>>> allocates a buffer per request, then registers all those buffers. On
-> >>>> the kernel side when it fetches the buffer, it'll always fetch the
-> >>>> whole buffer (eg offset is 0 and size is the full size).
-> >>>>
-> >>>> Do you think it is better to allocate one large buffer and have the
-> >>>> requests use subchunks?
-> >>>
-> >>> I think so, but that's general advice, I don't know the fuse
-> >>> implementation details, and it's not a strong opinion. It'll be great
-> >>> if you take a look at what other server implementations might want an=
-d
-> >>> do, and if whether this approach is flexible enough, and how amendabl=
-e
-> >>> it is if you change it later on. E.g. how many registered buffers it
-> >>> might need? io_uring caps it at some 1000s. How large buffers are?
-> >>> Each separate buffer has memory footprint. And because of the same
-> >>> footprint there might be cache misses as well if there are too many.
-> >>> Can you always predict the max number of buffers to avoid resizing
-> >>> the table? Do you ever want to use huge pages while being
-> >>> restricted by mlock limits? And so on.
-> >>>
-> >>> In either case, I don't have a problem with this patch, just
-> >>> found it a bit off.
-> >>
-> >> Maybe we could address that later on, so far I don't like the idea
-> >> of a single buffer size for all ring entries. Maybe it would make
-> >> sense to introduce buffer pools of different sizes and let ring
-> >> entries use a needed buffer size dynamically.
-> >>
-> >> The part I'm still not too happy about is the need for fuse server
-> >> changes - my alternative patch didn't need that at all.
-> >>
-> >
-> > With pinning through io-uring registered buffers, this lets us also
-> > automatically use pinned pages for writing it out (eg if we're writing
-> > it out to local disk, we can pass that sqe directly to
-> > io_uring_prep_rw() and since it's marked as a registered buffer in io
-> > uring, it'll skip that pinning/translation overhead).
->
-> Ah that is good to know, maybe worth to be mentioned to the commit messag=
-e.
+Hi Nanzhe,
 
-Will do. I will add this to the commit message.
+On 08/13, Nanzhe Zhao wrote:
+> This commit enables large folios support for F2FS's buffered read and
+> write paths.
+> 
+> We introduce a helper function `f2fs_set_iomap` to handle all the logic
+> that converts a f2fs_map_blocks to iomap.
+> 
+> Currently, compressed files, encrypted files, and fsverity are not
+> supported with iomap large folios.
 
->
-> Btw, I will start to work on libfuse around next week to add another
-> io-uring interface, so that the application can own the ring and
-> let libfuse submit and fetch from it. I.e. that way the same ring can be
-> used for libfuse and application IO.
+If we cannot support the encrypted files, we'll lose the gain a lot. Any
+idea on this? And, how about applying the folio->private stuffs and supporting
+the buffered read path on non-compressed and encrypted/plain files without
+iomap conversion?
 
-Sounds great! Looking forward to the changes.
-
-Thanks,
-Joanne
->
-> Thanks,
-> Bernd
+> 
+> Since F2FS requires `f2fs_iomap_folio_state` (or a similar equivalent
+> mechanism) to correctly support the iomap framework, when
+> `CONFIG_F2FS_IOMAP_FOLIO_STATE` is not enabled, we will not use the
+> iomap buffered read/write paths.
+> 
+> Note: Since holes reported by f2fs_map_blocks come in two types
+> (NULL_ADDR and unmapped dnodes).
+> They requiring different handle logic to set iomap.length,
+> So we add a new block state flag for f2fs_map_blocks
+> 
+> Signed-off-by: Nanzhe Zhao <nzzhao@126.com>
+> ---
+>  fs/f2fs/data.c   | 286 +++++++++++++++++++++++++++++++++++++++++++----
+>  fs/f2fs/f2fs.h   | 120 +++++++++++++-------
+>  fs/f2fs/file.c   |  33 +++++-
+>  fs/f2fs/inline.c |  15 ++-
+>  fs/f2fs/inode.c  |  27 +++++
+>  fs/f2fs/namei.c  |   7 ++
+>  fs/f2fs/super.c  |   3 +
+>  7 files changed, 425 insertions(+), 66 deletions(-)
+> 
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index 37eaf431ab42..243c6305b0c5 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -1149,6 +1149,9 @@ void f2fs_update_data_blkaddr(struct dnode_of_data *dn, block_t blkaddr)
+>  {
+>  	f2fs_set_data_blkaddr(dn, blkaddr);
+>  	f2fs_update_read_extent_cache(dn);
+> +#ifdef CONFIG_F2FS_IOMAP_FOLIO_STATE
+> +	f2fs_iomap_seq_inc(dn->inode);
+> +#endif
+>  }
+>  
+>  /* dn->ofs_in_node will be returned with up-to-date last block pointer */
+> @@ -1182,6 +1185,9 @@ int f2fs_reserve_new_blocks(struct dnode_of_data *dn, blkcnt_t count)
+>  
+>  	if (folio_mark_dirty(dn->node_folio))
+>  		dn->node_changed = true;
+> +#ifdef CONFIG_F2FS_IOMAP_FOLIO_STATE
+> +	f2fs_iomap_seq_inc(dn->inode);
+> +#endif
+>  	return 0;
+>  }
+>  
+> @@ -1486,6 +1492,7 @@ static int f2fs_map_no_dnode(struct inode *inode,
+>  		*map->m_next_pgofs = f2fs_get_next_page_offset(dn, pgoff);
+>  	if (map->m_next_extent)
+>  		*map->m_next_extent = f2fs_get_next_page_offset(dn, pgoff);
+> +	map->m_flags |= F2FS_MAP_NODNODE;
+>  	return 0;
+>  }
+>  
+> @@ -1702,7 +1709,9 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map, int flag)
+>  		if (blkaddr == NEW_ADDR)
+>  			map->m_flags |= F2FS_MAP_DELALLOC;
+>  		/* DIO READ and hole case, should not map the blocks. */
+> -		if (!(flag == F2FS_GET_BLOCK_DIO && is_hole && !map->m_may_create))
+> +		if (!(flag == F2FS_GET_BLOCK_DIO && is_hole &&
+> +		      !map->m_may_create) &&
+> +		    !(flag == F2FS_GET_BLOCK_IOMAP && is_hole))
+>  			map->m_flags |= F2FS_MAP_MAPPED;
+>  
+>  		map->m_pblk = blkaddr;
+> @@ -1736,6 +1745,10 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map, int flag)
+>  			goto sync_out;
+>  
+>  		map->m_len += dn.ofs_in_node - ofs_in_node;
+> +		/* Since we successfully reserved blocks, we can update the pblk now.
+> +		 * No need to perform inefficient look up in write_begin again
+> +		 */
+> +		map->m_pblk = dn.data_blkaddr;
+>  		if (prealloc && dn.ofs_in_node != last_ofs_in_node + 1) {
+>  			err = -ENOSPC;
+>  			goto sync_out;
+> @@ -4255,9 +4268,6 @@ static int f2fs_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
+>  	err = f2fs_map_blocks(inode, &map, F2FS_GET_BLOCK_DIO);
+>  	if (err)
+>  		return err;
+> -
+> -	iomap->offset = F2FS_BLK_TO_BYTES(map.m_lblk);
+> -
+>  	/*
+>  	 * When inline encryption is enabled, sometimes I/O to an encrypted file
+>  	 * has to be broken up to guarantee DUN contiguity.  Handle this by
+> @@ -4272,28 +4282,44 @@ static int f2fs_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
+>  	if (WARN_ON_ONCE(map.m_pblk == COMPRESS_ADDR))
+>  		return -EINVAL;
+>  
+> -	if (map.m_flags & F2FS_MAP_MAPPED) {
+> -		if (WARN_ON_ONCE(map.m_pblk == NEW_ADDR))
+> -			return -EINVAL;
+> -
+> -		iomap->length = F2FS_BLK_TO_BYTES(map.m_len);
+> -		iomap->type = IOMAP_MAPPED;
+> -		iomap->flags |= IOMAP_F_MERGED;
+> -		iomap->bdev = map.m_bdev;
+> -		iomap->addr = F2FS_BLK_TO_BYTES(map.m_pblk);
+> -
+> -		if (flags & IOMAP_WRITE && map.m_last_pblk)
+> -			iomap->private = (void *)map.m_last_pblk;
+> +	return f2fs_set_iomap(inode, &map, iomap, flags, offset, length, false);
+> +}
+> +int f2fs_set_iomap(struct inode *inode, struct f2fs_map_blocks *map,
+> +		   struct iomap *iomap, unsigned int flags, loff_t offset,
+> +		   loff_t length, bool dio)
+> +{
+> +	iomap->offset = F2FS_BLK_TO_BYTES(map->m_lblk);
+> +	if (map->m_flags & F2FS_MAP_MAPPED) {
+> +		if (dio) {
+> +			if (WARN_ON_ONCE(map->m_pblk == NEW_ADDR))
+> +				return -EINVAL;
+> +		}
+> +		iomap->length = F2FS_BLK_TO_BYTES(map->m_len);
+> +		iomap->bdev = map->m_bdev;
+> +		if (map->m_pblk != NEW_ADDR) {
+> +			iomap->type = IOMAP_MAPPED;
+> +			iomap->flags |= IOMAP_F_MERGED;
+> +			iomap->addr = F2FS_BLK_TO_BYTES(map->m_pblk);
+> +		} else {
+> +			iomap->type = IOMAP_UNWRITTEN;
+> +			iomap->addr = IOMAP_NULL_ADDR;
+> +		}
+> +		if (flags & IOMAP_WRITE && map->m_last_pblk)
+> +			iomap->private = (void *)map->m_last_pblk;
+>  	} else {
+> -		if (flags & IOMAP_WRITE)
+> +		if (dio && flags & IOMAP_WRITE)
+>  			return -ENOTBLK;
+>  
+> -		if (map.m_pblk == NULL_ADDR) {
+> -			iomap->length = F2FS_BLK_TO_BYTES(next_pgofs) -
+> -							iomap->offset;
+> +		if (map->m_pblk == NULL_ADDR) {
+> +			if (map->m_flags & F2FS_MAP_NODNODE)
+> +				iomap->length =
+> +					F2FS_BLK_TO_BYTES(*map->m_next_pgofs) -
+> +					iomap->offset;
+> +			else
+> +				iomap->length = F2FS_BLK_TO_BYTES(map->m_len);
+>  			iomap->type = IOMAP_HOLE;
+> -		} else if (map.m_pblk == NEW_ADDR) {
+> -			iomap->length = F2FS_BLK_TO_BYTES(map.m_len);
+> +		} else if (map->m_pblk == NEW_ADDR) {
+> +			iomap->length = F2FS_BLK_TO_BYTES(map->m_len);
+>  			iomap->type = IOMAP_UNWRITTEN;
+>  		} else {
+>  			f2fs_bug_on(F2FS_I_SB(inode), 1);
+> @@ -4301,7 +4327,7 @@ static int f2fs_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
+>  		iomap->addr = IOMAP_NULL_ADDR;
+>  	}
+>  
+> -	if (map.m_flags & F2FS_MAP_NEW)
+> +	if (map->m_flags & F2FS_MAP_NEW)
+>  		iomap->flags |= IOMAP_F_NEW;
+>  	if ((inode->i_state & I_DIRTY_DATASYNC) ||
+>  	    offset + length > i_size_read(inode))
+> @@ -4313,3 +4339,217 @@ static int f2fs_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
+>  const struct iomap_ops f2fs_iomap_ops = {
+>  	.iomap_begin	= f2fs_iomap_begin,
+>  };
+> +
+> +/* iomap buffered-io */
+> +static int f2fs_buffered_read_iomap_begin(struct inode *inode, loff_t offset,
+> +					  loff_t length, unsigned int flags,
+> +					  struct iomap *iomap,
+> +					  struct iomap *srcmap)
+> +{
+> +	pgoff_t next_pgofs = 0;
+> +	int err;
+> +	struct f2fs_map_blocks map = {};
+> +
+> +	map.m_lblk = F2FS_BYTES_TO_BLK(offset);
+> +	map.m_len = F2FS_BYTES_TO_BLK(offset + length - 1) - map.m_lblk + 1;
+> +	map.m_next_pgofs = &next_pgofs;
+> +	map.m_seg_type =
+> +		f2fs_rw_hint_to_seg_type(F2FS_I_SB(inode), inode->i_write_hint);
+> +	map.m_may_create = false;
+> +	if (is_sbi_flag_set(F2FS_I_SB(inode), SBI_IS_SHUTDOWN))
+> +		return -EIO;
+> +	/*
+> +	 * If the blocks being overwritten are already allocated,
+> +	 * f2fs_map_lock and f2fs_balance_fs are not necessary.
+> +	 */
+> +	if (flags & IOMAP_WRITE)
+> +		return -EINVAL;
+> +
+> +	err = f2fs_map_blocks(inode, &map, F2FS_GET_BLOCK_IOMAP);
+> +	if (err)
+> +		return err;
+> +
+> +	if (WARN_ON_ONCE(map.m_pblk == COMPRESS_ADDR))
+> +		return -EINVAL;
+> +
+> +	return f2fs_set_iomap(inode, &map, iomap, flags, offset, length, false);
+> +}
+> +
+> +const struct iomap_ops f2fs_buffered_read_iomap_ops = {
+> +	.iomap_begin = f2fs_buffered_read_iomap_begin,
+> +};
+> +
+> +static void f2fs_iomap_readahead(struct readahead_control *rac)
+> +{
+> +	struct inode *inode = rac->mapping->host;
+> +
+> +	if (!f2fs_is_compress_backend_ready(inode))
+> +		return;
+> +
+> +	/* If the file has inline data, skip readahead */
+> +	if (f2fs_has_inline_data(inode))
+> +		return;
+> +	iomap_readahead(rac, &f2fs_buffered_read_iomap_ops);
+> +}
+> +
+> +static int f2fs_buffered_write_iomap_begin(struct inode *inode, loff_t offset,
+> +					   loff_t length, unsigned flags,
+> +					   struct iomap *iomap,
+> +					   struct iomap *srcmap)
+> +{
+> +	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+> +	struct f2fs_map_blocks map = {};
+> +	struct folio *ifolio = NULL;
+> +	int err = 0;
+> +
+> +	iomap->offset = offset;
+> +	iomap->bdev = sbi->sb->s_bdev;
+> +#ifdef CONFIG_F2FS_IOMAP_FOLIO_STATE
+> +	iomap->validity_cookie = f2fs_iomap_seq_read(inode);
+> +#endif
+> +	if (f2fs_has_inline_data(inode)) {
+> +		if (offset + length <= MAX_INLINE_DATA(inode)) {
+> +			ifolio = f2fs_get_inode_folio(sbi, inode->i_ino);
+> +			if (IS_ERR(ifolio)) {
+> +				err = PTR_ERR(ifolio);
+> +				goto failed;
+> +			}
+> +			set_inode_flag(inode, FI_DATA_EXIST);
+> +			f2fs_iomap_prepare_read_inline(inode, ifolio, iomap,
+> +						       offset, length);
+> +			if (inode->i_nlink)
+> +				folio_set_f2fs_inline(ifolio);
+> +
+> +			f2fs_folio_put(ifolio, 1);
+> +			goto out;
+> +		}
+> +	}
+> +	block_t start_blk = F2FS_BYTES_TO_BLK(offset);
+> +	block_t len_blks =
+> +		F2FS_BYTES_TO_BLK(offset + length - 1) - start_blk + 1;
+> +	err = f2fs_map_blocks_iomap(inode, start_blk, len_blks, &map);
+> +	if (map.m_pblk == NULL_ADDR) {
+> +		err = f2fs_map_blocks_preallocate(inode, map.m_lblk, len_blks,
+> +						  &map);
+> +		if (err)
+> +			goto failed;
+> +	}
+> +	if (WARN_ON_ONCE(map.m_pblk == COMPRESS_ADDR))
+> +		return -EIO; // Should not happen for buffered write prep
+> +	err = f2fs_set_iomap(inode, &map, iomap, flags, offset, length, false);
+> +	if (err)
+> +		return err;
+> +failed:
+> +	f2fs_write_failed(inode, offset + length);
+> +out:
+> +	return err;
+> +}
+> +
+> +static int f2fs_buffered_write_atomic_iomap_begin(struct inode *inode,
+> +						  loff_t offset, loff_t length,
+> +						  unsigned flags,
+> +						  struct iomap *iomap,
+> +						  struct iomap *srcmap)
+> +{
+> +	struct inode *cow_inode = F2FS_I(inode)->cow_inode;
+> +	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+> +	struct f2fs_map_blocks map = {};
+> +	int err = 0;
+> +
+> +	iomap->offset = offset;
+> +	iomap->bdev = sbi->sb->s_bdev;
+> +#ifdef CONFIG_F2FS_IOMAP_FOLIO_STATE
+> +	iomap->validity_cookie = f2fs_iomap_seq_read(inode);
+> +#endif
+> +	block_t start_blk = F2FS_BYTES_TO_BLK(offset);
+> +	block_t len_blks =
+> +		F2FS_BYTES_TO_BLK(offset + length - 1) - start_blk + 1;
+> +	err = f2fs_map_blocks_iomap(cow_inode, start_blk, len_blks, &map);
+> +	if (err)
+> +		return err;
+> +	if (map.m_pblk == NULL_ADDR &&
+> +	    is_inode_flag_set(inode, FI_ATOMIC_REPLACE)) {
+> +		err = f2fs_map_blocks_preallocate(cow_inode, map.m_lblk,
+> +						  map.m_len, &map);
+> +		if (err)
+> +			return err;
+> +		inc_atomic_write_cnt(inode);
+> +		goto out;
+> +	} else if (map.m_pblk != NULL_ADDR) {
+> +		goto out;
+> +	}
+> +	err = f2fs_map_blocks_iomap(inode, start_blk, len_blks, &map);
+> +	if (err)
+> +		return err;
+> +out:
+> +	if (WARN_ON_ONCE(map.m_pblk == COMPRESS_ADDR))
+> +		return -EIO;
+> +
+> +	return f2fs_set_iomap(inode, &map, iomap, flags, offset, length, false);
+> +}
+> +
+> +static int f2fs_buffered_write_iomap_end(struct inode *inode, loff_t pos,
+> +					 loff_t length, ssize_t written,
+> +					 unsigned flags, struct iomap *iomap)
+> +{
+> +	return written;
+> +}
+> +
+> +const struct iomap_ops f2fs_buffered_write_iomap_ops = {
+> +	.iomap_begin = f2fs_buffered_write_iomap_begin,
+> +	.iomap_end = f2fs_buffered_write_iomap_end,
+> +};
+> +
+> +const struct iomap_ops f2fs_buffered_write_atomic_iomap_ops = {
+> +	.iomap_begin = f2fs_buffered_write_atomic_iomap_begin,
+> +};
+> +
+> +const struct address_space_operations f2fs_iomap_aops = {
+> +	.read_folio = f2fs_read_data_folio,
+> +	.readahead = f2fs_iomap_readahead,
+> +	.write_begin = f2fs_write_begin,
+> +	.write_end = f2fs_write_end,
+> +	.writepages = f2fs_write_data_pages,
+> +	.dirty_folio = f2fs_dirty_data_folio,
+> +	.invalidate_folio = f2fs_invalidate_folio,
+> +	.release_folio = f2fs_release_folio,
+> +	.migrate_folio = filemap_migrate_folio,
+> +	.is_partially_uptodate = iomap_is_partially_uptodate,
+> +	.error_remove_folio = generic_error_remove_folio,
+> +};
+> +
+> +static void f2fs_iomap_put_folio(struct inode *inode, loff_t pos,
+> +				 unsigned copied, struct folio *folio)
+> +{
+> +	if (!copied)
+> +		goto unlock_out;
+> +	if (f2fs_is_atomic_file(inode))
+> +		folio_set_f2fs_atomic(folio);
+> +
+> +	if (pos + copied > i_size_read(inode) &&
+> +	    !f2fs_verity_in_progress(inode)) {
+> +		if (f2fs_is_atomic_file(inode))
+> +			f2fs_i_size_write(F2FS_I(inode)->cow_inode,
+> +					  pos + copied);
+> +	}
+> +unlock_out:
+> +	folio_unlock(folio);
+> +	folio_put(folio);
+> +	f2fs_update_time(F2FS_I_SB(inode), REQ_TIME);
+> +}
+> +
+> +#ifdef CONFIG_F2FS_IOMAP_FOLIO_STATE
+> +static bool f2fs_iomap_valid(struct inode *inode, const struct iomap *iomap)
+> +{
+> +	return iomap->validity_cookie == f2fs_iomap_seq_read(inode);
+> +}
+> +#else
+> +static bool f2fs_iomap_valid(struct inode *inode, const struct iomap *iomap)
+> +{
+> +	return 1;
+> +}
+> +#endif
+> +const struct iomap_write_ops f2fs_iomap_write_ops = {
+> +	.put_folio = f2fs_iomap_put_folio,
+> +	.iomap_valid = f2fs_iomap_valid
+> +};
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index ac9a6ac13e1f..1cf12b76b09a 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -762,6 +762,7 @@ struct extent_tree_info {
+>  #define F2FS_MAP_NEW		(1U << 0)
+>  #define F2FS_MAP_MAPPED		(1U << 1)
+>  #define F2FS_MAP_DELALLOC	(1U << 2)
+> +#define F2FS_MAP_NODNODE	(1U << 3)
+>  #define F2FS_MAP_FLAGS		(F2FS_MAP_NEW | F2FS_MAP_MAPPED |\
+>  				F2FS_MAP_DELALLOC)
+>  
+> @@ -837,49 +838,53 @@ enum {
+>  
+>  /* used for f2fs_inode_info->flags */
+>  enum {
+> -	FI_NEW_INODE,		/* indicate newly allocated inode */
+> -	FI_DIRTY_INODE,		/* indicate inode is dirty or not */
+> -	FI_AUTO_RECOVER,	/* indicate inode is recoverable */
+> -	FI_DIRTY_DIR,		/* indicate directory has dirty pages */
+> -	FI_INC_LINK,		/* need to increment i_nlink */
+> -	FI_ACL_MODE,		/* indicate acl mode */
+> -	FI_NO_ALLOC,		/* should not allocate any blocks */
+> -	FI_FREE_NID,		/* free allocated nide */
+> -	FI_NO_EXTENT,		/* not to use the extent cache */
+> -	FI_INLINE_XATTR,	/* used for inline xattr */
+> -	FI_INLINE_DATA,		/* used for inline data*/
+> -	FI_INLINE_DENTRY,	/* used for inline dentry */
+> -	FI_APPEND_WRITE,	/* inode has appended data */
+> -	FI_UPDATE_WRITE,	/* inode has in-place-update data */
+> -	FI_NEED_IPU,		/* used for ipu per file */
+> -	FI_ATOMIC_FILE,		/* indicate atomic file */
+> -	FI_DATA_EXIST,		/* indicate data exists */
+> -	FI_SKIP_WRITES,		/* should skip data page writeback */
+> -	FI_OPU_WRITE,		/* used for opu per file */
+> -	FI_DIRTY_FILE,		/* indicate regular/symlink has dirty pages */
+> -	FI_PREALLOCATED_ALL,	/* all blocks for write were preallocated */
+> -	FI_HOT_DATA,		/* indicate file is hot */
+> -	FI_EXTRA_ATTR,		/* indicate file has extra attribute */
+> -	FI_PROJ_INHERIT,	/* indicate file inherits projectid */
+> -	FI_PIN_FILE,		/* indicate file should not be gced */
+> -	FI_VERITY_IN_PROGRESS,	/* building fs-verity Merkle tree */
+> -	FI_COMPRESSED_FILE,	/* indicate file's data can be compressed */
+> -	FI_COMPRESS_CORRUPT,	/* indicate compressed cluster is corrupted */
+> -	FI_MMAP_FILE,		/* indicate file was mmapped */
+> -	FI_ENABLE_COMPRESS,	/* enable compression in "user" compression mode */
+> -	FI_COMPRESS_RELEASED,	/* compressed blocks were released */
+> -	FI_ALIGNED_WRITE,	/* enable aligned write */
+> -	FI_COW_FILE,		/* indicate COW file */
+> -	FI_ATOMIC_COMMITTED,	/* indicate atomic commit completed except disk sync */
+> -	FI_ATOMIC_DIRTIED,	/* indicate atomic file is dirtied */
+> -	FI_ATOMIC_REPLACE,	/* indicate atomic replace */
+> -	FI_OPENED_FILE,		/* indicate file has been opened */
+> -	FI_DONATE_FINISHED,	/* indicate page donation of file has been finished */
+> -	FI_MAX,			/* max flag, never be used */
+> +	FI_NEW_INODE, /* indicate newly allocated inode */
+> +	FI_DIRTY_INODE, /* indicate inode is dirty or not */
+> +	FI_AUTO_RECOVER, /* indicate inode is recoverable */
+> +	FI_DIRTY_DIR, /* indicate directory has dirty pages */
+> +	FI_INC_LINK, /* need to increment i_nlink */
+> +	FI_ACL_MODE, /* indicate acl mode */
+> +	FI_NO_ALLOC, /* should not allocate any blocks */
+> +	FI_FREE_NID, /* free allocated nide */
+> +	FI_NO_EXTENT, /* not to use the extent cache */
+> +	FI_INLINE_XATTR, /* used for inline xattr */
+> +	FI_INLINE_DATA, /* used for inline data*/
+> +	FI_INLINE_DENTRY, /* used for inline dentry */
+> +	FI_APPEND_WRITE, /* inode has appended data */
+> +	FI_UPDATE_WRITE, /* inode has in-place-update data */
+> +	FI_NEED_IPU, /* used for ipu per file */
+> +	FI_ATOMIC_FILE, /* indicate atomic file */
+> +	FI_DATA_EXIST, /* indicate data exists */
+> +	FI_SKIP_WRITES, /* should skip data page writeback */
+> +	FI_OPU_WRITE, /* used for opu per file */
+> +	FI_DIRTY_FILE, /* indicate regular/symlink has dirty pages */
+> +	FI_PREALLOCATED_ALL, /* all blocks for write were preallocated */
+> +	FI_HOT_DATA, /* indicate file is hot */
+> +	FI_EXTRA_ATTR, /* indicate file has extra attribute */
+> +	FI_PROJ_INHERIT, /* indicate file inherits projectid */
+> +	FI_PIN_FILE, /* indicate file should not be gced */
+> +	FI_VERITY_IN_PROGRESS, /* building fs-verity Merkle tree */
+> +	FI_COMPRESSED_FILE, /* indicate file's data can be compressed */
+> +	FI_COMPRESS_CORRUPT, /* indicate compressed cluster is corrupted */
+> +	FI_MMAP_FILE, /* indicate file was mmapped */
+> +	FI_ENABLE_COMPRESS, /* enable compression in "user" compression mode */
+> +	FI_COMPRESS_RELEASED, /* compressed blocks were released */
+> +	FI_ALIGNED_WRITE, /* enable aligned write */
+> +	FI_COW_FILE, /* indicate COW file */
+> +	FI_ATOMIC_COMMITTED, /* indicate atomic commit completed except disk sync */
+> +	FI_ATOMIC_DIRTIED, /* indicate atomic file is dirtied */
+> +	FI_ATOMIC_REPLACE, /* indicate atomic replace */
+> +	FI_OPENED_FILE, /* indicate file has been opened */
+> +	FI_DONATE_FINISHED, /* indicate page donation of file has been finished */
+> +	FI_IOMAP, /* indicate whether this inode should enable iomap*/
+> +	FI_MAX, /* max flag, never be used */
+>  };
+>  
+>  struct f2fs_inode_info {
+>  	struct inode vfs_inode;		/* serve a vfs inode */
+> +#ifdef CONFIG_F2FS_IOMAP_FOLIO_STATE
+> +	atomic64_t i_iomap_seq; /* for iomap_valid sequence number */
+> +#endif
+>  	unsigned long i_flags;		/* keep an inode flags for ioctl */
+>  	unsigned char i_advise;		/* use to give file attribute hints */
+>  	unsigned char i_dir_level;	/* use for dentry level for large dir */
+> @@ -2814,6 +2819,16 @@ static inline void inc_page_count(struct f2fs_sb_info *sbi, int count_type)
+>  		set_sbi_flag(sbi, SBI_IS_DIRTY);
+>  }
+>  
+> +static inline void inc_page_count_multiple(struct f2fs_sb_info *sbi,
+> +					   int count_type, int npages)
+> +{
+> +	atomic_add(npages, &sbi->nr_pages[count_type]);
+> +
+> +	if (count_type == F2FS_DIRTY_DENTS || count_type == F2FS_DIRTY_NODES ||
+> +	    count_type == F2FS_DIRTY_META || count_type == F2FS_DIRTY_QDATA ||
+> +	    count_type == F2FS_DIRTY_IMETA)
+> +		set_sbi_flag(sbi, SBI_IS_DIRTY);
+> +}
+>  static inline void inode_inc_dirty_pages(struct inode *inode)
+>  {
+>  	atomic_inc(&F2FS_I(inode)->dirty_pages);
+> @@ -3657,6 +3672,10 @@ static inline bool f2fs_is_cow_file(struct inode *inode)
+>  	return is_inode_flag_set(inode, FI_COW_FILE);
+>  }
+>  
+> +static inline bool f2fs_iomap_inode(struct inode *inode)
+> +{
+> +	return is_inode_flag_set(inode, FI_IOMAP);
+> +}
+>  static inline void *inline_data_addr(struct inode *inode, struct folio *folio)
+>  {
+>  	__le32 *addr = get_dnode_addr(inode, folio);
+> @@ -3880,7 +3899,17 @@ int f2fs_write_inode(struct inode *inode, struct writeback_control *wbc);
+>  void f2fs_remove_donate_inode(struct inode *inode);
+>  void f2fs_evict_inode(struct inode *inode);
+>  void f2fs_handle_failed_inode(struct inode *inode);
+> +#ifdef CONFIG_F2FS_IOMAP_FOLIO_STATE
+> +static inline void f2fs_iomap_seq_inc(struct inode *inode)
+> +{
+> +	atomic64_inc(&F2FS_I(inode)->i_iomap_seq);
+> +}
+>  
+> +static inline u64 f2fs_iomap_seq_read(struct inode *inode)
+> +{
+> +	return atomic64_read(&F2FS_I(inode)->i_iomap_seq);
+> +}
+> +#endif
+>  /*
+>   * namei.c
+>   */
+> @@ -4248,6 +4277,9 @@ int f2fs_write_single_data_page(struct folio *folio, int *submitted,
+>  				enum iostat_type io_type,
+>  				int compr_blocks, bool allow_balance);
+>  void f2fs_write_failed(struct inode *inode, loff_t to);
+> +int f2fs_set_iomap(struct inode *inode, struct f2fs_map_blocks *map,
+> +		   struct iomap *iomap, unsigned int flags, loff_t offset,
+> +		   loff_t length, bool dio);
+>  void f2fs_invalidate_folio(struct folio *folio, size_t offset, size_t length);
+>  bool f2fs_release_folio(struct folio *folio, gfp_t wait);
+>  bool f2fs_overwrite_io(struct inode *inode, loff_t pos, size_t len);
+> @@ -4258,6 +4290,11 @@ int f2fs_init_post_read_wq(struct f2fs_sb_info *sbi);
+>  void f2fs_destroy_post_read_wq(struct f2fs_sb_info *sbi);
+>  extern const struct iomap_ops f2fs_iomap_ops;
+>  
+> +extern const struct iomap_write_ops f2fs_iomap_write_ops;
+> +extern const struct iomap_ops f2fs_buffered_read_iomap_ops;
+> +extern const struct iomap_ops f2fs_buffered_write_iomap_ops;
+> +extern const struct iomap_ops f2fs_buffered_write_atomic_iomap_ops;
+> +
+>  /*
+>   * gc.c
+>   */
+> @@ -4540,6 +4577,7 @@ extern const struct file_operations f2fs_dir_operations;
+>  extern const struct file_operations f2fs_file_operations;
+>  extern const struct inode_operations f2fs_file_inode_operations;
+>  extern const struct address_space_operations f2fs_dblock_aops;
+> +extern const struct address_space_operations f2fs_iomap_aops;
+>  extern const struct address_space_operations f2fs_node_aops;
+>  extern const struct address_space_operations f2fs_meta_aops;
+>  extern const struct inode_operations f2fs_dir_inode_operations;
+> @@ -4578,7 +4616,9 @@ int f2fs_read_inline_dir(struct file *file, struct dir_context *ctx,
+>  int f2fs_inline_data_fiemap(struct inode *inode,
+>  			struct fiemap_extent_info *fieinfo,
+>  			__u64 start, __u64 len);
+> -
+> +void f2fs_iomap_prepare_read_inline(struct inode *inode, struct folio *ifolio,
+> +				    struct iomap *iomap, loff_t pos,
+> +				    loff_t length);
+>  /*
+>   * shrinker.c
+>   */
+> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> index 42faaed6a02d..6c5b3e632f2b 100644
+> --- a/fs/f2fs/file.c
+> +++ b/fs/f2fs/file.c
+> @@ -4965,7 +4965,14 @@ static int f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *iter,
+>  		if (ret)
+>  			return ret;
+>  	}
+> -
+> +#ifdef CONFIG_F2FS_IOMAP_FOLIO_STATE
+> +	/* Buffered write can convert inline file to large normal file
+> +	 * when convert success, we uses mapping set large folios here
+> +	 */
+> +	if (f2fs_should_use_buffered_iomap(inode))
+> +		mapping_set_large_folios(inode->i_mapping);
+> +	set_inode_flag(inode, FI_IOMAP);
+> +#endif
+>  	/* Do not preallocate blocks that will be written partially in 4KB. */
+>  	map.m_lblk = F2FS_BLK_ALIGN(pos);
+>  	map.m_len = F2FS_BYTES_TO_BLK(pos + count);
+> @@ -4994,6 +5001,24 @@ static int f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *iter,
+>  	return map.m_len;
+>  }
+>  
+> +static ssize_t f2fs_iomap_buffered_write(struct kiocb *iocb, struct iov_iter *i)
+> +{
+> +	struct file *file = iocb->ki_filp;
+> +	struct inode *inode = file_inode(file);
+> +	ssize_t ret;
+> +
+> +	if (f2fs_is_atomic_file(inode)) {
+> +		ret = iomap_file_buffered_write(iocb, i,
+> +						&f2fs_buffered_write_atomic_iomap_ops,
+> +						&f2fs_iomap_write_ops, NULL);
+> +	} else {
+> +		ret = iomap_file_buffered_write(iocb, i,
+> +						&f2fs_buffered_write_iomap_ops,
+> +						&f2fs_iomap_write_ops, NULL);
+> +	}
+> +	return ret;
+> +}
+> +
+>  static ssize_t f2fs_buffered_write_iter(struct kiocb *iocb,
+>  					struct iov_iter *from)
+>  {
+> @@ -5004,7 +5029,11 @@ static ssize_t f2fs_buffered_write_iter(struct kiocb *iocb,
+>  	if (iocb->ki_flags & IOCB_NOWAIT)
+>  		return -EOPNOTSUPP;
+>  
+> -	ret = generic_perform_write(iocb, from);
+> +	if (f2fs_iomap_inode(inode)) {
+> +		ret = f2fs_iomap_buffered_write(iocb, from);
+> +	} else {
+> +		ret = generic_perform_write(iocb, from);
+> +	}
+>  
+>  	if (ret > 0) {
+>  		f2fs_update_iostat(F2FS_I_SB(inode), inode,
+> diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
+> index 58ac831ef704..bda338b4fc22 100644
+> --- a/fs/f2fs/inline.c
+> +++ b/fs/f2fs/inline.c
+> @@ -13,7 +13,7 @@
+>  #include "f2fs.h"
+>  #include "node.h"
+>  #include <trace/events/f2fs.h>
+> -
+> +#include <linux/iomap.h>
+>  static bool support_inline_data(struct inode *inode)
+>  {
+>  	if (f2fs_used_in_atomic_write(inode))
+> @@ -832,3 +832,16 @@ int f2fs_inline_data_fiemap(struct inode *inode,
+>  	f2fs_folio_put(ifolio, true);
+>  	return err;
+>  }
+> +/* fill iomap struct for inline data case for
+> + *iomap buffered write
+> + */
+> +void f2fs_iomap_prepare_read_inline(struct inode *inode, struct folio *ifolio,
+> +				    struct iomap *iomap, loff_t pos,
+> +				    loff_t length)
+> +{
+> +	iomap->addr = IOMAP_NULL_ADDR;
+> +	iomap->length = length;
+> +	iomap->type = IOMAP_INLINE;
+> +	iomap->flags = 0;
+> +	iomap->inline_data = inline_data_addr(inode, ifolio);
+> +}
+> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+> index 8c4eafe9ffac..29378270d561 100644
+> --- a/fs/f2fs/inode.c
+> +++ b/fs/f2fs/inode.c
+> @@ -23,6 +23,24 @@
+>  extern const struct address_space_operations f2fs_compress_aops;
+>  #endif
+>  
+> +bool f2fs_should_use_buffered_iomap(struct inode *inode)
+> +{
+> +	if (!S_ISREG(inode->i_mode))
+> +		return false;
+> +	if (S_ISDIR(inode->i_mode) || S_ISLNK(inode->i_mode))
+> +		return false;
+> +	if (inode->i_mapping == NODE_MAPPING(F2FS_I_SB(inode)))
+> +		return false;
+> +	if (inode->i_mapping == META_MAPPING(F2FS_I_SB(inode)))
+> +		return false;
+> +	if (f2fs_encrypted_file(inode))
+> +		return false;
+> +	if (fsverity_active(inode))
+> +		return false;
+> +	if (f2fs_compressed_file(inode))
+> +		return false;
+> +	return true;
+> +}
+>  void f2fs_mark_inode_dirty_sync(struct inode *inode, bool sync)
+>  {
+>  	if (is_inode_flag_set(inode, FI_NEW_INODE))
+> @@ -611,7 +629,16 @@ struct inode *f2fs_iget(struct super_block *sb, unsigned long ino)
+>  	} else if (S_ISREG(inode->i_mode)) {
+>  		inode->i_op = &f2fs_file_inode_operations;
+>  		inode->i_fop = &f2fs_file_operations;
+> +#ifdef CONFIG_F2FS_IOMAP_FOLIO_STATE
+> +		if (f2fs_should_use_buffered_iomap(inode)) {
+> +			mapping_set_large_folios(inode->i_mapping);
+> +			set_inode_flag(inode, FI_IOMAP);
+> +			inode->i_mapping->a_ops = &f2fs_iomap_aops;
+> +		} else
+> +			inode->i_mapping->a_ops = &f2fs_dblock_aops;
+> +#else
+>  		inode->i_mapping->a_ops = &f2fs_dblock_aops;
+> +#endif
+>  	} else if (S_ISDIR(inode->i_mode)) {
+>  		inode->i_op = &f2fs_dir_inode_operations;
+>  		inode->i_fop = &f2fs_dir_operations;
+> diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+> index b882771e4699..2d995860c488 100644
+> --- a/fs/f2fs/namei.c
+> +++ b/fs/f2fs/namei.c
+> @@ -328,6 +328,13 @@ static struct inode *f2fs_new_inode(struct mnt_idmap *idmap,
+>  	f2fs_init_extent_tree(inode);
+>  
+>  	trace_f2fs_new_inode(inode, 0);
+> +#ifdef CONFIG_F2FS_IOMAP_FOLIO_STATE
+> +	if (f2fs_should_use_buffered_iomap(inode)) {
+> +		set_inode_flag(inode, FI_IOMAP);
+> +		mapping_set_large_folios(inode->i_mapping);
+> +	}
+> +#endif
+> +
+>  	return inode;
+>  
+>  fail:
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index 2000880b7dca..35a42d6214fe 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -1719,6 +1719,9 @@ static struct inode *f2fs_alloc_inode(struct super_block *sb)
+>  	init_once((void *) fi);
+>  
+>  	/* Initialize f2fs-specific inode info */
+> +#ifdef CONFIG_F2FS_IOMAP_FOLIO_STATE
+> +	atomic64_set(&fi->i_iomap_seq, 0);
+> +#endif
+>  	atomic_set(&fi->dirty_pages, 0);
+>  	atomic_set(&fi->i_compr_blocks, 0);
+>  	atomic_set(&fi->open_count, 0);
+> -- 
+> 2.34.1
+> 
 
