@@ -1,110 +1,156 @@
-Return-Path: <linux-fsdevel+bounces-66626-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66627-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46AC5C26E63
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 21:34:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CA9AC26E87
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 21:35:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DAC41A24531
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 20:34:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7270C407C8B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 20:35:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 997903254A7;
-	Fri, 31 Oct 2025 20:34:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C232E329C63;
+	Fri, 31 Oct 2025 20:34:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TI/PtMzR"
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="dvQYnWoz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+Received: from mail-lf1-f99.google.com (mail-lf1-f99.google.com [209.85.167.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B9DD3002A2
-	for <linux-fsdevel@vger.kernel.org>; Fri, 31 Oct 2025 20:34:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 269313254B3
+	for <linux-fsdevel@vger.kernel.org>; Fri, 31 Oct 2025 20:34:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761942867; cv=none; b=Zba56sivIZnxJwqJWAhEu1LWztR2IXI6o24OrF7AFqQUNnzT6G+IeoPlquycDcjs/hOl1CmDw1l4Y5Hgk//hvw1VFr2y0hM824dtD3CgTIOEJoMhDujMGBD/rSP1lXqnCBNPa8ILkq+h+Sc8NH8x05JA7LWkPnrkylj/ooDINWE=
+	t=1761942882; cv=none; b=KAcJOcdJwjdWbqDSkYdLZmibbwKMaSE8u+WlIvMWgXJqdkwDVkqhHvqgh0WJaVC52X+Y3ubRspPz0ME9dq4Gj9gdyp2R8PwPLbwCXDSipo6gNGiCLHgYSw+Yb/fjde92bavo1Q3ZlAmWltYjIO4p12V7zwKg8fa2OHI8TlrEQbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761942867; c=relaxed/simple;
-	bh=htvbbyuLizdd2EyBJsklrXXtxab70iENexSgPdZge74=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o0UUySPADg4ni2AY2PfH13PuUERIWUcdF//rgHni0LNrOA2NGlMJL17oL483hCU8vg8AEclcG3tb+ChJhWC144613S9q0RBPa+lr7vXeMx95+L11tj5epKBQ/rJunDVhHuarEwgkqCT+U5xhwnkzVGKvwlRZmFM6yFO7+5+82VI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TI/PtMzR; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4e8a25d96ecso40381241cf.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 31 Oct 2025 13:34:25 -0700 (PDT)
+	s=arc-20240116; t=1761942882; c=relaxed/simple;
+	bh=jvDE7lWJxH3JAXZ63PoEX/oK9PZRTBG5vt6245JF66Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=b7smxhYdpPsTkdbH9KJFVhiXVFpUwpESbc/se2XzXpP9Mn23dMpC7w+0FMS1+FJlQVis3+c9KD/ZVigKlx6WWfhrOu3oPksA/aee6Him6b0oN+jLRtSRP4IQupO5BP57VMyYbURGLd6wk5iMH4+81ujg83tPPuK5PYVYre8SpXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=dvQYnWoz; arc=none smtp.client-ip=209.85.167.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-lf1-f99.google.com with SMTP id 2adb3069b0e04-592fac6c37fso325798e87.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 31 Oct 2025 13:34:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761942864; x=1762547664; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CDDdID9QoXu76MfnHvL4AObFRmpVopoqQ9rOn2Y4kzc=;
-        b=TI/PtMzR039fAlJz0SMreLWF2jZ34oNnowibS6wEt6lk3lqtHo96S1BXN9H04V1vVq
-         G2dUYwP8MeOSIZcV/6teERBXvfLZuJWz52788STm+FAGXjobM4xDDVVtfnBuo4nLNnYR
-         OIjpGMqDbbUQTLs8ZG1s+5vtyuhkcYbm7lTBl2VQSq3ZJmhZ4obySkJlUBN2ynI9sV3i
-         k6FWG/Zsm9QVk7lV94uhrMRvvQLHf3AuROeUx2dC9G+HYSAeBjCcij0eHLHxrL7uv180
-         EFL4yOI81fS45TKBI+A05cJsmFzkD8OONhVADdrgW8//Drrl49lSbqxBLEF5b/HPH7j2
-         ZQTg==
+        d=purestorage.com; s=google2022; t=1761942877; x=1762547677; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6JMKDvp/MIeXNCA/ceerlUqX0sUk5SPPyvwa4mIoYyc=;
+        b=dvQYnWozKugEUNvqdhCr6mOWn03B72UNbtIqWXxtzXbQZh2FwocLAAA2fo4AQBP8nD
+         gjuJ7hbba2arrHmEhlTtgj3pQKsPpu3BSnPyWnsK/iJ120VJETkxreb4co7cGyDFjZ1Q
+         Romr/u0AGF19Syc7K43JIlSdWKtdIt1Ct4P5iyInbmy9uAp6cN0Z1/cei717ORVB3nVw
+         DDaUMhf0SYo8HVPxmDmJPPtLOHXG4V63nGyRAWOsWj3w42NKDkkdBx63fvfLk7zXY9gU
+         qtPQJcYjFgzu17DHVa4v45yxtBaGrPHVrXeKNpXiD88/aZ8e+7f8iLJHjYqmKVvQCbdk
+         8keQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761942864; x=1762547664;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CDDdID9QoXu76MfnHvL4AObFRmpVopoqQ9rOn2Y4kzc=;
-        b=Ipvle4DXCTxJ3t6boqZMkM5cjvWkmXgmej/o22jFem0IlBUYtf5p1wdNIATparxrqk
-         rQ9fsr4RyI8DREDFF2rFbFcC0F+b/kiksVaOocOWgIIJwtPA/DD3hVBNLOBoH6vzgGSH
-         uKGSV1w3/Rh93EM9fB6G/FHDtSODyvMlWz8fMXaKyPk1ezIZKhFefBz+rCdYTORZlSgH
-         7JKd8LI5amm+krktlJPJvbuey5sCV860v4RZ7xrjES+aQWZ6KebNKoKGDUDucPo69I+v
-         42p+hKSbH6MYefHK1Rahh/C8dERHtXYj6fuw7lycBQ46SQcoUeBiSeOC26QpND2iEttj
-         /4/g==
-X-Forwarded-Encrypted: i=1; AJvYcCUownpAq5iBQKkAB9Bu6HMu7l3qt+5sNEbHkiwkQo9ndi2rHPNOL+gR3Wtq/0tu+m4R/tYzIQH4QTMn/YKo@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0x1cRpm4B/ePlH9JWjkWZ3sPkMtzqMvNy6oC6mWRrxB3qtd7O
-	Yd2E6oOdyBO/5d0DHqdhXXoSqf6KELb91pUztLoGKKkoP/3f4ZFnskl2nb22c29ju+Ylgrod3Y0
-	qF7cDKgFl1IBqEdN94OiT0mSivLapE7M=
-X-Gm-Gg: ASbGncuKYpQKQhSNsvOvWUjKQZZYlfEZb3lOebWhZW3CndewJNc967foer8VZ3rcpfA
-	rxhlq8W7nxOs8yTMhyaD4SIf8LTXza3Wk7G1vg6mMux7g6FT56ZmLlLFxWNVUEnVg2f+s2ComPP
-	ZmlZ5SctnxNJ/LEDDRBncmJog47lSjM8o1cLb1D6ee1QMNvKrpdlAdFBqAY6ur53xr3BUdUoeme
-	NkwU+viv0052D/INFevCilTw634G2G6G2uiaoQu9KIIa4NADrqYoLk3Q3eVVVHXIcOFCzDcOlSz
-	BmzWVaW3KnGJNOKMRdRRrH2KO5m3A/hvU/0xN91X4Bo=
-X-Google-Smtp-Source: AGHT+IEDvrBjTUOHf5upPxqP1SCh5zjuQKC+EBItLAQ29olE59LSxgnMb+U4nQAv0GZ8g2QKtkPg6xQmbM1hE77cX6U=
-X-Received: by 2002:ac8:5f91:0:b0:4e8:a97a:475 with SMTP id
- d75a77b69052e-4ed310aee0cmr66087181cf.79.1761942864310; Fri, 31 Oct 2025
- 13:34:24 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761942877; x=1762547677;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6JMKDvp/MIeXNCA/ceerlUqX0sUk5SPPyvwa4mIoYyc=;
+        b=dz3do7CdqFL6AcK/Hto3hZlXIeo0La59zqgBVDcUYZGSAYNArQHOwROgFUo4uh/onw
+         g3ZsgWM0I9ZYrlrrB8L90TLKqa/wFxF27OrXMBUVrmmSopY1K2wc3XeIHWdE3JtaGjal
+         G46lPsOr+NQM2ChJIF/3I8L/4CqAeo1ewWR0VITCuiLVBJchg2a4UrgojfAcePMQorjJ
+         D6s/OvfW0tErBrJU18oyg9OPd/k18ArRUYdL0mqpY+tHcX/4v19QG46GK5HWB9nKxjKh
+         5Wn6aGtBUATtkT8TZ599Osit31He9oPOHOBLiI6gc2iz8/I7DZQ76h9H3FZvJ4SaK98X
+         uz+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV6mJpVsJF7WcERe8YHyWRd0kBk141cZe08wK1Dk214+4KaW83ercyxGs6Jy0NXi+oOQzno6SEgvOqWUtYG@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpoGd1NzVBbLL3IbE52bnn/Uz702Nb5XMwtziklPTmqlJd1and
+	rpLI5QQoynLzJKGrkbPE6dIW/P/lAeeetQWyNEHK6hwzy8ykHE9X1F5dHtAXFySWukMtavVIgy7
+	4ksMZbLY+/iPmtMQWcd8/TW0s0DoPVuqc6byK
+X-Gm-Gg: ASbGncsC4sdEzG1h4Is6l+gWaQqa6ulg+i2sw+gr3INcYSLV3DtiikgVoyyP3y9R7aC
+	eS1ln1yLN4eL+Hwh4NQQWa1IucaSmV6Nl/vj/M47ucvtgerwEu/0hTBndFRFL/heR+6koPD+hRf
+	j6+PrTquB08JSC018eT1oy9SrM0fvOyhGokm6jEWn5+7RJ/vL7KH5e6xJ9ZX+Mhgbm9JVilVuJS
+	woCIom4x4uUTcSYUEx1p/mUBgugod1ChAXfYW49rl4UDq7O8JggOF4htqB00qyra5c++I1PtjyR
+	cMN2ekxNjjPQ+hHTPPNBBFlK3m2rYa+2B5ds70OUKuLOvzN0v/MbdKxkFSPsQ2sYvXLxZxrT1pd
+	PLyUNEuDaRQ+KvGsmd1BsyqZIUZa3DhU=
+X-Google-Smtp-Source: AGHT+IHYGUnO7bV47O6a0JaarTqAfmI/2Y9l++bnlFY3ld+pOZSgy8vCnY+sYVKLt/9KYUiwgYpMC6aTC4ND
+X-Received: by 2002:ac2:4c4f:0:b0:592:f7b4:e5fb with SMTP id 2adb3069b0e04-5941d4ff894mr969734e87.3.1761942876878;
+        Fri, 31 Oct 2025 13:34:36 -0700 (PDT)
+Received: from c7-smtp-2023.dev.purestorage.com ([208.88.159.129])
+        by smtp-relay.gmail.com with ESMTPS id 2adb3069b0e04-5941f3a30cbsm287556e87.27.2025.10.31.13.34.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 31 Oct 2025 13:34:36 -0700 (PDT)
+X-Relaying-Domain: purestorage.com
+Received: from dev-csander.dev.purestorage.com (dev-csander.dev.purestorage.com [10.7.70.37])
+	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id 4EBCF3400FE;
+	Fri, 31 Oct 2025 14:34:35 -0600 (MDT)
+Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
+	id 465FEE41255; Fri, 31 Oct 2025 14:34:35 -0600 (MDT)
+From: Caleb Sander Mateos <csander@purestorage.com>
+To: Jens Axboe <axboe@kernel.dk>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	Ming Lei <ming.lei@redhat.com>,
+	Keith Busch <kbusch@kernel.org>,
+	Christoph Hellwig <hch@lst.de>,
+	Sagi Grimberg <sagi@grimberg.me>,
+	Chris Mason <clm@fb.com>,
+	David Sterba <dsterba@suse.com>
+Cc: io-uring@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-block@vger.kernel.org,
+	linux-nvme@lists.infradead.org,
+	linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Caleb Sander Mateos <csander@purestorage.com>
+Subject: [PATCH v4 0/3] io_uring/uring_cmd: avoid double indirect call in task work dispatch
+Date: Fri, 31 Oct 2025 14:34:27 -0600
+Message-ID: <20251031203430.3886957-1-csander@purestorage.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251028181133.1285219-1-joannelkoong@gmail.com>
- <20251028181133.1285219-3-joannelkoong@gmail.com> <aQHSig7TWRQyRDi7@infradead.org>
-In-Reply-To: <aQHSig7TWRQyRDi7@infradead.org>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Fri, 31 Oct 2025 13:34:13 -0700
-X-Gm-Features: AWmQ_blRr1ErabTzXSFW_hLdcI0NVVnyI6VGyWJ9C3EzP4Zn3UxBmVITKUsqSfI
-Message-ID: <CAJnrk1Y15ZvvLLKW0PHB_-Tudd4eO2s_VWvfvLsKxug+wUtxmA@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] iomap: fix race when reading in all bytes of a folio
-To: Christoph Hellwig <hch@infradead.org>
-Cc: brauner@kernel.org, bfoster@redhat.com, djwong@kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 29, 2025 at 1:38=E2=80=AFAM Christoph Hellwig <hch@infradead.or=
-g> wrote:
->
-> On Tue, Oct 28, 2025 at 11:11:33AM -0700, Joanne Koong wrote:
-> > +              * add a +1 bias. We'll subtract the bias and any uptodat=
-e/zeroed
-> > +              * ranges that did not require IO in iomap_read_end() aft=
-er we're
->
-> Two overly long lines here.
->
-> Otherwise this looks good.
+Define uring_cmd implementation callback functions to have the
+io_req_tw_func_t signature to avoid the additional indirect call and
+save 8 bytes in struct io_uring_cmd.
 
-I will fix these two lines.
+v4:
+- Rebase on "io_uring: unify task_work cancelation checks"
+- Small cleanup in io_fallback_req_func()
+- Avoid intermediate variables where IO_URING_CMD_TASK_WORK_ISSUE_FLAG
+  is only used once (Christoph)
 
-Thanks,
-Joanne
+v3:
+- Hide io_kiocb from uring_cmd implementations
+- Label the 8 reserved bytes in struct io_uring_cmd (Ming)
+
+v2:
+- Define the uring_cmd callbacks with the io_req_tw_func_t signature
+  to avoid the macro defining a hidden wrapper function (Christoph)
+
+Caleb Sander Mateos (3):
+  io_uring: only call io_should_terminate_tw() once for ctx
+  io_uring: add wrapper type for io_req_tw_func_t arg
+  io_uring/uring_cmd: avoid double indirect call in task work dispatch
+
+ block/ioctl.c                  |  6 ++++--
+ drivers/block/ublk_drv.c       | 18 ++++++++++--------
+ drivers/nvme/host/ioctl.c      |  7 ++++---
+ fs/btrfs/ioctl.c               |  5 +++--
+ fs/fuse/dev_uring.c            |  7 ++++---
+ include/linux/io_uring/cmd.h   | 22 +++++++++++++---------
+ include/linux/io_uring_types.h |  7 +++++--
+ io_uring/futex.c               | 16 +++++++++-------
+ io_uring/io_uring.c            | 26 ++++++++++++++------------
+ io_uring/io_uring.h            |  4 ++--
+ io_uring/msg_ring.c            |  3 ++-
+ io_uring/notif.c               |  5 +++--
+ io_uring/poll.c                | 11 ++++++-----
+ io_uring/poll.h                |  2 +-
+ io_uring/rw.c                  |  5 +++--
+ io_uring/rw.h                  |  2 +-
+ io_uring/timeout.c             | 18 +++++++++++-------
+ io_uring/uring_cmd.c           | 17 ++---------------
+ io_uring/waitid.c              |  7 ++++---
+ 19 files changed, 101 insertions(+), 87 deletions(-)
+
+-- 
+2.45.2
+
 
