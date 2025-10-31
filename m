@@ -1,183 +1,116 @@
-Return-Path: <linux-fsdevel+bounces-66636-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66637-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9228C270C4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 22:31:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FBC5C2712C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 22:47:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0E9F463BCB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 21:30:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96E4C4036FC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 21:46:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD7F4242D9F;
-	Fri, 31 Oct 2025 21:30:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FB95328B67;
+	Fri, 31 Oct 2025 21:46:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RNAvmuOb"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="IdznsmzJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8078D22D792
-	for <linux-fsdevel@vger.kernel.org>; Fri, 31 Oct 2025 21:30:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CEC0328B48
+	for <linux-fsdevel@vger.kernel.org>; Fri, 31 Oct 2025 21:46:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761946246; cv=none; b=QArg3IajmFz0hbbMg/PpzUdMZqt63WK57lYXQ6MwP4OTufEaVchfr1asValgJ5ZZHQ+9w4y5odbCVXsOh+ewL5tm+K2Dl7w0PJKk2TRe2efVkoWbRquua/n29y82wKqXEGasVRUWCcAUG/8sdiiSzZdo3ihl02/z9kzpKKhTrVE=
+	t=1761947207; cv=none; b=qt+GCus4ulVYZiYvw8A4OjPXMvnFaokgKVeOseEpPLuQ8Ubhr6CiGSm1AMJ7CS2taXKgWsnK2s0Qmfj49pj6sIkNeAjkh0qsuqKZZGFtCcPw7elyM/K/Wtb4Ia57+jnCnFnjIlI5NKtFkaceDwDizgv5o1ZgH/SM50fYopwIoLg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761946246; c=relaxed/simple;
-	bh=Im012qh0MJpGdvOmFqSrqX4tKOtVONB+M0Go3dalb4g=;
+	s=arc-20240116; t=1761947207; c=relaxed/simple;
+	bh=lWFBDx2ODc9TCuhfEt3nuFs0i434016S0pXkIVIdcLg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=J8at/s9HfM67mgKSzsXkXYjxxP44YfP6rb9Svr2Qf4eGhvgWLo4DOg2UWSCMQVdGR5lnp5YyHoxcXUVhO0et+hjwTYF7Z4KQoud7ExchwWtVgpyyOT2EXm5CIbrbbaUAkdturkXam+k1G8ePak0KfGN8GkspAv9IWl0Lr0YFgW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RNAvmuOb; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4ecae310df8so41480681cf.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 31 Oct 2025 14:30:44 -0700 (PDT)
+	 To:Cc:Content-Type; b=I+dbSAINJ0UUmYfE5MiXamK/bj3bB4eQtSZVXzPtviyBPpnytI+g3jdkm1HC5pnMNycBAC2XNZIb7PckUqvD3J4ciXJfVQGtURpzLk1fOfCQze+DsfjxOMD8kF65iRBxgYfp2RddF6Z6ZHxbkO8Qs2wS71BJdCSPdYYosRCV/D8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=IdznsmzJ; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-63c3d7e2217so4914403a12.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 31 Oct 2025 14:46:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761946243; x=1762551043; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=b+VLevZopoUL7OM8jNtLvOs6kVfhg97XSSemrzsfRdw=;
-        b=RNAvmuObanwUoZ9eSQWdxwxdIOBCUaqrOkmLnjnYelOVQe3xL78dev8WyH60JIsZC3
-         n9/AS9/l+IeR2yW7309XwLJvmiWsUtjGfoJE4tJSs6qSUWy9u/hUEFHGhuUsLEYHALwA
-         rubu3mcxOmsYlcT7AUYQAk0BKqGPXbMwuqzFddgLrqdyCyE5AidKT1iD5Q3WNBSOODTC
-         yc9cQNQ92CTeOVoIFaKLSe8OJI3yQg6GXg3ykReaCwfrDSVZyGsbyCVCDlv/ZDmywI/t
-         j9YruDEGdsk41YCeyWs84K8PKReigtsLzQAZsDxFNz7njcrKkvb4yodJ7nbUPP61HBHF
-         ifPA==
+        d=linux-foundation.org; s=google; t=1761947203; x=1762552003; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=5ap26V4PqB3ACpx3v0DEE1m2RpaP2BujTR5irJcY+7c=;
+        b=IdznsmzJOZIcK6AgTwFuzl3swYsERbzpHDrFoLexPH636HS6fWS6RGmHzWvg+CKwa6
+         UwfSvSMbrshLvHvosAW34vK91zGkreOEotAz5jAj1q5h7Fo3YchBfn8GAbQl5jYZ6ElA
+         PRr5LqNZ1i7hgH48xyBcQRoenp8c0gxCh3SQM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761946243; x=1762551043;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=b+VLevZopoUL7OM8jNtLvOs6kVfhg97XSSemrzsfRdw=;
-        b=Lv1QxXxEuS6TF6g9YfOIPdmPC/YX6zNHy3Y4GAlN9F3Szu5TwQbHZvsb27/LgAatvI
-         NCXD0NumUydxQgye/iC1bdCwCfxuoOY68FIgCjSQ74TsF4r4Q3YfjMCMKI3LWNNg2dU7
-         lgRA3oRkzdoBPWDidqTBUChpwREyGkQxbOGfGqrNuMPBLdYSAaBNd55HRq5qf+2UaRnR
-         tMLUvaNMv4PnGIBHYCTA9pX7vHEeAtuSDZKNoYIpjs/J0u5HfmWDNfM43wWBLPX9bQVA
-         wL9G5oszYLxUWaRjmyNPXvNBr6brMda5elRP/odxGQHW16eBcuPbNemM6sPl4ikbURJP
-         aWdA==
-X-Forwarded-Encrypted: i=1; AJvYcCUvD+xWSZQiR3Y9ocmX7HB0MQdqSidU3AIImWrX0J+hSN+nQRBfuVg8TeOOz9+c71aa6eAwSo/0a4HhjrlV@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxNT9640jdv0G+zrHUOEZ5NZgA4ACBnyAAd43+r9l6NIsp8Blj
-	/fX8U8MFKFO3kqXQgnNC/+0oozvsL/j72GhIOU0fzV0MfTGjms0aVL/ulYQBewmmGQShf+04D7o
-	3iWGaBpSNE6P/10chjDHHljOMz0shaes=
-X-Gm-Gg: ASbGnctDriTwD5yXfHG9TgSTDAclrOSoZYb9Rhw2rgjbndgWOQJaRtVdoJk4QuT/3/c
-	3FrbZS1MINd6g2nuC5/7RyLYBzI3C2UVl7Xyn7nwfo81KMDsH72FnIQZk+3lSbSfu2Q7+mJI5bq
-	8i2lgEPjC8eB+zFZoFGw6qQ4gu/0y8LV7nkUBhQunG18wCblyAh+o5jvA0cXMxijCxy36lrh4We
-	JIFb6sTyyfZooo3GSPa2fWxxVm7sk70pOgf8qDaVqCK2I1qh5hv1M7zcPAaBWnAp6ikoxs1Q+KB
-	eNnFBv7Zi27/dFQ45gq4tCQfhlqmcpsZ
-X-Google-Smtp-Source: AGHT+IGvpEcWAnufdVYjZrrJ/UQ22AI+c6oLcylk17vxXoDSf4VBfQSh8K/B1zqUDh7Etogh2HSPZZeo34lvnenc1BE=
-X-Received: by 2002:a05:622a:1c12:b0:4d0:ac40:fab8 with SMTP id
- d75a77b69052e-4ed30d9286emr57909831cf.7.1761946243394; Fri, 31 Oct 2025
- 14:30:43 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761947203; x=1762552003;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5ap26V4PqB3ACpx3v0DEE1m2RpaP2BujTR5irJcY+7c=;
+        b=hAJjwDi7hmv9wnRdIdCfqxViX2lqZW+E0WsU8ZstSKLlSzRJRk+Fn5UV5MuUtl+IDR
+         u+gFBYBb5Sfa7WR0KO595lTOvhADwNFVPXRT67QMsli5ZW0aRHcyVHGZKZT1RkLQ/PJr
+         9jrV3ZEeL4tPbDDztDeRhtrTVCxlMI46akcs435cbZG/h9D5mvndlOHWPdsCrqxAXxw9
+         vM+CkT9WEyjBWp8/dBRnJ1f0+yBHzZ3B/diJud9kOxTHmMqhhQO5YWz0wEbrgg+YsdbS
+         qV7mqkJrbVUrNIcBxgxFt/9I3gYGIxjZilJkJNLx6YyOr0wSvPJkRqZkyfFqD+eVI0kQ
+         Mpew==
+X-Forwarded-Encrypted: i=1; AJvYcCUKUpTElGFinMGhkn8mt/tO7/KP9RN2y5/4tzLgsK5owx+bTqDF+sJunvEv03tW/gBxQRc6eLp++i/xnPJz@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHyWsy90R3p0tYNWgHTBJbessMl+o1e+sop1oDlNv2h/PLhQck
+	jYLk8UHOsmUAF3aEelMnDEx9+r0Imi4+Jkkb45f/e3HrrKZCIsLyzUEIKy/JWwegi91WTk3YHd8
+	NQJ1CR8Q=
+X-Gm-Gg: ASbGncteWMQqSXEsjaNF5o7mDTzabRV/pHYBB3Q12dcGMRdmUtKz5KUfgdQcPIWbQ9d
+	pM+i/Of1RQD3ovCnXZV8eUS8zguTuMbX3N1xsC1iz5iN0luJoiUuzXbk+94+mDkIbrgukuVaSY8
+	EG/YCH3PVmcNgbW5SG1UzXpHoebeJtyu/wY9hr7WwCUFB7NrFEoms9Yp6JYUO8hUrZyvcaEkjT/
+	4rsMgi/E9Q1kfFF6oXnMs15Z2OGnrYCyjK4LbfgUK3FFFdEDTFnRHqTF2Ov8JQDyfkacreLPEVx
+	+2q5SSgw8W13PmU1zjM5Pex+Qk1+i7c13ZINwPIpbfif1Rb1bJI+SHc62CmNkLen2bMOyDkGLCq
+	l957v7zIQZzB9voTNrIPoU17P/NqXpG2gLGg+40uhgLdRybMQEWA8RayTUuLsRH9oQ9gJoeShNH
+	CiiyjDEfrzJ753SHaM62ttU1QAPXlpYoYCsbDr+bqV9nR8pZd6RoLwMxt58ATX
+X-Google-Smtp-Source: AGHT+IEEuztiltSdVGbB5iI00UAPlHuUntKjUf7clM2NEUfTy100WELuyS1ZWfvKnnzQVObmaE6UJA==
+X-Received: by 2002:a05:6402:27cc:b0:639:e712:cd75 with SMTP id 4fb4d7f45d1cf-64076f6c105mr4576289a12.8.1761947203473;
+        Fri, 31 Oct 2025 14:46:43 -0700 (PDT)
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com. [209.85.208.46])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6407b390d7dsm2508866a12.10.2025.10.31.14.46.42
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 31 Oct 2025 14:46:42 -0700 (PDT)
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-64071184811so4046786a12.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 31 Oct 2025 14:46:42 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXOFI4zYdi9lvMHLaH0/X7Ft9ExADEJ8jnaTGl/S648e2RsKSOqboXunXrMOZte7iD5wjx4Dh6d9lt2OwHu@vger.kernel.org
+X-Received: by 2002:a05:6402:26cf:b0:63b:fbb7:88bc with SMTP id
+ 4fb4d7f45d1cf-64076f6c076mr4314088a12.5.1761947201720; Fri, 31 Oct 2025
+ 14:46:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251021-io-uring-fixes-copy-finish-v1-0-913ecf8aa945@ddn.com> <20251021-io-uring-fixes-copy-finish-v1-1-913ecf8aa945@ddn.com>
-In-Reply-To: <20251021-io-uring-fixes-copy-finish-v1-1-913ecf8aa945@ddn.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Fri, 31 Oct 2025 14:30:32 -0700
-X-Gm-Features: AWmQ_bm2YRQTdTVsTJrVAWrmh292bBnOj8X2Yok5D4Ru31Xl7iFLnCGSslMae5w
-Message-ID: <CAJnrk1aOsh-mFuueX0y=wvzvzF=MghNaLr85y+odToPB2pustg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] fuse: missing copy_finish in fuse-over-io-uring
- argument copies
-To: Bernd Schubert <bschubert@ddn.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Luis Henriques <luis@igalia.com>, 
-	Miklos Szeredi <mszeredi@redhat.com>, linux-fsdevel@vger.kernel.org, 
-	Cheng Ding <cding@ddn.com>, stable@vger.kernel.org
+References: <CAHk-=wjRA8G9eOPWa_Njz4NAk3gZNvdt0WAHZfn3iXfcVsmpcA@mail.gmail.com>
+ <20251031174220.43458-1-mjguzik@gmail.com> <20251031174220.43458-2-mjguzik@gmail.com>
+In-Reply-To: <20251031174220.43458-2-mjguzik@gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 31 Oct 2025 14:46:25 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wieH3O61QaqE8GO3VAfStti1UZKVcPHznZX5i3YFtmB6w@mail.gmail.com>
+X-Gm-Features: AWmQ_bnZTsOGUpX66wwDUEuZ9Wnk0waRdBkhsR3pIgRjF531SZpP31Vx6zbQtVA
+Message-ID: <CAHk-=wieH3O61QaqE8GO3VAfStti1UZKVcPHznZX5i3YFtmB6w@mail.gmail.com>
+Subject: Re: [PATCH 1/3] x86: fix access_ok() and valid_user_address() using
+ wrong USER_PTR_MAX in modules
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	tglx@linutronix.de, pfalcato@suse.de
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 21, 2025 at 1:46=E2=80=AFPM Bernd Schubert <bschubert@ddn.com> =
-wrote:
+On Fri, 31 Oct 2025 at 10:42, Mateusz Guzik <mjguzik@gmail.com> wrote:
 >
-> From: Cheng Ding <cding@ddn.com>
->
-> Fix a possible reference count leak of payload pages during
-> fuse argument copies.
->
-> Fixes: c090c8abae4b ("fuse: Add io-uring sqe commit and fetch support")
-> Cc: <stable@vger.kernel.org> # v6.14
-> Signed-off-by: Cheng Ding <cding@ddn.com>
-> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
-> ---
->  fs/fuse/dev.c        |  2 +-
->  fs/fuse/dev_uring.c  | 12 +++++++++---
->  fs/fuse/fuse_dev_i.h |  1 +
->  3 files changed, 11 insertions(+), 4 deletions(-)
->
-> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-> index 132f38619d70720ce74eedc002a7b8f31e760a61..49b18d7accb39927e49bc3814=
-ad2c3e51db84bb4 100644
-> --- a/fs/fuse/dev.c
-> +++ b/fs/fuse/dev.c
-> @@ -846,7 +846,7 @@ void fuse_copy_init(struct fuse_copy_state *cs, bool =
-write,
->  }
->
->  /* Unmap and put previous page of userspace buffer */
-> -static void fuse_copy_finish(struct fuse_copy_state *cs)
-> +void fuse_copy_finish(struct fuse_copy_state *cs)
->  {
->         if (cs->currbuf) {
->                 struct pipe_buffer *buf =3D cs->currbuf;
-> diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
-> index f6b12aebb8bbe7d255980593b75b5fb5af9c669e..3721c2d91627f5438b6997df3=
-de63734704e56ff 100644
-> --- a/fs/fuse/dev_uring.c
-> +++ b/fs/fuse/dev_uring.c
-> @@ -598,7 +598,9 @@ static int fuse_uring_copy_from_ring(struct fuse_ring=
- *ring,
->         cs.is_uring =3D true;
->         cs.req =3D req;
->
-> -       return fuse_copy_out_args(&cs, args, ring_in_out.payload_sz);
-> +       err =3D fuse_copy_out_args(&cs, args, ring_in_out.payload_sz);
-> +       fuse_copy_finish(&cs);
-> +       return err;
->  }
->
->   /*
-> @@ -651,13 +653,17 @@ static int fuse_uring_args_to_ring(struct fuse_ring=
- *ring, struct fuse_req *req,
->                              (struct fuse_arg *)in_args, 0);
->         if (err) {
->                 pr_info_ratelimited("%s fuse_copy_args failed\n", __func_=
-_);
-> -               return err;
-> +               goto copy_finish;
->         }
->
->         ent_in_out.payload_sz =3D cs.ring.copied_sz;
->         err =3D copy_to_user(&ent->headers->ring_ent_in_out, &ent_in_out,
->                            sizeof(ent_in_out));
-> -       return err ? -EFAULT : 0;
-> +       if (err)
-> +               err =3D -EFAULT;
-> +copy_finish:
-> +       fuse_copy_finish(&cs);
-> +       return err;
->  }
+> -extern unsigned long USER_PTR_MAX;
+> +extern unsigned long user_ptr_max;
 
-nit: this could just be
+Yeah, this doesn't work at all.
 
---- a/fs/fuse/dev_uring.c
-+++ b/fs/fuse/dev_uring.c
-@@ -649,6 +649,7 @@ static int fuse_uring_args_to_ring(struct
-fuse_ring *ring, struct fuse_req *req,
-        /* copy the payload */
-        err =3D fuse_copy_args(&cs, num_args, args->in_pages,
-                             (struct fuse_arg *)in_args, 0);
-+       fuse_copy_finish(&cs);
-        if (err) {
-                pr_info_ratelimited("%s fuse_copy_args failed\n", __func__)=
-;
-                return err;
+We still use USER_PTR_MAX in other places, including the linker script
+and arch/x86/lib/getuser.S
 
->
+So you changed about half the places to the new name, breaking the others.
 
-Reviewed-by: Joanne Koong <joannelkoong@gmail.com>
+             Linus
 
