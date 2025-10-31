@@ -1,191 +1,249 @@
-Return-Path: <linux-fsdevel+bounces-66598-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66599-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9151BC25D34
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 16:26:41 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B07BC25D4C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 16:28:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CB8F04F2EDA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 15:24:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 962B94F8B87
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 15:25:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 316082C234F;
-	Fri, 31 Oct 2025 15:24:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00F4B2C326F;
+	Fri, 31 Oct 2025 15:25:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ffMRckRH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hlQkJv9h"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B17527B331;
-	Fri, 31 Oct 2025 15:24:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B7C62C17B6;
+	Fri, 31 Oct 2025 15:25:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761924248; cv=none; b=CHg20VGybE23da+/6Bw84KUPlChWPgt2cOosfI7AMC7x5cBgmFxMeQdD9/LERN8Nsg7jl6G+/yhYMZn326xs2MQqA8teJBeFIZgnntpf0ORjRIT7MeYtSHvRNrjutxq5e57QiLCRzkuDxDW2kw0yYQwPlrcyfE8xuVwiCB6gZHg=
+	t=1761924333; cv=none; b=F7LzHsziAVezy1Pti3uIrZjq90QBqe97gg+T2w/lBPluT1N0XyLOhwszdFDFk4s5xo3XOenZoCiHlzLrvStDjwv7xHD2oPpWyIrrSgF4uIjCGEUfn1kdUqVDWzkSKjeo3GWNIYn3FsXaSWAseiufRU1FLq14ZLxFEM7SSF5/9Ug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761924248; c=relaxed/simple;
-	bh=o8OYUkrvrAalen5EIlWZ1kI7gpobmbgMMZ6EzFvJDRU=;
+	s=arc-20240116; t=1761924333; c=relaxed/simple;
+	bh=VeGPIDKJHY0kcgnWGdqHeyRl+7/k7kmy4YUStIV66x8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kciZhT9qj7zQBtSmTfC6hbdFsYQybaDrHkZDMbLP4ki0JT5XJWAF8dBX0w0ROj/E6pE8htqhS6HNXMxPJEKEB8rtG1dTHvGkuchi8FffDDER0fPtc26xZRGsen/j08guo0PlLxJLMTkEgGoMqrBY9LKM55R/I8NcpD5AabnowgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ffMRckRH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DABD2C4CEE7;
-	Fri, 31 Oct 2025 15:24:06 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=JlLwAkEn8fA2gI1l6u41aQqtI7SEuZ/lDj0T5Y2LdOvrScJ5XDgHrnAwsXHiMX4LncWh5PJc22yyzn4TwHxd0dnOXIKSNvNjk0a3GCqyN+RvK+Oyms84vXZI1JIa9gUJP97D2ABbFg5joPN6YTLhwZo6NJLykkovHj9mDTVcxJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hlQkJv9h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C945EC4CEE7;
+	Fri, 31 Oct 2025 15:25:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761924246;
-	bh=o8OYUkrvrAalen5EIlWZ1kI7gpobmbgMMZ6EzFvJDRU=;
+	s=k20201202; t=1761924332;
+	bh=VeGPIDKJHY0kcgnWGdqHeyRl+7/k7kmy4YUStIV66x8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ffMRckRHHzSd6Mz9AKNUK4KDfJbYa60u8pLWMTZYzkBeQfmkN4XXxysEo0AZGnFJt
-	 DW7rNj/sW7lzf7cwEqJqggpVbLdU12LKD4uOinI9eMuxseQopN2qMD0XnEWeOOZkkQ
-	 WNolDOXMhT+2cxzImiA9ISqQpVKTWCAsbzaonPs8TYCz27S2jp/KBpR+mgCEeySyrN
-	 AOFUdNAMZmFf3X01V1gxE0p05fTdNktvU7ihJFyjRL98Q0GR3Hly3wzlPVPvZl3iMS
-	 yzyxgd5v2kAKqzEkapt9xGlqTIv4D04qh1hKdsN3hhNunkUe9I1ZYx1f2O5R5phrT+
-	 YjGpfvDryjNig==
-Date: Fri, 31 Oct 2025 08:24:06 -0700
+	b=hlQkJv9ho8+T+TKLFiuelle/XtpAfUKmJ95JZlfaetUwvGKLdsdAYYa3vECRFKDtL
+	 Wb1sQ/osNylO2ypvQnZWf3wK78raaKWMVv/SSIQMy/DTb1Dh3djhITrAdgwI5vBHVr
+	 SY9pELBwWw8Cgr1iIs+4rjm1Sv4UVmy21o5wp1XIorDSzgRhgppI+/HNuJP8YNadd5
+	 zZiNLhvAaubcbHvPV5w4Q8CB6ByafPGFc0ml/ulDCnwunN2Y9z6S6sQTPs7j76Slfw
+	 f7G4XmqEYNeWLJed7Is45cqHczYI1qzKSTzTeJgctAjjEk5G5pUBDNs0saj4FkX3UC
+	 FmJYlToWVfcnQ==
+Date: Fri, 31 Oct 2025 08:25:31 -0700
 From: "Darrick J. Wong" <djwong@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Carlos Maiolino <cem@kernel.org>, Qu Wenruo <wqu@suse.com>,
-	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	Pankaj Raghav <p.raghav@samsung.com>
-Subject: Re: [PATCH 1/2] iomap: add IOMAP_DIO_FSBLOCK_ALIGNED flag
-Message-ID: <20251031152406.GO6174@frogsfrogsfrogs>
-References: <20251031131045.1613229-1-hch@lst.de>
- <20251031131045.1613229-2-hch@lst.de>
+To: Alejandro Colomar <alx@kernel.org>
+Cc: linux-man@vger.kernel.org,
+	Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>,
+	Jan Kara <jack@suse.cz>, "G. Branden Robinson" <branden@debian.org>,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3] man/man3/readdir.3, man/man3type/stat.3type: Improve
+ documentation about .d_ino and .st_ino
+Message-ID: <20251031152531.GP6174@frogsfrogsfrogs>
+References: <h7mdd3ecjwbxjlrj2wdmoq4zw4ugwqclzonli5vslh6hob543w@hbay377rxnjd>
+ <bfa7e72ea17ed369a1cf7589675c35728bb53ae4.1761907223.git.alx@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20251031131045.1613229-2-hch@lst.de>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <bfa7e72ea17ed369a1cf7589675c35728bb53ae4.1761907223.git.alx@kernel.org>
 
-On Fri, Oct 31, 2025 at 02:10:26PM +0100, Christoph Hellwig wrote:
-> From: Qu Wenruo <wqu@suse.com>
+On Fri, Oct 31, 2025 at 11:44:14AM +0100, Alejandro Colomar wrote:
+> Suggested-by: Pali Rohár <pali@kernel.org>
+> Co-authored-by: Pali Rohár <pali@kernel.org>
+> Co-authored-by: Jan Kara <jack@suse.cz>
+> Cc: "G. Branden Robinson" <branden@debian.org>
+> Cc: <linux-fsdevel@vger.kernel.org>
+> Signed-off-by: Alejandro Colomar <alx@kernel.org>
+> ---
 > 
-> Btrfs requires all of its bios to be fs block aligned, normally it's
-> totally fine but with the incoming block size larger than page size
-> (bs > ps) support, the requirement is no longer met for direct IOs.
+> Hi Jan,
 > 
-> Because iomap_dio_bio_iter() calls bio_iov_iter_get_pages(), only
-> requiring alignment to be bdev_logical_block_size().
+> I've put your suggestions into the patch.  I've also removed the
+> sentence about POSIX, as Pali discussed with Branden.
 > 
-> In the real world that value is either 512 or 4K, on 4K page sized
-> systems it means bio_iov_iter_get_pages() can break the bio at any page
-> boundary, breaking btrfs' requirement for bs > ps cases.
+> At the bottom of the email is the range-diff against the previous
+> version.
 > 
-> To address this problem, introduce a new public iomap dio flag,
-> IOMAP_DIO_FSBLOCK_ALIGNED.
 > 
-> When calling __iomap_dio_rw() with that new flag, iomap_dio::flags will
-> inherit that new flag, and iomap_dio_bio_iter() will take fs block size
-> into the calculation of the alignment, and pass the alignment to
-> bio_iov_iter_get_pages(), respecting the fs block size requirement.
+> Have a lovely day!
+> Alex
 > 
-> The initial user of this flag will be btrfs, which needs to calculate the
-> checksum for direct read and thus requires the biovec to be fs block
-> aligned for the incoming bs > ps support.
+>  man/man3/readdir.3      | 19 ++++++++++++++++++-
+>  man/man3type/stat.3type | 20 +++++++++++++++++++-
+>  2 files changed, 37 insertions(+), 2 deletions(-)
 > 
-> Signed-off-by: Qu Wenruo <wqu@suse.com>
-> Reviewed-by: Pankaj Raghav <p.raghav@samsung.com>
-> [hch: also align pos/len, incorporate the trace flags from Darrick]
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> diff --git a/man/man3/readdir.3 b/man/man3/readdir.3
+> index e1c7d2a6a..220643795 100644
+> --- a/man/man3/readdir.3
+> +++ b/man/man3/readdir.3
+> @@ -58,7 +58,24 @@ .SH DESCRIPTION
+>  structure are as follows:
+>  .TP
+>  .I .d_ino
+> -This is the inode number of the file.
+> +This is the inode number of the file
+> +in the filesystem containing
+> +the directory on which
+> +.BR readdir ()
+> +was called.
+> +If the directory entry is the mount point,
 
-LGTM
-Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
+nitpicking english:
+
+"...is a mount point," ?
 
 --D
 
-> ---
->  fs/iomap/direct-io.c  | 17 +++++++++++++++--
->  fs/iomap/trace.h      |  7 ++++---
->  include/linux/iomap.h |  8 ++++++++
->  3 files changed, 27 insertions(+), 5 deletions(-)
+> +then
+> +.I .d_ino
+> +differs from
+> +.I .st_ino
+> +returned by
+> +.BR stat (2)
+> +on this file:
+> +.I .d_ino
+> +is the inode number of the mount point,
+> +while
+> +.I .st_ino
+> +is the inode number of the root directory of the mounted filesystem.
+>  .TP
+>  .I .d_off
+>  The value returned in
+> diff --git a/man/man3type/stat.3type b/man/man3type/stat.3type
+> index 76ee3765d..ea9acc5ec 100644
+> --- a/man/man3type/stat.3type
+> +++ b/man/man3type/stat.3type
+> @@ -66,7 +66,25 @@ .SH DESCRIPTION
+>  macros may be useful to decompose the device ID in this field.)
+>  .TP
+>  .I .st_ino
+> -This field contains the file's inode number.
+> +This field contains the file's inode number
+> +in the filesystem on
+> +.IR .st_dev .
+> +If
+> +.BR stat (2)
+> +was called on the mount point,
+> +then
+> +.I .st_ino
+> +differs from
+> +.I .d_ino
+> +returned by
+> +.BR readdir (3)
+> +for the corresponding directory entry in the parent directory.
+> +In this case,
+> +.I .st_ino
+> +is the inode number of the root directory of the mounted filesystem,
+> +while
+> +.I .d_ino
+> +is the inode number of the mount point in the parent filesystem.
+>  .TP
+>  .I .st_mode
+>  This field contains the file type and mode.
 > 
-> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-> index 5d5d63efbd57..13def8418659 100644
-> --- a/fs/iomap/direct-io.c
-> +++ b/fs/iomap/direct-io.c
-> @@ -336,8 +336,18 @@ static int iomap_dio_bio_iter(struct iomap_iter *iter, struct iomap_dio *dio)
->  	int nr_pages, ret = 0;
->  	u64 copied = 0;
->  	size_t orig_count;
-> +	unsigned int alignment;
->  
-> -	if ((pos | length) & (bdev_logical_block_size(iomap->bdev) - 1))
-> +	/*
-> +	 * File systems that write out of place and always allocate new blocks
-> +	 * need each bio to be block aligned as that's the unit of allocation.
-> +	 */
-> +	if (dio->flags & IOMAP_DIO_FSBLOCK_ALIGNED)
-> +		alignment = fs_block_size;
-> +	else
-> +		alignment = bdev_logical_block_size(iomap->bdev);
-> +
-> +	if ((pos | length) & (alignment - 1))
->  		return -EINVAL;
->  
->  	if (dio->flags & IOMAP_DIO_WRITE) {
-> @@ -434,7 +444,7 @@ static int iomap_dio_bio_iter(struct iomap_iter *iter, struct iomap_dio *dio)
->  		bio->bi_end_io = iomap_dio_bio_end_io;
->  
->  		ret = bio_iov_iter_get_pages(bio, dio->submit.iter,
-> -				bdev_logical_block_size(iomap->bdev) - 1);
-> +					     alignment - 1);
->  		if (unlikely(ret)) {
->  			/*
->  			 * We have to stop part way through an IO. We must fall
-> @@ -639,6 +649,9 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
->  	if (iocb->ki_flags & IOCB_NOWAIT)
->  		iomi.flags |= IOMAP_NOWAIT;
->  
-> +	if (dio_flags & IOMAP_DIO_FSBLOCK_ALIGNED)
-> +		dio->flags |= IOMAP_DIO_FSBLOCK_ALIGNED;
-> +
->  	if (iov_iter_rw(iter) == READ) {
->  		/* reads can always complete inline */
->  		dio->flags |= IOMAP_DIO_INLINE_COMP;
-> diff --git a/fs/iomap/trace.h b/fs/iomap/trace.h
-> index a61c1dae4742..532787277b16 100644
-> --- a/fs/iomap/trace.h
-> +++ b/fs/iomap/trace.h
-> @@ -122,9 +122,10 @@ DEFINE_RANGE_EVENT(iomap_zero_iter);
->  
->  
->  #define IOMAP_DIO_STRINGS \
-> -	{IOMAP_DIO_FORCE_WAIT,	"DIO_FORCE_WAIT" }, \
-> -	{IOMAP_DIO_OVERWRITE_ONLY, "DIO_OVERWRITE_ONLY" }, \
-> -	{IOMAP_DIO_PARTIAL,	"DIO_PARTIAL" }
-> +	{IOMAP_DIO_FORCE_WAIT,		"DIO_FORCE_WAIT" }, \
-> +	{IOMAP_DIO_OVERWRITE_ONLY,	"DIO_OVERWRITE_ONLY" }, \
-> +	{IOMAP_DIO_PARTIAL,		"DIO_PARTIAL" }, \
-> +	{IOMAP_DIO_FSBLOCK_ALIGNED,	"DIO_FSBLOCK_ALIGNED" }
->  
->  DECLARE_EVENT_CLASS(iomap_class,
->  	TP_PROTO(struct inode *inode, struct iomap *iomap),
-> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-> index 73dceabc21c8..4da13fe24ce8 100644
-> --- a/include/linux/iomap.h
-> +++ b/include/linux/iomap.h
-> @@ -518,6 +518,14 @@ struct iomap_dio_ops {
->   */
->  #define IOMAP_DIO_PARTIAL		(1 << 2)
->  
-> +/*
-> + * Ensure each bio is aligned to fs block size.
-> + *
-> + * For filesystems which need to calculate/verify the checksum of each fs
-> + * block. Otherwise they may not be able to handle unaligned bios.
-> + */
-> +#define IOMAP_DIO_FSBLOCK_ALIGNED	(1 << 3)
-> +
->  ssize_t iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
->  		const struct iomap_ops *ops, const struct iomap_dio_ops *dops,
->  		unsigned int dio_flags, void *private, size_t done_before);
+> Range-diff against v2:
+> 1:  d3eeebe81 ! 1:  bfa7e72ea man/man3/readdir.3, man/man3type/stat.3type: Improve documentation about .d_ino and .st_ino
+>     @@ Commit message
+>      
+>          Suggested-by: Pali Rohár <pali@kernel.org>
+>          Co-authored-by: Pali Rohár <pali@kernel.org>
+>     +    Co-authored-by: Jan Kara <jack@suse.cz>
+>          Cc: "G. Branden Robinson" <branden@debian.org>
+>          Cc: <linux-fsdevel@vger.kernel.org>
+>          Signed-off-by: Alejandro Colomar <alx@kernel.org>
+>     @@ man/man3/readdir.3: .SH DESCRIPTION
+>       .TP
+>       .I .d_ino
+>      -This is the inode number of the file.
+>     -+This is the inode number of the file,
+>     -+which belongs to the filesystem
+>     -+.I .st_dev
+>     -+(see
+>     -+.BR stat (3type))
+>     -+of the directory on which
+>     ++This is the inode number of the file
+>     ++in the filesystem containing
+>     ++the directory on which
+>      +.BR readdir ()
+>      +was called.
+>      +If the directory entry is the mount point,
+>      +then
+>      +.I .d_ino
+>      +differs from
+>     -+.IR .st_ino :
+>     ++.I .st_ino
+>     ++returned by
+>     ++.BR stat (2)
+>     ++on this file:
+>      +.I .d_ino
+>     -+is the inode number of the underlying mount point,
+>     ++is the inode number of the mount point,
+>      +while
+>      +.I .st_ino
+>     -+is the inode number of the mounted file system.
+>     -+According to POSIX,
+>     -+this Linux behavior is considered to be a bug,
+>     -+but is nevertheless conforming.
+>     ++is the inode number of the root directory of the mounted filesystem.
+>       .TP
+>       .I .d_off
+>       The value returned in
+>     @@ man/man3type/stat.3type: .SH DESCRIPTION
+>       .TP
+>       .I .st_ino
+>      -This field contains the file's inode number.
+>     -+This field contains the file's inode number,
+>     -+which belongs to the
+>     ++This field contains the file's inode number
+>     ++in the filesystem on
+>      +.IR .st_dev .
+>      +If
+>      +.BR stat (2)
+>      +was called on the mount point,
+>      +then
+>     -+.I .d_ino
+>     -+differs from
+>     -+.IR .st_ino :
+>     -+.I .d_ino
+>     -+is the inode number of the underlying mount point,
+>     -+while
+>      +.I .st_ino
+>     -+is the inode number of the mounted file system.
+>     ++differs from
+>     ++.I .d_ino
+>     ++returned by
+>     ++.BR readdir (3)
+>     ++for the corresponding directory entry in the parent directory.
+>     ++In this case,
+>     ++.I .st_ino
+>     ++is the inode number of the root directory of the mounted filesystem,
+>     ++while
+>     ++.I .d_ino
+>     ++is the inode number of the mount point in the parent filesystem.
+>       .TP
+>       .I .st_mode
+>       This field contains the file type and mode.
+> 
+> base-commit: f305f7647d5cf62e7e764fb7a25c4926160c594f
 > -- 
-> 2.47.3
+> 2.51.0
 > 
 > 
 
