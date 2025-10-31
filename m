@@ -1,201 +1,152 @@
-Return-Path: <linux-fsdevel+bounces-66556-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66557-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D961C23A08
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 08:58:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C668AC23A1A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 08:59:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0C521A2492E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 07:58:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F0E01890A17
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 07:59:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E568E329C67;
-	Fri, 31 Oct 2025 07:58:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC515328B70;
+	Fri, 31 Oct 2025 07:59:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aU97ZAEW"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="b9KtJ2bQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8CB9328604
-	for <linux-fsdevel@vger.kernel.org>; Fri, 31 Oct 2025 07:58:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C744D328B63
+	for <linux-fsdevel@vger.kernel.org>; Fri, 31 Oct 2025 07:58:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761897503; cv=none; b=MFtHh7JWzpRtauCUr9q0kAXgFfD+wgINJBzxBwA3GxFZD+78BKYR3khdRPylX8pDIjZHR0Vp445HaP/UCfBsEvBtwm4NW2MXbssiCwRpzGbljRxRM3Qnb0LNELMtTOx5c5op9aeXSxfZjx7DpmW7JMZ7fe2zqHNaNKz3FWe40sQ=
+	t=1761897542; cv=none; b=U4eOeKFQSvgIUQeC7zGV+rg1fpJaoVk9jtIjvRhIEG//LtkWm/swFlNxiXbIiwS2FNXx4pYijbOcY3sRPODNAgmj3+rY+fg1Hx4rD9wMnSkoTnwb564/EGydRkX0962xl4+G10Sdr61rYngMb3x+/y5bNQptYd6M6/ybxQNKEIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761897503; c=relaxed/simple;
-	bh=VOyBD4y6/aRk3pcgc0Rldubfg8OfqWKep+3yPsEdR9w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eJbAjbSlaMRTNuMPqUv/8GnyX/iAL4XYBBA/KfLImnyJXjq5HgGi1+wVKoQZ65+p5XHU439qny1rEZcH1HuxANw682E8l11RSgTL82z8SFOKinj6H+h7woxgUxD6Ua1VP7Gj81briQmqOahgIKL2KDXgqNOfOBFwAVF0fOLtn/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aU97ZAEW; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761897500;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=S2eS52tk9i8Cbqs2+QfmKwdWaz22X5NSaWz8+XqnQXE=;
-	b=aU97ZAEW312FMy+0zH2yE8DfdvhI6wtp+wmJK2cva5R86im2VXibUJGmcpAcS+75CvwJ1g
-	p6y84Ky7TdaDqltAcafPRmpH1kIJt8Aw/f8M5T9rPTdymsUNNKE3jC6G1XRKKjmSJUiySW
-	tO1CUEfNat2oZqfj9EXt9IISL16hJ2o=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-60-zZ3HeHlWOM6S229ITNt70A-1; Fri, 31 Oct 2025 03:58:18 -0400
-X-MC-Unique: zZ3HeHlWOM6S229ITNt70A-1
-X-Mimecast-MFC-AGG-ID: zZ3HeHlWOM6S229ITNt70A_1761897498
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-4298da9effcso1863429f8f.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 31 Oct 2025 00:58:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761897497; x=1762502297;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=S2eS52tk9i8Cbqs2+QfmKwdWaz22X5NSaWz8+XqnQXE=;
-        b=Lo4wsqT7zdJfa+Tnz+uzDnlJWsrBAJTt2vOhjz8wBj05697x6XER8ELteVZmD7fKz/
-         aCh+D3vDlg3WzFIx3umr6wj/9P+NpJHQ7UvS+SlfItHwNZLgNRQ+z+uDOAcXhvgnA/3v
-         CYXLK7UQY2GLxhL+/B7FQsJHqekF219LaUqnfNrhipTAon6OHRb5LLcaTBW9igaMo7gn
-         ELtrcG/EmB8etHKk0BPnbBu1EjZUO/fUKQapVcGHVCE5QntD1hMJO0JNLYmKgkzZ1NZ1
-         Z/5ao0G/olbW1wncbrK7scxGReFm52TFdAy9AaqGap3H5emXE+divMQODB3CRLMyWgzH
-         vWWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUHsD2Ii/MnnSOCxDVFFEKDwBJgXtus80wum9EVF6ddoqgCWA9+9shSmtV+fWyzn8lXtsKAHEvMmR6vIoO1@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbG+VwiruZEyxHE09P/v6a3evF13id92PYkXpeIr1v+I0L5Jhv
-	sMdzH07nRjGzJf9meDZSdDgIc/P81Gowft6oLG9pPPx7HLz/cJGPekEiLSWwz+LloNQ1UVk7YqL
-	d1VF6dGEUH+KxeOZ2BNzQZPQzdXxosxxWyaOUyY5Bpxt2XBRIa1ZmfBwHSsl+uLaY2dw=
-X-Gm-Gg: ASbGncs3iVQjFogh31xkoTXan1B/isN2NOeNfk5Uz58ZjrfLqRQ2rsBNW7e/WW9hEBX
-	yZBfVbtJdZvMhfie713VykcWOWYFKLdMes9WWHYaA4Gz1hewA3PJOXT2nNRDl9XYEXz3fcNLEXq
-	Q5Icgj+V8kAvI65RrTukkSPno/yTwyrFTJjYFaOb6AwQQhawHJj2gmGE4FULjlWQpCym2DCeXnY
-	4gyzuUOrtChca56BFkQD1yrPe7GKvZ5HpR+CFbm4jIoI0wji89999Hb42+rhD3R88yJXZGJYZ09
-	Z3KUJQl5bc54QAzdjpKdEtFjHyEHU490JRtqK3l/tB53gr2PLQsP62U22hNuVKIsX2wVHV13TJT
-	S0xnLTLoX8lOuNWdpq7jv0BSsj2BUwLQ=
-X-Received: by 2002:a05:600c:c16b:b0:477:f9c:67f5 with SMTP id 5b1f17b1804b1-477376d769amr4379365e9.16.1761897497549;
-        Fri, 31 Oct 2025 00:58:17 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGNwemgOiv3lHzYhEufVFBAYrSQqe//rYSzgVvmn4tkq7hUvG4q9BL5K3qCkZTsiEl6FUiWFg==
-X-Received: by 2002:a05:600c:c16b:b0:477:f9c:67f5 with SMTP id 5b1f17b1804b1-477376d769amr4379075e9.16.1761897497158;
-        Fri, 31 Oct 2025 00:58:17 -0700 (PDT)
-Received: from [192.168.3.141] (p4ff1f1cf.dip0.t-ipconnect.de. [79.241.241.207])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4772fd280fbsm16398705e9.5.2025.10.31.00.58.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 31 Oct 2025 00:58:16 -0700 (PDT)
-Message-ID: <e1562980-b9df-4aa6-a44f-185a7c586b33@redhat.com>
-Date: Fri, 31 Oct 2025 08:58:14 +0100
+	s=arc-20240116; t=1761897542; c=relaxed/simple;
+	bh=ESQEdq6ZtpY0mQPXDXGgBkCaZ8DpoBTnj2E115wt0+4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=LfkhuUpWGKW+5THz4Lc+88YEHB1die5RyE17h+Es4bQ225WrExQJlvwmQLiGJAXtvcE3qCePx+d0m/nNOdvTxOUbCvc76eLwrkMGU69LsyQd7QoZz5zspetDtCt4G2NWPR3kdieWRz1iSIRAkkQ1TD+qzRpcVvMFr9kNkaguUlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=b9KtJ2bQ; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
+	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=nr8+DS92xXgF09oafuR0KoU5p8vImvBsX2478b5Us2k=; b=b9KtJ2bQZEeuofqwTUNC5xyn7u
+	Mmdaed+MrvSsK/jGY7jFaz5L58vNgGSIGZaAkQWYNvMWGKfhBjX+T5K+RxD42lxpY85UMpPzI/+8K
+	yw1Lx77LicXw5APy+stG9CoH3aIapHmI+kcjkNzAuIQVsksPpsJrm/6MprBaDgiMGnAbJmyGVSew0
+	YcqSrvB92wjO5UFuLsiqXoIos+MgOWdxexp0M7YVXFxDzIh4W1HYN9zn5mm9E/i3hBpCc9f6TTzXN
+	FO8HA+ZO+z9bIBiAR6QEiCS4u5lsy5M4pDCF7jOYvp5VGoA/i2WCQEqMoJbKBeT4ju7jrtdiszkYk
+	/NKsB/Jw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vEk2C-0000000GpVH-2Glc;
+	Fri, 31 Oct 2025 07:58:56 +0000
+Date: Fri, 31 Oct 2025 07:58:56 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: linux-audit@vger.kernel.org
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-fsdevel@vger.kernel.org, Paul Moore <paul@paul-moore.com>
+Subject: [RFC] audit reporting (or not reporting) pathnames on early failures
+ in syscalls
+Message-ID: <20251031075856.GZ2441659@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/3] mm/huge_memory: add split_huge_page_to_order()
-To: Zi Yan <ziy@nvidia.com>, linmiaohe@huawei.com, jane.chu@oracle.com
-Cc: kernel@pankajraghav.com, akpm@linux-foundation.org, mcgrof@kernel.org,
- nao.horiguchi@gmail.com, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>, Lance Yang <lance.yang@linux.dev>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Wei Yang <richard.weiyang@gmail.com>, Yang Shi <shy828301@gmail.com>,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org
-References: <20251030014020.475659-1-ziy@nvidia.com>
- <20251030014020.475659-2-ziy@nvidia.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <20251030014020.475659-2-ziy@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On 30.10.25 02:40, Zi Yan wrote:
-> When caller does not supply a list to split_huge_page_to_list_to_order(),
-> use split_huge_page_to_order() instead.
-> 
-> Signed-off-by: Zi Yan <ziy@nvidia.com>
-> Acked-by: David Hildenbrand <david@redhat.com>
-> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> ---
->   include/linux/huge_mm.h | 12 ++++++++++--
->   1 file changed, 10 insertions(+), 2 deletions(-)
-> 
-> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-> index 7698b3542c4f..34f8d8453bf3 100644
-> --- a/include/linux/huge_mm.h
-> +++ b/include/linux/huge_mm.h
-> @@ -381,6 +381,10 @@ static inline int split_huge_page_to_list_to_order(struct page *page, struct lis
->   {
->   	return __split_huge_page_to_list_to_order(page, list, new_order, false);
->   }
-> +static inline int split_huge_page_to_order(struct page *page, unsigned int new_order)
-> +{
-> +	return split_huge_page_to_list_to_order(page, NULL, new_order);
-> +}
->   
+	FWIW, I've just noticed that a patch in the series I'd been
+reordering had the following chunk:
+@@ -1421,20 +1421,16 @@ static int do_sys_openat2(int dfd, const char __user *filename,
+                          struct open_how *how)
+ {
+        struct open_flags op;
+-       struct filename *tmp;
+        int err, fd;
+ 
+        err = build_open_flags(how, &op);
+        if (unlikely(err))
+                return err;
+ 
+-       tmp = getname(filename);
+-       if (IS_ERR(tmp))
+-               return PTR_ERR(tmp);
+-
+        fd = get_unused_fd_flags(how->flags);
+        if (likely(fd >= 0)) {
+-               struct file *f = do_filp_open(dfd, tmp, &op);
++               struct filename *name __free(putname) = getname(filename);
++               struct file *f = do_filp_open(dfd, name, &op);
+                if (IS_ERR(f)) {
+                        put_unused_fd(fd);
+                        fd = PTR_ERR(f);
 
-Scanning this once again, I guess in the future all these interfaces 
-should rather be folio-based, and if we want to split at a specific page 
-where we want the reference to be held later, pass in a page:
+	From the VFS or userland POV there's no problem - we would get a
+different error reported e.g. in case when *both* EMFILE and ENAMETOOLONG
+would be applicable, but that's perfectly fine.  However, from the audit
+POV it changes behaviour.
 
-int folio_split_to_order(struct folio *folio, struct page *page,
-			 unsigned int new_order);
+	Consider behaviour of openat2(2).
+1.  we do sanity checks on the last ('usize') argument.  If they
+fail, we are done.
+2.  we copy struct open_how from userland ('how' argument).
+If copyin fails, we are done.
+3.  we do sanity checks on how->flags, how->resolve and how->mode.
+If they fail, we are done.
+4.  we copy the pathname to be opened from userland ('filename' argument).
+If that fails, or if the pathname is either empty or too long, we are done.
+5.  we reserve an unused file descriptor.  If that fails, we are done.
+6.  we allocate an empty struct file.  If that fails, we are done.
+7.  we finally get around to the business - finding and opening the damn thing.
+Which also can fail, of course.
 
-With the hope that we could end up with all folio split functions to
-look similar in that regard ... and remove all the "huge_page" terminology.
+	We are expected to be able to produce a record of failing
+syscall.  If we fail on step 4, well, the lack of pathname to come with
+the record is to be expected - we have failed to get it, after all.
+The same goes for failures on steps 1..3 - we hadn't gotten around to
+looking at the pathname yet, so there's no pathname to report.	What (if
+anything) makes "insane how->flags" different from "we have too many
+descriptors opened already"?  The contents of the pathname is equally
+irrelevant in both cases.  Yet in the latter case (failure at step 5)
+the pathname would get reported.  Do we need to preserve that behaviour?
 
-Of course, that can be done as cleanups on top, because there seems to 
-be quite some inconsistency already.
+	Because the patch quoted above would change it.  It puts the failure
+to allocate a descriptor into the same situation as failures on steps 1..3.
 
+	As far as I can see, there are three possible approaches:
 
--- 
-Cheers
+1) if the current kernel imports the pathname before some check, that shall
+always remain that way, no matter what.  Audit might be happy, but nobody
+else would - we'll need to document that constraint and watch out for such
+regressions.  And I'm pretty sure that over the years there had been
+other such changes that went into mainline unnoticed.
 
-David / dhildenb
+2) reordering is acceptable.  Of course, the pathname import must happen
+before we start using it, but that's the only real constraint.  That would
+mean the least headache for everyone other than audit folks.
 
+3) import the pathnames as early as possible.  It would mean a non-trivial
+amount of churn, but it's at least a definite policy - validity of change
+depends only on the resulting code, not the comparison with the earlier
+state, as it would in case (1).  From QoI POV it's as nice as audit folks
+could possibly ask, but it would cause quite a bit of churn to get there.
+Not impossible to do, but I would rather not go there without a need.
+Said that, struct filename handling is mostly a decent match to CLASS()
+machinery, and all required churn wouldn't be hard to fold into conversion
+to that.
+
+	My preference would be (2), obviously.	However, it really depends
+upon the kind of requirements audit users have.  Note that currently the
+position of pathname import in the sequence is not documented anywhere,
+so there's not much audit users can rely upon other than "the current
+behaviour is such-and-such, let's hope it doesn't change"... ;-/
+
+	Comments?
 
