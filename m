@@ -1,137 +1,142 @@
-Return-Path: <linux-fsdevel+bounces-66542-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66543-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B518C22ECE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 02:55:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA715C22F93
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 03:20:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15E53424AB9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 01:55:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93C4A404B43
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 02:20:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2CB826ED25;
-	Fri, 31 Oct 2025 01:55:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86A7A2765D4;
+	Fri, 31 Oct 2025 02:20:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="1PJllnbf"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VY7YDhSm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from canpmsgout01.his.huawei.com (canpmsgout01.his.huawei.com [113.46.200.216])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BD611898F8;
-	Fri, 31 Oct 2025 01:55:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C9842741C9
+	for <linux-fsdevel@vger.kernel.org>; Fri, 31 Oct 2025 02:19:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761875715; cv=none; b=UjXMTauk1Cw7gbisl1LE+ECToN4g+yAR1nVndRfFkyH4PZq73IRz4hAsQoex+vdybcNMpSR2WKc940Z+yhvIgQ3Jv7RX1nPYXjjG+9Whin5uVzxKnBUEAbQ+q5I5kBnNe0Wd+G1ciaCwzTxF2SiCiYly955bO+qL4EpmTg9PCxA=
+	t=1761877200; cv=none; b=E7GY2W0WVxrsOq1+UNG96Nk3oyII2e9VzWoRStOMgKbSVaULtwTg2TSnOshSvdwCjoue+O6hWXVJt7Cf++eq7E9k+5MPkC5X5hXUrAZidXHy5obO5OonmzLLE0BJFIL1Pbj2oLx8jYfY6gTSTlhCWZHchNdA6GYUqbSA6DoJXfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761875715; c=relaxed/simple;
-	bh=M+BOJ/OBQpKo/ETGkXYxnnjjC62dEeaIxIajvQYcOfA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=IHxcbPGjDD8f29pYsR+ueNtbzm8POYvEtkUGC+JQExg/f1oB/STMVj5VjgIk0LECpYK9sZJVK9MHweM68NeHV2rylvqfHf6a7OffNjvcQe/hNwi+7Hz1c3riXpEpKh8K30x3+z1bnjwsJhEXJX2u9akD8tSmCynptRc8viM4j5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=1PJllnbf; arc=none smtp.client-ip=113.46.200.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=FuRkASDZGC+sxqL3DYTg3OeS7+jWMa3JBcSB0zkywCw=;
-	b=1PJllnbfIbkvN0pKBGCG9TvvyYM4KGWr7n3wEXphZXHtJ4dimURefifOMidnDOs+bfUqeOF/4
-	OAEbwCDFZydkX1/3puSsGcf2swvVu2LEN3zhuUZkJIiN22z9kddenEuUrN/H1xkv2rk5oQu2eSC
-	o5hUppPjT4EJIbxE0/pOPNQ=
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by canpmsgout01.his.huawei.com (SkyGuard) with ESMTPS id 4cyPCs5FPtz1T4Fg;
-	Fri, 31 Oct 2025 09:54:01 +0800 (CST)
-Received: from dggpemf500013.china.huawei.com (unknown [7.185.36.188])
-	by mail.maildlp.com (Postfix) with ESMTPS id EB2F0140156;
-	Fri, 31 Oct 2025 09:55:07 +0800 (CST)
-Received: from [127.0.0.1] (10.174.178.254) by dggpemf500013.china.huawei.com
- (7.185.36.188) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 31 Oct
- 2025 09:55:06 +0800
-Message-ID: <6899c98c-b31b-4827-979c-935f833ed332@huawei.com>
-Date: Fri, 31 Oct 2025 09:55:05 +0800
+	s=arc-20240116; t=1761877200; c=relaxed/simple;
+	bh=3zQ1xqV8A42MGAiFtuedptKR3TjX9ZAKsBp2ihtBCQQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cQ6f3SEPHWVx66B3NgmeWTmELwaUnWveTMGpVL614n0v9riOycaMA5sELtK3zWI37TEMTt/iWFNCwKel1/RewzRRxsXho+t28BslW8y+nd5mRZi0t7B8uSl2a3w4uD7Mhfl2ulLqwmIYjAju4jKqPdV8IjRD3y9p6jDo3SHfmsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VY7YDhSm; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-63c3c7d3d53so3326502a12.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Oct 2025 19:19:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761877196; x=1762481996; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nAuHBkzBsMSaj0Gbuvv+XkhIsngSwsrTuvil52QriUA=;
+        b=VY7YDhSmVcypp67EV2qpwLqG4zSbBoPf6AFPi2vaevt/ezLVlrBGpC8f/++EoKxyWG
+         UGMbUNGm4hO3K98AEHLY7PvrFUVhfVK9T7sPoIwp2+FIFY9FaObD6f/aqb2k9FeEurhY
+         dS6cGTE/lQnWCeiyVAgGo2sSwDFrUDZhxTdHo1/PRAMBD1HCqoH8ScT+3fRcMh+0gBYE
+         7CaOF1RL7rVC+7+jrHZ31ZtbQY6fTazRT2j2rvAVS7+cCO6BabC3tOM7pW1p/l6PhxvG
+         zb1logAH/2v3YguO97LhFa4DSM8SdvINEILuDixMpdSdrLCOqi1jOrjK+miIIckgcOI3
+         TgZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761877196; x=1762481996;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=nAuHBkzBsMSaj0Gbuvv+XkhIsngSwsrTuvil52QriUA=;
+        b=CA3eIx1i/HvgIi7Pr/tzYRb8e5EFbsKET8qyOjQrjjFFJcrzfwQf86GZpxnZG18nIP
+         g4M0e32daFBhxHuC6Mgp9ClNCT8DM670MQGuvlI5PEwknAZECFqQxrWoKPFdaJywIxTZ
+         6PtWqz3kqbaE8K0FbLziciImEDJtOq8RsB6HmOYdtw/2N4mOqliaxBUUR+4P5gLVHATd
+         ayvpPWS6EcHMOd93a5PY1pbQ95Wupjs+el7eTDi25BDid62r8ZjeaLTMo+IpEYvXswGY
+         ZBmVT5/mO34x6XeogSCx6ISDcJCd/HHqGMyUzCPx7kWq/TGQM8SjH0HOdmTuT8Tbj4v0
+         FYsA==
+X-Forwarded-Encrypted: i=1; AJvYcCWqULZ6T9mAoy68pF3RyEpQu3vnYxjbWBesaCNFAD67yGWmiDZBOTEDDXs5akAcADYpk/W2AEfwYy9Ws9Ia@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUlY/cvonkmFnQ4S0eSxs05u7CvvZl7eWJaZ5dEk3v3k91qHV+
+	0a9Fu8GUOU27eFu4Eua1dDNThk+eoMUph2jXQ9g9AitbNK0EWoiUL93e
+X-Gm-Gg: ASbGncvg4WjryUapugU8gBlPzWM+XQdxvSo8JFPl+aIOFX/fd5MAOKt9vE1oeSzf1qb
+	GXvE0jQkd3J6W4huEAcbOqB6m3yLvCVwquxN+lijn8IdWAYfJKktT7rkywNFuMcD+/3s3dcr3Eo
+	7TKHJSKUx8KL+QCG3u956glXDWRWu52Z/6Srl0RErav7eRUbWJfMggfecvUJx1GpUPvpB3pgu74
+	zS6pl2TwXFXMHD2Bz23N8OmVJSUQNSd8FvbH0ZsYHavBacp+C8petoARIWKutC78HfVDcxSjD2V
+	UNNex4SnfwtaGnNA2U9N9YIiH9jtQCIpD8L3aMnCUapzECnTYv8rqBMflRz1gFvMlEB4J/1d16L
+	ug8yDnOOxQSMFghy5cQMNyo6e5wTMESGBeIGcteZixWc9UVSL7xeTfcti6IOvsZVHMuYBhyBfLG
+	tqdcPWkMh2UA==
+X-Google-Smtp-Source: AGHT+IEcH4kOFzp6/56rakvTEjeBVzfv6qBiWaY3eKFtuXFG29gDskvq3YaNRtp/ukRJ/0KfRNrsvg==
+X-Received: by 2002:a05:6402:1445:b0:63c:4f1e:6d7a with SMTP id 4fb4d7f45d1cf-640770127d6mr1311349a12.19.1761877196183;
+        Thu, 30 Oct 2025 19:19:56 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6407b427a23sm488415a12.21.2025.10.30.19.19.54
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 30 Oct 2025 19:19:55 -0700 (PDT)
+Date: Fri, 31 Oct 2025 02:19:54 +0000
+From: Wei Yang <richard.weiyang@gmail.com>
+To: Zi Yan <ziy@nvidia.com>
+Cc: linmiaohe@huawei.com, david@redhat.com, jane.chu@oracle.com,
+	kernel@pankajraghav.com, akpm@linux-foundation.org,
+	mcgrof@kernel.org, nao.horiguchi@gmail.com,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+	Lance Yang <lance.yang@linux.dev>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Wei Yang <richard.weiyang@gmail.com>,
+	Yang Shi <shy828301@gmail.com>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v4] mm/huge_memory: preserve PG_has_hwpoisoned if a folio
+ is split to >0 order
+Message-ID: <20251031021954.ba2pymy2hjvgzohf@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20251023030521.473097-1-ziy@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 22/25] fs/buffer: prevent WARN_ON in
- __alloc_pages_slowpath() when BS > PS
-Content-Language: en-GB
-To: Matthew Wilcox <willy@infradead.org>
-CC: "Darrick J. Wong" <djwong@kernel.org>, <linux-ext4@vger.kernel.org>,
-	<tytso@mit.edu>, <adilger.kernel@dilger.ca>, <jack@suse.cz>,
-	<linux-kernel@vger.kernel.org>, <kernel@pankajraghav.com>,
-	<mcgrof@kernel.org>, <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
-	<yi.zhang@huawei.com>, <yangerkun@huawei.com>, <chengzhihao1@huawei.com>,
-	Baokun Li <libaokun@huaweicloud.com>, Baokun Li <libaokun1@huawei.com>
-References: <20251025032221.2905818-1-libaokun@huaweicloud.com>
- <20251025032221.2905818-23-libaokun@huaweicloud.com>
- <aPxV6QnXu-OufSDH@casper.infradead.org>
- <adccaa99-ffbc-4fbf-9210-47932724c184@huaweicloud.com>
- <aQPX1-XWQjKaMTZB@casper.infradead.org>
-From: Baokun Li <libaokun1@huawei.com>
-In-Reply-To: <aQPX1-XWQjKaMTZB@casper.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
- dggpemf500013.china.huawei.com (7.185.36.188)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251023030521.473097-1-ziy@nvidia.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 
-On 2025-10-31 05:25, Matthew Wilcox wrote:
-> On Sat, Oct 25, 2025 at 02:32:45PM +0800, Baokun Li wrote:
->> On 2025-10-25 12:45, Matthew Wilcox wrote:
->>> No, absolutely not.  We're not having open-coded GFP_NOFAIL semantics.
->>> The right way forward is for ext4 to use iomap, not for buffer heads
->>> to support large block sizes.
->> ext4 only calls getblk_unmovable or __getblk when reading critical
->> metadata. Both of these functions set __GFP_NOFAIL to ensure that
->> metadata reads do not fail due to memory pressure.
->>
->> Both functions eventually call grow_dev_folio(), which is why we
->> handle the __GFP_NOFAIL logic there. xfs_buf_alloc_backing_mem()
->> has similar logic, but XFS manages its own metadata, allowing it
->> to use vmalloc for memory allocation.
-> In today's ext4 call, we discussed various options:
+On Wed, Oct 22, 2025 at 11:05:21PM -0400, Zi Yan wrote:
+>folio split clears PG_has_hwpoisoned, but the flag should be preserved in
+>after-split folios containing pages with PG_hwpoisoned flag if the folio is
+>split to >0 order folios. Scan all pages in a to-be-split folio to
+>determine which after-split folios need the flag.
 >
-> 1. Change folios to be potentially fragmented.  This change would be
-> ridiculously large and nobody thinks this is a good idea.  Included here
-> for completeness.
+>An alternatives is to change PG_has_hwpoisoned to PG_maybe_hwpoisoned to
+>avoid the scan and set it on all after-split folios, but resulting false
+>positive has undesirable negative impact. To remove false positive, caller
+>of folio_test_has_hwpoisoned() and folio_contain_hwpoisoned_page() needs to
+>do the scan. That might be causing a hassle for current and future callers
+>and more costly than doing the scan in the split code. More details are
+>discussed in [1].
 >
-> 2. Separate the buffer cache from the page cache again.  They were
-> unified about 25 years ago, and this also feels like a very big job.
+>This issue can be exposed via:
+>1. splitting a has_hwpoisoned folio to >0 order from debugfs interface;
+>2. truncating part of a has_hwpoisoned folio in
+>   truncate_inode_partial_folio().
 >
-> 3. Duplicate the buffer cache into ext4/jbd2, remove the functionality
-> not needed and make _this_ version of the buffer cache allocate
-> its own memory instead of aliasing into the page cache.  More feasible
-> than 1 or 2; still quite a big job.
+>And later accesses to a hwpoisoned page could be possible due to the
+>missing has_hwpoisoned folio flag. This will lead to MCE errors.
 >
-> 4. Pick up Catherine's work and make ext4/jbd2 use it.  Seems to be
-> about an equivalent amount of work to option 3.
->
-> 5. Make __GFP_NOFAIL work for allocations up to 64KiB (we decided this was
-> probably the practical limit of sector sizes that people actually want).
-> In terms of programming, it's a one-line change.  But we need to sell
-> this change to the MM people.  I think it's doable because if we have
-> a filesystem with 64KiB sectors, there will be many clean folios in the
-> pagecache which are 64KiB or larger.
->
-> So, we liked option 5 best.
->
-Thank you for your suggestions! 
+>Link: https://lore.kernel.org/all/CAHbLzkoOZm0PXxE9qwtF4gKR=cpRXrSrJ9V9Pm2DJexs985q4g@mail.gmail.com/ [1]
+>Fixes: c010d47f107f ("mm: thp: split huge page to any lower order pages")
+>Cc: stable@vger.kernel.org
+>Signed-off-by: Zi Yan <ziy@nvidia.com>
 
-Yes, options 1 and 2 don’t seem very feasible, and options 3 and 4 would
-involve a significant amount of work. Option 5 is indeed the simplest and
-most general solution at this point, and it makes a lot of sense.
+Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
 
-I will send a separate RFC patch to the MM list to gather feedback from the
-MM people. If this approach is accepted, we can drop patches 22 and 23 from
-the current series.
-
-
-Cheers,
-Baokun
-
-
+-- 
+Wei Yang
+Help you, Help me
 
