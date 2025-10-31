@@ -1,131 +1,114 @@
-Return-Path: <linux-fsdevel+bounces-66548-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66550-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 760E6C234AA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 06:34:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47360C23689
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 07:33:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B22941A27FDD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 05:35:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03A6A3B32DF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Oct 2025 06:31:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 258961F3B87;
-	Fri, 31 Oct 2025 05:34:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mhtoG/hR"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1B083016EC;
+	Fri, 31 Oct 2025 06:31:26 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0DD45C96
-	for <linux-fsdevel@vger.kernel.org>; Fri, 31 Oct 2025 05:34:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E1742EDD64;
+	Fri, 31 Oct 2025 06:31:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761888871; cv=none; b=cdrX+1vLuAk2s8GHX8zuMq2i3Te1DMm91sBpcGH7KRFvAkifWfy27n4NZN7Y82QoQmeUvktdBReWqGHe2o03zgauCYY75+0YeDB+Pq30H2TZE1WHAhUKwVxM63rkR/CZSqW9MhbMkwn553AT+RJp2ru25Th1OJjx7x4Ty3TOX58=
+	t=1761892286; cv=none; b=S51sDW4h9nZ5xlLfgvpvVZTICC9PAa0Ua/6k5AY6NmUrlskCL840o8qUXp96VRFwB9DlF67MKXsvgaQIggswIjjetZYX0rnABMkbSLBNIZSPmkD4B/5klQvuJ+TMClMty50+jTOj5r+R+02NJ/aDZ6WenGArQ9+MW40vFYTwFNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761888871; c=relaxed/simple;
-	bh=pbVHIF8g09eSBjGpsv4+LA+UoYiBlI25rt4MHjy3G58=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=P9GJEtb6cSEDymoV3AqBEDtk/J9+MTU6MFtYDzl2W19fBsGawjX1PFf3h6SSH7oWYgdwapJYb1BQn5p3ZbNKU6G2M8Aq4WLkfI++8P3HtzrJ9btXfZfuy8n7Hwk3i16+6C0dT+2/iSEzI7XK3SmT6nn92S4Hi+Fs1buWUZwLwks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mhtoG/hR; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4711810948aso13605415e9.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Oct 2025 22:34:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761888868; x=1762493668; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cMQhl9FabmGIHnZV2ZPiNA/xuVX+sV4Emo8zsUnt4uI=;
-        b=mhtoG/hRGEm4pvAmG4A6DgVmhP9xZajdIibhjxoRCSM20Mig3WoQVcqsH3gG2/IIHJ
-         oL3xwK8EdQtpuY1USqgifSKawqv9LJylpmxjeocmOGytTuU7Tdp5Wk4+f0Khslq8O+qA
-         kwQ2FQklGMwB3X/rXDFNEvGCq4KGpPH/PPyCz+Mi/g0pZdQrBE2jVUx8kaXbBY/mUani
-         qh2V4W8cMMF6XAuZNrSEIuvEihBhw85kafNlKldE92Brz1uwy8+j/53YxjewfXudX2lJ
-         zAWUDebm9Ih+fBMTcmGbuFsetFfRsLIV1qGadLLWzBVkWcD9mdHyIMEV/fDu7sAdwq9M
-         SKbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761888868; x=1762493668;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cMQhl9FabmGIHnZV2ZPiNA/xuVX+sV4Emo8zsUnt4uI=;
-        b=glwoTELmja9uEX/9Q1pgWs8v2yq1bul0/hocTZDy+I/SmwzKNbK24dstssQzMffaMl
-         EuGu93Ee4yrCEm7ltfbv6UtS+gO7LU2K5KzvYksClLylcXOmHLSlPqgVtvNK2xIYc/X4
-         XZnkOKbN1EuJd563tqqrxXu4PDT7KUOJPXOFvWma+JURPsJhqb51TVyadPFackR5LotJ
-         mcPYQDVrX6cQCYcHA45J4+5DUCmgBbEE8wiSRoTwpGtdNpOTLPCoSnP/2RHZ/0eEzM6v
-         lUFWZtw8ovim/PZc428ezDR5OKv+9MjdBi+WKkw1ye4QHIuYKcDkL4soaFMV48er84x8
-         JGxw==
-X-Gm-Message-State: AOJu0YwueO29Tq4SrVKYUwI9v6QFvuoJF63JZlHegrDuqmkf3cBEMTpv
-	0T8o0bV5wDA9nLljMRKquBu+9MJKDWgjsrOmJmtOw1xReJ715w7B2SIzYLktjZVnWpA=
-X-Gm-Gg: ASbGnctoLmX442qDKwipwgvXpxZ1TCWE2WvjWpngvEMjW4OEES2bfh3b0i0OMPC4yvx
-	LDEVN2D4CQgM1/BiYngU7mRxR5FYykavHNtq2qo5ahtOyPZJ42Z6LkoGsdn4t63EmJ4Rpd+WmAn
-	THbD+Od8fjTgqEMV1lVXOe09gTKGtd1/4vPd7vOCpHfD4pkz5GlrhJ335YcSFM7Vd5DoX29KCAi
-	O4848W0GEffKsmh/Dq4bG81paKUDouhdVJnHUKvuUZnzsWS+LZDg0TyklAGoK4cWdx7IB/Ghp+X
-	4vNqVdyoomVxZzv/nKRz46jQTQ1ginMPNa8m44IR6svJyXpGn9Kg7YwjPNOFAUrkdyLDlNeP41R
-	XCH6UdDajkJHASGzqadsdsiyyhui44DpeldyHEJAOKd4NyWnrmcCbqUBLCnBNLPPcDCAaUm4beN
-	o9SCKDp3jjofK5T0X7
-X-Google-Smtp-Source: AGHT+IH04o1fFGnLi7WSnIep89aNTcoUNVIz/Pk+locjuzIYM+lU9+S5J/MDuS6M16uXIBzW1n/fyA==
-X-Received: by 2002:a05:600c:524f:b0:477:bcb:24cd with SMTP id 5b1f17b1804b1-47730873b47mr17208885e9.22.1761888867461;
-        Thu, 30 Oct 2025 22:34:27 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-429c110034fsm1476764f8f.8.2025.10.30.22.34.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Oct 2025 22:34:27 -0700 (PDT)
-Date: Fri, 31 Oct 2025 08:34:23 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org
-Subject: [bug report] iomap: track pending read bytes more optimally
-Message-ID: <aQRKX5q34Xug_Hly@stanley.mountain>
+	s=arc-20240116; t=1761892286; c=relaxed/simple;
+	bh=8m42JcAQvJEaTiHTQMcTCJ98xv4AIRUlejmBaMD4oeM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XGhyDC8mO8phX9fqMyB2Ed7WlDk/qaAOQjnWFnxzEWZxNJMxqh8Spk8iRubvvKD+U5mtQGj+wAsEX1a315ztu4+gnXUzzyBy90pbvay8tdJKUBW9fdZsu3pyaUy94V38ULmMutHzYpihR5viFlo+O3iF6pVsr2U06tDZntnpirA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cyWLh1sPDzKHM0X;
+	Fri, 31 Oct 2025 14:30:20 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id E5D451A0847;
+	Fri, 31 Oct 2025 14:31:20 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.50.85.155])
+	by APP2 (Coremail) with SMTP id Syh0CgBHnESuVwRpEFrWCA--.33311S4;
+	Fri, 31 Oct 2025 14:31:18 +0800 (CST)
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+To: linux-ext4@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	tytso@mit.edu,
+	adilger.kernel@dilger.ca,
+	jack@suse.cz,
+	yi.zhang@huawei.com,
+	yi.zhang@huaweicloud.com,
+	libaokun1@huawei.com,
+	yangerkun@huawei.com
+Subject: [PATCH 0/4] ext4: replace ext4_es_insert_extent() when caching on-disk extents
+Date: Fri, 31 Oct 2025 14:29:01 +0800
+Message-ID: <20251031062905.4135909-1-yi.zhang@huaweicloud.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:Syh0CgBHnESuVwRpEFrWCA--.33311S4
+X-Coremail-Antispam: 1UD129KBjvJXoW7CF48ZFy7uF45Ar47tF4UCFg_yoW8GF48pr
+	ZxCw1rXr1rW3y7Ga93Jw47tr1fGan7Cr4xZryfKw1xuFyUZFy7ursFka1UZa4fXrWxAr15
+	XF45tr1kG3WUA3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
+	nIWIevJa73UjIFyTuYvjfUonmRUUUUU
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-Hello Joanne Koong,
+From: Zhang Yi <yi.zhang@huawei.com>
 
-Commit 51311f045375 ("iomap: track pending read bytes more
-optimally") from Sep 25, 2025 (linux-next), leads to the following
-Smatch static checker warning:
+This series addresses the optimization that Jan pointed out [1]
+regarding the introduction of a sequence number to
+ext4_es_insert_extent(). The proposal is to replace all instances where
+the cache of on-disk extents is updated by using ext4_es_cache_extent()
+instead of ext4_es_insert_extent(). This change can prevent excessive
+cache invalidations caused by unnecessarily increasing the extent
+sequence number when reading from the on-disk extent tree. This seires
+has no dependency on the patch set[2] that introduced the extent
+sequence number, so it can be merged independently.
 
-	fs/iomap/buffered-io.c:547 iomap_readahead()
-	error: uninitialized symbol 'cur_bytes_pending'.
+[1] https://lore.kernel.org/linux-ext4/ympvfypw3222g2k4xzd5pba4zhkz5jihw4td67iixvrqhuu43y@wse63ntv4s6u/
+[2] https://lore.kernel.org/linux-ext4/20251013015128.499308-1-yi.zhang@huaweicloud.com/
 
-fs/iomap/buffered-io.c
-   526  void iomap_readahead(const struct iomap_ops *ops,
-   527                  struct iomap_read_folio_ctx *ctx)
-   528  {
-   529          struct readahead_control *rac = ctx->rac;
-   530          struct iomap_iter iter = {
-   531                  .inode  = rac->mapping->host,
-   532                  .pos    = readahead_pos(rac),
-   533                  .len    = readahead_length(rac),
-   534          };
-   535          size_t cur_bytes_pending;
-   536  
-   537          trace_iomap_readahead(rac->mapping->host, readahead_count(rac));
-   538  
-   539          while (iomap_iter(&iter, ops) > 0)
-   540                  iter.status = iomap_readahead_iter(&iter, ctx,
-   541                                          &cur_bytes_pending);
+Thanks,
+Yi.
 
-Smatch worries that either iomap_iter() or iomap_length() might be
-false on the first iteration.  I don't know the code so it could be a
-false positive.
+Zhang Yi (4):
+  ext4: make ext4_es_cache_extent() support overwrite existing extents
+  ext4: check for conflicts when caching extents
+  ext4: adjust the debug info in ext4_es_cache_extent()
+  ext4: replace ext4_es_insert_extent() when caching on-disk extents
 
-   542  
-   543          if (ctx->ops->submit_read)
-   544                  ctx->ops->submit_read(ctx);
-   545  
-   546          if (ctx->cur_folio)
-   547                  iomap_read_end(ctx->cur_folio, cur_bytes_pending);
-   548  }
+ fs/ext4/extents.c        |  8 ++---
+ fs/ext4/extents_status.c | 75 +++++++++++++++++++++++++++++++++++-----
+ fs/ext4/extents_status.h |  2 +-
+ fs/ext4/inode.c          | 18 +++++-----
+ 4 files changed, 81 insertions(+), 22 deletions(-)
 
+-- 
+2.46.1
 
-regards,
-dan carpenter
 
