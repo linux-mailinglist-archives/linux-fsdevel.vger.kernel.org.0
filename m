@@ -1,84 +1,89 @@
-Return-Path: <linux-fsdevel+bounces-66675-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66676-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7186AC281FD
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 01 Nov 2025 17:03:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C23E4C2832A
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 01 Nov 2025 17:42:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 882F03A5319
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Nov 2025 16:02:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CEC0C3A861B
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Nov 2025 16:38:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9E6B1DB15F;
-	Sat,  1 Nov 2025 16:02:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72B492673AF;
+	Sat,  1 Nov 2025 16:38:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="L01lCcPm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jyfkrC+i"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A122634D3AD;
-	Sat,  1 Nov 2025 16:02:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C17E234D3A7;
+	Sat,  1 Nov 2025 16:38:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762012927; cv=none; b=semnW/vDdMqwVzKaY7mF/MArSogXqDuD0BlDgzOxHtxszHy8hpKvo5+PiU5MJoT3a8JbMmhlOsxJ6aagqL1hfQ1GGHntFDwiIGLEBlZ0yP+oWHW5eJccrJFdFIODgirr+padePmayAvG77Z2Jgy/YSoKc55i42K+UQKJj94sbGQ=
+	t=1762015114; cv=none; b=jGQoC+U6/WSMqEog7JAxJ/NWPdRv2RnTkRwIkAQV7OyU2vaeCsO+dJiBuTXA20sTMwzLwchCqY+1zGBP15FS8wadNKdMtGVyXDPOOBNY5cA75zYShjJSbKNptO9UJb4yCuTFUZ5clypctKrYrmlLtfWjVUaQbx6PvUt2b04u9Uk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762012927; c=relaxed/simple;
-	bh=GbVR6kceTtyQtx+nPaggJRF0YkqFBaVBZbZLgE7tuGA=;
+	s=arc-20240116; t=1762015114; c=relaxed/simple;
+	bh=TbYkopGyFIENuHFLTsV1V/jcgq4zG4Ty8C4XMJb33II=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KjgoJw5Z7ggHs1T5ghgN+hwcctu78e5Q6q2OGeVw8nJpGmf3r85v2s+DVLw92uyNou1T3ibfTjBaFWYCLVrg2aqmHUQJeGKC05CwV4pjex2h81Gbvmug0My+nAcwjkFFAZm9Oxpf6qaNbhvthgeBjHsncNGrZtyFgfVkmZXwUHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=L01lCcPm; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=achCPvh2j2Wq4WWIsZcSuVU5hHoyHWQc1iOhRa3GSPU=; b=L01lCcPm1a4ZGT3UvVExKFxoCu
-	PB9/AXca28BEjqgYcLQTcrWQ8ANs1Kw+cuSQQC370hT8AZmFw0sunOYCpTk2z0i2R8GylMHsRCvkT
-	JtAvbKMR0i2HYxY7J1y5PFPWmasH0Gh+R6gaP2332+h++6RN5e6gnK8L01DQWefCobTCSgCqx4dLC
-	jY8UT5x2A68M0aRmVzg5a64KOJDM9HmZP5e8CWi/16WiS/yOLsGoZv5PTe+FWXFswBDT5wQ+s//d+
-	WyqCezW5kAbqtGbxw6nO8+SHBkOf18ryGMa4viEewBrwokmpEnKa1vHozdXFWA0YDlmAYw+dr2HHF
-	BS9BZhHw==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vFE3D-0000000GVZH-0qy8;
-	Sat, 01 Nov 2025 16:01:59 +0000
-Date: Sat, 1 Nov 2025 16:01:58 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Cc: ntfs3@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH RFC] fs/ntfs3: disable readahead for compressed files
-Message-ID: <aQYu9jktrEAsx2y0@casper.infradead.org>
-References: <20251028165131.9187-1-almaz.alexandrovich@paragon-software.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=MFl4kNMZFDu98GGZpNoPr8VAf6XaxMBK05kXYNY9zZj+o8+b0oDt6MNL4OS6E9FoFLHMtOHvneoIy7R7VN16XRC+W0YatbO7Nuzu5g2nxxgGWjjqQuQGJf0bNp4x3kxzk30wIWNjQBpVSI9fhMbzkgJdej/MPSdUlKIfOVRG7y0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jyfkrC+i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFF3BC4CEF1;
+	Sat,  1 Nov 2025 16:38:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762015114;
+	bh=TbYkopGyFIENuHFLTsV1V/jcgq4zG4Ty8C4XMJb33II=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jyfkrC+ikQeJH77i4aH47bJY6O3wr3xTa3lr2CYFhGR7l14ZHoYW4hmzOE/Ua9SXb
+	 Q8t6WH5YISEsddmO/udRldPCV+t/UOjkDDVyaqy59DaKS4EYTSEpiYYmAMf47XAx7d
+	 NO7bUVzL1Q8LpxBsJY6c3lX2q3WsG5LSac+riEZXekvOtCT58FJtGP8oJmfD+hF7LH
+	 N2U5KF3Ehcq0lQpBMgHbpw842nj6dfnFb7vRf352FMN8H4Likmowl5t0b/5zjxPJ5z
+	 Cxw1c2184KlmI1aUU06U5WP5xKCkeM4D1lTvo8mVizx9nducIm2DmwsV3sAMlhAC3n
+	 TAZWgjkHiwOeg==
+Date: Sat, 1 Nov 2025 12:38:28 -0400
+From: Nathan Chancellor <nathan@kernel.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Ard Biesheuvel <ardb@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-efi@vger.kernel.org,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-kbuild@vger.kernel.org, David Sterba <dsterba@suse.com>
+Subject: Re: fms extension (Was: [PATCH] fs/pipe: stop duplicating union
+ pipe_index declaration)
+Message-ID: <20251101163828.GA3243548@ax162>
+References: <20251029-wobei-rezept-bd53e76bb05b@brauner>
+ <CAHk-=wjGcos7LACF0J40x-Dwf4beOYj+mhptD+xcLte1RG91Ug@mail.gmail.com>
+ <20251030-zuruf-linken-d20795719609@brauner>
+ <20251029233057.GA3441561@ax162>
+ <20251030-meerjungfrau-getrocknet-7b46eacc215d@brauner>
+ <CAMj1kXHP14_F1xUYHfUzvtoNJjPEQM9yLaoKQX=v4j3-YyAn=A@mail.gmail.com>
+ <20251030172918.GA417112@ax162>
+ <20251030-zukunft-reduzieren-323e5f33dca6@brauner>
+ <20251031013457.GA2650519@ax162>
+ <20251101-bugsieren-gemocht-0e6115014a45@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251028165131.9187-1-almaz.alexandrovich@paragon-software.com>
+In-Reply-To: <20251101-bugsieren-gemocht-0e6115014a45@brauner>
 
-On Tue, Oct 28, 2025 at 05:51:31PM +0100, Konstantin Komarov wrote:
-> Reading large compressed files is extremely slow when readahead is enabled.
-> For example, reading a 4 GB XPRESS-4K compressed file (compression ratio
-> ≈ 4:1) takes about 230 minutes with readahead enabled, but only around 3
-> minutes when readahead is disabled.
-> 
-> The issue was first observed in January 2025 and is reproducible with large
-> compressed NTFS files. Disabling readahead for compressed files avoids this
-> performance regression, although this may not be the ideal long-term fix.
-> 
-> This patch is submitted as an RFC to gather feedback on whether disabling
-> readahead is an acceptable solution or if a more targeted fix should be
-> implemented.
+On Sat, Nov 01, 2025 at 02:10:42PM +0100, Christian Brauner wrote:
+> I'd like a stable branch before -rc5, please.
 
-I suspect your real problem is that readahead is synchronous in ntfs3
-and the VFS is not expecting this.  Your get_block (ntfs_get_block_vbo)
-calls bh_read() which waits for the I/O to complete.  That means we get
-no pipelining which will significantly reduce bandwidth.
+Sure thing. I have sent the change out for Acks now:
+
+  https://lore.kernel.org/20251101-kbuild-ms-extensions-dedicated-cflags-v1-1-38004aba524b@kernel.org/
+
+I will finalize the branch by Thursday at the latest and ping you when
+it is ready.
+
+Cheers,
+Nathan
 
