@@ -1,192 +1,268 @@
-Return-Path: <linux-fsdevel+bounces-66678-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66679-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BA05C28434
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 01 Nov 2025 18:49:45 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D97AAC28623
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 01 Nov 2025 20:21:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 06C4F4E1BE9
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Nov 2025 17:49:44 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EEC794EE1D6
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Nov 2025 19:21:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65D1D277C9B;
-	Sat,  1 Nov 2025 17:49:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA0E530101D;
+	Sat,  1 Nov 2025 19:20:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IGHSl59l"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4Q3V8++I";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Y7sVe5FL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E13752701D8;
-	Sat,  1 Nov 2025 17:49:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 334E82FF678;
+	Sat,  1 Nov 2025 19:20:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762019379; cv=none; b=R0fGg0Ear8RQ6bLwaHVavEQnXKjlrlV7epbJd9XzReMGfGALMSVyzVyCmryOpXoeTrjFFtjf3j/8JaEAHetDaK1w4soQ2/s1PFJ+owCze1U2LobPxVFf1N70slEPJfESWPBFosoN+S22WNvRjNMbNYcF3M89zPpVbZ6L9NiSVnY=
+	t=1762024856; cv=none; b=iSJUMkL32R+/094n8OO7KA5i+hQPGUW7rNVxSJaspJA+lovf/uMDSzAgdAUA4tLZSj1cRO1R0bXhY4sB92Y6uRdRJqICCyrC0slcKe3FEsUzTyicJOwA1dAxZMwfOZDbD5XNoXIFyTS2m84+38TB3uu5eHBRoF1Z2SHOOFBhpSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762019379; c=relaxed/simple;
-	bh=ij1XrhRwLm7shGtODy/du1WAYcGn3j6QGULbLxSBhh4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oADz4o0T1GwJWbABM0AYTK7UoS6OnHDXR1aVS7pRdtg3yF7JAuhS4BYSCIG9LCym4qiaXOvCstew+fnAtzaLGBmojtTlIEL316fshKPt4QCy8pIUixRGftxkNIbU9goKNUHZAuCLI7O/bU71BmC5IThT3KUYtp6DcmbF0qGRPMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IGHSl59l; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762019378; x=1793555378;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ij1XrhRwLm7shGtODy/du1WAYcGn3j6QGULbLxSBhh4=;
-  b=IGHSl59lzym8cxNWkwHd+Noll82xG1txm9NC56/f5BDbJ1poD57iAJjK
-   82gFy9x/7oY0odRI2HW41D/0Xpqlx0u1jYDK+Td6URBuGFNA+m3nZcTjc
-   EVjFESqPxQH2aC0gVXLS08VPLufn+NcqjqVo4TnS58QKAZMKe/xZK30Pb
-   FRqmn0q47Zbg3QvDW1sfZVLcifDpGp/t8ebUT3LeK/pLnUsm9Wkrj+bNS
-   yg8sm5m2rZdEa7CsN8MLdF2pO3vckk3kD6A1AgazS/a5WFAfxlEX2kPVO
-   anOXUILLfGTuxmsRJz/7LRYTrEwjxoF07s0BO/Y5WotIDuTAqsAly8cgE
-   Q==;
-X-CSE-ConnectionGUID: Ms92yDeuQx2Sub3vBTQfjg==
-X-CSE-MsgGUID: iB6u2aNHSm+/E0OvoXWHOA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11600"; a="63176875"
-X-IronPort-AV: E=Sophos;i="6.19,272,1754982000"; 
-   d="scan'208";a="63176875"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2025 10:49:37 -0700
-X-CSE-ConnectionGUID: X6ptYErhTnmJ70iMbDKTVg==
-X-CSE-MsgGUID: 2ob+0bbGSV62bpZuymtMqw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,272,1754982000"; 
-   d="scan'208";a="185776408"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by orviesa010.jf.intel.com with ESMTP; 01 Nov 2025 10:49:35 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vFFjI-000OXU-12;
-	Sat, 01 Nov 2025 17:49:32 +0000
-Date: Sun, 2 Nov 2025 01:49:19 +0800
-From: kernel test robot <lkp@intel.com>
-To: Mateusz Guzik <mjguzik@gmail.com>, torvalds@linux-foundation.org
-Cc: oe-kbuild-all@lists.linux.dev, brauner@kernel.org,
-	viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, tglx@linutronix.de, pfalcato@suse.de,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: Re: [PATCH 3/3] fs: hide names_cachep behind runtime access machinery
-Message-ID: <202511020147.47PufBIR-lkp@intel.com>
-References: <20251031174220.43458-4-mjguzik@gmail.com>
+	s=arc-20240116; t=1762024856; c=relaxed/simple;
+	bh=KHDhI+OMbYsFp6vu64Dav6dGQ4hKGh0ZnHirB5dDyjg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ccPqIIH4+Rig4vsSRMC7Er+Vsv6ZwUbh/3ZaKN8hsGr0Sgxp0Mi9B37f81LZBReNwCAwaScb+akdD3ByyzqDEw8cbzCVICI+9B+EZhozQE0Mb9VudEgGvX87rhFCBAkAR6mrmu4mSXs+kwjOhTCQKiNbfbtSllT9HlNooibv92Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4Q3V8++I; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Y7sVe5FL; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1762024852;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zhGK+60JgBD3s2NPs/WG00WWgCrD3JAI9aGx3Giow6U=;
+	b=4Q3V8++IhPzdnCkY/fLpB838bS06LVS94OomrBx0h8qStWpHMqKWCW7j3ayeDgp5U0Lo/o
+	F+eq5PBK+kBuHixm5ic5qF0dA/DUmZ1MrUNzAo7FttEZuPrAzN9Bzo8DxZM1Me6JgPXR42
+	bd7fUT2D+vvzoQ8rYAboiMu1rOqt4/bM+p0UPIVOd13XLnr2+1lXWXq6dN8HEyX63uQvDG
+	YMGO6RzlzV2FncmPvQhB/oqPIK2uK0CKd+qE61wRVtsn0LfBbEhnqql3O3cjOpXguhyt9e
+	L7TETIY2pp3GHotPjDUBWjvuikX2V/O9q40/uAEYspHz64dZunswmNCX7hLAtQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1762024852;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zhGK+60JgBD3s2NPs/WG00WWgCrD3JAI9aGx3Giow6U=;
+	b=Y7sVe5FL9smASbvnWfH1rQIQ1Cxz51UnrlRZ8UUXPH2YhpFaoGbhA2mwjMjxokyAuxFRtd
+	t2+fvCz4NdQZAqDA==
+To: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
+ Josef Bacik <josef@toxicpanda.com>, Jeff Layton <jlayton@kernel.org>
+Cc: Jann Horn <jannh@google.com>, Mike Yuan <me@yhndnzj.com>, Zbigniew
+ =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, Lennart Poettering
+ <mzxreary@0pointer.de>, Daan De Meyer <daan.j.demeyer@gmail.com>, Aleksa
+ Sarai <cyphar@cyphar.com>, Amir Goldstein <amir73il@gmail.com>, Tejun Heo
+ <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, Alexander Viro
+ <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+ linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+ bpf@vger.kernel.org, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+ <kuba@kernel.org>, netdev@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+ Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH v4 18/72] nstree: add unified namespace list
+In-Reply-To: <20251029-work-namespace-nstree-listns-v4-18-2e6f823ebdc0@kernel.org>
+References: <20251029-work-namespace-nstree-listns-v4-0-2e6f823ebdc0@kernel.org>
+ <20251029-work-namespace-nstree-listns-v4-18-2e6f823ebdc0@kernel.org>
+Date: Sat, 01 Nov 2025 20:20:50 +0100
+Message-ID: <87ecqhy2y5.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251031174220.43458-4-mjguzik@gmail.com>
+Content-Type: text/plain
 
-Hi Mateusz,
+Christian!
 
-kernel test robot noticed the following build warnings:
+On Wed, Oct 29 2025 at 13:20, Christian Brauner wrote:
+> --- a/kernel/time/namespace.c
+> +++ b/kernel/time/namespace.c
+> @@ -488,6 +488,7 @@ struct time_namespace init_time_ns = {
+>  	.ns.ns_owner = LIST_HEAD_INIT(init_time_ns.ns.ns_owner),
+>  	.frozen_offsets	= true,
+>  	.ns.ns_list_node = LIST_HEAD_INIT(init_time_ns.ns.ns_list_node),
+> +	.ns.ns_unified_list_node = LIST_HEAD_INIT(init_time_ns.ns.ns_unified_list_node),
 
-[auto build test WARNING on arnd-asm-generic/master]
-[also build test WARNING on linus/master brauner-vfs/vfs.all v6.18-rc3 next-20251031]
-[cannot apply to linux/master]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Sorry that I did not catch that earlier, but
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Mateusz-Guzik/x86-fix-access_ok-and-valid_user_address-using-wrong-USER_PTR_MAX-in-modules/20251101-054539
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/arnd/asm-generic.git master
-patch link:    https://lore.kernel.org/r/20251031174220.43458-4-mjguzik%40gmail.com
-patch subject: [PATCH 3/3] fs: hide names_cachep behind runtime access machinery
-config: i386-randconfig-061-20251101 (https://download.01.org/0day-ci/archive/20251102/202511020147.47PufBIR-lkp@intel.com/config)
-compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251102/202511020147.47PufBIR-lkp@intel.com/reproduce)
+  1) this screws up the proper tabular struct initializer
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202511020147.47PufBIR-lkp@intel.com/
+  2) the churn of touching every compile time struct each time you add a
+     new field and add the same stupid initialization to each of them
+     can be avoided, when you do something like the uncompiled below.
+     You get the idea.
 
-sparse warnings: (new ones prefixed by >>)
-   fs/smb/client/link.c: note: in included file:
->> fs/smb/client/cifsproto.h:71:16: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
->> fs/smb/client/cifsproto.h:71:16: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
-   fs/smb/client/cifsproto.h:77:17: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
---
-   fs/smb/client/dir.c: note: in included file:
->> fs/smb/client/cifsproto.h:71:16: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
->> fs/smb/client/cifsproto.h:71:16: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
-   fs/smb/client/cifsproto.h:77:17: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
---
-   fs/smb/client/misc.c: note: in included file:
->> fs/smb/client/cifsproto.h:71:16: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
->> fs/smb/client/cifsproto.h:71:16: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
-   fs/smb/client/cifsproto.h:77:17: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
---
-   fs/smb/client/cifsfs.c: note: in included file:
->> fs/smb/client/cifsproto.h:71:16: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
->> fs/smb/client/cifsproto.h:71:16: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
-   fs/smb/client/cifsproto.h:77:17: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
---
-   fs/smb/client/ioctl.c: note: in included file:
->> fs/smb/client/cifsproto.h:71:16: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
->> fs/smb/client/cifsproto.h:71:16: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
-   fs/smb/client/cifsproto.h:77:17: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
---
-   fs/smb/client/inode.c: note: in included file:
->> fs/smb/client/cifsproto.h:71:16: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
->> fs/smb/client/cifsproto.h:71:16: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
-   fs/smb/client/cifsproto.h:77:17: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
---
-   fs/smb/client/file.c: note: in included file:
->> fs/smb/client/cifsproto.h:71:16: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
->> fs/smb/client/cifsproto.h:71:16: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
-   fs/smb/client/cifsproto.h:77:17: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
---
-   fs/smb/client/readdir.c: note: in included file:
->> fs/smb/client/cifsproto.h:71:16: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
->> fs/smb/client/cifsproto.h:71:16: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
-   fs/smb/client/cifsproto.h:77:17: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
---
-   fs/smb/client/namespace.c: note: in included file:
->> fs/smb/client/cifsproto.h:71:16: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
->> fs/smb/client/cifsproto.h:71:16: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
-   fs/smb/client/cifsproto.h:77:17: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
---
-   fs/smb/client/smb2ops.c: note: in included file:
->> fs/smb/client/cifsproto.h:71:16: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
->> fs/smb/client/cifsproto.h:71:16: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
-   fs/smb/client/cifsproto.h:77:17: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
+Thanks,
 
-vim +71 fs/smb/client/cifsproto.h
+        tglx
+---
+ fs/namespace.c            |    9 +--------
+ include/linux/ns_common.h |   12 ++++++++++++
+ init/version-timestamp.c  |    9 +--------
+ ipc/msgutil.c             |    9 +--------
+ kernel/pid.c              |    8 +-------
+ kernel/time/namespace.c   |    9 +--------
+ kernel/user.c             |    9 +--------
+ 7 files changed, 18 insertions(+), 47 deletions(-)
 
-b6b38f704a8193 fs/cifs/cifsproto.h Joe Perches        2010-04-21  48  
-6d5786a34d98bf fs/cifs/cifsproto.h Pavel Shilovsky    2012-06-20  49  #define free_xid(curr_xid)						\
-b6b38f704a8193 fs/cifs/cifsproto.h Joe Perches        2010-04-21  50  do {									\
-6d5786a34d98bf fs/cifs/cifsproto.h Pavel Shilovsky    2012-06-20  51  	_free_xid(curr_xid);						\
-a0a3036b81f1f6 fs/cifs/cifsproto.h Joe Perches        2020-04-14  52  	cifs_dbg(FYI, "VFS: leaving %s (xid = %u) rc = %d\n",		\
-b6b38f704a8193 fs/cifs/cifsproto.h Joe Perches        2010-04-21  53  		 __func__, curr_xid, (int)rc);				\
-d683bcd3e5d157 fs/cifs/cifsproto.h Steve French       2018-05-19  54  	if (rc)								\
-d683bcd3e5d157 fs/cifs/cifsproto.h Steve French       2018-05-19  55  		trace_smb3_exit_err(curr_xid, __func__, (int)rc);	\
-d683bcd3e5d157 fs/cifs/cifsproto.h Steve French       2018-05-19  56  	else								\
-d683bcd3e5d157 fs/cifs/cifsproto.h Steve French       2018-05-19  57  		trace_smb3_exit_done(curr_xid, __func__);		\
-b6b38f704a8193 fs/cifs/cifsproto.h Joe Perches        2010-04-21  58  } while (0)
-4d79dba0e00749 fs/cifs/cifsproto.h Shirish Pargaonkar 2011-04-27  59  extern int init_cifs_idmap(void);
-4d79dba0e00749 fs/cifs/cifsproto.h Shirish Pargaonkar 2011-04-27  60  extern void exit_cifs_idmap(void);
-b74cb9a80268be fs/cifs/cifsproto.h Sachin Prabhu      2016-05-17  61  extern int init_cifs_spnego(void);
-b74cb9a80268be fs/cifs/cifsproto.h Sachin Prabhu      2016-05-17  62  extern void exit_cifs_spnego(void);
-f6a9bc336b600e fs/cifs/cifsproto.h Al Viro            2021-03-05  63  extern const char *build_path_from_dentry(struct dentry *, void *);
-7ad54b98fc1f14 fs/cifs/cifsproto.h Paulo Alcantara    2022-12-18  64  char *__build_path_from_dentry_optional_prefix(struct dentry *direntry, void *page,
-7ad54b98fc1f14 fs/cifs/cifsproto.h Paulo Alcantara    2022-12-18  65  					       const char *tree, int tree_len,
-7ad54b98fc1f14 fs/cifs/cifsproto.h Paulo Alcantara    2022-12-18  66  					       bool prefix);
-268a635d414df4 fs/cifs/cifsproto.h Aurelien Aptel     2017-02-13  67  extern char *build_path_from_dentry_optional_prefix(struct dentry *direntry,
-f6a9bc336b600e fs/cifs/cifsproto.h Al Viro            2021-03-05  68  						    void *page, bool prefix);
-f6a9bc336b600e fs/cifs/cifsproto.h Al Viro            2021-03-05  69  static inline void *alloc_dentry_path(void)
-f6a9bc336b600e fs/cifs/cifsproto.h Al Viro            2021-03-05  70  {
-f6a9bc336b600e fs/cifs/cifsproto.h Al Viro            2021-03-05 @71  	return __getname();
-f6a9bc336b600e fs/cifs/cifsproto.h Al Viro            2021-03-05  72  }
-f6a9bc336b600e fs/cifs/cifsproto.h Al Viro            2021-03-05  73  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -5985,19 +5985,12 @@ SYSCALL_DEFINE4(listmount, const struct
+ }
+ 
+ struct mnt_namespace init_mnt_ns = {
+-	.ns.inum	= ns_init_inum(&init_mnt_ns),
++	.ns		= NS_COMMON_INIT(init_mnt_ns, 1, 1),
+ 	.ns.ops		= &mntns_operations,
+ 	.user_ns	= &init_user_ns,
+-	.ns.__ns_ref	= REFCOUNT_INIT(1),
+-	.ns.__ns_ref_active = ATOMIC_INIT(1),
+-	.ns.ns_type	= ns_common_type(&init_mnt_ns),
+ 	.passive	= REFCOUNT_INIT(1),
+ 	.mounts		= RB_ROOT,
+ 	.poll		= __WAIT_QUEUE_HEAD_INITIALIZER(init_mnt_ns.poll),
+-	.ns.ns_list_node = LIST_HEAD_INIT(init_mnt_ns.ns.ns_list_node),
+-	.ns.ns_unified_list_node = LIST_HEAD_INIT(init_mnt_ns.ns.ns_unified_list_node),
+-	.ns.ns_owner_entry = LIST_HEAD_INIT(init_mnt_ns.ns.ns_owner_entry),
+-	.ns.ns_owner = LIST_HEAD_INIT(init_mnt_ns.ns.ns_owner),
+ };
+ 
+ static void __init init_mount_tree(void)
+--- a/include/linux/ns_common.h
++++ b/include/linux/ns_common.h
+@@ -129,6 +129,18 @@ struct ns_common {
+ 	};
+ };
+ 
++#define NS_COMMON_INIT(nsname, refs, active)						\
++{											\
++	.ns_type		= ns_common_type(&nsname),				\
++	.inum			= ns_init_inum(&nsname),				\
++	.__ns_ref		= REFCOUNT_INIT(refs),					\
++	.__ns_ref_active	= ATOMIC_INIT(active),					\
++	.ns_list_node		= LIST_HEAD_INIT(nsname.ns.ns_list_node),		\
++	.ns_unified_list_node	= LIST_HEAD_INIT(nsname.ns.ns_unified_list_node),	\
++	.ns_owner_entry		= LIST_HEAD_INIT(nsname.ns.ns_owner_entry),		\
++	.ns_owner		= LIST_HEAD_INIT(nsname.ns.ns_owner),			\
++}
++
+ int __ns_common_init(struct ns_common *ns, u32 ns_type, const struct proc_ns_operations *ops, int inum);
+ void __ns_common_free(struct ns_common *ns);
+ 
+--- a/init/version-timestamp.c
++++ b/init/version-timestamp.c
+@@ -8,9 +8,7 @@
+ #include <linux/utsname.h>
+ 
+ struct uts_namespace init_uts_ns = {
+-	.ns.ns_type = ns_common_type(&init_uts_ns),
+-	.ns.__ns_ref = REFCOUNT_INIT(2),
+-	.ns.__ns_ref_active = ATOMIC_INIT(1),
++	.ns = NS_COMMON_INIT(init_uts_ns, 2, 1),
+ 	.name = {
+ 		.sysname	= UTS_SYSNAME,
+ 		.nodename	= UTS_NODENAME,
+@@ -20,11 +18,6 @@ struct uts_namespace init_uts_ns = {
+ 		.domainname	= UTS_DOMAINNAME,
+ 	},
+ 	.user_ns = &init_user_ns,
+-	.ns.inum = ns_init_inum(&init_uts_ns),
+-	.ns.ns_list_node = LIST_HEAD_INIT(init_uts_ns.ns.ns_list_node),
+-	.ns.ns_unified_list_node = LIST_HEAD_INIT(init_uts_ns.ns.ns_unified_list_node),
+-	.ns.ns_owner_entry = LIST_HEAD_INIT(init_uts_ns.ns.ns_owner_entry),
+-	.ns.ns_owner = LIST_HEAD_INIT(init_uts_ns.ns.ns_owner),
+ #ifdef CONFIG_UTS_NS
+ 	.ns.ops = &utsns_operations,
+ #endif
+--- a/ipc/msgutil.c
++++ b/ipc/msgutil.c
+@@ -27,18 +27,11 @@ DEFINE_SPINLOCK(mq_lock);
+  * and not CONFIG_IPC_NS.
+  */
+ struct ipc_namespace init_ipc_ns = {
+-	.ns.__ns_ref = REFCOUNT_INIT(1),
+-	.ns.__ns_ref_active = ATOMIC_INIT(1),
++	.ns = NS_COMMON_INIT(init_ipc_ns, 1, 1),
+ 	.user_ns = &init_user_ns,
+-	.ns.inum = ns_init_inum(&init_ipc_ns),
+-	.ns.ns_list_node = LIST_HEAD_INIT(init_ipc_ns.ns.ns_list_node),
+-	.ns.ns_unified_list_node = LIST_HEAD_INIT(init_ipc_ns.ns.ns_unified_list_node),
+-	.ns.ns_owner_entry = LIST_HEAD_INIT(init_ipc_ns.ns.ns_owner_entry),
+-	.ns.ns_owner = LIST_HEAD_INIT(init_ipc_ns.ns.ns_owner),
+ #ifdef CONFIG_IPC_NS
+ 	.ns.ops = &ipcns_operations,
+ #endif
+-	.ns.ns_type = ns_common_type(&init_ipc_ns),
+ };
+ 
+ struct msg_msgseg {
+--- a/kernel/pid.c
++++ b/kernel/pid.c
+@@ -71,18 +71,12 @@ static int pid_max_max = PID_MAX_LIMIT;
+  * the scheme scales to up to 4 million PIDs, runtime.
+  */
+ struct pid_namespace init_pid_ns = {
+-	.ns.__ns_ref = REFCOUNT_INIT(2),
+-	.ns.__ns_ref_active = ATOMIC_INIT(1),
++	.ns = NS_COMMON_INIT(init_pid_ns, 2, 1),
+ 	.idr = IDR_INIT(init_pid_ns.idr),
+ 	.pid_allocated = PIDNS_ADDING,
+ 	.level = 0,
+ 	.child_reaper = &init_task,
+ 	.user_ns = &init_user_ns,
+-	.ns.inum = ns_init_inum(&init_pid_ns),
+-	.ns.ns_list_node = LIST_HEAD_INIT(init_pid_ns.ns.ns_list_node),
+-	.ns.ns_unified_list_node = LIST_HEAD_INIT(init_pid_ns.ns.ns_unified_list_node),
+-	.ns.ns_owner_entry = LIST_HEAD_INIT(init_pid_ns.ns.ns_owner_entry),
+-	.ns.ns_owner = LIST_HEAD_INIT(init_pid_ns.ns.ns_owner),
+ #ifdef CONFIG_PID_NS
+ 	.ns.ops = &pidns_operations,
+ #endif
+--- a/kernel/time/namespace.c
++++ b/kernel/time/namespace.c
+@@ -478,17 +478,10 @@ const struct proc_ns_operations timens_f
+ };
+ 
+ struct time_namespace init_time_ns = {
+-	.ns.ns_type	= ns_common_type(&init_time_ns),
+-	.ns.__ns_ref	= REFCOUNT_INIT(3),
+-	.ns.__ns_ref_active = ATOMIC_INIT(1),
++	.ns		= NS_COMMON_INIT(init_time_ns, 3, 1),
+ 	.user_ns	= &init_user_ns,
+-	.ns.inum	= ns_init_inum(&init_time_ns),
+ 	.ns.ops		= &timens_operations,
+-	.ns.ns_owner_entry = LIST_HEAD_INIT(init_time_ns.ns.ns_owner_entry),
+-	.ns.ns_owner = LIST_HEAD_INIT(init_time_ns.ns.ns_owner),
+ 	.frozen_offsets	= true,
+-	.ns.ns_list_node = LIST_HEAD_INIT(init_time_ns.ns.ns_list_node),
+-	.ns.ns_unified_list_node = LIST_HEAD_INIT(init_time_ns.ns.ns_unified_list_node),
+ };
+ 
+ void __init time_ns_init(void)
+--- a/kernel/user.c
++++ b/kernel/user.c
+@@ -65,16 +65,9 @@ struct user_namespace init_user_ns = {
+ 			.nr_extents = 1,
+ 		},
+ 	},
+-	.ns.ns_type = ns_common_type(&init_user_ns),
+-	.ns.__ns_ref = REFCOUNT_INIT(3),
+-	.ns.__ns_ref_active = ATOMIC_INIT(1),
++	.ns = NS_COMMON_INIT(init_user_ns, 3, 1),
+ 	.owner = GLOBAL_ROOT_UID,
+ 	.group = GLOBAL_ROOT_GID,
+-	.ns.inum = ns_init_inum(&init_user_ns),
+-	.ns.ns_list_node = LIST_HEAD_INIT(init_user_ns.ns.ns_list_node),
+-	.ns.ns_unified_list_node = LIST_HEAD_INIT(init_user_ns.ns.ns_unified_list_node),
+-	.ns.ns_owner_entry = LIST_HEAD_INIT(init_user_ns.ns.ns_owner_entry),
+-	.ns.ns_owner = LIST_HEAD_INIT(init_user_ns.ns.ns_owner),
+ #ifdef CONFIG_USER_NS
+ 	.ns.ops = &userns_operations,
+ #endif
 
