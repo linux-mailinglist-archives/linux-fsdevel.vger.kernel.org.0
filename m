@@ -1,247 +1,192 @@
-Return-Path: <linux-fsdevel+bounces-66677-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66678-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 216E2C283E9
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 01 Nov 2025 18:36:28 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BA05C28434
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 01 Nov 2025 18:49:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B20423497AC
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Nov 2025 17:36:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 06C4F4E1BE9
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Nov 2025 17:49:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44C002F9DA0;
-	Sat,  1 Nov 2025 17:36:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65D1D277C9B;
+	Sat,  1 Nov 2025 17:49:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="bmKcNf3b"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IGHSl59l"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D07E92C0286
-	for <linux-fsdevel@vger.kernel.org>; Sat,  1 Nov 2025 17:36:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E13752701D8;
+	Sat,  1 Nov 2025 17:49:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762018580; cv=none; b=IdZyyHLnl04Dmr+UD/VAonit6opdBEB9SmJ0BX9Tvtf9NWTvZc8U83cQq3wSGtfHyr/voyE1tHU5p00GjICAQFzJgEmO+fc+sUOX8h6XYx8t8UzBTIGhs5vx4WuAaIQ9p1BF3Jm5a79XCP4+Xs2VepG9tuzxxvNnvLRh1UDHZ98=
+	t=1762019379; cv=none; b=R0fGg0Ear8RQ6bLwaHVavEQnXKjlrlV7epbJd9XzReMGfGALMSVyzVyCmryOpXoeTrjFFtjf3j/8JaEAHetDaK1w4soQ2/s1PFJ+owCze1U2LobPxVFf1N70slEPJfESWPBFosoN+S22WNvRjNMbNYcF3M89zPpVbZ6L9NiSVnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762018580; c=relaxed/simple;
-	bh=qf+ePpzEwV0T+sTFpqMnaKsTkQ7S334BUUkS2amf07A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=N3w27TwGThhZEouj2bFwwudV9FkUtWkG+THWKNknnJp8yHzFIyMytTO1J0cia7rGsnwzJEAe7uDpQf+9EnlU/ZieSKnyaz4jw8beT1CS/Y6iHjD+t6iAWeMqWht3Gp2Yro1wdfOHfqYRZu+FyKUHSsdius/P8naOFs5jwPs6dnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=bmKcNf3b; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-793021f348fso2767540b3a.1
-        for <linux-fsdevel@vger.kernel.org>; Sat, 01 Nov 2025 10:36:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1762018578; x=1762623378; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LyP1MTVcSsvaltoQodpw/+JP577TbPxpgLTVd2irWKs=;
-        b=bmKcNf3b0d51rp7vCe1Z1Y4WfxolfO5r0F3dejGvegs0J0dN0FVs/E5qvNHJTrj3oq
-         78TBpuYuAPzjkDiisX91VxNPNJoY3faYPhpLTCcnQnYn82PpiG8MaAVSF2k0+GxWLs2i
-         j6vSd8TuV0NLXQ9MkMAOJZaLJiBL78WzxgsKv/fuPylMiGSk3KzArc7o2GWeSrKh4z8t
-         FzcTdLpWom/hL2tr7wQ4W6wDC9uqkGmZIgzruWhyJK1UTM8zgutp8QZNL+IgitPjffFH
-         490vYogFhehf/3LleDmma1Nngh31HHFPGJ8JClzTmp4JJSSmmMSks2/SkaBDDYSyklTp
-         7rGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762018578; x=1762623378;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LyP1MTVcSsvaltoQodpw/+JP577TbPxpgLTVd2irWKs=;
-        b=L3Fbq2FZYK+Qnp90mv6L1SGwZwsKD0Ax4qqv6+S4yJCA8cenK8pWNFev0S/nNuVoXj
-         MkGfTk45OVD4w9A/36L1dzh/EKz/ZAHYhn8js8SK/d4+bdQJ6TJs+Aa6OB2PstuRC2x7
-         UM0nwon4Vxb5wWXR0ikrCFNLbk573HFWRZmxVoAA0HoL7U5pS1zjfm6Ur0IJbgkozw09
-         5N+VgcYDaTkaoGyLC66YCk/hCjmI1eMbNXJQq4DOgVMh7iMXOPQKOK7w3Xfcar68xttT
-         FjGh6rSXQCQudiQnmSuQSZ6XMfgpP3USpjl1Kw1t+ACCbIb1rXBpF7OlrYUEqp74YCN4
-         82Sg==
-X-Forwarded-Encrypted: i=1; AJvYcCWG+9tg6jr8exer0Xcv2xvHJRHBOHSAeyLYSLXksdXAXYUwQObpv/Wgswk6UvQ8TbZO9BYpKbQSLytwrPs7@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8ZIi2TnFkOn9M2VFlABWwe5GOstc6xvQ9Ep1LhgflcZnguFno
-	f+hSz/yJNrUvy/02/eTbjC6xa0ZQsaztyyEQpq4Ps7hGIWjeyNaxHCxVLzMmx50hgwYg+JArrsW
-	b9btNFOEezlx+p1pPCF7qU5+b+B4G+AgzfG8yjNQZ
-X-Gm-Gg: ASbGncuLeZMd2mLyxwfprVYUa3M2sLLQGuuoJ4LKQlPXlafxnvAuRJBpLsqQ16h669l
-	UCzN3Phw1yd8D2deLiDqmN8h5FRXHIIPd832YNCntTUhpS6j7aWxYmfj9cJpGGycK6XiQSrd131
-	6HDNeMdSA+29IAAXMqDE2PQe578NJAmvtOU/Rlo92XYgD8YDC2/AkHOvF73ND39uGCkZXT/TB88
-	KwVw5OMDk6K5Ihiq8/M9R0LY7hlnTLmZew7WKEedeY4MQ9A/lrAQgglh2njkyuQu7iBLQI=
-X-Google-Smtp-Source: AGHT+IHJixs3LJQKqZ6RgM4jbxOe6M9rOVhd3EkrJ5bmspsc9xawkZoiw/W6biXQ+gB/NK1xJYNE4PeS+rXwIu/l6zQ=
-X-Received: by 2002:a05:6a20:6a0b:b0:334:9b5d:3876 with SMTP id
- adf61e73a8af0-348c9d69d6cmr9955170637.4.1762018577974; Sat, 01 Nov 2025
- 10:36:17 -0700 (PDT)
+	s=arc-20240116; t=1762019379; c=relaxed/simple;
+	bh=ij1XrhRwLm7shGtODy/du1WAYcGn3j6QGULbLxSBhh4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oADz4o0T1GwJWbABM0AYTK7UoS6OnHDXR1aVS7pRdtg3yF7JAuhS4BYSCIG9LCym4qiaXOvCstew+fnAtzaLGBmojtTlIEL316fshKPt4QCy8pIUixRGftxkNIbU9goKNUHZAuCLI7O/bU71BmC5IThT3KUYtp6DcmbF0qGRPMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IGHSl59l; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762019378; x=1793555378;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ij1XrhRwLm7shGtODy/du1WAYcGn3j6QGULbLxSBhh4=;
+  b=IGHSl59lzym8cxNWkwHd+Noll82xG1txm9NC56/f5BDbJ1poD57iAJjK
+   82gFy9x/7oY0odRI2HW41D/0Xpqlx0u1jYDK+Td6URBuGFNA+m3nZcTjc
+   EVjFESqPxQH2aC0gVXLS08VPLufn+NcqjqVo4TnS58QKAZMKe/xZK30Pb
+   FRqmn0q47Zbg3QvDW1sfZVLcifDpGp/t8ebUT3LeK/pLnUsm9Wkrj+bNS
+   yg8sm5m2rZdEa7CsN8MLdF2pO3vckk3kD6A1AgazS/a5WFAfxlEX2kPVO
+   anOXUILLfGTuxmsRJz/7LRYTrEwjxoF07s0BO/Y5WotIDuTAqsAly8cgE
+   Q==;
+X-CSE-ConnectionGUID: Ms92yDeuQx2Sub3vBTQfjg==
+X-CSE-MsgGUID: iB6u2aNHSm+/E0OvoXWHOA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11600"; a="63176875"
+X-IronPort-AV: E=Sophos;i="6.19,272,1754982000"; 
+   d="scan'208";a="63176875"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2025 10:49:37 -0700
+X-CSE-ConnectionGUID: X6ptYErhTnmJ70iMbDKTVg==
+X-CSE-MsgGUID: 2ob+0bbGSV62bpZuymtMqw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,272,1754982000"; 
+   d="scan'208";a="185776408"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by orviesa010.jf.intel.com with ESMTP; 01 Nov 2025 10:49:35 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vFFjI-000OXU-12;
+	Sat, 01 Nov 2025 17:49:32 +0000
+Date: Sun, 2 Nov 2025 01:49:19 +0800
+From: kernel test robot <lkp@intel.com>
+To: Mateusz Guzik <mjguzik@gmail.com>, torvalds@linux-foundation.org
+Cc: oe-kbuild-all@lists.linux.dev, brauner@kernel.org,
+	viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, tglx@linutronix.de, pfalcato@suse.de,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: Re: [PATCH 3/3] fs: hide names_cachep behind runtime access machinery
+Message-ID: <202511020147.47PufBIR-lkp@intel.com>
+References: <20251031174220.43458-4-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251031080615.GB2441659@ZenIV>
-In-Reply-To: <20251031080615.GB2441659@ZenIV>
-From: Paul Moore <paul@paul-moore.com>
-Date: Sat, 1 Nov 2025 13:36:06 -0400
-X-Gm-Features: AWmQ_bkElVTmY1Q6A1T5hxRqSk7rkRDygri652wrM2uBDucqgiGJyvzOlz080g4
-Message-ID: <CAHC9VhTqhGCPJ37mAhKRE2SEnHup5+gSPoZV-SZkoszfcUk0xw@mail.gmail.com>
-Subject: Re: [viro@zeniv.linux.org.uk: [RFC] audit reporting (or not
- reporting) pathnames on early failures in syscalls]
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: audit@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251031174220.43458-4-mjguzik@gmail.com>
 
-On Fri, Oct 31, 2025 at 4:06=E2=80=AFAM Al Viro <viro@zeniv.linux.org.uk> w=
-rote:
->         FWIW, I've just noticed that a patch in the series I'd been
-> reordering had the following chunk:
-> @@ -1421,20 +1421,16 @@ static int do_sys_openat2(int dfd, const char __u=
-ser *filename,
->                           struct open_how *how)
->  {
->         struct open_flags op;
-> -       struct filename *tmp;
->         int err, fd;
->
->         err =3D build_open_flags(how, &op);
->         if (unlikely(err))
->                 return err;
->
-> -       tmp =3D getname(filename);
-> -       if (IS_ERR(tmp))
-> -               return PTR_ERR(tmp);
-> -
->         fd =3D get_unused_fd_flags(how->flags);
->         if (likely(fd >=3D 0)) {
-> -               struct file *f =3D do_filp_open(dfd, tmp, &op);
-> +               struct filename *name __free(putname) =3D getname(filenam=
-e);
-> +               struct file *f =3D do_filp_open(dfd, name, &op);
->                 if (IS_ERR(f)) {
->                         put_unused_fd(fd);
->                         fd =3D PTR_ERR(f);
->
->         From the VFS or userland POV there's no problem - we would get a
-> different error reported e.g. in case when *both* EMFILE and ENAMETOOLONG
-> would be applicable, but that's perfectly fine.  However, from the audit
-> POV it changes behaviour.
->
->         Consider behaviour of openat2(2).
-> 1.  we do sanity checks on the last ('usize') argument.  If they
-> fail, we are done.
-> 2.  we copy struct open_how from userland ('how' argument).
-> If copyin fails, we are done.
-> 3.  we do sanity checks on how->flags, how->resolve and how->mode.
-> If they fail, we are done.
-> 4.  we copy the pathname to be opened from userland ('filename' argument)=
-.
-> If that fails, or if the pathname is either empty or too long, we are don=
-e.
-> 5.  we reserve an unused file descriptor.  If that fails, we are done.
-> 6.  we allocate an empty struct file.  If that fails, we are done.
-> 7.  we finally get around to the business - finding and opening the damn =
-thing.
-> Which also can fail, of course.
->
->         We are expected to be able to produce a record of failing
-> syscall.  If we fail on step 4, well, the lack of pathname to come with
-> the record is to be expected - we have failed to get it, after all.
-> The same goes for failures on steps 1..3 - we hadn't gotten around to
-> looking at the pathname yet, so there's no pathname to report.  What (if
-> anything) makes "insane how->flags" different from "we have too many
-> descriptors opened already"?  The contents of the pathname is equally
-> irrelevant in both cases.  Yet in the latter case (failure at step 5)
-> the pathname would get reported.  Do we need to preserve that behaviour?
+Hi Mateusz,
 
-With the only real difference, from an audit perspective, between the
-current behavior and the proposed reordering being audit doesn't
-record a pathname in the case a fd can't be allocated, I'm not too
-bothered by the change.
+kernel test robot noticed the following build warnings:
 
-Based on discussions with people that actually use audit on real
-systems, on open failure the pathname is most interesting when the
-failure is caused by a permission failure somewhere along the path
-walk, the you're-trying-to-access-things-you-shouldn't-be-accessing
-case.  Even with the reordering we still do the getname() call before
-the do_filp_open() (duh) so we are fine in that regard.
+[auto build test WARNING on arnd-asm-generic/master]
+[also build test WARNING on linus/master brauner-vfs/vfs.all v6.18-rc3 next-20251031]
+[cannot apply to linux/master]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-I suppose one could make an argument about someone possibly trying to
-do something "bad" and bumping into the open file limit, either as a
-test or the exploit itself, and wanting to audit that.  However, in
-this case I think the pathname is probably the least interesting thing
-here, the goal would likely be to successfully open the file (or hit
-the limit) in which case the user would surely pick a file they know
-they would be able to open, making the pathname a bit boring and not
-very useful as an indicator of bad behavior.
+url:    https://github.com/intel-lab-lkp/linux/commits/Mateusz-Guzik/x86-fix-access_ok-and-valid_user_address-using-wrong-USER_PTR_MAX-in-modules/20251101-054539
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/arnd/asm-generic.git master
+patch link:    https://lore.kernel.org/r/20251031174220.43458-4-mjguzik%40gmail.com
+patch subject: [PATCH 3/3] fs: hide names_cachep behind runtime access machinery
+config: i386-randconfig-061-20251101 (https://download.01.org/0day-ci/archive/20251102/202511020147.47PufBIR-lkp@intel.com/config)
+compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251102/202511020147.47PufBIR-lkp@intel.com/reproduce)
 
->         Because the patch quoted above would change it.  It puts the fail=
-ure
-> to allocate a descriptor into the same situation as failures on steps 1..=
-3.
->
->         As far as I can see, there are three possible approaches:
->
-> 1) if the current kernel imports the pathname before some check, that sha=
-ll
-> always remain that way, no matter what.  Audit might be happy, but nobody
-> else would - we'll need to document that constraint and watch out for suc=
-h
-> regressions.  And I'm pretty sure that over the years there had been
-> other such changes that went into mainline unnoticed.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202511020147.47PufBIR-lkp@intel.com/
 
-Re: regressions ... sadly we don't have great audit test coverage at
-this point.  We used to have a pretty good test suite thanks to the
-security certification work, but I never could get the distros to do
-the maintenance/upkeep of the test suite outside the scope of the
-certification effort so it has fallen out of use.  We've got a
-smaller, easier to run and maintain test suite which is "okay" but it
-still has a number of gaps; thankfully we're starting to see some
-renewed effort there which makes me happy.
+sparse warnings: (new ones prefixed by >>)
+   fs/smb/client/link.c: note: in included file:
+>> fs/smb/client/cifsproto.h:71:16: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
+>> fs/smb/client/cifsproto.h:71:16: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
+   fs/smb/client/cifsproto.h:77:17: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
+--
+   fs/smb/client/dir.c: note: in included file:
+>> fs/smb/client/cifsproto.h:71:16: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
+>> fs/smb/client/cifsproto.h:71:16: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
+   fs/smb/client/cifsproto.h:77:17: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
+--
+   fs/smb/client/misc.c: note: in included file:
+>> fs/smb/client/cifsproto.h:71:16: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
+>> fs/smb/client/cifsproto.h:71:16: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
+   fs/smb/client/cifsproto.h:77:17: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
+--
+   fs/smb/client/cifsfs.c: note: in included file:
+>> fs/smb/client/cifsproto.h:71:16: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
+>> fs/smb/client/cifsproto.h:71:16: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
+   fs/smb/client/cifsproto.h:77:17: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
+--
+   fs/smb/client/ioctl.c: note: in included file:
+>> fs/smb/client/cifsproto.h:71:16: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
+>> fs/smb/client/cifsproto.h:71:16: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
+   fs/smb/client/cifsproto.h:77:17: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
+--
+   fs/smb/client/inode.c: note: in included file:
+>> fs/smb/client/cifsproto.h:71:16: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
+>> fs/smb/client/cifsproto.h:71:16: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
+   fs/smb/client/cifsproto.h:77:17: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
+--
+   fs/smb/client/file.c: note: in included file:
+>> fs/smb/client/cifsproto.h:71:16: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
+>> fs/smb/client/cifsproto.h:71:16: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
+   fs/smb/client/cifsproto.h:77:17: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
+--
+   fs/smb/client/readdir.c: note: in included file:
+>> fs/smb/client/cifsproto.h:71:16: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
+>> fs/smb/client/cifsproto.h:71:16: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
+   fs/smb/client/cifsproto.h:77:17: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
+--
+   fs/smb/client/namespace.c: note: in included file:
+>> fs/smb/client/cifsproto.h:71:16: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
+>> fs/smb/client/cifsproto.h:71:16: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
+   fs/smb/client/cifsproto.h:77:17: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
+--
+   fs/smb/client/smb2ops.c: note: in included file:
+>> fs/smb/client/cifsproto.h:71:16: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
+>> fs/smb/client/cifsproto.h:71:16: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
+   fs/smb/client/cifsproto.h:77:17: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
 
-> 2) reordering is acceptable.  Of course, the pathname import must happen
-> before we start using it, but that's the only real constraint.  That woul=
-d
-> mean the least headache for everyone other than audit folks.
+vim +71 fs/smb/client/cifsproto.h
 
-I'm not sure it really bothers me at this point in time.  Can we make
-an agreement that reordering is okay right now, but if we have a
-certification requirement in the future about having a pathname if
-earlier we can revisit/rework this?
+b6b38f704a8193 fs/cifs/cifsproto.h Joe Perches        2010-04-21  48  
+6d5786a34d98bf fs/cifs/cifsproto.h Pavel Shilovsky    2012-06-20  49  #define free_xid(curr_xid)						\
+b6b38f704a8193 fs/cifs/cifsproto.h Joe Perches        2010-04-21  50  do {									\
+6d5786a34d98bf fs/cifs/cifsproto.h Pavel Shilovsky    2012-06-20  51  	_free_xid(curr_xid);						\
+a0a3036b81f1f6 fs/cifs/cifsproto.h Joe Perches        2020-04-14  52  	cifs_dbg(FYI, "VFS: leaving %s (xid = %u) rc = %d\n",		\
+b6b38f704a8193 fs/cifs/cifsproto.h Joe Perches        2010-04-21  53  		 __func__, curr_xid, (int)rc);				\
+d683bcd3e5d157 fs/cifs/cifsproto.h Steve French       2018-05-19  54  	if (rc)								\
+d683bcd3e5d157 fs/cifs/cifsproto.h Steve French       2018-05-19  55  		trace_smb3_exit_err(curr_xid, __func__, (int)rc);	\
+d683bcd3e5d157 fs/cifs/cifsproto.h Steve French       2018-05-19  56  	else								\
+d683bcd3e5d157 fs/cifs/cifsproto.h Steve French       2018-05-19  57  		trace_smb3_exit_done(curr_xid, __func__);		\
+b6b38f704a8193 fs/cifs/cifsproto.h Joe Perches        2010-04-21  58  } while (0)
+4d79dba0e00749 fs/cifs/cifsproto.h Shirish Pargaonkar 2011-04-27  59  extern int init_cifs_idmap(void);
+4d79dba0e00749 fs/cifs/cifsproto.h Shirish Pargaonkar 2011-04-27  60  extern void exit_cifs_idmap(void);
+b74cb9a80268be fs/cifs/cifsproto.h Sachin Prabhu      2016-05-17  61  extern int init_cifs_spnego(void);
+b74cb9a80268be fs/cifs/cifsproto.h Sachin Prabhu      2016-05-17  62  extern void exit_cifs_spnego(void);
+f6a9bc336b600e fs/cifs/cifsproto.h Al Viro            2021-03-05  63  extern const char *build_path_from_dentry(struct dentry *, void *);
+7ad54b98fc1f14 fs/cifs/cifsproto.h Paulo Alcantara    2022-12-18  64  char *__build_path_from_dentry_optional_prefix(struct dentry *direntry, void *page,
+7ad54b98fc1f14 fs/cifs/cifsproto.h Paulo Alcantara    2022-12-18  65  					       const char *tree, int tree_len,
+7ad54b98fc1f14 fs/cifs/cifsproto.h Paulo Alcantara    2022-12-18  66  					       bool prefix);
+268a635d414df4 fs/cifs/cifsproto.h Aurelien Aptel     2017-02-13  67  extern char *build_path_from_dentry_optional_prefix(struct dentry *direntry,
+f6a9bc336b600e fs/cifs/cifsproto.h Al Viro            2021-03-05  68  						    void *page, bool prefix);
+f6a9bc336b600e fs/cifs/cifsproto.h Al Viro            2021-03-05  69  static inline void *alloc_dentry_path(void)
+f6a9bc336b600e fs/cifs/cifsproto.h Al Viro            2021-03-05  70  {
+f6a9bc336b600e fs/cifs/cifsproto.h Al Viro            2021-03-05 @71  	return __getname();
+f6a9bc336b600e fs/cifs/cifsproto.h Al Viro            2021-03-05  72  }
+f6a9bc336b600e fs/cifs/cifsproto.h Al Viro            2021-03-05  73  
 
-... and yes, I know people hate security certifications, and just
-"security" in general.  Fine, whatever, good for you.  However, like
-it or not, these certifications make or break the use of Linux in a
-number of situations that are important to a lot of users.  If we want
-to ensure that Linux continues to be a viable solution across a large
-number of use cases, and not just the small handful of hyperscalers,
-one of the things we need to do is make sure Linux can continue to
-meet these security certifications.
-
-> 3) import the pathnames as early as possible.  It would mean a non-trivia=
-l
-> amount of churn, but it's at least a definite policy - validity of change
-> depends only on the resulting code, not the comparison with the earlier
-> state, as it would in case (1).  From QoI POV it's as nice as audit folks
-> could possibly ask, but it would cause quite a bit of churn to get there.
-> Not impossible to do, but I would rather not go there without a need.
-> Said that, struct filename handling is mostly a decent match to CLASS()
-> machinery, and all required churn wouldn't be hard to fold into conversio=
-n
-> to that.
->
->         My preference would be (2), obviously.  However, it really depend=
-s
-> upon the kind of requirements audit users have.  Note that currently the
-> position of pathname import in the sequence is not documented anywhere,
-> so there's not much audit users can rely upon other than "the current
-> behaviour is such-and-such, let's hope it doesn't change"... ;-/
-
-Like I said above, I'm okay with option #2 so long as we can move the
-pathname capture earlier if needed at some point in the future.  I
-don't want to inflict pain on the kernel if it isn't needed, but I've
-also grown very weary of having to fight with every subsystem out
-there to claw things back that are necessary for adoption.  If you
-need a hard and fast policy now, then it would have to be option #3,
-but if we all promise to be reasonable adults I'm okay with option #2.
-
---=20
-paul-moore.com
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
