@@ -1,108 +1,97 @@
-Return-Path: <linux-fsdevel+bounces-66693-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66694-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEBC5C2932C
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 02 Nov 2025 18:07:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B42C7C29412
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 02 Nov 2025 18:38:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 537F54E80A4
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Nov 2025 17:06:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3105C3AD16E
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Nov 2025 17:38:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B41F2D9ECD;
-	Sun,  2 Nov 2025 17:06:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BhT/8kc9"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 121C02DF6E6;
+	Sun,  2 Nov 2025 17:38:05 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0B3A1F4169
-	for <linux-fsdevel@vger.kernel.org>; Sun,  2 Nov 2025 17:06:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3502A2DEA6A
+	for <linux-fsdevel@vger.kernel.org>; Sun,  2 Nov 2025 17:38:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762103195; cv=none; b=RMKcdmiH+2uepMm1aNZh0GynrrZSRyOMal8YhHF+HmnULspYZ1Wjn9uB1BBGOJ3Apur8zmGyue9uFYOExT2WWoG958EMaQdqtKINvmS3k4vV7+ib7ZNVjDPCuvNPMssN6L0mwd65DShq1JVnEX4JAaAUZbLsiDNsc22NnjKekL0=
+	t=1762105084; cv=none; b=JbZuRFq03y4R3nQXlKdTicIT1keJQ84ofca8NxAV6sls+ww7fp2r8upXlDon1Ey/iyvg7sdidLfbmq2huNZwJmqeRsv8GCf4rViknWe1QpfJFpEsC71UNFr7lp+Ola8/DgIfVKeJd3YLkRhaXbv0YdfUOYc2j6Rf3BcjROojowA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762103195; c=relaxed/simple;
-	bh=oedeZmsFxLhCFl1kUSF9/KJ/zIF/AaWI2eynqQGqXh4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sM4GKn6nPis37rvE9AEMqb+0Y0Io/oN+6qZrKGfpRGTT1W5iACkMf54WGXEYo+tA66GRXVffMfUbiR0vN89kvsuuqdm2YtP/NmrZ5SSiafskVO+KIa+zNqYR9e57XihvJooKZuOlV57H+YEwnCmu8AI57yb+7Xg3DFnmGqzeEO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BhT/8kc9; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762103192;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KP4XinEpyvd8kaWWhUtBs6CxqYLY+EFwwqKCaZv/Q+U=;
-	b=BhT/8kc9YEstHQuhb50HeVV18A6M5OwWUR4gFnGWxvG08uYdQ7O7G7oHOLAKyXYfUeWzzG
-	VyFfz2IWaVTNq72rJYd7U+lu0Vdgyg/zHv8KNb/TQqYRxCV7L26e0IN7nLMNnnqiWdAZKd
-	f5tWypq4zCkjORyr4BPE/9jHmP1ZDAI=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-98--iPxFb9KM8WqsRCXT3-xOQ-1; Sun,
- 02 Nov 2025 12:06:07 -0500
-X-MC-Unique: -iPxFb9KM8WqsRCXT3-xOQ-1
-X-Mimecast-MFC-AGG-ID: -iPxFb9KM8WqsRCXT3-xOQ_1762103120
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BB6A619541B5;
-	Sun,  2 Nov 2025 17:05:18 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.84])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id B31AD1800576;
-	Sun,  2 Nov 2025 17:05:12 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Sun,  2 Nov 2025 18:04:01 +0100 (CET)
-Date: Sun, 2 Nov 2025 18:03:54 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
-	Aleksa Sarai <cyphar@cyphar.com>,
-	Yu Watanabe <watanabe.yu+github@gmail.com>,
-	Josef Bacik <josef@toxicpanda.com>,
-	Jeff Layton <jlayton@kernel.org>, Jann Horn <jannh@google.com>,
-	Luca Boccassi <luca.boccassi@gmail.com>,
-	Alexander Mikhalitsyn <alexander@mihalicyn.com>,
-	linux-kernel@vger.kernel.org,
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-	Lennart Poettering <lennart@poettering.net>,
-	Mike Yuan <me@yhndnzj.com>,
-	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>
-Subject: Re: [PATCH 00/22] coredump: cleanups & pidfd extension
-Message-ID: <20251102170353.GA3837@redhat.com>
-References: <20251028-work-coredump-signal-v1-0-ca449b7b7aa0@kernel.org>
+	s=arc-20240116; t=1762105084; c=relaxed/simple;
+	bh=o0FIdqFREk++l3J1v2J3tW9h4pt95Mr7/7IG2Ece5Aw=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=g7G4pRLgJkIY3oKTRvx00gZwRJXlRHI9b23b/PM+OzI56CvfQuVL/e9fRwX0P6iPAbrGcx+wkQyDpjDDt/klhMKSJoaoSNqMGaiDSvj9YHv8jo+aMSKSkFjUyJsJW/1eJ7lTnOA55eWpyAYhWGrS/1GzVi15vveWTK618vBMvsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-93e86696b5fso388460239f.1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 02 Nov 2025 09:38:02 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762105082; x=1762709882;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=r/wAEv9GIPrwh1+x/pr00cLookNh43MVdSe1H945Cxs=;
+        b=FaD1ECtpaO4kGFTEjbAAUNloNzye28U+mIlLWxNq26GE3mBj/83pb4Q7dJKdJhekRS
+         dW0BNxVyhMUGFkX6qCMMOoeZnyV4Q/J/0l0j99tI2QzIy/Tq54yQg0v+Yqu8zQfP4TO0
+         9Ie30GVVX65GqHJfE4bkSPxX36pT+DMPr7zslW9zKpARn7mXs1TobwH95WpEN2EXnf1V
+         R1ywDb8xHr3NJbK4CKiimvLb5MRi1u+gRjrSIPeHDOImJlgpJBWSOeAuDZfzveewkjb1
+         QK/HBTNlfkAvECz8L9+YMQEM4tcREpKLvNyUYMfWH4law4vc2lsfa8ZMi+nU1vz2YsSk
+         6fmg==
+X-Forwarded-Encrypted: i=1; AJvYcCUjeuRHl8z62qlfqLfNRFas+YsD3hdQcekVielakPjj/EfKqSc4XCbwNtVV/NSYdPIZPjQcLRZYCgOMe+RG@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+8VHoPbAvfYk8vmc0sUcnsh8PoAEWjoMzFVzv73LT1W7N2ImU
+	SwjkeZ2OrWYvJxV9hDRNBPaN5ZGCd385/T/ccM6CDLAdAlY2jhOyuSPSlkUMFcNEp1wek20xx3q
+	hrlubi6dfnD02Vw7RIlWcqDyjYERWlIYI5pTIH31Zhkun1ZOB1vC3tVAiWeo=
+X-Google-Smtp-Source: AGHT+IG1zgigFckBfcGNeJaiPbJX6Gh9TmGX80g1LSF0Ct9iysgCECfpHX/faSxFEexyhP9Nc8O6trkMpNHWl4XussCMo5cabh/D
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251028-work-coredump-signal-v1-0-ca449b7b7aa0@kernel.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+X-Received: by 2002:a05:6e02:3e8c:b0:430:ab63:69d6 with SMTP id
+ e9e14a558f8ab-4330d1c9e60mr128484625ab.21.1762105082195; Sun, 02 Nov 2025
+ 09:38:02 -0800 (PST)
+Date: Sun, 02 Nov 2025 09:38:02 -0800
+In-Reply-To: <67b454d4.050a0220.173698.0051.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <690796fa.a70a0220.37351b.000b.GAE@google.com>
+Subject: Re: [syzbot] [kernfs?] [netfs?] INFO: task hung in pipe_write (6)
+From: syzbot <syzbot+5984e31a805252b3b40a@syzkaller.appspotmail.com>
+To: asmadeus@codewreck.org, brauner@kernel.org, ceph-devel@vger.kernel.org, 
+	dhowells@redhat.com, gregkh@linuxfoundation.org, idryomov@gmail.com, 
+	jack@suse.cz, jlayton@kernel.org, kprateek.nayak@amd.com, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, mathieu.desnoyers@efficios.com, 
+	mhiramat@kernel.org, netfs@lists.linux.dev, oleg@redhat.com, 
+	rostedt@goodmis.org, syzkaller-bugs@googlegroups.com, tj@kernel.org, 
+	viro@zeniv.linux.org.uk, xiubli@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 10/28, Christian Brauner wrote:
->
-> Christian Brauner (22):
->       pidfs: use guard() for task_lock
->       pidfs: fix PIDFD_INFO_COREDUMP handling
->       pidfs: add missing PIDFD_INFO_SIZE_VER1
->       pidfs: add missing BUILD_BUG_ON() assert on struct pidfd_info
->       pidfd: add a new supported_mask field
->       pidfs: prepare to drop exit_info pointer
->       pidfs: drop struct pidfs_exit_info
->       pidfs: expose coredump signal
+syzbot suspects this issue was fixed by commit:
 
-I don't think these changes need my review... but FWIW, I see nothing
-wrong in 1-8. For 1-8:
+commit e8fe3f07a357c39d429e02ca34f740692d88967a
+Author: Oleg Nesterov <oleg@redhat.com>
+Date:   Tue Aug 19 16:10:13 2025 +0000
 
-Reviewed-by: Oleg Nesterov <oleg@redhat.com>
+    9p/trans_fd: p9_fd_request: kick rx thread if EPOLLIN
 
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=154ba342580000
+start commit:   ad1b832bf1cf Merge tag 'devicetree-fixes-for-6.14-1' of gi..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e55cabe422b4fcaf
+dashboard link: https://syzkaller.appspot.com/bug?extid=5984e31a805252b3b40a
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=170d57df980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12df35a4580000
+
+If the result looks correct, please mark the issue as fixed by replying with:
+
+#syz fix: 9p/trans_fd: p9_fd_request: kick rx thread if EPOLLIN
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
