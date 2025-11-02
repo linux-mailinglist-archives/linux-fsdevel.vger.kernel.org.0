@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-66698-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66699-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 203BFC29991
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 03 Nov 2025 00:13:13 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39D53C29994
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 03 Nov 2025 00:13:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8C5A188DB61
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Nov 2025 23:13:34 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 633CF4E903D
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Nov 2025 23:13:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69E80148850;
-	Sun,  2 Nov 2025 23:12:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAC902522BE;
+	Sun,  2 Nov 2025 23:12:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ns7zzXTu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="urcobR42"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA3CAFBF0;
-	Sun,  2 Nov 2025 23:12:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F741FBF0;
+	Sun,  2 Nov 2025 23:12:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762125177; cv=none; b=VfBdfxKqK8lAFhqg1OjtqzAL1ghEX9V2u6EjJvtHwZCBD2L9hPhjyXBmhoSsG9DwTA6w/Q/HmN6OaRTvwvoWwXE/NSEZ7vsPyPx4N/3z20nh+M0IO0zNzzif4bADRI/PXxadfUHCo8mCG79RX+j7+F4Nlxznwqhhziy94KL2Br4=
+	t=1762125179; cv=none; b=YpKG4RSAZsk/gE4o2QBQgOUyCz7SPSoymuLLqmuQxw4C9xjC6zglbzW2OroIsNs6zT6HrTdqKkDrlVByw861Uq5dHuiMfBhgNvBhcUI3plSOiB6JmPx0F8LXvIZ1lZVMtdLYrZKEhOjwS7BbRPsRAOtr7HKKX/WRtz/7ygPXNvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762125177; c=relaxed/simple;
-	bh=BiiT3s/H8+pZ/AAoKoA6lZOhNS8mGTmCvgDQ/hf4FXM=;
+	s=arc-20240116; t=1762125179; c=relaxed/simple;
+	bh=s8zI9WG47PjzniQToHXGHJt+ASTAkWITbPaI9IMDaUA=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=XrwVkhyQtH1KP4dwBqvYXwEG+JDo6sMOUS2gHCdbyGiVBvOAG5By0OhDw7n73righ5GEqEpab/qt+eAE7kBZrjSexIZ0Ed2nkSmZS/WXKhf1TSCZak9+gSdxBgRfPkR6LBTohnoNu4Qe+5Qu635rc6F5TksTvoAkVOusxMRUOXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ns7zzXTu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E0B1C4CEF7;
-	Sun,  2 Nov 2025 23:12:55 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=qI+AR5rpmDIVd6M2zDDHvbQFiHrXnRDo1OMa0ngl8d/p1m6B7Z/6n0kdCZ0q2Cr6+75DETT1FhL37gP5Rs6usYZBc1l1Ttp9qCrqkm6oqG30lw2sM42Oiyg1UChVCI7ecpqKph6P+1RZ6tAhiLMu5eZ48+/LbHcQR8Af6328mAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=urcobR42; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8C7CC4CEFD;
+	Sun,  2 Nov 2025 23:12:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762125177;
-	bh=BiiT3s/H8+pZ/AAoKoA6lZOhNS8mGTmCvgDQ/hf4FXM=;
+	s=k20201202; t=1762125178;
+	bh=s8zI9WG47PjzniQToHXGHJt+ASTAkWITbPaI9IMDaUA=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=ns7zzXTukiWqW0YhAqipHRjU9O1i6F2GI7Rza7kUB9iJxbR4HJlbDACyQ6zIasf9D
-	 djWyBdDfbDvePevSj9vEvM80mEqDyjmPsNwcjHut6X8GYdpwcxZBSyT8Kqb5ivNBdC
-	 nnLYl/t6bge6ung3hhmGzhT5QZgqZnWeXs+ZvX86n9LB4UiTPxiW3IyUfsdbnOC+s2
-	 Z403I0V2VbNVmyUHVsr3IGgRP8s9W5leH5YO9QOT3EPzLYRDI4TQ0h3LUsFHe7YRbf
-	 f8kHaCNoHCTQCttDbQldjCd7yADVAD6S+EKKBpv3Gxe1uglK2uMZEzysxvQRoiA32g
-	 NvBFjVUF7n3Nw==
+	b=urcobR42bfmXm6OEX2+u0KT93ekUFr6zjpf9rw08nH7pNZB1AJKceuBBaEhK2Ummd
+	 ss3dMtxrfZcsXUFevNiX+Mge3/Pi2tm67Fep3vyZDjUcQ5EnVpvxkOAKoz6BLPMYvp
+	 1OJoqHbsaoVI2DhmaL3BERre1tZrzmAw5IWRptdyIb4XHHw1u9AJ+4Asx+b/Qd7pAQ
+	 4Lt1jQ+QhbqlI9G2JdkM505LY1US33F+CvtDHvMvvO+f06RGvrTtc/tNgo5LvFcjY2
+	 kAFEbj/uuCc1h5h9pLTjLk8wfWfRBE1lmJ3dmy4R9Xg+MXnLjcWzd7KlJFxB0+ccWz
+	 0w4ngzeKy8GPg==
 From: Christian Brauner <brauner@kernel.org>
-Date: Mon, 03 Nov 2025 00:12:40 +0100
-Subject: [PATCH 1/8] cleanup: fix scoped_class()
+Date: Mon, 03 Nov 2025 00:12:41 +0100
+Subject: [PATCH 2/8] cred: add kernel_cred() helper
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251103-work-creds-init_cred-v1-1-cb3ec8711a6a@kernel.org>
+Message-Id: <20251103-work-creds-init_cred-v1-2-cb3ec8711a6a@kernel.org>
 References: <20251103-work-creds-init_cred-v1-0-cb3ec8711a6a@kernel.org>
 In-Reply-To: <20251103-work-creds-init_cred-v1-0-cb3ec8711a6a@kernel.org>
 To: Jens Axboe <axboe@kernel.dk>, 
@@ -60,57 +60,49 @@ To: Jens Axboe <axboe@kernel.dk>,
 Cc: linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-96507
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1891; i=brauner@kernel.org;
- h=from:subject:message-id; bh=BiiT3s/H8+pZ/AAoKoA6lZOhNS8mGTmCvgDQ/hf4FXM=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSyPy1VO1/FdLZYdCWvzIYfW+z/tvSqPQzrfu2z4sUhI
- 50PmkJBHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABP52MTwV7ZlsnifBF/Ytd1n
- n6QFVsxzuPFY73dW4+8N95h4j69LP8DwV+CRhukRA1vF+9z+h9hbbgfU/jXuZGDnUFz92KWaJUq
- LFQA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1180; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=s8zI9WG47PjzniQToHXGHJt+ASTAkWITbPaI9IMDaUA=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSyPy21enxlCV+euESB3/92nYOpghovv8aLVtycaybCm
+ F2xtLixo5SFQYyLQVZMkcWh3SRcbjlPxWajTA2YOaxMIEMYuDgFYCK/DRkZpvz89HhZGW9Q/1eB
+ /4qfS2OuT2ZP2V/z8nr/1phVHP43HzEybPY7LnXr5JOOotUrGhenZ5d9yU147v9zZ2S7UG3PG7s
+ INgA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-This is a class, not a guard so why on earth is it checking for guard
-pointers or conditional lock acquisition? None of it makes any sense at
-all.
+Access kernel creds based off of init_task. This will let us avoid any
+direct access to init_cred.
 
-I'm not sure what happened back then. Maybe I had a brief psychedelic
-period that I completely forgot about and spaced out into a zone where
-that initial macro implementation made any sense at all.
-
-Fixes: 5c21c5f22d07 ("cleanup: add a scoped version of CLASS()")
+Link: https://patch.msgid.link/20251031-work-creds-init_cred-v1-1-cbf0400d6e0e@kernel.org
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- include/linux/cleanup.h | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+ include/linux/cred.h | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/include/linux/cleanup.h b/include/linux/cleanup.h
-index 2573585b7f06..19c7e475d3a4 100644
---- a/include/linux/cleanup.h
-+++ b/include/linux/cleanup.h
-@@ -290,15 +290,16 @@ static inline class_##_name##_t class_##_name##ext##_constructor(_init_args) \
- 	class_##_name##_t var __cleanup(class_##_name##_destructor) =	\
- 		class_##_name##_constructor
+diff --git a/include/linux/cred.h b/include/linux/cred.h
+index 89ae50ad2ace..8ab3718184ad 100644
+--- a/include/linux/cred.h
++++ b/include/linux/cred.h
+@@ -20,6 +20,8 @@
+ struct cred;
+ struct inode;
  
--#define scoped_class(_name, var, args)                          \
--	for (CLASS(_name, var)(args);                           \
--	     __guard_ptr(_name)(&var) || !__is_cond_ptr(_name); \
--	     ({ goto _label; }))                                \
--		if (0) {                                        \
--_label:                                                         \
--			break;                                  \
-+#define __scoped_class(_name, var, _label, args...)        \
-+	for (CLASS(_name, var)(args); ; ({ goto _label; })) \
-+		if (0) {                                   \
-+_label:                                                    \
-+			break;                             \
- 		} else
- 
-+#define scoped_class(_name, var, args...) \
-+	__scoped_class(_name, var, __UNIQUE_ID(label), args)
++extern struct task_struct init_task;
 +
  /*
-  * DEFINE_GUARD(name, type, lock, unlock):
-  *	trivial wrapper around DEFINE_CLASS() above specifically
+  * COW Supplementary groups list
+  */
+@@ -156,6 +158,11 @@ extern struct cred *prepare_exec_creds(void);
+ extern int commit_creds(struct cred *);
+ extern void abort_creds(struct cred *);
+ extern struct cred *prepare_kernel_cred(struct task_struct *);
++static inline const struct cred *kernel_cred(void)
++{
++	/* shut up sparse */
++	return rcu_dereference_raw(init_task.cred);
++}
+ extern int set_security_override(struct cred *, u32);
+ extern int set_security_override_from_ctx(struct cred *, const char *);
+ extern int set_create_files_as(struct cred *, struct inode *);
 
 -- 
 2.47.3
