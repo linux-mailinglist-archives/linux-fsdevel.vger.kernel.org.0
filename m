@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-66697-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66698-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5DF0C29988
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 03 Nov 2025 00:13:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 203BFC29991
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 03 Nov 2025 00:13:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3A9834E6F18
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Nov 2025 23:13:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8C5A188DB61
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Nov 2025 23:13:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F9B1248F4D;
-	Sun,  2 Nov 2025 23:12:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69E80148850;
+	Sun,  2 Nov 2025 23:12:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E0XVdHps"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ns7zzXTu"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3BCF239E60;
-	Sun,  2 Nov 2025 23:12:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA3CAFBF0;
+	Sun,  2 Nov 2025 23:12:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762125175; cv=none; b=fMjZ2k6b+OSuO9LukT0p0NpPgEufbHwEBX/9CVIql3dE8qeLLDFZFSWWlf40zBbErr15aXcLORty+artFvLf/YUzs+i1SCfgMWNEaNoRrJaMaLNqegEyxlTWA3OW79nTFzwY+cJRH8+r6ddjR0cU30MugAN8JyzKsP8StstGre8=
+	t=1762125177; cv=none; b=VfBdfxKqK8lAFhqg1OjtqzAL1ghEX9V2u6EjJvtHwZCBD2L9hPhjyXBmhoSsG9DwTA6w/Q/HmN6OaRTvwvoWwXE/NSEZ7vsPyPx4N/3z20nh+M0IO0zNzzif4bADRI/PXxadfUHCo8mCG79RX+j7+F4Nlxznwqhhziy94KL2Br4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762125175; c=relaxed/simple;
-	bh=Wbna9iAQsjbNqL8L77AiF9Wj8kEUspZsbhAl8SO43Eg=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Th5zX+GP4jUTFT0bdj7j5pGI8x2tL4ZsSDb70jO0dBQa7myV7jo8IswgMo7mQb3YC2NdATaVbzEfH2Axp4v4iCohvfaxwQ+CJRjnpiuwof3nigsg8wPgOclwMARqtxjrlY1R12OJ/Eyvr7D5+6sjzsv13A3mTu9r2hC2JOk5kQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E0XVdHps; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 309E8C4CEF7;
-	Sun,  2 Nov 2025 23:12:53 +0000 (UTC)
+	s=arc-20240116; t=1762125177; c=relaxed/simple;
+	bh=BiiT3s/H8+pZ/AAoKoA6lZOhNS8mGTmCvgDQ/hf4FXM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=XrwVkhyQtH1KP4dwBqvYXwEG+JDo6sMOUS2gHCdbyGiVBvOAG5By0OhDw7n73righ5GEqEpab/qt+eAE7kBZrjSexIZ0Ed2nkSmZS/WXKhf1TSCZak9+gSdxBgRfPkR6LBTohnoNu4Qe+5Qu635rc6F5TksTvoAkVOusxMRUOXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ns7zzXTu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E0B1C4CEF7;
+	Sun,  2 Nov 2025 23:12:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762125175;
-	bh=Wbna9iAQsjbNqL8L77AiF9Wj8kEUspZsbhAl8SO43Eg=;
-	h=From:Subject:Date:To:Cc:From;
-	b=E0XVdHpsPadkSM1kDtixeEtYiKYFAyzVRt4BV2afsggfrUtn6Ek9v8Ados3S9oDoJ
-	 Ga/2VwXo9jb8PYhGv9xym3BgoPV1vODufyYoQfb7aOaRnEp8gdOmUskSdmDFbp0dsK
-	 5mb2ODEULoxsIFowrZyzZZBOoIwDzZmZKA9cpk/JLjVi9c+q5plZd3eB9L19bAsK7Z
-	 Nq6pYjqQds3ACGWatSYMiWEjDco1jlwdfxgyUfLfW5zechN2PjlnIccJxhBHyR0h78
-	 jRtUm2kPG9b912D4777ykvAlP5pu+zBMGht3Bw2CGOjJ/mwct5o8tf4UAV8LjLckzV
-	 eGHiPDrWAXRIA==
+	s=k20201202; t=1762125177;
+	bh=BiiT3s/H8+pZ/AAoKoA6lZOhNS8mGTmCvgDQ/hf4FXM=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=ns7zzXTukiWqW0YhAqipHRjU9O1i6F2GI7Rza7kUB9iJxbR4HJlbDACyQ6zIasf9D
+	 djWyBdDfbDvePevSj9vEvM80mEqDyjmPsNwcjHut6X8GYdpwcxZBSyT8Kqb5ivNBdC
+	 nnLYl/t6bge6ung3hhmGzhT5QZgqZnWeXs+ZvX86n9LB4UiTPxiW3IyUfsdbnOC+s2
+	 Z403I0V2VbNVmyUHVsr3IGgRP8s9W5leH5YO9QOT3EPzLYRDI4TQ0h3LUsFHe7YRbf
+	 f8kHaCNoHCTQCttDbQldjCd7yADVAD6S+EKKBpv3Gxe1uglK2uMZEzysxvQRoiA32g
+	 NvBFjVUF7n3Nw==
 From: Christian Brauner <brauner@kernel.org>
-Subject: [PATCH 0/8] creds: add {scoped_}with_kernel_creds()
-Date: Mon, 03 Nov 2025 00:12:39 +0100
-Message-Id: <20251103-work-creds-init_cred-v1-0-cb3ec8711a6a@kernel.org>
+Date: Mon, 03 Nov 2025 00:12:40 +0100
+Subject: [PATCH 1/8] cleanup: fix scoped_class()
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,71 +52,67 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAGflB2kC/x3Myw6CQAyF4VchXVtCuYzGVzHGDENHGuNAWoImh
- Hd3cHe+xfk3MFZhg2uxgfIqJlPKoFMBYfTpyShDNtRV3RFVDX4mfWFQHgwlyfI4JhK1se187c4
- uQr7OylG+/+ztnt17Y+zVpzAesbe3hbVcXUkX1NDAvv8A4J3NZokAAAA=
-X-Change-ID: 20251103-work-creds-init_cred-114f45a2676f
+Message-Id: <20251103-work-creds-init_cred-v1-1-cb3ec8711a6a@kernel.org>
+References: <20251103-work-creds-init_cred-v1-0-cb3ec8711a6a@kernel.org>
+In-Reply-To: <20251103-work-creds-init_cred-v1-0-cb3ec8711a6a@kernel.org>
 To: Jens Axboe <axboe@kernel.dk>, 
  Linus Torvalds <torvalds@linux-foundation.org>
 Cc: linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-96507
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2098; i=brauner@kernel.org;
- h=from:subject:message-id; bh=Wbna9iAQsjbNqL8L77AiF9Wj8kEUspZsbhAl8SO43Eg=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSyPy1t2r3TamnzjruLn5VEv03cwa59J3yPBW/kFtPP+
- dMbt7i/6ihlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZjIyRJGhpZsH09b3yUL77B8
- sOFY6BbHrKe2Z2J4auzNHK37E6e6L2Fk+Hb1Rv70uGSt4Cu1BXOe8upsXPTO+Od5/w0F6rYCLkG
- P2AA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1891; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=BiiT3s/H8+pZ/AAoKoA6lZOhNS8mGTmCvgDQ/hf4FXM=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSyPy1VO1/FdLZYdCWvzIYfW+z/tvSqPQzrfu2z4sUhI
+ 50PmkJBHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABP52MTwV7ZlsnifBF/Ytd1n
+ n6QFVsxzuPFY73dW4+8N95h4j69LP8DwV+CRhukRA1vF+9z+h9hbbgfU/jXuZGDnUFz92KWaJUq
+ LFQA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-Hey,
+This is a class, not a guard so why on earth is it checking for guard
+pointers or conditional lock acquisition? None of it makes any sense at
+all.
 
-A few months ago I did work to make override_creds()/revert_creds()
-completely reference count free - mostly for the sake of
-overlayfs but it has been beneficial to everyone using this.
+I'm not sure what happened back then. Maybe I had a brief psychedelic
+period that I completely forgot about and spaced out into a zone where
+that initial macro implementation made any sense at all.
 
-In a recent pull request from Jens that introduced another round of
-override_creds()/revert_creds() for nbd Linus asked whether we could
-avoide the prepare_kernel_creds() calls that duplicate the kernel
-credentials and then drop them again later.
-
-Yes, we can actually. We can use the guard infrastructure to completely
-avoid the allocation and then also to never expose the temporary
-variable to hold the kernel credentials anywhere in the callers.
-
-So add with_kernel_creds() and scoped_with_kernel_creds() for this
-purpose. Also take the opportunity to fixup the scoped_class() macro I
-introduced two cycles ago.
-
-I've put this into kernel-6.19.cred now. Linus, not sure if you're
-paying attention but if you want you can give this a final look.
-
+Fixes: 5c21c5f22d07 ("cleanup: add a scoped version of CLASS()")
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
-Christian Brauner (8):
-      cleanup: fix scoped_class()
-      cred: add kernel_cred() helper
-      cred: make init_cred static
-      cred: add {scoped_}with_kernel_creds
-      firmware: don't copy kernel creds
-      nbd: don't copy kernel creds
-      target: don't copy kernel creds
-      unix: don't copy creds
+ include/linux/cleanup.h | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
- drivers/base/firmware_loader/main.c   | 59 +++++++++++++++--------------------
- drivers/block/nbd.c                   | 17 ++--------
- drivers/target/target_core_configfs.c | 14 ++-------
- include/linux/cleanup.h               | 15 ++++-----
- include/linux/cred.h                  | 18 +++++++++++
- include/linux/init_task.h             |  1 -
- init/init_task.c                      | 27 ++++++++++++++++
- kernel/cred.c                         | 27 ----------------
- net/unix/af_unix.c                    | 17 +++-------
- security/keys/process_keys.c          |  2 +-
- 10 files changed, 87 insertions(+), 110 deletions(-)
----
-base-commit: dcb6fa37fd7bc9c3d2b066329b0d27dedf8becaa
-change-id: 20251103-work-creds-init_cred-114f45a2676f
+diff --git a/include/linux/cleanup.h b/include/linux/cleanup.h
+index 2573585b7f06..19c7e475d3a4 100644
+--- a/include/linux/cleanup.h
++++ b/include/linux/cleanup.h
+@@ -290,15 +290,16 @@ static inline class_##_name##_t class_##_name##ext##_constructor(_init_args) \
+ 	class_##_name##_t var __cleanup(class_##_name##_destructor) =	\
+ 		class_##_name##_constructor
+ 
+-#define scoped_class(_name, var, args)                          \
+-	for (CLASS(_name, var)(args);                           \
+-	     __guard_ptr(_name)(&var) || !__is_cond_ptr(_name); \
+-	     ({ goto _label; }))                                \
+-		if (0) {                                        \
+-_label:                                                         \
+-			break;                                  \
++#define __scoped_class(_name, var, _label, args...)        \
++	for (CLASS(_name, var)(args); ; ({ goto _label; })) \
++		if (0) {                                   \
++_label:                                                    \
++			break;                             \
+ 		} else
+ 
++#define scoped_class(_name, var, args...) \
++	__scoped_class(_name, var, __UNIQUE_ID(label), args)
++
+ /*
+  * DEFINE_GUARD(name, type, lock, unlock):
+  *	trivial wrapper around DEFINE_CLASS() above specifically
+
+-- 
+2.47.3
 
 
