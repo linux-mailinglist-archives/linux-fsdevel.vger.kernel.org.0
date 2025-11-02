@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-66703-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66705-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03E00C299AD
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 03 Nov 2025 00:13:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 566B4C299B3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 03 Nov 2025 00:13:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D5DA64E6142
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Nov 2025 23:13:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 223183ADB35
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Nov 2025 23:13:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FD5C25783F;
-	Sun,  2 Nov 2025 23:13:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A7A224BCF5;
+	Sun,  2 Nov 2025 23:13:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K6WQD6kz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z6Sho3mr"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB4AB239E60;
-	Sun,  2 Nov 2025 23:13:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0054624A079;
+	Sun,  2 Nov 2025 23:13:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762125186; cv=none; b=Jt+7z0e4PmZIAThABDTZ70oYzW8fioB05PKAcFA+EvoOJHOGcV3msFQYhbKSXmvUQ+ZMb0zabgGR2HxY96La6hRVQgwPytPXLAQb7qEELL2o6W0VBcelHLHtrwdtKL6kOj20WvZ/ELr5P3WQLilo2u3UMDdBiOf3KUDVr77DAF4=
+	t=1762125190; cv=none; b=SmR6sBUhVKAH46bhubGrJeTfweccvJ9yM01kvROyxTnLvK56LnIPCilErum86t7j69/Sns5xzqt9uW0KuUKxFZfj0PH2EAOsyWOVgzdDiOkhEHn48U2QaWslxnv/cQmULh6oGWEwbKA7QuZuHxJUThobiH72Qy6zJU7qLn4lhOI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762125186; c=relaxed/simple;
-	bh=1ozcBCCfaQFjHpGUDMY7sc1UjIYzstsmIX1GAUFsUac=;
+	s=arc-20240116; t=1762125190; c=relaxed/simple;
+	bh=8qvEulndLNp7rN8gRGXI+meMz26/CIvolGUpF+mARqY=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Vejw9YytmH5Vpx9bvpLknGWxflNhvMbenATDXLhj4xb5INkc/4e7zmazM+XXi33WqyhKiwW6jWNcFr8TfZN719lVTWOHcgR5ks+br2LdrzQMqE0S6biTKLGAYsrJxTaVFoew13GeRg9dmwsuL8zld+OSxHNlaQaEsq8NPhn4na8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K6WQD6kz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4D24C4CEF7;
-	Sun,  2 Nov 2025 23:13:05 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=gFDLBRUlpeYrOxiTmbjljvdK8cTizE7bFlcVwfouxIevPk5qpF0tuksy5AJjcAiKxdzQqF5nXZGxP8jXTI360LVIpTa9n/LC6nD4ea20tqESHWVF7sWSvhYlp/DcfQeVXDfjCCSEn2f0XDhBr5TK0xp06b6QdcNrdHMh6vj4amQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z6Sho3mr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C6FBC116C6;
+	Sun,  2 Nov 2025 23:13:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762125186;
-	bh=1ozcBCCfaQFjHpGUDMY7sc1UjIYzstsmIX1GAUFsUac=;
+	s=k20201202; t=1762125188;
+	bh=8qvEulndLNp7rN8gRGXI+meMz26/CIvolGUpF+mARqY=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=K6WQD6kzirrVoE3fyt3uvzii9r/6pfwlglLZwoLk0ApZo1FBg83VOw1qTe+PfPGEN
-	 9Hictdw3WbNzyVuw6WuHRJViRAEStdMDEYP3DYB+7Q9ZJZsPw60VElO7ME1pp3T4lt
-	 oEIe3Bz4LJg9nCaa4jzOl1CbC3mtlPDfQ3DFXgxQqlNA1cWFz0pqKMr754MWdF3V/F
-	 YWTwiBZOye1BmQTXlTMgRgNDeL9F+LS96hhhw4ohTGgUGS1NZfdy/YLWjE7RtE20th
-	 tu/5XIuM8TpG1pcoIJPXh5KdEMGy3DXC2yBCxd4b2BLOAc6MlvjIYMxdndpycb8QCA
-	 VQ+jeZzFkGSpA==
+	b=Z6Sho3mrgPIrSo0cessW6hKWN9uJvLa/4MTzAkXUY1QEHDMYJjiSPaPtV1CUBKMqf
+	 DwquINhwzDd8MGIdqLVyN8/9UC5ddWgMxKkSVx8f1Q/qSuxw7YTOYGXOl1vUivFR8l
+	 svEQR9xvxsXJdno6+bOvT6csFmX4DaU+cBt8E4vC34b8oQ4VIm6DRAuZmLQMJwv+5j
+	 FYfiqJ1scBFDzZ7gh+287kjqG36bNbf6k/VkzSqosBQrhuPa/ReX3I8kTK08LZFNd8
+	 5cHInGap2IQ6NH08sbzx6sV9CshdZ2hnauKxKcOdllu3Hk2K638XW1mmFvq797Dcjt
+	 g9O2hVLqzP2oA==
 From: Christian Brauner <brauner@kernel.org>
-Date: Mon, 03 Nov 2025 00:12:46 +0100
-Subject: [PATCH 7/8] target: don't copy kernel creds
+Date: Mon, 03 Nov 2025 00:12:47 +0100
+Subject: [PATCH 8/8] unix: don't copy creds
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251103-work-creds-init_cred-v1-7-cb3ec8711a6a@kernel.org>
+Message-Id: <20251103-work-creds-init_cred-v1-8-cb3ec8711a6a@kernel.org>
 References: <20251103-work-creds-init_cred-v1-0-cb3ec8711a6a@kernel.org>
 In-Reply-To: <20251103-work-creds-init_cred-v1-0-cb3ec8711a6a@kernel.org>
 To: Jens Axboe <axboe@kernel.dk>, 
@@ -60,56 +60,57 @@ To: Jens Axboe <axboe@kernel.dk>,
 Cc: linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-96507
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1375; i=brauner@kernel.org;
- h=from:subject:message-id; bh=1ozcBCCfaQFjHpGUDMY7sc1UjIYzstsmIX1GAUFsUac=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSyPy1tNT4pMGnFb+MdbUavxfZvMp7a96ewtC/soFCC2
- svn3LfWdpSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzkxllGhgPrPx4udPf4msS1
- OCFu5eL//L2nX+wO3lm1vmxX6onLgpcZGbZeWpzleVzlhqNA0J+Q2es4HDcfTolcu5H3yLLQC8k
- M6kwA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1380; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=8qvEulndLNp7rN8gRGXI+meMz26/CIvolGUpF+mARqY=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSyPy2tLMtLaLbPvi/ndHPXsghVyUVTl55P1PvY0MjcK
+ CLgvXZnRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwESsNjEyNJ99vf3E0wRJNe7e
+ +jOKraL255a/ZQtdy37y29G0RadYWBj+aZzezdfpaTDnxYWkjIi6jxtt2JdzHlVcu/1D9gvbEKk
+ SXgA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-Get rid of all the boilerplate and tightly scope when the task runs with
-kernel creds.
+No need to copy kernel credentials.
 
-Link: https://patch.msgid.link/20251031-work-creds-init_cred-v1-5-cbf0400d6e0e@kernel.org
+Link: https://patch.msgid.link/20251031-work-creds-init_cred-v1-6-cbf0400d6e0e@kernel.org
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- drivers/target/target_core_configfs.c | 14 ++------------
- 1 file changed, 2 insertions(+), 12 deletions(-)
+ net/unix/af_unix.c | 17 ++++-------------
+ 1 file changed, 4 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/target/target_core_configfs.c b/drivers/target/target_core_configfs.c
-index b19acd662726..9e51c535ba8c 100644
---- a/drivers/target/target_core_configfs.c
-+++ b/drivers/target/target_core_configfs.c
-@@ -3670,8 +3670,6 @@ static int __init target_core_init_configfs(void)
- {
- 	struct configfs_subsystem *subsys = &target_core_fabrics;
- 	struct t10_alua_lu_gp *lu_gp;
--	struct cred *kern_cred;
--	const struct cred *old_cred;
- 	int ret;
+diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
+index 768098dec231..68c94f49f7b5 100644
+--- a/net/unix/af_unix.c
++++ b/net/unix/af_unix.c
+@@ -1210,25 +1210,16 @@ static struct sock *unix_find_bsd(struct sockaddr_un *sunaddr, int addr_len,
+ 	unix_mkname_bsd(sunaddr, addr_len);
  
- 	pr_debug("TARGET_CORE[0]: Loading Generic Kernel Storage"
-@@ -3748,16 +3746,8 @@ static int __init target_core_init_configfs(void)
- 	if (ret < 0)
- 		goto out;
+ 	if (flags & SOCK_COREDUMP) {
+-		const struct cred *cred;
+-		struct cred *kcred;
+ 		struct path root;
  
--	/* We use the kernel credentials to access the target directory */
--	kern_cred = prepare_kernel_cred(&init_task);
--	if (!kern_cred) {
--		ret = -ENOMEM;
--		goto out;
--	}
--	old_cred = override_creds(kern_cred);
--	target_init_dbroot();
--	revert_creds(old_cred);
--	put_cred(kern_cred);
-+	scoped_with_kernel_creds()
-+		target_init_dbroot();
+-		kcred = prepare_kernel_cred(&init_task);
+-		if (!kcred) {
+-			err = -ENOMEM;
+-			goto fail;
+-		}
+-
+ 		task_lock(&init_task);
+ 		get_fs_root(init_task.fs, &root);
+ 		task_unlock(&init_task);
  
- 	return 0;
- 
+-		cred = override_creds(kcred);
+-		err = vfs_path_lookup(root.dentry, root.mnt, sunaddr->sun_path,
+-				      LOOKUP_BENEATH | LOOKUP_NO_SYMLINKS |
+-				      LOOKUP_NO_MAGICLINKS, &path);
+-		put_cred(revert_creds(cred));
++		scoped_with_kernel_creds()
++			err = vfs_path_lookup(root.dentry, root.mnt, sunaddr->sun_path,
++					      LOOKUP_BENEATH | LOOKUP_NO_SYMLINKS |
++					      LOOKUP_NO_MAGICLINKS, &path);
+ 		path_put(&root);
+ 		if (err)
+ 			goto fail;
 
 -- 
 2.47.3
