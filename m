@@ -1,167 +1,186 @@
-Return-Path: <linux-fsdevel+bounces-66864-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66865-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CB93C2E61B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 04 Nov 2025 00:09:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CDA3C2E7F8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 04 Nov 2025 00:58:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id CCC4A34B503
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Nov 2025 23:09:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D281189AF40
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Nov 2025 23:59:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA2242FE04E;
-	Mon,  3 Nov 2025 23:09:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DF1830E846;
+	Mon,  3 Nov 2025 23:58:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OHsAeg1P"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QVEsPW/j"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94005279DAE
-	for <linux-fsdevel@vger.kernel.org>; Mon,  3 Nov 2025 23:09:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ACE32FE582
+	for <linux-fsdevel@vger.kernel.org>; Mon,  3 Nov 2025 23:58:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762211364; cv=none; b=JnmdQeSU7E6FtCbOjSSIUa2uTUCD+bKCoRzSF94DiRy44kVSZvUpDpb5B6dVn4WV1GSnDH5ccKDfd3lIyLaNTzV5uDxRMNtS42jLXAowg0sDAxvpqJk4txiNt3oZzEMyRaQT+DTkWTVR2diP6+2pY2+f0ZIXoB77qQMMsGzxfk8=
+	t=1762214323; cv=none; b=H1JaxWKif27YDaF431j7y0eD/8tGqyNLmEFG9pi2PEU6fEIPa/WDtQJE7VaTAOFE/BTixdTNMENjpK6DDmLgOdzOKDwitaafxFry2M1MS1vBMJYnG7Z4YeLj6qjBbOUN/MNnxjzlZK1ibjSzrFIIj9xyqJQmFMi3mA7NBAugOGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762211364; c=relaxed/simple;
-	bh=71Z+nFQ8WD3X7cBHSB5xsYEXzWiJJvRTnkDU3GDIF/4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MdsPmME/Me8wSZWp0ypTqXw8+qfWH+lKGUbV7r6+1UbDlxdtkdYxv3D7srlXBSxrFNAhPGBN3J1XSP1AkGAsyzAkYJcfTVDakWHpSwm7UoYURWMCpWMv1LwHXvUGdqtiNg9FJBa5EiCT5B1JC2prUEnDXXpuGQIOCdXiEerBCa4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OHsAeg1P; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-429c82bf86bso2432122f8f.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Nov 2025 15:09:22 -0800 (PST)
+	s=arc-20240116; t=1762214323; c=relaxed/simple;
+	bh=+GjPBbS4tzsC0uAErgpZoYbDYAoVZCtoNhVMyqS5aak=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fYBsAkRACZvMLcT2Fy0VEX/+g7gPtfIA4ELR12yzvksHkAnNRxeStp9768Bd1M83YNrn+S3PpLrRdlVlY950pXr54BxFbpHzsBH7xmvvHhehdaZJ1Ry05clFF1rsDTYeNrn1l8b6Stoy1Mx0RE40TitHQSkO2vO+j9q/uiC7BD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QVEsPW/j; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-295c64cb951so93565ad.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Nov 2025 15:58:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762211361; x=1762816161; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=v1Q1tLieQpcpuMwIkeXnAFgYmCnVQs4T7Pfl0eQn33c=;
-        b=OHsAeg1Pqr4hO/2smhIWlflRR9lQ7fz6PCna37tUz7ufG0CXtmrbCnCx/gw1yvrKh4
-         rLsylZJ1t9QHwvPRPFj7I2f7tDSgs136ONR7l9kKRdJQIxuSX7WzX2IjYFDcXLlSk3rz
-         /fNXBaiORg0ph47+iAR/hrYqjvoeThTrPWypxoC1sKavjJwfPqpXcknzgYFsr/x5IN65
-         m3t4vUK8LBjTDRPEKidZCM9DA+bisScqJe63/D4F6oW8ZOZ3LB+Vrvg7x143r4w51tUR
-         4g26APygxCsQuAVCz5F9GC0sWsg04Qm2H+UINMHg/o9d38p8YaylIW7F1veZr9JSzNZ/
-         S4pQ==
+        d=google.com; s=20230601; t=1762214321; x=1762819121; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UiaumAf9uKaq/47KUh0x3Zq3WXVBAjDWrX0gtHKtIa0=;
+        b=QVEsPW/jD/HZgfftOEifqiw5dvFekHCVoADUXunIIMxI9umfm3yHkT4hKw3qZeQqUN
+         UNTIFYDGE/amfzXM06cR7QWGGIIcwqsWQ1szWPdUlKW8wJCtYMRyzUbtAN1iIaOcdXdy
+         Rv8Ghrxeo8ftSL/5tMAosiYzL7G+zL0SMNuYdGC3dlzQn/hdO4hj753g+u656QqtW7yI
+         88t9CpLjJZyikwbPPHXokowV7Dm/jBQucMCKOcnTBEUiAHEAKiMtj1r5TytMqSv96cum
+         IDNWlXpOhIzQEnZ/NoQ+n5gk6ZGBC8QqqBzP3xYM1n98AN9nrpvBcU/hSkvIE6f5NaIZ
+         rRTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762211361; x=1762816161;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=v1Q1tLieQpcpuMwIkeXnAFgYmCnVQs4T7Pfl0eQn33c=;
-        b=F1QyEffxbP+JIX/ujSa48dMPWYvEGKpB1WhSARylWQBxXIvW65CdOY+I/UIlhvUoTQ
-         KRK4+yLXz2hae7zBJ/ofBhnLAoZOtMCLmIpEvyIpnu2q+O3GhguDRltdeo+hNb8HtYm0
-         LeSNL6bVccdLxtLYDKDKzgTQhg5uWXILHlzWaCx41aDV4Rau856LFpj1thZcwb8FQlOu
-         tH7iRvRlB/01/M780Q+Q+u3HvgIemRj1Zh5rm4++N8/P0Samy5eDTNkQwrpo42koRybL
-         7rhQOaxTti7PqZS4VZW4t3fe4/RmJqNSPEjRRuKHMqhQ0csNuFHfgxrKtkF+HjO2x6lz
-         FkzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXt+quk/C6eNNfuNaIVAeOFp1JSzstE13M6GiVFXq6ZNedS12iPMjn4llzNYtcrH6B4NJV7IEyk0vM3GOi+@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCJZ6sJ3TE3S377NEDU9fjLXlM5FcZPHgO9RRRnGZijLuEtIKH
-	5pdKFFvpi2+cd4WOz3LK/lDLBQztf6cnEmwfEgeBYk7OpWlUD/X3nYqv
-X-Gm-Gg: ASbGncu4o6alz8o6lnczqidcWF/yzrdvfiRkaxM1jT6jZ2bqhdJ7Ni3xpcAmUMUH7CR
-	vVQzJyyTToW3GDAzOMWzKdP+ARQyy2IZgyq5riAq+MJ5qP/WhJ4QaUIOLAav17s1FgzqnhhWv87
-	ZYXWOb5QWfH1jcokgYKR+T1ifXmz20pRJhEeaSySnJT7KkvcLIbNOnnLf4s9+3yIWfsVtWL7REt
-	qQNliLq/ns7fbnydkIvtcROlSpKdqyMZJewVadUVF5Hb8xFvuWM1ECuh5QDLJOn6mrrmy++iLWG
-	S2XztyUxFyK7OoGYrekCN1RboRcbpA4Eikr61kL42Q5e/kOYwUVk7cw6sBFk04Kg2Scpik2oeRS
-	/qcyNyP9/YQswJTTyYdZSqsca0qsEPuvMW7AFLrHY8rF3FeanQDPQDVc/Mi50khLoW9PYPNpgJb
-	piXJE65qoE8XLvN2DiY+AWzPakP2mV6PQc4XnW7Yi0XgmIHwT+KZWeJLpa+pM=
-X-Google-Smtp-Source: AGHT+IEaEv1N6ajpfURp5K++JWjwDFC+FBT/tHpzug1ZX5HikVcj1HkwnZqbRmlJ6GwomLFTRQLpxA==
-X-Received: by 2002:a5d:64e9:0:b0:429:cf86:1247 with SMTP id ffacd0b85a97d-429cf861389mr5676038f8f.57.1762211360842;
-        Mon, 03 Nov 2025 15:09:20 -0800 (PST)
-Received: from f.. (cst-prg-14-82.cust.vodafone.cz. [46.135.14.82])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429dbf53e86sm1338586f8f.0.2025.11.03.15.09.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Nov 2025 15:09:19 -0800 (PST)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: brauner@kernel.org
-Cc: viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH v3] fs: push list presence check into inode_io_list_del()
-Date: Tue,  4 Nov 2025 00:09:11 +0100
-Message-ID: <20251103230911.516866-1-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1762214321; x=1762819121;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UiaumAf9uKaq/47KUh0x3Zq3WXVBAjDWrX0gtHKtIa0=;
+        b=JkyhzrIuT4YmyHKg/DT6+l+cV594694L0WnX9sCI+n+aKAFZJN5qZPMzSH1X0/iiTY
+         OF4WmTcKdCMUCIX+yOlBXodt6IDvLgV4WhxrTN0QpKm0MovHYCrnwDR9LU+aspZlx9Os
+         M8vu7Awyfn6vwFkC6Nw0l525gYAWTJxXuj0RNUlrS9/OPKS6jQGLFXHvuN19YY0s/iDM
+         +m/7wAkQZV6PQhvFrDW5lyUAMU6UKGhoVKz/0TzHtlEHBId4et7w+Go3cY7rhi/uxWPy
+         B5zy+USVGMj1z/y3ro+SLHeeGruq8BjVQuG2iT3EUJ6TnqIacpBcXqk8MuSLrctbg719
+         6cmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWLP/OTGWSlBjemz8VJb5RLUGFP0TBTfrYWu4qkQo6iaU+HWpGnvfV2f8Q5dqVYE+vp8vS425QRV7MS5NPZ@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIEFw+rxER4PgL9ae5oeLd8ulRMPrfE2j83qXA4vsGjsmYYXUt
+	ktmvcdTbwucXWHtTpYYXqe0JbZBCybDGa8QV+N8otBJMJhOog/bglzD5p0MRCH5foizv/U2YIaX
+	HrczWOgVtOspHvcqc6jgUNHE380K5xBY7XVo8QX2x
+X-Gm-Gg: ASbGncth7H9fUxJGGSs1oEPHrA+LL8FZxdaJSMIiVAmXjvrlMyyjglnyY/+PJ+lMVMu
+	Rf7XfFya4RdPLJszX31O8iZ1iJnxzk3zaFuGnA9QjYlXLaNduPsazqpl3rbA33pgktptzKzNUrh
+	dY5h2a47bXT/jfknt7yKk1+X5jf/DCK5qzcFhI40faJB/Ejwu+4TiMtaTDt9I2k9Y6lQrYmwuLh
+	YTubjWzFINSV4NsvLfFlrnbcfZqYuOXzvd5kwC6TBcwtiNvAruk/rxs9n1SLqEDW/ZEhUgdmdDd
+	9MJiyRhsY3QujMqrXTJa4xFkxwI=
+X-Google-Smtp-Source: AGHT+IHt6j/O2+BVT8RrxCXQhlHMInI33IDskTKx+bVIyN+3SBdebf/1pf/skkswodcwqLLeaarZnJrY3sFQZRZnnO4=
+X-Received: by 2002:a17:902:ec81:b0:290:d7fd:6297 with SMTP id
+ d9443c01a7336-295fd265e91mr2024145ad.2.1762214320623; Mon, 03 Nov 2025
+ 15:58:40 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251028212528.681081-1-kaleshsingh@google.com>
+ <20251028212528.681081-3-kaleshsingh@google.com> <6c34ce4e-1212-4dd0-8b7c-6af952dda3cb@kernel.org>
+In-Reply-To: <6c34ce4e-1212-4dd0-8b7c-6af952dda3cb@kernel.org>
+From: Kalesh Singh <kaleshsingh@google.com>
+Date: Mon, 3 Nov 2025 15:58:28 -0800
+X-Gm-Features: AWmQ_blqxq78jLq4HTBbisYrdSqGuPCxohmpOKASM-NgBeXlVoTSRESehr_wOXs
+Message-ID: <CAC_TJvf+KwdFF3BO1bO2Jje1igbbM4pdy3-V5rY+fdciwmUEfA@mail.gmail.com>
+Subject: Re: [PATCH v4 2/5] mm/selftests: add max_vma_count tests
+To: "David Hildenbrand (Red Hat)" <david@kernel.org>
+Cc: akpm@linux-foundation.org, minchan@kernel.org, lorenzo.stoakes@oracle.com, 
+	david@redhat.com, Liam.Howlett@oracle.com, rppt@kernel.org, pfalcato@suse.de, 
+	rostedt@goodmis.org, hughd@google.com, kernel-team@android.com, 
+	android-mm@google.com, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Kees Cook <kees@kernel.org>, 
+	Vlastimil Babka <vbabka@suse.cz>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
+	Jann Horn <jannh@google.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Ingo Molnar <mingo@redhat.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
+	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-For consistency with sb routines.
+On Mon, Nov 3, 2025 at 9:13=E2=80=AFAM David Hildenbrand (Red Hat)
+<david@kernel.org> wrote:
+>
+> On 28.10.25 22:24, Kalesh Singh wrote:
+> > Add a new selftest to verify that the max VMA count limit is correctly
+> > enforced.
+> >
+> > This test suite checks that various VMA operations (mmap, mprotect,
+> > munmap, mremap) succeed or fail as expected when the number of VMAs is
+> > close to the sysctl_max_map_count limit.
+> >
+> > The test works by first creating a large number of VMAs to bring the
+> > process close to the limit, and then performing various operations that
+> > may or may not create new VMAs. The test then verifies that the
+> > operations that would exceed the limit fail, and that the operations
+> > that do not exceed the limit succeed.
+> >
+> > NOTE: munmap is special as it's allowed to temporarily exceed the limit
+> > by one for splits as this will decrease back to the limit once the unma=
+p
+> > succeeds.
+> >
+> > Cc: Andrew Morton <akpm@linux-foundation.org>
+> > Cc: David Hildenbrand <david@redhat.com>
+> > Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+> > Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> > Cc: Mike Rapoport <rppt@kernel.org>
+> > Cc: Minchan Kim <minchan@kernel.org>
+> > Cc: Pedro Falcato <pfalcato@suse.de>
+> > Signed-off-by: Kalesh Singh <kaleshsingh@google.com>
+> > ---
+>
+> [...]
+>
+> No capacity to review the tests in detail :(
 
-ext4 is the only consumer outside of evict(). Damage-controlling it is
-outside of the scope of this cleanup.
+Appreciate you taking a look :)
 
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
----
+>
+> > +
+> > diff --git a/tools/testing/selftests/mm/run_vmtests.sh b/tools/testing/=
+selftests/mm/run_vmtests.sh
+> > index d9173f2312b7..a85db61e6a92 100755
+> > --- a/tools/testing/selftests/mm/run_vmtests.sh
+> > +++ b/tools/testing/selftests/mm/run_vmtests.sh
+> > @@ -49,6 +49,8 @@ separated by spaces:
+> >       test madvise(2) MADV_GUARD_INSTALL and MADV_GUARD_REMOVE options
+> >   - madv_populate
+> >       test memadvise(2) MADV_POPULATE_{READ,WRITE} options
+> > +- max_vma_count
+> > +     tests for max vma_count
+> >   - memfd_secret
+> >       test memfd_secret(2)
+> >   - process_mrelease
+> > @@ -426,6 +428,9 @@ fi # VADDR64
+> >   # vmalloc stability smoke test
+> >   CATEGORY=3D"vmalloc" run_test bash ./test_vmalloc.sh smoke
+> >
+> > +# test operations against max vma count limit
+> > +CATEGORY=3D"max_vma_count" run_test ./max_vma_count_tests
+>
+> I'd just call it CATEGORY=3D"vma" or "vma_handling".
+>
+> Which makes me wodnering whether "vma_merge" falls into the same category=
+.
+>
+> Smalls like mremap test is similar.
+>
+> Point is that "CATEGORY" stops being really useful if we end up having a
+> separate category for each test, right? :)
 
-v3:
-- address feedback by Jan: take care of ext4
+I agree making both use a "vma" category seem more helpful. I'll wait
+for others' feedback before resending.
 
-if you don't like the specific comment added below I would appreciate if
-you adjusted it yourself.
-
-this patch replaces this guy: https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/commit/?h=vfs-6.19.inode&id=7ba2ca3d17bb69276de7c97587b1e1f3d989f389
-
-the other patch in the previous series remains unchanged
-
- fs/ext4/inode.c   | 3 +--
- fs/fs-writeback.c | 7 +++++++
- fs/inode.c        | 4 +---
- 3 files changed, 9 insertions(+), 5 deletions(-)
-
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index b864e9645f85..bf978ece70b3 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -202,8 +202,7 @@ void ext4_evict_inode(struct inode *inode)
- 	 * the inode. Flush worker is ignoring it because of I_FREEING flag but
- 	 * we still need to remove the inode from the writeback lists.
- 	 */
--	if (!list_empty_careful(&inode->i_io_list))
--		inode_io_list_del(inode);
-+	inode_io_list_del(inode);
- 
- 	/*
- 	 * Protect us against freezing - iput() caller didn't have to have any
-diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-index f784d8b09b04..e2eed66aabf8 100644
---- a/fs/fs-writeback.c
-+++ b/fs/fs-writeback.c
-@@ -1349,6 +1349,13 @@ void inode_io_list_del(struct inode *inode)
- {
- 	struct bdi_writeback *wb;
- 
-+	/*
-+	 * FIXME: ext4 can call here from ext4_evict_inode() after evict() already
-+	 * unlinked the inode.
-+	 */
-+	if (list_empty_careful(&inode->i_io_list))
-+		return;
-+
- 	wb = inode_to_wb_and_lock_list(inode);
- 	spin_lock(&inode->i_lock);
- 
-diff --git a/fs/inode.c b/fs/inode.c
-index 0f3a56ea8f48..263da76ed4fc 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -815,9 +815,7 @@ static void evict(struct inode *inode)
- 	BUG_ON(!(inode_state_read_once(inode) & I_FREEING));
- 	BUG_ON(!list_empty(&inode->i_lru));
- 
--	if (!list_empty(&inode->i_io_list))
--		inode_io_list_del(inode);
--
-+	inode_io_list_del(inode);
- 	inode_sb_list_del(inode);
- 
- 	spin_lock(&inode->i_lock);
--- 
-2.34.1
-
+Thanks,
+Kalesh
+>
+> --
+> Cheers
+>
+> David
 
