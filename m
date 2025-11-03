@@ -1,40 +1,40 @@
-Return-Path: <linux-fsdevel+bounces-66828-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66829-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3353CC2D003
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 03 Nov 2025 17:10:15 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E845C2D036
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 03 Nov 2025 17:12:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D2916349265
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Nov 2025 16:10:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 900484E994E
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Nov 2025 16:10:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 129BA315D51;
-	Mon,  3 Nov 2025 16:09:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47D0A316183;
+	Mon,  3 Nov 2025 16:10:23 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from relay.hostedemail.com (smtprelay0015.hostedemail.com [216.40.44.15])
+Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9D2A313285;
-	Mon,  3 Nov 2025 16:09:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0DA8314B7F;
+	Mon,  3 Nov 2025 16:10:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762186196; cv=none; b=EmI8pzwU/EiMTvEl6akZ8hYLkLS+z+TzRvtDgkJy1GjTg+dw8smm0huWWlfMWFYR2MSDo+BECUMyOy4i+HVeMvEhi/UsAqvY77wkCk1F7zuRrYcyw31dL/kG2cC1Vy1z/AtNxWSxeSqxw+uMV6iPPSGtY6lO53+CTkb1EyMQQLs=
+	t=1762186222; cv=none; b=dtdGY32zxoKqVJa0uRdbNewXMo+/gdwE5AXOeJAtVVvjJrAQcPvogD1F6SXmQuV42dBZO+/cXikmry5NMfHz4xvXFgg+qx+eu9yB8PZepFBz7PTPw5j680/NQrOZalOVkXCPOqtnbvb1qFihyDrl8pKdfiE5Ly6wtysL6xBKC0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762186196; c=relaxed/simple;
-	bh=xrxwG32n/y2oy1YHTu3G6RDWmunQWMgWRiwV4cS732s=;
+	s=arc-20240116; t=1762186222; c=relaxed/simple;
+	bh=PIZ4DoMJooALmRRVauNj4A/92u4T3LrS3MaC+zSCVos=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=l84mKzEjjQ5PFyBts8qGnpqfyiqRmyyCH65hA9dglaDh5jRISTBBmCfUVQFG+QeknFX1NY1ptoALaQWoB+dU78Fl2fJvsRXSypdGckZIOAz2x4DXmjuslt6ymZk1Ue+Xg5Aamvh7FC9jiG792Yl+EDuAwcyfj7EZuQ1WyWbfdjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.15
+	 MIME-Version:Content-Type; b=INO79ymRvzStf0ENJqFJxQ/iA8rPSv0RbWoPB1sb+xcpYdmjhNYNGVPnsXf7FVXJJsunTh4CqgQ0hh6xLYVXJrvatmnXsSHz+ue3dHvRLB/AqN2LiUCcwQpo2VFQrVqTMMTl5wlfzxy/7dTVHZ7e2vfg3x8WL9Byrbux4loZiV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.10
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf07.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay06.hostedemail.com (Postfix) with ESMTP id C84CD12ACEE;
-	Mon,  3 Nov 2025 16:09:45 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf07.hostedemail.com (Postfix) with ESMTPA id E4D1E20024;
-	Mon,  3 Nov 2025 16:09:42 +0000 (UTC)
-Date: Mon, 3 Nov 2025 11:09:46 -0500
+Received: from omf20.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay02.hostedemail.com (Postfix) with ESMTP id ACF47139E08;
+	Mon,  3 Nov 2025 16:10:17 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf20.hostedemail.com (Postfix) with ESMTPA id D4E0A20026;
+	Mon,  3 Nov 2025 16:10:14 +0000 (UTC)
+Date: Mon, 3 Nov 2025 11:10:18 -0500
 From: Steven Rostedt <rostedt@goodmis.org>
 To: Christian Brauner <brauner@kernel.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>,
@@ -44,11 +44,11 @@ Cc: Linus Torvalds <torvalds@linux-foundation.org>,
  linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
  cgroups@vger.kernel.org, netdev@vger.kernel.org,
  linux-crypto@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH 11/12] trace: use prepare credential guard
-Message-ID: <20251103110946.063f53da@gandalf.local.home>
-In-Reply-To: <20251103-work-creds-guards-prepare_creds-v1-11-b447b82f2c9b@kernel.org>
+Subject: Re: [PATCH 12/12] trace: use override credential guard
+Message-ID: <20251103111018.1a063e6f@gandalf.local.home>
+In-Reply-To: <20251103-work-creds-guards-prepare_creds-v1-12-b447b82f2c9b@kernel.org>
 References: <20251103-work-creds-guards-prepare_creds-v1-0-b447b82f2c9b@kernel.org>
-	<20251103-work-creds-guards-prepare_creds-v1-11-b447b82f2c9b@kernel.org>
+	<20251103-work-creds-guards-prepare_creds-v1-12-b447b82f2c9b@kernel.org>
 X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -58,25 +58,24 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Stat-Signature: f3a1jbh7gz5tygnr9ophixt6pum6i47w
-X-Rspamd-Server: rspamout07
-X-Rspamd-Queue-Id: E4D1E20024
+X-Rspamd-Server: rspamout08
+X-Rspamd-Queue-Id: D4E0A20026
+X-Stat-Signature: 9i8cwffmtnwb5s6qrjb8xtgzkiwywx5n
 X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX18u0U/NQFwhYc5xAY2TcmGwcG1D2BgWoTc=
-X-HE-Tag: 1762186182-249034
-X-HE-Meta: U2FsdGVkX1/oN4yafgD+MyqaAV3m0VoVtYRzu0D3nhVrjp7q8uA8Uc/g3Y1973pDGRtBMJFIpQ7B0O+F37rmbF8kIjhS7YPoQfvuYhqXbP66FkjkDqcxlSq/f9rE0VLfodvjXBeCq8tk6S9A50kqMRPnFBqoeWWggpvhArKEUJcxWbwhtGBUJA9D9GDy2rYSO7wzCitOaHdm8UT261o9vVM0wBxFfhfhIDvg4yDkUhUWC4l4RdGwq0vyz6roxCpZv5oWzdyX4MkQM3lYByyuZonkzkJpT2nT1UIISYlOxhoA6jv36VwIlmUVdl8Rp2E7rl7MGO6o9ABv2Rp0ARVpE/1Y8CPdK53RazVlow3RlyHTtAdeg3sjiAKEZ+dX7QrpdQ7cwXCa90kYxiksyJez7g==
+X-Session-ID: U2FsdGVkX19W/8xN94pNILmfZfTWKaYA/3XQ1AXwuhQ=
+X-HE-Tag: 1762186214-326372
+X-HE-Meta: U2FsdGVkX187oVSDRmUrDkx/y/qOH8UZf0p4/Uberk79CvGGM3PB+bS4hFQMtMBRnStKU7tlXn/ljHIltb999OspMxf1AbgAdGJ4HELAt2d5MaZ3fPZKklFy28lWO7r0IfW2NHvpDWpAzd6euKudbGYI+fHpMHhDMkXFuPEqjUv0+MRdLzcQFruKvrL4Gl9DwYesxzucXQGzI2pHTBcEz6bFpl9Bi1TKKSPcL3Nt+jnhVL/ZY4VjnpDa6O+uTo/zuM+YOrGhZidshqQRODml/FXmO4hQP0LvRRP2OeH65EderoO+6Iw5sJs9vuJe8U2RHjqtb5RfJ+b+TBT13gA7yEo+MTIUsNTsghvG0w3kvqWdz/+jfR9m7Faf4VcYB3h/KdOAB3mXHBvjf7jof/ORBw==
 
-On Mon, 03 Nov 2025 15:57:37 +0100
+On Mon, 03 Nov 2025 15:57:38 +0100
 Christian Brauner <brauner@kernel.org> wrote:
 
-> Use the prepare credential guard for allocating a new set of
-> credentials.
+> Use override credential guards for scoped credential override with
+> automatic restoration on scope exit.
 > 
 > Signed-off-by: Christian Brauner <brauner@kernel.org>
 > ---
->  kernel/trace/trace_events_user.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
+>  kernel/trace/trace_events_user.c | 11 +++--------
+>  1 file changed, 3 insertions(+), 8 deletions(-)
 
 Acked-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 
