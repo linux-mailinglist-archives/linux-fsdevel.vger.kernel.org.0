@@ -1,49 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-66809-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66810-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B8AEC2CC54
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 03 Nov 2025 16:34:44 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 857ECC2CA53
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 03 Nov 2025 16:19:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C468420254
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Nov 2025 15:08:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1D40E4F8798
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Nov 2025 15:08:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 694213148C3;
-	Mon,  3 Nov 2025 14:58:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E70E132E75F;
+	Mon,  3 Nov 2025 14:58:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="alKRJX9g"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k3jenSgj"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A94A32BF25;
-	Mon,  3 Nov 2025 14:58:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 333BA32D0EA;
+	Mon,  3 Nov 2025 14:58:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762181882; cv=none; b=ThckzqQjcKutEnf3sob/wRjb52wjAPUasT/5hFCOZbrlV6erdH5mz6OWmHWbIlJUJFTeC1wZw57t8Ep1Wikb6URfP1fe5KTqAhUVq7dhlp6yOI8/HQ02Dktx5UvIwX2OI1fWcomj8H21c3hQtoTM+SWPKh+7/PaOGC/5hPOlv1U=
+	t=1762181886; cv=none; b=JUDvznTeuuB+urJtMv6Ewnf494/JvAwx6DsQ1fMY+UWUMycpgjpWbjLNScTcjDxLQhJ6e+0JzCg5mQscZStEXflCXzvQ5gf9c/yb310+pcFiL8wfb9Px+CfzZ+7qaPxOwcNL8LgJkFqGWY5eg56c3jt1bh0KYjb1tgfQcNrWVos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762181882; c=relaxed/simple;
-	bh=ueoshrmp4QkI9SU1ImHUS9AR0CCmoEPF5ceuQmXRIvA=;
+	s=arc-20240116; t=1762181886; c=relaxed/simple;
+	bh=pg2v4Qq4p691A716jLKgU9cR9rJWdfU2QnrT9iAtdLo=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=hXG9CkA3+zdrewFhNx2HVd2edzyZ1/Ve7tCwyeEQCMYy0I5V4OqkUjDQnhYwPzN/R9m5gm0q80YeNu92wcC+wPe5O3nUGqUSGmYzE2nitg+rQmBD2CIwheeg6iIVs8PHMGSgeHMskhKTGIfnpaXLQ9gOiX5Jr9hdxkPqA6ymUMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=alKRJX9g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32D09C4CEFD;
-	Mon,  3 Nov 2025 14:57:59 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=aKL7VmjfqrYnITsbsaysrEcQIG3Z9Lp1JR0scetRMHuXMnwu2AtaVOzxCaJNwZe/ua7LRH+KugevcbnLbM1UHNNizx7nDiutL2ngw/ZKLAQTkcOKd4erOpZVcG6IUpAxD4qHP952sto56kOVYqAx/+NudHd2Yv0fxSdQl83Ks+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k3jenSgj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2085C19421;
+	Mon,  3 Nov 2025 14:58:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762181882;
-	bh=ueoshrmp4QkI9SU1ImHUS9AR0CCmoEPF5ceuQmXRIvA=;
+	s=k20201202; t=1762181885;
+	bh=pg2v4Qq4p691A716jLKgU9cR9rJWdfU2QnrT9iAtdLo=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=alKRJX9gwXSRLScebUpvPp+WXVLotG0w/uaJLFrECQUZ63vpCvDlosEP2dAxHgLHR
-	 kTJvdul0xoSMw5k3Pa5LBRuQdc0/WNZpMy0Wk1X5kyewz0yx46fZhRPZJpPpx0mc2C
-	 3HfjCt0y5PQmwMqYrxHSnC8ZNj+knGDQJHg4dplRcZsO7ITLG0EUup06T7Rk+13Wz4
-	 Enym8L6irtxbOcxOmMI4vj+2L9YN/9R+4R8/XaSIpQeYitGCSYDZti9Fzq36QP/SPP
-	 RgEjzT3poQR4wuhtf0dCe1WHvj9hOX/XesxMCRfrhCMMj4AubqpdHZwmMM+Qvj2CZf
-	 uLKVtSgEM3ZXg==
+	b=k3jenSgjz87qIYdLxKG5JJW4vxX0/TPxC6CFwTvlx7Tl7n9xE4mlIADEP/AxPoF0k
+	 3tHWsJQRfZReyP4rQ+YQZMb3IGYp9s5/GvKHpgXYopc4D7vWRzqJErSHWqp0ROj2Xq
+	 ++uF8hSneX2nYhaqRzlD1Ez+xBkz53yTGWIFTOdebt+I7k7+6dn5upLZYqDAldx3pP
+	 42Rcni/Xnt5jNXU6QaOy43bHgEsAZAKt2MVBNKePKZi45IFqA9Dwd+KyCcYbW3uXw1
+	 hcERYhyvMRY4w7zbRD1Mtuv+R1mzlr01Py/eUnVUwoTd2mK6Pwh9MKVd1ATi12wQyZ
+	 VgLHGxzPN5PMw==
 From: Christian Brauner <brauner@kernel.org>
-Date: Mon, 03 Nov 2025 15:57:30 +0100
-Subject: [PATCH 04/12] sev-dev: use override credential guards
+Date: Mon, 03 Nov 2025 15:57:31 +0100
+Subject: [PATCH 05/12] coredump: move revert_cred() before
+ coredump_cleanup()
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +53,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251103-work-creds-guards-prepare_creds-v1-4-b447b82f2c9b@kernel.org>
+Message-Id: <20251103-work-creds-guards-prepare_creds-v1-5-b447b82f2c9b@kernel.org>
 References: <20251103-work-creds-guards-prepare_creds-v1-0-b447b82f2c9b@kernel.org>
 In-Reply-To: <20251103-work-creds-guards-prepare_creds-v1-0-b447b82f2c9b@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
@@ -64,51 +65,37 @@ Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-crypto@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-96507
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1172; i=brauner@kernel.org;
- h=from:subject:message-id; bh=ueoshrmp4QkI9SU1ImHUS9AR0CCmoEPF5ceuQmXRIvA=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWRyHHoRr9r1hv+5W0WMGeOOLXFW8udvTNFLt9i3+Zfz3
- GpL6/o7HaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABMpOcLwT2u3aUiVfWZX55uD
- vY9fmLBIr1j37saKbvHfLSd95+iudWD4H+2SYH7Gq99lz7utyzcsOKF7uEt9x/8oRqNlV0/96rq
- 9hxkA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=611; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=pg2v4Qq4p691A716jLKgU9cR9rJWdfU2QnrT9iAtdLo=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWRyHHqZ6D57643ky/+/Hb66KPGd3u+ty2sqxY7dP8x1W
+ VGzSaXyeUcpC4MYF4OsmCKLQ7tJuNxynorNRpkaMHNYmUCGMHBxCsBE3AIZGd7od/1OWLjnxvcJ
+ QtuE5zwRbfra+q7KjcFz9rPzNt/mP8xm+O+68mRGc8RuhsSMUs9/pps+397laOW5KMdl6vUvk+b
+ 9SGYEAA==
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-Use override credential guards for scoped credential override with
-automatic restoration on scope exit.
+There's no need to pin the credentials across the coredump_cleanup()
+call. Nothing in there depends on elevated credentials.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- drivers/crypto/ccp/sev-dev.c | 9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
+ fs/coredump.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/crypto/ccp/sev-dev.c b/drivers/crypto/ccp/sev-dev.c
-index 09e4c9490d58..19422f422a59 100644
---- a/drivers/crypto/ccp/sev-dev.c
-+++ b/drivers/crypto/ccp/sev-dev.c
-@@ -260,7 +260,6 @@ static int sev_cmd_buffer_len(int cmd)
- static struct file *open_file_as_root(const char *filename, int flags, umode_t mode)
- {
- 	struct path root __free(path_put) = {};
--	struct file *fp;
- 	struct cred *cred;
- 	const struct cred *old_cred;
+diff --git a/fs/coredump.c b/fs/coredump.c
+index 5c1c381ee380..4fce2a2f279c 100644
+--- a/fs/coredump.c
++++ b/fs/coredump.c
+@@ -1197,8 +1197,8 @@ void vfs_coredump(const kernel_siginfo_t *siginfo)
+ 	}
  
-@@ -273,13 +272,9 @@ static struct file *open_file_as_root(const char *filename, int flags, umode_t m
- 		return ERR_PTR(-ENOMEM);
- 
- 	cred->fsuid = GLOBAL_ROOT_UID;
--	old_cred = override_creds(cred);
--
--	fp = file_open_root(&root, filename, flags, mode);
--
--	revert_creds(old_cred);
- 
--	return fp;
-+	with_creds(cred);
-+	return file_open_root(&root, filename, flags, mode);
+ close_fail:
+-	coredump_cleanup(&cn, &cprm);
+ 	revert_creds(old_cred);
++	coredump_cleanup(&cn, &cprm);
+ 	return;
  }
  
- static int sev_read_init_ex_file(void)
 
 -- 
 2.47.3
