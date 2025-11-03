@@ -1,104 +1,162 @@
-Return-Path: <linux-fsdevel+bounces-66706-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66707-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2640C29A8D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 03 Nov 2025 00:51:43 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 607FBC2A039
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 03 Nov 2025 05:07:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 183A6188CB4C
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Nov 2025 23:52:06 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4FAB04E2BF7
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Nov 2025 04:07:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92D9B23C8A1;
-	Sun,  2 Nov 2025 23:51:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85B45274669;
+	Mon,  3 Nov 2025 04:07:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="AJZfsEoK";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="C7kNSh91"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A774B1C8605;
-	Sun,  2 Nov 2025 23:51:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 086A686334
+	for <linux-fsdevel@vger.kernel.org>; Mon,  3 Nov 2025 04:07:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762127491; cv=none; b=Ua9RBvMLQmVzQnhD7oN/FN0DHKaYdBQfb7OFxrGkteafYKSaE+TIhXtvDnbS5NXAkv6JlnXyjyboX/ZWuKatpQdcxsbnVSoEGhJ0PzvLB+jRJJf30zQ41tXmBsN0eZEAg2fBSOlOjjW9bGgzq9TON0kzXKO7xD40bX6TeXdStoA=
+	t=1762142857; cv=none; b=LR/XonNtpPu5LjZibeHZvT9ww8a3e+Qxjr/7Bp1lVmawexVu5EBDEcgCdS7JKiIguE4XzmTQ1p6p1oE3oD3ZFnwbgjWmxBCis/tHHkQM/9aeRMkCY7Mt1cg9/8WsycT5nJl/8ItXQF8SqO1Lc2qO8xnje/jivI5gZf8bRaT7fKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762127491; c=relaxed/simple;
-	bh=3QBJqNiePwTQmv6unGmlEenM/JEk9C6UuRzdmtI8mBE=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=ji5znvkKOt8+RXiL8zs6cSqm1CsMQKygWMxgkHRaxQcbxNMDB/cgx8+63EacjYuhPP9ogecz07paRz8jiBV3Hhz2K+9M2zQWlPt61wnderVEGMyLJs2SqQVcSxRsPhJ1nLDnNySPi13MMHU2NNKZhCFQydAtWT00VNcedIWvAgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
-Received: by angie.orcam.me.uk (Postfix, from userid 500)
-	id DDB6592009D; Mon,  3 Nov 2025 00:51:12 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-	by angie.orcam.me.uk (Postfix) with ESMTP id CF26F92009B;
-	Sun,  2 Nov 2025 23:51:12 +0000 (GMT)
-Date: Sun, 2 Nov 2025 23:51:12 +0000 (GMT)
-From: "Maciej W. Rozycki" <macro@orcam.me.uk>
-To: Paul Walmsley <pjw@kernel.org>
-cc: Deepak Gupta <debug@rivosinc.com>, Thomas Gleixner <tglx@linutronix.de>, 
-    Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-    Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-    "H. Peter Anvin" <hpa@zytor.com>, 
-    Andrew Morton <akpm@linux-foundation.org>, 
-    "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-    Vlastimil Babka <vbabka@suse.cz>, 
-    Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-    Paul Walmsley <paul.walmsley@sifive.com>, 
-    Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-    Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
-    Krzysztof Kozlowski <krzk+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-    Christian Brauner <brauner@kernel.org>, 
-    Peter Zijlstra <peterz@infradead.org>, Oleg Nesterov <oleg@redhat.com>, 
-    Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, 
-    Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, 
-    Jann Horn <jannh@google.com>, Conor Dooley <conor+dt@kernel.org>, 
-    Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-    Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-    =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-    Andreas Hindborg <a.hindborg@kernel.org>, 
-    Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-    Benno Lossin <lossin@kernel.org>, linux-kernel@vger.kernel.org, 
-    linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-    linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
-    linux-arch@vger.kernel.org, linux-doc@vger.kernel.org, 
-    linux-kselftest@vger.kernel.org, alistair.francis@wdc.com, 
-    richard.henderson@linaro.org, jim.shu@sifive.com, andybnac@gmail.com, 
-    kito.cheng@sifive.com, charlie@rivosinc.com, atishp@rivosinc.com, 
-    evan@rivosinc.com, cleger@rivosinc.com, alexghiti@rivosinc.com, 
-    samitolvanen@google.com, broonie@kernel.org, rick.p.edgecombe@intel.com, 
-    rust-for-linux@vger.kernel.org, Zong Li <zong.li@sifive.com>
-Subject: Re: [PATCH v22 10/28] riscv/mm: Implement map_shadow_stack()
- syscall
-In-Reply-To: <020e2f6e-9c1b-648e-3017-31eb8a89c493@kernel.org>
-Message-ID: <alpine.DEB.2.21.2511022341110.1185@angie.orcam.me.uk>
-References: <20251023-v5_user_cfi_series-v22-0-1935270f7636@rivosinc.com> <20251023-v5_user_cfi_series-v22-10-1935270f7636@rivosinc.com> <020e2f6e-9c1b-648e-3017-31eb8a89c493@kernel.org>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+	s=arc-20240116; t=1762142857; c=relaxed/simple;
+	bh=yZ2eiZy4PeudqCHmBjPKkWUe7OZi2fiXd7M5EyaSJ84=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SWHlUnUywk3PI23uSw3IYtjazjRKKbzGAASNZBRuj/XjTkq2jHnrrl0sjVPmHoQlDS2sVvT7sXRuwhuKjP9dWBrwGKxUDB1CKDRE69RDp5jLveePYuri6U7eWfCWaURvQ04v/7vLP9fT7fjdt3X1Nvb8VDeUyqXKbKCIKljCbFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=AJZfsEoK; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=C7kNSh91; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id EC1F821EF3;
+	Mon,  3 Nov 2025 04:07:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1762142854; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=S2hwU0Gh9IRPYm22lTtuVTtlK8zh8YaxxqmWNNoNPoQ=;
+	b=AJZfsEoK6aQ0DVLw1QVUEX8apGp1zu9rOh0oeWEjpWlXMp+lw+XOVLEBqjM6YRrmu862q9
+	3fwADV3D8NDrMQh9JIzGSzb5dJ2ih29zKXgXXycRgySewvvt20C2JJ4jlE6qxocCYxr0C4
+	KuaU+O9rv83MM91Mq41Dg3GYjq59To8=
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.com header.s=susede1 header.b=C7kNSh91
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1762142853; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=S2hwU0Gh9IRPYm22lTtuVTtlK8zh8YaxxqmWNNoNPoQ=;
+	b=C7kNSh91GfquXk75KxVgah5feq95tHM5RyqpAvhbAlU3RL9OkzyVjihuHGXD47PVn0sTzQ
+	/QtfCXgHWFSYxUtGZjY+LlPzWzE5Wwuuy0rZoPWIYVh1VY9s1NkCZgarWLQbusp3Dd8ktB
+	D6tVUugMLcs4eYTwjVwER5IMl51XVIU=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 322271397D;
+	Mon,  3 Nov 2025 04:07:31 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id PDsVOYMqCGnhfAAAD6G6ig
+	(envelope-from <wqu@suse.com>); Mon, 03 Nov 2025 04:07:31 +0000
+From: Qu Wenruo <wqu@suse.com>
+To: linux-btrfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Cc: viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz
+Subject: [PATCH RFC 0/2] fs: fully sync all fsese even for an emergency sync
+Date: Mon,  3 Nov 2025 14:37:27 +1030
+Message-ID: <cover.1762142636.git.wqu@suse.com>
+X-Mailer: git-send-email 2.51.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: EC1F821EF3
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_MISSING_CHARSET(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_DN_NONE(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:mid,suse.com:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	RCPT_COUNT_FIVE(0.00)[5];
+	DKIM_TRACE(0.00)[suse.com:+]
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: -3.01
+X-Spam-Level: 
 
-On Fri, 31 Oct 2025, Paul Walmsley wrote:
+The first patch is a cleanup related to sync_inodes_one_sb() callback.
+Since it always wait for the writeback, there is no need to pass any
+parameter for it.
 
-> This patch introduces a 'checkpatch.pl --strict' message:
-> 
-> CHECK: Lines should not end with a '('
-> #78: FILE: arch/riscv/kernel/usercfi.c:36:
-> +	asm goto(
-> 
-> I'll fix it up here in the event that v22 goes in, but please do the same 
-> on your side in case a new version is needed.
+The second patch is a fix mostly affecting btrfs, as btrfs requires a
+explicit sync_fc() call with wait == 1, to commit its super blocks,
+and sync_bdevs() won't cut it at all.
 
- I think this warning is silly for `asm' statements.  It's been common for 
-decades to do this to format multi-line `asm' statements, just because it 
-makes them so much more readable.  We have roughly two thousand instances 
-in our tree already and I would use this style for new code in the parts I 
-maintain as well.
+However the current emergency sync never passes wait == 1, it means
+btrfs will writeback all dirty data and metadata, but still no super
+block update, resulting everything still pointing back to the old
+data/metadata.
 
- Now having trailing `);' on a separate line is another matter.
+This lead to a problem where btrfs doesn't seem to do anything during
+emergency sync.
 
-  Maciej
+The second patch fixes the problem by passing wait == 1 for the second
+iteration of sync_fs_one_sb().
+
+[REASON FOR RFC]
+I am not sure which way should I fix the bug.
+
+I can definitely put btrfs to ignore the @wait parameter and always do
+transaction commit, that will definitely fix the bug, but btrfs will do
+two transaction commits for emergency sync.
+Which may or may not be a problem for emergency sync itself, but will
+definitely cause a lot of unnessary small transactions during regular
+sync_fs() calls and degrade the peroformance.
+
+On the other hand, I also didn't see why we can not follow the common
+pattern inside emergency_sync(), all other call sites are syncing the fs
+first with nowait, then wait.
+(E.g. sync_filesyastem() and ksys_sync()).
+
+I know it's an emergency sync thus we don't want to wait, but please
+also remember that sync_inodes_one_sb() is always waiting, and I'm
+pretty sure we spend most of the time inside sync_inodes_one_sb(), thus
+it looks more sane to fix the only exception inside fs/sync.c.
+
+Qu Wenruo (2):
+  fs: do not pass a parameter for sync_inodes_one_sb()
+  fs: fully sync all fses even for an emergency sync
+
+ fs/sync.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+-- 
+2.51.2
+
 
