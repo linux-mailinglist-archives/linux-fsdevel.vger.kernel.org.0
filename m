@@ -1,49 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-66812-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66813-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 512AAC2C98B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 03 Nov 2025 16:12:11 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49070C2CA50
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 03 Nov 2025 16:19:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70FFA188693F
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Nov 2025 15:10:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 78A714F04ED
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Nov 2025 15:10:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBF163328F1;
-	Mon,  3 Nov 2025 14:58:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54061334387;
+	Mon,  3 Nov 2025 14:58:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LokUB/Mc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C2N09nCE"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 093E73168FC;
-	Mon,  3 Nov 2025 14:58:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6599D3191D8;
+	Mon,  3 Nov 2025 14:58:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762181895; cv=none; b=QW6KT55Fk9zuvWQneNRjFdgQOxu1GL1A7ZIIOYYLkMwOFYIrupLdvxr6s2x67Afu2iKAOfwWzeNeVROfOXlB8d+FE1+E5RME0LHFnmQdlrAcUltzol/QYLneOiV7avwTtS1tjJzvqrVi45LlXNdOr7l/NJHWW4EzypSR9EPHeDI=
+	t=1762181896; cv=none; b=N8CbbLnn8Dmpipf4hlqyVNyl1TSzvNS7Bc/xrQUCIvwKdyIkd2Ba6/biWlokCkNcEoDrUQZlW3uJQymIZebDKGfEdxb+Regd9cwjrdVoVSXhSpxOMJ/wuSRxmszqkgo4KjUr6auOlcoIxSD1bNGdPUKe2150vDVFjY578efwHEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762181895; c=relaxed/simple;
-	bh=9EsH2Da/6UhJaCMVF0omDPDa4FG+ogIUAttbOM8Fjec=;
+	s=arc-20240116; t=1762181896; c=relaxed/simple;
+	bh=3SOHcCNtJai0jiEeFwDApQD/S8x6jH+uzaK2QaiBxx8=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Yi70wRoTFLoc7gR09WBQyns1HKtz0B8fTA2rc48WirdtYrAYr0eFY6HZgkFwrvowMCxKNh3fJMqXlFRSYTkxBQhct0u2VzK6SnOdrwBT+kXzPkoBcvipPBASH+KOh22/ZTGvWQzhrJ/ybylXl2jhsyPSmn0Kjn5SyOlXuQsy6HM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LokUB/Mc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AB73C19424;
-	Mon,  3 Nov 2025 14:58:09 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=cXauWhcCHeUvDSgXKoSCEQ8rAQg4VHgVMHKBUhkPHv4sIeOELkHoY4yYgTtLIiCUGs/706qxrifEXMjenNVAY+5o9MfjntfLz6Irx9uciqY//o7iHRxjvQok2PoYVjE04fgEIr32pnZoOIlhGrx7AHimxBU6UJAnsOBNfBZUcF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C2N09nCE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18630C4CEFD;
+	Mon,  3 Nov 2025 14:58:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762181892;
-	bh=9EsH2Da/6UhJaCMVF0omDPDa4FG+ogIUAttbOM8Fjec=;
+	s=k20201202; t=1762181896;
+	bh=3SOHcCNtJai0jiEeFwDApQD/S8x6jH+uzaK2QaiBxx8=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=LokUB/McgJ3/29UMikpNosikAQqnLwDTX7X8gxMGompKPQe50GAhAhDb9V7MfeH+N
-	 WybYX5a9QtVgpXPUoJ6vGEf9fR2uq2Wk54rlzuExUqBjsdwfBgwQsIIfnmlrAzf9qV
-	 a+dc5BpxypOmzwR2uyHJV3EX4rB6mTVjR9FvQ2wpYVIw9umJ2FK9IaDqpvMTLYkQ2X
-	 zfmkvjMdH9mOWJq1wxUGfSxH5UFk04bsEYNaykTa/vg0JJTJlQsZ5bPl35IO0r8rDr
-	 SMdKGofW3CBbq6NsS3+vuh9+wtWJxOv+YbsNLt7xRnVZX+xa0wBXmZj9/2V2bawz5M
-	 e6KCSLn3GkgTQ==
+	b=C2N09nCE2+2V+HW48Wm/8xl8T3Vs8shmBL2PzA64cpY2NjZv0TZ1uBu113H5CVGUs
+	 EIyuggylugy1YAjqFJ0MnPVsslM9K1zthxOVsJAaezo2jCSqpPZh7Tbnj8HidnJ0TL
+	 7c4Jzs/R/fB+qKavyrWiLeVudH93nJTZddLVeumTJXbyrKouxsaiimk9gBmosy2RUg
+	 cnYZJP8rHuq+nlQL0IEmY/WnyYSG+gLwW/Zj7U921FCiFxyaiaunfjlGlODqdahK8m
+	 SIoYI+3SzIj9gb4JTV/Cq8k7QI7yoz2habV+V908LDCAsoWQfTf5MRgBq7IfvbK1ZG
+	 wuuNTqG+YFw2w==
 From: Christian Brauner <brauner@kernel.org>
-Date: Mon, 03 Nov 2025 15:57:33 +0100
-Subject: [PATCH 07/12] coredump: mark struct mm_struct as const
+Date: Mon, 03 Nov 2025 15:57:34 +0100
+Subject: [PATCH 08/12] coredump: split out do_coredump() from
+ vfs_coredump()
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +53,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251103-work-creds-guards-prepare_creds-v1-7-b447b82f2c9b@kernel.org>
+Message-Id: <20251103-work-creds-guards-prepare_creds-v1-8-b447b82f2c9b@kernel.org>
 References: <20251103-work-creds-guards-prepare_creds-v1-0-b447b82f2c9b@kernel.org>
 In-Reply-To: <20251103-work-creds-guards-prepare_creds-v1-0-b447b82f2c9b@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
@@ -64,49 +65,173 @@ Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-crypto@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-96507
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1281; i=brauner@kernel.org;
- h=from:subject:message-id; bh=9EsH2Da/6UhJaCMVF0omDPDa4FG+ogIUAttbOM8Fjec=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWRyHHrpe3G1dtnTrr4PBwxfP/m/JmXpzS8lXwrj/c5Ki
- 8hLXajk7ShlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZhIpzTDP9XcpOfRU9T6lQR3
- qW7o3hXK6sfa0fVU60Y727FFC86tl2P476eY7rGk7Xh2TtfP72zTJ7wMexFh1GyRX6i5//1LPwZ
- 7HgA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4185; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=3SOHcCNtJai0jiEeFwDApQD/S8x6jH+uzaK2QaiBxx8=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWRyHHrpENDx8pHFoi2H5317oP34Z/jR3KMOi5/83viya
+ RrDlOUfJnWUsjCIcTHIiimyOLSbhMst56nYbJSpATOHlQlkCAMXpwBMROsmw3/nghPNR/u3azIl
+ LkpZocCh1tZ2Zx//pAsrTy1+G7vjTawRwz8F5ZnNO/Ylyd7eMoO7/eC3E+zhHy+93lWTrjH9glk
+ VpzI/AA==
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-We don't actually modify it.
+Make the function easier to follow and prepare for some of the following
+changes.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- fs/coredump.c                  | 2 +-
- include/linux/sched/coredump.h | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ fs/coredump.c | 131 ++++++++++++++++++++++++++++++----------------------------
+ 1 file changed, 68 insertions(+), 63 deletions(-)
 
 diff --git a/fs/coredump.c b/fs/coredump.c
-index 590360ba0a28..8253b28bc728 100644
+index 8253b28bc728..79c681f1d647 100644
 --- a/fs/coredump.c
 +++ b/fs/coredump.c
-@@ -1092,7 +1092,7 @@ void vfs_coredump(const kernel_siginfo_t *siginfo)
- 	size_t *argv __free(kfree) = NULL;
- 	struct core_state core_state;
- 	struct core_name cn;
--	struct mm_struct *mm = current->mm;
-+	const struct mm_struct *mm = current->mm;
- 	const struct linux_binfmt *binfmt = mm->binfmt;
- 	const struct cred *old_cred;
- 	int argc = 0;
-diff --git a/include/linux/sched/coredump.h b/include/linux/sched/coredump.h
-index b7fafe999073..624fda17a785 100644
---- a/include/linux/sched/coredump.h
-+++ b/include/linux/sched/coredump.h
-@@ -8,7 +8,7 @@
- #define SUID_DUMP_USER		1	/* Dump as user of process */
- #define SUID_DUMP_ROOT		2	/* Dump as root */
+@@ -1086,6 +1086,73 @@ static inline bool coredump_skip(const struct coredump_params *cprm,
+ 	return false;
+ }
  
--static inline unsigned long __mm_flags_get_dumpable(struct mm_struct *mm)
-+static inline unsigned long __mm_flags_get_dumpable(const struct mm_struct *mm)
++static void do_coredump(struct core_name *cn, struct coredump_params *cprm,
++			size_t **argv, int *argc, const struct linux_binfmt *binfmt)
++{
++	if (!coredump_parse(cn, cprm, argv, argc)) {
++		coredump_report_failure("format_corename failed, aborting core");
++		return;
++	}
++
++	switch (cn->core_type) {
++	case COREDUMP_FILE:
++		if (!coredump_file(cn, cprm, binfmt))
++			return;
++		break;
++	case COREDUMP_PIPE:
++		if (!coredump_pipe(cn, cprm, *argv, *argc))
++			return;
++		break;
++	case COREDUMP_SOCK_REQ:
++		fallthrough;
++	case COREDUMP_SOCK:
++		if (!coredump_socket(cn, cprm))
++			return;
++		break;
++	default:
++		WARN_ON_ONCE(true);
++		return;
++	}
++
++	/* Don't even generate the coredump. */
++	if (cn->mask & COREDUMP_REJECT)
++		return;
++
++	/* get us an unshared descriptor table; almost always a no-op */
++	/* The cell spufs coredump code reads the file descriptor tables */
++	if (unshare_files())
++		return;
++
++	if ((cn->mask & COREDUMP_KERNEL) && !coredump_write(cn, cprm, binfmt))
++		return;
++
++	coredump_sock_shutdown(cprm->file);
++
++	/* Let the parent know that a coredump was generated. */
++	if (cn->mask & COREDUMP_USERSPACE)
++		cn->core_dumped = true;
++
++	/*
++	 * When core_pipe_limit is set we wait for the coredump server
++	 * or usermodehelper to finish before exiting so it can e.g.,
++	 * inspect /proc/<pid>.
++	 */
++	if (cn->mask & COREDUMP_WAIT) {
++		switch (cn->core_type) {
++		case COREDUMP_PIPE:
++			wait_for_dump_helpers(cprm->file);
++			break;
++		case COREDUMP_SOCK_REQ:
++			fallthrough;
++		case COREDUMP_SOCK:
++			coredump_sock_wait(cprm->file);
++			break;
++		default:
++			break;
++		}
++	}
++}
++
+ void vfs_coredump(const kernel_siginfo_t *siginfo)
  {
- 	/*
- 	 * By convention, dumpable bits are contained in first 32 bits of the
+ 	struct cred *cred __free(put_cred) = NULL;
+@@ -1133,70 +1200,8 @@ void vfs_coredump(const kernel_siginfo_t *siginfo)
+ 
+ 	old_cred = override_creds(cred);
+ 
+-	if (!coredump_parse(&cn, &cprm, &argv, &argc)) {
+-		coredump_report_failure("format_corename failed, aborting core");
+-		goto close_fail;
+-	}
+-
+-	switch (cn.core_type) {
+-	case COREDUMP_FILE:
+-		if (!coredump_file(&cn, &cprm, binfmt))
+-			goto close_fail;
+-		break;
+-	case COREDUMP_PIPE:
+-		if (!coredump_pipe(&cn, &cprm, argv, argc))
+-			goto close_fail;
+-		break;
+-	case COREDUMP_SOCK_REQ:
+-		fallthrough;
+-	case COREDUMP_SOCK:
+-		if (!coredump_socket(&cn, &cprm))
+-			goto close_fail;
+-		break;
+-	default:
+-		WARN_ON_ONCE(true);
+-		goto close_fail;
+-	}
+-
+-	/* Don't even generate the coredump. */
+-	if (cn.mask & COREDUMP_REJECT)
+-		goto close_fail;
+-
+-	/* get us an unshared descriptor table; almost always a no-op */
+-	/* The cell spufs coredump code reads the file descriptor tables */
+-	if (unshare_files())
+-		goto close_fail;
+-
+-	if ((cn.mask & COREDUMP_KERNEL) && !coredump_write(&cn, &cprm, binfmt))
+-		goto close_fail;
+-
+-	coredump_sock_shutdown(cprm.file);
+-
+-	/* Let the parent know that a coredump was generated. */
+-	if (cn.mask & COREDUMP_USERSPACE)
+-		cn.core_dumped = true;
+-
+-	/*
+-	 * When core_pipe_limit is set we wait for the coredump server
+-	 * or usermodehelper to finish before exiting so it can e.g.,
+-	 * inspect /proc/<pid>.
+-	 */
+-	if (cn.mask & COREDUMP_WAIT) {
+-		switch (cn.core_type) {
+-		case COREDUMP_PIPE:
+-			wait_for_dump_helpers(cprm.file);
+-			break;
+-		case COREDUMP_SOCK_REQ:
+-			fallthrough;
+-		case COREDUMP_SOCK:
+-			coredump_sock_wait(cprm.file);
+-			break;
+-		default:
+-			break;
+-		}
+-	}
++	do_coredump(&cn, &cprm, &argv, &argc, binfmt);
+ 
+-close_fail:
+ 	revert_creds(old_cred);
+ 	coredump_cleanup(&cn, &cprm);
+ 	return;
 
 -- 
 2.47.3
