@@ -1,50 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-66810-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66811-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 857ECC2CA53
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 03 Nov 2025 16:19:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBE18C2C967
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 03 Nov 2025 16:11:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1D40E4F8798
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Nov 2025 15:08:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 452E21885B53
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Nov 2025 15:09:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E70E132E75F;
-	Mon,  3 Nov 2025 14:58:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ED443314B8;
+	Mon,  3 Nov 2025 14:58:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k3jenSgj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rm5ipfPk"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 333BA32D0EA;
-	Mon,  3 Nov 2025 14:58:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A38AE3148D7;
+	Mon,  3 Nov 2025 14:58:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762181886; cv=none; b=JUDvznTeuuB+urJtMv6Ewnf494/JvAwx6DsQ1fMY+UWUMycpgjpWbjLNScTcjDxLQhJ6e+0JzCg5mQscZStEXflCXzvQ5gf9c/yb310+pcFiL8wfb9Px+CfzZ+7qaPxOwcNL8LgJkFqGWY5eg56c3jt1bh0KYjb1tgfQcNrWVos=
+	t=1762181889; cv=none; b=B1UzWren+EAiWO3Cb+wvv2jNgPicMp6pPtA/G7YEK+AT2fp9dFSA8dp+7U14dNm3Ze+EF6N9DnLZsa7M8BpfKsWglT45xzEEaz5MHzxL2zi0anlc9S8/9AVUH9ets3pOESKstzJGtrWVwHfUdnp8znQJlFqtBuo/fbYQQHntS4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762181886; c=relaxed/simple;
-	bh=pg2v4Qq4p691A716jLKgU9cR9rJWdfU2QnrT9iAtdLo=;
+	s=arc-20240116; t=1762181889; c=relaxed/simple;
+	bh=EP4X5ZOadtmMtGSodwXabbolR1oPbrjawwY7HhpdVyM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=aKL7VmjfqrYnITsbsaysrEcQIG3Z9Lp1JR0scetRMHuXMnwu2AtaVOzxCaJNwZe/ua7LRH+KugevcbnLbM1UHNNizx7nDiutL2ngw/ZKLAQTkcOKd4erOpZVcG6IUpAxD4qHP952sto56kOVYqAx/+NudHd2Yv0fxSdQl83Ks+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k3jenSgj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2085C19421;
-	Mon,  3 Nov 2025 14:58:02 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=lyY6+iowc9Z06/JIhs3nC1dGfk30W5Cim4I2i4gWf+6nX3AFAJ+lABZvOHx5n9ZIo1WwLliJ549NpXgG/BI3qUjzUmzNXqm+THRVpLsAwFP+iz7Y+zlnIpfljRKPJYBFlwuGvgrLaPnHVgu3OcJaCTKxL+JWvVDjiQS6SrA9Ayk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rm5ipfPk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39356C16AAE;
+	Mon,  3 Nov 2025 14:58:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762181885;
-	bh=pg2v4Qq4p691A716jLKgU9cR9rJWdfU2QnrT9iAtdLo=;
+	s=k20201202; t=1762181889;
+	bh=EP4X5ZOadtmMtGSodwXabbolR1oPbrjawwY7HhpdVyM=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=k3jenSgjz87qIYdLxKG5JJW4vxX0/TPxC6CFwTvlx7Tl7n9xE4mlIADEP/AxPoF0k
-	 3tHWsJQRfZReyP4rQ+YQZMb3IGYp9s5/GvKHpgXYopc4D7vWRzqJErSHWqp0ROj2Xq
-	 ++uF8hSneX2nYhaqRzlD1Ez+xBkz53yTGWIFTOdebt+I7k7+6dn5upLZYqDAldx3pP
-	 42Rcni/Xnt5jNXU6QaOy43bHgEsAZAKt2MVBNKePKZi45IFqA9Dwd+KyCcYbW3uXw1
-	 hcERYhyvMRY4w7zbRD1Mtuv+R1mzlr01Py/eUnVUwoTd2mK6Pwh9MKVd1ATi12wQyZ
-	 VgLHGxzPN5PMw==
+	b=Rm5ipfPkZ5jOLNVd7v3x/bd/uiTsZuAeEfY3O1BbacTQ3mrXb++tbKrh3zNkQe1Ot
+	 yLbfg3VXH7/HRMXuoqg57AWBiQTRY9r5VeQ5gVNQQUkMLGSX5zRwQcjqniDDbXM7Zi
+	 8uT77iMIEoOWEH2GArUKwPp5sI23+tagAEh5Q0Lw0Dag8PY3NqLmB+JosSWOcqhodr
+	 B/wzXIKtPZehf9KpsBMWEs7LrD0EONuhAA3cZtASk35iQvDjzdbQtru8V7jzgPlGVV
+	 fPwok5yQBon3DDQgONY6xml7axr8vbcBYWidVXaQXSTbO1KVVpalPYw9wa4CSxPgRu
+	 50yJso83WxuvQ==
 From: Christian Brauner <brauner@kernel.org>
-Date: Mon, 03 Nov 2025 15:57:31 +0100
-Subject: [PATCH 05/12] coredump: move revert_cred() before
- coredump_cleanup()
+Date: Mon, 03 Nov 2025 15:57:32 +0100
+Subject: [PATCH 06/12] coredump: pass struct linux_binfmt as const
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -53,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251103-work-creds-guards-prepare_creds-v1-5-b447b82f2c9b@kernel.org>
+Message-Id: <20251103-work-creds-guards-prepare_creds-v1-6-b447b82f2c9b@kernel.org>
 References: <20251103-work-creds-guards-prepare_creds-v1-0-b447b82f2c9b@kernel.org>
 In-Reply-To: <20251103-work-creds-guards-prepare_creds-v1-0-b447b82f2c9b@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
@@ -65,37 +64,44 @@ Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-crypto@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-96507
-X-Developer-Signature: v=1; a=openpgp-sha256; l=611; i=brauner@kernel.org;
- h=from:subject:message-id; bh=pg2v4Qq4p691A716jLKgU9cR9rJWdfU2QnrT9iAtdLo=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWRyHHqZ6D57643ky/+/Hb66KPGd3u+ty2sqxY7dP8x1W
- VGzSaXyeUcpC4MYF4OsmCKLQ7tJuNxynorNRpkaMHNYmUCGMHBxCsBE3AIZGd7od/1OWLjnxvcJ
- QtuE5zwRbfra+q7KjcFz9rPzNt/mP8xm+O+68mRGc8RuhsSMUs9/pps+397laOW5KMdl6vUvk+b
- 9SGYEAA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=965; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=EP4X5ZOadtmMtGSodwXabbolR1oPbrjawwY7HhpdVyM=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWRyHHpZkJ72rDJgX35OmNX/XUm22Z4y+3M884MOOq7sk
+ lJ70zS9o5SFQYyLQVZMkcWh3SRcbjlPxWajTA2YOaxMIEMYuDgFYCLJfxj+cJivjbN0+el3Ut7y
+ 1Hm51Wklp410S6P/bdLanhsWeCmch5HhlmLgXuNTbcff8Pf9OpA89d0T/U65s1PUpc/yZ349Jqn
+ BDwA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-There's no need to pin the credentials across the coredump_cleanup()
-call. Nothing in there depends on elevated credentials.
+We don't actually modify it.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- fs/coredump.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/coredump.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/fs/coredump.c b/fs/coredump.c
-index 5c1c381ee380..4fce2a2f279c 100644
+index 4fce2a2f279c..590360ba0a28 100644
 --- a/fs/coredump.c
 +++ b/fs/coredump.c
-@@ -1197,8 +1197,8 @@ void vfs_coredump(const kernel_siginfo_t *siginfo)
- 	}
+@@ -1036,7 +1036,7 @@ static bool coredump_pipe(struct core_name *cn, struct coredump_params *cprm,
  
- close_fail:
--	coredump_cleanup(&cn, &cprm);
- 	revert_creds(old_cred);
-+	coredump_cleanup(&cn, &cprm);
- 	return;
- }
+ static bool coredump_write(struct core_name *cn,
+ 			  struct coredump_params *cprm,
+-			  struct linux_binfmt *binfmt)
++			  const struct linux_binfmt *binfmt)
+ {
  
+ 	if (dump_interrupted())
+@@ -1093,7 +1093,7 @@ void vfs_coredump(const kernel_siginfo_t *siginfo)
+ 	struct core_state core_state;
+ 	struct core_name cn;
+ 	struct mm_struct *mm = current->mm;
+-	struct linux_binfmt *binfmt = mm->binfmt;
++	const struct linux_binfmt *binfmt = mm->binfmt;
+ 	const struct cred *old_cred;
+ 	int argc = 0;
+ 	struct coredump_params cprm = {
 
 -- 
 2.47.3
