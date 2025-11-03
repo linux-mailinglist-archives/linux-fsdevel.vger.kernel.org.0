@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-66740-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66741-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A512C2B611
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 03 Nov 2025 12:32:19 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0D91C2B68F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 03 Nov 2025 12:36:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F49B1892A48
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Nov 2025 11:30:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 18B934F94BF
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Nov 2025 11:30:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E9C03090C2;
-	Mon,  3 Nov 2025 11:27:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED24A3093B8;
+	Mon,  3 Nov 2025 11:27:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t/7pepPe"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="STqrMrI4"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CADC9308F00;
-	Mon,  3 Nov 2025 11:27:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AC57303A2F;
+	Mon,  3 Nov 2025 11:27:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762169247; cv=none; b=aM80Oj38KT1xe61dHYav1xs4MKrJ95XlFjwJ68Gu328J+wbDF9T7fw5MkO4HejkzqZC6qdZTAjO5uc/hSvWZnwX16VUf6BN5jknd+WXPRucGbZ4Uo9Ckhm3+YOa9P5sqbhAZFa4SjUJRuMyfhmwpN36GrM+jpJgRDfcfxcEQXqo=
+	t=1762169251; cv=none; b=n6H+3VQlqDSP2wu7doRydDT9DFoXPDIpFFrCs0t05qZTsnQlFbXO4AwyHnPnousMirQmGCwk74ponB0Kiq53SCeCQDUWqn2k1JBhzp1Pk2F7YbjqE25khHOCIdoa1YIov5to58HpptzbTxSgwC+NQKM+B8Yx0ijQUkr0Wh/a6D0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762169247; c=relaxed/simple;
-	bh=xUgfCnEjAJd8zsIOSMA0urqHXlAuN0jLc7ICsbqbewI=;
+	s=arc-20240116; t=1762169251; c=relaxed/simple;
+	bh=mYlstSLu9EjMbm9NKODOYBWD+LPqr6dAu0tzrPktmzQ=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=XiF8df5ilFM8sOYKFNeGQnknhbBga6Hq8zbNzol8oKIaD3uGk7Ypsn3AGiy1T8r4MmmTarPOjhOhpHAk/cH3WJRZQim9qPmbtr1hCX4uc891xjm51UEEtsJzJb5isMtjy6Sryu768PuEQMzz1m2t6h2APDELlvMkHlZ23x0LdRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t/7pepPe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47F83C4CEF8;
-	Mon,  3 Nov 2025 11:27:25 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=SMKBpEnOd0GVyl7nUUGnq72XwAqT82r++iGZciqJv3l/GxIinOiOq8EcBP+7UWv93qoX+4hvDgVkCvEYKlUsJPMQg/3tAcN0CiOyWpUQKLSU+8gCwe7UJ/iOFTafqt3WHeOuM8grDSeFIbfTvUVIbox6m+S3kdc0n/+FUSDQ29k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=STqrMrI4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 286ADC4CEE7;
+	Mon,  3 Nov 2025 11:27:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762169247;
-	bh=xUgfCnEjAJd8zsIOSMA0urqHXlAuN0jLc7ICsbqbewI=;
+	s=k20201202; t=1762169250;
+	bh=mYlstSLu9EjMbm9NKODOYBWD+LPqr6dAu0tzrPktmzQ=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=t/7pepPe+E2EpzUMqDzgHBspZi4YmYJq/8kyKPd8F4ea0WwzTWUKxbhr9BQn21g5p
-	 4vUpHCHemXB6WCn+RWve8MTpNaOMgVq+V0G5Yt9dQGt0TYSSpSuF+1vBLHm6cV79V4
-	 /Ef3Br+/I9RsZpUSXomjNPfGTamKACdaOSk0aWyoYYbif609YCwiJSx2Jh98aQ0Ofq
-	 CUodanmAKxk14DxR2ZdZsqfrSW1kzhfNI30558rjyOaZaOOTPVDEixp7GSLHnmdi6W
-	 X5H+Gu6tSKRCbmMwJz3DH/sLJXc1koIR94pNFloTG1GIny0GDGT2y0+626ZCaEyXMX
-	 Gic7qzrFm9jUA==
+	b=STqrMrI4HTdVciHFTQo6X/rWq9AuCwH8cjr9x8+n6+sG8Ivb5pFAr/LHYe5ukSl3Y
+	 /xOm63eQeS5pMMZE5xjNg9VDY4XYAN5G6gQqED6X5+od9W9xPQXtK4d8Iv2e02+w0i
+	 Wd6O2dhyK3zL3U11rEGhZdsx5Z0pLVA83ls9eVzpGSPPSbL0iICNZDfbyoPPyZ1ZL2
+	 0UPGQZun8LiPfvFilfZkttbHKMGAv17ErlWMEg9EcML+jOM4Mv0+FbKtSqZ3hFRVwg
+	 e5YDmEPGlN2ZfqtZWOK6oD41JlWuDosnLjx1hNgTh3glvEN5HiztiFysvvXU3DoIe4
+	 7GNQ753m8/85w==
 From: Christian Brauner <brauner@kernel.org>
-Date: Mon, 03 Nov 2025 12:26:55 +0100
-Subject: [PATCH 07/16] backing-file: use credential guards for mmap
+Date: Mon, 03 Nov 2025 12:26:56 +0100
+Subject: [PATCH 08/16] binfmt_misc: use credential guards
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251103-work-creds-guards-simple-v1-7-a3e156839e7f@kernel.org>
+Message-Id: <20251103-work-creds-guards-simple-v1-8-a3e156839e7f@kernel.org>
 References: <20251103-work-creds-guards-simple-v1-0-a3e156839e7f@kernel.org>
 In-Reply-To: <20251103-work-creds-guards-simple-v1-0-a3e156839e7f@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
@@ -63,12 +63,12 @@ Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
  cgroups@vger.kernel.org, netdev@vger.kernel.org, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-96507
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1027; i=brauner@kernel.org;
- h=from:subject:message-id; bh=xUgfCnEjAJd8zsIOSMA0urqHXlAuN0jLc7ICsbqbewI=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWRyTGx/tYdp5/3NnxKWxT267pvpVHLYZbnKu5ednnuOs
- ptrr97xpaOUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAiB3oYGf7bPVoYHBDtkvTm
- j0NBZrlhXOds+5m3OFIvVuu+nu7zMJ6RYXlZ6M8HAc6f/y7vskkP+syb1GXX780bzNOpyb/ifMp
- edgA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1225; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=mYlstSLu9EjMbm9NKODOYBWD+LPqr6dAu0tzrPktmzQ=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWRyTGz/+WIFh9nrxRFbP9Uf+F5deo/n7QrmSybR9YfeC
+ tz4fe/fm45SFgYxLgZZMUUWh3aTcLnlPBWbjTI1YOawMoEMYeDiFICJ1OsyMtxbwXNRcorXnde1
+ VRofdN8wFEYdEtv4JnqO0e+9GibWf2cz/I/OXytfrjPh+IulfbmKUgKiPxLjXAWTRDaHFx95/kj
+ sGDMA
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
@@ -77,33 +77,34 @@ restoration on scope exit.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- fs/backing-file.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ fs/binfmt_misc.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/fs/backing-file.c b/fs/backing-file.c
-index 9c63a3368b66..5cc4b59aa460 100644
---- a/fs/backing-file.c
-+++ b/fs/backing-file.c
-@@ -331,7 +331,6 @@ EXPORT_SYMBOL_GPL(backing_file_splice_write);
- int backing_file_mmap(struct file *file, struct vm_area_struct *vma,
- 		      struct backing_file_ctx *ctx)
- {
--	const struct cred *old_cred;
- 	struct file *user_file = vma->vm_file;
- 	int ret;
+diff --git a/fs/binfmt_misc.c b/fs/binfmt_misc.c
+index a839f960cd4a..558db4bd6c2a 100644
+--- a/fs/binfmt_misc.c
++++ b/fs/binfmt_misc.c
+@@ -782,8 +782,6 @@ static ssize_t bm_register_write(struct file *file, const char __user *buffer,
+ 		return PTR_ERR(e);
  
-@@ -343,9 +342,8 @@ int backing_file_mmap(struct file *file, struct vm_area_struct *vma,
- 
- 	vma_set_file(vma, file);
- 
--	old_cred = override_creds(ctx->cred);
--	ret = vfs_mmap(vma->vm_file, vma);
--	revert_creds(old_cred);
-+	scoped_with_creds(ctx->cred)
-+		ret = vfs_mmap(vma->vm_file, vma);
- 
- 	if (ctx->accessed)
- 		ctx->accessed(user_file);
+ 	if (e->flags & MISC_FMT_OPEN_FILE) {
+-		const struct cred *old_cred;
+-
+ 		/*
+ 		 * Now that we support unprivileged binfmt_misc mounts make
+ 		 * sure we use the credentials that the register @file was
+@@ -791,9 +789,8 @@ static ssize_t bm_register_write(struct file *file, const char __user *buffer,
+ 		 * didn't matter much as only a privileged process could open
+ 		 * the register file.
+ 		 */
+-		old_cred = override_creds(file->f_cred);
+-		f = open_exec(e->interpreter);
+-		revert_creds(old_cred);
++		scoped_with_creds(file->f_cred)
++			f = open_exec(e->interpreter);
+ 		if (IS_ERR(f)) {
+ 			pr_notice("register: failed to install interpreter file %s\n",
+ 				 e->interpreter);
 
 -- 
 2.47.3
