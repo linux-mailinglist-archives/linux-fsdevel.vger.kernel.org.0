@@ -1,157 +1,146 @@
-Return-Path: <linux-fsdevel+bounces-66796-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66797-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59377C2C1CA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 03 Nov 2025 14:35:30 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 544F1C2C399
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 03 Nov 2025 14:46:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB84D3B6E19
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Nov 2025 13:30:01 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 664EF4F0001
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Nov 2025 13:40:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AF232980A8;
-	Mon,  3 Nov 2025 13:29:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A6C830B51D;
+	Mon,  3 Nov 2025 13:40:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iIfc0l6k"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mTPQC/TW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40C3926F2BB
-	for <linux-fsdevel@vger.kernel.org>; Mon,  3 Nov 2025 13:29:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D5BC2FBE08
+	for <linux-fsdevel@vger.kernel.org>; Mon,  3 Nov 2025 13:40:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762176596; cv=none; b=UnUtsgriMR1sXzOwmRnX5xZQgw45moTkbXEIDDHOtqB0qx0FZuUUFCo5eBc/0wABwxkPX7Ethp7yixsGXviG5DH6aM0KhI6U2lWtcT7necX3maT3dzm6MiCs5URz6N0ThyrMmN16WWta7WfD5voQ53BZKvgXRuWUxxt6wqKOL4U=
+	t=1762177244; cv=none; b=YW052jVZkLtNEK4CDwlXkfjahOl6NN0VlbUIBN3eIpXTeBid8uT3ZrQ52tRpE1klLOdHdFkyUfrtqB0IDj6bT+GPokQWqh7keyitwmmacZ/QgAPBPW/Isqw3eReb5iDHkepXrsWwXcaKTG8LpWxxFmk07fnY6GpRP0AAsWOfRow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762176596; c=relaxed/simple;
-	bh=3P4uhXaD5ilvYs+a4RtrwVqLA5w/zngN8+yS2F+4lkk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DJWm1XH5uylpJQ7v33ic9N5ng1XHMD+plirswRINIBx6JFYOHluC1LoprtkBVlSG3nwt4w3NDrEsDJVHDy6H1W6Hr4pI098CB5Q3NomJspfAE9GuR+LR3Llnk50GEAe0zFTgzrePrQouZm7jGySvC7agC813l+NyJB6Vh7ivoT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iIfc0l6k; arc=none smtp.client-ip=209.85.208.46
+	s=arc-20240116; t=1762177244; c=relaxed/simple;
+	bh=JZ0P1jUJT/JHdrkC2pQPX3089iJixp+OjT43MwzgNR8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jDAG/k2vqSInYQXg4zs7/Ti2UIub4wXyZdaQ0fU6ZTGtEOVjiVC0LxNaDtf6Ieeguhoywx3LH4ZuZMPQ263mX7L1GffcvTdLomt6nLjayCZgA+cWbiy2RvyEadGhNCb2lBXWhJSs8IpKT4aBXc0q5amTm52qMjmbkNqvhIQPi6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mTPQC/TW; arc=none smtp.client-ip=209.85.216.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-640b06fa959so2317915a12.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Nov 2025 05:29:54 -0800 (PST)
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-33ba5d8f3bfso3794490a91.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Nov 2025 05:40:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762176593; x=1762781393; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=a21JbFZrSRmyl+TIWUp5y75+miyXDqyFyLKW07xgMRE=;
-        b=iIfc0l6k9iNQArxxX2qbTR4pYsdaNIZ+O0bZS+XBE8EwQROeAVrFCu2U6PBIjIhraX
-         suZNP2HKkCrkhFRfJVo9pyOplIYGW7dcmUuqnY9c40lEekzqbtTY4i73leXVc8hl4+jE
-         ZWGuzBP6tGg8MH0wbbwhE09bM1bGXHolSrhfM1prGDB9cyYHmiQ0l86NMY9N9e22F752
-         ccz127Qgm/Zwcw4gYj9gylM3DpNnvguc4OeZElaIjAP9QE6YuQMj3CCTOmjmIvcXW2At
-         4esTOikzxDAhxUICWw0ISVF7OFAeqdFTaNPpF0fHIOFA39W8YGD9CwZ0m5QUbAAdpKLC
-         f7VQ==
+        d=gmail.com; s=20230601; t=1762177242; x=1762782042; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+8IwqJtA/22JVDtVDWFjIJd2N2jNDTeHgnje61NBmJ8=;
+        b=mTPQC/TW205WGM22q1YNn+ndPJrOc6Yjahm5rTeZ0CLzA0C3ZORehURZEkV/qyA4jx
+         ML8RGQqdmf68ZoDpjlBVJCYZndBFghHjftPIIGsVBVIhFEPiqBldDefn56V/2kPo4lx6
+         dyy3h1DmvC7TBbOYOEBsvwfGS0bfg7kYT8DL1LP/LtICizpMdmV7MAPWJ/7GzcBjgjXl
+         og21ElomjErRG678nAYWFEEeWLSCD5FMX/IN7v2wZA+m+2fEDzfIql+2hh07LcqPZclH
+         V1tpcDnYGkijZIllr90/FQ5OPQS9iujhJ0+Hm963Hftbsv1loMFjknr1HaPeBTbtIJI5
+         ZGrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762176593; x=1762781393;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=a21JbFZrSRmyl+TIWUp5y75+miyXDqyFyLKW07xgMRE=;
-        b=rl9Elbbar1+xNNVmiVa3K3ECw41AqeSz7ZNm5rDj81OYcIGmI9GxxpGeQkBTS7fSb1
-         G4Asbiw0O1IxGjVOgWCu7K58lZUQW5RgHfZqIxropdEMjuATBBdoKggwPQPMJWmJJj4x
-         usDNDJdO2qxsLu0rdoxOOjrEaLvUBiZl4paU7CJn3W4X3arpv0stayvOz6I7ioZi1mOl
-         ikWCbGNhOwQDBwHp8yHWNDhHwI4ZimEvNhjScq8ya20MaQV6UgnBqXBKAFs3UDy8Aw8w
-         cTRR5mA72XJ2RtvgFlaHxq28OMRnXqOhpd/8WD1lpnxbyjaz70oWnvvAp6trnrn4vf4O
-         1VFg==
-X-Forwarded-Encrypted: i=1; AJvYcCVY5jtdauFHr/vi/DmuzHNfB7oeQc46BcL4TGdD74TSvRamVAPbqtYZ9WNIhXnv4wrA+Rb4VPfTMtOq08sP@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzl3X3kDeokOltpUJREEH3qNiE8jxqxvAa+Ku4eQFb1vUYHI4uQ
-	9TKbaiciWL1jF1dBLINMZhLaMy/qUo62cLepcDVbSG45PFig4Qbg4D+ocPowBpIl2Rd5iaEO2uD
-	UthbdZu7RDONVR6QOA359Ejvh3xNMskA=
-X-Gm-Gg: ASbGnct1OvG1XzckGrhHIKNAxOBh5btbM5WTK4cwP9Tuj2evl0xpwZd9fgFsIR2/JQa
-	i64VuMHefSRo0uHs+E+pEibmf3wwaVObs0eyLAb8I8ePL/Is+CvvNjRTQDQUp9XdT4zn1UoDcuF
-	YKclgzrBR1Udc3EC87ZNLbweguxcaSJR7oHUZOJx9KtEke0ZvmCnDkrcYNluLLwpP2bb7r6aex6
-	AAFG/0Vt080bQuYhO3fEBKgDkKkXkejupzQmVYiQukRqpL7WZGta2LmGzClhSmvHntQEBKEWI77
-	5+L5p6Bz8c3L4vGbBnSFKK+oZvwclC2IbPeYhIUW
-X-Google-Smtp-Source: AGHT+IGWyTZduHZ2AUQOMuHAUDSKDxSYh2Boylo//kHY7uALzcMyPCHh3aobLMS0sfZ3SBLE+RqIGbSBBaWJY8VJe/k=
-X-Received: by 2002:a05:6402:5108:b0:640:aa67:2933 with SMTP id
- 4fb4d7f45d1cf-640aa672a40mr5173930a12.21.1762176592344; Mon, 03 Nov 2025
- 05:29:52 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762177242; x=1762782042;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+8IwqJtA/22JVDtVDWFjIJd2N2jNDTeHgnje61NBmJ8=;
+        b=n9qt8Lsm92DCOpH82LTT+s0GhROXDL6axRAfV1mhJms8sKAK1zqGs9XOQQUCqqoEyI
+         l/gRs/AMTr6RYfDE1l20qSBYxV9U+gD+OxewFjIGHUk4/E4GotpAiVE6y0SkPv2OxrDq
+         3E9ow/9/lufi2R5QfDKZCPRrfqxzNmuiK5M8PYGPMfKHynhNwmlAn3QQR0YgnGmDo3F6
+         Ru1bSKBcm1KMx7+UeWDhzSERoSdd8Qfti32+se/pdrUmQCuDq7y2SaQExtLkhvOGp+SN
+         lSFGLX2QZkSmgbLgmBEeRmY6Zqdk1zS9A5rJBAgfHKWmAp/iWENtgLv4oiWyqfdLUKYk
+         djEg==
+X-Forwarded-Encrypted: i=1; AJvYcCVhWwT6zoWOuCEDTMQUyYg8WmhC+v9F6HQw5O5hvFWCa8gQdwRV+YUU4D/xjVfEa06KIKtO2d809GDDB/cD@vger.kernel.org
+X-Gm-Message-State: AOJu0YwpyF2VEHdJE9yEB2kuyZ0/zXgpM0VU/673pZmk7jAG5bvgdqSh
+	D7hmCFv7tLHXVCGLRxp8QDSe2VJoHhl5411odc5XGoXd5UQAGRGArg8F
+X-Gm-Gg: ASbGncte0y6h2M8H8S8+vSIoknw1VRUCv3qdmiWFmiNzTgGmIW0D9CW1cEGLWpUIWKw
+	fhF65/MFOso1TAz0f7a7U6phIdfsIMifiG5UdRJ/HfublHAP6ttPyWR7ZblMtQ/lDfcmJS+zeYC
+	QHKx8GSz6opMUjFZwwxX76iiEpgcNyMdp7tNi83tv+MzkMW2JmZwgLQ9a7v2vu96ux6KULlkqxe
+	Knp+cTbEvSdLWjedan2Ab30F0kkjgOm6jM9M8Qzha3nXGS+ZY/kL+VTrdIRoGqMrW8pgDMLNbsi
+	Hqc97NgHnQOV6xsZKu1qDJECEOwMMaPSmUGHOJz7e64puH/1aC5FNJbtzos3ipZAn8QgR39qF9M
+	1VDQJQHY1/tTx3lUdwCUxsK2zIv/jS+0GLtWXrHghJNJdywFEco47RW8Xs406sKkIXeZ2y+jUfe
+	/y95/oCF9hVR0VO8LQUJWtyhICgBGXNTq60a+gAVM3Sn8mL8WiDB11rqo5rRZuUYNNGTAvV01W
+X-Google-Smtp-Source: AGHT+IGpJsA054j4ViTtI38jqwpBxx4LnXSeC5cZfa9rXdhBelszsgUGjl8r93/Fsuxn/l+FZEUG2g==
+X-Received: by 2002:a17:90b:2f48:b0:330:bca5:13d9 with SMTP id 98e67ed59e1d1-3408309ae43mr14629306a91.32.1762177242379;
+        Mon, 03 Nov 2025 05:40:42 -0800 (PST)
+Received: from ?IPV6:2409:8a00:79b4:1a90:5d7b:82d2:2626:164a? ([2409:8a00:79b4:1a90:5d7b:82d2:2626:164a])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3407ef4c263sm5374195a91.3.2025.11.03.05.40.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Nov 2025 05:40:42 -0800 (PST)
+Message-ID: <07ab7f80-889e-4a28-adf9-12fc038bdc27@gmail.com>
+Date: Mon, 3 Nov 2025 21:40:18 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251103-work-creds-guards-simple-v1-0-a3e156839e7f@kernel.org>
-In-Reply-To: <20251103-work-creds-guards-simple-v1-0-a3e156839e7f@kernel.org>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Mon, 3 Nov 2025 14:29:40 +0100
-X-Gm-Features: AWmQ_bmz-aFyM_2e0ocdnrdFR9IUaRm9-CuMDUtbkHwY8CVjQjk6nDFhXg5Zzks
-Message-ID: <CAOQ4uxgr33rf1tzjqdJex_tzNYDqj45=qLzi3BkMUaezgbJqoQ@mail.gmail.com>
-Subject: Re: [PATCH 00/16] credentials guards: the easy cases
-To: Christian Brauner <brauner@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-aio@kvack.org, 
-	linux-unionfs@vger.kernel.org, linux-erofs@lists.ozlabs.org, 
-	linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org, 
-	samba-technical@lists.samba.org, cgroups@vger.kernel.org, 
-	netdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] fix missing sb_min_blocksize() return value checks in
+ some filesystems
+To: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+ Yongpeng Yang <yangyongpeng.storage@gmail.com>
+Cc: Namjae Jeon <linkinjeon@kernel.org>, Sungjong Seo
+ <sj1557.seo@samsung.com>, Jan Kara <jack@suse.cz>,
+ Carlos Maiolino <cem@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Sasha Levin <sashal@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, linux-xfs@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+ stable@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
+ "Darrick J . Wong" <djwong@kernel.org>,
+ Yongpeng Yang <yangyongpeng@xiaomi.com>
+References: <20251102163835.6533-2-yangyongpeng.storage@gmail.com>
+ <87cy60idr2.fsf@mail.parknet.co.jp>
+Content-Language: en-US
+From: Yongpeng Yang <yangyongpeng.storage@gmail.com>
+In-Reply-To: <87cy60idr2.fsf@mail.parknet.co.jp>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Nov 3, 2025 at 12:28=E2=80=AFPM Christian Brauner <brauner@kernel.o=
-rg> wrote:
->
-> This converts all users of override_creds() to rely on credentials
-> guards. Leave all those that do the prepare_creds() + modify creds +
-> override_creds() dance alone for now. Some of them qualify for their own
-> variant.
+On 11/3/2025 12:46 AM, OGAWA Hirofumi wrote:
+> Yongpeng Yang <yangyongpeng.storage@gmail.com> writes:
+> 
+>> diff --git a/fs/fat/inode.c b/fs/fat/inode.c
+>> index 9648ed097816..d22eec4f17b2 100644
+>> --- a/fs/fat/inode.c
+>> +++ b/fs/fat/inode.c
+>> @@ -1535,7 +1535,7 @@ int fat_fill_super(struct super_block *sb, struct fs_context *fc,
+>>   		   void (*setup)(struct super_block *))
+>>   {
+>>   	struct fat_mount_options *opts = fc->fs_private;
+>> -	int silent = fc->sb_flags & SB_SILENT;
+>> +	int silent = fc->sb_flags & SB_SILENT, blocksize;
+>>   	struct inode *root_inode = NULL, *fat_inode = NULL;
+>>   	struct inode *fsinfo_inode = NULL;
+>>   	struct buffer_head *bh;
+>> @@ -1595,8 +1595,13 @@ int fat_fill_super(struct super_block *sb, struct fs_context *fc,
+>>   
+>>   	setup(sb); /* flavour-specific stuff that needs options */
+>>   
+>> +	error = -EINVAL;
+>> +	blocksize = sb_min_blocksize(sb, 512);
+>> +	if (!blocksize) {
+> 
+> 	if (!sb_min_blocksize(sb, 512)) {
+> 
+> Looks like this one is enough?
+> 
 
-Nice!
+Thanks for the review. Yes, blocksize doesn't serve any other purpose. 
+I'll remove it in v2.
 
-What about with_ovl_creator_cred()/scoped_with_ovl_creator_cred()?
-Is there any reason not to do it as well?
+Yongpeng,
 
-I can try to clear some time for this cleanup.
+>> +		fat_msg(sb, KERN_ERR, "unable to set blocksize");
+>> +		goto out_fail;
+>> +	}
 
-For this series, feel free to add:
-
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-
-Thanks,
-Amir.
-
->
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
-> ---
-> Christian Brauner (16):
->       cred: add {scoped_}with_creds() guards
->       aio: use credential guards
->       backing-file: use credential guards for reads
->       backing-file: use credential guards for writes
->       backing-file: use credential guards for splice read
->       backing-file: use credential guards for splice write
->       backing-file: use credential guards for mmap
->       binfmt_misc: use credential guards
->       erofs: use credential guards
->       nfs: use credential guards in nfs_local_call_read()
->       nfs: use credential guards in nfs_local_call_write()
->       nfs: use credential guards in nfs_idmap_get_key()
->       smb: use credential guards in cifs_get_spnego_key()
->       act: use credential guards in acct_write_process()
->       cgroup: use credential guards in cgroup_attach_permissions()
->       net/dns_resolver: use credential guards in dns_query()
->
->  fs/aio.c                     |   6 +-
->  fs/backing-file.c            | 147 ++++++++++++++++++++++---------------=
-------
->  fs/binfmt_misc.c             |   7 +--
->  fs/erofs/fileio.c            |   6 +-
->  fs/nfs/localio.c             |  59 +++++++++--------
->  fs/nfs/nfs4idmap.c           |   7 +--
->  fs/smb/client/cifs_spnego.c  |   6 +-
->  include/linux/cred.h         |  12 ++--
->  kernel/acct.c                |   6 +-
->  kernel/cgroup/cgroup.c       |  10 ++-
->  net/dns_resolver/dns_query.c |   6 +-
->  11 files changed, 133 insertions(+), 139 deletions(-)
-> ---
-> base-commit: fea79c89ff947a69a55fed5ce86a70840e6d719c
-> change-id: 20251103-work-creds-guards-simple-619ef2200d22
->
->
 
