@@ -1,102 +1,121 @@
-Return-Path: <linux-fsdevel+bounces-66862-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66863-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17923C2E4F4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 03 Nov 2025 23:47:28 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50ADFC2E5EB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 04 Nov 2025 00:05:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E92A3B93B0
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Nov 2025 22:47:25 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D80934E3B32
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Nov 2025 23:05:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 090852FC005;
-	Mon,  3 Nov 2025 22:47:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99EA02FE593;
+	Mon,  3 Nov 2025 23:04:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FKXMJ/Ec"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="bGw+++mj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46EF91A9F82;
-	Mon,  3 Nov 2025 22:47:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FF972FD1BA
+	for <linux-fsdevel@vger.kernel.org>; Mon,  3 Nov 2025 23:04:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762210034; cv=none; b=fwYS6T4t01jymCasqv/VZutYy0ldycdZK9GDcKXyzX66yDNSrmSDnMt5ZIxgFStDRscCWlJl0VpCZ4fyz8InnGDRiGiwvvKSGq8lGjpFBRNOyjSqsPMNw9l2QKzXx1jP1Si2Hf8xG6v0w7Mw4EF1UWfA64Yd5mKHapgXIYyiFK4=
+	t=1762211091; cv=none; b=ppoRALp91ElmI6cKs8IEEGrp+hILyTnk7QUUIuPv9HDpO2BzIYuxuirOw7ZUJYNJ+77ubjLIYrqB/qkUpCceYE06mJ/jzd5mNeQYa78bXv/OYOJhYIBanfFe/EoIvDNLfillW2JTEsAZ/PvRShJjNhtvJEtUyevCarY/43LvXM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762210034; c=relaxed/simple;
-	bh=vzcjcZ/KzE5MpIcBsK7RTULC/BX++/fNaI56/t7f19g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sfpQKvwjZ+RnG+93QG8h9jzTk7fFK/0uHnQwOEC7biY/C04b5DDy9ilQshmDi2+9PGoJMs9iC1HQCVuvRgPgu8IvFhy0hcctDO/do/pXvV3IzKXCKjnukzbePba91WaB+WCxUgTy9W33rJAaWxSAwfRGFwF5uZVVwUSb+tA46dA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FKXMJ/Ec; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E436C4CEE7;
-	Mon,  3 Nov 2025 22:47:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762210033;
-	bh=vzcjcZ/KzE5MpIcBsK7RTULC/BX++/fNaI56/t7f19g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FKXMJ/Ec48ilrcgKvTG5GjgA5Z6I2mEPDZv3qtg5HhqKnAHiccABnQUzmRdyMaZCu
-	 hFjYLCQGqBJzqbKrqRsUiRuQ+0kshhLEduF5rRRAUbkSt2Z4OkDuJxEBusN8X4pKXt
-	 8FVTCg1ox+IrXozkewp4toraYgU0zItF8xFQfH4hGKx7wmq22kKuCdhM3x6/DsFWEe
-	 GY0Bnk2cWlL7r/RqYtZIJFpebDk5XnJdWE79KOuVk4bTIJvP3Lk/I2wWaKCcQsDtet
-	 LsdPNc/Ss0XvbsocywYxO+ZdzBnkdooEVdSAq7wnkLlMCkUMlKUcSbU5FLFr8oY2jJ
-	 Vz3aZTmotFj7g==
-Date: Mon, 3 Nov 2025 15:47:11 -0700
-From: Keith Busch <kbusch@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Jan Kara <jack@suse.cz>, Dave Chinner <david@fromorbit.com>,
-	Carlos Maiolino <cem@kernel.org>,
-	Christian Brauner <brauner@kernel.org>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-raid@vger.kernel.org,
-	linux-block@vger.kernel.org
-Subject: Re: fall back from direct to buffered I/O when stable writes are
- required
-Message-ID: <aQkw75D2cqqtkOrT@kbusch-mbp>
-References: <20251029071537.1127397-1-hch@lst.de>
- <aQNJ4iQ8vOiBQEW2@dread.disaster.area>
- <20251030143324.GA31550@lst.de>
- <aQPyVtkvTg4W1nyz@dread.disaster.area>
- <20251031130050.GA15719@lst.de>
- <aQTcb-0VtWLx6ghD@kbusch-mbp>
- <20251031164701.GA27481@lst.de>
- <kpk2od2fuqofdoneqse2l3gvn7wbqx3y4vckmnvl6gc2jcaw4m@hsxqmxshckpj>
- <20251103122111.GA17600@lst.de>
+	s=arc-20240116; t=1762211091; c=relaxed/simple;
+	bh=qFJb3QTz/3jg/L6x2lbG2psgJfjIQh5q1KW1+nPPaBI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=i32lndFHU+hy1I2m+SncPheEUucPKp0OsNanPUmxSA060++Wh/8p6CvTR3IKp6qkk8Jxu4opzGcmzry4blToynJ+obgybT6Ew5jJbvlo926sPfqT1vmY62J7v94rcOXn1OkhrKCVX1sRrBpprTZ26oNDA1NBvN9bnfRf60/U1gU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=bGw+++mj; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-640c3940649so2369708a12.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Nov 2025 15:04:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1762211087; x=1762815887; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZH0fDpUKrbZ7Y4RH7y1khfYrGo0F4yDKdY+imctMyp4=;
+        b=bGw+++mjPYnWZOYiS6EcFjJzEyuTPJUQqXmW4FOvtqPBOG+AEaph4a7eceAvZWI8sN
+         R74TLprWSn9DqgtcHyPzPf4wf8FG9rBlSIZbYpVeKH91J9lQiGihNuLD2YemdmX+AfI0
+         vxH9nHyZHQoa5N9Z3rudNTHD7bXvZuu2Kaums=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762211087; x=1762815887;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZH0fDpUKrbZ7Y4RH7y1khfYrGo0F4yDKdY+imctMyp4=;
+        b=QYMUBoiyWM7eb6u7/TuG6/G33HYGLcYJFP9U6sm2JSlUcf7sAkIyi685kdDPmErVhU
+         scQU4nohSIckzd3OYkNilUpTiE1KQ2C8lmeP+aB0jHMwPOy3uwBRIX54xL5Oz1ZT7drv
+         PFFxmpUAHUW0ku9x/aF07EropTqX7K1k5AjU11YZSKNyukVPE/AYtezwNSk2FqmMQF78
+         VmwcehLiX9tZJyRZIlUMKrsR2PRjc0BNz5sx7Kdt/lxF+pcTXtTe3CY2KKXnsnaqAH+m
+         F7u3W85pvTDObgLV3avRmuyPIA4DdPgxrsD9V8soP+eQOOqqLxX3CH3D2ZumXR4EQBzB
+         g6hg==
+X-Gm-Message-State: AOJu0Yw6pHBDAWv4COAlNnbVGRayHR1sfp8fsxHNKU9jvQqpcZ6Akply
+	XXA4UUzQmmGTyHV0WOpfmGIg9EMfUvFnE44Vz2ZcdNE0a1hA5QXeFMFIb+rh5BUcpJqjg98RLdU
+	hDKeFdCVjZg==
+X-Gm-Gg: ASbGncuatfy94joviztXbMkj13o/RTIa03nxxqFDtp2nGaVcVgPLNDSudfdsN5W4Ryi
+	Cc49zM548C5PXCEgQWRrjh1afs7M489k3Hj+MJ48v3QIlSlcuR2QiM0iKLCaUPTUjUTSzPREyaL
+	ynprAiuqM7rglBS3gR/FoZ+p+geDcvZwPqbTPoyChKm7eRM2s0Ft885VjhgP3+xnCqobuZunAsS
+	O5bSBlPSxWjUtKntkLQVTn3mRbCUbaLr0JV5lZl8DeHZkwrJkmG6gBnJ57HYjh4v4OCr+AXKdQl
+	QfM0IzS6HMu6rak/9yYmZ7lHmOzoSWasVZEUjFNiLwuzSgXobAjOXHggN14feQ+kwKCJn9rpTgl
+	HJQFcrkD2MbhPxvdB5ApPFIDMpAW3BsSOuuhb5q4/vWKvDO8ztaVdfJcZvt9XfDVKLtvNFvAhn6
+	ewn6ZGnk2buNCa+zwf/WtGDqW5r8BFEfsh9vMfQiDTq58Vw4iZ3g==
+X-Google-Smtp-Source: AGHT+IGQzwPxzyVnzGiseKvKiaupK0b1a32fWXvlmQfympctnSpp1JcjbvfCwX5uuV3vwKn1ZBl3MA==
+X-Received: by 2002:a05:6402:848:b0:640:c062:8bca with SMTP id 4fb4d7f45d1cf-640c0628f7cmr3971154a12.18.1762211087488;
+        Mon, 03 Nov 2025 15:04:47 -0800 (PST)
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com. [209.85.218.44])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-640e67eb96esm546139a12.1.2025.11.03.15.04.44
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Nov 2025 15:04:46 -0800 (PST)
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-b4aed12cea3so892266266b.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Nov 2025 15:04:44 -0800 (PST)
+X-Received: by 2002:a17:907:1c28:b0:b71:854:4e49 with SMTP id
+ a640c23a62f3a-b710854688emr499540366b.56.1762211084280; Mon, 03 Nov 2025
+ 15:04:44 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251103122111.GA17600@lst.de>
+References: <20251103-work-creds-guards-simple-v1-0-a3e156839e7f@kernel.org> <20251103-work-creds-guards-simple-v1-14-a3e156839e7f@kernel.org>
+In-Reply-To: <20251103-work-creds-guards-simple-v1-14-a3e156839e7f@kernel.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 4 Nov 2025 08:04:28 +0900
+X-Gmail-Original-Message-ID: <CAHk-=wiSmez2LFEpM05VUX=_GKJC8Ag68TJDByVPO=x4QwjyuA@mail.gmail.com>
+X-Gm-Features: AWmQ_bmQaBgs1Hs2Yx75LVx_L0plRwfdpBhmjm5wyWf-G7aoJOGX7gmwXWEf8f8
+Message-ID: <CAHk-=wiSmez2LFEpM05VUX=_GKJC8Ag68TJDByVPO=x4QwjyuA@mail.gmail.com>
+Subject: Re: [PATCH 14/16] act: use credential guards in acct_write_process()
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-aio@kvack.org, linux-unionfs@vger.kernel.org, 
+	linux-erofs@lists.ozlabs.org, linux-nfs@vger.kernel.org, 
+	linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, 
+	cgroups@vger.kernel.org, netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Nov 03, 2025 at 01:21:11PM +0100, Christoph Hellwig wrote:
-> On Mon, Nov 03, 2025 at 12:14:06PM +0100, Jan Kara wrote:
-> > > Yes, it's pretty clear that the result in non-deterministic in what you
-> > > get.  But that result still does not result in corruption, because
-> > > there is a clear boundary ( either the sector size, or for NVMe
-> > > optionally even a larger bodunary) that designates the atomicy boundary.
-> > 
-> > Well, is that boundary really guaranteed? I mean if you modify the buffer
-> > under IO couldn't it happen that the DMA sees part of the sector new and
-> > part of the sector old? I agree the window is small but I think the real
-> > guarantee is architecture dependent and likely cacheline granularity or
-> > something like that.
-> 
-> If you actually modify it: yes.  But I think Keith' argument was just
-> about regular racing reads vs writes.
+On Mon, 3 Nov 2025 at 20:27, Christian Brauner <brauner@kernel.org> wrote:
+>
+>         /* Perform file operations on behalf of whoever enabled accounting */
+> -       cred = override_creds(file->f_cred);
+> -
+> +       with_creds(file->f_cred);
 
-I was seeking documented behavior about concurrently modifying and
-using any part of a host data buffer, so I look to storage specs. The
-general guidance there aligns with "the reprecussions are your fault".
-Linux DIO didn't say that, but I'm just saying there's precedence lower
-down.
+I'd almost prefer if we *only* did "scoped_with_creds()" and didn't
+have this version at all.
 
-I'm not even sure how you handle the read side when multiple entities
-are concurrently modifying the buffer. That has to be an application
-bug even if bouncing it defeats the gaurd checks before the completion
-overwrites the application's conflicting changes from the bounce buffer.
+Most of the cases want that anyway, and the couple of plain
+"with_creds()" cases look like they would only be cleaned up by making
+the cred scoping more explicit.
+
+What do you think?
+
+Anyway, I approve of the whole series, obviously, I just suspect we
+could narrow down the new interface a bit more.
+
+                Linus
 
