@@ -1,79 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-66841-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66842-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1070FC2D3C7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 03 Nov 2025 17:49:31 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8D53C2D3E2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 03 Nov 2025 17:49:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6D25434B216
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Nov 2025 16:49:30 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9616934B35C
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Nov 2025 16:49:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06A6531A550;
-	Mon,  3 Nov 2025 16:48:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8156431C597;
+	Mon,  3 Nov 2025 16:48:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D1cDta+0"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="by4Nn7Pw"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ADF731B138
-	for <linux-fsdevel@vger.kernel.org>; Mon,  3 Nov 2025 16:48:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7879131A57E
+	for <linux-fsdevel@vger.kernel.org>; Mon,  3 Nov 2025 16:48:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762188507; cv=none; b=SpW3N7eU1hGfFjw4R6ti7j3gEHPkiZA7vo9/lULnGgSvOPkWC2kHRXuZ3oQdMiVlR+T/5rcWpwbBP2IvjBksj8mR/9dtx2g0qYJqFHEbO0Bl2Yx3j1LyrOCm3NFwibx+lE+F0IpMboqnYzj3V0MNcdwsRMRqZ6DDrpcftp2BZCE=
+	t=1762188516; cv=none; b=biKvsMSe4/Kbewut7bssFRK4VSP8ZUb1RRkEpHoC4rN4p7MbKfLL+fe6esd0qqLwm2f7182VPa8/LbtxVyfTiU2lQAwkEZbI8Qahux+Y44EmhjOVQKZEB/urCYhYzxhOplCuf6vEJDKR2GlsqGKCEib8h9Cfj5D/RIFfiggBS58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762188507; c=relaxed/simple;
-	bh=QVjhfMLQHjrgRMPIbt314bhjxXbir3hpnY4sM9EUf7A=;
+	s=arc-20240116; t=1762188516; c=relaxed/simple;
+	bh=803fn53SStK4wXIjz1Zh8Pjere+o4fW/LFg6pbNfZr4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OxvSemdR1Dff8EgZ9Thggv0clLF7eV3hkwH0zHix0GA1Fc+aMkh8tEvWU+6nG0dyyVrZ3E768sc8sYyMraxd0DkqGd72zqjMZeo5jeRlMlR4ACfVRxU/FXLCF7AZAhtPUH791VZSvwlPCxVbYauJ//JekKKUqD8jMiGf8iUvFm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D1cDta+0; arc=none smtp.client-ip=209.85.214.172
+	 MIME-Version:Content-Type; b=Oiw9ed1hQfze6JSACf5/5XsiAOSxoDp5ycIcJZbuj5z2mW98Xiecd6ppryPIGP65XsK2l97xTbIDUT8bDO7zKXj/0X7hQ6PZvdAaXklkS1yGi9a4BV+p3n5nZrb6EQ8ioj9FKxnP4rbxAtUFDgt4pXZ1h9Y3yeiFCX7e6HB1ZB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=by4Nn7Pw; arc=none smtp.client-ip=209.85.216.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-29599f08202so18000995ad.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Nov 2025 08:48:25 -0800 (PST)
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-340c680fe8cso1856022a91.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Nov 2025 08:48:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762188505; x=1762793305; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1762188513; x=1762793313; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=IZeg8I26rc6UbearIJ6Ec2S3DjEynyvxSgAdjW2/ZNw=;
-        b=D1cDta+0aILAknYn5nm1LmtJDQOYWRMoVh6ldmqDhA1OKI7azLUKxuVjOyP8PPAxGZ
-         WBTBtJbvAF1fuOzqh++jzfQlHzE8YT0TaqVrbeRjrWRAO+B6cTpmSiGON79QvtKt4fo6
-         kiBYUY8kdnw90EZqNqoAIc393CnV8Gc7zZ5saGVLdhTR73uk8pDw4D2v0p8NnZyowlII
-         wDemScjx3lu6id0YkOwEMdfJE1OSOPKKoW8jD5HBxVf03v4vkvsXz4O9VmaRmffVg7sl
-         erXgXMPU0P/ShLjLKfrBIc+o2a2fBPrlKTckIqrcpp+Yq6XvIEfPsKnF+XTydD3AWGmU
-         LMow==
+        bh=fzqCA84hItOJG3LR9jcLPhJDx5yJuZqijNb5+VhOfn8=;
+        b=by4Nn7Pw0YzDVlnvK/hIO+LBJjbY8kQynOeCj0qKqfql7QmpuCy/3h+iYUqrHJ0XzN
+         syCNrTU9En8G3vfNm+FuJ6zxgPzfc/OBYAeMcm6a3RkUFZn5s4P+CuYV1eKe8gnAuk9F
+         +n2gzirLVSWvsJ3spkW9hh4MmElD/TDweMRjCAmX8zuM1G/sbdxIFs7GKgtMus75u23w
+         1FaewPOusm8S9eFbhoKjspeZan3Xm/heZk8uQ01tmf5j4C46o1gU6ofeljEE5LXi16mT
+         zPBfGT2aZ2wTdnnR7gjjoWR6o69TynZLxNV/0Bt8r299HDRuLR0jYCAAJxV/yK6xcsTn
+         kHXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762188505; x=1762793305;
+        d=1e100.net; s=20230601; t=1762188513; x=1762793313;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=IZeg8I26rc6UbearIJ6Ec2S3DjEynyvxSgAdjW2/ZNw=;
-        b=e0NTLd3ioE18u9gkqopw4b01shiSOnUj1u3m5kYMyfwMHR/LioQrSVbycVIZ4MbqY5
-         8Vvfg6mbzDCara5sqgoNOEJrzyFC5muKdQAuZT9p0bq7Zou17IqU7tBrH6QxXw8vB06U
-         N8/LtteYs+4QjFYTyqEXbLwr8YfBhXMNKNYa81H0FpOJM8JA36qTEKlpjV7/BxCCuabR
-         WDE/sUfJwm2kelBY6rJnLQR7o4bdpH/nwIAwY5YPSW1ANTMQJjpqLEZ6A4sISQR/lSCY
-         NHr7uIbgRcfXrcbG3e8u49jaM2HZnt0EvlxnZ1ESO+sJEIgM7E/X8QOlMT5+482EWxe9
-         lAcw==
-X-Forwarded-Encrypted: i=1; AJvYcCV0a7F627ejiccmPU6ur9V6ut9d1hOmB6a/YqYskjrfl2a5n8QxsMdKeEr7KGLeRghBjQhVIEAV6KzeKHs6@vger.kernel.org
-X-Gm-Message-State: AOJu0Yya2fFEsBnreAl3FOoHa4Kr7AKViCPVQKL0QnjWWZXRFfFIHzXP
-	r3h6zKXIo4/iTgPa862OZT8cq43cAjV4OQHx7guOJl3ZAB8i5cFTPE7b4VEZmEe7cco=
-X-Gm-Gg: ASbGnctHDUeA1oQe8HiBWhGgJ1sgh4A+P2/C4PUE/wMIWqKaAU7o6bvqcsD49T6day+
-	GqUK3zOYbzn4Y/BfOz9q2d3QC+yOMgSz/1xjYhHn4yrYb8X+qAGfGb3+IQdt1OrSZwiBzoEsQGy
-	xa35ADmohv44zfT7VKKP77pTVtWANf8/tqQIhPnJPKfxYa3/wHZWVfph1CbdBfItb2mrCJQ7FCF
-	n4Qv56iMTpZOcduI5DOVBY19eTQhn0Q2NtVr/K5uVXZx2RU3I87we2VkPxuxfLBUqxHBZicTw2q
-	u7kTcBZKfC9yn31awg71W60BJMbDJV4sWKLCZGtIXZXB0tYxngsz/A2o15l7EKwCLdVQT8c7iG9
-	OLw0NY1CKAVh+vVQ741NhKWxrLQeI2gzRaZOPF76Lb10hzoSiWksmKLz47eLNECSL8nRwvqI7HB
-	MyP4jMYS2Z7EvwxWw0xYSu
-X-Google-Smtp-Source: AGHT+IH4dvliuPCPeEksMdouK++OLCepXxAi6BbzFrOf3xBpwY6kdtXvLuXYSMFRaScgJRVXvvJYDQ==
-X-Received: by 2002:a17:903:2442:b0:295:82c6:dac3 with SMTP id d9443c01a7336-29582c6de47mr78872695ad.32.1762188505225;
-        Mon, 03 Nov 2025 08:48:25 -0800 (PST)
+        bh=fzqCA84hItOJG3LR9jcLPhJDx5yJuZqijNb5+VhOfn8=;
+        b=FZkh3Y1CPuLMmO1vg0yr+j7uRy8TzepSVToarxUuUGYeFgWJEa3bpILbyCaBBhtsty
+         gE9z1xslduuwo/zBYgWzi3awVMpGOUD/op3NdcrEEO+n3IgzmvYzH3DSXWNadIlNvFWz
+         v8+mET2bRolmYe/L1bh7mHtOKfEYV93pB2g/jq3/EoyyuVTBajCGbbWetG8BrzYVS6rS
+         2NjNS/ka75DfFiI1spSRNaqjakxqK2ctSwcWxjQFZNMkSvl/v8cnq3Z5OSkTd5qRiaUr
+         ARMn8v6VPNuWJ8d/ZvXPtJbDlPvESNFJZAcgc4IsbmOKPeLNa328wktuzDscuxuYQeV2
+         cipg==
+X-Forwarded-Encrypted: i=1; AJvYcCW3pujHazQ0JqrPpLMEccOrhgIjvyIc7iv+6Lj4KxS/jc1ZJIscx5YDulSIgHf52jUG4AkYDQbjP/R6ftwo@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhN2NxU9PGTQXmb9TvsKeAbGbra0WAcnd97XxUwALY5B3XTAx8
+	WI+sdgWLGB2oDGKii2VZPsEXxT5Yn06ZEpse7E+vD7sYMZjg30ATgzg/
+X-Gm-Gg: ASbGnctqnwG+6MH8fKRGSLd0MpMOHNm8LsZrCPFlO3d/oI+M/PgYaYLebUSWwcK4wGp
+	sSrdq7J/cjXpMX31fmRe9BY0WanLYHRNvJiPjwWIiRYRgRfgn2DWTRdwIvU24pGGwwIpUW+/D4b
+	DK+QG1+DPmGJAYzs2I1ziCE5IOEE0Bssw12SPXXJhcbHbNTWNliIunIs1CIdKLUJ31EEDNtk58W
+	g4e3xQXvBLCEXVuJUoo0VhbR8vtVJpebCgdD9rUKmDgQHwUFlyJyaMb4jvXQk2FpZcYmS0QmZNs
+	TcvLc8yTd0c7Zm8V6jEGihLfqYHehaK963rMEvcRqACcYJpM2LVuQo11CqFfjUBpneQGPpia7gq
+	0njiKLJ97EFxCVWj3yVrdDq0FkMKC3RqEY0wuxcOpcM4jE8GHArQPtC/fKxdduewPlPIr2IhrnF
+	CkAFENUIlHyox2TeN0vRmR
+X-Google-Smtp-Source: AGHT+IEKGMkG8LSM8k5x2jtLV6ot/I3WeKc2wYyKsbkf6hGph6RyW15e3Nzs5v2jxgF/0uRopdPS1g==
+X-Received: by 2002:a17:90b:1c0a:b0:32e:7270:9499 with SMTP id 98e67ed59e1d1-34082eded6bmr17634572a91.0.1762188513382;
+        Mon, 03 Nov 2025 08:48:33 -0800 (PST)
 Received: from monty-pavel.. ([2409:8a00:79b4:1a90:e46b:b524:f579:242b])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-34159a15b6fsm1607264a91.18.2025.11.03.08.48.21
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-34159a15b6fsm1607264a91.18.2025.11.03.08.48.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Nov 2025 08:48:24 -0800 (PST)
+        Mon, 03 Nov 2025 08:48:33 -0800 (PST)
 From: Yongpeng Yang <yangyongpeng.storage@gmail.com>
 To: Namjae Jeon <linkinjeon@kernel.org>,
 	Sungjong Seo <sj1557.seo@samsung.com>,
@@ -93,9 +93,9 @@ Cc: linux-xfs@vger.kernel.org,
 	Matthew Wilcox <willy@infradead.org>,
 	"Darrick J . Wong" <djwong@kernel.org>,
 	Yongpeng Yang <yangyongpeng@xiaomi.com>
-Subject: [PATCH v5 4/5] xfs: check the return value of sb_min_blocksize() in xfs_fs_fill_super
-Date: Tue,  4 Nov 2025 00:47:22 +0800
-Message-ID: <20251103164722.151563-5-yangyongpeng.storage@gmail.com>
+Subject: [PATCH v5 5/5] block: add __must_check attribute to sb_min_blocksize()
+Date: Tue,  4 Nov 2025 00:47:23 +0800
+Message-ID: <20251103164722.151563-6-yangyongpeng.storage@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251103164722.151563-2-yangyongpeng.storage@gmail.com>
 References: <20251103164722.151563-2-yangyongpeng.storage@gmail.com>
@@ -105,37 +105,54 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 From: Yongpeng Yang <yangyongpeng@xiaomi.com>
 
-sb_min_blocksize() may return 0. Check its return value to avoid the
-filesystem super block when sb->s_blocksize is 0.
+When sb_min_blocksize() returns 0 and the return value is not checked,
+it may lead to a situation where sb->s_blocksize is 0 when
+accessing the filesystem super block. After commit a64e5a596067bd
+("bdev: add back PAGE_SIZE block size validation for
+sb_set_blocksize()"), this becomes more likely to happen when the
+block device’s logical_block_size is larger than PAGE_SIZE and the
+filesystem is unformatted. Add the __must_check attribute to ensure
+callers always check the return value.
 
 Cc: <stable@vger.kernel.org> # v6.15
-Fixes: a64e5a596067bd ("bdev: add back PAGE_SIZE block size validation
-for sb_set_blocksize()")
+Suggested-by: Matthew Wilcox <willy@infradead.org>
 Signed-off-by: Yongpeng Yang <yangyongpeng@xiaomi.com>
 ---
- fs/xfs/xfs_super.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ block/bdev.c       | 2 +-
+ include/linux/fs.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-index 1067ebb3b001..bc71aa9dcee8 100644
---- a/fs/xfs/xfs_super.c
-+++ b/fs/xfs/xfs_super.c
-@@ -1693,7 +1693,10 @@ xfs_fs_fill_super(
- 	if (error)
- 		return error;
+diff --git a/block/bdev.c b/block/bdev.c
+index 810707cca970..638f0cd458ae 100644
+--- a/block/bdev.c
++++ b/block/bdev.c
+@@ -231,7 +231,7 @@ int sb_set_blocksize(struct super_block *sb, int size)
  
--	sb_min_blocksize(sb, BBSIZE);
-+	if (!sb_min_blocksize(sb, BBSIZE)) {
-+		xfs_err(mp, "unable to set blocksize");
-+		return -EINVAL;
-+	}
- 	sb->s_xattr = xfs_xattr_handlers;
- 	sb->s_export_op = &xfs_export_operations;
- #ifdef CONFIG_XFS_QUOTA
+ EXPORT_SYMBOL(sb_set_blocksize);
+ 
+-int sb_min_blocksize(struct super_block *sb, int size)
++int __must_check sb_min_blocksize(struct super_block *sb, int size)
+ {
+ 	int minsize = bdev_logical_block_size(sb->s_bdev);
+ 	if (size < minsize)
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index c895146c1444..26d4ca0f859a 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3424,7 +3424,7 @@ extern void inode_sb_list_add(struct inode *inode);
+ extern void inode_add_lru(struct inode *inode);
+ 
+ extern int sb_set_blocksize(struct super_block *, int);
+-extern int sb_min_blocksize(struct super_block *, int);
++extern int __must_check sb_min_blocksize(struct super_block *, int);
+ 
+ int generic_file_mmap(struct file *, struct vm_area_struct *);
+ int generic_file_mmap_prepare(struct vm_area_desc *desc);
 -- 
 2.43.0
 
