@@ -1,62 +1,104 @@
-Return-Path: <linux-fsdevel+bounces-66710-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66711-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3EDFC2A091
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 03 Nov 2025 05:48:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D7DBC2A61D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 03 Nov 2025 08:43:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 724824EA6C1
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Nov 2025 04:46:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC2243A82FD
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Nov 2025 07:42:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A346502BE;
-	Mon,  3 Nov 2025 04:45:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E52B2C029E;
+	Mon,  3 Nov 2025 07:41:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="AkFiOWiu"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Fco/1o4Y";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="36nnXm7N";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="nz0e0JhF";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ruSI0m/z"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C61E33F3;
-	Mon,  3 Nov 2025 04:45:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DB412BEFF9
+	for <linux-fsdevel@vger.kernel.org>; Mon,  3 Nov 2025 07:41:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762145158; cv=none; b=kF7TmWvrv+Nve57MCZhILCDlWZuYTfzPReRnv+B3lc6VphdtNGRt70z7Ldlhl6w4fJd1QUOF6RGikYXuaVu/B5RbvWQ+SesnvDgUmbWZUQoPvN8GjdPn7ZeL6vEBNU7W0TuKY1rrmj0j9uhNFigkpKS2BvjPYxuuowFqbcxtLZU=
+	t=1762155713; cv=none; b=PQTDe+SmJsvj48uu9heVCxSobr0u5d9QKHR9+DUbSPzFkTFUVjg37IdS4g966N0oxvdIDK5xn+6VPpnVNrh0q6Xi9DxKqQtFa29yBRscZ579vOy2lPllfDHoaaogCcyqBGSn80/2aNhXV+pSeI4q4Ifg1UlYEKedLyRfrAQrGiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762145158; c=relaxed/simple;
-	bh=BrxaAHcqR6T+eaK3F6c+swlP1+unyURDr55nnhidFjY=;
+	s=arc-20240116; t=1762155713; c=relaxed/simple;
+	bh=eP192i3l/QqHyo+S9e/JNIQT+fCbHSmrMaT6+p6HfBY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bkSIxfwgWI4JOtkm6R/IxdQyEBeVbm9Vds0IR+2X/IB6pnw3wp7PU7xg/wR/1/aUu//SeGX2hDBUGIFf4bXG6p95OUGQ7Sqg9t3lf1KxIEnHxzALPkH+NDJ2iJ3X6V0M2oetYL4iUuU6SpskR7CT7q7jKEU7bPVPt/qrJGr+65M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=AkFiOWiu; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=QUADFDv4ActFiyAXojXkc92OQd6pHGgvzY2aMQ+ZVog=; b=AkFiOWiuzdC8mCCG8B0qm6JAFi
-	+1QKLyrd/jpq218sDy/4XpLbKTdrFojieSFpi3nEn7gk8QEBoDCWi+GCWmhv/rZSKWptvDkxCl+c4
-	zrzhrXHd4OD9mKuu25cRrXM5ia/AmacVGeQmSApr83vLjQuzLIK3uYK8rMziibPHp2NUe2e3CWmT8
-	LD3TL3Ed8ezN47RqPeBPxapLszeUnh7utU5OAfR7x0+KnDG1JAIC3tNrYMXaTksGC0/+GFiIwdpLL
-	r6JKY7+qwptASQw8h4bC+EbqcBibKrxWMtcMQ74QSCK6M7QOKilUcruMtPUtMDNPwhAhGaF0HCnpQ
-	F/kPrtlg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vFmS1-0000000GFqL-1Ym8;
-	Mon, 03 Nov 2025 04:45:53 +0000
-Date: Mon, 3 Nov 2025 04:45:53 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: brauner@kernel.org, jack@suse.cz, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fs: touch up predicts in putname()
-Message-ID: <20251103044553.GF2441659@ZenIV>
-References: <20251029134952.658450-1-mjguzik@gmail.com>
- <20251031201753.GD2441659@ZenIV>
- <20251101060556.GA1235503@ZenIV>
- <CAGudoHHno74hGjwu7rryrS4x2q2W8=SwMwT9Lohjr4mBbAg+LA@mail.gmail.com>
- <20251102061443.GE2441659@ZenIV>
- <CAGudoHFDAPEYoC8RAPuPVkcsHsgpdJtQh91=8wRgMAozJyYf2w@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LI/3V7mIlb6ugUfaW5Ru0IILKUZ/d61umERTfg9BfL5gia7b5m4iKDnpSRqb0qZwLsH9s+iUdFTmkUJonveXfDfkUb65jPsEbodqc/T9E/Uk6DY8YiXaNXjzt42S5TXCx7OC/Ob1asVM0UdHA3gW5F5dgb+8UoDVrAVr8B8SYjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Fco/1o4Y; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=36nnXm7N; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=nz0e0JhF; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ruSI0m/z; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id D309D1F787;
+	Mon,  3 Nov 2025 07:41:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762155703; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Uf4jQTpB9VGe8rGSo1CupspYWZxA+nV5Rkk/NcNgaTk=;
+	b=Fco/1o4YyB8iS5bcU70L/XwLCQmi7qhWcwRKdn0IP7ikTW2SnYYMejZHOhFOlJkj2aqbYv
+	7Og4UdFt3FYyg0RAaJiJd87MyeKJqIMGRah3xgjwru1mrFcbM71/MRFI61T4CNKbQ/sX/a
+	tExDc26+tFJuMH/kJjt8STWfE9jf66s=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762155703;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Uf4jQTpB9VGe8rGSo1CupspYWZxA+nV5Rkk/NcNgaTk=;
+	b=36nnXm7NdXBObt6o7MmXBreIjaTra9Fc9Esd6P/Sn6DNWcwYHVi8j93/BIkgjqD+wt54Zp
+	zJn9a7o979ZCSOAw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762155702; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Uf4jQTpB9VGe8rGSo1CupspYWZxA+nV5Rkk/NcNgaTk=;
+	b=nz0e0JhFowNrzf/aSLze8jAtlvEedLy3sCYQJeKOvmoebvnHAa0rrjsHlx4/ew7ybr+Hus
+	DaS7mMAkVoD6YCAlLaA0sqopXJS8OVwxLjz1cDgKMnO9Hhgwt88xOvdli9dLflEd33tppW
+	k14iL1q7Be1O1sFP4KIK6EZX/kj7JAc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762155702;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Uf4jQTpB9VGe8rGSo1CupspYWZxA+nV5Rkk/NcNgaTk=;
+	b=ruSI0m/zQZfLi+kTpwut7bmbwxLnOc9AATOzXEy5HyIzV774iyAoJsuyYLIBARDgakIh0N
+	CJXb55htoN3cmbAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B7B4813A88;
+	Mon,  3 Nov 2025 07:41:42 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id F6rPLLZcCGlVQgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 03 Nov 2025 07:41:42 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 24BF0A2A61; Mon,  3 Nov 2025 08:41:42 +0100 (CET)
+Date: Mon, 3 Nov 2025 08:41:42 +0100
+From: Jan Kara <jack@suse.cz>
+To: libaokun@huaweicloud.com
+Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, 
+	jack@suse.cz, linux-kernel@vger.kernel.org, kernel@pankajraghav.com, 
+	mcgrof@kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	yi.zhang@huawei.com, yangerkun@huawei.com, chengzhihao1@huawei.com, 
+	libaokun1@huawei.com
+Subject: Re: [PATCH 01/25] ext4: remove page offset calculation in
+ ext4_block_zero_page_range()
+Message-ID: <w7dawsu3tli23h6ezt4u7evprczgbezylnbyh3sqhv5rfimg4q@5vqelz5hsev6>
+References: <20251025032221.2905818-1-libaokun@huaweicloud.com>
+ <20251025032221.2905818-2-libaokun@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -65,119 +107,72 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAGudoHFDAPEYoC8RAPuPVkcsHsgpdJtQh91=8wRgMAozJyYf2w@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <20251025032221.2905818-2-libaokun@huaweicloud.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-0.24 / 50.00];
+	SEM_URIBL(3.50)[huaweicloud.com:email];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.14)[-0.682];
+	MIME_GOOD(-0.10)[text/plain];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_DN_NONE(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:email,suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Score: -0.24
 
-On Sun, Nov 02, 2025 at 11:42:03PM +0100, Mateusz Guzik wrote:
-
-> Even ignoring the fact that there is a refcount and people may be
-> inclined to refname(name) + take_filename(name), the following already
-> breaks:
-
-Er...  refname() doesn't need to be seen for anyone other than auditsc.c
-and core part of filename handling in fs/namei.c (I'd like to move it
-to fs/filename.c someday)...
-
-> foo() {
->     name = getname(...);
->     if (!IS_ERR_OR_NULL(name))
->         bar(name);
->     putname(name);
-> }
+On Sat 25-10-25 11:21:57, libaokun@huaweicloud.com wrote:
+> From: Zhihao Cheng <chengzhihao1@huawei.com>
 > 
-> bar(struct filename *name)
-> {
->     baz(take_filename(&name));
-> }
+> For bs <= ps scenarios, calculating the offset within the block is
+> sufficient. For bs > ps, an initial page offset calculation can lead to
+> incorrect behavior. Thus this redundant calculation has been removed.
 > 
-> While the code as proposed in the branch does not do it, it is a
-> matter of time before something which can be distilled to the above
-> shows up.
+> Signed-off-by: Zhihao Cheng <chengzhihao1@huawei.com>
+> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+> Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
 
-Breaks in which case, exactly?  If baz() consumes its argument, we are
-fine, if it does we have a leak...
+Looks good. Feel free to add:
 
-I agree that 'take_filename' is inviting wrong connotations, though.
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-Hell knows - it might be worth thinking of that as claiming ownership.
-Or, perhaps, transformation of the original object, if we separate
-the notion of 'active filename' (absolutely tied to one thread, not
-allowed to be reachable from any data structures shared with other
-threads, etc.) from 'embryonic filename' (no refcounting whatsoever,
-no copying of references, etc., consumed on transformation into
-'active filename').  Then getname_alien() would create an embryo,
-to be consumed before doing actual work.  That could be expressed
-in C type system...  Need to think about that.
+								Honza
 
-One possibility would be something like
-
-struct alien_filename {
-	struct filename *__dont_touch_that;
-};
-
-int getname_alien(struct alien_filename *v, const char __user *string)
-{
-	struct filename *res;
-	if (WARN_ON(v->__dont_touch_that))
-		return -EINVAL;
-	res = getname_flags(string, GETNAME_NOAUDIT);
-	if (IS_ERR(res))
-		return PTR_ERR(res);
-	v->__done_touch_that = res;
-	return 0;
-}
-
-void destroy_alien_filename(struct alient_filename *v)
-{
-	putname(no_free_ptr(v->__dont_touch_that));
-}
-
-struct filename *claim_filename(struct alien_filename *v)
-{
-	struct filename *res = no_free_ptr(v->__dont_touch_that);
-	if (!IS_ERR(res))
-		audit_getname(res);
-	return res;
-}
-
-and e.g.
-
-struct io_rename {
-        struct file                     *file;
-	int                             old_dfd;
-	int                             new_dfd;
-	struct alien_filename           oldpath;
-	struct alien_filename           newpath;
-	int                             flags;
-};
-
-...
-	err = getname_alien(&ren->oldpath);
-	if (unlikely(err))
-		return err;
-	err = getname_alien(&ren->newpath);
-	if (unlikely(err)) {
-		destroy_alien_filename(&ren->oldpath);
-		return err;
-	}
-
-...
-	/* note that do_renameat2() consumes filename references */
-        ret = do_renameat2(ren->old_dfd, claim_filename(&ren->oldpath),
-			   ren->new_dfd, claim_filename(&ren->newpath),
-			   ren->flags);
-...
-
-void io_renameat_cleanup(struct io_kiocb *req)
-{
-        struct io_rename *ren = io_kiocb_to_cmd(req, struct io_rename);
-	 
-	destroy_alien_filename(&ren->oldpath);
-	destroy_alien_filename(&ren->newpath);
-}
-
-Might work...  Anyone found adding any instances of __dont_touch_that anywhere in
-the kernel would be obviously doing something fishy (and if they are playing silly
-buggers with obfuscating that, s/doing something fishy/malicious/), so C typechecking
-+ git grep once in a while should suffice for safety.
+> ---
+>  fs/ext4/inode.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index e99306a8f47c..0742039c53a7 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -4157,9 +4157,8 @@ static int ext4_block_zero_page_range(handle_t *handle,
+>  		struct address_space *mapping, loff_t from, loff_t length)
+>  {
+>  	struct inode *inode = mapping->host;
+> -	unsigned offset = from & (PAGE_SIZE-1);
+>  	unsigned blocksize = inode->i_sb->s_blocksize;
+> -	unsigned max = blocksize - (offset & (blocksize - 1));
+> +	unsigned int max = blocksize - (from & (blocksize - 1));
+>  
+>  	/*
+>  	 * correct length if it does not fall between
+> -- 
+> 2.46.1
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
