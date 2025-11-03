@@ -1,117 +1,115 @@
-Return-Path: <linux-fsdevel+bounces-66728-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66729-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9737C2B278
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 03 Nov 2025 11:52:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93D74C2B32A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 03 Nov 2025 12:00:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F0B9D4F1CDD
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Nov 2025 10:51:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F98F3ACA23
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Nov 2025 10:59:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4B4B301007;
-	Mon,  3 Nov 2025 10:51:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 305063002B7;
+	Mon,  3 Nov 2025 10:59:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dMmdPgR/"
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="Q2knTnHJ";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="lVlBNiwT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from flow-b2-smtp.messagingengine.com (flow-b2-smtp.messagingengine.com [202.12.124.137])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1DDE2FFF8B;
-	Mon,  3 Nov 2025 10:51:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E680C2D7803;
+	Mon,  3 Nov 2025 10:59:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.137
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762167064; cv=none; b=rsHJ0FzDCuv6X+wv3YOSvKNs4c5m2C6VGJRbvs2fmdnolF2b/EtDgdid6G/y0QMnGNaX1OLm9ZkrdfaOqE73DOmvFBIQg9DGsAp64rLFLQ88j0rPX68FEQ6OzjPnmOr6N+yPB5TLJfSjvoOOKfnBo1nFVc6vMLHGSVvJP/6II2E=
+	t=1762167551; cv=none; b=dUJ2GIZNIlbKPuvoCs0BOqmqvEaWvkjY1E7gsV6E7QbkVuBQ7ZbBfSwbDIOImpNr9RTAtrFTlEB8yLVg8hIDHgOxxVFg7sb52DRfzsDpCE/WhSYKpIYdJy3zst0eA8965uomcLbQ13mwCahFmdDaSFH2/TijtaH7dtpATuFpdtA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762167064; c=relaxed/simple;
-	bh=VQ4hXNs7+ujjrEuM6okI3GtAUk8U1jbFJcLICEJAusg=;
+	s=arc-20240116; t=1762167551; c=relaxed/simple;
+	bh=ZBiwW+vApNaplywZ7BP26hNvG6P9w7aXkORucKrcHV0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r+IMRzPsP5deAqMy5laEyBmeBns+us68jF5qOGFpcToZgKStW1MAUjx8Y+7rPGtdkEjL95jYsMi3AzB7D9jkLt+eYB2qEtNfkFNK3ZFAefEdEzipqyQkePeumsCiwhAA+y7e5ZxdwBBBuPwMQYviKQcdIC0/26qSRWAcwDPIEqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dMmdPgR/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3098C4CEE7;
-	Mon,  3 Nov 2025 10:50:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762167062;
-	bh=VQ4hXNs7+ujjrEuM6okI3GtAUk8U1jbFJcLICEJAusg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dMmdPgR/Ennl/LxZY9JqJ+rdcdE5xbtl2DS6YCfkT8tjg2C4Ok941GA3a0aGjjcbh
-	 N+VphgG9Mxrc/rwY9hDkjQyGMzokqLs2VkZpM811GklFiDmbuNyU/kx4IyYR4eQ6J4
-	 LYYuHJzAEuB/b9dp2zy3oLn35WeqIp2x8dQv1mg9ylraTpLP1Ncd6KNEOugD2aZg6d
-	 J7IOaVx49e5JS8rzKGoQ+bfFg7G0KZ5tWzMM2lCcQC4hMefqksB4zyYyXewfMGG/sH
-	 sf8iVfIkNndfACRLGLkcklSZ9SSPDp5SoTikAG2yQ/gnB6LeuVhTDfy3sIEh3BNm3K
-	 i5hySTuH4tUXA==
-Date: Mon, 3 Nov 2025 12:50:41 +0200
-From: Mike Rapoport <rppt@kernel.org>
-To: Brendan Jackman <jackmanb@google.com>
-Cc: "Roy, Patrick" <roypat@amazon.co.uk>,
-	"pbonzini@redhat.com" <pbonzini@redhat.com>,
-	"corbet@lwn.net" <corbet@lwn.net>,
-	"maz@kernel.org" <maz@kernel.org>,
-	"oliver.upton@linux.dev" <oliver.upton@linux.dev>,
-	"joey.gouly@arm.com" <joey.gouly@arm.com>,
-	"suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
-	"yuzenghui@huawei.com" <yuzenghui@huawei.com>,
-	"catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-	"will@kernel.org" <will@kernel.org>,
-	"tglx@linutronix.de" <tglx@linutronix.de>,
-	"mingo@redhat.com" <mingo@redhat.com>,
-	"bp@alien8.de" <bp@alien8.de>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
-	"luto@kernel.org" <luto@kernel.org>,
-	"peterz@infradead.org" <peterz@infradead.org>,
-	"willy@infradead.org" <willy@infradead.org>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"david@redhat.com" <david@redhat.com>,
-	"lorenzo.stoakes@oracle.com" <lorenzo.stoakes@oracle.com>,
-	"Liam.Howlett@oracle.com" <Liam.Howlett@oracle.com>,
-	"vbabka@suse.cz" <vbabka@suse.cz>,
-	"surenb@google.com" <surenb@google.com>,
-	"mhocko@suse.com" <mhocko@suse.com>,
-	"song@kernel.org" <song@kernel.org>,
-	"jolsa@kernel.org" <jolsa@kernel.org>,
-	"ast@kernel.org" <ast@kernel.org>,
-	"daniel@iogearbox.net" <daniel@iogearbox.net>,
-	"andrii@kernel.org" <andrii@kernel.org>,
-	"martin.lau@linux.dev" <martin.lau@linux.dev>,
-	"eddyz87@gmail.com" <eddyz87@gmail.com>,
-	"yonghong.song@linux.dev" <yonghong.song@linux.dev>,
-	"john.fastabend@gmail.com" <john.fastabend@gmail.com>,
-	"kpsingh@kernel.org" <kpsingh@kernel.org>,
-	"sdf@fomichev.me" <sdf@fomichev.me>,
-	"haoluo@google.com" <haoluo@google.com>,
-	"jgg@ziepe.ca" <jgg@ziepe.ca>,
-	"jhubbard@nvidia.com" <jhubbard@nvidia.com>,
-	"peterx@redhat.com" <peterx@redhat.com>,
-	"jannh@google.com" <jannh@google.com>,
-	"pfalcato@suse.de" <pfalcato@suse.de>,
-	"shuah@kernel.org" <shuah@kernel.org>,
-	"seanjc@google.com" <seanjc@google.com>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-	"Cali, Marco" <xmarcalx@amazon.co.uk>,
-	"Kalyazin, Nikita" <kalyazin@amazon.co.uk>,
-	"Thomson, Jack" <jackabt@amazon.co.uk>,
-	"derekmn@amazon.co.uk" <derekmn@amazon.co.uk>,
-	"tabba@google.com" <tabba@google.com>,
-	"ackerleytng@google.com" <ackerleytng@google.com>
-Subject: Re: [PATCH v7 05/12] KVM: guest_memfd: Add flag to remove from
- direct map
-Message-ID: <aQiJAfO8wiVPko_N@kernel.org>
-References: <20250924151101.2225820-4-patrick.roy@campus.lmu.de>
- <20250924152214.7292-1-roypat@amazon.co.uk>
- <20250924152214.7292-2-roypat@amazon.co.uk>
- <DDWOP8GKHESP.2EOY2HGM9RXHU@google.com>
- <aQXVNuBwEIRBtOc0@kernel.org>
- <DDYZRG8A99D1.2MYZVGBKJNHJW@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qJDMs1ZGBrU5inZ6RlmaDrAWsjAHmed/L5Jzm4cIIrv8oEFzXhKLVsRZYB0ETpYxpJyb4Zv4joVF/AfHHNvl0F9qHMy4833VS+CHE2aW3T2MR6YUn9iHzCzYcr1SbEfeTrHI71jCOd8pfa9OZ+w9Z4vhFAQHVFYj+IDkmm9KDxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=Q2knTnHJ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=lVlBNiwT; arc=none smtp.client-ip=202.12.124.137
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+	by mailflow.stl.internal (Postfix) with ESMTP id C602513003AD;
+	Mon,  3 Nov 2025 05:59:05 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-01.internal (MEProxy); Mon, 03 Nov 2025 05:59:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm1; t=1762167545; x=
+	1762174745; bh=+4NQ+5V5v/JGdSry3DxICjbmhUscqySQtyw/XKVp7C8=; b=Q
+	2knTnHJpCxm/V+t/6L2eXw8ev9sqJ4+v8FOdLFzCmXayS841G+ajjojZc3mVGWo1
+	R/rFK56aHJkZ1jBIx0YT8KWoMPrdvg5RguHvKvlK9bEknZ64YZBSbfq/tH4L3oP6
+	jvetTJXEFdx1+IcFzhY3jQ3CEr8JzNmsV5Q9XmZPmWWZOzKWjXKM5nI7tlPPWEAl
+	NE8/tnEEZUGs32nXtTnC9VhfN1PaBSjvoFFG7kEhd6BZnqFopGoRkp6S/bTJgctA
+	I6UVrx/JYJ9vvjkOiHQAXLhyvF5SXfflFOuv7ksbPP5vBXeq2ironAjhr0h4LhPZ
+	I8vaa/XNOBLCecDBwkefA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1762167545; x=1762174745; bh=+4NQ+5V5v/JGdSry3DxICjbmhUscqySQtyw
+	/XKVp7C8=; b=lVlBNiwTkjN8wsYrqTh12ENcFZ1ihIQHs9QDHRYujxGBg4EaMby
+	yKdjdrdnFNHVTvRGMx+qJdHXDvjOm16nbBy+e3I5HCiOC3dwLajHn6CAbokwlUyW
+	TrIsXspuYJC5CLWz05By8CNnsjCjQCMzTKazQ45ewTPwY/0OJFEWaf0VWpKaIzzZ
+	ELZ3pSfmOZ7zlJChYfSOVzFWWFTCoyFjGqdqFt84f2N8Sh/6TL8iGS8MIU5xBXvB
+	vMPd9jTsdFhRKU/oQ5OkX9mAOmgLyBPaK24v5lnfyfrzHcX2X1ohuhitfc406b2r
+	kNsdhdnEfaxw30A7qh35vEc9H6ke5IiGpXQ==
+X-ME-Sender: <xms:9ooIaWdpcp6jmTbiN5aIhEsQsac_oYPEgtSv2-xYRFY9MkQd2V3ZWg>
+    <xme:9ooIadB6CyFhmtFnVz7JCCojqBEyBUF_R0NcTtzlyPxEhFJ9VdHrzMJhlup6_KTDv
+    BwBDgB5fyQsKOQvQLBh7ZuAPczjwPK4ZGFm5dAd2H20XRSKb3b-gg>
+X-ME-Received: <xmr:9ooIabuvo8IgbLOqK2r44-zrQF4cMwEzGLbSXlPBMuFogAHLsR_QO_ZnSwwhGg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddujeejleeiucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvdenucfhrhhomhepmfhirhihlhcu
+    ufhhuhhtshgvmhgruhcuoehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgeqnecugg
+    ftrfgrthhtvghrnhepjeehueefuddvgfejkeeivdejvdegjefgfeeiteevfffhtddvtdel
+    udfhfeefffdunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
+    homhepkhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvpdhnsggprhgtphhtthhopeeg
+    gedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepfihilhhlhiesihhnfhhrrgguvg
+    grugdrohhrghdprhgtphhtthhopehhuhhghhgusehgohhoghhlvgdrtghomhdprhgtphht
+    thhopegrkhhpmheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtoh
+    epuggrvhhiugesrhgvughhrghtrdgtohhmpdhrtghpthhtohepvhhirhhoseiivghnihhv
+    rdhlihhnuhigrdhorhhgrdhukhdprhgtphhtthhopegsrhgruhhnvghrsehkvghrnhgvlh
+    drohhrghdprhgtphhtthhopehlohhrvghniihordhsthhorghkvghssehorhgrtghlvgdr
+    tghomhdprhgtphhtthhopehlihgrmhdrhhhofihlvghtthesohhrrggtlhgvrdgtohhmpd
+    hrtghpthhtohepvhgsrggskhgrsehsuhhsvgdrtgii
+X-ME-Proxy: <xmx:94oIaSE-l0bqLj1DMOX4Xt-klS_pL6IlF9w2BfNKAtsbuHytbb07vw>
+    <xmx:94oIaW3Pegr5WO_ZGDTy_3Yfxoe2V1tZ8Iz6p2ivYvN2J4-07Cn9OA>
+    <xmx:94oIaS4actkpP1P69yNXCMCeDC7HHElOHKLN46hnyVxhUuP1JNg5sw>
+    <xmx:94oIaaV2RfNWnQLiVkbvvW6DXvGpS1sywTYvjz1dGfeZycLOU-xu2A>
+    <xmx:-YoIaVNuEwv4ZFAuSeU1Yd4rcsmlBos7lni2xBITnXmInUmd7XxEezEG>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 3 Nov 2025 05:59:02 -0500 (EST)
+Date: Mon, 3 Nov 2025 10:59:00 +0000
+From: Kiryl Shutsemau <kirill@shutemov.name>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Hugh Dickins <hughd@google.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, 
+	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, Rik van Riel <riel@surriel.com>, 
+	Harry Yoo <harry.yoo@oracle.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Shakeel Butt <shakeel.butt@linux.dev>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	"Darrick J. Wong" <djwong@kernel.org>, Dave Chinner <david@fromorbit.com>, linux-mm@kvack.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv3 1/2] mm/memory: Do not populate page table entries
+ beyond i_size
+Message-ID: <xadc6rbs7fkk2mb5b4reobqwue2kveo736r3wpa5zwted4daua@rgasjiwwot3g>
+References: <20251027115636.82382-1-kirill@shutemov.name>
+ <20251027115636.82382-2-kirill@shutemov.name>
+ <20251027153323.5eb2d97a791112f730e74a21@linux-foundation.org>
+ <hw5hjbmt65aefgfz5cqsodpduvlkc6fmlbmwemvoknuehhgml2@orbho2mz52sv>
+ <9e2750bf-7945-cc71-b9b3-632f03d89a55@google.com>
+ <aQWT_6cXWAcjZYON@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -120,76 +118,31 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <DDYZRG8A99D1.2MYZVGBKJNHJW@google.com>
+In-Reply-To: <aQWT_6cXWAcjZYON@casper.infradead.org>
 
-On Mon, Nov 03, 2025 at 10:35:38AM +0000, Brendan Jackman wrote:
-> On Sat Nov 1, 2025 at 9:39 AM UTC, Mike Rapoport wrote:
-> > On Fri, Oct 31, 2025 at 05:30:12PM +0000, Brendan Jackman wrote:
-> >> On Wed Sep 24, 2025 at 3:22 PM UTC, Patrick Roy wrote:
-> >> > diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-> >> > index 1d0585616aa3..73a15cade54a 100644
-> >> > --- a/include/linux/kvm_host.h
-> >> > +++ b/include/linux/kvm_host.h
-> >> > @@ -731,6 +731,12 @@ static inline bool kvm_arch_has_private_mem(struct kvm *kvm)
-> >> >  bool kvm_arch_supports_gmem_mmap(struct kvm *kvm);
-> >> >  #endif
-> >> >  
-> >> > +#ifdef CONFIG_KVM_GUEST_MEMFD
-> >> > +#ifndef kvm_arch_gmem_supports_no_direct_map
-> >> > +#define kvm_arch_gmem_supports_no_direct_map can_set_direct_map
-> >> > +#endif
-> >> > +#endif /* CONFIG_KVM_GUEST_MEMFD */
-> >> 
-> >> The test robot seems happy so I think I'm probably mistaken here, but
-> >> AFAICS can_set_direct_map only exists when ARCH_HAS_SET_DIRECT_MAP,
-> >> which powerpc doesn't set.
-> >
-> > We have stubs returning 0 for architectures that don't have
-> > ARCH_HAS_SET_DIRECT_MAP.
+On Sat, Nov 01, 2025 at 05:00:47AM +0000, Matthew Wilcox wrote:
+> On Wed, Oct 29, 2025 at 02:45:52AM -0700, Hugh Dickins wrote:
+> > But you're giving yourself too hard a time of backporting with your
+> > 5.10 Fixee 01c70267053d for 1/2: the only filesystem which set the
+> > flag then was tmpfs, which you're now excepting.  The flag got
+> > renamed later (in 5.16) and then in 5.17 at last there was another
+> > filesystem to set it.  So, this 1/2 would be
+> > 
+> > Fixes: 6795801366da ("xfs: Support large folios")
 > 
-> I can't see any such stub for can_set_direct_map() specifically?
+> I haven't been able to keep up with this patchset -- sorry.
+> 
+> But this problem didn't exist until bs>PS support was added because we
+> would never add a folio to the page cache which extended beyond i_size
+> before.  We'd shrink the folio order allocated in do_page_cache_ra()
+> (actually, we still do, but page_cache_ra_unbounded() rounds it up
+> again).  So it doesn't fix that commit at all, but something far more
+> recent.
 
-include/linux/set_memory.h:
-
-#ifndef CONFIG_ARCH_HAS_SET_DIRECT_MAP
-static inline int set_direct_map_invalid_noflush(struct page *page)
-{
-	return 0;
-}
-static inline int set_direct_map_default_noflush(struct page *page)
-{
-	return 0;
-}
-
-static inline int set_direct_map_valid_noflush(struct page *page,
-					       unsigned nr, bool valid)
-{
-	return 0;
-}
-
-static inline bool kernel_page_present(struct page *page)
-{
-	return true;
-}
-#else /* CONFIG_ARCH_HAS_SET_DIRECT_MAP */
-/*
- * Some architectures, e.g. ARM64 can disable direct map modifications at
- * boot time. Let them overrive this query.
- */
-#ifndef can_set_direct_map
-static inline bool can_set_direct_map(void)
-{
-	return true;
-}
-#define can_set_direct_map can_set_direct_map
-#endif
-#endif /* CONFIG_ARCH_HAS_SET_DIRECT_MAP */
-
- 
-> (But again, the bot seems happy, so I still suspect I'm wrong somehow or
-> other).
+What about truncate path? We could allocate within i_size at first, then
+truncate, if truncation failed to split the folio the mapping stays
+beyond i_size.
 
 -- 
-Sincerely yours,
-Mike.
+  Kiryl Shutsemau / Kirill A. Shutemov
 
