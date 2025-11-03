@@ -1,112 +1,116 @@
-Return-Path: <linux-fsdevel+bounces-66800-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66801-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C9BBC2C724
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 03 Nov 2025 15:43:05 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6FD9C2C701
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 03 Nov 2025 15:38:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1F3F3A9311
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Nov 2025 14:36:18 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E67654E932D
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Nov 2025 14:38:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E9AE27F4F5;
-	Mon,  3 Nov 2025 14:36:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 146ED3019BD;
+	Mon,  3 Nov 2025 14:37:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hu75PmCK"
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="WrwQlH8l"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from canpmsgout02.his.huawei.com (canpmsgout02.his.huawei.com [113.46.200.217])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAB6A27FB3E;
-	Mon,  3 Nov 2025 14:36:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 095D627FB21;
+	Mon,  3 Nov 2025 14:37:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.217
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762180573; cv=none; b=eUuEtInJOGaRsNWO9hI7AKo2ZX6RFajQlLnK/NQtmJQ4SLidtBp0FJpxgC0E1eVehG59gGTyeHk+YhbgiLJVRspmtZm9N8qDwoScZY/w/Ivv1JfOwZZYtYbTcNkMoNm+AmQktvtKdYIX4fWgSsro9pc3Uz/MbdlwaXlRGJ8oAkM=
+	t=1762180675; cv=none; b=RgJqiWkJS04JTUJLv0iiiMU6mT059KFTL21f03syjNnWBkHAR5hazh5T+6VDOrgtcR2kt3b2P6FesD4jwlIvS3FLgnQ8LDS5I+5KK9frZkvcro0XHlUYIM7AknnErx0MwlIyqlPpKjJ8z7PnwIWZ1eWbnWTcCoFecMDcJK99274=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762180573; c=relaxed/simple;
-	bh=PJL40H1rrSr1RByqR89AZ2E1q5oDA4QRqub55GfiluA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LTY8VyeacoTHzBLEx2dK8JMAWnGpOKH2Js5d2mrz1A6k6oQJ/T3LqPmcY72u439qAtlkhd0YHek+U1PefB2ypVgBkQ6DlIc+rRhQzu9fnRCa3eoKn4FAtss6TJHDZckVnnDwWjbHUrr0ZM2RqDy1jrZhYTfzeE1KnUN6+0gyAys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=hu75PmCK; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=bDJLzxzXeix51zzhX2vSU/9HiMumVsIUdwFwVA82G6A=; b=hu75PmCKzdeDR7snJfmgqiYskr
-	4Y+walnvU1NsJgfJ12yFjqNQQ6z64Kt7zgMxH2HfwjtCBNQwrXHwQWgvMap+GK4otMLw4mg5AfVet
-	qwHSUePwD1bMztaS6NBdgCU88ut4785Q4wVifQnfCXPkYVmGyySH/cIadqVIgWN0ePB4ws89Xg6Di
-	BpDuY77NKwLBZJWM5L5uda8UtdQ5gy3vlhqkTvyAj3OntGYhMcRLfnvoxFr553Uw8MEWfSumy8GL5
-	/7HDjsGlInDkOQeKkZ3JzXQddczmYxPncAru6jv/Jy8t2KDjxb5jc1EPJzu1Zge+u6IsLqIAmuKlp
-	V58oCqwQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vFvf3-00000008v4J-1HNK;
-	Mon, 03 Nov 2025 14:35:57 +0000
-Date: Mon, 3 Nov 2025 14:35:57 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Kiryl Shutsemau <kirill@shutemov.name>
-Cc: Hugh Dickins <hughd@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@redhat.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>, Rik van Riel <riel@surriel.com>,
-	Harry Yoo <harry.yoo@oracle.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	Dave Chinner <david@fromorbit.com>, linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv3 1/2] mm/memory: Do not populate page table entries
- beyond i_size
-Message-ID: <aQi9zaPxwLBTneF4@casper.infradead.org>
-References: <20251027115636.82382-1-kirill@shutemov.name>
- <20251027115636.82382-2-kirill@shutemov.name>
- <20251027153323.5eb2d97a791112f730e74a21@linux-foundation.org>
- <hw5hjbmt65aefgfz5cqsodpduvlkc6fmlbmwemvoknuehhgml2@orbho2mz52sv>
- <9e2750bf-7945-cc71-b9b3-632f03d89a55@google.com>
- <aQWT_6cXWAcjZYON@casper.infradead.org>
- <xadc6rbs7fkk2mb5b4reobqwue2kveo736r3wpa5zwted4daua@rgasjiwwot3g>
+	s=arc-20240116; t=1762180675; c=relaxed/simple;
+	bh=lQQ+am8tER63NawYmu9xQEDLkM/8ujSRAUA52iOKakk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=nb108Lijoax05QFRuLTj2YOiTLcFaO8c4w0gftRBfhUgQc3JRbPLu4Np5jmBg4Kkb5zBExLBbHSuyJfNOvs2wiR2Iq+LBoIH4FPv+lzpXLYzNrUB6wpHyk8lCZh1Zi8V/efWBPVkrqnfMJx+oDg32473K35b92CiIdrMABDDsCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=WrwQlH8l; arc=none smtp.client-ip=113.46.200.217
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=eGGeoWjftywpXqd25cgi9W6Zo6I329qDMqJRqqnzkTY=;
+	b=WrwQlH8lSAQpoTyjNCrbB3iphcJzncWZfRlf74sQrgsPbwsTrLH2SgEbAsATlmSzSw6vT0jLM
+	l2158lRS4FQrFSsxnYpnGG7I719b2wRMI8nvfXfV2sLuvkmks3qJsnNK2TTwyfCOrzgQu1nRYFD
+	CR/FzoirvzJ1aIvIPQTLlAc=
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by canpmsgout02.his.huawei.com (SkyGuard) with ESMTPS id 4d0Yzy64WSzcb1J;
+	Mon,  3 Nov 2025 22:36:14 +0800 (CST)
+Received: from dggpemf500013.china.huawei.com (unknown [7.185.36.188])
+	by mail.maildlp.com (Postfix) with ESMTPS id 3FB2E180064;
+	Mon,  3 Nov 2025 22:37:48 +0800 (CST)
+Received: from [127.0.0.1] (10.174.178.254) by dggpemf500013.china.huawei.com
+ (7.185.36.188) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 3 Nov
+ 2025 22:37:46 +0800
+Message-ID: <70fd2f0e-8fac-4be7-9597-7072a36a58bc@huawei.com>
+Date: Mon, 3 Nov 2025 22:37:45 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <xadc6rbs7fkk2mb5b4reobqwue2kveo736r3wpa5zwted4daua@rgasjiwwot3g>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 07/25] ext4: support large block size in
+ ext4_calculate_overhead()
+To: Jan Kara <jack@suse.cz>
+CC: <linux-ext4@vger.kernel.org>, <tytso@mit.edu>, <adilger.kernel@dilger.ca>,
+	<linux-kernel@vger.kernel.org>, <kernel@pankajraghav.com>,
+	<mcgrof@kernel.org>, <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
+	<yi.zhang@huawei.com>, <yangerkun@huawei.com>, <chengzhihao1@huawei.com>,
+	<libaokun1@huawei.com>, Baokun Li <libaokun@huaweicloud.com>
+References: <20251025032221.2905818-1-libaokun@huaweicloud.com>
+ <20251025032221.2905818-8-libaokun@huaweicloud.com>
+ <qmsx753xemvacoaghwhv6emusazmlynv54qqxwsdfsoaoeqre4@bp2lgrdufaim>
+Content-Language: en-GB
+From: Baokun Li <libaokun1@huawei.com>
+In-Reply-To: <qmsx753xemvacoaghwhv6emusazmlynv54qqxwsdfsoaoeqre4@bp2lgrdufaim>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
+ dggpemf500013.china.huawei.com (7.185.36.188)
 
-On Mon, Nov 03, 2025 at 10:59:00AM +0000, Kiryl Shutsemau wrote:
-> On Sat, Nov 01, 2025 at 05:00:47AM +0000, Matthew Wilcox wrote:
-> > On Wed, Oct 29, 2025 at 02:45:52AM -0700, Hugh Dickins wrote:
-> > > But you're giving yourself too hard a time of backporting with your
-> > > 5.10 Fixee 01c70267053d for 1/2: the only filesystem which set the
-> > > flag then was tmpfs, which you're now excepting.  The flag got
-> > > renamed later (in 5.16) and then in 5.17 at last there was another
-> > > filesystem to set it.  So, this 1/2 would be
-> > > 
-> > > Fixes: 6795801366da ("xfs: Support large folios")
-> > 
-> > I haven't been able to keep up with this patchset -- sorry.
-> > 
-> > But this problem didn't exist until bs>PS support was added because we
-> > would never add a folio to the page cache which extended beyond i_size
-> > before.  We'd shrink the folio order allocated in do_page_cache_ra()
-> > (actually, we still do, but page_cache_ra_unbounded() rounds it up
-> > again).  So it doesn't fix that commit at all, but something far more
-> > recent.
-> 
-> What about truncate path? We could allocate within i_size at first, then
-> truncate, if truncation failed to split the folio the mapping stays
-> beyond i_size.
+On 2025-11-03 16:14, Jan Kara wrote:
+> On Sat 25-10-25 11:22:03, libaokun@huaweicloud.com wrote:
+>> From: Baokun Li <libaokun1@huawei.com>
+>>
+>> ext4_calculate_overhead() used a single page for its bitmap buffer, which
+>> worked fine when PAGE_SIZE >= block size. However, with block size greater
+>> than page size (BS > PS) support, the bitmap can exceed a single page.
+>>
+>> To address this, we now use __get_free_pages() to allocate multiple pages,
+>> sized to the block size, to properly support BS > PS.
+>>
+>> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+>> Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
+> One comment below:
+>
+>> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+>> index d353e25a5b92..7338c708ea1d 100644
+>> --- a/fs/ext4/super.c
+>> +++ b/fs/ext4/super.c
+>> @@ -4182,7 +4182,8 @@ int ext4_calculate_overhead(struct super_block *sb)
+>>  	unsigned int j_blocks, j_inum = le32_to_cpu(es->s_journal_inum);
+>>  	ext4_group_t i, ngroups = ext4_get_groups_count(sb);
+>>  	ext4_fsblk_t overhead = 0;
+>> -	char *buf = (char *) get_zeroed_page(GFP_NOFS);
+>> +	gfp_t gfp = GFP_NOFS | __GFP_ZERO;
+>> +	char *buf = (char *)__get_free_pages(gfp, sbi->s_min_folio_order);
+> I think this should be using kvmalloc(). There's no reason to require
+> physically contiguous pages for this...
+>
+> 								Honza
 
-Is it worth backporting all this way to solve this niche case?
+Makes sense, I will use kvmalloc() in the next version.
+
+
+Thanks,
+Baokun
+
 
