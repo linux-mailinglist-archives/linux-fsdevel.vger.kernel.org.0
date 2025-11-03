@@ -1,156 +1,127 @@
-Return-Path: <linux-fsdevel+bounces-66818-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66819-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A152C2CDF0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 03 Nov 2025 16:47:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A073BC2CD3B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 03 Nov 2025 16:42:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84CE3620763
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Nov 2025 15:29:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72C43189A0D3
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Nov 2025 15:30:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 988C231A815;
-	Mon,  3 Nov 2025 15:18:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C21A431CA46;
+	Mon,  3 Nov 2025 15:20:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="GKVkfKCp";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="q9+n6eh6"
+	dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b="XWIY9mFt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from flow-a1-smtp.messagingengine.com (flow-a1-smtp.messagingengine.com [103.168.172.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94B4C2FD68D;
-	Mon,  3 Nov 2025 15:18:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4724C31AF3C
+	for <linux-fsdevel@vger.kernel.org>; Mon,  3 Nov 2025 15:20:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762183135; cv=none; b=P7Nxd1zcLbvhdhkHQxxtlfCPy2TERlDPmenZdyF8vwZGw5mBYGSjXlVLsjHbVi6P2uivz+a++fciouA0Z6I+GMjlE832nxR+AWW+wcCX59THSnwE7Zn+eKBx0Qzzw4vX4Ted0JJM0n6O68FfwsB9uXW15l3c1E1/Nl5cFshXFSQ=
+	t=1762183212; cv=none; b=WNXBJUwwRA+vWKeLAd76qn0hz5RZ38O6IuOzgwa4LY0FORmhfgp339Z1L/wf3K1qXOqrngNh1XCm4dso5izZ+T+ssyCsop925RH/+MnQ60Gc0VSLX2TRdhT4CqnYhkCP2vJWLmMQr3q5QQbA5r2t17b7b8ElckJWsrWr3M8JdXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762183135; c=relaxed/simple;
-	bh=iszpCAy6sFYsfEAaqZCY831oj+qI9ozqOgjMqeWJfcU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dDnufqp4xYeJca8aYKNgd97P3P8qdfqwuyHF+sMCV/4Uj88yWn6WozT6R2Q1/qI8KGiFvHOGucmE3wN8EF6d9pZoxAJPNl/pFS8bPd5cmhX9j7zFeQoEaspbTr+ihYmK9T4WusHfZzR0g/titk6DdCk6VnjNYA5FB5rvTfkRWfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=GKVkfKCp; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=q9+n6eh6; arc=none smtp.client-ip=103.168.172.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
-Received: from phl-compute-11.internal (phl-compute-11.internal [10.202.2.51])
-	by mailflow.phl.internal (Postfix) with ESMTP id 8942613802AB;
-	Mon,  3 Nov 2025 10:18:50 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-11.internal (MEProxy); Mon, 03 Nov 2025 10:18:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1762183130; x=
-	1762190330; bh=4J/yAIXHqePkPtS7iPxC2+IJeE7T8ALXXo4jnVmJ2eA=; b=G
-	KVkfKCp3XUpsixALMrMjMXHL/XPGbl/tZhVvdyLsRrDIaeXlwzdSLgBIV9kln+xj
-	w9euFJxbxx4kvirB0ZiS3oM0+Qy0ZPqCJV5lt7NqAcCUm2taV0lEIB6R3AOVFFcN
-	/h4vSUlFnF8I1EhsRbgU4ZSagX7UcU01adXHKHYTFVcC4IIT32S6WVmbuGrSX0Ho
-	OZEBdBORtda81bWO96DpEQPXPsDBGDU/H5YOzznpwfaFaOjLJl8dDwmPP3w2xiN3
-	5BOLpw9amvOEA/byjWdsPqXLBC/l3M5ISk+/Wsk0/7QKm+8n/JPqiEOPXZLfYp6N
-	6GVXO3SbtrHGmKuovwvAg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1762183130; x=1762190330; bh=4J/yAIXHqePkPtS7iPxC2+IJeE7T8ALXXo4
-	jnVmJ2eA=; b=q9+n6eh6upRvk7AnE6iyQfhPbMJFpMjwznzPN6xvIgcBCntDMBK
-	2Bwl4YnRNcJoJvwPixpcGbkml5GhwZOfa/cs8csnf3twevU7NspJN+BVOq1wzW0w
-	cIJ0oBjFvXBsJn1wrmIROzTvx2d2k/G2l9fDBv5V3EfmanWFlgcrNYz2/BjT0jBh
-	eIaMoQcBgI3wKxqE9rHDvD4pSDnbDcY5OjcfxFQcNIJ1mlZR1nmG59MS+8zp/Z51
-	ELlEaG2bkL2eGZnLkqIzud4LzxFYNe0NQYDAQu7zBTHQ8RP3QsEwxfI9ozM5hct/
-	UwB30L5cNfzCALvpqqT0tXCmADksAmJcIFA==
-X-ME-Sender: <xms:2McIacop7ZLPyDZmZqCMPtVoMLvvifWq26Fs7qPGKqbkQanPkaTRnQ>
-    <xme:2McIaaVdX0fp2WbXiCudCKi9wk5pvQqScGJNE9Ma-vKhXApPdZgdZcwCIhSwsfDgr
-    HuWHDQJfDC-_ouNBYMIVJCzcuCjE3Orn8uRBeDFcZz_Hc1GiZwZi9I>
-X-ME-Received: <xmr:2McIaTYth94jE5bZqanVXwDFhwBivA3ZJeZpHesE5x6WFVJF9mATT3etSJy5ig>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddujeekgeejucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvdenucfhrhhomhepmfhirhihlhcu
-    ufhhuhhtshgvmhgruhcuoehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgeqnecugg
-    ftrfgrthhtvghrnhepjeehueefuddvgfejkeeivdejvdegjefgfeeiteevfffhtddvtdel
-    udfhfeefffdunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
-    homhepkhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvpdhnsggprhgtphhtthhopeeg
-    gedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepfihilhhlhiesihhnfhhrrgguvg
-    grugdrohhrghdprhgtphhtthhopehhuhhghhgusehgohhoghhlvgdrtghomhdprhgtphht
-    thhopegrkhhpmheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtoh
-    epuggrvhhiugesrhgvughhrghtrdgtohhmpdhrtghpthhtohepvhhirhhoseiivghnihhv
-    rdhlihhnuhigrdhorhhgrdhukhdprhgtphhtthhopegsrhgruhhnvghrsehkvghrnhgvlh
-    drohhrghdprhgtphhtthhopehlohhrvghniihordhsthhorghkvghssehorhgrtghlvgdr
-    tghomhdprhgtphhtthhopehlihgrmhdrhhhofihlvghtthesohhrrggtlhgvrdgtohhmpd
-    hrtghpthhtohepvhgsrggskhgrsehsuhhsvgdrtgii
-X-ME-Proxy: <xmx:2McIaSlJnnzurptzxwq4E1GE_1O5XB-hA3ZQQs6OX1L2gyuSlBsZ7A>
-    <xmx:2McIafdli3EKWC8nSTp5CKgjEanm2RACgHBv4GYs85PAwodb1nUi4w>
-    <xmx:2McIaYsJgv0ZCZ5kJ8xFt8KmpI9G4LL8QZFjEGfAL140P2c7Eq2Xnw>
-    <xmx:2McIafTMZGmCeJqp6FmoQ8Cc5fAraSPSJjuG-tkEDXcn_JoEPsgAFg>
-    <xmx:2scIaf2rnwk2Pg9KZiL9pc_3dCGYTNdLWqgatSC77gINN-ED8YP1AsSv>
-Feedback-ID: ie3994620:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 3 Nov 2025 10:18:48 -0500 (EST)
-Date: Mon, 3 Nov 2025 15:18:45 +0000
-From: Kiryl Shutsemau <kirill@shutemov.name>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Hugh Dickins <hughd@google.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, 
-	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, Rik van Riel <riel@surriel.com>, 
-	Harry Yoo <harry.yoo@oracle.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Shakeel Butt <shakeel.butt@linux.dev>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	"Darrick J. Wong" <djwong@kernel.org>, Dave Chinner <david@fromorbit.com>, linux-mm@kvack.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv3 1/2] mm/memory: Do not populate page table entries
- beyond i_size
-Message-ID: <ctkrffqndi7tmw2d7vj5k7asotqe5z7ic4ux7wc3pqu6kyernk@sz34te5pkbmd>
-References: <20251027115636.82382-1-kirill@shutemov.name>
- <20251027115636.82382-2-kirill@shutemov.name>
- <20251027153323.5eb2d97a791112f730e74a21@linux-foundation.org>
- <hw5hjbmt65aefgfz5cqsodpduvlkc6fmlbmwemvoknuehhgml2@orbho2mz52sv>
- <9e2750bf-7945-cc71-b9b3-632f03d89a55@google.com>
- <aQWT_6cXWAcjZYON@casper.infradead.org>
- <xadc6rbs7fkk2mb5b4reobqwue2kveo736r3wpa5zwted4daua@rgasjiwwot3g>
- <aQi9zaPxwLBTneF4@casper.infradead.org>
+	s=arc-20240116; t=1762183212; c=relaxed/simple;
+	bh=QS1ElmiWGQ8d6SqToAtWmVYVs7aFmR5jmQxgEOOJtxw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VG9xzaE4y3V/+5XaImQMEWtP6Z/3GHGfXj/MCa1+TRITFjAmoj7/vGs5PcQ4LfnrB+Tx7gJOOsSB4lE3LtmAvfF3t0vCzN16odJcN0iUbnQGjZxsRFAtKToOkG1heKJ+lS7r80HTmWVgNQ6cdazpuadXJ3xPUddRSQTtAf//yM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mihalicyn.com; spf=pass smtp.mailfrom=mihalicyn.com; dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b=XWIY9mFt; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mihalicyn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mihalicyn.com
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-59428d2d975so1445943e87.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Nov 2025 07:20:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=mihalicyn.com; s=mihalicyn; t=1762183207; x=1762788007; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=swWtueJTD1lLAj0Vx8RWi3wNNzWbJ/rmL7j4fFwS3eg=;
+        b=XWIY9mFtpXyhud5yq+Ux+/lo5PGYQuUSCVSRU36fC5DaZL+ChWTAUCuMTBr9Z8+Pkc
+         mHJ5hkC73UVOJ3C7EVaYhFxQ6AjU53+HUiMSA9ImZzxDYv3GVgrgxqa4i7NsEhLTnQRg
+         ZN/P84hLzTSANHXCZAva9VblzrgI5UCoRppeM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762183207; x=1762788007;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=swWtueJTD1lLAj0Vx8RWi3wNNzWbJ/rmL7j4fFwS3eg=;
+        b=acS7S0lU5KhdxR0G1v+/KcAFLRwK3G9++4fnBh5PmSjMJACUhG/V7M4WNZiQjWY4FW
+         Bet/2EjKZpR18cc2UFMNvdoBH5CBHwwREH+8QM0nQoAkIihRvq9cSgLA9keT0pk+fFYp
+         n66XQrj/wv5G94Npz9Ld8PSROuS5H+jIBZOymQXVhNl4bebIOAm1QHfG4BDZcoGoxvy8
+         kPSwiiT2iegUAcXPS5LmL/ghWtd/VLpfwB3V9wpMDTibzkb+WuqN1YNz6vKcP9Imx7sv
+         JM4jQnJTc+yWCNhZdPP3MIIuktL/M003GnBLI9KdUzrZWvGqdc6Xec1No66zIP014VVJ
+         ZtAQ==
+X-Gm-Message-State: AOJu0YylOh8p8hQv5jJfUQVi2WCn2hva/sOt17TzOnSVjhQY3SCALdL1
+	KomVwmwC58XAoTnRRxud/j3AZmgLUqhsi39mKYR0q4IB26un5lWMEBfnEvAgx+Ov67JOO93ChYK
+	Qv/baMgHxRKETY1P+VsRDNvbKf4xluwU+Q/eI4HXleQ==
+X-Gm-Gg: ASbGncvqQrmDtgaHT5RHTqvyg6pytEHEVtrcd0ckZEHeDEKLeeHvzb2cHBIo2AA3n6c
+	a5azRcq3fxeKTSgBLTc77PwgakLFrgGCPbBOCadfi5XiLUQds8U5Q5xKhu02psEk/aUhmn942+R
+	bx1P3HwnUT3sVFrGUxrcC6QB14/DWt8y7F/jUvZuzVyrujNfE/MCoZELxZGs54+GZ8fxYT27+Uy
+	CeAqVHW1JpO7AvHxHBH0gjrzLLtCeJPPCIcbAcEHcLZFb0LwLLLjMyOsdHa
+X-Google-Smtp-Source: AGHT+IH1cXvY32biC6d9IC8g8KBhsDvrUFBnAjz78J5RdRKUTPT5+cM+MWvSntweydUvtixKj17jmykz9aBU3OYssOo=
+X-Received: by 2002:a05:6512:2212:b0:594:292f:bbe9 with SMTP id
+ 2adb3069b0e04-594292fc192mr1635258e87.36.1762183206953; Mon, 03 Nov 2025
+ 07:20:06 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aQi9zaPxwLBTneF4@casper.infradead.org>
+References: <20251028-work-coredump-signal-v1-0-ca449b7b7aa0@kernel.org> <20251028-work-coredump-signal-v1-1-ca449b7b7aa0@kernel.org>
+In-Reply-To: <20251028-work-coredump-signal-v1-1-ca449b7b7aa0@kernel.org>
+From: Alexander Mikhalitsyn <alexander@mihalicyn.com>
+Date: Mon, 3 Nov 2025 16:19:55 +0100
+X-Gm-Features: AWmQ_bkzsjh63BlFZ4oGK_EUFCxELlywhVux4yTLgGIGyeMzLSBxiwaHojVQJLo
+Message-ID: <CAJqdLrqy8OoGtzobGdRO=+AqMejesUnYcgzjrk8q4iueHiHJjQ@mail.gmail.com>
+Subject: Re: [PATCH 01/22] pidfs: use guard() for task_lock
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>, 
+	Amir Goldstein <amir73il@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
+	Yu Watanabe <watanabe.yu+github@gmail.com>, Josef Bacik <josef@toxicpanda.com>, 
+	Jeff Layton <jlayton@kernel.org>, Jann Horn <jannh@google.com>, 
+	Luca Boccassi <luca.boccassi@gmail.com>, linux-kernel@vger.kernel.org, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	Lennart Poettering <lennart@poettering.net>, Mike Yuan <me@yhndnzj.com>, 
+	=?UTF-8?Q?Zbigniew_J=C4=99drzejewski=2DSzmek?= <zbyszek@in.waw.pl>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Nov 03, 2025 at 02:35:57PM +0000, Matthew Wilcox wrote:
-> On Mon, Nov 03, 2025 at 10:59:00AM +0000, Kiryl Shutsemau wrote:
-> > On Sat, Nov 01, 2025 at 05:00:47AM +0000, Matthew Wilcox wrote:
-> > > On Wed, Oct 29, 2025 at 02:45:52AM -0700, Hugh Dickins wrote:
-> > > > But you're giving yourself too hard a time of backporting with your
-> > > > 5.10 Fixee 01c70267053d for 1/2: the only filesystem which set the
-> > > > flag then was tmpfs, which you're now excepting.  The flag got
-> > > > renamed later (in 5.16) and then in 5.17 at last there was another
-> > > > filesystem to set it.  So, this 1/2 would be
-> > > > 
-> > > > Fixes: 6795801366da ("xfs: Support large folios")
-> > > 
-> > > I haven't been able to keep up with this patchset -- sorry.
-> > > 
-> > > But this problem didn't exist until bs>PS support was added because we
-> > > would never add a folio to the page cache which extended beyond i_size
-> > > before.  We'd shrink the folio order allocated in do_page_cache_ra()
-> > > (actually, we still do, but page_cache_ra_unbounded() rounds it up
-> > > again).  So it doesn't fix that commit at all, but something far more
-> > > recent.
-> > 
-> > What about truncate path? We could allocate within i_size at first, then
-> > truncate, if truncation failed to split the folio the mapping stays
-> > beyond i_size.
-> 
-> Is it worth backporting all this way to solve this niche case?
+Am Di., 28. Okt. 2025 um 09:46 Uhr schrieb Christian Brauner
+<brauner@kernel.org>:
+>
+> Use a guard().
+>
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
 
-Dave says it is correctness issue, so.. yes?
+Reviewed-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
 
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+> ---
+>  fs/pidfs.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>
+> diff --git a/fs/pidfs.c b/fs/pidfs.c
+> index 0ef5b47d796a..c2f0b7091cd7 100644
+> --- a/fs/pidfs.c
+> +++ b/fs/pidfs.c
+> @@ -356,13 +356,12 @@ static long pidfd_info(struct file *file, unsigned int cmd, unsigned long arg)
+>                 return -ESRCH;
+>
+>         if ((kinfo.mask & PIDFD_INFO_COREDUMP) && !(kinfo.coredump_mask)) {
+> -               task_lock(task);
+> +               guard(task_lock)(task);
+>                 if (task->mm) {
+>                         unsigned long flags = __mm_flags_get_dumpable(task->mm);
+>
+>                         kinfo.coredump_mask = pidfs_coredump_mask(flags);
+>                 }
+> -               task_unlock(task);
+>         }
+>
+>         /* Unconditionally return identifiers and credentials, the rest only on request */
+>
+> --
+> 2.47.3
+>
 
