@@ -1,50 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-66787-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66789-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63181C2BF02
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 03 Nov 2025 14:05:06 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05928C2BE2D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 03 Nov 2025 13:59:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FCE73B8F35
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Nov 2025 12:58:15 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 87A52349144
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Nov 2025 12:59:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 007CE316184;
-	Mon,  3 Nov 2025 12:53:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98F93318120;
+	Mon,  3 Nov 2025 12:53:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="piHP4CCM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I2AURiXt"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 417AE315D38;
-	Mon,  3 Nov 2025 12:53:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA3E4316908;
+	Mon,  3 Nov 2025 12:53:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762174413; cv=none; b=VyhVQ7y96TZ6yxGF2hW2Z2ZW1EG30ikdw6h7jH7LTaOZ8pcIYaqO8txMqlCDQXpA69hItqPKUKtUlfID3/DFGVKE1ivuEegt1FOoOuBU03GCC9Jf/i3vMRFt6iGr53s8O40MiZtroI5yFqz4Vm+7ryLkWd6/m78BQnu85048+rQ=
+	t=1762174419; cv=none; b=s9CfYpEkizpOOJ0nSMNzWseZ32+nXhV05CTws+Xv/TYPrpMAsgDTymHwlLR3aHoLpgG+Ct+sj7EFMZyhzw9oaK/u3C3v7aq2iGfBfsl5TNuoXc8KkYTjjQt+ldZ5RJnvkm/RKbZo1cCY+m2YW7UwIxg1hJmZKg8whBi3HH4XDpc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762174413; c=relaxed/simple;
-	bh=D5V0UFm+9OUK4y+/EaRKtu56Yc3CDLhLRHYFSz9Ys84=;
+	s=arc-20240116; t=1762174419; c=relaxed/simple;
+	bh=YhL5OvzR8GSJpMDvQ8tbMUForHK8kp34QnTLaEJR2wE=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=FksU7U7rdGl1+aRlIthUdkVI3hSAtoUp5ah1qtHSIryHNGFwIcSZ7dKVQgakaqMcPg97SKTL0d0oFPafE1ZXwEivYsELOxJ82UBiz0KMmwr3KpORhvK8/s0z8JfR+U5V9eMFi+k5ss6MgaMqVNGVSoeEB/9J3QI5LmL1a/DVNBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=piHP4CCM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD205C16AAE;
-	Mon,  3 Nov 2025 12:53:28 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=CmVoFcKdjFHp1aU8b3i7MHzTLKyhLV/UxEIVN5cz1GgooZ6/vem1VUOFnMxhAPW+upsmx6p8Jvyc3tWt/7J1GDz1u+bHUVxeAlqm3AyVrM6sxZLqIGLVgB6d6O7jfcggGwvKlx/5MwA3aETRaYA4dWbQdhZb29sJMkFKVN3jswM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I2AURiXt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80C9FC16AAE;
+	Mon,  3 Nov 2025 12:53:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762174411;
-	bh=D5V0UFm+9OUK4y+/EaRKtu56Yc3CDLhLRHYFSz9Ys84=;
+	s=k20201202; t=1762174418;
+	bh=YhL5OvzR8GSJpMDvQ8tbMUForHK8kp34QnTLaEJR2wE=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=piHP4CCM5hB9QLZP0faziwV56bKDvC1DxsiEoOuVCRsdhjVE8Q9/zQBTCYn3xZmMW
-	 WFE0hBn+6ciWLEc4Ya9HpTnI/jOB58HtuarleVd5y/GEPa4xygwrDOEjX08h5er5hT
-	 UaKvV3mYqMtxtaIvqyQQV8MngdH41aLlYZQZtP7HEtpFPsCoa0g0TG8GHMNWsYzoYM
-	 3DTqtBK2f/Mw5qb7YO8Gv7Yms5AHN46jNvefawhcipWSzL6ChHSFjhRfOD/eBAq/Fg
-	 bcY6DAxmrpiDn1QbpZdNCEBvfOCOtli5UM3irMh5fVCq3so24Apdpy1An8gJ6EKz5I
-	 t3D9k4lQ2rDkQ==
+	b=I2AURiXtC+hFf4PwdxLP4aL6s+W6oTHRI+Vt47k4cvN74/zKr1mC5v2481ePxuWrd
+	 Wl7GlsOJ4K4J1Vnhm2qpprjSahehHTqETQ4MadbskvxJQyFqcCAZ6bCcaUgx/VRZ3t
+	 zr3ruydRMrbQfF+jMMgKIk2TP1mH/ULtFcMxGIsVE9MwsKqRESEk3iRJBuX0gXxQv5
+	 bLstOdOUO7MUBEXij2FTInqYr/6kPIQjdVUQFsytUaxj83fL3E329Fu/+x677TPUsd
+	 POwppa8kfKwgYQ+tLfmWY6eKd7vMVG7T5ByuFfWfv7dt8grm+oj5Njbgb+yPF+fcxe
+	 4Dn0P7T8tGeSw==
 From: Jeff Layton <jlayton@kernel.org>
-Date: Mon, 03 Nov 2025 07:52:40 -0500
-Subject: [PATCH v4 12/17] vfs: make vfs_symlink break delegations on parent
- dir
+Date: Mon, 03 Nov 2025 07:52:42 -0500
+Subject: [PATCH v4 14/17] nfsd: allow filecache to hold S_IFDIR files
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -53,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251103-dir-deleg-ro-v4-12-961b67adee89@kernel.org>
+Message-Id: <20251103-dir-deleg-ro-v4-14-961b67adee89@kernel.org>
 References: <20251103-dir-deleg-ro-v4-0-961b67adee89@kernel.org>
 In-Reply-To: <20251103-dir-deleg-ro-v4-0-961b67adee89@kernel.org>
 To: Miklos Szeredi <miklos@szeredi.hu>, 
@@ -84,163 +83,212 @@ Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-xfs@vger.kernel.org, netdev@vger.kernel.org, 
  Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5708; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=D5V0UFm+9OUK4y+/EaRKtu56Yc3CDLhLRHYFSz9Ys84=;
- b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBpCKWe25kDvzIUFEMcI8PZW6lHavHlY3cQCfQDV
- S7u3UR6x2KJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaQilngAKCRAADmhBGVaC
- FQr5D/9/bWoDn1lQiat35yZ2f6ohat3fC7JS/FnJI63iLRx8/cHR2mF0vj82fi6a1FBb/PeFMpM
- R82Ng7od8if9kPRhieD+muVBIu3fYQQxCCrFNY4Ohv78lVE2s+hj8AklaC5WtBuk1cN8IfP3WMU
- Wqtlo+XQK8Vi9qgXw36VVS5+p5OkhHcs/lZMd6mpnb/psZHy3wRpnN+JT0mmrzXx3LSSVVYzspF
- 9xzeR6J1BnwNpJ7yIdnD+9txMstScfPfwJk+WhffFcIF2K82Er1GlZnSlEel0Q0uXC0P6KkDiUH
- 7schL4zRpwE9Hyn2xLGNiFSNDkwjDiAvwZeYZS+up+2UCiHANncOSLGCbf2gsSJ/kZQ7LRPEBzT
- G/wHv6kF1xeOmz+dY6F+ji7C5lRLzQH3188IbHqrTHBOmw5jeC5xRepk8mteeTRPlWxSMLAqg/Q
- qv/xLej717aYVmn7vztG7UrICLSK+A5IqiE302B/qYEblCgpYcnxXTIad30aUPB6wXgObamTs48
- qIQ1a9t/knkUsdfL3TUfeYwOkB137fuU3FijP+9ebY5/qj0/Oy+Dwpch7kHwJ7GwnRE6aEazVGD
- vAHIu+QxEQg17M3Dj/oqMJZsGmZD0PWcqfOXAgxBxDq3nukjNDuJceZZ+mc7uTnUAWP99ZuSoq1
- ZjpxIKB9TSnusRg==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=7422; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=YhL5OvzR8GSJpMDvQ8tbMUForHK8kp34QnTLaEJR2wE=;
+ b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBpCKWeczgx1Z+RTzva+DQqLRnYoPMZ++BxuPOcP
+ PjJUuDNuemJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaQilngAKCRAADmhBGVaC
+ FUcREACPZg/hOfAPtSpgqZTOoGfLPBrjfAULd07qptKhcWtQqcxl0YuZLXcqiB0EV9arND8Bh3j
+ Tg2QRYMXRg/y/KMoyns4SbgZHk19rRlK4a6cE4B8AD2u/GZUONbef5fRIYNL3Z/ZYT3lVwAYfx0
+ SXhUrPppYnCiKq0gh4Hx2y2ZM/OZSkr6GuMUxGOzpRtHtWZJgh3fdHxdNcWqQdk31T8p/uypEBZ
+ B+cE7cAYzIQ+p4vLm52YQiUucmXuCeotCOEp9o5odD8mIZHwkS1gOHv+0YTu/PvIHLwIB+K/Gqt
+ faTkBW6DsG7Y2yHpikaAQuvn73oHxnx0MU9c9Rm3o8mZoy9BJgODcmL++7QXGqKWdDYUKgQrZ9H
+ Lr6Jdd3rOznGLTfaxE9Jd+2AzQslvNzxRrMYdHp2MTGU1BmyDSKX4MmGkXV5YR8bEKikV/vIC8l
+ EJ7i96VsQ+2c6RvjvDsDhpiDR3rzBrYdHjANu632DcU7O2y7UU0rUjT8zFpHYDe72qQ/Sm7bWVf
+ nerOd20fVcuypMl3wmldE71VAJncbVX6BI1bFOXLXbfs2WPVVQKeXCSpUmZolJcCAux/A60NFON
+ sSajyAvCCpLh4af4jTFwT2t3F1rGFWDPOyktFRce2RqKtEt5afei1ZIkovx5rjWqxE/9S97Op1o
+ 6UHjFBSpc1wUvDw==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-In order to add directory delegation support, we must break delegations
-on the parent on any change to the directory.
+The filecache infrastructure will only handle S_IFREG files at the
+moment. Directory delegations will require adding support for opening
+S_IFDIR inodes.
 
-Add a delegated_inode parameter to vfs_symlink() and have it break the
-delegation. do_symlinkat() can then wait on the delegation break before
-proceeding.
+Plumb a "type" argument into nfsd_file_do_acquire() and have all of the
+existing callers set it to S_IFREG. Add a new nfsd_file_acquire_dir()
+wrapper that nfsd can call to request a nfsd_file that holds a directory
+open.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+For now, there is no need for a fsnotify_mark for directories, as
+CB_NOTIFY is not yet supported. Change nfsd_file_do_acquire() to avoid
+allocating one for non-S_IFREG inodes.
+
+Reviewed-by: Chuck Lever <chuck.lever@oracle.com>
 Reviewed-by: NeilBrown <neil@brown.name>
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/ecryptfs/inode.c      |  2 +-
- fs/init.c                |  2 +-
- fs/namei.c               | 16 ++++++++++++++--
- fs/nfsd/vfs.c            |  2 +-
- fs/overlayfs/overlayfs.h |  2 +-
- include/linux/fs.h       |  2 +-
- 6 files changed, 19 insertions(+), 7 deletions(-)
+ fs/nfsd/filecache.c | 57 ++++++++++++++++++++++++++++++++++++++++-------------
+ fs/nfsd/filecache.h |  2 ++
+ fs/nfsd/vfs.c       |  5 +++--
+ fs/nfsd/vfs.h       |  2 +-
+ 4 files changed, 49 insertions(+), 17 deletions(-)
 
-diff --git a/fs/ecryptfs/inode.c b/fs/ecryptfs/inode.c
-index 42d00f5080b8c52622a5e57bd70a5659504da46e..c52bd187f21437fa1a0deb8f3dcd60c8930154ef 100644
---- a/fs/ecryptfs/inode.c
-+++ b/fs/ecryptfs/inode.c
-@@ -485,7 +485,7 @@ static int ecryptfs_symlink(struct mnt_idmap *idmap,
- 	if (rc)
- 		goto out_lock;
- 	rc = vfs_symlink(&nop_mnt_idmap, lower_dir, lower_dentry,
--			 encoded_symname);
-+			 encoded_symname, NULL);
- 	kfree(encoded_symname);
- 	if (rc || d_really_is_negative(lower_dentry))
- 		goto out_lock;
-diff --git a/fs/init.c b/fs/init.c
-index 4f02260dd65b0dfcbfbf5812d2ec6a33444a3b1f..e0f5429c0a49d046bd3f231a260954ed0f90ef44 100644
---- a/fs/init.c
-+++ b/fs/init.c
-@@ -209,7 +209,7 @@ int __init init_symlink(const char *oldname, const char *newname)
- 	error = security_path_symlink(&path, dentry, oldname);
- 	if (!error)
- 		error = vfs_symlink(mnt_idmap(path.mnt), path.dentry->d_inode,
--				    dentry, oldname);
-+				    dentry, oldname, NULL);
- 	end_creating_path(&path, dentry);
- 	return error;
- }
-diff --git a/fs/namei.c b/fs/namei.c
-index 8851f0870f63ba1d3789300dbacc8b9cce534900..7071cdbfc587c108ebd777746f736d854feb68e7 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -4854,6 +4854,7 @@ SYSCALL_DEFINE1(unlink, const char __user *, pathname)
-  * @dir:	inode of the parent directory
-  * @dentry:	dentry of the child symlink file
-  * @oldname:	name of the file to link to
-+ * @delegated_inode: returns victim inode, if the inode is delegated.
-  *
-  * Create a symlink.
-  *
-@@ -4864,7 +4865,8 @@ SYSCALL_DEFINE1(unlink, const char __user *, pathname)
-  * raw inode simply pass @nop_mnt_idmap.
-  */
- int vfs_symlink(struct mnt_idmap *idmap, struct inode *dir,
--		struct dentry *dentry, const char *oldname)
-+		struct dentry *dentry, const char *oldname,
-+		struct delegated_inode *delegated_inode)
+diff --git a/fs/nfsd/filecache.c b/fs/nfsd/filecache.c
+index a238b6725008a5c2988bd3da874d1f34ee778437..93798575b8075c63f95cd415b6d24df706ada0f6 100644
+--- a/fs/nfsd/filecache.c
++++ b/fs/nfsd/filecache.c
+@@ -1086,7 +1086,7 @@ nfsd_file_do_acquire(struct svc_rqst *rqstp, struct net *net,
+ 		     struct auth_domain *client,
+ 		     struct svc_fh *fhp,
+ 		     unsigned int may_flags, struct file *file,
+-		     struct nfsd_file **pnf, bool want_gc)
++		     umode_t type, bool want_gc, struct nfsd_file **pnf)
  {
- 	int error;
+ 	unsigned char need = may_flags & NFSD_FILE_MAY_MASK;
+ 	struct nfsd_file *new, *nf;
+@@ -1097,13 +1097,13 @@ nfsd_file_do_acquire(struct svc_rqst *rqstp, struct net *net,
+ 	int ret;
  
-@@ -4879,6 +4881,10 @@ int vfs_symlink(struct mnt_idmap *idmap, struct inode *dir,
- 	if (error)
- 		return error;
- 
-+	error = try_break_deleg(dir, delegated_inode);
-+	if (error)
-+		return error;
+ retry:
+-	if (rqstp) {
+-		status = fh_verify(rqstp, fhp, S_IFREG,
++	if (rqstp)
++		status = fh_verify(rqstp, fhp, type,
+ 				   may_flags|NFSD_MAY_OWNER_OVERRIDE);
+-	} else {
+-		status = fh_verify_local(net, cred, client, fhp, S_IFREG,
++	else
++		status = fh_verify_local(net, cred, client, fhp, type,
+ 					 may_flags|NFSD_MAY_OWNER_OVERRIDE);
+-	}
 +
- 	error = dir->i_op->symlink(idmap, dir, dentry, oldname);
- 	if (!error)
- 		fsnotify_create(dir, dentry);
-@@ -4892,6 +4898,7 @@ int do_symlinkat(struct filename *from, int newdfd, struct filename *to)
- 	struct dentry *dentry;
- 	struct path path;
- 	unsigned int lookup_flags = 0;
-+	struct delegated_inode delegated_inode = { };
+ 	if (status != nfs_ok)
+ 		return status;
+ 	inode = d_inode(fhp->fh_dentry);
+@@ -1176,15 +1176,18 @@ nfsd_file_do_acquire(struct svc_rqst *rqstp, struct net *net,
  
- 	if (IS_ERR(from)) {
- 		error = PTR_ERR(from);
-@@ -4906,8 +4913,13 @@ int do_symlinkat(struct filename *from, int newdfd, struct filename *to)
- 	error = security_path_symlink(&path, dentry, from->name);
- 	if (!error)
- 		error = vfs_symlink(mnt_idmap(path.mnt), path.dentry->d_inode,
--				    dentry, from->name);
-+				    dentry, from->name, &delegated_inode);
- 	end_creating_path(&path, dentry);
-+	if (is_delegated(&delegated_inode)) {
-+		error = break_deleg_wait(&delegated_inode);
-+		if (!error)
-+			goto retry;
-+	}
- 	if (retry_estale(error, lookup_flags)) {
- 		lookup_flags |= LOOKUP_REVAL;
- 		goto retry;
+ open_file:
+ 	trace_nfsd_file_alloc(nf);
+-	nf->nf_mark = nfsd_file_mark_find_or_create(inode);
+-	if (nf->nf_mark) {
++
++	if (type == S_IFREG)
++		nf->nf_mark = nfsd_file_mark_find_or_create(inode);
++
++	if (type != S_IFREG || nf->nf_mark) {
+ 		if (file) {
+ 			get_file(file);
+ 			nf->nf_file = file;
+ 			status = nfs_ok;
+ 			trace_nfsd_file_opened(nf, status);
+ 		} else {
+-			ret = nfsd_open_verified(fhp, may_flags, &nf->nf_file);
++			ret = nfsd_open_verified(fhp, type, may_flags, &nf->nf_file);
+ 			if (ret == -EOPENSTALE && stale_retry) {
+ 				stale_retry = false;
+ 				nfsd_file_unhash(nf);
+@@ -1246,7 +1249,7 @@ nfsd_file_acquire_gc(struct svc_rqst *rqstp, struct svc_fh *fhp,
+ 		     unsigned int may_flags, struct nfsd_file **pnf)
+ {
+ 	return nfsd_file_do_acquire(rqstp, SVC_NET(rqstp), NULL, NULL,
+-				    fhp, may_flags, NULL, pnf, true);
++				    fhp, may_flags, NULL, S_IFREG, true, pnf);
+ }
+ 
+ /**
+@@ -1271,7 +1274,7 @@ nfsd_file_acquire(struct svc_rqst *rqstp, struct svc_fh *fhp,
+ 		  unsigned int may_flags, struct nfsd_file **pnf)
+ {
+ 	return nfsd_file_do_acquire(rqstp, SVC_NET(rqstp), NULL, NULL,
+-				    fhp, may_flags, NULL, pnf, false);
++				    fhp, may_flags, NULL, S_IFREG, false, pnf);
+ }
+ 
+ /**
+@@ -1314,8 +1317,8 @@ nfsd_file_acquire_local(struct net *net, struct svc_cred *cred,
+ 	const struct cred *save_cred = get_current_cred();
+ 	__be32 beres;
+ 
+-	beres = nfsd_file_do_acquire(NULL, net, cred, client,
+-				     fhp, may_flags, NULL, pnf, false);
++	beres = nfsd_file_do_acquire(NULL, net, cred, client, fhp, may_flags,
++				     NULL, S_IFREG, false, pnf);
+ 	put_cred(revert_creds(save_cred));
+ 	return beres;
+ }
+@@ -1344,7 +1347,33 @@ nfsd_file_acquire_opened(struct svc_rqst *rqstp, struct svc_fh *fhp,
+ 			 struct nfsd_file **pnf)
+ {
+ 	return nfsd_file_do_acquire(rqstp, SVC_NET(rqstp), NULL, NULL,
+-				    fhp, may_flags, file, pnf, false);
++				    fhp, may_flags, file, S_IFREG, false, pnf);
++}
++
++/**
++ * nfsd_file_acquire_dir - Get a struct nfsd_file with an open directory
++ * @rqstp: the RPC transaction being executed
++ * @fhp: the NFS filehandle of the file to be opened
++ * @pnf: OUT: new or found "struct nfsd_file" object
++ *
++ * The nfsd_file_object returned by this API is reference-counted
++ * but not garbage-collected. The object is unhashed after the
++ * final nfsd_file_put(). This opens directories only, and only
++ * in O_RDONLY mode.
++ *
++ * Return values:
++ *   %nfs_ok - @pnf points to an nfsd_file with its reference
++ *   count boosted.
++ *
++ * On error, an nfsstat value in network byte order is returned.
++ */
++__be32
++nfsd_file_acquire_dir(struct svc_rqst *rqstp, struct svc_fh *fhp,
++		      struct nfsd_file **pnf)
++{
++	return nfsd_file_do_acquire(rqstp, SVC_NET(rqstp), NULL, NULL, fhp,
++				    NFSD_MAY_READ|NFSD_MAY_64BIT_COOKIE,
++				    NULL, S_IFDIR, false, pnf);
+ }
+ 
+ /*
+diff --git a/fs/nfsd/filecache.h b/fs/nfsd/filecache.h
+index e3d6ca2b60308e5e91ba4bb32d935f54527d8bda..b383dbc5b9218d21a29b852572f80fab08de9fa9 100644
+--- a/fs/nfsd/filecache.h
++++ b/fs/nfsd/filecache.h
+@@ -82,5 +82,7 @@ __be32 nfsd_file_acquire_opened(struct svc_rqst *rqstp, struct svc_fh *fhp,
+ __be32 nfsd_file_acquire_local(struct net *net, struct svc_cred *cred,
+ 			       struct auth_domain *client, struct svc_fh *fhp,
+ 			       unsigned int may_flags, struct nfsd_file **pnf);
++__be32 nfsd_file_acquire_dir(struct svc_rqst *rqstp, struct svc_fh *fhp,
++		  struct nfsd_file **pnf);
+ int nfsd_file_cache_stats_show(struct seq_file *m, void *v);
+ #endif /* _FS_NFSD_FILECACHE_H */
 diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
-index ce8c653f7a4edab81a7f1b231a4ae77dc82c073a..edcc8c05e435a4abba27dd2eb07facf4b5ed3243 100644
+index edcc8c05e435a4abba27dd2eb07facf4b5ed3243..e94747ae5897b1a33e2d09b7a3cbf6f5ad1ca417 100644
 --- a/fs/nfsd/vfs.c
 +++ b/fs/nfsd/vfs.c
-@@ -1748,7 +1748,7 @@ nfsd_symlink(struct svc_rqst *rqstp, struct svc_fh *fhp,
- 	err = fh_fill_pre_attrs(fhp);
- 	if (err != nfs_ok)
- 		goto out_unlock;
--	host_err = vfs_symlink(&nop_mnt_idmap, d_inode(dentry), dnew, path);
-+	host_err = vfs_symlink(&nop_mnt_idmap, d_inode(dentry), dnew, path, NULL);
- 	err = nfserrno(host_err);
- 	cerr = fh_compose(resfhp, fhp->fh_export, dnew, fhp);
- 	if (!err)
-diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
-index 958531448cb85aeb3bfa174e9dbf25469384b53f..3e4774a979976c65f2984bbc212bd403e440644e 100644
---- a/fs/overlayfs/overlayfs.h
-+++ b/fs/overlayfs/overlayfs.h
-@@ -272,7 +272,7 @@ static inline int ovl_do_symlink(struct ovl_fs *ofs,
- 				 struct inode *dir, struct dentry *dentry,
- 				 const char *oldname)
+@@ -959,15 +959,16 @@ nfsd_open(struct svc_rqst *rqstp, struct svc_fh *fhp, umode_t type,
+ /**
+  * nfsd_open_verified - Open a regular file for the filecache
+  * @fhp: NFS filehandle of the file to open
++ * @type: S_IFMT inode type allowed (0 means any type is allowed)
+  * @may_flags: internal permission flags
+  * @filp: OUT: open "struct file *"
+  *
+  * Returns zero on success, or a negative errno value.
+  */
+ int
+-nfsd_open_verified(struct svc_fh *fhp, int may_flags, struct file **filp)
++nfsd_open_verified(struct svc_fh *fhp, umode_t type, int may_flags, struct file **filp)
  {
--	int err = vfs_symlink(ovl_upper_mnt_idmap(ofs), dir, dentry, oldname);
-+	int err = vfs_symlink(ovl_upper_mnt_idmap(ofs), dir, dentry, oldname, NULL);
+-	return __nfsd_open(fhp, S_IFREG, may_flags, filp);
++	return __nfsd_open(fhp, type, may_flags, filp);
+ }
  
- 	pr_debug("symlink(\"%s\", %pd2) = %i\n", oldname, dentry, err);
- 	return err;
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 47031dbb0b026c0b59661719df551979717907a5..8cd1804a2c3dcfa0153b1bc1c0250f5a989c857c 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2127,7 +2127,7 @@ struct dentry *vfs_mkdir(struct mnt_idmap *, struct inode *,
- int vfs_mknod(struct mnt_idmap *, struct inode *, struct dentry *,
- 	      umode_t, dev_t, struct delegated_inode *);
- int vfs_symlink(struct mnt_idmap *, struct inode *,
--		struct dentry *, const char *);
-+		struct dentry *, const char *, struct delegated_inode *);
- int vfs_link(struct dentry *, struct mnt_idmap *, struct inode *,
- 	     struct dentry *, struct delegated_inode *);
- int vfs_rmdir(struct mnt_idmap *, struct inode *, struct dentry *,
+ /*
+diff --git a/fs/nfsd/vfs.h b/fs/nfsd/vfs.h
+index 0c0292611c6de3daf6f3ed51e2c61c0ad2751de4..09de48c50cbef8e7c4828b38dcb663b529514a30 100644
+--- a/fs/nfsd/vfs.h
++++ b/fs/nfsd/vfs.h
+@@ -114,7 +114,7 @@ __be32		nfsd_setxattr(struct svc_rqst *rqstp, struct svc_fh *fhp,
+ int 		nfsd_open_break_lease(struct inode *, int);
+ __be32		nfsd_open(struct svc_rqst *, struct svc_fh *, umode_t,
+ 				int, struct file **);
+-int		nfsd_open_verified(struct svc_fh *fhp, int may_flags,
++int		nfsd_open_verified(struct svc_fh *fhp, umode_t type, int may_flags,
+ 				struct file **filp);
+ __be32		nfsd_splice_read(struct svc_rqst *rqstp, struct svc_fh *fhp,
+ 				struct file *file, loff_t offset,
 
 -- 
 2.51.1
