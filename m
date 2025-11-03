@@ -1,121 +1,167 @@
-Return-Path: <linux-fsdevel+bounces-66863-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66864-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50ADFC2E5EB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 04 Nov 2025 00:05:08 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CB93C2E61B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 04 Nov 2025 00:09:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D80934E3B32
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Nov 2025 23:05:03 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id CCC4A34B503
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Nov 2025 23:09:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99EA02FE593;
-	Mon,  3 Nov 2025 23:04:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA2242FE04E;
+	Mon,  3 Nov 2025 23:09:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="bGw+++mj"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OHsAeg1P"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FF972FD1BA
-	for <linux-fsdevel@vger.kernel.org>; Mon,  3 Nov 2025 23:04:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94005279DAE
+	for <linux-fsdevel@vger.kernel.org>; Mon,  3 Nov 2025 23:09:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762211091; cv=none; b=ppoRALp91ElmI6cKs8IEEGrp+hILyTnk7QUUIuPv9HDpO2BzIYuxuirOw7ZUJYNJ+77ubjLIYrqB/qkUpCceYE06mJ/jzd5mNeQYa78bXv/OYOJhYIBanfFe/EoIvDNLfillW2JTEsAZ/PvRShJjNhtvJEtUyevCarY/43LvXM0=
+	t=1762211364; cv=none; b=JnmdQeSU7E6FtCbOjSSIUa2uTUCD+bKCoRzSF94DiRy44kVSZvUpDpb5B6dVn4WV1GSnDH5ccKDfd3lIyLaNTzV5uDxRMNtS42jLXAowg0sDAxvpqJk4txiNt3oZzEMyRaQT+DTkWTVR2diP6+2pY2+f0ZIXoB77qQMMsGzxfk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762211091; c=relaxed/simple;
-	bh=qFJb3QTz/3jg/L6x2lbG2psgJfjIQh5q1KW1+nPPaBI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=i32lndFHU+hy1I2m+SncPheEUucPKp0OsNanPUmxSA060++Wh/8p6CvTR3IKp6qkk8Jxu4opzGcmzry4blToynJ+obgybT6Ew5jJbvlo926sPfqT1vmY62J7v94rcOXn1OkhrKCVX1sRrBpprTZ26oNDA1NBvN9bnfRf60/U1gU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=bGw+++mj; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-640c3940649so2369708a12.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Nov 2025 15:04:49 -0800 (PST)
+	s=arc-20240116; t=1762211364; c=relaxed/simple;
+	bh=71Z+nFQ8WD3X7cBHSB5xsYEXzWiJJvRTnkDU3GDIF/4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MdsPmME/Me8wSZWp0ypTqXw8+qfWH+lKGUbV7r6+1UbDlxdtkdYxv3D7srlXBSxrFNAhPGBN3J1XSP1AkGAsyzAkYJcfTVDakWHpSwm7UoYURWMCpWMv1LwHXvUGdqtiNg9FJBa5EiCT5B1JC2prUEnDXXpuGQIOCdXiEerBCa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OHsAeg1P; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-429c82bf86bso2432122f8f.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Nov 2025 15:09:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1762211087; x=1762815887; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZH0fDpUKrbZ7Y4RH7y1khfYrGo0F4yDKdY+imctMyp4=;
-        b=bGw+++mjPYnWZOYiS6EcFjJzEyuTPJUQqXmW4FOvtqPBOG+AEaph4a7eceAvZWI8sN
-         R74TLprWSn9DqgtcHyPzPf4wf8FG9rBlSIZbYpVeKH91J9lQiGihNuLD2YemdmX+AfI0
-         vxH9nHyZHQoa5N9Z3rudNTHD7bXvZuu2Kaums=
+        d=gmail.com; s=20230601; t=1762211361; x=1762816161; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=v1Q1tLieQpcpuMwIkeXnAFgYmCnVQs4T7Pfl0eQn33c=;
+        b=OHsAeg1Pqr4hO/2smhIWlflRR9lQ7fz6PCna37tUz7ufG0CXtmrbCnCx/gw1yvrKh4
+         rLsylZJ1t9QHwvPRPFj7I2f7tDSgs136ONR7l9kKRdJQIxuSX7WzX2IjYFDcXLlSk3rz
+         /fNXBaiORg0ph47+iAR/hrYqjvoeThTrPWypxoC1sKavjJwfPqpXcknzgYFsr/x5IN65
+         m3t4vUK8LBjTDRPEKidZCM9DA+bisScqJe63/D4F6oW8ZOZ3LB+Vrvg7x143r4w51tUR
+         4g26APygxCsQuAVCz5F9GC0sWsg04Qm2H+UINMHg/o9d38p8YaylIW7F1veZr9JSzNZ/
+         S4pQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762211087; x=1762815887;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1762211361; x=1762816161;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=ZH0fDpUKrbZ7Y4RH7y1khfYrGo0F4yDKdY+imctMyp4=;
-        b=QYMUBoiyWM7eb6u7/TuG6/G33HYGLcYJFP9U6sm2JSlUcf7sAkIyi685kdDPmErVhU
-         scQU4nohSIckzd3OYkNilUpTiE1KQ2C8lmeP+aB0jHMwPOy3uwBRIX54xL5Oz1ZT7drv
-         PFFxmpUAHUW0ku9x/aF07EropTqX7K1k5AjU11YZSKNyukVPE/AYtezwNSk2FqmMQF78
-         VmwcehLiX9tZJyRZIlUMKrsR2PRjc0BNz5sx7Kdt/lxF+pcTXtTe3CY2KKXnsnaqAH+m
-         F7u3W85pvTDObgLV3avRmuyPIA4DdPgxrsD9V8soP+eQOOqqLxX3CH3D2ZumXR4EQBzB
-         g6hg==
-X-Gm-Message-State: AOJu0Yw6pHBDAWv4COAlNnbVGRayHR1sfp8fsxHNKU9jvQqpcZ6Akply
-	XXA4UUzQmmGTyHV0WOpfmGIg9EMfUvFnE44Vz2ZcdNE0a1hA5QXeFMFIb+rh5BUcpJqjg98RLdU
-	hDKeFdCVjZg==
-X-Gm-Gg: ASbGncuatfy94joviztXbMkj13o/RTIa03nxxqFDtp2nGaVcVgPLNDSudfdsN5W4Ryi
-	Cc49zM548C5PXCEgQWRrjh1afs7M489k3Hj+MJ48v3QIlSlcuR2QiM0iKLCaUPTUjUTSzPREyaL
-	ynprAiuqM7rglBS3gR/FoZ+p+geDcvZwPqbTPoyChKm7eRM2s0Ft885VjhgP3+xnCqobuZunAsS
-	O5bSBlPSxWjUtKntkLQVTn3mRbCUbaLr0JV5lZl8DeHZkwrJkmG6gBnJ57HYjh4v4OCr+AXKdQl
-	QfM0IzS6HMu6rak/9yYmZ7lHmOzoSWasVZEUjFNiLwuzSgXobAjOXHggN14feQ+kwKCJn9rpTgl
-	HJQFcrkD2MbhPxvdB5ApPFIDMpAW3BsSOuuhb5q4/vWKvDO8ztaVdfJcZvt9XfDVKLtvNFvAhn6
-	ewn6ZGnk2buNCa+zwf/WtGDqW5r8BFEfsh9vMfQiDTq58Vw4iZ3g==
-X-Google-Smtp-Source: AGHT+IGQzwPxzyVnzGiseKvKiaupK0b1a32fWXvlmQfympctnSpp1JcjbvfCwX5uuV3vwKn1ZBl3MA==
-X-Received: by 2002:a05:6402:848:b0:640:c062:8bca with SMTP id 4fb4d7f45d1cf-640c0628f7cmr3971154a12.18.1762211087488;
-        Mon, 03 Nov 2025 15:04:47 -0800 (PST)
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com. [209.85.218.44])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-640e67eb96esm546139a12.1.2025.11.03.15.04.44
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Nov 2025 15:04:46 -0800 (PST)
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-b4aed12cea3so892266266b.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Nov 2025 15:04:44 -0800 (PST)
-X-Received: by 2002:a17:907:1c28:b0:b71:854:4e49 with SMTP id
- a640c23a62f3a-b710854688emr499540366b.56.1762211084280; Mon, 03 Nov 2025
- 15:04:44 -0800 (PST)
+        bh=v1Q1tLieQpcpuMwIkeXnAFgYmCnVQs4T7Pfl0eQn33c=;
+        b=F1QyEffxbP+JIX/ujSa48dMPWYvEGKpB1WhSARylWQBxXIvW65CdOY+I/UIlhvUoTQ
+         KRK4+yLXz2hae7zBJ/ofBhnLAoZOtMCLmIpEvyIpnu2q+O3GhguDRltdeo+hNb8HtYm0
+         LeSNL6bVccdLxtLYDKDKzgTQhg5uWXILHlzWaCx41aDV4Rau856LFpj1thZcwb8FQlOu
+         tH7iRvRlB/01/M780Q+Q+u3HvgIemRj1Zh5rm4++N8/P0Samy5eDTNkQwrpo42koRybL
+         7rhQOaxTti7PqZS4VZW4t3fe4/RmJqNSPEjRRuKHMqhQ0csNuFHfgxrKtkF+HjO2x6lz
+         FkzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXt+quk/C6eNNfuNaIVAeOFp1JSzstE13M6GiVFXq6ZNedS12iPMjn4llzNYtcrH6B4NJV7IEyk0vM3GOi+@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCJZ6sJ3TE3S377NEDU9fjLXlM5FcZPHgO9RRRnGZijLuEtIKH
+	5pdKFFvpi2+cd4WOz3LK/lDLBQztf6cnEmwfEgeBYk7OpWlUD/X3nYqv
+X-Gm-Gg: ASbGncu4o6alz8o6lnczqidcWF/yzrdvfiRkaxM1jT6jZ2bqhdJ7Ni3xpcAmUMUH7CR
+	vVQzJyyTToW3GDAzOMWzKdP+ARQyy2IZgyq5riAq+MJ5qP/WhJ4QaUIOLAav17s1FgzqnhhWv87
+	ZYXWOb5QWfH1jcokgYKR+T1ifXmz20pRJhEeaSySnJT7KkvcLIbNOnnLf4s9+3yIWfsVtWL7REt
+	qQNliLq/ns7fbnydkIvtcROlSpKdqyMZJewVadUVF5Hb8xFvuWM1ECuh5QDLJOn6mrrmy++iLWG
+	S2XztyUxFyK7OoGYrekCN1RboRcbpA4Eikr61kL42Q5e/kOYwUVk7cw6sBFk04Kg2Scpik2oeRS
+	/qcyNyP9/YQswJTTyYdZSqsca0qsEPuvMW7AFLrHY8rF3FeanQDPQDVc/Mi50khLoW9PYPNpgJb
+	piXJE65qoE8XLvN2DiY+AWzPakP2mV6PQc4XnW7Yi0XgmIHwT+KZWeJLpa+pM=
+X-Google-Smtp-Source: AGHT+IEaEv1N6ajpfURp5K++JWjwDFC+FBT/tHpzug1ZX5HikVcj1HkwnZqbRmlJ6GwomLFTRQLpxA==
+X-Received: by 2002:a5d:64e9:0:b0:429:cf86:1247 with SMTP id ffacd0b85a97d-429cf861389mr5676038f8f.57.1762211360842;
+        Mon, 03 Nov 2025 15:09:20 -0800 (PST)
+Received: from f.. (cst-prg-14-82.cust.vodafone.cz. [46.135.14.82])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429dbf53e86sm1338586f8f.0.2025.11.03.15.09.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Nov 2025 15:09:19 -0800 (PST)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: brauner@kernel.org
+Cc: viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH v3] fs: push list presence check into inode_io_list_del()
+Date: Tue,  4 Nov 2025 00:09:11 +0100
+Message-ID: <20251103230911.516866-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251103-work-creds-guards-simple-v1-0-a3e156839e7f@kernel.org> <20251103-work-creds-guards-simple-v1-14-a3e156839e7f@kernel.org>
-In-Reply-To: <20251103-work-creds-guards-simple-v1-14-a3e156839e7f@kernel.org>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 4 Nov 2025 08:04:28 +0900
-X-Gmail-Original-Message-ID: <CAHk-=wiSmez2LFEpM05VUX=_GKJC8Ag68TJDByVPO=x4QwjyuA@mail.gmail.com>
-X-Gm-Features: AWmQ_bmQaBgs1Hs2Yx75LVx_L0plRwfdpBhmjm5wyWf-G7aoJOGX7gmwXWEf8f8
-Message-ID: <CAHk-=wiSmez2LFEpM05VUX=_GKJC8Ag68TJDByVPO=x4QwjyuA@mail.gmail.com>
-Subject: Re: [PATCH 14/16] act: use credential guards in acct_write_process()
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-aio@kvack.org, linux-unionfs@vger.kernel.org, 
-	linux-erofs@lists.ozlabs.org, linux-nfs@vger.kernel.org, 
-	linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, 
-	cgroups@vger.kernel.org, netdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Mon, 3 Nov 2025 at 20:27, Christian Brauner <brauner@kernel.org> wrote:
->
->         /* Perform file operations on behalf of whoever enabled accounting */
-> -       cred = override_creds(file->f_cred);
-> -
-> +       with_creds(file->f_cred);
+For consistency with sb routines.
 
-I'd almost prefer if we *only* did "scoped_with_creds()" and didn't
-have this version at all.
+ext4 is the only consumer outside of evict(). Damage-controlling it is
+outside of the scope of this cleanup.
 
-Most of the cases want that anyway, and the couple of plain
-"with_creds()" cases look like they would only be cleaned up by making
-the cred scoping more explicit.
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+---
 
-What do you think?
+v3:
+- address feedback by Jan: take care of ext4
 
-Anyway, I approve of the whole series, obviously, I just suspect we
-could narrow down the new interface a bit more.
+if you don't like the specific comment added below I would appreciate if
+you adjusted it yourself.
 
-                Linus
+this patch replaces this guy: https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/commit/?h=vfs-6.19.inode&id=7ba2ca3d17bb69276de7c97587b1e1f3d989f389
+
+the other patch in the previous series remains unchanged
+
+ fs/ext4/inode.c   | 3 +--
+ fs/fs-writeback.c | 7 +++++++
+ fs/inode.c        | 4 +---
+ 3 files changed, 9 insertions(+), 5 deletions(-)
+
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index b864e9645f85..bf978ece70b3 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -202,8 +202,7 @@ void ext4_evict_inode(struct inode *inode)
+ 	 * the inode. Flush worker is ignoring it because of I_FREEING flag but
+ 	 * we still need to remove the inode from the writeback lists.
+ 	 */
+-	if (!list_empty_careful(&inode->i_io_list))
+-		inode_io_list_del(inode);
++	inode_io_list_del(inode);
+ 
+ 	/*
+ 	 * Protect us against freezing - iput() caller didn't have to have any
+diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+index f784d8b09b04..e2eed66aabf8 100644
+--- a/fs/fs-writeback.c
++++ b/fs/fs-writeback.c
+@@ -1349,6 +1349,13 @@ void inode_io_list_del(struct inode *inode)
+ {
+ 	struct bdi_writeback *wb;
+ 
++	/*
++	 * FIXME: ext4 can call here from ext4_evict_inode() after evict() already
++	 * unlinked the inode.
++	 */
++	if (list_empty_careful(&inode->i_io_list))
++		return;
++
+ 	wb = inode_to_wb_and_lock_list(inode);
+ 	spin_lock(&inode->i_lock);
+ 
+diff --git a/fs/inode.c b/fs/inode.c
+index 0f3a56ea8f48..263da76ed4fc 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -815,9 +815,7 @@ static void evict(struct inode *inode)
+ 	BUG_ON(!(inode_state_read_once(inode) & I_FREEING));
+ 	BUG_ON(!list_empty(&inode->i_lru));
+ 
+-	if (!list_empty(&inode->i_io_list))
+-		inode_io_list_del(inode);
+-
++	inode_io_list_del(inode);
+ 	inode_sb_list_del(inode);
+ 
+ 	spin_lock(&inode->i_lock);
+-- 
+2.34.1
+
 
