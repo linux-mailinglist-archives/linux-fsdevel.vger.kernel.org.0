@@ -1,201 +1,218 @@
-Return-Path: <linux-fsdevel+bounces-66730-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66731-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71039C2B434
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 03 Nov 2025 12:14:30 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20536C2B474
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 03 Nov 2025 12:19:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29DE13AB3E4
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Nov 2025 11:14:29 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 48DE34EFFB9
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Nov 2025 11:19:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EC1430170F;
-	Mon,  3 Nov 2025 11:14:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA860302769;
+	Mon,  3 Nov 2025 11:19:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="S/u/hx6d";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="YQm9FIh2";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="S/u/hx6d";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="YQm9FIh2"
+	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="vNgT36HX";
+	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="gKncODgr";
+	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="M9Q6EN/h"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail1.bemta41.messagelabs.com (mail1.bemta41.messagelabs.com [195.245.230.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4D122F261D
-	for <linux-fsdevel@vger.kernel.org>; Mon,  3 Nov 2025 11:14:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DFFF3019A7;
+	Mon,  3 Nov 2025 11:19:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.245.230.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762168456; cv=none; b=FD6Upyqj23bgUPGzrS1wmExsfJ8PFPipAdxcELB4UovMtNTplI0xzvuCdThDhg1aczja1U2Y7PhNhDOe5pHWzkfoBzmM/rK5Ne8L9Q3agzunyRuMbjsuJjNjIznxB0wDaTf1mlGhQVD+5/ZL41p6HuVIszaslFhygLOJ/B7/bCU=
+	t=1762168743; cv=none; b=IuNAVFyCLavpVSEHzlT0ILKa9EqKlV6M867yu8CYZBZf+frCMggmQsrMAo05fc1TjShogmlzlr91JB3Cz8ZFXlFVKJrII/4tsCIPySXyDO6ij9nvLxfhczS4EHAvW048HlmE9uuD/blOC7EcE7o9Lsd/N3f8+9wEUgOSTmVNjmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762168456; c=relaxed/simple;
-	bh=JMlP5F8/TM9H4KCJbRqrlBkd9WC1GKKCixt0cRIB71g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z5Mmvpr0e/hGxpqwc51PD3tIH/rmIBgW8QrBS3FqJj0v1Y62pVAI/PbmZXfJA0/lsHg28qplJR4l3gto9AdDn1X1o0YSHfBhPBx7p403um7SLWT2W8BAoEJKoxV075wf8FsJGWsAg6I+PKMyFod2eHCttTL8u+O2dmUHBPPIvHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=S/u/hx6d; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=YQm9FIh2; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=S/u/hx6d; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=YQm9FIh2; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	s=arc-20240116; t=1762168743; c=relaxed/simple;
+	bh=O/a7IoG10D6HLlLciKIAfeG+yrgUWRtc1OljxapqmNI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XJyI9sWf9mKXQ38kpTUb1OK4gVcxuFMwUTWqIiHAKcF4lSBDnarinAv0PDu40Nqop6wCW7ZG5/dyep0EOaUTkgwe6uESRVEy12XdnFD/HNvcE1yw5xDVIWquz6lHF33ElG/hJ60c0mEXyHsBUQJnl/5aKhb/72H/25AzAa4kxtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com; spf=pass smtp.mailfrom=fujitsu.com; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=vNgT36HX; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=gKncODgr; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=M9Q6EN/h; arc=none smtp.client-ip=195.245.230.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fujitsu.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fujitsu.com;
+	s=170520fj; t=1762168738; i=@fujitsu.com;
+	bh=lWTfQaYpm6VfJ/9xy4tbemZZIjRJl7XPms8i1uMtQrA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding;
+	b=vNgT36HXcahiUoOr+WTvCOk4n19fpHCC4ZY9+acbRHCd2P/ufjH2AUX/RSZovoYdQ
+	 WEJ1CmvmDL9cnU4qMGVJZK2wManAuWhXeJuxZaAqkUsJxvmq6JhMitDrxfBGKdQPh2
+	 PXqbOhXwonIC5OA1QAfLrH/dN7AD9ri3Mhf3MU+wF2BNFKvrfD99pFKOaY3eeVZb5Y
+	 BNYAaJD74/ZhNCY8cMXYRSEmiGMNnc/cR9ckbNEX5i7ErhAUaxsyrtN4uJKfYCGLyC
+	 soIJjcL/ckGK/wRyvTpx7+sg1xtsJN1Wv9x9TVamDn3Ewhy4EpzW30yeR1gBRySijG
+	 gNobxAN49CtnQ==
+X-Brightmail-Tracker: H4sIAAAAAAAAA1WSfUwTdxjH+d1djxMoOcqLP5mgdogLpmW4aH4
+  6cEyz7SRBlk2zxCWyUg56SWnrXWGwZBvlZVEZvqBdR0FAZKiIYQNGUCAwJPI6QAYKZWyOQdZB
+  BDbY7AJsu9Kh7r8nz+f7/T7fPx4Klw2RgRSbbmR5nUorJz2I/ZFUnaL0LMW9OMyjiZ8HSfTX0
+  jxA50v+xNDil3+TyGIeBKhrzESiG2PVAGVfqSHRQN0KiVqnfyFQkSUbQwWNIziqunyfRNaLLR
+  gasPYQqLmlm0Df3S4m0WJ+B0C5JY8AOjltxtB1x4oEnZzPxFFnfhuGLi2ZcfT9Z5UAWeyrElS
+  99BuOxrsGJMh27i6Glh3FZHQw8zj3DMHkDq2SzC3rhDuT0/FIwtRdC2OuNP+KMbVVp0im9VK1
+  O2OvKwRM28wqYMxFHzN9ZR3uzGJtMLNcdBe86X1MwukS9OnvSTTtn8xihnsB6V3dZpAJsn1PA
+  w9KRtcCWHBn0v002EARdCxsmmyWOAFBNxDQ1D8LnEBG52Kw7HrMumh44BTumkXRHy0hrqTPAZ
+  zNthNOQNLhcPRC8ZrZjw6GD2ry1lJx+h8J7LTPrQFf+ii8YL/63+ntsHiqYS1VSu+Htp8eYs4
+  Z0lvgzMU6iXPeQO+Cl5tKMFejCHhr1gZceh/YXTglHqbEAztgTYnMucZFa/bXRbgrJhSO9Nfi
+  54Cf9RmH9anD+oyjDOBVAAksn8byit3KBJ5L1hhTVJxWqfpAoVayqbzewCreZwVjhDJZbVCyg
+  qAUMlLU2kSljjXWAvG9PBa2nm8EpVM54e1gE4XJ/aUv6ShO5p2gT8zQqARNPJ+qZYV2sJmi5F
+  BqzxeZD88ms+lJnFZ80nUMKS+5nzQmRcRSwaBKEbhkF+oBCuqrH9pacBmh0+vYwI3SVz4VRbR
+  TpEnVPYlYf/UhEBToKwVubm4yLwPLp3DG//MZsJECcl9pjrOJF6czPrk0I5bAxBJ2zN1Zwqh6
+  igIzsdibWcPxaV5YVFEG2JzWy+1enezY9sarbnHR3HTnnoCVQ+9GR8UGhc035O8YHnu9TH+zt
+  Kdv4aNSU1zltdCkEX1BuQMG//hFaH+B5zd7TeNbiLiob/Ne8/WPPMFEtY8GJI1++HaIW2TFpm
+  TcQxHRKqseenDQm9h39r7nPvMZajB/QO2J/56XVL63bcwBD/bXx20v1PJdWYPHj0Bbz1zijWO
+  Wynq4c/r5O8v84ccxCYcPFNvmOip6bVd9vKbKFS1b+Ymm50bGyyez/ExvzZlePh5/IHd1+UTQ
+  gqFS/Y5DH9hYUd8bvss/1LAtLnJP7CF1xgvmvp0hXP/Rew5+Nh08vG05IicEjSoiDOcF1b8tN
+  b+NZQQAAA==
+X-Env-Sender: tomasz.wolski@fujitsu.com
+X-Msg-Ref: server-8.tower-858.messagelabs.com!1762168731!338533!1
+X-SYMC-ESS-Client-Auth: outbound-route-from=pass
+X-StarScan-Received:
+X-StarScan-Version: 9.119.0; banners=-,-,-
+X-VirusChecked: Checked
+Received: (qmail 23889 invoked from network); 3 Nov 2025 11:18:53 -0000
+Received: from unknown (HELO n03ukasimr04.n03.fujitsu.local) (62.60.8.179)
+  by server-8.tower-858.messagelabs.com with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP; 3 Nov 2025 11:18:53 -0000
+Received: from n03ukasimr04.n03.fujitsu.local (localhost [127.0.0.1])
+	by n03ukasimr04.n03.fujitsu.local (Postfix) with ESMTP id 0AC01151D;
+	Mon,  3 Nov 2025 11:18:51 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 n03ukasimr04.n03.fujitsu.local 0AC01151D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fujitsu.com;
+	s=dspueurope; t=1762168731;
+	bh=lWTfQaYpm6VfJ/9xy4tbemZZIjRJl7XPms8i1uMtQrA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=gKncODgrZzwHl4PEYLXht0aC7IzMZ1z9L+eCdas5sX0gWQw2ci7M/QHv8lm17ksmv
+	 WKCtSHsbkGtqisHTIHRElitvmWdWsJvfEIHMqs9Vx9W57rBwPLBEp07kAT7Q0I2OVu
+	 6oXl1c07LH5rYH0K7TpYng+lUqBaTiZvqQgCPRZaiJTm240GVrcQE/ntTB0olUAWMe
+	 HqpZefvqeKGX1jBhoGcXB6ojjMz84YcKEV92lwuo2N/yqW5KImwvgnmR9yTUTxVpkM
+	 89KtLCtV7mAF/ggysSRhmDYOdI/NqJoySRuTta1UlECnDyIqjAwZcnNdwR9v+RcIi0
+	 OOL9UkqCFw8vA==
+Received: from ubuntudhcp (unknown [10.172.107.4])
+	(using TLSv1.2 with cipher ADH-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 7CE8521DA3;
-	Mon,  3 Nov 2025 11:14:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762168447; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kAOKcOngnHrYc/dXomxDPPqmKlLzC5SKPL9i00W6DQg=;
-	b=S/u/hx6duGowi/23qtCyS/p4qw46C7LKnrcI2Asj/Ybis80WciRhjeBfqE5buAOyHkGf5M
-	Ror43ZfDUEQOfCccPTgPP6D+GLwQkWEYBUn/AIgNG1E4LHUN/DwSY945+yrYyhd6icDWyj
-	8kwCRA/J/vop+AloumXfIGJJRbGp7jk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762168447;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kAOKcOngnHrYc/dXomxDPPqmKlLzC5SKPL9i00W6DQg=;
-	b=YQm9FIh21ynenPWiUKhSroYW38hcq/8Q6zhL/dSLMXC/g9YLE5ZRE+8RLbs1vgxj9pSvnO
-	gDgbHEOXJdqm+aBQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762168447; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kAOKcOngnHrYc/dXomxDPPqmKlLzC5SKPL9i00W6DQg=;
-	b=S/u/hx6duGowi/23qtCyS/p4qw46C7LKnrcI2Asj/Ybis80WciRhjeBfqE5buAOyHkGf5M
-	Ror43ZfDUEQOfCccPTgPP6D+GLwQkWEYBUn/AIgNG1E4LHUN/DwSY945+yrYyhd6icDWyj
-	8kwCRA/J/vop+AloumXfIGJJRbGp7jk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762168447;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kAOKcOngnHrYc/dXomxDPPqmKlLzC5SKPL9i00W6DQg=;
-	b=YQm9FIh21ynenPWiUKhSroYW38hcq/8Q6zhL/dSLMXC/g9YLE5ZRE+8RLbs1vgxj9pSvnO
-	gDgbHEOXJdqm+aBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6692F139A9;
-	Mon,  3 Nov 2025 11:14:07 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id S0MGGX+OCGm8FAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 03 Nov 2025 11:14:07 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id CDE22A2812; Mon,  3 Nov 2025 12:14:06 +0100 (CET)
-Date: Mon, 3 Nov 2025 12:14:06 +0100
-From: Jan Kara <jack@suse.cz>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Keith Busch <kbusch@kernel.org>, Dave Chinner <david@fromorbit.com>, 
-	Carlos Maiolino <cem@kernel.org>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	"Martin K. Petersen" <martin.petersen@oracle.com>, linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-raid@vger.kernel.org, linux-block@vger.kernel.org
-Subject: Re: fall back from direct to buffered I/O when stable writes are
- required
-Message-ID: <kpk2od2fuqofdoneqse2l3gvn7wbqx3y4vckmnvl6gc2jcaw4m@hsxqmxshckpj>
-References: <20251029071537.1127397-1-hch@lst.de>
- <aQNJ4iQ8vOiBQEW2@dread.disaster.area>
- <20251030143324.GA31550@lst.de>
- <aQPyVtkvTg4W1nyz@dread.disaster.area>
- <20251031130050.GA15719@lst.de>
- <aQTcb-0VtWLx6ghD@kbusch-mbp>
- <20251031164701.GA27481@lst.de>
+	by n03ukasimr04.n03.fujitsu.local (Postfix) with ESMTPS id D97581536;
+	Mon,  3 Nov 2025 11:18:50 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 n03ukasimr04.n03.fujitsu.local D97581536
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fujitsu.com;
+	s=dspueurope; t=1762168730;
+	bh=lWTfQaYpm6VfJ/9xy4tbemZZIjRJl7XPms8i1uMtQrA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=M9Q6EN/h+42pxoTlI4UOVvRWaRiLvHO9CiLKwlEffXZJn6m1tyYwyMpy52NChaBNU
+	 kFTVz2K6ltS1k68OVkcyI1tjYdVSl8hMNWkTkyYtQNfIrq9+w1hAb836ckoxRG+UJP
+	 czLDEsBjFA/quhMV+RSuyTBq/8/5O5XFUqJop041tH0CH/TrSbNxbZGunxjcAaUdlc
+	 9y0xoh8MuFNaWYVoHPiuZAP7Lc83op5gVszxkpnuUQ49EPFJM2Xoo5/PuXfFkuvuR4
+	 gyeGGoDEurAKlN0TAX/pWpxy9tIp4N8F33hE1biKMToMkXfkibAsFMxZ8gkSmU16kx
+	 IPjyyosHmoEEQ==
+Received: from localhost.BIOS.GDCv6 (unknown [10.172.196.36])
+	by ubuntudhcp (Postfix) with ESMTP id 78A702202BC;
+	Mon,  3 Nov 2025 11:18:50 +0000 (UTC)
+From: Tomasz Wolski <tomasz.wolski@fujitsu.com>
+To: alison.schofield@intel.com
+Cc: Smita.KoralahalliChannabasappa@amd.com,
+	ardb@kernel.org,
+	benjamin.cheatham@amd.com,
+	bp@alien8.de,
+	dan.j.williams@intel.com,
+	dave.jiang@intel.com,
+	dave@stgolabs.net,
+	gregkh@linuxfoundation.org,
+	huang.ying.caritas@gmail.com,
+	ira.weiny@intel.com,
+	jack@suse.cz,
+	jeff.johnson@oss.qualcomm.com,
+	jonathan.cameron@huawei.com,
+	len.brown@intel.com,
+	linux-cxl@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	lizhijian@fujitsu.com,
+	ming.li@zohomail.com,
+	nathan.fontenot@amd.com,
+	nvdimm@lists.linux.dev,
+	pavel@kernel.org,
+	peterz@infradead.org,
+	rafael@kernel.org,
+	rrichter@amd.com,
+	skoralah@amd.com,
+	terry.bowman@amd.com,
+	vishal.l.verma@intel.com,
+	willy@infradead.org,
+	yaoxt.fnst@fujitsu.com
+Subject: Re: [PATCH v3 0/5] dax/hmem, cxl: Coordinate Soft Reserved handling with CXL
+Date: Mon,  3 Nov 2025 12:18:37 +0100
+Message-ID: <20251103111840.22057-1-tomasz.wolski@fujitsu.com>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <aQAmhrS3Im21m_jw@aschofie-mobl2.lan>
+References: <aQAmhrS3Im21m_jw@aschofie-mobl2.lan>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251031164701.GA27481@lst.de>
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
-X-Spam-Level: 
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: ClamAV using ClamSMTP
 
-On Fri 31-10-25 17:47:01, Christoph Hellwig wrote:
-> On Fri, Oct 31, 2025 at 09:57:35AM -0600, Keith Busch wrote:
-> > Not sure of any official statement to that effect, but storage in
-> > general always says the behavior of modifying data concurrently with
-> > in-flight operations on that data produces non-deterministic results.
-> 
-> Yes, it's pretty clear that the result in non-deterministic in what you
-> get.  But that result still does not result in corruption, because
-> there is a clear boundary ( either the sector size, or for NVMe
-> optionally even a larger bodunary) that designates the atomicy boundary.
+Hi Alison and Smita,
 
-Well, is that boundary really guaranteed? I mean if you modify the buffer
-under IO couldn't it happen that the DMA sees part of the sector new and
-part of the sector old? I agree the window is small but I think the real
-guarantee is architecture dependent and likely cacheline granularity or
-something like that.
+I’ve been following your patch proposal and testing it on a few QEMU setups
 
-> > An
-> > application with such behavior sounds like a bug to me as I can't
-> > imagine anyone purposefully choosing to persist data with a random
-> > outcome. If PI is enabled, I think they'd rather get a deterministic
-> > guard check error so they know they did something with undefined
-> > behavior.
-> 
-> As long as your clearly define your transaction boundaries that
-> non-atomicy is not a problem per se.
-> 
-> > It's like having reads and writes to overlapping LBA and/or memory
-> > ranges concurrently outstanding. There's no guaranteed result there
-> > either; specs just say it's the host's responsibilty to not do that.
-> 
-> There is no guaranteed result as in an enforced ordering.  But there
-> is a pretty clear model that you get either the old or new at a
-> well defined boundary.
-> 
-> > The kernel doesn't stop an application from trying that on raw block
-> > direct-io, but I'd say that's an application bug.
-> 
-> If it corrupts other applications data as in the RAID case it's
-> pretty clearly not an application bug.  It's also pretty clear that
-> at least some applications (qemu and other VMs) have been doings this
-> for 20+ years.
+> Will it work to search directly for the region above by using params
+> IORESOURCE_MEM, IORES_DESC_NONE. This way we only get region conflicts,
+> no empty windows to examine. I think that might replace cxl_region_exists()
+> work below.
 
-Well, I'm mostly of the opinion that modifying IO buffers in flight is an
-application bug (as much as most current storage stacks tolerate it) but on
-the other hand returning IO errors later or even corrupting RAID5 on resync
-is, in my opinion, not a sane error handling on the kernel side either so I
-think we need to do better.
+I see expected 'dropping CXL range' message (case when region covers full CXL window)
 
-I also think the performance cost of the unconditional bounce buffering is
-so heavy that it's just a polite way of pushing the app to do proper IO
-buffer synchronization itself (assuming it cares about IO performance but
-given it bothered with direct IO it presumably does). 
+[   31.783945] hmem_platform hmem_platform.0: deferring range to CXL: [mem 0xa90000000-0xb8fffffff flags 0x80000200]
+[   31.784609] deferring range to CXL: [mem 0xa90000000-0xb8fffffff flags 0x80000200]
+[   31.790588] hmem_platform hmem_platform.0: dropping CXL range: [mem 0xa90000000-0xb8fffffff flags 0x80000200]
+[   31.791102] dropping CXL range: [mem 0xa90000000-0xb8fffffff flags 0x80000200]
 
-So the question is how to get out of this mess with the least disruption
-possible which IMO also means providing easy way for well-behaved apps to
-avoid the overhead.
+a90000000-b8fffffff : CXL Window 0
+  a90000000-b8fffffff : region0
+    a90000000-b8fffffff : dax0.0
+      a90000000-b8fffffff : System RAM (kmem)
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+[   31.384899] hmem_platform hmem_platform.0: deferring range to CXL: [mem 0xa90000000-0xc8fffffff flags 0x80000200]
+[   31.385586] deferring range to CXL: [mem 0xa90000000-0xc8fffffff flags 0x80000200]
+[   31.391107] hmem_platform hmem_platform.0: dropping CXL range: [mem 0xa90000000-0xc8fffffff flags 0x80000200]
+[   31.391676] dropping CXL range: [mem 0xa90000000-0xc8fffffff flags 0x80000200]
+
+a90000000-c8fffffff : CXL Window 0
+  a90000000-b8fffffff : region0
+    a90000000-b8fffffff : dax0.0
+      a90000000-b8fffffff : System RAM (kmem)
+  b90000000-c8fffffff : region1
+    b90000000-c8fffffff : dax1.0
+      b90000000-c8fffffff : System RAM (kmem)
+	  
+a90000000-b8fffffff : CXL Window 0
+  a90000000-b8fffffff : region0
+    a90000000-b8fffffff : dax0.0
+      a90000000-b8fffffff : System RAM (kmem)
+b90000000-c8fffffff : CXL Window 1
+  b90000000-c8fffffff : region1
+    b90000000-c8fffffff : dax1.0
+      b90000000-c8fffffff : System RAM (kmem)
+
+However, when testing version with cxl_region_exists() I didn't see expected 'registering CXL range' message
+when the CXL region does not fully occupy CXL window - please see below.
+I should mention that I’m still getting familiar with CXL internals, so maybe I might be missing some context :)
+
+a90000000-bcfffffff : CXL Window 0
+  a90000000-b8fffffff : region0
+    a90000000-b8fffffff : dax0.0
+      a90000000-b8fffffff : System RAM (kmem)
+
+[   30.434385] hmem_platform hmem_platform.0: deferring range to CXL: [mem 0xa90000000-0xbcfffffff flags 0x80000200]
+[   30.435116] deferring range to CXL: [mem 0xa90000000-0xbcfffffff flags 0x80000200]
+[   30.436530] hmem_platform hmem_platform.0: dropping CXL range: [mem 0xa90000000-0xbcfffffff flags 0x80000200]
+[   30.437070] hmem_platform hmem_platform.0: dropping CXL range: [mem 0xa90000000-0xbcfffffff flags 0x80000200]
+[   30.437599] dropping CXL range: [mem 0xa90000000-0xbcfffffff flags 0x80000200]
+
+Thanks,
+Tomasz
 
