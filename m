@@ -1,173 +1,296 @@
-Return-Path: <linux-fsdevel+bounces-66860-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66861-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F6A6C2E10D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 03 Nov 2025 21:55:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6468C2E3C4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 03 Nov 2025 23:15:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EF1C54E15E5
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Nov 2025 20:55:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B386E3BE581
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Nov 2025 22:13:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 908042C15BA;
-	Mon,  3 Nov 2025 20:55:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6C372F1FE5;
+	Mon,  3 Nov 2025 22:13:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="EAcTXB9L"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y1H2RYpM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C17222C11C2
-	for <linux-fsdevel@vger.kernel.org>; Mon,  3 Nov 2025 20:55:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C10632F069D;
+	Mon,  3 Nov 2025 22:13:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762203316; cv=none; b=VuWszM7RzAtg8J7N6lOeozJeQmK9afZPpRpNN4DKqEgi0qMbcK+gBkl37EF/7MTdE3qS+M+m2+UTGOkg+2cR2Fm1JtaZNT+ImyP45UVSaevy8x4wiXuaOS3bjHnZxCSRRGhl+ybdM0AHca3++R7iBJLuibqA5kN3gV4jyKhBM4Y=
+	t=1762208030; cv=none; b=emOP3guS4qYx1A6pCbXubINT5JFQ/iDLh+MOJkC085xEVyTEyqaIQX4206sw1N8zug/H/KQvtUmGaGVZWxBLfPRhUXylPWKjeO6U84K9nLPMdFl9mbgovTOAFBxwasIB5mzw9FAYrZMtCuXm28rMw2gqoyF/nW7+iLTaROQVXaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762203316; c=relaxed/simple;
-	bh=j2ka0Du304eFSI3URmzk7ROBpiufWYwrutSpwJmt+gQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=R2PSvVHu+kLIcOm1ZHWYEHPSHF4yinUWUJnhbqFB9nOsObU+d+aVtcVX2iHHXyv1+Vaol/TQW1rVUTKdoqa7wip4R9H5Zq6WConLrhMseaVQh0U9j6jn1KWWxsEcAO1TVbebfoh1aD1qfZphqs6KamWZmyoAp9rrVVLUhlnT2gg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=EAcTXB9L; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-470ffbf2150so33032065e9.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Nov 2025 12:55:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1762203312; x=1762808112; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=maeRjX1obKpA9rcTHZvyJjqqJETjy5RwGnFRm5Xcm8k=;
-        b=EAcTXB9LcG0MIvCwVh1WFsdCeY6ltP07VDDPyOg+VAzQ+H3hUzsHEc2XKi+w7kTrWO
-         POixBNO//7AXQH/3eZaWpI8U9Ga5ijbwt0G1MVvhF7cNWRoIkv5FfkFYkqy5l324jHSM
-         pahRmkW/T1DjDRkBMF+AreR5csKnhATgheHGkfeKV6+Oxi2KRllghmOsufd/TsT2kbzI
-         Kvt+JiKAzO/qKF8R4CSQ51Ty6QLOCZucRqaPiCk8xcx7U/I2NqV6OmjXY6HcJq5YD7MH
-         EqvbHNYqKGUXTyToGZFlwBdsSSD2ACzdJoMd4tQGuWIyD2G98G7OLuzEhBwc7r6xppM6
-         IFqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762203312; x=1762808112;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=maeRjX1obKpA9rcTHZvyJjqqJETjy5RwGnFRm5Xcm8k=;
-        b=SUHXq50kT6IEX/vI66UwuUca04gzAoR2Y3bPaTyszLi63mBiWnNuzHEQA+EpcdUOqZ
-         WN0GKI2BmWfnoKY2cUeiDcSaulkxXxLznmW7Iv3fJxQXlETy8c3KhssVHIlGUpJNTusv
-         jHmTp8J5JM9nNcgIu3u3FQN6moZchoUx5Ub3SnEm6ykT6X0EbyB/zQBw7vnF7dJVoGHd
-         XcS3dp2YWmfMGXvAt1PG5IJkBVgKjZKPOVZV/UOjvQmPPL2bsivujZdNqh63TqlfMFY/
-         pSI1IOqDFDh9Rfv6J1MAwd/e7KTf01EJ4imU9cez5Y03Hz6UR2ZEyIc1HcnkRUyuvco9
-         PQNg==
-X-Forwarded-Encrypted: i=1; AJvYcCUrTKOYWpEGTVPulOvTsdUEfweynIq9otdVWeMD/BjtKfTFwLxZcZZksqunkp02pi4KIUNuBzSRoVY3AZGR@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrwMF3GjaqA4FWI9X6dN25tQiH9dg3/Rn2Yr2sQ7DkFatlc4U0
-	S0yDpqzc4UClt9nyAzyLhyEztLbJjGUsSbiK6jkGdj+uA9YKPg1LRIZTm5/xkXAVHgU=
-X-Gm-Gg: ASbGncss9gPQQvXHEUjGLGi5GDwT2uAwBWQAlEs+yTdOCWToPY/4pWoVErTvUlCrTOt
-	GcO2Uc0puGJTem7abYW/L+fBJ9mn8yIlq0O/gRZamXI9y9r9zSrJFxk05l7oecgeVaq6hokBmub
-	zsMpu1yRt05afrJW68Q2+jmuBykvcSukuvuyz+1dAiGksTbJp9LgIc3P2UTaEAT2ZZSj/Ydm+/J
-	XRYVahDEqdZrwsxpHzraCQH0PVcAd+BCcQXc/zsjHes9T9UOR7+zaeVOqOYDs3zC1j02weCKfHT
-	znsZByzQs5yZ/Xp+9Te/20RC5bnePEVF4S7BVjjrP7/j1U4VhLXpYYePiqENTIvJDEk5juyI9C4
-	/qfTFRNeXzH7F2uYPE69PqTlmoGImFjKTu9VEIIhjOyPvwDffNjSFZDQx/PNGNuPbHMe8tQcrp6
-	UyJRRUWE5syO6WDeFCB7Dj/+nMZXpTAyAMq3VswcI=
-X-Google-Smtp-Source: AGHT+IEKmdFdDLRL0MpaKaBKWM8pPd65NhFlvW6yDCYoa7VcttAa1gHqo3eQEjKzWWMrrpeoxZkZcw==
-X-Received: by 2002:a05:6000:3108:b0:429:cc35:7032 with SMTP id ffacd0b85a97d-429dbd10259mr612205f8f.23.1762203311977;
-        Mon, 03 Nov 2025 12:55:11 -0800 (PST)
-Received: from ?IPV6:2403:580d:fda1::e9d? (2403-580d-fda1--e9d.ip6.aussiebb.net. [2403:580d:fda1::e9d])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-341599f14c6sm2076927a91.10.2025.11.03.12.55.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Nov 2025 12:55:11 -0800 (PST)
-Message-ID: <cbf7af56-c39a-4f42-b76d-0d1b3fecba9f@suse.com>
-Date: Tue, 4 Nov 2025 07:25:06 +1030
+	s=arc-20240116; t=1762208030; c=relaxed/simple;
+	bh=h6l/2UmCCguLKcroMTcTCCpj1Im7S4mXXxzgAD3m4gk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JfWZUI1myhPAY3ho67Vu6O9VPQR+N8pobnx+kruImNzTKpyTBLKPd1PDVLfSoHeXZh0kX7Cg7P/kmdBmJoRd9lng6SRgOYj/qvPgRN7X7J42+iiycDRNmF6rjWwGnrlUgPBLaUDd2NuLwJ4SnmuA3LfF9O/YtDMaYfnSLpdF1xo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y1H2RYpM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42498C113D0;
+	Mon,  3 Nov 2025 22:13:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762208030;
+	bh=h6l/2UmCCguLKcroMTcTCCpj1Im7S4mXXxzgAD3m4gk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Y1H2RYpMFd9WhBmbxUNdazEZO5h8t9gp332W6G4lDF9FQNqsLJBh4Mq/lQDHnJENo
+	 TfO5HA2SQcJujKpp5xTE4lSQOg89ejrMwRUmBT/PkH5E1JmhSDog4MxW4kc76Qp14C
+	 bWnZ85+2WhIhllapYiB8YbxsNeMFZDabVdxdIAzJ25yOXUyWzXkjDHf/TTsu6QjBmj
+	 rTtZpf3yIQYPe4tQpbAKQY8LmpaKIyzB+qLA96krOIZXDgn14vSDLtwHOQ5GJ1AacR
+	 Y8JmQOez27fx54d408wt9c61Ya9PYQEaTZKJkE4Ce7xv0g6jA0D1ULxNp98mB7oYWK
+	 jio06APXyscAA==
+Date: Mon, 3 Nov 2025 14:13:49 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: miklos@szeredi.hu, bernd@bsbernd.com, neal@gompa.dev,
+	linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 1/5] fuse: flush pending fuse events before aborting the
+ connection
+Message-ID: <20251103221349.GE196370@frogsfrogsfrogs>
+References: <176169809222.1424347.16562281526870178424.stgit@frogsfrogsfrogs>
+ <176169809274.1424347.4813085698864777783.stgit@frogsfrogsfrogs>
+ <CAJnrk1ZovORC=tLW-Q94XXY5M4i5WUd4CgRKEo7Lc7K2Sg+Kog@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 2/2] fs: fully sync all fses even for an emergency
- sync
-To: Christoph Hellwig <hch@infradead.org>
-Cc: linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
- Askar Safin <safinaskar@gmail.com>
-References: <cover.1762142636.git.wqu@suse.com>
- <7b7fd40c5fe440b633b6c0c741d96ce93eb5a89a.1762142636.git.wqu@suse.com>
- <aQiYZqX5aGn-FW56@infradead.org>
-Content-Language: en-US
-From: Qu Wenruo <wqu@suse.com>
-Autocrypt: addr=wqu@suse.com; keydata=
- xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
- 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
- 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
- 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
- gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
- AAHNGFF1IFdlbnJ1byA8d3F1QHN1c2UuY29tPsLAlAQTAQgAPgIbAwULCQgHAgYVCAkKCwIE
- FgIDAQIeAQIXgBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXVgBQkQ/lqxAAoJEMI9kfOh
- Jf6o+jIH/2KhFmyOw4XWAYbnnijuYqb/obGae8HhcJO2KIGcxbsinK+KQFTSZnkFxnbsQ+VY
- fvtWBHGt8WfHcNmfjdejmy9si2jyy8smQV2jiB60a8iqQXGmsrkuR+AM2V360oEbMF3gVvim
- 2VSX2IiW9KERuhifjseNV1HLk0SHw5NnXiWh1THTqtvFFY+CwnLN2GqiMaSLF6gATW05/sEd
- V17MdI1z4+WSk7D57FlLjp50F3ow2WJtXwG8yG8d6S40dytZpH9iFuk12Sbg7lrtQxPPOIEU
- rpmZLfCNJJoZj603613w/M8EiZw6MohzikTWcFc55RLYJPBWQ+9puZtx1DopW2jOwE0EWdWB
- rwEIAKpT62HgSzL9zwGe+WIUCMB+nOEjXAfvoUPUwk+YCEDcOdfkkM5FyBoJs8TCEuPXGXBO
- Cl5P5B8OYYnkHkGWutAVlUTV8KESOIm/KJIA7jJA+Ss9VhMjtePfgWexw+P8itFRSRrrwyUf
- E+0WcAevblUi45LjWWZgpg3A80tHP0iToOZ5MbdYk7YFBE29cDSleskfV80ZKxFv6koQocq0
- vXzTfHvXNDELAuH7Ms/WJcdUzmPyBf3Oq6mKBBH8J6XZc9LjjNZwNbyvsHSrV5bgmu/THX2n
- g/3be+iqf6OggCiy3I1NSMJ5KtR0q2H2Nx2Vqb1fYPOID8McMV9Ll6rh8S8AEQEAAcLAfAQY
- AQgAJgIbDBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXWBBQkQ/lrSAAoJEMI9kfOhJf6o
- cakH+QHwDszsoYvmrNq36MFGgvAHRjdlrHRBa4A1V1kzd4kOUokongcrOOgHY9yfglcvZqlJ
- qfa4l+1oxs1BvCi29psteQTtw+memmcGruKi+YHD7793zNCMtAtYidDmQ2pWaLfqSaryjlzR
- /3tBWMyvIeWZKURnZbBzWRREB7iWxEbZ014B3gICqZPDRwwitHpH8Om3eZr7ygZck6bBa4MU
- o1XgbZcspyCGqu1xF/bMAY2iCDcq6ULKQceuKkbeQ8qxvt9hVxJC2W3lHq8dlK1pkHPDg9wO
- JoAXek8MF37R8gpLoGWl41FIUb3hFiu3zhDDvslYM4BmzI18QgQTQnotJH8=
-In-Reply-To: <aQiYZqX5aGn-FW56@infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJnrk1ZovORC=tLW-Q94XXY5M4i5WUd4CgRKEo7Lc7K2Sg+Kog@mail.gmail.com>
 
-
-
-在 2025/11/3 22:26, Christoph Hellwig 写道:
-> The emergency sync being non-blocking goes back to day 1.  I think the
-> idea behind it is to not lock up a already messed up system by
-> blocking forever, even if it is in workqueue.  Changing this feels
-> a bit risky to me.
-
-Considering everything is already done in task context (baked by the 
-global per-cpu workqueue), it at least won't block anything else.
-
-And I'd say if the fs is already screwed up and hanging, the 
-sync_inodes_one_sb() call are more likely to hang than the final 
-sync_fs() call.
-
+On Mon, Nov 03, 2025 at 09:20:26AM -0800, Joanne Koong wrote:
+> On Tue, Oct 28, 2025 at 5:43 PM Darrick J. Wong <djwong@kernel.org> wrote:
+> >
+> > From: Darrick J. Wong <djwong@kernel.org>
+> >
+> > generic/488 fails with fuse2fs in the following fashion:
+> >
+> > generic/488       _check_generic_filesystem: filesystem on /dev/sdf is inconsistent
+> > (see /var/tmp/fstests/generic/488.full for details)
+> >
+> > This test opens a large number of files, unlinks them (which really just
+> > renames them to fuse hidden files), closes the program, unmounts the
+> > filesystem, and runs fsck to check that there aren't any inconsistencies
+> > in the filesystem.
+> >
+> > Unfortunately, the 488.full file shows that there are a lot of hidden
+> > files left over in the filesystem, with incorrect link counts.  Tracing
+> > fuse_request_* shows that there are a large number of FUSE_RELEASE
+> > commands that are queued up on behalf of the unlinked files at the time
+> > that fuse_conn_destroy calls fuse_abort_conn.  Had the connection not
+> > aborted, the fuse server would have responded to the RELEASE commands by
+> > removing the hidden files; instead they stick around.
+> >
+> > For upper-level fuse servers that don't use fuseblk mode this isn't a
+> > problem because libfuse responds to the connection going down by pruning
+> > its inode cache and calling the fuse server's ->release for any open
+> > files before calling the server's ->destroy function.
+> >
+> > For fuseblk servers this is a problem, however, because the kernel sends
+> > FUSE_DESTROY to the fuse server, and the fuse server has to close the
+> > block device before returning.  This means that the kernel must flush
+> > all pending FUSE_RELEASE requests before issuing FUSE_DESTROY.
+> >
+> > Create a function to push all the background requests to the queue and
+> > then wait for the number of pending events to hit zero, and call this
+> > before sending FUSE_DESTROY.  That way, all the pending events are
+> > processed by the fuse server and we don't end up with a corrupt
+> > filesystem.
+> >
+> > Note that we use a wait_event_timeout() loop to cause the process to
+> > schedule at least once per second to avoid a "task blocked" warning:
+> >
+> > INFO: task umount:1279 blocked for more than 20 seconds.
+> >       Not tainted 6.17.0-rc7-xfsx #rc7
+> > "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this messag.
+> > task:umount          state:D stack:11984 pid:1279  tgid:1279  ppid:10690
+> >
+> > Earlier in the threads about this patch there was a (self-inflicted)
+> > dispute as to whether it was necessary to call touch_softlockup_watchdog
+> > in the loop body.  Because the process goes to sleep, it's not necessary
+> > to touch the softlockup watchdog because we're not preventing another
+> > process from being scheduled on a CPU.
+> >
+> > Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
+> > ---
+> >  fs/fuse/fuse_i.h |    5 +++++
+> >  fs/fuse/dev.c    |   35 +++++++++++++++++++++++++++++++++++
+> >  fs/fuse/inode.c  |   11 ++++++++++-
+> >  3 files changed, 50 insertions(+), 1 deletion(-)
+> >
+> >
+> > diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+> > index c2f2a48156d6c5..aaa8574fd72775 100644
+> > --- a/fs/fuse/fuse_i.h
+> > +++ b/fs/fuse/fuse_i.h
+> > @@ -1274,6 +1274,11 @@ void fuse_request_end(struct fuse_req *req);
+> >  void fuse_abort_conn(struct fuse_conn *fc);
+> >  void fuse_wait_aborted(struct fuse_conn *fc);
+> >
+> > +/**
+> > + * Flush all pending requests and wait for them.
+> > + */
+> > +void fuse_flush_requests_and_wait(struct fuse_conn *fc);
+> > +
+> >  /* Check if any requests timed out */
+> >  void fuse_check_timeout(struct work_struct *work);
+> >
+> > diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+> > index 132f38619d7072..ecc0a5304c59d1 100644
+> > --- a/fs/fuse/dev.c
+> > +++ b/fs/fuse/dev.c
+> > @@ -24,6 +24,7 @@
+> >  #include <linux/splice.h>
+> >  #include <linux/sched.h>
+> >  #include <linux/seq_file.h>
+> > +#include <linux/nmi.h>
+> >
+> >  #include "fuse_trace.h"
+> >
+> > @@ -2430,6 +2431,40 @@ static void end_polls(struct fuse_conn *fc)
+> >         }
+> >  }
+> >
+> > +/*
+> > + * Flush all pending requests and wait for them.  Only call this function when
+> > + * it is no longer possible for other threads to add requests.
+> > + */
+> > +void fuse_flush_requests_and_wait(struct fuse_conn *fc)
+> > +{
+> > +       spin_lock(&fc->lock);
 > 
-> On Mon, Nov 03, 2025 at 02:37:29PM +1030, Qu Wenruo wrote:
->> At this stage, btrfs is only one super block update away to be fully committed.
->> I believe it's the more or less the same for other fses too.
+> Do we need to grab the fc lock? fc->connected is protected under the
+> bg_lock, afaict from fuse_abort_conn().
+
+Oh, heh.  Yeah, it does indeed take both fc->lock and fc->bg_lock.
+Will fix that, thanks. :)
+
+FWIW I don't think it's a big deal if we see a stale connected==1 value
+because the events will all get cancelled and the wait loop won't run
+anyway, but I agree with being consistent about lock ordering. :)
+
+> > +       if (!fc->connected) {
+> > +               spin_unlock(&fc->lock);
+> > +               return;
+> > +       }
+> > +
+> > +       /* Push all the background requests to the queue. */
+> > +       spin_lock(&fc->bg_lock);
+> > +       fc->blocked = 0;
+> > +       fc->max_background = UINT_MAX;
+> > +       flush_bg_queue(fc);
+> > +       spin_unlock(&fc->bg_lock);
+> > +       spin_unlock(&fc->lock);
+> > +
+> > +       /*
+> > +        * Wait for all pending fuse requests to complete or abort.  The fuse
+> > +        * server could take a significant amount of time to complete a
+> > +        * request, so run this in a loop with a short timeout so that we don't
+> > +        * trip the soft lockup detector.
+> > +        */
+> > +       smp_mb();
+> > +       while (wait_event_timeout(fc->blocked_waitq,
+> > +                       !fc->connected || atomic_read(&fc->num_waiting) == 0,
+> > +                       HZ) == 0) {
+> > +               /* empty */
+> > +       }
 > 
-> Most file systems do not need a superblock update to commit data.
+> I'm wondering if it's necessary to wait here for all the pending
+> requests to complete or abort?
 
-That's the main difference, btrfs always needs a superblock update to 
-switch metadata due to its metadata COW nature.
+I'm not 100% sure what the fuse client shutdown sequence is supposed to
+be.  If someone kills a program with a large number of open unlinked
+files and immediately calls umount(), then the fuse client could be in
+the process of sending FUSE_RELEASE requests to the server.
 
-The only good news is, emergency sync is not that a hot path, we have a 
-lot of time to properly fix.
+[background info, feel free to speedread this paragraph]
+For a non-fuseblk server, unmount aborts all pending requests and
+disconnects the fuse device.  This means that the fuse server won't see
+all the FUSE_REQUESTs before libfuse calls ->destroy having observed the
+fusedev shutdown.  The end result is that (on fuse2fs anyway) you end up
+with a lot of .fuseXXXXX files that nobody cleans up.
 
->> The problem is the next step, sync_bdevs().
->> Normally other fses have their super block already updated in the page
->> cache of the block device, but btrfs only updates the super block during
->> full transaction commit.
->>
->> So sync_bdevs() may work for other fses, but not for btrfs, btrfs is
->> still using its older super block, all pointing back to the old metadata
->> and data.
->>
+If you make ->destroy release all the remaining open files, now you run
+into a second problem, which is that if there are a lot of open unlinked
+files, freeing the inodes can collectively take enough time that the
+FUSE_DESTROY request times out.
+
+On a fuseblk server with libfuse running in multithreaded mode, there
+can be several threads reading fuse requests from the fusedev.  The
+kernel actually sends its own FUSE_DESTROY request, but there's no
+coordination between the fuse workers, which means that the fuse server
+can process FUSE_DESTROY at the same time it's processing FUSE_RELEASE.
+If ->destroy closes the filesystem before the FUSE_RELEASE requests are
+processed, you end up with the same .fuseXXXXX file cleanup problem.
+
+Here, if you make a fuseblk server's ->destroy release all the remaining
+open files, you have an even worse problem, because that could race with
+an existing libfuse worker that's processing a FUSE_RELEASE for the same
+open file.
+
+In short, the client has a FUSE_RELEASE request that pairs with the
+FUSE_OPEN request.  During regular operations, an OPEN always ends with
+a RELEASE.  I don't understand why unmount is special in that it aborts
+release requests without even sending them to the server; that sounds
+like a bug to me.  Worse yet, I looked on Debian codesearch, and nearly
+all of the fuse servers I found do not appear to handle this correctly.
+My guess is that it's uncommon to close 100,000 unlinked open files on a
+fuse filesystem and immediately unmount it.  Network filesystems can get
+away with not caring.
+
+For fuse+iomap, I want unmount to send FUSE_SYNCFS after all open files
+have been RELEASEd so that client can know that (a) the filesystem (at
+least as far as the kernel cares) is quiesced, and (b) the server
+persisted all dirty metadata to disk.  Only then would I send the
+FUSE_DESTROY.
+
+> We are already guaranteeing that the
+> background requests get sent before we issue the FUSE_DESTROY, so it
+> seems to me like this is already enough and we could skip the wait
+> because the server should make sure it completes the prior requests
+> it's received before it executes the destruction logic.
+
+That's just the thing -- fuse_conn_destroy calls fuse_abort_conn which
+aborts all the pending background requests so the server never sees
+them.
+
+--D
+
+> Thanks,
+> Joanne
 > 
-> At least for XFS, no metadata is written through the block device
-> mapping anyway.
-> 
-
-So does that mean sync_inodes_one_sb() on XFS (or even ext4?) will 
-always submit needed metadata (journal?) to disk?
-
-Thanks,
-Qu
+> > +}
+> > +
+> >  /*
+> >   * Abort all requests.
+> >   *
+> > diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+> > index d1babf56f25470..d048d634ef46f5 100644
+> > --- a/fs/fuse/inode.c
+> > +++ b/fs/fuse/inode.c
+> > @@ -2094,8 +2094,17 @@ void fuse_conn_destroy(struct fuse_mount *fm)
+> >  {
+> >         struct fuse_conn *fc = fm->fc;
+> >
+> > -       if (fc->destroy)
+> > +       if (fc->destroy) {
+> > +               /*
+> > +                * Flush all pending requests (most of which will be
+> > +                * FUSE_RELEASE) before sending FUSE_DESTROY, because the fuse
+> > +                * server must close the filesystem before replying to the
+> > +                * destroy message, because unmount is about to release its
+> > +                * O_EXCL hold on the block device.
+> > +                */
+> > +               fuse_flush_requests_and_wait(fc);
+> >                 fuse_send_destroy(fm);
+> > +       }
+> >
+> >         fuse_abort_conn(fc);
+> >         fuse_wait_aborted(fc);
+> >
 
