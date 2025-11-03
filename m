@@ -1,82 +1,82 @@
-Return-Path: <linux-fsdevel+bounces-66821-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66822-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA0C7C2CDB1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 03 Nov 2025 16:46:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19EE9C2CE3B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 03 Nov 2025 16:49:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 24ECD4F6E5C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Nov 2025 15:40:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E39E6427B60
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Nov 2025 15:40:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 162DF30C610;
-	Mon,  3 Nov 2025 15:36:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFAFC27B4EB;
+	Mon,  3 Nov 2025 15:36:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b="SZZQMC4G"
+	dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b="DuuUb9kS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E89330E832
-	for <linux-fsdevel@vger.kernel.org>; Mon,  3 Nov 2025 15:36:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6876E1B4244
+	for <linux-fsdevel@vger.kernel.org>; Mon,  3 Nov 2025 15:36:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762184168; cv=none; b=uRtYEE/SwO6XYpw5buQaCM1kammS3ReFueEIBb4D8qG4IOTVV9wRG/mG4s5b6orVWfwTUMxY/l4P7OuYAoeNvLzVo8NNxgqKN1VC85GRet4sZK8OYruXNq3staaWACP6aUx3ILoXrGmpAoEKHpwoTPlpXfjNpf8AMYYHzRqTwMA=
+	t=1762184192; cv=none; b=tr07lB0wJngZaHlVZXI6ShqsBick5inKECFonY5O4tfqRDlJZraUsJylNFzUvuwXZAiw4nqAyTfxgQihamOyTF+tJKzyioTgiori+mBD0y5TXqIceULtisQYWXdVfjVhJmxkPad12xsE9uA0dyx/ymjxaFizt6XNAKo37ki/cmo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762184168; c=relaxed/simple;
-	bh=To6YBtHvG+Ot8iV3UpyscJtjXiqASjcXva85WF1+cwE=;
+	s=arc-20240116; t=1762184192; c=relaxed/simple;
+	bh=gEnexRt2+csi5XaC3lzTGlhcekCOaPMwHX1bHBIBtuc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=U4WYdHZrB+31ZmOAvF7UPhR76Jdi9A2ZR6fUazApKBwDeqK1bU8x/eD1gXcPKACKL1mgFzJUw/9/ypcj3jd7bWvEUTvrR1vTN2wrZhk/kQqaKFI3qOR/nlc9hJAq/ePEBFR5WwI0uks5F6kkCbdKGXXAmwIZWvr14rNFZ4Xivdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mihalicyn.com; spf=pass smtp.mailfrom=mihalicyn.com; dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b=SZZQMC4G; arc=none smtp.client-ip=209.85.167.42
+	 To:Cc:Content-Type; b=dwhB2uLu8/9BOoeeLHzs4NBPu/fRai9I41O/M3Up6Z7XuQbrmA4NaSzL0w6af3ABM+lt9G/2S565FuCOcXXAneXNU12Ek+AUn99VTK0VY46+jIeQgLzhLmdwXNN4JcYLxTt+39OsP0SRSMTkTAxgAPML39E2S3+5bzfGaa3tuX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mihalicyn.com; spf=pass smtp.mailfrom=mihalicyn.com; dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b=DuuUb9kS; arc=none smtp.client-ip=209.85.167.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mihalicyn.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mihalicyn.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-586883eb9fbso5647476e87.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Nov 2025 07:36:06 -0800 (PST)
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5942ee7bc9dso807121e87.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Nov 2025 07:36:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mihalicyn.com; s=mihalicyn; t=1762184164; x=1762788964; darn=vger.kernel.org;
+        d=mihalicyn.com; s=mihalicyn; t=1762184188; x=1762788988; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=4q7nanxgAPjG6mFRNLv4lMdBfCDrxBKffr3UhQ6bdwg=;
-        b=SZZQMC4GkPK7PJ1LSkgF33aE/2stqdpC17dyoFMnD8a0dCraXOctYBT7pM1Rcp/Fz0
-         G2am6GzWmSmUg7RK8WK4kIMYp0UKvcvEQe6l8TwYD2KUXCv6+yFNzQheJ7TaV2TgdOo5
-         9jqbGpl4VKuTQY5pFMQzw8lwMIbfmkNqgs2Z8=
+        bh=zzaNsEzQhP5goti+8a1Sk9MxbSfJlJSHEPqAlOOrCs0=;
+        b=DuuUb9kSsjBABxTq9zhbEI0S6w6uuVQwTBfqcybvKbOqplf4u14sU7T3TjVoWjwjJk
+         B+Zcwb9FvR0Hmm4URjL1EdhoNDL0V3YgwICDkOwCjVykmXEB5+PT4I6sRt5C3YP5AeR5
+         a6gDZkDZDgdRv/clMPxtOP3v19j98ooSB0pco=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762184164; x=1762788964;
+        d=1e100.net; s=20230601; t=1762184188; x=1762788988;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=4q7nanxgAPjG6mFRNLv4lMdBfCDrxBKffr3UhQ6bdwg=;
-        b=ozyjwM6caEx4o9b17JzOqsSnvl2ftPIN1EKrhQxjJYCcuuq3Oe6sgO+ZsqKgWdLPHE
-         ee4hj375d4Q74n5IxrPskb0Eu/uHgz8aJFMp4OTK5Hw6/h6vilfhRGMrckA+7s41BMvt
-         yb9gjyXM2NNZseNveXUzKNIxd0eqshOX3enHDtbOCMHs9R0YJS4R0KTBF4q63/d/shEX
-         g41SblUE0uY5QdKn8J7q0HXmRYK3HcWb2QWe3zU8PMx7OGoSScxKifFzxcvcp1ScQb2h
-         1TAtlfdcaiaoMajl/xk3G7Emg9KajUISJMyqw9/4ltCjxExPC9evLlymnjGv+XJKkcF7
-         iajA==
-X-Gm-Message-State: AOJu0YxAoXF+P7JO+DZtyVSUFyzcq+LC49R+3UaNW/AYhk6BUBl0ktA3
-	ukF3CMDeFVqY0/eCKWQTd0xY768nzhHpr/unTvrd0HTDUIwJCpkvFBH99/xo/REITRyoW56vc14
-	S9/52zXBJaQkOGfzHFY2m2UjQGHXfa3xyr8YYrrr98Q==
-X-Gm-Gg: ASbGncsOkjmK/wPV5eaSxnwG17gapSbcWk8x7S9J6HHjhfc9pje7SDJ80RaaECiXUz2
-	ysD/dP4mRCgHIN8L4uXhz2hTt/jakGPbJQDs4dC4ZOTAgpyRkPkHn2wf1JBHaBnt7CaDwTd0+80
-	hPKte3QkitKucHyAU026nIhmqoaP0lkQzJhhKrrPOMRF+Oy4/vM3zR67/CA9y2MUJ1HS83COQ03
-	CxRaTv7Bnw1hSD4U1lYOQeHbiZ2lWU2ya7ZFqN/odRNInyn6zXZkHnxYPKu
-X-Google-Smtp-Source: AGHT+IH97ZofudZYy2YhVvIIBtVo8/XIjLURW5T472yYzr3yF0R+Ac4Gk3xB+10bebg2IPCGrovhYKZsLeaboE+Z0D4=
-X-Received: by 2002:a05:6512:3e05:b0:594:27fb:e7f5 with SMTP id
- 2adb3069b0e04-59427fbea48mr1899466e87.42.1762184164130; Mon, 03 Nov 2025
- 07:36:04 -0800 (PST)
+        bh=zzaNsEzQhP5goti+8a1Sk9MxbSfJlJSHEPqAlOOrCs0=;
+        b=Mp38grDpan7OgEU+7YN3gHpnBs0d0BHJb3HrYGDVIH57OL4QF8hhi+u6RLbrRgRdKU
+         a3chauHOUmsToMC0uTQ2nTmsQP0J1cmkwkrTUx4SGmSgJWYyKSjRKMqf4TCijSkcBSn8
+         8KwI35opCtTQFQOWwmZjvr54kNf9g0ak4IK0r1yIKbeyJ4/pvZjtvi81y1IBhSNx4Ylr
+         oLGVJdZ+1r1zogYSnYTTtTrQqtwMq2szdc2hnSye1nOXt15pbF5Z23LI1W7tK2VO+JXX
+         7MDFfTF4Czbx0AUbO38Y/JR8Rh2v811iIbOBEoockygpZHm5lcaVuKKhzsuON62nQwrS
+         b41w==
+X-Gm-Message-State: AOJu0YyJ/cTW1jLbYei/yGYrUv/XyRa4P1LX2xGZhEELjRrf/7ofxfV9
+	KYR3G1jxT8CEEB81D6fGvNUVzs98EbA8EE5pQp+3vhHNHQMDZHhJMeXqM6uI6XOuiTbv2DWS5N2
+	dtIGvUEdCe4CeRGjlC9QnG5qYdGAuadJQs15uF27Wtw==
+X-Gm-Gg: ASbGncvbEL2tsLp4FbzubVHKphRl14CDgzBd3F4hpSbPr0cz8Cg9+8Sw2u4LqO+Ce4T
+	m0w/cwTXlomWsYY8GclQWrU9/oDleYG6O1CU4bo28e8lIco9kBuASP4EcVGzUIe2YgC5u7gjIZu
+	c4rjFhbuSXJgJjA/dW4K553YXB9iS/G4yJyhI4DUo21Fvz5epSUNEjdrcu891aDyxHM2b+uhBtZ
+	hfZWfXFaaz4WvBMkp6LL9M56gZb0vFunmA1aJBWBBHb+sspD8uG5/PNS+F0LVol4fwCmeo=
+X-Google-Smtp-Source: AGHT+IH9HFX6m2RKwMUsRL27KWY/hEtnivxTOj9RRRvqz7hBvsvziImPZeLtzdqcc2cw0n4sxqvyxW74pWwgcfRjuf8=
+X-Received: by 2002:a05:6512:3e10:b0:594:2f1a:6ff0 with SMTP id
+ 2adb3069b0e04-5942f1a7404mr801173e87.9.1762184188265; Mon, 03 Nov 2025
+ 07:36:28 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251028-work-coredump-signal-v1-0-ca449b7b7aa0@kernel.org> <20251028-work-coredump-signal-v1-2-ca449b7b7aa0@kernel.org>
-In-Reply-To: <20251028-work-coredump-signal-v1-2-ca449b7b7aa0@kernel.org>
+References: <20251028-work-coredump-signal-v1-0-ca449b7b7aa0@kernel.org> <20251028-work-coredump-signal-v1-3-ca449b7b7aa0@kernel.org>
+In-Reply-To: <20251028-work-coredump-signal-v1-3-ca449b7b7aa0@kernel.org>
 From: Alexander Mikhalitsyn <alexander@mihalicyn.com>
-Date: Mon, 3 Nov 2025 16:35:50 +0100
-X-Gm-Features: AWmQ_bkXv1QBDsVsvIQlpi39qb4kwr3XZZOY4dgbJSwLF1w6jSLZdil2UJ4qNlg
-Message-ID: <CAJqdLroQrPkjsDfORf6FimbG2-noX43Kw+Z2M7d3DovpFFyjXw@mail.gmail.com>
-Subject: Re: [PATCH 02/22] pidfs: fix PIDFD_INFO_COREDUMP handling
+Date: Mon, 3 Nov 2025 16:36:17 +0100
+X-Gm-Features: AWmQ_bkG7jG1pb0tTG3Lf2yxUryV1bOUHLFfSOR9QoDXujCIssfdL2lCJtw2h04
+Message-ID: <CAJqdLrqvH4Trs=mbQ8qQGqw1tFdBg_5CLSByT8Ectxbk1p_36Q@mail.gmail.com>
+Subject: Re: [PATCH 03/22] pidfs: add missing PIDFD_INFO_SIZE_VER1
 To: Christian Brauner <brauner@kernel.org>
 Cc: linux-fsdevel@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>, 
 	Amir Goldstein <amir73il@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
@@ -91,52 +91,29 @@ Content-Type: text/plain; charset="UTF-8"
 Am Di., 28. Okt. 2025 um 09:46 Uhr schrieb Christian Brauner
 <brauner@kernel.org>:
 >
-> When PIDFD_INFO_COREDUMP is requested we raise it unconditionally in the
-> returned mask even if no coredump actually did take place. This was
-> done because we assumed that the later check whether ->coredump_mask as
-> non-zero detects that it is zero and then retrieves the dumpability
-> settings from the task's mm. This has issues though becuase there are
-> tasks that might not have any mm. Also it's just not very cleanly
-> implemented. Fix this.
+> We grew struct pidfd_info not too long ago.
 >
+> Fixes: 1d8db6fd698d ("pidfs, coredump: add PIDFD_INFO_COREDUMP")
 > Signed-off-by: Christian Brauner <brauner@kernel.org>
 
 Reviewed-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
 
 > ---
->  fs/pidfs.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
+>  include/uapi/linux/pidfd.h | 1 +
+>  1 file changed, 1 insertion(+)
 >
-> diff --git a/fs/pidfs.c b/fs/pidfs.c
-> index c2f0b7091cd7..c0f410903c3f 100644
-> --- a/fs/pidfs.c
-> +++ b/fs/pidfs.c
-> @@ -335,8 +335,9 @@ static long pidfd_info(struct file *file, unsigned int cmd, unsigned long arg)
->         }
+> diff --git a/include/uapi/linux/pidfd.h b/include/uapi/linux/pidfd.h
+> index 957db425d459..6ccbabd9a68d 100644
+> --- a/include/uapi/linux/pidfd.h
+> +++ b/include/uapi/linux/pidfd.h
+> @@ -28,6 +28,7 @@
+>  #define PIDFD_INFO_COREDUMP            (1UL << 4) /* Only returned if requested. */
 >
->         if (mask & PIDFD_INFO_COREDUMP) {
-> -               kinfo.mask |= PIDFD_INFO_COREDUMP;
->                 kinfo.coredump_mask = READ_ONCE(attr->__pei.coredump_mask);
-> +               if (kinfo.coredump_mask)
-> +                       kinfo.mask |= PIDFD_INFO_COREDUMP;
->         }
+>  #define PIDFD_INFO_SIZE_VER0           64 /* sizeof first published struct */
+> +#define PIDFD_INFO_SIZE_VER1           72 /* sizeof second published struct */
 >
->         task = get_pid_task(pid, PIDTYPE_PID);
-> @@ -355,12 +356,13 @@ static long pidfd_info(struct file *file, unsigned int cmd, unsigned long arg)
->         if (!c)
->                 return -ESRCH;
->
-> -       if ((kinfo.mask & PIDFD_INFO_COREDUMP) && !(kinfo.coredump_mask)) {
-> +       if ((mask & PIDFD_INFO_COREDUMP) && !kinfo.coredump_mask) {
->                 guard(task_lock)(task);
->                 if (task->mm) {
->                         unsigned long flags = __mm_flags_get_dumpable(task->mm);
->
->                         kinfo.coredump_mask = pidfs_coredump_mask(flags);
-> +                       kinfo.mask |= PIDFD_INFO_COREDUMP;
->                 }
->         }
->
+>  /*
+>   * Values for @coredump_mask in pidfd_info.
 >
 > --
 > 2.47.3
