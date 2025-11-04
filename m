@@ -1,79 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-67009-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67010-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4BC1C333E6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 04 Nov 2025 23:34:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 039BBC33505
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 05 Nov 2025 00:01:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6BA9A34A98D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Nov 2025 22:34:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF3AB4261ED
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Nov 2025 23:01:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACB6B313261;
-	Tue,  4 Nov 2025 22:34:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58D422609DC;
+	Tue,  4 Nov 2025 23:01:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="kDOcu/cq"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="qeGE9JVH"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AA262D0C99
-	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Nov 2025 22:34:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38E3934D3A7
+	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Nov 2025 23:01:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.156.1
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762295662; cv=fail; b=jpZg/CjP5fplpgcdoiaQewLfcKRvPJE82R3S54IHpfVaJ4l2f9uUJQM46op7eC42uFOgWWPlg9cixJ9bvuyC1yXBB2B+4xdVOY/9/UwuYjOJfFEsR9LeHEpadskS/52LLQeANi5Z7nzOLKCK9jeWMbrzhbS1J2V/zBJXfbWTCIM=
+	t=1762297297; cv=fail; b=mrpU2DJi2KdnnMPFnRwvrnB3uFbm2N2Q5ExKoWIOfEmXZkjALjlWhvqELsqCJHHt3CZoCfiYSZyrfwZOjpI886z4lDfWK1vFa3rKW3upKdmKLKEY2oUi2tDSRH8vZkdkBjUAcctHdP8mwdkx05AHwxlZMTcQStGPCluaJ6l1zQo=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762295662; c=relaxed/simple;
-	bh=LhrJjjz0bZJshnsI/CnwVZaIUieg8GAJxcMrvvUAOG4=;
+	s=arc-20240116; t=1762297297; c=relaxed/simple;
+	bh=YxeVKkBTxbNYcdsJwUroX64h9mwszIXidig736R0wT0=;
 	h=From:To:CC:Date:Message-ID:References:In-Reply-To:Content-Type:
-	 MIME-Version:Subject; b=IojFzerXBcnh9aARYzKtz5cTQEKio+AkPq1+gS9DsEtbZxYMYCrIlDgt+WD+Oni7vfXoc8iI4ueo00hNQ6Uiyk7YraWJRZW5UWZSffti3qxCi+yJwlh905PtHRAtredkYzDKf94DwVh90aT5O1Cx1i7UJ/Y6bdAP/xu9eVL8b80=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ibm.com; spf=pass smtp.mailfrom=ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=kDOcu/cq; arc=fail smtp.client-ip=148.163.156.1
+	 MIME-Version:Subject; b=gty4nyUffIZ8C3xs/t9X75EcmYDWzA/U5yET1N+DgHZKN0sO974Nk+w+wNaNYPG8+Dg0sXtMqAjWZa1f96Lh+oM9N4JSP8JAtfJeFQUlcsTvxwXqIBMiXTLHKF5Zx0xaDFqV4z1ci0RBngptGy7OLz8+uT6bIAw2WpqO3xBIdqc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ibm.com; spf=pass smtp.mailfrom=ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=qeGE9JVH; arc=fail smtp.client-ip=148.163.156.1
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ibm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ibm.com
 Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A4EVnUS002028
-	for <linux-fsdevel@vger.kernel.org>; Tue, 4 Nov 2025 22:34:19 GMT
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A4Evkjo029911
+	for <linux-fsdevel@vger.kernel.org>; Tue, 4 Nov 2025 23:01:35 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
 	:content-id:content-transfer-encoding:content-type:date:from
 	:in-reply-to:message-id:mime-version:references:subject:to; s=
-	pp1; bh=OiECmCmvpt44LDwma6nDPP1YpDGogwG5N1FAX0DoAW4=; b=kDOcu/cq
-	t/GVX19sPrq7Ws4XbUZrPTh52YgvtD3oU1lMFXs5C+WcbX2b1a4Re2PMBtHJzP+8
-	nPN2t9Gr0+KOdXJuGBzci3AsmdJLZr9nOh3Xk9lby5sO6LLtFILNm0tjBHYbZ5J7
-	gHN6p7qLnBN7D8ydMelxfqxbFFrsqbXEhBBwKfUoonsWatOABIJSvW6WSJiVbeNx
-	hgZCDuRhqSpIL1uo+8gp9sBmJwTctOshqJ/OcQKdyKfZFYzQ52z7HcFwWihXUfqv
-	OOQ61Rlm7ZQBlOHaQJ+Y8CSZCpzvsZXFEFK19Scrki6UbiWyY+NAuq4102ikFiAp
-	Z5B6u2Iy9jbOYg==
+	pp1; bh=7DfAO5nIFIl3icajiN404SLW3wUAJzxRTn8FHW0KQ3M=; b=qeGE9JVH
+	GWVqi15gnDYTBlWhyWE6oARgEMu+P/EJ/+GjZh9auBD9dLoc1YGzRCUu0Zfxpdey
+	emCZ0iGW+2X3aQK6Xl5/bdukQpTfYg8+WRmAr/PDA2lauQVrI0dp3Q2dQQ6r/Q/r
+	GUqxCBTl2pLDVswCnN8qBEeBT1QxcbzqYVOy7kmxym5ybnmjm2dI3S9jjvtjzqjt
+	lS/y2XqFJaGF6bEW4O8Tgq0rDPurG1TFV4NZPdB4w48x+qeHisho7JnZwTqGsXWc
+	lhZup/lK0DJY4agY6fGF1j7vAzUcH5G9rjBKQTwClj3PProeCjfjEAPm6fPL3U3W
+	Gle2rQrJgEqfww==
 Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a59vueaqt-1
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a59vued8j-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-	for <linux-fsdevel@vger.kernel.org>; Tue, 04 Nov 2025 22:34:19 +0000 (GMT)
+	for <linux-fsdevel@vger.kernel.org>; Tue, 04 Nov 2025 23:01:35 +0000 (GMT)
 Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5A4MUQNl029590
-	for <linux-fsdevel@vger.kernel.org>; Tue, 4 Nov 2025 22:34:19 GMT
-Received: from ph0pr06cu001.outbound.protection.outlook.com (mail-westus3azon11011049.outbound.protection.outlook.com [40.107.208.49])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a59vueaqn-1
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5A4N0Xj4019937
+	for <linux-fsdevel@vger.kernel.org>; Tue, 4 Nov 2025 23:01:35 GMT
+Received: from bl0pr03cu003.outbound.protection.outlook.com (mail-eastusazon11012068.outbound.protection.outlook.com [52.101.53.68])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a59vued8c-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 04 Nov 2025 22:34:18 +0000 (GMT)
+	Tue, 04 Nov 2025 23:01:34 +0000 (GMT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=EIEJfrSYI+ivezPHHnBZdJeGIKFB7XUb6w00jfwqnuMaexZ/vt/ZwjLhYIixy9/+ozTw7MIrY7uxu2Sx5tVnn2R0uT9eTQntHNW9WCazjtCJ8FSsbiJxuRrJXwP4TfvF64J8bAL4DOR2HdjaRZVOf5aTBgUcRxQjlkhJQKFmCYp5fdDer0/6qDrvZmqIbhKZISSzjUKNJvhBiI0+wBIy/9e6r2jQKFhPIxqENhfDAXt9iQ8NOZspxnL+zD27TepDA+ce/jUpKDM342YABntgTTq2bBEoPunTCV+j7BDWJzM18XE131D0Yc748QsdHsuruFkFCy9fG9u6mvccfnopTg==
+ b=PBqt0cSRlygvdAv23VKjGn4ydJHsP15WLIuDWc6ZQERWPJjG0IIIM6ppjJdFXEM2kRj1mr5lJrI42IduhR34LdGo6n+/NrbJlsNY2pda+9nAXvYPEk6xp0SmDqZrzfym2j8C2FcmT0vDIH9FCF84+sdfSn5BLw2uxRMXHkwWEWzMgy50cT/hRSDZ4VWneYHwpYg+y0IO5ssFdfHnl1vfjif9P1a3m9zLTVj9P22FGT7EVbyZhj0ePpnftuwR1M0QM+OlIO+H+OC9kkIYKzLG++QwlGQgjZAWPwqg9nCNuapE5BjwFco709Tu1wbq+otvN91X0aHFBjtTP+oPAX8PrA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=DI2MKRyasBeauAu0dKZR+RJ+DneyWe4MqeIcQatJQsE=;
- b=qSL8UpCHPfmBs/ZvcEm76wyKZVGt3jLnCWxz/kL/t4Q+a6m0T6qJFWaQ/yq+9cN3oc+sgCor6ig8dgOlLKzg4k2lJgSm3Uop5U8NAQhzEQPb4oBOGRcv/KM29prQWISuvuRiV3CdsjBqZPYuF+7chBAu8Io498xlC1tqGCgcXuo9Ya4lBhIKzG7Mt+l3CK+t/oQMf8xYWq+nkDFBgowyLw1HKRabJ3PyypnL2zDuwh5UhloFrBnrzOl6svu5kaES28L/u1Ndg3kkyNH2W48tRu1XuE07x0xQCIb60x4gXRFYJvsD1vEQUdcZdOgZUn4KHiu/eZFlTT8N06p0hk/1uQ==
+ bh=cZHECjk2O4UzgMNkv6KX+p8MyNSqpzRw8U6NKIhZOgU=;
+ b=W6u/+eWTafH66g0NwXmEZJYxYk+sSNVrcPTvNcuobfT+hdfHDWOo5lvo9aNP989pzpXRRJ6utczCl0Y9/amFZTiOSKHJOji+fE8R4mF1j70f29kVxeZoWIC/zUJDLWH4U2zS7Ln8PTihPnTJ3c40CTohPiIWMHngq9fpMOb16wDQtKzQPmdzitcVk3wWLb7xyUyqY9kZlHg3zNo8aAWnQW5Oaw4u5pW1yYGQu0UNPTISLrNUQKltuBUI0N9cqchzuuIF3VDdzbwGX7WijC8LugRrVU33ZZVvfcpL2F9C9gHRFjdysZzqMIgWJNNPJGTnYMgNQYmubUe7rwJEHvyUtQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=ibm.com; dmarc=pass action=none header.from=ibm.com; dkim=pass
  header.d=ibm.com; arc=none
 Received: from SA1PR15MB5819.namprd15.prod.outlook.com (2603:10b6:806:338::8)
- by DS4PPFCF61DF7DB.namprd15.prod.outlook.com (2603:10b6:f:fc00::9bf) with
+ by CH3PR15MB5587.namprd15.prod.outlook.com (2603:10b6:610:14c::13) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.14; Tue, 4 Nov
- 2025 22:34:16 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.7; Tue, 4 Nov
+ 2025 23:01:32 +0000
 Received: from SA1PR15MB5819.namprd15.prod.outlook.com
  ([fe80::920c:d2ba:5432:b539]) by SA1PR15MB5819.namprd15.prod.outlook.com
  ([fe80::920c:d2ba:5432:b539%4]) with mapi id 15.20.9275.015; Tue, 4 Nov 2025
- 22:34:15 +0000
+ 23:01:31 +0000
 From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
 To: "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
         "contact@gvernon.com" <contact@gvernon.com>,
@@ -90,130 +90,131 @@ CC: "linux-kernel-mentees@lists.linux.dev"
 	<linux-kernel@vger.kernel.org>,
         "syzbot+97e301b4b82ae803d21b@syzkaller.appspotmail.com"
 	<syzbot+97e301b4b82ae803d21b@syzkaller.appspotmail.com>
-Thread-Topic: [EXTERNAL] [PATCH v2 1/2] hfs: Validate CNIDs in hfs_read_inode
-Thread-Index: AQHcTS1Wu1aZP52wqEO5BJ3i0w5jk7TjG/AA
-Date: Tue, 4 Nov 2025 22:34:15 +0000
-Message-ID: <e13da4581ff5e8230fa5488f6e5d97695fc349b0.camel@ibm.com>
+Thread-Topic: [EXTERNAL] [PATCH v2 2/2] hfs: Update sanity check of the root
+ record
+Thread-Index: AQHcTS1TTOF64ePiQESHFmGvv/a5KLTjI5CA
+Date: Tue, 4 Nov 2025 23:01:31 +0000
+Message-ID: <ef0bd6a340e0e4332e809c322186e73d9e3fdec3.camel@ibm.com>
 References: <d2b28f73-49c8-4e30-9913-01702da4dfe4@I-love.SAKURA.ne.jp>
-	 <20251104014738.131872-3-contact@gvernon.com>
-In-Reply-To: <20251104014738.131872-3-contact@gvernon.com>
+	 <20251104014738.131872-4-contact@gvernon.com>
+In-Reply-To: <20251104014738.131872-4-contact@gvernon.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach:
 X-MS-TNEF-Correlator:
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SA1PR15MB5819:EE_|DS4PPFCF61DF7DB:EE_
-x-ms-office365-filtering-correlation-id: 019677c4-a403-4f27-964d-08de1bf24946
+x-ms-traffictypediagnostic: SA1PR15MB5819:EE_|CH3PR15MB5587:EE_
+x-ms-office365-filtering-correlation-id: dc2ae616-0ea5-472c-5940-08de1bf61861
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|366016|10070799003|7416014|376014|38070700021;
+ BCL:0;ARA:13230040|366016|7416014|376014|1800799024|10070799003|38070700021;
 x-microsoft-antispam-message-info:
- =?utf-8?B?MmZFcjBIVUEvUHRJRE9qcnBETFZPUjBxZWpOSmJqU3dEMHNqc3I0S2RZcWxI?=
- =?utf-8?B?VkZ0cU50c0tyM3JaNVJDdTh0ZXF4THU1RWl3eG9ReGoxSnl6aUdEZ08xbFVN?=
- =?utf-8?B?RDdickVhUW1LemROTjR2dXpoSnc0NXlWa0w5ZUV6cGlXdzMyaklZd0NRZXJZ?=
- =?utf-8?B?OWpubHoxOXJBM1FyRlljUVo2Mll3YzBudGlFcXpmK3pvekVDVUI5TzNWWGQz?=
- =?utf-8?B?bFl3Zml1REJsdXZNcHN6YzJSQ1BOL2xNdDFxKzNVSDhGRG5tdnZDTkIzRENZ?=
- =?utf-8?B?cEdMSXNJU0xKamtGck9oYStvd2ltemsyM1c4RTV0aWhRWTdHR1dtb3pNZm0r?=
- =?utf-8?B?VU9uWTJVd0d0emljeGVScG1nYlBUR2RXY1lmVStYdm11Z3hVWEN5V2ZHMDcx?=
- =?utf-8?B?aGZuZVJiK1ZUMmRqdUxnL2xkWXh6SnpLWEVUT2FwY1B1YmVIWXFqT1RQK3RF?=
- =?utf-8?B?OUpMVVMzcWdaM1pySHc2eHBESnZmU0dFN3lFbGpSeU5PZE5OZm1kdEkxWG1k?=
- =?utf-8?B?OW1oekRvVkhDQVdEbFllNm9vMHFGQ0ZJTHBHWXgwRTN2cE95emdJbGxBb0F3?=
- =?utf-8?B?K1BSMTFXZHFIZnVrVU4wQkl1K2MyRGN4aXRvdFJOcjZ6ZzdQeWNEUUtGWHRq?=
- =?utf-8?B?MDB6MEtTQmFub25qVjhBSU5rUGR6R0lJeDVGTURtMjl4TFdaL2RYRzdSejR5?=
- =?utf-8?B?WmdMZW42dWkzUlZCUkltemJ0RTJldVVaVU4rYlFKWUhUMjRZL0gwL3l0dHpM?=
- =?utf-8?B?ME14RjlEWmNMN1FQTGV1cHBubmpZcW0zSWxyRG8yTHZYZVJDZ1JKYWlOS2Vp?=
- =?utf-8?B?VGlQVll5WWVubmdwN3RPMlYwTjluWnlYY2QzeklxdjNLUW5rc1UxWHd5bG45?=
- =?utf-8?B?UE9VaFBxN3BPbkJvZ3p0U2k0RTFvcHh0b1F5UW9WZmFOaVJPRzZ3UGVraW5Y?=
- =?utf-8?B?Z0RpWk1JcVh5VDJHQXlsdFgxdFB1MS9YMVlSaHFFSVQydE54Z24wdHk4QWU1?=
- =?utf-8?B?b1FGRlFkVUxMbEF1SnNPM2ZNc1dmUGh3c2VOdU52SmVlMHNMRXN0VjNoOEF3?=
- =?utf-8?B?SmdBTEFHaGM3MjZpemVra01haGRmM0I5L2JqOW5DeDR1d0RraWN3bC9TRm5o?=
- =?utf-8?B?bnltYUxUbnFoa3RLT1VtelFZeDd4UURBa2tnY2pYRFc0MFBFcWcwcHVtdjRW?=
- =?utf-8?B?cWUwb2ZMVlEvRmlJeGxObXp6M1M1bUpIc281ZWRheFdFTjJKRW1oS0F2RS9U?=
- =?utf-8?B?WDZtTkZrbWpjV3F1cExjOVJCQ0F1WDFhYTh5RmJBSHZYSUV0ZnNFS0c0Rjk3?=
- =?utf-8?B?dUZPTnE2VGsxbHNKS3JFL1NVdkc5QVBOK1NmamYvb0psdi9TdDhRdjduQnRm?=
- =?utf-8?B?TU1nNVlBUXgvVmd5MC8zS3ByR1h4TmVwcm9CcmRTVk5uRGtPZkJJdDlOZ0hT?=
- =?utf-8?B?b0t3VSswR2hIU2Nra055QjJEbVpKTmwxUElpQzd4VFVNU0kzc0RHZ3MwSlFK?=
- =?utf-8?B?MmpSeTR1TzRUWmhtWEFEa2VhNEtZMGs2MHZyRTJLZVpYWWp2MDVFdHQyYU9U?=
- =?utf-8?B?aHVaWENES3JIYkFuQUNQNmNzaHphSVlYR2ZrUlJGYzBtNXFjaDJwakluVUlV?=
- =?utf-8?B?QnFCclNxTHQwdmZwWnZrdDBxdjRmdXNvTngvVkErRStXQkwvUEM5ZkVyVHBx?=
- =?utf-8?B?dHlITW5GdUlMcVN5RlNQQWNWQmlkUWluTk9UVjh3ZHFWNDYwSWlKK2xNNzFF?=
- =?utf-8?B?NndXY2plZlZnamhGQTUwVVBXTkNyQUVlcmU2MnZXQUlGYk0zTlNIc0tYckYz?=
- =?utf-8?B?bytmUVh6Yis2RzlEY2hOcDVkclJLQ3hBbGFXMGRzc0RQTXZvNzl6UUovQkpu?=
- =?utf-8?B?YmFaZ0pabE11V0o4clR5VWVrZjBuYkdZd0lIU0xsYnB0SFhXaUw3TGhUOHlF?=
- =?utf-8?B?SDBER0hHeTlpUVBtTUNGdktlNEpscGRsZXl5bFd4ODJZRXI3NndMTndSc1Av?=
- =?utf-8?B?cEdvNzNPdDh3PT0=?=
+ =?utf-8?B?RFlXU0hDMStiZEhZMTZHUmgyTzAwZWM0cnhJOWJBd0tqM3pnNHFVUVlyU2VC?=
+ =?utf-8?B?ckNHMSt1c2xCeWR4K2hQTmtzajZjZUQ5eEdyYUQrU3VYSUJDUno0SWJSQTJw?=
+ =?utf-8?B?YnAreWtiWEhiM2JtL0lUbTJnSEJCcUNWZFRDVFcxSE1TVmxrNFNJTzY2Nkx3?=
+ =?utf-8?B?Y3lXYVBJMnloWElkNVB5OFdJQTNXZTV1d2tXTFpuSHAwWGRPM1U3T1BnMHN5?=
+ =?utf-8?B?TGNMeWlXVCt0T2FoL2FPU2ZrMzh6R2o1emNnRDVFdkNuMGlFUzhSaXEvdWhv?=
+ =?utf-8?B?d2NQWFdjUVhlRXFjcDAvclpmL2E4TC84SnE1ZnZpbDY3cnFKYWREOERQUWZO?=
+ =?utf-8?B?eEVaNjd3NCttaHhiM3NseTMrOGVMRW81WXc4b1J1cWdjN0R1ZFZIcFRRNVpG?=
+ =?utf-8?B?NUQ2UkxmTUdSSkp0d3J6Q3F1c3hFN09PNWllMDZMTUZCU3AvbTMyYmgxN2hr?=
+ =?utf-8?B?bHU4d25EZGp4Z2pJdEZ0aWVrWEplNENBQVMydG11Rkh3czFBOEZ4QjVHdU43?=
+ =?utf-8?B?Ly9XOTNXcXhSVHo3QlBRdnE5NnZuR3VQUmZJWTBEcW9EK1VsMmgwQktLNCto?=
+ =?utf-8?B?YkJlS3FOU3Z6WXlwcWthK292eFNaczNYait6VUo3cXF6ZlUwMkhuOFRjNVkw?=
+ =?utf-8?B?ZmNNTmhHbGsvVTE5RGRmY05BYmJRQk5NWUszazhsQ0RPVTFCTXBvNy90WlRE?=
+ =?utf-8?B?d0l6aHBtWXlpM29hdE1ndEMzRG1QWGIzTVFsbXBtWUFzSWEwbHZFaVFaUm5i?=
+ =?utf-8?B?US9VSUpiUUh2UnFYL0tNWnI4cUhEMjQrSVlWQXhIWXR1V1ZyYkp3dXdmbFJu?=
+ =?utf-8?B?dTJLZXZqNS9kWVFIT3VYVTRvak00am56eXdFeGttZ3pSWmk3Q0ZuL3U4OHVR?=
+ =?utf-8?B?RmJtL0k0VEFZelBVZW1GWmE3d0VpYkNQOXVza2Y5eXhaczFRaEcwVXdyUFlk?=
+ =?utf-8?B?UmUyREZwemFqSlgyeGErcVBhQ2N0NHg1SU40eU9VMGpLOHpCMFdYeEwvY2lS?=
+ =?utf-8?B?VUZUK3RyR0RUcytsYU9DVWk3UWJyRE1DeFZRT2ZDeXl5bDJNd1RLWkxwL0VW?=
+ =?utf-8?B?Q3k2OVRIcWt1dEtCdEltaTN6eC9nQ3BHc2xpaEFBeFlYTHlOU0NtaTFTWHRw?=
+ =?utf-8?B?WTVxMnJNK1owaHQ3R0pwT20raE5uOUJ0azlNL3RwaUhTYVJab1ZnNFpaZ3Av?=
+ =?utf-8?B?Yi9tNTVZSVMxdkVGQkVnWVFERGRZM1dJMVBiSUJhKzY1NXN6TGUwUmFEY1lh?=
+ =?utf-8?B?OVM5V1ZsY2FkUzl5bGhsclpUMVRUSzRZNzJpajNyMXlLV3pjRGJraE1sVGFa?=
+ =?utf-8?B?T2tzWGNDbTdSNVlCUWU0clhzUzJBcDdvOUJmZE5FMk9XVlBnUHdYdktNWVN6?=
+ =?utf-8?B?ZW9XYUV6Vm9hZlcwNWQ0OVRQM3RBMTZkVXJuNjJ5QVJmWDNpNlZoZVBVS2Uv?=
+ =?utf-8?B?TGNWZGlzekQ3TFFqKzFhaHp6RWdsWUczeHFiQndtWENwUVhPYklCRTdLWnBp?=
+ =?utf-8?B?cnJDb1VUWjR4bFNEWWF5MmhLbW1xRldMZEpQTW9qakNodEZyMVhzamVic2pM?=
+ =?utf-8?B?TWd0VHVucExUaWlBMEc1anp4WTk2QXdhU0NEZ3VBb1cvdkE4cFNSSk13L2pY?=
+ =?utf-8?B?RW9VeERyd1dOMjIwSVM5b0Y4TXdSMHFxRFdIR1k0bDhYeW11RXo5SHdwNEhF?=
+ =?utf-8?B?bFI5Z3B5ZGVrT0ZUdnlmc0RvbnEvR0pGbUl6dGk0OU83RTRUckU2QzhGcThI?=
+ =?utf-8?B?Y1cvT1U3QStWUTRudkJBQ1d4VVgrem82NUNXMU1zZGhHRWJLWEVWamtGQU8y?=
+ =?utf-8?B?K2hKcTgxV0o3NDNyLzdsNU9xcnFOQS9vM2xwejBsTDhiUXhyYjNoVmNHOCtR?=
+ =?utf-8?B?TExPOVB0UHNWWGYvSjNXR2xRc3dPcGpjNUY0dEpJMURLZGJTTXU4dk52aFov?=
+ =?utf-8?B?ZHRPL0Fjbi80dWl1aUZXSVhqam4zWDYxNkZGWUNZcjMvc0ljUE95TTdtU1pY?=
+ =?utf-8?B?YXNYbzF1YVBnPT0=?=
 x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR15MB5819.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(10070799003)(7416014)(376014)(38070700021);DIR:OUT;SFP:1101;
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR15MB5819.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(10070799003)(38070700021);DIR:OUT;SFP:1101;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
 x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?c0Y2K1hXbGdDK1kxdjByMlprTlFrTnIvM3EwWVI0TmNJTWh4SEVydjlyNzky?=
- =?utf-8?B?eHNoUDR2dU1UVUxkNjRvWVIxbVlVMUxVK1IvUWVMcWJRQTFZVVQrRk8rZ2tO?=
- =?utf-8?B?Rjh2a0Q1dkVsUEFSQityY3poTTIzK3orSXNlTWtBK2owRXdnaEVHZXJqbUlz?=
- =?utf-8?B?WDZlQ0s4dWRhV080VG9WbFQzNjY1VVkrKzFsRFhFb0RRRnBmZENYS1NvbGFv?=
- =?utf-8?B?RnlBWElneTVoSG90YXpWeWY2SWVtZ3Y2RzlvempkcFAvcWF5MnZ2SnRMalhJ?=
- =?utf-8?B?bHdjTEhEbzVDcHRJZFJLOG81YXJwWTdwaG5pc3VDZUFNN1ZhcFF3NzJzY0tJ?=
- =?utf-8?B?VDZFT1drZXV5UEhEY1lYcnhQM0p6QUR2M0pPR3QrdCs1Y2VRelkwQ2RyWEhK?=
- =?utf-8?B?b2FiRnhHTGgvWUJ4cnZXQWxLRGROV1dmcSs0d3dWWUlESVVWV3ltT2hnSEhI?=
- =?utf-8?B?dHJDUWwrcVMxUmdjSEZyZmIwMWgzYzdwYkswanVuMEVwdnlraWpWZVpmV0hJ?=
- =?utf-8?B?TTMyNGt5T3dQcVNtbFZvVERCSUJxaDN3a2x0WHQySnBpU0JPTXpMNGd6TzUx?=
- =?utf-8?B?OGZ0TXAySDhmZ3U0YlpVSXRtVmJjQVU5S3U4WXVPeFNvakt6dVJqc3VRNWtj?=
- =?utf-8?B?dUZpd0hoc3RuWGxLeTJSeVBGUjhJeUh3bCtxWUdVQytNSmllY0czbWxtL3hl?=
- =?utf-8?B?eU80WEZFTWQvckhlL0NCUExJbGxIRTYyakx5SHg3aWlaSURzMFZMVFdmclQ1?=
- =?utf-8?B?Z01rUGxPZENlN3huZDdmb2VBRkoyWWVBZEdEWUhWV082eDhzZnU4SXp2aTRJ?=
- =?utf-8?B?Q3JOWmFhNExpakJjZTlzbURkN0Y1R1lTcXJBR0Iwb1pQb0w4VnBQOWNHMlda?=
- =?utf-8?B?SFJrOGppcUs0MW4zd1lSZVdkM3ZPYXNQZC94bGd4alBpOE9JNkdZM1drcS9y?=
- =?utf-8?B?WW96ZTBYWjF1ZS9tYXRYcWFsdkNyV2w1dXFlQnNTRkhTTzcyK0pPeCtwU0Ev?=
- =?utf-8?B?UDB3eUtEcDFRbEJMNlRhMTl4ZkhxYXNLUzllN1BpWmloUDRYOXA5S2lzSEpW?=
- =?utf-8?B?NWdvOE93WDBNd2Vla0xiaHZpZ0hGallUd3N5M2JHdktjaC9xUFk2QzNuNHUr?=
- =?utf-8?B?a3prejlTUFVLMUxsSHByV3dEeHFvNkN1cnlDKzQrVEYvL2lMS3lBTVhlV2tT?=
- =?utf-8?B?dlV4dmhjMTNUVEJsaE9TZmNvN1psd2hQTCtmUTl3eWI1RGN6SHNySDRJTlF1?=
- =?utf-8?B?Szg1dE9PcUl2SDdBV2lJd2ZaWEcwVzBkTDV2NUtGZngyQi92cG9vaFhUNzZS?=
- =?utf-8?B?ekhmRS9xUnIxSnRUV0RMNWdMSHM1K1gzNUI3b0E5NGQ5dERXZjVpdDBqV3gv?=
- =?utf-8?B?Q2lYZXp4aklaeFc4azBnOEZZZE0wUVZKc0NBY0NrZzRGblNXK2xWSmdEY2Rq?=
- =?utf-8?B?MWFnTWVFT01uZWg0eW8yMkQxRWtXOEtJNitjYlZPMm01bWI3UW1ZalVRelFV?=
- =?utf-8?B?TjQwR1hCQ3pCV24yamx5dS9tbEk2Zys4bk5ka0JPQ0RuNUVHZFhrQzZVcGgr?=
- =?utf-8?B?YXJ0ckRsVzY0UzJncDMzeHlvR2RBUXQwNTZRbEdHRmNsUmQ5YU03dVJQelJZ?=
- =?utf-8?B?UXo1NVB0VTdBYTQwazJqRk13dkx6dCtGT1JKNGVLbG9tb1RCL2w1Zkl0U25B?=
- =?utf-8?B?dnU4VnBURFgybVQzWkVWSWtMVi9EbGFxWFdTOWx2VXJkQzVzKzU5b0tRQy9R?=
- =?utf-8?B?Z1FxWnJoWUU2NnFqcERkMmI1T0R1OGhoZitZZWlVUHF6K1FCT2VVUmZGaThr?=
- =?utf-8?B?enJVN21ZZVBjdkE5YW9UcklBQStQSDZvVWRnUStNVWxSZ2FkMmhYWkxYay9h?=
- =?utf-8?B?d0p5K09MUUtMUkthMWIyS0xPemlnNGpwS01USFM3QkZpcCs1ZTF2cmNUQStn?=
- =?utf-8?B?K3U5QXdPMWZsK21tL2ZXeVBtSVhQdlZiYyt0ZERPWmRqK1Q2ZGtpejgvQmJo?=
- =?utf-8?B?ZVBMc05FVGVkMUJDQm1XSUh1dTlJUUdFdHEyRnhUWHZNWHBnYjdxR1pTc1FE?=
- =?utf-8?B?eU9TUnkwdXFJUVpGNmRBMUVJYkhGTlJ3NW5ZWnQxVTFyTzFpUFVxR2VPSkdu?=
- =?utf-8?B?Rko0Nm9wTytlZVgrd2dEaTlDdnpORG8vU1FDOEl0aGdTTDFod1VBSzBvQWkv?=
- =?utf-8?Q?VIOgnPaIl/dw5Fb/2AHHwfw=3D?=
+ =?utf-8?B?T3VtTzZMazYwaHlobmMyRmRSUkFZZ2U5ZXRZR0o0cGJZV0xyWGVRLy9SV2RX?=
+ =?utf-8?B?K1Y0bnJWaE9Wd1ZtWXdRZjFyZkUyLzkxRUxWZjFLRXV6V3lTRWVsazhtRFVS?=
+ =?utf-8?B?RU1nb2NEbDc0cUhhZXJBSlczTTZ6LzVGbVBtSjZGbHVrU2NwaVJCQkpZK1k1?=
+ =?utf-8?B?MHltajFOMjRJd2ZGWElHTCtOdUd3RjJmR3VRWDN4MUs1cnZQMlN0TFF3VFBs?=
+ =?utf-8?B?N3YwbTM5T2p0WnRmaDAvK29XbG0yTEFvVGFEUlFQQVl1blk3RVVKVmRGS3Nv?=
+ =?utf-8?B?a2dKY205eWZydGJ1UFE1Y1VXazQzeG9wY0p3RlludHdmZGFCdGcydDdhSFow?=
+ =?utf-8?B?cXExYXdROVpCeDI1b3pyOENtbUpYSVQ2SjJUQ1FJNVlGeVR0SzhKS1BXeFZp?=
+ =?utf-8?B?ZUthNHRDZk1oL0VtOXBSSkRlbUNqQklrWkdWMGc2N2JraXhETC9JMW40bEkw?=
+ =?utf-8?B?TmhpcDdoTmsxMndMdktzQW9Pbmp5YXdHSjJOWldMamxhQXVjRXRORDIrdWxG?=
+ =?utf-8?B?V0xWZUdvR2U0cTRRdjFlVG16ZWpzK1A2aklvaTk2by9BTE5kV1pKYVBqbTNW?=
+ =?utf-8?B?Mjl4MFB5bEZTNEdmaTZ2RlNGQXIyeFdick9MZGs0R1J3dmRScHVWckhUL0xT?=
+ =?utf-8?B?SDQwaHVpV2ZMZUJKNnNIbDRteEZoREZNVHNERFN6eXVld3Evalo2L1RERC9n?=
+ =?utf-8?B?aTZ3TEFoeXhIRE4yN0UzT0VleGlVYkJDVlQ2dmVSN3BGSHVRek5acEFqTWY0?=
+ =?utf-8?B?eXU1dVZMa1c5NVc2YlUwN3NjQjRxQXF0YXJWZENSKzhPRGVFZkswaXlZcTlR?=
+ =?utf-8?B?WEpXdVk5S0JtZjVrSzJzTlNsaWdHSTJUT2ZvYTFWNnQvcGc0VG5tMHpBS1Zm?=
+ =?utf-8?B?bGFWdkE5OXRwczJranQ3cDkrYjNEMXcyQ0MraU1heVZncGI1SHd3QytubjZm?=
+ =?utf-8?B?MFVxNHBScE1Ldk8vbDNhWU82a0NScnF5ZEtoeXcrY3FpYytaT3kreW85cm1m?=
+ =?utf-8?B?aUk5OWtUaGdQR3ZtbjF2SElTMmhKWmJpTEtXQVNnaGduT3Znc2c4b2ZlVkRQ?=
+ =?utf-8?B?WjI1RWg4ZE42RjRaRHA4VC9yZXpDQXVTS1Q1UlU2amsrbDRrRUQ1RmdrbnF1?=
+ =?utf-8?B?ME0wK2IwcHRqZk9jQ2IvZ0hBaXQ3aFBYQ0lBeFRVNy9nTEMwUGE1aUw0aFR1?=
+ =?utf-8?B?TDIrUHR5MmQ3aTZoU0hkKzJJcmpMZFBqTGJRTm5vemhvS1VpRWVNU1hoaVli?=
+ =?utf-8?B?SEc5cVBhR1l3RXZhYmJyVHdiamphdlNKZzlmWUZyVm05a21seEt4aVV6MFdn?=
+ =?utf-8?B?SU9oNy90RUNnNklQaTRJbHZpb0NOTzNERktPS3JXWEsxUG9LbzczZjdGL2JS?=
+ =?utf-8?B?SzBOTGpCR0dIRHIrSC9XWTBoYkZIZnJ3Nm03dXJ1Y0RPMTlQSExzYURTYUZJ?=
+ =?utf-8?B?aHlVQzJuK3VSWnJDRm1VajBwUjYvV3ZZazRxVVBJQnIvc3ZhMFZWQnB5NzhT?=
+ =?utf-8?B?ZTZKUk9BcGN4SThFNTRxY3poUXZrTmNtRGJYT3VZcHF0RVM2SzQyVzBuSTBr?=
+ =?utf-8?B?MUtWY3c0cWU1M3dMVks2ZkR5MXZQdklycVd3THJnSGQyYk8rWmV0cEF5ekw0?=
+ =?utf-8?B?T0JlVUFtdW40UGdnV1FBZWFjenMrMWRnbXFjNXkrSHNzR2M4c21UMlFxRVVv?=
+ =?utf-8?B?N2JkellSZTExRzFnM0tRSWl1c2tXa3pBZGI4RFB3SFNzMHEwRE5MSGtSRGhl?=
+ =?utf-8?B?TVJlMm5taDRtMnpVVm4vWjFBTWg1ZnphaGk3YWZGZTBsN0tEYWJGVU0vS2lq?=
+ =?utf-8?B?YzRMaFZtdDFsZzNXN2lHS2E3MllUcUFxc0pJWGVLTWVGM0QxQnowc2FrYndJ?=
+ =?utf-8?B?bVF3a0V0SFg4WWtya0RJRUs4T2t5NzhzOHBlVlpkL29td2dNOHR1Wk5lYUJS?=
+ =?utf-8?B?TEFiZC85a0xTMjV6eFhOMjBnL0JqWWs1dDlxK3Y4cldvNEtocm9YYzB1QnR4?=
+ =?utf-8?B?NkpNOSs0SGVvNCs1UFFNMGJXZDl0azlNUjlZY21uMzkySEZ6YWdESVVzVll3?=
+ =?utf-8?B?bmlFVDFGTUhvUlJNdjRWZy9rL2xwTXJEMXFreHNoZ3JVZjIrTHg4bjNobjBI?=
+ =?utf-8?B?OVlwSWF0YmZJRytJTHNoeUxrSzdzci9sQTQ1cW9oTDZaREtDTDIxWlE1S3Uz?=
+ =?utf-8?Q?yRD2op6/VYft/1i6fFZDLc4=3D?=
 X-OriginatorOrg: ibm.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
 X-MS-Exchange-CrossTenant-AuthSource: SA1PR15MB5819.namprd15.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 019677c4-a403-4f27-964d-08de1bf24946
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Nov 2025 22:34:15.8319
+X-MS-Exchange-CrossTenant-Network-Message-Id: dc2ae616-0ea5-472c-5940-08de1bf61861
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Nov 2025 23:01:31.7430
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: fcf67057-50c9-4ad4-98f3-ffca64add9e9
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: LWwzPV5ySGulzUT3UaxCgi1ghAo3UB/NJLrhTSWv8V9w+s/4L/9MJos3JBujji8yjvx9rc0Nih7akB6OfhjYdg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS4PPFCF61DF7DB
-X-Proofpoint-ORIG-GUID: SYMQ-0UW2q6b19tRagBiG2Bim8XXQfjk
-X-Proofpoint-GUID: SYMQ-0UW2q6b19tRagBiG2Bim8XXQfjk
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAxMDAyMSBTYWx0ZWRfX70pWhr/tLUHk
- a7pTOa+jsoj2QnOW+LfLYuqKsoKZy0ktZ6x4VMREh8QvFQAnSuIvnPdmN+1LFCVw8KFCJvNdAs1
- iwM4CpErzV9hbkPJyP5xv9QS4JMbtEIC24yi9Pk1YVRlmP567CmmngT6ery/71MumV6nPab4Iur
- MfkeoG/nVUZ8OCrLjSm/rrWkF6L4I8r4MebXju4vAqN4qMJD9r0fhoIYQe1SbJodHAYhpKZdo8Y
- 9O5eU+1DBn2NScNBv7kOHPenmF+ARDMYp5SgTscfHTfYdeexFD55q+4Qmu8bYmK8RyYwaunQwRa
- PyPBldJnonHYMZ6JIGpIReyvM9yoZ98ZJZS7mAaJ3vS4kyreytmpRFIJ8XcpGcaQG3/WhDAsV+0
- 6aX06yWYv0de0IECZ2ZhKBCdiMIEgg==
-X-Authority-Analysis: v=2.4 cv=U6qfzOru c=1 sm=1 tr=0 ts=690a7f6a cx=c_pps
- a=9TxNVFKjsEmGPsTOmRxrqw==:117 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+X-MS-Exchange-CrossTenant-userprincipalname: CqokohQBzqOeocWuyT1PSeg5sCazu790e6QWFQcw4rnVzH3AKE7kHBAyaMBwH9HYxt7eflc/NIw+JikXppJyLg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR15MB5587
+X-Proofpoint-ORIG-GUID: GY-XhdC7zIVOvnzMXbb0GVS4VXlNxSgS
+X-Proofpoint-GUID: GY-XhdC7zIVOvnzMXbb0GVS4VXlNxSgS
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAxMDAyMSBTYWx0ZWRfXxO/tyoiBUxiP
+ mT4P2KbxIRz+Icu/wd4499ukHOsfXZ9nh7j/6YrFImoJggJ51lnfuZ+J6TkhhA4DZ8IeZRL5bcc
+ kspuRBsmooDYJNPvyl5lZHF4Rkq2JBWt7UKu+Gqmh+ThjuzNpzIs18l+Y1KOvx5rMsfnsYKs0Oq
+ C8iQkeOmMpFiHjhNvuAh2BngQVt82K7WYBZCsWY37sRRMaMyASTbz7764HHLFFULUAOxkjlEExG
+ OePg5l1epmqXTAIeCGwC/xKNDPi8h6+87WTTF3jySvko7JG9v6m4+gZQD+CO4PBUc7hVfh9YrM9
+ V5TvEfnVU4eUbqpjhWhlahZaM0XGQqZl75sF2AfAcP2k5JezCdltuA084aq5RoCOFkXi4Kn4RAG
+ fhwxLTwu+gppd7EVAhhrssFAcBnZLQ==
+X-Authority-Analysis: v=2.4 cv=U6qfzOru c=1 sm=1 tr=0 ts=690a85ce cx=c_pps
+ a=EOla4jo+ZS3aUDydQNalYw==:117 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
  a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=edf1wS77AAAA:8
- a=hSkVLCK3AAAA:8 a=3HEcARKfAAAA:8 a=7DOuw9-pm6xThIrnlSkA:9 a=QEXdDO2ut3YA:10
- a=DcSpbTIhAlouE1Uv7lRv:22 a=cQPPKAXgyycSBL8etih5:22 a=fDn2Ip2BYFVysN9zRZLy:22
- a=poXaRoVlC6wW9_mwW8W4:22 a=cPQSjfK2_nFv0Q5t_7PE:22 a=Z5ABNNGmrOfJ6cZ5bIyy:22
- a=SsAZrZ5W_gNWK9tOzrEV:22
+ a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=edf1wS77AAAA:8 a=P-IC7800AAAA:8
+ a=hSkVLCK3AAAA:8 a=3HEcARKfAAAA:8 a=G4EkMA1AbSQJV-PrkkIA:9 a=QEXdDO2ut3YA:10
+ a=DcSpbTIhAlouE1Uv7lRv:22 a=d3PnA9EDa4IxuAV0gXij:22 a=cQPPKAXgyycSBL8etih5:22
+ a=fDn2Ip2BYFVysN9zRZLy:22 a=poXaRoVlC6wW9_mwW8W4:22 a=cPQSjfK2_nFv0Q5t_7PE:22
+ a=Z5ABNNGmrOfJ6cZ5bIyy:22 a=SsAZrZ5W_gNWK9tOzrEV:22
 Content-Type: text/plain; charset="utf-8"
-Content-ID: <19948407894EF9419735EDE8FA696288@namprd15.prod.outlook.com>
+Content-ID: <F4CC1D2B7B0874439AF9631522F153D6@namprd15.prod.outlook.com>
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -221,7 +222,7 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re:  [PATCH v2 1/2] hfs: Validate CNIDs in hfs_read_inode
+Subject: Re:  [PATCH v2 2/2] hfs: Update sanity check of the root record
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
  definitions=2025-11-04_04,2025-11-03_03,2025-10-01_01
@@ -233,198 +234,102 @@ X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
  definitions=main-2511010021
 
 On Tue, 2025-11-04 at 01:47 +0000, George Anthony Vernon wrote:
-> hfs_read_inode previously did not validate CNIDs read from disk, thereby
-> allowing inodes to be constructed with disallowed CNIDs and placed on
-> the dirty list, eventually hitting a bug on writeback.
+> syzbot is reporting that BUG() in hfs_write_inode() fires upon unmount
+> operation when the inode number of the record retrieved as a result of
+> hfs_cat_find_brec(HFS_ROOT_CNID) is not HFS_ROOT_CNID, for commit
+> b905bafdea21 ("hfs: Sanity check the root record") checked the record
+> size and the record type but did not check the inode number.
 >=20
-> Validate reserved CNIDs according to Apple technical note TN1150.
-
-The TN1150 technical note describes HFS+ file system and it needs to take i=
-nto
-account the difference between HFS and HFS+. So, it is not completely corre=
-ct
-for the case of HFS to follow to the TN1150 technical note as it is.
-
->=20
-> This issue was discussed at length on LKML previously, the discussion
-> is linked below.
->=20
-> Syzbot tested this patch on mainline and the bug did not replicate.
-> This patch was regression tested by issuing various system calls on a
-> mounted HFS filesystem and validating that file creation, deletion,
-> reads and writes all work.
->=20
-> Link: https://lore.kernel.org/all/427fcb57-8424-4e52-9f21-7041b2c4ae5b@ =
-=20
-> I-love.SAKURA.ne.jp/T/
 > Reported-by: syzbot+97e301b4b82ae803d21b@syzkaller.appspotmail.com
 > Closes: https://syzkaller.appspot.com/bug?extid=3D97e301b4b82ae803d21b =20
-> Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-> Tested-by: syzbot+97e301b4b82ae803d21b@syzkaller.appspotmail.com
+> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 > Signed-off-by: George Anthony Vernon <contact@gvernon.com>
 > ---
->  fs/hfs/inode.c | 67 +++++++++++++++++++++++++++++++++++++++-----------
->  1 file changed, 53 insertions(+), 14 deletions(-)
+>  fs/hfs/super.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >=20
-> diff --git a/fs/hfs/inode.c b/fs/hfs/inode.c
-> index 9cd449913dc8..bc346693941d 100644
-> --- a/fs/hfs/inode.c
-> +++ b/fs/hfs/inode.c
-> @@ -321,6 +321,38 @@ static int hfs_test_inode(struct inode *inode, void =
-*data)
->  	}
->  }
-> =20
-> +/*
-> + * is_valid_cnid
-> + *
-> + * Validate the CNID of a catalog record
-> + */
-> +static inline
-> +bool is_valid_cnid(u32 cnid, u8 type)
-> +{
-> +	if (likely(cnid >=3D HFS_FIRSTUSER_CNID))
-> +		return true;
-> +
-> +	switch (cnid) {
-> +	case HFS_ROOT_CNID:
-> +		return type =3D=3D HFS_CDR_DIR;
-> +	case HFS_EXT_CNID:
-> +	case HFS_CAT_CNID:
-> +		return type =3D=3D HFS_CDR_FIL;
-> +	case HFS_POR_CNID:
-> +		/* No valid record with this CNID */
-> +		break;
-> +	case HFS_BAD_CNID:
+> diff --git a/fs/hfs/super.c b/fs/hfs/super.c
+> index 47f50fa555a4..a7dd20f2d743 100644
+> --- a/fs/hfs/super.c
+> +++ b/fs/hfs/super.c
+> @@ -358,7 +358,7 @@ static int hfs_fill_super(struct super_block *sb, str=
+uct fs_context *fc)
+>  			goto bail_hfs_find;
+>  		}
+>  		hfs_bnode_read(fd.bnode, &rec, fd.entryoffset, fd.entrylength);
+> -		if (rec.type !=3D HFS_CDR_DIR)
+> +		if (rec.type !=3D HFS_CDR_DIR || rec.dir.DirID !=3D cpu_to_be32(HFS_RO=
+OT_CNID))
 
-HFS is ancient file system that was needed to work with floppy disks. And b=
-ad
-sectors management was regular task and responsibility of HFS for the case =
-of
-floppy disks (HDD was also not very reliable at that times). So, HFS implem=
-ents
-the bad block management. It means that, potentially, Linux kernel could ne=
-ed to
-mount a file system volume that created by ancient Mac OS.
+This check is completely unnecessary. Because, we have hfs_iget() then [1]:
 
-I don't think that it's correct management of HFS_BAD_CNID. We must to expe=
-ct to
-have such CNID for the case of HFS.
+	res =3D hfs_find_init(HFS_SB(sb)->cat_tree, &fd);
+	if (res)
+		goto bail_no_root;
+	res =3D hfs_cat_find_brec(sb, HFS_ROOT_CNID, &fd);
+	if (!res) {
+		if (fd.entrylength !=3D sizeof(rec.dir)) {
+			res =3D  -EIO;
+			goto bail_hfs_find;
+		}
+		hfs_bnode_read(fd.bnode, &rec, fd.entryoffset, fd.entrylength);
+		if (rec.type !=3D HFS_CDR_DIR)
+			res =3D -EIO;
+	}
+	if (res)
+		goto bail_hfs_find;
+	res =3D -EINVAL;
+	root_inode =3D hfs_iget(sb, &fd.search_key->cat, &rec);
+	hfs_find_exit(&fd);
+	if (!root_inode)
+		goto bail_no_root;
 
-> +	case HFS_EXCH_CNID:
-> +		/* Not implemented */
-> +		break;
-> +	default:
-> +		/* Invalid reserved CNID */
-> +		break;
-> +	}
-> +
-> +	return false;
-> +}
-> +
->  /*
->   * hfs_read_inode
->   */
-> @@ -350,6 +382,8 @@ static int hfs_read_inode(struct inode *inode, void *=
-data)
->  	rec =3D idata->rec;
->  	switch (rec->type) {
->  	case HFS_CDR_FIL:
-> +		if (!is_valid_cnid(rec->file.FlNum, HFS_CDR_FIL))
-> +			goto make_bad_inode;
->  		if (!HFS_IS_RSRC(inode)) {
->  			hfs_inode_read_fork(inode, rec->file.ExtRec, rec->file.LgLen,
->  					    rec->file.PyLen, be16_to_cpu(rec->file.ClpSize));
-> @@ -371,6 +405,8 @@ static int hfs_read_inode(struct inode *inode, void *=
-data)
->  		inode->i_mapping->a_ops =3D &hfs_aops;
->  		break;
->  	case HFS_CDR_DIR:
-> +		if (!is_valid_cnid(rec->dir.DirID, HFS_CDR_DIR))
-> +			goto make_bad_inode;
->  		inode->i_ino =3D be32_to_cpu(rec->dir.DirID);
->  		inode->i_size =3D be16_to_cpu(rec->dir.Val) + 2;
->  		HFS_I(inode)->fs_blocks =3D 0;
-> @@ -380,8 +416,12 @@ static int hfs_read_inode(struct inode *inode, void =
-*data)
->  		inode->i_op =3D &hfs_dir_inode_operations;
->  		inode->i_fop =3D &hfs_dir_operations;
->  		break;
-> +	make_bad_inode:
-> +		pr_warn("rejected cnid %lu. Volume is probably corrupted, try performi=
-ng fsck.\n", inode->i_ino);
+The hfs_iget() calls iget5_locked() [2]:
 
-The "invalid cnid" could sound more relevant than "rejected cnid" for my ta=
-ste.
+struct inode *hfs_iget(struct super_block *sb, struct hfs_cat_key *key,
+hfs_cat_rec *rec)
+{
+	struct hfs_iget_data data =3D { key, rec };
+	struct inode *inode;
+	u32 cnid;
 
-The whole message is too long. What's about to have two messages here?
+	switch (rec->type) {
+	case HFS_CDR_DIR:
+		cnid =3D be32_to_cpu(rec->dir.DirID);
+		break;
+	case HFS_CDR_FIL:
+		cnid =3D be32_to_cpu(rec->file.FlNum);
+		break;
+	default:
+		return NULL;
+	}
+	inode =3D iget5_locked(sb, cnid, hfs_test_inode, hfs_read_inode, &data);
+	if (inode && (inode->i_state & I_NEW))
+		unlock_new_inode(inode);
+	return inode;
+}
 
-pr_warn("invalid cnid %lu\n", inode->i_ino);
-pr_warn("Volume is probably corrupted, try performing fsck.\n");
+And iget5_locked() calls hfs_read_inode(). And hfs_read_inode() will call
+is_valid_cnid() after applying your patch. So, is_valid_cnid() in
+hfs_read_inode() can completely manage the issue. This is why we don't need=
+ in
+this modification after your first patch.
 
+But I think we need to check that root_inode is not bad inode afterwards:
 
-> +		fallthrough;
->  	default:
->  		make_bad_inode(inode);
-> +		break;
->  	}
->  	return 0;
->  }
-> @@ -441,20 +481,19 @@ int hfs_write_inode(struct inode *inode, struct wri=
-teback_control *wbc)
->  	if (res)
->  		return res;
-> =20
-> -	if (inode->i_ino < HFS_FIRSTUSER_CNID) {
-> -		switch (inode->i_ino) {
-> -		case HFS_ROOT_CNID:
-> -			break;
-> -		case HFS_EXT_CNID:
-> -			hfs_btree_write(HFS_SB(inode->i_sb)->ext_tree);
-> -			return 0;
-> -		case HFS_CAT_CNID:
-> -			hfs_btree_write(HFS_SB(inode->i_sb)->cat_tree);
-> -			return 0;
-> -		default:
-> -			BUG();
-> -			return -EIO;
-> -		}
-> +	if (!is_valid_cnid(inode->i_ino,
-> +			   S_ISDIR(inode->i_mode) ? HFS_CDR_DIR : HFS_CDR_FIL))
-
-What's about to introduce static inline function or local variable for
-S_ISDIR(inode->i_mode) ? HFS_CDR_DIR : HFS_CDR_FIL? I don't like this two l=
-ine
-implementation.
-
-> +		BUG();
-
-I am completely against of leaving BUG() here. Several fixes of syzbot issu=
-es
-were the exchanging BUG() on returning error code. I don't want to investig=
-ate
-the another syzbot issue that will involve this BUG() here. Let's return er=
-ror
-code here.
-
-Usually, it makes sense to have BUG() for debug mode and to return error co=
-de
-for the case of release mode. But we don't have the debug mode for HFS code.
+	root_inode =3D hfs_iget(sb, &fd.search_key->cat, &rec);
+	hfs_find_exit(&fd);
+	if (!root_inode || is_bad_inode(root_inode))
+		goto bail_no_root;
 
 Thanks,
 Slava.
 
-> +
-> +	switch (inode->i_ino) {
-> +	case HFS_EXT_CNID:
-> +		hfs_btree_write(HFS_SB(inode->i_sb)->ext_tree);
-> +		return 0;
-> +	case HFS_CAT_CNID:
-> +		hfs_btree_write(HFS_SB(inode->i_sb)->cat_tree);
-> +		return 0;
-> +	default:
-> +		break;
+>  			res =3D -EIO;
 >  	}
-> =20
->  	if (HFS_IS_RSRC(inode))
+>  	if (res)
+
+[1] https://elixir.bootlin.com/linux/v6.18-rc4/source/fs/hfs/super.c#L367
+[2] https://elixir.bootlin.com/linux/v6.18-rc4/source/fs/hfs/inode.c#L414
+
 
