@@ -1,50 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-66921-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66922-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8142C30A55
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 04 Nov 2025 12:04:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55B2CC30A72
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 04 Nov 2025 12:05:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 357B818C1B5B
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Nov 2025 11:03:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0C31189E84B
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Nov 2025 11:05:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE63F2E3373;
-	Tue,  4 Nov 2025 11:02:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 137F72E1C4E;
+	Tue,  4 Nov 2025 11:04:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="xG1M2bJ+"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="bR/ORk0m"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E38D2D23A4;
-	Tue,  4 Nov 2025 11:02:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CD1E2D8370;
+	Tue,  4 Nov 2025 11:04:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762254136; cv=none; b=FDz6i+k3CsMDK+dU9tAY+9bOybrDrHNUHqQ9c9uSzXf1DWVA1Gnjo1Ax1LL85wIdftWM10gCFgrglVOZux/WLVsFqrnwLbVyJ/OF/brTu3ylZXMptes6aBJkx23vP323/rBAd0k72hl6jjF1OOjHaGuCuogifov54zLh+O16Ba8=
+	t=1762254274; cv=none; b=RkQ5uL5bNWl1rri/p1WbWRpdIt6VH9U+n67r4WA939pxIJZO/G6sknd5zeO04suFI7sgJeQm7kLmUN/5oh3DluBm+1lmtfqwJobkhSIKWnE4YpFcvgmA3xQ3Af+Wvns12hnXn+cqxtwzIx0qqPikyah7ftoTq2nFYNOAxdn0bxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762254136; c=relaxed/simple;
-	bh=Bu+eKPZx/dw5XpxmyXLYE5uGSmlZ6ktOX5fWynHSTHU=;
+	s=arc-20240116; t=1762254274; c=relaxed/simple;
+	bh=hawChhwqgQoJXhI1uWGlkqNdZt8Ytu7a5JpukOOTcnA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HwZhnqroNiY7weJKbplzf3FMzKoVEaid1WnlNB5+pe7r8/QXQ33yfvz+uUo4iWVn04/LgWmDPL8jmZpANV+3tkB1EULihHSh/ikKnFEosK430LWHm7paMn9HOFveZX1mTe/e2Qz3djHZ8WpAku8od4MYEkqjx4srScsmlri+sck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=xG1M2bJ+; arc=none smtp.client-ip=198.137.202.133
+	 Content-Type:Content-Disposition:In-Reply-To; b=uR8soJPYZPNYIpH9fe7qZNJkwOYlZ6+tNny+MNHmd4OX5C9rmsSTdFhPpXdMzHsNF3ngs96366qCRawgPK5YGs5fcUrIQyG3xnTbWgmdNuyRDTlOdrlX5M6F/DYmpvJlnRo7X7/+gxMA3YO0xPFcmwg0O8wDqjhTnH6CFmIAGDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=bR/ORk0m; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
 	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=p0gKISrkmvQR4fbK8GO3Fkb54ut/Sj+KzqoO4yKrixY=; b=xG1M2bJ+og4CM4Z1yIYn7h/twZ
-	3QI3biSnM4I1yJpzczQr5ixRZ9gTmogB1AKbbeExc5gthzdiVFmIIkuphtAYdzerSCkwoZrx+f7Jj
-	tErM+kDrKMZV8K34EuYiE90lgRJIOVskJFhBCF8MOMiS0A9DpLMueXIZC/3nta6by9xOsRGyTakpM
-	1BhsHTZKHi4A5NA7GqTbF7j0LeZRyHJPpsANc/y3zIgN8mkwZJyY302mYsFKbz/T8nk4zILfhrmch
-	uW5TxOtuCe+CWSbaPFDXGE2A8gsIR15tpGYsA4pjjOcLQDliwQv9JAVYRNcrx2+vmreTR3pPOdD2z
-	OsIhkGzg==;
+	bh=cXSCABKME0BubnQOIaemnozhXE+EYAjmmWCLEvgl6vo=; b=bR/ORk0mGEsg35jaWW18FEIPYE
+	d17jSp4BEkZ3Xhn0vlRXdHrit6VV52OWnTt9sRlNsdPmnqlH4LenUWZYzAKJTyNvBnliYjZ1PnsVS
+	w/143/V84PxFjnvNOQdUm9f8JtH/zG79ndRfPPmH0Y+LX0IgRkJRFtHwdoTrgeeHtw+apCrbyVt5H
+	suIQqKdtVfipscGjq3NE+LRiAp+SEWcpaEAdin1kL1cUOlYDcl5x4ksgZGZpTtng6ChnxG6gUC51u
+	1B/ZETieW1FpHqb1IiNcWZ3RCFGQEtKzssFuvm49gzA62t0gfNbRolueml3Jf+e0mFHq2VN9h/n9f
+	2yx30psQ==;
 Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vGEnj-0000000BgHr-4781;
-	Tue, 04 Nov 2025 11:02:11 +0000
-Date: Tue, 4 Nov 2025 03:02:11 -0800
+	id 1vGEpx-0000000BgXZ-3F5D;
+	Tue, 04 Nov 2025 11:04:29 +0000
+Date: Tue, 4 Nov 2025 03:04:29 -0800
 From: Christoph Hellwig <hch@infradead.org>
 To: Yongpeng Yang <yangyongpeng.storage@gmail.com>
 Cc: Namjae Jeon <linkinjeon@kernel.org>,
@@ -61,11 +61,11 @@ Cc: Namjae Jeon <linkinjeon@kernel.org>,
 	stable@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
 	"Darrick J . Wong" <djwong@kernel.org>,
 	Yongpeng Yang <yangyongpeng@xiaomi.com>
-Subject: Re: [PATCH v5 3/5] isofs: check the return value of
- sb_min_blocksize() in isofs_fill_super
-Message-ID: <aQndM_Bq1HPRNyds@infradead.org>
+Subject: Re: [PATCH v5 4/5] xfs: check the return value of sb_min_blocksize()
+ in xfs_fs_fill_super
+Message-ID: <aQndvQnhv_1jNtlF@infradead.org>
 References: <20251103164722.151563-2-yangyongpeng.storage@gmail.com>
- <20251103164722.151563-4-yangyongpeng.storage@gmail.com>
+ <20251103164722.151563-5-yangyongpeng.storage@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -74,34 +74,38 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251103164722.151563-4-yangyongpeng.storage@gmail.com>
+In-Reply-To: <20251103164722.151563-5-yangyongpeng.storage@gmail.com>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Tue, Nov 04, 2025 at 12:47:21AM +0800, Yongpeng Yang wrote:
+On Tue, Nov 04, 2025 at 12:47:22AM +0800, Yongpeng Yang wrote:
 > From: Yongpeng Yang <yangyongpeng@xiaomi.com>
 > 
-> sb_min_blocksize() may return 0. Check its return value to avoid
-> opt->blocksize and sb->s_blocksize is 0.
+> sb_min_blocksize() may return 0. Check its return value to avoid the
+> filesystem super block when sb->s_blocksize is 0.
 > 
 > Cc: <stable@vger.kernel.org> # v6.15
-> Fixes: 1b17a46c9243e9 ("isofs: convert isofs to use the new mount API")
-> Reviewed-by: Jan Kara <jack@suse.cz>
+> Fixes: a64e5a596067bd ("bdev: add back PAGE_SIZE block size validation
+> for sb_set_blocksize()")
 > Signed-off-by: Yongpeng Yang <yangyongpeng@xiaomi.com>
 > ---
->  fs/isofs/inode.c | 5 +++++
->  1 file changed, 5 insertions(+)
+>  fs/xfs/xfs_super.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
 > 
-> diff --git a/fs/isofs/inode.c b/fs/isofs/inode.c
-> index 6f0e6b19383c..ad3143d4066b 100644
-> --- a/fs/isofs/inode.c
-> +++ b/fs/isofs/inode.c
-> @@ -610,6 +610,11 @@ static int isofs_fill_super(struct super_block *s, struct fs_context *fc)
->  		goto out_freesbi;
->  	}
->  	opt->blocksize = sb_min_blocksize(s, opt->blocksize);
-> +	if (!opt->blocksize) {
-> +		printk(KERN_ERR
+> diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
+> index 1067ebb3b001..bc71aa9dcee8 100644
+> --- a/fs/xfs/xfs_super.c
+> +++ b/fs/xfs/xfs_super.c
+> @@ -1693,7 +1693,10 @@ xfs_fs_fill_super(
+>  	if (error)
+>  		return error;
+>  
+> -	sb_min_blocksize(sb, BBSIZE);
+> +	if (!sb_min_blocksize(sb, BBSIZE)) {
+> +		xfs_err(mp, "unable to set blocksize");
+> +		return -EINVAL;
+> +	}
 
-This should probably use pr_err instead.
+Looks good:
 
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 
