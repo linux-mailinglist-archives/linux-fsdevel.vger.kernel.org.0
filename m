@@ -1,82 +1,82 @@
-Return-Path: <linux-fsdevel+bounces-66899-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66900-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D01C1C3020C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 04 Nov 2025 10:01:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ADBFC3021B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 04 Nov 2025 10:02:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9E8E461048
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Nov 2025 08:55:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D3063A76A7
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Nov 2025 08:55:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D932B3128CB;
-	Tue,  4 Nov 2025 08:53:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B990E313E2C;
+	Tue,  4 Nov 2025 08:53:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b="PiSoxJrO"
+	dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b="UzIhja6H"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8190C3126C0
-	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Nov 2025 08:53:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62CB62BF000
+	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Nov 2025 08:53:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762246396; cv=none; b=WeRAFf/UBPjZUcaJbrd1B6Qn8lLc2EUsCyU7ua3OE9/cMEVhORpASAfiMoJrFsE/zIOHj6JawnbVX7wFZFvpKu7fDTxbPwtv45PFtTm4cVaK11UBl9f8N3GbeoeIFR5A6FTR/oobszFBavowqR+g/IcbSmeSBhh4L4R2egeHT54=
+	t=1762246415; cv=none; b=WFIhDrXhe0ySnBh6+SgcBPOhn57KrQUYgh0n4eCoNZ0Pmk9C6inNlHw7ciTuBMVUfbMHY2og/WPyu+BZYmDC4LxlLkeQTrBGigdaJlug9ce+f2N/96Zth5/2j7FlmzHCjxDdmA4PQoHs3BfFfYwixabvRsBS5djqjuunCkdUmNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762246396; c=relaxed/simple;
-	bh=aq0omEoi4+53NC8HrfomYE/g5rpil+xDKbV+0OWd/9A=;
+	s=arc-20240116; t=1762246415; c=relaxed/simple;
+	bh=gP6cNYFzRNpWkbN1NTP1C84FkDJ5I5+eZ1iQUALPYx4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XmxKpiCGvox3LrPjIX++ao8HrEznzLgZJjfjt7Gi6xB4iBTTf0ALPBxH/CTTuBvbCWLyZFuP5pTKzREqboM8c6G3QaYmgwveSBEHVnnfYHDbVheIqmwjaklMysqH4uMTobTNm0/Cc06RV7oIf+JJlFnk/kmGTymO3BJDenTfI0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mihalicyn.com; spf=pass smtp.mailfrom=mihalicyn.com; dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b=PiSoxJrO; arc=none smtp.client-ip=209.85.208.176
+	 To:Cc:Content-Type; b=lFt8UxPgVWuEmnCjqTQ/RgVjoH7dPKY1iV5HJSBvMMQ+05ufRVn4xl8hU0kSl3x3VBXxWMWuw0+s/GssTn+hmg0OuwzQwg9R+0AftPXsC4JuTCTtdqyLaYUYtqy0bUZyD2G5jBRN7CeYaivVoqBkfH36jM33S30yL/wZ9rGUJrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mihalicyn.com; spf=pass smtp.mailfrom=mihalicyn.com; dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b=UzIhja6H; arc=none smtp.client-ip=209.85.167.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mihalicyn.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mihalicyn.com
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-378e0f355b9so21844011fa.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Nov 2025 00:53:14 -0800 (PST)
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-591ea9ccfc2so6453360e87.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Nov 2025 00:53:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mihalicyn.com; s=mihalicyn; t=1762246393; x=1762851193; darn=vger.kernel.org;
+        d=mihalicyn.com; s=mihalicyn; t=1762246411; x=1762851211; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=X2BYWHPcs6UGsM6Z7RjRBFBi7foOq/GE7TEQzUwZJ+g=;
-        b=PiSoxJrO3xNSV7jcBL8dIoMmseZ3/1HZF1ITqpGStyfAqywV+dWoRT//XSRnmmLKbn
-         X1TPmSYa37oqs6+0BEKnHqB948IOCguGm+fTNVrEF5xlgBHC7oKh5tiNCvBwzmEtNvPr
-         ysx1UqMHnvGnmkKc36MYBw/o+5oYv1g+bVBu4=
+        bh=a+OXJnO5n+g/tTpX3EMxsbFglDyw91SA+ogZeLugo7k=;
+        b=UzIhja6HOuHSqImVtPUZAycEX1KX/G77sQjLI4eEN5act/NrE1RRGvNDF4UMt/Rq6Z
+         0QPmDgYbRDMFPjsvLrh3SZy4U/TGo89eWA9a3ibsCiUo4cpitYPRQLlaeID4/16euNa2
+         91UxGQ5eWMhlRxnzGVxl1yZr2ZY4QvVXptKTI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762246393; x=1762851193;
+        d=1e100.net; s=20230601; t=1762246411; x=1762851211;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=X2BYWHPcs6UGsM6Z7RjRBFBi7foOq/GE7TEQzUwZJ+g=;
-        b=pydysajdD2tOQHLK1bJq+XaGszKYx0Aqksslr27hwbzeq8TXq7FGeVkw4yzdjrI1jt
-         AQ9JrrSfY0EvTJN5rb3uHIEpaQI43pQYWBcutY34dWUklVH+cAFbhuRcodywZmqVUhtm
-         XbNZHYylM3iG3ii2AXejtH2qNctJVLUAcUVzX3EqRkHkEX13ShIfrE73TeElbJlsRL0b
-         zhmkvx9vCcaDHGjTb+lZSqBg2Pcd3+qvmaYFrOw8+5+G5sCGmsG1Mt4iubEOZW2ufxxH
-         Kid/rL6D1+oMqdneRMZKFWr9JTDqDU/QD6fhtANE8dLOKaEFvJLZXlyyN5dG5DNSgpRj
-         75jg==
-X-Gm-Message-State: AOJu0YywHCV8SCejN+HqPNVXV+Tx9FbFZVEGnH286o1E1acdnuyMzXco
-	9de6N4auoRleoIo+ZESr5WBEVjoSrnE1Y4UVgFTsM4LSIJqRZdwTBGGDTVxDkQCxV+yAYwy70jL
-	vu9DwoMyKH4NXRPrBRxfqdH3dIPqd3JxTt+W9ctkKPg==
-X-Gm-Gg: ASbGncsBSs/oIdj+JuEqGpOCzVneqFoiW1234VwPiGXOZ1lj4Ablum0WRQ3aAcEKb3p
-	CquZwDXA13d/VGbcuhu178OF9S02IZHGRiPO0Xc8BL1xp1cWnI2MdyQefshUhxkXujEgDcvdpHs
-	8C9ClZ09+CYVraEW/Bk15dSaIibmSQYOMFZ4SNt/CNeCvzFGYEmItDXEnUzBFndfU3VP+CY9vcf
-	lbwKxGCGURS1lxhWFfK3jDQkOENtqb83S4YkvXIpwjCGN0FQOXk+Abd2g64
-X-Google-Smtp-Source: AGHT+IHaVkIZmiY61cwluXteqyDeM2eT2eyEncQyyx+Uds4hJ8EyPCT+scmZL5PaUyj9H4iMCL6H8Yf2ra3DqynTIKc=
-X-Received: by 2002:a05:6512:2387:b0:594:3564:437 with SMTP id
- 2adb3069b0e04-5943564079bmr547358e87.49.1762246392566; Tue, 04 Nov 2025
- 00:53:12 -0800 (PST)
+        bh=a+OXJnO5n+g/tTpX3EMxsbFglDyw91SA+ogZeLugo7k=;
+        b=flvNNyeOW2PgC0vT9MKXVpQ+EDEYrL9t3ADBHoItW6JJxBrkkzbqs8pIl44hfxQn6/
+         8AzzhwUriXoA1PkOnnxIlQh37tHg26pTQ3BdE6llIfvDko/T7jLcLcYOyrRmQHQC2tsJ
+         PI83j1v7WOItKPn5BJTT1DC9RpPMBduucnvWQAt5iVrWuwzKPDV5K2BpSm8JLuAmypAD
+         jEv4iQriqsCp3DzWOIwS23DVd0izxNf/F1bxO/X2QZ3Qcz0Dkkbh9eCIuC7MIOrcWB7Q
+         oDZ2bBx0PNSM6Zl6KWU0zfQSvzZXZKrjgv+ae9i+r/7NPaKw7xU9x4ok11i7X5qwXlOR
+         khHg==
+X-Gm-Message-State: AOJu0YwL9RVUMMh6BmT33A1yp5H0k9TOb6B8778D5w7mtNcIVi7D1lsm
+	Qc56QPu3o4sSXOQ+3ynMgy/PNmbFIqH1AP3Gj2TYM4doWwuMjKp1QdrqsAF4PAtU9Bvv/12600c
+	ckysz2YnsXEwMSric4i74LARPgv1qClfC139fpzUU9g==
+X-Gm-Gg: ASbGncuLmJW32+GAS935Rb6ijpkgF040fg2TVOO4bHUmASiBu+YzCYnwM5GzYJiiaDz
+	VZig95OWLezYXzbhm3vnKwbyo3lv3dX6H9tZZ9xXuwflU3Gfy320Xabkt1uOPsQ6hfxQb6niB9+
+	d9DdxO2aSpgspqEQ71XtNnx95xGDZDGRkQcnDJLqsdMU/RfHCROesmFab57uuFL/HIIsqhu26Ar
+	zo1s2/wIUZBeX1PT7i1N6ylUbKBxS57B4cnKb7vrcAU3SmdKAo9B7Yyexao
+X-Google-Smtp-Source: AGHT+IGJ+z0iFxZhijJNpEMc1N0AB6Pa4n0v8wGhfmcglDnKhowMsADaDG9Ej6mXnqk2khs681gchLMaC1Udhx7ZAbE=
+X-Received: by 2002:a05:6512:1391:b0:594:2bd4:c856 with SMTP id
+ 2adb3069b0e04-594348745fdmr797353e87.6.1762246411410; Tue, 04 Nov 2025
+ 00:53:31 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251028-work-coredump-signal-v1-0-ca449b7b7aa0@kernel.org> <20251028-work-coredump-signal-v1-10-ca449b7b7aa0@kernel.org>
-In-Reply-To: <20251028-work-coredump-signal-v1-10-ca449b7b7aa0@kernel.org>
+References: <20251028-work-coredump-signal-v1-0-ca449b7b7aa0@kernel.org> <20251028-work-coredump-signal-v1-11-ca449b7b7aa0@kernel.org>
+In-Reply-To: <20251028-work-coredump-signal-v1-11-ca449b7b7aa0@kernel.org>
 From: Alexander Mikhalitsyn <alexander@mihalicyn.com>
-Date: Tue, 4 Nov 2025 09:53:01 +0100
-X-Gm-Features: AWmQ_bk6vv7fvWPe0zWpUUuRPlVtxmU_G4j1JWfNzhZ22ZvVNF4yvVqf69K-kzw
-Message-ID: <CAJqdLro5Mtr_JRXnPehxEErY9L=rxAb-iXavAPqKxp1fTto-rw@mail.gmail.com>
-Subject: Re: [PATCH 10/22] selftests/pidfd: add first supported_mask test
+Date: Tue, 4 Nov 2025 09:53:19 +0100
+X-Gm-Features: AWmQ_bmTYbLrtUI9VB4T3B3ctrVNl3ozG6AI_qT1Lx_inBRtWI5cYeifq7EChzA
+Message-ID: <CAJqdLrqjvitPqNYbfZx0-fsA6LCzVV6aatkCt2qAiQiGEXTLNg@mail.gmail.com>
+Subject: Re: [PATCH 11/22] selftests/pidfd: add second supported_mask test
 To: Christian Brauner <brauner@kernel.org>
 Cc: linux-fsdevel@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>, 
 	Amir Goldstein <amir73il@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
@@ -91,36 +91,34 @@ Content-Type: text/plain; charset="UTF-8"
 Am Di., 28. Okt. 2025 um 09:46 Uhr schrieb Christian Brauner
 <brauner@kernel.org>:
 >
-> Verify that when PIDFD_INFO_SUPPORTED_MASK is requested, the kernel
-> returns the supported_mask field indicating which flags the kernel
-> supports.
+> Verify that supported_mask is returned even when other fields are
+> requested.
 >
 > Signed-off-by: Christian Brauner <brauner@kernel.org>
 
 Reviewed-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
 
 > ---
->  tools/testing/selftests/pidfd/pidfd_info_test.c | 41 +++++++++++++++++++++++++
->  1 file changed, 41 insertions(+)
+>  tools/testing/selftests/pidfd/pidfd_info_test.c | 32 +++++++++++++++++++++++++
+>  1 file changed, 32 insertions(+)
 >
 > diff --git a/tools/testing/selftests/pidfd/pidfd_info_test.c b/tools/testing/selftests/pidfd/pidfd_info_test.c
-> index a0eb6e81eaa2..b31a0597fbae 100644
+> index b31a0597fbae..cb5430a2fd75 100644
 > --- a/tools/testing/selftests/pidfd/pidfd_info_test.c
 > +++ b/tools/testing/selftests/pidfd/pidfd_info_test.c
-> @@ -690,4 +690,45 @@ TEST_F(pidfd_info, thread_group_exec_thread)
->         EXPECT_EQ(close(pidfd_thread), 0);
+> @@ -731,4 +731,36 @@ TEST(supported_mask_field)
+>         close(pidfd);
 >  }
 >
 > +/*
-> + * Test: PIDFD_INFO_SUPPORTED_MASK field
+> + * Test: PIDFD_INFO_SUPPORTED_MASK always available
 > + *
-> + * Verify that when PIDFD_INFO_SUPPORTED_MASK is requested, the kernel
-> + * returns the supported_mask field indicating which flags the kernel supports.
+> + * Verify that supported_mask is returned even when other fields are requested.
 > + */
-> +TEST(supported_mask_field)
+> +TEST(supported_mask_with_other_fields)
 > +{
 > +       struct pidfd_info info = {
-> +               .mask = PIDFD_INFO_SUPPORTED_MASK,
+> +               .mask = PIDFD_INFO_CGROUPID | PIDFD_INFO_SUPPORTED_MASK,
 > +       };
 > +       int pidfd;
 > +       pid_t pid;
@@ -131,20 +129,12 @@ Reviewed-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
 > +       if (pid == 0)
 > +               pause();
 > +
-> +       /* Request supported_mask field */
 > +       ASSERT_EQ(ioctl(pidfd, PIDFD_GET_INFO, &info), 0);
 > +
-> +       /* Verify PIDFD_INFO_SUPPORTED_MASK is set in the reply */
+> +       /* Both fields should be present */
+> +       ASSERT_TRUE(!!(info.mask & PIDFD_INFO_CGROUPID));
 > +       ASSERT_TRUE(!!(info.mask & PIDFD_INFO_SUPPORTED_MASK));
-> +
-> +       /* Verify supported_mask contains expected flags */
-> +       ASSERT_TRUE(!!(info.supported_mask & PIDFD_INFO_PID));
-> +       ASSERT_TRUE(!!(info.supported_mask & PIDFD_INFO_CREDS));
-> +       ASSERT_TRUE(!!(info.supported_mask & PIDFD_INFO_CGROUPID));
-> +       ASSERT_TRUE(!!(info.supported_mask & PIDFD_INFO_EXIT));
-> +       ASSERT_TRUE(!!(info.supported_mask & PIDFD_INFO_COREDUMP));
-> +       ASSERT_TRUE(!!(info.supported_mask & PIDFD_INFO_SUPPORTED_MASK));
-> +       ASSERT_TRUE(!!(info.supported_mask & PIDFD_INFO_COREDUMP_SIGNAL));
+> +       ASSERT_NE(info.supported_mask, 0);
 > +
 > +       /* Clean up */
 > +       sys_pidfd_send_signal(pidfd, SIGKILL, NULL, 0);
