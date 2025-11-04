@@ -1,439 +1,210 @@
-Return-Path: <linux-fsdevel+bounces-66887-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66879-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1935DC2F81B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 04 Nov 2025 07:53:01 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92035C2F704
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 04 Nov 2025 07:25:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CFCB421B54
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Nov 2025 06:52:38 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E9C4734BFF9
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Nov 2025 06:25:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15FFD2F0C49;
-	Tue,  4 Nov 2025 06:50:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4E772C2374;
+	Tue,  4 Nov 2025 06:25:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="CWrXKmDa"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DBFD1C3306;
-	Tue,  4 Nov 2025 06:50:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5E9D134AB
+	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Nov 2025 06:25:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762239037; cv=none; b=SvGqtXJddVDpJtVuqoAcf5qM1kzI6OIPQPIGlHQPzSclxVZbbd+axlYjfxJT05hezvbaXW+AeC8sJXM0znh7xQLXvsj4AUJ99k3XVYT2JU29kHVf8AsVp6S4mNjA0fLkWglZLlOiMTHmQA8Wxxw4yUOsybZnCMQRWhhAgtng+QE=
+	t=1762237544; cv=none; b=euhCNHLpQT5Xk+LOzij9AaUKib8KdhpT/EI7mVu1guk9rsp0zADStTagokqUDvOc9KvXhjNBrqxNxcv0f4RKeue9SH+KWEvxSgdLYVkNppwGlnng+GF/wG8tqvx2zIzCRdOb/DevqUz6Oj5zHFFb0Tztso01XtaQ1YymR4K43II=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762239037; c=relaxed/simple;
-	bh=Uux3Nm2MPD9vSwI264V42rQEY9VbREzHCqIHFZ3BZKc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nC/g+KiIKpPMsHYH9hlt/hpk5PnAAEv1y9b0lhGgZd1c3qx8qUHbh2lbf0E7LjEz/QhW0BV22IPdNJ+QhJ6A4iRYiumAfX6sIuURk2purHLMBcY7uuCX29ZEpNk9NIx2KcHqBEPVQGjr+X35Mz8gezbyG+1y0gXU84iRCPiiAwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4d0yxp0klwz9sSR;
-	Tue,  4 Nov 2025 07:20:46 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id UV5jl7N85Xo4; Tue,  4 Nov 2025 07:20:45 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4d0yxn6M0bz9sRy;
-	Tue,  4 Nov 2025 07:20:45 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id BCCBB8B76C;
-	Tue,  4 Nov 2025 07:20:45 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id UwygSlglnvtI; Tue,  4 Nov 2025 07:20:45 +0100 (CET)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id BC23D8B763;
-	Tue,  4 Nov 2025 07:20:43 +0100 (CET)
-Message-ID: <0049a144-be4d-46ca-acaf-cfe37ff06e6e@csgroup.eu>
-Date: Tue, 4 Nov 2025 07:20:42 +0100
+	s=arc-20240116; t=1762237544; c=relaxed/simple;
+	bh=ubuEjmLy2kImJfqKlWH5VdcWP18WDUWYFH4tWBBfrDY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oEaoUFisoikFKb+XHSLSK/y7BeXQoURZe545BI4Fa08I9RCK0jD+u2i9dVSJccJIZ5m38ksJEbUQELmB108M7yXk2Nlqah7B2RCeWbpTWI/qEpurv32LlOA0/AX1PMCLKuS/pk99Y75ndywerEOiRTKGECLWi/3hS8YUvbRWgL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=CWrXKmDa; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b6d78062424so1039777866b.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Nov 2025 22:25:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1762237540; x=1762842340; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=F21nu/70Y4PIfJ/LJgoigNQF+DEjcT0vVb1Y4wntgZo=;
+        b=CWrXKmDam1D58J4SxpJi7chMazeSRUcECyK+V/3D66pFkBxf6WMl9e/Kpk4WPyw+5+
+         lunjZpQ/1wlvEj1f6EuVS6lVjcKTi+qBBCW4tLfh3NEG//YSHUE4ZXkd/uKAyr5vHtRE
+         L+aTFqCcsyjxR4HJsAhK4aHyLyu3LwJ8WuwFM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762237540; x=1762842340;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=F21nu/70Y4PIfJ/LJgoigNQF+DEjcT0vVb1Y4wntgZo=;
+        b=wOz38tamj7yNEdQCUClOYLIyYHHba50M82orQg0oxTzRMZjiA3F22u5x1peV7Utaty
+         bu/gJ7fLI12eu1Id/IcBoCkQ20s5MK0NsLQEW5X/GinqaH6srQgJ/5/amANiCqz31RaR
+         PzWDq8FxQ7zyNQZ2jbFCK2i26V16Oolu1jmG/Cyy9TVJHtkYQGZmBG3B0Y5Nt+RxCcpA
+         BMc6ToDyfBoqbIOUoOP7SWDenwa7VFHlc8O4dVmpIjFxN8+MpxubMHxOotsHtUbzBCXN
+         jK41AqB0QhRe7XNtLhGRmofobeLMw6yGQMMjSjixeiG/nz1zpoh9VBr3mo/ZF2WKUoaN
+         xAMg==
+X-Forwarded-Encrypted: i=1; AJvYcCVJ8u8GeubHDHbRt4U5Ff/AGCgfpa47WHUalen0MRmNXtLuCR6+S7IjlQEyi1hAmo9gRU3eTOtMl+6463R3@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFcWkmMtnsLX7K0iKK4K6mPf9BtEU1PpL8DvTUsczuGUozjH2T
+	RehQltheRvGB1YvsYJKYMfmoy3NwDF8IWnBgDLrWYvKXETy/jNngesTvsL/Kqg0gGTNPcq5pRLD
+	h7y1J2BbLvA==
+X-Gm-Gg: ASbGncvnwwsBLvkEBrTMuPJrOU03pP2z00vN+UDLxFyivP57bBfrMfQs2VrKussEMJn
+	+YavVcDS0FgtcIFbdq80Oy3yNbTWBdG7f86NkkDn1kIG4M/vzHLvmDNxTrljsjbdub/owjM6+cW
+	iCdyx2mAEedCGDYiiU9hvMVEdPGGkC0xGDTynq/LZwUnFo87QJbKwO+RvnwNzYBmfyeGhmBwOvy
+	NiMFQWLXMG45eHx9gB1xhQ5SwZkqRyNWkMIiCs1ItICSVn8HSDP903z5o9XBi3p+h2LtusYi24+
+	d3QwmJos0+O2G4vtI4HtiEnUpnRh8mkmeFGG+HAUzQJ3yNtkM4FhcHebzLXaB2WQ+9XsIHraZWX
+	gIdlRWolK1Rt8KEXEf91RHNDHkLVIk+MTsjkuB4KBbWJiORFUy4ip7xDzQkkWlSZLWhq2bQNPKR
+	seaWTMBXqscC/9FGdMlAC92OSIPyjOBYrkzwV4Mz0K7AsTh1HVwQbfCb1BfLXF
+X-Google-Smtp-Source: AGHT+IFM6D2i1+XgUh1AOuEoHlQaK16ynuHtuiZiJ6v8TUlcm3dGIWxTDZWHO+/katDb6+SuuPDChg==
+X-Received: by 2002:a17:906:c114:b0:b6d:6c11:e9fe with SMTP id a640c23a62f3a-b70708ad2acmr1465257666b.64.1762237539674;
+        Mon, 03 Nov 2025 22:25:39 -0800 (PST)
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com. [209.85.218.50])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72596bb0f1sm6620366b.0.2025.11.03.22.25.37
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Nov 2025 22:25:38 -0800 (PST)
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-b3b27b50090so800113066b.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Nov 2025 22:25:37 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCU2juFdjn2PUZxOpeJhVUo9cRJTKuZMVpaE4VrzoDTSVrb0k7p+55TIKQDgiYhRCqZhvWndYUx4VDHHnsXQ@vger.kernel.org
+X-Received: by 2002:a17:906:d555:b0:b70:b5ce:e66e with SMTP id
+ a640c23a62f3a-b70b5cf23acmr702009266b.21.1762237537508; Mon, 03 Nov 2025
+ 22:25:37 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [patch V5 07/12] uaccess: Provide scoped user access regions
-To: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Cooper <andrew.cooper3@citrix.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- David Laight <david.laight.linux@gmail.com>,
- kernel test robot <lkp@intel.com>, Russell King <linux@armlinux.org.uk>,
- linux-arm-kernel@lists.infradead.org, x86@kernel.org,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- linuxppc-dev@lists.ozlabs.org, Paul Walmsley <pjw@kernel.org>,
- Palmer Dabbelt <palmer@dabbelt.com>, linux-riscv@lists.infradead.org,
- Heiko Carstens <hca@linux.ibm.com>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>, linux-s390@vger.kernel.org,
- Julia Lawall <Julia.Lawall@inria.fr>, Nicolas Palix <nicolas.palix@imag.fr>,
- Peter Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>,
- Davidlohr Bueso <dave@stgolabs.net>, =?UTF-8?Q?Andr=C3=A9_Almeida?=
- <andrealmeid@igalia.com>, Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- linux-fsdevel@vger.kernel.org
-References: <20251027083700.573016505@linutronix.de>
- <20251027083745.546420421@linutronix.de>
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-Content-Language: fr-FR
-In-Reply-To: <20251027083745.546420421@linutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <CAHk-=wjRA8G9eOPWa_Njz4NAk3gZNvdt0WAHZfn3iXfcVsmpcA@mail.gmail.com>
+ <20251031174220.43458-1-mjguzik@gmail.com> <20251031174220.43458-2-mjguzik@gmail.com>
+In-Reply-To: <20251031174220.43458-2-mjguzik@gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 4 Nov 2025 15:25:20 +0900
+X-Gmail-Original-Message-ID: <CAHk-=wimh_3jM9Xe8Zx0rpuf8CPDu6DkRCGb44azk0Sz5yqSnw@mail.gmail.com>
+X-Gm-Features: AWmQ_bkCiE0d-T6yyLCYrNs9euBFEsDAScPsO79Es5nrtD56kkYzWZYWoyCfZ7k
+Message-ID: <CAHk-=wimh_3jM9Xe8Zx0rpuf8CPDu6DkRCGb44azk0Sz5yqSnw@mail.gmail.com>
+Subject: Re: [PATCH 1/3] x86: fix access_ok() and valid_user_address() using
+ wrong USER_PTR_MAX in modules
+To: Mateusz Guzik <mjguzik@gmail.com>, "the arch/x86 maintainers" <x86@kernel.org>
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	tglx@linutronix.de, pfalcato@suse.de
+Content-Type: multipart/mixed; boundary="0000000000006f35580642bee61d"
 
+--0000000000006f35580642bee61d
+Content-Type: text/plain; charset="UTF-8"
 
+[ Adding x86 maintainers - I had added Thomas earlier, but I guess at
+least Borislav might actually care and have input too ]
 
-Le 27/10/2025 à 09:43, Thomas Gleixner a écrit :
-> User space access regions are tedious and require similar code patterns all
-> over the place:
-> 
->       	if (!user_read_access_begin(from, sizeof(*from)))
-> 		return -EFAULT;
-> 	unsafe_get_user(val, from, Efault);
-> 	user_read_access_end();
-> 	return 0;
-> Efault:
-> 	user_read_access_end();
-> 	return -EFAULT;
-> 
-> This got worse with the recent addition of masked user access, which
-> optimizes the speculation prevention:
-> 
-> 	if (can_do_masked_user_access())
-> 		from = masked_user_read_access_begin((from));
-> 	else if (!user_read_access_begin(from, sizeof(*from)))
-> 		return -EFAULT;
-> 	unsafe_get_user(val, from, Efault);
-> 	user_read_access_end();
-> 	return 0;
-> Efault:
-> 	user_read_access_end();
-> 	return -EFAULT;
-> 
-> There have been issues with using the wrong user_*_access_end() variant in
-> the error path and other typical Copy&Pasta problems, e.g. using the wrong
-> fault label in the user accessor which ends up using the wrong accesss end
-> variant.
-> 
-> These patterns beg for scopes with automatic cleanup. The resulting outcome
-> is:
->      	scoped_user_read_access(from, Efault)
-> 		unsafe_get_user(val, from, Efault);
-> 	return 0;
->    Efault:
-> 	return -EFAULT;
-> 
-> The scope guarantees the proper cleanup for the access mode is invoked both
-> in the success and the failure (fault) path.
-> 
-> The scoped_user_$MODE_access() macros are implemented as self terminating
-> nested for() loops. Thanks to Andrew Cooper for pointing me at them. The
-> scope can therefore be left with 'break', 'goto' and 'return'.  Even
-> 'continue' "works" due to the self termination mechanism. Both GCC and
-> clang optimize all the convoluted macro maze out and the above results with
-> clang in:
-> 
->   b80:	f3 0f 1e fa          	       endbr64
->   b84:	48 b8 ef cd ab 89 67 45 23 01  movabs $0x123456789abcdef,%rax
->   b8e:	48 39 c7    	               cmp    %rax,%rdi
->   b91:	48 0f 47 f8          	       cmova  %rax,%rdi
->   b95:	90                   	       nop
->   b96:	90                   	       nop
->   b97:	90                   	       nop
->   b98:	31 c9                	       xor    %ecx,%ecx
->   b9a:	8b 07                	       mov    (%rdi),%eax
->   b9c:	89 06                	       mov    %eax,(%rsi)
->   b9e:	85 c9                	       test   %ecx,%ecx
->   ba0:	0f 94 c0             	       sete   %al
->   ba3:	90                   	       nop
->   ba4:	90                   	       nop
->   ba5:	90                   	       nop
->   ba6:	c3                   	       ret
-> 
-> Which looks as compact as it gets. The NOPs are placeholder for STAC/CLAC.
-> GCC emits the fault path seperately:
-> 
->   bf0:	f3 0f 1e fa          	       endbr64
->   bf4:	48 b8 ef cd ab 89 67 45 23 01  movabs $0x123456789abcdef,%rax
->   bfe:	48 39 c7             	       cmp    %rax,%rdi
->   c01:	48 0f 47 f8          	       cmova  %rax,%rdi
->   c05:	90                   	       nop
->   c06:	90                   	       nop
->   c07:	90                   	       nop
->   c08:	31 d2                	       xor    %edx,%edx
->   c0a:	8b 07                	       mov    (%rdi),%eax
->   c0c:	89 06                	       mov    %eax,(%rsi)
->   c0e:	85 d2                	       test   %edx,%edx
->   c10:	75 09                	       jne    c1b <afoo+0x2b>
->   c12:	90                   	       nop
->   c13:	90                   	       nop
->   c14:	90                   	       nop
->   c15:	b8 01 00 00 00       	       mov    $0x1,%eax
->   c1a:	c3                   	       ret
->   c1b:	90                   	       nop
->   c1c:	90                   	       nop
->   c1d:	90                   	       nop
->   c1e:	31 c0                	       xor    %eax,%eax
->   c20:	c3                   	       ret
-> 
-> 
-> The fault labels for the scoped*() macros and the fault labels for the
-> actual user space accessors can be shared and must be placed outside of the
-> scope.
-> 
-> If masked user access is enabled on an architecture, then the pointer
-> handed in to scoped_user_$MODE_access() can be modified to point to a
-> guaranteed faulting user address. This modification is only scope local as
-> the pointer is aliased inside the scope. When the scope is left the alias
-> is not longer in effect. IOW the original pointer value is preserved so it
-> can be used e.g. for fixup or diagnostic purposes in the fault path.
-> 
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
-> Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> Cc: Andrew Cooper <andrew.cooper3@citrix.com>
-> Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> Cc: David Laight <david.laight.linux@gmail.com>
-> ---
-> V4: Remove the _masked_ naming as it's actually confusing - David
->      Remove underscores and make _tmpptr void - David
->      Add comment about access size and range - David
->      Shorten local variables and remove a few unneeded brackets - Mathieu
-> V3: Make it a nested for() loop
->      Get rid of the code in macro parameters - Linus
->      Provide sized variants - Mathieu
-> V2: Remove the shady wrappers around the opening and use scopes with automatic cleanup
-> ---
->   include/linux/uaccess.h |  192 ++++++++++++++++++++++++++++++++++++++++++++++++
->   1 file changed, 192 insertions(+)
-> 
-> --- a/include/linux/uaccess.h
-> +++ b/include/linux/uaccess.h
-> @@ -2,6 +2,7 @@
->   #ifndef __LINUX_UACCESS_H__
->   #define __LINUX_UACCESS_H__
->   
-> +#include <linux/cleanup.h>
->   #include <linux/fault-inject-usercopy.h>
->   #include <linux/instrumented.h>
->   #include <linux/minmax.h>
-> @@ -35,9 +36,17 @@
->   
->   #ifdef masked_user_access_begin
->    #define can_do_masked_user_access() 1
-> +# ifndef masked_user_write_access_begin
-> +#  define masked_user_write_access_begin masked_user_access_begin
-> +# endif
-> +# ifndef masked_user_read_access_begin
-> +#  define masked_user_read_access_begin masked_user_access_begin
-> +#endif
+So I think the patch I will commit would look like the attached: it's
+similar to your suggestion, but without the renaming of USER_PTR_MAX,
+and with just a
 
-You should move this out of the #ifdef/#else and remove the #else part 
-below, it should work as masked_user_access_begin(src) is defined in 
-both cases.
+  #ifdef MODULE
+    #define runtime_const_ptr(sym) (sym)
+  #else
+    #include <asm/runtime-const.h>
+  #endif
 
->   #else
->    #define can_do_masked_user_access() 0
->    #define masked_user_access_begin(src) NULL
-> + #define masked_user_read_access_begin(src) NULL
-> + #define masked_user_write_access_begin(src) NULL
->    #define mask_user_address(src) (src)
->   #endif
->   
-> @@ -633,6 +642,189 @@ static inline void user_access_restore(u
->   #define user_read_access_end user_access_end
->   #endif
->   
-> +/* Define RW variant so the below _mode macro expansion works */
-> +#define masked_user_rw_access_begin(u)	masked_user_access_begin(u)
-> +#define user_rw_access_begin(u, s)	user_access_begin(u, s)
-> +#define user_rw_access_end()		user_access_end()
-> +
-> +/* Scoped user access */
-> +#define USER_ACCESS_GUARD(_mode)				\
-> +static __always_inline void __user *				\
-> +class_user_##_mode##_begin(void __user *ptr)			\
-> +{								\
-> +	return ptr;						\
-> +}								\
-> +								\
-> +static __always_inline void					\
-> +class_user_##_mode##_end(void __user *ptr)			\
-> +{								\
-> +	user_##_mode##_access_end();				\
-> +}								\
-> +								\
-> +DEFINE_CLASS(user_ ##_mode## _access, void __user *,		\
-> +	     class_user_##_mode##_end(_T),			\
-> +	     class_user_##_mode##_begin(ptr), void __user *ptr)	\
-> +								\
-> +static __always_inline class_user_##_mode##_access_t		\
-> +class_user_##_mode##_access_ptr(void __user *scope)		\
-> +{								\
-> +	return scope;						\
-> +}
-> +
-> +USER_ACCESS_GUARD(read)
-> +USER_ACCESS_GUARD(write)
-> +USER_ACCESS_GUARD(rw)
-> +#undef USER_ACCESS_GUARD
-> +
-> +/**
-> + * __scoped_user_access_begin - Start a scoped user access
-> + * @mode:	The mode of the access class (read, write, rw)
-> + * @uptr:	The pointer to access user space memory
-> + * @size:	Size of the access
-> + * @elbl:	Error label to goto when the access region is rejected
-> + *
-> + * Internal helper for __scoped_user_access(). Don't use directly
-> + */
-> +#define __scoped_user_access_begin(mode, uptr, size, elbl)		\
-> +({									\
-> +	typeof(uptr) __retptr;						\
-> +									\
-> +	if (can_do_masked_user_access()) {				\
-> +		__retptr = masked_user_##mode##_access_begin(uptr);	\
-> +	} else {							\
-> +		__retptr = uptr;					\
-> +		if (!user_##mode##_access_begin(uptr, size))		\
-> +			goto elbl;					\
-> +	}								\
-> +	__retptr;							\
-> +})
-> +
-> +/**
-> + * __scoped_user_access - Open a scope for user access
-> + * @mode:	The mode of the access class (read, write, rw)
-> + * @uptr:	The pointer to access user space memory
-> + * @size:	Size of the access
-> + * @elbl:	Error label to goto when the access region is rejected. It
-> + *		must be placed outside the scope
-> + *
-> + * If the user access function inside the scope requires a fault label, it
-> + * can use @elvl or a different label outside the scope, which requires
-> + * that user access which is implemented with ASM GOTO has been properly
-> + * wrapped. See unsafe_get_user() for reference.
-> + *
-> + *	scoped_user_rw_access(ptr, efault) {
-> + *		unsafe_get_user(rval, &ptr->rval, efault);
-> + *		unsafe_put_user(wval, &ptr->wval, efault);
-> + *	}
-> + *	return 0;
-> + *  efault:
-> + *	return -EFAULT;
-> + *
-> + * The scope is internally implemented as a autoterminating nested for()
-> + * loop, which can be left with 'return', 'break' and 'goto' at any
-> + * point.
-> + *
-> + * When the scope is left user_##@_mode##_access_end() is automatically
-> + * invoked.
-> + *
-> + * When the architecture supports masked user access and the access region
-> + * which is determined by @uptr and @size is not a valid user space
-> + * address, i.e. < TASK_SIZE, the scope sets the pointer to a faulting user
-> + * space address and does not terminate early. This optimizes for the good
-> + * case and lets the performance uncritical bad case go through the fault.
-> + *
-> + * The eventual modification of the pointer is limited to the scope.
-> + * Outside of the scope the original pointer value is unmodified, so that
-> + * the original pointer value is available for diagnostic purposes in an
-> + * out of scope fault path.
-> + *
-> + * Nesting scoped user access into a user access scope is invalid and fails
-> + * the build. Nesting into other guards, e.g. pagefault is safe.
-> + *
-> + * The masked variant does not check the size of the access and relies on a
-> + * mapping hole (e.g. guard page) to catch an out of range pointer, the
-> + * first access to user memory inside the scope has to be within
-> + * @uptr ... @uptr + PAGE_SIZE - 1
-> + *
-> + * Don't use directly. Use scoped_masked_user_$MODE_access() instead.
-> + */
-> +#define __scoped_user_access(mode, uptr, size, elbl)					\
-> +for (bool done = false; !done; done = true)						\
-> +	for (void __user *_tmpptr = __scoped_user_access_begin(mode, uptr, size, elbl); \
-> +	     !done; done = true)							\
-> +		for (CLASS(user_##mode##_access, scope)(_tmpptr); !done; done = true)	\
-> +			/* Force modified pointer usage within the scope */		\
-> +			for (const typeof(uptr) uptr = _tmpptr; !done; done = true)
-> +
-> +/**
-> + * scoped_user_read_access_size - Start a scoped user read access with given size
-> + * @usrc:	Pointer to the user space address to read from
-> + * @size:	Size of the access starting from @usrc
-> + * @elbl:	Error label to goto when the access region is rejected
-> + *
-> + * For further information see __scoped_user_access() above.
-> + */
-> +#define scoped_user_read_access_size(usrc, size, elbl)		\
-> +	__scoped_user_access(read, usrc, size, elbl)
-> +
-> +/**
-> + * scoped_user_read_access - Start a scoped user read access
-> + * @usrc:	Pointer to the user space address to read from
-> + * @elbl:	Error label to goto when the access region is rejected
-> + *
-> + * The size of the access starting from @usrc is determined via sizeof(*@usrc)).
-> + *
-> + * For further information see __scoped_user_access() above.
-> + */
-> +#define scoped_user_read_access(usrc, elbl)				\
-> +	scoped_user_read_access_size(usrc, sizeof(*(usrc)), elbl)
-> +
-> +/**
-> + * scoped_user_write_access_size - Start a scoped user write access with given size
-> + * @udst:	Pointer to the user space address to write to
-> + * @size:	Size of the access starting from @udst
-> + * @elbl:	Error label to goto when the access region is rejected
-> + *
-> + * For further information see __scoped_user_access() above.
-> + */
-> +#define scoped_user_write_access_size(udst, size, elbl)			\
-> +	__scoped_user_access(write, udst, size, elbl)
-> +
-> +/**
-> + * scoped_user_write_access - Start a scoped user write access
-> + * @udst:	Pointer to the user space address to write to
-> + * @elbl:	Error label to goto when the access region is rejected
-> + *
-> + * The size of the access starting from @udst is determined via sizeof(*@udst)).
-> + *
-> + * For further information see __scoped_user_access() above.
-> + */
-> +#define scoped_user_write_access(udst, elbl)				\
-> +	scoped_user_write_access_size(udst, sizeof(*(udst)), elbl)
-> +
-> +/**
-> + * scoped_user_rw_access_size - Start a scoped user read/write access with given size
-> + * @uptr	Pointer to the user space address to read from and write to
-> + * @size:	Size of the access starting from @uptr
-> + * @elbl:	Error label to goto when the access region is rejected
-> + *
-> + * For further information see __scoped_user_access() above.
-> + */
-> +#define scoped_user_rw_access_size(uptr, size, elbl)			\
-> +	__scoped_user_access(rw, uptr, size, elbl)
-> +
-> +/**
-> + * scoped_user_rw_access - Start a scoped user read/write access
-> + * @uptr	Pointer to the user space address to read from and write to
-> + * @elbl:	Error label to goto when the access region is rejected
-> + *
-> + * The size of the access starting from @uptr is determined via sizeof(*@uptr)).
-> + *
-> + * For further information see __scoped_user_access() above.
-> + */
-> +#define scoped_user_rw_access(uptr, elbl)				\
-> +	scoped_user_rw_access_size(uptr, sizeof(*(uptr)), elbl)
-> +
->   #ifdef CONFIG_HARDENED_USERCOPY
->   void __noreturn usercopy_abort(const char *name, const char *detail,
->   			       bool to_user, unsigned long offset,
-> 
+in the x86 asm/uaccess_64.h header file and an added '#error' for the
+MODULE case in the actual x86 runtime-const.h file.
 
+As it is, this bug really only affects modular code that uses
+access_ok() and __{get,put}_user(), which is a really broken pattern
+to begin with these days, and is happily fairly rare.
+
+That is an old optimization that is no longer an optimization at all
+(since a plain "get_user()" is actually *faster* than the access_ok()
+and __get_user() these days), and I wish we didn't have any such code
+any more, but there are a handful of things that have never been
+converted to the modern world order.
+
+So it is what it is, and we have to deal with it.
+
+Also, even that kind of rare and broken code actually *works*,
+although the whole "non-canonical reads can speculatively leak
+possibly kernel data" does end up being an issue (largely theoretical
+because it's now limited to just a couple of odd-ball code sequences)
+
+And yes, it works just because I picked a runtime-const value that is
+non-canonical. I'd say it's "by luck", but I did pick that value
+partly *because* it's non-canonical, so it's not _entirely_ just luck.
+But mostly.
+
+That was all a long explanation for why I am planning on committing
+this as a real fix, even if the actual impact of it is largely
+theoretical.
+
+Borislav - comments? Generating this patch took longer than it should
+have, but I had travel and jetlag and a flight that I expected to have
+wifi but didn't...  And properly it should probably be committed by
+x86 maintainers rather than me, but I did mess this code up in the
+first place.
+
+The patch *looks* very straightforward, but since I'm on the road I am
+doing this on my laptop and haven't actually tested it yet (well, I've
+built this, and booted it, but nothing past that).
+
+Mateusz - I'd like to just credit you with this, since your comment
+about modules was why I started looking into this all in the first
+place (and you then wrote a similar patch). But I'm not going to do
+that without your ack.
+
+               Linus
+
+--0000000000006f35580642bee61d
+Content-Type: text/x-patch; charset="US-ASCII"; name="patch.diff"
+Content-Disposition: attachment; filename="patch.diff"
+Content-Transfer-Encoding: base64
+Content-ID: <f_mhk6mmvp0>
+X-Attachment-Id: f_mhk6mmvp0
+
+IGFyY2gveDg2L2luY2x1ZGUvYXNtL3J1bnRpbWUtY29uc3QuaCB8ICA0ICsrKysKIGFyY2gveDg2
+L2luY2x1ZGUvYXNtL3VhY2Nlc3NfNjQuaCAgICB8IDEwICsrKysrLS0tLS0KIGFyY2gveDg2L2tl
+cm5lbC9jcHUvY29tbW9uLmMgICAgICAgICB8ICA2ICsrKysrLQogMyBmaWxlcyBjaGFuZ2VkLCAx
+NCBpbnNlcnRpb25zKCspLCA2IGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2FyY2gveDg2L2lu
+Y2x1ZGUvYXNtL3J1bnRpbWUtY29uc3QuaCBiL2FyY2gveDg2L2luY2x1ZGUvYXNtL3J1bnRpbWUt
+Y29uc3QuaAppbmRleCA4ZDk4M2NmZDA2ZWEuLmU1YTEzZGM4ODE2ZSAxMDA2NDQKLS0tIGEvYXJj
+aC94ODYvaW5jbHVkZS9hc20vcnVudGltZS1jb25zdC5oCisrKyBiL2FyY2gveDg2L2luY2x1ZGUv
+YXNtL3J1bnRpbWUtY29uc3QuaApAQCAtMiw2ICsyLDEwIEBACiAjaWZuZGVmIF9BU01fUlVOVElN
+RV9DT05TVF9ICiAjZGVmaW5lIF9BU01fUlVOVElNRV9DT05TVF9ICiAKKyNpZmRlZiBNT0RVTEUK
+KyAgI2Vycm9yICJDYW5ub3QgdXNlIHJ1bnRpbWUtY29uc3QgaW5mcmFzdHJ1Y3R1cmUgZnJvbSBt
+b2R1bGVzIgorI2VuZGlmCisKICNpZmRlZiBfX0FTU0VNQkxZX18KIAogLm1hY3JvIFJVTlRJTUVf
+Q09OU1RfUFRSIHN5bSByZWcKZGlmZiAtLWdpdCBhL2FyY2gveDg2L2luY2x1ZGUvYXNtL3VhY2Nl
+c3NfNjQuaCBiL2FyY2gveDg2L2luY2x1ZGUvYXNtL3VhY2Nlc3NfNjQuaAppbmRleCBjOGE1YWUz
+NWM4NzEuLjY0MWY0NWMyMmY5ZCAxMDA2NDQKLS0tIGEvYXJjaC94ODYvaW5jbHVkZS9hc20vdWFj
+Y2Vzc182NC5oCisrKyBiL2FyY2gveDg2L2luY2x1ZGUvYXNtL3VhY2Nlc3NfNjQuaApAQCAtMTIs
+MTIgKzEyLDEyIEBACiAjaW5jbHVkZSA8YXNtL2NwdWZlYXR1cmVzLmg+CiAjaW5jbHVkZSA8YXNt
+L3BhZ2UuaD4KICNpbmNsdWRlIDxhc20vcGVyY3B1Lmg+Ci0jaW5jbHVkZSA8YXNtL3J1bnRpbWUt
+Y29uc3QuaD4KIAotLyoKLSAqIFZpcnR1YWwgdmFyaWFibGU6IHRoZXJlJ3Mgbm8gYWN0dWFsIGJh
+Y2tpbmcgc3RvcmUgZm9yIHRoaXMsCi0gKiBpdCBjYW4gcHVyZWx5IGJlIHVzZWQgYXMgJ3J1bnRp
+bWVfY29uc3RfcHRyKFVTRVJfUFRSX01BWCknCi0gKi8KKyNpZmRlZiBNT0RVTEUKKyAgI2RlZmlu
+ZSBydW50aW1lX2NvbnN0X3B0cihzeW0pIChzeW0pCisjZWxzZQorICAjaW5jbHVkZSA8YXNtL3J1
+bnRpbWUtY29uc3QuaD4KKyNlbmRpZgogZXh0ZXJuIHVuc2lnbmVkIGxvbmcgVVNFUl9QVFJfTUFY
+OwogCiAjaWZkZWYgQ09ORklHX0FERFJFU1NfTUFTS0lORwpkaWZmIC0tZ2l0IGEvYXJjaC94ODYv
+a2VybmVsL2NwdS9jb21tb24uYyBiL2FyY2gveDg2L2tlcm5lbC9jcHUvY29tbW9uLmMKaW5kZXgg
+YzdkMzUxMjkxNGNhLi4wMmQ5NzgzNGExZDQgMTAwNjQ0Ci0tLSBhL2FyY2gveDg2L2tlcm5lbC9j
+cHUvY29tbW9uLmMKKysrIGIvYXJjaC94ODYva2VybmVsL2NwdS9jb21tb24uYwpAQCAtNzgsNiAr
+NzgsMTAgQEAKIERFRklORV9QRVJfQ1BVX1JFQURfTU9TVExZKHN0cnVjdCBjcHVpbmZvX3g4Niwg
+Y3B1X2luZm8pOwogRVhQT1JUX1BFUl9DUFVfU1lNQk9MKGNwdV9pbmZvKTsKIAorLyogVXNlZCBm
+b3IgbW9kdWxlczogYnVpbHQtaW4gY29kZSB1c2VzIHJ1bnRpbWUgY29uc3RhbnRzICovCit1bnNp
+Z25lZCBsb25nIFVTRVJfUFRSX01BWDsKK0VYUE9SVF9TWU1CT0woVVNFUl9QVFJfTUFYKTsKKwog
+dTMyIGVsZl9od2NhcDIgX19yZWFkX21vc3RseTsKIAogLyogTnVtYmVyIG9mIHNpYmxpbmdzIHBl
+ciBDUFUgcGFja2FnZSAqLwpAQCAtMjU3OSw3ICsyNTgzLDcgQEAgdm9pZCBfX2luaXQgYXJjaF9j
+cHVfZmluYWxpemVfaW5pdCh2b2lkKQogCWFsdGVybmF0aXZlX2luc3RydWN0aW9ucygpOwogCiAJ
+aWYgKElTX0VOQUJMRUQoQ09ORklHX1g4Nl82NCkpIHsKLQkJdW5zaWduZWQgbG9uZyBVU0VSX1BU
+Ul9NQVggPSBUQVNLX1NJWkVfTUFYOworCQlVU0VSX1BUUl9NQVggPSBUQVNLX1NJWkVfTUFYOwog
+CiAJCS8qCiAJCSAqIEVuYWJsZSB0aGlzIHdoZW4gTEFNIGlzIGdhdGVkIG9uIExBU1Mgc3VwcG9y
+dAo=
+--0000000000006f35580642bee61d--
 
