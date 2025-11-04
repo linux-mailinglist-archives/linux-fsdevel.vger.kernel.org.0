@@ -1,150 +1,107 @@
-Return-Path: <linux-fsdevel+bounces-66900-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66901-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7ADBFC3021B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 04 Nov 2025 10:02:16 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47041C3025A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 04 Nov 2025 10:04:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D3063A76A7
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Nov 2025 08:55:23 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 037BF4FE3F0
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Nov 2025 08:58:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B990E313E2C;
-	Tue,  4 Nov 2025 08:53:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C24232BCF41;
+	Tue,  4 Nov 2025 08:57:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b="UzIhja6H"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U7ZooYB+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62CB62BF000
-	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Nov 2025 08:53:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90A73A41
+	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Nov 2025 08:57:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762246415; cv=none; b=WFIhDrXhe0ySnBh6+SgcBPOhn57KrQUYgh0n4eCoNZ0Pmk9C6inNlHw7ciTuBMVUfbMHY2og/WPyu+BZYmDC4LxlLkeQTrBGigdaJlug9ce+f2N/96Zth5/2j7FlmzHCjxDdmA4PQoHs3BfFfYwixabvRsBS5djqjuunCkdUmNs=
+	t=1762246634; cv=none; b=QVzkrnEGTUjKAHkVymrKyXaMN57fFaJeJD41u2I1bI1t0Nb/vIfAT1oQ0Q30ANr/QkqHhVtcNLadTcxwtRU1XfKgRXZlxQeg/UZbT14FZD18Siu7j89F4Gi/RWPPmWOgPEEEuIYkeYqQkGy7ASf2CIff8oigelsjv9RUXEzS7eY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762246415; c=relaxed/simple;
-	bh=gP6cNYFzRNpWkbN1NTP1C84FkDJ5I5+eZ1iQUALPYx4=;
+	s=arc-20240116; t=1762246634; c=relaxed/simple;
+	bh=w+jj3ziLRLynG+wa+K+2Apvi2QZl6via6pOPc6M9QTQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lFt8UxPgVWuEmnCjqTQ/RgVjoH7dPKY1iV5HJSBvMMQ+05ufRVn4xl8hU0kSl3x3VBXxWMWuw0+s/GssTn+hmg0OuwzQwg9R+0AftPXsC4JuTCTtdqyLaYUYtqy0bUZyD2G5jBRN7CeYaivVoqBkfH36jM33S30yL/wZ9rGUJrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mihalicyn.com; spf=pass smtp.mailfrom=mihalicyn.com; dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b=UzIhja6H; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mihalicyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mihalicyn.com
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-591ea9ccfc2so6453360e87.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Nov 2025 00:53:33 -0800 (PST)
+	 To:Cc:Content-Type; b=WV6IbQ5hUMlTxsP/YNgvXvJ0iR/VrGm62GyF1PiIeEN2nYC6IpbuEurYFJ10mu6hFmkOkJYXH204vPmem62zFN/tEVmnC42YXb1A9NkNOFWuRZ17ZN2yVTjXrD34tFtMeG5t98HcxbVcBbrLBMCNey2QI1w2OIBPyaWQr0n8S20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U7ZooYB+; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b70fb7b531cso297313866b.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Nov 2025 00:57:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mihalicyn.com; s=mihalicyn; t=1762246411; x=1762851211; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=a+OXJnO5n+g/tTpX3EMxsbFglDyw91SA+ogZeLugo7k=;
-        b=UzIhja6HOuHSqImVtPUZAycEX1KX/G77sQjLI4eEN5act/NrE1RRGvNDF4UMt/Rq6Z
-         0QPmDgYbRDMFPjsvLrh3SZy4U/TGo89eWA9a3ibsCiUo4cpitYPRQLlaeID4/16euNa2
-         91UxGQ5eWMhlRxnzGVxl1yZr2ZY4QvVXptKTI=
+        d=gmail.com; s=20230601; t=1762246631; x=1762851431; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=w+jj3ziLRLynG+wa+K+2Apvi2QZl6via6pOPc6M9QTQ=;
+        b=U7ZooYB+TLZ2U2mSLv+d9MUNvpKaAm3HLw2QEQWr5s4UUjiuB276934Boz0c9arn+q
+         JJ/r9reKNka8uv4GCaWmCjAghPCbgR0XMnd5ruvrgWMI6ZuVkxCmpTFh9fUbsdA37XQN
+         +4cG20g2Vjtn8qIfhN0202ATuSZZAp2dlhiltvzIIRpTk+IgpDLg4V8sHapnW17v5SqX
+         TR/zHsgPRLhhmvIThyADAailp5KTtA+CQTs4VGlrV5F8XFz8BZfCorWGJUgBDUyIUXND
+         s/Oqvfi1tYvBRJ3bql9W71SnseiKzK5xLdUGuajpYOczIdaJwM2rz1EJWVDzJ25x/daB
+         HTSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762246411; x=1762851211;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=a+OXJnO5n+g/tTpX3EMxsbFglDyw91SA+ogZeLugo7k=;
-        b=flvNNyeOW2PgC0vT9MKXVpQ+EDEYrL9t3ADBHoItW6JJxBrkkzbqs8pIl44hfxQn6/
-         8AzzhwUriXoA1PkOnnxIlQh37tHg26pTQ3BdE6llIfvDko/T7jLcLcYOyrRmQHQC2tsJ
-         PI83j1v7WOItKPn5BJTT1DC9RpPMBduucnvWQAt5iVrWuwzKPDV5K2BpSm8JLuAmypAD
-         jEv4iQriqsCp3DzWOIwS23DVd0izxNf/F1bxO/X2QZ3Qcz0Dkkbh9eCIuC7MIOrcWB7Q
-         oDZ2bBx0PNSM6Zl6KWU0zfQSvzZXZKrjgv+ae9i+r/7NPaKw7xU9x4ok11i7X5qwXlOR
-         khHg==
-X-Gm-Message-State: AOJu0YwL9RVUMMh6BmT33A1yp5H0k9TOb6B8778D5w7mtNcIVi7D1lsm
-	Qc56QPu3o4sSXOQ+3ynMgy/PNmbFIqH1AP3Gj2TYM4doWwuMjKp1QdrqsAF4PAtU9Bvv/12600c
-	ckysz2YnsXEwMSric4i74LARPgv1qClfC139fpzUU9g==
-X-Gm-Gg: ASbGncuLmJW32+GAS935Rb6ijpkgF040fg2TVOO4bHUmASiBu+YzCYnwM5GzYJiiaDz
-	VZig95OWLezYXzbhm3vnKwbyo3lv3dX6H9tZZ9xXuwflU3Gfy320Xabkt1uOPsQ6hfxQb6niB9+
-	d9DdxO2aSpgspqEQ71XtNnx95xGDZDGRkQcnDJLqsdMU/RfHCROesmFab57uuFL/HIIsqhu26Ar
-	zo1s2/wIUZBeX1PT7i1N6ylUbKBxS57B4cnKb7vrcAU3SmdKAo9B7Yyexao
-X-Google-Smtp-Source: AGHT+IGJ+z0iFxZhijJNpEMc1N0AB6Pa4n0v8wGhfmcglDnKhowMsADaDG9Ej6mXnqk2khs681gchLMaC1Udhx7ZAbE=
-X-Received: by 2002:a05:6512:1391:b0:594:2bd4:c856 with SMTP id
- 2adb3069b0e04-594348745fdmr797353e87.6.1762246411410; Tue, 04 Nov 2025
- 00:53:31 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762246631; x=1762851431;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=w+jj3ziLRLynG+wa+K+2Apvi2QZl6via6pOPc6M9QTQ=;
+        b=SbSTof66Xqhg8erzLM4LqYUkix+WfI0ET3CVvrqK3W4mrqfb/qhDy2n01SU3IaFo4g
+         ViAHN6ljZLfz93rYcjhjdarXEpXpcIELuHuxwUZt396Xm04Rd0OLzCVZ9gsZbndZLQ+9
+         Nz/LAMxogXQkptZzeX78mUsKLWlKp+noiLPU7fTlrwrJHmL2mXpSRoNSZ1QDM7iAGfS3
+         Hw9bV4Pt0vxFQKe30n7hlGihpD1biaegfM+YGWT6bHH0s/GvPgn9MUWtIVcxUc1e0IAh
+         b2F1CgAhfINh/hS65SOR7bqA/AeY+MMOKZzpP22bQ7W907zkX1Z2YSA2bOfOlDSQKeZV
+         /bxA==
+X-Forwarded-Encrypted: i=1; AJvYcCWilFrRYLsZbzWgataI/0SiuAoWmTrnMNiVzs3DExEOsgpJwUcTqZPOIGmhSjre1gWdtVNhVUjc72K+/jp+@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWLEfnALnzrtSf4r/Ilp/uVEzcaK0ROzFNQsLVi1OFRlEm/iv5
+	YHtbppZUu6NfggBInI+HT1PLyKQupTbLiyNlFbTkDVtv2v6oS5U64MeSx/TYTewasWx9Z/m822L
+	BQiPLS9XtIVNeHyHSXK4Ml5a7MXkMLuQ=
+X-Gm-Gg: ASbGnctwAUjslMUegGgZDW7TlwCvwWTbQLPGo2enZvt6KHNNHutFx9VEmFz64ea2jGD
+	2e0YhW2DCCXFEvhwJxaRRD4Nl+FcDO0ynh0M4m4HOQ7fU2YGK1WHyBZVMzoFULX1TLgendxvBT6
+	VaneJPQ2gKFWPnFBeivhI7Cik8sOquuivxG9B+t2vHC1O2ir/TOhfhDxhlThpf5er60ylew1MUv
+	JEsik6mm27tgEtxDukFL6kxz3QPKDone8Z48fsYx4sjTYEvgmmVLYB58aMPF+4IVhorovWOQywK
+	sWUoZq9Cm5MiN1w=
+X-Google-Smtp-Source: AGHT+IF6ueQYBNM1+RNhYOYIFnfLiX6oNuy4l48G1lx1VU0ywiXQgL6tqvYLuu3FO24uXys20ArxBAmkiPLr3hbeIKw=
+X-Received: by 2002:a17:907:d26:b0:b04:6546:345a with SMTP id
+ a640c23a62f3a-b707082bc03mr1630568866b.52.1762246630824; Tue, 04 Nov 2025
+ 00:57:10 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251028-work-coredump-signal-v1-0-ca449b7b7aa0@kernel.org> <20251028-work-coredump-signal-v1-11-ca449b7b7aa0@kernel.org>
-In-Reply-To: <20251028-work-coredump-signal-v1-11-ca449b7b7aa0@kernel.org>
-From: Alexander Mikhalitsyn <alexander@mihalicyn.com>
-Date: Tue, 4 Nov 2025 09:53:19 +0100
-X-Gm-Features: AWmQ_bmTYbLrtUI9VB4T3B3ctrVNl3ozG6AI_qT1Lx_inBRtWI5cYeifq7EChzA
-Message-ID: <CAJqdLrqjvitPqNYbfZx0-fsA6LCzVV6aatkCt2qAiQiGEXTLNg@mail.gmail.com>
-Subject: Re: [PATCH 11/22] selftests/pidfd: add second supported_mask test
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>, 
-	Amir Goldstein <amir73il@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Yu Watanabe <watanabe.yu+github@gmail.com>, Josef Bacik <josef@toxicpanda.com>, 
-	Jeff Layton <jlayton@kernel.org>, Jann Horn <jannh@google.com>, 
-	Luca Boccassi <luca.boccassi@gmail.com>, linux-kernel@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	Lennart Poettering <lennart@poettering.net>, Mike Yuan <me@yhndnzj.com>, 
-	=?UTF-8?Q?Zbigniew_J=C4=99drzejewski=2DSzmek?= <zbyszek@in.waw.pl>
+References: <CAHk-=wjRA8G9eOPWa_Njz4NAk3gZNvdt0WAHZfn3iXfcVsmpcA@mail.gmail.com>
+ <20251031174220.43458-1-mjguzik@gmail.com> <20251031174220.43458-2-mjguzik@gmail.com>
+ <CAHk-=wimh_3jM9Xe8Zx0rpuf8CPDu6DkRCGb44azk0Sz5yqSnw@mail.gmail.com>
+In-Reply-To: <CAHk-=wimh_3jM9Xe8Zx0rpuf8CPDu6DkRCGb44azk0Sz5yqSnw@mail.gmail.com>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Tue, 4 Nov 2025 09:56:56 +0100
+X-Gm-Features: AWmQ_blcze5b2JDvf6rk7zu8ZSgiylBvNU6Ne1vkeCMvYkjZxqkdx2SqKkvxo3M
+Message-ID: <CAGudoHESYkHNdZZ5j1KfZ3j23cEvPZUNWVuc7_TTKds=qNWt6w@mail.gmail.com>
+Subject: Re: [PATCH 1/3] x86: fix access_ok() and valid_user_address() using
+ wrong USER_PTR_MAX in modules
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "the arch/x86 maintainers" <x86@kernel.org>, brauner@kernel.org, viro@zeniv.linux.org.uk, 
+	jack@suse.cz, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	tglx@linutronix.de, pfalcato@suse.de
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Am Di., 28. Okt. 2025 um 09:46 Uhr schrieb Christian Brauner
-<brauner@kernel.org>:
+On Tue, Nov 4, 2025 at 7:25=E2=80=AFAM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+> Mateusz - I'd like to just credit you with this, since your comment
+> about modules was why I started looking into this all in the first
+> place (and you then wrote a similar patch). But I'm not going to do
+> that without your ack.
 >
-> Verify that supported_mask is returned even when other fields are
-> requested.
->
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
 
-Reviewed-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+I don't think crediting me here is warranted.
 
-> ---
->  tools/testing/selftests/pidfd/pidfd_info_test.c | 32 +++++++++++++++++++++++++
->  1 file changed, 32 insertions(+)
->
-> diff --git a/tools/testing/selftests/pidfd/pidfd_info_test.c b/tools/testing/selftests/pidfd/pidfd_info_test.c
-> index b31a0597fbae..cb5430a2fd75 100644
-> --- a/tools/testing/selftests/pidfd/pidfd_info_test.c
-> +++ b/tools/testing/selftests/pidfd/pidfd_info_test.c
-> @@ -731,4 +731,36 @@ TEST(supported_mask_field)
->         close(pidfd);
->  }
->
-> +/*
-> + * Test: PIDFD_INFO_SUPPORTED_MASK always available
-> + *
-> + * Verify that supported_mask is returned even when other fields are requested.
-> + */
-> +TEST(supported_mask_with_other_fields)
-> +{
-> +       struct pidfd_info info = {
-> +               .mask = PIDFD_INFO_CGROUPID | PIDFD_INFO_SUPPORTED_MASK,
-> +       };
-> +       int pidfd;
-> +       pid_t pid;
-> +
-> +       pid = create_child(&pidfd, 0);
-> +       ASSERT_GE(pid, 0);
-> +
-> +       if (pid == 0)
-> +               pause();
-> +
-> +       ASSERT_EQ(ioctl(pidfd, PIDFD_GET_INFO, &info), 0);
-> +
-> +       /* Both fields should be present */
-> +       ASSERT_TRUE(!!(info.mask & PIDFD_INFO_CGROUPID));
-> +       ASSERT_TRUE(!!(info.mask & PIDFD_INFO_SUPPORTED_MASK));
-> +       ASSERT_NE(info.supported_mask, 0);
-> +
-> +       /* Clean up */
-> +       sys_pidfd_send_signal(pidfd, SIGKILL, NULL, 0);
-> +       sys_waitid(P_PIDFD, pidfd, NULL, WEXITED);
-> +       close(pidfd);
-> +}
-> +
->  TEST_HARNESS_MAIN
->
-> --
-> 2.47.3
->
+I would appreciate some feedback on the header split idea though. :)
 
