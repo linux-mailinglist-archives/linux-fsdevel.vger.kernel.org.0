@@ -1,160 +1,156 @@
-Return-Path: <linux-fsdevel+bounces-66974-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66975-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BA11C32475
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 04 Nov 2025 18:18:25 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75688C32643
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 04 Nov 2025 18:39:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D14E54F9BEC
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Nov 2025 17:12:40 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D884434B4A5
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Nov 2025 17:39:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2371F338F5E;
-	Tue,  4 Nov 2025 17:09:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3934D33A028;
+	Tue,  4 Nov 2025 17:38:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DKI1GZDP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jD3Bcrqt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AF9F23F429
-	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Nov 2025 17:09:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DE4D3385B5;
+	Tue,  4 Nov 2025 17:38:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762276175; cv=none; b=H4ujj4p2kdJytR2zP4tduzz/vWGPp++lT3N/Gelgtl9V3PbxORSIEvfXdracFWAvMsXhaRpiNiS3yUa+8HZpprE6PaQmNkLkdrHi755m3KwUE945IsVu7LSYnKiFCexxG7GCvHPHHZ+u5GaWY1ASgB3t82HX9MQ5GsLS1CQfpiI=
+	t=1762277894; cv=none; b=Zl+kTSFI7qM20+N+zNX4mugulcBGRpWOsdZh3Owr/N52x6bjeYJpUEhAwu2CMUW2lmMqVvpjkJzKAP0L0pE+T+ldDyf1TD3k2pbvolj2gxi/onUpI4fV9l4hQdFXK4McoHJRMAB5LRHzlkaHZ+wu/I/oFXCdrBIt0f+idbgsR2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762276175; c=relaxed/simple;
-	bh=fLYNppll6t3kLWAUaRsq8n6hnetj7Sk9RdC7VbI1fIQ=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=GdxfOQ3TRvz9JamNe6YfRZiAmmhH/xCg86zQiDBPAUXhH0k5jBSHTcl0PCI0135OJTE9fJP6/jq2wsGE+787pg4aye6Yhc8zaxfYUYiNaheUYePfelnN02GbYeSYE4r1EU4m3ds5TDdRckCiuBauTFOZUFwXo/JvNUE69h/gqY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DKI1GZDP; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2956a694b47so37505495ad.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Nov 2025 09:09:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762276173; x=1762880973; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ESsFb4FWracpR2TzDvHPqwAo241JJ5KRosL78pKPvYk=;
-        b=DKI1GZDPQpbxJw/KCBeQOHoRdMG/0Lc51DRCVJWmC07OQKU1HalByNewE+bf0UgAaX
-         TLl9rQElzKjA2/DdspFbiZVivdMZICorCUOCW8quOJhsUkEa7mh79HLK27TDk42qaxI8
-         e60BVi4Faw1PwiGoWuqzVpsWzI52mThfRTPxY31lvV3z1uQvIeakPPZOhgqInftM6tpU
-         X1m4kXNQ/yypZgLTGMz5nPu3NeUK+Q6psW5BusFACuDQ012z5OfAVOGbsw/DQNmT0jMm
-         l/JRuCyzg8r6EtzV5ngeQurpNa3xg3l54joJtouaxzAw+KErxv2EPWZI1zH7PHZ5gtnv
-         kz4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762276173; x=1762880973;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ESsFb4FWracpR2TzDvHPqwAo241JJ5KRosL78pKPvYk=;
-        b=IevmOQf8noDDimSiNb5UL8ssJNvSnLjvrzO0aVRYPHs3N2APevE8V1FfdAYghp4AmM
-         O85SdaUm9q7RGxDwkk189JpzaaaS5oth3zn8VxjXYhuAlOH/g7KVHzhRa7YFILxNDkz1
-         yg+Mg2+9KHsMAJNakv24n+zNCHZNj2W8EUqFZExlUXMhFjfu8HzhL0Jdne1gIP3ny5bq
-         Qk1Novk7MLy+TTxbclWQOgMPMZEh/7HbfCXEVDrpPJxlM33rdGhu4ol2SYL9HZSmtzdc
-         YdwFy01npKFWNSd8/OjBShpGdw1IkkMvMA/mPKttnvFdO6ETKmDa3fzO37zYYX6JTFrR
-         hMvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWhrJuHSyuK5SAznyYCTjnn0E14DULcIvsuuGf2S7r2ZPUFikoRHu8UZ2k/MvpmYFYZD7tSGifJWzpPG0US@vger.kernel.org
-X-Gm-Message-State: AOJu0YwezVbX/aIXUp1GiY5EjffAqNqyDcqhiL4JXRfSlBpKvNrytR54
-	sa49jZ4IWOQmmgimCNsE+oT593Y0KjxevICAMJgB/tNhTrMgBxdd0V2OVVgXIbor9ay1BPBrnxl
-	kDNPh4A==
-X-Google-Smtp-Source: AGHT+IGQ0sGhS55n4NwGqrLp7I4ZqP5sQwM1HuZAUZBARPNaZyXx2vgsm8bxhh6NIaMledcxEB/xQt409L4=
-X-Received: from plbbd2.prod.google.com ([2002:a17:902:8302:b0:290:a6e2:2006])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:4b4b:b0:295:c2e7:7199
- with SMTP id d9443c01a7336-2962ae4c0d3mr3828985ad.29.1762276173341; Tue, 04
- Nov 2025 09:09:33 -0800 (PST)
-Date: Tue, 4 Nov 2025 09:09:31 -0800
-In-Reply-To: <CAHk-=wimh_3jM9Xe8Zx0rpuf8CPDu6DkRCGb44azk0Sz5yqSnw@mail.gmail.com>
+	s=arc-20240116; t=1762277894; c=relaxed/simple;
+	bh=2YkhSmbyR/ykbq3wvF4/ragaZLbIWVFj3cwVxNUZdOg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wznt+7awMAPpVSSsgyQvO4eeS7QYUveMakPLbvcz0MgMTMmTDtOlIuRHwHVYN5S4C/tJBgdfGfNsYyMluf54ikrIbIEPgSjur/4fZvNZGE3Vz7kS1JooMxAJLCnl6pKJ8GYG6noSy8P39mYEjSa0lHgHdBUt2Nv/lixqtffbniw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jD3Bcrqt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F483C4CEF7;
+	Tue,  4 Nov 2025 17:38:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762277893;
+	bh=2YkhSmbyR/ykbq3wvF4/ragaZLbIWVFj3cwVxNUZdOg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jD3BcrqtkZePKnxYHwmwZYrukhL924KK+XvIkgGVxtLZF3G8EhI0HztRHNkLk/RrZ
+	 xZ3icwfEYP+6rywLt1s/PR6mPSxnyDflICEeZSxJBxj5TYePRraT3XHf0MFJQuRqkh
+	 JxMr0DKypTdkQDdKbx83cWecgDQt8BKyVL11TM/532eR31nMoxm0uZgdx+t/WXyJK3
+	 0hVRs8djr+qJgAUGI7SgH8Ni7jAFnlCY3oW2W0QPu15rvN90eQU1+Urrluh2iy5DA2
+	 GnkHhgnocol6ztqH+u39zUu0PykXgUXPI7PIcjYad+ztfV9y8rO/x206FGCMBbLPrP
+	 bjd9t8CVd1NFg==
+Date: Tue, 4 Nov 2025 17:38:04 +0000
+From: Simon Horman <horms@kernel.org>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Miklos Szeredi <miklos@szeredi.hu>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Alexander Aring <alex.aring@gmail.com>,
+	Trond Myklebust <trondmy@kernel.org>,
+	Anna Schumaker <anna@kernel.org>, Steve French <sfrench@samba.org>,
+	Paulo Alcantara <pc@manguebit.org>,
+	Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+	Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
+	Bharath SM <bharathsm@microsoft.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	David Howells <dhowells@redhat.com>, Tyler Hicks <code@tyhicks.com>,
+	NeilBrown <neil@brown.name>,
+	Olga Kornievskaia <okorniev@redhat.com>,
+	Dai Ngo <Dai.Ngo@oracle.com>, Amir Goldstein <amir73il@gmail.com>,
+	Namjae Jeon <linkinjeon@kernel.org>,
+	Steve French <smfrench@gmail.com>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Carlos Maiolino <cem@kernel.org>,
+	Kuniyuki Iwashima <kuniyu@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+	samba-technical@lists.samba.org, netfs@lists.linux.dev,
+	ecryptfs@vger.kernel.org, linux-unionfs@vger.kernel.org,
+	linux-xfs@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH v4 10/17] vfs: make vfs_create break delegations on
+ parent directory
+Message-ID: <aQo5_P5XCsSZhw7N@horms.kernel.org>
+References: <20251103-dir-deleg-ro-v4-0-961b67adee89@kernel.org>
+ <20251103-dir-deleg-ro-v4-10-961b67adee89@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <CAHk-=wjRA8G9eOPWa_Njz4NAk3gZNvdt0WAHZfn3iXfcVsmpcA@mail.gmail.com>
- <20251031174220.43458-1-mjguzik@gmail.com> <20251031174220.43458-2-mjguzik@gmail.com>
- <CAHk-=wimh_3jM9Xe8Zx0rpuf8CPDu6DkRCGb44azk0Sz5yqSnw@mail.gmail.com>
-Message-ID: <aQozS2ZHX4x1APvb@google.com>
-Subject: Re: [PATCH 1/3] x86: fix access_ok() and valid_user_address() using
- wrong USER_PTR_MAX in modules
-From: Sean Christopherson <seanjc@google.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mateusz Guzik <mjguzik@gmail.com>, "the arch/x86 maintainers" <x86@kernel.org>, brauner@kernel.org, 
-	viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, tglx@linutronix.de, pfalcato@suse.de
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251103-dir-deleg-ro-v4-10-961b67adee89@kernel.org>
 
-On Tue, Nov 04, 2025, Linus Torvalds wrote:
-> [ Adding x86 maintainers - I had added Thomas earlier, but I guess at
-> least Borislav might actually care and have input too ]
+On Mon, Nov 03, 2025 at 07:52:38AM -0500, Jeff Layton wrote:
+> In order to add directory delegation support, we need to break
+> delegations on the parent whenever there is going to be a change in the
+> directory.
 > 
-> So I think the patch I will commit would look like the attached: it's
-> similar to your suggestion, but without the renaming of USER_PTR_MAX,
-> and with just a
+> Add a delegated_inode parameter to struct createdata. Most callers just
+> leave that as a NULL pointer, but do_mknodat() is changed to wait for a
+> delegation break if there is one.
 > 
->   #ifdef MODULE
->     #define runtime_const_ptr(sym) (sym)
->   #else
->     #include <asm/runtime-const.h>
->   #endif
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>  fs/namei.c         | 26 +++++++++++++++++---------
+>  include/linux/fs.h |  2 +-
+>  2 files changed, 18 insertions(+), 10 deletions(-)
 > 
-> in the x86 asm/uaccess_64.h header file and an added '#error' for the
-> MODULE case in the actual x86 runtime-const.h file.
-> 
-> As it is, this bug really only affects modular code that uses
+> diff --git a/fs/namei.c b/fs/namei.c
 
-What exactly is the bug?  Is the problem that module usage of runtime_const_ptr()
-doesn't get patched on module load, and so module code ends up using the
-0x0123456789abcdef placeholder?
+...
 
-> access_ok() and __{get,put}_user(), which is a really broken pattern
-> to begin with these days, and is happily fairly rare.
+> @@ -4359,6 +4362,8 @@ static int may_mknod(umode_t mode)
+>  static int do_mknodat(int dfd, struct filename *name, umode_t mode,
+>  		unsigned int dev)
+>  {
+> +	struct delegated_inode delegated_inode = { };
+> +	struct createdata cargs = { };
+>  	struct mnt_idmap *idmap;
+>  	struct dentry *dentry;
+>  	struct path path;
+> @@ -4383,18 +4388,16 @@ static int do_mknodat(int dfd, struct filename *name, umode_t mode,
+>  	switch (mode & S_IFMT) {
+>  		case 0:
+>  		case S_IFREG:
+> -		{
+> -			struct createdata args = { .idmap = idmap,
+> -						   .dir = path.dentry->d_inode,
+> -						   .dentry = dentry,
+> -						   .mode = mode,
+> -						   .excl = true };
+> -
+> -			error = vfs_create(&args);
+> +			cargs.idmap = idmap,
+> +			cargs.dir = path.dentry->d_inode,
+> +			cargs.dentry = dentry,
+> +			cargs.delegated_inode = &delegated_inode;
+> +			cargs.mode = mode,
+> +			cargs.excl = true,
 
-Just to make sure I understand the impact, doesn't this also affect all flavors
-of "nocheck" uaccesses?  E.g. access_ok() + __copy_{from,to}_user()?
+Hi Jeff,
 
-> That is an old optimization that is no longer an optimization at all
-> (since a plain "get_user()" is actually *faster* than the access_ok()
-> and __get_user() these days), and I wish we didn't have any such code
-> any more, but there are a handful of things that have never been
-> converted to the modern world order.
+I don't think it makes any difference to the generated code.
+But I think it would be more intuitive to use ';' rather than ','
+at the end of the lines immediately above.
 
-Looking at the assembly, I assume get_user() is faster than __get_user() due to
-the LFENCE in ASM_BARRIER_NOSPEC?
+> +			error = vfs_create(&cargs);
+>  			if (!error)
+>  				security_path_post_mknod(idmap, dentry);
+>  			break;
+> -		}
+>  		case S_IFCHR: case S_IFBLK:
+>  			error = vfs_mknod(idmap, path.dentry->d_inode,
+>  					  dentry, mode, new_decode_dev(dev));
 
-> So it is what it is, and we have to deal with it.
-
-Assuming __{get,put}_user() are slower on x86 in all scenarios, would it make
-sense to kill them off entirely for x86?  E.g. could we reroute them to the
-"checked" variants?
-
-For KVM x86, I'm more than happy to switch all two __{get,put}_user() calls to
-the checked variants if they're faster.
-
-> Also, even that kind of rare and broken code actually *works*,
-> although the whole "non-canonical reads can speculatively leak
-> possibly kernel data" does end up being an issue (largely theoretical
-> because it's now limited to just a couple of odd-ball code sequences)
-> 
-> And yes, it works just because I picked a runtime-const value that is
-> non-canonical. I'd say it's "by luck", but I did pick that value
-> partly *because* it's non-canonical, so it's not _entirely_ just luck.
-> But mostly.
-> 
-> That was all a long explanation for why I am planning on committing
-> this as a real fix, even if the actual impact of it is largely
-> theoretical.
-> 
-> Borislav - comments? Generating this patch took longer than it should
-> have, but I had travel and jetlag and a flight that I expected to have
-> wifi but didn't...  And properly it should probably be committed by
-> x86 maintainers rather than me, but I did mess this code up in the
-> first place.
-> 
-> The patch *looks* very straightforward, but since I'm on the road I am
-> doing this on my laptop and haven't actually tested it yet (well, I've
-> built this, and booted it, but nothing past that).
-
-FWIW, AFAICT it doesn't cause any regressions for KVM's usage of access_ok().
+...
 
