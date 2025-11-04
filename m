@@ -1,124 +1,153 @@
-Return-Path: <linux-fsdevel+bounces-66893-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66894-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DD39C3004E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 04 Nov 2025 09:46:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77FECC300C3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 04 Nov 2025 09:50:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2FF234FA013
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Nov 2025 08:43:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 631C71885718
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Nov 2025 08:45:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E23D314B93;
-	Tue,  4 Nov 2025 08:39:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A645A32038E;
+	Tue,  4 Nov 2025 08:42:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="VcRSaxea";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Ad15dwk8";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="fztRe1yP";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="zc4ByymI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 524C9314B71
-	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Nov 2025 08:39:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 801A5312829
+	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Nov 2025 08:42:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762245557; cv=none; b=WWXHygbaEgwPnmOMvcOz2kYQjNRL6HSn1aI3xBOx0hs3HVY5nqZSiD/dFkteAPl9PzEwhEm+2HzDESWZbvvuXSGciIPlV3EUmO9UIuj+Vrh+j8N3hp6x9l2gaXl7z3ygcjRyeeZGn1NjM6KW4V5/RuayG8CFnTfXXjDVitkJENc=
+	t=1762245737; cv=none; b=NCXrtqU8iEugH0WwdJhgyb8jWoNDrwa/fC87emt9xROmqJfDY87UO5ZAS994NGRMXONJL8S6MnC9kd++ofM4cIczFoy/5mId5wfRCYDyhWtBTvCWvVCgNkuT4JNm1/e5hxdWBIZpG+K1i9TzpOcR0csFD09DH0mT/6zhE/P80Eg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762245557; c=relaxed/simple;
-	bh=oH6/sifjQPHWDZWu1ZZahi/B7nF3syuHIhF3RTu61Ts=;
+	s=arc-20240116; t=1762245737; c=relaxed/simple;
+	bh=G/sTx7O0SDqHyHzcyzubTIk9364CWkYN0uaq147S9Ng=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lTX3a/BFd7fwWEFMGVOwL6a8vgRTrK9smFKia9Pm+z/t1W9rGkoc8rW4JLPhE5KbXobLrxmuudB4e6YMsclWWgz6xXIs9zsFXmvFGaGzOrDUcZdEL34db07ptuU5iLHYyu25PZwnjqd/GryPRwrnpIkrcnlPh2AKKzAhwm7GRxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; arc=none smtp.client-ip=195.135.223.130
+	 Content-Type:Content-Disposition:In-Reply-To; b=JEBEyBe5jYjEcYwsBpxkkjBCPDSxbUegkxCxVDExg7nIWnhlTFNapm8C73QdGS7YMFy/9JqnBIBFt27nL9d+c3x1YxCqvjhMFZY+n0Ec9z6N+3bb4idT39jpTp63G0fzSwO0I7x+7TjXVdST7xSqUfQblofmhdVsy+hVxNzGsfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=VcRSaxea; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Ad15dwk8; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=fztRe1yP; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=zc4ByymI; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id A1619211A6;
-	Tue,  4 Nov 2025 08:39:14 +0000 (UTC)
-Authentication-Results: smtp-out1.suse.de;
-	none
+	by smtp-out2.suse.de (Postfix) with ESMTPS id D75EC1F38F;
+	Tue,  4 Nov 2025 08:42:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762245728; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=P0mbBV7EKR7XIpa7raR6m3+hjbsPNugFaSjhyaxM2Wo=;
+	b=VcRSaxea/tzynfocC3UtxW6aSdOT8fhPpZG5bBqMrttoPRFSCaiQ/AZmKTWF8bblHnOwKA
+	EtS7+fKozS2QQs9RIVEGoX2LN/5db1kzb/IdfaRv33fcnvZJd71yVq5jGf5j3wP/MfDcol
+	SuNCEydQz+rXc5ooNY1HSi4duJl8F40=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762245728;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=P0mbBV7EKR7XIpa7raR6m3+hjbsPNugFaSjhyaxM2Wo=;
+	b=Ad15dwk8NTOqviBGFUEBeplwIwczVHvN765ZGZ87KWh+rELcXzs+7EzMTb6WjG9vIjKRP5
+	Rz5jceKPP6rwssCQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=fztRe1yP;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=zc4ByymI
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762245727; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=P0mbBV7EKR7XIpa7raR6m3+hjbsPNugFaSjhyaxM2Wo=;
+	b=fztRe1yPbvyv2qQjbMNA45urMtK+7I6P8CF5VkGq4uep2erL0TvJy3hBkriiuUKz2CEBup
+	k7sp2uo3dyHeLtNZMn1AVzcwZezxiH/RACSKjokEVm/iQIZI+RLUeBrv7labwO9GJnhZAR
+	vDbN4n51Zxhov/iB0po1cZUY/iZ5+TI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762245727;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=P0mbBV7EKR7XIpa7raR6m3+hjbsPNugFaSjhyaxM2Wo=;
+	b=zc4ByymItlLj/GVz7XTvyj+tm1kbS2IGZO3Lv/P+16FHLkiNSkHSi4Sl61ad9Xi2KzMu1U
+	joMSH1dDL2AhOUBA==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 963FA139A9;
-	Tue,  4 Nov 2025 08:39:14 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CD053139A9;
+	Tue,  4 Nov 2025 08:42:07 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id xnqtJLK7CWkLZgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 04 Nov 2025 08:39:14 +0000
+	id bRAFMl+8CWnUaAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 04 Nov 2025 08:42:07 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 44C02A2812; Tue,  4 Nov 2025 09:39:14 +0100 (CET)
-Date: Tue, 4 Nov 2025 09:39:14 +0100
+	id 86738A2812; Tue,  4 Nov 2025 09:42:07 +0100 (CET)
+Date: Tue, 4 Nov 2025 09:42:07 +0100
 From: Jan Kara <jack@suse.cz>
-To: Qu Wenruo <wqu@suse.com>
-Cc: Christoph Hellwig <hch@infradead.org>, linux-btrfs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
-	Askar Safin <safinaskar@gmail.com>
-Subject: Re: [PATCH RFC 2/2] fs: fully sync all fses even for an emergency
- sync
-Message-ID: <l4nrvt3dxy3wstryugdevnjub6g6e4qzsrpnqpdb2xo5qidxh2@yxcosrvhx6rh>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Qu Wenruo <wqu@suse.com>, linux-btrfs@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz
+Subject: Re: [PATCH RFC 1/2] fs: do not pass a parameter for
+ sync_inodes_one_sb()
+Message-ID: <i5ju5ohsvi54bsgfeuoy22tniln2scxwwl77iuluho5ohqn527@ycwgvf4yclwe>
 References: <cover.1762142636.git.wqu@suse.com>
- <7b7fd40c5fe440b633b6c0c741d96ce93eb5a89a.1762142636.git.wqu@suse.com>
- <aQiYZqX5aGn-FW56@infradead.org>
- <cbf7af56-c39a-4f42-b76d-0d1b3fecba9f@suse.com>
- <urm6i5idr36jcs7oby33mngrqaa6eu6jky3kubkr3fyhlt6lnd@wqrerkdn3vma>
+ <8079af1c4798cb36887022a8c51547a727c353cf.1762142636.git.wqu@suse.com>
+ <aQiXObERFgW3aVcE@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <urm6i5idr36jcs7oby33mngrqaa6eu6jky3kubkr3fyhlt6lnd@wqrerkdn3vma>
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Rspamd-Queue-Id: A1619211A6
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -4.00
+In-Reply-To: <aQiXObERFgW3aVcE@infradead.org>
 X-Spam-Level: 
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	REPLY(-4.00)[]
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: D75EC1F38F
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Spam-Score: -4.01
 
-On Tue 04-11-25 09:28:27, Jan Kara wrote:
-> On Tue 04-11-25 07:25:06, Qu Wenruo wrote:
-> > 
-> > 
-> > 在 2025/11/3 22:26, Christoph Hellwig 写道:
-> > > The emergency sync being non-blocking goes back to day 1.  I think the
-> > > idea behind it is to not lock up a already messed up system by
-> > > blocking forever, even if it is in workqueue.  Changing this feels
-> > > a bit risky to me.
-> > 
-> > Considering everything is already done in task context (baked by the global
-> > per-cpu workqueue), it at least won't block anything else.
-> > 
-> > And I'd say if the fs is already screwed up and hanging, the
-> > sync_inodes_one_sb() call are more likely to hang than the final sync_fs()
-> > call.
+On Mon 03-11-25 03:51:21, Christoph Hellwig wrote:
+> On Mon, Nov 03, 2025 at 02:37:28PM +1030, Qu Wenruo wrote:
+> > The function sync_inodes_one_sb() will always wait for the writeback,
+> > and ignore the optional parameter.
 > 
-> Well, but notice that sync_inodes_one_sb() is always called with wait == 0
-> from do_sync_work() exactly to skip inodes already marked as under
-> writeback, locked pages or pages under writeback as waiting for these has
-> high chances of locking up. Suddently calling sync_fs_one_sb() with wait ==
-> 1 can change things. That being said for ext4 the chances of locking up
-> ext4_sync_fs() with wait == 1 after sync_fs_one_sb() managed to do
-> non-trivial work are fairly minimal so I don't have strong objections
-> myself.
+> Indeed.
 
-Ah, ok, now I've checked the code and read patch 1 in this thread. Indeed
-sync_inodes_one_sb() ignores the wait parameter and waits for everything.
-Given we've been running like this for over 10 years and nobody complained
-I agree calling sync_fs_one_sb() with wait == 1 is worth trying if it makes
-life better for btrfs.
+Yeah, apparently I've broken non-blocking nature of emergency sync without
+nobody noticing for 13 years. Which probably means the non-blocking logic
+isn't that important ;)...
 
 								Honza
 -- 
