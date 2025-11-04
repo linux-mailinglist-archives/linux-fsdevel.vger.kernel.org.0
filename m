@@ -1,140 +1,124 @@
-Return-Path: <linux-fsdevel+bounces-66890-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66891-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11D3AC2FB93
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 04 Nov 2025 08:53:15 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8423C2FC10
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 04 Nov 2025 09:02:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 84B0B34CE9B
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Nov 2025 07:53:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4681B4E71CB
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Nov 2025 08:02:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A33123101D0;
-	Tue,  4 Nov 2025 07:53:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22CFA30506E;
+	Tue,  4 Nov 2025 08:02:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j4yROKUV"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Jgwl2Vop";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="t8JDRw+f"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E061430AAB8;
-	Tue,  4 Nov 2025 07:53:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD9B82C181;
+	Tue,  4 Nov 2025 08:02:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762242784; cv=none; b=HpIv9uEBH4A1S3RR+xU4gP5mtJxKU1kAOLEvKMknty6u2NBuywqp6uWAUleGeKUa7KEGMAq3T6TvbqhOGNqqTnto1rNaAZ6lYPO8+ijNCb9h6lgRfe3dGK2tXZnDMGTGtBmEfBq8/f9/EQfGgSo95cacu01WeWQ1ZcjhAlO1MAk=
+	t=1762243327; cv=none; b=KGFnH2l9do9oWlHUThIPfdZGOyZVO2WvRGI+Myr/0hQbYShgGyirQqKcQsrt0CYrugCbwl8FXJc6a9Owa6AV61FDehYFPH6TtcQfJusFtNBvzcSqVlZ4yV5PkM+gdFTS44hD3/bolxaA1jCe39jNDbAbG5ufxt4eqMfRk6oYduY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762242784; c=relaxed/simple;
-	bh=lGIbceyVZgdKoxAlgrENOyuI7iqdDhBBFcc98C3lKn0=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=rqDe8JC8vWeexLCQcKgdzxPhgMKA1epB0ndkEktCccV8f0JCpZXq7EZiJd0BSWJpjvKZr2939WZQN65bETTpkn/rHe8lIh8C8J5GuIOOGy5SJr6rHHnnxDnWk5Jv1LQdSmeI/1gjeuV97huhReh/X5BS1bPQZqASI69VO1ZWzz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j4yROKUV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E8A2C4CEF7;
-	Tue,  4 Nov 2025 07:52:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762242780;
-	bh=lGIbceyVZgdKoxAlgrENOyuI7iqdDhBBFcc98C3lKn0=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=j4yROKUVgRxS9OZJC90/SHA8XCPDVvwVHDTgceh+mCs64FFENtqjNn3VC2cS3YHRS
-	 Vh89i49TvVRT0q9eqdMJYy6UnQ4flTEkFee+vNQ+LDBtPs6JzXOg9rqYQ1l4R+DhcE
-	 OKQGVXbTY9tU25yQyQP/GPDQop+9ZGgyxC6t3ereLkJQbDn6Ob5K1plMoN0NTftZxP
-	 H0zc0vdg/o5PK4tKAehZQ7H8UtwncmtwY6oH+6QVwjaU8ikukGQIRaxvlWW+ISd3QU
-	 to0NJLl+MiSLIdyT3IYNIGJSnGwpG80zYDO7P7ohAcYwUyIFI+7D4Iv2WyVwNsWwgM
-	 89d6ggsAvvugA==
-Date: Tue, 4 Nov 2025 00:52:53 -0700 (MST)
-From: Paul Walmsley <pjw@kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-cc: Paul Walmsley <pjw@kernel.org>, Deepak Gupta <debug@rivosinc.com>, 
-    Andy Chiu <andybnac@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, 
-    Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-    Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-    "H. Peter Anvin" <hpa@zytor.com>, 
-    Andrew Morton <akpm@linux-foundation.org>, 
-    "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-    Vlastimil Babka <vbabka@suse.cz>, 
-    Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-    Paul Walmsley <paul.walmsley@sifive.com>, 
-    Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-    Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
-    Krzysztof Kozlowski <krzk+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-    Christian Brauner <brauner@kernel.org>, 
-    Peter Zijlstra <peterz@infradead.org>, Oleg Nesterov <oleg@redhat.com>, 
-    Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, 
-    Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, 
-    Jann Horn <jannh@google.com>, Conor Dooley <conor+dt@kernel.org>, 
-    Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-    Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-    =?ISO-8859-15?Q?Bj=F6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-    Andreas Hindborg <a.hindborg@kernel.org>, 
-    Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-    Benno Lossin <lossin@kernel.org>, linux-kernel@vger.kernel.org, 
-    linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-    linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
-    linux-arch@vger.kernel.org, linux-doc@vger.kernel.org, 
-    linux-kselftest@vger.kernel.org, alistair.francis@wdc.com, 
-    richard.henderson@linaro.org, jim.shu@sifive.com, kito.cheng@sifive.com, 
-    charlie@rivosinc.com, atishp@rivosinc.com, evan@rivosinc.com, 
-    cleger@rivosinc.com, alexghiti@rivosinc.com, samitolvanen@google.com, 
-    broonie@kernel.org, rick.p.edgecombe@intel.com, 
-    rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v22 17/28] riscv/signal: save and restore of shadow stack
- for signal
-In-Reply-To: <d442965b-8716-4f89-be88-bc62459af712@infradead.org>
-Message-ID: <febe1a8a-a68b-1af8-a9d5-1b5f510ecab3@kernel.org>
-References: <20251023-v5_user_cfi_series-v22-0-1935270f7636@rivosinc.com> <20251023-v5_user_cfi_series-v22-17-1935270f7636@rivosinc.com> <a8f469b8-5750-dfec-2390-09bad4515f99@kernel.org> <d442965b-8716-4f89-be88-bc62459af712@infradead.org>
+	s=arc-20240116; t=1762243327; c=relaxed/simple;
+	bh=vaSI9y3TVSYBJFCalfQ4W0TlJkXSf69LRSPhgBhvC3U=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=HOhhN6Z3TVKxvhkHfZoo6YXHC1pYbU3POb5pGKli9CRkh2PW3BdTvQyO/Uzzj8CtO0glJ0rNBHtl19S9VNRfkC3teolaMhxLuDsrzp4AP1OqWRrlJtBBuiw39vRT++8Mrt+6SGDOAodgA4216NEl730RHm9D0zbOO8eZZWCzFLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Jgwl2Vop; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=t8JDRw+f; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1762243320;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WxHg295CBRsqPu2lBIqw5Sn0fGrCLg/ElUlxqApeBLM=;
+	b=Jgwl2VopvLhsHH+YYqRsae6+FKzyHIS0wgTmsM6zvXdnRYVO1Mp+3CjSgP12sRf79JdkIC
+	hx50TnrXAEfEN5ICnRweGj/sSAz5nUPqUFikzhoLJZNQyXaN5ymoCj4E2L3wBjx4OeG4vN
+	lcnERol2ohNQ5nXcU3OkM3UJOm2NJRST4BTxh1MoYrChOMqgAT9DLUj9eFzBzflyLWH87K
+	qqDczZQWcFWGe/iPVZhDUA34+WNIo7S9c1kgflcSpKmM0UaRdPJMv7RLP9TTDCTxs4B7XJ
+	XLq2JS1KXSF/YOo8ZUxjIZTH8AN+3Axixi4ToMHu6WXnTGvIMsd2QaBZquI9Fg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1762243320;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WxHg295CBRsqPu2lBIqw5Sn0fGrCLg/ElUlxqApeBLM=;
+	b=t8JDRw+fUTFLMI+7oIYVrsnas628xW2/vuKmoPeHnnr/Dd9LlRlJTGnA4BulGKiXBQPkro
+	pOJgImdDLmiQK4AQ==
+To: Christophe Leroy <christophe.leroy@csgroup.eu>, Alexander Viro
+ <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan
+ Kara <jack@suse.cz>, Ingo Molnar <mingo@redhat.com>, Peter Zijlstra
+ <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>, Davidlohr
+ Bueso <dave@stgolabs.net>, Andre Almeida <andrealmeid@igalia.com>, Andrew
+ Morton <akpm@linux-foundation.org>, Eric Dumazet <edumazet@google.com>,
+ Kuniyuki Iwashima <kuniyu@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ Willem de Bruijn <willemb@google.com>, "David S. Miller"
+ <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Simon Horman
+ <horms@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Dave Hansen
+ <dave.hansen@linux.intel.com>, Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>
+Cc: linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH v3 03/10] uaccess: Add
+ masked_user_{read/write}_access_begin
+In-Reply-To: <01d89f24-8fca-4fc3-9f48-79e28b9663db@csgroup.eu>
+References: <cover.1760529207.git.christophe.leroy@csgroup.eu>
+ <a4ef0a8e1659805c60fafc8d3b073ecd08117241.1760529207.git.christophe.leroy@csgroup.eu>
+ <87bjlyyiii.ffs@tglx> <01d89f24-8fca-4fc3-9f48-79e28b9663db@csgroup.eu>
+Date: Tue, 04 Nov 2025 09:01:58 +0100
+Message-ID: <875xbqw7ih.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi Randy,
+On Tue, Nov 04 2025 at 07:39, Christophe Leroy wrote:
+> Le 22/10/2025 =C3=A0 19:05, Thomas Gleixner a =C3=A9crit=C2=A0:
+>> On Fri, Oct 17 2025 at 12:20, Christophe Leroy wrote:
+>>> Allthough masked_user_access_begin() is to only be used when reading
+>>> data from user at the moment, introduce masked_user_read_access_begin()
+>>> and masked_user_write_access_begin() in order to match
+>>> user_read_access_begin() and user_write_access_begin().
+>>>
+>>> That means masked_user_read_access_begin() is used when user memory is
+>>> exclusively read during the window, masked_user_write_access_begin()
+>>> is used when user memory is exclusively writen during the window,
+>>> masked_user_access_begin() remains and is used when both reads and
+>>> writes are performed during the open window. Each of them is expected
+>>> to be terminated by the matching user_read_access_end(),
+>>> user_write_access_end() and user_access_end().
+>>>
+>>> Have them default to masked_user_access_begin() when they are
+>>> not defined.
+>>>
+>>> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+>>=20
+>> Can we please coordinate on that vs. the scoped_access() work as this
+>> nicely collides all over the place?
+>
+> Sure, I will rebase on top of your series.
+>
+> Once it is rebased, could you take the non powerpc patches in your tree ?
 
-On Fri, 31 Oct 2025, Randy Dunlap wrote:
+Sure. The current lot is at:
 
-> 
-> On 10/31/25 1:07 PM, Paul Walmsley wrote:
-> > On Thu, 23 Oct 2025, Deepak Gupta via B4 Relay wrote:
-> > 
-> >> Save shadow stack pointer in sigcontext structure while delivering signal.
-> >> Restore shadow stack pointer from sigcontext on sigreturn.
-> 
-> > This patch causes some 'checkpatch.pl --strict' messages:
-> > 
-> > CHECK: Comparison to NULL could be written "!saved_shstk_ptr"
-> > #271: FILE: arch/riscv/kernel/usercfi.c:186:
-> > +	if (saved_shstk_ptr == NULL)
-> > 
-> > CHECK: Lines should not end with a '('
-> > #300: FILE: arch/riscv/kernel/usercfi.c:215:
-> > +		pr_info_ratelimited(
-> > 
-> > I've fixed them up here in the event that v22 goes in, but please do the 
-> > same on your side in case a new version is needed.
-> 
-> Is checkpatch.pl --strict the norm for arch/riscv/ ?
+  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git scoped-uaccess
 
-I run it on every patch I review.  I usually implement the formatting 
-recommendations, in the interest of keeping the codebase formatted in a 
-standard way across submitters.
+Thanks,
 
-> If there are enough arch/riscv/-specific patch expectations,
-> maybe they could be documented in Documentation/process/maintainer-riscv.rst
-> (a new file).
-
-It never occurred to me as being arch/riscv specific, in the sense that, 
-if --strict wasn't more broadly useful across the entire kernel tree, then 
-we should just remove it from checkpatch.pl entirely.  In other words, 
-probably everyone should use it.  There are false positive warnings, of 
-course, including at least one with this patch set; but then again, there 
-are regular false positive warnings with non-strict checkpatch (also with 
-this patch set).
-
-In any case, thanks for the suggestion, and will consider.
-
-
-- Paul
-
+        tglx
 
