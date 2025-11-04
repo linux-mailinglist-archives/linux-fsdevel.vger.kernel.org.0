@@ -1,107 +1,160 @@
-Return-Path: <linux-fsdevel+bounces-66973-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66974-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04485C32481
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 04 Nov 2025 18:18:37 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BA11C32475
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 04 Nov 2025 18:18:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C83318C4335
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Nov 2025 17:12:56 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D14E54F9BEC
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Nov 2025 17:12:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84F8033B958;
-	Tue,  4 Nov 2025 17:08:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2371F338F5E;
+	Tue,  4 Nov 2025 17:09:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Idih7x2W"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DKI1GZDP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9E48299A94;
-	Tue,  4 Nov 2025 17:08:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AF9F23F429
+	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Nov 2025 17:09:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762276126; cv=none; b=vDqJW4pMCs9tmDp1iEi7YtlT4/jMxrwKWdgiT5L+euuntfcOxIwmlmdy8J8hKUVBQsPl/NmdGuB+WD174D0SP/K6r8Lqu9opA4hpP0v4hQv+JxmgHtzbYF9k26QO4Fx8JRI9WHby62HUX0GCZYaee+VGoelciDXNmDzCwW2pNRQ=
+	t=1762276175; cv=none; b=H4ujj4p2kdJytR2zP4tduzz/vWGPp++lT3N/Gelgtl9V3PbxORSIEvfXdracFWAvMsXhaRpiNiS3yUa+8HZpprE6PaQmNkLkdrHi755m3KwUE945IsVu7LSYnKiFCexxG7GCvHPHHZ+u5GaWY1ASgB3t82HX9MQ5GsLS1CQfpiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762276126; c=relaxed/simple;
-	bh=C2E9h8PCXnsVBUe7O2T0vkR1AVsYACov1HR3DrGwEa0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C0srovq2iLDGZVKJIrICrvdE4/1BAgLPQT7kXvibNuoRzu9CLvk7C4H4rYxl34fFx9o8hOFrYkJE2DsvgqM4yGRzbvgUcucSCd5SMfZzyG1WPZ6Mv+OUXXg76u0SJQoVkE0hskpKl8HXp1V7DC5V8RAkXPk0hyhozkYNC+qKCgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Idih7x2W; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B49CC4CEF7;
-	Tue,  4 Nov 2025 17:08:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762276126;
-	bh=C2E9h8PCXnsVBUe7O2T0vkR1AVsYACov1HR3DrGwEa0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Idih7x2W/vSrlx0/3FpHsI3N1OPjhFD1a6097d68Q+eW5TNt/WhV33yrfwXaNXpKP
-	 qA0P96vXqi+eOQJvOM5kdjpfiyJfx2eVSoEmjrb6pQY8ijgSjnziGULxWALKRh+oKj
-	 nI+cUcMQihoAOPrLQXF1JWd3YomyKl0S+UF0vmns2EUPpdlu9KViVQT8t2fzv49Dzo
-	 HPgzy4TnLUysDJ4EKC71L47OFDE62TMNVqb2WxR6kAXTt73cakObX5o23OBRXGjYr4
-	 ItZ/Nze1RtiEW9w0zMecTb2uhfSQZYeG+pRV6mjVgiWiqyvc78uRY9x5jVW/GYDakL
-	 kv/ZxYUT7DieA==
-Date: Tue, 4 Nov 2025 09:08:45 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>, linux-btrfs@vger.kernel.org,
-	linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH RFC 8/8] xfs: use super write guard in xfs_file_ioctl()
-Message-ID: <20251104170845.GK196370@frogsfrogsfrogs>
-References: <20251104-work-guards-v1-0-5108ac78a171@kernel.org>
- <20251104-work-guards-v1-8-5108ac78a171@kernel.org>
+	s=arc-20240116; t=1762276175; c=relaxed/simple;
+	bh=fLYNppll6t3kLWAUaRsq8n6hnetj7Sk9RdC7VbI1fIQ=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=GdxfOQ3TRvz9JamNe6YfRZiAmmhH/xCg86zQiDBPAUXhH0k5jBSHTcl0PCI0135OJTE9fJP6/jq2wsGE+787pg4aye6Yhc8zaxfYUYiNaheUYePfelnN02GbYeSYE4r1EU4m3ds5TDdRckCiuBauTFOZUFwXo/JvNUE69h/gqY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DKI1GZDP; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2956a694b47so37505495ad.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Nov 2025 09:09:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762276173; x=1762880973; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ESsFb4FWracpR2TzDvHPqwAo241JJ5KRosL78pKPvYk=;
+        b=DKI1GZDPQpbxJw/KCBeQOHoRdMG/0Lc51DRCVJWmC07OQKU1HalByNewE+bf0UgAaX
+         TLl9rQElzKjA2/DdspFbiZVivdMZICorCUOCW8quOJhsUkEa7mh79HLK27TDk42qaxI8
+         e60BVi4Faw1PwiGoWuqzVpsWzI52mThfRTPxY31lvV3z1uQvIeakPPZOhgqInftM6tpU
+         X1m4kXNQ/yypZgLTGMz5nPu3NeUK+Q6psW5BusFACuDQ012z5OfAVOGbsw/DQNmT0jMm
+         l/JRuCyzg8r6EtzV5ngeQurpNa3xg3l54joJtouaxzAw+KErxv2EPWZI1zH7PHZ5gtnv
+         kz4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762276173; x=1762880973;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ESsFb4FWracpR2TzDvHPqwAo241JJ5KRosL78pKPvYk=;
+        b=IevmOQf8noDDimSiNb5UL8ssJNvSnLjvrzO0aVRYPHs3N2APevE8V1FfdAYghp4AmM
+         O85SdaUm9q7RGxDwkk189JpzaaaS5oth3zn8VxjXYhuAlOH/g7KVHzhRa7YFILxNDkz1
+         yg+Mg2+9KHsMAJNakv24n+zNCHZNj2W8EUqFZExlUXMhFjfu8HzhL0Jdne1gIP3ny5bq
+         Qk1Novk7MLy+TTxbclWQOgMPMZEh/7HbfCXEVDrpPJxlM33rdGhu4ol2SYL9HZSmtzdc
+         YdwFy01npKFWNSd8/OjBShpGdw1IkkMvMA/mPKttnvFdO6ETKmDa3fzO37zYYX6JTFrR
+         hMvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWhrJuHSyuK5SAznyYCTjnn0E14DULcIvsuuGf2S7r2ZPUFikoRHu8UZ2k/MvpmYFYZD7tSGifJWzpPG0US@vger.kernel.org
+X-Gm-Message-State: AOJu0YwezVbX/aIXUp1GiY5EjffAqNqyDcqhiL4JXRfSlBpKvNrytR54
+	sa49jZ4IWOQmmgimCNsE+oT593Y0KjxevICAMJgB/tNhTrMgBxdd0V2OVVgXIbor9ay1BPBrnxl
+	kDNPh4A==
+X-Google-Smtp-Source: AGHT+IGQ0sGhS55n4NwGqrLp7I4ZqP5sQwM1HuZAUZBARPNaZyXx2vgsm8bxhh6NIaMledcxEB/xQt409L4=
+X-Received: from plbbd2.prod.google.com ([2002:a17:902:8302:b0:290:a6e2:2006])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:4b4b:b0:295:c2e7:7199
+ with SMTP id d9443c01a7336-2962ae4c0d3mr3828985ad.29.1762276173341; Tue, 04
+ Nov 2025 09:09:33 -0800 (PST)
+Date: Tue, 4 Nov 2025 09:09:31 -0800
+In-Reply-To: <CAHk-=wimh_3jM9Xe8Zx0rpuf8CPDu6DkRCGb44azk0Sz5yqSnw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251104-work-guards-v1-8-5108ac78a171@kernel.org>
+Mime-Version: 1.0
+References: <CAHk-=wjRA8G9eOPWa_Njz4NAk3gZNvdt0WAHZfn3iXfcVsmpcA@mail.gmail.com>
+ <20251031174220.43458-1-mjguzik@gmail.com> <20251031174220.43458-2-mjguzik@gmail.com>
+ <CAHk-=wimh_3jM9Xe8Zx0rpuf8CPDu6DkRCGb44azk0Sz5yqSnw@mail.gmail.com>
+Message-ID: <aQozS2ZHX4x1APvb@google.com>
+Subject: Re: [PATCH 1/3] x86: fix access_ok() and valid_user_address() using
+ wrong USER_PTR_MAX in modules
+From: Sean Christopherson <seanjc@google.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Mateusz Guzik <mjguzik@gmail.com>, "the arch/x86 maintainers" <x86@kernel.org>, brauner@kernel.org, 
+	viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, tglx@linutronix.de, pfalcato@suse.de
+Content-Type: text/plain; charset="us-ascii"
 
-On Tue, Nov 04, 2025 at 01:12:37PM +0100, Christian Brauner wrote:
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
-> ---
->  fs/xfs/xfs_ioctl.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
+On Tue, Nov 04, 2025, Linus Torvalds wrote:
+> [ Adding x86 maintainers - I had added Thomas earlier, but I guess at
+> least Borislav might actually care and have input too ]
 > 
-> diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
-> index a6bb7ee7a27a..f72e96f54cb5 100644
-> --- a/fs/xfs/xfs_ioctl.c
-> +++ b/fs/xfs/xfs_ioctl.c
-> @@ -1408,10 +1408,8 @@ xfs_file_ioctl(
->  
->  		trace_xfs_ioc_free_eofblocks(mp, &icw, _RET_IP_);
->  
-> -		sb_start_write(mp->m_super);
-> -		error = xfs_blockgc_free_space(mp, &icw);
-> -		sb_end_write(mp->m_super);
-> -		return error;
-> +		scoped_guard(super_write, mp->m_super)
-> +			return xfs_blockgc_free_space(mp, &icw);
-
-Can we go full on Java?
-
-#define with_sb_write(sb) scoped_guard(super_write, (sb))
-
-	with_sb_write(mp->m_super)
-		return xfs_blockgc_free_space(mp, &icw);
-
-I still keep seeing scoped_guard() as a function call, not the sort of
-thing that starts a new block.
-
-[If I missed the bikeshedding war over this, I'll let this go]
-
---D
-
->  	}
->  
->  	case XFS_IOC_EXCHANGE_RANGE:
+> So I think the patch I will commit would look like the attached: it's
+> similar to your suggestion, but without the renaming of USER_PTR_MAX,
+> and with just a
 > 
-> -- 
-> 2.47.3
+>   #ifdef MODULE
+>     #define runtime_const_ptr(sym) (sym)
+>   #else
+>     #include <asm/runtime-const.h>
+>   #endif
 > 
+> in the x86 asm/uaccess_64.h header file and an added '#error' for the
+> MODULE case in the actual x86 runtime-const.h file.
 > 
+> As it is, this bug really only affects modular code that uses
+
+What exactly is the bug?  Is the problem that module usage of runtime_const_ptr()
+doesn't get patched on module load, and so module code ends up using the
+0x0123456789abcdef placeholder?
+
+> access_ok() and __{get,put}_user(), which is a really broken pattern
+> to begin with these days, and is happily fairly rare.
+
+Just to make sure I understand the impact, doesn't this also affect all flavors
+of "nocheck" uaccesses?  E.g. access_ok() + __copy_{from,to}_user()?
+
+> That is an old optimization that is no longer an optimization at all
+> (since a plain "get_user()" is actually *faster* than the access_ok()
+> and __get_user() these days), and I wish we didn't have any such code
+> any more, but there are a handful of things that have never been
+> converted to the modern world order.
+
+Looking at the assembly, I assume get_user() is faster than __get_user() due to
+the LFENCE in ASM_BARRIER_NOSPEC?
+
+> So it is what it is, and we have to deal with it.
+
+Assuming __{get,put}_user() are slower on x86 in all scenarios, would it make
+sense to kill them off entirely for x86?  E.g. could we reroute them to the
+"checked" variants?
+
+For KVM x86, I'm more than happy to switch all two __{get,put}_user() calls to
+the checked variants if they're faster.
+
+> Also, even that kind of rare and broken code actually *works*,
+> although the whole "non-canonical reads can speculatively leak
+> possibly kernel data" does end up being an issue (largely theoretical
+> because it's now limited to just a couple of odd-ball code sequences)
+> 
+> And yes, it works just because I picked a runtime-const value that is
+> non-canonical. I'd say it's "by luck", but I did pick that value
+> partly *because* it's non-canonical, so it's not _entirely_ just luck.
+> But mostly.
+> 
+> That was all a long explanation for why I am planning on committing
+> this as a real fix, even if the actual impact of it is largely
+> theoretical.
+> 
+> Borislav - comments? Generating this patch took longer than it should
+> have, but I had travel and jetlag and a flight that I expected to have
+> wifi but didn't...  And properly it should probably be committed by
+> x86 maintainers rather than me, but I did mess this code up in the
+> first place.
+> 
+> The patch *looks* very straightforward, but since I'm on the road I am
+> doing this on my laptop and haven't actually tested it yet (well, I've
+> built this, and booted it, but nothing past that).
+
+FWIW, AFAICT it doesn't cause any regressions for KVM's usage of access_ok().
 
