@@ -1,52 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-66986-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66989-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98B49C32F3B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 04 Nov 2025 21:46:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A11EC32F5C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 04 Nov 2025 21:46:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1DF3B3448FF
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Nov 2025 20:46:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D75AF460BAC
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Nov 2025 20:46:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64AAD224AE0;
-	Tue,  4 Nov 2025 20:45:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FA112FC87E;
+	Tue,  4 Nov 2025 20:46:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="cOhpich8"
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="egsTa0mX"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EF0AF9EC;
-	Tue,  4 Nov 2025 20:45:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 219C32FB0AE;
+	Tue,  4 Nov 2025 20:46:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762289155; cv=none; b=mY/9h2f2g3mD2ht5QeEChN9oo92UMxuh7kMLuQ/w8Qzw8K50EavLNzTVYuY7YVlIxM4Ko/2yw+4QM0HGbPnwRQSdbcLyc7Tx1gdVEvRE5SxjbMojJd1ugAcLz87YFztnSJPnSgsfxMITSIXLQi4aVHIXZAd37vKmMMjAfbFCZyA=
+	t=1762289171; cv=none; b=gkMbTR5N4KnrpT8pOUMYYdUbwSCA1fdfquKo8zG8Rr0dpg1Yo+PXQlZeRlnInmD+qB5P/VWQsF444OfZTrklYpAVIhNOAn1XeWoD7kY2B2QbX5IR45EFZV6Zp05SBKT6mai7+Zr7MK17rTIvgIvIZrBHaQ+BUa8GJRcqbZ9eRJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762289155; c=relaxed/simple;
-	bh=pYRixYNMuRW0O2YOWth/EjjzkNSsUX3bM89uzM/pWaA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=D8yopOkSSL6hGk5VJKryJeC5aK7gcuc0xxqqAYeL6XGX1n2IFZoPJV5zxPSx9p89mKGpEpa4MTMUipnwA0Tj1hQ5xfJBagWeN/zK6R2LbDsaCSbDNLgjx+0Ce2H1Pyl0/8Sx/Hr/Xk7mE3khTONnYANCPL6zI7vYBQWBUWxjMEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=cOhpich8; arc=none smtp.client-ip=212.227.17.20
+	s=arc-20240116; t=1762289171; c=relaxed/simple;
+	bh=by/Li4iSHhM1rDG8xsYwZIwe5AwgL0fSad9FXoF5WKA=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=NWcgibaa8zvBWyNJsVJNgepuHifsyW8Rt/lJeSz2Uwt14M6Olhky+is8RbqkTB1widZilrWGPM3ck6BV3Q6K7/7fHlA9VBtmUkyBZm1X46jUna4o2NNz/U/RNyNRvU1lzsSX+q956RGFkcJvx95egxAmsHWeMJLekVGJyXQjSZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=egsTa0mX; arc=none smtp.client-ip=212.227.17.20
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1762289150; x=1762893950; i=w_armin@gmx.de;
-	bh=+Yy5FzeH3zqJeuG3lOxt450dmDHT1IVzQekEBlABkz4=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:
-	 MIME-Version:Content-Transfer-Encoding:cc:
+	s=s31663417; t=1762289152; x=1762893952; i=w_armin@gmx.de;
+	bh=SKEe6QBDEckw6UbPK40FILVB/LXShWLeNILNZ7Iwdpg=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:In-Reply-To:
+	 References:MIME-Version:Content-Transfer-Encoding:cc:
 	 content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=cOhpich8XYFbSZqxPnFgUxmDpTNLN9nNu//tIitA1eL+nk/AJBBNmi2NZqCSbp6T
-	 MhWAv/3CnhWs1oJLjYauR2UWwXPku8daK2nqrEir0+T/S+JgVZrGeqTuAPN8nrQSp
-	 GLYM1VsU6gY0sH+oACZeut6HGeTcbU6w8G8VS6hWUW7uUCEQZuVbTluzYSANkvBCE
-	 dCz1rfRUUkeR0kkEmOyFrf0QSNJt+rWgprGRnw3RsSKchqPhZ0y6IittowSMNXTll
-	 vsC3m2aT5EUSTb5qBmnZOksb5FAAw6muBUcKk8dotSqXUXz1zphJUusZWVcJRD2sr
-	 6V3P+w45+PESxkIwzQ==
+	b=egsTa0mXQyviLp7yGr9XaH7E0m7kVcbMOOGhbc1p2/ZlVJNYd6U5zFld1sV0L+sq
+	 kIBtfTezaY7t+bd0yAGJ236xn9vEyp51oHV32cPLh9nlHEVWillIoB/OkDjrfrPtR
+	 nbnzhYg3U/4U9haLz0GQo8nmmFclWL73vXaiJF/372qinWvwUnNGtJFEfgE0vxUFZ
+	 cTuxnb41o20yizK4vxa2hdzj1bFkDIcLdtRe9jN91QAarehgV8siWi9D7PW0RJ6JS
+	 1VUAmgoO9XgnD37tQWgIWgK1XPkHgwex4yO6JrngXV1Q0yOkdse7v9VjHJK8KohOK
+	 KX6OOJONICMxRzO73g==
 X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
 Received: from mx-amd-b650.fritz.box ([93.202.247.91]) by mail.gmx.net
  (mrgmx105 [212.227.17.168]) with ESMTPSA (Nemesis) id
- 1M2O6Y-1vEk0u0pHa-0036EF; Tue, 04 Nov 2025 21:45:50 +0100
+ 1My32F-1wAIQR1t8R-00y6eV; Tue, 04 Nov 2025 21:45:52 +0100
 From: Armin Wolf <W_Armin@gmx.de>
 To: viro@zeniv.linux.org.uk,
 	brauner@kernel.org,
@@ -56,10 +57,12 @@ Cc: jack@suse.cz,
 	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	platform-driver-x86@vger.kernel.org
-Subject: [PATCH 0/4] platform/x86: wmi: Prepare for future changes
-Date: Tue,  4 Nov 2025 21:45:36 +0100
-Message-Id: <20251104204540.13931-1-W_Armin@gmx.de>
+Subject: [PATCH 1/4] fs/nls: Fix utf16 to utf8 conversion
+Date: Tue,  4 Nov 2025 21:45:37 +0100
+Message-Id: <20251104204540.13931-2-W_Armin@gmx.de>
 X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20251104204540.13931-1-W_Armin@gmx.de>
+References: <20251104204540.13931-1-W_Armin@gmx.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -67,117 +70,147 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:a2o/5UGqA2g+vWARMlh2wPOjPuXiSjHtKeGIEoiRxG58/6neJm3
- PK1385GPdSgw7Hy9KZ3R+KEqyql4sw9rrJou4vgwBELHtoPX5Df3IBB4w6N4yDTp1sNoRcC
- /vMdl28bkkbx6yFFa85Wxw/6iQMsfCj1BCLKIkTpF2Y972udT+ycBqYL+4pXNLNzoINwVzf
- cAILLueKHdFYOzqUqOcbg==
+X-Provags-ID: V03:K1:7FUHFbYyPOpM2TLAx7Z8bBcG5qHSsgvzz8rGBE9XcKOAkDvk3Xi
+ sW9RcMJgaQmlDqhTH1Qlri7b9XaNQWiQ+1/veXkQrUn4f3BUoyN/TCXsRhbytcRWcC127p4
+ qcbfiXIjEL59eZkGaASFgniaEwUjg9zeEw1gCAi1bEGcAdjwupXpu4jWGp0pdVIQcWMgx8p
+ OjhiYgO+K/c/bkMolVVRQ==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:nSKeVATT1gE=;d+aUvduCMk9HTls33X0Z/Wm7DLl
- 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
+UI-OutboundReport: notjunk:1;M01:P0:6s9v6bKRXS8=;4znOSUUmIH6sFTG/Uy5RXVvFXMP
+ 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
+ wQVvmAxJdzNuALs0XhW/JXPGvY=
 
-After over a year of reverse engineering, i am finally ready to
-introduce support for WMI-ACPI marshalling inside the WMI driver core.
-Since the resulting patch series is quite large, i am planning to
-submit the necessary patches as three separate patch series.
+Currently the function responsible for converting between utf16 and
+utf8 strings will ignore any characters that cannot be converted. This
+however also includes multi-byte characters that do not fit into the
+provided string buffer.
 
-This is supposed to be the first of the three patch series. Its main
-purpose is to prepare the WMI driver core for the upcoming changes.
-The first patch fixes an issue inside the nls utf16 to utf8 conversion
-code, while the next two patches fix some minor issues inside the WMI
-driver core itself. The last patch finally moves the code of the WMI
-driver core into a separate repository to allow for future additions
-without cluttering the main directory.
+This can cause problems if such a multi-byte character is followed by
+a single-byte character. In such a case the multi-byte character might
+be ignored when the provided string buffer is too small, but the
+single-byte character might fit and is thus still copied into the
+resulting string.
 
-Armin Wolf (4):
-  fs/nls: Fix utf16 to utf8 conversion
-  platform/x86: wmi: Use correct type when populating ACPI objects
-  platform/x86: wmi: Remove extern keyword from prototypes
-  platform/x86: wmi: Move WMI core code into a separate directory
+Fix this by stop filling the provided string buffer once a character
+does not fit. In order to be able to do this extend utf32_to_utf8()
+to return useful errno codes instead of -1.
 
- Documentation/driver-api/wmi.rst           |  2 +-
- MAINTAINERS                                |  2 +-
- drivers/platform/x86/Kconfig               | 30 +------------------
- drivers/platform/x86/Makefile              |  2 +-
- drivers/platform/x86/wmi/Kconfig           | 34 ++++++++++++++++++++++
- drivers/platform/x86/wmi/Makefile          |  8 +++++
- drivers/platform/x86/{wmi.c =3D> wmi/core.c} | 34 +++++++++++++---------
- fs/nls/nls_base.c                          | 16 +++++++---
- include/linux/wmi.h                        | 15 ++++------
- 9 files changed, 84 insertions(+), 59 deletions(-)
- create mode 100644 drivers/platform/x86/wmi/Kconfig
- create mode 100644 drivers/platform/x86/wmi/Makefile
- rename drivers/platform/x86/{wmi.c =3D> wmi/core.c} (98%)
+Fixes: 74675a58507e ("NLS: update handling of Unicode")
+Signed-off-by: Armin Wolf <W_Armin@gmx.de>
+=2D--
+ fs/nls/nls_base.c | 16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
 
+diff --git a/fs/nls/nls_base.c b/fs/nls/nls_base.c
+index 18d597e49a19..d434c4463a8f 100644
+=2D-- a/fs/nls/nls_base.c
++++ b/fs/nls/nls_base.c
+@@ -94,7 +94,7 @@ int utf32_to_utf8(unicode_t u, u8 *s, int maxout)
+=20
+ 	l =3D u;
+ 	if (l > UNICODE_MAX || (l & SURROGATE_MASK) =3D=3D SURROGATE_PAIR)
+-		return -1;
++		return -EILSEQ;
+=20
+ 	nc =3D 0;
+ 	for (t =3D utf8_table; t->cmask && maxout; t++, maxout--) {
+@@ -110,7 +110,7 @@ int utf32_to_utf8(unicode_t u, u8 *s, int maxout)
+ 			return nc;
+ 		}
+ 	}
+-	return -1;
++	return -EOVERFLOW;
+ }
+ EXPORT_SYMBOL(utf32_to_utf8);
+=20
+@@ -217,8 +217,16 @@ int utf16s_to_utf8s(const wchar_t *pwcs, int inlen, e=
+num utf16_endian endian,
+ 				inlen--;
+ 			}
+ 			size =3D utf32_to_utf8(u, op, maxout);
+-			if (size =3D=3D -1) {
+-				/* Ignore character and move on */
++			if (size < 0) {
++				if (size =3D=3D -EILSEQ) {
++					/* Ignore character and move on */
++					continue;
++				}
++				/*
++				 * Stop filling the buffer with data once a character
++				 * does not fit anymore.
++				 */
++				break;
+ 			} else {
+ 				op +=3D size;
+ 				maxout -=3D size;
 =2D-=20
 2.39.5
 
