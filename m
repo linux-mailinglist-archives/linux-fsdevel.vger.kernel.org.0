@@ -1,82 +1,83 @@
-Return-Path: <linux-fsdevel+bounces-66909-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66910-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AA7AC30483
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 04 Nov 2025 10:34:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC16AC303BD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 04 Nov 2025 10:22:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F64D3B3078
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Nov 2025 09:19:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1784189019B
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Nov 2025 09:20:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 088572264DB;
-	Tue,  4 Nov 2025 09:13:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6303329C48;
+	Tue,  4 Nov 2025 09:13:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b="FrBR2f7D"
+	dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b="fYHehwHJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 609552356D9
-	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Nov 2025 09:13:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A81D313548
+	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Nov 2025 09:13:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762247606; cv=none; b=nxhBLXfaQcnQjUo5PSBA/6E4E+yH9QRS796rfdMw6ZHfW9hK2hqybqzsDwuM/w3gqUcir7TF+GX5cAPpMwXA8u9r6KUZAPbdKkxfJCnjVMCE315vsSQFKYla1fcW6piOgnBhYlj1eNmYaPXVrIcuduAB0ymaXtAW6MwLx/bk8co=
+	t=1762247615; cv=none; b=IKEvcC9dvex5ulE8DBdVEFbrcZxZc2Z6Qdqfb/b4WPE8noLJPfA7FJjEPNpGSbn/MSMNStkukvDq7Sgu9igSw5Ps1ehp85uBQ+2SQq8bpTUCCUKYGEqgC6Jw76ZQ4ygE/vvstZOIcAKHmz+Fp9qesBtohLy/23UYRkvuK69vosw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762247606; c=relaxed/simple;
-	bh=ehXOSlokC20bIBLdoni9PsRvN8h14azKPpnSVKqbVkU=;
+	s=arc-20240116; t=1762247615; c=relaxed/simple;
+	bh=X3saQ01HvAadyE0U0yxTSLkzNUPaSlSNgq7Nvk1Fyr4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pzkPTsckp6Cml1bOg/G7mocdoTHP5KQE/S/uW7mMd+S05tomjAk8Nk0yFdhM1zAhZrmrwkENIwjEtHjWmFeR6hwF0M8dvPW5JHIwomhxcumUwFa6OqFLCpJS03d4cNYqvFHeC5Z02oorPnw8YLFxsTnO48c1lVFRX95rhKpVyrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mihalicyn.com; spf=pass smtp.mailfrom=mihalicyn.com; dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b=FrBR2f7D; arc=none smtp.client-ip=209.85.167.42
+	 To:Cc:Content-Type; b=mKXLsmyZQernpFOHPSWfT12QBUx04lDK7a2UXKqmTdAcMxhLxGkuy+zAdAnQE4X6J0d8oEiXz9iZlRZjhqwie2LFfhZvqhOjm7HKXSsI6h1fyqC4b8ktSNILvBBUFL2HsfJYizrdg+p42UYSxIdiKBraj35ggKVZUe6R+6tflG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mihalicyn.com; spf=pass smtp.mailfrom=mihalicyn.com; dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b=fYHehwHJ; arc=none smtp.client-ip=209.85.167.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mihalicyn.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mihalicyn.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-59435d82c1fso328532e87.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Nov 2025 01:13:23 -0800 (PST)
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-594285c6509so2161212e87.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Nov 2025 01:13:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mihalicyn.com; s=mihalicyn; t=1762247601; x=1762852401; darn=vger.kernel.org;
+        d=mihalicyn.com; s=mihalicyn; t=1762247611; x=1762852411; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=cbTpJ2kd0vtcHnRXRerhpDDb9m7VWCKBi2OT36dhbVo=;
-        b=FrBR2f7DUfJiIem2YSez54O6uhJuJNN6K4m2YavvSG7v2VNsnpw/CEMgqbvpJK3OrK
-         jdji97ABfUpcWxHaBgZWLWksc1S6pMggiz8Q9X7r0uMN7bgdbX2Y9em+BQkKSdsC/rth
-         o1mp7dm2QVntzfRcbtKkIhzLTRh2G0zubatYU=
+        bh=yC5ZbkKSZm/d/xkH+mRhsiaCkR8T/+9iGxUGIpCNOpo=;
+        b=fYHehwHJWuLJe3Dc/x7jQssgEh90WPjJ3LXvxt0B0QfG6DuunS2XucREt6PQ9hYXXM
+         gmwSyEvPfYjwJPeULvl0C5HpOhyXToP9tNd9q9whdcWOVfdthblSQ8jJXiqTFqjc0nkR
+         MBOyE83zdlFwASkoox6dmyQKM3w/4UbIW36A0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762247601; x=1762852401;
+        d=1e100.net; s=20230601; t=1762247611; x=1762852411;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=cbTpJ2kd0vtcHnRXRerhpDDb9m7VWCKBi2OT36dhbVo=;
-        b=UsnnyoPn46p46IE9W8IGgs9cjUiY1rlpxpFoAmuEQCyXErvchb1gweMbi2YzqPvQbU
-         l5eARyzfNW60Y4bau6aLr8HF9LeRyhpgmmLrR+m6jQBFIbH0ZdDmxXOxCMkJwhW/l0n4
-         vel7HgIgPrjw86U60+WltaambvWsMRPF8IKOb0bnWfFysNpi5HOr9pA9AK//m8W3S2Me
-         EvNk9XxBggyxrhqZOippdweHwx/hq5D10pWV0zZPTdwhTOyqoiVj+yDXNnB0HE65qpZc
-         meaNadQXBhH0QFRx/29U2FgqXcBapaRX1w8YjxpJdSDHos/gxes7Q/lFu4OtKVHgncRJ
-         aGAw==
-X-Gm-Message-State: AOJu0YzWF1fP4mRKfqsmm4YNHDTvCfXUAl2Cyk2dEk+ZfboyD1jjhK3X
-	m4HC90Qp3oxhqXZpdwQF69GlX7eM3dkMBDIXXnxHk0esAzSuuiO0fptq24dddK6CJApKtYiUmuo
-	wLp4qCthy1iJXAUVC+AdKZw7YBtEn+5nRqTGtTDIcp59At0L201ym2qeCd/gNWqk=
-X-Gm-Gg: ASbGncsIQS60+l3ucBAC+vKo5OkP/gK5F3eS6DqRvAlmG6tPR5KhJAY5NGaevCNgZfs
-	IjPoCy/d0UBWEo/dW0kzrLTeCuWxJE290vD5Nk6yz6eS6lDCRuO1xHU9rDD62WH+uEYtqGWfPkl
-	K5+QNeNaI8QjJa6+NJrZR44d1ZR7iRablR9kHJ1Oajt3hwsEaoh17lynVxkZ9MjE+r9W2XAldSU
-	hXFZkaF2HsPUXCnxYru3E9LxWnRJLFXhXVaNqxqalfHNXZ2WZ45xy68+8s7
-X-Google-Smtp-Source: AGHT+IHLWOjQzOq4EZEexl1y0s5TIFbR+H99TnsmW8bcHc62dykPOU9F431Ol1GwHd2wZKuQvjGDL9rD6FA5jNk+Oqo=
-X-Received: by 2002:ac2:4c4f:0:b0:57e:c1e6:ba8 with SMTP id
- 2adb3069b0e04-5941d50dcbcmr5053378e87.12.1762247601332; Tue, 04 Nov 2025
- 01:13:21 -0800 (PST)
+        bh=yC5ZbkKSZm/d/xkH+mRhsiaCkR8T/+9iGxUGIpCNOpo=;
+        b=Z0OiRNzJjBaHxeOtQABHGITHHU6EvgZO/p7vec1IACNfkUdi4bWV2tqh9cplrEtbMM
+         AQa+IKeyytfnusA0D59pQmq0hsUySlX/LfRZRWtt/Q7nRELtqrljgAvLWziFIN7kea/d
+         sJu9FkqegaUolzH2KeDG0VIcQzkCSJ8BGW687U54KmN6rnxyOIPL/sn0SP1Lj/aoadqI
+         CX+eUF5Z7OBn06Y3VpQS0hRX5yLVmQssC5Mr2xREm3whcN0pTVhyjOCDEo1ufUWUIdkW
+         CkSInT8VIleWr2vVjwKC1h43pAe4qTwQjtr3dDZo6CTDaZSythnB873iSmalG9ptNcK8
+         L1dA==
+X-Gm-Message-State: AOJu0YwQhBUbCUG9h4ZvyisOCvvdrmqiLTL6zTt+CsfJPJYlzTHKaLE2
+	BpywkD2PYDfrHWc1I8i3SpGgwtVOSP1iw4RGMUZiAeZuFz5GsPw9rWccwiYxagvT8OaTSymfEJ7
+	udUAT1ua/vIOijAhC1Xqc5TCX3nslITXYMDMeRsIJhA==
+X-Gm-Gg: ASbGncvN6eHLVY6Z7ZE2VKQH9BKfjKc+urx1C/R6k/BzhzZXqwrPrs4Q4kQW623C4Rh
+	DqFqyAjBSPpau/c8ujtnsuBuaLxD55KBbvUApCZI3sGwnzv9sGvchgxb8BF9rnZKtnEHxKejl8q
+	nJEjSCFuwV9bBbJhdyXIyawM+KR0NL7awMVdJSyI8iBDaoQ6RRVbniGDMzkb6XmOz1C7FKGajPC
+	qkBuloM1jFfuoSHZEbWIUQDAcD2+zQB+LjyRowAQJTBFOFKCHTg1a4mU9oUZpG/kK/5dU4=
+X-Google-Smtp-Source: AGHT+IHmEn+S+vJ02GNEiM+x2ag5QTVD0QFKLXPxHM6pgjwcpgFALU+ffxa+ka06Oxk3WmhLU61d1LG5jGxn7fZgGh4=
+X-Received: by 2002:a05:6512:3f06:b0:592:f6ec:112c with SMTP id
+ 2adb3069b0e04-5941d5827bdmr6234166e87.55.1762247611189; Tue, 04 Nov 2025
+ 01:13:31 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251028-work-coredump-signal-v1-0-ca449b7b7aa0@kernel.org> <20251028-work-coredump-signal-v1-17-ca449b7b7aa0@kernel.org>
-In-Reply-To: <20251028-work-coredump-signal-v1-17-ca449b7b7aa0@kernel.org>
+References: <20251028-work-coredump-signal-v1-0-ca449b7b7aa0@kernel.org> <20251028-work-coredump-signal-v1-18-ca449b7b7aa0@kernel.org>
+In-Reply-To: <20251028-work-coredump-signal-v1-18-ca449b7b7aa0@kernel.org>
 From: Alexander Mikhalitsyn <alexander@mihalicyn.com>
-Date: Tue, 4 Nov 2025 10:13:08 +0100
-X-Gm-Features: AWmQ_bn8XS0POXmBLNCfkFpdbJSrLm2S0Y6hVDKz6kn0uAZYZj2a91Sws73mBO4
-Message-ID: <CAJqdLroCjAwveicSftrf9BjCSZUdR3X_oG3pvkV-_cWuP4qfAA@mail.gmail.com>
-Subject: Re: [PATCH 17/22] selftests/coredump: add debug logging to test helpers
+Date: Tue, 4 Nov 2025 10:13:18 +0100
+X-Gm-Features: AWmQ_bnwJcjiJfpzJo_3tQPvegRV8ps1oOm0HCWWp98H0G31lwRhyHQCEYGdwIY
+Message-ID: <CAJqdLrrba2RtnojjWTU0=KZ1HBnNEs+9m4+5SuOkqGB9fn83QQ@mail.gmail.com>
+Subject: Re: [PATCH 18/22] selftests/coredump: add debug logging to coredump
+ socket tests
 To: Christian Brauner <brauner@kernel.org>
 Cc: linux-fsdevel@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>, 
 	Amir Goldstein <amir73il@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
@@ -91,143 +92,211 @@ Content-Type: text/plain; charset="UTF-8"
 Am Di., 28. Okt. 2025 um 09:47 Uhr schrieb Christian Brauner
 <brauner@kernel.org>:
 >
-> so we can easily figure out why something failed.
+> So it's easier to figure out bugs.
 >
 > Signed-off-by: Christian Brauner <brauner@kernel.org>
 
 Reviewed-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
 
 > ---
->  .../selftests/coredump/coredump_test_helpers.c     | 55 +++++++++++++++++-----
->  1 file changed, 44 insertions(+), 11 deletions(-)
+>  .../selftests/coredump/coredump_socket_test.c      | 93 +++++++++++++++++-----
+>  1 file changed, 71 insertions(+), 22 deletions(-)
 >
-> diff --git a/tools/testing/selftests/coredump/coredump_test_helpers.c b/tools/testing/selftests/coredump/coredump_test_helpers.c
-> index 116c797090a1..65deb3cfbe1b 100644
-> --- a/tools/testing/selftests/coredump/coredump_test_helpers.c
-> +++ b/tools/testing/selftests/coredump/coredump_test_helpers.c
-> @@ -131,17 +131,26 @@ int get_peer_pidfd(int fd)
->         int ret = getsockopt(fd, SOL_SOCKET, SO_PEERPIDFD, &fd_peer_pidfd,
->                              &fd_peer_pidfd_len);
->         if (ret < 0) {
-> -               fprintf(stderr, "%m - Failed to retrieve peer pidfd for coredump socket connection\n");
-> +               fprintf(stderr, "get_peer_pidfd: getsockopt(SO_PEERPIDFD) failed: %m\n");
->                 return -1;
->         }
-> +       fprintf(stderr, "get_peer_pidfd: successfully retrieved pidfd %d\n", fd_peer_pidfd);
->         return fd_peer_pidfd;
->  }
+> diff --git a/tools/testing/selftests/coredump/coredump_socket_test.c b/tools/testing/selftests/coredump/coredump_socket_test.c
+> index 5103d9f13003..0a37d0456672 100644
+> --- a/tools/testing/selftests/coredump/coredump_socket_test.c
+> +++ b/tools/testing/selftests/coredump/coredump_socket_test.c
+> @@ -98,52 +98,74 @@ TEST_F(coredump, socket)
+>                 close(ipc_sockets[0]);
 >
->  bool get_pidfd_info(int fd_peer_pidfd, struct pidfd_info *info)
->  {
-> +       int ret;
->         memset(info, 0, sizeof(*info));
->         info->mask = PIDFD_INFO_EXIT | PIDFD_INFO_COREDUMP | PIDFD_INFO_COREDUMP_SIGNAL;
-> -       return ioctl(fd_peer_pidfd, PIDFD_GET_INFO, info) == 0;
-> +       ret = ioctl(fd_peer_pidfd, PIDFD_GET_INFO, info);
-> +       if (ret < 0) {
-> +               fprintf(stderr, "get_pidfd_info: ioctl(PIDFD_GET_INFO) failed: %m\n");
-> +               return false;
-> +       }
-> +       fprintf(stderr, "get_pidfd_info: mask=0x%llx, coredump_mask=0x%x, coredump_signal=%d\n",
-> +               (unsigned long long)info->mask, info->coredump_mask, info->coredump_signal);
-> +       return true;
->  }
->
->  /* Protocol helper functions */
-> @@ -198,14 +207,23 @@ bool read_coredump_req(int fd, struct coredump_req *req)
->
->         /* Peek the size of the coredump request. */
->         ret = recv(fd, req, field_size, MSG_PEEK | MSG_WAITALL);
-> -       if (ret != field_size)
-> +       if (ret != field_size) {
-> +               fprintf(stderr, "read_coredump_req: peek failed (got %zd, expected %zu): %m\n",
-> +                       ret, field_size);
->                 return false;
-> +       }
->         kernel_size = req->size;
->
-> -       if (kernel_size < COREDUMP_ACK_SIZE_VER0)
-> +       if (kernel_size < COREDUMP_ACK_SIZE_VER0) {
-> +               fprintf(stderr, "read_coredump_req: kernel_size %zu < min %d\n",
-> +                       kernel_size, COREDUMP_ACK_SIZE_VER0);
->                 return false;
-> -       if (kernel_size >= PAGE_SIZE)
-> +       }
-> +       if (kernel_size >= PAGE_SIZE) {
-> +               fprintf(stderr, "read_coredump_req: kernel_size %zu >= PAGE_SIZE %d\n",
-> +                       kernel_size, PAGE_SIZE);
->                 return false;
-> +       }
->
->         /* Use the minimum of user and kernel size to read the full request. */
->         user_size = sizeof(struct coredump_req);
-> @@ -295,25 +313,35 @@ void process_coredump_worker(int fd_coredump, int fd_peer_pidfd, int fd_core_fil
->
->         /* Set socket to non-blocking mode for edge-triggered epoll */
->         flags = fcntl(fd_coredump, F_GETFL, 0);
-> -       if (flags < 0)
-> +       if (flags < 0) {
-> +               fprintf(stderr, "Worker: fcntl(F_GETFL) failed: %m\n");
->                 goto out;
-> -       if (fcntl(fd_coredump, F_SETFL, flags | O_NONBLOCK) < 0)
-> +       }
-> +       if (fcntl(fd_coredump, F_SETFL, flags | O_NONBLOCK) < 0) {
-> +               fprintf(stderr, "Worker: fcntl(F_SETFL, O_NONBLOCK) failed: %m\n");
->                 goto out;
-> +       }
->
->         epfd = epoll_create1(0);
-> -       if (epfd < 0)
-> +       if (epfd < 0) {
-> +               fprintf(stderr, "Worker: epoll_create1() failed: %m\n");
->                 goto out;
-> +       }
->
->         ev.events = EPOLLIN | EPOLLRDHUP | EPOLLET;
->         ev.data.fd = fd_coredump;
-> -       if (epoll_ctl(epfd, EPOLL_CTL_ADD, fd_coredump, &ev) < 0)
-> +       if (epoll_ctl(epfd, EPOLL_CTL_ADD, fd_coredump, &ev) < 0) {
-> +               fprintf(stderr, "Worker: epoll_ctl(EPOLL_CTL_ADD) failed: %m\n");
->                 goto out;
-> +       }
->
->         for (;;) {
->                 struct epoll_event events[1];
->                 int n = epoll_wait(epfd, events, 1, -1);
-> -               if (n < 0)
-> +               if (n < 0) {
-> +                       fprintf(stderr, "Worker: epoll_wait() failed: %m\n");
->                         break;
+>                 fd_server = create_and_listen_unix_socket("/tmp/coredump.socket");
+> -               if (fd_server < 0)
+> +               if (fd_server < 0) {
+> +                       fprintf(stderr, "socket test: create_and_listen_unix_socket failed: %m\n");
+>                         goto out;
 > +               }
 >
->                 if (events[0].events & (EPOLLIN | EPOLLRDHUP)) {
->                         for (;;) {
-> @@ -322,19 +350,24 @@ void process_coredump_worker(int fd_coredump, int fd_peer_pidfd, int fd_core_fil
->                                 if (bytes_read < 0) {
->                                         if (errno == EAGAIN || errno == EWOULDBLOCK)
->                                                 break;
-> +                                       fprintf(stderr, "Worker: read() failed: %m\n");
->                                         goto out;
->                                 }
->                                 if (bytes_read == 0)
->                                         goto done;
->                                 ssize_t bytes_write = write(fd_core_file, buffer, bytes_read);
-> -                               if (bytes_write != bytes_read)
-> +                               if (bytes_write != bytes_read) {
-> +                                       fprintf(stderr, "Worker: write() failed (read=%zd, write=%zd): %m\n",
-> +                                               bytes_read, bytes_write);
->                                         goto out;
-> +                               }
->                         }
+> -               if (write_nointr(ipc_sockets[1], "1", 1) < 0)
+> +               if (write_nointr(ipc_sockets[1], "1", 1) < 0) {
+> +                       fprintf(stderr, "socket test: write_nointr to ipc socket failed: %m\n");
+>                         goto out;
+> +               }
+>
+>                 close(ipc_sockets[1]);
+>
+>                 fd_coredump = accept4(fd_server, NULL, NULL, SOCK_CLOEXEC);
+> -               if (fd_coredump < 0)
+> +               if (fd_coredump < 0) {
+> +                       fprintf(stderr, "socket test: accept4 failed: %m\n");
+>                         goto out;
+> +               }
+>
+>                 fd_peer_pidfd = get_peer_pidfd(fd_coredump);
+> -               if (fd_peer_pidfd < 0)
+> +               if (fd_peer_pidfd < 0) {
+> +                       fprintf(stderr, "socket test: get_peer_pidfd failed\n");
+>                         goto out;
+> +               }
+>
+> -               if (!get_pidfd_info(fd_peer_pidfd, &info))
+> +               if (!get_pidfd_info(fd_peer_pidfd, &info)) {
+> +                       fprintf(stderr, "socket test: get_pidfd_info failed\n");
+>                         goto out;
+> +               }
+>
+> -               if (!(info.mask & PIDFD_INFO_COREDUMP))
+> +               if (!(info.mask & PIDFD_INFO_COREDUMP)) {
+> +                       fprintf(stderr, "socket test: PIDFD_INFO_COREDUMP not set in mask\n");
+>                         goto out;
+> +               }
+>
+> -               if (!(info.coredump_mask & PIDFD_COREDUMPED))
+> +               if (!(info.coredump_mask & PIDFD_COREDUMPED)) {
+> +                       fprintf(stderr, "socket test: PIDFD_COREDUMPED not set in coredump_mask\n");
+>                         goto out;
+> +               }
+>
+>                 fd_core_file = creat("/tmp/coredump.file", 0644);
+> -               if (fd_core_file < 0)
+> +               if (fd_core_file < 0) {
+> +                       fprintf(stderr, "socket test: creat coredump file failed: %m\n");
+>                         goto out;
+> +               }
+>
+>                 for (;;) {
+>                         char buffer[4096];
+>                         ssize_t bytes_read, bytes_write;
+>
+>                         bytes_read = read(fd_coredump, buffer, sizeof(buffer));
+> -                       if (bytes_read < 0)
+> +                       if (bytes_read < 0) {
+> +                               fprintf(stderr, "socket test: read from coredump socket failed: %m\n");
+>                                 goto out;
+> +                       }
+>
+>                         if (bytes_read == 0)
+>                                 break;
+>
+>                         bytes_write = write(fd_core_file, buffer, bytes_read);
+> -                       if (bytes_read != bytes_write)
+> +                       if (bytes_read != bytes_write) {
+> +                               fprintf(stderr, "socket test: write to core file failed (read=%zd, write=%zd): %m\n",
+> +                                       bytes_read, bytes_write);
+>                                 goto out;
+> +                       }
 >                 }
+>
+>                 exit_code = EXIT_SUCCESS;
+> +               fprintf(stderr, "socket test: completed successfully\n");
+>  out:
+>                 if (fd_core_file >= 0)
+>                         close(fd_core_file);
+> @@ -208,32 +230,47 @@ TEST_F(coredump, socket_detect_userspace_client)
+>                 close(ipc_sockets[0]);
+>
+>                 fd_server = create_and_listen_unix_socket("/tmp/coredump.socket");
+> -               if (fd_server < 0)
+> +               if (fd_server < 0) {
+> +                       fprintf(stderr, "socket_detect_userspace_client: create_and_listen_unix_socket failed: %m\n");
+>                         goto out;
+> +               }
+>
+> -               if (write_nointr(ipc_sockets[1], "1", 1) < 0)
+> +               if (write_nointr(ipc_sockets[1], "1", 1) < 0) {
+> +                       fprintf(stderr, "socket_detect_userspace_client: write_nointr to ipc socket failed: %m\n");
+>                         goto out;
+> +               }
+>
+>                 close(ipc_sockets[1]);
+>
+>                 fd_coredump = accept4(fd_server, NULL, NULL, SOCK_CLOEXEC);
+> -               if (fd_coredump < 0)
+> +               if (fd_coredump < 0) {
+> +                       fprintf(stderr, "socket_detect_userspace_client: accept4 failed: %m\n");
+>                         goto out;
+> +               }
+>
+>                 fd_peer_pidfd = get_peer_pidfd(fd_coredump);
+> -               if (fd_peer_pidfd < 0)
+> +               if (fd_peer_pidfd < 0) {
+> +                       fprintf(stderr, "socket_detect_userspace_client: get_peer_pidfd failed\n");
+>                         goto out;
+> +               }
+>
+> -               if (!get_pidfd_info(fd_peer_pidfd, &info))
+> +               if (!get_pidfd_info(fd_peer_pidfd, &info)) {
+> +                       fprintf(stderr, "socket_detect_userspace_client: get_pidfd_info failed\n");
+>                         goto out;
+> +               }
+>
+> -               if (!(info.mask & PIDFD_INFO_COREDUMP))
+> +               if (!(info.mask & PIDFD_INFO_COREDUMP)) {
+> +                       fprintf(stderr, "socket_detect_userspace_client: PIDFD_INFO_COREDUMP not set in mask\n");
+>                         goto out;
+> +               }
+>
+> -               if (info.coredump_mask & PIDFD_COREDUMPED)
+> +               if (info.coredump_mask & PIDFD_COREDUMPED) {
+> +                       fprintf(stderr, "socket_detect_userspace_client: PIDFD_COREDUMPED incorrectly set (should be userspace client)\n");
+>                         goto out;
+> +               }
+>
+>                 exit_code = EXIT_SUCCESS;
+> +               fprintf(stderr, "socket_detect_userspace_client: completed successfully\n");
+>  out:
+>                 if (fd_peer_pidfd >= 0)
+>                         close(fd_peer_pidfd);
+> @@ -263,15 +300,20 @@ TEST_F(coredump, socket_detect_userspace_client)
+>                         sizeof("/tmp/coredump.socket");
+>
+>                 fd_socket = socket(AF_UNIX, SOCK_STREAM, 0);
+> -               if (fd_socket < 0)
+> +               if (fd_socket < 0) {
+> +                       fprintf(stderr, "socket_detect_userspace_client (client): socket failed: %m\n");
+>                         _exit(EXIT_FAILURE);
+> +               }
+>
+>                 ret = connect(fd_socket, (const struct sockaddr *)&coredump_sk, coredump_sk_len);
+> -               if (ret < 0)
+> +               if (ret < 0) {
+> +                       fprintf(stderr, "socket_detect_userspace_client (client): connect failed: %m\n");
+>                         _exit(EXIT_FAILURE);
+> +               }
+>
+>                 close(fd_socket);
+>                 pause();
+> +               fprintf(stderr, "socket_detect_userspace_client (client): completed successfully\n");
+>                 _exit(EXIT_SUCCESS);
 >         }
 >
->  done:
->         exit_code = EXIT_SUCCESS;
-> +       fprintf(stderr, "Worker: completed successfully\n");
+> @@ -342,17 +384,24 @@ TEST_F(coredump, socket_no_listener)
+>                 close(ipc_sockets[0]);
+>
+>                 fd_server = socket(AF_UNIX, SOCK_STREAM | SOCK_CLOEXEC, 0);
+> -               if (fd_server < 0)
+> +               if (fd_server < 0) {
+> +                       fprintf(stderr, "socket_no_listener: socket failed: %m\n");
+>                         goto out;
+> +               }
+>
+>                 ret = bind(fd_server, (const struct sockaddr *)&coredump_sk, coredump_sk_len);
+> -               if (ret < 0)
+> +               if (ret < 0) {
+> +                       fprintf(stderr, "socket_no_listener: bind failed: %m\n");
+>                         goto out;
+> +               }
+>
+> -               if (write_nointr(ipc_sockets[1], "1", 1) < 0)
+> +               if (write_nointr(ipc_sockets[1], "1", 1) < 0) {
+> +                       fprintf(stderr, "socket_no_listener: write_nointr to ipc socket failed: %m\n");
+>                         goto out;
+> +               }
+>
+>                 exit_code = EXIT_SUCCESS;
+> +               fprintf(stderr, "socket_no_listener: completed successfully\n");
 >  out:
->         if (epfd >= 0)
->                 close(epfd);
+>                 if (fd_server >= 0)
+>                         close(fd_server);
 >
 > --
 > 2.47.3
