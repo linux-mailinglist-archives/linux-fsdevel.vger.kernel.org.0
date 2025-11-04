@@ -1,142 +1,188 @@
-Return-Path: <linux-fsdevel+bounces-66875-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66876-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B526C2F01E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 04 Nov 2025 03:43:26 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12D90C2F2F9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 04 Nov 2025 04:44:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 781DC189A5F0
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Nov 2025 02:43:36 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E53BD4E2392
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Nov 2025 03:44:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D73322459CF;
-	Tue,  4 Nov 2025 02:43:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 163FF299A94;
+	Tue,  4 Nov 2025 03:44:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="hBFzAFez"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from canpmsgout08.his.huawei.com (canpmsgout08.his.huawei.com [113.46.200.223])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6E752248BE
-	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Nov 2025 02:43:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 202361F37D4;
+	Tue,  4 Nov 2025 03:44:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762224184; cv=none; b=WBOmO4bjzh65exptj5H8N81IiGHw+HdSCZscnEWzgZ8m0Zuuyi/JZ5HP7m5EBzRod81TfE8r8VQ+ON0PAzrjtCZTO/W1iVqdfG9MlEFZLgo1+Tptt4IPBIhHPdM5F62Km93wzHs+/4WtLUWBLyU1gbW9KhbcdvbPTbbNaJHkzvI=
+	t=1762227855; cv=none; b=a/7RQuLKa7tlSh/ssxoVgd8MHxNPcQERwI1U5tyPLASbLrfyb93I9BN7kDpPsS3NZPTL2/kuKucBOv1JKUPmKnpw1BHHoAOCBthk3KDvZ7aAWuAcUiV+x72PV8I5H/azuRkz4Z5gBmXemyyKWovNDHi4yYNNBaoSdrjO/K3fJlc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762224184; c=relaxed/simple;
-	bh=/PwqJgpx6d83krd2BR/Q94EK2b4ZhuINslZXJfgaVy0=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=YKeHoR2PuBwNrxB2luzZckisBcXxIFYE48lo41w4alwqX5pVSP6GcUzCQi3Gu75OO80yY/kCfqSZVKSb5zcxNGkgFk40C8FYQ6ERfyV/whIAinXtyvSVdBIf5DmHTjiQoxzdUY+PkmAsoT9XAbkvUiqNf/LtJ4SDTGNhkYe6THY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-8870219dce3so518108739f.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Nov 2025 18:43:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762224182; x=1762828982;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NBIw0SYrhKhi35dC1UwvoNNnW3Il9lAar0bIukFldbU=;
-        b=TIj3KW63e9JnZ7pZeHZtmwJbA0NpUed8Xfp8W4jTxlbX4fY2afpW3OfWADj0KmjGns
-         aP4cJUpIJB24tt+yE2vQw2HSp6m43/O4V4MEdQEOnxvasuZWduTv5wPJe5P7+hZhFe6w
-         lnQVH3my+2ErDsI5k4avc1olNjeUFaiKhRtkxO4JH6qMJ3bQtqkYio0eyVW3V3ETLa4c
-         E1f5zTWMdbiG+DjjrVMAIdie7TL7hkG4lg0f1xKKWURVN43GN1/mPr4VPKJu1azmh5j6
-         QyySRqLcRSt4if/IkYlJ2QoIPZePKCdRQKOE2j3Lpf5YdCQy0rtHUi1RW4zCUl/3mG3e
-         76Dw==
-X-Forwarded-Encrypted: i=1; AJvYcCXqK3Zl0FxVf2VzSkmWkKVlgCsNfmqlgtoY99dHz7JJLNKcaaWnsR0i5JM58xFiuHOjQWcJQsrDXII+ZgCE@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0EdBOp9gg9WuJBuYnSquWDcVLm+HqIzzz0Fi9/a6BbXVSQU/c
-	7He0t2+8i2Q4DMTVXfDrQRn1fHvl0Ad/+v6IxfgUX1EhL5oOq3HMU+htNLqlgaTO1wwC0G6k0CX
-	GAeEs5w1uSCt1NPheHoc0+IElxcvZ9RlJoqVai3fZxudPwb7AbU0OyFYURf4=
-X-Google-Smtp-Source: AGHT+IE4zHEzVucOPYL+xz6/nTZPc+2B+jS+5ktcuCcpH5NHB6J00PeRw7cjAnyYOnMky1QPFtvntV155LaF0SvX5p90Y5mObxH1
+	s=arc-20240116; t=1762227855; c=relaxed/simple;
+	bh=umoX7VA18Gl5MBsm3Nw6/8CP6zXuM1RGPYbHB5gKFOg=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=L7EWQyHPV02xo3yEEVy49Sk8sQB9JoYQKmr0Os9wan1KuyGVR+vc4Gz1+5fEUDFCfpuH0u62rO9lDVEW3cqKz1ZXEsuwhoo1rTvL5aK/NrT9L2XWSUyPcIpigwQ+UhOnbnBj9oHaCZOSM8G9g79fXriux5FtM0Jzdz3qkJDTUhc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=hBFzAFez; arc=none smtp.client-ip=113.46.200.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=mI5NZzwX6x6xO/W1T3LkO8z5F3lpSfn/IETM235fG98=;
+	b=hBFzAFezSw5JUCqYW5mq4lqx75pi/JseqBGO1dB9WuIWOkL3yRPZ07q09rs6isMru3p+tiNC7
+	GjC2VM3ts7O8bU6uaEZHyqT2D6IHqU5GpI7oS18Jut473ONzsEfaZ6qzrtQmQ0oL3x3FZ64ox2k
+	v1YpxsgeVzQICoCb8/hW3uk=
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by canpmsgout08.his.huawei.com (SkyGuard) with ESMTPS id 4d0vR829VdzmV6Y;
+	Tue,  4 Nov 2025 11:42:28 +0800 (CST)
+Received: from dggemv705-chm.china.huawei.com (unknown [10.3.19.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id E19A51400E8;
+	Tue,  4 Nov 2025 11:44:02 +0800 (CST)
+Received: from kwepemq500010.china.huawei.com (7.202.194.235) by
+ dggemv705-chm.china.huawei.com (10.3.19.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 4 Nov 2025 11:44:02 +0800
+Received: from [10.173.125.37] (10.173.125.37) by
+ kwepemq500010.china.huawei.com (7.202.194.235) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 4 Nov 2025 11:44:01 +0800
+Subject: Re: [RFC PATCH v1 0/3] Userspace MFR Policy via memfd
+To: Jiaqi Yan <jiaqiyan@google.com>, Harry Yoo <harry.yoo@oracle.com>
+CC: =?UTF-8?Q?=e2=80=9cWilliam_Roche?= <william.roche@oracle.com>, "Ackerley
+ Tng" <ackerleytng@google.com>, <jgg@nvidia.com>, <akpm@linux-foundation.org>,
+	<ankita@nvidia.com>, <dave.hansen@linux.intel.com>, <david@redhat.com>,
+	<duenwen@google.com>, <jane.chu@oracle.com>, <jthoughton@google.com>,
+	<linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-mm@kvack.org>, <muchun.song@linux.dev>, <nao.horiguchi@gmail.com>,
+	<osalvador@suse.de>, <peterx@redhat.com>, <rientjes@google.com>,
+	<sidhartha.kumar@oracle.com>, <tony.luck@intel.com>,
+	<wangkefeng.wang@huawei.com>, <willy@infradead.org>, <vbabka@suse.cz>,
+	<surenb@google.com>, <mhocko@suse.com>, <jackmanb@google.com>,
+	<hannes@cmpxchg.org>, <ziy@nvidia.com>
+References: <20250118231549.1652825-1-jiaqiyan@google.com>
+ <20250919155832.1084091-1-william.roche@oracle.com>
+ <CACw3F521fi5HWhCKi_KrkNLXkw668HO4h8+DjkP2+vBuK-=org@mail.gmail.com>
+ <aPjXdP63T1yYtvkq@hyeyoo>
+ <CACw3F50As2jPzy1rRjzpm3uKOALjX_9WmKxMPGnQcok96OfQkA@mail.gmail.com>
+ <aQBqGupCN_v8ysMX@hyeyoo> <d3d35586-c63f-c1be-c95e-fbd7aafd43f3@huawei.com>
+ <CACw3F51qaug5aWFNcjB54dVEc8yH+_A7zrkGcQyKXKJs6uVvgA@mail.gmail.com>
+ <aQhk4WtDSaQmFFFo@harry> <aQhti7Dt_34Yx2jO@harry>
+ <CACw3F503FG01yQyA53hHAo7q0yE3qQtMuT9kOjNHpp8Q9qHKPQ@mail.gmail.com>
+From: Miaohe Lin <linmiaohe@huawei.com>
+Message-ID: <425edf39-fd51-cf99-9608-34ee314486a6@huawei.com>
+Date: Tue, 4 Nov 2025 11:44:00 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:3416:b0:948:27b1:3d0f with SMTP id
- ca18e2360f4ac-94827b13dd6mr1845011939f.15.1762224182127; Mon, 03 Nov 2025
- 18:43:02 -0800 (PST)
-Date: Mon, 03 Nov 2025 18:43:02 -0800
-In-Reply-To: <CAJnrk1bF8sLU6tG2MGkt_KR4BoTd_k01CMVZJ9js2-eyh80tbw@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <69096836.a70a0220.88fb8.0006.GAE@google.com>
-Subject: Re: [syzbot] [iomap?] kernel BUG in folio_end_read (2)
-From: syzbot <syzbot+3686758660f980b402dc@syzkaller.appspotmail.com>
-To: brauner@kernel.org, chao@kernel.org, djwong@kernel.org, jaegeuk@kernel.org, 
-	joannelkoong@gmail.com, linux-f2fs-devel@lists.sourceforge.net, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CACw3F503FG01yQyA53hHAo7q0yE3qQtMuT9kOjNHpp8Q9qHKPQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
+ kwepemq500010.china.huawei.com (7.202.194.235)
 
-Hello,
+On 2025/11/4 0:57, Jiaqi Yan wrote:
+> On Mon, Nov 3, 2025 at 12:53 AM Harry Yoo <harry.yoo@oracle.com> wrote:
+>>
+>> On Mon, Nov 03, 2025 at 05:16:33PM +0900, Harry Yoo wrote:
+>>> On Thu, Oct 30, 2025 at 10:28:48AM -0700, Jiaqi Yan wrote:
+>>>> On Thu, Oct 30, 2025 at 4:51 AM Miaohe Lin <linmiaohe@huawei.com> wrote:
+>>>>> On 2025/10/28 15:00, Harry Yoo wrote:
+>>>>>> On Mon, Oct 27, 2025 at 09:17:31PM -0700, Jiaqi Yan wrote:
+>>>>>>> On Wed, Oct 22, 2025 at 6:09 AM Harry Yoo <harry.yoo@oracle.com> wrote:
+>>>>>>>> On Mon, Oct 13, 2025 at 03:14:32PM -0700, Jiaqi Yan wrote:
+>>>>>>>>> On Fri, Sep 19, 2025 at 8:58 AM “William Roche <william.roche@oracle.com> wrote:
+>>>>>>>> But even after fixing that we need to fix the race condition.
+>>>>>>>
+>>>>>>> What exactly is the race condition you are referring to?
+>>>>>>
+>>>>>> When you free a high-order page, the buddy allocator doesn't not check
+>>>>>> PageHWPoison() on the page and its subpages. It checks PageHWPoison()
+>>>>>> only when you free a base (order-0) page, see free_pages_prepare().
+>>>>>
+>>>>> I think we might could check PageHWPoison() for subpages as what free_page_is_bad()
+>>>>> does. If any subpage has HWPoisoned flag set, simply drop the folio. Even we could
+>>>>
+>>>> Agree, I think as a starter I could try to, for example, let
+>>>> free_pages_prepare scan HWPoison-ed subpages if the base page is high
+>>>> order. In the optimal case, HugeTLB does move PageHWPoison flag from
+>>>> head page to the raw error pages.
+>>>
+>>> [+Cc page allocator folks]
+>>>
+>>> AFAICT enabling page sanity check in page alloc/free path would be against
+>>> past efforts to reduce sanity check overhead.
+>>>
+>>> [1] https://lore.kernel.org/linux-mm/1460711275-1130-15-git-send-email-mgorman@techsingularity.net/
+>>> [2] https://lore.kernel.org/linux-mm/1460711275-1130-16-git-send-email-mgorman@techsingularity.net/
+>>> [3] https://lore.kernel.org/all/20230216095131.17336-1-vbabka@suse.cz
+>>>
+>>> I'd recommend to check hwpoison flag before freeing it to the buddy
+>>> when we know a memory error has occurred (I guess that's also what Miaohe
+>>> suggested).
+>>>
+>>>>> do it better -- Split the folio and let healthy subpages join the buddy while reject
+>>>>> the hwpoisoned one.
+>>>>>
+>>>>>>
+>>>>>> AFAICT there is nothing that prevents the poisoned page to be
+>>>>>> allocated back to users because the buddy doesn't check PageHWPoison()
+>>>>>> on allocation as well (by default).
+>>>>>>
+>>>>>> So rather than freeing the high-order page as-is in
+>>>>>> dissolve_free_hugetlb_folio(), I think we have to split it to base pages
+>>>>>> and then free them one by one.
+>>>>>
+>>>>> It might not be worth to do that as this would significantly increase the overhead
+>>>>> of the function while memory failure event is really rare.
+>>>>
+>>>> IIUC, Harry's idea is to do the split in dissolve_free_hugetlb_folio
+>>>> only if folio is HWPoison-ed, similar to what Miaohe suggested
+>>>> earlier.
+>>>
+>>> Yes, and if we do the check before moving HWPoison flag to raw pages,
+>>> it'll be just a single folio_test_hwpoison() call.
+>>>
+>>>> BTW, I believe this race condition already exists today when
+>>>> memory_failure handles HWPoison-ed free hugetlb page; it is not
+>>>> something introduced via this patchset. I will fix or improve this in
+>>>> a separate patchset.
+>>>
+>>> That makes sense.
+>>
+>> Wait, without this patchset, do we even free the hugetlb folio when
+>> its subpage is hwpoisoned? I don't think we do, but I'm not expert at MFR...
+> 
+> Based on my reading of try_memory_failure_hugetlb, me_huge_page, and
+> __page_handle_poison, I think mainline kernel frees dissolved hugetlb
+> folio to buddy allocator in two cases:
+> 1. it was a free hugetlb page at the moment of try_memory_failure_hugetlb
+> 2. it was an anonomous hugetlb page
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-WARNING in get_data
+I think there are some corner cases that can lead to hugetlb folio being freed while
+some of its subpages are hwpoisoned. E.g. get_huge_page_for_hwpoison can return
+-EHWPOISON when hugetlb folio is happen to be isolated. Later hugetlb folio might
+become free and __update_and_free_hugetlb_folio will be used to free it into buddy.
 
-loop0: detected capacity change from 0 to 16
-------------[ cut here ]------------
-WARNING: kernel/printk/printk_ringbuffer.c:1278 at get_data+0x48a/0x840 kernel/printk/printk_ringbuffer.c:1278, CPU#1: syz.0.585/7652
-Modules linked in:
-CPU: 1 UID: 0 PID: 7652 Comm: syz.0.585 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
-RIP: 0010:get_data+0x48a/0x840 kernel/printk/printk_ringbuffer.c:1278
-Code: 83 c4 f8 48 b8 00 00 00 00 00 fc ff df 41 0f b6 04 07 84 c0 0f 85 ee 01 00 00 44 89 65 00 49 83 c5 08 eb 13 e8 a7 19 1f 00 90 <0f> 0b 90 eb 05 e8 9c 19 1f 00 45 31 ed 4c 89 e8 48 83 c4 28 5b 41
-RSP: 0018:ffffc900035170e0 EFLAGS: 00010293
-RAX: ffffffff81a1eee9 RBX: 00003fffffffffff RCX: ffff888033255b80
-RDX: 0000000000000000 RSI: 00003fffffffffff RDI: 0000000000000000
-RBP: 0000000000000012 R08: 0000000000000e55 R09: 000000325e213cc7
-R10: 000000325e213cc7 R11: 00001de4c2000037 R12: 0000000000000012
-R13: 0000000000000000 R14: ffffc90003517228 R15: 1ffffffff1bca646
-FS:  00007f44eb8da6c0(0000) GS:ffff888125fda000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f44ea9722e0 CR3: 0000000066344000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- copy_data kernel/printk/printk_ringbuffer.c:1857 [inline]
- prb_read kernel/printk/printk_ringbuffer.c:1966 [inline]
- _prb_read_valid+0x672/0xa90 kernel/printk/printk_ringbuffer.c:2143
- prb_read_valid+0x3c/0x60 kernel/printk/printk_ringbuffer.c:2215
- printk_get_next_message+0x15c/0x7b0 kernel/printk/printk.c:2978
- console_emit_next_record kernel/printk/printk.c:3062 [inline]
- console_flush_one_record kernel/printk/printk.c:3194 [inline]
- console_flush_all+0x4cc/0xb10 kernel/printk/printk.c:3268
- __console_flush_and_unlock kernel/printk/printk.c:3298 [inline]
- console_unlock+0xbb/0x190 kernel/printk/printk.c:3338
- vprintk_emit+0x4c5/0x590 kernel/printk/printk.c:2423
- _printk+0xcf/0x120 kernel/printk/printk.c:2448
- _erofs_printk+0x349/0x410 fs/erofs/super.c:33
- erofs_fc_fill_super+0x1591/0x1b20 fs/erofs/super.c:746
- get_tree_bdev_flags+0x40e/0x4d0 fs/super.c:1692
- vfs_get_tree+0x92/0x2b0 fs/super.c:1752
- fc_mount fs/namespace.c:1198 [inline]
- do_new_mount_fc fs/namespace.c:3641 [inline]
- do_new_mount+0x302/0xa10 fs/namespace.c:3717
- do_mount fs/namespace.c:4040 [inline]
- __do_sys_mount fs/namespace.c:4228 [inline]
- __se_sys_mount+0x313/0x410 fs/namespace.c:4205
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f44ea99076a
-Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 1a 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f44eb8d9e68 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007f44eb8d9ef0 RCX: 00007f44ea99076a
-RDX: 0000200000000180 RSI: 00002000000001c0 RDI: 00007f44eb8d9eb0
-RBP: 0000200000000180 R08: 00007f44eb8d9ef0 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00002000000001c0
-R13: 00007f44eb8d9eb0 R14: 00000000000001a1 R15: 0000200000000080
- </TASK>
+If page sanity check is enabled, hwpoisoned subpages will slip into buddy but they
+won't be re-allocated later because check_new_page will drop them. But if page sanity
+check is disabled, I think there is still missing a way to stop hwpoisoned subpages
+from being reused.
 
+Let me know if I miss something.
 
-Tested on:
+Thanks both.
+.
 
-commit:         98231209 Add linux-next specific files for 20251103
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=1370a292580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=43cc0e31558cb527
-dashboard link: https://syzkaller.appspot.com/bug?extid=3686758660f980b402dc
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-
-Note: no patches were applied.
 
