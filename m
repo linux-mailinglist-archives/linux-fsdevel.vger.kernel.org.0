@@ -1,118 +1,350 @@
-Return-Path: <linux-fsdevel+bounces-66971-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66972-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E300C3234E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 04 Nov 2025 18:03:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BAAC1C323CC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 04 Nov 2025 18:10:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 195C14EC421
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Nov 2025 17:01:04 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 34A5F4EC4CD
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Nov 2025 17:06:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62ECD3321DF;
-	Tue,  4 Nov 2025 17:00:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AA63331A7C;
+	Tue,  4 Nov 2025 17:04:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="avXZX9aA"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="apBg6Y3W"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9927D331A7C
-	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Nov 2025 17:00:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE2DD337B8E
+	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Nov 2025 17:04:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762275647; cv=none; b=iawAzCMHED2e3Q2G3r8RJs+wq7WgZ6XDpwgaK2aPu2jmHcpWRcmB+jyi9a6XLquJDNelwbdIYUUMm9KMHl5WUVjpLi7N2Av5YCBBdz1N92gbXxMRgsEh2ta7XIrhDkum/jMztjzENNNrFwaX3Kt/BOpDIsTCqfSp8A8XMpvxQY8=
+	t=1762275897; cv=none; b=jg5Aw12sW3gU7mIpJwb+pV6mQ8q3D4kss3Wh3UwdNIGQW7gUVvy/0AHdcF6L+acO5J9KN+bZZTiMQ7nR2E4PwqzrtoXAYReR0tAi54F6v6AH3MlTEwnkQ1wnZDJ8EOwrPzhqISjoelX3R4Vz6Bove5yb9pMENt8hWdI3NtcRd98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762275647; c=relaxed/simple;
-	bh=Vrr/uSwlry0nKvIcHU9NJV1yfDPOHC8rt2Mzqj3YkMI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Al29iecUn6NhSzMF+NGx9ZWrKYcCLZvjxpZfqQxrXKfYXp9PpQExT7YKe9mqYynj9MUptCTKK72vXYxt87BnuDG558oKPN68eiMeglsmRO/0mMn4hPvLIz+yreXS/rLd1FjRtlUrGWZL9YE9NSzr/nEfuZOtbiWXc/LPyPFgAtI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=avXZX9aA; arc=none smtp.client-ip=209.85.128.46
+	s=arc-20240116; t=1762275897; c=relaxed/simple;
+	bh=fhIUlrOyPq3n7/GWnWAZGGSii/QB4Z9azjCnjk20+Jg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gwdJZy8JfHCDO8ZvGiMGhonDDHiVoh/jzqX3VGU/ugHVDCw2WuiNHPJnqORPsormc3McjuVSpa9/6GjYlq7Oxrxs8ZuRfdBalz51imUWEjWZ278pINM5Yu6cGFxre1laEF3G0EC+9Mb5evpRJJP9bxzPT1jUtDQvrlaMK6KlGaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=apBg6Y3W; arc=none smtp.client-ip=209.85.128.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-47721743fd0so31276435e9.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Nov 2025 09:00:45 -0800 (PST)
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-47755a7652eso7966185e9.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Nov 2025 09:04:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762275644; x=1762880444; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3Yfb6FFNpXCK7ISYxIM3MD/neK2yEBhzq7eFojyB94A=;
-        b=avXZX9aAcpzUa9I1hrWCfY1uDIXVzvsm96b3e989zv9xRnpG2QiR04Zf8+svaSVG4X
-         D22/wjc4aF3fyhqIz/AUWEX0+KmQogEsA33WUtv55SVWftTftxAdOg+4Ou0C8oxZE/zG
-         9+MJMucOkLaNRx/5CPeHKlp14RB1zmqzmuTPe4F5RZ3FwdXwEA959Mjaauht8Uolql6g
-         I8E23kYw0E4Uyvk18VEv5K7/qkr8UVZ/0kFbpJaiQ2YozPLNrl2tYSzuN1iZnuhmrBtE
-         tbWcjckPkkWCTyI0NH5C9h7ghn68WiQsV7CyludR/889SrWK1viNfIwJNKXnRIslOXfR
-         OnZw==
+        d=gmail.com; s=20230601; t=1762275893; x=1762880693; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qbLDjKmL4uHc2dptE3aLwdNwU3mK9EQDqQ7oNou4dVA=;
+        b=apBg6Y3WmpXV8tNupi0zCb7sivXs/efOMH8so3INU+XH4Mxb9jQuERfTzLYrPL7aM+
+         bwYVKoMFoRE+38mLT/u060lLyRjP8BC+myPDVIQyfgG2TksBR84ZWEN8V5C1x5UOjoFv
+         pb10IK90dFONKjq6SWXWoLHOM3FpPXEFVw26V5asAxLo7SzBT326gUiHbQkBISQ1gilY
+         xSaggZ0U9hy0Z0Aeju6UstQBveQ27sNLCIV89wy9Xtf4h9STRmjrpkymw3bKHX9ZlbFb
+         rbRGgJoeplqgDiyyEnX+0BJMI3u3KZBjkqWkvLRzTTBcIsqkJ1+kcaG6tAC63JaB9H8g
+         vUIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762275644; x=1762880444;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3Yfb6FFNpXCK7ISYxIM3MD/neK2yEBhzq7eFojyB94A=;
-        b=ophahAlErIlhIHlapncdy8QrOzpJNkQoe9Vnr+0IHKCwdjDTyqFxjzR+z5UZzuQEPI
-         w3GQMQiozEPNxVpLT4EQiQ3OMBbG/wdc2NXpUWzmQ5hsmihbBMBObslhJ8kJ73MDXBWa
-         KuriHeiH0+o1Oyp2ah+fH6GocPIQ3bHX0UggLBR/+7kcP5M2C0EByrgJR8hodIuOGH8M
-         aMJk1DcyeP+WdEbZXlitBAOGbuN0En2iiNjJfI/WrTzchtCKsmn08nCbveHxa4tpLVvy
-         54UJlbCwcHJfqJ5t/29I7dAp5FSE5wkHgiZfOjPf3cY0FgXs8B/7t50xc7HxgA0Xd2tD
-         XmTg==
-X-Gm-Message-State: AOJu0YwhYpcaIBmJFnNbwT/DYnR2QLX7EipQfeY9JczI7GxVYdSn/ZUt
-	w7xfpC+dS4uTdJCdndwvQPhO+Um2Hp+wBB7bxBW9jtCzo/x2ruF4MZsw
-X-Gm-Gg: ASbGncv43Em3uzmIF302SKwg7FlUDgQIo34mag69JfeOwFiloRuwIU7rSK1TsdipjeZ
-	rvkZQzIICoqqrxDrzlioEbpT3I24U822zcR8XcF4kVtng85XetQIQbDKH0Vn8KcC/e2JJfyrOZp
-	Su0cwTCImnUqpEGWvwdaRvkIHiylzDycmdeH9UVzPgRDrSFVSIxFSzma2d2OPm8CMhOnTR8mM5C
-	4mSoEl7gfj5kpth2bG7UU+oDpH+gbhsxBZizGbebQpyFwlqTLO3VG+7S7OaM9qXiaVz0DrsEruE
-	o3cG5KJCab0vX5FdmQ1fO5YQIq3EjW+2LdY56AGzaoi2uxG5BkF1FA26vBGbvKbPcMi5POh7F7G
-	IyoWlC0wDLuwa2YF/C1MI5ptKeIsG4Y+zl2IbHRouIHbUjwIlanOdZQGYjMhVoD9OYUkUWeZYdC
-	+6UxPDxymBSjBGsEDzDPnE12Qus8UzXal+Ykp9iqJrSqpMdw==
-X-Google-Smtp-Source: AGHT+IH5aMD7dan6U5/w/UZRzVLH80Ar+ql1ErXcMyhqQ50Z13gZ06dshwL9yRzd5Se8p4waVSOTRA==
-X-Received: by 2002:a05:600c:8b88:b0:45d:d97c:236c with SMTP id 5b1f17b1804b1-4775cdf54d6mr106665e9.21.1762275643762;
-        Tue, 04 Nov 2025 09:00:43 -0800 (PST)
-Received: from f (cst-prg-14-82.cust.vodafone.cz. [46.135.14.82])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4775cd45466sm685245e9.0.2025.11.04.09.00.41
+        d=1e100.net; s=20230601; t=1762275893; x=1762880693;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qbLDjKmL4uHc2dptE3aLwdNwU3mK9EQDqQ7oNou4dVA=;
+        b=eqpwyxlaLAnLWIyXLOzvM2MVlL8VP4neRBaAiBMCbeBkXWmSazpWIMj/zhrnWuNIRu
+         79pUmOx9qB5yWDzwwZvIvxbQ8/EcGYdJiy7bZeCtPd07dHBcjNc80w+0ivn6N2DLeus9
+         S8apWpxA4DkNJUM+ckdxFH2INGBwk9HA5krjbpevCQj0MwnQa7wYBUnRLc/RfYmKP5Hh
+         asqmyoL+PbPEmHePobS+noB4v5qHuS3Gv06n+YUXGsgvk3LW0spTyZytsxqCR82Mnbf4
+         NIG9jt25RzsXcM8nOOX3DjCK1DFfwedd0NEeSApTP2dpZEKbF6P4efFM4dlKofNu85Nk
+         IuPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX4EDzC5hGaXS2eaYh2fDl4E1oMGOuTAPD8uTIwxNqVKfcmW9hPogFbQIX/3waFjlkj1axzB7vE33h5trhP@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkB89LW33JvHjXdt6lfIcaektmytIIdvl+7kpkysCiV3xDajg0
+	8/DlD1EeurUhQ5caog8HoTv0VncAzow55Nb8DYwjQ/0q9hn3m1pj4T/o
+X-Gm-Gg: ASbGncsM+6i84zD8QoFUmoHzgvBXFX2d28hD/M/TPkARFm2/yMszuc27dlyQ7YOB1dF
+	GkQJ4aWJTPHsYSaXeqe4WtZs0ZoAYlchu8FFcW7YNdWqOysJzM4jGesK4yhdUU1pxsss5D6aWn1
+	xVevO6ohBebQ+ycOcRWO1I2EPSoDYH3SpqZ9f2w4xPKom4AyJ/co36LEIKCh4zjlZcE6JI+DByR
+	4cidpvs5OCdPfjNEKfLEBWooDE11f/xuuSFVaNv7NlgQ8xVX6lJ6ktC5fLtYMJzzkvH6wmRgalu
+	PgCpBxd31egkouLxXW35ByZ/rFxTAXLqgh3Iko8CAyYmE5CKBcOiy8x06QxoK4ImDPgfqvSs09W
+	pgqdmLl3MK03rrG4uDu2ZdB+JyTPcdm9VB4FAZA8x8TFmORIUoqZ9ep0fuSUBjIQeJ8wXfkSEKT
+	lBl6GEV9s79Tr/0hl9ipM1zJMCyitYXmHGVONcSrV/af6JUVj9
+X-Google-Smtp-Source: AGHT+IEOhm4LBQ3j+uFfRzsfx33ktH92iC6aRT+QVBa8crwQ3gFbKh37Db7od69wIcrjDZXtYn9XAw==
+X-Received: by 2002:a05:600c:1d89:b0:471:9b5:6fd3 with SMTP id 5b1f17b1804b1-4775cd7d146mr681795e9.0.1762275893180;
+        Tue, 04 Nov 2025 09:04:53 -0800 (PST)
+Received: from f.. (cst-prg-14-82.cust.vodafone.cz. [46.135.14.82])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429dc1929b2sm5698036f8f.15.2025.11.04.09.04.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Nov 2025 09:00:42 -0800 (PST)
-Date: Tue, 4 Nov 2025 18:00:29 +0100
+        Tue, 04 Nov 2025 09:04:52 -0800 (PST)
 From: Mateusz Guzik <mjguzik@gmail.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, linux-btrfs@vger.kernel.org, 
-	linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH RFC 4/8] btrfs: use super write guard in sb_start_write()
-Message-ID: <cxrp3a7wu5lz5o6fiwleqiqwqm6xyevdjiega77mwxy5aekeab@522tt37vnwip>
-References: <20251104-work-guards-v1-0-5108ac78a171@kernel.org>
- <20251104-work-guards-v1-4-5108ac78a171@kernel.org>
+To: brauner@kernel.org
+Cc: viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH] fs: inline current_umask() and move it to fs_struct.h
+Date: Tue,  4 Nov 2025 18:04:48 +0100
+Message-ID: <20251104170448.630414-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251104-work-guards-v1-4-5108ac78a171@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Nov 04, 2025 at 01:12:33PM +0100, Christian Brauner wrote:
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
-> ---
->  fs/btrfs/volumes.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
-> index 2bec544d8ba3..4152b0a5537a 100644
-> --- a/fs/btrfs/volumes.c
-> +++ b/fs/btrfs/volumes.c
-> @@ -4660,7 +4660,8 @@ static int balance_kthread(void *data)
->  	struct btrfs_fs_info *fs_info = data;
->  	int ret = 0;
->  
-> -	sb_start_write(fs_info->sb);
-> +	guard(super_write)(fs_info->sb);
-> +
->  	mutex_lock(&fs_info->balance_mutex);
->  	if (fs_info->balance_ctl)
->  		ret = btrfs_balance(fs_info, fs_info->balance_ctl, NULL);
-> 
+There is no good reason to have this as a func call, other than avoiding
+the churn of adding fs_struct.h as needed.
 
-this missed sb_end_write call removal
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+---
+
+build tested with allmodconfig on x86-64
+
+this pulls in sched.h in fs_struct.h for task_struct.
+
+perhaps current_umask would be served better as a macro?
+
+either way, it is used a lot and there is no good reason to func it
+
+ fs/9p/acl.c               | 1 +
+ fs/btrfs/inode.c          | 1 +
+ fs/f2fs/acl.c             | 1 +
+ fs/fat/inode.c            | 1 +
+ fs/fs_struct.c            | 6 ------
+ fs/hfsplus/options.c      | 1 +
+ fs/hpfs/super.c           | 1 +
+ fs/nilfs2/nilfs.h         | 1 +
+ fs/ntfs3/super.c          | 1 +
+ fs/ocfs2/acl.c            | 1 +
+ fs/omfs/inode.c           | 1 +
+ fs/smb/client/file.c      | 1 +
+ fs/smb/client/inode.c     | 1 +
+ fs/smb/client/smb1ops.c   | 1 +
+ include/linux/fs.h        | 2 --
+ include/linux/fs_struct.h | 6 ++++++
+ include/linux/namei.h     | 1 +
+ 17 files changed, 20 insertions(+), 8 deletions(-)
+
+diff --git a/fs/9p/acl.c b/fs/9p/acl.c
+index eed551d8555f..633da5e37299 100644
+--- a/fs/9p/acl.c
++++ b/fs/9p/acl.c
+@@ -6,6 +6,7 @@
+ 
+ #include <linux/module.h>
+ #include <linux/fs.h>
++#include <linux/fs_struct.h>
+ #include <net/9p/9p.h>
+ #include <net/9p/client.h>
+ #include <linux/slab.h>
+diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+index 433ffe231546..9ac88f66bfcc 100644
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -9,6 +9,7 @@
+ #include <linux/blk-cgroup.h>
+ #include <linux/file.h>
+ #include <linux/fs.h>
++#include <linux/fs_struct.h>
+ #include <linux/pagemap.h>
+ #include <linux/highmem.h>
+ #include <linux/time.h>
+diff --git a/fs/f2fs/acl.c b/fs/f2fs/acl.c
+index d4d7f329d23f..fa8d81a30fb9 100644
+--- a/fs/f2fs/acl.c
++++ b/fs/f2fs/acl.c
+@@ -9,6 +9,7 @@
+  *
+  * Copyright (C) 2001-2003 Andreas Gruenbacher, <agruen@suse.de>
+  */
++#include <linux/fs_struct.h>
+ #include <linux/f2fs_fs.h>
+ #include "f2fs.h"
+ #include "xattr.h"
+diff --git a/fs/fat/inode.c b/fs/fat/inode.c
+index 9648ed097816..309e560038dd 100644
+--- a/fs/fat/inode.c
++++ b/fs/fat/inode.c
+@@ -22,6 +22,7 @@
+ #include <linux/unaligned.h>
+ #include <linux/random.h>
+ #include <linux/iversion.h>
++#include <linux/fs_struct.h>
+ #include "fat.h"
+ 
+ #ifndef CONFIG_FAT_DEFAULT_IOCHARSET
+diff --git a/fs/fs_struct.c b/fs/fs_struct.c
+index 28be762ac1c6..b8c46c5a38a0 100644
+--- a/fs/fs_struct.c
++++ b/fs/fs_struct.c
+@@ -146,12 +146,6 @@ int unshare_fs_struct(void)
+ }
+ EXPORT_SYMBOL_GPL(unshare_fs_struct);
+ 
+-int current_umask(void)
+-{
+-	return current->fs->umask;
+-}
+-EXPORT_SYMBOL(current_umask);
+-
+ /* to be mentioned only in INIT_TASK */
+ struct fs_struct init_fs = {
+ 	.users		= 1,
+diff --git a/fs/hfsplus/options.c b/fs/hfsplus/options.c
+index a66a09a56bf7..9b377481f397 100644
+--- a/fs/hfsplus/options.c
++++ b/fs/hfsplus/options.c
+@@ -12,6 +12,7 @@
+ #include <linux/string.h>
+ #include <linux/kernel.h>
+ #include <linux/sched.h>
++#include <linux/fs_struct.h>
+ #include <linux/fs_context.h>
+ #include <linux/fs_parser.h>
+ #include <linux/nls.h>
+diff --git a/fs/hpfs/super.c b/fs/hpfs/super.c
+index 8ab85e7ac91e..371aa6de8075 100644
+--- a/fs/hpfs/super.c
++++ b/fs/hpfs/super.c
+@@ -9,6 +9,7 @@
+ 
+ #include "hpfs_fn.h"
+ #include <linux/module.h>
++#include <linux/fs_struct.h>
+ #include <linux/fs_context.h>
+ #include <linux/fs_parser.h>
+ #include <linux/init.h>
+diff --git a/fs/nilfs2/nilfs.h b/fs/nilfs2/nilfs.h
+index f466daa39440..b7e3d91b6243 100644
+--- a/fs/nilfs2/nilfs.h
++++ b/fs/nilfs2/nilfs.h
+@@ -14,6 +14,7 @@
+ #include <linux/buffer_head.h>
+ #include <linux/spinlock.h>
+ #include <linux/blkdev.h>
++#include <linux/fs_struct.h>
+ #include <linux/nilfs2_api.h>
+ #include <linux/nilfs2_ondisk.h>
+ #include "the_nilfs.h"
+diff --git a/fs/ntfs3/super.c b/fs/ntfs3/super.c
+index ddff94c091b8..8d09dfec970a 100644
+--- a/fs/ntfs3/super.c
++++ b/fs/ntfs3/super.c
+@@ -51,6 +51,7 @@
+ #include <linux/buffer_head.h>
+ #include <linux/exportfs.h>
+ #include <linux/fs.h>
++#include <linux/fs_struct.h>
+ #include <linux/fs_context.h>
+ #include <linux/fs_parser.h>
+ #include <linux/log2.h>
+diff --git a/fs/ocfs2/acl.c b/fs/ocfs2/acl.c
+index 62464d194da3..af1e2cedb217 100644
+--- a/fs/ocfs2/acl.c
++++ b/fs/ocfs2/acl.c
+@@ -13,6 +13,7 @@
+ #include <linux/module.h>
+ #include <linux/slab.h>
+ #include <linux/string.h>
++#include <linux/fs_struct.h>
+ 
+ #include <cluster/masklog.h>
+ 
+diff --git a/fs/omfs/inode.c b/fs/omfs/inode.c
+index db80af312678..701ed85d9831 100644
+--- a/fs/omfs/inode.c
++++ b/fs/omfs/inode.c
+@@ -14,6 +14,7 @@
+ #include <linux/writeback.h>
+ #include <linux/seq_file.h>
+ #include <linux/crc-itu-t.h>
++#include <linux/fs_struct.h>
+ #include <linux/fs_context.h>
+ #include <linux/fs_parser.h>
+ #include "omfs.h"
+diff --git a/fs/smb/client/file.c b/fs/smb/client/file.c
+index 474dadeb1593..9dc0a968ec89 100644
+--- a/fs/smb/client/file.c
++++ b/fs/smb/client/file.c
+@@ -9,6 +9,7 @@
+  *
+  */
+ #include <linux/fs.h>
++#include <linux/fs_struct.h>
+ #include <linux/filelock.h>
+ #include <linux/backing-dev.h>
+ #include <linux/stat.h>
+diff --git a/fs/smb/client/inode.c b/fs/smb/client/inode.c
+index cc6871234ae9..e470d1cc5df6 100644
+--- a/fs/smb/client/inode.c
++++ b/fs/smb/client/inode.c
+@@ -6,6 +6,7 @@
+  *
+  */
+ #include <linux/fs.h>
++#include <linux/fs_struct.h>
+ #include <linux/stat.h>
+ #include <linux/slab.h>
+ #include <linux/pagemap.h>
+diff --git a/fs/smb/client/smb1ops.c b/fs/smb/client/smb1ops.c
+index ca8f3dd7ff63..78650527d4bb 100644
+--- a/fs/smb/client/smb1ops.c
++++ b/fs/smb/client/smb1ops.c
+@@ -7,6 +7,7 @@
+ 
+ #include <linux/pagemap.h>
+ #include <linux/vfs.h>
++#include <linux/fs_struct.h>
+ #include <uapi/linux/magic.h>
+ #include "cifsglob.h"
+ #include "cifsproto.h"
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 33129cda3a99..072b636827fd 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2902,8 +2902,6 @@ static inline void super_set_sysfs_name_generic(struct super_block *sb, const ch
+ 	va_end(args);
+ }
+ 
+-extern int current_umask(void);
+-
+ extern void ihold(struct inode * inode);
+ extern void iput(struct inode *);
+ int inode_update_timestamps(struct inode *inode, int flags);
+diff --git a/include/linux/fs_struct.h b/include/linux/fs_struct.h
+index baf200ab5c77..0070764b790a 100644
+--- a/include/linux/fs_struct.h
++++ b/include/linux/fs_struct.h
+@@ -2,6 +2,7 @@
+ #ifndef _LINUX_FS_STRUCT_H
+ #define _LINUX_FS_STRUCT_H
+ 
++#include <linux/sched.h>
+ #include <linux/path.h>
+ #include <linux/spinlock.h>
+ #include <linux/seqlock.h>
+@@ -41,4 +42,9 @@ static inline void get_fs_pwd(struct fs_struct *fs, struct path *pwd)
+ 
+ extern bool current_chrooted(void);
+ 
++static inline int current_umask(void)
++{
++	return current->fs->umask;
++}
++
+ #endif /* _LINUX_FS_STRUCT_H */
+diff --git a/include/linux/namei.h b/include/linux/namei.h
+index fed86221c69c..b0679c7420a8 100644
+--- a/include/linux/namei.h
++++ b/include/linux/namei.h
+@@ -7,6 +7,7 @@
+ #include <linux/path.h>
+ #include <linux/fcntl.h>
+ #include <linux/errno.h>
++#include <linux/fs_struct.h>
+ 
+ enum { MAX_NESTED_LINKS = 8 };
+ 
+-- 
+2.34.1
+
 
