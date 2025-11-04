@@ -1,209 +1,109 @@
-Return-Path: <linux-fsdevel+bounces-66999-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67000-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C90FC32F90
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 04 Nov 2025 21:54:03 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAC57C32F9E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 04 Nov 2025 21:54:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A6C6A4EF507
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Nov 2025 20:52:10 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DF23B4EFDB4
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Nov 2025 20:52:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81CD8264F81;
-	Tue,  4 Nov 2025 20:51:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A93E62E7F0A;
+	Tue,  4 Nov 2025 20:52:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I0mbF/GV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DZAzBnIY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7552C2C0F8E
-	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Nov 2025 20:51:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 029A4D27E;
+	Tue,  4 Nov 2025 20:52:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762289518; cv=none; b=FpGQpl+UN8K2MdOjDzTgdv/ff9ypVVmSapEOxR+BzLrA43iEtOVBqzBZWaU7KBPA4EyuyCvGWajPPoZttAq4y5z2wZcRre2J8Tg6cJFzvf2tvRmZ8wGX0/72P+eM9oDRnvdydgtoqaY5G6g8pq/nfshRJiujIsySKD6wm/VEQPw=
+	t=1762289552; cv=none; b=mCsxX0gvZp1phCN0hI+EzC0+fO2gHktQQf/RUIVA/FUmIAq3jtzj6M6Qn95ntQK8Tef5laDmNFKiS/2VdnfPqjctb3ekpdEFkWcSsMMbYhMYDrxX09wxOJXqZo8cDAiZYEo8LujAlsuEoUZruJNHzxx2NEno1KkkdGwX3syqHLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762289518; c=relaxed/simple;
-	bh=ege+TzqD6no8D4FLP3yhnRrLAi2PhM1e8YwtoA1bLNg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qkxhXV+D+P1eZimuYiCjT9uItKu+PThiq0xnHrLyovmzE+3x5+XkPoTjsff8TQiPSb3TYH75TukUMnDFEEaQYCsI9xatDJ7y08INSAsljxxTvgxEtjBqyzWXLENaXXKcT7DXZPLKSoDqRC4jIneruFe9iQANOJrUsEPPYgaJoJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I0mbF/GV; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-ba4874edb5dso393536a12.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Nov 2025 12:51:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762289516; x=1762894316; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=I5+LJhRW2wsqElWkTAW8jCIiHgU3xxMmmQA50Av6GOI=;
-        b=I0mbF/GVdr/PCpGJRB/q84a2Z636VPmNBMCBT01INYFBxxaQDYLplZtRZ/t0vbQOCw
-         HoJm9s7rIs7/aP+Tvs381wURpGTUdFpOyfKRUlAh/SPJ5N2tsMgR9Y6ItG/VZ+kertAF
-         7vCcjg1qZRvs5yyMRbZUHzbxRR55n9pyFeNFZYZ89mrC6yhfZ4X4Ts+DVfRPIEp75mxJ
-         fm7kkiGTbK/96n3jB7/P7LBwQallspZj+rOls/TY8ct7X8IQ8S5+kFmXYZ2w7Nhuxf8z
-         wKrKkq9Tc0QdeJAG2pstgJaqfig4/Pl9PsFmiwA3gFrtSnmopKGdKMrA5NCAjYvY+ZR4
-         r61A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762289516; x=1762894316;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=I5+LJhRW2wsqElWkTAW8jCIiHgU3xxMmmQA50Av6GOI=;
-        b=TIdUtBIt5uQFjdXZkyd9AcGfBXdP8wMaqeUR3/ymmLHr+Q7y8mCpQV7Teb3hisMbak
-         vC7sBdKuhy+5+aspfEiRvYKZn7GaVqC4FWGXxLDzfiq3lQhtMdmoXGxTAQLl9aymDSLK
-         Nyo7k69UeW857Ic7BIi3678roXSu/3KBF3co6yw/KUSwQVh6eql+qIkWYulMr2UAyVzo
-         r+fCfFmU92hxvOtvtXvEUDQXUhXj5hyBLZk+EYuwGMvuFEl89EUFlGC819T8rrqRqX9O
-         y2pOLMiTxsGXLvdqQYTjB3HLLopDO+tPM6fVndW5zem0uRcLceGRw1+kjaJz3ot4BfVP
-         +v7w==
-X-Forwarded-Encrypted: i=1; AJvYcCUpxZX3fIBSESuAeszjx+q4khQPdsgQNv/JioD0NzQs4riP1SOiZy67igxwV1AXBjAmA1anzQfRQVdwWFlf@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJFbrZncGBwChnw/Qa8rGvFyJ+dZcPxW4kW82WQNOGQyLyAX+7
-	09JL4whQADrLDL6I3kivjhbAeQ3Iv96prIEEDZMH1USgIQs50iTahCmw
-X-Gm-Gg: ASbGnctXD8Jgoz8UT9uydM2R3WcOeMaBevHGpAZ63yMfk1zV/UfVY27Pa4AD1WqUy1v
-	dJCuJEFjAekKIo7F50E6x2xDyaFc+rMmIhYyt0GMCirVgWMJmFbNjOvdcFPRKCUxzvZ8lF/MZ/H
-	yjUEYg3PwwGy8wEuAJRcEOmf9iatbwdJadGJWRreTTjeRvnV/CCEzpG7GTXAZEsgCPbmuPVKK8p
-	8aFG6b6JF1bkK3tcvsCp/N9K7xNN+TUfETAGjgLNc6WaJzqy/gXhxDyIiKpKRSF2Gywu0KAIphE
-	1MPDGn5OSUSgzmntHThYLUiOzTEkB5tK/Gh7cc+B5Y4Q2Odx1x8bX0VBijH8STcf5SPpi0AH6KE
-	Mk1VziU3oTMUF0f2RqmrQ1WriojCYvEYEANj5rK9eATqwCP1G4KI00os8onMLGFltD4zW8y2Mmc
-	1uQZjN5Rzocb710gcnSP/SiG5MqJIPqiXaERshvA==
-X-Google-Smtp-Source: AGHT+IFZGQOEF6wrNsRjmN/8Wy1yPPx1qkaZ0q+QR6+ZvnQUEh7V1RzsJ/k0oppblSnBwBzYymkDXQ==
-X-Received: by 2002:a05:6a21:3298:b0:304:313a:4bcd with SMTP id adf61e73a8af0-34f854ed11emr623285637.30.1762289515827;
-        Tue, 04 Nov 2025 12:51:55 -0800 (PST)
-Received: from localhost ([2a03:2880:ff:44::])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3417bcb9faasm2214007a91.1.2025.11.04.12.51.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Nov 2025 12:51:55 -0800 (PST)
-From: Joanne Koong <joannelkoong@gmail.com>
-To: brauner@kernel.org
-Cc: hch@infradead.org,
-	djwong@kernel.org,
-	bfoster@redhat.com,
-	linux-fsdevel@vger.kernel.org,
-	kernel-team@meta.com
-Subject: [PATCH v3 8/8] iomap: use find_next_bit() for uptodate bitmap scanning
-Date: Tue,  4 Nov 2025 12:51:19 -0800
-Message-ID: <20251104205119.1600045-9-joannelkoong@gmail.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251104205119.1600045-1-joannelkoong@gmail.com>
-References: <20251104205119.1600045-1-joannelkoong@gmail.com>
+	s=arc-20240116; t=1762289552; c=relaxed/simple;
+	bh=LdYsf6Q7sFeSDFSuH51djFML5cRsgTGNO7mFPwkyuQw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZQL5IBBJwDYATrUr23aDurzN65fevh/mPUxibT58UWFs/W4wBakHKPTuz9W0p+9evXBGrZbsykP/gSe0lisu8dZTb3xjX7llWLG/h7s8Mq3Krv+XkL2lz/UEk10xzutvdWNoqHr6ELZLQ0jsDlCJqNuVFdI1JJdFzkwbdPGJZtk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DZAzBnIY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B27AC4CEF7;
+	Tue,  4 Nov 2025 20:52:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762289551;
+	bh=LdYsf6Q7sFeSDFSuH51djFML5cRsgTGNO7mFPwkyuQw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=DZAzBnIYM52HWvkY+QUubrczjaHQy63871/6iqVPYU5syzGZhLPHWkd7bAyB1EXAQ
+	 e6YJgvOYrHalnGG30BObgCdzYZnEGxLYpRpjnRFo02FlAKdm76SQzwPUxrq9t+pkHs
+	 9NScWe5EnfDzdynwha1DzbIwiy0fqLN3m7zYC1iUAgPZ2u9yRT4CUwSe4w+c0Hv/Wz
+	 azFPsiw2dx7RCkEdyP0Qg7CM8RFFHg8f2xcKRqo0e/tQe9fc+3qZUh4u9TUkINUpQD
+	 j4aAjEaGmEHhP8Wua+cI9w5H85500IQWbu9cHCphBnVFIleR2F9cUli7PnVFlOMjn6
+	 z1/U6jJxFmaKQ==
+Message-ID: <e40a0d9c-7f38-44ab-a954-b09c9687ea88@kernel.org>
+Date: Tue, 4 Nov 2025 14:52:30 -0600
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/4] platform/x86: wmi: Prepare for future changes
+To: Armin Wolf <W_Armin@gmx.de>, viro@zeniv.linux.org.uk, brauner@kernel.org,
+ hansg@kernel.org, ilpo.jarvinen@linux.intel.com
+Cc: jack@suse.cz, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
+References: <20251104204540.13931-1-W_Armin@gmx.de>
+Content-Language: en-US
+From: Mario Limonciello <superm1@kernel.org>
+In-Reply-To: <20251104204540.13931-1-W_Armin@gmx.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Use find_next_bit()/find_next_zero_bit() for iomap uptodate bitmap
-scanning. This uses __ffs() internally and is more efficient for
-finding the next uptodate or non-uptodate bit than iterating through the
-the bitmap range testing every bit.
+On 11/4/25 2:45 PM, Armin Wolf wrote:
+> After over a year of reverse engineering, i am finally ready to
+> introduce support for WMI-ACPI marshalling inside the WMI driver core.
+marshaling> Since the resulting patch series is quite large, i am 
+planning to
+> submit the necessary patches as three separate patch series.
+> 
+> This is supposed to be the first of the three patch series. Its main
+> purpose is to prepare the WMI driver core for the upcoming changes.
+> The first patch fixes an issue inside the nls utf16 to utf8 conversion
+> code, while the next two patches fix some minor issues inside the WMI
+> driver core itself. The last patch finally moves the code of the WMI
+> driver core into a separate repository to allow for future additions
+> without cluttering the main directory.
 
-Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-Suggested-by: Christoph Hellwig <hch@infradead.org>
----
- fs/iomap/buffered-io.c | 52 ++++++++++++++++++++++++++----------------
- 1 file changed, 32 insertions(+), 20 deletions(-)
+One question I have here on the patch to move things.
 
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 3c9a4b773186..03dd524b69d2 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -38,10 +38,28 @@ static inline bool ifs_is_fully_uptodate(struct folio *folio,
- 	return bitmap_full(ifs->state, i_blocks_per_folio(inode, folio));
- }
- 
--static inline bool ifs_block_is_uptodate(struct iomap_folio_state *ifs,
--		unsigned int block)
-+/*
-+ * Find the next uptodate block in the folio. end_blk is inclusive.
-+ * If no uptodate block is found, this will return end_blk + 1.
-+ */
-+static unsigned ifs_next_uptodate_block(struct folio *folio,
-+		unsigned start_blk, unsigned end_blk)
- {
--	return test_bit(block, ifs->state);
-+	struct iomap_folio_state *ifs = folio->private;
-+
-+	return find_next_bit(ifs->state, end_blk + 1, start_blk);
-+}
-+
-+/*
-+ * Find the next non-uptodate block in the folio. end_blk is inclusive.
-+ * If no non-uptodate block is found, this will return end_blk + 1.
-+ */
-+static unsigned ifs_next_nonuptodate_block(struct folio *folio,
-+		unsigned start_blk, unsigned end_blk)
-+{
-+	struct iomap_folio_state *ifs = folio->private;
-+
-+	return find_next_zero_bit(ifs->state, end_blk + 1, start_blk);
- }
- 
- static bool ifs_set_range_uptodate(struct folio *folio,
-@@ -278,14 +296,11 @@ static void iomap_adjust_read_range(struct inode *inode, struct folio *folio,
- 	 * to avoid reading in already uptodate ranges.
- 	 */
- 	if (ifs) {
--		unsigned int i, blocks_skipped;
-+		unsigned int next, blocks_skipped;
- 
--		/* move forward for each leading block marked uptodate */
--		for (i = first; i <= last; i++)
--			if (!ifs_block_is_uptodate(ifs, i))
--				break;
-+		next = ifs_next_nonuptodate_block(folio, first, last);
-+		blocks_skipped = next - first;
- 
--		blocks_skipped = i - first;
- 		if (blocks_skipped) {
- 			unsigned long block_offset = *pos & (block_size - 1);
- 			unsigned bytes_skipped =
-@@ -295,15 +310,15 @@ static void iomap_adjust_read_range(struct inode *inode, struct folio *folio,
- 			poff += bytes_skipped;
- 			plen -= bytes_skipped;
- 		}
--		first = i;
-+		first = next;
- 
- 		/* truncate len if we find any trailing uptodate block(s) */
--		while (++i <= last) {
--			if (ifs_block_is_uptodate(ifs, i)) {
-+		if (++next <= last) {
-+			next = ifs_next_uptodate_block(folio, next, last);
-+			if (next <= last) {
- 				plen -= iomap_bytes_to_truncate(*pos + plen,
--						block_bits, last - i + 1);
--				last = i - 1;
--				break;
-+						block_bits, last - next + 1);
-+				last = next - 1;
- 			}
- 		}
- 	}
-@@ -634,7 +649,7 @@ bool iomap_is_partially_uptodate(struct folio *folio, size_t from, size_t count)
- {
- 	struct iomap_folio_state *ifs = folio->private;
- 	struct inode *inode = folio->mapping->host;
--	unsigned first, last, i;
-+	unsigned first, last;
- 
- 	if (!ifs)
- 		return false;
-@@ -646,10 +661,7 @@ bool iomap_is_partially_uptodate(struct folio *folio, size_t from, size_t count)
- 	first = from >> inode->i_blkbits;
- 	last = (from + count - 1) >> inode->i_blkbits;
- 
--	for (i = first; i <= last; i++)
--		if (!ifs_block_is_uptodate(ifs, i))
--			return false;
--	return true;
-+	return ifs_next_nonuptodate_block(folio, first, last) > last;
- }
- EXPORT_SYMBOL_GPL(iomap_is_partially_uptodate);
- 
--- 
-2.47.3
+Since Windows on ARM (WoA) laptops are a thing - is this still actually 
+x86 specific?  I am wondering if this should be moving to a different 
+subsystem altogether like ACPI; especially now with this impending other 
+large patch series you have on your way.
+> 
+> Armin Wolf (4):
+>    fs/nls: Fix utf16 to utf8 conversion
+>    platform/x86: wmi: Use correct type when populating ACPI objects
+>    platform/x86: wmi: Remove extern keyword from prototypes
+>    platform/x86: wmi: Move WMI core code into a separate directory
+> 
+>   Documentation/driver-api/wmi.rst           |  2 +-
+>   MAINTAINERS                                |  2 +-
+>   drivers/platform/x86/Kconfig               | 30 +------------------
+>   drivers/platform/x86/Makefile              |  2 +-
+>   drivers/platform/x86/wmi/Kconfig           | 34 ++++++++++++++++++++++
+>   drivers/platform/x86/wmi/Makefile          |  8 +++++
+>   drivers/platform/x86/{wmi.c => wmi/core.c} | 34 +++++++++++++---------
+>   fs/nls/nls_base.c                          | 16 +++++++---
+>   include/linux/wmi.h                        | 15 ++++------
+>   9 files changed, 84 insertions(+), 59 deletions(-)
+>   create mode 100644 drivers/platform/x86/wmi/Kconfig
+>   create mode 100644 drivers/platform/x86/wmi/Makefile
+>   rename drivers/platform/x86/{wmi.c => wmi/core.c} (98%)
+> 
 
+Reviewed-by: Mario Limonciello (AMD) <superm1@kernel.org>
 
