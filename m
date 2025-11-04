@@ -1,157 +1,520 @@
-Return-Path: <linux-fsdevel+bounces-66903-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66904-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D22D9C302B1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 04 Nov 2025 10:08:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E439BC30386
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 04 Nov 2025 10:21:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EFBCD4FCEDA
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Nov 2025 09:01:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B7023BB45B
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Nov 2025 09:11:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A55C2BEFED;
-	Tue,  4 Nov 2025 09:01:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BAFA3112D0;
+	Tue,  4 Nov 2025 09:11:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="EojySN4o"
+	dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b="P7VA6gwA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout.web.de (mout.web.de [212.227.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EDCE72605;
-	Tue,  4 Nov 2025 09:01:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A194228BAAC
+	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Nov 2025 09:11:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762246877; cv=none; b=ugYUlIGNHKfBilmdhImG9VWPndzJQZrPnM+tRKUs0hweKWtqoWdfmJxsfsjE2dqHj+rqGPRWHB3TTNy7UNY+u5eVgreue+tHLAxboVhMo0bCkKr3C1NRnhtBzBlPIUQiTdZ4gBzfJdTn/o5B4UN9dkwBYePK8lXcHjF7/qXsUxk=
+	t=1762247511; cv=none; b=fQJhWd1UjR4D4y16PM7t1I9QAObxYsOV9UaDjN7WPcsBK+bdBkQOnDU5LdKQKW1FBVm6Sguprr6kt2BN48pw/X1ET/8//1wxmfjMqc8NXFB77bI8dg1wAumc8xGHPBExTGPkavWb0NEDch9sKAZUyaVm324txpB77duggbucEoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762246877; c=relaxed/simple;
-	bh=UCqspKvuGFqHWxG698yzoFnfxlIZdBjD27JjaClsYNg=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=Efiprh+doH9Y5bWoCemN4VXICqboDfOMgsy8z/4eRGLnzITEajl5kZ3LUcR6+kLwBhStpMz9nXfZup739XteGOL4AokxyPzWZERUcB8pRB99O5ElqyKFcsJ07iF5aNmgKkylWq52wnKEtaPbw8ghRiwsaxjoyO2HkeARALSn14I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=EojySN4o; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1762246867; x=1762851667; i=markus.elfring@web.de;
-	bh=UCqspKvuGFqHWxG698yzoFnfxlIZdBjD27JjaClsYNg=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=EojySN4og5jcWtGSXmStgcqy2yalY1uM67B29EotKW0AvRJ1TDV7kHfZxddGoulu
-	 ruU2wnKtxvvlEj8k5FoOYrf4zak+jrxQ+3FsF6Foa7pw8p/tUJm01Sf6RXmeHa2dP
-	 7+Ct9DckB5AK+nglfjEFoBKhyVLVHaXzUkgAkUV9lFcvpibCShno3ON4UeUz4WP+z
-	 omX0e6CRq4X3k4b41ctExW2p0PcgHAFtnJjbDzpQFksGzz2RZ5+s1lMRa1RblMEWv
-	 Y/bHAoD8r54O+w5GSvzFY2lVBHm2REsQra7x/YpqDmovV/8H8v75yyfGMtuTd2qPs
-	 pkMPPAp6l0nyEuzZ2A==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.92.227]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MjBVv-1vuT3p0uZx-00eAi2; Tue, 04
- Nov 2025 09:55:32 +0100
-Message-ID: <f6509ce8-72f9-436e-82ca-dc7bbf601bb3@web.de>
-Date: Tue, 4 Nov 2025 09:55:30 +0100
+	s=arc-20240116; t=1762247511; c=relaxed/simple;
+	bh=AHPqWzpPHwKAhaFT/OGB2thf7A8e70xCIaa3HlL2k1Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IDN6fgW2DnF/OFRXP4sw2+lwNL/dim4KGds6wPvSx6vCmVxPwMDGhCy9X7d6Z1mOsIG2D+PlfvmFkRz8lP5qq03jZzw/7JigHzodzHwA+XzptARSVNV4tqyaW+/l80cNLzDThESkkpk72Ewd5ZEwVjek9Pj8LHJdYJ3M6OsMTsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mihalicyn.com; spf=pass smtp.mailfrom=mihalicyn.com; dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b=P7VA6gwA; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mihalicyn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mihalicyn.com
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-594330147efso1262812e87.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Nov 2025 01:11:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=mihalicyn.com; s=mihalicyn; t=1762247508; x=1762852308; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=XgJorVCJuOR1wPzHzYV/7GJpyiQt6MPf1YxYv2yXZvw=;
+        b=P7VA6gwArT1a8dAA4FUJbeFAwF4uZ8bBFxkiQ7FHSzWMyaXL+qxF6GDFm5MqAW+4cJ
+         8On3uR9CVQQ5ZoatVhrHJI8t4pzS7Rvsowuf1Ut/YQZ419vL2S/rSFjzwPJTld9+q6Jn
+         AZK8o5BjtBrwqeIg20W+0ViM1Wgtu823aCFsI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762247508; x=1762852308;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XgJorVCJuOR1wPzHzYV/7GJpyiQt6MPf1YxYv2yXZvw=;
+        b=DIsfAZxcI/JfWa+v/2kAMufLphfkcoDthX6tNxjc4P9HtGQx55wHC5rJ1RtJc1vG+G
+         3vOpNXfd5Y3HkQc+xVPyLZoXJSvZi8+pfh8wq/b1xmEo9QjuyGnGtmbb+sxE1PmenOaZ
+         E+Sf6zz+E4Ri6n73qIWti+JIgUro2J8MukNJfzeC8ng5F0QesYYT+klB6lCl/RnMafkK
+         LY6oCmZ8mrEuVzEn2hOvHB0TJpvzOnp85uCzfrCsJFi8ArQ63dmAu+k9l3UkhJ4ogoty
+         pvGXOXwXoEblammM2chUVS9xC09xdq/FWfPJDPPm8kkF8+dXojT/lhPIgQDDBkh4eVaf
+         Yd0A==
+X-Gm-Message-State: AOJu0YyqjypmFwTZP0Q7Q4qJPTz1ShZfzY4IfUQnwIjmYPznbUqB+KRa
+	DhFBFxROpP739y+nZ0s+1ikOwPL0OZE3RkWeRtpphDAj0gafeOLRtMHW1MFO5mbS+tYPdei/o5l
+	SbYcnWPI7YrNPmo3Fzt9kRQQEXf+/rXe/YzxnlI9Hbw==
+X-Gm-Gg: ASbGncufpdi/NW8xIJZLYi134N6yQe647+s6Nn22bthMHbr1mk4LNP80FjNb/EE07D0
+	Wyaj4z2HRIAzFUWASIaCw7bfrx8iL8rKJyaQwJMOw78Of/hidvMxU+BdT1/DX5pWgLLnirQqja/
+	iL5/xnnjzMQ1AyN43ntls19U2eUYJj+7TbZ9ve8a9bbWLkXntWJ1DFqdKimVKfQ5p8uQGZJQsvD
+	Hax577YRU4H0plP7VJxC3JTIpbMDBx9bIiFxSiJkBraUDsgvOjdRfF07JTm
+X-Google-Smtp-Source: AGHT+IH+qylmSr8S03hrVMglFYrPOb0XpdrL8Yj2JZp6G5EbDoXN6JiO/mPjXgK2gOsRyIYPj1wWm9g+Dvt2I5U8lnc=
+X-Received: by 2002:a05:6512:10c4:b0:591:ec83:3183 with SMTP id
+ 2adb3069b0e04-5941d55ac00mr5364033e87.57.1762247507488; Tue, 04 Nov 2025
+ 01:11:47 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: linux-fsdevel@vger.kernel.org,
- Gabriel Krisman Bertazi <krisman@kernel.org>, Theodore Ts'o <tytso@mit.edu>
-Content-Language: en-GB, de-DE
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [RFC] unicode: Completion of error handling
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:Ocf4noJcdAYgUVvf2UdDP7Ho6e3T3DO146mj5NumU7dlsPPcJhV
- M29qPTCXfPSDwMMelKEqnBDu5SG2nK+jlxrLMrv4ZDzUBF/qjkTcJukG+tLhrZ86hZtLa/7
- S32bTU5Ond6ntSIRc8X397ig7a/2IrwsOw51Yl7oELjHp/OJshAbHtOIEsat7MtcgjWX4P9
- l37u/idi4AaSCFGywYq7Q==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:7MerS+iU8P0=;ix36Mv9ExA5sv6/qMWEh8F2tN0L
- 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
+References: <20251028-work-coredump-signal-v1-0-ca449b7b7aa0@kernel.org> <20251028-work-coredump-signal-v1-12-ca449b7b7aa0@kernel.org>
+In-Reply-To: <20251028-work-coredump-signal-v1-12-ca449b7b7aa0@kernel.org>
+From: Alexander Mikhalitsyn <alexander@mihalicyn.com>
+Date: Tue, 4 Nov 2025 10:11:35 +0100
+X-Gm-Features: AWmQ_blQJR05UGPCVijv9Rfuv6GHtCq_NarAYr4bLWSeG6gHbbN8VVrBiYQWSvE
+Message-ID: <CAJqdLroBTL42zoxKS3gb0NKBxjxG4evgEHMPr3AiEmz9kuW7tA@mail.gmail.com>
+Subject: Re: [PATCH 12/22] selftests/coredump: split out common helpers
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>, 
+	Amir Goldstein <amir73il@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
+	Yu Watanabe <watanabe.yu+github@gmail.com>, Josef Bacik <josef@toxicpanda.com>, 
+	Jeff Layton <jlayton@kernel.org>, Jann Horn <jannh@google.com>, 
+	Luca Boccassi <luca.boccassi@gmail.com>, linux-kernel@vger.kernel.org, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	Lennart Poettering <lennart@poettering.net>, Mike Yuan <me@yhndnzj.com>, 
+	=?UTF-8?Q?Zbigniew_J=C4=99drzejewski=2DSzmek?= <zbyszek@in.waw.pl>
+Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+Am Di., 28. Okt. 2025 um 09:46 Uhr schrieb Christian Brauner
+<brauner@kernel.org>:
+>
+> into separate files.
+>
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
 
-It can be determined (also with the help of some source code analysis tools)
-that error detection (and corresponding exception handling) is incomplete
-in this source file.
-https://elixir.bootlin.com/linux/v6.18-rc4/source/fs/unicode/mkutf8data.c
-https://cwe.mitre.org/data/definitions/252.html
+Reviewed-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
 
-How do you think about to improve affected implementation details?
-
-Regards,
-Markus
+> ---
+>  tools/testing/selftests/coredump/coredump_test.h   |  59 ++++
+>  .../selftests/coredump/coredump_test_helpers.c     | 340 +++++++++++++++++++++
+>  2 files changed, 399 insertions(+)
+>
+> diff --git a/tools/testing/selftests/coredump/coredump_test.h b/tools/testing/selftests/coredump/coredump_test.h
+> new file mode 100644
+> index 000000000000..ed47f01fa53c
+> --- /dev/null
+> +++ b/tools/testing/selftests/coredump/coredump_test.h
+> @@ -0,0 +1,59 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +
+> +#ifndef __COREDUMP_TEST_H
+> +#define __COREDUMP_TEST_H
+> +
+> +#include <stdbool.h>
+> +#include <sys/types.h>
+> +#include <linux/coredump.h>
+> +
+> +#include "../kselftest_harness.h"
+> +#include "../pidfd/pidfd.h"
+> +
+> +#ifndef PAGE_SIZE
+> +#define PAGE_SIZE 4096
+> +#endif
+> +
+> +#define NUM_THREAD_SPAWN 128
+> +
+> +/* Coredump fixture */
+> +FIXTURE(coredump)
+> +{
+> +       char original_core_pattern[256];
+> +       pid_t pid_coredump_server;
+> +       int fd_tmpfs_detached;
+> +};
+> +
+> +/* Shared helper function declarations */
+> +void *do_nothing(void *arg);
+> +void crashing_child(void);
+> +int create_detached_tmpfs(void);
+> +int create_and_listen_unix_socket(const char *path);
+> +bool set_core_pattern(const char *pattern);
+> +int get_peer_pidfd(int fd);
+> +bool get_pidfd_info(int fd_peer_pidfd, struct pidfd_info *info);
+> +
+> +/* Inline helper that uses harness types */
+> +static inline void wait_and_check_coredump_server(pid_t pid_coredump_server,
+> +                                                  struct __test_metadata *const _metadata,
+> +                                                  FIXTURE_DATA(coredump) *self)
+> +{
+> +       int status;
+> +       waitpid(pid_coredump_server, &status, 0);
+> +       self->pid_coredump_server = -ESRCH;
+> +       ASSERT_TRUE(WIFEXITED(status));
+> +       ASSERT_EQ(WEXITSTATUS(status), 0);
+> +}
+> +
+> +/* Protocol helper function declarations */
+> +ssize_t recv_marker(int fd);
+> +bool read_marker(int fd, enum coredump_mark mark);
+> +bool read_coredump_req(int fd, struct coredump_req *req);
+> +bool send_coredump_ack(int fd, const struct coredump_req *req,
+> +                      __u64 mask, size_t size_ack);
+> +bool check_coredump_req(const struct coredump_req *req, size_t min_size,
+> +                       __u64 required_mask);
+> +int open_coredump_tmpfile(int fd_tmpfs_detached);
+> +void process_coredump_worker(int fd_coredump, int fd_peer_pidfd, int fd_core_file);
+> +
+> +#endif /* __COREDUMP_TEST_H */
+> diff --git a/tools/testing/selftests/coredump/coredump_test_helpers.c b/tools/testing/selftests/coredump/coredump_test_helpers.c
+> new file mode 100644
+> index 000000000000..7512a8ef73d3
+> --- /dev/null
+> +++ b/tools/testing/selftests/coredump/coredump_test_helpers.c
+> @@ -0,0 +1,340 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +#include <assert.h>
+> +#include <errno.h>
+> +#include <fcntl.h>
+> +#include <limits.h>
+> +#include <linux/coredump.h>
+> +#include <linux/fs.h>
+> +#include <pthread.h>
+> +#include <stdbool.h>
+> +#include <stdio.h>
+> +#include <stdlib.h>
+> +#include <string.h>
+> +#include <sys/epoll.h>
+> +#include <sys/ioctl.h>
+> +#include <sys/socket.h>
+> +#include <sys/types.h>
+> +#include <sys/un.h>
+> +#include <sys/wait.h>
+> +#include <unistd.h>
+> +
+> +#include "../filesystems/wrappers.h"
+> +#include "../pidfd/pidfd.h"
+> +
+> +/* Forward declarations to avoid including harness header */
+> +struct __test_metadata;
+> +
+> +/* Match the fixture definition from coredump_test.h */
+> +struct _fixture_coredump_data {
+> +       char original_core_pattern[256];
+> +       pid_t pid_coredump_server;
+> +       int fd_tmpfs_detached;
+> +};
+> +
+> +#ifndef PAGE_SIZE
+> +#define PAGE_SIZE 4096
+> +#endif
+> +
+> +#define NUM_THREAD_SPAWN 128
+> +
+> +void *do_nothing(void *arg)
+> +{
+> +       (void)arg;
+> +       while (1)
+> +               pause();
+> +
+> +       return NULL;
+> +}
+> +
+> +void crashing_child(void)
+> +{
+> +       pthread_t thread;
+> +       int i;
+> +
+> +       for (i = 0; i < NUM_THREAD_SPAWN; ++i)
+> +               pthread_create(&thread, NULL, do_nothing, NULL);
+> +
+> +       /* crash on purpose */
+> +       i = *(int *)NULL;
+> +}
+> +
+> +int create_detached_tmpfs(void)
+> +{
+> +       int fd_context, fd_tmpfs;
+> +
+> +       fd_context = sys_fsopen("tmpfs", 0);
+> +       if (fd_context < 0)
+> +               return -1;
+> +
+> +       if (sys_fsconfig(fd_context, FSCONFIG_CMD_CREATE, NULL, NULL, 0) < 0)
+> +               return -1;
+> +
+> +       fd_tmpfs = sys_fsmount(fd_context, 0, 0);
+> +       close(fd_context);
+> +       return fd_tmpfs;
+> +}
+> +
+> +int create_and_listen_unix_socket(const char *path)
+> +{
+> +       struct sockaddr_un addr = {
+> +               .sun_family = AF_UNIX,
+> +       };
+> +       assert(strlen(path) < sizeof(addr.sun_path) - 1);
+> +       strncpy(addr.sun_path, path, sizeof(addr.sun_path) - 1);
+> +       size_t addr_len =
+> +               offsetof(struct sockaddr_un, sun_path) + strlen(path) + 1;
+> +       int fd, ret;
+> +
+> +       fd = socket(AF_UNIX, SOCK_STREAM | SOCK_CLOEXEC, 0);
+> +       if (fd < 0)
+> +               goto out;
+> +
+> +       ret = bind(fd, (const struct sockaddr *)&addr, addr_len);
+> +       if (ret < 0)
+> +               goto out;
+> +
+> +       ret = listen(fd, 128);
+> +       if (ret < 0)
+> +               goto out;
+> +
+> +       return fd;
+> +
+> +out:
+> +       if (fd >= 0)
+> +               close(fd);
+> +       return -1;
+> +}
+> +
+> +bool set_core_pattern(const char *pattern)
+> +{
+> +       int fd;
+> +       ssize_t ret;
+> +
+> +       fd = open("/proc/sys/kernel/core_pattern", O_WRONLY | O_CLOEXEC);
+> +       if (fd < 0)
+> +               return false;
+> +
+> +       ret = write(fd, pattern, strlen(pattern));
+> +       close(fd);
+> +       if (ret < 0)
+> +               return false;
+> +
+> +       fprintf(stderr, "Set core_pattern to '%s' | %zu == %zu\n", pattern, ret, strlen(pattern));
+> +       return ret == strlen(pattern);
+> +}
+> +
+> +int get_peer_pidfd(int fd)
+> +{
+> +       int fd_peer_pidfd;
+> +       socklen_t fd_peer_pidfd_len = sizeof(fd_peer_pidfd);
+> +       int ret = getsockopt(fd, SOL_SOCKET, SO_PEERPIDFD, &fd_peer_pidfd,
+> +                            &fd_peer_pidfd_len);
+> +       if (ret < 0) {
+> +               fprintf(stderr, "%m - Failed to retrieve peer pidfd for coredump socket connection\n");
+> +               return -1;
+> +       }
+> +       return fd_peer_pidfd;
+> +}
+> +
+> +bool get_pidfd_info(int fd_peer_pidfd, struct pidfd_info *info)
+> +{
+> +       memset(info, 0, sizeof(*info));
+> +       info->mask = PIDFD_INFO_EXIT | PIDFD_INFO_COREDUMP | PIDFD_INFO_COREDUMP_SIGNAL;
+> +       return ioctl(fd_peer_pidfd, PIDFD_GET_INFO, info) == 0;
+> +}
+> +
+> +/* Protocol helper functions */
+> +
+> +ssize_t recv_marker(int fd)
+> +{
+> +       enum coredump_mark mark = COREDUMP_MARK_REQACK;
+> +       ssize_t ret;
+> +
+> +       ret = recv(fd, &mark, sizeof(mark), MSG_WAITALL);
+> +       if (ret != sizeof(mark))
+> +               return -1;
+> +
+> +       switch (mark) {
+> +       case COREDUMP_MARK_REQACK:
+> +               fprintf(stderr, "Received marker: ReqAck\n");
+> +               return COREDUMP_MARK_REQACK;
+> +       case COREDUMP_MARK_MINSIZE:
+> +               fprintf(stderr, "Received marker: MinSize\n");
+> +               return COREDUMP_MARK_MINSIZE;
+> +       case COREDUMP_MARK_MAXSIZE:
+> +               fprintf(stderr, "Received marker: MaxSize\n");
+> +               return COREDUMP_MARK_MAXSIZE;
+> +       case COREDUMP_MARK_UNSUPPORTED:
+> +               fprintf(stderr, "Received marker: Unsupported\n");
+> +               return COREDUMP_MARK_UNSUPPORTED;
+> +       case COREDUMP_MARK_CONFLICTING:
+> +               fprintf(stderr, "Received marker: Conflicting\n");
+> +               return COREDUMP_MARK_CONFLICTING;
+> +       default:
+> +               fprintf(stderr, "Received unknown marker: %u\n", mark);
+> +               break;
+> +       }
+> +       return -1;
+> +}
+> +
+> +bool read_marker(int fd, enum coredump_mark mark)
+> +{
+> +       ssize_t ret;
+> +
+> +       ret = recv_marker(fd);
+> +       if (ret < 0)
+> +               return false;
+> +       return ret == mark;
+> +}
+> +
+> +bool read_coredump_req(int fd, struct coredump_req *req)
+> +{
+> +       ssize_t ret;
+> +       size_t field_size, user_size, ack_size, kernel_size, remaining_size;
+> +
+> +       memset(req, 0, sizeof(*req));
+> +       field_size = sizeof(req->size);
+> +
+> +       /* Peek the size of the coredump request. */
+> +       ret = recv(fd, req, field_size, MSG_PEEK | MSG_WAITALL);
+> +       if (ret != field_size)
+> +               return false;
+> +       kernel_size = req->size;
+> +
+> +       if (kernel_size < COREDUMP_ACK_SIZE_VER0)
+> +               return false;
+> +       if (kernel_size >= PAGE_SIZE)
+> +               return false;
+> +
+> +       /* Use the minimum of user and kernel size to read the full request. */
+> +       user_size = sizeof(struct coredump_req);
+> +       ack_size = user_size < kernel_size ? user_size : kernel_size;
+> +       ret = recv(fd, req, ack_size, MSG_WAITALL);
+> +       if (ret != ack_size)
+> +               return false;
+> +
+> +       fprintf(stderr, "Read coredump request with size %u and mask 0x%llx\n",
+> +               req->size, (unsigned long long)req->mask);
+> +
+> +       if (user_size > kernel_size)
+> +               remaining_size = user_size - kernel_size;
+> +       else
+> +               remaining_size = kernel_size - user_size;
+> +
+> +       if (PAGE_SIZE <= remaining_size)
+> +               return false;
+> +
+> +       /*
+> +        * Discard any additional data if the kernel's request was larger than
+> +        * what we knew about or cared about.
+> +        */
+> +       if (remaining_size) {
+> +               char buffer[PAGE_SIZE];
+> +
+> +               ret = recv(fd, buffer, sizeof(buffer), MSG_WAITALL);
+> +               if (ret != remaining_size)
+> +                       return false;
+> +               fprintf(stderr, "Discarded %zu bytes of data after coredump request\n", remaining_size);
+> +       }
+> +
+> +       return true;
+> +}
+> +
+> +bool send_coredump_ack(int fd, const struct coredump_req *req,
+> +                      __u64 mask, size_t size_ack)
+> +{
+> +       ssize_t ret;
+> +       /*
+> +        * Wrap struct coredump_ack in a larger struct so we can
+> +        * simulate sending to much data to the kernel.
+> +        */
+> +       struct large_ack_for_size_testing {
+> +               struct coredump_ack ack;
+> +               char buffer[PAGE_SIZE];
+> +       } large_ack = {};
+> +
+> +       if (!size_ack)
+> +               size_ack = sizeof(struct coredump_ack) < req->size_ack ?
+> +                                  sizeof(struct coredump_ack) :
+> +                                  req->size_ack;
+> +       large_ack.ack.mask = mask;
+> +       large_ack.ack.size = size_ack;
+> +       ret = send(fd, &large_ack, size_ack, MSG_NOSIGNAL);
+> +       if (ret != size_ack)
+> +               return false;
+> +
+> +       fprintf(stderr, "Sent coredump ack with size %zu and mask 0x%llx\n",
+> +               size_ack, (unsigned long long)mask);
+> +       return true;
+> +}
+> +
+> +bool check_coredump_req(const struct coredump_req *req, size_t min_size,
+> +                       __u64 required_mask)
+> +{
+> +       if (req->size < min_size)
+> +               return false;
+> +       if ((req->mask & required_mask) != required_mask)
+> +               return false;
+> +       if (req->mask & ~required_mask)
+> +               return false;
+> +       return true;
+> +}
+> +
+> +int open_coredump_tmpfile(int fd_tmpfs_detached)
+> +{
+> +       return openat(fd_tmpfs_detached, ".", O_TMPFILE | O_RDWR | O_EXCL, 0600);
+> +}
+> +
+> +void process_coredump_worker(int fd_coredump, int fd_peer_pidfd, int fd_core_file)
+> +{
+> +       int epfd = -1;
+> +       int exit_code = EXIT_FAILURE;
+> +       struct epoll_event ev;
+> +
+> +       epfd = epoll_create1(0);
+> +       if (epfd < 0)
+> +               goto out;
+> +
+> +       ev.events = EPOLLIN | EPOLLRDHUP | EPOLLET;
+> +       ev.data.fd = fd_coredump;
+> +       if (epoll_ctl(epfd, EPOLL_CTL_ADD, fd_coredump, &ev) < 0)
+> +               goto out;
+> +
+> +       for (;;) {
+> +               struct epoll_event events[1];
+> +               int n = epoll_wait(epfd, events, 1, -1);
+> +               if (n < 0)
+> +                       break;
+> +
+> +               if (events[0].events & (EPOLLIN | EPOLLRDHUP)) {
+> +                       for (;;) {
+> +                               char buffer[4096];
+> +                               ssize_t bytes_read = read(fd_coredump, buffer, sizeof(buffer));
+> +                               if (bytes_read < 0) {
+> +                                       if (errno == EAGAIN || errno == EWOULDBLOCK)
+> +                                               break;
+> +                                       goto out;
+> +                               }
+> +                               if (bytes_read == 0)
+> +                                       goto done;
+> +                               ssize_t bytes_write = write(fd_core_file, buffer, bytes_read);
+> +                               if (bytes_write != bytes_read)
+> +                                       goto out;
+> +                       }
+> +               }
+> +       }
+> +
+> +done:
+> +       exit_code = EXIT_SUCCESS;
+> +out:
+> +       if (epfd >= 0)
+> +               close(epfd);
+> +       if (fd_core_file >= 0)
+> +               close(fd_core_file);
+> +       if (fd_peer_pidfd >= 0)
+> +               close(fd_peer_pidfd);
+> +       if (fd_coredump >= 0)
+> +               close(fd_coredump);
+> +       _exit(exit_code);
+> +}
+>
+> --
+> 2.47.3
+>
 
