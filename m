@@ -1,233 +1,171 @@
-Return-Path: <linux-fsdevel+bounces-66979-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66980-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30247C32AA0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 04 Nov 2025 19:31:30 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9544C32BB2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 04 Nov 2025 20:08:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C7543B176C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Nov 2025 18:26:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A126D4E7236
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Nov 2025 19:08:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37CBC33EB1A;
-	Tue,  4 Nov 2025 18:25:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05F7E33EB0A;
+	Tue,  4 Nov 2025 19:08:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="X5qjeZyA"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="BvU1RC60"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B6E233E349
-	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Nov 2025 18:25:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F34E22E62A6
+	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Nov 2025 19:08:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762280755; cv=none; b=nVvlkCKEsldcZ8PFU0PVNTwKhdaeATFj5feVHXpsTlWwRx2HbAPNXRSccrSfoRJstJ5C+DKpTBjaPkO2siIe5H+c07C+rvmU3FKUE7Ic+K/u/tdb9TC/qk9+ateGOxUVbk8fR0xBTgzBS02Metw++w029V4JxJB/AWS0j4lygSo=
+	t=1762283288; cv=none; b=Bm/TR8GswkmijSjG7sqe35MM7doviszMlKE/sksjP+vlRnW4urc3Q9ZvNlPuetUdFQax22OVm5In4TFh/c8zb1SPGsSsDnWFRcCv4t7sD1we6ile9DPt0WF4wCAvmDJEvmjhDFNNWDrXdZT5eidGq0/aZwBIJoOY9QjT0TWMijs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762280755; c=relaxed/simple;
-	bh=xQr66sfWcYDPdt1OZVxS5cHO8GM9E9VyMkXI31644oE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FGRh5E1BQJs15DDQitPSazhurPRvd/HzclTt4MsWwKCm94bEnATJPAj6gnAYvbynMS7YS/SVRKCa/i4T1hGlEfaDtvirHyNoQ0o6t4/jgWocnODACQ9MJQKdveVJXzBNmMEPfFA6pxFTo8P9VcK5U/ggunLCC0gWWiNzWC6BH3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=X5qjeZyA; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b7155207964so417563866b.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Nov 2025 10:25:53 -0800 (PST)
+	s=arc-20240116; t=1762283288; c=relaxed/simple;
+	bh=9PbXECyM/ppEw73G19W07knzHtFK2i4sPouqb3V9IkQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fytGqvsBPrKFfSO07lcY+j6+5jbEcMSWJBLTl+cmC9vDNzhk9m0YxxjGUPbhjd6sFrSjPQawCYuwnk8bQwHRm4miuPBaeqy1bCr43TQWHicTjNZj7aqNgYpZEfw2j0+3mAPdRtdZn4TgiMo4+hzAGmR0yYxSRTGkODbgjgbVuDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=BvU1RC60; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-64088c6b309so6376319a12.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Nov 2025 11:08:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1762280751; x=1762885551; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=YPkYNb3AdFbUUvWyK5+IEaMU2KcLnkNB85urH6+U/Jk=;
-        b=X5qjeZyAUNH27ueKeS1/TnkFDc/bloo9oIINnR2Dr0BJep65ZuczAgP2Yp9roIXY9w
-         a8vIW86MS8yoHbqApY3cHZ2+zP8XbrCpBlDSEpLaii11Wn926kZtKgavZ4rI+ohXQz32
-         Api7RbuscN2JEwbS4zjdBesFzGpKfjs1T1nTb6QJlsKft0cXwIvU7Zv5Bg0t8z1oEDCG
-         dTfvvWGvMtkL796BVLNY8kc+QSBAnIlTC7CAq4bnPVjGKgECIIhymFQIbyejBaTtVxpc
-         qwxLDfd3O3761BNz5FewfCqYDuBplKMll9VOJL0s7FD1Ivi/rsP1mKUDrDt9j0VcxavN
-         ReCw==
+        d=linux-foundation.org; s=google; t=1762283284; x=1762888084; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=q+hzUPNbXmbOEbK0/6dvG/NjDNLu+WmiU1f8ZDEUtyo=;
+        b=BvU1RC60Rd542J8K8PyaflxbcCz2Q0wJKDIHJxctI4INj/efvhmKq/oxwxWboFJa8n
+         DHzqsNlsMXEQxAGB4CuXaRoz5anEWU0h3YAdm0YZAh1gy56MVBKdNbipJxrRHP0wZbmb
+         nEzs1PV7aI85lB27yqhE/ORQN2/Pmwo4vjlUI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762280751; x=1762885551;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YPkYNb3AdFbUUvWyK5+IEaMU2KcLnkNB85urH6+U/Jk=;
-        b=ed12tvG32ad5fCFvLEF3QkxvXkrIeNavIyGBfVq0rGlrS8r8TiBV8sJntwT5/1iNJv
-         qL4ntfA2ZvOr2UXNXzXg0BIVV7lLPzWQtniq6/N6JX86LbcsR1zMac+pVhrT/Ws7l/aU
-         BBMSehkxnNR+HkVa0HDwSLSksG2jTAAFCAUce3tstqjF+Xskm1uWv9WWVher8zqnJm1x
-         Ilwxt7NpcWUUmUQflJUVsuIQhIrt3+ZODcDUvzPcdBcBntL7Qf9k/ZnT8beyBk6WjokR
-         NsEPq8EabfA3gU35UhEZo46dawc1F8U0SK0EQ8OqlSzfnTzoKqobRy06jzi58BgqxyK+
-         m6pw==
-X-Forwarded-Encrypted: i=1; AJvYcCXgGki7Y+5Crf3WLAamxRgNLngeV5N2wC3Gze7Fl5KWrp2k5rULun8qCfivlRS0luxQBiOP5VCq81NSCh9S@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhodWquz9Er9TGRkF0L5Y4xyi3XYZhWcQ3vq4umCxdlJQck7ZR
-	1UedX0u0RXiXmJmm9PFt3XEULnq3wazSIZKUj4OIxV9fwvA6SLTadeS7KXE7d8NCQ68=
-X-Gm-Gg: ASbGnct5/egAflTNlVK2VZ5obwTqwGUz+rNTZ7tV/Ey2P/dZvCozl8KOkR++7KSyV1Q
-	DHIt05GLY2y1bcVpxWa04kh4q5tZvgiwndaejWHRPJh42swWI/uQ1ZCc5zJrST8oI7+YDxU2ej2
-	uwQKjvEJFGFXZMS7ZBDG1LSUL2q0jfEZnVCUy6NO+yO3IEtUeNpEf+8pbXUT7x6rkPKgCdXq5/J
-	qX+CzHlTyOc2G9Loh4loe3YViW/3Kj0cVn/YNU8kHSy1dQ3U7LJPa/h2EFVIPCSvzsEmT2xwZYQ
-	ooortrnuHRRacxcaFw8WYS3d078OcyKNJ/hZJuk0wpk/z6ySHhdAYKXZQWO6K460EZQiRmJXRtT
-	s8FW0AnhnIBDgPhuB4iItPHa26tPb1qzpuqi3A8I5kmfXJnIShOgB/YvxjCQVVVfid8+OZePoVE
-	vuLNc=
-X-Google-Smtp-Source: AGHT+IFAz3YGZNVaEACS46pBOhwodMBp8mAa30t1ei+hvvakkC32yROwn5/v/BY4HZBMgQz5jF71mw==
-X-Received: by 2002:a17:907:3f1b:b0:b43:b7ec:b8a1 with SMTP id a640c23a62f3a-b726529edfemr13155566b.24.1762280751465;
-        Tue, 04 Nov 2025 10:25:51 -0800 (PST)
-Received: from pathway.suse.cz ([176.114.240.130])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b723d3a3d4asm277568566b.2.2025.11.04.10.25.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Nov 2025 10:25:51 -0800 (PST)
-Date: Tue, 4 Nov 2025 19:25:48 +0100
-From: Petr Mladek <pmladek@suse.com>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: syzbot <syzbot+3686758660f980b402dc@syzkaller.appspotmail.com>,
-	"amurray@thegoodpenguin.co.uk" <amurray@thegoodpenguin.co.uk>,
-	brauner@kernel.org, chao@kernel.org, djwong@kernel.org,
-	jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-	John Ogness <john.ogness@linutronix.de>
-Subject: Re: [syzbot] [iomap?] kernel BUG in folio_end_read (2)
-Message-ID: <aQpFLJM96uRpO4S-@pathway.suse.cz>
-References: <CAJnrk1bF8sLU6tG2MGkt_KR4BoTd_k01CMVZJ9js2-eyh80tbw@mail.gmail.com>
- <69096836.a70a0220.88fb8.0006.GAE@google.com>
- <CAJnrk1Yo4dRVSaPCaAGkHc+in03KaTXJ+KxckhLoSrRxbEdDBg@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1762283284; x=1762888084;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=q+hzUPNbXmbOEbK0/6dvG/NjDNLu+WmiU1f8ZDEUtyo=;
+        b=KjasWRnldVCqKhc5A4rnv9nn/kR02Sh3G7yXrEAlkYeVC2U7GJL36EHEJrjSKLtUaU
+         DIxwbXtWX73AWx/ncGwBKX/lBCCRjqzHFu1eAAJxQpHac0PB71vtifRI3jE29mlQ+E5s
+         U1tnGBPnyQ2cQhtZOYZePxpMs0o0BxM3jRVnAnrmhIiB9WyOtEDwnsEOAfLXxuaRaoQO
+         +iwE9cXhhk6dQbHxu18uiIupil4dvON74AMd3uZo78lDetZ4zzUq/I6F6RaeeELa62RU
+         MoW4RF/XRg6aANjDFwWvZKONp9qah1OR3IRKFnvimAiYM9rIXsxGID9FEa0KwlIOavIe
+         2x5w==
+X-Forwarded-Encrypted: i=1; AJvYcCVPbtf4md397bxm9NhrJwHu1JRxRavd8O6hTt08TAc989Nx/3/kBC44/+Y8WdQoHvlGG0i+dqx9SZcs9Pb8@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqyIxXWbliEj5JzHzNBt/o6Es1Kx2pbhnRQFfDrFri7nwgibqq
+	q0/ZxD5At3iAG1RDXgjm5dc4qKGqryTAmjUD4FFCqryBG4HQd42EfgxIXEiacuneyFhaVvSMr8p
+	CKBKVLPw3Gw==
+X-Gm-Gg: ASbGnct2lMZ3t3exqDV1/KmqzY2ba6JHExkT2g1FfoTXH2BYCwn4HFZr13ppZ0CDP+i
+	spl6tVSipH1K9v9KJPSFfVwwmBwge1NuIoNJHtXOWNuGhTcGMyX+Cl9okgFSGBIZJNgHKdyLuss
+	zB2eQCRlpl1XgNmRwoNeCrK7FYqx0otKEuegk1dIIGuQchubxiRj/z65/8h+TpaO/A8gxBcEqAK
+	BDMB0DYOHlXatoPsRX+KYmG6hMdguZtQ9bm7YkcMks62UNxsQXJrf4LdHwb5Dq+Vjmi4Rg+WKta
+	sd0Sh/B+aMHaKwPYsMmWtbYFyJdPAZaE+oiQ3BTIDNPnwmXpt2p80WUjcNou0cTAccjh7mQ+4ZQ
+	1uXMrrPlblHuvZDdUCqhOzV1rNh3KNjU2Oy9Qh4BT0R+OKNFmLgKwxQw1C1u+wUFr4H7518eBYe
+	r/4sJgDH71ObTM8gP7P2qkkjqOZq0t+XMhZMzysvBifKO5XCnzug==
+X-Google-Smtp-Source: AGHT+IEOFyI4Bcntcmj3IlbYnPhgs1pvadCSSg1tzOHlVXrGlEo8kqhd3kY+AtbPKGuI6h+ZkZuXgg==
+X-Received: by 2002:a05:6402:84d:b0:640:36d9:54fe with SMTP id 4fb4d7f45d1cf-64105a4cce7mr294124a12.24.1762283283974;
+        Tue, 04 Nov 2025 11:08:03 -0800 (PST)
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com. [209.85.218.49])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-640e67eb65bsm2762346a12.4.2025.11.04.11.08.02
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 04 Nov 2025 11:08:02 -0800 (PST)
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b7200568b13so279415066b.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Nov 2025 11:08:02 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUdFWh0msNAnaZtNIZOt32gu/W3cNzAFNhNXHDwkfPow4DSGcLWHuvUP84TyLcr50zsBxwZ0pH50dpSE7ij@vger.kernel.org
+X-Received: by 2002:a17:907:3d44:b0:b72:5a54:1720 with SMTP id
+ a640c23a62f3a-b7265682b6bmr19875966b.57.1762283282425; Tue, 04 Nov 2025
+ 11:08:02 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJnrk1Yo4dRVSaPCaAGkHc+in03KaTXJ+KxckhLoSrRxbEdDBg@mail.gmail.com>
+References: <CAHk-=wjRA8G9eOPWa_Njz4NAk3gZNvdt0WAHZfn3iXfcVsmpcA@mail.gmail.com>
+ <20251031174220.43458-1-mjguzik@gmail.com> <20251031174220.43458-2-mjguzik@gmail.com>
+ <CAHk-=wimh_3jM9Xe8Zx0rpuf8CPDu6DkRCGb44azk0Sz5yqSnw@mail.gmail.com> <aQozS2ZHX4x1APvb@google.com>
+In-Reply-To: <aQozS2ZHX4x1APvb@google.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 5 Nov 2025 04:07:44 +0900
+X-Gmail-Original-Message-ID: <CAHk-=wjkaHdi2z62fn+rf++h-f0KM66MXKxVX-xd3X6vqs8SoQ@mail.gmail.com>
+X-Gm-Features: AWmQ_bnsJnu_LlkWN2ZcU9tBsfAEnxyUDvIiSqWsCKYbcoFT1Otlp3W0KDjsg8g
+Message-ID: <CAHk-=wjkaHdi2z62fn+rf++h-f0KM66MXKxVX-xd3X6vqs8SoQ@mail.gmail.com>
+Subject: Re: [PATCH 1/3] x86: fix access_ok() and valid_user_address() using
+ wrong USER_PTR_MAX in modules
+To: Sean Christopherson <seanjc@google.com>
+Cc: Mateusz Guzik <mjguzik@gmail.com>, "the arch/x86 maintainers" <x86@kernel.org>, brauner@kernel.org, 
+	viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, tglx@linutronix.de, pfalcato@suse.de
+Content-Type: text/plain; charset="UTF-8"
 
-Adding John into Cc.
+On Wed, 5 Nov 2025 at 02:09, Sean Christopherson <seanjc@google.com> wrote:
+>
+> What exactly is the bug?  Is the problem that module usage of runtime_const_ptr()
+> doesn't get patched on module load, and so module code ends up using the
+> 0x0123456789abcdef placeholder?
 
-On Tue 2025-11-04 09:45:27, Joanne Koong wrote:
-> On Mon, Nov 3, 2025 at 6:43 PM syzbot
-> <syzbot+3686758660f980b402dc@syzkaller.appspotmail.com> wrote:
-> >
-> > Hello,
-> >
-> > syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-> > WARNING in get_data
-> >
-> > loop0: detected capacity change from 0 to 16
-> > ------------[ cut here ]------------
-> > WARNING: kernel/printk/printk_ringbuffer.c:1278 at get_data+0x48a/0x840 kernel/printk/printk_ringbuffer.c:1278, CPU#1: syz.0.585/7652
+Yes. The runtime-const fixup is intentionally simplistic, because the
+ordering concerns with the more generic instruction rewriting was
+painful (and architecture-specific).
 
-It seems to trigger an "Illegac block description" warning, see :
+And as part of being simple and stupid, it doesn't deal with modules,
+and only runs early at boot.
 
-   1263         /* Regular data block: @begin less than @next and in same wrap. */
-   1264         if (!is_blk_wrapped(data_ring, blk_lpos->begin, blk_lpos->next) &&
-   1265             blk_lpos->begin < blk_lpos->next) {
-   1266                 db = to_block(data_ring, blk_lpos->begin);
-   1267                 *data_size = blk_lpos->next - blk_lpos->begin;
-   1268 
-   1269         /* Wrapping data block: @begin is one wrap behind @next. */
-   1270         } else if (!is_blk_wrapped(data_ring,
-   1271                                    blk_lpos->begin + DATA_SIZE(data_ring),
-   1272                                    blk_lpos->next)) {
-   1273                 db = to_block(data_ring, 0);
-   1274                 *data_size = DATA_INDEX(data_ring, blk_lpos->next);
-   1275 
-   1276         /* Illegal block description. */
-   1277         } else {
-   1278                 WARN_ON_ONCE(1);		<-----------
-   1279                 return NULL;
-   1280         }
+> Just to make sure I understand the impact, doesn't this also affect all flavors
+> of "nocheck" uaccesses?  E.g. access_ok() + __copy_{from,to}_user()?
 
+The access_ok() issue happens with those too, but I don't think there
+was any way to then trigger the speculative leak with non-canonical
+addresses that way.  Iirc, you needed a load-load gadget and only had
+a few cycles in which to do it.
 
-> > Modules linked in:
-> > CPU: 1 UID: 0 PID: 7652 Comm: syz.0.585 Not tainted syzkaller #0 PREEMPT(full)
-> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
-> > RIP: 0010:get_data+0x48a/0x840 kernel/printk/printk_ringbuffer.c:1278
-> > Code: 83 c4 f8 48 b8 00 00 00 00 00 fc ff df 41 0f b6 04 07 84 c0 0f 85 ee 01 00 00 44 89 65 00 49 83 c5 08 eb 13 e8 a7 19 1f 00 90 <0f> 0b 90 eb 05 e8 9c 19 1f 00 45 31 ed 4c 89 e8 48 83 c4 28 5b 41
-> > RSP: 0018:ffffc900035170e0 EFLAGS: 00010293
-> > RAX: ffffffff81a1eee9 RBX: 00003fffffffffff RCX: ffff888033255b80
-> > RDX: 0000000000000000 RSI: 00003fffffffffff RDI: 0000000000000000
-> > RBP: 0000000000000012 R08: 0000000000000e55 R09: 000000325e213cc7
-> > R10: 000000325e213cc7 R11: 00001de4c2000037 R12: 0000000000000012
-> > R13: 0000000000000000 R14: ffffc90003517228 R15: 1ffffffff1bca646
-> > FS:  00007f44eb8da6c0(0000) GS:ffff888125fda000(0000) knlGS:0000000000000000
-> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > CR2: 00007f44ea9722e0 CR3: 0000000066344000 CR4: 00000000003526f0
-> > Call Trace:
-> >  <TASK>
-> >  copy_data kernel/printk/printk_ringbuffer.c:1857 [inline]
-> >  prb_read kernel/printk/printk_ringbuffer.c:1966 [inline]
-> >  _prb_read_valid+0x672/0xa90 kernel/printk/printk_ringbuffer.c:2143
-> >  prb_read_valid+0x3c/0x60 kernel/printk/printk_ringbuffer.c:2215
-> >  printk_get_next_message+0x15c/0x7b0 kernel/printk/printk.c:2978
-> >  console_emit_next_record kernel/printk/printk.c:3062 [inline]
-> >  console_flush_one_record kernel/printk/printk.c:3194 [inline]
-> >  console_flush_all+0x4cc/0xb10 kernel/printk/printk.c:3268
-> >  __console_flush_and_unlock kernel/printk/printk.c:3298 [inline]
-> >  console_unlock+0xbb/0x190 kernel/printk/printk.c:3338
-> >  vprintk_emit+0x4c5/0x590 kernel/printk/printk.c:2423
-> >  _printk+0xcf/0x120 kernel/printk/printk.c:2448
-> >  _erofs_printk+0x349/0x410 fs/erofs/super.c:33
-> >  erofs_fc_fill_super+0x1591/0x1b20 fs/erofs/super.c:746
-> >  get_tree_bdev_flags+0x40e/0x4d0 fs/super.c:1692
-> >  vfs_get_tree+0x92/0x2b0 fs/super.c:1752
-> >  fc_mount fs/namespace.c:1198 [inline]
-> >  do_new_mount_fc fs/namespace.c:3641 [inline]
-> >  do_new_mount+0x302/0xa10 fs/namespace.c:3717
-> >  do_mount fs/namespace.c:4040 [inline]
-> >  __do_sys_mount fs/namespace.c:4228 [inline]
-> >  __se_sys_mount+0x313/0x410 fs/namespace.c:4205
-> >  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-> >  do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
-> >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> > RIP: 0033:0x7f44ea99076a
-> > Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 1a 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-> > RSP: 002b:00007f44eb8d9e68 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-> > RAX: ffffffffffffffda RBX: 00007f44eb8d9ef0 RCX: 00007f44ea99076a
-> > RDX: 0000200000000180 RSI: 00002000000001c0 RDI: 00007f44eb8d9eb0
-> > RBP: 0000200000000180 R08: 00007f44eb8d9ef0 R09: 0000000000000000
-> > R10: 0000000000000000 R11: 0000000000000246 R12: 00002000000001c0
-> > R13: 00007f44eb8d9eb0 R14: 00000000000001a1 R15: 0000200000000080
-> >  </TASK>
-> >
-> 
-> This looks unrelated to the iomap changes and seems tied to the recent
-> printk console flushing changes. Hmm, maybe one of these changes
-> [1,2,3]?
->> 
-> [1] https://lore.kernel.org/all/20251020-printk_legacy_thread_console_lock-v3-1-00f1f0ac055a@thegoodpenguin.co.uk/
-> [2] https://lore.kernel.org/all/20251020-printk_legacy_thread_console_lock-v3-2-00f1f0ac055a@thegoodpenguin.co.uk/
-> [3] https://lore.kernel.org/all/20251020-printk_legacy_thread_console_lock-v3-3-00f1f0ac055a@thegoodpenguin.co.uk/
+But in theory, yes.
 
-These patches modified the callers of the printk_ringbuffer API.
-I doubt that they might cause the problem.
+> Looking at the assembly, I assume get_user() is faster than __get_user() due to
+> the LFENCE in ASM_BARRIER_NOSPEC?
 
-It rather looks like an internal bug in the printk_ringbuffer code.
-And there is only one recent patch:
+The access_ok() itself is also slower than the address masking, with
+the whole "add size and check for overflow" dance that a plain
+get_user() simply doesn't need.
 
-   https://patch.msgid.link/20250905144152.9137-2-d-tatianin@yandex-team.ru
+Of course, at some point it can be advantageous to only check the
+address once, and then do multiple __get_user() calls, and that was
+obviously the *original* advantage (along with inlining the
+single-instruction __get_user).
 
-The scenario leading to the WARN() is not obvious to me. But the patch
-touched this code path. So it is a likely culprit. I have to think
-more about it.
+But with SMAP, the inlining advantage hasn't existed for years, and
+the "avoid 3*N cheap ALU instructions by using a much more expensive
+access_ok()" is dubious even for somewhat larger values of N.
 
-Anyway, I wonder if the WARNING is reproducible and if it happens even after
-reverting the commit 67e1b0052f6bb82be84e3 ("printk_ringbuffer: don't
-needlessly wrap data blocks around")
+> Assuming __{get,put}_user() are slower on x86 in all scenarios, would it make
+> sense to kill them off entirely for x86?  E.g. could we reroute them to the
+> "checked" variants?
 
-Best Regards,
-Petr
+Sadly, no. We've wanted to do that many times for various other
+reasons, and we really should, but because of historical semantics,
+some horrendous users still use "__get_user()" for addresses that
+might be user space or might be kernel space depending on use-case.
 
-> Thanks,
-> Joanne
-> 
-> >
-> > Tested on:
-> >
-> > commit:         98231209 Add linux-next specific files for 20251103
-> > git tree:       linux-next
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=1370a292580000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=43cc0e31558cb527
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=3686758660f980b402dc
-> > compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-> >
-> > Note: no patches were applied.
+Maybe we should bite the bullet and just break any remaining cases of
+that horrendous historical pattern. There might not be any actual
+relevant ones left, and they should all be easyish to fix if we just
+*find* them. But we had that pattern in at least some tracing code,
+and I'd expect some random drivers too, just because it *used* to
+historically work to do "the user access path does access_ok(), the
+kernel access path doesn't, and then both can use __get_user()".
+
+In fact, Josh Poimboeuf tried to do that __get_user() fix fairly
+recently, but he hit at least the "coco" code mis-using this thing.
+
+See vc_read_mem() in arch/x86/coco/sev/vc-handle.c.
+
+Are there others? Probably not very many. But *finding* all those
+cases is the painful part.
+
+Anybody want a new pet project?
+
+              Linus
 
