@@ -1,163 +1,146 @@
-Return-Path: <linux-fsdevel+bounces-67007-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67008-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A75CFC331BD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 04 Nov 2025 22:53:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3394C33214
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 04 Nov 2025 23:06:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB79418C094E
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Nov 2025 21:54:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BADD6461D88
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Nov 2025 22:06:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97027346791;
-	Tue,  4 Nov 2025 21:53:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFD812C11E9;
+	Tue,  4 Nov 2025 22:06:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PDwme/zD"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="eVbDFcS7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86F2B2FC00C
-	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Nov 2025 21:53:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E869D34D3AE
+	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Nov 2025 22:06:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762293209; cv=none; b=dL1LngMeWJ5caHA9z8lznFg8oaSTNgJiCrnD0if+0AoPXisphNoNv26jYZ7oFWRD/mOoT7cWesBVijgdmvS9LAyVAseYlKuErptJ/vPpBRhB4VcjOkNs0ZzGScV3ymK0DC1eeVPWXT2GhCcyGtha/Vdc7F6ld+Z5rIzzNwvyIhc=
+	t=1762293989; cv=none; b=gr+avnh25Z3BQ1GQGv9mFh1+1h17JsYbnfg47Z+O1yQV3jXL90rdEy6+wyRcqY2j6LOIQXw+pdltqLnBdxoG0uXkdU0YiQ8wPNcAMR195Uq8QpiTIa+Js4GH2kWmpPgn0FRV6hTIVsWYYfnAOgn2Fl7f1776SgjCraOUfRtCOpw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762293209; c=relaxed/simple;
-	bh=FiI9p9fL07foN9U6NE+nplVhbZVds5ennOI07GP8Ozs=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=rJEPbU28J48JvQIYxC90LnDn8pvGVNcsp3z9vynrVRc6NLmvlEy4MJxwkqYch4xIzQ6qjrT3uiYRwIOOhsDFjlOgxqkkFFhUXfphqcFUfKEMmr0mzeK7pfCbu/s4uUZoJ1ZbPYV2MFMVcUCo4egIR9ZuwBl/uU2CnfOH4Cys7O8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PDwme/zD; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-341616a6fb7so2179078a91.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Nov 2025 13:53:27 -0800 (PST)
+	s=arc-20240116; t=1762293989; c=relaxed/simple;
+	bh=MB7A1vTXVybnoioucy3wrWv8+Jn81ohbURENXs0pUhA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Sj4wHB/vkymkUc9M33+uloacUCOqSrTz7PsYc215EdRdtx1cvabXdNcugOuy8fI9ptVwQDGi5KTEBSiB6xn92gwRVlrdLKXVz8sB2fhcONxBCK7id91s+DMjgp8SAYfsIlB0bVd0KrZ8FHeoNAyImZnn5fo9i5HrsEx0ReJdjsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=eVbDFcS7; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b472842981fso767337966b.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Nov 2025 14:06:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762293207; x=1762898007; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=LXD0qHrs8srMCRrDjUfBB17xsmweOCKSQJGW+x1+97c=;
-        b=PDwme/zDc9oDY2DHSk5HfRhPNtieTuL6Pp0TWqmOrIFGXl9638VwxpnQDMJVw7InLG
-         iFqagsIePnaIU/vNtJK6WABN08WpeNdCwkFjhU+eD/OpAIKLtZnhynGy64iSwo4FwC4C
-         zThA9JsBOexRfaJQmf1Q1GzRJawTy0AKfusiOrv+59VEQ4dC924ngrCsy0Izk2jC9BI+
-         q2FQbJruRQrkzBp6ezTRB2T/7W7xYXiTxaWxkJ2NYaplRGL9DkxL0Ez4psQ+vEHF2Ejh
-         HJ8N4fIn3H+oqTpKp2002WsaOnsOhSbZsl1wT1N4FqRh4KcM10ycRv9dkgTuuDcl7hA3
-         0Z4g==
+        d=linux-foundation.org; s=google; t=1762293985; x=1762898785; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=OSolmfNCqKzaq21h0SNVzfu+X5TQh0oCJL/32vsBw0A=;
+        b=eVbDFcS7HJgFR0ABW1ygLKA4iWVTP0sPyrhRD4upc6h+3+OZFL2VR3lB4K4VvTrDQk
+         7FFrLLo9DtFZHh0fbsbfJmDoGNxjpscuCsjWQ3RKUVcVVx1xz3v6dAJbPCU4/1s2DFXH
+         y1dQrXM7vsv/h/72IAqzPG4751cB466/jhol8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762293207; x=1762898007;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LXD0qHrs8srMCRrDjUfBB17xsmweOCKSQJGW+x1+97c=;
-        b=c6ygBnRb64RgwZHDf63ixpv3pXsayAQLpY7AJYQfFfK9Y62xRnjXj8P/piJRtZbiQ2
-         6CdbQAwJdYqX17NdiIMJ3pbi1buqgeB9vbxICptt1uZh9h6Gx3y22Ri8C7jx2uwc10BM
-         UFhWxwManKw70s0o/b7ehliU7a3vSFFal9HBiV9XZ+6DqnJFjPJkh0ZwAVyrcojwoxY4
-         q2cx+biClEj7rSjBMuUfY17q1BDRH34A2+TNJRyCaPSweQpYFG1lVHKe22o/MrQMRHmm
-         2D8KlRtUumWPdW6BTNYNGUUtGpALQcsOKXMbBk9UjtTHfwPavL3XW2AgYRAQ0yAkoi1y
-         QccA==
-X-Forwarded-Encrypted: i=1; AJvYcCUvlWcoSSlLmuyHaRvZZ49xBrJxEJtLxPbbarLTv/Siqw7O0lzkyOX1IqVYHCAwIzEmsZLSN0jiQuvh/l4j@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+NvMRbhr+3BF+KVA7AM7ZWxA7YmclvOyIxspsS5gp6S9c0ML8
-	+G12XgCcRXSZHOUEjgXREnaADIpkorf4bNTQhRLj6xb60y+ejLBxA9zbf2O+bKE61qarv42S2yG
-	+rn1zvA==
-X-Google-Smtp-Source: AGHT+IH1XoNQfghiAg7S86NH4YPLrBciXDQBVrF/kug/MKIjKX8NM65/a5W+DsUMJHgdpwqsqGgojgCN3sg=
-X-Received: from pja8.prod.google.com ([2002:a17:90b:5488:b0:340:cddf:785a])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:17cb:b0:330:bca5:13d9
- with SMTP id 98e67ed59e1d1-341a6de7a07mr874146a91.32.1762293206792; Tue, 04
- Nov 2025 13:53:26 -0800 (PST)
-Date: Tue, 4 Nov 2025 13:53:24 -0800
-In-Reply-To: <CAHk-=wgYPbj1yQu3=wvMvfX2knKEmaeCoaG9wkPXmM1LoVxRuQ@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1762293985; x=1762898785;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OSolmfNCqKzaq21h0SNVzfu+X5TQh0oCJL/32vsBw0A=;
+        b=KStVhgo2w4gRXbxdYhatetPvei8U75l9BOh6WfiTD4sgoaVZM1tmSL3Pmkcb/Y75J5
+         p5CiXmUlG/5LBV5binxndtAGYB7gB5dbtSeri4SCkTdqGSER3I4V/FO9yz+/5LHh04wF
+         +nPpgdH9eaO+sqdN86fhXS4o4+4Bb30qMpDfSUbhfL75d1oGHuTkcbbej9GN14dPqtcb
+         iI/4+HH1oHUNZqLJw56I5Th2t50Xw64B5VZZ7S7JQNR/kTEpAtxrwnHeGnnVpRoJ9Xoe
+         AVovKAtNOqH/5qy3kBIMYrHEpQXcv1I0kcq4YkYwlYCKhCo5JQWxRQ5ffZsQrw1dLN8V
+         VeJw==
+X-Forwarded-Encrypted: i=1; AJvYcCXfQ7i3nAL5QXi/svUAGImzamyrfnHmgoyVAjVfIdQADY3OuoXIp5xlExjY1u+ATBX4nxZoVllkpd0NRWrU@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFegUx2ubuzCFEGsZWi7eaSWnpnwLPJ8APvJG3UdeolsQz4qLl
+	HtZ3Eqc6gIINuLKR+Q7MFpxYeVgPocdY750SUREyY86cFU/MRcbmvjeJ/nEXFhSJh+cLd5WS67d
+	yicIWpTEhMw==
+X-Gm-Gg: ASbGnctTgqzwTqt9l0RpIPGIYBfocYcSBFbXnj6dFGDJMhFBETD0N2VWOPT/7Xr3n9Q
+	1rkkuZV0iaG/u6yruDykmd/kowSUdPV0TDvXaLF0FV3YhVeK1ixZf912kHeKRl7Tyxn8XARL06D
+	Gel6i7b4sMClKAu7FZvg/lwq8bCSlcQppu+t8ydA9WNqJgtsVgscDb0UKeFFu0A8bnoyyQ4eAfH
+	WktzW2Zx4Z2SCrIwr0fxNbc6nxU4kBb6OttMr3CkNm7TgL/bz0nfehjbaJFaOLoANQ57K+vvZGh
+	EG3wU3ruLy0h5LVzR5Ar9fGu0l4Ey4tNEhDlObjgTwj3YcHvKAXYsaL3YU0nYabhFOxRkv3dcjs
+	fzoe694JkGi2N3Y+QttptsPp0MwVVMbl/ijcfQh8hfNwM1qJ4ojDWIVz/AF+XzUGmFPqPddgzvj
+	wVxYFtSRMZ/lvt/wLLRhFa1JCbAcOZMIiff3ed+5fin1h7wc+o4w==
+X-Google-Smtp-Source: AGHT+IHBvy0VKvEd1pgqCxwvf3jAyd1RhC4dL/7aeY6T4YTsG5/nhLe2a9L0EDscXscmrfvB9Tpd9A==
+X-Received: by 2002:a17:907:97d4:b0:b70:edaf:4ee5 with SMTP id a640c23a62f3a-b7265297d83mr71375266b.16.1762293985040;
+        Tue, 04 Nov 2025 14:06:25 -0800 (PST)
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com. [209.85.208.48])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b723f6e2560sm326012866b.46.2025.11.04.14.06.23
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 04 Nov 2025 14:06:23 -0800 (PST)
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-640aa1445c3so5229520a12.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Nov 2025 14:06:23 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXRbHGySgVDNOyy4svy95nc4USPHmUyWFxPejCWPAKUXfnaTibSz+LPliWZ8XEvo9bPJWKlc3wout8qXfn3@vger.kernel.org
+X-Received: by 2002:a05:6402:1e92:b0:640:96b8:2c36 with SMTP id
+ 4fb4d7f45d1cf-641058b31fdmr653807a12.11.1762293983503; Tue, 04 Nov 2025
+ 14:06:23 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
 References: <CAHk-=wjRA8G9eOPWa_Njz4NAk3gZNvdt0WAHZfn3iXfcVsmpcA@mail.gmail.com>
  <20251031174220.43458-1-mjguzik@gmail.com> <20251031174220.43458-2-mjguzik@gmail.com>
  <CAHk-=wimh_3jM9Xe8Zx0rpuf8CPDu6DkRCGb44azk0Sz5yqSnw@mail.gmail.com>
  <aQozS2ZHX4x1APvb@google.com> <CAHk-=wjkaHdi2z62fn+rf++h-f0KM66MXKxVX-xd3X6vqs8SoQ@mail.gmail.com>
- <CAHk-=wgYPbj1yQu3=wvMvfX2knKEmaeCoaG9wkPXmM1LoVxRuQ@mail.gmail.com>
-Message-ID: <aQp11AiTJpg_m_MG@google.com>
+ <20251104201752.GEaQpfcJtiI_IxeLVq@fat_crate.local>
+In-Reply-To: <20251104201752.GEaQpfcJtiI_IxeLVq@fat_crate.local>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 5 Nov 2025 07:06:05 +0900
+X-Gmail-Original-Message-ID: <CAHk-=wgoajqRhtYi=uS0UpmH61qE=tBCwb8x3GG6ywZUqWY6zg@mail.gmail.com>
+X-Gm-Features: AWmQ_bnsCqWH_iYKP_EdZA2WzLcUhVAfQWPyoyRVWTol-RWkziiQu5qj5FOPxAo
+Message-ID: <CAHk-=wgoajqRhtYi=uS0UpmH61qE=tBCwb8x3GG6ywZUqWY6zg@mail.gmail.com>
 Subject: Re: [PATCH 1/3] x86: fix access_ok() and valid_user_address() using
  wrong USER_PTR_MAX in modules
-From: Sean Christopherson <seanjc@google.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mateusz Guzik <mjguzik@gmail.com>, "the arch/x86 maintainers" <x86@kernel.org>, brauner@kernel.org, 
-	viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, tglx@linutronix.de, pfalcato@suse.de
-Content-Type: text/plain; charset="us-ascii"
+To: Borislav Petkov <bp@alien8.de>
+Cc: Joerg Roedel <joro@8bytes.org>, Tom Lendacky <thomas.lendacky@amd.com>, 
+	Sean Christopherson <seanjc@google.com>, Mateusz Guzik <mjguzik@gmail.com>, 
+	"the arch/x86 maintainers" <x86@kernel.org>, brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	tglx@linutronix.de, pfalcato@suse.de
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Nov 05, 2025, Linus Torvalds wrote:
-> On Wed, 5 Nov 2025 at 04:07, Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
+On Wed, 5 Nov 2025 at 05:18, Borislav Petkov <bp@alien8.de> wrote:
+>
+> On Wed, Nov 05, 2025 at 04:07:44AM +0900, Linus Torvalds wrote:
+> > In fact, Josh Poimboeuf tried to do that __get_user() fix fairly
+> > recently, but he hit at least the "coco" code mis-using this thing.
 > >
-> > Sadly, no. We've wanted to do that many times for various other
-> > reasons, and we really should, but because of historical semantics,
-> > some horrendous users still use "__get_user()" for addresses that
-> > might be user space or might be kernel space depending on use-case.
+> > See vc_read_mem() in arch/x86/coco/sev/vc-handle.c.
+>
+> So Tom and I did pre-fault this whole deal just now: so we need an atomic way
+> to figure out whether we'll fault on the address and then handle that result
+> properly. Which we do. So we only need to know whether it'll fault or not,
+> without sleeping.
+>
+> So the question is, what would be an alternative to do that? Should we do
+> something homegrown?
 
-Eww.
+So I think that since it's x86-specific code, maybe something
+homegrown is the way to go. I mean, that cdoe already effectively is.
 
-> > Maybe we should bite the bullet and just break any remaining cases of
-> > that horrendous historical pattern. [...]
-> 
-> What I think is probably the right approach is to just take the normal
-> __get_user() calls - the ones that are obviously to user space, and
-> have an access_ok() - and just replace them with get_user().
-> 
-> That should all be very simple and straightforward for any half-way
-> normal code, and you won't see any downsides.
-> 
-> And in the unlikely case that you can measure any performance impact
-> because you had one single access_ok() and many __get_user() calls,
-> and *if* you really really care, that kind of code should be using
-> "user_read_access_begin()" and friends anyway, because unlike the
-> range checking, the *real* performance issue is almost certainly going
-> to be the cost of the CLAC/STAC instructions.
-> 
-> Put another way: __get_user() is simply always wrong these days.
-> Either it's wrong because it's a bad historical optimization that
-> isn't an optimization any more, or it's wrong because it's mis-using
-> the old semantics to play tricks with kernel-vs-user memory.
-> 
-> So we shouldn't try to "fix" __get_user(). We should aim to get rid of it.
+With a *BIG* comment about what is going on, something like
 
-Curiosity got the better of me :-)
+        pagefault_disable();
+        stac();
+        unsafe_get_user(val, ptr, fault_label);
+        clac();
+        pagefault_enable();
+        return 0;
 
-TL;DR: I agree, we should kill __get_user().
+  fault_label:
+        clac();
+        return 1;
 
+but any other users of __get_user() that aren't in x86-specific code
+can't do that, so I do think it's probably better to just migrate the
+*good* cases - the ones known to actually be about user space - away
+from __get_user() and just leave these turds alone.
 
-KVM x86's use case is a bit of a snowflake.  KVM does the access_ok() check when
-host userspace configures memory regions for the guest, and then does __get_user()
-when reading guest PTEs (i.e. when walking the guest's page tables for shadow
-paging).
-
-For each access_ok(), there are potentially billions (with a 'b') of __get_user()
-calls throughout the lifetime of the guest when KVM is using shadow paging.  E.g.
-just booting a Linux guest hits the __get_user() in arch/x86/kvm/mmu/paging_tmpl.h
-a few million times.  So if there's any chance that split access_ok() + __get_user()
-provides a performance advantage, then it should show up in KVM's shadow paging
-use case.
-
-Unless I botched the measurements, get_user() is straight up faster on both Intel
-(EMR) and AMD (Turin).  Over tens of millions of calls, get_user() is 12%+ faster
-on Intel and 25%+ faster on AMD, relative to __get_user().  The extra overhead is
-pretty much entirely due to the LFENCE, as open coding the equivalent via
-__uaccess_begin_nospec()+unsafe_get_user()+__uaccess_end(), to avoid the CALL+RET,
-yields identical numbers to __get_user().  Dropping the LFENCE, by using
-__uaccess_begin(), manages to eke out a victory over get_user() by ~2 cycles, but
-that's not remotely worth having to think about whether or not the LFENCE is necessary.
-
-The only setup I can think of that _might_ benefit from __get_user() would be
-ancient CPUs without EPT/NPT (i.e. CPUs on which KVM _must_ use shadow paging)
-and without SMAP, but those CPUs are so old that IMO they simply aren't relevant
-when it comes to performance.  Or I suppose the horrors where RET is actually
-something else entirely, but that's also a "don't care", at least as far as KVM
-is concerned.
-
-Cycles per guest PTE read:
-
-                __get_user()    get_user()      open-coded      open-coded, no LFENCE
-Intel (EMR)		75.1          67.6            75.3                       65.5
-AMD (Turin)             68.1          51.1            67.5                       49.3
+              Linus
 
