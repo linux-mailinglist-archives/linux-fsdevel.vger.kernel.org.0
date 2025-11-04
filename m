@@ -1,104 +1,88 @@
-Return-Path: <linux-fsdevel+bounces-66870-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66871-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95047C2EB7B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 04 Nov 2025 02:14:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30516C2EDE0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 04 Nov 2025 02:47:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3FDEF34C60E
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Nov 2025 01:14:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73E9C18837A7
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Nov 2025 01:44:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B1FC2192EA;
-	Tue,  4 Nov 2025 01:13:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 088BC22DF9E;
+	Tue,  4 Nov 2025 01:43:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="MXiijNs0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dY6b2MM6"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65F211A9FB7;
-	Tue,  4 Nov 2025 01:13:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 459162264B1;
+	Tue,  4 Nov 2025 01:43:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762218837; cv=none; b=J8F/ZIBnUtDcjW+ekcN+loyg0JOsrLuSDr+cKJl54PdgoG8xHSeqit0os06F75Yql9sU01neZswRnN7cSsYXmanHrZLyaNKRGnSVBCH3sFHRp1qP1Ea2v969C8FwcMxQR6FizkIYVc4821/wTFXQjGX74u/vvfrvhq15P/X8i1Y=
+	t=1762220625; cv=none; b=oNvQMNUM3JvAAZu57ruHrWiQcuy5E5YSgHiuTzt7PGpO6uvAnQBhv/0njyN/Tg3tfMcDk0CmyeXV3npuuIfVkoLW5GQVfUKmVm/ZQFgDwaU6M6Uyl4rmfCbnNJnXrrpk6OJFShGcjGhHFkQOiUNEUF6CzBOzE8rAwMx4NMOFrmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762218837; c=relaxed/simple;
-	bh=g7+1CBZoXgMB9m5sapw5MTlDDr4R1niG6p5OTGYxjW8=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=W2faQtAoY5WI03ivbS6ExkOUgSuVTrAYYFMQ3TcfuQcjIa28AMdTrEEtQWPvV0HGcK/gxmqarKIXXmtrv1eD4/IICdGfXN0fwFkUzgUBq4fnSsyLHKZY6NxFr6k3auuuOGiraf4hJsf3X/7phrpSL3aolsCdE6LaZdkqLmuJI48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=MXiijNs0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDF4FC4CEE7;
-	Tue,  4 Nov 2025 01:13:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1762218836;
-	bh=g7+1CBZoXgMB9m5sapw5MTlDDr4R1niG6p5OTGYxjW8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=MXiijNs0dGLzPm7ExN02p9fLamNAS3PK8usLGn4WUjz1zDuNgKotkoWoll6bFAcCZ
-	 c+DX7hIKwm4DgEsPCtD3kUf+z8RMOay39KpBJN6aox4BmnB/K49oGznndZHewdwfAL
-	 cQ5C9jPS31+fy+Dxn1r0V+f74Kv5BDm26YQZF0TQ=
-Date: Mon, 3 Nov 2025 17:13:54 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Christian Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank
- <frankja@linux.ibm.com>, Claudio Imbrenda <imbrenda@linux.ibm.com>, David
- Hildenbrand <david@redhat.com>, Alexander Gordeev <agordeev@linux.ibm.com>,
- Gerald Schaefer <gerald.schaefer@linux.ibm.com>, Heiko Carstens
- <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, Sven Schnelle
- <svens@linux.ibm.com>, Peter Xu <peterx@redhat.com>, Alexander Viro
- <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara
- <jack@suse.cz>, Arnd Bergmann <arnd@arndb.de>, Zi Yan <ziy@nvidia.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>, "Liam R . Howlett"
- <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>, Ryan Roberts
- <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, Barry Song
- <baohua@kernel.org>, Lance Yang <lance.yang@linux.dev>, Muchun Song
- <muchun.song@linux.dev>, Oscar Salvador <osalvador@suse.de>, Vlastimil
- Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan
- <surenb@google.com>, Michal Hocko <mhocko@suse.com>, Matthew Brost
- <matthew.brost@intel.com>, Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim
- <rakie.kim@sk.com>, Byungchul Park <byungchul@sk.com>, Gregory Price
- <gourry@gourry.net>, Ying Huang <ying.huang@linux.alibaba.com>, Alistair
- Popple <apopple@nvidia.com>, Axel Rasmussen <axelrasmussen@google.com>,
- Yuanchu Xie <yuanchu@google.com>, Wei Xu <weixugc@google.com>, Kemeng Shi
- <shikemeng@huaweicloud.com>, Kairui Song <kasong@tencent.com>, Nhat Pham
- <nphamcs@gmail.com>, Baoquan He <bhe@redhat.com>, Chris Li
- <chrisl@kernel.org>, SeongJae Park <sj@kernel.org>, Matthew Wilcox
- <willy@infradead.org>, Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky
- <leon@kernel.org>, Xu Xin <xu.xin16@zte.com.cn>, Chengming Zhou
- <chengming.zhou@linux.dev>, Jann Horn <jannh@google.com>, Miaohe Lin
- <linmiaohe@huawei.com>, Naoya Horiguchi <nao.horiguchi@gmail.com>, Pedro
- Falcato <pfalcato@suse.de>, Pasha Tatashin <pasha.tatashin@soleen.com>, Rik
- van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>, Hugh Dickins
- <hughd@google.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
- linux-s390@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linux-arch@vger.kernel.org, damon@lists.linux.dev
-Subject: Re: [PATCH 00/16] mm: remove is_swap_[pte, pmd]() + non-swap
- entries, introduce leaf entries
-Message-Id: <20251103171354.bb28c06d9e83bdd72c3bd648@linux-foundation.org>
-In-Reply-To: <cover.1762171281.git.lorenzo.stoakes@oracle.com>
-References: <cover.1762171281.git.lorenzo.stoakes@oracle.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1762220625; c=relaxed/simple;
+	bh=BX0tUVsyY8ldvnds1/e/y6kgPKJqlyj2E8lWQ44dxfo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fwdL9Jp9t0vvYYiGRhOGpm12qex8sQ1gsraYDPHJad2Ys7IUuycMbvYFcUUKPBkydT3UhN9jTcsBvONe/hhRMQAYO2u+T9Ae55/eWiVVpGzkzykTh+2qhkTAkRpSDo3AbMZcuGFtNXff7FfDZtH7XCMvt8WNdDyBTsKlND2q/bM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dY6b2MM6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0699BC4CEFD;
+	Tue,  4 Nov 2025 01:43:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762220625;
+	bh=BX0tUVsyY8ldvnds1/e/y6kgPKJqlyj2E8lWQ44dxfo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dY6b2MM6lvQesY8UEelJfXc71chFYKuoyIOZKssRUSMQJxDm9jXPKotxE9/ABbFPu
+	 XdSerDYLKzYzDqDQ6JtxN3d5froEQfTFFz5xPdBJiYV5fi7EtRoBao1e6KRqYwr3AY
+	 4WLnVKWA2sLfmr9+9HcGjMrprpXu64yk6i9qhfJk1xH3AdHuzSaP7REg2SZctZwFBT
+	 ziPcYiFBzusRmwzHTOosUeYKOg4gg5R34YL/8ezSb/+A5pYwNrmsMmzydnbJ1FjVaF
+	 jXaQc0pHgng9HvscIjQuljf8jrhjAvtPL5qfzHDAlZO3QJ8dh49y79v1EdVD6oFICv
+	 aPXmbZutFbm5Q==
+Date: Mon, 3 Nov 2025 17:43:44 -0800
+From: Kees Cook <kees@kernel.org>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org,
+	brauner@kernel.org, jack@suse.cz, raven@themaw.net,
+	miklos@szeredi.hu, neil@brown.name, a.hindborg@kernel.org,
+	linux-mm@kvack.org, linux-efi@vger.kernel.org,
+	ocfs2-devel@lists.linux.dev, rostedt@goodmis.org,
+	gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+	paul@paul-moore.com, casey@schaufler-ca.com,
+	linuxppc-dev@lists.ozlabs.org, john.johansen@canonical.com,
+	selinux@vger.kernel.org, borntraeger@linux.ibm.com,
+	bpf@vger.kernel.org
+Subject: Re: [PATCH v2 18/50] convert pstore
+Message-ID: <202511031743.3F127F8@keescook>
+References: <20251028004614.393374-1-viro@zeniv.linux.org.uk>
+ <20251028004614.393374-19-viro@zeniv.linux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251028004614.393374-19-viro@zeniv.linux.org.uk>
 
-On Mon,  3 Nov 2025 12:31:41 +0000 Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
-
-> There's an established convention in the kernel that we treat leaf page
-> tables (so far at the PTE, PMD level) as containing 'swap entries' should
-> they be neither empty (i.e. p**_none() evaluating true) nor present
-> (i.e. p**_present() evaluating true).
+On Tue, Oct 28, 2025 at 12:45:37AM +0000, Al Viro wrote:
+> object creation by d_alloc_name()+d_add() in pstore_mkfile(), removal -
+> via normal VFS codepaths (with ->unlink() using simple_unlink()) or
+> in pstore_put_backend_records() via locked_recursive_removal()
 > 
-> ...
->
+> Replace d_add() with d_make_persistent()+dput() - that's what really
+> happens there.  The reference that goes into record->dentry is valid
+> only until the unlink (and explicitly cleared by pstore_unlink()).
+> 
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 
-All queued up, along with two -fix patches, thanks.
+Thanks for the refactoring!
 
-I disabled the customary email spray.
+Reviewed-by: Kees Cook <kees@kernel.org>
+
+-- 
+Kees Cook
 
