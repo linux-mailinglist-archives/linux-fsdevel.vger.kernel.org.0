@@ -1,67 +1,80 @@
-Return-Path: <linux-fsdevel+bounces-66968-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66969-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADCF0C31F41
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 04 Nov 2025 16:59:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F85DC31FE9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 04 Nov 2025 17:14:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BD0F1899590
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Nov 2025 15:58:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD3C518C32F5
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Nov 2025 16:15:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 079BA27FB3A;
-	Tue,  4 Nov 2025 15:57:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE18032B9B7;
+	Tue,  4 Nov 2025 16:14:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lhIYInPy"
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="WsJkFqFk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54A8826B75B;
-	Tue,  4 Nov 2025 15:57:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E6F228751B;
+	Tue,  4 Nov 2025 16:14:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762271873; cv=none; b=U6+nKPpHBUnBaN0Hl2ckpir2f9vtBvMp6puoBSbnW9J5GuYyJHbLDf2HdHFrGJs84JXT3t45HXj2ZhE0krs1Z7IVxa3ZLs+PD5jJtcAs0Zf5Nv2L64HqdEb14j3mjbUrOGIED9eL0bPjvB7o5M2fN/NSYHe4sbKAev9504W1XEw=
+	t=1762272868; cv=none; b=JIdvu3QMjr126eDmXMl5gTdogAGoUbjUP8rxeG4vW+7Cc6ssYiUS6XxLrbw79A2BMsvp3zIubbSUYNQZS0LwGn7paseFn6FTFwQGV2DvpT1lEWrGsjikDFxlw/3hJwkHDzn4zPPSDwLI3lTwfekGcelpSNX5vjzVJqyqNvo+EF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762271873; c=relaxed/simple;
-	bh=etPxiZ7rjP8VtgOg/n1V87qRxchqdEoQZ9KyI3fRorU=;
+	s=arc-20240116; t=1762272868; c=relaxed/simple;
+	bh=jtTRcLRPl0S7ICs+I5qWMOFEWJJj/lodA+jLILnY1Oo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TUDpu0mv50tjiOPsi08K0dqR1+t0ogIVevrc4tSYhdpQ8JJPlINJp1f7ovJ/d/RAMllVzpx4P1bDdlmp0s81CmGQqGRJ8Uhv17rcSP/MLRwMW3qC+YSph2yCluHk6GxVu6LhQfPfLtNSO2QKfV17Cr9oJkkBsE1uip2OJkMn2ck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lhIYInPy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB013C4CEF7;
-	Tue,  4 Nov 2025 15:57:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762271872;
-	bh=etPxiZ7rjP8VtgOg/n1V87qRxchqdEoQZ9KyI3fRorU=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=GnKAupv0IDRG675DBLA+bb8KJ7VXpetlb/g1f1Br7h80ReMLfsxkTfbN1YzMoHp7/drEkHBGgbqo0a5B8KL8GypId5OkqAPynPpHwmGPKGCcUr6g19RHxLafECXbwgkOvEnQbW/r3F6aO614T9xaxlcFX+xiE7tM2CkgPs/WEl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=WsJkFqFk; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 9553940E01A5;
+	Tue,  4 Nov 2025 16:14:22 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 91D3z73EMMNp; Tue,  4 Nov 2025 16:14:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1762272856; bh=FNgyVk2BPz+y0bw3H0Td/xY5ZxkIc4MyugmkwC321Qk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lhIYInPyIxnNY1EIllIQhhpfP0DP2/EeT3oIkIX3I5K0jheAHc3+3C16W4p9GJAB3
-	 qyJM5t9DGGOR+a1d2pRYrYHVBiHtZQXvRjN4ka+q5H5I8XIcY2iBsEILKp+3dERtxH
-	 P+xsYopX8bWUApscI9kNQKLnBfb1PO/vLa3MN4DRtMFXDIAdZXGYsz/a7dosKn4puZ
-	 G3dJQHVa41HF+WK8KZDHNNW6KAldY7z6faIj6DpnHl0RaYyUe6idw2hGOYupkrm+pK
-	 NgAhPZv/mp8b3HUD/zT1TyxYt5KN5Drgy9lju8+eQ9Jid6aXAt3izazhFpqk47PmZ3
-	 aMvhIN/ZvaIag==
-Date: Tue, 4 Nov 2025 07:57:52 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Yongpeng Yang <yangyongpeng.storage@gmail.com>
-Cc: Namjae Jeon <linkinjeon@kernel.org>,
-	Sungjong Seo <sj1557.seo@samsung.com>,
-	OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-	Jan Kara <jack@suse.cz>, Carlos Maiolino <cem@kernel.org>,
-	Jens Axboe <axboe@kernel.dk>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sasha Levin <sashal@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Christoph Hellwig <hch@infradead.org>, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-	stable@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
-	Yongpeng Yang <yangyongpeng@xiaomi.com>
-Subject: Re: [PATCH v4 5/5] block: add __must_check attribute to
- sb_min_blocksize()
-Message-ID: <20251104155752.GB196362@frogsfrogsfrogs>
-References: <20251103163617.151045-2-yangyongpeng.storage@gmail.com>
- <20251103163617.151045-6-yangyongpeng.storage@gmail.com>
+	b=WsJkFqFkzmKoHzeo2sq5btxwv0TXojUeM/TpfzyIJTc8hjVk+qMrxoJPnY3TPRilZ
+	 t/3IJ9zjf39U/IwlrTalPGaaZYf9JNVMzAtMaFK/DuTjZtlJs4+jfuL4E76Chztvgt
+	 qGcydLXPCOLJP6UEF+drNrAE2hT0WMQNvuywlp2yJfDtk3SSz05u6Qql6DDMkriBur
+	 6CPyfQKMPPfVtTnYyIldqC6gcondafrVYRbELqQUe5P/OfY2ScnKwFfGpqklHI5kbo
+	 u1ZjyrP4pOmQBE2zbfa/emBGke7hSr5TjQiM6fPMF03tW0gQHvkFc/p2O/OQmafP2h
+	 URuLkFeRPbHqV1XI8SuNUE8SgquwvStXir1n3UcKu4/zhnMHb7xfiuZ032qWQ2xPxq
+	 7E5KWsJ61g0+eZ4mcpGrUaN66gGGYkNF8TaPcELzqSo2kU3I7oJzf+UIDWB0WONd4o
+	 a8k8WJKHv6QW5W7/X41jlT36U7sOOCwApDg1V4H0OX2audqiMRpA6bm5aHtiamb6FU
+	 xrZbzE/Xkxzm1ogLCyRh0eGBlWurj6KVgldwPd/ZY8qgUgBj/2k17r2a5G7BEn+zId
+	 vUA6/4kcCZOHdjRoNaHhyCgsoSAgYg3rMjMpQXkjaXZ2EuLIcalgarcTXQy+QKdUzQ
+	 itFlhFjkqmmz5btnz8QXncHw=
+Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 944BD40E015B;
+	Tue,  4 Nov 2025 16:14:06 +0000 (UTC)
+Date: Tue, 4 Nov 2025 17:13:59 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Mateusz Guzik <mjguzik@gmail.com>,
+	the arch/x86 maintainers <x86@kernel.org>, brauner@kernel.org,
+	viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, tglx@linutronix.de, pfalcato@suse.de
+Subject: Re: [PATCH 1/3] x86: fix access_ok() and valid_user_address() using
+ wrong USER_PTR_MAX in modules
+Message-ID: <20251104161359.GDaQomRwYqr0hbYitC@fat_crate.local>
+References: <CAHk-=wjRA8G9eOPWa_Njz4NAk3gZNvdt0WAHZfn3iXfcVsmpcA@mail.gmail.com>
+ <20251031174220.43458-1-mjguzik@gmail.com>
+ <20251031174220.43458-2-mjguzik@gmail.com>
+ <CAHk-=wimh_3jM9Xe8Zx0rpuf8CPDu6DkRCGb44azk0Sz5yqSnw@mail.gmail.com>
+ <20251104102544.GBaQnUqFF9nxxsGCP7@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -70,62 +83,24 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251103163617.151045-6-yangyongpeng.storage@gmail.com>
+In-Reply-To: <20251104102544.GBaQnUqFF9nxxsGCP7@fat_crate.local>
 
-On Tue, Nov 04, 2025 at 12:36:18AM +0800, Yongpeng Yang wrote:
-> From: Yongpeng Yang <yangyongpeng@xiaomi.com>
+On Tue, Nov 04, 2025 at 11:25:44AM +0100, Borislav Petkov wrote:
+> On Tue, Nov 04, 2025 at 03:25:20PM +0900, Linus Torvalds wrote:
+> > Borislav - comments?
 > 
-> When sb_min_blocksize() returns 0 and the return value is not checked,
-> it may lead to a situation where sb->s_blocksize is 0 when
-> accessing the filesystem super block. After commit a64e5a596067bd
-> ("bdev: add back PAGE_SIZE block size validation for
-> sb_set_blocksize()"), this becomes more likely to happen when the
-> block device’s logical_block_size is larger than PAGE_SIZE and the
-> filesystem is unformatted. Add the __must_check attribute to ensure
-> callers always check the return value.
-> 
-> Suggested-by: Matthew Wilcox <willy@infradead.org>
-> Signed-off-by: Yongpeng Yang <yangyongpeng@xiaomi.com>
+> LGTM at a quick glance but lemme take it for a spin around the hw jungle here
+> later and give it a more thorough look, once I've put out all the daily
+> fires...
 
-Looks good to me,
-Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
+Did a deeper look, did randbuilds, boots fine on a couple of machines, so all
+good AFAIIC.
 
---D
+I sincerely hope that helps.
 
-> ---
->  block/bdev.c       | 2 +-
->  include/linux/fs.h | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/block/bdev.c b/block/bdev.c
-> index 810707cca970..638f0cd458ae 100644
-> --- a/block/bdev.c
-> +++ b/block/bdev.c
-> @@ -231,7 +231,7 @@ int sb_set_blocksize(struct super_block *sb, int size)
->  
->  EXPORT_SYMBOL(sb_set_blocksize);
->  
-> -int sb_min_blocksize(struct super_block *sb, int size)
-> +int __must_check sb_min_blocksize(struct super_block *sb, int size)
->  {
->  	int minsize = bdev_logical_block_size(sb->s_bdev);
->  	if (size < minsize)
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index c895146c1444..26d4ca0f859a 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -3424,7 +3424,7 @@ extern void inode_sb_list_add(struct inode *inode);
->  extern void inode_add_lru(struct inode *inode);
->  
->  extern int sb_set_blocksize(struct super_block *, int);
-> -extern int sb_min_blocksize(struct super_block *, int);
-> +extern int __must_check sb_min_blocksize(struct super_block *, int);
->  
->  int generic_file_mmap(struct file *, struct vm_area_struct *);
->  int generic_file_mmap_prepare(struct vm_area_desc *desc);
-> -- 
-> 2.43.0
-> 
-> 
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
