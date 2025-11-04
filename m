@@ -1,150 +1,150 @@
-Return-Path: <linux-fsdevel+bounces-66961-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-66962-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B1FAC31B73
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 04 Nov 2025 16:06:03 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D906C31D90
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 04 Nov 2025 16:32:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3764734ACB6
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Nov 2025 15:06:03 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 08CEC4EC976
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Nov 2025 15:29:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02F62221FA0;
-	Tue,  4 Nov 2025 15:05:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF8EF260583;
+	Tue,  4 Nov 2025 15:29:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hnLbi/Rs"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="komXz4R+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18DCC1B0439
-	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Nov 2025 15:05:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D937D2566D3
+	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Nov 2025 15:29:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762268756; cv=none; b=VvZak0eksbl54NFitlYRiO3We0EC/DjYp6ATvgSerauAtbAw0Oz5ggJExX1+oIJuDr4WWDhD64LMaXjBGXZABcFLi34IwmaLCLQZN7kyk4GBNLbCQFNgWyFZbdlfAnSxkU/p8rIrkUBiLY5g9NPKwIpNLfifVeTOrMX4O4A4Llc=
+	t=1762270172; cv=none; b=msSUyoaSpW0w/BIK86zgyI7wYxE45G5lc4IPAi8aIsKSqsR3SLEuzmB6k3RdoXy/tI5lVMvYZJ4DZVKBPnSJe5g9EqkHLqB+seZ40YnAnuSXj/7swN0l5FwjAsB2f7Wc708cuRKz+UuU6tqBQCNrAs3eUxQJ0WgYNlfLXoKdvLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762268756; c=relaxed/simple;
-	bh=Yp6fUD952UVKQWCkV+hXAOlbW0lYlppgeblWFreQc58=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fnABb6sqbVnx/a5kOQW12v8uNdT9NwyEcdT68Sm/7PM5AKDpT6LcwaDqEmNLP3kjzH94CO9HXwmHcSxUl/AcraTfXbHvjE2/RJmKo2r84TJtQudKE4qMk/Fw57PNoqdQZTPdUQkdTyjETbEobEC0H9wVqskfQXp2yiG+NtsnXqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hnLbi/Rs; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-294fe7c2e69so52820585ad.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Nov 2025 07:05:54 -0800 (PST)
+	s=arc-20240116; t=1762270172; c=relaxed/simple;
+	bh=8GNMbexAGe1nKqMzzLVClEkNd7j6DVDRkgcdOMp8ajQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iqo3CllkY/b9Q8yWn1hIGrvfd8by2SAxn5EdMUNIqlOmjlhdd7vFefHVW8Ls32abXPZvroQw8ZFQvyvPjza4XX93r05s/4mBMJQRd8qbjFKWgn8cp50qhqmTfhM0vEgwHgWAvVAkawe1HExtdl8Hyg/lBJxpCEyBTpo/xbV29S4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=komXz4R+; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2959197b68eso195975ad.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Nov 2025 07:29:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762268754; x=1762873554; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kjsZzzSV6ptDEgOqNG45MMGnROqBWBrdMHjfc2PbPmo=;
-        b=hnLbi/RskHJ62tG5fmddzuJQ/uUw2ykV9H6PKkLxB3zk/3YDH1Lqh7YLHLEkJNrQNq
-         863EdxFMPtKI12/auV2fwyH+VoOfVXWij7zML30P6EuPh6MKhl1AONZBxUj6RPMIvwWG
-         iQY6ltYvgiC8Wiu2KP8Lav6z9ic6xHemBuJ5qsRKw+i/wy7HB4F4emkGg2y9xRNTagfv
-         GvpFfwYOYoRMVeop2I9At03yO8RqJjC4uLdPGZBYYolHuXx/2kNObyBDvW1w+8oDRW9n
-         0ckCEPY9JuNKZqIS4PrSAKjjgiDi/WqTq0i6Tx8w7G+s4wKIhojHlcMGKDAAiW4ZKYdk
-         Ak3A==
+        d=google.com; s=20230601; t=1762270170; x=1762874970; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8GNMbexAGe1nKqMzzLVClEkNd7j6DVDRkgcdOMp8ajQ=;
+        b=komXz4R+41dzT/XSiGVn89xk28v1lVjn5ZUX4+R3Vry1fRFm0on3hzx47TViArkgsV
+         64igP4q74IHlHGz/e6WNOhIzO4NoXFVpzWZY5PT6xsU5aMt5urG5Tmgum3HpayNNAR7W
+         qMgE5xpOgsKWwcZiD/HiON3MyShaU7sEGd9iKE/mhwXRZZth+xK/SZMi8eNiy6M2u/JN
+         mu5mOt3DcNFAVsM5g7HUMIvWJa2e7uJ6jJGTK7/tdfqn1iuKZ03YmvQ6604ISnoZsI6F
+         EwQrKMGUNWm7ChO2CPB+o/p4InWbwf4bs/Ew38x9e09dHaSp+1R2iw0gthCKjcs7qe3Y
+         ZcNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762268754; x=1762873554;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kjsZzzSV6ptDEgOqNG45MMGnROqBWBrdMHjfc2PbPmo=;
-        b=pfamPzIBZ1JOYLznm3HmaJCDZNTZj/r6gSYm+t+LR/Po8stsZJ4Wt4gn0dtm0iVids
-         CJydey0V6TAuPXk525/HJZYWphlC1Cg7xK6i7Fo3tOJasv/J3qYp9BhJW0wTsmRJR7FD
-         k+vQvcFyu66zWRyhftfdvlBR+vrbA7jbrxxnZbSR09C4gw1TEtP9HWeh4nCFl2kQeBL3
-         CmvTYm0VMtCS9Br8y2COwOOYzKf63POHTywvRtbUpiSdAqS01Wpy2V6CMPwMnG38KDX3
-         5gjlSxhnXOwcFrAIM9VOsVktBqcvcDG+9uG0zMCSdRd5TqWM5sqQi4nsmUTMBCM+I8G5
-         UJDg==
-X-Forwarded-Encrypted: i=1; AJvYcCWaLlUj1aDrP29567hXso+F88qfngRqROl0vAZ1+x+n0jvKrfZH8Ru8gT+s3OGHN0C36WCyChEnfw5RfgGD@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIGmsFOWkZlHb5GftoboAdyHRErNcdd/e3v3TXNEOJX5t9A82e
-	S//+DsJbW1LOw6tDaxAUgtN++U1j4sRSk52QnSOxBr0PMmolFAc4rpUK
-X-Gm-Gg: ASbGncvUp+cKJeiqFoes3Fjx+x8oM5LrL784GX9QnVmciYq7eWHPWa1o2N4JK1/zvUq
-	i77lJeGs+M/ldOb2h/1m77VWGWveYb0b26C/xJ97yIeBhZ9Fqxx2JoZzjHVgST4kr1r9QFzgKPq
-	5rTaGIvQJGnyP1X/emH2OelyVVRm3fUMCMXHy9gyaC3j9gXAAKdohBdd7yt6oQQaVCCkEVwMhuj
-	6GF1tTk0C4uA1wQwcHEcZXbfFw3zCUXP+kbUvpzL4TqCukKD6POwPez1PXILTQ9AonzGJpu37kI
-	4v+TzJwrcCogI6LoYAhW+tMMWiUEex6+NiVcXqaWbh9hm8YR8b0kPYvPkNNiA1EGwq8sSNuFdIX
-	M/Ccih0zUlbPNVYsVLEI1D8CtZXjYiV2z257bCFlNqMmy3YVYqxw6kQrTo0ypKJDxrLdlS5dm89
-	tvkrPwPUURdkfVD/G/kW+9TAFr0y5sG2N1sUEi5LjC+Gn6CGdo6+fKhyawX7LbVChnnUt8oQ==
-X-Google-Smtp-Source: AGHT+IF6GMlcuTvJ/QMvT7CMF97mhy83YwPs7iC6oKLK4oKXG45cls7H4Vrjj+0VVpTVu8RpWQY3oA==
-X-Received: by 2002:a17:902:d48e:b0:295:986f:6514 with SMTP id d9443c01a7336-295986f65fdmr98727215ad.9.1762268754106;
-        Tue, 04 Nov 2025 07:05:54 -0800 (PST)
-Received: from ?IPV6:2409:8a00:79b4:1a90:a428:f9f:5def:1227? ([2409:8a00:79b4:1a90:a428:f9f:5def:1227])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-296019982c7sm29883325ad.25.2025.11.04.07.05.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Nov 2025 07:05:53 -0800 (PST)
-Message-ID: <b8f06e62-27dc-462e-83ad-33b179daf8a2@gmail.com>
-Date: Tue, 4 Nov 2025 23:05:49 +0800
+        d=1e100.net; s=20230601; t=1762270170; x=1762874970;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8GNMbexAGe1nKqMzzLVClEkNd7j6DVDRkgcdOMp8ajQ=;
+        b=aYmfxY/uy0RSZeKVMQzPlp0AV0RlDRHC5kdw/NZ0lIGC7EsLPFgH8ix73NLsSw6UK9
+         235MSTuLvtC8tP63onfd4gV7iEpQEjRe1FsDEQwl5IXRg3/Q5rFBohgTcTCAC6nao79D
+         0LvDpkUX4MQJxVOf2faM2ZNZVadnBml8hK4gkGpQU1x8rGaPjn0vdXsDw91yIgSsj2pF
+         T729NlHWLGxx+m4GeNjM2UvB22Ro7OgYOi8MsgtreoHHpsh68oRazzBC+SQilMZuSbCe
+         7iwYwAKjY9s4PUrR6SSk0ZEhvh3edS+bcBTB6acUpCy4zce8SPzntlS/cw26E0+jR7bD
+         0t5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUZkLWDnVXvc3M7mAJFP3u5j/N/f4sNE6nFcU5+iUoLBGDuFHPlxOWko1envvgG/huf+6wUnHx3CKDBHvW+@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjOxcZpJQKi8Yz1Hy/vxMWGBsLpfa3tspGmfX+kAjmpLGJ+2vg
+	fSCZYZh9CVU84DuxfDi9infeZOO7ukal6yOXbsBVZ/x3z5rtuTnMWzOsELXiwFsKwc666F6nD3O
+	ZEnq5I2M0HU8uWsNGx7rAyeUsr9KND6lVxH6KCtEW
+X-Gm-Gg: ASbGncuTrVNnSsnp9hMXwXSrPDR/7/uR06DS4xcuIbPLmEP+r+TpljRUuyP2OftXD86
+	TdmLgRWUW5LkOlrgkEn37no7c6Gebe+kpWw3xA9a+DGKWzi7ESUMrSrG7Dis68vCct7uB0lWxWa
+	po2UkSquECCUvRAxGCbrjSS68yaNQya30uZ7aJRD+2/FtJVMSsrA7quJjkh4ihDrgihEbLLvmwP
+	NomM6+MxPxyUMcrAbdcVVNRrrPwS91l4J8UMJ/1sPJnrHuOLkZ5T1t9y82g5xpawRlXaIrH4lp8
+	hyY82ZUiYFyrtCpjcg==
+X-Google-Smtp-Source: AGHT+IH4UAJnle8ScuJWqynVoBOWdaJhxSn6rAs6bqvidoqyAcb3/mjW+zeWXvxPSrbgnMnIJK48J8HHgBswCtIjjHM=
+X-Received: by 2002:a17:902:c412:b0:294:d42c:ca0f with SMTP id
+ d9443c01a7336-295fd276d54mr4970305ad.2.1762270169379; Tue, 04 Nov 2025
+ 07:29:29 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] fscrypt: fix left shift underflow when
- inode->i_blkbits > PAGE_SHIFT
-To: Christoph Hellwig <hch@infradead.org>, Eric Biggers <ebiggers@kernel.org>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Theodore Ts'o <tytso@mit.edu>,
- linux-fscrypt@vger.kernel.org, Yongpeng Yang <yangyongpeng@xiaomi.com>,
- linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
- Luis Chamberlain <mcgrof@kernel.org>
-References: <20251030072956.454679-1-yangyongpeng.storage@gmail.com>
- <20251103164829.GC1735@sol> <aQnftXAg93-4FbaO@infradead.org>
-Content-Language: en-US
-From: Yongpeng Yang <yangyongpeng.storage@gmail.com>
-In-Reply-To: <aQnftXAg93-4FbaO@infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <cover.1760731772.git.ackerleytng@google.com> <5a4dfc265a46959953e6c24730d22584972b1179.1760731772.git.ackerleytng@google.com>
+ <aQnGJ5agTohMijj8@yzhao56-desk.sh.intel.com>
+In-Reply-To: <aQnGJ5agTohMijj8@yzhao56-desk.sh.intel.com>
+From: Vishal Annapurve <vannapurve@google.com>
+Date: Tue, 4 Nov 2025 07:29:14 -0800
+X-Gm-Features: AWmQ_bl_ayCFfhnMsugNyyrAbP6HSGsNUxGOugUtPG7U3zm3zMrinB0nHoIiMMY
+Message-ID: <CAGtprH9cajbGWrU9PAZWNKMeKJ9DyhoV=nEYk_DnYnR8Fyapww@mail.gmail.com>
+Subject: Re: [RFC PATCH v1 11/37] KVM: guest_memfd: Add support for KVM_SET_MEMORY_ATTRIBUTES
+To: Yan Zhao <yan.y.zhao@intel.com>
+Cc: Ackerley Tng <ackerleytng@google.com>, cgroups@vger.kernel.org, kvm@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org, x86@kernel.org, 
+	akpm@linux-foundation.org, binbin.wu@linux.intel.com, bp@alien8.de, 
+	brauner@kernel.org, chao.p.peng@intel.com, chenhuacai@kernel.org, 
+	corbet@lwn.net, dave.hansen@intel.com, dave.hansen@linux.intel.com, 
+	david@redhat.com, dmatlack@google.com, erdemaktas@google.com, 
+	fan.du@intel.com, fvdl@google.com, haibo1.xu@intel.com, hannes@cmpxchg.org, 
+	hch@infradead.org, hpa@zytor.com, hughd@google.com, ira.weiny@intel.com, 
+	isaku.yamahata@intel.com, jack@suse.cz, james.morse@arm.com, 
+	jarkko@kernel.org, jgg@ziepe.ca, jgowans@amazon.com, jhubbard@nvidia.com, 
+	jroedel@suse.de, jthoughton@google.com, jun.miao@intel.com, 
+	kai.huang@intel.com, keirf@google.com, kent.overstreet@linux.dev, 
+	liam.merwick@oracle.com, maciej.wieczor-retman@intel.com, 
+	mail@maciej.szmigiero.name, maobibo@loongson.cn, 
+	mathieu.desnoyers@efficios.com, maz@kernel.org, mhiramat@kernel.org, 
+	mhocko@kernel.org, mic@digikod.net, michael.roth@amd.com, mingo@redhat.com, 
+	mlevitsk@redhat.com, mpe@ellerman.id.au, muchun.song@linux.dev, 
+	nikunj@amd.com, nsaenz@amazon.es, oliver.upton@linux.dev, palmer@dabbelt.com, 
+	pankaj.gupta@amd.com, paul.walmsley@sifive.com, pbonzini@redhat.com, 
+	peterx@redhat.com, pgonda@google.com, prsampat@amd.com, pvorel@suse.cz, 
+	qperret@google.com, richard.weiyang@gmail.com, rick.p.edgecombe@intel.com, 
+	rientjes@google.com, rostedt@goodmis.org, roypat@amazon.co.uk, 
+	rppt@kernel.org, seanjc@google.com, shakeel.butt@linux.dev, shuah@kernel.org, 
+	steven.price@arm.com, steven.sistare@oracle.com, suzuki.poulose@arm.com, 
+	tabba@google.com, tglx@linutronix.de, thomas.lendacky@amd.com, vbabka@suse.cz, 
+	viro@zeniv.linux.org.uk, vkuznets@redhat.com, wei.w.wang@intel.com, 
+	will@kernel.org, willy@infradead.org, wyihan@google.com, xiaoyao.li@intel.com, 
+	yilun.xu@intel.com, yuzenghui@huawei.com, zhiquan1.li@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/4/2025 7:12 PM, Christoph Hellwig wrote:
-> On Mon, Nov 03, 2025 at 08:48:29AM -0800, Eric Biggers wrote:
->>>   	*inode_ret = inode;
->>> -	*lblk_num_ret = ((u64)folio->index << (PAGE_SHIFT - inode->i_blkbits)) +
->>> +	*lblk_num_ret = (((u64)folio->index << PAGE_SHIFT) >> inode->i_blkbits) +
-> 
-> This should be using folio_pos() instead of open coding the arithmetics.
-> 
+On Tue, Nov 4, 2025 at 1:27=E2=80=AFAM Yan Zhao <yan.y.zhao@intel.com> wrot=
+e:
+>
+> On Fri, Oct 17, 2025 at 01:11:52PM -0700, Ackerley Tng wrote:
+> > For shared to private conversions, if refcounts on any of the folios
+> > within the range are elevated, fail the conversion with -EAGAIN.
+> >
+> > At the point of shared to private conversion, all folios in range are
+> > also unmapped. The filemap_invalidate_lock() is held, so no faulting
+> > can occur. Hence, from that point on, only transient refcounts can be
+> > taken on the folios associated with that guest_memfd.
+> >
+> > Hence, it is safe to do the conversion from shared to private.
+> >
+> > After conversion is complete, refcounts may become elevated, but that
+> > is fine since users of transient refcounts don't actually access
+> > memory.
+> >
+> > For private to shared conversions, there are no refcount checks. any
+> > transient refcounts are expected to drop their refcounts soon. The
+> > conversion process will spin waiting for these transient refcounts to
+> > go away.
+> Where's the code to spin?
 
-How about this modification: using "<< PAGE_SHIFT" instead of "* 
-PAGE_SIZE" for page_offset and folio_pos?
-
---- a/fs/crypto/inline_crypt.c
-+++ b/fs/crypto/inline_crypt.c
-@@ -333,7 +333,7 @@ static bool bh_get_inode_and_lblk_num(const struct 
-buffer_head *bh,
-         inode = mapping->host;
-
-         *inode_ret = inode;
--       *lblk_num_ret = ((u64)folio->index << (PAGE_SHIFT - 
-inode->i_blkbits)) +
-+       *lblk_num_ret = ((u64)folio_pos(folio) >> inode->i_blkbits) +
-                         (bh_offset(bh) >> inode->i_blkbits);
-         return true;
-  }
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 09b581c1d878..72eeb1841bc3 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -1026,7 +1026,7 @@ static inline pgoff_t page_pgoff(const struct 
-folio *folio,
-   */
-  static inline loff_t folio_pos(const struct folio *folio)
-  {
--       return ((loff_t)folio->index) * PAGE_SIZE;
-+       return ((loff_t)folio->index) << PAGE_SHIFT;
-  }
-
-  /*
-@@ -1036,7 +1036,7 @@ static inline loff_t page_offset(struct page *page)
-  {
-         struct folio *folio = page_folio(page);
-
--       return folio_pos(folio) + folio_page_idx(folio, page) * PAGE_SIZE;
-+       return folio_pos(folio) + (folio_page_idx(folio, page) << 
-PAGE_SHIFT);
-  }
-
-Yongpeng,
+When dealing with 4k pages, I think we don't need to spin waiting for
+transient refcounts to drop, that logic will be needed when dealing
+with huge folios in order to restructure them while handling
+conversion. So the specific part can be safely dropped from the commit
+message.
 
