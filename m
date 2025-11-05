@@ -1,234 +1,159 @@
-Return-Path: <linux-fsdevel+bounces-67147-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67149-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BE3DC36522
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 05 Nov 2025 16:27:38 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D46F6C36635
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 05 Nov 2025 16:40:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B770623B57
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Nov 2025 15:18:54 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7492E502294
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Nov 2025 15:28:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2AE033EAFD;
-	Wed,  5 Nov 2025 15:12:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC21E334C2B;
+	Wed,  5 Nov 2025 15:23:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="vOPg+LHG";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3fBDLO1F";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="vOPg+LHG";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3fBDLO1F"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uMrvcThp"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2CAE33E353
-	for <linux-fsdevel@vger.kernel.org>; Wed,  5 Nov 2025 15:12:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C6F1331A59;
+	Wed,  5 Nov 2025 15:23:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762355553; cv=none; b=jyscpkC1FGn6jRQT6bKpPRfBvzPTvfvph20SYN1aL3dzrZsf7D4Zw6122d2wDVbMvo2izZa3hIfSX0HfDkb8/L2aXMkcbHVyKWXfgb23b+FKpsAGWvdwKTVUGytpXJy9a88ldJmiyH+DCsDBBhH40FXJH38zdZ4IenHmyRodifo=
+	t=1762356227; cv=none; b=S11uMwJaf8FrbcnQifEJz0plYqTOW3WzX0Nf8KvSN8tyIeCPKiZ9pCrHNWuhxh4fbkZnLqLcGXeukGDzVllsUt/g4gP+oqJBsqLKB1A7rF1dRW6aAGszQ7tJnLMMaaCiJu1SvgmbN4M8/s8ojVJGOQQHTZ5rR+bCUSXgeYWspYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762355553; c=relaxed/simple;
-	bh=EjlKUtNHqDKQw/INUf1si5y4KGCdguruY4CNlDjBZBU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VnqE8G1Gx2ehOHf5g4n2tL6Ob9avuOd7SuCby2PeEwD5h+ST8kS7nk5etJNlbt2DL5zgsDed16qN5UkbktRbwryJNtRGWAFxjhXz14SID2uMu9KCEYIMXX+Vn0F5EY3r4AUAiekMey8DwPgRYJB86ZfSaJYy+97YcyB/6ioOu9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=vOPg+LHG; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3fBDLO1F; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=vOPg+LHG; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3fBDLO1F; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id D37AE1F393;
-	Wed,  5 Nov 2025 15:12:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762355549; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=iwBH7iM0sPxUEaHRpT+jUi+gGcVAjv29IOeKwGDaXZs=;
-	b=vOPg+LHG7W8Yk1HS6Dsqqv3MuWG2XGmqog16SM/nz7u6dEMJPe3i9AhFhwP/WfJVXmvQcV
-	QWH4iMuF1SSTkpoQe/WLl/HtHn4D7b3y2PCeNYRSq3zsRKURpLzDnArWbzFfZtLKKvzbKk
-	QuWyoiheskgZBExMQm9+VQqcZ4b5XfQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762355549;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=iwBH7iM0sPxUEaHRpT+jUi+gGcVAjv29IOeKwGDaXZs=;
-	b=3fBDLO1F7aXeoa1qyCsw7hVXRdwyz8+2qPyK704dPWdvmcYFcrqpQGEUIV0fpFTM3pjpyw
-	BPMYDGJJBtmN/qBA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762355549; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=iwBH7iM0sPxUEaHRpT+jUi+gGcVAjv29IOeKwGDaXZs=;
-	b=vOPg+LHG7W8Yk1HS6Dsqqv3MuWG2XGmqog16SM/nz7u6dEMJPe3i9AhFhwP/WfJVXmvQcV
-	QWH4iMuF1SSTkpoQe/WLl/HtHn4D7b3y2PCeNYRSq3zsRKURpLzDnArWbzFfZtLKKvzbKk
-	QuWyoiheskgZBExMQm9+VQqcZ4b5XfQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762355549;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=iwBH7iM0sPxUEaHRpT+jUi+gGcVAjv29IOeKwGDaXZs=;
-	b=3fBDLO1F7aXeoa1qyCsw7hVXRdwyz8+2qPyK704dPWdvmcYFcrqpQGEUIV0fpFTM3pjpyw
-	BPMYDGJJBtmN/qBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B30C1132DD;
-	Wed,  5 Nov 2025 15:12:29 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id mI/pKV1pC2lFeQAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 05 Nov 2025 15:12:29 +0000
-Message-ID: <39f2d0d3-de79-4e13-a577-83a3aeb5cf1b@suse.cz>
-Date: Wed, 5 Nov 2025 16:12:29 +0100
+	s=arc-20240116; t=1762356227; c=relaxed/simple;
+	bh=kUs8Lv2NDX+HzCDICX2X7wBuseMdW6bT2eEf/zscT/4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Aj3T1v/331VyzhdKe9HuEzbzDACObaKZk/f0CION5BGLM1PozB5yuGI9Wymp2UlKrW6pKOfL6kcNCVGmlJNxMyDWfKoDHBvGKonrj9ArOK+3+4Oa3F8X1Ex1t+/IghDsB4fvY9Hj6Yv/U/T60XYXHMaMDj7kKPncOMPonYM6ttg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uMrvcThp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEE3FC4CEF5;
+	Wed,  5 Nov 2025 15:23:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762356226;
+	bh=kUs8Lv2NDX+HzCDICX2X7wBuseMdW6bT2eEf/zscT/4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uMrvcThpY3YAAbWSY9xnzagjiDcwxd3DE9e20MpciQ0mHPg3Rf2Ci/61aau+E4mQM
+	 8nZgzHXJSUUcSaMnT3I6e/kc2OTFqEOU8mhgloW70El8EVP4uFuINodUwyZYdb4wN6
+	 1lFZyctatEB0Ly2mBkqqT1g1f5kszp3d1j2Gfcxbk6+UPzncHihdjKp/ahdU45prxY
+	 rmgoXHjD8Oya/yhaU7KPl20KhLjgM4879Ne2XzlbiGqEnxwVLMRrnoxp2UrzmMsOXc
+	 mmWDqocG56Gn6iM3/+Xaa3pHugJb+dKTjiXrnAV7pXWqqp81/F+Ra04o22uyDpfK++
+	 osL5X75ZbKhQQ==
+Date: Wed, 5 Nov 2025 16:23:39 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc: Ard Biesheuvel <ardb@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
+	linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org, jack@suse.cz, raven@themaw.net, 
+	miklos@szeredi.hu, neil@brown.name, a.hindborg@kernel.org, linux-mm@kvack.org, 
+	linux-efi@vger.kernel.org, ocfs2-devel@lists.linux.dev, kees@kernel.org, 
+	rostedt@goodmis.org, gregkh@linuxfoundation.org, linux-usb@vger.kernel.org, 
+	paul@paul-moore.com, casey@schaufler-ca.com, linuxppc-dev@lists.ozlabs.org, 
+	john.johansen@canonical.com, selinux@vger.kernel.org, borntraeger@linux.ibm.com, 
+	bpf@vger.kernel.org
+Subject: Re: [PATCH v2 22/50] convert efivarfs
+Message-ID: <20251105-absatz-zehrt-8d1197f900c9@brauner>
+References: <CAMj1kXF6tvg6+CL_1x7h0HK1PoSGtxDjc0LQ1abGQBd5qrbffg@mail.gmail.com>
+ <9f079d0c8cffb150c0decb673a12bfe1b835efc9.camel@HansenPartnership.com>
+ <20251029193755.GU2441659@ZenIV>
+ <CAMj1kXHnEq97bzt-C=zKJdV3BK3EDJCPz3Pfyk52p2735-4wFA@mail.gmail.com>
+ <20251105-aufheben-ausmusterung-4588dab8c585@brauner>
+ <423f5cc5352c54fc21e0570daeeddc4a58e74974.camel@HansenPartnership.com>
+ <20251105-sohlen-fenster-e7c5af1204c4@brauner>
+ <305ff01c159993d8124ae3125f7dacf6b61fa933.camel@HansenPartnership.com>
+ <20251105-ausfiel-klopapier-599213591ad2@brauner>
+ <ddc9e2efa25d59ae7f1989ac155b9a9043ca830b.camel@HansenPartnership.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 9/9] blk-crypto: use mempool_alloc_bulk for encrypted bio
- page allocation
-Content-Language: en-US
-To: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
- Eric Biggers <ebiggers@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
-Cc: Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>,
- Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>,
- linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-fscrypt@vger.kernel.org, linux-mm@kvack.org
-References: <20251031093517.1603379-1-hch@lst.de>
- <20251031093517.1603379-10-hch@lst.de>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <20251031093517.1603379-10-hch@lst.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.996];
-	MIME_GOOD(-0.10)[text/plain];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:mid]
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ddc9e2efa25d59ae7f1989ac155b9a9043ca830b.camel@HansenPartnership.com>
 
-On 10/31/25 10:34, Christoph Hellwig wrote:
-> @@ -192,6 +205,29 @@ static struct bio *blk_crypto_alloc_enc_bio(struct bio *bio_src,
->  	bio->bi_write_stream	= bio_src->bi_write_stream;
->  	bio->bi_iter.bi_sector	= bio_src->bi_iter.bi_sector;
->  	bio_clone_blkg_association(bio, bio_src);
-> +
-> +	/*
-> +	 * Move page array up in the allocated memory for the bio vecs as far as
-> +	 * possible so that we can start filling biovecs from the beginning
-> +	 * without overwriting the temporary page array.
-> +	 */
-> +	static_assert(PAGE_PTRS_PER_BVEC > 1);
-> +	pages = (struct page **)bio->bi_io_vec;
-> +	pages += nr_segs * (PAGE_PTRS_PER_BVEC - 1);
-> +
-> +	/*
-> +	 * Try a bulk allocation first.  This could leave random pages in the
-> +	 * array unallocated, but we'll fix that up later in mempool_alloc_bulk.
-> +	 *
-> +	 * Note: alloc_pages_bulk needs the array to be zeroed, as it assumes
-> +	 * any non-zero slot already contains a valid allocation.
-> +	 */
-> +	memset(pages, 0, sizeof(struct page *) * nr_segs);
-> +	if (alloc_pages_bulk(GFP_NOFS, nr_segs, pages) < nr_segs) {
-> +		mempool_alloc_bulk(blk_crypto_bounce_page_pool, (void **)pages,
-> +				nr_segs, GFP_NOIO);
+On Wed, Nov 05, 2025 at 09:01:59AM -0500, James Bottomley wrote:
+> On Wed, 2025-11-05 at 14:46 +0100, Christian Brauner wrote:
+> > On Wed, Nov 05, 2025 at 08:33:10AM -0500, James Bottomley wrote:
+> > > On Wed, 2025-11-05 at 14:16 +0100, Christian Brauner wrote:
+> > > > On Wed, Nov 05, 2025 at 08:09:03AM -0500, James Bottomley wrote:
+> > > > > On Wed, 2025-11-05 at 12:47 +0100, Christian Brauner wrote:
+> > > [...]
+> > > > > > And suspend/resume works just fine with freeze/thaw. See
+> > > > > > commit
+> > > > > > eacfbf74196f ("power: freeze filesystems during
+> > > > > > suspend/resume") which implements exactly that.
+> > > > > > 
+> > > > > > The reason this didn't work for you is very likely:
+> > > > > > 
+> > > > > > cat /sys/power/freeze_filesystems
+> > > > > > 0
+> > > > > > 
+> > > > > > which you must set to 1.
+> > > > > 
+> > > > > Actually, no, that's not correct.  The efivarfs freeze/thaw
+> > > > > logic must run unconditionally regardless of this setting to
+> > > > > fix the systemd bug, so all the variable resyncing is done in
+> > > > > the thaw call, which isn't conditioned on the above (or at
+> > > > > least it shouldn't be).
+> > > > 
+> > > > It is conditioned on the above currently but we can certainly fix
+> > > > it easily to not be.
+> > > 
+> > > It still seems to be unconditional in upstream 6.18-rc4
+> > > kernel/power/hibernate.c with only freeze being conditioned on the
+> > 
+> > I'm honestly not sure how efivarfs would be frozen if
+> > filesystems_freeze() isn't called... Maybe I missed that memo though.
+> > In any case I just sent you...
+> 
+> We don't need to be frozen: our freeze_fs method is empty, we just need
+> thaw_fs calling.
 
-Why do the GFP flags differ?
+No, you need to call freeze so the power subsystem can mark the
+filesystem as being exclusively frozen by it because that specific
+freeze must not be undone by anyone else e.g., userspace or some other
+internal unfreeze due to some filesystem (for other filesystems this is
+very relevant) internal freeze for say scrub or whatever.
 
-> +	}
-> +	*pages_ret = pages;
->  	return bio;
->  }
->  
-> @@ -234,6 +270,7 @@ static blk_status_t __blk_crypto_fallback_encrypt_bio(struct bio *src_bio,
->  	struct scatterlist src, dst;
->  	union blk_crypto_iv iv;
->  	struct bio *enc_bio = NULL;
-> +	struct page **enc_pages;
->  	unsigned int nr_segs;
->  	unsigned int enc_idx = 0;
->  	unsigned int j;
-> @@ -259,11 +296,10 @@ static blk_status_t __blk_crypto_fallback_encrypt_bio(struct bio *src_bio,
->  
->  		if (!enc_bio) {
->  			enc_bio = blk_crypto_alloc_enc_bio(src_bio,
-> -					min(nr_segs, BIO_MAX_VECS));
-> +					min(nr_segs, BIO_MAX_VECS), &enc_pages);
->  		}
->  
-> -		enc_page = mempool_alloc(blk_crypto_bounce_page_pool,
-> -				GFP_NOIO);
-> +		enc_page = enc_pages[enc_idx];
->  		__bio_add_page(enc_bio, enc_page, src_bv.bv_len,
->  				src_bv.bv_offset);
->  
+If filesystem_thaw() doesn't find efivarfs frozen - and exclusively
+frozen by the power subsyste - it obviously won't call the actual
+efivarfs thaw method. It's all working in order. My patch should fix
+your issue and will ensure efivarfs always runs. We wouldn't even need
+an SB_I_* flag for this. We could equally well just match superblock but
+other filesystems might need or want to opt into this too.
 
+Don't implement thaw_super() yourself, please.
+
+> 
+> Is the trouble that there's now freeze/thaw accounting, so thaw won't
+> be called based on that if freeze wasn't?  In which case might it not
+> be better for us to implement thaw_super, which is called
+> unconditionally and leaves the accounting up to the filesystem?
+> 
+> > > setting of the filesystem_freeze variable but I haven't checked -
+> > > next.
+> > > 
+> > > However, if there's anything in the works to change that we would
+> > > need an exception for efivarfs, please ... we can't have a bug fix
+> > > conditioned on a user setting.
+> > 
+> > ... a patch in another mail.
+> > 
+> > Sorry in case I misunderstood that you _always_ wanted that sync
+> > regardless of userspace enabling it.
+> 
+> We need the thaw method called to get the variable resync to happen. 
+> That fixes a bug on hibernate with systemd (and also accounts for an
+> other efi variable changes the user may have made between hibernate and
+> resume), yes.  And we need that to happen unconditionally to fix the
+> systemd bug.
+> 
+> Regards,
+> 
+> James
+> 
 
