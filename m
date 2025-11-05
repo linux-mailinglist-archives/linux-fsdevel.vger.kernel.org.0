@@ -1,69 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-67130-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67131-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10B5BC35EA7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 05 Nov 2025 14:48:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B2B6C35EC8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 05 Nov 2025 14:51:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EFDBC4F43EB
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Nov 2025 13:46:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 526504200E4
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Nov 2025 13:48:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD515325482;
-	Wed,  5 Nov 2025 13:46:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B76A324B39;
+	Wed,  5 Nov 2025 13:48:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ShpmD5CE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZQP+QvOX"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22268227B95;
-	Wed,  5 Nov 2025 13:46:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73CFC236A73;
+	Wed,  5 Nov 2025 13:48:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762350376; cv=none; b=DMP36Pur5Bma9I2sDiP8D3RJlw6jRzzb2Mt+Iy+TXQ98B20BBzCtSvWLE6dJ4vX4TNl0vhztyTzWHPYIboqu0MqYOZsYrZfvaXDQK6+D19Y+HCUyqGLkor0so+1zW48T4BLdaeRXn0YPAsyARrhBsg6L8D9+7D3TVq23YAOT90o=
+	t=1762350490; cv=none; b=V686AhXgazxQfZYmghuQE+56zSs65uC4kQ7CcC89CWi3Lw64Hmit4vu63xVF7DlZsTl7wNCIiuPDcMU/zOB0lEIBY/WwUo1Mr5BSsWNkc/dzoJhtS2NSnU9fNstH3/0o0TMU/mlEVNYgpWCSZT4Yo4SvtoBoo36wPib0Qri/8IY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762350376; c=relaxed/simple;
-	bh=PBw6f127nni3oALBZyW0JgdvwP5qSqzJy9SAmndAriA=;
+	s=arc-20240116; t=1762350490; c=relaxed/simple;
+	bh=Y/WC8N7PHX07YjQWrc8LSpK7K/PgvP/HlvVRSpu1Ijc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FIQnFZnUxzMxd62Lx7WfEzL8sUHdUGsgGZKfJttTy0tWoFbj130IvXA7HFj4EClzABkJ7o+uYsDpbmVtnGhH3nVL7MXg6VX44mK7a/xeUt/ff/s2Pbryp7bO2zCZDfhRYqFHbEycWoVll7l+SpvuGzRLbM1uU0uxs3TOAtv7ZbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ShpmD5CE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88442C4CEF8;
-	Wed,  5 Nov 2025 13:46:10 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=UzwNWx/Qp+Rx0OG9osSeE2bfEhnU8B/b4byC38f9pCFoEtZfmmIAhGauy3Xru14iEHfAjFbliZbrihS7rzgwx334OJQXWO8nxkI+e3+Gg3a0tv+ssI/3hkxLFvB5fXQc25MXbspVODDCNy+Ub/wJ2P66+VqtmMLeEA/sQQp1vUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZQP+QvOX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD9BDC4CEF8;
+	Wed,  5 Nov 2025 13:48:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762350375;
-	bh=PBw6f127nni3oALBZyW0JgdvwP5qSqzJy9SAmndAriA=;
+	s=k20201202; t=1762350490;
+	bh=Y/WC8N7PHX07YjQWrc8LSpK7K/PgvP/HlvVRSpu1Ijc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ShpmD5CEr+JOX/hdyLmwbKn+7N/84QMIjLE9j2cZcrRvpVVQ75tjvns2y5AtNRjNB
-	 Yz/cddtecY9g6c5niROEmlZIGG5XZUkdnkP1ukuBnc6gReYjrQWthxBdx6AWzSPCto
-	 H5T2MJQ6JwDB5soUuJR37OivkZPbAKj+jm3MbBvvRUCLje5nBaF8qyof8/avmrOrQo
-	 AetMggcJiBTqXIIqRYQO2peEzYuk6WbKzeJQmuHBsuyC0xrt8ateYNVpRjsDJ2WscG
-	 uhaFUjmftREcVGApZjqCE58fnFSyfg3U6HCIwJGFbq7P1TvBbf4A89/uShbWcEdej8
-	 m/GMvmV69qEFQ==
-Date: Wed, 5 Nov 2025 14:46:08 +0100
+	b=ZQP+QvOXpExulyD8Pol21uBTvRAzmRxRZ+5JCaAJ4bXGB7rl770roY1pdjxh88vHb
+	 YZAJQT4CNErHGe5ZwuPnz2Be/CbJpGNayKGLa9IHqvbCw6rO/H5OkIlVp753mxj7Ee
+	 222DQ2yCg9V1RA+NiOUVzFz/gFAK2oZL80NzIyfzlkpMOiyNu3iy9AuATXGFCaEJYl
+	 qbEgH7EHigtjZ9MfyCHTTTs/eP5TCzmidblQiTkdsB1SJjYDJb+yK31cX2cBjhowM2
+	 /a1dO0xGUKu/gWAJ7wOA2L7qdYdzKRiTwMdTr8fSVPC9bFZ6kMvwCSx/NoMRltEQnG
+	 TK8a95d3CSjSA==
+Date: Wed, 5 Nov 2025 14:48:06 +0100
 From: Christian Brauner <brauner@kernel.org>
-To: James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc: Ard Biesheuvel <ardb@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
-	linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org, jack@suse.cz, raven@themaw.net, 
-	miklos@szeredi.hu, neil@brown.name, a.hindborg@kernel.org, linux-mm@kvack.org, 
-	linux-efi@vger.kernel.org, ocfs2-devel@lists.linux.dev, kees@kernel.org, 
-	rostedt@goodmis.org, gregkh@linuxfoundation.org, linux-usb@vger.kernel.org, 
-	paul@paul-moore.com, casey@schaufler-ca.com, linuxppc-dev@lists.ozlabs.org, 
-	john.johansen@canonical.com, selinux@vger.kernel.org, borntraeger@linux.ibm.com, 
-	bpf@vger.kernel.org
-Subject: Re: [PATCH v2 22/50] convert efivarfs
-Message-ID: <20251105-ausfiel-klopapier-599213591ad2@brauner>
-References: <20251028174540.GN2441659@ZenIV>
- <20251028210805.GP2441659@ZenIV>
- <CAMj1kXF6tvg6+CL_1x7h0HK1PoSGtxDjc0LQ1abGQBd5qrbffg@mail.gmail.com>
- <9f079d0c8cffb150c0decb673a12bfe1b835efc9.camel@HansenPartnership.com>
- <20251029193755.GU2441659@ZenIV>
- <CAMj1kXHnEq97bzt-C=zKJdV3BK3EDJCPz3Pfyk52p2735-4wFA@mail.gmail.com>
- <20251105-aufheben-ausmusterung-4588dab8c585@brauner>
- <423f5cc5352c54fc21e0570daeeddc4a58e74974.camel@HansenPartnership.com>
- <20251105-sohlen-fenster-e7c5af1204c4@brauner>
- <305ff01c159993d8124ae3125f7dacf6b61fa933.camel@HansenPartnership.com>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: linux-fsdevel@vger.kernel.org, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/3] fs: start to split up fs.h
+Message-ID: <20251105-noten-bewiesen-3862ad2d7aea@brauner>
+References: <20251104-work-fs-header-v1-0-fb39a2efe39e@kernel.org>
+ <aQtJRisTtkX-Jzen@infradead.org>
+ <20251105-nippen-forsten-dabf4d7508eb@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -72,49 +59,26 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <305ff01c159993d8124ae3125f7dacf6b61fa933.camel@HansenPartnership.com>
+In-Reply-To: <20251105-nippen-forsten-dabf4d7508eb@brauner>
 
-On Wed, Nov 05, 2025 at 08:33:10AM -0500, James Bottomley wrote:
-> On Wed, 2025-11-05 at 14:16 +0100, Christian Brauner wrote:
-> > On Wed, Nov 05, 2025 at 08:09:03AM -0500, James Bottomley wrote:
-> > > On Wed, 2025-11-05 at 12:47 +0100, Christian Brauner wrote:
-> [...]
-> > > > And suspend/resume works just fine with freeze/thaw. See commit
-> > > > eacfbf74196f ("power: freeze filesystems during suspend/resume")
-> > > > which implements exactly that.
-> > > > 
-> > > > The reason this didn't work for you is very likely:
-> > > > 
-> > > > cat /sys/power/freeze_filesystems
-> > > > 0
-> > > > 
-> > > > which you must set to 1.
-> > > 
-> > > Actually, no, that's not correct.  The efivarfs freeze/thaw logic
-> > > must run unconditionally regardless of this setting to fix the
-> > > systemd bug, so all the variable resyncing is done in the thaw
-> > > call, which isn't conditioned on the above (or at least it
-> > > shouldn't be).
+On Wed, Nov 05, 2025 at 02:13:32PM +0100, Christian Brauner wrote:
+> On Wed, Nov 05, 2025 at 04:55:34AM -0800, Christoph Hellwig wrote:
+> > On Tue, Nov 04, 2025 at 03:46:31PM +0100, Christian Brauner wrote:
+> > > Take first steps to split up fs.h. Add fs_super_types.h and fs_super.h
+> > > headers that contain the types and functions associated with super
+> > > blocks respectively.
 > > 
-> > It is conditioned on the above currently but we can certainly fix it
-> > easily to not be.
+> > We have this nice concept called directories for namespace prefixes.
+> > Why not include/linux/fs/*.h for all these split out bits?
 > 
-> It still seems to be unconditional in upstream 6.18-rc4
-> kernel/power/hibernate.c with only freeze being conditioned on the
+> Sure, fine by me. Some do it differently. For example, mm has mm_* too.
+> But yeah, the fs/ layout is fine.
 
-I'm honestly not sure how efivarfs would be frozen if
-filesystems_freeze() isn't called... Maybe I missed that memo though.
-In any case I just sent you...
+/me raises eye-brows:
 
-> setting of the filesystem_freeze variable but I haven't checked -next.
-> 
-> However, if there's anything in the works to change that we would need
-> an exception for efivarfs, please ... we can't have a bug fix
-> conditioned on a user setting.
+blk-cgroup.h          blkdev.h              blk-mq.h              blktrace_api.h
+blk-crypto.h          blk-integrity.h       blkpg.h               blk_types.h
+blk-crypto-profile.h  blk-mq-dma.h          blk-pm.h
 
-... a patch in another mail.
-
-Sorry in case I misunderstood that you _always_ wanted that sync
-regardless of userspace enabling it.
+What sort of mix-and-match bonanza have you got going on over there?
 
