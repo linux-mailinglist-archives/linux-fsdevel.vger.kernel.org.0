@@ -1,55 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-67013-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67014-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7854FC3370F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 05 Nov 2025 01:08:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67014C33739
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 05 Nov 2025 01:14:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BB3D189EBE2
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Nov 2025 00:07:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25D2F426498
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Nov 2025 00:14:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 478171F03D8;
-	Wed,  5 Nov 2025 00:07:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7532221F13;
+	Wed,  5 Nov 2025 00:14:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fdV5O5yU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dYc5xhMk"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A163C125A9;
-	Wed,  5 Nov 2025 00:07:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CC601DFDE;
+	Wed,  5 Nov 2025 00:14:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762301237; cv=none; b=Kqfl388D6Mdlmd0FvL6ZP9odCAdtqz4sy3nIeDoYdcGaMPvfyXFpdDZU0prNp71wbT5ZmPpraT94MEW7IuIYsvCzNyHnixVcGupeAh68XBRbxbMrRT66e42HdHgWuTkjAnxP4c3PL+PzZbRpzcsmHiAkPq3WZLCQz/ZTjnjBv7o=
+	t=1762301686; cv=none; b=s5jHSu5wc5NV2FuFgO1/FOTl5i72M/fOWA6GZMGZ4LHYTjElnz7hKpxu8VKSkwDNeZAqR0f0SkuqULEbxitHiTKAMxpRa4bQzRfnD19RSfPjhUTSy2qk12KsBbvdTW1E0tyOzlSDlno//2E0qNSdbT5cKSFS7xOY6ZAZIzmAK1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762301237; c=relaxed/simple;
-	bh=FMKCbFMOdiy7j/T4uw5UF1NFMt326yjcLMQGzWVL8/0=;
+	s=arc-20240116; t=1762301686; c=relaxed/simple;
+	bh=4+OjzYPim783G2VpmBxIU6MsTjyuOWle5mtI3ZIzbf0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dq9R9HCKaQsKkdYGYIGjJN9/gNZsy/78RQBdr2XTNx2DDavlI1t+fPhaH2DEv+hY6PBvHnxVsjwSutrcQyb3JE7J03Sl7YkZuqUHHv9xkQdcNyd/wSq2UZB6Xl7tTIJBxez6G5gP66djk6UYNd+ayoWlP5A8C75O+X4aM336wvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fdV5O5yU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 797C7C4CEF7;
-	Wed,  5 Nov 2025 00:07:17 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=UqZ/Xyrk6mGsLbZ8+IVb+DCOuDvEIa3Hj58TUf4J8Cv0yQgY1qXnIoy9uOcWGqfh7gV2wePmx6wJefj2pTRmo+MPpJr/E8MrRsKwzFsa1ApUQOhkV79Aca63aiHP9ZIAeMcENpF6fGhax4iL7tBVJIGvTpXlBJTmO6WyvaoI5UY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dYc5xhMk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B89E1C4CEF7;
+	Wed,  5 Nov 2025 00:14:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762301237;
-	bh=FMKCbFMOdiy7j/T4uw5UF1NFMt326yjcLMQGzWVL8/0=;
+	s=k20201202; t=1762301685;
+	bh=4+OjzYPim783G2VpmBxIU6MsTjyuOWle5mtI3ZIzbf0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fdV5O5yU08N7WAqOhsNDjillcK8oGLiDX0UBvd3DpZ26IpQT+8Z3JP+ch0pY6sHZg
-	 FIaCMdw4ujXmH6nwMkwqQ147W7yKudVRgsMHsXNqsSzA223sDjtgcRtOBBOH1tbDYF
-	 3cycWJXX1AsvcZhN2uG86pyl7s8JatkJ0Ywfy//IZhoEt2x++GUYktu2H4jze6Eb6f
-	 YMoH2cN78pXjpzI0Ua/XdByRC3BsUaXFynne3hudjTQnBx90ulm/ORi9Rw1ONk4XXm
-	 /Q1O1vptwpBlPCff8ZTOwAkZP7/gLxxvvXfilzIxp8TavyK1G3YwjpGtXWXtJLo4/c
-	 sUwFFnVGKE6PQ==
-Date: Tue, 4 Nov 2025 16:07:16 -0800
+	b=dYc5xhMkmKlmESYXPy5QaO+IDAadw2tJR/IBn4pDt2qurgrYmjdULmwqnKGuQH/+1
+	 hDUDII7Ws9P6Xd1KOxMHvpcoxJ+nBFC7BD3wX8zlY8DXRzKg8g8W0Qo2y5nz6fxAwb
+	 86MaiUKF7FXk/L04cCyiXkTEcL3hW5UuCeHIeP13KOgCYuIXW8EcqlrwRW3/IeW7/2
+	 ZZWTCR4UIddO86paXxOFBW9w4wJ1DDCImtz5m1uzxAykvL5zFhfRDVncl4u96dmItS
+	 gMOgHssDh975QOlTlBVegzP1JyPpxANdIdokmHbQjAhwJTM/OTtVt+yjHE+KOmVG9f
+	 6Gri0XyG1PA8A==
+Date: Tue, 4 Nov 2025 16:14:45 -0800
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: Brian Foster <bfoster@redhat.com>
 Cc: linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH 1/6] iomap: replace folio_batch allocation with stack
- allocation
-Message-ID: <20251105000716.GU196370@frogsfrogsfrogs>
+Subject: Re: [PATCH 3/6] xfs: flush eof folio before insert range size update
+Message-ID: <20251105001445.GW196370@frogsfrogsfrogs>
 References: <20251016190303.53881-1-bfoster@redhat.com>
- <20251016190303.53881-2-bfoster@redhat.com>
+ <20251016190303.53881-4-bfoster@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -58,222 +57,75 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251016190303.53881-2-bfoster@redhat.com>
+In-Reply-To: <20251016190303.53881-4-bfoster@redhat.com>
 
-On Thu, Oct 16, 2025 at 03:02:58PM -0400, Brian Foster wrote:
-> Zhang Yi points out that the dynamic folio_batch allocation in
-> iomap_fill_dirty_folios() is problematic for the ext4 on iomap work
-> that is under development because it doesn't sufficiently handle the
-> allocation failure case (by allowing a retry, for example).
+On Thu, Oct 16, 2025 at 03:03:00PM -0400, Brian Foster wrote:
+> The flush in xfs_buffered_write_iomap_begin() for zero range over a
+> data fork hole fronted by COW fork prealloc is primarily designed to
+> provide correct zeroing behavior in particular pagecache conditions.
+> As it turns out, this also partially masks some odd behavior in
+> insert range (via zero range via setattr).
 > 
-> The dynamic allocation was initially added for simplicity and to
-> help indicate whether the batch was used or not by the calling fs.
-> To address this issue, put the batch on the stack of
-> iomap_zero_range() and use a flag to control whether the batch
-> should be used in the iomap folio lookup path. This keeps things
-> simple and eliminates the concern for ext4 on iomap.
-> 
-> Signed-off-by: Brian Foster <bfoster@redhat.com>
+> Insert range bumps i_size the length of the new range, flushes,
+> unmaps pagecache and cancels COW prealloc, and then right shifts
+> extents from the end of the file back to the target offset of the
+> insert. Since the i_size update occurs before the pagecache flush,
+> this creates a transient situation where writeback around EOF can
+> behave differently.
 
-Hrmm, so who kmallocs the fbatch array now?  Is that left as an exercise
-to the filesystem?  I'm confused because I don't see the kmalloc call
-reappear elsewhere, at least not in this patch.
+Why not flush the file from @offset to EOF, flush the COW
+preallocations, extend i_size, and only then start shifting extents?
+That would seem a lot more straightforward to me.
 
 --D
 
-> ---
->  fs/iomap/buffered-io.c | 45 ++++++++++++++++++++++++++++--------------
->  fs/iomap/iter.c        |  6 +++---
->  fs/xfs/xfs_iomap.c     | 11 ++++++-----
->  include/linux/iomap.h  |  8 ++++++--
->  4 files changed, 45 insertions(+), 25 deletions(-)
+> This appears to be corner case situation, but if happens to be
+> fronted by COW fork speculative preallocation and a large, dirty
+> folio that contains at least one full COW block beyond EOF, the
+> writeback after i_size is bumped may remap that COW fork block into
+> the data fork within EOF. The block is zeroed and then shifted back
+> out to post-eof, but this is unexpected in that it leads to a
+> written post-eof data fork block. This can cause a zero range
+> warning on a subsequent size extension, because we should never find
+> blocks that require physical zeroing beyond i_size.
 > 
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index 51ecb6d48feb..05ff82c5432e 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -761,7 +761,7 @@ static struct folio *__iomap_get_folio(struct iomap_iter *iter,
->  	if (!mapping_large_folio_support(iter->inode->i_mapping))
->  		len = min_t(size_t, len, PAGE_SIZE - offset_in_page(pos));
+> To avoid this quirk, flush the EOF folio before the i_size update
+> during insert range. The entire range will be flushed, unmapped and
+> invalidated anyways, so this should be relatively unnoticeable.
+> 
+> Signed-off-by: Brian Foster <bfoster@redhat.com>
+> ---
+>  fs/xfs/xfs_file.c | 17 +++++++++++++++++
+>  1 file changed, 17 insertions(+)
+> 
+> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
+> index 5b9864c8582e..cc3a9674ad40 100644
+> --- a/fs/xfs/xfs_file.c
+> +++ b/fs/xfs/xfs_file.c
+> @@ -1226,6 +1226,23 @@ xfs_falloc_insert_range(
+>  	if (offset >= isize)
+>  		return -EINVAL;
 >  
-> -	if (iter->fbatch) {
-> +	if (iter->iomap.flags & IOMAP_F_FOLIO_BATCH) {
->  		struct folio *folio = folio_batch_next(iter->fbatch);
->  
->  		if (!folio)
-> @@ -858,7 +858,7 @@ static int iomap_write_begin(struct iomap_iter *iter,
->  	 * process so return and let the caller iterate and refill the batch.
->  	 */
->  	if (!folio) {
-> -		WARN_ON_ONCE(!iter->fbatch);
-> +		WARN_ON_ONCE(!(iter->iomap.flags & IOMAP_F_FOLIO_BATCH));
->  		return 0;
->  	}
->  
-> @@ -1473,23 +1473,34 @@ static int iomap_zero_iter(struct iomap_iter *iter, bool *did_zero,
->  	return status;
->  }
->  
-> -loff_t
-> +/**
-> + * iomap_fill_dirty_folios - fill a folio batch with dirty folios
-> + * @iter: Iteration structure
-> + * @start: Start offset of range. Updated based on lookup progress.
-> + * @end: End offset of range
-> + *
-> + * Returns the associated control flag if the folio batch is available and the
-> + * lookup performed. The caller is responsible to set the flag on the associated
-> + * iomap.
-> + */
-> +unsigned int
->  iomap_fill_dirty_folios(
->  	struct iomap_iter	*iter,
-> -	loff_t			offset,
-> -	loff_t			length)
-> +	loff_t			*start,
-> +	loff_t			end)
->  {
->  	struct address_space	*mapping = iter->inode->i_mapping;
-> -	pgoff_t			start = offset >> PAGE_SHIFT;
-> -	pgoff_t			end = (offset + length - 1) >> PAGE_SHIFT;
-> +	pgoff_t			pstart = *start >> PAGE_SHIFT;
-> +	pgoff_t			pend = (end - 1) >> PAGE_SHIFT;
->  
-> -	iter->fbatch = kmalloc(sizeof(struct folio_batch), GFP_KERNEL);
-> -	if (!iter->fbatch)
-> -		return offset + length;
-> -	folio_batch_init(iter->fbatch);
-> +	if (!iter->fbatch) {
-> +		*start = end;
-> +		return 0;
-> +	}
->  
-> -	filemap_get_folios_dirty(mapping, &start, end, iter->fbatch);
-> -	return (start << PAGE_SHIFT);
-> +	filemap_get_folios_dirty(mapping, &pstart, pend, iter->fbatch);
-> +	*start = (pstart << PAGE_SHIFT);
-> +	return IOMAP_F_FOLIO_BATCH;
->  }
->  EXPORT_SYMBOL_GPL(iomap_fill_dirty_folios);
->  
-> @@ -1498,17 +1509,21 @@ iomap_zero_range(struct inode *inode, loff_t pos, loff_t len, bool *did_zero,
->  		const struct iomap_ops *ops,
->  		const struct iomap_write_ops *write_ops, void *private)
->  {
-> +	struct folio_batch fbatch;
->  	struct iomap_iter iter = {
->  		.inode		= inode,
->  		.pos		= pos,
->  		.len		= len,
->  		.flags		= IOMAP_ZERO,
->  		.private	= private,
-> +		.fbatch		= &fbatch,
->  	};
->  	struct address_space *mapping = inode->i_mapping;
->  	int ret;
->  	bool range_dirty;
->  
-> +	folio_batch_init(&fbatch);
+> +	/*
+> +	 * Let writeback clean up EOF folio state before we bump i_size. The
+> +	 * insert flushes before it starts shifting and under certain
+> +	 * circumstances we can write back blocks that should technically be
+> +	 * considered post-eof (and thus should not be submitted for writeback).
+> +	 *
+> +	 * For example, a large, dirty folio that spans EOF and is backed by
+> +	 * post-eof COW fork preallocation can cause block remap into the data
+> +	 * fork. This shifts back out beyond EOF, but creates an expectedly
+> +	 * written post-eof block. The insert is going to flush, unmap and
+> +	 * cancel prealloc across this whole range, so flush EOF now before we
+> +	 * bump i_size to provide consistent behavior.
+> +	 */
+> +	error = filemap_write_and_wait_range(inode->i_mapping, isize, isize);
+> +	if (error)
+> +		return error;
 > +
->  	/*
->  	 * To avoid an unconditional flush, check pagecache state and only flush
->  	 * if dirty and the fs returns a mapping that might convert on
-> @@ -1519,11 +1534,11 @@ iomap_zero_range(struct inode *inode, loff_t pos, loff_t len, bool *did_zero,
->  	while ((ret = iomap_iter(&iter, ops)) > 0) {
->  		const struct iomap *srcmap = iomap_iter_srcmap(&iter);
->  
-> -		if (WARN_ON_ONCE(iter.fbatch &&
-> +		if (WARN_ON_ONCE((iter.iomap.flags & IOMAP_F_FOLIO_BATCH) &&
->  				 srcmap->type != IOMAP_UNWRITTEN))
->  			return -EIO;
->  
-> -		if (!iter.fbatch &&
-> +		if (!(iter.iomap.flags & IOMAP_F_FOLIO_BATCH) &&
->  		    (srcmap->type == IOMAP_HOLE ||
->  		     srcmap->type == IOMAP_UNWRITTEN)) {
->  			s64 status;
-> diff --git a/fs/iomap/iter.c b/fs/iomap/iter.c
-> index 66ca12aac57d..026d85823c76 100644
-> --- a/fs/iomap/iter.c
-> +++ b/fs/iomap/iter.c
-> @@ -8,10 +8,10 @@
->  
->  static inline void iomap_iter_reset_iomap(struct iomap_iter *iter)
->  {
-> -	if (iter->fbatch) {
-> +	if (iter->iomap.flags & IOMAP_F_FOLIO_BATCH) {
->  		folio_batch_release(iter->fbatch);
-> -		kfree(iter->fbatch);
-> -		iter->fbatch = NULL;
-> +		folio_batch_reinit(iter->fbatch);
-> +		iter->iomap.flags &= ~IOMAP_F_FOLIO_BATCH;
->  	}
->  
->  	iter->status = 0;
-> diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
-> index 535bf3b8705d..01833aca37ac 100644
-> --- a/fs/xfs/xfs_iomap.c
-> +++ b/fs/xfs/xfs_iomap.c
-> @@ -1775,7 +1775,6 @@ xfs_buffered_write_iomap_begin(
->  	 */
->  	if (flags & IOMAP_ZERO) {
->  		xfs_fileoff_t eof_fsb = XFS_B_TO_FSB(mp, XFS_ISIZE(ip));
-> -		u64 end;
->  
->  		if (isnullstartblock(imap.br_startblock) &&
->  		    offset_fsb >= eof_fsb)
-> @@ -1795,12 +1794,14 @@ xfs_buffered_write_iomap_begin(
->  		 */
->  		if (imap.br_state == XFS_EXT_UNWRITTEN &&
->  		    offset_fsb < eof_fsb) {
-> -			loff_t len = min(count,
-> -					 XFS_FSB_TO_B(mp, imap.br_blockcount));
-> +			loff_t foffset = offset, fend;
->  
-> -			end = iomap_fill_dirty_folios(iter, offset, len);
-> +			fend = offset +
-> +			       min(count, XFS_FSB_TO_B(mp, imap.br_blockcount));
-> +			iomap_flags |= iomap_fill_dirty_folios(iter, &foffset,
-> +							       fend);
->  			end_fsb = min_t(xfs_fileoff_t, end_fsb,
-> -					XFS_B_TO_FSB(mp, end));
-> +					XFS_B_TO_FSB(mp, foffset));
->  		}
->  
->  		xfs_trim_extent(&imap, offset_fsb, end_fsb - offset_fsb);
-> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-> index cd0f573156d6..79da917ff45e 100644
-> --- a/include/linux/iomap.h
-> +++ b/include/linux/iomap.h
-> @@ -87,6 +87,9 @@ struct vm_fault;
->  /*
->   * Flags set by the core iomap code during operations:
->   *
-> + * IOMAP_F_FOLIO_BATCH indicates that the folio batch mechanism is active
-> + * for this operation, set by iomap_fill_dirty_folios().
-> + *
->   * IOMAP_F_SIZE_CHANGED indicates to the iomap_end method that the file size
->   * has changed as the result of this write operation.
->   *
-> @@ -94,6 +97,7 @@ struct vm_fault;
->   * range it covers needs to be remapped by the high level before the operation
->   * can proceed.
->   */
-> +#define IOMAP_F_FOLIO_BATCH	(1U << 13)
->  #define IOMAP_F_SIZE_CHANGED	(1U << 14)
->  #define IOMAP_F_STALE		(1U << 15)
->  
-> @@ -351,8 +355,8 @@ bool iomap_dirty_folio(struct address_space *mapping, struct folio *folio);
->  int iomap_file_unshare(struct inode *inode, loff_t pos, loff_t len,
->  		const struct iomap_ops *ops,
->  		const struct iomap_write_ops *write_ops);
-> -loff_t iomap_fill_dirty_folios(struct iomap_iter *iter, loff_t offset,
-> -		loff_t length);
-> +unsigned int iomap_fill_dirty_folios(struct iomap_iter *iter, loff_t *start,
-> +		loff_t end);
->  int iomap_zero_range(struct inode *inode, loff_t pos, loff_t len,
->  		bool *did_zero, const struct iomap_ops *ops,
->  		const struct iomap_write_ops *write_ops, void *private);
+>  	error = xfs_falloc_setsize(file, isize + len);
+>  	if (error)
+>  		return error;
 > -- 
 > 2.51.0
 > 
