@@ -1,99 +1,95 @@
-Return-Path: <linux-fsdevel+bounces-67113-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67114-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FE9CC35888
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 05 Nov 2025 12:56:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D15E1C358B0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 05 Nov 2025 12:58:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5C7414F395B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Nov 2025 11:54:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7084A1883B64
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Nov 2025 11:58:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26A683126D6;
-	Wed,  5 Nov 2025 11:54:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8516A3126CD;
+	Wed,  5 Nov 2025 11:57:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XYchl2ma"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CRMglurA"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AB4B311979;
-	Wed,  5 Nov 2025 11:54:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3BFA30216F
+	for <linux-fsdevel@vger.kernel.org>; Wed,  5 Nov 2025 11:57:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762343654; cv=none; b=CZcUDRPT/U5rvgVLa+VAsQgEXMD9bucMPyOLd9BcWaEHVdL34Mh4XpTZKuNcpECfqmLG7yshHaxJBRmViWxS3iI2YDE7Vy1/MLr9GTC2PZwbzgQyMxW7q1EiZcuGhINu62F7qnXWyb3QXmHzx/RY107TdqJLtP9+jGfkIBTf3SE=
+	t=1762343870; cv=none; b=G+mhbn4w9S+x2f+TbAfLM3RbqHYMdUZ+QYYxsR2kKvgkNBZIQiRoYVNRPTOpiGuiE6iacXdBeEgtPT0biKO2EtdSNSc3v1UgjxUBkbqdOw+M0z73rwe2jZoAukxoa6zYE3w/MaQdeGJPMbiYdpmPXz4wFFu4I8ISSO0PGi87ZO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762343654; c=relaxed/simple;
-	bh=1yCSTLyQx+/w/apujRIHLWAJtkx3xpqUhrl0FfmC5Ck=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hWThmP7o5JvRnY3pO7Iy58cev9scM6qEi9F8SK7gdHuD9p/uxi7yVk8btlfdeAXDeBsytbk4jRj845hldU00/aw13IIlb/rC9GfrBB+dvX8mKOTzgw1PRhr9sijIyTUhTGfurRzorS7YgoXtlPY9UanjSKWspdEO3+UM3jcm1uA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XYchl2ma; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79463C4CEF8;
-	Wed,  5 Nov 2025 11:54:12 +0000 (UTC)
+	s=arc-20240116; t=1762343870; c=relaxed/simple;
+	bh=sRblGwvg7mUFCHltZzeY8PBpcw/V2XcepPGBhZ9j7ZA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=b93q02W9TnfZPv6+7bg87OGm+KPH/HDQDUjDq/tGQbjEmOju51aDozZ86fHBnCLpfm/lT0grKY11jG2hvUhmRo6YAoI9c9Eds3MlJqqW+Nklgf5BB7Z1DotxCDFvSeCN4J8s1dHShT4dQxggOi2UguM2nVGNd/ONulzNHDpSQG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CRMglurA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEFF5C4CEF8;
+	Wed,  5 Nov 2025 11:57:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762343654;
-	bh=1yCSTLyQx+/w/apujRIHLWAJtkx3xpqUhrl0FfmC5Ck=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XYchl2mafXql+860MVERf3aaXVigRjjVwePJ5W1kHiibyeG8JNxBTi9+y3jrAAP8z
-	 fGwcLTXnPr/yz0AzMVluwYln1marJaGIFUbOtRIvHfzEvRqWrpspd7gV2X8HZWJlu4
-	 kd5idylxMemsMOKJwpNJA2zhdKiisGxgyL6Vp6mRHXd+18NS5HFQO9k3alZFIccKU/
-	 8oZQICj2fJx0JiLVXanPB2VnGLpP8JtU/4PB6iQa+P5347D68/oU8P9XhMzp2kpbV6
-	 F8GSxRkjHM65u2mnYuEnulVwvV/PpfnXb+UEB5qYMeSw+pi8RvDAuaAWSAsl4HPWOa
-	 bTvG/2MoEcdKQ==
-Date: Wed, 5 Nov 2025 12:54:10 +0100
+	s=k20201202; t=1762343869;
+	bh=sRblGwvg7mUFCHltZzeY8PBpcw/V2XcepPGBhZ9j7ZA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=CRMglurAQIRxmbfkYfAnV5aC7JGiFFKG4S+JMFuDQeSTH0DuL6S7Sy0aogwmvCXD1
+	 Dp6eu65sr3PEZnFlcBJLvZAyvcFl2aOm0WjefQKwAmkGpHHt8RN3vQvF05KOspzOWS
+	 KvwZ0EC0AKlI9Ies0vVCwZrBE3sE2FvdmPa8yplQ2du9ZMzX6yKKQHdx0iPtbZjVPz
+	 GNG5TJvPG0nPe7nHde8j8tKilSS9LHcF5L8j4NVAN9Lb0iQK3VFEf9Oe9i0JEkVngJ
+	 XXQ+rOFzXlOOcOft8J9C+aM+e6sl9uzUHF2EUD+s5vjnar+L4EX1+g3wb8byxB00Kc
+	 FJWRSF3NS/19g==
 From: Christian Brauner <brauner@kernel.org>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: GuangFei Luo <luogf2025@163.com>, jack@suse.cz, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] mount: fix duplicate mounts using the new mount API
-Message-ID: <20251105-abbaden-unmerklich-6682a021d5a8@brauner>
-References: <20251025024934.1350492-1-luogf2025@163.com>
- <20251025033601.GJ2441659@ZenIV>
- <788d8763-0c2c-458a-9b0b-a5634e50c029@163.com>
- <20251031-gerufen-rotkohl-7d86b0c3dfe2@brauner>
- <20251031184822.GC2441659@ZenIV>
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	bfoster@redhat.com,
+	hch@infradead.org,
+	djwong@kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v4 0/1] vfs-6.19.iomap commit 51311f045375 fixup
+Date: Wed,  5 Nov 2025 12:57:41 +0100
+Message-ID: <20251105-errungenschaft-karitativ-04c91a5418e4@brauner>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20251031211309.1774819-1-joannelkoong@gmail.com>
+References: <20251031211309.1774819-1-joannelkoong@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1036; i=brauner@kernel.org; h=from:subject:message-id; bh=sRblGwvg7mUFCHltZzeY8PBpcw/V2XcepPGBhZ9j7ZA=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWRyW++cqCrS/OvLbsdTjzYtspwwV+W5uwzH7SUP7fZof 9NJM9t1raOUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAi290Z/vsYbT94t9Ms4rJU 3Iw9sh0lN6w3XdVNmyp672fwpy37Ga4z/OGJmq32Z1rIzl/X9jEzvAx1lmo/+fJ7d6qB39tXEbq sdxkA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251031184822.GC2441659@ZenIV>
 
-On Fri, Oct 31, 2025 at 06:48:22PM +0000, Al Viro wrote:
-> On Fri, Oct 31, 2025 at 01:54:27PM +0100, Christian Brauner wrote:
+On Fri, 31 Oct 2025 14:13:08 -0700, Joanne Koong wrote:
+> This fixes the race that was reported by Brian in [1]. This fix was locally
+> verified by running the repro (running generic/051 in a loop on an xfs
+> filesystem with 1k block size).
 > 
-> > > > I agree that it's a regression in mount(8) conversion to new API, but this
-> > > > is not a fix.
-> > > Thanks for the review. Perhaps fixing this in |move_mount| isn't the best
-> > > approach, and I don’t have a good solution yet.
-> > 
-> > Sorry, no. This restriction never made any sense in the old mount api
-> > and it certainly has no place in the new mount api. And it has been
-> > _years_ since the new mount api was released. Any fix is likely to break
-> > someone else that's already relying on that working.
+> Thanks,
+> Joanne
 > 
-> Not quite...  I agree that it makes little sense to do that on syscall level,
-> but conversion of mount(8) to new API is a different story - that's more recent
-> than the introduction of new API itself and it does create a regression on
-> the userland side.
-> 
-> IIRC, the original rationale had been "what if somebody keeps clicking on
-> something in some kind of filemangler inturdface and gets a pile of overmounts
-> there?", but however weak that might be, it is an established behaviour of
-> mount(2), with userland callers of mount(2) expecting that semantics.
-> 
-> Blind conversion to new API has changed userland behaviour.  I would argue
-> that it's a problem on the userland side, and the only question kernel-side
-> is whether there is something we could provide to simplify the life of those
-> who do such userland conversions.  A move_mount(2) flag, perhaps, defaulting
-> to what we have move_mount(2) do now?
+> [...]
 
-Maybe a flag but even then. I'm pretty sure that mount can just use
-statmount() to figure out that someone is trying to mount the same fs
-twice and simply abort. That should be close enough...
+Applied to the vfs-6.19.iomap branch of the vfs/vfs.git tree.
+Patches in the vfs-6.19.iomap branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.19.iomap
+
+[1/1] iomap: fix race when reading in all bytes of a folio
+      (no commit info)
 
