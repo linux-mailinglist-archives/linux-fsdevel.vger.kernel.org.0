@@ -1,124 +1,116 @@
-Return-Path: <linux-fsdevel+bounces-67185-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67186-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F3C6C375E0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 05 Nov 2025 19:45:31 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EC2AC3761C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 05 Nov 2025 19:50:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EE313B5580
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Nov 2025 18:40:43 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1DBEC4E4DCF
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Nov 2025 18:50:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE6442989BC;
-	Wed,  5 Nov 2025 18:40:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4C1D2F8BF4;
+	Wed,  5 Nov 2025 18:50:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="gisM+4T3"
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Kpgzigv0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2974F261B8C
-	for <linux-fsdevel@vger.kernel.org>; Wed,  5 Nov 2025 18:40:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DE4C246793
+	for <linux-fsdevel@vger.kernel.org>; Wed,  5 Nov 2025 18:50:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762368032; cv=none; b=hBxM3UN0TJkG70H/794g/pK/8sPZUtYzlBNuIiJsHmiFAGvAUUfUqzPbYHvzokLhtQWRiGpDxmRGSvC2RrRRt2717LtfRuiU6tzSvQcQPx9dhlIwDhgiZGGzFk6clohJ/UjaRU6s6ZUGaDEzN6O0ruOVAn41XVRWkGZ+UQxs2Q0=
+	t=1762368649; cv=none; b=ifnEdJ8FLnNd9GzX+Y5SEJuTogfaTQTZbKsjmS7Q55r0RgrFFTz/ivkhaFOru8VIqcT3ODjhmC8+9UwMsu8NgHLURGVXR4X6MPkBPAehBm3LQXjUXA2a7KLNokbkRglNpgDt/H//z4tXo0cwpcsP7X2ouhFg0s92ZRFUK+Rou/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762368032; c=relaxed/simple;
-	bh=AvBw7pIapYDjfqbEZ1bgncfbRO2NgqW+PZq/6jkqGM8=;
+	s=arc-20240116; t=1762368649; c=relaxed/simple;
+	bh=AR3Tr51DEIZpKjlHia+yL3++n71VyHBWu/YGG/C5b8o=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UhBnBItRbnW3+AlUPc8tBZx0Gk7FGheqZRQ5Urq5ExWry3QgZPmcWiDJdqyieUge8hJfBxlsDw5SiiIk9zg2s9QhYen7lwl6+9h7dDiKg8moGQ7wXUjTm4P/0lCY01noMuP7/OiuH3dc0i3/kgDIXdjO9U56Tav9c1RpagrpS7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=gisM+4T3; arc=none smtp.client-ip=209.85.221.50
+	 To:Cc:Content-Type; b=a1mkJOhBbTO4uzgmXGUmpvS1vP8Dyhwiji+p4iFxwWej18FbeAn/OX/k8utjTdiND29DEAMjZ1tj4b9FGvs0eoca1WRaoNxLEp41c5wwRGdykxJBJWnD9W07F10SylCP7jXzReF8BydNnbFuCCzfza9oMkzCRH8wCxeTlKKV9Bk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Kpgzigv0; arc=none smtp.client-ip=209.85.221.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-429b9b6ce96so127743f8f.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Nov 2025 10:40:28 -0800 (PST)
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-426fc536b5dso107863f8f.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Nov 2025 10:50:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1762368027; x=1762972827; darn=vger.kernel.org;
+        d=suse.com; s=google; t=1762368645; x=1762973445; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=XIyQJV0BoOq8cM6bW2Nc4tys93TVUqC9F2FCguuU5Y4=;
-        b=gisM+4T3Q9267eqJ1ys58qBqAdKRrmOcVQb1cdNiSx2qEd6cyvWlRcW8mUU8WvIePz
-         1HrZfi4mV+sXAsV/7HQHl1PJQmjJb667uvzaCzODUDwSeMD9VZv76Ye7JZyc5T2nSzp5
-         ZuXCqKHPHPXQra6fPgpeIB7w9aXpQPJXACBYR8fWFMxgSz3Kvs1JAboHCMbeQB3C+2Wa
-         0wLyX1yRhzSG1+7YSeGI9RNx8iAFDkUmKxSncp8mB7DrF06FvWOqzhpmJHKiIkynBLsw
-         w+I38X/mNLUSVaukwi4bauaUP0xoBjL5uqF+s80cMD7Shg2gfpNSm5mfzEXHN4hEEUy7
-         X7RQ==
+        bh=O71bTvl8ycrFadW+n507Eymg3koTfCjZxvdMhis1QVs=;
+        b=Kpgzigv0S1IIys/wQWAoM2CgU4JWlK9M+bqMSllxZtpBUaOk5KuzPcLwKs/v1xUHU1
+         /HfqvK+Btn82+Yck3ghcgZRxnrAMWjMeN1lnx5Y2aU89IWdroSzvL0G/HpqIpHkXh7A3
+         cMFH2sxBFPyv7/MvtqyPxh4vx20v+Olmky2iI2WTwJlpZWIPLg5qTLMoXJoS1C000a3j
+         j9HHg9z+0ri+ZNKUbTU/IMFeAgn6mQZ49SZcjFPEO7d7vceU6N5w+sYERmrAJXEXSZ1v
+         8SvTO/LqUSfUg24WXMs/IXL8OBMaxV/vuNi3EHxywO0/+fENsTel9F4LggKjjfDwDAPv
+         MDBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762368027; x=1762972827;
+        d=1e100.net; s=20230601; t=1762368645; x=1762973445;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=XIyQJV0BoOq8cM6bW2Nc4tys93TVUqC9F2FCguuU5Y4=;
-        b=AlRRqZK+xLZvTeK6WuwhGcv8CCSRuREE2VlW8BDotRjiv+Z1FXtPK8gFtgpgcFdrtk
-         hGE+eOf1gfRCFbwogqVrtpqT92YY9UVXYv1u6K7x/1mJyri5U1WcgtSYAoiwLQV+KWHQ
-         hKB0Dff0ZF1T5Lh5Op5P9/elCWc/HLgzcYVXxnUwTUWV57Q/ca2gIfW5a9wJLeCkq00F
-         ABLMT/ID/AiV0vxZyBIySsdQaOCOk5uPuSbIUYLZC1/bOsCgY9t3fmolP6QZJRC4o3/V
-         ZjgFwow4rZ4Gjrh2Xe16VMnyTAruNcn73WBhm0KpAeU1vR9MAGrtsfUs3Nw96T5YTj5T
-         XK2w==
-X-Gm-Message-State: AOJu0YzlP26IPqBQoKtVdUA7ktZ3Gred60wLwYSYisgDWZGHHNUhhq6v
-	9gItztoEdJcictaV0JQV1IIQWDDkezv00C4X02JIM7wm/E+yIknuLDGA0kFmSI3AYMIZMy3w3Ph
-	s6XzR2+4WoV05ystSKJjcS2COh9bIGTUEKJsxopviWw==
-X-Gm-Gg: ASbGncsWnpXSBiXlmIb9QzysFB32KB3SxwnFThCyni7j63b9p22nXAoUz/oWAahcW4l
-	4AmuM9xk034X0s9nWIUDdvGd1mRr1MyutbXe4xL3gAPEntuqdwQaCeT5grIUuKHqmG75f4L3Spm
-	JyXEqTA/xFTfxlrswrBo2d5/hu+4cFzhxON7Od/WoNZ2QzQ2Js5mqfZajdP98PMMxGLz828fpxV
-	8q/8IC3nhYCAYFoaWfqADZYJiK0eP0CJnX+RwzpIxuovAitdPWc7mmcBy744fpuMaKi2/PldH8N
-	kEaR97vb1YbOhLXpMNLoQlFaNjZxbKnVnTge47+/tNTe+vW/66l1Rd6+zw==
-X-Google-Smtp-Source: AGHT+IE7JHWAjENwi47IGOpfVP4yA/c0uXNjUPhrOCm2JpvPKV7uVzx/cwlCOY7h0IJ+8GoTWuRVpHEfcxcTPv30XiU=
-X-Received: by 2002:a05:6000:2184:b0:429:b8f9:a87e with SMTP id
- ffacd0b85a97d-429e32e9348mr2957432f8f.20.1762368027493; Wed, 05 Nov 2025
- 10:40:27 -0800 (PST)
+        bh=O71bTvl8ycrFadW+n507Eymg3koTfCjZxvdMhis1QVs=;
+        b=KOKWKLx0nQ8v2/CugpADob9+LWKhhzLcvZQKiUrODffceiKu9E5CtH3EUeXeQUkXZR
+         iWFbxXAEZFfRpTUrnKkeLhoKRNi976xG2X/ZvShol8cssDBxVTdjV+oMfn0P/gF4CeuF
+         C4/aTRmHOTsSmsAgjYnku3sgiTgpR6s/b2IfBiZfFbkzBAKNNF/jTeteSkLWJgvsZGKW
+         owAxDgJwqCo7Dpha81JIQcKJg/itLwEi6cHQO0DV+Eso6YqP4cKxH2UBKebxPZ835Yex
+         u5yJTe7V+fAjQvAe5gqwGIj2/j7dqCSJQSZhXX0NGJh/kVrvQNHtOQZyMyS9n+afP1Eb
+         P9gw==
+X-Forwarded-Encrypted: i=1; AJvYcCVUOSfBIjl6lRGJvsqfjFlKmkB/EMSlUXd0MTJtep/o6ZNnflWIR51LgIYvPtbw7vpy7t/kvAM3WXTs7u85@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwyhDnU3VR5A6B+ZEpsyLN//3qKn7Hvm5d1QTl83qW0rS+maSY
+	OX/SruP8zCzZQqHWFwMi6BDBnMiV33/3B/OFZPWNZtqvfBwsVs7o9OoB1HsJew6a98hy3zPF+6R
+	Tl1zQbichRBZsyfzi4Fo72feRio5VRJjP/umkkrygaw==
+X-Gm-Gg: ASbGnctJ0Qj0pYo+QgYxrsgb/bW5jYd7YcqY7I2Y22zQC59qsfKMx0oLkl1tmg30259
+	bvfFWG99YOYJT56rDjmze5cQSiNyJaZOHkR0dAZjkgzSOQ5YINV8TkrlXPNkDNc4ShyQYRCdQWq
+	uof3UmRBqYGztn+4/NzK44ZF2dgulYDLVRisy5hmHrsPiC4bXxgrX1zuHsu8GtSGSWj4psEQEIV
+	aKST+n7WBARo7D/MXZ4DW7UMo1dvXWt+ipTbVH4NeM85dt2L5i62hXxpSh1d0UEYEKQLKrTw0A1
+	xB7DNLOPEGxAP+ZU6zLNoQfHYmhCc5rGvR7NOD9O4NAaNaUg2dQ+awtrLQ==
+X-Google-Smtp-Source: AGHT+IEl+wf0FPgtypwBcsggq27T8diJ+W4afYGT2ObX692cZJu0dO8J1HpGnirBYZxDCql0kT1HlaQuaW0+Uyzc6f4=
+X-Received: by 2002:a05:6000:26c2:b0:429:cc6b:e011 with SMTP id
+ ffacd0b85a97d-429e33063b4mr3794933f8f.36.1762368645525; Wed, 05 Nov 2025
+ 10:50:45 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251104-work-guards-v1-0-5108ac78a171@kernel.org> <20251104-work-guards-v1-8-5108ac78a171@kernel.org>
-In-Reply-To: <20251104-work-guards-v1-8-5108ac78a171@kernel.org>
+References: <cover.1762142636.git.wqu@suse.com> <8079af1c4798cb36887022a8c51547a727c353cf.1762142636.git.wqu@suse.com>
+ <aQiXObERFgW3aVcE@infradead.org> <i5ju5ohsvi54bsgfeuoy22tniln2scxwwl77iuluho5ohqn527@ycwgvf4yclwe>
+In-Reply-To: <i5ju5ohsvi54bsgfeuoy22tniln2scxwwl77iuluho5ohqn527@ycwgvf4yclwe>
 From: Daniel Vacek <neelx@suse.com>
-Date: Wed, 5 Nov 2025 19:40:16 +0100
-X-Gm-Features: AWmQ_blzod4RW1ZTgCh0cBumT4ZK5h0yfmsbksJOvdN6HEySSPMcZBN44FECEdQ
-Message-ID: <CAPjX3FfyQ4wDD54_=wz62OBsSO30C2f7dmXZcKEu2JgpuER_KQ@mail.gmail.com>
-Subject: Re: [PATCH RFC 8/8] xfs: use super write guard in xfs_file_ioctl()
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Jan Kara <jack@suse.cz>, linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org, 
-	linux-xfs@vger.kernel.org
+Date: Wed, 5 Nov 2025 19:50:34 +0100
+X-Gm-Features: AWmQ_bn9cmWhEGY2XKLOcbegApB5i6cnfvYmKdk0xlLIg2P37-OrpResm_bmKrQ
+Message-ID: <CAPjX3FdpED=XmQy_a6Py=rGh_OoGXXGhBCA_mqAFWAdr=c1S5Q@mail.gmail.com>
+Subject: Re: [PATCH RFC 1/2] fs: do not pass a parameter for sync_inodes_one_sb()
+To: Jan Kara <jack@suse.cz>
+Cc: Christoph Hellwig <hch@infradead.org>, Qu Wenruo <wqu@suse.com>, linux-btrfs@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk, brauner@kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 4 Nov 2025 at 13:17, Christian Brauner <brauner@kernel.org> wrote:
+On Tue, 4 Nov 2025 at 09:50, Jan Kara <jack@suse.cz> wrote:
 >
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
-> ---
->  fs/xfs/xfs_ioctl.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
+> On Mon 03-11-25 03:51:21, Christoph Hellwig wrote:
+> > On Mon, Nov 03, 2025 at 02:37:28PM +1030, Qu Wenruo wrote:
+> > > The function sync_inodes_one_sb() will always wait for the writeback,
+> > > and ignore the optional parameter.
+> >
+> > Indeed.
 >
-> diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
-> index a6bb7ee7a27a..f72e96f54cb5 100644
-> --- a/fs/xfs/xfs_ioctl.c
-> +++ b/fs/xfs/xfs_ioctl.c
-> @@ -1408,10 +1408,8 @@ xfs_file_ioctl(
->
->                 trace_xfs_ioc_free_eofblocks(mp, &icw, _RET_IP_);
->
-> -               sb_start_write(mp->m_super);
-> -               error = xfs_blockgc_free_space(mp, &icw);
-> -               sb_end_write(mp->m_super);
-> -               return error;
-> +               scoped_guard(super_write, mp->m_super)
-> +                       return xfs_blockgc_free_space(mp, &icw);
+> Yeah, apparently I've broken non-blocking nature of emergency sync without
+> nobody noticing for 13 years. Which probably means the non-blocking logic
+> isn't that important ;)...
 
-Again, scope_guard where not needed, right?
+Or it means it's not being widely tested or used heavily in production
+and when it fails it's hard to tell if that was because it is broken
+or because the system state was already severely impaired at that
+time.
 
 --nX
 
->         }
->
->         case XFS_IOC_EXCHANGE_RANGE:
->
+>                                                                 Honza
 > --
-> 2.47.3
->
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
 >
 
