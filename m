@@ -1,50 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-67166-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67167-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4782CC37102
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 05 Nov 2025 18:26:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C74EC3724C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 05 Nov 2025 18:41:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5AFE665571
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Nov 2025 16:57:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECFC468486C
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Nov 2025 16:58:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3234345CAC;
-	Wed,  5 Nov 2025 16:54:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A542B346798;
+	Wed,  5 Nov 2025 16:54:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y45UKCTr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XWTpsunj"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C66133B970;
-	Wed,  5 Nov 2025 16:54:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCFF333B970;
+	Wed,  5 Nov 2025 16:54:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762361677; cv=none; b=QoDktXGvXt3JBdOdJnmHsV/47q71qjbwuLHSprcrop+PZqhV+KmXPCSD1bOjJxLUPSSUOrwOesNKdBnbuHSUaKWQ7W7D9LG7RM3AGdiA4mXpcuSC2OVyyT/M1baLtPjpYK1ztmCOAErdwLPpfm1nCUG/3v7jaiHw7LY0+ShcObs=
+	t=1762361681; cv=none; b=ZdGCMo8mcepU6dNRo2ZWOSSFGGF2PEhjnB7dyAyU3MzRpmG8/jyFFeBLG8Rt/cTpxdDxak2ztCsy0lF2N1ZUp9RfCiET6X40pwkSFs59A7KreO+vIIpFFYGAFT7wY3amaP7v+h3aQC5kNzyDZxKtYWSXjBui69uOwg5EGFUN7wE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762361677; c=relaxed/simple;
-	bh=zBQyD4C+LOu4tUZSnzQKyrp9sE+YBQAdVnnbBh8HRrY=;
+	s=arc-20240116; t=1762361681; c=relaxed/simple;
+	bh=4nVJZFd2d/Rjh95mS/P/b1sCz4UVYDxkm9LfEMOl0LY=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Pst66u5DBmSzQ76tfjqsKYm0lD6nymhWcSaU5VBlYF3JEnTJb0dcnpmXtAUwl7epKb1cROblmE0i+E5TLCce7NQZxoiDJJWrtCyQyCEJhICSa562RQoSZjvKAfbLd8nmt/+/2S8RNy4ZRSPGpKhjlXEUdxBirI8i+ecw00tOu80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y45UKCTr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B838FC19424;
-	Wed,  5 Nov 2025 16:54:33 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=DVnKIqnY98huPGfw2Yir2/ZY/pYz04DdWWDvztE5blDy1GpRLlOHowIfx8z24B20o9mO1YWaqe8aDfgZHNx8fAXWPoEKPFrt522nCCptDolfb66gkd1EeZlFDCAg1LvJv9qjAdeoSDnWAj6teqEn0Tn+TiW4D50D3aUzKuT5XX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XWTpsunj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AE2BC4CEF5;
+	Wed,  5 Nov 2025 16:54:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762361676;
-	bh=zBQyD4C+LOu4tUZSnzQKyrp9sE+YBQAdVnnbBh8HRrY=;
+	s=k20201202; t=1762361680;
+	bh=4nVJZFd2d/Rjh95mS/P/b1sCz4UVYDxkm9LfEMOl0LY=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=Y45UKCTrpPCHbOODGNYGhrqPcwh9QMORc2Iyz6c2TydWutN+pdFX1HreFFIQRPtCe
-	 6asDG6ipL0d9pxWRisEaO7QWXSTpMtFsQ8wq6wGYDNt8R+fiRMfF1tqH+4QG33YooA
-	 8zYWcmkMK6WdgsDPJroDJnSGpOti1nyDNubfKLn38B8Jd29x0h+7xAwnMqcmuoMaFu
-	 P5g/HuH3dnHXNj+4nyCTQkrKO5TGaAjn4qL6EpJtVALD0TBFfJvNtGb6hBjwR/Bixc
-	 05PaKuUNwtYsYz6NoC7C8V2sXF21gd+7QU55Gkg8+QKjNoPOWBH7/jl9lpbM3QV6ov
-	 qlHxohoxT/FxQ==
+	b=XWTpsunjrlrR9H3MKUO+WuoGhTKFe+gT5MuOtbcgVGCXgyxhMA5JD/TM1drbpyv/Z
+	 AbW/dSo0urwpWKJFhEYop+UkTdM2aodsuGooP5nSbxyM9WEN9UPnnMwQfJc4vEFtyg
+	 u2E/BDg+dJB/M7s3u1pVZt3Cs7QlYtInPUvl36lc10rXbntRhrpQ3QE3gK5JHaLnnU
+	 /DQwielOy+Csl3jPWU/WFl8U4FrezKCm9+I8rWPzeFxfTzBV6iCHb99mWy4vgJQ2oX
+	 FS3NE1NoO9Hdym8jMcNQpti+8xRpc77Hu9nyONLEPlCIyF5E6zrcWnn4nL5uwoeLK9
+	 gadsJbiPPcuZw==
 From: Jeff Layton <jlayton@kernel.org>
-Date: Wed, 05 Nov 2025 11:53:54 -0500
-Subject: [PATCH v5 08/17] vfs: break parent dir delegations in open(...,
- O_CREAT) codepath
+Date: Wed, 05 Nov 2025 11:53:55 -0500
+Subject: [PATCH v5 09/17] vfs: clean up argument list for vfs_create()
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -53,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251105-dir-deleg-ro-v5-8-7ebc168a88ac@kernel.org>
+Message-Id: <20251105-dir-deleg-ro-v5-9-7ebc168a88ac@kernel.org>
 References: <20251105-dir-deleg-ro-v5-0-7ebc168a88ac@kernel.org>
 In-Reply-To: <20251105-dir-deleg-ro-v5-0-7ebc168a88ac@kernel.org>
 To: Miklos Szeredi <miklos@szeredi.hu>, 
@@ -82,109 +81,193 @@ Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
  samba-technical@lists.samba.org, netfs@lists.linux.dev, 
  ecryptfs@vger.kernel.org, linux-unionfs@vger.kernel.org, 
  linux-xfs@vger.kernel.org, netdev@vger.kernel.org, 
- Jeff Layton <jlayton@kernel.org>
+ Jeff Layton <jlayton@kernel.org>, NeilBrown <neilb@ownmail.net>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3106; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=zBQyD4C+LOu4tUZSnzQKyrp9sE+YBQAdVnnbBh8HRrY=;
- b=kA0DAAoBAA5oQRlWghUByyZiAGkLgSzIfD1XscOsnPbbHAdNqYpqIdL5OUrLyaIN/CbYAXxBi
- IkCMwQAAQoAHRYhBEvA17JEcbKhhOr10wAOaEEZVoIVBQJpC4EsAAoJEAAOaEEZVoIVPJEP/3lu
- M+FOxIMmf5JXzwv8WAfgTWMjrkrQP2yNCluaH9t2WckVoCX8k2i8Z9IMk6RpcnurWyLeBC5yXs6
- vrHXrDYq2iWwRWRFzsQLdNHNqw9quw8bC8sLzETQypmCMp+D3o/ntHc9r4vH8F7YyHqHOd/kZRq
- qZFRRJC1xJ5U4YKLRB+JIJBV66YX1fgka5hVROBLiLAr2EXsCltwld6M2TfXPB7UBaCZO1VlOmR
- t1UjhWuyHouL8fuU3BVV2jt290QTlk2TnDKkEDHtkvm/pY4kauWSu8UARWxnvCDV4OZnD59h5dm
- nJy0mV0/fNaGyV8x4bT6ml/E/q9b+jR2DDSGuwWWNShsVLAKJeYBKhEyugTZY2Uc/9Xt/TSofGs
- hjx38h2EERwrb7gRqjy/E9Nqjk4VKXveI+lLUCHY+38XiJ/2zOUabUQEIn+4XRsfktxC2pYejgD
- S4cwpuM4/sZCjTSxU3rsiQFYM7acpF/MpuHQFeeThhsK3Fv1TOTS6Q3qO9ae9DCpKH4I6zb/KSV
- slvwM336m0CeuS7VNysDj1OR0TIXiOtO2+jHaVvDhuY5KC4zaPwItijFDqwzQWG5BqWIisyKVko
- g7QAdM9U2L9YngwwsGWu7TFHDTZJEI6qHVyrSqm8MFc06Y6/ChRDZ8r4zB5nnCOv0HUh+8YkYLh
- Qe8AH
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6719; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=4nVJZFd2d/Rjh95mS/P/b1sCz4UVYDxkm9LfEMOl0LY=;
+ b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBpC4EsSmf683IMJJEkFQDDeFR8KQ9kJOcPWCS9j
+ Ld41lk/MnyJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaQuBLAAKCRAADmhBGVaC
+ FSKWEADSYwweto3Ce2brU+Y+1k6HqzD/C/qVi8dORz9LzEbHPGW0a6q+7pxVRFbjIavSSUkor8T
+ 9AWETxZVVdGV8psXf9+VAYWXIkdviyQmasv/ZbQC4jWVbRpwmqk/gV6BEItcu+BjtZm2sjZtxBT
+ zcoSoNmNOBH1eDvhzsaejoXNvqn82d3UruM8AYdCsmnS36qO00MN7vxTxI/1APCf6NtSKTDpy2Y
+ 77Bf89BEZfSTCCm3b4irIMnCetkQFz/5UZKjJIPgZ1cHwGp25xBWb4ZnpN2uWrykf4Lqew5YKkp
+ G+UovgCywrg97O8D5+nnr9GfAfToGvvSGyr9yvHbz2O8n5XgNpnKkubXsx+izh6y9lW+ScvbNmj
+ dWNxOJVPk/0pBUTJkcXIixt8dGBX1o1gkOaNuib65t2g85UJqNKL2IYhbHFyhIwORt7RLFite+S
+ EMmLnQNrwF2NTtkXrk1DLVyXrQ7Ip2et+/FLGyDK4Hz97lsDpCe4EKnq75WnTasQqyQw0AR9QIA
+ +B0tFN9gyA8hYJ6v1bvaYAUIR7HcbURu6Lhb5qVW/dlJrV1k6qkQzzcqXhDFH2kEJyNIDjS+W7T
+ 6WQAtrwcct9BZ4smbdBOeW9ISyQgpqjqd+eU1qrYAWTg7+WWrGhExXQ3hgl84fQmgosNyZACiA2
+ 40LOJJKY7nDVlGA==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-In order to add directory delegation support, we need to break
-delegations on the parent whenever there is going to be a change in the
-directory.
+As Neil points out:
 
-Add a delegated_inode parameter to lookup_open and have it break the
-delegation. Then, open_last_lookups can wait for the delegation break
-and retry the call to lookup_open once it's done.
+"I would be in favour of dropping the "dir" arg because it is always
+d_inode(dentry->d_parent) which is stable."
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-Reviewed-by: NeilBrown <neil@brown.name>
+...and...
+
+"Also *every* caller of vfs_create() passes ".excl = true".  So maybe we
+don't need that arg at all."
+
+Drop both arguments from vfs_create() and fix up the callers.
+
+Suggested-by: NeilBrown <neilb@ownmail.net>
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/namei.c | 22 ++++++++++++++++++----
- 1 file changed, 18 insertions(+), 4 deletions(-)
+ fs/ecryptfs/inode.c      |  3 +--
+ fs/namei.c               | 11 ++++-------
+ fs/nfsd/nfs3proc.c       |  2 +-
+ fs/nfsd/vfs.c            |  3 +--
+ fs/open.c                |  4 +---
+ fs/overlayfs/overlayfs.h |  2 +-
+ fs/smb/server/vfs.c      |  3 +--
+ include/linux/fs.h       |  3 +--
+ 8 files changed, 11 insertions(+), 20 deletions(-)
 
+diff --git a/fs/ecryptfs/inode.c b/fs/ecryptfs/inode.c
+index 88631291b32535f623a3fbe4ea9b6ed48a306ca0..d109e3763a88150bfe64cd2d5564dc9802ef3386 100644
+--- a/fs/ecryptfs/inode.c
++++ b/fs/ecryptfs/inode.c
+@@ -188,8 +188,7 @@ ecryptfs_do_create(struct inode *directory_inode,
+ 
+ 	rc = lock_parent(ecryptfs_dentry, &lower_dentry, &lower_dir);
+ 	if (!rc)
+-		rc = vfs_create(&nop_mnt_idmap, lower_dir,
+-				lower_dentry, mode, true);
++		rc = vfs_create(&nop_mnt_idmap, lower_dentry, mode);
+ 	if (rc) {
+ 		printk(KERN_ERR "%s: Failure to create dentry in lower fs; "
+ 		       "rc = [%d]\n", __func__, rc);
 diff --git a/fs/namei.c b/fs/namei.c
-index 9e0393a92091ac522b5324fcdad8c5592a948e8d..f439429bdfa271ccc64c937771ef4175597feb53 100644
+index f439429bdfa271ccc64c937771ef4175597feb53..9586c6aba6eae05a9fc3c103b8501d98767bef53 100644
 --- a/fs/namei.c
 +++ b/fs/namei.c
-@@ -3697,7 +3697,7 @@ static struct dentry *atomic_open(struct nameidata *nd, struct dentry *dentry,
+@@ -3461,10 +3461,8 @@ static inline umode_t vfs_prepare_mode(struct mnt_idmap *idmap,
+ /**
+  * vfs_create - create new file
+  * @idmap:	idmap of the mount the inode was found from
+- * @dir:	inode of the parent directory
+  * @dentry:	dentry of the child file
+  * @mode:	mode of the child file
+- * @want_excl:	whether the file must not yet exist
+  *
+  * Create a new file.
+  *
+@@ -3474,9 +3472,9 @@ static inline umode_t vfs_prepare_mode(struct mnt_idmap *idmap,
+  * On non-idmapped mounts or if permission checking is to be performed on the
+  * raw inode simply pass @nop_mnt_idmap.
   */
- static struct dentry *lookup_open(struct nameidata *nd, struct file *file,
- 				  const struct open_flags *op,
--				  bool got_write)
-+				  bool got_write, struct delegated_inode *delegated_inode)
+-int vfs_create(struct mnt_idmap *idmap, struct inode *dir,
+-	       struct dentry *dentry, umode_t mode, bool want_excl)
++int vfs_create(struct mnt_idmap *idmap, struct dentry *dentry, umode_t mode)
  {
- 	struct mnt_idmap *idmap;
- 	struct dentry *dir = nd->path.dentry;
-@@ -3786,6 +3786,11 @@ static struct dentry *lookup_open(struct nameidata *nd, struct file *file,
++	struct inode *dir = d_inode(dentry->d_parent);
+ 	int error;
  
- 	/* Negative dentry, just create the file */
- 	if (!dentry->d_inode && (open_flag & O_CREAT)) {
-+		/* but break the directory lease first! */
-+		error = try_break_deleg(dir_inode, delegated_inode);
-+		if (error)
-+			goto out_dput;
-+
- 		file->f_mode |= FMODE_CREATED;
- 		audit_inode_child(dir_inode, dentry, AUDIT_TYPE_CHILD_CREATE);
- 		if (!dir_inode->i_op->create) {
-@@ -3848,6 +3853,7 @@ static struct dentry *lookup_fast_for_open(struct nameidata *nd, int open_flag)
- static const char *open_last_lookups(struct nameidata *nd,
- 		   struct file *file, const struct open_flags *op)
+ 	error = may_create(idmap, dir, dentry);
+@@ -3490,7 +3488,7 @@ int vfs_create(struct mnt_idmap *idmap, struct inode *dir,
+ 	error = security_inode_create(dir, dentry, mode);
+ 	if (error)
+ 		return error;
+-	error = dir->i_op->create(idmap, dir, dentry, mode, want_excl);
++	error = dir->i_op->create(idmap, dir, dentry, mode, true);
+ 	if (!error)
+ 		fsnotify_create(dir, dentry);
+ 	return error;
+@@ -4383,8 +4381,7 @@ static int do_mknodat(int dfd, struct filename *name, umode_t mode,
+ 	idmap = mnt_idmap(path.mnt);
+ 	switch (mode & S_IFMT) {
+ 		case 0: case S_IFREG:
+-			error = vfs_create(idmap, path.dentry->d_inode,
+-					   dentry, mode, true);
++			error = vfs_create(idmap, dentry, mode);
+ 			if (!error)
+ 				security_path_post_mknod(idmap, dentry);
+ 			break;
+diff --git a/fs/nfsd/nfs3proc.c b/fs/nfsd/nfs3proc.c
+index b6d03e1ef5f7a5e8dd111b0d56c061f1e91abff7..30ea7ffa2affdb9a959b0fd15a630de056d6dc3c 100644
+--- a/fs/nfsd/nfs3proc.c
++++ b/fs/nfsd/nfs3proc.c
+@@ -344,7 +344,7 @@ nfsd3_create_file(struct svc_rqst *rqstp, struct svc_fh *fhp,
+ 	status = fh_fill_pre_attrs(fhp);
+ 	if (status != nfs_ok)
+ 		goto out;
+-	host_err = vfs_create(&nop_mnt_idmap, inode, child, iap->ia_mode, true);
++	host_err = vfs_create(&nop_mnt_idmap, child, iap->ia_mode);
+ 	if (host_err < 0) {
+ 		status = nfserrno(host_err);
+ 		goto out;
+diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
+index c400ea94ff2e837fd59719bf2c4b79ef1d064743..464fd54675f3b16fce9ae5f05ad22e0e6b363eb3 100644
+--- a/fs/nfsd/vfs.c
++++ b/fs/nfsd/vfs.c
+@@ -1552,8 +1552,7 @@ nfsd_create_locked(struct svc_rqst *rqstp, struct svc_fh *fhp,
+ 	err = 0;
+ 	switch (type) {
+ 	case S_IFREG:
+-		host_err = vfs_create(&nop_mnt_idmap, dirp, dchild,
+-				      iap->ia_mode, true);
++		host_err = vfs_create(&nop_mnt_idmap, dchild, iap->ia_mode);
+ 		if (!host_err)
+ 			nfsd_check_ignore_resizing(iap);
+ 		break;
+diff --git a/fs/open.c b/fs/open.c
+index fdaa6f08f6f4cac5c2fefd3eafa5e430e51f3979..e440f58e3ce81e137aabdf00510d839342a19219 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -1171,9 +1171,7 @@ struct file *dentry_create(const struct path *path, int flags, umode_t mode,
+ 	if (IS_ERR(f))
+ 		return f;
+ 
+-	error = vfs_create(mnt_idmap(path->mnt),
+-			   d_inode(path->dentry->d_parent),
+-			   path->dentry, mode, true);
++	error = vfs_create(mnt_idmap(path->mnt), path->dentry, mode);
+ 	if (!error)
+ 		error = vfs_open(path, f);
+ 
+diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
+index d215d7349489686b66bb66e939b27046f7d836f6..2bdc434941ebc70f6d4f57cca4f68125112a7bc4 100644
+--- a/fs/overlayfs/overlayfs.h
++++ b/fs/overlayfs/overlayfs.h
+@@ -235,7 +235,7 @@ static inline int ovl_do_create(struct ovl_fs *ofs,
+ 				struct inode *dir, struct dentry *dentry,
+ 				umode_t mode)
  {
-+	struct delegated_inode delegated_inode = { };
- 	struct dentry *dir = nd->path.dentry;
- 	int open_flag = op->open_flag;
- 	bool got_write = false;
-@@ -3879,7 +3885,7 @@ static const char *open_last_lookups(struct nameidata *nd,
- 				return ERR_PTR(-ECHILD);
- 		}
+-	int err = vfs_create(ovl_upper_mnt_idmap(ofs), dir, dentry, mode, true);
++	int err = vfs_create(ovl_upper_mnt_idmap(ofs), dentry, mode);
+ 
+ 	pr_debug("create(%pd2, 0%o) = %i\n", dentry, mode, err);
+ 	return err;
+diff --git a/fs/smb/server/vfs.c b/fs/smb/server/vfs.c
+index c5f0f3170d586cb2dc4d416b80948c642797fb82..83ece2de4b23bf9209137e7ca414a72439b5cc2e 100644
+--- a/fs/smb/server/vfs.c
++++ b/fs/smb/server/vfs.c
+@@ -188,8 +188,7 @@ int ksmbd_vfs_create(struct ksmbd_work *work, const char *name, umode_t mode)
  	}
--
-+retry:
- 	if (open_flag & (O_CREAT | O_TRUNC | O_WRONLY | O_RDWR)) {
- 		got_write = !mnt_want_write(nd->path.mnt);
- 		/*
-@@ -3892,7 +3898,7 @@ static const char *open_last_lookups(struct nameidata *nd,
- 		inode_lock(dir->d_inode);
- 	else
- 		inode_lock_shared(dir->d_inode);
--	dentry = lookup_open(nd, file, op, got_write);
-+	dentry = lookup_open(nd, file, op, got_write, &delegated_inode);
- 	if (!IS_ERR(dentry)) {
- 		if (file->f_mode & FMODE_CREATED)
- 			fsnotify_create(dir->d_inode, dentry);
-@@ -3907,8 +3913,16 @@ static const char *open_last_lookups(struct nameidata *nd,
- 	if (got_write)
- 		mnt_drop_write(nd->path.mnt);
  
--	if (IS_ERR(dentry))
-+	if (IS_ERR(dentry)) {
-+		if (is_delegated(&delegated_inode)) {
-+			int error = break_deleg_wait(&delegated_inode);
-+
-+			if (!error)
-+				goto retry;
-+			return ERR_PTR(error);
-+		}
- 		return ERR_CAST(dentry);
-+	}
- 
- 	if (file->f_mode & (FMODE_OPENED | FMODE_CREATED)) {
- 		dput(nd->path.dentry);
+ 	mode |= S_IFREG;
+-	err = vfs_create(mnt_idmap(path.mnt), d_inode(path.dentry),
+-			 dentry, mode, true);
++	err = vfs_create(mnt_idmap(path.mnt), dentry, mode);
+ 	if (!err) {
+ 		ksmbd_vfs_inherit_owner(work, d_inode(path.dentry),
+ 					d_inode(dentry));
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 12873214e1c7811735ea5d2dee3d57e2a5604d8f..21876ef1fec90181b9878372c7c7e710773aae9f 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2111,8 +2111,7 @@ bool inode_owner_or_capable(struct mnt_idmap *idmap,
+ /*
+  * VFS helper functions..
+  */
+-int vfs_create(struct mnt_idmap *, struct inode *,
+-	       struct dentry *, umode_t, bool);
++int vfs_create(struct mnt_idmap *, struct dentry *, umode_t);
+ struct dentry *vfs_mkdir(struct mnt_idmap *, struct inode *,
+ 			 struct dentry *, umode_t, struct delegated_inode *);
+ int vfs_mknod(struct mnt_idmap *, struct inode *, struct dentry *,
 
 -- 
 2.51.1
