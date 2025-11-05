@@ -1,77 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-67205-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67206-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42ABCC37FF4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 05 Nov 2025 22:26:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 39627C37FF8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 05 Nov 2025 22:26:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 834A44F30F2
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Nov 2025 21:23:59 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1840A4F5A8A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Nov 2025 21:24:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 867F62E11AB;
-	Wed,  5 Nov 2025 21:20:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB7372E2DD2;
+	Wed,  5 Nov 2025 21:20:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A3DrJn1J"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YFEzgGst"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 825DA1E47A5
-	for <linux-fsdevel@vger.kernel.org>; Wed,  5 Nov 2025 21:20:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55F422E1C7C
+	for <linux-fsdevel@vger.kernel.org>; Wed,  5 Nov 2025 21:20:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762377639; cv=none; b=jRMXuuMn7scAAsbpWG/ArC2P1ysfs0IWDYEi1hw9N/AOtzbUH55+c3XEIDaAZxZW72TT025wiO9Dd93rgqF2O/pt+ZP7wpP5qc7fXjrpL/ZBDU+qfkZuQXNEyNwC5H5ylDSqMatjWMy/r7hPNIeP12OHO2HS5pr3SatGnRBH9bY=
+	t=1762377642; cv=none; b=aNS29PN5ga7H0AiK0M8whbU8ZzlfNwrwPwYNpQyKBeHxA/qemL68bMDW9BiM9LTm7kHH5Okx0PRBq159r0OFsYkPgsbJFu182iMvihk7rTJxvsiZsD9xTlGcTSIVIYAwedB8QwEe08dBX8lq4LfmIktlR1LC/8Nmxs+QB+McqPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762377639; c=relaxed/simple;
-	bh=2pplFlMMvnjUl6FrlZeDRW3iPjYcJlrYy3U19WE/I2c=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cXRkGkxHIIZbOFU9HGIVWcD74W71Ke71yTFyzFTSNXgqJaCiL0XMqABVwcBUVGQfDZ/CLXD1NhCQfuWvS1sXPhnxOvVQ81aJBWdDRK5zDQgpnV2Q8PQ5X3JE8ty2dg+lWhAFO1E+ZxvDdWV8vPwLBSYqWTharutIOor5SO3gC9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A3DrJn1J; arc=none smtp.client-ip=209.85.128.42
+	s=arc-20240116; t=1762377642; c=relaxed/simple;
+	bh=VK/9HNFmtl1DbSF5vPhE1RBKf6UQ211G3ScyH9k47P0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Bmp/bOq83QbxZuaDj5WTynFmyQ7hhUaKvB2yzUWq8JOob+NByA3U2+DcXhbqeCr6yEZZtbmJtoA784Xy80o04xCZEMhcH49NeVp30DP8QXLT+dl17NLwwB5tYIgpBXKu9oB12UUQGKg5yxhxdh4PIbUMU5AdZCj1Kss7IQRPjf0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YFEzgGst; arc=none smtp.client-ip=209.85.128.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4710a1f9e4cso1934015e9.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Nov 2025 13:20:36 -0800 (PST)
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-477563e28a3so2267035e9.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Nov 2025 13:20:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762377635; x=1762982435; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zdLJGs3mR/Ak3xxBl+2P2SaXwjuVbkUq06ZP/Gr3rTg=;
-        b=A3DrJn1JOySehDZuoyhVgOJjCj8Z6fOoSQFAB9ZZ3tmRRJw72nfZDI2SJHlrZvl/F7
-         NiTOXTvbnFMyo/Dy3ebNkdyoJEqD9NrWLYlQ0eJBLb6HCzD7+68bRruNuWOPFcsNoJKD
-         2LjYOBg15pM5bUqcNgtPzt13Q2969Fm9Pk4cHjF+I6FPkPEzYH/Q8dP2WIeSCCZhegTL
-         Eq5O5V+Tlimg4aVxJIKkFMf4761msUOVwwGWsWagT+Z6b2Tk650HmxDw8MF000A+u1ip
-         UMoDfuBD82+eEMYCKgtJgTXSLfnof6VK4TIW8WFrUDphXnM/um9gcgFPoqMXe3Cn7uaM
-         5LYA==
+        d=gmail.com; s=20230601; t=1762377639; x=1762982439; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5lQyzNcm7QV0KWXbua/krd30WIAIDjyyQ9x8CHS4lA4=;
+        b=YFEzgGster8N813fTtbmfhPKG2jUi00lrGldxhCCn7u2rZx71O1xYimBLRWS9fz3M6
+         S5oUInrDTXM42W0ZpIHmi7xsxNreMXkSaCL9fmVeUukb6pDuqjhBg7GtTwzbwIsJn7dW
+         +GPQQDPjTKHfBunEDOSiK1zXJpCL2esUjrwBTkAFuh0zBkDOaMm1P+qfKVLu5z/ue+qc
+         Vd/rs931dVPvKlClxg11wwqjkJ7trvYSFQrgsSN+ADK8QMBTt2BPdxvHoM56Qf73DAG4
+         Pp2GRcmpm2qfHGGVfy1ZWz+m2sYaHZo2D011uiTypg8BluCP/GBTzMz2Rb4ep+HWyyid
+         l/8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762377635; x=1762982435;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zdLJGs3mR/Ak3xxBl+2P2SaXwjuVbkUq06ZP/Gr3rTg=;
-        b=dSdpJ7W+6JIeJYr6F79SnRaPYXpIgZV6xsDKPGTPP3yFIV9s11jrktzSCFtZ941Iwy
-         cuY4d7jD1KXhPJFrEBtAULdHNfyqDNGAOCD698TQGyZx6c8sqODIIGlL9HwcyRhzcbfM
-         q4kHI8HOgZhcJqdPHiPgfeoP2PScdaNk0nIvXwEXsThR4xx/gL3UBxXj2YmTsMD9/9A+
-         Vrmeg8GfaIMJFDE4scOSxeLvat1/X5cWGIkxQ1Mq1GUjBrPzXaI1Q0c5IRCXY9z1AENz
-         xZTGwLNE/97oywTNQHTdkTw4juESpijDbpfzlUQbclhehEokdDq07GxEuKQ4SVIVgCzs
-         lyvg==
-X-Forwarded-Encrypted: i=1; AJvYcCUo3YYCIKP+gbog1yW6v9A1X9uQd8QR3Z+Tc7vd/vxftt6lWuPVRpmbRxDjC7E0b+U1YdIJrgVptaRhiCeA@vger.kernel.org
-X-Gm-Message-State: AOJu0YzyZmhZNBWOP0Pi7nvS7c2kNgplTRfpg0klqrMaiMyPK3zYYLPl
-	ZT3lrWqjUzL/UeKsJJlj+9D9XMS4DTOnfgoeIv+YC31cunjy8G3fkevF
-X-Gm-Gg: ASbGncu1Bkeza3oAfvokdQXHsNpa7gMMAinS86liRdzD5KS09xmO0bHGm7YFKn9pJgV
-	fMqKdrh6WKxrcR0HPOXSxkYRan1JBxO4rfHLZwDr+oMQTN372iOXEgPfKoRduZlL/vBFMZVYbM3
-	1t9PvX6ZsjoJmPza6MngbWtrvOohCZ7NcdGBF6bzXGRdXMhg1FYffMPnva5krgvRK1/9OJxMkfp
-	JJQiwThsZw9F6LVZPgl3hPgQ3vGey45/KstP1GHgreNtnPamFB2hkGIJk9qxyWbTM42EgFBgz5i
-	KqUlBItShG++OSZkP5spfGEoOdTb0fTq6vD6iSxrnn7l2z1FOqB5LOZtC9RyehEBHelxk02Vd9H
-	WjDvD3ss3nyQYb4Zd+UWw1Yond6RE4wIA1AWIDtFrmtxtBZYrrmIWUopcpI3jHdBGoYBxlAOBs9
-	Ez+7Wj6bE+w0mdllid0Of5GRhvq3+iyK/lVXju5ib74v012vmd
-X-Google-Smtp-Source: AGHT+IEwpSk8sOAJvDtjfIMcje8WUONwpgtu7bj9S59zK+n8/BOyF98omCH07HtS0euQPIoNmLSS6A==
-X-Received: by 2002:a05:600c:358d:b0:477:b93:a7b8 with SMTP id 5b1f17b1804b1-4775cdbd478mr43779465e9.8.1762377634689;
-        Wed, 05 Nov 2025 13:20:34 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762377639; x=1762982439;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=5lQyzNcm7QV0KWXbua/krd30WIAIDjyyQ9x8CHS4lA4=;
+        b=JaR/o5/dcRJi2Q+tSTnwr9Lgw/S6+IUKzdG/C4tKtRTmGqlDBdlhEu0wiXf/tfiT+Y
+         Wu8zQrBhOhgfjNTs/EPLAeUsmUAaw4lo4z1zW2I6rtPtF848OZUONfFn4eG7Ze2s1o2U
+         vS7oeipVMmA7HSMidrqPHgLq+2x8v4P3xmMXL49RbJSoyGfPgWfhuXFvSBsewlHjfwyf
+         bLGTUavTOytAGhaQcBsOmTRVgKSTUZJ+115V1TUNC7BEs8/7IA9whKqRZkwcS5W3BpSE
+         4QeCwu9NK8fTzhMsW3d3LdrAjsVciEku+n4lec8wtXbouPAqlCTCI9aF7FRkFfPvBUH1
+         eLJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUWoArCD+PilcsFj/tjQnGEGHS9wZTHE5EgyNspQm1bezeJuafN4KnptbB9FmUbVxCSTDzUwhccdFv8YiBP@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCvPYQQyD+yxeiRXU/YBm2NYxnxJDzY0NnKsXsLbMMYpQRxoJf
+	/Y9AMssnHixjA2aSdSUJcke34Z4arI5S0Imhd6+v0Jb7UYP+5fbevVKe
+X-Gm-Gg: ASbGncs0V+edKf17hUOEDHRcBokV76NuBTwVNchAd4qxlioG0dDFy0N1X/l96TlCb5b
+	yu+O3qcy45LGGwRI0gpg+NnunYOWs+OgcvXFKRzItJxZpXiKt4aitW8agm46qNQpSctgqhZEKiy
+	x9NPLxYUQLp00VVyPMzmYmGZyIAjGawXiyWpvy4gqMqSXSu31tBWQ3pXdIL5e3WD6SJPIiVIC99
+	Tezityjrc62UYtvru70Uqm2D5qmFmcmOSAHchTSdiFWX94AYooU4p9SuO/KQ538hHK5HseyHLcf
+	Ii7BvQsJuh749es7H01Kppe2/p3ePIAU1tlCtDmmXjod8J9o6EZYQtLRl61Ypzy+pKcCUuNU31d
+	3CYdrwc1fDy1k14o5VN1839FVRH7fj0t3C94hc1quQ0i736GYx9S0es8/6qmg6jN3fhngTDBA8n
+	fy6/ubYX+19ELyNogyi5zGFDwi8AsgaaEBY5wZlkcL+o1Fw/YB
+X-Google-Smtp-Source: AGHT+IFPFme+C9Eiy3ItncLEn8BR0aSw2Xo1OTHfhpspKa2xDTBJtCTWjqboomnBE7dSFjby7JDOpQ==
+X-Received: by 2002:a05:600c:8a0a:20b0:477:5639:ff66 with SMTP id 5b1f17b1804b1-47762089cc1mr5883485e9.13.1762377638603;
+        Wed, 05 Nov 2025 13:20:38 -0800 (PST)
 Received: from f.. (cst-prg-14-82.cust.vodafone.cz. [46.135.14.82])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-477625c2f90sm8914505e9.12.2025.11.05.13.20.32
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-477625c2f90sm8914505e9.12.2025.11.05.13.20.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 13:20:34 -0800 (PST)
+        Wed, 05 Nov 2025 13:20:38 -0800 (PST)
 From: Mateusz Guzik <mjguzik@gmail.com>
 To: mic@digikod.net,
 	brauner@kernel.org
@@ -86,10 +88,12 @@ Cc: linux-security-module@vger.kernel.org,
 	m@maowtm.org,
 	syzbot+12479ae15958fc3f54ec@syzkaller.appspotmail.com,
 	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH 1/2] fs: add iput_not_last()
-Date: Wed,  5 Nov 2025 22:20:24 +0100
-Message-ID: <20251105212025.807549-1-mjguzik@gmail.com>
+Subject: [PATCH 2/2] landlock: fix splats from iput() after it started calling might_sleep()
+Date: Wed,  5 Nov 2025 22:20:25 +0100
+Message-ID: <20251105212025.807549-2-mjguzik@gmail.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20251105212025.807549-1-mjguzik@gmail.com>
+References: <20251105212025.807549-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -98,47 +102,40 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
+At this point it is guaranteed this is not the last reference.
+
+However, a recent addition of might_sleep() at top of iput() started
+generating false-positives as it was executing for all values.
+
+Remedy the problem by using the newly introduced iput_not_last().
+
+Reported-by: syzbot+12479ae15958fc3f54ec@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/all/68d32659.a70a0220.4f78.0012.GAE@google.com/
+Fixes: 2ef435a872ab ("fs: add might_sleep() annotation to iput() and more")
 Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
 ---
- fs/inode.c         | 12 ++++++++++++
- include/linux/fs.h |  1 +
- 2 files changed, 13 insertions(+)
+ security/landlock/fs.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/fs/inode.c b/fs/inode.c
-index ec9339024ac3..cff1d3af0d57 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -1967,6 +1967,18 @@ void iput(struct inode *inode)
- }
- EXPORT_SYMBOL(iput);
- 
-+/**
-+ *	iput_not_last	- put an inode assuming this is not the last reference
-+ *	@inode: inode to put
-+ */
-+void iput_not_last(struct inode *inode)
-+{
-+	VFS_BUG_ON_INODE(atomic_read(&inode->i_count) < 2, inode);
-+
-+	WARN_ON(atomic_sub_return(1, &inode->i_count) == 0);
-+}
-+EXPORT_SYMBOL(iput_not_last);
-+
- #ifdef CONFIG_BLOCK
- /**
-  *	bmap	- find a block number in a file
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index c895146c1444..98fc088a461f 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2823,6 +2823,7 @@ extern int current_umask(void);
- 
- extern void ihold(struct inode * inode);
- extern void iput(struct inode *);
-+void iput_not_last(struct inode *);
- int inode_update_timestamps(struct inode *inode, int flags);
- int generic_update_time(struct inode *, int);
- 
+diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+index 0bade2c5aa1d..d9c12b993fa7 100644
+--- a/security/landlock/fs.c
++++ b/security/landlock/fs.c
+@@ -1335,11 +1335,10 @@ static void hook_sb_delete(struct super_block *const sb)
+ 			 * At this point, we own the ihold() reference that was
+ 			 * originally set up by get_inode_object() and the
+ 			 * __iget() reference that we just set in this loop
+-			 * walk.  Therefore the following call to iput() will
+-			 * not sleep nor drop the inode because there is now at
+-			 * least two references to it.
++			 * walk.  Therefore there are at least two references
++			 * on the inode.
+ 			 */
+-			iput(inode);
++			iput_not_last(inode);
+ 		} else {
+ 			spin_unlock(&object->lock);
+ 			rcu_read_unlock();
 -- 
 2.48.1
 
