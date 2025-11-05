@@ -1,56 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-67058-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67059-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03657C33B14
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 05 Nov 2025 02:43:57 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E18D1C33B0B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 05 Nov 2025 02:43:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E9713B4FE7
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Nov 2025 01:42:38 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D01C14E153C
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Nov 2025 01:43:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3892D22D7A1;
-	Wed,  5 Nov 2025 01:42:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1810A2253FF;
+	Wed,  5 Nov 2025 01:43:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YHMeowDl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JBJLSunh"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 979D91F03EF
-	for <linux-fsdevel@vger.kernel.org>; Wed,  5 Nov 2025 01:42:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7444A27470
+	for <linux-fsdevel@vger.kernel.org>; Wed,  5 Nov 2025 01:43:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762306954; cv=none; b=E9Jt/ynoOmzlVdijhcvXDSed+lpgatXwS57Ljzolyr2gYWprtW2A8HWU2JCooRTOPvixlF6a8uimCKzn8pNLhwrxcMy837HFsKy0I0WPXZjSrFGgaYJNdl7IshtvVIJF2BJn3WH0VE0jLlkosEYipQSYHgJPCWgB1l0hfnjeChI=
+	t=1762306980; cv=none; b=g2mMMZwYY3ixPx2X+m/HB22+t3u+JQrWFj/7cnsTRNVPGUwm69K0eCpT8ttVTGpPU6C2rRZ1U4CKbH0BVMDDGXLZm/Q2ZEYRBcElv8RvOcEAlP1HRHkd12sgkkZMAF6zAbUZvhs7MU6n7N4wgRUCs+fYKTtidYor49PNLWs9az8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762306954; c=relaxed/simple;
-	bh=KNuKg5a/kPdE2LMVMwtD7pzUzOoaBdWvRzqGY+Srvi0=;
+	s=arc-20240116; t=1762306980; c=relaxed/simple;
+	bh=Q+W1v7RxgclqGCBVkHavlezwg+oZ+Agtl3ex/hfDG9k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zb9Qv2E1b1MmB65kpsA5mQQQ2X32O/83LAEsy+zGZ0eTgQ8ioLBZbeVQ+94R0dxu9IJvHXHsMR6Iqmi5YaF6kg38DIXRCI2VoAw2KFcdy6eMIKlm+xbUXOUe3YKJVRRsqWJBtlazne8lg0tuTyMUO1wIIPkz4rJPO13J3RqgmuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YHMeowDl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EC94C116B1;
-	Wed,  5 Nov 2025 01:42:34 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=h7pCK3aV6aS7ztDfzIOBkt5lVZGk57y4uck1HtWFOGTib3xfBwVjOgj9QtPMBkEoHKBuoM+bIh01E4HpVppV1dXlqRoiPAn/+RASJq1QaLtFyDhETXxTjiNuXnI/p0u4synw4eojGMhDPGljxv0h4V38VSJQrI8HpudPERTTm34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JBJLSunh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CC2CC116D0;
+	Wed,  5 Nov 2025 01:43:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762306954;
-	bh=KNuKg5a/kPdE2LMVMwtD7pzUzOoaBdWvRzqGY+Srvi0=;
+	s=k20201202; t=1762306980;
+	bh=Q+W1v7RxgclqGCBVkHavlezwg+oZ+Agtl3ex/hfDG9k=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YHMeowDlUYY8HEI7hwaGp95oTUGhpXyyv6wCQleazGjLRvjB4x83hUPkqOf/0+w1J
-	 YeO65qw1zi+8xAxinNaFW/YIJJXdumjkjKjkR4UZQIxAJlKvuNm2wWkBSa0wJPUdEP
-	 ahwhkLAs7NzybhVArKPVGXJreEW8xzFsNhUqTiuIxIo9A+bhwdNYFgaxXppHwmpchP
-	 pQ9b06H90Ttny9olMrai84QWWLppLKRDmiCPhhYa2AhAZJXcCTgJ7AXJ+bc1Osy4e8
-	 //GCFLIbNtoQa4UN3p6+Gm3mZnG8wJ8GgPaS2P60qpZSoGKfWoUiGjnc1tGxc3rKh/
-	 Po7J6T1CsQAKA==
-Date: Tue, 4 Nov 2025 17:42:33 -0800
+	b=JBJLSunhooF2ut7aqV2tbkvxo5Ne9/SfwG9nUDphu1UQAYzgfe8DPbcoinnyFsDtX
+	 OCtDe5SKtuyyMvd2njGE3ufjd/7UVe6qzTaoqUUHraJEebvxI9ZWkA/HBTR7IOO7/A
+	 xBbU72cc/NQKmzKAdtz1+nMcKWxeF0WBg6pSZ4o9PDSIIplcUlE1d53MH0qOkHYKJq
+	 xIiKpPAaJSHixsXhVoR1AY/U++G3inxuWQXu9vc8tXYewRTIeT8BsK5Af3qHCpqVRG
+	 oTMtinZgRnCRWwfgaNKY8cM48XteMJpaL0ONO9Dd5/byaVCnlBZuWTxNad4iC90lEH
+	 /MavjEhsVCvug==
+Date: Tue, 4 Nov 2025 17:42:58 -0800
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: Joanne Koong <joannelkoong@gmail.com>
 Cc: brauner@kernel.org, hch@infradead.org, bfoster@redhat.com,
 	linux-fsdevel@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [PATCH v3 7/8] iomap: use find_next_bit() for dirty bitmap
+Subject: Re: [PATCH v3 8/8] iomap: use find_next_bit() for uptodate bitmap
  scanning
-Message-ID: <20251105014233.GH196362@frogsfrogsfrogs>
+Message-ID: <20251105014258.GI196362@frogsfrogsfrogs>
 References: <20251104205119.1600045-1-joannelkoong@gmail.com>
- <20251104205119.1600045-8-joannelkoong@gmail.com>
+ <20251104205119.1600045-9-joannelkoong@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -59,122 +59,122 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251104205119.1600045-8-joannelkoong@gmail.com>
+In-Reply-To: <20251104205119.1600045-9-joannelkoong@gmail.com>
 
-On Tue, Nov 04, 2025 at 12:51:18PM -0800, Joanne Koong wrote:
-> Use find_next_bit()/find_next_zero_bit() for iomap dirty bitmap
+On Tue, Nov 04, 2025 at 12:51:19PM -0800, Joanne Koong wrote:
+> Use find_next_bit()/find_next_zero_bit() for iomap uptodate bitmap
 > scanning. This uses __ffs() internally and is more efficient for
-> finding the next dirty or clean bit than iterating through the bitmap
-> range testing every bit.
+> finding the next uptodate or non-uptodate bit than iterating through the
+> the bitmap range testing every bit.
 > 
 > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
 > Suggested-by: Christoph Hellwig <hch@infradead.org>
 
-Oh hey, that's a nice cleanup
+Here too!
 Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 
 --D
 
 > ---
->  fs/iomap/buffered-io.c | 61 ++++++++++++++++++++++++++++--------------
->  1 file changed, 41 insertions(+), 20 deletions(-)
+>  fs/iomap/buffered-io.c | 52 ++++++++++++++++++++++++++----------------
+>  1 file changed, 32 insertions(+), 20 deletions(-)
 > 
 > diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index 420fe2865927..3c9a4b773186 100644
+> index 3c9a4b773186..03dd524b69d2 100644
 > --- a/fs/iomap/buffered-io.c
 > +++ b/fs/iomap/buffered-io.c
-> @@ -76,13 +76,34 @@ static void iomap_set_range_uptodate(struct folio *folio, size_t off,
->  		folio_mark_uptodate(folio);
+> @@ -38,10 +38,28 @@ static inline bool ifs_is_fully_uptodate(struct folio *folio,
+>  	return bitmap_full(ifs->state, i_blocks_per_folio(inode, folio));
 >  }
 >  
-> -static inline bool ifs_block_is_dirty(struct folio *folio,
-> -		struct iomap_folio_state *ifs, int block)
+> -static inline bool ifs_block_is_uptodate(struct iomap_folio_state *ifs,
+> -		unsigned int block)
 > +/*
-> + * Find the next dirty block in the folio. end_blk is inclusive.
-> + * If no dirty block is found, this will return end_blk + 1.
+> + * Find the next uptodate block in the folio. end_blk is inclusive.
+> + * If no uptodate block is found, this will return end_blk + 1.
 > + */
-> +static unsigned ifs_next_dirty_block(struct folio *folio,
+> +static unsigned ifs_next_uptodate_block(struct folio *folio,
 > +		unsigned start_blk, unsigned end_blk)
 >  {
+> -	return test_bit(block, ifs->state);
 > +	struct iomap_folio_state *ifs = folio->private;
->  	struct inode *inode = folio->mapping->host;
-> -	unsigned int blks_per_folio = i_blocks_per_folio(inode, folio);
-> +	unsigned int blks = i_blocks_per_folio(inode, folio);
 > +
-> +	return find_next_bit(ifs->state, blks + end_blk + 1,
-> +			blks + start_blk) - blks;
+> +	return find_next_bit(ifs->state, end_blk + 1, start_blk);
 > +}
 > +
 > +/*
-> + * Find the next clean block in the folio. end_blk is inclusive.
-> + * If no clean block is found, this will return end_blk + 1.
+> + * Find the next non-uptodate block in the folio. end_blk is inclusive.
+> + * If no non-uptodate block is found, this will return end_blk + 1.
 > + */
-> +static unsigned ifs_next_clean_block(struct folio *folio,
+> +static unsigned ifs_next_nonuptodate_block(struct folio *folio,
 > +		unsigned start_blk, unsigned end_blk)
 > +{
 > +	struct iomap_folio_state *ifs = folio->private;
-> +	struct inode *inode = folio->mapping->host;
-> +	unsigned int blks = i_blocks_per_folio(inode, folio);
->  
-> -	return test_bit(block + blks_per_folio, ifs->state);
-> +	return find_next_zero_bit(ifs->state, blks + end_blk + 1,
-> +			blks + start_blk) - blks;
+> +
+> +	return find_next_zero_bit(ifs->state, end_blk + 1, start_blk);
 >  }
 >  
->  static unsigned ifs_find_dirty_range(struct folio *folio,
-> @@ -94,18 +115,17 @@ static unsigned ifs_find_dirty_range(struct folio *folio,
->  		offset_in_folio(folio, *range_start) >> inode->i_blkbits;
->  	unsigned end_blk = min_not_zero(
->  		offset_in_folio(folio, range_end) >> inode->i_blkbits,
-> -		i_blocks_per_folio(inode, folio));
-> -	unsigned nblks = 1;
-> -
-> -	while (!ifs_block_is_dirty(folio, ifs, start_blk))
-> -		if (++start_blk == end_blk)
-> -			return 0;
-> +		i_blocks_per_folio(inode, folio)) - 1;
-> +	unsigned nblks;
+>  static bool ifs_set_range_uptodate(struct folio *folio,
+> @@ -278,14 +296,11 @@ static void iomap_adjust_read_range(struct inode *inode, struct folio *folio,
+>  	 * to avoid reading in already uptodate ranges.
+>  	 */
+>  	if (ifs) {
+> -		unsigned int i, blocks_skipped;
+> +		unsigned int next, blocks_skipped;
 >  
-> -	while (start_blk + nblks < end_blk) {
-> -		if (!ifs_block_is_dirty(folio, ifs, start_blk + nblks))
-> -			break;
-> -		nblks++;
-> -	}
-> +	start_blk = ifs_next_dirty_block(folio, start_blk, end_blk);
-> +	if (start_blk > end_blk)
-> +		return 0;
-> +	if (start_blk == end_blk)
-> +		nblks = 1;
-> +	else
-> +		nblks = ifs_next_clean_block(folio, start_blk + 1, end_blk) -
-> +				start_blk;
+> -		/* move forward for each leading block marked uptodate */
+> -		for (i = first; i <= last; i++)
+> -			if (!ifs_block_is_uptodate(ifs, i))
+> -				break;
+> +		next = ifs_next_nonuptodate_block(folio, first, last);
+> +		blocks_skipped = next - first;
 >  
->  	*range_start = folio_pos(folio) + (start_blk << inode->i_blkbits);
->  	return nblks << inode->i_blkbits;
-> @@ -1161,7 +1181,7 @@ static void iomap_write_delalloc_ifs_punch(struct inode *inode,
->  		struct folio *folio, loff_t start_byte, loff_t end_byte,
->  		struct iomap *iomap, iomap_punch_t punch)
->  {
-> -	unsigned int first_blk, last_blk, i;
-> +	unsigned int first_blk, last_blk;
->  	loff_t last_byte;
->  	u8 blkbits = inode->i_blkbits;
->  	struct iomap_folio_state *ifs;
-> @@ -1180,10 +1200,11 @@ static void iomap_write_delalloc_ifs_punch(struct inode *inode,
->  			folio_pos(folio) + folio_size(folio) - 1);
->  	first_blk = offset_in_folio(folio, start_byte) >> blkbits;
->  	last_blk = offset_in_folio(folio, last_byte) >> blkbits;
-> -	for (i = first_blk; i <= last_blk; i++) {
-> -		if (!ifs_block_is_dirty(folio, ifs, i))
-> -			punch(inode, folio_pos(folio) + (i << blkbits),
-> -				    1 << blkbits, iomap);
-> +	while ((first_blk = ifs_next_clean_block(folio, first_blk, last_blk))
-> +		       <= last_blk) {
-> +		punch(inode, folio_pos(folio) + (first_blk << blkbits),
-> +				1 << blkbits, iomap);
-> +		first_blk++;
+> -		blocks_skipped = i - first;
+>  		if (blocks_skipped) {
+>  			unsigned long block_offset = *pos & (block_size - 1);
+>  			unsigned bytes_skipped =
+> @@ -295,15 +310,15 @@ static void iomap_adjust_read_range(struct inode *inode, struct folio *folio,
+>  			poff += bytes_skipped;
+>  			plen -= bytes_skipped;
+>  		}
+> -		first = i;
+> +		first = next;
+>  
+>  		/* truncate len if we find any trailing uptodate block(s) */
+> -		while (++i <= last) {
+> -			if (ifs_block_is_uptodate(ifs, i)) {
+> +		if (++next <= last) {
+> +			next = ifs_next_uptodate_block(folio, next, last);
+> +			if (next <= last) {
+>  				plen -= iomap_bytes_to_truncate(*pos + plen,
+> -						block_bits, last - i + 1);
+> -				last = i - 1;
+> -				break;
+> +						block_bits, last - next + 1);
+> +				last = next - 1;
+>  			}
+>  		}
 >  	}
+> @@ -634,7 +649,7 @@ bool iomap_is_partially_uptodate(struct folio *folio, size_t from, size_t count)
+>  {
+>  	struct iomap_folio_state *ifs = folio->private;
+>  	struct inode *inode = folio->mapping->host;
+> -	unsigned first, last, i;
+> +	unsigned first, last;
+>  
+>  	if (!ifs)
+>  		return false;
+> @@ -646,10 +661,7 @@ bool iomap_is_partially_uptodate(struct folio *folio, size_t from, size_t count)
+>  	first = from >> inode->i_blkbits;
+>  	last = (from + count - 1) >> inode->i_blkbits;
+>  
+> -	for (i = first; i <= last; i++)
+> -		if (!ifs_block_is_uptodate(ifs, i))
+> -			return false;
+> -	return true;
+> +	return ifs_next_nonuptodate_block(folio, first, last) > last;
 >  }
+>  EXPORT_SYMBOL_GPL(iomap_is_partially_uptodate);
 >  
 > -- 
 > 2.47.3
