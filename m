@@ -1,239 +1,257 @@
-Return-Path: <linux-fsdevel+bounces-67152-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67150-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F060FC366F5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 05 Nov 2025 16:46:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 563EFC366F8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 05 Nov 2025 16:46:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 244CA1A436B4
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Nov 2025 15:32:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AD1D3A2364
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Nov 2025 15:31:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C228330B24;
-	Wed,  5 Nov 2025 15:31:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70CE432ED58;
+	Wed,  5 Nov 2025 15:28:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eVwiSsN+"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DFKFfDsg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BDA5329E71
-	for <linux-fsdevel@vger.kernel.org>; Wed,  5 Nov 2025 15:31:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAEB432ED39
+	for <linux-fsdevel@vger.kernel.org>; Wed,  5 Nov 2025 15:28:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762356667; cv=none; b=rJKpMMWhwN/wVbypFnAD0HOqWh7ZTdgVSYYYKfltYE9ZhlW/ZluPvSOVWFxdFNFwjrqUxe8r0zg6GeBd4aHH7t4CZukRkWeKvyCupxIqUptqlpMrKf77eCKgWdT89VHqCXpB0ZRjQILfWcScJ55d6GPpA0Ff+QCqULG59MQQMoY=
+	t=1762356533; cv=none; b=fxNGxHSmB2/4snfBsuEl28snwqW9gvOc2cYx+T9TA13LtXR1uXrjdBzW7nI3MF8P/7Yhge6AqCYDsmhbOvwsfSiWpzlNoRHE6TanrBPglssPHmdXQb/TOPFveqHjlVFn4GBhT+1Z/WIKlrQIbj91IuRslwPj9oyInL6Np98JqNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762356667; c=relaxed/simple;
-	bh=yEbFUxhU5133fiA2wgh8p34cECSDXHmt2efF/soZEWY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QnqygN8F617nRLyizuYQlXhf29B2yrj3yNb/QzEc5NhJdzfuhNNf6msifP9oXXXaMGOp5raEpro1tDCL2MCWX+AL5l6kIISa2VFxw9DexLtgHCjaBSYY/kxR/T9b7osMAM8Tyb2yGspdIl8SXSxzwtwfY8ERGHmoIpli2AvLLiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eVwiSsN+; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-640aaa89697so6294055a12.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Nov 2025 07:31:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762356664; x=1762961464; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4+z52qtWPifN7YndFewUQfgP4BQqbdcxKI4xG7v6Wtg=;
-        b=eVwiSsN+GH8oJYCNas3zxtrCrX0AUwANIXnNhcBdE3wS/5BM00oSTOodxUCLpvEFwr
-         KvT48Ugzrtk28loE5qXKQajpXmSphrPQhUiOwXJFC9VbDpVfDvVWI8KiygUsJKs3i3/a
-         S7a1bD1/QuVIPOyK7HJBzf1V9msgScbN35whwg2x4Wzhh7hR27icBViCLS2zQmEP43lY
-         tOARD1Sowew6P50lMybQ82ANtCv8Bf1zNLKKys51qhzuz4kmf8A0RIV6C4Ww5vew/CY5
-         bwU9qr79jEUq/XE3np9X5wSiOBDrfCkLhRHPCgEWrVG1K8ormbxmZzQS6EplQc4moY/L
-         y1Ug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762356664; x=1762961464;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4+z52qtWPifN7YndFewUQfgP4BQqbdcxKI4xG7v6Wtg=;
-        b=ZYy4QD69TxYetlPXEMI35UYWL3zGUDz7yElYTONX6ebrrkkkKCzXYhaedit6DPAKub
-         9Pb9k1IKdh6mvRtQq2yXLzE3RQfC/EqBw0ZoVKG3NvKgSvrdeIAXJhbR4D2HiPsxWoJq
-         hE+Pl9MFF27PORvfKEFawTQRyp7CqZN8FxoAXxqv1+xe0StBVPd7ErJC4t5KBu3+YlkD
-         zMKYia9LU0EedRCdcACpJqxzo4HEXIYzdTtqPvQFc44xbhZKXCoz0YuFF0Y5T6jGjOKb
-         vls5+SnWJqs4CQth5Am6tYpQ1Wrwrq+DzshTkpoUZ1Ke9FQIx4Lai2pDUXwhkIqxvWP4
-         4wRA==
-X-Forwarded-Encrypted: i=1; AJvYcCW/3mvo+lmTVMuNkC4f2w8nMvkCoJMkRRHWLiC/Udv4EkwIzSAkQKuovTigAgooVrPlQrTNrxa4yK7y91pk@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1x0IE5rXBfW9CZdcUgXb8+/Fo5cFIqHg0rx3Rqi4HIm2w5vwa
-	prfCxW+3bfBzi3olhMOMmfuP3EJskMF8ZComo+xm9zGtboP6QykcXgo/Jilz7Wu8sPgsOF61bGx
-	4Mo7o4r0punSB516sJ1Lm6bm2YXgttJA=
-X-Gm-Gg: ASbGncvbdpGFY/kgLZ/NJkA6Q/ekssiJtGJcu3JRAqFzjQpcHx/mvjwhokAgQPw5eHX
-	aCSFBv2njLLpCmYWy5PQEY5ryX89AMD+OahqZ8penhlxhQuPFLoEq4bSPkKf+oojAsI/kYvmSed
-	KpYo6DCYAZYef2lqYnzZjuid3CGbNHeKQaenDPnwILOhseudQMBwm2aNXHtib8CrLQXPACFeiXg
-	twY4k+gWWkc9pO8OTT9+xJhurDi6tsBfHiP+72Yuoo5jW7lvmNhkr5YwmuKr2T5CLJirPNYKq7r
-	lpOd/XHfP3AAM+C/xAE=
-X-Google-Smtp-Source: AGHT+IFeTdBoWoUyL5OJBj6ctpxjIzpxH5YSlDQbMjLCXNftce5Xam58H6eehckj8yuunQCZvowB+AKwBvBeUXEftyg=
-X-Received: by 2002:a05:6402:1462:b0:640:b978:efdb with SMTP id
- 4fb4d7f45d1cf-64105b80a61mr3309961a12.25.1762356663555; Wed, 05 Nov 2025
- 07:31:03 -0800 (PST)
+	s=arc-20240116; t=1762356533; c=relaxed/simple;
+	bh=02HHu47V5B1AgqVWRsh9u0XB8hvxi9+e0DWhFevvMCQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZWh/ly7ZITsviIASTIAtgAa3pCvCFQWeVU8TvzEacia+Ui9lM3NgMMXEWOx5hTunnCmVB9c9a7IcjOp1gjW4zOZEsUAVonxHQELesYTgUQPA69lvEBfHgtPHmqdncgcPV/2xHH8FsYvto8UWHkYc1exXy7YUCAUP0zPiUtWwadk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DFKFfDsg; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762356530;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+5hRDI7SZ0uZHSZPEqeC8t/60M6asZ42vgi6SEFQJt0=;
+	b=DFKFfDsggUBkZCTCWgc2I6s4+5IEfaCftPzkAPqcpJKUoeIEyshza7jE5FJ8PXShM7Vum1
+	o6eyrnBXAwWSDUFTumDXuzFiPK2j4wB9qgDbdHvGYZbYCMM5pZtWhJ0/7sxlCKUTNI/Uvj
+	LvUAToMA1ROvAtnECHNaz5CjTcjeaO4=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-588-d1HSu3OPOqqcJTonuo3msA-1; Wed,
+ 05 Nov 2025 10:28:49 -0500
+X-MC-Unique: d1HSu3OPOqqcJTonuo3msA-1
+X-Mimecast-MFC-AGG-ID: d1HSu3OPOqqcJTonuo3msA_1762356528
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6747C1956058;
+	Wed,  5 Nov 2025 15:28:48 +0000 (UTC)
+Received: from bfoster (unknown [10.22.88.135])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A3BED180049F;
+	Wed,  5 Nov 2025 15:28:47 +0000 (UTC)
+Date: Wed, 5 Nov 2025 10:33:16 -0500
+From: Brian Foster <bfoster@redhat.com>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH 2/6] iomap, xfs: lift zero range hole mapping flush into
+ xfs
+Message-ID: <aQtuPFHtzm8-zeqS@bfoster>
+References: <20251016190303.53881-1-bfoster@redhat.com>
+ <20251016190303.53881-3-bfoster@redhat.com>
+ <20251105003114.GY196370@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250731130458.GE273706@mit.edu> <20250731173858.GE2672029@frogsfrogsfrogs>
- <8734abgxfl.fsf@igalia.com> <39818613-c10b-4ed2-b596-23b70c749af1@bsbernd.com>
- <CAOQ4uxg1zXPTB1_pFB=hyqjAGjk=AC34qP1k9C043otxcwqJGg@mail.gmail.com>
- <2e57be4f-e61b-4a37-832d-14bdea315126@bsbernd.com> <20250912145857.GQ8117@frogsfrogsfrogs>
- <CAOQ4uxhm3=P-kJn3Liu67bhhMODZOM7AUSLFJRiy_neuz6g80g@mail.gmail.com>
- <2e1db15f-b2b1-487f-9f42-44dc7480b2e2@bsbernd.com> <CAOQ4uxg8sFdFRxKUcAFoCPMXaNY18m4e1PfBXo+GdGxGcKDaFg@mail.gmail.com>
- <20250916025341.GO1587915@frogsfrogsfrogs> <CAOQ4uxhLM11Zq9P=E1VyN7puvBs80v0HrPU6HqY0LLM6HVc_ZQ@mail.gmail.com>
- <87ldkm6n5o.fsf@wotan.olymp> <CAOQ4uxg7b0mupCVaouPXPGNN=Ji2XceeceUf8L6pW8+vq3uOMQ@mail.gmail.com>
- <87cy5x7sud.fsf@wotan.olymp> <CAOQ4uxjZ0B5TwV+HiWsUpBuFuZJZ_e4Bm_QfNn4crDoVAfkA9Q@mail.gmail.com>
- <87ecqcpujw.fsf@wotan.olymp>
-In-Reply-To: <87ecqcpujw.fsf@wotan.olymp>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Wed, 5 Nov 2025 16:30:51 +0100
-X-Gm-Features: AWmQ_bllL0jRg0lG2IquSuf9WxK56YqDrwheMrE1Nh3n-OXTi4UNNbtnbhoiVQo
-Message-ID: <CAOQ4uxg+w5LHnVbYGLc_pq+zfAw5UXbfo0M2=dxFGKLmBvJ+5Q@mail.gmail.com>
-Subject: Re: [RFC] Another take at restarting FUSE servers
-To: Luis Henriques <luis@igalia.com>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, Bernd Schubert <bernd@bsbernd.com>, "Theodore Ts'o" <tytso@mit.edu>, 
-	Miklos Szeredi <miklos@szeredi.hu>, Bernd Schubert <bschubert@ddn.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Kevin Chen <kchen@ddn.com>, 
-	Matt Harvey <mharvey@jumptrading.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251105003114.GY196370@frogsfrogsfrogs>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Wed, Nov 5, 2025 at 12:50=E2=80=AFPM Luis Henriques <luis@igalia.com> wr=
-ote:
->
-> Hi Amir,
->
-> On Wed, Nov 05 2025, Amir Goldstein wrote:
->
-> > On Tue, Nov 4, 2025 at 3:52=E2=80=AFPM Luis Henriques <luis@igalia.com>=
- wrote:
->
-> <...>
->
-> >> > fuse_entry_out was extended once and fuse_reply_entry()
-> >> > sends the size of the struct.
-> >>
-> >> So, if I'm understanding you correctly, you're suggesting to extend
-> >> fuse_entry_out to add the new handle (a 'size' field + the actual hand=
-le).
-> >
-> > Well it depends...
-> >
-> > There are several ways to do it.
-> > I would really like to get Miklos and Bernd's opinion on the preferred =
-way.
->
-> Sure, all feedback is welcome!
->
-> > So far, it looks like the client determines the size of the output args=
-.
-> >
-> > If we want the server to be able to write a different file handle size
-> > per inode that's going to be a bigger challenge.
-> >
-> > I think it's plenty enough if server and client negotiate a max file ha=
-ndle
-> > size and then the client always reserves enough space in the output
-> > args buffer.
-> >
-> > One more thing to ask is what is "the actual handle".
-> > If "the actual handle" is the variable sized struct file_handle then
-> > the size is already available in the file handle header.
->
-> Actually, this is exactly what I was trying to mimic for my initial
-> attempt.  However, I was not going to do any size negotiation but instead
-> define a maximum size for the handle.  See below.
->
-> > If it is not, then I think some sort of type or version of the file han=
-dles
-> > encoding should be negotiated beyond the max handle size.
->
-> In my initial stab at this I was going to take a very simple approach and
-> hard-code a maximum size for the handle.  This would have the advantage o=
-f
-> allowing the server to use different sizes for different inodes (though
-> I'm not sure how useful that would be in practice).  So, in summary, I
-> would define the new handle like this:
->
-> /* Same value as MAX_HANDLE_SZ */
-> #define FUSE_MAX_HANDLE_SZ 128
->
-> struct fuse_file_handle {
->         uint32_t        size;
->         uint32_t        padding;
+On Tue, Nov 04, 2025 at 04:31:14PM -0800, Darrick J. Wong wrote:
+> On Thu, Oct 16, 2025 at 03:02:59PM -0400, Brian Foster wrote:
+> > iomap zero range has a wart in that it also flushes dirty pagecache
+> > over hole mappings (rather than only unwritten mappings). This was
+> > included to accommodate a quirk in XFS where COW fork preallocation
+> > can exist over a hole in the data fork, and the associated range is
+> > reported as a hole. This is because the range actually is a hole,
+> > but XFS also has an optimization where if COW fork blocks exist for
+> > a range being written to, those blocks are used regardless of
+> > whether the data fork blocks are shared or not. For zeroing, COW
+> > fork blocks over a data fork hole are only relevant if the range is
+> > dirty in pagecache, otherwise the range is already considered
+> > zeroed.
+> 
+> It occurs to me that the situation (unwritten cow mapping, hole in data
+> fork) results in iomap_iter::iomap getting the unwritten mapping, and
+> iomap_iter::srcmap getting the hole mapping.  iomap_iter_srcmap returns
+> iomap_itere::iomap because srcmap.type == HOLE.
+> 
+> But then you have ext4 where there is no cow fork, so it will only ever
+> set iomap_iter::iomap, leaving iomap_iter::srcmap set to the default.
+> The default srcmap is a HOLE.
+> 
+> So iomap can't distinguish between xfs' speculative cow over a hole
+> behavior vs. ext4 just being simple.  I wonder if we actually need to
+> introduce a new iomap type for "pure overwrite"?
+> 
 
-I think that the handle type is going to be relevant as well.
+I definitely think we need a better solution here in iomap. The current
+iomap/srcmap management/handling is quite confusing. What that solution
+is, I'm not sure.
 
->         char            handle[FUSE_MAX_HANDLE_SZ];
-> };
->
-> and this struct would be included in fuse_entry_out.
->
-> There's probably a problem with having this (big) fixed size increase to
-> fuse_entry_out, but maybe that could be fixed once I have all the other
-> details sorted out.  Hopefully I'm not oversimplifying the problem,
-> skipping the need for negotiating a handle size.
->
+> The reason I say that that in designing the fuse-iomap uapi, it was a
+> lot easier to understand the programming model if there was always
+> explicit read and write mappings being sent back and forth; and a new
+> type FUSE_IOMAP_TYPE_PURE_OVERWRITE that could be stored in the write
+> mapping to mean "just look at the read mapping".  If such a beast were
+> ported to the core iomap code then maybe that would help here?
+> 
 
-Maybe this fixed size is reasonable for the first version of FUSE protocol
-as long as this overhead is NOT added if the server does not opt-in for the
-feature.
+I'm not following what this means. Separate read/write mappings for each
+individual iomap operation (i.e. "read from here, write to there"), or
+separate iomap structures to be used for read ops vs. write ops, or
+something else..?
 
-IOW, allow the server to negotiate FUSE_MAX_HANDLE_SZ or 0,
-but keep the negotiation protocol extendable to another value later on.
+> A hole with an out-of-place mapping needs a flush (or maybe just go find
+> the pagecache and zero it), whereas a hole with nothing else backing it
+> clearly doesn't need any action at all.
+> 
+> Does that help?
+> 
 
-> >> That's probably a good idea.  I was working towards having the
-> >> LOOKUP_HANDLE to be similar to LOOKUP, but extending it so that it wou=
-ld
-> >> include:
-> >>
-> >>  - An extra inarg: the parent directory handle.  (To be honest, I'm no=
-t
-> >>    really sure this would be needed.)
-> >
-> > Yes, I think you need extra inarg.
-> > Why would it not be needed?
-> > The problem is that you cannot know if the parent node id in the lookup
-> > command is stale after server restart.
->
-> Ah, of course.  Hence the need for this extra inarg.
->
-> > The thing is that the kernel fuse inode will need to store the file han=
-dle,
-> > much the same as an NFS client stores the file handle provided by the
-> > NFS server.
-> >
-> > FYI, fanotify has an optimized way to store file handles in
-> > struct fanotify_fid_event - small file handles are stored inline
-> > and larger file handles can use an external buffer.
-> >
-> > But fuse does not need to support any size of file handles.
-> > For first version we could definitely simplify things by limiting the s=
-ize
-> > of supported file handles, because server and client need to negotiate
-> > the max file handle size anyway.
->
-> I'll definitely need to have a look at how fanotify does that.  But I
-> guess that if my simplistic approach with a static array is acceptable fo=
-r
-> now, I'll stick with it for the initial attempt to implement this, and
-> eventually revisit it later to do something more clever.
->
+This kind of sounds like what we're already doing in iomap, so I suspect
+I'm missing something on the fuse side...
 
-What you proposed is the extension of fuse_entry_out for fuse
-protocol.
+WRT this patchset, I'm trying to address the underlying problems that
+require the flush-a-dirty-hole hack that provides zeroing correctness
+for XFS. This needs to be lifted out of iomap because it also causes
+problems for ext4, but can be bypassed completely for XFS as well by the
+end of the series. The first part is just a straight lift into xfs, but
+the next patches replace the flush with use of the folio batch, and
+split off the band-aid case down into insert range where this flush was
+also indirectly suppressing issues.
 
-My reference to fanotify_fid_event is meant to explain how to encode
-a file handle in fuse_inode in cache, because the fuse_inode_cachep
-cannot have variable sized inodes and in most of the cases, a short
-inline file handle should be enough.
+For the former, if you look at the last few patches the main reason we
+rely on the flush-a-dirty-hole hack is that we don't actually report the
+mappings correctly in XFS for zero range with respect to allowable
+behavior. We just report a hole if one exists in the data fork. So this
+is trying to encode that "COW fork prealloc over data fork hole"
+scenario correctly for zero range, and also identify when we need to
+consider whether the mapping range is dirty in cache (i.e. unwritten COW
+blocks).
 
-Therefore, if you limit the support in the first version to something like
-FANOTIFY_INLINE_FH_LEN, you can always store the file handle
-in fuse_inode and postpone support for bigger file handles to later.
+So yes in general I think we need to improve on iomap reporting somehow,
+but I don't necessarily see how that avoids the need (or desire) to fix
+up the iomap_begin logic. I also think it's confusing enough that it
+should probably be a separate discussion (I'd probably need to stare at
+the fuse-related proposition to grok it).
 
-Thanks,
-Amir.
+Ultimately the flush in zero range should go away completely except for
+the default/fallback case where the fs supports zero range, fails to
+check pagecache itself, and iomap has otherwise detected that the range
+over an unwritten mapping was dirty. There has been some discussion over
+potentially lifting the batch lookup into iomap as well, but there are
+some details that would need to be worked out to determine whether that
+can be done safely.
+
+Brian
+
+> --D
+> 
+> > The easiest way to deal with this corner case is to flush the
+> > pagecache to trigger COW remapping into the data fork, and then
+> > operate on the updated on-disk state. The problem is that ext4
+> > cannot accommodate a flush from this context due to being a
+> > transaction deadlock vector.
+> > 
+> > Outside of the hole quirk, ext4 can avoid the flush for zero range
+> > by using the recently introduced folio batch lookup mechanism for
+> > unwritten mappings. Therefore, take the next logical step and lift
+> > the hole handling logic into the XFS iomap_begin handler. iomap will
+> > still flush on unwritten mappings without a folio batch, and XFS
+> > will flush and retry mapping lookups in the case where it would
+> > otherwise report a hole with dirty pagecache during a zero range.
+> > 
+> > Note that this is intended to be a fairly straightforward lift and
+> > otherwise not change behavior. Now that the flush exists within XFS,
+> > follow on patches can further optimize it.
+> > 
+> > Signed-off-by: Brian Foster <bfoster@redhat.com>
+> > ---
+> >  fs/iomap/buffered-io.c |  2 +-
+> >  fs/xfs/xfs_iomap.c     | 25 ++++++++++++++++++++++---
+> >  2 files changed, 23 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> > index 05ff82c5432e..d6de689374c3 100644
+> > --- a/fs/iomap/buffered-io.c
+> > +++ b/fs/iomap/buffered-io.c
+> > @@ -1543,7 +1543,7 @@ iomap_zero_range(struct inode *inode, loff_t pos, loff_t len, bool *did_zero,
+> >  		     srcmap->type == IOMAP_UNWRITTEN)) {
+> >  			s64 status;
+> >  
+> > -			if (range_dirty) {
+> > +			if (range_dirty && srcmap->type == IOMAP_UNWRITTEN) {
+> >  				range_dirty = false;
+> >  				status = iomap_zero_iter_flush_and_stale(&iter);
+> >  			} else {
+> > diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
+> > index 01833aca37ac..b84c94558cc9 100644
+> > --- a/fs/xfs/xfs_iomap.c
+> > +++ b/fs/xfs/xfs_iomap.c
+> > @@ -1734,6 +1734,7 @@ xfs_buffered_write_iomap_begin(
+> >  	if (error)
+> >  		return error;
+> >  
+> > +restart:
+> >  	error = xfs_ilock_for_iomap(ip, flags, &lockmode);
+> >  	if (error)
+> >  		return error;
+> > @@ -1761,9 +1762,27 @@ xfs_buffered_write_iomap_begin(
+> >  	if (eof)
+> >  		imap.br_startoff = end_fsb; /* fake hole until the end */
+> >  
+> > -	/* We never need to allocate blocks for zeroing or unsharing a hole. */
+> > -	if ((flags & (IOMAP_UNSHARE | IOMAP_ZERO)) &&
+> > -	    imap.br_startoff > offset_fsb) {
+> > +	/* We never need to allocate blocks for unsharing a hole. */
+> > +	if ((flags & IOMAP_UNSHARE) && imap.br_startoff > offset_fsb) {
+> > +		xfs_hole_to_iomap(ip, iomap, offset_fsb, imap.br_startoff);
+> > +		goto out_unlock;
+> > +	}
+> > +
+> > +	/*
+> > +	 * We may need to zero over a hole in the data fork if it's fronted by
+> > +	 * COW blocks and dirty pagecache. To make sure zeroing occurs, force
+> > +	 * writeback to remap pending blocks and restart the lookup.
+> > +	 */
+> > +	if ((flags & IOMAP_ZERO) && imap.br_startoff > offset_fsb) {
+> > +		if (filemap_range_needs_writeback(inode->i_mapping, offset,
+> > +						  offset + count - 1)) {
+> > +			xfs_iunlock(ip, lockmode);
+> > +			error = filemap_write_and_wait_range(inode->i_mapping,
+> > +						offset, offset + count - 1);
+> > +			if (error)
+> > +				return error;
+> > +			goto restart;
+> > +		}
+> >  		xfs_hole_to_iomap(ip, iomap, offset_fsb, imap.br_startoff);
+> >  		goto out_unlock;
+> >  	}
+> > -- 
+> > 2.51.0
+> > 
+> > 
+> 
+
 
