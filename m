@@ -1,227 +1,298 @@
-Return-Path: <linux-fsdevel+bounces-67219-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67221-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A1A4C38290
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 05 Nov 2025 23:17:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7694BC382E7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 05 Nov 2025 23:23:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DD2744F3D61
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Nov 2025 22:16:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE53C3B7FEB
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Nov 2025 22:23:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BD672F0C66;
-	Wed,  5 Nov 2025 22:16:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14B272F12DF;
+	Wed,  5 Nov 2025 22:23:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="FCw+L7bS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CeFjPV+u"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F5F429898B;
-	Wed,  5 Nov 2025 22:16:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A1DB265630;
+	Wed,  5 Nov 2025 22:23:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762381001; cv=none; b=oOmnvmOcfCNxjZIQ7/sB/qd4vO+W1AWtvZpPlJvMBdszYj0Nt8uOJR5xaZZWYcXRVTb/4r6RX1jBNELMWf2czY3Q6GIkb/hF/DE6Vig6Vbx5jDL2OazFW5yeyepJdryewOjph9wwllqXqP+cfSBoCSFY0UbLGq3HFOZMlXP+oqY=
+	t=1762381431; cv=none; b=MxG+cH0UyI3upCJvtA1SdYVcbMH4+PTzd0nM//Ir7Cak68JITEXX7fLSL2wZO21jYFyK7v/vfoRE5JL8gzqpoYUqQM6jKljQVd/lP5WZqBqT1Q5x/LhPRjYS64uLVnT1id/OjT5Mwdvo7f1RBgjzUWD+/9Duc/a549hCijg3hCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762381001; c=relaxed/simple;
-	bh=2a7QNJShN1PwXOOabfbcQHaM9xIZsGpRzjxizIKSKZE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cHCpGxrejOXuYLoEJ5GlvEQcFRR0SuV5jtnOf59Xgtz5TVE480D1OFxtvljw+CsY7pnZJtNzIWc1MRhWefbFWUdBxREmOtU/VTsRU+1Qwce1pgUgEQ73BosnxB0zz7TyNJa+9HXAkyVGMJFu46JYgU7VWNxkGGdZhROEG/StQHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=FCw+L7bS; arc=none smtp.client-ip=212.227.17.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1762380990; x=1762985790; i=w_armin@gmx.de;
-	bh=2a7QNJShN1PwXOOabfbcQHaM9xIZsGpRzjxizIKSKZE=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=FCw+L7bSbAWDKSLD0NKg0iTr3gu78is1wQ+3avoK9nzptcvruBuLKCqAnZ2nTwe3
-	 wMjiO/+Xnwo6VIIUy7v1uMJVMZKl6l8JxWL4AxizwZPfyluT7eL1XxOsQKMeR41jn
-	 jZyyBW24RYEdET4G5h6XGJZwHfMxnlvD99rPSK4IyGXscPr/8u9f/SsrU8JncMw4A
-	 jCcqGmLw1XrfdQ9mCOvH++GzW9YPcy/e8NbpOeNiG05Iy/RCbG4AQYRYPtUtpaFBB
-	 PAI1a55UicgPY27cT7tdSh7ZB9Ys0SmPUIzogakyJ5L9somCzWCedxG50+ziUVDzg
-	 dc3UAwa0f4jj7DWknw==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.0.69] ([93.202.247.91]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1M8hZJ-1vKufE3YEz-00F1HR; Wed, 05
- Nov 2025 23:16:30 +0100
-Message-ID: <17515e4d-6e3b-4eb9-99eb-840933315d55@gmx.de>
-Date: Wed, 5 Nov 2025 23:16:27 +0100
+	s=arc-20240116; t=1762381431; c=relaxed/simple;
+	bh=kgIHUGI0VIgZ6aroM3uGbpsuTUtL+nigur3NygJsL2U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y6wJ7N6mO2PAbIezNY+P3OSArSlNqAJDBmPJiUi0SNHkwV0Rwyd8OOCpHXjYL9UYfVYse0ONuyQE7AaGe3FV1PIsMKxNfKIaUrGn2yr+9PK+bXcSrtoewQ5jd6BTHZXEiXcy7Mqgnb4EGc3igxV8npo6/4NgshjU5j/l68FEf2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CeFjPV+u; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D97DCC4CEFB;
+	Wed,  5 Nov 2025 22:23:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762381430;
+	bh=kgIHUGI0VIgZ6aroM3uGbpsuTUtL+nigur3NygJsL2U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CeFjPV+ujm4xq/Uu0Dgl3Jj1jPgnQrNMqqSYgRyUITtJllqyyh/7yQw5AINfToYPd
+	 WimIJQFW+zUE9p7TbFzkyEFV7rH1TIGtqc7XJXHqEDSomPC9qrqdlmZmMyBEDwoejL
+	 6ij1yiocZgEUOLe4l5MudSpRB8/vWxznlC1xI3HBW2JZ7amaBNtU1wFBEA77DLhlAf
+	 +ovfk+IKD2xGh+ukdeP7LrmFPaTXGpEUw1XZZO0kQWcMPue0Ufd1vuFrO3/CoSOJp9
+	 AVexR2wcjLcYO+4E/MCT58P4KgMBzF+9wXbBYwnvKKqUGwwzmohNUR54WBQODmcJO0
+	 hrWeF7xqhjIXQ==
+Date: Wed, 5 Nov 2025 14:23:50 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Brian Foster <bfoster@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH 2/6] iomap, xfs: lift zero range hole mapping flush into
+ xfs
+Message-ID: <20251105222350.GO196362@frogsfrogsfrogs>
+References: <20251016190303.53881-1-bfoster@redhat.com>
+ <20251016190303.53881-3-bfoster@redhat.com>
+ <20251105003114.GY196370@frogsfrogsfrogs>
+ <aQtuPFHtzm8-zeqS@bfoster>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/4] platform/x86: wmi: Prepare for future changes
-To: Mario Limonciello <superm1@kernel.org>, viro@zeniv.linux.org.uk,
- brauner@kernel.org, hansg@kernel.org, ilpo.jarvinen@linux.intel.com
-Cc: jack@suse.cz, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
-References: <20251104204540.13931-1-W_Armin@gmx.de>
- <e40a0d9c-7f38-44ab-a954-b09c9687ea88@kernel.org>
-Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <e40a0d9c-7f38-44ab-a954-b09c9687ea88@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:N22RwbSVWba+ZROhTSnv11lNkgsjQT+PCLO5LTw/g4rLg30ZZ4n
- aInmQU9d+NCawvFIy7iKXbiTg7LaOVLcKKgDyr/Z03YsC0MHhWY1o7Ll1tm815ZcIuSqrmG
- iqTm0daM0lJ6pzKat8iNEGbM2CHxyu8gFGeeBe2rJ+TibIT+WYOjIVLkZ2k6Q3bfK3fYB3s
- nJglHZemNUCaTjZZK+ssQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Zs7z59eG/kM=;YjNOiyXCcDWUprpOURrOUWTcDT9
- elGcENvTE2vVGWClr7J4ViNrNC/QDf2hQZjJmMfbwyCxdLJfjPtjGvZSvgp123Yjeog62Eao0
- 1DLyBXocEJ94dfsqCoTPW6YdMYRWU6H76m+B4Sg+CSTMm9pZ733rOxWkbrxGwjsZRL1zexAMy
- ZwBdLTSK2LfWs6xC1tmtt8S9A6Xv2f/FD43AA9spsNI/hC++/zUdXw2TDCCnYcTuLF1QHzbr3
- ZR3L/nEU8EfpRJTRqdND18cVN2oiTf8/+BSFYHwK9CBEu1lPMWz8HfKXIw2p5RYBmo6VdlIub
- M+XO7BWFFHcffcu5Y472FxcCDnNR6GM4jxws2Zp+4hH7eUs73zvWo4wyxQr/yYKRSUPqxVJKq
- 4IlQA419/cP0ODRMnimfa7GCi/DvS8+e2L5DqsxAuqlxL+St079djoTVe5C732T2VMIVHwtm3
- q8t9F3JUB9lX2NdXh+VD4tXBACoREzG/BGFDrZQma3CnjAvlX9VQ4LHgW1IjANZGQzC48BTRp
- 73eXooQRfuA/T+EwY0XSDZ+0RPhRG/gwN8wBp9/pl9legoB4om6pehPRAqG15oFNp3GZVq8+P
- qIBQ0f5j0vgfZLgezr2KP+5RbuA/OP+RuD2RfGsc/Dv/bpdwqpi6qI7FdxSAOtDySlZk5MXNT
- Jq7nqmsuVdKBdQhb86S2nPVit42Y7wi7ylIFJQzO+uc4rpuRBLtoh7gL8yO3920tAHY9B+mAD
- yIsvMWR3bRdRgfkD6585XF9gUB2qbLGrLzZc7aWKvyVfLMhuQLCedjOU4Zi9HOlT4m4aUMNin
- VpfY6QcUafeqni9NKFhoXzr21tETPw5wDYnHHWxk3jL4ZNC6oAtpjbiFHV3lb7EYmi7U6eg79
- KxdVxNHA4IJ8ddft/Vov8SGN+wN7aNigLnqroYUAo4aRv1qtZRLEqudJ5wJgnkCiNUm4/1lzC
- LD1hBqAr9jtVGZkW/7MD2S3o99+UXNK5VTLj4yWCpaXRJccv+bXtkisFGsZfZEByg4jSlfeDm
- rFPja+SPsbbKvRqo/C27YAL9C9fZ688CxMNTemckm1tWcIPA+HokuiRohFlNo7IY+h2a7cvBB
- VqvcjQ1SLNTBrwdT+EOpEF5HAcY5elUWKMW0YRA1W7Vf6P5pHdn8eZKuPiV8e3ERxibNlLUwf
- WmCjMTVqE3wkgsI5kk/xpr8dapJaCwZlITIE7Y+ytFGycamt4pJQExMdX3Vo9E4iMFyxtNRUK
- cPYq46/3vyzzr0mUmTx96gF4ZHIYulkfqqpwH38RCXfJYOucl1PkJLKvqg2tVTJeWJFSEkMFm
- +E/I41l0nAaJjZFEGW6dcsNV3FRGUSbyfHptoJ/Byg7S7RN7jRZc/eLkeUvS1vI5kRsQDD71G
- SQKJ7Te4ZulRn4XlXeC8HnfawGtdkb8cd+G5PZIYdlCsIsTbsmlg07uaOkZ5yltEHX5jqJCvv
- MO+gJCas8faKvGyBc+Gj1HL0SJEWVveebgff+Y9McolrwPUkERfYlTYngB1c7oB+LqskF6e+r
- MqN4WowWN0BvAuajll4oFjB2Qxacx99WjSF66cnFPjtUl4s9vY5HJtEqx1YwAcUU495tAsBKZ
- eusKXi6P6dsXbmoeMbm9+ovaZdSVHALDhOfpqlXNI8Ea4i3/L8BnWYO2Wd8ECscafCKILdB3F
- JvjGXad6sI4ECgdEeB8E00QHFQPrFlKa+IfDKdDwNex4WpivzWLUnrK+uStNS++SNCc8OjTbF
- X/4ApzIcIkjGlU78h1id4YFdisKeSVlEdj88zk6SoD4r8ZBbW0oEDrSt1dMpIKymJSYPvyF4Q
- GumT/0HjYFLxHA4sNS5PipUvsQsDCbnEMJ/yBGxQyL7egqMOQ0KBxBF56UL7w9nprfeMROsWG
- +9N2Inw7igcgYc5tyC6pzWsxVmRXWE0Qr2IygF7p5KCZ7YPV/xjZUY/JgZJXvaU4U265TlInS
- qrOh5mA1EzTvokEi0HmCNQWF9xMzH14jjq9GX2a5+NXi1qy5Fpdh88kQc/CXWC1Wvi+18La4h
- JdHEjaaOWGZrw4Y0ITulP1jL8js4abF12agBQgCXONh4hM2Ef+mDh4gbqjI/3XyImOo3dx8ke
- ZAhnuCsi58Hx67oZhQa9vtYsQK7yMZYMfjqgcaD3zsr3vgA3gvchYGwQQZb6FvJewtt7akJk0
- N66Dr2n5N/4/M7VeO2iU3qJ9vDmk7KJ3wQAKy9PrWYSQrEmgFgPI5KJ9/iznd7WfmhiiT+tjQ
- XlRxln8xPUQjuiOE19XvLTWBr55xEBBtS5s7Mp9Ki1LfP15ykJuNwWkGEM4VNjTiUPd4+XwBx
- TCf0XE/I+ol16fVrNjcxeyig6raI6sIVyvMsnqdZTBwLyCc72WIpRpfzVEXBXUSggfDVEC5Ju
- Jd04pIuLISuIUy8jA3CwCeNLejaqYLAvvboIoDwJ5yW8mUPG6Xxnn6OABrV7Pxwv1vc4dYGLD
- /9SMEakcdCJFWglZ/JUn2z/paM15/6OeVrEfRU4aQ96wgTcL7I1Gxaa+eHXP9hpl7mYP2fLQG
- 1E/CE3Lr5RGJ93HHc20l+d1VaukX5WXTwux9tfjmgmqaATpJzGD1BQp87VJdBkuwBrVBertBQ
- ig7D1TmBrICd122cXANY/McoBAjU61Ba+NR1cYiZjNYjhht7Y54jIwaZePXPgAKNBHDVdC97H
- 2yRClM5zj9Wekvt2C/2SzO5lbJhAunu0VfSoHuRn7sJpEyn6TtWpDsJHB/TSD/ixjzVc6KsYH
- tcVyQbnGIzFAPEFENxs0IS5sWborl6SmSEKp3R0Qr9m8Tp4ObXeMUtw/0WmiuE2Vnc/DExb1I
- s8cH8kb7QzqvfmSrHpX5qMzowH97nA36dq2R2iPwjxwrGRSnkwC6nycZ8dcLYNMUCTAku4PCi
- gnRROFPkWUp+InMIYWBWivEODybOFEBup+NHGHcSNLdYLP00f7EqSkRsOsfYikaew9dcX/QmF
- JRRrUXbDpLGPiT5JqkHVXeqyCeotrRY8ZoBLalvAeIy8rbFhlsi0eA7tr9kF4FCRiLQe/PI24
- zYjjeDcU/JfTCPNjHRqynYmexG5UxrPInNSmVvaccmlU3RKGBDPFQyQSy4ZyuwP/4cI6vUkNv
- q3LHGFPVjyS+k9fpQEsQgXqNhW3lsBj/iz+1W6kHTr4w7Z+G5P+7vJHrmfM62FGuctHSqoP7l
- uE/cCFKmC0eewQuhGOoHNN8wmeXGGDoeVtPpRcZo4wNJLAWcBOX4/vtYZ6cFPqxTRdnFSI1MG
- NECvrZOkK+LrFIjBodcN18iqumrRQw67idm8BQyID/O5N6bNE/B60gKmlg0mX+kxCJk9pJFOS
- O74P2yZxk1he4VQHA/cW+AI+pacBDABaOxsdLkJ8mYIx2Iz9nAVINYB0mGPzCiExPHRNYnZVi
- qoLKokYFSS0Xyibw2AtPcnOc2g0faYMQo39t4jovaKqGr9AchTPnaok77t9udj8zwB8Lyoyfq
- 80mRVFCCl0+e+UTo/Kx4SxGRNvRmT0OjfKdcs6o1V/Qoi5NbEl3k32HHmQOI9KminqYHKaJ55
- TO1iJqT4egiN/IQHAcirdiwvSKirDidMyz7DBwPzfWEK/5BU6bfQdkD3zBpn5ox4cd6LeQtjk
- pQbxnqRiSxXIi4pHZbFzaIrIx4CD1qXiB6KY7/RirQID2fL3KaZfemE03z7PEwKjxlfhsXSE0
- HS3gGTkZmCjchyMa4VJvMlDRUoC97iQlMBDSDw8qgkLUPK7zdz4eJUkzzHCN6odXNKWE8oC8V
- DEK9j/46AhjVqj28wA2KvrkrVM7Yjo+gzhMjdO5mvKZn0+VpYnSt0frWCxVKOSBaEkCPe4Gkc
- 7jA4b2cNZdtoMMQim/o1UV8Nrl022XZHsSXgd0VJv8Cf22vxq4jG9ggfhNrS8vKyjLnHLAy2/
- A5UJDLKH4HW2dG9jiThS4In3k9O0i5RyIEb0okupGz0ik8PCTDsg8+dQiIb+pE/AZFQW0vvse
- sA5TDDA/ygMy2vvuQj1HnCmvjSgwUUxNJk//awwmY63UaunL2RidQLyb+rmH0q1qtP58KVquR
- SVoeQS9EQVGU9RazK/6ML/obMps2IcAzQMo7tq2Gc0Sq+pUErBb/fPtxk073gSin7bYMb7aJC
- oSDZozLN+Dec3ToTk8TsJ0H5265JtqCjA/+3hd5IQu4I9W6OWov80QOtPV8V1GXQS699xkseW
- BpJ9uG7SBo1eJ3rrW064TNY7cw4omCGEdiIZIBXnzFB//lBzcZnfPyCl60+6LKjkxNsKmPfN2
- Z46rrq6nsnxA2Asvwt5o6FSr+MI3lXUu8Ug5dZCPjVs4nNmgfM0uwuY+uboyuWcmnrkJZ6gbL
- Wf5Xxj+wnvKwtKoIqQaE8p7PRIC3KMkWSpumLfoGu37DdHJ486oy1iBVnRgAUnjJAtgSdX9FF
- PHrp+xTrv3+7yEfjjbJdP6Ta6NPn+1C0u9jo5aP0oM1SO3+bcT+nqqjMSGn/v05ZodaFffCs0
- FhFYjxkOwawpY5GP6sjuKwjwZ6i805WlilVQZyHmaEG46TIgtTFnwJeoipCkO8JNTRTfHeOjw
- Hs0zwvbfFKlVio8c/Q8mffmBFmQQ/XvlllH4tTaLZ5aLXCJ2F5gFMReLN7oR9FMgVahBOq0YI
- MgtfzgkBAnSnigZJPauPJNm0ySzq/l0U+DSahSZZqUXccqZiZSEBW3bHih6zSn9fLu8Cw5SmJ
- jkvg4GbesIqN/x1TdAZmxAKrL+mu2tWLzxel6BRdRgUAQBZTFoJGOP3+Wbfa5yGC98kLOlAFe
- KxKQxoA/2v+Hq6r0O38NreDOdjIzgZ0dWIKENtD6XfiiNndJlCY7ea8SfzCafxTArp1CGKk5N
- wfux7aQ7hX7JD9+xfxpfc6XvsDByjAc9g9RDhwbFPJVhyUyEblcExienNzZpRsdACmxhKB0s4
- VsZOYrONqjhhPrQwV1kzBXkan5fUFaLN8wdLBOBi0cXfMq3fW0FzsoyncriBgGeSzXAR+OUtj
- Ht0bHK48d3iP/b0vRuljEMsbTuTjDWtAmGIeI7USdBJp+HzFp4KaMnmHu9wuYjH/11sRYM49z
- 308bmbsazNBO93O0comBhkNA39OptAOUDvtfSZuL00oZKyhIFQwoUPRZZB4H+J1TPcxng==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aQtuPFHtzm8-zeqS@bfoster>
 
-Am 04.11.25 um 21:52 schrieb Mario Limonciello:
+On Wed, Nov 05, 2025 at 10:33:16AM -0500, Brian Foster wrote:
+> On Tue, Nov 04, 2025 at 04:31:14PM -0800, Darrick J. Wong wrote:
+> > On Thu, Oct 16, 2025 at 03:02:59PM -0400, Brian Foster wrote:
+> > > iomap zero range has a wart in that it also flushes dirty pagecache
+> > > over hole mappings (rather than only unwritten mappings). This was
+> > > included to accommodate a quirk in XFS where COW fork preallocation
+> > > can exist over a hole in the data fork, and the associated range is
+> > > reported as a hole. This is because the range actually is a hole,
+> > > but XFS also has an optimization where if COW fork blocks exist for
+> > > a range being written to, those blocks are used regardless of
+> > > whether the data fork blocks are shared or not. For zeroing, COW
+> > > fork blocks over a data fork hole are only relevant if the range is
+> > > dirty in pagecache, otherwise the range is already considered
+> > > zeroed.
+> > 
+> > It occurs to me that the situation (unwritten cow mapping, hole in data
+> > fork) results in iomap_iter::iomap getting the unwritten mapping, and
+> > iomap_iter::srcmap getting the hole mapping.  iomap_iter_srcmap returns
+> > iomap_itere::iomap because srcmap.type == HOLE.
+> > 
+> > But then you have ext4 where there is no cow fork, so it will only ever
+> > set iomap_iter::iomap, leaving iomap_iter::srcmap set to the default.
+> > The default srcmap is a HOLE.
+> > 
+> > So iomap can't distinguish between xfs' speculative cow over a hole
+> > behavior vs. ext4 just being simple.  I wonder if we actually need to
+> > introduce a new iomap type for "pure overwrite"?
+> > 
+> 
+> I definitely think we need a better solution here in iomap. The current
+> iomap/srcmap management/handling is quite confusing. What that solution
+> is, I'm not sure.
+> 
+> > The reason I say that that in designing the fuse-iomap uapi, it was a
+> > lot easier to understand the programming model if there was always
+> > explicit read and write mappings being sent back and forth; and a new
+> > type FUSE_IOMAP_TYPE_PURE_OVERWRITE that could be stored in the write
+> > mapping to mean "just look at the read mapping".  If such a beast were
+> > ported to the core iomap code then maybe that would help here?
+> > 
+> 
+> I'm not following what this means. Separate read/write mappings for each
+> individual iomap operation (i.e. "read from here, write to there"), or
+> separate iomap structures to be used for read ops vs. write ops, or
+> something else..?
 
-> On 11/4/25 2:45 PM, Armin Wolf wrote:
->> After over a year of reverse engineering, i am finally ready to
->> introduce support for WMI-ACPI marshalling inside the WMI driver core.
-> marshaling> Since the resulting patch series is quite large, i am=20
-> planning to
->> submit the necessary patches as three separate patch series.
->>
->> This is supposed to be the first of the three patch series. Its main
->> purpose is to prepare the WMI driver core for the upcoming changes.
->> The first patch fixes an issue inside the nls utf16 to utf8 conversion
->> code, while the next two patches fix some minor issues inside the WMI
->> driver core itself. The last patch finally moves the code of the WMI
->> driver core into a separate repository to allow for future additions
->> without cluttering the main directory.
->
-> One question I have here on the patch to move things.
->
-> Since Windows on ARM (WoA) laptops are a thing - is this still=20
-> actually x86 specific?=C2=A0 I am wondering if this should be moving to =
-a=20
-> different subsystem altogether like ACPI; especially now with this=20
-> impending other large patch series you have on your way.
+"read from here, write to there".
 
-I know of a few WoA laptops that contain ACPI-WMI devices, meaning this dr=
-iver is indeed not x86-specific.
-However i need to make some changes to the WMI driver core (and actually t=
-ests it on a AArch64 VM) first
-before moving it out of drivers/platform/x86.
+First, we move IOMAP_HOLE up one:
 
-Once i am actually ready for this i would prefer to move the whole stuff t=
-o drivers/platform, as drivers/acpi
-IMHO is better suited for core ACPI drivers.
+#define IOMAP_NULL	0	/* no mapping here at all */
+#define IOMAP_HOLE	1	/* no blocks allocated, need allocation */
+#define IOMAP_DELALLOC	2	/* delayed allocation blocks */
+...
 
-Thanks,
-Armin Wolf
+and do some renaming:
 
->>
->> Armin Wolf (4):
->> =C2=A0=C2=A0 fs/nls: Fix utf16 to utf8 conversion
->> =C2=A0=C2=A0 platform/x86: wmi: Use correct type when populating ACPI o=
-bjects
->> =C2=A0=C2=A0 platform/x86: wmi: Remove extern keyword from prototypes
->> =C2=A0=C2=A0 platform/x86: wmi: Move WMI core code into a separate dire=
-ctory
->>
->> =C2=A0 Documentation/driver-api/wmi.rst=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 2 +-
->> =C2=A0 MAINTAINERS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 2 =
-+-
->> =C2=A0 drivers/platform/x86/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 30 +------------------
->> =C2=A0 drivers/platform/x86/Makefile=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 2 +-
->> =C2=A0 drivers/platform/x86/wmi/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 34 ++++++++++++++++++++++
->> =C2=A0 drivers/platform/x86/wmi/Makefile=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 8 +++++
->> =C2=A0 drivers/platform/x86/{wmi.c =3D> wmi/core.c} | 34 +++++++++++++-=
-=2D-------
->> =C2=A0 fs/nls/nls_base.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 16 +++++++---
->> =C2=A0 include/linux/wmi.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 | 15 ++++------
->> =C2=A0 9 files changed, 84 insertions(+), 59 deletions(-)
->> =C2=A0 create mode 100644 drivers/platform/x86/wmi/Kconfig
->> =C2=A0 create mode 100644 drivers/platform/x86/wmi/Makefile
->> =C2=A0 rename drivers/platform/x86/{wmi.c =3D> wmi/core.c} (98%)
->>
->
-> Reviewed-by: Mario Limonciello (AMD) <superm1@kernel.org>
+struct iomap_iter {
+	struct inode *inode;
+	loff_t pos;
+	u64 len;
+	loff_t iter_start_pos;
+	int status;
+	unsigned flags;
+	struct iomap write_map;
+	struct iomap read_map;
+	void *private;
+};
+
+Then we change the interface so that ->iomap_begin always sets read_map
+to a mapping from which file data can be read, and write_map is always
+set to a mapping into which file data can be written.  If a filesystem
+doesn't support out of place writes, then it can ignore write_map and
+write_map.type will be IOMAP_NULL.
+
+(Obviously the fs always has to supply a read mapping)
+
+The read operations (e.g. readahead, fiemap) only ever pay attention to
+what the filesystem supplies in iomap_iter::read_map.
+
+An unaligned pagecache write to an uncached region uses the read mapping
+to pull data into the pagecache.  For writeback, we'd use the write
+mapping if it's non-null, or else the read mapping.
+
+This might not move the needle much wrt to fixing your problem, but at
+least it eliminates the weirdness around "@iomap is for reads except
+when you're doing a write but you have to do a read *and* @srcmap isn't
+a hole".
+
+> > A hole with an out-of-place mapping needs a flush (or maybe just go find
+> > the pagecache and zero it), whereas a hole with nothing else backing it
+> > clearly doesn't need any action at all.
+> > 
+> > Does that help?
+> > 
+> 
+> This kind of sounds like what we're already doing in iomap, so I suspect
+> I'm missing something on the fuse side...
+> 
+> WRT this patchset, I'm trying to address the underlying problems that
+> require the flush-a-dirty-hole hack that provides zeroing correctness
+> for XFS. This needs to be lifted out of iomap because it also causes
+> problems for ext4, but can be bypassed completely for XFS as well by the
+> end of the series. The first part is just a straight lift into xfs, but
+> the next patches replace the flush with use of the folio batch, and
+> split off the band-aid case down into insert range where this flush was
+> also indirectly suppressing issues.
+> 
+> For the former, if you look at the last few patches the main reason we
+> rely on the flush-a-dirty-hole hack is that we don't actually report the
+> mappings correctly in XFS for zero range with respect to allowable
+> behavior. We just report a hole if one exists in the data fork. So this
+> is trying to encode that "COW fork prealloc over data fork hole"
+> scenario correctly for zero range, and also identify when we need to
+> consider whether the mapping range is dirty in cache (i.e. unwritten COW
+> blocks).
+
+Ahh, ok.  I think I get what you're saying now -- instead of doddering
+around in iomap to make it know the difference between "prealloc in cow,
+hole in data fork" vs. "hole in data fork", you'd rather try to
+accumulate folios in the folio_batch, hand that to iomap, and then iomap
+will just zero folios in the batch.  No need for the preflush or deep
+surgery to core code.
+
+> So yes in general I think we need to improve on iomap reporting somehow,
+> but I don't necessarily see how that avoids the need (or desire) to fix
+> up the iomap_begin logic. I also think it's confusing enough that it
+> should probably be a separate discussion (I'd probably need to stare at
+> the fuse-related proposition to grok it).
+> 
+> Ultimately the flush in zero range should go away completely except for
+> the default/fallback case where the fs supports zero range, fails to
+> check pagecache itself, and iomap has otherwise detected that the range
+> over an unwritten mapping was dirty. There has been some discussion over
+> potentially lifting the batch lookup into iomap as well, but there are
+> some details that would need to be worked out to determine whether that
+> can be done safely.
+
+<nod> ok I'll keep reading this series.
+
+--D
+
+> Brian
+> 
+> > --D
+> > 
+> > > The easiest way to deal with this corner case is to flush the
+> > > pagecache to trigger COW remapping into the data fork, and then
+> > > operate on the updated on-disk state. The problem is that ext4
+> > > cannot accommodate a flush from this context due to being a
+> > > transaction deadlock vector.
+> > > 
+> > > Outside of the hole quirk, ext4 can avoid the flush for zero range
+> > > by using the recently introduced folio batch lookup mechanism for
+> > > unwritten mappings. Therefore, take the next logical step and lift
+> > > the hole handling logic into the XFS iomap_begin handler. iomap will
+> > > still flush on unwritten mappings without a folio batch, and XFS
+> > > will flush and retry mapping lookups in the case where it would
+> > > otherwise report a hole with dirty pagecache during a zero range.
+> > > 
+> > > Note that this is intended to be a fairly straightforward lift and
+> > > otherwise not change behavior. Now that the flush exists within XFS,
+> > > follow on patches can further optimize it.
+> > > 
+> > > Signed-off-by: Brian Foster <bfoster@redhat.com>
+> > > ---
+> > >  fs/iomap/buffered-io.c |  2 +-
+> > >  fs/xfs/xfs_iomap.c     | 25 ++++++++++++++++++++++---
+> > >  2 files changed, 23 insertions(+), 4 deletions(-)
+> > > 
+> > > diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> > > index 05ff82c5432e..d6de689374c3 100644
+> > > --- a/fs/iomap/buffered-io.c
+> > > +++ b/fs/iomap/buffered-io.c
+> > > @@ -1543,7 +1543,7 @@ iomap_zero_range(struct inode *inode, loff_t pos, loff_t len, bool *did_zero,
+> > >  		     srcmap->type == IOMAP_UNWRITTEN)) {
+> > >  			s64 status;
+> > >  
+> > > -			if (range_dirty) {
+> > > +			if (range_dirty && srcmap->type == IOMAP_UNWRITTEN) {
+> > >  				range_dirty = false;
+> > >  				status = iomap_zero_iter_flush_and_stale(&iter);
+> > >  			} else {
+> > > diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
+> > > index 01833aca37ac..b84c94558cc9 100644
+> > > --- a/fs/xfs/xfs_iomap.c
+> > > +++ b/fs/xfs/xfs_iomap.c
+> > > @@ -1734,6 +1734,7 @@ xfs_buffered_write_iomap_begin(
+> > >  	if (error)
+> > >  		return error;
+> > >  
+> > > +restart:
+> > >  	error = xfs_ilock_for_iomap(ip, flags, &lockmode);
+> > >  	if (error)
+> > >  		return error;
+> > > @@ -1761,9 +1762,27 @@ xfs_buffered_write_iomap_begin(
+> > >  	if (eof)
+> > >  		imap.br_startoff = end_fsb; /* fake hole until the end */
+> > >  
+> > > -	/* We never need to allocate blocks for zeroing or unsharing a hole. */
+> > > -	if ((flags & (IOMAP_UNSHARE | IOMAP_ZERO)) &&
+> > > -	    imap.br_startoff > offset_fsb) {
+> > > +	/* We never need to allocate blocks for unsharing a hole. */
+> > > +	if ((flags & IOMAP_UNSHARE) && imap.br_startoff > offset_fsb) {
+> > > +		xfs_hole_to_iomap(ip, iomap, offset_fsb, imap.br_startoff);
+> > > +		goto out_unlock;
+> > > +	}
+> > > +
+> > > +	/*
+> > > +	 * We may need to zero over a hole in the data fork if it's fronted by
+> > > +	 * COW blocks and dirty pagecache. To make sure zeroing occurs, force
+> > > +	 * writeback to remap pending blocks and restart the lookup.
+> > > +	 */
+> > > +	if ((flags & IOMAP_ZERO) && imap.br_startoff > offset_fsb) {
+> > > +		if (filemap_range_needs_writeback(inode->i_mapping, offset,
+> > > +						  offset + count - 1)) {
+> > > +			xfs_iunlock(ip, lockmode);
+> > > +			error = filemap_write_and_wait_range(inode->i_mapping,
+> > > +						offset, offset + count - 1);
+> > > +			if (error)
+> > > +				return error;
+> > > +			goto restart;
+> > > +		}
+> > >  		xfs_hole_to_iomap(ip, iomap, offset_fsb, imap.br_startoff);
+> > >  		goto out_unlock;
+> > >  	}
+> > > -- 
+> > > 2.51.0
+> > > 
+> > > 
+> > 
+> 
+> 
 
