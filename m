@@ -1,183 +1,121 @@
-Return-Path: <linux-fsdevel+bounces-67059-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67060-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E18D1C33B0B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 05 Nov 2025 02:43:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BB4FC33B56
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 05 Nov 2025 02:51:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D01C14E153C
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Nov 2025 01:43:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21785464E5F
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Nov 2025 01:50:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1810A2253FF;
-	Wed,  5 Nov 2025 01:43:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 650EE21CC68;
+	Wed,  5 Nov 2025 01:50:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JBJLSunh"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="An3z4PlS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7444A27470
-	for <linux-fsdevel@vger.kernel.org>; Wed,  5 Nov 2025 01:43:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EDA719F43A
+	for <linux-fsdevel@vger.kernel.org>; Wed,  5 Nov 2025 01:50:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762306980; cv=none; b=g2mMMZwYY3ixPx2X+m/HB22+t3u+JQrWFj/7cnsTRNVPGUwm69K0eCpT8ttVTGpPU6C2rRZ1U4CKbH0BVMDDGXLZm/Q2ZEYRBcElv8RvOcEAlP1HRHkd12sgkkZMAF6zAbUZvhs7MU6n7N4wgRUCs+fYKTtidYor49PNLWs9az8=
+	t=1762307443; cv=none; b=gOIiEp29fanpDn9j50xv8eLxVu/wyjre0Ky1Ls9SecK3dTwcaaM528EF2AV30L3pXneUqge83aS4KBFa//goF+R2LYSHJqzRxd7Fh2TIpFnzf3mFduhYENWjy90acV8kKTX0Ry1av0uacgin9BcWvusbC1kYZJpTLKUEBT5C4cg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762306980; c=relaxed/simple;
-	bh=Q+W1v7RxgclqGCBVkHavlezwg+oZ+Agtl3ex/hfDG9k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h7pCK3aV6aS7ztDfzIOBkt5lVZGk57y4uck1HtWFOGTib3xfBwVjOgj9QtPMBkEoHKBuoM+bIh01E4HpVppV1dXlqRoiPAn/+RASJq1QaLtFyDhETXxTjiNuXnI/p0u4synw4eojGMhDPGljxv0h4V38VSJQrI8HpudPERTTm34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JBJLSunh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CC2CC116D0;
-	Wed,  5 Nov 2025 01:43:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762306980;
-	bh=Q+W1v7RxgclqGCBVkHavlezwg+oZ+Agtl3ex/hfDG9k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JBJLSunhooF2ut7aqV2tbkvxo5Ne9/SfwG9nUDphu1UQAYzgfe8DPbcoinnyFsDtX
-	 OCtDe5SKtuyyMvd2njGE3ufjd/7UVe6qzTaoqUUHraJEebvxI9ZWkA/HBTR7IOO7/A
-	 xBbU72cc/NQKmzKAdtz1+nMcKWxeF0WBg6pSZ4o9PDSIIplcUlE1d53MH0qOkHYKJq
-	 xIiKpPAaJSHixsXhVoR1AY/U++G3inxuWQXu9vc8tXYewRTIeT8BsK5Af3qHCpqVRG
-	 oTMtinZgRnCRWwfgaNKY8cM48XteMJpaL0ONO9Dd5/byaVCnlBZuWTxNad4iC90lEH
-	 /MavjEhsVCvug==
-Date: Tue, 4 Nov 2025 17:42:58 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: brauner@kernel.org, hch@infradead.org, bfoster@redhat.com,
-	linux-fsdevel@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [PATCH v3 8/8] iomap: use find_next_bit() for uptodate bitmap
- scanning
-Message-ID: <20251105014258.GI196362@frogsfrogsfrogs>
-References: <20251104205119.1600045-1-joannelkoong@gmail.com>
- <20251104205119.1600045-9-joannelkoong@gmail.com>
+	s=arc-20240116; t=1762307443; c=relaxed/simple;
+	bh=Xoo1eWw+oKxOthozh6rdMIwwomqTZAcI7+etlq4bToM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MBqRvXRq9ZhWje24+cP0pcNGeGwjHf5XY7zedPw95P1YZFe1uP4kn66rqueOrvwLlpTMZ0th/KSiKLyiY5AY19VR4FrJ4FnqR24oin1gBvDaWikQDuminXIr7Ds5+Drp9EpN76h4guCaC1Phrh6e6GgzygPQGQv0x/7Uhn39QKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=An3z4PlS; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-b3b27b50090so955960966b.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Nov 2025 17:50:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1762307439; x=1762912239; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=v9O1EJ71YCT0OI8Q+97FbtiUgmbiyimj36/6bjgq688=;
+        b=An3z4PlSXNnEPeiKHzsu04rGrzKB6w+WF/aUuW0GdVvoofBLuJvsyH19Z9/MLg9P+3
+         gtJ6uYYVjeonxoO27NvVdNxx3uyGA6bgFguVHI15bga+LCWCcx5QQutppMTIFk6wfpJh
+         wSw2MMtHKh9mZxZxoBWObFHdynOlBkizmaT0M=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762307439; x=1762912239;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=v9O1EJ71YCT0OI8Q+97FbtiUgmbiyimj36/6bjgq688=;
+        b=aA5PZ3kwPT0TkvglQu5DbX4SoqDgg62VX2IBbBOWq1QzywBOEoi6HiQBDrbKytDCZi
+         pV/vcCHkJWIndwQDhL4ulgsc2ajiRyDfK9QGLBXtxUSUDD1P8E6HDo4SWPasKjnV/b6X
+         f2RmwP4BGjOKLwkZX6KatiOAvyGCp80+SKvsje3c5elfjsk3OIF7OuUdOfcA1V3KK37/
+         G6gsppadfGky8ZhkgIc+tHrC8iU1OGPUfaFhXWYJlKboyNGMp0CTZ/+KxivHih7uf5Fo
+         NnHTX4/uSEjRJcT0ttYsKqcsv6486vc+VyrjRTbneDauGmQbDASz9pYPlkj0MZMGqqZ7
+         iF+w==
+X-Forwarded-Encrypted: i=1; AJvYcCXxz9haLbQB/qB9kSKUWB9ItxsrljPPPZYdBLIGWhFLBZKdesA+5LGvHEFNcSyEgcicnvTCzADV5b2GAa99@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVMgQh3wm1HLajxyVjT9BOIBjjQiLjVlOepEIm9skOKEr4w32j
+	OssHqrbH0Ck6RJVTSSf9lbkkgGlotCixCHO0RdpywOjWcnT3lpU42rahl7sqCOa8CXJClIufEvV
+	Ue5mZ6XO/5w==
+X-Gm-Gg: ASbGncsoF8v3SP9KiGYGy4Odotk42smblyiDyK8JaoWAeRf4EEZ3aSDZgTkIR6ayyST
+	v6haxZk7ksUdsNbMUu2WybPuCk9NuvFzvCWzTEQvah8eB5xQPkoKY4uMu+Low5vt+b1RsO3ma/s
+	5IZBf07qt7emZtSdCMLFZeWgz/QE5APKJAZCBftOWB5Nhe5BnhmAw89d2G5GTQJ02cVpl/bPU8X
+	hC/Wu9ez9mVoqNZZ/o6v+9qpQRTsIbC9LZVao1NDYmo5GkbLQiXzKzIraRcZGm6Itf8wQVqCbF/
+	PhW+/UJHAnfdA/iKxVZ/UtIMdEOxhM1cQdcP8WI5X8UQFf/AkXP2syYLfwWVlbS0tT+yn2L7OXp
+	nEp0etn/udhw5Vg3s/MI3aQlHXhbefqZBpyhtub76d6lwSZnQCVn2IpOBrM2nwDo1dHbexVXzEO
+	xVXEZb2DtOWtWQPv0qj4Lienxnnbd9dVJySYpevCnUrk7Ek37Kkw==
+X-Google-Smtp-Source: AGHT+IF86Fve8pOtGyAkYYVjaYK1lZJlw4L8H1k9qs3vWFGTd8JCiaC+88PcRHfHUbYxVO/gT7lsNg==
+X-Received: by 2002:a17:906:7312:b0:b70:b3e8:a363 with SMTP id a640c23a62f3a-b7265568c41mr120729966b.48.1762307439494;
+        Tue, 04 Nov 2025 17:50:39 -0800 (PST)
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com. [209.85.208.41])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b723d6f9b7csm366559566b.21.2025.11.04.17.50.38
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 04 Nov 2025 17:50:38 -0800 (PST)
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-640860f97b5so5581903a12.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Nov 2025 17:50:38 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWOwxjT0QUKUPDriGIgcbY2QJYQjAvFOjfY4bboIuYh9aqYHyp8QbN50y2IifVaOQqS/UcxMLclO6O37tcW@vger.kernel.org
+X-Received: by 2002:a17:907:868f:b0:b70:f2c4:bdf2 with SMTP id
+ a640c23a62f3a-b72652ad183mr116255766b.23.1762307438033; Tue, 04 Nov 2025
+ 17:50:38 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251104205119.1600045-9-joannelkoong@gmail.com>
+References: <CAHk-=wjRA8G9eOPWa_Njz4NAk3gZNvdt0WAHZfn3iXfcVsmpcA@mail.gmail.com>
+ <20251031174220.43458-1-mjguzik@gmail.com> <20251031174220.43458-2-mjguzik@gmail.com>
+ <CAHk-=wimh_3jM9Xe8Zx0rpuf8CPDu6DkRCGb44azk0Sz5yqSnw@mail.gmail.com>
+ <20251104102544.GBaQnUqFF9nxxsGCP7@fat_crate.local> <20251104161359.GDaQomRwYqr0hbYitC@fat_crate.local>
+In-Reply-To: <20251104161359.GDaQomRwYqr0hbYitC@fat_crate.local>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 5 Nov 2025 10:50:21 +0900
+X-Gmail-Original-Message-ID: <CAHk-=whu7aVmk8zwwhh9+2Okx6aGKFUrY7CKEWK_RLieGizuKA@mail.gmail.com>
+X-Gm-Features: AWmQ_bmNvTH03i95LkvpehEJva-w_271URCZDbGW1hGWGw5T4Ng3DD_mmRBfixI
+Message-ID: <CAHk-=whu7aVmk8zwwhh9+2Okx6aGKFUrY7CKEWK_RLieGizuKA@mail.gmail.com>
+Subject: Re: [PATCH 1/3] x86: fix access_ok() and valid_user_address() using
+ wrong USER_PTR_MAX in modules
+To: Borislav Petkov <bp@alien8.de>
+Cc: Mateusz Guzik <mjguzik@gmail.com>, "the arch/x86 maintainers" <x86@kernel.org>, brauner@kernel.org, 
+	viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, tglx@linutronix.de, pfalcato@suse.de
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Nov 04, 2025 at 12:51:19PM -0800, Joanne Koong wrote:
-> Use find_next_bit()/find_next_zero_bit() for iomap uptodate bitmap
-> scanning. This uses __ffs() internally and is more efficient for
-> finding the next uptodate or non-uptodate bit than iterating through the
-> the bitmap range testing every bit.
-> 
-> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-> Suggested-by: Christoph Hellwig <hch@infradead.org>
+On Wed, 5 Nov 2025 at 01:14, Borislav Petkov <bp@alien8.de> wrote:
+>
+> Did a deeper look, did randbuilds, boots fine on a couple of machines, so all
+> good AFAIIC.
+>
+> I sincerely hope that helps.
 
-Here too!
-Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
+I pushed it out with a proper commit message etc. It might not be an
+acute bug right now, but I do want it fixed in 6.18, so that when
+Thomas' new scoped accessors get merged - and maybe cause the whole
+inlining pattern to be much more commonly used - this is all behind
+us.
 
---D
+And the patch certainly _looks_ ObviouslyCorrect(tm). Famous last words.
 
-> ---
->  fs/iomap/buffered-io.c | 52 ++++++++++++++++++++++++++----------------
->  1 file changed, 32 insertions(+), 20 deletions(-)
-> 
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index 3c9a4b773186..03dd524b69d2 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -38,10 +38,28 @@ static inline bool ifs_is_fully_uptodate(struct folio *folio,
->  	return bitmap_full(ifs->state, i_blocks_per_folio(inode, folio));
->  }
->  
-> -static inline bool ifs_block_is_uptodate(struct iomap_folio_state *ifs,
-> -		unsigned int block)
-> +/*
-> + * Find the next uptodate block in the folio. end_blk is inclusive.
-> + * If no uptodate block is found, this will return end_blk + 1.
-> + */
-> +static unsigned ifs_next_uptodate_block(struct folio *folio,
-> +		unsigned start_blk, unsigned end_blk)
->  {
-> -	return test_bit(block, ifs->state);
-> +	struct iomap_folio_state *ifs = folio->private;
-> +
-> +	return find_next_bit(ifs->state, end_blk + 1, start_blk);
-> +}
-> +
-> +/*
-> + * Find the next non-uptodate block in the folio. end_blk is inclusive.
-> + * If no non-uptodate block is found, this will return end_blk + 1.
-> + */
-> +static unsigned ifs_next_nonuptodate_block(struct folio *folio,
-> +		unsigned start_blk, unsigned end_blk)
-> +{
-> +	struct iomap_folio_state *ifs = folio->private;
-> +
-> +	return find_next_zero_bit(ifs->state, end_blk + 1, start_blk);
->  }
->  
->  static bool ifs_set_range_uptodate(struct folio *folio,
-> @@ -278,14 +296,11 @@ static void iomap_adjust_read_range(struct inode *inode, struct folio *folio,
->  	 * to avoid reading in already uptodate ranges.
->  	 */
->  	if (ifs) {
-> -		unsigned int i, blocks_skipped;
-> +		unsigned int next, blocks_skipped;
->  
-> -		/* move forward for each leading block marked uptodate */
-> -		for (i = first; i <= last; i++)
-> -			if (!ifs_block_is_uptodate(ifs, i))
-> -				break;
-> +		next = ifs_next_nonuptodate_block(folio, first, last);
-> +		blocks_skipped = next - first;
->  
-> -		blocks_skipped = i - first;
->  		if (blocks_skipped) {
->  			unsigned long block_offset = *pos & (block_size - 1);
->  			unsigned bytes_skipped =
-> @@ -295,15 +310,15 @@ static void iomap_adjust_read_range(struct inode *inode, struct folio *folio,
->  			poff += bytes_skipped;
->  			plen -= bytes_skipped;
->  		}
-> -		first = i;
-> +		first = next;
->  
->  		/* truncate len if we find any trailing uptodate block(s) */
-> -		while (++i <= last) {
-> -			if (ifs_block_is_uptodate(ifs, i)) {
-> +		if (++next <= last) {
-> +			next = ifs_next_uptodate_block(folio, next, last);
-> +			if (next <= last) {
->  				plen -= iomap_bytes_to_truncate(*pos + plen,
-> -						block_bits, last - i + 1);
-> -				last = i - 1;
-> -				break;
-> +						block_bits, last - next + 1);
-> +				last = next - 1;
->  			}
->  		}
->  	}
-> @@ -634,7 +649,7 @@ bool iomap_is_partially_uptodate(struct folio *folio, size_t from, size_t count)
->  {
->  	struct iomap_folio_state *ifs = folio->private;
->  	struct inode *inode = folio->mapping->host;
-> -	unsigned first, last, i;
-> +	unsigned first, last;
->  
->  	if (!ifs)
->  		return false;
-> @@ -646,10 +661,7 @@ bool iomap_is_partially_uptodate(struct folio *folio, size_t from, size_t count)
->  	first = from >> inode->i_blkbits;
->  	last = (from + count - 1) >> inode->i_blkbits;
->  
-> -	for (i = first; i <= last; i++)
-> -		if (!ifs_block_is_uptodate(ifs, i))
-> -			return false;
-> -	return true;
-> +	return ifs_next_nonuptodate_block(folio, first, last) > last;
->  }
->  EXPORT_SYMBOL_GPL(iomap_is_partially_uptodate);
->  
-> -- 
-> 2.47.3
-> 
-> 
+                Linus
 
