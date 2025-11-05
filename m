@@ -1,164 +1,123 @@
-Return-Path: <linux-fsdevel+bounces-67020-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67021-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFB7FC337C4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 05 Nov 2025 01:38:40 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8064CC33818
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 05 Nov 2025 01:48:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8E9D934BEFC
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Nov 2025 00:38:40 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 43A304F3ABE
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Nov 2025 00:46:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF48F224AF3;
-	Wed,  5 Nov 2025 00:38:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA85C2367B3;
+	Wed,  5 Nov 2025 00:46:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ptR0KmoB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LX7dZPpZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48C462940D;
-	Wed,  5 Nov 2025 00:38:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FEFD1FDE14;
+	Wed,  5 Nov 2025 00:46:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762303113; cv=none; b=t+GXxjKTELhEfdmyQvCSEmVwD3AYhAOVWEDLpkMkTGeRweLrGYAFYyFXbDzLHzpUGzKU9ethbXCXFI7Qcdle4lwkyS9rfOAcH85oBdLfZ3rtigttmRyT5XJuXBmMs10p1eWqWb9j/o4e7at57N4NCnAVC7PXhltx7Z36BZJp+nY=
+	t=1762303610; cv=none; b=b8BHoEClb3bhFOFO+g7YaBXOAauHNP4G8MobzepwkK//HrjUUbt7J3wVmMHNK7WvpTytZslOwR6qTMOwA4TWqEetqWOw0+ioVlaWDyjGCjnsexs1t1P1ctWcCkeOr2av1txQ7/TN33oc6G/S3Y6xYpKG7JCT6pSr4UslOqgulCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762303113; c=relaxed/simple;
-	bh=ozzedGexVm3c7LAJROJn2IsFXaRUObyKrN+iT0hZtCY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cKw4tcby5VQKjP8Yd7QMloQ0ek0pVnhtT80m/VSsUoWik4716bFgo4Mo5K8LZFWGl92kLGH03607MHC8ZgK/9f13cccBvMFPNJDiwLs3M0QDHmaunha6QMsEcQIDa7qRLPZ20E773j3WoivWKyNITu8B0tCbKTUA13CqPXZjQMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ptR0KmoB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C518C4CEF7;
-	Wed,  5 Nov 2025 00:38:31 +0000 (UTC)
+	s=arc-20240116; t=1762303610; c=relaxed/simple;
+	bh=GhLR+QrwDJ2VvgLr6D9KiqM1dMq83TwZdbfvzC0QgP8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=K9ACu8a9gCTKJNiASauyrgtr/bCKbvrOTGINkRIZkUpthNbIPpj5pT+uBsS7hPxvAbOBss1kCAnG16XSht9b2/Y58Nq9w5/Q8M8SgDAWJPEYP8yOYHJH1l+HQRWHk0BQk9w7nuGreJuzua85HHvBD7BIvO6javH9GovzzLrJt4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LX7dZPpZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0E9DC116B1;
+	Wed,  5 Nov 2025 00:46:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762303111;
-	bh=ozzedGexVm3c7LAJROJn2IsFXaRUObyKrN+iT0hZtCY=;
-	h=From:To:Cc:Subject:Date:From;
-	b=ptR0KmoBFtTbL19XkNIzXueSZWZY/twdtmdgLFHw75tnPtDRLgthL4Nu42I1+NGgP
-	 R9YGZwqNNroue9gVRuJOYNFQl8c5CCpwsAb/DUR/WcDNILYwgUPd8NYjGCpxlA4LP2
-	 1NoLoMvXzsIiAz/i4dwPKYEtJgwki5bEAnh5aniham5fCcjSgmCJtmVRQBVaQ7GIgk
-	 Lh70Vw9Elxqxq8hv8mLW+41TPihRhOeqYz4Fmh1g1DHOdWO0n3htihIMSlbC5J+DKF
-	 wBNG2RzCxDahK8tEKZinOcULkU3G+14Y2GCKiuCRrqWtYNCm9USN72qyt2RU76j0Qv
-	 uA1GHnu4H3/xQ==
-From: Eric Biggers <ebiggers@kernel.org>
-To: linux-fscrypt@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-block@vger.kernel.org,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Yongpeng Yang <yangyongpeng@xiaomi.com>,
-	stable@vger.kernel.org,
-	Eric Biggers <ebiggers@kernel.org>
-Subject: [PATCH v3] fscrypt: fix left shift underflow when inode->i_blkbits > PAGE_SHIFT
-Date: Tue,  4 Nov 2025 16:36:42 -0800
-Message-ID: <20251105003642.42796-1-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.51.2
+	s=k20201202; t=1762303609;
+	bh=GhLR+QrwDJ2VvgLr6D9KiqM1dMq83TwZdbfvzC0QgP8=;
+	h=Date:From:To:Cc:Subject:From;
+	b=LX7dZPpZIQh3CsTxJf+6wjouBudCCDIOeff0Nu0FBq9fbNZBmXoOIZeTBkxMwI2tF
+	 ia1Ckc6cXOiAUB44+kDnWqHjmD/8WUynhmLe5RSR/Wo7Pv4HYDYoqxwy/7Tsd94h/j
+	 9uZihTyJgie571XgWqSM0iLp3jhM7Tb/cgu0l04jz8LVnLA+p73h3bbERZ209bEK1n
+	 60yqr8KQ5bw5p3anY2Yu5aQIpP9RBBlpl1OIlh4fZ+dLY9mE8OQaW3Rj18l7gU7QAF
+	 jFE+OGCl8hN+0j7fk3UxNzBSgVfyoXxZJzHK3Vpp1i9qk+8lSEdgcmrBejO3DJTE1B
+	 0JzukUmaxwEug==
+Date: Tue, 4 Nov 2025 16:46:49 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Carlos Maiolino <cem@kernel.org>, Christoph Hellwig <hch@infradead.org>
+Cc: xfs <linux-xfs@vger.kernel.org>,
+	Chandan Babu R <chandanbabu@kernel.org>,
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: [PATCHBOMB v2 6.19] xfs: autonomous self healing
+Message-ID: <20251105004649.GA196370@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-From: Yongpeng Yang <yangyongpeng@xiaomi.com>
+Hi everyone,
 
-When simulating an nvme device on qemu with both logical_block_size and
-physical_block_size set to 8 KiB, an error trace appears during
-partition table reading at boot time. The issue is caused by
-inode->i_blkbits being larger than PAGE_SHIFT, which leads to a left
-shift of -1 and triggering a UBSAN warning.
+You might recall that 18 months ago I showed off an early draft of a
+patchset implementing autonomous self healing capabilities for XFS.
+The premise is quite simple -- add a few hooks to the kernel to capture
+significant filesystem metadata and file health events (pretty much all
+failures), queue these events to a special anonfd, and let userspace
+read the events at its leisure.  That's patchset 1.
 
-[    2.697306] ------------[ cut here ]------------
-[    2.697309] UBSAN: shift-out-of-bounds in fs/crypto/inline_crypt.c:336:37
-[    2.697311] shift exponent -1 is negative
-[    2.697315] CPU: 3 UID: 0 PID: 274 Comm: (udev-worker) Not tainted 6.18.0-rc2+ #34 PREEMPT(voluntary)
-[    2.697317] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
-[    2.697320] Call Trace:
-[    2.697324]  <TASK>
-[    2.697325]  dump_stack_lvl+0x76/0xa0
-[    2.697340]  dump_stack+0x10/0x20
-[    2.697342]  __ubsan_handle_shift_out_of_bounds+0x1e3/0x390
-[    2.697351]  bh_get_inode_and_lblk_num.cold+0x12/0x94
-[    2.697359]  fscrypt_set_bio_crypt_ctx_bh+0x44/0x90
-[    2.697365]  submit_bh_wbc+0xb6/0x190
-[    2.697370]  block_read_full_folio+0x194/0x270
-[    2.697371]  ? __pfx_blkdev_get_block+0x10/0x10
-[    2.697375]  ? __pfx_blkdev_read_folio+0x10/0x10
-[    2.697377]  blkdev_read_folio+0x18/0x30
-[    2.697379]  filemap_read_folio+0x40/0xe0
-[    2.697382]  filemap_get_pages+0x5ef/0x7a0
-[    2.697385]  ? mmap_region+0x63/0xd0
-[    2.697389]  filemap_read+0x11d/0x520
-[    2.697392]  blkdev_read_iter+0x7c/0x180
-[    2.697393]  vfs_read+0x261/0x390
-[    2.697397]  ksys_read+0x71/0xf0
-[    2.697398]  __x64_sys_read+0x19/0x30
-[    2.697399]  x64_sys_call+0x1e88/0x26a0
-[    2.697405]  do_syscall_64+0x80/0x670
-[    2.697410]  ? __x64_sys_newfstat+0x15/0x20
-[    2.697414]  ? x64_sys_call+0x204a/0x26a0
-[    2.697415]  ? do_syscall_64+0xb8/0x670
-[    2.697417]  ? irqentry_exit_to_user_mode+0x2e/0x2a0
-[    2.697420]  ? irqentry_exit+0x43/0x50
-[    2.697421]  ? exc_page_fault+0x90/0x1b0
-[    2.697422]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-[    2.697425] RIP: 0033:0x75054cba4a06
-[    2.697426] Code: 5d e8 41 8b 93 08 03 00 00 59 5e 48 83 f8 fc 75 19 83 e2 39 83 fa 08 75 11 e8 26 ff ff ff 66 0f 1f 44 00 00 48 8b 45 10 0f 05 <48> 8b 5d f8 c9 c3 0f 1f 40 00 f3 0f 1e fa 55 48 89 e5 48 83 ec 08
-[    2.697427] RSP: 002b:00007fff973723a0 EFLAGS: 00000202 ORIG_RAX: 0000000000000000
-[    2.697430] RAX: ffffffffffffffda RBX: 00005ea9a2c02760 RCX: 000075054cba4a06
-[    2.697432] RDX: 0000000000002000 RSI: 000075054c190000 RDI: 000000000000001b
-[    2.697433] RBP: 00007fff973723c0 R08: 0000000000000000 R09: 0000000000000000
-[    2.697434] R10: 0000000000000000 R11: 0000000000000202 R12: 0000000000000000
-[    2.697434] R13: 00005ea9a2c027c0 R14: 00005ea9a2be5608 R15: 00005ea9a2be55f0
-[    2.697436]  </TASK>
-[    2.697436] ---[ end trace ]---
+Since the previous release, I've removed all the json event generation
+stuff and made media errors use the rmap btree to report file data loss.
+I also ported the userspace program to C.  I'm not going to blast
+everyone with the full set; just know that the C version is here:
 
-This situation can happen for block devices because when
-CONFIG_TRANSPARENT_HUGEPAGE is enabled, the maximum logical_block_size
-is 64 KiB. set_init_blocksize() then sets the block device
-inode->i_blkbits to 13, which is within this limit.
+https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfsprogs-dev.git/log/?h=health-monitoring
 
-File I/O does not trigger this problem because for filesystems that do
-not support the FS_LBS feature, sb_set_blocksize() prevents
-sb->s_blocksize_bits from being larger than PAGE_SHIFT. During inode
-allocation, alloc_inode()->inode_init_always() assigns inode->i_blkbits
-from sb->s_blocksize_bits. Currently, only xfs_fs_type has the FS_LBS
-flag, and since xfs I/O paths do not reach submit_bh_wbc(), it does not
-hit the left-shift underflow issue.
+Patchset 2 is now a cleanup of the file IO error hooks in patchset 1 to
+use a more generic interface and to call fsnotify with the error
+reports.  This means that the fsnotify filesystem error functionality
+conveys generic errors to unprivileged userspace programs, but I'm
+leaving the privileged healthmon interface so that xfsprogs can figure
+out which specific part of the filesystem needs fixing.
 
-Signed-off-by: Yongpeng Yang <yangyongpeng@xiaomi.com>
-Fixes: 47dd67532303 ("block/bdev: lift block size restrictions to 64k")
-Cc: stable@vger.kernel.org
-[EB: use folio_pos() and consolidate the two shifts by i_blkbits]
-Signed-off-by: Eric Biggers <ebiggers@kernel.org>
----
+This work was mostly complete by the end of 2024, and I've been letting
+it run on my XFS QA testing fleets ever since then.  I am submitting
+this patchset for upstream for 6.19.  Once this is merged, the online
+fsck project will be complete.
 
-This patch is targeting the fscrypt/for-current tree
+--D
 
- fs/crypto/inline_crypt.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+The unreviewed patches in this series are:
 
-diff --git a/fs/crypto/inline_crypt.c b/fs/crypto/inline_crypt.c
-index 5dee7c498bc8..ed6e926226b5 100644
---- a/fs/crypto/inline_crypt.c
-+++ b/fs/crypto/inline_crypt.c
-@@ -331,12 +331,11 @@ static bool bh_get_inode_and_lblk_num(const struct buffer_head *bh,
- 	if (!mapping)
- 		return false;
- 	inode = mapping->host;
- 
- 	*inode_ret = inode;
--	*lblk_num_ret = ((u64)folio->index << (PAGE_SHIFT - inode->i_blkbits)) +
--			(bh_offset(bh) >> inode->i_blkbits);
-+	*lblk_num_ret = (folio_pos(folio) + bh_offset(bh)) >> inode->i_blkbits;
- 	return true;
- }
- 
- /**
-  * fscrypt_set_bio_crypt_ctx_bh() - prepare a file contents bio for inline
-
-base-commit: 6146a0f1dfae5d37442a9ddcba012add260bceb0
--- 
-2.51.2
+[PATCHSET V3 1/2] xfs: autonomous self healing of filesystems
+  [PATCH 02/22] docs: discuss autonomous self healing in the xfs online
+  [PATCH 03/22] xfs: create debugfs uuid aliases
+  [PATCH 04/22] xfs: create hooks for monitoring health updates
+  [PATCH 05/22] xfs: create a filesystem shutdown hook
+  [PATCH 06/22] xfs: create hooks for media errors
+  [PATCH 07/22] iomap: report buffered read and write io errors to the
+  [PATCH 08/22] iomap: report directio read and write errors to callers
+  [PATCH 09/22] xfs: create file io error hooks
+  [PATCH 10/22] xfs: create a special file to pass filesystem health to
+  [PATCH 11/22] xfs: create event queuing, formatting,
+  [PATCH 12/22] xfs: report metadata health events through healthmon
+  [PATCH 13/22] xfs: report shutdown events through healthmon
+  [PATCH 14/22] xfs: report media errors through healthmon
+  [PATCH 15/22] xfs: report file io errors through healthmon
+  [PATCH 16/22] xfs: allow reconfiguration of the health monitoring
+  [PATCH 17/22] xfs: validate fds against running healthmon
+  [PATCH 18/22] xfs: add media error reporting ioctl
+  [PATCH 19/22] xfs: send uevents when major filesystem events happen
+  [PATCH 20/22] xfs: merge health monitoring events when possible
+  [PATCH 21/22] xfs: restrict healthmon users further
+  [PATCH 22/22] xfs: charge healthmon event objects to the memcg of the
+[PATCHSET V3 2/2] iomap: generic file IO error reporting
+  [PATCH 1/6] iomap: report file IO errors to fsnotify
+  [PATCH 2/6] xfs: switch healthmon to use the iomap I/O error
+  [PATCH 3/6] xfs: port notify-failure to use the new vfs io error
+  [PATCH 4/6] xfs: remove file I/O error hooks
+  [PATCH 5/6] iomap: remove I/O error hooks
+  [PATCH 6/6] xfs: report fs metadata errors via fsnotify
 
 
