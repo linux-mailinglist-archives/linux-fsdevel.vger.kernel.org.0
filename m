@@ -1,238 +1,482 @@
-Return-Path: <linux-fsdevel+bounces-67143-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67145-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDA04C36366
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 05 Nov 2025 16:07:26 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A648C3639C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 05 Nov 2025 16:10:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42D216269C3
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Nov 2025 14:53:42 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CF6A74FBECD
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Nov 2025 15:05:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA97632274B;
-	Wed,  5 Nov 2025 14:53:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0736232F766;
+	Wed,  5 Nov 2025 15:05:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ZZOjllLA";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="HO/Watgm"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="fPHkWN3c";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="zlDOApGa";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="fPHkWN3c";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="zlDOApGa"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70EE3239562;
-	Wed,  5 Nov 2025 14:53:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762354416; cv=fail; b=pgHOjtss5bQeXZpp9sJkbLo5U9M5hAEXY3Dw9v20drcGaFtv5w5SV3pyYpnBIDVqnEnVRXGGkzXOz7CreljRJO87ixWYkDSPCf/9D7vR899PvcXqGHFEyO1Lz/KFmOj7e1ESlRGICXlC+3Y/eTqRxElMS3abT23+Y8B9PEoxN3s=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762354416; c=relaxed/simple;
-	bh=gKRVzmMRlTQA3h6lrXQbfpqELs5BHeaCmiexcrwAwho=;
-	h=Message-ID:Date:Subject:To:References:Cc:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=KvcvyhxxmPM7cGY0DUB8NfgzQgH+v4p5ue4gVg/kKVpGWc+c3T/MKc0P3D0Twdu+C81Y11yh0mKzu3R1k04rq4PAJ+d5TiPmRcWh4HJ6wUQ77uBC9uHfN4W1TEXY3QIriaBQ1Tb86SJxOhLOGR0sFe5Fbt5JtLeUqt/IGMXmGnA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=ZZOjllLA; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=HO/Watgm; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A5Densw005799;
-	Wed, 5 Nov 2025 14:53:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2025-04-25; bh=ADZOVbb19R+45f3N1z4YgMO2qePyETNHpm2E2ndUgsE=; b=
-	ZZOjllLAbp+4aVdZlUssXqZUe0OpDPDq7r4DGzYBqkxO8ab62xPYoryHuOhgs/Ge
-	MQYa+1zflUdPfUmnM3LuUe3hDt/dNT3PceuPL8lLh6lDzSz9KKd10DHXNZQw67pu
-	MAyzeS+k8w4PBVsT0xU3OuMPopH035+ijQHVT7WGGMGjqzOuwzF3QyYXkComMa7E
-	R+t11x1bbMwFAYRMbO1xKRblR+U44A+yg5dOpf38CYvUrrZWUN0z9YZs813Qv4c3
-	bHdq7+OM/7mNl/6FWGrNuPJyycrKIuyMcpcnGLxVmIvCtUI0Fh+stMVGce9gC4sh
-	Djkfz99QYfzWKlvWBBbuAw==
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4a87nfr6rk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 05 Nov 2025 14:53:32 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5A5Eht7T002696;
-	Wed, 5 Nov 2025 14:53:32 GMT
-Received: from cy3pr05cu001.outbound.protection.outlook.com (mail-westcentralusazon11013059.outbound.protection.outlook.com [40.93.201.59])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4a58nemma9-2
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 05 Nov 2025 14:53:32 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SOL/gqh8cgvKd8EG8MJV/3u3BVm5v2FCYGXUcUTtFA1RSOQK5y7gR7bJ8iXC34QWQallxVOs/mKrzBjJjgu4mUYdrhKXYbU1OI5w+WJUgfEV1ClCoU0bn+QYQ9cV7J7jx9t3c6GH488ha8xmkDDlZtPQmEq2y7co/UuDFCpBwmBc/LO8ST/p6kDbNnHgGis3sgHaTFbVmIsCNXz7zBLL4WjCnIiz/T9L8+OkZ+x+EddInbMWRWMsBtwu8ohJQ+iRlZhDw+9XCSXUKzPwoai3AlLyUPfEAyqJsTdcDHsPaJdXjx6WVJ6ZIWokOB9RPSoFnhXkd3HzdhDVcwYitXdlkw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ADZOVbb19R+45f3N1z4YgMO2qePyETNHpm2E2ndUgsE=;
- b=kr7bEHhWxfTC2eeJS4w9+owxMJAY6EJ4dm2Hej0p8lAsEo+N104nenkp9OGDY3e8VEWG8nhwJRIIdJu1H6l5hcXE+zapajoeBDqPgQLDKxvT2whqhWq7DH8UfnLckuemu0Vf5YhWTmyFXpKt0PrEspIsXrzZ29Md8LVUx0AmigGFe3OpLhFvS7Xt8f6aHaKafWX/4csHEcef9QYd8ghFqZiZfkPl9S/XEgwOGfORY8HR/dKKCvWLNoBUz+1+c4o+f1hgw8wtZsKMs4P7EBNnIb2pFzbFymlv1FVhF+Sp8mqZvKNoL0EtuBmjNWpJ/9PIXxlPAhsVfjI0aDtC4+2Svw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ADZOVbb19R+45f3N1z4YgMO2qePyETNHpm2E2ndUgsE=;
- b=HO/WatgmtGIzDBP6vvFafw77Kcw6ZCNYuUMF026OVbHwc5K5IQitdB+V+jIKqBmP5ku927KfofurtYtjRaNT7uJjZE2lFnXqy1rc+SP/oEOuslpGI/5+q+Vjb2oE7ctd6zFs+UiQJunaGRP57HjE5+cSrqnMc4CFisksNxTpKHo=
-Received: from BN0PR10MB5128.namprd10.prod.outlook.com (2603:10b6:408:117::24)
- by DS0PR10MB7020.namprd10.prod.outlook.com (2603:10b6:8:14b::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.7; Wed, 5 Nov
- 2025 14:53:04 +0000
-Received: from BN0PR10MB5128.namprd10.prod.outlook.com
- ([fe80::743a:3154:40da:cf90]) by BN0PR10MB5128.namprd10.prod.outlook.com
- ([fe80::743a:3154:40da:cf90%4]) with mapi id 15.20.9253.017; Wed, 5 Nov 2025
- 14:53:04 +0000
-Message-ID: <21813208-da86-427b-9e6b-4ecb066e6763@oracle.com>
-Date: Wed, 5 Nov 2025 09:53:03 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: NFSv4 server sets/gets FATTR4_HIDDEN, FATTR4_SYSTEM,
- FATTR4_ARCHIVE attributes from Linux "user.DOSATTRIB"?
-To: Lionel Cons <lionelcons1972@gmail.com>
-References: <CAPJSo4Wa4EGCTQhfK7O9S9O7rmkb5aQHg85_R19FJHqCGi1Usg@mail.gmail.com>
-Content-Language: en-US
-Cc: linux-nfs <linux-nfs@vger.kernel.org>, CIFS <linux-cifs@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>
-From: Chuck Lever <chuck.lever@oracle.com>
-In-Reply-To: <CAPJSo4Wa4EGCTQhfK7O9S9O7rmkb5aQHg85_R19FJHqCGi1Usg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: CH2PR14CA0046.namprd14.prod.outlook.com
- (2603:10b6:610:56::26) To BN0PR10MB5128.namprd10.prod.outlook.com
- (2603:10b6:408:117::24)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42CFC32ED48
+	for <linux-fsdevel@vger.kernel.org>; Wed,  5 Nov 2025 15:04:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762355099; cv=none; b=bzufagJsmCq0aWTUWOLEpIjQYZBBXE9quOfOKD1J1YnXafcrJs+D/t4NYeweKNs461wDzTohYPzRu1Jvbzkutxd3MT8JjlFmKV7jpnVhbsxiuGPU8wOQGXwDOhYmsJR/5zZYPZ5iJaOiAbeKBPgHkYBa3alFtDeq4Gxy/bQPQo8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762355099; c=relaxed/simple;
+	bh=7m56ByMl+eoEzthsvVdQQaSSIon6inr0sZfQNwc0w4Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CDAfseRHJ54VKh0VtnQtn5RezzlrepSHi0g6daPKeI6dsL4Gv+v4Gz2ohGkF3Y5y7yZzduBhuLx7tSMrslz4LoTTdHoCpvT8aAw6YERiGCPX5WHAN+RhOql+tmtpXqKH6GG9GXjx4yj88C/pZsCHtdH3Bbr/XXxvD8VYY6AtXr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=fPHkWN3c; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=zlDOApGa; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=fPHkWN3c; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=zlDOApGa; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 524981F453;
+	Wed,  5 Nov 2025 15:04:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762355094; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=1b2kqqfLNp7GE0vErHBCF/JiZ1v/mSHLXfSO46GI2vQ=;
+	b=fPHkWN3cohCt3Y9aKRf5dm54h1HsdlNwgieAXowMXSKEVQAV31WG9vqp5LNul3fcV8VosZ
+	xuufrMV4qZezZ1GOacDwpUxuDJKZLUgzoKNoxAhoolNkY93hYgFgbCMQICdUEkkuh+IGAB
+	snxdZ4N7OU1ji6kBsCIe+PLk+xRwEok=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762355094;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=1b2kqqfLNp7GE0vErHBCF/JiZ1v/mSHLXfSO46GI2vQ=;
+	b=zlDOApGaLytUOYBDPIikb5vi/8jstOehbTANXSGPR4wA1vCX7Q5L/ARIpWAD7RCT3Mb+0b
+	zwlX8tjLHn/UoyAw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762355094; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=1b2kqqfLNp7GE0vErHBCF/JiZ1v/mSHLXfSO46GI2vQ=;
+	b=fPHkWN3cohCt3Y9aKRf5dm54h1HsdlNwgieAXowMXSKEVQAV31WG9vqp5LNul3fcV8VosZ
+	xuufrMV4qZezZ1GOacDwpUxuDJKZLUgzoKNoxAhoolNkY93hYgFgbCMQICdUEkkuh+IGAB
+	snxdZ4N7OU1ji6kBsCIe+PLk+xRwEok=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762355094;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=1b2kqqfLNp7GE0vErHBCF/JiZ1v/mSHLXfSO46GI2vQ=;
+	b=zlDOApGaLytUOYBDPIikb5vi/8jstOehbTANXSGPR4wA1vCX7Q5L/ARIpWAD7RCT3Mb+0b
+	zwlX8tjLHn/UoyAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 28038132DD;
+	Wed,  5 Nov 2025 15:04:54 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id yLH8CJZnC2kjcgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Wed, 05 Nov 2025 15:04:54 +0000
+Message-ID: <1fff522d-1987-4dcc-a6a2-4406a22d3ec2@suse.cz>
+Date: Wed, 5 Nov 2025 16:04:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN0PR10MB5128:EE_|DS0PR10MB7020:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2ee29b8f-774b-4ccb-70c8-08de1c7b0633
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NVYwT05MYnB2Uk9sZEgvUDM3VmJrSXRPOGNkTHBGalJITWgzVWVPbHJva2px?=
- =?utf-8?B?VndiaDdmeG5QZDg2KzBHNUhXR0JMSlRrSTR2RHBrMWFqSXM1WEhVa0pLZ1Qx?=
- =?utf-8?B?d2kzMjlYUWUzQ1ZGbFVVVVk0TkZJRlhNZkxkRlFtM0dKMDBIM25kNHJXbXBw?=
- =?utf-8?B?SThhanJJbHVvdHlnMU5RZG5GakZ4eTVRL2NBYzlXU1FtYkpqdGJOdU9iZGNx?=
- =?utf-8?B?RXBWaFhiSTh4U29PQUJxUHc2Tm45N3NwL3k5QkFSVGtyNHpBU2JEK0kyNExS?=
- =?utf-8?B?cDlkb01VcmZ0NkNKYUI1ZjNYdTBwRTVsSzNnenAwUjM3ZEJpNDkxcCswTEZj?=
- =?utf-8?B?TWZIQ1NnbmNwQ0pTS1Y0VG5rWC9DZHhZb2Q1dzFNdlBFK2kwTGQ4S0ZHN2JD?=
- =?utf-8?B?ZWU3aEtNaFhBWUdaTTJRdE9zVmpJQlRKTmRTVk4rcW5IdHl0Q1hPZDF2eWUw?=
- =?utf-8?B?cStlVnVWVVUzNFlkWHU0M0ZZeTRZU0JaNzVEblhWSExlZWk3V1oyT284QXJB?=
- =?utf-8?B?bXdVT094a1Byb29mVCthbHlJb0hVMzBzTkNXQTBQLzhXczFoY21QNGVKeXpk?=
- =?utf-8?B?V05uSVg4b1RuWlNQdUNValhPY0R6T3hYeUtHK0oxUmsyTGQ1N1I5cGI0YUVn?=
- =?utf-8?B?Q3d4R0VYdnVnZEU3a3ZHU3EwVGVLeFZ5R3NnZ1FDVTVzSmdJa051TFh2Mk1K?=
- =?utf-8?B?VUtnQ1d5UmMzL3RLSUFYZUVSeXBDUFl3OFNDY2dNb0x6cmRmdy9iYmdkQzIv?=
- =?utf-8?B?R040WmF2ais1bStiZDhuSjFjR09vOVhuZnV6QlRMWktyMnhzL05qdzBVNFl6?=
- =?utf-8?B?ZUcvakdUaG81WThTNHF2aDFaVGdxNzNtZFFJUUpsT01HMjJaRTVzZE10OEtP?=
- =?utf-8?B?QXZoUzMvZ0t2SHMrTG1uWjZCVy9oT082OTVQSUkzaEV3OUlHNFdraklwQUZy?=
- =?utf-8?B?VStvZHNGZktqdk0wQmo3VjRRMmd0TkxvTEsyZzA4WE91T250dFJjYXpENjJ2?=
- =?utf-8?B?UEY2bWVjYndDN1h2a1JEOGdjRTlXZHlMampCczNMRi8yWGw2UUZKVFlUdkxN?=
- =?utf-8?B?T3piQUxBTUg1b0FKRW01VllISDRoWEUxcEVzMUN6bnliOVJMTDZTMEMreTdS?=
- =?utf-8?B?UDVSUkNhRUJ2dE1jL1NBL3prMldIUnZ6clU5VjZiTjdweVNDRm5BeVB4d0dC?=
- =?utf-8?B?NG1vRHpteHVJL25sSmpTS0l5S2kvNnJ3cUZ3Y2hySzZIWkorZXFqRGhXNWpy?=
- =?utf-8?B?d21aRmtwOUlsYlN5dlJ5SDNOb2U3LzZaNG83ME42MXFTZzJtUDdEaWZ2Qmtv?=
- =?utf-8?B?REhDUUJudEFPQmFlMkl2ZTV3VFdtY1JiL1p4SWUvajMvdFhibjFUYkxCdk5m?=
- =?utf-8?B?ZzBJWENLelEvRmRoYUZKZ2owQWZ0bk9uTkpleVUzY25rMWR3bEtGdE9RMitl?=
- =?utf-8?B?WVNGMzdESlRjMGNsZk9hNGdFbjUyR3VGU0RyTUZnMjU0aVRoWGk5RCt4dzJ6?=
- =?utf-8?B?NmUyaWRURndZbXQ2R1J0YmpKSi9lZDc5c2t1YzREalNpRFlSWGFyblJOME1j?=
- =?utf-8?B?QTRYVUZPQjN5eUs0TlhsKzd5Y2wwekhXaFpjYkFFSjJSUCtGRXZNNEp4b1Z4?=
- =?utf-8?B?QmFXdjkwNlprT2dVSEtVeGF4YXFwREVFakxQcmFOaG1qZCtsYnRuS1VnYVNV?=
- =?utf-8?B?NlVKblNGN2VTZjJCeVFWVFNNR2lxTHZYQ0RLYmVqdlRxQ1g4Wm8zY1JUTXZw?=
- =?utf-8?B?NGtsQ1BIdEFlWjIweWxVeGJNdHc5N3ZZSVV0bjlLNDRuemR2R1htc0doTFll?=
- =?utf-8?B?dUJoZDNmSGprUUZjV2t3VjkzVzhzRWl6MGt6K3I2T253QTJuODZKVzZBMjBV?=
- =?utf-8?B?ZjZyaEVDOXRlbzVRemN5QnJJcG44L3VyRWlmdWNQVFlqQWVDTXRMMVkxZWFi?=
- =?utf-8?Q?2hflpxhBliXGC/J2/0tWL/1md566LBoG?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN0PR10MB5128.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?VTByT3pTcCsrU3kwejJIRXVJM0hwSlRLTWJvVXFkdzNGajRYZHZrSUs3YXRG?=
- =?utf-8?B?U0haQnRaeTQ0K2VqTTBNbDk5Q3BQMzlzZUk3ZmY0QnhrUnpVdjBEREVVNzha?=
- =?utf-8?B?SVZiUnJYbkZvWGlVVmZWZGo2YUhpRzVyUVNVK3R1RUluVUxXYmhYcm0wSnFz?=
- =?utf-8?B?T2pENjJ1YUMyMUgzZE9mK0hHRXBMbHVRaVdLWUFjdkoydFhsanZrTUVDMUZ3?=
- =?utf-8?B?VUlVTnQ4b2FGSW9uMjRPeC9vQUxFbnFMNWpHSjRjc2xsVkw1cFdHaXBuZ1BB?=
- =?utf-8?B?VlorQkZwc1huT2QyN3N2eERNMm5NM2RZMzY0UzNUNVQxTWVBYklmWUx1ZmF4?=
- =?utf-8?B?QnFsZGhtRkhJQUUyZ1YrQzYyM1hTNHRNTWUrMEMwUXFVVkl6UFE3RUdheUFa?=
- =?utf-8?B?ZGN3N2ZULzJIaGJtNW0wWkw4RWo4M1o2YUJ3a3Z2bVRraUFZaUlUeDNOMENI?=
- =?utf-8?B?djk4a0dNeXdaRkZvR2VQWFNjeVdjczhiOGVYSXpCMDY4ZjFHTGxqZHlPWk1w?=
- =?utf-8?B?c2lLMGNDUEtDc1g0dS9xVjE1VU81MjZEdS9jc29XUTYxcUIwR1JZVTRYM1ls?=
- =?utf-8?B?SmIvcTJYZXNWK09SMDNqTkFSdUQ1eVEwZXNQQThkNFhxcEhpMC8zWGIwdzFk?=
- =?utf-8?B?Y28walVnWEhvMGFsZDFGWThSc1d1NzRwVUhKa0Z3d3NXZlE4SnBaUDBvTVEr?=
- =?utf-8?B?cXM4cFVDeHd5aUM0SjZ1bStlNk5kWCt1MmxXWWZoczBYQktmZnF3aHU1am1w?=
- =?utf-8?B?cE5pNlJXVmlIblNBSnZvNzZ1L2hEUUpWeE1XdTRBUDFBTWhrMUxoOWV2UVF2?=
- =?utf-8?B?aTBjQ3NBM1FnTVprb3NKZjZka2g2S212VGwxUDBJU3c4by8vdFprdmZqWWNV?=
- =?utf-8?B?N2FxTEtTaG8rcDVqTDRjdmtCRWxoVVlpSkYxbC81eEh6ZUplREpFQytKLzQ4?=
- =?utf-8?B?eUl6RlgrVmRMVk5sUmFtRVV1Q2plYWd6aUJlaGQ4ZW9jYjlMK3pHRjhoQW0y?=
- =?utf-8?B?NGlnMGRLZHZIUlB0aXoxd2R0bG5iQmtPRWQ0TFpmUkhCdlpxOUZSS21nVWgy?=
- =?utf-8?B?ZCtlOTA3U252MlFlRUJjMWFvOUZaelhxTks1U3JKaExNdjhneEtvTGxvQUNu?=
- =?utf-8?B?RGtLVEtGVmtaQ0t4d01Lbk5tWU4rbXlmdXBRa2pjTWdyOVBQRHdNTi93WVhU?=
- =?utf-8?B?UE9VYlptUXVMeUhva1VMdkZpWk15ZlprWVljRklZa0F2WG9NMS9DTm4xaXFv?=
- =?utf-8?B?eEVTc05ERGkrY0RJUkNqQWdGYTA0NWxhTEwzakdhbkEybm94b3AwWDdKK0ky?=
- =?utf-8?B?aUNnY3RqZG95RWI0MkM0MExRQzkzQkF3T2thZGFoZEdWMmZuWUFMeHlzWGJj?=
- =?utf-8?B?ampNQlZBM0ZUcGNQc3l1T25VOTh6REowY0duaGNCVEd1dVdNWnZjSFRkeU95?=
- =?utf-8?B?aU5tQ2lGbW9DTlBFcXU1b1ZZM3FadFdsQzlmQ3J6VXArbTlCQTBpak9OVHlv?=
- =?utf-8?B?TE9Zam5hK3Z3bXMyVjRLOGM0YXZMWHQvbUpmclRiaW1uNnFjd3RhT2RsRkNi?=
- =?utf-8?B?QzVnZFM4Y0szUzRmWXNINmpGTmxVc0NUeURLVGI4K0kyZURianY4MEw0enc4?=
- =?utf-8?B?U1hDeTZzQUI3OG5wamo1TExZU2d1RCtkK1p1TnBsQnVYVlptUmtGcFJabFRB?=
- =?utf-8?B?MllxZFMzQ2l5YVIzUzhqMVEydjNiUTJ1S1A1QVNDSzRoY1pqU2RLZCtIY0k2?=
- =?utf-8?B?NFNCa1BlNUNlZHlLMXVScUdwZk1tOEhjem5UZEpzRWpJaW5hWVRsRVRXb1B2?=
- =?utf-8?B?UXpPeEY1elc2RzRTWjZ6QnhGR1hzaHpiNGpud0RjODdVdjFldlVMVFRvZkdn?=
- =?utf-8?B?OW1jK3NDV0tnWGlWNjVDcnlJdXprb2VWS3lRbmtMYlJmQzduYWU5djRvZEtB?=
- =?utf-8?B?bGhESjEvZ3hXU1JHS0ZvTER1b2hZMm5KWEs5NUVmdG9PMzZxbDB2M1BRc1hE?=
- =?utf-8?B?U2U2RFpuV0M5emI0Q0w2dWRmMEpLSkZzZ3ZrOW5lOEZYVE5hL2pIN29jODIv?=
- =?utf-8?B?ajhWSVRIMnluc1JBbVdEL0k1RTJ3YkhINk9jQkVtSEU2Y3hRSG05MGswYzl3?=
- =?utf-8?Q?ikDcLHJ8AhAFJjIswuZqlQ23L?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	11pi5hiuRUC1AmcfA5jLkSna5+pK92VS9c+VcZPNJd9mfzW21EJY3AU+6z69OOfVywTGCrzTEcZuWN8TwsOxl/eiPyiVV8pjzt81GdZ8e5Ybs704DGYEz4urR4zyscRxtwdK097e0jjtZLjnzq4D9CC7KvsUUbsAW5bEJ5j2Up5DPdmlKIAwcWRslXN/sqhStGrwbAr/8V0FQ5TLr9OlJGP6b143HFN+UBjxZgP9idJN0j0OTy+E+McMmlnjX+uwVom0d2fmuFET3zgXoMHqAAClgQ34Ay+Ji2QHmcghZ4DL1r/H/DtHusyU5gmUTxHM+WrPXipGWRfKeonExWqAo3nH05810ID1w9aQgAAimEdpPiF2Mbs0RfkYe2Q4TsERcpuIQS37BOu7Bw0CryPn1n4qhCDSrIxdEfCG9sIOtf/MUIHQcSno+dRtFBpQIWpL57S6J2Tz/bPWtKM2K+QEsPuxbor3etwOopl3s1UT0fd1/uFxB49aEt8k3anIG/DKSDaSEs6H+f2UswV5KkPFx39Id0/rlx82xQ7uuzM3xSn6vmECqSzsJdwlYYr68WE45Cw1BGM7B808BNyC2f4Ej/ac9VzrkaaPA8ICwiE3fk0=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2ee29b8f-774b-4ccb-70c8-08de1c7b0633
-X-MS-Exchange-CrossTenant-AuthSource: BN0PR10MB5128.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Nov 2025 14:53:04.4954
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 1pO0f/cCd9m4mhCuHyyDGJCr8TVGjxvM7JRy272A25l6V0e13jXzB7xAjNl7p/bqIxPa0WAV4oJ7Y8Ywioxt+w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR10MB7020
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-05_05,2025-11-03_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 mlxscore=0 bulkscore=0
- malwarescore=0 adultscore=0 spamscore=0 mlxlogscore=779 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2510240000
- definitions=main-2511050113
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA1MDEwMyBTYWx0ZWRfX3rirFtgyVus6
- Kzz9F1xmXm4lBqZhC2ky+dGOHxEJ6GClfJKzhdXKDA5KbgY/H4FBWTpmhHfRIOClpIkxV78r71O
- vKhCsAAShbUCJvHiyLpsiTw7kRZOOvOopR03LxhTQ9NVE6eaqoRzOzKTwwsauqUJKvJX86ETtU7
- SLee5ePr9XpMf3J72i4ziTyDUn2IEZWnooo4mRb8La1agCASp70z8CXeYyFD5Sju2TY/XT+787j
- cisRe3mQSdjmNDjtZgf0sjl9XPNVnI7YNvbBDeB7sFwAf1yBvz+VcLOdao8TyMkRTbjr9nVqwhV
- IhWvQ4X0v9gtRJCYc1P+W34v3zQTyZrQ5KYUzbKqwCu2foK3ER0ROP+1mIPSr9R2eYIGcMK0kRQ
- 1hDKpoHfD3Rh6jYLg48htq9ea2/MziNEj79juzQjBCIXEDWfOg4=
-X-Proofpoint-ORIG-GUID: CSn5c8jwKcETSZjOIOsQhFIX_R4qtux5
-X-Authority-Analysis: v=2.4 cv=YdOwJgRf c=1 sm=1 tr=0 ts=690b64ed b=1 cx=c_pps
- a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=6UeiqGixMTsA:10 a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=VCnASw7wS2PUiqfvY1sA:9 a=QEXdDO2ut3YA:10 a=zZCYzV9kfG8A:10 cc=ntf
- awl=host:13657
-X-Proofpoint-GUID: CSn5c8jwKcETSZjOIOsQhFIX_R4qtux5
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/9] mempool: add mempool_{alloc,free}_bulk
+Content-Language: en-US
+To: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+ Eric Biggers <ebiggers@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>,
+ Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>,
+ linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-fscrypt@vger.kernel.org, linux-mm@kvack.org
+References: <20251031093517.1603379-1-hch@lst.de>
+ <20251031093517.1603379-4-hch@lst.de>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <20251031093517.1603379-4-hch@lst.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.994];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
+X-Spam-Level: 
 
-On 11/5/25 9:47 AM, Lionel Cons wrote:
-> Is it feasibe that the Linux NFSv4 server sets/gets FATTR4_HIDDEN,
-> FATTR4_SYSTEM, FATTR4_ARCHIVE attributes from Linux "user.DOSATTRIB"
-> XATTR used by SMB/CIFS?
+On 10/31/25 10:34, Christoph Hellwig wrote:
+> Add a version of the mempool allocator that works for batch allocations
+> of multiple objects.  Calling mempool_alloc in a loop is not safe because
+> it could deadlock if multiple threads are performing such an allocation
+> at the same time.
 > 
-> This is for MacOS, MacOS X and Windows client support.
-Of course NFSD can access that attribute. The question is: is that the
-agreed-upon standard storage location that everyone else uses for those
-settings? (I don't know the answer, so copying linux-cifs@ and
-linux-fsdevel@ )
+> As an extra benefit the interface is build so that the same array can be
+> used for alloc_pages_bulk / release_pages so that at least for page
+> backed mempools the fast path can use a nice batch optimization.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  include/linux/mempool.h |   7 ++
+>  mm/mempool.c            | 145 ++++++++++++++++++++++++++++------------
+>  2 files changed, 111 insertions(+), 41 deletions(-)
+> 
+> diff --git a/include/linux/mempool.h b/include/linux/mempool.h
+> index 34941a4b9026..486ed50776db 100644
+> --- a/include/linux/mempool.h
+> +++ b/include/linux/mempool.h
+> @@ -66,9 +66,16 @@ extern void mempool_destroy(mempool_t *pool);
+>  extern void *mempool_alloc_noprof(mempool_t *pool, gfp_t gfp_mask) __malloc;
+>  #define mempool_alloc(...)						\
+>  	alloc_hooks(mempool_alloc_noprof(__VA_ARGS__))
+> +int mempool_alloc_bulk_noprof(mempool_t *pool, void **elem,
+> +		unsigned int count, gfp_t gfp_mask, unsigned long caller_ip);
+> +#define mempool_alloc_bulk(pool, elem, count, gfp_mask)			\
+> +	alloc_hooks(mempool_alloc_bulk_noprof(pool, elem, count, gfp_mask, \
+> +			_RET_IP_))
+>  
+>  extern void *mempool_alloc_preallocated(mempool_t *pool) __malloc;
+>  extern void mempool_free(void *element, mempool_t *pool);
+> +unsigned int mempool_free_bulk(mempool_t *pool, void **elem,
+> +		unsigned int count);
+>  
+>  /*
+>   * A mempool_alloc_t and mempool_free_t that get the memory from
+> diff --git a/mm/mempool.c b/mm/mempool.c
+> index 15581179c8b9..c980a0396986 100644
+> --- a/mm/mempool.c
+> +++ b/mm/mempool.c
+> @@ -381,23 +381,29 @@ int mempool_resize(mempool_t *pool, int new_min_nr)
+>  EXPORT_SYMBOL(mempool_resize);
+>  
+>  /**
+> - * mempool_alloc - allocate an element from a memory pool
+> + * mempool_alloc_bulk - allocate multiple elements from a memory pool
+>   * @pool:	pointer to the memory pool
+> + * @elem:	partially or fully populated elements array
+> + * @count:	size (in entries) of @elem
+>   * @gfp_mask:	GFP_* flags.
+>   *
+> + * Allocate elements for each slot in @elem that is non-%NULL.
+> + *
+>   * Note: This function only sleeps if the alloc_fn callback sleeps or returns
+>   * %NULL.  Using __GFP_ZERO is not supported.
+>   *
+> - * Return: pointer to the allocated element or %NULL on error. This function
+> - * never returns %NULL when @gfp_mask allows sleeping.
+> + * Return: 0 if successful, else -ENOMEM.  This function never returns -ENOMEM
+> + * when @gfp_mask allows sleeping.
+>   */
+> -void *mempool_alloc_noprof(mempool_t *pool, gfp_t gfp_mask)
+> +int mempool_alloc_bulk_noprof(struct mempool *pool, void **elem,
+> +		unsigned int count, gfp_t gfp_mask, unsigned long caller_ip)
+>  {
+> -	void *element;
+>  	unsigned long flags;
+>  	wait_queue_entry_t wait;
+>  	gfp_t gfp_temp;
+> +	unsigned int i;
+>  
+> +	VM_WARN_ON_ONCE(count > pool->min_nr);
+>  	VM_WARN_ON_ONCE(gfp_mask & __GFP_ZERO);
+>  	might_alloc(gfp_mask);
+>  
+> @@ -407,20 +413,31 @@ void *mempool_alloc_noprof(mempool_t *pool, gfp_t gfp_mask)
+>  
+>  	gfp_temp = gfp_mask & ~(__GFP_DIRECT_RECLAIM|__GFP_IO);
+>  
+> +	i = 0;
+>  repeat_alloc:
+> -	if (should_fail_ex(&fail_mempool_alloc, 1, FAULT_NOWARN)) {
+> -		pr_info("forcing mempool usage for pool %pS\n",
+> -				(void *)_RET_IP_);
+> -		element = NULL;
+> -	} else {
+> -		element = pool->alloc(gfp_temp, pool->pool_data);
+> -		if (likely(element != NULL))
+> -			return element;
+> +	for (; i < count; i++) {
+> +		if (!elem[i]) {
+> +			if (should_fail_ex(&fail_mempool_alloc, 1,
+> +					FAULT_NOWARN)) {
+> +				pr_info("forcing pool usage for pool %pS\n",
+> +					(void *)caller_ip);
+> +				goto use_pool;
+> +			}
 
+Would it be enough to do this failure injection attempt once and not in
+every iteration?
 
--- 
-Chuck Lever
+> +			elem[i] = pool->alloc(gfp_temp, pool->pool_data);
+> +			if (unlikely(!elem[i]))
+> +				goto use_pool;
+> +		}
+>  	}
+>  
+> +	return 0;
+> +
+> +use_pool:
+>  	spin_lock_irqsave(&pool->lock, flags);
+> -	if (likely(pool->curr_nr)) {
+> -		element = remove_element(pool);
+> +	if (likely(pool->curr_nr >= count - i)) {
+> +		for (; i < count; i++) {
+> +			if (!elem[i])
+> +				elem[i] = remove_element(pool);
+> +		}
+>  		spin_unlock_irqrestore(&pool->lock, flags);
+>  		/* paired with rmb in mempool_free(), read comment there */
+>  		smp_wmb();
+> @@ -428,8 +445,9 @@ void *mempool_alloc_noprof(mempool_t *pool, gfp_t gfp_mask)
+>  		 * Update the allocation stack trace as this is more useful
+>  		 * for debugging.
+>  		 */
+> -		kmemleak_update_trace(element);
+> -		return element;
+> +		for (i = 0; i < count; i++)
+> +			kmemleak_update_trace(elem[i]);
+> +		return 0;
+>  	}
+>  
+>  	/*
+> @@ -445,10 +463,12 @@ void *mempool_alloc_noprof(mempool_t *pool, gfp_t gfp_mask)
+>  	/* We must not sleep if !__GFP_DIRECT_RECLAIM */
+>  	if (!(gfp_mask & __GFP_DIRECT_RECLAIM)) {
+>  		spin_unlock_irqrestore(&pool->lock, flags);
+> -		return NULL;
+> +		if (i > 0)
+> +			mempool_free_bulk(pool, elem + i, count - i);
+
+I don't understand why we are trying to free from i to count and not from 0
+to i? Seems buggy, there will likely be NULLs which might go through
+add_element() which assumes they are not NULL.
+
+Assuming this is fixed we might still have confusing API. We might be
+freeing away elements that were already in the array when
+mempool_alloc_bulk() was called. OTOH the pool might be missing less than i
+elements and mempool_free_bulk() will not do anything with the rest.
+Anything beyond i is untouched. The caller has no idea what's in the array
+after getting this -ENOMEM. (alloc_pages_bulk() returns the number of pages
+there).
+Maybe it's acceptable (your usecase I think doesn't even add a caller that
+can't block), but needs documenting clearly.
+
+> +		return -ENOMEM;
+>  	}
+>  
+> -	/* Let's wait for someone else to return an element to @pool */
+> +	/* Let's wait for someone else to return elements to @pool */
+>  	init_wait(&wait);
+>  	prepare_to_wait(&pool->wait, &wait, TASK_UNINTERRUPTIBLE);
+
+So in theory callers waiting for many objects might wait indefinitely to
+find enough objects in the pool, while smaller callers succeed their
+allocations and deplete the pool. Mempools never provided some fair ordering
+of waiters, but this might make it worse deterministically instead of
+randomly. Guess it's not such a problem if all callers are comparable in
+number of objects.
+
+> @@ -463,6 +483,27 @@ void *mempool_alloc_noprof(mempool_t *pool, gfp_t gfp_mask)
+>  	finish_wait(&pool->wait, &wait);
+>  	goto repeat_alloc;
+>  }
+> +EXPORT_SYMBOL_GPL(mempool_alloc_bulk_noprof);
+> +
+> +/**
+> + * mempool_alloc - allocate an element from a memory pool
+> + * @pool:	pointer to the memory pool
+> + * @gfp_mask:	GFP_* flags.
+> + *
+> + * Note: This function only sleeps if the alloc_fn callback sleeps or returns
+> + * %NULL.  Using __GFP_ZERO is not supported.
+> + *
+> + * Return: pointer to the allocated element or %NULL on error. This function
+> + * never returns %NULL when @gfp_mask allows sleeping.
+> + */
+> +void *mempool_alloc_noprof(struct mempool *pool, gfp_t gfp_mask)
+> +{
+> +	void *elem[1] = { };
+> +
+> +	if (mempool_alloc_bulk_noprof(pool, elem, 1, gfp_mask, _RET_IP_) < 0)
+> +		return NULL;
+> +	return elem[0];
+> +}
+>  EXPORT_SYMBOL(mempool_alloc_noprof);
+>  
+>  /**
+> @@ -502,21 +543,26 @@ void *mempool_alloc_preallocated(mempool_t *pool)
+>  EXPORT_SYMBOL(mempool_alloc_preallocated);
+>  
+>  /**
+> - * mempool_free - return an element to a mempool
+> - * @element:	pointer to element
+> + * mempool_free_bulk - return elements to a mempool
+>   * @pool:	pointer to the memory pool
+> + * @elem:	elements to return
+> + * @count:	number of elements to return
+>   *
+> - * Returns @elem to @pool if its needs replenishing, else free it using
+> - * the free_fn callback in @pool.
+> + * Returns elements from @elem to @pool if its needs replenishing and sets
+> + * their slot in @elem to NULL.  Other elements are left in @elem.
+> + *
+> + * Return: number of elements transferred to @pool.  Elements are always
+> + * transferred from the beginning of @elem, so the return value can be used as
+> + * an offset into @elem for the freeing the remaining elements in the caller.
+>   *
+>   * This function only sleeps if the free_fn callback sleeps.
+
+This part now only applies to mempool_free() ?
+
+>   */
+> -void mempool_free(void *element, mempool_t *pool)
+> +unsigned int mempool_free_bulk(struct mempool *pool, void **elem,
+> +		unsigned int count)
+>  {
+>  	unsigned long flags;
+> -
+> -	if (unlikely(element == NULL))
+> -		return;
+> +	bool added = false;
+> +	unsigned int freed = 0;
+>  
+>  	/*
+>  	 * Paired with the wmb in mempool_alloc().  The preceding read is
+> @@ -553,15 +599,11 @@ void mempool_free(void *element, mempool_t *pool)
+>  	 */
+>  	if (unlikely(READ_ONCE(pool->curr_nr) < pool->min_nr)) {
+>  		spin_lock_irqsave(&pool->lock, flags);
+> -		if (likely(pool->curr_nr < pool->min_nr)) {
+> -			add_element(pool, element);
+> -			spin_unlock_irqrestore(&pool->lock, flags);
+> -			if (wq_has_sleeper(&pool->wait))
+> -				wake_up(&pool->wait);
+> -			return;
+> +		while (pool->curr_nr < pool->min_nr && freed < count) {
+> +			add_element(pool, elem[freed++]);
+> +			added = true;
+>  		}
+>  		spin_unlock_irqrestore(&pool->lock, flags);
+> -	}
+>  
+>  	/*
+>  	 * Handle the min_nr = 0 edge case:
+> @@ -572,20 +614,41 @@ void mempool_free(void *element, mempool_t *pool)
+>  	 * allocation of element when both min_nr and curr_nr are 0, and
+>  	 * any active waiters are properly awakened.
+>  	 */
+> -	if (unlikely(pool->min_nr == 0 &&
+> +	} else if (unlikely(pool->min_nr == 0 &&
+>  		     READ_ONCE(pool->curr_nr) == 0)) {
+>  		spin_lock_irqsave(&pool->lock, flags);
+>  		if (likely(pool->curr_nr == 0)) {
+> -			add_element(pool, element);
+> -			spin_unlock_irqrestore(&pool->lock, flags);
+> -			if (wq_has_sleeper(&pool->wait))
+> -				wake_up(&pool->wait);
+> -			return;
+> +			add_element(pool, elem[freed++]);
+> +			added = true;
+>  		}
+>  		spin_unlock_irqrestore(&pool->lock, flags);
+>  	}
+>  
+> -	pool->free(element, pool->pool_data);
+> +	if (unlikely(added) && wq_has_sleeper(&pool->wait))
+> +		wake_up(&pool->wait);
+> +
+> +	return freed;
+> +}
+> +EXPORT_SYMBOL_GPL(mempool_free_bulk);
+> +
+> +/**
+> + * mempool_free - return an element to the pool.
+> + * @element:	element to return
+> + * @pool:	pointer to the memory pool
+> + *
+> + * Returns @elem to @pool if its needs replenishing, else free it using
+> + * the free_fn callback in @pool.
+> + *
+> + * This function only sleeps if the free_fn callback sleeps.
+> + */
+> +void mempool_free(void *element, struct mempool *pool)
+> +{
+> +	if (likely(element)) {
+> +		void *elem[1] = { element };
+> +
+> +		if (!mempool_free_bulk(pool, elem, 1))
+> +			pool->free(element, pool->pool_data);
+> +	}
+>  }
+>  EXPORT_SYMBOL(mempool_free);
+>  
+
 
