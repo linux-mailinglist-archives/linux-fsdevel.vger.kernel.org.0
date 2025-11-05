@@ -1,188 +1,164 @@
-Return-Path: <linux-fsdevel+bounces-67019-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67020-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09FE1C337A0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 05 Nov 2025 01:31:24 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFB7FC337C4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 05 Nov 2025 01:38:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9B22D4E974F
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Nov 2025 00:31:22 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8E9D934BEFC
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Nov 2025 00:38:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8685B24B28;
-	Wed,  5 Nov 2025 00:31:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF48F224AF3;
+	Wed,  5 Nov 2025 00:38:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QFdLjsXP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ptR0KmoB"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E12F61FC8;
-	Wed,  5 Nov 2025 00:31:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48C462940D;
+	Wed,  5 Nov 2025 00:38:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762302677; cv=none; b=q58ChhTjHBqxKPq+PYUh9AvDvTSknLb1Amk+7V0UNm2lOaCXOwbPWpfF1g01Gl8XODLpLEtL65I0c5xac9OEk3bXm50+yr0XWLnjgs9UM2HFGyhkioJ4SIMmotgYl3WEpjKtMMWBzcx4zjRgyj7yjnmbRlq3EldnhuC+4lc9+O0=
+	t=1762303113; cv=none; b=t+GXxjKTELhEfdmyQvCSEmVwD3AYhAOVWEDLpkMkTGeRweLrGYAFYyFXbDzLHzpUGzKU9ethbXCXFI7Qcdle4lwkyS9rfOAcH85oBdLfZ3rtigttmRyT5XJuXBmMs10p1eWqWb9j/o4e7at57N4NCnAVC7PXhltx7Z36BZJp+nY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762302677; c=relaxed/simple;
-	bh=fvsuoJmK6PbnYdkMRKBiZIBvwzEp6WB857fVoWxCI0M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K3Gj+uO74gLIg+6YDE6oNcv1++QtwqWOPibyY9OSjPU2mvfnblcNaUe6zbL9UuxEBzIpD1h3XjrzKNpVh456X429biQIUBPisLE3UqSWJN+02p+N7q7nwVy/N4s6wroyFtzK9pkwBHDmadj1GFq/5FGgIQBAkSyrSBD2PWCBH3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QFdLjsXP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67199C116B1;
-	Wed,  5 Nov 2025 00:31:15 +0000 (UTC)
+	s=arc-20240116; t=1762303113; c=relaxed/simple;
+	bh=ozzedGexVm3c7LAJROJn2IsFXaRUObyKrN+iT0hZtCY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cKw4tcby5VQKjP8Yd7QMloQ0ek0pVnhtT80m/VSsUoWik4716bFgo4Mo5K8LZFWGl92kLGH03607MHC8ZgK/9f13cccBvMFPNJDiwLs3M0QDHmaunha6QMsEcQIDa7qRLPZ20E773j3WoivWKyNITu8B0tCbKTUA13CqPXZjQMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ptR0KmoB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C518C4CEF7;
+	Wed,  5 Nov 2025 00:38:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762302675;
-	bh=fvsuoJmK6PbnYdkMRKBiZIBvwzEp6WB857fVoWxCI0M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QFdLjsXPziKRs6Ovq37U1gAt4QNCZzfaF4zJXoPAPtwpiDaSCZh6FJxMWa0nFHerJ
-	 sxIfhXrmMfnXcbi00FD4meookYpXzGfrcVaZ3r6j7tyDPInY6Nj4VON7lQlo1LmW8y
-	 7XEYBeXnhBb9H6lmfQV+a8A6FQxnTTXipJ6GcX7Lctz5q7M6brwPQezGkohZFkzzNA
-	 O7Y/P5OPb9tjSdYoxRLX2zqhESBO4vnB/W1MM1z7tKvgEiN/Zt2DcduH1d/AUQUASW
-	 c8aLosC7A9eeKWIOF2+7VNdpg/wLQ3IhKTsdt3nUfssk4B4QJY07rpQ+zt4vWnDzkz
-	 7OlUYpIBVuk/g==
-Date: Tue, 4 Nov 2025 16:31:14 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Brian Foster <bfoster@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH 2/6] iomap, xfs: lift zero range hole mapping flush into
- xfs
-Message-ID: <20251105003114.GY196370@frogsfrogsfrogs>
-References: <20251016190303.53881-1-bfoster@redhat.com>
- <20251016190303.53881-3-bfoster@redhat.com>
+	s=k20201202; t=1762303111;
+	bh=ozzedGexVm3c7LAJROJn2IsFXaRUObyKrN+iT0hZtCY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ptR0KmoBFtTbL19XkNIzXueSZWZY/twdtmdgLFHw75tnPtDRLgthL4Nu42I1+NGgP
+	 R9YGZwqNNroue9gVRuJOYNFQl8c5CCpwsAb/DUR/WcDNILYwgUPd8NYjGCpxlA4LP2
+	 1NoLoMvXzsIiAz/i4dwPKYEtJgwki5bEAnh5aniham5fCcjSgmCJtmVRQBVaQ7GIgk
+	 Lh70Vw9Elxqxq8hv8mLW+41TPihRhOeqYz4Fmh1g1DHOdWO0n3htihIMSlbC5J+DKF
+	 wBNG2RzCxDahK8tEKZinOcULkU3G+14Y2GCKiuCRrqWtYNCm9USN72qyt2RU76j0Qv
+	 uA1GHnu4H3/xQ==
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-fscrypt@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-block@vger.kernel.org,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Yongpeng Yang <yangyongpeng@xiaomi.com>,
+	stable@vger.kernel.org,
+	Eric Biggers <ebiggers@kernel.org>
+Subject: [PATCH v3] fscrypt: fix left shift underflow when inode->i_blkbits > PAGE_SHIFT
+Date: Tue,  4 Nov 2025 16:36:42 -0800
+Message-ID: <20251105003642.42796-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.51.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251016190303.53881-3-bfoster@redhat.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 16, 2025 at 03:02:59PM -0400, Brian Foster wrote:
-> iomap zero range has a wart in that it also flushes dirty pagecache
-> over hole mappings (rather than only unwritten mappings). This was
-> included to accommodate a quirk in XFS where COW fork preallocation
-> can exist over a hole in the data fork, and the associated range is
-> reported as a hole. This is because the range actually is a hole,
-> but XFS also has an optimization where if COW fork blocks exist for
-> a range being written to, those blocks are used regardless of
-> whether the data fork blocks are shared or not. For zeroing, COW
-> fork blocks over a data fork hole are only relevant if the range is
-> dirty in pagecache, otherwise the range is already considered
-> zeroed.
+From: Yongpeng Yang <yangyongpeng@xiaomi.com>
 
-It occurs to me that the situation (unwritten cow mapping, hole in data
-fork) results in iomap_iter::iomap getting the unwritten mapping, and
-iomap_iter::srcmap getting the hole mapping.  iomap_iter_srcmap returns
-iomap_itere::iomap because srcmap.type == HOLE.
+When simulating an nvme device on qemu with both logical_block_size and
+physical_block_size set to 8 KiB, an error trace appears during
+partition table reading at boot time. The issue is caused by
+inode->i_blkbits being larger than PAGE_SHIFT, which leads to a left
+shift of -1 and triggering a UBSAN warning.
 
-But then you have ext4 where there is no cow fork, so it will only ever
-set iomap_iter::iomap, leaving iomap_iter::srcmap set to the default.
-The default srcmap is a HOLE.
+[    2.697306] ------------[ cut here ]------------
+[    2.697309] UBSAN: shift-out-of-bounds in fs/crypto/inline_crypt.c:336:37
+[    2.697311] shift exponent -1 is negative
+[    2.697315] CPU: 3 UID: 0 PID: 274 Comm: (udev-worker) Not tainted 6.18.0-rc2+ #34 PREEMPT(voluntary)
+[    2.697317] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
+[    2.697320] Call Trace:
+[    2.697324]  <TASK>
+[    2.697325]  dump_stack_lvl+0x76/0xa0
+[    2.697340]  dump_stack+0x10/0x20
+[    2.697342]  __ubsan_handle_shift_out_of_bounds+0x1e3/0x390
+[    2.697351]  bh_get_inode_and_lblk_num.cold+0x12/0x94
+[    2.697359]  fscrypt_set_bio_crypt_ctx_bh+0x44/0x90
+[    2.697365]  submit_bh_wbc+0xb6/0x190
+[    2.697370]  block_read_full_folio+0x194/0x270
+[    2.697371]  ? __pfx_blkdev_get_block+0x10/0x10
+[    2.697375]  ? __pfx_blkdev_read_folio+0x10/0x10
+[    2.697377]  blkdev_read_folio+0x18/0x30
+[    2.697379]  filemap_read_folio+0x40/0xe0
+[    2.697382]  filemap_get_pages+0x5ef/0x7a0
+[    2.697385]  ? mmap_region+0x63/0xd0
+[    2.697389]  filemap_read+0x11d/0x520
+[    2.697392]  blkdev_read_iter+0x7c/0x180
+[    2.697393]  vfs_read+0x261/0x390
+[    2.697397]  ksys_read+0x71/0xf0
+[    2.697398]  __x64_sys_read+0x19/0x30
+[    2.697399]  x64_sys_call+0x1e88/0x26a0
+[    2.697405]  do_syscall_64+0x80/0x670
+[    2.697410]  ? __x64_sys_newfstat+0x15/0x20
+[    2.697414]  ? x64_sys_call+0x204a/0x26a0
+[    2.697415]  ? do_syscall_64+0xb8/0x670
+[    2.697417]  ? irqentry_exit_to_user_mode+0x2e/0x2a0
+[    2.697420]  ? irqentry_exit+0x43/0x50
+[    2.697421]  ? exc_page_fault+0x90/0x1b0
+[    2.697422]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+[    2.697425] RIP: 0033:0x75054cba4a06
+[    2.697426] Code: 5d e8 41 8b 93 08 03 00 00 59 5e 48 83 f8 fc 75 19 83 e2 39 83 fa 08 75 11 e8 26 ff ff ff 66 0f 1f 44 00 00 48 8b 45 10 0f 05 <48> 8b 5d f8 c9 c3 0f 1f 40 00 f3 0f 1e fa 55 48 89 e5 48 83 ec 08
+[    2.697427] RSP: 002b:00007fff973723a0 EFLAGS: 00000202 ORIG_RAX: 0000000000000000
+[    2.697430] RAX: ffffffffffffffda RBX: 00005ea9a2c02760 RCX: 000075054cba4a06
+[    2.697432] RDX: 0000000000002000 RSI: 000075054c190000 RDI: 000000000000001b
+[    2.697433] RBP: 00007fff973723c0 R08: 0000000000000000 R09: 0000000000000000
+[    2.697434] R10: 0000000000000000 R11: 0000000000000202 R12: 0000000000000000
+[    2.697434] R13: 00005ea9a2c027c0 R14: 00005ea9a2be5608 R15: 00005ea9a2be55f0
+[    2.697436]  </TASK>
+[    2.697436] ---[ end trace ]---
 
-So iomap can't distinguish between xfs' speculative cow over a hole
-behavior vs. ext4 just being simple.  I wonder if we actually need to
-introduce a new iomap type for "pure overwrite"?
+This situation can happen for block devices because when
+CONFIG_TRANSPARENT_HUGEPAGE is enabled, the maximum logical_block_size
+is 64 KiB. set_init_blocksize() then sets the block device
+inode->i_blkbits to 13, which is within this limit.
 
-The reason I say that that in designing the fuse-iomap uapi, it was a
-lot easier to understand the programming model if there was always
-explicit read and write mappings being sent back and forth; and a new
-type FUSE_IOMAP_TYPE_PURE_OVERWRITE that could be stored in the write
-mapping to mean "just look at the read mapping".  If such a beast were
-ported to the core iomap code then maybe that would help here?
+File I/O does not trigger this problem because for filesystems that do
+not support the FS_LBS feature, sb_set_blocksize() prevents
+sb->s_blocksize_bits from being larger than PAGE_SHIFT. During inode
+allocation, alloc_inode()->inode_init_always() assigns inode->i_blkbits
+from sb->s_blocksize_bits. Currently, only xfs_fs_type has the FS_LBS
+flag, and since xfs I/O paths do not reach submit_bh_wbc(), it does not
+hit the left-shift underflow issue.
 
-A hole with an out-of-place mapping needs a flush (or maybe just go find
-the pagecache and zero it), whereas a hole with nothing else backing it
-clearly doesn't need any action at all.
+Signed-off-by: Yongpeng Yang <yangyongpeng@xiaomi.com>
+Fixes: 47dd67532303 ("block/bdev: lift block size restrictions to 64k")
+Cc: stable@vger.kernel.org
+[EB: use folio_pos() and consolidate the two shifts by i_blkbits]
+Signed-off-by: Eric Biggers <ebiggers@kernel.org>
+---
 
-Does that help?
+This patch is targeting the fscrypt/for-current tree
 
---D
+ fs/crypto/inline_crypt.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-> The easiest way to deal with this corner case is to flush the
-> pagecache to trigger COW remapping into the data fork, and then
-> operate on the updated on-disk state. The problem is that ext4
-> cannot accommodate a flush from this context due to being a
-> transaction deadlock vector.
-> 
-> Outside of the hole quirk, ext4 can avoid the flush for zero range
-> by using the recently introduced folio batch lookup mechanism for
-> unwritten mappings. Therefore, take the next logical step and lift
-> the hole handling logic into the XFS iomap_begin handler. iomap will
-> still flush on unwritten mappings without a folio batch, and XFS
-> will flush and retry mapping lookups in the case where it would
-> otherwise report a hole with dirty pagecache during a zero range.
-> 
-> Note that this is intended to be a fairly straightforward lift and
-> otherwise not change behavior. Now that the flush exists within XFS,
-> follow on patches can further optimize it.
-> 
-> Signed-off-by: Brian Foster <bfoster@redhat.com>
-> ---
->  fs/iomap/buffered-io.c |  2 +-
->  fs/xfs/xfs_iomap.c     | 25 ++++++++++++++++++++++---
->  2 files changed, 23 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index 05ff82c5432e..d6de689374c3 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -1543,7 +1543,7 @@ iomap_zero_range(struct inode *inode, loff_t pos, loff_t len, bool *did_zero,
->  		     srcmap->type == IOMAP_UNWRITTEN)) {
->  			s64 status;
->  
-> -			if (range_dirty) {
-> +			if (range_dirty && srcmap->type == IOMAP_UNWRITTEN) {
->  				range_dirty = false;
->  				status = iomap_zero_iter_flush_and_stale(&iter);
->  			} else {
-> diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
-> index 01833aca37ac..b84c94558cc9 100644
-> --- a/fs/xfs/xfs_iomap.c
-> +++ b/fs/xfs/xfs_iomap.c
-> @@ -1734,6 +1734,7 @@ xfs_buffered_write_iomap_begin(
->  	if (error)
->  		return error;
->  
-> +restart:
->  	error = xfs_ilock_for_iomap(ip, flags, &lockmode);
->  	if (error)
->  		return error;
-> @@ -1761,9 +1762,27 @@ xfs_buffered_write_iomap_begin(
->  	if (eof)
->  		imap.br_startoff = end_fsb; /* fake hole until the end */
->  
-> -	/* We never need to allocate blocks for zeroing or unsharing a hole. */
-> -	if ((flags & (IOMAP_UNSHARE | IOMAP_ZERO)) &&
-> -	    imap.br_startoff > offset_fsb) {
-> +	/* We never need to allocate blocks for unsharing a hole. */
-> +	if ((flags & IOMAP_UNSHARE) && imap.br_startoff > offset_fsb) {
-> +		xfs_hole_to_iomap(ip, iomap, offset_fsb, imap.br_startoff);
-> +		goto out_unlock;
-> +	}
-> +
-> +	/*
-> +	 * We may need to zero over a hole in the data fork if it's fronted by
-> +	 * COW blocks and dirty pagecache. To make sure zeroing occurs, force
-> +	 * writeback to remap pending blocks and restart the lookup.
-> +	 */
-> +	if ((flags & IOMAP_ZERO) && imap.br_startoff > offset_fsb) {
-> +		if (filemap_range_needs_writeback(inode->i_mapping, offset,
-> +						  offset + count - 1)) {
-> +			xfs_iunlock(ip, lockmode);
-> +			error = filemap_write_and_wait_range(inode->i_mapping,
-> +						offset, offset + count - 1);
-> +			if (error)
-> +				return error;
-> +			goto restart;
-> +		}
->  		xfs_hole_to_iomap(ip, iomap, offset_fsb, imap.br_startoff);
->  		goto out_unlock;
->  	}
-> -- 
-> 2.51.0
-> 
-> 
+diff --git a/fs/crypto/inline_crypt.c b/fs/crypto/inline_crypt.c
+index 5dee7c498bc8..ed6e926226b5 100644
+--- a/fs/crypto/inline_crypt.c
++++ b/fs/crypto/inline_crypt.c
+@@ -331,12 +331,11 @@ static bool bh_get_inode_and_lblk_num(const struct buffer_head *bh,
+ 	if (!mapping)
+ 		return false;
+ 	inode = mapping->host;
+ 
+ 	*inode_ret = inode;
+-	*lblk_num_ret = ((u64)folio->index << (PAGE_SHIFT - inode->i_blkbits)) +
+-			(bh_offset(bh) >> inode->i_blkbits);
++	*lblk_num_ret = (folio_pos(folio) + bh_offset(bh)) >> inode->i_blkbits;
+ 	return true;
+ }
+ 
+ /**
+  * fscrypt_set_bio_crypt_ctx_bh() - prepare a file contents bio for inline
+
+base-commit: 6146a0f1dfae5d37442a9ddcba012add260bceb0
+-- 
+2.51.2
+
 
