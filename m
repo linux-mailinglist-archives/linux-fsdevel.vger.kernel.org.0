@@ -1,52 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-67032-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67033-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8441C33863
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 05 Nov 2025 01:50:56 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B360BC3388A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 05 Nov 2025 01:52:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4467E3AB797
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Nov 2025 00:50:54 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A86F64EC8EB
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Nov 2025 00:51:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1F3B23BCF7;
-	Wed,  5 Nov 2025 00:50:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CC3C23BCFD;
+	Wed,  5 Nov 2025 00:51:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u/JtbNCr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m6U4AFfy"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17F482367B3;
-	Wed,  5 Nov 2025 00:50:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6ED434D396;
+	Wed,  5 Nov 2025 00:51:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762303849; cv=none; b=WaoTiHQekt5eHzHoCcORCuBtTL52eT7b1rRQOAQAhmTlu4iJM/OWKKXMVAkel+SWkseNS5PGz8k6bd9weCIm+njsTcJ9wauuGOU5nyaJxd4nXMUQslKVMoTJUCEvfypswzrleEKvWeOXPH1I9lbMHXXEM6fGTesf68ajiYDqXJ4=
+	t=1762303863; cv=none; b=asTpKK7z9Tf92Nf86mlGy2pDKlGbGtDWgkRqB5Pst7LNg/05PPcgLbyBuWDwSgReKHDuoiWDmMsjymaKsqDfOwFVUZfyAwzrTwc4uBvnL57vgzTrHzeSc8G6FARF67hTRwjTAzc6GiDBFxCG8FjV4g8H0a7VJoSQ83T1gCGXXBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762303849; c=relaxed/simple;
-	bh=R1zkR1jey4d4rx3G7j+htBDEjMt84KlTRr54x07qpWY=;
+	s=arc-20240116; t=1762303863; c=relaxed/simple;
+	bh=z2uRmttoZ2ank1dJzUHia6TcpUILH52njugxj8iS0pA=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NpkRXHNIoHCMtO+cTAytP+jUr3m6zvsWJ5pYOrP0VZrxh4wsDMfNZjbcACYDVJr3ApUSwo/Z007IunlCi7auRkpZLbwc/8GyJj9B9QGkUe5XDPHsKTKIzMfO7JO9cz0iA2dCDhuTIwKCAs1/YReygw54qwd6/nBwuV6zPbJqIuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u/JtbNCr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F1FDC4CEF7;
-	Wed,  5 Nov 2025 00:50:46 +0000 (UTC)
+	 MIME-Version:Content-Type; b=MAK4/cl9g55ANZfujCONDJAS9jd/Ax+rFltAFSwM1/AKcrwIyvlk4vqxYlQ+LLbEJ109IjBsdhaeXcv5Lv9LcNay/swAcbOxp0abC8sOx3dOIZ7d40P6gM3YF7Q9SBZvLnH/t0NOOMew+WlAtekEkH+cFvaxz4jpS3M/2eHoJD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m6U4AFfy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38866C4CEF7;
+	Wed,  5 Nov 2025 00:51:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762303846;
-	bh=R1zkR1jey4d4rx3G7j+htBDEjMt84KlTRr54x07qpWY=;
+	s=k20201202; t=1762303862;
+	bh=z2uRmttoZ2ank1dJzUHia6TcpUILH52njugxj8iS0pA=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=u/JtbNCrzTbSMea8mGey2tnjJ6/4CjqpHDv+EnLl0XykfHLqdkZoXfq6CvKkaNmPM
-	 q7RhAi5lNCzxBtNvkDlRG/YoN8bK2Si/MiXSkJpMrn2+Vz539efsntFrC8Bzpi0HMU
-	 W/PQLvm3r4B+WUvL6344CM9QRFhAbk4Kd3ztxOawWNr9DGNk2JlV1pNUDj39ztI6tn
-	 BawdUw+hDjTtSvxQf8FXoY5VGbaTcXw24T82deyNLwBobwtZy0zvDJfeSlt+rUiqyM
-	 1h+yGCBY1qx4+I0BkGTVpbMrljp37+aJke0cSduVNU9mY17MiaXmvgyR0XcQNkdALd
-	 YVJm6b4395t0w==
-Date: Tue, 04 Nov 2025 16:50:46 -0800
-Subject: [PATCH 09/22] xfs: create file io error hooks
+	b=m6U4AFfyEyXjEAjyHjVURAGcKaS4eSP8+3/Rs+EFCZ0Lr6Nw+OsjNAEGhrK+J9JMM
+	 VCmlNSiAyclsAJzSubCC20U+64ncKWfv0+6//GE5SH/N2HTBImZdFWodLqMqfrZe5U
+	 Pd6vpPZskxq8GzKdJ+f8nZ0OE4NB5LrkAE8z4qdcpPs117bZ+RrcDEwKXxHPF9yFYL
+	 i1qLEbk8Lec221MXmZkEk6Jan9GaLfKXKhW5IkAc3B40DAc1nixBh6lFdaVuXlI9Mh
+	 11q5JFtkm76HoyqkZp/eyBtmySi5TPLRKS+01zpJ7KKty8OiybxWCKmmJFeeAiMylN
+	 vF1QZ+JXaM/nA==
+Date: Tue, 04 Nov 2025 16:51:01 -0800
+Subject: [PATCH 10/22] xfs: create a special file to pass filesystem health to
+ userspace
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: djwong@kernel.org, cem@kernel.org
 Cc: hch@lst.de, linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
-Message-ID: <176230365884.1647136.542908210799575148.stgit@frogsfrogsfrogs>
+Message-ID: <176230365906.1647136.6465335929414973110.stgit@frogsfrogsfrogs>
 In-Reply-To: <176230365543.1647136.3601811429298452884.stgit@frogsfrogsfrogs>
 References: <176230365543.1647136.3601811429298452884.stgit@frogsfrogsfrogs>
 Precedence: bulk
@@ -60,333 +61,285 @@ Content-Transfer-Encoding: 7bit
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Create hooks within XFS to deliver IO errors to callers.  File I/O
-errors are usually rare, so we don't employ a static key here.
+Create an ioctl that installs a file descriptor backed by an anon_inode
+file that will convey filesystem health events to userspace.
 
 Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- fs/xfs/xfs_file.h           |   37 +++++++++
- fs/xfs/xfs_mount.h          |    3 +
- fs/xfs/xfs_aops.c           |    2 
- fs/xfs/xfs_file.c           |  174 +++++++++++++++++++++++++++++++++++++++++++
- fs/xfs/xfs_notify_failure.c |    5 +
- fs/xfs/xfs_super.c          |    1 
- 6 files changed, 221 insertions(+), 1 deletion(-)
+ fs/xfs/libxfs/xfs_fs.h |    8 ++
+ fs/xfs/xfs_healthmon.h |   16 +++++
+ fs/xfs/Kconfig         |    8 ++
+ fs/xfs/Makefile        |    1 
+ fs/xfs/xfs_healthmon.c |  157 ++++++++++++++++++++++++++++++++++++++++++++++++
+ fs/xfs/xfs_ioctl.c     |    4 +
+ 6 files changed, 194 insertions(+)
+ create mode 100644 fs/xfs/xfs_healthmon.h
+ create mode 100644 fs/xfs/xfs_healthmon.c
 
 
-diff --git a/fs/xfs/xfs_file.h b/fs/xfs/xfs_file.h
-index 2ad91f755caf35..441f8a693bb884 100644
---- a/fs/xfs/xfs_file.h
-+++ b/fs/xfs/xfs_file.h
-@@ -12,4 +12,41 @@ extern const struct file_operations xfs_dir_file_operations;
- bool xfs_is_falloc_aligned(struct xfs_inode *ip, loff_t pos,
- 		long long int len);
+diff --git a/fs/xfs/libxfs/xfs_fs.h b/fs/xfs/libxfs/xfs_fs.h
+index 12463ba766da05..dba7896f716092 100644
+--- a/fs/xfs/libxfs/xfs_fs.h
++++ b/fs/xfs/libxfs/xfs_fs.h
+@@ -1003,6 +1003,13 @@ struct xfs_rtgroup_geometry {
+ #define XFS_RTGROUP_GEOM_SICK_RMAPBT	(1U << 3)  /* reverse mappings */
+ #define XFS_RTGROUP_GEOM_SICK_REFCNTBT	(1U << 4)  /* reference counts */
  
-+enum xfs_file_ioerror_type {
-+	XFS_FILE_IOERROR_BUFFERED_READ,
-+	XFS_FILE_IOERROR_BUFFERED_WRITE,
-+	XFS_FILE_IOERROR_DIRECT_READ,
-+	XFS_FILE_IOERROR_DIRECT_WRITE,
-+	XFS_FILE_IOERROR_DATA_LOST,
++struct xfs_health_monitor {
++	__u64	flags;		/* flags */
++	__u8	format;		/* output format */
++	__u8	pad1[7];	/* zeroes */
++	__u64	pad2[2];	/* zeroes */
 +};
 +
-+struct xfs_file_ioerror_params {
-+	xfs_ino_t		ino;
-+	loff_t			pos;
-+	u64			len;
-+	u32			gen;
-+	int			error;
-+};
+ /*
+  * ioctl commands that are used by Linux filesystems
+  */
+@@ -1042,6 +1049,7 @@ struct xfs_rtgroup_geometry {
+ #define XFS_IOC_GETPARENTS_BY_HANDLE _IOWR('X', 63, struct xfs_getparents_by_handle)
+ #define XFS_IOC_SCRUBV_METADATA	_IOWR('X', 64, struct xfs_scrub_vec_head)
+ #define XFS_IOC_RTGROUP_GEOMETRY _IOWR('X', 65, struct xfs_rtgroup_geometry)
++#define XFS_IOC_HEALTH_MONITOR	_IOW ('X', 68, struct xfs_health_monitor)
+ 
+ /*
+  * ioctl commands that replace IRIX syssgi()'s
+diff --git a/fs/xfs/xfs_healthmon.h b/fs/xfs/xfs_healthmon.h
+new file mode 100644
+index 00000000000000..07126e39281a0c
+--- /dev/null
++++ b/fs/xfs/xfs_healthmon.h
+@@ -0,0 +1,16 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later */
++/*
++ * Copyright (c) 2024-2025 Oracle.  All Rights Reserved.
++ * Author: Darrick J. Wong <djwong@kernel.org>
++ */
++#ifndef __XFS_HEALTHMON_H__
++#define __XFS_HEALTHMON_H__
 +
-+#ifdef CONFIG_XFS_LIVE_HOOKS
-+struct xfs_file_ioerror_hook {
-+	struct xfs_hook			ioerror_hook;
-+};
-+
-+int xfs_file_ioerror_hook_add(struct xfs_mount *mp,
-+		struct xfs_file_ioerror_hook *hook);
-+void xfs_file_ioerror_hook_del(struct xfs_mount *mp,
-+		struct xfs_file_ioerror_hook *hook);
-+void xfs_file_ioerror_hook_setup(struct xfs_file_ioerror_hook *hook,
-+		notifier_fn_t mod_fn);
-+
-+void xfs_vm_ioerror(struct address_space *mapping, int direction, loff_t pos,
-+		u64 len, int error);
-+
-+void xfs_inode_media_error(struct xfs_inode *ip, loff_t pos, u64 len);
++#ifdef CONFIG_XFS_HEALTH_MONITOR
++long xfs_ioc_health_monitor(struct xfs_mount *mp,
++		struct xfs_health_monitor __user *arg);
 +#else
-+# define xfs_vm_ioerror			NULL
-+# define xfs_inode_media_error(...)	((void)0)
-+#endif /* CONFIG_XFS_LIVE_HOOKS */
++# define xfs_ioc_health_monitor(mp, hmo)	(-ENOTTY)
++#endif /* CONFIG_XFS_HEALTH_MONITOR */
 +
- #endif /* __XFS_FILE_H__ */
-diff --git a/fs/xfs/xfs_mount.h b/fs/xfs/xfs_mount.h
-index 0feb0fb685f51f..2d7f9ccba5287e 100644
---- a/fs/xfs/xfs_mount.h
-+++ b/fs/xfs/xfs_mount.h
-@@ -352,6 +352,9 @@ typedef struct xfs_mount {
++#endif /* __XFS_HEALTHMON_H__ */
+diff --git a/fs/xfs/Kconfig b/fs/xfs/Kconfig
+index b99da294e9a310..682d9a35203494 100644
+--- a/fs/xfs/Kconfig
++++ b/fs/xfs/Kconfig
+@@ -130,6 +130,14 @@ config XFS_RT
  
- 	/* Hook to feed media error events to a daemon. */
- 	struct xfs_hooks	m_media_error_hooks;
+ 	  If unsure, say N.
+ 
++config XFS_HEALTH_MONITOR
++	bool "Report filesystem health events to userspace"
++	depends on XFS_FS
++	select XFS_LIVE_HOOKS
++	default y
++	help
++	  Report health events to userspace programs.
 +
-+	/* Hook to feed file io error events to a daemon. */
-+	struct xfs_hooks	m_file_ioerror_hooks;
- } xfs_mount_t;
+ config XFS_DRAIN_INTENTS
+ 	bool
+ 	select JUMP_LABEL if HAVE_ARCH_JUMP_LABEL
+diff --git a/fs/xfs/Makefile b/fs/xfs/Makefile
+index 5bf501cf827172..d4e9070a9326ba 100644
+--- a/fs/xfs/Makefile
++++ b/fs/xfs/Makefile
+@@ -157,6 +157,7 @@ xfs-$(CONFIG_XFS_DRAIN_INTENTS)	+= xfs_drain.o
+ xfs-$(CONFIG_XFS_LIVE_HOOKS)	+= xfs_hooks.o
+ xfs-$(CONFIG_XFS_MEMORY_BUFS)	+= xfs_buf_mem.o
+ xfs-$(CONFIG_XFS_BTREE_IN_MEM)	+= libxfs/xfs_btree_mem.o
++xfs-$(CONFIG_XFS_HEALTH_MONITOR) += xfs_healthmon.o
  
- #define M_IGEO(mp)		(&(mp)->m_ino_geo)
-diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
-index a26f798155331f..f3f28b9ae0f70e 100644
---- a/fs/xfs/xfs_aops.c
-+++ b/fs/xfs/xfs_aops.c
-@@ -22,6 +22,7 @@
- #include "xfs_icache.h"
- #include "xfs_zone_alloc.h"
- #include "xfs_rtgroup.h"
-+#include "xfs_file.h"
- 
- struct xfs_writepage_ctx {
- 	struct iomap_writepage_ctx ctx;
-@@ -810,6 +811,7 @@ const struct address_space_operations xfs_address_space_operations = {
- 	.is_partially_uptodate  = iomap_is_partially_uptodate,
- 	.error_remove_folio	= generic_error_remove_folio,
- 	.swap_activate		= xfs_vm_swap_activate,
-+	.ioerror		= xfs_vm_ioerror,
- };
- 
- const struct address_space_operations xfs_dax_aops = {
-diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-index 2702fef2c90cd2..f5988904f5d44d 100644
---- a/fs/xfs/xfs_file.c
-+++ b/fs/xfs/xfs_file.c
-@@ -222,6 +222,176 @@ xfs_ilock_iocb_for_write(
- 	return 0;
- }
- 
-+#ifdef CONFIG_XFS_LIVE_HOOKS
-+struct xfs_file_ioerror {
-+	struct work_struct		work;
+ # online scrub/repair
+ ifeq ($(CONFIG_XFS_ONLINE_SCRUB),y)
+diff --git a/fs/xfs/xfs_healthmon.c b/fs/xfs/xfs_healthmon.c
+new file mode 100644
+index 00000000000000..7b0d9f78b0a402
+--- /dev/null
++++ b/fs/xfs/xfs_healthmon.c
+@@ -0,0 +1,157 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ * Copyright (c) 2024-2025 Oracle.  All Rights Reserved.
++ * Author: Darrick J. Wong <djwong@kernel.org>
++ */
++#include "xfs.h"
++#include "xfs_fs.h"
++#include "xfs_shared.h"
++#include "xfs_format.h"
++#include "xfs_log_format.h"
++#include "xfs_trans_resv.h"
++#include "xfs_mount.h"
++#include "xfs_inode.h"
++#include "xfs_trace.h"
++#include "xfs_ag.h"
++#include "xfs_btree.h"
++#include "xfs_da_format.h"
++#include "xfs_da_btree.h"
++#include "xfs_quota_defs.h"
++#include "xfs_rtgroup.h"
++#include "xfs_healthmon.h"
++
++#include <linux/anon_inodes.h>
++#include <linux/eventpoll.h>
++#include <linux/poll.h>
++
++/*
++ * Live Health Monitoring
++ * ======================
++ *
++ * Autonomous self-healing of XFS filesystems requires a means for the kernel
++ * to send filesystem health events to a monitoring daemon in userspace.  To
++ * accomplish this, we establish a thread_with_file kthread object to handle
++ * translating internal events about filesystem health into a format that can
++ * be parsed easily by userspace.  Then we hook various parts of the filesystem
++ * to supply those internal events to the kthread.  Userspace reads events
++ * from the file descriptor returned by the ioctl.
++ *
++ * The healthmon abstraction has a weak reference to the host filesystem mount
++ * so that the queueing and processing of the events do not pin the mount and
++ * cannot slow down the main filesystem.  The healthmon object can exist past
++ * the end of the filesystem mount.
++ */
++
++struct xfs_healthmon {
 +	struct xfs_mount		*mp;
-+	xfs_ino_t			ino;
-+	loff_t				pos;
-+	u64				len;
-+	u32				gen;
-+	int				error;
-+	enum xfs_file_ioerror_type	type;
 +};
 +
-+/* Call downstream hooks for a file io error update. */
-+STATIC void
-+xfs_file_report_ioerror(
-+	struct work_struct	*work)
++/*
++ * Convey queued event data to userspace.  First copy any remaining bytes in
++ * the outbuf, then format the oldest event into the outbuf and copy that too.
++ */
++STATIC ssize_t
++xfs_healthmon_read_iter(
++	struct kiocb		*iocb,
++	struct iov_iter		*to)
 +{
-+	struct xfs_file_ioerror	*ioerr =
-+		container_of(work, struct xfs_file_ioerror, work);
-+	struct xfs_file_ioerror_params	p = {
-+		.ino		= ioerr->ino,
-+		.gen		= ioerr->gen,
-+		.pos		= ioerr->pos,
-+		.len		= ioerr->len,
-+	};
-+	struct xfs_mount	*mp = ioerr->mp;
-+
-+	xfs_hooks_call(&mp->m_file_ioerror_hooks, ioerr->type, &p);
-+	kfree(ioerr);
++	return -EIO;
 +}
 +
-+/* Queue a directio io error notification. */
-+STATIC void
-+xfs_dio_ioerror(
++/* Free the health monitoring information. */
++STATIC int
++xfs_healthmon_release(
 +	struct inode		*inode,
-+	int			direction,
-+	loff_t			pos,
-+	u64			len,
-+	int			error)
++	struct file		*file)
 +{
-+	struct xfs_inode	*ip = XFS_I(inode);
-+	struct xfs_mount	*mp = ip->i_mount;
-+	struct xfs_file_ioerror	*ioerr;
++	struct xfs_healthmon	*hm = file->private_data;
 +
-+	ioerr = kzalloc(sizeof(*ioerr), GFP_ATOMIC);
-+	if (!ioerr) {
-+		xfs_err(mp,
-+ "lost ioerror report for ino 0x%llx %s pos 0x%llx len 0x%llx error %d",
-+				ip->i_ino,
-+				direction == WRITE ? "WRITE" : "READ",
-+				pos, len, error);
-+		return;
-+	}
++	kfree(hm);
 +
-+	INIT_WORK(&ioerr->work, xfs_file_report_ioerror);
-+	ioerr->mp = mp;
-+	ioerr->ino = ip->i_ino;
-+	ioerr->gen = VFS_I(ip)->i_generation;
-+	ioerr->pos = pos;
-+	ioerr->len = len;
-+	if (direction == WRITE)
-+		ioerr->type = XFS_FILE_IOERROR_DIRECT_WRITE;
-+	else
-+		ioerr->type = XFS_FILE_IOERROR_DIRECT_READ;
-+	ioerr->error = error;
-+	queue_work(mp->m_unwritten_workqueue, &ioerr->work);
++	return 0;
 +}
 +
-+/* Deal with a media error */
-+void
-+xfs_inode_media_error(
-+	struct xfs_inode	*ip,
-+	loff_t			pos,
-+	u64			len)
++/* Validate ioctl parameters. */
++static inline bool
++xfs_healthmon_validate(
++	const struct xfs_health_monitor	*hmo)
 +{
-+	struct xfs_mount	*mp = ip->i_mount;
-+	struct xfs_file_ioerror	*ioerr;
-+
-+	ioerr = kzalloc(sizeof(*ioerr), GFP_ATOMIC);
-+	if (!ioerr) {
-+		xfs_err(mp,
-+ "lost data error report for ino 0x%llx pos 0x%llx len 0x%llx",
-+				ip->i_ino,
-+				pos, len);
-+		return;
-+	}
-+
-+	INIT_WORK(&ioerr->work, xfs_file_report_ioerror);
-+	ioerr->mp = mp;
-+	ioerr->ino = ip->i_ino;
-+	ioerr->gen = VFS_I(ip)->i_generation;
-+	ioerr->pos = pos;
-+	ioerr->len = len;
-+	ioerr->type = XFS_FILE_IOERROR_DATA_LOST;
-+	ioerr->error = -EIO;
-+	queue_work(mp->m_unwritten_workqueue, &ioerr->work);
++	if (hmo->flags)
++		return false;
++	if (hmo->format)
++		return false;
++	if (memchr_inv(&hmo->pad1, 0, sizeof(hmo->pad1)))
++		return false;
++	if (memchr_inv(&hmo->pad2, 0, sizeof(hmo->pad2)))
++		return false;
++	return true;
 +}
 +
-+/* Queue a buffered io error notification. */
-+void
-+xfs_vm_ioerror(
-+	struct address_space	*mapping,
-+	int			direction,
-+	loff_t			pos,
-+	u64			len,
-+	int			error)
++/* Emit some data about the health monitoring fd. */
++#ifdef CONFIG_PROC_FS
++static void
++xfs_healthmon_show_fdinfo(
++	struct seq_file		*m,
++	struct file		*file)
 +{
-+	struct inode		*inode = mapping->host;
-+	struct xfs_inode	*ip = XFS_I(inode);
-+	struct xfs_mount	*mp = ip->i_mount;
-+	struct xfs_file_ioerror	*ioerr;
++	struct xfs_healthmon	*hm = file->private_data;
 +
-+	ioerr = kzalloc(sizeof(*ioerr), GFP_ATOMIC);
-+	if (!ioerr) {
-+		xfs_err(mp,
-+ "lost ioerror report for ino 0x%llx %s pos 0x%llx len 0x%llx error %d",
-+				ip->i_ino,
-+				direction == WRITE ? "WRITE" : "READ",
-+				pos, len, error);
-+		return;
-+	}
-+
-+	INIT_WORK(&ioerr->work, xfs_file_report_ioerror);
-+	ioerr->mp = mp;
-+	ioerr->ino = ip->i_ino;
-+	ioerr->gen = VFS_I(ip)->i_generation;
-+	ioerr->pos = pos;
-+	ioerr->len = len;
-+	if (direction == WRITE)
-+		ioerr->type = XFS_FILE_IOERROR_BUFFERED_WRITE;
-+	else
-+		ioerr->type = XFS_FILE_IOERROR_BUFFERED_READ;
-+	ioerr->error = error;
-+	queue_work(mp->m_unwritten_workqueue, &ioerr->work);
++	seq_printf(m, "state:\talive\ndev:\t%s\n",
++			hm->mp->m_super->s_id);
 +}
++#endif
 +
-+/* Call the specified function after a file io error. */
-+int
-+xfs_file_ioerror_hook_add(
-+	struct xfs_mount		*mp,
-+	struct xfs_file_ioerror_hook	*hook)
-+{
-+	return xfs_hooks_add(&mp->m_file_ioerror_hooks, &hook->ioerror_hook);
-+}
-+
-+/* Stop calling the specified function after a file io error. */
-+void
-+xfs_file_ioerror_hook_del(
-+	struct xfs_mount		*mp,
-+	struct xfs_file_ioerror_hook	*hook)
-+{
-+	xfs_hooks_del(&mp->m_file_ioerror_hooks, &hook->ioerror_hook);
-+}
-+
-+/* Configure file io error update hook functions. */
-+void
-+xfs_file_ioerror_hook_setup(
-+	struct xfs_file_ioerror_hook	*hook,
-+	notifier_fn_t			mod_fn)
-+{
-+	xfs_hook_setup(&hook->ioerror_hook, mod_fn);
-+}
-+#else
-+# define xfs_dio_ioerror		NULL
-+#endif /* CONFIG_XFS_LIVE_HOOKS */
-+
-+static const struct iomap_dio_ops xfs_dio_read_ops = {
-+	.ioerror	= xfs_dio_ioerror,
++static const struct file_operations xfs_healthmon_fops = {
++	.owner		= THIS_MODULE,
++#ifdef CONFIG_PROC_FS
++	.show_fdinfo	= xfs_healthmon_show_fdinfo,
++#endif
++	.read_iter	= xfs_healthmon_read_iter,
++	.release	= xfs_healthmon_release,
 +};
 +
- STATIC ssize_t
- xfs_file_dio_read(
- 	struct kiocb		*iocb,
-@@ -240,7 +410,8 @@ xfs_file_dio_read(
- 	ret = xfs_ilock_iocb(iocb, XFS_IOLOCK_SHARED);
- 	if (ret)
- 		return ret;
--	ret = iomap_dio_rw(iocb, to, &xfs_read_iomap_ops, NULL, 0, NULL, 0);
-+	ret = iomap_dio_rw(iocb, to, &xfs_read_iomap_ops, &xfs_dio_read_ops,
-+			0, NULL, 0);
- 	xfs_iunlock(ip, XFS_IOLOCK_SHARED);
- 
- 	return ret;
-@@ -625,6 +796,7 @@ xfs_dio_write_end_io(
- 
- static const struct iomap_dio_ops xfs_dio_write_ops = {
- 	.end_io		= xfs_dio_write_end_io,
-+	.ioerror	= xfs_dio_ioerror,
- };
- 
- static void
-diff --git a/fs/xfs/xfs_notify_failure.c b/fs/xfs/xfs_notify_failure.c
-index 557f4bf3463dcb..8766d83385ddad 100644
---- a/fs/xfs/xfs_notify_failure.c
-+++ b/fs/xfs/xfs_notify_failure.c
-@@ -22,6 +22,7 @@
- #include "xfs_notify_failure.h"
- #include "xfs_rtgroup.h"
- #include "xfs_rtrmap_btree.h"
-+#include "xfs_file.h"
- 
- #include <linux/mm.h>
- #include <linux/dax.h>
-@@ -167,6 +168,10 @@ xfs_dax_failure_fn(
- 		invalidate_inode_pages2_range(mapping, pgoff,
- 					      pgoff + pgcnt - 1);
- 
-+	xfs_inode_media_error(ip,
-+			XFS_FSB_TO_B(mp, (u64)pgoff << PAGE_SHIFT),
-+			XFS_FSB_TO_B(mp, (u64)pgcnt << PAGE_SHIFT));
++/*
++ * Create a health monitoring file.  Returns an index to the fd table or a
++ * negative errno.
++ */
++long
++xfs_ioc_health_monitor(
++	struct xfs_mount		*mp,
++	struct xfs_health_monitor __user *arg)
++{
++	struct xfs_health_monitor	hmo;
++	struct xfs_healthmon		*hm;
++	int				fd;
++	int				ret;
 +
- 	xfs_irele(ip);
- 	return error;
- }
-diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-index fb72a4976e8570..54d82f5a5b8863 100644
---- a/fs/xfs/xfs_super.c
-+++ b/fs/xfs/xfs_super.c
-@@ -2294,6 +2294,7 @@ xfs_init_fs_context(
- 	xfs_hooks_init(&mp->m_shutdown_hooks);
- 	xfs_hooks_init(&mp->m_health_update_hooks);
- 	xfs_hooks_init(&mp->m_media_error_hooks);
-+	xfs_hooks_init(&mp->m_file_ioerror_hooks);
++	if (!capable(CAP_SYS_ADMIN))
++		return -EPERM;
++
++	if (copy_from_user(&hmo, arg, sizeof(hmo)))
++		return -EFAULT;
++
++	if (!xfs_healthmon_validate(&hmo))
++		return -EINVAL;
++
++	hm = kzalloc(sizeof(*hm), GFP_KERNEL);
++	if (!hm)
++		return -ENOMEM;
++	hm->mp = mp;
++
++	/*
++	 * Create the anonymous file.  If it succeeds, the file owns hm and
++	 * can go away at any time, so we must not access it again.
++	 */
++	fd = anon_inode_getfd("xfs_healthmon", &xfs_healthmon_fops, hm,
++			O_CLOEXEC | O_RDONLY);
++	if (fd < 0) {
++		ret = fd;
++		goto out_hm;
++	}
++
++	return fd;
++
++out_hm:
++	kfree(hm);
++	return ret;
++}
+diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
+index a6bb7ee7a27ad5..08998d84554f09 100644
+--- a/fs/xfs/xfs_ioctl.c
++++ b/fs/xfs/xfs_ioctl.c
+@@ -41,6 +41,7 @@
+ #include "xfs_exchrange.h"
+ #include "xfs_handle.h"
+ #include "xfs_rtgroup.h"
++#include "xfs_healthmon.h"
  
- 	fc->s_fs_info = mp;
- 	fc->ops = &xfs_context_ops;
+ #include <linux/mount.h>
+ #include <linux/fileattr.h>
+@@ -1421,6 +1422,9 @@ xfs_file_ioctl(
+ 	case XFS_IOC_COMMIT_RANGE:
+ 		return xfs_ioc_commit_range(filp, arg);
+ 
++	case XFS_IOC_HEALTH_MONITOR:
++		return xfs_ioc_health_monitor(mp, arg);
++
+ 	default:
+ 		return -ENOTTY;
+ 	}
 
 
