@@ -1,157 +1,146 @@
-Return-Path: <linux-fsdevel+bounces-67092-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67093-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A31FC3535B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 05 Nov 2025 11:49:37 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 047CDC35436
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 05 Nov 2025 11:59:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 592841891391
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Nov 2025 10:49:34 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A484434E0E1
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Nov 2025 10:59:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CF4E30DD3A;
-	Wed,  5 Nov 2025 10:48:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1783430DEBC;
+	Wed,  5 Nov 2025 10:59:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DGFGX0B7";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="LvatTV13"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92F13309DD8;
-	Wed,  5 Nov 2025 10:48:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A318D30C379
+	for <linux-fsdevel@vger.kernel.org>; Wed,  5 Nov 2025 10:59:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762339730; cv=none; b=PhM/I5BZzBHWIXyf/yCfkzExpcRnri4IL9Do/mEx51j+g9yOMIXhnweDkT1z/KKi8oeJdgPOdB+nGw1+V2edIEFpY1zwu2WR2rrCKLA8BybH0wdSKDjmPAcRdV7/UvsTfZF/i5IPHZ6cdA/YVUeAxTO055N2HzsuI1Z0lxRayk8=
+	t=1762340352; cv=none; b=tUnNa4YhtZ3S/gXtwDhMl4NXFV6vwGZs2cCZfeR0D/5lG3vNOUx41w8EjH7i+hFJkb//krtCbxBRCquDQXrI9tcUhjpQw0jtZY2eHpu3fenRewBFuQLB55NMtXYLfDf2GkM27D/QZ6Xfdcw8REaRWJF3b5zivBsQflTtr7gIDO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762339730; c=relaxed/simple;
-	bh=krgdsMbqPAnZEgv6GcAPh6GqU4FTX2vq6UliNancPPA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IEvV+mPfp8c1yQrLLCB0Ta89b9fqyvvqENZ3Y7lSDW81Kv48YEHctQHpJDPxtZULcZDdgHd8RQa/doAVgAOTEvAzrJSN3MvsiQme5hdqI2UBZG9hfs2R/M3ekkOoebWSFbMai0CSkBbewAWS0EyU3j9gOZHNhycxZXOeYbzy14o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4d1hrC6TxGzYQvhs;
-	Wed,  5 Nov 2025 18:48:27 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 740A21A058E;
-	Wed,  5 Nov 2025 18:48:44 +0800 (CST)
-Received: from [10.174.178.152] (unknown [10.174.178.152])
-	by APP2 (Coremail) with SMTP id Syh0CgBnCEGJKwtpT+YjCw--.1462S3;
-	Wed, 05 Nov 2025 18:48:43 +0800 (CST)
-Message-ID: <8041da1f-2ea6-4c66-8042-81076f5fc9d3@huaweicloud.com>
-Date: Wed, 5 Nov 2025 18:48:41 +0800
+	s=arc-20240116; t=1762340352; c=relaxed/simple;
+	bh=mDYPQoa9g7C/yEpqbRIi6ESdyE1WLl8zUuyXg+ubNy0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sPXFdHIA+JJgdsx5zKWv1GBlAycR1w66nLo8YsmmZ5clwyKDhD/0XH1sIacUkCubbasaYiALV+8IFAgkZwsBiiWGt1a+Gi80el4yFsENOZYptoUZJw/+3Oc2qP8B6qUwTEh2VlXkv5EYadZ0sr4HrjM0gJUnroQu3bq9d9Pd//0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DGFGX0B7; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=LvatTV13; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762340348;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=fi6lMVZB+GdSzEqZmyJtwxQVO8YBPh6HS+ZyxPLOlA0=;
+	b=DGFGX0B7I6qnj1MN91y9qP54QK8nyrTmGvB16ssocl4m9Wr58KmDQsTzRtuEmeHO5tk+22
+	LPa41LG7FH3TsHiNdzNTgjeVzwr0i848BlPUOVT7u4zX33K3LC3tXaoHi7Scgc4AFF9sWi
+	X/bA41aDIifEEOU9j7w1xBc00mfaaSA=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-558-KwoUXVFlPXCjamrW6ISFOg-1; Wed, 05 Nov 2025 05:59:05 -0500
+X-MC-Unique: KwoUXVFlPXCjamrW6ISFOg-1
+X-Mimecast-MFC-AGG-ID: KwoUXVFlPXCjamrW6ISFOg_1762340344
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-470fd92ad57so85117005e9.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Nov 2025 02:59:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1762340344; x=1762945144; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fi6lMVZB+GdSzEqZmyJtwxQVO8YBPh6HS+ZyxPLOlA0=;
+        b=LvatTV13nKsR7HuD2OBSVSCbKiUnsb/3nZT3pBVig03ZtUzIoyWbQ5l+MNvlfzJLdu
+         TllfZa51xrADveEhpvutdRd4q0clarkcAoQYBtJMdlJaagffDhpMPFEIIDmo747cLi0P
+         3qCZ2OehMcrUl8vpuD/N+WJarCfesqkW9Xq/9oeWO4tLLJb06YnMEGBo0M/GQgTbR45O
+         0KVL1bC/ZPnNEKd/wspgrLe4wdW8UrB1mzKuNnGHNcItX/Opn9+2DIeZAw6zmyGEEiRj
+         EZIodFfJC/4CXfhkYjpqvegQJX5apkoWmmAE1wXlEAJRLBb3ov8sjBUbAgJI1Tnw9MXQ
+         s1Dg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762340344; x=1762945144;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fi6lMVZB+GdSzEqZmyJtwxQVO8YBPh6HS+ZyxPLOlA0=;
+        b=LP6CB83Z6GTPMet4zG0ESkK2txfmuUztsrMOu0BdYrftC7MXbLjYhUs0YODy0aHzVM
+         QO6zWPzaGPDfz7SorIWxQMA3OrSqYt9lI9n4qGRBt34y/42gGDii5jwnmkmcvwnV6YbB
+         m3q7RX8WDoWE3ASAqTLhPc3/KHZvbtRLtjWy+kVbAw1yovugaaf0LbkmYwFFbBCNAlqd
+         3XqatqipMRSBGnJln24A1rWyQ+rVE4AuMRI2kHjxSMCb+G+dFLNCq/FMKk066kqjZkSL
+         D04aM6oc/jZgb7yjo21teH5ErEfh3DDux9FX1uJ8xtXVTJE0oU2uS2N3FTda5qwGgVYL
+         npDA==
+X-Forwarded-Encrypted: i=1; AJvYcCWN6zUj5W326AueYLxlN2L0PTRot7kAl4JCEhehQ8yuQKDH6ycNdwlKDWu5PC6Zi30lRbTXJ555EqFPtJIR@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfdeLcoWA6/aJFkp5+T8Wiy7Xc00/vGYQeZCbTviykXRhltk3D
+	13FfC+JkF8lqv6JtBq46wJ6aVjSeJ0n59sfSyDhdtSrvQmJcyOCNOfcYSprexpf0qnS6m0K49R/
+	X8SssbfK90QdKDBR2aMGZUbCxTUoj3BxlxoR2awWXLXRc05cgDIDCuV+F3EV1lMWupBA=
+X-Gm-Gg: ASbGncsRwDyw9PWnWeALoIg9WgDZir4CF2yEQkou3ZUgGWbLCTidQMm6yRA9OXJsW79
+	1Ean+wGsQbOfgWFMWqiW9zhD7lEYBh9wv4Vq0erTcwaJN/ahEYFM7CQni4DeFIsi2w80ZHWHjhs
+	J6e/8xCdyo5/bYpR7hAF5H/c/3K5FmD8mG7AUn6mzr65Bv8eJsyGebx0gni2yEu4zKPTmKyT9P3
+	ycT+IxaSg9PjMMqiFoy1+xukrhDVdWbdd2BtuQ8RgH2lc7eDQ5Uizk3mV0ymWOWH8wSBbcDa4Sd
+	rCW2KnY0boxP6pe0hyWVwjkZ8K7R8woveXUbBWUbazoY3xo0p1N2D0RoEP6+qlyPpZdhcC1tL3a
+	qnKFnB/ORC+gR0DahhskWFzpLuNzDXPqmVX3v6rEdbFeEvBYn
+X-Received: by 2002:a05:600c:a00a:b0:475:d8b3:a9d5 with SMTP id 5b1f17b1804b1-4775cdbf0bfmr23847085e9.10.1762340343920;
+        Wed, 05 Nov 2025 02:59:03 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFGMcjTBOz+Nu6wkEk+5mmod0huDiyH5V1WOUYLCdKWa9YhZHNUKUTSo1PqiQsOwaH+WwN8Vg==
+X-Received: by 2002:a05:600c:a00a:b0:475:d8b3:a9d5 with SMTP id 5b1f17b1804b1-4775cdbf0bfmr23846845e9.10.1762340343543;
+        Wed, 05 Nov 2025 02:59:03 -0800 (PST)
+Received: from lbulwahn-thinkpadx1carbongen12.rmtde.csb ([2a02:810d:7e01:ef00:1622:5a48:afdc:799f])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-477558c4edasm39000785e9.5.2025.11.05.02.59.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Nov 2025 02:59:02 -0800 (PST)
+From: Lukas Bulwahn <lbulwahn@redhat.com>
+X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+To: Matthew Wilcox <willy@infradead.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: [PATCH] MAINTAINERS: add idr core-api doc file to XARRAY
+Date: Wed,  5 Nov 2025 11:58:57 +0100
+Message-ID: <20251105105857.156950-1-lukas.bulwahn@redhat.com>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 21/25] ext4: make online defragmentation support large
- block size
-To: Jan Kara <jack@suse.cz>, libaokun@huaweicloud.com
-Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
- linux-kernel@vger.kernel.org, kernel@pankajraghav.com, mcgrof@kernel.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, yangerkun@huawei.com,
- chengzhihao1@huawei.com, libaokun1@huawei.com
-References: <20251025032221.2905818-1-libaokun@huaweicloud.com>
- <20251025032221.2905818-22-libaokun@huaweicloud.com>
- <vkbarfyd6ozrrljhvwhmy2cq23mby6mxl2kxlsxp2wqgmvxvgi@6sgmqhhdnmru>
-Content-Language: en-US
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-In-Reply-To: <vkbarfyd6ozrrljhvwhmy2cq23mby6mxl2kxlsxp2wqgmvxvgi@6sgmqhhdnmru>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:Syh0CgBnCEGJKwtpT+YjCw--.1462S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxAw4fWF4kKF4fWrW8KF15Arb_yoW5XryDpF
-	WxAr15Kws8W3W0grsrXFsrZr1rK3W7CF4UXrW8W34fXFyjy3sIgFn7A3W5uFyj9rWxCry0
-	vF42yrnrWay5J3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
-	v3UUUUU
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Transfer-Encoding: 8bit
 
-On 11/5/2025 5:50 PM, Jan Kara wrote:
-> On Sat 25-10-25 11:22:17, libaokun@huaweicloud.com wrote:
->> From: Zhihao Cheng <chengzhihao1@huawei.com>
->>
->> There are several places assuming that block size <= PAGE_SIZE, modify
->> them to support large block size (bs > ps).
->>
->> Signed-off-by: Zhihao Cheng <chengzhihao1@huawei.com>
->> Signed-off-by: Baokun Li <libaokun1@huawei.com>
-> 
-> ...
-> 
->> @@ -565,7 +564,7 @@ ext4_move_extents(struct file *o_filp, struct file *d_filp, __u64 orig_blk,
->>  	struct inode *orig_inode = file_inode(o_filp);
->>  	struct inode *donor_inode = file_inode(d_filp);
->>  	struct ext4_ext_path *path = NULL;
->> -	int blocks_per_page = PAGE_SIZE >> orig_inode->i_blkbits;
->> +	int blocks_per_page = 1;
->>  	ext4_lblk_t o_end, o_start = orig_blk;
->>  	ext4_lblk_t d_start = donor_blk;
->>  	int ret;
->> @@ -608,6 +607,9 @@ ext4_move_extents(struct file *o_filp, struct file *d_filp, __u64 orig_blk,
->>  		return -EOPNOTSUPP;
->>  	}
->>  
->> +	if (i_blocksize(orig_inode) < PAGE_SIZE)
->> +		blocks_per_page = PAGE_SIZE >> orig_inode->i_blkbits;
->> +
-> 
-> I think these are strange and the only reason for this is that
-> ext4_move_extents() tries to make life easier to move_extent_per_page() and
-> that doesn't really work with larger folios anymore. I think
-> ext4_move_extents() just shouldn't care about pages / folios at all and
-> pass 'cur_len' as the length to the end of extent / moved range and
-> move_extent_per_page() will trim the length based on the folios it has got.
-> 
-> Also then we can rename some of the variables and functions from 'page' to
-> 'folio'.
-> 
-> 								Honza
+From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 
-Hi, Jan!
+The files in Documentation/core-api/ are by virtue of their top-level
+directory part of the Documentation section in MAINTAINERS. Each file in
+Documentation/core-api/ should however also have a further section in
+MAINTAINERS it belongs to, which fits to the technical area of the
+documented API in that file.
 
-Thank you for the suggestion. However, after merging my online defragmentation
-optimization series[1], we don't need this patch at all. Baokun will rebase it
-onto my series in the next iteration.
+The idr.rst provides some explanation to the ID allocation API defined in
+lib/idr.c, which itself is part of the XARRAY section.
 
-[1] https://lore.kernel.org/linux-ext4/20251013015128.499308-1-yi.zhang@huaweicloud.com/
+Add this core-api document to XARRAY.
 
-Thanks,
-Yi.
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+---
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
 
-> 
->>  	/* Protect orig and donor inodes against a truncate */
->>  	lock_two_nondirectories(orig_inode, donor_inode);
->>  
->> @@ -665,10 +667,8 @@ ext4_move_extents(struct file *o_filp, struct file *d_filp, __u64 orig_blk,
->>  		if (o_end - o_start < cur_len)
->>  			cur_len = o_end - o_start;
->>  
->> -		orig_page_index = o_start >> (PAGE_SHIFT -
->> -					       orig_inode->i_blkbits);
->> -		donor_page_index = d_start >> (PAGE_SHIFT -
->> -					       donor_inode->i_blkbits);
->> +		orig_page_index = EXT4_LBLK_TO_P(orig_inode, o_start);
->> +		donor_page_index = EXT4_LBLK_TO_P(donor_inode, d_start);
->>  		offset_in_page = o_start % blocks_per_page;
->>  		if (cur_len > blocks_per_page - offset_in_page)
->>  			cur_len = blocks_per_page - offset_in_page;
->> -- 
->> 2.46.1
->>
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 2b5f86dcf898..01e1668cac02 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -28010,6 +28010,7 @@ M:	Matthew Wilcox <willy@infradead.org>
+ L:	linux-fsdevel@vger.kernel.org
+ L:	linux-mm@kvack.org
+ S:	Supported
++F:	Documentation/core-api/idr.rst
+ F:	Documentation/core-api/xarray.rst
+ F:	include/linux/idr.h
+ F:	include/linux/xarray.h
+-- 
+2.51.1
 
 
