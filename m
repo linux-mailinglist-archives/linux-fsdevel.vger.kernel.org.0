@@ -1,98 +1,105 @@
-Return-Path: <linux-fsdevel+bounces-67103-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67104-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2098EC355D6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 05 Nov 2025 12:31:23 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71C2DC35603
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 05 Nov 2025 12:34:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FE6318C54B2
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Nov 2025 11:31:47 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 36C644F91FD
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Nov 2025 11:32:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3484A2D7DE8;
-	Wed,  5 Nov 2025 11:31:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C402630C350;
+	Wed,  5 Nov 2025 11:32:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZVFKczwF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nGTh17TR"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89B51191493;
-	Wed,  5 Nov 2025 11:31:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C45E72192F9;
+	Wed,  5 Nov 2025 11:32:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762342274; cv=none; b=n/NWNPvedAWHXuGKhuVZmz5tFidGvt84ZSyWomu5gwI58BWPKDr9aMtAkSa7qPZeceacP31RdFRixZg03khc8cm/j48wrrBMg+pSSNYSdhG88mOYv9uV4Y4/T3PyIoG/He7xkqqHqvbvzVkVK06CmZx/B6OUcUh752Fucf1bvh0=
+	t=1762342368; cv=none; b=NeJ61nSEBoVLfNC7kCjDJbm239toWkb2KivAIkg3zfo+GLFIve4SmkmUauw4pHX08QdNU/ShLSIou8J3y39czTO9dvgkwWPbqm448IxrWkZADgsgliaPMY/iFiv1SFvwFCM/4VnRu+QxGfrhbL8wn/UKOQ/OO5ndIERn6RiQHbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762342274; c=relaxed/simple;
-	bh=WtURY0uD44AoguOSak+nV2pEPZmlCr/xoq++x7NStGU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=H/zMEhPEBpV7moN3m+AYZEjQLNSQ6zKq3cEf0JAD88+g9RnMtZR/dFrA3X4bz+y4VnM2QnPVXojJATYST6qkO5AjMo6Ccrd7OiKPid0Xs5OupfSKpnLJY1+tZ0MV4YvIcB0Kqq3pkvJoplIJYQ0P0WRp2VNpF7ShOlVUKi4+dyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZVFKczwF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A33A6C4CEF8;
-	Wed,  5 Nov 2025 11:31:12 +0000 (UTC)
+	s=arc-20240116; t=1762342368; c=relaxed/simple;
+	bh=Tfi10fkzsZ3Q9MbW9Z557c9dyifcpTcdXY4ETbmZWcA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jZK2AA14pIiI7RgcJBQ9Sy+LoxvqHc4Wr5qtsdOA9yraxcT9ZG5CL4X2iQEKuB7PtWBr6YDelzhN51jG1D1ljgmAdpoPDknxPJodprYvn17d2GarCAK8R3tprnOtDO9gOJ4dT0a7a25glVGsWtmhXsFRad1skHA1ItvLrWNg/Ys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nGTh17TR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E342C4CEF8;
+	Wed,  5 Nov 2025 11:32:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762342274;
-	bh=WtURY0uD44AoguOSak+nV2pEPZmlCr/xoq++x7NStGU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ZVFKczwF/5vVhuE2JiD/87qvFzMgcc8sOlNhbgU4vD/8o+OEIaw2bdL5aQ/+6qMm/
-	 070QG5V9CvJq7J40yvjR3KHln+ro9rwh3fVQVKHTvHAPhep5jI1ZY+/n9jVOk9Es5m
-	 LvUhMg1ExclS17Cqdmd2CS2IzPCo3rMJtwxN5Dyfhym9ybxoXjpHF476rvQeXfQyVO
-	 +dYsuwSa/NGDEqhdKHh1eRWrLeF5HUsQtM+3yhZk9dtOBORi5TBFEFuEMjk1rGealn
-	 LfRGh+qEY/xkXL0+BIASE3Q/Obw69pB7YBkCmAEug2sTcqYgbOSB/NuVLCPJytWlFf
-	 g11F+cYOrcTQg==
+	s=k20201202; t=1762342368;
+	bh=Tfi10fkzsZ3Q9MbW9Z557c9dyifcpTcdXY4ETbmZWcA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nGTh17TRitiDNoK802K4njGG2alXOIuSh3/tN7UixoBNvoXIq35LkvQYIsuU9Wzch
+	 lS1XRxKFuH9Zr8uujZeuVfgIIehzyUfDlRU+CLzdRIuVKiU6zzHEubA/Sd/igp/xBK
+	 FSXbPzi1yKHOjd2GaH1VVcT89E7Qd9M6+xkywRQ80anPCa1bCF/fi+mFfASzE9HB1Z
+	 5ftWFGDCsgoYdHzA/r2GrtfET3+Z6VM3KDvupsoMVV7hBRE0vctcQtI2C3xy/eD8QK
+	 vD0wHWl9g51bq9o4HhhG8vCa9CxsiZI4WlEYjf9byKBE8s5OsWlXSgAi5E2VBbSyOc
+	 yxZQttdvDQlKA==
+Date: Wed, 5 Nov 2025 12:32:44 +0100
 From: Christian Brauner <brauner@kernel.org>
-To: linux-btrfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Qu Wenruo <wqu@suse.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	viro@zeniv.linux.org.uk,
-	jack@suse.cz
-Subject: Re: [PATCH RFC 0/2] fs: fully sync all fsese even for an emergency sync
-Date: Wed,  5 Nov 2025 12:31:05 +0100
-Message-ID: <20251105-rezitieren-anpfiff-4e21c114802d@brauner>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <cover.1762142636.git.wqu@suse.com>
+To: Jan Kara <jack@suse.cz>
+Cc: Qu Wenruo <wqu@suse.com>, Christoph Hellwig <hch@infradead.org>, 
+	linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk, 
+	Askar Safin <safinaskar@gmail.com>
+Subject: Re: [PATCH RFC 2/2] fs: fully sync all fses even for an emergency
+ sync
+Message-ID: <20251105-libellen-genutzt-2133e1086dc5@brauner>
 References: <cover.1762142636.git.wqu@suse.com>
+ <7b7fd40c5fe440b633b6c0c741d96ce93eb5a89a.1762142636.git.wqu@suse.com>
+ <aQiYZqX5aGn-FW56@infradead.org>
+ <cbf7af56-c39a-4f42-b76d-0d1b3fecba9f@suse.com>
+ <urm6i5idr36jcs7oby33mngrqaa6eu6jky3kubkr3fyhlt6lnd@wqrerkdn3vma>
+ <l4nrvt3dxy3wstryugdevnjub6g6e4qzsrpnqpdb2xo5qidxh2@yxcosrvhx6rh>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1313; i=brauner@kernel.org; h=from:subject:message-id; bh=WtURY0uD44AoguOSak+nV2pEPZmlCr/xoq++x7NStGU=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWRym9bqrN/zVktr/+2jTb+1d7vflbfY9PXAnLCKluBFq 3d2H8hd0lHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCRypOMDD+CdxtIvPg5/baY td2HzKNMnq1Zx45nmM4rKVJ+fuv74vMM/1Sa3uVwmfnYVWzx8SmTmhe3tZy95UCA3g+D6ufzZc5 3sQAA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <l4nrvt3dxy3wstryugdevnjub6g6e4qzsrpnqpdb2xo5qidxh2@yxcosrvhx6rh>
 
-On Mon, 03 Nov 2025 14:37:27 +1030, Qu Wenruo wrote:
-> The first patch is a cleanup related to sync_inodes_one_sb() callback.
-> Since it always wait for the writeback, there is no need to pass any
-> parameter for it.
+On Tue, Nov 04, 2025 at 09:39:14AM +0100, Jan Kara wrote:
+> On Tue 04-11-25 09:28:27, Jan Kara wrote:
+> > On Tue 04-11-25 07:25:06, Qu Wenruo wrote:
+> > > 
+> > > 
+> > > 在 2025/11/3 22:26, Christoph Hellwig 写道:
+> > > > The emergency sync being non-blocking goes back to day 1.  I think the
+> > > > idea behind it is to not lock up a already messed up system by
+> > > > blocking forever, even if it is in workqueue.  Changing this feels
+> > > > a bit risky to me.
+> > > 
+> > > Considering everything is already done in task context (baked by the global
+> > > per-cpu workqueue), it at least won't block anything else.
+> > > 
+> > > And I'd say if the fs is already screwed up and hanging, the
+> > > sync_inodes_one_sb() call are more likely to hang than the final sync_fs()
+> > > call.
+> > 
+> > Well, but notice that sync_inodes_one_sb() is always called with wait == 0
+> > from do_sync_work() exactly to skip inodes already marked as under
+> > writeback, locked pages or pages under writeback as waiting for these has
+> > high chances of locking up. Suddently calling sync_fs_one_sb() with wait ==
+> > 1 can change things. That being said for ext4 the chances of locking up
+> > ext4_sync_fs() with wait == 1 after sync_fs_one_sb() managed to do
+> > non-trivial work are fairly minimal so I don't have strong objections
+> > myself.
 > 
-> The second patch is a fix mostly affecting btrfs, as btrfs requires a
-> explicit sync_fc() call with wait == 1, to commit its super blocks,
-> and sync_bdevs() won't cut it at all.
-> 
-> [...]
+> Ah, ok, now I've checked the code and read patch 1 in this thread. Indeed
+> sync_inodes_one_sb() ignores the wait parameter and waits for everything.
+> Given we've been running like this for over 10 years and nobody complained
+> I agree calling sync_fs_one_sb() with wait == 1 is worth trying if it makes
+> life better for btrfs.
 
-Applied to the vfs-6.19.misc branch of the vfs/vfs.git tree.
-Patches in the vfs-6.19.misc branch should appear in linux-next soon.
-
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.19.misc
-
-[1/2] fs: do not pass a parameter for sync_inodes_one_sb()
-      https://git.kernel.org/vfs/vfs/c/fbc22c299636
-[2/2] fs: fully sync all fses even for an emergency sync
-      https://git.kernel.org/vfs/vfs/c/2706659d642e
+Agreed. But emergency_sync() is really just a best-effort thing and I'm
+rather weary accumulating complexity for it otherwise.
 
