@@ -1,168 +1,171 @@
-Return-Path: <linux-fsdevel+bounces-67141-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67142-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B096C3614E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 05 Nov 2025 15:35:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA779C36202
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 05 Nov 2025 15:43:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BB221A227CA
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Nov 2025 14:35:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 555B018874E1
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Nov 2025 14:44:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3A2432D0EB;
-	Wed,  5 Nov 2025 14:34:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F16B132E6BD;
+	Wed,  5 Nov 2025 14:42:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eLG4m9XW"
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="gCDf5z05"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 410A332D0E4
-	for <linux-fsdevel@vger.kernel.org>; Wed,  5 Nov 2025 14:34:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 775A632936B
+	for <linux-fsdevel@vger.kernel.org>; Wed,  5 Nov 2025 14:42:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762353282; cv=none; b=QjAa1B9sHfl46pa3HQ6vyM/Dr+Ulv8sGzJp93HHasBRK7ACxmNB/zXQXTtxzdy4RDx4IeC/MwMVXZQXFGpdEFb30Kz+DYS83QIUIJ+MfMcxZ5jEi+lfUIx7dGcfVFgguJjeyS7hb/TV/kX7iUDJ9sJAUJzh9cMmLINxizMkgFmk=
+	t=1762353751; cv=none; b=d1LXFWaQDKSAfu7EVP3EFdhJCXGyqlfdPRS68s0mBg0EhmzEhJjVuhu3iCK1b89VI1hLmrZWMNNE6xnBD+gW94LuV54o+gvUcBSa0TksBHECkjHj7qHJDMwmUSD2pH9yeD/5QU+5P9mEsgG3MVDRmqhD2UdcOMJyo9NZYflFxsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762353282; c=relaxed/simple;
-	bh=Lws3O9Q9eWUWHaR1D9jjGEWwx/Fg3c+pD6vwOq6VklQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gnexFXwsDFy0narDb1Scn8gdHk5MUIbMLMG/91zvWsAYpC7fk2yZ3nYBYctLf5VSXd6p66o0Y+RFUrJFlvqrfQ652ecmos7Bh+l+Kyyh/CTuYB1qJQv+5RX/m4sKuofGEyNB1hD8A+yzmezXPzvlvNoUHqu1bOuaKSbkFO/xg7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eLG4m9XW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E72CBC116D0
-	for <linux-fsdevel@vger.kernel.org>; Wed,  5 Nov 2025 14:34:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762353281;
-	bh=Lws3O9Q9eWUWHaR1D9jjGEWwx/Fg3c+pD6vwOq6VklQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=eLG4m9XWoTatrjavqtssn5k+xGF+Fior9Mu79vwdT032JLGEUoettavt8SEZnnlXQ
-	 9TpVlHTRxRu42t45fqw9RT+vYwqSodHrasC29GJeriemWw5Se8fEiK0NaOD+mePinx
-	 tECspgx27qGDxe3gA4E6QzWFA8NcAA1Rwf0PSlARHodGAN338DPS1PsA0tD2s/wdyB
-	 GZ6icgXQC4z0vi3T+L+xYt2Ew9F06RYntrZ8rrKcQuyB0nxWl1YBKnmRNmG71c/gvB
-	 r3eaOQIw1j6a8/CnIwO1nR4uI8bl59odYarSWc86IqMB63UAFXo9z5X3R3kHrMYjN6
-	 2ZhagdvxF+Nog==
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-37a492d3840so14344721fa.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Nov 2025 06:34:41 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCW2XQpENflU1P5RqK0Y9iiWEzx5fIi54YwDEaIWYd2rnWm1Jv1VFjAvSZpkfLkFNiDYQbTx41ZPAK6lHKRQ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzf39F4rthDzeseVo52UFPr1Q03jBq+v+j18HL9IssDaOLCwl86
-	MMWTMlP5TFtv2pckF4LrRUoL+ZCzJ1r0vW3NwOw5xL2P+GIBI9oh0kow9hLW0f6YO1mFhn8dk/U
-	Aj467QZu3Z4+sLo9hLZoLKMsA+YI3g5M=
-X-Google-Smtp-Source: AGHT+IEx5VuhTUzWGT5C3xk1ZCwXIz0HqLNQc4gHIQEVN/RV4yl9TQkUcvj3QI9yqUVwVZWCqZOKOmWyJ6CMatr8gc0=
-X-Received: by 2002:a05:651c:1504:b0:372:904d:add4 with SMTP id
- 38308e7fff4ca-37a51417cf6mr11398531fa.28.1762353280238; Wed, 05 Nov 2025
- 06:34:40 -0800 (PST)
+	s=arc-20240116; t=1762353751; c=relaxed/simple;
+	bh=ij2iHrslX/5yNAV81WvwyiP5ZRrrhcDqQSgtHEa9ZoY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rrobb3pDFGpIjxtRmqqUZrYscLHFGtr5w2XuNgpA42b8PtJXhnxaDgSUJD5NMVvhh67YysERw1FEUpWgDtubLdCKVF6hxZEaEkNyf1udN8cPoAzx8hxeTyJ4deGmS4ovHMt8zoc8TSaLCfxHE/Pg+XQKUMpic2Z73f6j/CX65HY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=gCDf5z05; arc=none smtp.client-ip=209.85.222.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-8af121588d9so478622685a.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Nov 2025 06:42:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gourry.net; s=google; t=1762353748; x=1762958548; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=gCP0hsq/q40gFxNmjoVFcp0QbOx89aTWebuusBQgCaY=;
+        b=gCDf5z05uYtlJggKnF95ezS3J3umvz7sQMNDZDnGK8dtKLvayu7kdaLUtT1vMZ6cHs
+         1GrwbtfIe7scOFlP2tQeblKFtqfnBbDDvWuaerJCvF4fbX4Iuw1jMMO5qNBS6ZY5ORf7
+         wlXA8FlARkhwl3/zBiBwJU4aOeCxfoymxp+HA7s9/gBrOxzS0LNRs3+Mbv6zW6wrbKgS
+         Vw1NtjBOiZPKJ476QYp/x9lkuvghR476RYKYUJr6/ygsD+kVyEil9ToZF0qbl82FpAPl
+         jncikulGE0TeNC1J/5fCUZfNhIKnf6FldJa+Hdi7S90irvpaNARjjyogJGnYymejeFSJ
+         J/Qw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762353748; x=1762958548;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gCP0hsq/q40gFxNmjoVFcp0QbOx89aTWebuusBQgCaY=;
+        b=vU2WX1LiLevBWqwAvC2FdZ1UMR8CWP8wSZQS9HpGdRIU0uGZ3YtH7sYl53OzKeNbZ6
+         d0lqbgSAIGJCrWVV7Tv7JXDFfASyxsmIsezuS12U03FrJMQEg9t1pHd/Y3f1J4C0ejyk
+         mFKnf6W7naI5LesR4tOozotmtcp9ZkcfowFHOfCxqmxmJ92C/9QQp0x4aktTQr5JN9qJ
+         JSauXvIsVuCA6Pkp5d94ESK/a0/eA1eElqx09mGL+ekyo4KKW4kZjFuWoYqtMHGIVvjQ
+         /6hwVtCjhtnftIucGyOYOHyiPVxTBbmuVWTsravMgVUSkyKyRRhl537lhY0m179sWzXF
+         Afwg==
+X-Forwarded-Encrypted: i=1; AJvYcCWOaj5c4tmSrcDSL955GHptICEJ+WhW4Rj5DoppH1cg2VdA7wFTvyMq6dXAJmUL7sGmuFu40zeXAp+mm6s3@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWAFn7cK63OsWCyOlmAIS+gtYwri4ry3q77Z4TTnv9BIAradCu
+	Yi/s0K+i/XDJsjxUKzyOM+f+z3+FkrxepoFmMkAdAo/H4tXRo5wrNKrbUi3eywtdlwo=
+X-Gm-Gg: ASbGncvhabzSQvYbtSs35BLTfXpX64lYjMdPD9nD3tQICnMqrRZLjWIbfDoRoqa4ceC
+	pGqMGdBIyLhruhY1qvJesACGLVN14Qcy2UL5KdQ4RViteyq2UCbEJMS8iiv0vRNYZkPjIva+T58
+	hkBy+POTXx9a7ih9Ny5RMV8BzTdXRDmYIb6kJQbAD0g1KqatO8TZ1R9/tIGRHzONu/nvhvf82kI
+	iXeV3n/vcUG6No4hpzOYq9epMCmfVjNXVtq3IYKhicPw8HgupsrUs9XhT5vWJPC6WAS2a05pZpY
+	XHRGWtjXb9UVmo60nS6zxUwuiDBRS7vkRwjE/Db0yhUZ5FSU8lMjxfF1FSU63p+/I+7BOty0NKB
+	PGj1b8Y9NCyxOEHl/MTwPZ/Iby+5ZQ6BR8AA3TygFuPTNZQjYsFSOfNNKbjWAOVcyXenLpjJTt0
+	kMlakAhFht2F1JMduFyNS4ISShVeglSCH4fxyF8AZr8xT6mGGfMl2fUdPVY6gBYTHwuEtebw==
+X-Google-Smtp-Source: AGHT+IFOPmymxkVWTStAmI1fSxsEHrX8n+cH3NR2hrKHNMeSwi6zTbwFsDY5mjtR5/Zbzi6pU1fUXg==
+X-Received: by 2002:a05:620a:4416:b0:8ab:4ada:9b2f with SMTP id af79cd13be357-8b220b7f441mr375892585a.56.1762353748298;
+        Wed, 05 Nov 2025 06:42:28 -0800 (PST)
+Received: from gourry-fedora-PF4VCD3F (pool-96-255-20-138.washdc.ftas.verizon.net. [96.255.20.138])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8b21fc36dbasm239867985a.19.2025.11.05.06.42.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Nov 2025 06:42:27 -0800 (PST)
+Date: Wed, 5 Nov 2025 09:42:24 -0500
+From: Gregory Price <gourry@gourry.net>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Janosch Frank <frankja@linux.ibm.com>,
+	Claudio Imbrenda <imbrenda@linux.ibm.com>,
+	David Hildenbrand <david@redhat.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>, Peter Xu <peterx@redhat.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Arnd Bergmann <arnd@arndb.de>, Zi Yan <ziy@nvidia.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+	Lance Yang <lance.yang@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>,
+	Oscar Salvador <osalvador@suse.de>,
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
+	Byungchul Park <byungchul@sk.com>,
+	Ying Huang <ying.huang@linux.alibaba.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	Axel Rasmussen <axelrasmussen@google.com>,
+	Yuanchu Xie <yuanchu@google.com>, Wei Xu <weixugc@google.com>,
+	Kemeng Shi <shikemeng@huaweicloud.com>,
+	Kairui Song <kasong@tencent.com>, Nhat Pham <nphamcs@gmail.com>,
+	Baoquan He <bhe@redhat.com>, Chris Li <chrisl@kernel.org>,
+	SeongJae Park <sj@kernel.org>, Matthew Wilcox <willy@infradead.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
+	Xu Xin <xu.xin16@zte.com.cn>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	Jann Horn <jannh@google.com>, Miaohe Lin <linmiaohe@huawei.com>,
+	Naoya Horiguchi <nao.horiguchi@gmail.com>,
+	Pedro Falcato <pfalcato@suse.de>,
+	Pasha Tatashin <pasha.tatashin@soleen.com>,
+	Rik van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>,
+	Hugh Dickins <hughd@google.com>, linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org, linux-s390@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-arch@vger.kernel.org, damon@lists.linux.dev
+Subject: Re: [PATCH 02/16] mm: introduce leaf entry type and use to simplify
+ leaf entry logic
+Message-ID: <aQtiUPwhY5brDrna@gourry-fedora-PF4VCD3F>
+References: <cover.1762171281.git.lorenzo.stoakes@oracle.com>
+ <2c75a316f1b91a502fad718de9b1bb151aafe717.1762171281.git.lorenzo.stoakes@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251028004614.393374-1-viro@zeniv.linux.org.uk>
- <20251028004614.393374-23-viro@zeniv.linux.org.uk> <66300d81c5e127e3bca8c6c4d997da386b142004.camel@HansenPartnership.com>
- <20251028174540.GN2441659@ZenIV> <20251028210805.GP2441659@ZenIV>
- <CAMj1kXF6tvg6+CL_1x7h0HK1PoSGtxDjc0LQ1abGQBd5qrbffg@mail.gmail.com>
- <9f079d0c8cffb150c0decb673a12bfe1b835efc9.camel@HansenPartnership.com>
- <20251029193755.GU2441659@ZenIV> <CAMj1kXHnEq97bzt-C=zKJdV3BK3EDJCPz3Pfyk52p2735-4wFA@mail.gmail.com>
- <20251105-aufheben-ausmusterung-4588dab8c585@brauner>
-In-Reply-To: <20251105-aufheben-ausmusterung-4588dab8c585@brauner>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Wed, 5 Nov 2025 15:34:28 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXEt1i=4iGaum9MoQWMJT55LYxUd6=f+x=NKGCgz5vL4TQ@mail.gmail.com>
-X-Gm-Features: AWmQ_bnxYKD_q_DEqIXXuAAuvtynWG7mNNaOqPYQs_wBysPbMIk9Lu8V4S9c-i8
-Message-ID: <CAMj1kXEt1i=4iGaum9MoQWMJT55LYxUd6=f+x=NKGCgz5vL4TQ@mail.gmail.com>
-Subject: Re: [PATCH v2 22/50] convert efivarfs
-To: Christian Brauner <brauner@kernel.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, 
-	James Bottomley <james.bottomley@hansenpartnership.com>, linux-fsdevel@vger.kernel.org, 
-	torvalds@linux-foundation.org, jack@suse.cz, raven@themaw.net, 
-	miklos@szeredi.hu, neil@brown.name, a.hindborg@kernel.org, linux-mm@kvack.org, 
-	linux-efi@vger.kernel.org, ocfs2-devel@lists.linux.dev, kees@kernel.org, 
-	rostedt@goodmis.org, gregkh@linuxfoundation.org, linux-usb@vger.kernel.org, 
-	paul@paul-moore.com, casey@schaufler-ca.com, linuxppc-dev@lists.ozlabs.org, 
-	john.johansen@canonical.com, selinux@vger.kernel.org, 
-	borntraeger@linux.ibm.com, bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2c75a316f1b91a502fad718de9b1bb151aafe717.1762171281.git.lorenzo.stoakes@oracle.com>
 
-On Wed, 5 Nov 2025 at 12:48, Christian Brauner <brauner@kernel.org> wrote:
->
-> On Thu, Oct 30, 2025 at 02:35:51PM +0100, Ard Biesheuvel wrote:
-> > On Wed, 29 Oct 2025 at 20:38, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> > >
-> > > On Wed, Oct 29, 2025 at 02:57:51PM -0400, James Bottomley wrote:
-> > >
-> > > > I think this all looks OK.  The reason for the convolution is that
-> > > > simple_start/done_creating() didn't exist when I did the conversion ...
-> > > > although if they had, I'm not sure I'd have thought of reworking
-> > > > efivarfs_create_dentry to use them.  I tried to update some redundant
-> > > > bits, but it wasn't the focus of what I was trying to fix.
-> > > >
-> > > > So I think the cleanup works and looks nice.
-> > > >
-> > > > >
-> > > > > Relying on the -EEXIST return value to detect duplicates, and
-> > > > > combining the two callbacks seem like neat optimizations to me, so
-> > > > >
-> > > > > Acked-by: Ard Biesheuvel <ardb@kernel.org>
-> > > > >
-> > > > > but I have to confess I am slightly out of my depth when it comes to
-> > > > > VFS stuff.
-> > > >
-> > > > Yes, ack too.
-> > >
-> > >         Umm...  FWIW, I've got a few more followups on top of that (see
-> > > #untested.efivarfs, current head at 36051c773015).  Not sure what would
-> > > be the best way to deal with that stuff - I hope to get the main series
-> > > stabilized and merged in the coming window.  Right now I'm collecting
-> > > feedback (acked-by, etc.), and there's a couple of outright bugfixes
-> > > in front of the series, so I'd expect at least a rebase to -rc4...
-> > >
-> >
-> > I pulled your code and tried to test it. It works fine for the
-> > ordinary case, but only now I realized that commit
-> >
-> > commit 0e4f9483959b785f65a36120bb0e4cf1407e492c
-> > Author: Christian Brauner <brauner@kernel.org>
-> > Date:   Mon Mar 31 14:42:12 2025 +0200
-> >
-> >     efivarfs: support freeze/thaw
-> >
-> > actually broke James's implementation of the post-resume sync with the
-> > underlying variable store.
-> >
-> > So I wonder what the point is of all this complexity if it does not
-> > work for the use case where it is the most important, i.e., resume
-> > from hibernation, where the system goes through an ordinary cold boot
-> > and so the EFI variable store may have gotten out of sync with the
-> > hibernated kernel's view of it.
-> >
-> > If no freeze/thaw support in the suspend/resume path is forthcoming,
-> > would it be better to just revert that change? That would badly
-> > conflict with your changes, though, so I'd like to resolve this before
-> > going further down this path.
->
-> So first of all, this works. I've tested it extensively. If it doesn't
-> work there's a regression.
->
-> And suspend/resume works just fine with freeze/thaw. See commit
-> eacfbf74196f ("power: freeze filesystems during suspend/resume") which
-> implements exactly that.
->
-> The reason this didn't work for you is very likely:
->
-> cat /sys/power/freeze_filesystems
-> 0
->
-> which you must set to 1.
->
+On Mon, Nov 03, 2025 at 12:31:43PM +0000, Lorenzo Stoakes wrote:
+> +typedef swp_entry_t leaf_entry_t;
+> +
+> +#ifdef CONFIG_MMU
+> +
+> +/* Temporary until swp_entry_t eliminated. */
+> +#define LEAF_TYPE_SHIFT SWP_TYPE_SHIFT
+> +
+> +enum leaf_entry_type {
+> +	/* Fundamental types. */
+> +	LEAFENT_NONE,
+> +	LEAFENT_SWAP,
+> +	/* Migration types. */
+> +	LEAFENT_MIGRATION_READ,
+> +	LEAFENT_MIGRATION_READ_EXCLUSIVE,
+> +	LEAFENT_MIGRATION_WRITE,
+> +	/* Device types. */
+> +	LEAFENT_DEVICE_PRIVATE_READ,
+> +	LEAFENT_DEVICE_PRIVATE_WRITE,
+> +	LEAFENT_DEVICE_EXCLUSIVE,
+> +	/* H/W posion types. */
+> +	LEAFENT_HWPOISON,
+> +	/* Marker types. */
+> +	LEAFENT_MARKER,
+> +};
+> +
 
-Yes, that does the trick, thanks.
+Have been browsing the patch set again, will get around a deeper review,
+but just wanted to say this is a thing of beauty :]
 
-But as James argued as well, this should not be an opt-in, at least
-not for resume from hibernate: from the EFI firmware's PoV, it is just
-a cold boot, and even the tiniest change in hardware state during boot
-(docked vs undocked, USB drive plugged in, etc) could potentially
-affect the state of the variable store. In practice, we are mostly
-interested in some of the non-volatile variables to set the boot order
-etc, so bad things rarely happen, but doing the sync unconditionally
-is the safest choice here.
+~Gregory
 
