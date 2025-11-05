@@ -1,186 +1,145 @@
-Return-Path: <linux-fsdevel+bounces-67204-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67205-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53870C37F4C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 05 Nov 2025 22:20:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 42ABCC37FF4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 05 Nov 2025 22:26:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E12E14FA191
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Nov 2025 21:18:00 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 834A44F30F2
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Nov 2025 21:23:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ABC82D7806;
-	Wed,  5 Nov 2025 21:16:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 867F62E11AB;
+	Wed,  5 Nov 2025 21:20:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VkhK4jvA"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A3DrJn1J"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C59E28726E
-	for <linux-fsdevel@vger.kernel.org>; Wed,  5 Nov 2025 21:15:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 825DA1E47A5
+	for <linux-fsdevel@vger.kernel.org>; Wed,  5 Nov 2025 21:20:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762377359; cv=none; b=K2fGSkHKug1RKsG0j2rmjO90z4FVVsrfU3RW3CyM+svaIQGuDpETDNSjjiEzzla0u6NaY+TEsfXhyJShSfIYOyxNvS4PpVdoKIs2Jl9+Fua+7wIaPkidApmwe2H+7Vh1v14SY6odoCXhk0OVrCpMeWf+OkyQ45xeDyDe8QLRxJo=
+	t=1762377639; cv=none; b=jRMXuuMn7scAAsbpWG/ArC2P1ysfs0IWDYEi1hw9N/AOtzbUH55+c3XEIDaAZxZW72TT025wiO9Dd93rgqF2O/pt+ZP7wpP5qc7fXjrpL/ZBDU+qfkZuQXNEyNwC5H5ylDSqMatjWMy/r7hPNIeP12OHO2HS5pr3SatGnRBH9bY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762377359; c=relaxed/simple;
-	bh=f9gnacKKf2I1AkHrp5BqN18zRTjnCOrkCGu1EP+5wLU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jVR0gUS+FU7x3c6twJ1Nm83n3YfYm9/p8ULJn827MfBXcpAAO5uumPIW/iPhvYzKW/SR5yBnPKCBrkWsiQak6tkCR7E04h83TEf87UQR3CbFqIuVzoSG5UHfQhqSe+jDatzDcvsT5z0Y6drLKu/86L+ia2z1ibENb/B4SFifwXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VkhK4jvA; arc=none smtp.client-ip=209.85.221.54
+	s=arc-20240116; t=1762377639; c=relaxed/simple;
+	bh=2pplFlMMvnjUl6FrlZeDRW3iPjYcJlrYy3U19WE/I2c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cXRkGkxHIIZbOFU9HGIVWcD74W71Ke71yTFyzFTSNXgqJaCiL0XMqABVwcBUVGQfDZ/CLXD1NhCQfuWvS1sXPhnxOvVQ81aJBWdDRK5zDQgpnV2Q8PQ5X3JE8ty2dg+lWhAFO1E+ZxvDdWV8vPwLBSYqWTharutIOor5SO3gC9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A3DrJn1J; arc=none smtp.client-ip=209.85.128.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-429bcddad32so191822f8f.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Nov 2025 13:15:57 -0800 (PST)
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4710a1f9e4cso1934015e9.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Nov 2025 13:20:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762377356; x=1762982156; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8ppaE2LQfT94SEh9VKLVy8mNImdVN7dwxyvCopktHPk=;
-        b=VkhK4jvA99PG3acbgpmUypWPEdtb0MKnA5L0WDSKIpwQwS3xHnOn9s8Y0xdq3FiNAS
-         68cVm7oqgzT70gg+TPdHlJ1EijPf+hAt2zhvLNS7uPQOyBUoy9p2O9gGFTWL3zWsKRgH
-         57w/sLfa7P2x/2tlr5TUvpld/VD65YmWFqwwJAUngCXEQq0dO6P7fcgjn6a0Ece3tj3d
-         PbEX7jrRRObD7pZRGtsO6csWRKwEg9tdla8SWVrPXJvzOJKqmcCz80g0gxa9q2dGLkf4
-         X7NnPJtcJhOHU9k5JPEK2uyGjkHcbbSzvqz+wQFPCBkGDsyiQI6wZc/mV76QK2S3eBAB
-         7DNw==
+        d=gmail.com; s=20230601; t=1762377635; x=1762982435; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zdLJGs3mR/Ak3xxBl+2P2SaXwjuVbkUq06ZP/Gr3rTg=;
+        b=A3DrJn1JOySehDZuoyhVgOJjCj8Z6fOoSQFAB9ZZ3tmRRJw72nfZDI2SJHlrZvl/F7
+         NiTOXTvbnFMyo/Dy3ebNkdyoJEqD9NrWLYlQ0eJBLb6HCzD7+68bRruNuWOPFcsNoJKD
+         2LjYOBg15pM5bUqcNgtPzt13Q2969Fm9Pk4cHjF+I6FPkPEzYH/Q8dP2WIeSCCZhegTL
+         Eq5O5V+Tlimg4aVxJIKkFMf4761msUOVwwGWsWagT+Z6b2Tk650HmxDw8MF000A+u1ip
+         UMoDfuBD82+eEMYCKgtJgTXSLfnof6VK4TIW8WFrUDphXnM/um9gcgFPoqMXe3Cn7uaM
+         5LYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762377356; x=1762982156;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8ppaE2LQfT94SEh9VKLVy8mNImdVN7dwxyvCopktHPk=;
-        b=nlMpKFLWknXQhZItLmV0I0+JdQl4mVaPOkG7VXdDnXqmZdT3eOlOXPhwBh/Q82Y+pw
-         5PHuCJhWG+im/bJQjip6TnqQ285Vwlzjsq/Jslvwqn2UQa4ijgSA6ic7WxMKsv5e367X
-         YT8gPnNKDnQ/mUAJYVA9bszKn9T/B6WEu6qM+BPWBL9nsMq9ozyH9hqIwNbOgDpA9dlG
-         au7f1SbGoSiT7rVAH41pxWJoqXut6prQ+zbKQZppC55Qf5UJ83Rh4ERQJP4l4gB1/daO
-         mGRbjduc4j0dqMy/MtgY+rZwVXWsS80U0myr3c1ziAwh7jaL/Yc8m9phQOApkjPvbXtN
-         E6xw==
-X-Forwarded-Encrypted: i=1; AJvYcCXb49XY7AQr3QZERlqS72yBfICLsH6nHJO09Px6vpoL3kdkbkDSVGx+c9W/ZfgpGGqVnUkcp0zlxk31tx/t@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTgcgUViSUvV/2KCCJ7hoe1aUArI072WobOFrNxHlj+YYGuz+B
-	WYY4ojRYBCORSsTNg3HcWR+SQ3IYQx3kPprfmJmie8H6zcwq0qMuOm+X
-X-Gm-Gg: ASbGncs9I6kJfyOr3XuiO9o1MtQuE/BXjtG8xCjcPMOzc4tGrsvyEiW/63jK3xLtTSp
-	sK/3QUXmKCNP/CAIY8TOpun9S9pAh2w/ckvHSa4rqAXk5RSDHCp6wFDwzQdCwHSvt2l40ul6OrS
-	iLCGdHo/X/PIhw8qBT91zaHva0iLdaF0Ylb1UrqmL3qKiL3rK/ksFQUq9uIqTus/Qb5sE6u38w8
-	dk21HktEwolkscvc5hdTt4Iab4T6N1fxRp0rAxLfoZ21PxaLy9MH8nhGJVXD2EN4jG7jDOMU/2+
-	jgW59gkNQ2XrAch/AieQUvjqOiNtZ+jsQu7TbN3DCxOXq/fSz/ZVZlRcv1QyPfx18qb/GmUQ5Z9
-	HObEVDWO+fBja4hQheeyOyK8egT/z01hKpHy7swEySXTdz+0VNDYMVrFEiHYwxZXqSjPT4P+FC9
-	p1iw6NT6NxzKXPg1fIDn3stfQPqrqD5KUtr5J2vr3wrJYXEA52hOrHWKwi2zzKPmCX/VH6y9mtz
-	uEdH9WP/vKwFvH7BQHSGWZ07mYVIus=
-X-Google-Smtp-Source: AGHT+IHhnDU7C8JIw0mU7ueaGAVALbH7ZSUb6hbiggFXfD6/S5ypV4gK3TS5wjxW/SnnCtFGhSbz5Q==
-X-Received: by 2002:a5d:5f53:0:b0:427:4b0:b3e5 with SMTP id ffacd0b85a97d-429e330aed4mr4567372f8f.47.1762377355551;
-        Wed, 05 Nov 2025 13:15:55 -0800 (PST)
-Received: from ?IPV6:2003:d8:2f30:b00:cea9:dee:d607:41d? (p200300d82f300b00cea90deed607041d.dip0.t-ipconnect.de. [2003:d8:2f30:b00:cea9:dee:d607:41d])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429eb40617asm851462f8f.10.2025.11.05.13.15.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Nov 2025 13:15:54 -0800 (PST)
-Message-ID: <563246df-cca4-4d21-bad0-7269ab5a419c@gmail.com>
-Date: Wed, 5 Nov 2025 22:15:51 +0100
+        d=1e100.net; s=20230601; t=1762377635; x=1762982435;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zdLJGs3mR/Ak3xxBl+2P2SaXwjuVbkUq06ZP/Gr3rTg=;
+        b=dSdpJ7W+6JIeJYr6F79SnRaPYXpIgZV6xsDKPGTPP3yFIV9s11jrktzSCFtZ941Iwy
+         cuY4d7jD1KXhPJFrEBtAULdHNfyqDNGAOCD698TQGyZx6c8sqODIIGlL9HwcyRhzcbfM
+         q4kHI8HOgZhcJqdPHiPgfeoP2PScdaNk0nIvXwEXsThR4xx/gL3UBxXj2YmTsMD9/9A+
+         Vrmeg8GfaIMJFDE4scOSxeLvat1/X5cWGIkxQ1Mq1GUjBrPzXaI1Q0c5IRCXY9z1AENz
+         xZTGwLNE/97oywTNQHTdkTw4juESpijDbpfzlUQbclhehEokdDq07GxEuKQ4SVIVgCzs
+         lyvg==
+X-Forwarded-Encrypted: i=1; AJvYcCUo3YYCIKP+gbog1yW6v9A1X9uQd8QR3Z+Tc7vd/vxftt6lWuPVRpmbRxDjC7E0b+U1YdIJrgVptaRhiCeA@vger.kernel.org
+X-Gm-Message-State: AOJu0YzyZmhZNBWOP0Pi7nvS7c2kNgplTRfpg0klqrMaiMyPK3zYYLPl
+	ZT3lrWqjUzL/UeKsJJlj+9D9XMS4DTOnfgoeIv+YC31cunjy8G3fkevF
+X-Gm-Gg: ASbGncu1Bkeza3oAfvokdQXHsNpa7gMMAinS86liRdzD5KS09xmO0bHGm7YFKn9pJgV
+	fMqKdrh6WKxrcR0HPOXSxkYRan1JBxO4rfHLZwDr+oMQTN372iOXEgPfKoRduZlL/vBFMZVYbM3
+	1t9PvX6ZsjoJmPza6MngbWtrvOohCZ7NcdGBF6bzXGRdXMhg1FYffMPnva5krgvRK1/9OJxMkfp
+	JJQiwThsZw9F6LVZPgl3hPgQ3vGey45/KstP1GHgreNtnPamFB2hkGIJk9qxyWbTM42EgFBgz5i
+	KqUlBItShG++OSZkP5spfGEoOdTb0fTq6vD6iSxrnn7l2z1FOqB5LOZtC9RyehEBHelxk02Vd9H
+	WjDvD3ss3nyQYb4Zd+UWw1Yond6RE4wIA1AWIDtFrmtxtBZYrrmIWUopcpI3jHdBGoYBxlAOBs9
+	Ez+7Wj6bE+w0mdllid0Of5GRhvq3+iyK/lVXju5ib74v012vmd
+X-Google-Smtp-Source: AGHT+IEwpSk8sOAJvDtjfIMcje8WUONwpgtu7bj9S59zK+n8/BOyF98omCH07HtS0euQPIoNmLSS6A==
+X-Received: by 2002:a05:600c:358d:b0:477:b93:a7b8 with SMTP id 5b1f17b1804b1-4775cdbd478mr43779465e9.8.1762377634689;
+        Wed, 05 Nov 2025 13:20:34 -0800 (PST)
+Received: from f.. (cst-prg-14-82.cust.vodafone.cz. [46.135.14.82])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-477625c2f90sm8914505e9.12.2025.11.05.13.20.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Nov 2025 13:20:34 -0800 (PST)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: mic@digikod.net,
+	brauner@kernel.org
+Cc: linux-security-module@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	viro@zeniv.linux.org.uk,
+	eadavis@qq.com,
+	gnoack@google.com,
+	jack@suse.cz,
+	jannh@google.com,
+	max.kellermann@ionos.com,
+	m@maowtm.org,
+	syzbot+12479ae15958fc3f54ec@syzkaller.appspotmail.com,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH 1/2] fs: add iput_not_last()
+Date: Wed,  5 Nov 2025 22:20:24 +0100
+Message-ID: <20251105212025.807549-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 02/16] mm: introduce leaf entry type and use to simplify
- leaf entry logic
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Gregory Price <gourry@gourry.net>, Matthew Wilcox <willy@infradead.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Janosch Frank <frankja@linux.ibm.com>,
- Claudio Imbrenda <imbrenda@linux.ibm.com>,
- Alexander Gordeev <agordeev@linux.ibm.com>,
- Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
- Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>, Peter Xu <peterx@redhat.com>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Arnd Bergmann <arnd@arndb.de>, Zi Yan <ziy@nvidia.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>, Nico Pache
- <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
- Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
- Lance Yang <lance.yang@linux.dev>, Muchun Song <muchun.song@linux.dev>,
- Oscar Salvador <osalvador@suse.de>, Vlastimil Babka <vbabka@suse.cz>,
- Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
- Michal Hocko <mhocko@suse.com>, Matthew Brost <matthew.brost@intel.com>,
- Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
- Byungchul Park <byungchul@sk.com>, Ying Huang
- <ying.huang@linux.alibaba.com>, Alistair Popple <apopple@nvidia.com>,
- Axel Rasmussen <axelrasmussen@google.com>, Yuanchu Xie <yuanchu@google.com>,
- Wei Xu <weixugc@google.com>, Kemeng Shi <shikemeng@huaweicloud.com>,
- Kairui Song <kasong@tencent.com>, Nhat Pham <nphamcs@gmail.com>,
- Baoquan He <bhe@redhat.com>, Chris Li <chrisl@kernel.org>,
- SeongJae Park <sj@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
- Leon Romanovsky <leon@kernel.org>, Xu Xin <xu.xin16@zte.com.cn>,
- Chengming Zhou <chengming.zhou@linux.dev>, Jann Horn <jannh@google.com>,
- Miaohe Lin <linmiaohe@huawei.com>, Naoya Horiguchi
- <nao.horiguchi@gmail.com>, Pedro Falcato <pfalcato@suse.de>,
- Pasha Tatashin <pasha.tatashin@soleen.com>, Rik van Riel <riel@surriel.com>,
- Harry Yoo <harry.yoo@oracle.com>, Hugh Dickins <hughd@google.com>,
- linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
- linux-s390@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linux-arch@vger.kernel.org, damon@lists.linux.dev
-References: <cover.1762171281.git.lorenzo.stoakes@oracle.com>
- <2c75a316f1b91a502fad718de9b1bb151aafe717.1762171281.git.lorenzo.stoakes@oracle.com>
- <aQugI-F_Jig41FR9@casper.infradead.org>
- <aQukruJP6CyG7UNx@gourry-fedora-PF4VCD3F>
- <373a0e43-c9bf-4b5b-8d39-4f71684ef883@lucifer.local>
- <aQus_MNi2gFyY_pL@gourry-fedora-PF4VCD3F>
- <fb718e69-8827-4226-8ab4-38d80ee07043@lucifer.local>
- <7f507cb7-f6aa-4f52-b0b5-8f0f27905122@gmail.com>
- <2d1f420e-c391-487d-a3cc-536eb62f3518@lucifer.local>
-From: "David Hildenbrand (Red Hat)" <davidhildenbrandkernel@gmail.com>
-Content-Language: en-US
-In-Reply-To: <2d1f420e-c391-487d-a3cc-536eb62f3518@lucifer.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 05.11.25 22:08, Lorenzo Stoakes wrote:
-> On Wed, Nov 05, 2025 at 09:11:45PM +0100, David Hildenbrand (Red Hat) wrote:
->> On 05.11.25 21:05, Lorenzo Stoakes wrote:
->>> On Wed, Nov 05, 2025 at 03:01:00PM -0500, Gregory Price wrote:
->>>> On Wed, Nov 05, 2025 at 07:52:36PM +0000, Lorenzo Stoakes wrote:
->>>>> On Wed, Nov 05, 2025 at 02:25:34PM -0500, Gregory Price wrote:
->>>>>> On Wed, Nov 05, 2025 at 07:06:11PM +0000, Matthew Wilcox wrote:
->>>>> I thought about doing this but it doesn't really work as the type is
->>>>> _abstracted_ from the architecture-specific value, _and_ we use what is
->>>>> currently the swp_type field to identify what this is.
->>>>>
->>>>> So we would lose the architecture-specific information that any 'hardware leaf'
->>>>> entry would require and not be able to reliably identify it without losing bits.
->>>>>
->>>>> Trying to preserve the value _and_ correctly identify it as a present entry
->>>>> would be difficult.
->>>>>
->>>>> And I _really_ didn't want to go on a deep dive through all the architectures to
->>>>> see if we could encode it differently to allow for this.
->>>>>
->>>>> Rather I think it's better to differentiate between s/w + h/w leaf entries.
->>>>>
->>>>
->>>> Reasonable - names are hard, but just about anything will be better than swp_entry.
->>>>
->>>> SWE / sw_entry seems perfectly reasonable.
->>>
->>> I'm not a lover of 'sw' in there it's just... eye-stabby. Is that a word?
->>>
->>> I am quite fond of my suggested soft_leaf_t, softleaf_xxx()
->>
->> We do have soft_dirty.
->>
->> It will get interesting with pte_swp_soft_dirty() :)
-> 
-> Hmm but that's literally a swap entry, and is used against an actual PTE entry
-> not an abstracted s/w leaf entry so I doubt that'd require renaming on any
-> level.
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+---
+ fs/inode.c         | 12 ++++++++++++
+ include/linux/fs.h |  1 +
+ 2 files changed, 13 insertions(+)
 
-It's used on migration entries as well. Just like pte_swp_uffd_wp().
+diff --git a/fs/inode.c b/fs/inode.c
+index ec9339024ac3..cff1d3af0d57 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -1967,6 +1967,18 @@ void iput(struct inode *inode)
+ }
+ EXPORT_SYMBOL(iput);
+ 
++/**
++ *	iput_not_last	- put an inode assuming this is not the last reference
++ *	@inode: inode to put
++ */
++void iput_not_last(struct inode *inode)
++{
++	VFS_BUG_ON_INODE(atomic_read(&inode->i_count) < 2, inode);
++
++	WARN_ON(atomic_sub_return(1, &inode->i_count) == 0);
++}
++EXPORT_SYMBOL(iput_not_last);
++
+ #ifdef CONFIG_BLOCK
+ /**
+  *	bmap	- find a block number in a file
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index c895146c1444..98fc088a461f 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2823,6 +2823,7 @@ extern int current_umask(void);
+ 
+ extern void ihold(struct inode * inode);
+ extern void iput(struct inode *);
++void iput_not_last(struct inode *);
+ int inode_update_timestamps(struct inode *inode, int flags);
+ int generic_update_time(struct inode *, int);
+ 
+-- 
+2.48.1
 
-So, it's ... tricky :)
-
-But maybe I am missing your point (my brain is exhausted from uffd code)
 
