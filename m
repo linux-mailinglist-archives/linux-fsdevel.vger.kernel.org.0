@@ -1,58 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-67228-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67229-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F60FC3844F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 05 Nov 2025 23:56:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2664C3846D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 06 Nov 2025 00:00:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C7A0189C5F2
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Nov 2025 22:56:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7B803B4875
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Nov 2025 22:59:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B03552F0C7C;
-	Wed,  5 Nov 2025 22:56:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56FCA2E973A;
+	Wed,  5 Nov 2025 22:58:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SF/CrC6y"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LNvEhAIQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12A512E8B73;
-	Wed,  5 Nov 2025 22:56:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB25221E097;
+	Wed,  5 Nov 2025 22:58:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762383373; cv=none; b=p+YzyOECgUPs8AWn9AGg18r+YKVNe8TE+eBJmuwH+20I+kHfZUO6VSbibYQ9zoTyjA3eYw8MNEaovChPr23kSCuMsquBAHQpQ8IS4sRAk7Eif6O3C+d4zRyWze9WGAqWx1+GaC5Np+nuY9Jfa9Bp+Mf/OTGurCjT2/tS0qzw9so=
+	t=1762383536; cv=none; b=YXAbG5Nj2SlEet6fxYVfUcjxPcI7iIjezcHCWAeQrXu3qbtK6IhJMSDuYG6SjAnOtKsinblwEZOQVbyAyij/aB3ujVfe0++rqWTDBAUYZrmsRu7M6Meh/d9/+Pcvfcg412/XOBCLpRRW9gw/fkgxkNCbZRNiL2Q4i/MgbZhcMas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762383373; c=relaxed/simple;
-	bh=KVUjl+51Bg8bXVZjvs2CrjO+gcGngsts6Uy7Xsgql2o=;
+	s=arc-20240116; t=1762383536; c=relaxed/simple;
+	bh=onJHOiyRK4hFxFEwH1SEwaVtaoqqcrCxRjUW5zIdKas=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ynnzic6MhhD/tp13ogdHR7kG1dtKn8MOLps/hZmvK5/fCGe5x5SCNi2FPMKXlmowKmrzYOgVmgqy4WcB2YKktyslp51cOtCaOqsNwA0Pukj+yfnGyDizjTnsnwxfgILVqrwDGLCWrux+GayYtk4H9TbsrBfZ2PoZTzyd+eP7iDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SF/CrC6y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73E4CC116B1;
-	Wed,  5 Nov 2025 22:56:10 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=oxz2nbo4ZLObFnrVVTbQqzsLHMocFVcZiomS5EmXiNXpX63OFGNaYSDX74iaS6ZJ0JYK/JzpiygNeYoj44d7oxQFNIA1b/EvT596XXfl6odSvG5AoS/Y9YVknPaVE+5SykvHFcgkzaWjSEWBW2+QdizkSY+luGqSDf+20ReQQk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LNvEhAIQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35027C4CEF5;
+	Wed,  5 Nov 2025 22:58:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762383370;
-	bh=KVUjl+51Bg8bXVZjvs2CrjO+gcGngsts6Uy7Xsgql2o=;
+	s=k20201202; t=1762383536;
+	bh=onJHOiyRK4hFxFEwH1SEwaVtaoqqcrCxRjUW5zIdKas=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SF/CrC6yajRJqmwq6JqvFAM5zxx8GsS+JUNBoruhgj6TnM2yX4ep8F9jZGvl7+DfP
-	 fDal18Vq89vjjOTKwTrK8QsA97vdLaBl5DY6ZRZP4O426kIizp6uAsYnclEezc2MqG
-	 WxfDkHM96U42vkFPce7psPru43LpIOC9RX9ZVh8opVizkDw5gGEIY9zoIw8/d9k0hS
-	 YmsUYcjXwm1Ee0Fyvtq/lyIH39MfcaPVqSs2NXbXWjxLhDoejNz+35v0r3M2ChlN6C
-	 EEtYQC3WkmqYvNylKsbvQaVWMVnEFFjdYVw0N01rVI9BMbTjLTH75WJEbmuBnSD8u5
-	 Pww4QpU3GUTXA==
-Date: Wed, 5 Nov 2025 14:56:09 -0800
+	b=LNvEhAIQRPz93Wq0RYjBT0NOeBgiRj7uhHqn47efkJegtniXqIo+OE6nRBRT498jx
+	 noI+P5juTzsNV0koidDPHrrafpGVQq4Tg0OzC3pqCRY1Ylm9iQG0Dexx3HHowoqSMq
+	 meYpJCTPNxEGifVAjeirTaWvvxEthuazH29Lve/gDPQCxLzh1pKoqwq0r3XCxT6/6g
+	 o1MpKCBCFBRPgHH9KEkZTlH3FFa/SIoc8oimij7AEUwdyHVClXAw/Ozl9W6iKAJKih
+	 EkpROn5hPOSxy2R5uB/0VhASUsVWW9hs7aFYk2tOksA2BHU9g8+5QxZmfhQEScK3Rv
+	 2U6BvOxb3gavg==
+Date: Wed, 5 Nov 2025 14:58:55 -0800
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: Amir Goldstein <amir73il@gmail.com>
 Cc: zlang@redhat.com, neal@gompa.dev, fstests@vger.kernel.org,
 	linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
 	joannelkoong@gmail.com, bernd@bsbernd.com
-Subject: Re: [PATCH 02/33] generic/740: don't run this test for fuse ext*
- implementations
-Message-ID: <20251105225609.GD196358@frogsfrogsfrogs>
+Subject: Re: [PATCH 23/33] generic/{409,410,411,589}: check for stacking
+ mount support
+Message-ID: <20251105225855.GE196358@frogsfrogsfrogs>
 References: <176169819804.1433624.11241650941850700038.stgit@frogsfrogsfrogs>
- <176169820014.1433624.17059077666167415725.stgit@frogsfrogsfrogs>
- <CAOQ4uxhgCqf8pj-ebUiC_HNG4VLyv7UEOausCt5Cs831_AnGUg@mail.gmail.com>
+ <176169820405.1433624.15490165287670348975.stgit@frogsfrogsfrogs>
+ <CAOQ4uxgQe5thjp_Pfmbwf-P+o9n7a93a7dzS4S0_Rnw--ULBfA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -62,65 +62,73 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxhgCqf8pj-ebUiC_HNG4VLyv7UEOausCt5Cs831_AnGUg@mail.gmail.com>
+In-Reply-To: <CAOQ4uxgQe5thjp_Pfmbwf-P+o9n7a93a7dzS4S0_Rnw--ULBfA@mail.gmail.com>
 
-On Thu, Oct 30, 2025 at 10:59:00AM +0100, Amir Goldstein wrote:
-> On Wed, Oct 29, 2025 at 2:30 AM Darrick J. Wong <djwong@kernel.org> wrote:
+On Thu, Oct 30, 2025 at 11:25:12AM +0100, Amir Goldstein wrote:
+> On Wed, Oct 29, 2025 at 2:29 AM Darrick J. Wong <djwong@kernel.org> wrote:
 > >
 > > From: Darrick J. Wong <djwong@kernel.org>
 > >
-> > mke2fs disables foreign filesystem detection no matter what type you
-> > pass in, so we need to block this for both fuse server variants.
+> > _get_mount depends on the ability for commands such as "mount /dev/sda
+> > /a/second/mountpoint -o per_mount_opts" to succeed when /dev/sda is
+> > already mounted elsewhere.
+> >
+> > The kernel isn't going to notice that /dev/sda is already mounted, so
+> > the mount(8) call won't do the right thing even if per_mount_opts match
+> > the existing mount options.
+> >
+> > If per_mount_opts doesn't match, we'd have to convey the new per-mount
+> > options to the kernel.  In theory we could make the fuse2fs argument
+> > parsing even more complex to support this use case, but for now fuse2fs
+> > doesn't know how to do that.
+> >
+> > Until that happens, let's _notrun these tests.
 > >
 > > Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 > > ---
-> >  common/rc         |    2 +-
-> >  tests/generic/740 |    1 +
-> >  2 files changed, 2 insertions(+), 1 deletion(-)
+> >  common/rc         |   24 ++++++++++++++++++++++++
+> >  tests/generic/409 |    1 +
+> >  tests/generic/410 |    1 +
+> >  tests/generic/411 |    1 +
+> >  tests/generic/589 |    1 +
+> >  5 files changed, 28 insertions(+)
 > >
 > >
 > > diff --git a/common/rc b/common/rc
-> > index 3fe6f53758c05b..18d11e2c5cad3a 100644
+> > index f5b10a280adec9..b6e76c03a12445 100644
 > > --- a/common/rc
 > > +++ b/common/rc
-> > @@ -1889,7 +1889,7 @@ _do()
-> >  #
-> >  _exclude_fs()
-> >  {
-> > -       [ "$1" = "$FSTYP" ] && \
-> > +       [[ $FSTYP =~ $1 ]] && \
-> >                 _notrun "not suitable for this filesystem type: $FSTYP"
-> 
-> If you accept my previous suggestion of MKFSTYP, then could add:
-> 
->        [[ $MKFSTYP =~ $1 ]] && \
->                _notrun "not suitable for this filesystem on-disk
-> format: $MKFSTYP"
-> 
-> 
+> > @@ -364,6 +364,30 @@ _clear_mount_stack()
+> >         MOUNTED_POINT_STACK=""
 > >  }
 > >
-> > diff --git a/tests/generic/740 b/tests/generic/740
-> > index 83a16052a8a252..e26ae047127985 100755
-> > --- a/tests/generic/740
-> > +++ b/tests/generic/740
-> > @@ -17,6 +17,7 @@ _begin_fstest mkfs auto quick
-> >  _exclude_fs ext2
-> >  _exclude_fs ext3
-> >  _exclude_fs ext4
-> > +_exclude_fs fuse.ext[234]
-> >  _exclude_fs jfs
-> >  _exclude_fs ocfs2
-> >  _exclude_fs udf
-> >
-> >
+> > +# Check that this filesystem supports stack mounts
+> > +_require_mount_stack()
+> > +{
+> > +       case "$FSTYP" in
+> > +       fuse.ext[234])
+> > +               # _get_mount depends on the ability for commands such as
+> > +               # "mount /dev/sda /a/second/mountpoint -o per_mount_opts" to
+> > +               # succeed when /dev/sda is already mounted elsewhere.
+> > +               #
+> > +               # The kernel isn't going to notice that /dev/sda is already
+> > +               # mounted, so the mount(8) call won't do the right thing even
+> > +               # if per_mount_opts match the existing mount options.
+> > +               #
+> > +               # If per_mount_opts doesn't match, we'd have to convey the new
+> > +               # per-mount options to the kernel.  In theory we could make the
+> > +               # fuse2fs argument parsing even more complex to support this
+> > +               # use case, but for now fuse2fs doesn't know how to do that.
+> > +               _notrun "fuse2fs servers do not support stacking mounts"
+> > +               ;;
 > 
-> And then you wont need to add fuse.ext[234] to exclude list
-> 
-> At the (very faint) risk of having a test that only wants to exclude ext4 and
-> does not want to exclude fuse.ext4, I think this is worth it.
+> I believe this is true for fuse* in general. no?
 
-I guess we could try to do [[ $MKFSTYP =~ ^$1 ]]; ?
+I think it's actually true any time mount shells out to a mount helper
+because you gave it a -t FOO and there happens to be a mount.FOO in
+$PATH.  Though I wonder if I could/should just bloat up fuse4fs to
+detect when the device is already open to the same mountpoint, and just
+call mount(8) back with --internal?
 
 --D
 
