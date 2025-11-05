@@ -1,452 +1,157 @@
-Return-Path: <linux-fsdevel+bounces-67132-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67133-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8D60C35F01
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 05 Nov 2025 14:57:18 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F1DFC35F22
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 05 Nov 2025 15:02:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9F3754FC42E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Nov 2025 13:55:32 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1386F3481EC
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Nov 2025 14:02:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C28CB326D4B;
-	Wed,  5 Nov 2025 13:55:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41369327786;
+	Wed,  5 Nov 2025 14:02:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H6RjlWu4"
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="DITFGI7k"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 266AA3254AA
-	for <linux-fsdevel@vger.kernel.org>; Wed,  5 Nov 2025 13:55:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E96C320CB5;
+	Wed,  5 Nov 2025 14:02:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762350914; cv=none; b=pAIC9zx/7j/fbLy1K+UoH2d21O0RgRbffLOjqaQv2B6TgNHSaXz4S0v7DYBfyq9UtrG9Zf8INJB8S+/1jvvnb1wGUYWN3fP3QJVRMewoNgS3GvAZwKTxZL1lYKMpXWnRV7fzH6DKewxsvW0YNYmk+3ITWWMX4mem3/IlQILBbX8=
+	t=1762351323; cv=none; b=ioud6RG33brndjRFk5JgH8FdlGNhfWy+cQbmJ1fRj3WwGHMxWyt04ZR08/Y1GvEfT1TDwyy4KJlMyq4rfnQMIhUQZErXGe6mW28JvWxvo1ymvbF6Fx7Zk4d1pwOkjV+JbcLCB3B5fRh1tmROYUQ1NoIU6AfNtxdL/eY2LsGtRF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762350914; c=relaxed/simple;
-	bh=xOAkdwx5XMPuZBweonSMuobYigRFLMCprX2fUOYbHWg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Kssr2TMw8dY9rUaM/oi1NC4MX3zKsUNCXGybu0rhCyyI6fb5YYdKq0VHVeeRYKrzapMccwBNclPggCufNObc1bamhCfImWDwWoVYpYBwK9UyCGGzcV7cXc+8oQkMvo+h5+OfQhJh5//zUmGZQQxhQKbfgiz8FP2asCS/pVbZ244=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H6RjlWu4; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-47112a73785so43807305e9.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Nov 2025 05:55:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762350910; x=1762955710; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=rKxkYfDxy0NxD5aWbghbexk5V7RHrrReQ225T2JDBP0=;
-        b=H6RjlWu4V15Cmhb4HdlaEGyPLHGQ+7c5808dkeB6fdPy3MK8TGCXen8JcxEN1fqj9f
-         r9MxqMHHRhYlrjzA1ixVoJZBuNhR82vkVN7VR6LtOwQh7U71ud7uAQVqnydFOyN9g7eO
-         6tRID8nXP5V1qZI8GF6rdVwwQReu3vDwUDN2HmA/oxBTAxVa/7PREWALRjj6M2U1qS2u
-         wfwK62JQA/MKAHhyFMJFNrlk+TcHGrgWeH/Q9ZOvxpcgFawijw3abb13cDktbH8r0QhR
-         ruvm2a0hO1lDftSbJ/wHPl7BDOm0HCHrvi6GzHn6HoXuqX+I36rJOhjQSz3jKiEZRJwV
-         +tbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762350910; x=1762955710;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rKxkYfDxy0NxD5aWbghbexk5V7RHrrReQ225T2JDBP0=;
-        b=OS1TgwRpzMxowXWBUsap0m7I5c3r0xgraAM5sfkWCWQqM6iPycfH1dy8qQI/el/46c
-         TS8mZMoONdR6B0UfNOnonQ9k35t6jj1YtevbsEi09adNMO+nLuPvVM6tc61g5SufXKhr
-         IBRCrKM/5yIL3YZgmryFGTi6Pmlj57GAaXZ7kCKi3K60yxWDFkQlObt7VwQXvSLnh4S0
-         YJyUeYFBYJk6SiA7UZWm9zrDqDeRnM64T/Siz+c+aWpocCYH8z1cV6qJF+qmXTiEMHn2
-         qcgpWNRqXkXD6b2VrKlA126WTNeeSfZ2dum98SBh97tp04M3MP5ZO2+2Md2pLCQ2dV4Q
-         npJw==
-X-Forwarded-Encrypted: i=1; AJvYcCX7PvA8rbFLrNSXc/jnKxyhNDZI1dHC3Mz+n2VrdMplx/JN5hfPGB8JsSU3vag8cXxCT64/nzpoQmF72sby@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxPAbGRP29FHWHJ5qZlrxQPtDF+AAK1wxbqK0UYivG2UigEXzt
-	YzkkFuaJNiYTuk/Y23sjzJFVaL0Rym4pvLiPQVXWSPb8XhfHviGfQ0sr
-X-Gm-Gg: ASbGncuw6Oh3v9+E1WD1Zg/Pdwcd0ZMGRWveAC+83u+BXStxXb86Di5Cnp3JAi5jx+9
-	yWuto9v4gI70laK1Y7bV5k0UGBmXCaj5T+rIYwS9RPoDPh1I2x4iwRrwtsafR8Z0FR3OPLVCK5N
-	Vp+PJXeUS3MVm4lfJBq40vDsThnYx3sMM1uPTsZe8ehGIVKElukXC8dXIZzXzkWQqzyEaNjtSkA
-	pg1VWzC998NWvQ5RKdOGcb+lK4Nw+b+Z7RCaD+j9eCrLMnfkFUay0Z4Hcwa3Uf4Z5yr0TWRW1Sh
-	TXbmrQQr6njQUOqGkYSLDGgYFrVsqhhck3saTkWGp3JbVtf8yBT6nD/NXTwodHUpD3v1CuTYzKF
-	sAFVtv43th+5+KmFagycYG0whhcV2Ak+AwuVM8kN1CUoWj8eJvIQL3kbozKqSo29e8xYcsTddwZ
-	f5wEyMh/BHlm5aHqR17uW5zhO0RFq7DwkNVtLKI40FY0R4AxcX
-X-Google-Smtp-Source: AGHT+IFbrMOkwHlj7tzUq3CNHRE0pCkUygQWliDIrQ/V6eJXbLgxVBRh+H6LBamQYBVrY23ibi9f2w==
-X-Received: by 2002:a05:600c:3ba0:b0:475:e007:baf1 with SMTP id 5b1f17b1804b1-4775ce207a3mr42747085e9.34.1762350910176;
-        Wed, 05 Nov 2025 05:55:10 -0800 (PST)
-Received: from f.. (cst-prg-14-82.cust.vodafone.cz. [46.135.14.82])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429dc193e27sm10797646f8f.18.2025.11.05.05.55.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 05:55:09 -0800 (PST)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: brauner@kernel.org
-Cc: viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-ext4@vger.kernel.org,
-	tytso@mit.edu,
-	torvalds@linux-foundation.org,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [WIP PATCH] fs: speed up path lookup with cheaper MAY_EXEC checks
-Date: Wed,  5 Nov 2025 14:55:05 +0100
-Message-ID: <20251105135505.751454-1-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1762351323; c=relaxed/simple;
+	bh=U1SOFOwQEZy4lr/5coF+o6aFeBeansHiljOkSUgFn6E=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=KDwvL1W3YcFRM4Fsw/RJkAKC8AKUK3pg/jGyeBJWFP3jzdDg6sq71hxT5CB8LumFUlkvZV2qsLdNR4M2cY5LfHWjGUI3qzyrXgKMyhedkcs0zxTRflbf6+yFEbSq0SeoK25y1g2t4zZcCFcKFHHMY6G8Bn4ZWnz1LGD/5ckEMzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=DITFGI7k; arc=none smtp.client-ip=198.37.111.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1762351320;
+	bh=U1SOFOwQEZy4lr/5coF+o6aFeBeansHiljOkSUgFn6E=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=DITFGI7ky2UGXPSyvPNbR2eDKb2mIpOI8y0K51vGkyfZ+ObaFpNyu67RYk/ENbjEu
+	 3mrCHBbAQhPMbWg/6dVpkvo4tX2HKrVHzZsjI62CXwdlmlzzDCPp4oYCOt0Y9ZBCIk
+	 pWlcU7Ae6wsogMVNvZ5mcAT1o7YRXfjxH8BbE5Kg=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 438B41C02D4;
+	Wed, 05 Nov 2025 09:02:00 -0500 (EST)
+Message-ID: <ddc9e2efa25d59ae7f1989ac155b9a9043ca830b.camel@HansenPartnership.com>
+Subject: Re: [PATCH v2 22/50] convert efivarfs
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Ard Biesheuvel <ardb@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
+ linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org, jack@suse.cz,
+  raven@themaw.net, miklos@szeredi.hu, neil@brown.name,
+ a.hindborg@kernel.org,  linux-mm@kvack.org, linux-efi@vger.kernel.org,
+ ocfs2-devel@lists.linux.dev,  kees@kernel.org, rostedt@goodmis.org,
+ gregkh@linuxfoundation.org,  linux-usb@vger.kernel.org,
+ paul@paul-moore.com, casey@schaufler-ca.com, 
+ linuxppc-dev@lists.ozlabs.org, john.johansen@canonical.com, 
+ selinux@vger.kernel.org, borntraeger@linux.ibm.com, bpf@vger.kernel.org
+Date: Wed, 05 Nov 2025 09:01:59 -0500
+In-Reply-To: <20251105-ausfiel-klopapier-599213591ad2@brauner>
+References: <20251028174540.GN2441659@ZenIV>
+	 <20251028210805.GP2441659@ZenIV>
+	 <CAMj1kXF6tvg6+CL_1x7h0HK1PoSGtxDjc0LQ1abGQBd5qrbffg@mail.gmail.com>
+	 <9f079d0c8cffb150c0decb673a12bfe1b835efc9.camel@HansenPartnership.com>
+	 <20251029193755.GU2441659@ZenIV>
+	 <CAMj1kXHnEq97bzt-C=zKJdV3BK3EDJCPz3Pfyk52p2735-4wFA@mail.gmail.com>
+	 <20251105-aufheben-ausmusterung-4588dab8c585@brauner>
+	 <423f5cc5352c54fc21e0570daeeddc4a58e74974.camel@HansenPartnership.com>
+	 <20251105-sohlen-fenster-e7c5af1204c4@brauner>
+	 <305ff01c159993d8124ae3125f7dacf6b61fa933.camel@HansenPartnership.com>
+	 <20251105-ausfiel-klopapier-599213591ad2@brauner>
+Autocrypt: addr=James.Bottomley@HansenPartnership.com;
+ prefer-encrypt=mutual;
+ keydata=mQENBE58FlABCADPM714lRLxGmba4JFjkocqpj1/6/Cx+IXezcS22azZetzCXDpm2MfNElecY3qkFjfnoffQiw5rrOO0/oRSATOh8+2fmJ6el7naRbDuh+i8lVESfdlkoqX57H5R8h/UTIp6gn1mpNlxjQv6QSZbl551zQ1nmkSVRbA5TbEp4br5GZeJ58esmYDCBwxuFTsSsdzbOBNthLcudWpJZHURfMc0ew24By1nldL9F37AktNcCipKpC2U0NtGlJjYPNSVXrCd1izxKmO7te7BLP+7B4DNj1VRnaf8X9+VIApCi/l4Kdx+ZR3aLTqSuNsIMmXUJ3T8JRl+ag7kby/KBp+0OpotABEBAAG0N0phbWVzIEJvdHRvbWxleSA8SmFtZXMuQm90dG9tbGV5QEhhbnNlblBhcnRuZXJzaGlwLmNvbT6JAVgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAhkBFiEE1WBuc8i0YnG+rZrfgUrkfCFIVNYFAmBLmY0FCRs1hL0ACgkQgUrkfCFIVNaEiQgAg18F4G7PGWQ68xqnIrccke7Reh5thjUz6kQIii6Dh64BDW6/UvXn20UxK2uSs/0TBLO81k1mV4c6rNE+H8b7IEjieGR9frBsp/+Q01JpToJfzzMUY7ZTDV1IXQZ+AY9L7vRzyimnJHx0Ba4JTlAyHB+Ly5i4Ab2+uZcnNfBXquWrG3oPWz+qPK88LJLya5Jxse1m1QT6R/isDuPivBzntLOooxPk+Cwf5sFAAJND+idTAzWzslexr9j7rtQ1UW6FjO4CvK9yVNz7dgG6FvEZl6J/HOr1rivtGgpCZTBzKNF8jg034n49zGfKkkzWLuXbPUOp3/oGfsKv8pnEu1c2GbQpSmFtZXMgQm90dG9tbGV5IDxqZWpiQGxpbnV4LnZuZXQuaWJtLmNvbT6JAVYEEwEIAEACGwMHCwkIBwMCAQYVC
+	AIJCgsEFgIDAQIeAQIXgBYhBNVgbnPItGJxvq2a34FK5HwhSFTWBQJgS5mXBQkbNYS9AAoJEIFK5HwhSFTWEYEH/1YZpV+1uCI2MVz0wTRlnO/3OW/xnyigrw+K4cuO7MToo0tHJb/qL9CBJ2ddG6q+GTnF5kqUe87t7M7rSrIcAkIZMbJmtIbKk0j5EstyYqlE1HzvpmssGpg/8uJBBuWbU35af1ubKCjUs1+974mYXkfLmS0a6h+cG7atVLmyClIc2frd3o0zHF9+E7BaB+HQzT4lheQAXv9KI+63ksnbBpcZnS44t6mi1lzUE65+Am1z+1KJurF2Qbj4AkICzJjJa0bXa9DmFunjPhLbCU160LppaG3OksxuNOTkGCo/tEotDOotZNBYejWaXN2nr9WrH5hDfQ5zLayfKMtLSd33T9u0IUphbWVzIEJvdHRvbWxleSA8amVqYkBrZXJuZWwub3JnPokBVQQTAQgAPwIbAwYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AWIQTVYG5zyLRicb6tmt+BSuR8IUhU1gUCYEuZmAUJGzWEvQAKCRCBSuR8IUhU1gacCAC+QZN+RQd+FOoh5g884HQm8S07ON0/2EMiaXBiL6KQb5yP3w2PKEhug3+uPzugftUfgPEw6emRucrFFpwguhriGhB3pgWJIrTD4JUevrBgjEGOztJpbD73bLLyitSiPQZ6OFVOqIGhdqlc3n0qoNQ45n/w3LMVj6yP43SfBQeQGEdq4yHQxXPs0XQCbmr6Nf2p8mNsIKRYf90fCDmABH1lfZxoGJH/frQOBCJ9bMRNCNy+aFtjd5m8ka5M7gcDvM7TAsKhD5O5qFs4aJHGajF4gCGoWmXZGrISQvrNl9kWUhgsvoPqb2OTTeAQVRuV8C4FQamxzE3MRNH25j6s/qujtCRKYW1lcyBCb3R0b21sZXkgPGplamJAbGludXguaWJtLmNvbT6JAVQEEwEIAD
+	4CGwMFCwkIBwIGFQoJCAsCBBYCAwECHgECF4AWIQTVYG5zyLRicb6tmt+BSuR8IUhU1gUCYEuZmQUJGzWEvQAKCRCBSuR8IUhU1kyHB/9VIOkf8RapONUdZ+7FgEpDgESE/y3coDeeb8jrtJyeefWCA0sWU8GSc9KMcMoSUetUreB+fukeVTe/f2NcJ87Bkq5jUEWff4qsbqf5PPM+wlD873StFc6mP8koy8bb7QcH3asH9fDFXUz7Oz5ubI0sE8+qD+Pdlk5qmLY5IiZ4D98V239nrKIhDymcuL7VztyWfdFSnbVXmumIpi79Ox536P2aMe3/v+1jAsFQOIjThMo/2xmLkQiyacB2veMcBzBkcair5WC7SBgrz2YsMCbC37X7crDWmCI3xEuwRAeDNpmxhVCb7jEvigNfRWQ4TYQADdC4KsilPfuW8Edk/8tPtCVKYW1lcyBCb3R0b21sZXkgPEpCb3R0b21sZXlAT2Rpbi5jb20+iQEfBDABAgAJBQJXI+B0Ah0gAAoJEIFK5HwhSFTWzkwH+gOg1UG/oB2lc0DF3lAJPloSIDBW38D3rezXTUiJtAhenWrH2Cl/ejznjdTukxOcuR1bV8zxR9Zs9jhUin2tgCCxIbrdvFIoYilMMRKcue1q0IYQHaqjd7ko8BHn9UysuX8qltJFar0BOClIlH95gdKWJbK46mw7bsXeD66N9IhAsOMJt6mSJmUdIOMuKy4dD4X3adegKMmoTRvHOndZQClTZHiYt5ECRPO534Lb/gyKAKQkFiwirsgx11ZSx3zGlw28brco6ohSLMBylna/Pbbn5hII86cjrCXWtQ4mE0Y6ofeFjpmMdfSRUxy6LHYd3fxVq9PoAJTv7vQ6bLTDFNa0KkphbWVzIEJvdHRvbWxleSA8SkJvdHRvbWxleUBQYXJhbGxlbHMuY29tPokBHwQwAQIACQUCVyPgjAIdIAAKCRCBSuR8IUhU1tXiB/9D9OOU8qB
+	CZPxkxB6ofp0j0pbZppRe6iCJ+btWBhSURz25DQzQNu5GVBRQt1Us6v3PPGU1cEWi5WL935nw+1hXPIVB3x8hElvdCO2aU61bMcpFd138AFHMHJ+emboKHblnhuY5+L1OlA1QmPw6wQooCor1h113lZiBZGrPFxjRYbWYVQmVaM6zhkiGgIkzQw/g9v57nAzYuBhFjnVHgmmu6/B0N8z6xD5sSPCZSjYSS38UG9w189S8HVr4eg54jReIEvLPRaxqVEnsoKmLisryyaw3EpqZcYAWoX0Am+58CXq3j5OvrCvbyqQIWFElba3Ka/oT7CnTdo/SUL/jPNobtCxKYW1lcyBCb3R0b21sZXkgPGplamJAaGFuc2VucGFydG5lcnNoaXAuY29tPokBVwQTAQgAQRYhBNVgbnPItGJxvq2a34FK5HwhSFTWBQJjg2eQAhsDBQkbNYS9BQsJCAcCAiICBhUKCQgLAgQWAgMBAh4HAheAAAoJEIFK5HwhSFTWbtAH/087y9vzXYAHMPbjd8etB/I3OEFKteFacXBRBRDKXI9ZqK5F/xvd1fuehwQWl2Y/sivD4cSAP0iM/rFOwv9GLyrr82pD/GV/+1iXt9kjlLY36/1U2qoyAczY+jsS72aZjWwcO7Og8IYTaRzlqif9Zpfj7Q0Q1e9SAefMlakI6dcZTSlZWaaXCefdPBCc7BZ0SFY4kIg0iqKaagdgQomwW61nJZ+woljMjgv3HKOkiJ+rcB/n+/moryd8RnDhNmvYASheazYvUwaF/aMj5rIb/0w5p6IbFax+wGF5RmH2U5NeUlhIkTodUF/P7g/cJf4HCL+RA1KU/xS9o8zrAOeut2+4UgRaZ7bmEwgqhkjOPQMBBwIDBH4GsIgL0yQij5S5ISDZmlR7qDQPcWUxMVx6zVPsAoITdjKFjaDmUATkS+l5zmiCrUBcJ6MBavPiYQ4kqn4/xwaJAbMEGAEIACYCGwIWIQTVYG5zyLRi
+	cb6tmt+BSuR8IUhU1gUCZag0LwUJDwLkSQCBdiAEGRMIAB0WIQTnYEDbdso9F2cI+arnQslM7pishQUCWme25gAKCRDnQslM7pishdi9AQDyOvLYOBkylBqiTlJrMnGCCsWgGZwPpKq3e3s7JQ/xBAEAlx29pPY5z0RLyIDUsjf9mtkSNTaeaQ6TIjDrFa+8XH8JEIFK5HwhSFTWkasH/j7LL9WH9dRfwfTwuMMj1/KGzjU/4KFIu4uKxDaevKpGS7sDx4F56mafCdGD8u4+ri6bJr/3mmuzIdyger0vJdRlTrnpX3ONXvR57p1JHgCljehE1ZB0RCzIk0vKhdt8+CDBQWfKbbKBTmzA7wR68raMQb2D7nQ9d0KXXbtr7Hag29yj92aUAZ/sFoe9RhDOcRUptdYyPKU1JHgJyc0Z7HwNjRSJ4lKJSKP+Px0/XxT3gV3LaDLtHuHa2IujLEAKcPzTr5DOV+xsgA3iSwTYI6H5aEe+ZRv/rA4sdjqRiVpo2d044aCUFUNQ3PiIHPAZR3KK5O64m6+BJMDXBvgSsMy4VgRaZ7clEggqhkjOPQMBBwIDBMfuMuE+PECbOoYjkD0Teno7TDbcgxJNgPV7Y2lQbNBnexMLOEY6/xJzRi1Xm/o9mOyZ+VIj8h4G5V/eWSntNkwDAQgHiQE8BBgBCAAmAhsMFiEE1WBuc8i0YnG+rZrfgUrkfCFIVNYFAmWoNBwFCQ8C4/cACgkQgUrkfCFIVNZs4AgAnIjU1QEPLdpotiy3X01sKUO+hvcT3/Cd6g55sJyKJ5/U0o3f8fdSn6MWPhi1m62zbAxcLJFiTZ3OWNCZAMEvwHrXFb684Ey6yImQ9gm2dG2nVuCzr1+9gIaMSBeZ+4kUJqhdWSJjrNLQG38GbnBuYOJUD+x6oJ2AT10/mQfBVZ3qWDQXr/je2TSf0OIXaWyG6meG5yTqOEv0eaTH22yBb1nbodoZkmlMMb56jzRGZuorhFE06
+	N0Eb0kiGz5cCIrHZoH10dHWoa7/Z+AzfL0caOKjcmsnUPcmcrqmWzJTEibLA81z15GBCrldfQVt+dF7Us2kc0hKUgaWeI8Gv4CzwLkCDQRUdhaZARAApeF9gbNSBBudW8xeMQIiB/CZwK4VOEP7nGHZn3UsWemsvE9lvjbFzbqcIkbUp2V6ExM5tyEgzio2BavLe1ZJGHVaKkL3cKLABoYi/yBLEnogPFzzYfK2fdipm2G+GhLaqfDxtAQ7cqXeo1TCsZLSvjD+kLVV1TvKlaHS8tUCh2oUyR7fTbv6WHi5H8DLyR0Pnbt9E9/Gcs1j11JX+MWJ7jset2FVDsB5U1LM70AjhXiDiQCtNJzKaqKdMei8zazWS50iMKKeo4m/adWBjG/8ld3fQ7/Hcj6Opkh8xPaCnmgDZovYGavw4Am2tjRqE6G6rPQpS0we5I6lSsKNBP/2FhLmI9fnsBnZC1l1NrASRSX1BK0xf4LYB2Ww3fYQmbbApAUBbWZ/1aQoc2ECKbSK9iW0gfZ8rDggfMw8nzpmEEExl0hU6wtJLymyDV+QGoPx5KwYK/6qAUNJQInUYz8z2ERM/HOI09Zu3jiauFBDtouSIraX/2DDvTf7Lfe1+ihARFSlp64kEMAsjKutNBK2u5oj4H7hQ7zD+BvWLHxMgysOtYYtwggweOrM/k3RndsZ/z3nsGqF0ggct1VLuH2eznDksI+KkZ3Bg0WihQyJ7Z9omgaQAyRDFct+jnJsv2Iza+xIvPei+fpbGNAyFvj0e+TsZoQGcC34/ipGwze651UAEQEAAYkBHwQoAQIACQUCVT6BaAIdAwAKCRCBSuR8IUhU1p5QCAC7pgjOM17Hxwqz9mlGELilYqjzNPUoZt5xslcTFGxj/QWNzu0K8gEQPePnc5dTfumzWL077nxhdKYtoqwm2C6fOmXiJBZx6khBfRqctUvN2DlOB6dFf5I+1QT9TRBvceGzw01E4Gi0xjWKAB6OII
+	MAdnPcDVFzaXJdlAAJdjfg/lyJtAyxifflG8NnXJ3elwGqoBso84XBNWWzbc5VKmatzhYLOvXtfzDhu4mNPv/z7S1HTtRguI0NlH5RVBzSvfzybin9hysE3/+r3C0HJ2xiOHzucNAmG03aztzZYDMTbKQW4bQqeD5MJxT68vBYu8MtzfIe41lSLpb/qlwq1qg0iQElBBgBAgAPBQJUdhaZAhsMBQkA7U4AAAoJEIFK5HwhSFTW3YgH/AyJL2rlCvGrkLcas94ND9Pmn0cUlVrPl7wVGcIV+6I4nrw6u49TyqNMmsYam2YpjervJGgbvIbMzoHFCREi6R9XyUsw5w7GCRoWegw2blZYi5A52xe500+/RruG//MKfOtVUotu3N+u7FcXaYAg9gbYeGNZCV70vI+cnFgq0AEJRdjidzfCWVKPjafTo7jHeFxX7Q22kUfWOkMzzhoDbFg0jPhVYNiEXpNyXCwirzvKA7bvFwZPlRkbfihaiXDE7QKIUtQ10i5kw4C9rqDKwx8F0PaWDRF9gGaKd7/IJGHJaac/OcSJ36zxgkNgLsVX5GUroJ2GaZcR7W9Vppj5H+C4UgRkuRyTEwgqhkjOPQMBBwIDBOySomnsW2SkApXv1zUBaD38dFEj0LQeDEMdSE7bm1fnrdjAYt0f/CtbUUiDaPodQk2qeHzOP6wA/2K6rrjwNIWJAT0EGAEIACcDGyAEFiEE1WBuc8i0YnG+rZrfgUrkfCFIVNYFAmWoM/gFCQSxfmUACgkQgUrkfCFIVNZhTgf/VQxtQ5rgu2aoXh2KOH6naGzPKDkYDJ/K7XCJAq3nJYEpYN8G+F8mL/ql0hrihAsHfjmoDOlt+INa3AcG3v0jDZIMEzmcjAlu7g5NcXS3kntcMHgw3dCgE9eYDaKGipUCubdXvBaZWU6AUlTldaB8FE6u7It7+UO+IW4/L+KpLYKs8V5POInu2rqahlm7vgxY5iv4Txz4EvCW2e4dAlG
+	8mT2Eh9SkH+YVOmaKsajgZgrBxA7fWmGoxXswEVxJIFj3vW7yNc0C5HaUdYa5iGOMs4kg2ht4s7yy7NRQuh7BifWjo6BQ6k4S1H+6axZucxhSV1L6zN9d+lr3Xo/vy1unzA==
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.3 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-WARNING:
-This is not a real submission yet, will need to do more testing for
-correctness.
+On Wed, 2025-11-05 at 14:46 +0100, Christian Brauner wrote:
+> On Wed, Nov 05, 2025 at 08:33:10AM -0500, James Bottomley wrote:
+> > On Wed, 2025-11-05 at 14:16 +0100, Christian Brauner wrote:
+> > > On Wed, Nov 05, 2025 at 08:09:03AM -0500, James Bottomley wrote:
+> > > > On Wed, 2025-11-05 at 12:47 +0100, Christian Brauner wrote:
+> > [...]
+> > > > > And suspend/resume works just fine with freeze/thaw. See
+> > > > > commit
+> > > > > eacfbf74196f ("power: freeze filesystems during
+> > > > > suspend/resume") which implements exactly that.
+> > > > >=20
+> > > > > The reason this didn't work for you is very likely:
+> > > > >=20
+> > > > > cat /sys/power/freeze_filesystems
+> > > > > 0
+> > > > >=20
+> > > > > which you must set to 1.
+> > > >=20
+> > > > Actually, no, that's not correct.=C2=A0 The efivarfs freeze/thaw
+> > > > logic must run unconditionally regardless of this setting to
+> > > > fix the systemd bug, so all the variable resyncing is done in
+> > > > the thaw call, which isn't conditioned on the above (or at
+> > > > least it shouldn't be).
+> > >=20
+> > > It is conditioned on the above currently but we can certainly fix
+> > > it easily to not be.
+> >=20
+> > It still seems to be unconditional in upstream 6.18-rc4
+> > kernel/power/hibernate.c with only freeze being conditioned on the
+>=20
+> I'm honestly not sure how efivarfs would be frozen if
+> filesystems_freeze() isn't called... Maybe I missed that memo though.
+> In any case I just sent you...
 
-Also I slapped ext4 support into this patch as opposed to posting it
-separately. The no_acl caching was written by Linus, also see the
-necroed thread here:
-https://lore.kernel.org/linux-fsdevel/kn44smk4dgaj5rqmtcfr7ruecixzrik6omur2l2opitn7lbvfm@rm4y24fcfzbz/T/#m30d6cea6be48e95c0d824e98a328fb90c7a5766d
-and full thread:
-https://lore.kernel.org/linux-fsdevel/kn44smk4dgaj5rqmtcfr7ruecixzrik6omur2l2opitn7lbvfm@rm4y24fcfzbz/T/#t
+We don't need to be frozen: our freeze_fs method is empty, we just need
+thaw_fs calling.
 
-Not pointing fingers, but someone promised to get that bit in. ;)
+Is the trouble that there's now freeze/thaw accounting, so thaw won't
+be called based on that if freeze wasn't?  In which case might it not
+be better for us to implement thaw_super, which is called
+unconditionally and leaves the accounting up to the filesystem?
 
-Now to business:
+> > setting of the filesystem_freeze variable but I haven't checked -
+> > next.
+> >=20
+> > However, if there's anything in the works to change that we would
+> > need an exception for efivarfs, please ... we can't have a bug fix
+> > conditioned on a user setting.
+>=20
+> ... a patch in another mail.
+>=20
+> Sorry in case I misunderstood that you _always_ wanted that sync
+> regardless of userspace enabling it.
 
-Vast majority of real-world traversals happen on directories which are
-traversable by anyone. The patch below adds support for pre-computing
-that state and branching on it during lookup, avoiding tons of work.
+We need the thaw method called to get the variable resync to happen.=20
+That fixes a bug on hibernate with systemd (and also accounts for an
+other efi variable changes the user may have made between hibernate and
+resume), yes.  And we need that to happen unconditionally to fix the
+systemd bug.
 
-Stats from calls to security_inode_permission during kernel build:
-missing: 6097127
-present: 60579018
+Regards,
 
-Or just above 90% of all lookups on my debian install benefited from it.
-
-A simple microbench of stating /usr/include/linux/fs.h on ext4 in a loop
-on Sapphire Rapids (ops/s):
-before: 3640352
-after:	3797258 (+4%)
-
-Note the speed up would be higher if it was not for stat itself being
-dog slow (to be addressed separately).
-
-Filesystems interested in participating call
-inode_enable_fast_may_exec() when instatianating an inode.
-
-Explicit opt-in is necessary as some filesystems have custom inode
-permission check hooks which happen to be of no significance for
-MAY_EXEC. With an opt-in we now it can be safely ignored. Otherwise any
-inode with such a func present would need to be excluded.
-
----
- fs/attr.c          |   1 +
- fs/ext4/inode.c    |   6 +++
- fs/ext4/namei.c    |   1 +
- fs/file_table.c    |  12 +++++
- fs/namei.c         | 106 +++++++++++++++++++++++++++++++++++++++++++--
- fs/posix_acl.c     |   1 +
- fs/xattr.c         |   1 +
- include/linux/fs.h |  20 ++++++---
- mm/shmem.c         |   2 +
- 9 files changed, 141 insertions(+), 9 deletions(-)
-
-diff --git a/fs/attr.c b/fs/attr.c
-index 795f231d00e8..572363ff9c6d 100644
---- a/fs/attr.c
-+++ b/fs/attr.c
-@@ -549,6 +549,7 @@ int notify_change(struct mnt_idmap *idmap, struct dentry *dentry,
- 
- 	if (!error) {
- 		fsnotify_change(dentry, ia_valid);
-+		inode_recalc_fast_may_exec(inode);
- 		security_inode_post_setattr(idmap, dentry, ia_valid);
- 	}
- 
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index a163c0871373..ce2bfe3167e7 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -5519,6 +5519,12 @@ struct inode *__ext4_iget(struct super_block *sb, unsigned long ino,
- 		goto bad_inode;
- 	brelse(iloc.bh);
- 
-+	/* Initialize the "no ACL's" state for the simple cases */
-+	if (!ext4_test_inode_state(inode, EXT4_STATE_XATTR) && !ei->i_file_acl)
-+		cache_no_acl(inode);
-+
-+	inode_enable_fast_may_exec(inode);
-+
- 	unlock_new_inode(inode);
- 	return inode;
- 
-diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
-index 2cd36f59c9e3..bedd9bfca440 100644
---- a/fs/ext4/namei.c
-+++ b/fs/ext4/namei.c
-@@ -3042,6 +3042,7 @@ static struct dentry *ext4_mkdir(struct mnt_idmap *idmap, struct inode *dir,
- 	ext4_fc_track_create(handle, dentry);
- 	if (IS_DIRSYNC(dir))
- 		ext4_handle_sync(handle);
-+	inode_enable_fast_may_exec(inode);
- 
- out_stop:
- 	if (handle)
-diff --git a/fs/file_table.c b/fs/file_table.c
-index cd4a3db4659a..de1ef700d144 100644
---- a/fs/file_table.c
-+++ b/fs/file_table.c
-@@ -109,6 +109,8 @@ static int proc_nr_files(const struct ctl_table *table, int write, void *buffer,
- 	return proc_doulongvec_minmax(table, write, buffer, lenp, ppos);
- }
- 
-+unsigned long magic_tunable;
-+
- static const struct ctl_table fs_stat_sysctls[] = {
- 	{
- 		.procname	= "file-nr",
-@@ -126,6 +128,16 @@ static const struct ctl_table fs_stat_sysctls[] = {
- 		.extra1		= SYSCTL_LONG_ZERO,
- 		.extra2		= SYSCTL_LONG_MAX,
- 	},
-+	{
-+		.procname	= "magic_tunable",
-+		.data		= &magic_tunable,
-+		.maxlen		= sizeof(magic_tunable),
-+		.mode		= 0644,
-+		.proc_handler	= proc_doulongvec_minmax,
-+		.extra1		= SYSCTL_LONG_ZERO,
-+		.extra2		= SYSCTL_LONG_MAX,
-+	},
-+
- 	{
- 		.procname	= "nr_open",
- 		.data		= &sysctl_nr_open,
-diff --git a/fs/namei.c b/fs/namei.c
-index 39c4d52f5b54..ac7252c0a428 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -123,6 +123,9 @@
-  * PATH_MAX includes the nul terminator --RR.
-  */
- 
-+static __always_inline int inode_permission_may_exec(struct mnt_idmap *idmap,
-+		     struct inode *inode, int mask);
-+
- #define EMBEDDED_NAME_MAX	(PATH_MAX - offsetof(struct filename, iname))
- 
- static inline void initname(struct filename *name, const char __user *uptr)
-@@ -574,7 +577,7 @@ int inode_permission(struct mnt_idmap *idmap,
- 	if (unlikely(retval))
- 		return retval;
- 
--	if (unlikely(mask & MAY_WRITE)) {
-+	if (mask & MAY_WRITE) {
- 		/*
- 		 * Nobody gets write access to an immutable file.
- 		 */
-@@ -601,6 +604,103 @@ int inode_permission(struct mnt_idmap *idmap,
- 	return security_inode_permission(inode, mask);
- }
- EXPORT_SYMBOL(inode_permission);
-+extern unsigned long magic_tunable;
-+
-+/**
-+ * inode_permission_may_exec - Check traversal right for given inode
-+ *
-+ * This is a special case routine for may_lookup(). Use inode_permission()
-+ * instead even if MAY_EXEC is the only thing you want to check for.
-+ */
-+static __always_inline int inode_permission_may_exec(struct mnt_idmap *idmap,
-+	struct inode *inode, int mask)
-+{
-+	mask |= MAY_EXEC;
-+
-+#if 1
-+	if (!magic_tunable || !(READ_ONCE(inode->i_opflags) & IOP_FAST_MAY_EXEC))
-+		return inode_permission(idmap, inode, mask);
-+#else
-+	if (!(READ_ONCE(inode->i_opflags) & IOP_FAST_MAY_EXEC))
-+		return inode_permission(idmap, inode, mask);
-+#endif
-+
-+#ifdef CONFIG_DEBUG_VFS
-+	/*
-+	 * We expect everyone has the execute permission and that there are no
-+	 * acls. We assert the filesystem at hand complies by validating it
-+	 * below.
-+	 *
-+	 * However, We may be racing against setattr and/or setacl, in which case
-+	 * we will have to redo the check with the appropriate lock held to avoid
-+	 * false-positives.
-+	 */
-+	unsigned int mode = READ_ONCE(inode->i_mode);
-+
-+	VFS_BUG_ON_INODE(!S_ISDIR(mode), inode);
-+	if (((mode & 0111) != 0111) || !no_acl_inode(inode)) {
-+		/*
-+		 * If we are in RCU mode may_lookup() will unlazy and try again.
-+		 * Worst case if we are still racing the lock will be taken below.
-+		 */
-+		if (mask & MAY_NOT_BLOCK)
-+			return -ECHILD;
-+		inode_lock(inode);
-+		if (inode->i_opflags & IOP_FAST_MAY_EXEC) {
-+			VFS_BUG_ON_INODE((inode->i_mode & 0111) != 0111, inode);
-+			VFS_BUG_ON_INODE(!no_acl_inode(inode), inode);
-+		}
-+		inode_unlock(inode);
-+		return inode_permission(idmap, inode, mask);
-+	}
-+#endif
-+	return security_inode_permission(inode, mask);
-+}
-+
-+/**
-+ * inode_recalc_fast_may_exec - recalc IOP_FAST_MAY_EXEC
-+ * @inode: Inode to set/unset the bit on
-+ *
-+ * To be called if the fs considers the inode eligible for short-circuited
-+ * permission checks.
-+ */
-+void inode_recalc_fast_may_exec(struct inode *inode)
-+{
-+	unsigned int mode;
-+	bool wantbit = false;
-+
-+	if (!(inode_state_read(inode) & I_NEW))
-+		lockdep_assert_held_write(inode->i_rwsem);
-+
-+	if (!(inode->i_flags & S_CAN_FAST_EXEC)) {
-+		VFS_BUG_ON_INODE(inode->i_opflags & IOP_FAST_MAY_EXEC, inode);
-+		return;
-+	}
-+
-+	mode = inode->i_mode;
-+	if (!S_ISDIR(mode)) {
-+		VFS_BUG_ON_INODE(inode->i_opflags & IOP_FAST_MAY_EXEC, inode);
-+		return;
-+	}
-+
-+	if (((mode & 0111) == 0111) && no_acl_inode(inode))
-+		wantbit = true;
-+
-+	if (wantbit) {
-+		if (inode->i_opflags & IOP_FAST_MAY_EXEC)
-+			return;
-+		spin_lock(&inode->i_lock);
-+		inode->i_opflags |= IOP_FAST_MAY_EXEC;
-+		spin_unlock(&inode->i_lock);
-+	} else {
-+		if (!(inode->i_opflags & IOP_FAST_MAY_EXEC))
-+			return;
-+		spin_lock(&inode->i_lock);
-+		inode->i_opflags &= ~IOP_FAST_MAY_EXEC;
-+		spin_unlock(&inode->i_lock);
-+	}
-+}
-+EXPORT_SYMBOL(inode_recalc_fast_may_exec);
- 
- /**
-  * path_get - get a reference to a path
-@@ -1855,7 +1955,7 @@ static inline int may_lookup(struct mnt_idmap *idmap,
- 	int err, mask;
- 
- 	mask = nd->flags & LOOKUP_RCU ? MAY_NOT_BLOCK : 0;
--	err = inode_permission(idmap, nd->inode, mask | MAY_EXEC);
-+	err = inode_permission_may_exec(idmap, nd->inode, mask);
- 	if (likely(!err))
- 		return 0;
- 
-@@ -1870,7 +1970,7 @@ static inline int may_lookup(struct mnt_idmap *idmap,
- 	if (err != -ECHILD)	// hard error
- 		return err;
- 
--	return inode_permission(idmap, nd->inode, MAY_EXEC);
-+	return inode_permission_may_exec(idmap, nd->inode, 0);
- }
- 
- static int reserve_stack(struct nameidata *nd, struct path *link)
-diff --git a/fs/posix_acl.c b/fs/posix_acl.c
-index 4050942ab52f..da27dd536058 100644
---- a/fs/posix_acl.c
-+++ b/fs/posix_acl.c
-@@ -1135,6 +1135,7 @@ int vfs_set_acl(struct mnt_idmap *idmap, struct dentry *dentry,
- 		error = -EIO;
- 	if (!error) {
- 		fsnotify_xattr(dentry);
-+		inode_recalc_fast_may_exec(inode);
- 		security_inode_post_set_acl(dentry, acl_name, kacl);
- 	}
- 
-diff --git a/fs/xattr.c b/fs/xattr.c
-index 8851a5ef34f5..917946a7f367 100644
---- a/fs/xattr.c
-+++ b/fs/xattr.c
-@@ -235,6 +235,7 @@ int __vfs_setxattr_noperm(struct mnt_idmap *idmap,
- 				       size, flags);
- 		if (!error) {
- 			fsnotify_xattr(dentry);
-+			inode_recalc_fast_may_exec(inode);
- 			security_inode_post_setxattr(dentry, name, value,
- 						     size, flags);
- 		}
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index a8ffab9d4a64..41c855ef0594 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -659,13 +659,14 @@ is_uncached_acl(struct posix_acl *acl)
- 	return (long)acl & 1;
- }
- 
--#define IOP_FASTPERM	0x0001
--#define IOP_LOOKUP	0x0002
--#define IOP_NOFOLLOW	0x0004
--#define IOP_XATTR	0x0008
-+#define IOP_FASTPERM		0x0001
-+#define IOP_LOOKUP		0x0002
-+#define IOP_NOFOLLOW		0x0004
-+#define IOP_XATTR		0x0008
- #define IOP_DEFAULT_READLINK	0x0010
--#define IOP_MGTIME	0x0020
--#define IOP_CACHED_LINK	0x0040
-+#define IOP_MGTIME		0x0020
-+#define IOP_CACHED_LINK		0x0040
-+#define IOP_FAST_MAY_EXEC	0x0080
- 
- /*
-  * Inode state bits.  Protected by inode->i_lock
-@@ -2607,6 +2608,7 @@ struct super_operations {
- #define S_VERITY	(1 << 16) /* Verity file (using fs/verity/) */
- #define S_KERNEL_FILE	(1 << 17) /* File is in use by the kernel (eg. fs/cachefiles) */
- #define S_ANON_INODE	(1 << 19) /* Inode is an anonymous inode */
-+#define S_CAN_FAST_EXEC	(1 << 20) /* Inode is eligible for IOP_FAST_MAY_EXEC */
- 
- /*
-  * Note that nosuid etc flags are inode-specific: setting some file-system
-@@ -3395,6 +3397,12 @@ static inline int inode_init_always(struct super_block *sb, struct inode *inode)
- {
- 	return inode_init_always_gfp(sb, inode, GFP_NOFS);
- }
-+void inode_recalc_fast_may_exec(struct inode *);
-+static inline void inode_enable_fast_may_exec(struct inode *inode)
-+{
-+	inode->i_flags |= S_CAN_FAST_EXEC;
-+	inode_recalc_fast_may_exec(inode);
-+}
- 
- extern void inode_init_once(struct inode *);
- extern void address_space_init_once(struct address_space *mapping);
-diff --git a/mm/shmem.c b/mm/shmem.c
-index c819cecf1ed9..15d769882371 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -3105,6 +3105,8 @@ static struct inode *__shmem_get_inode(struct mnt_idmap *idmap,
- 		break;
- 	}
- 
-+	inode_recalc_fast_may_exec(inode);
-+
- 	lockdep_annotate_inode_mutex_key(inode);
- 	return inode;
- }
--- 
-2.48.1
+James
 
 
