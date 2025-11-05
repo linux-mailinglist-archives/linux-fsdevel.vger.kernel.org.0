@@ -1,357 +1,183 @@
-Return-Path: <linux-fsdevel+bounces-67097-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67098-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B55AC354F0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 05 Nov 2025 12:15:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 25B5AC3551E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 05 Nov 2025 12:18:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0C43A4EB81D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Nov 2025 11:15:11 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 464184F4C9D
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Nov 2025 11:18:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 208E330F7F8;
-	Wed,  5 Nov 2025 11:15:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0ECF30FC1F;
+	Wed,  5 Nov 2025 11:18:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d3bMZp6r"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="knbkAIWy"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B31E30F947
-	for <linux-fsdevel@vger.kernel.org>; Wed,  5 Nov 2025 11:15:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F36F82F1FD2;
+	Wed,  5 Nov 2025 11:18:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762341308; cv=none; b=ZNcg4YU/L0CI+xXcreWVe4jJ9YugxM1ve0dMO3PLw/vG1xmwUZDOo3Xjl9WrbLtSnr0rZJLklIDElCZK2KJRhsOxELVdhBMYJ7Sr8eHKOxAkmzwbWyxbBB7C+ayD2sJtrljvvR1L6ShQz1W6/LIJkYxgXbRKJArp+MM+lGehz8g=
+	t=1762341485; cv=none; b=XLlYUu7avzOr2agvRVMvtg4Coaz2suflMZ/cWrCCYGqNmRojdr5a2kR9wPgztnpsmtgmePkH/N2+doffspnKoAOhfgYHhhOG0lZZIEme/lrw4fv6U1h6edsSAPdkR+k1yirC9/6p1ISYUyY0B3rx3mTov/Hk9RFQLrmFqpD99/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762341308; c=relaxed/simple;
-	bh=S83DNfO0HG92dfkWDZsUYdj0PDxHeoyCZZyNBwXdLIA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=D6QJJGnc25KxaDB7YUrIfkHvLEsBmWekdsWEpz8cPvAnfOMd+SGCmD9kh8bbElu5hOO6+89TvjcL9k7wVMZrZyfMzq97/mNuKj6Daa80q34tz2oiwc0clDvnS+CJtaoiKsUJe7ZnnO2sLNPP2H2WXj3CREgglyEOzLYOWZfonyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d3bMZp6r; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-64088c6b309so7368145a12.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Nov 2025 03:15:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762341304; x=1762946104; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KsD/Dhl4t99GvJL5Ke+OPPsrHvEVtNZwMkhdc9rUqcI=;
-        b=d3bMZp6rAPHJvdPOy5B3kJ/vqWckP5KoQURZ/PKetbyfiQ3gGsxYtPZUqc0Tn2cvR2
-         PjStY7Y2+q6A23lZmjerFUB7Uk1vNZS3Z0N4KSMzoSQOMv21g2lP+0Y8VGCwYgN6oAy4
-         xfhUgl4bRVaLwSR5c6gEdkK8t0dreBvTbHPEqDPbGHffsOnZBgsBhoNg0J6KpSXpzRks
-         vUU6R0prEomDDprLShf6UnkUq1GwI6bvgL+3K9sqFJ9aZHOyAZVY20XoStzELvoR95ol
-         XwKNVcYSqlfHT6iMGIpwPLBxPn78SFsBD7IwlIYPy9ELbZqgJE1NXLA6FzmB3BYU7NRd
-         xHsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762341304; x=1762946104;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KsD/Dhl4t99GvJL5Ke+OPPsrHvEVtNZwMkhdc9rUqcI=;
-        b=Pz4KQ3FqK0JF58bDAhIUbEPtHrdPSU/+c1w9mI9Tev3EYVKOH9xNRf/nXREZHfjc0D
-         sfiSjcUmUxqxvQGxiaMD4/5K0Ez72mH6EnxIuU7DDmZ54p9Nm7t0FGLiDRHIC4+73k+Z
-         Ru6K5RH0PAOQ2rIjF1N996EUcF030vZiJ6LCWqV+2duXuScfSnh8SKjztVO/wmrbASDw
-         bAwaTQ3W013+5umh+h3AJoiVpwAAShXTcbUvKYTXgGezxuqlXcVRCO6+sK5M6g0hF3Yi
-         zEKjNtm7EJAUUdvRXK27o/kKHu45j1pcRscYiGZt/SoCJOwcqO4S9IKKxL9xmKI4gpjK
-         47nw==
-X-Forwarded-Encrypted: i=1; AJvYcCXC6HxSchgY707ATmuYrQS5tpCvPU3jnTBz0NAzZdzcy4WWnzlJRiF9X2lzcQFLud9DL4e6eEpaBcILmtAP@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzk0GR2XCii87oMfH92td7KuSOnX8TLXG7JN2pgWKbCzyhDvTx9
-	+BcauIlNE6Vz4CxKCujR9zNnINtmU9C4dIosrpPSUJRgyLKc127APc1qj1zxD/cpw3+VL5uJYZE
-	o0Is89EsvwXN7m+rkRvxYKfY+g50WYpg=
-X-Gm-Gg: ASbGncsn/3oOdhhYuvYbx5DIA6zaZUlQysLYbd2H+/N6IG7k2YqEM8WBdFEgke23zSN
-	NG0Sa+nlRPN5fEaJZhVaENSQIaXg1y/VqiBNPGF0EASaFkf9rU6cTPL9a8n5Hu/1vNFf10KWbhg
-	bFcnZjZszNGzyMzc5lKXMQVWsWpP8Lrdy6j1WvHUNemM0swomGfNdhBFiF9g1MRd7QckBZa92Xq
-	XYr/Nbi05UDChWM8gE8ZTUfMAmuIM4L6CnVX6F22Zu5PyZTgIMpPsSY2wrCkHPyc5zlA/jg8NPN
-	6faAC0u8WsWilUuvni8=
-X-Google-Smtp-Source: AGHT+IGJZrQfj6YGdkTUJv0nwz0hWjjf+nTDXnsRhoRZxEJ2PhGIJAdhb+GPXfHXuI0eaVDeHYZXrn+l1MrC8fIfosc=
-X-Received: by 2002:a05:6402:1454:b0:63b:f22d:9254 with SMTP id
- 4fb4d7f45d1cf-64105a4c93amr2413729a12.23.1762341303447; Wed, 05 Nov 2025
- 03:15:03 -0800 (PST)
+	s=arc-20240116; t=1762341485; c=relaxed/simple;
+	bh=8cflPIIAlr4DmbW78x+5XZ22FHRHMpp/a4PnXwi0bOs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jT26Mj5sWcMezr00mwvebMz/sDTfWC4pEvnCaeaKXMJ/5vBknzkjcqqyZq5M0T6evJGV4RXavEhwulnq1KJecrCH9F8/fNPStnEl8lZORZZ8HDDUWN40hTyvrF7FGeasWVM9JyMila8/59xUQsrGpZlBjCyRdMeyKKXjqCn8qNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=knbkAIWy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 433B2C4CEF8;
+	Wed,  5 Nov 2025 11:18:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762341484;
+	bh=8cflPIIAlr4DmbW78x+5XZ22FHRHMpp/a4PnXwi0bOs=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=knbkAIWy+gu8l89MmQNXr3pfUDrTBcAa5VFmEg+n9PObqU1AWWKF0acsKwWMgLhbH
+	 IXMTaen9CLUj6kGz74gOHjlxgl/TuDingIaNexgEFiVgrKXcI0wUKPJ13YU2+rNfyF
+	 9PfJnVqepZVUD8aKbPazYDWfyySYDOrEHi2zHejVEkphIyGwGP3lS0rbPEiAaGwWCu
+	 lqYBW9ZizV+C3uokG45KWpN0YpxNAgxzjt/AESjr903xi8cuCMSDDX4mZSp0L0lMRN
+	 f6ZZIt7iYWsqJGyfvmS1/ZUPd+0RXsxPperxNAOLSaXqCJwl04pf51Xa1wqwqASMuA
+	 V4Ncif9cwClkw==
+From: Christian Brauner <brauner@kernel.org>
+To: Yongpeng Yang <yangyongpeng.storage@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-block@vger.kernel.org,
+	stable@vger.kernel.org,
+	Matthew Wilcox <willy@infradead.org>,
+	"Darrick J . Wong" <djwong@kernel.org>,
+	Yongpeng Yang <yangyongpeng@xiaomi.com>,
+	Christoph Hellwig <hch@lst.de>,
+	Namjae Jeon <linkinjeon@kernel.org>,
+	Sungjong Seo <sj1557.seo@samsung.com>,
+	OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+	Jan Kara <jack@suse.cz>,
+	Carlos Maiolino <cem@kernel.org>,
+	Jens Axboe <axboe@kernel.dk>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Sasha Levin <sashal@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH v6 1/5] vfat: fix missing sb_min_blocksize() return value checks
+Date: Wed,  5 Nov 2025 12:17:48 +0100
+Message-ID: <20251105-subtil-tabuisieren-bb71156f02aa@brauner>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20251104125009.2111925-2-yangyongpeng.storage@gmail.com>
+References: <20251104125009.2111925-2-yangyongpeng.storage@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <176230366393.1647991.7608961849841103569.stgit@frogsfrogsfrogs>
- <176230366453.1647991.17002688390201603817.stgit@frogsfrogsfrogs> <ewqcnrecsvpi5wy3mufy3swnf46ejnz4kc5ph2eb4iriftdddi@mamiprlrvi75>
-In-Reply-To: <ewqcnrecsvpi5wy3mufy3swnf46ejnz4kc5ph2eb4iriftdddi@mamiprlrvi75>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Wed, 5 Nov 2025 12:14:52 +0100
-X-Gm-Features: AWmQ_bkztXnxFOVa3AQuvTjQrg0lv6QJ-KJy3C1E7cBVZUO1j--jX0BJOTU7810
-Message-ID: <CAOQ4uxhfrHNk+b=BW5o7We=jC7ob4JbuL4vQz8QhUKD0VaRP=A@mail.gmail.com>
-Subject: Re: [PATCH 1/6] iomap: report file IO errors to fsnotify
-To: Jan Kara <jack@suse.cz>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, cem@kernel.org, hch@lst.de, 
-	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org, gabriel@krisman.be, 
-	Christian Brauner <brauner@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5811; i=brauner@kernel.org; h=from:subject:message-id; bh=8cflPIIAlr4DmbW78x+5XZ22FHRHMpp/a4PnXwi0bOs=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWRyG6Xsctik969Qq3+hy9FtC94+aFpt15jYdMFy1pRsP T0z+U0uHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABOptGFkeC8QlLfrwtyZF6X0 Itcb6tklFH/lFGVOqJ3b7b7Y+cH1V4wM/6MFoxOTPvt+POi1e/KPLCaZ4DuvFEqVP/kfn8r+6N4 XfgA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Wed, Nov 5, 2025 at 12:00=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
->
-> On Tue 04-11-25 16:54:24, Darrick J. Wong wrote:
-> > From: Darrick J. Wong <djwong@kernel.org>
-> >
-> > Create a generic hook for iomap filesystems to report IO errors to
-> > fsnotify and in-kernel subsystems that want to know about such things.
-> >
-> > Suggested-by: Christoph Hellwig <hch@lst.de>
-> > Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
->
-> Looks good to me. Feel free to add:
->
-> Reviewed-by: Jan Kara <jack@suse.cz>
->
->                                                                 Honza
->
-> > ---
-> >  include/linux/fs.h     |   64 ++++++++++++++++++++++++++++++++++++++++=
-++++++++
-> >  fs/iomap/buffered-io.c |    6 +++++
-> >  fs/iomap/direct-io.c   |    5 ++++
-> >  fs/super.c             |   53 ++++++++++++++++++++++++++++++++++++++++
-> >  4 files changed, 128 insertions(+)
-> >
-> >
-> > diff --git a/include/linux/fs.h b/include/linux/fs.h
-> > index 5e4b3a4b24823f..1cb3965db3275c 100644
-> > --- a/include/linux/fs.h
-> > +++ b/include/linux/fs.h
-> > @@ -80,6 +80,7 @@ struct fs_context;
-> >  struct fs_parameter_spec;
-> >  struct file_kattr;
-> >  struct iomap_ops;
-> > +struct notifier_head;
-> >
-> >  extern void __init inode_init(void);
-> >  extern void __init inode_init_early(void);
-> > @@ -1587,6 +1588,7 @@ struct super_block {
-> >
-> >       spinlock_t              s_inode_wblist_lock;
-> >       struct list_head        s_inodes_wb;    /* writeback inodes */
-> > +     struct blocking_notifier_head   s_error_notifier;
-> >  } __randomize_layout;
-> >
-> >  static inline struct user_namespace *i_user_ns(const struct inode *ino=
-de)
-> > @@ -4069,4 +4071,66 @@ static inline bool extensible_ioctl_valid(unsign=
-ed int cmd_a,
-> >       return true;
-> >  }
-> >
-> > +enum fs_error_type {
-> > +     /* pagecache reads and writes */
-> > +     FSERR_READAHEAD,
-> > +     FSERR_WRITEBACK,
-> > +
-> > +     /* directio read and writes */
-> > +     FSERR_DIO_READ,
-> > +     FSERR_DIO_WRITE,
-> > +
-> > +     /* media error */
-> > +     FSERR_DATA_LOST,
-> > +
-> > +     /* filesystem metadata */
-> > +     FSERR_METADATA,
-> > +};
-> > +
-> > +struct fs_error {
-> > +     struct work_struct work;
-> > +     struct super_block *sb;
-> > +     struct inode *inode;
-> > +     loff_t pos;
-> > +     u64 len;
-> > +     enum fs_error_type type;
-> > +     int error;
-> > +};
-> > +
-> > +struct fs_error_hook {
-> > +     struct notifier_block nb;
-> > +};
-> > +
-> > +static inline int sb_hook_error(struct super_block *sb,
-> > +                             struct fs_error_hook *h)
-> > +{
-> > +     return blocking_notifier_chain_register(&sb->s_error_notifier, &h=
-->nb);
-> > +}
-> > +
-> > +static inline void sb_unhook_error(struct super_block *sb,
-> > +                                struct fs_error_hook *h)
-> > +{
-> > +     blocking_notifier_chain_unregister(&sb->s_error_notifier, &h->nb)=
-;
-> > +}
-> > +
-> > +static inline void sb_init_error_hook(struct fs_error_hook *h, notifie=
-r_fn_t fn)
-> > +{
-> > +     h->nb.notifier_call =3D fn;
-> > +     h->nb.priority =3D 0;
-> > +}
-> > +
-> > +void __sb_error(struct super_block *sb, struct inode *inode,
-> > +             enum fs_error_type type, loff_t pos, u64 len, int error);
-> > +
-> > +static inline void sb_error(struct super_block *sb, int error)
-> > +{
-> > +     __sb_error(sb, NULL, FSERR_METADATA, 0, 0, error);
-> > +}
-> > +
-> > +static inline void inode_error(struct inode *inode, enum fs_error_type=
- type,
-> > +                            loff_t pos, u64 len, int error)
-> > +{
-> > +     __sb_error(inode->i_sb, inode, type, pos, len, error);
-> > +}
-> > +
+On Tue, 04 Nov 2025 20:50:06 +0800, Yongpeng Yang wrote:
+> When emulating an nvme device on qemu with both logical_block_size and
+> physical_block_size set to 8 KiB, but without format, a kernel panic
+> was triggered during the early boot stage while attempting to mount a
+> vfat filesystem.
+> 
+> [95553.682035] EXT4-fs (nvme0n1): unable to set blocksize
+> [95553.684326] EXT4-fs (nvme0n1): unable to set blocksize
+> [95553.686501] EXT4-fs (nvme0n1): unable to set blocksize
+> [95553.696448] ISOFS: unsupported/invalid hardware sector size 8192
+> [95553.697117] ------------[ cut here ]------------
+> [95553.697567] kernel BUG at fs/buffer.c:1582!
+> [95553.697984] Oops: invalid opcode: 0000 [#1] SMP NOPTI
+> [95553.698602] CPU: 0 UID: 0 PID: 7212 Comm: mount Kdump: loaded Not tainted 6.18.0-rc2+ #38 PREEMPT(voluntary)
+> [95553.699511] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
+> [95553.700534] RIP: 0010:folio_alloc_buffers+0x1bb/0x1c0
+> [95553.701018] Code: 48 8b 15 e8 93 18 02 65 48 89 35 e0 93 18 02 48 83 c4 10 5b 41 5c 41 5d 41 5e 41 5f 5d 31 d2 31 c9 31 f6 31 ff c3 cc cc cc cc <0f> 0b 90 66 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 0f
+> [95553.702648] RSP: 0018:ffffd1b0c676f990 EFLAGS: 00010246
+> [95553.703132] RAX: ffff8cfc4176d820 RBX: 0000000000508c48 RCX: 0000000000000001
+> [95553.703805] RDX: 0000000000002000 RSI: 0000000000000000 RDI: 0000000000000000
+> [95553.704481] RBP: ffffd1b0c676f9c8 R08: 0000000000000000 R09: 0000000000000000
+> [95553.705148] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000001
+> [95553.705816] R13: 0000000000002000 R14: fffff8bc8257e800 R15: 0000000000000000
+> [95553.706483] FS:  000072ee77315840(0000) GS:ffff8cfdd2c8d000(0000) knlGS:0000000000000000
+> [95553.707248] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [95553.707782] CR2: 00007d8f2a9e5a20 CR3: 0000000039d0c006 CR4: 0000000000772ef0
+> [95553.708439] PKRU: 55555554
+> [95553.708734] Call Trace:
+> [95553.709015]  <TASK>
+> [95553.709266]  __getblk_slow+0xd2/0x230
+> [95553.709641]  ? find_get_block_common+0x8b/0x530
+> [95553.710084]  bdev_getblk+0x77/0xa0
+> [95553.710449]  __bread_gfp+0x22/0x140
+> [95553.710810]  fat_fill_super+0x23a/0xfc0
+> [95553.711216]  ? __pfx_setup+0x10/0x10
+> [95553.711580]  ? __pfx_vfat_fill_super+0x10/0x10
+> [95553.712014]  vfat_fill_super+0x15/0x30
+> [95553.712401]  get_tree_bdev_flags+0x141/0x1e0
+> [95553.712817]  get_tree_bdev+0x10/0x20
+> [95553.713177]  vfat_get_tree+0x15/0x20
+> [95553.713550]  vfs_get_tree+0x2a/0x100
+> [95553.713910]  vfs_cmd_create+0x62/0xf0
+> [95553.714273]  __do_sys_fsconfig+0x4e7/0x660
+> [95553.714669]  __x64_sys_fsconfig+0x20/0x40
+> [95553.715062]  x64_sys_call+0x21ee/0x26a0
+> [95553.715453]  do_syscall_64+0x80/0x670
+> [95553.715816]  ? __fs_parse+0x65/0x1e0
+> [95553.716172]  ? fat_parse_param+0x103/0x4b0
+> [95553.716587]  ? vfs_parse_fs_param_source+0x21/0xa0
+> [95553.717034]  ? __do_sys_fsconfig+0x3d9/0x660
+> [95553.717548]  ? __x64_sys_fsconfig+0x20/0x40
+> [95553.717957]  ? x64_sys_call+0x21ee/0x26a0
+> [95553.718360]  ? do_syscall_64+0xb8/0x670
+> [95553.718734]  ? __x64_sys_fsconfig+0x20/0x40
+> [95553.719141]  ? x64_sys_call+0x21ee/0x26a0
+> [95553.719545]  ? do_syscall_64+0xb8/0x670
+> [95553.719922]  ? x64_sys_call+0x1405/0x26a0
+> [95553.720317]  ? do_syscall_64+0xb8/0x670
+> [95553.720702]  ? __x64_sys_close+0x3e/0x90
+> [95553.721080]  ? x64_sys_call+0x1b5e/0x26a0
+> [95553.721478]  ? do_syscall_64+0xb8/0x670
+> [95553.721841]  ? irqentry_exit+0x43/0x50
+> [95553.722211]  ? exc_page_fault+0x90/0x1b0
+> [95553.722681]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> [95553.723166] RIP: 0033:0x72ee774f3afe
+> [95553.723562] Code: 73 01 c3 48 8b 0d 0a 33 0f 00 f7 d8 64 89 01 48 83 c8 ff c3 0f 1f 84 00 00 00 00 00 f3 0f 1e fa 49 89 ca b8 af 01 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d da 32 0f 00 f7 d8 64 89 01 48
+> [95553.725188] RSP: 002b:00007ffe97148978 EFLAGS: 00000246 ORIG_RAX: 00000000000001af
+> [95553.725892] RAX: ffffffffffffffda RBX: 00005dcfe53d0080 RCX: 000072ee774f3afe
+> [95553.726526] RDX: 0000000000000000 RSI: 0000000000000006 RDI: 0000000000000003
+> [95553.727176] RBP: 00007ffe97148ac0 R08: 0000000000000000 R09: 000072ee775e7ac0
+> [95553.727818] R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> [95553.728459] R13: 00005dcfe53d04b0 R14: 000072ee77670b00 R15: 00005dcfe53d1a28
+> [95553.729086]  </TASK>
+> 
+> [...]
 
-Apart from the fact that Christian is not going to be happy with this
-bloat of fs.h
-shouldn't all this be part of fsnotify.h?
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
 
-I do not see why ext4 should not use the same workqueue
-or why any code would need to call fsnotify_sb_error() directly.
-...
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-> >  #endif /* _LINUX_FS_H */
-> > diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> > index 8dd5421cb910b5..dc19311fe1c6c0 100644
-> > --- a/fs/iomap/buffered-io.c
-> > +++ b/fs/iomap/buffered-io.c
-> > @@ -291,6 +291,12 @@ static inline bool iomap_block_needs_zeroing(const=
- struct iomap_iter *iter,
-> >  inline void iomap_mapping_ioerror(struct address_space *mapping, int d=
-irection,
-> >               loff_t pos, u64 len, int error)
-> >  {
-> > +     struct inode *inode =3D mapping->host;
-> > +
-> > +     inode_error(inode,
-> > +                 direction =3D=3D READ ? FSERR_READAHEAD : FSERR_WRITE=
-BACK,
-> > +                 pos, len, error);
-> > +
-> >       if (mapping && mapping->a_ops->ioerror)
-> >               mapping->a_ops->ioerror(mapping, direction, pos, len,
-> >                               error);
-> > diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-> > index 1512d8dbb0d2e7..9f6ce0d9c531bb 100644
-> > --- a/fs/iomap/direct-io.c
-> > +++ b/fs/iomap/direct-io.c
-> > @@ -95,6 +95,11 @@ ssize_t iomap_dio_complete(struct iomap_dio *dio)
-> >
-> >       if (dops && dops->end_io)
-> >               ret =3D dops->end_io(iocb, dio->size, ret, dio->flags);
-> > +     if (dio->error)
-> > +             inode_error(file_inode(iocb->ki_filp),
-> > +                         (dio->flags & IOMAP_DIO_WRITE) ? FSERR_DIO_WR=
-ITE :
-> > +                                                          FSERR_DIO_RE=
-AD,
-> > +                         offset, dio->size, dio->error);
-> >       if (dio->error && dops && dops->ioerror)
-> >               dops->ioerror(file_inode(iocb->ki_filp),
-> >                               (dio->flags & IOMAP_DIO_WRITE) ? WRITE : =
-READ,
-> > diff --git a/fs/super.c b/fs/super.c
-> > index 5bab94fb7e0358..f6d38e4b3d76b2 100644
-> > --- a/fs/super.c
-> > +++ b/fs/super.c
-> > @@ -363,6 +363,7 @@ static struct super_block *alloc_super(struct file_=
-system_type *type, int flags,
-> >       spin_lock_init(&s->s_inode_list_lock);
-> >       INIT_LIST_HEAD(&s->s_inodes_wb);
-> >       spin_lock_init(&s->s_inode_wblist_lock);
-> > +     BLOCKING_INIT_NOTIFIER_HEAD(&s->s_error_notifier);
-> >
-> >       s->s_count =3D 1;
-> >       atomic_set(&s->s_active, 1);
-> > @@ -2267,3 +2268,55 @@ int sb_init_dio_done_wq(struct super_block *sb)
-> >       return 0;
-> >  }
-> >  EXPORT_SYMBOL_GPL(sb_init_dio_done_wq);
-> > +
-> > +static void handle_sb_error(struct work_struct *work)
-> > +{
-> > +     struct fs_error *fserr =3D container_of(work, struct fs_error, wo=
-rk);
-> > +
-> > +     fsnotify_sb_error(fserr->sb, fserr->inode, fserr->error);
-> > +     blocking_notifier_call_chain(&fserr->sb->s_error_notifier, fserr-=
->type,
-> > +                                  fserr);
-> > +     iput(fserr->inode);
-> > +     kfree(fserr);
-> > +}
-> > +
-> > +/**
-> > + * Report a filesystem error.  The actual work is deferred to a workqu=
-eue so
-> > + * that we're always in process context and to avoid blowing out the c=
-aller's
-> > + * stack.
-> > + *
-> > + * @sb Filesystem superblock
-> > + * @inode Inode within filesystem, if applicable
-> > + * @type Type of error
-> > + * @pos Start of file range affected, if applicable
-> > + * @len Length of file range affected, if applicable
-> > + * @error Error encountered.
-> > + */
-> > +void __sb_error(struct super_block *sb, struct inode *inode,
-> > +             enum fs_error_type type, loff_t pos, u64 len, int error)
-> > +{
-> > +     struct fs_error *fserr =3D kzalloc(sizeof(struct fs_error), GFP_A=
-TOMIC);
-> > +
-> > +     if (!fserr) {
-> > +             printk(KERN_ERR
-> > + "lost fs error report for ino %lu type %u pos 0x%llx len 0x%llx error=
- %d",
-> > +                             inode ? inode->i_ino : 0, type,
-> > +                             pos, len, error);
-> > +             return;
-> > +     }
-> > +
-> > +     if (inode) {
-> > +             fserr->sb =3D inode->i_sb;
-> > +             fserr->inode =3D igrab(inode);
-> > +     } else {
-> > +             fserr->sb =3D sb;
-> > +     }
-> > +     fserr->type =3D type;
-> > +     fserr->pos =3D pos;
-> > +     fserr->len =3D len;
-> > +     fserr->error =3D error;
-> > +     INIT_WORK(&fserr->work, handle_sb_error);
-> > +
-> > +     schedule_work(&fserr->work);
-> > +}
-> > +EXPORT_SYMBOL_GPL(__sb_error);
-> >
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-...
-We recently discovered that fsnotify_sb_error() calls are exposed to
-races with generic_shutdown_super():
-https://lore.kernel.org/linux-fsdevel/scmyycf2trich22v25s6gpe3ib6ejawflwf76=
-znxg7sedqablp@ejfycd34xvpa/
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
-Will punting all FS_ERROR events to workqueue help to improve this
-situation or will it make it worse?
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
 
-Another question to ask is whether reporting fs error duing fs shutdown
-is a feature or anti feature?
-
-If this is needed then we could change fsnotify_sb_error() to
-take ino,gen or file handle directly instead of calling filesystem to encod=
-e
-a file handle to report with the event.
-
-Thanks,
-Amir.
+[1/5] vfat: fix missing sb_min_blocksize() return value checks
+      https://git.kernel.org/vfs/vfs/c/c9374affbcb5
+[2/5] exfat: check return value of sb_min_blocksize in exfat_read_boot_sector
+      https://git.kernel.org/vfs/vfs/c/d1178095d240
+[3/5] isofs: check the return value of sb_min_blocksize() in isofs_fill_super
+      https://git.kernel.org/vfs/vfs/c/f0e6852b29d1
+[4/5] xfs: check the return value of sb_min_blocksize() in xfs_fs_fill_super
+      https://git.kernel.org/vfs/vfs/c/018e0be111cb
+[5/5] block: add __must_check attribute to sb_min_blocksize()
+      https://git.kernel.org/vfs/vfs/c/11fee7948917
 
