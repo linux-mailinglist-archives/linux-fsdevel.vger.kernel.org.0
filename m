@@ -1,142 +1,201 @@
-Return-Path: <linux-fsdevel+bounces-67206-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67207-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39627C37FF8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 05 Nov 2025 22:26:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4033C38090
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 05 Nov 2025 22:31:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1840A4F5A8A
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Nov 2025 21:24:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D420E463C0A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Nov 2025 21:25:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB7372E2DD2;
-	Wed,  5 Nov 2025 21:20:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41E7B2E174B;
+	Wed,  5 Nov 2025 21:24:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YFEzgGst"
+	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="HmU5hGoP";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="qSmEJgx4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from flow-b6-smtp.messagingengine.com (flow-b6-smtp.messagingengine.com [202.12.124.141])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55F422E1C7C
-	for <linux-fsdevel@vger.kernel.org>; Wed,  5 Nov 2025 21:20:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A34F23F424;
+	Wed,  5 Nov 2025 21:24:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762377642; cv=none; b=aNS29PN5ga7H0AiK0M8whbU8ZzlfNwrwPwYNpQyKBeHxA/qemL68bMDW9BiM9LTm7kHH5Okx0PRBq159r0OFsYkPgsbJFu182iMvihk7rTJxvsiZsD9xTlGcTSIVIYAwedB8QwEe08dBX8lq4LfmIktlR1LC/8Nmxs+QB+McqPA=
+	t=1762377849; cv=none; b=i4JciZp882lhO+EIRmak5VUTyfPbdPgWOHnqVKwi4FWsn4BmrrY3n5csFOyxN3y4F/PTyi40oXxqfCoJu1opa0WoeU5FTq5NF1Jzg62sbd+YQH6NK7C51ezim9QzetLr4fux9Ft5Dweed7WDI9ZyPZ2YxwU2O0ock1eFhXdDLLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762377642; c=relaxed/simple;
-	bh=VK/9HNFmtl1DbSF5vPhE1RBKf6UQ211G3ScyH9k47P0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Bmp/bOq83QbxZuaDj5WTynFmyQ7hhUaKvB2yzUWq8JOob+NByA3U2+DcXhbqeCr6yEZZtbmJtoA784Xy80o04xCZEMhcH49NeVp30DP8QXLT+dl17NLwwB5tYIgpBXKu9oB12UUQGKg5yxhxdh4PIbUMU5AdZCj1Kss7IQRPjf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YFEzgGst; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-477563e28a3so2267035e9.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Nov 2025 13:20:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762377639; x=1762982439; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5lQyzNcm7QV0KWXbua/krd30WIAIDjyyQ9x8CHS4lA4=;
-        b=YFEzgGster8N813fTtbmfhPKG2jUi00lrGldxhCCn7u2rZx71O1xYimBLRWS9fz3M6
-         S5oUInrDTXM42W0ZpIHmi7xsxNreMXkSaCL9fmVeUukb6pDuqjhBg7GtTwzbwIsJn7dW
-         +GPQQDPjTKHfBunEDOSiK1zXJpCL2esUjrwBTkAFuh0zBkDOaMm1P+qfKVLu5z/ue+qc
-         Vd/rs931dVPvKlClxg11wwqjkJ7trvYSFQrgsSN+ADK8QMBTt2BPdxvHoM56Qf73DAG4
-         Pp2GRcmpm2qfHGGVfy1ZWz+m2sYaHZo2D011uiTypg8BluCP/GBTzMz2Rb4ep+HWyyid
-         l/8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762377639; x=1762982439;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=5lQyzNcm7QV0KWXbua/krd30WIAIDjyyQ9x8CHS4lA4=;
-        b=JaR/o5/dcRJi2Q+tSTnwr9Lgw/S6+IUKzdG/C4tKtRTmGqlDBdlhEu0wiXf/tfiT+Y
-         Wu8zQrBhOhgfjNTs/EPLAeUsmUAaw4lo4z1zW2I6rtPtF848OZUONfFn4eG7Ze2s1o2U
-         vS7oeipVMmA7HSMidrqPHgLq+2x8v4P3xmMXL49RbJSoyGfPgWfhuXFvSBsewlHjfwyf
-         bLGTUavTOytAGhaQcBsOmTRVgKSTUZJ+115V1TUNC7BEs8/7IA9whKqRZkwcS5W3BpSE
-         4QeCwu9NK8fTzhMsW3d3LdrAjsVciEku+n4lec8wtXbouPAqlCTCI9aF7FRkFfPvBUH1
-         eLJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUWoArCD+PilcsFj/tjQnGEGHS9wZTHE5EgyNspQm1bezeJuafN4KnptbB9FmUbVxCSTDzUwhccdFv8YiBP@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCvPYQQyD+yxeiRXU/YBm2NYxnxJDzY0NnKsXsLbMMYpQRxoJf
-	/Y9AMssnHixjA2aSdSUJcke34Z4arI5S0Imhd6+v0Jb7UYP+5fbevVKe
-X-Gm-Gg: ASbGncs0V+edKf17hUOEDHRcBokV76NuBTwVNchAd4qxlioG0dDFy0N1X/l96TlCb5b
-	yu+O3qcy45LGGwRI0gpg+NnunYOWs+OgcvXFKRzItJxZpXiKt4aitW8agm46qNQpSctgqhZEKiy
-	x9NPLxYUQLp00VVyPMzmYmGZyIAjGawXiyWpvy4gqMqSXSu31tBWQ3pXdIL5e3WD6SJPIiVIC99
-	Tezityjrc62UYtvru70Uqm2D5qmFmcmOSAHchTSdiFWX94AYooU4p9SuO/KQ538hHK5HseyHLcf
-	Ii7BvQsJuh749es7H01Kppe2/p3ePIAU1tlCtDmmXjod8J9o6EZYQtLRl61Ypzy+pKcCUuNU31d
-	3CYdrwc1fDy1k14o5VN1839FVRH7fj0t3C94hc1quQ0i736GYx9S0es8/6qmg6jN3fhngTDBA8n
-	fy6/ubYX+19ELyNogyi5zGFDwi8AsgaaEBY5wZlkcL+o1Fw/YB
-X-Google-Smtp-Source: AGHT+IFPFme+C9Eiy3ItncLEn8BR0aSw2Xo1OTHfhpspKa2xDTBJtCTWjqboomnBE7dSFjby7JDOpQ==
-X-Received: by 2002:a05:600c:8a0a:20b0:477:5639:ff66 with SMTP id 5b1f17b1804b1-47762089cc1mr5883485e9.13.1762377638603;
-        Wed, 05 Nov 2025 13:20:38 -0800 (PST)
-Received: from f.. (cst-prg-14-82.cust.vodafone.cz. [46.135.14.82])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-477625c2f90sm8914505e9.12.2025.11.05.13.20.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 13:20:38 -0800 (PST)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: mic@digikod.net,
-	brauner@kernel.org
-Cc: linux-security-module@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	viro@zeniv.linux.org.uk,
-	eadavis@qq.com,
-	gnoack@google.com,
-	jack@suse.cz,
-	jannh@google.com,
-	max.kellermann@ionos.com,
-	m@maowtm.org,
-	syzbot+12479ae15958fc3f54ec@syzkaller.appspotmail.com,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH 2/2] landlock: fix splats from iput() after it started calling might_sleep()
-Date: Wed,  5 Nov 2025 22:20:25 +0100
-Message-ID: <20251105212025.807549-2-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251105212025.807549-1-mjguzik@gmail.com>
-References: <20251105212025.807549-1-mjguzik@gmail.com>
+	s=arc-20240116; t=1762377849; c=relaxed/simple;
+	bh=u7d9evMnHLg8hJK0Bj/mYGhbV3SaK5dJyb8wyfl1+zg=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=HShAdk2x0EZ/hCfR6hiYIh+DOtgJ/yMqTxtEDwpRYr+c4sQHQZ0WxHnwh1YVCmt2oX/xazquhtSrOnEbpf9jc/MyJf/pPUbsnVrQGSxvgduq9+doZq6Gg8KjwfsgaxOjl5JoqsEmmU7VW1+/5SfQ20tMBzrydN3y2BPbTgye7U0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=HmU5hGoP; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=qSmEJgx4; arc=none smtp.client-ip=202.12.124.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+	by mailflow.stl.internal (Postfix) with ESMTP id 1739B1300C2C;
+	Wed,  5 Nov 2025 16:24:03 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-03.internal (MEProxy); Wed, 05 Nov 2025 16:24:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to; s=fm3; t=
+	1762377842; x=1762385042; bh=EVCZm+k0TFnzyISAYv/ad61W8yGyS+Ggtni
+	ecPh35bI=; b=HmU5hGoPqokqzJCeAqGf4BLGNy0MGNPv7gplJ67n7ajHRRuR5XU
+	QACgC7SBMngKWRr4nVPjJJgBKA3Q8lvkyUIGSJ1J47cOcYiClbPU1pS4MppGb5wh
+	2U2/xgadcENW/jgHJsJTyYYdk+1XjojR7/TQqmLQq3cUPGl27XnIya4CBHC1wN5U
+	B+nehvMy/L9Mb2tEVTuU62Q/a0ARwc5MO2szCGIyxpVtm6vXzecjyFmyuGF+NoPC
+	aDoFRHfQnTUA0wUc9ga83EokX5Vq/Y4zVF59Z0IqpO5AZkbSr//2iHDO/uH6Mdle
+	v+KzAJeRAhAF2PY5f//xFYICp+6h/EtUY0Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762377842; x=
+	1762385042; bh=EVCZm+k0TFnzyISAYv/ad61W8yGyS+GgtniecPh35bI=; b=q
+	SmEJgx4M8dlmgTjoUZkSr8FLucgLUEVlbd9odWDFkQcMJ+PFRsH9Y//0VRWWOa2P
+	Ww7Nr0XlQSokRvZEPNvVMlDa6wHjsBAaK17Tal0oudel/kBoVldVw56udPXn9uh7
+	Mczp91CekHgkQQrSfj7GW2ikHW7rCR3uH+ZZqm5byT0S1cyww1zJkHKJ+SuERDBe
+	UBNUFH0g9LBeW66OTxBJSBU1+z1R+WJlAHRefWLPYecfVMfJsDxhw/7LXOajVkRK
+	EY0gezm21MwMMJYPZofen2+s3eL3i0IyTk0/RNQdye2aRU/x2B6K2Dlf35uwcujj
+	UVMV0x49c00E0JFs7mDIA==
+X-ME-Sender: <xms:asALaQBQoSVaUuTXtcG_GYkEHX7ZGK1IdW3-DpTTeAob7NvcdQnESw>
+    <xme:asALaZvvSYTRURk71wOmt1sLYQpre30qKc9hcTtEoays4h59X1vNTOzcXv4ewIAT7
+    PBP05Cv2IT0eKS3Y5hzt-pSpQXWpNcWFPc3z3tPuShZJnbiAw>
+X-ME-Received: <xmr:asALaV1K1vj_trpV4WX4Ug9tckywabHWFw4izsBwBHNEfUZdhT2LhWV0hKbStCEFmuTyATTpSjnEcu5m6FzT9u-CFv5Y_mYw-vIlsrnNGGDt>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddukeegleejucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurheptgfgggfhvfevufgjfhffkfhrsehtqhertddttdejnecuhfhrohhmpefpvghilheu
+    rhhofihnuceonhgvihhlsgesohifnhhmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnh
+    epleejtdefgeeukeeiteduveehudevfeffvedutefgteduhfegvdfgtdeigeeuudejnecu
+    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhgvihhlsg
+    esohifnhhmrghilhdrnhgvthdpnhgspghrtghpthhtohepleegpdhmohguvgepshhmthhp
+    ohhuthdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpd
+    hrtghpthhtohepfhhrrghnkhdrlhhisehvihhvohdrtghomhdprhgtphhtthhopehlihhn
+    uhigqdigfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugi
+    dquhhnihhonhhfshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhn
+    uhigqdhnihhlfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinh
+    hugidqnhhfshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhig
+    qdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuh
+    igqdhhrghruggvnhhinhhgsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
+    lhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:asALafmPr_ZX1OBseZ_yN5P8ha0kcdOo70DqfQ-d7eox1J3FRhMuTg>
+    <xmx:asALaYv6caGo7YOyqxlwHt-aa7xcS6ubR74B6joQPFkP4nVa857B-Q>
+    <xmx:asALaQazXCEbXKvEWtOde9MGMuFd4iSpENdxHY6Br8A6SQLP9UCqOg>
+    <xmx:asALaUc6XxQI42baNH5r4oVKLbArJeUxiTNL9duhGxUFeugLz9diCA>
+    <xmx:csALaZ2nr3Xo9lu7ZwRVoMnu5vfNzgtS4RKi9tfb5i1b6hqQye68vliH>
+Feedback-ID: iab3e480c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 5 Nov 2025 16:23:32 -0500 (EST)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: NeilBrown <neilb@ownmail.net>
+To: "Jeff Layton" <jlayton@kernel.org>
+Cc: "Eric Van Hensbergen" <ericvh@kernel.org>,
+ "Latchesar Ionkov" <lucho@ionkov.net>,
+ "Dominique Martinet" <asmadeus@codewreck.org>,
+ "Christian Schoenebeck" <linux_oss@crudebyte.com>,
+ "David Sterba" <dsterba@suse.com>, "David Howells" <dhowells@redhat.com>,
+ "Marc Dionne" <marc.dionne@auristor.com>,
+ "Alexander Viro" <viro@zeniv.linux.org.uk>,
+ "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>,
+ "Tigran A. Aivazian" <aivazian.tigran@gmail.com>,
+ "Chris Mason" <clm@fb.com>, "Xiubo Li" <xiubli@redhat.com>,
+ "Ilya Dryomov" <idryomov@gmail.com>, "Jan Harkes" <jaharkes@cs.cmu.edu>,
+ coda@cs.cmu.edu, "Tyler Hicks" <code@tyhicks.com>,
+ "Jeremy Kerr" <jk@ozlabs.org>, "Ard Biesheuvel" <ardb@kernel.org>,
+ "Namjae Jeon" <linkinjeon@kernel.org>,
+ "Sungjong Seo" <sj1557.seo@samsung.com>,
+ "Yuezhang Mo" <yuezhang.mo@sony.com>, "Theodore Ts'o" <tytso@mit.edu>,
+ "Andreas Dilger" <adilger.kernel@dilger.ca>,
+ "Jaegeuk Kim" <jaegeuk@kernel.org>, "Chao Yu" <chao@kernel.org>,
+ "OGAWA Hirofumi" <hirofumi@mail.parknet.co.jp>,
+ "Miklos Szeredi" <miklos@szeredi.hu>,
+ "Andreas Gruenbacher" <agruenba@redhat.com>,
+ "Viacheslav Dubeyko" <slava@dubeyko.com>,
+ "John Paul Adrian Glaubitz" <glaubitz@physik.fu-berlin.de>,
+ "Yangtao Li" <frank.li@vivo.com>, "Richard Weinberger" <richard@nod.at>,
+ "Anton Ivanov" <anton.ivanov@cambridgegreys.com>,
+ "Johannes Berg" <johannes@sipsolutions.net>,
+ "Mikulas Patocka" <mikulas@artax.karlin.mff.cuni.cz>,
+ "Muchun Song" <muchun.song@linux.dev>,
+ "Oscar Salvador" <osalvador@suse.de>,
+ "David Hildenbrand" <david@redhat.com>,
+ "David Woodhouse" <dwmw2@infradead.org>,
+ "Dave Kleikamp" <shaggy@kernel.org>,
+ "Trond Myklebust" <trondmy@kernel.org>,
+ "Anna Schumaker" <anna@kernel.org>,
+ "Ryusuke Konishi" <konishi.ryusuke@gmail.com>,
+ "Konstantin Komarov" <almaz.alexandrovich@paragon-software.com>,
+ "Mark Fasheh" <mark@fasheh.com>, "Joel Becker" <jlbec@evilplan.org>,
+ "Joseph Qi" <joseph.qi@linux.alibaba.com>,
+ "Bob Copeland" <me@bobcopeland.com>,
+ "Mike Marshall" <hubcap@omnibond.com>,
+ "Martin Brandenburg" <martin@omnibond.com>,
+ "Amir Goldstein" <amir73il@gmail.com>,
+ "Steve French" <sfrench@samba.org>, "Paulo Alcantara" <pc@manguebit.org>,
+ "Ronnie Sahlberg" <ronniesahlberg@gmail.com>,
+ "Shyam Prasad N" <sprasad@microsoft.com>, "Tom Talpey" <tom@talpey.com>,
+ "Bharath SM" <bharathsm@microsoft.com>,
+ "Zhihao Cheng" <chengzhihao1@huawei.com>,
+ "Hans de Goede" <hansg@kernel.org>, "Carlos Maiolino" <cem@kernel.org>,
+ "Hugh Dickins" <hughd@google.com>,
+ "Baolin Wang" <baolin.wang@linux.alibaba.com>,
+ "Andrew Morton" <akpm@linux-foundation.org>,
+ "Kees Cook" <kees@kernel.org>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ linux-kernel@vger.kernel.org, v9fs@lists.linux.dev,
+ linux-fsdevel@vger.kernel.org, linux-afs@lists.infradead.org,
+ linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org,
+ codalist@coda.cs.cmu.edu, ecryptfs@vger.kernel.org,
+ linux-efi@vger.kernel.org, linux-ext4@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, gfs2@lists.linux.dev,
+ linux-um@lists.infradead.org, linux-mm@kvack.org,
+ linux-mtd@lists.infradead.org, jfs-discussion@lists.sourceforge.net,
+ linux-nfs@vger.kernel.org, linux-nilfs@vger.kernel.org,
+ ntfs3@lists.linux.dev, ocfs2-devel@lists.linux.dev,
+ linux-karma-devel@lists.sourceforge.net, devel@lists.orangefs.org,
+ linux-unionfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+ samba-technical@lists.samba.org, linux-xfs@vger.kernel.org,
+ linux-hardening@vger.kernel.org, "Jeff Layton" <jlayton@kernel.org>
+Subject:
+ Re: [PATCH] vfs: remove the excl argument from the ->create() inode_operation
+In-reply-to: <20251105-create-excl-v1-1-a4cce035cc55@kernel.org>
+References: <20251105-create-excl-v1-1-a4cce035cc55@kernel.org>
+Date: Thu, 06 Nov 2025 08:23:24 +1100
+Message-id: <176237780417.634289.15818324160940255011@noble.neil.brown.name>
+Reply-To: NeilBrown <neil@brown.name>
 
-At this point it is guaranteed this is not the last reference.
+On Thu, 06 Nov 2025, Jeff Layton wrote:
+> Since ce8644fcadc5 ("lookup_open(): expand the call of vfs_create()"),
+> the "excl" argument to the ->create() inode_operation is always set to
+> true. Remove it, and fix up all of the create implementations.
 
-However, a recent addition of might_sleep() at top of iput() started
-generating false-positives as it was executing for all values.
+nonono
 
-Remedy the problem by using the newly introduced iput_not_last().
 
-Reported-by: syzbot+12479ae15958fc3f54ec@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/all/68d32659.a70a0220.4f78.0012.GAE@google.com/
-Fixes: 2ef435a872ab ("fs: add might_sleep() annotation to iput() and more")
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
----
- security/landlock/fs.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+> @@ -3802,7 +3802,7 @@ static struct dentry *lookup_open(struct nameidata *n=
+d, struct file *file,
+>  		}
+> =20
+>  		error =3D dir_inode->i_op->create(idmap, dir_inode, dentry,
+> -						mode, open_flag & O_EXCL);
+> +						mode);
 
-diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-index 0bade2c5aa1d..d9c12b993fa7 100644
---- a/security/landlock/fs.c
-+++ b/security/landlock/fs.c
-@@ -1335,11 +1335,10 @@ static void hook_sb_delete(struct super_block *const sb)
- 			 * At this point, we own the ihold() reference that was
- 			 * originally set up by get_inode_object() and the
- 			 * __iget() reference that we just set in this loop
--			 * walk.  Therefore the following call to iput() will
--			 * not sleep nor drop the inode because there is now at
--			 * least two references to it.
-+			 * walk.  Therefore there are at least two references
-+			 * on the inode.
- 			 */
--			iput(inode);
-+			iput_not_last(inode);
- 		} else {
- 			spin_unlock(&object->lock);
- 			rcu_read_unlock();
--- 
-2.48.1
+"open_flag & O_EXCL" is not the same as "true".
+
+It is true that "all calls to vfs_create() pass true for 'excl'"
+The same is NOT true for inode_operations.create.
+
+NeilBrown
 
 
