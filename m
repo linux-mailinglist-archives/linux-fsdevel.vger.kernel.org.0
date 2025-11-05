@@ -1,97 +1,119 @@
-Return-Path: <linux-fsdevel+bounces-67067-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67068-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7681DC3400B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 05 Nov 2025 06:48:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F912C340B5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 05 Nov 2025 07:25:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 08EE94EBFA9
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Nov 2025 05:48:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FD951897D42
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Nov 2025 06:25:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CD6626ED51;
-	Wed,  5 Nov 2025 05:48:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD41E2C08AB;
+	Wed,  5 Nov 2025 06:25:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="DKqQnOYr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E11D1F4615
-	for <linux-fsdevel@vger.kernel.org>; Wed,  5 Nov 2025 05:48:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0100729C338;
+	Wed,  5 Nov 2025 06:25:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762321686; cv=none; b=CQKt5WC6o5BAhakmuURboRvU9ipPVPE7645XMUVtZE6w6r8D2rnksHU4hmyPSAw+9jZJFZaWGInJamy5KUUwHNbIK0YrQ0ybi1JnzvVIMBPdhgKlwgdLYwG7ilupeg4a1E4YmcW3ZPVU/gYiKLxnI5RsSVPxZfQSU9bOtcmnuRI=
+	t=1762323907; cv=none; b=W1a8wnbz8YwIxmaxJ0iwAC1USfPqcFeMIxADSz/N7dZhmhWQ01wjJ/Hh305wGz9qwOVIeUKaCwxA/rKqkcIOGEYGG+kNa2qBw2rkh3V+YpRZrOxhwejD9jX5iWKbiUG10lCJipRYR9WvtxTiGd2WlMfV6AjpQs6FdGFD4vMZSxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762321686; c=relaxed/simple;
-	bh=GlQIhOpVt8G+BVYMy665LNIo97/TwQy9Ja+ALJ1AUDo=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=W+yNlQlJBJEHCrZPbY14ZEHesQEzzKscR1QSqAZnVw6TmZa8Rj1PtFW2G44UQOxBjRg145GDpp1CxZhrN8Qtbx24D9CxksEjQncInGv19x0BJM23M7Zgvl0JqEB2gtv31lgK2T4LEZqUKWbduCqE35luYOd6cXB5H67oZ8eET20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-9484c2ac07cso285476839f.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Nov 2025 21:48:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762321683; x=1762926483;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=g4XDLXqrEs29g4qhc4+ZUYTByJ5LUyYE6CBWzXLnGEU=;
-        b=kXw5PC854Otv8o5gFSKQclwVXKPB5hceT8Im2qvgxVdgbHKEqL8tmKGNTpi/lDbigw
-         s3zd+AWRQOPNEx1dVYuurN5myftN+rOtCuwrW5ckSC4ontB8QD0xm8YNlR6IA7belbWS
-         7v+0tDFfrBH8jIPxlqIs+CrUk+Cxybmzlb5LuSHQOGZFvExSrW7KobJk8HCxiDaXxj7z
-         YWwYO3N6r+Sct2HHgtDG/1Y+mL0B0LKodElSt32n3xz3xjxa4j3sZe+yC9Tb7CEKA9in
-         3fYu1PjJy8b8jNX9uxoYruIpq8YcLYSdvPMd070QufNzxUkatKHgvw5hmn1aVqWN0yM4
-         /cJA==
-X-Forwarded-Encrypted: i=1; AJvYcCWpdpz+IzA3KD7m/R6qxGLs4obgjFo0Vd6U38yEh7FHc6L1OAOANQ0aLLNJizmgJNSF/z3TFJWWIEiaPxib@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3hKn/hL3ZolRg/gdU1WyaugUSLA7hLottt1VxwnfDP5zCR330
-	9brP+2x/Wg+8GQMya8E1VP2qcylWYrQPHxEpAi7BDrM1kyPnf6yq9TddQL14a09cy5AoNM4fV9R
-	RXn3JuJMVQuwTi1etmfEruvZyMSq7TKF1DY3A0LJ1vzFSf9Aw7e6+xcBmz9k=
-X-Google-Smtp-Source: AGHT+IFp+75P9fzMNP6tFwZqfyhcKVqnVaql1CMi2hGDeHUR9fDxpaS8IRIyJ/54rHYeSSnjNRL0DzJ+OpUzQhVJDknW+FXvnEk4
+	s=arc-20240116; t=1762323907; c=relaxed/simple;
+	bh=PYeGwhSelUDlgFEYczoOST+VVcOmZjQzlpX+qD1Ww00=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MVKK5pi5kpr0Liyr+tgLDfWOC41SU1Y8YEsDOkTK1F3zJTuyWw8n3c4HuEbkDecw4K3+RDS1CMeW3ZKVfzvARtGjVmiaa54SSwIibLi4siVSLHOI5/6l+ee5gp4n/HgS+PpjgK5BGfbDlv1hHhuFU6uCgyHh9a618LuZ7e/mFV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=DKqQnOYr; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=K3trsM2jtIqcXAhO2RW82Rusl1AamfzGXsKVmqjZpjY=; b=DKqQnOYru7+/NOF0d6uXDrfww4
+	f7RyIm9g2Agn8TBxBmz/a6g1hVMmQFoCyvaegYhnKkXOnq/aNSSC92OhoZtxYMCe1d4Oof4v4yAI+
+	iB8dd37SlbbottLqCYa6LZI+SbFKwCgrZ4P78lZllzrs+EQE9853uqdluxgDN/t3J25eraFa66LFd
+	2xpJWYtn7mBiia3+AQ+xsG4XGgYFwh6D0VFNCQwkwa0doBd9/Y2OEfEWrxArVAmgvJWwt6OsKh1SA
+	cF/Omol/fEDnRr6TivnztsVS6VWJRQ+mlV3EQUBkr2gDQF9CTXmee4Z5I8gEm46a4G/D/j7WBk/Mi
+	XKdHUNpg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vGWx3-00000005J1b-0Cti;
+	Wed, 05 Nov 2025 06:25:01 +0000
+Date: Wed, 5 Nov 2025 06:25:01 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: brauner@kernel.org, jack@suse.cz, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fs: touch up predicts in putname()
+Message-ID: <20251105062501.GG2441659@ZenIV>
+References: <20251029134952.658450-1-mjguzik@gmail.com>
+ <20251031201753.GD2441659@ZenIV>
+ <20251101060556.GA1235503@ZenIV>
+ <CAGudoHHno74hGjwu7rryrS4x2q2W8=SwMwT9Lohjr4mBbAg+LA@mail.gmail.com>
+ <20251102061443.GE2441659@ZenIV>
+ <CAGudoHFDAPEYoC8RAPuPVkcsHsgpdJtQh91=8wRgMAozJyYf2w@mail.gmail.com>
+ <20251103044553.GF2441659@ZenIV>
+ <CAGudoHGP+x0VPpJnn=zWG6NLTkN8t+TvKDwErfWVvzZ7CEa+=Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:29c9:b0:945:9f2d:592f with SMTP id
- ca18e2360f4ac-94869ebc957mr295259839f.17.1762321683439; Tue, 04 Nov 2025
- 21:48:03 -0800 (PST)
-Date: Tue, 04 Nov 2025 21:48:03 -0800
-In-Reply-To: <68132c08.050a0220.14dd7d.0007.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <690ae513.050a0220.baf87.0009.GAE@google.com>
-Subject: Re: [syzbot] [nfs?] [netfs?] INFO: task hung in anon_pipe_write
-From: syzbot <syzbot+ef2c1c404cbcbcc66453@syzkaller.appspotmail.com>
-To: asmadeus@codewreck.org, brauner@kernel.org, ceph-devel@vger.kernel.org, 
-	dhowells@redhat.com, ericvh@kernel.org, idryomov@gmail.com, jack@suse.cz, 
-	jlayton@kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, linux_oss@crudebyte.com, lucho@ionkov.net, 
-	m@maowtm.org, mathieu.desnoyers@efficios.com, mhiramat@kernel.org, 
-	netfs@lists.linux.dev, rostedt@goodmis.org, syzkaller-bugs@googlegroups.com, 
-	v9fs@lists.linux.dev, viro@zeniv.linux.org.uk, xiubli@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGudoHGP+x0VPpJnn=zWG6NLTkN8t+TvKDwErfWVvzZ7CEa+=Q@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-syzbot suspects this issue was fixed by commit:
+On Mon, Nov 03, 2025 at 05:44:07PM +0100, Mateusz Guzik wrote:
 
-commit 290434474c332a2ba9c8499fe699c7f2e1153280
-Author: Tingmao Wang <m@maowtm.org>
-Date:   Sun Apr 6 16:18:42 2025 +0000
+> a sketch:
+> /* called by the thread which allocated the name if it decides to go
+> through with it */
+> delegate_alien_name(name) {
+>     VFS_BUG_ON(name->delegated);
+>     name->delegated = true;
+> }
+> 
+> /* called by the thread using the name */
+> claim_alien_name(name) {
+>     VFS_BUG_ON(!name->delegated);
+>     VFS_BUG_ON(name->__who_can_free != NULL);
+>     name->__who_can_free = current;
+> }
+> 
+> destroy_alien_name(name) {
+>     if (name->delegated) {
+>         VFS_BUG_ON(name->__who_can_free == NULL);
+>         VFS_BUG_ON(name->__who_can_free != current);
+>     }
+>     putname(..);
+> }
+> 
+> So a sample correct consumer looks like this:
+> err = getname_alien(&name);
+> ....
+> err = other_prep();
+> if (!err)
+>     actual_work(delegate_alien_name(name));
+> else
+>     destroy_alien_name(name);
+> 
+> the *other* thread which eventually works on the name:
+> claim_alien_name(name);
+> /* hard work goes here */
+> destroy_alien_name(name);
+> 
+> Sample buggy consumer which both delegated the free *and* decided free
+> anyway is caught.
 
-    fs/9p: Refresh metadata in d_revalidate for uncached mode too
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=10be532f980000
-start commit:   5bc1018675ec Merge tag 'pci-v6.15-fixes-3' of git://git.ke..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9f5bd2a76d9d0b4e
-dashboard link: https://syzkaller.appspot.com/bug?extid=ef2c1c404cbcbcc66453
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15631270580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12a0b0d4580000
-
-If the result looks correct, please mark the issue as fixed by replying with:
-
-#syz fix: fs/9p: Refresh metadata in d_revalidate for uncached mode too
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+That would make sense had there been any places where we would want
+use the alien_filename contents (hell, access it) in any way other
+than "destroy and get a struct filename reference".  I don't see any
+candidates, TBH...
 
