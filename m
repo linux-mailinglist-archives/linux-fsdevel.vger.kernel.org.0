@@ -1,105 +1,78 @@
-Return-Path: <linux-fsdevel+bounces-67301-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67302-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECACFC3ACF2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 06 Nov 2025 13:11:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4E1FC3AD64
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 06 Nov 2025 13:16:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72AFC189D06A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Nov 2025 12:08:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3BF3460FB9
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Nov 2025 12:12:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BCC73271FF;
-	Thu,  6 Nov 2025 12:07:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95FED326D76;
+	Thu,  6 Nov 2025 12:09:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VNzO3H2p"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aCSP76bS"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74590325480;
-	Thu,  6 Nov 2025 12:07:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCDAB14F112;
+	Thu,  6 Nov 2025 12:09:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762430876; cv=none; b=f+fwnbhy0PtcQvw3TTTQ0N+dvLv4dXHGLR7M9bcVEMmVtKswV+fMUrSxV8E5+jSdtISwus8Qcdf4eKSaubzaPLWjDARTM1p1QuJ2rZTW8F1kyfqQhbsCx6Td/oBZH8bvjfcoKD0uEW8I0UZz4wqw1Dco3HlEChqfRebI/Fkx0k0=
+	t=1762430944; cv=none; b=DJ77N3Sbj9SIU/ePx1iDtqsFJJpz2ge8Fdocds/zYsznwtoxXLuItZt1iGkwtjpyD+KIyGzktyzjpb30A2wxavxGrNaCVWV0N/JAlraLJ1oy9TQJbmK6ansnkwpWc/MYTAFGr9bAPrINeBvKzMU0Icc3dwC9xKVPrcg8ewnvrek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762430876; c=relaxed/simple;
-	bh=ZSAzxLSRlNc7aHk3QQjU+Jn2ls3JaS1qMmMrb2/qUBM=;
+	s=arc-20240116; t=1762430944; c=relaxed/simple;
+	bh=LP7ZmyrMkXBm+ONLXJyVda0lQs6BJPqHUOBgiw51NPQ=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Auxd+Ld9ielLhtLn2DG/r/TCeDz+g29dqqK/QyIbSvlE5dB4uDIXZXPvQph4XfMoYTAR5rYCDck10GRQ3LjAO4W61O6Tj1bOYQP7IInqCYDWoSjJOqObQaFFgsLz9alHQdAphRNtNTS0HURa6mjnp45AYYqg6+N+Tsk9xeO946g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VNzO3H2p; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45F20C16AAE;
-	Thu,  6 Nov 2025 12:07:49 +0000 (UTC)
+	 Content-Type:MIME-Version; b=nZrrb5TVzNEBU9OpMuNVcPeDgyAvMmpOl4lZzi0hh8IbyMpdXIQL70RqvHQWxBFEcmAIvRYFdAkKRjuhbh7rUpBfSmX/DJqKzqSEkMZtY+C2RfzKQ2FC9HENV73eM02okfaaeZ6nIN/cl1wlpsttEIveRHx9DAC6L92BHx2G1Bc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aCSP76bS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DBB8C113D0;
+	Thu,  6 Nov 2025 12:09:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762430876;
-	bh=ZSAzxLSRlNc7aHk3QQjU+Jn2ls3JaS1qMmMrb2/qUBM=;
+	s=k20201202; t=1762430943;
+	bh=LP7ZmyrMkXBm+ONLXJyVda0lQs6BJPqHUOBgiw51NPQ=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=VNzO3H2p6CwGtTyPbapCQ3QGkVPCDj0Gu4NOPyGtgJgmaYMtgBtFdfn1FNy5iqr6k
-	 vTv6ROHNpjvXI02lRsoWF/DhOh/uJCOWIGFqPaPNS7PcJjp39waeiJOYKbRPTwfrbU
-	 SMsnPJn43Jpt7c11rBBLMRgkivM7erknhuvz0QL9AVVVAnNexDJAeVEkJChDqH2EN6
-	 8oda1kH5rwMJrie0d3U1H9Cz/oc/yOp2QxL//jKy5IQ7gAhznsONMdqHufyuvBkH7Z
-	 SS+7EyYZ9fRip3j/kHm5jr4WaoPL6Ps8XzbBqB5YMKxF7epkNPAz2Ku5VI9q85h1pI
-	 bAkoyVAUJdhpA==
-Message-ID: <6758176514cdd6e2ceacb3bd0e4d63fb8784b7c6.camel@kernel.org>
-Subject: Re: [PATCH] vfs: remove the excl argument from the ->create()
- inode_operation
+	b=aCSP76bShFtNtarqKQ39cOrob87BYEJLR8x3XybpvWCgVqAQg/pdqC7n7NRZSmbQS
+	 aNN47Anax/M1kyq/usu7O/0dBObpluAMnF3sFzlrhrSW8T43auNgEuci9QQYAtoBIx
+	 29Va/KeJj7GrIBHoYMiSKxlyXBSa59bf+6AeS5TxZu/sS49XPQCYJAhsJ7NnONgO66
+	 3Hy0defaktIndrn0UqyxX+ZlmLRDGnf42JeFjvZfb1NVnXcZZpwWwhut7If4/G9LSI
+	 v8698KoD1zXlJDLOT70thrR2ItNqSa0voVRpVm3ljJRTYzULb0nbvr8BfxPvlFNjUO
+	 /xHq47tX/fPpg==
+Message-ID: <fc9765e8c58fbbc14c8066f685477da0cb2b55d0.camel@kernel.org>
+Subject: Re: [PATCH v5 09/17] vfs: clean up argument list for vfs_create()
 From: Jeff Layton <jlayton@kernel.org>
 To: NeilBrown <neil@brown.name>
-Cc: Eric Van Hensbergen <ericvh@kernel.org>, Latchesar Ionkov
- <lucho@ionkov.net>,  Dominique Martinet <asmadeus@codewreck.org>, Christian
- Schoenebeck <linux_oss@crudebyte.com>, David Sterba	 <dsterba@suse.com>,
- David Howells <dhowells@redhat.com>, Marc Dionne	
- <marc.dionne@auristor.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner	 <brauner@kernel.org>, Jan Kara <jack@suse.cz>, "Tigran
- A. Aivazian"	 <aivazian.tigran@gmail.com>, Chris Mason <clm@fb.com>, Xiubo
- Li	 <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>, Jan Harkes	
- <jaharkes@cs.cmu.edu>, coda@cs.cmu.edu, Tyler Hicks <code@tyhicks.com>,
- Jeremy Kerr <jk@ozlabs.org>, Ard Biesheuvel <ardb@kernel.org>, Namjae Jeon
- <linkinjeon@kernel.org>,  Sungjong Seo <sj1557.seo@samsung.com>, Yuezhang
- Mo <yuezhang.mo@sony.com>, Theodore Ts'o <tytso@mit.edu>,  Andreas Dilger
- <adilger.kernel@dilger.ca>, Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu
- <chao@kernel.org>, OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>, Miklos
- Szeredi <miklos@szeredi.hu>, Andreas Gruenbacher	 <agruenba@redhat.com>,
- Viacheslav Dubeyko <slava@dubeyko.com>, John Paul Adrian Glaubitz
- <glaubitz@physik.fu-berlin.de>, Yangtao Li <frank.li@vivo.com>, Richard
- Weinberger <richard@nod.at>,  Anton Ivanov
- <anton.ivanov@cambridgegreys.com>, Johannes Berg
- <johannes@sipsolutions.net>, Mikulas Patocka	
- <mikulas@artax.karlin.mff.cuni.cz>, Muchun Song <muchun.song@linux.dev>, 
- Oscar Salvador <osalvador@suse.de>, David Hildenbrand <david@redhat.com>,
- David Woodhouse <dwmw2@infradead.org>,  Dave Kleikamp <shaggy@kernel.org>,
- Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
- Ryusuke Konishi <konishi.ryusuke@gmail.com>, Konstantin Komarov
- <almaz.alexandrovich@paragon-software.com>,  Mark Fasheh <mark@fasheh.com>,
- Joel Becker <jlbec@evilplan.org>, Joseph Qi <joseph.qi@linux.alibaba.com>, 
- Bob Copeland <me@bobcopeland.com>, Mike Marshall <hubcap@omnibond.com>,
- Martin Brandenburg	 <martin@omnibond.com>, Amir Goldstein
- <amir73il@gmail.com>, Steve French	 <sfrench@samba.org>, Paulo Alcantara
- <pc@manguebit.org>, Ronnie Sahlberg	 <ronniesahlberg@gmail.com>, Shyam
- Prasad N <sprasad@microsoft.com>, Tom Talpey	 <tom@talpey.com>, Bharath SM
- <bharathsm@microsoft.com>, Zhihao Cheng	 <chengzhihao1@huawei.com>, Hans de
- Goede <hansg@kernel.org>, Carlos Maiolino	 <cem@kernel.org>, Hugh Dickins
- <hughd@google.com>, Baolin Wang	 <baolin.wang@linux.alibaba.com>, Andrew
- Morton <akpm@linux-foundation.org>,  Kees Cook <kees@kernel.org>, "Gustavo
- A. R. Silva" <gustavoars@kernel.org>, 	linux-kernel@vger.kernel.org,
- v9fs@lists.linux.dev, 	linux-fsdevel@vger.kernel.org,
- linux-afs@lists.infradead.org, 	linux-btrfs@vger.kernel.org,
- ceph-devel@vger.kernel.org, 	codalist@coda.cs.cmu.edu,
- ecryptfs@vger.kernel.org, linux-efi@vger.kernel.org, 
-	linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, 
-	gfs2@lists.linux.dev, linux-um@lists.infradead.org, linux-mm@kvack.org, 
-	linux-mtd@lists.infradead.org, jfs-discussion@lists.sourceforge.net, 
-	linux-nfs@vger.kernel.org, linux-nilfs@vger.kernel.org,
- ntfs3@lists.linux.dev, 	ocfs2-devel@lists.linux.dev,
- linux-karma-devel@lists.sourceforge.net, 	devel@lists.orangefs.org,
- linux-unionfs@vger.kernel.org, 	linux-cifs@vger.kernel.org,
- samba-technical@lists.samba.org, 	linux-xfs@vger.kernel.org,
- linux-hardening@vger.kernel.org
-Date: Thu, 06 Nov 2025 07:07:48 -0500
-In-Reply-To: <176237780417.634289.15818324160940255011@noble.neil.brown.name>
-References: <20251105-create-excl-v1-1-a4cce035cc55@kernel.org>
-	 <176237780417.634289.15818324160940255011@noble.neil.brown.name>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Alexander Viro
+ <viro@zeniv.linux.org.uk>,  Christian Brauner	 <brauner@kernel.org>, Jan
+ Kara <jack@suse.cz>, Chuck Lever	 <chuck.lever@oracle.com>, Alexander Aring
+ <alex.aring@gmail.com>, Trond Myklebust <trondmy@kernel.org>, Anna
+ Schumaker <anna@kernel.org>, Steve French <sfrench@samba.org>,  Paulo
+ Alcantara	 <pc@manguebit.org>, Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+ Shyam Prasad N	 <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
+ Bharath SM	 <bharathsm@microsoft.com>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>,  "Rafael J. Wysocki"	 <rafael@kernel.org>,
+ Danilo Krummrich <dakr@kernel.org>, David Howells	 <dhowells@redhat.com>,
+ Tyler Hicks <code@tyhicks.com>, Olga Kornievskaia	 <okorniev@redhat.com>,
+ Dai Ngo <Dai.Ngo@oracle.com>, Amir Goldstein	 <amir73il@gmail.com>, Namjae
+ Jeon <linkinjeon@kernel.org>, Steve French	 <smfrench@gmail.com>, Sergey
+ Senozhatsky <senozhatsky@chromium.org>, Carlos Maiolino <cem@kernel.org>,
+ Kuniyuki Iwashima <kuniyu@google.com>, "David S. Miller"	
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski	
+ <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman	
+ <horms@kernel.org>, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, 	linux-nfs@vger.kernel.org,
+ linux-cifs@vger.kernel.org, 	samba-technical@lists.samba.org,
+ netfs@lists.linux.dev, ecryptfs@vger.kernel.org, 
+	linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org,
+ netdev@vger.kernel.org
+Date: Thu, 06 Nov 2025 07:08:59 -0500
+In-Reply-To: <176237805165.634289.1849067298194355086@noble.neil.brown.name>
+References: <20251105-dir-deleg-ro-v5-0-7ebc168a88ac@kernel.org>
+	, <20251105-dir-deleg-ro-v5-9-7ebc168a88ac@kernel.org>
+	 <176237805165.634289.1849067298194355086@noble.neil.brown.name>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
  n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
@@ -184,37 +157,36 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-On Thu, 2025-11-06 at 08:23 +1100, NeilBrown wrote:
+On Thu, 2025-11-06 at 08:27 +1100, NeilBrown wrote:
 > On Thu, 06 Nov 2025, Jeff Layton wrote:
-> > Since ce8644fcadc5 ("lookup_open(): expand the call of vfs_create()"),
-> > the "excl" argument to the ->create() inode_operation is always set to
-> > true. Remove it, and fix up all of the create implementations.
+> > As Neil points out:
+> >=20
+> > "I would be in favour of dropping the "dir" arg because it is always
+> > d_inode(dentry->d_parent) which is stable."
+> >=20
+> > ...and...
+> >=20
+> > "Also *every* caller of vfs_create() passes ".excl =3D true".  So maybe=
+ we
+> > don't need that arg at all."
+> >=20
+> > Drop both arguments from vfs_create() and fix up the callers.
+> >=20
+> > Suggested-by: NeilBrown <neilb@ownmail.net>
+> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
 >=20
-> nonono
+> This I like.
 >=20
+> Reviewed-by: NeilBrown <neil@brown.name>
 >=20
-> > @@ -3802,7 +3802,7 @@ static struct dentry *lookup_open(struct nameidat=
-a *nd, struct file *file,
-> >  		}
-> > =20
-> >  		error =3D dir_inode->i_op->create(idmap, dir_inode, dentry,
-> > -						mode, open_flag & O_EXCL);
-> > +						mode);
->=20
-> "open_flag & O_EXCL" is not the same as "true".
->=20
-> It is true that "all calls to vfs_create() pass true for 'excl'"
-> The same is NOT true for inode_operations.create.
+> It would be consistent to also remove the 'dir' arg from vfs_mkdir(),
+> vfs_mknod(), etc.  I wouldn't do that until we find out what other
+> people think of the change.
 >=20
 
-I don't think this is a problem, actually:
-
-Almost all of the existing ->create() operations ignore the "excl"
-bool. There are only two that I found that do not: NFS and GFS2. Both
-of those have an ->atomic_open() operation though, so lookup_open()
-will never call ->create() for those filesystems. This means that -
->create() _is_ always called with excl =3D=3D true.
-
+I was thinking that too. I can roll patches to do those as well, but at
+this point I think I'd rather do that on top of this series rather than
+in the context of it.
 --=20
 Jeff Layton <jlayton@kernel.org>
 
