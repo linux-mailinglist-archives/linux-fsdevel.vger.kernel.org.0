@@ -1,52 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-67292-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67289-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F007C3ABC8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 06 Nov 2025 12:58:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDE05C3AB20
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 06 Nov 2025 12:51:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3FFD3BE31B
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Nov 2025 11:51:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D50C1A42821
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Nov 2025 11:50:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C17530EF63;
-	Thu,  6 Nov 2025 11:50:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5A853164C3;
+	Thu,  6 Nov 2025 11:50:05 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B64231985F;
-	Thu,  6 Nov 2025 11:50:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A28A3101DC;
+	Thu,  6 Nov 2025 11:50:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762429818; cv=none; b=QhprNwBxFubvpm2LUXejNdmyOfH9jkT79sLkVw+SQN37zD9WSjg05Byw4BkS9UMraO0JRw1YQ1jxbIcEDCrFXI48OdGAMqMjMVLIpBPi+aw0RD2R3HdAEga4tNqEzsZ2W58QjPmIGEulk3181yq/kxg1dL5B/8pFzCrhdL3Tt9w=
+	t=1762429805; cv=none; b=XSEOHY1D3xP3j0aiVM+K+8yI6/ZDgPRTMZTcBGjgKgODGJ3gElcNATPbtU7EvMwCgZdfVo3+zkjqESVFzSrChwjkrbejJtnzEjIejNnVIOAbr/6L9aqGovNIgW9Ib2DOC/6CooMjvsLS2NGdDlA1P2axw3iM0odPaDqR1P1D0Wg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762429818; c=relaxed/simple;
-	bh=KnzlfUS7b6A05GpPdjrBHv7ZFNA1ZFx8E2W+mgIICCo=;
+	s=arc-20240116; t=1762429805; c=relaxed/simple;
+	bh=fcju2KL6HfO0NoLFgdd2flZ1YHYvh2/fvlhLhAc9ihw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mAVOtJn02StU/h5O8iupvyOuNAqFuSLxh83xw8f7ON+WuTcxyTXMv+WUhzJDfhmL2oGQq4iaO48bmIXJREBJKNtvnZDzybxKG8HU4LiOctb2Xj/U8cd5DAROlLwZDPDP51PGIMBxWOy6mC7lG6aNpafMq31rNIxzJqe7JNQV6oQ=
+	 MIME-Version; b=gA7o1EfuqscgPnvgr+l1D4zGyhE9JCKadCkySXYgcrTA0/3ft0lhCYPvMu534ZbFvQCYlGqH2W5JgXjaOoEsgtb8WsSLawOqRFz5WuMBmGD93c3ZpMssAEieuOfnQixfiGH7B/xjT7glZoDS8K+7vOLeZidc8q3aI63cFMiJXf4=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
 Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4d2KmQ28qdz9sSf;
-	Thu,  6 Nov 2025 12:32:22 +0100 (CET)
+	by localhost (Postfix) with ESMTP id 4d2KmR2KScz9sSq;
+	Thu,  6 Nov 2025 12:32:23 +0100 (CET)
 X-Virus-Scanned: amavisd-new at c-s.fr
 Received: from pegase2.c-s.fr ([172.26.127.65])
 	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id YVf_i7GoCn0I; Thu,  6 Nov 2025 12:32:22 +0100 (CET)
+	with ESMTP id dbnuwnZTfd4H; Thu,  6 Nov 2025 12:32:23 +0100 (CET)
 Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4d2KmJ4Mjpz9sSh;
-	Thu,  6 Nov 2025 12:32:16 +0100 (CET)
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4d2KmK2sQ3z9sSj;
+	Thu,  6 Nov 2025 12:32:17 +0100 (CET)
 Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 7C8418B792;
-	Thu,  6 Nov 2025 12:32:16 +0100 (CET)
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 49CEC8B77B;
+	Thu,  6 Nov 2025 12:32:17 +0100 (CET)
 X-Virus-Scanned: amavisd-new at c-s.fr
 Received: from messagerie.si.c-s.fr ([127.0.0.1])
 	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id JO5LBR2iyzW5; Thu,  6 Nov 2025 12:32:16 +0100 (CET)
+	with ESMTP id NxNpllOkh-J7; Thu,  6 Nov 2025 12:32:17 +0100 (CET)
 Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 97B858B77B;
-	Thu,  6 Nov 2025 12:32:15 +0100 (CET)
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 740078B78F;
+	Thu,  6 Nov 2025 12:32:16 +0100 (CET)
 From: Christophe Leroy <christophe.leroy@csgroup.eu>
 To: Alexander Viro <viro@zeniv.linux.org.uk>,
 	Christian Brauner <brauner@kernel.org>,
@@ -76,9 +76,9 @@ Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
 	linux-kernel@vger.kernel.org,
 	netdev@vger.kernel.org,
 	linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH v4 05/10] powerpc/uaccess: Remove unused size and from parameters from allow_access_user()
-Date: Thu,  6 Nov 2025 12:31:23 +0100
-Message-ID: <e0c60bc6ae9912b400203c1f16f869211026adc9.1762427933.git.christophe.leroy@csgroup.eu>
+Subject: [PATCH v4 06/10] powerpc/uaccess: Remove {allow/prevent}_{read/write/read_write}_{from/to/}_user()
+Date: Thu,  6 Nov 2025 12:31:24 +0100
+Message-ID: <cd40a84ef85c26e2017730bb491631aa701dbe54.1762427933.git.christophe.leroy@csgroup.eu>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <cover.1762427933.git.christophe.leroy@csgroup.eu>
 References: <cover.1762427933.git.christophe.leroy@csgroup.eu>
@@ -88,130 +88,182 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5364; i=christophe.leroy@csgroup.eu; h=from:subject:message-id; bh=KnzlfUS7b6A05GpPdjrBHv7ZFNA1ZFx8E2W+mgIICCo=; b=kA0DAAoW3ZBwJryrz1MByyZiAGkMhyqi7HXpCsd+qcBnUJl2gCnVLOzgpgcKPJ7chMABwclmX 4h1BAAWCgAdFiEEx/8LupiK9GVvlbov3ZBwJryrz1MFAmkMhyoACgkQ3ZBwJryrz1MeKwEAy0ha N7ps/87sD4oYwH26bIktbycULo/IbbKxgPhsgTsBANqE9t7CuwL1fTq/tdbdBaVJdXFbCT9dMNp HA5cqzQAK
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5385; i=christophe.leroy@csgroup.eu; h=from:subject:message-id; bh=fcju2KL6HfO0NoLFgdd2flZ1YHYvh2/fvlhLhAc9ihw=; b=owGbwMvMwCV2d0KB2p7V54MZT6slMWTytGvJqyis8VimY+Bl2hUyL/T7hr5VeYvuX8gLN3Y2r GmIP+bcUcrCIMbFICumyHL8P/euGV1fUvOn7tKHmcPKBDKEgYtTACaiU8rIsGvavIyK6M3XFY50 LpoTeGfdwblrL67i+X5kQ7FNxU9zXR+Gv9JGZYXrxO8ozzmprXDyxryFat7l558s+HRhr1F4+oe pzHwA
 X-Developer-Key: i=christophe.leroy@csgroup.eu; a=openpgp; fpr=10FFE6F8B390DE17ACC2632368A92FEB01B8DD78
 Content-Transfer-Encoding: 8bit
 
-Since commit 16132529cee5 ("powerpc/32s: Rework Kernel Userspace
-Access Protection") the size parameter is unused on all platforms.
+The six following functions have become simple single-line fonctions
+that do not have much added value anymore:
+- allow_read_from_user()
+- allow_write_to_user()
+- allow_read_write_user()
+- prevent_read_from_user()
+- prevent_write_to_user()
+- prevent_read_write_user()
 
-And the 'from' parameter has never been used.
-
-Remove them.
+Directly call allow_user_access() and prevent_user_access(), it doesn't
+reduce the readability and it removes unnecessary middle functions.
 
 Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 ---
-v2: Also remove 'from' param.
+v2: New
 ---
- arch/powerpc/include/asm/book3s/32/kup.h     | 3 +--
- arch/powerpc/include/asm/book3s/64/kup.h     | 6 ++----
- arch/powerpc/include/asm/kup.h               | 9 ++++-----
- arch/powerpc/include/asm/nohash/32/kup-8xx.h | 3 +--
- arch/powerpc/include/asm/nohash/kup-booke.h  | 3 +--
- 5 files changed, 9 insertions(+), 15 deletions(-)
+ arch/powerpc/include/asm/kup.h     | 47 ------------------------------
+ arch/powerpc/include/asm/uaccess.h | 30 +++++++++----------
+ 2 files changed, 15 insertions(+), 62 deletions(-)
 
-diff --git a/arch/powerpc/include/asm/book3s/32/kup.h b/arch/powerpc/include/asm/book3s/32/kup.h
-index 873c5146e3261..a3558419c41b1 100644
---- a/arch/powerpc/include/asm/book3s/32/kup.h
-+++ b/arch/powerpc/include/asm/book3s/32/kup.h
-@@ -97,8 +97,7 @@ static __always_inline unsigned long __kuap_get_and_assert_locked(void)
- }
- #define __kuap_get_and_assert_locked __kuap_get_and_assert_locked
- 
--static __always_inline void allow_user_access(void __user *to, const void __user *from,
--					      u32 size, unsigned long dir)
-+static __always_inline void allow_user_access(void __user *to, unsigned long dir)
- {
- 	BUILD_BUG_ON(!__builtin_constant_p(dir));
- 
-diff --git a/arch/powerpc/include/asm/book3s/64/kup.h b/arch/powerpc/include/asm/book3s/64/kup.h
-index 03aec3c6c851c..9ccf8a5e0926f 100644
---- a/arch/powerpc/include/asm/book3s/64/kup.h
-+++ b/arch/powerpc/include/asm/book3s/64/kup.h
-@@ -353,8 +353,7 @@ __bad_kuap_fault(struct pt_regs *regs, unsigned long address, bool is_write)
- 	return (regs->amr & AMR_KUAP_BLOCK_READ) == AMR_KUAP_BLOCK_READ;
- }
- 
--static __always_inline void allow_user_access(void __user *to, const void __user *from,
--					      unsigned long size, unsigned long dir)
-+static __always_inline void allow_user_access(void __user *to, unsigned long dir)
- {
- 	unsigned long thread_amr = 0;
- 
-@@ -383,8 +382,7 @@ static __always_inline unsigned long get_kuap(void)
- 
- static __always_inline void set_kuap(unsigned long value) { }
- 
--static __always_inline void allow_user_access(void __user *to, const void __user *from,
--					      unsigned long size, unsigned long dir)
-+static __always_inline void allow_user_access(void __user *to, unsigned long dir)
- { }
- 
- #endif /* !CONFIG_PPC_KUAP */
 diff --git a/arch/powerpc/include/asm/kup.h b/arch/powerpc/include/asm/kup.h
-index f2009d7c8cfa7..3963584ac1cf1 100644
+index 3963584ac1cf1..4a4145a244f29 100644
 --- a/arch/powerpc/include/asm/kup.h
 +++ b/arch/powerpc/include/asm/kup.h
-@@ -72,8 +72,7 @@ static __always_inline void __kuap_kernel_restore(struct pt_regs *regs, unsigned
-  * platforms.
-  */
- #ifndef CONFIG_PPC_BOOK3S_64
--static __always_inline void allow_user_access(void __user *to, const void __user *from,
--					      unsigned long size, unsigned long dir) { }
-+static __always_inline void allow_user_access(void __user *to, unsigned long dir) { }
- static __always_inline void prevent_user_access(unsigned long dir) { }
- static __always_inline unsigned long prevent_user_access_return(void) { return 0UL; }
- static __always_inline void restore_user_access(unsigned long flags) { }
-@@ -134,18 +133,18 @@ static __always_inline void kuap_assert_locked(void)
- 
- static __always_inline void allow_read_from_user(const void __user *from, unsigned long size)
- {
--	allow_user_access(NULL, from, size, KUAP_READ);
-+	allow_user_access(NULL, KUAP_READ);
+@@ -131,53 +131,6 @@ static __always_inline void kuap_assert_locked(void)
+ 		kuap_get_and_assert_locked();
  }
  
- static __always_inline void allow_write_to_user(void __user *to, unsigned long size)
- {
--	allow_user_access(to, NULL, size, KUAP_WRITE);
-+	allow_user_access(to, KUAP_WRITE);
- }
+-static __always_inline void allow_read_from_user(const void __user *from, unsigned long size)
+-{
+-	allow_user_access(NULL, KUAP_READ);
+-}
+-
+-static __always_inline void allow_write_to_user(void __user *to, unsigned long size)
+-{
+-	allow_user_access(to, KUAP_WRITE);
+-}
+-
+-static __always_inline void allow_read_write_user(void __user *to, const void __user *from,
+-						  unsigned long size)
+-{
+-	allow_user_access(to, KUAP_READ_WRITE);
+-}
+-
+-static __always_inline void prevent_read_from_user(const void __user *from, unsigned long size)
+-{
+-	prevent_user_access(KUAP_READ);
+-}
+-
+-static __always_inline void prevent_write_to_user(void __user *to, unsigned long size)
+-{
+-	prevent_user_access(KUAP_WRITE);
+-}
+-
+-static __always_inline void prevent_read_write_user(void __user *to, const void __user *from,
+-						    unsigned long size)
+-{
+-	prevent_user_access(KUAP_READ_WRITE);
+-}
+-
+-static __always_inline void prevent_current_access_user(void)
+-{
+-	prevent_user_access(KUAP_READ_WRITE);
+-}
+-
+-static __always_inline void prevent_current_read_from_user(void)
+-{
+-	prevent_user_access(KUAP_READ);
+-}
+-
+-static __always_inline void prevent_current_write_to_user(void)
+-{
+-	prevent_user_access(KUAP_WRITE);
+-}
+-
+ #endif /* !__ASSEMBLER__ */
  
- static __always_inline void allow_read_write_user(void __user *to, const void __user *from,
- 						  unsigned long size)
- {
--	allow_user_access(to, from, size, KUAP_READ_WRITE);
+ #endif /* _ASM_POWERPC_KUAP_H_ */
+diff --git a/arch/powerpc/include/asm/uaccess.h b/arch/powerpc/include/asm/uaccess.h
+index 3e622e647d622..7846ee59e3747 100644
+--- a/arch/powerpc/include/asm/uaccess.h
++++ b/arch/powerpc/include/asm/uaccess.h
+@@ -45,14 +45,14 @@
+ 	do {							\
+ 		__label__ __pu_failed;				\
+ 								\
+-		allow_write_to_user(__pu_addr, __pu_size);	\
++		allow_user_access(__pu_addr, KUAP_WRITE);	\
+ 		__put_user_size_goto(__pu_val, __pu_addr, __pu_size, __pu_failed);	\
+-		prevent_write_to_user(__pu_addr, __pu_size);	\
++		prevent_user_access(KUAP_WRITE);		\
+ 		__pu_err = 0;					\
+ 		break;						\
+ 								\
+ __pu_failed:							\
+-		prevent_write_to_user(__pu_addr, __pu_size);	\
++		prevent_user_access(KUAP_WRITE);		\
+ 		__pu_err = -EFAULT;				\
+ 	} while (0);						\
+ 								\
+@@ -302,9 +302,9 @@ do {								\
+ 								\
+ 	might_fault();					\
+ 	barrier_nospec();					\
+-	allow_read_from_user(__gu_addr, __gu_size);		\
++	allow_user_access(NULL, KUAP_READ);		\
+ 	__get_user_size_allowed(__gu_val, __gu_addr, __gu_size, __gu_err);	\
+-	prevent_read_from_user(__gu_addr, __gu_size);		\
++	prevent_user_access(KUAP_READ);				\
+ 	(x) = (__typeof__(*(ptr)))__gu_val;			\
+ 								\
+ 	__gu_err;						\
+@@ -331,9 +331,9 @@ raw_copy_in_user(void __user *to, const void __user *from, unsigned long n)
+ 	unsigned long ret;
+ 
+ 	barrier_nospec();
+-	allow_read_write_user(to, from, n);
 +	allow_user_access(to, KUAP_READ_WRITE);
+ 	ret = __copy_tofrom_user(to, from, n);
+-	prevent_read_write_user(to, from, n);
++	prevent_user_access(KUAP_READ_WRITE);
+ 	return ret;
  }
- 
- static __always_inline void prevent_read_from_user(const void __user *from, unsigned long size)
-diff --git a/arch/powerpc/include/asm/nohash/32/kup-8xx.h b/arch/powerpc/include/asm/nohash/32/kup-8xx.h
-index 08486b15b2075..efffb5006d190 100644
---- a/arch/powerpc/include/asm/nohash/32/kup-8xx.h
-+++ b/arch/powerpc/include/asm/nohash/32/kup-8xx.h
-@@ -49,8 +49,7 @@ static __always_inline void uaccess_end_8xx(void)
- 	    "i"(SPRN_MD_AP), "r"(MD_APG_KUAP), "i"(MMU_FTR_KUAP) : "memory");
- }
- 
--static __always_inline void allow_user_access(void __user *to, const void __user *from,
--					      unsigned long size, unsigned long dir)
-+static __always_inline void allow_user_access(void __user *to, unsigned long dir)
+ #endif /* __powerpc64__ */
+@@ -343,9 +343,9 @@ static inline unsigned long raw_copy_from_user(void *to,
  {
- 	uaccess_begin_8xx(MD_APG_INIT);
- }
-diff --git a/arch/powerpc/include/asm/nohash/kup-booke.h b/arch/powerpc/include/asm/nohash/kup-booke.h
-index d6bbb6d78bbe4..cb2d5a96c3df7 100644
---- a/arch/powerpc/include/asm/nohash/kup-booke.h
-+++ b/arch/powerpc/include/asm/nohash/kup-booke.h
-@@ -73,8 +73,7 @@ static __always_inline void uaccess_end_booke(void)
- 	    "i"(SPRN_PID), "r"(0), "i"(MMU_FTR_KUAP) : "memory");
+ 	unsigned long ret;
+ 
+-	allow_read_from_user(from, n);
++	allow_user_access(NULL, KUAP_READ);
+ 	ret = __copy_tofrom_user((__force void __user *)to, from, n);
+-	prevent_read_from_user(from, n);
++	prevent_user_access(KUAP_READ);
+ 	return ret;
  }
  
--static __always_inline void allow_user_access(void __user *to, const void __user *from,
--					      unsigned long size, unsigned long dir)
-+static __always_inline void allow_user_access(void __user *to, unsigned long dir)
+@@ -354,9 +354,9 @@ raw_copy_to_user(void __user *to, const void *from, unsigned long n)
  {
- 	uaccess_begin_booke(current->thread.pid);
+ 	unsigned long ret;
+ 
+-	allow_write_to_user(to, n);
++	allow_user_access(to, KUAP_WRITE);
+ 	ret = __copy_tofrom_user(to, (__force const void __user *)from, n);
+-	prevent_write_to_user(to, n);
++	prevent_user_access(KUAP_WRITE);
+ 	return ret;
  }
+ 
+@@ -367,9 +367,9 @@ static inline unsigned long __clear_user(void __user *addr, unsigned long size)
+ 	unsigned long ret;
+ 
+ 	might_fault();
+-	allow_write_to_user(addr, size);
++	allow_user_access(addr, KUAP_WRITE);
+ 	ret = __arch_clear_user(addr, size);
+-	prevent_write_to_user(addr, size);
++	prevent_user_access(KUAP_WRITE);
+ 	return ret;
+ }
+ 
+@@ -397,9 +397,9 @@ copy_mc_to_user(void __user *to, const void *from, unsigned long n)
+ {
+ 	if (check_copy_size(from, n, true)) {
+ 		if (access_ok(to, n)) {
+-			allow_write_to_user(to, n);
++			allow_user_access(to, KUAP_WRITE);
+ 			n = copy_mc_generic((void __force *)to, from, n);
+-			prevent_write_to_user(to, n);
++			prevent_user_access(KUAP_WRITE);
+ 		}
+ 	}
+ 
 -- 
 2.49.0
 
