@@ -1,121 +1,280 @@
-Return-Path: <linux-fsdevel+bounces-67391-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67392-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49605C3DBB7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 07 Nov 2025 00:09:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0EACC3DBC3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 07 Nov 2025 00:10:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 380274E3B9E
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Nov 2025 23:09:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 580A1188D145
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Nov 2025 23:10:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1138D3502BC;
-	Thu,  6 Nov 2025 23:09:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94044350D72;
+	Thu,  6 Nov 2025 23:10:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="spik9obX"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wb+5BokU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D9CA2DF14D
-	for <linux-fsdevel@vger.kernel.org>; Thu,  6 Nov 2025 23:09:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 596A1350D64
+	for <linux-fsdevel@vger.kernel.org>; Thu,  6 Nov 2025 23:10:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762470544; cv=none; b=JPyqLwFzlnj29nG5vLc5BXVxc/9xlDP6+RQ8e4yFyfytWlPxyVtvGebHtbUl3IeKCl/JyNDvKHytB6dSIg8ADfaP89IKsBy801NtfVnjLr5Y+TEjbZAQVWMem60BX/CxW6cCPkhwOVZ+uWiPMAYnRFfnNoOyfagGhTfCwz8ex1o=
+	t=1762470602; cv=none; b=kf7/dxzjlnvDooX0VGGTeRS/BnV5dFMxWOgATYDQ+1Y0X0oN4Nrsu7exDXphfrq75OndzOVzfOUkWGTgxVMe2Se5TN39/APr0oqGfnO6TKWORVmWKkK8OAYCU4gZmRNJXwGyXJEwuTV6vPiLdt4O/UrFjhU+CeZNc7iYuoo5EHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762470544; c=relaxed/simple;
-	bh=4eZ5Y35kimZun5nbyioHfr9g/DtbvRNKmFt/7agf9DA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Dy+LyxisHO9TVo5UMo6t+AvC1+rz8gg5yphW54AtO4irTZGk7/Y7A18yuo255bsG7ODJIVweOi7tWupm7LBcqy8oOsxst+S/EpQD8rftqlOdWBvg6tH6nLel7yf76XdlHjV/NpQg2VaujnoO3/BfGz9xKZ0iXR7LAYTBEkqmSSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=spik9obX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5BFFC4CEF7;
-	Thu,  6 Nov 2025 23:09:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762470544;
-	bh=4eZ5Y35kimZun5nbyioHfr9g/DtbvRNKmFt/7agf9DA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=spik9obX1FlRuajzgxXI9gb19txRMo3nX3apTjZHj2ZEgSGfxnLcF0la3ocsoIgiO
-	 m6QaSR0AzK3+DIymU+FZxmCqUza9j3gK9mMPwesPqwtEM9oqx1BCuOWoOkbcH+25He
-	 Gc966L9U14tnPEQHvtWnyqzzai1FGw0eWDW/zNH1LqgPINhGFBR4aXYBNuIm4h4sjj
-	 9c6QebkjWEwzRukM0DBA7ZdMn9RC38oCyTVOnNRPFVuicFjClbq9mKfl+2vnRjjNRQ
-	 QTax38B2shusgUxgNnUufov1VL82N0aSlf9kLJe7VWgH6tzosFf9gAV0pl1pv3bkHL
-	 8WCw9JPr7YMoA==
-Date: Thu, 6 Nov 2025 15:09:03 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: brauner@kernel.org, hch@infradead.org, bfoster@redhat.com,
-	linux-fsdevel@vger.kernel.org, kernel-team@meta.com,
-	Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v3 4/8] iomap: simplify ->read_folio_range() error
- handling for reads
-Message-ID: <20251106230903.GT196362@frogsfrogsfrogs>
-References: <20251104205119.1600045-1-joannelkoong@gmail.com>
- <20251104205119.1600045-5-joannelkoong@gmail.com>
- <20251105015058.GJ196362@frogsfrogsfrogs>
- <CAJnrk1Zqj0TNpJcrGLhSvTaK48=8iHW-58y3HXH=YgHs_or0tA@mail.gmail.com>
+	s=arc-20240116; t=1762470602; c=relaxed/simple;
+	bh=n7JqdJN3gpe7HNJnotoXOgVUcOWeuEm30bSwulUPMkE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=F1fHq7QZaRBMpDHKVAZUjt3L2VbztKe7ecZTXADLbxHBNrhoq5G/CI1rLxSTYPu6bPhwRGVglCn/P9DWHLDhT2L1wqupWGPndVcSFuOf76OKjFOxe/mxCKTTydGHX3+R7L/57jOYyLOe7oEfpYmNCZvxqRTfdo25o/fFxlZ4uAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wb+5BokU; arc=none smtp.client-ip=209.85.222.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-8b1f2fbaed7so14972285a.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Nov 2025 15:10:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762470599; x=1763075399; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AHczQmclgS/+tkZTXLYiv1vB4NjNd67X8R6/+BUyaqQ=;
+        b=Wb+5BokU3cegusvs/AjtTnvQQwb7JzJfDRCisXAIGof/8Ed6sA7SY5Jsqyoq/C9Eto
+         zyaP3kzSlaJrQM2UxHHUd0HzibgNvMe5Pry6Xycxj8TddPZojpw4qfo7YsKnbI+PPuav
+         yiECbQg/LsQ3URXlidFatG0q5iDfoRfvCbE+x2Thcb4bMFUKJkDAbyk4ga+h9U7zg60Y
+         TYzd/Zi/x6kP9SB2xUOPcZpnLe3qYjfMTUeMJqqRFQB3UB1/V9KOvoQh923uSHeQZlD5
+         BbsOhlOLRzwHIMDJYSqM0m/Z6Vn/mGhTe3MV5FEurpGkVxb5DRMN72ESA0HqZwKj5Nh0
+         Pu1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762470599; x=1763075399;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=AHczQmclgS/+tkZTXLYiv1vB4NjNd67X8R6/+BUyaqQ=;
+        b=XDZ7EakDvgEUVW3ygsx/9+BKVaNNRwREvHb38ZRfocrkqMUDq0DQmHWU/LLGEBWDK5
+         ZtYGnUjjrlJbGKib1tfCgqdKYtxLKANSFaLWsCxXLqprYduJ+Os7UWuOrA2i4Dp5mUXV
+         xXEP5SgSD4m8dOoxfxak3KoAq3dT3mKAQL3qelD6vwH4dk7lt9RTg4fkJnS/HCiuKuZq
+         YQV5UUALgZhW4oHwyhvp58z95E59IH+vouD7tAnUDORrZKRInT4/qHFdeKRaUIIbZXVH
+         EO37TVvGzNNGVfHk11uYVDoLCSl07XKgfvUMqa0eHzWpncqm4U0VRGRRSYfeXUZtD7kB
+         P6mA==
+X-Forwarded-Encrypted: i=1; AJvYcCUQ0zvg6H71Qj4wUS08aGoK+OzT7TPU9XBuXg5gBVdmzdQ6kWcSnmEJH3wulZ1duzsns0fsDigoLqNZUgLG@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDzuc0B6pKINCcWCZ1lXNdfZYOKzZqqFT5nv+tAIzCQlH8xelj
+	7Te7XsZORvzUO0n5guFDtI0jrQEdYdvqn/EYEsS9Vm1Kc1eLCKT3NQV3z1iGwgh2Skx4OZGEh+e
+	dd/qFgfjBEzDv/o2YpdAba6zvUytb0gI=
+X-Gm-Gg: ASbGncufhi4EJA9XUAhsWyWxT6Y668o2TUEMCcqU5LXRCb/usSKUQBE3sngS1BWLGZC
+	dVYINhDLv+2CaqfDUUJA3jPRV/C+U6+qs3kvm/9QyCcGoxRUS3WbPbiVCDOIQiH6SiOvdHZHBRL
+	3sXqKwf5CSymFUmXop6MjHUo7v7XVwOZEoEmoSv+GcRe7XK62LotlW8z3iyqmpNqQRhtI0+9LAm
+	QT3Ua54N7wcgzXpfOPAwDUHcM/CICxMctm8fToIp2buHUz3oVCcSLoU+5d0wQQSWZZoIh0mq6JD
+	JeFT/+VFd7+SNYMAoOwFtpZGCA==
+X-Google-Smtp-Source: AGHT+IE7zx/lNOuzvh+WJIIb+A5DylQyCNxvT3Ad2RYJg7b7gKruXyyfSGF0E2baUuCazA7mQ2JAgrOcXJZEE3/AN8o=
+X-Received: by 2002:a05:622a:58a:b0:4ed:6cac:d1b9 with SMTP id
+ d75a77b69052e-4ed94a66c44mr13867571cf.63.1762470599221; Thu, 06 Nov 2025
+ 15:09:59 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJnrk1Zqj0TNpJcrGLhSvTaK48=8iHW-58y3HXH=YgHs_or0tA@mail.gmail.com>
+References: <20251027222808.2332692-1-joannelkoong@gmail.com>
+ <20251027222808.2332692-9-joannelkoong@gmail.com> <a335fd2c-03ca-4201-abcf-74809b84c426@bsbernd.com>
+In-Reply-To: <a335fd2c-03ca-4201-abcf-74809b84c426@bsbernd.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Thu, 6 Nov 2025 15:09:48 -0800
+X-Gm-Features: AWmQ_bke2NRXNF9swgCVLPdBnODqUTELjGRMQZZGgEqm5ZtMMRcDBkK5Ad4ePls
+Message-ID: <CAJnrk1YPEDUbOu2N0EjfrkwK3Ge2XrNeaCY0YKL+E1t7Z8Xtvg@mail.gmail.com>
+Subject: Re: [PATCH v2 8/8] fuse: support io-uring registered buffers
+To: Bernd Schubert <bernd@bsbernd.com>
+Cc: miklos@szeredi.hu, axboe@kernel.dk, linux-fsdevel@vger.kernel.org, 
+	bschubert@ddn.com, asml.silence@gmail.com, io-uring@vger.kernel.org, 
+	xiaobing.li@samsung.com, csander@purestorage.com, kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 06, 2025 at 09:17:02AM -0800, Joanne Koong wrote:
-> On Tue, Nov 4, 2025 at 5:50 PM Darrick J. Wong <djwong@kernel.org> wrote:
+On Thu, Nov 6, 2025 at 11:48=E2=80=AFAM Bernd Schubert <bernd@bsbernd.com> =
+wrote:
+>
+> On 10/27/25 23:28, Joanne Koong wrote:
+> > Add support for io-uring registered buffers for fuse daemons
+> > communicating through the io-uring interface. Daemons may register
+> > buffers ahead of time, which will eliminate the overhead of
+> > pinning/unpinning user pages and translating virtual addresses for ever=
+y
+> > server-kernel interaction.
 > >
-> > On Tue, Nov 04, 2025 at 12:51:15PM -0800, Joanne Koong wrote:
-> > > Instead of requiring that the caller calls iomap_finish_folio_read()
-> > > even if the ->read_folio_range() callback returns an error, account for
-> > > this internally in iomap instead, which makes the interface simpler and
-> > > makes it match writeback's ->read_folio_range() error handling
-> > > expectations.
-> > >
-> > > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-> > > Reviewed-by: Christoph Hellwig <hch@lst.de>
-> > > ---
-> > >  .../filesystems/iomap/operations.rst          |  7 +++--
-> > >  fs/fuse/file.c                                | 10 ++-----
-> > >  fs/iomap/buffered-io.c                        | 27 +++++++++----------
-> > >  include/linux/iomap.h                         |  5 ++--
-> > >  4 files changed, 20 insertions(+), 29 deletions(-)
-> > >
-> > > @@ -498,10 +497,10 @@ static int iomap_read_folio_iter(struct iomap_iter *iter,
-> > >               } else {
-> > >                       if (!*bytes_submitted)
-> > >                               iomap_read_init(folio);
-> > > -                     *bytes_submitted += plen;
-> > >                       ret = ctx->ops->read_folio_range(iter, ctx, plen);
-> > >                       if (ret)
-> > >                               return ret;
-> > > +                     *bytes_submitted += plen;
+> > To support page-aligned payloads, the buffer is structured such that th=
+e
+> > payload is at the front of the buffer and the fuse_uring_req_header is
+> > offset from the end of the buffer.
 > >
-> > Hrmm.  Is this the main change of this patch?  We don't increment
-> > bytes_submitted if ->read_folio_range returns an error, which then means
-> > that fuse doesn't have to call iomap_finish_folio_read to decrement
-> > *bytes_submitted?
+> > To be backwards compatible, fuse uring still needs to support non-regis=
+tered
+> > buffers as well.
 > >
-> > (and apparently the bio read_folio_range can't fail so no changes are
-> > needed there)
-> 
-> Yes, that is the motivation for the change. And to make the interface
-> consistent with how the ->read_folio_iter() callback for writeback
-> handles errors.
+> > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> > ---
+> >  fs/fuse/dev_uring.c   | 200 +++++++++++++++++++++++++++++++++---------
+> >  fs/fuse/dev_uring_i.h |  27 +++++-
+> >  2 files changed, 183 insertions(+), 44 deletions(-)
+> >
+> > diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
+> > index c6b22b14b354..f501bc81f331 100644
+> > --- a/fs/fuse/dev_uring.c
+> > +++ b/fs/fuse/dev_uring.c
+> >
+> > +/*
+> > + * Prepare fixed buffer for access. Sets up the payload iter and kmaps=
+ the
+> > + * header.
+> > + *
+> > + * Callers must call fuse_uring_unmap_buffer() in the same scope to re=
+lease the
+> > + * header mapping.
+> > + *
+> > + * For non-fixed buffers, this is a no-op.
+> > + */
+> > +static int fuse_uring_map_buffer(struct fuse_ring_ent *ent)
+> > +{
+> > +     size_t header_size =3D sizeof(struct fuse_uring_req_header);
+> > +     struct iov_iter iter;
+> > +     struct page *header_page;
+> > +     size_t count, start;
+> > +     ssize_t copied;
+> > +     int err;
+> > +
+> > +     if (!ent->fixed_buffer)
+> > +             return 0;
+> > +
+> > +     err =3D io_uring_cmd_import_fixed_full(ITER_DEST, &iter, ent->cmd=
+, 0);
+>
+> This seems to be a rather expensive call, especially as it gets
+> called twice (during submit and fetch).
+> Wouldn't be there be a possibility to check if the user buffer changed
+> and then keep the existing iter? I think Caleb had a similar idea
+> in patch 1/8.
 
-Cool!  I think I understand this well enough to say
-Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
+I think the best approach is to get rid of the call entirely by
+returning -EBUSY to the server if it tries unregistering the buffers
+while a connection is still alive. Then we would just have to set this
+up once at registration time, and use that for the lifetime of the
+connection. The discussion about this with Pavel is in [1] - I'm
+planning to do this as a separate follow-up.
 
---D
+[1] https://lore.kernel.org/linux-fsdevel/9f0debb1-ce0e-4085-a3fe-0da7a8fd7=
+6a6@gmail.com/
 
-> 
-> Thanks,
-> Joanne
-> 
+>
+> > +     if (err)
+> > +             return err;
+> > +
+> > +     count =3D iov_iter_count(&iter);
+> > +     if (count < header_size || count & (PAGE_SIZE - 1))
+> > +             return -EINVAL;
+>
+> || !PAGE_ALIGNED(count)) ?
+
+Nice, I didn't realize this macro existed. Thanks.
+
+>
+> > +
+> > +     /* Adjust the payload iter to protect the header from any overwri=
+tes */
+> > +     ent->payload_iter =3D iter;
+> > +     iov_iter_truncate(&ent->payload_iter, count - header_size);
+> > +
+> > +     /* Set up the headers */
+> > +     iov_iter_advance(&iter, count - header_size);
+> > +     copied =3D iov_iter_get_pages2(&iter, &header_page, header_size, =
+1, &start);
+>
+> The iter is later used for the payload, but I miss a reset? iov_iter_reve=
+rt()?
+
+This iter is separate from the payload iter and doesn't affect the
+payload iter's values because the "ent->payload_iter =3D iter;"
+assignment above shallow copies that out first.
+
+>
+> > +     if (copied < header_size)
+> > +             return -EFAULT;
+> > +     ent->headers =3D kmap_local_page(header_page) + start;
+>
+> My plan for the alternative pinning patch (with io-uring) was to let the
+> header be shared by multiple entries. Current libfuse master handles
+> a fixed page size buffer for the payload (prepared page pinning - I
+> didn't expect I was blocked for 9 months on other work), missing is to
+> share it between ring entries.
+> I think this wouldn't work with registered buffer approach - it
+> always needs one full page?
+
+I've been working on the patches for zero-copy and that has required
+the design for registered buffers in this patch to change, namely that
+the payload and the headers must be separated out. For v3, I have them
+separate now.
+>
+> I would also like to discuss dynamic multiple payload sizes per queue.
+> For example to have something like
+>
+> 256 x 4K
+> 8 x 128K
+> 4 x 1M
+
+I think zero-copy might obviate the need for this. The way I have it
+right now, it uses sparse buffers for payloads, which prevents the
+server from needing to allocate the 1M buffer per ent. I'm hoping to
+send out the patches for this as part of v3 at the end of next week or
+next next week.
+
+Thanks,
+joanne
+
+>
+> I think there are currently two ways to do that
+>
+> 1) Sort entries into pools
+> 2) Sort buffers into pools and let entries use these. Here the header
+> would be fixed and payload would come from a pool.
+>
+> With the appraoch to have payload and header in one buffer we couldn't
+> use 2). Using 1) should be fine, though.
+>
 > >
-> > --D
-> 
+> >  /*
+> > @@ -1249,20 +1358,29 @@ static void fuse_uring_send_in_task(struct io_u=
+ring_cmd *cmd,
+> >  {
+> >       struct fuse_ring_ent *ent =3D uring_cmd_to_ring_ent(cmd);
+> >       struct fuse_ring_queue *queue =3D ent->queue;
+> > +     bool send_ent =3D true;
+> >       int err;
+> >
+> > -     if (!(issue_flags & IO_URING_F_TASK_DEAD)) {
+> > -             err =3D fuse_uring_prepare_send(ent, ent->fuse_req);
+> > -             if (err) {
+> > -                     if (!fuse_uring_get_next_fuse_req(ent, queue))
+> > -                             return;
+> > -                     err =3D 0;
+> > -             }
+> > -     } else {
+> > -             err =3D -ECANCELED;
+> > +     if (issue_flags & IO_URING_F_TASK_DEAD) {
+> > +             fuse_uring_send(ent, cmd, -ECANCELED, issue_flags);
+> > +             return;
+> > +     }
+> > +
+> > +     err =3D fuse_uring_map_buffer(ent);
+> > +     if (err) {
+> > +             fuse_uring_req_end(ent, ent->fuse_req, err);
+> > +             return;
+>
+> I think this needs to abort the connection now. There could be multiple
+> commands on the queue and they would be stuck now and there is no
+> notification to fuse server either.
+
+This approach makes sense to me and makes things a bit simpler. I'll
+add this to v3.
+
+Thanks,
+Joanne
 
