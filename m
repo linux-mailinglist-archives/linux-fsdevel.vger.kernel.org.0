@@ -1,167 +1,114 @@
-Return-Path: <linux-fsdevel+bounces-67263-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67264-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4CF6C398CD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 06 Nov 2025 09:19:58 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4570CC399F6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 06 Nov 2025 09:45:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 346493BC5B2
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Nov 2025 08:19:56 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2E94A4E5DA3
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Nov 2025 08:45:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB48C2D63F2;
-	Thu,  6 Nov 2025 08:19:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B4433002C5;
+	Thu,  6 Nov 2025 08:45:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Hhz5m9dR";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="VvC5eyxj";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="cy3kQaQb";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="zvHg9C8v"
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="X30Bk2PF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-190c.mail.infomaniak.ch (smtp-190c.mail.infomaniak.ch [185.125.25.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFA27145FE0
-	for <linux-fsdevel@vger.kernel.org>; Thu,  6 Nov 2025 08:19:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 316FA26E718
+	for <linux-fsdevel@vger.kernel.org>; Thu,  6 Nov 2025 08:45:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762417191; cv=none; b=AnI7UOfIlBzCyHZxT3eh+cnWk9K3jdh+7QYCGAteu54H8lqi9mm0nfv7S6W+V004iP3kv0fiR3vQpjTidpmy22E5BpZ/yTXR//jU93wCjaIFo4vnHh0W3FdV8bM0kh5xrY6CNz4vOe5ZiMmdq8Mbfm6C9ZmEJJNAUnjnP//wINo=
+	t=1762418752; cv=none; b=KXaw1leyHKXfW1C+rBlRhfA0qS1aBMrA1P1Ek/u6GfraBolYEPQeGz+AtBW5DcONUJLvs61WNxlU7s5CAXFR0RevsblXECPw2DJ38G15onDZHAE8s8+aSrV8zEOHLMkE8gM3rgCJQe54xqnLke6DSlVwa5w4WSyM3oSYoUhDABQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762417191; c=relaxed/simple;
-	bh=w1jhKK19bPZcNm0NCQz5LFgT5J9i7OqRhOa7qwdSNI4=;
+	s=arc-20240116; t=1762418752; c=relaxed/simple;
+	bh=JeeGduUL6bWDAecqsw7jXtrhy0rUfGVWJXThQknPHYY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SpTrUQ4vtB3IM7vSFyOwnaRSEqQ5H1AH2pf7oZr9BJBlfGtp29bAJhHbDV9TD62h/BMK9hRs4ZbimeMNKOabQEvlrQ9NiS5GiS64oExEoDcRV+Nf7zE9RScLBh4CcTD4pKk2/iEOqIGPuvT8xJN21AzJIID8SlNmaEzqCy1YEAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Hhz5m9dR; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=VvC5eyxj; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=cy3kQaQb; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=zvHg9C8v; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id AD8F5211CF;
-	Thu,  6 Nov 2025 08:19:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762417187;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=drBt2CXaLppXkJADFpL2NiZ2+fhddPt0th0vzvDdmfs=;
-	b=Hhz5m9dRMDYggPQHiHRC/wAEtQbt9acNyy9eZ4Bc+YpaBmCbn94VEnAPVDGCyS77LnYYIw
-	WpFfqQtsl4TjYCpkMAITEzjgV0u4jBFlz/xS1Gu1aV1zy6+NLjqD854rRbs6KN7aZ7qLgD
-	GPQSpnGNFKX967k9XbCKskimoiy08qs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762417187;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=drBt2CXaLppXkJADFpL2NiZ2+fhddPt0th0vzvDdmfs=;
-	b=VvC5eyxjLhiw2RN75NSZhXOiezV6oGl1dnQ7PSyIQxZ0LZ7kLOLqMrySZmgo8kL9m4SMTV
-	b/Y7/vxYs7WqvgBA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=cy3kQaQb;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=zvHg9C8v
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762417186;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=drBt2CXaLppXkJADFpL2NiZ2+fhddPt0th0vzvDdmfs=;
-	b=cy3kQaQbM2DahKYSUYnT269gA52gIdFQQObMVNNnzfP9jaUHChqeSlPMxUnkDpiMHFslwF
-	NcFnsaq+iejnmntkh51XZUIOObCN9nsr+ed4wEhgelurt4EL940CCC1PVNK/mvrTD15vD9
-	l84wPNfhjmwEqGtVRoLmGbyDkzzd+Yc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762417186;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=drBt2CXaLppXkJADFpL2NiZ2+fhddPt0th0vzvDdmfs=;
-	b=zvHg9C8vS5Cnu40YKvRKpHC1kWdpv0QSEpVIKPbs67loFvB2p+Ge7wxi6ZHfQaDynnINHl
-	QEZg4IPTmwf+s4Bg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8FF3A13A31;
-	Thu,  6 Nov 2025 08:19:46 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id UlPzIiJaDGm1TgAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Thu, 06 Nov 2025 08:19:46 +0000
-Date: Thu, 6 Nov 2025 09:19:45 +0100
-From: David Sterba <dsterba@suse.cz>
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>, linux-btrfs@vger.kernel.org,
-	linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH RFC 3/8] btrfs: use super write guard
- btrfs_run_defrag_inode()
-Message-ID: <20251106081945.GU13846@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <20251104-work-guards-v1-0-5108ac78a171@kernel.org>
- <20251104-work-guards-v1-3-5108ac78a171@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=G9xsUxm/0SR1zouwbWXVG333siooIOqwtrv15rcgOCmMauUD/B6cpFswheCWadc+smC6Bi5lNDccQNzdaFlFaM48yJ8sCp4TjqOsHNrXlLvh/BO6tUVv3n8OlZ8VkvmCJ8xMVMrLtDUWNZPKDvvUMfkEUT4Tt8cUnFYAv9Szg90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=X30Bk2PF; arc=none smtp.client-ip=185.125.25.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4d2G465h95zj7h;
+	Thu,  6 Nov 2025 09:45:42 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1762418742;
+	bh=JfNO0M5lh5psROFvDuYOwWJ0xb+D1+8vDp/FH+1rqVk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=X30Bk2PFMYipzWJ7/aD0f3Ym/BAnhmLFkPYEUVdne23t2s1Ir9+joBlwp6Di9JEbZ
+	 sBEf7MkKQLVN1DVNZxQcI/ZzArZrdlEHEYKIPMH+ppOjVk1//SHGRXQr3kAK60lyjL
+	 9KbnjgYprlQj+JEmTkgx0EXqV6fDKy1YiQ+QNKrc=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4d2G455C1YzlQr;
+	Thu,  6 Nov 2025 09:45:41 +0100 (CET)
+Date: Thu, 6 Nov 2025 09:45:40 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Mateusz Guzik <mjguzik@gmail.com>, brauner@kernel.org
+Cc: linux-security-module@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	viro@zeniv.linux.org.uk, eadavis@qq.com, gnoack@google.com, jack@suse.cz, 
+	jannh@google.com, max.kellermann@ionos.com, m@maowtm.org, 
+	syzbot+12479ae15958fc3f54ec@syzkaller.appspotmail.com, Hillf Danton <hdanton@sina.com>
+Subject: Re: [PATCH 2/2] landlock: fix splats from iput() after it started
+ calling might_sleep()
+Message-ID: <20251106.ahm0loS4ceic@digikod.net>
+References: <20251105212025.807549-1-mjguzik@gmail.com>
+ <20251105212025.807549-2-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251104-work-guards-v1-3-5108ac78a171@kernel.org>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Rspamd-Queue-Id: AD8F5211CF
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.21 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -4.21
-X-Spam-Level: 
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251105212025.807549-2-mjguzik@gmail.com>
+X-Infomaniak-Routing: alpha
 
-On Tue, Nov 04, 2025 at 01:12:32PM +0100, Christian Brauner wrote:
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
+On Wed, Nov 05, 2025 at 10:20:25PM +0100, Mateusz Guzik wrote:
+> At this point it is guaranteed this is not the last reference.
+> 
+> However, a recent addition of might_sleep() at top of iput() started
+> generating false-positives as it was executing for all values.
+> 
+> Remedy the problem by using the newly introduced iput_not_last().
+> 
+> Reported-by: syzbot+12479ae15958fc3f54ec@syzkaller.appspotmail.com
+> Closes: https://lore.kernel.org/all/68d32659.a70a0220.4f78.0012.GAE@google.com/
+> Fixes: 2ef435a872ab ("fs: add might_sleep() annotation to iput() and more")
+> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+
+Reviewed-by: Mickaël Salaün <mic@digikod.net>
+
+Thanks!
+
 > ---
->  fs/btrfs/defrag.c | 7 +++----
+>  security/landlock/fs.c | 7 +++----
 >  1 file changed, 3 insertions(+), 4 deletions(-)
 > 
-> diff --git a/fs/btrfs/defrag.c b/fs/btrfs/defrag.c
-> index 7b277934f66f..35fb8ee164dc 100644
-> --- a/fs/btrfs/defrag.c
-> +++ b/fs/btrfs/defrag.c
-> @@ -254,10 +254,9 @@ static int btrfs_run_defrag_inode(struct btrfs_fs_info *fs_info,
->  	range.extent_thresh = defrag->extent_thresh;
->  	file_ra_state_init(ra, inode->vfs_inode.i_mapping);
->  
-> -	sb_start_write(fs_info->sb);
-> -	ret = btrfs_defrag_file(inode, ra, &range, defrag->transid,
-> -				BTRFS_DEFRAG_BATCH);
-> -	sb_end_write(fs_info->sb);
-> +	scoped_guard(super_write, fs_info->sb)
-> +		ret = btrfs_defrag_file(inode, ra, &range,
-> +					defrag->transid, BTRFS_DEFRAG_BATCH);
-
-Please use explicit { } around scoped_guard() in btrfs code. It makes
-the scope more obvious.
+> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+> index 0bade2c5aa1d..d9c12b993fa7 100644
+> --- a/security/landlock/fs.c
+> +++ b/security/landlock/fs.c
+> @@ -1335,11 +1335,10 @@ static void hook_sb_delete(struct super_block *const sb)
+>  			 * At this point, we own the ihold() reference that was
+>  			 * originally set up by get_inode_object() and the
+>  			 * __iget() reference that we just set in this loop
+> -			 * walk.  Therefore the following call to iput() will
+> -			 * not sleep nor drop the inode because there is now at
+> -			 * least two references to it.
+> +			 * walk.  Therefore there are at least two references
+> +			 * on the inode.
+>  			 */
+> -			iput(inode);
+> +			iput_not_last(inode);
+>  		} else {
+>  			spin_unlock(&object->lock);
+>  			rcu_read_unlock();
+> -- 
+> 2.48.1
+> 
+> 
 
