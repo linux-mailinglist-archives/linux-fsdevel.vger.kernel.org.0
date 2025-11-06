@@ -1,143 +1,167 @@
-Return-Path: <linux-fsdevel+bounces-67356-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67357-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4687AC3CCDE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 06 Nov 2025 18:24:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2322FC3CFED
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 06 Nov 2025 19:03:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFFFC6613E9
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Nov 2025 17:18:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 527223BAFAF
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Nov 2025 18:01:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2E89350297;
-	Thu,  6 Nov 2025 17:17:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F027D34F246;
+	Thu,  6 Nov 2025 18:01:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e9mpI372"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H4XyW7vN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 686D232E135
-	for <linux-fsdevel@vger.kernel.org>; Thu,  6 Nov 2025 17:17:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91296EACE
+	for <linux-fsdevel@vger.kernel.org>; Thu,  6 Nov 2025 18:01:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762449437; cv=none; b=dxwNHylO65IEywLuI9y3tJS8l8E8jQWfi+cy3BQ8OjnOjhHkVMLZaZEJ5VG0pm/UypDwm/cdccisakBwq+9iSTKisUUGaBlzntQ8aGvXr1Wx1Nan0xxdMDv6110UC4SnI4+vBYUcMeCqjenzQzk6Mr2BNL7zpgzbCrlIOAlZqGo=
+	t=1762452075; cv=none; b=WcUPRSEpHrJNGz2cudADnmRAqW2Z5Qby45Urj08EURmjt4eDOPrFwqZvYnMdrqmYjiNWhclTHdUGkMwPV/RIwwhqsQ0ZKdbetB3cemfVQTBunGemD7fUs/RF/DHHL1PJlfTpDCdCXjy1gYJyBP1oo1iJYxyDcofDA0lzv1B9PPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762449437; c=relaxed/simple;
-	bh=Kb0xCCSilazZ/+mUpILFAKuAAykAuExsNjSlRInz8No=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kgofPrHYIs/tsOEKG1IcaAznn5dcD+A0XYAKsBUXA2Ep/T6tT8EMKys4gp5KTwQ+iWWOEuaEI87bAoSQI0JIrpXzIq85vn2JYAN0Sw3LJd94uvdeEvKRjeY9vSKBDFBE1ir78+jUBDNCkTZM86tIX3+Vhj0G72RnBCf9ZvLJGfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e9mpI372; arc=none smtp.client-ip=209.85.160.178
+	s=arc-20240116; t=1762452075; c=relaxed/simple;
+	bh=d6fcH4YBy4tJrSO/61Sxb3Q4+XTZBualHoVt8LZv+l4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=N3P6duiPn5G+vqwDLpIODhhggjl+8blfKF+1juCtXUgM3wHWW0v8mHoxbc5cnTs+89Fvidv2TZ/22cA23bcohZk3Xw8sA6w5rJJmGeTt0goV7CQ/XnBp/JqDt44ULjzKLkl50/cXpFJmek8pTgdPBRk0I8ElexXscr5XTaC2Rxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H4XyW7vN; arc=none smtp.client-ip=209.85.218.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4e89c433c00so12209671cf.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Nov 2025 09:17:14 -0800 (PST)
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-b714b1290aeso160709466b.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Nov 2025 10:01:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762449433; x=1763054233; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Cx8P5FUeVJGxl9c0y6Zf3qT67jGlSyjXi22KOtbz0tE=;
-        b=e9mpI372zSyf6IiQuD8pxTaDUHw0vhFGQWPxwWDU1iii68vB1K4FMylCKdiwqGsY1b
-         wvK+dOyCjA+IOHZqDi7goxwa2mELQy95Qz22S0pSaQw9MmZWoHRI+Fce500w+By+jWtt
-         x+pIU2PPe3INvZyDqYNil5HENCj9Hu82ocBz0OldUcl1WYYO6JWbJ68tKHkAwbUHUDi5
-         wchWFVUEMrvzgjOJrHib1hNHTqRE7amdAgNqN7pgG2XkJA5K8ZsluhO5CTdJOnJ5I94q
-         wRpXd5zAebfFVgRGUg8CXwW3vmsdf90MmpBUU/ASRZJQsd1uFY7babn9GrOdpd7NxdJk
-         eSxw==
+        d=gmail.com; s=20230601; t=1762452071; x=1763056871; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2T3N0BT2STs8n+iZkoEMWI+F1MMhUxu61N6/yM0vzrc=;
+        b=H4XyW7vNizeqxrowPTLAfeOBkxdjSJITunlBteHpteph+J+7BmYmJCpR9GrFefnTTY
+         6nZipxgJ1VsZ41P0dGGWhJqrSOhiAemwl6HohvZVI4zDTK/VThxaM4QARJZ2wVFOPtRn
+         90oB05KIAkDTE6XFXDh9ySSGNPKt/2ZNo1bFKI1nzutr9tBLe+W2s+2/qc9ATVQ6NxYF
+         opKDplbrNWInoix5Pir7KA9QAt4ig5OudhDDU8wPkTjNULayXg5VZX0MsSbZcXPof6CJ
+         mljex2KoNGh0VOdAMvKaMes93OGIqGHv7VXc4oMJkvrP5MNecRl91Iw920w7WttD9AHo
+         he7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762449433; x=1763054233;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Cx8P5FUeVJGxl9c0y6Zf3qT67jGlSyjXi22KOtbz0tE=;
-        b=g/wdNjUDG6nWtKsi3qyF3Ci4lSZ0mbPBCvfqjvCHFOI1/4x8H0TKOqlwrdb3soJEFl
-         cJ1bz2PN6Unu9COY3iMuyn6xepb9YJGNFvruUt/v+TABgIILaN5AdZHDGq4psg+MiFtM
-         fUh72vVvDgq+pUCr4b+v+d8WhXKaD4EF/bMnRIJ41ShB5AkPda30sZ5Y2zWA0dfSpGPn
-         SHptjAPiWogowbyACQ9QPgbYNHyOKAAU/66ow8PvCOyMfCqiVkAC21f5ycpGn7nx9dbH
-         KbY0ydW1PLv6MK2KH3siyCOnT/F50gfaPnAZprZ8haPt1+ZZh0YI0aqClNPaW1Lqw07K
-         zAYw==
-X-Forwarded-Encrypted: i=1; AJvYcCWa/w6KMLTuGtTBakKV5AgmLMqu30+wMpHprO3Q5xlBAVZzXluHR3zjHrElc2ILqPFESECPhM/MOgp5j+m6@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9KMfwlSt+sp6gXz5mvwIaRkArHLVNsXBpXDnbR5UvcfOCWUQo
-	0TPsI6bTkhpMsdafciKvc2OAg7vJ3b/vMqyJ3IDiqqBYuE0TRR+Xrb6+Ak1J9OKCy7Y8FgaABLA
-	bEZ+dZtAMJ0QOgUXeUNEGbw+VqfP2c7w=
-X-Gm-Gg: ASbGncu7buepmcl/NJ/nlITtljaqxjy4Nxz7AvfWtwjhMLAhAKqMeQP9Q5EM6zkxoS6
-	HRuuR2Q6Xw4xq8aRuaKM24wbH3m3QJtUUaQZG0s+bgD1maYxiVzUurhaYZZlFZ1UhBRpNQ8wvku
-	R/RLZtyqDGTm8MkSdRqTbvbXkhOJnskWEKQxCT8iXBh6YF4qB3qu6/bOgT1pYUInVfUE3nqnktS
-	6KGyKnQK98pyn+KmUfj09lw1GesiZNiOhXZsi8lxZXjx8BxeM1P3sBvnZi7r87RF0sBT6xpppsI
-	zNoOETLOpEGXmpWLNFXK7Ta3Tg==
-X-Google-Smtp-Source: AGHT+IGeaQLgFwQTOw+mDbfA2s8cBZE+yprlg1qhZ5tLZ35NcmcyihJFA+0p8oVeTYC6jDFSw0TBwec5TG7jP41miO4=
-X-Received: by 2002:a05:622a:1886:b0:4ed:64ee:b946 with SMTP id
- d75a77b69052e-4ed72333348mr84795831cf.9.1762449433003; Thu, 06 Nov 2025
- 09:17:13 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762452071; x=1763056871;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2T3N0BT2STs8n+iZkoEMWI+F1MMhUxu61N6/yM0vzrc=;
+        b=QdkfEKpckKDsyih8orgIcpoVX/qmdUU5re4cMUF0+4Rk5fUSa4o5wsX1MDu0Rw81pD
+         UVnDyLwkAMHNLwFuJmAxogVzIjaQXeF0SkvbUZhyKm5MPj7DTpcnEC0rpSjM+B7V8pQE
+         PnoHIppI2UfebLY+QyLBTUQ+V6ktuXS/XbWkCTkmMIMNNZZPsfewpWLNFa4BYTFyvxnM
+         I0DHdCvaP0cizSlRrll4i2a/Ak4dJ6jZHtyP+TMAm1Nj3qPCRTFifZxAdk7VwppdpJDF
+         waaBuBIlUH8s8c2fHONqQvc265gW9UZpyIjdCrNZ4ncZX3xulZ0bzaoWr88JvQ4Tcw+E
+         lkag==
+X-Forwarded-Encrypted: i=1; AJvYcCUKGzD8uaMEeZo3/SzAbxNnV2+0YDdsKP9QTi5FEPy7mwYLjamls45VcnMCyYsFq9nMpEmWYuS5mwcbxuwY@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyr1ebYiVo9CTeTvxWxwa1eOhTbC0CLVPeyaytsHVJ3xay3DyqD
+	X6rzG6hYik+DxEDF9pPjLYe8sQ8Blt+RveF0SjYPPhvlThstfbEvrI9/
+X-Gm-Gg: ASbGncvhDdKR4ubpmBUKL/ELySy0KLelLIAtXE+2yHGC3AXLfUrnkc4yPpFl1jDVoMg
+	M7BVTE1Obu/2MlhEqmFUBDnpacMDVRqOb+OuayT5hGB2bq7pvljaTEtmeyZLuM3nA2uRCGuHxM+
+	sCm4PFDDZTMXQhNpRn3NUyD3xgm6BDddlbBt6YkVJWx7shsTzk27yCHWfLwZf1P8uXu9UqeuIc+
+	+nW0ktJKClnWlwV7BfYMbWkA4tdJuneMqA2NwVV6g8/DDPsEyhR8DMFYL/1/qCMouKt2GQtzp6P
+	b4/F4jNhUmTM4c3DyOlo5HEx0A9j2ACGudhp53499d6BfSAIbada4BrZh/etry7ky8OJnUG72gT
+	dxGgZ5zNUhUCRWJP39kRn+DP0ZFK2evaUZSHVFfBVUtGhV9203vYV+mC3DPeyExF625w0HP5Q9g
+	p35XHYnjFmxMjjdigPRwCuO3bZiddcIsJEgriDtSU2rhZc2T4n
+X-Google-Smtp-Source: AGHT+IHjp607z6cdgZ7HFt5E5SFL6QJoNHGzb+TT6QDSql6CaQ0lp76FRbpfISADQTjtlAYn9VTXPA==
+X-Received: by 2002:a17:907:9607:b0:b70:b5b9:1f82 with SMTP id a640c23a62f3a-b72c0abcb78mr4492966b.31.1762452070474;
+        Thu, 06 Nov 2025 10:01:10 -0800 (PST)
+Received: from f.. (cst-prg-14-82.cust.vodafone.cz. [46.135.14.82])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bfa0f1bbsm15430466b.65.2025.11.06.10.01.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Nov 2025 10:01:09 -0800 (PST)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: brauner@kernel.org
+Cc: viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-ext4@vger.kernel.org,
+	tytso@mit.edu,
+	torvalds@linux-foundation.org,
+	josef@toxicpanda.com,
+	linux-btrfs@vger.kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH v2 0/4] permission check avoidance during lookup
+Date: Thu,  6 Nov 2025 19:00:58 +0100
+Message-ID: <20251106180103.923856-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251104205119.1600045-1-joannelkoong@gmail.com>
- <20251104205119.1600045-5-joannelkoong@gmail.com> <20251105015058.GJ196362@frogsfrogsfrogs>
-In-Reply-To: <20251105015058.GJ196362@frogsfrogsfrogs>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Thu, 6 Nov 2025 09:17:02 -0800
-X-Gm-Features: AWmQ_bn6Fh9Vjo2iqfQ_tTbgGdSzC1iRJCbLWdsAcT8hytWSB0Cqq8Ac4mWS0EQ
-Message-ID: <CAJnrk1Zqj0TNpJcrGLhSvTaK48=8iHW-58y3HXH=YgHs_or0tA@mail.gmail.com>
-Subject: Re: [PATCH v3 4/8] iomap: simplify ->read_folio_range() error
- handling for reads
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: brauner@kernel.org, hch@infradead.org, bfoster@redhat.com, 
-	linux-fsdevel@vger.kernel.org, kernel-team@meta.com, 
-	Christoph Hellwig <hch@lst.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Nov 4, 2025 at 5:50=E2=80=AFPM Darrick J. Wong <djwong@kernel.org> =
-wrote:
->
-> On Tue, Nov 04, 2025 at 12:51:15PM -0800, Joanne Koong wrote:
-> > Instead of requiring that the caller calls iomap_finish_folio_read()
-> > even if the ->read_folio_range() callback returns an error, account for
-> > this internally in iomap instead, which makes the interface simpler and
-> > makes it match writeback's ->read_folio_range() error handling
-> > expectations.
-> >
-> > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-> > Reviewed-by: Christoph Hellwig <hch@lst.de>
-> > ---
-> >  .../filesystems/iomap/operations.rst          |  7 +++--
-> >  fs/fuse/file.c                                | 10 ++-----
-> >  fs/iomap/buffered-io.c                        | 27 +++++++++----------
-> >  include/linux/iomap.h                         |  5 ++--
-> >  4 files changed, 20 insertions(+), 29 deletions(-)
-> >
-> > @@ -498,10 +497,10 @@ static int iomap_read_folio_iter(struct iomap_ite=
-r *iter,
-> >               } else {
-> >                       if (!*bytes_submitted)
-> >                               iomap_read_init(folio);
-> > -                     *bytes_submitted +=3D plen;
-> >                       ret =3D ctx->ops->read_folio_range(iter, ctx, ple=
-n);
-> >                       if (ret)
-> >                               return ret;
-> > +                     *bytes_submitted +=3D plen;
->
-> Hrmm.  Is this the main change of this patch?  We don't increment
-> bytes_submitted if ->read_folio_range returns an error, which then means
-> that fuse doesn't have to call iomap_finish_folio_read to decrement
-> *bytes_submitted?
->
-> (and apparently the bio read_folio_range can't fail so no changes are
-> needed there)
+To quote from patch 1:
+<quote>
+Vast majority of real-world lookups happen on directories which are
+traversable by anyone. Figuring out that this holds for a given inode
+can be done when instantiating it or changing permissions, avoiding the
+overhead during lookup. Stats below.
 
-Yes, that is the motivation for the change. And to make the interface
-consistent with how the ->read_folio_iter() callback for writeback
-handles errors.
+A simple microbench of stating /usr/include/linux/fs.h on ext4 in a loop
+on Sapphire Rapids (ops/s):
+before: 3640352
+after:  3797258 (+4%)
+</quote>
 
-Thanks,
-Joanne
+During a kernel build about 90% of all lookups managed to skip
+permission checks in my setup, see the commit message for a breakdown.
 
->
-> --D
+WARNING: more testing is needed for correctness, but I'm largely happy
+with the state as is.
+
+WARNING: I'm assuming the following bit is applied:
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 78ea864fa8cd..eaf776cd4175 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -5518,6 +5518,10 @@ struct inode *__ext4_iget(struct super_block *sb, unsigned long ino,
+                goto bad_inode;
+        brelse(iloc.bh);
+ 
++       /* Initialize the "no ACL's" state for the simple cases */
++       if (!ext4_test_inode_state(inode, EXT4_STATE_XATTR) && !ei->i_file_acl)
++               cache_no_acl(inode);
++
+        unlock_new_inode(inode);
+        return inode;
+
+Lack of the patch does not affect correctness, but it does make the
+patch ineffective for ext4. I did not include it in the posting as other
+people promised to sort it out.
+
+Discussion is here with an ack from Jan:
+https://lore.kernel.org/linux-fsdevel/kn44smk4dgaj5rqmtcfr7ruecixzrik6omur2l2opitn7lbvfm@rm4y24fcfzbz/T/#m30d6cea6be48e95c0d824e98a328fb90c7a5766d
+and full thread:
+https://lore.kernel.org/linux-fsdevel/kn44smk4dgaj5rqmtcfr7ruecixzrik6omur2l2opitn7lbvfm@rm4y24fcfzbz/T/#t
+
+v2:
+- productize
+- btrfs and tmpfs support
+
+Mateusz Guzik (4):
+  fs: speed up path lookup with cheaper MAY_EXEC checks
+  ext4: opt-in for IOP_MAY_FAST_EXEC
+  btrfs: opt-in for IOP_MAY_FAST_EXEC
+  tmpfs: opt-in for IOP_MAY_FAST_EXEC
+
+ fs/attr.c          |  1 +
+ fs/btrfs/inode.c   | 12 +++++-
+ fs/ext4/inode.c    |  2 +
+ fs/ext4/namei.c    |  1 +
+ fs/namei.c         | 95 +++++++++++++++++++++++++++++++++++++++++++++-
+ fs/posix_acl.c     |  1 +
+ fs/xattr.c         |  1 +
+ include/linux/fs.h | 21 +++++++---
+ mm/shmem.c         |  9 +++++
+ 9 files changed, 134 insertions(+), 9 deletions(-)
+
+-- 
+2.48.1
+
 
