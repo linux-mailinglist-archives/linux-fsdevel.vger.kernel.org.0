@@ -1,244 +1,570 @@
-Return-Path: <linux-fsdevel+bounces-67362-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67363-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 965E2C3D041
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 06 Nov 2025 19:06:22 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64388C3D165
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 06 Nov 2025 19:37:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C82E54FB977
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Nov 2025 18:03:12 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 954CE4E4BD6
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Nov 2025 18:37:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F52F3559E3;
-	Thu,  6 Nov 2025 18:01:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9099D32C305;
+	Thu,  6 Nov 2025 18:37:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WB7yYBKU"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SNeRJ1iQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52384314D06;
-	Thu,  6 Nov 2025 18:01:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DD10342173
+	for <linux-fsdevel@vger.kernel.org>; Thu,  6 Nov 2025 18:37:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762452089; cv=none; b=tBTyZR0pq0H8EpUcEdOG0elLGJP7jdK1OE+716kxKlX1W4WG7RpC9vsoG7JqE3zjs97tQUK2XkkseLO1WKII2TWntxbXaARoSt4d8lGCeLU25pikB7HVO0tEqY0ieGDuy9E0ZeNdt34FL1fZLxSX/2AVVxpAr3o+q7Lz0S3h8W4=
+	t=1762454230; cv=none; b=dfcxvjyP0jIRZu5iKJof+KUnyDTPQBvxBOFijwfhloCTLDtxIxU3On6FBSqKVr0d91D7nZCmmW1qxLCWzLoiPa4ZQ929k5L7xSnmVhlv1AodiHUY1yrJ5MlDVes1SxRH8vA/G9h9xC4YlLLcIRyU0sg3+W0JDkDVCh+A7nBY4lI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762452089; c=relaxed/simple;
-	bh=dMhrb4k0NLQTzG9CdasHB8pF4LD/TSGmYxk7iyEfZqc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=YSvsA7U5pM9RCdwxyLmsO44kV8DUB06tkewtxQgVubcX3JvN26fDexuI/FjRUqT88zF5sUGcoVnjAjBvNplrX+DfXHo9428vhCuTEvEKtlWWHsqwaEbJeQtEDSVrZi24vToeGtW6C6foyyprFtVtM2InP1pNDmu62sLWa77wkgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WB7yYBKU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEBDCC116C6;
-	Thu,  6 Nov 2025 18:01:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762452088;
-	bh=dMhrb4k0NLQTzG9CdasHB8pF4LD/TSGmYxk7iyEfZqc=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=WB7yYBKUOX/lE4WZY3g8QG/RvBLCrGkug7SbS55SwPbAyl2h/5knvTDVX7fdQR0dn
-	 /r2h5zqyYYg4YpTcRl4bb17O2pbs9f8Ty0hcR98EO81Rf0vm6/jnoROJ67IgB19hqt
-	 I87SfjjtAKzWhX9MRD5MywBx0QTkPqPYiAJOBd6v77Lsv/0J7lP9WK3VTY8q4pv96C
-	 sc7RfxgdkgPYVq+mqEd1yKOjQfYhp6cb6cjLMpB5vtuslVF+sXEk2nxjPYIbxlTOp7
-	 xn4l6FSe3rrrS+hYzYdvxTjPCAUZ0rwMgS5itofFbs6IlBmNPX49Qy46dSE4Ot/9So
-	 ttgrYph6IXC0g==
-Message-ID: <f5927a9bb985b9ad241bc5f9fc32acfd35340222.camel@kernel.org>
-Subject: Re: [PATCH] vfs: remove the excl argument from the ->create()
- inode_operation
-From: Jeff Layton <jlayton@kernel.org>
-To: NeilBrown <neil@brown.name>
-Cc: Eric Van Hensbergen <ericvh@kernel.org>, Latchesar Ionkov
- <lucho@ionkov.net>,  Dominique Martinet <asmadeus@codewreck.org>, Christian
- Schoenebeck <linux_oss@crudebyte.com>, David Sterba	 <dsterba@suse.com>,
- David Howells <dhowells@redhat.com>, Marc Dionne	
- <marc.dionne@auristor.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner	 <brauner@kernel.org>, Jan Kara <jack@suse.cz>, "Tigran
- A. Aivazian"	 <aivazian.tigran@gmail.com>, Chris Mason <clm@fb.com>, Xiubo
- Li	 <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>, Jan Harkes	
- <jaharkes@cs.cmu.edu>, coda@cs.cmu.edu, Tyler Hicks <code@tyhicks.com>,
- Jeremy Kerr <jk@ozlabs.org>, Ard Biesheuvel <ardb@kernel.org>, Namjae Jeon
- <linkinjeon@kernel.org>,  Sungjong Seo <sj1557.seo@samsung.com>, Yuezhang
- Mo <yuezhang.mo@sony.com>, Theodore Ts'o <tytso@mit.edu>,  Andreas Dilger
- <adilger.kernel@dilger.ca>, Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu
- <chao@kernel.org>, OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>, Miklos
- Szeredi <miklos@szeredi.hu>, Andreas Gruenbacher	 <agruenba@redhat.com>,
- Viacheslav Dubeyko <slava@dubeyko.com>, John Paul Adrian Glaubitz
- <glaubitz@physik.fu-berlin.de>, Yangtao Li <frank.li@vivo.com>, Richard
- Weinberger <richard@nod.at>,  Anton Ivanov
- <anton.ivanov@cambridgegreys.com>, Johannes Berg
- <johannes@sipsolutions.net>, Mikulas Patocka	
- <mikulas@artax.karlin.mff.cuni.cz>, Muchun Song <muchun.song@linux.dev>, 
- Oscar Salvador <osalvador@suse.de>, David Hildenbrand <david@redhat.com>,
- David Woodhouse <dwmw2@infradead.org>,  Dave Kleikamp <shaggy@kernel.org>,
- Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
- Ryusuke Konishi <konishi.ryusuke@gmail.com>, Konstantin Komarov
- <almaz.alexandrovich@paragon-software.com>,  Mark Fasheh <mark@fasheh.com>,
- Joel Becker <jlbec@evilplan.org>, Joseph Qi <joseph.qi@linux.alibaba.com>, 
- Bob Copeland <me@bobcopeland.com>, Mike Marshall <hubcap@omnibond.com>,
- Martin Brandenburg	 <martin@omnibond.com>, Amir Goldstein
- <amir73il@gmail.com>, Steve French	 <sfrench@samba.org>, Paulo Alcantara
- <pc@manguebit.org>, Ronnie Sahlberg	 <ronniesahlberg@gmail.com>, Shyam
- Prasad N <sprasad@microsoft.com>, Tom Talpey	 <tom@talpey.com>, Bharath SM
- <bharathsm@microsoft.com>, Zhihao Cheng	 <chengzhihao1@huawei.com>, Hans de
- Goede <hansg@kernel.org>, Carlos Maiolino	 <cem@kernel.org>, Hugh Dickins
- <hughd@google.com>, Baolin Wang	 <baolin.wang@linux.alibaba.com>, Andrew
- Morton <akpm@linux-foundation.org>,  Kees Cook <kees@kernel.org>, "Gustavo
- A. R. Silva" <gustavoars@kernel.org>, 	linux-kernel@vger.kernel.org,
- v9fs@lists.linux.dev, 	linux-fsdevel@vger.kernel.org,
- linux-afs@lists.infradead.org, 	linux-btrfs@vger.kernel.org,
- ceph-devel@vger.kernel.org, 	codalist@coda.cs.cmu.edu,
- ecryptfs@vger.kernel.org, linux-efi@vger.kernel.org, 
-	linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, 
-	gfs2@lists.linux.dev, linux-um@lists.infradead.org, linux-mm@kvack.org, 
-	linux-mtd@lists.infradead.org, jfs-discussion@lists.sourceforge.net, 
-	linux-nfs@vger.kernel.org, linux-nilfs@vger.kernel.org,
- ntfs3@lists.linux.dev, 	ocfs2-devel@lists.linux.dev,
- linux-karma-devel@lists.sourceforge.net, 	devel@lists.orangefs.org,
- linux-unionfs@vger.kernel.org, 	linux-cifs@vger.kernel.org,
- samba-technical@lists.samba.org, 	linux-xfs@vger.kernel.org,
- linux-hardening@vger.kernel.org
-Date: Thu, 06 Nov 2025 13:01:20 -0500
-In-Reply-To: <6758176514cdd6e2ceacb3bd0e4d63fb8784b7c6.camel@kernel.org>
-References: <20251105-create-excl-v1-1-a4cce035cc55@kernel.org>
-		 <176237780417.634289.15818324160940255011@noble.neil.brown.name>
-	 <6758176514cdd6e2ceacb3bd0e4d63fb8784b7c6.camel@kernel.org>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
- n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
- egyjnSsFt7EGoDjdKqr1TS9syJYFjagYtvWk/UfHlW09X+jOh4vYtfX7iYSx/NfqV3W1D7EDi0PqV
- T2h6v8i8YqsATFPwO4nuiTmL6I40ZofxVd+9wdRI4Db8yUNA4ZSP2nqLcLtFjClYRBoJvRWvsv4lm
- 0OX6MYPtv76hka8lW4mnRmZqqx3UtfHX/hF/zH24Gj7A6sYKYLCU3YrI2Ogiu7/ksKcl7goQjpvtV
- YrOOI5VGLHge0awt7bhMCTM9KAfPc+xL/ZxAMVWd3NCk5SamL2cE99UWgtvNOIYU8m6EjTLhsj8sn
- VluJH0/RcxEeFbnSaswVChNSGa7mXJrTR22lRL6ZPjdMgS2Km90haWPRc8Wolcz07Y2se0xpGVLEQ
- cDEsvv5IMmeMe1/qLZ6NaVkNuL3WOXvxaVT9USW1+/SGipO2IpKJjeDZfehlB/kpfF24+RrK+seQf
- CBYyUE8QJpvTZyfUHNYldXlrjO6n5MdOempLqWpfOmcGkwnyNRBR46g/jf8KnPRwXs509yAqDB6sE
- LZH+yWr9LQZEwARAQABtCVKZWZmIExheXRvbiA8amxheXRvbkBwb29jaGllcmVkcy5uZXQ+iQI7BB
- MBAgAlAhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAUCTpXWPAIZAQAKCRAADmhBGVaCFc65D/4
- gBLNMHopQYgG/9RIM3kgFCCQV0pLv0hcg1cjr+bPI5f1PzJoOVi9s0wBDHwp8+vtHgYhM54yt43uI
- 7Htij0RHFL5eFqoVT4TSfAg2qlvNemJEOY0e4daljjmZM7UtmpGs9NN0r9r50W82eb5Kw5bc/r0km
- R/arUS2st+ecRsCnwAOj6HiURwIgfDMHGPtSkoPpu3DDp/cjcYUg3HaOJuTjtGHFH963B+f+hyQ2B
- rQZBBE76ErgTDJ2Db9Ey0kw7VEZ4I2nnVUY9B5dE2pJFVO5HJBMp30fUGKvwaKqYCU2iAKxdmJXRI
- ONb7dSde8LqZahuunPDMZyMA5+mkQl7kpIpR6kVDIiqmxzRuPeiMP7O2FCUlS2DnJnRVrHmCljLkZ
- Wf7ZUA22wJpepBligemtSRSbqCyZ3B48zJ8g5B8xLEntPo/NknSJaYRvfEQqGxgk5kkNWMIMDkfQO
- lDSXZvoxqU9wFH/9jTv1/6p8dHeGM0BsbBLMqQaqnWiVt5mG92E1zkOW69LnoozE6Le+12DsNW7Rj
- iR5K+27MObjXEYIW7FIvNN/TQ6U1EOsdxwB8o//Yfc3p2QqPr5uS93SDDan5ehH59BnHpguTc27Xi
- QQZ9EGiieCUx6Zh2ze3X2UW9YNzE15uKwkkuEIj60NvQRmEDfweYfOfPVOueC+iFifbQgSmVmZiBM
- YXl0b24gPGpsYXl0b25AcmVkaGF0LmNvbT6JAjgEEwECACIFAk6V0q0CGwMGCwkIBwMCBhUIAgkKC
- wQWAgMBAh4BAheAAAoJEAAOaEEZVoIViKUQALpvsacTMWWOd7SlPFzIYy2/fjvKlfB/Xs4YdNcf9q
- LqF+lk2RBUHdR/dGwZpvw/OLmnZ8TryDo2zXVJNWEEUFNc7wQpl3i78r6UU/GUY/RQmOgPhs3epQC
- 3PMJj4xFx+VuVcf/MXgDDdBUHaCTT793hyBeDbQuciARDJAW24Q1RCmjcwWIV/pgrlFa4lAXsmhoa
- c8UPc82Ijrs6ivlTweFf16VBc4nSLX5FB3ls7S5noRhm5/Zsd4PGPgIHgCZcPgkAnU1S/A/rSqf3F
- LpU+CbVBDvlVAnOq9gfNF+QiTlOHdZVIe4gEYAU3CUjbleywQqV02BKxPVM0C5/oVjMVx3bri75n1
- TkBYGmqAXy9usCkHIsG5CBHmphv9MHmqMZQVsxvCzfnI5IO1+7MoloeeW/lxuyd0pU88dZsV/riHw
- 87i2GJUJtVlMl5IGBNFpqoNUoqmvRfEMeXhy/kUX4Xc03I1coZIgmwLmCSXwx9MaCPFzV/dOOrju2
- xjO+2sYyB5BNtxRqUEyXglpujFZqJxxau7E0eXoYgoY9gtFGsspzFkVNntamVXEWVVgzJJr/EWW0y
- +jNd54MfPRqH+eCGuqlnNLktSAVz1MvVRY1dxUltSlDZT7P2bUoMorIPu8p7ZCg9dyX1+9T6Muc5d
- Hxf/BBP/ir+3e8JTFQBFOiLNdFtB9KZWZmIExheXRvbiA8amxheXRvbkBzYW1iYS5vcmc+iQI4BBM
- BAgAiBQJOldK9AhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRAADmhBGVaCFWgWD/0ZRi4h
- N9FK2BdQs9RwNnFZUr7JidAWfCrs37XrA/56olQl3ojn0fQtrP4DbTmCuh0SfMijB24psy1GnkPep
- naQ6VRf7Dxg/Y8muZELSOtsv2CKt3/02J1BBitrkkqmHyni5fLLYYg6fub0T/8Kwo1qGPdu1hx2BQ
- RERYtQ/S5d/T0cACdlzi6w8rs5f09hU9Tu4qV1JLKmBTgUWKN969HPRkxiojLQziHVyM/weR5Reu6
- FZVNuVBGqBD+sfk/c98VJHjsQhYJijcsmgMb1NohAzwrBKcSGKOWJToGEO/1RkIN8tqGnYNp2G+aR
- 685D0chgTl1WzPRM6mFG1+n2b2RR95DxumKVpwBwdLPoCkI24JkeDJ7lXSe3uFWISstFGt0HL8Eew
- P8RuGC8s5h7Ct91HMNQTbjgA+Vi1foWUVXpEintAKgoywaIDlJfTZIl6Ew8ETN/7DLy8bXYgq0Xzh
- aKg3CnOUuGQV5/nl4OAX/3jocT5Cz/OtAiNYj5mLPeL5z2ZszjoCAH6caqsF2oLyAnLqRgDgR+wTQ
- T6gMhr2IRsl+cp8gPHBwQ4uZMb+X00c/Amm9VfviT+BI7B66cnC7Zv6Gvmtu2rEjWDGWPqUgccB7h
- dMKnKDthkA227/82tYoFiFMb/NwtgGrn5n2vwJyKN6SEoygGrNt0SI84y6hEVbQlSmVmZiBMYXl0b
- 24gPGpsYXl0b25AcHJpbWFyeWRhdGEuY29tPokCOQQTAQIAIwUCU4xmKQIbAwcLCQgHAwIBBhUIAg
- kKCwQWAgMBAh4BAheAAAoJEAAOaEEZVoIV1H0P/j4OUTwFd7BBbpoSp695qb6HqCzWMuExsp8nZjr
- uymMaeZbGr3OWMNEXRI1FWNHMtcMHWLP/RaDqCJil28proO+PQ/yPhsr2QqJcW4nr91tBrv/MqItu
- AXLYlsgXqp4BxLP67bzRJ1Bd2x0bWXurpEXY//VBOLnODqThGEcL7jouwjmnRh9FTKZfBDpFRaEfD
- FOXIfAkMKBa/c9TQwRpx2DPsl3eFWVCNuNGKeGsirLqCxUg5kWTxEorROppz9oU4HPicL6rRH22Ce
- 6nOAON2vHvhkUuO3GbffhrcsPD4DaYup4ic+DxWm+DaSSRJ+e1yJvwi6NmQ9P9UAuLG93S2MdNNbo
- sZ9P8k2mTOVKMc+GooI9Ve/vH8unwitwo7ORMVXhJeU6Q0X7zf3SjwDq2lBhn1DSuTsn2DbsNTiDv
- qrAaCvbsTsw+SZRwF85eG67eAwouYk+dnKmp1q57LDKMyzysij2oDKbcBlwB/TeX16p8+LxECv51a
- sjS9TInnipssssUDrHIvoTTXWcz7Y5wIngxDFwT8rPY3EggzLGfK5Zx2Q5S/N0FfmADmKknG/D8qG
- IcJE574D956tiUDKN4I+/g125ORR1v7bP+OIaayAvq17RP+qcAqkxc0x8iCYVCYDouDyNvWPGRhbL
- UO7mlBpjW9jK9e2fvZY9iw3QzIPGKtClKZWZmIExheXRvbiA8amVmZi5sYXl0b25AcHJpbWFyeWRh
- dGEuY29tPokCOQQTAQIAIwUCU4xmUAIbAwcLCQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEAAOa
- EEZVoIVzJoQALFCS6n/FHQS+hIzHIb56JbokhK0AFqoLVzLKzrnaeXhE5isWcVg0eoV2oTScIwUSU
- apy94if69tnUo4Q7YNt8/6yFM6hwZAxFjOXR0ciGE3Q+Z1zi49Ox51yjGMQGxlakV9ep4sV/d5a50
- M+LFTmYSAFp6HY23JN9PkjVJC4PUv5DYRbOZ6Y1+TfXKBAewMVqtwT1Y+LPlfmI8dbbbuUX/kKZ5d
- dhV2736fgyfpslvJKYl0YifUOVy4D1G/oSycyHkJG78OvX4JKcf2kKzVvg7/Rnv+AueCfFQ6nGwPn
- 0P91I7TEOC4XfZ6a1K3uTp4fPPs1Wn75X7K8lzJP/p8lme40uqwAyBjk+IA5VGd+CVRiyJTpGZwA0
- jwSYLyXboX+Dqm9pSYzmC9+/AE7lIgpWj+3iNisp1SWtHc4pdtQ5EU2SEz8yKvDbD0lNDbv4ljI7e
- flPsvN6vOrxz24mCliEco5DwhpaaSnzWnbAPXhQDWb/lUgs/JNk8dtwmvWnqCwRqElMLVisAbJmC0
- BhZ/Ab4sph3EaiZfdXKhiQqSGdK4La3OTJOJYZphPdGgnkvDV9Pl1QZ0ijXQrVIy3zd6VCNaKYq7B
- AKidn5g/2Q8oio9Tf4XfdZ9dtwcB+bwDJFgvvDYaZ5bI3ln4V3EyW5i2NfXazz/GA/I/ZtbsigCFc
- 8ftCBKZWZmIExheXRvbiA8amxheXRvbkBrZXJuZWwub3JnPokCOAQTAQIAIgUCWe8u6AIbAwYLCQg
- HAwIGFQgCCQoLBBYCAwECHgECF4AACgkQAA5oQRlWghUuCg/+Lb/xGxZD2Q1oJVAE37uW308UpVSD
- 2tAMJUvFTdDbfe3zKlPDTuVsyNsALBGclPLagJ5ZTP+Vp2irAN9uwBuacBOTtmOdz4ZN2tdvNgozz
- uxp4CHBDVzAslUi2idy+xpsp47DWPxYFIRP3M8QG/aNW052LaPc0cedYxp8+9eiVUNpxF4SiU4i9J
- DfX/sn9XcfoVZIxMpCRE750zvJvcCUz9HojsrMQ1NFc7MFT1z3MOW2/RlzPcog7xvR5ENPH19ojRD
- CHqumUHRry+RF0lH00clzX/W8OrQJZtoBPXv9ahka/Vp7kEulcBJr1cH5Wz/WprhsIM7U9pse1f1g
- Yy9YbXtWctUz8uvDR7shsQxAhX3qO7DilMtuGo1v97I/Kx4gXQ52syh/w6EBny71CZrOgD6kJwPVV
- AaM1LRC28muq91WCFhs/nzHozpbzcheyGtMUI2Ao4K6mnY+3zIuXPygZMFr9KXE6fF7HzKxKuZMJO
- aEZCiDOq0anx6FmOzs5E6Jqdpo/mtI8beK+BE7Va6ni7YrQlnT0i3vaTVMTiCThbqsB20VrbMjlhp
- f8lfK1XVNbRq/R7GZ9zHESlsa35ha60yd/j3pu5hT2xyy8krV8vGhHvnJ1XRMJBAB/UYb6FyC7S+m
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.58.1 (3.58.1-1.fc43) 
+	s=arc-20240116; t=1762454230; c=relaxed/simple;
+	bh=3Wnrg9DvAAWnkfTTFLvzjXzEBGBuRHncHGqgIDgq0HE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mR9yJO5z4K0fceeftjqTtLm914TN7QOpyTuZGChKU7uVGPCp2CzYVxU+7O4X9+vLGquevh0q+is/+wGa8ETm7CScpK1dHv++3uZet9pTx0swnfS3Z2dUHVF7nbXwczMm1xOOxsR0GvJNQKaQjVRZboCkuJBeXBtKKl2n87q10Ro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SNeRJ1iQ; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-640e9a53ff6so2429197a12.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Nov 2025 10:37:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762454225; x=1763059025; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1EJE8BczzSHdGxAw/zzsEkbZMcjp/94OHe+ZfYfftlc=;
+        b=SNeRJ1iQo2a5uhPH1gmZ8UdkpW1k//Aj2+QiRGWBeIfbMzLKCOUjAa84G5QFPt47sS
+         A58RJos5Su422W3Bv5wEzEM7kDOJ79868dMDxvtduXs9GYdKasmC1VHoXx1X4qHXzK2a
+         e0Hyr2oWI3r7gnti1kgalMs2h4IC88Ei3mxGHo6JEk98cfGNCgcvG+lhF/Lafo5tfncU
+         CXqYRTVoWrn+4ZENJjoqh742qMm0tCFFEpSZv/uh796VyMH4idU9IYL3xIi8cCxoVhSY
+         DgFl8qlQX4XUN9ekzOuz467RNAFxgxvAnbveVMYrBs9U+UVVn3u4bYkAa2mhMVNxqLub
+         GIxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762454225; x=1763059025;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=1EJE8BczzSHdGxAw/zzsEkbZMcjp/94OHe+ZfYfftlc=;
+        b=R55+21uNRXvtuiA1UiFQmJn7S+K3YP7+IPnQb2/9SylswY6cP/0Qj8ylCLiWUv7RQ/
+         oosIYpvdTg+KiKAYbMlMiYm8NeSt5t83ixI8neHf+vHhrZbVw1/yKcpDxBzJ2/L+gOLt
+         0HiNm7wLwMR9M4xnnl/is7MhQAICDB/uqE7BmAcFUgg3ObLaYmy39yNRqvyhmX3GeLQD
+         Ip+fTGj2pn+d2wRnr0HeuXXxp1rFoB5moYwFlUs5V2qLHLizklzKbxeSynAHh1Y4+P2X
+         RD5vsnqzvqnHs5Z5qpZv2yhp1aUp+8F4gif5z1LfXomrscwuFIDp2Xf5WLH89bDofRP+
+         +l3w==
+X-Forwarded-Encrypted: i=1; AJvYcCUzXIkTfO/Y9+OqG5i14foqJBSC5CkeJHbhV+9fDN8BOYwGqJHBXgOTnWtX1/4xyur9SygvxuI71k3ZhjKc@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSlLr0LwGDHTo9Z8c1ZsN9cclj1ow61eLIjPh/Dp9vTqYWu++i
+	vqy58MTYIcIF6pTqrUYJscuuUtgT+0q1NHeCtCnDIFgXrvNCcbAI/XLtx/iAMEJrAmR3cLr2nXO
+	oc2hW/ZReyCIRwYheUNQ9JvI8bQa6QB8=
+X-Gm-Gg: ASbGncthW7tAQJ9gp54AoTTla8hn5XwoCB214dlDNvv6d19xeprH4oDxJRlffg8Owgj
+	56RP1fiomH7KS79ZcCl5Hyy8YoaQczrWogSKqjVPuLT7x4iiG94SVqrBrA2C2KcqtQ0HqdmAzFN
+	ZXtsgi8FkK5HUhs4aMpy2IqFDbfG6q+QeKHhhOfY+kXdx01IS18lCvWnS9qsJaBWXCOvsUACELs
+	pefYWhnAxPV3sn1HIDQkbBE98rE9xqGqFYTIPpSBLa7yEQy2qoZsXU6aJs2NWkqPA34D+4eqHFU
+	f6s6XJzwvuHkfLGXWrY=
+X-Google-Smtp-Source: AGHT+IFaR7YPLJszGOznVpddfPAvOBytrkD85TufNdWn86A9TGBf2k7wgRvx/SjNoe6TMoNoSgPHOd5H+i1bq1ix/zA=
+X-Received: by 2002:a05:6402:2114:b0:63b:f0b3:76cf with SMTP id
+ 4fb4d7f45d1cf-6413f07f3f6mr436725a12.2.1762454225031; Thu, 06 Nov 2025
+ 10:37:05 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <176169809796.1424693.4820699158982303428.stgit@frogsfrogsfrogs> <176169809828.1424693.658681539435984766.stgit@frogsfrogsfrogs>
+In-Reply-To: <176169809828.1424693.658681539435984766.stgit@frogsfrogsfrogs>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Thu, 6 Nov 2025 19:36:53 +0100
+X-Gm-Features: AWmQ_bk9benqkg2ZFiZ6Avxx-WFuHY1oNU_3_7qCMAtyI8FAg8slVSgQ0RkljRI
+Message-ID: <CAOQ4uxgW4=6KRuR6Qh3uMQyxtdRPLwAXZ8VY4yuduzTVqz7+dA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] fuse: move the passthrough-specific code back to passthrough.c
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: miklos@szeredi.hu, joannelkoong@gmail.com, bernd@bsbernd.com, 
+	neal@gompa.dev, linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 2025-11-06 at 07:07 -0500, Jeff Layton wrote:
-> On Thu, 2025-11-06 at 08:23 +1100, NeilBrown wrote:
-> > On Thu, 06 Nov 2025, Jeff Layton wrote:
-> > > Since ce8644fcadc5 ("lookup_open(): expand the call of vfs_create()")=
-,
-> > > the "excl" argument to the ->create() inode_operation is always set t=
-o
-> > > true. Remove it, and fix up all of the create implementations.
-> >=20
-> > nonono
-> >=20
-> >=20
-> > > @@ -3802,7 +3802,7 @@ static struct dentry *lookup_open(struct nameid=
-ata *nd, struct file *file,
-> > >  		}
-> > > =20
-> > >  		error =3D dir_inode->i_op->create(idmap, dir_inode, dentry,
-> > > -						mode, open_flag & O_EXCL);
-> > > +						mode);
-> >=20
-> > "open_flag & O_EXCL" is not the same as "true".
-> >=20
-> > It is true that "all calls to vfs_create() pass true for 'excl'"
-> > The same is NOT true for inode_operations.create.
-> >=20
->=20
-> I don't think this is a problem, actually:
->=20
-> Almost all of the existing ->create() operations ignore the "excl"
-> bool. There are only two that I found that do not: NFS and GFS2. Both
-> of those have an ->atomic_open() operation though, so lookup_open()
-> will never call ->create() for those filesystems. This means that -
-> > create() _is_ always called with excl =3D=3D true.
+On Wed, Oct 29, 2025 at 1:44=E2=80=AFAM Darrick J. Wong <djwong@kernel.org>=
+ wrote:
+>
+> From: Darrick J. Wong <djwong@kernel.org>
+>
+> In preparation for iomap, move the passthrough-specific validation code
+> back to passthrough.c and create a new Kconfig item for conditional
+> compilation of backing.c.  In the next patch, iomap will share the
+> backing structures.
+>
+> Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 
-How about this for a revised changelog, which makes the above clear:
+Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 
-    vfs: remove the excl argument from the ->create() inode_operation
-   =20
-    Since ce8644fcadc5 ("lookup_open(): expand the call of vfs_create()"),
-    the "excl" argument to the ->create() inode_operation is always set to
-    true in vfs_create().
-   =20
-    There is another call to ->create() in lookup_open() that can set it to
-    either true or false. All of the ->create() operations in the kernel
-    ignore the excl argument, except for NFS and GFS2. Both NFS and GFS2
-    have an ->atomic_open() operation, however so lookup_open() will never
-    call ->create() on those filesystems.
-   =20
-    Remove the "excl" argument from the ->create() operation, and fix up th=
-e
-    filesystems accordingly.
-
-Maybe we also need some comments or updates to Documentation/ to make
-it clear that ->create() always implies O_EXCL semantics?
---=20
-Jeff Layton <jlayton@kernel.org>
+> ---
+>  fs/fuse/fuse_i.h          |   25 ++++++++++-
+>  include/uapi/linux/fuse.h |    8 +++-
+>  fs/fuse/Kconfig           |    4 ++
+>  fs/fuse/Makefile          |    3 +
+>  fs/fuse/backing.c         |   98 ++++++++++++++++++++++++++++++++++-----=
+------
+>  fs/fuse/dev.c             |    4 +-
+>  fs/fuse/inode.c           |    4 +-
+>  fs/fuse/passthrough.c     |   38 +++++++++++++++++
+>  8 files changed, 149 insertions(+), 35 deletions(-)
+>
+>
+> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+> index 1316c3853f68dc..7c7d255d817f1e 100644
+> --- a/fs/fuse/fuse_i.h
+> +++ b/fs/fuse/fuse_i.h
+> @@ -96,10 +96,23 @@ struct fuse_submount_lookup {
+>         struct fuse_forget_link *forget;
+>  };
+>
+> +struct fuse_conn;
+> +
+> +/** Operations for subsystems that want to use a backing file */
+> +struct fuse_backing_ops {
+> +       int (*may_admin)(struct fuse_conn *fc, uint32_t flags);
+> +       int (*may_open)(struct fuse_conn *fc, struct file *file);
+> +       int (*may_close)(struct fuse_conn *fc, struct file *file);
+> +       unsigned int type;
+> +       int id_start;
+> +       int id_end;
+> +};
+> +
+>  /** Container for data related to mapping to backing file */
+>  struct fuse_backing {
+>         struct file *file;
+>         struct cred *cred;
+> +       const struct fuse_backing_ops *ops;
+>
+>         /** refcount */
+>         refcount_t count;
+> @@ -972,7 +985,7 @@ struct fuse_conn {
+>         /* New writepages go into this bucket */
+>         struct fuse_sync_bucket __rcu *curr_bucket;
+>
+> -#ifdef CONFIG_FUSE_PASSTHROUGH
+> +#ifdef CONFIG_FUSE_BACKING
+>         /** IDR for backing files ids */
+>         struct idr backing_files_map;
+>  #endif
+> @@ -1588,10 +1601,12 @@ void fuse_file_release(struct inode *inode, struc=
+t fuse_file *ff,
+>                        unsigned int open_flags, fl_owner_t id, bool isdir=
+);
+>
+>  /* backing.c */
+> -#ifdef CONFIG_FUSE_PASSTHROUGH
+> +#ifdef CONFIG_FUSE_BACKING
+>  struct fuse_backing *fuse_backing_get(struct fuse_backing *fb);
+>  void fuse_backing_put(struct fuse_backing *fb);
+> -struct fuse_backing *fuse_backing_lookup(struct fuse_conn *fc, int backi=
+ng_id);
+> +struct fuse_backing *fuse_backing_lookup(struct fuse_conn *fc,
+> +                                        const struct fuse_backing_ops *o=
+ps,
+> +                                        int backing_id);
+>  #else
+>
+>  static inline struct fuse_backing *fuse_backing_get(struct fuse_backing =
+*fb)
+> @@ -1646,6 +1661,10 @@ static inline struct file *fuse_file_passthrough(s=
+truct fuse_file *ff)
+>  #endif
+>  }
+>
+> +#ifdef CONFIG_FUSE_PASSTHROUGH
+> +extern const struct fuse_backing_ops fuse_passthrough_backing_ops;
+> +#endif
+> +
+>  ssize_t fuse_passthrough_read_iter(struct kiocb *iocb, struct iov_iter *=
+iter);
+>  ssize_t fuse_passthrough_write_iter(struct kiocb *iocb, struct iov_iter =
+*iter);
+>  ssize_t fuse_passthrough_splice_read(struct file *in, loff_t *ppos,
+> diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+> index c13e1f9a2f12bd..18713cfaf09171 100644
+> --- a/include/uapi/linux/fuse.h
+> +++ b/include/uapi/linux/fuse.h
+> @@ -1126,9 +1126,15 @@ struct fuse_notify_prune_out {
+>         uint64_t        spare;
+>  };
+>
+> +#define FUSE_BACKING_TYPE_MASK         (0xFF)
+> +#define FUSE_BACKING_TYPE_PASSTHROUGH  (0)
+> +#define FUSE_BACKING_MAX_TYPE          (FUSE_BACKING_TYPE_PASSTHROUGH)
+> +
+> +#define FUSE_BACKING_FLAGS_ALL         (FUSE_BACKING_TYPE_MASK)
+> +
+>  struct fuse_backing_map {
+>         int32_t         fd;
+> -       uint32_t        flags;
+> +       uint32_t        flags; /* FUSE_BACKING_* */
+>         uint64_t        padding;
+>  };
+>
+> diff --git a/fs/fuse/Kconfig b/fs/fuse/Kconfig
+> index 3a4ae632c94aa8..290d1c09e0b924 100644
+> --- a/fs/fuse/Kconfig
+> +++ b/fs/fuse/Kconfig
+> @@ -59,12 +59,16 @@ config FUSE_PASSTHROUGH
+>         default y
+>         depends on FUSE_FS
+>         select FS_STACK
+> +       select FUSE_BACKING
+>         help
+>           This allows bypassing FUSE server by mapping specific FUSE oper=
+ations
+>           to be performed directly on a backing file.
+>
+>           If you want to allow passthrough operations, answer Y.
+>
+> +config FUSE_BACKING
+> +       bool
+> +
+>  config FUSE_IO_URING
+>         bool "FUSE communication over io-uring"
+>         default y
+> diff --git a/fs/fuse/Makefile b/fs/fuse/Makefile
+> index 22ad9538dfc4b8..46041228e5be2c 100644
+> --- a/fs/fuse/Makefile
+> +++ b/fs/fuse/Makefile
+> @@ -14,7 +14,8 @@ fuse-y :=3D trace.o     # put trace.o first so we see f=
+trace errors sooner
+>  fuse-y +=3D dev.o dir.o file.o inode.o control.o xattr.o acl.o readdir.o=
+ ioctl.o
+>  fuse-y +=3D iomode.o
+>  fuse-$(CONFIG_FUSE_DAX) +=3D dax.o
+> -fuse-$(CONFIG_FUSE_PASSTHROUGH) +=3D passthrough.o backing.o
+> +fuse-$(CONFIG_FUSE_PASSTHROUGH) +=3D passthrough.o
+> +fuse-$(CONFIG_FUSE_BACKING) +=3D backing.o
+>  fuse-$(CONFIG_SYSCTL) +=3D sysctl.o
+>  fuse-$(CONFIG_FUSE_IO_URING) +=3D dev_uring.o
+>
+> diff --git a/fs/fuse/backing.c b/fs/fuse/backing.c
+> index 4afda419dd1416..f5efbffd0f456b 100644
+> --- a/fs/fuse/backing.c
+> +++ b/fs/fuse/backing.c
+> @@ -6,6 +6,7 @@
+>   */
+>
+>  #include "fuse_i.h"
+> +#include "fuse_trace.h"
+>
+>  #include <linux/file.h>
+>
+> @@ -44,7 +45,8 @@ static int fuse_backing_id_alloc(struct fuse_conn *fc, =
+struct fuse_backing *fb)
+>         idr_preload(GFP_KERNEL);
+>         spin_lock(&fc->lock);
+>         /* FIXME: xarray might be space inefficient */
+> -       id =3D idr_alloc_cyclic(&fc->backing_files_map, fb, 1, 0, GFP_ATO=
+MIC);
+> +       id =3D idr_alloc_cyclic(&fc->backing_files_map, fb, fb->ops->id_s=
+tart,
+> +                             fb->ops->id_end, GFP_ATOMIC);
+>         spin_unlock(&fc->lock);
+>         idr_preload_end();
+>
+> @@ -69,32 +71,53 @@ static int fuse_backing_id_free(int id, void *p, void=
+ *data)
+>         struct fuse_backing *fb =3D p;
+>
+>         WARN_ON_ONCE(refcount_read(&fb->count) !=3D 1);
+> +
+>         fuse_backing_free(fb);
+>         return 0;
+>  }
+>
+>  void fuse_backing_files_free(struct fuse_conn *fc)
+>  {
+> -       idr_for_each(&fc->backing_files_map, fuse_backing_id_free, NULL);
+> +       idr_for_each(&fc->backing_files_map, fuse_backing_id_free, fc);
+>         idr_destroy(&fc->backing_files_map);
+>  }
+>
+> +static inline const struct fuse_backing_ops *
+> +fuse_backing_ops_from_map(const struct fuse_backing_map *map)
+> +{
+> +       switch (map->flags & FUSE_BACKING_TYPE_MASK) {
+> +#ifdef CONFIG_FUSE_PASSTHROUGH
+> +       case FUSE_BACKING_TYPE_PASSTHROUGH:
+> +               return &fuse_passthrough_backing_ops;
+> +#endif
+> +       default:
+> +               break;
+> +       }
+> +
+> +       return NULL;
+> +}
+> +
+>  int fuse_backing_open(struct fuse_conn *fc, struct fuse_backing_map *map=
+)
+>  {
+>         struct file *file;
+> -       struct super_block *backing_sb;
+>         struct fuse_backing *fb =3D NULL;
+> +       const struct fuse_backing_ops *ops =3D fuse_backing_ops_from_map(=
+map);
+> +       uint32_t op_flags =3D map->flags & ~FUSE_BACKING_TYPE_MASK;
+>         int res;
+>
+>         pr_debug("%s: fd=3D%d flags=3D0x%x\n", __func__, map->fd, map->fl=
+ags);
+>
+> -       /* TODO: relax CAP_SYS_ADMIN once backing files are visible to ls=
+of */
+> -       res =3D -EPERM;
+> -       if (!fc->passthrough || !capable(CAP_SYS_ADMIN))
+> +       res =3D -EOPNOTSUPP;
+> +       if (!ops)
+> +               goto out;
+> +       WARN_ON(ops->type !=3D (map->flags & FUSE_BACKING_TYPE_MASK));
+> +
+> +       res =3D ops->may_admin ? ops->may_admin(fc, op_flags) : 0;
+> +       if (res)
+>                 goto out;
+>
+>         res =3D -EINVAL;
+> -       if (map->flags || map->padding)
+> +       if (map->padding)
+>                 goto out;
+>
+>         file =3D fget_raw(map->fd);
+> @@ -102,14 +125,8 @@ int fuse_backing_open(struct fuse_conn *fc, struct f=
+use_backing_map *map)
+>         if (!file)
+>                 goto out;
+>
+> -       /* read/write/splice/mmap passthrough only relevant for regular f=
+iles */
+> -       res =3D d_is_dir(file->f_path.dentry) ? -EISDIR : -EINVAL;
+> -       if (!d_is_reg(file->f_path.dentry))
+> -               goto out_fput;
+> -
+> -       backing_sb =3D file_inode(file)->i_sb;
+> -       res =3D -ELOOP;
+> -       if (backing_sb->s_stack_depth >=3D fc->max_stack_depth)
+> +       res =3D ops->may_open ? ops->may_open(fc, file) : 0;
+> +       if (res)
+>                 goto out_fput;
+>
+>         fb =3D kmalloc(sizeof(struct fuse_backing), GFP_KERNEL);
+> @@ -119,14 +136,15 @@ int fuse_backing_open(struct fuse_conn *fc, struct =
+fuse_backing_map *map)
+>
+>         fb->file =3D file;
+>         fb->cred =3D prepare_creds();
+> +       fb->ops =3D ops;
+>         refcount_set(&fb->count, 1);
+>
+>         res =3D fuse_backing_id_alloc(fc, fb);
+>         if (res < 0) {
+>                 fuse_backing_free(fb);
+>                 fb =3D NULL;
+> +               goto out;
+>         }
+> -
+>  out:
+>         pr_debug("%s: fb=3D0x%p, ret=3D%i\n", __func__, fb, res);
+>
+> @@ -137,41 +155,71 @@ int fuse_backing_open(struct fuse_conn *fc, struct =
+fuse_backing_map *map)
+>         goto out;
+>  }
+>
+> +static struct fuse_backing *__fuse_backing_lookup(struct fuse_conn *fc,
+> +                                                 int backing_id)
+> +{
+> +       struct fuse_backing *fb;
+> +
+> +       rcu_read_lock();
+> +       fb =3D idr_find(&fc->backing_files_map, backing_id);
+> +       fb =3D fuse_backing_get(fb);
+> +       rcu_read_unlock();
+> +
+> +       return fb;
+> +}
+> +
+>  int fuse_backing_close(struct fuse_conn *fc, int backing_id)
+>  {
+> -       struct fuse_backing *fb =3D NULL;
+> +       struct fuse_backing *fb, *test_fb;
+> +       const struct fuse_backing_ops *ops;
+>         int err;
+>
+>         pr_debug("%s: backing_id=3D%d\n", __func__, backing_id);
+>
+> -       /* TODO: relax CAP_SYS_ADMIN once backing files are visible to ls=
+of */
+> -       err =3D -EPERM;
+> -       if (!fc->passthrough || !capable(CAP_SYS_ADMIN))
+> -               goto out;
+> -
+>         err =3D -EINVAL;
+>         if (backing_id <=3D 0)
+>                 goto out;
+>
+>         err =3D -ENOENT;
+> -       fb =3D fuse_backing_id_remove(fc, backing_id);
+> +       fb =3D __fuse_backing_lookup(fc, backing_id);
+>         if (!fb)
+>                 goto out;
+> +       ops =3D fb->ops;
+>
+> -       fuse_backing_put(fb);
+> +       err =3D ops->may_admin ? ops->may_admin(fc, 0) : 0;
+> +       if (err)
+> +               goto out_fb;
+> +
+> +       err =3D ops->may_close ? ops->may_close(fc, fb->file) : 0;
+> +       if (err)
+> +               goto out_fb;
+> +
+> +       err =3D -ENOENT;
+> +       test_fb =3D fuse_backing_id_remove(fc, backing_id);
+> +       if (!test_fb)
+> +               goto out_fb;
+> +
+> +       WARN_ON(fb !=3D test_fb);
+>         err =3D 0;
+> +       fuse_backing_put(test_fb);
+> +out_fb:
+> +       fuse_backing_put(fb);
+>  out:
+>         pr_debug("%s: fb=3D0x%p, err=3D%i\n", __func__, fb, err);
+>
+>         return err;
+>  }
+>
+> -struct fuse_backing *fuse_backing_lookup(struct fuse_conn *fc, int backi=
+ng_id)
+> +struct fuse_backing *fuse_backing_lookup(struct fuse_conn *fc,
+> +                                        const struct fuse_backing_ops *o=
+ps,
+> +                                        int backing_id)
+>  {
+>         struct fuse_backing *fb;
+>
+>         rcu_read_lock();
+>         fb =3D idr_find(&fc->backing_files_map, backing_id);
+> +       if (fb && fb->ops !=3D ops)
+> +               fb =3D NULL;
+>         fb =3D fuse_backing_get(fb);
+>         rcu_read_unlock();
+>
+> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+> index ecc0a5304c59d1..12cc673df99151 100644
+> --- a/fs/fuse/dev.c
+> +++ b/fs/fuse/dev.c
+> @@ -2662,7 +2662,7 @@ static long fuse_dev_ioctl_backing_open(struct file=
+ *file,
+>         if (IS_ERR(fud))
+>                 return PTR_ERR(fud);
+>
+> -       if (!IS_ENABLED(CONFIG_FUSE_PASSTHROUGH))
+> +       if (!IS_ENABLED(CONFIG_FUSE_BACKING))
+>                 return -EOPNOTSUPP;
+>
+>         if (copy_from_user(&map, argp, sizeof(map)))
+> @@ -2679,7 +2679,7 @@ static long fuse_dev_ioctl_backing_close(struct fil=
+e *file, __u32 __user *argp)
+>         if (IS_ERR(fud))
+>                 return PTR_ERR(fud);
+>
+> -       if (!IS_ENABLED(CONFIG_FUSE_PASSTHROUGH))
+> +       if (!IS_ENABLED(CONFIG_FUSE_BACKING))
+>                 return -EOPNOTSUPP;
+>
+>         if (get_user(backing_id, argp))
+> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+> index 76e5b7f5c980c2..0cac7164afa298 100644
+> --- a/fs/fuse/inode.c
+> +++ b/fs/fuse/inode.c
+> @@ -1004,7 +1004,7 @@ void fuse_conn_init(struct fuse_conn *fc, struct fu=
+se_mount *fm,
+>         fc->name_max =3D FUSE_NAME_LOW_MAX;
+>         fc->timeout.req_timeout =3D 0;
+>
+> -       if (IS_ENABLED(CONFIG_FUSE_PASSTHROUGH))
+> +       if (IS_ENABLED(CONFIG_FUSE_BACKING))
+>                 fuse_backing_files_init(fc);
+>
+>         INIT_LIST_HEAD(&fc->mounts);
+> @@ -1041,7 +1041,7 @@ void fuse_conn_put(struct fuse_conn *fc)
+>                         WARN_ON(atomic_read(&bucket->count) !=3D 1);
+>                         kfree(bucket);
+>                 }
+> -               if (IS_ENABLED(CONFIG_FUSE_PASSTHROUGH))
+> +               if (IS_ENABLED(CONFIG_FUSE_BACKING))
+>                         fuse_backing_files_free(fc);
+>                 call_rcu(&fc->rcu, delayed_release);
+>         }
+> diff --git a/fs/fuse/passthrough.c b/fs/fuse/passthrough.c
+> index 72de97c03d0eeb..e1619bffb5d125 100644
+> --- a/fs/fuse/passthrough.c
+> +++ b/fs/fuse/passthrough.c
+> @@ -162,7 +162,7 @@ struct fuse_backing *fuse_passthrough_open(struct fil=
+e *file, int backing_id)
+>                 goto out;
+>
+>         err =3D -ENOENT;
+> -       fb =3D fuse_backing_lookup(fc, backing_id);
+> +       fb =3D fuse_backing_lookup(fc, &fuse_passthrough_backing_ops, bac=
+king_id);
+>         if (!fb)
+>                 goto out;
+>
+> @@ -195,3 +195,39 @@ void fuse_passthrough_release(struct fuse_file *ff, =
+struct fuse_backing *fb)
+>         put_cred(ff->cred);
+>         ff->cred =3D NULL;
+>  }
+> +
+> +static int fuse_passthrough_may_admin(struct fuse_conn *fc, unsigned int=
+ flags)
+> +{
+> +       /* TODO: relax CAP_SYS_ADMIN once backing files are visible to ls=
+of */
+> +       if (!fc->passthrough || !capable(CAP_SYS_ADMIN))
+> +               return -EPERM;
+> +
+> +       if (flags)
+> +               return -EINVAL;
+> +
+> +       return 0;
+> +}
+> +
+> +static int fuse_passthrough_may_open(struct fuse_conn *fc, struct file *=
+file)
+> +{
+> +       struct super_block *backing_sb;
+> +       int res;
+> +
+> +       /* read/write/splice/mmap passthrough only relevant for regular f=
+iles */
+> +       res =3D d_is_dir(file->f_path.dentry) ? -EISDIR : -EINVAL;
+> +       if (!d_is_reg(file->f_path.dentry))
+> +               return res;
+> +
+> +       backing_sb =3D file_inode(file)->i_sb;
+> +       if (backing_sb->s_stack_depth >=3D fc->max_stack_depth)
+> +               return -ELOOP;
+> +
+> +       return 0;
+> +}
+> +
+> +const struct fuse_backing_ops fuse_passthrough_backing_ops =3D {
+> +       .type =3D FUSE_BACKING_TYPE_PASSTHROUGH,
+> +       .id_start =3D 1,
+> +       .may_admin =3D fuse_passthrough_may_admin,
+> +       .may_open =3D fuse_passthrough_may_open,
+> +};
+>
+>
 
