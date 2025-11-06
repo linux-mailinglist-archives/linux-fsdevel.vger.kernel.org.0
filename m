@@ -1,110 +1,86 @@
-Return-Path: <linux-fsdevel+bounces-67374-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67375-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 489DCC3D518
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 06 Nov 2025 21:03:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C1EABC3D589
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 06 Nov 2025 21:26:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E997D35105B
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Nov 2025 20:03:29 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6DACB351346
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Nov 2025 20:26:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F2F934E75E;
-	Thu,  6 Nov 2025 20:03:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BE912F998A;
+	Thu,  6 Nov 2025 20:26:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mobintestserver.ir header.i=@mobintestserver.ir header.b="w29sWdar"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k4JL8aP7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mobintestserver.ir (mobintestserver.ir [185.204.170.116])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7103231DD97;
-	Thu,  6 Nov 2025 20:03:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.204.170.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B56672F83B8;
+	Thu,  6 Nov 2025 20:26:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762459400; cv=none; b=e5sOPSTzgmlHgoVMVbTHzj5c9VTpAib8gH9s3aCZvkn8kaq5nFzR572KHcSrWhIwdTlolQa0MmlArN972nmXoXpjv6AU+YBojxziIelyzWHsf79morqG7IDGsHXqcmczb7Om0XEeCpvsuTnr109NRaKKCnQdY1eK5/hw4XKmGw4=
+	t=1762460800; cv=none; b=rcdT6eqxs07kljd7yhDcfydFePSJDis/NVk0kQGKQOjqBx1NHaSiFmmCQ4DsIPo3cJE8dtEHOVzlb0GG9BlVgShrztFZ46071GeAPg49ZKYkmdSI09lyBlwWVFfrakaNSJTHmK8fGXzMd407NURkUKNaTrLwIFuST1yIwGFUNpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762459400; c=relaxed/simple;
-	bh=+0k3b3CsL9Tmy7H4Qx3A27FFUhgXBl9Wm7mUoElHWnc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UXP0NloG4f5cWURAdcUIpeMCPr/m/Ff7BzXidB/gObNr6qX4OV6wP5RdRayWtH7TEQ2htRnP2Z+jPBWnhmuFMbCrqXH2eOI0NjzWIxpOsyHgTs3CgVXiFwYzZ4jUfGbaM0iaHwOJMT2b8SnpOOIzaE0zirxit38q18tYQYS6KKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mobintestserver.ir; spf=pass smtp.mailfrom=mobintestserver.ir; dkim=pass (2048-bit key) header.d=mobintestserver.ir header.i=@mobintestserver.ir header.b=w29sWdar; arc=none smtp.client-ip=185.204.170.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mobintestserver.ir
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mobintestserver.ir
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; s=dkim; bh=+0k3b3CsL9Tmy7H
-	4Qx3A27FFUhgXBl9Wm7mUoElHWnc=; h=in-reply-to:from:references:cc:to:
-	subject:date; d=mobintestserver.ir; b=w29sWdar6B4vZKMRhfRUbD4XcBzkkQyf
-	ieRbY3VqvxN7NyYi8LEZcXLQSym4ROxgaUyRPF8pePjYmvlPAm2QPMz8B/iwZn/ShOL6Y9
-	vxf5isKTZRHIX/aWliBOSybtnYQLnFIE2QIdq7Yi7hh3JQD5ZbExxCUfqj+l+LKUaDYvm5
-	bm18zmA8pqVonJZ3kBm8apg+WwlWol5UZm7fpcE1YB9GXqMSf6LNwI523778ocXtgJ7m4x
-	4R3jEnPJN8g2gSWer0eV7n38HCdq4bDWak87TU8kE0lG+xjgNyeelRqGfrqkrgj0Xm90A2
-	z4UfyaPlWrnmsYSZFotG5j2HzTVjyg==
-Received: 
-	by mobintestserver.ir (OpenSMTPD) with ESMTPSA id 160d2a2a (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Thu, 6 Nov 2025 19:47:33 +0000 (UTC)
-Message-ID: <46ebc4d5-5478-4c22-8f17-069fe40ebe44@mobintestserver.ir>
-Date: Thu, 6 Nov 2025 23:26:31 +0330
+	s=arc-20240116; t=1762460800; c=relaxed/simple;
+	bh=G5+JFHN9pF0pfKeMBtPHehPbGANjfz2YxWFZBSN6yuU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=VM/Ep4CubFVVSAIHNUQSIkbsK6pc+9uVrq6pGQGmeHiWYiKMCD6oyKK+GNW57ij9GgGoG4iZ5eFhEf382wCCWNidbGD2g7cHe0mkFaCXrret6G6f7b1xVMeeCD7RNnc3nZ+zykr9DctK8NhWLeQxPnmqLsA3kvkcXQa9/ojUh4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k4JL8aP7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7037C4CEF7;
+	Thu,  6 Nov 2025 20:26:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762460800;
+	bh=G5+JFHN9pF0pfKeMBtPHehPbGANjfz2YxWFZBSN6yuU=;
+	h=Date:From:To:Cc:Subject:From;
+	b=k4JL8aP7g3emW8K/WZvE0ZM2dTj76VdsE2erzADNRJ0g0nK2Zy0+FO0/90r/bz4pL
+	 RHZhSc8mt04soUjBv/tFZ+X33fFy7fydtwv3C0+Yo/D/2PAntrfoTeCNFHuNVasTep
+	 2kR94GaP2pqY2tWUIoOb98rY7DgipXqSprX2wFCiTfbsTL/b3kta8m7jmOicaDqyce
+	 WBT5ngTQ0TOG0AfpAw2SeBvyBv4a6/3MmCDAekz9hvP19vn4ZcZNeMzEosshsnRS/B
+	 q3WVXhHA5oyeL4f0k3kx9r1golXRvHmHMAU+eDvbNxITbugUA3LNDvCRY0tqH7QaCI
+	 NlJAK1yVbTiPg==
+Date: Thu, 6 Nov 2025 12:26:37 -0800
+From: Eric Biggers <ebiggers@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Theodore Ts'o <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>,
+	Yongpeng Yang <yangyongpeng@xiaomi.com>,
+	Luis Chamberlain <mcgrof@kernel.org>
+Subject: [GIT PULL] fscrypt fix for v6.18-rc5
+Message-ID: <20251106202637.GA7015@quark>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 02/11] ntfsplus: add super block operations
-To: Namjae Jeon <linkinjeon@kernel.org>, viro@zeniv.linux.org.uk,
- brauner@kernel.org, hch@infradead.org, hch@lst.de, tytso@mit.edu,
- willy@infradead.org, jack@suse.cz, djwong@kernel.org, josef@toxicpanda.com,
- sandeen@sandeen.net, rgoldwyn@suse.com, xiang@kernel.org, dsterba@suse.com,
- pali@kernel.org, ebiggers@kernel.org, neil@brown.name, amir73il@gmail.com
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- iamjoonsoo.kim@lge.com, cheol.lee@lge.com, jay.sim@lge.com, gunho.lee@lge.com
-References: <20251020020749.5522-1-linkinjeon@kernel.org>
- <20251020020749.5522-3-linkinjeon@kernel.org>
-Content-Language: en-US
-From: Mobin Aydinfar <mobin@mobintestserver.ir>
-In-Reply-To: <20251020020749.5522-3-linkinjeon@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hi Namjae, I built your new driver (as DKMS) and I'm using it and it 
-went smooth so far. Thanks for this good driver (and also really 
-practical userspace tools) but something in dmesg caught my eye:
+The following changes since commit 6146a0f1dfae5d37442a9ddcba012add260bceb0:
 
-On 10/20/25 05:37, Namjae Jeon wrote:
-> This adds the implementation of superblock operations for ntfsplus.
-> 
-> Signed-off-by: Namjae Jeon <linkinjeon@kernel.org>
-> ---
->   fs/ntfsplus/super.c | 2716 +++++++++++++++++++++++++++++++++++++++++++
->   1 file changed, 2716 insertions(+)
->   create mode 100644 fs/ntfsplus/super.c
-> 
-> diff --git a/fs/ntfsplus/super.c b/fs/ntfsplus/super.c
-> new file mode 100644
-> index 000000000000..1803eeec5618
-> --- /dev/null
-> +++ b/fs/ntfsplus/super.c
-> @@ -0,0 +1,2716 @@
-> ...
-> +	pr_info("volume version %i.%i, dev %s, cluster size %d\n",
-> +		vol->major_ver, vol->minor_ver, sb->s_id, vol->cluster_size);
-> +
- > ...
+  Linux 6.18-rc4 (2025-11-02 11:28:02 -0800)
 
-Shouldn't pr_info() messages have "ntfsplus: " prefix? I mean most 
-drivers do so and it is weird to me to have something like this:
+are available in the Git repository at:
 
-[    5.431662] volume version 3.1, dev sda3, cluster size 4096
-[    5.444801] volume version 3.1, dev sdb1, cluster size 4096
+  https://git.kernel.org/pub/scm/fs/fscrypt/linux.git tags/fscrypt-for-linus
 
-instead of this:
+for you to fetch changes up to 1e39da974ce621ed874c6d3aaf65ad14848c9f0d:
 
-[    5.431662] ntfsplus: volume version 3.1, dev sda3, cluster size 4096
-[    5.444801] ntfsplus: volume version 3.1, dev sdb1, cluster size 4096
+  fscrypt: fix left shift underflow when inode->i_blkbits > PAGE_SHIFT (2025-11-04 16:37:38 -0800)
 
-in my dmesg. What do you think? It wouldn't be better to include 
-"ntfsplus: " prefix for pr_info messages?
+----------------------------------------------------------------
 
-Best Regards
+Fix an UBSAN warning that started occurring when the block layer started
+supporting logical_block_size > PAGE_SIZE.
+
+----------------------------------------------------------------
+Yongpeng Yang (1):
+      fscrypt: fix left shift underflow when inode->i_blkbits > PAGE_SHIFT
+
+ fs/crypto/inline_crypt.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
