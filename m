@@ -1,157 +1,164 @@
-Return-Path: <linux-fsdevel+bounces-67288-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67300-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA322C3A9E5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 06 Nov 2025 12:37:55 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EA83C3AC67
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 06 Nov 2025 13:06:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EB2F1A43728
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Nov 2025 11:38:20 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 03D8B34DC8E
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Nov 2025 12:06:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CB573101AA;
-	Thu,  6 Nov 2025 11:36:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB802322A21;
+	Thu,  6 Nov 2025 12:06:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="VfHVcgmp";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="o1GL4jP2"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WKgdbJuo"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B250930F932;
-	Thu,  6 Nov 2025 11:36:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9385A3195F6
+	for <linux-fsdevel@vger.kernel.org>; Thu,  6 Nov 2025 12:06:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762428986; cv=none; b=Oq+421zOYex+kN926bZ9WTD0MIDMMOkq/hW9p0HP3zIz0KTb/KsSEekLF0gUvRHPqVur7Wv/m4WtyhPHcAQ5QwA3i/FKIkkUgiOOLYj3oNnnDwigQfSdPGcsK0gJ8zzdiw/W8NzLHqd3RVC3F/kt4VYavnaR+PudrDHwlvbLN/c=
+	t=1762430782; cv=none; b=SnMx7oUjEvUF8dRrp+idgpgOG5uopxVU/dIDdzsX8FpVSPf9lNzEnz9gjhkVP2/w3yODrpLGZgCavvfxTqItPXBeSKt315PpLLK+Wiohn705SGvcCJb/sFTbCCw6tK7ZvRm5EVT3JUKXKLcK107lxTfNJSQ18Shk86OB7CtzxQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762428986; c=relaxed/simple;
-	bh=yL1dKuTwJbqWHWFM/S4JLHnPEsgFEplZUtp9/v+jbis=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=GtcBUIZj8z4AD4cnaOSJlNaHpMOClzhGnY81mL9ArGJhMcG1l80bbI50/0QPpPfomcZdL4tt7uwEx+mslIfTY6sDcxTY+sadCb0ipHFZRyFYKwIAD+KZWBZAvpIKgBncFGINU9/hwWZTITYf+9gW1jyBxegkr8V+dZkjXyjq1So=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VfHVcgmp; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=o1GL4jP2; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: John Ogness <john.ogness@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1762428982;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3OFVSDhbG36SsIf5lzC388elLqvaZZTmYLAdGi/UGDg=;
-	b=VfHVcgmpJH3uTfDhchkD4wuvXiCeO6Y0cgIqWhodPDv0n2WVyYSiJgJJpsP+TuMeWHGFhk
-	awrfiT1E4sgpQl/J9FkfBBes3xk5bIN19ceahwVKoZUp77RiupUePOYXKRjfWcOOZNzJyI
-	nEGwsjZJXoedyhMd+JsaSo0915zq3oA0kUISJHkpjhjfUhWqF7la7YqWpyki7iPmNWmakE
-	1xhtxvITVT9bFAfdxm0ZQDDm4fTBoi6xT7qZeJDMw7135L0MoVUU7nVX9ZV0r7kk20V5Hd
-	8BnaSJ/s1Q5JnQT8KCr/Flgxrv/goYiQYt5i7ji3eoWtF4DinD6WOF+xYK6ieQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1762428982;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3OFVSDhbG36SsIf5lzC388elLqvaZZTmYLAdGi/UGDg=;
-	b=o1GL4jP2YCiTuyko5Z4t0WrMdYgexNYHQsUuVxE4kxErQm/WLMPqalMwDn0asv1C6ScxeV
-	1J3sSKVoaU//4sBA==
-To: Petr Mladek <pmladek@suse.com>
-Cc: Joanne Koong <joannelkoong@gmail.com>, syzbot
- <syzbot+3686758660f980b402dc@syzkaller.appspotmail.com>,
- "amurray@thegoodpenguin.co.uk" <amurray@thegoodpenguin.co.uk>,
- brauner@kernel.org, chao@kernel.org, djwong@kernel.org,
- jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [iomap?] kernel BUG in folio_end_read (2)
-In-Reply-To: <87bjlgqmk5.fsf@jogness.linutronix.de>
-References: <CAJnrk1bF8sLU6tG2MGkt_KR4BoTd_k01CMVZJ9js2-eyh80tbw@mail.gmail.com>
- <69096836.a70a0220.88fb8.0006.GAE@google.com>
- <CAJnrk1Yo4dRVSaPCaAGkHc+in03KaTXJ+KxckhLoSrRxbEdDBg@mail.gmail.com>
- <aQpFLJM96uRpO4S-@pathway.suse.cz> <87ldkk34yj.fsf@jogness.linutronix.de>
- <aQuABK25fdBVTGZc@pathway.suse.cz> <87bjlgqmk5.fsf@jogness.linutronix.de>
-Date: Thu, 06 Nov 2025 12:42:21 +0106
-Message-ID: <87tsz7iea2.fsf@jogness.linutronix.de>
+	s=arc-20240116; t=1762430782; c=relaxed/simple;
+	bh=27NJKWGNcSxXkw/6VX3AWktNtI13IDjnXzjnGtQMSSs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bsBhaQYlG829dAnNJehS/uTA4NLbgX7xL5kLffVziB9KcMH9pm1BidahukIiR4GnM7+vgtFzyhyShB2HqQ6/kXrZq6j47c5CCuInL/U4vKg5QKoWfhDf8POlTOvyoLgSLQ/V4be4btHtRN7cROxQ6Pvpoiz8GR77lMwRS2aWP04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WKgdbJuo; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-6408f9cb1dcso1384444a12.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Nov 2025 04:06:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762430779; x=1763035579; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5ELMLjwv9zhNxrZy1x+2Ltl6cR1kt6BazqSE2RQWFss=;
+        b=WKgdbJuoNNQDzKBC9iU6HH7SUOE4MsFG9t0NU3mOrN4M76EuuKOFCrKS0bJ3TIki9j
+         8F0jVgige4VMWzIn8ajMmtlsvI4hGx0hFXoUKjqFUz2/5+oECG1lsFGcPDqsU++yC/c4
+         6d2XOKu3KW9mWRUg+2K3ilPcXZXAfVN8nTViofmcj1iK4MKurp5Ik5RPeIanmY+b+62p
+         pvLDAa2KKmIjvr8VXnpKyglyC61n+I5/j8+UhxojO6OnLU8XhNSq56QgctoIbcWI5U7t
+         Dd8bMRe2uN3FRklp6HdmY1qgsFPQ6X9f3cwscZvYnxpgByslK250CI8RWDm3YNYcIQ8g
+         iLcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762430779; x=1763035579;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5ELMLjwv9zhNxrZy1x+2Ltl6cR1kt6BazqSE2RQWFss=;
+        b=Ggv2OVdmHmAyhCH8nxPhPdmnPFRxJQTj1Xv8Y4OE610ItDyh2EML3BVhfWyJyMuq+p
+         R55PpxV0kLspfRwHYM/KuByosFiiXBkT6H9OhmxtVF+Jgf8FT0QYjthSe/d/SL/+j66u
+         9hvSEg/zYuKxgV8myc8FLPgVuupnnf4eLJObNrI+ujPHqgRAPovr7UuNYtnq5y2VK7ai
+         xgFZmFrnuLneg37N6/zVpeWb1aEu7eE7KS1c9ro1Wy4hfMDrZ1g1gc/iJkZRgnof3cev
+         bNfP3eSF/llq4LbLeZn8+4FBIszCUIS45GmLMM6b0qTjlhf94Y6RLzAzoS2UD9AWAC+t
+         hsVA==
+X-Forwarded-Encrypted: i=1; AJvYcCV4+OFJUJULDEnBl8a8lf9adwho3G5Llcz87jlWoRvtZqZ7k5/OmVB4CE3bBH63SIen5hZap04VJK69z0lU@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy61wpG35dn+QtjC0cabUx03ZeX8MSwRN1WMAZNlcDm6PjkISr+
+	9CSFeio6Ijiu9eTvXENqL5NR3dMjg8XKbDAZ+esoagcpkCF2L1ORZhopwiuow2l1uxIxTsBxPD2
+	NtRu7cDUTDaNJRXsScvcauCMiNFfwhiw=
+X-Gm-Gg: ASbGncvbbLHAnUAL7taS2LWMGDg28f8n3cx1nn8wNDdW+D50aJ/5BlragcH8qwxXb9w
+	YOLuq214Ivo/gS6YpGFR8sftSGQ2PV/bgiNBHPpoy7q+kC0vpdxjhHU19MUJXWqGuMnQS4tBade
+	YwVuwlFjf73RUuM4Y08HJPreN97me4iC/BFKHX1XNsJRzlypDXpGMLYD5rEulu0Wlbj1v3zNIBS
+	k82iczNuic93TDotuOnC33KDUbL5HrngiWr9a1lrBf5AJKwLTk/zqcmgwfOf7G/TNh/hBtsEjkL
+	HuqpaWzlUjdTAT0=
+X-Google-Smtp-Source: AGHT+IFewgIeZt0GBhSCLwwbLupiWrk7ObPfoT3K72tH/D6fKqxSroEIndJcH/DS0dGQfAu7B5dcTLDkDIQaeJ4ftQU=
+X-Received: by 2002:a05:6402:24cd:b0:640:b044:d9bd with SMTP id
+ 4fb4d7f45d1cf-64105a688e5mr4890597a12.29.1762430778583; Thu, 06 Nov 2025
+ 04:06:18 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <CAHk-=wjRA8G9eOPWa_Njz4NAk3gZNvdt0WAHZfn3iXfcVsmpcA@mail.gmail.com>
+ <20251031174220.43458-1-mjguzik@gmail.com> <20251031174220.43458-2-mjguzik@gmail.com>
+ <CAHk-=wimh_3jM9Xe8Zx0rpuf8CPDu6DkRCGb44azk0Sz5yqSnw@mail.gmail.com>
+ <20251104102544.GBaQnUqFF9nxxsGCP7@fat_crate.local> <20251104161359.GDaQomRwYqr0hbYitC@fat_crate.local>
+ <CAGudoHGXeg+eBsJRwZwr6snSzOBkWM0G+tVb23zCAhhuWR5UXQ@mail.gmail.com> <20251106111429.GCaQyDFWjbN8PjqxUW@fat_crate.local>
+In-Reply-To: <20251106111429.GCaQyDFWjbN8PjqxUW@fat_crate.local>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Thu, 6 Nov 2025 13:06:06 +0100
+X-Gm-Features: AWmQ_blk5OHj6nrJkXypqjpRIzrmgpqDRwEg1cnKOyCQvNKvMvgqeXjYCOYVvS0
+Message-ID: <CAGudoHGWL6gLjmo3m6uCt9ueHL9rGCdw_jz9FLvgu_3=3A-BrA@mail.gmail.com>
+Subject: Re: [PATCH 1/3] x86: fix access_ok() and valid_user_address() using
+ wrong USER_PTR_MAX in modules
+To: Borislav Petkov <bp@alien8.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
+	"the arch/x86 maintainers" <x86@kernel.org>, brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	tglx@linutronix.de, pfalcato@suse.de
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2025-11-05, John Ogness <john.ogness@linutronix.de> wrote:
->> Another question is whether this is the only problem caused the patch.
+On Thu, Nov 6, 2025 at 12:14=E2=80=AFPM Borislav Petkov <bp@alien8.de> wrot=
+e:
 >
-> This comparison is quite special. It caught my attention while combing
-> through the code.
+> On Wed, Nov 05, 2025 at 09:50:51PM +0100, Mateusz Guzik wrote:
+> > For unrelated reasons I disassembled kmem_cache_free and the following
+> > goodies popped up:
+> > sub    0x18e033f(%rip),%rax        # ffffffff82f944d0 <page_offset_base=
+>
+> > [..]
+> > add    0x18e031d(%rip),%rax        # ffffffff82f944c0 <vmemmap_base>
+> > [..]
+> > mov    0x2189e19(%rip),%rax        # ffffffff8383e010 <__pi_phys_base>
+> >
+> > These are definitely worthwhile to get rid of.
+>
+> Says which semi-respectable benchmark?
+>
+> If none, why bother?
+>
 
-The reason that this comparison is special is because it is the only one
-that does not take wrapping into account. I did it that way originally
-because it is AND with a wrap check. But this is an ugly special
-case. It should use the same wrap check as the other 3 cases in
-nbcon.c. If it had, the bug would not have happened.
+I don't know what are you trying to say here.
 
-I always considered these wrap checks to be non-obvious and
-error-prone. So what if we create a nice helper function to simplify and
-unify the wrap checks? Something like this:
+Are you protesting the notion that reducing cache footprint of the
+memory allocator is a good idea, or perhaps are you claiming these
+vars are too problematic to warrant the effort, or something else?
 
-diff --git a/kernel/printk/printk_ringbuffer.c b/kernel/printk/printk_ringbuffer.c
-index 839f504db6d30..8499ee642c31d 100644
---- a/kernel/printk/printk_ringbuffer.c
-+++ b/kernel/printk/printk_ringbuffer.c
-@@ -390,6 +390,17 @@ static unsigned int to_blk_size(unsigned int size)
- 	return size;
- }
- 
-+/*
-+ * Check if @lpos1 is before @lpos2. This takes ringbuffer wrapping
-+ * into account. If @lpos1 is more than a full wrap before @lpos2,
-+ * it is considered to be after @lpos2.
-+ */
-+static bool lpos1_before_lpos2(struct prb_data_ring *data_ring,
-+			       unsigned long lpos1, unsigned long lpos2)
-+{
-+	return lpos2 - lpos1 - 1 < DATA_SIZE(data_ring);
-+}
-+
- /*
-  * Sanity checker for reserve size. The ringbuffer code assumes that a data
-  * block does not exceed the maximum possible size that could fit within the
-@@ -577,7 +588,7 @@ static bool data_make_reusable(struct printk_ringbuffer *rb,
- 	unsigned long id;
- 
- 	/* Loop until @lpos_begin has advanced to or beyond @lpos_end. */
--	while ((lpos_end - lpos_begin) - 1 < DATA_SIZE(data_ring)) {
-+	while (lpos1_before_lpos2(data_ring, lpos_begin, lpos_end)) {
- 		blk = to_block(data_ring, lpos_begin);
- 
- 		/*
-@@ -668,7 +679,7 @@ static bool data_push_tail(struct printk_ringbuffer *rb, unsigned long lpos)
- 	 * sees the new tail lpos, any descriptor states that transitioned to
- 	 * the reusable state must already be visible.
- 	 */
--	while ((lpos - tail_lpos) - 1 < DATA_SIZE(data_ring)) {
-+	while (lpos1_before_lpos2(data_ring, tail_lpos, lpos)) {
- 		/*
- 		 * Make all descriptors reusable that are associated with
- 		 * data blocks before @lpos.
-@@ -1149,7 +1160,7 @@ static char *data_realloc(struct printk_ringbuffer *rb, unsigned int size,
- 	next_lpos = get_next_lpos(data_ring, blk_lpos->begin, size);
- 
- 	/* If the data block does not increase, there is nothing to do. */
--	if (head_lpos - next_lpos < DATA_SIZE(data_ring)) {
-+	if (!lpos1_before_lpos2(data_ring, head_lpos, next_lpos)) {
- 		if (wrapped)
- 			blk = to_block(data_ring, 0);
- 		else
-@@ -1262,7 +1273,7 @@ static const char *get_data(struct prb_data_ring *data_ring,
- 
- 	/* Regular data block: @begin less than @next and in same wrap. */
- 	if (!is_blk_wrapped(data_ring, blk_lpos->begin, blk_lpos->next) &&
--	    blk_lpos->begin < blk_lpos->next) {
-+	    lpos1_before_lpos2(data_ring, blk_lpos->begin, blk_lpos->next)) {
- 		db = to_block(data_ring, blk_lpos->begin);
- 		*data_size = blk_lpos->next - blk_lpos->begin;
- 
-This change also fixes the issue. Thoughts?
+I'll note that contrary to popular belief the Linux kernel is very
+much *slow* in terms of single-threaded performance and it is not
+about mitigations or hardening measures. There are tidbits of heavy
+microoptimization here and there, but that's all paired with massive
+perf loss few instructions later -- inlined rep movsq/stosq for small
+sizes (gcc is at fault here), lock-prefixed instructions when they can
+be avoided, but also cache-cold memory accesses which don't need to be
+there and so on.
 
-John
+One great example of slowness is the SLUB allocator with its
+cmpxchg16b-using fast paths, but that got recently damage-controlled
+with introduction of "shaves". Even then, it still leaves performance
+on the table.
+
+I don't know if you consider this semi-respectable or better, but
+years back Ingo Molnar created a simple benchmark for i-cache
+footprint: https://lkml.org/lkml/2015/5/19/1009
+
+I have been using a modified version of it on and off to optimize
+FreeBSD and through systemic removal of tons of avoidable work
+(including memory references which did not need to be there) I got to
+single-threaded performance beating Linux. It's not that anything
+clever is taking place there (in fact there is still plenty of room
+for improvement), rather Linux has systemic issues where it loses on
+performance when it does not have to.
+
+All that said, will you notice not taking a cache miss in there in the
+sea of other cache misses and other slowdows which are currently
+present? I don't think so, but it does not invalidate the notion that
+they should be eliminated if feasible.
+
+I feel compelled to note runtime-consting of USER_PTR_MAX came in with
+no benchmark results (semi-respectable or otherwise) and still
+received no pushback despite a bug being uncovered related to it. Per
+the above, I think runtime-consting of the thing makes perfect sense
+and does not warrant benchmarking. Like I said, I'm not sure what you
+were trying to state. If your position is that a benchmark is required
+to remove a memory reference from a frequently used codepath, then you
+should be protesting USER_PTR_MAX.
 
