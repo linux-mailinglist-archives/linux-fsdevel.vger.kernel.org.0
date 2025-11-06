@@ -1,75 +1,75 @@
-Return-Path: <linux-fsdevel+bounces-67355-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67356-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33804C3CC1A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 06 Nov 2025 18:14:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4687AC3CCDE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 06 Nov 2025 18:24:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 626864F4667
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Nov 2025 17:09:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFFFC6613E9
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Nov 2025 17:18:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19A7F34D4D9;
-	Thu,  6 Nov 2025 17:09:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2E89350297;
+	Thu,  6 Nov 2025 17:17:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xtw8K5jJ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e9mpI372"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 051032BF3DF
-	for <linux-fsdevel@vger.kernel.org>; Thu,  6 Nov 2025 17:08:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 686D232E135
+	for <linux-fsdevel@vger.kernel.org>; Thu,  6 Nov 2025 17:17:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762448940; cv=none; b=aHa6C3ywqSdvSCGPrbGFyqnlpaWiLCMHoaIgBttbS+vq5KjGLI37F6zGBGMk7P1W2VKnD1dMcoNBn/EwW2W42WyOtMV2+RMoV4oRNM7K6/ymhyYybaU7MyrLbrlJyuhZhQnTQZyQiWOAWVaU120PP4d5bWpyFCzaR5FIhYheffk=
+	t=1762449437; cv=none; b=dxwNHylO65IEywLuI9y3tJS8l8E8jQWfi+cy3BQ8OjnOjhHkVMLZaZEJ5VG0pm/UypDwm/cdccisakBwq+9iSTKisUUGaBlzntQ8aGvXr1Wx1Nan0xxdMDv6110UC4SnI4+vBYUcMeCqjenzQzk6Mr2BNL7zpgzbCrlIOAlZqGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762448940; c=relaxed/simple;
-	bh=6o9ZZrR37mutIKNjC6NLcl4zABgGFKhlrWYgRdVJHGk=;
+	s=arc-20240116; t=1762449437; c=relaxed/simple;
+	bh=Kb0xCCSilazZ/+mUpILFAKuAAykAuExsNjSlRInz8No=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Xl8BkRKNSxUewRr/ghjoSDgbkB102dZbIdAjYHPrCpeIVBmZIi7T+rCw9qiS+tQLKEY3kekeSwjztRX9dxY4WP/YKqmcPNd3yokW4yVVIWpQJfoRrJxvxfw9BLAH2Pl0nLaHyi7CT7QHt8hcM8pHj03mvUkQ8CiPjqMCUClBX7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xtw8K5jJ; arc=none smtp.client-ip=209.85.219.43
+	 To:Cc:Content-Type; b=kgofPrHYIs/tsOEKG1IcaAznn5dcD+A0XYAKsBUXA2Ep/T6tT8EMKys4gp5KTwQ+iWWOEuaEI87bAoSQI0JIrpXzIq85vn2JYAN0Sw3LJd94uvdeEvKRjeY9vSKBDFBE1ir78+jUBDNCkTZM86tIX3+Vhj0G72RnBCf9ZvLJGfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e9mpI372; arc=none smtp.client-ip=209.85.160.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-8804650ca32so12679326d6.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Nov 2025 09:08:58 -0800 (PST)
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4e89c433c00so12209671cf.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Nov 2025 09:17:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762448938; x=1763053738; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1762449433; x=1763054233; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3xdFLs99TCG7hmbukBiXpA5iRmK/dJWsEcsNp3DpC+k=;
-        b=Xtw8K5jJnkO7dnx19SMo+S1iNRY2K2o+WyRJPp18beKWXGGRKNaLF4e/2iJ1X13PM0
-         i4X08qXj9fN4aG+ehvJZA5LnmA2v0DdnWylOoyHRYGmQeLAuL+OtduJ+jDP+K5WO+j/C
-         Kx1MewHZypakp+jvHSSgfd45yUIik0eqkUQgg9gzOcwJ/pNacyyS005rUnNjfzBXx/CU
-         9rTdvwO3HLUwHn16rh+NAGpDmxdx2oTstlXUoETQM+vi/OwGUstFoY0yOybZKJy6mmMe
-         VXVepbt6nh1nTefj0TFez80UyLkUh98lQzBXCX7FI//K49xsU3/UXeaCBF5QbsRAjZHl
-         Ubtw==
+        bh=Cx8P5FUeVJGxl9c0y6Zf3qT67jGlSyjXi22KOtbz0tE=;
+        b=e9mpI372zSyf6IiQuD8pxTaDUHw0vhFGQWPxwWDU1iii68vB1K4FMylCKdiwqGsY1b
+         wvK+dOyCjA+IOHZqDi7goxwa2mELQy95Qz22S0pSaQw9MmZWoHRI+Fce500w+By+jWtt
+         x+pIU2PPe3INvZyDqYNil5HENCj9Hu82ocBz0OldUcl1WYYO6JWbJ68tKHkAwbUHUDi5
+         wchWFVUEMrvzgjOJrHib1hNHTqRE7amdAgNqN7pgG2XkJA5K8ZsluhO5CTdJOnJ5I94q
+         wRpXd5zAebfFVgRGUg8CXwW3vmsdf90MmpBUU/ASRZJQsd1uFY7babn9GrOdpd7NxdJk
+         eSxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762448938; x=1763053738;
+        d=1e100.net; s=20230601; t=1762449433; x=1763054233;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=3xdFLs99TCG7hmbukBiXpA5iRmK/dJWsEcsNp3DpC+k=;
-        b=HYj0Jm4wre5u577H4pt2WWhVh+6fA36zBQn01/Zqd9WUZ/6lyq+5LS4sGlqFs7N/zW
-         YeyFxdfTaPZNZga+v36sRgfjqHpmVA+VFUOSfZDWtQHxR/Mz86bGlvXC5jeREC726AD7
-         oUhNQdnzkXE2Os0LdcC0ktz4+WA0oDsEkfil+QEYz1N/WeIlSvyVR0jagoQd/y2dsmME
-         vaHUm2IwjYx27Jt8sJP8J3i98sFYWXwkiiyEOLtMr4GNO0wdXkGxKDNgAoryJPZ4oPaU
-         Ula7ZMoLUFTmUWEegC6N1y7AGDxffHV4x6t609HWa11YXl+369oolRm8SFGiydaTJrIp
-         KZOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWHLyao3lubuzn1ky5aDnIUGgMy1JIHhd8xYIDXWdUO49fyXjSeDV6gdnyYGKOWuVWdto2u/0JUcIJPzEtt@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6rcE+apySA5w0YT2WjN4IJtn5dcE1FpOUd+q71Pcd/EFUj6Bi
-	VvnNXosf0DtbsqSrLIyidSDlwyIfGyEF7gA3h4P29osfEoGETWK06hyuXI76yQHEfmqBxKBWvGp
-	ZthvOzyS61zVNNeurQtyI3OQzvQeq8dc=
-X-Gm-Gg: ASbGnctOzVjXUuYyM3S8pBD+K5i3jQUKhM4Pf9o+aijTAgfpBHAxV1CAwgoh9x1TgdI
-	xwmL3rzIRpOXNcWYOPcj3i54eyeSc/7s+SRMLRS+g+c3TtogOxganr6zIOf1TzJmH3Cxpa6tvLY
-	5gLdRy1xIYF+Xp7zwD1k5EkflFkOQl+GmOgsiCNB6qAHrS+T+IOomHWRFlZBYaPzV1e65PiBvvf
-	0puIme+jRmDpyS1wvw+AjrcZuGABas3sYpohEGGj4ZNyOCeDV2jsPgn7ooQMZSjPNPiAU+PK0C0
-	vEUeG5ompYMQ5Os=
-X-Google-Smtp-Source: AGHT+IH24ttaP2ND8ABZ0MYk5pOjGlaX5NgLsJcV/IWJbwhZ1Xjjjsah+KDhvAD8/Fu9J4YERkA9nI8Tt09A3jCUwg4=
-X-Received: by 2002:ac8:5ac6:0:b0:4e8:9a7d:90eb with SMTP id
- d75a77b69052e-4ed72609594mr96852481cf.38.1762448937852; Thu, 06 Nov 2025
- 09:08:57 -0800 (PST)
+        bh=Cx8P5FUeVJGxl9c0y6Zf3qT67jGlSyjXi22KOtbz0tE=;
+        b=g/wdNjUDG6nWtKsi3qyF3Ci4lSZ0mbPBCvfqjvCHFOI1/4x8H0TKOqlwrdb3soJEFl
+         cJ1bz2PN6Unu9COY3iMuyn6xepb9YJGNFvruUt/v+TABgIILaN5AdZHDGq4psg+MiFtM
+         fUh72vVvDgq+pUCr4b+v+d8WhXKaD4EF/bMnRIJ41ShB5AkPda30sZ5Y2zWA0dfSpGPn
+         SHptjAPiWogowbyACQ9QPgbYNHyOKAAU/66ow8PvCOyMfCqiVkAC21f5ycpGn7nx9dbH
+         KbY0ydW1PLv6MK2KH3siyCOnT/F50gfaPnAZprZ8haPt1+ZZh0YI0aqClNPaW1Lqw07K
+         zAYw==
+X-Forwarded-Encrypted: i=1; AJvYcCWa/w6KMLTuGtTBakKV5AgmLMqu30+wMpHprO3Q5xlBAVZzXluHR3zjHrElc2ILqPFESECPhM/MOgp5j+m6@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9KMfwlSt+sp6gXz5mvwIaRkArHLVNsXBpXDnbR5UvcfOCWUQo
+	0TPsI6bTkhpMsdafciKvc2OAg7vJ3b/vMqyJ3IDiqqBYuE0TRR+Xrb6+Ak1J9OKCy7Y8FgaABLA
+	bEZ+dZtAMJ0QOgUXeUNEGbw+VqfP2c7w=
+X-Gm-Gg: ASbGncu7buepmcl/NJ/nlITtljaqxjy4Nxz7AvfWtwjhMLAhAKqMeQP9Q5EM6zkxoS6
+	HRuuR2Q6Xw4xq8aRuaKM24wbH3m3QJtUUaQZG0s+bgD1maYxiVzUurhaYZZlFZ1UhBRpNQ8wvku
+	R/RLZtyqDGTm8MkSdRqTbvbXkhOJnskWEKQxCT8iXBh6YF4qB3qu6/bOgT1pYUInVfUE3nqnktS
+	6KGyKnQK98pyn+KmUfj09lw1GesiZNiOhXZsi8lxZXjx8BxeM1P3sBvnZi7r87RF0sBT6xpppsI
+	zNoOETLOpEGXmpWLNFXK7Ta3Tg==
+X-Google-Smtp-Source: AGHT+IGeaQLgFwQTOw+mDbfA2s8cBZE+yprlg1qhZ5tLZ35NcmcyihJFA+0p8oVeTYC6jDFSw0TBwec5TG7jP41miO4=
+X-Received: by 2002:a05:622a:1886:b0:4ed:64ee:b946 with SMTP id
+ d75a77b69052e-4ed72333348mr84795831cf.9.1762449433003; Thu, 06 Nov 2025
+ 09:17:13 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -77,14 +77,14 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20251104205119.1600045-1-joannelkoong@gmail.com>
- <20251104205119.1600045-2-joannelkoong@gmail.com> <20251105012721.GD196362@frogsfrogsfrogs>
-In-Reply-To: <20251105012721.GD196362@frogsfrogsfrogs>
+ <20251104205119.1600045-5-joannelkoong@gmail.com> <20251105015058.GJ196362@frogsfrogsfrogs>
+In-Reply-To: <20251105015058.GJ196362@frogsfrogsfrogs>
 From: Joanne Koong <joannelkoong@gmail.com>
-Date: Thu, 6 Nov 2025 09:08:47 -0800
-X-Gm-Features: AWmQ_bnZlXgnVWVptbwNrOcCWOTSqkqTg5f7xMtR_VvuX6pbHkHwsNowc6K8RKw
-Message-ID: <CAJnrk1aMZPoRKgPA39pqjHvH8zPsu0vhqpoVmPdyHYEo8Nszww@mail.gmail.com>
-Subject: Re: [PATCH v3 1/8] iomap: account for unaligned end offsets when
- truncating read range
+Date: Thu, 6 Nov 2025 09:17:02 -0800
+X-Gm-Features: AWmQ_bn6Fh9Vjo2iqfQ_tTbgGdSzC1iRJCbLWdsAcT8hytWSB0Cqq8Ac4mWS0EQ
+Message-ID: <CAJnrk1Zqj0TNpJcrGLhSvTaK48=8iHW-58y3HXH=YgHs_or0tA@mail.gmail.com>
+Subject: Re: [PATCH v3 4/8] iomap: simplify ->read_folio_range() error
+ handling for reads
 To: "Darrick J. Wong" <djwong@kernel.org>
 Cc: brauner@kernel.org, hch@infradead.org, bfoster@redhat.com, 
 	linux-fsdevel@vger.kernel.org, kernel-team@meta.com, 
@@ -92,36 +92,52 @@ Cc: brauner@kernel.org, hch@infradead.org, bfoster@redhat.com,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 4, 2025 at 5:27=E2=80=AFPM Darrick J. Wong <djwong@kernel.org> =
+On Tue, Nov 4, 2025 at 5:50=E2=80=AFPM Darrick J. Wong <djwong@kernel.org> =
 wrote:
 >
-> On Tue, Nov 04, 2025 at 12:51:12PM -0800, Joanne Koong wrote:
-> > The end position to start truncating from may be at an offset into a
-> > block, which under the current logic would result in overtruncation.
+> On Tue, Nov 04, 2025 at 12:51:15PM -0800, Joanne Koong wrote:
+> > Instead of requiring that the caller calls iomap_finish_folio_read()
+> > even if the ->read_folio_range() callback returns an error, account for
+> > this internally in iomap instead, which makes the interface simpler and
+> > makes it match writeback's ->read_folio_range() error handling
+> > expectations.
 > >
-> > Adjust the calculation to account for unaligned end offsets.
+> > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> > Reviewed-by: Christoph Hellwig <hch@lst.de>
+> > ---
+> >  .../filesystems/iomap/operations.rst          |  7 +++--
+> >  fs/fuse/file.c                                | 10 ++-----
+> >  fs/iomap/buffered-io.c                        | 27 +++++++++----------
+> >  include/linux/iomap.h                         |  5 ++--
+> >  4 files changed, 20 insertions(+), 29 deletions(-)
+> >
+> > @@ -498,10 +497,10 @@ static int iomap_read_folio_iter(struct iomap_ite=
+r *iter,
+> >               } else {
+> >                       if (!*bytes_submitted)
+> >                               iomap_read_init(folio);
+> > -                     *bytes_submitted +=3D plen;
+> >                       ret =3D ctx->ops->read_folio_range(iter, ctx, ple=
+n);
+> >                       if (ret)
+> >                               return ret;
+> > +                     *bytes_submitted +=3D plen;
 >
-> When would the read offset be in the middle of a block?  My guess is
-> that happens when fuse reads some unaligned number of bytes into a folio
-> and then stops?  Can this also happen with inlinedata mappings?  I think
-> those are the only two conditions where iomap isn't dealing with
-> fsblock-aligned mappings and/or IOs.
+> Hrmm.  Is this the main change of this patch?  We don't increment
+> bytes_submitted if ->read_folio_range returns an error, which then means
+> that fuse doesn't have to call iomap_finish_folio_read to decrement
+> *bytes_submitted?
 >
+> (and apparently the bio read_folio_range can't fail so no changes are
+> needed there)
 
-The end offset may be in the middle of a block if the filesystem sets
-an unaligned mapping size (the length of the read used is derived from
-iomap_length(), which considers iter->iomap.length which is set by the
-filesystem's ->iomap_begin() handler). This is what we saw on erofs
-for inline mappings for example in this syzbot report [1].
-
-[1] https://lore.kernel.org/linux-fsdevel/68ca71bd.050a0220.2ff435.04fc.GAE=
-@google.com/
+Yes, that is the motivation for the change. And to make the interface
+consistent with how the ->read_folio_iter() callback for writeback
+handles errors.
 
 Thanks,
 Joanne
 
-> (Obviously the pagecache copies themselves aren't required to be
-> aligned)
 >
 > --D
 
