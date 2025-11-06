@@ -1,182 +1,329 @@
-Return-Path: <linux-fsdevel+bounces-67343-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67342-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E105AC3C37F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 06 Nov 2025 17:01:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98750C3C3D0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 06 Nov 2025 17:04:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 079034FE60C
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Nov 2025 15:59:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 303085621D3
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Nov 2025 15:58:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C59C934A76F;
-	Thu,  6 Nov 2025 15:58:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2214340A63;
+	Thu,  6 Nov 2025 15:58:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="pnHNp4a7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qVU+OgVv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15FEA343D98;
-	Thu,  6 Nov 2025 15:58:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09ECF32C92B;
+	Thu,  6 Nov 2025 15:58:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762444728; cv=none; b=JFhdDTnDO9sOgVJZB9fxZQmI//RIY5Gxrih4G2U5Hh4InMjvhTLHzGj29SQVjKWpg+/04iaSyv4K9OsBB0YsDbJjHMQvkidBGsYxyzzu/cvwr1XUZFAum59MSG9FaprqggvjUwm6DGP5e8y8CmORUWXqF3kn9/AOLVbPz8154Xo=
+	t=1762444721; cv=none; b=o5lM4UJ3TBr+TNGU0/ZFJUxJeDL7/kwyCKL8PwarD74HN42BcTiKJkNxb7zXD2D2Pmb+G76Wm5wK/pt4xse5p037kg+uVfFh2B44gcSIzHl6HHoaxAyz2txmAOmYZ+z5agnTFE9nzX4k0JUEuVSMwynR8nt9mwJVyDyDA5WJj6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762444728; c=relaxed/simple;
-	bh=3kuQkXSOQM+wblCbfuc568D67T+5c6qCnYVhC9PzB10=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=effeIoghFvBXKQ1mhm5ep+dEdhkiNkxqBQVihaJGwHU7PddavmPZE4c7TVMi27kJ6HgajTGAa9W97WyBdUS3EpGdFApr1KvmLwPrD+NAlL2xmOp+hYPeFM7fSoUP9APWVe1D7hyN8TjoYXuaaD7BPRto3s9PhC0N47uXZTLGPuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=pnHNp4a7; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
-	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=1EO13qWLyLQKe+R/NAhnJnKcCSI1DnMuIB44Th05gng=; b=pnHNp4a71gdu7KTf4HMz0rA3pv
-	8TS3K82WU/UGTtbYvjYSU2YmKKCniv3Jm6iL1xWtFdaIwGjgug9oSbaTQ/AUEkgmfeBUoR2SH5V8V
-	4pbT9FR1E+zCkMwnA/CX60+LzXQCb5QblB4g2R+Kmw0HzKF73QzhRhr4Wb8/JYAiBT/EpGvnJg9xi
-	RFEoJA3o7+hUx81f2qtPEQoZ+jE9LwA1XXR/KGPzm2c4y273aajytUeeay1kcWGMcSUiG2xPDus+g
-	lAcEDNnoHZiwgsvZGR2taXMqWN6ASCjb2OQHv1r0mDtUf2JQC+8/hbtKjJ8AuH6ei/WzMgg9jCIxO
-	Qd9TvdWA==;
-Received: from bl17-145-117.dsl.telepac.pt ([188.82.145.117] helo=localhost)
-	by fanzine2.igalia.com with utf8esmtpsa 
-	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1vH2Nb-0034SO-W7; Thu, 06 Nov 2025 16:58:32 +0100
-From: Luis Henriques <luis@igalia.com>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Bernd Schubert <bschubert@ddn.com>,  "Darrick J. Wong"
- <djwong@kernel.org>,  Bernd Schubert <bernd@bsbernd.com>,  "Theodore Ts'o"
- <tytso@mit.edu>,  Miklos Szeredi <miklos@szeredi.hu>,
-  linux-fsdevel@vger.kernel.org,  linux-kernel@vger.kernel.org,  Kevin Chen
- <kchen@ddn.com>
-Subject: Re: [RFC] Another take at restarting FUSE servers
-In-Reply-To: <874ir7qjov.fsf@wotan.olymp> (Luis Henriques's message of "Thu,
-	06 Nov 2025 15:12:16 +0000")
-References: <2e57be4f-e61b-4a37-832d-14bdea315126@bsbernd.com>
-	<20250912145857.GQ8117@frogsfrogsfrogs>
-	<CAOQ4uxhm3=P-kJn3Liu67bhhMODZOM7AUSLFJRiy_neuz6g80g@mail.gmail.com>
-	<2e1db15f-b2b1-487f-9f42-44dc7480b2e2@bsbernd.com>
-	<CAOQ4uxg8sFdFRxKUcAFoCPMXaNY18m4e1PfBXo+GdGxGcKDaFg@mail.gmail.com>
-	<20250916025341.GO1587915@frogsfrogsfrogs>
-	<CAOQ4uxhLM11Zq9P=E1VyN7puvBs80v0HrPU6HqY0LLM6HVc_ZQ@mail.gmail.com>
-	<87ldkm6n5o.fsf@wotan.olymp>
-	<CAOQ4uxg7b0mupCVaouPXPGNN=Ji2XceeceUf8L6pW8+vq3uOMQ@mail.gmail.com>
-	<7ee1e308-c58c-45a0-8ded-6694feae097f@ddn.com>
-	<20251105224245.GP196362@frogsfrogsfrogs>
-	<d57bcfc5-fc3d-4635-ab46-0b9038fb7039@ddn.com>
-	<CAOQ4uxgKZ3Hc+fMg_azN=DWLTj4fq0hsoU4n0M8GA+DsMgJW4g@mail.gmail.com>
-	<874ir7qjov.fsf@wotan.olymp>
-Date: Thu, 06 Nov 2025 15:58:31 +0000
-Message-ID: <87zf8zp2zc.fsf@wotan.olymp>
+	s=arc-20240116; t=1762444721; c=relaxed/simple;
+	bh=9FwOxNw1WGCO5wemKG5MclpcAyf+sp834GswSeo09qs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AMWIs0Wef4ZUPRJzV+rKtgEvg19QJW+aZ+iyjHd4Cr6lz295tMbkggxlYN8QpUqcWOzcNT7tfaxm5Z4AYVNDAR21y8e4GrCcb/ZNYqFJogkAO3rSlGLjMwaw2xzfrdpROK4JbAclVUe/NOqDP6LpYmk3uqCzeEJpJWgHiuPTds4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qVU+OgVv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AEE3C4CEFB;
+	Thu,  6 Nov 2025 15:58:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762444720;
+	bh=9FwOxNw1WGCO5wemKG5MclpcAyf+sp834GswSeo09qs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qVU+OgVvg8WExYVUs7vDAirX8Z0N/BFhsnn0y1VXdhayblbzI7VpDh7eXV5xReqFa
+	 bPfEpvJy3hhQGAB8uv9485VTlDwK/OGf9WGy/pFX/8IGs0wf/RSj68oObPxoa2WqbP
+	 uco0s9a/1sa/1FI99tTFxV153Mfyi6actqB2GCGrWdhtYALVgvCdgayzxEB0kGga5y
+	 3yv2ZJoYaA2yrw0D8yAhGfszQXB6xEI5yD5edssWNvktEyAP3SeiRLuNiO3scxT/IL
+	 SRM2/K7MIyQQoeyiq/VeS/UpXm60AolC8l16Ji7TiAag1l2DjAEfZ7vRnXIYpwWa61
+	 n4SOwYxY9c9nA==
+Date: Thu, 6 Nov 2025 07:58:39 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Brian Foster <bfoster@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH 1/6] iomap: replace folio_batch allocation with stack
+ allocation
+Message-ID: <20251106155839.GG196391@frogsfrogsfrogs>
+References: <20251016190303.53881-1-bfoster@redhat.com>
+ <20251016190303.53881-2-bfoster@redhat.com>
+ <20251105000716.GU196370@frogsfrogsfrogs>
+ <aQts-Fg2YUoIbVsV@bfoster>
+ <20251105214100.GM196362@frogsfrogsfrogs>
+ <aQzD6oE6QCzqaV8X@bfoster>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aQzD6oE6QCzqaV8X@bfoster>
 
-On Thu, Nov 06 2025, Luis Henriques wrote:
+On Thu, Nov 06, 2025 at 10:51:06AM -0500, Brian Foster wrote:
+> On Wed, Nov 05, 2025 at 01:41:00PM -0800, Darrick J. Wong wrote:
+> > On Wed, Nov 05, 2025 at 10:27:52AM -0500, Brian Foster wrote:
+> > > On Tue, Nov 04, 2025 at 04:07:16PM -0800, Darrick J. Wong wrote:
+> > > > On Thu, Oct 16, 2025 at 03:02:58PM -0400, Brian Foster wrote:
+> > > > > Zhang Yi points out that the dynamic folio_batch allocation in
+> > > > > iomap_fill_dirty_folios() is problematic for the ext4 on iomap work
+> > > > > that is under development because it doesn't sufficiently handle the
+> > > > > allocation failure case (by allowing a retry, for example).
+> > > > > 
+> > > > > The dynamic allocation was initially added for simplicity and to
+> > > > > help indicate whether the batch was used or not by the calling fs.
+> > > > > To address this issue, put the batch on the stack of
+> > > > > iomap_zero_range() and use a flag to control whether the batch
+> > > > > should be used in the iomap folio lookup path. This keeps things
+> > > > > simple and eliminates the concern for ext4 on iomap.
+> > > > > 
+> > > > > Signed-off-by: Brian Foster <bfoster@redhat.com>
+> > > > 
+> > > > Hrmm, so who kmallocs the fbatch array now?  Is that left as an exercise
+> > > > to the filesystem?  I'm confused because I don't see the kmalloc call
+> > > > reappear elsewhere, at least not in this patch.
+> > > > 
+> > > 
+> > > It's no longer dynamically allocated. It's allocated on the stack in
+> > > iomap_zero_range(), and a flag is set on the iomap if the pagecache
+> > > lookup occurs. The allocation is a potential problem for the ext4 on
+> > > iomap port, so this elides the need for dealing with alloc failures and
+> > > whatnot.
+> > 
+> > Oh, silly me.  I got mixed up thinking that the deleted kmalloc was
+> > allocating folio_batch::folios whereas in reality the kmalloc was for
+> > the entire struct folio_batch.  So yes, it's allocated on the stack.
+> > Sorry about the noise.
+> > 
+> 
+> Np.. This alloc was also just brought up here:
+> 
+> https://lore.kernel.org/linux-xfs/aQu8B63pEAzGRAkj@dread.disaster.area/
+> 
+> ... so I'm wondering if this should be split off into a standalone patch
+> to try and land sooner than the rest (assuming I can get R-b's)..?
 
-> On Thu, Nov 06 2025, Amir Goldstein wrote:
->
->> [...]
->>
->>> >>> fuse_entry_out was extended once and fuse_reply_entry()
->>> >>> sends the size of the struct.
->>> >>
->>> >> Sorry, I'm confused. Where does fuse_reply_entry() send the size?
->>
->> Sorry, I meant to say that the reply size is variable.
->> The size is obviously determined at init time.
->>
->>> >>
->>> >>> However fuse_reply_create() sends it with fuse_open_out
->>> >>> appended and fuse_add_direntry_plus() does not seem to write
->>> >>> record size at all, so server and client will need to agree on the
->>> >>> size of fuse_entry_out and this would need to be backward compat.
->>> >>> If both server and client declare support for FUSE_LOOKUP_HANDLE
->>> >>> it should be fine (?).
->>> >>
->>> >> If max_handle size becomes a value in fuse_init_out, server and
->>> >> client would use it? I think appended fuse_open_out could just
->>> >> follow the dynamic actual size of the handle - code that
->>> >> serializes/deserializes the response has to look up the actual
->>> >> handle size then. For example I wouldn't know what to put in
->>> >> for any of the example/passthrough* file systems as handle size -
->>> >> would need to be 128B, but the actual size will be typically
->>> >> much smaller.
->>> >
->>> > name_to_handle_at ?
->>> >
->>> > I guess the problem here is that technically speaking filesystems cou=
-ld
->>> > have variable sized handles depending on the file.  Sometimes you enc=
-ode
->>> > just the ino/gen of the child file, but other times you might know the
->>> > parent and put that in the handle too.
->>>
->>> Yeah, I don't think it would be reliable for *all* file systems to use
->>> name_to_handle_at on startup on some example file/directory. At least
->>> not without knowing all the details of the underlying passthrough file
->>> system.
->>>
->>
->> Maybe it's not a world-wide general solution, but it is a practical one.
->>
->> My fuse_passthrough library knows how to detect xfs and ext4 and
->> knows about the size of their file handles.
->> https://github.com/amir73il/libfuse/blob/fuse_passthrough/passthrough/fu=
-se_passthrough.cpp#L645
->>
->> A server could optimize for max_handle_size if it knows it or use
->> MAX_HANDLE_SZ if it doesn't.
->>
->> Keep in mind that for the sake of restarting fuse servers (title of this=
- thread)
->> file handles do not need to be the actual filesystem file handles.
->> Server can use its own pid as generation and then all inodes get
->> auto invalidated on server restart.
->>
->> Not invalidating file handles on server restart, because the file handles
->> are persistent file handles is an optimization.
->>
->> LOOKUP_HANDLE still needs to provide the inode+gen of the parent
->> which LOOKUP currently does not.
->
-> One additional complication I just realised is that FUSE_LOOKUP already
-> uses up all the 3 in_args.
+Yes, that's a good idea.  I'll likely rvb it, and we can armtwist the
+reporter to test it for us too. ;)
 
-Ok, ignore me.  We can have 4 in_args, not 3.
+--D
 
-Cheers
---=20
-Lu=C3=ADs
-
-> So, my initial plan of having FUSE_LOOKUP_HANDLE using a similar structure
-> to FUSE_LOOKUP, with the additional parent handle passed to the server
-> through the in_args needs a different solution.
->
-> (Anyway, I'll need to read through the whole thread(s) again to better
-> digest all the information.)
->
-> Cheers,
-> --=20
-> Lu=C3=ADs
->
->
->>
->> I did not understand why Darrick's suggestion of a flag that ino+gen
->> suffice is any different then max_handle_size =3D 12 and using the
->> standard FILEID_INO64_GEN in that case?
->>
->> Thanks,
->> Amir.
-
+> Brian
+> 
+> > --D
+> > 
+> > > This is probably how it should have been done from the start, but when
+> > > the flag related feedback came along it was deep enough in test/review
+> > > cycle that I preferred to do it separately.
+> > > 
+> > > Brian
+> > > 
+> > > > --D
+> > > > 
+> > > > > ---
+> > > > >  fs/iomap/buffered-io.c | 45 ++++++++++++++++++++++++++++--------------
+> > > > >  fs/iomap/iter.c        |  6 +++---
+> > > > >  fs/xfs/xfs_iomap.c     | 11 ++++++-----
+> > > > >  include/linux/iomap.h  |  8 ++++++--
+> > > > >  4 files changed, 45 insertions(+), 25 deletions(-)
+> > > > > 
+> > > > > diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> > > > > index 51ecb6d48feb..05ff82c5432e 100644
+> > > > > --- a/fs/iomap/buffered-io.c
+> > > > > +++ b/fs/iomap/buffered-io.c
+> > > > > @@ -761,7 +761,7 @@ static struct folio *__iomap_get_folio(struct iomap_iter *iter,
+> > > > >  	if (!mapping_large_folio_support(iter->inode->i_mapping))
+> > > > >  		len = min_t(size_t, len, PAGE_SIZE - offset_in_page(pos));
+> > > > >  
+> > > > > -	if (iter->fbatch) {
+> > > > > +	if (iter->iomap.flags & IOMAP_F_FOLIO_BATCH) {
+> > > > >  		struct folio *folio = folio_batch_next(iter->fbatch);
+> > > > >  
+> > > > >  		if (!folio)
+> > > > > @@ -858,7 +858,7 @@ static int iomap_write_begin(struct iomap_iter *iter,
+> > > > >  	 * process so return and let the caller iterate and refill the batch.
+> > > > >  	 */
+> > > > >  	if (!folio) {
+> > > > > -		WARN_ON_ONCE(!iter->fbatch);
+> > > > > +		WARN_ON_ONCE(!(iter->iomap.flags & IOMAP_F_FOLIO_BATCH));
+> > > > >  		return 0;
+> > > > >  	}
+> > > > >  
+> > > > > @@ -1473,23 +1473,34 @@ static int iomap_zero_iter(struct iomap_iter *iter, bool *did_zero,
+> > > > >  	return status;
+> > > > >  }
+> > > > >  
+> > > > > -loff_t
+> > > > > +/**
+> > > > > + * iomap_fill_dirty_folios - fill a folio batch with dirty folios
+> > > > > + * @iter: Iteration structure
+> > > > > + * @start: Start offset of range. Updated based on lookup progress.
+> > > > > + * @end: End offset of range
+> > > > > + *
+> > > > > + * Returns the associated control flag if the folio batch is available and the
+> > > > > + * lookup performed. The caller is responsible to set the flag on the associated
+> > > > > + * iomap.
+> > > > > + */
+> > > > > +unsigned int
+> > > > >  iomap_fill_dirty_folios(
+> > > > >  	struct iomap_iter	*iter,
+> > > > > -	loff_t			offset,
+> > > > > -	loff_t			length)
+> > > > > +	loff_t			*start,
+> > > > > +	loff_t			end)
+> > > > >  {
+> > > > >  	struct address_space	*mapping = iter->inode->i_mapping;
+> > > > > -	pgoff_t			start = offset >> PAGE_SHIFT;
+> > > > > -	pgoff_t			end = (offset + length - 1) >> PAGE_SHIFT;
+> > > > > +	pgoff_t			pstart = *start >> PAGE_SHIFT;
+> > > > > +	pgoff_t			pend = (end - 1) >> PAGE_SHIFT;
+> > > > >  
+> > > > > -	iter->fbatch = kmalloc(sizeof(struct folio_batch), GFP_KERNEL);
+> > > > > -	if (!iter->fbatch)
+> > > > > -		return offset + length;
+> > > > > -	folio_batch_init(iter->fbatch);
+> > > > > +	if (!iter->fbatch) {
+> > > > > +		*start = end;
+> > > > > +		return 0;
+> > > > > +	}
+> > > > >  
+> > > > > -	filemap_get_folios_dirty(mapping, &start, end, iter->fbatch);
+> > > > > -	return (start << PAGE_SHIFT);
+> > > > > +	filemap_get_folios_dirty(mapping, &pstart, pend, iter->fbatch);
+> > > > > +	*start = (pstart << PAGE_SHIFT);
+> > > > > +	return IOMAP_F_FOLIO_BATCH;
+> > > > >  }
+> > > > >  EXPORT_SYMBOL_GPL(iomap_fill_dirty_folios);
+> > > > >  
+> > > > > @@ -1498,17 +1509,21 @@ iomap_zero_range(struct inode *inode, loff_t pos, loff_t len, bool *did_zero,
+> > > > >  		const struct iomap_ops *ops,
+> > > > >  		const struct iomap_write_ops *write_ops, void *private)
+> > > > >  {
+> > > > > +	struct folio_batch fbatch;
+> > > > >  	struct iomap_iter iter = {
+> > > > >  		.inode		= inode,
+> > > > >  		.pos		= pos,
+> > > > >  		.len		= len,
+> > > > >  		.flags		= IOMAP_ZERO,
+> > > > >  		.private	= private,
+> > > > > +		.fbatch		= &fbatch,
+> > > > >  	};
+> > > > >  	struct address_space *mapping = inode->i_mapping;
+> > > > >  	int ret;
+> > > > >  	bool range_dirty;
+> > > > >  
+> > > > > +	folio_batch_init(&fbatch);
+> > > > > +
+> > > > >  	/*
+> > > > >  	 * To avoid an unconditional flush, check pagecache state and only flush
+> > > > >  	 * if dirty and the fs returns a mapping that might convert on
+> > > > > @@ -1519,11 +1534,11 @@ iomap_zero_range(struct inode *inode, loff_t pos, loff_t len, bool *did_zero,
+> > > > >  	while ((ret = iomap_iter(&iter, ops)) > 0) {
+> > > > >  		const struct iomap *srcmap = iomap_iter_srcmap(&iter);
+> > > > >  
+> > > > > -		if (WARN_ON_ONCE(iter.fbatch &&
+> > > > > +		if (WARN_ON_ONCE((iter.iomap.flags & IOMAP_F_FOLIO_BATCH) &&
+> > > > >  				 srcmap->type != IOMAP_UNWRITTEN))
+> > > > >  			return -EIO;
+> > > > >  
+> > > > > -		if (!iter.fbatch &&
+> > > > > +		if (!(iter.iomap.flags & IOMAP_F_FOLIO_BATCH) &&
+> > > > >  		    (srcmap->type == IOMAP_HOLE ||
+> > > > >  		     srcmap->type == IOMAP_UNWRITTEN)) {
+> > > > >  			s64 status;
+> > > > > diff --git a/fs/iomap/iter.c b/fs/iomap/iter.c
+> > > > > index 66ca12aac57d..026d85823c76 100644
+> > > > > --- a/fs/iomap/iter.c
+> > > > > +++ b/fs/iomap/iter.c
+> > > > > @@ -8,10 +8,10 @@
+> > > > >  
+> > > > >  static inline void iomap_iter_reset_iomap(struct iomap_iter *iter)
+> > > > >  {
+> > > > > -	if (iter->fbatch) {
+> > > > > +	if (iter->iomap.flags & IOMAP_F_FOLIO_BATCH) {
+> > > > >  		folio_batch_release(iter->fbatch);
+> > > > > -		kfree(iter->fbatch);
+> > > > > -		iter->fbatch = NULL;
+> > > > > +		folio_batch_reinit(iter->fbatch);
+> > > > > +		iter->iomap.flags &= ~IOMAP_F_FOLIO_BATCH;
+> > > > >  	}
+> > > > >  
+> > > > >  	iter->status = 0;
+> > > > > diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
+> > > > > index 535bf3b8705d..01833aca37ac 100644
+> > > > > --- a/fs/xfs/xfs_iomap.c
+> > > > > +++ b/fs/xfs/xfs_iomap.c
+> > > > > @@ -1775,7 +1775,6 @@ xfs_buffered_write_iomap_begin(
+> > > > >  	 */
+> > > > >  	if (flags & IOMAP_ZERO) {
+> > > > >  		xfs_fileoff_t eof_fsb = XFS_B_TO_FSB(mp, XFS_ISIZE(ip));
+> > > > > -		u64 end;
+> > > > >  
+> > > > >  		if (isnullstartblock(imap.br_startblock) &&
+> > > > >  		    offset_fsb >= eof_fsb)
+> > > > > @@ -1795,12 +1794,14 @@ xfs_buffered_write_iomap_begin(
+> > > > >  		 */
+> > > > >  		if (imap.br_state == XFS_EXT_UNWRITTEN &&
+> > > > >  		    offset_fsb < eof_fsb) {
+> > > > > -			loff_t len = min(count,
+> > > > > -					 XFS_FSB_TO_B(mp, imap.br_blockcount));
+> > > > > +			loff_t foffset = offset, fend;
+> > > > >  
+> > > > > -			end = iomap_fill_dirty_folios(iter, offset, len);
+> > > > > +			fend = offset +
+> > > > > +			       min(count, XFS_FSB_TO_B(mp, imap.br_blockcount));
+> > > > > +			iomap_flags |= iomap_fill_dirty_folios(iter, &foffset,
+> > > > > +							       fend);
+> > > > >  			end_fsb = min_t(xfs_fileoff_t, end_fsb,
+> > > > > -					XFS_B_TO_FSB(mp, end));
+> > > > > +					XFS_B_TO_FSB(mp, foffset));
+> > > > >  		}
+> > > > >  
+> > > > >  		xfs_trim_extent(&imap, offset_fsb, end_fsb - offset_fsb);
+> > > > > diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+> > > > > index cd0f573156d6..79da917ff45e 100644
+> > > > > --- a/include/linux/iomap.h
+> > > > > +++ b/include/linux/iomap.h
+> > > > > @@ -87,6 +87,9 @@ struct vm_fault;
+> > > > >  /*
+> > > > >   * Flags set by the core iomap code during operations:
+> > > > >   *
+> > > > > + * IOMAP_F_FOLIO_BATCH indicates that the folio batch mechanism is active
+> > > > > + * for this operation, set by iomap_fill_dirty_folios().
+> > > > > + *
+> > > > >   * IOMAP_F_SIZE_CHANGED indicates to the iomap_end method that the file size
+> > > > >   * has changed as the result of this write operation.
+> > > > >   *
+> > > > > @@ -94,6 +97,7 @@ struct vm_fault;
+> > > > >   * range it covers needs to be remapped by the high level before the operation
+> > > > >   * can proceed.
+> > > > >   */
+> > > > > +#define IOMAP_F_FOLIO_BATCH	(1U << 13)
+> > > > >  #define IOMAP_F_SIZE_CHANGED	(1U << 14)
+> > > > >  #define IOMAP_F_STALE		(1U << 15)
+> > > > >  
+> > > > > @@ -351,8 +355,8 @@ bool iomap_dirty_folio(struct address_space *mapping, struct folio *folio);
+> > > > >  int iomap_file_unshare(struct inode *inode, loff_t pos, loff_t len,
+> > > > >  		const struct iomap_ops *ops,
+> > > > >  		const struct iomap_write_ops *write_ops);
+> > > > > -loff_t iomap_fill_dirty_folios(struct iomap_iter *iter, loff_t offset,
+> > > > > -		loff_t length);
+> > > > > +unsigned int iomap_fill_dirty_folios(struct iomap_iter *iter, loff_t *start,
+> > > > > +		loff_t end);
+> > > > >  int iomap_zero_range(struct inode *inode, loff_t pos, loff_t len,
+> > > > >  		bool *did_zero, const struct iomap_ops *ops,
+> > > > >  		const struct iomap_write_ops *write_ops, void *private);
+> > > > > -- 
+> > > > > 2.51.0
+> > > > > 
+> > > > > 
+> > > > 
+> > > 
+> > > 
+> > 
+> 
 
