@@ -1,274 +1,114 @@
-Return-Path: <linux-fsdevel+bounces-67344-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67345-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBE5AC3C3BE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 06 Nov 2025 17:03:28 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB355C3C49F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 06 Nov 2025 17:12:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F2C51AA72D4
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Nov 2025 16:03:46 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 76C9A4EE0CD
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Nov 2025 16:08:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98CE633EB00;
-	Thu,  6 Nov 2025 16:02:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B90F032C92B;
+	Thu,  6 Nov 2025 16:08:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f3bBJM7M"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QEyqOps4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD39434C127;
-	Thu,  6 Nov 2025 16:02:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4403B302CD0
+	for <linux-fsdevel@vger.kernel.org>; Thu,  6 Nov 2025 16:08:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762444969; cv=none; b=fVLg8Fkl2wTHebPCRECXHkHS8apEuzfVkXLbg8ZXSJX5AnKzFp504JyjMFoaiMY2M14chTEvuh957+QdpktFZ0maErttn5ftVMVWBo0IvGzgpzKq8F33778/Dileue4HNYR5Ak6e6xVrsOvFVnbvyPiDbLofXUMPjyj1BLp+dsc=
+	t=1762445294; cv=none; b=vCAXK/r+WqVZSmHG3INRKvlpL4PjFrjRKf61Vgoh9QlMMRPbTlQBBULE8l7TJEfHigP+mGjJUuHHfkDVEqElcjTiF+N7O6sfuKr63QSeG1jXGzYlQe4vrmRTiLeTxCHu487eeTAx4iqK/1jjkpCbX8FI4zjUg7Y6yJJ3YuygxSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762444969; c=relaxed/simple;
-	bh=HY4WkagOCSSLnIUoikHDOt/pBlqaTxH2hmXbuOnRe6Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pGXAOpvjkYcM/Umir4LfCJhsErmZt4dH41xbL+qkP3lUVyteIZm2y/dvK5uPOIp/kEwHXrLz4ADzWOKodPhBOEZw3jAVW0TP5267mnTu8dCS4DyqAtau+FqpmDFbjY8bGcyovBc+rj7sRj6JDYKq3HXrDZlf2voEmsrHfM1hVlI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f3bBJM7M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18787C4CEFB;
-	Thu,  6 Nov 2025 16:02:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762444968;
-	bh=HY4WkagOCSSLnIUoikHDOt/pBlqaTxH2hmXbuOnRe6Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=f3bBJM7MWHciQta/a44zHsq26o7EEcl95Gj9sYuDxNZ2W3qohpu6JacKFC4MkIY5/
-	 oipfbgirthcXoz0hns1dpiMAKvLYEOFUQuNvIW/GZfCc2NvZp3wgQp5J2z+j3qFmWK
-	 0BtGHSR4x5EvhzrA2Epco5Y9hyiv+moKWc1whuc28dZgAzQk4wjTVECygwZIgY180t
-	 EXqNxeL6ItFADftwme0msZ0EzoH5w2qqipiFrXmSAT59G97N3LIpTwUuQc7wjoNtVy
-	 L2KiyutXTNEu4f51KkGOuvgZRxMuhNnZhYLLOLFIBM2fmiJvyVrbNlw6DbT6bWhQkc
-	 yV+/yJrsx6owQ==
-Date: Thu, 6 Nov 2025 08:02:47 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: zlang@redhat.com, neal@gompa.dev, fstests@vger.kernel.org,
-	linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	joannelkoong@gmail.com, bernd@bsbernd.com
-Subject: Re: [PATCH 22/33] generic/631: don't run test if we can't mount
- overlayfs
-Message-ID: <20251106160247.GH196391@frogsfrogsfrogs>
-References: <176169819804.1433624.11241650941850700038.stgit@frogsfrogsfrogs>
- <176169820388.1433624.12333256574549591904.stgit@frogsfrogsfrogs>
- <aQNNZ6lxeMntTifa@amir-ThinkPad-T480>
- <20251105231228.GG196358@frogsfrogsfrogs>
- <CAOQ4uxhQt6LNo7QaN3rWy3eCeAS9r0xNcMW4ZvdrY5YgMbq66g@mail.gmail.com>
+	s=arc-20240116; t=1762445294; c=relaxed/simple;
+	bh=laKqait+cSw79exUwq45fM39p/9bpuzRkaDsWou+UUM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dBewiRMReInzNtaeA5fdMcEwP1gqQ1mumvo25Y6TlvZfQcb6wNIdpefKnlecITt3mZbHkHNDPIxZwUDyHxKztr4T8ZD9fsWDsyQeb5aMBUuqJRtUD06CMpHQzXWRjPavpo8oLVmtj1h/A/n/OPc0l+UFup4qtj1OLywO5rdsALc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QEyqOps4; arc=none smtp.client-ip=209.85.161.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-656c07e3241so521505eaf.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Nov 2025 08:08:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762445292; x=1763050092; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=laKqait+cSw79exUwq45fM39p/9bpuzRkaDsWou+UUM=;
+        b=QEyqOps4ZPuFaxNwz7qVYBfteyeM5Rbr7S55xnO9XpfQR/7Wyu5DQGDCcSqyaze3DO
+         r7MhlRfD+df7X4EU82uCXbQWZthhE7QqMXd2z5ef7OUYxg22DuqRvUYNpZKAS1k8AX+A
+         u468RyAn1Wb8QXkwaJDNqG10vvrjUl3sgEX/XLJX+fdnUKbWk58fty6F2V0OPIooqf8l
+         jL4vlTrN7M2irLqxcReIUBykLsJ9HBRjt4G4aPhjBrTpcpJaTrT99yKywkwRvVKmeI5G
+         8Pa1Aw4mKLd7+kgh57FAKSIgvkUHgOWfmKV4vElxDSmT+NWKerA8CjNO+HCpe8BD/Cx+
+         S7FQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762445292; x=1763050092;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=laKqait+cSw79exUwq45fM39p/9bpuzRkaDsWou+UUM=;
+        b=kji46dbidSj1j0H4hCH2EXq+igRSJmm9Idahez/Q545wc7JitnkOptJEYiaC5R8LHS
+         mKF4ZY8zgYBHw6s4l7Pqt18ju585SvHD/wYVXrupbxcpuYqwG8J5NxPxQuWV1zrXYcH1
+         G7da+QY4mhWCS4Bd5uKCMD+Ba+fSFf1VWUk4xcx5StE7pzroa/0SZpDZ/r1FLa0vIDeT
+         InbCB57Q47YWzwWRK/GdMimM1iWdHRRVrI2Qtf4oC0DksS822GlXomF6wGERkfdfDZDr
+         mMKqT59F4CyeBNtEZdWzmIehRcC+Hhp1GLUGFxsozxObiF7fF9YT2jhYwMFabLz4kx5U
+         6Hrg==
+X-Forwarded-Encrypted: i=1; AJvYcCV7iSSrCFB8Vfc2i9gTKB8Z9ZMEHBs/yqqMdCL40sLKA10xHNZEBKFrS75DsH64NdwwkPx4bOwKlBZSyMPy@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvzWU1vgDGfoVPlCjIfC7T3xJqXrUx7URfQuihVypqlfl9P1G1
+	s8zgX7agcNwUmBJqL1Dl/VuL+bp1m9OK/M8U/uusZVvN5KwP6YQ777+bd5Rm8hEMbEmW3N7+dX0
+	WkoIEoBtODWmk79j27Qv20go40jC78g==
+X-Gm-Gg: ASbGncu8avQQFQL5yi9vGvxmmn9BgTrQJ5RYUYu4lnegW8unahfWNiiZR8tUDSVRC9C
+	IXmXBymJewUJpkW5g1pntdkIIJqu8hW692im+zHUHdXsi5Ih8wX9fMb0E13W9SGra+pcQwqiFCl
+	4cFPmQnNgf64Q0YLf/wnMWjWP8e8hLTJgx4+2DAhvaBjJRu8ZWmXkGW1ACL7Yf+dphyL5LsYGjJ
+	GKU1+bKTnEvbFbwaxiUt5uFXKqZ9CoRe5aoX6e3+hePst6huT+v57iIW2k=
+X-Google-Smtp-Source: AGHT+IHyJijhtJc3B6Ll/keF3ITIBKwvHR+4JfY8UpBRpeV1p3eRhyLieZgGk813hMSy2bjRq6Ou2YEbk+ereSr7dmw=
+X-Received: by 2002:a05:6808:c3ed:b0:44f:df33:7682 with SMTP id
+ 5614622812f47-44fed2e39d9mr3838955b6e.2.1762445292193; Thu, 06 Nov 2025
+ 08:08:12 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxhQt6LNo7QaN3rWy3eCeAS9r0xNcMW4ZvdrY5YgMbq66g@mail.gmail.com>
+References: <2e1db15f-b2b1-487f-9f42-44dc7480b2e2@bsbernd.com>
+ <CAOQ4uxg8sFdFRxKUcAFoCPMXaNY18m4e1PfBXo+GdGxGcKDaFg@mail.gmail.com>
+ <20250916025341.GO1587915@frogsfrogsfrogs> <CAOQ4uxhLM11Zq9P=E1VyN7puvBs80v0HrPU6HqY0LLM6HVc_ZQ@mail.gmail.com>
+ <87ldkm6n5o.fsf@wotan.olymp> <CAOQ4uxg7b0mupCVaouPXPGNN=Ji2XceeceUf8L6pW8+vq3uOMQ@mail.gmail.com>
+ <7ee1e308-c58c-45a0-8ded-6694feae097f@ddn.com> <20251105224245.GP196362@frogsfrogsfrogs>
+ <d57bcfc5-fc3d-4635-ab46-0b9038fb7039@ddn.com> <CAOQ4uxgKZ3Hc+fMg_azN=DWLTj4fq0hsoU4n0M8GA+DsMgJW4g@mail.gmail.com>
+ <20251106154940.GF196391@frogsfrogsfrogs>
+In-Reply-To: <20251106154940.GF196391@frogsfrogsfrogs>
+From: Stef Bon <stefbon@gmail.com>
+Date: Thu, 6 Nov 2025 17:08:00 +0100
+X-Gm-Features: AWmQ_bk-wlOwiF1FtVQ0IxyYR48oRj3xT_blmrLDT_FvQm4nR2RCsvj0RKOoztQ
+Message-ID: <CANXojcwP2jQUpXSZAv_3z5q+=Zrn7M8ffh2_KdcZpEad+XH6_A@mail.gmail.com>
+Subject: Re: [RFC] Another take at restarting FUSE servers
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Amir Goldstein <amir73il@gmail.com>, Bernd Schubert <bschubert@ddn.com>, 
+	Luis Henriques <luis@igalia.com>, Bernd Schubert <bernd@bsbernd.com>, "Theodore Ts'o" <tytso@mit.edu>, 
+	Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Kevin Chen <kchen@ddn.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Nov 06, 2025 at 10:23:04AM +0100, Amir Goldstein wrote:
-> On Thu, Nov 6, 2025 at 12:12 AM Darrick J. Wong <djwong@kernel.org> wrote:
-> >
-> > On Thu, Oct 30, 2025 at 12:35:03PM +0100, Amir Goldstein wrote:
-> > > On Tue, Oct 28, 2025 at 06:26:09PM -0700, Darrick J. Wong wrote:
-> > > > From: Darrick J. Wong <djwong@kernel.org>
-> > > >
-> > > > This test fails on fuse2fs with the following:
-> > > >
-> > > > +mount: /opt/merged0: wrong fs type, bad option, bad superblock on overlay, missing codepage or helper program, or other error.
-> > > > +       dmesg(1) may have more information after failed mount system call.
-> > > >
-> > > > dmesg logs the following:
-> > > >
-> > > > [  764.775172] overlayfs: upper fs does not support tmpfile.
-> > > > [  764.777707] overlayfs: upper fs does not support RENAME_WHITEOUT.
-> > > >
-> > > > From this, it's pretty clear why the test fails -- overlayfs checks that
-> > > > the upper filesystem (fuse2fs) supports RENAME_WHITEOUT and O_TMPFILE.
-> > > > fuse2fs doesn't support either of these, so the mount fails and then the
-> > > > test goes wild.
-> > > >
-> > > > Instead of doing that, let's do an initial test mount with the same
-> > > > options as the workers, and _notrun if that first mount doesn't succeed.
-> > > >
-> > > > Fixes: 210089cfa00315 ("generic: test a deadlock in xfs_rename when whiteing out files")
-> > > > Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
-> > > > ---
-> > > >  tests/generic/631 |   22 ++++++++++++++++++++++
-> > > >  1 file changed, 22 insertions(+)
-> > > >
-> > > >
-> > > > diff --git a/tests/generic/631 b/tests/generic/631
-> > > > index 72bf85e30bdd4b..64e2f911fdd10e 100755
-> > > > --- a/tests/generic/631
-> > > > +++ b/tests/generic/631
-> > > > @@ -64,6 +64,26 @@ stop_workers() {
-> > > >     done
-> > > >  }
-> > > >
-> > > > +require_overlayfs() {
-> > > > +   local tag="check"
-> > > > +   local mergedir="$SCRATCH_MNT/merged$tag"
-> > > > +   local l="lowerdir=$SCRATCH_MNT/lowerdir:$SCRATCH_MNT/lowerdir1"
-> > > > +   local u="upperdir=$SCRATCH_MNT/upperdir$tag"
-> > > > +   local w="workdir=$SCRATCH_MNT/workdir$tag"
-> > > > +   local i="index=off"
-> > > > +
-> > > > +   rm -rf $SCRATCH_MNT/merged$tag
-> > > > +   rm -rf $SCRATCH_MNT/upperdir$tag
-> > > > +   rm -rf $SCRATCH_MNT/workdir$tag
-> > > > +   mkdir $SCRATCH_MNT/merged$tag
-> > > > +   mkdir $SCRATCH_MNT/workdir$tag
-> > > > +   mkdir $SCRATCH_MNT/upperdir$tag
-> > > > +
-> > > > +   _mount -t overlay overlay -o "$l,$u,$w,$i" $mergedir || \
-> > > > +           _notrun "cannot mount overlayfs"
-> > > > +   umount $mergedir
-> > > > +}
-> > > > +
-> > > >  worker() {
-> > > >     local tag="$1"
-> > > >     local mergedir="$SCRATCH_MNT/merged$tag"
-> > > > @@ -91,6 +111,8 @@ worker() {
-> > > >     rm -f $SCRATCH_MNT/workers/$tag
-> > > >  }
-> > > >
-> > > > +require_overlayfs
-> > > > +
-> > > >  for i in $(seq 0 $((4 + LOAD_FACTOR)) ); do
-> > > >     worker $i &
-> > > >  done
-> > > >
-> > >
-> > > I agree in general, but please consider this (untested) cleaner patch
-> >
-> > Yes, this works too.  Since this is your code, could you send it to the
-> > list with a proper commit message (or even just copy mine) and then I
-> > can ack it?
-> >
-> 
-> Attached.
-> Now it's even tested.
-> 
-> I put you down as Suggested-by.
-> Feel free to choose your own roles...
-> 
-> Thanks,
-> Amir.
+Hi,
 
-> From dc31352d6c926e0f6da6238eccbcaa96b1fb89c2 Mon Sep 17 00:00:00 2001
-> From: Amir Goldstein <amir73il@gmail.com>
-> Date: Thu, 30 Oct 2025 12:24:21 +0100
-> Subject: [PATCH] generic/631: don't run test if we can't mount overlayfs
-> 
-> This test fails on fuse2fs with the following:
-> 
-> mount: /opt/merged0: wrong fs type, bad option, bad superblock on overlay,
->        missing codepage or helper program, or other error.
->        dmesg(1) may have more information after failed mount system call.
-> 
-> dmesg logs the following:
-> 
-> [  764.775172] overlayfs: upper fs does not support tmpfile.
-> [  764.777707] overlayfs: upper fs does not support RENAME_WHITEOUT.
-> 
-> From this, it's pretty clear why the test fails -- overlayfs checks that
-> the upper filesystem (fuse2fs) supports RENAME_WHITEOUT and O_TMPFILE.
-> fuse2fs doesn't support either of these, so the mount fails and then the
-> test goes wild.
-> 
-> Instead of doing that, let's do an initial test mount with the same
-> options as the workers, and _notrun if that first mount doesn't succeed.
-> 
-> Fixes: 210089cfa00315 ("generic: test a deadlock in xfs_rename when whiteing out files")
-> Suggested-by: "Darrick J. Wong" <djwong@kernel.org>
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+is implementing a lookup using a handle to be in the kernel?
 
-Works for me,
-Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
+I've written a FUSE fs for sftp using SSH as transport, where the
+lookup call normally has to create a path (relative to the root of the
+sftp) and send that to the remote server.
+It saves the creation of this path if there is a handle available.
+When doing an opendir, this is normally followed by a lookup for every
+dentry. (sftp does not support readdirplus) Now in this case there is
+a handle available (the one used by opendir, or one created with
+open), so the fuse daemon I wrote used that to proceed. (and so not
+create a path).
 
---D
+So it can also go in userspace.
 
-> ---
->  tests/generic/631 | 39 ++++++++++++++++++++++++++++-----------
->  1 file changed, 28 insertions(+), 11 deletions(-)
-> 
-> diff --git a/tests/generic/631 b/tests/generic/631
-> index c38ab771..7dc335aa 100755
-> --- a/tests/generic/631
-> +++ b/tests/generic/631
-> @@ -46,7 +46,6 @@ _require_extra_fs overlay
->  
->  _scratch_mkfs >> $seqres.full
->  _scratch_mount
-> -_supports_filetype $SCRATCH_MNT || _notrun "overlayfs test requires d_type"
->  
->  mkdir $SCRATCH_MNT/lowerdir
->  mkdir $SCRATCH_MNT/lowerdir1
-> @@ -64,7 +63,7 @@ stop_workers() {
->  	done
->  }
->  
-> -worker() {
-> +mount_overlay() {
->  	local tag="$1"
->  	local mergedir="$SCRATCH_MNT/merged$tag"
->  	local l="lowerdir=$SCRATCH_MNT/lowerdir:$SCRATCH_MNT/lowerdir1"
-> @@ -72,25 +71,43 @@ worker() {
->  	local w="workdir=$SCRATCH_MNT/workdir$tag"
->  	local i="index=off"
->  
-> +	rm -rf $SCRATCH_MNT/merged$tag
-> +	rm -rf $SCRATCH_MNT/upperdir$tag
-> +	rm -rf $SCRATCH_MNT/workdir$tag
-> +	mkdir $SCRATCH_MNT/merged$tag
-> +	mkdir $SCRATCH_MNT/workdir$tag
-> +	mkdir $SCRATCH_MNT/upperdir$tag
-> +
-> +	mount -t overlay overlay -o "$l,$u,$w,$i" "$mergedir"
-> +}
-> +
-> +unmount_overlay() {
-> +	local tag="$1"
-> +	local mergedir="$SCRATCH_MNT/merged$tag"
-> +
-> +	_unmount $mergedir
-> +}
-> +
-> +worker() {
-> +	local tag="$1"
-> +	local mergedir="$SCRATCH_MNT/merged$tag"
-> +
->  	touch $SCRATCH_MNT/workers/$tag
->  	while test -e $SCRATCH_MNT/running; do
-> -		rm -rf $SCRATCH_MNT/merged$tag
-> -		rm -rf $SCRATCH_MNT/upperdir$tag
-> -		rm -rf $SCRATCH_MNT/workdir$tag
-> -		mkdir $SCRATCH_MNT/merged$tag
-> -		mkdir $SCRATCH_MNT/workdir$tag
-> -		mkdir $SCRATCH_MNT/upperdir$tag
-> -
-> -		mount -t overlay overlay -o "$l,$u,$w,$i" $mergedir
-> +		mount_overlay $tag
->  		mv $mergedir/etc/access.conf $mergedir/etc/access.conf.bak
->  		touch $mergedir/etc/access.conf
->  		mv $mergedir/etc/access.conf $mergedir/etc/access.conf.bak
->  		touch $mergedir/etc/access.conf
-> -		_unmount $mergedir
-> +		unmount_overlay $tag
->  	done
->  	rm -f $SCRATCH_MNT/workers/$tag
->  }
->  
-> +mount_overlay check || \
-> +	_notrun "cannot mount overlayfs with underlying filesystem $FSTYP"
-> +unmount_overlay check
-> +
->  for i in $(seq 0 $((4 + LOAD_FACTOR)) ); do
->  	worker $i &
->  done
-> -- 
-> 2.51.1
-> 
-
+Stef
 
