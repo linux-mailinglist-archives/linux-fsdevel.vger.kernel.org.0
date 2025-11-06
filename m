@@ -1,185 +1,182 @@
-Return-Path: <linux-fsdevel+bounces-67340-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67343-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E137C3C2AA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 06 Nov 2025 16:49:16 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id E105AC3C37F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 06 Nov 2025 17:01:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 723DF1898E10
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Nov 2025 15:49:40 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 079034FE60C
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Nov 2025 15:59:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A63432E130;
-	Thu,  6 Nov 2025 15:49:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C59C934A76F;
+	Thu,  6 Nov 2025 15:58:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gs6IhAOZ"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="pnHNp4a7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD73A32AADD
-	for <linux-fsdevel@vger.kernel.org>; Thu,  6 Nov 2025 15:49:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15FEA343D98;
+	Thu,  6 Nov 2025 15:58:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762444148; cv=none; b=gzrRv6JCJ8BOyfFgnYK6yzQB9uqdAAFJSUgcStVIVM992kYzgQ99gVnM9h/6x7Fqdl+jSOPqIpr/QpvJnp1uAONXQVJOesX7W7lgh9uV+IZ6Qt/kG9K3ORRSOMTkmk5xdWghf61bwhNx/0nCrE9y4wKIrZgq83mDwIwBvXhKMbA=
+	t=1762444728; cv=none; b=JFhdDTnDO9sOgVJZB9fxZQmI//RIY5Gxrih4G2U5Hh4InMjvhTLHzGj29SQVjKWpg+/04iaSyv4K9OsBB0YsDbJjHMQvkidBGsYxyzzu/cvwr1XUZFAum59MSG9FaprqggvjUwm6DGP5e8y8CmORUWXqF3kn9/AOLVbPz8154Xo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762444148; c=relaxed/simple;
-	bh=RsD9gD+c8mzpiCWgPcSjchRv1Gi9fsZ7DxP8IbufyhU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kZXC6WMGMj3DNAUwDpt2Bc1u6bB3RJ+ltVvtwX84LQfkhThHEzfyYWBfBlhC9CKTCBh2mQgzAn/gpT8qQClj7kTEH6LkD7TL6aHm3w7c5wuBDerkx6XwjPEZA4Mb290JQm7Bt6lPwDu437AMUHfIdLKTm8OkFjJnSgkqqMhCRkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gs6IhAOZ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762444143;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YVcAGRzZwHlVl2fhSAFXgvU2Ck+KPoFTTbeyJpqT2WA=;
-	b=gs6IhAOZZRm8puZghF9yGUaVoDusPSem2cHnRrsIdu6zNAELSfUIo2craer7rQF5naMru5
-	51UJgHvwrTjgegDEN7Wv6lu6SoN/LNMIUie1XylNqwGrvJ8lX0gBktecGZ296TJvsItstI
-	X0s384akP5OF04uBwhAtKhxmVB/eejs=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-512-JHJmxbs4MFmse2DR-awrPQ-1; Thu,
- 06 Nov 2025 10:48:53 -0500
-X-MC-Unique: JHJmxbs4MFmse2DR-awrPQ-1
-X-Mimecast-MFC-AGG-ID: JHJmxbs4MFmse2DR-awrPQ_1762444129
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7CD4B19560A2;
-	Thu,  6 Nov 2025 15:48:49 +0000 (UTC)
-Received: from bfoster (unknown [10.22.88.135])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C106319560A7;
-	Thu,  6 Nov 2025 15:48:48 +0000 (UTC)
-Date: Thu, 6 Nov 2025 10:53:18 -0500
-From: Brian Foster <bfoster@redhat.com>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH 6/6] xfs: replace zero range flush with folio batch
-Message-ID: <aQzEbqc3nRTWfdtB@bfoster>
-References: <20251016190303.53881-1-bfoster@redhat.com>
- <20251016190303.53881-7-bfoster@redhat.com>
- <20251105223715.GI196370@frogsfrogsfrogs>
+	s=arc-20240116; t=1762444728; c=relaxed/simple;
+	bh=3kuQkXSOQM+wblCbfuc568D67T+5c6qCnYVhC9PzB10=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=effeIoghFvBXKQ1mhm5ep+dEdhkiNkxqBQVihaJGwHU7PddavmPZE4c7TVMi27kJ6HgajTGAa9W97WyBdUS3EpGdFApr1KvmLwPrD+NAlL2xmOp+hYPeFM7fSoUP9APWVe1D7hyN8TjoYXuaaD7BPRto3s9PhC0N47uXZTLGPuk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=pnHNp4a7; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
+	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=1EO13qWLyLQKe+R/NAhnJnKcCSI1DnMuIB44Th05gng=; b=pnHNp4a71gdu7KTf4HMz0rA3pv
+	8TS3K82WU/UGTtbYvjYSU2YmKKCniv3Jm6iL1xWtFdaIwGjgug9oSbaTQ/AUEkgmfeBUoR2SH5V8V
+	4pbT9FR1E+zCkMwnA/CX60+LzXQCb5QblB4g2R+Kmw0HzKF73QzhRhr4Wb8/JYAiBT/EpGvnJg9xi
+	RFEoJA3o7+hUx81f2qtPEQoZ+jE9LwA1XXR/KGPzm2c4y273aajytUeeay1kcWGMcSUiG2xPDus+g
+	lAcEDNnoHZiwgsvZGR2taXMqWN6ASCjb2OQHv1r0mDtUf2JQC+8/hbtKjJ8AuH6ei/WzMgg9jCIxO
+	Qd9TvdWA==;
+Received: from bl17-145-117.dsl.telepac.pt ([188.82.145.117] helo=localhost)
+	by fanzine2.igalia.com with utf8esmtpsa 
+	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1vH2Nb-0034SO-W7; Thu, 06 Nov 2025 16:58:32 +0100
+From: Luis Henriques <luis@igalia.com>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Bernd Schubert <bschubert@ddn.com>,  "Darrick J. Wong"
+ <djwong@kernel.org>,  Bernd Schubert <bernd@bsbernd.com>,  "Theodore Ts'o"
+ <tytso@mit.edu>,  Miklos Szeredi <miklos@szeredi.hu>,
+  linux-fsdevel@vger.kernel.org,  linux-kernel@vger.kernel.org,  Kevin Chen
+ <kchen@ddn.com>
+Subject: Re: [RFC] Another take at restarting FUSE servers
+In-Reply-To: <874ir7qjov.fsf@wotan.olymp> (Luis Henriques's message of "Thu,
+	06 Nov 2025 15:12:16 +0000")
+References: <2e57be4f-e61b-4a37-832d-14bdea315126@bsbernd.com>
+	<20250912145857.GQ8117@frogsfrogsfrogs>
+	<CAOQ4uxhm3=P-kJn3Liu67bhhMODZOM7AUSLFJRiy_neuz6g80g@mail.gmail.com>
+	<2e1db15f-b2b1-487f-9f42-44dc7480b2e2@bsbernd.com>
+	<CAOQ4uxg8sFdFRxKUcAFoCPMXaNY18m4e1PfBXo+GdGxGcKDaFg@mail.gmail.com>
+	<20250916025341.GO1587915@frogsfrogsfrogs>
+	<CAOQ4uxhLM11Zq9P=E1VyN7puvBs80v0HrPU6HqY0LLM6HVc_ZQ@mail.gmail.com>
+	<87ldkm6n5o.fsf@wotan.olymp>
+	<CAOQ4uxg7b0mupCVaouPXPGNN=Ji2XceeceUf8L6pW8+vq3uOMQ@mail.gmail.com>
+	<7ee1e308-c58c-45a0-8ded-6694feae097f@ddn.com>
+	<20251105224245.GP196362@frogsfrogsfrogs>
+	<d57bcfc5-fc3d-4635-ab46-0b9038fb7039@ddn.com>
+	<CAOQ4uxgKZ3Hc+fMg_azN=DWLTj4fq0hsoU4n0M8GA+DsMgJW4g@mail.gmail.com>
+	<874ir7qjov.fsf@wotan.olymp>
+Date: Thu, 06 Nov 2025 15:58:31 +0000
+Message-ID: <87zf8zp2zc.fsf@wotan.olymp>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251105223715.GI196370@frogsfrogsfrogs>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 05, 2025 at 02:37:15PM -0800, Darrick J. Wong wrote:
-> On Thu, Oct 16, 2025 at 03:03:03PM -0400, Brian Foster wrote:
-> > Now that the zero range pagecache flush is purely isolated to
-> > providing zeroing correctness in this case, we can remove it and
-> > replace it with the folio batch mechanism that is used for handling
-> > unwritten extents.
-> > 
-> > This is still slightly odd in that XFS reports a hole vs. a mapping
-> > that reflects the COW fork extents, but that has always been the
-> > case in this situation and so a separate issue. We drop the iomap
-> > warning that assumes the folio batch is always associated with
-> > unwritten mappings, but this is mainly a development assertion as
-> > otherwise the core iomap fbatch code doesn't care much about the
-> > mapping type if it's handed the set of folios to process.
-> > 
-> > Signed-off-by: Brian Foster <bfoster@redhat.com>
-> > ---
-> >  fs/iomap/buffered-io.c |  4 ----
-> >  fs/xfs/xfs_iomap.c     | 16 ++++------------
-> >  2 files changed, 4 insertions(+), 16 deletions(-)
-> > 
-> > diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> > index d6de689374c3..7bc4b8d090ee 100644
-> > --- a/fs/iomap/buffered-io.c
-> > +++ b/fs/iomap/buffered-io.c
-> > @@ -1534,10 +1534,6 @@ iomap_zero_range(struct inode *inode, loff_t pos, loff_t len, bool *did_zero,
-> >  	while ((ret = iomap_iter(&iter, ops)) > 0) {
-> >  		const struct iomap *srcmap = iomap_iter_srcmap(&iter);
-> >  
-> > -		if (WARN_ON_ONCE((iter.iomap.flags & IOMAP_F_FOLIO_BATCH) &&
-> > -				 srcmap->type != IOMAP_UNWRITTEN))
-> > -			return -EIO;
-> > -
-> >  		if (!(iter.iomap.flags & IOMAP_F_FOLIO_BATCH) &&
-> >  		    (srcmap->type == IOMAP_HOLE ||
-> >  		     srcmap->type == IOMAP_UNWRITTEN)) {
-> > diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
-> > index 29f1462819fa..5a845a0ded79 100644
-> > --- a/fs/xfs/xfs_iomap.c
-> > +++ b/fs/xfs/xfs_iomap.c
-> > @@ -1704,7 +1704,6 @@ xfs_buffered_write_iomap_begin(
-> >  {
-> >  	struct iomap_iter	*iter = container_of(iomap, struct iomap_iter,
-> >  						     iomap);
-> > -	struct address_space	*mapping = inode->i_mapping;
-> >  	struct xfs_inode	*ip = XFS_I(inode);
-> >  	struct xfs_mount	*mp = ip->i_mount;
-> >  	xfs_fileoff_t		offset_fsb = XFS_B_TO_FSBT(mp, offset);
-> > @@ -1736,7 +1735,6 @@ xfs_buffered_write_iomap_begin(
-> >  	if (error)
-> >  		return error;
-> >  
-> > -restart:
-> >  	error = xfs_ilock_for_iomap(ip, flags, &lockmode);
-> >  	if (error)
-> >  		return error;
-> > @@ -1812,16 +1810,10 @@ xfs_buffered_write_iomap_begin(
-> >  		xfs_trim_extent(&imap, offset_fsb,
-> >  			    cmap.br_startoff + cmap.br_blockcount - offset_fsb);
-> >  		start = XFS_FSB_TO_B(mp, imap.br_startoff);
-> > -		end = XFS_FSB_TO_B(mp,
-> > -				   imap.br_startoff + imap.br_blockcount) - 1;
-> > -		if (filemap_range_needs_writeback(mapping, start, end)) {
-> > -			xfs_iunlock(ip, lockmode);
-> > -			error = filemap_write_and_wait_range(mapping, start,
-> > -							     end);
-> > -			if (error)
-> > -				return error;
-> > -			goto restart;
-> > -		}
-> > +		end = XFS_FSB_TO_B(mp, imap.br_startoff + imap.br_blockcount);
-> > +		iomap_flags |= iomap_fill_dirty_folios(iter, &start, end);
-> > +		xfs_trim_extent(&imap, offset_fsb,
-> > +				XFS_B_TO_FSB(mp, start) - offset_fsb);
-> 
-> Hrm, ok.  This replaces the pagecache flush with passing in folios and
-> letting iomap zero the folios regardless of whatever's in the mapping.
-> That seems to me like a reasonable way to solve the immediate problem
-> without the huge reengineering ->iomap_begin project.
-> 
+On Thu, Nov 06 2025, Luis Henriques wrote:
 
-Yeah.. modulo a potential clean up to have this actually report the COW
-mapping which might be incrementally cleaner. I'll take a closer look at
-that when I get back to this..
+> On Thu, Nov 06 2025, Amir Goldstein wrote:
+>
+>> [...]
+>>
+>>> >>> fuse_entry_out was extended once and fuse_reply_entry()
+>>> >>> sends the size of the struct.
+>>> >>
+>>> >> Sorry, I'm confused. Where does fuse_reply_entry() send the size?
+>>
+>> Sorry, I meant to say that the reply size is variable.
+>> The size is obviously determined at init time.
+>>
+>>> >>
+>>> >>> However fuse_reply_create() sends it with fuse_open_out
+>>> >>> appended and fuse_add_direntry_plus() does not seem to write
+>>> >>> record size at all, so server and client will need to agree on the
+>>> >>> size of fuse_entry_out and this would need to be backward compat.
+>>> >>> If both server and client declare support for FUSE_LOOKUP_HANDLE
+>>> >>> it should be fine (?).
+>>> >>
+>>> >> If max_handle size becomes a value in fuse_init_out, server and
+>>> >> client would use it? I think appended fuse_open_out could just
+>>> >> follow the dynamic actual size of the handle - code that
+>>> >> serializes/deserializes the response has to look up the actual
+>>> >> handle size then. For example I wouldn't know what to put in
+>>> >> for any of the example/passthrough* file systems as handle size -
+>>> >> would need to be 128B, but the actual size will be typically
+>>> >> much smaller.
+>>> >
+>>> > name_to_handle_at ?
+>>> >
+>>> > I guess the problem here is that technically speaking filesystems cou=
+ld
+>>> > have variable sized handles depending on the file.  Sometimes you enc=
+ode
+>>> > just the ino/gen of the child file, but other times you might know the
+>>> > parent and put that in the handle too.
+>>>
+>>> Yeah, I don't think it would be reliable for *all* file systems to use
+>>> name_to_handle_at on startup on some example file/directory. At least
+>>> not without knowing all the details of the underlying passthrough file
+>>> system.
+>>>
+>>
+>> Maybe it's not a world-wide general solution, but it is a practical one.
+>>
+>> My fuse_passthrough library knows how to detect xfs and ext4 and
+>> knows about the size of their file handles.
+>> https://github.com/amir73il/libfuse/blob/fuse_passthrough/passthrough/fu=
+se_passthrough.cpp#L645
+>>
+>> A server could optimize for max_handle_size if it knows it or use
+>> MAX_HANDLE_SZ if it doesn't.
+>>
+>> Keep in mind that for the sake of restarting fuse servers (title of this=
+ thread)
+>> file handles do not need to be the actual filesystem file handles.
+>> Server can use its own pid as generation and then all inodes get
+>> auto invalidated on server restart.
+>>
+>> Not invalidating file handles on server restart, because the file handles
+>> are persistent file handles is an optimization.
+>>
+>> LOOKUP_HANDLE still needs to provide the inode+gen of the parent
+>> which LOOKUP currently does not.
+>
+> One additional complication I just realised is that FUSE_LOOKUP already
+> uses up all the 3 in_args.
 
-> The changes here mostly look ok to me, though I wonder how well this all
-> meshes with all the other iomap work headed to 6.19...
-> 
+Ok, ignore me.  We can have 4 in_args, not 3.
 
-The batch stuff is already in -next I believe. It might be good to get
-the first patch in sooner, but I don't think the rest should be too bad
-provided it stays isolated to XFS and zero range.
+Cheers
+--=20
+Lu=C3=ADs
 
-Brian
-
-> --D
-> 
-> >  
-> >  		goto found_imap;
-> >  	}
-> > -- 
-> > 2.51.0
-> > 
-> > 
-> 
+> So, my initial plan of having FUSE_LOOKUP_HANDLE using a similar structure
+> to FUSE_LOOKUP, with the additional parent handle passed to the server
+> through the in_args needs a different solution.
+>
+> (Anyway, I'll need to read through the whole thread(s) again to better
+> digest all the information.)
+>
+> Cheers,
+> --=20
+> Lu=C3=ADs
+>
+>
+>>
+>> I did not understand why Darrick's suggestion of a flag that ino+gen
+>> suffice is any different then max_handle_size =3D 12 and using the
+>> standard FILEID_INO64_GEN in that case?
+>>
+>> Thanks,
+>> Amir.
 
 
