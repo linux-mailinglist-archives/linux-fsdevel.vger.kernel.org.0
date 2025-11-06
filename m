@@ -1,71 +1,71 @@
-Return-Path: <linux-fsdevel+bounces-67243-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67244-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BD61C388F8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 06 Nov 2025 01:56:09 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5EC5C38931
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 06 Nov 2025 01:57:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFEDD1A24427
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Nov 2025 00:56:22 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D92984F2D4C
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Nov 2025 00:56:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1447B1FA859;
-	Thu,  6 Nov 2025 00:55:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 416AD2066DE;
+	Thu,  6 Nov 2025 00:55:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="GU5Jw/b9";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="D/bw3jKF"
+	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="J//lmioR";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="M4j3TyN2"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from flow-b4-smtp.messagingengine.com (flow-b4-smtp.messagingengine.com [202.12.124.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5647C1E1DFC;
-	Thu,  6 Nov 2025 00:55:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 767E01EC01B;
+	Thu,  6 Nov 2025 00:55:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762390521; cv=none; b=jfO+yuvm8Lj9DBcRTTqlXy+mDqE4QFsKRuLloBerggpag7wzBJysU0xA+IIOU5gy811ALO0aDY2s1RLdvpNMgzr1QhlYKtHMop5pD/F0ET4rmts5bR8XKYbTL5Or7xelnHHmKcRhSqliclxYKMFubMW1Wg/IYpmxcCsR4UL3RKw=
+	t=1762390535; cv=none; b=L+BDjPccCo1OAbu/FVWr7GQP0TF4/XJPHKq9MGK1kZpIlk11n/vfN2dS80hU1aqq+eu+dhBheE2NYqPZmFYGLNUQBHzt5cJkLWrUm5EWKjL8j3U6MaLMe9lTcG5YMB9JW6MvVaPfwqZbS+fkH9wIpcZPAk/y6LGcDIxgN4gB5Us=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762390521; c=relaxed/simple;
-	bh=R8bHaHyEJ594zGFKE/fad7JGvr03zpWNes7mrF7tbOk=;
+	s=arc-20240116; t=1762390535; c=relaxed/simple;
+	bh=6oyh/T8znBsPrAtlhgaRAtDGwmLMx11TbSc3rJJeWWU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=O71kQQ7WgACwOAWg6jMhK7QvJB3kuaiWtO6k7n4C5vmexdnAhM5DwSPvQr8o3L6kM+EkmF0QWCtv/syeUqvKZ7NhctahNWQS1R7I27xcZB9IiPqBvfyrSrDwbc2mLKgiRLhlyYZFSVczSxB0aiFBL8vGpcyTGBPxRdYlHmJQelM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=GU5Jw/b9; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=D/bw3jKF; arc=none smtp.client-ip=202.12.124.139
+	 MIME-Version; b=miP7nLrJ+4idyyZUcOt3LmUPLVGNTJmiko7l40EsDA27SNkVHBEBzd6gCxJREzb6GLvhdK7Jolktv1nDWmhGx4L0JVtLPGK0nkPhToBYGLVOzWnZ5EvRlmr0J4B/ikmsy7pmcQ+sq555cTmmteVkEE2Hur0c5YkXQw8w6rC899w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=J//lmioR; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=M4j3TyN2; arc=none smtp.client-ip=202.12.124.139
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailflow.stl.internal (Postfix) with ESMTP id C987D1300618;
-	Wed,  5 Nov 2025 19:55:17 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-04.internal (MEProxy); Wed, 05 Nov 2025 19:55:18 -0500
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+	by mailflow.stl.internal (Postfix) with ESMTP id B773213005FE;
+	Wed,  5 Nov 2025 19:55:31 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-02.internal (MEProxy); Wed, 05 Nov 2025 19:55:32 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
 	cc:cc:content-transfer-encoding:content-type:date:date:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:reply-to:subject:subject:to:to; s=fm3; t=1762390517;
-	 x=1762397717; bh=PJzgcrxhiIBIelv8Z38ByCDof4FfjJXhCw99Sa9A6Ac=; b=
-	GU5Jw/b9rZy6URDk55s+fBj4Sz8G9mnhiFhFd4Q9WcdaqdatI/nsDgdZGc+fCIXN
-	SfRFZNpRNbh0H4qVMjMOwEkKU7ZWwRVmCo+cj0JNxQyVFJhGyONxxcuJvRNbk6j4
-	X+ytsrhpsx7irNSdAPchdXPN0GKg6VqU9AuT6VJ+eyVD7IBHOmMJMouXDkrpQNR7
-	VDsBjYdqo7aSfkztJp5tw23EMWOP9f1PkLqTMmtyJ1WOh76aVoilfMu9udiVX0CW
-	i+JL2xBTsCP/p5MbfZSzmGWRRly5gTVjU7okbKAqWN+GsHTYciGmYayUq/RhvqMM
-	yr7wMJy5LufFTB6r0f1Lcw==
+	:reply-to:reply-to:subject:subject:to:to; s=fm3; t=1762390531;
+	 x=1762397731; bh=wM+KYKPNKK5yORGqRgu9XPCurY4g3fiHErRLGI56I5k=; b=
+	J//lmioR2DMS9b8gaJQok1JZHKrJoEmFeqFLfwMC28lL6zG3WKBJhLpy/dsG2Q+5
+	W84Cyibqtb8bpZvDjf8POAT+G/I2IfiIOqhfO28qXn1tAEovuoTwEsrrn8LCVLCP
+	fM1mbSiNStscUlw5eoUPpTanX1WiXDR9uL+QHSgeL7vnNF8AtAJtwmtcUZOItKEX
+	ZhMIIgMAhuQtgX2zU6hGeG9e9EVtZRxiAhgZqQWbL/bmES7PE/YY4ylY9DGZkSWp
+	B0h+jR+bSXZaT9otaz+WFEsZJ8FFwZ3gDGq1OwhpfvUROL4/yAXkQlHWsQbFpBVc
+	dCEdUlkpvHdVtm09r9HUXw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:date:date:feedback-id:feedback-id:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
 	:reply-to:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm3; t=1762390517; x=1762397717; bh=P
-	JzgcrxhiIBIelv8Z38ByCDof4FfjJXhCw99Sa9A6Ac=; b=D/bw3jKFt5ulyzu4q
-	/oOBxDbm9n6URhx1AuR7zpzAYiY+anKKuBPTRqfc37RpiSc6uj8vWRk5jhoHoPmD
-	J0TrYglOg/YooNVNZaeRC87CkS3BPPnhqL0ggekDiJWHlAQoqyMy9jchjyE553qq
-	5QDbxUwzUXchq1rh3jrjMo8w47EL/NKPyHC+IjTQnUkiKCHHDg4WCAGM28mZYHiM
-	D2k6h5ZodmmK91d4shDq+OzZnoWok4iriGtioRvCJuwEycg18l1HWxlAXAJyCIBO
-	qXyw1JBYJRXJXUE2BBblll0pl2PEVbtHMo+tTW2uQZrO6+0684TsagA97zutUq0D
-	8eE+g==
-X-ME-Sender: <xms:9fELaVBvANWPedycTHh2z4JUjAUxFxGcozVskVkyW-BDpXXwKt8xcQ>
-    <xme:9fELaYkT8__Cp7FOiHxo8rYEHzx4uveSjCghVM2sXNUtEU8Og569OZppYtlOXuerB
-    _CkgKiVB1NIye-9f5F9poddJGJZrlqA2zMRyL6Ue7yuNWT8PQ>
-X-ME-Received: <xmr:9fELadmsfhlQhYA_09bE4nrTtlmBcpONoBPXeFcT4aHu-aPhTNs92mRNwZIXzoJ_vL-SO1bHbmsalWm1wYf8ffZPxUMzI5ywYrpA-i5rXPtW>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddukeehgedtucetufdoteggodetrf
+	:x-me-sender:x-sasl-enc; s=fm3; t=1762390531; x=1762397731; bh=w
+	M+KYKPNKK5yORGqRgu9XPCurY4g3fiHErRLGI56I5k=; b=M4j3TyN26gf8Or4xS
+	VljNs3rsklA9+piKSnN77Ox13LfMsr/9JbhdczdBs9w9bya+bgJQ/rEpAGxADmos
+	6ZHc5gCyNuvgPwI5KHt2YVzrp6C4/7meh+CShJJfsp5zP8KdUPQTSENFcOiBNXpi
+	CcoDp9uNFmmOlEJ2iH2hMvhbMUKunX3UHQWYw9zL2LjQSUisp4o0F6J0ssZsQ1H9
+	lDRbnlwj+EcaTkaraj+PP+Ogr5pOGkQy4X1qUICikOgmKGgjm8/GMMn8FbnKZZxb
+	XwVXnHCZWKbDNAAYEpqGN+W0p85ICES1ShcU7HG4tTQ+Z/P9hsAvjGOkAYOmdcXV
+	9aTTg==
+X-ME-Sender: <xms:AvILaScDwbygc253vdikwfbGH-BiQiUu2GkWCGJREgQ8PqpQGyVFeQ>
+    <xme:AvILaRQw-W1Us8dAc24hGsL_Ko5qz0-kCkrpMTcmSFZppmyqqHerv8WI1Y0GlNZzB
+    RyQQwQSGVcIk83gkAOeXeBd5d40-6N8Tk4XqHjo0uwfzapouRk>
+X-ME-Received: <xmr:AvILaQi24UmNQmwpy0_WyuavKr1SbZOJVPyPXdh9OHohtEc7ABCxJxPOSymjk3FerRXswa71BfSINui1BVGQYUslfDLFtb2eGz0MY_LmKAHv>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddukeehfeelucetufdoteggodetrf
     dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
     rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
     gurhephffvvefufffkofgjfhhrggfgsedtkeertdertddtnecuhfhrohhmpefpvghilheu
@@ -83,14 +83,14 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddukeehgedtucetufdote
     drohhrghdprhgtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhn
     vghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqtghifhhssehvghgvrhdrkhgvrhhnvg
     hlrdhorhhg
-X-ME-Proxy: <xmx:9fELadcvdaVCscCZitQyMjbnnmWz7092ILNo4chCLVmhuR47Cm3piw>
-    <xmx:9fELabwfpQPp_BKbnK2FNNjyci-aWlFQqfFRN-yVlmMwBXlLoDswiA>
-    <xmx:9fELaXt5_oS67qB9C_gWGIN9Kt_rq2NNEdsFm-RvYt3y5qWnIhgRkQ>
-    <xmx:9fELaQpQG8WhHq3Y2mo_ZhzBx2aemlr1hwyQoUoqmFyPlwEM92ttNA>
-    <xmx:9fELaRg0X_wyC9atGKbtfIwY2-QlZ1zycEIF1rFYFrKOGDB1KuvBQx9A>
+X-ME-Proxy: <xmx:A_ILadpSNHNrHTIZKVOjT4u0YZG69LsMXQVEOAdUWXTqDWR8T0ig0g>
+    <xmx:A_ILaQO6PzjXUs2r_C-kGyUrr3UsrKV4tXOPt32HmUApKTrHntrfQA>
+    <xmx:A_ILabbz4ZwbVri6-GXc4fpZkPpNgnjYYnn1GAHdEXY3qQ5N-51WrQ>
+    <xmx:A_ILaSldKyko_Bh2-3L5GwDAjYqlnYoZtuXMSvP8S8KA1CYfEa8kKw>
+    <xmx:A_ILaVfL2X-hXi_Uo_CNbEld3ULLWq-GZHLEAMeSX9jsG9drUbeuIjVZ>
 Feedback-ID: iab3e480c:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 5 Nov 2025 19:55:07 -0500 (EST)
+ 5 Nov 2025 19:55:20 -0500 (EST)
 From: NeilBrown <neilb@ownmail.net>
 To: "Alexander Viro" <viro@zeniv.linux.org.uk>,
 	"Christian Brauner" <brauner@kernel.org>,
@@ -118,9 +118,9 @@ Cc: "Jan Kara" <jack@suse.cz>,	linux-fsdevel@vger.kernel.org,
 	linux-nfs@vger.kernel.org,	linux-unionfs@vger.kernel.org,
 	linux-cifs@vger.kernel.org,	linux-xfs@vger.kernel.org,
 	linux-security-module@vger.kernel.org,	selinux@vger.kernel.org
-Subject: [PATCH v5 06/14] VFS: introduce start_creating_noperm() and start_removing_noperm()
-Date: Thu,  6 Nov 2025 11:50:50 +1100
-Message-ID: <20251106005333.956321-7-neilb@ownmail.net>
+Subject: [PATCH v5 07/14] VFS: introduce start_removing_dentry()
+Date: Thu,  6 Nov 2025 11:50:51 +1100
+Message-ID: <20251106005333.956321-8-neilb@ownmail.net>
 X-Mailer: git-send-email 2.50.0.107.gf914562f5916.dirty
 In-Reply-To: <20251106005333.956321-1-neilb@ownmail.net>
 References: <20251106005333.956321-1-neilb@ownmail.net>
@@ -135,280 +135,344 @@ Content-Transfer-Encoding: 8bit
 
 From: NeilBrown <neil@brown.name>
 
-xfs, fuse, ipc/mqueue need variants of start_creating or start_removing
-which do not check permissions.
-This patch adds _noperm versions of these functions.
+start_removing_dentry() is similar to start_removing() but instead of
+providing a name for lookup, the target dentry is given.
 
-Note that do_mq_open() was only calling mntget() so it could call
-path_put() - it didn't really need an extra reference on the mnt.
-Now it doesn't call mntget() and uses end_creating() which does
-the dput() half of path_put().
+start_removing_dentry() checks that the dentry is still hashed and in
+the parent, and if so it locks and increases the refcount so that
+end_removing() can be used to finish the operation.
 
-Also mq_unlink() previously passed
-   d_inode(dentry->d_parent)
-as the dir inode to vfs_unlink().  This is after locking
-   d_inode(mnt->mnt_root)
-These two inodes are the same, but normally calls use the textual
-parent.
-So I've changes the vfs_unlink() call to be given d_inode(mnt->mnt_root).
+This is used in cachefiles, overlayfs, smb/server, and apparmor.
+
+There will be other users including ecryptfs.
+
+As start_removing_dentry() takes an extra reference to the dentry (to be
+put by end_removing()), there is no need to explicitly take an extra
+reference to stop d_delete() from using dentry_unlink_inode() to negate
+the dentry - as in cachefiles_delete_object(), and ksmbd_vfs_unlink().
+
+cachefiles_bury_object() now gets an extra ref to the victim, which is
+drops.  As it includes the needed end_removing() calls, the caller
+doesn't need them.
 
 Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
 Signed-off-by: NeilBrown <neil@brown.name>
 
---
-changes since v2:
- - dir arg passed to vfs_unlink() in mq_unlink() changed to match
-   the dir passed to lookup_noperm()
- - restore assignment to path->mnt even though the mntget() is removed.
 ---
- fs/fuse/dir.c            | 19 +++++++---------
- fs/namei.c               | 48 ++++++++++++++++++++++++++++++++++++++++
- fs/xfs/scrub/orphanage.c | 11 ++++-----
- include/linux/namei.h    |  2 ++
- ipc/mqueue.c             | 32 ++++++++++-----------------
- 5 files changed, 74 insertions(+), 38 deletions(-)
+Changes since v4
+Callers of cachefiles_bury_object() were incorrectly calling
+end_removing() after that call.  The dput() was needed, the unlock
+wasn't.  The dput() has been effectively moved into
+cachefiles_bury_object() by removing a dget() which is now not needed.
+---
+ fs/cachefiles/interface.c      | 11 +++++++----
+ fs/cachefiles/namei.c          | 30 ++++++++++++++----------------
+ fs/cachefiles/volume.c         |  9 ++++++---
+ fs/namei.c                     | 33 +++++++++++++++++++++++++++++++++
+ fs/overlayfs/dir.c             | 10 ++++------
+ fs/overlayfs/readdir.c         |  8 ++++----
+ fs/smb/server/vfs.c            | 27 ++++-----------------------
+ include/linux/namei.h          |  2 ++
+ security/apparmor/apparmorfs.c |  8 ++++----
+ 9 files changed, 78 insertions(+), 60 deletions(-)
 
-diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index 316922d5dd13..a0d5b302bcc2 100644
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -1397,27 +1397,25 @@ int fuse_reverse_inval_entry(struct fuse_conn *fc, u64 parent_nodeid,
- 	if (!parent)
- 		return -ENOENT;
+diff --git a/fs/cachefiles/interface.c b/fs/cachefiles/interface.c
+index 3e63cfe15874..a08250d244ea 100644
+--- a/fs/cachefiles/interface.c
++++ b/fs/cachefiles/interface.c
+@@ -9,6 +9,7 @@
+ #include <linux/mount.h>
+ #include <linux/xattr.h>
+ #include <linux/file.h>
++#include <linux/namei.h>
+ #include <linux/falloc.h>
+ #include <trace/events/fscache.h>
+ #include "internal.h"
+@@ -428,11 +429,13 @@ static bool cachefiles_invalidate_cookie(struct fscache_cookie *cookie)
+ 		if (!old_tmpfile) {
+ 			struct cachefiles_volume *volume = object->volume;
+ 			struct dentry *fan = volume->fanout[(u8)cookie->key_hash];
++			struct dentry *obj;
  
--	inode_lock_nested(parent, I_MUTEX_PARENT);
- 	if (!S_ISDIR(parent->i_mode))
--		goto unlock;
-+		goto put_parent;
- 
- 	err = -ENOENT;
- 	dir = d_find_alias(parent);
- 	if (!dir)
--		goto unlock;
-+		goto put_parent;
- 
--	name->hash = full_name_hash(dir, name->name, name->len);
--	entry = d_lookup(dir, name);
-+	entry = start_removing_noperm(dir, name);
- 	dput(dir);
--	if (!entry)
--		goto unlock;
-+	if (IS_ERR(entry))
-+		goto put_parent;
- 
- 	fuse_dir_changed(parent);
- 	if (!(flags & FUSE_EXPIRE_ONLY))
- 		d_invalidate(entry);
- 	fuse_invalidate_entry_cache(entry);
- 
--	if (child_nodeid != 0 && d_really_is_positive(entry)) {
-+	if (child_nodeid != 0) {
- 		inode_lock(d_inode(entry));
- 		if (get_node_id(d_inode(entry)) != child_nodeid) {
- 			err = -ENOENT;
-@@ -1445,10 +1443,9 @@ int fuse_reverse_inval_entry(struct fuse_conn *fc, u64 parent_nodeid,
- 	} else {
- 		err = 0;
+-			inode_lock_nested(d_inode(fan), I_MUTEX_PARENT);
+-			cachefiles_bury_object(volume->cache, object, fan,
+-					       old_file->f_path.dentry,
+-					       FSCACHE_OBJECT_INVALIDATED);
++			obj = start_removing_dentry(fan, old_file->f_path.dentry);
++			if (!IS_ERR(obj))
++				cachefiles_bury_object(volume->cache, object,
++						       fan, obj,
++						       FSCACHE_OBJECT_INVALIDATED);
+ 		}
+ 		fput(old_file);
  	}
--	dput(entry);
+diff --git a/fs/cachefiles/namei.c b/fs/cachefiles/namei.c
+index c7f0c6ab9b88..0104ac00485d 100644
+--- a/fs/cachefiles/namei.c
++++ b/fs/cachefiles/namei.c
+@@ -261,6 +261,7 @@ static int cachefiles_unlink(struct cachefiles_cache *cache,
+  * - Directory backed objects are stuffed into the graveyard for userspace to
+  *   delete
+  * On entry dir must be locked.  It will be unlocked on exit.
++ * On entry there must be at least 2 refs on rep, one will be dropped on exit.
+  */
+ int cachefiles_bury_object(struct cachefiles_cache *cache,
+ 			   struct cachefiles_object *object,
+@@ -275,12 +276,6 @@ int cachefiles_bury_object(struct cachefiles_cache *cache,
  
-- unlock:
--	inode_unlock(parent);
-+	end_removing(entry);
-+ put_parent:
- 	iput(parent);
- 	return err;
+ 	_enter(",'%pd','%pd'", dir, rep);
+ 
+-	/* end_removing() will dput() @rep but we need to keep
+-	 * a ref, so take one now.  This also stops the dentry
+-	 * being negated when unlinked which we need.
+-	 */
+-	dget(rep);
+-
+ 	if (rep->d_parent != dir) {
+ 		end_removing(rep);
+ 		_leave(" = -ESTALE");
+@@ -425,13 +420,12 @@ int cachefiles_delete_object(struct cachefiles_object *object,
+ 
+ 	_enter(",OBJ%x{%pD}", object->debug_id, object->file);
+ 
+-	/* Stop the dentry being negated if it's only pinned by a file struct. */
+-	dget(dentry);
+-
+-	inode_lock_nested(d_backing_inode(fan), I_MUTEX_PARENT);
+-	ret = cachefiles_unlink(volume->cache, object, fan, dentry, why);
+-	inode_unlock(d_backing_inode(fan));
+-	dput(dentry);
++	dentry = start_removing_dentry(fan, dentry);
++	if (IS_ERR(dentry))
++		ret = PTR_ERR(dentry);
++	else
++		ret = cachefiles_unlink(volume->cache, object, fan, dentry, why);
++	end_removing(dentry);
+ 	return ret;
  }
+ 
+@@ -644,9 +638,13 @@ bool cachefiles_look_up_object(struct cachefiles_object *object)
+ 
+ 	if (!d_is_reg(dentry)) {
+ 		pr_err("%pd is not a file\n", dentry);
+-		inode_lock_nested(d_inode(fan), I_MUTEX_PARENT);
+-		ret = cachefiles_bury_object(volume->cache, object, fan, dentry,
+-					     FSCACHE_OBJECT_IS_WEIRD);
++		struct dentry *de = start_removing_dentry(fan, dentry);
++		if (IS_ERR(de))
++			ret = PTR_ERR(de);
++		else
++			ret = cachefiles_bury_object(volume->cache, object,
++						     fan, de,
++						     FSCACHE_OBJECT_IS_WEIRD);
+ 		dput(dentry);
+ 		if (ret < 0)
+ 			return false;
+diff --git a/fs/cachefiles/volume.c b/fs/cachefiles/volume.c
+index 781aac4ef274..90ba926f488e 100644
+--- a/fs/cachefiles/volume.c
++++ b/fs/cachefiles/volume.c
+@@ -7,6 +7,7 @@
+ 
+ #include <linux/fs.h>
+ #include <linux/slab.h>
++#include <linux/namei.h>
+ #include "internal.h"
+ #include <trace/events/fscache.h>
+ 
+@@ -58,9 +59,11 @@ void cachefiles_acquire_volume(struct fscache_volume *vcookie)
+ 		if (ret < 0) {
+ 			if (ret != -ESTALE)
+ 				goto error_dir;
+-			inode_lock_nested(d_inode(cache->store), I_MUTEX_PARENT);
+-			cachefiles_bury_object(cache, NULL, cache->store, vdentry,
+-					       FSCACHE_VOLUME_IS_WEIRD);
++			vdentry = start_removing_dentry(cache->store, vdentry);
++			if (!IS_ERR(vdentry))
++				cachefiles_bury_object(cache, NULL, cache->store,
++						       vdentry,
++						       FSCACHE_VOLUME_IS_WEIRD);
+ 			cachefiles_put_directory(volume->dentry);
+ 			cond_resched();
+ 			goto retry;
 diff --git a/fs/namei.c b/fs/namei.c
-index 38dda29552f6..da01b828ede6 100644
+index da01b828ede6..729b42fb143b 100644
 --- a/fs/namei.c
 +++ b/fs/namei.c
-@@ -3275,6 +3275,54 @@ struct dentry *start_removing(struct mnt_idmap *idmap, struct dentry *parent,
+@@ -3323,6 +3323,39 @@ struct dentry *start_removing_noperm(struct dentry *parent,
  }
- EXPORT_SYMBOL(start_removing);
+ EXPORT_SYMBOL(start_removing_noperm);
  
 +/**
-+ * start_creating_noperm - prepare to create a given name without permission checking
-+ * @parent: directory in which to prepare to create the name
-+ * @name:   the name to be created
++ * start_removing_dentry - prepare to remove a given dentry
++ * @parent: directory from which dentry should be removed
++ * @child:  the dentry to be removed
 + *
-+ * Locks are taken and a lookup in performed prior to creating
-+ * an object in a directory.
++ * A lock is taken to protect the dentry again other dirops and
++ * the validity of the dentry is checked: correct parent and still hashed.
 + *
-+ * If the name already exists, a positive dentry is returned.
-+ *
-+ * Returns: a negative or positive dentry, or an error.
-+ */
-+struct dentry *start_creating_noperm(struct dentry *parent,
-+				     struct qstr *name)
-+{
-+	int err = lookup_noperm_common(name, parent);
-+
-+	if (err)
-+		return ERR_PTR(err);
-+	return start_dirop(parent, name, LOOKUP_CREATE);
-+}
-+EXPORT_SYMBOL(start_creating_noperm);
-+
-+/**
-+ * start_removing_noperm - prepare to remove a given name without permission checking
-+ * @parent: directory in which to find the name
-+ * @name:   the name to be removed
-+ *
-+ * Locks are taken and a lookup in performed prior to removing
-+ * an object from a directory.
-+ *
-+ * If the name doesn't exist, an error is returned.
++ * If the dentry is valid and positive, a reference is taken and
++ * returned.  If not an error is returned.
 + *
 + * end_removing() should be called when removal is complete, or aborted.
 + *
-+ * Returns: a positive dentry, or an error.
++ * Returns: the valid dentry, or an error.
 + */
-+struct dentry *start_removing_noperm(struct dentry *parent,
-+				     struct qstr *name)
++struct dentry *start_removing_dentry(struct dentry *parent,
++				     struct dentry *child)
 +{
-+	int err = lookup_noperm_common(name, parent);
-+
-+	if (err)
-+		return ERR_PTR(err);
-+	return start_dirop(parent, name, 0);
++	inode_lock_nested(parent->d_inode, I_MUTEX_PARENT);
++	if (unlikely(IS_DEADDIR(parent->d_inode) ||
++		     child->d_parent != parent ||
++		     d_unhashed(child))) {
++		inode_unlock(parent->d_inode);
++		return ERR_PTR(-EINVAL);
++	}
++	if (d_is_negative(child)) {
++		inode_unlock(parent->d_inode);
++		return ERR_PTR(-ENOENT);
++	}
++	return dget(child);
 +}
-+EXPORT_SYMBOL(start_removing_noperm);
++EXPORT_SYMBOL(start_removing_dentry);
 +
  #ifdef CONFIG_UNIX98_PTYS
  int path_pts(struct path *path)
  {
-diff --git a/fs/xfs/scrub/orphanage.c b/fs/xfs/scrub/orphanage.c
-index 9c12cb844231..e732605924a1 100644
---- a/fs/xfs/scrub/orphanage.c
-+++ b/fs/xfs/scrub/orphanage.c
-@@ -152,11 +152,10 @@ xrep_orphanage_create(
- 	}
+diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
+index 20682afdbd20..6d1d0e94e287 100644
+--- a/fs/overlayfs/dir.c
++++ b/fs/overlayfs/dir.c
+@@ -47,14 +47,12 @@ static int ovl_cleanup_locked(struct ovl_fs *ofs, struct inode *wdir,
+ int ovl_cleanup(struct ovl_fs *ofs, struct dentry *workdir,
+ 		struct dentry *wdentry)
+ {
+-	int err;
+-
+-	err = ovl_parent_lock(workdir, wdentry);
+-	if (err)
+-		return err;
++	wdentry = start_removing_dentry(workdir, wdentry);
++	if (IS_ERR(wdentry))
++		return PTR_ERR(wdentry);
  
- 	/* Try to find the orphanage directory. */
--	inode_lock_nested(root_inode, I_MUTEX_PARENT);
--	orphanage_dentry = lookup_noperm(&QSTR(ORPHANAGE), root_dentry);
-+	orphanage_dentry = start_creating_noperm(root_dentry, &QSTR(ORPHANAGE));
- 	if (IS_ERR(orphanage_dentry)) {
- 		error = PTR_ERR(orphanage_dentry);
--		goto out_unlock_root;
-+		goto out_dput_root;
- 	}
+ 	ovl_cleanup_locked(ofs, workdir->d_inode, wdentry);
+-	ovl_parent_unlock(workdir);
++	end_removing(wdentry);
  
- 	/*
-@@ -170,7 +169,7 @@ xrep_orphanage_create(
- 					     orphanage_dentry, 0750);
- 		error = PTR_ERR(orphanage_dentry);
- 		if (IS_ERR(orphanage_dentry))
--			goto out_unlock_root;
-+			goto out_dput_orphanage;
- 	}
+ 	return 0;
+ }
+diff --git a/fs/overlayfs/readdir.c b/fs/overlayfs/readdir.c
+index 1e9792cc557b..77ecc39fc33a 100644
+--- a/fs/overlayfs/readdir.c
++++ b/fs/overlayfs/readdir.c
+@@ -1242,11 +1242,11 @@ int ovl_workdir_cleanup(struct ovl_fs *ofs, struct dentry *parent,
+ 	if (!d_is_dir(dentry) || level > 1)
+ 		return ovl_cleanup(ofs, parent, dentry);
  
- 	/* Not a directory? Bail out. */
-@@ -200,9 +199,7 @@ xrep_orphanage_create(
- 	sc->orphanage_ilock_flags = 0;
+-	err = ovl_parent_lock(parent, dentry);
+-	if (err)
+-		return err;
++	dentry = start_removing_dentry(parent, dentry);
++	if (IS_ERR(dentry))
++		return PTR_ERR(dentry);
+ 	err = ovl_do_rmdir(ofs, parent->d_inode, dentry);
+-	ovl_parent_unlock(parent);
++	end_removing(dentry);
+ 	if (err) {
+ 		struct path path = { .mnt = mnt, .dentry = dentry };
  
- out_dput_orphanage:
--	dput(orphanage_dentry);
--out_unlock_root:
--	inode_unlock(VFS_I(sc->mp->m_rootip));
-+	end_creating(orphanage_dentry, root_dentry);
- out_dput_root:
- 	dput(root_dentry);
+diff --git a/fs/smb/server/vfs.c b/fs/smb/server/vfs.c
+index 891ed2dc2b73..7c4ddc43ab39 100644
+--- a/fs/smb/server/vfs.c
++++ b/fs/smb/server/vfs.c
+@@ -49,24 +49,6 @@ static void ksmbd_vfs_inherit_owner(struct ksmbd_work *work,
+ 	i_uid_write(inode, i_uid_read(parent_inode));
+ }
+ 
+-/**
+- * ksmbd_vfs_lock_parent() - lock parent dentry if it is stable
+- * @parent: parent dentry
+- * @child: child dentry
+- *
+- * Returns: %0 on success, %-ENOENT if the parent dentry is not stable
+- */
+-int ksmbd_vfs_lock_parent(struct dentry *parent, struct dentry *child)
+-{
+-	inode_lock_nested(d_inode(parent), I_MUTEX_PARENT);
+-	if (child->d_parent != parent) {
+-		inode_unlock(d_inode(parent));
+-		return -ENOENT;
+-	}
+-
+-	return 0;
+-}
+-
+ static int ksmbd_vfs_path_lookup(struct ksmbd_share_config *share_conf,
+ 				 char *pathname, unsigned int flags,
+ 				 struct path *path, bool do_lock)
+@@ -1084,18 +1066,17 @@ int ksmbd_vfs_unlink(struct file *filp)
+ 		return err;
+ 
+ 	dir = dget_parent(dentry);
+-	err = ksmbd_vfs_lock_parent(dir, dentry);
+-	if (err)
++	dentry = start_removing_dentry(dir, dentry);
++	err = PTR_ERR(dentry);
++	if (IS_ERR(dentry))
+ 		goto out;
+-	dget(dentry);
+ 
+ 	if (S_ISDIR(d_inode(dentry)->i_mode))
+ 		err = vfs_rmdir(idmap, d_inode(dir), dentry);
+ 	else
+ 		err = vfs_unlink(idmap, d_inode(dir), dentry, NULL);
+ 
+-	dput(dentry);
+-	inode_unlock(d_inode(dir));
++	end_removing(dentry);
+ 	if (err)
+ 		ksmbd_debug(VFS, "failed to delete, err %d\n", err);
  out:
 diff --git a/include/linux/namei.h b/include/linux/namei.h
-index 6d1069f93ebf..0441f5921f87 100644
+index 0441f5921f87..d089e4e8fdd0 100644
 --- a/include/linux/namei.h
 +++ b/include/linux/namei.h
-@@ -93,6 +93,8 @@ struct dentry *start_creating(struct mnt_idmap *idmap, struct dentry *parent,
+@@ -95,6 +95,8 @@ struct dentry *start_removing(struct mnt_idmap *idmap, struct dentry *parent,
  			      struct qstr *name);
- struct dentry *start_removing(struct mnt_idmap *idmap, struct dentry *parent,
- 			      struct qstr *name);
-+struct dentry *start_creating_noperm(struct dentry *parent, struct qstr *name);
-+struct dentry *start_removing_noperm(struct dentry *parent, struct qstr *name);
+ struct dentry *start_creating_noperm(struct dentry *parent, struct qstr *name);
+ struct dentry *start_removing_noperm(struct dentry *parent, struct qstr *name);
++struct dentry *start_removing_dentry(struct dentry *parent,
++				     struct dentry *child);
  
  /**
   * end_creating - finish action started with start_creating
-diff --git a/ipc/mqueue.c b/ipc/mqueue.c
-index 093551fe66a7..6d7610310003 100644
---- a/ipc/mqueue.c
-+++ b/ipc/mqueue.c
-@@ -913,13 +913,12 @@ static int do_mq_open(const char __user *u_name, int oflag, umode_t mode,
- 		goto out_putname;
+diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
+index 391a586d0557..9d08d103f142 100644
+--- a/security/apparmor/apparmorfs.c
++++ b/security/apparmor/apparmorfs.c
+@@ -355,17 +355,17 @@ static void aafs_remove(struct dentry *dentry)
+ 	if (!dentry || IS_ERR(dentry))
+ 		return;
  
- 	ro = mnt_want_write(mnt);	/* we'll drop it in any case */
--	inode_lock(d_inode(root));
--	path.dentry = lookup_noperm(&QSTR(name->name), root);
-+	path.dentry = start_creating_noperm(root, &QSTR(name->name));
- 	if (IS_ERR(path.dentry)) {
- 		error = PTR_ERR(path.dentry);
- 		goto out_putfd;
- 	}
--	path.mnt = mntget(mnt);
-+	path.mnt = mnt;
- 	error = prepare_open(path.dentry, oflag, ro, mode, name, attr);
- 	if (!error) {
- 		struct file *file = dentry_open(&path, oflag, current_cred());
-@@ -928,13 +927,12 @@ static int do_mq_open(const char __user *u_name, int oflag, umode_t mode,
++	/* ->d_parent is stable as rename is not supported */
+ 	dir = d_inode(dentry->d_parent);
+-	inode_lock(dir);
+-	if (simple_positive(dentry)) {
++	dentry = start_removing_dentry(dentry->d_parent, dentry);
++	if (!IS_ERR(dentry) && simple_positive(dentry)) {
+ 		if (d_is_dir(dentry))
+ 			simple_rmdir(dir, dentry);
  		else
- 			error = PTR_ERR(file);
+ 			simple_unlink(dir, dentry);
+ 		d_delete(dentry);
+-		dput(dentry);
  	}
--	path_put(&path);
- out_putfd:
- 	if (error) {
- 		put_unused_fd(fd);
- 		fd = error;
- 	}
--	inode_unlock(d_inode(root));
-+	end_creating(path.dentry, root);
- 	if (!ro)
- 		mnt_drop_write(mnt);
- out_putname:
-@@ -957,7 +955,7 @@ SYSCALL_DEFINE1(mq_unlink, const char __user *, u_name)
- 	int err;
- 	struct filename *name;
- 	struct dentry *dentry;
--	struct inode *inode = NULL;
-+	struct inode *inode;
- 	struct ipc_namespace *ipc_ns = current->nsproxy->ipc_ns;
- 	struct vfsmount *mnt = ipc_ns->mq_mnt;
- 
-@@ -969,26 +967,20 @@ SYSCALL_DEFINE1(mq_unlink, const char __user *, u_name)
- 	err = mnt_want_write(mnt);
- 	if (err)
- 		goto out_name;
--	inode_lock_nested(d_inode(mnt->mnt_root), I_MUTEX_PARENT);
--	dentry = lookup_noperm(&QSTR(name->name), mnt->mnt_root);
-+	dentry = start_removing_noperm(mnt->mnt_root, &QSTR(name->name));
- 	if (IS_ERR(dentry)) {
- 		err = PTR_ERR(dentry);
--		goto out_unlock;
-+		goto out_drop_write;
- 	}
- 
- 	inode = d_inode(dentry);
--	if (!inode) {
--		err = -ENOENT;
--	} else {
--		ihold(inode);
--		err = vfs_unlink(&nop_mnt_idmap, d_inode(dentry->d_parent),
--				 dentry, NULL);
--	}
--	dput(dentry);
--
--out_unlock:
--	inode_unlock(d_inode(mnt->mnt_root));
-+	ihold(inode);
-+	err = vfs_unlink(&nop_mnt_idmap, d_inode(mnt->mnt_root),
-+			 dentry, NULL);
+-	inode_unlock(dir);
 +	end_removing(dentry);
- 	iput(inode);
-+
-+out_drop_write:
- 	mnt_drop_write(mnt);
- out_name:
- 	putname(name);
+ 	simple_release_fs(&aafs_mnt, &aafs_count);
+ }
+ 
 -- 
 2.50.0.107.gf914562f5916.dirty
 
