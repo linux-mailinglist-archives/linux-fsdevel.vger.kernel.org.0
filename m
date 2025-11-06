@@ -1,164 +1,276 @@
-Return-Path: <linux-fsdevel+bounces-67267-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67268-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71960C39BAF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 06 Nov 2025 10:04:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25EBBC39C60
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 06 Nov 2025 10:15:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30BEC1A2562E
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Nov 2025 09:03:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D677B3AF11D
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Nov 2025 09:15:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7A42272E4E;
-	Thu,  6 Nov 2025 09:03:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E010B3090E4;
+	Thu,  6 Nov 2025 09:15:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WYTuwoHs"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="C/fWtJPb";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="y0Aok+VE";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ge0vQiTj";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="GJ8qPQ2i"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8130C309EFD
-	for <linux-fsdevel@vger.kernel.org>; Thu,  6 Nov 2025 09:03:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8794430B51A
+	for <linux-fsdevel@vger.kernel.org>; Thu,  6 Nov 2025 09:15:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762419792; cv=none; b=BPl574EqyXBevGHDryFoyGNBBIdtwLTM1q4BLX9Cj3OuM1kLs/OAHllvQQOUwjkG/fPif785ryxs+qWsKAI/NuFmnafa44BpbKpH0K3xuSTbj1yjTFU91XX2/6+CzaBwGNYA6ftyPX1zdgsuClMsp+xdn7eMJPmd0emcDn5D9pQ=
+	t=1762420543; cv=none; b=fgHSzoJlwldYr6YKpNwVNe3NsLCWBsX0QzU7A3QzYtirkvEKAtpfgTiFWJDxTpX7WPnXgShJeFBDTt/v/16F3Gese7tRH9RX4b961gTVJv5GIXQfaBDoiv4WPpF14w9gfOQKUzBgXM0dvay1i3cz+8N3A0aidmeoRLIqhJeuTKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762419792; c=relaxed/simple;
-	bh=0EKAehxKkI/bTw9WUORbVkGz8/nS+B2Kso4BX+bmOcU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mXjcVDWebTFlaj6PXGv+gykzWNGw2PDDwxbtRnJt1ANAdf+YnfHUhGeuKDHJkBc/bhGZru+8U4H6cnC4cwqonhXjtdL3wnI683nEjB1ZkDH+a+BB06ajm6eKP87qyPGJ4CfgJiO1zZFS/cMGu15Y/yGAYmlwuuj8XjlJqXC9yxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WYTuwoHs; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-640ace5f283so795314a12.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Nov 2025 01:03:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762419789; x=1763024589; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=veIj9WdBpJJNLGbbTumRAOZ1DVwrSRtT1QGKYvneLtE=;
-        b=WYTuwoHswTDQdrk2J9Byqj7f/Husd4nnYTfT5hDwYM9qbNvMrqzk3jWBqpFf5pF9IZ
-         xzOtmQrbMenNPXGpT4RowxdsBgEo6JvsQhAR1wbpO//4K7gzZeCyE75Wpf/NeEP4k/iT
-         VbQO44VulP2dMtkPiivIc/uRMrYO5qbcx3rNe471ERaRKb1SVvMz61pm5UKvSAA8D7nb
-         AR9GSbYzwdw5ZQYPqfoAuRZLbkUTooohJKnjOjfmLeJ8srPqEDgBSge2sJx/uMciNPgf
-         d+gF5HL/2mL8yg1lylzuq1scROxUHlX2IhXfKjGIl0dm+8hGFrkqvkcp1z69l1Jgf0Y2
-         5KMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762419789; x=1763024589;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=veIj9WdBpJJNLGbbTumRAOZ1DVwrSRtT1QGKYvneLtE=;
-        b=HBnUnWIQ06KnO5j5brHG6it1Su9JvMWiBlRJ+5j2JxCprEUv7wMdZ0IAb4dmGItW1y
-         9C1hHHn+2Qlam592H3VJo48sM4D0/N39VsPrmSwvbntpIcpQiH/3x5okiBQ/u25MFbKI
-         yErxWs2vkdC13RO94hB3BQutMclPHXy0f1Xr/b+bipU1BqDZTE27l8xzOGGCFDqLMHR0
-         uKiOWOmmta6zKnL54OdB41f7cODellUFJjCiFBZfYbNNwOZx4gCzDvi4Q4EAyxOurGhf
-         v60ElhwItlEECCtLE5l+9390oNYn/WnPCsK/Uhpe7RaJ9XU0gLRcxw7xJlglUwx7AEt5
-         Ol+A==
-X-Forwarded-Encrypted: i=1; AJvYcCVBsrnvzwezkaMaRuJMCvTN9le8w1EF2+pqK2bghcZYNZ7CUldsssM9zphfADUqexAgSag60VbrHHHHK+v9@vger.kernel.org
-X-Gm-Message-State: AOJu0YygIgF+pFc7CtleEG9tXwLuMbc1Ec+sV79ROFtdyHMiZ1CQ67Mv
-	h1n6WF2lAE5vWljflVPDkUEg0emBoQtQDvO/ZsHz8r4CpxIGqFeNUew1diFgkvGt1SbHennOqte
-	bJLJzkz+YAIBQ54Y0k5pUgjmakY64hkw=
-X-Gm-Gg: ASbGncvIHnHv8Ps6rUAWDSAqWar1W7ylzGd7nQDpvPJSfme1vj8rERLnLqIrBjb8Rk+
-	9gOdVgjSMT3IMOswhA5Yo1Q3lch8RxpttpSGD28PHQu2w5Su6sjj4DJ9L/PcPn8PoX/MSo88SRK
-	uYzuXBL7ICoAboERQoG+R9S5YQOI1M77wb7Y4WJh8IpzOz/YwbV7XcrqL0KO0lbbc6JELC66c/0
-	UrYEUiXREmEewqgkUo0cJj51zduLx5u+ofbUn33KeuvZXGuj0dwh8wse66zwrSDwRdM0pJdjRlL
-	iD56W4syDP/hA8hb3E20d/ewP06EAg==
-X-Google-Smtp-Source: AGHT+IGzG4L1zsLSrPolVgz53k8qLjyW8wdBsccQu20dip4z2Ulliwm8dDW4Lw75AwMHZ0hiIPIToqA/2u2N+i4Tu34=
-X-Received: by 2002:a05:6402:34c6:b0:640:abd5:8642 with SMTP id
- 4fb4d7f45d1cf-64105a477d4mr5755119a12.21.1762419788438; Thu, 06 Nov 2025
- 01:03:08 -0800 (PST)
+	s=arc-20240116; t=1762420543; c=relaxed/simple;
+	bh=Ym9wpKbyGYK+lSGT9Y6tw98v3cdwk7PQ3TiqZm9gAMc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RZZGwzFQqiK1cN7fNyJ65M1NFjEIzC2DhH2P9mgbHMLxII+pym2Q+4eZVmpNwuY751ytiJo382uz6N9G+/YO+F/O2pn/5pA6OTKIfgT8mWzYGxv4+FQ8/bnTPQT4zTEVXPkTyDsg9F8FnzFEs3rUS0aVK6Uo5f6oNAN5MrGLhls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=C/fWtJPb; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=y0Aok+VE; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ge0vQiTj; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=GJ8qPQ2i; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 9A1F92117A;
+	Thu,  6 Nov 2025 09:15:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762420539; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7EJyEl/k7DT8f9HbU1Gh+BkGTTsTzDuULRregCfnYb4=;
+	b=C/fWtJPbGhc0gm+wcXd1RssXuDKsArXoiTvEWIfmaMJdg0VfFe+VAqWtnIpPYDJyT21puY
+	M7P5Fyo89sxoW1unVC9qXclO3Xp3WOu4jJywgkH1ccn8g500Xx+ibB72wk6Pe94z951zT9
+	S3xpvnadC0yVfPPuMxCa1/BnjJ8XYgg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762420539;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7EJyEl/k7DT8f9HbU1Gh+BkGTTsTzDuULRregCfnYb4=;
+	b=y0Aok+VE6+VgI/e34WmQNRXLdnJFoiDzVYLmmEiqw6Jhm/HmiNifTVoOgjQqYP0kz4o3sm
+	g77EnK++lnM1fxBw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762420538; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7EJyEl/k7DT8f9HbU1Gh+BkGTTsTzDuULRregCfnYb4=;
+	b=ge0vQiTjkBGS4d8Q+hXFf0TWvUv8FHOxgGi/3KVyF135gTDocVjmO1Dr69E7vFVNtAwNtx
+	k3p67thvqHe4LGJTxc402CqgakrlcykWtWO8e/4J174kbEXFPzehYlOW+z/HdZprZcvUW4
+	ScevaT2/P4VppzuGpb5odUehBJ8xOVk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762420538;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7EJyEl/k7DT8f9HbU1Gh+BkGTTsTzDuULRregCfnYb4=;
+	b=GJ8qPQ2i6Lxm817y3Cu0yIY8EiJ9uldQT0ramhS032FF1MstThDnubU7YQqvZ3Ui4/jpvw
+	VKIcpyzHtKwY5iAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8CB2F139A9;
+	Thu,  6 Nov 2025 09:15:38 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id stFSIjpnDGmmBwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 06 Nov 2025 09:15:38 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 3CE46A0927; Thu,  6 Nov 2025 10:15:38 +0100 (CET)
+Date: Thu, 6 Nov 2025 10:15:38 +0100
+From: Jan Kara <jack@suse.cz>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz, 
+	yi.zhang@huawei.com, libaokun1@huawei.com, yangerkun@huawei.com
+Subject: Re: [PATCH 1/4] ext4: make ext4_es_cache_extent() support overwrite
+ existing extents
+Message-ID: <l7tb75bsk52ybeok737b7o4ag4zeleowtddf3v6wcbnhbom4tx@xv643wp5wp6a>
+References: <20251031062905.4135909-1-yi.zhang@huaweicloud.com>
+ <20251031062905.4135909-2-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <176169819804.1433624.11241650941850700038.stgit@frogsfrogsfrogs>
- <176169820014.1433624.17059077666167415725.stgit@frogsfrogsfrogs>
- <CAOQ4uxhgCqf8pj-ebUiC_HNG4VLyv7UEOausCt5Cs831_AnGUg@mail.gmail.com> <20251105225609.GD196358@frogsfrogsfrogs>
-In-Reply-To: <20251105225609.GD196358@frogsfrogsfrogs>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 6 Nov 2025 10:02:57 +0100
-X-Gm-Features: AWmQ_bn2fAKjP1LvxTPOzsC5eSdfONWi8mVFNaKjNuG1RFoEXsyn3eS71zosukU
-Message-ID: <CAOQ4uxhqVQYZvgNp=yN_u9rqoEw4wZ_YuAfwnpgrnduBruNMbg@mail.gmail.com>
-Subject: Re: [PATCH 02/33] generic/740: don't run this test for fuse ext* implementations
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: zlang@redhat.com, neal@gompa.dev, fstests@vger.kernel.org, 
-	linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	joannelkoong@gmail.com, bernd@bsbernd.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251031062905.4135909-2-yi.zhang@huaweicloud.com>
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_COUNT_THREE(0.00)[3];
+	URIBL_BLOCKED(0.00)[imap1.dmz-prg2.suse.org:helo,huawei.com:email,suse.com:email];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
+X-Spam-Level: 
 
-On Wed, Nov 5, 2025 at 11:56=E2=80=AFPM Darrick J. Wong <djwong@kernel.org>=
- wrote:
->
-> On Thu, Oct 30, 2025 at 10:59:00AM +0100, Amir Goldstein wrote:
-> > On Wed, Oct 29, 2025 at 2:30=E2=80=AFAM Darrick J. Wong <djwong@kernel.=
-org> wrote:
-> > >
-> > > From: Darrick J. Wong <djwong@kernel.org>
-> > >
-> > > mke2fs disables foreign filesystem detection no matter what type you
-> > > pass in, so we need to block this for both fuse server variants.
-> > >
-> > > Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
-> > > ---
-> > >  common/rc         |    2 +-
-> > >  tests/generic/740 |    1 +
-> > >  2 files changed, 2 insertions(+), 1 deletion(-)
-> > >
-> > >
-> > > diff --git a/common/rc b/common/rc
-> > > index 3fe6f53758c05b..18d11e2c5cad3a 100644
-> > > --- a/common/rc
-> > > +++ b/common/rc
-> > > @@ -1889,7 +1889,7 @@ _do()
-> > >  #
-> > >  _exclude_fs()
-> > >  {
-> > > -       [ "$1" =3D "$FSTYP" ] && \
-> > > +       [[ $FSTYP =3D~ $1 ]] && \
-> > >                 _notrun "not suitable for this filesystem type: $FSTY=
-P"
-> >
-> > If you accept my previous suggestion of MKFSTYP, then could add:
-> >
-> >        [[ $MKFSTYP =3D~ $1 ]] && \
-> >                _notrun "not suitable for this filesystem on-disk
-> > format: $MKFSTYP"
-> >
-> >
-> > >  }
-> > >
-> > > diff --git a/tests/generic/740 b/tests/generic/740
-> > > index 83a16052a8a252..e26ae047127985 100755
-> > > --- a/tests/generic/740
-> > > +++ b/tests/generic/740
-> > > @@ -17,6 +17,7 @@ _begin_fstest mkfs auto quick
-> > >  _exclude_fs ext2
-> > >  _exclude_fs ext3
-> > >  _exclude_fs ext4
-> > > +_exclude_fs fuse.ext[234]
-> > >  _exclude_fs jfs
-> > >  _exclude_fs ocfs2
-> > >  _exclude_fs udf
-> > >
-> > >
-> >
-> > And then you wont need to add fuse.ext[234] to exclude list
-> >
-> > At the (very faint) risk of having a test that only wants to exclude ex=
-t4 and
-> > does not want to exclude fuse.ext4, I think this is worth it.
->
-> I guess we could try to do [[ $MKFSTYP =3D~ ^$1 ]]; ?
+On Fri 31-10-25 14:29:02, Zhang Yi wrote:
+> From: Zhang Yi <yi.zhang@huawei.com>
+> 
+> Currently, ext4_es_cache_extent() is used to load extents into the
+> extent status tree when reading on-disk extent blocks. Since it may be
+> called while moving or modifying the extent tree, so it does not
+> overwrite existing extents in the extent status tree and is only used
+> for the initial loading.
+> 
+> There are many other places in ext4 where on-disk extents are inserted
+> into the extent status tree, such as in ext4_map_query_blocks().
+> Currently, they call ext4_es_insert_extent() to perform the insertion,
+> but they don't modify the extents, so ext4_es_cache_extent() would be a
+> more appropriate choice. However, when ext4_map_query_blocks() inserts
+> an extent, it may overwrite a short existing extent of the same type.
+> Therefore, to prepare for the replacements, we need to extend
+> ext4_es_cache_extent() to allow it to overwrite existing extents with
+> the same type.
+> 
+> In addition, since cached extents can be more lenient than the extents
+> they modify and do not involve modifying reserved blocks, it is not
+> necessary to ensure that the insertion operation succeeds as strictly as
+> in the ext4_es_insert_extent() function.
+> 
+> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 
-Yeh of course, either that or [ $MKFSTYP =3D $1 ]
-if we do not care to add pattern matching.
+Thanks for writing this series! I think we can actually simplify things
+event further. Extent status tree operations can be divided into three
+groups:
+1) Lookups in es tree - protected only by i_es_lock.
+2) Caching of on-disk state into es tree - protected by i_es_lock and
+   i_data_sem (at least in read mode).
+3) Modification of existing state - protected by i_es_lock and i_data_sem
+   in write mode.
 
-Thanks,
-Amir.
+Now because 2) has exclusion vs 3) due to i_data_sem, the observation is
+that 2) should never see a real conflict - i.e., all intersecting entries
+in es tree have the same status, otherwise this is a bug. So I think that 
+ext4_es_cache_extent() should always walk the whole inserted range, verify
+the statuses match and merge all these entries into a single one. This
+isn't going to be slower than what we have today because your
+__es_remove_extent(), __es_insert_extent() pair is effectively doing the
+same thing, just without checking the statuses. That way we always get the
+checking and also ext4_es_cache_extent() doesn't have to have the
+overwriting and non-overwriting variant. What do you think?
+
+								Honza
+
+> ---
+>  fs/ext4/extents.c        |  4 ++--
+>  fs/ext4/extents_status.c | 28 +++++++++++++++++++++-------
+>  fs/ext4/extents_status.h |  2 +-
+>  3 files changed, 24 insertions(+), 10 deletions(-)
+> 
+> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
+> index ca5499e9412b..c42ceb5aae37 100644
+> --- a/fs/ext4/extents.c
+> +++ b/fs/ext4/extents.c
+> @@ -537,12 +537,12 @@ static void ext4_cache_extents(struct inode *inode,
+>  
+>  		if (prev && (prev != lblk))
+>  			ext4_es_cache_extent(inode, prev, lblk - prev, ~0,
+> -					     EXTENT_STATUS_HOLE);
+> +					     EXTENT_STATUS_HOLE, false);
+>  
+>  		if (ext4_ext_is_unwritten(ex))
+>  			status = EXTENT_STATUS_UNWRITTEN;
+>  		ext4_es_cache_extent(inode, lblk, len,
+> -				     ext4_ext_pblock(ex), status);
+> +				     ext4_ext_pblock(ex), status, false);
+>  		prev = lblk + len;
+>  	}
+>  }
+> diff --git a/fs/ext4/extents_status.c b/fs/ext4/extents_status.c
+> index 31dc0496f8d0..f9546ecf7340 100644
+> --- a/fs/ext4/extents_status.c
+> +++ b/fs/ext4/extents_status.c
+> @@ -986,13 +986,19 @@ void ext4_es_insert_extent(struct inode *inode, ext4_lblk_t lblk,
+>  }
+>  
+>  /*
+> - * ext4_es_cache_extent() inserts information into the extent status
+> - * tree if and only if there isn't information about the range in
+> - * question already.
+> + * ext4_es_cache_extent() inserts extent information into the extent status
+> + * tree. If 'overwrite' is not set, it inserts extent only if there isn't
+> + * information about the specified range. Otherwise, it overwrites the
+> + * current information.
+> + *
+> + * Note that this interface is only used for caching on-disk extent
+> + * information and cannot be used to convert existing extents in the extent
+> + * status tree. To convert existing extents, use ext4_es_insert_extent()
+> + * instead.
+>   */
+>  void ext4_es_cache_extent(struct inode *inode, ext4_lblk_t lblk,
+>  			  ext4_lblk_t len, ext4_fsblk_t pblk,
+> -			  unsigned int status)
+> +			  unsigned int status, bool overwrite)
+>  {
+>  	struct extent_status *es;
+>  	struct extent_status newes;
+> @@ -1012,10 +1018,18 @@ void ext4_es_cache_extent(struct inode *inode, ext4_lblk_t lblk,
+>  	BUG_ON(end < lblk);
+>  
+>  	write_lock(&EXT4_I(inode)->i_es_lock);
+> -
+>  	es = __es_tree_search(&EXT4_I(inode)->i_es_tree.root, lblk);
+> -	if (!es || es->es_lblk > end)
+> -		__es_insert_extent(inode, &newes, NULL);
+> +	if (es && es->es_lblk <= end) {
+> +		if (!overwrite)
+> +			goto unlock;
+> +
+> +		/* Only extents of the same type can be overwritten. */
+> +		WARN_ON_ONCE(ext4_es_type(es) != status);
+> +		if (__es_remove_extent(inode, lblk, end, NULL, NULL))
+> +			goto unlock;
+> +	}
+> +	__es_insert_extent(inode, &newes, NULL);
+> +unlock:
+>  	write_unlock(&EXT4_I(inode)->i_es_lock);
+>  }
+>  
+> diff --git a/fs/ext4/extents_status.h b/fs/ext4/extents_status.h
+> index 8f9c008d11e8..415f7c223a46 100644
+> --- a/fs/ext4/extents_status.h
+> +++ b/fs/ext4/extents_status.h
+> @@ -139,7 +139,7 @@ extern void ext4_es_insert_extent(struct inode *inode, ext4_lblk_t lblk,
+>  				  bool delalloc_reserve_used);
+>  extern void ext4_es_cache_extent(struct inode *inode, ext4_lblk_t lblk,
+>  				 ext4_lblk_t len, ext4_fsblk_t pblk,
+> -				 unsigned int status);
+> +				 unsigned int status, bool overwrite);
+>  extern void ext4_es_remove_extent(struct inode *inode, ext4_lblk_t lblk,
+>  				  ext4_lblk_t len);
+>  extern void ext4_es_find_extent_range(struct inode *inode,
+> -- 
+> 2.46.1
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
