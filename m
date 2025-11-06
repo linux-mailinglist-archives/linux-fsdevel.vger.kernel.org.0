@@ -1,49 +1,51 @@
-Return-Path: <linux-fsdevel+bounces-67326-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67327-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D202BC3BE14
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 06 Nov 2025 15:53:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE61CC3BE29
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 06 Nov 2025 15:53:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 70DB250354F
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Nov 2025 14:46:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE9C53BEF24
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Nov 2025 14:49:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25A713451CD;
-	Thu,  6 Nov 2025 14:46:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2618D333452;
+	Thu,  6 Nov 2025 14:48:55 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DE61D271;
-	Thu,  6 Nov 2025 14:46:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 126852DAFD7;
+	Thu,  6 Nov 2025 14:48:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762440377; cv=none; b=MvfcrH+KImPZMt0ff3EQCpF0LmMOw7t+0UkjUw8UW53Sw7N/lZYwPnqY9rZqzSvEJkmvSHGUVDu4827HW07bLhZqdBaEovn7dS41HkbIIo3tC6azZLVF4+6U+jmpTTGn5gkdsq80jTOG7NDBO7Nyv17PCFKlY6KWKq56YrAgqw4=
+	t=1762440534; cv=none; b=lH2nohaA1r6ZFxvzYD78Ek3BKEL52d9ADdgkVD3RebVA7mrkFgq2m6WvSpV8TnL5Pe+WZylWusqoR3ztZLKPtlgo8pClzeoLyAa8yr7nlDfaLSbezW6+hI9QWJKdeJUroO2VBsV613dwuf6UorUM+p50D2JKcJUuoQzhCJQ+QlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762440377; c=relaxed/simple;
-	bh=FaWCe0HBuSNVm+1a2uvCPEoKIlnvRBc0xcItbF2Xdqg=;
+	s=arc-20240116; t=1762440534; c=relaxed/simple;
+	bh=lKugn0J9rMSINhrlRTkYP3boduzz6d+jBDbWL1YlLmw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hhoWPgwsw74TbIlggLNhSvJZ02PDRj7kJE9RCtTdJjHqPFLMaCX9AfK1rknLgBqH/+GtFXQFzmMBSSJqAPOWvJi9JfmbqIUH06LN4PyUnCMKgQxlHec8a/MZbKPoWCxNEtCj9DYFvu9q/mYnsGxVgYfq+LFDezGpXjykV9ZjIM0=
+	 Content-Type:Content-Disposition:In-Reply-To; b=phkXRMElo5wxkicp49ZKUHOs2Fa0CGOyYwFbpk+HkY/FjtC6VEpsV8pAX8v66Vc3eDjUgLsBZjYwl3ZdWMby9s+KdAvQIkLgr0bwizOzsABen6Tf+O82ddGGCKCn1bEKFrkdusXhcgrDXrOnas+f4ISQZkLOhedY3ILsw0IpdJ0=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
 Received: by verein.lst.de (Postfix, from userid 2407)
-	id ECB46227AAE; Thu,  6 Nov 2025 15:46:10 +0100 (CET)
-Date: Thu, 6 Nov 2025 15:46:10 +0100
+	id F02EA227AAE; Thu,  6 Nov 2025 15:48:46 +0100 (CET)
+Date: Thu, 6 Nov 2025 15:48:46 +0100
 From: Christoph Hellwig <hch@lst.de>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Christoph Hellwig <hch@lst.de>, Florian Weimer <fweimer@redhat.com>,
-	Hans Holmberg <hans.holmberg@wdc.com>, linux-xfs@vger.kernel.org,
-	Carlos Maiolino <cem@kernel.org>,
-	Dave Chinner <david@fromorbit.com>,
-	"Darrick J . Wong" <djwong@kernel.org>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	libc-alpha@sourceware.org
-Subject: Re: [RFC] xfs: fake fallocate success for always CoW inodes
-Message-ID: <20251106144610.GA14909@lst.de>
-References: <20251106133530.12927-1-hans.holmberg@wdc.com> <lhuikfngtlv.fsf@oldenburg.str.redhat.com> <20251106135212.GA10477@lst.de> <aQyz1j7nqXPKTYPT@casper.infradead.org>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+	Eric Biggers <ebiggers@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Lameter <cl@gentwo.org>,
+	David Rientjes <rientjes@google.com>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Harry Yoo <harry.yoo@oracle.com>, linux-block@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH 3/9] mempool: add mempool_{alloc,free}_bulk
+Message-ID: <20251106144846.GA15119@lst.de>
+References: <20251031093517.1603379-1-hch@lst.de> <20251031093517.1603379-4-hch@lst.de> <1fff522d-1987-4dcc-a6a2-4406a22d3ec2@suse.cz> <20251106141306.GA12043@lst.de> <b950d1a9-3686-4adc-ac2d-795b598ff1a5@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,34 +54,47 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aQyz1j7nqXPKTYPT@casper.infradead.org>
+In-Reply-To: <b950d1a9-3686-4adc-ac2d-795b598ff1a5@suse.cz>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Thu, Nov 06, 2025 at 02:42:30PM +0000, Matthew Wilcox wrote:
-> On Thu, Nov 06, 2025 at 02:52:12PM +0100, Christoph Hellwig wrote:
-> > On Thu, Nov 06, 2025 at 02:48:12PM +0100, Florian Weimer wrote:
-> > > * Hans Holmberg:
-> > > 
-> > > > We don't support preallocations for CoW inodes and we currently fail
-> > > > with -EOPNOTSUPP, but this causes an issue for users of glibc's
-> > > > posix_fallocate[1]. If fallocate fails, posix_fallocate falls back on
-> > > > writing actual data into the range to try to allocate blocks that way.
-> > > > That does not actually gurantee anything for CoW inodes however as we
-> > > > write out of place.
-> > > 
-> > > Why doesn't fallocate trigger the copy instead?  Isn't this what the
-> > > user is requesting?
+On Thu, Nov 06, 2025 at 03:27:35PM +0100, Vlastimil Babka wrote:
+> >> Would it be enough to do this failure injection attempt once and not in
+> >> every iteration?
 > > 
-> > What copy?
+> > Well, that would only test failure handling for the first element. Or
+> > you mean don't call it again if called once?
 > 
-> I believe Florian is thinking of CoW in the sense of "share while read
-> only, then you have a mutable block allocation", rather than the
-> WAFL (or SMR) sense of "we always put writes in a new location".
+> I mean since this is (due to the semantics of mempools) not really causing a
+> failure to the caller (unlike the typical failure injection usage), but
+> forcing preallocated objecs use, I'm not sure we get much benefit (in terms
+> of testing caller's error paths) from the fine grained selection of the
+> first element where we inject fail, and failing immediately or never should
+> be sufficient.
 
-Note that the glibc posix_fallocate(3( fallback will never copy anyway.
-It does a racy check and somewhat broken check if there is already
-data, and if it thinks there isn't it writes zeroes.  Which is the
-wrong thing for just about every use case imaginable.  And the only
-thing to stop it from doing that is to implement fallocate(2) and
-return success.
+I guess. OTOH testing multiple failures could be useful?
+
+> > Yes, this looks like broken copy and paste.  The again I'm not even
+> > sure who calls into mempool without __GFP_DIRECT_RECLAIM reset, as
+> > that's kinda pointless.
+> 
+> Hm yeah would have to be some special case where something limits how many
+> such outstanding allocations can there be, otherwise it's just a cache to
+> make success more likely but not guaranteed.
+
+I think the only reason mempool_alloc even allows !__GFP_DIRECT_RECLAIM
+is to avoid special casing that in callers that have a non-constant
+gfp mask.  So maybe the best thing would be to never actually go to
+the pool for them and just give up if alloc_fn fails?
+
+> >> >   * This function only sleeps if the free_fn callback sleeps.
+> >> 
+> >> This part now only applies to mempool_free() ?
+> > 
+> > Both mempool_free and mempool_free_bulk.
+> 
+> But mempool_free_bulk() doesn't use the callback, it's up to the caller to
+> free anything the mempool didn't use for its refill.
+
+You're right.  So mempool_free_bulk itself will indeed never sleep and
+I'll fix that up.
 
