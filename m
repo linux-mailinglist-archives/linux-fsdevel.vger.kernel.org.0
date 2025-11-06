@@ -1,61 +1,65 @@
-Return-Path: <linux-fsdevel+bounces-67234-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67235-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F169C3874E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 06 Nov 2025 01:21:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF46BC3875A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 06 Nov 2025 01:22:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 262A23A42CD
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Nov 2025 00:19:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFE723A3F81
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Nov 2025 00:21:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93B851662E7;
-	Thu,  6 Nov 2025 00:19:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A66F17BEBF;
+	Thu,  6 Nov 2025 00:21:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R1A5OGiW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AZPR8UZ2"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBF8710957;
-	Thu,  6 Nov 2025 00:19:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A28BC28E9;
+	Thu,  6 Nov 2025 00:21:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762388356; cv=none; b=T/2/3wE6JQ3A3EdlZPZ3kWofIOIih2jhSmobT2e1BPFUSOiQUpZQW/P6RgRwxRcN+Cn2nKTAZijN4r+1EtktgU5RJLicQig942kh7Ef+Kt2A66xxDirdorBkjs2FKGHNHqGOXDQFn0Rl6rMgJa7JBugPuY2GHLWiiLvAdNnPVeI=
+	t=1762388498; cv=none; b=heObBJEw+OQYGR3+l4OxaVU+Bf8Nrm+EuRyPVPenorINoN3Z8qCLaA923lQo2d3/3cKtZkfQ8Ak3dhFcmylIf4xV25V5jQ902g+a9lLfKZms9Rzd4xRhSf/4ZuTqvCKr0lW9+Ru1MNbgg6Pttvj9ylFttlbs1FFl+aAyRMyXCrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762388356; c=relaxed/simple;
-	bh=yuz8cRWpXPaa88jkV7mgefpgHkZ19yoPK0xCS4Ul/VI=;
+	s=arc-20240116; t=1762388498; c=relaxed/simple;
+	bh=Y2hCur7XaI2XXznlltyJtt8DhqhwBdUCRRv+EdY3nqw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M7w+Ptp2P9FIfHRFkhBXSQi2pg0pvvpxrOQhiL1tSIfx/oIZ58AONqdZQ18ZI3GQIbFtFC69jaYpdDLRaxk0cCO8azFPNkbG2pcWOxkIaqb2S3zJTcQTWL4EgEdggURPDk+vRtG+yh3XWzunROASUd5tAtXjmw0yF12UNyrS6FE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R1A5OGiW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 229EBC4CEF5;
-	Thu,  6 Nov 2025 00:19:15 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=CSqDKHfsgXsYC0zOd0vJybRcGJo/GmzoUTd0nDMO+PYm4x5Mu45uQYKMuY8so6geiuvy9Qp3573+LpFBVl5ppP9x5eG2jUsPXawbR5SEo7sJh0avT9ys+P7y3tPz0HrhegVoEWUodQ4jFPLxIjUNtaw5hkADtYT4kQRHqQdUrD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AZPR8UZ2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38314C4CEF5;
+	Thu,  6 Nov 2025 00:21:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762388355;
-	bh=yuz8cRWpXPaa88jkV7mgefpgHkZ19yoPK0xCS4Ul/VI=;
+	s=k20201202; t=1762388498;
+	bh=Y2hCur7XaI2XXznlltyJtt8DhqhwBdUCRRv+EdY3nqw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=R1A5OGiWP68niBI+otgdSkB33I3FvHoFZwPtlQ2+S2ILENyq30G7KJcdjvLPFVrmS
-	 9/aan1z5hYSsu4PHxcYDmrM74iZ2ZP7DK0kpKf6MBBqv6EhIOc48qRKj5gL8XpCZFI
-	 PHDBZ3dNLnzyAT6IfCfSGgXh2wCJKS+o7NFgaUpcfVWom/c3Ave7gz8SibOfk2EaVz
-	 xxKrYZNVH4uUqNwrIIk6LKsvkPA1Dz9u49MnmGxYPNuDxFH4ZqzLAi1D8M6kkcfCWG
-	 gd/4Fk4As0CzOl2wlcjffbHt2mVsRyvzf3og4/RfnJhPWirGFPIJz2xvdDOYG3rBKd
-	 k3aDV+/PPQyyA==
-Date: Wed, 5 Nov 2025 16:19:14 -0800
+	b=AZPR8UZ2YVUCoEpXoestDFmN3KxGZ5XSumakh53pFpG/x9yhmbck1iRSHCz5uCh2M
+	 Y1+R625ouZXXVUKC97DVaSsYeI8JCgDBj/YdZopEIWYnjDqNsO3mIKsyieD2Upp1YM
+	 8AEGWn22IY1a94p3qvF67qGJx3M7ihMoSaO6It5x+e01M4UTubNvcrQemf2hdRK1zV
+	 vual/m1XgseJt31v9S/CsEhDKeH15uOct/A1vaqQf7xozcXHEQegt5/YtCuxt/XjKt
+	 RMFcaCBbvkPyLkdXAN0xP00IR3+aI2DJD54Ny+lL/wxp+HSNugzbdFYFfKy2xCcIbG
+	 ZCa5rP5/ZSy0Q==
+Date: Wed, 5 Nov 2025 16:21:37 -0800
 From: "Darrick J. Wong" <djwong@kernel.org>
-To: Bernd Schubert <bernd@bsbernd.com>
-Cc: Joanne Koong <joannelkoong@gmail.com>, miklos@szeredi.hu,
-	neal@gompa.dev, linux-ext4@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 1/5] fuse: flush pending fuse events before aborting the
- connection
-Message-ID: <20251106001914.GI196358@frogsfrogsfrogs>
-References: <176169809222.1424347.16562281526870178424.stgit@frogsfrogsfrogs>
- <176169809274.1424347.4813085698864777783.stgit@frogsfrogsfrogs>
- <CAJnrk1ZovORC=tLW-Q94XXY5M4i5WUd4CgRKEo7Lc7K2Sg+Kog@mail.gmail.com>
- <20251103221349.GE196370@frogsfrogsfrogs>
- <CAJnrk1a4d__8RHu0EGN2Yfk3oOhqZLJ7fBCNQYdHoThPrvnOaQ@mail.gmail.com>
- <a9c0c66e-c3ce-4cdd-bd83-dd04bc5f9379@bsbernd.com>
+To: Bernd Schubert <bschubert@ddn.com>
+Cc: Amir Goldstein <amir73il@gmail.com>, Luis Henriques <luis@igalia.com>,
+	Bernd Schubert <bernd@bsbernd.com>, Theodore Ts'o <tytso@mit.edu>,
+	Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Kevin Chen <kchen@ddn.com>
+Subject: Re: [RFC] Another take at restarting FUSE servers
+Message-ID: <20251106002137.GQ196362@frogsfrogsfrogs>
+References: <CAOQ4uxhm3=P-kJn3Liu67bhhMODZOM7AUSLFJRiy_neuz6g80g@mail.gmail.com>
+ <2e1db15f-b2b1-487f-9f42-44dc7480b2e2@bsbernd.com>
+ <CAOQ4uxg8sFdFRxKUcAFoCPMXaNY18m4e1PfBXo+GdGxGcKDaFg@mail.gmail.com>
+ <20250916025341.GO1587915@frogsfrogsfrogs>
+ <CAOQ4uxhLM11Zq9P=E1VyN7puvBs80v0HrPU6HqY0LLM6HVc_ZQ@mail.gmail.com>
+ <87ldkm6n5o.fsf@wotan.olymp>
+ <CAOQ4uxg7b0mupCVaouPXPGNN=Ji2XceeceUf8L6pW8+vq3uOMQ@mail.gmail.com>
+ <7ee1e308-c58c-45a0-8ded-6694feae097f@ddn.com>
+ <20251105224245.GP196362@frogsfrogsfrogs>
+ <d57bcfc5-fc3d-4635-ab46-0b9038fb7039@ddn.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -65,209 +69,267 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <a9c0c66e-c3ce-4cdd-bd83-dd04bc5f9379@bsbernd.com>
+In-Reply-To: <d57bcfc5-fc3d-4635-ab46-0b9038fb7039@ddn.com>
 
-On Tue, Nov 04, 2025 at 10:47:52PM +0100, Bernd Schubert wrote:
+On Wed, Nov 05, 2025 at 11:48:21PM +0100, Bernd Schubert wrote:
 > 
 > 
-> On 11/4/25 20:22, Joanne Koong wrote:
-> > On Mon, Nov 3, 2025 at 2:13 PM Darrick J. Wong <djwong@kernel.org> wrote:
+> On 11/5/25 23:42, Darrick J. Wong wrote:
+> > On Wed, Nov 05, 2025 at 11:24:01PM +0100, Bernd Schubert wrote:
 > >>
-> >> On Mon, Nov 03, 2025 at 09:20:26AM -0800, Joanne Koong wrote:
-> >>> On Tue, Oct 28, 2025 at 5:43 PM Darrick J. Wong <djwong@kernel.org> wrote:
+> >>
+> >> On 11/4/25 14:10, Amir Goldstein wrote:
+> >>> On Tue, Nov 4, 2025 at 12:40 PM Luis Henriques <luis@igalia.com> wrote:
 > >>>>
-> >>>> From: Darrick J. Wong <djwong@kernel.org>
+> >>>> On Tue, Sep 16 2025, Amir Goldstein wrote:
 > >>>>
-> >>>> generic/488 fails with fuse2fs in the following fashion:
+> >>>>> On Tue, Sep 16, 2025 at 4:53 AM Darrick J. Wong <djwong@kernel.org> wrote:
+> >>>>>>
+> >>>>>> On Mon, Sep 15, 2025 at 10:41:31AM +0200, Amir Goldstein wrote:
+> >>>>>>> On Mon, Sep 15, 2025 at 10:27 AM Bernd Schubert <bernd@bsbernd.com> wrote:
+> >>>>>>>>
+> >>>>>>>>
+> >>>>>>>>
+> >>>>>>>> On 9/15/25 09:07, Amir Goldstein wrote:
+> >>>>>>>>> On Fri, Sep 12, 2025 at 4:58 PM Darrick J. Wong <djwong@kernel.org> wrote:
+> >>>>>>>>>>
+> >>>>>>>>>> On Fri, Sep 12, 2025 at 02:29:03PM +0200, Bernd Schubert wrote:
+> >>>>>>>>>>>
+> >>>>>>>>>>>
+> >>>>>>>>>>> On 9/12/25 13:41, Amir Goldstein wrote:
+> >>>>>>>>>>>> On Fri, Sep 12, 2025 at 12:31 PM Bernd Schubert <bernd@bsbernd.com> wrote:
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>> On 8/1/25 12:15, Luis Henriques wrote:
+> >>>>>>>>>>>>>> On Thu, Jul 31 2025, Darrick J. Wong wrote:
+> >>>>>>>>>>>>>>
+> >>>>>>>>>>>>>>> On Thu, Jul 31, 2025 at 09:04:58AM -0400, Theodore Ts'o wrote:
+> >>>>>>>>>>>>>>>> On Tue, Jul 29, 2025 at 04:38:54PM -0700, Darrick J. Wong wrote:
+> >>>>>>>>>>>>>>>>>
+> >>>>>>>>>>>>>>>>> Just speaking for fuse2fs here -- that would be kinda nifty if libfuse
+> >>>>>>>>>>>>>>>>> could restart itself.  It's unclear if doing so will actually enable us
+> >>>>>>>>>>>>>>>>> to clear the condition that caused the failure in the first place, but I
+> >>>>>>>>>>>>>>>>> suppose fuse2fs /does/ have e2fsck -fy at hand.  So maybe restarts
+> >>>>>>>>>>>>>>>>> aren't totally crazy.
+> >>>>>>>>>>>>>>>>
+> >>>>>>>>>>>>>>>> I'm trying to understand what the failure scenario is here.  Is this
+> >>>>>>>>>>>>>>>> if the userspace fuse server (i.e., fuse2fs) has crashed?  If so, what
+> >>>>>>>>>>>>>>>> is supposed to happen with respect to open files, metadata and data
+> >>>>>>>>>>>>>>>> modifications which were in transit, etc.?  Sure, fuse2fs could run
+> >>>>>>>>>>>>>>>> e2fsck -fy, but if there are dirty inode on the system, that's going
+> >>>>>>>>>>>>>>>> potentally to be out of sync, right?
+> >>>>>>>>>>>>>>>>
+> >>>>>>>>>>>>>>>> What are the recovery semantics that we hope to be able to provide?
+> >>>>>>>>>>>>>>>
+> >>>>>>>>>>>>>>> <echoing what we said on the ext4 call this morning>
+> >>>>>>>>>>>>>>>
+> >>>>>>>>>>>>>>> With iomap, most of the dirty state is in the kernel, so I think the new
+> >>>>>>>>>>>>>>> fuse2fs instance would poke the kernel with FUSE_NOTIFY_RESTARTED, which
+> >>>>>>>>>>>>>>> would initiate GETATTR requests on all the cached inodes to validate
+> >>>>>>>>>>>>>>> that they still exist; and then resend all the unacknowledged requests
+> >>>>>>>>>>>>>>> that were pending at the time.  It might be the case that you have to
+> >>>>>>>>>>>>>>> that in the reverse order; I only know enough about the design of fuse
+> >>>>>>>>>>>>>>> to suspect that to be true.
+> >>>>>>>>>>>>>>>
+> >>>>>>>>>>>>>>> Anyhow once those are complete, I think we can resume operations with
+> >>>>>>>>>>>>>>> the surviving inodes.  The ones that fail the GETATTR revalidation are
+> >>>>>>>>>>>>>>> fuse_make_bad'd, which effectively revokes them.
+> >>>>>>>>>>>>>>
+> >>>>>>>>>>>>>> Ah! Interesting, I have been playing a bit with sending LOOKUP requests,
+> >>>>>>>>>>>>>> but probably GETATTR is a better option.
+> >>>>>>>>>>>>>>
+> >>>>>>>>>>>>>> So, are you currently working on any of this?  Are you implementing this
+> >>>>>>>>>>>>>> new NOTIFY_RESTARTED request?  I guess it's time for me to have a closer
+> >>>>>>>>>>>>>> look at fuse2fs too.
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>> Sorry for joining the discussion late, I was totally occupied, day and
+> >>>>>>>>>>>>> night. Added Kevin to CC, who is going to work on recovery on our
+> >>>>>>>>>>>>> DDN side.
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>> Issue with GETATTR and LOOKUP is that they need a path, but on fuse
+> >>>>>>>>>>>>> server restart we want kernel to recover inodes and their lookup count.
+> >>>>>>>>>>>>> Now inode recovery might be hard, because we currently only have a
+> >>>>>>>>>>>>> 64-bit node-id - which is used my most fuse application as memory
+> >>>>>>>>>>>>> pointer.
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>> As Luis wrote, my issue with FUSE_NOTIFY_RESEND is that it just re-sends
+> >>>>>>>>>>>>> outstanding requests. And that ends up in most cases in sending requests
+> >>>>>>>>>>>>> with invalid node-IDs, that are casted and might provoke random memory
+> >>>>>>>>>>>>> access on restart. Kind of the same issue why fuse nfs export or
+> >>>>>>>>>>>>> open_by_handle_at doesn't work well right now.
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>> So IMHO, what we really want is something like FUSE_LOOKUP_FH, which
+> >>>>>>>>>>>>> would not return a 64-bit node ID, but a max 128 byte file handle.
+> >>>>>>>>>>>>> And then FUSE_REVALIDATE_FH on server restart.
+> >>>>>>>>>>>>> The file handles could be stored into the fuse inode and also used for
+> >>>>>>>>>>>>> NFS export.
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>> I *think* Amir had a similar idea, but I don't find the link quickly.
+> >>>>>>>>>>>>> Adding Amir to CC.
+> >>>>>>>>>>>>
+> >>>>>>>>>>>> Or maybe it was Miklos' idea. Hard to keep track of this rolling thread:
+> >>>>>>>>>>>> https://lore.kernel.org/linux-fsdevel/CAJfpegvNZ6Z7uhuTdQ6quBaTOYNkAP8W_4yUY4L2JRAEKxEwOQ@mail.gmail.com/
+> >>>>>>>>>>>
+> >>>>>>>>>>> Thanks for the reference Amir! I even had been in that thread.
+> >>>>>>>>>>>
+> >>>>>>>>>>>>
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>> Our short term plan is to add something like FUSE_NOTIFY_RESTART, which
+> >>>>>>>>>>>>> will iterate over all superblock inodes and mark them with fuse_make_bad.
+> >>>>>>>>>>>>> Any objections against that?
+> >>>>>>>>>>
+> >>>>>>>>>> What if you actually /can/ reuse a nodeid after a restart?  Consider
+> >>>>>>>>>> fuse4fs, where the nodeid is the on-disk inode number.  After a restart,
+> >>>>>>>>>> you can reconnect the fuse_inode to the ondisk inode, assuming recovery
+> >>>>>>>>>> didn't delete it, obviously.
+> >>>>>>>>>
+> >>>>>>>>> FUSE_LOOKUP_HANDLE is a contract.
+> >>>>>>>>> If fuse4fs can reuse nodeid after restart then by all means, it should sign
+> >>>>>>>>> this contract, otherwise there is no way for client to know that the
+> >>>>>>>>> nodeids are persistent.
+> >>>>>>>>> If fuse4fs_handle := nodeid, that will make implementing the lookup_handle()
+> >>>>>>>>> API trivial.
+> >>>>>>>>>
+> >>>>>>>>>>
+> >>>>>>>>>> I suppose you could just ask for refreshed stat information and either
+> >>>>>>>>>> the server gives it to you and the fuse_inode lives; or the server
+> >>>>>>>>>> returns ENOENT and then we mark it bad.  But I'd have to see code
+> >>>>>>>>>> patches to form a real opinion.
+> >>>>>>>>>>
+> >>>>>>>>>
+> >>>>>>>>> You could make fuse4fs_handle := <nodeid:fuse_instance_id>
+> >>>>>>>>> where fuse_instance_id can be its start time or random number.
+> >>>>>>>>> for auto invalidate, or maybe the fuse_instance_id should be
+> >>>>>>>>> a native part of FUSE protocol so that client knows to only invalidate
+> >>>>>>>>> attr cache in case of fuse_instance_id change?
+> >>>>>>>>>
+> >>>>>>>>> In any case, instead of a storm of revalidate messages after
+> >>>>>>>>> server restart, do it lazily on demand.
+> >>>>>>>>
+> >>>>>>>> For a network file system, probably. For fuse4fs or other block
+> >>>>>>>> based file systems, not sure. Darrick has the example of fsck.
+> >>>>>>>> Let's assume fuse4fs runs with attribute and dentry timeouts > 0,
+> >>>>>>>> fuse-server gets restarted, fsck'ed and some files get removed.
+> >>>>>>>> Now reading these inodes would still work - wouldn't it
+> >>>>>>>> be better to invalidate the cache before going into operation
+> >>>>>>>> again?
+> >>>>>>>
+> >>>>>>> Forgive me, I was making a wrong assumption that fuse4fs
+> >>>>>>> was using ext4 filehandle as nodeid, but of course it does not.
+> >>>>>>
+> >>>>>> Well now that you mention it, there /is/ a risk of shenanigans like
+> >>>>>> that.  Consider:
+> >>>>>>
+> >>>>>> 1) fuse4fs mount an ext4 filesystem
+> >>>>>> 2) crash the fuse4fs server
+> >>>>>> <fuse4fs server restart stalls...>
+> >>>>>> 3) e2fsck -fy /dev/XXX deletes inode 17
+> >>>>>> 4) someone else mounts the fs, makes some changes that result in 17
+> >>>>>>    being reallocated, user says "OOOOOPS", unmounts it
+> >>>>>> 5) fuse4fs server finally restarts, and reconnects to the kernel
+> >>>>>>
+> >>>>>> Hey, inode 17 is now a different file!!
+> >>>>>>
+> >>>>>> So maybe the nodeid has to be an actual file handle.  Oh wait, no,
+> >>>>>> everything's (potentially) fine because fuse4fs supplied i_generation to
+> >>>>>> the kernel, and fuse_stale_inode will mark it bad if that happens.
+> >>>>>>
+> >>>>>> Hm ok then, at least there's a way out. :)
+> >>>>>>
+> >>>>>
+> >>>>> Right.
+> >>>>>
+> >>>>>>> The reason I made this wrong assumption is because fuse4fs *can*
+> >>>>>>> already use ext4 (64bit) file handle as nodeid, with existing FUSE protocol
+> >>>>>>> which is what my fuse passthough library [1] does.
+> >>>>>>>
+> >>>>>>> My claim was that although fuse4fs could support safe restart, which
+> >>>>>>> cannot read from recycled inode number with current FUSE protocol,
+> >>>>>>> doing so with FUSE_HANDLE protocol would express a commitment
+> >>>>>>
+> >>>>>> Pardon my naïvete, but what is FUSE_HANDLE?
+> >>>>>>
+> >>>>>> $ git grep -w FUSE_HANDLE fs
+> >>>>>> $
+> >>>>>
+> >>>>> Sorry, braino. I meant LOOKUP_HANDLE (or FUSE_LOOKUP_HANDLE):
+> >>>>> https://lore.kernel.org/linux-fsdevel/CAJfpegvNZ6Z7uhuTdQ6quBaTOYNkAP8W_4yUY4L2JRAEKxEwOQ@mail.gmail.com/
+> >>>>>
+> >>>>> Which means to communicate a variable sized "nodeid"
+> >>>>> which can also be declared as an object id that survives server restart.
+> >>>>>
+> >>>>> Basically, the reason that I brought up LOOKUP_HANDLE is to
+> >>>>> properly support NFS export of fuse filesystems.
+> >>>>>
+> >>>>> My incentive was to support a proper fuse server restart/remount/re-export
+> >>>>> with the same fsid in /etc/exports, but this gives us a better starting point
+> >>>>> for fuse server restart/re-connect.
 > >>>>
-> >>>> generic/488       _check_generic_filesystem: filesystem on /dev/sdf is inconsistent
-> >>>> (see /var/tmp/fstests/generic/488.full for details)
+> >>>> Sorry for resurrecting (again!) this discussion.  I've been thinking about
+> >>>> this, and trying to get some initial RFC for this LOOKUP_HANDLE operation.
+> >>>> However, I feel there are other operations that will need to return this
+> >>>> new handle.
 > >>>>
-> >>>> This test opens a large number of files, unlinks them (which really just
-> >>>> renames them to fuse hidden files), closes the program, unmounts the
-> >>>> filesystem, and runs fsck to check that there aren't any inconsistencies
-> >>>> in the filesystem.
-> >>>>
-> >>>> Unfortunately, the 488.full file shows that there are a lot of hidden
-> >>>> files left over in the filesystem, with incorrect link counts.  Tracing
-> >>>> fuse_request_* shows that there are a large number of FUSE_RELEASE
-> >>>> commands that are queued up on behalf of the unlinked files at the time
-> >>>> that fuse_conn_destroy calls fuse_abort_conn.  Had the connection not
-> >>>> aborted, the fuse server would have responded to the RELEASE commands by
-> >>>> removing the hidden files; instead they stick around.
-> >>>>
-> >>>> For upper-level fuse servers that don't use fuseblk mode this isn't a
-> >>>> problem because libfuse responds to the connection going down by pruning
-> >>>> its inode cache and calling the fuse server's ->release for any open
-> >>>> files before calling the server's ->destroy function.
-> >>>>
-> >>>> For fuseblk servers this is a problem, however, because the kernel sends
-> >>>> FUSE_DESTROY to the fuse server, and the fuse server has to close the
-> >>>> block device before returning.  This means that the kernel must flush
-> >>>> all pending FUSE_RELEASE requests before issuing FUSE_DESTROY.
-> >>>>
-> >>>> Create a function to push all the background requests to the queue and
-> >>>> then wait for the number of pending events to hit zero, and call this
-> >>>> before sending FUSE_DESTROY.  That way, all the pending events are
-> >>>> processed by the fuse server and we don't end up with a corrupt
-> >>>> filesystem.
-> >>>>
-> >>>> Note that we use a wait_event_timeout() loop to cause the process to
-> >>>> schedule at least once per second to avoid a "task blocked" warning:
-> >>>>
-> >>>> INFO: task umount:1279 blocked for more than 20 seconds.
-> >>>>       Not tainted 6.17.0-rc7-xfsx #rc7
-> >>>> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this messag.
-> >>>> task:umount          state:D stack:11984 pid:1279  tgid:1279  ppid:10690
-> >>>>
-> >>>> Earlier in the threads about this patch there was a (self-inflicted)
-> >>>> dispute as to whether it was necessary to call touch_softlockup_watchdog
-> >>>> in the loop body.  Because the process goes to sleep, it's not necessary
-> >>>> to touch the softlockup watchdog because we're not preventing another
-> >>>> process from being scheduled on a CPU.
-> >>>>
-> >>>> Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
-> >>>> ---
-> >>>>  fs/fuse/fuse_i.h |    5 +++++
-> >>>>  fs/fuse/dev.c    |   35 +++++++++++++++++++++++++++++++++++
-> >>>>  fs/fuse/inode.c  |   11 ++++++++++-
-> >>>>  3 files changed, 50 insertions(+), 1 deletion(-)
-> >>>>
-> >>>>
-> >>>> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-> >>>> index c2f2a48156d6c5..aaa8574fd72775 100644
-> >>>> --- a/fs/fuse/fuse_i.h
-> >>>> +++ b/fs/fuse/fuse_i.h
-> >>>> @@ -1274,6 +1274,11 @@ void fuse_request_end(struct fuse_req *req);
-> >>>>  void fuse_abort_conn(struct fuse_conn *fc);
-> >>>>  void fuse_wait_aborted(struct fuse_conn *fc);
-> >>>>
-> >>>> +/**
-> >>>> + * Flush all pending requests and wait for them.
-> >>>> + */
-> >>>> +void fuse_flush_requests_and_wait(struct fuse_conn *fc);
-> >>>> +
-> >>>>  /* Check if any requests timed out */
-> >>>>  void fuse_check_timeout(struct work_struct *work);
-> >>>>
-> >>>> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-> >>>> index 132f38619d7072..ecc0a5304c59d1 100644
-> >>>> --- a/fs/fuse/dev.c
-> >>>> +++ b/fs/fuse/dev.c
-> >>>> @@ -24,6 +24,7 @@
-> >>>>  #include <linux/splice.h>
-> >>>>  #include <linux/sched.h>
-> >>>>  #include <linux/seq_file.h>
-> >>>> +#include <linux/nmi.h>
-> >>>>
-> >>>>  #include "fuse_trace.h"
-> >>>>
-> >>>> @@ -2430,6 +2431,40 @@ static void end_polls(struct fuse_conn *fc)
-> >>>>         }
-> >>>>  }
-> >>>>
-> >>>> +/*
-> >>>> + * Flush all pending requests and wait for them.  Only call this function when
-> >>>> + * it is no longer possible for other threads to add requests.
-> >>>> + */
-> >>>> +void fuse_flush_requests_and_wait(struct fuse_conn *fc)
-> >>>> +{
-> >>>> +       spin_lock(&fc->lock);
+> >>>> For example, the FUSE_CREATE (for atomic_open) also returns a nodeid.
+> >>>> Doesn't this means that, if the user-space server supports the new
+> >>>> LOOKUP_HANDLE, it should also return an handle in reply to the CREATE
+> >>>> request?
 > >>>
-> >>> Do we need to grab the fc lock? fc->connected is protected under the
-> >>> bg_lock, afaict from fuse_abort_conn().
-> >>
-> >> Oh, heh.  Yeah, it does indeed take both fc->lock and fc->bg_lock.
-> >> Will fix that, thanks. :)
-> >>
-> >> FWIW I don't think it's a big deal if we see a stale connected==1 value
-> >> because the events will all get cancelled and the wait loop won't run
-> >> anyway, but I agree with being consistent about lock ordering. :)
-> >>
-> >>>> +       if (!fc->connected) {
-> >>>> +               spin_unlock(&fc->lock);
-> >>>> +               return;
-> >>>> +       }
-> >>>> +
-> >>>> +       /* Push all the background requests to the queue. */
-> >>>> +       spin_lock(&fc->bg_lock);
-> >>>> +       fc->blocked = 0;
-> >>>> +       fc->max_background = UINT_MAX;
-> >>>> +       flush_bg_queue(fc);
-> >>>> +       spin_unlock(&fc->bg_lock);
-> >>>> +       spin_unlock(&fc->lock);
-> >>>> +
-> >>>> +       /*
-> >>>> +        * Wait for all pending fuse requests to complete or abort.  The fuse
-> >>>> +        * server could take a significant amount of time to complete a
-> >>>> +        * request, so run this in a loop with a short timeout so that we don't
-> >>>> +        * trip the soft lockup detector.
-> >>>> +        */
-> >>>> +       smp_mb();
-> >>>> +       while (wait_event_timeout(fc->blocked_waitq,
-> >>>> +                       !fc->connected || atomic_read(&fc->num_waiting) == 0,
-> >>>> +                       HZ) == 0) {
-> >>>> +               /* empty */
-> >>>> +       }
+> >>> Yes, I think that's what it means.
 > >>>
-> >>> I'm wondering if it's necessary to wait here for all the pending
-> >>> requests to complete or abort?
+> >>>> The same question applies for TMPFILE, LINK, etc.  Or is there
+> >>>> something special about the LOOKUP operation that I'm missing?
+> >>>>
+> >>>
+> >>> Any command returning fuse_entry_out.
+> >>>
+> >>> READDIRPLUS, MKNOD, MKDIR, SYMLINK
 > >>
-> >> I'm not 100% sure what the fuse client shutdown sequence is supposed to
-> >> be.  If someone kills a program with a large number of open unlinked
-> >> files and immediately calls umount(), then the fuse client could be in
-> >> the process of sending FUSE_RELEASE requests to the server.
+> >> Btw, checkout out <libfuse>/doc/libfuse-operations.txt for these
+> >> things. With double checking, though, the file was mostly created by AI
+> >> (just added a correction today). With that easy to see the missing
+> >> FUSE_TMPFILE.
 > >>
-> >> [background info, feel free to speedread this paragraph]
-> >> For a non-fuseblk server, unmount aborts all pending requests and
-> >> disconnects the fuse device.  This means that the fuse server won't see
-> >> all the FUSE_REQUESTs before libfuse calls ->destroy having observed the
-> >> fusedev shutdown.  The end result is that (on fuse2fs anyway) you end up
-> >> with a lot of .fuseXXXXX files that nobody cleans up.
 > >>
-> >> If you make ->destroy release all the remaining open files, now you run
-> >> into a second problem, which is that if there are a lot of open unlinked
-> >> files, freeing the inodes can collectively take enough time that the
-> >> FUSE_DESTROY request times out.
+> >>>
+> >>> fuse_entry_out was extended once and fuse_reply_entry()
+> >>> sends the size of the struct.
 > >>
-> >> On a fuseblk server with libfuse running in multithreaded mode, there
-> >> can be several threads reading fuse requests from the fusedev.  The
-> >> kernel actually sends its own FUSE_DESTROY request, but there's no
-> >> coordination between the fuse workers, which means that the fuse server
-> >> can process FUSE_DESTROY at the same time it's processing FUSE_RELEASE.
-> >> If ->destroy closes the filesystem before the FUSE_RELEASE requests are
-> >> processed, you end up with the same .fuseXXXXX file cleanup problem.
+> >> Sorry, I'm confused. Where does fuse_reply_entry() send the size?
+> >>
+> >>> However fuse_reply_create() sends it with fuse_open_out
+> >>> appended and fuse_add_direntry_plus() does not seem to write
+> >>> record size at all, so server and client will need to agree on the
+> >>> size of fuse_entry_out and this would need to be backward compat.
+> >>> If both server and client declare support for FUSE_LOOKUP_HANDLE
+> >>> it should be fine (?).
+> >>
+> >> If max_handle size becomes a value in fuse_init_out, server and
+> >> client would use it? I think appended fuse_open_out could just
+> >> follow the dynamic actual size of the handle - code that
+> >> serializes/deserializes the response has to look up the actual
+> >> handle size then. For example I wouldn't know what to put in
+> >> for any of the example/passthrough* file systems as handle size - 
+> >> would need to be 128B, but the actual size will be typically
+> >> much smaller.
 > > 
-> > imo it is the responsibility of the server to coordinate this and make
-> > sure it has handled all the requests it has received before it starts
-> > executing the destruction logic. imo the only responsibility of the
-> > kernel is to actually send the background requests before it sends the
-> > FUSE_DESTROY. I think non-fuseblk servers should also receive the
-> > FUSE_DESTROY request.
+> > name_to_handle_at ?
+> > 
+> > I guess the problem here is that technically speaking filesystems could
+> > have variable sized handles depending on the file.  Sometimes you encode
+> > just the ino/gen of the child file, but other times you might know the
+> > parent and put that in the handle too.
 > 
-> Hmm, good idea, I guess we can add that in libfuse, maybe with some kind
-> of timeout.
-> 
-> There is something I don't understand though, how can FUSE_DESTROY
-> happen before FUSE_RELEASE is completed?
-> 
-> ->release / fuse_release
->    fuse_release_common
->       fuse_file_release
->          fuse_file_put
->             fuse_simple_background
->             <userspace>
->             <userspace-reply>
->                fuse_release_end
->                   iput()
-> 
-> I.e. how can it release the superblock (which triggers FUSE_DESTROY)
+> Yeah, I don't think it would be reliable for *all* file systems to use
+> name_to_handle_at on startup on some example file/directory. At least
+> not without knowing all the details of the underlying passthrough file
+> system.
 
-The short answer is that fuse_file_put doesn't wait for the backgrounded
-release request to complete and returns; and that FUSE_DESTROY is sent
-synchronously and with args->force = true so it jumps the queue.
-
-(See my longer reply to Joanne for more details)
+I think if you can send arbitrarily sized outblobs back to the kernel
+then it would be ok for a filesystem to have different handle sizes for
+a file, just so long as it doesn't change during the lifetime of a file.
+Obviously you couldn't then have a meaningful fs-wide max_handle_size.
 
 --D
 
