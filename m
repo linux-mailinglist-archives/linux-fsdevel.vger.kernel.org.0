@@ -1,114 +1,186 @@
-Return-Path: <linux-fsdevel+bounces-67264-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67265-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4570CC399F6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 06 Nov 2025 09:45:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D2965C39B21
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 06 Nov 2025 09:59:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2E94A4E5DA3
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Nov 2025 08:45:57 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0FDD04F7CB3
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Nov 2025 08:58:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B4433002C5;
-	Thu,  6 Nov 2025 08:45:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE60D309DC4;
+	Thu,  6 Nov 2025 08:58:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="X30Bk2PF"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sz6Qetui"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-190c.mail.infomaniak.ch (smtp-190c.mail.infomaniak.ch [185.125.25.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 316FA26E718
-	for <linux-fsdevel@vger.kernel.org>; Thu,  6 Nov 2025 08:45:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B24203093D7
+	for <linux-fsdevel@vger.kernel.org>; Thu,  6 Nov 2025 08:58:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762418752; cv=none; b=KXaw1leyHKXfW1C+rBlRhfA0qS1aBMrA1P1Ek/u6GfraBolYEPQeGz+AtBW5DcONUJLvs61WNxlU7s5CAXFR0RevsblXECPw2DJ38G15onDZHAE8s8+aSrV8zEOHLMkE8gM3rgCJQe54xqnLke6DSlVwa5w4WSyM3oSYoUhDABQ=
+	t=1762419523; cv=none; b=aO2pOmm+h3zNgqKy0mEBTGSgmC9TmfCpaQRvWBCDtwuc8N//DjxF4kW5eDr6exKQU3RZoBEPk6xLqhhgZe/Ta2PEk8rQVXARsXPlfG0XSlZAFQvD1D2U2BcdXowiVbhoF3qNS56SNE8W+azNKA01qnThAuzXLCJXAIOptVcCltY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762418752; c=relaxed/simple;
-	bh=JeeGduUL6bWDAecqsw7jXtrhy0rUfGVWJXThQknPHYY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G9xsUxm/0SR1zouwbWXVG333siooIOqwtrv15rcgOCmMauUD/B6cpFswheCWadc+smC6Bi5lNDccQNzdaFlFaM48yJ8sCp4TjqOsHNrXlLvh/BO6tUVv3n8OlZ8VkvmCJ8xMVMrLtDUWNZPKDvvUMfkEUT4Tt8cUnFYAv9Szg90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=X30Bk2PF; arc=none smtp.client-ip=185.125.25.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4d2G465h95zj7h;
-	Thu,  6 Nov 2025 09:45:42 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1762418742;
-	bh=JfNO0M5lh5psROFvDuYOwWJ0xb+D1+8vDp/FH+1rqVk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=X30Bk2PFMYipzWJ7/aD0f3Ym/BAnhmLFkPYEUVdne23t2s1Ir9+joBlwp6Di9JEbZ
-	 sBEf7MkKQLVN1DVNZxQcI/ZzArZrdlEHEYKIPMH+ppOjVk1//SHGRXQr3kAK60lyjL
-	 9KbnjgYprlQj+JEmTkgx0EXqV6fDKy1YiQ+QNKrc=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4d2G455C1YzlQr;
-	Thu,  6 Nov 2025 09:45:41 +0100 (CET)
-Date: Thu, 6 Nov 2025 09:45:40 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Mateusz Guzik <mjguzik@gmail.com>, brauner@kernel.org
-Cc: linux-security-module@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	viro@zeniv.linux.org.uk, eadavis@qq.com, gnoack@google.com, jack@suse.cz, 
-	jannh@google.com, max.kellermann@ionos.com, m@maowtm.org, 
-	syzbot+12479ae15958fc3f54ec@syzkaller.appspotmail.com, Hillf Danton <hdanton@sina.com>
-Subject: Re: [PATCH 2/2] landlock: fix splats from iput() after it started
- calling might_sleep()
-Message-ID: <20251106.ahm0loS4ceic@digikod.net>
-References: <20251105212025.807549-1-mjguzik@gmail.com>
- <20251105212025.807549-2-mjguzik@gmail.com>
+	s=arc-20240116; t=1762419523; c=relaxed/simple;
+	bh=jZcI5+1Ss6TPvgkAAV76GUd62OE9+TiURdgHBGyzwoU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=srXERISAJE7ZvFTFWCqI+9V+4QCr/vzCKdWK+dCt2oh9v7+oCi1Rv+4SZYQJqwv8r4bkbNwsgMvTsGXWqhQDxpXqXbUtiLsVfcid3efVLd8qjadkYbIxP1Dk3npae+/tAkK+j+qmZSAAdic2G5YwJcNC4bjtdDd7JxNczpHDFKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Sz6Qetui; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-640b9c7eab9so1069154a12.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Nov 2025 00:58:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762419520; x=1763024320; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ck0m8wFZB9XcmaKq8dytQ0ONqq6wW9ZN3Xn7nrKuDWc=;
+        b=Sz6QetuiUOHkA3tM+NddvSdrLzzIvP6a/nXsDbGgIdL56l1FE2G16HlcbU8kQ7PFLA
+         HfMSQVIEcrsCnz/+YSltV/EHvolDeDWRC10b/XRskjSzE61iY6qDxDSSaBFc2IM4HCyq
+         YnmVFnSY+7gslOmfhj7DAIydVezdn+1/AqgPUDUrjqDyHJqOuB4Zc/vhXcCO9pUcayiQ
+         Xx+/j33PiEOVlTNfTjhn+ocM5j9Z8HXjN5Pv6J2Ow4N3FaBHZdPesil5a2LODYrj6hhj
+         +pCMCg6QEm58dQEGpBnmYanvL3/HQeywq8Fgjy8nkYZpUSkFNWb1eXTH7xcj12VU1Cbm
+         iY7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762419520; x=1763024320;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ck0m8wFZB9XcmaKq8dytQ0ONqq6wW9ZN3Xn7nrKuDWc=;
+        b=DJ1NmX0C48wviKQvpXhG/z/nChkz+FUD59PE4m0zM0AKZimyUaevPftn+maA1yFdoi
+         ZZaV1yFVfDsbSNBMAvSsCitgogaev9O7Azewcm9z4xAiGJ+xhg2kK1QEZSCAeU9lk5dj
+         ztEj4Bsl3drpTxCsVzvNBxfCQFfCI2EYp6xk7l7Avd8O7qYB8icu8QMltG8/O2iIl+VU
+         FdeMUlP3mddN3L19umfFzoFYGzVaq1/8385L6IdqlSruX3MeX6vDdNzBh+ycdNH9cmBw
+         GEms7Xr1tnTCFiq9e69qHrr2rr3JgWTWyTxAQMnJ8TqzW1O3NSCPQlEBDo+e+fSXwDp7
+         N6dQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXVAP0imzJA7T0SZgz+JhjG8ucHysqSrLwbiZ9h9MdhmKTy5uqRetYKzGgN2pxq02ByJwp06sESE8X5G4Um@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHvtXHTSU4MKg40STmCFt9UKea2E1OQ5/+/io7PY0fUeKGIzX3
+	2k6lGwtn5s5Y8s9ESxSUm33tihmMG97wy32dzrvfTvsOWAXOb6MJpijSRP+xFv4iMUqpNgpidb9
+	lA30siptfIDE2QdmTgax4nNiu6X7fiGM=
+X-Gm-Gg: ASbGncuuLwrETXlmxKsg1dkkeiqtoDcFtvHoBxpMG2NSA46zCTHAfG5ECnNqdqvFobm
+	Emi70qCTPSc9toqF0wea1I0cFbLCzoOt9tp/yj9+HGqSCN9QCouhCfbdLoLHxplAGSl6bgUykgE
+	xwkMbl9/TFN73XVgYvSJBrDH7wWXb+WkAxLuQapSgUCPVj9b6H7R348TfI03fi2tN69tkbBe9yf
+	pVmkrwBrqyAZmJgg9Y1Kd7755lUDjc1qLIjhHyoFK2oOalaGhE7gTamr7eSrKuuLBkIJcwjHQ6V
+	ZPIzFPXBTv1JuPkgyRs=
+X-Google-Smtp-Source: AGHT+IEHawD1xB6GQmLFykw+yW+B52duLhBw9u10AbP5tS5Ky2pbjNedqdkSkvdgV804kceaE8LvNF0HWEEdMMxXtws=
+X-Received: by 2002:a05:6402:4301:b0:634:ab36:3c74 with SMTP id
+ 4fb4d7f45d1cf-641058bbcafmr5577723a12.9.1762419519709; Thu, 06 Nov 2025
+ 00:58:39 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251105212025.807549-2-mjguzik@gmail.com>
-X-Infomaniak-Routing: alpha
+References: <176169819804.1433624.11241650941850700038.stgit@frogsfrogsfrogs>
+ <176169819994.1433624.4365613323075287467.stgit@frogsfrogsfrogs>
+ <CAOQ4uxj7yaX5qLEs4BOJBJwybkHzv8WmNsUt0w_zehueOLLP9A@mail.gmail.com> <20251105225355.GC196358@frogsfrogsfrogs>
+In-Reply-To: <20251105225355.GC196358@frogsfrogsfrogs>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Thu, 6 Nov 2025 09:58:28 +0100
+X-Gm-Features: AWmQ_bl5E-AoHE-1AuDyZsQmdfkMyiI2gUbeKfvAWpOXmZ3IVywzlGkMPg_nxeA
+Message-ID: <CAOQ4uxjC+rFKrp3SMMabyBwSKOWDGGpVR7-5gyodGbH80ucnkA@mail.gmail.com>
+Subject: Re: [PATCH 01/33] misc: adapt tests to handle the fuse ext[234] drivers
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: zlang@redhat.com, neal@gompa.dev, fstests@vger.kernel.org, 
+	linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	joannelkoong@gmail.com, bernd@bsbernd.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 05, 2025 at 10:20:25PM +0100, Mateusz Guzik wrote:
-> At this point it is guaranteed this is not the last reference.
-> 
-> However, a recent addition of might_sleep() at top of iput() started
-> generating false-positives as it was executing for all values.
-> 
-> Remedy the problem by using the newly introduced iput_not_last().
-> 
-> Reported-by: syzbot+12479ae15958fc3f54ec@syzkaller.appspotmail.com
-> Closes: https://lore.kernel.org/all/68d32659.a70a0220.4f78.0012.GAE@google.com/
-> Fixes: 2ef435a872ab ("fs: add might_sleep() annotation to iput() and more")
-> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+On Wed, Nov 5, 2025 at 11:53=E2=80=AFPM Darrick J. Wong <djwong@kernel.org>=
+ wrote:
+>
+> On Thu, Oct 30, 2025 at 10:51:06AM +0100, Amir Goldstein wrote:
+> > On Wed, Oct 29, 2025 at 2:22=E2=80=AFAM Darrick J. Wong <djwong@kernel.=
+org> wrote:
+> > >
+> > > From: Darrick J. Wong <djwong@kernel.org>
+> > >
+> > > It would be useful to be able to run fstests against the userspace
+> > > ext[234] driver program fuse2fs.  A convention (at least on Debian)
+> > > seems to be to install fuse drivers as /sbin/mount.fuse.XXX so that
+> > > users can run "mount -t fuse.XXX" to start a fuse driver for a
+> > > disk-based filesystem type XXX.
+> > >
+> > > Therefore, we'll adopt the practice of setting FSTYP=3Dfuse.ext4 to
+> > > test ext4 with fuse2fs.  Change all the library code as needed to han=
+dle
+> > > this new type alongside all the existing ext[234] checks, which seems=
+ a
+> > > little cleaner than FSTYP=3Dfuse FUSE_SUBTYPE=3Dext4, which also woul=
+d
+> > > require even more treewide cleanups to work properly because most
+> > > fstests code switches on $FSTYP alone.
+> > >
+> >
+> > I agree that FSTYP=3Dfuse.ext4 is cleaner than
+> > FSTYP=3Dfuse FUSE_SUBTYPE=3Dext4
+> > but it is not extendable to future (e.g. fuse.xfs)
+> > and it is still a bit ugly.
+> >
+> > Consider:
+> > FSTYP=3Dfuse.ext4
+> > MKFSTYP=3Dext4
+> >
+> > I think this is the correct abstraction -
+> > fuse2fs/ext4 are formatted that same and mounted differently
+> >
+> > See how some of your patch looks nicer and naturally extends to
+> > the imaginary fuse.xfs...
+>
+> Maybe I'd rather do it the other way around for fuse4fs:
+>
+> FSTYP=3Dext4
+> MOUNT_FSTYP=3Dfuse.ext4
+>
 
-Reviewed-by: Mickaël Salaün <mic@digikod.net>
+Sounds good. Will need to see the final patch.
 
-Thanks!
+> (obviously, MOUNT_FSTYP=3D$FSTYP if the test runner hasn't overridden it)
+>
+> Where $MOUNT_FSTYP is what you pass to mount -t and what you'd see in
+> /proc/mounts.  The only weirdness with that is that some of the helpers
+> will end up with code like:
+>
+>         case $FSTYP in
+>         ext4)
+>                 # do ext4 stuff
+>                 ;;
+>         esac
+>
+>         case $MOUNT_FSTYP in
+>         fuse.ext4)
+>                 # do fuse4fs stuff that overrides ext4
+>                 ;;
+>         esac
+>
+> which would be a little weird.
+>
 
-> ---
->  security/landlock/fs.c | 7 +++----
->  1 file changed, 3 insertions(+), 4 deletions(-)
-> 
-> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-> index 0bade2c5aa1d..d9c12b993fa7 100644
-> --- a/security/landlock/fs.c
-> +++ b/security/landlock/fs.c
-> @@ -1335,11 +1335,10 @@ static void hook_sb_delete(struct super_block *const sb)
->  			 * At this point, we own the ihold() reference that was
->  			 * originally set up by get_inode_object() and the
->  			 * __iget() reference that we just set in this loop
-> -			 * walk.  Therefore the following call to iput() will
-> -			 * not sleep nor drop the inode because there is now at
-> -			 * least two references to it.
-> +			 * walk.  Therefore there are at least two references
-> +			 * on the inode.
->  			 */
-> -			iput(inode);
-> +			iput_not_last(inode);
->  		} else {
->  			spin_unlock(&object->lock);
->  			rcu_read_unlock();
-> -- 
-> 2.48.1
-> 
-> 
+Sounds weird, but there is always going to be weirdness
+somewhere - need to pick the least weird result or most
+easy to understand code IMO.
+
+> _scratch_mount would end up with:
+>
+>         $MOUNT_PROG -t $MOUNT_FSTYP ...
+>
+> and detecting it would be
+>
+>         grep -q -w $MOUNT_FSTYP /proc/mounts || _fail "booooo"
+>
+> Hrm?
+
+Those look obviously nice.
+
+Maybe the answer is to have all MOUNT_FSTYP, MKFS_FSTYP
+and FSTYP and use whichever best fits in the context.
+
+Thanks,
+Amir.
 
