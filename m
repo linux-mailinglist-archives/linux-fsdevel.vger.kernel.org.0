@@ -1,79 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-67445-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67446-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CD9EC404CD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 07 Nov 2025 15:23:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07E40C404BB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 07 Nov 2025 15:22:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B92C3B4900
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Nov 2025 14:22:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9378189DF72
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Nov 2025 14:23:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45A8532AAB9;
-	Fri,  7 Nov 2025 14:22:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20C9532ABEC;
+	Fri,  7 Nov 2025 14:22:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ETVmxdsL"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="To2POnNR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 708D1329C66
-	for <linux-fsdevel@vger.kernel.org>; Fri,  7 Nov 2025 14:22:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C28DE32938B
+	for <linux-fsdevel@vger.kernel.org>; Fri,  7 Nov 2025 14:22:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762525326; cv=none; b=GMeMFode+QVpmYv0vI65NxTwJUZQnVgtLfalm6qUcrfhlUR1xO+t1JhuLWwkrKqs8lE52GevGgSpzaU/eN35LBdynQ73XbAZFra+d8+0Vyh20Gaj6xKhULZERwQmkS/mIHGWqw3qvnVEMsaeONrZp9dxRI39GUwhmGVkCASURrE=
+	t=1762525327; cv=none; b=pNPd42+nsuC79Uk9AyJeaKRIeMc8DxCSYLCP/6ia2bdlOLTqs75k07tZ9GWE+WfCnp2If1FjWOFPBPbmRmbX3Sx0/3H9Lm5gfxXcqjiWdq/Js5Nmm+01uFVoIUafef7w3SX70YLNwPLK9HXGQgvlj4sURAdhT1Ilwaw1T1usVXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762525326; c=relaxed/simple;
-	bh=128KSekg9ZnF2sASoMn8sOUDRGbIcWBCHawlZ+Q48b4=;
+	s=arc-20240116; t=1762525327; c=relaxed/simple;
+	bh=wS2imuQ9BmkOhIkqMvqqB5gl66Z+pbAiZyZ4vNX0hTE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ag3LFT5O6qvuBErYP6O8DaMCojb0il/Pm3xxOSjnBofXbPjvldBt8Gf2NL949r33jh4ZnywRR+t5CMBcYevYKme01rjzfPaY8IMBBG1ZZF7RhOthrhTq0KdxS7/ITK/5h2VpKVZh7O08YndG/0FGbsTchS7S0/Mdu7hZxKJyMk0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ETVmxdsL; arc=none smtp.client-ip=209.85.218.44
+	 MIME-Version; b=IAgIg/7z8hzHhWmZBWAPtVyisiEs2x6BywDAF1X1LZU3sn1rzjtvc35ajkC5asK/gjURJ6/24TJzbeNXeSsBwiHeT7QFNqrwQeOzAjAzex6bZQy0UeeLuId9ikHBVCZH9DQhEiPQfcuutSHWid4W1aDxYmMgh/zc5pQm7HsONCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=To2POnNR; arc=none smtp.client-ip=209.85.218.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-b727f330dd2so129641866b.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 07 Nov 2025 06:22:03 -0800 (PST)
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-b7260435287so117167166b.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 07 Nov 2025 06:22:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762525322; x=1763130122; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1762525324; x=1763130124; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=wT6MSCAlH/pIZcAzO5vrkwY0EcFJEg7V7STMnWnK/pQ=;
-        b=ETVmxdsL50D5FLUBG/X9tr4eyj0jP+bGDTcSp4R9wzOn3zi+uVAoox6ikqXiO80Td+
-         OVe/LnO45No33dcaVpNyy1rfTbEnYYO++sgWGnMx75rCSbBSgVX3q4857YpiQ6pwrX8k
-         dkpZRo44UCYNbM+WXT9GrMTDL4mrdun/dzxHvNpKqOpqJuDAzGkrK2zpu36UWG0iVj0w
-         xd9wkVAvTL/KqxPCgzV7l+WporwzZu8FTdaq5qC0T2BJuW49/1PXEH9gdpw4rFq7PO2b
-         kRrIzLlCMm5/R3UpCTsL+HvZKb+UQZhUpgw7lzZdd/aYuXkHguc/Oee/eTeGSZv4NKEX
-         0JzQ==
+        bh=ALuLKFw+mr0eVU5vuPj8LnIxQt3AfWAYuS4LghXi6Bg=;
+        b=To2POnNRLv1Z3RMuB327G2Bf9yjQ9YNRisL8V7Ov15aKZICI4Ofq0UP/LIsjXK3XcJ
+         VM/LwdnxjyCrL9PnHBrxhsZCG+NPykzg0l0pv5mRfhqC4hWrY5m+Ozha1bnoZfy6+iYy
+         l11vn2RvuaI5l0OjlNCmjYC2kJUYPQzX49GitXv5ByPDkv57UpscjjzZEbRaW9uWdpv+
+         mZdwjpZyiDA7wRjBTnWpbImi0ZQl+ClMQo8gZfEUJwOETqt2ZIYoZ3Atbr3xsPzg11Sj
+         6Sh9e9DRaAWTOuIlOxUa4w5h6K+nKUNG3PSqzYyCRRclZ8b3LfN9EDfyBN3NIdY6GF7j
+         mAUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762525322; x=1763130122;
+        d=1e100.net; s=20230601; t=1762525324; x=1763130124;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=wT6MSCAlH/pIZcAzO5vrkwY0EcFJEg7V7STMnWnK/pQ=;
-        b=VrAR3MmXHniCWmZtJSDKH0sc45ChbYAujNVtn4cXpNSJrhoSNECPjIWiAuHj6eNnx1
-         ZPWfDJjZyFDv6Xk3AC9I5+K05UbNrMkTCJcSSD5VPb9VOoepmCDlj7P6CeG5s4I9LeK0
-         ssMNTDU8GBF2vOvGbnZA4fUGl4s2ApnUhIkhSR7bCa1NBmqS782iaYdsBGtefdEHM05o
-         Ocbq3EVgXO3mXYuIK6aj7cgTp+ZtgeywYYcQnbf3cv/FQsGmKa6YYA7Mn5ZJVqKLwD+L
-         Iamq2EedVq1OQIZgg3svF7fObbZycX+B798+6GvyxPKw2ILkmEOgAoBiy2Dt65HZq6O+
-         A56A==
-X-Forwarded-Encrypted: i=1; AJvYcCUJNv1FmB2l/M0I3AVsH7w4Wb4WTkUehlz7hK2tNr/RAZ4kqZMPfMFyW9qLMeE0dhK8Fq1E06fviGNGMaKv@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6YxHDUSqOoJg0jbcfAkXJzysIkKGqnBtcmiFejUlO4I5XGajA
-	NWDKTu8gfZzf/QHrQbWZrIBki9JrN4ePtWyLdkUiSIvC6QmMjtDK50ca
-X-Gm-Gg: ASbGnctFbunz+4nOHZ9DFCxiVWVTk+ESrvsMNcyNUJxqN/kitt0Q8U5f8ZJiUTctX+H
-	IYY1QXnT4EaG1DeIyVD00lvPRp1aN49OMQ35YyXauX9gnMc2FYQ99hQijGyBqTe4gwSPKniWKCZ
-	gz6rM3DBsCWr60DEducH4WO8oQSeUH5CHbeJIQH3PGcKfAs9ee75uYbnzpFegjxuzcRQYiQIbCX
-	z/GbKpbeXf7JmCpTUlsbtHsgRrSapWA3iL9B84muMnaplkU7Lk8Nicjd5C6ifeWJKazFXzcsQsW
-	mqp5c1WWdFL7g+RQhWau566tdGcSbZEYQbdAINQCDvjlnjUVL26HpEuQNUGJX7x48q8VQfnOzBb
-	IxZWFPYAr7DhuyWECipX7Q4u3oMO6cS49GZ2vh3p9uL0MP1Ea34ilaiTs4S5sqFbypskr/1hHdT
-	6yXescTTbxUKv/ucDtETSeziJjL+TydYXXn4cqV2axM0HQEYo8
-X-Google-Smtp-Source: AGHT+IGrbWD7yFMbT4C/yX4TspKvFS9f6XhDjvBKE1AYLhGSfZjTB0CFxn4t/7QjDw74UBz/8iB09w==
-X-Received: by 2002:a17:907:3f1f:b0:b70:8e7d:42a4 with SMTP id a640c23a62f3a-b72c0ae2029mr426905166b.36.1762525321480;
-        Fri, 07 Nov 2025 06:22:01 -0800 (PST)
+        bh=ALuLKFw+mr0eVU5vuPj8LnIxQt3AfWAYuS4LghXi6Bg=;
+        b=cPKgZMjVsR0ZlYI7Cmue4qg9yGm1f+5nM8F6EJzYWmTv6qVW+/GMvpDY7D9XqFFl1/
+         ltByvk0yRboOXUTI2venOwuPjfxebn69V226w9VtMvH2tbB5m02BQqt8hu/Uvja+H1UL
+         1hENlOh/GP9oMXDcFvLs5F/Yg0lKD+Furi/+nJpKSmoVAv+G4/1feZqZ8VdQ5+9b9Owp
+         6R7wgEvvcrkz075yR181iR47Ms99IHayftifC28QEfUiPJUNaRjSSYv2P0RwtgF4KWSu
+         a2QtAu1lIlQ1KA8qnPrqOOyVD821jzTcC7dIRfQlTEb6vFEIqHqg1HcTYwggThcjX5L7
+         Z9uA==
+X-Forwarded-Encrypted: i=1; AJvYcCVL52VsNcH+JpWiobL4RKtg5+m6/mkik8VOnLAJwtZY9e4w2glwIwPJcaxJzjiWUY1pO3MZZeQhEr3DQR9i@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzlx4hfGJT1LTegxDoJB0lMwY8rdBQZxmiofr4D2xXn6bZt7l1h
+	clBqygXpOn5ZmTduGFHF5kxD+RwZwni7Aw2GQ5y60KeUdaXT1/fDlRt3
+X-Gm-Gg: ASbGncuX+JR2X4dXk8Z4N0zBMQQBe532Tp6UMR4P5/dARRIYe4fiJoCCeRtDQTBhApo
+	EU2+S5NF/5wKYrnCV1xoNRL8YkglXpFsGwOyCKy2ontwVTZaV5/ggV00nPhBSbJx9BGRNm9YZSV
+	AW4LklGyqnSpb5HtfgDu+8RWHAXHGeo0wJt3Gk93r8liMQpkUTppi3dlXIpsiYbK5M8rlQ6i9ai
+	NGhpOi5eVr4KL2vAPuYHLpNQL1/HSlmN8RWB7NfOfsZg4xh3nRNr1kOUNvTWKsTtYcV1OyDd1bL
+	c40epvlICN2ZSpPUQWUR/5TVOx0ljfS2eYkcn0IgPoTdBBIYala6QtYSgClQ0kMNH1IvRuOM/yf
+	gUjQKO+zi4p1PROJG87vFWN97VL1fn9fZmtTKgQoumJqr1f8Sbh2aqklodkvwHsf3ecvazRUnnK
+	fplWLsxZl0cYoie9sQ0myIFiorfzDCc4SVWhviT5DCo9Jz0eOs
+X-Google-Smtp-Source: AGHT+IFYK2b9ojdXtTAd4PTW5XlFiit6Z3g1OoNfduNaJTNxwuPOLhjJOAV1QVecyGCifhAj28KZcw==
+X-Received: by 2002:a17:907:3fa5:b0:b3f:a960:e057 with SMTP id a640c23a62f3a-b72c090e626mr342966366b.31.1762525323963;
+        Fri, 07 Nov 2025 06:22:03 -0800 (PST)
 Received: from f.. (cst-prg-14-82.cust.vodafone.cz. [46.135.14.82])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bf97e563sm253322766b.41.2025.11.07.06.21.58
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bf97e563sm253322766b.41.2025.11.07.06.22.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Nov 2025 06:22:01 -0800 (PST)
+        Fri, 07 Nov 2025 06:22:03 -0800 (PST)
 From: Mateusz Guzik <mjguzik@gmail.com>
 To: brauner@kernel.org
 Cc: viro@zeniv.linux.org.uk,
@@ -86,9 +86,9 @@ Cc: viro@zeniv.linux.org.uk,
 	josef@toxicpanda.com,
 	linux-btrfs@vger.kernel.org,
 	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH v3 2/3] btrfs: utilize IOP_FASTPERM_MAY_EXEC
-Date: Fri,  7 Nov 2025 15:21:48 +0100
-Message-ID: <20251107142149.989998-3-mjguzik@gmail.com>
+Subject: [PATCH v3 3/3] fs: retire now stale MAY_WRITE predicts in inode_permission()
+Date: Fri,  7 Nov 2025 15:21:49 +0100
+Message-ID: <20251107142149.989998-4-mjguzik@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251107142149.989998-1-mjguzik@gmail.com>
 References: <20251107142149.989998-1-mjguzik@gmail.com>
@@ -100,57 +100,35 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Root filesystem was ext4, btrfs was mounted on /testfs.
-
-Then issuing access(2) in a loop on /testfs/repos/linux/include/linux/fs.h
-on Sapphire Rapids (ops/s):
-
-before: 3447976
-after:	3620879 (+5%)
+The primary non-MAY_WRITE consumer now uses lookup_inode_permission_may_exec().
 
 Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
 ---
- fs/btrfs/inode.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ fs/namei.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index 42da39c1e5b5..1a560f7298bf 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -5852,6 +5852,8 @@ struct btrfs_inode *btrfs_iget(u64 ino, struct btrfs_root *root)
- 	if (ret)
- 		return ERR_PTR(ret);
- 
-+	if (S_ISDIR(inode->vfs_inode.i_mode))
-+		inode->vfs_inode.i_opflags |= IOP_FASTPERM_MAY_EXEC;
- 	unlock_new_inode(&inode->vfs_inode);
- 	return inode;
- }
-@@ -6803,8 +6805,11 @@ static int btrfs_create_common(struct inode *dir, struct dentry *dentry,
- 	}
- 
- 	ret = btrfs_create_new_inode(trans, &new_inode_args);
--	if (!ret)
-+	if (!ret) {
-+		if (S_ISDIR(inode->i_mode))
-+			inode->i_opflags |= IOP_FASTPERM_MAY_EXEC;
- 		d_instantiate_new(dentry, inode);
-+	}
- 
- 	btrfs_end_transaction(trans);
- 	btrfs_btree_balance_dirty(fs_info);
-@@ -9163,6 +9168,11 @@ int btrfs_prealloc_file_range_trans(struct inode *inode,
- 					   min_size, actual_len, alloc_hint, trans);
- }
- 
-+/*
-+ * NOTE: in case you are adding MAY_EXEC check for directories:
-+ * we are marking them with IOP_FASTPERM_MAY_EXEC, allowing path lookup to
-+ * elide calls here.
-+ */
- static int btrfs_permission(struct mnt_idmap *idmap,
- 			    struct inode *inode, int mask)
+diff --git a/fs/namei.c b/fs/namei.c
+index 6b2a5a5478e7..2a112b2c0951 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -546,7 +546,7 @@ static inline int do_inode_permission(struct mnt_idmap *idmap,
+  */
+ static int sb_permission(struct super_block *sb, struct inode *inode, int mask)
  {
+-	if (unlikely(mask & MAY_WRITE)) {
++	if (mask & MAY_WRITE) {
+ 		umode_t mode = inode->i_mode;
+ 
+ 		/* Nobody gets write access to a read-only fs. */
+@@ -577,7 +577,7 @@ int inode_permission(struct mnt_idmap *idmap,
+ 	if (unlikely(retval))
+ 		return retval;
+ 
+-	if (unlikely(mask & MAY_WRITE)) {
++	if (mask & MAY_WRITE) {
+ 		/*
+ 		 * Nobody gets write access to an immutable file.
+ 		 */
 -- 
 2.48.1
 
