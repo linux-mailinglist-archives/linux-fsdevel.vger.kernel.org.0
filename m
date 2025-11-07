@@ -1,83 +1,61 @@
-Return-Path: <linux-fsdevel+bounces-67403-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67404-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03986C3E546
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 07 Nov 2025 04:18:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23A62C3E582
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 07 Nov 2025 04:28:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 38B714E44F8
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Nov 2025 03:18:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4C353AA28E
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Nov 2025 03:28:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03FBE2F616C;
-	Fri,  7 Nov 2025 03:18:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F28A72FCC10;
+	Fri,  7 Nov 2025 03:28:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SzdFtJle"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AArFEai1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC72F12CDA5;
-	Fri,  7 Nov 2025 03:18:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 488CD2FBDFE;
+	Fri,  7 Nov 2025 03:28:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762485517; cv=none; b=AD5/FoDGciUt3qEXToQH7RGYbIIhzBwVWqlylPoTPU91TgRbfz/Tw4mDYqG/UFTLP0ExXWTwZI5EPU6a6iRbWVXIzOdXuqTU7NMdpV9gpP+WQjXTpYe7zueLwfWUL3Oywu2O+i1QTC3pbjJUN06dqPWyxojT4uaVHeO7OCmLMiE=
+	t=1762486109; cv=none; b=m2jSHmMf5Nui/efsXqQrSIkle13xNGJx6qQxCE4zM80zCpLF68YPUqe3IE5JG3mBIhd7VLg3qfZK5z33/3uO5EDTtLYixUR3ngM8oYlo9xGmpDA659GukEMpXXdEm1HdRHwM6Z4WiiJKQxwzfksuEruYlCmgp2iJSCe30lMg5vI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762485517; c=relaxed/simple;
-	bh=co3D5bCb1NX6D4M8Dv/GU45fZxnLdO//HvOQOwmnBcA=;
+	s=arc-20240116; t=1762486109; c=relaxed/simple;
+	bh=aybGlQtaizqxHm41GGb/A/kHPgiZ2DKdD6qW18vbYSY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H5FK7uVvshV+s/7cpQPR+A6kMrrHNOeqguhwI3x54P66bGUWPukDaQcYjmcP1R8JKBRFtI8lqz4AAiuY6NjBERjFigGNT36O81SQyiet6E47CqZuMe8N7QqGqy2GgKyBackkvw+GVmtZ0eC79yMfqgj2r89HwXNTlYsJ2YppG4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SzdFtJle; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762485516; x=1794021516;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=co3D5bCb1NX6D4M8Dv/GU45fZxnLdO//HvOQOwmnBcA=;
-  b=SzdFtJleNbxcZ3UbX9p1Rx6m2kPpQs2M2IiCfOhEOwFuTq8g8EFj0jx0
-   1Jpsbio3ON/I6L8l+6efpmqQl+oNAtP5l5JMvkLZ/BtXPicYvzDNu14Lz
-   ipHM7waycQEJFpN20v+Bgr0w+QsrrvsMBa9Ev5xt8l43QRLvJ9JdnWO6h
-   Ld7cuFG34/eKfzFu0CJzwIucVL0is8hvatdUnc/NMj7yu8R7Mn9jXpBJ4
-   QJYDKxOpByoO5FHvUCt99hwX0QzJ/GjR5OH+89/EgLdgvOI6LtJs31+Ip
-   Ocr6Kpa19mZT6iCkdS5uXvskfiQpFn0S1tGMMBNbi0bpBJGEmDQpEZoM5
-   Q==;
-X-CSE-ConnectionGUID: qzMsmp9/SX+jqc9BRnB1Sg==
-X-CSE-MsgGUID: FCslDIO9S9ad62d40mo/XQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11605"; a="64334020"
-X-IronPort-AV: E=Sophos;i="6.19,285,1754982000"; 
-   d="scan'208";a="64334020"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2025 19:18:35 -0800
-X-CSE-ConnectionGUID: v6iMZdAXQC2eCAAjusf8hQ==
-X-CSE-MsgGUID: ZAMaWgOaQ9ix8OmGhqlTWg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,285,1754982000"; 
-   d="scan'208";a="187184741"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by orviesa006.jf.intel.com with ESMTP; 06 Nov 2025 19:18:31 -0800
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vHCzc-000Udk-30;
-	Fri, 07 Nov 2025 03:18:28 +0000
-Date: Fri, 7 Nov 2025 11:17:52 +0800
-From: kernel test robot <lkp@intel.com>
-To: Fengnan Chang <changfengnan@bytedance.com>, axboe@kernel.dk,
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	asml.silence@gmail.com, willy@infradead.org, djwong@kernel.org,
-	hch@infradead.org, ritesh.list@gmail.com,
-	linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
-	linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org,
-	linux-block@vger.kernel.org, ming.lei@redhat.com,
-	linux-nvme@lists.infradead.org
-Cc: oe-kbuild-all@lists.linux.dev,
-	Fengnan Chang <changfengnan@bytedance.com>
-Subject: Re: [PATCH v2 1/2] block: use bio_alloc_bioset for passthru IO by
- default
-Message-ID: <202511071021.3YIvZw6u-lkp@intel.com>
-References: <20251107020557.10097-2-changfengnan@bytedance.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=sTDEEDaaPn0JsrPCIBmvLdxLh09jgucYAkzCCPvZeirkSGWRIksJTFsVSp4w7HUrY2icCHoebI6BxZ1cF10FAbVAIk0d2KU7eDpSpsQfAofOZEH1IQFHd4bcM744XzXjAe6ps52Wb4m8R4HG7t1Pxe2BtSmLYJfzHzmM+Mpemzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AArFEai1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 574C7C4CEF8;
+	Fri,  7 Nov 2025 03:28:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762486108;
+	bh=aybGlQtaizqxHm41GGb/A/kHPgiZ2DKdD6qW18vbYSY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AArFEai1JWZvh3gNP8XXmOc05q7SzaAXjuoWU0mV5vEgOlhQmmKJVxOSjfyYixzQ3
+	 vi82Fll+cAMAtHKg5Lc2nmYm35CFw6RaVGYIddIgCeVmuAmi8kPUd/YxBcEAwliYah
+	 zPEU5HCIRHS7YFmStaNogEcPvh2NS1I1GhGKzUL9cZgVfMCusGEzPbZSSzj9CkDd89
+	 TXbfVN7y49QKub/B1CKJMsDTvnUrR+Nng2KhsMM2MYdnmrpR1r/lQ0E2av3VPQ7hUg
+	 RRxPX1oCj2I1VH6+kZC4VNVNo6mOF5i0q+LZ/0Enom+4fOBRcusaIwS0Z6M74aMIgl
+	 JhJIpAzozGX8w==
+Date: Thu, 6 Nov 2025 19:26:48 -0800
+From: Eric Biggers <ebiggers@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Jens Axboe <axboe@kernel.dk>, Vlastimil Babka <vbabka@suse.cz>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Lameter <cl@gentwo.org>,
+	David Rientjes <rientjes@google.com>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Harry Yoo <harry.yoo@oracle.com>, linux-block@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH 1/9] mempool: update kerneldoc comments
+Message-ID: <20251107032648.GA16450@sol>
+References: <20251031093517.1603379-1-hch@lst.de>
+ <20251031093517.1603379-2-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -86,32 +64,62 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251107020557.10097-2-changfengnan@bytedance.com>
+In-Reply-To: <20251031093517.1603379-2-hch@lst.de>
 
-Hi Fengnan,
+On Fri, Oct 31, 2025 at 10:34:31AM +0100, Christoph Hellwig wrote:
+> diff --git a/mm/mempool.c b/mm/mempool.c
+> index 1c38e873e546..d7c55a98c2be 100644
+> --- a/mm/mempool.c
+> +++ b/mm/mempool.c
+> @@ -372,18 +372,15 @@ int mempool_resize(mempool_t *pool, int new_min_nr)
+>  EXPORT_SYMBOL(mempool_resize);
+>  
+>  /**
+> - * mempool_alloc - allocate an element from a specific memory pool
+> - * @pool:      pointer to the memory pool which was allocated via
+> - *             mempool_create().
+> - * @gfp_mask:  the usual allocation bitmask.
+> + * mempool_alloc - allocate an element from a memory pool
+> + * @pool:	pointer to the memory pool
+> + * @gfp_mask:	GFP_* flags.
+>   *
+> - * this function only sleeps if the alloc_fn() function sleeps or
+> - * returns NULL. Note that due to preallocation, this function
+> - * *never* fails when called from process contexts. (it might
+> - * fail if called from an IRQ context.)
+> - * Note: using __GFP_ZERO is not supported.
+> + * Note: This function only sleeps if the alloc_fn callback sleeps or returns
+> + * %NULL.  Using __GFP_ZERO is not supported.
 
-kernel test robot noticed the following build warnings:
+Maybe put the note about __GFP_ZERO being unsupported directly in the
+description of @gfp_mask.
 
-[auto build test WARNING on 4a0c9b3391999818e2c5b93719699b255be1f682]
+>   *
+> - * Return: pointer to the allocated element or %NULL on error.
+> + * Return: pointer to the allocated element or %NULL on error. This function
+> + * never returns %NULL when @gfp_mask allows sleeping.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Fengnan-Chang/block-use-bio_alloc_bioset-for-passthru-IO-by-default/20251107-100851
-base:   4a0c9b3391999818e2c5b93719699b255be1f682
-patch link:    https://lore.kernel.org/r/20251107020557.10097-2-changfengnan%40bytedance.com
-patch subject: [PATCH v2 1/2] block: use bio_alloc_bioset for passthru IO by default
-config: m68k-allnoconfig (https://download.01.org/0day-ci/archive/20251107/202511071021.3YIvZw6u-lkp@intel.com/config)
-compiler: m68k-linux-gcc (GCC) 15.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251107/202511071021.3YIvZw6u-lkp@intel.com/reproduce)
+Is "allows sleeping" exactly the same as "__GFP_DIRECT_RECLAIM is set"?
+The latter is what the code actually checks for.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202511071021.3YIvZw6u-lkp@intel.com/
+>  /**
+> - * mempool_free - return an element to the pool.
+> - * @element:   pool element pointer.
+> - * @pool:      pointer to the memory pool which was allocated via
+> - *             mempool_create().
+> + * mempool_free - return an element to a mempool
+> + * @element:	pointer to element
+> + * @pool:	pointer to the memory pool
+> + *
+> + * Returns @elem to @pool if its needs replenishing, else free it using
+> + * the free_fn callback in @pool.
+>   *
+> - * this function only sleeps if the free_fn() function sleeps.
+> + * This function only sleeps if the free_fn callback sleeps.
+>   */
+>  void mempool_free(void *element, mempool_t *pool)
 
-All warnings (new ones prefixed by >>):
+"if its needs" => "if it needs" and "@elem" => "@element"
 
->> Warning: block/blk-map.c:365 function parameter 'rq' not described in 'bio_copy_kern'
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+- Eric
 
