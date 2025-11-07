@@ -1,146 +1,124 @@
-Return-Path: <linux-fsdevel+bounces-67419-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67420-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93836C3F251
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 07 Nov 2025 10:25:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F524C3F263
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 07 Nov 2025 10:26:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 752573B047C
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Nov 2025 09:25:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07F3E3B06E0
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Nov 2025 09:25:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 946232BDC03;
-	Fri,  7 Nov 2025 09:25:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC4561EE033;
+	Fri,  7 Nov 2025 09:25:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="nNuFq4Jn"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="DiKODaXt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E8162E7178
-	for <linux-fsdevel@vger.kernel.org>; Fri,  7 Nov 2025 09:25:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7A9129B8E0;
+	Fri,  7 Nov 2025 09:25:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762507515; cv=none; b=njUyMSEo4ug8aHirsOMlp3O591STNpnu4g3EmQVcmSK1chP0AgTqoTK/n4br/btIxHUv4rgKMu9+kPuf2GjVofry/EFApMhkW6INGUpStcHwDnc8j5vrfDaLgezuSoFFcZhkk7eaf0Lir7zuAMTS+GDofLb48ej7FA6RxKn/EGk=
+	t=1762507539; cv=none; b=b2zINVFeHUWLG9T8DpG+hV6JvG3S55ZVCWWtu8xZGdPdBrmYf1WVwnokQparBxgu/F2QoVf7mvTme4+fkfojEwBp7udMPIYWbT01fQVcqs7CD6FqZtmRK6nym8Uz8Zn6v4AOvPV/N6JWXlaKP8yOgbRTfua93gXGYWTZPVJbkpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762507515; c=relaxed/simple;
-	bh=Llyb6G0N3m4WlabBeyiNpWRbU+9xF3fUAQa726lzReU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=QaC9OvDRTv/MBe6DTcUcKj9N5u4spW6trvkSQwBsTTJh77crF+dMsWjvusGW2XP607wqD5TrsAoTmKGqD7T0QrMBh5EXcAZx70vo/+kFUZwrJ5AJbvhUbSb3H/+ZmDMDSyp1343GRMhLtx9MT16D36pFMBOWsxparRpcouyFw00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=nNuFq4Jn; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20251107092510epoutp020993c72c37a7fbced46976de14616431~1rz4CT-g62580925809epoutp02L
-	for <linux-fsdevel@vger.kernel.org>; Fri,  7 Nov 2025 09:25:10 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20251107092510epoutp020993c72c37a7fbced46976de14616431~1rz4CT-g62580925809epoutp02L
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1762507510;
-	bh=u8uZZ4eKtfeKdhCl1Q4zHBINNzxY5n31tzDb1+D2ZUs=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=nNuFq4JnvaalPuw3XSCF+FmfhR4hroJIdPSDaHbSmmalxbF06Dg/9xIUKs6+9KzFz
-	 +mAELlYpPRLM/VRb9troicO5aYquOMj5KfMMzbcDgQdZ0rmuNl5y5iIwuarLma8XZW
-	 tCVt9qc3o0mDZEE2QeTmo6c4tZqQQITd/PUA9KvM=
-Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
-	20251107092509epcas5p39521b5623906275347b3ec7177eac680~1rz3UXgnn2572925729epcas5p39;
-	Fri,  7 Nov 2025 09:25:09 +0000 (GMT)
-Received: from epcas5p3.samsung.com (unknown [182.195.38.91]) by
-	epsnrtp02.localdomain (Postfix) with ESMTP id 4d2tv81KkDz2SSKY; Fri,  7 Nov
-	2025 09:25:08 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20251107092507epcas5p3041edfe682f64c59ac3fe0fab4b9384b~1rz1O74AD2299222992epcas5p3F;
-	Fri,  7 Nov 2025 09:25:07 +0000 (GMT)
-Received: from [107.111.86.57] (unknown [107.111.86.57]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20251107092447epsmtip2e07f9528cf570ebdd336a8a4571fc676~1rzi_2xUI0827208272epsmtip2i;
-	Fri,  7 Nov 2025 09:24:46 +0000 (GMT)
-Message-ID: <91367b76-e48b-46b4-b10b-43dfdd8472fa@samsung.com>
-Date: Fri, 7 Nov 2025 14:54:42 +0530
+	s=arc-20240116; t=1762507539; c=relaxed/simple;
+	bh=/AGNW71S4Yk/RK26qQSj8YrNbE16Egqb8P/usljzDio=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=HEswPhbRSpDHfbP47/jnzGsGScU4zJ36oa4IzLfRID1e7nellDh8HaxWZ0FwzexUiXCCi48yKFhv0T6zv2YqoUIk51ImKbuX/xtu8WYDkIyrOHIVFQ17NY5TV1IjLM+R++34HNP02kmNysGSd60roFqes8SnWQxkyn0JKqTQCzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=DiKODaXt; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
+	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=/x4l+A0jDSFdktd3t5ashjObRl7Kwga0z+/ilUukgS0=; b=DiKODaXtdUn1nt9dQCN5rnvlsV
+	br+tLYih0okDtPfimNQjBtdgRkMCPtyFH3TLYsJ4UV8n0Gyl3+nERXhfaZWK/DxsBBfI/YxHb/2u2
+	lO7Lpf0zxsEnI+CczxCCaXGC2DhXUOFihlG/vDITn3NmZyo6U39qSmWPcqTXckyrQjGIxMiWTyQb8
+	m5nxlpJD85gK7mjDR7bWZPctqsyvOazc4VqCcdEREUxDqWEvqlVfWG0f+l0wlG8gMSk4FvHR7IJC8
+	8ODGrloxjm5/TEckul52a93TZuU2fhK/CpqQUOUCf7jrz30BmYHevIASvqQIJ0W1e55NyoF52mZoB
+	vJoTL4Ig==;
+Received: from bl17-145-117.dsl.telepac.pt ([188.82.145.117] helo=localhost)
+	by fanzine2.igalia.com with utf8esmtpsa 
+	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1vHIig-003Nko-V7; Fri, 07 Nov 2025 10:25:23 +0100
+From: Luis Henriques <luis@igalia.com>
+To: Stef Bon <stefbon@gmail.com>
+Cc: "Darrick J. Wong" <djwong@kernel.org>,  Amir Goldstein
+ <amir73il@gmail.com>,  Bernd Schubert <bschubert@ddn.com>,  Bernd Schubert
+ <bernd@bsbernd.com>,  "Theodore Ts'o" <tytso@mit.edu>,  Miklos Szeredi
+ <miklos@szeredi.hu>,  linux-fsdevel@vger.kernel.org,
+  linux-kernel@vger.kernel.org,  Kevin Chen <kchen@ddn.com>
+Subject: Re: [RFC] Another take at restarting FUSE servers
+In-Reply-To: <CANXojcwP2jQUpXSZAv_3z5q+=Zrn7M8ffh2_KdcZpEad+XH6_A@mail.gmail.com>
+	(Stef Bon's message of "Thu, 6 Nov 2025 17:08:00 +0100")
+References: <2e1db15f-b2b1-487f-9f42-44dc7480b2e2@bsbernd.com>
+	<CAOQ4uxg8sFdFRxKUcAFoCPMXaNY18m4e1PfBXo+GdGxGcKDaFg@mail.gmail.com>
+	<20250916025341.GO1587915@frogsfrogsfrogs>
+	<CAOQ4uxhLM11Zq9P=E1VyN7puvBs80v0HrPU6HqY0LLM6HVc_ZQ@mail.gmail.com>
+	<87ldkm6n5o.fsf@wotan.olymp>
+	<CAOQ4uxg7b0mupCVaouPXPGNN=Ji2XceeceUf8L6pW8+vq3uOMQ@mail.gmail.com>
+	<7ee1e308-c58c-45a0-8ded-6694feae097f@ddn.com>
+	<20251105224245.GP196362@frogsfrogsfrogs>
+	<d57bcfc5-fc3d-4635-ab46-0b9038fb7039@ddn.com>
+	<CAOQ4uxgKZ3Hc+fMg_azN=DWLTj4fq0hsoU4n0M8GA+DsMgJW4g@mail.gmail.com>
+	<20251106154940.GF196391@frogsfrogsfrogs>
+	<CANXojcwP2jQUpXSZAv_3z5q+=Zrn7M8ffh2_KdcZpEad+XH6_A@mail.gmail.com>
+Date: Fri, 07 Nov 2025 09:25:17 +0000
+Message-ID: <87ecqary82.fsf@wotan.olymp>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 00/16] Parallelizing filesystem writeback
-Content-Language: en-US
-To: Christoph Hellwig <hch@lst.de>, "Darrick J. Wong" <djwong@kernel.org>
-Cc: Dave Chinner <david@fromorbit.com>, jaegeuk@kernel.org, chao@kernel.org,
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	miklos@szeredi.hu, agruenba@redhat.com, trondmy@kernel.org, anna@kernel.org,
-	akpm@linux-foundation.org, willy@infradead.org, mcgrof@kernel.org,
-	clm@meta.com, amir73il@gmail.com, axboe@kernel.dk, ritesh.list@gmail.com,
-	dave@stgolabs.net, wangyufei@vivo.com,
-	linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
-	gfs2@lists.linux.dev, linux-nfs@vger.kernel.org, linux-mm@kvack.org,
-	gost.dev@samsung.com, anuj20.g@samsung.com, vishak.g@samsung.com,
-	joshi.k@samsung.com
-From: Kundan Kumar <kundan.kumar@samsung.com>
-In-Reply-To: <20251029085526.GA32407@lst.de>
-Content-Transfer-Encoding: 7bit
-X-CMS-MailID: 20251107092507epcas5p3041edfe682f64c59ac3fe0fab4b9384b
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20251014120958epcas5p267c3c9f9dbe6ffc53c25755327de89f9
-References: <CGME20251014120958epcas5p267c3c9f9dbe6ffc53c25755327de89f9@epcas5p2.samsung.com>
-	<20251014120845.2361-1-kundan.kumar@samsung.com>
-	<aPa7xozr7YbZX0W4@dread.disaster.area> <20251022043930.GC2371@lst.de>
-	<e51e4fb9-01f7-4273-a363-fc1c2c61954b@samsung.com>
-	<20251029060932.GS4015566@frogsfrogsfrogs> <20251029085526.GA32407@lst.de>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 10/29/2025 2:25 PM, Christoph Hellwig wrote:
-> On Tue, Oct 28, 2025 at 11:09:32PM -0700, Darrick J. Wong wrote:
->> Was that with or without rtgroups?  metadir/rtgroups aren't enabled by
->> default yet so you'd have to select that manually with mkfs.xfs -m
->> metadir=1.
->>
->> (and you might still not see much change because of what hch said)
-> 
-> The real problem here is that even the inode number to AG association
-> is just a hint, and will often go wrong on an aged file system.
-> 
-> Now for the zoned RT device we could probably do a thread per open
-> zone, as that is a very logical association.  The problem with that
-> right now is that we only pick the zone to write to once doing
-> writeback, but there might be ways to lift it up.  Then again
-> zoned writeback is so little code that I can't see how it would
-> saturate a single thread.
-> 
+Hi Stef,
 
-Predicting the Allocation Group (AG) for aged filesystems and passing
-this information to per-AG writeback threads appears to be a complex
-task.
+On Thu, Nov 06 2025, Stef Bon wrote:
 
-For write operations without pre-allocated data blocks (fallocate=none,
-resulting in DELALLOC), the next available AG is selected, and the
-XFS hook can be used to predict the AG that will be allocated.
+> Hi,
+>
+> is implementing a lookup using a handle to be in the kernel?
 
-In contrast, when writing to a previously allocated data block
-(fallocate default, resulting in UNWRITTEN), the AG containing the data
-block is chosen. Large files that span multiple AGs can lead to a mix
-of random I/O operations (DELALLOC, UNWRITTEN, MAPPED) being directed
-to different AGs, while still being cached in the same page cache.
+What we're talking here is a new FUSE operation, FUSE_LOOKUP_HANDLE.  The
+scope here is mostly related to servers restartability: being able to
+restart a FUSE server without unmounting the file system.  But other
+scopes are also relevant (e.g. NFS exports).
 
-To segregate these I/O requests by AG, it is necessary to associate
-AG-specific information with the pages/folios in the page cache. Two
-possible approaches are:
-(1) storing AG information in the folio->private field, or
-(2) introducing new markers in the xarray to track AG-specific data.
+Just in case you missed it, here's a link to the full discussion:
 
-The AG-affined writeback thread processes specific pages from the page 
-cache marked for its AG. Is this a viable approach, or are there 
-alternative solutions that could be more effective?
+https://lore.kernel.org/all/8734afp0ct.fsf@igalia.com/
 
->>
->> --D
-> ---end quoted text---
-> 
+and to an older discussion, also relevant:
+
+https://lore.kernel.org/all/CAJfpegvNZ6Z7uhuTdQ6quBaTOYNkAP8W_4yUY4L2JRAEKx=
+EwOQ@mail.gmail.com/
+
+Cheers,
+--=20
+Lu=C3=ADs
+
+> I've written a FUSE fs for sftp using SSH as transport, where the
+> lookup call normally has to create a path (relative to the root of the
+> sftp) and send that to the remote server.
+> It saves the creation of this path if there is a handle available.
+> When doing an opendir, this is normally followed by a lookup for every
+> dentry. (sftp does not support readdirplus) Now in this case there is
+> a handle available (the one used by opendir, or one created with
+> open), so the fuse daemon I wrote used that to proceed. (and so not
+> create a path).
+>
+> So it can also go in userspace.
+>
+> Stef
+>
 
 
