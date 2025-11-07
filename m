@@ -1,230 +1,129 @@
-Return-Path: <linux-fsdevel+bounces-67401-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67402-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93B7CC3E34D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 07 Nov 2025 03:07:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 97789C3E4AB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 07 Nov 2025 03:58:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E6BA1889D1E
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Nov 2025 02:08:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E9261889301
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Nov 2025 02:59:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA61F2DF3E7;
-	Fri,  7 Nov 2025 02:07:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EB9B2EBB88;
+	Fri,  7 Nov 2025 02:58:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="FdDcFUQp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H2icienk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59D7E2E228D
-	for <linux-fsdevel@vger.kernel.org>; Fri,  7 Nov 2025 02:07:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DD371D5CC7
+	for <linux-fsdevel@vger.kernel.org>; Fri,  7 Nov 2025 02:58:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762481252; cv=none; b=pVNXO+Q448ZSRXCo4cJqgqqUjC9xVRcHwYtWcnqNQ/NA+tR+ud4AsERTVRBrXex5wxwuuyfTZjgPg9yocd3qUn5kzXCVCwx8pN++Hiq7l1cnFiFIB0ZbrOXhcUCJ2voFSzTubMmWZBPBFF14rKG/boZIYO2AZMkHqA+8l6pDZsc=
+	t=1762484315; cv=none; b=upk5A9PzXdgglrApZHkQfeekl/bdIaVhpMj7DnLKWcEZzHZurguWOm9kiovrcoBCO1Y2wtEzYXjOr7yp/XgXkn4edaBxldpChZsmhSocOCueoF5js6VUYIIeSA4AtZvGaC6FXPrXqVvt5lorGdVW39LrkaOJiNaRcWyRoOKvkus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762481252; c=relaxed/simple;
-	bh=UIab7wtwL7MJOqUh9OsFCLgRkvtJ87T6L6S86OEG8/0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=rXWVAw7EDr4d4c1NFzoWZWH+pMo/tTqESqJJvakxlCgXYdhbH3Hptch4U0umIQ8cu9HrpSPBTMlbtjOnnQrErtlUWIUSLFllH0LEYS7e7jaU9tW1ZWZodw4hSfsblbiJZ0zdqH7YEsbgkJ5k3UIrHZTFxs4LGaOE5pAA88y0mqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=FdDcFUQp; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b550eff972eso152065a12.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Nov 2025 18:07:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1762481249; x=1763086049; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QuX17fCzmjSlKD2oTV0BAVWCX3GMVQ03UEsOj2aXO/w=;
-        b=FdDcFUQpsQGrRs9SYQctX6rOgF3sJar5Sa3J/Z1NyX9Kcrd6r8qDuhYdT5+d+fJI2w
-         UZSaA4F0AraXyZQXLVh+QxtFSL0cHWr7nTQvbWrT/DSykZBgijRu7Vg14/lcO2zcREUY
-         VYIo+gxoNkhfP4PfAvkr0acMP4HukdlXehlPpoJiIEBQoyeV39+8eYrhvkc8FvrFhtj1
-         vn7HYjP3kVBaEAlL31mNTqJt76AJ7+IgXJ+J6G1aoabe//Cw1+pkZbGTedDRenPRrMeK
-         NqVK8nF/Pca8gNMqDS/ODyhjXFMq7w6hKjZOPXzw0TGyI0+CF0N/PDO/YirWWGKcWYlQ
-         ZIzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762481249; x=1763086049;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=QuX17fCzmjSlKD2oTV0BAVWCX3GMVQ03UEsOj2aXO/w=;
-        b=kDoUZwFccWAjjlZI58xDfA/jaED/oADe/zqRY7fS3ny6+m+W9UCdA9YYgearooskNS
-         WtVzTi5YoveXNNs2mEd7HasmshrF7HB9VKhecJHv3Kf+pRQkhMC4MjSXhVYvoE5jjiVi
-         0rzQKlLlJLVp7EpvouUQ1x+bRee0lmBHgkEikniaVWbqiv9WPCLOq5TseNj4thgkrJ7U
-         2cshV6w39bCYiz/OQrTmNW0ffZeUf8p+glYAwmbFO2Y6TNJJIHKBeqfMqdTKEwa3DRPf
-         PpwVhiX0kyIFRuBaRjOp6ySOuPeYltADlQ+Y07KmIscZw/XhDTnNoeXPHuC5W1qOZO7y
-         xjyg==
-X-Forwarded-Encrypted: i=1; AJvYcCWXeY42bxMerYPLvcrmojTMOSmwtbe+zRhAf8a8yfel1MNEDgJrAqysD0pRi/Ed9wbNVCUGBTPafBm7ainH@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZ3V7WN7aeXMYIqxVpo9rdKzzbVTegwwQwvfJJQTKPPXuaM9jt
-	yCIo11XXKv5G+zU9qnGbiz2lXma8KIQjGn8lMQ/ZLbDHGyT45YhRLSiG/c6gpurSS7k=
-X-Gm-Gg: ASbGncuGoPJZC7GTHP2LHxAcxJCqUjQTJh0ie0fwqtU5oEqVrTMQgZCvwA4zbV/ZBmG
-	8RzyZc2iYzj/E/bvNDGA5PRFlTdC/Xfkov1fUE33o7HGvE1xrloMfW2AAUl6dO9m+QSL2S1Hshz
-	xMeKs0z4Sudlbsnzu9DEoiLTqKSA74sdOv/hkyunuktZ2wmC226kB67MHv3JKGDWiA3ShFXwfKJ
-	lc679WZgJgwUz0r6buYo1xR0OnznNeHSTPQvsgMoUP71nhnnsVIH6RYx/Rt6iNOxjspM9NikTGd
-	DVwE63HU91liSh0fgtOykhbuH333Yzcv3bbYCK6sft1J37mgWMAwWpNE4NCt5Awub/56Fx3SbvS
-	iUs5ZWYT36X5CkH0hhmTfwZuaKwnUxzZTp9917gCnaxpLiomoKnWj4tVNrP4Rj5jlGMz8t7vISf
-	OVz0RMy2vEb34cKvfr
-X-Google-Smtp-Source: AGHT+IHXmZOcta8jUuxDACQrWTlF7AFvsAayeKJwmvo20B5+lL1aR+s8qHZVmeDX1E1ADNkEK+YkjQ==
-X-Received: by 2002:a17:903:1a85:b0:295:94e1:91da with SMTP id d9443c01a7336-297c04601efmr20299015ad.33.1762481248360;
-        Thu, 06 Nov 2025 18:07:28 -0800 (PST)
-Received: from localhost.localdomain ([2408:8740:c4ff:1::4])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2965096825esm43129885ad.3.2025.11.06.18.07.17
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Thu, 06 Nov 2025 18:07:28 -0800 (PST)
-From: Fengnan Chang <changfengnan@bytedance.com>
-To: axboe@kernel.dk,
-	viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	asml.silence@gmail.com,
-	willy@infradead.org,
-	djwong@kernel.org,
-	hch@infradead.org,
-	ritesh.list@gmail.com,
-	linux-fsdevel@vger.kernel.org,
-	io-uring@vger.kernel.org,
-	linux-xfs@vger.kernel.org,
-	linux-ext4@vger.kernel.org,
-	linux-block@vger.kernel.org,
-	ming.lei@redhat.com,
-	linux-nvme@lists.infradead.org
-Cc: Fengnan Chang <changfengnan@bytedance.com>
-Subject: [PATCH v2 2/2] block: enable per-cpu bio cache by default
-Date: Fri,  7 Nov 2025 10:05:57 +0800
-Message-Id: <20251107020557.10097-3-changfengnan@bytedance.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20251107020557.10097-1-changfengnan@bytedance.com>
-References: <20251107020557.10097-1-changfengnan@bytedance.com>
+	s=arc-20240116; t=1762484315; c=relaxed/simple;
+	bh=CnMcg/kXN5EiKNbIPt3g68fYg//OTHVOPtX1VKA2VYw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=G8Afhf09FLjGRVTL7ix0zsVUareYO+lSAVJq3+uGC1PxfyZ1KJSf2+7T7YsvTboj8mYiymxgLvscZ3BxzPT33Q1lKQOIPqPNhmlh5M1uLklEt0+/AXxXId7LR36zRHkVkPykuxcFPwvkVdYWkAoAXHq4GG/qC7hDh0nYVZVXswk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H2icienk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1ABEBC19423
+	for <linux-fsdevel@vger.kernel.org>; Fri,  7 Nov 2025 02:58:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762484315;
+	bh=CnMcg/kXN5EiKNbIPt3g68fYg//OTHVOPtX1VKA2VYw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=H2icienk0mhx8Svklyc7RESVshO9h/1isHvKy4Uh5LoteAZFnN6iQc0jTGSFf42Gt
+	 JYNUCqZxGc7f1kCR7eECbQgs7RhTSR5mPdItruO1KbM6Cl3Ti+IZjJaEeUEUqFFIOn
+	 n2Nlym25f+4MNOPv0odBtR5rtUrwQujdd6zW7l2fKJsLm8pgYNr73Y+24J8gsmc8Lw
+	 4GZatp43t3v2kRPwlnjMQM12SkXdpHofm5BsBGh2mOuabXuRn4nUJtt0snlq5wxNbC
+	 9cCYoaK37SEhX7lAfZbIp9UEV08oYoD81meefLui/37UsT1a5Q6QODGt6EB+JifR4Y
+	 Ef5HkVJV8Jc/w==
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-b70fb7b54cdso52617666b.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Nov 2025 18:58:35 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUCAWZuYrYI7xQ7oUHSDgK2E86UPLQF84V5V8DvL7//fyNWfgxBTHYbF0gfzuUfoHuAGZ7BKi4l0tmPWQN7@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCuOAzjktYp0GKGmuOWUIFpOsFlFF3OR1P+alw7VQhZe+L/222
+	93kGem3HTspWnufBn1hAY+SuxZJtNO3vWUXdFR43qmITN9HJXNjc44oXazNibfCniqpIMspwGdZ
+	cqBF0COm4pvbI6IOrms6AGqtAfz65JNY=
+X-Google-Smtp-Source: AGHT+IE8krnrPRv2PXae1vIDWcCVLgktPSHDjY80bHprT5hVpdghcZoZ49o9WqzcqULrxNJOmw7CGKVM6CYazVfu3JA=
+X-Received: by 2002:a17:907:9488:b0:b71:854:4e4e with SMTP id
+ a640c23a62f3a-b72c0ac14f0mr151946466b.38.1762484313448; Thu, 06 Nov 2025
+ 18:58:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251020020749.5522-1-linkinjeon@kernel.org> <20251020020749.5522-3-linkinjeon@kernel.org>
+ <46ebc4d5-5478-4c22-8f17-069fe40ebe44@mobintestserver.ir>
+In-Reply-To: <46ebc4d5-5478-4c22-8f17-069fe40ebe44@mobintestserver.ir>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Fri, 7 Nov 2025 11:58:19 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd-YiCdiHn8ZrwisB=5A_u2fXCDPVvmZFc9n6nHf3JF_7A@mail.gmail.com>
+X-Gm-Features: AWmQ_blZpFAFtNz5McsQNEZU6UnFAYCUfHhaIOfI9OjcE-kgAMGKnvAZMAkZvfw
+Message-ID: <CAKYAXd-YiCdiHn8ZrwisB=5A_u2fXCDPVvmZFc9n6nHf3JF_7A@mail.gmail.com>
+Subject: Re: [PATCH 02/11] ntfsplus: add super block operations
+To: Mobin Aydinfar <mobin@mobintestserver.ir>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, hch@infradead.org, hch@lst.de, 
+	tytso@mit.edu, willy@infradead.org, jack@suse.cz, djwong@kernel.org, 
+	josef@toxicpanda.com, sandeen@sandeen.net, rgoldwyn@suse.com, 
+	xiang@kernel.org, dsterba@suse.com, pali@kernel.org, ebiggers@kernel.org, 
+	neil@brown.name, amir73il@gmail.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, iamjoonsoo.kim@lge.com, cheol.lee@lge.com, 
+	jay.sim@lge.com, gunho.lee@lge.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Since after commit 12e4e8c7ab59 ("io_uring/rw: enable bio caches for
-IRQ rw"), bio_put is safe for task and irq context, bio_alloc_bioset is
-safe for task context and no one calls in irq context, so we can enable
-per cpu bio cache by default.
-
-Benchmarked with t/io_uring and ext4+nvme:
-taskset -c 6 /root/fio/t/io_uring  -p0 -d128 -b4096 -s1 -c1 -F1 -B1 -R1
--X1 -n1 -P1  /mnt/testfile
-base IOPS is 562K, patch IOPS is 574K. The CPU usage of bio_alloc_bioset
-decrease from 1.42% to 1.22%.
-
-The worst case is allocate bio in CPU A but free in CPU B, still use
-t/io_uring and ext4+nvme:
-base IOPS is 648K, patch IOPS is 647K.
-
-Also use fio test ext4/xfs with libaio/sync/io_uring on null_blk and
-nvme, no obvious performance regression.
-
-Signed-off-by: Fengnan Chang <changfengnan@bytedance.com>
----
- block/bio.c        | 26 ++++++++++++--------------
- block/fops.c       |  4 ----
- include/linux/fs.h |  3 ---
- io_uring/rw.c      |  1 -
- 4 files changed, 12 insertions(+), 22 deletions(-)
-
-diff --git a/block/bio.c b/block/bio.c
-index b3a79285c278..64a1599a5930 100644
---- a/block/bio.c
-+++ b/block/bio.c
-@@ -516,20 +516,18 @@ struct bio *bio_alloc_bioset(struct block_device *bdev, unsigned short nr_vecs,
- 	if (WARN_ON_ONCE(!mempool_initialized(&bs->bvec_pool) && nr_vecs > 0))
- 		return NULL;
- 
--	if (opf & REQ_ALLOC_CACHE) {
--		if (bs->cache && nr_vecs <= BIO_INLINE_VECS) {
--			bio = bio_alloc_percpu_cache(bdev, nr_vecs, opf,
--						     gfp_mask, bs);
--			if (bio)
--				return bio;
--			/*
--			 * No cached bio available, bio returned below marked with
--			 * REQ_ALLOC_CACHE to particpate in per-cpu alloc cache.
--			 */
--		} else {
--			opf &= ~REQ_ALLOC_CACHE;
--		}
--	}
-+	if (bs->cache && nr_vecs <= BIO_INLINE_VECS) {
-+		opf |= REQ_ALLOC_CACHE;
-+		bio = bio_alloc_percpu_cache(bdev, nr_vecs, opf,
-+					     gfp_mask, bs);
-+		if (bio)
-+			return bio;
-+		/*
-+		 * No cached bio available, bio returned below marked with
-+		 * REQ_ALLOC_CACHE to participate in per-cpu alloc cache.
-+		 */
-+	} else
-+		opf &= ~REQ_ALLOC_CACHE;
- 
- 	/*
- 	 * submit_bio_noacct() converts recursion to iteration; this means if
-diff --git a/block/fops.c b/block/fops.c
-index 5e3db9fead77..7ef2848244b1 100644
---- a/block/fops.c
-+++ b/block/fops.c
-@@ -184,8 +184,6 @@ static ssize_t __blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter,
- 	loff_t pos = iocb->ki_pos;
- 	int ret = 0;
- 
--	if (iocb->ki_flags & IOCB_ALLOC_CACHE)
--		opf |= REQ_ALLOC_CACHE;
- 	bio = bio_alloc_bioset(bdev, nr_pages, opf, GFP_KERNEL,
- 			       &blkdev_dio_pool);
- 	dio = container_of(bio, struct blkdev_dio, bio);
-@@ -333,8 +331,6 @@ static ssize_t __blkdev_direct_IO_async(struct kiocb *iocb,
- 	loff_t pos = iocb->ki_pos;
- 	int ret = 0;
- 
--	if (iocb->ki_flags & IOCB_ALLOC_CACHE)
--		opf |= REQ_ALLOC_CACHE;
- 	bio = bio_alloc_bioset(bdev, nr_pages, opf, GFP_KERNEL,
- 			       &blkdev_dio_pool);
- 	dio = container_of(bio, struct blkdev_dio, bio);
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index c895146c1444..1be899ac8b5a 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -365,8 +365,6 @@ struct readahead_control;
- /* iocb->ki_waitq is valid */
- #define IOCB_WAITQ		(1 << 19)
- #define IOCB_NOIO		(1 << 20)
--/* can use bio alloc cache */
--#define IOCB_ALLOC_CACHE	(1 << 21)
- /*
-  * IOCB_DIO_CALLER_COMP can be set by the iocb owner, to indicate that the
-  * iocb completion can be passed back to the owner for execution from a safe
-@@ -399,7 +397,6 @@ struct readahead_control;
- 	{ IOCB_WRITE,		"WRITE" }, \
- 	{ IOCB_WAITQ,		"WAITQ" }, \
- 	{ IOCB_NOIO,		"NOIO" }, \
--	{ IOCB_ALLOC_CACHE,	"ALLOC_CACHE" }, \
- 	{ IOCB_DIO_CALLER_COMP,	"CALLER_COMP" }, \
- 	{ IOCB_AIO_RW,		"AIO_RW" }, \
- 	{ IOCB_HAS_METADATA,	"AIO_HAS_METADATA" }
-diff --git a/io_uring/rw.c b/io_uring/rw.c
-index 5b2241a5813c..c0c59eb358a8 100644
---- a/io_uring/rw.c
-+++ b/io_uring/rw.c
-@@ -862,7 +862,6 @@ static int io_rw_init_file(struct io_kiocb *req, fmode_t mode, int rw_type)
- 	ret = kiocb_set_rw_flags(kiocb, rw->flags, rw_type);
- 	if (unlikely(ret))
- 		return ret;
--	kiocb->ki_flags |= IOCB_ALLOC_CACHE;
- 
- 	/*
- 	 * If the file is marked O_NONBLOCK, still allow retry for it if it
--- 
-2.39.5 (Apple Git-154)
-
+On Fri, Nov 7, 2025 at 5:03=E2=80=AFAM Mobin Aydinfar <mobin@mobintestserve=
+r.ir> wrote:
+>
+Hi Mobin,
+> Hi Namjae, I built your new driver (as DKMS) and I'm using it and it
+> went smooth so far. Thanks for this good driver (and also really
+> practical userspace tools) but something in dmesg caught my eye:
+Thanks for your test:)
+>
+> On 10/20/25 05:37, Namjae Jeon wrote:
+> > This adds the implementation of superblock operations for ntfsplus.
+> >
+> > Signed-off-by: Namjae Jeon <linkinjeon@kernel.org>
+> > ---
+> >   fs/ntfsplus/super.c | 2716 ++++++++++++++++++++++++++++++++++++++++++=
++
+> >   1 file changed, 2716 insertions(+)
+> >   create mode 100644 fs/ntfsplus/super.c
+> >
+> > diff --git a/fs/ntfsplus/super.c b/fs/ntfsplus/super.c
+> > new file mode 100644
+> > index 000000000000..1803eeec5618
+> > --- /dev/null
+> > +++ b/fs/ntfsplus/super.c
+> > @@ -0,0 +1,2716 @@
+> > ...
+> > +     pr_info("volume version %i.%i, dev %s, cluster size %d\n",
+> > +             vol->major_ver, vol->minor_ver, sb->s_id, vol->cluster_si=
+ze);
+> > +
+>  > ...
+>
+> Shouldn't pr_info() messages have "ntfsplus: " prefix? I mean most
+> drivers do so and it is weird to me to have something like this:
+>
+> [    5.431662] volume version 3.1, dev sda3, cluster size 4096
+> [    5.444801] volume version 3.1, dev sdb1, cluster size 4096
+>
+> instead of this:
+>
+> [    5.431662] ntfsplus: volume version 3.1, dev sda3, cluster size 4096
+> [    5.444801] ntfsplus: volume version 3.1, dev sdb1, cluster size 4096
+>
+> in my dmesg. What do you think? It wouldn't be better to include
+> "ntfsplus: " prefix for pr_info messages?
+Okay, I will improve it in the next version.
+Thanks.
+>
+> Best Regards
 
