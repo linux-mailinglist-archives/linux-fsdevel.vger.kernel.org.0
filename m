@@ -1,170 +1,228 @@
-Return-Path: <linux-fsdevel+bounces-67414-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67415-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1C93C3EC35
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 07 Nov 2025 08:32:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23833C3ED10
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 07 Nov 2025 08:51:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 265F73AFBD5
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Nov 2025 07:31:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 984C61884749
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Nov 2025 07:51:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58684308F36;
-	Fri,  7 Nov 2025 07:31:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26AA930E83C;
+	Fri,  7 Nov 2025 07:51:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HsK+QnaS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 728AE27B4FB
-	for <linux-fsdevel@vger.kernel.org>; Fri,  7 Nov 2025 07:31:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B91B2D063C
+	for <linux-fsdevel@vger.kernel.org>; Fri,  7 Nov 2025 07:51:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762500690; cv=none; b=PITO+K6PfOuGgH27dkJ4y4YibUBTrQ1tKHAh8Lc1cQoyZBPLB/V5qOL/EQlO5HOhdr9uh1xpf9qO8oiJhyuPfhlza1Irqe/fymG09iQ7PC6OBiM4/ztCfmU/S6u3J2Tcq8+tQj/g1cBq942fnmhLhTDDh9NoPANqb4VQgA47J08=
+	t=1762501874; cv=none; b=dOXtIACD/He1kYMANk7a0pU/mSF+F/sNGtQ3Pc0tZbn5NCrI31AB+7miBfd1cxar99HOaunpwYbAS1xZ3exOhLL8JUOTITXSlVEaBkHpHKzIItvtwN9p4mQ00diMsvYZZnJkTUFTdVBjZFDm0hq6JgK59M3jx62TuPXq4g+hQNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762500690; c=relaxed/simple;
-	bh=hmBQunOCM5ZmhF1k490t04BJn11l0BugsBMHywhEaok=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=WdIsO+x/yPyaJ8iI5ZFLKI4poX1PwOsTJhbUPgBcurb2fpjf3razv0amZoymHpEKafHPaeyiHMog+8ungfBLklNGUOYRPFxljV5k8gvbEEiiLI74CTuGjWcPrxPg6qpfZ/9Op9sEAx8xybOwyUqQtcy66tBaYahRLOI/YERpYm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-9486440360dso41825439f.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Nov 2025 23:31:28 -0800 (PST)
+	s=arc-20240116; t=1762501874; c=relaxed/simple;
+	bh=DBkxoSNlKaSPUMK4zellr7NQI5sAgx6z9H/pZ4MGVqI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qcU1cCZ/yNga7CpBjyuM/zOyO0P5z0X90mfCADq0HpbZCp2jS0MelMsNYXiwIK19+VYc8cui2R6E+7mpr9LnOucQ38hKfg+zpWtx5QvK4fSPkF55LRWlNGxLT5RAlxqEy+UGDgFlF9lzCCPaZxTIwqBu9/ok5zagFOR/DFtHU+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HsK+QnaS; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-640aa1445c3so739018a12.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Nov 2025 23:51:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762501871; x=1763106671; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gypdu32AjBdl8JRh/paj6OCLfQy8ztkLDfHJejFEMqc=;
+        b=HsK+QnaS3sPxVxk2m3RzVCU2iYIyNIc5wvyVaCv24AUeONkHsTfrSk8lNa4Jb4QQFL
+         5dR+H8N2sTQ3cf1WWLirpqmLue1oB3LfW4aRXBKDU0iBKiPPBYHMEhkVwdGYjDOKNxTd
+         TrOSZAA4k9wUBFklMWGF45+1uQObdRWWMIec4W4HcxcKsvJJQYrue2iAzlYshrj1YsLL
+         q9p68hUnqC5ArqOUb9bsCKL0f97NwUNIbMhhU8l3EduOpqtzjVoGVBS7dkOsvK7B5tCU
+         P9f8bIq1ZAnk2t/t+h8jR4nOVRVJSuw4jOxou26H3NPehG0Cwbp60DT1hYQwK31A1fZi
+         unBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762500688; x=1763105488;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=DC5whZ6xjAg9orncDEXG9Mf4Zikpjttx0BkeAU8vHTQ=;
-        b=JShywigQSMuQ6+9DwiCXkf+BtoIXWCmjFXuQulv88CR7Czg6EwN8ba1NAZy8yIIV7K
-         qIieN1FEZdZsUc4d0i01CVQQbKU8EU3d4VeZ+dj1b/0quPSWCbr0q1HGnOqhUD0cVVJw
-         8c6FTahX0wsHYY5GOyGWzj/KN5Y4I7qPT+YZS1QjUIEbHlHMgkc569SsPSTqyd0XaSVv
-         fzfDvNWM+fC4laOs/bzydNbUQ/8b9aBEzhCLFBeKGdYYCMqdgGoULZHsxKovUw+p41/B
-         aEfQBImfzM2qh+dB4sTGdJ5X6RUGMcLz5SCeJGMk0YT91eFtyh6Z+k4XSDVPAhqrelAV
-         8o/A==
-X-Forwarded-Encrypted: i=1; AJvYcCV/1ufHuiTu2bsCb3qmDeL+H848GXNg4OaxAdslMEIcN+G2qISi0/6CcDMVlN+frE2RTfSVYd2oF/DdAH4M@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTGm2iNG+92ILElbPujlXo5pvY4IrFpRVGIoOJFe9ouVHmd+DO
-	ZUhr/dyB7w2xATrVfYcCzVpbbyvERiyIFexyaqQgGvbrWYSesets0pl11UX2HLAbgOGDiyHCbsF
-	fGbgpn66f52X8Fo/LORgiGPbRrOV+zVkwIyTqv6BzQGfRr1NC0AnCqbXt4lI=
-X-Google-Smtp-Source: AGHT+IF1mWmFU+QuzP+6G0raJVSuUbhvWf35rIhwvg/7kKBEsHrx+TEWgqipXwdks6Tvvg+v62pf8jfuYyIcJq7AP3kS3CRjzES2
+        d=1e100.net; s=20230601; t=1762501871; x=1763106671;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=gypdu32AjBdl8JRh/paj6OCLfQy8ztkLDfHJejFEMqc=;
+        b=WFLhz3Ix4TokJbDyjuxOMQ/2MSo54Q1bn2aTgX9/iE4vnO4Yh4yCLo3UZA6vaeCGUu
+         Y4lGsBbx3ypXq2wsSLV1s7IeE9ZWPSr/j6iVjUKPWItlHALlIb0zy9kv9b32OfA5Y8Sc
+         XsejRUKl6uiHaV3bX12s2KFDsc8mPtFNjl1ICSySONMMeZMz5mr0V+wpKoZrn7rX9xbc
+         4xl/AFbbH+dsgud/BPbIHL8AO4fxNbox/paDqxzxFTOMa70xleFc+nM00D+KB8VQoAGY
+         lrc/gVolXMCO1TpTdR7WknUiGx/rvFkJH322etiNvYUOSydNR5G0LVwq0xQt7ZG7IcNl
+         PDlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWvQHzcnEjXShnIASqFBRUy6Rwllxk/2CEqIhRJokV5uzHafVqYiC+x3dOBJEW56rcyApbtj/KhjJzjfLjH@vger.kernel.org
+X-Gm-Message-State: AOJu0YyssM8x8F83n5AURRcXEwZ2nDOQPY0iHG3OxxhKH+ZZr9hrPvTZ
+	ngL9LIYUZ72fuOXnbprZRn4N5zcAvQ1P/b2D0Qq6e5Tw/oA8/GexAAhz9Ul++iMChgn08YC1AsK
+	i65hq/3wWSvtl351zbSadDq3WSJDbwgs=
+X-Gm-Gg: ASbGncuKnw97i1mw7Vn/wsJS/Whq2rd5QQQolaORnC5tvzjunxb/pOlF5z7fe2iDgeA
+	lQko1+AAKqYWvp4Z+2Ra7AjE3hyayuTTpQzr9oD2zyA6DzzKytKETDrT9Ap9vqyjw1FSlvamKoy
+	cgBp9WiY+3kaYj1l0qkdOaTqHSO4XmT6uoraoXjrdIWFJjamrGK70bvgMwgT/XbUarPJVtR3DGD
+	HJNJkx2Z8wxPkGfZ09xueGaVsrzG62dUbmuT6SkxtpnlJ+olct8CPpxEoCeHafdrvKirLYsJ18r
+	IiEihVP3OxX5I4AwwgM=
+X-Google-Smtp-Source: AGHT+IE0wn+JgXGDP+/X23JJiJR87uZ3bU9Eku9RD/Xf6SIQu9XEELdfWfIJb6UWtw6QwSr76TEb6t86wyo+1imQhyo=
+X-Received: by 2002:a05:6402:51c6:b0:640:ca67:848d with SMTP id
+ 4fb4d7f45d1cf-6413eeb9fb6mr2107882a12.8.1762501870320; Thu, 06 Nov 2025
+ 23:51:10 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a64:b0:433:290f:c201 with SMTP id
- e9e14a558f8ab-4335f3d0389mr32665345ab.11.1762500687581; Thu, 06 Nov 2025
- 23:31:27 -0800 (PST)
-Date: Thu, 06 Nov 2025 23:31:27 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <690da04f.a70a0220.22f260.0027.GAE@google.com>
-Subject: [syzbot] [fs?] WARNING in destroy_super_work
-From: syzbot <syzbot+1957b26299cf3ff7890c@syzkaller.appspotmail.com>
-To: Liam.Howlett@oracle.com, akpm@linux-foundation.org, 
-	anna-maria@linutronix.de, bpf@vger.kernel.org, brauner@kernel.org, 
-	bsegall@google.com, cgroups@vger.kernel.org, david@redhat.com, 
-	dietmar.eggemann@arm.com, frederic@kernel.org, hannes@cmpxchg.org, 
-	jack@suse.cz, jsavitz@redhat.com, juri.lelli@redhat.com, kees@kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-security-module@vger.kernel.org, 
-	lorenzo.stoakes@oracle.com, mgorman@suse.de, mhocko@suse.com, 
-	mingo@redhat.com, mjguzik@gmail.com, mkoutny@suse.com, oleg@redhat.com, 
-	paul@paul-moore.com, peterz@infradead.org, rostedt@goodmis.org, 
-	rppt@kernel.org, sergeh@kernel.org, surenb@google.com, 
-	syzkaller-bugs@googlegroups.com, tglx@linutronix.de, tj@kernel.org, 
-	vbabka@suse.cz, vincent.guittot@linaro.org, viro@zeniv.linux.org.uk, 
-	vschneid@redhat.com
+References: <176169819804.1433624.11241650941850700038.stgit@frogsfrogsfrogs>
+ <176169819994.1433624.4365613323075287467.stgit@frogsfrogsfrogs>
+ <CAOQ4uxj7yaX5qLEs4BOJBJwybkHzv8WmNsUt0w_zehueOLLP9A@mail.gmail.com>
+ <20251105225355.GC196358@frogsfrogsfrogs> <CAOQ4uxjC+rFKrp3SMMabyBwSKOWDGGpVR7-5gyodGbH80ucnkA@mail.gmail.com>
+ <20251106231215.GC196366@frogsfrogsfrogs>
+In-Reply-To: <20251106231215.GC196366@frogsfrogsfrogs>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Fri, 7 Nov 2025 08:50:58 +0100
+X-Gm-Features: AWmQ_bka4NhoB4_0GzsMDp2JL8GmrqvBcI2VdjLITQEvTx--8zNv2vTizrwbetI
+Message-ID: <CAOQ4uxjBpm_2cUDHyU72pSRc5KLDNm9tRgGYsoaAtp6tM6yFwg@mail.gmail.com>
+Subject: Re: [PATCH 01/33] misc: adapt tests to handle the fuse ext[234] drivers
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: zlang@redhat.com, neal@gompa.dev, fstests@vger.kernel.org, 
+	linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	joannelkoong@gmail.com, bernd@bsbernd.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Fri, Nov 7, 2025 at 12:12=E2=80=AFAM Darrick J. Wong <djwong@kernel.org>=
+ wrote:
+>
+> On Thu, Nov 06, 2025 at 09:58:28AM +0100, Amir Goldstein wrote:
+> > On Wed, Nov 5, 2025 at 11:53=E2=80=AFPM Darrick J. Wong <djwong@kernel.=
+org> wrote:
+> > >
+> > > On Thu, Oct 30, 2025 at 10:51:06AM +0100, Amir Goldstein wrote:
+> > > > On Wed, Oct 29, 2025 at 2:22=E2=80=AFAM Darrick J. Wong <djwong@ker=
+nel.org> wrote:
+> > > > >
+> > > > > From: Darrick J. Wong <djwong@kernel.org>
+> > > > >
+> > > > > It would be useful to be able to run fstests against the userspac=
+e
+> > > > > ext[234] driver program fuse2fs.  A convention (at least on Debia=
+n)
+> > > > > seems to be to install fuse drivers as /sbin/mount.fuse.XXX so th=
+at
+> > > > > users can run "mount -t fuse.XXX" to start a fuse driver for a
+> > > > > disk-based filesystem type XXX.
+> > > > >
+> > > > > Therefore, we'll adopt the practice of setting FSTYP=3Dfuse.ext4 =
+to
+> > > > > test ext4 with fuse2fs.  Change all the library code as needed to=
+ handle
+> > > > > this new type alongside all the existing ext[234] checks, which s=
+eems a
+> > > > > little cleaner than FSTYP=3Dfuse FUSE_SUBTYPE=3Dext4, which also =
+would
+> > > > > require even more treewide cleanups to work properly because most
+> > > > > fstests code switches on $FSTYP alone.
+> > > > >
+> > > >
+> > > > I agree that FSTYP=3Dfuse.ext4 is cleaner than
+> > > > FSTYP=3Dfuse FUSE_SUBTYPE=3Dext4
+> > > > but it is not extendable to future (e.g. fuse.xfs)
+> > > > and it is still a bit ugly.
+> > > >
+> > > > Consider:
+> > > > FSTYP=3Dfuse.ext4
+> > > > MKFSTYP=3Dext4
+> > > >
+> > > > I think this is the correct abstraction -
+> > > > fuse2fs/ext4 are formatted that same and mounted differently
+> > > >
+> > > > See how some of your patch looks nicer and naturally extends to
+> > > > the imaginary fuse.xfs...
+> > >
+> > > Maybe I'd rather do it the other way around for fuse4fs:
+> > >
+> > > FSTYP=3Dext4
+> > > MOUNT_FSTYP=3Dfuse.ext4
+> > >
+> >
+> > Sounds good. Will need to see the final patch.
+> >
+> > > (obviously, MOUNT_FSTYP=3D$FSTYP if the test runner hasn't overridden=
+ it)
+> > >
+> > > Where $MOUNT_FSTYP is what you pass to mount -t and what you'd see in
+> > > /proc/mounts.  The only weirdness with that is that some of the helpe=
+rs
+> > > will end up with code like:
+> > >
+> > >         case $FSTYP in
+> > >         ext4)
+> > >                 # do ext4 stuff
+> > >                 ;;
+> > >         esac
+> > >
+> > >         case $MOUNT_FSTYP in
+> > >         fuse.ext4)
+> > >                 # do fuse4fs stuff that overrides ext4
+> > >                 ;;
+> > >         esac
+> > >
+> > > which would be a little weird.
+> > >
+> >
+> > Sounds weird, but there is always going to be weirdness
+> > somewhere - need to pick the least weird result or most
+> > easy to understand code IMO.
+> >
+> > > _scratch_mount would end up with:
+> > >
+> > >         $MOUNT_PROG -t $MOUNT_FSTYP ...
+> > >
+> > > and detecting it would be
+> > >
+> > >         grep -q -w $MOUNT_FSTYP /proc/mounts || _fail "booooo"
+> > >
+> > > Hrm?
+> >
+> > Those look obviously nice.
+> >
+> > Maybe the answer is to have all MOUNT_FSTYP, MKFS_FSTYP
+> > and FSTYP and use whichever best fits in the context.
+>
+> Hrmm well I would /like/ avoid adding MKFS_FSTYP since ext4 is ext4, no
+> matter whether we're using the kernel or fuse42fs.  Do you have a use
+> case for adding such a thing?
+>
 
-syzbot found the following issue on:
+No use case, beyond more flexibility in writing clear code.
+I agree with Zorro that ext4 is not only ext4.
+ext4 is ext4 on-disk format and it is ext4 driver and this ambiguity
+can be a source of confusion sometimes.
 
-HEAD commit:    982312090977 Add linux-next specific files for 20251103
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=17b2932f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=43cc0e31558cb527
-dashboard link: https://syzkaller.appspot.com/bug?extid=1957b26299cf3ff7890c
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1347817c580000
+I don't see the problem with defining MKFS_FSTYP
+the controversial part IMO is what FSTYP should be
+referring to, the flesh or the spirit...
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/40058f8a830c/disk-98231209.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/1d7f42e8639f/vmlinux-98231209.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/d8bb0284f393/bzImage-98231209.xz
+Trying to think up a use case, ntfs has at least 3 Linux drivers
+that I know of (ntfs,ntfs3 and fuse.ntfs-3g) and another one that was recen=
+tly
+proposed (ntfsplus). At least some have also their matching mkfs
+and should be able to cross mount an ntfs formatted by other mkfs.
 
-The issue was bisected to:
+So testing any variation of MKFS_FSTYP and MOUNT_FSTYP
+makes sense.
 
-commit 3c9820d5c64aeaadea7ffe3a6bb99d019a5ff46a
-Author: Christian Brauner <brauner@kernel.org>
-Date:   Wed Oct 29 12:20:24 2025 +0000
+Using MKFS_FSTYP in mkfs and fsck helpers and using MOUNT_FSTYP
+in mount helpers is always good practice IMO.
 
-    ns: add active reference count
+My intuition is that FSTYP should be defined to whichever
+results in less churn and less weird looking code, but I don't know
+which one that would be.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=101e9bcd980000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=121e9bcd980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=141e9bcd980000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+1957b26299cf3ff7890c@syzkaller.appspotmail.com
-Fixes: 3c9820d5c64a ("ns: add active reference count")
-
-------------[ cut here ]------------
-WARNING: ./include/linux/ns_common.h:229 at __ns_ref_put include/linux/ns_common.h:229 [inline], CPU#0: kworker/0:6/6108
-WARNING: ./include/linux/ns_common.h:229 at put_user_ns include/linux/user_namespace.h:189 [inline], CPU#0: kworker/0:6/6108
-WARNING: ./include/linux/ns_common.h:229 at destroy_super_work+0x15c/0x1a0 fs/super.c:280, CPU#0: kworker/0:6/6108
-Modules linked in:
-CPU: 0 UID: 0 PID: 6108 Comm: kworker/0:6 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
-Workqueue: events destroy_super_work
-RIP: 0010:__ns_ref_put include/linux/ns_common.h:229 [inline]
-RIP: 0010:put_user_ns include/linux/user_namespace.h:189 [inline]
-RIP: 0010:destroy_super_work+0x15c/0x1a0 fs/super.c:280
-Code: 90 63 ff 48 81 c3 a8 fc ff ff 48 89 df e8 ec 90 63 ff 4c 89 f7 5b 41 5c 41 5d 41 5e 41 5f 5d e9 8a 91 e1 ff e8 45 df 86 ff 90 <0f> 0b 90 e9 6d ff ff ff e8 37 df 86 ff 4c 89 e7 be 03 00 00 00 e8
-RSP: 0018:ffffc900030d7a48 EFLAGS: 00010293
-RAX: ffffffff823a294b RBX: ffff88805639c898 RCX: ffff88802ab59e80
-RDX: 0000000000000000 RSI: 0000000000000004 RDI: 0000000000000000
-RBP: 0000000000000004 R08: ffff88807477565b R09: 1ffff1100e8eeacb
-R10: dffffc0000000000 R11: ffffed100e8eeacc R12: ffff888074775658
-R13: dffffc0000000000 R14: ffff88805639c000 R15: ffff8880747754c8
-FS:  0000000000000000(0000) GS:ffff888125eda000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000c008044000 CR3: 0000000077ad4000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- process_one_work+0x94a/0x15d0 kernel/workqueue.c:3267
- process_scheduled_works kernel/workqueue.c:3350 [inline]
- worker_thread+0x9b0/0xee0 kernel/workqueue.c:3431
- kthread+0x711/0x8a0 kernel/kthread.c:463
- ret_from_fork+0x52d/0xa70 arch/x86/kernel/process.c:158
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Thanks,
+Amir.
 
