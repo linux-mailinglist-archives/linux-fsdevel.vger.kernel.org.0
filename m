@@ -1,78 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-67399-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67400-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94CF4C3E33E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 07 Nov 2025 03:07:17 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2530C3E347
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 07 Nov 2025 03:07:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4C43188A2A3
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Nov 2025 02:07:38 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 94F5A4E410B
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Nov 2025 02:07:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23102219A86;
-	Fri,  7 Nov 2025 02:07:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A224C2EC087;
+	Fri,  7 Nov 2025 02:07:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="OYp4ubuT"
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="ZK+dqPBD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 511BA7494
-	for <linux-fsdevel@vger.kernel.org>; Fri,  7 Nov 2025 02:06:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF4192D7805
+	for <linux-fsdevel@vger.kernel.org>; Fri,  7 Nov 2025 02:07:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762481221; cv=none; b=bYUuQ5SllG4O8bWhTGrivbXcmHqHTFFJcyUaLKjgIlf573ckfPH3kvqDWqubWkVMvW7F5rupb3YdOXK5DD89x6VRFeXtQSgSJSX10tKChsG/wuWRZUi81yXkDo/0zclbsIzw3kWJGJ11jO1zMwKBtNqRkrWRAeLwsAXk0qw+1+0=
+	t=1762481237; cv=none; b=fII6TFZhBGRAYQNWZlrFpvoZLoi1o1Az4TBiE7E5S5uXKjL4QS+8AZVz1OhZdNfpvUaZ8waPL1SPTTVUPkJDcMD6RCdEPQYcxaKPqjdvvYN9N8eeMiSY/sUdukgSQzYBfT+LshkKCEVzzoAZAC3jn7AwwWf0URVBK1mjLWLLTik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762481221; c=relaxed/simple;
-	bh=5/T0SIm0UdNO/IdzRZZKEiu//zm3DFK1QFan+BlZfc8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lD+SxPMoMoY+Qpr2r3FKkzhy6jaFeyu99c/fqAMP67Hn/n3fqRwBLqtQxEjszud5G+1LIWko5626aC8r/h2vpC9Sm1I2Hl0Uf0Wa6047y/PHSD1yjEgQP2TIA4tx23NxjDF2hYUsYUwHRz0Cqz23boO0VzyhweYGu9jTMtgUHJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=OYp4ubuT; arc=none smtp.client-ip=209.85.214.182
+	s=arc-20240116; t=1762481237; c=relaxed/simple;
+	bh=lli0u4TsngLndxWtzp+3OjhbYuTLmWB5AKNTXIDei0c=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=F+od/qdiNlaHBL9pmc2Bt4DfPeopeCJN022QMCprpkzlvG7LTTtfHQ4N0KrDoQetfT2qFUcrjauOzpXc+ewT32qICEhkxeoOWnyMQTCvLvjW2+u/cfbx80tprs0J6MWiHpqn4Z8XGzYCpR4iSqvMGKIBf7wSw9FVdZLDfmLABDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=ZK+dqPBD; arc=none smtp.client-ip=209.85.215.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-29524abfba3so2630175ad.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Nov 2025 18:06:59 -0800 (PST)
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b98983bae80so173435a12.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Nov 2025 18:07:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1762481219; x=1763086019; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=oWHtEzv8Rq5cRO8AqC7Ez/zeQln1yPOIQJdYebnSBzQ=;
-        b=OYp4ubuT3gFc60iNpOyqfZR5wKv5fjTWfjquldjj3yOmqwOqHhb+gL5tBGy1h6g19a
-         mE9JKBplmSkVKkEn3gsbnssVeL3P2OnVme1LfIGDUWl5uwketcnYSSPYd40ovl+AAtli
-         qK20UzYrZWuzXHfZvM8pZD6J1OS8frr4sUeuoh+AKkoH53mA0fbtfwSUkKSjloevMJ8H
-         BKbPC7Ggm5NBb6iCHtS/VLhpM2bxPrrfQKV92pW54zrGq7nwYO5NHJQ/ZCweBAVuV4JQ
-         X8QjrT3Jou7mvj0bxG/giBOc833ri2zbOH18PTI/qb3Ld1KMUxR3ET8eZjBe147luRUB
-         lIig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762481219; x=1763086019;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=bytedance.com; s=google; t=1762481234; x=1763086034; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=oWHtEzv8Rq5cRO8AqC7Ez/zeQln1yPOIQJdYebnSBzQ=;
-        b=Oj1gTjs4yfu4CieWG7W1CC+gwOk4k1x/tbkzGEmZt3LdOukN/cbWNh1B1BmExy1VrD
-         C5m6XpRjUhDPlmda9t7uNfZ1AuaBr8rShncsnIOAOJDMeihASw48+P5Bvf7AXa/j157J
-         HAYrqPGZbMtLiZrWwmN1UGTJ4JLKFIVrhNefBcbWcu0wKKPKzNbwlVVTmd4jOwBnyOwR
-         aR1sM0Py4WLv9sxjQoRLlob+ROjIfHGKJUpA8DNn3cuvpcY0x6jjtbDmoMGth9StrHra
-         T5v/RDLChrDag2GfupJPwet97pI0JOCTXwSERC8JmSQ3aNqscRqsqlHTUMU/K33rRtR8
-         eivA==
-X-Forwarded-Encrypted: i=1; AJvYcCU/cruySRuewy3QWSaoLo4esRfOH4wwgrzgM1BwhslAMSsO5f+6KAx9EmaHJuaZ06xs9U1xek1WrY9XPvfg@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCAuq8iaSZCOX049XFkqP/eicHio+L3BIvvomctOstRFB3MSRV
-	ovDKnwpn1vzE9Ej11tVZWU8JewvBuIbjzFQhwGDkbOL4jQoZ61X/JeSv6pyVjoX+MBo/iyyndAH
-	nhvjLzr3XYQ==
-X-Gm-Gg: ASbGncuOUBqDeH+s5W+AgnJkXiGWXA+CVPiUvOl9rmCjXxQ5b+t606WyE6kaMGL6MBA
-	+6Ww8WglhrfV+VnPFTTLPZ7oqk15FNROQQv3F4IwFRtIpDXhMMGkeCjFHudt9c/WhMm0Ou521/7
-	zH+Rfg/Kl1YYHgPn1G+SdErPTaO0HuNhz5dBCQhiaX846L6YQjNFSYoVIv1369LDlY+M1g2M5R6
-	GQTJm98MPdI3WBRBoOKa3q06HYQdLhVd/l/Bn4/XkCePWWEIBja3RfkitPh8YVFusSvborcsp2e
-	XnZW771c8py6ROVAEM64E5jXZW203y7G0hV5ldcqUPoY/pxL0dcaaI+phbB3w/LBbpyNcwz3/Ly
-	BH3kCRUWiyw7/A6aVnxIkkV8SlOsEKCGwyTWY6YSr7nOlaq+4ILPy6JzkgMiMphGfiOsKTdRTXk
-	tH4i/VU5AV9E/zMwee
-X-Google-Smtp-Source: AGHT+IEQ1r7AsblEW15F6NrWnCgQgZkngBPtkNTOIEI5NyInjWIPCo6YMVNtFNrYGdMqGrYdOjvVJw==
-X-Received: by 2002:a17:903:1ca:b0:296:1beb:6776 with SMTP id d9443c01a7336-297c04aa6abmr21929025ad.58.1762481218563;
-        Thu, 06 Nov 2025 18:06:58 -0800 (PST)
+        bh=XOUCCDcR32WTLhwAJaOBtVC8wRTuafJBLOF7ysVPF/4=;
+        b=ZK+dqPBDsOX76jp54dJVBVYt5whg6DQHhTju4LBQFrHFooAsi/5qpswY9NzUl3IIKg
+         ORS23IsPYDfPoMC7wDtIBkJS2XCawXjd/rZDKBgTWRC8G/cII+mLw0p7ylEE4tmqFiUT
+         KrwaN6/hJdr3CDMdjUhFm3ZOsK392ccAT8B/h7v3BNL1wtNd2gQQ9l5Q1aLisQBNBMHG
+         qpikA3+ANgyNr287xBjO5oxPeWDat++Nu59Y6VrIqdoR1P6au2prEFiDxfP12Gqm0hyw
+         2q/Y7nPm2u3DuuYWLtdiTOXdUykrMqaxzNm+nOBp5j51T+4HWwedUUu+bngkGJVm79YS
+         4QNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762481234; x=1763086034;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=XOUCCDcR32WTLhwAJaOBtVC8wRTuafJBLOF7ysVPF/4=;
+        b=m0eNp0ZkiDbdffABWN8mijGlrpYNNa8qC7oSe2r2vhdkilGX74qROxeW1zpKm8+lzl
+         gp3BYTYrX+Em/aDDwZQdWG79frG37kqXp8KkKQhI31OSzlm+0AzAj3stw5n08Dl6ohVy
+         zJN/UyrKFxZT76/PiCMTXl+SfQt796ndRDZoyCDmHAztW2ObCPbY/dPiv3mIJA5arpCX
+         Y+A4zmohora7+8elmvB/l5rXF63GZ5h4SfQRgbamnymZkAsWa/2A4+Fa2PpxBAQgQ2rD
+         06znm4ZkfCcHJv/iZKZIaalyKKWybXIl18v3CQPecZrIrStWcwOKf5HmUByMI10YwjEB
+         VOng==
+X-Forwarded-Encrypted: i=1; AJvYcCW9gK16Wj/+srjavg3Lyhtrg/R+0VFk7W5/BpKNVMIkCwh1LgzMdEKwzhuQnmhP5ql3mgZJN22KaxJE4Oxe@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGbOPuQAd8LpCtcGEyapBnIqmsW99gZUvyoElRE06khqfT17k7
+	CSSm0VtKICjN6lKEIikDzs5X/B8b88M+jfzlEnbZgYMIwccSbgY8C/HcBGpdLsEqgBA=
+X-Gm-Gg: ASbGncs0RAoRXIsLrj+1Gw/Ofgev+WGJkjzqgwp9dteLe3/RhmVtBg9OtBZ6izbw77U
+	WTA1CiXvhr6vsjX8R8SZgQC+vPSMMrP7rFB8Xw/2LvjKj7d1bzxfxgFklReHmxmKrbHZmzDsCh6
+	8bcJD1VoVX77Ks7L2nUrqTHAamHG9LWFIEQY8/zUaI5R7FpX663RbX40VVxy8v8WYKFd/+4kjNr
+	qz4pqExeShceJE/srW3wztcN2Nb1Z6zTQtHliAeR0IzwumFyvBa/aiCVYHY8CkFr+PrZFbHyGvZ
+	4Y1ZQuliYCLpS1PvFTRgxng+LG4Hw6LZrIr22nht/UzxgZ6uXYb2fEH08hrrg9gmP4m1pDIuNIS
+	lxyXGC85MVkbfDMjdOHQBdjQ6M4tRhkhn+7dMfi5im9jzPvqU4cEOXFW/SrRepIkT13H63Ot7pW
+	gYuMeBiycll4Lfv+SR
+X-Google-Smtp-Source: AGHT+IEJti4NiV6U2nPuxp72+m4/jnwAUg2/UAR4b5PLKU43+gH5PrMm/tm0Xa1G5TmaQR5rlzUdcA==
+X-Received: by 2002:a17:903:2ac3:b0:290:94ed:184c with SMTP id d9443c01a7336-297c03d5580mr23239875ad.15.1762481234112;
+        Thu, 06 Nov 2025 18:07:14 -0800 (PST)
 Received: from localhost.localdomain ([2408:8740:c4ff:1::4])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2965096825esm43129885ad.3.2025.11.06.18.06.47
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2965096825esm43129885ad.3.2025.11.06.18.07.03
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Thu, 06 Nov 2025 18:06:58 -0800 (PST)
+        Thu, 06 Nov 2025 18:07:13 -0800 (PST)
 From: Fengnan Chang <changfengnan@bytedance.com>
 To: axboe@kernel.dk,
 	viro@zeniv.linux.org.uk,
@@ -91,10 +92,12 @@ To: axboe@kernel.dk,
 	ming.lei@redhat.com,
 	linux-nvme@lists.infradead.org
 Cc: Fengnan Chang <changfengnan@bytedance.com>
-Subject: [PATCH v2 0/2] block: enable per-cpu bio cache by default
-Date: Fri,  7 Nov 2025 10:05:55 +0800
-Message-Id: <20251107020557.10097-1-changfengnan@bytedance.com>
+Subject: [PATCH v2 1/2] block: use bio_alloc_bioset for passthru IO by default
+Date: Fri,  7 Nov 2025 10:05:56 +0800
+Message-Id: <20251107020557.10097-2-changfengnan@bytedance.com>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+In-Reply-To: <20251107020557.10097-1-changfengnan@bytedance.com>
+References: <20251107020557.10097-1-changfengnan@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -103,35 +106,213 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-For now, per-cpu bio cache was only used in the io_uring + raw block
-device, filesystem also can use this to improve performance.
-After discussion in [1], we think it's better to enable per-cpu bio cache
-by default.
+Use bio_alloc_bioset for passthru IO by default, so that we can enable
+bio cache for irq and polled passthru IO in later.
 
-v2:
-enable per-cpu bio cache for passthru IO by default.
-
-v1:
-https://lore.kernel.org/linux-fsdevel/CAPFOzZs5mJ9Ts+TYkhioO8aAYfzevcgw7O3hjexFNb_tM+kEZA@mail.gmail.com/
-
-[1] https://lore.kernel.org/linux-fsdevel/c4bc7c33-b1e1-47d1-9d22-b189c86c6c7d@gmail.com/
-
-
-
-Fengnan Chang (2):
-  block: use bio_alloc_bioset for passthru IO by default
-  block: enable per-cpu bio cache by default
-
- block/bio.c               | 26 ++++++------
+Signed-off-by: Fengnan Chang <changfengnan@bytedance.com>
+---
  block/blk-map.c           | 89 +++++++++++++++------------------------
- block/fops.c              |  4 --
  drivers/nvme/host/ioctl.c |  2 +-
- include/linux/fs.h        |  3 --
- io_uring/rw.c             |  1 -
- 6 files changed, 48 insertions(+), 77 deletions(-)
+ 2 files changed, 36 insertions(+), 55 deletions(-)
 
-
-base-commit: 4a0c9b3391999818e2c5b93719699b255be1f682
+diff --git a/block/blk-map.c b/block/blk-map.c
+index 60faf036fb6e..272a23d8ef8e 100644
+--- a/block/blk-map.c
++++ b/block/blk-map.c
+@@ -37,6 +37,25 @@ static struct bio_map_data *bio_alloc_map_data(struct iov_iter *data,
+ 	return bmd;
+ }
+ 
++static inline void blk_mq_map_bio_put(struct bio *bio)
++{
++	bio_put(bio);
++}
++
++static struct bio *blk_rq_map_bio_alloc(struct request *rq,
++		unsigned int nr_vecs, gfp_t gfp_mask)
++{
++	struct block_device *bdev = rq->q->disk ? rq->q->disk->part0 : NULL;
++	struct bio *bio;
++
++	bio = bio_alloc_bioset(bdev, nr_vecs, rq->cmd_flags, gfp_mask,
++				&fs_bio_set);
++	if (!bio)
++		return NULL;
++
++	return bio;
++}
++
+ /**
+  * bio_copy_from_iter - copy all pages from iov_iter to bio
+  * @bio: The &struct bio which describes the I/O as destination
+@@ -154,10 +173,9 @@ static int bio_copy_user_iov(struct request *rq, struct rq_map_data *map_data,
+ 	nr_pages = bio_max_segs(DIV_ROUND_UP(offset + len, PAGE_SIZE));
+ 
+ 	ret = -ENOMEM;
+-	bio = bio_kmalloc(nr_pages, gfp_mask);
++	bio = blk_rq_map_bio_alloc(rq, nr_pages, gfp_mask);
+ 	if (!bio)
+ 		goto out_bmd;
+-	bio_init_inline(bio, NULL, nr_pages, req_op(rq));
+ 
+ 	if (map_data) {
+ 		nr_pages = 1U << map_data->page_order;
+@@ -233,43 +251,12 @@ static int bio_copy_user_iov(struct request *rq, struct rq_map_data *map_data,
+ cleanup:
+ 	if (!map_data)
+ 		bio_free_pages(bio);
+-	bio_uninit(bio);
+-	kfree(bio);
++	blk_mq_map_bio_put(bio);
+ out_bmd:
+ 	kfree(bmd);
+ 	return ret;
+ }
+ 
+-static void blk_mq_map_bio_put(struct bio *bio)
+-{
+-	if (bio->bi_opf & REQ_ALLOC_CACHE) {
+-		bio_put(bio);
+-	} else {
+-		bio_uninit(bio);
+-		kfree(bio);
+-	}
+-}
+-
+-static struct bio *blk_rq_map_bio_alloc(struct request *rq,
+-		unsigned int nr_vecs, gfp_t gfp_mask)
+-{
+-	struct block_device *bdev = rq->q->disk ? rq->q->disk->part0 : NULL;
+-	struct bio *bio;
+-
+-	if (rq->cmd_flags & REQ_ALLOC_CACHE && (nr_vecs <= BIO_INLINE_VECS)) {
+-		bio = bio_alloc_bioset(bdev, nr_vecs, rq->cmd_flags, gfp_mask,
+-					&fs_bio_set);
+-		if (!bio)
+-			return NULL;
+-	} else {
+-		bio = bio_kmalloc(nr_vecs, gfp_mask);
+-		if (!bio)
+-			return NULL;
+-		bio_init_inline(bio, bdev, nr_vecs, req_op(rq));
+-	}
+-	return bio;
+-}
+-
+ static int bio_map_user_iov(struct request *rq, struct iov_iter *iter,
+ 		gfp_t gfp_mask)
+ {
+@@ -318,25 +305,23 @@ static void bio_invalidate_vmalloc_pages(struct bio *bio)
+ static void bio_map_kern_endio(struct bio *bio)
+ {
+ 	bio_invalidate_vmalloc_pages(bio);
+-	bio_uninit(bio);
+-	kfree(bio);
++	blk_mq_map_bio_put(bio);
+ }
+ 
+-static struct bio *bio_map_kern(void *data, unsigned int len, enum req_op op,
++static struct bio *bio_map_kern(struct request *rq, void *data, unsigned int len,
+ 		gfp_t gfp_mask)
+ {
+ 	unsigned int nr_vecs = bio_add_max_vecs(data, len);
+ 	struct bio *bio;
+ 
+-	bio = bio_kmalloc(nr_vecs, gfp_mask);
++	bio = blk_rq_map_bio_alloc(rq, nr_vecs, gfp_mask);
+ 	if (!bio)
+ 		return ERR_PTR(-ENOMEM);
+-	bio_init_inline(bio, NULL, nr_vecs, op);
++
+ 	if (is_vmalloc_addr(data)) {
+ 		bio->bi_private = data;
+ 		if (!bio_add_vmalloc(bio, data, len)) {
+-			bio_uninit(bio);
+-			kfree(bio);
++			blk_mq_map_bio_put(bio);
+ 			return ERR_PTR(-EINVAL);
+ 		}
+ 	} else {
+@@ -349,8 +334,7 @@ static struct bio *bio_map_kern(void *data, unsigned int len, enum req_op op,
+ static void bio_copy_kern_endio(struct bio *bio)
+ {
+ 	bio_free_pages(bio);
+-	bio_uninit(bio);
+-	kfree(bio);
++	blk_mq_map_bio_put(bio);
+ }
+ 
+ static void bio_copy_kern_endio_read(struct bio *bio)
+@@ -377,9 +361,10 @@ static void bio_copy_kern_endio_read(struct bio *bio)
+  *	copy the kernel address into a bio suitable for io to a block
+  *	device. Returns an error pointer in case of error.
+  */
+-static struct bio *bio_copy_kern(void *data, unsigned int len, enum req_op op,
++static struct bio *bio_copy_kern(struct request *rq, void *data, unsigned int len,
+ 		gfp_t gfp_mask)
+ {
++	enum req_op op = req_op(rq);
+ 	unsigned long kaddr = (unsigned long)data;
+ 	unsigned long end = (kaddr + len + PAGE_SIZE - 1) >> PAGE_SHIFT;
+ 	unsigned long start = kaddr >> PAGE_SHIFT;
+@@ -394,10 +379,9 @@ static struct bio *bio_copy_kern(void *data, unsigned int len, enum req_op op,
+ 		return ERR_PTR(-EINVAL);
+ 
+ 	nr_pages = end - start;
+-	bio = bio_kmalloc(nr_pages, gfp_mask);
++	bio = blk_rq_map_bio_alloc(rq, nr_pages, gfp_mask);
+ 	if (!bio)
+ 		return ERR_PTR(-ENOMEM);
+-	bio_init_inline(bio, NULL, nr_pages, op);
+ 
+ 	while (len) {
+ 		struct page *page;
+@@ -431,8 +415,7 @@ static struct bio *bio_copy_kern(void *data, unsigned int len, enum req_op op,
+ 
+ cleanup:
+ 	bio_free_pages(bio);
+-	bio_uninit(bio);
+-	kfree(bio);
++	blk_mq_map_bio_put(bio);
+ 	return ERR_PTR(-ENOMEM);
+ }
+ 
+@@ -676,18 +659,16 @@ int blk_rq_map_kern(struct request *rq, void *kbuf, unsigned int len,
+ 		return -EINVAL;
+ 
+ 	if (!blk_rq_aligned(rq->q, addr, len) || object_is_on_stack(kbuf))
+-		bio = bio_copy_kern(kbuf, len, req_op(rq), gfp_mask);
++		bio = bio_copy_kern(rq, kbuf, len, gfp_mask);
+ 	else
+-		bio = bio_map_kern(kbuf, len, req_op(rq), gfp_mask);
++		bio = bio_map_kern(rq, kbuf, len, gfp_mask);
+ 
+ 	if (IS_ERR(bio))
+ 		return PTR_ERR(bio);
+ 
+ 	ret = blk_rq_append_bio(rq, bio);
+-	if (unlikely(ret)) {
+-		bio_uninit(bio);
+-		kfree(bio);
+-	}
++	if (unlikely(ret))
++		blk_mq_map_bio_put(bio);
+ 	return ret;
+ }
+ EXPORT_SYMBOL(blk_rq_map_kern);
+diff --git a/drivers/nvme/host/ioctl.c b/drivers/nvme/host/ioctl.c
+index c212fa952c0f..cd6bca8a5233 100644
+--- a/drivers/nvme/host/ioctl.c
++++ b/drivers/nvme/host/ioctl.c
+@@ -446,7 +446,7 @@ static int nvme_uring_cmd_io(struct nvme_ctrl *ctrl, struct nvme_ns *ns,
+ 	struct iov_iter iter;
+ 	struct iov_iter *map_iter = NULL;
+ 	struct request *req;
+-	blk_opf_t rq_flags = REQ_ALLOC_CACHE;
++	blk_opf_t rq_flags;
+ 	blk_mq_req_flags_t blk_flags = 0;
+ 	int ret;
+ 
 -- 
 2.39.5 (Apple Git-154)
 
