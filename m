@@ -1,281 +1,200 @@
-Return-Path: <linux-fsdevel+bounces-67468-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67469-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFB4AC413B6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 07 Nov 2025 19:11:51 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86C3AC416CB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 07 Nov 2025 20:19:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A86E3AFE40
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Nov 2025 18:11:37 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8421D4F5F0F
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Nov 2025 19:18:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98137339B34;
-	Fri,  7 Nov 2025 18:11:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 372072FFDC1;
+	Fri,  7 Nov 2025 19:18:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="qPMh+sGS"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PcAsSnxx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fra-out-004.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-004.esa.eu-central-1.outbound.mail-perimeter.amazon.com [3.74.81.189])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D99933396E1;
-	Fri,  7 Nov 2025 18:11:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.74.81.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 997C2302CDE
+	for <linux-fsdevel@vger.kernel.org>; Fri,  7 Nov 2025 19:18:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762539088; cv=none; b=ko1+YLk4LOl6NTIQ6rlrUzTEPALTUgdei5VDiL9jRWknUcsDNPAJkMdoH1JtgZymn+PpvTNEdcTpVMZQG3lAZTERODH1V4HsP+W7vziLsCS+iZorUgxBLwVqr3AuLWmZkispTYimZjIOugs1IpNqu3oR1cTjtl0wPFeTWu9dGdo=
+	t=1762543093; cv=none; b=pgYZaJins+UGvWtMk3SzR6LEJL7Br0+3b/6TObLU8IQ+KKbe0o1/ZypcutBwEf0j/Ih5fWNQHukJ25GWNpS21XXvZIYm8rW3tjdK052lJxiu2pdseQ9zzOxD2HpfDLv9QMkAjRgi9jBN5S6QqnBA5nrKKkzlliVJEcyftK6qKZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762539088; c=relaxed/simple;
-	bh=N4gOSBeRZWqaySZxSBCtzaOl7g3HsBW0KJqcGWerLgo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=JHnTvsHPIMDU0vozm+cQ1p+WpvOdO93xaCFm5sWPwwYOvWmM3zSmG1Ywv/djaTFgw4kIwwkZkSqyMnF0i82IZEm7BPlBlZsfjbapDTUm7xCjrMTG0Cvba8eX9oohVzAG6dzRvXSA8BBMawk5rGnhN73PwtiDivwdq2R22PKdGmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=qPMh+sGS; arc=none smtp.client-ip=3.74.81.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
+	s=arc-20240116; t=1762543093; c=relaxed/simple;
+	bh=HMX+nokK9V+QGgu5vvY3CGRBUupf3RY/CVnmsPQBGss=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jdROwPSaq6Fq5GhAaC+uIltAVQOCP29vApURSjWGauzfn4dXjZKKDr18i/KoePTPj15+LCeczdhpRolmKX2Ga3oeGuuGuZYCt/5bg9E2T5XypM2nbQOOQUfSIQK5hRqXesPw/GrHmJSYzEecq3gP17I0VTSMVLRWsueBhdtvh7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PcAsSnxx; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-471b80b994bso12138455e9.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 07 Nov 2025 11:18:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1762539085; x=1794075085;
-  h=message-id:date:mime-version:reply-to:subject:to:cc:
-   references:from:in-reply-to:content-transfer-encoding;
-  bh=SCkgHKsCB067+A2QKdQEeR2F/1cDYKaCmk5fyfcip00=;
-  b=qPMh+sGSJZt+z4Nc+DhY/1qTycu+jXWtJcRVfVq9aThqVfhZ7CnGrjbs
-   68J8ryCMsklugfRIIRzKfjio4AWTnd8/O16cOk7o7OJRbctMvBpisAZLd
-   nqU2bdn4xB3Q8OCfXoPqg+mifE4tBiunRgSnSKXqId8l9IYNfWHW1Sh5q
-   B09bCz0jvRk0ABD58ut3l9+naRE6voeFpiY1OBcZG8uXYktiDw/TWojP3
-   piBXzdlKm8Kz6SehvX/bTm2FndIweeX9zrmAnMvV7RYI2XG3W9V/r/YIH
-   5exIyAFKqLp0i+4B+hwJpbb7jmooRqPOnOWLbbaFatsClwVHQR/3alGJ2
-   w==;
-X-CSE-ConnectionGUID: fFJTYbfoSuanuoJNyoUMiw==
-X-CSE-MsgGUID: ItF1NJ0MQ7GmOV9vTi4D2Q==
-X-IronPort-AV: E=Sophos;i="6.19,287,1754956800"; 
-   d="scan'208";a="4852407"
-Received: from ip-10-6-6-97.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.6.97])
-  by internal-fra-out-004.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2025 18:11:07 +0000
-Received: from EX19MTAEUC002.ant.amazon.com [54.240.197.228:6828]
- by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.13.118:2525] with esmtp (Farcaster)
- id 217d753f-5175-4dc1-96ad-8ed664faf6cb; Fri, 7 Nov 2025 18:11:06 +0000 (UTC)
-X-Farcaster-Flow-ID: 217d753f-5175-4dc1-96ad-8ed664faf6cb
-Received: from EX19D022EUC002.ant.amazon.com (10.252.51.137) by
- EX19MTAEUC002.ant.amazon.com (10.252.51.181) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.29;
- Fri, 7 Nov 2025 18:11:06 +0000
-Received: from [192.168.9.244] (10.106.83.15) by EX19D022EUC002.ant.amazon.com
- (10.252.51.137) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.29; Fri, 7 Nov 2025
- 18:11:03 +0000
-Message-ID: <a940044f-3ae4-451f-b9ba-946ec6df5082@amazon.com>
-Date: Fri, 7 Nov 2025 18:11:01 +0000
+        d=gmail.com; s=20230601; t=1762543079; x=1763147879; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BoyRAxBYJ97KZHdMcvP1wI7gdZM18PW/SDBquVzm/CM=;
+        b=PcAsSnxxk/vQ8EKi7S/zlpRriabJ6LStD3JjS9iMC1hHhA7ft4Ly8XN1F4KNak3nE2
+         Azx3zPSFn9dNxBWGFc8Q0PGil+tYqmpuTWwYxIYcIv2G7YxmW3RVzo4tPDRmdwHnyFth
+         ynrZ6laqoBE+okxBPB7YOgcbfSg224RvjW7uKp1kV2mq83jDvblTIbsCss7FkO/MeMHS
+         RCPwKZblpC2N9yZs2vcU7+2qCYut6DMlTJQqMyeCk8kWoR0SyuT4q2Zn0GDbTmVagkQk
+         BwFyCwwfWNcoAPNAbbVmaiVFIQmtAWK22/WHTHEAf0VvjzSO9AE7OeanDvGjh94licgb
+         Tr7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762543079; x=1763147879;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=BoyRAxBYJ97KZHdMcvP1wI7gdZM18PW/SDBquVzm/CM=;
+        b=tJyOtwf/4K2uQzsZvO1NTqSgM/+saBwtJ85c0+n5VqkNyTS+UjRtmQqILZAR8nVtLQ
+         JHMnZN8gJKyZo7PN8ZWSRlIKQdN9e3d9lDusx++LvtaddNSW2B22iMxJKLm15UBmlzBX
+         /oOy5/Shw3We8Mjkpm30jcVsf04umkV12IJbIAdgxGKfdi7nScrgLHlEblrax8rOMZZO
+         4c5uwdly9jJHh9slEeMn5ioMLMELkgIu+aq9osB2yaDXfVyAXKCL99xlQ1vvkgUfaA5b
+         doCQ2VLV0gSNoSXyxvYV7VDr+NyvOfLoPHZYwtadZLoUWHWPjEkMp1neUWAg8Fbp4ZlM
+         21vg==
+X-Forwarded-Encrypted: i=1; AJvYcCVdNUzzU/T1zQ8ajkf0lG0TF48h7RXsxIOdeMsxg1poojbILPUSjxXL/XnJUamXyy435BCgGRbpQrUlvbPP@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+x0uccFH4IHwIZrWyNJwbB/edU3tjokb/mP87B1QdwuxWBKFV
+	dH47oaHe8bLc9m/WJdhkPDD4S0iGZXkhZk+nX+fXDlgcW2jbonr/hUpf
+X-Gm-Gg: ASbGncv4UMefvixHbDRtc0KBXF+TWlwK3ddcH9XkMW0ZyIka8BGOIW3BdIOQsw9v4uf
+	6gXbD9zp4otP6rs0WvMtUKa7OcLXsSl71IgzptGohTfdClQ73fCq0KNbMp0hf71khPLl+NfIc64
+	b+lWXQwrKUgA09iuUZiZ0iRDCrbLqT/E05XvLAWrJntQTV+IDb6BlBkRNNixqlOQXg9cQEHOdqg
+	vOkhQA2EwZNBo3UncL1gJ4VBeYXzKRsDJqM/6wTuithlWeZZP7mz/MuNyvGIqWjujXEhjigXLLq
+	2oSrNfMtgT/elEtXwgjqd0Gzxp/5+BQvRE4mV078CJaaMtLrUE2XuxmkoWH+P0c5io7IvH4xd5r
+	XVxbQWhHmGX9BzFjG3ZLEHzWBgb6Gaybp+dhpEcdvvxIwfmYNnnB7ZoNimBRodVr7KiZTlbZJEQ
+	YkTnpA08+dZCCIXNN56zbJX1+98zLm5UlZ+OcjLp5NZwFqrsP3poir
+X-Google-Smtp-Source: AGHT+IGwWldiHMKs6o3o24t2zUapUEv2nDiVIW1qgftMpp+s7M3k154xFpb/vMUGopieuIUWMdpZmw==
+X-Received: by 2002:a05:600c:45c7:b0:477:55b6:cdd6 with SMTP id 5b1f17b1804b1-4777322f0a4mr1228445e9.10.1762543078570;
+        Fri, 07 Nov 2025 11:17:58 -0800 (PST)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42abe62b23csm6811350f8f.10.2025.11.07.11.17.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Nov 2025 11:17:58 -0800 (PST)
+Date: Fri, 7 Nov 2025 19:17:53 +0000
+From: David Laight <david.laight.linux@gmail.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, Christophe Leroy
+ <christophe.leroy@csgroup.eu>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Andrew Cooper
+ <andrew.cooper3@citrix.com>, Linus Torvalds
+ <torvalds@linux-foundation.org>, kernel test robot <lkp@intel.com>, Russell
+ King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org,
+ x86@kernel.org, Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman
+ <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ linuxppc-dev@lists.ozlabs.org, Paul Walmsley <pjw@kernel.org>, Palmer
+ Dabbelt <palmer@dabbelt.com>, linux-riscv@lists.infradead.org, Heiko
+ Carstens <hca@linux.ibm.com>, Christian Borntraeger
+ <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>,
+ linux-s390@vger.kernel.org, Julia Lawall <Julia.Lawall@inria.fr>, Nicolas
+ Palix <nicolas.palix@imag.fr>, Peter Zijlstra <peterz@infradead.org>,
+ Darren Hart <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>,
+ =?UTF-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>, Alexander Viro
+ <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara
+ <jack@suse.cz>, linux-fsdevel@vger.kernel.org
+Subject: Re: [patch V5 07/12] uaccess: Provide scoped user access regions
+Message-ID: <20251107191753.7433d2dc@pumpkin>
+In-Reply-To: <20251027083745.546420421@linutronix.de>
+References: <20251027083700.573016505@linutronix.de>
+	<20251027083745.546420421@linutronix.de>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: <kalyazin@amazon.com>
-Subject: Re: [PATCH v7 00/12] Direct Map Removal Support for guest_memfd
-To: Brendan Jackman <jackmanb@google.com>
-CC: <pbonzini@redhat.com>, <corbet@lwn.net>, <maz@kernel.org>,
-	<oliver.upton@linux.dev>, <joey.gouly@arm.com>, <suzuki.poulose@arm.com>,
-	<yuzenghui@huawei.com>, <catalin.marinas@arm.com>, <will@kernel.org>,
-	<tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
-	<dave.hansen@linux.intel.com>, <x86@kernel.org>, <hpa@zytor.com>,
-	<luto@kernel.org>, <peterz@infradead.org>, <willy@infradead.org>,
-	<akpm@linux-foundation.org>, <david@redhat.com>,
-	<lorenzo.stoakes@oracle.com>, <Liam.Howlett@oracle.com>, <vbabka@suse.cz>,
-	<rppt@kernel.org>, <surenb@google.com>, <mhocko@suse.com>, <song@kernel.org>,
-	<jolsa@kernel.org>, <ast@kernel.org>, <daniel@iogearbox.net>,
-	<andrii@kernel.org>, <martin.lau@linux.dev>, <eddyz87@gmail.com>,
-	<yonghong.song@linux.dev>, <john.fastabend@gmail.com>, <kpsingh@kernel.org>,
-	<sdf@fomichev.me>, <haoluo@google.com>, <jgg@ziepe.ca>,
-	<jhubbard@nvidia.com>, <peterx@redhat.com>, <jannh@google.com>,
-	<pfalcato@suse.de>, <shuah@kernel.org>, <seanjc@google.com>,
-	<kvm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<kvmarm@lists.linux.dev>, <linux-fsdevel@vger.kernel.org>,
-	<linux-mm@kvack.org>, <bpf@vger.kernel.org>,
-	<linux-kselftest@vger.kernel.org>, <xmarcalx@amazon.co.uk>,
-	<kalyazin@amazon.co.uk>, <jackabt@amazon.co.uk>, <derekmn@amazon.co.uk>,
-	<tabba@google.com>, <ackerleytng@google.com>, Patrick Roy
-	<patrick.roy@campus.lmu.de>
-References: <20250924151101.2225820-1-patrick.roy@campus.lmu.de>
- <DE2L1SAOC55E.E4JY62WJQ2A8@google.com>
- <add94932-290c-4037-b4e6-c3c760240819@amazon.com>
- <DE2NTMZXQ1MT.2TH9VAKM6WP6I@google.com>
-Content-Language: en-US
-From: Nikita Kalyazin <kalyazin@amazon.com>
-Autocrypt: addr=kalyazin@amazon.com; keydata=
- xjMEY+ZIvRYJKwYBBAHaRw8BAQdA9FwYskD/5BFmiiTgktstviS9svHeszG2JfIkUqjxf+/N
- JU5pa2l0YSBLYWx5YXppbiA8a2FseWF6aW5AYW1hem9uLmNvbT7CjwQTFggANxYhBGhhGDEy
- BjLQwD9FsK+SyiCpmmTzBQJnrNfABQkFps9DAhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQr5LK
- IKmaZPOpfgD/exazh4C2Z8fNEz54YLJ6tuFEgQrVQPX6nQ/PfQi2+dwBAMGTpZcj9Z9NvSe1
- CmmKYnYjhzGxzjBs8itSUvWIcMsFzjgEY+ZIvRIKKwYBBAGXVQEFAQEHQCqd7/nb2tb36vZt
- ubg1iBLCSDctMlKHsQTp7wCnEc4RAwEIB8J+BBgWCAAmFiEEaGEYMTIGMtDAP0Wwr5LKIKma
- ZPMFAmes18AFCQWmz0MCGwwACgkQr5LKIKmaZPNTlQEA+q+rGFn7273rOAg+rxPty0M8lJbT
- i2kGo8RmPPLu650A/1kWgz1AnenQUYzTAFnZrKSsXAw5WoHaDLBz9kiO5pAK
-In-Reply-To: <DE2NTMZXQ1MT.2TH9VAKM6WP6I@google.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EX19D013EUB001.ant.amazon.com (10.252.51.116) To
- EX19D022EUC002.ant.amazon.com (10.252.51.137)
 
+On Mon, 27 Oct 2025 09:43:55 +0100 (CET)
+Thomas Gleixner <tglx@linutronix.de> wrote:
 
-
-On 07/11/2025 18:04, Brendan Jackman wrote:
-> On Fri Nov 7, 2025 at 5:23 PM UTC, Nikita Kalyazin wrote:
->>
->>
->> On 07/11/2025 15:54, Brendan Jackman wrote:
->>> On Wed Sep 24, 2025 at 3:10 PM UTC, Patrick Roy wrote:
->>>> From: Patrick Roy <roypat@amazon.co.uk>
->>>>
->>>> [ based on kvm/next ]
->>>>
->>>> Unmapping virtual machine guest memory from the host kernel's direct map is a
->>>> successful mitigation against Spectre-style transient execution issues: If the
->>>> kernel page tables do not contain entries pointing to guest memory, then any
->>>> attempted speculative read through the direct map will necessarily be blocked
->>>> by the MMU before any observable microarchitectural side-effects happen. This
->>>> means that Spectre-gadgets and similar cannot be used to target virtual machine
->>>> memory. Roughly 60% of speculative execution issues fall into this category [1,
->>>> Table 1].
->>>>
->>>> This patch series extends guest_memfd with the ability to remove its memory
->>>> from the host kernel's direct map, to be able to attain the above protection
->>>> for KVM guests running inside guest_memfd.
->>>>
->>>> Additionally, a Firecracker branch with support for these VMs can be found on
->>>> GitHub [2].
->>>>
->>>> For more details, please refer to the v5 cover letter [v5]. No
->>>> substantial changes in design have taken place since.
->>>>
->>>> === Changes Since v6 ===
->>>>
->>>> - Drop patch for passing struct address_space to ->free_folio(), due to
->>>>     possible races with freeing of the address_space. (Hugh)
->>>> - Stop using PG_uptodate / gmem preparedness tracking to keep track of
->>>>     direct map state.  Instead, use the lowest bit of folio->private. (Mike, David)
->>>> - Do direct map removal when establishing mapping of gmem folio instead
->>>>     of at allocation time, due to impossibility of handling direct map
->>>>     removal errors in kvm_gmem_populate(). (Patrick)
->>>> - Do TLB flushes after direct map removal, and provide a module
->>>>     parameter to opt out from them, and a new patch to export
->>>>     flush_tlb_kernel_range() to KVM. (Will)
->>>>
->>>> [1]: https://download.vusec.net/papers/quarantine_raid23.pdf
->>>> [2]: https://github.com/firecracker-microvm/firecracker/tree/feature/secret-hiding
->>>
->>> I just got around to trying this out, I checked out this patchset using
->>> its base-commit and grabbed the Firecracker branch. Things seem OK until
->>> I set the secrets_free flag in the Firecracker config which IIUC makes
->>> it set GUEST_MEMFD_FLAG_NO_DIRECT_MAP.
->>>
->>> If I set it, I find the guest doesn't show anything on the console.
->>> Running it in a VM and attaching GDB suggests that it's entering the
->>> guest repeatedly, it doesn't seem like the vCPU thread is stuck or
->>> anything. I'm a bit clueless about how to debug that (so far, whenever
->>> I've broken KVM, things always exploded very dramatically).
->>>
->>> Anyway, if I then kill the firecracker process, the host sometimes
->>> crashes, I think this is the most suggestive splat I've seen:
->>>
->>> [   99.673420][    T2] BUG: unable to handle page fault for address: ffff888012804000
->>> [   99.676216][    T2] #PF: supervisor write access in kernel mode
->>> [   99.678381][    T2] #PF: error_code(0x0002) - not-present page
->>> [   99.680499][    T2] PGD 2e01067 P4D 2e01067 PUD 2e02067 PMD 12801063 PTE 800fffffed7fb020
->>> [   99.683374][    T2] Oops: Oops: 0002 [#1] SMP
->>> [   99.685004][    T2] CPU: 0 UID: 0 PID: 2 Comm: kthreadd Not tainted 6.17.0-rc7-00366-g473c46a3cb2a #106 NONE
->>> [   99.688514][    T2] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 0.1 11/11/2019
->>> [   99.691547][    T2] RIP: 0010:clear_page_erms+0x7/0x10
->>> [   99.693440][    T2] Code: 48 89 47 18 48 89 47 20 48 89 47 28 48 89 47 30 48 89 47 38 48 8d 7f 40 75 d9 90 c3 0f 1f 80 00 00 00 00 b9 00 10 00 00 31 c0 <f3> aa c3 66 0f 1f 44 00 00 48 83 f9 40 73 2a 83 f9 08 73 0f 85 c9
->>> [   99.700188][    T2] RSP: 0018:ffff88800318fc10 EFLAGS: 00010246
->>> [   99.702321][    T2] RAX: 0000000000000000 RBX: 0000000000400dc0 RCX: 0000000000001000
->>> [   99.705100][    T2] RDX: ffffea00004a0100 RSI: ffffea00004a0200 RDI: ffff888012804000
->>> [   99.707861][    T2] RBP: 0000000000000801 R08: 0000000000000000 R09: 0000000000000000
->>> [   99.710648][    T2] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000002
->>> [   99.713412][    T2] R13: 0000000000000801 R14: ffffea00004a0100 R15: ffffffff81f4df80
->>> [   99.716191][    T2] FS:  0000000000000000(0000) GS:ffff8880bbf28000(0000) knlGS:0000000000000000
->>> [   99.719316][    T2] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>> [   99.721648][    T2] CR2: ffff888012804000 CR3: 0000000007583001 CR4: 0000000000372eb0
->>> [   99.724421][    T2] Call Trace:
->>> [   99.725608][    T2]  <TASK>
->>> [   99.726646][    T2]  get_page_from_freelist+0x6fe/0x14b0
->>> [   99.728583][    T2]  ? fs_reclaim_acquire+0x43/0xe0
->>> [   99.730325][    T2]  ? find_held_lock+0x2b/0x80
->>> [   99.731965][    T2]  __alloc_frozen_pages_noprof+0x147/0x2d0
->>> [   99.734003][    T2]  __alloc_pages_noprof+0x5/0x50
->>> [   99.735766][    T2]  copy_process+0x1b1/0x1b30
->>> [   99.737398][    T2]  ? lock_is_held_type+0x89/0x100
->>> [   99.739157][    T2]  ? kthreadd+0x25/0x190
->>> [   99.740664][    T2]  kernel_clone+0x59/0x390
->>> [   99.742213][    T2]  ? kthreadd+0x25/0x190
->>> [   99.743728][    T2]  kernel_thread+0x55/0x70
->>> [   99.745310][    T2]  ? kthread_complete_and_exit+0x20/0x20
->>> [   99.747265][    T2]  kthreadd+0x117/0x190
->>> [   99.748748][    T2]  ? kthread_is_per_cpu+0x30/0x30
->>> [   99.750509][    T2]  ret_from_fork+0x16b/0x1e0
->>> [   99.752193][    T2]  ? kthread_is_per_cpu+0x30/0x30
->>> [   99.753992][    T2]  ret_from_fork_asm+0x11/0x20
->>> [   99.755717][    T2]  </TASK>
->>> [   99.756861][    T2] CR2: ffff888012804000
->>> [   99.758353][    T2] ---[ end trace 0000000000000000 ]---
->>> [   99.760319][    T2] RIP: 0010:clear_page_erms+0x7/0x10
->>> [   99.762209][    T2] Code: 48 89 47 18 48 89 47 20 48 89 47 28 48 89 47 30 48 89 47 38 48 8d 7f 40 75 d9 90 c3 0f 1f 80 00 00 00 00 b9 00 10 00 00 31 c0 <f3> aa c3 66 0f 1f 44 00 00 48 83 f9 40 73 2a 83 f9 08 73 0f 85 c9
->>> [   99.769129][    T2] RSP: 0018:ffff88800318fc10 EFLAGS: 00010246
->>> [   99.771297][    T2] RAX: 0000000000000000 RBX: 0000000000400dc0 RCX: 0000000000001000
->>> [   99.774126][    T2] RDX: ffffea00004a0100 RSI: ffffea00004a0200 RDI: ffff888012804000
->>> [   99.777013][    T2] RBP: 0000000000000801 R08: 0000000000000000 R09: 0000000000000000
->>> [   99.779827][    T2] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000002
->>> [   99.782641][    T2] R13: 0000000000000801 R14: ffffea00004a0100 R15: ffffffff81f4df80
->>> [   99.785487][    T2] FS:  0000000000000000(0000) GS:ffff8880bbf28000(0000) knlGS:0000000000000000
->>> [   99.788671][    T2] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>> [   99.791012][    T2] CR2: ffff888012804000 CR3: 0000000007583001 CR4: 0000000000372eb0
->>> [   99.793863][    T2] Kernel panic - not syncing: Fatal exception
->>> [   99.796760][    T2] Kernel Offset: disabled
->>> [   99.798296][    T2] ---[ end Kernel panic - not syncing: Fatal exception ]---
->>>
->>> This makes me suspect the kvm_gmem_folio_restore_direct_map() path isn't
->>> working or isn't getting called.
->>>
->>> If anyone wants help trying to reproduce this let me know.
->>
->> Hi Brendan,
->>
->> Thanks for trying to run it!
->>
->> Just as a sanity check, the way it is known for us to work is we apply
->> all patches from [1].  For booted VMs (as opposed to restored from
->> snapshot), apart from the v6 of the direct map removal series, the only
->> additional patch is a fix for kvmclock on x86 [2].  Please let me know
->> if you see the same issue with that patch applied too.
->>
->> Nikita
->>
->> [1]
->> https://github.com/firecracker-microvm/firecracker/tree/feature/secret-hiding/resources/hiding_ci/linux_patches
->> [2]
->> https://github.com/firecracker-microvm/firecracker/tree/feature/secret-hiding/resources/hiding_ci/linux_patches/11-kvm-clock
+> User space access regions are tedious and require similar code patterns all
+> over the place:
+...
+> There have been issues with using the wrong user_*_access_end() variant in
+> the error path and other typical Copy&Pasta problems, e.g. using the wrong
+> fault label in the user accessor which ends up using the wrong accesss end
+> variant. 
 > 
-> Ah, thanks! Seems I should have checked my inbox before sending my other
-> mail. With the kvmclock fix applied to my host kernel, I start setting
-> the other crash immediately when the VM boots. If I comment out the
-> actual unmapping of memory, it boots (before, it wouldn't boot even with
-> that commented out).
+> These patterns beg for scopes with automatic cleanup. The resulting outcome
+> is:
+>     	scoped_user_read_access(from, Efault)
+> 		unsafe_get_user(val, from, Efault);
+> 	return 0;
+>   Efault:
+> 	return -EFAULT;
 > 
-> For the other linux_patches, I couldn't apply them on top of this
-> series, do you have a branch I can use as a reference?
-
-Instead of having an explicit branch, we apply all the patches on top of 
-[1].  There is a script that performs fetch/build/install end-to-end: [2].
-
-[1] 
-https://github.com/firecracker-microvm/firecracker/blob/feature/secret-hiding/resources/hiding_ci/kernel_commit_hash
-[2] 
-https://github.com/firecracker-microvm/firecracker/blob/feature/secret-hiding/resources/hiding_ci/build_and_install_kernel.sh
-
+> The scope guarantees the proper cleanup for the access mode is invoked both
+> in the success and the failure (fault) path.
 > 
-> Anyway, the solution I'm hoping to present for your problem gets rid of
-> that explicit unmapping code (the allocator will do it for you), so in
-> the meantime I have something I can work with.
+...
+
+The code doesn't work if the 'from' (above) is 'const foo __user *from'.
+Due to assigning away constness.
+
+The changes below fix the build, I suspect the code is then correct.
+
+...
+> +/* Define RW variant so the below _mode macro expansion works */
+> +#define masked_user_rw_access_begin(u)	masked_user_access_begin(u)
+> +#define user_rw_access_begin(u, s)	user_access_begin(u, s)
+> +#define user_rw_access_end()		user_access_end()
+> +
+> +/* Scoped user access */
+> +#define USER_ACCESS_GUARD(_mode)				\
+
+#define USER_ACCESS_GUARD(_mode, void)
+(but change all the void below to a different name...)
+
+> +static __always_inline void __user *				\
+> +class_user_##_mode##_begin(void __user *ptr)			\
+> +{								\
+> +	return ptr;						\
+> +}								\
+> +								\
+> +static __always_inline void					\
+> +class_user_##_mode##_end(void __user *ptr)			\
+> +{								\
+> +	user_##_mode##_access_end();				\
+> +}								\
+> +								\
+> +DEFINE_CLASS(user_ ##_mode## _access, void __user *,		\
+> +	     class_user_##_mode##_end(_T),			\
+> +	     class_user_##_mode##_begin(ptr), void __user *ptr)	\
+> +								\
+> +static __always_inline class_user_##_mode##_access_t		\
+> +class_user_##_mode##_access_ptr(void __user *scope)		\
+> +{								\
+> +	return scope;						\
+> +}
+> +
+> +USER_ACCESS_GUARD(read)
+> +USER_ACCESS_GUARD(write)
+> +USER_ACCESS_GUARD(rw)
+
+USER_ACCESS_GUARD(read, const void)
+USER_ACCESS_GUARD(write, void)
+USER_ACCESS_GUARD(rw, void)
+
+> +#undef USER_ACCESS_GUARD
+...
+> +#define __scoped_user_access(mode, uptr, size, elbl)					\
+> +for (bool done = false; !done; done = true)						\
+> +	for (void __user *_tmpptr = __scoped_user_access_begin(mode, uptr, size, elbl); \
+
+	for (typeof(uptr) _tmpptr = ...
+
+> +	     !done; done = true)							\
+> +		for (CLASS(user_##mode##_access, scope)(_tmpptr); !done; done = true)	\
+> +			/* Force modified pointer usage within the scope */		\
+> +			for (const typeof(uptr) uptr = _tmpptr; !done; done = true)
+> +
+
+	David
 
 
