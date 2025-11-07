@@ -1,69 +1,69 @@
-Return-Path: <linux-fsdevel+bounces-67462-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67463-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF2ACC4106E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 07 Nov 2025 18:24:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B19B6C41089
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 07 Nov 2025 18:25:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E81D74229E2
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Nov 2025 17:23:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BD32561145
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Nov 2025 17:24:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A670233556D;
-	Fri,  7 Nov 2025 17:23:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09196334C1B;
+	Fri,  7 Nov 2025 17:24:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="rn5vj+fj"
+	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="VXNDD4+r"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fra-out-014.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-014.esa.eu-central-1.outbound.mail-perimeter.amazon.com [18.199.210.3])
+Received: from fra-out-007.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-007.esa.eu-central-1.outbound.mail-perimeter.amazon.com [3.75.33.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23B9A328B79;
-	Fri,  7 Nov 2025 17:23:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.199.210.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 526B83346AE;
+	Fri,  7 Nov 2025 17:23:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.75.33.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762536184; cv=none; b=KEg7dbqFhg4dR3fDil4s8Tlb6h4pL4B0BiJskTLY3p3zofxPqQ45Iq+N6XawKacYQZrIgxGwsMUL8HfLLBqFDVxglImOBhm38IpmnOZmzxtHoZQT6voKJ2crmGEXfEYP9A+cVzJoelUxPgqCzmRI6lxwdgThSeuwEnKKTVjqGZA=
+	t=1762536239; cv=none; b=oyhLN/lQQC5515BZgIT+FyyisASibC1NxC4C3CUkkoioFQKkSATacLyHLtRfTHpb0gj0+MBQ6767WgEafdBjmrwcUEjYWZavegQcZMI7rUomsQIiK8LHjT0Daa0n+2D8iI9HL5eRlbqdl+g2W/syHkwbdIcnkQoJfJQl5qV2uy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762536184; c=relaxed/simple;
-	bh=OiGJqXeXn1LFs3RF2ZWfHltQfCG662vT0kTwgbxG71k=;
+	s=arc-20240116; t=1762536239; c=relaxed/simple;
+	bh=gLi7de/NPl4CutCbcHyElhUzdggKS3dZs6ObArdEYbs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ExgbshRsWMhrQAoAT970W6p1VrYVYhaepYShK4x2ylVNTIDVw30AxxA+457H/7AB8adIVVFzti3A5sBv1j2BD6BRZz+NrdVvrvJWXDZ/8zyn5j8St2HpW95Ifi25PYcsk7F6meWi/2no8jwAPlugQx/vu/MqmvSBIpBA7Fel9BY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=rn5vj+fj; arc=none smtp.client-ip=18.199.210.3
+	 In-Reply-To:Content-Type; b=pBY/YOLQsObzD2Xz0+wxPWuM+cQMHIqeFbawDOb4SBBZLEKjpIwHOXPsVQ1SXLws+jOu7h5PvVhNeHPlv9WYwyXIusa/9DmBA4Gi6R/BKiisjlcl16ugDnXdfcZAUjXb7dDIoWxa4Z2VHvHBs1tUknTmVavqP/6D6KYyHt8Gwok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=VXNDD4+r; arc=none smtp.client-ip=3.75.33.185
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1762536182; x=1794072182;
+  t=1762536237; x=1794072237;
   h=message-id:date:mime-version:reply-to:subject:to:cc:
    references:from:in-reply-to:content-transfer-encoding;
-  bh=atCy8RpnuAqcRPzYjCIN1QpE+/di+36Scy1AE5iWgNk=;
-  b=rn5vj+fjBfJRdaUqsd5dbqJ8BebhDZ/5UkHPX8CfgHONuEhsE0/IAYv0
-   mhG7P9KhtlaPOhuCFLpurzETPLfsjRxVsPsJnbAZ/h6G6GPVb4An12d0h
-   bnQBN/z/FczD5BWpIJtir6WNey/rSM8DPXliUgLh/R5gRXfqzZDqAJsN8
-   zXGdZ/g6BUJc6/yl2VC7RgJ3+63mS62ZGQybSeqpaWBjz78QQS6cNS6T6
-   oXumwKLpH9o5bEF11uBMFr6wpS5pDW9XZxUZvtAp6kOW9RHwkFasJkT/4
-   aUMLqxD5GuGPqG1O/L38UNn3axUCh/1/FM6nMOGVwTK2XesoXcI2Q9xbW
-   g==;
-X-CSE-ConnectionGUID: fclArW/bR8qx9ljpWfI9Qg==
-X-CSE-MsgGUID: hWc3zM/WTWePNbtnbgcR6A==
+  bh=o6wcqFFajh7A/LsdWzRuMS1HeEL9V3ml4dPEALpSF3E=;
+  b=VXNDD4+r6GivoVgSDwoaQ2BG1mDCQu9Kz/XtxJwu3+JAxNl/4tIbQXt1
+   lK7I4q8XDmbi6yqthf6G7ycWBxErTbhHQnPOT2p3+tuzE0dCPS2V+pjmh
+   7twctb5v+aqlGZCPRL3d+kuvK/d0fSeORtxnG0gqPkjHWVhoMdn2x+N+i
+   Amw6Jv5CKq4k0VwdMgnOyaZvJj060oQMz5MkDVCnJxk6egIF6JhwJhMR2
+   YFiekU1ToZeKwjFBTtolF/JNGy1AQCU/0cWVcJ92GpxdS75ur84D944dC
+   x4UP/y1ldSO3/Kik/hmkeFBpR6DDUe/rs2tOJEVwtIGM2XWJJc4ekGhHv
+   w==;
+X-CSE-ConnectionGUID: hWjyRCz+SZyv1J236BTcDQ==
+X-CSE-MsgGUID: J4rqY35IROKEYxpnVVSXaA==
 X-IronPort-AV: E=Sophos;i="6.19,287,1754956800"; 
-   d="scan'208";a="4736768"
+   d="scan'208";a="4849373"
 Received: from ip-10-6-6-97.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.6.97])
-  by internal-fra-out-014.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2025 17:22:38 +0000
-Received: from EX19MTAEUC002.ant.amazon.com [54.240.197.228:7912]
- by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.25.163:2525] with esmtp (Farcaster)
- id bd1226e1-fa2a-4cdf-b10a-b827fb60542a; Fri, 7 Nov 2025 17:22:38 +0000 (UTC)
-X-Farcaster-Flow-ID: bd1226e1-fa2a-4cdf-b10a-b827fb60542a
+  by internal-fra-out-007.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2025 17:23:54 +0000
+Received: from EX19MTAEUB001.ant.amazon.com [54.240.197.226:28723]
+ by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.11.74:2525] with esmtp (Farcaster)
+ id 5bb66a71-c62c-4d84-9175-7e585abc3994; Fri, 7 Nov 2025 17:23:54 +0000 (UTC)
+X-Farcaster-Flow-ID: 5bb66a71-c62c-4d84-9175-7e585abc3994
 Received: from EX19D022EUC002.ant.amazon.com (10.252.51.137) by
- EX19MTAEUC002.ant.amazon.com (10.252.51.245) with Microsoft SMTP Server
+ EX19MTAEUB001.ant.amazon.com (10.252.51.28) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.29;
- Fri, 7 Nov 2025 17:22:32 +0000
+ Fri, 7 Nov 2025 17:23:53 +0000
 Received: from [192.168.9.244] (10.106.83.15) by EX19D022EUC002.ant.amazon.com
  (10.252.51.137) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.29; Fri, 7 Nov 2025
- 17:22:29 +0000
-Message-ID: <d1b58114-9b88-4535-b28c-09d9cc1ff3be@amazon.com>
-Date: Fri, 7 Nov 2025 17:22:27 +0000
+ 17:23:50 +0000
+Message-ID: <add94932-290c-4037-b4e6-c3c760240819@amazon.com>
+Date: Fri, 7 Nov 2025 17:23:49 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -72,64 +72,33 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Reply-To: <kalyazin@amazon.com>
-Subject: Re: [PATCH v7 06/12] KVM: guest_memfd: add module param for disabling
- TLB flushing
-To: Ackerley Tng <ackerleytng@google.com>, Patrick Roy
-	<patrick.roy@linux.dev>, David Hildenbrand <david@redhat.com>, Will Deacon
-	<will@kernel.org>
-CC: Dave Hansen <dave.hansen@intel.com>, "Roy, Patrick" <roypat@amazon.co.uk>,
-	"pbonzini@redhat.com" <pbonzini@redhat.com>, "corbet@lwn.net"
-	<corbet@lwn.net>, "maz@kernel.org" <maz@kernel.org>, "oliver.upton@linux.dev"
-	<oliver.upton@linux.dev>, "joey.gouly@arm.com" <joey.gouly@arm.com>,
-	"suzuki.poulose@arm.com" <suzuki.poulose@arm.com>, "yuzenghui@huawei.com"
-	<yuzenghui@huawei.com>, "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-	"tglx@linutronix.de" <tglx@linutronix.de>, "mingo@redhat.com"
-	<mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "x86@kernel.org"
-	<x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>, "luto@kernel.org"
-	<luto@kernel.org>, "peterz@infradead.org" <peterz@infradead.org>,
-	"willy@infradead.org" <willy@infradead.org>, "akpm@linux-foundation.org"
-	<akpm@linux-foundation.org>, "lorenzo.stoakes@oracle.com"
-	<lorenzo.stoakes@oracle.com>, "Liam.Howlett@oracle.com"
-	<Liam.Howlett@oracle.com>, "vbabka@suse.cz" <vbabka@suse.cz>,
-	"rppt@kernel.org" <rppt@kernel.org>, "surenb@google.com" <surenb@google.com>,
-	"mhocko@suse.com" <mhocko@suse.com>, "song@kernel.org" <song@kernel.org>,
-	"jolsa@kernel.org" <jolsa@kernel.org>, "ast@kernel.org" <ast@kernel.org>,
-	"daniel@iogearbox.net" <daniel@iogearbox.net>, "andrii@kernel.org"
-	<andrii@kernel.org>, "martin.lau@linux.dev" <martin.lau@linux.dev>,
-	"eddyz87@gmail.com" <eddyz87@gmail.com>, "yonghong.song@linux.dev"
-	<yonghong.song@linux.dev>, "john.fastabend@gmail.com"
-	<john.fastabend@gmail.com>, "kpsingh@kernel.org" <kpsingh@kernel.org>,
-	"sdf@fomichev.me" <sdf@fomichev.me>, "haoluo@google.com" <haoluo@google.com>,
-	"jgg@ziepe.ca" <jgg@ziepe.ca>, "jhubbard@nvidia.com" <jhubbard@nvidia.com>,
-	"peterx@redhat.com" <peterx@redhat.com>, "jannh@google.com"
-	<jannh@google.com>, "pfalcato@suse.de" <pfalcato@suse.de>, "shuah@kernel.org"
-	<shuah@kernel.org>, "seanjc@google.com" <seanjc@google.com>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "linux-doc@vger.kernel.org"
-	<linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "kvmarm@lists.linux.dev"
-	<kvmarm@lists.linux.dev>, "linux-fsdevel@vger.kernel.org"
-	<linux-fsdevel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>, "Cali,
- Marco" <xmarcalx@amazon.co.uk>, "Kalyazin, Nikita" <kalyazin@amazon.co.uk>,
-	"Thomson, Jack" <jackabt@amazon.co.uk>, "derekmn@amazon.co.uk"
-	<derekmn@amazon.co.uk>, "tabba@google.com" <tabba@google.com>
-References: <20250924151101.2225820-4-patrick.roy@campus.lmu.de>
- <20250924152214.7292-1-roypat@amazon.co.uk>
- <20250924152214.7292-3-roypat@amazon.co.uk>
- <e25867b6-ffc0-4c7c-9635-9b3f47b186ca@intel.com>
- <c1875a54-0c87-450f-9370-29e7ec4fea3d@redhat.com>
- <82bff1c4-987f-46cb-833c-bd99eaa46e7a@intel.com>
- <c79173d8-6f18-40fa-9621-e691990501e4@redhat.com>
- <c88514c3-e15f-4853-8acf-15e7b4b979f4@linux.dev>
- <aNZwmPFAxm_HRYpC@willie-the-truck>
- <5d11b5f7-3208-4ea8-bbff-f535cf62d576@redhat.com>
- <be89abc6-97ca-47d8-b8e7-95f58ab9cc67@linux.dev>
- <f13e06f3-3c7b-4993-b33a-a6921c14231b@redhat.com>
- <d25340e3-2017-4614-a472-c5c7244c7ce4@linux.dev>
- <diqzqzu9dfog.fsf@google.com>
+Subject: Re: [PATCH v7 00/12] Direct Map Removal Support for guest_memfd
+To: Brendan Jackman <jackmanb@google.com>
+CC: <pbonzini@redhat.com>, <corbet@lwn.net>, <maz@kernel.org>,
+	<oliver.upton@linux.dev>, <joey.gouly@arm.com>, <suzuki.poulose@arm.com>,
+	<yuzenghui@huawei.com>, <catalin.marinas@arm.com>, <will@kernel.org>,
+	<tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
+	<dave.hansen@linux.intel.com>, <x86@kernel.org>, <hpa@zytor.com>,
+	<luto@kernel.org>, <peterz@infradead.org>, <willy@infradead.org>,
+	<akpm@linux-foundation.org>, <david@redhat.com>,
+	<lorenzo.stoakes@oracle.com>, <Liam.Howlett@oracle.com>, <vbabka@suse.cz>,
+	<rppt@kernel.org>, <surenb@google.com>, <mhocko@suse.com>, <song@kernel.org>,
+	<jolsa@kernel.org>, <ast@kernel.org>, <daniel@iogearbox.net>,
+	<andrii@kernel.org>, <martin.lau@linux.dev>, <eddyz87@gmail.com>,
+	<yonghong.song@linux.dev>, <john.fastabend@gmail.com>, <kpsingh@kernel.org>,
+	<sdf@fomichev.me>, <haoluo@google.com>, <jgg@ziepe.ca>,
+	<jhubbard@nvidia.com>, <peterx@redhat.com>, <jannh@google.com>,
+	<pfalcato@suse.de>, <shuah@kernel.org>, <seanjc@google.com>,
+	<kvm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<kvmarm@lists.linux.dev>, <linux-fsdevel@vger.kernel.org>,
+	<linux-mm@kvack.org>, <bpf@vger.kernel.org>,
+	<linux-kselftest@vger.kernel.org>, <xmarcalx@amazon.co.uk>,
+	<kalyazin@amazon.co.uk>, <jackabt@amazon.co.uk>, <derekmn@amazon.co.uk>,
+	<tabba@google.com>, <ackerleytng@google.com>, Patrick Roy
+	<patrick.roy@campus.lmu.de>
+References: <20250924151101.2225820-1-patrick.roy@campus.lmu.de>
+ <DE2L1SAOC55E.E4JY62WJQ2A8@google.com>
 Content-Language: en-US
 From: Nikita Kalyazin <kalyazin@amazon.com>
 Autocrypt: addr=kalyazin@amazon.com; keydata=
@@ -141,183 +110,144 @@ Autocrypt: addr=kalyazin@amazon.com; keydata=
  ubg1iBLCSDctMlKHsQTp7wCnEc4RAwEIB8J+BBgWCAAmFiEEaGEYMTIGMtDAP0Wwr5LKIKma
  ZPMFAmes18AFCQWmz0MCGwwACgkQr5LKIKmaZPNTlQEA+q+rGFn7273rOAg+rxPty0M8lJbT
  i2kGo8RmPPLu650A/1kWgz1AnenQUYzTAFnZrKSsXAw5WoHaDLBz9kiO5pAK
-In-Reply-To: <diqzqzu9dfog.fsf@google.com>
+In-Reply-To: <DE2L1SAOC55E.E4JY62WJQ2A8@google.com>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EX19D003EUB004.ant.amazon.com (10.252.51.121) To
+X-ClientProxiedBy: EX19D002EUA001.ant.amazon.com (10.252.50.66) To
  EX19D022EUC002.ant.amazon.com (10.252.51.137)
 
 
 
-On 07/11/2025 15:29, Ackerley Tng wrote:
-> Patrick Roy <patrick.roy@linux.dev> writes:
+On 07/11/2025 15:54, Brendan Jackman wrote:
+> On Wed Sep 24, 2025 at 3:10 PM UTC, Patrick Roy wrote:
+>> From: Patrick Roy <roypat@amazon.co.uk>
+>>
+>> [ based on kvm/next ]
+>>
+>> Unmapping virtual machine guest memory from the host kernel's direct map is a
+>> successful mitigation against Spectre-style transient execution issues: If the
+>> kernel page tables do not contain entries pointing to guest memory, then any
+>> attempted speculative read through the direct map will necessarily be blocked
+>> by the MMU before any observable microarchitectural side-effects happen. This
+>> means that Spectre-gadgets and similar cannot be used to target virtual machine
+>> memory. Roughly 60% of speculative execution issues fall into this category [1,
+>> Table 1].
+>>
+>> This patch series extends guest_memfd with the ability to remove its memory
+>> from the host kernel's direct map, to be able to attain the above protection
+>> for KVM guests running inside guest_memfd.
+>>
+>> Additionally, a Firecracker branch with support for these VMs can be found on
+>> GitHub [2].
+>>
+>> For more details, please refer to the v5 cover letter [v5]. No
+>> substantial changes in design have taken place since.
+>>
+>> === Changes Since v6 ===
+>>
+>> - Drop patch for passing struct address_space to ->free_folio(), due to
+>>    possible races with freeing of the address_space. (Hugh)
+>> - Stop using PG_uptodate / gmem preparedness tracking to keep track of
+>>    direct map state.  Instead, use the lowest bit of folio->private. (Mike, David)
+>> - Do direct map removal when establishing mapping of gmem folio instead
+>>    of at allocation time, due to impossibility of handling direct map
+>>    removal errors in kvm_gmem_populate(). (Patrick)
+>> - Do TLB flushes after direct map removal, and provide a module
+>>    parameter to opt out from them, and a new patch to export
+>>    flush_tlb_kernel_range() to KVM. (Will)
+>>
+>> [1]: https://download.vusec.net/papers/quarantine_raid23.pdf
+>> [2]: https://github.com/firecracker-microvm/firecracker/tree/feature/secret-hiding
 > 
->> Hey all,
->>
->> sorry it took me a while to get back to this, turns out moving
->> internationally is move time consuming than I expected.
->>
->> On Mon, 2025-09-29 at 12:20 +0200, David Hildenbrand wrote:
->>> On 27.09.25 09:38, Patrick Roy wrote:
->>>> On Fri, 2025-09-26 at 21:09 +0100, David Hildenbrand wrote:
->>>>> On 26.09.25 12:53, Will Deacon wrote:
->>>>>> On Fri, Sep 26, 2025 at 10:46:15AM +0100, Patrick Roy wrote:
->>>>>>> On Thu, 2025-09-25 at 21:13 +0100, David Hildenbrand wrote:
->>>>>>>> On 25.09.25 21:59, Dave Hansen wrote:
->>>>>>>>> On 9/25/25 12:20, David Hildenbrand wrote:
->>>>>>>>>> On 25.09.25 20:27, Dave Hansen wrote:
->>>>>>>>>>> On 9/24/25 08:22, Roy, Patrick wrote:
->>>>>>>>>>>> Add an option to not perform TLB flushes after direct map manipulations.
->>>>>>>>>>>
->>>>>>>>>>> I'd really prefer this be left out for now. It's a massive can of worms.
->>>>>>>>>>> Let's agree on something that works and has well-defined behavior before
->>>>>>>>>>> we go breaking it on purpose.
->>>>>>>>>>
->>>>>>>>>> May I ask what the big concern here is?
->>>>>>>>>
->>>>>>>>> It's not a _big_ concern.
->>>>>>>>
->>>>>>>> Oh, I read "can of worms" and thought there is something seriously problematic :)
->>>>>>>>
->>>>>>>>> I just think we want to start on something
->>>>>>>>> like this as simple, secure, and deterministic as possible.
->>>>>>>>
->>>>>>>> Yes, I agree. And it should be the default. Less secure would have to be opt-in and documented thoroughly.
->>>>>>>
->>>>>>> Yes, I am definitely happy to have the 100% secure behavior be the
->>>>>>> default, and the skipping of TLB flushes be an opt-in, with thorough
->>>>>>> documentation!
->>>>>>>
->>>>>>> But I would like to include the "skip tlb flushes" option as part of
->>>>>>> this patch series straight away, because as I was alluding to in the
->>>>>>> commit message, with TLB flushes this is not usable for Firecracker for
->>>>>>> performance reasons :(
->>>>>>
->>>>>> I really don't want that option for arm64. If we're going to bother
->>>>>> unmapping from the linear map, we should invalidate the TLB.
->>>>>
->>>>> Reading "TLB flushes result in a up to 40x elongation of page faults in
->>>>> guest_memfd (scaling with the number of CPU cores), or a 5x elongation
->>>>> of memory population,", I can understand why one would want that optimization :)
->>>>>
->>>>> @Patrick, couldn't we use fallocate() to preallocate memory and batch the TLB flush within such an operation?
->>>>>
->>>>> That is, we wouldn't flush after each individual direct-map modification but after multiple ones part of a single operation like fallocate of a larger range.
->>>>>
->>>>> Likely wouldn't make all use cases happy.
->>>>>
->>>>
->>>> For Firecracker, we rely a lot on not preallocating _all_ VM memory, and
->>>> trying to ensure only the actual "working set" of a VM is faulted in (we
->>>> pack a lot more VMs onto a physical host than there is actual physical
->>>> memory available). For VMs that are restored from a snapshot, we know
->>>> pretty well what memory needs to be faulted in (that's where @Nikita's
->>>> write syscall comes in), so there we could try such an optimization. But
->>>> for everything else we very much rely on the on-demand nature of guest
->>>> memory allocation (and hence direct map removal). And even right now,
->>>> the long pole performance-wise are these on-demand faults, so really, we
->>>> don't want them to become even slower :(
->>>
->>> Makes sense. I guess even without support for large folios one could implement a kind of "fault" around: for example, on access to one addr, allocate+prepare all pages in the same 2 M chunk, flushing the tlb only once after adjusting all the direct map entries.
->>>
->>>>
->>>> Also, can we really batch multiple TLB flushes as you suggest? Even if
->>>> pages are at consecutive indices in guest_memfd, they're not guaranteed
->>>> to be continguous physically, e.g. we couldn't just coalesce multiple
->>>> TLB flushes into a single TLB flush of a larger range.
->>>
->>> Well, you there is the option on just flushing the complete tlb of course :) When trying to flush a range you would indeed run into the problem of flushing an ever growing range.
->>
->> In the last guest_memfd upstream call (over a week ago now), we've
->> discussed the option of batching and deferring TLB flushes, while
->> providing a sort of "deadline" at which a TLB flush will
->> deterministically be done.  E.g. guest_memfd would keep a counter of how
->> many pages got direct map zapped, and do a flush of a range that
->> contains all zapped pages every 512 allocated pages (and to ensure the
->> flushes even happen in a timely manner if no allocations happen for a
->> long time, also every, say, 5 seconds or something like that). Would
->> that work for everyone? I briefly tested the performance of
->> batch-flushes with secretmem in QEMU, and its within of 30% of the "no
->> TLB flushes at all" solution in a simple benchmark that just memsets
->> 2GiB of memory.
->>
->> I think something like this, together with the batch-flushing at the end
->> of fallocate() / write() as David suggested above should work for
->> Firecracker.
->>
->>>> There's probably other things we can try. Backing guest_memfd with
->>>> hugepages would reduce the number TLB flushes by 512x (although not all
->>>> users of Firecracker at Amazon [can] use hugepages).
->>>
->>> Right.
->>>
->>>>
->>>> And I do still wonder if it's possible to have "async TLB flushes" where
->>>> we simply don't wait for the IPI (x86 terminology, not sure what the
->>>> mechanism on arm64 is). Looking at
->>>> smp_call_function_many_cond()/invlpgb_kernel_range_flush() on x86, it
->>>> seems so? Although seems like on ARM it's actually just handled by a
->>>> single instruction (TLBI) and not some interprocess communication
->>>> thingy. Maybe there's a variant that's faster / better for this usecase?
->>>
->>> Right, some architectures (and IIRC also x86 with some extension) are able to flush remote TLBs without IPIs.
->>>
->>> Doing a quick search, there seems to be some research on async TLB flushing, e.g., [1].
->>>
->>> In the context here, I wonder whether an async TLB flush would be
->>> significantly better than not doing an explicit TLB flush: in both
->>> cases, it's not really deterministic when the relevant TLB entries
->>> will vanish: with the async variant it might happen faster on average
->>> I guess.
->>
->> I actually did end up playing around with this a while ago, and it made
->> things slightly better performance wise, but it was still too bad to be
->> useful :(
->>
+> I just got around to trying this out, I checked out this patchset using
+> its base-commit and grabbed the Firecracker branch. Things seem OK until
+> I set the secrets_free flag in the Firecracker config which IIUC makes
+> it set GUEST_MEMFD_FLAG_NO_DIRECT_MAP.
 > 
-> Does it help if we add a guest_memfd ioctl that allows userspace to zap
-> from the direct map to batch TLB flushes?
+> If I set it, I find the guest doesn't show anything on the console.
+> Running it in a VM and attaching GDB suggests that it's entering the
+> guest repeatedly, it doesn't seem like the vCPU thread is stuck or
+> anything. I'm a bit clueless about how to debug that (so far, whenever
+> I've broken KVM, things always exploded very dramatically).
 > 
-> Could usage be something like:
+> Anyway, if I then kill the firecracker process, the host sometimes
+> crashes, I think this is the most suggestive splat I've seen:
 > 
-> 0. Create guest_memfd with GUEST_MEMFD_FLAG_NO_DIRECT_MAP.
-> 1. write() entire VM memory to guest_memfd.
+> [   99.673420][    T2] BUG: unable to handle page fault for address: ffff888012804000
+> [   99.676216][    T2] #PF: supervisor write access in kernel mode
+> [   99.678381][    T2] #PF: error_code(0x0002) - not-present page
+> [   99.680499][    T2] PGD 2e01067 P4D 2e01067 PUD 2e02067 PMD 12801063 PTE 800fffffed7fb020
+> [   99.683374][    T2] Oops: Oops: 0002 [#1] SMP
+> [   99.685004][    T2] CPU: 0 UID: 0 PID: 2 Comm: kthreadd Not tainted 6.17.0-rc7-00366-g473c46a3cb2a #106 NONE
+> [   99.688514][    T2] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 0.1 11/11/2019
+> [   99.691547][    T2] RIP: 0010:clear_page_erms+0x7/0x10
+> [   99.693440][    T2] Code: 48 89 47 18 48 89 47 20 48 89 47 28 48 89 47 30 48 89 47 38 48 8d 7f 40 75 d9 90 c3 0f 1f 80 00 00 00 00 b9 00 10 00 00 31 c0 <f3> aa c3 66 0f 1f 44 00 00 48 83 f9 40 73 2a 83 f9 08 73 0f 85 c9
+> [   99.700188][    T2] RSP: 0018:ffff88800318fc10 EFLAGS: 00010246
+> [   99.702321][    T2] RAX: 0000000000000000 RBX: 0000000000400dc0 RCX: 0000000000001000
+> [   99.705100][    T2] RDX: ffffea00004a0100 RSI: ffffea00004a0200 RDI: ffff888012804000
+> [   99.707861][    T2] RBP: 0000000000000801 R08: 0000000000000000 R09: 0000000000000000
+> [   99.710648][    T2] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000002
+> [   99.713412][    T2] R13: 0000000000000801 R14: ffffea00004a0100 R15: ffffffff81f4df80
+> [   99.716191][    T2] FS:  0000000000000000(0000) GS:ffff8880bbf28000(0000) knlGS:0000000000000000
+> [   99.719316][    T2] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [   99.721648][    T2] CR2: ffff888012804000 CR3: 0000000007583001 CR4: 0000000000372eb0
+> [   99.724421][    T2] Call Trace:
+> [   99.725608][    T2]  <TASK>
+> [   99.726646][    T2]  get_page_from_freelist+0x6fe/0x14b0
+> [   99.728583][    T2]  ? fs_reclaim_acquire+0x43/0xe0
+> [   99.730325][    T2]  ? find_held_lock+0x2b/0x80
+> [   99.731965][    T2]  __alloc_frozen_pages_noprof+0x147/0x2d0
+> [   99.734003][    T2]  __alloc_pages_noprof+0x5/0x50
+> [   99.735766][    T2]  copy_process+0x1b1/0x1b30
+> [   99.737398][    T2]  ? lock_is_held_type+0x89/0x100
+> [   99.739157][    T2]  ? kthreadd+0x25/0x190
+> [   99.740664][    T2]  kernel_clone+0x59/0x390
+> [   99.742213][    T2]  ? kthreadd+0x25/0x190
+> [   99.743728][    T2]  kernel_thread+0x55/0x70
+> [   99.745310][    T2]  ? kthread_complete_and_exit+0x20/0x20
+> [   99.747265][    T2]  kthreadd+0x117/0x190
+> [   99.748748][    T2]  ? kthread_is_per_cpu+0x30/0x30
+> [   99.750509][    T2]  ret_from_fork+0x16b/0x1e0
+> [   99.752193][    T2]  ? kthread_is_per_cpu+0x30/0x30
+> [   99.753992][    T2]  ret_from_fork_asm+0x11/0x20
+> [   99.755717][    T2]  </TASK>
+> [   99.756861][    T2] CR2: ffff888012804000
+> [   99.758353][    T2] ---[ end trace 0000000000000000 ]---
+> [   99.760319][    T2] RIP: 0010:clear_page_erms+0x7/0x10
+> [   99.762209][    T2] Code: 48 89 47 18 48 89 47 20 48 89 47 28 48 89 47 30 48 89 47 38 48 8d 7f 40 75 d9 90 c3 0f 1f 80 00 00 00 00 b9 00 10 00 00 31 c0 <f3> aa c3 66 0f 1f 44 00 00 48 83 f9 40 73 2a 83 f9 08 73 0f 85 c9
+> [   99.769129][    T2] RSP: 0018:ffff88800318fc10 EFLAGS: 00010246
+> [   99.771297][    T2] RAX: 0000000000000000 RBX: 0000000000400dc0 RCX: 0000000000001000
+> [   99.774126][    T2] RDX: ffffea00004a0100 RSI: ffffea00004a0200 RDI: ffff888012804000
+> [   99.777013][    T2] RBP: 0000000000000801 R08: 0000000000000000 R09: 0000000000000000
+> [   99.779827][    T2] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000002
+> [   99.782641][    T2] R13: 0000000000000801 R14: ffffea00004a0100 R15: ffffffff81f4df80
+> [   99.785487][    T2] FS:  0000000000000000(0000) GS:ffff8880bbf28000(0000) knlGS:0000000000000000
+> [   99.788671][    T2] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [   99.791012][    T2] CR2: ffff888012804000 CR3: 0000000007583001 CR4: 0000000000372eb0
+> [   99.793863][    T2] Kernel panic - not syncing: Fatal exception
+> [   99.796760][    T2] Kernel Offset: disabled
+> [   99.798296][    T2] ---[ end Kernel panic - not syncing: Fatal exception ]---
+> 
+> This makes me suspect the kvm_gmem_folio_restore_direct_map() path isn't
+> working or isn't getting called.
+> 
+> If anyone wants help trying to reproduce this let me know.
 
-Hi Ackerley,
+Hi Brendan,
 
-This doesn't fully cover our use case.  We are not always able to 
-populate the entire guest memory proactively with a write(). 
-Specifically, 1) the memory content may not be available on the host by 
-the time the vCPU accesses the page and 2) as we don't want to populate 
-zero pages in advance to save memory on the host, faults on those pages 
-will occur unpredictably and we will have to pay TLB flush cost on every 
-such fault.
+Thanks for trying to run it!
 
-> 2. ioctl(guest_memfd, KVM_GUEST_MEMFD_ZAP_DIRECT_MAP, { offset, len })
-> 3. vcpu_run()
-> 
-> This way, we could flush the tlb once for the entire range of { offset,
-> len } instead of zapping once per fault.
-> 
-> For not-yet-allocated folios, those will get zapped once per fault
-> though.
-> 
-> Maybe this won't help much if the intention is to allow on-demand
-> loading of memory, since the demands will come to guest_memfd on a
-> per-folio basis.
-
-Yes, in our setup we rely on both write() + on-demand faulting working 
-concurrently and we can't always predict which of them will handle a 
-specific page.
+Just as a sanity check, the way it is known for us to work is we apply 
+all patches from [1].  For booted VMs (as opposed to restored from 
+snapshot), apart from the v6 of the direct map removal series, the only 
+additional patch is a fix for kvmclock on x86 [2].  Please let me know 
+if you see the same issue with that patch applied too.
 
 Nikita
 
-> 
->>>
->>> [1] https://cs.yale.edu/homes/abhishek/kumar-taco20.pdf
->>>
->>
->> Best,
->> Patrick
+[1] 
+https://github.com/firecracker-microvm/firecracker/tree/feature/secret-hiding/resources/hiding_ci/linux_patches
+[2] 
+https://github.com/firecracker-microvm/firecracker/tree/feature/secret-hiding/resources/hiding_ci/linux_patches/11-kvm-clock
 
 
