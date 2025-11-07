@@ -1,79 +1,80 @@
-Return-Path: <linux-fsdevel+bounces-67496-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67497-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CA2DC41B5B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 07 Nov 2025 22:09:32 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B7FDC41BF1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 07 Nov 2025 22:13:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A2D7F351D13
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Nov 2025 21:09:31 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7ED954FE34E
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Nov 2025 21:09:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76DB334887B;
-	Fri,  7 Nov 2025 21:06:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4038034A3C1;
+	Fri,  7 Nov 2025 21:06:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="U8dLtQtY"
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="O8X+VxWq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 457AA346FA8
-	for <linux-fsdevel@vger.kernel.org>; Fri,  7 Nov 2025 21:06:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A831347BBF
+	for <linux-fsdevel@vger.kernel.org>; Fri,  7 Nov 2025 21:06:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762549576; cv=none; b=blB6GpJhxFXtSxfftP/qFp6Gl4w7Hk7T6SUO6cuvOMyFFN7eQ5Wm3j51Ji8NCan61iNSNkj/k9MqKkIP+j/C1l/Sy+uhVaXwUzFFb7b2lPhy/lmkiJ+25jvEeQ4LJjlUiLCtGRMjgOErs4oRPoDFthDssKp76C8HWEd3aevUqdE=
+	t=1762549578; cv=none; b=rpe56iz5/+E+XBC75cXqK+kVe95AELpmStJ1LV+bFY+AVzj9VOdTbajcsZlgMaNuvKjiEganePpLHdhhdWciu4kC3tM3EeTAr7g5X26PX4ipvhxCdIglgiK9jFdaoqPswEDTNOi/BGsWEIF5uKzqaaziK9f/w7wDjZtsjg+2UY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762549576; c=relaxed/simple;
-	bh=ex9Ty+ajRZX6NEjdJenwudqrabq/5m4ytLE7jyNiaXU=;
+	s=arc-20240116; t=1762549578; c=relaxed/simple;
+	bh=1wTqPfHzUHv0FGZcXb2vOKDwv2ZgcOIsvnW2P64RZwo=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qXgUJBKJWcbgdmWKNj4xOoxaoUhVPbute3DY7GQOBWhnOsEr0KXRXejY91QZRb39ALqZR+ep/HWZ6x6J5scZE3PehaC/U1R0lN9iKaNvbCxmZdOcyfadpIJQkeHMun9b66Qv3ho4xb0Ea8PKRDqo5/XGoWWxrxesI0icDJWlUIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=U8dLtQtY; arc=none smtp.client-ip=209.85.128.173
+	 MIME-Version; b=D6IS4yMWS3fHxBqZnjEUIiL8GD/q1vgbVkUQIgO3JO4TUTnMIlLKfoVh/LNElcQpCTCgKXysWQKFJ5v1YECk3li7hQogdbyz99A5trc8lT1YmDHv/d3mleiltSSLsmkL2cA/QORkN5leFFV3Ja6lI6Cy23yVmc//lwvRWsNXtv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=O8X+VxWq; arc=none smtp.client-ip=209.85.128.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-786a8eeb047so13299467b3.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 07 Nov 2025 13:06:12 -0800 (PST)
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-7866e9e62e1so12765257b3.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 07 Nov 2025 13:06:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1762549571; x=1763154371; darn=vger.kernel.org;
+        d=soleen.com; s=google; t=1762549573; x=1763154373; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=wMSpKE1l2D+pbDUsxKcM6He86wroChEvKIhAzF63c/s=;
-        b=U8dLtQtYJs1I6q+RGrFKe1vUk5v/5xhK9ST8sjPUhZYOHtU4P48MxrGHE7vzVq2t/O
-         KOG/r3hHe2uXaJF7xomMuLV7wEeipasxJwanzqRqOjCTjxrAlPNuyJMkr2U+CWV+XXoQ
-         RG1M0i4OIzW4uh2wtLjeGW7tDl62xc80TZ3xpOiPHEGGQVmd1VPhsm4eJxTYfC72iP5a
-         tkTMpF+C3+DKySxu3d+bmrC1PGtucNg50X4TGn7ceRXxRXXBPpYCI70T+CczdcvCLAQ1
-         iJofcNmB5cK4Ao/5olGvVxSb1/aQKDtdQEptSPJI4K2pL+X84lhtlE2IKEHs/LfrZiyd
-         EEwQ==
+        bh=qjuXuvmfL1K8By8qdYZh9RjNKTHIKCPX1bM6iJVu4Us=;
+        b=O8X+VxWqjmCDzqn46G0VibAWreLK+4mK/GkgkUX4er9cYe+Ve6g2sS9weXW1owk8H7
+         it3ujAKLyvOO8H0H97oxEQyQZu8haFwb5Lc8MhmsEq5qRsDHYFmrxfWqtg1djt/XxC5G
+         lfKtNF400o+HKw5FnQp81rPSjqRq6zN+9zpSrdqIuMU/ktIxgrAByt3ArMs/hc8FS7Uk
+         LUqhXuDM5J6zHHcfo1qlVy4hubgn+nBnx+RjoJCvrEoJAP8qvIYVyLqDHuTIawgmRaPA
+         HaiXShU5b0ck80mf0BBKDdnGB7Bp8FEgd1y49HEpPKtz4P/fA2dZnEO4haEWhGHuZaUi
+         kPyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762549571; x=1763154371;
+        d=1e100.net; s=20230601; t=1762549573; x=1763154373;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=wMSpKE1l2D+pbDUsxKcM6He86wroChEvKIhAzF63c/s=;
-        b=v0hAlyctV7bnwFT7uUub9YUhz9v/EpEuLnhB06cJY3PkWW1692P2TDo7f0SKYSVgFl
-         i2V/FC9UVBjy81VjM2DylGpN521riQPPoHjOZWMfGVnu3tkbpsI/CJ0faiD2FBwLtcy7
-         0/dtdo++h+qrndl2DAv0I9lWR+9dleBH/bLTJUW7FKUEhwARdac0v+VYLxCKBJKEdLwV
-         SoC6rNEpKJzupm5fYFr48Lzt05aduJhg10nLcxeQraa+1yc+Pa0ooNEFZorARbszzbZ4
-         QZJTdgaiIxHB+J15tjdLOgUqaaLwC1aYJJKyaGD9f0NIYP8ItuIJ9wQbRtGnQa/NzgX+
-         Zh6g==
-X-Forwarded-Encrypted: i=1; AJvYcCWeHaFZd5baYxcXMK2Y4PKOQqXtwrL72eXgCDayaRw+bVsPxj/nej1UNh1XCGxJnWK+RA+5KhVMrUlhldMS@vger.kernel.org
-X-Gm-Message-State: AOJu0YzyQaYYlFkDdnEGjcnodCUuVS41RkR/4gGV+I0eOpvHEe1j7+NK
-	hiO+wyFUwoEKKCG426jb0O7re+QvzNa/rQBNPRllZnaz65X3gbXuZqSkr/rnAVTirbg=
-X-Gm-Gg: ASbGnct8t7EwjhAm/AjsvadGSUMSNdwpsEKlGxN3xIUfOY0/GLmsAi/l0jmfPp7z1jN
-	iLUf+AzGO3HvO8d+DnBH+yWsZx52FWPFztnRv71sWGzFZvN8RwAmOeQGp8zOMdYILnN5kz0bou1
-	HGvWt4EBjuQWhill4daXvMjx91XjoKKAlci6U3WZdLC1xNjTZjuF+tZV2cRqmav00Jcb1YSEgFd
-	5o9cNUGO5365XhShoYwFY1pibEkl6gx9WtDlagzeeg/NmcShgjXVq/QhE/tNpm+6F5u/6Lwxc29
-	NDOIfnciLyyitQ/rDtmGp1ZyERbGPeJ9ry/1Fi9rVtUG3N39DctN1kd1dAVMDaTB7i2YfDkl6rF
-	zb0klpl7I2hbv0hF1xIK6FHROvP27Ra5b6TSvR83LTIXNbLBTg0KXROMBJXJq3TzYshzSIWL4mq
-	UedceM8vTqKxD3kOy2R7Y84GgvyD9bPUN/kHr0zbZizZY8iXySKKC9NyZNGhcr8pI=
-X-Google-Smtp-Source: AGHT+IFflyRO6w1q3DXVe7O2dxbNRv5YmoMD7A2svs64snuag/XfdkXNTRwcLqUkAwpierKFK5vHIg==
-X-Received: by 2002:a05:690c:4d09:b0:786:4fbb:642 with SMTP id 00721157ae682-787d548410fmr7640347b3.60.1762549571027;
-        Fri, 07 Nov 2025 13:06:11 -0800 (PST)
+        bh=qjuXuvmfL1K8By8qdYZh9RjNKTHIKCPX1bM6iJVu4Us=;
+        b=LxbSF0Cx+67m4zh8tWEmhqPoTenwohaXrcy4KM8IAn0K3MqijqMa5F5jm/jvO7nTbk
+         f5OsCUtSMUx+o+qZ+yEJrtijiQsKpnDVIBAzK7AKqsd4F7GSXjO3J54DBCM2YRlDagXp
+         t+EaW0U5jlRmdKMzaIAJyflJx17x74IkUVdkKdvIhsT4gwX0ljhV9rP5Ay/allh2iRTo
+         ITGEJ/4yg7yVxAFWCmlRb9zTgveWKZHuU0OckLkJNmqmkb9n5KwmapvBTTKd+KB39d6C
+         BLrmWndrwIHyBMtuJfVtuxTrkVhAIPcc9smQ3TErIY2lfhjdk5+IgHbFNU1qMQ0rZR8z
+         15Mg==
+X-Forwarded-Encrypted: i=1; AJvYcCV5PbbyZL+jkpcQ63nbZkHQqKnXPkgkTyM1fxO69ewyM+lzw3KGLv+xD88dTjzrm4pOPJO3Lg8VVG0Ndsb0@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOoa/KfvDfGZnoNNxIIHoD7hMuXQs1RrzKxxcF17+A5lqTASQg
+	bzkV634WwhIz5dhCMfRlc0t6cov3CIXy9UTFB8lrZs/LmWpbUvOiuOZ2D4WfDsoQbkU=
+X-Gm-Gg: ASbGncvxOfxYMsmWeuqMDvXxV9SSbDz/mejXnz6VnDtX3LZ72esnptqdvpIti/76Dah
+	IfrEDh8nYWVSYj/kTGmNFUDXGZB087XiKBR8CvHfvmpl96Chdno65EaqUZzuZ+6jctqu6ikHcLs
+	ZL6QKHX6Ofi+pBeRKJktBHgcyTtfYULrUxPNzgvezit6f7cfSOwHg3Dqp4MFieDV8QroDDXHln4
+	QPd+4cdvm6fPINIeNlR5S4fsDIYijyHofs2UJH1vVxJz+1R+BLDKewjKPPg7pCjq71SbsiOtj9h
+	IlTC34eXedfG5iAih+0sbftGePMG8dSIoAyyyM0kidlXXa/zBtNvDltF7rv8RCOU8JBBfHTCqUG
+	ZjGRbdvxEBYtntxJHQaM1hOZEf+z7n81Anp0i12lKsNxTr49tHx8TkZFc0Ts8a3u/GnX+Z3TUrJ
+	nEOlhcCSVYYEu/O9h1GL2MkQ5DFUSaGK5PflnZ2ooNziqXPShABLrQYSSii6ooRiIk9eyKrzf2/
+	Q==
+X-Google-Smtp-Source: AGHT+IE4r8jHOQKB/UiTHgSqUgazEpkLY0csKmQ3EsY7bV+rYNEGHwWx8lwO5MiuiV1LIw2GfopjMw==
+X-Received: by 2002:a05:690c:6385:b0:786:7017:9506 with SMTP id 00721157ae682-787d541b17emr8282027b3.43.1762549573027;
+        Fri, 07 Nov 2025 13:06:13 -0800 (PST)
 Received: from soleen.c.googlers.com.com (53.47.86.34.bc.googleusercontent.com. [34.86.47.53])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-787d68754d3sm990817b3.26.2025.11.07.13.06.09
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-787d68754d3sm990817b3.26.2025.11.07.13.06.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Nov 2025 13:06:10 -0800 (PST)
+        Fri, 07 Nov 2025 13:06:12 -0800 (PST)
 From: Pasha Tatashin <pasha.tatashin@soleen.com>
 To: pratyush@kernel.org,
 	jasonmiu@google.com,
@@ -149,9 +150,9 @@ To: pratyush@kernel.org,
 	hughd@google.com,
 	skhawaja@google.com,
 	chrisl@kernel.org
-Subject: [PATCH v5 20/22] selftests/liveupdate: Add kexec-based selftest for session lifecycle
-Date: Fri,  7 Nov 2025 16:03:18 -0500
-Message-ID: <20251107210526.257742-21-pasha.tatashin@soleen.com>
+Subject: [PATCH v5 21/22] selftests/liveupdate: Add kexec test for multiple and empty sessions
+Date: Fri,  7 Nov 2025 16:03:19 -0500
+Message-ID: <20251107210526.257742-22-pasha.tatashin@soleen.com>
 X-Mailer: git-send-email 2.51.2.1041.gc1ab5b90ca-goog
 In-Reply-To: <20251107210526.257742-1-pasha.tatashin@soleen.com>
 References: <20251107210526.257742-1-pasha.tatashin@soleen.com>
@@ -161,213 +162,242 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Introduce a kexec-based selftest, luo_kexec_simple, to validate the
-end-to-end lifecycle of a Live Update Orchestrator (LUO) session across
-a reboot.
+Introduce a new kexec-based selftest, luo_kexec_multi_session, to
+validate the end-to-end lifecycle of a more complex LUO scenario.
 
-While existing tests verify the uAPI in a pre-reboot context, this test
-ensures that the core functionality—preserving state via Kexec Handover
-and restoring it in a new kernel—works as expected.
-
-The test operates in two stages, managing its state across the reboot by
-preserving a dedicated "state session" containing a memfd. This
-mechanism dogfoods the LUO feature itself for state tracking, making the
-test self-contained.
+While the existing luo_kexec_simple test covers the basic end-to-end
+lifecycle, it is limited to a single session with one preserved file.
+This new test significantly expands coverage by verifying LUO's ability
+to handle a mixed workload involving multiple sessions, some of which
+are intentionally empty. This ensures that the LUO core correctly
+preserves and restores the state of all session types across a reboot.
 
 The test validates the following sequence:
 
 Stage 1 (Pre-kexec):
- - Creates a test session (test-session).
- - Creates and preserves a memfd with a known data pattern into the test
-   session.
- - Creates the state-tracking session to signal progression to Stage 2.
- - Executes a kexec reboot via a helper script.
+
+  - Creates two empty test sessions (multi-test-empty-1,
+    multi-test-empty-2).
+  - Creates a session with one preserved memfd (multi-test-files-1).
+  - Creates another session with two preserved memfds
+    (multi-test-files-2), each containing unique data.
+  - Creates a state-tracking session to manage the transition to
+    Stage 2.
+  - Executes a kexec reboot via the helper script.
 
 Stage 2 (Post-kexec):
- - Retrieves the state-tracking session to confirm it is in the
-   post-reboot stage.
- - Retrieves the preserved test session.
- - Restores the memfd from the test session and verifies its contents
-   match the original data pattern written in Stage 1.
- - Finalizes both the test and state sessions to ensure a clean
-   teardown.
 
-The test relies on a helper script (do_kexec.sh) to perform the reboot
-and a shared utility library (luo_test_utils.c) for common LUO
-operations, keeping the main test logic clean and focused.
+  - Retrieves the state-tracking session to confirm it is in the
+    post-reboot stage.
+  - Retrieves all four test sessions (both the empty and non-empty
+    ones).
+  - For the non-empty sessions, restores the preserved memfds and
+    verifies their contents match the original data patterns.
+  - Finalizes all test sessions and the state session to ensure a clean
+    teardown and that all associated kernel resources are correctly
+    released.
+
+This test provides greater confidence in the robustness of the LUO
+framework by validating its behavior in a more realistic, multi-faceted
+scenario.
 
 Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
 ---
  tools/testing/selftests/liveupdate/.gitignore |   1 +
- tools/testing/selftests/liveupdate/Makefile   |  32 ++++
- .../testing/selftests/liveupdate/do_kexec.sh  |   6 +
- .../selftests/liveupdate/luo_kexec_simple.c   | 114 ++++++++++++
- .../selftests/liveupdate/luo_test_utils.c     | 168 ++++++++++++++++++
- .../selftests/liveupdate/luo_test_utils.h     |  39 ++++
- 6 files changed, 360 insertions(+)
- create mode 100755 tools/testing/selftests/liveupdate/do_kexec.sh
- create mode 100644 tools/testing/selftests/liveupdate/luo_kexec_simple.c
- create mode 100644 tools/testing/selftests/liveupdate/luo_test_utils.c
- create mode 100644 tools/testing/selftests/liveupdate/luo_test_utils.h
+ tools/testing/selftests/liveupdate/Makefile   |   1 +
+ .../selftests/liveupdate/luo_multi_session.c  | 190 ++++++++++++++++++
+ 3 files changed, 192 insertions(+)
+ create mode 100644 tools/testing/selftests/liveupdate/luo_multi_session.c
 
 diff --git a/tools/testing/selftests/liveupdate/.gitignore b/tools/testing/selftests/liveupdate/.gitignore
-index af6e773cf98f..daeef116174d 100644
+index daeef116174d..42a15a8d5d9e 100644
 --- a/tools/testing/selftests/liveupdate/.gitignore
 +++ b/tools/testing/selftests/liveupdate/.gitignore
-@@ -1 +1,2 @@
+@@ -1,2 +1,3 @@
  /liveupdate
-+/luo_kexec_simple
+ /luo_kexec_simple
++/luo_multi_session
 diff --git a/tools/testing/selftests/liveupdate/Makefile b/tools/testing/selftests/liveupdate/Makefile
-index 2a573c36016e..1563ac84006a 100644
+index 1563ac84006a..6ee6efeec62d 100644
 --- a/tools/testing/selftests/liveupdate/Makefile
 +++ b/tools/testing/selftests/liveupdate/Makefile
-@@ -1,7 +1,39 @@
- # SPDX-License-Identifier: GPL-2.0-only
-+
-+KHDR_INCLUDES ?= -I../../../../usr/include
- CFLAGS += -Wall -O2 -Wno-unused-function
- CFLAGS += $(KHDR_INCLUDES)
-+LDFLAGS += -static
-+OUTPUT ?= .
-+
-+# --- Test Configuration (Edit this section when adding new tests) ---
-+LUO_SHARED_SRCS := luo_test_utils.c
-+LUO_SHARED_HDRS += luo_test_utils.h
-+
-+LUO_MANUAL_TESTS += luo_kexec_simple
-+
-+TEST_FILES += do_kexec.sh
+@@ -11,6 +11,7 @@ LUO_SHARED_SRCS := luo_test_utils.c
+ LUO_SHARED_HDRS += luo_test_utils.h
  
- TEST_GEN_PROGS += liveupdate
+ LUO_MANUAL_TESTS += luo_kexec_simple
++LUO_MANUAL_TESTS += luo_multi_session
  
-+# --- Automatic Rule Generation (Do not edit below) ---
-+
-+TEST_GEN_PROGS_EXTENDED += $(LUO_MANUAL_TESTS)
-+
-+# Define the full list of sources for each manual test.
-+$(foreach test,$(LUO_MANUAL_TESTS), \
-+	$(eval $(test)_SOURCES := $(test).c $(LUO_SHARED_SRCS)))
-+
-+# This loop automatically generates an explicit build rule for each manual test.
-+# It includes dependencies on the shared headers and makes the output
-+# executable.
-+# Note the use of '$$' to escape automatic variables for the 'eval' command.
-+$(foreach test,$(LUO_MANUAL_TESTS), \
-+	$(eval $(OUTPUT)/$(test): $($(test)_SOURCES) $(LUO_SHARED_HDRS) \
-+		$(call msg,LINK,,$$@) ; \
-+		$(Q)$(LINK.c) $$^ $(LDLIBS) -o $$@ ; \
-+		$(Q)chmod +x $$@ \
-+	) \
-+)
-+
- include ../lib.mk
-diff --git a/tools/testing/selftests/liveupdate/do_kexec.sh b/tools/testing/selftests/liveupdate/do_kexec.sh
-new file mode 100755
-index 000000000000..bb396a92c3b8
---- /dev/null
-+++ b/tools/testing/selftests/liveupdate/do_kexec.sh
-@@ -0,0 +1,6 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0
-+set -e
-+
-+kexec -l -s --reuse-cmdline /boot/bzImage
-+kexec -e
-diff --git a/tools/testing/selftests/liveupdate/luo_kexec_simple.c b/tools/testing/selftests/liveupdate/luo_kexec_simple.c
+ TEST_FILES += do_kexec.sh
+ 
+diff --git a/tools/testing/selftests/liveupdate/luo_multi_session.c b/tools/testing/selftests/liveupdate/luo_multi_session.c
 new file mode 100644
-index 000000000000..67ab6ebf9eec
+index 000000000000..c9955f1b6e97
 --- /dev/null
-+++ b/tools/testing/selftests/liveupdate/luo_kexec_simple.c
-@@ -0,0 +1,114 @@
++++ b/tools/testing/selftests/liveupdate/luo_multi_session.c
+@@ -0,0 +1,190 @@
 +// SPDX-License-Identifier: GPL-2.0-only
 +
 +/*
 + * Copyright (c) 2025, Google LLC.
 + * Pasha Tatashin <pasha.tatashin@soleen.com>
 + *
-+ * A simple selftest to validate the end-to-end lifecycle of a LUO session
-+ * across a single kexec reboot.
++ * A selftest to validate the end-to-end lifecycle of multiple LUO sessions
++ * across a kexec reboot, including empty sessions and sessions with multiple
++ * files.
 + */
 +
 +#include "luo_test_utils.h"
 +
-+/* Test-specific constants are now defined locally */
 +#define KEXEC_SCRIPT "./do_kexec.sh"
-+#define TEST_SESSION_NAME "test-session"
-+#define TEST_MEMFD_TOKEN 0x1A
-+#define TEST_MEMFD_DATA "hello kexec world"
 +
-+/* Constants for the state-tracking mechanism, specific to this test file. */
-+#define STATE_SESSION_NAME "kexec_simple_state"
-+#define STATE_MEMFD_TOKEN 999
++#define SESSION_EMPTY_1 "multi-test-empty-1"
++#define SESSION_EMPTY_2 "multi-test-empty-2"
++#define SESSION_FILES_1 "multi-test-files-1"
++#define SESSION_FILES_2 "multi-test-files-2"
++
++#define MFD1_TOKEN 0x1001
++#define MFD2_TOKEN 0x2002
++#define MFD3_TOKEN 0x3003
++
++#define MFD1_DATA "Data for session files 1"
++#define MFD2_DATA "First file for session files 2"
++#define MFD3_DATA "Second file for session files 2"
++
++#define STATE_SESSION_NAME "kexec_multi_state"
++#define STATE_MEMFD_TOKEN 998
 +
 +/* Stage 1: Executed before the kexec reboot. */
 +static void run_stage_1(int luo_fd)
 +{
-+	int session_fd;
++	int s_empty1_fd, s_empty2_fd, s_files1_fd, s_files2_fd;
 +
-+	ksft_print_msg("[STAGE 1] Starting pre-kexec setup...\n");
++	ksft_print_msg("[STAGE 1] Starting pre-kexec setup for multi-session test...\n");
 +
 +	ksft_print_msg("[STAGE 1] Creating state file for next stage (2)...\n");
 +	create_state_file(luo_fd, STATE_SESSION_NAME, STATE_MEMFD_TOKEN, 2);
 +
-+	ksft_print_msg("[STAGE 1] Creating session '%s' and preserving memfd...\n",
-+		       TEST_SESSION_NAME);
-+	session_fd = luo_create_session(luo_fd, TEST_SESSION_NAME);
-+	if (session_fd < 0)
-+		fail_exit("luo_create_session for '%s'", TEST_SESSION_NAME);
++	ksft_print_msg("[STAGE 1] Creating empty sessions '%s' and '%s'...\n",
++		       SESSION_EMPTY_1, SESSION_EMPTY_2);
++	s_empty1_fd = luo_create_session(luo_fd, SESSION_EMPTY_1);
++	if (s_empty1_fd < 0)
++		fail_exit("luo_create_session for '%s'", SESSION_EMPTY_1);
 +
-+	if (create_and_preserve_memfd(session_fd, TEST_MEMFD_TOKEN,
-+				      TEST_MEMFD_DATA) < 0) {
++	s_empty2_fd = luo_create_session(luo_fd, SESSION_EMPTY_2);
++	if (s_empty2_fd < 0)
++		fail_exit("luo_create_session for '%s'", SESSION_EMPTY_2);
++
++	ksft_print_msg("[STAGE 1] Creating session '%s' with one memfd...\n",
++		       SESSION_FILES_1);
++
++	s_files1_fd = luo_create_session(luo_fd, SESSION_FILES_1);
++	if (s_files1_fd < 0)
++		fail_exit("luo_create_session for '%s'", SESSION_FILES_1);
++	if (create_and_preserve_memfd(s_files1_fd, MFD1_TOKEN, MFD1_DATA) < 0) {
 +		fail_exit("create_and_preserve_memfd for token %#x",
-+			  TEST_MEMFD_TOKEN);
++			  MFD1_TOKEN);
++	}
++
++	ksft_print_msg("[STAGE 1] Creating session '%s' with two memfds...\n",
++		       SESSION_FILES_2);
++
++	s_files2_fd = luo_create_session(luo_fd, SESSION_FILES_2);
++	if (s_files2_fd < 0)
++		fail_exit("luo_create_session for '%s'", SESSION_FILES_2);
++	if (create_and_preserve_memfd(s_files2_fd, MFD2_TOKEN, MFD2_DATA) < 0) {
++		fail_exit("create_and_preserve_memfd for token %#x",
++			  MFD2_TOKEN);
++	}
++	if (create_and_preserve_memfd(s_files2_fd, MFD3_TOKEN, MFD3_DATA) < 0) {
++		fail_exit("create_and_preserve_memfd for token %#x",
++			  MFD3_TOKEN);
 +	}
 +
 +	ksft_print_msg("[STAGE 1] Executing kexec...\n");
++
 +	if (system(KEXEC_SCRIPT) != 0)
 +		fail_exit("kexec script failed");
++
 +	exit(EXIT_FAILURE);
 +}
 +
 +/* Stage 2: Executed after the kexec reboot. */
 +static void run_stage_2(int luo_fd, int state_session_fd)
 +{
-+	int session_fd, mfd, stage;
++	int s_empty1_fd, s_empty2_fd, s_files1_fd, s_files2_fd;
++	int mfd1, mfd2, mfd3, stage;
 +
 +	ksft_print_msg("[STAGE 2] Starting post-kexec verification...\n");
 +
 +	restore_and_read_stage(state_session_fd, STATE_MEMFD_TOKEN, &stage);
-+	if (stage != 2)
-+		fail_exit("Expected stage 2, but state file contains %d", stage);
++	if (stage != 2) {
++		fail_exit("Expected stage 2, but state file contains %d",
++			  stage);
++	}
 +
-+	ksft_print_msg("[STAGE 2] Retrieving session '%s'...\n", TEST_SESSION_NAME);
-+	session_fd = luo_retrieve_session(luo_fd, TEST_SESSION_NAME);
-+	if (session_fd < 0)
-+		fail_exit("luo_retrieve_session for '%s'", TEST_SESSION_NAME);
++	ksft_print_msg("[STAGE 2] Retrieving all sessions...\n");
++	s_empty1_fd = luo_retrieve_session(luo_fd, SESSION_EMPTY_1);
++	if (s_empty1_fd < 0)
++		fail_exit("luo_retrieve_session for '%s'", SESSION_EMPTY_1);
 +
-+	ksft_print_msg("[STAGE 2] Restoring and verifying memfd (token %#x)...\n",
-+		       TEST_MEMFD_TOKEN);
-+	mfd = restore_and_verify_memfd(session_fd, TEST_MEMFD_TOKEN,
-+				       TEST_MEMFD_DATA);
-+	if (mfd < 0)
-+		fail_exit("restore_and_verify_memfd for token %#x", TEST_MEMFD_TOKEN);
-+	close(mfd);
++	s_empty2_fd = luo_retrieve_session(luo_fd, SESSION_EMPTY_2);
++	if (s_empty2_fd < 0)
++		fail_exit("luo_retrieve_session for '%s'", SESSION_EMPTY_2);
++
++	s_files1_fd = luo_retrieve_session(luo_fd, SESSION_FILES_1);
++	if (s_files1_fd < 0)
++		fail_exit("luo_retrieve_session for '%s'", SESSION_FILES_1);
++
++	s_files2_fd = luo_retrieve_session(luo_fd, SESSION_FILES_2);
++	if (s_files2_fd < 0)
++		fail_exit("luo_retrieve_session for '%s'", SESSION_FILES_2);
++
++	ksft_print_msg("[STAGE 2] Verifying contents of session '%s'...\n",
++		       SESSION_FILES_1);
++	mfd1 = restore_and_verify_memfd(s_files1_fd, MFD1_TOKEN, MFD1_DATA);
++	if (mfd1 < 0)
++		fail_exit("restore_and_verify_memfd for token %#x", MFD1_TOKEN);
++	close(mfd1);
++
++	ksft_print_msg("[STAGE 2] Verifying contents of session '%s'...\n",
++		       SESSION_FILES_2);
++
++	mfd2 = restore_and_verify_memfd(s_files2_fd, MFD2_TOKEN, MFD2_DATA);
++	if (mfd2 < 0)
++		fail_exit("restore_and_verify_memfd for token %#x", MFD2_TOKEN);
++	close(mfd2);
++
++	mfd3 = restore_and_verify_memfd(s_files2_fd, MFD3_TOKEN, MFD3_DATA);
++	if (mfd3 < 0)
++		fail_exit("restore_and_verify_memfd for token %#x", MFD3_TOKEN);
++	close(mfd3);
 +
 +	ksft_print_msg("[STAGE 2] Test data verified successfully.\n");
-+	ksft_print_msg("[STAGE 2] Finalizing test session...\n");
-+	if (luo_session_finish(session_fd) < 0)
-+		fail_exit("luo_session_finish for test session");
-+	close(session_fd);
++
++	ksft_print_msg("[STAGE 2] Finalizing all test sessions...\n");
++	if (luo_session_finish(s_empty1_fd) < 0)
++		fail_exit("luo_session_finish for '%s'", SESSION_EMPTY_1);
++	close(s_empty1_fd);
++
++	if (luo_session_finish(s_empty2_fd) < 0)
++		fail_exit("luo_session_finish for '%s'", SESSION_EMPTY_2);
++	close(s_empty2_fd);
++
++	if (luo_session_finish(s_files1_fd) < 0)
++		fail_exit("luo_session_finish for '%s'", SESSION_FILES_1);
++	close(s_files1_fd);
++
++	if (luo_session_finish(s_files2_fd) < 0)
++		fail_exit("luo_session_finish for '%s'", SESSION_FILES_2);
++	close(s_files2_fd);
 +
 +	ksft_print_msg("[STAGE 2] Finalizing state session...\n");
 +	if (luo_session_finish(state_session_fd) < 0)
 +		fail_exit("luo_session_finish for state session");
 +	close(state_session_fd);
 +
-+	ksft_print_msg("\n--- SIMPLE KEXEC TEST PASSED ---\n");
++	ksft_print_msg("\n--- MULTI-SESSION KEXEC TEST PASSED ---\n");
 +}
 +
 +int main(int argc, char *argv[])
@@ -395,226 +425,8 @@ index 000000000000..67ab6ebf9eec
 +	}
 +
 +	close(luo_fd);
-+}
-diff --git a/tools/testing/selftests/liveupdate/luo_test_utils.c b/tools/testing/selftests/liveupdate/luo_test_utils.c
-new file mode 100644
-index 000000000000..0a24105cbc54
---- /dev/null
-+++ b/tools/testing/selftests/liveupdate/luo_test_utils.c
-@@ -0,0 +1,168 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+
-+/*
-+ * Copyright (c) 2025, Google LLC.
-+ * Pasha Tatashin <pasha.tatashin@soleen.com>
-+ */
-+
-+#define _GNU_SOURCE
-+
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <fcntl.h>
-+#include <unistd.h>
-+#include <sys/ioctl.h>
-+#include <sys/syscall.h>
-+#include <sys/mman.h>
-+#include <errno.h>
-+#include <stdarg.h>
-+
-+#include "luo_test_utils.h"
-+
-+int luo_open_device(void)
-+{
-+	return open(LUO_DEVICE, O_RDWR);
-+}
-+
-+int luo_create_session(int luo_fd, const char *name)
-+{
-+	struct liveupdate_ioctl_create_session arg = { .size = sizeof(arg) };
-+
-+	snprintf((char *)arg.name, LIVEUPDATE_SESSION_NAME_LENGTH, "%.*s",
-+		 LIVEUPDATE_SESSION_NAME_LENGTH - 1, name);
-+
-+	if (ioctl(luo_fd, LIVEUPDATE_IOCTL_CREATE_SESSION, &arg) < 0)
-+		return -errno;
-+
-+	return arg.fd;
-+}
-+
-+int luo_retrieve_session(int luo_fd, const char *name)
-+{
-+	struct liveupdate_ioctl_retrieve_session arg = { .size = sizeof(arg) };
-+
-+	snprintf((char *)arg.name, LIVEUPDATE_SESSION_NAME_LENGTH, "%.*s",
-+		 LIVEUPDATE_SESSION_NAME_LENGTH - 1, name);
-+
-+	if (ioctl(luo_fd, LIVEUPDATE_IOCTL_RETRIEVE_SESSION, &arg) < 0)
-+		return -errno;
-+
-+	return arg.fd;
-+}
-+
-+int create_and_preserve_memfd(int session_fd, int token, const char *data)
-+{
-+	struct liveupdate_session_preserve_fd arg = { .size = sizeof(arg) };
-+	long page_size = sysconf(_SC_PAGE_SIZE);
-+	void *map = MAP_FAILED;
-+	int mfd = -1, ret = -1;
-+
-+	mfd = memfd_create("test_mfd", 0);
-+	if (mfd < 0)
-+		return -errno;
-+
-+	if (ftruncate(mfd, page_size) != 0)
-+		goto out;
-+
-+	map = mmap(NULL, page_size, PROT_WRITE, MAP_SHARED, mfd, 0);
-+	if (map == MAP_FAILED)
-+		goto out;
-+
-+	snprintf(map, page_size, "%s", data);
-+	munmap(map, page_size);
-+
-+	arg.fd = mfd;
-+	arg.token = token;
-+	if (ioctl(session_fd, LIVEUPDATE_SESSION_PRESERVE_FD, &arg) < 0)
-+		goto out;
-+
-+	ret = 0;
-+out:
-+	if (ret != 0 && errno != 0)
-+		ret = -errno;
-+	if (mfd >= 0)
-+		close(mfd);
-+	return ret;
-+}
-+
-+int restore_and_verify_memfd(int session_fd, int token,
-+			     const char *expected_data)
-+{
-+	struct liveupdate_session_retrieve_fd arg = { .size = sizeof(arg) };
-+	long page_size = sysconf(_SC_PAGE_SIZE);
-+	void *map = MAP_FAILED;
-+	int mfd = -1, ret = -1;
-+
-+	arg.token = token;
-+	if (ioctl(session_fd, LIVEUPDATE_SESSION_RETRIEVE_FD, &arg) < 0)
-+		return -errno;
-+	mfd = arg.fd;
-+
-+	map = mmap(NULL, page_size, PROT_READ, MAP_SHARED, mfd, 0);
-+	if (map == MAP_FAILED)
-+		goto out;
-+
-+	if (expected_data && strcmp(expected_data, map) != 0) {
-+		ksft_print_msg("Data mismatch! Expected '%s', Got '%s'\n",
-+			       expected_data, (char *)map);
-+		ret = -EINVAL;
-+		goto out_munmap;
-+	}
-+
-+	ret = mfd;
-+out_munmap:
-+	munmap(map, page_size);
-+out:
-+	if (ret < 0 && errno != 0)
-+		ret = -errno;
-+	if (ret < 0 && mfd >= 0)
-+		close(mfd);
-+	return ret;
-+}
-+
-+int luo_session_finish(int session_fd)
-+{
-+	struct liveupdate_session_finish arg = { .size = sizeof(arg) };
-+
-+	if (ioctl(session_fd, LIVEUPDATE_SESSION_FINISH, &arg) < 0)
-+		return -errno;
-+
 +	return 0;
 +}
-+
-+void create_state_file(int luo_fd, const char *session_name, int token,
-+		       int next_stage)
-+{
-+	char buf[32];
-+	int state_session_fd;
-+
-+	state_session_fd = luo_create_session(luo_fd, session_name);
-+	if (state_session_fd < 0)
-+		fail_exit("luo_create_session for state tracking");
-+
-+	snprintf(buf, sizeof(buf), "%d", next_stage);
-+	if (create_and_preserve_memfd(state_session_fd, token, buf) < 0)
-+		fail_exit("create_and_preserve_memfd for state tracking");
-+
-+	/*
-+	 * DO NOT close session FD, otherwise it is going to be unpreserved
-+	 */
-+}
-+
-+void restore_and_read_stage(int state_session_fd, int token, int *stage)
-+{
-+	char buf[32] = {0};
-+	int mfd;
-+
-+	mfd = restore_and_verify_memfd(state_session_fd, token, NULL);
-+	if (mfd < 0)
-+		fail_exit("failed to restore state memfd");
-+
-+	if (read(mfd, buf, sizeof(buf) - 1) < 0)
-+		fail_exit("failed to read state mfd");
-+
-+	*stage = atoi(buf);
-+
-+	close(mfd);
-+}
-diff --git a/tools/testing/selftests/liveupdate/luo_test_utils.h b/tools/testing/selftests/liveupdate/luo_test_utils.h
-new file mode 100644
-index 000000000000..093e787b9f4b
---- /dev/null
-+++ b/tools/testing/selftests/liveupdate/luo_test_utils.h
-@@ -0,0 +1,39 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+/*
-+ * Copyright (c) 2025, Google LLC.
-+ * Pasha Tatashin <pasha.tatashin@soleen.com>
-+ *
-+ * Utility functions for LUO kselftests.
-+ */
-+
-+#ifndef LUO_TEST_UTILS_H
-+#define LUO_TEST_UTILS_H
-+
-+#include <errno.h>
-+#include <string.h>
-+#include <linux/liveupdate.h>
-+#include "../kselftest.h"
-+
-+#define LUO_DEVICE "/dev/liveupdate"
-+
-+#define fail_exit(fmt, ...)						\
-+	ksft_exit_fail_msg("[%s:%d] " fmt " (errno: %s)\n",	\
-+			   __func__, __LINE__, ##__VA_ARGS__, strerror(errno))
-+
-+/* Generic LUO and session management helpers */
-+int luo_open_device(void);
-+int luo_create_session(int luo_fd, const char *name);
-+int luo_retrieve_session(int luo_fd, const char *name);
-+int luo_session_finish(int session_fd);
-+
-+/* Generic file preservation and restoration helpers */
-+int create_and_preserve_memfd(int session_fd, int token, const char *data);
-+int restore_and_verify_memfd(int session_fd, int token, const char *expected_data);
-+
-+/* Kexec state-tracking helpers */
-+void create_state_file(int luo_fd, const char *session_name, int token,
-+		       int next_stage);
-+void restore_and_read_stage(int state_session_fd, int token, int *stage);
-+
-+#endif /* LUO_TEST_UTILS_H */
 -- 
 2.51.2.1041.gc1ab5b90ca-goog
 
