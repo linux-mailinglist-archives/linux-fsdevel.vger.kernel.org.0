@@ -1,356 +1,532 @@
-Return-Path: <linux-fsdevel+bounces-67422-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67423-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A230C3F3B7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 07 Nov 2025 10:45:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C47EC3F44F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 07 Nov 2025 10:53:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BBAC188EC67
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Nov 2025 09:46:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D7DA3A4624
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Nov 2025 09:52:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C0A6303C97;
-	Fri,  7 Nov 2025 09:44:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 441072FFF9D;
+	Fri,  7 Nov 2025 09:51:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="OVkN/oHw";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="r5xZpc/n"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jBL0hMsR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54EF43019D8;
-	Fri,  7 Nov 2025 09:44:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762508696; cv=fail; b=sDmVBHt2nkCKJVzkrKVR+5bgmPICywlqXOBERrS0Z49NO4NcUoAvMUAl+glGx8d0tp6VHNwG3EspfH7MOhl+HkMET+egHy1DPg8h5lW2rYX+Q29d14RAD1Pucn1tXzPMrCVNWOMwveFQp+gaSMsnS9ATI/un+u/NCaZ6wOCFZ6o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762508696; c=relaxed/simple;
-	bh=tI9dbx9FUcf0/T9xN3qYblpozf1or5TT94GLKiMlwio=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=RFN24ZpAu4f5EXEAgOk9SJ3GgW/FAPPG6OZlovZMvwL4dkok4eE1Zq90FS23/McsZ71OofkMby0HcB5WohenMFGXi9C1HIGkMSTpblAXwzIFMA3bIdsw4b8z9KY7yctqark3E4zloCWmbYjLneQwCdKRehn6hFmROoPvYjQA/0A=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=OVkN/oHw; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=r5xZpc/n; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A78ubso029920;
-	Fri, 7 Nov 2025 09:44:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=dKXD5AWRKx2uUP2Szn
-	60nCfknCcXCU+opxBR+Cvcdjg=; b=OVkN/oHwAZTx4u5ZY63YCyNZF44PQ5azoB
-	4XMNv+l9UMOZjYxFoTujWwFNq85AKBS0nJrEOJ6KjxduTEGScCknwSU+vuWAxWcJ
-	6GQZOHSd0pT1v6rlN8zkwYf3/xiswA0S0TieUljZeEC4slzUyfRS0KqupsUSUSFF
-	rE2jOIPV1blU79+6n1RpldQ4WSGSwVRhKGR+qxrZFTR5ad/PJMafHlt0HNSRXBKw
-	Hj7PCfQqqaPDG0uzA4M/AxLzihCjKFaLoKrWHpCFw1/ETe8iVLOxErPlZ+vpSOau
-	C/KHXssSrIwJ2Z8vADbBS9cDhgfZ6e49WDai5rvIDoF/02KYpfYQ==
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4a8yhj1j04-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 07 Nov 2025 09:44:29 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5A79Mwl9014876;
-	Fri, 7 Nov 2025 09:44:29 GMT
-Received: from ph8pr06cu001.outbound.protection.outlook.com (mail-westus3azon11012066.outbound.protection.outlook.com [40.107.209.66])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4a58ndahhs-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 07 Nov 2025 09:44:28 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=q8d3dPHIk/TYP6IaaPSBXiRH1xOM5rFFnBI42pnY6wa1awQPovu8DUgYA17Rk0qEqzi01TaTuuJYNY8buGXueUsIedZtJqNcqKEGlYh4fQj1tkY+wCRCxNzh6Bw91y6ejC0a2NdHr3rLVqsFjPe3uxy8/VIAY53sRKIQSFhIheNphHo2hmLgluJxqmaD+fF/5no6uxymqgbrt9vy/htXkGXMGbXpQjvrtfChcvAzL9e06Plja+ZuvWli3kPaYUTgO5ben0OeXXB+o5fPoiQ3uqj8lmunGyqmsRrADdsyaVSB0PYgxLw+1lbjaT4LQoFLeqclEZZP05LbtP36uKuFcg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dKXD5AWRKx2uUP2Szn60nCfknCcXCU+opxBR+Cvcdjg=;
- b=KgjOYqM0aaQVqY8xROKrlz+SJFLFSnyKGFMJqugWOeV8xO8bVuUPSVbnn7ubFFtXKl2N10Zr8apfFr2WwPmJDkJmQvzB/FKQ1pNXM+udcdq+Y6+rjqz0KZ05MENdqZhm0NqK6jRk6grPOE00lcQS/DrrllG26ddEek8+ZrSNDPCrKP6Cyqj+XNNmcwPT42Tiuhwle4sDVv19/fr2SUVlSuEGxjhg9DLPz0Y7ieoSwjetO7+H1LC8Z/qmMe5kPKuVkmVmzv9Wz5ZUyUac6i8Zdcq33U/YoDKjJT+djYhlXoxGEBwTYf4HQ0pa1TRbm8ku0779px2P49KsWa3Spsw93Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4103E2D9EED
+	for <linux-fsdevel@vger.kernel.org>; Fri,  7 Nov 2025 09:51:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762509079; cv=none; b=TtpFQl1x/PiJbBI6hqUnl0cbPrBbRX9t7CQlyX77+LUjzsppsqdNGZYFDv/ObIuMDPUUmMTBnHQqDH20nnKhT+RVxoXi7GuxmkjnZ2i/9LxV7machlBKsQydQh9tl19dmPuwTTFQm0R4OWpxkJmvuDm6MPycaFp1MROLFI0BfH4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762509079; c=relaxed/simple;
+	bh=++Dy/ZgaZeQxyXh0UrVW7WaILvbvHgp2azMTLaPM+n4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oUHHy1UVQM9iEyJQUpy5BCP63t5ckafxNQrAedRZVC+W1/Pp/afceTgy/34eZ5uJFsHuQaax0yqVbHIOogdYwgj6448yKkGS3Bq8fwgLvQA3Cw6XuBaWmnmTzEh5IC88MYWQOwm/+fu2NVT7vAMKHK1DMyUquqCWiWuvReF3q9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jBL0hMsR; arc=none smtp.client-ip=209.85.221.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-5597a0a95fcso119492e0c.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 07 Nov 2025 01:51:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dKXD5AWRKx2uUP2Szn60nCfknCcXCU+opxBR+Cvcdjg=;
- b=r5xZpc/n0BRv0w7Sf7A6PwxU20BgpXzbNQ8azbGpLy7n8ls6TaQqOQSNpJ/B2pbQwglS/B6t7hpzr0SdtOjqSQ3Ze3O5eOQ4QKzqnU1RL2GQ+dHkCD21eWb85mLSev7v1ohVjb482QDCdRhSpS8lk8nkAvot2OqkI2hWe9JF4UQ=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by LV8PR10MB7966.namprd10.prod.outlook.com (2603:10b6:408:202::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.12; Fri, 7 Nov
- 2025 09:44:24 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2%7]) with mapi id 15.20.9298.010; Fri, 7 Nov 2025
- 09:44:24 +0000
-Date: Fri, 7 Nov 2025 09:44:22 +0000
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Pedro Falcato <pfalcato@suse.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jonathan Corbet <corbet@lwn.net>, David Hildenbrand <david@redhat.com>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Jann Horn <jannh@google.com>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, Andrei Vagin <avagin@gmail.com>
-Subject: Re: [PATCH v2 1/5] mm: introduce VM_MAYBE_GUARD and make visible in
- /proc/$pid/smaps
-Message-ID: <0f7186b3-16bd-44b7-a3fe-637af9d25dd3@lucifer.local>
-References: <cover.1762422915.git.lorenzo.stoakes@oracle.com>
- <fe38b1a43364f72d1ce7a6217e53a33c9c0bb0c5.1762422915.git.lorenzo.stoakes@oracle.com>
- <yja2mhwa4bzatbthjjq5rolqlkfgcbmppic3caaiwi6jc63rbc@cims6rqnotvj>
- <043dcbdb-e069-46e7-8f79-8fdaf354fb44@lucifer.local>
- <aQ24HAAxYLhIvV5U@google.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aQ24HAAxYLhIvV5U@google.com>
-X-ClientProxiedBy: LO4P123CA0047.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:152::16) To DM4PR10MB8218.namprd10.prod.outlook.com
- (2603:10b6:8:1cc::16)
+        d=gmail.com; s=20230601; t=1762509076; x=1763113876; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fIPRsjJhgiFWlgghaKQPLlxBGWk6bsyE13wTtDPU6jo=;
+        b=jBL0hMsR5wUsq5AJkur2BXCa4Zis7JXmDWLX1BkcmRxaluOMt1NJd6+T/GoZgU+v8q
+         bb5+8C9dh29MyNp7oR5jvU6xugzL7JHCupLXEPbmAAIjfV66b/w0oytOMh20sShZJQ/s
+         UOCknX2+wD2NKLcE0Ps2w8EzcELH29SBuxz+DmyjqeEKTf0sUPHDPeo2vIZy7+HGKPHy
+         Uu1PMKMYJKDh51eG8PQXx40dlaKTAq6l5GV00HqsuumPGAaf2dqUjkbmKZw85PA1QyK/
+         QEVxday9g9XmQhdpPt4n11uF8yMc+HrGy15nhzKFxbMqtcTo1ofJ7IRYD4c7W+ZQkbIn
+         kNJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762509076; x=1763113876;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=fIPRsjJhgiFWlgghaKQPLlxBGWk6bsyE13wTtDPU6jo=;
+        b=Oups8unhXsptqYxNzOQo40CgvaBa3ehyMXcR5+8q8NQlf7ijy1SYKoPgRyP480OKd+
+         Nsv3vMnPtQ9IPlvD7Zto6rVLv+dVD8HnSHDBAptww+d5LAVPvWAn8j7uSNxtv5NmXTJ4
+         6y84Y0h548BomqLdSyavCrFP+cuD7fNDJC23AGA22G3NG+j8tRgCjtLPrUtpY2JvuNrW
+         9gqdgKqNnZv/sBY9z6yA2LN4cHnKSzz1O7XRjtGDQGT9GVBp32LWlP5Qj4nt2eJsnDbZ
+         qXrpXg8FhSSrNgpfWsyMVJSrA9335vQYicJbdGI0dHRg4D0l/NJOg71mvvd+AIFxnlgU
+         UUNw==
+X-Forwarded-Encrypted: i=1; AJvYcCUqgWhSmeN4MJIAMf0YBSsCZEO1D0oB0j2ugMDgQT3RNFrindDdAFH9dZuSQ02M/sm1xRjNsQ2xxb1sUsPv@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywn824YHpnfUlH8dC+HMQjSiprFUHH3ho+8FM6TxkP/gIIe9QL0
+	wTybC1xiAbLaWsD8hXE/b4OsB4OL1skDT7QsOMWsHF82UfgSlZzyVv5R+/5OumqSVZv1Q4SB5zp
+	UuRFT0GhPlF8LUIftsoVjYG4pG1Kjkqk=
+X-Gm-Gg: ASbGncslhwTrICRUKbgTj0cVGeI9X4jNpII0XbOep4PZosGUlfGHGHFad9eXPEoX/fk
+	zJrvfDS8wAp+BAWENGqGGEYiKyAd6EaSUJ14M/jI6MbkyMVYh5Ro000z1Q0ZGO0cH4kdpj9T6p9
+	pUyMICeUEply1zG1f8puIfs/cD6pTHTWe6iEy7DwoZigdBTgqudGwnu7+eRzhnLsSkizL406ue0
+	f7MUmkvOUfNtFCE5fuYyk28Ui2CIvLRE+nJUoWVr1rG9fSk8kZL2SfHH1bluW385ab5bZWbmCRj
+	CQFCVfEjxx0gcxkS
+X-Google-Smtp-Source: AGHT+IHI4dtmJe9YBUZyvB8I5L4B6hEjxpaY1ljtMSUY/By7YcGREckHfTAtNG3CTEMtAB9g/7xiFNrShAIGvaMlrKc=
+X-Received: by 2002:a05:6122:2024:b0:559:74c4:45f8 with SMTP id
+ 71dfb90a1353d-559a39f8150mr754004e0c.5.1762509075760; Fri, 07 Nov 2025
+ 01:51:15 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|LV8PR10MB7966:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3715ad52-d153-483a-2b80-08de1de23c6d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?QgrgS8WM5YdVqwxWJ1YMBRZw2Ru/X5fzsv4Io+Ds04yrqLXTn8peyLW93Q+a?=
- =?us-ascii?Q?aVq6JTLo4meEjPa29ax0kNBu3TihKOUNkfYam8znhhKNMs0QHdoAfAyuUKIv?=
- =?us-ascii?Q?h0iI7/1DtfgacWC3owyY6X8AMZ6JtxC4bmzOy/tYpzmypFBXCmqX9I1TFRVo?=
- =?us-ascii?Q?HYtkwIEGXrYchnKpk3lSGo/VmoE90aRXu+SJY6hw9Pj1VyXFCp9FXhhGSFB3?=
- =?us-ascii?Q?17L+tAF0oBdCHJlFx1EAvYxmJFessQNEEVFbm62SMbx/Upim0y2zkYyCyKX2?=
- =?us-ascii?Q?1SRCYAPMDdNtqDCgvwKqSDOgFJSe0Ztz364CDB+xjVXjt19sS02XbHM0wCro?=
- =?us-ascii?Q?aireHSTuMBfa2g6kvSz7uocHfAqUOFhKY9dsx5QjCtLUbWm5oKs60KgsvgKh?=
- =?us-ascii?Q?qVZvN2rddZiaXaEbwvxasYoOqIv8QptfxLm5ZP/RJk7Y7utJN4ugHcCQqtj9?=
- =?us-ascii?Q?2IF0aaSdPARJIZLwO7V28+QvvvBUcxn97Q63dL4d6+JahE3YWU4wH0Lfyxw4?=
- =?us-ascii?Q?GwqCCSAC2N6YoyXYBO3P2Y3hWZIs3KsURhhTCjZTOe3RI9Jm3vQ5sWR2SlPr?=
- =?us-ascii?Q?YzYHlm8WnAF7gHrRrP+ktPZk3AWh9wFyMAMpY8qxhvYvzDwM07tAkMWtWxRO?=
- =?us-ascii?Q?IiYFwAztg3VoOp7KOKcPFxGRhaAtfRsbhawi8PxIFSoRPWhGR+LB3tTonNM2?=
- =?us-ascii?Q?Jd7mdYx4qso8GQ+gCeKd6ZAxf1s75Lmis3cvK4UC0yEEON+qT94ZIdBAyn9q?=
- =?us-ascii?Q?ux+NyCnydGhH74DHRyaL9tAhJtrxk/ZWg7a0vViQjwFuic1hOskdDeOkU0P6?=
- =?us-ascii?Q?7iKWNhsDEKbL4GJUbfVKL7FY9fQwg7hzZW91b86Ug+LAxwmfse71/J/BdDS9?=
- =?us-ascii?Q?cFNym4BdGSc2tGhFZBZnARCgnegSWrXVUXIiD+jQiw5FHqveAgAvep5OsfZX?=
- =?us-ascii?Q?j7B7MgWrfAyGkfBRc7y3u1wkrTudozqScNx0w59hGZqv2P3CBGzNQfDhmvTL?=
- =?us-ascii?Q?lf+WqvDAECm9vcNxnxF4bUD02jALO+TacyQYEtq4L8dp7CJcd/LSVh6Z+GqG?=
- =?us-ascii?Q?zH3VuE8hz4kpK3kMzF9gB8ROHE+luoJpkzfuvTY7tRHxyQDjm+NxuO8gBEMm?=
- =?us-ascii?Q?wJhxmuFWyQTKXCKYCskLa6SuGXCyYeNcvdlLb/tAX63wfe+LshSSr+z01GXu?=
- =?us-ascii?Q?HbI2StfRRMJTLmGD27wpqYSHcjKzClEbTdPJuUGMSsRPOrCCZdkoHAltiif3?=
- =?us-ascii?Q?aFY1oSQtEFE++UZQX+8wj9lA5o2iLzJ9bSGNjOWFeeoAQIylIxafWBi98dew?=
- =?us-ascii?Q?EfSsMnC/gWbMtbr+BiVYYP8tu+Zx9jhGp0Df7Ws3NSiV+ZTEqBLvZCyh8uER?=
- =?us-ascii?Q?sf+icDAG8g6GNJg+3gw6gpR1TGzlSPnY0WuN8/iCumyq2TrrnGCbT9YrtzNL?=
- =?us-ascii?Q?6BsToG/7D3Sw8Pp9qpaLNvwXa4IT+yIIPzADsc6ZYom0F5pFeBjYzg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?kmmi7c/lB2p2lSLW6J6qUaATNQHKwTBztbGF1n0KQ8mRLd4kMYC+bZRz9+60?=
- =?us-ascii?Q?BJx7miNIOmqL4zgjdaxpTpfEG0s0nPGJ+zl9gqTcZ09cIhfxuMBpG37ptjWI?=
- =?us-ascii?Q?+sar9ta59iVOEiN0k/c/XzmCsJ1MHpmDdPVZS+pLKIACgo7+DlJhcUxlFOQi?=
- =?us-ascii?Q?47xmY/v2bV1JEZyFXYfrTE0bhcRpd5Iniyi96CPZh1UUDwKzRRIh4iZ7dKIB?=
- =?us-ascii?Q?4qU28bkBxxdluo++P1FVfXgSCIbz9fAwJ+b5noxTh/mPIYWBfcwbErGVbqA4?=
- =?us-ascii?Q?NEQhG3GwHAHopGZ87qHcKqglyljEDFXz6GQGDg5YJQjttwpcvpTXn6N9RLsO?=
- =?us-ascii?Q?jf8OCl6B8wc7HiDOM18Kp77O8gHt4cfbn1lb/bGwtcF3lyek1XrFoTMVaS3V?=
- =?us-ascii?Q?w0XLThuRidSRK/sO7gX1hE9c3pFppt+ECCJrOeImX38BErRYTe7fIXK3GwQY?=
- =?us-ascii?Q?zar0dDkkoUQdTGakZRZTQnv4Pj3jXPRfK/NYzKnVY1Da5YyavO8Dz+xnpFeA?=
- =?us-ascii?Q?ZJJ6DTZGLYmyMLMJyiDc0089IGyXrE+8pXt8qghwNunWf8SRJsh8fh1I9maJ?=
- =?us-ascii?Q?Xt4S58AgA8nwZ8JpQnE3QjkKglcoWQb/5c49ntmiKyWjnFLCd0WDKVRlEXaD?=
- =?us-ascii?Q?MBpualL5H/J2T9uJX46yRYS7LIyYz3oSdHIElrkpiJDVTK2bqtCtLGnNzVVj?=
- =?us-ascii?Q?KNnaLnMuWTjwcOw6dZVHRiodPM+7Lw79VuBUnoVklED6ZIZAgea5xffVeFj8?=
- =?us-ascii?Q?87K7bB2hugiELt20ahyXKot/xzDAWnK23w+FWKJXlyRj68Vk481anxSlmdJ8?=
- =?us-ascii?Q?X/fIrw55zd0dG77oxZ2JZZHgpX1sKY5YK4mzkbxGbDAuTL6mrdoEO+pCZEcu?=
- =?us-ascii?Q?Ro9n3eCI4SSasWen531uUzxjUgO0pz67PaTOgaqjMIA5cK/KMNwyuCoJR7L3?=
- =?us-ascii?Q?cViy9fExvqtvEOfCBveuavu1CXk/qB2s1hnt19algN2XAzHIDtXj9TcEdwMk?=
- =?us-ascii?Q?cXzKhOIcIdI/poF/QbELjQNC0iaStgZow4GklM8vyKscLAn/MvGGwEmrcKpd?=
- =?us-ascii?Q?JOHURl/yjqGxUnSzPXFg5s+hMczxaNMx3xTZy5CnBRXcU5MJB5bcKHl79f2D?=
- =?us-ascii?Q?RmJ8mLkUt6SRi7lcmm/HH7Ka2tgiIOeMbz3jUPBWhVr4z9twIqazmr6TS84M?=
- =?us-ascii?Q?+MHGwG5HyFD4Yy4NHXPDWxIahSvgiTUSihz2cK9w2RIdIqSOeEP5FmKvJLZi?=
- =?us-ascii?Q?9wC4+QWilq+SROvg1vUjIOQdWfddk3PXWj7PMF44xXn1fZ5sySp7NLgDLPSg?=
- =?us-ascii?Q?X5U1E2GgALZ5N0yfZq2nt2ekSeCXY7Zz0NgnTS7ffvI+IhvUNuvgLMFR1fU7?=
- =?us-ascii?Q?Fetdrg/+0etjeX0yIcgPC+iQcup0rOZ+YUDoAtvnV3OBDr7lqlLjxSz2qp71?=
- =?us-ascii?Q?XqcJSzJ/v/Gxkyt7kTBNNnB8AXSp2CMHMuYZX1dG6nnEoBlkPA/xgmxn3Blj?=
- =?us-ascii?Q?u/6cS56pKVSlDlrQaP2eUJXE8SoYNbJTg+gbwoVz8lzUlY+08cSfDk7pmAVS?=
- =?us-ascii?Q?EwPddcxx4WDFAErX4hfFp9V6c7qpu2SrmwTrrZuJdcVSBQ5mH0B6HGq25Pc8?=
- =?us-ascii?Q?pA=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	rSx9Ialzyi4KSDbOuJ9qGOU84+Nr34h/JzbtjPRCLRcE0Z7FtxsVRkgwHKBml9VrC87fRobJRdIkQDB1KeKrgSD25h4Yik9Thll9ZRWlhF05rmx5rEqOncdjnEFlus6AirfXdPo9mSmuZowiInnk3CtYkPxXS88+Fuvc9Tm5kClP9Fr/4c3iB35UGgal/DAbmpNzACiMv0BOcWofEOPXazKWb58N0729PiKQrSSlU3mz7xNM0p7R0JKl2W7LXfgOnGzneOVDz/fFBC/RsiRcBoG2g15TtPxYn45VAbOjsNPKGc4FTVsuw7DxUxH0sskldemjDoaYiykxc3T3tUJ05KW9mS61HQUcQavgJ5NDfAXQ/r7R7AE4JiXjf/VXHA8051PqK0Gsi+UvrM6O49d0jVmcaJVnCDcVo+NCsUP54wMzOoGm7KPrauntTSCfNtO3LUYFv7jVPknozPJIvMihYWRKancz8gZpFbZcj//XB3MMDKqlV0aSfv11GVb5LBT1ioT/u2wLSbtl7q3b9COtbjxCFwNCHCuLD9pNNREVA1CC9vs9dfhTHG8CJ0uossvFl3DGDR+fznIjSiavvtenw7YzgYPFo0z1Vs8BgjfPgSE=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3715ad52-d153-483a-2b80-08de1de23c6d
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2025 09:44:24.8750
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: DzcRBkfmuv1aUzvXE+HBTZac2dTAtts/PowkwMeBu3ZCYEq9fOgTrMlU8VrpM8JPCDRprIfqedMWWmgcc21UF0slyN90oMCFNSYJBLZcQcI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR10MB7966
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-07_02,2025-11-06_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 mlxlogscore=999 spamscore=0
- adultscore=0 phishscore=0 malwarescore=0 bulkscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2510240000
- definitions=main-2511070078
-X-Authority-Analysis: v=2.4 cv=BdrVE7t2 c=1 sm=1 tr=0 ts=690dbf7e b=1 cx=c_pps
- a=WeWmnZmh0fydH62SvGsd2A==:117 a=WeWmnZmh0fydH62SvGsd2A==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=6UeiqGixMTsA:10 a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8 a=yPCof4ZbAAAA:8 a=oHvQr4N-xIuw19cP40IA:9
- a=CjuIK1q_8ugA:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA2MDEzMyBTYWx0ZWRfX4J6o58+zLxM+
- h4sVEi6JykKTb829IZb+RKUzIlrgv5MpOJLyG8jSp9JiP4VA44HeBangfD0LlT3KaK85/+Fm7/z
- xOQOsZVeTF5/0rOnte9PwZyXmgleWXsqq3Ot2zp/LYafmX+AdcxpDvfng2JVT74O0stjv8+akUK
- 2Tn9ZWHRbAAteUZF19ZY510NHOzdsDoo4HSO0QkAig/spOJUFC8ZH6VonRxGZLXw+nVpYvvD6U5
- RlPa3ToODxLscs7fjz2o35iMsgZCFX62DEqpi2oWtaEjCwdW3aQrbsXGPVyeEK0eg7DTtKk1orr
- 1P9ueXiKqGUjtvfPbhhgCMN11aImqHBrjgTQTRi8QIeLfvnQUEWLay7Zqfz4S90SVaIcIkn4dwj
- w89hwLE0FsxFAuQOUCAep2brqk+Xmg==
-X-Proofpoint-ORIG-GUID: eEvPNJxhxeNun3f4CI1pOZ32GL__VPRi
-X-Proofpoint-GUID: eEvPNJxhxeNun3f4CI1pOZ32GL__VPRi
+References: <20250813093755.47599-1-nzzhao@126.com> <20250813093755.47599-2-nzzhao@126.com>
+In-Reply-To: <20250813093755.47599-2-nzzhao@126.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Fri, 7 Nov 2025 17:51:04 +0800
+X-Gm-Features: AWmQ_bnSwTKx_aQLRNGzhEJKES-0M_s2kH4__jjyDu05-szzYmSb4WEg5fa9LBQ
+Message-ID: <CAGsJ_4xzX0snLs1qMfx4hkCVkZuu2U9tGMyHdJ6r9NcoP+Q30Q@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/9] f2fs: Introduce f2fs_iomap_folio_state
+To: Nanzhe Zhao <nzzhao@126.com>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net, 
+	linux-fsdevel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>, 
+	Chao Yu <chao@kernel.org>, Yi Zhang <yi.zhang@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 07, 2025 at 09:13:00AM +0000, Alice Ryhl wrote:
-> On Thu, Nov 06, 2025 at 02:54:33PM +0000, Lorenzo Stoakes wrote:
-> > +cc Alice for rust stuff
-> >
-> > On Thu, Nov 06, 2025 at 02:27:56PM +0000, Pedro Falcato wrote:
-> > > On Thu, Nov 06, 2025 at 10:46:12AM +0000, Lorenzo Stoakes wrote:
-> > > > Currently, if a user needs to determine if guard regions are present in a
-> > > > range, they have to scan all VMAs (or have knowledge of which ones might
-> > > > have guard regions).
-> > > >
-> > > > Since commit 8e2f2aeb8b48 ("fs/proc/task_mmu: add guard region bit to
-> > > > pagemap") and the related commit a516403787e0 ("fs/proc: extend the
-> > > > PAGEMAP_SCAN ioctl to report guard regions"), users can use either
-> > > > /proc/$pid/pagemap or the PAGEMAP_SCAN functionality to perform this
-> > > > operation at a virtual address level.
-> > > >
-> > > > This is not ideal, and it gives no visibility at a /proc/$pid/smaps level
-> > > > that guard regions exist in ranges.
-> > > >
-> > > > This patch remedies the situation by establishing a new VMA flag,
-> > > > VM_MAYBE_GUARD, to indicate that a VMA may contain guard regions (it is
-> > > > uncertain because we cannot reasonably determine whether a
-> > > > MADV_GUARD_REMOVE call has removed all of the guard regions in a VMA, and
-> > > > additionally VMAs may change across merge/split).
-> > > >
-> > > > We utilise 0x800 for this flag which makes it available to 32-bit
-> > > > architectures also, a flag that was previously used by VM_DENYWRITE, which
-> > > > was removed in commit 8d0920bde5eb ("mm: remove VM_DENYWRITE") and hasn't
-> > > > bee reused yet.
-> > > >
-> > > > We also update the smaps logic and documentation to identify these VMAs.
-> > > >
-> > > > Another major use of this functionality is that we can use it to identify
-> > > > that we ought to copy page tables on fork.
-> > > >
-> > > > We do not actually implement usage of this flag in mm/madvise.c yet as we
-> > > > need to allow some VMA flags to be applied atomically under mmap/VMA read
-> > > > lock in order to avoid the need to acquire a write lock for this purpose.
-> > > >
-> > > > Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> > > > ---
-> > > >  Documentation/filesystems/proc.rst | 1 +
-> > > >  fs/proc/task_mmu.c                 | 1 +
-> > > >  include/linux/mm.h                 | 3 +++
-> > > >  include/trace/events/mmflags.h     | 1 +
-> > > >  mm/memory.c                        | 4 ++++
-> > > >  tools/testing/vma/vma_internal.h   | 3 +++
-> > > >  6 files changed, 13 insertions(+)
-> > > >
-> > > > diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
-> > > > index 0b86a8022fa1..b8a423ca590a 100644
-> > > > --- a/Documentation/filesystems/proc.rst
-> > > > +++ b/Documentation/filesystems/proc.rst
-> > > > @@ -591,6 +591,7 @@ encoded manner. The codes are the following:
-> > > >      sl    sealed
-> > > >      lf    lock on fault pages
-> > > >      dp    always lazily freeable mapping
-> > > > +    gu    maybe contains guard regions (if not set, definitely doesn't)
-> > > >      ==    =======================================
-> > >
-> > > The nittiest
-> > > of nits:     =============================================================
-> >
-> > Sigh :) OK will fix.
-> >
-> > >
-> > >
-> > > >
-> > > >  Note that there is no guarantee that every flag and associated mnemonic will
-> > > > diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-> > > > index 8a9894aefbca..a420dcf9ffbb 100644
-> > > > --- a/fs/proc/task_mmu.c
-> > > > +++ b/fs/proc/task_mmu.c
-> > > > @@ -1147,6 +1147,7 @@ static void show_smap_vma_flags(struct seq_file *m, struct vm_area_struct *vma)
-> > > >  		[ilog2(VM_MAYSHARE)]	= "ms",
-> > > >  		[ilog2(VM_GROWSDOWN)]	= "gd",
-> > > >  		[ilog2(VM_PFNMAP)]	= "pf",
-> > > > +		[ilog2(VM_MAYBE_GUARD)]	= "gu",
-> > > >  		[ilog2(VM_LOCKED)]	= "lo",
-> > > >  		[ilog2(VM_IO)]		= "io",
-> > > >  		[ilog2(VM_SEQ_READ)]	= "sr",
-> > > > diff --git a/include/linux/mm.h b/include/linux/mm.h
-> > > > index 6e5ca5287e21..2a5516bff75a 100644
-> > > > --- a/include/linux/mm.h
-> > > > +++ b/include/linux/mm.h
-> > > > @@ -271,6 +271,8 @@ extern struct rw_semaphore nommu_region_sem;
-> > > >  extern unsigned int kobjsize(const void *objp);
-> > > >  #endif
-> > > >
-> > > > +#define VM_MAYBE_GUARD_BIT 11
-> > > > +
-> > > >  /*
-> > > >   * vm_flags in vm_area_struct, see mm_types.h.
-> > > >   * When changing, update also include/trace/events/mmflags.h
-> > > > @@ -296,6 +298,7 @@ extern unsigned int kobjsize(const void *objp);
-> > > >  #define VM_UFFD_MISSING	0
-> > > >  #endif /* CONFIG_MMU */
-> > > >  #define VM_PFNMAP	0x00000400	/* Page-ranges managed without "struct page", just pure PFN */
-> > > > +#define VM_MAYBE_GUARD	BIT(VM_MAYBE_GUARD_BIT)	/* The VMA maybe contains guard regions. */
-> > >
-> > > Don't we also need an adjustment on the rust side for this BIT()? Like we
-> > > for f04aad36a07c ("mm/ksm: fix flag-dropping behavior in ksm_madvise").
-> >
-> > That's a bit unhelpful if rust can't cope with extremely basic assignments like
-> > that and we just have to know to add helpers :/
-> >
-> > We do BIT() stuff for e.g. VM_HIGH_ARCH_n, VM_UFFD_MINOR_BIT,
-> > VM_ALLOW_ANY_UNCACHED_BIT, VM_DROPPABLE_BIT and VM_SEALED_BIT too and no such
-> > helpers there, So not sure if this is required?
-> >
-> > Alice - why is it these 'non-trivial' defines were fine but VM_MERGEABLE was
-> > problematic? That seems strange.
-> >
-> > I see [0], so let me build rust here and see if it moans, if it moans I'll add
-> > it.
-> >
-> > [0]:https://lore.kernel.org/oe-kbuild-all/CANiq72kOhRdGtQe2UVYmDLdbw6VNkiMtdFzkQizsfQV0gLY1Hg@mail.gmail.com/
+On Wed, Aug 13, 2025 at 5:39=E2=80=AFPM Nanzhe Zhao <nzzhao@126.com> wrote:
 >
-> When you use #define to declare a constant whose right-hand-side
-> contains a function-like macro such as BIT(), bindgen does not define a
-> Rust version of that constant. However, VM_MAYBE_GUARD is not referenced
-> in Rust anywhere, so that isn't a problem.
+> Add f2fs's own per-folio structure to track
+> per-block dirty state of a folio.
 >
-> It was a problem with VM_MERGEABLE because rust/kernel/mm/virt.rs
-> references it.
+> The reason for introducing this structure is that f2fs's private flag
+> would conflict with iomap_folio_state's use of the folio->private field.
+> Thanks to Mr. Matthew for providing the idea. See for details:
+> [https://lore.kernel.org/linux-f2fs-devel/Z-oPTUrF7kkhzJg_
+> @casper.infradead.org/]
 >
-> Note that it's only the combination of #define and function-like macro
-> that triggers this condition. If the constant is defined using another
-> mechanism such as enum {}, then bindgen will generate the constant no
-> matter how complex the right-hand-side is. The problem is that bindgen
-> can't tell whether a #define is just a constant or not.
+> The memory layout of this structure is the same as iomap_folio_state,
+> except that we set read_bytes_pending to a magic number. This is because
+> we need to be able to distinguish it from the original iomap_folio_state.
+> We additionally allocate an unsigned long at the end of the state array
+> to store f2fs-specific flags.
 >
-> Alice
+> This implementation is compatible with high-order folios, order-0 folios,
+> and metadata folios.
+> However, it does not support compressed data folios.
+>
+> Introduction to related functions:
+>
+> - f2fs_ifs_alloc: Allocates f2fs's own f2fs_iomap_folio_state. If it
+>   detects that folio->private already has a value, we distinguish
+>   whether it is f2fs's own flag value or an iomap_folio_state. If it is
+>   the latter, we will copy its content to our f2fs_iomap_folio_state
+>   and then free it.
+>
+> - folio_detach_f2fs_private: Serves as a unified interface to release
+>   f2fs's private resources, no matter what it is.
+>
+> - f2fs_ifs_clear_range_uptodate && f2fs_ifs_set_range_dirty: Helper
+>   functions copied and slightly modified from fs/iomap.
+>
+> - folio_get_f2fs_ifs: Specifically used to get f2fs_iomap_folio_state.
+>   It cannot be used to get f2fs's own fields used on compressed folios.
+>   For the former, we return a null pointer to indicate that the current
+>   folio does not hold an f2fs_iomap_folio_state. For the latter, we
+>   directly BUG_ON.
+>
+> Signed-off-by: Nanzhe Zhao <nzzhao@126.com>
+> ---
+>  fs/f2fs/Kconfig    |  10 ++
+>  fs/f2fs/Makefile   |   1 +
+>  fs/f2fs/f2fs_ifs.c | 221 +++++++++++++++++++++++++++++++++++++++++++++
+>  fs/f2fs/f2fs_ifs.h |  79 ++++++++++++++++
+>  4 files changed, 311 insertions(+)
+>  create mode 100644 fs/f2fs/f2fs_ifs.c
+>  create mode 100644 fs/f2fs/f2fs_ifs.h
+>
+> diff --git a/fs/f2fs/Kconfig b/fs/f2fs/Kconfig
+> index 5916a02fb46d..480b8536fa39 100644
+> --- a/fs/f2fs/Kconfig
+> +++ b/fs/f2fs/Kconfig
+> @@ -150,3 +150,13 @@ config F2FS_UNFAIR_RWSEM
+>         help
+>           Use unfair rw_semaphore, if system configured IO priority by bl=
+ock
+>           cgroup.
+> +
+> +config F2FS_IOMAP_FOLIO_STATE
+> +       bool "F2FS folio per-block I/O state tracking"
+> +       depends on F2FS_FS && FS_IOMAP
+> +       help
+> +         Enable a custom F2FS structure for tracking the I/O state
+> +         (up-to-date, dirty) on a per-block basis within a memory folio.
+> +         This structure stores F2FS private flag in its state flexible
+> +         array while keeping compatibility with generic iomap_folio_stat=
+e.
+> +         Must be enabled if using iomap large folios support in F2FS.
 
-Thanks, I guess we can update as we go as rust needs. Or I can do a big update
-as part of my VMA flag series respin?
+
+This is purely an internal implementation detail, not a Kconfig option
+in any case.
+
+> \ No newline at end of file
+> diff --git a/fs/f2fs/Makefile b/fs/f2fs/Makefile
+> index 8a7322d229e4..3b9270d774e8 100644
+> --- a/fs/f2fs/Makefile
+> +++ b/fs/f2fs/Makefile
+> @@ -10,3 +10,4 @@ f2fs-$(CONFIG_F2FS_FS_POSIX_ACL) +=3D acl.o
+>  f2fs-$(CONFIG_FS_VERITY) +=3D verity.o
+>  f2fs-$(CONFIG_F2FS_FS_COMPRESSION) +=3D compress.o
+>  f2fs-$(CONFIG_F2FS_IOSTAT) +=3D iostat.o
+> +f2fs-$(CONFIG_F2FS_IOMAP_FOLIO_STATE) +=3D f2fs_ifs.o
+> diff --git a/fs/f2fs/f2fs_ifs.c b/fs/f2fs/f2fs_ifs.c
+> new file mode 100644
+> index 000000000000..6b7503474580
+> --- /dev/null
+> +++ b/fs/f2fs/f2fs_ifs.c
+> @@ -0,0 +1,221 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +#include <linux/fs.h>
+> +#include <linux/f2fs_fs.h>
+> +
+> +#include "f2fs.h"
+> +#include "f2fs_ifs.h"
+> +
+> +/*
+> + * Have to set parameter ifs's type to void*
+> + * and have to interpret ifs as f2fs_ifs to access its fields because
+> + * we cannot see iomap_folio_state definition
+> + */
+> +static void ifs_to_f2fs_ifs(void *ifs, struct f2fs_iomap_folio_state *fi=
+fs,
+> +                           struct folio *folio)
+> +{
+> +       struct f2fs_iomap_folio_state *src_ifs =3D
+> +               (struct f2fs_iomap_folio_state *)ifs;
+> +       size_t iomap_longs =3D f2fs_ifs_iomap_longs(folio);
+> +
+> +       fifs->read_bytes_pending =3D READ_ONCE(src_ifs->read_bytes_pendin=
+g);
+> +       atomic_set(&fifs->write_bytes_pending,
+> +                  atomic_read(&src_ifs->write_bytes_pending));
+> +       memcpy(fifs->state, src_ifs->state,
+> +              iomap_longs * sizeof(unsigned long));
+> +}
+
+Is it possible to drop this memcpy? It seems iomap has already
+allocated ifs, but you=E2=80=99re allocating f2fs_ifs again. Could we exten=
+d
+ifs_alloc() to support an extra argument so that the inode or F2FS can
+pass the additional data it needs?
+
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index fd827398afd2..f3bfb116dd5a 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -169,7 +169,8 @@ static void iomap_set_range_dirty(struct folio
+*folio, size_t off, size_t len)
+ }
+
+ static struct iomap_folio_state *ifs_alloc(struct inode *inode,
+-               struct folio *folio, unsigned int flags)
++               struct folio *folio, unsigned int flags,
++               unsigned int extra)
+
+
+Alternatively, F2FS might be able to provide the extra_ifs requirement
+using the method shown below?
+
+diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+index 73dceabc21c8..c333f934273c 100644
+--- a/include/linux/iomap.h
++++ b/include/linux/iomap.h
+@@ -107,6 +107,7 @@ struct iomap {
+        u64                     length; /* length of mapping, bytes */
+        u16                     type;   /* type of mapping */
+        u16                     flags;  /* flags for mapping */
++       u16                     ifs_extra; /* extra length needed for ifs *=
+/
+        struct block_device     *bdev;  /* block device for I/O */
+        struct dax_device       *dax_dev; /* dax_dev for dax operations */
+        void                    *inline_data;
+
+Not entirely sure what the best approach is, but I=E2=80=99m confident you =
+can
+find a way to avoid introducing so much duplicated code.
+
+> +
+> +static inline bool is_f2fs_ifs(struct folio *folio)
+> +{
+> +       struct f2fs_iomap_folio_state *fifs;
+> +
+> +       if (!folio_test_private(folio))
+> +               return false;
+> +
+> +       // first directly test no pointer flag is set or not
+> +       if (test_bit(PAGE_PRIVATE_NOT_POINTER,
+> +                    (unsigned long *)&folio->private))
+> +               return false;
+> +
+> +       fifs =3D (struct f2fs_iomap_folio_state *)folio->private;
+> +       if (!fifs)
+> +               return false;
+> +
+> +       if (READ_ONCE(fifs->read_bytes_pending) =3D=3D F2FS_IFS_MAGIC)
+> +               return true;
+> +
+
+This seems quite strange =E2=80=94 why is this needed? Can we keep the sema=
+ntics
+of all existing ifs fields unchanged and simply extend the state[]
+array with your new data?
+
+> +       return false;
+> +}
+> +
+> +struct f2fs_iomap_folio_state *f2fs_ifs_alloc(struct folio *folio, gfp_t=
+ gfp,
+> +                                             bool force_alloc)
+> +{
+> +       struct inode *inode =3D folio->mapping->host;
+> +       size_t alloc_size =3D 0;
+> +
+> +       if (!folio_test_large(folio)) {
+> +               if (!force_alloc) {
+> +                       WARN_ON_ONCE(1);
+> +                       return NULL;
+> +               }
+> +               /*
+> +                * GC can store private flag in 0 order folio's folio->pr=
+ivate
+> +                * causes iomap buffered write mistakenly interpret as a =
+pointer
+> +                * we add a bool force_alloc to deal with this case
+> +                */
+> +               struct f2fs_iomap_folio_state *fifs;
+> +
+> +               alloc_size =3D sizeof(*fifs) + 2 * sizeof(unsigned long);
+> +               fifs =3D kmalloc(alloc_size, gfp);
+> +               if (!fifs)
+> +                       return NULL;
+> +               spin_lock_init(&fifs->state_lock);
+> +               WRITE_ONCE(fifs->read_bytes_pending, F2FS_IFS_MAGIC);
+> +               atomic_set(&fifs->write_bytes_pending, 0);
+> +               unsigned int nr_blocks =3D
+> +                       i_blocks_per_folio(inode, folio);
+> +               if (folio_test_uptodate(folio))
+> +                       bitmap_set(fifs->state, 0, nr_blocks);
+> +               if (folio_test_dirty(folio))
+> +                       bitmap_set(fifs->state, nr_blocks, nr_blocks);
+> +               *f2fs_ifs_private_flags_ptr(fifs, folio) =3D 0;
+> +               folio_attach_private(folio, fifs);
+> +               return fifs;
+> +       }
+> +
+
+As mentioned above, let=E2=80=99s try to remove the duplicated allocation i=
+f
+iomap has already done it. We can instead make iomap support an
+additional argument that can be provided by F2FS and its inode.
+
+> +       struct f2fs_iomap_folio_state *fifs;
+> +       void *old_private;
+> +       size_t iomap_longs;
+> +       size_t total_longs;
+> +
+> +       WARN_ON_ONCE(!inode); // Should have an inode
+> +
+> +       old_private =3D folio_get_private(folio);
+> +
+> +       if (old_private) {
+> +               // Check if it's already our type using the magic number =
+directly
+> +               if (READ_ONCE(((struct f2fs_iomap_folio_state *)old_priva=
+te)
+> +                                     ->read_bytes_pending) =3D=3D F2FS_I=
+FS_MAGIC) {
+> +                       return (struct f2fs_iomap_folio_state *)
+> +                               old_private; // Already ours
+> +               }
+> +               // Non-NULL, not ours -> Allocate, Copy, Replace path
+> +               total_longs =3D f2fs_ifs_total_longs(folio);
+> +               alloc_size =3D sizeof(*fifs) +
+> +                               total_longs * sizeof(unsigned long);
+> +
+> +               fifs =3D kmalloc(alloc_size, gfp);
+> +               if (!fifs)
+> +                       return NULL;
+> +
+> +               spin_lock_init(&fifs->state_lock);
+> +               *f2fs_ifs_private_flags_ptr(fifs, folio) =3D 0;
+> +               // Copy data from the presumed iomap_folio_state (old_pri=
+vate)
+> +               ifs_to_f2fs_ifs(old_private, fifs, folio);
+> +               WRITE_ONCE(fifs->read_bytes_pending, F2FS_IFS_MAGIC);
+> +               folio_change_private(folio, fifs);
+> +               kfree(old_private);
+> +               return fifs;
+> +       }
+> +
+> +       iomap_longs =3D f2fs_ifs_iomap_longs(folio);
+> +       total_longs =3D iomap_longs + 1;
+> +       alloc_size =3D
+> +               sizeof(*fifs) + total_longs * sizeof(unsigned long);
+> +
+> +       fifs =3D kzalloc(alloc_size, gfp);
+> +       if (!fifs)
+> +               return NULL;
+> +
+> +       spin_lock_init(&fifs->state_lock);
+> +
+> +       unsigned int nr_blocks =3D i_blocks_per_folio(inode, folio);
+> +
+> +       if (folio_test_uptodate(folio))
+> +               bitmap_set(fifs->state, 0, nr_blocks);
+> +       if (folio_test_dirty(folio))
+> +               bitmap_set(fifs->state, nr_blocks, nr_blocks);
+> +       WRITE_ONCE(fifs->read_bytes_pending, F2FS_IFS_MAGIC);
+> +       atomic_set(&fifs->write_bytes_pending, 0);
+> +       folio_attach_private(folio, fifs);
+> +       return fifs;
+> +}
+> +
+> +void folio_detach_f2fs_private(struct folio *folio)
+> +{
+> +       struct f2fs_iomap_folio_state *fifs;
+> +
+> +       if (!folio_test_private(folio))
+> +               return;
+> +
+> +       // Check if it's using direct flags
+> +       if (test_bit(PAGE_PRIVATE_NOT_POINTER,
+> +                    (unsigned long *)&folio->private)) {
+> +               folio_detach_private(folio);
+> +               return;
+> +       }
+> +
+> +       fifs =3D folio_detach_private(folio);
+> +       if (!fifs)
+> +               return;
+> +
+> +       if (is_f2fs_ifs(folio)) {
+> +               WARN_ON_ONCE(READ_ONCE(fifs->read_bytes_pending) !=3D
+> +                            F2FS_IFS_MAGIC);
+> +               WARN_ON_ONCE(atomic_read(&fifs->write_bytes_pending));
+> +       } else {
+> +               WARN_ON_ONCE(READ_ONCE(fifs->read_bytes_pending) !=3D 0);
+> +               WARN_ON_ONCE(atomic_read(&fifs->write_bytes_pending));
+> +       }
+> +
+> +       kfree(fifs);
+> +}
+> +
+> +struct f2fs_iomap_folio_state *folio_get_f2fs_ifs(struct folio *folio)
+> +{
+> +       if (!folio_test_private(folio))
+> +               return NULL;
+> +
+> +       if (test_bit(PAGE_PRIVATE_NOT_POINTER,
+> +                    (unsigned long *)&folio->private))
+> +               return NULL;
+> +       /*
+> +        * Note we assume folio->private can be either ifs or f2fs_ifs he=
+re.
+> +        * Compresssed folios should not call this function
+> +        */
+> +       f2fs_bug_on(F2FS_F_SB(folio),
+> +                   *((u32 *)folio->private) =3D=3D F2FS_COMPRESSED_PAGE_=
+MAGIC);
+> +       return folio->private;
+> +}
+> +
+> +void f2fs_ifs_clear_range_uptodate(struct folio *folio,
+> +                                  struct f2fs_iomap_folio_state *fifs,
+> +                                  size_t off, size_t len)
+> +{
+> +       struct inode *inode =3D folio->mapping->host;
+> +       unsigned int first_blk =3D (off >> inode->i_blkbits);
+> +       unsigned int last_blk =3D (off + len - 1) >> inode->i_blkbits;
+> +       unsigned int nr_blks =3D last_blk - first_blk + 1;
+> +       unsigned long flags;
+> +
+> +       spin_lock_irqsave(&fifs->state_lock, flags);
+> +       bitmap_clear(fifs->state, first_blk, nr_blks);
+> +       spin_unlock_irqrestore(&fifs->state_lock, flags);
+> +}
+> +
+> +void f2fs_iomap_set_range_dirty(struct folio *folio, size_t off, size_t =
+len)
+> +{
+> +       struct f2fs_iomap_folio_state *fifs =3D folio_get_f2fs_ifs(folio)=
+;
+> +
+> +       if (fifs) {
+> +               struct inode *inode =3D folio->mapping->host;
+> +               unsigned int blks_per_folio =3D i_blocks_per_folio(inode,=
+ folio);
+> +               unsigned int first_blk =3D (off >> inode->i_blkbits);
+> +               unsigned int last_blk =3D (off + len - 1) >> inode->i_blk=
+bits;
+> +               unsigned int nr_blks =3D last_blk - first_blk + 1;
+> +               unsigned long flags;
+> +
+> +               spin_lock_irqsave(&fifs->state_lock, flags);
+> +               bitmap_set(fifs->state, first_blk + blks_per_folio, nr_bl=
+ks);
+> +               spin_unlock_irqrestore(&fifs->state_lock, flags);
+> +       }
+> +}
+
+Let=E2=80=99s try to reuse the existing iomap code instead of creating a ne=
+w
+copy-paste version. I believe iomap_set_range_dirty() should work
+perfectly fine for our case.
+
+> diff --git a/fs/f2fs/f2fs_ifs.h b/fs/f2fs/f2fs_ifs.h
+> new file mode 100644
+> index 000000000000..3b16deda8a1e
+> --- /dev/null
+> +++ b/fs/f2fs/f2fs_ifs.h
+> @@ -0,0 +1,79 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +#ifndef F2FS_IFS_H
+> +#define F2FS_IFS_H
+> +
+> +#include <linux/fs.h>
+> +#include <linux/bug.h>
+> +#include <linux/f2fs_fs.h>
+> +#include <linux/mm.h>
+> +#include <linux/iomap.h>
+> +#include <linux/slab.h>
+> +#include <linux/spinlock.h>
+> +#include <linux/atomic.h>
+> +
+> +#include "f2fs.h"
+> +
+> +#define F2FS_IFS_MAGIC 0xf2f5
+> +#define F2FS_IFS_PRIVATE_LONGS 1
+> +
+> +/*
+> + * F2FS structure for folio private data, mimicking iomap_folio_state la=
+yout.
+> + * F2FS private flags/data are stored in extra space allocated at the en=
+d
+> + */
+> +struct f2fs_iomap_folio_state {
+> +       spinlock_t state_lock;
+> +       unsigned int read_bytes_pending;
+> +       atomic_t write_bytes_pending;
+> +       /*
+> +        * Flexible array member.
+> +        * Holds [0...iomap_longs-1] for iomap uptodate/dirty bits.
+> +        * Holds [iomap_longs] for F2FS private flags/data (unsigned long=
+).
+> +        */
+> +       unsigned long state[];
+> +};
+> +
+
+This is completely unnecessary =E2=80=94 it=E2=80=99s just a duplicate of
+iomap_folio_state. I=E2=80=99d prefer moving iomap_folio_state to a header
+file so that F2FS can reference it directly.
+
+Thanks
+Barry
 
