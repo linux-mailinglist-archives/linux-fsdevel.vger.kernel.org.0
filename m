@@ -1,63 +1,64 @@
-Return-Path: <linux-fsdevel+bounces-67441-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67442-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8948C403D0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 07 Nov 2025 15:01:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5250C403C1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 07 Nov 2025 14:59:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 065B84F7FC9
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Nov 2025 13:57:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5844942826F
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Nov 2025 13:59:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A46CF31A813;
-	Fri,  7 Nov 2025 13:57:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 798D031A813;
+	Fri,  7 Nov 2025 13:59:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LzPjAEFP"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="K10DaNeN"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07BE9433BC;
-	Fri,  7 Nov 2025 13:57:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 727C6433BC;
+	Fri,  7 Nov 2025 13:59:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762523866; cv=none; b=VCe1HbSZJ7P64q8DB/Mz27qs7MxrqezlTlqsUTDk1rQtm3pDZ77RqXxefEsM3wnYdZ6homRsmFB0Zt9obtBuVxtNoYBdhGgzUC1LQyerpJIJee2Ak2A+CxLC5rXnp9xMhqiiQjdYK4lUb8OJG3ECR+ql1yNK4CMLs8bv05AcgzQ=
+	t=1762523949; cv=none; b=M5a6VhZIK/yR+X7GI+jMZCoi1iLCFKYCoLo0iIuVYGDUrHaqKhwSFRLoRuwQLIuM5WDy4UCzLQ4S4yKmBIFXsjJr0wBeY8vSBBSrgzR6TJz/+h7O+gQUwjSf9TiRCXLQ0ltZAMkCjiD5HbtIFHc70ZVXsOEhSA6IYzSTl/Ft7Sc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762523866; c=relaxed/simple;
-	bh=a6wn1s+JcgbMF86nuPJ38UW/k9+5ocGH9m3O6K6TWDo=;
+	s=arc-20240116; t=1762523949; c=relaxed/simple;
+	bh=P6XUHOaJvjG29cBiZ2CB/0Yx4883pM3A3OrPUozDIX4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gr1PdIxo7Xx6ZRxFaTpTZ03Oih5RD8W5MyB1kDnr+wGPxuK2Ahoj7FuNrTmP5vVpQQqJj8EynUEUAUPtiE6acM06ma+BzRpqJspRoDlYUjt//yX7xfrJQ+44tXymK3pe/EQOjZuWA9wC4HWV6LsnAHhHA8q1wdNUqFWuofqHMz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=LzPjAEFP; arc=none smtp.client-ip=198.137.202.133
+	 Content-Type:Content-Disposition:In-Reply-To; b=hZVCVMGwZn6YGKw/GNBtXcHKkfByKReuGdO4eAeMW5K7yv1kKCAgN3MFXUjhyvJIV1jp/r45tXAgtMHi7Q5gnDvqwFUD8esfFiXTqz3GreOn28MstLH3uKleamXliMot9u6v70X/01Q9ngcwJRhGc+8bJhVYu496jyHpCo0+TAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=K10DaNeN; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
 	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=odC97piI4VFDCJpFeVI4GGijMGtAOHX0I0tIPHlExlM=; b=LzPjAEFPIswH0McWUQJOORXTwi
-	ndJDea1mCvy01YhIauu9YwUBAEqAMwAK27OOM+X9TBjBudz5yflz/gZ0W4Tchk+wxidboegLEufNS
-	/N3UuVu71Wh1tMlJDtrLKmqUXwHdn0L/y+eKMrJ/W82kYfeZQtUM1HIXNbIyY/lwMH33aV33nlnJC
-	TGqScSLFQcdHImFiWs1Sra29fYP5fiwoifngnJlMMKJAD9bFpchRj1UAEZiY13vG2VysQD13VMTcs
-	drqNj93q3WoxQ5WUD3/ZT3erHZXrNwWsFsFfQJSaMKpIh8gL6L6vMfvisEtewq6JUEBaZFrp4Nxlv
-	i6b+LGBg==;
+	bh=7dUWbgfOqkVn7S/pp573YtAkvotd2+0fUGiwiV5AgqE=; b=K10DaNeN6/TEZ/6YgKnQ+Vbx3L
+	0aWGqAC12MgvdxL2ZfR0gB943XKed1B3yT1XIAf1qV6tx438EJSX2A1LvEFQ7kEAhfaOIHTkx6lHv
+	68BMhmkCWqCx47VmHtMOoyULtrQIPcRZAOQEMtR2diuHf5qndB+MOe+zaaEfKVbqO/S+vuG1o1PDC
+	vm4ABhl3RlJlP4VAYSC8CnGQitHuaci6YT/6RjAPTZVFIh0FVSiuG3lPMB3trP7+t8LyZu/VL+Nwm
+	VPqhc6iPJMZpXyqWJKH42hvwZy74YDG7z1v5aShuTmluQwgRO9cVzXFBx74aS6ag+A+0+AtGviax2
+	UhVbt6uA==;
 Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vHMyF-0000000HRbs-1wrx;
-	Fri, 07 Nov 2025 13:57:43 +0000
-Date: Fri, 7 Nov 2025 05:57:43 -0800
+	id 1vHMzX-0000000HRec-3VPC;
+	Fri, 07 Nov 2025 13:59:03 +0000
+Date: Fri, 7 Nov 2025 05:59:03 -0800
 From: Christoph Hellwig <hch@infradead.org>
-To: Brian Foster <bfoster@redhat.com>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, linux-fsdevel@vger.kernel.org,
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Brian Foster <bfoster@redhat.com>, linux-fsdevel@vger.kernel.org,
 	linux-xfs@vger.kernel.org
 Subject: Re: [PATCH 2/6] iomap, xfs: lift zero range hole mapping flush into
  xfs
-Message-ID: <aQ3612r1qKFeM9Ur@infradead.org>
+Message-ID: <aQ37J1qqhhP2WXOX@infradead.org>
 References: <20251016190303.53881-1-bfoster@redhat.com>
  <20251016190303.53881-3-bfoster@redhat.com>
  <20251105003114.GY196370@frogsfrogsfrogs>
  <aQtuPFHtzm8-zeqS@bfoster>
  <20251105222350.GO196362@frogsfrogsfrogs>
  <aQzEQtynNsJLdLcD@bfoster>
+ <20251106233208.GU196362@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -66,31 +67,15 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aQzEQtynNsJLdLcD@bfoster>
+In-Reply-To: <20251106233208.GU196362@frogsfrogsfrogs>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Thu, Nov 06, 2025 at 10:52:34AM -0500, Brian Foster wrote:
-> > An unaligned pagecache write to an uncached region uses the read mapping
-> > to pull data into the pagecache.  For writeback, we'd use the write
-> > mapping if it's non-null, or else the read mapping.
-> > 
-> 
-> Or perhaps let the read/write mappings overlap? It's not clear to me if
-> that's better or worse. ;P
+On Thu, Nov 06, 2025 at 03:32:08PM -0800, Darrick J. Wong wrote:
+> A harder question is: what would filesystems put in write_map for a pure
+> read?  They could leave it at the default (null mapping) and the kernel
+> wouldn't pay attention to it.
 
-It is much better for the case where they actually are different.
-
-> > This might not move the needle much wrt to fixing your problem, but at
-> > least it eliminates the weirdness around "@iomap is for reads except
-> > when you're doing a write but you have to do a read *and* @srcmap isn't
-> > a hole".
-> > 
-> 
-> Yeah.. it might be reaching a pedantic level, but to me having a couple
-> mappings that say "you can read from this range, write to that range,
-> and they might be the same" is more clear than the srcmap/dstmap/maybe
-> both logic we have today.
-
-It is a lot better.
+Please make them entirely separate iomap_iters, and allowing nesting.
+That way no write map even exists for pure reads.
 
 
