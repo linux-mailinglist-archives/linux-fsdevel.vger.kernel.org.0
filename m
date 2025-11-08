@@ -1,90 +1,122 @@
-Return-Path: <linux-fsdevel+bounces-67531-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67532-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79BE1C42C34
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 08 Nov 2025 12:46:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBC5BC42CF3
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 08 Nov 2025 13:37:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id AE54734A3EF
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Nov 2025 11:46:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90E90188DBF3
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Nov 2025 12:38:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B41FF2F548C;
-	Sat,  8 Nov 2025 11:46:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B70D2257AD1;
+	Sat,  8 Nov 2025 12:37:34 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from cygnus.enyo.de (cygnus.enyo.de [79.140.189.114])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FD772FA0ED
-	for <linux-fsdevel@vger.kernel.org>; Sat,  8 Nov 2025 11:46:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C84601B81D3;
+	Sat,  8 Nov 2025 12:37:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.140.189.114
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762602375; cv=none; b=WTsIILEYjDOroi42b8qSbXFJ7vZlfngYC971MT9V6CdHN+OvaqIgxYD7gCjZ2LQlRyHHQP6PJDQ5lSLzs9DWbtWmVG5HjJBN65eqkN8lRVHGzIjrZEWIITngY+dHeI9mIB8mR2yNodUo8SVXlloSqQyVh7Xs6Vig2WWeIDfrMs4=
+	t=1762605454; cv=none; b=maNFrF+U8tRdcDRtNv6O/gKFQAKa148pLzbufhIDFFw7fC3deboDL5hBLAcgAJfUGakaO447pz2+CmP628hHrvNa5JCCu8+JmwRr2AEhUQnDzvKjgSipAhnbjb/eNnm2fM+Xy6MAtgtgIsKRk618sSGsfO1+I2pZQfLP/EXqnW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762602375; c=relaxed/simple;
-	bh=89T+4qHUQTIhG/SFKMt6Ii4GDc1WK8TCsdeL307uyVU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=l43qEFvV/DNP/KkW5wHUXd/VKK8RtfAFUxtFbYVrRw549hNwk4UY9pGrbV3T0oi8A6PJlDwFT1F4CXtNirAGw01IxiPlEVTk1EkERHlDmAf0sKHzIbHrArSq2PU5/0Mg2V0IbU/WMSuj7u9KqE2LLtlPixqtcR2AWkbvT57htx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-43373c85296so981795ab.2
-        for <linux-fsdevel@vger.kernel.org>; Sat, 08 Nov 2025 03:46:05 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762602364; x=1763207164;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sT3nWmWtpfLwoiQ/LXrBCnymc6GSizFbMsCyBhkjSMo=;
-        b=DrZEO825xn+q88HDZMsk89ebzOPiw7Izo2iiHcGrsCZYbrK4e5BJa4Gwux+LOuNt59
-         VqMdWjcr8vqCnKMjWKWZzu4QHeR6aMrTuRZzUP7gA502aYXzphDAcoEv+rfnmNobxIzM
-         Cz2628qNbmdyLuMrzgJHUu1pJcSaB89REaZhZK/Zypk8xKrwyQZo9f4cK6zpFGLgobHl
-         pFbOFtJtA5JizCQ0UkjSjCuUGmemfKpz0m0KXCRrgrg9T16XoHY1+lfi3/6arExN2UtL
-         HItdxcnFpIAUzIaj3D6swYRFYm3heKj7JXaVInVqxSEFXBMrgcuqAdbugiom8G1TaR15
-         zVmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXaAptoa6zBR/iNezNoW710MeR84+FqVN85AxT9jKbhT+WvWBIkkWCmgf+RJPhkrdoaI1QGxY+rqKo3kqoN@vger.kernel.org
-X-Gm-Message-State: AOJu0YyS5ra+A+GJiDnADpHQVw81PQDyh027o7vbiyP+OAu5Vx9jahyS
-	g7imLkV1zSyW4iXfHwn2oOp8E0PYucU3/Lg+rH4fzNX2ftKDBdeFTGhliIUNWsxNNedmQFxGSEt
-	X4yoZSpb2KvpQzVemDrswo/3fA6UU05EryO4bEza0lk2NGfw8556pU06sty0=
-X-Google-Smtp-Source: AGHT+IF0lzmC3C5XiHZSRivjPA0W6wBCehFT2N8SafVZfF0emtOTtW0CiDs6zRdErfomW1D917I2L6HKV6ZJHX+cmO1ZDnUEfj2i
+	s=arc-20240116; t=1762605454; c=relaxed/simple;
+	bh=NiZXhsu8l9stZGCY12NJjHjUXDrbcQ4AP91b+KknZEw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=KqktVLJII6r7982be6j8VL0UAynWN//64sXiT+20s2KJS+2AlV6NEbmtFglS4eEz1XUGWM+LfFWvJu9LA2KwK7CRtCqjQjdtI2tjuraCLNgK/S8PywU9UWrRg9ZiJEkcdpfZ1EEuA2eVIkfF7uZrIPKF7tuL/pWqUO4cCfVXhsw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=deneb.enyo.de; spf=pass smtp.mailfrom=deneb.enyo.de; arc=none smtp.client-ip=79.140.189.114
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=deneb.enyo.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=deneb.enyo.de
+Received: from [172.17.203.2] (port=55061 helo=deneb.enyo.de)
+	by albireo.enyo.de ([172.17.140.2]) with esmtps (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	id 1vHi5C-00000005xuU-2FLj;
+	Sat, 08 Nov 2025 12:30:18 +0000
+Received: from fw by deneb.enyo.de with local (Exim 4.98.2)
+	(envelope-from <fw@deneb.enyo.de>)
+	id 1vHi5C-00000000B4X-1Zfa;
+	Sat, 08 Nov 2025 13:30:18 +0100
+From: Florian Weimer <fw@deneb.enyo.de>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Florian Weimer <fweimer@redhat.com>,  Matthew Wilcox
+ <willy@infradead.org>,  Hans Holmberg <hans.holmberg@wdc.com>,
+  linux-xfs@vger.kernel.org,  Carlos Maiolino <cem@kernel.org>,  Dave
+ Chinner <david@fromorbit.com>,  "Darrick J . Wong" <djwong@kernel.org>,
+  linux-fsdevel@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  libc-alpha@sourceware.org
+Subject: Re: [RFC] xfs: fake fallocate success for always CoW inodes
+In-Reply-To: <20251106170501.GA25601@lst.de> (Christoph Hellwig's message of
+	"Thu, 6 Nov 2025 18:05:01 +0100")
+References: <20251106133530.12927-1-hans.holmberg@wdc.com>
+	<lhuikfngtlv.fsf@oldenburg.str.redhat.com>
+	<20251106135212.GA10477@lst.de>
+	<aQyz1j7nqXPKTYPT@casper.infradead.org>
+	<lhu4ir7gm1r.fsf@oldenburg.str.redhat.com>
+	<20251106170501.GA25601@lst.de>
+Date: Sat, 08 Nov 2025 13:30:18 +0100
+Message-ID: <878qgg4sh1.fsf@mid.deneb.enyo.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1fc7:b0:433:74cb:e13 with SMTP id
- e9e14a558f8ab-43374cb13d4mr7183385ab.32.1762602364207; Sat, 08 Nov 2025
- 03:46:04 -0800 (PST)
-Date: Sat, 08 Nov 2025 03:46:04 -0800
-In-Reply-To: <CAKYAXd-ycMzZ+o2wDMk4tdE8msafQ1syedsC-n19i=0Bba-x4Q@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <690f2d7c.a70a0220.22f260.007d.GAE@google.com>
-Subject: Re: [syzbot] [exfat?] WARNING in __rt_mutex_slowlock_locked (2)
-From: syzbot <syzbot+5216036fc59c43d1ee02@syzkaller.appspotmail.com>
-To: brauner@kernel.org, jack@suse.cz, linkinjeon@kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	sj1557.seo@samsung.com, syzkaller-bugs@googlegroups.com, 
-	viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 
-Hello,
+* Christoph Hellwig:
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+> On Thu, Nov 06, 2025 at 05:31:28PM +0100, Florian Weimer wrote:
+>> It's been a few years, I think, and maybe we should drop the allocation
+>> logic from posix_fallocate in glibc?  Assuming that it's implemented
+>> everywhere it makes sense?
+>
+> I really think it should go away.  If it turns out we find cases where
+> it was useful we can try to implement a zeroing fallocate in the kernel
+> for the file system where people want it.  gfs2 for example currently
+> has such an implementation, and we could have somewhat generic library
+> version of it.
 
-Reported-by: syzbot+5216036fc59c43d1ee02@syzkaller.appspotmail.com
-Tested-by: syzbot+5216036fc59c43d1ee02@syzkaller.appspotmail.com
+Sorry, I remember now where this got stuck the last time.
 
-Tested on:
+This program:
 
-commit:         e811c33b Merge tag 'drm-fixes-2025-11-08' of https://g..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=134eb812580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=41ad820f608cb833
-dashboard link: https://syzkaller.appspot.com/bug?extid=5216036fc59c43d1ee02
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1258d084580000
+#include <fcntl.h>
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/mman.h>
 
-Note: testing is done by a robot and is best-effort only.
+int
+main(void)
+{
+  FILE *fp = tmpfile();
+  if (fp == NULL)
+    abort();
+  int fd = fileno(fp);
+  posix_fallocate(fd, 0, 1);
+  char *p = mmap(NULL, 1, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+  *p = 1;
+}
+
+should not crash even if the file system does not support fallocate.
+I hope we can agree on that.  I expect avoiding SIGBUS errors because
+of insufficient file size is a common use case for posix_fallocate.
+This use is not really an optimization, it's required to get mmap
+working properly.
+
+If we can get an fallocate mode that we can use as a fallback to
+increase the file size with a zero flag argument, we can definitely
+use that in posix_fallocate (replacing the fallback path on kernels
+that support it).  All local file systems should be able to implement
+that (but perhaps not efficiently).  Basically, what we need here is a
+non-destructive ftruncate.
+
+Maybe add two flags, one for the ftruncate replacement, and one that
+instructs the file system that the range will be used with mmap soon?
+I expect this could be useful information to the file system.  We
+wouldn't use it in posix_fallocate, but applications calling fallocate
+directly might.
+
+Christoph, is this something you could help with?
 
