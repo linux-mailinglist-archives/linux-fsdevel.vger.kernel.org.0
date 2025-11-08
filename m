@@ -1,122 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-67532-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67533-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBC5BC42CF3
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 08 Nov 2025 13:37:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11FCFC42D93
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 08 Nov 2025 15:01:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90E90188DBF3
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Nov 2025 12:38:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54C1118878CE
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Nov 2025 14:02:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B70D2257AD1;
-	Sat,  8 Nov 2025 12:37:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 192D61E0E14;
+	Sat,  8 Nov 2025 14:01:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="IKPY4bm9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from cygnus.enyo.de (cygnus.enyo.de [79.140.189.114])
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C84601B81D3;
-	Sat,  8 Nov 2025 12:37:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.140.189.114
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A86EB204C36
+	for <linux-fsdevel@vger.kernel.org>; Sat,  8 Nov 2025 14:01:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762605454; cv=none; b=maNFrF+U8tRdcDRtNv6O/gKFQAKa148pLzbufhIDFFw7fC3deboDL5hBLAcgAJfUGakaO447pz2+CmP628hHrvNa5JCCu8+JmwRr2AEhUQnDzvKjgSipAhnbjb/eNnm2fM+Xy6MAtgtgIsKRk618sSGsfO1+I2pZQfLP/EXqnW8=
+	t=1762610496; cv=none; b=sru8xpAgeSg6OoKknnKtB8yjczSQTcnJqTAR2MxZTgyQThEcnnUZOF2+n4vZU6U4qdRdn6Mm8pUOsRtBodudbRqhU52iaY59WN48IXvpKn+0q+R41l3295sFK2Ccw47kqfKJ2Q3MvvKRfJkpvFU9jnSCjspxYWveB5xIZEsuSTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762605454; c=relaxed/simple;
-	bh=NiZXhsu8l9stZGCY12NJjHjUXDrbcQ4AP91b+KknZEw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=KqktVLJII6r7982be6j8VL0UAynWN//64sXiT+20s2KJS+2AlV6NEbmtFglS4eEz1XUGWM+LfFWvJu9LA2KwK7CRtCqjQjdtI2tjuraCLNgK/S8PywU9UWrRg9ZiJEkcdpfZ1EEuA2eVIkfF7uZrIPKF7tuL/pWqUO4cCfVXhsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=deneb.enyo.de; spf=pass smtp.mailfrom=deneb.enyo.de; arc=none smtp.client-ip=79.140.189.114
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=deneb.enyo.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=deneb.enyo.de
-Received: from [172.17.203.2] (port=55061 helo=deneb.enyo.de)
-	by albireo.enyo.de ([172.17.140.2]) with esmtps (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	id 1vHi5C-00000005xuU-2FLj;
-	Sat, 08 Nov 2025 12:30:18 +0000
-Received: from fw by deneb.enyo.de with local (Exim 4.98.2)
-	(envelope-from <fw@deneb.enyo.de>)
-	id 1vHi5C-00000000B4X-1Zfa;
-	Sat, 08 Nov 2025 13:30:18 +0100
-From: Florian Weimer <fw@deneb.enyo.de>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Florian Weimer <fweimer@redhat.com>,  Matthew Wilcox
- <willy@infradead.org>,  Hans Holmberg <hans.holmberg@wdc.com>,
-  linux-xfs@vger.kernel.org,  Carlos Maiolino <cem@kernel.org>,  Dave
- Chinner <david@fromorbit.com>,  "Darrick J . Wong" <djwong@kernel.org>,
-  linux-fsdevel@vger.kernel.org,  linux-kernel@vger.kernel.org,
-  libc-alpha@sourceware.org
-Subject: Re: [RFC] xfs: fake fallocate success for always CoW inodes
-In-Reply-To: <20251106170501.GA25601@lst.de> (Christoph Hellwig's message of
-	"Thu, 6 Nov 2025 18:05:01 +0100")
-References: <20251106133530.12927-1-hans.holmberg@wdc.com>
-	<lhuikfngtlv.fsf@oldenburg.str.redhat.com>
-	<20251106135212.GA10477@lst.de>
-	<aQyz1j7nqXPKTYPT@casper.infradead.org>
-	<lhu4ir7gm1r.fsf@oldenburg.str.redhat.com>
-	<20251106170501.GA25601@lst.de>
-Date: Sat, 08 Nov 2025 13:30:18 +0100
-Message-ID: <878qgg4sh1.fsf@mid.deneb.enyo.de>
+	s=arc-20240116; t=1762610496; c=relaxed/simple;
+	bh=CNJoTmBYU76d3qdtzuMHrbQpge/KdZ6/OsOyxVTEXWE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dIhXDIBRbfKlqTqXexftHM/XZ63pAjzS85+BmrWKd8EQtSiipkCfXJb9PykG6o6RMe3FCVn3QqeYP+VIpoh5SJHuzMrRTN60K72/RRSJrTF2sr/YBlgt1VjDetru5kY/zkD1oHPhi2JbV48p92ID2SKIZdyMdjhhC0WE+sdUbpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=IKPY4bm9; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from trampoline.thunk.org (pool-173-48-122-154.bstnma.fios.verizon.net [173.48.122.154])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 5A8E1HK1015238
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 8 Nov 2025 09:01:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1762610479; bh=BNBVr38ff5e6t5oymiiuzp16Ba/4xNCIhgf/dMIqUZ4=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=IKPY4bm92ZJKv/V3v2BmYZzKzTXUZ7vZZLP0SAA6GazsILZzfi+mbLLGTDs88J0Oi
+	 x9B5Wj4gFcnqH1jHKJOhNJ9wCAdAGAPthaqHFM7476pxK96d/e87sGgOvV49nMqqyh
+	 PGAeISm0VeUEmgvEn2FUC1PCQAeSyXgK/a308VGvlDB5/wxfMwP30s/KKg77lRTbTj
+	 ufC8lUQypDGKLyF243O/wDwlmDmyHkx3Is1jLQDUzuulbBhVSouSCbKLAJ7psslQt3
+	 YK3ShcGolTHgasAUltXSkfyh2nOk165ofkKsmlVUsr1mxltQFGjfemUeJX16Vlq+xA
+	 Fv3q/TJU9xpHw==
+Received: by trampoline.thunk.org (Postfix, from userid 15806)
+	id C5DCE2E00D9; Sat, 08 Nov 2025 09:01:16 -0500 (EST)
+Date: Sat, 8 Nov 2025 09:01:16 -0500
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+Cc: "fstests@vger.kernel.org" <fstests@vger.kernel.org>,
+        "wqu@suse.com" <wqu@suse.com>,
+        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+        "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
+        "frank.li@vivo.com" <frank.li@vivo.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: [RFC] Why generic/073 is generic but not btrfs specific?
+Message-ID: <20251108140116.GB2988753@mit.edu>
+References: <92ac4eb8cdc47ddc99edeb145e67882259d3aa0e.camel@ibm.com>
+ <fb616f30-5a56-4436-8dc7-0d8fe2b4d772@suse.com>
+ <06b369cd4fdf2dfb1cfe0b43640dbe6b05be368a.camel@ibm.com>
+ <a43fd07d-88e6-473d-a0be-3ba3203785e6@suse.com>
+ <ee43d81115d91ceb359f697162f21ce50cee29ff.camel@ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ee43d81115d91ceb359f697162f21ce50cee29ff.camel@ibm.com>
 
-* Christoph Hellwig:
+On Thu, Nov 06, 2025 at 10:29:46PM +0000, Viacheslav Dubeyko wrote:
+> > > Technically speaking, HFS+ is journaling file system in Apple implementation.
+> > > But we don't have this functionality implemented and fully supported on Linux
+> > > kernel side. Potentially, it can be done but currently we haven't such
+> > > functionality yet. So, HFS/HFS+ doesn't use journaling on Linux kernel side  and
+> > > no journal replay could happen. :)
 
-> On Thu, Nov 06, 2025 at 05:31:28PM +0100, Florian Weimer wrote:
->> It's been a few years, I think, and maybe we should drop the allocation
->> logic from posix_fallocate in glibc?  Assuming that it's implemented
->> everywhere it makes sense?
->
-> I really think it should go away.  If it turns out we find cases where
-> it was useful we can try to implement a zeroing fallocate in the kernel
-> for the file system where people want it.  gfs2 for example currently
-> has such an implementation, and we could have somewhat generic library
-> version of it.
+If the implementation of HJFJS+ in Linux doesn't support metadata
+consistency after a crash, I'd suggest adding HFS+ to
+_has_metadat_journalling().  This will suppress a number of test
+failures so you can focus on other issues which arguably is probably
+higher priority for you to fix.
 
-Sorry, I remember now where this got stuck the last time.
+After you get HFS+ to run clean with the journalling tesets skipped,
+then you can focus on adding that guarantee at that point, perhaps?
 
-This program:
-
-#include <fcntl.h>
-#include <stddef.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/mman.h>
-
-int
-main(void)
-{
-  FILE *fp = tmpfile();
-  if (fp == NULL)
-    abort();
-  int fd = fileno(fp);
-  posix_fallocate(fd, 0, 1);
-  char *p = mmap(NULL, 1, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
-  *p = 1;
-}
-
-should not crash even if the file system does not support fallocate.
-I hope we can agree on that.  I expect avoiding SIGBUS errors because
-of insufficient file size is a common use case for posix_fallocate.
-This use is not really an optimization, it's required to get mmap
-working properly.
-
-If we can get an fallocate mode that we can use as a fallback to
-increase the file size with a zero flag argument, we can definitely
-use that in posix_fallocate (replacing the fallback path on kernels
-that support it).  All local file systems should be able to implement
-that (but perhaps not efficiently).  Basically, what we need here is a
-non-destructive ftruncate.
-
-Maybe add two flags, one for the ftruncate replacement, and one that
-instructs the file system that the range will be used with mmap soon?
-I expect this could be useful information to the file system.  We
-wouldn't use it in posix_fallocate, but applications calling fallocate
-directly might.
-
-Christoph, is this something you could help with?
+     	     	      	     	  - Ted
 
