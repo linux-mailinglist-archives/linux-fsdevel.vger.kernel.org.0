@@ -1,83 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-67524-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67525-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03853C423AE
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 08 Nov 2025 02:17:07 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id D80BFC4275F
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 08 Nov 2025 06:00:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B9F9188B5E5
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Nov 2025 01:17:31 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 83C7234AC15
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Nov 2025 05:00:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B09C82586E8;
-	Sat,  8 Nov 2025 01:16:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 925C22D5A07;
+	Sat,  8 Nov 2025 05:00:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XRRklK0a"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="c9BGTl1I"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3958F45C0B;
-	Sat,  8 Nov 2025 01:16:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5871B24886E
+	for <linux-fsdevel@vger.kernel.org>; Sat,  8 Nov 2025 05:00:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762564617; cv=none; b=B1h67evaYY+8mK/BAn5FrIH/ciJxPUajLxZ8pdyfj7+Or1oTnoBhUizeYactg+xfk6taOsNlnl4gCYIzRNOBLfY771KqxW8fbQzT6cgWGPoVutUgoxcMhqdpCjSJBzSvWZPxfZrMcmD+v7FmTEY5QbZoq/ZRF2e5JH5aErp2oL4=
+	t=1762578036; cv=none; b=UezIAN0dcZGQvQXb89gJVxx4GNaSRuYMxPoGb6ngb3kCDCoy3VWViFvPnoSnzcyUeRZgd3/nd8nMa04FVkWsZoczNP2O1sMSwyLiAIs3kAfJ8Vu6MT/Obd3dPnKiA/c24JgL/QtQ+hpNMVUkLCIT8PyWBrqW9a8kZWmsOV1AFbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762564617; c=relaxed/simple;
-	bh=Z2R2Y+Y7iYLIBfc+xrkSR2Yr7K6yCTnIgBnYqJBs2Pw=;
+	s=arc-20240116; t=1762578036; c=relaxed/simple;
+	bh=TTP/E6MDNVKqZfSdAt/Q7h6Myauh55qgKsdz2sOCuo4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oflWeDaAGl9HygF6dDJihmcJredAgxzDRnDL3Y7M7qKRBqzu+OiEjv+DUwosYsq0Y44TiLegQdhH5K0y3/qPWthdEU2rEWb77fdGDviMmO0A02sPUDlH8mmLgs8X6o7vhKdG4wkKk/jGKQPsezl9SGEcqRllrGnAPwsCgaCczt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XRRklK0a; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762564615; x=1794100615;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Z2R2Y+Y7iYLIBfc+xrkSR2Yr7K6yCTnIgBnYqJBs2Pw=;
-  b=XRRklK0aRYzf862/TSqViFFVhbciSUJEMFR39kWWffSrQiPZ+rQgTMGS
-   OIdSsJRVZJ+u9xK1+kMJ4S79mY7mKmgcl39zDFIbbEro3FrEd6b+/XCSz
-   BcvMQs+mskgqKo7rOy+OaYppw+acVEG795h+zx8aMsq72C7AAg1hbicLi
-   fYc0Xhl+HPTPvE2k3eFG9TK6HhtxxF4f81HOIxg/alHpOVeD7JWJiYIOb
-   +esKCQHmrXKcIg9ES8F/slbsmRd1ZlCXCMNqTgUXAwS6QjMDrA1567++j
-   8LY0xJDSpk3mCuuF+QW/A1bbdkmkz7cPBJY5e0s/13LcMK7qVscE9RZMm
-   A==;
-X-CSE-ConnectionGUID: xtQJUMJRTI+yd4qoPcq5Fw==
-X-CSE-MsgGUID: nj0f87SuQHeDJFFtlpVo8g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11606"; a="75328244"
-X-IronPort-AV: E=Sophos;i="6.19,288,1754982000"; 
-   d="scan'208";a="75328244"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2025 17:16:55 -0800
-X-CSE-ConnectionGUID: JxjCYdpvSpqW/a7GIPacDA==
-X-CSE-MsgGUID: 8XFmiRmJTaC5TUgp0Bwudg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,288,1754982000"; 
-   d="scan'208";a="193209633"
-Received: from lkp-server01.sh.intel.com (HELO 6ef82f2de774) ([10.239.97.150])
-  by fmviesa004.fm.intel.com with ESMTP; 07 Nov 2025 17:16:50 -0800
-Received: from kbuild by 6ef82f2de774 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vHXZQ-0000ZL-1W;
-	Sat, 08 Nov 2025 01:16:48 +0000
-Date: Sat, 8 Nov 2025 09:15:48 +0800
-From: kernel test robot <lkp@intel.com>
-To: Fengnan Chang <changfengnan@bytedance.com>, axboe@kernel.dk,
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	asml.silence@gmail.com, willy@infradead.org, djwong@kernel.org,
-	hch@infradead.org, ritesh.list@gmail.com,
-	linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
-	linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org,
-	linux-block@vger.kernel.org, ming.lei@redhat.com,
-	linux-nvme@lists.infradead.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Fengnan Chang <changfengnan@bytedance.com>
-Subject: Re: [PATCH v2 1/2] block: use bio_alloc_bioset for passthru IO by
- default
-Message-ID: <202511080837.qd2MmgFS-lkp@intel.com>
-References: <20251107020557.10097-2-changfengnan@bytedance.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZBVqkxkAQB2Svz+h8l7DBFcVcMYo1tEqb8GtLaZaEQhm4wbALRlte7kRpKMFxP5HvyklcB7y7jlV5BI+GOVL5WcPZwFQmPKXQ8HCfLlAM5FhQupWzDuZ32Ott2n2mwkPpeHOZAPOX5f8WCzqOJ/WgEfwDVS1Xn+6zEruFN1YRbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=c9BGTl1I; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=3Uicbi0GzrwSMJpZH2t7k0frWbxeMbuqQjQce1tcheY=; b=c9BGTl1IhpGMc9TG9YorRjI7Wa
+	U+f+thBN5xTPat81KAWaLN3ryZjJvTB5eRqJfXQSinjl4FUTrIJ69r41RohLuxdiHYbiOm96L0t4c
+	E2Aec+1dECFxXC6QWT1toOEr/cDVt/iAkzvZsrDdunN/b3D6c2qOl/wakEfOeYKmYfHW8h5xeOlPB
+	dzbuzv7hYTAHA4sArHbeF7Om5WeJ/diVhKJACE6yydWpzfN8v/4Fg0pmaQrETTc4Fx33+DSE132X9
+	Zqd6Jv2/0oxcjmBAbuC4JOYOMhGEH4Gs/n6QZ4RjLg7+HLl0hieST60DtGmxHg6vurTQQLpAYQVlm
+	Cvfs80ow==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vHb3s-00000009gXx-3I0G;
+	Sat, 08 Nov 2025 05:00:28 +0000
+Date: Sat, 8 Nov 2025 05:00:28 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
+Cc: Hugh Dickins <hughd@google.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
+Subject: Re: [PATCH 10/10] mm: Use folio_next_pos()
+Message-ID: <aQ7ObHvd8FXb8Taz@casper.infradead.org>
+References: <20251024170822.1427218-1-willy@infradead.org>
+ <20251024170822.1427218-11-willy@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -86,138 +62,40 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251107020557.10097-2-changfengnan@bytedance.com>
+In-Reply-To: <20251024170822.1427218-11-willy@infradead.org>
 
-Hi Fengnan,
+On Fri, Oct 24, 2025 at 06:08:18PM +0100, Matthew Wilcox (Oracle) wrote:
+> +++ b/mm/truncate.c
+> @@ -387,7 +387,7 @@ void truncate_inode_pages_range(struct address_space *mapping,
+>  	same_folio = (lstart >> PAGE_SHIFT) == (lend >> PAGE_SHIFT);
+>  	folio = __filemap_get_folio(mapping, lstart >> PAGE_SHIFT, FGP_LOCK, 0);
+>  	if (!IS_ERR(folio)) {
+> -		same_folio = lend < folio_pos(folio) + folio_size(folio);
+> +		same_folio = lend < folio_next_pos(folio);
 
-kernel test robot noticed the following build warnings:
+This causes an intermittent failure with XFS.  Two reports here:
+https://lore.kernel.org/linux-xfs/aQohjfEFmU8lef6M@casper.infradead.org/
 
-[auto build test WARNING on 4a0c9b3391999818e2c5b93719699b255be1f682]
+This is a fun one.  The "fix" I'm running with right now is:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Fengnan-Chang/block-use-bio_alloc_bioset-for-passthru-IO-by-default/20251107-100851
-base:   4a0c9b3391999818e2c5b93719699b255be1f682
-patch link:    https://lore.kernel.org/r/20251107020557.10097-2-changfengnan%40bytedance.com
-patch subject: [PATCH v2 1/2] block: use bio_alloc_bioset for passthru IO by default
-config: x86_64-kexec (https://download.01.org/0day-ci/archive/20251108/202511080837.qd2MmgFS-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251108/202511080837.qd2MmgFS-lkp@intel.com/reproduce)
+-               same_folio = lend < folio_next_pos(folio);
++               same_folio = lend < (u64)folio_next_pos(folio);
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202511080837.qd2MmgFS-lkp@intel.com/
+folio_pos() and folio_next_pos() return an loff_t.  folio_size() returns
+a size_t.  So folio_pos() + folio_size() is unsigned (by the usual C
+promotion rules).  Before this patch, this was an unsigned comparison
+against lend, and with the patch it's now a signed comparison.  Since
+lend can be -1 (to mean 'end of file'), same_folio will now be 'true'
+when it used to be 'false'.
 
-All warnings (new ones prefixed by >>):
+Funnily, on 32-bit systems, size_t is u32 and loff_t is s64, so their
+addition is also s64.  That means this has been wrong on 32-bit systems
+for ... a while.  And nobody noticed, so I guess nobody's testing 32-bit
+all that hard.
 
->> drivers/nvme/host/ioctl.c:500:3: warning: variable 'rq_flags' is uninitialized when used here [-Wuninitialized]
-     500 |                 rq_flags |= REQ_NOWAIT;
-         |                 ^~~~~~~~
-   drivers/nvme/host/ioctl.c:449:20: note: initialize the variable 'rq_flags' to silence this warning
-     449 |         blk_opf_t rq_flags;
-         |                           ^
-         |                            = 0
-   1 warning generated.
+Anyway, what's the *right* way to fix this?  Cast to (unsigned long
+long)?  There's an ssize_t, but I really want the opposite, a uloff_t.
 
-
-vim +/rq_flags +500 drivers/nvme/host/ioctl.c
-
-c0a7ba77e81b84 Jens Axboe          2022-09-21  437  
-456cba386e94f2 Kanchan Joshi       2022-05-11  438  static int nvme_uring_cmd_io(struct nvme_ctrl *ctrl, struct nvme_ns *ns,
-f569add47119fa Anuj Gupta          2022-05-11  439  		struct io_uring_cmd *ioucmd, unsigned int issue_flags, bool vec)
-456cba386e94f2 Kanchan Joshi       2022-05-11  440  {
-456cba386e94f2 Kanchan Joshi       2022-05-11  441  	struct nvme_uring_cmd_pdu *pdu = nvme_uring_cmd_pdu(ioucmd);
-fd9b8547bc5c34 Breno Leitao        2023-05-04  442  	const struct nvme_uring_cmd *cmd = io_uring_sqe_cmd(ioucmd->sqe);
-456cba386e94f2 Kanchan Joshi       2022-05-11  443  	struct request_queue *q = ns ? ns->queue : ctrl->admin_q;
-456cba386e94f2 Kanchan Joshi       2022-05-11  444  	struct nvme_uring_data d;
-456cba386e94f2 Kanchan Joshi       2022-05-11  445  	struct nvme_command c;
-38808af53c6e72 Caleb Sander Mateos 2025-03-28  446  	struct iov_iter iter;
-38808af53c6e72 Caleb Sander Mateos 2025-03-28  447  	struct iov_iter *map_iter = NULL;
-456cba386e94f2 Kanchan Joshi       2022-05-11  448  	struct request *req;
-070157fe67aee9 Fengnan Chang       2025-11-07  449  	blk_opf_t rq_flags;
-456cba386e94f2 Kanchan Joshi       2022-05-11  450  	blk_mq_req_flags_t blk_flags = 0;
-470e900c8036ff Kanchan Joshi       2022-09-30  451  	int ret;
-456cba386e94f2 Kanchan Joshi       2022-05-11  452  
-456cba386e94f2 Kanchan Joshi       2022-05-11  453  	c.common.opcode = READ_ONCE(cmd->opcode);
-456cba386e94f2 Kanchan Joshi       2022-05-11  454  	c.common.flags = READ_ONCE(cmd->flags);
-456cba386e94f2 Kanchan Joshi       2022-05-11  455  	if (c.common.flags)
-456cba386e94f2 Kanchan Joshi       2022-05-11  456  		return -EINVAL;
-456cba386e94f2 Kanchan Joshi       2022-05-11  457  
-456cba386e94f2 Kanchan Joshi       2022-05-11  458  	c.common.command_id = 0;
-456cba386e94f2 Kanchan Joshi       2022-05-11  459  	c.common.nsid = cpu_to_le32(cmd->nsid);
-456cba386e94f2 Kanchan Joshi       2022-05-11  460  	if (!nvme_validate_passthru_nsid(ctrl, ns, le32_to_cpu(c.common.nsid)))
-456cba386e94f2 Kanchan Joshi       2022-05-11  461  		return -EINVAL;
-456cba386e94f2 Kanchan Joshi       2022-05-11  462  
-456cba386e94f2 Kanchan Joshi       2022-05-11  463  	c.common.cdw2[0] = cpu_to_le32(READ_ONCE(cmd->cdw2));
-456cba386e94f2 Kanchan Joshi       2022-05-11  464  	c.common.cdw2[1] = cpu_to_le32(READ_ONCE(cmd->cdw3));
-456cba386e94f2 Kanchan Joshi       2022-05-11  465  	c.common.metadata = 0;
-456cba386e94f2 Kanchan Joshi       2022-05-11  466  	c.common.dptr.prp1 = c.common.dptr.prp2 = 0;
-456cba386e94f2 Kanchan Joshi       2022-05-11  467  	c.common.cdw10 = cpu_to_le32(READ_ONCE(cmd->cdw10));
-456cba386e94f2 Kanchan Joshi       2022-05-11  468  	c.common.cdw11 = cpu_to_le32(READ_ONCE(cmd->cdw11));
-456cba386e94f2 Kanchan Joshi       2022-05-11  469  	c.common.cdw12 = cpu_to_le32(READ_ONCE(cmd->cdw12));
-456cba386e94f2 Kanchan Joshi       2022-05-11  470  	c.common.cdw13 = cpu_to_le32(READ_ONCE(cmd->cdw13));
-456cba386e94f2 Kanchan Joshi       2022-05-11  471  	c.common.cdw14 = cpu_to_le32(READ_ONCE(cmd->cdw14));
-456cba386e94f2 Kanchan Joshi       2022-05-11  472  	c.common.cdw15 = cpu_to_le32(READ_ONCE(cmd->cdw15));
-456cba386e94f2 Kanchan Joshi       2022-05-11  473  
-7d9d7d59d44b7e Christoph Hellwig   2023-06-08  474  	if (!nvme_cmd_allowed(ns, &c, 0, ioucmd->file->f_mode & FMODE_WRITE))
-855b7717f44b13 Kanchan Joshi       2022-10-31  475  		return -EACCES;
-855b7717f44b13 Kanchan Joshi       2022-10-31  476  
-456cba386e94f2 Kanchan Joshi       2022-05-11  477  	d.metadata = READ_ONCE(cmd->metadata);
-456cba386e94f2 Kanchan Joshi       2022-05-11  478  	d.addr = READ_ONCE(cmd->addr);
-456cba386e94f2 Kanchan Joshi       2022-05-11  479  	d.data_len = READ_ONCE(cmd->data_len);
-456cba386e94f2 Kanchan Joshi       2022-05-11  480  	d.metadata_len = READ_ONCE(cmd->metadata_len);
-456cba386e94f2 Kanchan Joshi       2022-05-11  481  	d.timeout_ms = READ_ONCE(cmd->timeout_ms);
-456cba386e94f2 Kanchan Joshi       2022-05-11  482  
-38808af53c6e72 Caleb Sander Mateos 2025-03-28  483  	if (d.data_len && (ioucmd->flags & IORING_URING_CMD_FIXED)) {
-3c12a8939e0474 Pavel Begunkov      2025-05-20  484  		int ddir = nvme_is_write(&c) ? WRITE : READ;
-38808af53c6e72 Caleb Sander Mateos 2025-03-28  485  
-3c12a8939e0474 Pavel Begunkov      2025-05-20  486  		if (vec)
-3c12a8939e0474 Pavel Begunkov      2025-05-20  487  			ret = io_uring_cmd_import_fixed_vec(ioucmd,
-3c12a8939e0474 Pavel Begunkov      2025-05-20  488  					u64_to_user_ptr(d.addr), d.data_len,
-3c12a8939e0474 Pavel Begunkov      2025-05-20  489  					ddir, &iter, issue_flags);
-3c12a8939e0474 Pavel Begunkov      2025-05-20  490  		else
-38808af53c6e72 Caleb Sander Mateos 2025-03-28  491  			ret = io_uring_cmd_import_fixed(d.addr, d.data_len,
-3c12a8939e0474 Pavel Begunkov      2025-05-20  492  					ddir, &iter, ioucmd, issue_flags);
-38808af53c6e72 Caleb Sander Mateos 2025-03-28  493  		if (ret < 0)
-38808af53c6e72 Caleb Sander Mateos 2025-03-28  494  			return ret;
-38808af53c6e72 Caleb Sander Mateos 2025-03-28  495  
-38808af53c6e72 Caleb Sander Mateos 2025-03-28  496  		map_iter = &iter;
-38808af53c6e72 Caleb Sander Mateos 2025-03-28  497  	}
-38808af53c6e72 Caleb Sander Mateos 2025-03-28  498  
-456cba386e94f2 Kanchan Joshi       2022-05-11  499  	if (issue_flags & IO_URING_F_NONBLOCK) {
-888545cb43d763 Anuj Gupta          2023-01-17 @500  		rq_flags |= REQ_NOWAIT;
-456cba386e94f2 Kanchan Joshi       2022-05-11  501  		blk_flags = BLK_MQ_REQ_NOWAIT;
-456cba386e94f2 Kanchan Joshi       2022-05-11  502  	}
-585079b6e42538 Kanchan Joshi       2022-08-23  503  	if (issue_flags & IO_URING_F_IOPOLL)
-585079b6e42538 Kanchan Joshi       2022-08-23  504  		rq_flags |= REQ_POLLED;
-456cba386e94f2 Kanchan Joshi       2022-05-11  505  
-470e900c8036ff Kanchan Joshi       2022-09-30  506  	req = nvme_alloc_user_request(q, &c, rq_flags, blk_flags);
-456cba386e94f2 Kanchan Joshi       2022-05-11  507  	if (IS_ERR(req))
-456cba386e94f2 Kanchan Joshi       2022-05-11  508  		return PTR_ERR(req);
-470e900c8036ff Kanchan Joshi       2022-09-30  509  	req->timeout = d.timeout_ms ? msecs_to_jiffies(d.timeout_ms) : 0;
-470e900c8036ff Kanchan Joshi       2022-09-30  510  
-99fde895ff56ac Xinyu Zhang         2025-02-27  511  	if (d.data_len) {
-38808af53c6e72 Caleb Sander Mateos 2025-03-28  512  		ret = nvme_map_user_request(req, d.addr, d.data_len,
-38808af53c6e72 Caleb Sander Mateos 2025-03-28  513  			nvme_to_user_ptr(d.metadata), d.metadata_len,
-c4b680ac286382 Pavel Begunkov      2025-05-20  514  			map_iter, vec ? NVME_IOCTL_VEC : 0);
-470e900c8036ff Kanchan Joshi       2022-09-30  515  		if (ret)
-cd683de63e1d7c Caleb Sander Mateos 2025-03-28  516  			goto out_free_req;
-470e900c8036ff Kanchan Joshi       2022-09-30  517  	}
-456cba386e94f2 Kanchan Joshi       2022-05-11  518  
-456cba386e94f2 Kanchan Joshi       2022-05-11  519  	/* to free bio on completion, as req->bio will be null at that time */
-456cba386e94f2 Kanchan Joshi       2022-05-11  520  	pdu->bio = req->bio;
-d6aacee9255e7f Keith Busch         2023-11-30  521  	pdu->req = req;
-c0a7ba77e81b84 Jens Axboe          2022-09-21  522  	req->end_io_data = ioucmd;
-c0a7ba77e81b84 Jens Axboe          2022-09-21  523  	req->end_io = nvme_uring_cmd_end_io;
-e2e530867245d0 Christoph Hellwig   2022-05-24  524  	blk_execute_rq_nowait(req, false);
-456cba386e94f2 Kanchan Joshi       2022-05-11  525  	return -EIOCBQUEUED;
-cd683de63e1d7c Caleb Sander Mateos 2025-03-28  526  
-cd683de63e1d7c Caleb Sander Mateos 2025-03-28  527  out_free_req:
-cd683de63e1d7c Caleb Sander Mateos 2025-03-28  528  	blk_mq_free_request(req);
-cd683de63e1d7c Caleb Sander Mateos 2025-03-28  529  	return ret;
-456cba386e94f2 Kanchan Joshi       2022-05-11  530  }
-456cba386e94f2 Kanchan Joshi       2022-05-11  531  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+(now i'm going to go back through all the other patches in this series
+and see if I've made the same mistake anywhere else)
 
