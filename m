@@ -1,238 +1,205 @@
-Return-Path: <linux-fsdevel+bounces-67517-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67519-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1850C41FC2
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 08 Nov 2025 00:38:25 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26A07C4216B
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 08 Nov 2025 01:03:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C41F18920BB
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Nov 2025 23:38:50 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0AED94E65A3
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Nov 2025 00:03:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB431316194;
-	Fri,  7 Nov 2025 23:38:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B58521F956;
+	Sat,  8 Nov 2025 00:02:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="E4OMnSLC";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="av+lzygt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h5DseiMz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from flow-b3-smtp.messagingengine.com (flow-b3-smtp.messagingengine.com [202.12.124.138])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 516F0314B87;
-	Fri,  7 Nov 2025 23:38:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1604CFC1D;
+	Sat,  8 Nov 2025 00:02:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762558689; cv=none; b=jp+v6gFsE+R1LWElwRtiw4Sy6VCcq3lhp6GcnFkmNVY2diWdsoGY20MSR4kqSZ+BNiU8Tzd3IJqppkrnFDFnylk4M3fWj+UVxv8euh5iyIk+Fo+BC/Ru3Th6a0hsx71k1n6UssAozJZmlnFxWVPcQQNaETHm5jPUuxsia8li8zU=
+	t=1762560176; cv=none; b=dN1zZiNBzFy3QhVjC3Zdi1y6mUFKH68DYzBcs6C7NarkURMseskmXb7AZL/ktgPtEd4FpEGDe5aP3q+i/9L4PrsUI2n0rdkM2m4m9qgIwkTLACnlxrLn5wv7x3XHR4aR6IS+JjzgQWFVWPUttuPvWnxh938fc4DQ3Ztf08tyUXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762558689; c=relaxed/simple;
-	bh=pHPtbLi2TErUd+MN0LC96eF/g0yHByCgb4Kw0BwbT0o=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=Qw/QpLg6fQNVS79CiLfIbxJ4pIVvX9C5nhF4f0ba9B3HrRrNVD9kfscCrlptpnD1lzvQQ5mkqwGQbgXK2HpMv+uw6ffrySFlQJ53Ym5mAAcFBpJk+yXgAleG7xts7iGtnIbsCpkPUflM0O/ipU3XhAmUyj3ukHdp4Px5nnuk0RU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=E4OMnSLC; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=av+lzygt; arc=none smtp.client-ip=202.12.124.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailflow.stl.internal (Postfix) with ESMTP id 3696013001EB;
-	Fri,  7 Nov 2025 18:38:03 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-04.internal (MEProxy); Fri, 07 Nov 2025 18:38:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to; s=fm3; t=
-	1762558683; x=1762565883; bh=ZcRWR0XGRVohQHNqpTmVOGqvgKfDCmeABc6
-	Q5B6kVA0=; b=E4OMnSLCME0PmpfRUhAwNxIceLFq3/FAK5GtwevM7iICUCUuV5x
-	chVCFB6fdmay7+ooFw0uv6Azy1ChdRqJqvR+mkrCRIpg73LnR+/X59PszjPwZ/rz
-	8CPuwHb/xwC5N1QSJvSaLdjI57addGAeTJRkLimMYRo6wgCZPhDhW+hNxZlCxMuJ
-	hAPkIxK9zjio+5tvTHBm3a+bqM8CDMop81FHuSYzFd2NCfNmjV5NgDtUDa2Eyf25
-	3VuDhIEZvIbIrGiHuAnMLfItwaVgsWO7Q33GX+ggP6/jGDAegWeYBoQRn47aNko2
-	PunoNsPduYvN8zewgDdm1dEy75bfZgIQYaQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762558683; x=
-	1762565883; bh=ZcRWR0XGRVohQHNqpTmVOGqvgKfDCmeABc6Q5B6kVA0=; b=a
-	v+lzygtoc1HX4ZadDskwTpZwJtb1oG3peL6O0gr4iO5O5jYd+vaRP7/no7N27oF3
-	EzxSXy6KoH6IHmfzzAjLPr0QATO37tQfExkHIQ/kLMEtcMIpZa9opvRREQRlIldG
-	Q9D0WkBAPuYtKKTvP1JAxo1/Rx7n6G2bitd51++grbdTyzCWIWx3DW0/Nhivcp1A
-	s7ZtqshuHntLjgQgQJ+crHlgWYzKyD5izePEyTID8AqXRiIHiDEt9qwC/wQbmAXC
-	g/7fHF+pLwFi9swg49B8mIz8mdbJ+nyJwVG9AYbNRT/JTg129nrTn8NZkPgHxX+2
-	7BatW30ZGfoIC5BANZTig==
-X-ME-Sender: <xms:04IOaUS1llkqfnpj0hP0k9hck1nUGtgZum40Y0dtCM64yfklBqqJ5g>
-    <xme:04IOaV4vrSP4x6QNhepje5WcwIcNTd1apJim4xvCzIrniX8SAiYXqKNGGHIuD1WKQ
-    33nU51_RKbR52XMFfrIspvHlzrBn079yJ8CWMmi6dxhoUy63Q>
-X-ME-Received: <xmr:04IOaT3MWpLgDLL757W25o-tMfqjGpak2vFwG2uUDPGL2GuLLHFgVWSCwflcxilp3PZXpLTiHfR-SxGJx5w8TjROMf9sHRUcJd4NP_ZWYt62>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduledutddtucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnegouf
-    hprghmfghrlhculdeftddtmdenucfjughrpegtgfgghffvvefujghffffkrhesthhqredt
-    tddtjeenucfhrhhomheppfgvihhluehrohifnhcuoehnvghilhgssehofihnmhgrihhlrd
-    hnvghtqeenucggtffrrghtthgvrhhnpedvueetleekjeekveetteevtdekgeeludeifedt
-    feetgfdttdeljefglefgveffieenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuuf
-    hprghmfghrlhephhhtthhpshemsddslhhorhgvrdhkvghrnhgvlhdrohhrghdsrghllhds
-    jeeiieeffeeileekvdeltdehuddurdehfedtvdekfeekqdelqdgurghvvgdrhhgrnecuve
-    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhgvihhlsges
-    ohifnhhmrghilhdrnhgvthdpnhgspghrtghpthhtohepleejpdhmohguvgepshhmthhpoh
-    huthdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpdhr
-    tghpthhtohepfhhrrghnkhdrlhhisehvihhvohdrtghomhdprhgtphhtthhopehlihhnuh
-    igqdigfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidq
-    uhhnihhonhhfshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuh
-    igqdhnihhlfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhu
-    gidqnhhfshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqd
-    hkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhig
-    qdhhrghruggvnhhinhhgsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplh
-    hinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:04IOaUUP8Agp5i-ePskgdOIZ3qDw3X8wH2n0PkSgIS-qUH6nBwUnqg>
-    <xmx:04IOaTnQGxLDK6TRtOgEGVijEWvd6FvZOuwL0vyqcWwYM4LX-zVZXA>
-    <xmx:04IOaVhEuGeVrKovELx7lzKD-9IxEW9YEYZ2LQZX-iUA996QSWwOgg>
-    <xmx:04IOab5K6Z-7wWhbIK2-S_EvLNyL4_2HwgPfi2l7GSRp7-b2X_0qug>
-    <xmx:24IOabMc8-grgTNo-sBp23kB4IC_01hhvLJuap-Y8_HG_nozNoQTctxM>
-Feedback-ID: iab3e480c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 7 Nov 2025 18:37:32 -0500 (EST)
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1762560176; c=relaxed/simple;
+	bh=viNt9afbNBdtQqi1Dc1Q/j7+Plf7H/XEwFpGMxTCOlo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oFpXHDFgZdPplsH4C3pcdfLJ/vd5tzPypLzhZ0z6FxplY/FUJcIljJLGeG6hN7FaMaqJFu7xjN1CLedxi1JE6TZJEpQoNQzkFcv0YnacdKuej8vX2JoqguGg3T359nV0nHwiO3eLMX4Uqj4tilxr6Cbi5O0fGxNoA0cUag7+zjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h5DseiMz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 849BFC116C6;
+	Sat,  8 Nov 2025 00:02:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762560175;
+	bh=viNt9afbNBdtQqi1Dc1Q/j7+Plf7H/XEwFpGMxTCOlo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=h5DseiMzmvLusOH9gxk8iMToJaHV8GBC57kLneHq2mdC90oGQ9YT+Z9sk8VyBK252
+	 iViivnBvYzJTWO/gojQ+2Vgwus0vyaRWdzqIcVV1OdhwBBQUACstwXLYvwwduikoT7
+	 EQwD00ty3ghInmqVOFqy8BegCbwOXIx8CqNXXGQWpaQKbdt6aGFMQvIBuSYKQTFJ4d
+	 PE0onTIwzmK7m5VrGTZzBY7jx9Ra9KhMbrl7OGmqr9O23zCjdPd5c1qEwXdjQ/QJWb
+	 8Mbng12xMCEwm4ERBgO4axkOFW+PYtFpg69/n4fXCoUy2IqwJd9xN17jv5E5MEjQPU
+	 bT05F1F21d+Qw==
+Date: Fri, 7 Nov 2025 16:02:54 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Bernd Schubert <bernd@bsbernd.com>
+Cc: Joanne Koong <joannelkoong@gmail.com>, miklos@szeredi.hu,
+	neal@gompa.dev, linux-ext4@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 1/5] fuse: flush pending fuse events before aborting the
+ connection
+Message-ID: <20251108000254.GK196391@frogsfrogsfrogs>
+References: <176169809222.1424347.16562281526870178424.stgit@frogsfrogsfrogs>
+ <176169809274.1424347.4813085698864777783.stgit@frogsfrogsfrogs>
+ <CAJnrk1ZovORC=tLW-Q94XXY5M4i5WUd4CgRKEo7Lc7K2Sg+Kog@mail.gmail.com>
+ <20251103221349.GE196370@frogsfrogsfrogs>
+ <CAJnrk1a4d__8RHu0EGN2Yfk3oOhqZLJ7fBCNQYdHoThPrvnOaQ@mail.gmail.com>
+ <20251106001730.GH196358@frogsfrogsfrogs>
+ <CAJnrk1Ycsw0pn+Qdo5+4adVrjha=ypofE_Wk0GwLwrandpjLeQ@mail.gmail.com>
+ <20251107042619.GK196358@frogsfrogsfrogs>
+ <e0b83d5f-d6b2-4383-a90f-437437d4cb75@bsbernd.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: NeilBrown <neilb@ownmail.net>
-To: "Jeff Layton" <jlayton@kernel.org>
-Cc: "Jonathan Corbet" <corbet@lwn.net>,
- "Eric Van Hensbergen" <ericvh@kernel.org>,
- "Latchesar Ionkov" <lucho@ionkov.net>,
- "Dominique Martinet" <asmadeus@codewreck.org>,
- "Christian Schoenebeck" <linux_oss@crudebyte.com>,
- "David Sterba" <dsterba@suse.com>, "David Howells" <dhowells@redhat.com>,
- "Marc Dionne" <marc.dionne@auristor.com>,
- "Alexander Viro" <viro@zeniv.linux.org.uk>,
- "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>,
- "Tigran A. Aivazian" <aivazian.tigran@gmail.com>,
- "Chris Mason" <clm@fb.com>, "Xiubo Li" <xiubli@redhat.com>,
- "Ilya Dryomov" <idryomov@gmail.com>, "Jan Harkes" <jaharkes@cs.cmu.edu>,
- coda@cs.cmu.edu, "Tyler Hicks" <code@tyhicks.com>,
- "Jeremy Kerr" <jk@ozlabs.org>, "Ard Biesheuvel" <ardb@kernel.org>,
- "Namjae Jeon" <linkinjeon@kernel.org>,
- "Sungjong Seo" <sj1557.seo@samsung.com>,
- "Yuezhang Mo" <yuezhang.mo@sony.com>, "Theodore Ts'o" <tytso@mit.edu>,
- "Andreas Dilger" <adilger.kernel@dilger.ca>,
- "Jaegeuk Kim" <jaegeuk@kernel.org>, "Chao Yu" <chao@kernel.org>,
- "OGAWA Hirofumi" <hirofumi@mail.parknet.co.jp>,
- "Miklos Szeredi" <miklos@szeredi.hu>,
- "Andreas Gruenbacher" <agruenba@redhat.com>,
- "Viacheslav Dubeyko" <slava@dubeyko.com>,
- "John Paul Adrian Glaubitz" <glaubitz@physik.fu-berlin.de>,
- "Yangtao Li" <frank.li@vivo.com>, "Richard Weinberger" <richard@nod.at>,
- "Anton Ivanov" <anton.ivanov@cambridgegreys.com>,
- "Johannes Berg" <johannes@sipsolutions.net>,
- "Mikulas Patocka" <mikulas@artax.karlin.mff.cuni.cz>,
- "Muchun Song" <muchun.song@linux.dev>,
- "Oscar Salvador" <osalvador@suse.de>,
- "David Hildenbrand" <david@redhat.com>,
- "David Woodhouse" <dwmw2@infradead.org>,
- "Dave Kleikamp" <shaggy@kernel.org>,
- "Trond Myklebust" <trondmy@kernel.org>,
- "Anna Schumaker" <anna@kernel.org>,
- "Ryusuke Konishi" <konishi.ryusuke@gmail.com>,
- "Konstantin Komarov" <almaz.alexandrovich@paragon-software.com>,
- "Mark Fasheh" <mark@fasheh.com>, "Joel Becker" <jlbec@evilplan.org>,
- "Joseph Qi" <joseph.qi@linux.alibaba.com>,
- "Bob Copeland" <me@bobcopeland.com>,
- "Mike Marshall" <hubcap@omnibond.com>,
- "Martin Brandenburg" <martin@omnibond.com>,
- "Amir Goldstein" <amir73il@gmail.com>,
- "Steve French" <sfrench@samba.org>, "Paulo Alcantara" <pc@manguebit.org>,
- "Ronnie Sahlberg" <ronniesahlberg@gmail.com>,
- "Shyam Prasad N" <sprasad@microsoft.com>, "Tom Talpey" <tom@talpey.com>,
- "Bharath SM" <bharathsm@microsoft.com>,
- "Zhihao Cheng" <chengzhihao1@huawei.com>,
- "Hans de Goede" <hansg@kernel.org>, "Carlos Maiolino" <cem@kernel.org>,
- "Hugh Dickins" <hughd@google.com>,
- "Baolin Wang" <baolin.wang@linux.alibaba.com>,
- "Andrew Morton" <akpm@linux-foundation.org>,
- "Kees Cook" <kees@kernel.org>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- linux-kernel@vger.kernel.org, v9fs@lists.linux.dev,
- linux-fsdevel@vger.kernel.org, linux-afs@lists.infradead.org,
- linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org,
- codalist@coda.cs.cmu.edu, ecryptfs@vger.kernel.org,
- linux-efi@vger.kernel.org, linux-ext4@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, gfs2@lists.linux.dev,
- linux-um@lists.infradead.org, linux-mm@kvack.org,
- linux-mtd@lists.infradead.org, jfs-discussion@lists.sourceforge.net,
- linux-nfs@vger.kernel.org, linux-nilfs@vger.kernel.org,
- ntfs3@lists.linux.dev, ocfs2-devel@lists.linux.dev,
- linux-karma-devel@lists.sourceforge.net, devel@lists.orangefs.org,
- linux-unionfs@vger.kernel.org, linux-cifs@vger.kernel.org,
- samba-technical@lists.samba.org, linux-xfs@vger.kernel.org,
- linux-hardening@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: LLM disclosure (was: [PATCH v2] vfs: remove the excl argument
- from the ->create() inode_operation)
-In-reply-to: <f5a2c41e4f272fef9f1525e17b494dd4b4bcb529.camel@kernel.org>
-References: <20251107-create-excl-v2-1-f678165d7f3f@kernel.org>,
- <176255458305.634289.5577159882824096330@noble.neil.brown.name>,
- <87ikfl1nfe.fsf@trenco.lwn.net>,
- <f5a2c41e4f272fef9f1525e17b494dd4b4bcb529.camel@kernel.org>
-Date: Sat, 08 Nov 2025 10:37:30 +1100
-Message-id: <176255865045.634289.1814933499430115577@noble.neil.brown.name>
-Reply-To: NeilBrown <neil@brown.name>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <e0b83d5f-d6b2-4383-a90f-437437d4cb75@bsbernd.com>
 
-On Sat, 08 Nov 2025, Jeff Layton wrote:
-> On Fri, 2025-11-07 at 15:35 -0700, Jonathan Corbet wrote:
-> > NeilBrown <neilb@ownmail.net> writes:
-> >=20
-> > > On Sat, 08 Nov 2025, Jeff Layton wrote:
-> >=20
-> > > > Full disclosure: I did use Claude code to generate the first
-> > > > approximation of this patch, but I had to fix a number of things that=
- it
-> > > > missed.  I probably could have given it better prompts. In any case, =
-I'm
-> > > > not sure how to properly attribute this (or if I even need to).
-> > >=20
-> > > My understanding is that if you fully understand (and can defend) the
-> > > code change with all its motivations and implications as well as if you
-> > > had written it yourself, then you don't need to attribute whatever fancy
-> > > text editor or IDE (e.g.  Claude) that you used to help produce the
-> > > patch.
-> >=20
-> > The proposed policy for such things is here, under review right now:
-> >=20
-> >   https://lore.kernel.org/all/20251105231514.3167738-1-dave.hansen@linux.=
-intel.com/
-> >=20
-> > jon
->=20
-> Thanks Jon.
->=20
-> I'm guessing that this would fall under the "menial task"
-> classification, and therefore doesn't need attribution. This seems
-> applicable:
->=20
-> + - Purely mechanical transformations like variable renaming
->=20
-> This is a little different, but it's a similar rote task.
-> --=20
-> Jeff Layton <jlayton@kernel.org>
->=20
+On Fri, Nov 07, 2025 at 11:03:24PM +0100, Bernd Schubert wrote:
+> 
+> 
+> On 11/7/25 05:26, Darrick J. Wong wrote:
+> > [I read this email backwards, like I do]
+> > 
+> > On Thu, Nov 06, 2025 at 10:37:41AM -0800, Joanne Koong wrote:
+> >> On Wed, Nov 5, 2025 at 4:17 PM Darrick J. Wong <djwong@kernel.org> wrote:
+> >>>
+> >>> On Tue, Nov 04, 2025 at 11:22:26AM -0800, Joanne Koong wrote:
+> >>>
+> >>> <snipping here because this thread has gotten very long>
+> >>>
+> >>>>>>> +       while (wait_event_timeout(fc->blocked_waitq,
+> >>>>>>> +                       !fc->connected || atomic_read(&fc->num_waiting) == 0,
+> >>>>>>> +                       HZ) == 0) {
+> >>>>>>> +               /* empty */
+> >>>>>>> +       }
+> >>>>>>
+> >>>>>> I'm wondering if it's necessary to wait here for all the pending
+> >>>>>> requests to complete or abort?
+> >>>>>
+> >>>>> I'm not 100% sure what the fuse client shutdown sequence is supposed to
+> >>>>> be.  If someone kills a program with a large number of open unlinked
+> >>>>> files and immediately calls umount(), then the fuse client could be in
+> >>>>> the process of sending FUSE_RELEASE requests to the server.
+> >>>>>
+> >>>>> [background info, feel free to speedread this paragraph]
+> >>>>> For a non-fuseblk server, unmount aborts all pending requests and
+> >>>>> disconnects the fuse device.  This means that the fuse server won't see
+> >>>>> all the FUSE_REQUESTs before libfuse calls ->destroy having observed the
+> >>>>> fusedev shutdown.  The end result is that (on fuse2fs anyway) you end up
+> >>>>> with a lot of .fuseXXXXX files that nobody cleans up.
+> >>>>>
+> >>>>> If you make ->destroy release all the remaining open files, now you run
+> >>>>> into a second problem, which is that if there are a lot of open unlinked
+> >>>>> files, freeing the inodes can collectively take enough time that the
+> >>>>> FUSE_DESTROY request times out.
+> >>>>>
+> >>>>> On a fuseblk server with libfuse running in multithreaded mode, there
+> >>>>> can be several threads reading fuse requests from the fusedev.  The
+> >>>>> kernel actually sends its own FUSE_DESTROY request, but there's no
+> >>>>> coordination between the fuse workers, which means that the fuse server
+> >>>>> can process FUSE_DESTROY at the same time it's processing FUSE_RELEASE.
+> >>>>> If ->destroy closes the filesystem before the FUSE_RELEASE requests are
+> >>>>> processed, you end up with the same .fuseXXXXX file cleanup problem.
+> >>>>
+> >>>> imo it is the responsibility of the server to coordinate this and make
+> >>>> sure it has handled all the requests it has received before it starts
+> >>>> executing the destruction logic.
+> >>>
+> >>> I think we're all saying that some sort of fuse request reordering
+> >>> barrier is needed here, but there's at least three opinions about where
+> >>> that barrier should be implemented.  Clearly I think the barrier should
+> >>> be in the kernel, but let me think more about where it could go if it
+> >>> were somewhere else.
+> >>>
+> >>> First, Joanne's suggestion for putting it in the fuse server itself:
+> >>>
+> >>> I don't see how it's generally possible for the fuse server to know that
+> >>> it's processed all the requests that the kernel might have sent it.
+> >>> AFAICT each libfuse thread does roughly this:
+> >>>
+> >>> 1. read() a request from the fusedev fd
+> >>> 2. decode the request data and maybe do some allocations or transform it
+> >>> 3. call fuse server with request
+> >>> 4. fuse server does ... something with the request
+> >>> 5. fuse server finishes, hops back to libfuse / calls fuse_reply_XXX
+> >>>
+> >>> Let's say thread 1 is at step 4 with a FUSE_DESTROY.  How does it find
+> >>> out if there are other fuse worker threads that are somewhere in steps
+> >>> 2 or 3?  AFAICT the library doesn't keep track of the number of threads
+> >>> that are waiting in fuse_session_receive_buf_internal, so fuse servers
+> >>> can't ask the library about that either.
+> >>>
+> >>> Taking a narrower view, it might be possible for the fuse server to
+> >>> figure this out by maintaining an open resource count.  It would
+> >>> increment this counter when a FUSE_{OPEN,CREATE} request succeeds and
+> >>> decrement it when FUSE_RELEASE comes in.  Assuming that FUSE_RELEASE is
+> >>> the only kind of request that can be pending when a FUSE_DESTROY comes
+> >>> in, then destroy just has to wait for the counter to hit zero.
+> >>
+> >> I was thinking this logic could be in libfuse's fuse_loop_mt.c. Where
+> >> if there are X worker threads that are all running fuse_do_work( )
+> >> then if you get a FUSE_DESTROY on one of those threads that thread can
+> >> set some se->destroyed field. At this point the other threads will
+> >> have already called fuse_session_receive_buf_internal() on all the
+> >> flushed background requests, so after they process it and return from
+> >> fuse_session_process_buf_internal(), then they check if se->destroyed
+> >> was set, and if it is they exit the thread, while in the thread that
+> >> got the FUSE_DESTROY it sleeps until all the threads have completed
+> >> and then it executes the destroy logic.That to me seems like the
+> >> cleanest approach.
+> > 
+> > Hrm.  Well now (scrolling to the bottom and back) that I know that the
+> > FUSE_DESTROY won't get put on the queue ahead of the FUSE_RELEASEs, I
+> > think that /could/ work.
+> > 
+> > One tricky thing with having worker threads check a flag and exit is
+> > that they can be sleeping in the kernel (from _fuse_session_receive_buf)
+> > when the "just go away" flag gets set.  If the thread never wakes up,
+> > then it'll never exit.  In theory you could have the FUSE_DESTROY thread
+> > call pthread_cancel on all the other worker threads to eliminate them
+> > once they emerge from PTHREAD_CANCEL_DISABLE state, but I still have
+> > nightmares from adventures in pthread_cancel at Sun in 2002. :P
+> > 
+> > Maybe an easier approach would be to have fuse_do_work increment a
+> > counter when it receives a buffer and decrement it when it finishes with
+> > that buffer.  The FUSE_DESTROY thread merely has to wait for that
+> > counter to reach 1, at which point it's the only thread with a request
+> > to process, so it can call do_destroy.  That at least would avoid adding
+> > a new user of pthread_cancel() into the mt loop code.
+> 
+> I will read through the rest (too tired right now) durig the weekend. 
+> I was also thinking about counter. And let's please also do this right
+> also handling io-uring. I.e. all CQEs needs to have been handled.
+> Without io-uring it would be probably a counter in decreased in 
+> fuse_free_req(), with io-uring it is a bit more complex.
 
-The bit I particularly liked was:
+Oh right, the uring backend.
 
-+
-+Even if your tool use is out of scope you should still always consider
-+if it would help reviewing your contribution if the reviewer knows
-+about the tool that you used.
-+
+Assuming that it's really true that the only requests pending during an
+unmount are going to be FUSE_RELEASE (nobody's actually said that's
+true) then it's *much* easier to count the number of open files in
+fuse_session and make _do_destroy in the lowlevel library wait until the
+open file count reaches zero.
 
-"would it help the reviewer"?  I agree that is a key question.  In your
-case I cannot see how it would help.
+--D
 
-Thanks,
-NeilBrown
+> Thanks,
+> Bernd
+> 
 
