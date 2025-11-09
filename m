@@ -1,139 +1,169 @@
-Return-Path: <linux-fsdevel+bounces-67581-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67582-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2878BC43D16
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 09 Nov 2025 13:08:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A49CC43D4D
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 09 Nov 2025 13:19:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3D363AA257
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Nov 2025 12:08:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12AAA3A8438
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Nov 2025 12:19:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB3AF2E7BCC;
-	Sun,  9 Nov 2025 12:07:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86F832EBDF2;
+	Sun,  9 Nov 2025 12:19:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="heNWA8ss"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nAvIbX3P"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20F042E401;
-	Sun,  9 Nov 2025 12:07:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 513E72EBBB0
+	for <linux-fsdevel@vger.kernel.org>; Sun,  9 Nov 2025 12:19:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762690076; cv=none; b=WjyIVEENnjwD8rq39ID5cDQVk7Vy/0o/bqDmmL+QFavowGJxwCPbsLgc+ozDtNhL/aKRwXLqHrA+sCFrT0MmGm5FeD6patMbYHIv38iwT7lvXipK0lwMjqLeHj0hb6PgFd8L+aTlVJHXeZejmpPr/HlcGxbGJHkKKtGW2ve9AdE=
+	t=1762690781; cv=none; b=N5OR6eZMoBcb2nPo1B2Lxaxu5YD2ca4P7XoRDOX7gyQXXheYI7KM1i1CTILIKWJDdLF13dEgzhJKfKFSQUVW2wwVAWEbk3kZR6kel2qac6KPF8GR7dT+wj9cNAQndlAkE00FoycZzfGi7HcbYq9SyW9xkJXkl+D8sTNzdckyIVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762690076; c=relaxed/simple;
-	bh=wt8Tw4gjZkaNxNmkQRYq0c4tnrM8t3SmfvyuWifw7KI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EIyXqLNhZn4dEtNsNI7/2DvdJvcLS8g5r7ZXPk72rppAvX1UHW9twc+0LCGoP74oqlP+hjB5Z9M4YF2VcoUlgc6Lj3akHYGgCgTZzbCa5R1wGd85cR2J2DbW4tGHJTn90wBpaEdUwkH6k3VqUK5lNgCNn1IwXqz3fRExvDQtwb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=heNWA8ss; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D888C116B1;
-	Sun,  9 Nov 2025 12:07:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762690075;
-	bh=wt8Tw4gjZkaNxNmkQRYq0c4tnrM8t3SmfvyuWifw7KI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=heNWA8ssDvVMPu2hNsx+R4Okyv2M/nREqV+VPSvKtaOSrQ7YdEiyVg0wxtrKhq8hr
-	 mKDRZ365+lJFHw/5zgIKjA2pEaNMh16vZfrF9tMPm6o3xib89gAxuHKRDu5mkobU5H
-	 QGl0LUOMssceEqb7cE6y944DOkrdWe6OjvC+Y5/wq0+mwgz2JVuYVvARCqOvNORWti
-	 yR9XluuWtZI8lnbeGxJekZH97BwhKuprtoq1TAx1stS0C/vBLJey0Q+aF9Sn/ce9HS
-	 eRC0hvW6r4C6TGCI1KdFCuVWH6GMsjdFESxr/LvKrtgUFeG/9iI5qmbFFgfKAH5/YQ
-	 OdiZ2La3m2plg==
-Date: Sun, 9 Nov 2025 13:07:52 +0100
-From: Alejandro Colomar <alx@kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, linux-man@vger.kernel.org, 
-	Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>, "G. Branden Robinson" <branden@debian.org>, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3] man/man3/readdir.3, man/man3type/stat.3type: Improve
- documentation about .d_ino and .st_ino
-Message-ID: <aer4p5dc3ukmqo4ydigujtjdr5evtp6zutcyjgcnedc4eeibdn@eabfm6kibcyy>
-References: <h7mdd3ecjwbxjlrj2wdmoq4zw4ugwqclzonli5vslh6hob543w@hbay377rxnjd>
- <bfa7e72ea17ed369a1cf7589675c35728bb53ae4.1761907223.git.alx@kernel.org>
- <20251031152531.GP6174@frogsfrogsfrogs>
- <rg6xzjm5vw2j5ercxiihm2pdedc4brdslngiih6eknvod66oqk@tz3gue33a7fe>
- <tkh3cbnxbixmeuprlfrpfbzm5l6y6ne3i424wswd7ymspuu6as@h2hzgun5moff>
+	s=arc-20240116; t=1762690781; c=relaxed/simple;
+	bh=RI8OG7v0LCuN6zw8dyXHr6xSbJ0eZb2RqvOZGNNRbbg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pmFfL+qQgaEm9R2sHQC7V+CnE+0I/FvKoDSUB+s89n7aSa2gSjieMlHn20nFA1Xs6lVndQgjVEZP4587cbLOU7tBwze5fC9x1r75RtrqYEkTGNgHKsmKG36Q4vdVyRqACirgTOZk3RmU81Ol6KXf8eCnl5qxLegIuiTJ/4c1314=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nAvIbX3P; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-64149f78c0dso2504781a12.3
+        for <linux-fsdevel@vger.kernel.org>; Sun, 09 Nov 2025 04:19:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762690778; x=1763295578; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=v+qAufXH6G8vBsUnnnyRTAQrC2PGUzHUrWi4FrePh40=;
+        b=nAvIbX3Pg2g4JqWwlWF9b+l2JtGk2BJmfDZ7vvVnscbUnwk1p5/NmbDl8MKv9pGPZA
+         bH7qtGO8eDrFqgTm58ydHh4JLhDlXDWQQOiIdXYGs60GqQ8aQSfh+8nR2nKQUnyl5nb4
+         vY3gOLvwZKRLi9Nh1VAFiNKsC76JRCkKhJeBWZUnrP8SO5d+jxp3RqQ2rxfo0LTNKcGJ
+         0GARNAMGHWF3lyLk7/nTNySw4N67j6I7UrYgrbxa2nUcRn3+S6TGDwOQ3nsMnPLGTFOx
+         zO2g6kKEZtZZTQLIoPIkmMUVpW3FVnfKfa2BHr32hpMHKE/af2y43bpSreYAC5BeVzs2
+         /VYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762690778; x=1763295578;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=v+qAufXH6G8vBsUnnnyRTAQrC2PGUzHUrWi4FrePh40=;
+        b=G7qXeywypQDyQg8TQtOCUS7DGgRqhn34RCy/iLVoSXsytxqdQ/2XNnU3HEPEfT103F
+         Ud49FJTTh8VTvzuUrBgnOOJ+KhopLG+g2QcJoIz8T0bvMfuzpyXkI8JVxvpFfnXoIx/C
+         cjjI8WXpdBzHaP9EEbATKUkVP8ldSbg6ws2MqhK/Vl36Zjn4bHtSwMAaodueZ+5cioBu
+         4p3Y1fMEtgeOgtejWUn19XzJvkBQluVIMHsEnNeNwAqMBPMF0ynsazRG2bfl/YH9Hp91
+         iIe9nTKZvk5KcUjNUQT/IPIvL39X5qNYKX6fs67+SI0DTU+tkilPKlSCTYtrl2SWDTb9
+         w18g==
+X-Forwarded-Encrypted: i=1; AJvYcCVDT2WQgj3GFi59OHpUxvVETPRuCCU34ePtbKhtSOmAMuigVmQaKQgSJTlQfTuO9SVQ1hVEl2QwkAFVXF2x@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywwni0CguLuNA3mJsObkYBuSO7l7UibJ+d+tcrl17t25LOLFrVU
+	DoXLwTXpBDJOvYbm9n3LxQneHu0BVuuDgZ30B+jGA7Q0dxIa5PMNpbrZ
+X-Gm-Gg: ASbGncvV57jMGudCVg8+EwotXaJETtkllRf9Mt7ibZPN6+O+1RGiGY9FKIZB9BQWeJH
+	FeVZwzxRIjLDs0+8uzMOWAT5LyFAMM0JSvKRSjNLrAqHxjZYynAunD/XYF8eU88j6ozu5r5+yuh
+	7w8vyP+SAEYOckL75+x6fazXwL5JM7Hs6+9ZKSRl7IIcdVsaXKvB5H+aHy3MFnwNIwkfnRsFRUm
+	zA+kfSLpkSIZc1DdQugrnBMj+UHkyqDqBD8+lJlg234g0A2M1YeG6HM4MXfqfF0YSpJ7ou4zSM1
+	7r4VP6zTti6O4rJLk4O8rlKuZoQy3RXAdjshiZuVwMWyE03WPLdeXRDB7iaGnMN8t4RamGoO1BB
+	SGejsTX/I1KaAzUMtMMUMnXumaR7u9/6XY/QH/hoZJ+aMj4KqcBV+xcE/qUqufv7xKD2eGehazq
+	QveXGgyoEmeyoyq7GjAJ/XbkCiozaOS1VIAWs6Od5vuZSmW/wHSEpgfcaFka0=
+X-Google-Smtp-Source: AGHT+IESsSrfC3NJ8IFNuotOFPOATY0CGb9MaPKj5bpd2i2c9yv5ol0qKlnUskE2eI2wayN6ZZs9LQ==
+X-Received: by 2002:a17:907:3ea9:b0:b6d:7db1:49aa with SMTP id a640c23a62f3a-b72e05dac61mr464154066b.63.1762690777282;
+        Sun, 09 Nov 2025 04:19:37 -0800 (PST)
+Received: from f.. (cst-prg-14-82.cust.vodafone.cz. [46.135.14.82])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72d7996c4csm600245666b.5.2025.11.09.04.19.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 09 Nov 2025 04:19:35 -0800 (PST)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: brauner@kernel.org
+Cc: viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH] fs: move inode fields used during fast path lookup closer together
+Date: Sun,  9 Nov 2025 13:19:31 +0100
+Message-ID: <20251109121931.1285366-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="qdpvxircad6tnokw"
-Content-Disposition: inline
-In-Reply-To: <tkh3cbnxbixmeuprlfrpfbzm5l6y6ne3i424wswd7ymspuu6as@h2hzgun5moff>
+Content-Transfer-Encoding: 8bit
 
+This should avoid *some* cache misses.
 
---qdpvxircad6tnokw
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, linux-man@vger.kernel.org, 
-	Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>, "G. Branden Robinson" <branden@debian.org>, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3] man/man3/readdir.3, man/man3type/stat.3type: Improve
- documentation about .d_ino and .st_ino
-Message-ID: <aer4p5dc3ukmqo4ydigujtjdr5evtp6zutcyjgcnedc4eeibdn@eabfm6kibcyy>
-References: <h7mdd3ecjwbxjlrj2wdmoq4zw4ugwqclzonli5vslh6hob543w@hbay377rxnjd>
- <bfa7e72ea17ed369a1cf7589675c35728bb53ae4.1761907223.git.alx@kernel.org>
- <20251031152531.GP6174@frogsfrogsfrogs>
- <rg6xzjm5vw2j5ercxiihm2pdedc4brdslngiih6eknvod66oqk@tz3gue33a7fe>
- <tkh3cbnxbixmeuprlfrpfbzm5l6y6ne3i424wswd7ymspuu6as@h2hzgun5moff>
-MIME-Version: 1.0
-In-Reply-To: <tkh3cbnxbixmeuprlfrpfbzm5l6y6ne3i424wswd7ymspuu6as@h2hzgun5moff>
+Successful path lookup is guaranteed to load at least ->i_mode,
+->i_opflags and ->i_acl. At the same time the common case will avoid
+looking at more fields.
 
-Hi Jan, Darrick, Pali,
+struct inode is not guaranteed to have any particular alignment, notably
+ext4 has it only aligned to 8 bytes meaning nearby fields might happen
+to be on the same or only adjacent cache lines depending on luck (or no
+luck).
 
-On Mon, Nov 03, 2025 at 12:28:21PM +0100, Jan Kara wrote:
-> On Sun 02-11-25 22:17:06, Alejandro Colomar wrote:
-> > On Fri, Oct 31, 2025 at 08:25:31AM -0700, Darrick J. Wong wrote:
-> > > On Fri, Oct 31, 2025 at 11:44:14AM +0100, Alejandro Colomar wrote:
-> > > > +If the directory entry is the mount point,
-> > >=20
-> > > nitpicking english:
-> > >=20
-> > > "...is a mount point," ?
-> >=20
-> > I think you're right.  Unless Jan and Pali meant something more
-> > specific.  Jan, Pali, can you please confirm?
->=20
-> Yes, Darrick is right :).
+According to pahole:
+        umode_t                    i_mode;               /*     0     2 */
+        short unsigned int         i_opflags;            /*     2     2 */
+        kuid_t                     i_uid;                /*     4     4 */
+        kgid_t                     i_gid;                /*     8     4 */
+        unsigned int               i_flags;              /*    12     4 */
+        struct posix_acl *         i_acl;                /*    16     8 */
+        struct posix_acl *         i_default_acl;        /*    24     8 */
 
-Thanks!  I've amended the patch with that, added the Reviewed-by tags,
-and pushed.
+->i_acl is unnecessarily separated by 8 bytes from the other fields.
+With struct inode being offset 48 bytes into the cacheline this means an
+avoidable miss. Note it will still be there for the 56 byte case.
 
+New layout:
+        umode_t                    i_mode;               /*     0     2 */
+        short unsigned int         i_opflags;            /*     2     2 */
+        unsigned int               i_flags;              /*     4     4 */
+        struct posix_acl *         i_acl;                /*     8     8 */
+        struct posix_acl *         i_default_acl;        /*    16     8 */
+        kuid_t                     i_uid;                /*    24     4 */
+        kgid_t                     i_gid;                /*    28     4 */
 
-Have a lovely day!
-Alex
+I verified with pahole there are no size or hole changes.
 
---=20
-<https://www.alejandro-colomar.es>
-Use port 80 (that is, <...:80/>).
+This is stopgap until someone(tm) sanitizes the layout in the first
+place, allocation methods aside.
 
---qdpvxircad6tnokw
-Content-Type: application/pgp-signature; name="signature.asc"
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+---
 
------BEGIN PGP SIGNATURE-----
+> Successful path lookup is guaranteed to load at least ->i_mode,
+> ->i_opflags and ->i_acl. At the same time the common case will avoid
+> looking at more fields.
 
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmkQhBcACgkQ64mZXMKQ
-wqnHnBAAmtz9qFn6qvmKCbIgCNEfmLZ4JSiv40ilWecl+EtrEE0EjAMfyzE6AbJY
-zGiaax1RRB9ebjMR+QeZYPrOJnfMwSZufdFHfHCDOx4kSFe1ZEvt54cMZ6k5SBdL
-UPjFZLmrUtaB5lQmmVntTpftLxMw8QdYR/wM6dtTDEAInBEUMqen39eAt8p5MQ1L
-sueOMPjKnMdyfPnI9Bfz3lOQV/MFrnfyywn4A17VO7m5Lk9JeTEjjGWtXvrxaMIY
-/pBriPIv5NK3YqCZ2qC7e7+SO/EAW26wFGzxNiwAFm3DOUAMSGW4gAQ1V/JVcQwu
-0MiDKnvKKpOlu61UpsqmMihfJQoHWP8Op1AvEihhVGQpMNU3bEu7eExrocfia30n
-mZnmAUBmXe4v/c30VcbFsTu47miiXv9+5QI0yxeRRsqMd1uFtrl80MsoAuGG9kSA
-PO94SdCTygJ7HvOwf2QZY0ioc1wJ14QdGZAxg/NEWiCDOOFSV6YJEv7NyDMBtMxw
-GdbWtgvUJWbbYkUDMfVa0CMrsiHNMApHsfvA2iEjXGlOM3a+80yYUSxtXU0mljjx
-HDaSVzzcrfaZSRTmUihAXGYVFdalA7GEOLprPVBWz4DLDUMyBvIkl/Q0pJ462sgi
-qpTjMwOzpkjE6B5LHVSoYNJZgHZiC3cwsv0fOZCdzO7NCea8akI=
-=Atbb
------END PGP SIGNATURE-----
+While this is readily apparent with my patch to add dedicated MAY_EXEC
+handling, this is already true for the stock kernel.
 
---qdpvxircad6tnokw--
+ include/linux/fs.h | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index bd0740e3bfcb..314a1349747b 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -790,14 +790,13 @@ struct inode_state_flags {
+ struct inode {
+ 	umode_t			i_mode;
+ 	unsigned short		i_opflags;
+-	kuid_t			i_uid;
+-	kgid_t			i_gid;
+ 	unsigned int		i_flags;
+-
+ #ifdef CONFIG_FS_POSIX_ACL
+ 	struct posix_acl	*i_acl;
+ 	struct posix_acl	*i_default_acl;
+ #endif
++	kuid_t			i_uid;
++	kgid_t			i_gid;
+ 
+ 	const struct inode_operations	*i_op;
+ 	struct super_block	*i_sb;
+-- 
+2.48.1
+
 
