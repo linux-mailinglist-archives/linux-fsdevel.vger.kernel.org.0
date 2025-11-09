@@ -1,169 +1,183 @@
-Return-Path: <linux-fsdevel+bounces-67582-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67583-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A49CC43D4D
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 09 Nov 2025 13:19:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 320AFC43D5C
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 09 Nov 2025 13:20:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12AAA3A8438
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Nov 2025 12:19:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECF60188BFC3
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Nov 2025 12:21:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86F832EBDF2;
-	Sun,  9 Nov 2025 12:19:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EE322EBDFB;
+	Sun,  9 Nov 2025 12:20:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nAvIbX3P"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tYbVgOxe"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 513E72EBBB0
-	for <linux-fsdevel@vger.kernel.org>; Sun,  9 Nov 2025 12:19:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98BD32EBDCD;
+	Sun,  9 Nov 2025 12:20:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762690781; cv=none; b=N5OR6eZMoBcb2nPo1B2Lxaxu5YD2ca4P7XoRDOX7gyQXXheYI7KM1i1CTILIKWJDdLF13dEgzhJKfKFSQUVW2wwVAWEbk3kZR6kel2qac6KPF8GR7dT+wj9cNAQndlAkE00FoycZzfGi7HcbYq9SyW9xkJXkl+D8sTNzdckyIVc=
+	t=1762690833; cv=none; b=fpUYtgWYdD6iroeFN+aIjES3rYtXZKY+zHtK/dvWAsYEGNgKx8X57PAbUdhaEkF0yy9iH65GBaglc7c2reMIggxRCdhWPF4zfRvI6hoXlsG34unedbfGuQeupqcbCnZd1BS5Zh6S3pbJCW/FTjXl0gooIvq+vsC/Ml3EFFKrDIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762690781; c=relaxed/simple;
-	bh=RI8OG7v0LCuN6zw8dyXHr6xSbJ0eZb2RqvOZGNNRbbg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pmFfL+qQgaEm9R2sHQC7V+CnE+0I/FvKoDSUB+s89n7aSa2gSjieMlHn20nFA1Xs6lVndQgjVEZP4587cbLOU7tBwze5fC9x1r75RtrqYEkTGNgHKsmKG36Q4vdVyRqACirgTOZk3RmU81Ol6KXf8eCnl5qxLegIuiTJ/4c1314=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nAvIbX3P; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-64149f78c0dso2504781a12.3
-        for <linux-fsdevel@vger.kernel.org>; Sun, 09 Nov 2025 04:19:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762690778; x=1763295578; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=v+qAufXH6G8vBsUnnnyRTAQrC2PGUzHUrWi4FrePh40=;
-        b=nAvIbX3Pg2g4JqWwlWF9b+l2JtGk2BJmfDZ7vvVnscbUnwk1p5/NmbDl8MKv9pGPZA
-         bH7qtGO8eDrFqgTm58ydHh4JLhDlXDWQQOiIdXYGs60GqQ8aQSfh+8nR2nKQUnyl5nb4
-         vY3gOLvwZKRLi9Nh1VAFiNKsC76JRCkKhJeBWZUnrP8SO5d+jxp3RqQ2rxfo0LTNKcGJ
-         0GARNAMGHWF3lyLk7/nTNySw4N67j6I7UrYgrbxa2nUcRn3+S6TGDwOQ3nsMnPLGTFOx
-         zO2g6kKEZtZZTQLIoPIkmMUVpW3FVnfKfa2BHr32hpMHKE/af2y43bpSreYAC5BeVzs2
-         /VYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762690778; x=1763295578;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=v+qAufXH6G8vBsUnnnyRTAQrC2PGUzHUrWi4FrePh40=;
-        b=G7qXeywypQDyQg8TQtOCUS7DGgRqhn34RCy/iLVoSXsytxqdQ/2XNnU3HEPEfT103F
-         Ud49FJTTh8VTvzuUrBgnOOJ+KhopLG+g2QcJoIz8T0bvMfuzpyXkI8JVxvpFfnXoIx/C
-         cjjI8WXpdBzHaP9EEbATKUkVP8ldSbg6ws2MqhK/Vl36Zjn4bHtSwMAaodueZ+5cioBu
-         4p3Y1fMEtgeOgtejWUn19XzJvkBQluVIMHsEnNeNwAqMBPMF0ynsazRG2bfl/YH9Hp91
-         iIe9nTKZvk5KcUjNUQT/IPIvL39X5qNYKX6fs67+SI0DTU+tkilPKlSCTYtrl2SWDTb9
-         w18g==
-X-Forwarded-Encrypted: i=1; AJvYcCVDT2WQgj3GFi59OHpUxvVETPRuCCU34ePtbKhtSOmAMuigVmQaKQgSJTlQfTuO9SVQ1hVEl2QwkAFVXF2x@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywwni0CguLuNA3mJsObkYBuSO7l7UibJ+d+tcrl17t25LOLFrVU
-	DoXLwTXpBDJOvYbm9n3LxQneHu0BVuuDgZ30B+jGA7Q0dxIa5PMNpbrZ
-X-Gm-Gg: ASbGncvV57jMGudCVg8+EwotXaJETtkllRf9Mt7ibZPN6+O+1RGiGY9FKIZB9BQWeJH
-	FeVZwzxRIjLDs0+8uzMOWAT5LyFAMM0JSvKRSjNLrAqHxjZYynAunD/XYF8eU88j6ozu5r5+yuh
-	7w8vyP+SAEYOckL75+x6fazXwL5JM7Hs6+9ZKSRl7IIcdVsaXKvB5H+aHy3MFnwNIwkfnRsFRUm
-	zA+kfSLpkSIZc1DdQugrnBMj+UHkyqDqBD8+lJlg234g0A2M1YeG6HM4MXfqfF0YSpJ7ou4zSM1
-	7r4VP6zTti6O4rJLk4O8rlKuZoQy3RXAdjshiZuVwMWyE03WPLdeXRDB7iaGnMN8t4RamGoO1BB
-	SGejsTX/I1KaAzUMtMMUMnXumaR7u9/6XY/QH/hoZJ+aMj4KqcBV+xcE/qUqufv7xKD2eGehazq
-	QveXGgyoEmeyoyq7GjAJ/XbkCiozaOS1VIAWs6Od5vuZSmW/wHSEpgfcaFka0=
-X-Google-Smtp-Source: AGHT+IESsSrfC3NJ8IFNuotOFPOATY0CGb9MaPKj5bpd2i2c9yv5ol0qKlnUskE2eI2wayN6ZZs9LQ==
-X-Received: by 2002:a17:907:3ea9:b0:b6d:7db1:49aa with SMTP id a640c23a62f3a-b72e05dac61mr464154066b.63.1762690777282;
-        Sun, 09 Nov 2025 04:19:37 -0800 (PST)
-Received: from f.. (cst-prg-14-82.cust.vodafone.cz. [46.135.14.82])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72d7996c4csm600245666b.5.2025.11.09.04.19.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Nov 2025 04:19:35 -0800 (PST)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: brauner@kernel.org
-Cc: viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH] fs: move inode fields used during fast path lookup closer together
-Date: Sun,  9 Nov 2025 13:19:31 +0100
-Message-ID: <20251109121931.1285366-1-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1762690833; c=relaxed/simple;
+	bh=MUl+dTqbZ7YKKKUJEy7a4BIZnRoQfskt2IlZrrF+h24=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lSNu9zu1qNE/SDwl0ntoNKTjYaE16wvNa0v8OO8pBmRq2JP5QNTynhBPtjgyjeL5K0u9BTdWPsy7QESXIcgsTP2fL72QAYqqDWdnwFLvTIBdI07AA+wC652wrc1HrLtXmw7WnEg9Qd6MxDtror6/WQujrQzBFlLF3TPiZDF/WTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tYbVgOxe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18F39C19423;
+	Sun,  9 Nov 2025 12:20:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762690833;
+	bh=MUl+dTqbZ7YKKKUJEy7a4BIZnRoQfskt2IlZrrF+h24=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tYbVgOxeR6H3AjeYrj/XMAsMU5/91mlBPu6I6I2Qhso2FiX/Jbxu/GvAcIQCG7l07
+	 H1oUelvYVzAjO0kAhurJh9DwXLnGZmR6TbAeZNaKZdcnUgSdssNHNJhzyT4z03ExX6
+	 uu6d8ocSA1FEBZNPsmxntlXkzpLc0NOUEoxPLPDprrkkqtccjt/ciHHD61yMaeLoON
+	 5r5vz7BE13Up8FleS/dpu6uztj8HhcBf5za9n2/jMNys2su0r269+a8A9rmjDqdOyS
+	 hE/8zhMxeBk6ogJVO1Xi1A1xECVerbjfJffslia3pPU/ufZ9vQX7B6gWtZrfeCGVut
+	 qGBO0Hj4DMiIg==
+Date: Sun, 9 Nov 2025 13:20:29 +0100
+From: Alejandro Colomar <alx@kernel.org>
+To: Jan Kara <jack@suse.cz>
+Cc: Alexander Monakov <amonakov@ispras.ru>, linux-man@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v1] man/man2/flock.2: Mention non-atomicity w.r.t close
+Message-ID: <u3b2gz7gc4iwrwomngg2gioxscu6lwucwl4egdhovh52u7dakb@knipbilujfex>
+References: <181d561860e52955b29fe388ad089bde4f67241a.1760627023.git.amonakov@ispras.ru>
+ <xvwzokj7inyw4x2brbuprosk5i2w53p3qjerkcjfsy6lg43krm@gp65tt2tg4kw>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="i2ksitioofyffpkb"
+Content-Disposition: inline
+In-Reply-To: <xvwzokj7inyw4x2brbuprosk5i2w53p3qjerkcjfsy6lg43krm@gp65tt2tg4kw>
 
-This should avoid *some* cache misses.
 
-Successful path lookup is guaranteed to load at least ->i_mode,
-->i_opflags and ->i_acl. At the same time the common case will avoid
-looking at more fields.
+--i2ksitioofyffpkb
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: Jan Kara <jack@suse.cz>
+Cc: Alexander Monakov <amonakov@ispras.ru>, linux-man@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v1] man/man2/flock.2: Mention non-atomicity w.r.t close
+Message-ID: <u3b2gz7gc4iwrwomngg2gioxscu6lwucwl4egdhovh52u7dakb@knipbilujfex>
+References: <181d561860e52955b29fe388ad089bde4f67241a.1760627023.git.amonakov@ispras.ru>
+ <xvwzokj7inyw4x2brbuprosk5i2w53p3qjerkcjfsy6lg43krm@gp65tt2tg4kw>
+MIME-Version: 1.0
+In-Reply-To: <xvwzokj7inyw4x2brbuprosk5i2w53p3qjerkcjfsy6lg43krm@gp65tt2tg4kw>
 
-struct inode is not guaranteed to have any particular alignment, notably
-ext4 has it only aligned to 8 bytes meaning nearby fields might happen
-to be on the same or only adjacent cache lines depending on luck (or no
-luck).
+Hi Alexander, Jan,
 
-According to pahole:
-        umode_t                    i_mode;               /*     0     2 */
-        short unsigned int         i_opflags;            /*     2     2 */
-        kuid_t                     i_uid;                /*     4     4 */
-        kgid_t                     i_gid;                /*     8     4 */
-        unsigned int               i_flags;              /*    12     4 */
-        struct posix_acl *         i_acl;                /*    16     8 */
-        struct posix_acl *         i_default_acl;        /*    24     8 */
+On Thu, Oct 30, 2025 at 10:21:30AM +0100, Jan Kara wrote:
+> On Thu 16-10-25 18:22:36, Alexander Monakov wrote:
+> > Ideally one should be able to use flock to synchronize with another
+> > process (or thread) closing that file, for instance before attempting
+> > to execve it (as execve of a file open for writing fails with ETXTBSY).
+> >=20
+> > Unfortunately, on Linux it is not reliable, because in the process of
+> > closing a file its locks are dropped before the refcounts of the file
+> > (as well as its underlying filesystem) are decremented, creating a race
+> > window where execve of the just-unlocked file sees it as if still open.
+> >=20
+> > Linux developers have indicated that it is not easy to fix, and the
+> > appropriate course of action for now is to document this limitation.
+> >=20
+> > Link: <https://lore.kernel.org/linux-fsdevel/68c99812-e933-ce93-17c0-3f=
+e3ab01afb8@ispras.ru/>
+> >=20
+> > Signed-off-by: Alexander Monakov <amonakov@ispras.ru>
+>=20
+> The change looks good to me. Feel free to add:
+>=20
+> Reviewed-by: Jan Kara <jack@suse.cz>
 
-->i_acl is unnecessarily separated by 8 bytes from the other fields.
-With struct inode being offset 48 bytes into the cacheline this means an
-avoidable miss. Note it will still be there for the 56 byte case.
+Thanks!  I've applied the patch, and appended the tag.
+<https://git.kernel.org/pub/scm/docs/man-pages/man-pages.git/commit/?id=3Da=
+fdd0a64c5bad49d6030ddc488951aeb50f0b88e>
 
-New layout:
-        umode_t                    i_mode;               /*     0     2 */
-        short unsigned int         i_opflags;            /*     2     2 */
-        unsigned int               i_flags;              /*     4     4 */
-        struct posix_acl *         i_acl;                /*     8     8 */
-        struct posix_acl *         i_default_acl;        /*    16     8 */
-        kuid_t                     i_uid;                /*    24     4 */
-        kgid_t                     i_gid;                /*    28     4 */
 
-I verified with pahole there are no size or hole changes.
+Have a lovely day!
+Alex
 
-This is stopgap until someone(tm) sanitizes the layout in the first
-place, allocation methods aside.
+>=20
+> 								Honza
+> > ---
+> >  man/man2/flock.2 | 15 +++++++++++++++
+> >  1 file changed, 15 insertions(+)
+> >=20
+> > diff --git a/man/man2/flock.2 b/man/man2/flock.2
+> > index b424b3267..793eaa3bd 100644
+> > --- a/man/man2/flock.2
+> > +++ b/man/man2/flock.2
+> > @@ -245,6 +245,21 @@ .SH NOTES
+> >  and occurs on many other implementations.)
+> >  .\" Kernel 2.5.21 changed things a little: during lock conversion
+> >  .\" it is now the highest priority process that will get the lock -- m=
+tk
+> > +.P
+> > +Release of a lock when a file descriptor is closed
+> > +is not sequenced after all observable effects of
+> > +.BR close (2).
+> > +For example, if one process writes a file while holding an exclusive l=
+ock,
+> > +then closes that file, and another process blocks placing a shared lock
+> > +on that file to wait until it is closed, it may observe that subsequent
+> > +.BR execve (2)
+> > +of that file fails with
+> > +.BR ETXTBSY ,
+> > +and
+> > +.BR umount (2)
+> > +of its underlying filesystem fails with
+> > +.BR EBUSY ,
+> > +as if the file is still open in the first process.
+> >  .SH SEE ALSO
+> >  .BR flock (1),
+> >  .BR close (2),
+> >=20
+> > Range-diff against v0:
+> > -:  --------- > 1:  181d56186 man/man2/flock.2: Mention non-atomicity w=
+=2Er.t close
+> > --=20
+> > 2.49.1
+> >=20
+> --=20
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
 
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
----
+--=20
+<https://www.alejandro-colomar.es>
+Use port 80 (that is, <...:80/>).
 
-> Successful path lookup is guaranteed to load at least ->i_mode,
-> ->i_opflags and ->i_acl. At the same time the common case will avoid
-> looking at more fields.
+--i2ksitioofyffpkb
+Content-Type: application/pgp-signature; name="signature.asc"
 
-While this is readily apparent with my patch to add dedicated MAY_EXEC
-handling, this is already true for the stock kernel.
+-----BEGIN PGP SIGNATURE-----
 
- include/linux/fs.h | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmkQhw0ACgkQ64mZXMKQ
+wqnN2Q//Z+PbivK/qNOGipga3ohs3ymSdFjaFCTz75FjDtkXa8BVnRakTgnvr91x
+n3D1L3xy27OdjsplCQ529EhCvlrmpnQoPy0fH8qPDug8tqIEQYOvVt91UpfFbJG6
+Yov0RWAQSt4GxBKZ9g553wmJI3dZjKmN8oM8yDQUHxaKGVmBP/oWUi8l9U5KJpHK
+jmEvQ3pgEYHzh3k0G7S2gMp38WsTLFOvnEQUs6ekMOU+dqnzXTdc8ZjYM7GW3dEh
+P4YeCmfqOh0DZzebGrRRztcAeECiHfvIAfE7BNAR+D8lWGMeAYJOAmpaGIiFebsF
++iGY6oes14hD7Jy1oRikaJJL+nDHtDNMXXSDS2v9wOR9BszdLj5iY0lpaH2F1WtX
+g0clG/R8JdHHPhHrHc1ukQqxO0DEJ6wuuD0ZYdbJVH49B3+M0phgu2JrGYxUqoIa
+ShEcESRg65ye6myq5rXbdHtdqr4ZJY44RSEsRKx64wOKgcmlHKzL7vNZ3xOTLJXM
+eBXroC6kiRPNzx/EJk3udl5vTMPGalhMmcTL8HEy8xmmaCRTShT7UY2Atg28MkLe
+qrm/Dxc6fipfeshjUjEIG2DfwVO1aKUDf/Hz5zAUtMuii8eu+FdoKuexZFc9zpoV
+R+B6DS4avQ8+2Vrl062zK0Sag/REMbfWnV657twuJvQhEidM9bM=
+=24qw
+-----END PGP SIGNATURE-----
 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index bd0740e3bfcb..314a1349747b 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -790,14 +790,13 @@ struct inode_state_flags {
- struct inode {
- 	umode_t			i_mode;
- 	unsigned short		i_opflags;
--	kuid_t			i_uid;
--	kgid_t			i_gid;
- 	unsigned int		i_flags;
--
- #ifdef CONFIG_FS_POSIX_ACL
- 	struct posix_acl	*i_acl;
- 	struct posix_acl	*i_default_acl;
- #endif
-+	kuid_t			i_uid;
-+	kgid_t			i_gid;
- 
- 	const struct inode_operations	*i_op;
- 	struct super_block	*i_sb;
--- 
-2.48.1
-
+--i2ksitioofyffpkb--
 
