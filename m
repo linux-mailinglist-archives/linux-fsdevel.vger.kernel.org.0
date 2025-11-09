@@ -1,64 +1,64 @@
-Return-Path: <linux-fsdevel+bounces-67593-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67594-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C94FAC44391
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 09 Nov 2025 18:14:56 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01C2FC443A0
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 09 Nov 2025 18:15:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4BD23B3843
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Nov 2025 17:14:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 137F04E6774
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Nov 2025 17:15:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 235B23054FA;
-	Sun,  9 Nov 2025 17:14:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 854B7305976;
+	Sun,  9 Nov 2025 17:15:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="f1cW/NQD"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FhT4JAHs"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DF6330499B
-	for <linux-fsdevel@vger.kernel.org>; Sun,  9 Nov 2025 17:14:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CBD32FFFB2
+	for <linux-fsdevel@vger.kernel.org>; Sun,  9 Nov 2025 17:15:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762708479; cv=none; b=IyaYfg8Fm3bqjYxpAJ+Hauwgc1o7iahJ4VZyYDEbmcnLILyFT1rYtEqZn0qwU84NpROI2VKgog6wa6rROrQ3TqHPYZVdQDztv6uccXnmf27tZLiDSBRpPKXuaAwW+JKizoWtRXSYFQi8uslBGIxJ57g1DpxAA3xlVInfsM24E/I=
+	t=1762708528; cv=none; b=H2ph1rJLylcuJ77FqpKoGDaLs9yUThAi9gnjSNtn33mMLwC2ahi2RSQMWd7qlGf8R6I60Nj9SW3CHYdYS55J1CLJPSJGxSQIK43Lg5XCo56SEoS289dVWZwhs5F6kcrLE6i/To/80PBBD/f41O0lgphPkYOJPf0aOyyto2RAsCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762708479; c=relaxed/simple;
-	bh=X8iXuBDLNyavzveN+u0clYIy8dEtP8NarhPdel67RD4=;
+	s=arc-20240116; t=1762708528; c=relaxed/simple;
+	bh=5WYlPL0F3A1t+zKDUiKYdZay1vJaUmu4Ud0oSWVXAoU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C+NAN8bIK3OLaosU9IzJHvzJqUBqdezPvxsKmgdzJBWSxXWoRkgZCYnXqjyp8ENQMdvBKnS2SznoBTTNquOlpgQmUIWYRe46tdNR7q2TKIxIrNFMlRYbDxFO3sswSh8cYY1p/tsRDTvpDLdZQqyyEynT0qHk68+lDLjuTTyM3eo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=f1cW/NQD; arc=none smtp.client-ip=170.10.133.124
+	 Content-Type:Content-Disposition:In-Reply-To; b=gtdTARyPB7Hi8vcRArAes3sEx5PDDiZg4bbmnuXsUwNEogOMuKmOtYRbNjT6ibcOk0Y7qUjaKgBl6/4Id3eKpPwaRl+ZPAQhc87DDm5MsqN2DY2HwUCWZep11Q3vRMm6Of3cH3Otum2TSlr1d5/8bl9qJk17fZDI6ezALBgdmF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FhT4JAHs; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762708476;
+	s=mimecast20190719; t=1762708525;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=F5HpPOlX4A+IDC0iS/hUD8BvRwzAlkYdd4UARWjCrtI=;
-	b=f1cW/NQDBmRdN/qrgRggEyi7y18tcbIg6op28Ff6fGsRBRkdkVzAbvhLWfUH0AOD0z6wWC
-	YcR8tOVWWlQWDv50CrYaUH1bt4Bd5TURHxnax856S7wpIXh5cDSumKhBU++kBubDj5sr8K
-	TLp6NDnUogw+S/doYK+pZHzBDwGBDZM=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+	bh=CH23Ki9EOjG++XfGf0hWyR5UKo/5fVuG3elhs2g375Y=;
+	b=FhT4JAHslPzhrP7baHrzVzllbDFvRJutwwMKsXH8d8AsRQMEKPx/y8ZN+pBfO/J2ZszdRH
+	qjsdslAGKfo7a0Cm58k8yrL3/rXjOsMAWzRVrBptz6nn0b61GKMGK5FFDFRN4oZZIVkg6/
+	jwbWEWXR0/o630O32Ju2N00FXNFqorU=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-346-P45cLDM0P8SsWBX1eHJ3Qw-1; Sun,
- 09 Nov 2025 12:14:33 -0500
-X-MC-Unique: P45cLDM0P8SsWBX1eHJ3Qw-1
-X-Mimecast-MFC-AGG-ID: P45cLDM0P8SsWBX1eHJ3Qw_1762708468
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-648-hba6nzFHMM2ZSUG6656qEw-1; Sun,
+ 09 Nov 2025 12:15:21 -0500
+X-MC-Unique: hba6nzFHMM2ZSUG6656qEw-1
+X-Mimecast-MFC-AGG-ID: hba6nzFHMM2ZSUG6656qEw_1762708516
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1EA1F195608D;
-	Sun,  9 Nov 2025 17:14:27 +0000 (UTC)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0CA8E180048E;
+	Sun,  9 Nov 2025 17:15:15 +0000 (UTC)
 Received: from fedora (unknown [10.44.32.53])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 6443730001B9;
-	Sun,  9 Nov 2025 17:14:06 +0000 (UTC)
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id C8655180087B;
+	Sun,  9 Nov 2025 17:14:53 +0000 (UTC)
 Received: by fedora (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Sun,  9 Nov 2025 18:14:26 +0100 (CET)
-Date: Sun, 9 Nov 2025 18:14:04 +0100
+	oleg@redhat.com; Sun,  9 Nov 2025 18:15:14 +0100 (CET)
+Date: Sun, 9 Nov 2025 18:14:52 +0100
 From: Oleg Nesterov <oleg@redhat.com>
 To: Bernd Edlinger <bernd.edlinger@hotmail.de>,
 	Linus Torvalds <torvalds@linux-foundation.org>,
@@ -106,8 +106,8 @@ Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
 	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
 	Cyrill Gorcunov <gorcunov@gmail.com>,
 	Eric Dumazet <edumazet@google.com>
-Subject: [RFC PATCH 0/3] mt-exec: fix deadlock with ptrace_attach()
-Message-ID: <aRDL3HOB21pMVMWC@redhat.com>
+Subject: [RFC PATCH 1/3] exec: make setup_new_exec() return int
+Message-ID: <aRDMDLgLdYq9g1Tr@redhat.com>
 References: <AM8PR10MB470801D01A0CF24BC32C25E7E40E9@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
  <AM8PR10MB470875B22B4C08BEAEC3F77FE4169@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
  <AS8P193MB1285DF698D7524EDE22ABFA1E4A1A@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
@@ -116,6 +116,7 @@ References: <AM8PR10MB470801D01A0CF24BC32C25E7E40E9@AM8PR10MB4708.EURPRD10.PROD.
  <AS8P193MB1285937F9831CECAF2A9EEE2E4752@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
  <GV2PPF74270EBEEEDE0B9742310DE91E9A7E431A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
  <GV2PPF74270EBEE9EF78827D73D3D7212F7E432A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+ <aRDL3HOB21pMVMWC@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -124,27 +125,102 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <GV2PPF74270EBEE9EF78827D73D3D7212F7E432A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+In-Reply-To: <aRDL3HOB21pMVMWC@redhat.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-Not for inclusion yet. 2/2 is untested, incomplete, possibly buggy.
+Preparation. After the next change setup_new_exec() can fail.
 
-But could you review at least the intent? Do you see any problem with
-this approach?
-
-This problem is very, very old. It seems that nobody can suggest a
-simple/clean fix...
-
-Oleg.
+Signed-off-by: Oleg Nesterov <oleg@redhat.com>
 ---
+ fs/binfmt_elf.c         | 4 +++-
+ fs/binfmt_elf_fdpic.c   | 4 +++-
+ fs/binfmt_flat.c        | 4 +++-
+ fs/exec.c               | 4 +++-
+ include/linux/binfmts.h | 2 +-
+ 5 files changed, 13 insertions(+), 5 deletions(-)
 
- fs/binfmt_elf.c         |   4 +-
- fs/binfmt_elf_fdpic.c   |   4 +-
- fs/binfmt_flat.c        |   4 +-
- fs/exec.c               | 142 +++++++++++++++++++++++-------------------------
- include/linux/binfmts.h |   2 +-
- kernel/exit.c           |   9 +--
- kernel/signal.c         |   6 +-
- 7 files changed, 87 insertions(+), 84 deletions(-)
+diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+index e4653bb99946..8a38689ae4b0 100644
+--- a/fs/binfmt_elf.c
++++ b/fs/binfmt_elf.c
+@@ -1021,7 +1021,9 @@ static int load_elf_binary(struct linux_binprm *bprm)
+ 	if (!(current->personality & ADDR_NO_RANDOMIZE) && snapshot_randomize_va_space)
+ 		current->flags |= PF_RANDOMIZE;
+ 
+-	setup_new_exec(bprm);
++	retval = setup_new_exec(bprm);
++	if (retval)
++		goto out_free_dentry;
+ 
+ 	/* Do this so that we can load the interpreter, if need be.  We will
+ 	   change some of these later */
+diff --git a/fs/binfmt_elf_fdpic.c b/fs/binfmt_elf_fdpic.c
+index 48fd2de3bca0..7ad98b8132fc 100644
+--- a/fs/binfmt_elf_fdpic.c
++++ b/fs/binfmt_elf_fdpic.c
+@@ -351,7 +351,9 @@ static int load_elf_fdpic_binary(struct linux_binprm *bprm)
+ 	if (elf_read_implies_exec(&exec_params.hdr, executable_stack))
+ 		current->personality |= READ_IMPLIES_EXEC;
+ 
+-	setup_new_exec(bprm);
++	retval = setup_new_exec(bprm);
++	if (retval)
++		goto error;
+ 
+ 	set_binfmt(&elf_fdpic_format);
+ 
+diff --git a/fs/binfmt_flat.c b/fs/binfmt_flat.c
+index b5b5ca1a44f7..78e9ca128ea7 100644
+--- a/fs/binfmt_flat.c
++++ b/fs/binfmt_flat.c
+@@ -512,7 +512,9 @@ static int load_flat_file(struct linux_binprm *bprm,
+ 
+ 	/* OK, This is the point of no return */
+ 	set_personality(PER_LINUX_32BIT);
+-	setup_new_exec(bprm);
++	ret = setup_new_exec(bprm);
++	if (ret)
++		goto err;
+ 
+ 	/*
+ 	 * calculate the extra space we need to map in
+diff --git a/fs/exec.c b/fs/exec.c
+index 6b70c6726d31..136a7ab5d91c 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1321,7 +1321,7 @@ void would_dump(struct linux_binprm *bprm, struct file *file)
+ }
+ EXPORT_SYMBOL(would_dump);
+ 
+-void setup_new_exec(struct linux_binprm * bprm)
++int setup_new_exec(struct linux_binprm * bprm)
+ {
+ 	/* Setup things that can depend upon the personality */
+ 	struct task_struct *me = current;
+@@ -1337,6 +1337,8 @@ void setup_new_exec(struct linux_binprm * bprm)
+ 	me->mm->task_size = TASK_SIZE;
+ 	up_write(&me->signal->exec_update_lock);
+ 	mutex_unlock(&me->signal->cred_guard_mutex);
++
++	return 0;
+ }
+ EXPORT_SYMBOL(setup_new_exec);
+ 
+diff --git a/include/linux/binfmts.h b/include/linux/binfmts.h
+index 65abd5ab8836..678b7525ac5a 100644
+--- a/include/linux/binfmts.h
++++ b/include/linux/binfmts.h
+@@ -123,7 +123,7 @@ extern void unregister_binfmt(struct linux_binfmt *);
+ 
+ extern int __must_check remove_arg_zero(struct linux_binprm *);
+ extern int begin_new_exec(struct linux_binprm * bprm);
+-extern void setup_new_exec(struct linux_binprm * bprm);
++extern int setup_new_exec(struct linux_binprm * bprm);
+ extern void finalize_exec(struct linux_binprm *bprm);
+ extern void would_dump(struct linux_binprm *, struct file *);
+ 
+-- 
+2.25.1.362.g51ebf55
+
 
 
