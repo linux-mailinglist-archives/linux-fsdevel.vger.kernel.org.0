@@ -1,49 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-67614-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67615-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE114C44774
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 09 Nov 2025 22:16:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E844C44781
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 09 Nov 2025 22:17:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4F2304E8E30
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Nov 2025 21:14:34 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5C27F4E983A
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Nov 2025 21:15:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5E42279DCC;
-	Sun,  9 Nov 2025 21:13:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 110CD27C84B;
+	Sun,  9 Nov 2025 21:13:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mOopcn5n"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PdhwGjva"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBE242737E4;
-	Sun,  9 Nov 2025 21:13:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48D6426CE07;
+	Sun,  9 Nov 2025 21:13:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762722829; cv=none; b=vC+kq3BeBI4lvTfoZI7uzpTOcn0rCdpXuPgNklzdjs/Us/7SQvQWTS4veYJzLwtTSV6H/UcAMos+Ae+fZHl4Fz96EHb4v3zlVUh3xQ3oKIapN/0GIyTpRJKELBiVuaenDHnNu9Yu925UuPF4gWdvEVw24HYrj78825DSweZD7hA=
+	t=1762722834; cv=none; b=Yr4RT05iZ/xVMbKsdjiIaoFFomXaVpzkaGtsY/CYiIQz0RThXJ6ef5DiwV+dcYVI0vJAIKus55doWK8yhb7MJNtzCS4jKBvTTVrR8t+mZs3bNZqymcHPcphWkkfvDPyZNizaLA4ifhFyRe01G7YVK13GW4Yz4qVhcsRARYOfHXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762722829; c=relaxed/simple;
-	bh=8y4aMICEEV0LiihR+FyZdw88fBca7WRMqCEtGLIdliw=;
+	s=arc-20240116; t=1762722834; c=relaxed/simple;
+	bh=hjIC8MoMy22tTyZzN7VrtnIt0FY8IbJnB2GTuhPLsjc=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=n7UQNkFNrNCJbxZ8JpHroLjj05q4J3G//lybCHPYPCvZqGX6MmwAIAjlHUPQfKblJKtx36iDPYZj/K99oNeCLxnh1YM78IoZtOrRlVw5HukrC0Xmi5ZMnBZbJpaoxAAM2cj/1VL6TPlG/rCUXYMk0FkzOUetiQAwYx15KFsfcs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mOopcn5n; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CFCFC4CEF8;
-	Sun,  9 Nov 2025 21:13:43 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=m+dE/415bJCi9FZE7kytUyRc5wNMSvBcgsEDhYqBzP5czfqpqkaB5+COC5s2I4nIvb6xNa1AGMdH+WQhq1ux9jWs+vl6QBs/qknRUJGj5sSkKxF1rDSUdA73JOquEtMJ+NH2dA+2zzQygdDr5u0N8DgYlYcrZsiwUKJZj9sdypo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PdhwGjva; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D6D7C4CEF7;
+	Sun,  9 Nov 2025 21:13:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762722828;
-	bh=8y4aMICEEV0LiihR+FyZdw88fBca7WRMqCEtGLIdliw=;
+	s=k20201202; t=1762722833;
+	bh=hjIC8MoMy22tTyZzN7VrtnIt0FY8IbJnB2GTuhPLsjc=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=mOopcn5nPKjp9ET/HK1MoGqbKamvY8j+oN3zAbpyOBrjIIQB8BJKgij2MDIouYqqF
-	 1XAzGyLVi51vxjHXvsu+g38vArQ83PceTdh59Fv6tVU2ddt/PPXlCZ/04RUCfnzeRB
-	 +zHvbqEKft6+NK7r1QdLdFXk54WyAAiV6C0Dygd2iO7kBQJNB61AIusvI27t22Aj6K
-	 tV/CxOELIvpP+5bax176AfwrDdScfeZ5LXxl9EClPUgfkyCqnCFOK18REeLRbnkBqK
-	 cU1wu1vuz6WUISiDTtW8tlLd0h7OP514y9kyw6T99AKNg77ksgLRgHGZP65XyckwTw
-	 bXIbiJAMiV6sg==
+	b=PdhwGjvaxle3BHuwErRwea24DSGUj6VsFwvL/i35en7+On7B8fTQqr3M3VbthI459
+	 TXhpGx2uiqhbkLjHydc5H4QKQVGC8FKp5awqU4DVYcEpdBJKhdD67UWYDzN5JX1yaD
+	 SEaL+BkA7aKlasQRWo7oj4Pju3hDeleTgqHXj9/o1MUw9Hkeyj7B8bFWChGmrnZ8Mb
+	 la7La2IzdDAmjQDksrKII7oHr9ohYp7PsRYvqnwGFgUoAWFtf/+UXcK4FBcH6QaZMF
+	 i6ILu6R/uC8ONonjuy4FzRhTGSHSs65NfHBxQZRC0wbVjGEbTrPP6HQyhwkrakd/YN
+	 R9t4i7c3jLt9w==
 From: Christian Brauner <brauner@kernel.org>
-Date: Sun, 09 Nov 2025 22:11:27 +0100
-Subject: [PATCH 6/8] ns: add asserts for active refcount underflow
+Date: Sun, 09 Nov 2025 22:11:28 +0100
+Subject: [PATCH 7/8] selftests/namespaces: add active reference count
+ regression test
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +53,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251109-namespace-6-19-fixes-v1-6-ae8a4ad5a3b3@kernel.org>
+Message-Id: <20251109-namespace-6-19-fixes-v1-7-ae8a4ad5a3b3@kernel.org>
 References: <20251109-namespace-6-19-fixes-v1-0-ae8a4ad5a3b3@kernel.org>
 In-Reply-To: <20251109-namespace-6-19-fixes-v1-0-ae8a4ad5a3b3@kernel.org>
 To: linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
@@ -69,92 +70,172 @@ Cc: Jann Horn <jannh@google.com>, Mike Yuan <me@yhndnzj.com>,
  netdev@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-a6db3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2410; i=brauner@kernel.org;
- h=from:subject:message-id; bh=8y4aMICEEV0LiihR+FyZdw88fBca7WRMqCEtGLIdliw=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQKMr94l1/5uyM4UfXv9Zy/QcYVfFzZC07+d68/ur7O7
- PWfd6m/O0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACby8AUjw8H4pUZdv+6x1BhK
- qgSXsaVatl3+m54+0Wopv2/5vMCkW4wM6+daXThSYHuq7+cKpkaTPz4+plG9O/ftU7loJ7569uI
- ULgA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4949; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=hjIC8MoMy22tTyZzN7VrtnIt0FY8IbJnB2GTuhPLsjc=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQKMr9Ytectw83jb9NCRYVZy571HzMSXv4nqiNNnKv7R
+ ldGWU5IRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwEROizP84e/ZbChy0G6P3oSl
+ utGvdnYsWmPxOu76zYVqjEwCtZkdnAx/BY8rNccK/y4/167Vf4m3cI2DwwXXC7/W8uq7/Zs328i
+ GFwA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-Add a few more assert to detect active reference count underflows.
+Add a regression test for setns() with pidfd.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- include/linux/ns_common.h |  1 -
- kernel/nscommon.c         | 18 ++++++++++++++----
- 2 files changed, 14 insertions(+), 5 deletions(-)
+ tools/testing/selftests/namespaces/.gitignore      |   1 +
+ tools/testing/selftests/namespaces/Makefile        |   4 +-
+ .../namespaces/regression_pidfd_setns_test.c       | 113 +++++++++++++++++++++
+ 3 files changed, 117 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/ns_common.h b/include/linux/ns_common.h
-index 3aaba2ca31d7..66ea09b48377 100644
---- a/include/linux/ns_common.h
-+++ b/include/linux/ns_common.h
-@@ -294,7 +294,6 @@ void __ns_ref_active_put(struct ns_common *ns);
+diff --git a/tools/testing/selftests/namespaces/.gitignore b/tools/testing/selftests/namespaces/.gitignore
+index f4d2209ca4e4..4cb428d77659 100644
+--- a/tools/testing/selftests/namespaces/.gitignore
++++ b/tools/testing/selftests/namespaces/.gitignore
+@@ -8,3 +8,4 @@ siocgskns_test
+ cred_change_test
+ stress_test
+ listns_pagination_bug
++regression_pidfd_setns_test
+diff --git a/tools/testing/selftests/namespaces/Makefile b/tools/testing/selftests/namespaces/Makefile
+index 01569e0abbdb..1f36c7bf7728 100644
+--- a/tools/testing/selftests/namespaces/Makefile
++++ b/tools/testing/selftests/namespaces/Makefile
+@@ -11,7 +11,8 @@ TEST_GEN_PROGS := nsid_test \
+ 		  siocgskns_test \
+ 		  cred_change_test \
+ 		  stress_test \
+-		  listns_pagination_bug
++		  listns_pagination_bug \
++		  regression_pidfd_setns_test
  
- static __always_inline struct ns_common *__must_check ns_get_unless_inactive(struct ns_common *ns)
- {
--	VFS_WARN_ON_ONCE(__ns_ref_active_read(ns) && !__ns_ref_read(ns));
- 	if (!__ns_ref_active_read(ns)) {
- 		VFS_WARN_ON_ONCE(is_ns_init_id(ns));
- 		return NULL;
-diff --git a/kernel/nscommon.c b/kernel/nscommon.c
-index bfd2d6805776..c910b979e433 100644
---- a/kernel/nscommon.c
-+++ b/kernel/nscommon.c
-@@ -170,8 +170,10 @@ void __ns_ref_active_put(struct ns_common *ns)
- 	if (is_ns_init_id(ns))
- 		return;
+ include ../lib.mk
  
--	if (!atomic_dec_and_test(&ns->__ns_ref_active))
-+	if (!atomic_dec_and_test(&ns->__ns_ref_active)) {
-+		VFS_WARN_ON_ONCE(__ns_ref_active_read(ns) < 0);
- 		return;
-+	}
+@@ -22,4 +23,5 @@ $(OUTPUT)/siocgskns_test: ../filesystems/utils.c
+ $(OUTPUT)/cred_change_test: ../filesystems/utils.c
+ $(OUTPUT)/stress_test: ../filesystems/utils.c
+ $(OUTPUT)/listns_pagination_bug: ../filesystems/utils.c
++$(OUTPUT)/regression_pidfd_setns_test: ../filesystems/utils.c
  
- 	VFS_WARN_ON_ONCE(is_ns_init_id(ns));
- 	VFS_WARN_ON_ONCE(!__ns_ref_read(ns));
-@@ -181,8 +183,10 @@ void __ns_ref_active_put(struct ns_common *ns)
- 		if (!ns)
- 			return;
- 		VFS_WARN_ON_ONCE(is_ns_init_id(ns));
--		if (!atomic_dec_and_test(&ns->__ns_ref_active))
-+		if (!atomic_dec_and_test(&ns->__ns_ref_active)) {
-+			VFS_WARN_ON_ONCE(__ns_ref_active_read(ns) < 0);
- 			return;
-+		}
- 	}
- }
- 
-@@ -280,12 +284,16 @@ void __ns_ref_active_put(struct ns_common *ns)
-  */
- void __ns_ref_active_get(struct ns_common *ns)
- {
-+	int prev;
+diff --git a/tools/testing/selftests/namespaces/regression_pidfd_setns_test.c b/tools/testing/selftests/namespaces/regression_pidfd_setns_test.c
+new file mode 100644
+index 000000000000..753fd29dffd8
+--- /dev/null
++++ b/tools/testing/selftests/namespaces/regression_pidfd_setns_test.c
+@@ -0,0 +1,113 @@
++// SPDX-License-Identifier: GPL-2.0
++#define _GNU_SOURCE
++#include <errno.h>
++#include <sched.h>
++#include <signal.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <sys/socket.h>
++#include <unistd.h>
++#include "../pidfd/pidfd.h"
++#include "../kselftest_harness.h"
 +
- 	/* Initial namespaces are always active. */
- 	if (is_ns_init_id(ns))
- 		return;
- 
- 	/* If we didn't resurrect the namespace we're done. */
--	if (atomic_fetch_add(1, &ns->__ns_ref_active))
-+	prev = atomic_fetch_add(1, &ns->__ns_ref_active);
-+	VFS_WARN_ON_ONCE(prev < 0);
-+	if (likely(prev))
- 		return;
- 
- 	/*
-@@ -298,7 +306,9 @@ void __ns_ref_active_get(struct ns_common *ns)
- 			return;
- 
- 		VFS_WARN_ON_ONCE(is_ns_init_id(ns));
--		if (atomic_fetch_add(1, &ns->__ns_ref_active))
-+		prev = atomic_fetch_add(1, &ns->__ns_ref_active);
-+		VFS_WARN_ON_ONCE(prev < 0);
-+		if (likely(prev))
- 			return;
- 	}
- }
++/*
++ * Regression tests for the setns(pidfd) active reference counting bug.
++ *
++ * These tests are based on the reproducers that triggered the race condition
++ * fixed by commit 1c465d0518dc ("ns: handle setns(pidfd, ...) cleanly").
++ *
++ * The bug: When using setns() with a pidfd, if the target task exits between
++ * prepare_nsset() and commit_nsset(), the namespaces would become inactive.
++ * Then ns_ref_active_get() would increment from 0 without properly resurrecting
++ * the owner chain, causing active reference count underflows.
++ */
++
++/*
++ * Simple pidfd setns test using create_child()+unshare().
++ *
++ * Without the fix, this would trigger active refcount warnings when the
++ * parent exits after doing setns(pidfd) on a child that has already exited.
++ */
++TEST(simple_pidfd_setns)
++{
++	pid_t child_pid;
++	int pidfd = -1;
++	int ret;
++	int sv[2];
++	char c;
++
++	/* Ignore SIGCHLD for autoreap */
++	ASSERT_NE(signal(SIGCHLD, SIG_IGN), SIG_ERR);
++
++	ASSERT_EQ(socketpair(AF_UNIX, SOCK_STREAM, 0, sv), 0);
++
++	/* Create a child process without namespaces initially */
++	child_pid = create_child(&pidfd, 0);
++	ASSERT_GE(child_pid, 0);
++
++	if (child_pid == 0) {
++		close(sv[0]);
++
++		if (unshare(CLONE_NEWUTS | CLONE_NEWIPC | CLONE_NEWNET | CLONE_NEWUSER) < 0) {
++			close(sv[1]);
++			_exit(1);
++		}
++
++		/* Signal parent that namespaces are ready */
++		if (write_nointr(sv[1], "1", 1) < 0) {
++			close(sv[1]);
++			_exit(1);
++		}
++
++		close(sv[1]);
++		_exit(0);
++	}
++	ASSERT_GE(pidfd, 0);
++	EXPECT_EQ(close(sv[1]), 0);
++
++	ret = read_nointr(sv[0], &c, 1);
++	ASSERT_EQ(ret, 1);
++	EXPECT_EQ(close(sv[0]), 0);
++
++	/* Set to child's namespaces via pidfd */
++	ret = setns(pidfd, CLONE_NEWUTS | CLONE_NEWIPC);
++	TH_LOG("setns() returned %d", ret);
++	close(pidfd);
++}
++
++/*
++ * Simple pidfd setns test using create_child().
++ *
++ * This variation uses create_child() with namespace flags directly.
++ * Namespaces are created immediately at clone time.
++ */
++TEST(simple_pidfd_setns_clone)
++{
++	pid_t child_pid;
++	int pidfd = -1;
++	int ret;
++
++	/* Ignore SIGCHLD for autoreap */
++	ASSERT_NE(signal(SIGCHLD, SIG_IGN), SIG_ERR);
++
++	/* Create a child process with new namespaces using create_child() */
++	child_pid = create_child(&pidfd, CLONE_NEWUSER | CLONE_NEWUTS | CLONE_NEWIPC | CLONE_NEWNET);
++	ASSERT_GE(child_pid, 0);
++
++	if (child_pid == 0) {
++		/* Child: sleep for a while so parent can setns to us */
++		sleep(2);
++		_exit(0);
++	}
++
++	/* Parent: pidfd was already created by create_child() */
++	ASSERT_GE(pidfd, 0);
++
++	/* Set to child's namespaces via pidfd */
++	ret = setns(pidfd, CLONE_NEWUTS | CLONE_NEWIPC);
++	close(pidfd);
++	TH_LOG("setns() returned %d", ret);
++}
++
++TEST_HARNESS_MAIN
 
 -- 
 2.47.3
