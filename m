@@ -1,157 +1,139 @@
-Return-Path: <linux-fsdevel+bounces-67627-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67628-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9F8BC44984
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 09 Nov 2025 23:56:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16862C449BA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 00:08:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 53FDE4E4E38
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Nov 2025 22:56:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C50203AF056
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Nov 2025 23:08:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1010426D4C4;
-	Sun,  9 Nov 2025 22:56:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2023826FDBB;
+	Sun,  9 Nov 2025 23:08:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="YmAbICQw"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ZmcOuLFZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp153-168.sina.com.cn (smtp153-168.sina.com.cn [61.135.153.168])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97C5326D4CD
-	for <linux-fsdevel@vger.kernel.org>; Sun,  9 Nov 2025 22:56:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=61.135.153.168
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3588D26CE35
+	for <linux-fsdevel@vger.kernel.org>; Sun,  9 Nov 2025 23:08:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762728987; cv=none; b=o+MNb29l1GRnthg+xV8vg9tzx0CDPSPEdMkIGGgg1FLHg4Sy0KS+nU3pOwuvzKaK9+zLFIWOKEqyVNiYcwNZVeCm9fdwPacqhfQAwgk6YaKBkqLjNRIZGcVjJcVvAcJts/+HZbRAVRgoSDuP68ouUPKk0h7BfogWu0pIWc3FHak=
+	t=1762729693; cv=none; b=L7J4akG8DeaiBQT/Ogpnx5dHArPkkfDnCEzI1JEIPc+CrRt7QK5/0ndoWYx0BKuBa5gCjQrF3cjVawIWHXThBdcrCBN16ArQ6vcyd+k1n9+JIABRaQTR/pNH/6xC7GaBFco2lHFaWSCEydBUqav9+bDhEUHW9fAUori4ukz1jhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762728987; c=relaxed/simple;
-	bh=zvM5L82UsovszDgGDQwBgPaonvekrGjz9aSleaGG4HE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Y35APcTaYo5A6ufDYJMX+pQesl9IfwMd00gb/VH/lGz4JLsiXUJiLsLDvJOJ+wS1ohwq3awwMWoLZIfRks6xJABkNc/k0Tm5gPmJtg6QEfjjifAt2iFtClVTEW/FdZEasLMIVdzvyp7e3qXIPrfIlf6B/mh0PDNYRvpz3FYYWMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=YmAbICQw; arc=none smtp.client-ip=61.135.153.168
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1762728977;
-	bh=X3sgMONdGnK9HZSlZmsqzfDs/H21WbjKzGNdhC1T2Yo=;
-	h=From:Subject:Date:Message-ID;
-	b=YmAbICQwYaDco9zHZY3AXfJipcWXvATv9NeCaWyyrySjGo6pVGM44ZeGML06QbaTz
-	 BSTWF0x1QiGS3K87ZoQuJGjU/ekWB2LNclbLIZ8t2hWFzhF3XCt5pVhjqGG7xhaOQ4
-	 Ws/p5WpW4H0kTwyNyPReCb5O73C3EaHbXPEa+6tc=
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([114.249.57.85])
-	by sina.com (10.54.253.33) with ESMTP
-	id 69111BE800007E0D; Sun, 10 Nov 2025 06:55:38 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 7950016685186
-X-SMAIL-UIID: 211698EDDDFC497485E9AE18BBA73E18-20251110-065538-1
-From: Hillf Danton <hdanton@sina.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org,
-	Jann Horn <jannh@google.com>,
-	Jan Kara <jack@suse.cz>,
-	linux-kernel@vger.kernel.org,
-	syzbot+1957b26299cf3ff7890c@syzkaller.appspotmail.com
-Subject: Re: [PATCH 0/8] ns: fixes for namespace iteration and active reference counting
-Date: Mon, 10 Nov 2025 06:55:26 +0800
-Message-ID: <20251109225528.9063-1-hdanton@sina.com>
-In-Reply-To: <20251109-namespace-6-19-fixes-v1-0-ae8a4ad5a3b3@kernel.org>
-References: 
+	s=arc-20240116; t=1762729693; c=relaxed/simple;
+	bh=iACxoHcoDxLWZj3kolEGP9nbhxUet6TkNrDdT2g6g6A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cZFvGB65EwxgTmEmR9Jub/9UHZzV3+IGbi8n/7J9mVYljBjPPjq0lhOuIROLSkiEwziieZFrdi7eWDfEK7iu6sGJpFL3AUOxSBsJJXz8EjnrlxIWtkpt5drKTUl8U2DrMvHIsGXFrWYLfCt13opcIDt3FdvlWXxeD0FeF6tQRbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=ZmcOuLFZ; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b729f239b39so519275266b.0
+        for <linux-fsdevel@vger.kernel.org>; Sun, 09 Nov 2025 15:08:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1762729689; x=1763334489; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=gAZXs3XadTTrsCvx/VeK6Nga0Xvd+txMXgtt9i6bijA=;
+        b=ZmcOuLFZceHb71iFe7EbCUnGZvf1GBccZl7skKMvy+hQwpdvuoln+JUEo2i5So0W8W
+         TzLlE6Eo9IqgsAuPDM4dFyqCbkvWZe8RoR+qIPn4IrtfpFoUavnEpkrdK2TsLCU7GlH2
+         q+ZoKfsy9DKsJEL6WG5gc/R5pn7h/Brnlccvs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762729689; x=1763334489;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gAZXs3XadTTrsCvx/VeK6Nga0Xvd+txMXgtt9i6bijA=;
+        b=v+7iygz+Ud3RVoShfoyVwPaCdZOIP53oVRzOo1RTyijVXPTdGptIybW37ItDbrLQpC
+         LsO6sAmcEr325I00VJZ6BfyGQTZC/4iU7RPCeEgwTEitLy1SsgAR/V8cJWNpwZAcs0g2
+         fX0/QsucIt6tsHnbb+cOO09mEsY01hwy2oR76u2fyFwjmvoCceUh4iFSyp6603k7wi8B
+         4US10Hne8nSku8+TlJzgnaZzu5ceR25FqKBgMqJptA5v9niM6Iku8FBXOfFetEkyQVGK
+         zfW3sGz6uytEgzoUgnE7jamhDJjjZFYP2logZ6iF9oCr3PfFCXJWR8KWIZKBwAkJT61b
+         C7kQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXN4fNpLqcmcIupHZnU/5at4/8gvMSCvLVgxPdoNgVnYimj1QZlv23IUGERzsTYj/lzQISnj9jRVWeNGDEz@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRpg3/1dNToih+mY8PB77a2/CcwCUxfWyT7t0cNj2ctFJOFTt/
+	hhPLVRNKI5R91DwH+AQxaUih856OnTPLXz0PUb6M+56PuerH4X04U20vv8X64EVBtHP4gomt5MN
+	SUCZk3aw=
+X-Gm-Gg: ASbGncson044cRWLOxyMOYdpNP1tz1X3nrwWyu4eaOCAAAbnvEThF0G3U6kO2txByb4
+	LfJ65f+u/3sGuNrJp1rG3oJm2u0jyq+rDyoTlVrXu2a6HtGe1M4Bm34sT8L9PPno/m8IjjoQYCb
+	QRUEXkt29TG98PyWc5sPQV8UxgV2SQRkmH8hWOAYOZX7/lBJ1m4JFXeLT2DOQpoLkRm8Z6kbYyK
+	iWOG2exTArL484xHhNqMaTWtiy1fNXEnRZSt3/3hHb3SOh6A3ZxdAbVGpmKRjS/OhLkDUl3Nu2p
+	q9t5qjuANvcqp7e0s3WELp3QGulPd0qXAhaire1z1SUnqgJBVrWw/+l4tRyGVQ5XI43JzvVoguO
+	DqdI14a1K5TY9DIVVXppJA9e+iWFG0ZkTZicN2R8wLJL0LfqxzWsu4c5eKUEpgwx6MMyNaT09hA
+	LkOp2AyFdVUYIZRrqjd+GuTcbMLVdZbZbxjGSp9pNODhG/KDzsvYOMiFK9KAsA
+X-Google-Smtp-Source: AGHT+IFyVSwvwEWskhcC7Iu+EO6GI6Cp6xtFpPqW3gUybkYAgYDVShaQ7HCt1WxeMf0BoDkXzl7UHA==
+X-Received: by 2002:a17:907:961f:b0:b27:edf1:f638 with SMTP id a640c23a62f3a-b72d0b031f4mr966322666b.23.1762729689268;
+        Sun, 09 Nov 2025 15:08:09 -0800 (PST)
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com. [209.85.218.48])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bfa11367sm905952966b.68.2025.11.09.15.08.08
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 09 Nov 2025 15:08:08 -0800 (PST)
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b727f452fffso412298866b.1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 09 Nov 2025 15:08:08 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUntDIbVoNb9YIWcjbXDzrVV1NqYD7+govNwPckJ+kYMZIvlcjuurRyfIzJqQPCDsM/KYWL7I8MoGW+AEeE@vger.kernel.org
+X-Received: by 2002:a17:907:7f13:b0:b07:87f1:fc42 with SMTP id
+ a640c23a62f3a-b72dfd9b02cmr669689266b.16.1762729688139; Sun, 09 Nov 2025
+ 15:08:08 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251109063745.2089578-1-viro@zeniv.linux.org.uk>
+ <20251109063745.2089578-11-viro@zeniv.linux.org.uk> <CAHk-=wgXvEK66gjkKfUxZ+G8n50Ms65MM6Sa9Vj9cTFg7_WAkA@mail.gmail.com>
+ <CAGudoHHoSVRct8_BGwax37sadci-vwx_C=nuyCGoPn4SCAEagA@mail.gmail.com>
+ <CAHk-=wiaGQUU5wPmmbsccUJ4zRdtfi_7YXdnZ-ig3WyPRE_wnw@mail.gmail.com>
+ <CAGudoHGCkDXsFnc30k10w-thxNZ5c0B9j26kOWsCXkOV8ueeEA@mail.gmail.com>
+ <CAHk-=whxKKnh=rtO9sq0uUL76YGLB3YTb98DVBub_84_nO6txA@mail.gmail.com>
+ <CAGudoHHA_dDXMZFh1=U=AjPsqK9PRUGq3fQ_GjOdebUBK-sn3g@mail.gmail.com>
+ <CAHk-=wj5GSLaqf+rVE6u-4-rzdUK+OM_oUnPLQoqVY4J_F0uRw@mail.gmail.com> <CAHk-=wgbn+6pGaPw1k6LsMyaPQqz4PxOqF_kN+drQvNudF_1XA@mail.gmail.com>
+In-Reply-To: <CAHk-=wgbn+6pGaPw1k6LsMyaPQqz4PxOqF_kN+drQvNudF_1XA@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sun, 9 Nov 2025 15:07:52 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wghq+wJrgrDy=-S5TmVNkaJS5RWsQ3kFfCCwv0juoKG4w@mail.gmail.com>
+X-Gm-Features: AWmQ_bnxTScKA_GtJGPpI3hrR3y54KxE0TmLEXSfNmQBESKxwdZdKzo52akvKlY
+Message-ID: <CAHk-=wghq+wJrgrDy=-S5TmVNkaJS5RWsQ3kFfCCwv0juoKG4w@mail.gmail.com>
+Subject: Re: [RFC][PATCH 10/13] get rid of audit_reusename()
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, 
+	brauner@kernel.org, jack@suse.cz, paul@paul-moore.com, axboe@kernel.dk, 
+	audit@vger.kernel.org, io-uring@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, 09 Nov 2025 22:11:21 +0100 Christian Brauner wrote:
-> * Make sure to initialize the active reference count for the initial
->   network namespace and prevent __ns_common_init() from returning too
->   early.
-> 
-> * Make sure that passive reference counts are dropped outside of rcu
->   read locks as some namespaces such as the mount namespace do in fact
->   sleep when putting the last reference.
-> 
-> * The setns() system call supports:
-> 
->   (1) namespace file descriptors (nsfd)
->   (2) process file descriptors (pidfd)
-> 
->   When using nsfds the namespaces will remain active because they are
->   pinned by the vfs. However, when pidfds are used things are more
->   complicated.
-> 
->   When the target task exits and passes through exit_nsproxy_namespaces()
->   or is reaped and thus also passes through exit_cred_namespaces() after
->   the setns()'ing task has called prepare_nsset() but before the active
->   reference count of the set of namespaces it wants to setns() to might
->   have been dropped already:
-> 
->     P1                                                              P2
-> 
->     pid_p1 = clone(CLONE_NEWUSER | CLONE_NEWNET | CLONE_NEWNS)
->                                                                     pidfd = pidfd_open(pid_p1)
->                                                                     setns(pidfd, CLONE_NEWUSER | CLONE_NEWNET | CLONE_NEWNS)
->                                                                     prepare_nsset()
-> 
->     exit(0)
->     // ns->__ns_active_ref        == 1
->     // parent_ns->__ns_active_ref == 1
->     -> exit_nsproxy_namespaces()
->     -> exit_cred_namespaces()
-> 
->     // ns_active_ref_put() will also put
->     // the reference on the owner of the
->     // namespace. If the only reason the
->     // owning namespace was alive was
->     // because it was a parent of @ns
->     // it's active reference count now goes
->     // to zero... --------------------------------
->     //                                           |
->     // ns->__ns_active_ref        == 0           |
->     // parent_ns->__ns_active_ref == 0           |
->                                                  |                  commit_nsset()
->                                                  -----------------> // If setns()
->                                                                     // now manages to install the namespaces
->                                                                     // it will call ns_active_ref_get()
->                                                                     // on them thus bumping the active reference
->                                                                     // count from zero again but without also
->                                                                     // taking the required reference on the owner.
->                                                                     // Thus we get:
->                                                                     //
->                                                                     // ns->__ns_active_ref        == 1
->                                                                     // parent_ns->__ns_active_ref == 0
-> 
->     When later someone does ns_active_ref_put() on @ns it will underflow
->     parent_ns->__ns_active_ref leading to a splat from our asserts
->     thinking there are still active references when in fact the counter
->     just underflowed.
-> 
->   So resurrect the ownership chain if necessary as well. If the caller
->   succeeded to grab passive references to the set of namespaces the
->   setns() should simply succeed even if the target task exists or gets
->   reaped in the meantime.
-> 
->   The race is rare and can only be triggered when using pidfs to setns()
->   to namespaces. Also note that active reference on initial namespaces are
->   nops.
-> 
->   Since we now always handle parent references directly we can drop
->   ns_ref_active_get_owner() when adding a namespace to a namespace tree.
->   This is now all handled uniformly in the places where the new namespaces
->   actually become active.
-> 
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
-> ---
+On Sun, 9 Nov 2025 at 14:44, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
 >
-FYI namespace-6.19.fixes failed to survive the syzbot test [1].
+> And again: that patch will slow things down [..]
 
-[1] Subject: Re: [syzbot] [lsm?] WARNING in put_cred_rcu
-https://lore.kernel.org/lkml/690eedba.a70a0220.22f260.0075.GAE@google.com/
+Having done a profile just to see, the regular allocation path
+(getname_flags -> kmem_cache_alloc_noprof) certainly shows up.
+
+But on that test set (kernel build), I never hit the 128-byte limit,
+and interestingly putname() shows up a tiny bit more than
+getname_flags().
+
+At least one reason seems to be that the
+
+        if (refcnt != 1) {
+
+thing in putname() is mispredicted, and without the auditing code, the
+"refcnt == 1" case is obviously the common case.
+
+Anyway. Not a great test, and this is all the "good behavior", and all
+the *real* costs in that particular path are in strncpy_from_user(),
+kmem_cache_free() and kmem_cache_alloc_noprof().
+
+And yeah, STAC/CLAC is expensive on my old Zen 2 machine, as are the
+cmpxchg16b in the slab alloc/free paths.
+
+And in the end, the actual path walking is more expensive than all of
+this, as is selinux_inode_permission(). So the actual filename copying
+isn't *really* all that noticeable - you have to look for it.
+
+              Linus
 
