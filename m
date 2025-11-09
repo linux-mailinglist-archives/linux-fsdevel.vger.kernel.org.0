@@ -1,99 +1,134 @@
-Return-Path: <linux-fsdevel+bounces-67589-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67590-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90E74C43FB6
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 09 Nov 2025 15:11:17 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6ECCEC441C9
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 09 Nov 2025 17:04:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0F6F94E65AD
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Nov 2025 14:11:12 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 033304E653A
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Nov 2025 16:04:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37C102FC013;
-	Sun,  9 Nov 2025 14:11:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 206132FFF98;
+	Sun,  9 Nov 2025 16:04:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PSHLP7+b"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 095DA2FB0AE
-	for <linux-fsdevel@vger.kernel.org>; Sun,  9 Nov 2025 14:11:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE9DF2D595A
+	for <linux-fsdevel@vger.kernel.org>; Sun,  9 Nov 2025 16:04:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762697464; cv=none; b=pUhM9XKe2Z1IWatTBFhypDE2EVEoMZzeggnYRAJvD+kxoBTHH7Qs3/3bXBFQZYY3mfa56b74fRB0Nv3PdLQzSvLCBRea2+h8i71i9x+0Ok+A0dT8GBI4e7MxgbzwsLN+ts6CccJS+ZxnBCw8J/8WQJ6r7gkydsS7m320mRs5Kps=
+	t=1762704264; cv=none; b=d6VDNlZJ4scVDTzNJynpbcArr9AZBVgPX2F7MLc8JNeaSsHQYZLIVBx0E+SFx5NtQYsXxtdDx4zTT2kJr7PBkOHJhO+aTGSGnvxR6rMh/PMMNxXNfnxn9KRHVqDUsis66xs6dprd88fglFCx7LwarPBr4m+N75mh73h8A3AdUY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762697464; c=relaxed/simple;
-	bh=y6Dy/w1K3XpX2uFUEe+rBJFRb32lSDcExJhalbXQ5aU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=rKW72P7BUeF5iSvHfbFumOOALrmlY97VyhoM7XHQAy8vYq2VhXBQPv/tHRwdfW3wnHu+PKWd636pb5r7F93CpFy4cRRBSNADXcT/ywOGf6V33iURbM0rnsV2BdvjYHDl2dQAQZfaIrpVlZVb4P0NnvCTX5OBMdZzTuxojKGBfy0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-9487904aeccso135320539f.1
-        for <linux-fsdevel@vger.kernel.org>; Sun, 09 Nov 2025 06:11:02 -0800 (PST)
+	s=arc-20240116; t=1762704264; c=relaxed/simple;
+	bh=ZwznLFivANyU8ZlKEutMzt9MzcWHkhSBL7kC5XjFM0w=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VR/2id/k20fmKEl+QAB93BC8kvYzUlMCzzGedrJ1at/KtKr8ZMJi+ADI5Qv/8GfeyUlZF1gBNiXbTf/J9QVX78lagZH3RRAk1VvYNdFNWXgC4Gp+d1GRYAIrJnxgYGS8YCX05ZKCZS29ErijagAWIalI3zIl/p+X1lhLoi6/8/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PSHLP7+b; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-429c7869704so1675808f8f.2
+        for <linux-fsdevel@vger.kernel.org>; Sun, 09 Nov 2025 08:04:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762704261; x=1763309061; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yZ/3k/Szvk85XYtPGcfXcb2ddiNwOVeYZcc0QlEd1Dg=;
+        b=PSHLP7+bXzYqOd4Ca6cAxh9ydRiOhY+xMmvsx64dw4n11vSAFQa+NX2vbnF65zsOIG
+         O4Z94tsib0MhmWkvg8I5+lD7nQ3fwhEgWQApjAqe4sA1PT+YnaQOqvCp84Ycrn5WmF3+
+         rcnmiR0mEmgvu4vfoU2mLuelcztdKEre3liXk83x61OcSYCa7kR2ShXhV0PCX0rY4U7N
+         WtBCT1d8Rxu1daJg5wpMi7JV6Wn9nHyXStcGc1ugLStqkccB0Mw3M1+ASFfUK22W/CIS
+         XFtjxq3z8HcZQLx41kkRI/oAiR0eieyp/w9kkcHcxExiJWeMHux+VSFUQNEdy1FeRtpV
+         BFpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762697462; x=1763302262;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=m02kWE5lhyrzZgApWthbB6kQBtAUB+gmZPn3Dt1ZsD4=;
-        b=V+EUXZ/thYAZVD4Fl1uhVINnoLDf9mE5AA7uSAtruSWFDn0gLHPjYSlAfJeMUvyrEj
-         LeJdTLo8TZoXc4ofCykv6u2CFCFk2x4yaASGT68pXbLxt7Ymv8qXFSl9rmdjyzsvENe+
-         3WgzNXX5yd36CMFOqmqQ/4onJSTkPXJF5gT1Vr7v0cO32UrhzksVV5oW/4mNxlzZuOqf
-         pdp33PntYbFWg/uelewk+cjjRIkO/VBLxFwlt73x6MU6aCcZcp7BVuT/M3p0hbgQMX3o
-         438tbU4Dk/2bCZPWG6EfD9YsklyjDmFAdvWyZCrWMtYqMLBgqW40mkqANqxjDJR87ZiF
-         bSEA==
-X-Forwarded-Encrypted: i=1; AJvYcCX+Nku2B+vMH5vnlO5JlFgw8Ks74/IbED/sWTHD+6742zUIGz2zvlm3jKb8FAINvXL/Isa5/maIqelPLpcx@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjJT5n8zcCkOYGjOePrQE/ZvwUcjm5C1o7jtE1e4f3MLmd/L/s
-	qgZHx+xTBmwMgQu2YpIJKRbAFQ8fe62el7dV8tQboNX2earCy7mKW0GR1dtv8nZWf7xWxjBALTm
-	vvPh1/uXfAgafEnXru88vIornDHC01WzyMFk8HJopSwoLflB+1OLspr7Moqw=
-X-Google-Smtp-Source: AGHT+IEw+SyBMcsmvsru2ydmWiAer57ckBKlQAwl2f1WWyRnepHiN7uVkkXdan4vghsxm/ZOPYzm213l8SerzWDt7Il3Poc2ozLJ
+        d=1e100.net; s=20230601; t=1762704261; x=1763309061;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=yZ/3k/Szvk85XYtPGcfXcb2ddiNwOVeYZcc0QlEd1Dg=;
+        b=TF5e7meW6+hmNPL3BFnpvGZvIbX+pv5r92xESv59DtPEkQqRYcWHiGj+rzhV95bkbk
+         +/HeTpkWFVrLGUb0FW6XflB665JEIr2r1acaI5NccI7Xd9/yKhG6cQzkiJp0j8W1jE9w
+         /CE5HcYdLWSsmJL8FVsZkuu8HxwXX0QWnLi3hEMKiLSp/foE62bhU/zn9Ark7S2A/koX
+         nzYOnnkHFBRPhd0WN0NIULnUZKyPZpbZdbeg7USZG5sXN59XYvNI5GKHBJsfH1ennc8Z
+         HGcFqOjBKpTicFKwzWwdmdjzF8Zi4xHdWjrMI48SJ9Q50o0gyEF4V2bX5bN51Z3QkVxM
+         +VXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV1HnOJ5TJ81jxCvSjwfxYrB0Imqje65wJYQIHWaVe39dnMtucwoNEGXa0RLTm8Oa5nXL4WGIuScoKbOlGI@vger.kernel.org
+X-Gm-Message-State: AOJu0YzS7WhoyfFyemfa8+k2VhJcaipGAkBnFRFSfhPpJr4GYJU2PzEL
+	gZUnpJHWLbEXSPOc1JdZ01cPlQsJtWUVlcU+VKfrdn2O2EBy7oAYXwao
+X-Gm-Gg: ASbGncusQfNPY5/6ZifuzNtsoiiaeD6mGSBS3J8EBbdXfP3tDbOnPPebMmWDBVMTmYl
+	zlM2urTl3KgRAO+ed43LfOwptLIUIVHixTqrA4TyEp88aQZVxo6ETplmgX5U4rNxylXZ3TPgA5v
+	4F9BJaYfLPsu9GwgV7a89s4tFtiueKgXy4DMz8ZBhRBOE63cyyrWHt8cNVkU5nptlKkK7qIIUhy
+	40GuDu/XK1GR4u45GzP7hIzzp4irV+JyqwbjnFaPe6euKtaiF7RbW3YeIEWitSfEOuFUmafrFK2
+	YUDA3r0Qg7u9s+D9FwhSuYdKYmjzKjqBw7E+3MVek27W1TSAcKBN63d3QGHanEflU4X63TnR4z/
+	OJKvNe1N7+nCOVK3aESAqbbzCZVZjaYg5EppKnFxy+uH0dxDeCgkzGpqPhmpQy3zsA/fX51BsJj
+	C9oPo4sQM9zEU4wdeI9F0Qjo3HT8qiV59Y/EaL/TcP8owPU9mEXzE2
+X-Google-Smtp-Source: AGHT+IF4v4kRAm85ejXHBzeoSJZ5rv1Sf/e1KUUS5XVDP4wZrYVo3g/uJNxMF3qT2VLVXhWlbGOhHA==
+X-Received: by 2002:a05:6000:24c4:b0:42b:3978:157a with SMTP id ffacd0b85a97d-42b3978176fmr1366422f8f.39.1762704260877;
+        Sun, 09 Nov 2025 08:04:20 -0800 (PST)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b2dd927d5sm10518562f8f.24.2025.11.09.08.04.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 09 Nov 2025 08:04:20 -0800 (PST)
+Date: Sun, 9 Nov 2025 16:04:19 +0000
+From: David Laight <david.laight.linux@gmail.com>
+To: Masaharu Noguchi <nogunix@gmail.com>
+Cc: jesperjuhl76@gmail.com, Jeff Layton <jlayton@kernel.org>, Chuck Lever
+ <chuck.lever@oracle.com>, Alexander Aring <alex.aring@gmail.com>,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] samples: vfs: avoid libc AT_RENAME_* redefinitions
+Message-ID: <20251109160419.5a16411a@pumpkin>
+In-Reply-To: <20251109071304.2415982-3-nogunix@gmail.com>
+References: <CAHaCkme7C8LDpWVX8TnDQQ+feWeQy_SA3HYfpyyPNFee_+Z2EA@mail.gmail.com>
+	<20251109071304.2415982-1-nogunix@gmail.com>
+	<20251109071304.2415982-3-nogunix@gmail.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:4417:20b0:433:7d0b:b377 with SMTP id
- e9e14a558f8ab-4337d0bb530mr14752975ab.15.1762697462239; Sun, 09 Nov 2025
- 06:11:02 -0800 (PST)
-Date: Sun, 09 Nov 2025 06:11:02 -0800
-In-Reply-To: <20251109-lesung-erkaufen-476f6fb00b1b@brauner>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6910a0f6.a70a0220.22f260.00b8.GAE@google.com>
-Subject: Re: [syzbot] [fs?] WARNING in destroy_super_work
-From: syzbot <syzbot+1957b26299cf3ff7890c@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, anna-maria@linutronix.de, bpf@vger.kernel.org, 
-	brauner@kernel.org, bsegall@google.com, cgroups@vger.kernel.org, 
-	david@redhat.com, dietmar.eggemann@arm.com, frederic@kernel.org, 
-	hannes@cmpxchg.org, jack@suse.cz, jsavitz@redhat.com, juri.lelli@redhat.com, 
-	kees@kernel.org, liam.howlett@oracle.com, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-security-module@vger.kernel.org, lorenzo.stoakes@oracle.com, 
-	mgorman@suse.de, mhocko@suse.com, mingo@redhat.com, mjguzik@gmail.com, 
-	mkoutny@suse.com, oleg@redhat.com, paul@paul-moore.com, peterz@infradead.org, 
-	rostedt@goodmis.org, rppt@kernel.org, sergeh@kernel.org, surenb@google.com, 
-	syzkaller-bugs@googlegroups.com, tglx@linutronix.de, tj@kernel.org, 
-	vbabka@suse.cz, vincent.guittot@linaro.org, viro@zeniv.linux.org.uk, 
-	vschneid@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On Sun,  9 Nov 2025 16:13:04 +0900
+Masaharu Noguchi <nogunix@gmail.com> wrote:
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+> Signed-off-by: Masaharu Noguchi <nogunix@gmail.com>
+> ---
+>  samples/vfs/test-statx.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/samples/vfs/test-statx.c b/samples/vfs/test-statx.c
+> index 49c7a46cee07..eabea80e9db8 100644
+> --- a/samples/vfs/test-statx.c
+> +++ b/samples/vfs/test-statx.c
+> @@ -20,6 +20,15 @@
+>  #include <sys/syscall.h>
+>  #include <sys/types.h>
+>  #include <linux/stat.h>
+> +#ifdef AT_RENAME_NOREPLACE
+> +#undef AT_RENAME_NOREPLACE
+> +#endif
+> +#ifdef AT_RENAME_EXCHANGE
+> +#undef AT_RENAME_EXCHANGE
+> +#endif
+> +#ifdef AT_RENAME_WHITEOUT
+> +#undef AT_RENAME_WHITEOUT
+> +#endif
 
-Reported-by: syzbot+1957b26299cf3ff7890c@syzkaller.appspotmail.com
-Tested-by: syzbot+1957b26299cf3ff7890c@syzkaller.appspotmail.com
+There is no need for the #if, just #undef the symbols.
+It is probably worthy of a short comment.
 
-Tested on:
+	David
 
-commit:         241462cd ns: fixes for namespace iteration and active ..
-git tree:       https://github.com/brauner/linux.git namespace-6.19.fixes
-console output: https://syzkaller.appspot.com/x/log.txt?x=11e1517c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f1b1a45727d1f117
-dashboard link: https://syzkaller.appspot.com/bug?extid=1957b26299cf3ff7890c
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+>  #include <linux/fcntl.h>
+>  #define statx foo
+>  #define statx_timestamp foo_timestamp
 
-Note: no patches were applied.
-Note: testing is done by a robot and is best-effort only.
 
