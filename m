@@ -1,65 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-67568-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67572-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A98B1C4398A
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 09 Nov 2025 07:38:56 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8972C439C2
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 09 Nov 2025 08:13:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B5113B2688
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Nov 2025 06:38:39 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8A4454E3AA8
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Nov 2025 07:13:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDC09268C40;
-	Sun,  9 Nov 2025 06:37:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E96382690D1;
+	Sun,  9 Nov 2025 07:13:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="t7ZoDXsb"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mOX6qwnR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4783241CB7;
-	Sun,  9 Nov 2025 06:37:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3F711F8723
+	for <linux-fsdevel@vger.kernel.org>; Sun,  9 Nov 2025 07:13:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762670271; cv=none; b=WhimD6NFy9vGr+Hznf5psU6X330eTuZPBwAhJChfixSB+ygcjpe/iyJrdCHCmy9jLxgSwZG5+4Owhxa5PFq51DqOZ1EeV3iIplTgcVlcvL+ZT5zu36zKfTTEfREds+gug8scgXzHsab0bP8WHrE7bvpqXufhHU4fx18MuKmGH9k=
+	t=1762672397; cv=none; b=W++Q/hn69Sr8rBFX/Cya1I4xUDXuaBWQIULmE/iHNV1NJl32XH7p4I5ELD520qE3AHZpGJK3UA6qWR8QyXC9BXQJlNnFcY1IghRbvMI6QkoulVMjOcMgDKAh3EFgA4NGjHSKwlipoZFyTEbGFTLNN/uOK/jPItaVFdm5ky9v8N8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762670271; c=relaxed/simple;
-	bh=YXvExZ6nFYMYGW5Yow8JrqcueNyhJE1qx9yl2S9CFNI=;
+	s=arc-20240116; t=1762672397; c=relaxed/simple;
+	bh=kCkl0IgEuB+qK0ucQM7ByvS2mgClHBC+newUobFrM2A=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kVVsyTw0a6OYhNPxwnEmVd8orRGUYvf0hRyfvfFPzad/lQ4MaNh8cc081B53C8Eg6EpHNZL3VDkJnvvZgWpxLfeKczIYfcii1G9rmH9nebClzJjaHnnbcBjzXODrXyiolOTxBsy8D14hBmWR/LXx5qun97LCdYVcFFIg+xDom/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=t7ZoDXsb; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
-	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=2OVGejaTIaqTifOZGRFKTB6zyUq35WGbXMjA6hnZtbo=; b=t7ZoDXsbxeLWCoY8yjMq5se07Q
-	bcSED/P0dXfRD+NsKjJP6B2IfQvTyLXF/hnkOb/+k0Fc9LohkOBMjKYwlZebDDxGS8WA9QuK1I4Z+
-	SZilhrZDcdYetf5fUwGLSXge2fbcdMKq5pKqey0GChiBJuwMWha52uQ69o67Enh+oRcdD9AwGfCUS
-	lEBh/9HKU0miOH8luLnlAc6HvHxqP01J2eQMDV8ENZ+H4aQmNynkFAv7vD0TTYCc1s69EUvOVpGIF
-	NZovAt+r61Fy7uxMKLTBscBtlzI8kFwu/xf9ZgLM0Rp6CwT2ggNqWJXdEMzx/tEPSYeEfPmg0dnTN
-	/7umuPcg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vHz3b-00000008ldY-07hj;
-	Sun, 09 Nov 2025 06:37:47 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: linux-fsdevel@vger.kernel.org
-Cc: torvalds@linux-foundation.org,
-	brauner@kernel.org,
-	jack@suse.cz,
-	mjguzik@gmail.com,
-	paul@paul-moore.com,
-	axboe@kernel.dk,
-	audit@vger.kernel.org,
-	io-uring@vger.kernel.org
-Subject: [RFC][PATCH 13/13] struct filename ->refcnt doesn't need to be atomic
-Date: Sun,  9 Nov 2025 06:37:45 +0000
-Message-ID: <20251109063745.2089578-14-viro@zeniv.linux.org.uk>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20251109063745.2089578-1-viro@zeniv.linux.org.uk>
-References: <20251109063745.2089578-1-viro@zeniv.linux.org.uk>
+	 MIME-Version; b=j/1NYLwqj9PEhRXVoi5qSZSB5lMCkU2MFEhIy2NJduUFFPstY2mPILxUxfkAmKX5CiDdpyJlt0BhmmhkC8S9fx5cHQjl8xL1vFhaEPuu3U0siEoTGd0c9M0sVPn8hu6oNlICR9Z/goD/Aic5I+MvKzzLOmc8nOkmAZbCWjD6wo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mOX6qwnR; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-297ec8a6418so1344315ad.1
+        for <linux-fsdevel@vger.kernel.org>; Sat, 08 Nov 2025 23:13:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762672395; x=1763277195; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xwusb2qyqwUfitZumVkZ/28VAioj7VL64C6xxAS8wL4=;
+        b=mOX6qwnRHIZNmd/1YGRYE223nLT+gkppueRfKG8E6I2WZC9NbRzjRP5EwjynwSWwl9
+         dxROBwOCw//AEkIDeqseh7l5QeOz584aOte/uMGb7IUkjZb+Cat1EZ3Lp0c9n2EKqmLD
+         oYfLeHXbOcAGAPRjEZhjH2ZCv99HRVtRVRYunuFGR2ziTOUvhd8DZ6v5urXB1co42MSg
+         JC2cBHwurNDpI5dOKzdoHEXGTDVP8Bf3eOELL1E0Q1/U7qUUTACTVDm8NzJajoRxBD1Z
+         KnwG2Hay8cCY+eHe5AvxN1KsfThrjfYBqlEl1wHCNG/N2O1Zp//BD/OI7ptJfAxCCxla
+         ++lw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762672395; x=1763277195;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=xwusb2qyqwUfitZumVkZ/28VAioj7VL64C6xxAS8wL4=;
+        b=t6pGDTDKpAl/QCYFarJhS09Fr4zwRXmlouzFunOkJ72h6zNl4563tOTbd096EeVMw4
+         sysoRqtu6O6omYZScFho7VkAasm2NBXswYksgs1OAaKIwKDwOPqKlP1M55OHkTON7TyP
+         q+ZvYRoe6PmN50pBj29+GMm1w7hQfmcXn2FARYMFET3fpPS9JSWyqEaIpZgPswk+fljv
+         JgJ6FWnlA/MWWQyTSnWejmv/cP+d82sYgsEZoj01lKkcle1i/QfcYGjdVAFU+GHa6yVP
+         Ib+oxFpxrBqzosgy1+KfYIskbV/aXSQqDJ2ae9Lqxy8PiODNeqkWyfTkWDQ5yU2VhUvr
+         CyUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW/MBup64VsO7gQ/jo9+Qlt4zCiuub+7OkPkS3PsqilIabCXa/72uq73vH0TFcMgHLDRQpa52mO/f+HQ7md@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKiCB8tulrqp+zPzpmqUqgOZ7+XRjCNY3Cjok1noAKb8++UtLm
+	3gbCSjsF5FjIUepUiuKfU06RGbCbKKSRr5a8xHJ6ul+DCXFHKD9nOh9L
+X-Gm-Gg: ASbGncvCp81RmyI5asDehMQJUZ4Hev/PmNVMx5WGOiK2tbUgmAp4ZlRnL2w7dUZmvZm
+	TEqOYkooeeEGy3RhGhszJgQxPWvG0/MoW4wqdFhrgTVWghPYoIiuhiN6e5kmiRGYvCsrufYnsoS
+	4a6B1Kdedik0qvdhH1N2B6UGQCw2omOBolZCNKgUEHxG0BLtOYD8bKC1JHJGUcUkRZZfAUzRxu2
+	AH7JdhWwUqngK1+WdoRnIF5TMLSOgr9ne1Gj9GEVyIiph0mbOrajEXHL0q4IZnZsE75xN+yAFS/
+	93A8ZOLhEmplkCcU3PBH2TtvtvXqYO+ak8e5eDS9GQQakFTyBzLzHDUnq1pWTr8ggS6zev1ck3d
+	qOn3I8KZ0m8BrbwgVl2SNyG7Yx0PmiGWOB4ZX60x4QSL3i7GREjI6kzbosr98zBiJBu3PN55qzK
+	LCm+k7bxsiWykWgco50A==
+X-Google-Smtp-Source: AGHT+IEy6utceTlq2dzE6jroNbB4zuXSzLqvToAaWYV/ORbFpst6LvtRaKQzKsVJDmFFSf2dbDX5rA==
+X-Received: by 2002:a17:902:e742:b0:297:f50a:d12a with SMTP id d9443c01a7336-297f50ad245mr18826875ad.8.1762672395171;
+        Sat, 08 Nov 2025 23:13:15 -0800 (PST)
+Received: from elitemini.flets-east.jp ([2400:4050:d860:9700:75bf:9e2e:8ac9:3001])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-297d6859a92sm57287495ad.88.2025.11.08.23.13.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 08 Nov 2025 23:13:14 -0800 (PST)
+From: Masaharu Noguchi <nogunix@gmail.com>
+To: jesperjuhl76@gmail.com,
+	Jeff Layton <jlayton@kernel.org>,
+	Chuck Lever <chuck.lever@oracle.com>
+Cc: Alexander Aring <alex.aring@gmail.com>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Masaharu Noguchi <nogunix@gmail.com>
+Subject: [PATCH 0/2] fix AT_RENAME_* redefinitions with glibc < 2.43
+Date: Sun,  9 Nov 2025 16:13:02 +0900
+Message-ID: <20251109071304.2415982-1-nogunix@gmail.com>
+X-Mailer: git-send-email 2.51.1
+In-Reply-To: <CAHaCkme7C8LDpWVX8TnDQQ+feWeQy_SA3HYfpyyPNFee_+Z2EA@mail.gmail.com>
+References: <CAHaCkme7C8LDpWVX8TnDQQ+feWeQy_SA3HYfpyyPNFee_+Z2EA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -67,95 +95,36 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Sender: Al Viro <viro@ftp.linux.org.uk>
 
-... or visible outside of audit, really.  Note that references
-held in delayed_filename always have refcount 1, and from the
-moment of complete_getname() or equivalent point in getname...()
-there is no references to struct filename instance anywhere
-that would be visible to other threads.
+LKML reports show that `allyesconfig` currently fails with glibc 2.42
+because both `<stdio.h>` and `<linux/fcntl.h>` define the AT_RENAME_*
+macros.  A follow-up pointed to glibc commit `1166170d9586 ("libio:
+Define AT_RENAME_* with the same tokens as Linux")`, which will first
+appear in glibc 2.43.  Until that release lands in common distributions,
+upstream kernels still build against glibc versions that redeclare the
+macros and fail under `-Werror`.
 
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
----
- fs/namei.c         | 8 ++++----
- include/linux/fs.h | 8 +-------
- kernel/auditsc.c   | 6 ++++++
- 3 files changed, 11 insertions(+), 11 deletions(-)
+This series is a small, revertable workaround so developers on Fedora 43
+(glibc 2.42) and other distributions with glibc < 2.43 can keep building
+the samples.  The
+first patch only emits the AT_RENAME_* aliases when libc does not do so
+already, and the second patch undefines any libc-provided macros before
+including `<linux/fcntl.h>` in the VFS sample.  Once glibc 2.43+ is
+ubiquitous (or if we decide to remove the aliases entirely), these
+changes can be dropped.
 
-diff --git a/fs/namei.c b/fs/namei.c
-index bb306177b8a3..9863cc319181 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -128,7 +128,7 @@
- static inline void initname(struct filename *name)
- {
- 	name->aname = NULL;
--	atomic_set(&name->refcnt, 1);
-+	name->refcnt = 1;
- }
- 
- static struct filename *
-@@ -283,13 +283,13 @@ void putname(struct filename *name)
- 	if (IS_ERR_OR_NULL(name))
- 		return;
- 
--	refcnt = atomic_read(&name->refcnt);
-+	refcnt = name->refcnt;
- 	if (unlikely(refcnt != 1)) {
- 		if (WARN_ON_ONCE(!refcnt))
- 			return;
- 
--		if (!atomic_dec_and_test(&name->refcnt))
--			return;
-+		name->refcnt--;
-+		return;
- 	}
- 
- 	if (unlikely(name->name != name->iname)) {
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index d57c8e21be13..4ea32aba847b 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2835,7 +2835,7 @@ extern struct kobject *fs_kobj;
- struct audit_names;
- struct filename {
- 	const char		*name;	/* pointer to actual string */
--	atomic_t		refcnt;
-+	int			refcnt;
- 	struct audit_names	*aname;
- 	const char		iname[];
- };
-@@ -2944,12 +2944,6 @@ int delayed_getname_uflags(struct delayed_filename *v, const char __user *, int)
- void dismiss_delayed_filename(struct delayed_filename *);
- struct filename *complete_getname(struct delayed_filename *);
- 
--static inline struct filename *refname(struct filename *name)
--{
--	atomic_inc(&name->refcnt);
--	return name;
--}
--
- extern int finish_open(struct file *file, struct dentry *dentry,
- 			int (*open)(struct inode *, struct file *));
- extern int finish_no_open(struct file *file, struct dentry *dentry);
-diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-index e59a094bb9f7..d71fc73455b2 100644
---- a/kernel/auditsc.c
-+++ b/kernel/auditsc.c
-@@ -2169,6 +2169,12 @@ static struct audit_names *audit_alloc_name(struct audit_context *context,
- 	return aname;
- }
- 
-+static inline struct filename *refname(struct filename *name)
-+{
-+	name->refcnt++;
-+	return name;
-+}
-+
- /**
-  * __audit_getname - add a name to the list
-  * @name: name to add
+Link: https://lore.kernel.org/all/CAHaCkme7C8LDpWVX8TnDQQ+feWeQy_SA3HYfpyyPNFee_+Z2EA@mail.gmail.com/ # LKML report
+Link: https://lore.kernel.org/all/20251013012423.GA331@ax162/ # follow-up
+Link: https://sourceware.org/git/?p=glibc.git;a=commit;h=1166170d95863e5a6f8121a5ca9d97713f524f49 # glibc fix
+
+Masaharu Noguchi (2):
+  uapi: fcntl: guard AT_RENAME_* aliases
+  samples: vfs: avoid libc AT_RENAME_* redefinitions
+
+ include/uapi/linux/fcntl.h | 6 ++++++
+ samples/vfs/test-statx.c   | 9 +++++++++
+ 2 files changed, 15 insertions(+)
+
 -- 
-2.47.3
-
+2.51.1
 
