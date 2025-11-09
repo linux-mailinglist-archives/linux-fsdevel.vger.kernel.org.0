@@ -1,147 +1,131 @@
-Return-Path: <linux-fsdevel+bounces-67555-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67556-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DBE0C4339E
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 08 Nov 2025 20:10:28 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09071C43742
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 09 Nov 2025 03:32:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F7DE188D741
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Nov 2025 19:10:50 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 68D154E047B
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Nov 2025 02:32:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24048279334;
-	Sat,  8 Nov 2025 19:10:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 798B01DE8A4;
+	Sun,  9 Nov 2025 02:32:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yhndnzj.com header.i=@yhndnzj.com header.b="fEfR45/B"
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="b0I93vTv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-08.mail-europe.com (mail-08.mail-europe.com [57.129.93.249])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8453E1E32D3
-	for <linux-fsdevel@vger.kernel.org>; Sat,  8 Nov 2025 19:10:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=57.129.93.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9F1F1C6FEC
+	for <linux-fsdevel@vger.kernel.org>; Sun,  9 Nov 2025 02:32:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762629011; cv=none; b=XjUplSNaDxuOJAj9F0RYW83V127M0rihFCEkP9OO1M8THHaMAuGhEE7+/iptCXzTjrqGWeoex3KBTHL2dCbB7U1YLLHxIff0qXI85Suzo02Zq3XCVuIHRb0QYn/MEJq78Z+jv33w5JupLKHnHmenAoxo9M062gSVa7qxAgTZZHA=
+	t=1762655553; cv=none; b=A8uXeAveTgcZoFqKDNuNPKxNO4VRFMSHenAHGOrNsuBJ4ex/Dh4b7/YIPwivMDnlbkcvBnyKkd7+8oi9KGnh4ElV1gabCR7DpbisNMJ0GSJ26OEymgOkOObvfvvD8EBWFwXuK38jtwDmjpJlQ5XGXsUDp5j9BtFYLFtv5kZNLlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762629011; c=relaxed/simple;
-	bh=9e3E1g4hxN+rejc8kzum2wJk3KiPtUh8/abMAG27iG8=;
-	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=ZPcVFY7JrXvizL3571tOveN08CSsp7FeRLTxQ4C4URi4I8oudS3ADd8rjsq6z2RlkIRf6x4EObppEiIbSQPwSZIqZBCUxPGC8dO8oo18KKoL8DR069FRn6/+2kJTHaNcsM48kra2OBNaENUh5Z6V+kz7YWq05QDgAH/TzRZEr5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=yhndnzj.com; spf=pass smtp.mailfrom=yhndnzj.com; dkim=pass (2048-bit key) header.d=yhndnzj.com header.i=@yhndnzj.com header.b=fEfR45/B; arc=none smtp.client-ip=57.129.93.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=yhndnzj.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yhndnzj.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yhndnzj.com;
-	s=protonmail; t=1762628992; x=1762888192;
-	bh=WfmfezCASpoeRxzyP97/Bg6TuZeskJUKe+Q4rAekhjg=;
-	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
-	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
-	b=fEfR45/BGmwWjUPZt6R1yF9uOirxoDV5bmKbJHcdmYTVN6KC1lLXBcFooWKTSwOa9
-	 EvBA3LO5ooz9thOjCxycCoPWu7v7B4iN0NMZ5RJR+xqfPiQT9A+bflUjd8jKs5vutw
-	 o8WpXvXUEpgUiQzmG1tsgj+BWtJGrbSKTJN0Z8N3f62gfnVu0INV3RaSOA1XG4ZrVJ
-	 ipi2kFQQZkEomm03BbX3b++TPECxdbtcQm2y7BNFPnOCPktyGZIlGIleeRnW+vqzZo
-	 1V/UZT605WmGMutL6ZSZpGrRMS+G1bxZiN+wPuGJ+p/VQfm5U6jiU6lxb/ogidYUvn
-	 dLse2aUSQu/5Q==
-Date: Sat, 08 Nov 2025 19:09:47 +0000
-To: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
-From: Mike Yuan <me@yhndnzj.com>
-Cc: Mike Yuan <me@yhndnzj.com>, linux-kernel@vger.kernel.org, Luis Chamberlain <mcgrof@kernel.org>, Christian Brauner <brauner@kernel.org>, Hugh Dickins <hughd@google.com>, stable@vger.kernel.org
-Subject: [PATCH] shmem: fix tmpfs reconfiguration (remount) when noswap is set
-Message-ID: <20251108190930.440685-1-me@yhndnzj.com>
-Feedback-ID: 102487535:user:proton
-X-Pm-Message-ID: 149e0ed8edb97c432bef16be68b2175ea0fe5f86
+	s=arc-20240116; t=1762655553; c=relaxed/simple;
+	bh=8wnVlEDqMdtcwfKI+Tx4kOKYiIjjZzPcvCAbnijyJz0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=U8JgjfUAcbcpgN7qfq/7/dBjl6s0bX0YwsjeA/UNb8Lk+vEk4GqxMYA6bOJVPDnAxLgRS4Cy7Y9yKg+ByHZy9GHfueWvswh2UiRqnJbNuNxMLOBUimzgCsiWZ7pw1jRXkJEVVwEoyNmmeLRIS1HseRaSAyVV06JaWu3FxvdQKRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=b0I93vTv; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-64149f78c0dso2216379a12.3
+        for <linux-fsdevel@vger.kernel.org>; Sat, 08 Nov 2025 18:32:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen.com; s=google; t=1762655550; x=1763260350; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=v3sUd4yemanGWTyJ8Beqz7xtQVHp5hlUsPWyPSJXOUQ=;
+        b=b0I93vTv/1CuhJD5S9t5VkO3h82xRN8BBhw5WUK8w76QXPFlkbgft6ZQR0PLu/Aqa5
+         5gLIyxnZuICXZU2aJeuALxwBjPKEy7PU7hqcasm1LaJfnudYo9gopK00XDh24b6NC83k
+         dcOlrLF25ySQoUknCtiI7fVaw0GDH7vRoYU2pXWw3cezIaAhahKeE5UywCH1aLqT/x1H
+         enZuZLBusJR/gHzgxfr+1bnuYD9jk7v4/acUR1WwdBcESAhfc7nu52n+fXSXZXH9THqI
+         3CIRn7vQSn59yCRx1e7RYlpwQvGbl20RChs97VbMYvycR78jPeNeP4+S37aI1BEcMcQc
+         3eJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762655550; x=1763260350;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=v3sUd4yemanGWTyJ8Beqz7xtQVHp5hlUsPWyPSJXOUQ=;
+        b=gc4WaT+zynf/WM3gss0Uwxi9NIt1YNxZg7A94exCxSIoI/VCwl1UuDhojI76h0nmm8
+         zvdfLRzc1HIwb4neK8r9QjSp1/XsZDVWFOOSwWMrcbU8xQSCkGF8c4Sj2X+QHvER37MK
+         PDiIuQpWVZrHjHXAaNQnlCcKuhnv2GHATJiIbOgbSjcm4jx8zoufafEJzaXok9oN1HWA
+         Ld8pe+U2y2+dKU0TY8o6K6IGs/CKEmQgqkHIYkJeNDSSAptRSjpv/cdbW8S+OgSHiRSd
+         U/+sV8ENMQNHOjmaeE/H/n77P1o/EcFyzxT8zKfKPSrE/FKvHHr5GeR3SODehM6+yeft
+         HR8g==
+X-Forwarded-Encrypted: i=1; AJvYcCXZlxgOud5AgEbVtZKbO/r89yTlPsEi8RMlJZtnDRHUeLpygIe3mSkMheCYJkcp/dTbcu5GuMpxOxnPSK5I@vger.kernel.org
+X-Gm-Message-State: AOJu0YytrBK/9j/RyizEpW0FVrc78gfByaGg0PA+vT2jsc52xsuFXDJZ
+	kHvQPYYu8JUVgOSOHs257a+RlkTIkGWkJ2lAnhj7lHHgVJ++JNS7BeZq2LzefMCqdUxku9ijVhH
+	HmcXraeuUIIknvLn7PJAOcLwP23925WUyCL/D8e7vBw==
+X-Gm-Gg: ASbGncubfNXfFM/eLWX2n+K++A1JsBfMKI5Be6KxhR79JddCYKmicD4MOW9pC0nYMfX
+	JHSjt0hgLhx3g4J/AwO+pDiD5d2dab7DQ0EZQqWD+qShxlXmA5Jv9GY8oXairx7skiTZNin8waI
+	U+IMAIOg0YujRj/sxglkVQ2UfKIcDCziWbQwbCMHRJDMfOaAnJiVEL6zqqAqvdhZWdmNeZTreg2
+	W+BobgelXsabdFfdQhN4DuAaM0dK7tnqP9wNDDJVWxeeLu273AkKoQBOg==
+X-Google-Smtp-Source: AGHT+IGkPxaoskiODxv8UFWCdDvkCCatOQpLUt4UqpyBbWyWH0iYYiRs5ogfnHqSYP0nAMnRxIXTeT8EwyG6LMTSdO4=
+X-Received: by 2002:a05:6402:270f:b0:640:b7f1:1cc8 with SMTP id
+ 4fb4d7f45d1cf-6415e822f52mr2906725a12.18.1762655550218; Sat, 08 Nov 2025
+ 18:32:30 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+References: <20251107210526.257742-1-pasha.tatashin@soleen.com>
+ <20251107143310.8b03e72c8f9998ff4c02a0d0@linux-foundation.org>
+ <CA+CK2bCakoNEHk-fgjpnHpo5jtBoXvnzdeJHQOOBBFM8yo-4zQ@mail.gmail.com> <20251108103655.1c89f05222ba06e24ddc3cc3@linux-foundation.org>
+In-Reply-To: <20251108103655.1c89f05222ba06e24ddc3cc3@linux-foundation.org>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Sat, 8 Nov 2025 21:31:54 -0500
+X-Gm-Features: AWmQ_bkVcbxT0gV7fpmnxd0SCIbpS_2m6TSXTf-t_TBkr04sjlFMoWl4do6gJ2w
+Message-ID: <CA+CK2bAcQZM76dO2pHP0M1wAUeq6m7kKijSxoWDv7fvyreMJ1g@mail.gmail.com>
+Subject: Re: [PATCH v5 00/22] Live Update Orchestrator
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com, rppt@kernel.org, 
+	dmatlack@google.com, rientjes@google.com, corbet@lwn.net, 
+	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, 
+	ojeda@kernel.org, aliceryhl@google.com, masahiroy@kernel.org, tj@kernel.org, 
+	yoann.congal@smile.fr, mmaurer@google.com, roman.gushchin@linux.dev, 
+	chenridong@huawei.com, axboe@kernel.dk, mark.rutland@arm.com, 
+	jannh@google.com, vincent.guittot@linaro.org, hannes@cmpxchg.org, 
+	dan.j.williams@intel.com, david@redhat.com, joel.granados@kernel.org, 
+	rostedt@goodmis.org, anna.schumaker@oracle.com, song@kernel.org, 
+	zhangguopeng@kylinos.cn, linux@weissschuh.net, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-mm@kvack.org, gregkh@linuxfoundation.org, 
+	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, rafael@kernel.org, 
+	dakr@kernel.org, bartosz.golaszewski@linaro.org, cw00.choi@samsung.com, 
+	myungjoo.ham@samsung.com, yesanishhere@gmail.com, Jonathan.Cameron@huawei.com, 
+	quic_zijuhu@quicinc.com, aleksander.lobakin@intel.com, ira.weiny@intel.com, 
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
+	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net, 
+	brauner@kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	saeedm@nvidia.com, ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com, 
+	leonro@nvidia.com, witu@nvidia.com, hughd@google.com, skhawaja@google.com, 
+	chrisl@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-In systemd we're trying to switch the internal credentials setup logic
-to new mount API [1], and I noticed fsconfig(FSCONFIG_CMD_RECONFIGURE)
-consistently fails on tmpfs with noswap option. This can be trivially
-reproduced with the following:
+> No prob.
+>
+> It's unfortunate that one has to take unexpected steps (disable
+> CONFIG_DEFERRED_STRUCT_PAGE_INIT) just to compile test this.
+>
+> It's a general thing.  I'm increasingly unhappy about how poor
+> allmodconfig coverage is, so I'm starting to maintain a custom .config
+> to give improved coverage.
 
-```
-int fs_fd =3D fsopen("tmpfs", 0);
-fsconfig(fs_fd, FSCONFIG_SET_FLAG, "noswap", NULL, 0);
-fsconfig(fs_fd, FSCONFIG_CMD_CREATE, NULL, NULL, 0);
-fsmount(fs_fd, 0, 0);
-fsconfig(fs_fd, FSCONFIG_CMD_RECONFIGURE, NULL, NULL, 0);  <------ EINVAL
-```
+That's an interesting point. The depends on !DEFERRED_STRUCT_PAGE_INIT
+reduces build and potentially other automatic test coverage for
+LUO/KHO.
 
-After some digging the culprit is shmem_reconfigure() rejecting
-!(ctx->seen & SHMEM_SEEN_NOSWAP) && sbinfo->noswap, which is bogus
-as ctx->seen serves as a mask for whether certain options are touched
-at all. On top of that, noswap option doesn't use fsparam_flag_no,
-hence it's not really possible to "reenable" swap to begin with.
-Drop the check and redundant SHMEM_SEEN_NOSWAP flag.
+We should prioritize relaxing this constraint. There are a few
+possible short- and long-term solutions, which I will discuss with
+Mike and Pratyush at our next sync.
 
-[1] https://github.com/systemd/systemd/pull/39637
-
-Fixes: 2c6efe9cf2d7 ("shmem: add support to ignore swap")
-Signed-off-by: Mike Yuan <me@yhndnzj.com>
-Cc: Luis Chamberlain <mcgrof@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: Hugh Dickins <hughd@google.com>
-Cc: <stable@vger.kernel.org>
----
- mm/shmem.c | 15 +++++++--------
- 1 file changed, 7 insertions(+), 8 deletions(-)
-
-diff --git a/mm/shmem.c b/mm/shmem.c
-index b9081b817d28..1b976414d6fa 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -131,8 +131,7 @@ struct shmem_options {
- #define SHMEM_SEEN_INODES 2
- #define SHMEM_SEEN_HUGE 4
- #define SHMEM_SEEN_INUMS 8
--#define SHMEM_SEEN_NOSWAP 16
--#define SHMEM_SEEN_QUOTA 32
-+#define SHMEM_SEEN_QUOTA 16
- };
-=20
- #ifdef CONFIG_TRANSPARENT_HUGEPAGE
-@@ -4677,7 +4676,6 @@ static int shmem_parse_one(struct fs_context *fc, str=
-uct fs_parameter *param)
- =09=09=09=09       "Turning off swap in unprivileged tmpfs mounts unsuppor=
-ted");
- =09=09}
- =09=09ctx->noswap =3D true;
--=09=09ctx->seen |=3D SHMEM_SEEN_NOSWAP;
- =09=09break;
- =09case Opt_quota:
- =09=09if (fc->user_ns !=3D &init_user_ns)
-@@ -4827,14 +4825,15 @@ static int shmem_reconfigure(struct fs_context *fc)
- =09=09err =3D "Current inum too high to switch to 32-bit inums";
- =09=09goto out;
- =09}
--=09if ((ctx->seen & SHMEM_SEEN_NOSWAP) && ctx->noswap && !sbinfo->noswap) =
-{
-+
-+=09/*
-+=09 * "noswap" doesn't use fsparam_flag_no, i.e. there's no "swap"
-+=09 * counterpart for (re-)enabling swap.
-+=09 */
-+=09if (ctx->noswap && !sbinfo->noswap) {
- =09=09err =3D "Cannot disable swap on remount";
- =09=09goto out;
- =09}
--=09if (!(ctx->seen & SHMEM_SEEN_NOSWAP) && !ctx->noswap && sbinfo->noswap)=
- {
--=09=09err =3D "Cannot enable swap on remount if it was disabled on first m=
-ount";
--=09=09goto out;
--=09}
-=20
- =09if (ctx->seen & SHMEM_SEEN_QUOTA &&
- =09    !sb_any_quota_loaded(fc->root->d_sb)) {
-
-base-commit: 0d7bee10beeb59b1133bf5a4749b17a4ef3bbb01
---=20
-2.51.1
-
-
+Thanks,
+Pasha
 
