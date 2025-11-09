@@ -1,75 +1,83 @@
-Return-Path: <linux-fsdevel+bounces-67621-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67622-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5E56C448F1
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 09 Nov 2025 23:18:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3FF2C4490C
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 09 Nov 2025 23:29:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AD4418841B2
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Nov 2025 22:19:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E4613AFE5B
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Nov 2025 22:29:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA30023D7C8;
-	Sun,  9 Nov 2025 22:18:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC87F26C3A2;
+	Sun,  9 Nov 2025 22:29:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CZTc4/BD"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="H+iAGw3W"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F9A923D28B
-	for <linux-fsdevel@vger.kernel.org>; Sun,  9 Nov 2025 22:18:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 152AA1FC8
+	for <linux-fsdevel@vger.kernel.org>; Sun,  9 Nov 2025 22:29:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762726729; cv=none; b=rNPVowtegUwLFGrd+FzPtfv03WUTI8356qQUxnDT9advyo0O6Bs71P56EAsOSqK3QaqxwMo8i5JLlcuie22G9XK3t2WZFGDvwZKSv2mmvlVXtxcA6sYCm/NLo/rv2+1lvPAP0kpFfOOhmH6VeGO0mXloOjFlk5MSoq/2hJQo+cg=
+	t=1762727368; cv=none; b=X65DCnBpS0HTFJFTqsWAB5tYUUyZK+KTwuAWIY5T46Kut2aVo8ZtEKE9i1WPe8fhrM6zRhKxTxoEJaDx+NM4fdVS04Xaumv19P3YaOupA+nxAbqF1Nd6XxWRU7eorsFpJ1EObX7wuV+s1YMDdjy0/Nk9dDzRO/Ltx5jui4S1QU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762726729; c=relaxed/simple;
-	bh=slULiQ1LSn8YdkuFl/xC8oqHmgXF0LLOx5h8vaRWxRg=;
+	s=arc-20240116; t=1762727368; c=relaxed/simple;
+	bh=XyKRq+klY1XpCUw5LERZ+VW2+vF/uljQ+cnRU4sIHJE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=H3P6GyUW/6kmTYCzz/hvu8Fpt78Mm8WYyApoqyxE/6OIp6wbT2tCihs8FPgmHf2HFeMO5KDog9lPJfyGevaZPis6toSFghMJvv3UJGlGPEhIfVUZlE+sQT66x+QirIilAHQLAp25USb7ALDmCit5RXEWkO9057q+4NNhsyeK9rM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CZTc4/BD; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-b7200568b13so416351666b.1
-        for <linux-fsdevel@vger.kernel.org>; Sun, 09 Nov 2025 14:18:47 -0800 (PST)
+	 To:Cc:Content-Type; b=m/mRNhM2/nJv2CSg9POzDZl1CHtA35GZA5gs0MxUCV4EbYh5QIjxXT+UhOUDrud7kIjqYW1z5xDd+B87ik0tU1TbWiqjnNeyjnub/iqtRQn/vGpPlAuQfn5siE8MtJ4MuXCge0pfUn7b4C4JRAzx7DB604JVBqnxjdCizDo9fkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=H+iAGw3W; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-b6d402422c2so488299166b.2
+        for <linux-fsdevel@vger.kernel.org>; Sun, 09 Nov 2025 14:29:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762726726; x=1763331526; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+9yqoMpO/6oIYxh6F8d/nAhX/lmSSgeTXQGQsqpmEKQ=;
-        b=CZTc4/BDF4EvwReUH8D2bdsv7NGLWE+fDuxrCZO5PqmF3NW0qe5eelDUkptzi0hohc
-         lb3FsenPhLD3TyhZkXO0RVtBidEn/lBft3Kp2bFiQykRp4geYi/Us4mEutRrF6Wxdbqr
-         qkvFccNFonPYvlZ2srQuNXG3wdGfNk4nyfpb0/mwuKlp9shaieJ3S+5XiSNAo8hcs/yP
-         jmHQvpGD8i78AFAUlQ26ct64TkG0frpKDNYkX+Gyk9sqalF/0lbu81CHdVyFc+KMCXh9
-         HPJhAm6R2xUiPq+K32r0kKSM3gz/k7X3fiL8PIk9qm4v7EMY/0f00MrA5q8/AmOG4rn2
-         DO2A==
+        d=linux-foundation.org; s=google; t=1762727364; x=1763332164; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=FPZie8eb8w8Uk6fiaOTQBcY1xriqA9OV/bgfwL+5Tjg=;
+        b=H+iAGw3WZ8/mcUNCqCYcLbSN05Lkwprzv2wm6tnE0Y+pCwsTV/JswZALzrEZv1CCDd
+         V3tFE6r8JSdi2QOBlX4fMJ0Tf5+T9wChdcr2t0zozx+DJ+NA7L3VG8F0fhNm2eOcmaam
+         hkyCSMsXNJjKO0WhYxaMNm+ZJZyAYb3GGR7XI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762726726; x=1763331526;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=+9yqoMpO/6oIYxh6F8d/nAhX/lmSSgeTXQGQsqpmEKQ=;
-        b=biGFCUnLoM4SjdwzyPRCJbwsH3TqFQinHt4FnCi5rzmHQabmWrvuzaA65uM1XOHXri
-         6E9oJkUistgGAHR1gitjl8atSHGNkJI4a10FE84CHXAb43rS2qWxZ9URx3nTnBkAX07w
-         gKXc/B0WcVURPvCPP9u6caf4DD42vbcqiTU7iiTpCEf4yssY3WEgITFzz28cg1v8OQkF
-         0LndBwF8M/VdAAQMuJkVuTtVwVVJaH1iWuD+xkF+JRi+AFTWDYvjCodcpQ69ibLRbKf0
-         VtfBK9/EbS6r5PA02PiIqg7qmckq8wgQlQEm/1wn9/vIImAFE/62CWgVvAjOIVWdVBsb
-         MnFg==
-X-Forwarded-Encrypted: i=1; AJvYcCXL3VIkh4DN0Te44TkAv1QR6nDVeTUp0f1nbLDOlgUleXJ1+8iRaI/GGyJ7x26kw1+kJKqGRr3qxFzKT8LP@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkhayuAHcsluDM89DCJNvose1iQTBkjifgE5UxejMLGzmMVrLV
-	YWU6ibl2TA/5J1b6EdPhRLCISuu8KftkYsb30Ah3XGBpxYm/jYMTztR6O+EkPbw7VqMxwH34cnW
-	65bXHWtALkWxdjLO9eFl8zeArTD39seM=
-X-Gm-Gg: ASbGncueMvSbAkja7RU1ph5uchkGCurl+Q8bpQ5jYongVqeyfZuEuHDyjuC3jjKhE90
-	kJch7DW6EIw86QafNxmy4oC7SC7g/cyTJIwB5/RE8MP93vUNPUqCnrfNR3EuNe3xqpKD2nxFcW3
-	uYM3lVVhe5TL11qSkzD9VfypeC8iL2bPXDco9wwrJS3oExs2b/wbmXHO7ge+WPdWg04nmLMx8dL
-	wP29U9YSHMpk9W73S6/B53BE2vvUjWAdGXhKVtA9yRGSK85y13qVBn/odg4spJeoKGr3yGuXl3d
-	QrVGkUIBYGJScXk=
-X-Google-Smtp-Source: AGHT+IFf1ZtqJyrB5MOuTg4/YWN68+L2rXBSEutsf5O57w31PlNv4KIPNyR1/rt/eMA363AAdWzsVunYcgFyWawwQQ8=
-X-Received: by 2002:a17:907:3f9b:b0:b72:62b2:26a1 with SMTP id
- a640c23a62f3a-b72e0337345mr479536666b.19.1762726725731; Sun, 09 Nov 2025
- 14:18:45 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762727364; x=1763332164;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FPZie8eb8w8Uk6fiaOTQBcY1xriqA9OV/bgfwL+5Tjg=;
+        b=AhqSCqE+ywA9Lf1P8iT/apFlgHRI84kKHFGnPcD+KSqiBSszPmzZFoN+JeHWHJRB9H
+         ESjDnCsOl2sILU0y8+QTIfx36a10s74BcWQX6jCa+1Y3k0zLX2/qLN4RTEsfErc4snSJ
+         NUpr6CeTk/jD3pTGUHGib6SJqw/AUpJXU2W9HJYDjXw37s1LJZt0ohqxaQY6IrpK4QOr
+         w6EuZBU3xF1tNgmzB8Q2P2UYo0r/Npl+sMqhLZkTm8zbp2eghrQlZjQXW/lyxJsXHSKu
+         ouliTKH6UIw1f86kJuy39N9g4KEqdYwwlAAhGPlZ7IzpbVxuYFoI2Mr3FfCsA2bsyV4f
+         FDlw==
+X-Forwarded-Encrypted: i=1; AJvYcCUVkHB/U5HE+g3O51doTF5DtzrTnI3YIjVX7KEry/J6LxGUb+5Cyjt7AOUoJJETKa85vuBnM2hjdR/8BxHC@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+DtFfKiHifVSxMOLYpiPwfS1pYQUtzz6XSmvaJC0tycUWvNES
+	JzaEcHB5nO2kduj61kb7uf9XEkIMKUb10E7EndSRZQFiMaMfwyE/cGr2K/gN8W4857hKIlt/VDg
+	+0Z5je+o=
+X-Gm-Gg: ASbGncss76KdOZNjp14iwYHUiOPE7Op1waJjM8MePPyH/FDYaEqv8YV0B8YWkZdctqj
+	cCynAihk0yP1mFS/lfOqgqP8v+GquPlO6iiJHrOS9UNZUacT7/ZxRazDg++lNkIyv501qhk5BhR
+	u991CzBg4bjxl+oP0ykZW5RdBbNwF70gD2nWilC6xuKL74LuiYaSss7u0AWNdlnGMjkHSXlUdoQ
+	vfk3ijySbwjOubKM0t0UL1prwJCkGa3M82SrstqYA/f1M1wd9YfMIMbjjdve4bp/OnPpH43FmBN
+	2/gw/fa97G29JhWYvqvC10vWo9qOGZqhyMDDqB0xseh+By4rEpvhqPmrCeN+/yWWvzK4VezXpJX
+	BpEUGRnns+MZCpXF/NYdy6WCKErNjsRvD4kmr+iumFXA7XbSGMj9qOv7cNpM+sdfHnmoimgFCiG
+	LWKOlm4556+dS+e5Tqx4uuUV8t1r0nRhqfXtgMH/YeXjPKjIzkRIxODF3BAYOx
+X-Google-Smtp-Source: AGHT+IHpN/+z1xX+zLePJOYz/PlmCJ1NYlFJyP37JgJjGz2cLx/ZhnzhUwQ5RcFZnpjWA2YX7DDmVQ==
+X-Received: by 2002:a17:907:9409:b0:b72:947e:358e with SMTP id a640c23a62f3a-b72e0286ef4mr624361366b.1.1762727364192;
+        Sun, 09 Nov 2025 14:29:24 -0800 (PST)
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com. [209.85.218.46])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bf97e457sm907258866b.43.2025.11.09.14.29.22
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 09 Nov 2025 14:29:22 -0800 (PST)
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b403bb7843eso432940666b.3
+        for <linux-fsdevel@vger.kernel.org>; Sun, 09 Nov 2025 14:29:22 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXF8FNRpC3KK65sAXtN0NfdElPNCeoup1uCHp0Mpy0bOXCfOt5XEXywth8fXfOrEqOpQyvcWpl/5I0xVCAd@vger.kernel.org
+X-Received: by 2002:a17:907:7e91:b0:b6d:9576:3890 with SMTP id
+ a640c23a62f3a-b72e04ca2a7mr646520366b.45.1762727361843; Sun, 09 Nov 2025
+ 14:29:21 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -78,105 +86,37 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20251109063745.2089578-1-viro@zeniv.linux.org.uk>
  <20251109063745.2089578-11-viro@zeniv.linux.org.uk> <CAHk-=wgXvEK66gjkKfUxZ+G8n50Ms65MM6Sa9Vj9cTFg7_WAkA@mail.gmail.com>
- <CAGudoHHoSVRct8_BGwax37sadci-vwx_C=nuyCGoPn4SCAEagA@mail.gmail.com> <CAHk-=wiaGQUU5wPmmbsccUJ4zRdtfi_7YXdnZ-ig3WyPRE_wnw@mail.gmail.com>
-In-Reply-To: <CAHk-=wiaGQUU5wPmmbsccUJ4zRdtfi_7YXdnZ-ig3WyPRE_wnw@mail.gmail.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Sun, 9 Nov 2025 23:18:33 +0100
-X-Gm-Features: AWmQ_bldKLq5SKxMLtJgZsZW6GApk3TIsKpzw-Bqk5FLnfMtaX5q0jqoDirdRGQ
-Message-ID: <CAGudoHGCkDXsFnc30k10w-thxNZ5c0B9j26kOWsCXkOV8ueeEA@mail.gmail.com>
+ <CAGudoHHoSVRct8_BGwax37sadci-vwx_C=nuyCGoPn4SCAEagA@mail.gmail.com>
+ <CAHk-=wiaGQUU5wPmmbsccUJ4zRdtfi_7YXdnZ-ig3WyPRE_wnw@mail.gmail.com> <CAGudoHGCkDXsFnc30k10w-thxNZ5c0B9j26kOWsCXkOV8ueeEA@mail.gmail.com>
+In-Reply-To: <CAGudoHGCkDXsFnc30k10w-thxNZ5c0B9j26kOWsCXkOV8ueeEA@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sun, 9 Nov 2025 14:29:05 -0800
+X-Gmail-Original-Message-ID: <CAHk-=whxKKnh=rtO9sq0uUL76YGLB3YTb98DVBub_84_nO6txA@mail.gmail.com>
+X-Gm-Features: AWmQ_blmodcy0umvH9FZdE7IOt16sLGm5PW6HtUqYPgjmzsWiwn8iRr6Hrq0I0s
+Message-ID: <CAHk-=whxKKnh=rtO9sq0uUL76YGLB3YTb98DVBub_84_nO6txA@mail.gmail.com>
 Subject: Re: [RFC][PATCH 10/13] get rid of audit_reusename()
-To: Linus Torvalds <torvalds@linux-foundation.org>
+To: Mateusz Guzik <mjguzik@gmail.com>
 Cc: Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, 
 	brauner@kernel.org, jack@suse.cz, paul@paul-moore.com, axboe@kernel.dk, 
 	audit@vger.kernel.org, io-uring@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Sun, Nov 9, 2025 at 9:22=E2=80=AFPM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
+On Sun, 9 Nov 2025 at 14:18, Mateusz Guzik <mjguzik@gmail.com> wrote:
 >
-> On Sun, 9 Nov 2025 at 11:55, Mateusz Guzik <mjguzik@gmail.com> wrote:
-> >
-> > I looked into this in the past, 64 definitely does not cut it.
->
-> We could easily make it be 128 bytes, I just picked 64 at random.
->
+> You would need 256 bytes to cover almost all of this.
 
-I see I neglected to mention, the lengths I had seen were untenable
-for a stack-based allocation. Going with a smaller on-stack buf means
-having to retry with an extra SMAP trip which probably makes it a
-no-go.
+Why would you care to cover all of that?
 
-While I can't easily redo the survey on Linux, here is a taste from 10
-minutes of package building on FreeBSD. A histogram of lengths with a
-step of 8, rounded down.
+Your very numbers show that 128 bytes covers 97+% of all cases (and
+160 bytes is at 99.8%)
 
-You would need 256 bytes to cover almost all of this. Maybe 192-ish is
-a bare minimum where the idea is likely a win? But even then the
-people who want 8K stacks probably wont be able to use the feature to
-begin with.
+The other cases need to be *correct*, of course, but not necessarily
+optimized for.
 
-dtrace -n 'vfs:namei:lookup:entry { @ =3D
-lquantize(strlen(stringof(arg1)), 0, 384, 8); }'
+If we can do 97% of all filenames with a simple on-stack allocation,
+that would be a huge win.
 
- value  ------------- Distribution ------------- count
-             < 0 |                                         0
-               0 |@@@@@@@@                                 18105105
-               8 |@@@@@@@                                  16360012
-              16 |@@@@@@@@@                                21313430
-              24 |@@@@@@                                   15000426
-              32 |@@@                                      6450202
-              40 |@@                                       4209166
-              48 |@                                        2533298
-              56 |@                                        1611506
-              64 |@                                        1203825
-              72 |                                         1068207
-              80 |                                         877158
-              88 |                                         592192
-              96 |                                         489958
-             104 |                                         709757
-             112 |                                         925775
-             120 |                                         1041627
-             128 |@                                        1315123
-             136 |                                         664687
-             144 |                                         276673
-             152 |                                         150870
-             160 |                                         82661
-             168 |                                         40630
-             176 |                                         26693
-             184 |                                         15112
-             192 |                                         7276
-             200 |                                         5773
-             208 |                                         2462
-             216 |                                         1679
-             224 |                                         1150
-             232 |                                         1301
-             240 |                                         1652
-             248 |                                         659
-             256 |                                         464
-             264 |                                         0
+(In fact, 64 bytes covers 90% of the cases according to your numbers).
 
-
-> > Anyhow, given that the intent is to damage-control allocation cost, I
-> > have to point out there is a patchset to replace the current kmem
-> > alloc/free code with sheaves for everyone which promises better
-> > performance:
->
-> Oh, I'm sure sheaves will improve on the allocation path, but it's not
-> going to be even remotely near what a simple stack allocation will be.
-> Not just from an allocation cost standpoint, but just from D$ density.
->
-
-I completely agree, but per the above the sizes look unwieldy for the
-stack. This is something I tried to do years back and backed off due
-to that reason.
-
-> That said, I partly like my patch just because the current code in
-> getname_flags() is simply disgusting for all those historical reasons.
-> So even if we kept the allocation big - and didn't put it on the stack
-> - I think actually using a proper 'struct filename' allocation would
-> be a good change.
->
-
-I don't know of anyone is fond of the current code. ;)
+              Linus
 
