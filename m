@@ -1,173 +1,201 @@
-Return-Path: <linux-fsdevel+bounces-67600-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67601-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FFB7C44537
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 09 Nov 2025 19:54:41 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6E5DC44540
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 09 Nov 2025 19:57:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 117964E20E6
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Nov 2025 18:54:40 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 665614E13F7
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Nov 2025 18:57:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A628222FDE6;
-	Sun,  9 Nov 2025 18:54:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2382E230BF8;
+	Sun,  9 Nov 2025 18:57:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CAIdjjVC"
+	dkim=pass (1024-bit key) header.d=hammerspace.com header.i=@hammerspace.com header.b="R99IRQC1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11021103.outbound.protection.outlook.com [52.101.62.103])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62A991E1E1C
-	for <linux-fsdevel@vger.kernel.org>; Sun,  9 Nov 2025 18:54:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762714473; cv=none; b=CXIijUCiBYZdq+KwZaruf28/YN9vPo7xtgmOL3XhcTYOsxZuW+pPFQwviee2lM0dIteY5n3A5moyvIPIjE637PvpGDxnAlw0n9teWErAlNfj9Yl9Ld/72mSwEKp6hPZg/lhVE/PrgMNq+0xwJIE1D4/7BRI4LKGQPkM3ZRvsjwE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762714473; c=relaxed/simple;
-	bh=J3Eapg6FSMiLMLlHLu7Lcc7HuutFBLZ75dfOfkEO7O4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ABdCvxddgE+DbCSBSgzsrHxJSlxn03hRbg8LBJhjOzy+fTsco5v/dhtrsabMYhgmXdEV6f7UtGCYzlEjHseLeHBWEpENuaEwFa3GmriquYG/+/Yo5NdQcdp3byNykMuRfzOspUbCBTU7bG52Ly+pjnCSZsU8E2xovQUTdPftWyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CAIdjjVC; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-6407e617ad4so3950399a12.0
-        for <linux-fsdevel@vger.kernel.org>; Sun, 09 Nov 2025 10:54:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762714470; x=1763319270; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=8iwkTig1PIiP3eBZ+a+R9WXt8C51PQf0ZsMJF1LX55s=;
-        b=CAIdjjVCcwCbfpSnMGxbBl0mu7lxqbl+fXAkirVoM88YIn+3HNuWAfwh4305rk4lQ4
-         Eu8ehCbZz4j59bc97YY8VD28pyyka8ueeFp870yhXZmubPHPoJmwXObzDSKH/CKDkwnv
-         P0BZ2DE70m6WxNAbraTFfWXu8DOr7yc9E64w5dZLEyk7021aPZnlhy3/tZ7mmw6MXk+q
-         tWjEcxyKrQny6g+V2YWiO0QPnSc/3largxaQeoZh5qsQq6dfIKYKisHwqILQ/mTXHRgR
-         UQ43uxWFfY7XhP+J8LL+gHQxNOicaWWAq79XvDOz4dchnhUdXjvd+vscqAckHrYO8LTg
-         S15g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762714470; x=1763319270;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8iwkTig1PIiP3eBZ+a+R9WXt8C51PQf0ZsMJF1LX55s=;
-        b=R0ALsZ+tyAVlrS5OLHjQT3k281aTi2sKOM9kfeUKay+rroqsqHbUSa6KvebSCFei6m
-         DXZ7r/ccH89vSRF586IwpNnzEzBrjsZFwlYzdpySYhElqCT2FJVOKqjhv2mARgeaR2MQ
-         qwbbsu5B92L0I2gBxQfHIJFoxvTw/aUufjRwWzHdcV1Eg65NMHBUVc6DEmig38nLl/nJ
-         N5aYHn+ubt7gkrRXSUwqgJJsKhrrGZ4jmBgDxJPBLcByRQ+m+a8/kRgJ9Du1CVC/Yk8F
-         r0hWCGvaLVjzQFOlwVpIi/+qTp43/LNXK402r/5JR3GopAqFyUsT11w7gXKKQhR+AO46
-         gVqw==
-X-Forwarded-Encrypted: i=1; AJvYcCWn7ZL4JfFzgUB/fJu16lze65pVIrD2j0yRBdZGu6ZCMVHEnAt7fEEtqrsBwath6wqJajNWpETZMlYCqJ2U@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgZfh4ZKb6WSMXfcM0/h0YmJW670nmoy7TZNkwyXiFL9eGQWyh
-	6GUAV4Wrd2dsC4YAg0qcoYgl00QfI7iPM/2M9Rv6Me7rcVarnYLq0guH
-X-Gm-Gg: ASbGncvqFwdz7CI78/haWgyR76Y4ghTRJUr5DKnrWLD5vquv1aW4PQXrTZOojlJGE/m
-	h6RCZz24KzOEDDjaPVYlsj5CyeOn/63wQk03PZ7BAbrsw7XccyjfKlt4EM5MUMPjbq8aVQ6OxXG
-	KTuiWAZ9gpV1g0iSHE296xHRoxY/QL3MQVc4438vADB0PowXX60P7jfZ3USkzzqgewtnLuMP5zc
-	jL87pkfiCL32sQfeBd/VL1LVVsj4DfmrNBcPoDBfemILQbp7uaG76AwqhJksyBVISHXZAOY82p+
-	P1w6EyflvPGX9WNhwpapa3OVtjQxa+bCyJGS5jpS5ZNgprNT8Jes35lVZKR60DBbwUJQ2Y71r1D
-	Cw2UP6K8ZmtY0uLH3MYYAcUEoMWyD4dWTZliHacMXEr/ANwnRaRid6ugGx7m51LgpfMBc+Oyxjq
-	tXEALmT2MDy9Tt6GVqKFqbmRinnSFKo4NnEdAaMi9Z8kwDllNu
-X-Google-Smtp-Source: AGHT+IF8g57bavsXqBfVBq9Xek59IpECDQlYh6sOrl3meu/h5BHoAkoM+JOiNtZTqe5C2ySHS4M7rQ==
-X-Received: by 2002:a05:6402:518e:b0:641:6b44:75de with SMTP id 4fb4d7f45d1cf-6416b4480aemr3311507a12.5.1762714469448;
-        Sun, 09 Nov 2025 10:54:29 -0800 (PST)
-Received: from f.. (cst-prg-14-82.cust.vodafone.cz. [46.135.14.82])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6411f713a68sm9550382a12.2.2025.11.09.10.54.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Nov 2025 10:54:28 -0800 (PST)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: brauner@kernel.org
-Cc: viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH] fs: avoid calls to legitimize_links() if possible
-Date: Sun,  9 Nov 2025 19:54:09 +0100
-Message-ID: <20251109185409.1330720-1-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71BAB223DE9;
+	Sun,  9 Nov 2025 18:57:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.103
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762714655; cv=fail; b=GePojRwX8pHvP2ObcxgKfTZEcASp10RgOKsLzB0qiBef0o5RaNM1S6iIf2984Y5TsP49S7LDxnFov54eJdyxFzsEfy1PkLLeXp9xZZv+DdvlwB168eueGh4pP7qInEg59SQYCI3IQkgiHOCBdMHzTcppsEvwR5Iola4FwZFPTOs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762714655; c=relaxed/simple;
+	bh=UVqbcCg70sqYa0uKutISfIdG481KtAN5Ein3xfyrJqY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Y3skpUewUbNh8pJErstJUNhmL6W/9M8dq0ao7pf+tpc/EjTRfqWkxde3aDa3yQIKe1YJlRxyyOr/zE0Dt7541lX+1Dz2GfbGQ3o2aYD20f8PICn3Gj1obe66gjEbbUPbstR7E1byCgv4+SPfU9BHLArX0OH8pkMIZe7RhEsl9/E=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hammerspace.com; spf=pass smtp.mailfrom=hammerspace.com; dkim=pass (1024-bit key) header.d=hammerspace.com header.i=@hammerspace.com header.b=R99IRQC1; arc=fail smtp.client-ip=52.101.62.103
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hammerspace.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hammerspace.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=rmmYbZSuK/xZHUdSqeY7lkRFOInu9T5mtPnfWRzR8d6cdziLlO9NfeXXnn2VkacIP/e6O2KOphilCDbeYFrwejZSI2v8PVpndOtKDAQmTG8xKmjJbuU1nSlgzTNmvs0AfzKdPITeS3HuEnsLdpUMpz7Kwz+tsLeZB0s2n75bs4YT6QhWCWU1OUbJsAvaUDtv523xJUNCOVRLWDxirt6AJU00oefc6TOLNNMEo55iMuVH2fS/dJ80G5+OiQMIMv43jWLw+HkM3s8K1xbObwHaypkeHv7iWEVMyd17KHkEkv0dDo9sUgtoANzNKLMvJNOemXoVgNkdmEdikpzAPP1Jgw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=13pNlSkUjHC9o9eAsf5gQnNI7ShkwVnEJ+LO9+JgRgY=;
+ b=CW456EDnSyrV2iy3hPZfilYYgkQw3fOuG/3ESeyD6gMFdpG22pbTLdO4o5/YLSI9/Bqrck0Zk3XvmFSmVthV503vtQm7NzJ+rgfFoQZ8nxBDVrTzzlnS8RvsM+l/UMP7eFDZchsO1iBPjK2DIjboV1izjUOBoo77MiYcbDtt9Bev4A3Wg43F8y1TR3W7MjZDztNMX5k9J2jeHVAdtXUBC+Tb+FQORzxrkg3ctuoMHZKaUJUDar3qX/QM3KOGjvUou5TrbgmWRXJdKOk1Pyju45w11K7jO5ITSQH9yYKknTKHKNLKx/7uStjRr8IeajCjSAO7R2dSGeZpefbfepNDeg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=hammerspace.com; dmarc=pass action=none
+ header.from=hammerspace.com; dkim=pass header.d=hammerspace.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hammerspace.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=13pNlSkUjHC9o9eAsf5gQnNI7ShkwVnEJ+LO9+JgRgY=;
+ b=R99IRQC1UM3Ki6LMu7zNQDAlbS2wfdCn8eCK3g7PVgiuMA1bg9+H8ZPp6B3hRxD54mFjbZlyoXe1Jr9S95vX+oYJ5ZXtF6XyDT284iV+EMGWb72nFSzhie4AaM1sF46CVg9twVQuybyjqrm3345pnpLh2afIK7tgynkhjBULGTU=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=hammerspace.com;
+Received: from SN6PR13MB2365.namprd13.prod.outlook.com (2603:10b6:805:5a::14)
+ by DM6PR13MB3954.namprd13.prod.outlook.com (2603:10b6:5:2a3::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.12; Sun, 9 Nov
+ 2025 18:57:30 +0000
+Received: from SN6PR13MB2365.namprd13.prod.outlook.com
+ ([fe80::9127:c65a:b5c5:a9d]) by SN6PR13MB2365.namprd13.prod.outlook.com
+ ([fe80::9127:c65a:b5c5:a9d%7]) with mapi id 15.20.9298.015; Sun, 9 Nov 2025
+ 18:57:30 +0000
+From: Benjamin Coddington <bcodding@hammerspace.com>
+To: Chuck Lever <chuck.lever@oracle.com>
+Cc: Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+ Linux FS Devel <linux-fsdevel@vger.kernel.org>
+Subject: Re: RFC: NFSD administrative interface to prevent offering NFSv4
+ delegation
+Date: Sun, 09 Nov 2025 13:57:10 -0500
+X-Mailer: MailMate (2.0r6272)
+Message-ID: <2602B6D3-C892-4D5A-98E7-299095BD245F@hammerspace.com>
+In-Reply-To: <8918ca00-11cb-4a39-855a-e4b727cb63b8@oracle.com>
+References: <8918ca00-11cb-4a39-855a-e4b727cb63b8@oracle.com>
+Content-Type: text/plain
+X-ClientProxiedBy: CH0PR08CA0001.namprd08.prod.outlook.com
+ (2603:10b6:610:33::6) To SN6PR13MB2365.namprd13.prod.outlook.com
+ (2603:10b6:805:5a::14)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN6PR13MB2365:EE_|DM6PR13MB3954:EE_
+X-MS-Office365-Filtering-Correlation-Id: b8abf994-0296-4fa7-853f-08de1fc1d534
+X-MS-Exchange-AtpMessageProperties: SA
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?zQSkkVFk3Fcjb7HXXje7AzQunyKXEWL3zsLxrJCT9kA4fFqGznh9/rLmsdSy?=
+ =?us-ascii?Q?IOptsIZsorZ/MlgTZ8LvrsxHXUCE1POGo/I+jtyDyNcDe+82B8SGsK+6ejAq?=
+ =?us-ascii?Q?aGwfOwPv3qdn0VSldncodPaUCvEWBHm2ExDfrdIWvkEZt2hDzeAlEz17lbgF?=
+ =?us-ascii?Q?R5j2Xd9ZClTBUidkos5jkZK2DfC36eq6Fvhm7ngyUAb5V/tOX1HN+um89MAT?=
+ =?us-ascii?Q?zNAscIVqdWsCedPZYDdVP7Gk1lEzCjTA+sMl+Z82Rs2wcoAZcw4rwkYv4SUL?=
+ =?us-ascii?Q?cmUABUYwG9JlRNWiVvHV2dmNGN+7L2cXeOz5TwcKjNqtz1+0OiIKbBbJWzHV?=
+ =?us-ascii?Q?ju3gCdGJ0ENovbsE4ZOnzTrUZazE6GcFomxP+DtyvWQx49/4ufmJiAN3M3xS?=
+ =?us-ascii?Q?BQtrOxNDk2u+1FCALUPjGXmxuM02iIQp0gMIJAtImNg+xnh3IgHjA2n/AlFF?=
+ =?us-ascii?Q?wGSR0jmcL2oDx8/aFyvGp+Sn6vUfhvNjhYHqU1dWwHobdDzmi3vzWH41kukw?=
+ =?us-ascii?Q?IcAVeLs8iIHjYWDKK4LXUjhY0SyGTri7n1Lh3zTmLb5BX+frA91P+9p52u3k?=
+ =?us-ascii?Q?AQDDD3T5524BUbls8IxIdxs3frtnssZU8nDtcApSorTAEp21qfg3rYKxSZU5?=
+ =?us-ascii?Q?WlRa00sOgLIKBnpdH1ki54gtnUfjh/q0isP9nE1h4lwDJANTbQoKN6AZ1NcS?=
+ =?us-ascii?Q?lGTAIfd1x40BI5zOz72uHNY9IE5E5btK83Wgmwy8kTRG4++rKYRvnFTHCsCZ?=
+ =?us-ascii?Q?BE3UJS5uorRzJANZ1CYugGu/6Uk6QbPfmM6EvsJrCArlJlKPeuR2w7hzSChq?=
+ =?us-ascii?Q?mP8VoaRw7wzKJMTKWm4BzP0rmMRwr9ZXs8kdQuUFb4eoqbWZOtvSWiOUqzfv?=
+ =?us-ascii?Q?eNWFGjvM/yDGP8DdQWcR/vzD8R/rEx6RZP4+ArbM4G8dhvQkEsVrlH6nXCsL?=
+ =?us-ascii?Q?w+8lMMg0+xF60nawYfOLFS/OqLk/avwc82Ri+24eGfJN6hzPmuMswBAtQjOj?=
+ =?us-ascii?Q?FWBWVNQwg79o+E+dUUCiKzjiI1PixLGaeUrJCoRCzk2EfdFcgFXTTdQxbmCh?=
+ =?us-ascii?Q?TrFE6B38CdeofSroHX7zDWNWcjpVzcwrD0MQyIZTiNHdQDjA1JVsf3AcsNjq?=
+ =?us-ascii?Q?2nlx/j1HwlE2RDYFJhXinn2+wJ0vjexLM0KUVMgEr1jenD4ld6whiS7PaNwd?=
+ =?us-ascii?Q?ZEKmN8YOv+dGLNXuJcCWstgYIKSpDE4bIpSI1pY1gzDTUf5Tc42PnNKmJ8Pv?=
+ =?us-ascii?Q?x/jBw3t3tg9cgubLpK64oZ0HqI0sCRzvTWvGVNcFdF25gt2n8A/V/617IiEg?=
+ =?us-ascii?Q?r+vKnjf/SnKwV3DANSfRs2KLLDNlNcS7lsKDVAkMNN+cdBaL7ILwkbVw+V5z?=
+ =?us-ascii?Q?IdZ4CN5BXUndostyp3O5U0C5KR/YC8l/9d4kPO67tJduDFvKdGqbHTOk+tM3?=
+ =?us-ascii?Q?FnYTq0ilQusrVq5shJrbuuYC9kxv8/cE?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN6PR13MB2365.namprd13.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?H0iaBk/kgbga09g+uV9l8m4LC0fK58N6i34nnxKgVXjqBd0yQ4dzjPyqUScY?=
+ =?us-ascii?Q?mxeJTKMzR6u1nLCp9vTG1xneJ/adT0qBQaao54/Y02hYHsZQ+W6f+2JzpLJU?=
+ =?us-ascii?Q?G9GVg0l1+sMOnGCLWORDRyqj0WMTqIy+pTjguLxD+Dh0n/EOq9kkvO5X6QMA?=
+ =?us-ascii?Q?G3Inq8YJ/9EDIBFOWy1sQlCvhzHzFOMsQ0dB9IN68OmbYCLtUfCkdu/DM0FK?=
+ =?us-ascii?Q?HoV8jHTjpUhkE+7wHokB2Zq4lNs3Qwdd4352nrUnVxVOqhxe42WVQsK90Dy4?=
+ =?us-ascii?Q?V/CdVc6ov4acB3EGbZ4LqMgx1JrmmVTOm2k0YDWGsb4yw0ZRgeg5WqR241zO?=
+ =?us-ascii?Q?riJxomUEM6e4/TPx0tyEtpgJITVxdVyyGddN2LXh1Dix6fCBHwZj0FGw/0bq?=
+ =?us-ascii?Q?LZqSY1ZZsig2T2CZmbFAuftne+El4PmVLDkUoXPp0swqNFpE0yQ5JbBdE/PH?=
+ =?us-ascii?Q?ZNCh92VXtKy/emtIooy44VVYFY2+/6jTMpHRRj/Z/FYi3cc6ERKswd7LIxlj?=
+ =?us-ascii?Q?KEkmgwhQYKKNd6C7jLP8GDblX8NZmVpDCAkfwI9HyTPUJhILH6TekzqGMe/Q?=
+ =?us-ascii?Q?mRl0MMuXc5eB7/RZrZIsyAtUQWL+5qiiishroBpBfykdtglpWt/IC81MCJW1?=
+ =?us-ascii?Q?RLbqD7ScJrUW1+I3ZdrZBAbODdLjsWa0F+EuY8epgwXRilpbBniFjav5KELe?=
+ =?us-ascii?Q?lX0b/f648eitY9rYZTJu3NHJdKPnHKZC/Ty+eM0MCqRsfSmdEwcjzapqCVTu?=
+ =?us-ascii?Q?Ukb5PlgAkdF7C1ccScVaw0ROfPrNlrvcAb6GW21pfMEkvRpbzTgaZIzGvEN7?=
+ =?us-ascii?Q?slPxhQxSgjuKuFhDHyt+dJZx34Y45Av8TL3zfHGOPk5sl5id94Ch+8PBdvDc?=
+ =?us-ascii?Q?CU7MNYOqxTfAu7m19hTfYGjlaqLvNJitEfxckQLD533sI98Sce6FrfsV22cE?=
+ =?us-ascii?Q?FonkGs6J7GCnOlsPdr4gpiEpi5wn9zl/MUUHbiu99JeAQjy5G+co8YHs4d66?=
+ =?us-ascii?Q?kKj85eB1YYeuNgBKLRNmGvV2MepKfPRfRFo/BTO6gHe0P54CXA4b75MQUnGR?=
+ =?us-ascii?Q?uLXwqzy1PRSSblLibXXpQQk922DZH+eW28Ev9s88CV8CLGhPECfW7gtqassQ?=
+ =?us-ascii?Q?eX5UDx8vnqdcTFphnWnKt7Fu2Cx53I2hfDPewlS7Pkr78E5pgzcBiBL7CVib?=
+ =?us-ascii?Q?/2OCWsd7eDqicZ9mvfWpIzgTKRAZNlSjtFsve0Akhw7X2I5N7BZ/9eEc35QL?=
+ =?us-ascii?Q?EhQcs5aSbucFpvG9L73nn7FBGjuWEVfLn90tnv5wRDavyUIPYUa2TJ67c6JR?=
+ =?us-ascii?Q?04TCvRr2Vmg5VmsSEZjoijDL2RWTKb5iXAvr2dvOhR5l2YQdKOtP0J0ltICB?=
+ =?us-ascii?Q?g5FQSKIWzCVbSiKd7T9HKHRpVezVGFOjeKAF61f10KCR/mkQxNxwPS5qlFMV?=
+ =?us-ascii?Q?30gtvGR+lL8D92LVdSemeH+ZQBwXwpgV9wqoQBde5qKRpSLOnErW/MAW3Dvp?=
+ =?us-ascii?Q?/kG99HWm0f45EpYqxC517bBRFTqNLMGs4oXFpjKOSXECtz+MmNo8jVS00s9T?=
+ =?us-ascii?Q?ocxljMszPIX8sdBDYq5YFJrnwzK3qwHUI++jLge64J4sLfUNGgWHhAROmvHk?=
+ =?us-ascii?Q?55N99i0729Hh4CVogJpG0MY=3D?=
+X-OriginatorOrg: hammerspace.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b8abf994-0296-4fa7-853f-08de1fc1d534
+X-MS-Exchange-CrossTenant-AuthSource: SN6PR13MB2365.namprd13.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Nov 2025 18:57:30.0401
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 0d4fed5c-3a70-46fe-9430-ece41741f59e
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ZHdaDiPeNSqqrmRGECRvUpQbWfO+D5YT6YlGseVfHJeE2enbBTLxqCVw1twoQF0PeTgaiFS7w9PFf77OrtJBkLH9+L3GKjtVHBhzMq7vSp4=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR13MB3954
 
-The routine is always called towards the end of lookup.
+On 4 Nov 2025, at 10:54, Chuck Lever wrote:
 
-According to bpftrace on my boxen and boxen of people I asked, the depth
-count is almost always 0, thus the call can be avoided in the common case.
+> NFSD has long had some ability to disable NFSv4 delegation, by disabling
+> fs leases.
+>
+> However it would be nice to have more fine-grained control, for example
+> in cases where read delegation seems to work well but the newer forms
+> of delegation (directory, or attribute) might have bugs or performance
+> problems, and need to be disabled. There are also testing scenarios
+> where a unit test might focus specifically on one type of delegation.
+>
+> A little brainstorming:
+>
+> * Controls would be per net namespace
+> * Allow read delegations, or read and write
+> * Control attribute delegations too? Perhaps yes.
+> * Ignore the OPEN_XOR_DELEG flag? Either that, or mask off the
+>   advertised feature flag.
+> * Change of setting would cause immediate behavior change; no
+>   server restart needed
+> * Control directory delegations too (when they arrive)
+>
+> Is this for NFSD only, or also for local accessors (via the VFS) on the
+> NFS server?
+>
+> Should this be plumbed into NFSD netlink, or into /sys ?
+>
+> Any thoughts/opinions/suggestions are welcome at this point.
 
-one-liner:
-bpftrace -e 'kprobe:legitimize_links { @[((struct nameidata *)arg0)->depth] = count(); }'
+Happy to read this.
 
-sample results from few minutes of tracing:
-@[1]: 59
-@[0]: 147236
+I think this would be most welcomed by the distros - there's been a lot of
+instances of "disable delegations" with the big knob
+/proc/sys/fs/leases-enable
 
-@[2]: 1
-@[1]: 12087
-@[0]: 5926235
+I'd also like to be able to twiddle these bits for clients as well, and
+lacking a netlink tool to do it for the client the logical place might be
+the client's sysfs interface.
 
-And of course the venerable kernel build:
-@[1]: 3563
-@[0]: 6625425
+Would you also look to grain these settings per-client?  The server's
+per-client interface in proc has been fantastic.
 
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
----
- fs/namei.c | 19 ++++++++++++++-----
- 1 file changed, 14 insertions(+), 5 deletions(-)
-
-diff --git a/fs/namei.c b/fs/namei.c
-index 2a112b2c0951..d89937c2c0b2 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -826,7 +826,7 @@ static inline bool legitimize_path(struct nameidata *nd,
- 	return __legitimize_path(path, seq, nd->m_seq);
- }
- 
--static bool legitimize_links(struct nameidata *nd)
-+static noinline bool legitimize_links(struct nameidata *nd)
- {
- 	int i;
- 	if (unlikely(nd->flags & LOOKUP_CACHED)) {
-@@ -845,6 +845,11 @@ static bool legitimize_links(struct nameidata *nd)
- 	return true;
- }
- 
-+static __always_inline bool need_legitimize_links(struct nameidata *nd)
-+{
-+	return nd->depth > 0;
-+}
-+
- static bool legitimize_root(struct nameidata *nd)
- {
- 	/* Nothing to do if nd->root is zero or is managed by the VFS user. */
-@@ -882,8 +887,10 @@ static bool try_to_unlazy(struct nameidata *nd)
- 
- 	BUG_ON(!(nd->flags & LOOKUP_RCU));
- 
--	if (unlikely(!legitimize_links(nd)))
--		goto out1;
-+	if (unlikely(need_legitimize_links(nd))) {
-+		if (unlikely(!legitimize_links(nd)))
-+			goto out1;
-+	}
- 	if (unlikely(!legitimize_path(nd, &nd->path, nd->seq)))
- 		goto out;
- 	if (unlikely(!legitimize_root(nd)))
-@@ -917,8 +924,10 @@ static bool try_to_unlazy_next(struct nameidata *nd, struct dentry *dentry)
- 	int res;
- 	BUG_ON(!(nd->flags & LOOKUP_RCU));
- 
--	if (unlikely(!legitimize_links(nd)))
--		goto out2;
-+	if (unlikely(need_legitimize_links(nd))) {
-+		if (unlikely(!legitimize_links(nd)))
-+			goto out2;
-+	}
- 	res = __legitimize_mnt(nd->path.mnt, nd->m_seq);
- 	if (unlikely(res)) {
- 		if (res > 0)
--- 
-2.48.1
-
+Ben
 
