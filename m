@@ -1,170 +1,127 @@
-Return-Path: <linux-fsdevel+bounces-67596-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67597-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2FC8C4444C
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 09 Nov 2025 18:22:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CFEBC44458
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 09 Nov 2025 18:25:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FCC73B5384
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Nov 2025 17:19:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 249F01888869
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Nov 2025 17:25:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8D7D305963;
-	Sun,  9 Nov 2025 17:16:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31DD730AAD2;
+	Sun,  9 Nov 2025 17:25:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TSz+6fFR"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m6sor9YK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 997C23043A2
-	for <linux-fsdevel@vger.kernel.org>; Sun,  9 Nov 2025 17:16:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 005B62FE59C
+	for <linux-fsdevel@vger.kernel.org>; Sun,  9 Nov 2025 17:25:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762708615; cv=none; b=nBVfCxdBhMViGu+KSPau1Nucsgyv6eAEYX+Y5M2bCjraajuoV7x/082OQ9fRVgH73mw9jSBaqD+fjuSi47plCdIrvm08mAydSefnHvirZ1gtZnDnLyHYCnkdCA+LxFipmtZ5vi53TRH8DbSK3Bnu62Du1CWLhgxvuI/0Ch3QSp0=
+	t=1762709126; cv=none; b=AoTu6vBCL7wlB6eyRCCSGk7m1JBBUwOE47+gjzoQNzrBguLtq3MG1YkqAgODPIyl+FE9V0UNbPXyYQX87xQ2V4J+6e9nT4PxcRrCET/9ZuEvujv0pijg6tqESgyhp/lW/Kt9v4I8FSt2ddT+qC/oOQjyOgXPbiHYUfqxa25V9PY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762708615; c=relaxed/simple;
-	bh=TEHCsYmNR3I9xmM/WSR88FgTxB0Xly9HoUofVNoZx/s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q0RY4I6oK9n4IregGq/4yIu/y3SK0cwrMQuLagG2FJDip+9bLJgBE7LuftJs0ZY7rE+cxZ8kAPN3GXdPGrwOdm6q0awjKkE2XRAfKpKMtSdZyknffDhW9vdbldl38rygY1w/PVhLZTi7ZY/FMvErJhzFf7wjaC1WpuYxG0FwvYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TSz+6fFR; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762708612;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=De3qwJZddIJhWbGGVbrDOYNQpF2Q/objdb0xufnPYfw=;
-	b=TSz+6fFRaO77dvaI+P/PSTXWFQoEudO1h7kSM4Szk+w6tZ6h0q2aOQcfz68OEv9veYCe7E
-	aDgOIMfGCLYgk8e/YP1wm+L4EcoUm20yFhJbtu5L4qb57QgQ+S9uMioFOiMd9DVNXS19b1
-	pgwUTpPmPLH6QA+TnneFStR3S7rmqTk=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-503-sgxsSvgzNTOqDj75cxvXMA-1; Sun,
- 09 Nov 2025 12:16:50 -0500
-X-MC-Unique: sgxsSvgzNTOqDj75cxvXMA-1
-X-Mimecast-MFC-AGG-ID: sgxsSvgzNTOqDj75cxvXMA_1762708604
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0C53D19560B2;
-	Sun,  9 Nov 2025 17:16:44 +0000 (UTC)
-Received: from fedora (unknown [10.44.32.53])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 3C7C919560A7;
-	Sun,  9 Nov 2025 17:16:19 +0000 (UTC)
-Received: by fedora (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Sun,  9 Nov 2025 18:16:42 +0100 (CET)
-Date: Sun, 9 Nov 2025 18:16:17 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: Bernd Edlinger <bernd.edlinger@hotmail.de>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Dmitry Levin <ldv@strace.io>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Alexey Dobriyan <adobriyan@gmail.com>, Kees Cook <kees@kernel.org>,
-	Andy Lutomirski <luto@amacapital.net>,
-	Will Drewry <wad@chromium.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Michal Hocko <mhocko@suse.com>, Serge Hallyn <serge@hallyn.com>,
-	James Morris <jamorris@linux.microsoft.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Yafang Shao <laoar.shao@gmail.com>, Helge Deller <deller@gmx.de>,
-	"Eric W. Biederman" <ebiederm@xmission.com>,
-	Adrian Reber <areber@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>, Jens Axboe <axboe@kernel.dk>,
-	Alexei Starovoitov <ast@kernel.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
-	linux-security-module@vger.kernel.org,
-	tiozhang <tiozhang@didiglobal.com>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	"Paulo Alcantara (SUSE)" <pc@manguebit.com>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	YueHaibing <yuehaibing@huawei.com>,
-	Paul Moore <paul@paul-moore.com>, Aleksa Sarai <cyphar@cyphar.com>,
-	Stefan Roesch <shr@devkernel.io>, Chao Yu <chao@kernel.org>,
-	xu xin <xu.xin16@zte.com.cn>, Jeff Layton <jlayton@kernel.org>,
-	Jan Kara <jack@suse.cz>, David Hildenbrand <david@redhat.com>,
-	Dave Chinner <dchinner@redhat.com>, Shuah Khan <shuah@kernel.org>,
-	Elena Reshetova <elena.reshetova@intel.com>,
-	David Windsor <dwindsor@gmail.com>,
-	Mateusz Guzik <mjguzik@gmail.com>, Ard Biesheuvel <ardb@kernel.org>,
-	"Joel Fernandes (Google)" <joel@joelfernandes.org>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Hans Liljestrand <ishkamiel@gmail.com>,
-	Penglei Jiang <superman.xpt@gmail.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Adrian Ratiu <adrian.ratiu@collabora.com>,
-	Ingo Molnar <mingo@kernel.org>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	Cyrill Gorcunov <gorcunov@gmail.com>,
-	Eric Dumazet <edumazet@google.com>
-Subject: [RFC PATCH 3/3] ptrace: ensure PTRACE_EVENT_EXIT won't stop if the
- tracee is killed by exec
-Message-ID: <aRDMYSuEV82irPmA@redhat.com>
-References: <AM8PR10MB470801D01A0CF24BC32C25E7E40E9@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
- <AM8PR10MB470875B22B4C08BEAEC3F77FE4169@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
- <AS8P193MB1285DF698D7524EDE22ABFA1E4A1A@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <AS8P193MB12851AC1F862B97FCE9B3F4FE4AAA@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <AS8P193MB1285FF445694F149B70B21D0E46C2@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <AS8P193MB1285937F9831CECAF2A9EEE2E4752@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <GV2PPF74270EBEEEDE0B9742310DE91E9A7E431A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
- <GV2PPF74270EBEE9EF78827D73D3D7212F7E432A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
- <aRDL3HOB21pMVMWC@redhat.com>
+	s=arc-20240116; t=1762709126; c=relaxed/simple;
+	bh=IhIkuSuF17GlsVUwGV7Fi75Nge9iJGGX57xSFdaaG2o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oeeHq0jOGYWp21yxYWUyvabFlAk3vlXobfPXJrRsrtOZEYdvGUCPC9/ooPNOiLtR0se14xCueLpK72XugNI02fVZhjjGW8pfDtBEY/yp4XeZxR/Pk/q9jOLJX/ECu0CiHVF1jFe2il/sXTPaD+KwI1SpJU1ks7de8lZES8R9rRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m6sor9YK; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-640f4b6836bso4123820a12.3
+        for <linux-fsdevel@vger.kernel.org>; Sun, 09 Nov 2025 09:25:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762709123; x=1763313923; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=G5uUj7ITcpZj2TsML5T8Cl6HHMpcKN3nQGf9uTJBYnM=;
+        b=m6sor9YK4QBFH07aM2PIDtspRSlSz7wyBNb0DkRk4NToI42oKGufWJGXbS4laM24ac
+         BCKZ2OvoQBqMe6DMcy350twzMBt18tQHP96DUXB/4ZyblgTnGLMq+9yfwDbtveuI71r0
+         t9Ccf2V70RCeUJnjRRR/Kn4fUtVsWfYSKAQRWiSTFo/7p140qn9hi37bxlE9egZU5k5b
+         VpgMP+4cdldBEKE4RKKOcLKtW20XCAMmIoW0sJDb5yn1T9pHESbYA/8XlQwdCycSidy+
+         yUqfP1ziGfjSZoU3XxOFGrsePITc3s/WENWWLbR6bPJaEinkOQQFXwkF0wzjIYceO4ga
+         7YJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762709123; x=1763313923;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=G5uUj7ITcpZj2TsML5T8Cl6HHMpcKN3nQGf9uTJBYnM=;
+        b=VnGoee6niGtoaiKuvlyTCcj7w8QuCEV1kwEKNVDlTb3vYluN5TVHax2RMXixdw9mUY
+         RQIBGiLO0RH8Uh7rAIjZ23uPTMZwqnXVKtCEny35NRVaREQfPXxvO7aTpQiwr3rmZ/Lk
+         cW6usrVwNaLw22VhrCZey2mpqmjF4w50z4/IgkIrZtPPmkeL9I6ogDTVnnV9TyFYOegg
+         Go5F/ceDiIGPBBEgcOYc9FF8gtcnmJmzNWCN6ypsbOW2W6eUS4Gq2O3398t2xy771CrD
+         L35+r2If8SHof+bkmQvj+zaixxPMNHbOARmmw/a6ygqR+PJqixpoG6ajHvkEcVOhWvlc
+         BrIg==
+X-Forwarded-Encrypted: i=1; AJvYcCVrGV3Ic0yks4uB2w6gN9gr2oz+mv4XayoK+nmo9ZMpLxm7oelLkxRW6FBECkZpUGr5IDbaegClaj1ccLtw@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+Y5CHjI/HP0PeNL+zuyUvEjCn3HBWUTC4Wp6oNPA+XvMy+3g7
+	wvHBuiOPTeRmzqtFazScbG2bn3lULL4jk8nz6y5uYSpA2myq25fJlCa4
+X-Gm-Gg: ASbGncvlAjia47SOOmVjyTAqkNek1Eb/6vgDdEXUzyyBHpawlWXE6vk98TdYeIbd7V+
+	Kmeug/CVeHhFKAEzXwwO//rD6geGdUuV6o9nrJc3KmLgPZgtRNJtgK+ol3rW2A5L0Eh5UZxn6ar
+	bsiU2w484YSku5LebWL/sZcSPC0A+49DVam/vuyPqpiTI7LTjojHDafDxHX5ffytCaAH+HHiY9E
+	55BU1F6Br1nGchxGUOoeYb6YUJJGCp2khxRvtxe7DmOddRUVqMPHIr8TGU+iIzf8b1UEjrqocM6
+	DofzdRgbY4QPROPQaWwCwyodXHZ/xoAujNpkKNnr4zS5rljLs9vrm5rNssSJzzZNs370GAUAzGb
+	iQ5kIskbw8HqcHAmSNmGbQoTog/qfD03fXLw1XQrV1EpFC9EHS9raHZbaMHVIuY4h1ftDiJuQSQ
+	n8s+ysbK7p0FJ65HpkuhXuPF4xBEI3ETeNjKyEV6dCqrq2fVoIkX8y693w9zs=
+X-Google-Smtp-Source: AGHT+IFWNwV3C/IaXRRnwobzv1o9PKYxfESAALRMns5L92IjMXOjd9WqLoAGQ9NI9ORRXtNCpzRCWA==
+X-Received: by 2002:a05:6402:354b:b0:640:ea4b:6a87 with SMTP id 4fb4d7f45d1cf-6415e8134a5mr3660037a12.30.1762709123200;
+        Sun, 09 Nov 2025 09:25:23 -0800 (PST)
+Received: from f.. (cst-prg-14-82.cust.vodafone.cz. [46.135.14.82])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6411f813bedsm9257748a12.10.2025.11.09.09.25.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 09 Nov 2025 09:25:22 -0800 (PST)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: brauner@kernel.org,
+	jlayton@kernel.org
+Cc: viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH 1/2] filelock: use a consume fence in locks_inode_context()
+Date: Sun,  9 Nov 2025 18:25:15 +0100
+Message-ID: <20251109172516.1317329-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aRDL3HOB21pMVMWC@redhat.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Transfer-Encoding: 8bit
 
-The previous patch fixed the deadlock when mt-exec waits for debugger
-which should reap a zombie thread, but we can hit the same problem if
-the killed sub-thread stops in ptrace_event(PTRACE_EVENT_EXIT). Change
-ptrace_stop() to check signal->group_exit_task.
+Matches the idiom of storing a pointer with a release fence and safely
+getting the content with a consume fence after.
 
-This is a user-visible change. But hopefully it can't break anything.
-Note that the semantics of PTRACE_EVENT_EXIT was never really defined,
-it depends on /dev/random. Just for example, currently a sub-thread
-killed by exec will stop, but if it exits on its own and races with
-exec it will not stop, so nobody can rely on PTRACE_EVENT_EXIT anyway.
+Eliminates an actual fence on some archs.
 
-We really need to finally define what PTRACE_EVENT_EXIT should actually
-do, but this needs other changes.
-
-Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
 ---
- kernel/signal.c | 4 ++++
- 1 file changed, 4 insertions(+)
 
-diff --git a/kernel/signal.c b/kernel/signal.c
-index 334212044940..59f61e07905b 100644
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -2376,6 +2376,10 @@ static int ptrace_stop(int exit_code, int why, unsigned long message,
- 	if (!current->ptrace || __fatal_signal_pending(current))
- 		return exit_code;
+this is tiny prep for the actual change later
+
+ include/linux/filelock.h | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/include/linux/filelock.h b/include/linux/filelock.h
+index c2ce8ba05d06..37e1b33bd267 100644
+--- a/include/linux/filelock.h
++++ b/include/linux/filelock.h
+@@ -232,7 +232,10 @@ bool locks_owner_has_blockers(struct file_lock_context *flctx,
+ static inline struct file_lock_context *
+ locks_inode_context(const struct inode *inode)
+ {
+-	return smp_load_acquire(&inode->i_flctx);
++	/*
++	 * Paired with the fence in locks_get_lock_context().
++	 */
++	return READ_ONCE(inode->i_flctx);
+ }
  
-+	/* de_thread() -> wait_for_notify_count() waits for us */
-+	if (current->signal->group_exec_task)
-+		return exit_code;
-+
- 	set_special_state(TASK_TRACED);
- 	current->jobctl |= JOBCTL_TRACED;
- 
+ #else /* !CONFIG_FILE_LOCKING */
 -- 
-2.25.1.362.g51ebf55
-
+2.48.1
 
 
