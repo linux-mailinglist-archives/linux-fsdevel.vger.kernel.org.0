@@ -1,75 +1,83 @@
-Return-Path: <linux-fsdevel+bounces-67624-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67625-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93A55C44951
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 09 Nov 2025 23:40:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9DFEC4495D
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 09 Nov 2025 23:42:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 40773346239
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Nov 2025 22:40:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84871188A742
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Nov 2025 22:42:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72E0026C399;
-	Sun,  9 Nov 2025 22:40:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C9CC26CE2B;
+	Sun,  9 Nov 2025 22:42:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hm/ZXnqL"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="MzX4VfDs"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A73B255E43
-	for <linux-fsdevel@vger.kernel.org>; Sun,  9 Nov 2025 22:40:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B73BE21B9C5
+	for <linux-fsdevel@vger.kernel.org>; Sun,  9 Nov 2025 22:42:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762728009; cv=none; b=uvZogzH48ARRRTvbLHki9ngQ/+Nk/XfaDxQqMDOa5YptLYLifkCMaomQA33c+roV0abwuHwiTyfgIJg8PuiQCovhbadBF1s8QudajS4K+7F6x7AjBaP91QPhA4P/O5S0urGEUU3QpmFHic/iCwIUo3DPZ+BfE7jOYGwm3Lp/vG0=
+	t=1762728139; cv=none; b=puDkn9JcRBjFfmCJuPjUjiAiDo2a52tsEVly3Xlpk25fpuSZsP5reJhCluwpZIk3uq2cy+fTBKFniGGG0j5m9bxpmlem2SfwxSU3BXyvKM27eb8fc5b3eTSwecDhGlg9a5MAkOk6sSlV/i9R4/uu2eGUy0tmSk+4NEno0TnR0E4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762728009; c=relaxed/simple;
-	bh=Zz/RLnXj/ZlmR8T7NF7hLX/IgWqO3vnZx7+cRUL2HaQ=;
+	s=arc-20240116; t=1762728139; c=relaxed/simple;
+	bh=qIjdEUO4UIxlK8RXL91T93B918tKVIx5tlbLeaqNZTs=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mhwD0DtDWWRkq9++coicXHj7qbWJ7mY10kURkfCdhiv4DN6xk1PrKUzPJt75l4oS3gj2xnc2yCxNagPWk+ZYBJ12jOY0nEDci8hnqSa3RxmW4rp/hcrXhpJRbQKL7yjGlcm13AJHPl5lpl8GB0039znHhYe+1s0gDEy9pb7uZN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hm/ZXnqL; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-b72e43405e2so190468166b.0
-        for <linux-fsdevel@vger.kernel.org>; Sun, 09 Nov 2025 14:40:06 -0800 (PST)
+	 To:Cc:Content-Type; b=LG9/UZk0GctDF1mnK4Q5jVskT+4pBUc0Gfy/GvRKw9C3ZlILO7vWoF9Our39god68bUUB8SDiE+Oi6AwW/mqzd2BiVXaNhpH0uGeHORw5p+4/GlRWaNZ9hn9hQBXhgX+x4EBkuCKnHu4k53pRRwgkRdFrz1CUZciB0yIFV+eYfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=MzX4VfDs; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-b7291af7190so359271766b.3
+        for <linux-fsdevel@vger.kernel.org>; Sun, 09 Nov 2025 14:42:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762728005; x=1763332805; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Zz/RLnXj/ZlmR8T7NF7hLX/IgWqO3vnZx7+cRUL2HaQ=;
-        b=hm/ZXnqLeWIkLRXqpmqqqjAVkNtWvpAoYc4xya6uI0mJrk2a7gM9QAerILpH6Mu6Li
-         dOxlReETQNYnRRfRwXVpcVvRq1hi8WfKyi4ny4mrkxpqwLcX3qEZQbdkTj6RSASb5lao
-         fCc/aDC8H0owkjusWW4nDlpBl2nyvw2IQBvC1+5mZ4b+0ifon9Nx6CPpxJ3JtHK79Tsq
-         jHjWzP2ppXQC6g1b2kUDW55NuOu5fHsTcnrsnJ7yjC4rsioE8r7Wye+GXj7ChtrpFbO9
-         7inDbkRVthpXWyZqk3ySGO9dDL3F0/j/MTmpFLsQwoWWv29LCg9znLefrV88a2kaTcCr
-         jEuw==
+        d=linux-foundation.org; s=google; t=1762728136; x=1763332936; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=7S1tPI9KX5FxZpbFA6GTKD9y2rwBJh6/sJGdbAgzg24=;
+        b=MzX4VfDsnyjNO0R0WafNm74z/mAMlXZi2wgGt/ByHmFKH03MtFD0c1Ic1GShzg7/lE
+         Q3xQgiZ4GiotpvNqKQOb6P9JzqQrehpMi8twO20QcQ+j1R4ZD2SDs5hG+y+WB1/GJn/E
+         k9taFObJ48GV+2HskA2OjteraGRrbHHldHY4s=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762728005; x=1763332805;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Zz/RLnXj/ZlmR8T7NF7hLX/IgWqO3vnZx7+cRUL2HaQ=;
-        b=VbdxbtvJnIk69k6go6PPhgFIkLSLwByfZVBZIyueOvoD5lcSBUlpDR8KQxghRlafOr
-         WVykmQnm/ktDN2nhl74hFE2KkOoxY0iXUIsVZ+fAitobdgFxagiTHi1E+RfwqEhjXP3H
-         XIYh2U4T+ZIFOjU1zKQ75DUo0QLB4oV5huG/zUN/GSmz/L8t7c6o+Cdr8bft4gONLIYS
-         XI4yYxA1sK9eV0CKMuYyyQfZHWg8fchhuz3PexmfcK6C/hMbbifcDP3vSr71wZ/so0DS
-         DLmfkJK+I0wJrO0Yjer/WWktOa8vCTT4Fls3HIUb8n/cA6LQMHH3WTXAUn8SnuBaS5Zw
-         Uvsw==
-X-Forwarded-Encrypted: i=1; AJvYcCWw1K9na9YDejqXa86bTERG4aU00yNiTqQRqp8RG7PLkgUnG7tlUTHR5TOdwGZm6h+8UURIWsEpn6XkJ/0q@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2udWrhrc8z6qaqkgn81zPrzT1q0/BhS4C5KEr8fPXCfZamC/7
-	4R72EJ7cAwDDEs60ybz46LHzZSa5VvFV7JDBi4f54o88O4QDXAB7QyJi47YChJuPNz9JzUYD/fj
-	aMjVbkOxOoB3Wc8pdF9LhTK0MrhWmli8=
-X-Gm-Gg: ASbGncsOhDZoCUsPBm2tFOn1BOOqL6c9ngKBqSvXYdWqKt2laWogBtkS1fWyDeJmwJs
-	E6aYR929Ox4BuGdHsKpfMdiYtO+WzYxD57T73higEFWolepgegk2e8Q4VrDYiRI+OhtFDgutUA8
-	rYlydpB/EpJePIwLN1b2morxO1i3SwGaP82217A0Z1xkbrrpa46T4zRhcvuiUYoD/HajR3G9iOn
-	RMr1sFjltVlMwFBeGVv2nnOuu04M2a3k1Dm8xqhe1ViHlneaxhKhZw1u29m48M7L0n/A+TlhvyA
-	kWkn5kf5NNU2t9Y=
-X-Google-Smtp-Source: AGHT+IEf2G3FM0i2bVmOUG7+vPY37y6f5todMu8F9N/qNHio4HbRPNWL68hqLfVk+zbwZK2GIQZm3Q4XqlDpU7RXT50=
-X-Received: by 2002:a17:907:60d6:b0:b6d:545e:44f6 with SMTP id
- a640c23a62f3a-b72d0954176mr884727066b.12.1762728005401; Sun, 09 Nov 2025
- 14:40:05 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762728136; x=1763332936;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7S1tPI9KX5FxZpbFA6GTKD9y2rwBJh6/sJGdbAgzg24=;
+        b=tLXLtqVJLg6hNWnF7+vg9aXfrjmpFjr6V69gBwlGNzyITxf8zB0wicsP9KVWiG8tKh
+         v4BU8I+mzYl7Xuv3GonNgTVm56VPN9AWP0/Mmin+Onn/8p5a1+gSLtkOM2qSXUoDAtoE
+         uzWc03bmVq1bWqkpANz51UxfhXWeudktTDpvRPlUZo9G6ZPrXTzH7fEDBU7/hUJYg3ka
+         OyWgvNDMrEKj6Nhaftk8yyCmQiST6w72Iuiq2ifHVgrQW94DWg4tJAwEV9v6//qCvTQY
+         +X1ymSvpJI3zogdB9715rwl4koEw3w41TzHlSU+UWAanlkfdBfJcknutDeH4OYCWruQs
+         rE6A==
+X-Forwarded-Encrypted: i=1; AJvYcCXVNcMadSB8BXz2JEjSpieXeZI76vVho66q3It7WqkpJP+GNHSXuVHNpb7xG6xGLhwnSXvUMjV3gBRdMQ4b@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpuXaIP0OJ2rlC5oCJR3vNXlUKxUtXyIV/Vs8gpWi6V0K/Vq6c
+	9j+TBtCIf/W6OKzNtU3eRXF6d3hqNt+oKyT2DtU1tQ/EryvvAYQkCiLgnnRa6kF8AdMpwz9eQif
+	Q73GNUHA=
+X-Gm-Gg: ASbGnctiXeItvaabAzVTjaIUPx8kAkEZ7X6+/BIPSETc5EHGc6C0dz0+7AmKm+xxkOV
+	7Kja0nDKv4PzPRAc4EThkpBgFgJbSEW1QvrngS6ld5uVKVexek8wTgnwYU27WdQqqc+EoLZ62jD
+	cJvKSegCVkdKYlScBN5D3R9x6G7WyAtyiMCC+Nw9miGukSvTJGkt8NBU+Wi59rEw0/Dg+GVM7nA
+	xu9Zj/SeYEsP6GXZ7WiMOXDm3hGEynu9h9AfdeUsh0uOqmNgHbBeoU178dGpp5ePnC+q1d1tm2Q
+	aQbOHXVB/mxkJPzLly5wHoU4V84hSvKCR3mzvKwyFExn/eS+aPfRzStajTpRIMsBD1VHwMWoGVq
+	qK3CZWaL75gHBMxnLPf1qXeTMJTJM5NKXyZHUQyuDnG21tnBfPOk3lFBA55dHbuuTngGuDqLf6J
+	d3Y3JXA8QT5K1/gjrGAWp60jeAnQtAFnfB4bpVqsaucwni1GHhAQ==
+X-Google-Smtp-Source: AGHT+IGSAMCL9gHUKqFuj90vrG8bv9F+QyV3f9xVnwnPEbOj49A/4URW6C1eAZBXpnLqiAetvg5ACA==
+X-Received: by 2002:a17:907:1c03:b0:b72:9c81:48ab with SMTP id a640c23a62f3a-b72e050415bmr571890866b.59.1762728135890;
+        Sun, 09 Nov 2025 14:42:15 -0800 (PST)
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com. [209.85.218.52])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bf97e563sm916385966b.41.2025.11.09.14.42.14
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 09 Nov 2025 14:42:14 -0800 (PST)
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b710601e659so382871966b.1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 09 Nov 2025 14:42:14 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCW9BQkCTPPz29Gr7pJzHSxcJjOzbfP3YTDBymDKFbg29M5+JhIbHtiLmtRkx+RrjNetySZaScgV4I0lao4m@vger.kernel.org
+X-Received: by 2002:a17:907:7246:b0:b72:5e29:5084 with SMTP id
+ a640c23a62f3a-b72e02729dfmr660861066b.4.1762728134438; Sun, 09 Nov 2025
+ 14:42:14 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -83,61 +91,34 @@ References: <20251109063745.2089578-1-viro@zeniv.linux.org.uk>
  <CAGudoHGCkDXsFnc30k10w-thxNZ5c0B9j26kOWsCXkOV8ueeEA@mail.gmail.com>
  <CAHk-=whxKKnh=rtO9sq0uUL76YGLB3YTb98DVBub_84_nO6txA@mail.gmail.com> <CAGudoHHA_dDXMZFh1=U=AjPsqK9PRUGq3fQ_GjOdebUBK-sn3g@mail.gmail.com>
 In-Reply-To: <CAGudoHHA_dDXMZFh1=U=AjPsqK9PRUGq3fQ_GjOdebUBK-sn3g@mail.gmail.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Sun, 9 Nov 2025 23:39:53 +0100
-X-Gm-Features: AWmQ_bm4fdxC6v1rOIJ15dLgNbIpqHp2QfAR172JK6y5Y6KlspYKYyOefkgBoCA
-Message-ID: <CAGudoHHMgY0NnN0FX_OQnV578Wu1e03VjO8+3tUA8XDxwy_Smg@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sun, 9 Nov 2025 14:41:58 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wj5GSLaqf+rVE6u-4-rzdUK+OM_oUnPLQoqVY4J_F0uRw@mail.gmail.com>
+X-Gm-Features: AWmQ_bk5CNTgXVq9Wj4DrVDvXfYphjsw9So7wK98LkhJD7EILYp-AjhoG9v3pfw
+Message-ID: <CAHk-=wj5GSLaqf+rVE6u-4-rzdUK+OM_oUnPLQoqVY4J_F0uRw@mail.gmail.com>
 Subject: Re: [RFC][PATCH 10/13] get rid of audit_reusename()
-To: Linus Torvalds <torvalds@linux-foundation.org>
+To: Mateusz Guzik <mjguzik@gmail.com>
 Cc: Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, 
 	brauner@kernel.org, jack@suse.cz, paul@paul-moore.com, axboe@kernel.dk, 
 	audit@vger.kernel.org, io-uring@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Sun, Nov 9, 2025 at 11:33=E2=80=AFPM Mateusz Guzik <mjguzik@gmail.com> w=
-rote:
->
-> On Sun, Nov 9, 2025 at 11:29=E2=80=AFPM Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> >
-> > On Sun, 9 Nov 2025 at 14:18, Mateusz Guzik <mjguzik@gmail.com> wrote:
-> > >
-> > > You would need 256 bytes to cover almost all of this.
-> >
-> > Why would you care to cover all of that?
-> >
-> > Your very numbers show that 128 bytes covers 97+% of all cases (and
-> > 160 bytes is at 99.8%)
-> >
-> > The other cases need to be *correct*, of course, but not necessarily
-> > optimized for.
-> >
-> > If we can do 97% of all filenames with a simple on-stack allocation,
-> > that would be a huge win.
-> >
-> > (In fact, 64 bytes covers 90% of the cases according to your numbers).
-> >
+On Sun, 9 Nov 2025 at 14:33, Mateusz Guzik <mjguzik@gmail.com> wrote:
 >
 > The programs which pass in these "too long" names just keep doing it,
-> meaning with a stack-based scheme which forces an extra SMAP trip
-> means they are permanently shafted. It's not that only a small % of
-> their lookups is penalized.
->
-> However, now that I wrote, I figured one could create a trivial
-> heuristic: if a given process had too many long names in a row, switch
-> to go directly to kmem going forward? Reset the flag on exec.
 
-Geez, that was rather poorly stated. Let me try again:
+Sure. So what?
 
-1. The programs which pass long names just keep doing for majority of
-their lookups, meaning the extra overhead from failing to fit on the
-stack will be there for most of their syscalls.
+We optimize for the common case.
 
-2. I noted a heuristic could be added to detect these wankers and go
-straight to kmem in their case. One trivial idea is to bump a counter
-task_struct for every long name and dec for every short name, keep it
-bounded. If it goes past a threshold for long names, skip stack
-allocs. Then indeed a smaller on-stack buffer would be a great win
-overall.
+Sure, there's an extra SMAP sequence for people using longer names,
+but while those SMAP things are costly compared to individual
+instructions, they aren't costly in the *big* picture.
+
+They are a pipeline stall, not some kind of horrendous thing.
+
+It would be *more* expensive to try to keep statistics than it is to
+just say "long pathnames are more expensive than short ones".
+
+                Linus
 
