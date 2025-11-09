@@ -1,180 +1,139 @@
-Return-Path: <linux-fsdevel+bounces-67580-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67581-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BDAAC43D0D
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 09 Nov 2025 13:03:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2878BC43D16
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 09 Nov 2025 13:08:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6272D3B0D45
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Nov 2025 12:03:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3D363AA257
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Nov 2025 12:08:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 375042E7BCF;
-	Sun,  9 Nov 2025 12:03:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB3AF2E7BCC;
+	Sun,  9 Nov 2025 12:07:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O4pf0aKg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="heNWA8ss"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F10282E7658
-	for <linux-fsdevel@vger.kernel.org>; Sun,  9 Nov 2025 12:03:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20F042E401;
+	Sun,  9 Nov 2025 12:07:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762689791; cv=none; b=DwVw8qrZkORtbTAusxuYgixc0ilvF1VonYEtDrxYtyomvV+GzNORISuEiJp+1+y63Z4MCTwjx//CTOlDQsj0FEhydEt22RDBN7zntj1u5sBA/rVJbmZr/Geo705cZQ5DQj86C6Gno9YA0KdLJoWmfib6Fjkzm4OsSG/txzTjRAk=
+	t=1762690076; cv=none; b=WjyIVEENnjwD8rq39ID5cDQVk7Vy/0o/bqDmmL+QFavowGJxwCPbsLgc+ozDtNhL/aKRwXLqHrA+sCFrT0MmGm5FeD6patMbYHIv38iwT7lvXipK0lwMjqLeHj0hb6PgFd8L+aTlVJHXeZejmpPr/HlcGxbGJHkKKtGW2ve9AdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762689791; c=relaxed/simple;
-	bh=qxv9oP1S4VQrVQ/WUkjRbwz93uUoCYdrmXkz6+1+qEU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PM31s7vtkK0Qj8hnZgTNuNdoMetVmt+XGlioCKrX6KBkKmk6kF5SShkLRK2gx9Sqt97lNs03x9Jm9Wr//SOTbfx9rU5Kp5YqoiqzM0w3AqQ3bSYhnt8GFLd3YheTKpuRPYcM0hlRFWtvrGAAVqmemt2WTNdBR+auEi7TO1OT9wg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O4pf0aKg; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-6408f9cb1dcso3686120a12.3
-        for <linux-fsdevel@vger.kernel.org>; Sun, 09 Nov 2025 04:03:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762689785; x=1763294585; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Uhv3s6l+/V0AVNQ6yZgHV88airWpT9eUaCudXwyxKRw=;
-        b=O4pf0aKgdNZtPmz3A03L+8ya2nc1NnoP+3ocdwjilDmcAzPLBe7rXLv6094vJvdTN6
-         9kS+85umdip1HVUEWoeFmPjOtfPGM9x6aIrvG5GpvJaGT3Ik24GN3MKnywlFXWQxKEU0
-         j9iGKmCcmUNLvaOvaUr9JCoKgH+LqDYnVujNXqyRMTRVKjlFWieNave4CmNDUUGLmuru
-         Ny7YR/jU4oX8n+TA/PijAmHQnziq905aIbTFtrvBAiQs+PoTNGlI8hxweOAQLue44ww2
-         ctKjeeGamGOaqmF3bN9D4CKsFPpJTV3IO7vWstG5p1SJmmwZ8AU02nyTY1TLdF9oRYYY
-         a76A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762689785; x=1763294585;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Uhv3s6l+/V0AVNQ6yZgHV88airWpT9eUaCudXwyxKRw=;
-        b=QUAQyFg++U44SGlw7AtP6l/g4rF4G+eFy2veQiAX5FrtGuKUpiQyzGoIhanAunN2Er
-         D+WtbtbPLsIA6/eayGJ3RXN6ZPHD+L0LLlbJNsWkb+7ONE8lTTkuWEFkvN7HkiSBX9zf
-         gTd/NLxttS1RqJ97wioDfHfwEVieD0z2B47JS6US60fS+crSdKBzoF6TxuxVMDoZ2YKK
-         jvseVgURjWhNv+NzKKNMxZSPbBI3KuZ5mgB7Nc/iCDdhkFZfWIRdc8FzBxBwnVyiPCiz
-         IdRKdnpDCB+hTDvdrgeJIIkspr0yooHxepXTYxtusZ6nV4NR0kmy8l2WoHGulFNGJgvZ
-         cNXw==
-X-Forwarded-Encrypted: i=1; AJvYcCXUUBLWomISwRwTQNbx74dvOYd1HAKgJze+5RBodZeyXfb4Q7xy+8qRXG/6P0tcZTbMnP9DjSjijzlbe64v@vger.kernel.org
-X-Gm-Message-State: AOJu0YwiNbrfYxMavvG4O75idR1QfgDF5h8t6dE7/xWrq/ltn9rjAl4a
-	lsJ5/hxLJI49V0lTa5bAAGiHL6YocW+RzIJpXKY4WCD7AtwesF5jb2I4
-X-Gm-Gg: ASbGncutdlL82dzWXDWq41chxOqD8MyZYDEXQRT4Sghic46ZelTGGYhIQcAZqTcjNUx
-	ZDG/UDA5Yrxf0sKPemv6VidP2T1YQDubQkif3zZOCJb8VR11vFN9xuV3E6ic+rRhrI5i+AH+HVV
-	EUucZoIjtaWFIxGv1BCljl3Ty9k2u94hAM3Q05rohD+0iGYTW0ZFfkwZr1H0M4S80oFoOOGPKo6
-	1jRvnExE2YHUGN/gHgTb9ySa6AbEBgCVL1A8hEUiIznkrV0pOTm34+ZcwndAndUk6eRyjne/A5o
-	+XQ8WVxZJVUpxMp1R+IjTtuhC5eKk9KZSxR3e65wP5WGCCZNaGRzaTFcu0OSKa+4VGkIP7ZnBmj
-	9odjvdVskNHlu7l2D0RemF+H8URDtWtu1bDycoXXgB/yCIiyrpuCRmpN+Z6j63XrOwIoxmMbzBG
-	4tAA90x5OR1s12vSIhuV0+Jf/+ubAwT/MRYrMVG3k3GXew4BfX
-X-Google-Smtp-Source: AGHT+IE4B3XToGQDvImXqeLOymkkS7RFjZtOpBbs/n5FSVyFAWBKofw6zy/heUB61w1ZfdFoc2KFsg==
-X-Received: by 2002:a05:6402:13d0:b0:640:b7f1:1ce0 with SMTP id 4fb4d7f45d1cf-6415e6efb3dmr3652910a12.23.1762689784947;
-        Sun, 09 Nov 2025 04:03:04 -0800 (PST)
-Received: from f.. (cst-prg-14-82.cust.vodafone.cz. [46.135.14.82])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6411f86e9d7sm8775732a12.36.2025.11.09.04.03.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Nov 2025 04:03:04 -0800 (PST)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: brauner@kernel.org
-Cc: viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [MEH PATCH] fs: move fd_install() slowpath into a dedicated routine and provide commentary
-Date: Sun,  9 Nov 2025 13:02:59 +0100
-Message-ID: <20251109120259.1283435-1-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1762690076; c=relaxed/simple;
+	bh=wt8Tw4gjZkaNxNmkQRYq0c4tnrM8t3SmfvyuWifw7KI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EIyXqLNhZn4dEtNsNI7/2DvdJvcLS8g5r7ZXPk72rppAvX1UHW9twc+0LCGoP74oqlP+hjB5Z9M4YF2VcoUlgc6Lj3akHYGgCgTZzbCa5R1wGd85cR2J2DbW4tGHJTn90wBpaEdUwkH6k3VqUK5lNgCNn1IwXqz3fRExvDQtwb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=heNWA8ss; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D888C116B1;
+	Sun,  9 Nov 2025 12:07:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762690075;
+	bh=wt8Tw4gjZkaNxNmkQRYq0c4tnrM8t3SmfvyuWifw7KI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=heNWA8ssDvVMPu2hNsx+R4Okyv2M/nREqV+VPSvKtaOSrQ7YdEiyVg0wxtrKhq8hr
+	 mKDRZ365+lJFHw/5zgIKjA2pEaNMh16vZfrF9tMPm6o3xib89gAxuHKRDu5mkobU5H
+	 QGl0LUOMssceEqb7cE6y944DOkrdWe6OjvC+Y5/wq0+mwgz2JVuYVvARCqOvNORWti
+	 yR9XluuWtZI8lnbeGxJekZH97BwhKuprtoq1TAx1stS0C/vBLJey0Q+aF9Sn/ce9HS
+	 eRC0hvW6r4C6TGCI1KdFCuVWH6GMsjdFESxr/LvKrtgUFeG/9iI5qmbFFgfKAH5/YQ
+	 OdiZ2La3m2plg==
+Date: Sun, 9 Nov 2025 13:07:52 +0100
+From: Alejandro Colomar <alx@kernel.org>
+To: Jan Kara <jack@suse.cz>
+Cc: "Darrick J. Wong" <djwong@kernel.org>, linux-man@vger.kernel.org, 
+	Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>, "G. Branden Robinson" <branden@debian.org>, 
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3] man/man3/readdir.3, man/man3type/stat.3type: Improve
+ documentation about .d_ino and .st_ino
+Message-ID: <aer4p5dc3ukmqo4ydigujtjdr5evtp6zutcyjgcnedc4eeibdn@eabfm6kibcyy>
+References: <h7mdd3ecjwbxjlrj2wdmoq4zw4ugwqclzonli5vslh6hob543w@hbay377rxnjd>
+ <bfa7e72ea17ed369a1cf7589675c35728bb53ae4.1761907223.git.alx@kernel.org>
+ <20251031152531.GP6174@frogsfrogsfrogs>
+ <rg6xzjm5vw2j5ercxiihm2pdedc4brdslngiih6eknvod66oqk@tz3gue33a7fe>
+ <tkh3cbnxbixmeuprlfrpfbzm5l6y6ne3i424wswd7ymspuu6as@h2hzgun5moff>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="qdpvxircad6tnokw"
+Content-Disposition: inline
+In-Reply-To: <tkh3cbnxbixmeuprlfrpfbzm5l6y6ne3i424wswd7ymspuu6as@h2hzgun5moff>
 
-On stock kernel gcc 14 emits avoidable register spillage:
-	endbr64
-	call   ffffffff81374630 <__fentry__>
-	push   %r13
-	push   %r12
-	push   %rbx
-	sub    $0x8,%rsp
-	[snip]
 
-Total fast path is 99 bytes.
+--qdpvxircad6tnokw
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: Jan Kara <jack@suse.cz>
+Cc: "Darrick J. Wong" <djwong@kernel.org>, linux-man@vger.kernel.org, 
+	Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>, "G. Branden Robinson" <branden@debian.org>, 
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3] man/man3/readdir.3, man/man3type/stat.3type: Improve
+ documentation about .d_ino and .st_ino
+Message-ID: <aer4p5dc3ukmqo4ydigujtjdr5evtp6zutcyjgcnedc4eeibdn@eabfm6kibcyy>
+References: <h7mdd3ecjwbxjlrj2wdmoq4zw4ugwqclzonli5vslh6hob543w@hbay377rxnjd>
+ <bfa7e72ea17ed369a1cf7589675c35728bb53ae4.1761907223.git.alx@kernel.org>
+ <20251031152531.GP6174@frogsfrogsfrogs>
+ <rg6xzjm5vw2j5ercxiihm2pdedc4brdslngiih6eknvod66oqk@tz3gue33a7fe>
+ <tkh3cbnxbixmeuprlfrpfbzm5l6y6ne3i424wswd7ymspuu6as@h2hzgun5moff>
+MIME-Version: 1.0
+In-Reply-To: <tkh3cbnxbixmeuprlfrpfbzm5l6y6ne3i424wswd7ymspuu6as@h2hzgun5moff>
 
-Moving the slowpath out avoids it and shortens the fast path to 74
-bytes.
+Hi Jan, Darrick, Pali,
 
-Take this opportunity to elaborate on the resize_in_progress machinery.
+On Mon, Nov 03, 2025 at 12:28:21PM +0100, Jan Kara wrote:
+> On Sun 02-11-25 22:17:06, Alejandro Colomar wrote:
+> > On Fri, Oct 31, 2025 at 08:25:31AM -0700, Darrick J. Wong wrote:
+> > > On Fri, Oct 31, 2025 at 11:44:14AM +0100, Alejandro Colomar wrote:
+> > > > +If the directory entry is the mount point,
+> > >=20
+> > > nitpicking english:
+> > >=20
+> > > "...is a mount point," ?
+> >=20
+> > I think you're right.  Unless Jan and Pali meant something more
+> > specific.  Jan, Pali, can you please confirm?
+>=20
+> Yes, Darrick is right :).
 
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
----
+Thanks!  I've amended the patch with that, added the Reviewed-by tags,
+and pushed.
 
-I don't feel particularly strongly about the patch, so if there is
-resistance and I'm not going to argue for it.
 
-Spotted on the profile while looking at open()
+Have a lovely day!
+Alex
 
- fs/file.c | 37 ++++++++++++++++++++++++++++++-------
- 1 file changed, 30 insertions(+), 7 deletions(-)
+--=20
+<https://www.alejandro-colomar.es>
+Use port 80 (that is, <...:80/>).
 
-diff --git a/fs/file.c b/fs/file.c
-index 28743b742e3c..d73730203bb5 100644
---- a/fs/file.c
-+++ b/fs/file.c
-@@ -641,6 +641,35 @@ void put_unused_fd(unsigned int fd)
- 
- EXPORT_SYMBOL(put_unused_fd);
- 
-+/*
-+ * Install a file pointer in the fd array while it is being resized.
-+ *
-+ * We need to make sure our update to the array does not get lost as the resizing
-+ * thread can be copying the content as we modify it.
-+ *
-+ * We have two ways to do it:
-+ * - go off CPU waiting for resize_in_progress to clear
-+ * - take the spin lock
-+ *
-+ * The latter is trivial to implement and saves us from having to might_sleep()
-+ * for debugging purposes.
-+ *
-+ * This is moved out of line from fd_install() to convince gcc to optimize that
-+ * routine better.
-+ */
-+static void noinline fd_install_slowpath(unsigned int fd, struct file *file)
-+{
-+	struct files_struct *files = current->files;
-+	struct fdtable *fdt;
-+
-+	rcu_read_unlock_sched();
-+	spin_lock(&files->file_lock);
-+	fdt = files_fdtable(files);
-+	VFS_BUG_ON(rcu_access_pointer(fdt->fd[fd]) != NULL);
-+	rcu_assign_pointer(fdt->fd[fd], file);
-+	spin_unlock(&files->file_lock);
-+}
-+
- /**
-  * fd_install - install a file pointer in the fd array
-  * @fd: file descriptor to install the file in
-@@ -658,14 +687,8 @@ void fd_install(unsigned int fd, struct file *file)
- 		return;
- 
- 	rcu_read_lock_sched();
--
- 	if (unlikely(files->resize_in_progress)) {
--		rcu_read_unlock_sched();
--		spin_lock(&files->file_lock);
--		fdt = files_fdtable(files);
--		VFS_BUG_ON(rcu_access_pointer(fdt->fd[fd]) != NULL);
--		rcu_assign_pointer(fdt->fd[fd], file);
--		spin_unlock(&files->file_lock);
-+		fd_install_slowpath(fd, file);
- 		return;
- 	}
- 	/* coupled with smp_wmb() in expand_fdtable() */
--- 
-2.48.1
+--qdpvxircad6tnokw
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmkQhBcACgkQ64mZXMKQ
+wqnHnBAAmtz9qFn6qvmKCbIgCNEfmLZ4JSiv40ilWecl+EtrEE0EjAMfyzE6AbJY
+zGiaax1RRB9ebjMR+QeZYPrOJnfMwSZufdFHfHCDOx4kSFe1ZEvt54cMZ6k5SBdL
+UPjFZLmrUtaB5lQmmVntTpftLxMw8QdYR/wM6dtTDEAInBEUMqen39eAt8p5MQ1L
+sueOMPjKnMdyfPnI9Bfz3lOQV/MFrnfyywn4A17VO7m5Lk9JeTEjjGWtXvrxaMIY
+/pBriPIv5NK3YqCZ2qC7e7+SO/EAW26wFGzxNiwAFm3DOUAMSGW4gAQ1V/JVcQwu
+0MiDKnvKKpOlu61UpsqmMihfJQoHWP8Op1AvEihhVGQpMNU3bEu7eExrocfia30n
+mZnmAUBmXe4v/c30VcbFsTu47miiXv9+5QI0yxeRRsqMd1uFtrl80MsoAuGG9kSA
+PO94SdCTygJ7HvOwf2QZY0ioc1wJ14QdGZAxg/NEWiCDOOFSV6YJEv7NyDMBtMxw
+GdbWtgvUJWbbYkUDMfVa0CMrsiHNMApHsfvA2iEjXGlOM3a+80yYUSxtXU0mljjx
+HDaSVzzcrfaZSRTmUihAXGYVFdalA7GEOLprPVBWz4DLDUMyBvIkl/Q0pJ462sgi
+qpTjMwOzpkjE6B5LHVSoYNJZgHZiC3cwsv0fOZCdzO7NCea8akI=
+=Atbb
+-----END PGP SIGNATURE-----
+
+--qdpvxircad6tnokw--
 
