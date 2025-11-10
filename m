@@ -1,100 +1,91 @@
-Return-Path: <linux-fsdevel+bounces-67677-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67678-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28D90C464BC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 12:34:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B646C4697C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 13:28:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6C6AA4EBDD5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 11:31:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23A043B2676
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 12:25:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02B4B30C373;
-	Mon, 10 Nov 2025 11:30:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBCBC3093C0;
+	Mon, 10 Nov 2025 12:25:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="vdlF668r";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="+l21lIjW";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="vdlF668r";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="+l21lIjW"
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="c93jGTUQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E3C430C361
-	for <linux-fsdevel@vger.kernel.org>; Mon, 10 Nov 2025 11:30:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FA044204E
+	for <linux-fsdevel@vger.kernel.org>; Mon, 10 Nov 2025 12:25:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762774252; cv=none; b=aUohZgkRUsEOkV3F6QB0OVfhWKjtCYj+jGU1zXyZc3+VCWY9w9yXT4wc7zbtGY85jOtfcpmCd9u0ytk/0tG2oIb+ygo9K89pKeV0R3EmXLcEm0A7oOG7wz0wepVflsxTteVopwNi4AmUqoUPc4Z+zOekTa4ksVG1iXB9oOhrf0c=
+	t=1762777524; cv=none; b=Cu6Q9XtFWrT4nWXP4rmUAiIX4AIYC3BOm3UeTCKBsXfEXgHKg8FKvF9UUQoOojh8abitWl65T2jjAAStZTmV8YyQjMYcwdZmaQMSDaDh7Ms7ixIITbO9hsiFnQX3O1CVik/2viiOEbmiCMUKCDoaZ9uaxDfTQAIA4w1yBW/ccvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762774252; c=relaxed/simple;
-	bh=OoCAVZI0ODO0xjNB4eMphg5EnwxHAzR51SdjYdc6spg=;
+	s=arc-20240116; t=1762777524; c=relaxed/simple;
+	bh=yKWNhJc0NCCYA8zjMOH3QEEhuWZljyQXcQSfuMODHe0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hWfKteMadjQ61V3vFCJfOBarCwxqUqeNRBiZLMMklrlk3Str7ajES1pwJGRm4vLK/ovME+GWCPSUQFHmwd8YfMzGCDY9JzX7zIAtVQAvO/pU7VEJPIUelwGKvO0/M/R+w1MlquLpNOQM6F8p8/06SoU+u+uFfjg2HEfigOaZQzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=vdlF668r; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=+l21lIjW; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=vdlF668r; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=+l21lIjW; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id A33661F445;
-	Mon, 10 Nov 2025 11:30:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762774248; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pxS0+Y+8aWU+WXGUz5FS1LZd+SzhEBie98VixeoLL1Y=;
-	b=vdlF668rSvDWzW8jhD0I8kBgY7UeqfjAOVYoyhd7WiPbxK/WabeeFs+rhFU3yYbCBOtQNr
-	l1ZII0vj1+Q3taeYoCbNuR3mewdN7QsDc2ilsRtLGMGy850k0FlVnQ7Oc5dqqbocJxUS3b
-	iLo45yFktiZehyvrhzG/ObElUcCYo/g=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762774248;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pxS0+Y+8aWU+WXGUz5FS1LZd+SzhEBie98VixeoLL1Y=;
-	b=+l21lIjWmNCdC5n8dzP2Hv0PBstxOGGtXJou2EQKQXC+bVAzS8mqh+SIgV+HelSjxVu5QX
-	6S/rOh2fKluUWlBw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=vdlF668r;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=+l21lIjW
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762774248; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pxS0+Y+8aWU+WXGUz5FS1LZd+SzhEBie98VixeoLL1Y=;
-	b=vdlF668rSvDWzW8jhD0I8kBgY7UeqfjAOVYoyhd7WiPbxK/WabeeFs+rhFU3yYbCBOtQNr
-	l1ZII0vj1+Q3taeYoCbNuR3mewdN7QsDc2ilsRtLGMGy850k0FlVnQ7Oc5dqqbocJxUS3b
-	iLo45yFktiZehyvrhzG/ObElUcCYo/g=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762774248;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pxS0+Y+8aWU+WXGUz5FS1LZd+SzhEBie98VixeoLL1Y=;
-	b=+l21lIjWmNCdC5n8dzP2Hv0PBstxOGGtXJou2EQKQXC+bVAzS8mqh+SIgV+HelSjxVu5QX
-	6S/rOh2fKluUWlBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9989E14385;
-	Mon, 10 Nov 2025 11:30:48 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 7vp0JejMEWnXXwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 10 Nov 2025 11:30:48 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 37F2AA28B1; Mon, 10 Nov 2025 12:30:40 +0100 (CET)
-Date: Mon, 10 Nov 2025 12:30:40 +0100
-From: Jan Kara <jack@suse.cz>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2] fs: avoid calls to legitimize_links() if possible
-Message-ID: <iwsvdaw4u2o366ndbk2dzj2ehjbwpynpkcym435qvndoiwqg6a@mlbbmml23747>
-References: <20251110100503.1434167-1-mjguzik@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GPZd8U0OIWE/POuH1Uf29LIJKmFhwaZLp42l8vwcTwX6Rgr8Zag23A3OwYEwrDSEFlEkxc+unXFj1Wp5+J9FmtVPYDGUOS1apGsElTZ7MhlkE+Fjm1naVUUimiJVNQGHtTtHYCjVWEZv81oX03muDEj5E0CHCnu7bf3lQGZRMmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=c93jGTUQ; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-641677916b5so2633641a12.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Nov 2025 04:25:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1762777521; x=1763382321; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=AdI7IxF7cmaOwwPz2uPN9pz51vkfzTah0Iexytj/exg=;
+        b=c93jGTUQLNsvGt5jexqNPPi3uEH9qXGrOuUBu58yE+JTRqflbj53dmr9ifzHGsaOd8
+         rN7t0rvLX+G4Kdb6S+7pxeXpeVNAdWCqhaoE0VXWkv3bk3JwZmcH5OqRl+JV7cuNycEm
+         IagQDSjmfQ6gsZIwx02+xTnrFn3ghxrugM4SVAGZwdjacGjldRhriOkO0nKL18jmjy+r
+         o/Q2k0/DZCWnNATcnzV8P9TijQLst11BKQfzWrSA2I59ewlZxnkZuzuOALhl/KBKvEDN
+         3I7atanfWjz6hcnMq1/BmPFUPEQcTTNB594icUBPtwYf3IbKWdmVS5aTmE10apvNcN06
+         ZlSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762777521; x=1763382321;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AdI7IxF7cmaOwwPz2uPN9pz51vkfzTah0Iexytj/exg=;
+        b=q+WnI4zgD0D5PFQN76rIXMMOWbCuFSuZ1OyFe9roSPmGvqQF7Ytn2RWnatQZXrahR0
+         RD6Yube00U9yztJb/2zcbRvt1UtLMDw5xxNRMkxXmuTuLZnbC1Xs9pGAzAkmQkUS4t0Z
+         36rEG2fpppYlyMBnnvZZOsQwGGjTRdIipN01Y8sGaAVFcxeY3EOnmd5WhAIdJ1KcF8ne
+         U5m+x5gvWKUi9G0Ticpahw1gZ3RF+RUSJp8t6mcef3pJKNafEFIMd0orIPmyIlLrpbAk
+         /xtUerOYTf19p06WybvGs2tmcX+zBi5l9RDF0eTt8VhClR3rXbyI11kqP4UROw8z0yJq
+         l1Og==
+X-Forwarded-Encrypted: i=1; AJvYcCXhzsBwgd5ozbujdIgGqWsmUgtPSEyKcsaV07efvrHJNPx0qCA2aOx+ldM0bSxddY09HnCFhabMDoIIk0cz@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCiCodwQYML+oQcGoXk+nQhLCn/pQ+0ajhqLRAZrMc01llRy6B
+	LCxoQ7fgHVMwG25qEzDM4EIyNP+m+fbN+nRW8aiACt33pUmPwFQ9w9yqPHMTuEY1nBo=
+X-Gm-Gg: ASbGnctTTyJWoXyhyKuQR5rOJOo8i3BxSnJSFOINClx2xI1aQ6CXAdv5gzBQuNSNcbw
+	V15E6diTa3oYMk6IucVzCVQSDc6Qhdnz39ozbyRMWOCFlEIGukbjzgM+Z1URwMo4G+i5hNlKeDm
+	5HL9NQxeVUDyvewNmXH/HLZ/ELJyHEm2XRk1mwNbXTOeBnnY2/uUnaZhOGjMd48RVJfTC5kwvCQ
+	GuSYBfx8JrTob0YPKv0UWZS7UbxOp0XMo4aySivgTiY3LAS9tcBzx+hO98h9jpg4MNnw/fm09OQ
+	ZowUtIZ9pfmrOsAM60Gfn+9U/FGjhE+KLR16E7s5RLXYNMyZGZ4769FYQ9vwWrVNpDT/Ae8DtxV
+	Rd3epDLdD+v7iljcEf2aeKaHLAMblvTcrCQ29KwyFM4nwAx3jjXKNiMYkP65f+UQvAU4QRFSmdd
+	+X0hk=
+X-Google-Smtp-Source: AGHT+IH45M4martpu1ZV9EapqxF5z1Rmn3ab4L1EkLdaCAIViHu2tcBKPEF2r4oHemmDEAtCuQt94g==
+X-Received: by 2002:a05:6402:27cf:b0:640:825e:ae82 with SMTP id 4fb4d7f45d1cf-6415e80a83bmr5792863a12.29.1762777520696;
+        Mon, 10 Nov 2025 04:25:20 -0800 (PST)
+Received: from pathway.suse.cz ([176.114.240.130])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6411f813bedsm11054476a12.10.2025.11.10.04.25.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Nov 2025 04:25:20 -0800 (PST)
+Date: Mon, 10 Nov 2025 13:25:18 +0100
+From: Petr Mladek <pmladek@suse.com>
+To: John Ogness <john.ogness@linutronix.de>
+Cc: Joanne Koong <joannelkoong@gmail.com>,
+	"amurray @ thegoodpenguin . co . uk" <amurray@thegoodpenguin.co.uk>,
+	brauner@kernel.org, chao@kernel.org, djwong@kernel.org,
+	jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH 0/2] printk_ringbuffer: Fix regression in get_data() and
+ clean up data size checks
+Message-ID: <aRHZrgMXUeMMY_gf@pathway.suse.cz>
+References: <20251107194720.1231457-1-pmladek@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -103,109 +94,48 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251110100503.1434167-1-mjguzik@gmail.com>
-X-Rspamd-Queue-Id: A33661F445
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_TO(0.00)[gmail.com];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DWL_DNSWL_BLOCKED(0.00)[suse.cz:dkim];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:email,suse.cz:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -4.01
-X-Spam-Level: 
+In-Reply-To: <20251107194720.1231457-1-pmladek@suse.com>
 
-On Mon 10-11-25 11:05:03, Mateusz Guzik wrote:
-> The routine is always called towards the end of lookup.
+On Fri 2025-11-07 20:47:18, Petr Mladek wrote:
+> This is outcome of the long discussion about the regression caused
+> by 67e1b0052f6bb82 ("printk_ringbuffer: don't needlessly wrap data blocks around"),
+> see https://lore.kernel.org/all/69096836.a70a0220.88fb8.0006.GAE@google.com/
 > 
-> According to bpftrace on my boxen and boxen of people I asked, the depth
-> count is almost always 0, thus the call can be avoided in the common case.
+> The 1st patch fixes the regression as agreed, see
+> https://lore.kernel.org/all/87ecqb3qd0.fsf@jogness.linutronix.de/
 > 
-> one-liner:
-> bpftrace -e 'kprobe:legitimize_links { @[((struct nameidata *)arg0)->depth] = count(); }'
+> The 2nd patch adds a helper function to unify the checks whether
+> a more space is needed. I did my best to address all the concerns
+> about various proposed variants.
 > 
-> sample results from few minutes of tracing:
-> @[1]: 59
-> @[0]: 147236
+> Note that I called the new helper function "need_more_space()" in the end.
+> It avoids all the problems with "before" vs. "lt" vs "le",
+> and "_safe" vs. "_sane" vs. "_bounded".
 > 
-> @[2]: 1
-> @[1]: 12087
-> @[0]: 5926235
+> IMHO, the name "need_more_space()" fits very well in all three
+> locations, surprisingly even in data_realloc(). But it is possible
+> that you disagree. Let me know if you hate it ;-)
 > 
-> And of course the venerable kernel build:
-> @[1]: 3563
-> @[0]: 6625425
 > 
-> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+> The patchset applies on top of printk/linux.git, branch for-6.19.
+> It should apply on top of linux-next as well.
+> 
+> Petr Mladek (2):
+>   printk_ringbuffer: Fix check of valid data size when blk_lpos
+>     overflows
+>   printk_ringbuffer: Create a helper function to decide whether a more
+>     space is needed
+> 
+>  kernel/printk/printk_ringbuffer.c | 40 +++++++++++++++++++++++++------
+>  1 file changed, 33 insertions(+), 7 deletions(-)
 
-Looks good. Feel free to add:
+JFYI, the patchset has been comitted into printk/linux.git,
+branch for-6.19.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+Note that I have updated the Subject and a comment in the 2nd patch
+as suggested by John, see
+https://git.kernel.org/pub/scm/linux/kernel/git/printk/linux.git/commit/?h=for-6.19&id=394aa576c0b783ae728d87ed98fe4f1831dfd720
 
-								Honza
-
-> ---
-> 
-> v2:
-> - drop 'noinline'
-> - spell out the check at call sites
-> 
-> verified no change in asm
-> 
->  fs/namei.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 2a112b2c0951..0de0344a2ab2 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -882,7 +882,7 @@ static bool try_to_unlazy(struct nameidata *nd)
->  
->  	BUG_ON(!(nd->flags & LOOKUP_RCU));
->  
-> -	if (unlikely(!legitimize_links(nd)))
-> +	if (unlikely(nd->depth && !legitimize_links(nd)))
->  		goto out1;
->  	if (unlikely(!legitimize_path(nd, &nd->path, nd->seq)))
->  		goto out;
-> @@ -917,7 +917,7 @@ static bool try_to_unlazy_next(struct nameidata *nd, struct dentry *dentry)
->  	int res;
->  	BUG_ON(!(nd->flags & LOOKUP_RCU));
->  
-> -	if (unlikely(!legitimize_links(nd)))
-> +	if (unlikely(nd->depth && !legitimize_links(nd)))
->  		goto out2;
->  	res = __legitimize_mnt(nd->path.mnt, nd->m_seq);
->  	if (unlikely(res)) {
-> -- 
-> 2.48.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Best Regards,
+Petr
 
