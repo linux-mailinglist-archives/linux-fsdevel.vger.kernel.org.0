@@ -1,237 +1,264 @@
-Return-Path: <linux-fsdevel+bounces-67688-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67689-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DD45C46E8B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 14:34:05 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 332F6C46F55
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 14:39:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 87B0E4E129E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 13:34:04 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id AE5F8349792
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 13:39:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E1B830FF2E;
-	Mon, 10 Nov 2025 13:33:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 006D3313549;
+	Mon, 10 Nov 2025 13:38:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P0dUDWXH"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cnzfU5Dx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60E293081DC;
-	Mon, 10 Nov 2025 13:33:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C5A7313546
+	for <linux-fsdevel@vger.kernel.org>; Mon, 10 Nov 2025 13:38:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762781638; cv=none; b=NBjww0kWXcnDLRcboX3ORKUFjuAsmPb1lZmjRfR+qEMQ0uTRgVf+aQuOuO98fYEuqeGsbh5fqcjoYQlBlzQbcDzzxD3UmVNT316u4ViGokZpdH2D/R5Ka578+aDD+qETMPpIXyxX7C0Rn7xHeEAc4Klo1+P3d5EhZWODF2T9jWw=
+	t=1762781894; cv=none; b=QkR7uegXJ9H2QUbdMP4RQOh9kAOgJyC1MBgBFl+Ut2kYx+TitZ2n302OxwvGR0DboStagVsXeVoVm9j/Fyli53QM57QNPkU2EBmLo6A8FKcX/hRf95ERvzIJkorp+nOvWDFw0RTFm4yGGP0urRhWgTk/gO1Pvsktwe+AbNdkSIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762781638; c=relaxed/simple;
-	bh=KrJ2YKSsIzH6nVo1MlcOu41RTn1gmKSelMYjAFxZ1Kw=;
+	s=arc-20240116; t=1762781894; c=relaxed/simple;
+	bh=HOUCuTxWwKHYskDLNwEKHT2ZtC97epKNJQ0iYXnYKSw=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=WENx1hvyxzfpZFWpcNDyYANxA3MHaEKmax+Dlz6EVBD75Awv6EmoaijnHQh8CkM8WragF8eQydbIfVuP5nBdSMuWxSL7KVrb7zn4mntbdjXZEJksKuMN8Sbr6GIgCwKPbOOlGvHOG4/5Ddwe7y97pj5N8Yvh0Eeu9rMTk9VYCwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P0dUDWXH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD371C116D0;
-	Mon, 10 Nov 2025 13:33:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762781638;
-	bh=KrJ2YKSsIzH6nVo1MlcOu41RTn1gmKSelMYjAFxZ1Kw=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=P0dUDWXHQAvfCZU96S6hWjTpUdjmy7990xsJAOgF2CPwPSMXSVRsm34nvItduBqJo
-	 5r6TiGqARZw7Eg0NAlv4hqXVkXnXR00yU81y+/1hssGhBP2QnhBuRTd1rKsa0bEBMj
-	 Hbu9pBb4VNRUzzjGtGbADEFn8xpzAfqli27LuNHV+W1vU/p0H5rBF1hs0ok6kNmnTL
-	 crvtwFCEpLMFhTP4xj/4kINe9DpW3ESB89iBfn/UcT3kalqScrRhUX9l/r2VL2Sfo7
-	 S1SSj+epa2IdhMzEMmaVnXBOJL7zpDBnytMGuYkPIaWyE6V3o/PavzUg5H/3e1tdD5
-	 Hw8dDCjhkWaFA==
-Message-ID: <aaa862f008e91f2fb7aefe7cc810eaea76dff3d0.camel@kernel.org>
-Subject: Re: RFC: NFSD administrative interface to prevent offering NFSv4
- delegation
-From: Jeff Layton <jlayton@kernel.org>
-To: Chuck Lever <chuck.lever@oracle.com>, Benjamin Coddington
-	 <bcodding@hammerspace.com>
-Cc: Linux NFS Mailing List <linux-nfs@vger.kernel.org>, Linux FS Devel
-	 <linux-fsdevel@vger.kernel.org>
-Date: Mon, 10 Nov 2025 08:33:56 -0500
-In-Reply-To: <26959e66-f04f-4e6e-a8ce-a44c4362d99f@oracle.com>
-References: <8918ca00-11cb-4a39-855a-e4b727cb63b8@oracle.com>
-	 <2602B6D3-C892-4D5A-98E7-299095BD245F@hammerspace.com>
-	 <26959e66-f04f-4e6e-a8ce-a44c4362d99f@oracle.com>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+	 Content-Type:Mime-Version; b=iaAUdTahvVKAEBYEi0LG+G3Lgqh27OYcfl22gUO27nWSaApI3U0tzN5ft9cYALtA44UJ6WxNUBZoXrrfTnMzN0zxGrIdmqGxA5c4lqy13Otb4ABlclyUJMIaO4QnuElIoarHLzCvBuF1WWMDdlulhJDWFC01TdC8rp2/sOitUKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cnzfU5Dx; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-78af3fe5b17so2276287b3a.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Nov 2025 05:38:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762781892; x=1763386692; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:date
+         :cc:to:from:subject:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jnGlBRb9DwPiK9LmBGDtYmrRRuxIEh43z/epZv69VLQ=;
+        b=cnzfU5Dx7ei5165Oe21fXuxJobF5pYYWzJ6nz44a4qpnbTDHfaxt2uNEIxhyaar0gM
+         NOiGAVlSOw9p1tOzQFuPRIqGvuf7I5xwuy589Sfw72gkHII2klEm/0qHqw9/xcP4QnE7
+         CwA3VrKfrqD4OxTCCcSZdGsjfPcDafyt4ICvATeS2b9s0zidabiqqVankwQQ8doo+pE9
+         JCEyAQVtuSQ7MsXe7Z/V54rHKuuNGWADEvDJrG02KvQ3jGrz2og562GH4STpSy6GuVHq
+         qiQfG5gqFJ9amS4S1jQCXko05sruq0T0IEbHGMzBXbpV1F0k8G3JEXxaNJD2cK7jWkTK
+         oF3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762781892; x=1763386692;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:date
+         :cc:to:from:subject:message-id:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jnGlBRb9DwPiK9LmBGDtYmrRRuxIEh43z/epZv69VLQ=;
+        b=oI5ZAEuDojoa764S97j0LPCiv+9juPt9/Bz5nSf5dOuivPD9cj7qKtwlxlcKqp+wUM
+         q+QEc2nR3nki1PNq1oX+H51IgPlyLE2/ewhAu8fpJgam4BbpSjd1tktF7oaq/7bQKx7G
+         tBcB+pPtOdf+Rxej0pez4vMb+wvHbL91Uj+3HEeuohw0ns0lx2ZITWnW6/LczW/1AOm6
+         Sq+YY/eLuAcdIZJSEtcwABjal2yW4HMcUbKcufexgJsNfyed3MjjXYNDYawZp1uGa3nN
+         vqX/5tL95FwGJL68mrV4DPWP6C0NLjk5rJkFD7aBWXvOcKN5nOpZX5AxgBaydvfKDAkW
+         dYdg==
+X-Forwarded-Encrypted: i=1; AJvYcCUdSig3BybOkWVE5mIN7Vr9UXl+WjcBLOhKxbG/wGizrgKMtg4MuMmim8OxVCq8oErKhBNTRpWXGuecmKIe@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxdwk9LQ7k38cBm1+Z4ZI81SfncoIVdCaSY6tk6oU/FOSFufujk
+	K08PklUHjeLZhaX6MB0VxA3+EYCLzTJ31yXD15g4QWFxFIb+7HXME3uk
+X-Gm-Gg: ASbGncuTKUc0CqE52mZOT7yxfdopd9SzmkROnuD/nWekRCuDy8PRI5eiscLquWGvJtr
+	giYd4FuYG/0Ohl9ws+DUu8YeDRy+EYLoGXjfwMR9NlFSiCBXgmDSyBTvPRFz/ZfBBlK40Bgpv9b
+	dLZnJhncqEiJC5oKs7vKGC8FKVcs5VssZSwYHnjLM4gABK06PaQKK0Kc37xCc3CeVMGXXIYAOq3
+	9E3Jhi6jkdbkSZss7DRY3F/7bdLsy+jitkGyGskuraTHWMGU+rGEYXfRY52gVl8T8vt82KOYmuO
+	//PY7bHrzLRUE0c6sYIIQGcJJ6e1rNK4FEl8MrLP0/gCgA4Q7FFccpmpgRSLjzKy0r7ePLZ7Eh2
+	s0jJLbA0pVmrTqR9iMZgNh565JNLIncIy+BK1M/BgSEc0lE5ogca7kgvC4rVnsnb4VidWcM0PRE
+	fEkSadcKj0qD5y7UtJuTB3vxDu+0+6EKGWS4ukdbysBKol1oqq1yJ/L8kraRkQ7T2w
+X-Google-Smtp-Source: AGHT+IHNvk2m9lZznt0nbMSiGOUuWH6p+xE2cZfK8zcBuHfxFqo1BWD3CQfalfJc7QB2TuotmiLZDQ==
+X-Received: by 2002:a05:6a21:32a0:b0:334:a784:304a with SMTP id adf61e73a8af0-353a2d3cec1mr9389506637.33.1762781891518;
+        Mon, 10 Nov 2025 05:38:11 -0800 (PST)
+Received: from li-5d80d4cc-2782-11b2-a85c-bed59fe4c9e5.ibm.com ([49.207.198.166])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-ba8f9ed21desm13311276a12.11.2025.11.10.05.38.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Nov 2025 05:38:11 -0800 (PST)
+Message-ID: <7f7163d79dc89ae8c8d1157ce969b369acbcfb5d.camel@gmail.com>
+Subject: Re: [PATCH 4/4] xfs: fallback to buffered I/O for direct I/O when
+ stable writes are required
+From: "Nirjhar Roy (IBM)" <nirjhar.roy.lists@gmail.com>
+To: Christoph Hellwig <hch@lst.de>, Carlos Maiolino <cem@kernel.org>, 
+	Christian Brauner
+	 <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, "Martin K. Petersen"
+ <martin.petersen@oracle.com>,  linux-kernel@vger.kernel.org,
+ linux-xfs@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
+ linux-raid@vger.kernel.org,  linux-block@vger.kernel.org
+Date: Mon, 10 Nov 2025 19:08:05 +0530
+In-Reply-To: <20251029071537.1127397-5-hch@lst.de>
+References: <20251029071537.1127397-1-hch@lst.de>
+	 <20251029071537.1127397-5-hch@lst.de>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.58.1 (3.58.1-1.fc43) 
+X-Mailer: Evolution 3.28.5 (3.28.5-27.el8_10) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 
-On Sun, 2025-11-09 at 15:47 -0500, Chuck Lever wrote:
-> On 11/9/25 1:57 PM, Benjamin Coddington wrote:
-> > On 4 Nov 2025, at 10:54, Chuck Lever wrote:
-> >=20
-> > > NFSD has long had some ability to disable NFSv4 delegation, by disabl=
-ing
-> > > fs leases.
-> > >=20
-> > > However it would be nice to have more fine-grained control, for examp=
-le
-> > > in cases where read delegation seems to work well but the newer forms
-> > > of delegation (directory, or attribute) might have bugs or performanc=
-e
-> > > problems, and need to be disabled. There are also testing scenarios
-> > > where a unit test might focus specifically on one type of delegation.
-> > >=20
-> > > A little brainstorming:
-> > >=20
-> > > * Controls would be per net namespace
-> > > * Allow read delegations, or read and write
-> > > * Control attribute delegations too? Perhaps yes.
-> > > * Ignore the OPEN_XOR_DELEG flag? Either that, or mask off the
-> > >   advertised feature flag.
-> > > * Change of setting would cause immediate behavior change; no
-> > >   server restart needed
-> > > * Control directory delegations too (when they arrive)
-> > >=20
-> > > Is this for NFSD only, or also for local accessors (via the VFS) on t=
-he
-> > > NFS server?
-> > >=20
+On Wed, 2025-10-29 at 08:15 +0100, Christoph Hellwig wrote:
+> Inodes can be marked as requiring stable writes, which is a setting
+> usually inherited from block devices that require stable writes.  Block
+> devices require stable writes when the drivers have to sample the data
+> more than once, e.g. to calculate a checksum or parity in one pass, and
+> then send the data on to a hardware device, and modifying the data
+> in-flight can lead to inconsistent checksums or parity.
+> 
+> For buffered I/O, the writeback code implements this by not allowing
+> modifications while folios are marked as under writeback, but for
+> direct I/O, the kernel currently does not have any way to prevent the
+> user application from modifying the in-flight memory, so modifications
+> can easily corrupt data despite the block driver setting the stable
+> write flag.  Even worse, corruption can happen on reads as well,
+> where concurrent modifications can cause checksum mismatches, or
+> failures to rebuild parity.  One application known to trigger this
+> behavior is Qemu when running Windows VMs, but there might be many
+> others as well.  xfstests can also hit this behavior, not only in the
+> specifically crafted patch for this (generic/761), but also in
+> various other tests that mostly stress races between different I/O
+> modes, which generic/095 being the most trivial and easy to hit
+> one.
+> 
+> Fix XFS to fall back to uncached buffered I/O when the block device
+> requires stable writes to fix these races.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  fs/xfs/xfs_file.c | 54 +++++++++++++++++++++++++++++++++++++++--------
+>  fs/xfs/xfs_iops.c |  6 ++++++
+>  2 files changed, 51 insertions(+), 9 deletions(-)
+> 
+> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
+> index e09ae86e118e..0668af07966a 100644
+> --- a/fs/xfs/xfs_file.c
+> +++ b/fs/xfs/xfs_file.c
+> @@ -230,6 +230,12 @@ xfs_file_dio_read(
+>  	struct xfs_inode	*ip = XFS_I(file_inode(iocb->ki_filp));
+>  	ssize_t			ret;
+>  
+> +	if (mapping_stable_writes(iocb->ki_filp->f_mapping)) {
+> +		xfs_info_once(ip->i_mount,
+> +			"falling back from direct to buffered I/O for read");
+> +		return -ENOTBLK;
+> +	}
+> +
+>  	trace_xfs_file_direct_read(iocb, to);
+>  
+>  	if (!iov_iter_count(to))
+> @@ -302,13 +308,22 @@ xfs_file_read_iter(
+>  	if (xfs_is_shutdown(mp))
+>  		return -EIO;
+>  
+> -	if (IS_DAX(inode))
+> +	if (IS_DAX(inode)) {
+>  		ret = xfs_file_dax_read(iocb, to);
+> -	else if (iocb->ki_flags & IOCB_DIRECT)
+> +		goto done;
+> +	}
+> +
+> +	if (iocb->ki_flags & IOCB_DIRECT) {
+>  		ret = xfs_file_dio_read(iocb, to);
+> -	else
+> -		ret = xfs_file_buffered_read(iocb, to);
+> +		if (ret != -ENOTBLK)
+> +			goto done;
+> +
+> +		iocb->ki_flags &= ~IOCB_DIRECT;
+> +		iocb->ki_flags |= IOCB_DONTCACHE;
+> +	}
+>  
+> +	ret = xfs_file_buffered_read(iocb, to);
+> +done:
+>  	if (ret > 0)
+>  		XFS_STATS_ADD(mp, xs_read_bytes, ret);
+>  	return ret;
+> @@ -883,6 +898,7 @@ xfs_file_dio_write(
+>  	struct iov_iter		*from)
+>  {
+>  	struct xfs_inode	*ip = XFS_I(file_inode(iocb->ki_filp));
+> +	struct xfs_mount	*mp = ip->i_mount;
+>  	struct xfs_buftarg      *target = xfs_inode_buftarg(ip);
+>  	size_t			count = iov_iter_count(from);
+>  
+> @@ -890,15 +906,21 @@ xfs_file_dio_write(
+>  	if ((iocb->ki_pos | count) & target->bt_logical_sectormask)
+>  		return -EINVAL;
+>  
+> +	if (mapping_stable_writes(iocb->ki_filp->f_mapping)) {
+> +		xfs_info_once(mp,
+> +			"falling back from direct to buffered I/O for write");
+Minor: Let us say that an user opens a file in O_DIRECT in an atomic write enabled device(requiring
+stable writes), we get this warning once. Now the same/different user/application opens another file
+with O_DIRECT in the same atomic write enabled device and expects atomic write to be enabled - but
+it will not be enabled (since the kernel has falled back to the uncached buffered write path)
+without any warning message. Won't that be a bit confusing for the user (of course unless the user
+is totally aware of the kernel's exact behavior)?
+--NR
 
-I agree with all of the above bullet points. I think we should just
-implement the more fine-grained controls for nfsd (at least initially).
-OPEN_XOR_DELEG and attribute delegs don't have any relevance at the VFS
-layer, so if we want to control all of these then it makes more sense
-to do it in nfsd.
+> +		return -ENOTBLK;
+> +	}
+> +
+>  	/*
+>  	 * For always COW inodes we also must check the alignment of each
+>  	 * individual iovec segment, as they could end up with different
+>  	 * I/Os due to the way bio_iov_iter_get_pages works, and we'd
+>  	 * then overwrite an already written block.
+>  	 */
+> -	if (((iocb->ki_pos | count) & ip->i_mount->m_blockmask) ||
+> +	if (((iocb->ki_pos | count) & mp->m_blockmask) ||
+>  	    (xfs_is_always_cow_inode(ip) &&
+> -	     (iov_iter_alignment(from) & ip->i_mount->m_blockmask)))
+> +	     (iov_iter_alignment(from) & mp->m_blockmask)))
+>  		return xfs_file_dio_write_unaligned(ip, iocb, from);
+>  	if (xfs_is_zoned_inode(ip))
+>  		return xfs_file_dio_write_zoned(ip, iocb, from);
+> @@ -1555,10 +1577,24 @@ xfs_file_open(
+>  {
+>  	if (xfs_is_shutdown(XFS_M(inode->i_sb)))
+>  		return -EIO;
+> +
+> +	/*
+> +	 * If the underlying devices requires stable writes, we have to fall
+> +	 * back to (uncached) buffered I/O for direct I/O reads and writes, as
+> +	 * the kernel can't prevent applications from modifying the memory under
+> +	 * I/O.  We still claim to support O_DIRECT as we want opens for that to
+> +	 * succeed and fall back.
+> +	 *
+> +	 * As atomic writes are only supported for direct I/O, they can't be
+> +	 * supported either in this case.
+> +	 */
+>  	file->f_mode |= FMODE_NOWAIT | FMODE_CAN_ODIRECT;
+> -	file->f_mode |= FMODE_DIO_PARALLEL_WRITE;
+> -	if (xfs_get_atomic_write_min(XFS_I(inode)) > 0)
+> -		file->f_mode |= FMODE_CAN_ATOMIC_WRITE;
+> +	if (!mapping_stable_writes(file->f_mapping)) {
+> +		file->f_mode |= FMODE_DIO_PARALLEL_WRITE;
+> +		if (xfs_get_atomic_write_min(XFS_I(inode)) > 0)
+> +			file->f_mode |= FMODE_CAN_ATOMIC_WRITE;
+> +	}
+> +
+>  	return generic_file_open(inode, file);
+>  }
+>  
+> diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+> index caff0125faea..bd49ac6b31de 100644
+> --- a/fs/xfs/xfs_iops.c
+> +++ b/fs/xfs/xfs_iops.c
+> @@ -672,6 +672,12 @@ xfs_report_atomic_write(
+>  	struct xfs_inode	*ip,
+>  	struct kstat		*stat)
+>  {
+> +	/*
+> +	 * If the stable writes flag is set, we have to fall back to buffered
+> +	 * I/O, which doesn't support atomic writes.
+> +	 */
+> +	if (mapping_stable_writes(VFS_I(ip)->i_mapping))
+> +		return;
+>  	generic_fill_statx_atomic_writes(stat,
+>  			xfs_get_atomic_write_min(ip),
+>  			xfs_get_atomic_write_max(ip),
 
-We could consider adding more fine-grained VFS layer controls later if
-that's needed though.
-
-> > > Should this be plumbed into NFSD netlink, or into /sys ?
-> > >=20
-> > > Any thoughts/opinions/suggestions are welcome at this point.
-> >=20
-> > Happy to read this.
-> >=20
-> > I think this would be most welcomed by the distros - there's been a lot=
- of
-> > instances of "disable delegations" with the big knob
-> > /proc/sys/fs/leases-enable
-> >=20
-> > I'd also like to be able to twiddle these bits for clients as well, and
-> > lacking a netlink tool to do it for the client the logical place might =
-be
-> > the client's sysfs interface.
->=20
-> Jeff is working on a system call API that disables delegation on the
-> client, to write unit tests against. Trond also proposed one, years ago.
-> On the client you might want to disable delegation per file.
->=20
-
-Not exactly. I'm just adding fcntl() commands that allow you to set/get
-delegations from userland:
-
-https://lore.kernel.org/linux-nfs/20251105-dir-deleg-ro-v5-17-7ebc168a88ac@=
-kernel.org/T/#u
-
-The main reason I wanted these was for testing purposes (so we can
-ensure that later VFS changes don't subtly break delegations).
-
->=20
-> > Would you also look to grain these settings per-client?  The server's
-> > per-client interface in proc has been fantastic.
-> >=20
-> > Ben
->=20
-> The issue with per-client control is that, if the client hasn't already
-> contacted the server, we don't know how to identify that client to
-> the server administrator. We can't use the client's IP address because
-> the client could be multi-homed or DHCP-configured.
->=20
-> So, per client, the settings would have to be done every time the client
-> contacts the server after either one has rebooted (I think).
->=20
-> If we're doing per net-namespace on the server, that becomes easier to
-> implement and document. Each container instance has its own settings
-> that apply to all exports from that container.
->=20
-
-Agreed. I don't think we can reasonably do this on a per-client basis,
-because we don't have any stable long-term persistent record of clients
-on the server. If the client disappears for a while, the server will
-just forget about it.
---=20
-Jeff Layton <jlayton@kernel.org>
 
