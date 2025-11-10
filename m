@@ -1,141 +1,120 @@
-Return-Path: <linux-fsdevel+bounces-67692-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67693-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BA1EC471E0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 15:13:51 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A52CC47472
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 15:43:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E176A4EC98A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 14:13:42 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 273E7348F36
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 14:43:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4FE431281D;
-	Mon, 10 Nov 2025 14:13:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28B18313542;
+	Mon, 10 Nov 2025 14:42:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gI+qUF/v"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45CF73126C7;
-	Mon, 10 Nov 2025 14:13:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2877D31280E
+	for <linux-fsdevel@vger.kernel.org>; Mon, 10 Nov 2025 14:42:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762784018; cv=none; b=du4mQUpU/BJ9dvcZIfd7MGwc1f2eMvW+iMWvf21kp4Oi2RMU91C7R0NA5/KEOi7y+3znh8Y5r9m5+2PbWoqUeCuQkitJ81oRDqIzi77nLARdO4o3oJhAn4H3VewPkX/eD+VwcCN+8CGKSAKV5GLMls7b2j+DnIlHK8krBkC/HY4=
+	t=1762785778; cv=none; b=q/Yk9MN72RvdYRG/psZmRKx7qiRXH98uyIM/RN7D7SWu7jhQ8X+j5oF5ztOFj5zdWE4JbICq5LqniBDxsSd6/8zKlPoPCXLlhD6q5iDdS5ZtavdvvncEKra8yP/2XPnsFAPcDS/H/ocaYYHMv1WJ40hexCSq1xmFThA4mA9lPVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762784018; c=relaxed/simple;
-	bh=7tIWrGouMUaytXUKW8IlvpRs6GDUMAJ2YsLhkWoK6Ng=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=krVQJdh62V9pBUI/FLoMnjj86uH5B7T3NdWGO2V/bOxeHGpOWSq+d7NvgkJAAY5Bd0q6TgvvZFoiZ1iPWHXRZD1SbsLZjvDnpA6VR4XWuF1Hmm0bJ8UH1sUe5XN9nc4o0Va+PmAxOduF+ZkpRmf7eqa7wNjQkKillC+EUe7cXqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4d4s8F02v6zKHMjR;
-	Mon, 10 Nov 2025 22:13:17 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id B160E1A0847;
-	Mon, 10 Nov 2025 22:13:31 +0800 (CST)
-Received: from [10.174.178.152] (unknown [10.174.178.152])
-	by APP2 (Coremail) with SMTP id Syh0CgAHZXsH8xFp7DgWAQ--.14837S3;
-	Mon, 10 Nov 2025 22:13:29 +0800 (CST)
-Message-ID: <2b8a6767-5e37-48e1-b75c-cd16005580a7@huaweicloud.com>
-Date: Mon, 10 Nov 2025 22:13:26 +0800
+	s=arc-20240116; t=1762785778; c=relaxed/simple;
+	bh=YYJDGhYEE+IE3sRD8B2vXjob2uf0ya/UBo8KW6w42aI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XEGlmR11e7H5lGAgTFtFaOB2gl9AcmpHUNCqwNM8F7CldfW5o3IMSj1gb3RS3S8beSBswuxD498sLTrh3n7+b2KRLXNnZrpAhRjfTrkaIZCfvtDj08kvACqCjzLkSt4Ztq+3BY1oNaLv+u4aodsAB/vIbMKnk06kXAFlsLrearg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gI+qUF/v; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-340c2dfc1daso492446a91.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Nov 2025 06:42:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762785776; x=1763390576; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=sNzjHQ+WrDJMGz6phMHSxuZiXquRr8z8joipRN7J12Y=;
+        b=gI+qUF/vJOGu8cgQAHAdvr0MQUCq8PSqAnUdMHgj4YNxP01V/pBIgU1RtZNYx98+tp
+         s0ZBcbZ8G+CwftNj3/XToPhfTd/xvO4YrhWNqKuz/YSXWV22owFCdYhoQwpeQ319AKsH
+         xi0cSUYZTeNsZOO+BF44Os5IxeHFLRpqoJmHuN2pufk7Ed4o1lur9js/6B/4lyJK9zNF
+         2Min407wl+whzzON7bwlCAyQkBJlKkH9P0Sn3rra1tzJs1alq4q2v9oIMlYh33PyAP1P
+         T1qR4gFn7f78UpzdsSzvtepOZ5nLy/NeocFDepx/WSKtVqeeT9CX8Q980phUPfQJKOUz
+         pHjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762785776; x=1763390576;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sNzjHQ+WrDJMGz6phMHSxuZiXquRr8z8joipRN7J12Y=;
+        b=g6y2BXUNf3WThul83W2a0JH0WDnncs3jR8YTQS7Rdjg9FoPNPTxW1uT35QdXr0usk1
+         FD5otJsjL38cl81mnBzFNw3yGab7IJBteqS7qSPLmFt8A83rtA3eiSnxrrNwe5WAiJnD
+         e3ABwUW/4l+MxZTOvkjcfn6pso3fHDLealpS/00tNLkwS3lGbk1C4/GyD0GSubWQIqLT
+         oaxeebTpYzelW6J4MmXh4M8btYN/DzA0fAMs1mOR4/dFe6UvjVSATs6IFPVwFIqpqktj
+         gylMqS8vTgB7h/V0jZg/rPxIsF0ljF4LU/5c2j02pm19R2a25nS9lcsUI2yAC5uS1rsy
+         rIlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVPk4P03U4SpXqfLDFzL07/DaqO8M/al0CZl9c98ng/V5Q0E697Yv0rYgtTadVBYyh9dqY2JBTdUfRxStjo@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGJkBU6oaKvwmXpg+r9noCT9kMUQsZL/mfOs5yV9ymHyjHXokJ
+	/+MvAensVZOzjFIbuX0M0eMLIAxYrPJRl0FMji3Ztj4XqbWzIAR1SloC
+X-Gm-Gg: ASbGnctfVecAUwa3SzYNFvqjR1D/lLN2xpazLGlKa1aiXszn94r40Gdx6WlZsJZAPIw
+	rRXf1FwlrWO6nbTykeaek0uidGapmSmZwwIQ2hfmG7elF6ACwgHbC7X0duw9RnXoRRwU64sJ42+
+	0v2By9kWgePpsVYnbQW+30W0DdkSwU4dA1J1E6MsqWI3SkyYWDRTDCJBIVyNSCmoacoosWaMmDi
+	X5ZPsJ1DNkDywkePnvmAuNqo3xyL68FcRpM7XRv3+OrOyZBOsPDXiryickEXJwXWC3tmlqVPaYP
+	PD5OYYjzAnTs0bLfB5eS4cN3Dz3snQn+di2RaYrKo53dfxGF4p0Jy3roPfwTr9V4HxK5Q5/SoTQ
+	NVL65JVsVAKdFeu2t2lvtzWki4VbX4Jy6HGxlt5YI6nnrlCaaLeIi2vFA6LLq7+smR3M5H2pUPc
+	bn93b6NjW8FPuT0RrPYS+gRNSLOc6O
+X-Google-Smtp-Source: AGHT+IFLIvfvzBAOLg54kuvXq8pVBAwIGNRWPiBHJBuAsnmvQ5Ms9Se5CcOXXisu3gJm6vu1H+yXVg==
+X-Received: by 2002:a17:90b:1b44:b0:340:aa74:c2a6 with SMTP id 98e67ed59e1d1-3436cbbec71mr5653917a91.6.1762785776489;
+        Mon, 10 Nov 2025 06:42:56 -0800 (PST)
+Received: from elitemini.flets-east.jp ([2400:4050:d860:9700:75bf:9e2e:8ac9:3001])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-343abec3836sm2163308a91.18.2025.11.10.06.42.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Nov 2025 06:42:56 -0800 (PST)
+From: Masaharu Noguchi <nogunix@gmail.com>
+To: Jeff Layton <jlayton@kernel.org>,
+	Chuck Lever <chuck.lever@oracle.com>
+Cc: Jesper Juhl <jesperjuhl76@gmail.com>,
+	David Laight <david.laight.linux@gmail.com>,
+	Alexander Aring <alex.aring@gmail.com>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Masaharu Noguchi <nogunix@gmail.com>
+Subject: [PATCH v2 0/2] uapi/samples: guard renameat2 flag macros
+Date: Mon, 10 Nov 2025 23:42:30 +0900
+Message-ID: <20251110144232.3765169-1-nogunix@gmail.com>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] bdev: add hint prints in sb_set_blocksize() for LBS
- dependency on THP
-To: libaokun@huaweicloud.com, linux-fsdevel@vger.kernel.org
-Cc: brauner@kernel.org, jack@suse.cz, viro@zeniv.linux.org.uk,
- axboe@kernel.dk, linux-block@vger.kernel.org, yangerkun@huawei.com,
- libaokun1@huawei.com, Theodore Ts'o <tytso@mit.edu>
-References: <20251110124714.1329978-1-libaokun@huaweicloud.com>
-Content-Language: en-US
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-In-Reply-To: <20251110124714.1329978-1-libaokun@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:Syh0CgAHZXsH8xFp7DgWAQ--.14837S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7Aw47Wr4xGFyrKr4fXrWxXrb_yoW8ur18pF
-	y8Gr1rAr18KF1xuFy7Z3ZxJasa9ws5JFyUJ34xuFyjvryDt34fGr93Kry5XF4IvrsxCrZ3
-	XFsrKFWI9r1UW3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
-	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
-	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUF1
-	v3UUUUU
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Transfer-Encoding: 8bit
 
-On 11/10/2025 8:47 PM, libaokun@huaweicloud.com wrote:
-> From: Baokun Li <libaokun1@huawei.com>
-> 
-> Support for block sizes greater than the page size depends on large
-> folios, which in turn require CONFIG_TRANSPARENT_HUGEPAGE to be enabled.
-> 
-> Because the code is wrapped in multiple layers of abstraction, this
-> dependency is rather obscure, so users may not realize it and may be
-> unsure how to enable LBS.
-> 
-> As suggested by Theodore, I have added hint messages in sb_set_blocksize
-> so that users can distinguish whether a mount failure with block size
-> larger than page size is due to lack of filesystem support or the absence
-> of CONFIG_TRANSPARENT_HUGEPAGE.
-> 
-> Suggested-by: Theodore Ts'o <tytso@mit.edu>
-> Link: https://patch.msgid.link/20251110043226.GD2988753@mit.edu
-> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+Including `<linux/fcntl.h>` after libc headers leaves the renameat2 flag
+macros stuck with libc's values, and our sample code in turn redefines
+them when it includes the uapi header.  This little series makes the
+uapi header resilient to prior definitions and ensures the sample drops
+any libc remnants before pulling in the kernel constants.
 
-Looks good to me.
+Changes since v1 (based on feedback from David Laight):
+- uapi change now checks the macro values and undefines mismatches
+- sample code always undefines the macros up front and documents why
 
-Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
+Link: https://lore.kernel.org/all/20251109071304.2415982-1-nogunix@gmail.com/
 
-> ---
->  block/bdev.c | 19 ++++++++++++++++++-
->  1 file changed, 18 insertions(+), 1 deletion(-)
-> 
-> diff --git a/block/bdev.c b/block/bdev.c
-> index 810707cca970..4888831acaf5 100644
-> --- a/block/bdev.c
-> +++ b/block/bdev.c
-> @@ -217,9 +217,26 @@ int set_blocksize(struct file *file, int size)
->  
->  EXPORT_SYMBOL(set_blocksize);
->  
-> +static int sb_validate_large_blocksize(struct super_block *sb, int size)
-> +{
-> +	const char *err_str = NULL;
-> +
-> +	if (!(sb->s_type->fs_flags & FS_LBS))
-> +		err_str = "not supported by filesystem";
-> +	else if (!IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE))
-> +		err_str = "is only supported with CONFIG_TRANSPARENT_HUGEPAGE";
-> +
-> +	if (!err_str)
-> +		return 0;
-> +
-> +	pr_warn_ratelimited("%s: block size(%d) > page size(%lu) %s\n",
-> +				sb->s_type->name, size, PAGE_SIZE, err_str);
-> +	return -EINVAL;
-> +}
-> +
->  int sb_set_blocksize(struct super_block *sb, int size)
->  {
-> -	if (!(sb->s_type->fs_flags & FS_LBS) && size > PAGE_SIZE)
-> +	if (size > PAGE_SIZE && sb_validate_large_blocksize(sb, size))
->  		return 0;
->  	if (set_blocksize(sb->s_bdev_file, size))
->  		return 0;
+Masaharu Noguchi (2):
+  uapi: fcntl: guard AT_RENAME_* aliases
+  samples: vfs: avoid libc AT_RENAME_* redefinitions
 
+ include/uapi/linux/fcntl.h | 15 ++++++++++++++-
+ samples/vfs/test-statx.c   |  9 +++++++++
+ 2 files changed, 23 insertions(+), 1 deletion(-)
+
+
+base-commit: e9a6fb0bcdd7609be6969112f3fbfcce3b1d4a7c
+-- 
+2.51.1
 
