@@ -1,200 +1,130 @@
-Return-Path: <linux-fsdevel+bounces-67723-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67725-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44919C480EB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 17:43:39 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 341A7C48228
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 17:54:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF1CE1884C83
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 16:43:52 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D44F634A8B4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 16:54:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BCEE328601;
-	Mon, 10 Nov 2025 16:38:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F76531A051;
+	Mon, 10 Nov 2025 16:50:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jz7HLTG1"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="P9eB7UWU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5AEA30AACE
-	for <linux-fsdevel@vger.kernel.org>; Mon, 10 Nov 2025 16:38:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 642B628642A
+	for <linux-fsdevel@vger.kernel.org>; Mon, 10 Nov 2025 16:50:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762792711; cv=none; b=QaBbdQaKzuO5G4oVHhxgRXn6Rdz9wQZWLU4IJc6NxZBXDVH1AJEK0MIpAU6bF00OfoMOoyG+rXVPu4/9G4AfjsqOcPaX92scZBNY83mjIXNczNLsvxAhdPUfuWNu0KYoxZiyOtQDf4ZzYCqk9jpeQjQjBJR6Ae9kJyjcbWm6ayQ=
+	t=1762793432; cv=none; b=obn2ZjYju7Wv4kh2Bd3+5Gqzp8KHDqz95kdcG3nHNr6nNYYxf9hlaKAp4Hg1iSJmmsKBMOTnPNEnx8IV3wIZzMTlySQxfuILZSRXrLsZSW+B9o4P8yJCgngiNH84KliwY6CktjZlgJgV9AEtkDSZ1LnproCOIDFDK1tXk8fsfXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762792711; c=relaxed/simple;
-	bh=NtWnINBt3sM6GiXGdKHci0gX7e3BpDT+7lx59+8Zdus=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WXCMYtqDCzEqce95KNZYPiMBrAbMSeu9Eu5mEu9rLhkuIErNc1ruUZfoYPqZoi3sOP0Vi0ImkoLle6R+yUoupEfwZfuDRXHWwPsDczWkaoS9AdUE8maCqbgwpdeAoDZe0q6djorQyMlAHiNh6JjMLaHfPXt/Wy41xmMu1/JjwiU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jz7HLTG1; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-640f4b6836bso5960971a12.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Nov 2025 08:38:29 -0800 (PST)
+	s=arc-20240116; t=1762793432; c=relaxed/simple;
+	bh=XltYOg7k6APNYxmEk9YbYTSDtH+b3EpjGO8HEYY9tKY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aPlAqHAxiUnsCu/HvUtVfyIMufgSR/3tdit9LeysQP/Js9faCjoniSm4iG8elNM1OITdEY7GFruUrlKfUtydX5jRuC3Yeo4LH3iPjrAXGNehIngtS7R52v8F8TbbNIfqHHUoliGIlVRueoMCVBrb9uc8vlXB6U5ugQo149+e/rw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=P9eB7UWU; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-640bd9039fbso6554572a12.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Nov 2025 08:50:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762792708; x=1763397508; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=crySnOU0BCzQMPPEF+Im0cShC+HGRCGDJ0MSVHJMWYg=;
-        b=Jz7HLTG1UVYjcpQz7csEmnd+Oa87xqpup0PgaUOZ9+/xnwBe/+4qtTX1zJNtEFb9RS
-         /jt9YI722uZvxQo1W1Tz8Swb3/Hqaja9d/370e+s+WX5cVu2blOEruTNQyFuhIinue5v
-         thQc0WIts1C2Ldm2FMRcjqFzHj5kHBEaObpmewjtbp3bIgOWLWiG+uramKWSclBWT01Y
-         pChFA+y3z9yqR3CO7PLZOw+WsB2Rreu9u7HiadMlk/oh6QgRncUJm8l/q4l2IDYLrAui
-         dphML3/i03GT50PjxlQG4fuJvsBDsgLRwvUs/2MQKB0Hr6eXYMQRvs1UDPw1beo/73CD
-         H9yQ==
+        d=linux-foundation.org; s=google; t=1762793428; x=1763398228; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=DkZN9c+POTwUaLOiQGKa5zH5Hbhc5P5pBlVymH+hWeM=;
+        b=P9eB7UWU+twK7fSG145AoH3h8kI70lCdg4NwiDqu0BHulMPUxl5fnFWuMezg3luR1I
+         OonG2am+vifDMxkmAbMXey+RibLuAwK6tJIlIHSA1eol1LlJN2v6rSsm3A5Dx8c4Z7i6
+         uujAHIOJGiOQtRav3B4AKCD1a+QqYMGvoIMPY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762792708; x=1763397508;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1762793428; x=1763398228;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=crySnOU0BCzQMPPEF+Im0cShC+HGRCGDJ0MSVHJMWYg=;
-        b=pdzQG9siUqNWN/N4kl4n1Rbty2dar4+ihFnR2UWw61q7x8I0E9b6/zS4fuu5Neu5wC
-         6sxzQiOiChYiV7jR+pIgXNyHAl2uQAF+i/PsfmdTwtXJWKhLlPXZEos/g54cYbSZhpI6
-         x79gGtywHtSnbIZ9xX2/agixzSCAGqDZTfK0bU2lgxSRCfQdCGmjYqzGLq0F8QdcbG3s
-         AaPtmODSmDUPacFxQ+yNeQ/j08Z8WvL2U3omTrjP5QQcd8v/kjlUViJ8i9jpsdU3hmfn
-         g+qeIxZrP2ahuMEyHbtJzYApFANopkDsXoBBy0EK7zSTJDBqg9YHLBiJ9ETn9Mlapt10
-         gkYA==
-X-Forwarded-Encrypted: i=1; AJvYcCXKYDo3JKPp2t2f2Cb92mBZ//Vz2kr9oRqxNzrbwVZG1J84s+mG6J/mEmXRt6b6hTvpnjy0+xR7KcfpDcZA@vger.kernel.org
-X-Gm-Message-State: AOJu0YzujCRVzRYaimtzA26oebXuihZ5/8VMaqinqdB1857vAP35sqlX
-	NYCO2v0VGIuIV7Yfe14XzU+AoKA1Mv+S+EZDjz+hqY1gfoa67DkVqjdx
-X-Gm-Gg: ASbGncszuIiESEPzFwzclZJNKvsdkct2RnMK5+KWcoOF1GPkM8IG7y9QxPVPXJ5vp2D
-	v8LIiDn01gdjZHFWHexCiixyzVBoLGn6LYRUTO+sh8ry7r7Zd1GA6jzzhhnCRDez46B5oTo0tJp
-	XKb8+STaczdMZtfpQRsyTvGMJ/Za4e9rIKp6lg7A4wS4RdX9Z6/USJ3iC5YmQdGtWhG4VMDo68X
-	LFrqGKedfHzRKI6KtBuo15/K+I8hVkhoLBvvGa02DTdfMUCFgWtzhSUZQ3qWwkAn9Z0RamlLS8f
-	nGrA3HGWmQKcQp7xdDHKZRxq0ElgRPwYDv/jMFW9VNxK2enjoTUFDzjTzNt0WM3tADza7xOfaD0
-	YzzlXMDusXe//I6iyCcaqWApwu42aJVKKEMHLcDyKTpUG8kcXF0xJRMKRkg8vrxuIq+aYqMVGrO
-	bKm7qRqWUIC8CqYueseJgbBnEB7RaHukGhjKz8kIYyyKY+FiTv
-X-Google-Smtp-Source: AGHT+IFRyFfuGUAUqh/iXGb40Q/6TuxBb/dJTSuyufllnYorj5TKU4oOweyogQ8JItcI/4Zi5gDSNA==
-X-Received: by 2002:a17:906:dc8d:b0:b6d:c44a:b69b with SMTP id a640c23a62f3a-b72e04524d9mr835230466b.35.1762792707889;
-        Mon, 10 Nov 2025 08:38:27 -0800 (PST)
-Received: from f.. (cst-prg-14-82.cust.vodafone.cz. [46.135.14.82])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bfa11367sm1112772166b.68.2025.11.10.08.38.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Nov 2025 08:38:27 -0800 (PST)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: viro@zeniv.linux.org.uk
-Cc: brauner@kernel.org,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH v3] fs: add predicts based on nd->depth
-Date: Mon, 10 Nov 2025 17:38:21 +0100
-Message-ID: <20251110163821.1487937-1-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        bh=DkZN9c+POTwUaLOiQGKa5zH5Hbhc5P5pBlVymH+hWeM=;
+        b=b8boFf4SUWpqW/vIRC4xf0nS9Thnsh/ptUWWceKT5FO/qe8D2QeIAZZvXGZeS0bcEr
+         cfQkcO558Lsnmw69h++KmCiWpjAjJOLmFIpB7w/XmOpI6gn4Ks5APvO55m3ZJDAH4gzq
+         RdrjCuAOwl6JYdDmPOk6DGz4nLH0wwJgcaaHSK3N4sUF8/C7Wq8NGWvPVWMGjE108kMB
+         /nsti/GWljkVIpAgeXlOL8GEIlOL3/2XtAPxTFQ9aH6KI9N7m9QM4p7leedVcXR8JBuE
+         /jppCN+Uj2eq6dyg8sXGS8mgxivE1ZcWeMTqa1ROV8GVekSyJM8u9JfJzBbF7kDGShad
+         YeIQ==
+X-Gm-Message-State: AOJu0Yws5Qa17GnwukdxNFYOs7XBYKfUs00iftY1bvckc9GBdCpnxJnO
+	uKWy/8gKR7BdgmO9didrsTbgPcHGagG1gSLbFRTsNYUR4TxDNtturORI8BvTIFES6Lg1nPj6uOk
+	I09AdrAk=
+X-Gm-Gg: ASbGncvn136ISXN9ehO7Hxd74hGplDCcZpfg5Z0Sd5as9s1vR+u8q0kI39ZnPMtk87T
+	Ujr28iG2ajzVq55saWIZzfJClT4NM609Kg4Tw4Dg7An96RAXbhLmhsnVvoddCOyi7pzx19rfaFt
+	Mw+9lFSJNJ91oJQA1TB0C4o69lTYgPP+f2hZulBoTzH0wKGpwO79YLVgPP3ItYKGvEugvvEQQpf
+	ozkvrbyd9GbyR3mdE9rXsJROcnBqm2eP+840b95x/KW1s2wfuYKohLsNPwE9Vtw9JDRHqSAAd08
+	84Dz6E3vNDftPaB5KLvmQSwlkMvDoN/YHnR2mEK3dejqvmilDHJbRE8VJsbktNs0Le7mDGbYLEf
+	Pt3a/FZJy55E/tP8xIwu6qaippBGwvvF+4CKBPFqt4Lcf/6oQ4bTjrnWoh1LtgZk2j47ZZflfOs
+	AdaFiy4zz0etwZYvlykzV8n7Utj74RcxnPLQBTH161glW/uJ8DXw==
+X-Google-Smtp-Source: AGHT+IHnrXpXY3Q4aJWb0Hm1Z/kwUj6vLL7DFmukuBV8Uty7xTp61lCnkJPVPcjZ+p8G+U6UJ1EkKw==
+X-Received: by 2002:a17:907:3fa8:b0:b70:acd7:2049 with SMTP id a640c23a62f3a-b72e0308518mr963225166b.25.1762793428407;
+        Mon, 10 Nov 2025 08:50:28 -0800 (PST)
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com. [209.85.208.47])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bfa24d2asm1113905666b.70.2025.11.10.08.50.27
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Nov 2025 08:50:27 -0800 (PST)
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-640bd9039fbso6554529a12.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Nov 2025 08:50:27 -0800 (PST)
+X-Received: by 2002:a17:907:da3:b0:b72:a899:168a with SMTP id
+ a640c23a62f3a-b72e031d007mr811932266b.28.1762793427368; Mon, 10 Nov 2025
+ 08:50:27 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251109063745.2089578-1-viro@zeniv.linux.org.uk>
+ <20251109063745.2089578-11-viro@zeniv.linux.org.uk> <CAHk-=wgXvEK66gjkKfUxZ+G8n50Ms65MM6Sa9Vj9cTFg7_WAkA@mail.gmail.com>
+ <CAHk-=wjA=iXRyu1-ABST43vdT60Md9zpQDJ4Kg14V3f_2Bf+BA@mail.gmail.com> <20251110063658.GL2441659@ZenIV>
+In-Reply-To: <20251110063658.GL2441659@ZenIV>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 10 Nov 2025 08:50:10 -0800
+X-Gmail-Original-Message-ID: <CAHk-=whxqWfNmPuE59P56Q-U29he2x3BO9C0Q4bUPphBtNdQpg@mail.gmail.com>
+X-Gm-Features: AWmQ_bne3SudUbW59AJIrZv5w1KqgWCmrYPp42xrhe0AZmxb-UOp-XffXDbOnBM
+Message-ID: <CAHk-=whxqWfNmPuE59P56Q-U29he2x3BO9C0Q4bUPphBtNdQpg@mail.gmail.com>
+Subject: Re: [RFC][PATCH 10/13] get rid of audit_reusename()
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, brauner@kernel.org, jack@suse.cz, 
+	mjguzik@gmail.com, paul@paul-moore.com, axboe@kernel.dk, 
+	audit@vger.kernel.org, io-uring@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Stats from nd->depth usage during the venerable kernel build collected like so:
-bpftrace -e 'kprobe:terminate_walk,kprobe:walk_component,kprobe:legitimize_links
-{ @[probe] = lhist(((struct nameidata *)arg0)->depth, 0, 8, 1); }'
+On Sun, 9 Nov 2025 at 22:37, Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> > @@ -258,13 +264,13 @@ struct filename *getname_kernel(const char * filename)
+> >
+> >               tmp = kmalloc(size, GFP_KERNEL);
+> >               if (unlikely(!tmp)) {
+> > -                     __putname(result);
+> > +                     free_filename(result);
+> >                       return ERR_PTR(-ENOMEM);
+> >               }
+> >               tmp->name = (char *)result;
+> >               result = tmp;
+>
+> That's wrong - putname() will choke on that (free_filename() on result of
+> kmalloc()).
 
-@[kprobe:legitimize_links]:
-[0, 1)           6554906 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
-[1, 2)              3534 |                                                    |
+Yeah, that's me not doing the right conversion from the old crazy
+"turn allocations around".
 
-@[kprobe:terminate_walk]:
-[0, 1)          12153664 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+It should just do
 
-@[kprobe:walk_component]:
-[0, 1)          53075749 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
-[1, 2)            971421 |                                                    |
-[2, 3)             84946 |                                                    |
+                char *tmp = kmalloc(len, GFP_KERNEL);
+                .... NULL check ..
+                result->name = tmp;
 
-Given these results:
-1. terminate_walk() is called towards the end of the lookup. I failed
-   run into a case where it has any depth to clean up. For now predict
-   it is not.
-2. legitimize_links() is also called towards the end of lookup and most
-   of the time there 0 depth. Patch consumers to avoid calling into it if
-   so.
-3. walk_component() is typically called *with* WALK_MORE and zero depth,
-   but these conditions are checked in this order and not predicted.
-   Check depth first and predict it is 0.
-4. link_path_walk() predicts not dealing with a symlink, but the other
-   part of symlink handling fails to make the same predict. add it.
+without any odd games with types. And yeah, that code could be
+re-organized to be clearer.
 
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
----
-
-v3:
-- more predicts
-
-This obsoletes the previous patch which only took care of
-legitimize_links().
-
-While this only massages the existing stuff a little bit, I'm looking at
-eliding some work later. This is prep cleanup.
-
- fs/namei.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
-
-diff --git a/fs/namei.c b/fs/namei.c
-index 2a112b2c0951..a3d86bd62075 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -785,7 +785,8 @@ static void leave_rcu(struct nameidata *nd)
- 
- static void terminate_walk(struct nameidata *nd)
- {
--	drop_links(nd);
-+	if (unlikely(nd->depth))
-+		drop_links(nd);
- 	if (!(nd->flags & LOOKUP_RCU)) {
- 		int i;
- 		path_put(&nd->path);
-@@ -882,7 +883,7 @@ static bool try_to_unlazy(struct nameidata *nd)
- 
- 	BUG_ON(!(nd->flags & LOOKUP_RCU));
- 
--	if (unlikely(!legitimize_links(nd)))
-+	if (unlikely(nd->depth && !legitimize_links(nd)))
- 		goto out1;
- 	if (unlikely(!legitimize_path(nd, &nd->path, nd->seq)))
- 		goto out;
-@@ -917,7 +918,7 @@ static bool try_to_unlazy_next(struct nameidata *nd, struct dentry *dentry)
- 	int res;
- 	BUG_ON(!(nd->flags & LOOKUP_RCU));
- 
--	if (unlikely(!legitimize_links(nd)))
-+	if (unlikely(nd->depth && !legitimize_links(nd)))
- 		goto out2;
- 	res = __legitimize_mnt(nd->path.mnt, nd->m_seq);
- 	if (unlikely(res)) {
-@@ -2179,7 +2180,7 @@ static const char *walk_component(struct nameidata *nd, int flags)
- 	 * parent relationships.
- 	 */
- 	if (unlikely(nd->last_type != LAST_NORM)) {
--		if (!(flags & WALK_MORE) && nd->depth)
-+		if (unlikely(nd->depth) && !(flags & WALK_MORE))
- 			put_link(nd);
- 		return handle_dots(nd, nd->last_type);
- 	}
-@@ -2191,7 +2192,7 @@ static const char *walk_component(struct nameidata *nd, int flags)
- 		if (IS_ERR(dentry))
- 			return ERR_CAST(dentry);
- 	}
--	if (!(flags & WALK_MORE) && nd->depth)
-+	if (unlikely(nd->depth) && !(flags & WALK_MORE))
- 		put_link(nd);
- 	return step_into(nd, flags, dentry);
- }
-@@ -2544,7 +2545,7 @@ static int link_path_walk(const char *name, struct nameidata *nd)
- 		if (unlikely(!*name)) {
- OK:
- 			/* pathname or trailing symlink, done */
--			if (!depth) {
-+			if (unlikely(!depth)) {
- 				nd->dir_vfsuid = i_uid_into_vfsuid(idmap, nd->inode);
- 				nd->dir_mode = nd->inode->i_mode;
- 				nd->flags &= ~LOOKUP_PARENT;
--- 
-2.48.1
-
+             Linus
 
