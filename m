@@ -1,83 +1,85 @@
-Return-Path: <linux-fsdevel+bounces-67753-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67756-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF10FC49809
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 23:22:47 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4451BC49836
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 23:24:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 936213A94BF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 22:22:46 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F3A4B4E76C9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 22:24:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A67B030216F;
-	Mon, 10 Nov 2025 22:22:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AEF2335095;
+	Mon, 10 Nov 2025 22:23:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="qqdCpTOg";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="Fq5xOYe+"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="TvbJWKj/";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="upOpG8zb"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5947F2F25F6;
-	Mon, 10 Nov 2025 22:22:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF8D92F39B1;
+	Mon, 10 Nov 2025 22:23:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762813356; cv=fail; b=Dq414011094uRt2CzfR/n3dZM12/+PHXpWPlgiS4X+XrSz6GZ89GM292WOcMwuJ2KNGOudJXL6OzK5Gaz9jJcPv+lpdUO6UJSUlCfXtM9wX4vvYBRFPloSxJNahdah887ow5eJu35bIZKT+cCLH1CPfwic1mjxL+HndBVs0/PUE=
+	t=1762813415; cv=fail; b=N5I1KD+8QSUW+8gKo8iQS9lS+bst5npBJ6sKowGXwUIwKkDY76PIDFYLt4qXCcgJkfoOfMr9Gu7d5zJJLTiBJ0uaG7MMCPkOo+hWgjhHVp+dhCsrhS3JS2DCXgVtm/UN1A0D6L777Q1Q1A35vh1o+j937dXQhf7K3CKaR3UCwts=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762813356; c=relaxed/simple;
-	bh=Dv6KydGXVUcET9ogzuaZYe0biQcH5kJa9fRBq6bgL44=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=RMo5LgGyK4TmK1gzF8LMGcb7OiG6wSSLFL/vCYLJ3dsXCI6K8QRe9IxeYDFuetMhmK0USNKJHYYyVIPENjkudgGicpKMmEC9mauOas22lpHEYNi5Mt6G4/pA6ED4Ko4aMzmcsC9+caCf6hWq0agOf4ID8I1JpVH8vQXmM1j2yoI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=qqdCpTOg; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=Fq5xOYe+; arc=fail smtp.client-ip=205.220.165.32
+	s=arc-20240116; t=1762813415; c=relaxed/simple;
+	bh=EpKr6G0Rk11ui8D+6dz9SCRpM5mYLzPC+hQiqugBw3s=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=PnfbLpvOW8GI7+lDUEEfmLld1wOHgxqGeSrVhUILAMgz/pvP1GZEWHML+CDai35gC+Ryf/5TfI4nHpS/bSAI5UuK9M7FvBPKDF+IjI6QioqBILC9ki3FdSrmEZohh2WxApecxmBS7H0IPhdh8LTrpUNGEa/c5Oo/TBE065pszUE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=TvbJWKj/; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=upOpG8zb; arc=fail smtp.client-ip=205.220.165.32
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5AAMIL20025961;
-	Mon, 10 Nov 2025 22:21:43 GMT
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5AAM0dN1019647;
+	Mon, 10 Nov 2025 22:21:44 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=corp-2025-04-25; bh=3e/ktl/KVyqj1fmq
-	6AfrgIfqhE9VaQulrRNlf49evjU=; b=qqdCpTOgIhW+TZoM4l2G+SZ/3z5M3TnX
-	MzipYtd3sX/1HHPcgaf1zoKg7HJdYdI7VonoFY81cRXzHRgSSXx9T4XvwIZXo774
-	1t1kKcM7GYG31LKsAdO+QEasEI7pb0FD8WZC6Rn4mW7tqSPxYbHB5eKuLDGW3/4g
-	z4KiEr9egSJQvlDtEgB3KO15UT7nVr++fQAUZQQHQWmZKVxQIkaq3plwdXV9FHi4
-	SYqHiDC/cJmL3JsiRzMBlnNiiuvhKfcoAw51/uDejeZL1WsIUKHR2ozoBzF76uS3
-	1MP1mWukqTGOSBIuP8dmjQT6SlXGx9yagcHhm24mc4U4GJ0WzWoEcA==
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2025-04-25; bh=+OmHm5+r2RgMhhHMJNazyAU9W9VnLQDJDS1/tF1j8VM=; b=
+	TvbJWKj/h79+yuoeK3imNHSpV6NX1RwxvvumQjz7nVULCH9j33U03inWQL+FHkQA
+	tzcpPMhhNNQwI449ujp/B7jaFRYPEGGvTDwsRXnedv+yGHJeI3izFK1L615FYIEu
+	AN/oYVk+5FDOJtYUMnSJ060/ZazOGJYNWJjdzvgJOET4dQDiSKtVWNrdIDomEqk8
+	vqO0sYk2ZtfyAzKE/pNUfdeOHtGRRBKtwVZBZPmPUtL9s0h0J8+65fVxYY612Vsk
+	FxpAGJwKZ9LUViN7Lif8uck5sN7Uz5En/5i1jUjZq0W7SA/O8lpviIuRbqXI0kzB
+	5pb4nf3b75NWXbPfybTifQ==
 Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4abr5vr29s-1
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4abqvfg49p-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 10 Nov 2025 22:21:42 +0000 (GMT)
+	Mon, 10 Nov 2025 22:21:44 +0000 (GMT)
 Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5AAMBBYb020907;
-	Mon, 10 Nov 2025 22:21:41 GMT
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5AAMBBYe020907;
+	Mon, 10 Nov 2025 22:21:43 GMT
 Received: from ph7pr06cu001.outbound.protection.outlook.com (mail-westus3azon11010007.outbound.protection.outlook.com [52.101.201.7])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4a9va8rhn4-1
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4a9va8rhn4-2
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 10 Nov 2025 22:21:41 +0000
+	Mon, 10 Nov 2025 22:21:43 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=I3BBmhIby9efzoVZb2jgZ6T5Y9UEhDyy8jDCqsRH1rUPhGzliDV4HKc0/USsI6g9ExPLSQg7wtzR3T8EWl/MoIleSjg8CF1LHAA/lev4SgH+L0UnRozNk7vDRZ83peDZP5WcqVZA+0Cc4v88qO5e0CNn9BHX4fEVPiHCBJxSs43kzDoV8dm08W9mQJyH4hwbdrzdPfFCi07LCi1lyjeTk19V0+e1KRoCxSOP5/JlXzmgp5BdajFWYpVYtPmPeHT1A5d048+iW/+Y/UJSMpyFDa1RwCQY84T/ggBlZHLg3Xuu3MVboKlZLJt33ARWwSGV1mW1GfCPCyP0kFJe3+Z7GQ==
+ b=awXxLhJrRa1RMLuYBg8y4+CNnH3tPd1hrqXWCSAr2OuW7zv/q9VhZHGOrpUFWkw73fb5RCz4xeb2+Vd9oMKyvTm6HpDJVIu10x3A/y5cCJ0sk6LiMZQWTsCD4+MmtMhMdu78ZL9zyQMGG6joGSJ2+ri3JikuyzN4J4WXp/Ex3lqCtuG3S5WRVptqb4YBkx7Lq0u9Qng0Yr82tP9XlwcbQvv0eQofkTI54FpO06dVReKJNmPPPjgXWS9+3/LXlL4dk/Rmuuh54AQ8R6H+xWO8ae42RrLMQegTwt2JtUWWkMN5cQ8lcuuqWBKsWgOVSq7hez1YWD3GLxOYAdAOKGsPUQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3e/ktl/KVyqj1fmq6AfrgIfqhE9VaQulrRNlf49evjU=;
- b=ux057z8MFFsTx0/VPr10E1P4fKdkiVuo+4sTZEFZoaAi9T1wFnrwCEbJsuCmu+hKYFYz+AEeNqZ3H4WOBbgUxRx9nYvDon+auZuSTLwuWEp61MVgmqYg3AXwfW+UGdzkAGy7b4bPTkCP/YIMgD2yHFTaygWPurlxk8drGScrqhW4ycjyvTHWHeXVjeBDl6KJ8CB5E0inqWcEhsh8H6sAHGugjmxpYgH8Y4ZWR8/euKNhqRefr1oCleDI3Xpyd4aYpqd0TO4R5xG4oy+i1xGTXTzRMZvjCiMyj1uVpQbaL0zope7uA15VpNgnGDGOCl1vFV4nzPIYSRRGtl9uOWJnNQ==
+ bh=+OmHm5+r2RgMhhHMJNazyAU9W9VnLQDJDS1/tF1j8VM=;
+ b=FdZNvEzrZLAX+h1/0jaxT15gdVrCU2tNDOM5CW2rNzrM+O9GCumZ2hvltBenPbRzZXcBXICATUlsDGN4qSANMoQKrMYassA2cqLOvnSn/084UDAXu2lNSnksH4cpRSVjtPXXh82k76FVoiRt5idhoA3r3Df9vn9XIt5VrlL6zAsGqmuZzheaBEYeY6BIVb4hTmFECRav8LZtJiPMl5VhtgCzLAhg8Q56dqI8OQz/hu9ZwR/W1YRUsFC3fL6IFeOjlXc6koyjAfInkw3vwry39w7z70b61njoR+1oGV+lM8cMiqYfFS710pNxWekKmRvvPSMVr0vkB/TQXFqE1eCcHQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
  dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3e/ktl/KVyqj1fmq6AfrgIfqhE9VaQulrRNlf49evjU=;
- b=Fq5xOYe+QMnxrimkXU6AsoTNVJsat8kAOdRf0NsS7OUnO8XDZzBNEllyc5A2bnzMPaJrPK0UeAOrawwv5mbYP19RkYCT92QbsBm2SckATIQp4JVCaqLiNOKrKEsjoRmzIeos0dH1YLqd6JbvjDb1zyRsc7HFIBk9pqBaH1yQHQE=
+ bh=+OmHm5+r2RgMhhHMJNazyAU9W9VnLQDJDS1/tF1j8VM=;
+ b=upOpG8zbj6u1O23jmsrI2WmLlOPX69DRB4sj9PujgmlqOm2a35YuJbnxm1zSmMsaRLH1x9FBWNmPDPSUrxDXHjCJWsFurDrs/KBeyJEBapxbKBKC2NgLzEb4WYRMjrRiMyI2d7lPc11Z5uXF0B4iWpS/GxMosBuqYStF9PIYKX4=
 Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
  by IA0PR10MB7622.namprd10.prod.outlook.com (2603:10b6:208:483::19) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Mon, 10 Nov
- 2025 22:21:38 +0000
+ 2025 22:21:39 +0000
 Received: from DM4PR10MB8218.namprd10.prod.outlook.com
  ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
  ([fe80::2650:55cf:2816:5f2%7]) with mapi id 15.20.9298.010; Mon, 10 Nov 2025
- 22:21:37 +0000
+ 22:21:39 +0000
 From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: Christian Borntraeger <borntraeger@linux.ibm.com>,
@@ -122,14 +124,16 @@ Cc: Christian Borntraeger <borntraeger@linux.ibm.com>,
         kvm@vger.kernel.org, linux-s390@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
         linux-arch@vger.kernel.org, damon@lists.linux.dev
-Subject: [PATCH v2 00/16] mm: remove is_swap_[pte, pmd]() + non-swap entries, introduce leaf entries
-Date: Mon, 10 Nov 2025 22:21:18 +0000
-Message-ID: <cover.1762812360.git.lorenzo.stoakes@oracle.com>
+Subject: [PATCH v3 01/16] mm: correctly handle UFFD PTE markers
+Date: Mon, 10 Nov 2025 22:21:19 +0000
+Message-ID: <c38625fd9a1c1f1cf64ae8a248858e45b3dcdf11.1762812360.git.lorenzo.stoakes@oracle.com>
 X-Mailer: git-send-email 2.51.0
+In-Reply-To: <cover.1762812360.git.lorenzo.stoakes@oracle.com>
+References: <cover.1762812360.git.lorenzo.stoakes@oracle.com>
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: LO2P265CA0143.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:9f::35) To DM4PR10MB8218.namprd10.prod.outlook.com
+X-ClientProxiedBy: LO4P265CA0149.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:2c7::13) To DM4PR10MB8218.namprd10.prod.outlook.com
  (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -139,81 +143,81 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|IA0PR10MB7622:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5d0d8d67-a826-44ee-f6e2-08de20a783a6
+X-MS-Office365-Filtering-Correlation-Id: f22be284-8da9-41c4-b9d9-08de20a784fe
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?vy/bCOynMA8+wNc49eIHU83gNeoWZVU+gKTWWdumuU/5uWw+cwnR5hvrRcIy?=
- =?us-ascii?Q?RF7LgnVYh/udB0DxLGP2g35qRA/PsiWGQULzA+ZBDl0IZBcv96R3FIr5WGBz?=
- =?us-ascii?Q?JzZfkNtKdM8Q2M+SbPIfZzHtAKiGqscGgxKiRqXw1CWbqs/DckhphJVPPaYB?=
- =?us-ascii?Q?DuFrwF93xIDFaWa0AzUlRnQPSGXubT9/vhr4yQaQvwbh9U9dAV+Bm0Fvsf9k?=
- =?us-ascii?Q?D0MuMGFSMrqNmnosz+gTrlp6dwUSuelMbsjh8gP3ksIaPRRMGuWvAgcLA3Oz?=
- =?us-ascii?Q?SVWDXg4pL1K15RKgkqqHIWuJeDS1L/fnWsK1vCj197C3C4Pa3WXujKU1IDBs?=
- =?us-ascii?Q?3CtKbc4MmdeHd9rxuIV842SaIGS4zcAIZkyy872N5Va4Qp0+kFpuOFDmROFA?=
- =?us-ascii?Q?DijJvamoYnuzuG2l7dvNFwYp1jQrVy/W8qYnzPRcgIJY39BS0B0xbdPEO3Ma?=
- =?us-ascii?Q?3CiOvC2TEkwOtMn780OrrGa+MUW77wdo3uWnqDxJwGq/295aSje7Yki0H0Wo?=
- =?us-ascii?Q?QggKLfeIqMiZzD78FoQlGJgjMIlqSwMw+Gxq7wQ6opYmD5onWYqtuHRh82mT?=
- =?us-ascii?Q?Gyp/qQJCvHrt3PLYFa8cZNO4uChRLPT9MwsSMBI2Nm/xafhbJeTx8PgR7V8v?=
- =?us-ascii?Q?tYJcIweeTrCtlD64A5SNa91meXqxpVzGhsOxpkv1Dlqs/e1DW6gb8v6LvOhQ?=
- =?us-ascii?Q?H8BCqPpyCLybrn0bOxEVwkIblczRwi0wuLoFgA5eIgWhdDAOIjt+KsiQhYUB?=
- =?us-ascii?Q?sQz2cPHXK2xg2ZFW9myJCNcQtBVnIq6tFfDWGWvrcx/Is7aevItnHCTZ5Nqr?=
- =?us-ascii?Q?uALKm2Hvyao0FzfYobfiyAFbaZa4moCJhr9jbX2WwKjasf1QorryQPCSx8Zo?=
- =?us-ascii?Q?/OYl4VCPczRwzOX4OzuYPYULx8/6LkhQmh+mWLcSF1Xl4WzryByEyFdmbC1d?=
- =?us-ascii?Q?jMH2C3saL89a46HcGc44PWBGlsDrFCDZ/Qf07RfPyqzFdrxK+IQXbZakI3kd?=
- =?us-ascii?Q?vTXJjd9kett+adnwNB7kaZtvpPSTt0EKDNhAnysa5paTnSOqcs+8ZWPzAEDA?=
- =?us-ascii?Q?jxX9myy0aYLWZq89+UATjCVQjoaVGBAQKRtt6rD/TIHKhaOHYmhu+qmBA2o3?=
- =?us-ascii?Q?HjtPlbaiC/9RWP5PisGqC5Nl62c1PLFIspRAZ8JMLcV+Vdb/I1a4+/uIdDLU?=
- =?us-ascii?Q?zzgql/AYIsZU4CmH0Wf6H8sJFS/3oFLwKKi8HmxDAFnOCAa4gga5+yT7+t43?=
- =?us-ascii?Q?loCafqXm1RRJyg8WSaUqWsODfZ3+AY22CGdzbkhu8rgpmaFAWdTbV54yWfpG?=
- =?us-ascii?Q?p//n7YNkCRMTfyNjR2axx6fJ5VoCprwVjbfxDRSqtN7qNTItRton+BzLiO0h?=
- =?us-ascii?Q?GDAgOs7NwoEot7yOXl6pJcspavoOpyeMJe4z9v8D7k4LFNe8zYjirxbxHrb3?=
- =?us-ascii?Q?FPBjWn3mkp9iuRLJtK4f4ZfIbZjPXpCTVeakkcWo3+Lm8FHOP780lQ=3D=3D?=
+	=?us-ascii?Q?Ct3ZLE9Kvzyb/OuUli0zfxYfXgDosMU5XGllEVAftG7J5jTOW0aeIs1Qb+UX?=
+ =?us-ascii?Q?h5QRJVTCIRTFff2oJTwe3P4oLtR0ddT/Y6eDDTyxUO2gQefKOFQbVV4awy7C?=
+ =?us-ascii?Q?5SjjfxBhZMM+hhMqXoJPM7OfaMeRXh80MGAU3MMv2PcykunoawQCrcKRkIA+?=
+ =?us-ascii?Q?dRi8U0DOWmq8CDLWHQV+WVRvWsRGZfHxd0CgqX73zRSAj4Yk5qofY/sxr2ok?=
+ =?us-ascii?Q?9xevoZ0pWPrILNlQ1UhUaOZ9AhDfUgwZhAcEkUSnV89eLQXTmpEX8aQwGtDv?=
+ =?us-ascii?Q?DMrp+kO5TVuYzVbMpJAC6Rx3M9TCC5uKVB0Ulp1k3I41R7ckfEEcbEFRbF9w?=
+ =?us-ascii?Q?m1KDj2lQXOnWaCGfUp+05gecaf3/41JqCtBxi2lS5Ik8SiplSa0REfJERNPd?=
+ =?us-ascii?Q?EVkq1J+YX0vI7S1l+Zkx5mzmuH1kSZscPOnhHUNasffvkzQimVv0RUW06Slf?=
+ =?us-ascii?Q?RgROPjkFAimZyTJnhc2KEHY0zgq6EWbyoVu/iD4oJFToiPl5b6kdTqhfBRoP?=
+ =?us-ascii?Q?mGnu8qHJClCEukaH+xpQgUtfV0C/Nc/WisC8yoZInlDoRXgZrJDLZywCP6m7?=
+ =?us-ascii?Q?ncmi0h9k7DClUSNdYpmNDEon4xprHyzlMVk+MtAdReFy7zj8GS1fWuSzUcpw?=
+ =?us-ascii?Q?di/b/HlE8YyWR1SvPpc9by369w5eAxCaTW66EZmNhO3QmWbLIStMx45xSmcu?=
+ =?us-ascii?Q?LuQPdYvehdstb0dQC9TUUxln5FYEA2L5x3wZ0Iy4PgmwM31TwxQmDG2adpw8?=
+ =?us-ascii?Q?huRXrkxhZ4QKoPaV618w6LrT0qYEy7BvjHtTraRB7j4yd3QlM2DiHanJ8gLU?=
+ =?us-ascii?Q?zCCKnSC5Re3GpI0wQHt4i7xB/NBDsG/9X8J8U6F1v/FXQi5b4MvA0HOLcbvP?=
+ =?us-ascii?Q?yTa3tL7+BtqzgUHxB7zcj54Nzdt+DBetxWr9v8nEZoYVTkgSsvYdRYiWNd0I?=
+ =?us-ascii?Q?MI+Raz1dzOvj5d7/YHavnkUNH2lPmc3oUd4YrE7L8Wkyfbv6sWJTHmTiBABz?=
+ =?us-ascii?Q?8TKrHV5iMQRyDUr3T4SoqRv5bnj8OokoonhwDf7RwIPe9vPL9Xo5bUAthLSh?=
+ =?us-ascii?Q?TKmHQQkDcE7vhobR8NIH86F4Dibwiqu7iR6AHCucM/eSCsIG6k3z+IX5a9vm?=
+ =?us-ascii?Q?/YYwDjm/XPMvWiMftCOKG7EH7qPnxRK8WIHbaKbOh4mMwp1DG/3WpFb+BrNE?=
+ =?us-ascii?Q?nxcFxTO1TRQ/uAHfy7PAYcnuasHdHSqZ+LRD+v/Gx7bwWqJRMzMfcZLINaez?=
+ =?us-ascii?Q?pVoSGYcbHNO/7TbzoJEMtIPG4ZeCVtg1qKAkSfVejW5TlLkhvOgBRqRwdCUW?=
+ =?us-ascii?Q?Cy+8/Dnf00Rk7eF4fJdtxO2Hxy32hc+k/calehym1XcUNHXk1eluazEN7WQ5?=
+ =?us-ascii?Q?y00tSYxie1ziDt7/N1pG1oQ+d9loI8f8J4QEJf3hbKEQdEnCqQibOPsYF/CX?=
+ =?us-ascii?Q?63JaMjY/WhQKOxi07O17rLmRdPIJORih?=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?03uVX+y86U+9UCcWt2CWF3zDTWHFxo5T6U9idzdQ6K6KJElLHKZ8vpDEyERj?=
- =?us-ascii?Q?0eJFCiiY19EW9aWDsbTcRhYpin1I0kNZWvWcqH9QF+frxHtFTTILLzABZeJF?=
- =?us-ascii?Q?hqA32bzJSInZ0m8PTksLHMM7hThhgx8qyoTNq/bhjJ6Zq2vCIqElADnOZZ/g?=
- =?us-ascii?Q?/Yd6XhPWcsJhXZQt96a3RcHnKUjY9u6TplyHBSGxML1o/gGGZftoMtFKUosZ?=
- =?us-ascii?Q?PfVaLigxQnHNUrAYCj/HmiotVbVTA3N64qMuik5Oze9rx2E1HtJvjIjcyPlL?=
- =?us-ascii?Q?J2Z+nQlmMJ4XR/kqTCPTtlnKH9Lyr1bmgHqCCVyeWHwV4htMOucLIkf88+Y8?=
- =?us-ascii?Q?Fkxo/0kRpK0eE8Snhkmcmc2TrerEeNcaBVndpI58K6sGQCiJ30mg9CB0Impu?=
- =?us-ascii?Q?reMlz8FE7XaPw5x+vi9b1ImjZ/05cP3CS0gG3Wzv/sf1Jjj20FAUAWzCJqlr?=
- =?us-ascii?Q?qXNtJ4FNqNE89K2R5hi20dAKQGbz1NWKsTopnQHDwXpnoCFGX7HOdnk+hWKg?=
- =?us-ascii?Q?jWT5bcSFsHfHRw1N3GGaBouDYpmERolGGSZr1FHNI85gfOFjxIxPRk12UUdo?=
- =?us-ascii?Q?1/DgHsxPR3brn/e+pp4KyM/yEiPEJcWAv4ZuuGEbtuPzpCJZp0I/h6AveGmf?=
- =?us-ascii?Q?hZyZWlQwaG5m6ZUdbZItVvAgc6ifoCRqErFYWGgXsaxXOwrHgm8ExixHLEsG?=
- =?us-ascii?Q?pbRKskeESh6HKnJUJW3clvvj9cDl51565bunqnpXBgDCFilOCdXWAKBTa10N?=
- =?us-ascii?Q?6lsU7lSd0O/rIGhGSXJ2cdX8Vc5TN4A15mN5zCC10JEQEVz1PXLmmAoMrh/H?=
- =?us-ascii?Q?QDcRNJ+9OXExCDccUgiSIHX/nDtPdw1qAM7T5hbhLSr90puNMpxkBrvZqNyk?=
- =?us-ascii?Q?LXm393ukoT/Dj2fOD42XPgYW423HwloUSTJKQb5NTASzhWFbEZA5wL5LsCIX?=
- =?us-ascii?Q?yXxqKT8iTiFmAfRpWmjfBCgdV99OnTc4Mlu7D1hv13fXmHZ1wHSYb7rO8xD3?=
- =?us-ascii?Q?Twd72AhEW4sqXS+knuA50Y1fotXPwwDWs4plZZcoR+KSG+a1C8kwt8msThIP?=
- =?us-ascii?Q?BT0SU8+YTmwa/JPW2EoH1s3SgmPGe8rhRcehgt0PdB8FQ8JUHfn2g0lWTMIz?=
- =?us-ascii?Q?4F9f0nS7HUEW82GktOHRJ8n19m9UKBUgLLd8mu1qtIsg44O7n4425ESHU3rM?=
- =?us-ascii?Q?3hOrP860Jf/rILwdP8yejK22uB/hrQOGuJOA0/oEg9u3uyK85Nu8f7+QuL6A?=
- =?us-ascii?Q?KlkaAN+1O1bwLVOC3w8FiSSN9nFc31Zu8fS52EJ4Zx7znKWl5uJm5H4Ku8IP?=
- =?us-ascii?Q?n/GveKeiRIaDzUJr3Yafm3u+Un8rbHKSz8urCr+OkLFPKPgiJ0GoRYkzvn94?=
- =?us-ascii?Q?Kp7ZlW6HqxX7pS9840cJw8KS95yMu08ZGp0XjRgoh0XxTbnmWkEKcQXmSJVn?=
- =?us-ascii?Q?MTmlJXXw1yO5tri72Z9z2e7zKuHCxO9JSyF5zzhlLSSTSQxK+ArDpqAXdtY0?=
- =?us-ascii?Q?WkZJcW+VB8wQ6Z8WLRREiTBTFMsdOSCm5v4U+czM8bUcgvTZO2hGrrlS4Qbh?=
- =?us-ascii?Q?LPTuuEE7Ak/tuLawE4aq5llThP2so+wVFfIBZc/vKA+B8tWuc7erLZUGXkj8?=
- =?us-ascii?Q?bg=3D=3D?=
+	=?us-ascii?Q?zlYJKFRdM4M9RS9kbZB/nR7z5TWEF1gRhM9rQfHn4OhD49VtNt54IQKmAUsq?=
+ =?us-ascii?Q?gJMXyg6oCQ+6rVD/6J5Zn5nUln+eWU893JPG6VkECkPqL9VRbw5bu3yiV2Du?=
+ =?us-ascii?Q?PPi+/qpUgq/LWXA+GI3QF5RBwztAijD4lT1esPOwxGkmrb1ZOAxqVX13Qwh8?=
+ =?us-ascii?Q?+qwqsBQ/jnv5xxRiGKnQDszL4L7SJeFg534dLr2MTadtZrEjCH5iz9PAZP7B?=
+ =?us-ascii?Q?CfQuafxI15qMWGRBpmGBZ20y+P8tihKpoyM6TNhjkMs6EAtc2+EXg9bRuTYj?=
+ =?us-ascii?Q?wtVYZDDGOmRht7TDbgv/wzaEsDHVLEL1XYEe4/hWXWyPhfytpaxxRgAvj4R1?=
+ =?us-ascii?Q?hbvxb5C2UzPh9MExiRaAOWYz7FJfb+EPfsYnKJ2ddsAJMDY0QSEJnvPwnZWN?=
+ =?us-ascii?Q?oYXwhUcgnHm+cDChRLpEf6ahBLXHta94jSLGGNiYQvJ1Sw+JeIdfV95n4nsN?=
+ =?us-ascii?Q?96BMRlkf0o/PXy+zdgDf0QpwF6rPcQLtY8pSXVMv/aCr/NWCHEMzJcL+ibfV?=
+ =?us-ascii?Q?5Koosf2RIVlgW1hxuKQsID2fdc4PRgdrtdVA2EnH/X+U2m9FZyh5DYEKxq0o?=
+ =?us-ascii?Q?2ZbLTOurhc22l5PPn06T2o3KnZSqkfDomIMTzvYZcqEznqpfaaUYLuBcIFvq?=
+ =?us-ascii?Q?f0sjBEozRxmyrLlPcgTy5zte/MNo7CssuQMwTHlgEdTdGZ4v9viKXbl5l6HN?=
+ =?us-ascii?Q?jEk8YaUYDqkItNBEDyO7YO26sGQt4wZ1p5UizQjmgH3D/DbirU5h3Ye5Dgzv?=
+ =?us-ascii?Q?jBUo95aTobU8qOhkr/1mjm8yoeTadNprPvyu5+ZltNHSURWVLu3ZuY/GROHc?=
+ =?us-ascii?Q?raHNCcYLFoPTGnopiCPLLyTdhROXq86I4W/08icU32oIsLvBbVavOb2DY4aF?=
+ =?us-ascii?Q?PoinoX5MgLE1rYfqH9WsakvAvp8NRK0WOcXlsk0rrpftRwYvah4BWHWiqrKu?=
+ =?us-ascii?Q?oiEzX9Fv/iCtx+lxg0Yyi/JLb4rC+Zx+YyAFDsuGOIUrZ2kd10GJLCUThpY7?=
+ =?us-ascii?Q?MCPAIUp2gUnmCMOi/RPmFw2BXKbnPjJZTjzrOwIpUHy2h6TWkKI8IcyT3M51?=
+ =?us-ascii?Q?axb2YLdYUhmWZ5+5apcVCuSUXuaCExPDfwAabab9FW9l/mcRt0GInRmgIvXq?=
+ =?us-ascii?Q?lvkjElyf4FktLMmnbFmR5od4K43LHowU6pHc62Vicj+JXy4IIkLI3GbtBOe9?=
+ =?us-ascii?Q?+43Eg/ndtu0dC9mJqLGUA01zp6MXr5t33wYWS0z6rtlwODOx6KGHP2UoYq0m?=
+ =?us-ascii?Q?HxvkKHuvyOSYAaT9olc7/QQRrGbPvm7cU1sv2lXWbdmZ8j8A/MjkVz6yOxwr?=
+ =?us-ascii?Q?7C+lFzTMkgTfpxEuMYqtltGEhqsClYMRZcNVaT9xx/EF/R4wBRoffA7a6eIr?=
+ =?us-ascii?Q?wKBNoqoqld7fl7X8S9+2W5lbYHeVgdkuA4gC94Bhks3hQn9RZMYGYBYxDZJu?=
+ =?us-ascii?Q?q1LCEY11ad53hweYwEQG6nb1oNUtzX5kNsjtnVoUjcMycsiUKMVznh6i9MM6?=
+ =?us-ascii?Q?6771dtMV58nmFizYsL5FvQKo2TK1xKFmGeMoDg/FBBZw1UslysLV8JICq2X0?=
+ =?us-ascii?Q?n5N73UQXIeLyTd9qWMMEAfoAyWb8hcyUHinvLH2SDcGvdlm20g6dc0UIUY3r?=
+ =?us-ascii?Q?kQ=3D=3D?=
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	QLb/T60rlq3c00nbUxH0gS2YSA9torgsns2LbyQbhQBXvtplIksEiINo+jTn0S1clxlord96/h5pDoB2+tDGTHIPCok0NgbkWGPxP+qXeAVefBnwdi2DRSzbt03lOeEzmZaoZCrh087VkEiO8O5WyYMFRcAymaGlDvQXoiCLrYB2dNzcKXZCdh1vSR9gQJdNjfkDEl5jJRodWSOJI4QastIHVs6FMzci25nXdiRCMQ1Goi35JT5nT+/udBuXm55Pwtcfp0vNw2NcAuHpsjTy+EAmepyuY6BasuUopQwkIQ/KUMAv+zUU76ywwBGmPjVOkQUPOCj+/oWGLERp/gWDBwxkTMSE9H5SULD/3YKQpflKoAhziVllBmO0Ab1rlFn7zahC+jCt/aokF0KwQaa8zebzSfKdenuFLPG4zvtJbqF1YUHcXRNc7LQ1Wy7js39YhCOFuqEpfNo0d38vyDOX3FdzGXLsrpvb+QE6TFshyWo1C5LnwZqinMksECuvSKsr3zh3c1w42Km5+x/CzhDxslatZ7u8BkCD/AatvNa2ZDdciV5kdRufjII2W7Iy8Giv6xTvUdhcSiPWcRkdLWelPA849MDOLuy3cPjAha3MQhE=
+	rykGXGR76JQFQncI+dM6UUO/+aO6DCcGWcKVGiamjA3uiLrFBAdKrNpK5He+TASKiko8R/SC0RvFW//W7xb20nfPknW4ZaUC/ioWcLvShl2ND5YSrReFp7MGzHGD/B+qMg9dfhUiIQzaT6HH3kZA19FyY7xF9zZCVcZMCjm0Yzudafw4kotlf11sL7NKvyI1l57Bk3VjkdAbOrapOWVICOfB3djJKz0CEqX4PywMw8w/TiaLEV5EDLMNvI3HjIJ0MJmnEsoc+aA56DKerYbTmnSNOm/GbDOz4dttEXCv5OBcSKAbwLkyTSioMe9Bk9tBeXCCToubFghfD9mj7db1M7qn0WK4W4ZeyyacQ9AihYL/adQDU6tKJpEr07DjSAH3M2W/z/z8tl9R7yIHPoPbdgehKolCwyWl+vwXNHQiDvasxAbLWwiAB7747I1U8gJVq/tCw/WopfzFZp8+Phlg2GR+sphdLux7ap+ooQ1d2VJWMZFfUc4nu86/ukHLcx1MlSqUvyIMi29SHzRuVTOLFmRX+u6JVbWBd/PNxwLhsSVzAZGhzJG9e0sjOnwu9FZlfVXaXL0RtAcbt5WMLod9A2B7SDDvEy1QyhBWFDQmQqA=
 X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5d0d8d67-a826-44ee-f6e2-08de20a783a6
+X-MS-Exchange-CrossTenant-Network-Message-Id: f22be284-8da9-41c4-b9d9-08de20a784fe
 X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Nov 2025 22:21:37.5300
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Nov 2025 22:21:39.7765
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: WwejZl9Hc977NbDKEiUrWaTy1pUlxEKp5Gwm38NxnbuymwBWQpPOR0hbNFGo/U9tlbgcM1+dsXuBMGPW9Jf9gcElJLgnop2LoDWV3iJgRWo=
+X-MS-Exchange-CrossTenant-UserPrincipalName: xVAzVTIU8NrrlZPFfMppJd9nQZ8+PR0+z6luZuaMsTXLXfwTDS+ssnQVEk3jDCScHLtOCOlPLq2Nll15x3s1HLFeHSdVxcqxeVvLa6QeRSo=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR10MB7622
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
@@ -222,194 +226,503 @@ X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 m
  adultscore=0 bulkscore=0 suspectscore=0 spamscore=0 mlxscore=0
  phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2510240000 definitions=main-2511100190
-X-Proofpoint-GUID: flJWBB3yzAbLDEja1JPXhqlucgXzB25v
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEwMDE4NCBTYWx0ZWRfXzs4F8LxndeUR
- b4DX+m/bJlTUz/TRWKmUKv/KVnHCDM2obxqg/bJqC6lY5HtovYNwXhkyGnbXWf3s1xv76UcDOkC
- 7yrHAY6KA9qPep1YawLPLuVREuxwhfYzVabikjD/Z6eNMTu2xYozufppJXesAd+YS7y7aSkb7Id
- FrikQuonGj0LNB+DyjOKVMslM2x8Hud9ZCtQO51qvIRnl2bRw4e9u0AFyS2AIQ78BX0CtEykDTG
- tLIKwDR7jwFLgTe+kX6Z20uZ8cvjz9SdBUrLnvy/YXUwIiKl7t2N3/84uuWIunJMkNGvefR0I3I
- fggANbpWrCpDYnQl1B2O47gLtmf3Xq3ktGJ5WuMDintGojJT6SigGH/RbjXtwmB0a7hrh7aQ78l
- 2VaqufOFRy54TGqEZbERfLWh44/PWA==
-X-Proofpoint-ORIG-GUID: flJWBB3yzAbLDEja1JPXhqlucgXzB25v
-X-Authority-Analysis: v=2.4 cv=YN+SCBGx c=1 sm=1 tr=0 ts=69126576 cx=c_pps
+X-Proofpoint-GUID: nO88I5oKXZ4LCqrAVZJVNDjRF_dy7Lf9
+X-Authority-Analysis: v=2.4 cv=FaY6BZ+6 c=1 sm=1 tr=0 ts=69126578 cx=c_pps
  a=OOZaFjgC48PWsiFpTAqLcw==:117 a=OOZaFjgC48PWsiFpTAqLcw==:17
  a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
  a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=6UeiqGixMTsA:10
- a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=yPCof4ZbAAAA:8
- a=G2-HCQ5rFf2ZBQrTsY8A:9 a=UhEZJTgQB8St2RibIkdl:22 a=Z5ABNNGmrOfJ6cZ5bIyy:22
+ a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22 a=yPCof4ZbAAAA:8
+ a=g27RGp_RAGdlA0bXL-AA:9 a=UhEZJTgQB8St2RibIkdl:22 a=Z5ABNNGmrOfJ6cZ5bIyy:22
  a=QOGEsqRv6VhmHaoFNykA:22
+X-Proofpoint-ORIG-GUID: nO88I5oKXZ4LCqrAVZJVNDjRF_dy7Lf9
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEwMDE4MiBTYWx0ZWRfX6n+r3Lwjnh5r
+ sipCq5XAXMGGpwddOhWJ6yjh9qS8w2qc7TC/6y2uD6SLoH1sOR33rmBvhywgt56oVDfjXJW84Ba
+ 86XQ7+Ig7Bm3/hd58RHkUYp2y3mkoRO7/9CKAK/rM/hyc4UgefLGHlbUNyh4puZTH7hFpX3d2IV
+ GC4mHQ60eyRVMLQ9Wv71/AEbsF/J7vE7/23gppjnp9OZ7/VUM38QkWokeXTTWsww4kbBrSgIJfN
+ fXx3zMIqpgEh/TU125ZDL/thM78KfgEJ74yk9sNuubdWUeNaXrejWP83AZKRBJdOXMV1YSWmWlX
+ 6RGdez9WXfRzVw/vq/gsKVkiY9Qf3bWRhu+a0VOdceaxTchVFo+7BEqmw1VOnVguFisbzsjQLad
+ eF4aq4sIPYDNhGf/5TLjgIk2CGk/XQ==
 
-There's an established convention in the kernel that we treat leaf page
-tables (so far at the PTE, PMD level) as containing 'swap entries' should
-they be neither empty (i.e. p**_none() evaluating true) nor present
-(i.e. p**_present() evaluating true).
+PTE markers were previously only concerned with UFFD-specific logic - that
+is, PTE entries with the UFFD WP marker set or those marked via
+UFFDIO_POISON.
 
-However, at the same time we also have helper predicates - is_swap_pte(),
-is_swap_pmd() - which are inconsistently used.
+However since the introduction of guard markers in commit
+ 7c53dfbdb024 ("mm: add PTE_MARKER_GUARD PTE marker"), this has no longer
+ been the case.
 
-This is problematic, as it is logical to assume that should somebody wish
-to operate upon a page table swap entry they should first check to see if
-it is in fact one.
+Issues have been avoided as guard regions are not permitted in conjunction
+with UFFD, but it still leaves very confusing logic in place, most notably
+the misleading and poorly named pte_none_mostly() and
+huge_pte_none_mostly().
 
-It also implies that perhaps, in future, we might introduce a non-present,
-none page table entry that is not a swap entry.
+This predicate returns true for PTE entries that ought to be treated as
+none, but only in certain circumstances, and on the assumption we are
+dealing with H/W poison markers or UFFD WP markers.
 
-This series resolves this issue by systematically eliminating all use of
-the is_swap_pte() and is swap_pmd() predicates so we retain only the
-convention that should a leaf page table entry be neither none nor present
-it is a swap entry.
+This patch removes these functions and makes each invocation of these
+functions instead explicitly check what it needs to check.
 
-We also have the further issue that 'swap entry' is unfortunately a really
-rather overloaded term and in fact refers to both entries for swap and for
-other information such as migration entries, page table markers, and device
-private entries.
+As part of this effort it introduces is_uffd_pte_marker() to explicitly
+determine if a marker in fact is used as part of UFFD or not.
 
-We therefore have the rather 'unique' concept of a 'non-swap' swap entry.
+In the HMM logic we note that the only time we would need to check for a
+fault is in the case of a UFFD WP marker, otherwise we simply encounter a
+fault error (VM_FAULT_HWPOISON for H/W poisoned marker, VM_FAULT_SIGSEGV
+for a guard marker), so only check for the UFFD WP case.
 
-This series therefore introduces the concept of 'software leaf entries', of
-type softleaf_t, to eliminate this confusion.
+While we're here we also refactor code to make it easier to understand.
 
-A software leaf entry in this sense is any page table entry which is
-non-present, and represented by the softleaf_t type. That is - page table
-leaf entries which are software-controlled by the kernel.
+Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
+Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+---
+ fs/userfaultfd.c              | 93 +++++++++++++++++++++--------------
+ include/asm-generic/hugetlb.h |  8 ---
+ include/linux/swapops.h       | 18 -------
+ include/linux/userfaultfd_k.h | 21 ++++++++
+ mm/hmm.c                      |  7 ++-
+ mm/hugetlb.c                  | 47 +++++++++---------
+ mm/mincore.c                  | 17 +++++--
+ mm/userfaultfd.c              | 27 ++++++----
+ 8 files changed, 138 insertions(+), 100 deletions(-)
 
-This includes 'none' or empty entries, which are simply represented by an
-zero leaf entry value.
-
-In order to maintain compatibility as we transition the kernel to this new
-type, we simply typedef swp_entry_t to softleaf_t.
-
-We introduce a number of predicates and helpers to interact with software
-leaf entries in include/linux/leafops.h which, as it imports swapops.h, can
-be treated as a drop-in replacement for swapops.h wherever leaf entry
-helpers are used.
-
-Since softleaf_from_[pte, pmd]() treats present entries as they were
-empty/none leaf entries, this allows for a great deal of simplification of
-code throughout the code base, which this series utilises a great deal.
-
-We additionally change from swap entry to software leaf entry handling
-where it makes sense to and eliminate functions from swapops.h where
-software leaf entries obviate the need for the functions.
-
-v3:
-* Propagated tag (thanks SJ! :)
-* Fixed up comments as per Mike.
-* Fixed is_marker issue as per Lance.
-* Fixed issue with softleaf_from_pte() as per Kairiu.
-* Fixed comments as per Lance.
-* Fixed comments as per Kairiu.
-* Fixed missing softleaf_is_device_exclusive() kdoc in patch 2.
-* Updated softleaf_from_pmd() to correct the none case like the PTE case.
-* Fixed the rather unusual generic_max_swapfile_size() function which, at
-  least on x86-64, generates an entirely invalid PTE entry (an empty one)
-  then treats it as if it were a swap entry. We resolve this by generating
-  this value manually.
-
-v2:
-* Folded all fixpatches into patches they fix.
-* Added Vlasta's tag to patch 1 (thanks!)
-* Renamed leaf_entry_t to softleaf_t and leafent_xxx() to softleaf_xxx() as
-  a result of discussion between Matthew, Jason, David, Gregory & myself to
-  make clearer that we abstract the concept of a software page table leaf
-  entry.
-* Updated all commit messages to reference softleaves.
-* Updated the kdoc comment describing softleaf_t to provide more detail.
-* Added a description of softleaves to the top of leafops.h.
-https://lore.kernel.org/all/cover.1762621567.git.lorenzo.stoakes@oracle.com/
-
-non-RFC v1:
-* As part of efforts to eliminate swp_entry_t usage, remove
-  pte_none_mostly() and correct UFFD PTE marker handling.
-* Introduce leaf_entry_t - credit to Gregory for naming, and to Jason for
-  the concept of simply using a leafent_*() set of functions to interact
-  with these entities.
-* Replace pte_to_swp_entry_or_zero() with leafent_from_pte() and simply
-  categorise pte_none() cases as an empty leaf entry, as per Jason.
-* Eliminate get_pte_swap_entry() - as we can simply do this with
-  leafent_from_pte() also, as discussed with Jason.
-* Put pmd_trans_huge_lock() acquisition/release in pagemap_pmd_range()
-  rather than pmd_trans_huge_lock_thp() as per Gregory.
-* Eliminate pmd_to_swp_entry() and related and introduce leafent_from_pmd()
-  to replace it and further propagate leaf entry usage.
-* Remove the confusing and unnecessary is_hugetlb_entry_[migration,
-  hwpoison]() functions.
-* Replace is_pfn_swap_entry(), pfn_swap_entry_to_page(),
-  is_writable_device_private_entry(), is_device_exclusive_entry(),
-  is_migration_entry(), is_writable_migration_entry(),
-  is_readable_migration_entry(), is_readable_exclusive_migration_entry()
-  and pfn_swap_entry_folio() with leafent equivalents.
-* Wrapped up the 'safe' behaviour discussed with Jason in
-  leafent_from_[pte, pmd]() so these can be used unconditionally which
-  simplifies things a lot.
-* Further changes that are a consequence of the introduction of leaf
-  entries.
-https://lore.kernel.org/all/cover.1762171281.git.lorenzo.stoakes@oracle.com/
-
-RFC:
-https://lore.kernel.org/all/cover.1761288179.git.lorenzo.stoakes@oracle.com/
-
-Lorenzo Stoakes (16):
-  mm: correctly handle UFFD PTE markers
-  mm: introduce leaf entry type and use to simplify leaf entry logic
-  mm: avoid unnecessary uses of is_swap_pte()
-  mm: eliminate is_swap_pte() when softleaf_from_pte() suffices
-  mm: use leaf entries in debug pgtable + remove is_swap_pte()
-  fs/proc/task_mmu: refactor pagemap_pmd_range()
-  mm: avoid unnecessary use of is_swap_pmd()
-  mm/huge_memory: refactor copy_huge_pmd() non-present logic
-  mm/huge_memory: refactor change_huge_pmd() non-present logic
-  mm: replace pmd_to_swp_entry() with softleaf_from_pmd()
-  mm: introduce pmd_is_huge() and use where appropriate
-  mm: remove remaining is_swap_pmd() users and is_swap_pmd()
-  mm: remove non_swap_entry() and use softleaf helpers instead
-  mm: remove is_hugetlb_entry_[migration, hwpoisoned]()
-  mm: eliminate further swapops predicates
-  mm: replace remaining pte_to_swp_entry() with softleaf_from_pte()
-
- MAINTAINERS                   |   1 +
- arch/s390/mm/gmap_helpers.c   |  20 +-
- arch/s390/mm/pgtable.c        |  12 +-
- fs/proc/task_mmu.c            | 294 +++++++++-------
- fs/userfaultfd.c              |  95 +++---
- include/asm-generic/hugetlb.h |   8 -
- include/linux/huge_mm.h       |  48 ++-
- include/linux/hugetlb.h       |   2 -
- include/linux/leafops.h       | 619 ++++++++++++++++++++++++++++++++++
- include/linux/migrate.h       |   2 +-
- include/linux/mm_inline.h     |   6 +-
- include/linux/mm_types.h      |  25 ++
- include/linux/swapops.h       | 273 +--------------
- include/linux/userfaultfd_k.h |  33 +-
- mm/damon/ops-common.c         |   6 +-
- mm/debug_vm_pgtable.c         |  86 +++--
- mm/filemap.c                  |   8 +-
- mm/hmm.c                      |  41 ++-
- mm/huge_memory.c              | 263 ++++++++-------
- mm/hugetlb.c                  | 165 ++++-----
- mm/internal.h                 |  20 +-
- mm/khugepaged.c               |  33 +-
- mm/ksm.c                      |   6 +-
- mm/madvise.c                  |  28 +-
- mm/memory-failure.c           |   8 +-
- mm/memory.c                   | 150 ++++----
- mm/mempolicy.c                |  25 +-
- mm/migrate.c                  |  45 +--
- mm/migrate_device.c           |  24 +-
- mm/mincore.c                  |  25 +-
- mm/mprotect.c                 |  59 ++--
- mm/mremap.c                   |  13 +-
- mm/page_table_check.c         |  33 +-
- mm/page_vma_mapped.c          |  65 ++--
- mm/pagewalk.c                 |  15 +-
- mm/rmap.c                     |  17 +-
- mm/shmem.c                    |   7 +-
- mm/swap_state.c               |  12 +-
- mm/swapfile.c                 |  22 +-
- mm/userfaultfd.c              |  53 +--
- 40 files changed, 1582 insertions(+), 1085 deletions(-)
- create mode 100644 include/linux/leafops.h
-
---
+diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+index 54c6cc7fe9c6..375494309182 100644
+--- a/fs/userfaultfd.c
++++ b/fs/userfaultfd.c
+@@ -233,40 +233,48 @@ static inline bool userfaultfd_huge_must_wait(struct userfaultfd_ctx *ctx,
+ {
+ 	struct vm_area_struct *vma = vmf->vma;
+ 	pte_t *ptep, pte;
+-	bool ret = true;
+ 
+ 	assert_fault_locked(vmf);
+ 
+ 	ptep = hugetlb_walk(vma, vmf->address, vma_mmu_pagesize(vma));
+ 	if (!ptep)
+-		goto out;
++		return true;
+ 
+-	ret = false;
+ 	pte = huge_ptep_get(vma->vm_mm, vmf->address, ptep);
+ 
+ 	/*
+ 	 * Lockless access: we're in a wait_event so it's ok if it
+-	 * changes under us.  PTE markers should be handled the same as none
+-	 * ptes here.
++	 * changes under us.
++	 */
++
++	/* Entry is still missing, wait for userspace to resolve the fault. */
++	if (huge_pte_none(pte))
++		return true;
++	/* UFFD PTE markers require userspace to resolve the fault. */
++	if (is_uffd_pte_marker(pte))
++		return true;
++	/*
++	 * If VMA has UFFD WP faults enabled and WP fault, wait for userspace to
++	 * resolve the fault.
+ 	 */
+-	if (huge_pte_none_mostly(pte))
+-		ret = true;
+ 	if (!huge_pte_write(pte) && (reason & VM_UFFD_WP))
+-		ret = true;
+-out:
+-	return ret;
++		return true;
++
++	return false;
+ }
+ #else
+ static inline bool userfaultfd_huge_must_wait(struct userfaultfd_ctx *ctx,
+ 					      struct vm_fault *vmf,
+ 					      unsigned long reason)
+ {
+-	return false;	/* should never get here */
++	/* Should never get here. */
++	VM_WARN_ON_ONCE(1);
++	return false;
+ }
+ #endif /* CONFIG_HUGETLB_PAGE */
+ 
+ /*
+- * Verify the pagetables are still not ok after having reigstered into
++ * Verify the pagetables are still not ok after having registered into
+  * the fault_pending_wqh to avoid userland having to UFFDIO_WAKE any
+  * userfault that has already been resolved, if userfaultfd_read_iter and
+  * UFFDIO_COPY|ZEROPAGE are being run simultaneously on two different
+@@ -284,53 +292,63 @@ static inline bool userfaultfd_must_wait(struct userfaultfd_ctx *ctx,
+ 	pmd_t *pmd, _pmd;
+ 	pte_t *pte;
+ 	pte_t ptent;
+-	bool ret = true;
++	bool ret;
+ 
+ 	assert_fault_locked(vmf);
+ 
+ 	pgd = pgd_offset(mm, address);
+ 	if (!pgd_present(*pgd))
+-		goto out;
++		return true;
+ 	p4d = p4d_offset(pgd, address);
+ 	if (!p4d_present(*p4d))
+-		goto out;
++		return true;
+ 	pud = pud_offset(p4d, address);
+ 	if (!pud_present(*pud))
+-		goto out;
++		return true;
+ 	pmd = pmd_offset(pud, address);
+ again:
+ 	_pmd = pmdp_get_lockless(pmd);
+ 	if (pmd_none(_pmd))
+-		goto out;
++		return true;
+ 
+-	ret = false;
++	/*
++	 * A race could arise which would result in a softleaf entry such a
++	 * migration entry unexpectedly being present in the PMD, so explicitly
++	 * check for this and bail out if so.
++	 */
+ 	if (!pmd_present(_pmd))
+-		goto out;
++		return false;
+ 
+-	if (pmd_trans_huge(_pmd)) {
+-		if (!pmd_write(_pmd) && (reason & VM_UFFD_WP))
+-			ret = true;
+-		goto out;
+-	}
++	if (pmd_trans_huge(_pmd))
++		return !pmd_write(_pmd) && (reason & VM_UFFD_WP);
+ 
+ 	pte = pte_offset_map(pmd, address);
+-	if (!pte) {
+-		ret = true;
++	if (!pte)
+ 		goto again;
+-	}
++
+ 	/*
+ 	 * Lockless access: we're in a wait_event so it's ok if it
+-	 * changes under us.  PTE markers should be handled the same as none
+-	 * ptes here.
++	 * changes under us.
+ 	 */
+ 	ptent = ptep_get(pte);
+-	if (pte_none_mostly(ptent))
+-		ret = true;
++
++	ret = true;
++	/* Entry is still missing, wait for userspace to resolve the fault. */
++	if (pte_none(ptent))
++		goto out;
++	/* UFFD PTE markers require userspace to resolve the fault. */
++	if (is_uffd_pte_marker(ptent))
++		goto out;
++	/*
++	 * If VMA has UFFD WP faults enabled and WP fault, wait for userspace to
++	 * resolve the fault.
++	 */
+ 	if (!pte_write(ptent) && (reason & VM_UFFD_WP))
+-		ret = true;
+-	pte_unmap(pte);
++		goto out;
+ 
++	ret = false;
+ out:
++	pte_unmap(pte);
+ 	return ret;
+ }
+ 
+@@ -490,12 +508,13 @@ vm_fault_t handle_userfault(struct vm_fault *vmf, unsigned long reason)
+ 	set_current_state(blocking_state);
+ 	spin_unlock_irq(&ctx->fault_pending_wqh.lock);
+ 
+-	if (!is_vm_hugetlb_page(vma))
+-		must_wait = userfaultfd_must_wait(ctx, vmf, reason);
+-	else
++	if (is_vm_hugetlb_page(vma)) {
+ 		must_wait = userfaultfd_huge_must_wait(ctx, vmf, reason);
+-	if (is_vm_hugetlb_page(vma))
+ 		hugetlb_vma_unlock_read(vma);
++	} else {
++		must_wait = userfaultfd_must_wait(ctx, vmf, reason);
++	}
++
+ 	release_fault_lock(vmf);
+ 
+ 	if (likely(must_wait && !READ_ONCE(ctx->released))) {
+diff --git a/include/asm-generic/hugetlb.h b/include/asm-generic/hugetlb.h
+index dcb8727f2b82..e1a2e1b7c8e7 100644
+--- a/include/asm-generic/hugetlb.h
++++ b/include/asm-generic/hugetlb.h
+@@ -97,14 +97,6 @@ static inline int huge_pte_none(pte_t pte)
+ }
+ #endif
+ 
+-/* Please refer to comments above pte_none_mostly() for the usage */
+-#ifndef __HAVE_ARCH_HUGE_PTE_NONE_MOSTLY
+-static inline int huge_pte_none_mostly(pte_t pte)
+-{
+-	return huge_pte_none(pte) || is_pte_marker(pte);
+-}
+-#endif
+-
+ #ifndef __HAVE_ARCH_HUGE_PTEP_SET_WRPROTECT
+ static inline void huge_ptep_set_wrprotect(struct mm_struct *mm,
+ 		unsigned long addr, pte_t *ptep)
+diff --git a/include/linux/swapops.h b/include/linux/swapops.h
+index 2687928a8146..d1f665935cfc 100644
+--- a/include/linux/swapops.h
++++ b/include/linux/swapops.h
+@@ -469,24 +469,6 @@ static inline int is_guard_swp_entry(swp_entry_t entry)
+ 		(pte_marker_get(entry) & PTE_MARKER_GUARD);
+ }
+ 
+-/*
+- * This is a special version to check pte_none() just to cover the case when
+- * the pte is a pte marker.  It existed because in many cases the pte marker
+- * should be seen as a none pte; it's just that we have stored some information
+- * onto the none pte so it becomes not-none any more.
+- *
+- * It should be used when the pte is file-backed, ram-based and backing
+- * userspace pages, like shmem.  It is not needed upon pgtables that do not
+- * support pte markers at all.  For example, it's not needed on anonymous
+- * memory, kernel-only memory (including when the system is during-boot),
+- * non-ram based generic file-system.  It's fine to be used even there, but the
+- * extra pte marker check will be pure overhead.
+- */
+-static inline int pte_none_mostly(pte_t pte)
+-{
+-	return pte_none(pte) || is_pte_marker(pte);
+-}
+-
+ static inline struct page *pfn_swap_entry_to_page(swp_entry_t entry)
+ {
+ 	struct page *p = pfn_to_page(swp_offset_pfn(entry));
+diff --git a/include/linux/userfaultfd_k.h b/include/linux/userfaultfd_k.h
+index c0e716aec26a..da0b4fcc566f 100644
+--- a/include/linux/userfaultfd_k.h
++++ b/include/linux/userfaultfd_k.h
+@@ -479,4 +479,25 @@ static inline bool pte_swp_uffd_wp_any(pte_t pte)
+ 	return false;
+ }
+ 
++
++static inline bool is_uffd_pte_marker(pte_t pte)
++{
++	swp_entry_t entry;
++
++	if (pte_present(pte))
++		return false;
++
++	entry = pte_to_swp_entry(pte);
++	if (!is_pte_marker_entry(entry))
++		return false;
++
++	/* UFFD WP, poisoned swap entries are UFFD handled. */
++	if (pte_marker_entry_uffd_wp(entry))
++		return true;
++	if (is_poisoned_swp_entry(entry))
++		return true;
++
++	return false;
++}
++
+ #endif /* _LINUX_USERFAULTFD_K_H */
+diff --git a/mm/hmm.c b/mm/hmm.c
+index a56081d67ad6..387a38bbaf6a 100644
+--- a/mm/hmm.c
++++ b/mm/hmm.c
+@@ -244,7 +244,12 @@ static int hmm_vma_handle_pte(struct mm_walk *walk, unsigned long addr,
+ 	uint64_t pfn_req_flags = *hmm_pfn;
+ 	uint64_t new_pfn_flags = 0;
+ 
+-	if (pte_none_mostly(pte)) {
++	/*
++	 * Any other marker than a UFFD WP marker will result in a fault error
++	 * that will be correctly handled, so we need only check for UFFD WP
++	 * here.
++	 */
++	if (pte_none(pte) || pte_marker_uffd_wp(pte)) {
+ 		required_fault =
+ 			hmm_pte_need_fault(hmm_vma_walk, pfn_req_flags, 0);
+ 		if (required_fault)
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index 1ea459723cce..01c784547d1e 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -6743,29 +6743,28 @@ vm_fault_t hugetlb_fault(struct mm_struct *mm, struct vm_area_struct *vma,
+ 	}
+ 
+ 	vmf.orig_pte = huge_ptep_get(mm, vmf.address, vmf.pte);
+-	if (huge_pte_none_mostly(vmf.orig_pte)) {
+-		if (is_pte_marker(vmf.orig_pte)) {
+-			pte_marker marker =
+-				pte_marker_get(pte_to_swp_entry(vmf.orig_pte));
+-
+-			if (marker & PTE_MARKER_POISONED) {
+-				ret = VM_FAULT_HWPOISON_LARGE |
+-				      VM_FAULT_SET_HINDEX(hstate_index(h));
+-				goto out_mutex;
+-			} else if (WARN_ON_ONCE(marker & PTE_MARKER_GUARD)) {
+-				/* This isn't supported in hugetlb. */
+-				ret = VM_FAULT_SIGSEGV;
+-				goto out_mutex;
+-			}
+-		}
+-
++	if (huge_pte_none(vmf.orig_pte))
+ 		/*
+-		 * Other PTE markers should be handled the same way as none PTE.
+-		 *
+ 		 * hugetlb_no_page will drop vma lock and hugetlb fault
+ 		 * mutex internally, which make us return immediately.
+ 		 */
+ 		return hugetlb_no_page(mapping, &vmf);
++
++	if (is_pte_marker(vmf.orig_pte)) {
++		const pte_marker marker =
++			pte_marker_get(pte_to_swp_entry(vmf.orig_pte));
++
++		if (marker & PTE_MARKER_POISONED) {
++			ret = VM_FAULT_HWPOISON_LARGE |
++				VM_FAULT_SET_HINDEX(hstate_index(h));
++			goto out_mutex;
++		} else if (WARN_ON_ONCE(marker & PTE_MARKER_GUARD)) {
++			/* This isn't supported in hugetlb. */
++			ret = VM_FAULT_SIGSEGV;
++			goto out_mutex;
++		}
++
++		return hugetlb_no_page(mapping, &vmf);
+ 	}
+ 
+ 	ret = 0;
+@@ -6934,6 +6933,7 @@ int hugetlb_mfill_atomic_pte(pte_t *dst_pte,
+ 	int ret = -ENOMEM;
+ 	struct folio *folio;
+ 	bool folio_in_pagecache = false;
++	pte_t dst_ptep;
+ 
+ 	if (uffd_flags_mode_is(flags, MFILL_ATOMIC_POISON)) {
+ 		ptl = huge_pte_lock(h, dst_mm, dst_pte);
+@@ -7073,13 +7073,14 @@ int hugetlb_mfill_atomic_pte(pte_t *dst_pte,
+ 	if (folio_test_hwpoison(folio))
+ 		goto out_release_unlock;
+ 
++	ret = -EEXIST;
++
++	dst_ptep = huge_ptep_get(dst_mm, dst_addr, dst_pte);
+ 	/*
+-	 * We allow to overwrite a pte marker: consider when both MISSING|WP
+-	 * registered, we firstly wr-protect a none pte which has no page cache
+-	 * page backing it, then access the page.
++	 * See comment about UFFD marker overwriting in
++	 * mfill_atomic_install_pte().
+ 	 */
+-	ret = -EEXIST;
+-	if (!huge_pte_none_mostly(huge_ptep_get(dst_mm, dst_addr, dst_pte)))
++	if (!huge_pte_none(dst_ptep) && !is_uffd_pte_marker(dst_ptep))
+ 		goto out_release_unlock;
+ 
+ 	if (folio_in_pagecache)
+diff --git a/mm/mincore.c b/mm/mincore.c
+index 8ec4719370e1..fb80becd6119 100644
+--- a/mm/mincore.c
++++ b/mm/mincore.c
+@@ -32,11 +32,22 @@ static int mincore_hugetlb(pte_t *pte, unsigned long hmask, unsigned long addr,
+ 	spinlock_t *ptl;
+ 
+ 	ptl = huge_pte_lock(hstate_vma(walk->vma), walk->mm, pte);
++
+ 	/*
+ 	 * Hugepages under user process are always in RAM and never
+ 	 * swapped out, but theoretically it needs to be checked.
+ 	 */
+-	present = pte && !huge_pte_none_mostly(huge_ptep_get(walk->mm, addr, pte));
++	if (!pte) {
++		present = 0;
++	} else {
++		const pte_t ptep = huge_ptep_get(walk->mm, addr, pte);
++
++		if (huge_pte_none(ptep) || is_pte_marker(ptep))
++			present = 0;
++		else
++			present = 1;
++	}
++
+ 	for (; addr != end; vec++, addr += PAGE_SIZE)
+ 		*vec = present;
+ 	walk->private = vec;
+@@ -175,8 +186,8 @@ static int mincore_pte_range(pmd_t *pmd, unsigned long addr, unsigned long end,
+ 		pte_t pte = ptep_get(ptep);
+ 
+ 		step = 1;
+-		/* We need to do cache lookup too for pte markers */
+-		if (pte_none_mostly(pte))
++		/* We need to do cache lookup too for markers */
++		if (pte_none(pte) || is_pte_marker(pte))
+ 			__mincore_unmapped_range(addr, addr + PAGE_SIZE,
+ 						 vma, vec);
+ 		else if (pte_present(pte)) {
+diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+index 00122f42718c..cc4ce205bbec 100644
+--- a/mm/userfaultfd.c
++++ b/mm/userfaultfd.c
+@@ -178,6 +178,7 @@ int mfill_atomic_install_pte(pmd_t *dst_pmd,
+ 	spinlock_t *ptl;
+ 	struct folio *folio = page_folio(page);
+ 	bool page_in_cache = folio_mapping(folio);
++	pte_t dst_ptep;
+ 
+ 	_dst_pte = mk_pte(page, dst_vma->vm_page_prot);
+ 	_dst_pte = pte_mkdirty(_dst_pte);
+@@ -199,12 +200,15 @@ int mfill_atomic_install_pte(pmd_t *dst_pmd,
+ 	}
+ 
+ 	ret = -EEXIST;
++
++	dst_ptep = ptep_get(dst_pte);
++
+ 	/*
+-	 * We allow to overwrite a pte marker: consider when both MISSING|WP
+-	 * registered, we firstly wr-protect a none pte which has no page cache
+-	 * page backing it, then access the page.
++	 * We are allowed to overwrite a UFFD pte marker: consider when both
++	 * MISSING|WP registered, we firstly wr-protect a none pte which has no
++	 * page cache page backing it, then access the page.
+ 	 */
+-	if (!pte_none_mostly(ptep_get(dst_pte)))
++	if (!pte_none(dst_ptep) && !is_uffd_pte_marker(dst_ptep))
+ 		goto out_unlock;
+ 
+ 	if (page_in_cache) {
+@@ -583,12 +587,15 @@ static __always_inline ssize_t mfill_atomic_hugetlb(
+ 			goto out_unlock;
+ 		}
+ 
+-		if (!uffd_flags_mode_is(flags, MFILL_ATOMIC_CONTINUE) &&
+-		    !huge_pte_none_mostly(huge_ptep_get(dst_mm, dst_addr, dst_pte))) {
+-			err = -EEXIST;
+-			hugetlb_vma_unlock_read(dst_vma);
+-			mutex_unlock(&hugetlb_fault_mutex_table[hash]);
+-			goto out_unlock;
++		if (!uffd_flags_mode_is(flags, MFILL_ATOMIC_CONTINUE)) {
++			const pte_t ptep = huge_ptep_get(dst_mm, dst_addr, dst_pte);
++
++			if (!huge_pte_none(ptep) && !is_uffd_pte_marker(ptep)) {
++				err = -EEXIST;
++				hugetlb_vma_unlock_read(dst_vma);
++				mutex_unlock(&hugetlb_fault_mutex_table[hash]);
++				goto out_unlock;
++			}
+ 		}
+ 
+ 		err = hugetlb_mfill_atomic_pte(dst_pte, dst_vma, dst_addr,
+-- 
 2.51.0
+
 
