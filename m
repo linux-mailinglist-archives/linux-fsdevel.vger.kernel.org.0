@@ -1,100 +1,184 @@
-Return-Path: <linux-fsdevel+bounces-67639-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67640-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6E1CC4559E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 09:21:14 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D54BC4561C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 09:31:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE551188F664
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 08:21:39 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DC0684E962A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 08:31:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46A3D25A322;
-	Mon, 10 Nov 2025 08:21:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7800222A4E9;
+	Mon, 10 Nov 2025 08:31:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cyF91dT8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MJQtbQTM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50CFF2512FF
-	for <linux-fsdevel@vger.kernel.org>; Mon, 10 Nov 2025 08:21:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D80A821CC59
+	for <linux-fsdevel@vger.kernel.org>; Mon, 10 Nov 2025 08:31:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762762869; cv=none; b=kPkSIwM5tsQHGJu2Vw7EbGnqVCuw4D0otMQKK+r5eVz8iP9liFKxafr+QgRpdQVCjR80o6TcCMVyuP1f0tb2jBYIVK3fKdd3SnwCFebKXQsgqzIHKNmLhJ1N6ps2rLbJuHqZuLkOzTOQLzZZtPBr3nIKQpOqMnzeR/zf9g2iauI=
+	t=1762763481; cv=none; b=PvDnnzkeJzurhxs1e0UNTJxSlwX883hCp57S+eRQQTabf0S7fazQaeFehac4e0O9EJC13oNJ8JffMSzJhGbwZVVh95hP2bm6QA0TKXs6RVzoPngEcBCaybEpAGbKPuKWKq9FdQS/+srrHEWfJWxGPgiNENrug1haMb4xr6waON0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762762869; c=relaxed/simple;
-	bh=aTPTAQn4ouWc2CT6r9voElmkLrZutSEG0pY6gt5Y6TQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=V5g5A3c203zGshoFI46/Xr5NAPoyupK08J9Nq1LXvGkMGgqRX08tmV0b5lBUHNGG95zr3m7AOUnRGRhgVbQt7inl2zgxMGF9G7zxQGDgP4BEs+oyWTA5ILuSUuwxi3wEhHBJBubS6wYQk36IMqy7rd6TIpppQ2HqR8/XGw682Vw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cyF91dT8; arc=none smtp.client-ip=209.85.210.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-7c28bf230feso2845423a34.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Nov 2025 00:21:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762762866; x=1763367666; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=aTPTAQn4ouWc2CT6r9voElmkLrZutSEG0pY6gt5Y6TQ=;
-        b=cyF91dT8OWSD9ITmgg9EG/AzERMnd/7D03awpdJOhPCcWe6h7tPi29WUqjwgbV2kAj
-         GLP8Afzbk2VIItrcyjQInlFpGSW1Wg363H2ayVCi49Cg2msLPIAaB5zymhuYQmRXnhBW
-         b3EqHEAXkDkAj9v9Ka2UoR9u4Wbf+TmmR0eIANb3wsMVngbqJwVat6E8RjeTZx068ww3
-         YsjxOJEyI1IH7inMCVObuL30MyzzpPAYKJ4REJmZYUImSwJeKVDQAlaJBx9cSnlEq3Bu
-         HhFQLmmf1LXtveKDAGOM/3R/ThgnWdlYMQ7nPTnItfnZDDCt7timLvULd5SrW6kYTZcb
-         xTKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762762866; x=1763367666;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aTPTAQn4ouWc2CT6r9voElmkLrZutSEG0pY6gt5Y6TQ=;
-        b=PBiOyqv94HGzPqbVc00p+WVl+jQ09ye8Nn5QbEpWPgZ1quh7Lln1kUc4O3qWeLdBWJ
-         1oCx/7GEB2EDiK0g/T/sbyDJW090InecVDymJNP1DgIGRxLvTc1opo94uJ5ebrJ530rs
-         gi15b+H4+jwsWzecu38wr+ZDD1ynHTVL4fFN0eOIvxeQEiyxlW7IHIHabcBAy4p5kEJ8
-         Bz+mDVK291Z0JiatPO8r85PJbpPzySX6GiajfJnR0tn5Qh7JJyipx9RD4lD2CNn97WTb
-         foygusVBZCeSkgFlFpA6V98o90vPneDip0HTElo92kh1tky3UtrMrJkUUsgrOv1sjtTR
-         q6DQ==
-X-Gm-Message-State: AOJu0YxxaxtB1/TF7/1AeCWvimZAbmSxXWs+nmevl+dNHzFA4Ct9fEIA
-	pRBvpnkO+ORsBaoMAAsWFEuxQr+Hx26EFUnXeyCd6P1+sXsS8oSm3aAq4lf12WkB4u6mPbnXp0L
-	UoyGAzp5bakFjwPDeUsSGZpxWe+1YnQ==
-X-Gm-Gg: ASbGncufejoV8IZfZnJcnGPLu7N4pSYbQSjG6u7Y5kiYJHLLRi9423CDi8f5kz62fQm
-	+0Y+nMau3YGKoEhGqB7IkSvOpVleya23FaJ2Z15eyxolQ+oeE6M7cjPG6VIxEZtKqbdeC0SAp6o
-	Jljz3fFIWpzVuNyI3OvkInoV6Ra8Vyr+edaG2THOuADEl1OUdw4UHsf4LMXxGoCVK6iXXLtsH8b
-	/m5xBW6aw5QQY6E9oavpWG6vB1/A9TjbLh+ANPgJgS8elKvU26wov2OA6U+STWGMcW9hg==
-X-Google-Smtp-Source: AGHT+IFQRzMclK2LZrlklR3vvFXP2j5BqTAtvgOyp55NCLPMq7f051KDAWCb7+DpaAQxglIBZqcda07ETAnrgHQHU+Q=
-X-Received: by 2002:a05:6808:198d:b0:44f:ddf1:f238 with SMTP id
- 5614622812f47-4501c55d866mr7052892b6e.0.1762762866187; Mon, 10 Nov 2025
- 00:21:06 -0800 (PST)
+	s=arc-20240116; t=1762763481; c=relaxed/simple;
+	bh=9k0h6OBkjBgZGpcbd3i9Y8P8ilrE6Zk4KJUTWDKQBT4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=RA863dI8/eUQAteYPdZ9WLlDsn+PtSSFpCn5fcB/hPKH+1PbP1QK6v/b+4IArB9ACIf3qRt7ydBhbxOBctpzG5FRKw01AAdnzr/dhTM+77Mhn2VjAd7d6t/gdUTeGXcAeUm+uODUpy38ArB0CZvlHP5zSE1UlCFEy5qskNLheaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MJQtbQTM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 6DD51C4CEFB;
+	Mon, 10 Nov 2025 08:31:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762763481;
+	bh=9k0h6OBkjBgZGpcbd3i9Y8P8ilrE6Zk4KJUTWDKQBT4=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=MJQtbQTMP1nEsGd3bSFJ1ubfnPTFRv2NrSeVC6JG3dyO93C0JHtWdZYucKyVnfZNV
+	 Y3kGL6LQRGCoEoOeFWmgByTjWM2nOxlQtWUqff+XXKdn+mknbdp6dqJP3k7S9Kobo0
+	 fFDBzAZxEoBQcy3a2zF3PRSLl39ukFPKGdegVMgqnaNSSPp33mCnoLaJWgRHi80zBk
+	 HJyHwSN06AmdmkLRRTWEMGQBO8P0RHfgGcWvdpdDFapJun1WFXMt0BOouuUwO2fev7
+	 IVtScWMBvA/KjnH1nSTVG59zAF3vN9IWVWrByUd7elazsW/kGjk+N5cFE1aKzmLiPd
+	 vxcfD/XH186sQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64E1DCCFA13;
+	Mon, 10 Nov 2025 08:31:21 +0000 (UTC)
+From: Xin Wang via B4 Relay <devnull+xwang.ddn.com@kernel.org>
+Date: Mon, 10 Nov 2025 08:31:02 +0000
+Subject: [PATCH] fuse: Umask handling problem if FUSE_CAP_DONT_MASK is
+ disabled
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <2e1db15f-b2b1-487f-9f42-44dc7480b2e2@bsbernd.com>
- <CAOQ4uxg8sFdFRxKUcAFoCPMXaNY18m4e1PfBXo+GdGxGcKDaFg@mail.gmail.com>
- <20250916025341.GO1587915@frogsfrogsfrogs> <CAOQ4uxhLM11Zq9P=E1VyN7puvBs80v0HrPU6HqY0LLM6HVc_ZQ@mail.gmail.com>
- <87ldkm6n5o.fsf@wotan.olymp> <CAOQ4uxg7b0mupCVaouPXPGNN=Ji2XceeceUf8L6pW8+vq3uOMQ@mail.gmail.com>
- <7ee1e308-c58c-45a0-8ded-6694feae097f@ddn.com> <20251105224245.GP196362@frogsfrogsfrogs>
- <d57bcfc5-fc3d-4635-ab46-0b9038fb7039@ddn.com> <CAOQ4uxgKZ3Hc+fMg_azN=DWLTj4fq0hsoU4n0M8GA+DsMgJW4g@mail.gmail.com>
- <20251106154940.GF196391@frogsfrogsfrogs> <CANXojcwP2jQUpXSZAv_3z5q+=Zrn7M8ffh2_KdcZpEad+XH6_A@mail.gmail.com>
- <87ecqary82.fsf@wotan.olymp>
-In-Reply-To: <87ecqary82.fsf@wotan.olymp>
-From: Stef Bon <stefbon@gmail.com>
-Date: Mon, 10 Nov 2025 09:20:54 +0100
-X-Gm-Features: AWmQ_bmIlbt9JkhLZwQfMjVNDJSXMctgRyy-4lDufTJXjUn6s7KKYIuO3wG6_L8
-Message-ID: <CANXojcxBQ5XA16DcwYR2AANR-QaBuLCsudmngp3kC9RS5N_=WA@mail.gmail.com>
-Subject: Re: [RFC] Another take at restarting FUSE servers
-To: Luis Henriques <luis@igalia.com>
-Cc: linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20251110-fuse_acl_umask-v1-1-cf1d431cae06@ddn.com>
+X-B4-Tracking: v=1; b=H4sIAMWiEWkC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1NDQ0MD3bTS4tT4xOSc+NLcxOJs3cQ08yQTkxQjYzNTCyWgpoKi1LTMCrC
+ B0bG1tQDNpDN+YAAAAA==
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: linux-fsdevel@vger.kernel.org, bschubert@ddn.com, gwu@ddn.com, 
+ Xin Wang <xwang@ddn.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1762763481; l=3412;
+ i=xwang@ddn.com; s=20251110; h=from:subject:message-id;
+ bh=Gy+2d2kF9z2hAE/298jrIqc0SMibW2BMrzDNvDUnckQ=;
+ b=+417Hkhu3M6dN87YbsEfWVcZkOiooZmV3ZhyYKQoM6kunPcwS3jmKn786NUOHGw9tryaItxAz
+ U8kxgK3C1JeAL4OzZUFLuy2tAWGV8VNgO+/Qdgbzpp9GENc0DhSZmpE
+X-Developer-Key: i=xwang@ddn.com; a=ed25519;
+ pk=2NZ7S3gXVdveRFk4yNU1Q6JCNiAedXyGWBm7ipgv5kE=
+X-Endpoint-Received: by B4 Relay for xwang@ddn.com/20251110 with
+ auth_id=563
+X-Original-From: Xin Wang <xwang@ddn.com>
+Reply-To: xwang@ddn.com
 
-Hi,
+From: Xin Wang <xwang@ddn.com>
 
-I see this has to do with the name to handle calls to provide clients
-a reference to fs objects which remain valid over a restart right?
+According to umask manpage, it should be ignored if the parent has a
+default ACL.  But currently, if FUSE_CAP_DONT_MASK is disabled, fuse
+always applies umask no matter if the parent has a default ACL or not.
+This behaviior is not consistent with the behavior described in the
+manpage.
 
-Stef
+Fix the problem by checking if the parent has a default ACL before
+applying umask if FUSE_CAP_DONT_MASK is disabled.
+
+---
+We found that there may be a problem about umask handling in fuse code.
+According to umask manpage, it should be ignored if the parent has a
+default ACL. But currently, if FUSE_CAP_DONT_MASK is disabled, fuse always
+applies umask no matter if the parent has a default ACL or not. So, we
+think this may be a problem because it is not consistent with the behavior
+described in the manpage.
+
+umask manpage:
+       Alternatively, if the parent directory has a default ACL
+       (see acl(5)), the umask is ignored, the default ACL is inherited,
+       the permission bits are set based on the inherited ACL, …
+
+Signed-off-by: Xin Wang <xwang@ddn.com>
+---
+ fs/fuse/dir.c | 42 ++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 36 insertions(+), 6 deletions(-)
+
+diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+index ecaec0fea3a1..f8ab6d76ae35 100644
+--- a/fs/fuse/dir.c
++++ b/fs/fuse/dir.c
+@@ -645,8 +645,18 @@ static int fuse_create_open(struct mnt_idmap *idmap, struct inode *dir,
+ 	if (!ff)
+ 		goto out_put_forget_req;
+ 
+-	if (!fm->fc->dont_mask)
+-		mode &= ~current_umask();
++	if (!fm->fc->dont_mask) {
++		/*
++		 * If the parent has a default ACL, the umask is
++		 * ignored, the default ACL is inherited, the
++		 * permission bits are set based on the inherited
++		 * default ACL
++		 */
++		struct posix_acl *p =
++			get_inode_acl(dir, ACL_TYPE_DEFAULT);
++		if (!p || p == ERR_PTR(-EOPNOTSUPP))
++			mode &= ~current_umask();
++	}
+ 
+ 	flags &= ~O_NOCTTY;
+ 	memset(&inarg, 0, sizeof(inarg));
+@@ -872,8 +882,18 @@ static int fuse_mknod(struct mnt_idmap *idmap, struct inode *dir,
+ 	struct fuse_mount *fm = get_fuse_mount(dir);
+ 	FUSE_ARGS(args);
+ 
+-	if (!fm->fc->dont_mask)
+-		mode &= ~current_umask();
++	if (!fm->fc->dont_mask) {
++		/*
++		 * If the parent has a default ACL, the umask is
++		 * ignored, the default ACL is inherited, the
++		 * permission bits are set based on the inherited
++		 * default ACL
++		 */
++		struct posix_acl *p =
++			get_inode_acl(dir, ACL_TYPE_DEFAULT);
++		if (!p || p == ERR_PTR(-EOPNOTSUPP))
++			mode &= ~current_umask();
++	}
+ 
+ 	memset(&inarg, 0, sizeof(inarg));
+ 	inarg.mode = mode;
+@@ -919,8 +939,18 @@ static struct dentry *fuse_mkdir(struct mnt_idmap *idmap, struct inode *dir,
+ 	struct fuse_mount *fm = get_fuse_mount(dir);
+ 	FUSE_ARGS(args);
+ 
+-	if (!fm->fc->dont_mask)
+-		mode &= ~current_umask();
++	if (!fm->fc->dont_mask) {
++		/*
++		 * If the parent has a default ACL, the umask is
++		 * ignored, the default ACL is inherited, the
++		 * permission bits are set based on the inherited
++		 * default ACL
++		 */
++		struct posix_acl *p =
++			get_inode_acl(dir, ACL_TYPE_DEFAULT);
++		if (!p || p == ERR_PTR(-EOPNOTSUPP))
++			mode &= ~current_umask();
++	}
+ 
+ 	memset(&inarg, 0, sizeof(inarg));
+ 	inarg.mode = mode;
+
+---
+base-commit: 4a0c9b3391999818e2c5b93719699b255be1f682
+change-id: 20251110-fuse_acl_umask-af7b44d23658
+
+Best regards,
+-- 
+Xin Wang <xwang@ddn.com>
+
+
 
