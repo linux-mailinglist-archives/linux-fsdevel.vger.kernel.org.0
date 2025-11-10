@@ -1,79 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-67694-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67695-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D93EFC4747A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 15:43:19 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2AFCC47489
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 15:43:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5773188F81C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 14:43:43 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 525534ED49B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 14:43:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB862313542;
-	Mon, 10 Nov 2025 14:43:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B8F7314A80;
+	Mon, 10 Nov 2025 14:43:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cThjWDBI"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AfoQaK8+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C050631280E
-	for <linux-fsdevel@vger.kernel.org>; Mon, 10 Nov 2025 14:43:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93BFC313524
+	for <linux-fsdevel@vger.kernel.org>; Mon, 10 Nov 2025 14:43:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762785788; cv=none; b=KUeQhR/6lOzx4h/+g69oNbZpX6B3lnKUr2HA6o6ZykzdqPzh5sdYu2Bmi8eOHGqPa4acepOZPMpDH0LAoBcpinaeTb9EHY05rPty9J7wvjNQx0o3sCrafPHo9Tz5q9i4JgxDRFUqwJrytN/irD6Iol+jXtAtCeSUVvcmoE9VB/4=
+	t=1762785793; cv=none; b=iGHEENYcJo3ZPJgnjf9neekfJBAKCvrxaeUtG0gHa3pnO3Xbpug00uYZXbUKg1PKThsP/9zg1Vf+z1kLkOcNohpygQmAlMMy7Cj0GGARGUaAQ1ZSLEuMrdj+6NDLvksk5jfXpShki2SPEQ0Xp6DGSM+/KMr9yj4Yyy8I4gALrXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762785788; c=relaxed/simple;
-	bh=rq8inUEioFPmuMEK5dyLyp/Z5EEtZ4ialpzlvE8Z8Ws=;
+	s=arc-20240116; t=1762785793; c=relaxed/simple;
+	bh=/E3gJIQjBTJ6pBJSXNOjyTL+w6L6Y1/FtKLBYQhekO8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rcf2IXXE5BQjka8w08gLngd9KQsy8xBDI4aSreMyfcMtU3Mtt+Jq1W5Ky710UHzcPyl37vLJmazXnEfZV4H74hK+AjY9OuZaqF8YyOuJGYLaTExkw/LVEPrpa6NiPGDNz5fnfR1ksYbw/r2lqAolEq2lm51WAeedt8Vfv35B/WI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cThjWDBI; arc=none smtp.client-ip=209.85.216.45
+	 MIME-Version; b=ZdrEwzNOtrko2dNeRQL1Y7qhBMzXI4KicAj+SHfW6oiA2nTEqxOBM6wZMmu4jw6yfVbxHziVzYawHHNYdHSvYJqOQc/BUPD8BNGm59ozbVs0EUQA7RdhOKoGM7b5yym3R3z0DlC82n9bsckfTp68YUgsj6JLaqMJgi+2u+dZGtQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AfoQaK8+; arc=none smtp.client-ip=209.85.216.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-340ef0e6c06so275135a91.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Nov 2025 06:43:05 -0800 (PST)
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-340c2dfc1daso492483a91.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Nov 2025 06:43:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762785785; x=1763390585; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1762785791; x=1763390591; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=JikY8RUWAS87/Uf8jcHZAVFCfs9UYHP3mbI5XvHhWpo=;
-        b=cThjWDBIb0kUXiKtQ9CYWWUBhosJFcZ2VEnYBhTU35Ofl5N8xdl/eeDcAqmdtjvdvO
-         FuZqwbpkLuYMq/TcdfA1OSbWoTaiAP+DcIsQb6k7kr7nJ+oOmKu9h4UsCdPALXNwj1el
-         7D8Kk8Qqi04s1FZXIAJx72qrUQjq1tQ1e7RHmGB0vVqQ9oRxKMEDA5ksyHbqVW8rdaFt
-         jcGs7fWzCv4eL3zVAtuzh5yBCPN0FuRKFIoEN91wxLYDZE21OHTcgZ7RVmAUFGqVHAmf
-         5PXNs5hFUXIniLzk2+E9xE9R5dKYXFsNhJ/WSPRU3hhF2ewM0gtjzwzUTRLObi+4d//P
-         Jjhw==
+        bh=F9990Zs5Z5XVH5d3pKn1lkTCNXa3vBYG5og1GHLxwso=;
+        b=AfoQaK8+zes7Nzru3pGNenzbk5dmTfEp4axm1tczXdaPnG3Hvm0fFhv2+2uoiw1VBD
+         XQyIrkaUpF3JZ/gV+KmHE/bxTutXWqCrOft/Z4d24HGMZBT605vg05ThumZuuTrQ4LZ4
+         F709XjvlJvBPZqliGDrfhABchTXB52l6WAJZY0HArY0DbMOTvLL9JjCS2F+n+MA15KcK
+         JHRZqu2FwjLGzAe8ErtK1/p/hIsaj0rwL7FZdI/5uaGMOwBJeN13kTp+LStOvmtfqY8b
+         bMyWZlZvUrz2DQzjQ73TwkMjKzda4EK4PMoWsRfkWl1Jx0zBjFYhIEV6nDe3CdK1BFtY
+         0yhQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762785785; x=1763390585;
+        d=1e100.net; s=20230601; t=1762785791; x=1763390591;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=JikY8RUWAS87/Uf8jcHZAVFCfs9UYHP3mbI5XvHhWpo=;
-        b=gMdwtI/4XsEaGbdt65/xG/73c+ptM0YPtKSopQ3kWOo6uR/avK84aW5k3c//kqA7wg
-         LgQ6YyQw/8ZBipXGKoCNjC1Q7yvfAMmaDv1fq+tOQgoLYcVLpdEsjk4fQqb4RNM3pGlq
-         eB2WNCNfqqeZtEQgsqm4lzbRBiZO99Eleh+9SgA6XBtQDGqbxlQxogfdBPH5lHNmB8Nf
-         YsKLxhXWRzcNBpu+ABjZ6wQmSEfhPNiXZDWmqd+x7G83b2tGzlKXYxS3hHcBvGmUm1ct
-         VShNMjGKVk049zMzsE0iIX4z8h/UsCPlyZ0MG5awhbbG66WMXLFORbrCz70lXL4ReEsM
-         B+Og==
-X-Forwarded-Encrypted: i=1; AJvYcCXSSQCyANnSw1b0gl4ioW7HjTzcyQsE1HroAliriHedunczDxwuVv6PkY4sEXD+ri7V9kvddXNEumE9wrRi@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLyxeytnGs9tFhXD2GHljDoDwNkxJbpv8LK3IdcYH6vX4Jz7ia
-	2AmlypvQtp6T2uwQz3xQ+54PK2M8CRqnjgV0kcvGHjdCken8W+wrKXK7
-X-Gm-Gg: ASbGncvWZiPL0O0JOSWMnf+H/tjSjOXb8HwyJmEe/A6TPpbSCuzJ2ByhY1yULgL6iP9
-	5Wr/PbPW5hQKrWDWs1xYNFZLuUAxy6Sa3Gc36IqmimcTHrah2IKZ/mGKDxSk1HNAnSPmIIybQHb
-	r+dSs5EpWzuHQ3cnk6kr4AltLyO40xgROm1ZalXin42rBK4ojvKHhJH/g4b/EtykoHYa7yir4oj
-	KMto7OtyGVXEKA0aQKJKLpxgVKVLLcygC8wifeT3oXBMDxSv1LKv+0+pYvv2OXxZgUMY3E2Ude4
-	M+sBDVxEDLyXlIMKobLUel9aFLWbgOFZ1ssFrlrTYzc1auENsfb+GB+K28QnrYlJrj7loyb2g4t
-	TuzKWQY4+NNvnnLyCLbAKjd8sg0eiP9mtd4VXcdCXl1szTFYlfbWqNYPS1Bg4FkUYLz72dwhV+K
-	nt5c9JtvSYW7f/l7JZuvh3DhP5uPO9
-X-Google-Smtp-Source: AGHT+IHBa1xJTFMz8fhGb7BKgNk6MKI2wokPJ0JpH1QYJDJFAVfq7908wrIU2cRPDlRk2m4QFg8smA==
-X-Received: by 2002:a17:90b:1d11:b0:340:b501:3ae2 with SMTP id 98e67ed59e1d1-3436ca72a20mr5911655a91.0.1762785784925;
-        Mon, 10 Nov 2025 06:43:04 -0800 (PST)
+        bh=F9990Zs5Z5XVH5d3pKn1lkTCNXa3vBYG5og1GHLxwso=;
+        b=MY7KEA+eD/KFuLmXmxFRoPyz6ybtQEvfcxkPmRM02u6EfWjwxzejnmZdguXAOWMSIA
+         v7yowFbIux2z8maEVq16UNzEYVzVmi3XJ0lnJHRsmQmDgm1/Aa0s5YOA0cCYoAMzD642
+         no5wHtZ95mDcZEZNWNRIyP5UpJCeOoXOkyFctnQ3MILzlD0gPo40fjkzNa9qPlL6CMh7
+         XHdEsfVo7BTZDH2TmhRzJHE1UVKAKFwS4G/O9cZtw7cWSGIVwbbyd8kUfV1jXar3+ngv
+         c/A47OTZZPaI/VnTLAMTbB47LjyvSsVooRaisjrSWg6QgZFrEjT5/QgQQyM+28TYLhuI
+         2UmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXH0JUIeo0KxFYBrJia0eC5ntwJ1UgS0hhzt/MTjHX5GfzqoHn14bnKuVgpFrKaqPY5r4eBVj9L94cJVY3p@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvAf01nTqYUB5QSKItFeZ8/p3To/cQ0raIfHGKRfDbLWKPOnSC
+	ZSlbIHLX75PQIYnlmYcKbU6Sj5B2sbzLVsz8u8PGx4GtJsFf/5tRSKn7
+X-Gm-Gg: ASbGncsbwYZGMpCSrvKtse3UuVVxJurjDZJvX1nplIDnA7HF2IcKFMByR8CAAyEr7Gh
+	5Xq2WqeiYSRz3c1fwC54EjBuxN7H8OB6/FloWdMePBai0PFLVRN+CK50hWFrUisZDF72YMpb+cS
+	9myyOtQ+wV6O55CC3/YIZcVtWCT3WRiIyFwE/dkJw5ZSHItQAbTl+EEHvvK9c+SyXWzWfgtVvX8
+	EActMPvgI/vYDISjSsNr4zQMl6iIzyzuYOkYgZD3rXzOR7RL+7zLyMs8DIikdN/GKLKZVVJ25wc
+	Xldu7UsNe3w6rDK2o3sXmdZ8dL6GH7V9exn05CIWiPBBryRCn43RjpZ65fN4EH/PNrSP1g5r1Fx
+	CFFkR66VN3JOm6YaXX56hC6hyQBdcpNoVA4RQGQ6j20eO9JvZ4eAh1gplID4FPhi+aidg3SS8EU
+	Rku4U8yKnVE4gnxc/+M79zWiLGUtnAt8cO8/5mk8E=
+X-Google-Smtp-Source: AGHT+IHya+A0auZJFr6yNuX36i+1/oEdX5PqTd5tyOpfqW09H+Ff+mZ5vBFnIAIjcQ2qncxi+Eqb0g==
+X-Received: by 2002:a17:90b:164a:b0:32e:1213:1ec1 with SMTP id 98e67ed59e1d1-3436cb9c0d9mr6237006a91.3.1762785790881;
+        Mon, 10 Nov 2025 06:43:10 -0800 (PST)
 Received: from elitemini.flets-east.jp ([2400:4050:d860:9700:75bf:9e2e:8ac9:3001])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-343abec3836sm2163308a91.18.2025.11.10.06.43.03
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-343abec3836sm2163308a91.18.2025.11.10.06.43.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Nov 2025 06:43:04 -0800 (PST)
+        Mon, 10 Nov 2025 06:43:10 -0800 (PST)
 From: Masaharu Noguchi <nogunix@gmail.com>
 To: Jeff Layton <jlayton@kernel.org>,
 	Chuck Lever <chuck.lever@oracle.com>
@@ -83,9 +83,9 @@ Cc: Jesper Juhl <jesperjuhl76@gmail.com>,
 	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Masaharu Noguchi <nogunix@gmail.com>
-Subject: [PATCH v2 1/2] uapi: fcntl: guard AT_RENAME_* aliases
-Date: Mon, 10 Nov 2025 23:42:31 +0900
-Message-ID: <20251110144232.3765169-2-nogunix@gmail.com>
+Subject: [PATCH v2 2/2] samples: vfs: avoid libc AT_RENAME_* redefinitions
+Date: Mon, 10 Nov 2025 23:42:32 +0900
+Message-ID: <20251110144232.3765169-3-nogunix@gmail.com>
 X-Mailer: git-send-email 2.51.1
 In-Reply-To: <20251110144232.3765169-1-nogunix@gmail.com>
 References: <20251110144232.3765169-1-nogunix@gmail.com>
@@ -97,50 +97,41 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Including <linux/fcntl.h> after libc headers such as stdio.h may leave
-the renameat2() flag macros defined to libc's values.  That leaks the
-wrong numbers into user space even though the kernel header tries to
-provide its own aliases.
+Users building the sample after including libc headers such as stdio.h
+may inherit libc's AT_RENAME_* macros before <linux/fcntl.h> is pulled
+in.  When that happens, the sample ends up with conflicting definitions
+or the libc values leak into the rest of the build.
 
-Check whether AT_RENAME_* is already defined and whether the value
-matches what the uapi header expects.  If not, drop the old definition
-and replace it with the kernel one so the exported flags stay stable
-regardless of include order.
+Drop any existing AT_RENAME_* macros before including the uapi header so
+that the sample always uses the kernel values and does not trip -Werror
+redefinition checks.
 
 Signed-off-by: Masaharu Noguchi <nogunix@gmail.com>
 ---
- include/uapi/linux/fcntl.h | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
+ samples/vfs/test-statx.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
-index 3741ea1b73d8..8b667550e44a 100644
---- a/include/uapi/linux/fcntl.h
-+++ b/include/uapi/linux/fcntl.h
-@@ -156,10 +156,23 @@
-  * as possible, so we can use them for generic bits in the future if necessary.
-  */
- 
--/* Flags for renameat2(2) (must match legacy RENAME_* flags). */
-+/* Flags for renameat2(2) (must match legacy RENAME_* flags).
-+ * stdio.h may define these differently, so check explicitly.
+diff --git a/samples/vfs/test-statx.c b/samples/vfs/test-statx.c
+index 49c7a46cee07..0123ab4efe0a 100644
+--- a/samples/vfs/test-statx.c
++++ b/samples/vfs/test-statx.c
+@@ -20,7 +20,16 @@
+ #include <sys/syscall.h>
+ #include <sys/types.h>
+ #include <linux/stat.h>
++
++/* Undefine AT_RENAME_* macros that may have been set by libc headers
++ * (e.g. stdio.h) to avoid redefinition conflicts with uapi fcntl.h.
 + */
-+#if !defined(AT_RENAME_NOREPLACE) || AT_RENAME_NOREPLACE != 0x0001
 +#undef AT_RENAME_NOREPLACE
- #define AT_RENAME_NOREPLACE	0x0001
-+#endif
-+
-+#if !defined(AT_RENAME_EXCHANGE) || AT_RENAME_EXCHANGE != 0x0002
 +#undef AT_RENAME_EXCHANGE
- #define AT_RENAME_EXCHANGE	0x0002
-+#endif
-+
-+#if !defined(AT_RENAME_WHITEOUT) || AT_RENAME_WHITEOUT != 0x0004
 +#undef AT_RENAME_WHITEOUT
- #define AT_RENAME_WHITEOUT	0x0004
-+#endif
- 
- /* Flag for faccessat(2). */
- #define AT_EACCESS		0x200	/* Test access permitted for
++
+ #include <linux/fcntl.h>
++
+ #define statx foo
+ #define statx_timestamp foo_timestamp
+ struct statx;
 -- 
 2.51.1
 
