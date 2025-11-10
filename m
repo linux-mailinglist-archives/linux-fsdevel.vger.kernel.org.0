@@ -1,226 +1,414 @@
-Return-Path: <linux-fsdevel+bounces-67680-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67681-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5FD2C46A72
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 13:41:05 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6394BC46A99
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 13:42:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD21D18855F3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 12:39:03 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 79BB04EB25B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 12:42:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFEA130E83A;
-	Mon, 10 Nov 2025 12:38:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 963EB30F7F5;
+	Mon, 10 Nov 2025 12:42:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TdctlHmN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9143E1DF258
-	for <linux-fsdevel@vger.kernel.org>; Mon, 10 Nov 2025 12:38:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7384823EA88
+	for <linux-fsdevel@vger.kernel.org>; Mon, 10 Nov 2025 12:42:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762778307; cv=none; b=vBJJXzq6yC8Q7LXsL3WKOozN+oqml5H9bQqJd2KJFQxboqiKLGS/Xcm6DxOowmL7UV/YkgZCPNBAPFRuEg8Vb8ognnd78HMo00gZ2XlGW+YXtbVJBQnPWYEz0PXa49yAao9YbD9TxVEHGS1RnSb85kG4OBpSrhYVlpBWgxIYwsE=
+	t=1762778560; cv=none; b=tTU4nCsPdZG3Z5CHyMgHJbWt2MEmclrJiA4gB0FN+qQ0ChkBY/YexxpWzbtcApGfx42manuB0PL+PrmTie9czklzT/6WtF4Bis6MRj8kgJQApmNbgTYoCEHFad6XHBm6BCjWCcoIC5zFBn7xLXh8tWSsRtuaCrx9LjwVv8HTPP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762778307; c=relaxed/simple;
-	bh=BCfvvEXeY6H6UtpuWIrt7AopHRQuvES0wL5swHqk7IU=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=SIAb57n/WzF5M7ZyOyBkrAxAI7lQEvv2Zh5uVnbMp3N7OFxPIA0TcSFSm9B2DEuZaBpdnfX9isk6SO9hjBCe/NdtjTuZaIgRgrZQvKFAGI9/AgLcI1xkQocTQFm6d0Ic2h1d5BupkXLLpBNA10nqAcdLxTx+jevxwD9w1A7EhTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-433770ba913so14643175ab.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Nov 2025 04:38:25 -0800 (PST)
+	s=arc-20240116; t=1762778560; c=relaxed/simple;
+	bh=uUtvFOB6z32iM0/C8spW4NyZv5t6/1wBqBw6TkluSVU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TGVa8swgAOZPZ3J0p0kdEZdmamiako0Vawwe2Grp+ZhY7Ts3/wskMZsUjGrEleydC/CMHzoQ5riIB9SCp5ks25Tz4//6IWh+YSfneOyEWG4pyDgVMkiyiC3B5BZsNdWQFu0czXFrM7SIordtUvhpEjLAHDhT/pP+QtuNW+doQCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TdctlHmN; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-63b9da57cecso4654089a12.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Nov 2025 04:42:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762778557; x=1763383357; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=El/L14SNqIPUaZEBf6jmwtqmoB4NXugjSXJ5To/VgXE=;
+        b=TdctlHmNQIsI3uYLJ0MhR7F0EFLYyC+6Q6mMTFL1hDOWWiWUGwI6ZJWS27K36IAqDk
+         rCCAmpQcneZibtTNCzufjKqPAp+iCieu7Gf05hOxKCpLij9cNCQLCQWgA0Wi1alG3YlA
+         7l4rN7jr4L+SCQmnKeNnoMfmEFyjP/kGEpo9dj35vdwmqLlGUUh5cAbHTc5b8olbXm3/
+         162pxC4swoEZTRJLnZ8/6ALXYCUnnpcmg2dwlVcM41+64fH/753kevuGx98xYFE3V3Ux
+         OLYgjJmTwneg78tlFflOSsWteaBCthEJijjSGem6BGVM2hH9vCeFcx59nK54Cq7VMKLv
+         MBzw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762778305; x=1763383105;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=pHR+NKBcK3L+aBXZ8xDlwRY8dl6XpDqfRmEc/iDSCro=;
-        b=b7C+j72PtltE5Z4BvOiHW4OWsqug/IpYcdZ5VLMHcxq5/WPbKDr1t/AW1wnVSedC7E
-         dEiFd5tQMx9IIZRf8Lk8yTMmHzJYj3c3W7a6c/t9H+vcOfEWqCA6rF3bB2BT5ou3mI8j
-         aVe7dEQn3rsfqvQvni4Bq+d/pWoTcFzPpsMJWgfN/FvocfuHw+09Tfq+AhsVSUnft5k+
-         v602sFzo/rKTGP3qixuneHB9oDJ4KP6Ht8cZfhL+CDJGHzmMIXvenYyuK8H0T7ReRGmg
-         CxR5dRRuyECn/MbHuENkcsRnkR3rK4iZq7Hpc0E0XnlgxISx4C8rvVBHljg62pWmQZ0j
-         2ylQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWMHuNqt/GkUlr0hA1JIuOEUYBRVV0WDmSQUw5GUB20+wBL22MQQNXsGWA3iB3ST8rzddQrCXGU2maf3EjW@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCg8vWsBP9bYeSR17MKcOMcV2sOHuATuXIbQwD6XgeYmt6l+3o
-	HAr5s8vBKt5m+vOjHbUS5DZ4rF2SxmOogdLgLJoKsAj0hT4YQLNGkp+NbIq8J0mgFnCubx3nDj9
-	6LwbXGwHujhrNPdpcKKMQw+/woivzlTagkhv9gQkL5ikjMkvuc1Zc8SshV1M=
-X-Google-Smtp-Source: AGHT+IFlI1SjeIah8QgfxOkQEjEn2ZZ/BPy3jVI577kmaDWdgotXOaJaP6omqG9s88pi9hMgFMpQTrQuAwBkDLjwI843DpyIskJ6
+        d=1e100.net; s=20230601; t=1762778557; x=1763383357;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=El/L14SNqIPUaZEBf6jmwtqmoB4NXugjSXJ5To/VgXE=;
+        b=pmZj/4f6KFsgYS+/X9yMlWoYF2U+TXP2buJ10inZi39zGQBiWEVP0oTNRBlPtG88he
+         Z4Znhi7twWoBPzAXpr9PKzrPSbw3D/fjyb32IbHypDtSctAFTuf+gV5imdSxYf83UJZP
+         tiilnWY6E3utZkgjLGLZW0sVKDsapTJ5FcqcqQvjk5n8UfmgXVGWkAHm+YOhaTnDCYDG
+         MWwvlk0m9Waa/osKv9DVuMmbjNmx/04bedU7ctUsRgMBkSgMLgQ3d+jEQTf4xkFFSKFM
+         iUmPsu2wxSwiZ0PaHdRmTtfUCRbUFxMiKRlHQqLA0BnyPedJwRZX6jMetk9PrHyRmcnq
+         hK3g==
+X-Forwarded-Encrypted: i=1; AJvYcCVVthKlZ9TlaR5jKGVbWvRu9atpePxfoEJvflTVToqvVKYASENYbTl5BMZBixPhQj2ILheNfrMd9/FRFK7G@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIsjxVuBO9u8dGljdCmNz0my1YWjPwrjlW6XsrA9E9kNQ58aMR
+	PLNudDCT30PNc0uMFOHbSaOK6qmGpNZSOBi3l8ITyb8M3sJDPSE6OuGlowaL53j+rvBVrYJl+kJ
+	eoprk1f9lQLHAbS3HOhpJsClt/fxB580=
+X-Gm-Gg: ASbGncvRjATEM4UlXd6dUJsxs9Qgyonf4UHkOi8giq/dMBdcA0qlATqCNQE9vJhPdJa
+	nh24ne7ZD4qbGFu0F956EtFTN4VszBqLQUhgCyNehM+8Ujov+hq3q1MJha2QWZuJNZQhM9a3yqe
+	8xySo2/hMHq3wJyqA8Yz0lu72vzQPhO7YqSjVJjn6yjNcXFwfM16XVbRoCc5T3gm4VUHYRxCQHT
+	Sz7LtYn4upRnMwu00srj+BnPEDfSxQLtrxJK0FtVMpbZGSQLONRtbF8n0wUTOtSA1PE6QP239ib
+	nGhiIxM6YRikoaQ=
+X-Google-Smtp-Source: AGHT+IGhPY9WCGWu+51TSFOl2+LGYdYcXyHohe6/C3xa/WC1+qtWDpSX5QSXBw6Tn43W5d53+nK+Rz6ENevNnMHThJw=
+X-Received: by 2002:a05:6402:2816:b0:640:e78f:f347 with SMTP id
+ 4fb4d7f45d1cf-6415e6f0032mr5821310a12.22.1762778556559; Mon, 10 Nov 2025
+ 04:42:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c23:b0:433:2fa2:a55d with SMTP id
- e9e14a558f8ab-43367de53edmr133878845ab.12.1762778304716; Mon, 10 Nov 2025
- 04:38:24 -0800 (PST)
-Date: Mon, 10 Nov 2025 04:38:24 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6911dcc0.a70a0220.22f260.00ed.GAE@google.com>
-Subject: [syzbot] [fs?] KASAN: null-ptr-deref Read in drop_buffers (5)
-From: syzbot <syzbot+e07658f51ca22ab65b4e@syzkaller.appspotmail.com>
-To: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	viro@zeniv.linux.org.uk
+References: <20251107142149.989998-1-mjguzik@gmail.com> <20251107142149.989998-2-mjguzik@gmail.com>
+ <qfoni4sufho6ruxsuxvcwnw4xryptydtt3wimsflf7kwfcortf@372gbykgkctf>
+ <CAGudoHGz6PXi+DLiWjzwLuYq=c+oiA1cWTUt1RmHw5QOt6DAsA@mail.gmail.com> <x4ngquwvecmlnbhesqowetnidvad57f34xnlhom6qurxr3qsng@uiy7hvlspfjd>
+In-Reply-To: <x4ngquwvecmlnbhesqowetnidvad57f34xnlhom6qurxr3qsng@uiy7hvlspfjd>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Mon, 10 Nov 2025 13:42:23 +0100
+X-Gm-Features: AWmQ_blYvy6J8CxiTKz4HPmLfeNPxIRBkMDX8otJ4c67ZU8oim4LVR3WqFytaZw
+Message-ID: <CAGudoHFA04dBDDP9bOD9kg2zW46ufJ8aBXjzM+gv5MU-gTVm2Q@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] fs: speed up path lookup with cheaper handling of MAY_EXEC
+To: Jan Kara <jack@suse.cz>
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, tytso@mit.edu, 
+	torvalds@linux-foundation.org, josef@toxicpanda.com, 
+	linux-btrfs@vger.kernel.org
+Content-Type: multipart/mixed; boundary="000000000000aeb36c06433cddc0"
+
+--000000000000aeb36c06433cddc0
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Mon, Nov 10, 2025 at 11:13=E2=80=AFAM Jan Kara <jack@suse.cz> wrote:
+> OK, the path lookup is really light
 
-syzbot found the following issue on:
+I would not go that far ;)
 
-HEAD commit:    7bb4d6512545 Merge tag 'v6.18rc4-SMB-client-fixes' of git:..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17170412580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b944b1e5afd39857
-dashboard link: https://syzkaller.appspot.com/bug?extid=e07658f51ca22ab65b4e
-compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+The current code has function calls which can be either inlined or elided.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+More importantly it is a massive branch-fest, notably with repeated
+LOOKUP_RCU checks.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/f75c0b0bb6c3/disk-7bb4d651.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/f7a1ee597ee0/vmlinux-7bb4d651.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/bd9a86dba20d/bzImage-7bb4d651.xz
+Based on my work on the same stuff $elsewhere, most of the time the
+entry in the cache is there and is a directory you can traverse
+through and which is not mounted on.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+e07658f51ca22ab65b4e@syzkaller.appspotmail.com
+While there is a bunch of likely/unlikely usage to help out, the code
+is not structured in a way which allows for easy use of it. Instead
+some of the branches are repeated or have to be present to begin with.
 
-==================================================================
-BUG: KASAN: null-ptr-deref in instrument_atomic_read include/linux/instrumented.h:68 [inline]
-BUG: KASAN: null-ptr-deref in atomic_read include/linux/atomic/atomic-instrumented.h:32 [inline]
-BUG: KASAN: null-ptr-deref in buffer_busy fs/buffer.c:2886 [inline]
-BUG: KASAN: null-ptr-deref in drop_buffers.constprop.0+0x89/0x340 fs/buffer.c:2898
-Read of size 4 at addr 0000000000000060 by task kswapd0/85
+Ideally lookup could roll forward over a pathname without function
+calls as long as fast path conditions hold. You would still need to
+pay to check permissions and that this is a non-mounted directory for
+every path component, but some of this can be combined. Per the above,
+the repeated LOOKUP_RCU checks would be whacked. Checking if this is a
+directory which got mounted on *OR* is it a symlink could be one
+branch and so on.
 
-CPU: 0 UID: 0 PID: 85 Comm: kswapd0 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
- kasan_report+0xe0/0x110 mm/kasan/report.c:595
- check_region_inline mm/kasan/generic.c:194 [inline]
- kasan_check_range+0x100/0x1b0 mm/kasan/generic.c:200
- instrument_atomic_read include/linux/instrumented.h:68 [inline]
- atomic_read include/linux/atomic/atomic-instrumented.h:32 [inline]
- buffer_busy fs/buffer.c:2886 [inline]
- drop_buffers.constprop.0+0x89/0x340 fs/buffer.c:2898
- try_to_free_buffers+0x21c/0x2d0 fs/buffer.c:2952
- filemap_release_folio+0x219/0x280 mm/filemap.c:4423
- shrink_folio_list+0x28a5/0x4800 mm/vmscan.c:1519
- evict_folios+0x79c/0x1b30 mm/vmscan.c:4745
- try_to_shrink_lruvec+0x585/0x9b0 mm/vmscan.c:4908
- shrink_one+0x3e3/0x7a0 mm/vmscan.c:4953
- shrink_many mm/vmscan.c:5016 [inline]
- lru_gen_shrink_node mm/vmscan.c:5094 [inline]
- shrink_node+0x26cb/0x3d80 mm/vmscan.c:6081
- kswapd_shrink_node mm/vmscan.c:6941 [inline]
- balance_pgdat+0xbb8/0x1a50 mm/vmscan.c:7124
- kswapd+0x590/0xb90 mm/vmscan.c:7389
- kthread+0x3c5/0x780 kernel/kthread.c:463
- ret_from_fork+0x675/0x7d0 arch/x86/kernel/process.c:158
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-==================================================================
-Oops: general protection fault, probably for non-canonical address 0xdffffc000000000c: 0000 [#1] SMP KASAN NOPTI
-KASAN: null-ptr-deref in range [0x0000000000000060-0x0000000000000067]
-CPU: 0 UID: 0 PID: 85 Comm: kswapd0 Tainted: G    B               syzkaller #0 PREEMPT(full) 
-Tainted: [B]=BAD_PAGE
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
-RIP: 0010:arch_atomic_read arch/x86/include/asm/atomic.h:23 [inline]
-RIP: 0010:raw_atomic_read include/linux/atomic/atomic-arch-fallback.h:457 [inline]
-RIP: 0010:atomic_read include/linux/atomic/atomic-instrumented.h:33 [inline]
-RIP: 0010:buffer_busy fs/buffer.c:2886 [inline]
-RIP: 0010:drop_buffers.constprop.0+0x90/0x340 fs/buffer.c:2898
-Code: 4d 8b 76 08 4c 39 f3 0f 84 84 00 00 00 e8 f8 28 72 ff 4d 8d 66 60 be 04 00 00 00 4c 89 e7 e8 d7 cc d9 ff 4c 89 e0 48 c1 e8 03 <0f> b6 0c 28 4c 89 e0 83 e0 07 83 c0 03 38 c8 7c 08 84 c9 0f 85 2d
-RSP: 0018:ffffc9000239f0b0 EFLAGS: 00010216
-RAX: 000000000000000c RBX: ffff888057ccd3e0 RCX: ffffffff817b40ef
-RDX: ffff88801ef18000 RSI: ffffffff82246d87 RDI: 0000000000000007
-RBP: dffffc0000000000 R08: 0000000000000007 R09: 0000000000000000
-R10: 0000000000000000 R11: 3d3d3d3d3d3d3d3d R12: 0000000000000060
-R13: ffffea0000a77880 R14: 0000000000000000 R15: ffffea0000a778a8
-FS:  0000000000000000(0000) GS:ffff888124a07000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055e34233c168 CR3: 0000000030ecb000 CR4: 0000000000350ef0
-Call Trace:
- <TASK>
- try_to_free_buffers+0x21c/0x2d0 fs/buffer.c:2952
- filemap_release_folio+0x219/0x280 mm/filemap.c:4423
- shrink_folio_list+0x28a5/0x4800 mm/vmscan.c:1519
- evict_folios+0x79c/0x1b30 mm/vmscan.c:4745
- try_to_shrink_lruvec+0x585/0x9b0 mm/vmscan.c:4908
- shrink_one+0x3e3/0x7a0 mm/vmscan.c:4953
- shrink_many mm/vmscan.c:5016 [inline]
- lru_gen_shrink_node mm/vmscan.c:5094 [inline]
- shrink_node+0x26cb/0x3d80 mm/vmscan.c:6081
- kswapd_shrink_node mm/vmscan.c:6941 [inline]
- balance_pgdat+0xbb8/0x1a50 mm/vmscan.c:7124
- kswapd+0x590/0xb90 mm/vmscan.c:7389
- kthread+0x3c5/0x780 kernel/kthread.c:463
- ret_from_fork+0x675/0x7d0 arch/x86/kernel/process.c:158
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:arch_atomic_read arch/x86/include/asm/atomic.h:23 [inline]
-RIP: 0010:raw_atomic_read include/linux/atomic/atomic-arch-fallback.h:457 [inline]
-RIP: 0010:atomic_read include/linux/atomic/atomic-instrumented.h:33 [inline]
-RIP: 0010:buffer_busy fs/buffer.c:2886 [inline]
-RIP: 0010:drop_buffers.constprop.0+0x90/0x340 fs/buffer.c:2898
-Code: 4d 8b 76 08 4c 39 f3 0f 84 84 00 00 00 e8 f8 28 72 ff 4d 8d 66 60 be 04 00 00 00 4c 89 e7 e8 d7 cc d9 ff 4c 89 e0 48 c1 e8 03 <0f> b6 0c 28 4c 89 e0 83 e0 07 83 c0 03 38 c8 7c 08 84 c9 0f 85 2d
-RSP: 0018:ffffc9000239f0b0 EFLAGS: 00010216
-RAX: 000000000000000c RBX: ffff888057ccd3e0 RCX: ffffffff817b40ef
-RDX: ffff88801ef18000 RSI: ffffffff82246d87 RDI: 0000000000000007
-RBP: dffffc0000000000 R08: 0000000000000007 R09: 0000000000000000
-R10: 0000000000000000 R11: 3d3d3d3d3d3d3d3d R12: 0000000000000060
-R13: ffffea0000a77880 R14: 0000000000000000 R15: ffffea0000a778a8
-FS:  0000000000000000(0000) GS:ffff888124a07000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055e34233c168 CR3: 0000000030ecb000 CR4: 0000000000350ef0
-----------------
-Code disassembly (best guess):
-   0:	4d 8b 76 08          	mov    0x8(%r14),%r14
-   4:	4c 39 f3             	cmp    %r14,%rbx
-   7:	0f 84 84 00 00 00    	je     0x91
-   d:	e8 f8 28 72 ff       	call   0xff72290a
-  12:	4d 8d 66 60          	lea    0x60(%r14),%r12
-  16:	be 04 00 00 00       	mov    $0x4,%esi
-  1b:	4c 89 e7             	mov    %r12,%rdi
-  1e:	e8 d7 cc d9 ff       	call   0xffd9ccfa
-  23:	4c 89 e0             	mov    %r12,%rax
-  26:	48 c1 e8 03          	shr    $0x3,%rax
-* 2a:	0f b6 0c 28          	movzbl (%rax,%rbp,1),%ecx <-- trapping instruction
-  2e:	4c 89 e0             	mov    %r12,%rax
-  31:	83 e0 07             	and    $0x7,%eax
-  34:	83 c0 03             	add    $0x3,%eax
-  37:	38 c8                	cmp    %cl,%al
-  39:	7c 08                	jl     0x43
-  3b:	84 c9                	test   %cl,%cl
-  3d:	0f                   	.byte 0xf
-  3e:	85                   	.byte 0x85
-  3f:	2d                   	.byte 0x2d
+On path parsing side, userspace could have passed something fucky like
+foo/////bar and this of course needs to be handled but it does not
+require the current ugliness to do so. This does happen with real
+programs (typically two slashes in a row), but is also constitutes a
+small minority of paths. The current code makes sure to skip the
+spurious slashes before looking up the name.
 
+My code $elsewhere instead notes it is an invariant that a name
+containing a slash cannot appear in the cache so it just goes forward
+with the lookup. If an entry is found, the name could not have started
+with / and the check is elided (common case). Should the entry be
+missing then indeed we check if slashes need to get rolled over.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+And so on.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+I think I can incrementally reduce a bunch of overhead, but it will
+always be leaving some perf on the table unless restructured.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+As for some profiling of the state, I booted up a kernel with all of
+my patches (including an extra to elide security_inode_permission) +
+sheaves and perf top'ed over a testcase which consists of series of
+access(2) calls lifted from strace on gcc and the linker. To the tune
+of 205 paths, some of them repeated and several deranged -- for
+example:
+        access("/usr/lib/gcc/x86_64-linux-gnu/12/../../../../x86_64-linux-g=
+nu/lib/x86_64-linux-gnu/12/Scrt1.o",
+R_OK);
+        access("/usr/lib/gcc/x86_64-linux-gnu/12/../../../../x86_64-linux-g=
+nu/lib/x86_64-linux-gnu/Scrt1.o",
+R_OK);
+        access("/usr/lib/gcc/x86_64-linux-gnu/12/../../../../x86_64-linux-g=
+nu/lib/../lib/Scrt1.o",
+R_OK);
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+The file is attached for interested.
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+The profile:
+  20.43%  [kernel]                  [k] __d_lookup_rcu
+  10.66%  [kernel]                  [k] entry_SYSCALL_64
+   9.50%  [kernel]                  [k] link_path_walk
+   6.98%  libc.so.6                 [.] __GI___access
+   6.04%  [kernel]                  [k] strncpy_from_user
+   4.81%  [kernel]                  [k] step_into
+   3.36%  [kernel]                  [k] kmem_cache_alloc_noprof
+   2.80%  [kernel]                  [k] kmem_cache_free
+   2.77%  [kernel]                  [k] walk_component
+   2.18%  [kernel]                  [k] lookup_fast
+   1.83%  [kernel]                  [k] set_root
+   1.83%  [kernel]                  [k] do_syscall_64
+   1.65%  [kernel]                  [k] getname_flags.part.0
+   1.57%  [kernel]                  [k] entry_SYSCALL_64_safe_stack
+   1.52%  [kernel]                  [k] nd_jump_root
+   1.48%  [kernel]                  [k] filename_lookup
+   1.34%  [kernel]                  [k] path_init
+   1.33%  [kernel]                  [k] do_faccessat
+   1.23%  [kernel]                  [k] __legitimize_mnt
+   1.23%  [kernel]                  [k] lockref_get_not_dead
+   0.96%  [kernel]                  [k] path_lookupat
+   0.92%  [kernel]                  [k] lockref_put_return
+   0.86%  [kernel]                  [k] its_return_thunk
+   0.83%  [kernel]                  [k] entry_SYSCALL_64_after_hwframe
+   0.80%  [kernel]                  [k] map_id_range_down
+   0.68%  [kernel]                  [k] user_path_at
 
-If you want to undo deduplication, reply with:
-#syz undup
+--000000000000aeb36c06433cddc0
+Content-Type: text/x-csrc; charset="US-ASCII"; name="access_compile.c"
+Content-Disposition: attachment; filename="access_compile.c"
+Content-Transfer-Encoding: base64
+Content-ID: <f_mht4tuhg0>
+X-Attachment-Id: f_mht4tuhg0
+
+I2luY2x1ZGUgPHN0ZGxpYi5oPgojaW5jbHVkZSA8dW5pc3RkLmg+CiNpbmNsdWRlIDxzeXMvdHlw
+ZXMuaD4KI2luY2x1ZGUgPHN5cy9zdGF0Lmg+CiNpbmNsdWRlIDxmY250bC5oPgojaW5jbHVkZSA8
+YXNzZXJ0Lmg+CgpjaGFyICp0ZXN0Y2FzZV9kZXNjcmlwdGlvbiA9ICJhY2Nlc3MoMikgY2FsbHMg
+aW52b2tlZCBieSBnY2MgYW5kIHRoZSBsaW5rZXIiOwoKdm9pZCB0ZXN0Y2FzZSh1bnNpZ25lZCBs
+b25nIGxvbmcgKml0ZXJhdGlvbnMsIHVuc2lnbmVkIGxvbmcgbnIpCnsKCXdoaWxlICgxKSB7CgkJ
+YWNjZXNzKCIvZXRjL2xkLnNvLnByZWxvYWQiLCBSX09LKTsKCQlhY2Nlc3MoIi9iaW4vc2giLCBY
+X09LKTsKCQlhY2Nlc3MoIi9ldGMvbGQuc28ucHJlbG9hZCIsIFJfT0spOwoJCWFjY2VzcygiL2V0
+Yy9sZC5zby5wcmVsb2FkIiwgUl9PSyk7CgkJYWNjZXNzKCIvdXNyL2xvY2FsL3NiaW4vY2MiLCBY
+X09LKTsKCQlhY2Nlc3MoIi91c3IvbG9jYWwvYmluL2NjIiwgWF9PSyk7CgkJYWNjZXNzKCIvdXNy
+L3NiaW4vY2MiLCBYX09LKTsKCQlhY2Nlc3MoIi91c3IvYmluL2NjIiwgWF9PSyk7CgkJYWNjZXNz
+KCIvdXNyL2xvY2FsL3NiaW4vY2MiLCBYX09LKTsKCQlhY2Nlc3MoIi91c3IvbG9jYWwvYmluL2Nj
+IiwgWF9PSyk7CgkJYWNjZXNzKCIvdXNyL3NiaW4vY2MiLCBYX09LKTsKCQlhY2Nlc3MoIi91c3Iv
+YmluL2NjIiwgWF9PSyk7CgkJYWNjZXNzKCIvdXNyL2xpYi9nY2MveDg2XzY0LWxpbnV4LWdudS8x
+Mi8iLCBYX09LKTsKCQlhY2Nlc3MoIi91c3IvbGliL2djYy94ODZfNjQtbGludXgtZ251LzEyLyIs
+IFhfT0spOwoJCWFjY2VzcygiL3Vzci9saWIvZ2NjL3g4Nl82NC1saW51eC1nbnUvMTIvc3BlY3Mi
+LCBSX09LKTsKCQlhY2Nlc3MoIi91c3IvbGliL2djYy94ODZfNjQtbGludXgtZ251LzEyLy4uLy4u
+Ly4uLy4uL3g4Nl82NC1saW51eC1nbnUvbGliL3g4Nl82NC1saW51eC1nbnUvMTIvc3BlY3MiLCBS
+X09LKTsKCQlhY2Nlc3MoIi91c3IvbGliL2djYy94ODZfNjQtbGludXgtZ251LzEyLy4uLy4uLy4u
+Ly4uL3g4Nl82NC1saW51eC1nbnUvbGliL3NwZWNzIiwgUl9PSyk7CgkJYWNjZXNzKCIvdXNyL2xp
+Yi9nY2MveDg2XzY0LWxpbnV4LWdudS9zcGVjcyIsIFJfT0spOwoJCWFjY2VzcygiL3Vzci9saWIv
+Z2NjL3g4Nl82NC1saW51eC1nbnUvMTIvIiwgWF9PSyk7CgkJYWNjZXNzKCIvdXNyL2xpYi9nY2Mv
+eDg2XzY0LWxpbnV4LWdudS8xMi9sdG8td3JhcHBlciIsIFhfT0spOwoJCWFjY2VzcygiL3RtcCIs
+IFJfT0t8V19PS3xYX09LKTsKCQlhY2Nlc3MoIi91c3IvbGliL2djYy94ODZfNjQtbGludXgtZ251
+LzEyL2NjMSIsIFhfT0spOwoJCWFjY2VzcygiL2V0Yy9sZC5zby5wcmVsb2FkIiwgUl9PSyk7CgkJ
+YWNjZXNzKCIvdXNyL2xpYi9nY2MveDg2XzY0LWxpbnV4LWdudS8xMi8iLCBYX09LKTsKCQlhY2Nl
+c3MoIi9ldGMvbGQuc28ucHJlbG9hZCIsIFJfT0spOwoJCWFjY2VzcygiL3Vzci9saWIvZ2NjL3g4
+Nl82NC1saW51eC1nbnUvMTIvY29sbGVjdDIiLCBYX09LKTsKCQlhY2Nlc3MoIi91c3IvbGliL2dj
+Yy94ODZfNjQtbGludXgtZ251LzEyL2xpYmx0b19wbHVnaW4uc28iLCBSX09LKTsKCQlhY2Nlc3Mo
+Ii91c3IvbGliL2djYy94ODZfNjQtbGludXgtZ251LzEyL1NjcnQxLm8iLCBSX09LKTsKCQlhY2Nl
+c3MoIi91c3IvbGliL2djYy94ODZfNjQtbGludXgtZ251LzEyLy4uLy4uLy4uLy4uL3g4Nl82NC1s
+aW51eC1nbnUvbGliL3g4Nl82NC1saW51eC1nbnUvMTIvU2NydDEubyIsIFJfT0spOwoJCWFjY2Vz
+cygiL3Vzci9saWIvZ2NjL3g4Nl82NC1saW51eC1nbnUvMTIvLi4vLi4vLi4vLi4veDg2XzY0LWxp
+bnV4LWdudS9saWIveDg2XzY0LWxpbnV4LWdudS9TY3J0MS5vIiwgUl9PSyk7CgkJYWNjZXNzKCIv
+dXNyL2xpYi9nY2MveDg2XzY0LWxpbnV4LWdudS8xMi8uLi8uLi8uLi8uLi94ODZfNjQtbGludXgt
+Z251L2xpYi8uLi9saWIvU2NydDEubyIsIFJfT0spOwoJCWFjY2VzcygiL3Vzci9saWIvZ2NjL3g4
+Nl82NC1saW51eC1nbnUvMTIvLi4vLi4vLi4veDg2XzY0LWxpbnV4LWdudS8xMi9TY3J0MS5vIiwg
+Ul9PSyk7CgkJYWNjZXNzKCIvdXNyL2xpYi9nY2MveDg2XzY0LWxpbnV4LWdudS8xMi8uLi8uLi8u
+Li94ODZfNjQtbGludXgtZ251L1NjcnQxLm8iLCBSX09LKTsKCQlhY2Nlc3MoIi91c3IvbGliL2dj
+Yy94ODZfNjQtbGludXgtZ251LzEyL2NydGkubyIsIFJfT0spOwoJCWFjY2VzcygiL3Vzci9saWIv
+Z2NjL3g4Nl82NC1saW51eC1nbnUvMTIvLi4vLi4vLi4vLi4veDg2XzY0LWxpbnV4LWdudS9saWIv
+eDg2XzY0LWxpbnV4LWdudS8xMi9jcnRpLm8iLCBSX09LKTsKCQlhY2Nlc3MoIi91c3IvbGliL2dj
+Yy94ODZfNjQtbGludXgtZ251LzEyLy4uLy4uLy4uLy4uL3g4Nl82NC1saW51eC1nbnUvbGliL3g4
+Nl82NC1saW51eC1nbnUvY3J0aS5vIiwgUl9PSyk7CgkJYWNjZXNzKCIvdXNyL2xpYi9nY2MveDg2
+XzY0LWxpbnV4LWdudS8xMi8uLi8uLi8uLi8uLi94ODZfNjQtbGludXgtZ251L2xpYi8uLi9saWIv
+Y3J0aS5vIiwgUl9PSyk7CgkJYWNjZXNzKCIvdXNyL2xpYi9nY2MveDg2XzY0LWxpbnV4LWdudS8x
+Mi8uLi8uLi8uLi94ODZfNjQtbGludXgtZ251LzEyL2NydGkubyIsIFJfT0spOwoJCWFjY2Vzcygi
+L3Vzci9saWIvZ2NjL3g4Nl82NC1saW51eC1nbnUvMTIvLi4vLi4vLi4veDg2XzY0LWxpbnV4LWdu
+dS9jcnRpLm8iLCBSX09LKTsKCQlhY2Nlc3MoIi91c3IvbGliL2djYy94ODZfNjQtbGludXgtZ251
+LzEyL2NydGJlZ2luUy5vIiwgUl9PSyk7CgkJYWNjZXNzKCIvdXNyL2xpYi9nY2MveDg2XzY0LWxp
+bnV4LWdudS8xMi9jcnRlbmRTLm8iLCBSX09LKTsKCQlhY2Nlc3MoIi91c3IvbGliL2djYy94ODZf
+NjQtbGludXgtZ251LzEyL2NydG4ubyIsIFJfT0spOwoJCWFjY2VzcygiL3Vzci9saWIvZ2NjL3g4
+Nl82NC1saW51eC1nbnUvMTIvLi4vLi4vLi4vLi4veDg2XzY0LWxpbnV4LWdudS9saWIveDg2XzY0
+LWxpbnV4LWdudS8xMi9jcnRuLm8iLCBSX09LKTsKCQlhY2Nlc3MoIi91c3IvbGliL2djYy94ODZf
+NjQtbGludXgtZ251LzEyLy4uLy4uLy4uLy4uL3g4Nl82NC1saW51eC1nbnUvbGliL3g4Nl82NC1s
+aW51eC1nbnUvY3J0bi5vIiwgUl9PSyk7CgkJYWNjZXNzKCIvdXNyL2xpYi9nY2MveDg2XzY0LWxp
+bnV4LWdudS8xMi8uLi8uLi8uLi8uLi94ODZfNjQtbGludXgtZ251L2xpYi8uLi9saWIvY3J0bi5v
+IiwgUl9PSyk7CgkJYWNjZXNzKCIvdXNyL2xpYi9nY2MveDg2XzY0LWxpbnV4LWdudS8xMi8uLi8u
+Li8uLi94ODZfNjQtbGludXgtZ251LzEyL2NydG4ubyIsIFJfT0spOwoJCWFjY2VzcygiL3Vzci9s
+aWIvZ2NjL3g4Nl82NC1saW51eC1nbnUvMTIvLi4vLi4vLi4veDg2XzY0LWxpbnV4LWdudS9jcnRu
+Lm8iLCBSX09LKTsKCQlhY2Nlc3MoIi91c3IvbGliL2djYy94ODZfNjQtbGludXgtZ251LzEyL2Nv
+bGxlY3QyIiwgWF9PSyk7CgkJYWNjZXNzKCIvZXRjL2xkLnNvLnByZWxvYWQiLCBSX09LKTsKCQlh
+Y2Nlc3MoIi91c3IvYmluL2xkIiwgWF9PSyk7CgkJYWNjZXNzKCIvdXNyL2Jpbi9ubSIsIFhfT0sp
+OwoJCWFjY2VzcygiL3Vzci9iaW4vc3RyaXAiLCBYX09LKTsKCQlhY2Nlc3MoIi91c3IvYmluL2Nj
+IiwgWF9PSyk7CgkJYWNjZXNzKCIvdG1wIiwgUl9PS3xXX09LfFhfT0spOwoJCWFjY2VzcygiL2V0
+Yy9sZC5zby5wcmVsb2FkIiwgUl9PSyk7CgkJYWNjZXNzKCIvYmluL3NoIiwgWF9PSyk7CgkJYWNj
+ZXNzKCIvZXRjL2xkLnNvLnByZWxvYWQiLCBSX09LKTsKCQlhY2Nlc3MoIi9ldGMvbGQuc28ucHJl
+bG9hZCIsIFJfT0spOwoJCWFjY2VzcygiL3Vzci9sb2NhbC9zYmluL2NjIiwgWF9PSyk7CgkJYWNj
+ZXNzKCIvdXNyL2xvY2FsL2Jpbi9jYyIsIFhfT0spOwoJCWFjY2VzcygiL3Vzci9zYmluL2NjIiwg
+WF9PSyk7CgkJYWNjZXNzKCIvdXNyL2Jpbi9jYyIsIFhfT0spOwoJCWFjY2VzcygiL3Vzci9sb2Nh
+bC9zYmluL2NjIiwgWF9PSyk7CgkJYWNjZXNzKCIvdXNyL2xvY2FsL2Jpbi9jYyIsIFhfT0spOwoJ
+CWFjY2VzcygiL3Vzci9zYmluL2NjIiwgWF9PSyk7CgkJYWNjZXNzKCIvdXNyL2Jpbi9jYyIsIFhf
+T0spOwoJCWFjY2VzcygiL3Vzci9saWIvZ2NjL3g4Nl82NC1saW51eC1nbnUvMTIvIiwgWF9PSyk7
+CgkJYWNjZXNzKCIvdXNyL2xpYi9nY2MveDg2XzY0LWxpbnV4LWdudS8xMi8iLCBYX09LKTsKCQlh
+Y2Nlc3MoIi91c3IvbGliL2djYy94ODZfNjQtbGludXgtZ251LzEyL3NwZWNzIiwgUl9PSyk7CgkJ
+YWNjZXNzKCIvdXNyL2xpYi9nY2MveDg2XzY0LWxpbnV4LWdudS8xMi8uLi8uLi8uLi8uLi94ODZf
+NjQtbGludXgtZ251L2xpYi94ODZfNjQtbGludXgtZ251LzEyL3NwZWNzIiwgUl9PSyk7CgkJYWNj
+ZXNzKCIvdXNyL2xpYi9nY2MveDg2XzY0LWxpbnV4LWdudS8xMi8uLi8uLi8uLi8uLi94ODZfNjQt
+bGludXgtZ251L2xpYi9zcGVjcyIsIFJfT0spOwoJCWFjY2VzcygiL3Vzci9saWIvZ2NjL3g4Nl82
+NC1saW51eC1nbnUvc3BlY3MiLCBSX09LKTsKCQlhY2Nlc3MoIi91c3IvbGliL2djYy94ODZfNjQt
+bGludXgtZ251LzEyLyIsIFhfT0spOwoJCWFjY2VzcygiL3RtcCIsIFJfT0t8V19PS3xYX09LKTsK
+CQlhY2Nlc3MoIi91c3IvbGliL2djYy94ODZfNjQtbGludXgtZ251LzEyL2NjMSIsIFhfT0spOwoJ
+CWFjY2VzcygiL2V0Yy9sZC5zby5wcmVsb2FkIiwgUl9PSyk7CgkJYWNjZXNzKCIvdXNyL2xpYi9n
+Y2MveDg2XzY0LWxpbnV4LWdudS8xMi8iLCBYX09LKTsKCQlhY2Nlc3MoIi91c3IvYmluL2NjIiwg
+WF9PSyk7CgkJYWNjZXNzKCIvZXRjL2xkLnNvLnByZWxvYWQiLCBSX09LKTsKCQlhY2Nlc3MoIi91
+c3IvbG9jYWwvc2Jpbi9jYyIsIFhfT0spOwoJCWFjY2VzcygiL3Vzci9sb2NhbC9iaW4vY2MiLCBY
+X09LKTsKCQlhY2Nlc3MoIi91c3Ivc2Jpbi9jYyIsIFhfT0spOwoJCWFjY2VzcygiL3Vzci9iaW4v
+Y2MiLCBYX09LKTsKCQlhY2Nlc3MoIi91c3IvbG9jYWwvc2Jpbi9jYyIsIFhfT0spOwoJCWFjY2Vz
+cygiL3Vzci9sb2NhbC9iaW4vY2MiLCBYX09LKTsKCQlhY2Nlc3MoIi91c3Ivc2Jpbi9jYyIsIFhf
+T0spOwoJCWFjY2VzcygiL3Vzci9iaW4vY2MiLCBYX09LKTsKCQlhY2Nlc3MoIi91c3IvbGliL2dj
+Yy94ODZfNjQtbGludXgtZ251LzEyLyIsIFhfT0spOwoJCWFjY2VzcygiL3Vzci9saWIvZ2NjL3g4
+Nl82NC1saW51eC1nbnUvMTIvIiwgWF9PSyk7CgkJYWNjZXNzKCIvdXNyL2xpYi9nY2MveDg2XzY0
+LWxpbnV4LWdudS8xMi9zcGVjcyIsIFJfT0spOwoJCWFjY2VzcygiL3Vzci9saWIvZ2NjL3g4Nl82
+NC1saW51eC1nbnUvMTIvLi4vLi4vLi4vLi4veDg2XzY0LWxpbnV4LWdudS9saWIveDg2XzY0LWxp
+bnV4LWdudS8xMi9zcGVjcyIsIFJfT0spOwoJCWFjY2VzcygiL3Vzci9saWIvZ2NjL3g4Nl82NC1s
+aW51eC1nbnUvMTIvLi4vLi4vLi4vLi4veDg2XzY0LWxpbnV4LWdudS9saWIvc3BlY3MiLCBSX09L
+KTsKCQlhY2Nlc3MoIi91c3IvbGliL2djYy94ODZfNjQtbGludXgtZ251L3NwZWNzIiwgUl9PSyk7
+CgkJYWNjZXNzKCIvdXNyL2xpYi9nY2MveDg2XzY0LWxpbnV4LWdudS8xMi8iLCBYX09LKTsKCQlh
+Y2Nlc3MoIi90bXAiLCBSX09LfFdfT0t8WF9PSyk7CgkJYWNjZXNzKCIvdXNyL2xpYi9nY2MveDg2
+XzY0LWxpbnV4LWdudS8xMi9jYzEiLCBYX09LKTsKCQlhY2Nlc3MoIi9ldGMvbGQuc28ucHJlbG9h
+ZCIsIFJfT0spOwoJCWFjY2VzcygiL3Vzci9saWIvZ2NjL3g4Nl82NC1saW51eC1nbnUvMTIvIiwg
+WF9PSyk7CgkJYWNjZXNzKCIvZXRjL2xkLnNvLnByZWxvYWQiLCBSX09LKTsKCQlhY2Nlc3MoIi91
+c3IvYmluL2NjIiwgWF9PSyk7CgkJYWNjZXNzKCIvZXRjL2xkLnNvLnByZWxvYWQiLCBSX09LKTsK
+CQlhY2Nlc3MoIi91c3IvbG9jYWwvc2Jpbi9jYyIsIFhfT0spOwoJCWFjY2VzcygiL3Vzci9sb2Nh
+bC9iaW4vY2MiLCBYX09LKTsKCQlhY2Nlc3MoIi91c3Ivc2Jpbi9jYyIsIFhfT0spOwoJCWFjY2Vz
+cygiL3Vzci9iaW4vY2MiLCBYX09LKTsKCQlhY2Nlc3MoIi91c3IvbG9jYWwvc2Jpbi9jYyIsIFhf
+T0spOwoJCWFjY2VzcygiL3Vzci9sb2NhbC9iaW4vY2MiLCBYX09LKTsKCQlhY2Nlc3MoIi91c3Iv
+c2Jpbi9jYyIsIFhfT0spOwoJCWFjY2VzcygiL3Vzci9iaW4vY2MiLCBYX09LKTsKCQlhY2Nlc3Mo
+Ii91c3IvbGliL2djYy94ODZfNjQtbGludXgtZ251LzEyLyIsIFhfT0spOwoJCWFjY2VzcygiL3Vz
+ci9saWIvZ2NjL3g4Nl82NC1saW51eC1nbnUvMTIvIiwgWF9PSyk7CgkJYWNjZXNzKCIvdXNyL2xp
+Yi9nY2MveDg2XzY0LWxpbnV4LWdudS8xMi9zcGVjcyIsIFJfT0spOwoJCWFjY2VzcygiL3Vzci9s
+aWIvZ2NjL3g4Nl82NC1saW51eC1nbnUvMTIvLi4vLi4vLi4vLi4veDg2XzY0LWxpbnV4LWdudS9s
+aWIveDg2XzY0LWxpbnV4LWdudS8xMi9zcGVjcyIsIFJfT0spOwoJCWFjY2VzcygiL3Vzci9saWIv
+Z2NjL3g4Nl82NC1saW51eC1nbnUvMTIvLi4vLi4vLi4vLi4veDg2XzY0LWxpbnV4LWdudS9saWIv
+c3BlY3MiLCBSX09LKTsKCQlhY2Nlc3MoIi91c3IvbGliL2djYy94ODZfNjQtbGludXgtZ251L3Nw
+ZWNzIiwgUl9PSyk7CgkJYWNjZXNzKCIvdXNyL2xpYi9nY2MveDg2XzY0LWxpbnV4LWdudS8xMi8i
+LCBYX09LKTsKCQlhY2Nlc3MoIi91c3IvbGliL2djYy94ODZfNjQtbGludXgtZ251LzEyL2x0by13
+cmFwcGVyIiwgWF9PSyk7CgkJYWNjZXNzKCIvdG1wIiwgUl9PS3xXX09LfFhfT0spOwoJCWFjY2Vz
+cygiL3Vzci9saWIvZ2NjL3g4Nl82NC1saW51eC1nbnUvMTIvY2MxIiwgWF9PSyk7CgkJYWNjZXNz
+KCIvZXRjL2xkLnNvLnByZWxvYWQiLCBSX09LKTsKCQlhY2Nlc3MoIi91c3IvbGliL2djYy94ODZf
+NjQtbGludXgtZ251LzEyLyIsIFhfT0spOwoJCWFjY2VzcygiL2V0Yy9sZC5zby5wcmVsb2FkIiwg
+Ul9PSyk7CgkJYWNjZXNzKCIvdXNyL2xpYi9nY2MveDg2XzY0LWxpbnV4LWdudS8xMi9jb2xsZWN0
+MiIsIFhfT0spOwoJCWFjY2VzcygiL3Vzci9saWIvZ2NjL3g4Nl82NC1saW51eC1nbnUvMTIvbGli
+bHRvX3BsdWdpbi5zbyIsIFJfT0spOwoJCWFjY2VzcygiL3Vzci9saWIvZ2NjL3g4Nl82NC1saW51
+eC1nbnUvMTIvU2NydDEubyIsIFJfT0spOwoJCWFjY2VzcygiL3Vzci9saWIvZ2NjL3g4Nl82NC1s
+aW51eC1nbnUvMTIvLi4vLi4vLi4vLi4veDg2XzY0LWxpbnV4LWdudS9saWIveDg2XzY0LWxpbnV4
+LWdudS8xMi9TY3J0MS5vIiwgUl9PSyk7CgkJYWNjZXNzKCIvdXNyL2xpYi9nY2MveDg2XzY0LWxp
+bnV4LWdudS8xMi8uLi8uLi8uLi8uLi94ODZfNjQtbGludXgtZ251L2xpYi94ODZfNjQtbGludXgt
+Z251L1NjcnQxLm8iLCBSX09LKTsKCQlhY2Nlc3MoIi91c3IvbGliL2djYy94ODZfNjQtbGludXgt
+Z251LzEyLy4uLy4uLy4uLy4uL3g4Nl82NC1saW51eC1nbnUvbGliLy4uL2xpYi9TY3J0MS5vIiwg
+Ul9PSyk7CgkJYWNjZXNzKCIvdXNyL2xpYi9nY2MveDg2XzY0LWxpbnV4LWdudS8xMi8uLi8uLi8u
+Li94ODZfNjQtbGludXgtZ251LzEyL1NjcnQxLm8iLCBSX09LKTsKCQlhY2Nlc3MoIi91c3IvbGli
+L2djYy94ODZfNjQtbGludXgtZ251LzEyLy4uLy4uLy4uL3g4Nl82NC1saW51eC1nbnUvU2NydDEu
+byIsIFJfT0spOwoJCWFjY2VzcygiL3Vzci9saWIvZ2NjL3g4Nl82NC1saW51eC1nbnUvMTIvY3J0
+aS5vIiwgUl9PSyk7CgkJYWNjZXNzKCIvdXNyL2xpYi9nY2MveDg2XzY0LWxpbnV4LWdudS8xMi8u
+Li8uLi8uLi8uLi94ODZfNjQtbGludXgtZ251L2xpYi94ODZfNjQtbGludXgtZ251LzEyL2NydGku
+byIsIFJfT0spOwoJCWFjY2VzcygiL3Vzci9saWIvZ2NjL3g4Nl82NC1saW51eC1nbnUvMTIvLi4v
+Li4vLi4vLi4veDg2XzY0LWxpbnV4LWdudS9saWIveDg2XzY0LWxpbnV4LWdudS9jcnRpLm8iLCBS
+X09LKTsKCQlhY2Nlc3MoIi91c3IvbGliL2djYy94ODZfNjQtbGludXgtZ251LzEyLy4uLy4uLy4u
+Ly4uL3g4Nl82NC1saW51eC1nbnUvbGliLy4uL2xpYi9jcnRpLm8iLCBSX09LKTsKCQlhY2Nlc3Mo
+Ii91c3IvbGliL2djYy94ODZfNjQtbGludXgtZ251LzEyLy4uLy4uLy4uL3g4Nl82NC1saW51eC1n
+bnUvMTIvY3J0aS5vIiwgUl9PSyk7CgkJYWNjZXNzKCIvdXNyL2xpYi9nY2MveDg2XzY0LWxpbnV4
+LWdudS8xMi8uLi8uLi8uLi94ODZfNjQtbGludXgtZ251L2NydGkubyIsIFJfT0spOwoJCWFjY2Vz
+cygiL3Vzci9saWIvZ2NjL3g4Nl82NC1saW51eC1nbnUvMTIvY3J0YmVnaW5TLm8iLCBSX09LKTsK
+CQlhY2Nlc3MoIi91c3IvbGliL2djYy94ODZfNjQtbGludXgtZ251LzEyL2NydGVuZFMubyIsIFJf
+T0spOwoJCWFjY2VzcygiL3Vzci9saWIvZ2NjL3g4Nl82NC1saW51eC1nbnUvMTIvY3J0bi5vIiwg
+Ul9PSyk7CgkJYWNjZXNzKCIvdXNyL2xpYi9nY2MveDg2XzY0LWxpbnV4LWdudS8xMi8uLi8uLi8u
+Li8uLi94ODZfNjQtbGludXgtZ251L2xpYi94ODZfNjQtbGludXgtZ251LzEyL2NydG4ubyIsIFJf
+T0spOwoJCWFjY2VzcygiL3Vzci9saWIvZ2NjL3g4Nl82NC1saW51eC1nbnUvMTIvLi4vLi4vLi4v
+Li4veDg2XzY0LWxpbnV4LWdudS9saWIveDg2XzY0LWxpbnV4LWdudS9jcnRuLm8iLCBSX09LKTsK
+CQlhY2Nlc3MoIi91c3IvbGliL2djYy94ODZfNjQtbGludXgtZ251LzEyLy4uLy4uLy4uLy4uL3g4
+Nl82NC1saW51eC1nbnUvbGliLy4uL2xpYi9jcnRuLm8iLCBSX09LKTsKCQlhY2Nlc3MoIi91c3Iv
+bGliL2djYy94ODZfNjQtbGludXgtZ251LzEyLy4uLy4uLy4uL3g4Nl82NC1saW51eC1nbnUvMTIv
+Y3J0bi5vIiwgUl9PSyk7CgkJYWNjZXNzKCIvdXNyL2xpYi9nY2MveDg2XzY0LWxpbnV4LWdudS8x
+Mi8uLi8uLi8uLi94ODZfNjQtbGludXgtZ251L2NydG4ubyIsIFJfT0spOwoJCWFjY2VzcygiL3Vz
+ci9saWIvZ2NjL3g4Nl82NC1saW51eC1nbnUvMTIvY29sbGVjdDIiLCBYX09LKTsKCQlhY2Nlc3Mo
+Ii9ldGMvbGQuc28ucHJlbG9hZCIsIFJfT0spOwoJCWFjY2VzcygiL3Vzci9iaW4vbGQiLCBYX09L
+KTsKCQlhY2Nlc3MoIi91c3IvYmluL25tIiwgWF9PSyk7CgkJYWNjZXNzKCIvdXNyL2Jpbi9zdHJp
+cCIsIFhfT0spOwoJCWFjY2VzcygiL3Vzci9iaW4vY2MiLCBYX09LKTsKCQlhY2Nlc3MoIi90bXAi
+LCBSX09LfFdfT0t8WF9PSyk7CgkJYWNjZXNzKCIvZXRjL2xkLnNvLnByZWxvYWQiLCBSX09LKTsK
+CQlhY2Nlc3MoIi91c3IvYmluL2NjIiwgWF9PSyk7CgkJYWNjZXNzKCIvZXRjL2xkLnNvLnByZWxv
+YWQiLCBSX09LKTsKCQlhY2Nlc3MoIi91c3IvbG9jYWwvc2Jpbi9jYyIsIFhfT0spOwoJCWFjY2Vz
+cygiL3Vzci9sb2NhbC9iaW4vY2MiLCBYX09LKTsKCQlhY2Nlc3MoIi91c3Ivc2Jpbi9jYyIsIFhf
+T0spOwoJCWFjY2VzcygiL3Vzci9iaW4vY2MiLCBYX09LKTsKCQlhY2Nlc3MoIi91c3IvbG9jYWwv
+c2Jpbi9jYyIsIFhfT0spOwoJCWFjY2VzcygiL3Vzci9sb2NhbC9iaW4vY2MiLCBYX09LKTsKCQlh
+Y2Nlc3MoIi91c3Ivc2Jpbi9jYyIsIFhfT0spOwoJCWFjY2VzcygiL3Vzci9iaW4vY2MiLCBYX09L
+KTsKCQlhY2Nlc3MoIi91c3IvbGliL2djYy94ODZfNjQtbGludXgtZ251LzEyLyIsIFhfT0spOwoJ
+CWFjY2VzcygiL3Vzci9saWIvZ2NjL3g4Nl82NC1saW51eC1nbnUvMTIvIiwgWF9PSyk7CgkJYWNj
+ZXNzKCIvdXNyL2xpYi9nY2MveDg2XzY0LWxpbnV4LWdudS8xMi9zcGVjcyIsIFJfT0spOwoJCWFj
+Y2VzcygiL3Vzci9saWIvZ2NjL3g4Nl82NC1saW51eC1nbnUvMTIvLi4vLi4vLi4vLi4veDg2XzY0
+LWxpbnV4LWdudS9saWIveDg2XzY0LWxpbnV4LWdudS8xMi9zcGVjcyIsIFJfT0spOwoJCWFjY2Vz
+cygiL3Vzci9saWIvZ2NjL3g4Nl82NC1saW51eC1nbnUvMTIvLi4vLi4vLi4vLi4veDg2XzY0LWxp
+bnV4LWdudS9saWIvc3BlY3MiLCBSX09LKTsKCQlhY2Nlc3MoIi91c3IvbGliL2djYy94ODZfNjQt
+bGludXgtZ251L3NwZWNzIiwgUl9PSyk7CgkJYWNjZXNzKCIvdXNyL2xpYi9nY2MveDg2XzY0LWxp
+bnV4LWdudS8xMi8iLCBYX09LKTsKCQlhY2Nlc3MoIi91c3IvbGliL2djYy94ODZfNjQtbGludXgt
+Z251LzEyL2x0by13cmFwcGVyIiwgWF9PSyk7CgkJYWNjZXNzKCIvdG1wIiwgUl9PS3xXX09LfFhf
+T0spOwoJCWFjY2VzcygiL3Vzci9saWIvZ2NjL3g4Nl82NC1saW51eC1nbnUvMTIvY2MxIiwgWF9P
+Syk7CgkJYWNjZXNzKCIvZXRjL2xkLnNvLnByZWxvYWQiLCBSX09LKTsKCQlhY2Nlc3MoIi91c3Iv
+bGliL2djYy94ODZfNjQtbGludXgtZ251LzEyLyIsIFhfT0spOwoJCWFjY2VzcygiL2V0Yy9sZC5z
+by5wcmVsb2FkIiwgUl9PSyk7CgkJYWNjZXNzKCIvdXNyL2xpYi9nY2MveDg2XzY0LWxpbnV4LWdu
+dS8xMi9jb2xsZWN0MiIsIFhfT0spOwoJCWFjY2VzcygiL3Vzci9saWIvZ2NjL3g4Nl82NC1saW51
+eC1nbnUvMTIvbGlibHRvX3BsdWdpbi5zbyIsIFJfT0spOwoJCWFjY2VzcygiL3Vzci9saWIvZ2Nj
+L3g4Nl82NC1saW51eC1nbnUvMTIvU2NydDEubyIsIFJfT0spOwoJCWFjY2VzcygiL3Vzci9saWIv
+Z2NjL3g4Nl82NC1saW51eC1nbnUvMTIvLi4vLi4vLi4vLi4veDg2XzY0LWxpbnV4LWdudS9saWIv
+eDg2XzY0LWxpbnV4LWdudS8xMi9TY3J0MS5vIiwgUl9PSyk7CgkJYWNjZXNzKCIvdXNyL2xpYi9n
+Y2MveDg2XzY0LWxpbnV4LWdudS8xMi8uLi8uLi8uLi8uLi94ODZfNjQtbGludXgtZ251L2xpYi94
+ODZfNjQtbGludXgtZ251L1NjcnQxLm8iLCBSX09LKTsKCQlhY2Nlc3MoIi91c3IvbGliL2djYy94
+ODZfNjQtbGludXgtZ251LzEyLy4uLy4uLy4uLy4uL3g4Nl82NC1saW51eC1nbnUvbGliLy4uL2xp
+Yi9TY3J0MS5vIiwgUl9PSyk7CgkJYWNjZXNzKCIvdXNyL2xpYi9nY2MveDg2XzY0LWxpbnV4LWdu
+dS8xMi8uLi8uLi8uLi94ODZfNjQtbGludXgtZ251LzEyL1NjcnQxLm8iLCBSX09LKTsKCQlhY2Nl
+c3MoIi91c3IvbGliL2djYy94ODZfNjQtbGludXgtZ251LzEyLy4uLy4uLy4uL3g4Nl82NC1saW51
+eC1nbnUvU2NydDEubyIsIFJfT0spOwoJCWFjY2VzcygiL3Vzci9saWIvZ2NjL3g4Nl82NC1saW51
+eC1nbnUvMTIvY3J0aS5vIiwgUl9PSyk7CgkJYWNjZXNzKCIvdXNyL2xpYi9nY2MveDg2XzY0LWxp
+bnV4LWdudS8xMi8uLi8uLi8uLi8uLi94ODZfNjQtbGludXgtZ251L2xpYi94ODZfNjQtbGludXgt
+Z251LzEyL2NydGkubyIsIFJfT0spOwoJCWFjY2VzcygiL3Vzci9saWIvZ2NjL3g4Nl82NC1saW51
+eC1nbnUvMTIvLi4vLi4vLi4vLi4veDg2XzY0LWxpbnV4LWdudS9saWIveDg2XzY0LWxpbnV4LWdu
+dS9jcnRpLm8iLCBSX09LKTsKCQlhY2Nlc3MoIi91c3IvbGliL2djYy94ODZfNjQtbGludXgtZ251
+LzEyLy4uLy4uLy4uLy4uL3g4Nl82NC1saW51eC1nbnUvbGliLy4uL2xpYi9jcnRpLm8iLCBSX09L
+KTsKCQlhY2Nlc3MoIi91c3IvbGliL2djYy94ODZfNjQtbGludXgtZ251LzEyLy4uLy4uLy4uL3g4
+Nl82NC1saW51eC1nbnUvMTIvY3J0aS5vIiwgUl9PSyk7CgkJYWNjZXNzKCIvdXNyL2xpYi9nY2Mv
+eDg2XzY0LWxpbnV4LWdudS8xMi8uLi8uLi8uLi94ODZfNjQtbGludXgtZ251L2NydGkubyIsIFJf
+T0spOwoJCWFjY2VzcygiL3Vzci9saWIvZ2NjL3g4Nl82NC1saW51eC1nbnUvMTIvY3J0YmVnaW5T
+Lm8iLCBSX09LKTsKCQlhY2Nlc3MoIi91c3IvbGliL2djYy94ODZfNjQtbGludXgtZ251LzEyL2Ny
+dGVuZFMubyIsIFJfT0spOwoJCWFjY2VzcygiL3Vzci9saWIvZ2NjL3g4Nl82NC1saW51eC1nbnUv
+MTIvY3J0bi5vIiwgUl9PSyk7CgkJYWNjZXNzKCIvdXNyL2xpYi9nY2MveDg2XzY0LWxpbnV4LWdu
+dS8xMi8uLi8uLi8uLi8uLi94ODZfNjQtbGludXgtZ251L2xpYi94ODZfNjQtbGludXgtZ251LzEy
+L2NydG4ubyIsIFJfT0spOwoJCWFjY2VzcygiL3Vzci9saWIvZ2NjL3g4Nl82NC1saW51eC1nbnUv
+MTIvLi4vLi4vLi4vLi4veDg2XzY0LWxpbnV4LWdudS9saWIveDg2XzY0LWxpbnV4LWdudS9jcnRu
+Lm8iLCBSX09LKTsKCQlhY2Nlc3MoIi91c3IvbGliL2djYy94ODZfNjQtbGludXgtZ251LzEyLy4u
+Ly4uLy4uLy4uL3g4Nl82NC1saW51eC1nbnUvbGliLy4uL2xpYi9jcnRuLm8iLCBSX09LKTsKCQlh
+Y2Nlc3MoIi91c3IvbGliL2djYy94ODZfNjQtbGludXgtZ251LzEyLy4uLy4uLy4uL3g4Nl82NC1s
+aW51eC1nbnUvMTIvY3J0bi5vIiwgUl9PSyk7CgkJYWNjZXNzKCIvdXNyL2xpYi9nY2MveDg2XzY0
+LWxpbnV4LWdudS8xMi8uLi8uLi8uLi94ODZfNjQtbGludXgtZ251L2NydG4ubyIsIFJfT0spOwoJ
+CWFjY2VzcygiL3Vzci9saWIvZ2NjL3g4Nl82NC1saW51eC1nbnUvMTIvY29sbGVjdDIiLCBYX09L
+KTsKCQlhY2Nlc3MoIi9ldGMvbGQuc28ucHJlbG9hZCIsIFJfT0spOwoJCWFjY2VzcygiL3Vzci9i
+aW4vbGQiLCBYX09LKTsKCQlhY2Nlc3MoIi91c3IvYmluL25tIiwgWF9PSyk7CgkJYWNjZXNzKCIv
+dXNyL2Jpbi9zdHJpcCIsIFhfT0spOwoJCWFjY2VzcygiL3Vzci9iaW4vY2MiLCBYX09LKTsKCQlh
+Y2Nlc3MoIi90bXAiLCBSX09LfFdfT0t8WF9PSyk7CgkJYWNjZXNzKCIvZXRjL2xkLnNvLnByZWxv
+YWQiLCBSX09LKTsKCgkJKCppdGVyYXRpb25zKSsrOwoJfQp9CgoK
+--000000000000aeb36c06433cddc0--
 
