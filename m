@@ -1,208 +1,221 @@
-Return-Path: <linux-fsdevel+bounces-67671-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67672-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F30D3C461A0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 12:04:18 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BA4FC461B8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 12:05:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C13B1894061
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 11:04:43 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0E0AC4E233F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 11:05:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 218DE3074AF;
-	Mon, 10 Nov 2025 11:04:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47711307ACF;
+	Mon, 10 Nov 2025 11:05:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="YkVWwa2J"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sa6AQQ73"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 476A926B756;
-	Mon, 10 Nov 2025 11:04:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A20AD26B756
+	for <linux-fsdevel@vger.kernel.org>; Mon, 10 Nov 2025 11:05:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762772648; cv=none; b=FbiQx4hHAZVFgIbCWYLpPEhOMsNvIpG2C3WbZBH0RpKKutlGYaONvjv4Qhb4TYNPuhw8yy4NLJtjSGCCSFe0L5geLTMqI0vGNLZe3WolSV3eMFWdQ+xDZzT5V74R2x2Rr0uVPS3w95zMxGwf6HZgXD3CCmnfk3ujYrrNOTzrSuc=
+	t=1762772701; cv=none; b=hT2QSLxZw8onBOnYXcrSpN7YWhVwxD+TND5j/KXTV2W5i9MjWlAj42JS6If53EhR1A829WibayZMIDpryiQaEItXQleOpBldZFv0yAju3kRiWlA1L6QnH035KByIgc0QdF68IkQz2GBEABtdgpXk9iwp/qqWjmpAeal7t5csguY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762772648; c=relaxed/simple;
-	bh=r5jQ+yIu763oKhNAZAGzUhjRb6bKpvQX6ufqYs2cyLo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=W1jIiCGjVwm8VVUNtaVTbti/3S5mHmPHSnRjP7o2ZxLp/RV9OigPKCnZ8zMZiem93gfj/IMYLT8v/P+2Ojvxg5JNXtAgSNfOXN1aAbIgmIwdaiKjSCajiDAxreTsUNHMos0wTQUqwhrIJ7WaDuN+K157hvRoqoZtBuwQc10VfZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=YkVWwa2J; arc=none smtp.client-ip=212.227.17.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1762772638; x=1763377438; i=w_armin@gmx.de;
-	bh=r5jQ+yIu763oKhNAZAGzUhjRb6bKpvQX6ufqYs2cyLo=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=YkVWwa2JkguC0sLOiygbuDB4GSwk/1IHV/lFyJ7BJWxks/63ZAztW7DyHiRiJGrx
-	 IcfhQPw2yATzCJgb0xcm7mVti7HFlFEY9B/RGVr/WQ06a5xCyjz4N8c/InGOvZ2oh
-	 nIaED+ojkw8Ey69iuMlnKfarXf2dJAE8ywagu57PWBUkgQvXkKcYFXgG+IULfJrbq
-	 eG1NptZz85V4YFT9m5T39Fghb6wd90dyd9maank+z+wX2lp8IBGC0JIavG+VrdtQ+
-	 YOR8nl+uumViNmqCxasxrn/5PY6uJzFUtyv1/prDL3OoqPKh7KmU78fihrRyBIJUS
-	 2poc3+Y+/ZjYy3wkjg==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [172.16.125.152] ([141.76.8.152]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1M2wKq-1vLiXS2Jqu-009oD9; Mon, 10
- Nov 2025 12:03:58 +0100
-Message-ID: <126f3332-ce35-46d0-bd81-a66528f92032@gmx.de>
-Date: Mon, 10 Nov 2025 12:03:56 +0100
+	s=arc-20240116; t=1762772701; c=relaxed/simple;
+	bh=57vcXoVaGnG9l4Hdh9tDUE5rwfPZ24UgvbT3aVj/BUk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uM4A/pJlBh3jKJTYJyMmUiejUTeyeioa7mtE/wTwcCGqTHM2mj0hajXuVKSEyNKGju5sWpqdJ97+3G1Or2rPDQ/SAiFbaFiCSzFUa/i21UH9vIMcXUL1WWurEb/JNRQgzrBvQZPTc37VQAGfJFknH4WBpeXlDJP87/7G232zLOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sa6AQQ73; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D0F9C116D0
+	for <linux-fsdevel@vger.kernel.org>; Mon, 10 Nov 2025 11:05:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762772701;
+	bh=57vcXoVaGnG9l4Hdh9tDUE5rwfPZ24UgvbT3aVj/BUk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=sa6AQQ73O01w64nwho5tib1IxlyUdIJGtdtZ9Hkgxafn61iopBLbXLDF1Ba5V2i27
+	 WD6YFYVerjMnAIO9/muIJYDdpv8clNUqhwoewQ/kI6xBSZ7jVC6JHroti+9tXdEs20
+	 5EKZAMf9l+SFPX7I9+FCSHrvUm+bOAkz1wYS9nveGAjwkbxnr4Nd7GtPj5xjzuo5O4
+	 Fc7gKbOMrlamMfMeSGiNycyH/4IkhNBrCVvNpqk+BQzuNmMhCTvf5IxMmj7iK+EaLs
+	 ETWg/vuyz4jZTP7O28TnvbQhzcLZpoWBPH2g2qFYB1KLl4zsm3zT9ooSaICIThBSgK
+	 PLzO/EzPnjooQ==
+Received: by mail-yx1-f42.google.com with SMTP id 956f58d0204a3-63f9beb2730so2293465d50.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Nov 2025 03:05:01 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWVhNGcvC4EL2b/5vjiYpVVw93B5uPdyHP8qhsuUjdZTa8mbGroMVRcVf3ap5LuSpwvi/aktDrbY+754XRr@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDnZvoYc5rJTkJDPT6AQvzXS70ewQup3+VB7yMvI5AAucWUM4I
+	990gQI6ScSsohuUQLeBtN5tq8T70fDruqqIkR9NOjXyKnNANVjVNh/IESkEpldv6ZxlO3exI9yY
+	t/8mAGJvP4sE91hmXmbe0ATgl7RPO6u+4fO8EWg+ogQ==
+X-Google-Smtp-Source: AGHT+IGb5xn+sWB6zhZvawlKpKaY52jteK/NuAWw2b6kNJUT3KOwS3xUtwezxnsh77APdSOaFVEz79TEZy9y4Ini9II=
+X-Received: by 2002:a05:690e:2598:b0:63f:a089:ad11 with SMTP id
+ 956f58d0204a3-640d45e57f4mr5199456d50.47.1762772699777; Mon, 10 Nov 2025
+ 03:04:59 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/4] platform/x86: wmi: Prepare for future changes
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Mario Limonciello <superm1@kernel.org>, viro@zeniv.linux.org.uk,
- brauner@kernel.org, Hans de Goede <hansg@kernel.org>, jack@suse.cz,
- linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- platform-driver-x86@vger.kernel.org
-References: <20251104204540.13931-1-W_Armin@gmx.de>
- <e40a0d9c-7f38-44ab-a954-b09c9687ea88@kernel.org>
- <17515e4d-6e3b-4eb9-99eb-840933315d55@gmx.de>
- <6dcc3eda-f06a-22b3-fff6-f4805f709f5f@linux.intel.com>
-Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <6dcc3eda-f06a-22b3-fff6-f4805f709f5f@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+References: <cover.1762621567.git.lorenzo.stoakes@oracle.com>
+ <CACePvbVq3kFtrue2smXRSZ86+EuNVf6q+awQnU-n7=Q4x7U9Lw@mail.gmail.com> <5b60f6e8-7eab-4518-808a-b34331662da5@lucifer.local>
+In-Reply-To: <5b60f6e8-7eab-4518-808a-b34331662da5@lucifer.local>
+From: Chris Li <chrisl@kernel.org>
+Date: Mon, 10 Nov 2025 03:04:48 -0800
+X-Gmail-Original-Message-ID: <CACePvbUvQu+So7OoUbJTMLODz8YDAOgWaM8A-RXFj2U_Qc-dng@mail.gmail.com>
+X-Gm-Features: AWmQ_bl_ugrcb7Xqm2Eobi_WepJs_DP4Kj2CRqbuSy5_pOEO8kL68WELcSVKV30
+Message-ID: <CACePvbUvQu+So7OoUbJTMLODz8YDAOgWaM8A-RXFj2U_Qc-dng@mail.gmail.com>
+Subject: Re: [PATCH v2 00/16] mm: remove is_swap_[pte, pmd]() + non-swap
+ entries, introduce leaf entries
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	Christian Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank <frankja@linux.ibm.com>, 
+	Claudio Imbrenda <imbrenda@linux.ibm.com>, David Hildenbrand <david@redhat.com>, 
+	Alexander Gordeev <agordeev@linux.ibm.com>, Gerald Schaefer <gerald.schaefer@linux.ibm.com>, 
+	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+	Sven Schnelle <svens@linux.ibm.com>, Peter Xu <peterx@redhat.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Arnd Bergmann <arnd@arndb.de>, Zi Yan <ziy@nvidia.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>, 
+	Lance Yang <lance.yang@linux.dev>, Muchun Song <muchun.song@linux.dev>, 
+	Oscar Salvador <osalvador@suse.de>, Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, 
+	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
+	Matthew Brost <matthew.brost@intel.com>, Joshua Hahn <joshua.hahnjy@gmail.com>, 
+	Rakie Kim <rakie.kim@sk.com>, Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>, 
+	Ying Huang <ying.huang@linux.alibaba.com>, Alistair Popple <apopple@nvidia.com>, 
+	Axel Rasmussen <axelrasmussen@google.com>, Yuanchu Xie <yuanchu@google.com>, 
+	Wei Xu <weixugc@google.com>, Kemeng Shi <shikemeng@huaweicloud.com>, 
+	Kairui Song <kasong@tencent.com>, Nhat Pham <nphamcs@gmail.com>, Baoquan He <bhe@redhat.com>, 
+	SeongJae Park <sj@kernel.org>, Matthew Wilcox <willy@infradead.org>, Jason Gunthorpe <jgg@ziepe.ca>, 
+	Leon Romanovsky <leon@kernel.org>, Xu Xin <xu.xin16@zte.com.cn>, 
+	Chengming Zhou <chengming.zhou@linux.dev>, Jann Horn <jannh@google.com>, 
+	Miaohe Lin <linmiaohe@huawei.com>, Naoya Horiguchi <nao.horiguchi@gmail.com>, 
+	Pedro Falcato <pfalcato@suse.de>, Pasha Tatashin <pasha.tatashin@soleen.com>, 
+	Rik van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>, Hugh Dickins <hughd@google.com>, 
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org, linux-s390@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-arch@vger.kernel.org, 
+	damon@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:/8UsP9ZvpQlvhj1Ls8QLljj+ow1HHmtXxWLssPjTT72dfn/q+tk
- 4Nr8nIUoGFE8slK/8Z5puO8zC0gsNPGkAS1cSDK8IjUdfQL50rL07/Dj8pcJLZ5L3RxQzb1
- jop0t3FuEQDayIO660tgLc2f/Sz4De6t956cNI4AJR0GdO6m4FnHAMOicZj8ZU8eXGqHL6z
- hpNQcm59SV2I/52JUqOSA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:V1ph19vAYaI=;yHbIt97/+aAtBZJjfEPYJHr6MDe
- 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
- JQJ5l5w7xRtLQXH7U=
 
-Am 10.11.25 um 12:00 schrieb Ilpo J=C3=A4rvinen:
-
-> On Wed, 5 Nov 2025, Armin Wolf wrote:
+On Mon, Nov 10, 2025 at 2:18=E2=80=AFAM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
 >
->> Am 04.11.25 um 21:52 schrieb Mario Limonciello:
->>
->>> On 11/4/25 2:45 PM, Armin Wolf wrote:
->>>> After over a year of reverse engineering, i am finally ready to
->>>> introduce support for WMI-ACPI marshalling inside the WMI driver core=
-.
->>> marshaling> Since the resulting patch series is quite large, i am plan=
-ning
->>> to
->>>> submit the necessary patches as three separate patch series.
->>>>
->>>> This is supposed to be the first of the three patch series. Its main
->>>> purpose is to prepare the WMI driver core for the upcoming changes.
->>>> The first patch fixes an issue inside the nls utf16 to utf8 conversio=
-n
->>>> code, while the next two patches fix some minor issues inside the WMI
->>>> driver core itself. The last patch finally moves the code of the WMI
->>>> driver core into a separate repository to allow for future additions
->>>> without cluttering the main directory.
->>> One question I have here on the patch to move things.
->>>
->>> Since Windows on ARM (WoA) laptops are a thing - is this still actuall=
-y x86
->>> specific?=C2=A0 I am wondering if this should be moving to a different=
- subsystem
->>> altogether like ACPI; especially now with this impending other large p=
-atch
->>> series you have on your way.
->> I know of a few WoA laptops that contain ACPI-WMI devices, meaning this=
- driver
->> is indeed not x86-specific.
->> However i need to make some changes to the WMI driver core (and actuall=
-y tests
->> it on a AArch64 VM) first
->> before moving it out of drivers/platform/x86.
->>
->> Once i am actually ready for this i would prefer to move the whole stuf=
-f to
->> drivers/platform, as drivers/acpi
->> IMHO is better suited for core ACPI drivers.
-> So no need to put it under drivers/platform/x86/wmi/ then at all. It
-> can move directly to drivers/platform/wmi/ and you work there towards
-> making it non-x86-specific.
+> On Sun, Nov 09, 2025 at 11:32:09PM -0800, Chris Li wrote:
+> > Hi Lorenzo,
+> >
+> > Sorry I was late to the party. Can you clarify that you intend to
+> > remove swp_entry_t completely to softleaf_t?
+> > I think for the traditional usage of the swp_entry_t, which is made up
+> > of swap device type and swap device offset. Can we please keep the
+> > swp_entry_t for the traditional swap system usage? The mix type can
+> > stay in softleaf_t in the pte level.
+>
+> Ultimately it doesn't really matter - if we do entirely eliminate
+> swp_entry_t, the type that we are left with for genuine swap entries will
+> be _identical_ to swp_entry_t. As in bit-by-bit identical.
 
-OK, i will send the v2 revision of this series soon.
+In that case you might just as well leave it as swp_entry_t for the
+_actual_ swap code.
 
-Thanks,
-Armin Wolf
+>
+> But I did think perhaps we could maintain this type explicitly for the
+> _actual_ swap code.
 
+Exactly. Please do consider impact the actual swap
+
+> > I kind of wish the swap system could still use swp_entry_t. At least I
+> > don't see any complete reason to massively rename all the swap system
+> > code if we already know the entry is the limited meaning of swap entry
+> > (device + offset).
+>
+> Well the reason would be because we are trying to keep things consistent
+> and viewing a swap entry as merely being one of the modes of a softleaf.
+
+Your reason applies to the multi-personality non-present pte entries.
+I am fine with those as softleaf. However the reasoning does not apply
+to the swap entry where we already know it is for actual swap. The
+multi-personality does not apply there. I see no conflict with the
+swp_entry type there. I argue that it is even cleaner that the swap
+codes only refer to those as swp_entry rather than softleaf because
+there is no possibility that the swap entry has multi-personality.
+
+> However I am empathetic to not wanting to create _entirely_ unnecessary
+> churn here.
+>
+> I will actively keep you in the loop on follow up series and obviously wi=
+ll
+> absolutely take your opinion seriously on this.
+
+Thank you for your consideration.
+
+>
+> I think this series overall hugely improves clarity and additionally avoi=
+ds
+> a bunch of unnecessary, duplicative logic that previously was required, s=
+o
+> is well worth the slightly-annoying-churn cost here.
+>
+> But when it comes to the swap code itself I will try to avoid any
+> unnecessary noise.
+
+Ack.
+
+> One thing we were considering (discussions on previous iteration of serie=
+s)
+> was to have a union of different softleaf types - one of which could simp=
+ly
+> be swp_entry_t, meaning we get the best of both worlds, or at least
+> absolutely minimal changes.
+
+If you have a patch I would take a look and comment on it.
+
+> > Timing is not great either. We have the swap table phase II on review
+> > now. There is also phase III and phase IV on the backlog pipeline. All
+> > this renaming can create unnecessary conflicts. I am pleading please
+> > reduce the renaming in the swap system code for now until we can
+> > figure out what is the impact to the rest of the swap table series,
+> > which is the heavy lifting for swap right now. I want to draw a line
+> > in the sand that, on the PTE entry side, having multiple meanings, we
+> > can call it softleaft_t whatever. If we know it is the traditional
+> > swap entry meaning. Keep it swp_entry_t for now until we figure out
+> > the real impact.
+>
+> I really do empathise, having dealt with multiple conflicts and races in
+> series, however I don't think it's really sensible to delay one series
+> based on unmerged follow ups.
+
+If you leave the actual swap entry (single personality) alone, I think
+we can deal with the merge conflicts.
+
+> So this series will proceed as it is.
+
+Please clarify the "proceed as it is" regarding the actual swap code.
+I hope you mean you are continuing your series, maybe with
+modifications also consider my feedback. After all, you just say " But
+I did think perhaps we could maintain this type explicitly for the
+_actual_ swap code."
+
+> However I'm more than happy to help resolve conflicts - if you want to se=
+nd
+> me any of these series off list etc. I can rebase to mm-new myself if
+> that'd be helpful?
+
+As I said above, leaving the actual swap code alone is more helpful
+and I consider it cleaner as well. We can also look into incremental
+change on your V2 to crave out the swap code.
+
+>
+> >
+> > Does this renaming have any behavior change in the produced machine cod=
+e?
+>
+> It shouldn't result in any meaningful change no.
+
+That is actually the reason to give the swap table change more
+priority. Just saying.
+
+Chris
 
