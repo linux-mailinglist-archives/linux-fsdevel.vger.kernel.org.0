@@ -1,160 +1,98 @@
-Return-Path: <linux-fsdevel+bounces-67651-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67652-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE243C45AE4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 10:39:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 277EBC45B32
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 10:45:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E27A418914C5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 09:39:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36B213B75C3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 09:45:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ACE6301477;
-	Mon, 10 Nov 2025 09:39:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97FF6301716;
+	Mon, 10 Nov 2025 09:45:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="N19wyuih";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3prbPczX"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UqOLMzeY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D81EA3009F5;
-	Mon, 10 Nov 2025 09:38:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CFAF30103F
+	for <linux-fsdevel@vger.kernel.org>; Mon, 10 Nov 2025 09:45:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762767541; cv=none; b=Bz/EZnof1Efeaz/ZReXhSZSS7sLr5Y3ry5q59f8btcPvufJWEe4kQ5qiTqzi9ha01w0XPbCdsXDbD2FFgm7bnlKXGy7Jn5H5MYkn3Q/PHhRpUTI/P4MEj8mZzRGachmuYWb5VP7XSNUEIPU2aTeB58uNmiXQsimksxFRuXhrSgU=
+	t=1762767913; cv=none; b=LghJNjPfpy98nab5EYPIkQlAeccRiM00xOsPkfPd5dK1q05fSOrqk8FZ8CkYxrZINGN7oTI3PVyiytbSLlJ6471cuxEBpFPe80WFAwjQ77b4TwinBV9EXG4agcGBhDjmvQL2zhvb4SdOxdehrzKKtPXzNylAMp6V9IYOUUQT10I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762767541; c=relaxed/simple;
-	bh=Z7vd8CeGFdm/VB/9K1E3bADy3YcngSckDUMHi3AJFSs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=OtxgdbiHLuj20qQDJSDQjSJEjjI9edIlyY2aB2yDKRY5LucnvihRDkGP5aRTSJMkALPdba3BXncu4ghcJc2wBBDvxlQYpHPVSbx0LieQoBB5NvozKwhuNMds+6d5g0i8u+TfwyMwlWTkHPa/2F4jljzrlWmL28MUUViviNUuIqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=N19wyuih; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3prbPczX; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1762767538;
+	s=arc-20240116; t=1762767913; c=relaxed/simple;
+	bh=goBB6a9ijYsjH1ApwGICOTD9RRiuY+gQpLOMLI1pKjM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=IvG98xHzWebx521S2wv+ZoYD8Ja/wzQMai1tpuBDgGYM8pTsbsneNK6h0ZwrKlUeoB5hSfnyS5q9LW23O6iCJoROyMjqW0FDGom4MrCFdPtFsXjrqSsxYyiRkU/OOk70/ipEUR7XPvBpqiJ1X/T6zrSiMtLwAA4pvAliwnEEetk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UqOLMzeY; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762767909;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=TkRdkj79k9FYq5BLiI92p7/ZGuBv94lRr/Umjv2MFBY=;
-	b=N19wyuihCAUoO+bttQewCDnEJSKXBjMjnH2h1k6Fhfttdvltu8XgdV9Qoz/R9h1bg9cnkO
-	5dfz1IbSipmStO21U+SAt1c4smNbHJKcAluAHzS6SE/6BRHP8BSL3/4hiURtxReXuCBcep
-	pMDd6wnG0U2/le7wr49VeksW9HwnNjveJlSSIkiHqxaKVSz+Y4C5Wr+te6rRkQy1EA4/tA
-	ZXfJrkJaSYVGjpNIqH4Scsf/Ock6oZdPqZ7Vf3JH8wfvZv75FTfYPDwGNoPaCGCT/lbWFs
-	KwSVdIjSZ13whah+Nc2XMheTt6nEfHmm9bGPUgL4zQLJlflUyOgDMlsZS4vNEg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1762767538;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TkRdkj79k9FYq5BLiI92p7/ZGuBv94lRr/Umjv2MFBY=;
-	b=3prbPczX5kba5ob082own+tQWaOrpxX1jk2JRA1Z7bDRltliJ/fiI3l45OelD8MlLdPl+c
-	pknzbxJAt8RvEXBQ==
-Date: Mon, 10 Nov 2025 10:38:53 +0100
-Subject: [PATCH 3/3] hrtimer: Store time as ktime_t in restart block
+	bh=UVXpka/wfvK1NTQpXcElrqr+Eu4p1Ghvs93NaoRYmkY=;
+	b=UqOLMzeYsMiJ1XxiRnZuPq029M5xXXA6wkIZwMn37Yq0/ktjg3akP0gXYuje3cOQYE2llS
+	4GXtLKlDXb35xChIaFFB6J6/OHSTFh1sSP2f04gBrcGwjYlcJcXJlCnW1ENcEbxQVz0FOO
+	WVX/TwlKmCNj+wJ0TLqgzf3fWUtEbHE=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-691-tAv0p3UENYmR87MU9ynLsg-1; Mon,
+ 10 Nov 2025 04:45:06 -0500
+X-MC-Unique: tAv0p3UENYmR87MU9ynLsg-1
+X-Mimecast-MFC-AGG-ID: tAv0p3UENYmR87MU9ynLsg_1762767905
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 12E97195606D;
+	Mon, 10 Nov 2025 09:45:05 +0000 (UTC)
+Received: from fweimer-oldenburg.csb.redhat.com (unknown [10.44.32.47])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 25B581800576;
+	Mon, 10 Nov 2025 09:45:00 +0000 (UTC)
+From: Florian Weimer <fweimer@redhat.com>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Dave Chinner <david@fromorbit.com>,  Matthew Wilcox
+ <willy@infradead.org>,  Hans Holmberg <hans.holmberg@wdc.com>,
+  linux-xfs@vger.kernel.org,  Carlos Maiolino <cem@kernel.org>,  "Darrick J
+ . Wong" <djwong@kernel.org>,  linux-fsdevel@vger.kernel.org,
+  linux-kernel@vger.kernel.org,  libc-alpha@sourceware.org
+Subject: Re: [RFC] xfs: fake fallocate success for always CoW inodes
+In-Reply-To: <20251110093701.GB22674@lst.de> (Christoph Hellwig's message of
+	"Mon, 10 Nov 2025 10:37:01 +0100")
+References: <20251106133530.12927-1-hans.holmberg@wdc.com>
+	<lhuikfngtlv.fsf@oldenburg.str.redhat.com>
+	<20251106135212.GA10477@lst.de>
+	<aQyz1j7nqXPKTYPT@casper.infradead.org>
+	<lhu4ir7gm1r.fsf@oldenburg.str.redhat.com>
+	<20251106170501.GA25601@lst.de> <878qgg4sh1.fsf@mid.deneb.enyo.de>
+	<aRESlvWf9VquNzx3@dread.disaster.area> <20251110093701.GB22674@lst.de>
+Date: Mon, 10 Nov 2025 10:44:58 +0100
+Message-ID: <lhuframz0f9.fsf@oldenburg.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20251110-restart-block-expiration-v1-3-5d39cc93df4f@linutronix.de>
-References: <20251110-restart-block-expiration-v1-0-5d39cc93df4f@linutronix.de>
-In-Reply-To: <20251110-restart-block-expiration-v1-0-5d39cc93df4f@linutronix.de>
-To: Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
- Peter Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>, 
- Davidlohr Bueso <dave@stgolabs.net>, 
- =?utf-8?q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>, 
- Anna-Maria Behnsen <anna-maria@linutronix.de>, 
- Frederic Weisbecker <frederic@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1762767533; l=3047;
- i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
- bh=Z7vd8CeGFdm/VB/9K1E3bADy3YcngSckDUMHi3AJFSs=;
- b=smNlYvv9OtwROE5ka2hUsuluSoCFORhPENKDjqLxzL4ahRKe4roHsoscnPxBNRYDLKVMMlzXV
- fGYbuJONGtFDab6K955aRDrzOqVxji0hUsTj9gTLKrrI3If4aw/Z2vO
-X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
- pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-The hrtimer core uses ktime_t to represent times, use that also for the
-restart block. CPU timers internally use nanoseconds instead of ktime_t
-but use the same restart block, so use the correct accessors for those.
+* Christoph Hellwig:
 
-Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
----
- include/linux/restart_block.h  | 2 +-
- kernel/time/hrtimer.c          | 4 ++--
- kernel/time/posix-cpu-timers.c | 4 ++--
- 3 files changed, 5 insertions(+), 5 deletions(-)
+> I think what Florian wants (although I might be misunderstanding him)
+> is an interface that will increase the file size up to the passed in
+> size, but never reduce it and lose data.
 
-diff --git a/include/linux/restart_block.h b/include/linux/restart_block.h
-index 3c2bd13f609120a8a914f6e738ffea97bf72c32d..9b262109726d25ca1d7871d916280a7bf336355a 100644
---- a/include/linux/restart_block.h
-+++ b/include/linux/restart_block.h
-@@ -44,7 +44,7 @@ struct restart_block {
- 				struct __kernel_timespec __user *rmtp;
- 				struct old_timespec32 __user *compat_rmtp;
- 			};
--			u64 expires;
-+			ktime_t expires;
- 		} nanosleep;
- 		/* For poll */
- 		struct {
-diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
-index 88aa062b8a556db071dad74d34ba5953c3e57339..f8ea8c8fc89529889ab3a4d0a9acaec872856c85 100644
---- a/kernel/time/hrtimer.c
-+++ b/kernel/time/hrtimer.c
-@@ -2145,7 +2145,7 @@ static long __sched hrtimer_nanosleep_restart(struct restart_block *restart)
- 	int ret;
- 
- 	hrtimer_setup_sleeper_on_stack(&t, restart->nanosleep.clockid, HRTIMER_MODE_ABS);
--	hrtimer_set_expires_tv64(&t.timer, restart->nanosleep.expires);
-+	hrtimer_set_expires(&t.timer, restart->nanosleep.expires);
- 	ret = do_nanosleep(&t, HRTIMER_MODE_ABS);
- 	destroy_hrtimer_on_stack(&t.timer);
- 	return ret;
-@@ -2172,7 +2172,7 @@ long hrtimer_nanosleep(ktime_t rqtp, const enum hrtimer_mode mode,
- 
- 	restart = &current->restart_block;
- 	restart->nanosleep.clockid = t.timer.base->clockid;
--	restart->nanosleep.expires = hrtimer_get_expires_tv64(&t.timer);
-+	restart->nanosleep.expires = hrtimer_get_expires(&t.timer);
- 	set_restart_fn(restart, hrtimer_nanosleep_restart);
- out:
- 	destroy_hrtimer_on_stack(&t.timer);
-diff --git a/kernel/time/posix-cpu-timers.c b/kernel/time/posix-cpu-timers.c
-index 2e5b89d7d8660585460490557021dfbf7799740d..0de2bb7cbec01c423fc98e78c5a0aeb5c910381d 100644
---- a/kernel/time/posix-cpu-timers.c
-+++ b/kernel/time/posix-cpu-timers.c
-@@ -1557,7 +1557,7 @@ static int do_cpu_nanosleep(const clockid_t which_clock, int flags,
- 		 * Report back to the user the time still remaining.
- 		 */
- 		restart = &current->restart_block;
--		restart->nanosleep.expires = expires;
-+		restart->nanosleep.expires = ns_to_ktime(expires);
- 		if (restart->nanosleep.type != TT_NONE)
- 			error = nanosleep_copyout(restart, &it.it_value);
- 	}
-@@ -1599,7 +1599,7 @@ static long posix_cpu_nsleep_restart(struct restart_block *restart_block)
- 	clockid_t which_clock = restart_block->nanosleep.clockid;
- 	struct timespec64 t;
- 
--	t = ns_to_timespec64(restart_block->nanosleep.expires);
-+	t = ktime_to_timespec64(restart_block->nanosleep.expires);
- 
- 	return do_cpu_nanosleep(which_clock, TIMER_ABSTIME, &t);
- }
+Exaclty.  Thank you for the succinct summary.
 
--- 
-2.51.0
+Florian
 
 
