@@ -1,138 +1,204 @@
-Return-Path: <linux-fsdevel+bounces-67695-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67696-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2AFCC47489
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 15:43:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D52EC47528
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 15:48:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 525534ED49B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 14:43:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 085CB189190B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 14:48:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B8F7314A80;
-	Mon, 10 Nov 2025 14:43:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE9C9314A69;
+	Mon, 10 Nov 2025 14:47:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AfoQaK8+"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Xz60gTbZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93BFC313524
-	for <linux-fsdevel@vger.kernel.org>; Mon, 10 Nov 2025 14:43:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A389F31353E
+	for <linux-fsdevel@vger.kernel.org>; Mon, 10 Nov 2025 14:47:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762785793; cv=none; b=iGHEENYcJo3ZPJgnjf9neekfJBAKCvrxaeUtG0gHa3pnO3Xbpug00uYZXbUKg1PKThsP/9zg1Vf+z1kLkOcNohpygQmAlMMy7Cj0GGARGUaAQ1ZSLEuMrdj+6NDLvksk5jfXpShki2SPEQ0Xp6DGSM+/KMr9yj4Yyy8I4gALrXI=
+	t=1762786072; cv=none; b=JJACbuer55b9j8lRdWZ8N5P433IIxycJpKgTdQpdZ6AZgpdO8SlXENF3HKP3Yvl6ljaJ4LVTJDGJhE8/E5rRoIZt5qx2FytME+U50bCrhiDUpynfEld6FXYwBxdpnZj5q7ngm202r7e95910Mg0Iy4hccU9taNprHTIfDy+tLLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762785793; c=relaxed/simple;
-	bh=/E3gJIQjBTJ6pBJSXNOjyTL+w6L6Y1/FtKLBYQhekO8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZdrEwzNOtrko2dNeRQL1Y7qhBMzXI4KicAj+SHfW6oiA2nTEqxOBM6wZMmu4jw6yfVbxHziVzYawHHNYdHSvYJqOQc/BUPD8BNGm59ozbVs0EUQA7RdhOKoGM7b5yym3R3z0DlC82n9bsckfTp68YUgsj6JLaqMJgi+2u+dZGtQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AfoQaK8+; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-340c2dfc1daso492483a91.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Nov 2025 06:43:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762785791; x=1763390591; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=F9990Zs5Z5XVH5d3pKn1lkTCNXa3vBYG5og1GHLxwso=;
-        b=AfoQaK8+zes7Nzru3pGNenzbk5dmTfEp4axm1tczXdaPnG3Hvm0fFhv2+2uoiw1VBD
-         XQyIrkaUpF3JZ/gV+KmHE/bxTutXWqCrOft/Z4d24HGMZBT605vg05ThumZuuTrQ4LZ4
-         F709XjvlJvBPZqliGDrfhABchTXB52l6WAJZY0HArY0DbMOTvLL9JjCS2F+n+MA15KcK
-         JHRZqu2FwjLGzAe8ErtK1/p/hIsaj0rwL7FZdI/5uaGMOwBJeN13kTp+LStOvmtfqY8b
-         bMyWZlZvUrz2DQzjQ73TwkMjKzda4EK4PMoWsRfkWl1Jx0zBjFYhIEV6nDe3CdK1BFtY
-         0yhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762785791; x=1763390591;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=F9990Zs5Z5XVH5d3pKn1lkTCNXa3vBYG5og1GHLxwso=;
-        b=MY7KEA+eD/KFuLmXmxFRoPyz6ybtQEvfcxkPmRM02u6EfWjwxzejnmZdguXAOWMSIA
-         v7yowFbIux2z8maEVq16UNzEYVzVmi3XJ0lnJHRsmQmDgm1/Aa0s5YOA0cCYoAMzD642
-         no5wHtZ95mDcZEZNWNRIyP5UpJCeOoXOkyFctnQ3MILzlD0gPo40fjkzNa9qPlL6CMh7
-         XHdEsfVo7BTZDH2TmhRzJHE1UVKAKFwS4G/O9cZtw7cWSGIVwbbyd8kUfV1jXar3+ngv
-         c/A47OTZZPaI/VnTLAMTbB47LjyvSsVooRaisjrSWg6QgZFrEjT5/QgQQyM+28TYLhuI
-         2UmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXH0JUIeo0KxFYBrJia0eC5ntwJ1UgS0hhzt/MTjHX5GfzqoHn14bnKuVgpFrKaqPY5r4eBVj9L94cJVY3p@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvAf01nTqYUB5QSKItFeZ8/p3To/cQ0raIfHGKRfDbLWKPOnSC
-	ZSlbIHLX75PQIYnlmYcKbU6Sj5B2sbzLVsz8u8PGx4GtJsFf/5tRSKn7
-X-Gm-Gg: ASbGncsbwYZGMpCSrvKtse3UuVVxJurjDZJvX1nplIDnA7HF2IcKFMByR8CAAyEr7Gh
-	5Xq2WqeiYSRz3c1fwC54EjBuxN7H8OB6/FloWdMePBai0PFLVRN+CK50hWFrUisZDF72YMpb+cS
-	9myyOtQ+wV6O55CC3/YIZcVtWCT3WRiIyFwE/dkJw5ZSHItQAbTl+EEHvvK9c+SyXWzWfgtVvX8
-	EActMPvgI/vYDISjSsNr4zQMl6iIzyzuYOkYgZD3rXzOR7RL+7zLyMs8DIikdN/GKLKZVVJ25wc
-	Xldu7UsNe3w6rDK2o3sXmdZ8dL6GH7V9exn05CIWiPBBryRCn43RjpZ65fN4EH/PNrSP1g5r1Fx
-	CFFkR66VN3JOm6YaXX56hC6hyQBdcpNoVA4RQGQ6j20eO9JvZ4eAh1gplID4FPhi+aidg3SS8EU
-	Rku4U8yKnVE4gnxc/+M79zWiLGUtnAt8cO8/5mk8E=
-X-Google-Smtp-Source: AGHT+IHya+A0auZJFr6yNuX36i+1/oEdX5PqTd5tyOpfqW09H+Ff+mZ5vBFnIAIjcQ2qncxi+Eqb0g==
-X-Received: by 2002:a17:90b:164a:b0:32e:1213:1ec1 with SMTP id 98e67ed59e1d1-3436cb9c0d9mr6237006a91.3.1762785790881;
-        Mon, 10 Nov 2025 06:43:10 -0800 (PST)
-Received: from elitemini.flets-east.jp ([2400:4050:d860:9700:75bf:9e2e:8ac9:3001])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-343abec3836sm2163308a91.18.2025.11.10.06.43.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Nov 2025 06:43:10 -0800 (PST)
-From: Masaharu Noguchi <nogunix@gmail.com>
-To: Jeff Layton <jlayton@kernel.org>,
-	Chuck Lever <chuck.lever@oracle.com>
-Cc: Jesper Juhl <jesperjuhl76@gmail.com>,
-	David Laight <david.laight.linux@gmail.com>,
-	Alexander Aring <alex.aring@gmail.com>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Masaharu Noguchi <nogunix@gmail.com>
-Subject: [PATCH v2 2/2] samples: vfs: avoid libc AT_RENAME_* redefinitions
-Date: Mon, 10 Nov 2025 23:42:32 +0900
-Message-ID: <20251110144232.3765169-3-nogunix@gmail.com>
-X-Mailer: git-send-email 2.51.1
-In-Reply-To: <20251110144232.3765169-1-nogunix@gmail.com>
-References: <20251110144232.3765169-1-nogunix@gmail.com>
+	s=arc-20240116; t=1762786072; c=relaxed/simple;
+	bh=dgdLTnC9OagC7TcCvigEKRgst8vGqHZqM0+amuk2YAo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K9aeYYkzBsbLrQhi0/TPAHIkylzSLgiEty1Pyb88ewYAz3HXJq0WF9Y2Op9wZDGj+P3/7zKZPyI1uBUcq604aj95oC8UGPsYnnepXoO+tuu8zmm50VYKswz42IYe+CABG938pHhsJSV/Y7ymYAzHLEKtPtXJMmnvmvG9xU6wJGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Xz60gTbZ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762786069;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uIeb35oP9Vs/R5h7VhglPZyEdkMXH/upLLEanGBOeTA=;
+	b=Xz60gTbZggctvqMyRadIH86E6OfzXHAsxNMqqOU12nBpvcWc6S9JiRDMGTh7lHuhWHLHhL
+	JxpNq7hVIKTmn5n38THhHP3C7D0aNhW3KRSkji32ICuFPUKXN4lN1WgevmtMeDICw2DETm
+	zMBNt6EfEdBzKBGDQQa7Mdy8JoFnfmg=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-502-b2a0058xO8GOujbU21T91g-1; Mon,
+ 10 Nov 2025 09:47:36 -0500
+X-MC-Unique: b2a0058xO8GOujbU21T91g-1
+X-Mimecast-MFC-AGG-ID: b2a0058xO8GOujbU21T91g_1762786050
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 49CC218002CB;
+	Mon, 10 Nov 2025 14:47:28 +0000 (UTC)
+Received: from fedora (unknown [10.44.33.158])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 787811800451;
+	Mon, 10 Nov 2025 14:47:08 +0000 (UTC)
+Received: by fedora (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Mon, 10 Nov 2025 15:47:27 +0100 (CET)
+Date: Mon, 10 Nov 2025 15:47:06 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: Bernd Edlinger <bernd.edlinger@hotmail.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Dmitry Levin <ldv@strace.io>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Alexey Dobriyan <adobriyan@gmail.com>, Kees Cook <kees@kernel.org>,
+	Andy Lutomirski <luto@amacapital.net>,
+	Will Drewry <wad@chromium.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Michal Hocko <mhocko@suse.com>, Serge Hallyn <serge@hallyn.com>,
+	James Morris <jamorris@linux.microsoft.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Yafang Shao <laoar.shao@gmail.com>, Helge Deller <deller@gmx.de>,
+	"Eric W. Biederman" <ebiederm@xmission.com>,
+	Adrian Reber <areber@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>, Jens Axboe <axboe@kernel.dk>,
+	Alexei Starovoitov <ast@kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
+	linux-security-module@vger.kernel.org,
+	tiozhang <tiozhang@didiglobal.com>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	"Paulo Alcantara (SUSE)" <pc@manguebit.com>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	YueHaibing <yuehaibing@huawei.com>,
+	Paul Moore <paul@paul-moore.com>, Aleksa Sarai <cyphar@cyphar.com>,
+	Stefan Roesch <shr@devkernel.io>, Chao Yu <chao@kernel.org>,
+	xu xin <xu.xin16@zte.com.cn>, Jeff Layton <jlayton@kernel.org>,
+	Jan Kara <jack@suse.cz>, David Hildenbrand <david@redhat.com>,
+	Dave Chinner <dchinner@redhat.com>, Shuah Khan <shuah@kernel.org>,
+	Elena Reshetova <elena.reshetova@intel.com>,
+	David Windsor <dwindsor@gmail.com>,
+	Mateusz Guzik <mjguzik@gmail.com>, Ard Biesheuvel <ardb@kernel.org>,
+	"Joel Fernandes (Google)" <joel@joelfernandes.org>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Hans Liljestrand <ishkamiel@gmail.com>,
+	Penglei Jiang <superman.xpt@gmail.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Adrian Ratiu <adrian.ratiu@collabora.com>,
+	Ingo Molnar <mingo@kernel.org>,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
+	Cyrill Gorcunov <gorcunov@gmail.com>,
+	Eric Dumazet <edumazet@google.com>
+Subject: Re: [RFC PATCH 0/3] mt-exec: fix deadlock with ptrace_attach()
+Message-ID: <aRH66lGd-OT4O68C@redhat.com>
+References: <AM8PR10MB470801D01A0CF24BC32C25E7E40E9@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
+ <AM8PR10MB470875B22B4C08BEAEC3F77FE4169@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
+ <AS8P193MB1285DF698D7524EDE22ABFA1E4A1A@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <AS8P193MB12851AC1F862B97FCE9B3F4FE4AAA@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <AS8P193MB1285FF445694F149B70B21D0E46C2@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <AS8P193MB1285937F9831CECAF2A9EEE2E4752@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <GV2PPF74270EBEEEDE0B9742310DE91E9A7E431A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+ <GV2PPF74270EBEE9EF78827D73D3D7212F7E432A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+ <aRDL3HOB21pMVMWC@redhat.com>
+ <GV2PPF74270EBEE83C2CA09B945BC954FA3E4CEA@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <GV2PPF74270EBEE83C2CA09B945BC954FA3E4CEA@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-Users building the sample after including libc headers such as stdio.h
-may inherit libc's AT_RENAME_* macros before <linux/fcntl.h> is pulled
-in.  When that happens, the sample ends up with conflicting definitions
-or the libc values leak into the rest of the build.
+Hi Bernd,
 
-Drop any existing AT_RENAME_* macros before including the uapi header so
-that the sample always uses the kernel values and does not trip -Werror
-redefinition checks.
+On 11/10, Bernd Edlinger wrote:
+>
+> When the debugger wants to attach the de_thread the debug-user access rights are
+> checked against the current user and additionally against the new user credentials.
+> This I did by quickly switching the user credenitals to the next user and back again,
+> under the cred_guard_mutex, which should make that safe.
 
-Signed-off-by: Masaharu Noguchi <nogunix@gmail.com>
----
- samples/vfs/test-statx.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Let me repeat, I can't really comment this part, I don't know if it is
+actually safe. But the very fact your patch changes ->mm and ->cred of
+the execing task in ptrace_attach() makes me worry... At least I think
+you should update or remove this comment in begin_new_exec:
 
-diff --git a/samples/vfs/test-statx.c b/samples/vfs/test-statx.c
-index 49c7a46cee07..0123ab4efe0a 100644
---- a/samples/vfs/test-statx.c
-+++ b/samples/vfs/test-statx.c
-@@ -20,7 +20,16 @@
- #include <sys/syscall.h>
- #include <sys/types.h>
- #include <linux/stat.h>
-+
-+/* Undefine AT_RENAME_* macros that may have been set by libc headers
-+ * (e.g. stdio.h) to avoid redefinition conflicts with uapi fcntl.h.
-+ */
-+#undef AT_RENAME_NOREPLACE
-+#undef AT_RENAME_EXCHANGE
-+#undef AT_RENAME_WHITEOUT
-+
- #include <linux/fcntl.h>
-+
- #define statx foo
- #define statx_timestamp foo_timestamp
- struct statx;
--- 
-2.51.1
+	/*
+	 * cred_guard_mutex must be held at least to this point to prevent
+	 * ptrace_attach() from altering our determination of the task's
+	 * credentials; any time after this it may be unlocked.
+	 */
+	security_bprm_committed_creds(bprm);
+
+> So at this time I have only one request for you.
+> Could you please try out how the test case in my patch behaves with your fix?
+
+The new TEST(attach2) added by your patch fails as expected, see 3/3.
+
+   128  static long thread2_tid;
+   129  static void *thread2(void *arg)
+   130  {
+   131          thread2_tid = syscall(__NR_gettid);
+   132          sleep(2);
+   133          execlp("false", "false", NULL);
+   134          return NULL;
+   135  }
+   136
+   137  TEST(attach2)
+   138  {
+   139          int s, k, pid = fork();
+   140
+   141          if (!pid) {
+   142                  pthread_t pt;
+   143
+   144                  pthread_create(&pt, NULL, thread2, NULL);
+   145                  pthread_join(pt, NULL);
+   146                  return;
+   147          }
+   148
+   149          sleep(1);
+   150          k = ptrace(PTRACE_ATTACH, pid, 0L, 0L);
+   151          ASSERT_EQ(k, 0);
+   152          k = waitpid(-1, &s, 0);
+   153          ASSERT_EQ(k, pid);
+   154          ASSERT_EQ(WIFSTOPPED(s), 1);
+   155          ASSERT_EQ(WSTOPSIG(s), SIGSTOP);
+   156          k = ptrace(PTRACE_SETOPTIONS, pid, 0L, PTRACE_O_TRACEEXIT);
+   157          ASSERT_EQ(k, 0);
+   158          thread2_tid = ptrace(PTRACE_PEEKDATA, pid, &thread2_tid, 0L);
+   159          ASSERT_NE(thread2_tid, -1);
+   160          ASSERT_NE(thread2_tid, 0);
+   161          ASSERT_NE(thread2_tid, pid);
+   162          k = waitpid(-1, &s, WNOHANG);
+   163          ASSERT_EQ(k, 0);
+   164          sleep(2);
+   165          /* deadlock may happen here */
+   166          k = ptrace(PTRACE_ATTACH, thread2_tid, 0L, 0L);
+
+PTRACE_ATTACH fails.
+
+thread2() kills the old leader, takes it pid, execlp() succeeds.
+
+Oleg.
 
 
