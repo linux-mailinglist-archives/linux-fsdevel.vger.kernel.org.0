@@ -1,201 +1,237 @@
-Return-Path: <linux-fsdevel+bounces-67687-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67688-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F493C46D04
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 14:15:23 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DD45C46E8B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 14:34:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A742C349224
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 13:15:22 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 87B0E4E129E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 13:34:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6AE03101C8;
-	Mon, 10 Nov 2025 13:15:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E1B830FF2E;
+	Mon, 10 Nov 2025 13:33:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="2oB1tbgc";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="GY2pZ8lu";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="2oB1tbgc";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="GY2pZ8lu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P0dUDWXH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F1E3BE5E
-	for <linux-fsdevel@vger.kernel.org>; Mon, 10 Nov 2025 13:15:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60E293081DC;
+	Mon, 10 Nov 2025 13:33:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762780515; cv=none; b=RPw6hAaxLTo+FMclXgLYX1huHa7nEx7YJeKhM9emYqX+If7uPFZ6W7sdWzliSHK2ikHoa4j6PBk1dY9lb/xL8zXdkMJnWaIvun+SXUQ/s9xzV0/8OJTJiOhZ8A3/W9tddrMymXAthbH0w3MaQBHY0tadKW+aP6A1mvlXccCnx8E=
+	t=1762781638; cv=none; b=NBjww0kWXcnDLRcboX3ORKUFjuAsmPb1lZmjRfR+qEMQ0uTRgVf+aQuOuO98fYEuqeGsbh5fqcjoYQlBlzQbcDzzxD3UmVNT316u4ViGokZpdH2D/R5Ka578+aDD+qETMPpIXyxX7C0Rn7xHeEAc4Klo1+P3d5EhZWODF2T9jWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762780515; c=relaxed/simple;
-	bh=UDFAmRjHGjSapaGRPRIM+Nkgi1V7QaMsLubQACwIBvo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sfQ/G28iL8lsqdAxUb24FskzdSmGCZwqzv8wgV3/wvyJwAS+uMmM7sC7YEwn0/JTF8NEY2qTBsahqXfD507tIjC6jQUaMoCPk4Va4SiLN15/gHf27Mltd2qkHKBx1OuetUw5Jro6lvA5dR0qqybmYtWYx8a+gxCmVPArhstCeIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=2oB1tbgc; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=GY2pZ8lu; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=2oB1tbgc; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=GY2pZ8lu; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 3E6F22125B;
-	Mon, 10 Nov 2025 13:15:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762780510; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Bob9q4zZe78YDc7c7xXVoYI5YSZxt/68IuU4mBqqm28=;
-	b=2oB1tbgc5h+N0YnX145fTn8vYrjujiH42wsJ7bKD2yw7OPvMoeLwqfeqRi2rfOitr3kmMe
-	5vyN8mNlYxXNbB/oiipJDkZvQRHXB5jwa73jMbHgpdnzOh5dVhlsnOKf190w23HTDNy01K
-	hmuDCF4PxRG8C9wv7qgtJ72UPUKlXJs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762780510;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Bob9q4zZe78YDc7c7xXVoYI5YSZxt/68IuU4mBqqm28=;
-	b=GY2pZ8luFO/31CQuaFw/H6EzaiG7YGDyQlY7TVA9duLek0vkWfSUaVbDPNvP4gUATaTDI0
-	nWVFNZ/985nAYmBQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762780510; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Bob9q4zZe78YDc7c7xXVoYI5YSZxt/68IuU4mBqqm28=;
-	b=2oB1tbgc5h+N0YnX145fTn8vYrjujiH42wsJ7bKD2yw7OPvMoeLwqfeqRi2rfOitr3kmMe
-	5vyN8mNlYxXNbB/oiipJDkZvQRHXB5jwa73jMbHgpdnzOh5dVhlsnOKf190w23HTDNy01K
-	hmuDCF4PxRG8C9wv7qgtJ72UPUKlXJs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762780510;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Bob9q4zZe78YDc7c7xXVoYI5YSZxt/68IuU4mBqqm28=;
-	b=GY2pZ8luFO/31CQuaFw/H6EzaiG7YGDyQlY7TVA9duLek0vkWfSUaVbDPNvP4gUATaTDI0
-	nWVFNZ/985nAYmBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 32426143EE;
-	Mon, 10 Nov 2025 13:15:10 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id /Uk8DF7lEWk5RwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 10 Nov 2025 13:15:10 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id DACB6A28B1; Mon, 10 Nov 2025 14:15:09 +0100 (CET)
-Date: Mon, 10 Nov 2025 14:15:09 +0100
-From: Jan Kara <jack@suse.cz>
-To: libaokun@huaweicloud.com
-Cc: linux-fsdevel@vger.kernel.org, brauner@kernel.org, jack@suse.cz, 
-	viro@zeniv.linux.org.uk, axboe@kernel.dk, linux-block@vger.kernel.org, 
-	yi.zhang@huawei.com, yangerkun@huawei.com, libaokun1@huawei.com, 
-	Theodore Ts'o <tytso@mit.edu>
-Subject: Re: [PATCH] bdev: add hint prints in sb_set_blocksize() for LBS
- dependency on THP
-Message-ID: <rbrz2e3zilyjejol2azth3z43irzq3fp2sapecgzv4ocio5cjk@uu76dbfmoy3k>
-References: <20251110124714.1329978-1-libaokun@huaweicloud.com>
+	s=arc-20240116; t=1762781638; c=relaxed/simple;
+	bh=KrJ2YKSsIzH6nVo1MlcOu41RTn1gmKSelMYjAFxZ1Kw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=WENx1hvyxzfpZFWpcNDyYANxA3MHaEKmax+Dlz6EVBD75Awv6EmoaijnHQh8CkM8WragF8eQydbIfVuP5nBdSMuWxSL7KVrb7zn4mntbdjXZEJksKuMN8Sbr6GIgCwKPbOOlGvHOG4/5Ddwe7y97pj5N8Yvh0Eeu9rMTk9VYCwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P0dUDWXH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD371C116D0;
+	Mon, 10 Nov 2025 13:33:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762781638;
+	bh=KrJ2YKSsIzH6nVo1MlcOu41RTn1gmKSelMYjAFxZ1Kw=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=P0dUDWXHQAvfCZU96S6hWjTpUdjmy7990xsJAOgF2CPwPSMXSVRsm34nvItduBqJo
+	 5r6TiGqARZw7Eg0NAlv4hqXVkXnXR00yU81y+/1hssGhBP2QnhBuRTd1rKsa0bEBMj
+	 Hbu9pBb4VNRUzzjGtGbADEFn8xpzAfqli27LuNHV+W1vU/p0H5rBF1hs0ok6kNmnTL
+	 crvtwFCEpLMFhTP4xj/4kINe9DpW3ESB89iBfn/UcT3kalqScrRhUX9l/r2VL2Sfo7
+	 S1SSj+epa2IdhMzEMmaVnXBOJL7zpDBnytMGuYkPIaWyE6V3o/PavzUg5H/3e1tdD5
+	 Hw8dDCjhkWaFA==
+Message-ID: <aaa862f008e91f2fb7aefe7cc810eaea76dff3d0.camel@kernel.org>
+Subject: Re: RFC: NFSD administrative interface to prevent offering NFSv4
+ delegation
+From: Jeff Layton <jlayton@kernel.org>
+To: Chuck Lever <chuck.lever@oracle.com>, Benjamin Coddington
+	 <bcodding@hammerspace.com>
+Cc: Linux NFS Mailing List <linux-nfs@vger.kernel.org>, Linux FS Devel
+	 <linux-fsdevel@vger.kernel.org>
+Date: Mon, 10 Nov 2025 08:33:56 -0500
+In-Reply-To: <26959e66-f04f-4e6e-a8ce-a44c4362d99f@oracle.com>
+References: <8918ca00-11cb-4a39-855a-e4b727cb63b8@oracle.com>
+	 <2602B6D3-C892-4D5A-98E7-299095BD245F@hammerspace.com>
+	 <26959e66-f04f-4e6e-a8ce-a44c4362d99f@oracle.com>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.1 (3.58.1-1.fc43) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251110124714.1329978-1-libaokun@huaweicloud.com>
-X-Spamd-Result: default: False [-0.30 / 50.00];
-	SEM_URIBL(3.50)[huaweicloud.com:email];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Score: -0.30
-X-Spam-Level: 
 
-On Mon 10-11-25 20:47:14, libaokun@huaweicloud.com wrote:
-> From: Baokun Li <libaokun1@huawei.com>
-> 
-> Support for block sizes greater than the page size depends on large
-> folios, which in turn require CONFIG_TRANSPARENT_HUGEPAGE to be enabled.
-> 
-> Because the code is wrapped in multiple layers of abstraction, this
-> dependency is rather obscure, so users may not realize it and may be
-> unsure how to enable LBS.
-> 
-> As suggested by Theodore, I have added hint messages in sb_set_blocksize
-> so that users can distinguish whether a mount failure with block size
-> larger than page size is due to lack of filesystem support or the absence
-> of CONFIG_TRANSPARENT_HUGEPAGE.
-> 
-> Suggested-by: Theodore Ts'o <tytso@mit.edu>
-> Link: https://patch.msgid.link/20251110043226.GD2988753@mit.edu
-> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+On Sun, 2025-11-09 at 15:47 -0500, Chuck Lever wrote:
+> On 11/9/25 1:57 PM, Benjamin Coddington wrote:
+> > On 4 Nov 2025, at 10:54, Chuck Lever wrote:
+> >=20
+> > > NFSD has long had some ability to disable NFSv4 delegation, by disabl=
+ing
+> > > fs leases.
+> > >=20
+> > > However it would be nice to have more fine-grained control, for examp=
+le
+> > > in cases where read delegation seems to work well but the newer forms
+> > > of delegation (directory, or attribute) might have bugs or performanc=
+e
+> > > problems, and need to be disabled. There are also testing scenarios
+> > > where a unit test might focus specifically on one type of delegation.
+> > >=20
+> > > A little brainstorming:
+> > >=20
+> > > * Controls would be per net namespace
+> > > * Allow read delegations, or read and write
+> > > * Control attribute delegations too? Perhaps yes.
+> > > * Ignore the OPEN_XOR_DELEG flag? Either that, or mask off the
+> > >   advertised feature flag.
+> > > * Change of setting would cause immediate behavior change; no
+> > >   server restart needed
+> > > * Control directory delegations too (when they arrive)
+> > >=20
+> > > Is this for NFSD only, or also for local accessors (via the VFS) on t=
+he
+> > > NFS server?
+> > >=20
 
-Looks good. Feel free to add:
+I agree with all of the above bullet points. I think we should just
+implement the more fine-grained controls for nfsd (at least initially).
+OPEN_XOR_DELEG and attribute delegs don't have any relevance at the VFS
+layer, so if we want to control all of these then it makes more sense
+to do it in nfsd.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+We could consider adding more fine-grained VFS layer controls later if
+that's needed though.
 
-								Honza
+> > > Should this be plumbed into NFSD netlink, or into /sys ?
+> > >=20
+> > > Any thoughts/opinions/suggestions are welcome at this point.
+> >=20
+> > Happy to read this.
+> >=20
+> > I think this would be most welcomed by the distros - there's been a lot=
+ of
+> > instances of "disable delegations" with the big knob
+> > /proc/sys/fs/leases-enable
+> >=20
+> > I'd also like to be able to twiddle these bits for clients as well, and
+> > lacking a netlink tool to do it for the client the logical place might =
+be
+> > the client's sysfs interface.
+>=20
+> Jeff is working on a system call API that disables delegation on the
+> client, to write unit tests against. Trond also proposed one, years ago.
+> On the client you might want to disable delegation per file.
+>=20
 
-> ---
->  block/bdev.c | 19 ++++++++++++++++++-
->  1 file changed, 18 insertions(+), 1 deletion(-)
-> 
-> diff --git a/block/bdev.c b/block/bdev.c
-> index 810707cca970..4888831acaf5 100644
-> --- a/block/bdev.c
-> +++ b/block/bdev.c
-> @@ -217,9 +217,26 @@ int set_blocksize(struct file *file, int size)
->  
->  EXPORT_SYMBOL(set_blocksize);
->  
-> +static int sb_validate_large_blocksize(struct super_block *sb, int size)
-> +{
-> +	const char *err_str = NULL;
-> +
-> +	if (!(sb->s_type->fs_flags & FS_LBS))
-> +		err_str = "not supported by filesystem";
-> +	else if (!IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE))
-> +		err_str = "is only supported with CONFIG_TRANSPARENT_HUGEPAGE";
-> +
-> +	if (!err_str)
-> +		return 0;
-> +
-> +	pr_warn_ratelimited("%s: block size(%d) > page size(%lu) %s\n",
-> +				sb->s_type->name, size, PAGE_SIZE, err_str);
-> +	return -EINVAL;
-> +}
-> +
->  int sb_set_blocksize(struct super_block *sb, int size)
->  {
-> -	if (!(sb->s_type->fs_flags & FS_LBS) && size > PAGE_SIZE)
-> +	if (size > PAGE_SIZE && sb_validate_large_blocksize(sb, size))
->  		return 0;
->  	if (set_blocksize(sb->s_bdev_file, size))
->  		return 0;
-> -- 
-> 2.46.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Not exactly. I'm just adding fcntl() commands that allow you to set/get
+delegations from userland:
+
+https://lore.kernel.org/linux-nfs/20251105-dir-deleg-ro-v5-17-7ebc168a88ac@=
+kernel.org/T/#u
+
+The main reason I wanted these was for testing purposes (so we can
+ensure that later VFS changes don't subtly break delegations).
+
+>=20
+> > Would you also look to grain these settings per-client?  The server's
+> > per-client interface in proc has been fantastic.
+> >=20
+> > Ben
+>=20
+> The issue with per-client control is that, if the client hasn't already
+> contacted the server, we don't know how to identify that client to
+> the server administrator. We can't use the client's IP address because
+> the client could be multi-homed or DHCP-configured.
+>=20
+> So, per client, the settings would have to be done every time the client
+> contacts the server after either one has rebooted (I think).
+>=20
+> If we're doing per net-namespace on the server, that becomes easier to
+> implement and document. Each container instance has its own settings
+> that apply to all exports from that container.
+>=20
+
+Agreed. I don't think we can reasonably do this on a per-client basis,
+because we don't have any stable long-term persistent record of clients
+on the server. If the client disappears for a while, the server will
+just forget about it.
+--=20
+Jeff Layton <jlayton@kernel.org>
 
