@@ -1,153 +1,154 @@
-Return-Path: <linux-fsdevel+bounces-67718-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67719-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EA70C47B30
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 16:54:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47176C47A8E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 16:50:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DBCE44F189E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 15:43:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A20411887C71
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 15:46:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBE902741B6;
-	Mon, 10 Nov 2025 15:40:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C518631326F;
+	Mon, 10 Nov 2025 15:44:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="yXaG3Q68";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="720y12/j";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="yXaG3Q68";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="720y12/j"
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="dzvOjL21"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91E8025B663
-	for <linux-fsdevel@vger.kernel.org>; Mon, 10 Nov 2025 15:40:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B12D26F443
+	for <linux-fsdevel@vger.kernel.org>; Mon, 10 Nov 2025 15:44:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762789246; cv=none; b=WuUhYN9sJ5U35KMPsYfAzgPfRH03iJbUu2nsxHMeslCU5zLCfpcEShJVSNsgaFdjQxg97fB7yyY3WyF4rLJZVYCBVZV2Yu+ezrdccx5CPaG5385OAk3EMvDto57tsMk2TfLay5KrNci3dGypt6cqxoJJv7FyQaWbsR8bxQIFP8c=
+	t=1762789464; cv=none; b=Cqy1CsS56qe7fOBHaL2A0y9W6EYW/pYUMkgFgsnD3/1S1TzJsrIPrZjIL4556jgxKWyp4TyciauoT7YZCv4RZPeyCn5VAih74BJMolz/0EIjP3PxCCgOZ+3+dmfwGhL/aahrE4/AhyTwBDklcUdWNY6tcLbPNtvZS7ifBIewmRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762789246; c=relaxed/simple;
-	bh=bakk/x+7ivr5WFpTz4ZoP8PZs34SMamXYUTpTCCzxQI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DB+MxZF5gAwW8dY52C34bP6zUIKyxhDN9EosO6GGBaUme+LalJcDz45Hp0OK5ZOg5v9SJRyfojvizsrltmsoxxB9NeBqkMXskBqESWfjRQJ5egqEHg03164wT3rb6hSDLCkVPUIo0wtwwKJ0vIIT0tk8Tux6djzhWrlJeKJzu/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=yXaG3Q68; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=720y12/j; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=yXaG3Q68; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=720y12/j; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id C982333808;
-	Mon, 10 Nov 2025 15:40:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762789241;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vlrsgtG09qGxjpAiJIYhoUiJYVdUj4Y2K3a+i4ch7w8=;
-	b=yXaG3Q68faWw+PJet4VjKz/N90j3Zyv0h81QrYibJsWUhPlHNlVWU040Ag7+BcJvZYctUv
-	ILapRWLX0HSFR28/hjWTu/qIl9CkRypv11TWs1SF+ViB/uVnJaBnp/tO83IDqcDOj9a3gF
-	K61iM7Rvu6dRCe/mKC3G17NW+Nadjz8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762789241;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vlrsgtG09qGxjpAiJIYhoUiJYVdUj4Y2K3a+i4ch7w8=;
-	b=720y12/jGmSEA4LtosPDCijz87kMQDrMdien6pV8aJ/CNH47ouqvxo5Qwken1WQZcxsqWk
-	A1Zt3q807NRUGJDA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762789241;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vlrsgtG09qGxjpAiJIYhoUiJYVdUj4Y2K3a+i4ch7w8=;
-	b=yXaG3Q68faWw+PJet4VjKz/N90j3Zyv0h81QrYibJsWUhPlHNlVWU040Ag7+BcJvZYctUv
-	ILapRWLX0HSFR28/hjWTu/qIl9CkRypv11TWs1SF+ViB/uVnJaBnp/tO83IDqcDOj9a3gF
-	K61iM7Rvu6dRCe/mKC3G17NW+Nadjz8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762789241;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vlrsgtG09qGxjpAiJIYhoUiJYVdUj4Y2K3a+i4ch7w8=;
-	b=720y12/jGmSEA4LtosPDCijz87kMQDrMdien6pV8aJ/CNH47ouqvxo5Qwken1WQZcxsqWk
-	A1Zt3q807NRUGJDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id ACA131447D;
-	Mon, 10 Nov 2025 15:40:41 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id /DP5KXkHEmlfVwAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Mon, 10 Nov 2025 15:40:41 +0000
-Date: Mon, 10 Nov 2025 16:40:32 +0100
-From: David Sterba <dsterba@suse.cz>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-ext4@vger.kernel.org, tytso@mit.edu,
-	torvalds@linux-foundation.org, josef@toxicpanda.com,
-	linux-btrfs@vger.kernel.org
-Subject: Re: [PATCH v3 2/3] btrfs: utilize IOP_FASTPERM_MAY_EXEC
-Message-ID: <20251110154032.GY13846@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <20251107142149.989998-1-mjguzik@gmail.com>
- <20251107142149.989998-3-mjguzik@gmail.com>
+	s=arc-20240116; t=1762789464; c=relaxed/simple;
+	bh=0/OiCETMmzcumsvoWoUgjV7cQZEVGoR3fXx3J8u0qVE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=I2wrm1jyLq1hRsdrR2SBBGhQyUsQqqiy4rvTTPyA4C+I0Dw35SpqGAPKmip3olIPEMhOvJ2ZumKf1NBVeNJpjFzgBRVnbhstPaPYAd/jsMTfUVy2qEBt/ghyv+BmdvWA+HHxp2g5ry2KGiS7DUQgWDYU0GViMO7T8j8N+g+UzaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=dzvOjL21; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-6419aaced59so1470702a12.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Nov 2025 07:44:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen.com; s=google; t=1762789461; x=1763394261; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=KQAadWs2BEV1pVXExDFNf/QXLwU7Gs3Db0cLPnWAqzw=;
+        b=dzvOjL21KjvkYZZzR6Ed+fpTiS0NvhBWEAiCCEQBV19oX3UrQouoka3tyVBpTo2UWs
+         j4PVvJ2pL4ZrTlNNHUDdVANtzS7C0YiDtCMYtFnYw/pyxn35SX9EwsR3r5NFtC1pqczs
+         PfomZmit+5jlMicEO2krFsQEgEsMZznnqrt7AdW062KR3Wf/NJR/LoXOHLXXcJofeQ8w
+         P/mI86v2d6dSxyNcHa7tmNUU9ErJLfuhu6SpeaUNPhOq1V1iuMB9XnDS0OlHfX5ljxM5
+         w50mfpkDbsD/GI0E+6Q1b7bB14spFnuBLpTe0ZV8evQnSc8hpXd9fph6sJ0No4vC/Pti
+         NLug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762789461; x=1763394261;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KQAadWs2BEV1pVXExDFNf/QXLwU7Gs3Db0cLPnWAqzw=;
+        b=J4qsOFphyCFxGAKTWtR6hFFyu9evEzdHcYps6sfxPrWPtWCmN2m8UAVckKUsAaMPlq
+         jMp0wYPMUFN7JSk+Jy1985ZH3GTxU7eKu1c3x/su5KI8AdCMYAVhiKsjj8RemSnHGyB9
+         9HHMkxVMYBXH+ZdQfcxt1O/Kv6ihJNdDYgUgaqcxaT8kdm4KBTFp6CfLwNfd+sGRlOxe
+         wXLA+xxQqAigs0hqtQKyHVP8K7FyJSKF1y9nNYO1xY0FQDji4a/h6cRjAoSPIeoZ2+XP
+         YZw/4DA3+nUL+d22Jm4ZOmOzul4ukOVs2Tm4rxM7aFhRm/CQR8jAG1NvqJ94XN/O7d0T
+         yeeg==
+X-Forwarded-Encrypted: i=1; AJvYcCUsgpbZFKePzTqxUTmosobfR6xeG+MHpNX5hFvKDnjTcZhXTgigHWSlgqjAcBU7iMPooUOkPPj7qhnyTBAk@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5ezuHrazKV+NxEXRAn2YlyJS/t87kTjJLSn9f7DeCtj7OpjNE
+	Ppdwc8eD1AE8kUUl5k8JfOYpxtP0Vr22cgMO0/HBpPbuPjIiZvulYvU2LRkhE7VcR2Uu89sSirx
+	7OJH7XBJgIn5iXQnvnvllzrPgfUOoEseVkTvqStz+MQ==
+X-Gm-Gg: ASbGncspOOo6Ar+/U/KQ+Cj0KH1sG/FrtYKV6lrDV4lWeD65QWEhJd7IB8UeuaTw/x2
+	AdgauZ5fYV0Ly4l/WmLcAUCJyKf0y1eAJtu4Ho3iynDZ+RsN3uQ+5MBAM8tjJSjBPhwEetV1V2o
+	2uPho88OeHIWEmQ1CDtR/IHc1LDpnEMo6m+RbJ/Nrudbnwpf6q3Ll6Ljdtc6FpvN0CsiwCkLgQQ
+	Yyi4FuwMUzI41o1ehwhB0q3Fa7Fx5uTWtYLXofDYaXJQt34t+PewvnXBg==
+X-Google-Smtp-Source: AGHT+IHgzYBqOch+pmqIr6aFKeN8KU2lBlaA5VrUfecgkUX1bwRao0L5zlIWi8QFdGiWaxEVfTfghHwHllS6y/yRZSI=
+X-Received: by 2002:a05:6402:5245:b0:641:270:2c5b with SMTP id
+ 4fb4d7f45d1cf-6415dc082f2mr6735966a12.4.1762789460667; Mon, 10 Nov 2025
+ 07:44:20 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251107142149.989998-3-mjguzik@gmail.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_TLS_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:replyto,suse.com:email,twin.jikos.cz:mid];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Score: -4.00
-X-Spam-Level: 
+References: <20251107210526.257742-1-pasha.tatashin@soleen.com>
+ <20251107210526.257742-3-pasha.tatashin@soleen.com> <aRHiCxoJnEGmj17q@kernel.org>
+In-Reply-To: <aRHiCxoJnEGmj17q@kernel.org>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Mon, 10 Nov 2025 10:43:43 -0500
+X-Gm-Features: AWmQ_bn3hTY0dfz8jKC-NQyPogDeCUM0IUVj5R8f5Xi9W9zl_j-5I3l31CcFnck
+Message-ID: <CA+CK2bCHhbBtSJCx38gxjfR6DM1PjcfsOTD-Pqzqyez1_hXJ7Q@mail.gmail.com>
+Subject: Re: [PATCH v5 02/22] liveupdate: luo_core: integrate with KHO
+To: Mike Rapoport <rppt@kernel.org>
+Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com, 
+	dmatlack@google.com, rientjes@google.com, corbet@lwn.net, 
+	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, 
+	ojeda@kernel.org, aliceryhl@google.com, masahiroy@kernel.org, 
+	akpm@linux-foundation.org, tj@kernel.org, yoann.congal@smile.fr, 
+	mmaurer@google.com, roman.gushchin@linux.dev, chenridong@huawei.com, 
+	axboe@kernel.dk, mark.rutland@arm.com, jannh@google.com, 
+	vincent.guittot@linaro.org, hannes@cmpxchg.org, dan.j.williams@intel.com, 
+	david@redhat.com, joel.granados@kernel.org, rostedt@goodmis.org, 
+	anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn, 
+	linux@weissschuh.net, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-mm@kvack.org, gregkh@linuxfoundation.org, tglx@linutronix.de, 
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, 
+	hpa@zytor.com, rafael@kernel.org, dakr@kernel.org, 
+	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com, 
+	myungjoo.ham@samsung.com, yesanishhere@gmail.com, Jonathan.Cameron@huawei.com, 
+	quic_zijuhu@quicinc.com, aleksander.lobakin@intel.com, ira.weiny@intel.com, 
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
+	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net, 
+	brauner@kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	saeedm@nvidia.com, ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com, 
+	leonro@nvidia.com, witu@nvidia.com, hughd@google.com, skhawaja@google.com, 
+	chrisl@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Nov 07, 2025 at 03:21:48PM +0100, Mateusz Guzik wrote:
-> Root filesystem was ext4, btrfs was mounted on /testfs.
-> 
-> Then issuing access(2) in a loop on /testfs/repos/linux/include/linux/fs.h
-> on Sapphire Rapids (ops/s):
-> 
-> before: 3447976
-> after:	3620879 (+5%)
-> 
-> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+>
+> kho_finalize() should be really called from kernel_kexec().
+>
+> We avoided it because of the concern that memory allocations that late in
+> reboot could be an issue. But I looked at hibernate() and it does
+> allocations on reboot->hibernate path, so adding kho_finalize() as the
+> first step of kernel_kexec() seems fine.
 
-Thanks.
+This isn't a regular reboot; it's a live update. The
+liveupdate_reboot() is designed to be reversible and allows us to
+return an error, undoing the freeze() operations via unfreeze() in
+case of failure.
 
-Acked-by: David Sterba <dsterba@suse.com>
+This is why this call is placed first in reboot(), before any
+irreversible reboot notifiers or shutdown callbacks are performed. If
+an allocation problem occurs in KHO, the error is simply reported back
+to userspace, and the live update update is safely aborted.
+
+> And if we prioritize stateless memory tracking in KHO, it won't be a
+> concern at all.
+
+We are prioritizing stateless KHO work ;-) +Jason Miu
+Once KHO is stateless, the kho_finalize() is going to be removed.
+
+>
+> > +     if (err) {
+> > +             pr_err("kho_finalize failed %d\n", err);
+> > +             /*
+> > +              * kho_finalize() may return libfdt errors, to aboid passing to
+> > +              * userspace unknown errors, change this to EAGAIN.
+> > +              */
+> > +             err = -EAGAIN;
+> > +     }
+> > +
+> > +     return err;
+> >  }
+> >
+> >  /**
+>
+> --
+> Sincerely yours,
+> Mike.
 
