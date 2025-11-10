@@ -1,204 +1,136 @@
-Return-Path: <linux-fsdevel+bounces-67696-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67697-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D52EC47528
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 15:48:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F317FC4769A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 16:08:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 085CB189190B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 14:48:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 546843A7050
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 15:08:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE9C9314A69;
-	Mon, 10 Nov 2025 14:47:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5220314D2F;
+	Mon, 10 Nov 2025 15:08:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Xz60gTbZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uLm0/4Ev"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A389F31353E
-	for <linux-fsdevel@vger.kernel.org>; Mon, 10 Nov 2025 14:47:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 100AE1A7AE3;
+	Mon, 10 Nov 2025 15:08:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762786072; cv=none; b=JJACbuer55b9j8lRdWZ8N5P433IIxycJpKgTdQpdZ6AZgpdO8SlXENF3HKP3Yvl6ljaJ4LVTJDGJhE8/E5rRoIZt5qx2FytME+U50bCrhiDUpynfEld6FXYwBxdpnZj5q7ngm202r7e95910Mg0Iy4hccU9taNprHTIfDy+tLLA=
+	t=1762787322; cv=none; b=MpvA/76q5WBhBMMmErudHZoA0S46RT1gI9ZxXleeQp7ZPSMmwm4pFLSr8piti7XLknDisijgaLrKdRkCB5FQdoqV0ga5zHygBpHDKL4curnU77wXn7zj8/zkzTbabwpzlRIj7fpOK5pZaL+GjKqEM6zcpOxG2xdNWKUfgugmGyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762786072; c=relaxed/simple;
-	bh=dgdLTnC9OagC7TcCvigEKRgst8vGqHZqM0+amuk2YAo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K9aeYYkzBsbLrQhi0/TPAHIkylzSLgiEty1Pyb88ewYAz3HXJq0WF9Y2Op9wZDGj+P3/7zKZPyI1uBUcq604aj95oC8UGPsYnnepXoO+tuu8zmm50VYKswz42IYe+CABG938pHhsJSV/Y7ymYAzHLEKtPtXJMmnvmvG9xU6wJGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Xz60gTbZ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762786069;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uIeb35oP9Vs/R5h7VhglPZyEdkMXH/upLLEanGBOeTA=;
-	b=Xz60gTbZggctvqMyRadIH86E6OfzXHAsxNMqqOU12nBpvcWc6S9JiRDMGTh7lHuhWHLHhL
-	JxpNq7hVIKTmn5n38THhHP3C7D0aNhW3KRSkji32ICuFPUKXN4lN1WgevmtMeDICw2DETm
-	zMBNt6EfEdBzKBGDQQa7Mdy8JoFnfmg=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-502-b2a0058xO8GOujbU21T91g-1; Mon,
- 10 Nov 2025 09:47:36 -0500
-X-MC-Unique: b2a0058xO8GOujbU21T91g-1
-X-Mimecast-MFC-AGG-ID: b2a0058xO8GOujbU21T91g_1762786050
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 49CC218002CB;
-	Mon, 10 Nov 2025 14:47:28 +0000 (UTC)
-Received: from fedora (unknown [10.44.33.158])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 787811800451;
-	Mon, 10 Nov 2025 14:47:08 +0000 (UTC)
-Received: by fedora (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Mon, 10 Nov 2025 15:47:27 +0100 (CET)
-Date: Mon, 10 Nov 2025 15:47:06 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: Bernd Edlinger <bernd.edlinger@hotmail.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Dmitry Levin <ldv@strace.io>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Alexey Dobriyan <adobriyan@gmail.com>, Kees Cook <kees@kernel.org>,
-	Andy Lutomirski <luto@amacapital.net>,
-	Will Drewry <wad@chromium.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Michal Hocko <mhocko@suse.com>, Serge Hallyn <serge@hallyn.com>,
-	James Morris <jamorris@linux.microsoft.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Yafang Shao <laoar.shao@gmail.com>, Helge Deller <deller@gmx.de>,
-	"Eric W. Biederman" <ebiederm@xmission.com>,
-	Adrian Reber <areber@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>, Jens Axboe <axboe@kernel.dk>,
-	Alexei Starovoitov <ast@kernel.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
-	linux-security-module@vger.kernel.org,
-	tiozhang <tiozhang@didiglobal.com>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	"Paulo Alcantara (SUSE)" <pc@manguebit.com>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	YueHaibing <yuehaibing@huawei.com>,
-	Paul Moore <paul@paul-moore.com>, Aleksa Sarai <cyphar@cyphar.com>,
-	Stefan Roesch <shr@devkernel.io>, Chao Yu <chao@kernel.org>,
-	xu xin <xu.xin16@zte.com.cn>, Jeff Layton <jlayton@kernel.org>,
-	Jan Kara <jack@suse.cz>, David Hildenbrand <david@redhat.com>,
-	Dave Chinner <dchinner@redhat.com>, Shuah Khan <shuah@kernel.org>,
-	Elena Reshetova <elena.reshetova@intel.com>,
-	David Windsor <dwindsor@gmail.com>,
-	Mateusz Guzik <mjguzik@gmail.com>, Ard Biesheuvel <ardb@kernel.org>,
-	"Joel Fernandes (Google)" <joel@joelfernandes.org>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Hans Liljestrand <ishkamiel@gmail.com>,
-	Penglei Jiang <superman.xpt@gmail.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Adrian Ratiu <adrian.ratiu@collabora.com>,
-	Ingo Molnar <mingo@kernel.org>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	Cyrill Gorcunov <gorcunov@gmail.com>,
-	Eric Dumazet <edumazet@google.com>
-Subject: Re: [RFC PATCH 0/3] mt-exec: fix deadlock with ptrace_attach()
-Message-ID: <aRH66lGd-OT4O68C@redhat.com>
-References: <AM8PR10MB470801D01A0CF24BC32C25E7E40E9@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
- <AM8PR10MB470875B22B4C08BEAEC3F77FE4169@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
- <AS8P193MB1285DF698D7524EDE22ABFA1E4A1A@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <AS8P193MB12851AC1F862B97FCE9B3F4FE4AAA@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <AS8P193MB1285FF445694F149B70B21D0E46C2@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <AS8P193MB1285937F9831CECAF2A9EEE2E4752@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <GV2PPF74270EBEEEDE0B9742310DE91E9A7E431A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
- <GV2PPF74270EBEE9EF78827D73D3D7212F7E432A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
- <aRDL3HOB21pMVMWC@redhat.com>
- <GV2PPF74270EBEE83C2CA09B945BC954FA3E4CEA@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+	s=arc-20240116; t=1762787322; c=relaxed/simple;
+	bh=6KSwsK8hJ3VsxaX3vSZfCo2wVNblyfeSCIhlDo7+M8s=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=QAAvSfisKgZ0lhvOLuS/5ICYa4T8x82tcpaAd9HNrZqrpHlLc73H9qsjrr1JD0baRbtA+/qXUA75qdS5zPDGYMdZOCzAyEB3jfgBWYuFPorhjyRoVV3b/plT9HFUzBhkiR6Kj2vf6+14bFTZkJkIYjATQeDkQBPuMmEo+k8WKFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uLm0/4Ev; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77677C113D0;
+	Mon, 10 Nov 2025 15:08:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762787321;
+	bh=6KSwsK8hJ3VsxaX3vSZfCo2wVNblyfeSCIhlDo7+M8s=;
+	h=From:Subject:Date:To:Cc:From;
+	b=uLm0/4EvJE1j74j9QrirPiPyBOSzPMEk/h/hXjnZIEdQ180jK+CQjUqfYCuGpk4Vf
+	 5mobfv4yPgkePiyxcD6931VgiqR944gHEROE/Wyih0wahEAMNE4JxyyBJdAueainrp
+	 uh4+nQKWGr+in+771km0LEE5tCpV4pYhQi11wdGREl7LqMC60DbVDYpGq5OHabFy2d
+	 UngFeoTeREhmgCy/D+pwkHjnlxonZgRPbAycgSi/7aEVXNrHqc4GgTScMbV1sOZIvX
+	 8sqnHIUyfO+j/10N487rOEaY33MQvYwCyujkiHEvYinl5EYVJFDdhtbcECrpcDWpGA
+	 8VKES//ZwEnWQ==
+From: Christian Brauner <brauner@kernel.org>
+Subject: [PATCH 00/17] ns: header cleanups and initial namespace reference
+ count improvements
+Date: Mon, 10 Nov 2025 16:08:12 +0100
+Message-Id: <20251110-work-namespace-nstree-fixes-v1-0-e8a9264e0fb9@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <GV2PPF74270EBEE83C2CA09B945BC954FA3E4CEA@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANz/EWkC/0XMQQrCQAxA0auUrE2ZTFGoVxEXmTG1g5iWpKhQe
+ nenblw+PvwVXKyIw7lZweRVvExaQYcG8sh6Fyy3aoghHoko4HuyByo/xWfOguqLieBQPuI4xK7
+ viENIHKEeZpNfqIPLtTqxCyZjzeP+3Nn+V6eWeti2Lx80KNOTAAAA
+X-Change-ID: 20251110-work-namespace-nstree-fixes-f23931a00ba2
+To: linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
+ Jeff Layton <jlayton@kernel.org>
+Cc: Jann Horn <jannh@google.com>, Mike Yuan <me@yhndnzj.com>, 
+ =?utf-8?q?Zbigniew_J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, 
+ Lennart Poettering <mzxreary@0pointer.de>, 
+ Daan De Meyer <daan.j.demeyer@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
+ Amir Goldstein <amir73il@gmail.com>, Tejun Heo <tj@kernel.org>, 
+ Johannes Weiner <hannes@cmpxchg.org>, Thomas Gleixner <tglx@linutronix.de>, 
+ Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+ linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, bpf@vger.kernel.org, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ netdev@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, 
+ Christian Brauner <brauner@kernel.org>
+X-Mailer: b4 0.15-dev-a6db3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2728; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=6KSwsK8hJ3VsxaX3vSZfCo2wVNblyfeSCIhlDo7+M8s=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQK/v+sx9I829Vx/dJT0dYO/bk8rzg27U5LYN7h9iE3S
+ vKfgIFsRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwETS2hkZ1p+8KSZhx8wk4XH/
+ 3y1F57kChquubJ0gVh50I+jinRlX+BgZ9lwRMytQ1/zhUerw06P496wDmdHWVvofdxteP25TMzG
+ WGQA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp;
+ fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-Hi Bernd,
+Cleanup the namespace headers by splitting them into types and helpers.
+Better separate common namepace types and functions from namespace tree
+types and functions.
 
-On 11/10, Bernd Edlinger wrote:
->
-> When the debugger wants to attach the de_thread the debug-user access rights are
-> checked against the current user and additionally against the new user credentials.
-> This I did by quickly switching the user credenitals to the next user and back again,
-> under the cred_guard_mutex, which should make that safe.
+Fix the reference counts of initial namespaces so we don't do any
+pointless cacheline ping-pong for them when we know they can never go
+away. Add a bunch of asserts for both the passive and active reference
+counts to catch any changes that would break it.
 
-Let me repeat, I can't really comment this part, I don't know if it is
-actually safe. But the very fact your patch changes ->mm and ->cred of
-the execing task in ptrace_attach() makes me worry... At least I think
-you should update or remove this comment in begin_new_exec:
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+Christian Brauner (17):
+      ns: move namespace types into separate header
+      nstree: decouple from ns_common header
+      nstree: move nstree types into separate header
+      nstree: add helper to operate on struct ns_tree_{node,root}
+      nstree: switch to new structures
+      nstree: simplify owner list iteration
+      nstree: use guards for ns_tree_lock
+      ns: make is_initial_namespace() argument const
+      ns: rename is_initial_namespace()
+      fs: use boolean to indicate anonymous mount namespace
+      ipc: enable is_ns_init_id() assertions
+      ns: make all reference counts on initial namespace a nop
+      ns: add asserts for initial namespace reference counts
+      ns: add asserts for initial namespace active reference counts
+      pid: rely on common reference count behavior
+      ns: drop custom reference count initialization for initial namespaces
+      selftests/namespaces: fix nsid tests
 
-	/*
-	 * cred_guard_mutex must be held at least to this point to prevent
-	 * ptrace_attach() from altering our determination of the task's
-	 * credentials; any time after this it may be unlocked.
-	 */
-	security_bprm_committed_creds(bprm);
-
-> So at this time I have only one request for you.
-> Could you please try out how the test case in my patch behaves with your fix?
-
-The new TEST(attach2) added by your patch fails as expected, see 3/3.
-
-   128  static long thread2_tid;
-   129  static void *thread2(void *arg)
-   130  {
-   131          thread2_tid = syscall(__NR_gettid);
-   132          sleep(2);
-   133          execlp("false", "false", NULL);
-   134          return NULL;
-   135  }
-   136
-   137  TEST(attach2)
-   138  {
-   139          int s, k, pid = fork();
-   140
-   141          if (!pid) {
-   142                  pthread_t pt;
-   143
-   144                  pthread_create(&pt, NULL, thread2, NULL);
-   145                  pthread_join(pt, NULL);
-   146                  return;
-   147          }
-   148
-   149          sleep(1);
-   150          k = ptrace(PTRACE_ATTACH, pid, 0L, 0L);
-   151          ASSERT_EQ(k, 0);
-   152          k = waitpid(-1, &s, 0);
-   153          ASSERT_EQ(k, pid);
-   154          ASSERT_EQ(WIFSTOPPED(s), 1);
-   155          ASSERT_EQ(WSTOPSIG(s), SIGSTOP);
-   156          k = ptrace(PTRACE_SETOPTIONS, pid, 0L, PTRACE_O_TRACEEXIT);
-   157          ASSERT_EQ(k, 0);
-   158          thread2_tid = ptrace(PTRACE_PEEKDATA, pid, &thread2_tid, 0L);
-   159          ASSERT_NE(thread2_tid, -1);
-   160          ASSERT_NE(thread2_tid, 0);
-   161          ASSERT_NE(thread2_tid, pid);
-   162          k = waitpid(-1, &s, WNOHANG);
-   163          ASSERT_EQ(k, 0);
-   164          sleep(2);
-   165          /* deadlock may happen here */
-   166          k = ptrace(PTRACE_ATTACH, thread2_tid, 0L, 0L);
-
-PTRACE_ATTACH fails.
-
-thread2() kills the old leader, takes it pid, execlp() succeeds.
-
-Oleg.
+ fs/mount.h                                     |   3 +-
+ fs/namespace.c                                 |   9 +-
+ include/linux/ns/ns_common_types.h             | 196 ++++++++++++++++
+ include/linux/ns/nstree_types.h                |  55 +++++
+ include/linux/ns_common.h                      | 266 +++++-----------------
+ include/linux/nstree.h                         |  38 ++--
+ include/linux/pid_namespace.h                  |   3 +-
+ init/version-timestamp.c                       |   2 +-
+ ipc/msgutil.c                                  |   2 +-
+ ipc/namespace.c                                |   3 +-
+ kernel/cgroup/cgroup.c                         |   2 +-
+ kernel/nscommon.c                              |  15 +-
+ kernel/nstree.c                                | 304 ++++++++++++++-----------
+ kernel/pid.c                                   |   2 +-
+ kernel/pid_namespace.c                         |   2 +-
+ kernel/time/namespace.c                        |   2 +-
+ kernel/user.c                                  |   2 +-
+ tools/testing/selftests/namespaces/nsid_test.c | 107 +++++----
+ 18 files changed, 576 insertions(+), 437 deletions(-)
+---
+base-commit: c9255cbe738098e46c9125c6b409f7f8f4785bf6
+change-id: 20251110-work-namespace-nstree-fixes-f23931a00ba2
 
 
