@@ -1,200 +1,302 @@
-Return-Path: <linux-fsdevel+bounces-67674-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67675-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C1ACC46252
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 12:10:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E3F60C46339
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 12:19:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC6DA3AD552
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 11:09:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFF6D3A78F3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 11:18:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30AC53074A0;
-	Mon, 10 Nov 2025 11:09:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9A2B3081D7;
+	Mon, 10 Nov 2025 11:18:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="WJTdAEO3";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="aMA1X8IV";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="WJTdAEO3";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="aMA1X8IV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="suAfZZSb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED83C2EBB88
-	for <linux-fsdevel@vger.kernel.org>; Mon, 10 Nov 2025 11:09:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F403923B616;
+	Mon, 10 Nov 2025 11:18:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762772969; cv=none; b=Df43yVUyCsEcHk4w4CL8UBEMKEjZ7Erz5siz/vryjDdsrcGT0CKvdGnXMVoC+dv2F9PzyO8u6RGbgEgAMdazchkeWsuUKnMY8xnLk0+k1o2eAd8SBqvMEPsfirc09ePvoVqhZRX9dBg7C2XT9K+1auXFkagiKXprpktZ/p/hiTc=
+	t=1762773481; cv=none; b=KExwkPNlDcHCckFBlni4cnATEvlB+wKJ1qtVF3gkf4I5/xjovHumznKjqVjtwXWg8VLHOqvO5XYlueD7SWvw8wRBKfs3q/4VNPVbW/rB5CbHr9pxmrAQz7Dl9gQLS1Bv2qj5bKDzpFvd8OouIbP+1cbxfbLV01BQmfya/BGyFDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762772969; c=relaxed/simple;
-	bh=+KBmRNafak3ap++2xlrc7kNHO3YO/fkS8Attg973XVk=;
+	s=arc-20240116; t=1762773481; c=relaxed/simple;
+	bh=Kl3noGEumLrebFoTSEUpT8n+WyWcc5CDX7vO2T8znyo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ijqIm3SEuPhy3aabHobye7zv4NfwIO74qPxonIZR128+enc3v4wMMwjDIYC0BFttvyhKc2gw4k08yMqLyLX6VUkBzLT9dFXAVHXkwwsYDdSM6ZI+oIRL6bsVJWv76z7CzMkgzeJyo1TAUExoRW8U7/P3o5przgOmH/FTFsT9jx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=WJTdAEO3; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=aMA1X8IV; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=WJTdAEO3; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=aMA1X8IV; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 471FD1F445;
-	Mon, 10 Nov 2025 11:09:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762772966; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Vt+M+VE2AxdsqecB1TrhGicB97Adif/19QV7IHqEko8=;
-	b=WJTdAEO3bx3/vooEh/U5MUUU9lZW4tQDPFjRgAxXD7Af/IiDWZlUnB2oHuNWtK5l08rOzm
-	w2tkw6bqSumVvk8RIC6COPDChLilRql2JoduRFahCasvynqcFs0dXI63K8QYdGmPklfd0u
-	9yhTcSYh16wueMAmTHsCGVlWYFlJxRU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762772966;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Vt+M+VE2AxdsqecB1TrhGicB97Adif/19QV7IHqEko8=;
-	b=aMA1X8IV3LNrHhnTLxcUAG8nmTM+TVN31/2lQZrfabwCN47VMgWIDXVIZGG+VmCIAdTRz6
-	PAxSxxMqHvrhQmBQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762772966; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Vt+M+VE2AxdsqecB1TrhGicB97Adif/19QV7IHqEko8=;
-	b=WJTdAEO3bx3/vooEh/U5MUUU9lZW4tQDPFjRgAxXD7Af/IiDWZlUnB2oHuNWtK5l08rOzm
-	w2tkw6bqSumVvk8RIC6COPDChLilRql2JoduRFahCasvynqcFs0dXI63K8QYdGmPklfd0u
-	9yhTcSYh16wueMAmTHsCGVlWYFlJxRU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762772966;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Vt+M+VE2AxdsqecB1TrhGicB97Adif/19QV7IHqEko8=;
-	b=aMA1X8IV3LNrHhnTLxcUAG8nmTM+TVN31/2lQZrfabwCN47VMgWIDXVIZGG+VmCIAdTRz6
-	PAxSxxMqHvrhQmBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3BB0A1436F;
-	Mon, 10 Nov 2025 11:09:26 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id BnuODubHEWlESgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 10 Nov 2025 11:09:26 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id D592FA28B1; Mon, 10 Nov 2025 12:09:25 +0100 (CET)
-Date: Mon, 10 Nov 2025 12:09:25 +0100
-From: Jan Kara <jack@suse.cz>
-To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Darren Hart <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>, 
-	=?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>, Anna-Maria Behnsen <anna-maria@linutronix.de>, 
-	Frederic Weisbecker <frederic@kernel.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] futex: Store time as ktime_t in restart block
-Message-ID: <qzqldbanacnrdwtqbgplxmgucfzijelq5mhciyykldok6pocwr@mdkezu5pinxa>
-References: <20251110-restart-block-expiration-v1-0-5d39cc93df4f@linutronix.de>
- <20251110-restart-block-expiration-v1-2-5d39cc93df4f@linutronix.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=SsD3yyKFanaEOK8PRxPgK3aHYTh0IdcJuqY8lF/WU4iLKAK0ki3EMd2RBdobcDuyq32kDEGR25WjXuQz4JTyFB8XzvjWcfOza/Iwtb7zzU/frx4e5Bno2hMCK1Lvfz88nMUd0VSUNG26TapWJ+495NN53CrZnaZwc3kjTY+INGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=suAfZZSb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4C43C116B1;
+	Mon, 10 Nov 2025 11:17:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762773480;
+	bh=Kl3noGEumLrebFoTSEUpT8n+WyWcc5CDX7vO2T8znyo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=suAfZZSbiazW8sFc3Ab8Dx4NBPVEAhiluxobak9p2W7fV7tGaO7etyuexr+Wd3vCj
+	 PqHxUnnNW7q++eT7YBuJNwAJ3rvKAo7XoOn6lFdrMFjUD3WX+vxmv61jmLfPOYOs4S
+	 kgsdkCyDsNIp911BsonJsPQag0KfEYtcFcMSuVKaDEiv4/3VDw0E9C2G+b/HLgSKiW
+	 SvzHr4R5cUfu3krfZf0NcIhD1aEvXuOLOydf18+trvSrzMjKoRzc936vRumSNGLv/7
+	 zHFW012E2kZECXgXkvGjDJltpN+//CUP2yGc+d3k9TyonAEyXSC/gzEyX+zosgPkV/
+	 y+Taz5qHRrJ5A==
+Date: Mon, 10 Nov 2025 13:17:37 +0200
+From: Mike Rapoport <rppt@kernel.org>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Janosch Frank <frankja@linux.ibm.com>,
+	Claudio Imbrenda <imbrenda@linux.ibm.com>,
+	David Hildenbrand <david@redhat.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>, Peter Xu <peterx@redhat.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Arnd Bergmann <arnd@arndb.de>, Zi Yan <ziy@nvidia.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+	Lance Yang <lance.yang@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>,
+	Oscar Salvador <osalvador@suse.de>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
+	Byungchul Park <byungchul@sk.com>,
+	Gregory Price <gourry@gourry.net>,
+	Ying Huang <ying.huang@linux.alibaba.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	Axel Rasmussen <axelrasmussen@google.com>,
+	Yuanchu Xie <yuanchu@google.com>, Wei Xu <weixugc@google.com>,
+	Kemeng Shi <shikemeng@huaweicloud.com>,
+	Kairui Song <kasong@tencent.com>, Nhat Pham <nphamcs@gmail.com>,
+	Baoquan He <bhe@redhat.com>, Chris Li <chrisl@kernel.org>,
+	SeongJae Park <sj@kernel.org>, Matthew Wilcox <willy@infradead.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
+	Xu Xin <xu.xin16@zte.com.cn>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	Jann Horn <jannh@google.com>, Miaohe Lin <linmiaohe@huawei.com>,
+	Naoya Horiguchi <nao.horiguchi@gmail.com>,
+	Pedro Falcato <pfalcato@suse.de>,
+	Pasha Tatashin <pasha.tatashin@soleen.com>,
+	Rik van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>,
+	Hugh Dickins <hughd@google.com>, linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org, linux-s390@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-arch@vger.kernel.org, damon@lists.linux.dev
+Subject: Re: [PATCH v2 01/16] mm: correctly handle UFFD PTE markers
+Message-ID: <aRHJ0RDu9fJGEBF8@kernel.org>
+References: <cover.1762621567.git.lorenzo.stoakes@oracle.com>
+ <0b50fd4b1d3241d0965e6b969fb49bcc14704d9b.1762621568.git.lorenzo.stoakes@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251110-restart-block-expiration-v1-2-5d39cc93df4f@linutronix.de>
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[linutronix.de:email,suse.com:email,suse.cz:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
-X-Spam-Level: 
+In-Reply-To: <0b50fd4b1d3241d0965e6b969fb49bcc14704d9b.1762621568.git.lorenzo.stoakes@oracle.com>
 
-On Mon 10-11-25 10:38:52, Thomas Weiﬂschuh wrote:
-> The futex core uses ktime_t to represent times,
-> use that also for the restart block.
+On Sat, Nov 08, 2025 at 05:08:15PM +0000, Lorenzo Stoakes wrote:
+> PTE markers were previously only concerned with UFFD-specific logic - that
+> is, PTE entries with the UFFD WP marker set or those marked via
+> UFFDIO_POISON.
 > 
-> This also allows the simplification of the accessors.
+> However since the introduction of guard markers in commit
+>  7c53dfbdb024 ("mm: add PTE_MARKER_GUARD PTE marker"), this has no longer
+>  been the case.
 > 
-> Signed-off-by: Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
-
-Looks good. Feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
+> Issues have been avoided as guard regions are not permitted in conjunction
+> with UFFD, but it still leaves very confusing logic in place, most notably
+> the misleading and poorly named pte_none_mostly() and
+> huge_pte_none_mostly().
+> 
+> This predicate returns true for PTE entries that ought to be treated as
+> none, but only in certain circumstances, and on the assumption we are
+> dealing with H/W poison markers or UFFD WP markers.
+> 
+> This patch removes these functions and makes each invocation of these
+> functions instead explicitly check what it needs to check.
+> 
+> As part of this effort it introduces is_uffd_pte_marker() to explicitly
+> determine if a marker in fact is used as part of UFFD or not.
+> 
+> In the HMM logic we note that the only time we would need to check for a
+> fault is in the case of a UFFD WP marker, otherwise we simply encounter a
+> fault error (VM_FAULT_HWPOISON for H/W poisoned marker, VM_FAULT_SIGSEGV
+> for a guard marker), so only check for the UFFD WP case.
+> 
+> While we're here we also refactor code to make it easier to understand.
+> 
+> Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 > ---
->  include/linux/restart_block.h | 2 +-
->  kernel/futex/waitwake.c       | 9 ++++-----
->  2 files changed, 5 insertions(+), 6 deletions(-)
+>  fs/userfaultfd.c              | 83 +++++++++++++++++++----------------
+>  include/asm-generic/hugetlb.h |  8 ----
+>  include/linux/swapops.h       | 18 --------
+>  include/linux/userfaultfd_k.h | 21 +++++++++
+>  mm/hmm.c                      |  2 +-
+>  mm/hugetlb.c                  | 47 ++++++++++----------
+>  mm/mincore.c                  | 17 +++++--
+>  mm/userfaultfd.c              | 27 +++++++-----
+>  8 files changed, 123 insertions(+), 100 deletions(-)
 > 
-> diff --git a/include/linux/restart_block.h b/include/linux/restart_block.h
-> index 0798a4ae67c6c75749c38c4673ab8ea012261319..3c2bd13f609120a8a914f6e738ffea97bf72c32d 100644
-> --- a/include/linux/restart_block.h
-> +++ b/include/linux/restart_block.h
-> @@ -33,7 +33,7 @@ struct restart_block {
->  			u32 val;
->  			u32 flags;
->  			u32 bitset;
-> -			u64 time;
-> +			ktime_t time;
->  			u32 __user *uaddr2;
->  		} futex;
->  		/* For nanosleep */
-> diff --git a/kernel/futex/waitwake.c b/kernel/futex/waitwake.c
-> index e2bbe5509ec27a18785227358d4ff8d8f913ddc1..1c2dd03f11ec4e5d34d1a9f67ef01e05604b3bac 100644
-> --- a/kernel/futex/waitwake.c
-> +++ b/kernel/futex/waitwake.c
-> @@ -738,12 +738,11 @@ int futex_wait(u32 __user *uaddr, unsigned int flags, u32 val, ktime_t *abs_time
->  static long futex_wait_restart(struct restart_block *restart)
+> diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+> index 54c6cc7fe9c6..04c66b5001d5 100644
+> --- a/fs/userfaultfd.c
+> +++ b/fs/userfaultfd.c
+> @@ -233,40 +233,46 @@ static inline bool userfaultfd_huge_must_wait(struct userfaultfd_ctx *ctx,
 >  {
->  	u32 __user *uaddr = restart->futex.uaddr;
-> -	ktime_t t, *tp = NULL;
-> +	ktime_t *tp = NULL;
+>  	struct vm_area_struct *vma = vmf->vma;
+>  	pte_t *ptep, pte;
+> -	bool ret = true;
+>  
+>  	assert_fault_locked(vmf);
+>  
+>  	ptep = hugetlb_walk(vma, vmf->address, vma_mmu_pagesize(vma));
+>  	if (!ptep)
+> -		goto out;
+> +		return true;
+>  
+> -	ret = false;
+>  	pte = huge_ptep_get(vma->vm_mm, vmf->address, ptep);
+>  
+>  	/*
+>  	 * Lockless access: we're in a wait_event so it's ok if it
+> -	 * changes under us.  PTE markers should be handled the same as none
+> -	 * ptes here.
+> +	 * changes under us.
+>  	 */
+> -	if (huge_pte_none_mostly(pte))
+> -		ret = true;
 > +
-> +	if (restart->futex.flags & FLAGS_HAS_TIMEOUT)
-> +		tp = &restart->futex.time;
+> +	/* If missing entry, wait for handler. */
+
+It's actually #PF handler that waits ;-)
+
+When userfaultfd_(huge_)must_wait() return true, it means that process that
+caused a fault should wait until userspace resolves the fault and return
+false means that it's ok to retry the #PF.
+
+So the comment here should probably read as
+
+	/* entry is still missing, wait for userspace to resolve the fault */
+
+and the rest of the comments here and in userfaultfd_must_wait() need
+similar update.
+
+> +	if (huge_pte_none(pte))
+> +		return true;
+> +	/* UFFD PTE markers require handling. */
+> +	if (is_uffd_pte_marker(pte))
+> +		return true;
+> +	/* If VMA has UFFD WP faults enabled and WP fault, wait for handler. */
+>  	if (!huge_pte_write(pte) && (reason & VM_UFFD_WP))
+> -		ret = true;
+> -out:
+> -	return ret;
+> +		return true;
+> +
+> +	/* Otherwise, if entry isn't present, let fault handler deal with it. */
+
+Entry is actually present here, e.g because there is a thread that called
+UFFDIO_COPY in parallel with the fault, so no need to stuck the faulting
+process.
+
+> +	return false;
+>  }
+>  #else
+>  static inline bool userfaultfd_huge_must_wait(struct userfaultfd_ctx *ctx,
+>  					      struct vm_fault *vmf,
+>  					      unsigned long reason)
+>  {
+> -	return false;	/* should never get here */
+> +	/* Should never get here. */
+> +	VM_WARN_ON_ONCE(1);
+> +	return false;
+>  }
+>  #endif /* CONFIG_HUGETLB_PAGE */
 >  
-> -	if (restart->futex.flags & FLAGS_HAS_TIMEOUT) {
-> -		t = restart->futex.time;
-> -		tp = &t;
+>  /*
+> - * Verify the pagetables are still not ok after having reigstered into
+> + * Verify the pagetables are still not ok after having registered into
+>   * the fault_pending_wqh to avoid userland having to UFFDIO_WAKE any
+>   * userfault that has already been resolved, if userfaultfd_read_iter and
+>   * UFFDIO_COPY|ZEROPAGE are being run simultaneously on two different
+> @@ -284,53 +290,55 @@ static inline bool userfaultfd_must_wait(struct userfaultfd_ctx *ctx,
+>  	pmd_t *pmd, _pmd;
+>  	pte_t *pte;
+>  	pte_t ptent;
+> -	bool ret = true;
+> +	bool ret;
+>  
+>  	assert_fault_locked(vmf);
+>  
+>  	pgd = pgd_offset(mm, address);
+>  	if (!pgd_present(*pgd))
+> -		goto out;
+> +		return true;
+>  	p4d = p4d_offset(pgd, address);
+>  	if (!p4d_present(*p4d))
+> -		goto out;
+> +		return true;
+>  	pud = pud_offset(p4d, address);
+>  	if (!pud_present(*pud))
+> -		goto out;
+> +		return true;
+>  	pmd = pmd_offset(pud, address);
+>  again:
+>  	_pmd = pmdp_get_lockless(pmd);
+>  	if (pmd_none(_pmd))
+> -		goto out;
+> +		return true;
+>  
+> -	ret = false;
+>  	if (!pmd_present(_pmd))
+> -		goto out;
+> +		return false;
+
+This one is actually tricky, maybe it's worth adding a gist of commit log
+from a365ac09d334 ("mm, userfaultfd, THP: avoid waiting when PMD under THP migration")
+as a comment.
+
+>  
+> -	if (pmd_trans_huge(_pmd)) {
+> -		if (!pmd_write(_pmd) && (reason & VM_UFFD_WP))
+> -			ret = true;
+> -		goto out;
 > -	}
->  	restart->fn = do_no_restart_syscall;
+> +	if (pmd_trans_huge(_pmd))
+> +		return !pmd_write(_pmd) && (reason & VM_UFFD_WP);
+
+...
+
+> diff --git a/mm/hmm.c b/mm/hmm.c
+> index a56081d67ad6..43d4a91035ff 100644
+> --- a/mm/hmm.c
+> +++ b/mm/hmm.c
+> @@ -244,7 +244,7 @@ static int hmm_vma_handle_pte(struct mm_walk *walk, unsigned long addr,
+>  	uint64_t pfn_req_flags = *hmm_pfn;
+>  	uint64_t new_pfn_flags = 0;
 >  
->  	return (long)futex_wait(uaddr, restart->futex.flags,
-> 
-> -- 
-> 2.51.0
-> 
+> -	if (pte_none_mostly(pte)) {
+> +	if (pte_none(pte) || pte_marker_uffd_wp(pte)) {
+
+Would be nice to add the note from the changelog as a comment here.
+
+>  		required_fault =
+>  			hmm_pte_need_fault(hmm_vma_walk, pfn_req_flags, 0);
+>  		if (required_fault)
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Sincerely yours,
+Mike.
 
