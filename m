@@ -1,50 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-67711-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67712-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D2DCC47793
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 16:19:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 009B9C477B2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 16:19:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B8B73B0F7E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 15:13:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F6F33B4553
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 15:14:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1DF7328B41;
-	Mon, 10 Nov 2025 15:09:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1B0D329379;
+	Mon, 10 Nov 2025 15:09:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qlw7E5lb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y4pHJ6Nf"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14C8430506A;
-	Mon, 10 Nov 2025 15:09:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38EB63195EB;
+	Mon, 10 Nov 2025 15:09:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762787389; cv=none; b=aDiEPk4FbnS9FLnYmzKb0U6pNHM4qmnKkfmF6N7w6DI20d69upLflFJiNvCYHZe3Z8Rzpk8jb8U+xHaITinTvgZJ7STfRnTrlcQaIvbnKnC93Qzc7ghAXoUO2LjFbyySKjqGUqkdnOfiaIZTQ+EqoUX3x05HUHo9zga7dMa8LH8=
+	t=1762787394; cv=none; b=dTAbEsDvIe2vHS1c49t4l2Ir6U1BrW+GoyQmaq7e1sBuk+vnPMA8dDt90mHhOjpUpSTncCU6heiRjdDlwh7CB+T+q8gvL5JbijgPoKdbtInS0b2kAO17WHn2o8p5s4VOAipxinDStD1jf2Lw07w2eaNLyY55RsDvFWTirvOaZNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762787389; c=relaxed/simple;
-	bh=dZSc1guTC2/uM+g+SjXe2PvJ4m9+xTNeaSFMoTViLHc=;
+	s=arc-20240116; t=1762787394; c=relaxed/simple;
+	bh=HSueTNLDLiciDnAbEMop6IvyniLLhSYMaO0aax1SYAQ=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=uL5DAZUGESh3GR68g89d7BURdcjVxLUc+URA2/6tN4Z5YW52b/sWwlB7/3uj1F1xzaZsJLJh3expNytktPF3s7S/FbkNXzt5v9fIX3+bU5qHCYJapxy5NwAvQqbSkdIj2fS/M+D9eSJvwsqdXlkNccCanBVcZ+A0ZekdUgl0It8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qlw7E5lb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37B99C4CEFB;
-	Mon, 10 Nov 2025 15:09:44 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=sZPrFKjmudKnYZMjW4KtBOiBDWP/PDDopi8b+trBBXz4X5PZ/U7WE2O4b6FfscH45+CaKzixm4WBTnri+l+DSF2qWqlUgxrxf58K+Z8JLxhySgnBJq/ZZEUjkw8tQrdv8PnsVppoWTj1lBfRFGUAzwcuBGDVJwSqZMhGJ5amZN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y4pHJ6Nf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68462C113D0;
+	Mon, 10 Nov 2025 15:09:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762787389;
-	bh=dZSc1guTC2/uM+g+SjXe2PvJ4m9+xTNeaSFMoTViLHc=;
+	s=k20201202; t=1762787394;
+	bh=HSueTNLDLiciDnAbEMop6IvyniLLhSYMaO0aax1SYAQ=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=Qlw7E5lblIEKi0aChIXt0k7Uk1U2yAxNDAp3eqNQjjWD9RWJF2tNQJGqhjCcFQp+z
-	 ENgUjGqbbvgviGBZbJZptqhi4EIWRpNBwsOPKFPlX+SErgY8LDP4NUuJHR5v8m5CaE
-	 eVOpQX3xWZUizKeTN0QWBXiPdB3nAyS2vj3MaQTMtheLkshcG7xtO/BkyAJtAUM0lm
-	 eslqeZeez88/LxoWACbhAO4ZscXvhmakhliQB2bR/KAwwAMgXoH7OKXdvFT5dM9Saa
-	 FWeFTBIYTiqbUm/6utoenkWiZGBmVeHlCTLoBr0wt3m9t032GcwnL9rhDJu20nZuPO
-	 /dhdr3kdy/RpA==
+	b=Y4pHJ6NfYU8jHVGl6PaxVvNGysGpDRQIvSgp6E1e37g5XafV8tHQww//n8B2CAYEp
+	 9pxvdLFu8aAXm9EdQpDTzu36c8NDsoAY9cTn/gzcgnSwwSymSiPv4M4w6kZcYwD5bA
+	 ZAhQpcZWP1o7FH51SKWAnqQHGlMMQrV3/yD5lRbI+P6Rww64VmBYG1hCdPm5pCPkbS
+	 rEvTKspL+aUWoStaQIJYa0t3QPDaP94tRKRh3h+Aa2CP81tKlw2d29n21Lz4lcIzvB
+	 sdHZVMmLoai2T/l2/Ksut/t9EFG2irGeHjT5hWIMg4Bor4SkhKtaexvrdgqNgxXS1l
+	 6VJWyVsVT5MCg==
 From: Christian Brauner <brauner@kernel.org>
-Date: Mon, 10 Nov 2025 16:08:25 +0100
-Subject: [PATCH 13/17] ns: add asserts for initial namespace reference
- counts
+Date: Mon, 10 Nov 2025 16:08:26 +0100
+Subject: [PATCH 14/17] ns: add asserts for initial namespace active
+ reference counts
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -53,7 +53,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251110-work-namespace-nstree-fixes-v1-13-e8a9264e0fb9@kernel.org>
+Message-Id: <20251110-work-namespace-nstree-fixes-v1-14-e8a9264e0fb9@kernel.org>
 References: <20251110-work-namespace-nstree-fixes-v1-0-e8a9264e0fb9@kernel.org>
 In-Reply-To: <20251110-work-namespace-nstree-fixes-v1-0-e8a9264e0fb9@kernel.org>
 To: linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
@@ -70,12 +70,12 @@ Cc: Jann Horn <jannh@google.com>, Mike Yuan <me@yhndnzj.com>,
  netdev@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-a6db3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2157; i=brauner@kernel.org;
- h=from:subject:message-id; bh=dZSc1guTC2/uM+g+SjXe2PvJ4m9+xTNeaSFMoTViLHc=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQK/v+8PdR+0gFZr2ZZTqXa3T8rGnt8eFbU7wh5apiq6
- b3+2W/rjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgImIGzIyfMg8f6RqmdYlz+7z
- CXEKaxT4nzXNlvp5bkplR1/5u/nxbxgZXr5+4fgyPFl+dpH3lvj7xtM1WM1MXPu2uKVd5fid6Hi
- BEQA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1562; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=HSueTNLDLiciDnAbEMop6IvyniLLhSYMaO0aax1SYAQ=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQK/v/cu7mrXSNqrnQ9y1Z/fa+4c7abH4dP3lytbTV57
+ snnSc+EOkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACYi1MbIsPVkTc+FpE2/N2Ve
+ VmZg/nvka/j56pbKI+7t7nXe7TGhDAz/g+YV1MdnrfmqFfwkkz/79aSe1H59uXNTLsnO/JkSf/Q
+ ZBwA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
@@ -83,73 +83,45 @@ They always remain fixed at one. Notice when that assumptions is broken.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- include/linux/ns_common.h | 26 +++++++++++++++++---------
- 1 file changed, 17 insertions(+), 9 deletions(-)
+ include/linux/ns_common.h | 4 ++++
+ 1 file changed, 4 insertions(+)
 
 diff --git a/include/linux/ns_common.h b/include/linux/ns_common.h
-index 5b8f2f0163d7..dfb6b798ba82 100644
+index dfb6b798ba82..43f709ab846a 100644
 --- a/include/linux/ns_common.h
 +++ b/include/linux/ns_common.h
-@@ -60,10 +60,17 @@ static __always_inline __must_check int __ns_ref_active_read(const struct ns_com
- 	return atomic_read(&ns->__ns_ref_active);
- }
- 
-+static __always_inline __must_check int __ns_ref_read(const struct ns_common *ns)
-+{
-+	return refcount_read(&ns->__ns_ref);
-+}
-+
- static __always_inline __must_check bool __ns_ref_put(struct ns_common *ns)
+@@ -69,6 +69,7 @@ static __always_inline __must_check bool __ns_ref_put(struct ns_common *ns)
  {
--	if (is_ns_init_id(ns))
-+	if (is_ns_init_id(ns)) {
-+		VFS_WARN_ON_ONCE(__ns_ref_read(ns) != 1);
+ 	if (is_ns_init_id(ns)) {
+ 		VFS_WARN_ON_ONCE(__ns_ref_read(ns) != 1);
++		VFS_WARN_ON_ONCE(__ns_ref_active_read(ns) != 1);
  		return false;
-+	}
+ 	}
  	if (refcount_dec_and_test(&ns->__ns_ref)) {
- 		VFS_WARN_ON_ONCE(__ns_ref_active_read(ns));
- 		return true;
-@@ -73,31 +80,32 @@ static __always_inline __must_check bool __ns_ref_put(struct ns_common *ns)
- 
- static __always_inline __must_check bool __ns_ref_get(struct ns_common *ns)
+@@ -82,6 +83,7 @@ static __always_inline __must_check bool __ns_ref_get(struct ns_common *ns)
  {
--	if (is_ns_init_id(ns))
-+	if (is_ns_init_id(ns)) {
-+		VFS_WARN_ON_ONCE(__ns_ref_read(ns) != 1);
+ 	if (is_ns_init_id(ns)) {
+ 		VFS_WARN_ON_ONCE(__ns_ref_read(ns) != 1);
++		VFS_WARN_ON_ONCE(__ns_ref_active_read(ns) != 1);
  		return true;
-+	}
+ 	}
  	if (refcount_inc_not_zero(&ns->__ns_ref))
- 		return true;
- 	VFS_WARN_ON_ONCE(__ns_ref_active_read(ns));
- 	return false;
- }
- 
--static __always_inline __must_check int __ns_ref_read(const struct ns_common *ns)
--{
--	return refcount_read(&ns->__ns_ref);
--}
--
- static __always_inline void __ns_ref_inc(struct ns_common *ns)
+@@ -94,6 +96,7 @@ static __always_inline void __ns_ref_inc(struct ns_common *ns)
  {
--	if (is_ns_init_id(ns))
-+	if (is_ns_init_id(ns)) {
-+		VFS_WARN_ON_ONCE(__ns_ref_read(ns) != 1);
+ 	if (is_ns_init_id(ns)) {
+ 		VFS_WARN_ON_ONCE(__ns_ref_read(ns) != 1);
++		VFS_WARN_ON_ONCE(__ns_ref_active_read(ns) != 1);
  		return;
-+	}
+ 	}
  	refcount_inc(&ns->__ns_ref);
- }
- 
- static __always_inline __must_check bool __ns_ref_dec_and_lock(struct ns_common *ns,
- 							       spinlock_t *ns_lock)
+@@ -104,6 +107,7 @@ static __always_inline __must_check bool __ns_ref_dec_and_lock(struct ns_common
  {
--	if (is_ns_init_id(ns))
-+	if (is_ns_init_id(ns)) {
-+		VFS_WARN_ON_ONCE(__ns_ref_read(ns) != 1);
+ 	if (is_ns_init_id(ns)) {
+ 		VFS_WARN_ON_ONCE(__ns_ref_read(ns) != 1);
++		VFS_WARN_ON_ONCE(__ns_ref_active_read(ns) != 1);
  		return false;
-+	}
+ 	}
  	return refcount_dec_and_lock(&ns->__ns_ref, ns_lock);
- }
- 
 
 -- 
 2.47.3
