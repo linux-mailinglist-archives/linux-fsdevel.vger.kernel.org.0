@@ -1,264 +1,242 @@
-Return-Path: <linux-fsdevel+bounces-67689-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67690-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 332F6C46F55
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 14:39:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B490C46FDD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 14:45:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id AE5F8349792
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 13:39:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C4AC18834B4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 13:45:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 006D3313549;
-	Mon, 10 Nov 2025 13:38:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD4D3311C24;
+	Mon, 10 Nov 2025 13:45:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cnzfU5Dx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nJRJnoHT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C5A7313546
-	for <linux-fsdevel@vger.kernel.org>; Mon, 10 Nov 2025 13:38:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06E1A30E0C5;
+	Mon, 10 Nov 2025 13:45:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762781894; cv=none; b=QkR7uegXJ9H2QUbdMP4RQOh9kAOgJyC1MBgBFl+Ut2kYx+TitZ2n302OxwvGR0DboStagVsXeVoVm9j/Fyli53QM57QNPkU2EBmLo6A8FKcX/hRf95ERvzIJkorp+nOvWDFw0RTFm4yGGP0urRhWgTk/gO1Pvsktwe+AbNdkSIw=
+	t=1762782309; cv=none; b=J+Ym0LAA5oRBo4e+cJkXLI3xrjF6kX1MGWi53H1IGQkZAFdOkVaEtmJuMjRQb6aiDePif7GN0cwIbqHlMockZo2PEc7vkU+XoJCclTGdF78EZc63zTUmLUHq3jvXKbmJBfDW/IxSAzIqscs/GPVZvWrqrgN2uT5G1DKYj7miw5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762781894; c=relaxed/simple;
-	bh=HOUCuTxWwKHYskDLNwEKHT2ZtC97epKNJQ0iYXnYKSw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:Mime-Version; b=iaAUdTahvVKAEBYEi0LG+G3Lgqh27OYcfl22gUO27nWSaApI3U0tzN5ft9cYALtA44UJ6WxNUBZoXrrfTnMzN0zxGrIdmqGxA5c4lqy13Otb4ABlclyUJMIaO4QnuElIoarHLzCvBuF1WWMDdlulhJDWFC01TdC8rp2/sOitUKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cnzfU5Dx; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-78af3fe5b17so2276287b3a.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Nov 2025 05:38:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762781892; x=1763386692; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:date
-         :cc:to:from:subject:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jnGlBRb9DwPiK9LmBGDtYmrRRuxIEh43z/epZv69VLQ=;
-        b=cnzfU5Dx7ei5165Oe21fXuxJobF5pYYWzJ6nz44a4qpnbTDHfaxt2uNEIxhyaar0gM
-         NOiGAVlSOw9p1tOzQFuPRIqGvuf7I5xwuy589Sfw72gkHII2klEm/0qHqw9/xcP4QnE7
-         CwA3VrKfrqD4OxTCCcSZdGsjfPcDafyt4ICvATeS2b9s0zidabiqqVankwQQ8doo+pE9
-         JCEyAQVtuSQ7MsXe7Z/V54rHKuuNGWADEvDJrG02KvQ3jGrz2og562GH4STpSy6GuVHq
-         qiQfG5gqFJ9amS4S1jQCXko05sruq0T0IEbHGMzBXbpV1F0k8G3JEXxaNJD2cK7jWkTK
-         oF3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762781892; x=1763386692;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:date
-         :cc:to:from:subject:message-id:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jnGlBRb9DwPiK9LmBGDtYmrRRuxIEh43z/epZv69VLQ=;
-        b=oI5ZAEuDojoa764S97j0LPCiv+9juPt9/Bz5nSf5dOuivPD9cj7qKtwlxlcKqp+wUM
-         q+QEc2nR3nki1PNq1oX+H51IgPlyLE2/ewhAu8fpJgam4BbpSjd1tktF7oaq/7bQKx7G
-         tBcB+pPtOdf+Rxej0pez4vMb+wvHbL91Uj+3HEeuohw0ns0lx2ZITWnW6/LczW/1AOm6
-         Sq+YY/eLuAcdIZJSEtcwABjal2yW4HMcUbKcufexgJsNfyed3MjjXYNDYawZp1uGa3nN
-         vqX/5tL95FwGJL68mrV4DPWP6C0NLjk5rJkFD7aBWXvOcKN5nOpZX5AxgBaydvfKDAkW
-         dYdg==
-X-Forwarded-Encrypted: i=1; AJvYcCUdSig3BybOkWVE5mIN7Vr9UXl+WjcBLOhKxbG/wGizrgKMtg4MuMmim8OxVCq8oErKhBNTRpWXGuecmKIe@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxdwk9LQ7k38cBm1+Z4ZI81SfncoIVdCaSY6tk6oU/FOSFufujk
-	K08PklUHjeLZhaX6MB0VxA3+EYCLzTJ31yXD15g4QWFxFIb+7HXME3uk
-X-Gm-Gg: ASbGncuTKUc0CqE52mZOT7yxfdopd9SzmkROnuD/nWekRCuDy8PRI5eiscLquWGvJtr
-	giYd4FuYG/0Ohl9ws+DUu8YeDRy+EYLoGXjfwMR9NlFSiCBXgmDSyBTvPRFz/ZfBBlK40Bgpv9b
-	dLZnJhncqEiJC5oKs7vKGC8FKVcs5VssZSwYHnjLM4gABK06PaQKK0Kc37xCc3CeVMGXXIYAOq3
-	9E3Jhi6jkdbkSZss7DRY3F/7bdLsy+jitkGyGskuraTHWMGU+rGEYXfRY52gVl8T8vt82KOYmuO
-	//PY7bHrzLRUE0c6sYIIQGcJJ6e1rNK4FEl8MrLP0/gCgA4Q7FFccpmpgRSLjzKy0r7ePLZ7Eh2
-	s0jJLbA0pVmrTqR9iMZgNh565JNLIncIy+BK1M/BgSEc0lE5ogca7kgvC4rVnsnb4VidWcM0PRE
-	fEkSadcKj0qD5y7UtJuTB3vxDu+0+6EKGWS4ukdbysBKol1oqq1yJ/L8kraRkQ7T2w
-X-Google-Smtp-Source: AGHT+IHNvk2m9lZznt0nbMSiGOUuWH6p+xE2cZfK8zcBuHfxFqo1BWD3CQfalfJc7QB2TuotmiLZDQ==
-X-Received: by 2002:a05:6a21:32a0:b0:334:a784:304a with SMTP id adf61e73a8af0-353a2d3cec1mr9389506637.33.1762781891518;
-        Mon, 10 Nov 2025 05:38:11 -0800 (PST)
-Received: from li-5d80d4cc-2782-11b2-a85c-bed59fe4c9e5.ibm.com ([49.207.198.166])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-ba8f9ed21desm13311276a12.11.2025.11.10.05.38.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Nov 2025 05:38:11 -0800 (PST)
-Message-ID: <7f7163d79dc89ae8c8d1157ce969b369acbcfb5d.camel@gmail.com>
-Subject: Re: [PATCH 4/4] xfs: fallback to buffered I/O for direct I/O when
- stable writes are required
-From: "Nirjhar Roy (IBM)" <nirjhar.roy.lists@gmail.com>
-To: Christoph Hellwig <hch@lst.de>, Carlos Maiolino <cem@kernel.org>, 
-	Christian Brauner
-	 <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, "Martin K. Petersen"
- <martin.petersen@oracle.com>,  linux-kernel@vger.kernel.org,
- linux-xfs@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
- linux-raid@vger.kernel.org,  linux-block@vger.kernel.org
-Date: Mon, 10 Nov 2025 19:08:05 +0530
-In-Reply-To: <20251029071537.1127397-5-hch@lst.de>
-References: <20251029071537.1127397-1-hch@lst.de>
-	 <20251029071537.1127397-5-hch@lst.de>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-27.el8_10) 
+	s=arc-20240116; t=1762782309; c=relaxed/simple;
+	bh=K1xogRmcdnJHCvjWGY+Er/5mR9phjWmkoC/mTpkqq+Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XBOnXyO6mpRXeUuvr70iBH2Yyaeuumh3auWYopNX0jxvbcstdPSvCQNpr0nct2QYRfkjfO9x29x6Pc6c5a6sZ9ryy4oEzv7bF8mzRP8BSmyDsLaEiGltX16IbYcSLAzhFZm66rJZskquyRz7qWcLa/ODVI/GdPmDHO1xFcOLVuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nJRJnoHT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA5E7C4CEFB;
+	Mon, 10 Nov 2025 13:44:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762782305;
+	bh=K1xogRmcdnJHCvjWGY+Er/5mR9phjWmkoC/mTpkqq+Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nJRJnoHTl+9Cbeu8AtpQVl6MNu8LP7vYCarp/uXV0NbcLGe5/UyGPbNA4xSCI2RwC
+	 UPZmRzo9UEkoy089Iscpp5zjMrREPUnqLbKm++nbSkNKPu6x56aI+Xh3ev/QLMxEec
+	 5c0fkBUdfIeOd6MKzMEIqZzG7e6gVDaVhCSdHwTLfdkd4kAYztyAKHnKyl3X+S3fzV
+	 9ovZf4kVEn7eNQe3LemtVmi9zH1TsJkySJDyQTzaD4W3PCvng8gUNAjb73ZhIYrUPz
+	 9YxUpUh25WrfYWIBf27UgkW6dDxg8oF9+SWT6FXPYKflLL4vUgUmyLlAW0YPlrGzUi
+	 pT0FLuBk5ZvOQ==
+Date: Mon, 10 Nov 2025 15:44:43 +0200
+From: Mike Rapoport <rppt@kernel.org>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Janosch Frank <frankja@linux.ibm.com>,
+	Claudio Imbrenda <imbrenda@linux.ibm.com>,
+	David Hildenbrand <david@redhat.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>, Peter Xu <peterx@redhat.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Arnd Bergmann <arnd@arndb.de>, Zi Yan <ziy@nvidia.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+	Lance Yang <lance.yang@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>,
+	Oscar Salvador <osalvador@suse.de>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
+	Byungchul Park <byungchul@sk.com>,
+	Gregory Price <gourry@gourry.net>,
+	Ying Huang <ying.huang@linux.alibaba.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	Axel Rasmussen <axelrasmussen@google.com>,
+	Yuanchu Xie <yuanchu@google.com>, Wei Xu <weixugc@google.com>,
+	Kemeng Shi <shikemeng@huaweicloud.com>,
+	Kairui Song <kasong@tencent.com>, Nhat Pham <nphamcs@gmail.com>,
+	Baoquan He <bhe@redhat.com>, Chris Li <chrisl@kernel.org>,
+	SeongJae Park <sj@kernel.org>, Matthew Wilcox <willy@infradead.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
+	Xu Xin <xu.xin16@zte.com.cn>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	Jann Horn <jannh@google.com>, Miaohe Lin <linmiaohe@huawei.com>,
+	Naoya Horiguchi <nao.horiguchi@gmail.com>,
+	Pedro Falcato <pfalcato@suse.de>,
+	Pasha Tatashin <pasha.tatashin@soleen.com>,
+	Rik van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>,
+	Hugh Dickins <hughd@google.com>, linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org, linux-s390@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-arch@vger.kernel.org, damon@lists.linux.dev
+Subject: Re: [PATCH v2 01/16] mm: correctly handle UFFD PTE markers
+Message-ID: <aRHsSxhIikzC9AAN@kernel.org>
+References: <cover.1762621567.git.lorenzo.stoakes@oracle.com>
+ <0b50fd4b1d3241d0965e6b969fb49bcc14704d9b.1762621568.git.lorenzo.stoakes@oracle.com>
+ <aRHJ0RDu9fJGEBF8@kernel.org>
+ <1a77db9b-ddb2-42bc-8e8f-f4794a5bfc6d@lucifer.local>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1a77db9b-ddb2-42bc-8e8f-f4794a5bfc6d@lucifer.local>
 
-On Wed, 2025-10-29 at 08:15 +0100, Christoph Hellwig wrote:
-> Inodes can be marked as requiring stable writes, which is a setting
-> usually inherited from block devices that require stable writes.  Block
-> devices require stable writes when the drivers have to sample the data
-> more than once, e.g. to calculate a checksum or parity in one pass, and
-> then send the data on to a hardware device, and modifying the data
-> in-flight can lead to inconsistent checksums or parity.
+On Mon, Nov 10, 2025 at 01:01:36PM +0000, Lorenzo Stoakes wrote:
+> On Mon, Nov 10, 2025 at 01:17:37PM +0200, Mike Rapoport wrote:
+> > On Sat, Nov 08, 2025 at 05:08:15PM +0000, Lorenzo Stoakes wrote:
+> > > PTE markers were previously only concerned with UFFD-specific logic - that
+> > > is, PTE entries with the UFFD WP marker set or those marked via
+> > > UFFDIO_POISON.
+> > >
+> > > However since the introduction of guard markers in commit
+> > >  7c53dfbdb024 ("mm: add PTE_MARKER_GUARD PTE marker"), this has no longer
+> > >  been the case.
+> > >
+> > > Issues have been avoided as guard regions are not permitted in conjunction
+> > > with UFFD, but it still leaves very confusing logic in place, most notably
+> > > the misleading and poorly named pte_none_mostly() and
+> > > huge_pte_none_mostly().
+> > >
+> > > This predicate returns true for PTE entries that ought to be treated as
+> > > none, but only in certain circumstances, and on the assumption we are
+> > > dealing with H/W poison markers or UFFD WP markers.
+> > >
+> > > This patch removes these functions and makes each invocation of these
+> > > functions instead explicitly check what it needs to check.
+> > >
+> > > As part of this effort it introduces is_uffd_pte_marker() to explicitly
+> > > determine if a marker in fact is used as part of UFFD or not.
+> > >
+> > > In the HMM logic we note that the only time we would need to check for a
+> > > fault is in the case of a UFFD WP marker, otherwise we simply encounter a
+> > > fault error (VM_FAULT_HWPOISON for H/W poisoned marker, VM_FAULT_SIGSEGV
+> > > for a guard marker), so only check for the UFFD WP case.
+> > >
+> > > While we're here we also refactor code to make it easier to understand.
+> > >
+> > > Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
+> > > Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> > > ---
+> > >  fs/userfaultfd.c              | 83 +++++++++++++++++++----------------
+> > >  include/asm-generic/hugetlb.h |  8 ----
+> > >  include/linux/swapops.h       | 18 --------
+> > >  include/linux/userfaultfd_k.h | 21 +++++++++
+> > >  mm/hmm.c                      |  2 +-
+> > >  mm/hugetlb.c                  | 47 ++++++++++----------
+> > >  mm/mincore.c                  | 17 +++++--
+> > >  mm/userfaultfd.c              | 27 +++++++-----
+> > >  8 files changed, 123 insertions(+), 100 deletions(-)
+> > >
+> > > diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+> > > index 54c6cc7fe9c6..04c66b5001d5 100644
+> > > --- a/fs/userfaultfd.c
+> > > +++ b/fs/userfaultfd.c
+> > > @@ -233,40 +233,46 @@ static inline bool userfaultfd_huge_must_wait(struct userfaultfd_ctx *ctx,
+> > >  {
+> > >  	struct vm_area_struct *vma = vmf->vma;
+> > >  	pte_t *ptep, pte;
+> > > -	bool ret = true;
+> > >
+> > >  	assert_fault_locked(vmf);
+> > >
+> > >  	ptep = hugetlb_walk(vma, vmf->address, vma_mmu_pagesize(vma));
+> > >  	if (!ptep)
+> > > -		goto out;
+> > > +		return true;
+> > >
+> > > -	ret = false;
+> > >  	pte = huge_ptep_get(vma->vm_mm, vmf->address, ptep);
+> > >
+> > >  	/*
+> > >  	 * Lockless access: we're in a wait_event so it's ok if it
+> > > -	 * changes under us.  PTE markers should be handled the same as none
+> > > -	 * ptes here.
+> > > +	 * changes under us.
+> > >  	 */
+> > > -	if (huge_pte_none_mostly(pte))
+> > > -		ret = true;
+> > > +
+> > > +	/* If missing entry, wait for handler. */
+> >
+> > It's actually #PF handler that waits ;-)
 > 
-> For buffered I/O, the writeback code implements this by not allowing
-> modifications while folios are marked as under writeback, but for
-> direct I/O, the kernel currently does not have any way to prevent the
-> user application from modifying the in-flight memory, so modifications
-> can easily corrupt data despite the block driver setting the stable
-> write flag.  Even worse, corruption can happen on reads as well,
-> where concurrent modifications can cause checksum mismatches, or
-> failures to rebuild parity.  One application known to trigger this
-> behavior is Qemu when running Windows VMs, but there might be many
-> others as well.  xfstests can also hit this behavior, not only in the
-> specifically crafted patch for this (generic/761), but also in
-> various other tests that mostly stress races between different I/O
-> modes, which generic/095 being the most trivial and easy to hit
-> one.
+> Think I meant uffd userland 'handler' as in handle_userfault(). But this is not
+> clear obviously.
 > 
-> Fix XFS to fall back to uncached buffered I/O when the block device
-> requires stable writes to fix these races.
+> >
+> > When userfaultfd_(huge_)must_wait() return true, it means that process that
+> > caused a fault should wait until userspace resolves the fault and return
+> > false means that it's ok to retry the #PF.
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  fs/xfs/xfs_file.c | 54 +++++++++++++++++++++++++++++++++++++++--------
->  fs/xfs/xfs_iops.c |  6 ++++++
->  2 files changed, 51 insertions(+), 9 deletions(-)
+> Yup.
 > 
-> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-> index e09ae86e118e..0668af07966a 100644
-> --- a/fs/xfs/xfs_file.c
-> +++ b/fs/xfs/xfs_file.c
-> @@ -230,6 +230,12 @@ xfs_file_dio_read(
->  	struct xfs_inode	*ip = XFS_I(file_inode(iocb->ki_filp));
->  	ssize_t			ret;
->  
-> +	if (mapping_stable_writes(iocb->ki_filp->f_mapping)) {
-> +		xfs_info_once(ip->i_mount,
-> +			"falling back from direct to buffered I/O for read");
-> +		return -ENOTBLK;
-> +	}
-> +
->  	trace_xfs_file_direct_read(iocb, to);
->  
->  	if (!iov_iter_count(to))
-> @@ -302,13 +308,22 @@ xfs_file_read_iter(
->  	if (xfs_is_shutdown(mp))
->  		return -EIO;
->  
-> -	if (IS_DAX(inode))
-> +	if (IS_DAX(inode)) {
->  		ret = xfs_file_dax_read(iocb, to);
-> -	else if (iocb->ki_flags & IOCB_DIRECT)
-> +		goto done;
-> +	}
-> +
-> +	if (iocb->ki_flags & IOCB_DIRECT) {
->  		ret = xfs_file_dio_read(iocb, to);
-> -	else
-> -		ret = xfs_file_buffered_read(iocb, to);
-> +		if (ret != -ENOTBLK)
-> +			goto done;
-> +
-> +		iocb->ki_flags &= ~IOCB_DIRECT;
-> +		iocb->ki_flags |= IOCB_DONTCACHE;
-> +	}
->  
-> +	ret = xfs_file_buffered_read(iocb, to);
-> +done:
->  	if (ret > 0)
->  		XFS_STATS_ADD(mp, xs_read_bytes, ret);
->  	return ret;
-> @@ -883,6 +898,7 @@ xfs_file_dio_write(
->  	struct iov_iter		*from)
->  {
->  	struct xfs_inode	*ip = XFS_I(file_inode(iocb->ki_filp));
-> +	struct xfs_mount	*mp = ip->i_mount;
->  	struct xfs_buftarg      *target = xfs_inode_buftarg(ip);
->  	size_t			count = iov_iter_count(from);
->  
-> @@ -890,15 +906,21 @@ xfs_file_dio_write(
->  	if ((iocb->ki_pos | count) & target->bt_logical_sectormask)
->  		return -EINVAL;
->  
-> +	if (mapping_stable_writes(iocb->ki_filp->f_mapping)) {
-> +		xfs_info_once(mp,
-> +			"falling back from direct to buffered I/O for write");
-Minor: Let us say that an user opens a file in O_DIRECT in an atomic write enabled device(requiring
-stable writes), we get this warning once. Now the same/different user/application opens another file
-with O_DIRECT in the same atomic write enabled device and expects atomic write to be enabled - but
-it will not be enabled (since the kernel has falled back to the uncached buffered write path)
-without any warning message. Won't that be a bit confusing for the user (of course unless the user
-is totally aware of the kernel's exact behavior)?
---NR
+> >
+> > So the comment here should probably read as
+> >
+> > 	/* entry is still missing, wait for userspace to resolve the fault */
+> >
+> 
+> Will update to make clearer thanks.
+> 
+> >
+> > > +	if (huge_pte_none(pte))
+> > > +		return true;
+> > > +	/* UFFD PTE markers require handling. */
+> > > +	if (is_uffd_pte_marker(pte))
+> > > +		return true;
+> > > +	/* If VMA has UFFD WP faults enabled and WP fault, wait for handler. */
+> > >  	if (!huge_pte_write(pte) && (reason & VM_UFFD_WP))
+> > > -		ret = true;
+> > > -out:
+> > > -	return ret;
+> > > +		return true;
+> > > +
+> > > +	/* Otherwise, if entry isn't present, let fault handler deal with it. */
+> >
+> > Entry is actually present here, e.g because there is a thread that called
+> > UFFDIO_COPY in parallel with the fault, so no need to stuck the faulting
+> > process.
+> 
+> Well it might not be? Could be a swap entry, migration entry, etc. unless I'm
+> missing cases? Point of comment was 'ok if non-present in a way that doesn't
+> require a userfaultfd userland handler the fault handler will deal'
+> 
+> But anyway agree this isn't clear, probably better to just say 'otherwise no
+> need for userland uffd handler to do anything here' or similar.
 
-> +		return -ENOTBLK;
-> +	}
-> +
->  	/*
->  	 * For always COW inodes we also must check the alignment of each
->  	 * individual iovec segment, as they could end up with different
->  	 * I/Os due to the way bio_iov_iter_get_pages works, and we'd
->  	 * then overwrite an already written block.
->  	 */
-> -	if (((iocb->ki_pos | count) & ip->i_mount->m_blockmask) ||
-> +	if (((iocb->ki_pos | count) & mp->m_blockmask) ||
->  	    (xfs_is_always_cow_inode(ip) &&
-> -	     (iov_iter_alignment(from) & ip->i_mount->m_blockmask)))
-> +	     (iov_iter_alignment(from) & mp->m_blockmask)))
->  		return xfs_file_dio_write_unaligned(ip, iocb, from);
->  	if (xfs_is_zoned_inode(ip))
->  		return xfs_file_dio_write_zoned(ip, iocb, from);
-> @@ -1555,10 +1577,24 @@ xfs_file_open(
->  {
->  	if (xfs_is_shutdown(XFS_M(inode->i_sb)))
->  		return -EIO;
-> +
-> +	/*
-> +	 * If the underlying devices requires stable writes, we have to fall
-> +	 * back to (uncached) buffered I/O for direct I/O reads and writes, as
-> +	 * the kernel can't prevent applications from modifying the memory under
-> +	 * I/O.  We still claim to support O_DIRECT as we want opens for that to
-> +	 * succeed and fall back.
-> +	 *
-> +	 * As atomic writes are only supported for direct I/O, they can't be
-> +	 * supported either in this case.
-> +	 */
->  	file->f_mode |= FMODE_NOWAIT | FMODE_CAN_ODIRECT;
-> -	file->f_mode |= FMODE_DIO_PARALLEL_WRITE;
-> -	if (xfs_get_atomic_write_min(XFS_I(inode)) > 0)
-> -		file->f_mode |= FMODE_CAN_ATOMIC_WRITE;
-> +	if (!mapping_stable_writes(file->f_mapping)) {
-> +		file->f_mode |= FMODE_DIO_PARALLEL_WRITE;
-> +		if (xfs_get_atomic_write_min(XFS_I(inode)) > 0)
-> +			file->f_mode |= FMODE_CAN_ATOMIC_WRITE;
-> +	}
-> +
->  	return generic_file_open(inode, file);
->  }
->  
-> diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
-> index caff0125faea..bd49ac6b31de 100644
-> --- a/fs/xfs/xfs_iops.c
-> +++ b/fs/xfs/xfs_iops.c
-> @@ -672,6 +672,12 @@ xfs_report_atomic_write(
->  	struct xfs_inode	*ip,
->  	struct kstat		*stat)
->  {
-> +	/*
-> +	 * If the stable writes flag is set, we have to fall back to buffered
-> +	 * I/O, which doesn't support atomic writes.
-> +	 */
-> +	if (mapping_stable_writes(VFS_I(ip)->i_mapping))
-> +		return;
->  	generic_fill_statx_atomic_writes(stat,
->  			xfs_get_atomic_write_min(ip),
->  			xfs_get_atomic_write_max(ip),
+It's not that userspace does not need to do anything, it's just that pte is
+good enough for the faulting thread to retry the page fault without waiting
+for userspace to resolve the fault.
+ 
+> Cheers, Lorenzo
 
+-- 
+Sincerely yours,
+Mike.
 
