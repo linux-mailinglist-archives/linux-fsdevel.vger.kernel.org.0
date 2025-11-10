@@ -1,187 +1,102 @@
-Return-Path: <linux-fsdevel+bounces-67643-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67644-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6BD1C45994
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 10:21:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D66A6C45A6F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 10:32:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6798B1890F28
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 09:22:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75EE13A5E85
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 09:32:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FC862FF142;
-	Mon, 10 Nov 2025 09:21:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1AHZDA0H";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QiNo9/Vx"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ADD73002AD;
+	Mon, 10 Nov 2025 09:31:58 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E87F34503B;
-	Mon, 10 Nov 2025 09:21:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3BF32E8E0E;
+	Mon, 10 Nov 2025 09:31:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762766488; cv=none; b=tDhwtLNcT4rL7eAA96rwi1y1W6PZ8QoWnomD/4lXf8ihEv/pD8MIvzXFfvRi5ujHRr1V2TqjfDre8fkQKIxwN172o2ql8n1XdzWxzvm/yTR/1aT7hwhZvYjt55OLSWADFz4G98n7eKYpWZcjsJ/nCiDb2Ps19NgXp/N7NmcyIQw=
+	t=1762767118; cv=none; b=JCtlwJ1vRJ5Pg/Bra3FUsA/BHLd1d6+kOkzcG5jTt87r7ZD4YWI3dDunAJI7GNXCgnImVxfHFd0KtHmYoH3pjlKHcHGy6w4hF7vrWoyXN6tElgpQ/8EKpTmi7oe6k5t2KkeoOH+tzR9q8a3HVHiWtaRTvF8qxRR380F9a26QDgo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762766488; c=relaxed/simple;
-	bh=UOXTFfctU+la1ZRGJ4ND5QM9NGb52PYcz12HWAlPtNs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=PlMmdlb89hgstkxnQoptphjMd1yjukT5DKgF9+MgUmeH7QW87z43a57AhjMYevduMZSymEWVI1qd0IZoD0bM8/yhjrxhL9/E8eO1KfoetOEaWXMDM66bApn16FcexAFo1MTYQXqMfGl0ctS0ryzh+Hf2pL942M885y1dKpvUga0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1AHZDA0H; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QiNo9/Vx; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: John Ogness <john.ogness@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1762766484;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RH6y8AqWM02HDoXJucHQCnZ4iL8GJPZpMZrh3/buiXE=;
-	b=1AHZDA0HjqDPADvCENpUEaCHCNu3clHUkAhrYHRZAj7SW8m1mWA4wwXhAxsXw9/Ypg1aql
-	vC7+kpyBmfER8wn/9KvNWQO0rFSRZOGMYBF5W4dT/qMSeMaSYplCZNTCNz0Q0tmiyWSwf8
-	3eqib3Jl7Vyed1Y2axixqLpWDLkSTmSXKns6RLZH/tcZQ0Pcl/heCNj7aj2vqUyV3Ul8um
-	x5R7NCNT0RMZOgOxP/3EFZEU3YEKVcWTm3SG6iieA52kOiPXDyRMNWrmv78i6BSGx5WxjP
-	QHs0P7xNmwUNPBEJfU6QLUlz8jMi83kpf/Q85gxF85GBgNspEwPIESQlc7M7Hg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1762766484;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RH6y8AqWM02HDoXJucHQCnZ4iL8GJPZpMZrh3/buiXE=;
-	b=QiNo9/Vx7XmkYNoF4Q7UPAO9m0J/JXMYstBDyeujKvFPQREVnnJ7dGQTsIZRrGya3/NmnR
-	1nHl/bwTSAplPFDw==
-To: Petr Mladek <pmladek@suse.com>
-Cc: Joanne Koong <joannelkoong@gmail.com>, "amurray @ thegoodpenguin . co .
- uk" <amurray@thegoodpenguin.co.uk>, brauner@kernel.org, chao@kernel.org,
- djwong@kernel.org, jaegeuk@kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
- syzkaller-bugs@googlegroups.com, Petr Mladek <pmladek@suse.com>
-Subject: Re: [PATCH 2/2] printk_ringbuffer: Create a helper function to
- decide whether a more space is needed
-In-Reply-To: <20251107194720.1231457-3-pmladek@suse.com>
-References: <20251107194720.1231457-1-pmladek@suse.com>
- <20251107194720.1231457-3-pmladek@suse.com>
-Date: Mon, 10 Nov 2025 10:27:23 +0106
-Message-ID: <87jyzyutt8.fsf@jogness.linutronix.de>
+	s=arc-20240116; t=1762767118; c=relaxed/simple;
+	bh=nmuldyuZD2nRGq42cOH+SbbeN+lRYZeaUiYdGciqMnA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aV17MXE4ptAyi5sADaT/m1TItS9kFOqz366VOQatCGnfcrWTKl3b/W3X8ZifPLtUJ1+qk6yXCC2tpGKEqg4CMUStzaxuPCvKnishTsH7HZyQLZZHpRmWXq1YPL6Tg31ggC8OY/g8mSp7C/3VGmdvOzAV0NXDlbruBS3prVCzYWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 5D2FF227A87; Mon, 10 Nov 2025 10:31:41 +0100 (CET)
+Date: Mon, 10 Nov 2025 10:31:40 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Florian Weimer <fw@deneb.enyo.de>
+Cc: Christoph Hellwig <hch@lst.de>, Florian Weimer <fweimer@redhat.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Hans Holmberg <hans.holmberg@wdc.com>, linux-xfs@vger.kernel.org,
+	Carlos Maiolino <cem@kernel.org>,
+	Dave Chinner <david@fromorbit.com>,
+	"Darrick J . Wong" <djwong@kernel.org>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	libc-alpha@sourceware.org
+Subject: Re: [RFC] xfs: fake fallocate success for always CoW inodes
+Message-ID: <20251110093140.GA22674@lst.de>
+References: <20251106133530.12927-1-hans.holmberg@wdc.com> <lhuikfngtlv.fsf@oldenburg.str.redhat.com> <20251106135212.GA10477@lst.de> <aQyz1j7nqXPKTYPT@casper.infradead.org> <lhu4ir7gm1r.fsf@oldenburg.str.redhat.com> <20251106170501.GA25601@lst.de> <878qgg4sh1.fsf@mid.deneb.enyo.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <878qgg4sh1.fsf@mid.deneb.enyo.de>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-Hi Petr,
+On Sat, Nov 08, 2025 at 01:30:18PM +0100, Florian Weimer wrote:
+> main(void)
+> {
+>   FILE *fp = tmpfile();
+>   if (fp == NULL)
+>     abort();
+>   int fd = fileno(fp);
+>   posix_fallocate(fd, 0, 1);
+>   char *p = mmap(NULL, 1, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+>   *p = 1;
+> }
+> 
+> should not crash even if the file system does not support fallocate.
+> I hope we can agree on that.  I expect avoiding SIGBUS errors because
+> of insufficient file size is a common use case for posix_fallocate.
+> This use is not really an optimization, it's required to get mmap
+> working properly.
 
-Nit: For the patch subject, remove the word "a":
+That's a weird use of posix_fallocate, but if an interface to increase
+the file without the chance of reducing it is useful that's for
+sure something we could add.
 
-"Create a helper function to decide whether more space is needed"
+> If we can get an fallocate mode that we can use as a fallback to
+> increase the file size with a zero flag argument, we can definitely
+> use that in posix_fallocate (replacing the fallback path on kernels
+> that support it).  All local file systems should be able to implement
+> that (but perhaps not efficiently).  Basically, what we need here is a
+> non-destructive ftruncate.
 
-More below...
+fallocate seems like an odd interface choice for that, but given that
+(f)truncate doesn't have a flags argument that might still be the
+least unexpected version.
 
-On 2025-11-07, Petr Mladek <pmladek@suse.com> wrote:
-> The decision whether some more space is needed is tricky in the printk
-> ring buffer code:
->
->   1. The given lpos values might overflow. A subtraction must be used
->      instead of a simple "lower than" check.
->
->   2. Another CPU might reuse the space in the mean time. It can be
->      detected when the subtraction is bigger than DATA_SIZE(data_ring).
->
->   3. There is exactly enough space when the result of the subtraction
->      is zero. But more space is needed when the result is exactly
->      DATA_SIZE(data_ring).
->
-> Add a helper function to make sure that the check is done correctly
-> in all situations. Also it helps to make the code consistent and
-> better documented.
->
-> Suggested-by: John Ogness <john.ogness@linutronix.de>
-> Link: https://lore.kernel.org/r/87tsz7iea2.fsf@jogness.linutronix.de
-> Signed-off-by: Petr Mladek <pmladek@suse.com>
-> ---
->  kernel/printk/printk_ringbuffer.c | 31 +++++++++++++++++++++++++++----
->  1 file changed, 27 insertions(+), 4 deletions(-)
->
-> diff --git a/kernel/printk/printk_ringbuffer.c b/kernel/printk/printk_ringbuffer.c
-> index 3e6fd8d6fa9f..ede3039dd041 100644
-> --- a/kernel/printk/printk_ringbuffer.c
-> +++ b/kernel/printk/printk_ringbuffer.c
-> @@ -411,6 +411,23 @@ static bool data_check_size(struct prb_data_ring *data_ring, unsigned int size)
->  	return to_blk_size(size) <= DATA_SIZE(data_ring) / 2;
->  }
->  
-> +/*
-> + * Compare the current and requested logical position and decide
-> + * whether more space needed.
-> + *
-> + * Return false when @lpos_current is already at or beyond @lpos_target.
-> + *
-> + * Also return false when the difference between the positions is bigger
-> + * than the size of the data buffer. It might happen only when the caller
-> + * raced with another CPU(s) which already made and used the space.
-> + */
-> +static bool need_more_space(struct prb_data_ring *data_ring,
-> +			    unsigned long lpos_current,
-> +			    unsigned long lpos_target)
-> +{
-> +	return lpos_target - lpos_current - 1 < DATA_SIZE(data_ring);
-> +}
-> +
->  /* Query the state of a descriptor. */
->  static enum desc_state get_desc_state(unsigned long id,
->  				      unsigned long state_val)
-> @@ -577,7 +594,7 @@ static bool data_make_reusable(struct printk_ringbuffer *rb,
->  	unsigned long id;
->  
->  	/* Loop until @lpos_begin has advanced to or beyond @lpos_end. */
-> -	while ((lpos_end - lpos_begin) - 1 < DATA_SIZE(data_ring)) {
-> +	while (need_more_space(data_ring, lpos_begin, lpos_end)) {
->  		blk = to_block(data_ring, lpos_begin);
->  
->  		/*
-> @@ -668,7 +685,7 @@ static bool data_push_tail(struct printk_ringbuffer *rb, unsigned long lpos)
->  	 * sees the new tail lpos, any descriptor states that transitioned to
->  	 * the reusable state must already be visible.
->  	 */
-> -	while ((lpos - tail_lpos) - 1 < DATA_SIZE(data_ring)) {
-> +	while (need_more_space(data_ring, tail_lpos, lpos)) {
->  		/*
->  		 * Make all descriptors reusable that are associated with
->  		 * data blocks before @lpos.
-> @@ -1148,8 +1165,14 @@ static char *data_realloc(struct printk_ringbuffer *rb, unsigned int size,
->  
->  	next_lpos = get_next_lpos(data_ring, blk_lpos->begin, size);
->  
-> -	/* If the data block does not increase, there is nothing to do. */
-> -	if (head_lpos - next_lpos < DATA_SIZE(data_ring)) {
-> +	/*
-> +	 * Use the current data block when the size does not increase.
+> Maybe add two flags, one for the ftruncate replacement, and one that
+> instructs the file system that the range will be used with mmap soon?
+> I expect this could be useful information to the file system.  We
+> wouldn't use it in posix_fallocate, but applications calling fallocate
+> directly might.
 
-I would like to expand the above sentence so that it is a bit clearer
-how it relates to the new check. Perhaps:
+What do you think "to be used with mmap" flag could be useful for
+in the file system?  For file systems mmap I/O isn't very different
+from other use cases.
 
-	 * Use the current data block when the size does not increase, i.e.
-	 * when @head_lpos is already able to accommodate the new @next_lpos.
-
-> +	 *
-> +	 * Note that need_more_space() could never return false here because
-> +	 * the difference between the positions was bigger than the data
-> +	 * buffer size. The data block is reopened and can't get reused.
-> +	 */
-> +	if (!need_more_space(data_ring, head_lpos, next_lpos)) {
->  		if (wrapped)
->  			blk = to_block(data_ring, 0);
->  		else
-> -- 
-> 2.51.1
-
-Otherwise, LGTM. Thanks for choosing a name that presents contextual
-purpose rather than simply function.
-
-Reviewed-by: John Ogness <john.ogness@linutronix.de>
 
