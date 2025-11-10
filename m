@@ -1,113 +1,151 @@
-Return-Path: <linux-fsdevel+bounces-67660-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67661-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2EA3C45D2B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 11:10:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10EEAC45CDD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 11:05:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A17704EB7B1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 10:04:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 027493A6D99
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Nov 2025 10:05:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C35C6303A1B;
-	Mon, 10 Nov 2025 10:04:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36E772FFDC9;
+	Mon, 10 Nov 2025 10:05:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HWxfpDiK"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G45l4+an"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE59B30275B
-	for <linux-fsdevel@vger.kernel.org>; Mon, 10 Nov 2025 10:04:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0587A193077
+	for <linux-fsdevel@vger.kernel.org>; Mon, 10 Nov 2025 10:05:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762769043; cv=none; b=JBP5eeNlUQLEJY4OB5m+WrXni4nTt8AjZ7Ggr0Aygz+OtPzjssJZmIOG5PAlbYiQ8lwStKpm3LR8HMPEACYqJNISGdVDcAgbRkzl9Jqc5fduXOXHu0eQhvGel6EayIavW2YacVa9yrhOHKbitl/OCUKW6sHE6Pz8lYLZySZ/22k=
+	t=1762769111; cv=none; b=lYqp6SWwiGMHDyZ0yZnECnCnjtpTi8M0LSYu9eZsUiMsqitUvwQt2+Zf3/9ZwYPUdpkzWj5GytHRxkrqZdDe08UpeFEGMyBJnJ79DjVchBwm2MXJkNaG+SiKyzQb1qjaIIPpJFUfMGQhmNfJqzFPxoOhL0W5KYI2+g2x6bf5xUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762769043; c=relaxed/simple;
-	bh=xMPm2roPNOiQD1q4be1XihMW21gDvf9YbXLroWX6Tnw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=YOa4qgTKmUUj4xoYV3LtcJPdgra1kHs7mxNYllMwGZUqpVB15FrGPf3JiR+j9GYIXqdgwCBobkJJN3cYamsVu2GV0PUSvaujx+H0JgMG6SlX4xLjKMOWHeZrdDYw8LaloHREtrk5CeZFPGzAFHqjaf+gr1D4Isa8mbwnltRa6as=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HWxfpDiK; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762769040;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qycs3QBWuphW6IaV/2MMmVqLjCAStIYoGfDJBOz4Br0=;
-	b=HWxfpDiKKEWBnJmmnuqSZ83+yCMovqgaUIxguYMLQmlmcns990gG7Ub3Wexzo0fl26XCdn
-	VGdc7uVN0WcgHiVtdUxQVddA4rOSm/PL1lq6DKGsA5W8EuONzhKFFrQEprc5ni3lTXgLBl
-	GCHVHgeyscx2RVsbbNC2ai0eG7MH6Fo=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-345-aFxD10TfOmGWdUeGPQvyBQ-1; Mon,
- 10 Nov 2025 05:03:56 -0500
-X-MC-Unique: aFxD10TfOmGWdUeGPQvyBQ-1
-X-Mimecast-MFC-AGG-ID: aFxD10TfOmGWdUeGPQvyBQ_1762769034
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6EADA195609F;
-	Mon, 10 Nov 2025 10:03:54 +0000 (UTC)
-Received: from fweimer-oldenburg.csb.redhat.com (unknown [10.44.32.47])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3A5391800576;
-	Mon, 10 Nov 2025 10:03:50 +0000 (UTC)
-From: Florian Weimer <fweimer@redhat.com>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Dave Chinner <david@fromorbit.com>,  Matthew Wilcox
- <willy@infradead.org>,  Hans Holmberg <hans.holmberg@wdc.com>,
-  linux-xfs@vger.kernel.org,  Carlos Maiolino <cem@kernel.org>,  "Darrick J
- . Wong" <djwong@kernel.org>,  linux-fsdevel@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  libc-alpha@sourceware.org
-Subject: Re: [RFC] xfs: fake fallocate success for always CoW inodes
-In-Reply-To: <20251110093828.GC22674@lst.de> (Christoph Hellwig's message of
-	"Mon, 10 Nov 2025 10:38:28 +0100")
-References: <20251106133530.12927-1-hans.holmberg@wdc.com>
-	<lhuikfngtlv.fsf@oldenburg.str.redhat.com>
-	<20251106135212.GA10477@lst.de>
-	<aQyz1j7nqXPKTYPT@casper.infradead.org>
-	<lhu4ir7gm1r.fsf@oldenburg.str.redhat.com>
-	<20251106170501.GA25601@lst.de> <878qgg4sh1.fsf@mid.deneb.enyo.de>
-	<aRESlvWf9VquNzx3@dread.disaster.area>
-	<lhuseem1mpe.fsf@oldenburg.str.redhat.com>
-	<20251110093828.GC22674@lst.de>
-Date: Mon, 10 Nov 2025 11:03:48 +0100
-Message-ID: <lhu1pm6yzjv.fsf@oldenburg.str.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1762769111; c=relaxed/simple;
+	bh=hlkiH7RyJZpDhhRpZroaibQT/g2tEON32/xBcmeW52M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=J3mkyborIAN8iuuBJyEX2VrZvrxKgOjUFLDzDKWvPmkxjtaIFylsRdRQYMsr0DBdmtRaot5dmvJRXPIg/dy3/rDjnebsXzF9/wfZafwi0NvEXvtzSkb9zARikgue1KsWDiUz3Z6HCiOg4QL51xvaL4s4ZWrmBoRuqwmWqAYJv1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G45l4+an; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-6407e617ad4so4810331a12.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Nov 2025 02:05:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762769108; x=1763373908; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=bBm2zMuY+Afri40UzI7562MktkLPVD9d+ncsYP0UEPA=;
+        b=G45l4+anS+FNBQ5+lj/zJAJU9RX674TtQ8/W9LKerFj15INmW9PB4tLtwV6jzJQh/B
+         2lBa1XQsxgVY4PvyEMX+xFf04inOzN3EqIsKSpahAkXXzoHCIovpkI/fh85QyTPJ5JEJ
+         NkvzGygyhvWXlPiKoRyp9nOpD3XQEyyYPAsJTFple1ZdLHsTqdjjEfWGHuHYpr6ymrxF
+         wDjrIA24C0cLOMZJuECdcc0YkdU1rxPI1RVCOK2LZbRlVfQfrQgRs4N3/EQ6ufJ15cSP
+         ffjdKV8TLWvqNnR46JgJhk0qjiLdH2AdmzD5xC5znR/fnFoBFSHHqkHiId93F9ZIHLig
+         PRuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762769108; x=1763373908;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bBm2zMuY+Afri40UzI7562MktkLPVD9d+ncsYP0UEPA=;
+        b=DEf4G2PmkpiONpNtujUQXTMj+a3t7Bi/RbKPvR7hNLJdHoYmM8gAzHqa+Nm/hABP3t
+         ZgityeEZFCNS/Ph4VCyzVhAEj+6pLYsZHLkB31HfGBVLEucTIzX2esvk+sH52GMh26Qp
+         GPLZ7GNvSVVNksnLYHrbpFoAY669JoCV7G7otpzOg2qNKjNMnU71p/fA64JXxBrq3H3g
+         3wLByRkksYwqze3XjkSK5AFtITKlb9IqaegQ90FYcCAoXG4P75IJ+pOhlXTijqjwisRi
+         bSwvWDl5g2c9dh7kiMlgupYD9IfdaTWITnzfiSUDkWT5dA3WqvmQjfMZ+Dp8np5GZjTk
+         zb4w==
+X-Forwarded-Encrypted: i=1; AJvYcCXknIzN7R7qmQDUvWCrXa/lqKqSbkWDN1EzJ6S1btcgcpzBfG9DhbpEi2AImAQkSP6x+naYpqUr+O/9T35i@vger.kernel.org
+X-Gm-Message-State: AOJu0Yztzgpt9EtiuuTZPDl9In6L7LZFGF9uFuaZthduMWZgSCK4iNJm
+	2DsnGH/JXrvN2To0AfK60aX4qj4Ag3L3sjnGJ2MvBI1LMvaTWbvOmgvM
+X-Gm-Gg: ASbGncu1AFpYaEkrQXQP3Nr9NERrhghpTDugnG8AGph0NA0epJpExQoxMoIrvDJ+Hsm
+	qJPlIrsecVuuZfYBdRC9dSgrdwYVnzqkSPsZ2H0XWaVVjixt4i7wJeAddDS94IySJ9zsN+DfTHE
+	H2k+WGKh42H08aHQyzXDD9nFcWzOj5Rde4ZFiNHtSJ7q9heOdsoOCpZN13WnwM94UKrxztQG5i/
+	1M/a3WwaQ4PhrUQXqr6SBbeuRCEGifi+FZgqmkUQVVaBkmyx21FAiNSgZ5AJu+WcsEKCW3COvWI
+	+Lcuckl/vhKl4W1raVYFw97yIuWraVk4zTDe9JKURlLC+MnJ/5bUSE6Ncf6qtVO/kdb7gGwah8D
+	/zH8e5bPmpezsHzVIEK2k/DswCHgPFJgptckmD/GdYxp9IDmIjsV4QzWUQLDOUUU2AauHg08/8q
+	sV28qnlDAbu9Z95DBlEtH4G2uxmykMTAY18TH2eJqyV8MhCm5wTYI+DmD+pq00gj210lJ0KQ==
+X-Google-Smtp-Source: AGHT+IFA08IWh5LeHbv095pwRvXx72RbGGyIYXDu9W0o2t0+2HmaJ1eQjqspJUpdqGf6YjPghZ6n+g==
+X-Received: by 2002:a05:6402:2711:b0:634:11d7:f70c with SMTP id 4fb4d7f45d1cf-64159b5afe6mr6141872a12.2.1762769108052;
+        Mon, 10 Nov 2025 02:05:08 -0800 (PST)
+Received: from f.. (cst-prg-14-82.cust.vodafone.cz. [46.135.14.82])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6416001a4a8sm6054882a12.15.2025.11.10.02.05.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Nov 2025 02:05:07 -0800 (PST)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: viro@zeniv.linux.org.uk
+Cc: brauner@kernel.org,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH v2] fs: avoid calls to legitimize_links() if possible
+Date: Mon, 10 Nov 2025 11:05:03 +0100
+Message-ID: <20251110100503.1434167-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+Content-Transfer-Encoding: 8bit
 
-* Christoph Hellwig:
+The routine is always called towards the end of lookup.
 
-> On Mon, Nov 10, 2025 at 06:27:41AM +0100, Florian Weimer wrote:
->> Sorry, I made the example confusing.
->> 
->> How would the application deal with failure due to lack of fallocate
->> support?  It would have to do a pwrite, like posix_fallocate does to
->> today, or maybe ftruncate.  This is way I think removing the fallback
->> from posix_fallocate completely is mostly pointless.
->
-> In general it would ftruncate.  If it thinks it can't work without
-> preallocation at all the application will fail, as again the lack
-> of posix_fallocate means that space can't be preallocated.
+According to bpftrace on my boxen and boxen of people I asked, the depth
+count is almost always 0, thus the call can be avoided in the common case.
 
-Hmm.  It's not a 1:1 replacement: someone really needs to understand the
-code and see what the appropriate way to deal with the situation is.  Of
-course the posix_fallocate fallback path (or an application-level
-equivalent) has the potential for data loss, too.  It's just a different
-trade-off.
+one-liner:
+bpftrace -e 'kprobe:legitimize_links { @[((struct nameidata *)arg0)->depth] = count(); }'
 
-Thanks,
-Florian
+sample results from few minutes of tracing:
+@[1]: 59
+@[0]: 147236
+
+@[2]: 1
+@[1]: 12087
+@[0]: 5926235
+
+And of course the venerable kernel build:
+@[1]: 3563
+@[0]: 6625425
+
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+---
+
+v2:
+- drop 'noinline'
+- spell out the check at call sites
+
+verified no change in asm
+
+ fs/namei.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/namei.c b/fs/namei.c
+index 2a112b2c0951..0de0344a2ab2 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -882,7 +882,7 @@ static bool try_to_unlazy(struct nameidata *nd)
+ 
+ 	BUG_ON(!(nd->flags & LOOKUP_RCU));
+ 
+-	if (unlikely(!legitimize_links(nd)))
++	if (unlikely(nd->depth && !legitimize_links(nd)))
+ 		goto out1;
+ 	if (unlikely(!legitimize_path(nd, &nd->path, nd->seq)))
+ 		goto out;
+@@ -917,7 +917,7 @@ static bool try_to_unlazy_next(struct nameidata *nd, struct dentry *dentry)
+ 	int res;
+ 	BUG_ON(!(nd->flags & LOOKUP_RCU));
+ 
+-	if (unlikely(!legitimize_links(nd)))
++	if (unlikely(nd->depth && !legitimize_links(nd)))
+ 		goto out2;
+ 	res = __legitimize_mnt(nd->path.mnt, nd->m_seq);
+ 	if (unlikely(res)) {
+-- 
+2.48.1
 
 
