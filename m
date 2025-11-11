@@ -1,163 +1,157 @@
-Return-Path: <linux-fsdevel+bounces-67799-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67812-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7A1EC4BADF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 07:28:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A91FC4BE16
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 08:02:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 5744734DEDB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 06:28:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24DF41898823
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 06:59:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E6132D77E2;
-	Tue, 11 Nov 2025 06:28:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C30F9350298;
+	Tue, 11 Nov 2025 06:55:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ptR8aU5K"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="J53TPJ+O"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f74.google.com (mail-io1-f74.google.com [209.85.166.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 660A32D6400
-	for <linux-fsdevel@vger.kernel.org>; Tue, 11 Nov 2025 06:28:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA9D7346E6E;
+	Tue, 11 Nov 2025 06:55:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762842514; cv=none; b=GZ5ds3NP18NoD9KzFnaXb2X5YR+yuzrYbr9lL1SOcLS06ky6nobKkEXhCBCzGBG5Q76hhs6UAj1qOx07Mno278NiwHDGzsMUt8k11Ol94QMBs8CJAE7fJMuFi7/Gvn9AoLpQHIphPxtlbt3QCiHd3nHyoWqHw00wHSg2rQtTDYQ=
+	t=1762844132; cv=none; b=Ba3+m/RYe9OYKvHm7je1tib2cVMwmHiauZwIOgbZuOWhcxEwtOgrAMf0ZaBterGEiSDbtTelWigznWJsGEmZArbAZz6kMoxx38V4tLlrv6kPxOUu9ClRxzypo0JoNVG0CBccgBhXW0mURFiDwufUAtmD+3TofHCHnYyTfkWG+HY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762842514; c=relaxed/simple;
-	bh=fhMrgQz20uh4PXK2nkAxqWB+AOOUbEsG24S6VIqSBO4=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=eWODoqE9Sn18Y4TtbsJ7CLd3m3V1m3SX7igmMBjNmBVqdeybH2RUx1RaUTeaGfdff0e2jdweqj5myoQ1LUvXueKhc8ZvquWeaWHcIG1CgHhPEn7uu0aV+rG1VPy1IFMwp0He9+D7lxfM6Vx5F0O6lUmxjhlz6BigFlHxr7/2I9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--avagin.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ptR8aU5K; arc=none smtp.client-ip=209.85.166.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--avagin.bounces.google.com
-Received: by mail-io1-f74.google.com with SMTP id ca18e2360f4ac-9489bfaef15so230964039f.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Nov 2025 22:28:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762842511; x=1763447311; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=fmSc84hT8MIqkBb125h6Fg0cbHYTnrDRYFuzpYBDlHI=;
-        b=ptR8aU5KUGZz38dTRCLRct2KyAGM0JkihTN0FeqBlwdncW4sfsQAWcE47nm2IR60ZP
-         5aBNqCBtyaBpv4KuEHwlGmcrSB2ZYhLzkCUHk6bmeNBKlGpiyB/qr0Jj4IGgatSAE12b
-         5HSfe0p7C5SXFDszFFVMqQVWhCdrJ6YKcNcnveTSFkutIm2cTjBVCd6QOqlzyFM4VHMq
-         yonCmKoDWifr15qvZfcF6pwZ6CPB3bP5RSSV2ZHaoSWf4a1ARE+YTrswPR6kl9CbLCAI
-         Bs3hTdBWe+NHDUSyEbY85+qDakPzVieWo9ab6o/AknMkDTVr/KSOiKSKyGhxbuLHRyEY
-         AnmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762842511; x=1763447311;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fmSc84hT8MIqkBb125h6Fg0cbHYTnrDRYFuzpYBDlHI=;
-        b=xS3VKtBsKmfGC1x7H6N0T9Vbk7JtX4lWdxoSW4cXeoocKYShW/7Mp+qVjQScr6CUaP
-         6+wpIQAJTEoa4Ui1L7C2E7yOEcn9iypbNrzMD/Vr0srKjlmZobnnmilHl4tVMc2ai7mt
-         /zWe3/FFotyWmF3nWJhYRsIctHYQHkpSjblFDchyMymZwqy0pm42bmBJ4w96K7FuWptl
-         0tOE7poJ76j/+paImoPe5Ygslre7feGwj6l271fyQF0MqDcqy3IAQ/pQRG7FC04ASTLu
-         gHc8LZOj2HOnmN2n+YUSjqANe1Wj7t4pB3qVqI053/PSYbHxmvpYlHVE5OnM2lAjsOVS
-         8fVw==
-X-Forwarded-Encrypted: i=1; AJvYcCUW26a6973OUYoYtdJykDY0pvK9DyxDlG1GV1E3IG7avyne/fQls1vkHOR4WjUyX11YdJ+5d1pdTHXFlZuk@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzj9IG7TrkyQaHvVzK7sLU7FldD+z2YB2Ab486qBwDkVYzs9j0k
-	nm+jjZNAbBQgY9LNZkoZzN+d+dqYWmyJLUsbT1La5x0J9k0PaBSeG3v9PGLqcU7D4nWUMbepz5r
-	LGzvs8w==
-X-Google-Smtp-Source: AGHT+IGMml7ghUQoIAeKf967cifI7mzHN8+YTLattppaozkKG2IB6bitZuNO9bVIQ9HY5Gdiy9X8KAFw++Q=
-X-Received: from ioge25.prod.google.com ([2002:a6b:f119:0:b0:948:a267:a8a4])
- (user=avagin job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6602:27cb:b0:948:73c9:c5a0
- with SMTP id ca18e2360f4ac-94895fe55dbmr1315740439f.12.1762842511579; Mon, 10
- Nov 2025 22:28:31 -0800 (PST)
-Date: Tue, 11 Nov 2025 06:28:15 +0000
+	s=arc-20240116; t=1762844132; c=relaxed/simple;
+	bh=3i0vEkyfqpj2vZHxx9t3FgL7MOX+b5d7ioUJFtXztZ0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=sF3dGILK3NYnn/FUM1KKP4Bb0JrCk7ZmJfABg5ZETRZSU1uX7q2JgyYSqWGlJGmWXgKObZay5cdA9kKUxbuVAszUco4KfG+2ieu43t9zUV/4pGUUT3yeqUK5Tk/TGW980Q50OEfr5cZEF0lTbbqfsYnC7WW/urlinO861IkEucU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=J53TPJ+O; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
+	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
+	Reply-To:Content-Type:Content-ID:Content-Description;
+	bh=lB/gWST5s3/zNGGpGrNmQn0s9XjLn6XUo6NFB74HdeU=; b=J53TPJ+OZ5kZaHTrq85iExMJ+0
+	ESCvD/mY3AUsQJbPBplyGJvh+DHfa6CJDgQjwYe04T03q5fZxVnFU0fMIh0322RWs9ZOTmhrzBB4F
+	M7pYyqB4AJ1pH5/4yHMfI4b55YVk9UTCBH3TyPGbn2v0fBFizfaZELuSNxzb5Gn9xTdxjsRHFHBov
+	Vbxe51f2IOsquNV3XRN/456KamzLZYI0lkolF+ELEVzocIV/iNa1VqfookQvrhsRG+cJ5VKjQ4CKf
+	g24MHsi3z0nxP8/d+QstBk8c4urCx51+yd1QoDelaMTgnAdd/wT1JKm9FpFgd8pogNRRcXpLYc3aG
+	PGOz2OPQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vIiHh-0000000BwtD-1BG9;
+	Tue, 11 Nov 2025 06:55:21 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: linux-fsdevel@vger.kernel.org
+Cc: torvalds@linux-foundation.org,
+	brauner@kernel.org,
+	jack@suse.cz,
+	raven@themaw.net,
+	miklos@szeredi.hu,
+	neil@brown.name,
+	a.hindborg@kernel.org,
+	linux-mm@kvack.org,
+	linux-efi@vger.kernel.org,
+	ocfs2-devel@lists.linux.dev,
+	kees@kernel.org,
+	rostedt@goodmis.org,
+	gregkh@linuxfoundation.org,
+	linux-usb@vger.kernel.org,
+	paul@paul-moore.com,
+	casey@schaufler-ca.com,
+	linuxppc-dev@lists.ozlabs.org,
+	john.johansen@canonical.com,
+	selinux@vger.kernel.org,
+	borntraeger@linux.ibm.com,
+	bpf@vger.kernel.org
+Subject: [PATCH v3 01/50] fuse_ctl_add_conn(): fix nlink breakage in case of early failure
+Date: Tue, 11 Nov 2025 06:54:30 +0000
+Message-ID: <20251111065520.2847791-2-viro@zeniv.linux.org.uk>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20251111065520.2847791-1-viro@zeniv.linux.org.uk>
+References: <20251111065520.2847791-1-viro@zeniv.linux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.51.2.1041.gc1ab5b90ca-goog
-Message-ID: <20251111062815.2546189-1-avagin@google.com>
-Subject: [PATCH] fs/namespace: correctly handle errors returned by grab_requested_mnt_ns
-From: Andrei Vagin <avagin@google.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Andrei Vagin <avagin@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-grab_requested_mnt_ns was changed to return error codes on failure, but
-its callers were not updated to check for error pointers, still checking
-only for a NULL return value.
+fuse_ctl_remove_conn() used to decrement the link count of root
+manually; that got subsumed by simple_recursive_removal(), but
+in case when subdirectory creation has failed the latter won't
+get called.
 
-This commit updates the callers to use IS_ERR() or IS_ERR_OR_NULL() and
-PTR_ERR() to correctly check for and propagate errors.
+Just move the modification of parent's link count into
+fuse_ctl_add_dentry() to keep the things simple.  Allows to
+get rid of the nlink argument as well...
 
-Fixes: 7b9d14af8777 ("fs: allow mount namespace fd")
-Cc: Christian Brauner <brauner@kernel.org>
-Signed-off-by: Andrei Vagin <avagin@google.com>
+Fixes: fcaac5b42768 "fuse_ctl: use simple_recursive_removal()"
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/namespace.c | 23 ++++++++++++++---------
- 1 file changed, 14 insertions(+), 9 deletions(-)
+ fs/fuse/control.c | 19 ++++++++++---------
+ 1 file changed, 10 insertions(+), 9 deletions(-)
 
-diff --git a/fs/namespace.c b/fs/namespace.c
-index d82910f33dc4..9124465dca55 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -144,8 +144,10 @@ static inline struct mnt_namespace *node_to_mnt_ns(const struct rb_node *node)
+diff --git a/fs/fuse/control.c b/fs/fuse/control.c
+index bb407705603c..5247df896c5d 100644
+--- a/fs/fuse/control.c
++++ b/fs/fuse/control.c
+@@ -205,8 +205,7 @@ static const struct file_operations fuse_conn_congestion_threshold_ops = {
  
- static void mnt_ns_release(struct mnt_namespace *ns)
+ static struct dentry *fuse_ctl_add_dentry(struct dentry *parent,
+ 					  struct fuse_conn *fc,
+-					  const char *name,
+-					  int mode, int nlink,
++					  const char *name, int mode,
+ 					  const struct inode_operations *iop,
+ 					  const struct file_operations *fop)
  {
-+	if (IS_ERR_OR_NULL(ns))
-+		return;
- 	/* keep alive for {list,stat}mount() */
--	if (ns && refcount_dec_and_test(&ns->passive)) {
-+	if (refcount_dec_and_test(&ns->passive)) {
- 		fsnotify_mntns_delete(ns);
- 		put_user_ns(ns->user_ns);
- 		kfree(ns);
-@@ -5756,8 +5758,10 @@ static struct mnt_namespace *grab_requested_mnt_ns(const struct mnt_id_req *kreq
- 	if (kreq->mnt_ns_id && kreq->spare)
- 		return ERR_PTR(-EINVAL);
- 
--	if (kreq->mnt_ns_id)
--		return lookup_mnt_ns(kreq->mnt_ns_id);
-+	if (kreq->mnt_ns_id) {
-+		mnt_ns = lookup_mnt_ns(kreq->mnt_ns_id);
-+		return mnt_ns ? : ERR_PTR(-ENOENT);
+@@ -232,7 +231,10 @@ static struct dentry *fuse_ctl_add_dentry(struct dentry *parent,
+ 	if (iop)
+ 		inode->i_op = iop;
+ 	inode->i_fop = fop;
+-	set_nlink(inode, nlink);
++	if (S_ISDIR(mode)) {
++		inc_nlink(d_inode(parent));
++		inc_nlink(inode);
 +	}
+ 	inode->i_private = fc;
+ 	d_add(dentry, inode);
  
- 	if (kreq->spare) {
- 		struct ns_common *ns;
-@@ -5801,8 +5805,8 @@ SYSCALL_DEFINE4(statmount, const struct mnt_id_req __user *, req,
- 		return ret;
+@@ -252,22 +254,21 @@ int fuse_ctl_add_conn(struct fuse_conn *fc)
+ 		return 0;
  
- 	ns = grab_requested_mnt_ns(&kreq);
--	if (!ns)
--		return -ENOENT;
-+	if (IS_ERR(ns))
-+		return PTR_ERR(ns);
+ 	parent = fuse_control_sb->s_root;
+-	inc_nlink(d_inode(parent));
+ 	sprintf(name, "%u", fc->dev);
+-	parent = fuse_ctl_add_dentry(parent, fc, name, S_IFDIR | 0500, 2,
++	parent = fuse_ctl_add_dentry(parent, fc, name, S_IFDIR | 0500,
+ 				     &simple_dir_inode_operations,
+ 				     &simple_dir_operations);
+ 	if (!parent)
+ 		goto err;
  
- 	if (kreq.mnt_ns_id && (ns != current->nsproxy->mnt_ns) &&
- 	    !ns_capable_noaudit(ns->user_ns, CAP_SYS_ADMIN))
-@@ -5912,8 +5916,8 @@ static void __free_klistmount_free(const struct klistmount *kls)
- static inline int prepare_klistmount(struct klistmount *kls, struct mnt_id_req *kreq,
- 				     size_t nr_mnt_ids)
- {
--
- 	u64 last_mnt_id = kreq->param;
-+	struct mnt_namespace *ns;
+-	if (!fuse_ctl_add_dentry(parent, fc, "waiting", S_IFREG | 0400, 1,
++	if (!fuse_ctl_add_dentry(parent, fc, "waiting", S_IFREG | 0400,
+ 				 NULL, &fuse_ctl_waiting_ops) ||
+-	    !fuse_ctl_add_dentry(parent, fc, "abort", S_IFREG | 0200, 1,
++	    !fuse_ctl_add_dentry(parent, fc, "abort", S_IFREG | 0200,
+ 				 NULL, &fuse_ctl_abort_ops) ||
+ 	    !fuse_ctl_add_dentry(parent, fc, "max_background", S_IFREG | 0600,
+-				 1, NULL, &fuse_conn_max_background_ops) ||
++				 NULL, &fuse_conn_max_background_ops) ||
+ 	    !fuse_ctl_add_dentry(parent, fc, "congestion_threshold",
+-				 S_IFREG | 0600, 1, NULL,
++				 S_IFREG | 0600, NULL,
+ 				 &fuse_conn_congestion_threshold_ops))
+ 		goto err;
  
- 	/* The first valid unique mount id is MNT_UNIQUE_ID_OFFSET + 1. */
- 	if (last_mnt_id != 0 && last_mnt_id <= MNT_UNIQUE_ID_OFFSET)
-@@ -5927,9 +5931,10 @@ static inline int prepare_klistmount(struct klistmount *kls, struct mnt_id_req *
- 	if (!kls->kmnt_ids)
- 		return -ENOMEM;
- 
--	kls->ns = grab_requested_mnt_ns(kreq);
--	if (!kls->ns)
--		return -ENOENT;
-+	ns = grab_requested_mnt_ns(kreq);
-+	if (IS_ERR(ns))
-+		return PTR_ERR(ns);
-+	kls->ns = ns;
- 
- 	kls->mnt_parent_id = kreq->mnt_id;
- 	return 0;
 -- 
-2.51.2.1041.gc1ab5b90ca-goog
+2.47.3
 
 
