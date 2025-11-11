@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-67843-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67846-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F687C4BF24
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 08:07:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 01BDAC4BF1E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 08:07:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0DB184F4B37
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 07:05:39 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DC10D4F6B6D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 07:05:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49D23359712;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44B4435970A;
 	Tue, 11 Nov 2025 06:55:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="CBs3HWKU"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="hgd1T/hR"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4288034EF1B;
-	Tue, 11 Nov 2025 06:55:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48EF234EF03;
+	Tue, 11 Nov 2025 06:55:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762844137; cv=none; b=hXwaC/spycPjeLij5kERG96NP6P1Hc74QaUgxWNgKzTDZyaQm3CHHkyiNNIHmxIyxLhPsyut8xMF35rO6MGjQQVDHU0ZKInGlhijgRa8goB70fVZ8Ss/9pfishv6VLDXiFJlxIszuRoy0zthK8xaxf+w4WgRYF9PCnS4Aidjjdo=
+	t=1762844137; cv=none; b=Ate6A6oPYs1M9oGsDXEGg/DD36TvXl36WwsWqOM9gwSGDYWCbGa2jwFwpRj2MI+lKiJZLlVhvp8tapyPlFfzWhH3DEN+gEwYFiXs7hk5i9/OhNgpvyw0DdT3Auei9ov8606keqxK/TER83xFTTSo0dAVIllmUCzvQKNKQoDQIDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1762844137; c=relaxed/simple;
-	bh=icvtNIz5lJf/ismM/Azqz9b548rZIyrgqCmgg5+8Fvg=;
+	bh=xdBCDyyVJS4G+zsY9iJC7Lf/yxlRWctmNpOPn0NXpIo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=T0DiWci7Wo1bPWnws5iEXAmGr+3N9A/MaUyQcH7BXwpZPQB6ojk+pmWpB8wMzEtnLUUUXnVEv6gCsS+aR4j9whwPcdAnZ+6oePiWZmNRcFERuzAgPuOejjt6D+xDH/QQZDZ5WXUEan6yTBbuPS45z8gPB7DlysIFIUT6CrnWvxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=CBs3HWKU; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=VU/2Sqby5yMxUffY6xP1/cZfy99yys8tne7a3eo2GvuIqLm2+dCsdZlpGZHWoHSwzt3f6Zzc61ncFJUCvjQ3+w3RC/WpOFqd12N+t0p3Ex8zVLb7QU3xFKG6enj8xkWOaLO+H0rZiVbJedBVoQoDi/kFmQ9AWmr1a3nIeVeR0LM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=hgd1T/hR; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=wpD3/Bm7sGWpOU7mqGoqyLeTupfR9EfJ0JdO0qw2AEQ=; b=CBs3HWKUVB7PxyhYsggH1moPwq
-	TDMOfNPze804ERULgFgDbvViqdMWMVbicUAGNCIOpbaHIkoJFiaDAGeMsfnNskflhXgUo8EoYwEJW
-	T5YOHPY81KDfieCaqV0Hw2Yqz2JkpwxpxeR1i28AkWI5bCiyPeEdLZgCMcrXi7kH4+J5AxIssOkVT
-	4BKc4aZMopg/kpv5KGOTrnYn3suNjSba+qGG7vQHR+3Cepf+UuVmRpQgzlOxQjZl6Alcg+RaXA9tj
-	A95YtZA/jKIFpV6XqOXxihLOhTS5mKOGci9TCc9W41oxzZI2mUE17rTlgH5I2VI13Wa47W+bz+v39
-	V130mP1Q==;
+	bh=/QE5WDCT/6E4/9SENMzbAx4/TtK/VNDZoQCVo0AmPFA=; b=hgd1T/hR7hFzvqa4/FhQi64LUF
+	DpGBGzt8FSozWK1vHT1CSAIxtkOUMD9lfA+Yg5jssmzeqp36q2yrCN1/ha/2TSHNgQG0WInh76BP3
+	S+rZAUnPIolPPEO6FsPoyNn3RAH6ashTBW/05hTa2+Gf9ltR3CmC8s3eEAvGIOLEzKZj8ctY0MWWd
+	QcP46qJ8955VSBOzIya9NtrbLAAv7jtnZPWHr1LfNQ6KwEohpuZdrws6OkrXvoNH5ypk/dY4ZvEtL
+	t26DMKkl5jl6E+GclnSqGx58FWqgLhyI4nW3pOThpZWg0niou86/LHLxzvZcrzqxg9WNlmOEQl9PK
+	HXAt9dmA==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vIiHs-0000000BxLe-47lP;
+	id 1vIiHt-0000000BxNT-1JUi;
 	Tue, 11 Nov 2025 06:55:33 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
@@ -67,9 +67,9 @@ Cc: torvalds@linux-foundation.org,
 	selinux@vger.kernel.org,
 	borntraeger@linux.ibm.com,
 	bpf@vger.kernel.org
-Subject: [PATCH v3 47/50] get rid of kill_litter_super()
-Date: Tue, 11 Nov 2025 06:55:16 +0000
-Message-ID: <20251111065520.2847791-48-viro@zeniv.linux.org.uk>
+Subject: [PATCH v3 48/50] convert securityfs
+Date: Tue, 11 Nov 2025 06:55:17 +0000
+Message-ID: <20251111065520.2847791-49-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20251111065520.2847791-1-viro@zeniv.linux.org.uk>
 References: <20251111065520.2847791-1-viro@zeniv.linux.org.uk>
@@ -82,120 +82,77 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Not used anymore.
+securityfs uses simple_recursive_removal(), but does not bother to mark
+dentries persistent.  This is the only place where it still happens; get
+rid of that irregularity.
 
+* use simple_{start,done}_creating() and d_make_persitent(); kill_litter_super()
+use was already gone, since we empty the filesystem instance before it gets
+shut down.
+
+Acked-by: Paul Moore <paul@paul-moore.com>
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- Documentation/filesystems/porting.rst |  7 +++++++
- fs/dcache.c                           | 21 ---------------------
- fs/internal.h                         |  1 -
- fs/super.c                            |  8 --------
- include/linux/dcache.h                |  1 -
- include/linux/fs.h                    |  1 -
- 6 files changed, 7 insertions(+), 32 deletions(-)
+ security/inode.c | 33 ++++++++++++---------------------
+ 1 file changed, 12 insertions(+), 21 deletions(-)
 
-diff --git a/Documentation/filesystems/porting.rst b/Documentation/filesystems/porting.rst
-index 7233b04668fc..4921b3b0662a 100644
---- a/Documentation/filesystems/porting.rst
-+++ b/Documentation/filesystems/porting.rst
-@@ -1309,3 +1309,10 @@ a different length, use
- 	vfs_parse_fs_qstr(fc, key, &QSTR_LEN(value, len))
+diff --git a/security/inode.c b/security/inode.c
+index bf7b5e2e6955..73df5db7f831 100644
+--- a/security/inode.c
++++ b/security/inode.c
+@@ -127,24 +127,19 @@ static struct dentry *securityfs_create_dentry(const char *name, umode_t mode,
+ 		parent = mount->mnt_root;
+ 	}
  
- instead.
-+
-+---
-+
-+**mandatory**
-+
-+kill_litter_super() is gone; convert to DCACHE_PERSISTENT use (as all
-+in-tree filesystems have done).
-diff --git a/fs/dcache.c b/fs/dcache.c
-index 3cc6c3876177..5ee2e78a91b3 100644
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -3167,27 +3167,6 @@ bool is_subdir(struct dentry *new_dentry, struct dentry *old_dentry)
- }
- EXPORT_SYMBOL(is_subdir);
- 
--static enum d_walk_ret d_genocide_kill(void *data, struct dentry *dentry)
--{
--	struct dentry *root = data;
--	if (dentry != root) {
--		if (d_unhashed(dentry) || !dentry->d_inode ||
--		    dentry->d_flags & DCACHE_PERSISTENT)
--			return D_WALK_SKIP;
+-	dir = d_inode(parent);
 -
--		if (!(dentry->d_flags & DCACHE_GENOCIDE)) {
--			dentry->d_flags |= DCACHE_GENOCIDE;
--			dentry->d_lockref.count--;
--		}
+-	inode_lock(dir);
+-	dentry = lookup_noperm(&QSTR(name), parent);
+-	if (IS_ERR(dentry))
++	inode = new_inode(parent->d_sb);
++	if (unlikely(!inode)) {
++		dentry = ERR_PTR(-ENOMEM);
+ 		goto out;
+-
+-	if (d_really_is_positive(dentry)) {
+-		error = -EEXIST;
+-		goto out1;
+ 	}
+ 
+-	inode = new_inode(dir->i_sb);
+-	if (!inode) {
+-		error = -ENOMEM;
+-		goto out1;
 -	}
--	return D_WALK_CONTINUE;
--}
--
--void d_genocide(struct dentry *parent)
--{
--	d_walk(parent, parent, d_genocide_kill);
--}
--
- void d_mark_tmpfile(struct file *file, struct inode *inode)
- {
- 	struct dentry *dentry = file->f_path.dentry;
-diff --git a/fs/internal.h b/fs/internal.h
-index 9b2b4d116880..144686af6c36 100644
---- a/fs/internal.h
-+++ b/fs/internal.h
-@@ -227,7 +227,6 @@ extern void shrink_dcache_for_umount(struct super_block *);
- extern struct dentry *__d_lookup(const struct dentry *, const struct qstr *);
- extern struct dentry *__d_lookup_rcu(const struct dentry *parent,
- 				const struct qstr *name, unsigned *seq);
--extern void d_genocide(struct dentry *);
++	dir = d_inode(parent);
  
- /*
-  * pipe.c
-diff --git a/fs/super.c b/fs/super.c
-index 5bab94fb7e03..ee001f684d2a 100644
---- a/fs/super.c
-+++ b/fs/super.c
-@@ -1284,14 +1284,6 @@ void kill_anon_super(struct super_block *sb)
- }
- EXPORT_SYMBOL(kill_anon_super);
++	dentry = simple_start_creating(parent, name);
++	if (IS_ERR(dentry)) {
++		iput(inode);
++		goto out;
++	}
+ 	inode->i_ino = get_next_ino();
+ 	inode->i_mode = mode;
+ 	simple_inode_init_ts(inode);
+@@ -160,15 +155,11 @@ static struct dentry *securityfs_create_dentry(const char *name, umode_t mode,
+ 	} else {
+ 		inode->i_fop = fops;
+ 	}
+-	d_instantiate(dentry, inode);
+-	inode_unlock(dir);
+-	return dentry;
++	d_make_persistent(dentry, inode);
++	simple_done_creating(dentry);
++	return dentry; // borrowed
  
--void kill_litter_super(struct super_block *sb)
--{
--	if (sb->s_root)
--		d_genocide(sb->s_root);
--	kill_anon_super(sb);
--}
--EXPORT_SYMBOL(kill_litter_super);
--
- int set_anon_super_fc(struct super_block *sb, struct fs_context *fc)
- {
- 	return set_anon_super(sb, NULL);
-diff --git a/include/linux/dcache.h b/include/linux/dcache.h
-index 6ec4066825e3..20a85144a00e 100644
---- a/include/linux/dcache.h
-+++ b/include/linux/dcache.h
-@@ -198,7 +198,6 @@ enum dentry_flags {
- 	DCACHE_REFERENCED		= BIT(6),	/* Recently used, don't discard. */
- 	DCACHE_DONTCACHE		= BIT(7),	/* Purge from memory on final dput() */
- 	DCACHE_CANT_MOUNT		= BIT(8),
--	DCACHE_GENOCIDE			= BIT(9),
- 	DCACHE_SHRINK_LIST		= BIT(10),
- 	DCACHE_OP_WEAK_REVALIDATE	= BIT(11),
- 	/*
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index f5037c556f61..95933ceaae51 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2728,7 +2728,6 @@ void retire_super(struct super_block *sb);
- void generic_shutdown_super(struct super_block *sb);
- void kill_block_super(struct super_block *sb);
- void kill_anon_super(struct super_block *sb);
--void kill_litter_super(struct super_block *sb);
- void deactivate_super(struct super_block *sb);
- void deactivate_locked_super(struct super_block *sb);
- int set_anon_super(struct super_block *s, void *data);
+-out1:
+-	dput(dentry);
+-	dentry = ERR_PTR(error);
+ out:
+-	inode_unlock(dir);
+ 	if (pinned)
+ 		simple_release_fs(&mount, &mount_count);
+ 	return dentry;
 -- 
 2.47.3
 
