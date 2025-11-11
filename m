@@ -1,210 +1,135 @@
-Return-Path: <linux-fsdevel+bounces-67988-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67989-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA43AC4F9F8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 20:39:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC2FDC4FADA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 21:17:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BA4004E3691
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 19:39:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A37661896D0A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 20:17:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBB4232ABC4;
-	Tue, 11 Nov 2025 19:38:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C9AB3A9BF9;
+	Tue, 11 Nov 2025 20:16:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VcPH9y5t"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VjJixwN8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6AED329E60
-	for <linux-fsdevel@vger.kernel.org>; Tue, 11 Nov 2025 19:38:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4DA61E492A;
+	Tue, 11 Nov 2025 20:16:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762889935; cv=none; b=t54OOTNf0D8ivkPObXSFIE55e9rjc7JR2XPDl/i23YQcnS8OVAt9kQJGTLUpoiRXe5/XKdF6vVmIXtMlQLZYOlMdTFoTFguWh9dpbjxs6naYeB9UOK+tkrdod7fs0Rky0NMhvfh1/I4AUvA+tprePGMb6rC78oKGyKJVecmPAAY=
+	t=1762892198; cv=none; b=Z4fSz0xwYUv4Zy1JtcGSc827RVbqFYUF+6UnOwWNrra6xBUZaISQ6fWKM9fV2LdsgZ2z4oxH80Z0Jwy2iHCH+osnJtLOFDZX9+f+BkI+pwg+drIeFDfPRfLa7vufAZ+c7CBmVxLDIjaQxU7nveL9uww6kuBRLHEZXMUfDeHH250=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762889935; c=relaxed/simple;
-	bh=9nZVIepa3DDFWiaB2LbsMB++tRhzwqO90Si+ZVb4geg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jh1gl+yKNxZxj6UWjSQtzoHLkHgksdKy0A3toI+X0boWxKUgN7/J/ZOUdb/slHwsNtYU3nfT8Hhl4HOxYo55Vx9osrNhpZ5AboGdqAN9sbgWzQ2hg5eiMrcnbSmd7/obIKtswRfjwJjGca922psh0RFLNg8QRZqZ+QCokTbjUcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VcPH9y5t; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-3436d6aa66dso977535a91.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Nov 2025 11:38:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762889933; x=1763494733; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=d0ncL4R2zk6s6B7KYTY9YZceUgKlRnM/SCAT7RRqscs=;
-        b=VcPH9y5tPJyFk07MqcwjarYyf3CgB05JUmtib4D5oSlAh6qUNL1JRdwBTmI+eaH0t/
-         c7YGh+vGxrEXzGX6rFDaCBjzJkuc50HLtENhCeB/+aPtaN3c+5PIXLGAtefQxGWALDNZ
-         bX2kqJJCUcdk9FZZIisD3KAl8IGMeMgLUvljUn4g9IEQ/rDHYoJ+tbGIEz7yuIkzMnxn
-         HAqWlOy4563FIVeiTsDcfLLILsBKA4mVsfqbm0jM2jVOt8RP7kvMg859SoksIUZ4zM0H
-         sdRJDFaRlthnPX5k4tT0fyfzqPMd6rOgzHkHwccXh6Ix/Ll9jKAYAG3tyr9+s0btruiR
-         62fg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762889933; x=1763494733;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=d0ncL4R2zk6s6B7KYTY9YZceUgKlRnM/SCAT7RRqscs=;
-        b=Z9auYjpi45GfHFO82EBoS0/Tc1YQh0VfDL1HkNWAX1Jjxf9iAjMegHOSmKMbU/WigB
-         K+3KAx2HeresnSWqufqih5XhHeEQUyCOnccrvxghQYBLnBByWbsU0vwnQ9fpTxxn/tfX
-         D2fGuNjIIV6vO8J1jz6g4mprEkBQXutr/nCy4TqoE5SD2xCagzG4X7xnxOIBy/DnVok6
-         iw1W0Um/FRCkunXMuQTtj/x4oBbLKnlD5nR4672BKjpelhsVXVkYosbzFkAkOvx7Uj7X
-         euGLODQluDgI9r4wJ+fxJj8pvQpvofwtWATR8WC+HRHZLUSjdokh7i9kIA3mU4asAIPO
-         O9lQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX8Qil9YWuA0UFYq0+o13Eb2cGCXyJ5cFwclBde1oHF6CL1hSsec3/sTKUwrB2j7cbmG9D1KbxI+4yFDqF3@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxwlt8dBMI2JsLea4oddWJgNOwzEXPX4ryvPVKJyW0Lh7EFHF+e
-	ZNVX8zkTTPWrjT/69pGUkOo/UxmJvmCvoaR2PXILlzdn8rgvC1hEP9c2
-X-Gm-Gg: ASbGncswvk8DEeUevqLLXfdWx+vsHfSHwm4LYprFcSW2AY2NXLAoMfSFyip3n6hZ+Dx
-	tPrNH/F15P7H+0j8AAS8o+A5WFBT7Jf0Z69gGZ8tZXFKDSadf1K2u82/QQ6gMvO8m/KifIU9M9J
-	Cr8GwRfuF2bWPIRtKupOQj6wnyQEqUcLV0AVvrTLntU58P5O3sbQJjP226ke0Dvp6jXuaWWbeeb
-	rTREoQhKJ0BNZWVW+RhIOH7iFex5CAgcMmpqtUGg8d+aU9qbDwascda+0FItgnk74CtdlHdFXtI
-	FQ0t/3jSwFm4qYgpuy6ZyNTFK3ACthh/zFKKcgkR9ciLZYmL5cX00r85vL9dYtCnC9mBG9042mK
-	Bnd0mJ+Kt0e++mD6ZGHs65EZU16qugruEXn7BCc8eCaYqertOf1oZMs7QKhTQlU9Bzl9h63Rvcs
-	/UXyZx4/xZCOS5D7+9GliDGGQHrjk=
-X-Google-Smtp-Source: AGHT+IF2bR5318yk3LnrBxyoujWhW0I30BzJZc58KJsh8YufSMsN0bMJpyML6eBa43+Slys5PmwJOQ==
-X-Received: by 2002:a17:90b:2689:b0:343:3898:e7c9 with SMTP id 98e67ed59e1d1-343befa52a0mr5086995a91.2.1762889933028;
-        Tue, 11 Nov 2025 11:38:53 -0800 (PST)
-Received: from localhost ([2a03:2880:ff:70::])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-343c4f61e50sm1727583a91.5.2025.11.11.11.38.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Nov 2025 11:38:52 -0800 (PST)
-From: Joanne Koong <joannelkoong@gmail.com>
-To: brauner@kernel.org
-Cc: hch@infradead.org,
-	djwong@kernel.org,
-	bfoster@redhat.com,
-	linux-fsdevel@vger.kernel.org,
-	kernel-team@meta.com
-Subject: [PATCH v4 9/9] iomap: use find_next_bit() for uptodate bitmap scanning
-Date: Tue, 11 Nov 2025 11:36:58 -0800
-Message-ID: <20251111193658.3495942-10-joannelkoong@gmail.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251111193658.3495942-1-joannelkoong@gmail.com>
-References: <20251111193658.3495942-1-joannelkoong@gmail.com>
+	s=arc-20240116; t=1762892198; c=relaxed/simple;
+	bh=kr44aeOaJcNZMsy/DaB9H7WStxetNlT6LAhP4sVEKyU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QNn/jfWS5ZTaG2S4j5wODNWT7RoPsBbzPcEEG14hlN2XbICtisOp6QJDKLiz0xPMlLvb1ljWivAGQmV0OpCQz2xY45I24Zt3lXs2AoFI1EkkRdcSrHi4zD7+Bvk0IOU67Dk9s0WhiNfn+jsqAIKqEvrsk4g+J75LKRvhXTZFM8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VjJixwN8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95ABBC19422;
+	Tue, 11 Nov 2025 20:16:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762892197;
+	bh=kr44aeOaJcNZMsy/DaB9H7WStxetNlT6LAhP4sVEKyU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VjJixwN8jecm/9/GvO0cxbi0cA4i0/F3OOFxCavC3pfVCzcrM6xh13VhMpEBg5kpe
+	 qiuJAxt2cyCU/0jERoj6B2P9NqwUAMGgXsf7vX3BaapxNU9Vr4rDdIXx0ZMToDMRC+
+	 q2B4ACkjZ//xGa696u6Zxm90CDPdm5CozrFKbJAo5eWCnByKEUZSENG6DlQbwRdLFL
+	 VYu3N7OdenMS80rJSV3omvMaWHhbGIxbTglpinTKoiVm3YmrXRExxzWiYeKgIkDpUh
+	 gL91xa/fbHmGSAD2ArgPXjtdFar+4b+qMpwAz4qR8lMZv7Vl6EXq4/E0VDCh/a2DxC
+	 UO2ZuVGEXjSWg==
+Date: Tue, 11 Nov 2025 22:16:11 +0200
+From: Mike Rapoport <rppt@kernel.org>
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com,
+	dmatlack@google.com, rientjes@google.com, corbet@lwn.net,
+	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com,
+	kanie@linux.alibaba.com, ojeda@kernel.org, aliceryhl@google.com,
+	masahiroy@kernel.org, akpm@linux-foundation.org, tj@kernel.org,
+	yoann.congal@smile.fr, mmaurer@google.com, roman.gushchin@linux.dev,
+	chenridong@huawei.com, axboe@kernel.dk, mark.rutland@arm.com,
+	jannh@google.com, vincent.guittot@linaro.org, hannes@cmpxchg.org,
+	dan.j.williams@intel.com, david@redhat.com,
+	joel.granados@kernel.org, rostedt@goodmis.org,
+	anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn,
+	linux@weissschuh.net, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-mm@kvack.org,
+	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com,
+	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
+	hpa@zytor.com, rafael@kernel.org, dakr@kernel.org,
+	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com,
+	myungjoo.ham@samsung.com, yesanishhere@gmail.com,
+	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com,
+	aleksander.lobakin@intel.com, ira.weiny@intel.com,
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de,
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com,
+	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net,
+	brauner@kernel.org, linux-api@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, saeedm@nvidia.com,
+	ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com,
+	leonro@nvidia.com, witu@nvidia.com, hughd@google.com,
+	skhawaja@google.com, chrisl@kernel.org
+Subject: Re: [PATCH v5 02/22] liveupdate: luo_core: integrate with KHO
+Message-ID: <aROZi043lxtegqWE@kernel.org>
+References: <20251107210526.257742-1-pasha.tatashin@soleen.com>
+ <20251107210526.257742-3-pasha.tatashin@soleen.com>
+ <aRHiCxoJnEGmj17q@kernel.org>
+ <CA+CK2bCHhbBtSJCx38gxjfR6DM1PjcfsOTD-Pqzqyez1_hXJ7Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+CK2bCHhbBtSJCx38gxjfR6DM1PjcfsOTD-Pqzqyez1_hXJ7Q@mail.gmail.com>
 
-Use find_next_bit()/find_next_zero_bit() for iomap uptodate bitmap
-scanning. This uses __ffs() internally and is more efficient for
-finding the next uptodate or non-uptodate bit than iterating through the
-the bitmap range testing every bit.
+On Mon, Nov 10, 2025 at 10:43:43AM -0500, Pasha Tatashin wrote:
+> >
+> > kho_finalize() should be really called from kernel_kexec().
+> >
+> > We avoided it because of the concern that memory allocations that late in
+> > reboot could be an issue. But I looked at hibernate() and it does
+> > allocations on reboot->hibernate path, so adding kho_finalize() as the
+> > first step of kernel_kexec() seems fine.
+> 
+> This isn't a regular reboot; it's a live update. The
+> liveupdate_reboot() is designed to be reversible and allows us to
+> return an error, undoing the freeze() operations via unfreeze() in
+> case of failure.
+> 
+> This is why this call is placed first in reboot(), before any
+> irreversible reboot notifiers or shutdown callbacks are performed. If
+> an allocation problem occurs in KHO, the error is simply reported back
+> to userspace, and the live update update is safely aborted.
 
-Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-Suggested-by: Christoph Hellwig <hch@infradead.org>
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
----
- fs/iomap/buffered-io.c | 52 ++++++++++++++++++++++++++----------------
- 1 file changed, 32 insertions(+), 20 deletions(-)
+This is fine. But what I don't like is that we can't use kho without
+liveupdate. We are making debugfs optional, we have a way to call
+kho_finalize() on the reboot path and it does not seem an issue to do it
+even without liveupdate. But then we force kho_finalize() into
+liveupdate_reboot() allowing weird configurations where kho is there but
+it's unusable.
 
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 1a7146d6ba49..0475d949e5a0 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -38,10 +38,28 @@ static inline bool ifs_is_fully_uptodate(struct folio *folio,
- 	return bitmap_full(ifs->state, i_blocks_per_folio(inode, folio));
- }
+What I'd like to see is that we can finalize KHO on kexec reboot path even
+when liveupdate is not compiled and until then the patch that makes KHO
+debugfs optional should not go further IMO.
+
+Another thing I didn't check in this series yet is how finalization driven
+from debugfs interacts with liveupdate internal handling?
  
--static inline bool ifs_block_is_uptodate(struct iomap_folio_state *ifs,
--		unsigned int block)
-+/*
-+ * Find the next uptodate block in the folio. end_blk is inclusive.
-+ * If no uptodate block is found, this will return end_blk + 1.
-+ */
-+static unsigned ifs_next_uptodate_block(struct folio *folio,
-+		unsigned start_blk, unsigned end_blk)
- {
--	return test_bit(block, ifs->state);
-+	struct iomap_folio_state *ifs = folio->private;
-+
-+	return find_next_bit(ifs->state, end_blk + 1, start_blk);
-+}
-+
-+/*
-+ * Find the next non-uptodate block in the folio. end_blk is inclusive.
-+ * If no non-uptodate block is found, this will return end_blk + 1.
-+ */
-+static unsigned ifs_next_nonuptodate_block(struct folio *folio,
-+		unsigned start_blk, unsigned end_blk)
-+{
-+	struct iomap_folio_state *ifs = folio->private;
-+
-+	return find_next_zero_bit(ifs->state, end_blk + 1, start_blk);
- }
- 
- static bool ifs_set_range_uptodate(struct folio *folio,
-@@ -278,14 +296,11 @@ static void iomap_adjust_read_range(struct inode *inode, struct folio *folio,
- 	 * to avoid reading in already uptodate ranges.
- 	 */
- 	if (ifs) {
--		unsigned int i, blocks_skipped;
-+		unsigned int next, blocks_skipped;
- 
--		/* move forward for each leading block marked uptodate */
--		for (i = first; i <= last; i++)
--			if (!ifs_block_is_uptodate(ifs, i))
--				break;
-+		next = ifs_next_nonuptodate_block(folio, first, last);
-+		blocks_skipped = next - first;
- 
--		blocks_skipped = i - first;
- 		if (blocks_skipped) {
- 			unsigned long block_offset = *pos & (block_size - 1);
- 			unsigned bytes_skipped =
-@@ -295,15 +310,15 @@ static void iomap_adjust_read_range(struct inode *inode, struct folio *folio,
- 			poff += bytes_skipped;
- 			plen -= bytes_skipped;
- 		}
--		first = i;
-+		first = next;
- 
- 		/* truncate len if we find any trailing uptodate block(s) */
--		while (++i <= last) {
--			if (ifs_block_is_uptodate(ifs, i)) {
-+		if (++next <= last) {
-+			next = ifs_next_uptodate_block(folio, next, last);
-+			if (next <= last) {
- 				plen -= iomap_bytes_to_truncate(*pos + plen,
--						block_bits, last - i + 1);
--				last = i - 1;
--				break;
-+						block_bits, last - next + 1);
-+				last = next - 1;
- 			}
- 		}
- 	}
-@@ -640,7 +655,7 @@ bool iomap_is_partially_uptodate(struct folio *folio, size_t from, size_t count)
- {
- 	struct iomap_folio_state *ifs = folio->private;
- 	struct inode *inode = folio->mapping->host;
--	unsigned first, last, i;
-+	unsigned first, last;
- 
- 	if (!ifs)
- 		return false;
-@@ -652,10 +667,7 @@ bool iomap_is_partially_uptodate(struct folio *folio, size_t from, size_t count)
- 	first = from >> inode->i_blkbits;
- 	last = (from + count - 1) >> inode->i_blkbits;
- 
--	for (i = first; i <= last; i++)
--		if (!ifs_block_is_uptodate(ifs, i))
--			return false;
--	return true;
-+	return ifs_next_nonuptodate_block(folio, first, last) > last;
- }
- EXPORT_SYMBOL_GPL(iomap_is_partially_uptodate);
- 
+> > And if we prioritize stateless memory tracking in KHO, it won't be a
+> > concern at all.
+> 
+> We are prioritizing stateless KHO work ;-) +Jason Miu
+> Once KHO is stateless, the kho_finalize() is going to be removed.
+
+There's still fdt_finish(), but it can't fail in practice. 
+
 -- 
-2.47.3
-
+Sincerely yours,
+Mike.
 
