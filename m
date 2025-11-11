@@ -1,223 +1,313 @@
-Return-Path: <linux-fsdevel+bounces-67921-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67922-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68665C4D9FB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 13:18:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 44DA0C4DCFE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 13:44:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDCAC3A1E02
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 12:15:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47FFE3A9206
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 12:41:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9162E358D29;
-	Tue, 11 Nov 2025 12:14:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C3DE35A126;
+	Tue, 11 Nov 2025 12:27:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L8+p8JpV"
+	dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b="h21gR9aU";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="homK9s+4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from fhigh-a4-smtp.messagingengine.com (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A11F0357711;
-	Tue, 11 Nov 2025 12:14:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF6963587B8;
+	Tue, 11 Nov 2025 12:27:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762863285; cv=none; b=AzqTi7UjPt+M2ueC5rM4fWRvdPjnEfDBQEI5VaiueYdW94APTQ3wzfk06/cy2N92BZk/lSna2BJmYCHsXquz7o26viBVP/+gVPueGxjNmMQkQyIvo2Ca7pHKU/HyNbRjVHGWjyhzDZZIrKcsC96213k3d93c920OYmk008qzyGU=
+	t=1762864072; cv=none; b=WJ1FcvtqOZdLFacyoKd74AdYK0EiIHnzUzH2H5y8hlsyqSgHgRC3RpG6TVSykl4z5qMTKaYOifr05o2vhd1ZkgNeRcYnKYL6zSYpgebzux98Yd5218xEgUsjvNFXgDgLzQw3txQjVg09h9bP3wiOAReXOSa7DdEt0yRKloF8KCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762863285; c=relaxed/simple;
-	bh=+rzKQWAbRHUg4ouBJteUhgLiy1lvAwd+xZ2GORVTZyM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=mdW7+gyEWnaNZOk5MefMGkiT44hzxEzZsYI91ATKjsLS+YLek5XfCSakkuLlxXfWb1U5fUu/XGeZ8JRdV++HXqWDPKD9uVRnh1GTVLMHqw8K77VTOty/ftqwULBmD1+otSj77Cmw7a4VEgeLUpTS/6ul30sxeT0DPil/AAlIDk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L8+p8JpV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEFA8C16AAE;
-	Tue, 11 Nov 2025 12:14:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762863285;
-	bh=+rzKQWAbRHUg4ouBJteUhgLiy1lvAwd+xZ2GORVTZyM=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=L8+p8JpVK7PTEkla3qKRiaprmCyYkFkm3RFmbLOQ+JWWKk7+ZMQWwI3ZWJQSouxXT
-	 3ediEo5XyLbdJjUFNBQ6uuyhtSGizG0OZGr4jKhR5Dvlbp1UrgLBAr9ohjtwzEKXeM
-	 G1YDLaAbp57K2IDKGVRUig3r9zCCW6UB+KtgZ0xJSjmBvuFw4BlxXY1t9zQUFi5IzL
-	 4PksDCXtKYKJ4PLRQLxlY6LzZm16nK/tGZwcVOpZHddjo2mHvGH+clbQeWI7WdwHL7
-	 m0cBBE9o1zBeYd+fUA+PUWV0Lbw321Qzal+objZ6KSEKZLc22Iris+EiobHa6jX+WR
-	 nA98vwSRcRnHw==
-Message-ID: <4dd0e1f2dd1ef5103d54e1dceeb2a18fbf7d1e63.camel@kernel.org>
-Subject: Re: [PATCH v5 17/17] vfs: expose delegation support to userland
-From: Jeff Layton <jlayton@kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Alexander Viro
- <viro@zeniv.linux.org.uk>,  Christian Brauner	 <brauner@kernel.org>, Chuck
- Lever <chuck.lever@oracle.com>, Alexander Aring	 <alex.aring@gmail.com>,
- Trond Myklebust <trondmy@kernel.org>, Anna Schumaker	 <anna@kernel.org>,
- Steve French <sfrench@samba.org>, Paulo Alcantara	 <pc@manguebit.org>,
- Ronnie Sahlberg <ronniesahlberg@gmail.com>, Shyam Prasad N	
- <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>, Bharath SM	
- <bharathsm@microsoft.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-  "Rafael J. Wysocki"	 <rafael@kernel.org>, Danilo Krummrich
- <dakr@kernel.org>, David Howells	 <dhowells@redhat.com>, Tyler Hicks
- <code@tyhicks.com>, NeilBrown <neil@brown.name>,  Olga Kornievskaia
- <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, Amir Goldstein
- <amir73il@gmail.com>, Namjae Jeon	 <linkinjeon@kernel.org>, Steve French
- <smfrench@gmail.com>, Sergey Senozhatsky	 <senozhatsky@chromium.org>,
- Carlos Maiolino <cem@kernel.org>, Kuniyuki Iwashima	 <kuniyu@google.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet	
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni	
- <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org, 
-	samba-technical@lists.samba.org, netfs@lists.linux.dev,
- ecryptfs@vger.kernel.org, 	linux-unionfs@vger.kernel.org,
- linux-xfs@vger.kernel.org, netdev@vger.kernel.org
-Date: Tue, 11 Nov 2025 07:14:40 -0500
-In-Reply-To: <tcpo34clqby633deon2qnccih24xor2mz6jm4fzh2zj7o24sjc@s5c25qgpgmv2>
-References: <20251105-dir-deleg-ro-v5-0-7ebc168a88ac@kernel.org>
-	 <20251105-dir-deleg-ro-v5-17-7ebc168a88ac@kernel.org>
-	 <tcpo34clqby633deon2qnccih24xor2mz6jm4fzh2zj7o24sjc@s5c25qgpgmv2>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.58.1 (3.58.1-1.fc43) 
+	s=arc-20240116; t=1762864072; c=relaxed/simple;
+	bh=9BI5n61qLiP4hmzl3oxkvSzARLyEY3ntDVuVCOxRJ6Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LAwuMlI38vO5aZlMk19ffdmY9PHQ6SWPhUbktrVb+508UZ9DINIpv+l0svxlVsuNGEHVc2cOpDHiSmPMOWDNqEfLZjikhOQRLccj2h8MGHmgs+boKkggkOinD4dwifo/iHg5B5wnYht9XKPyLvPAiggqysvRW/XWDb5JDqFs8Tk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=themaw.net; spf=pass smtp.mailfrom=themaw.net; dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b=h21gR9aU; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=homK9s+4; arc=none smtp.client-ip=103.168.172.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=themaw.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=themaw.net
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id C470C14001D9;
+	Tue, 11 Nov 2025 07:27:48 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-04.internal (MEProxy); Tue, 11 Nov 2025 07:27:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1762864068;
+	 x=1762950468; bh=odCvzHzflLTAc8B/UiMMglkBWYTEtUU7jHdHxgB3fu8=; b=
+	h21gR9aUOjzrDzAhSZHB7JQQ+BsTGhFXXEzoBZ5s7/flcm0VWAf+PzOtW/HJCAAO
+	Uqn18ITg0JbKiLcbuA4MYBSyTEu2yel106bMnSDYzNRk1zIlxLeRRlrugtY0wqjx
+	pFwVwflzl7QuyGR4MfGXOEGae44I/m+QZWU699e8AM/rzjKeOOKBMdKWo6ObCgve
+	Sa9zaIgu7ZF+btnPbayXxz7EibphXSUpJtRHMxlHKZ1kxx7VxF+1q8O2ly0mbUzx
+	1GxoeV6lt6G6sRAchwqOlLZPSpig4bj4h02diKgtg6qw9QzhFe9joRDSBYErCAna
+	Fu9swYJFkKtQCX+VWfq7ug==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762864068; x=
+	1762950468; bh=odCvzHzflLTAc8B/UiMMglkBWYTEtUU7jHdHxgB3fu8=; b=h
+	omK9s+4cw843BfJ15NlcQmt1hTjPuTJMtjylCmmXyNW/TVxjvpth7xn5OqCHhGnU
+	j78yDG9O0vZPj8KyjSCjEHVIiOGjCeYtfVsQBTtYKpebg5Y6PSJi+cBMzhOEKtAa
+	jOMOppcZHLdZV3fudg7zLyY8UwRROCR0nlBdjCbppF+UZzoIxoeZIfiTJeyJ/675
+	UnVaQqDO6hqgiwQm//ZEZWYoW9NJ0NVY8pEf0uyX+eW7A3Ufef2r4OBBY8FmniWq
+	fG2RDvlaIuWsfGao6jLLYr16IV5qvue4W4onQXY6ZcWo2byS7tWyYtkaphcxSEOJ
+	/Xq32TVFASmOaB97K6R7Q==
+X-ME-Sender: <xms:xCsTaZ2hZStZuDiLGavtSkYgB3ucdUSzfqZ8a7g4treYvYx9LxGnLg>
+    <xme:xCsTaZZNItA3yn9Au_LvAbT8IArlLEgWX2gVEK3erYL0EVHGCPMP-4EzosTMMNbVD
+    XScEcukpOqtTrXH0ZIe-7RNlo8gSCtcS4aMtX3WfePjPA64-g>
+X-ME-Received: <xmr:xCsTaRKcDXEImi27sN60Fo4ZJqzZmHvwzC-6VfhE3gpdE1UidP8FEd1kTpp0F_OTayABvowlhOXE--nl8e8qPEuhst4uK1fvo4NCJLwcpg3UeLCHsv8JL-s>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvtdduudelucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpefkrghnucfm
+    vghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecuggftrfgrthhtvghrnhepfe
+    ekhfegieegteelffegleetjeekuddvhfehjefhheeuiedtheeuhfekueekffehnecuvehl
+    uhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprhgrvhgvnhesth
+    hhvghmrgifrdhnvghtpdhnsggprhgtphhtthhopeehpdhmohguvgepshhmthhpohhuthdp
+    rhgtphhtthhopegsrhgruhhnvghrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehvih
+    hrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpdhrtghpthhtoheplhhinhhugidq
+    khgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghuthhofh
+    hssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqfhhsuggv
+    vhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:xCsTaYG-y2h-kozUbttnhTpRY9rFAM5tX7IoEoUxdeEpPp-IRNIMqg>
+    <xmx:xCsTaYt53DaTaCAgoabxYzX8txS4o2HaS37qTar8osSBBohk8CrdMQ>
+    <xmx:xCsTaXumBAYW8PPVSeoFF32V3RiS3mCZTKCNWiXnjvi_OELvhZjcEw>
+    <xmx:xCsTaWBANcwvItT1cvjIUz4lZaaXixuaxbDDNqQV1TgNLKo38JLUOg>
+    <xmx:xCsTaXhY5wdpZLNuruvlKeUNSrPkeljlpaVztqMCBMvsUCWGEuMZ-up1>
+Feedback-ID: i31e841b0:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 11 Nov 2025 07:27:46 -0500 (EST)
+Message-ID: <bd4fc8ce-ca3f-4e0f-86c0-f9aaa931a066@themaw.net>
+Date: Tue, 11 Nov 2025 20:27:42 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] autofs: dont trigger mount if it cant succeed
+To: Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>
+Cc: Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ autofs mailing list <autofs@vger.kernel.org>,
+ linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <20251111060439.19593-1-raven@themaw.net>
+ <20251111060439.19593-3-raven@themaw.net>
+ <20251111-zunahm-endeffekt-c8fb3f90a365@brauner>
+ <20251111102435.GW2441659@ZenIV>
+ <20251111-ortseinfahrt-lithium-21455428ab30@brauner>
+Content-Language: en-AU
+From: Ian Kent <raven@themaw.net>
+Autocrypt: addr=raven@themaw.net;
+ keydata= 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
+In-Reply-To: <20251111-ortseinfahrt-lithium-21455428ab30@brauner>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, 2025-11-11 at 11:48 +0100, Jan Kara wrote:
-> On Wed 05-11-25 11:54:03, Jeff Layton wrote:
-> > Now that support for recallable directory delegations is available,
-> > expose this functionality to userland with new F_SETDELEG and F_GETDELE=
-G
-> > commands for fcntl().
-> >=20
-> > Note that this also allows userland to request a FL_DELEG type lease on
-> > files too. Userland applications that do will get signalled when there
-> > are metadata changes in addition to just data changes (which is a
-> > limitation of FL_LEASE leases).
-> >=20
-> > These commands accept a new "struct delegation" argument that contains =
-a
-> > flags field for future expansion.
-> >=20
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
->=20
-> For new apis CCing linux-api is a good practice ;)
->=20
-> ...
->=20
+On 11/11/25 18:55, Christian Brauner wrote:
+> On Tue, Nov 11, 2025 at 10:24:35AM +0000, Al Viro wrote:
+>> On Tue, Nov 11, 2025 at 11:19:59AM +0100, Christian Brauner wrote:
+>>
+>>>> +	sbi->owner = current->nsproxy->mnt_ns;
+>>> ns_ref_get()
+>>> Can be called directly on the mount namespace.
+>> ... and would leak all mounts in the mount tree, unless I'm missing
+>> something subtle.
+> Right, I thought you actually wanted to pin it.
+> Anyway, you could take a passive reference but I think that's nonsense
+> as well. The following should do it:
 
-Doh! I definitely will on the next posting.
+Right, I'll need to think about this for a little while, I did think
 
-> > diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
-> > index 3741ea1b73d8500061567b6590ccf5fb4c6770f0..8123fe70e03cfb1ba9ce1b5=
-e20d61b62e462a7ea 100644
-> > --- a/include/uapi/linux/fcntl.h
-> > +++ b/include/uapi/linux/fcntl.h
-> > @@ -79,6 +79,16 @@
-> >   */
-> >  #define RWF_WRITE_LIFE_NOT_SET	RWH_WRITE_LIFE_NOT_SET
-> > =20
-> > +/* Set/Get delegations */
-> > +#define F_GETDELEG		(F_LINUX_SPECIFIC_BASE + 15)
-> > +#define F_SETDELEG		(F_LINUX_SPECIFIC_BASE + 16)
-> > +
-> > +/* Argument structure for F_GETDELEG and F_SETDELEG */
-> > +struct delegation {
-> > +	unsigned int	d_flags;	/* Must be 0 */
-> > +	short		d_type;		/* F_RDLCK, F_WRLCK, F_UNLCK */
-> > +};
-> > +
->=20
-> I think it would make sense for d_type to be unsigned since it's more or
-> less enum.
->=20
+of using an id for the comparison but I diverged down the wrong path so
 
-FWIW, struct flock has the l_type as a signed short, so that's why I
-copied it here. Making it unsigned is better though.
+this is a very welcome suggestion. There's still the handling of where
 
-> Also struct delegation is going to have a hole in it at the end
-> which is always a concern with uAPI structures (passing around
-> uninitialized stuff). I think it would be good to put an explicit padding
-> there and enforce it is zeroed out.
->=20
+the daemon goes away (crash or SIGKILL, yes people deliberately do this
 
-Makes sense. I'll incorporate that too.
+at times, think simulated disaster recovery) which I've missed in this
 
-Thanks!
---=20
-Jeff Layton <jlayton@kernel.org>
+revision.
+
+
+Al, thoughts please?
+
+
+>
+> UNTESTED, UNCOMPILED
+
+I'll give it a whirl, ;)
+
+
+>
+> ---
+>   fs/autofs/autofs_i.h |  4 ++++
+>   fs/autofs/inode.c    |  3 +++
+>   fs/autofs/root.c     | 10 ++++++++++
+>   fs/namespace.c       |  6 ++++++
+>   include/linux/fs.h   |  1 +
+>   5 files changed, 24 insertions(+)
+>
+> diff --git a/fs/autofs/autofs_i.h b/fs/autofs/autofs_i.h
+> index 23cea74f9933..2b9d2300d351 100644
+> --- a/fs/autofs/autofs_i.h
+> +++ b/fs/autofs/autofs_i.h
+> @@ -16,6 +16,7 @@
+>   #include <linux/wait.h>
+>   #include <linux/sched.h>
+>   #include <linux/sched/signal.h>
+> +#include <uapi/linux/mount.h>
+>   #include <linux/mount.h>
+>   #include <linux/namei.h>
+>   #include <linux/uaccess.h>
+> @@ -109,11 +110,14 @@ struct autofs_wait_queue {
+>   #define AUTOFS_SBI_STRICTEXPIRE 0x0002
+>   #define AUTOFS_SBI_IGNORE	0x0004
+>   
+>   struct autofs_sb_info {
+>   	u32 magic;
+>   	int pipefd;
+>   	struct file *pipe;
+>   	struct pid *oz_pgrp;
+> +	u64 mnt_ns_id;
+>   	int version;
+>   	int sub_version;
+>   	int min_proto;
+> diff --git a/fs/autofs/inode.c b/fs/autofs/inode.c
+> index f5c16ffba013..247a5784d192 100644
+> --- a/fs/autofs/inode.c
+> +++ b/fs/autofs/inode.c
+> @@ -6,8 +6,10 @@
+>   
+>   #include <linux/seq_file.h>
+>   #include <linux/pagemap.h>
+> +#include <linux/ns_common.h>
+>   
+>   #include "autofs_i.h"
+> +#include "../mount.h"
+
+As a module I try really hard to avoid use of non-public definitions.
+
+But if everyone is happy I'm happy too!
+
+
+>   
+>   struct autofs_info *autofs_new_ino(struct autofs_sb_info *sbi)
+>   {
+> @@ -251,6 +253,7 @@ static struct autofs_sb_info *autofs_alloc_sbi(void)
+>   	sbi->min_proto = AUTOFS_MIN_PROTO_VERSION;
+>   	sbi->max_proto = AUTOFS_MAX_PROTO_VERSION;
+>   	sbi->pipefd = -1;
+> +	sbi->mnt_ns_id = to_ns_common(current->nsproxy->mnt_ns)->ns_id;
+>   
+>   	set_autofs_type_indirect(&sbi->type);
+>   	mutex_init(&sbi->wq_mutex);
+> diff --git a/fs/autofs/root.c b/fs/autofs/root.c
+> index 174c7205fee4..f06f62d23e76 100644
+> --- a/fs/autofs/root.c
+> +++ b/fs/autofs/root.c
+> @@ -7,8 +7,10 @@
+>   
+>   #include <linux/capability.h>
+>   #include <linux/compat.h>
+> +#include <linux/ns_common.h>
+>   
+>   #include "autofs_i.h"
+> +#include "../mount.h"
+>   
+>   static int autofs_dir_permission(struct mnt_idmap *, struct inode *, int);
+>   static int autofs_dir_symlink(struct mnt_idmap *, struct inode *,
+> @@ -341,6 +343,14 @@ static struct vfsmount *autofs_d_automount(struct path *path)
+>   	if (autofs_oz_mode(sbi))
+>   		return NULL;
+>   
+> +	/* Refuse to trigger mount if current namespace is not the owner
+> +	 * and the mount is propagation private.
+> +	 */
+> +	if (sbi->mnt_ns_id != to_ns_common(current->nsproxy->mnt_ns)->ns_id) {
+> +		if (vfsmount_to_propagation_flags(path->mnt) & MS_PRIVATE)
+> +			return ERR_PTR(-EPERM);
+> +	}
+> +
+>   	/*
+>   	 * If an expire request is pending everyone must wait.
+>   	 * If the expire fails we're still mounted so continue
+> diff --git a/fs/namespace.c b/fs/namespace.c
+> index d82910f33dc4..27bb12693cba 100644
+> --- a/fs/namespace.c
+> +++ b/fs/namespace.c
+> @@ -5150,6 +5150,12 @@ static u64 mnt_to_propagation_flags(struct mount *m)
+>   	return propagation;
+>   }
+>   
+> +u64 vfsmount_to_propagation_flags(struct vfsmount *mnt)
+> +{
+> +	return mnt_to_propagation_flags(real_mount(mnt));
+> +}
+> +EXPORT_SYMBOL_GPL(vfsmount_to_propagation_flags);
+> +
+>   static void statmount_sb_basic(struct kstatmount *s)
+>   {
+>   	struct super_block *sb = s->mnt->mnt_sb;
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index c895146c1444..a5c2077ce6ed 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -3269,6 +3269,7 @@ extern struct file * open_exec(const char *);
+>   /* fs/dcache.c -- generic fs support functions */
+>   extern bool is_subdir(struct dentry *, struct dentry *);
+>   extern bool path_is_under(const struct path *, const struct path *);
+> +u64 vfsmount_to_propagation_flags(struct vfsmount *mnt);
+>   
+>   extern char *file_path(struct file *, char *, int);
+>   
 
