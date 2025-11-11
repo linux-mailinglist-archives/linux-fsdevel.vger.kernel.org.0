@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-67827-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67850-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3478BC4BE79
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 08:04:53 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80964C4BEB3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 08:05:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AADC03BB07A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 07:02:28 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D62F734EFF6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 07:05:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6432E3563FF;
-	Tue, 11 Nov 2025 06:55:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 749EF359F88;
+	Tue, 11 Nov 2025 06:55:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="bU5nMRV1"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="mCtTlOKV"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B243534B678;
-	Tue, 11 Nov 2025 06:55:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8317A351FB7;
+	Tue, 11 Nov 2025 06:55:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762844135; cv=none; b=d4STWkSThf3R5JYiQam6UO8nboNQB0l9gQ2yo8luga5YUVqIqH+aPufs/SAHLXENXXOSM2S0m4pZOidbQPCMDY3AfDyu/ixCBi1/ylzReO8YqK9kK86kWacSajRcToRmrddKCT3r3GU2AC61y/aFD9QZDRvQbYU72s3YaXJzaD0=
+	t=1762844139; cv=none; b=S1AXxtYJ/KBsHW+X8FRMn5HY+l/Bwr5AnWATjhVLZE6LG8C2CN7suBck1h1pQDhpAZ70+aFMoSnHRjNt75d/bN9/keIigKm52jH5XQ/pmsiL6/Qh9D4Na1IbavJBRvOXcMKXHxejtKN1+XWnsYkBdHSBpVT5/P9KLz5f7u+A0EA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762844135; c=relaxed/simple;
-	bh=9AS75eVlweTY+v6fpHuTI3Q7t//pHwL//inAnhQncd4=;
+	s=arc-20240116; t=1762844139; c=relaxed/simple;
+	bh=EPwXfKzUq6WB4Lo0fSXpMaiMt3x+BzpT0g03SMuKZHY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=A/4j3OFrnEXpSg4kOP7ksyolLqK38/7+TE+1ybIhzYJrt/in8jJe0/pVSWXY5TvkNJEbRXomt5nIa4zJhM4lLYLPUwGBaSBXwzttH+hzqvmw5t3W4wZ0K2uipCZfaa95YrlIYdnFUxnsiJ7EE1Om09o8P+sYhig3ZQtwdxaaz6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=bU5nMRV1; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=VWxKyjDc73XODEkbPmArXNuXF6cDJ2F0aF6Kl7E48+ts/RA3IT20mth1Sbl4BGxdCo/uEW9Xg61wZWL6GCX81tAIdXh0rc3aqcRaf/m9Jc8Eq1HIt67v4Bc1o4kgBkA5esAVxZkGhKjKLRyfX0COlL8NhQ+vYEgib5Ho7glXVpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=mCtTlOKV; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=NrCfZqIGx2QtH4dFK91zKO0X/du0eTzDDHu7mpHeJ3A=; b=bU5nMRV1HYIpzFuIj1mxnQVWFT
-	n5MlL7sdQ4oFxAKmM3zgYB4MJa1s+CqH9ZNp8B+3Ya1Sk2/4un/w7RJ19EUnMyzYfuYu8qrRk7hcH
-	oTDp3KIiXF4tCG8m0sjz7UOahMqzTzhzG7KRPXSFEHjjYQ7qLr/gKVI236b2dFyvffsabXoyb4psw
-	DkIWYkpSFC7pByhnnBnQBOGDNjxrUmDbOap+jvLg8ryyflfD/qsK/ZwW54E6ih9xa+6z61jLA2jER
-	FCKsCM4k6ydDGoxsiMGR9KTlQ7i744lbTyMfdrz3LAoDhXJaikJo4uOoFBfg8DLTBoPqaoI0tbfsP
-	CK5V/4YA==;
+	bh=q+YJfK1JQC1qMGUqrxdt1F1Oxcx2pv8iNDDBzggBjk0=; b=mCtTlOKVOGtAV3Fd6s6t1TxgRe
+	XpkebMhkQJ23JdJ50DloJJh1lPBIgODF0uHNkVHCF0nN4mFnY8p5mCYD7GufmCSBVONhWbAxx5OQU
+	i8tS+ba8dzGs9SHCOePSmdZiJoXKqSw2KQLgDlbl/2pNRodja8ORO2lDdpp6DxKXw0ame4bvrW/Kj
+	PbJ/KBuJFManx7Sho2+mSf+ksoI7PV9UBotmKpRDaa+CtwveOgvlbJ8rDNI2gp8ZQhlbqmfZebR7x
+	9VdzGf0QSTCffumZdqTIi1ODwjGBvi5zgelxMVKWQAFaz9BD/7ZTYuvHi+9t/kaeW9T+tiLc0y3fU
+	BcyH9PFg==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vIiHp-0000000BxBh-2EXa;
-	Tue, 11 Nov 2025 06:55:29 +0000
+	id 1vIiHu-0000000BxRd-0qMW;
+	Tue, 11 Nov 2025 06:55:34 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
 Cc: torvalds@linux-foundation.org,
@@ -67,9 +67,9 @@ Cc: torvalds@linux-foundation.org,
 	selinux@vger.kernel.org,
 	borntraeger@linux.ibm.com,
 	bpf@vger.kernel.org
-Subject: [PATCH v3 41/50] hypfs: switch hypfs_create_str() to returning int
-Date: Tue, 11 Nov 2025 06:55:10 +0000
-Message-ID: <20251111065520.2847791-42-viro@zeniv.linux.org.uk>
+Subject: [PATCH v3 50/50] d_make_discardable(): warn if given a non-persistent dentry
+Date: Tue, 11 Nov 2025 06:55:19 +0000
+Message-ID: <20251111065520.2847791-51-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20251111065520.2847791-1-viro@zeniv.linux.org.uk>
 References: <20251111065520.2847791-1-viro@zeniv.linux.org.uk>
@@ -82,156 +82,173 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Every single caller only cares about PTR_ERR_OR_ZERO() of return value...
+At this point there are very few call chains that might lead to
+d_make_discardable() on a dentry that hadn't been made persistent:
+calls of simple_unlink() and simple_rmdir() in configfs and
+apparmorfs.
+
+Both filesystems do pin (part of) their contents in dcache, but
+they are currently playing very unusual games with that.  Converting
+them to more usual patterns might be possible, but it's definitely
+going to be a long series of changes in both cases.
+
+For now the easiest solution is to have both stop using simple_unlink()
+and simple_rmdir() - that allows to make d_make_discardable() warn
+when given a non-persistent dentry.
+
+Rather than giving them full-blown private copies (with calls of
+d_make_discardable() replaced with dput()), let's pull the parts of
+simple_unlink() and simple_rmdir() that deal with timestamps and link
+counts into separate helpers (__simple_unlink() and __simple_rmdir()
+resp.) and have those used by configfs and apparmorfs.
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- arch/s390/hypfs/hypfs.h         |  3 +--
- arch/s390/hypfs/hypfs_diag_fs.c | 40 +++++++++------------------------
- arch/s390/hypfs/hypfs_vm_fs.c   |  6 ++---
- arch/s390/hypfs/inode.c         |  9 ++++----
- 4 files changed, 18 insertions(+), 40 deletions(-)
+ fs/configfs/dir.c              | 10 ++++++++--
+ fs/configfs/inode.c            |  3 ++-
+ fs/dcache.c                    |  9 +--------
+ fs/libfs.c                     | 21 +++++++++++++++++----
+ include/linux/fs.h             |  2 ++
+ security/apparmor/apparmorfs.c | 13 +++++++++----
+ 6 files changed, 39 insertions(+), 19 deletions(-)
 
-diff --git a/arch/s390/hypfs/hypfs.h b/arch/s390/hypfs/hypfs.h
-index 4dc2e068e0ff..0d109d956015 100644
---- a/arch/s390/hypfs/hypfs.h
-+++ b/arch/s390/hypfs/hypfs.h
-@@ -25,8 +25,7 @@ extern struct dentry *hypfs_mkdir(struct dentry *parent, const char *name);
- extern struct dentry *hypfs_create_u64(struct dentry *dir, const char *name,
- 				       __u64 value);
+diff --git a/fs/configfs/dir.c b/fs/configfs/dir.c
+index 81f4f06bc87e..e8f2f44012e9 100644
+--- a/fs/configfs/dir.c
++++ b/fs/configfs/dir.c
+@@ -400,8 +400,14 @@ static void remove_dir(struct dentry * d)
  
--extern struct dentry *hypfs_create_str(struct dentry *dir, const char *name,
--				       char *string);
-+extern int hypfs_create_str(struct dentry *dir, const char *name, char *string);
+ 	configfs_remove_dirent(d);
  
- /* LPAR Hypervisor */
- extern int hypfs_diag_init(void);
-diff --git a/arch/s390/hypfs/hypfs_diag_fs.c b/arch/s390/hypfs/hypfs_diag_fs.c
-index ede951dc0085..2178e6060a5d 100644
---- a/arch/s390/hypfs/hypfs_diag_fs.c
-+++ b/arch/s390/hypfs/hypfs_diag_fs.c
-@@ -228,8 +228,7 @@ static int hypfs_create_cpu_files(struct dentry *cpus_dir, void *cpu_info)
- 			return PTR_ERR(rc);
+-	if (d_really_is_positive(d))
+-		simple_rmdir(d_inode(parent),d);
++	if (d_really_is_positive(d)) {
++		if (likely(simple_empty(d))) {
++			__simple_rmdir(d_inode(parent),d);
++			dput(d);
++		} else {
++			pr_warn("remove_dir (%pd): attributes remain", d);
++		}
++	}
+ 
+ 	pr_debug(" o %pd removing done (%d)\n", d, d_count(d));
+ 
+diff --git a/fs/configfs/inode.c b/fs/configfs/inode.c
+index 1d2e3a5738d1..bcda3372e141 100644
+--- a/fs/configfs/inode.c
++++ b/fs/configfs/inode.c
+@@ -211,7 +211,8 @@ void configfs_drop_dentry(struct configfs_dirent * sd, struct dentry * parent)
+ 			dget_dlock(dentry);
+ 			__d_drop(dentry);
+ 			spin_unlock(&dentry->d_lock);
+-			simple_unlink(d_inode(parent), dentry);
++			__simple_unlink(d_inode(parent), dentry);
++			dput(dentry);
+ 		} else
+ 			spin_unlock(&dentry->d_lock);
  	}
- 	diag224_idx2name(cpu_info__ctidx(diag204_get_info_type(), cpu_info), buffer);
--	rc = hypfs_create_str(cpu_dir, "type", buffer);
--	return PTR_ERR_OR_ZERO(rc);
-+	return hypfs_create_str(cpu_dir, "type", buffer);
- }
- 
- static void *hypfs_create_lpar_files(struct dentry *systems_dir, void *part_hdr)
-@@ -276,8 +275,7 @@ static int hypfs_create_phys_cpu_files(struct dentry *cpus_dir, void *cpu_info)
- 	if (IS_ERR(rc))
- 		return PTR_ERR(rc);
- 	diag224_idx2name(phys_cpu__ctidx(diag204_get_info_type(), cpu_info), buffer);
--	rc = hypfs_create_str(cpu_dir, "type", buffer);
--	return PTR_ERR_OR_ZERO(rc);
-+	return hypfs_create_str(cpu_dir, "type", buffer);
- }
- 
- static void *hypfs_create_phys_files(struct dentry *parent_dir, void *phys_hdr)
-@@ -316,41 +314,25 @@ int hypfs_diag_create_files(struct dentry *root)
- 		return rc;
- 
- 	systems_dir = hypfs_mkdir(root, "systems");
--	if (IS_ERR(systems_dir)) {
--		rc = PTR_ERR(systems_dir);
--		goto err_out;
--	}
-+	if (IS_ERR(systems_dir))
-+		return PTR_ERR(systems_dir);
- 	time_hdr = (struct x_info_blk_hdr *)buffer;
- 	part_hdr = time_hdr + info_blk_hdr__size(diag204_get_info_type());
- 	for (i = 0; i < info_blk_hdr__npar(diag204_get_info_type(), time_hdr); i++) {
- 		part_hdr = hypfs_create_lpar_files(systems_dir, part_hdr);
--		if (IS_ERR(part_hdr)) {
--			rc = PTR_ERR(part_hdr);
--			goto err_out;
--		}
-+		if (IS_ERR(part_hdr))
-+			return PTR_ERR(part_hdr);
- 	}
- 	if (info_blk_hdr__flags(diag204_get_info_type(), time_hdr) &
- 	    DIAG204_LPAR_PHYS_FLG) {
- 		ptr = hypfs_create_phys_files(root, part_hdr);
--		if (IS_ERR(ptr)) {
--			rc = PTR_ERR(ptr);
--			goto err_out;
--		}
-+		if (IS_ERR(ptr))
-+			return PTR_ERR(ptr);
- 	}
- 	hyp_dir = hypfs_mkdir(root, "hyp");
--	if (IS_ERR(hyp_dir)) {
--		rc = PTR_ERR(hyp_dir);
--		goto err_out;
--	}
--	ptr = hypfs_create_str(hyp_dir, "type", "LPAR Hypervisor");
--	if (IS_ERR(ptr)) {
--		rc = PTR_ERR(ptr);
--		goto err_out;
--	}
--	rc = 0;
--
--err_out:
--	return rc;
-+	if (IS_ERR(hyp_dir))
-+		return PTR_ERR(hyp_dir);
-+	return hypfs_create_str(hyp_dir, "type", "LPAR Hypervisor");
- }
- 
- /* Diagnose 224 functions */
-diff --git a/arch/s390/hypfs/hypfs_vm_fs.c b/arch/s390/hypfs/hypfs_vm_fs.c
-index 6011289afa8c..e8a32d66062b 100644
---- a/arch/s390/hypfs/hypfs_vm_fs.c
-+++ b/arch/s390/hypfs/hypfs_vm_fs.c
-@@ -100,11 +100,9 @@ int hypfs_vm_create_files(struct dentry *root)
- 		rc = PTR_ERR(dir);
- 		goto failed;
- 	}
--	file = hypfs_create_str(dir, "type", "z/VM Hypervisor");
--	if (IS_ERR(file)) {
--		rc = PTR_ERR(file);
-+	rc = hypfs_create_str(dir, "type", "z/VM Hypervisor");
-+	if (rc)
- 		goto failed;
--	}
- 
- 	/* physical cpus */
- 	dir = hypfs_mkdir(root, "cpus");
-diff --git a/arch/s390/hypfs/inode.c b/arch/s390/hypfs/inode.c
-index a4dc8e13d999..c5e2d8932b88 100644
---- a/arch/s390/hypfs/inode.c
-+++ b/arch/s390/hypfs/inode.c
-@@ -398,24 +398,23 @@ struct dentry *hypfs_create_u64(struct dentry *dir,
- 	return dentry;
- }
- 
--struct dentry *hypfs_create_str(struct dentry *dir,
--				const char *name, char *string)
-+int hypfs_create_str(struct dentry *dir, const char *name, char *string)
+diff --git a/fs/dcache.c b/fs/dcache.c
+index 5ee2e78a91b3..824d620bb563 100644
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -931,14 +931,7 @@ EXPORT_SYMBOL(dput);
+ void d_make_discardable(struct dentry *dentry)
  {
- 	char *buffer;
- 	struct dentry *dentry;
- 
- 	buffer = kmalloc(strlen(string) + 2, GFP_KERNEL);
- 	if (!buffer)
--		return ERR_PTR(-ENOMEM);
-+		return -ENOMEM;
- 	sprintf(buffer, "%s\n", string);
- 	dentry =
- 	    hypfs_create_file(dir, name, buffer, S_IFREG | REG_FILE_MODE);
- 	if (IS_ERR(dentry)) {
- 		kfree(buffer);
--		return ERR_PTR(-ENOMEM);
-+		return -ENOMEM;
- 	}
- 	hypfs_add_dentry(dentry);
--	return dentry;
-+	return 0;
+ 	spin_lock(&dentry->d_lock);
+-	/*
+-	 * By the end of the series we'll add
+-	 * WARN_ON(!(dentry->d_flags & DCACHE_PERSISTENT);
+-	 * here, but while object removal is done by a few common helpers,
+-	 * object creation tends to be open-coded (if nothing else, new inode
+-	 * needs to be set up), so adding a warning from the very beginning
+-	 * would make for much messier patch series.
+-	 */
++	WARN_ON(!(dentry->d_flags & DCACHE_PERSISTENT));
+ 	dentry->d_flags &= ~DCACHE_PERSISTENT;
+ 	dentry->d_lockref.count--;
+ 	rcu_read_lock();
+diff --git a/fs/libfs.c b/fs/libfs.c
+index 80f288a771e3..0aa630e7eb00 100644
+--- a/fs/libfs.c
++++ b/fs/libfs.c
+@@ -790,13 +790,27 @@ int simple_empty(struct dentry *dentry)
  }
+ EXPORT_SYMBOL(simple_empty);
  
- static const struct file_operations hypfs_file_ops = {
+-int simple_unlink(struct inode *dir, struct dentry *dentry)
++void __simple_unlink(struct inode *dir, struct dentry *dentry)
+ {
+ 	struct inode *inode = d_inode(dentry);
+ 
+ 	inode_set_mtime_to_ts(dir,
+ 			      inode_set_ctime_to_ts(dir, inode_set_ctime_current(inode)));
+ 	drop_nlink(inode);
++}
++EXPORT_SYMBOL(__simple_unlink);
++
++void __simple_rmdir(struct inode *dir, struct dentry *dentry)
++{
++	drop_nlink(d_inode(dentry));
++	__simple_unlink(dir, dentry);
++	drop_nlink(dir);
++}
++EXPORT_SYMBOL(__simple_rmdir);
++
++int simple_unlink(struct inode *dir, struct dentry *dentry)
++{
++	__simple_unlink(dir, dentry);
+ 	d_make_discardable(dentry);
+ 	return 0;
+ }
+@@ -807,9 +821,8 @@ int simple_rmdir(struct inode *dir, struct dentry *dentry)
+ 	if (!simple_empty(dentry))
+ 		return -ENOTEMPTY;
+ 
+-	drop_nlink(d_inode(dentry));
+-	simple_unlink(dir, dentry);
+-	drop_nlink(dir);
++	__simple_rmdir(dir, dentry);
++	d_make_discardable(dentry);
+ 	return 0;
+ }
+ EXPORT_SYMBOL(simple_rmdir);
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 95933ceaae51..ef842adbd418 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3621,6 +3621,8 @@ extern int simple_open(struct inode *inode, struct file *file);
+ extern int simple_link(struct dentry *, struct inode *, struct dentry *);
+ extern int simple_unlink(struct inode *, struct dentry *);
+ extern int simple_rmdir(struct inode *, struct dentry *);
++extern void __simple_unlink(struct inode *, struct dentry *);
++extern void __simple_rmdir(struct inode *, struct dentry *);
+ void simple_rename_timestamp(struct inode *old_dir, struct dentry *old_dentry,
+ 			     struct inode *new_dir, struct dentry *new_dentry);
+ extern int simple_rename_exchange(struct inode *old_dir, struct dentry *old_dentry,
+diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
+index 391a586d0557..9b9090d38ea2 100644
+--- a/security/apparmor/apparmorfs.c
++++ b/security/apparmor/apparmorfs.c
+@@ -358,10 +358,15 @@ static void aafs_remove(struct dentry *dentry)
+ 	dir = d_inode(dentry->d_parent);
+ 	inode_lock(dir);
+ 	if (simple_positive(dentry)) {
+-		if (d_is_dir(dentry))
+-			simple_rmdir(dir, dentry);
+-		else
+-			simple_unlink(dir, dentry);
++		if (d_is_dir(dentry)) {
++			if (!WARN_ON(!simple_empty(dentry))) {
++				__simple_rmdir(dir, dentry);
++				dput(dentry);
++			}
++		} else {
++			__simple_unlink(dir, dentry);
++			dput(dentry);
++		}
+ 		d_delete(dentry);
+ 		dput(dentry);
+ 	}
 -- 
 2.47.3
 
