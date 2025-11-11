@@ -1,99 +1,113 @@
-Return-Path: <linux-fsdevel+bounces-67887-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67888-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53F4FC4CD24
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 10:58:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE9EEC4CC52
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 10:50:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D2E8426756
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 09:50:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9F49189202C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 09:51:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 582A32F290B;
-	Tue, 11 Nov 2025 09:50:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C59D52FBE0E;
+	Tue, 11 Nov 2025 09:50:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KXxNjQ+t"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UYkWV5Fk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A51F22EDD72;
-	Tue, 11 Nov 2025 09:50:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0C2D2F7ADD
+	for <linux-fsdevel@vger.kernel.org>; Tue, 11 Nov 2025 09:50:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762854612; cv=none; b=WAf+eXzyV1vZzZcJWN2r/B4i9C/E9AY8p+qUjR8Ux8HGI9KFawWhbeXT3gRZ5kf1XNvLkNVhDN5MDUO27Tsj9vHglkmKa3+spfzuiZJ8fJKHQyRORbQqb/pdrRkPGnRFwHFeZHRvE6rRB9OuWW0DJMeYHkP155Uu3g1o74jKy14=
+	t=1762854635; cv=none; b=LM+JsTGi2SfkBIzEY/ThmVi17m9VTYQJ4GzsD0V8alG0OGXC6cfUAvGCNQ4+EOzMOLBlAAft4eBwhU/3+tmPVYUClQs9B5VtVjofh5fVzuX+LefvnvExrRU73nQPe5ZPKAqNf4F1QEXeZNALt2Byog4Gsvsq/+Iez0dn/bDAxT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762854612; c=relaxed/simple;
-	bh=l16okVrNgxsDI6U6EIfS9tmHA0egk0SYJcVLBk1Q3gc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VO5cpq+tz3s1AtkiXws7W4UFy1wGXQa4LFqOWxlfibyPBLyQjPWApALRImmxFq2M84n7osHewjSUgPv0406No7xGb3+VWIC8NZgywEcdhkunfD0h35UHQEDCNy6bxMyY2o4MIN1p9mPDZxglA6bW3GmCRXSuMaalkS1Ijn/NcNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KXxNjQ+t; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3C31C19422;
-	Tue, 11 Nov 2025 09:50:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762854612;
-	bh=l16okVrNgxsDI6U6EIfS9tmHA0egk0SYJcVLBk1Q3gc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=KXxNjQ+tZmUOHcS7hcmQM0Mq6bsCH3Bz5+630nwMTbL4iZptKiz8x0BPEFEduZcF7
-	 tXc8MgguM7CYN5/unB5NEu4B/Bn78NkqOx2x1bSCim7M0gvbdgx7cCIBQer7PhsXcs
-	 YqhATkUtpaEg8lRpQSRG4AhjEhJJ5s2lD2o+BxqWp/xJ5NsgOG1gVTREod7q8j6amH
-	 EZ/4J1bXGddHJkfxYYUtDfC3gZtuPZzYv66IIG8TVnEYzpTxNoLuIG/qxJxvW5KZV/
-	 5hermCcYKCmGBOL7RnWAsiQZfSK6rTsQwCZddFYXGwcVRTyhW6ZXSxkJMAawuXFISC
-	 //8m4QbyBoO9A==
-From: Christian Brauner <brauner@kernel.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fs: move inode fields used during fast path lookup closer together
-Date: Tue, 11 Nov 2025 10:50:07 +0100
-Message-ID: <20251111-zeremonie-amortisieren-d1455ae20d5f@brauner>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251109121931.1285366-1-mjguzik@gmail.com>
-References: <20251109121931.1285366-1-mjguzik@gmail.com>
+	s=arc-20240116; t=1762854635; c=relaxed/simple;
+	bh=d/6qmPIr6XfIAiRzU4wN1UuSbgtZ/Xh4tt0OqSWfrPw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=CmQR3SiakEndEXECixrENTHwPVR08QHZ9sE3u6SK5ECMOIGyG2xl4/YFPmrcMuiWgeDHqXArkdSu4a5TwZICXxiYNXtOXn1Urflk5/NnAVh5Lfvv5h6dGWeplcMn0c56htpHP7G8l+Q2a8cm+hAp06JeIaRbWvUTw3kwlt7ru5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UYkWV5Fk; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762854631;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Scsyq6luIilwuHQq5aSleNZrTNqfMNUGhbn0iJxWQUY=;
+	b=UYkWV5FkZ5lY0HFHsRSJ8LI4UGAi500pDRusOvWOhvTJf9C/AB53TjWvKVmgUCqu6Zzfry
+	ZCw/lTHgHCNH/Upyq0UaNkIhbw+sVPeVWox//eLwn+RvSwX2SonaJ0cUgas+PYgiPBMTDk
+	fPyJwCJ/TAFd/t2XJZPN7FAAzA/2q+M=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-189-PKQaNzSFPMevevEoDCLEzw-1; Tue,
+ 11 Nov 2025 04:50:23 -0500
+X-MC-Unique: PKQaNzSFPMevevEoDCLEzw-1
+X-Mimecast-MFC-AGG-ID: PKQaNzSFPMevevEoDCLEzw_1762854621
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1A683180028A;
+	Tue, 11 Nov 2025 09:50:20 +0000 (UTC)
+Received: from fweimer-oldenburg.csb.redhat.com (unknown [10.45.225.58])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C7082195608E;
+	Tue, 11 Nov 2025 09:50:15 +0000 (UTC)
+From: Florian Weimer <fweimer@redhat.com>
+To: hch <hch@lst.de>
+Cc: Hans Holmberg <Hans.Holmberg@wdc.com>,  "linux-xfs@vger.kernel.org"
+ <linux-xfs@vger.kernel.org>,  Carlos Maiolino <cem@kernel.org>,  Dave
+ Chinner <david@fromorbit.com>,  "Darrick J . Wong" <djwong@kernel.org>,
+  "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+  "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+  "libc-alpha@sourceware.org" <libc-alpha@sourceware.org>,  Matthew Wilcox
+ <willy@infradead.org>
+Subject: Re: [RFC] xfs: fake fallocate success for always CoW inodes
+In-Reply-To: <20251111090547.GC11723@lst.de> (hch@lst.de's message of "Tue, 11
+	Nov 2025 10:05:47 +0100")
+References: <20251106133530.12927-1-hans.holmberg@wdc.com>
+	<lhuikfngtlv.fsf@oldenburg.str.redhat.com>
+	<20251106135212.GA10477@lst.de>
+	<aQyz1j7nqXPKTYPT@casper.infradead.org>
+	<20251106144610.GA14909@lst.de>
+	<8b9e31f4-0ec6-4817-8214-4dfc4e988265@wdc.com>
+	<20251111090547.GC11723@lst.de>
+Date: Tue, 11 Nov 2025 10:50:13 +0100
+Message-ID: <lhu4ir0kiei.fsf@oldenburg.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1330; i=brauner@kernel.org; h=from:subject:message-id; bh=l16okVrNgxsDI6U6EIfS9tmHA0egk0SYJcVLBk1Q3gc=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQKs53X/eYoEaf27cfqj9OOrFm0t33D+YC14Tp2voLq6 VfWB5tN7yhlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZhI2DeGP7x8J+qOTna05Bbc 1SC14dyL5SsF+d0Kjl/YXPHFXkvx9iqGf1bRXV8995iJNLro132uSp53ievaJt3nzPJT9nbUJk3 hZQUA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Sun, 09 Nov 2025 13:19:31 +0100, Mateusz Guzik wrote:
-> This should avoid *some* cache misses.
-> 
-> Successful path lookup is guaranteed to load at least ->i_mode,
-> ->i_opflags and ->i_acl. At the same time the common case will avoid
-> looking at more fields.
-> 
-> struct inode is not guaranteed to have any particular alignment, notably
-> ext4 has it only aligned to 8 bytes meaning nearby fields might happen
-> to be on the same or only adjacent cache lines depending on luck (or no
-> luck).
-> 
-> [...]
+> On Tue, Nov 11, 2025 at 08:31:30AM +0000, Hans Holmberg wrote:
+>> In stead of returning success in fallocate(2), could we in stead return
+>> an distinct error code that would tell the caller that:
+>> 
+>> The optimized allocation not supported, AND there is no use trying to
+>> preallocate data using writes?
+>> 
+>> EUSELESS would be nice to have, but that is not available.
+>> 
+>> Then posix_fallocate could fail with -EINVAL (which looks legit according
+>> to the man page "the underlying filesystem does not support the operation")
+>> or skip the writes and return success (whatever is preferable)
+>
+> The problem is that both the existing direct callers of fallocate(2)
+> including all currently released glibc versions do not expect that
+> return value.
 
-Applied to the vfs-6.19.fs_header branch of the vfs/vfs.git tree.
-Patches in the vfs-6.19.fs_header branch should appear in linux-next soon.
+That could be covered by putting a flag into the mode argument of
+allocate that triggers the new behavior.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+Thanks,
+Florian
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.19.fs_header
-
-[1/1] fs: move inode fields used during fast path lookup closer together
-      https://git.kernel.org/vfs/vfs/c/dca3aa666fbd
 
