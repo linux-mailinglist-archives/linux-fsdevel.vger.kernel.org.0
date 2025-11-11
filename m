@@ -1,114 +1,136 @@
-Return-Path: <linux-fsdevel+bounces-67778-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67780-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C48A9C49D9B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 01:18:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B858C49DC5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 01:24:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2190F188CC04
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 00:18:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64C85188E88F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 00:24:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DD82136349;
-	Tue, 11 Nov 2025 00:17:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEA0F19B5A7;
+	Tue, 11 Nov 2025 00:23:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="vjkeLHDm"
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="POT8RZoV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BFE454763;
-	Tue, 11 Nov 2025 00:17:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B744B199EAD
+	for <linux-fsdevel@vger.kernel.org>; Tue, 11 Nov 2025 00:23:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762820271; cv=none; b=mooVU1Ag7/Ii6tk/im5TbXdFz4IeLGxlnjRVH5An7GF7ge1maNkhZ5YLdcVLN98knjlQjDpyVD56eH82FrZLsAacbovRt/XTdPdKL5V1OlBvmwWScrVSivXLvGbohvMPHmR0hHCIdPsl/KwmsoYNz9pAbVtpImA3lDVOTxg9GyY=
+	t=1762820605; cv=none; b=iuZDHochxws2YGc8DzBFNvEQt1d0/k9E6y0YqPxyLrj/SMfjsM8mTDz1rOIKyzeJT2Iodk8SIw6oq2UzDE0orXbdCkEy++V1cm8hofuRGNopHyvHeX94wyTvUta+eSTY29dfaEDGokSMaAiNMtDsuyp3X8QI2Vsjt3U1gZbSkxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762820271; c=relaxed/simple;
-	bh=h4IOFDJ10o8gxsjF+0swXOnDNA//+lvIGav3YD5mbm4=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=r+VRs+4P0pEYLBkDT1OxCqrfvvg17R5ATPRVQWr+OF3SLo6dibLuydJfez9hkG55vvWpi0sAcpCFXq2gO829fz9FwulBv1E6JXegjgpiCFKIdO9l4/J5Zu8iJKQU9qQEkQb5kAEz6abJkF6ZQGB+3/wLJ+wTOCKA6duwr6EAnBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=vjkeLHDm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68CB5C4CEFB;
-	Tue, 11 Nov 2025 00:17:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1762820268;
-	bh=h4IOFDJ10o8gxsjF+0swXOnDNA//+lvIGav3YD5mbm4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=vjkeLHDmhlbRmdh2J8YEkuADTnOje8197r13F9Y+9M4PNEGyrIjTsJrXa9FcWBd30
-	 3dmWPQqBvqXKMpha7c0qNKjQ5ewY10+fA5vTYMX7SAz0x9GQP2DAUfOdVKd+b+ILms
-	 w4QnZBmAPYCsSnhcOO+V0J4HJESA9uFYopLe6MVY=
-Date: Mon, 10 Nov 2025 16:17:45 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Christian Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank
- <frankja@linux.ibm.com>, Claudio Imbrenda <imbrenda@linux.ibm.com>, David
- Hildenbrand <david@redhat.com>, Alexander Gordeev <agordeev@linux.ibm.com>,
- Gerald Schaefer <gerald.schaefer@linux.ibm.com>, Heiko Carstens
- <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, Sven Schnelle
- <svens@linux.ibm.com>, Peter Xu <peterx@redhat.com>, Alexander Viro
- <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara
- <jack@suse.cz>, Arnd Bergmann <arnd@arndb.de>, Zi Yan <ziy@nvidia.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>, "Liam R . Howlett"
- <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>, Ryan Roberts
- <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, Barry Song
- <baohua@kernel.org>, Lance Yang <lance.yang@linux.dev>, Muchun Song
- <muchun.song@linux.dev>, Oscar Salvador <osalvador@suse.de>, Vlastimil
- Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan
- <surenb@google.com>, Michal Hocko <mhocko@suse.com>, Matthew Brost
- <matthew.brost@intel.com>, Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim
- <rakie.kim@sk.com>, Byungchul Park <byungchul@sk.com>, Gregory Price
- <gourry@gourry.net>, Ying Huang <ying.huang@linux.alibaba.com>, Alistair
- Popple <apopple@nvidia.com>, Axel Rasmussen <axelrasmussen@google.com>,
- Yuanchu Xie <yuanchu@google.com>, Wei Xu <weixugc@google.com>, Kemeng Shi
- <shikemeng@huaweicloud.com>, Kairui Song <kasong@tencent.com>, Nhat Pham
- <nphamcs@gmail.com>, Baoquan He <bhe@redhat.com>, Chris Li
- <chrisl@kernel.org>, SeongJae Park <sj@kernel.org>, Matthew Wilcox
- <willy@infradead.org>, Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky
- <leon@kernel.org>, Xu Xin <xu.xin16@zte.com.cn>, Chengming Zhou
- <chengming.zhou@linux.dev>, Jann Horn <jannh@google.com>, Miaohe Lin
- <linmiaohe@huawei.com>, Naoya Horiguchi <nao.horiguchi@gmail.com>, Pedro
- Falcato <pfalcato@suse.de>, Pasha Tatashin <pasha.tatashin@soleen.com>, Rik
- van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>, Hugh Dickins
- <hughd@google.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
- linux-s390@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linux-arch@vger.kernel.org, damon@lists.linux.dev
-Subject: Re: [PATCH v2 00/16] mm: remove is_swap_[pte, pmd]() + non-swap
- entries, introduce leaf entries
-Message-Id: <20251110161745.2075f263e3c693bf65f98ccc@linux-foundation.org>
-In-Reply-To: <cover.1762812360.git.lorenzo.stoakes@oracle.com>
-References: <cover.1762812360.git.lorenzo.stoakes@oracle.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1762820605; c=relaxed/simple;
+	bh=SY/HFJpytkf+nFpwanwJw1fx9K5HCqkmPfW8bqd6qg4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tZofJj3jbMv855s2YMsdBLfKKruaulvnTeC92pWOSGInRPBeormj4o/eAP5v+TkIPqpnpLbVXXyDsCOgcLHX8ERsYJiUdotznswynncIpmptw2MFZ1AHbjq+SQ94mVlx23bxHdEmOrt/gTeQrE9HuGJocR+DJm3DEF2AMSoafR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=POT8RZoV; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-794e300e20dso185473b3a.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Nov 2025 16:23:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1762820603; x=1763425403; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=W3+9M+5M55tGV3eZYdGtHuJ5xbHqc1TJ5Xfs5N1S3t8=;
+        b=POT8RZoVu860iAuf0MhS4qkWDubeYbY2qGXKU0WJ27bIuAT/7zNXiexSend+G/vp4L
+         YzVjrs6wLuQBs+DHIHIBnu/5N4gZEcZSEIZoHkMNePzdtftd6OYfp1nUW3FyJhpfBO8q
+         TertUfnmUrm9lW1RK91RVdk245zEykfathgrvKYbHNgVB6LHnCtSd8jaimRAQsaAponl
+         Rl6S/HHzTrlPfPd/oYYW1QRdhjUVgU4jEGuLi3nt0RPmjPVdJX/UoyvNHAuqy2YwqWaH
+         SoZYp/Ffd60TEfuUxK4++NCnndBXJ2u5WCzt03iVAu67a6jBLgXzS8ZZ2x8c5TuwtP17
+         nD0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762820603; x=1763425403;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=W3+9M+5M55tGV3eZYdGtHuJ5xbHqc1TJ5Xfs5N1S3t8=;
+        b=pce+yv/PTtbcQVbKQT/ExeZ+6jfet1CGLmlUNmX3zphjRTMB+OrjnlJ1/4RvQmRFNF
+         QE+RYGnpBIskZROEmQa2cBk1eGHybJiql99uB0nhjGgXdvj9FWdhBdTZlcRJUhoHUt+Y
+         MPQEXxcnruGliwbpZ9WnY+BN2o91PpTgkQc7fwfkAeymDgKJ3rf7XS733zp0jIN/IgLh
+         PErnBHgcsVqxSgqY4JVRoYl9vKYoPGYp2G8setsMfDdeGydwL52gptCbkT0y7/N6srWk
+         WKxocCZ97mLjbfVelZIJSUYgUDoPBc1NBYZcyy8VgwdS8VGaP95yfXp+jJTjPRmk2Z1l
+         x+Wg==
+X-Gm-Message-State: AOJu0YzSpkiltONUA1RSoIc1Yq1SJh9rEX8E6E7PVeOQcZyy0GCQg2Qj
+	sx0MAxgnV9JOC9PMOOh+mOuw8guVsAOdcyl5+ZY+iABzxRsYonvbQP4IykiUMmXKyTEyKs5xmmj
+	/A+6v55BtEwxyA5Pfxn+Hoplus42v/9jJpGdu0sRf
+X-Gm-Gg: ASbGncvaN+oWpo8y2DXokYz3xKlAzUBG/3vVXspqpMCgVNprkrA3QJG4H9bzGtYC6Q4
+	hnQEJRbDCQ44fi2VstGQFICdXMcuVl9uzyk+h4bfCK099w878/DvLUw4dvERLOl1mvWtvSM7QB6
+	RuANcBnuD92RvatinBtu37h7uPrkCTDZTFdx4WeqrXdOzW+wmNHF7WDyl2RVldn0tjjJ6/GHGe4
+	bCjOccuvdYelHt9WHiAgbTwZl4SuPEsBTAv0OvLO41isw0PF+0ABXNigjqG
+X-Google-Smtp-Source: AGHT+IGKKFXvoGiwpuj7250U6R+lXP80Kgo4s5yoGQEaNtVEqrSDNucZT1Bw9ABkyZhxSNT9x1CFxaxjgHbtulHgNlg=
+X-Received: by 2002:a17:90b:5201:b0:343:7410:5b66 with SMTP id
+ 98e67ed59e1d1-343bf23e94cmr1515386a91.11.1762820603008; Mon, 10 Nov 2025
+ 16:23:23 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+References: <20251109063745.2089578-1-viro@zeniv.linux.org.uk>
+ <20251109063745.2089578-11-viro@zeniv.linux.org.uk> <CAHC9VhQjzt0nJnbwXuwT7UPBwtHjEOPZu6z=c=G=+-Wdkuj5Vw@mail.gmail.com>
+In-Reply-To: <CAHC9VhQjzt0nJnbwXuwT7UPBwtHjEOPZu6z=c=G=+-Wdkuj5Vw@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 10 Nov 2025 19:23:10 -0500
+X-Gm-Features: AWmQ_bmO_J1uWwhkfIMjYLf5xJIaX93Sr0Zwq3mSA3wxHuho5Pw0As_fNioTvOo
+Message-ID: <CAHC9VhROakxXe-ZJNFtpNLeV+P8g5W4VZOdQtuY9NbaOHwEYuQ@mail.gmail.com>
+Subject: Re: [RFC][PATCH 10/13] get rid of audit_reusename()
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org, 
+	brauner@kernel.org, jack@suse.cz, mjguzik@gmail.com, axboe@kernel.dk, 
+	audit@vger.kernel.org, io-uring@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 10 Nov 2025 22:21:18 +0000 Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
+On Mon, Nov 10, 2025 at 6:13=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
+ote:
+> On Sun, Nov 9, 2025 at 1:37=E2=80=AFAM Al Viro <viro@zeniv.linux.org.uk> =
+wrote:
+> >
+> > Originally we tried to avoid multiple insertions into audit names array
+> > during retry loop by a cute hack - memorize the userland pointer and
+> > if there already is a match, just grab an extra reference to it.
+> >
+> > Cute as it had been, it had problems - two identical pointers had
+> > audit aux entries merged, two identical strings did not.  Having
+> > different behaviour for syscalls that differ only by addresses of
+> > otherwise identical string arguments is obviously wrong - if nothing
+> > else, compiler can decide to merge identical string literals.
+> >
+> > Besides, this hack does nothing for non-audited processes - they get
+> > a fresh copy for retry.  It's not time-critical, but having behaviour
+> > subtly differ that way is bogus.
+> >
+> > These days we have very few places that import filename more than once
+> > (9 functions total) and it's easy to massage them so we get rid of all
+> > re-imports.  With that done, we don't need audit_reusename() anymore.
+> > There's no need to memorize userland pointer either.
+> >
+> > Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> > ---
+> >  fs/namei.c            | 11 +++--------
+> >  include/linux/audit.h | 11 -----------
+> >  include/linux/fs.h    |  1 -
+> >  kernel/auditsc.c      | 23 -----------------------
+> >  4 files changed, 3 insertions(+), 43 deletions(-)
+>
+> Looks reasonable to me.  Not sure if you've run it through the
+> audit-testsuite yet, but I'm building a test kernel as I write this,
+> I'll let you know how it goes.
+>
+> Acked-by: Paul Moore <paul@paul-moore.com>
 
-> There's an established convention in the kernel that we treat leaf page
-> tables (so far at the PTE, PMD level) as containing 'swap entries' should
-> they be neither empty (i.e. p**_none() evaluating true) nor present
-> (i.e. p**_present() evaluating true).
-> 
-> However, at the same time we also have helper predicates - is_swap_pte(),
-> is_swap_pmd() - which are inconsistently used.
-> 
-> This is problematic, as it is logical to assume that should somebody wish
-> to operate upon a page table swap entry they should first check to see if
-> it is in fact one.
-> 
-> It also implies that perhaps, in future, we might introduce a non-present,
-> none page table entry that is not a swap entry.
-> 
-> This series resolves this issue by systematically eliminating all use of
-> the is_swap_pte() and is swap_pmd() predicates so we retain only the
-> convention that should a leaf page table entry be neither none nor present
-> it is a swap entry.
+FWIW, it passes the audit-testsuite.
 
-Thanks, I updated mm.git's mm-unstable branch to this version the patchset.
+Tested-by: Paul Moore <paul@paul-moore.com>
+
+--=20
+paul-moore.com
 
