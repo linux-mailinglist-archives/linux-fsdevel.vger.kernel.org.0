@@ -1,300 +1,526 @@
-Return-Path: <linux-fsdevel+bounces-67997-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67998-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3122C4FD9A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 22:30:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 48B2EC4FE12
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 22:36:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 41E9F34C539
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 21:30:10 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B900634C8D3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 21:36:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DC78352F93;
-	Tue, 11 Nov 2025 21:30:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 818FA326951;
+	Tue, 11 Nov 2025 21:35:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uGKgOZih"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mvdyBNXX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5206B33D6D1;
-	Tue, 11 Nov 2025 21:29:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDF9B32692A
+	for <linux-fsdevel@vger.kernel.org>; Tue, 11 Nov 2025 21:35:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762896599; cv=none; b=LmSoLQkaOoNz+2Yj90u730p41z3IljaPO8zLTmkZXy3eC6itbRMdCMlKhPB7vU7MCRCUjLrKvf9K60AigDc145zyy7qgBgt1KUFyHB6w2OzUdsOH00zF8nENvYCRh96ezVbathLKh9VX/bXInii19lUff+F7+8Shj1uGMR6yiis=
+	t=1762896953; cv=none; b=tHBr6UMf1e7K/R4CM897ewvypDbwBzL+UxJ33WFt63qsvQACajHJf37zDXd96NLIUllMI9ahzppChtnL2ETUPcuh/ADTk7/LWQBOgL16m8YSWqNi1OhdY3dgYgVPNz3Nz9DwHL/ij5bkDPtlTzlPLWMoMgXlfDXCJZqVFt8xW3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762896599; c=relaxed/simple;
-	bh=/bC50lhCtcx6OG7oIZHLvFZOizTdGgNdqLCTc3tazgg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NQP8WoZOmI238qE13vbIgKwzS5UitDzRHGBkvd8s98EHtZERrK90nf+8mZZpT05uz4lGj9MUaauQW4fy+1UBPksuR5mK2K9HlWXowkSsHxyYFQgCtEzSLb+eDPkao6n7XXFsjcsCq7XGK5BLzGmANnHy5btieP+CwF4IKTJ1OXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uGKgOZih; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CBE2C116D0;
-	Tue, 11 Nov 2025 21:29:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762896598;
-	bh=/bC50lhCtcx6OG7oIZHLvFZOizTdGgNdqLCTc3tazgg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=uGKgOZihX6WkxOXaYaMp7Ce45mAoZy1EdfFSGzxey8lL8ehrEFIL28KuIarmg/MNN
-	 q3HW4jyWthAJ8uUu/tNQsUJIcWjqrwAyZYS2WAzJFEVqjfCokNpJ+pA5pdwBRqWMey
-	 bPGuKEJQFW0OLIvy59Fzs8zpgRKcZmZjpPqjwd1hcYyG4KMM7du5CZ+tP62TLx16s2
-	 vDik8OOPhpjo+w0OVb0HfR9Y1msHmcC+CUnE13AHRG//Nak7D47T7MeOw4cM6XUuLE
-	 SN+jmchssstwp47zqOcbrNN6mzaZpHQXpJoluWRAwVhesyL1Yvf7L+IGOI9KCkFGB8
-	 ZB7mc1l3UU0Dw==
-From: Christian Brauner <brauner@kernel.org>
-To: syzbot <syzbot+0b2e79f91ff6579bfa5b@syzkaller.appspotmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	akpm@linux-foundation.org,
-	bpf@vger.kernel.org,
-	bsegall@google.com,
-	david@redhat.com,
-	dietmar.eggemann@arm.com,
-	jack@suse.cz,
-	jsavitz@redhat.com,
-	juri.lelli@redhat.com,
-	kartikey406@gmail.com,
-	kees@kernel.org,
-	liam.howlett@oracle.com,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-security-module@vger.kernel.org,
-	lorenzo.stoakes@oracle.com,
-	mgorman@suse.de,
-	mhocko@suse.com,
-	mingo@redhat.com,
-	mjguzik@gmail.com,
-	oleg@redhat.com,
-	paul@paul-moore.com,
-	peterz@infradead.org,
-	rostedt@goodmis.org,
-	rppt@kernel.org,
-	sergeh@kernel.org,
-	surenb@google.com,
-	syzkaller-bugs@googlegroups.com,
-	vbabka@suse.cz,
-	vincent.guittot@linaro.org,
-	viro@zeniv.linux.org.uk,
-	vschneid@redhat.com,
-	syzbot+0a8655a80e189278487e@syzkaller.appspotmail.com
-Subject: [PATCH] nsproxy: fix free_nsproxy() and simplify create_new_namespaces()
-Date: Tue, 11 Nov 2025 22:29:44 +0100
-Message-ID: <20251111-sakralbau-guthaben-7dcc277d337f@brauner>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <691360cc.a70a0220.22f260.013e.GAE@google.com>
-References: 
+	s=arc-20240116; t=1762896953; c=relaxed/simple;
+	bh=sxmXlqqXWJoDB0yUoABcjVP0KVAeV474tfj76SJF8iE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=n5PB2EHXecQy2pMiS6jpEz+dZj/hBo+KCAJf1u2bY0yuX5ZaIhOm0Dc30ijKpHuAKx7CtPPjMZt+3lXH+j7qnd+K+wT93rrz21JmpxgYLTupFCV+uD0hFWTcU7Xal61RpRgZdF/59ur/KpDen9xttV+Lj+YbHrNtvr3Nyjxt4w8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mvdyBNXX; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-29599f08202so1769745ad.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Nov 2025 13:35:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762896951; x=1763501751; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=a2hD4cc76iH8D/yIGo0RAQh1Xcav1ARVanFqEiccDpI=;
+        b=mvdyBNXX5S9tDAWLBiGIaJJ7tfu5GjvwEsOKUIcr7umGQaPtRe+PhOaNCK2lKiG0Cj
+         XD+NXmkMmQOjeI8hyQo1k0Hm3u/hfuNjTD3qJsjSQ5I+oBPQfVPxsmrCO0o7IFQOAWWf
+         RkgOvJfYj/iChU2qFNRqr+PzVnd3zRObZHWLDl2LziLYG9dy3tlCRqPpK3iX8AZP1A8b
+         ipfcyhjq1ZCsoWMtfIL16e9aJg40Yxwklot+xxxeU2dyp3SvoK+pNsVDoB0mlKShnK/s
+         VrqZhboQSgfprPkRHpyUX/DrbhognWEATbdVfIXDscEO6P5qwMF3E/yBi7DiG/SjV2S0
+         SfIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762896951; x=1763501751;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=a2hD4cc76iH8D/yIGo0RAQh1Xcav1ARVanFqEiccDpI=;
+        b=kS2KKdNEsd4tZh1GErLqyGzWzlyhbWU8/CYHqQZYe++x/r8XkIVorwolY/e1bSuu67
+         G0ksU8DE674eqaUm2EXkZPa9bixyokkNXIFAaAgJZYM7qUnjfbtfxFIvcxHjQuX2cZaa
+         TwpItlgM48k8/c9uOS6nCNwHozays6/X39eCJwY7RicLhnbCRexsoyK1jgje+1ThsS3P
+         JfQvm3E8EihqCi5an10BTcKvqhEu94Xk/4L0ah5WWAP+pncwHFc5FXLAciemjOFdi2YI
+         ZunrbUDprvzGFUP6c1r+ThGar/4QyGHweCz/beOaeO/NnLvO+r8rxlSN/2syMp4jAVZo
+         xkig==
+X-Forwarded-Encrypted: i=1; AJvYcCVG1wEz6aSdN1CVq4eDHhSNz96v6Yr6CJpqkAySJw6l94RDVE7r4WVYNpwwPEgJuOqaNa46+48sA8u+UmnX@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPORKcWgvKJXKYATzJ8+yb7gqFWOrUjyg8zaWlCJb0br9kKGvG
+	oh96WPhtq7dS3PliZp2f9+3Id24jw+qbh9du+qZmCMWOtw2iPh2MiVEwYvUDU8/CHHoP7AT84sZ
+	DpUTodJ8agagmHwKVBojCHE8fbwF/dSjGX34B
+X-Gm-Gg: ASbGncvpPtt5FaYxKyfhLorlyZmGp2qKzABzCByOJA0RiQwEaaD43oaMtzbGNFz1GbP
+	ckC4hXPHPrOkaiuG3jyzud7qg+nd8BB4xBNQU6SNYejtxj86bkupp0CpNp4WiCvDzgdcXJtfvb8
+	GHLxGAuBKjLWG08WqCp9PlctjuCnXVoF46B4F2x/4PGkD+QkHNHw1eSO3EN8Qr5knRbFMMeVKRO
+	1TV3loHXT+VofEf6kSrq3d9gUmTKAetwQIQF/B/mkjy2IlLSeAGdXXAB0th
+X-Google-Smtp-Source: AGHT+IFhJNuiOpl41I4WujWtz4LOrnr4B6qpLjdE6HoRaaUDA9XaLbFwlevO1RhfL0EKrVW5RsDcc2f+XK+zulw5DAY=
+X-Received: by 2002:a17:902:cf0e:b0:295:54cd:d2dc with SMTP id
+ d9443c01a7336-2984ed48921mr10824305ad.16.1762896951054; Tue, 11 Nov 2025
+ 13:35:51 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6748; i=brauner@kernel.org; h=from:subject:message-id; bh=/bC50lhCtcx6OG7oIZHLvFZOizTdGgNdqLCTc3tazgg=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQKrzr99kkW6wzH6+UP/PreNc3KE2rfU+NbHrZ+xbWOF t7s6PTXHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABPRDmVkuJPxT1/H9VJg0TpP bYu9tkz6hpfdpUT+6F3i3+xsae+1ieGv0BItmR8v/+iyT+J6VCyx5du09JVfWi1ua75+sX5Kp8w rHgA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+References: <20251111205627.475128-2-slava@dubeyko.com>
+In-Reply-To: <20251111205627.475128-2-slava@dubeyko.com>
+From: Ilya Dryomov <idryomov@gmail.com>
+Date: Tue, 11 Nov 2025 22:35:39 +0100
+X-Gm-Features: AWmQ_bmYtJKsPNoWakc1uf4fSWxUKhGqb9opv8Hes46C7STDe1rvMsXPLO-1CT0
+Message-ID: <CAOi1vP_tHEgBn-+EmSeOtpWnQezEZDnGWapGZ3ngXZYkzvPpiw@mail.gmail.com>
+Subject: Re: [PATCH] ceph: fix crash in process_v2_sparse_read() for
+ fscrypt-encrypted directories
+To: Viacheslav Dubeyko <slava@dubeyko.com>
+Cc: ceph-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	pdonnell@redhat.com, amarkuze@redhat.com, Slava.Dubeyko@ibm.com, 
+	vdubeyko@redhat.com, Pavan.Rallabhandi@ibm.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Make it possible to handle NULL being passed to the reference count
-helpers instead of forcing the caller to handle this. Afterwards we can
-nicely allow a cleanup guard to handle nsproxy freeing.
+On Tue, Nov 11, 2025 at 9:57=E2=80=AFPM Viacheslav Dubeyko <slava@dubeyko.c=
+om> wrote:
+>
+> From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+>
+> The crash in process_v2_sparse_read() for fscrypt-encrypted
+> directories has been reported [1]. Issue takes place for
+> Ceph msgr2 protocol. It can be reproduced by the steps:
+>
+> sudo mount -t ceph :/ /mnt/cephfs/ -o name=3Dadmin,fs=3Dcephfs,ms_mode=3D=
+secure
+>
+> (1) mkdir /mnt/cephfs/fscrypt-test-3
+> (2) cp area_decrypted.tar /mnt/cephfs/fscrypt-test-3
+> (3) fscrypt encrypt --source=3Draw_key --key=3D./my.key /mnt/cephfs/fscry=
+pt-test-3
+> (4) fscrypt lock /mnt/cephfs/fscrypt-test-3
+> (5) fscrypt unlock --key=3Dmy.key /mnt/cephfs/fscrypt-test-3
+> (6) cat /mnt/cephfs/fscrypt-test-3/area_decrypted.tar
+> (7) Issue has been triggered
+>
+> [  408.072247] ------------[ cut here ]------------
+> [  408.072251] WARNING: CPU: 1 PID: 392 at net/ceph/messenger_v2.c:865
+> ceph_con_v2_try_read+0x4b39/0x72f0
+> [  408.072267] Modules linked in: intel_rapl_msr intel_rapl_common
+> intel_uncore_frequency_common intel_pmc_core pmt_telemetry pmt_discovery
+> pmt_class intel_pmc_ssram_telemetry intel_vsec kvm_intel joydev kvm irqby=
+pass
+> polyval_clmulni ghash_clmulni_intel aesni_intel rapl input_leds psmouse
+> serio_raw i2c_piix4 vga16fb bochs vgastate i2c_smbus floppy mac_hid qemu_=
+fw_cfg
+> pata_acpi sch_fq_codel rbd msr parport_pc ppdev lp parport efi_pstore
+> [  408.072304] CPU: 1 UID: 0 PID: 392 Comm: kworker/1:3 Not tainted 6.17.=
+0-rc7+
+> [  408.072307] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIO=
+S
+> 1.17.0-5.fc42 04/01/2014
+> [  408.072310] Workqueue: ceph-msgr ceph_con_workfn
+> [  408.072314] RIP: 0010:ceph_con_v2_try_read+0x4b39/0x72f0
+> [  408.072317] Code: c7 c1 20 f0 d4 ae 50 31 d2 48 c7 c6 60 27 d5 ae 48 c=
+7 c7 f8
+> 8e 6f b0 68 60 38 d5 ae e8 00 47 61 fe 48 83 c4 18 e9 ac fc ff ff <0f> 0b=
+ e9 06
+> fe ff ff 4c 8b 9d 98 fd ff ff 0f 84 64 e7 ff ff 89 85
+> [  408.072319] RSP: 0018:ffff88811c3e7a30 EFLAGS: 00010246
+> [  408.072322] RAX: ffffed1024874c6f RBX: ffffea00042c2b40 RCX: 000000000=
+0000f38
+> [  408.072324] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 000000000=
+0000000
+> [  408.072325] RBP: ffff88811c3e7ca8 R08: 0000000000000000 R09: 000000000=
+00000c8
+> [  408.072326] R10: 00000000000000c8 R11: 0000000000000000 R12: 000000000=
+00000c8
+> [  408.072327] R13: dffffc0000000000 R14: ffff8881243a6030 R15: 000000000=
+0003000
+> [  408.072329] FS:  0000000000000000(0000) GS:ffff88823eadf000(0000)
+> knlGS:0000000000000000
+> [  408.072331] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [  408.072332] CR2: 000000c0003c6000 CR3: 000000010c106005 CR4: 000000000=
+0772ef0
+> [  408.072336] PKRU: 55555554
+> [  408.072337] Call Trace:
+> [  408.072338]  <TASK>
+> [  408.072340]  ? sched_clock_noinstr+0x9/0x10
+> [  408.072344]  ? __pfx_ceph_con_v2_try_read+0x10/0x10
+> [  408.072347]  ? _raw_spin_unlock+0xe/0x40
+> [  408.072349]  ? finish_task_switch.isra.0+0x15d/0x830
+> [  408.072353]  ? __kasan_check_write+0x14/0x30
+> [  408.072357]  ? mutex_lock+0x84/0xe0
+> [  408.072359]  ? __pfx_mutex_lock+0x10/0x10
+> [  408.072361]  ceph_con_workfn+0x27e/0x10e0
+> [  408.072364]  ? metric_delayed_work+0x311/0x2c50
+> [  408.072367]  process_one_work+0x611/0xe20
+> [  408.072371]  ? __kasan_check_write+0x14/0x30
+> [  408.072373]  worker_thread+0x7e3/0x1580
+> [  408.072375]  ? __pfx__raw_spin_lock_irqsave+0x10/0x10
+> [  408.072378]  ? __pfx_worker_thread+0x10/0x10
+> [  408.072381]  kthread+0x381/0x7a0
+> [  408.072383]  ? __pfx__raw_spin_lock_irq+0x10/0x10
+> [  408.072385]  ? __pfx_kthread+0x10/0x10
+> [  408.072387]  ? __kasan_check_write+0x14/0x30
+> [  408.072389]  ? recalc_sigpending+0x160/0x220
+> [  408.072392]  ? _raw_spin_unlock_irq+0xe/0x50
+> [  408.072394]  ? calculate_sigpending+0x78/0xb0
+> [  408.072395]  ? __pfx_kthread+0x10/0x10
+> [  408.072397]  ret_from_fork+0x2b6/0x380
+> [  408.072400]  ? __pfx_kthread+0x10/0x10
+> [  408.072402]  ret_from_fork_asm+0x1a/0x30
+> [  408.072406]  </TASK>
+> [  408.072407] ---[ end trace 0000000000000000 ]---
+> [  408.072418] Oops: general protection fault, probably for non-canonical
+> address 0xdffffc0000000000: 0000 [#1] SMP KASAN NOPTI
+> [  408.072984] KASAN: null-ptr-deref in range [0x0000000000000000-
+> 0x0000000000000007]
+> [  408.073350] CPU: 1 UID: 0 PID: 392 Comm: kworker/1:3 Tainted: G       =
+ W
+> 6.17.0-rc7+ #1 PREEMPT(voluntary)
+> [  408.073886] Tainted: [W]=3DWARN
+> [  408.074042] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIO=
+S
+> 1.17.0-5.fc42 04/01/2014
+> [  408.074468] Workqueue: ceph-msgr ceph_con_workfn
+> [  408.074694] RIP: 0010:ceph_msg_data_advance+0x79/0x1a80
+> [  408.074976] Code: fc ff df 49 8d 77 08 48 c1 ee 03 80 3c 16 00 0f 85 0=
+7 11 00
+> 00 48 ba 00 00 00 00 00 fc ff df 49 8b 5f 08 48 89 de 48 c1 ee 03 <0f> b6=
+ 14 16
+> 84 d2 74 09 80 fa 03 0f 8e 0f 0e 00 00 8b 13 83 fa 03
+> [  408.075884] RSP: 0018:ffff88811c3e7990 EFLAGS: 00010246
+> [  408.076305] RAX: ffff8881243a6388 RBX: 0000000000000000 RCX: 000000000=
+0000000
+> [  408.076909] RDX: dffffc0000000000 RSI: 0000000000000000 RDI: ffff88812=
+43a6378
+> [  408.077466] RBP: ffff88811c3e7a20 R08: 0000000000000000 R09: 000000000=
+00000c8
+> [  408.078034] R10: ffff8881243a6388 R11: 0000000000000000 R12: ffffed102=
+4874c71
+> [  408.078575] R13: dffffc0000000000 R14: ffff8881243a6030 R15: ffff88812=
+43a6378
+> [  408.079159] FS:  0000000000000000(0000) GS:ffff88823eadf000(0000)
+> knlGS:0000000000000000
+> [  408.079736] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [  408.080039] CR2: 000000c0003c6000 CR3: 000000010c106005 CR4: 000000000=
+0772ef0
+> [  408.080376] PKRU: 55555554
+> [  408.080513] Call Trace:
+> [  408.080630]  <TASK>
+> [  408.080729]  ceph_con_v2_try_read+0x49b9/0x72f0
+> [  408.081115]  ? __pfx_ceph_con_v2_try_read+0x10/0x10
+> [  408.081348]  ? _raw_spin_unlock+0xe/0x40
+> [  408.081538]  ? finish_task_switch.isra.0+0x15d/0x830
+> [  408.081768]  ? __kasan_check_write+0x14/0x30
+> [  408.081986]  ? mutex_lock+0x84/0xe0
+> [  408.082160]  ? __pfx_mutex_lock+0x10/0x10
+> [  408.082343]  ceph_con_workfn+0x27e/0x10e0
+> [  408.082529]  ? metric_delayed_work+0x311/0x2c50
+> [  408.082737]  process_one_work+0x611/0xe20
+> [  408.082948]  ? __kasan_check_write+0x14/0x30
+> [  408.083156]  worker_thread+0x7e3/0x1580
+> [  408.083331]  ? __pfx__raw_spin_lock_irqsave+0x10/0x10
+> [  408.083557]  ? __pfx_worker_thread+0x10/0x10
+> [  408.083751]  kthread+0x381/0x7a0
+> [  408.083922]  ? __pfx__raw_spin_lock_irq+0x10/0x10
+> [  408.084139]  ? __pfx_kthread+0x10/0x10
+> [  408.084310]  ? __kasan_check_write+0x14/0x30
+> [  408.084510]  ? recalc_sigpending+0x160/0x220
+> [  408.084708]  ? _raw_spin_unlock_irq+0xe/0x50
+> [  408.084917]  ? calculate_sigpending+0x78/0xb0
+> [  408.085138]  ? __pfx_kthread+0x10/0x10
+> [  408.085335]  ret_from_fork+0x2b6/0x380
+> [  408.085525]  ? __pfx_kthread+0x10/0x10
+> [  408.085720]  ret_from_fork_asm+0x1a/0x30
+> [  408.085922]  </TASK>
+> [  408.086036] Modules linked in: intel_rapl_msr intel_rapl_common
+> intel_uncore_frequency_common intel_pmc_core pmt_telemetry pmt_discovery
+> pmt_class intel_pmc_ssram_telemetry intel_vsec kvm_intel joydev kvm irqby=
+pass
+> polyval_clmulni ghash_clmulni_intel aesni_intel rapl input_leds psmouse
+> serio_raw i2c_piix4 vga16fb bochs vgastate i2c_smbus floppy mac_hid qemu_=
+fw_cfg
+> pata_acpi sch_fq_codel rbd msr parport_pc ppdev lp parport efi_pstore
+> [  408.087778] ---[ end trace 0000000000000000 ]---
+> [  408.088007] RIP: 0010:ceph_msg_data_advance+0x79/0x1a80
+> [  408.088260] Code: fc ff df 49 8d 77 08 48 c1 ee 03 80 3c 16 00 0f 85 0=
+7 11 00
+> 00 48 ba 00 00 00 00 00 fc ff df 49 8b 5f 08 48 89 de 48 c1 ee 03 <0f> b6=
+ 14 16
+> 84 d2 74 09 80 fa 03 0f 8e 0f 0e 00 00 8b 13 83 fa 03
+> [  408.089118] RSP: 0018:ffff88811c3e7990 EFLAGS: 00010246
+> [  408.089357] RAX: ffff8881243a6388 RBX: 0000000000000000 RCX: 000000000=
+0000000
+> [  408.089678] RDX: dffffc0000000000 RSI: 0000000000000000 RDI: ffff88812=
+43a6378
+> [  408.090020] RBP: ffff88811c3e7a20 R08: 0000000000000000 R09: 000000000=
+00000c8
+> [  408.090360] R10: ffff8881243a6388 R11: 0000000000000000 R12: ffffed102=
+4874c71
+> [  408.090687] R13: dffffc0000000000 R14: ffff8881243a6030 R15: ffff88812=
+43a6378
+> [  408.091035] FS:  0000000000000000(0000) GS:ffff88823eadf000(0000)
+> knlGS:0000000000000000
+> [  408.091452] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [  408.092015] CR2: 000000c0003c6000 CR3: 000000010c106005 CR4: 000000000=
+0772ef0
+> [  408.092530] PKRU: 55555554
+> [  417.112915]
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> [  417.113491] BUG: KASAN: slab-use-after-free in
+> __mutex_lock.constprop.0+0x1522/0x1610
+> [  417.114014] Read of size 4 at addr ffff888124870034 by task kworker/2:=
+0/4951
+>
+> [  417.114587] CPU: 2 UID: 0 PID: 4951 Comm: kworker/2:0 Tainted: G      =
+D W
+> 6.17.0-rc7+ #1 PREEMPT(voluntary)
+> [  417.114592] Tainted: [D]=3DDIE, [W]=3DWARN
+> [  417.114593] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIO=
+S
+> 1.17.0-5.fc42 04/01/2014
+> [  417.114596] Workqueue: events handle_timeout
+> [  417.114601] Call Trace:
+> [  417.114602]  <TASK>
+> [  417.114604]  dump_stack_lvl+0x5c/0x90
+> [  417.114610]  print_report+0x171/0x4dc
+> [  417.114613]  ? __pfx__raw_spin_lock_irqsave+0x10/0x10
+> [  417.114617]  ? kasan_complete_mode_report_info+0x80/0x220
+> [  417.114621]  kasan_report+0xbd/0x100
+> [  417.114625]  ? __mutex_lock.constprop.0+0x1522/0x1610
+> [  417.114628]  ? __mutex_lock.constprop.0+0x1522/0x1610
+> [  417.114630]  __asan_report_load4_noabort+0x14/0x30
+> [  417.114633]  __mutex_lock.constprop.0+0x1522/0x1610
+> [  417.114635]  ? queue_con_delay+0x8d/0x200
+> [  417.114638]  ? __pfx___mutex_lock.constprop.0+0x10/0x10
+> [  417.114641]  ? __send_subscribe+0x529/0xb20
+> [  417.114644]  __mutex_lock_slowpath+0x13/0x20
+> [  417.114646]  mutex_lock+0xd4/0xe0
+> [  417.114649]  ? __pfx_mutex_lock+0x10/0x10
+> [  417.114652]  ? ceph_monc_renew_subs+0x2a/0x40
+> [  417.114654]  ceph_con_keepalive+0x22/0x110
+> [  417.114656]  handle_timeout+0x6b3/0x11d0
+> [  417.114659]  ? _raw_spin_unlock_irq+0xe/0x50
+> [  417.114662]  ? __pfx_handle_timeout+0x10/0x10
+> [  417.114664]  ? queue_delayed_work_on+0x8e/0xa0
+> [  417.114669]  process_one_work+0x611/0xe20
+> [  417.114672]  ? __kasan_check_write+0x14/0x30
+> [  417.114676]  worker_thread+0x7e3/0x1580
+> [  417.114678]  ? __pfx__raw_spin_lock_irqsave+0x10/0x10
+> [  417.114682]  ? __pfx_sched_setscheduler_nocheck+0x10/0x10
+> [  417.114687]  ? __pfx_worker_thread+0x10/0x10
+> [  417.114689]  kthread+0x381/0x7a0
+> [  417.114692]  ? __pfx__raw_spin_lock_irq+0x10/0x10
+> [  417.114694]  ? __pfx_kthread+0x10/0x10
+> [  417.114697]  ? __kasan_check_write+0x14/0x30
+> [  417.114699]  ? recalc_sigpending+0x160/0x220
+> [  417.114703]  ? _raw_spin_unlock_irq+0xe/0x50
+> [  417.114705]  ? calculate_sigpending+0x78/0xb0
+> [  417.114707]  ? __pfx_kthread+0x10/0x10
+> [  417.114710]  ret_from_fork+0x2b6/0x380
+> [  417.114713]  ? __pfx_kthread+0x10/0x10
+> [  417.114715]  ret_from_fork_asm+0x1a/0x30
+> [  417.114720]  </TASK>
+>
+> [  417.125171] Allocated by task 2:
+> [  417.125333]  kasan_save_stack+0x26/0x60
+> [  417.125522]  kasan_save_track+0x14/0x40
+> [  417.125742]  kasan_save_alloc_info+0x39/0x60
+> [  417.125945]  __kasan_slab_alloc+0x8b/0xb0
+> [  417.126133]  kmem_cache_alloc_node_noprof+0x13b/0x460
+> [  417.126381]  copy_process+0x320/0x6250
+> [  417.126595]  kernel_clone+0xb7/0x840
+> [  417.126792]  kernel_thread+0xd6/0x120
+> [  417.126995]  kthreadd+0x85c/0xbe0
+> [  417.127176]  ret_from_fork+0x2b6/0x380
+> [  417.127378]  ret_from_fork_asm+0x1a/0x30
+>
+> [  417.127692] Freed by task 0:
+> [  417.127851]  kasan_save_stack+0x26/0x60
+> [  417.128057]  kasan_save_track+0x14/0x40
+> [  417.128267]  kasan_save_free_info+0x3b/0x60
+> [  417.128491]  __kasan_slab_free+0x6c/0xa0
+> [  417.128708]  kmem_cache_free+0x182/0x550
+> [  417.128906]  free_task+0xeb/0x140
+> [  417.129070]  __put_task_struct+0x1d2/0x4f0
+> [  417.129259]  __put_task_struct_rcu_cb+0x15/0x20
+> [  417.129480]  rcu_do_batch+0x3d3/0xe70
+> [  417.129681]  rcu_core+0x549/0xb30
+> [  417.129839]  rcu_core_si+0xe/0x20
+> [  417.130005]  handle_softirqs+0x160/0x570
+> [  417.130190]  __irq_exit_rcu+0x189/0x1e0
+> [  417.130369]  irq_exit_rcu+0xe/0x20
+> [  417.130531]  sysvec_apic_timer_interrupt+0x9f/0xd0
+> [  417.130768]  asm_sysvec_apic_timer_interrupt+0x1b/0x20
+>
+> [  417.131082] Last potentially related work creation:
+> [  417.131305]  kasan_save_stack+0x26/0x60
+> [  417.131484]  kasan_record_aux_stack+0xae/0xd0
+> [  417.131695]  __call_rcu_common+0xcd/0x14b0
+> [  417.131909]  call_rcu+0x31/0x50
+> [  417.132071]  delayed_put_task_struct+0x128/0x190
+> [  417.132295]  rcu_do_batch+0x3d3/0xe70
+> [  417.132478]  rcu_core+0x549/0xb30
+> [  417.132658]  rcu_core_si+0xe/0x20
+> [  417.132808]  handle_softirqs+0x160/0x570
+> [  417.132993]  __irq_exit_rcu+0x189/0x1e0
+> [  417.133181]  irq_exit_rcu+0xe/0x20
+> [  417.133353]  sysvec_apic_timer_interrupt+0x9f/0xd0
+> [  417.133584]  asm_sysvec_apic_timer_interrupt+0x1b/0x20
+>
+> [  417.133921] Second to last potentially related work creation:
+> [  417.134183]  kasan_save_stack+0x26/0x60
+> [  417.134362]  kasan_record_aux_stack+0xae/0xd0
+> [  417.134566]  __call_rcu_common+0xcd/0x14b0
+> [  417.134782]  call_rcu+0x31/0x50
+> [  417.134929]  put_task_struct_rcu_user+0x58/0xb0
+> [  417.135143]  finish_task_switch.isra.0+0x5d3/0x830
+> [  417.135366]  __schedule+0xd30/0x5100
+> [  417.135534]  schedule_idle+0x5a/0x90
+> [  417.135712]  do_idle+0x25f/0x410
+> [  417.135871]  cpu_startup_entry+0x53/0x70
+> [  417.136053]  start_secondary+0x216/0x2c0
+> [  417.136233]  common_startup_64+0x13e/0x141
+>
+> [  417.136894] The buggy address belongs to the object at ffff88812487000=
+0
+>                 which belongs to the cache task_struct of size 10504
+> [  417.138122] The buggy address is located 52 bytes inside of
+>                 freed 10504-byte region [ffff888124870000, ffff8881248729=
+08)
+>
+> [  417.139465] The buggy address belongs to the physical page:
+> [  417.140016] page: refcount:0 mapcount:0 mapping:0000000000000000 index=
+:0x0
+> pfn:0x124870
+> [  417.140789] head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped=
+:0
+> pincount:0
+> [  417.141519] memcg:ffff88811aa20e01
+> [  417.141874] anon flags:
+> 0x17ffffc0000040(head|node=3D0|zone=3D2|lastcpupid=3D0x1fffff)
+> [  417.142600] page_type: f5(slab)
+> [  417.142922] raw: 0017ffffc0000040 ffff88810094f040 0000000000000000
+> dead000000000001
+> [  417.143554] raw: 0000000000000000 0000000000030003 00000000f5000000
+> ffff88811aa20e01
+> [  417.143954] head: 0017ffffc0000040 ffff88810094f040 0000000000000000
+> dead000000000001
+> [  417.144329] head: 0000000000000000 0000000000030003 00000000f5000000
+> ffff88811aa20e01
+> [  417.144710] head: 0017ffffc0000003 ffffea0004921c01 00000000ffffffff
+> 00000000ffffffff
+> [  417.145106] head: ffffffffffffffff 0000000000000000 00000000ffffffff
+> 0000000000000008
+> [  417.145485] page dumped because: kasan: bad access detected
+>
+> [  417.145859] Memory state around the buggy address:
+> [  417.146094]  ffff88812486ff00: fc fc fc fc fc fc fc fc fc fc fc fc fc =
+fc fc
+> fc
+> [  417.146439]  ffff88812486ff80: fc fc fc fc fc fc fc fc fc fc fc fc fc =
+fc fc
+> fc
+> [  417.146791] >ffff888124870000: fa fb fb fb fb fb fb fb fb fb fb fb fb =
+fb fb
+> fb
+> [  417.147145]                                      ^
+> [  417.147387]  ffff888124870080: fb fb fb fb fb fb fb fb fb fb fb fb fb =
+fb fb
+> fb
+> [  417.147751]  ffff888124870100: fb fb fb fb fb fb fb fb fb fb fb fb fb =
+fb fb
+> fb
+> [  417.148123]
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>
+> First of all, we have warning in get_bvec_at() because
+> cursor->total_resid contains zero value. And, finally,
+> we have crash in ceph_msg_data_advance() because
+> cursor->data is NULL. It means that get_bvec_at()
+> receives not initialized ceph_msg_data_cursor structure
+> because data is NULL and total_resid contains zero.
+>
+> Moreover, we don't have likewise issue for the case of
+> Ceph msgr1 protocol because ceph_msg_data_cursor_init()
+> has been called before reading sparse data.
+>
+> This patch adds calling of ceph_msg_data_cursor_init()
+> in the beginning of process_v2_sparse_read() with
+> the goal to guarantee that logic of reading sparse data
+> works correctly for the case of Ceph msgr2 protocol.
+>
+> [1] https://tracker.ceph.com/issues/73152
+>
+> Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+> cc: Alex Markuze <amarkuze@redhat.com>
+> cc: Ilya Dryomov <idryomov@gmail.com>
+> cc: Ceph Development <ceph-devel@vger.kernel.org>
+> ---
+>  net/ceph/messenger.c    | 1 +
+>  net/ceph/messenger_v2.c | 2 ++
+>  2 files changed, 3 insertions(+)
+>
+> diff --git a/net/ceph/messenger.c b/net/ceph/messenger.c
+> index f8181acaf870..02d2fc075ce7 100644
+> --- a/net/ceph/messenger.c
+> +++ b/net/ceph/messenger.c
+> @@ -1129,6 +1129,7 @@ void ceph_msg_data_advance(struct ceph_msg_data_cur=
+sor *cursor, size_t bytes)
+>         bool new_piece;
+>
+>         BUG_ON(bytes > cursor->resid);
+> +       BUG_ON(!cursor->data);
 
-Active reference count handling is not done in nsproxy_free() but rather
-in free_nsproxy() as nsproxy_free() is also called from setns() failure
-paths where a new nsproxy has been prepared but has not been marked as
-active via switch_task_namespaces().
+Hi Slava,
 
-Fixes: 3c9820d5c64a ("ns: add active reference count")
-Reported-by: syzbot+0b2e79f91ff6579bfa5b@syzkaller.appspotmail.com
-Reported-by: syzbot+0a8655a80e189278487e@syzkaller.appspotmail.com
-Link: https://lore.kernel.org/690bfb9e.050a0220.2e3c35.0013.GAE@google.com
-Signed-off-by: Christian Brauner <brauner@kernel.org>
----
- include/linux/ns_common.h |  11 ++--
- kernel/nsproxy.c          | 107 +++++++++++++++-----------------------
- 2 files changed, 48 insertions(+), 70 deletions(-)
+What is the reason for adding this BUG_ON?  If cursor->data is NULL,
+it should result in a distinctive crash on the very next line because
+the data item is dereferenced there to get its type.
 
-diff --git a/include/linux/ns_common.h b/include/linux/ns_common.h
-index 136f6a322e53..825f5865bfc5 100644
---- a/include/linux/ns_common.h
-+++ b/include/linux/ns_common.h
-@@ -114,11 +114,14 @@ static __always_inline __must_check bool __ns_ref_dec_and_lock(struct ns_common
- }
- 
- #define ns_ref_read(__ns) __ns_ref_read(to_ns_common((__ns)))
--#define ns_ref_inc(__ns) __ns_ref_inc(to_ns_common((__ns)))
--#define ns_ref_get(__ns) __ns_ref_get(to_ns_common((__ns)))
--#define ns_ref_put(__ns) __ns_ref_put(to_ns_common((__ns)))
-+#define ns_ref_inc(__ns) \
-+	do { if (__ns) __ns_ref_inc(to_ns_common((__ns))); } while (0)
-+#define ns_ref_get(__ns) \
-+	((__ns) ? __ns_ref_get(to_ns_common((__ns))) : false)
-+#define ns_ref_put(__ns) \
-+	((__ns) ? __ns_ref_put(to_ns_common((__ns))) : false)
- #define ns_ref_put_and_lock(__ns, __ns_lock) \
--	__ns_ref_dec_and_lock(to_ns_common((__ns)), __ns_lock)
-+	((__ns) ? __ns_ref_dec_and_lock(to_ns_common((__ns)), __ns_lock) : false)
- 
- #define ns_ref_active_read(__ns) \
- 	((__ns) ? __ns_ref_active_read(to_ns_common(__ns)) : 0)
-diff --git a/kernel/nsproxy.c b/kernel/nsproxy.c
-index 94c2cfe0afa1..2c94452dc793 100644
---- a/kernel/nsproxy.c
-+++ b/kernel/nsproxy.c
-@@ -60,6 +60,27 @@ static inline struct nsproxy *create_nsproxy(void)
- 	return nsproxy;
- }
- 
-+static inline void nsproxy_free(struct nsproxy *ns)
-+{
-+	put_mnt_ns(ns->mnt_ns);
-+	put_uts_ns(ns->uts_ns);
-+	put_ipc_ns(ns->ipc_ns);
-+	put_pid_ns(ns->pid_ns_for_children);
-+	put_time_ns(ns->time_ns);
-+	put_time_ns(ns->time_ns_for_children);
-+	put_cgroup_ns(ns->cgroup_ns);
-+	put_net(ns->net_ns);
-+	kmem_cache_free(nsproxy_cachep, ns);
-+}
-+
-+DEFINE_FREE(nsproxy_free, struct nsproxy *, if (_T) nsproxy_free(_T))
-+
-+void free_nsproxy(struct nsproxy *ns)
-+{
-+	nsproxy_ns_active_put(ns);
-+	nsproxy_free(ns);
-+}
-+
- /*
-  * Create new nsproxy and all of its the associated namespaces.
-  * Return the newly created nsproxy.  Do not attach this to the task,
-@@ -69,76 +90,45 @@ static struct nsproxy *create_new_namespaces(u64 flags,
- 	struct task_struct *tsk, struct user_namespace *user_ns,
- 	struct fs_struct *new_fs)
- {
--	struct nsproxy *new_nsp;
--	int err;
-+	struct nsproxy *new_nsp __free(nsproxy_free) = NULL;
- 
- 	new_nsp = create_nsproxy();
- 	if (!new_nsp)
- 		return ERR_PTR(-ENOMEM);
- 
- 	new_nsp->mnt_ns = copy_mnt_ns(flags, tsk->nsproxy->mnt_ns, user_ns, new_fs);
--	if (IS_ERR(new_nsp->mnt_ns)) {
--		err = PTR_ERR(new_nsp->mnt_ns);
--		goto out_ns;
--	}
-+	if (IS_ERR(new_nsp->mnt_ns))
-+		return ERR_CAST(new_nsp->mnt_ns);
- 
- 	new_nsp->uts_ns = copy_utsname(flags, user_ns, tsk->nsproxy->uts_ns);
--	if (IS_ERR(new_nsp->uts_ns)) {
--		err = PTR_ERR(new_nsp->uts_ns);
--		goto out_uts;
--	}
-+	if (IS_ERR(new_nsp->uts_ns))
-+		return ERR_CAST(new_nsp->uts_ns);
- 
- 	new_nsp->ipc_ns = copy_ipcs(flags, user_ns, tsk->nsproxy->ipc_ns);
--	if (IS_ERR(new_nsp->ipc_ns)) {
--		err = PTR_ERR(new_nsp->ipc_ns);
--		goto out_ipc;
--	}
-+	if (IS_ERR(new_nsp->ipc_ns))
-+		return ERR_CAST(new_nsp->ipc_ns);
- 
--	new_nsp->pid_ns_for_children =
--		copy_pid_ns(flags, user_ns, tsk->nsproxy->pid_ns_for_children);
--	if (IS_ERR(new_nsp->pid_ns_for_children)) {
--		err = PTR_ERR(new_nsp->pid_ns_for_children);
--		goto out_pid;
--	}
-+	new_nsp->pid_ns_for_children = copy_pid_ns(flags, user_ns,
-+						   tsk->nsproxy->pid_ns_for_children);
-+	if (IS_ERR(new_nsp->pid_ns_for_children))
-+		return ERR_CAST(new_nsp->pid_ns_for_children);
- 
- 	new_nsp->cgroup_ns = copy_cgroup_ns(flags, user_ns,
- 					    tsk->nsproxy->cgroup_ns);
--	if (IS_ERR(new_nsp->cgroup_ns)) {
--		err = PTR_ERR(new_nsp->cgroup_ns);
--		goto out_cgroup;
--	}
-+	if (IS_ERR(new_nsp->cgroup_ns))
-+		return ERR_CAST(new_nsp->cgroup_ns);
- 
- 	new_nsp->net_ns = copy_net_ns(flags, user_ns, tsk->nsproxy->net_ns);
--	if (IS_ERR(new_nsp->net_ns)) {
--		err = PTR_ERR(new_nsp->net_ns);
--		goto out_net;
--	}
-+	if (IS_ERR(new_nsp->net_ns))
-+		return ERR_CAST(new_nsp->net_ns);
- 
- 	new_nsp->time_ns_for_children = copy_time_ns(flags, user_ns,
--					tsk->nsproxy->time_ns_for_children);
--	if (IS_ERR(new_nsp->time_ns_for_children)) {
--		err = PTR_ERR(new_nsp->time_ns_for_children);
--		goto out_time;
--	}
-+						     tsk->nsproxy->time_ns_for_children);
-+	if (IS_ERR(new_nsp->time_ns_for_children))
-+		return ERR_CAST(new_nsp->time_ns_for_children);
- 	new_nsp->time_ns = get_time_ns(tsk->nsproxy->time_ns);
- 
--	return new_nsp;
--
--out_time:
--	put_net(new_nsp->net_ns);
--out_net:
--	put_cgroup_ns(new_nsp->cgroup_ns);
--out_cgroup:
--	put_pid_ns(new_nsp->pid_ns_for_children);
--out_pid:
--	put_ipc_ns(new_nsp->ipc_ns);
--out_ipc:
--	put_uts_ns(new_nsp->uts_ns);
--out_uts:
--	put_mnt_ns(new_nsp->mnt_ns);
--out_ns:
--	kmem_cache_free(nsproxy_cachep, new_nsp);
--	return ERR_PTR(err);
-+	return no_free_ptr(new_nsp);
- }
- 
- /*
-@@ -185,21 +175,6 @@ int copy_namespaces(u64 flags, struct task_struct *tsk)
- 	return 0;
- }
- 
--void free_nsproxy(struct nsproxy *ns)
--{
--	nsproxy_ns_active_put(ns);
--
--	put_mnt_ns(ns->mnt_ns);
--	put_uts_ns(ns->uts_ns);
--	put_ipc_ns(ns->ipc_ns);
--	put_pid_ns(ns->pid_ns_for_children);
--	put_time_ns(ns->time_ns);
--	put_time_ns(ns->time_ns_for_children);
--	put_cgroup_ns(ns->cgroup_ns);
--	put_net(ns->net_ns);
--	kmem_cache_free(nsproxy_cachep, ns);
--}
--
- /*
-  * Called from unshare. Unshare all the namespaces part of nsproxy.
-  * On success, returns the new nsproxy.
-@@ -338,7 +313,7 @@ static void put_nsset(struct nsset *nsset)
- 	if (nsset->fs && (flags & CLONE_NEWNS) && (flags & ~CLONE_NEWNS))
- 		free_fs_struct(nsset->fs);
- 	if (nsset->nsproxy)
--		free_nsproxy(nsset->nsproxy);
-+		nsproxy_free(nsset->nsproxy);
- }
- 
- static int prepare_nsset(unsigned flags, struct nsset *nsset)
--- 
-2.47.3
+I'd rather we remove some existing BUG_ONs than add more of them.
 
+>         switch (cursor->data->type) {
+>         case CEPH_MSG_DATA_PAGELIST:
+>                 new_piece =3D ceph_msg_data_pagelist_advance(cursor, byte=
+s);
+> diff --git a/net/ceph/messenger_v2.c b/net/ceph/messenger_v2.c
+> index 9e39378eda00..445a60e6fe91 100644
+> --- a/net/ceph/messenger_v2.c
+> +++ b/net/ceph/messenger_v2.c
+> @@ -1064,6 +1064,8 @@ static int process_v2_sparse_read(struct ceph_conne=
+ction *con,
+>         struct ceph_msg_data_cursor *cursor =3D &con->v2.in_cursor;
+
+Instead of con->v2.in_cursor, I'd suggest using a private cursor here
+like it's done in setup_message_sgs().  This is to highlight to the
+reader that this cursor isn't being advanced as the data is read in
+(which requires maintaining connection-wide state) but rather just
+arranging a simple copy from con->v2.in_enc_pages to the user-provided
+buffer.
+
+>         int ret;
+>
+> +       ceph_msg_data_cursor_init(cursor, con->in_msg, con->in_msg->data_=
+length);
+
+This line is too wrong, please wrap before the last argument.
+
+Thanks,
+
+                Ilya
 
