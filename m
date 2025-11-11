@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-67815-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67831-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48984C4BF21
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 08:07:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A35CC4BED0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 08:06:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBB70189856C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 07:02:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49EDC3BC976
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 07:03:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AFAA3559FE;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9106357704;
 	Tue, 11 Nov 2025 06:55:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="HBJvsBb6"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="R4NIhkG0"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F7BB343D63;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6ECA346FB9;
 	Tue, 11 Nov 2025 06:55:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762844133; cv=none; b=ZdQ3At5HADmul+ExP5GTS38g8+vdxCTTuSAN/ES0W3VogDbF2Lal5Jp42wxAMp1duj/sdbAdDK/Mu6TVV2O0r/niN2fpetcBpPnOCKbM6Zvuxn/fnQQuI3GI03bMXZl3Dxfo0NH41NZiFNlT9f1tu/6si3rSUjNjPMLIwid/eN4=
+	t=1762844134; cv=none; b=QMGCwFh54ZrsMQt7zIiOxYX31AA4cpup8ef1SiWtE2ZepVSOn6Hccym7FxAJwpeF4iETa+9U+lf2IuykiiShfB9k8aD1CqHu0d3kxEJgfLD295zoIfoN8Lzdf/i0uNcIQrf27vsQR4A9A6vQn/R0U+N7J6Nhv3jp9qa8BuxQht0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762844133; c=relaxed/simple;
-	bh=Iwt5ye99zRJSX9pycRhX5pwplCSLlQAGWoYLgPWULTo=;
+	s=arc-20240116; t=1762844134; c=relaxed/simple;
+	bh=bf3+g4U+6wGli2vhuPciTlWsbHOZefsVTzvJDSs1kWA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fBO4JHXoKRp6lQ1FHTVJNy109DS3H3Erb2Md2bL1sGakbNGBpgvbO1NJdHESWTQHlEx70djhEF5CPIvYX2bG+ePcBjpXGtEnpe15JUX28Mi6FvRZVQW5MSe6jywVzjg8jJ4TITfyEA3WtIjzdgithn0ZHEYHjGsKY7D3gjtZNQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=HBJvsBb6; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=X1BMLCo1gf5sIqPm5JTXYWDZFMtBny+/ShqmV3XUupzY6R6J/ZobB+AJOu+L8a1mW4utLyQkKqa24x9TuUKlzzyI4Qh25wK0Q67iCFpmFY0NbN+XhyDwnDn474vusbH+bdZ5IQJ6HsVTaBRWp5K2feh/Mb+Ov/yyrwxs3tkIIRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=R4NIhkG0; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=Zcrjn9Hoyal2qTn93te4BLRuOf8fYSOuLLeBgOIrdbo=; b=HBJvsBb6G3R2lFHWxQJg4yi7EA
-	ogEbzwl0kV8/dSI+7YYtUq+3QUM9stYqBDD0U2IOJHdWS1hBvExlcyU/aq+QkwPzt9fFREVG7Xk1I
-	5Yp30hFOvB7PfIoU/DXzMICkaIPZ4Lp+c7NZoiQYKvNc2CHe/rt5Kty67e2YrtOWxEdHJp/nBVlrS
-	9+WEP2H13utNb91o6Kjmwvc/Zi67++4qcGAWxn6a1OQ2gy5VvsF0amJuiq7e9InvooUce4BPmarmb
-	/pf6fZAcOdbfS4S2otE5ZvDz3R3u9ud1UB8vDEUZz3VDn3dOp/ouQV7KkUor7sjEFxDjpXUw1IFwx
-	rfQNCOWg==;
+	bh=OHt/Ew+g7B0pNZwOTBE8VBfCIPUfQxC19aVy8itf040=; b=R4NIhkG0/V2mLVIyhcwusQ9nft
+	8PZeZikDf6DfjU8btWRu2gDdgdWAWufZgJAle4MZacBlTpu2VZUM/bXqtHmYL2zuE8JBljJcITK5A
+	ugGpjTf5V8wyuS4R3+1VZc7ZTTmixykTU3IcImNAEiuz6ATWp7kqFS1iITWbp8J6MWXKVKfkbf40O
+	UgnGSBuhf3W3cUjZllApd4FxBfdfgJhXFyUxxC21kqutXFs51ZBuYxbsOaTS+L7EJy5FRp6bVMD3n
+	0k/LUFpYm857/BMdvbI7VmNwc4MB+zYeIIM04sRhDT2NxMSMLKzbaSSQ5BeV4XHeiUn2/fcWdnrkX
+	a3YFAoGg==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vIiHj-0000000BwyR-3IKe;
-	Tue, 11 Nov 2025 06:55:23 +0000
+	id 1vIiHk-0000000Bwyp-1RVQ;
+	Tue, 11 Nov 2025 06:55:24 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
 Cc: torvalds@linux-foundation.org,
@@ -67,9 +67,9 @@ Cc: torvalds@linux-foundation.org,
 	selinux@vger.kernel.org,
 	borntraeger@linux.ibm.com,
 	bpf@vger.kernel.org
-Subject: [PATCH v3 16/50] convert dlmfs
-Date: Tue, 11 Nov 2025 06:54:45 +0000
-Message-ID: <20251111065520.2847791-17-viro@zeniv.linux.org.uk>
+Subject: [PATCH v3 20/50] convert debugfs
+Date: Tue, 11 Nov 2025 06:54:49 +0000
+Message-ID: <20251111065520.2847791-21-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20251111065520.2847791-1-viro@zeniv.linux.org.uk>
 References: <20251111065520.2847791-1-viro@zeniv.linux.org.uk>
@@ -82,49 +82,84 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-All modifications via normal VFS codepaths; just take care of making
-persistent in ->create() and ->mkdir() and that's it (removal side
-doesn't need any changes, since it uses simple_rmdir() for ->rmdir()
-and calls simple_unlink() from ->unlink()).
+similar to tracefs - simulation of normal codepath for creation,
+simple_recursive_removal() for removal.
 
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/ocfs2/dlmfs/dlmfs.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ fs/debugfs/inode.c | 17 ++++++++---------
+ 1 file changed, 8 insertions(+), 9 deletions(-)
 
-diff --git a/fs/ocfs2/dlmfs/dlmfs.c b/fs/ocfs2/dlmfs/dlmfs.c
-index cccaa1d6fbba..339f0b11cdc8 100644
---- a/fs/ocfs2/dlmfs/dlmfs.c
-+++ b/fs/ocfs2/dlmfs/dlmfs.c
-@@ -441,8 +441,7 @@ static struct dentry *dlmfs_mkdir(struct mnt_idmap * idmap,
- 	ip->ip_conn = conn;
- 
- 	inc_nlink(dir);
--	d_instantiate(dentry, inode);
--	dget(dentry);	/* Extra count - pin the dentry in core */
-+	d_make_persistent(dentry, inode);
- 
- 	status = 0;
- bail:
-@@ -480,8 +479,7 @@ static int dlmfs_create(struct mnt_idmap *idmap,
- 		goto bail;
- 	}
- 
--	d_instantiate(dentry, inode);
--	dget(dentry);	/* Extra count - pin the dentry in core */
-+	d_make_persistent(dentry, inode);
- bail:
- 	return status;
- }
-@@ -574,7 +572,7 @@ static int dlmfs_init_fs_context(struct fs_context *fc)
- static struct file_system_type dlmfs_fs_type = {
- 	.owner		= THIS_MODULE,
- 	.name		= "ocfs2_dlmfs",
--	.kill_sb	= kill_litter_super,
-+	.kill_sb	= kill_anon_super,
- 	.init_fs_context = dlmfs_init_fs_context,
+diff --git a/fs/debugfs/inode.c b/fs/debugfs/inode.c
+index 661a99a7dfbe..682120fdbb17 100644
+--- a/fs/debugfs/inode.c
++++ b/fs/debugfs/inode.c
+@@ -329,7 +329,7 @@ static struct file_system_type debug_fs_type = {
+ 	.name =		"debugfs",
+ 	.init_fs_context = debugfs_init_fs_context,
+ 	.parameters =	debugfs_param_specs,
+-	.kill_sb =	kill_litter_super,
++	.kill_sb =	kill_anon_super,
  };
- MODULE_ALIAS_FS("ocfs2_dlmfs");
+ MODULE_ALIAS_FS("debugfs");
+ 
+@@ -405,16 +405,15 @@ static struct dentry *debugfs_start_creating(const char *name,
+ 
+ static struct dentry *failed_creating(struct dentry *dentry)
+ {
+-	inode_unlock(d_inode(dentry->d_parent));
+-	dput(dentry);
++	simple_done_creating(dentry);
+ 	simple_release_fs(&debugfs_mount, &debugfs_mount_count);
+ 	return ERR_PTR(-ENOMEM);
+ }
+ 
+ static struct dentry *end_creating(struct dentry *dentry)
+ {
+-	inode_unlock(d_inode(dentry->d_parent));
+-	return dentry;
++	simple_done_creating(dentry);
++	return dentry; // borrowed
+ }
+ 
+ static struct dentry *__debugfs_create_file(const char *name, umode_t mode,
+@@ -456,7 +455,7 @@ static struct dentry *__debugfs_create_file(const char *name, umode_t mode,
+ 	DEBUGFS_I(inode)->raw = real_fops;
+ 	DEBUGFS_I(inode)->aux = (void *)aux;
+ 
+-	d_instantiate(dentry, inode);
++	d_make_persistent(dentry, inode);
+ 	fsnotify_create(d_inode(dentry->d_parent), dentry);
+ 	return end_creating(dentry);
+ }
+@@ -602,7 +601,7 @@ struct dentry *debugfs_create_dir(const char *name, struct dentry *parent)
+ 
+ 	/* directory inodes start off with i_nlink == 2 (for "." entry) */
+ 	inc_nlink(inode);
+-	d_instantiate(dentry, inode);
++	d_make_persistent(dentry, inode);
+ 	inc_nlink(d_inode(dentry->d_parent));
+ 	fsnotify_mkdir(d_inode(dentry->d_parent), dentry);
+ 	return end_creating(dentry);
+@@ -649,7 +648,7 @@ struct dentry *debugfs_create_automount(const char *name,
+ 	DEBUGFS_I(inode)->automount = f;
+ 	/* directory inodes start off with i_nlink == 2 (for "." entry) */
+ 	inc_nlink(inode);
+-	d_instantiate(dentry, inode);
++	d_make_persistent(dentry, inode);
+ 	inc_nlink(d_inode(dentry->d_parent));
+ 	fsnotify_mkdir(d_inode(dentry->d_parent), dentry);
+ 	return end_creating(dentry);
+@@ -704,7 +703,7 @@ struct dentry *debugfs_create_symlink(const char *name, struct dentry *parent,
+ 	inode->i_mode = S_IFLNK | S_IRWXUGO;
+ 	inode->i_op = &debugfs_symlink_inode_operations;
+ 	inode->i_link = link;
+-	d_instantiate(dentry, inode);
++	d_make_persistent(dentry, inode);
+ 	return end_creating(dentry);
+ }
+ EXPORT_SYMBOL_GPL(debugfs_create_symlink);
 -- 
 2.47.3
 
