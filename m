@@ -1,89 +1,80 @@
-Return-Path: <linux-fsdevel+bounces-67919-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67920-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23B56C4D937
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 13:06:05 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36A67C4D9DF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 13:16:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 78F2134FD42
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 12:06:04 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6C7164F95B7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 12:09:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35EFA3570AB;
-	Tue, 11 Nov 2025 12:05:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12F3734F466;
+	Tue, 11 Nov 2025 12:09:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BBkaD78x"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QeqMDAvU"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DDEA248F78;
-	Tue, 11 Nov 2025 12:05:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 716002882B2
+	for <linux-fsdevel@vger.kernel.org>; Tue, 11 Nov 2025 12:09:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762862756; cv=none; b=NvxG4qd+Ux+5jr/LSi4jCsXWDb9gTaKytBpwnV6PIC4C+bYyBEJMXmYQAl6nXWdgYiKaCZxu1OwUnVRHMHKTj1H4wQB9wilHH9qAOcPR+aH5JAW+gEtFmbr6tf5MJLLUIWmKTXzCRheCiDX16qMVZ7WvJQ54D70gqpZM2jrfT0c=
+	t=1762862966; cv=none; b=jyvLa3tarRMu/dI9+qjdYpeJ39xnFt8Csrm50kMPuiXSR0aPUprUPVi06IevOPrNy1E1rMUwTUFKyKtun54cz4NNlfhj3eB6unQmlbqEWa3pzKi+Jz80G9SoBzaH1mKn/mBOcVj5Jqyg01XdSyz5nXPay8zg8hivNdmZ4yp7eNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762862756; c=relaxed/simple;
-	bh=VRGcAN2yTGan9iucsJQd7KhaDHf/oFMbWEQdpOAsvMM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Yvj916gIWEyNMP3CVKHluzE4R2ZcNY824zTGePt7uf2Yp9Qgq56LE/rorqqOdLBlfL9unhI+YU1paiGEmkvUgEARC+Rs5IFIYyA6QMwDQ2Nv6kQ0fK5/Vhn0E3UfEdbj2tsSZOY1kP4XNYYcO5HPE1ifOtOhY+YNDyH9/Wt+jVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BBkaD78x; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89DDCC4CEFB;
-	Tue, 11 Nov 2025 12:05:54 +0000 (UTC)
+	s=arc-20240116; t=1762862966; c=relaxed/simple;
+	bh=yfaPo/0eZ+ud3DCGWGSUVzKnElMxszGVg4+nj662poA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZGtgq925/6TqlyzLJhXw0pMT2p/afg3AYg2iw1ZVAzuIm3NCnfEUoxN/kkt7I6TB/yYY3i9DVzbb0vt+qQSzpcz7JefrQihvynQbBaB3XqPaki+SVTGMeLq5ZHZdF2oT+lBS5in4NZATkDNNfqvMkep3N/MhcSEWtyovDamQ4bM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QeqMDAvU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61A5DC4CEFB;
+	Tue, 11 Nov 2025 12:09:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762862756;
-	bh=VRGcAN2yTGan9iucsJQd7KhaDHf/oFMbWEQdpOAsvMM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=BBkaD78xZB2M2FqoTBASK5HU+V+uR/G8wS0lTNNTGtaskHHJgzou32mKxXgRetCOF
-	 VsN/AyORBEug0eaBi1ov27cyevAnzJyyqtnR6JGPOLaVC76ugBSeG6ybg5RBnjrZ5r
-	 UaDKBtuYNACP8hhvxXWejn9C+BnUfQr+FdCOZsPJj2zO5tx+Z3YQJ8vTJ35jbSLneo
-	 vx5NcuUaUr0mLttM1AC/lXfU0y8ALB8/bKxUD9Gg7ZTCWNV6eonkrbL6oHREz0Dyta
-	 51FKsW43zWntQu1mZC3onEZsCNyRYdmEawF9wWaNYR6jzYtry9XR8e9f1FdVw8jF0R
-	 HzZkMsdJ17uIw==
+	s=k20201202; t=1762862966;
+	bh=yfaPo/0eZ+ud3DCGWGSUVzKnElMxszGVg4+nj662poA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QeqMDAvUti/Ndb4ZKQpmuomc5xLLiHvGESSfc8vzNvpy3pXjV66fjHYFsLDPP6GyN
+	 5vXAHv+UO2PO0gXEusp9wG18x/rOZfYtrPQAEW0lLzfMs6QGczWKh+K94TGPJHoTu6
+	 ub/mEFPLJ78gaj5IKWeqkOrX5kn+1iT+mLMXZHVLG3jhGO6Qm3a0nu5kjhqLJ0tGzh
+	 XfRCxxOqBMLRU/Zgw+I7o9RdP1dYoHwhv0pno2YwDRQQbEPfK9JAUh6PpvRvL6yGyY
+	 6LIHxPtMcOvEqUHZHmo6GKmfeA/aQmw+PZjqfA8ZdLEjlM4G1PLWpeobCTRnq3rB4M
+	 gGhhjKIGFwDQw==
+Date: Tue, 11 Nov 2025 13:09:21 +0100
 From: Christian Brauner <brauner@kernel.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fs: hide dentry_cache behind runtime const machinery
-Date: Tue, 11 Nov 2025 13:05:51 +0100
-Message-ID: <20251111-lobpreisen-nebel-8c71952ada8b@brauner>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251105153622.758836-1-mjguzik@gmail.com>
-References: <20251105153622.758836-1-mjguzik@gmail.com>
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: hch@infradead.org, djwong@kernel.org, bfoster@redhat.com, 
+	linux-fsdevel@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [PATCH v3 0/8] iomap: buffered io changes
+Message-ID: <20251111-unkontrollierbar-zugelangt-1dbd13f5d305@brauner>
+References: <20251104205119.1600045-1-joannelkoong@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=843; i=brauner@kernel.org; h=from:subject:message-id; bh=VRGcAN2yTGan9iucsJQd7KhaDHf/oFMbWEQdpOAsvMM=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQKq83/84DNQEZnwuW8OKYpk399OSjpa9QmGeHFfrD9h ESydMSljlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgInotjEy7DCwO/w91Du3f+as bIugQtFkJo1NWmneC08qyGTJvtI5ysjQ2vp6yZzVGzzfL2FIfz7nD+OSQ07TeDZYVjws4GyN/z2 RDwA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251104205119.1600045-1-joannelkoong@gmail.com>
 
-On Wed, 05 Nov 2025 16:36:22 +0100, Mateusz Guzik wrote:
+On Tue, Nov 04, 2025 at 12:51:11PM -0800, Joanne Koong wrote:
 > 
+> v2: https://lore.kernel.org/linux-fsdevel/20251021164353.3854086-1-joannelkoong@gmail.com/
+> v2 -> v3:
+> * Fix race when writing back all bytes of a folio (patch 3)
+> * Rename from bytes_pending to bytes_submitted (patch 3)
+> * Add more comments about logic (patch 3)
+> * Change bytes_submitted from unsigned to size_t (patch 3) (Matthew)
+> 
+> v1: https://lore.kernel.org/linux-fsdevel/20251009225611.3744728-1-joannelkoong@gmail.com/
+> v1 -> v2:
+> * Incorporate Christoph's feedback (drop non-block-aligned writes patch, fix
+>   bitmap scanning function comments, use more concise variable name, etc)
+> * For loff_t patch, fix up .writeback_range() callback for zonefs, gfs2, and
+>   block 
 
-
-Applied to the vfs-6.19.misc branch of the vfs/vfs.git tree.
-Patches in the vfs-6.19.misc branch should appear in linux-next soon.
-
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.19.misc
-
-[1/1] fs: hide dentry_cache behind runtime const machinery
-      https://git.kernel.org/vfs/vfs/c/15e78f24ccf0
+Joanne, I think we're ready to take this upstream. Could you do me a
+favor and rebase this on top of vfs-6.19.iomap and resend?
 
