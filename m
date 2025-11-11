@@ -1,47 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-67990-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67991-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C9C7C4FB07
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 21:20:31 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E70FC4FB34
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 21:26:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2F9BD4E98B5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 20:19:19 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 620584E2CAF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 20:26:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F9CA33D6CE;
-	Tue, 11 Nov 2025 20:19:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3771833D6F5;
+	Tue, 11 Nov 2025 20:26:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i1r2Y3/e"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YISalZIK"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1E8E33D6CB;
-	Tue, 11 Nov 2025 20:19:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 806DF33D6D5;
+	Tue, 11 Nov 2025 20:26:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762892351; cv=none; b=MfyPUfwfd0HBAnal0ezgGyhs7LVJTH5HqkqDNeTW7Ea8vhl3wYYHtn/C6G9VTxggo3RLpZlYN2QOzUFzBMF/ovBKTdLPXHJCWuxubX7Yl7bnrSO+SQ5ywXfb77FyuZDbdDVGaPibYL6gdT6kVWUKrojO/z9lVpd73rV/ZctOKug=
+	t=1762892775; cv=none; b=K+EhVPgkG+4gbekASEF4SLLRmDkv9fiuAWOo7eiJPnjvNpJzSsQqZQBXXlAisQyC1B7wHacsFnZGEX6UyHPyj0wJ6L1ngXHlVgVnWsYjhQt1B6xwfWHcsTst7X93l1DJm4uClF1KwQguEQSYE3SsuU0NrW9NfefcGdQ4olIBOeU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762892351; c=relaxed/simple;
-	bh=fu6s4/xojeZgX7aNEWJfig73AGlXvP+znZlBg9agON0=;
+	s=arc-20240116; t=1762892775; c=relaxed/simple;
+	bh=g11VVLOrnrPR/EWZfPCKV/WPrJOnLP2exJs3CrROv6U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dDHk+l0dyB5hqby9muCsA6DOy16m23etkAdWNczARJm1XNoMdhOQXH7EoiCTfkoKNKOkeRTB8fsq32UrZWtOuS/TGdyZEp7FN0P/bp4JMFRSNdg22rrVapJRlq67sWgB2Ef5Qpeq56+Y4jUU38ZEXRDJrV7pYQwLf4vfgSIOJHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i1r2Y3/e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D978C16AAE;
-	Tue, 11 Nov 2025 20:18:49 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=KkyFTPxEh3yVJ/MUin3k/P1YRkioT2RapBmGez/oNV3cInRXMqEsIZoXrDYuqRnxi6x6rBTolvao7WmsLXLL0bVmxEnzC6IqCTRReo0kZH7VmZZ4/oM44GUEMX1mF8+7k6LQSY91tp5rHmqZD8tyOdeMpuWh7JK2L7asYF+IWIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YISalZIK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8212C4CEF5;
+	Tue, 11 Nov 2025 20:25:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762892351;
-	bh=fu6s4/xojeZgX7aNEWJfig73AGlXvP+znZlBg9agON0=;
+	s=k20201202; t=1762892775;
+	bh=g11VVLOrnrPR/EWZfPCKV/WPrJOnLP2exJs3CrROv6U=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=i1r2Y3/eCL0Xa1MPNF0IPCxP2xdKudBp6EZ4cRQgfP4VdypOsH81FEZotsSfUiHgF
-	 cxTKhhYY6VoiwxWk49M2q1Dd5X7DrOaUYN6CD31pg6hRhseCY9+7TPbwl+fE6WDY3J
-	 31yszZrpQjppaORB+oPZZPM+0RE4xt4NeYgT4dYAT0rxBTI4o1+5oOfU6U6A4lRZ0g
-	 a8AJUZGlBDEH/REX282Zj/V/0p3VxdI1WknGoEoxhbzATEVAhgaclM9Tv1CxfsmQUz
-	 JaYcvB8j8Yuz9n5SbCpWwKnjk1cA3nIn+JhfYLvi3YqQ2SQ/CMl3wbK5nMn9PQC8tS
-	 jBOR9zCSUendA==
-Date: Tue, 11 Nov 2025 22:18:45 +0200
+	b=YISalZIK3TR8PTD+G8hE2OyU4402PpTibQm6YhhXgyG1aHMBQaLvYwlEFIpFzOQ5X
+	 qoSlvR3ju4pMUrLtTAdx04FnwZt8dBsZWAW0Zqe7hCqv5B0RpR57/3C3aTVO+0fnKR
+	 AYFaNnK9pPJ9rFmcOZncZTAMqpw5+mIW6Zp2N6o/7L624FLpGK0gCV4DdOvhWlHOKp
+	 VmJx6sCEH1hefU34OhpEg0xJvO+Gar1UuQcXM1UlxP8IVtZQ530bfppIa/5fKNpf7o
+	 9kBBt2oZWf/FzCUMy7Bwu4Rn0UxewXeFXI1cH8NEtgskC4ISIoozoNmPZrsaaMNIG+
+	 2N7NuwQcalN0w==
+Date: Tue, 11 Nov 2025 22:25:51 +0200
 From: Mike Rapoport <rppt@kernel.org>
 To: Pasha Tatashin <pasha.tatashin@soleen.com>
 Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com,
@@ -72,73 +72,73 @@ Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com,
 	ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com,
 	leonro@nvidia.com, witu@nvidia.com, hughd@google.com,
 	skhawaja@google.com, chrisl@kernel.org
-Subject: Re: [PATCH v5 05/22] liveupdate: kho: when live update add KHO image
- during kexec load
-Message-ID: <aROaJUjyyZqJ19Wo@kernel.org>
+Subject: Re: [PATCH v5 02/22] liveupdate: luo_core: integrate with KHO
+Message-ID: <aRObz4bQzRHH5hJb@kernel.org>
 References: <20251107210526.257742-1-pasha.tatashin@soleen.com>
- <20251107210526.257742-6-pasha.tatashin@soleen.com>
- <aRHe3syRvOrCYC9u@kernel.org>
- <CA+CK2bA=cQkibx4dSxJQTVxVxqkAsZPfFoPJip6rx8DqX62aEA@mail.gmail.com>
+ <20251107210526.257742-3-pasha.tatashin@soleen.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+CK2bA=cQkibx4dSxJQTVxVxqkAsZPfFoPJip6rx8DqX62aEA@mail.gmail.com>
+In-Reply-To: <20251107210526.257742-3-pasha.tatashin@soleen.com>
 
-On Mon, Nov 10, 2025 at 10:31:23AM -0500, Pasha Tatashin wrote:
-> On Mon, Nov 10, 2025 at 7:47 AM Mike Rapoport <rppt@kernel.org> wrote:
-> >
-> > On Fri, Nov 07, 2025 at 04:03:03PM -0500, Pasha Tatashin wrote:
-> > > In case KHO is driven from within kernel via live update, finalize will
-> > > always happen during reboot, so add the KHO image unconditionally.
-> > >
-> > > Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
-> > > ---
-> > >  kernel/liveupdate/kexec_handover.c | 3 ++-
-> > >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/kernel/liveupdate/kexec_handover.c b/kernel/liveupdate/kexec_handover.c
-> > > index 9f0913e101be..b54ca665e005 100644
-> > > --- a/kernel/liveupdate/kexec_handover.c
-> > > +++ b/kernel/liveupdate/kexec_handover.c
-> > > @@ -15,6 +15,7 @@
-> > >  #include <linux/kexec_handover.h>
-> > >  #include <linux/libfdt.h>
-> > >  #include <linux/list.h>
-> > > +#include <linux/liveupdate.h>
-> > >  #include <linux/memblock.h>
-> > >  #include <linux/page-isolation.h>
-> > >  #include <linux/vmalloc.h>
-> > > @@ -1489,7 +1490,7 @@ int kho_fill_kimage(struct kimage *image)
-> > >       int err = 0;
-> > >       struct kexec_buf scratch;
-> > >
-> > > -     if (!kho_out.finalized)
-> > > +     if (!kho_out.finalized && !liveupdate_enabled())
-> > >               return 0;
-> >
-> > This feels backwards, I don't think KHO should call liveupdate methods.
+On Fri, Nov 07, 2025 at 04:03:00PM -0500, Pasha Tatashin wrote:
+> Integrate the LUO with the KHO framework to enable passing LUO state
+> across a kexec reboot.
 > 
-> It is backward, but it is a requirement until KHO becomes stateless.
-> LUO does not have dependencies on userspace state of when kexec is
-> loaded. In fact the next kernel must be loaded before the brownout as
-> it is an expensive operation. The sequence of events should:
+> When LUO is transitioned to a "prepared" state, it tells KHO to
+> finalize, so all memory segments that were added to KHO preservation
+> list are getting preserved. After "Prepared" state no new segments
+> can be preserved. If LUO is canceled, it also tells KHO to cancel the
+> serialization, and therefore, later LUO can go back into the prepared
+> state.
 > 
-> 1. Load the next kernel in memory
-> 2. Preserve resources via LUO
-> 3. Do Kexec reboot
+> This patch introduces the following changes:
+> - During the KHO finalization phase allocate FDT blob.
+> - Populate this FDT with a LUO compatibility string ("luo-v1").
+> 
+> LUO now depends on `CONFIG_KEXEC_HANDOVER`. The core state transition
+> logic (`luo_do_*_calls`) remains unimplemented in this patch.
+> 
+> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
 
-I believe that when my concerns about "[PATCH v5 02/22] liveupdate:
-luo_core: integrate with KHO" [1] are resolved this patch won't be needed.
+...
 
-[1] https://lore.kernel.org/all/aROZi043lxtegqWE@kernel.org/
- 
-> Pasha
+> diff --git a/mm/mm_init.c b/mm/mm_init.c
+> index c6812b4dbb2e..20c850a52167 100644
+> --- a/mm/mm_init.c
+> +++ b/mm/mm_init.c
+> @@ -21,6 +21,7 @@
+>  #include <linux/buffer_head.h>
+>  #include <linux/kmemleak.h>
+>  #include <linux/kfence.h>
+> +#include <linux/liveupdate.h>
+>  #include <linux/page_ext.h>
+>  #include <linux/pti.h>
+>  #include <linux/pgtable.h>
+> @@ -2703,6 +2704,9 @@ void __init mm_core_init(void)
+>  	 */
+>  	kho_memory_init();
+>  
+> +	/* Live Update should follow right after KHO is initialized */
+> +	liveupdate_init();
+> +
+
+Why do you think it should be immediately after kho_memory_init()?
+Any reason this can't be called from start_kernel() or even later as an
+early_initcall() or core_initall()?
+
+>  	memblock_free_all();
+>  	mem_init();
+>  	kmem_cache_init();
+> -- 
+> 2.51.2.1041.gc1ab5b90ca-goog
+> 
+> 
 
 -- 
 Sincerely yours,
