@@ -1,55 +1,64 @@
-Return-Path: <linux-fsdevel+bounces-67872-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67873-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72876C4CA99
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 10:30:32 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DDD7C4CAAE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 10:31:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B2493BAF78
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 09:27:47 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1F35234EDAB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 09:31:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58B282F49F5;
-	Tue, 11 Nov 2025 09:27:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F2442F6563;
+	Tue, 11 Nov 2025 09:30:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mYV7wo/8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wel3RcIu"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2EC6228CA9;
-	Tue, 11 Nov 2025 09:27:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 889702F60D6;
+	Tue, 11 Nov 2025 09:30:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762853240; cv=none; b=aCC0HBJsBRSa5jbHD4lIWw/zmitI9b/e77J1ExNuL2t7pcYRkgSJabq1Dfi4JPp85aEuKSMrmTxWOsfglZEOhi4KuklGzRe9ZmQGzmFut5/62RbCFIL1aaOP8wg3Yeys9/+56ErvMKcxsedoxoQT3FI9cTw63uaGOGD1+C8BavY=
+	t=1762853432; cv=none; b=jKVHt9873K6bhNsI2smMolLZygaQUAOT+4x4Rc3EZoc4oWlzsQJL48fHX5UbtGkchDqQpE0P4zcBpBXSnGAO8hzzAsLsmlnoqgoR6bS8xzlHEb4twoLFZGw9UbnBkxKwsB80mygEnvKgdT7Fbi9ORpQlmBrwT2P1YrBUfzAp2Ms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762853240; c=relaxed/simple;
-	bh=L65M4dF3os+W2WKpgS1o4tMupE+uWY2D8hkMGwN/YGo=;
+	s=arc-20240116; t=1762853432; c=relaxed/simple;
+	bh=FABYtlEqY2mS5o9frfhx1zgALjceFTO/BSa/J+igp2U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=txsnKzrv//UyH3bOQY9fOFgahkioOVzrx9281lO4zUSj4r39qNpf7nf3LEEQ6+kpncVOQibuLGmgjXA4/Y135yWUrcJOGl/TB2h9L1UMMVb+wxV1E7PMnVoDB6p/e0xT5esLD+07Xdgq3TMVsatwXu9t9oEX6W0K7sN501DiRKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mYV7wo/8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA64AC4AF0E;
-	Tue, 11 Nov 2025 09:27:18 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=teQ4i1GVViJV1EJe+i/j6uB43CNVKdqmABbHJAetswcvh8SSs3gfv5fAbflCj0qtPwCvxKVkI4cw839XZ1sWys7CakRfUbjJCVQcvt/opLNKkt112xTNRzj/OSXhpJkD1dAVfxVh+aktP1qAXXA8eDTQY0bqokXYwzadBTwGGUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wel3RcIu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B728C19421;
+	Tue, 11 Nov 2025 09:30:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762853240;
-	bh=L65M4dF3os+W2WKpgS1o4tMupE+uWY2D8hkMGwN/YGo=;
+	s=k20201202; t=1762853432;
+	bh=FABYtlEqY2mS5o9frfhx1zgALjceFTO/BSa/J+igp2U=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mYV7wo/8/LzMaZ848IcdKOnkMJZIUM+xVBVatsNxOc7iEmJKvwrcTRbO9kXCIvyly
-	 5JisvrnyzgThRa6MSFu209SqjhwygBNKYzDqx0ujEzQuQgAh0evDyOwi5HwrV+H0n/
-	 ABNqHqZPyc4lM+XeETColisFG0JXJcuabvMbVemW78IlL6Dx20TeS+2s8LycI1ukUV
-	 6gea7x2+v5gcWkD7wbWMOWon5Sb8W7/nkwUoucDXEXXS7cujl83nEHpRLMsVtqzKmx
-	 HqnWwL04KPOwitj6dX3Ix8IeeTxg5O2MtNcWGicSSZBufsxbRl1cLIvovBjVKG8pgU
-	 5San4pL7jr2tw==
-Date: Tue, 11 Nov 2025 10:27:15 +0100
+	b=Wel3RcIuS5j+o/v6AaFglHplRlVo9sjzdy86FsNvkTS5k7A/kuydEY9YQDtDQNrkU
+	 1JCCFOApt8LXWbOxCeqS0vlhGpfcI0c8jf2RAsKomtysjY/RFbLTstpdKXu40yGTYn
+	 FLxjdS45rZweVEmhZDxCWOTnPuYWbymg3w5CfiOvkb1Zp/DixWYVSWmBkR6D86LVRS
+	 90pZQhDvDQUp5C//Nl5fU0nZLj6njdPQoX9etWjUUWT7zS1p8r3mKbTo7WJJiVw2Eh
+	 1ZXIc9VtvUtautgBEOReKPpMqPkOF85M+AtRNgbRjY4ZeYjO80kCfOZdnWtEAjEE0Q
+	 TQ0u/1s2TNihQ==
+Date: Tue, 11 Nov 2025 10:30:22 +0100
 From: Christian Brauner <brauner@kernel.org>
-To: Deepanshu Kartikey <kartikey406@gmail.com>
-Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzbot+0b2e79f91ff6579bfa5b@syzkaller.appspotmail.com
-Subject: Re: [PATCH v2] fs/nsfs: skip active ref counting for initial
- namespaces
-Message-ID: <20251111-inhaftiert-observieren-b595499354e4@brauner>
-References: <20251109092333.844185-1-kartikey406@gmail.com>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: bot+bpf-ci@kernel.org, linux-fsdevel@vger.kernel.org, 
+	torvalds@linux-foundation.org, jack@suse.cz, raven@themaw.net, miklos@szeredi.hu, 
+	neil@brown.name, a.hindborg@kernel.org, linux-mm@kvack.org, 
+	linux-efi@vger.kernel.org, ocfs2-devel@lists.linux.dev, kees@kernel.org, 
+	rostedt@goodmis.org, gregkh@linuxfoundation.org, linux-usb@vger.kernel.org, 
+	paul@paul-moore.com, casey@schaufler-ca.com, linuxppc-dev@lists.ozlabs.org, 
+	john.johansen@canonical.com, selinux@vger.kernel.org, borntraeger@linux.ibm.com, 
+	bpf@vger.kernel.org, ast@kernel.org, andrii@kernel.org, daniel@iogearbox.net, 
+	martin.lau@kernel.org, eddyz87@gmail.com, yonghong.song@linux.dev, clm@meta.com, 
+	ihor.solodrai@linux.dev
+Subject: Re: [PATCH v3 36/50] functionfs: switch to simple_remove_by_name()
+Message-ID: <20251111-verelendung-unpolitisch-1bdcd153611e@brauner>
+References: <20251111065520.2847791-37-viro@zeniv.linux.org.uk>
+ <20754dba9be498daeda5fe856e7276c9c91c271999320ae32331adb25a47cd4f@mail.kernel.org>
+ <20251111092244.GS2441659@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -58,40 +67,45 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251109092333.844185-1-kartikey406@gmail.com>
+In-Reply-To: <20251111092244.GS2441659@ZenIV>
 
-On Sun, Nov 09, 2025 at 02:53:33PM +0530, Deepanshu Kartikey wrote:
-> Initial namespaces are statically allocated and exist for the entire
-> lifetime of the system. They should not participate in active
-> reference counting.
+On Tue, Nov 11, 2025 at 09:22:44AM +0000, Al Viro wrote:
+> On Tue, Nov 11, 2025 at 07:53:16AM +0000, bot+bpf-ci@kernel.org wrote:
 > 
-> The recent introduction of active reference counting in commit
-> 3a18f809184b ("ns: add active reference count") added functions that
-> unconditionally take/drop active references on all namespaces,
-> including initial ones.
+> > When ffs_epfiles_create() calls ffs_epfiles_destroy(epfiles, i - 1) after
+> > the first ffs_sb_create_file() call fails (when i=1), it passes count=0.
+> > The initialization loop starts at i=1, so epfiles[0].ffs is never
+> > initialized.
 > 
-> This causes a WARN_ON_ONCE() to trigger when a namespace file for an
-> initial namespace is evicted:
-> 
->   WARNING: ./include/linux/ns_common.h:314 at nsfs_evict+0x18e/0x200
-> 
-> The same pattern exists in nsproxy_ns_active_get() and
-> nsproxy_ns_active_put() which could trigger similar warnings when
-> operating on initial namespaces.
-> 
-> Fix by checking is_initial_namespace() before taking or dropping
-> active references in:
-> - nsfs_evict()
-> - nsproxy_ns_active_get()
-> - nsproxy_ns_active_put()
-> 
-> Reported-by: syzbot+0b2e79f91ff6579bfa5b@syzkaller.appspotmail.com
-> Link: https://syzkaller.appspot.com/bug?extid=0b2e79f91ff6579bfa5b
-> Fixes: 3a18f809184b ("ns: add active reference count")
-> Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
-> ---
+> Incorrect.  The loop in question is
 
-This is not the way to fix it and it's not the cause of the bug.
-I've sent a series that addresses this issue properly and it's already
-been in next.
+Are you aware that you're replying to a bot-generated email?
+
+> 
+> 	epfile = epfiles;
+> 	for (i = 1; i <= count; ++i, ++epfile) {
+> 		epfile->ffs = ffs;
+> 		mutex_init(&epfile->mutex);
+> 		mutex_init(&epfile->dmabufs_mutex);
+> 		INIT_LIST_HEAD(&epfile->dmabufs);
+> 		if (ffs->user_flags & FUNCTIONFS_VIRTUAL_ADDR)
+> 			sprintf(epfile->name, "ep%02x", ffs->eps_addrmap[i]);
+> 		else   
+> 			sprintf(epfile->name, "ep%u", i);
+> 		err = ffs_sb_create_file(ffs->sb, epfile->name,
+> 					 epfile, &ffs_epfile_operations);
+> 		if (err) {
+> 			ffs_epfiles_destroy(epfiles, i - 1);
+> 			return err;
+> 		}
+> 	}
+> 
+> and invariant maintained through the loop is epfile == epfiles + (i - 1).
+> We start with i == 1 and epfile == epfiles, modify neither variable in
+> the loop body and increment both i and epfile by the same amount in
+> the step.
+> 
+> In other words, on the first pass through the loop we access epfiles[0],
+> not epfiles[1].  Granted, the loop could've been more idiomatic, but
+> it is actually correct.
 
