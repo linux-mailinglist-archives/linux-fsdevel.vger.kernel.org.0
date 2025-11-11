@@ -1,136 +1,161 @@
-Return-Path: <linux-fsdevel+bounces-67780-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67781-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B858C49DC5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 01:24:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEBC0C49DC8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 01:24:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64C85188E88F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 00:24:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E49513A9FA9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 00:24:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEA0F19B5A7;
-	Tue, 11 Nov 2025 00:23:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79FBC199EAD;
+	Tue, 11 Nov 2025 00:23:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="POT8RZoV"
+	dkim=pass (2048-bit key) header.d=gvernon.com header.i=@gvernon.com header.b="MHv9s7Ny"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B744B199EAD
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4C30194A6C
 	for <linux-fsdevel@vger.kernel.org>; Tue, 11 Nov 2025 00:23:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762820605; cv=none; b=iuZDHochxws2YGc8DzBFNvEQt1d0/k9E6y0YqPxyLrj/SMfjsM8mTDz1rOIKyzeJT2Iodk8SIw6oq2UzDE0orXbdCkEy++V1cm8hofuRGNopHyvHeX94wyTvUta+eSTY29dfaEDGokSMaAiNMtDsuyp3X8QI2Vsjt3U1gZbSkxM=
+	t=1762820605; cv=none; b=mkG9Uf+JBaTIJEEo9LY6FIyYQKfKdx58A2LTW0X+YMdZOr8I4ufbltknKmn8hvfefPhcGbvLhxA9tWAlGVqPGuaN/S4fewnnIcYGy48AhU8vt74ymDnhc6oYBpq0YfNhdGyJuBEAZj8KW5wbj+nXy1ety5aiwMjMxsi4CGqXDlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1762820605; c=relaxed/simple;
-	bh=SY/HFJpytkf+nFpwanwJw1fx9K5HCqkmPfW8bqd6qg4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tZofJj3jbMv855s2YMsdBLfKKruaulvnTeC92pWOSGInRPBeormj4o/eAP5v+TkIPqpnpLbVXXyDsCOgcLHX8ERsYJiUdotznswynncIpmptw2MFZ1AHbjq+SQ94mVlx23bxHdEmOrt/gTeQrE9HuGJocR+DJm3DEF2AMSoafR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=POT8RZoV; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-794e300e20dso185473b3a.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Nov 2025 16:23:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1762820603; x=1763425403; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=W3+9M+5M55tGV3eZYdGtHuJ5xbHqc1TJ5Xfs5N1S3t8=;
-        b=POT8RZoVu860iAuf0MhS4qkWDubeYbY2qGXKU0WJ27bIuAT/7zNXiexSend+G/vp4L
-         YzVjrs6wLuQBs+DHIHIBnu/5N4gZEcZSEIZoHkMNePzdtftd6OYfp1nUW3FyJhpfBO8q
-         TertUfnmUrm9lW1RK91RVdk245zEykfathgrvKYbHNgVB6LHnCtSd8jaimRAQsaAponl
-         Rl6S/HHzTrlPfPd/oYYW1QRdhjUVgU4jEGuLi3nt0RPmjPVdJX/UoyvNHAuqy2YwqWaH
-         SoZYp/Ffd60TEfuUxK4++NCnndBXJ2u5WCzt03iVAu67a6jBLgXzS8ZZ2x8c5TuwtP17
-         nD0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762820603; x=1763425403;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=W3+9M+5M55tGV3eZYdGtHuJ5xbHqc1TJ5Xfs5N1S3t8=;
-        b=pce+yv/PTtbcQVbKQT/ExeZ+6jfet1CGLmlUNmX3zphjRTMB+OrjnlJ1/4RvQmRFNF
-         QE+RYGnpBIskZROEmQa2cBk1eGHybJiql99uB0nhjGgXdvj9FWdhBdTZlcRJUhoHUt+Y
-         MPQEXxcnruGliwbpZ9WnY+BN2o91PpTgkQc7fwfkAeymDgKJ3rf7XS733zp0jIN/IgLh
-         PErnBHgcsVqxSgqY4JVRoYl9vKYoPGYp2G8setsMfDdeGydwL52gptCbkT0y7/N6srWk
-         WKxocCZ97mLjbfVelZIJSUYgUDoPBc1NBYZcyy8VgwdS8VGaP95yfXp+jJTjPRmk2Z1l
-         x+Wg==
-X-Gm-Message-State: AOJu0YzSpkiltONUA1RSoIc1Yq1SJh9rEX8E6E7PVeOQcZyy0GCQg2Qj
-	sx0MAxgnV9JOC9PMOOh+mOuw8guVsAOdcyl5+ZY+iABzxRsYonvbQP4IykiUMmXKyTEyKs5xmmj
-	/A+6v55BtEwxyA5Pfxn+Hoplus42v/9jJpGdu0sRf
-X-Gm-Gg: ASbGncvaN+oWpo8y2DXokYz3xKlAzUBG/3vVXspqpMCgVNprkrA3QJG4H9bzGtYC6Q4
-	hnQEJRbDCQ44fi2VstGQFICdXMcuVl9uzyk+h4bfCK099w878/DvLUw4dvERLOl1mvWtvSM7QB6
-	RuANcBnuD92RvatinBtu37h7uPrkCTDZTFdx4WeqrXdOzW+wmNHF7WDyl2RVldn0tjjJ6/GHGe4
-	bCjOccuvdYelHt9WHiAgbTwZl4SuPEsBTAv0OvLO41isw0PF+0ABXNigjqG
-X-Google-Smtp-Source: AGHT+IGKKFXvoGiwpuj7250U6R+lXP80Kgo4s5yoGQEaNtVEqrSDNucZT1Bw9ABkyZhxSNT9x1CFxaxjgHbtulHgNlg=
-X-Received: by 2002:a17:90b:5201:b0:343:7410:5b66 with SMTP id
- 98e67ed59e1d1-343bf23e94cmr1515386a91.11.1762820603008; Mon, 10 Nov 2025
- 16:23:23 -0800 (PST)
+	bh=bPPdzsFCYqmZxZG1oaCETVPCkyCDDs3i4xm8UUoKQvM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Nuhw5f5W7AbJzD+CCYgKaJxehAdDw4RDzUrq4TEU7/MBCfa1MZ7qxAJuYW6It6k3iMwsir3xdO0a3p1m8Dj+BeyNMVuxeIQKLxUyUiGckJyb511PK87olkkg8RJZBiJeCQDVj/jw5a1vIBsOkqq3C69ODT5vJKNzMTJAvDIBDJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gvernon.com; spf=pass smtp.mailfrom=gvernon.com; dkim=pass (2048-bit key) header.d=gvernon.com header.i=@gvernon.com header.b=MHv9s7Ny; arc=none smtp.client-ip=95.215.58.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gvernon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gvernon.com
+Date: Tue, 11 Nov 2025 00:23:12 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gvernon.com; s=key1;
+	t=1762820591;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6MzVfzkvlgrw/5KjtWHCkGWxkY9koFjZVoe3P9pnd+0=;
+	b=MHv9s7NyTDDpSTBAokrLPAFFoIjoc34+qo8Nw3cILbrnBCkLgGVbXuKQkXdJJTeVa+S25J
+	/aj9f2w3MOXh/8hXywySn9TX4XgKbN7zCXYrsd/wvQc8d3OrQWe8Gpkt1Up1xJgtqtHRpC
+	+Xi2Hdd0DCZEMYhYf3DtCWW4EuM0HiL8/+546z0oB8CUk+Jp7mX5IRoVG399MsXGDVSPS7
+	5ekbkJ+p6w3DObP+U8w1Wi5ZxrW2iBA0+Iir4k7730t5AobI86QGZ7pZnzBWbabFxOTV0H
+	bSt761VAkd2k5ia3QRhk19TwwpFeX/0rYkYN6IBteypNOnOMu6Bp4JZI0wKVHQ==
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: George Anthony Vernon <contact@gvernon.com>
+To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+Cc: "frank.li@vivo.com" <frank.li@vivo.com>,
+	"linux-kernel-mentees@lists.linux.dev" <linux-kernel-mentees@lists.linux.dev>,
+	"slava@dubeyko.com" <slava@dubeyko.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"penguin-kernel@i-love.sakura.ne.jp" <penguin-kernel@i-love.sakura.ne.jp>,
+	"syzbot+97e301b4b82ae803d21b@syzkaller.appspotmail.com" <syzbot+97e301b4b82ae803d21b@syzkaller.appspotmail.com>,
+	"skhan@linuxfoundation.org" <skhan@linuxfoundation.org>,
+	"glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH v2 2/2] hfs: Update sanity check of the root record
+Message-ID: <aRKB8C2f1Auy0ccA@Bertha>
+References: <d2b28f73-49c8-4e30-9913-01702da4dfe4@I-love.SAKURA.ne.jp>
+ <20251104014738.131872-4-contact@gvernon.com>
+ <ef0bd6a340e0e4332e809c322186e73d9e3fdec3.camel@ibm.com>
+ <aRJvXWcwkUeal7DO@Bertha>
+ <74eae0401c7a518d1593cce875a402c0a9ded360.camel@ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251109063745.2089578-1-viro@zeniv.linux.org.uk>
- <20251109063745.2089578-11-viro@zeniv.linux.org.uk> <CAHC9VhQjzt0nJnbwXuwT7UPBwtHjEOPZu6z=c=G=+-Wdkuj5Vw@mail.gmail.com>
-In-Reply-To: <CAHC9VhQjzt0nJnbwXuwT7UPBwtHjEOPZu6z=c=G=+-Wdkuj5Vw@mail.gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 10 Nov 2025 19:23:10 -0500
-X-Gm-Features: AWmQ_bmO_J1uWwhkfIMjYLf5xJIaX93Sr0Zwq3mSA3wxHuho5Pw0As_fNioTvOo
-Message-ID: <CAHC9VhROakxXe-ZJNFtpNLeV+P8g5W4VZOdQtuY9NbaOHwEYuQ@mail.gmail.com>
-Subject: Re: [RFC][PATCH 10/13] get rid of audit_reusename()
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org, 
-	brauner@kernel.org, jack@suse.cz, mjguzik@gmail.com, axboe@kernel.dk, 
-	audit@vger.kernel.org, io-uring@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <74eae0401c7a518d1593cce875a402c0a9ded360.camel@ibm.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Nov 10, 2025 at 6:13=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
-ote:
-> On Sun, Nov 9, 2025 at 1:37=E2=80=AFAM Al Viro <viro@zeniv.linux.org.uk> =
-wrote:
-> >
-> > Originally we tried to avoid multiple insertions into audit names array
-> > during retry loop by a cute hack - memorize the userland pointer and
-> > if there already is a match, just grab an extra reference to it.
-> >
-> > Cute as it had been, it had problems - two identical pointers had
-> > audit aux entries merged, two identical strings did not.  Having
-> > different behaviour for syscalls that differ only by addresses of
-> > otherwise identical string arguments is obviously wrong - if nothing
-> > else, compiler can decide to merge identical string literals.
-> >
-> > Besides, this hack does nothing for non-audited processes - they get
-> > a fresh copy for retry.  It's not time-critical, but having behaviour
-> > subtly differ that way is bogus.
-> >
-> > These days we have very few places that import filename more than once
-> > (9 functions total) and it's easy to massage them so we get rid of all
-> > re-imports.  With that done, we don't need audit_reusename() anymore.
-> > There's no need to memorize userland pointer either.
-> >
-> > Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-> > ---
-> >  fs/namei.c            | 11 +++--------
-> >  include/linux/audit.h | 11 -----------
-> >  include/linux/fs.h    |  1 -
-> >  kernel/auditsc.c      | 23 -----------------------
-> >  4 files changed, 3 insertions(+), 43 deletions(-)
->
-> Looks reasonable to me.  Not sure if you've run it through the
-> audit-testsuite yet, but I'm building a test kernel as I write this,
-> I'll let you know how it goes.
->
-> Acked-by: Paul Moore <paul@paul-moore.com>
+On Mon, Nov 10, 2025 at 11:34:39PM +0000, Viacheslav Dubeyko wrote:
+> On Mon, 2025-11-10 at 23:03 +0000, George Anthony Vernon wrote:
+> > On Tue, Nov 04, 2025 at 11:01:31PM +0000, Viacheslav Dubeyko wrote:
+> > > On Tue, 2025-11-04 at 01:47 +0000, George Anthony Vernon wrote:
+> > > > syzbot is reporting that BUG() in hfs_write_inode() fires upon unmount
+> > > > operation when the inode number of the record retrieved as a result of
+> > > > hfs_cat_find_brec(HFS_ROOT_CNID) is not HFS_ROOT_CNID, for commit
+> > > > b905bafdea21 ("hfs: Sanity check the root record") checked the record
+> > > > size and the record type but did not check the inode number.
+> > > > 
+> > > > Reported-by: syzbot+97e301b4b82ae803d21b@syzkaller.appspotmail.com
+> > > > Closes: https://syzkaller.appspot.com/bug?extid=97e301b4b82ae803d21b    
+> > > > Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> > > > Signed-off-by: George Anthony Vernon <contact@gvernon.com>
+> > > > ---
+> > > >  fs/hfs/super.c | 2 +-
+> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > > 
+> > > > diff --git a/fs/hfs/super.c b/fs/hfs/super.c
+> > > > index 47f50fa555a4..a7dd20f2d743 100644
+> > > > --- a/fs/hfs/super.c
+> > > > +++ b/fs/hfs/super.c
+> > > > @@ -358,7 +358,7 @@ static int hfs_fill_super(struct super_block *sb, struct fs_context *fc)
+> > > >  			goto bail_hfs_find;
+> > > >  		}
+> > > >  		hfs_bnode_read(fd.bnode, &rec, fd.entryoffset, fd.entrylength);
+> > > > -		if (rec.type != HFS_CDR_DIR)
+> > > > +		if (rec.type != HFS_CDR_DIR || rec.dir.DirID != cpu_to_be32(HFS_ROOT_CNID))
+> > > 
+> > > This check is completely unnecessary. Because, we have hfs_iget() then [1]:
+> > > 
+> > > The hfs_iget() calls iget5_locked() [2]:
+> > > 
+> > > And iget5_locked() calls hfs_read_inode(). And hfs_read_inode() will call
+> > > is_valid_cnid() after applying your patch. So, is_valid_cnid() in
+> > > hfs_read_inode() can completely manage the issue. This is why we don't need in
+> > > this modification after your first patch.
+> > > 
+> > 
+> > I think Tetsuo's concern is that a directory catalog record with
+> > cnid > 15 might be returned as a result of hfs_bnode_read, which
+> > is_valid_cnid() would not protect against. I've satisfied myself that
+> > hfs_bnode_read() in hfs_fill_super() will populate hfs_find_data fd
+> > correctly and crash out if it failed to find a record with root CNID so
+> > this path is unreachable and there is no need for the second patch.
+> > 
+> 
+> Technically speaking, we can adopt this check to be completely sure that nothing
+> will be wrong during the mount operation. But I believe that is_valid_cnid()
+> should be good enough to manage this. Potential argument could be that the check
+> of rec.dir.DirID could be faster operation than to call hfs_iget(). But mount is
+> rare and not very fast operation, anyway. And if we fail to mount, then the
+> speed of mount operation is not very important.
 
-FWIW, it passes the audit-testsuite.
+Agreed we're not worried about speed that the mount operation can reach
+fail case. The check would have value if the bnode populated in
+hfs_find_data fd by hfs_cat_find_brec() is bad. That would be very
+defensive, I'm not sure it's necessary.
 
-Tested-by: Paul Moore <paul@paul-moore.com>
+Maybe is_valid_cnid() should be is_valid_catalog_cnid(), since that is
+what it is actually testing for at the interface with the VFS. Would you
+agree?
 
---=20
-paul-moore.com
+> 
+> > > But I think we need to check that root_inode is not bad inode afterwards:
+> > > 
+> > > 	root_inode = hfs_iget(sb, &fd.search_key->cat, &rec);
+> > > 	hfs_find_exit(&fd);
+> > > 	if (!root_inode || is_bad_inode(root_inode))
+> > > 		goto bail_no_root;
+> > 
+> > Agreed, I see hfs_read_inode might return a bad inode. Thanks for
+> > catching this. I noticed also that it returns an int but the return
+> > value holds no meaning; it is always zero.
+> > 
+> > 
+> 
+> I've realized that hfs_write_inode() doesn't check that inode is bad like other
+> file systems do. Probably, we need to have this check too.
+
+Good point, and similarly with HFS+. I'll take a look.
+
+Thanks,
+
+George
 
