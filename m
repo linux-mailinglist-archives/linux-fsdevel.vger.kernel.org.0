@@ -1,167 +1,131 @@
-Return-Path: <linux-fsdevel+bounces-67880-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67881-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22026C4CC3A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 10:49:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A884C4CC7E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 10:54:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6D2AA4EF4F5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 09:44:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 045DB4FBB2D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 09:47:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFCBF2F2619;
-	Tue, 11 Nov 2025 09:44:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kooy5u1e"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 217B92F260C;
+	Tue, 11 Nov 2025 09:46:06 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09333257831;
-	Tue, 11 Nov 2025 09:44:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F01552F2618
+	for <linux-fsdevel@vger.kernel.org>; Tue, 11 Nov 2025 09:46:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762854277; cv=none; b=HdOoUw1vheccgBcV6e2LkFtj9OmOiAP540W6liW+HsrpsCLNWTQISm++fMLE+tv9fHneWW1KiJ9lYdxHt63gammJV9d3rGBi8yjqZCsWT5+Yw7rBVRR/SOkuzoGlKB2GdgB3p9RbSe1JQjmp9rRJQDDFO+0stRNcQOtNQZQAiy4=
+	t=1762854365; cv=none; b=pKqZbIMMwUahgscx49gWHmO7rYKZr1TKLLWBt24xDzccEX9PLqVZMpqfd9vRq/71B5xYs/RGc2cVntl404iU9fcBMYa5/6m/D9g9h2TpX0quzSEoKgugcU5LUxECbIxEuRb3nfAHXGOFxJjAjJXH4vVjAz+Us0dvpOtVBX9bTxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762854277; c=relaxed/simple;
-	bh=kqeh6HDjB2sib9cgqKfp8WMgJr7BrZdH4GoycJq/By0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qu3o0kUoO22JiKxUhSkkDvBkZQsmxu5eNxXgzFXzl3oMThQzY7kg/LPNVeKQhhf4X9XMCE3jI7j+wQUttOYsbzby2TiPFjJm2B1QRlBanY9OCGbMyC47aW/Me2EDFbtKdaHdNLCfuRsEpdmTZur7oShgtkshdAAxXWxKhhIPEMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kooy5u1e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CE96C19421;
-	Tue, 11 Nov 2025 09:44:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762854276;
-	bh=kqeh6HDjB2sib9cgqKfp8WMgJr7BrZdH4GoycJq/By0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kooy5u1eTSpqBxpo5ZqPGT9uLaUfwAp0CEOUGt8JU3w3eUnAUpDM2sf9SdNaIiEO0
-	 ZBixVnZZkxd9tdK73tTagxFfFfsIRwAcAOD//AwHcKEm8qXqsNYV1MLGqqkF6eXJAl
-	 MgqBxM83hJz1FYtY/vglqeddnGLPTay6u+VF7ly9PN3i6BHyLcz+a8dcHf4n222Pta
-	 FWH8+A+Ee4tzj9ssHyEQNW2MpNh3OTvDrNU110IJQ9A0BGGngeXGLekJ8ePODNTez8
-	 mV3jbcWyRqjjhG4mrHHi6Dm+cqnvRlhCv4UuVaoQFgGnK48k92YXgJbwP6uA6aKx/0
-	 eXljy4ppXF1og==
-Date: Tue, 11 Nov 2025 10:44:32 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Carlos Maiolino <cem@kernel.org>, Jan Kara <jack@suse.cz>, 
-	"Martin K. Petersen" <martin.petersen@oracle.com>, linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-raid@vger.kernel.org, linux-block@vger.kernel.org
-Subject: Re: [PATCH 1/4] fs: replace FOP_DIO_PARALLEL_WRITE with a fmode bits
-Message-ID: <20251111-tierwelt-toxisch-1f20fb67e77b@brauner>
-References: <20251029071537.1127397-1-hch@lst.de>
- <20251029071537.1127397-2-hch@lst.de>
+	s=arc-20240116; t=1762854365; c=relaxed/simple;
+	bh=MGqkyJPAh4zW65+tZYFbDdGQAx3QF87Y101n3ZZIGWc=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=AmoAl4MaHqjEkmkvE0XYl2fnNTwzojtzZ62pJtBNIcqcj49sjekPkmKA0HJPpBUJUD2U0DIromHASj1qooZ1Ahuol27/mD+UGMmzo3qsGJ+anqce+vp7Hjw3pyeHm/O8snWObUMmqbASrQYNqXZEd9E+lDI9oKYf8H+xELerzUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-43470d72247so32585ab.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Nov 2025 01:46:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762854363; x=1763459163;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pxx43rg5vTwPZ2wNbygdxPupwm5jqNPgGIjEmJm74aE=;
+        b=SluZVEaOgsTVbtfUw4vkOzWkE7bSDQIR78tllNca31ZKxxySrxhXI1+94SKlT1fcc2
+         mxEnLMugU3+SCQxezfLcyVePMGKOUD+tcrUJsrpPOs8NOrQ43i+INwQZqYqKP6ORB/X2
+         ikgIn0ix9C3wBP7ay3NjEK4SwBHU9gZHO57xsNNf3e/5boqDZYdq0SgdFIe+oGvtepkg
+         NhRQpX90Mi/1IwuUFaLd8HMVOpt3WiiGDteSP31/6b9bYS7xXfAgpBGnj6lpGYEj6Wg0
+         VUjNamlLUWAWRbwRdN6q5YQJ+v8JcbOUqCc8k2/y70aFYKuHLiJkWD7ZVXwnMk9UZluN
+         0s0w==
+X-Forwarded-Encrypted: i=1; AJvYcCW78XSukSMO/2+TGTDJw94qHHAZ4bsHWslM2jsowE8veYRTDp/tV5cnbd6etn4knnG9Fy1oBp9gVJB/C/C0@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTP/QCfWVD8Z+4tmBZ7r0sO3nvdZx0nkbr2I0/K3P6ZZHCx6uF
+	9J3TqKqlVuKIETy+bW9EcbrORHpCwdf3iuax0Aq9opKvAolcsgScaYBAdUtDr8RuvgW1d8MS4Ov
+	krx1c9AelHU74F1fPtKaoaJD6xihBN8zN734zcF7XhIQxMe+3397K/5+5ahg=
+X-Google-Smtp-Source: AGHT+IFqLPDPKBiPRu3uu7IeP812DZQb4h/dmZnbCd8SnvgWxvVU1yv/z8fN5lQPvlaeArHHV0ZoY+wPaoICTLGVJWFDgk3ltdWI
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251029071537.1127397-2-hch@lst.de>
+X-Received: by 2002:a05:6e02:349d:b0:433:4ac7:13bb with SMTP id
+ e9e14a558f8ab-43367dd8a03mr188557675ab.11.1762854363073; Tue, 11 Nov 2025
+ 01:46:03 -0800 (PST)
+Date: Tue, 11 Nov 2025 01:46:03 -0800
+In-Reply-To: <20251111-lausbub-wieweit-76ec521875b2@brauner>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <691305db.a70a0220.22f260.0130.GAE@google.com>
+Subject: Re: [syzbot] [fs?] WARNING in nsproxy_ns_active_put
+From: syzbot <syzbot+0b2e79f91ff6579bfa5b@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, bpf@vger.kernel.org, brauner@kernel.org, 
+	bsegall@google.com, david@redhat.com, dietmar.eggemann@arm.com, jack@suse.cz, 
+	jsavitz@redhat.com, juri.lelli@redhat.com, kartikey406@gmail.com, 
+	kees@kernel.org, liam.howlett@oracle.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-security-module@vger.kernel.org, lorenzo.stoakes@oracle.com, 
+	mgorman@suse.de, mhocko@suse.com, mingo@redhat.com, mjguzik@gmail.com, 
+	oleg@redhat.com, paul@paul-moore.com, peterz@infradead.org, 
+	rostedt@goodmis.org, rppt@kernel.org, sergeh@kernel.org, surenb@google.com, 
+	syzkaller-bugs@googlegroups.com, vbabka@suse.cz, vincent.guittot@linaro.org, 
+	viro@zeniv.linux.org.uk, vschneid@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Oct 29, 2025 at 08:15:02AM +0100, Christoph Hellwig wrote:
-> To properly handle the direct to buffered I/O fallback for devices that
-> require stable writes, we need to be able to set the DIO_PARALLEL_WRITE
-> on a per-file basis and no statically for a given file_operations
-> instance.
+Hello,
 
-Groan...
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+WARNING in __ns_ref_active_put
 
-> 
-> This effectively reverts a part of 210a03c9d51a ("fs: claw back a few
-> FMODE_* bits").
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  fs/ext4/file.c      | 2 +-
->  fs/xfs/xfs_file.c   | 4 ++--
->  include/linux/fs.h  | 7 ++-----
->  io_uring/io_uring.c | 2 +-
->  4 files changed, 6 insertions(+), 9 deletions(-)
-> 
-> diff --git a/fs/ext4/file.c b/fs/ext4/file.c
-> index 7a8b30932189..b484e98b9c78 100644
-> --- a/fs/ext4/file.c
-> +++ b/fs/ext4/file.c
-> @@ -924,6 +924,7 @@ static int ext4_file_open(struct inode *inode, struct file *filp)
->  		filp->f_mode |= FMODE_CAN_ATOMIC_WRITE;
->  
->  	filp->f_mode |= FMODE_NOWAIT | FMODE_CAN_ODIRECT;
-> +	filp->f_mode |= FMODE_DIO_PARALLEL_WRITE;
->  	return dquot_file_open(inode, filp);
->  }
->  
-> @@ -978,7 +979,6 @@ const struct file_operations ext4_file_operations = {
->  	.splice_write	= iter_file_splice_write,
->  	.fallocate	= ext4_fallocate,
->  	.fop_flags	= FOP_MMAP_SYNC | FOP_BUFFER_RASYNC |
-> -			  FOP_DIO_PARALLEL_WRITE |
->  			  FOP_DONTCACHE,
->  };
->  
-> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-> index 2702fef2c90c..5703b6681b1d 100644
-> --- a/fs/xfs/xfs_file.c
-> +++ b/fs/xfs/xfs_file.c
-> @@ -1553,6 +1553,7 @@ xfs_file_open(
->  	if (xfs_is_shutdown(XFS_M(inode->i_sb)))
->  		return -EIO;
->  	file->f_mode |= FMODE_NOWAIT | FMODE_CAN_ODIRECT;
-> +	file->f_mode |= FMODE_DIO_PARALLEL_WRITE;
->  	if (xfs_get_atomic_write_min(XFS_I(inode)) > 0)
->  		file->f_mode |= FMODE_CAN_ATOMIC_WRITE;
->  	return generic_file_open(inode, file);
-> @@ -1951,8 +1952,7 @@ const struct file_operations xfs_file_operations = {
->  	.fadvise	= xfs_file_fadvise,
->  	.remap_file_range = xfs_file_remap_range,
->  	.fop_flags	= FOP_MMAP_SYNC | FOP_BUFFER_RASYNC |
-> -			  FOP_BUFFER_WASYNC | FOP_DIO_PARALLEL_WRITE |
-> -			  FOP_DONTCACHE,
-> +			  FOP_BUFFER_WASYNC | FOP_DONTCACHE,
->  };
->  
->  const struct file_operations xfs_dir_file_operations = {
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index c895146c1444..09b47effc55e 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -128,9 +128,8 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff_t offset,
->  #define FMODE_WRITE_RESTRICTED	((__force fmode_t)(1 << 6))
->  /* File supports atomic writes */
->  #define FMODE_CAN_ATOMIC_WRITE	((__force fmode_t)(1 << 7))
-> -
-> -/* FMODE_* bit 8 */
-> -
-> +/* Supports non-exclusive O_DIRECT writes from multiple threads */
-> +#define FMODE_DIO_PARALLEL_WRITE ((__force fmode_t)(1 << 8))
->  /* 32bit hashes as llseek() offset (for directories) */
->  #define FMODE_32BITHASH         ((__force fmode_t)(1 << 9))
->  /* 64bit hashes as llseek() offset (for directories) */
-> @@ -2317,8 +2316,6 @@ struct file_operations {
->  #define FOP_BUFFER_WASYNC	((__force fop_flags_t)(1 << 1))
->  /* Supports synchronous page faults for mappings */
->  #define FOP_MMAP_SYNC		((__force fop_flags_t)(1 << 2))
-> -/* Supports non-exclusive O_DIRECT writes from multiple threads */
-> -#define FOP_DIO_PARALLEL_WRITE	((__force fop_flags_t)(1 << 3))
->  /* Contains huge pages */
->  #define FOP_HUGE_PAGES		((__force fop_flags_t)(1 << 4))
->  /* Treat loff_t as unsigned (e.g., /dev/mem) */
-> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-> index 296667ba712c..668937da27e8 100644
-> --- a/io_uring/io_uring.c
-> +++ b/io_uring/io_uring.c
-> @@ -469,7 +469,7 @@ static void io_prep_async_work(struct io_kiocb *req)
->  
->  		/* don't serialize this request if the fs doesn't need it */
->  		if (should_hash && (req->file->f_flags & O_DIRECT) &&
-> -		    (req->file->f_op->fop_flags & FOP_DIO_PARALLEL_WRITE))
-> +		    (req->file->f_mode & FMODE_DIO_PARALLEL_WRITE))
->  			should_hash = false;
->  		if (should_hash || (ctx->flags & IORING_SETUP_IOPOLL))
->  			io_wq_hash_work(&req->work, file_inode(req->file));
-> -- 
-> 2.47.3
-> 
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 6489 at kernel/nscommon.c:171 __ns_ref_active_put+0x3d7/0x450 kernel/nscommon.c:171
+Modules linked in:
+CPU: 0 UID: 0 PID: 6489 Comm: syz.0.18 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+RIP: 0010:__ns_ref_active_put+0x3d7/0x450 kernel/nscommon.c:171
+Code: 4d 8b 3e e9 1b fd ff ff e8 b6 61 32 00 90 0f 0b 90 e9 29 fd ff ff e8 a8 61 32 00 90 0f 0b 90 e9 59 fd ff ff e8 9a 61 32 00 90 <0f> 0b 90 e9 72 ff ff ff e8 8c 61 32 00 90 0f 0b 90 e9 64 ff ff ff
+RSP: 0018:ffffc90003457d50 EFLAGS: 00010293
+RAX: ffffffff818e5b86 RBX: 00000000ffffffff RCX: ffff88802cc69e40
+RDX: 0000000000000000 RSI: 00000000ffffffff RDI: 0000000000000000
+RBP: ffffc90003457e00 R08: ffff8880320be42b R09: 1ffff11006417c85
+R10: dffffc0000000000 R11: ffffed1006417c86 R12: dffffc0000000000
+R13: 1ffff11006417c84 R14: ffff8880320be420 R15: ffff8880320be428
+FS:  00007fe11c3746c0(0000) GS:ffff888125cf3000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000001b2d863fff CR3: 000000007798c000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ nsproxy_ns_active_put+0x4a/0x200 fs/nsfs.c:701
+ free_nsproxy+0x21/0x140 kernel/nsproxy.c:190
+ put_nsset kernel/nsproxy.c:341 [inline]
+ __do_sys_setns kernel/nsproxy.c:594 [inline]
+ __se_sys_setns+0x1459/0x1c60 kernel/nsproxy.c:559
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fe11b590ef7
+Code: 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 b8 34 01 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fe11c373fd8 EFLAGS: 00000246 ORIG_RAX: 0000000000000134
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007fe11b590ef7
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00000000000000c9
+RBP: 00007fe11b611f91 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007fe11b7e6038 R14: 00007fe11b7e5fa0 R15: 00007ffcd9b83d18
+ </TASK>
+
+
+Tested on:
+
+commit:         18b5c400 Merge patch series "ns: header cleanups and i..
+git tree:       https://github.com/brauner/linux.git namespace-6.19
+console output: https://syzkaller.appspot.com/x/log.txt?x=12c08658580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=59952e73920025e4
+dashboard link: https://syzkaller.appspot.com/bug?extid=0b2e79f91ff6579bfa5b
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+
+Note: no patches were applied.
 
