@@ -1,115 +1,99 @@
-Return-Path: <linux-fsdevel+bounces-67886-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67887-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 883DFC4CCC7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 10:57:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53F4FC4CD24
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 10:58:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F18EA4F9BFB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 09:50:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D2E8426756
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 09:50:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9584C2F261C;
-	Tue, 11 Nov 2025 09:50:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 582A32F290B;
+	Tue, 11 Nov 2025 09:50:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="WXA69s3/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KXxNjQ+t"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D273E256C87;
-	Tue, 11 Nov 2025 09:50:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A51F22EDD72;
+	Tue, 11 Nov 2025 09:50:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762854603; cv=none; b=XEEvzNwvt7G1skMKwHDDzttBvBr1PAkLGKutrIZE9O5RhBGstNREAwaMjRdqk5Xjbm5GSCAcsF9zQUCK3cmbmxqCoTf/z46dr8aqrCiwz/bossJfSLnDZiZeqnXKuDRL6QjXRqfXNpHU42RBqM3C9nRaUiCT7mKii0YVl+qagZU=
+	t=1762854612; cv=none; b=WAf+eXzyV1vZzZcJWN2r/B4i9C/E9AY8p+qUjR8Ux8HGI9KFawWhbeXT3gRZ5kf1XNvLkNVhDN5MDUO27Tsj9vHglkmKa3+spfzuiZJ8fJKHQyRORbQqb/pdrRkPGnRFwHFeZHRvE6rRB9OuWW0DJMeYHkP155Uu3g1o74jKy14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762854603; c=relaxed/simple;
-	bh=D36LveqlJs6QkLgZQAhRPR+Lxgos/gtCjDPl8hDAgYw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dYPKS9dvpG1wsLawvEa11bgustnkaii0gykLIx3dymWAUt+CV59nDG0ENMWaYUZUDYwrpUpAJvKuyMNMGRoDlB7eo8Tt7qyayzM5lR0Q5ymmO6hysdjIHvAtqfWN50K8CyLALMBtkgNpAm3PkFDbsjIXdqBlQWRa5AkLLud8POQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=WXA69s3/; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=6bsPdtBaqJ4UPF5R7K+ouK1dJ6DCyxBWv0w/QZnr7cE=; b=WXA69s3/ndSSCDKncRmaO/hjic
-	O1y94fGm7YG4wpp1EnXG6yDbvuMjQmTNWvtrC7zZiZbJKSJQ3qPVVV+wFbvU9CFAsYmwuwFWd9TQz
-	502RxsFSRuMlb+ZsoiAw/Eyy0gQ2krWPMw0fEZQ3Z1ZbYzdnWOQhbqHDcknhoQE/b6LUe5OiGj/uX
-	ilItJNCZJAw3WeivKD5Fmg/6ibDscl4juFxBkBG0efupSFSIBUUIdS3DG4fn/rMt/0u9B5d/iqbE3
-	VTHj0bLhd9xu7SVaxQVogoLmue/J7I9fcpgSO2MhCBANTrOxCwyy94lXIyVk5oV9wmikQTnsNUf6U
-	oFmhH9OQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vIl0f-0000000FPaa-0OxV;
-	Tue, 11 Nov 2025 09:49:57 +0000
-Date: Tue, 11 Nov 2025 09:49:57 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: bot+bpf-ci@kernel.org
-Cc: linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org,
-	brauner@kernel.org, jack@suse.cz, raven@themaw.net,
-	miklos@szeredi.hu, neil@brown.name, a.hindborg@kernel.org,
-	linux-mm@kvack.org, linux-efi@vger.kernel.org,
-	ocfs2-devel@lists.linux.dev, kees@kernel.org, rostedt@goodmis.org,
-	gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-	paul@paul-moore.com, casey@schaufler-ca.com,
-	linuxppc-dev@lists.ozlabs.org, john.johansen@canonical.com,
-	selinux@vger.kernel.org, borntraeger@linux.ibm.com,
-	bpf@vger.kernel.org, ast@kernel.org, andrii@kernel.org,
-	daniel@iogearbox.net, martin.lau@kernel.org, eddyz87@gmail.com,
-	yonghong.song@linux.dev, clm@meta.com, ihor.solodrai@linux.dev
-Subject: Re: [PATCH v3 34/50] selinuxfs: new helper for attaching files to
- tree
-Message-ID: <20251111094957.GT2441659@ZenIV>
-References: <20251111065520.2847791-35-viro@zeniv.linux.org.uk>
- <70d825699c6e0a7e6cb978fdefba5935d5a515702e22e732d5c2ad919cfe010b@mail.kernel.org>
+	s=arc-20240116; t=1762854612; c=relaxed/simple;
+	bh=l16okVrNgxsDI6U6EIfS9tmHA0egk0SYJcVLBk1Q3gc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VO5cpq+tz3s1AtkiXws7W4UFy1wGXQa4LFqOWxlfibyPBLyQjPWApALRImmxFq2M84n7osHewjSUgPv0406No7xGb3+VWIC8NZgywEcdhkunfD0h35UHQEDCNy6bxMyY2o4MIN1p9mPDZxglA6bW3GmCRXSuMaalkS1Ijn/NcNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KXxNjQ+t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3C31C19422;
+	Tue, 11 Nov 2025 09:50:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762854612;
+	bh=l16okVrNgxsDI6U6EIfS9tmHA0egk0SYJcVLBk1Q3gc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=KXxNjQ+tZmUOHcS7hcmQM0Mq6bsCH3Bz5+630nwMTbL4iZptKiz8x0BPEFEduZcF7
+	 tXc8MgguM7CYN5/unB5NEu4B/Bn78NkqOx2x1bSCim7M0gvbdgx7cCIBQer7PhsXcs
+	 YqhATkUtpaEg8lRpQSRG4AhjEhJJ5s2lD2o+BxqWp/xJ5NsgOG1gVTREod7q8j6amH
+	 EZ/4J1bXGddHJkfxYYUtDfC3gZtuPZzYv66IIG8TVnEYzpTxNoLuIG/qxJxvW5KZV/
+	 5hermCcYKCmGBOL7RnWAsiQZfSK6rTsQwCZddFYXGwcVRTyhW6ZXSxkJMAawuXFISC
+	 //8m4QbyBoO9A==
+From: Christian Brauner <brauner@kernel.org>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fs: move inode fields used during fast path lookup closer together
+Date: Tue, 11 Nov 2025 10:50:07 +0100
+Message-ID: <20251111-zeremonie-amortisieren-d1455ae20d5f@brauner>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20251109121931.1285366-1-mjguzik@gmail.com>
+References: <20251109121931.1285366-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <70d825699c6e0a7e6cb978fdefba5935d5a515702e22e732d5c2ad919cfe010b@mail.kernel.org>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1330; i=brauner@kernel.org; h=from:subject:message-id; bh=l16okVrNgxsDI6U6EIfS9tmHA0egk0SYJcVLBk1Q3gc=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQKs53X/eYoEaf27cfqj9OOrFm0t33D+YC14Tp2voLq6 VfWB5tN7yhlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZhI2DeGP7x8J+qOTna05Bbc 1SC14dyL5SsF+d0Kjl/YXPHFXkvx9iqGf1bRXV8995iJNLro132uSp53ievaJt3nzPJT9nbUJk3 hZQUA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Tue, Nov 11, 2025 at 07:53:18AM +0000, bot+bpf-ci@kernel.org wrote:
-
-> Can this leak the parent directory's reference count? The parent inode's
-> link count is incremented with inc_nlink(d_inode(dir)) before calling
-> sel_attach(). When sel_attach()->d_alloc_name() fails and returns NULL,
-> sel_attach() correctly cleans up the child inode with iput() and returns
-> ERR_PTR(-ENOMEM). However, the parent directory's link count has already
-> been incremented and is never decremented on this error path.
+On Sun, 09 Nov 2025 13:19:31 +0100, Mateusz Guzik wrote:
+> This should avoid *some* cache misses.
 > 
-> In the original code, the parent link count increment happened after
-> d_add() succeeded, ensuring it only occurred when the full operation
-> completed successfully.
+> Successful path lookup is guaranteed to load at least ->i_mode,
+> ->i_opflags and ->i_acl. At the same time the common case will avoid
+> looking at more fields.
+> 
+> struct inode is not guaranteed to have any particular alignment, notably
+> ext4 has it only aligned to 8 bytes meaning nearby fields might happen
+> to be on the same or only adjacent cache lines depending on luck (or no
+> luck).
+> 
+> [...]
 
-All callers of sel_make_dir() proceed to remove the parent in case of
-failure.  All directories are created either at mount time or at
-policy reload afterwards.  A failure in the former will have
-sel_fill_super() return an error, with the entire filesystem instance
-being torn apart by the cleanup path in its caller (get_tree_single()).
-No directories survive that.  A failure in the latter (in something
-called from sel_make_policy_nodes()) will be taken care of by the
-call of simple_recursive_removal() in the end of sel_make_policy_nodes() -
-there we
-	1.  create a temporary directory ("/.swapover").  We do *NOT*
-use sel_make_dir() for that - see sel_make_swapover_dir().  If that has
-failed, we return an error.
-	2.  create and populate two subtrees in it ("booleans" and "classes").
-That's the step where we would create subdirectories and that's where
-sel_make_dir() failures might occur.
-	3.  if the subtree creation had been successful, swap "/.swapover/booleans"
-with "/booleans" and "/.swapover/classes" with "/classes" respectively.
-	4.  recursively remove "/.swapover", along with anything that might
-be in it.  In case of success that would be the old "/classes" and "/booleans"
-that got replaced, in case of failure - whatever we have partially created.
+Applied to the vfs-6.19.fs_header branch of the vfs/vfs.git tree.
+Patches in the vfs-6.19.fs_header branch should appear in linux-next soon.
 
-That's the same reason why we don't need to bother with failure cleanups in
-the functions that populate directories - if they fail halfway through, the
-entire (sub)tree is going to be wiped out in one pass.
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.19.fs_header
+
+[1/1] fs: move inode fields used during fast path lookup closer together
+      https://git.kernel.org/vfs/vfs/c/dca3aa666fbd
 
