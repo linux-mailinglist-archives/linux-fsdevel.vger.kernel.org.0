@@ -1,103 +1,229 @@
-Return-Path: <linux-fsdevel+bounces-67900-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67901-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DA01C4D095
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 11:31:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12FF9C4D1CD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 11:41:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0B53188F432
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 10:31:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB30C420723
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 10:33:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BA5734D931;
-	Tue, 11 Nov 2025 10:30:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A544134D90E;
+	Tue, 11 Nov 2025 10:33:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="q4HHA45X"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="oERShwSy";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="XNUAfiDO";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="oERShwSy";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="XNUAfiDO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF8FB2F546D
-	for <linux-fsdevel@vger.kernel.org>; Tue, 11 Nov 2025 10:30:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 614A734CFAD
+	for <linux-fsdevel@vger.kernel.org>; Tue, 11 Nov 2025 10:33:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762857008; cv=none; b=eu01A3WBvFRgTklBZh4RC2PTC0Tki8+Knr3RAkz2CsjQ/B8ymuy9IJ8Tg89rtBpFV+LncT1IK25LzAvvDdvA6u9SdH1Hinz2auj7oIAYNpn1suJw7D5VeLgItY0OVsSKVizVQ1Yyl8yYac2O0JxRE8D/mA4NXBNjSmyh0bFgNuU=
+	t=1762857227; cv=none; b=AW5qMRGFTaIcm8mHEjYyfcVkot9KaV8P/SRk29DYDrEXkKsKI/7ZvCHUkJN9YKCiOSKIKu5Avu9f6c00KucQUs+bpVxD7coGcz4elHfqiJr5Qfrh4gDZh7V80e7LzZ5IRubYYETegABK/gKF/IQfOANMem3JgKrHlvcgXb6i2jk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762857008; c=relaxed/simple;
-	bh=ErpvLu+msmOQH+DLoUzEraHYQEPe7HwAu5dxR8qbtAo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=F9CatfJb63f5T2MYafj68lOllwxUxbtaj1StB+gh/4bRgsdPaSqqD7gYBOjdYMTodE757Vl7rjXVVl4/WVBBVoFFuhKdSfO0pzCgZ+kGDfAu3Jayk0kRBRgj4OX3lquJsC6gmLQIe6YpjVjVcgbkXIpEE/JBCYF/EXBfQD4Y07w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=q4HHA45X; arc=none smtp.client-ip=209.85.160.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4e4d9fc4316so40133711cf.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Nov 2025 02:30:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1762857004; x=1763461804; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ErpvLu+msmOQH+DLoUzEraHYQEPe7HwAu5dxR8qbtAo=;
-        b=q4HHA45Xx0xTDskll4DjSU6SWhWolRSlpTtA8cDnYPTI/9mbRIiB52rjVByj7Xz8ay
-         nFP0//QDDttEQdXDUPTQYuhtZxg4E9Z6etcMAQhjvLkWtzN7d8du6hlQT4fTRYhV57g2
-         fSGQ47hY+Biwn3/0+lGUjV8ol/iJevVJFrQy0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762857004; x=1763461804;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ErpvLu+msmOQH+DLoUzEraHYQEPe7HwAu5dxR8qbtAo=;
-        b=Zx1T4DVw5ZFl1OdiKIGzlWvh1BJrOKqMkKMXZPzhJl8kVQvIVt4AeAMF8YZDfQZDA5
-         YOz5qb5x+ea3xP8YOvlq4enYBBsuZ6aU4SMNMxu9UFC5MrmbQv9b3Wrovqr5LczsEfTm
-         dhMRz0OCO5YCToZhsd45MqPorjFKq8yS2KsA8aTNbOLHlirKC6hsNcS1Kp0KYs5d3s0/
-         ybyZ/oRMfM0o4IKfOUfz4mYapoOJUQX4OPRay3w0FWHucyokgBikq4T0VBOOH7TKrNMM
-         LqtSSqwFNQuHFozbDeN3SSI3XVJ+nf0d2PMBOoRgLHuUbun84XwWZGpQ//wNiQ7ipR42
-         +eyQ==
-X-Gm-Message-State: AOJu0YzEGu6aABPRPaMBWF0H2arXxktNcc/UttCecOZcsUX0TsQ1F0aq
-	bfir0gRtrdisgjPQLEZkJ1s+PJo2cwwcAuUgklafeuyEGl6JW8PlXQVO23Va9cnitu3d/Zr48fl
-	TwsJ6rZSZrTDGOMSzkn5nOgQumQJ5ShydnB/NHEfR+Q==
-X-Gm-Gg: ASbGncs4pgSKE0+WNA3rHXMA/1EOqa+CqiN8OYJSQdru6GWMrkhPdT8wNOZhWIn0u1b
-	vQpG4S7nvj0JnNDYhItpsEvJqxmDO19le/Z7oBvA/+v8o9bOvwTYNoNwdInjyhXji8C3lnFS8oF
-	yzp7M6nqmpqG/ct3al1MT4cn+Xmh60aPAp/7EFBxE6Nd1ssH/zEJ0eQIGqAEsaAwsMzhRYsPDgc
-	wHi9yr72KNUZbXD0pZ/17HKUOzvFVm9/Bp/cipmnfBItO3xea0j38ZTuRogeC3/dRxbVw==
-X-Google-Smtp-Source: AGHT+IG1vPc79jE1NxMTWUcAkMOFXJ1dO7xwNLHncVzXeQGMi6M4ZcaWG7wZ9Wn4xgn8RqaQcm4UKxcrnMz8XFw/71I=
-X-Received: by 2002:ac8:7d8b:0:b0:4ed:b378:145d with SMTP id
- d75a77b69052e-4edb3781c5fmr87056701cf.45.1762857003684; Tue, 11 Nov 2025
- 02:30:03 -0800 (PST)
+	s=arc-20240116; t=1762857227; c=relaxed/simple;
+	bh=Aiyv5ucnncWw2iaSvGLNFpegRjmlSJULqrmNLCRCH4I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gc/Ky87RioVcD9Znuiwuode3PcLLw9WTeXicYAH1zJfJ4KmeTmrjcUMpyvg6/fcgFa5Tq8n3sd8I3XsMZ6Cv+R2a+nvO7d2YB0spInHuDrC0fXw6cSuNn8WOk6a+H16+fvmjGiBgj5F5lsCEnU0rYtDvnS6z+XBIWuSI7nBfavU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=oERShwSy; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=XNUAfiDO; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=oERShwSy; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=XNUAfiDO; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 093931F6E6;
+	Tue, 11 Nov 2025 10:33:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762857223; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NL8a+UlhbGyXd2WdlBHIwL7vr0c6ivysNI9rxft/p9U=;
+	b=oERShwSyYBtspyRIyoopoZRIXEwdsO/rC2ArSz/bj/rPcHc3nfiD2q89H8uLYMW4SGS8ke
+	u8yKWMLhpbdGPRE6OzELQ13YzpPV2WaKnx2nA+JkFhkY/rWo9LABpVYX/EPZ+gvFQHPlb3
+	Y6TX7WhxiS/YJp4zKSbi5ftrV3JwA0U=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762857223;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NL8a+UlhbGyXd2WdlBHIwL7vr0c6ivysNI9rxft/p9U=;
+	b=XNUAfiDOVXT3RAvs62TpP1BZ+GhMf08UvsgK5W3Hv2FH1E5JCggH1+w3ebXpooDw49hbyG
+	Mr1y90tZ4w49QDDw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=oERShwSy;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=XNUAfiDO
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762857223; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NL8a+UlhbGyXd2WdlBHIwL7vr0c6ivysNI9rxft/p9U=;
+	b=oERShwSyYBtspyRIyoopoZRIXEwdsO/rC2ArSz/bj/rPcHc3nfiD2q89H8uLYMW4SGS8ke
+	u8yKWMLhpbdGPRE6OzELQ13YzpPV2WaKnx2nA+JkFhkY/rWo9LABpVYX/EPZ+gvFQHPlb3
+	Y6TX7WhxiS/YJp4zKSbi5ftrV3JwA0U=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762857223;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NL8a+UlhbGyXd2WdlBHIwL7vr0c6ivysNI9rxft/p9U=;
+	b=XNUAfiDOVXT3RAvs62TpP1BZ+GhMf08UvsgK5W3Hv2FH1E5JCggH1+w3ebXpooDw49hbyG
+	Mr1y90tZ4w49QDDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id F1FBE148ED;
+	Tue, 11 Nov 2025 10:33:42 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id iykQOwYRE2nMMQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 11 Nov 2025 10:33:42 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 9ED77A28C8; Tue, 11 Nov 2025 11:33:34 +0100 (CET)
+Date: Tue, 11 Nov 2025 11:33:34 +0100
+From: Jan Kara <jack@suse.cz>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, tytso@mit.edu, 
+	adilger.kernel@dilger.ca, yi.zhang@huawei.com, libaokun1@huawei.com, yangerkun@huawei.com
+Subject: Re: [PATCH 1/4] ext4: make ext4_es_cache_extent() support overwrite
+ existing extents
+Message-ID: <hmfdz3arnmmmrvar2266ye4vb64txvxsa4hrpzppb4sp354b25@tnpvja7o7uww>
+References: <20251031062905.4135909-1-yi.zhang@huaweicloud.com>
+ <20251031062905.4135909-2-yi.zhang@huaweicloud.com>
+ <l7tb75bsk52ybeok737b7o4ag4zeleowtddf3v6wcbnhbom4tx@xv643wp5wp6a>
+ <ee200d75-6f3e-4514-8fd4-8cdcbd3754d4@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251111065520.2847791-1-viro@zeniv.linux.org.uk> <20251111065520.2847791-4-viro@zeniv.linux.org.uk>
-In-Reply-To: <20251111065520.2847791-4-viro@zeniv.linux.org.uk>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Tue, 11 Nov 2025 11:29:52 +0100
-X-Gm-Features: AWmQ_bnbS5BGnOdlDcNli2J3_mWe2QdNv2AalQvWZZg8jjhCbQzLKZqYiVdFPQQ
-Message-ID: <CAJfpegv5eZK=70GEdbofg8u-CKS7gL6Ur5PD86Ay4h3Z8D986A@mail.gmail.com>
-Subject: Re: [PATCH v3 03/50] new helper: simple_remove_by_name()
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org, 
-	brauner@kernel.org, jack@suse.cz, raven@themaw.net, neil@brown.name, 
-	a.hindborg@kernel.org, linux-mm@kvack.org, linux-efi@vger.kernel.org, 
-	ocfs2-devel@lists.linux.dev, kees@kernel.org, rostedt@goodmis.org, 
-	gregkh@linuxfoundation.org, linux-usb@vger.kernel.org, paul@paul-moore.com, 
-	casey@schaufler-ca.com, linuxppc-dev@lists.ozlabs.org, 
-	john.johansen@canonical.com, selinux@vger.kernel.org, 
-	borntraeger@linux.ibm.com, bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ee200d75-6f3e-4514-8fd4-8cdcbd3754d4@huaweicloud.com>
+X-Rspamd-Queue-Id: 093931F6E6
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email,huawei.com:email]
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: -4.01
+X-Spam-Level: 
 
-On Tue, 11 Nov 2025 at 07:55, Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> simple_recursive_removal(), but instead of victim dentry it takes
-> parent + name.
->
-> Used to be open-coded in fs/fuse/control.c, but there's no need to expose
-> the guts of that thing there and there are other potential users, so
-> let's lift it into libfs...
->
-> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Hi!
 
-Acked-by: Miklos Szeredi <mszeredi@redhat.com>
+On Thu 06-11-25 21:02:35, Zhang Yi wrote:
+> On 11/6/2025 5:15 PM, Jan Kara wrote:
+> > On Fri 31-10-25 14:29:02, Zhang Yi wrote:
+> >> From: Zhang Yi <yi.zhang@huawei.com>
+> >>
+> >> Currently, ext4_es_cache_extent() is used to load extents into the
+> >> extent status tree when reading on-disk extent blocks. Since it may be
+> >> called while moving or modifying the extent tree, so it does not
+> >> overwrite existing extents in the extent status tree and is only used
+> >> for the initial loading.
+> >>
+> >> There are many other places in ext4 where on-disk extents are inserted
+> >> into the extent status tree, such as in ext4_map_query_blocks().
+> >> Currently, they call ext4_es_insert_extent() to perform the insertion,
+> >> but they don't modify the extents, so ext4_es_cache_extent() would be a
+> >> more appropriate choice. However, when ext4_map_query_blocks() inserts
+> >> an extent, it may overwrite a short existing extent of the same type.
+> >> Therefore, to prepare for the replacements, we need to extend
+> >> ext4_es_cache_extent() to allow it to overwrite existing extents with
+> >> the same type.
+> >>
+> >> In addition, since cached extents can be more lenient than the extents
+> >> they modify and do not involve modifying reserved blocks, it is not
+> >> necessary to ensure that the insertion operation succeeds as strictly as
+> >> in the ext4_es_insert_extent() function.
+> >>
+> >> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+> > 
+> > Thanks for writing this series! I think we can actually simplify things
+> > event further. Extent status tree operations can be divided into three
+> > groups:
+> > 1) Lookups in es tree - protected only by i_es_lock.
+> > 2) Caching of on-disk state into es tree - protected by i_es_lock and
+> >    i_data_sem (at least in read mode).
+> > 3) Modification of existing state - protected by i_es_lock and i_data_sem
+> >    in write mode.
+> 
+> Yeah.
+> 
+> > 
+> > Now because 2) has exclusion vs 3) due to i_data_sem, the observation is
+> > that 2) should never see a real conflict - i.e., all intersecting entries
+> > in es tree have the same status, otherwise this is a bug.
+> 
+> While I was debugging, I observed two exceptions here.
+> 
+> A. The first exceptions is about the delay extent. Since there is no actual
+>    extent present in the extent tree on the disk, if a delayed extent
+>    already exists in the extent status tree and someone calls
+>    ext4_find_extent()->ext4_cache_extents() to cache an extent at the same
+>    location, then a status mismatch will occur (attempting to replace
+>    the delayed extent with a hole). This is not a bug.
+> B. I also observed that ext4_find_extent()->ext4_cache_extents() is called
+>    during splitting and conversion between unwritten and written states (in
+>    most scenarios, EXT4_EX_NOCACHE is not added). However, because the
+>    process is in an intermediate state of handling extents, there can be
+>    cases where the status do not match. I did not analyze this scenario in
+>    detail, but since ext4_es_insert_extent() is called at the end of the
+>    processing to ensure the final state is correct, I don't think this is a
+>    practical issue either.
+
+Thanks for bringing this up. I didn't think about these two cases. As for
+case A that is easy to deal with as you write below. A hole insertion can
+be deemed compatible with existing delalloc extent.
+
+Case B is more difficult and I think I need to better understand the
+details there to decide what to do. Only extent splitting (as it happens
+e.g. with EXT4_GET_BLOCKS_PRE_IO) should keep extents in the extent tree and
+extent status tree compatible. So it has to be something like
+EXT4_GET_BLOCKS_CONVERT case. There indeed after we call
+ext4_ext_mark_initialized() we have initialized extent on disk but in
+extent status tree it is still as unwritten. But I just didn't find a place
+in the extent conversion path that would modify extent state on disk and
+then call ext4_find_extent(). Can you perhaps share a stacktrace where the
+extent incompatibility was hit from ext4_cache_extents()? Thanks!
+
+								Honza
+
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
