@@ -1,235 +1,207 @@
-Return-Path: <linux-fsdevel+bounces-67860-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67861-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A332C4C627
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 09:26:10 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE45BC4C696
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 09:33:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B91818979BE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 08:22:37 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F0F034F5381
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 08:25:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDECE2BEFE4;
-	Tue, 11 Nov 2025 08:22:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BA372E6127;
+	Tue, 11 Nov 2025 08:25:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="1l6Vgn9W";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QT/2PNIh";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="AbCJLGaq";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="RyY/sz17"
+	dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b="cqChozWH";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ttTB93KD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fout-b7-smtp.messagingengine.com (fout-b7-smtp.messagingengine.com [202.12.124.150])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA45E2882AA
-	for <linux-fsdevel@vger.kernel.org>; Tue, 11 Nov 2025 08:22:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEDA434D39F;
+	Tue, 11 Nov 2025 08:25:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762849325; cv=none; b=FLiCrOeE3rj/0Q3GdJx35atJoa51Dm3sVBKOPmCjLo3KhIo0/ommJJk3HOpjJVEli10N2GNIT3XBlR2DYSNp3QpbA8TtGTlQ9g6zZ4Ym5auvXzzlb8ntlauYvkbyehvwlhP2V/u2vf98qRBlGX6G+RmKrGewq9Py/gq6a9lGSeQ=
+	t=1762849538; cv=none; b=MQ/QkONeAZHSn+F3BpSBRXcf7tegwbra25mv5ZubtoG2ujXI7+RzLrlPbmsaCoE2RdFkTvO1ShqlrD/jvkZdVf+h/wTOih1ympJSMgtm5lm4h7GcK+wZqvbIlzuFWU/1sSqITxu7iz25YjZqUYLrC8ABNQXfLIBWJq1NhSPyjPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762849325; c=relaxed/simple;
-	bh=SvnP/2kFGpZb/rH94jpz0sj8LOr5nXGQyvKYmHrDiuI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h2VXTQXPDiAZABor6Qwwpm/vN/j6wselaEojd/G1tzRd/792KsDilJcfhzGaJYU4js2VjXbICboZJFG1A85r0mdvQynHSjs/ebdeD05Mp1togy+u/3qh+ZYDU1w1Nge7q/ajdYd/QJ/nT5lA2FTks6fh6To5vbXNYaehOLrYHus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=1l6Vgn9W; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QT/2PNIh; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=AbCJLGaq; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=RyY/sz17; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 6505D21C07;
-	Tue, 11 Nov 2025 08:21:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762849316; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Zk9wMRFfHEVY2Jm5yWIcHNEmM7zAyv2N5Xyuix1WNEk=;
-	b=1l6Vgn9WuDnIVY8fN9JTLLXcOXhPNZ/txVKCNeCQXz8lNQKxcGgZ5RHOGCmUpcUZfeAhvZ
-	tZUQHm9PbO7gZT8wHfANKKKrny7A3QfnBuafAv1jwlWPgi1eHjg0ciMSSfZrbpKLoP3MMj
-	LcJ24RwY8khNL+BaWAOGniEwf+VczVA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762849316;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Zk9wMRFfHEVY2Jm5yWIcHNEmM7zAyv2N5Xyuix1WNEk=;
-	b=QT/2PNIhRcN83djfbdXY8eHQHhwe44W/Lqt/qVnmsyKbCXLgun5Vsr/UY421bk2LZtOG2c
-	kJq3bX9mePNA0nDQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=AbCJLGaq;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="RyY/sz17"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762849315; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Zk9wMRFfHEVY2Jm5yWIcHNEmM7zAyv2N5Xyuix1WNEk=;
-	b=AbCJLGaqGks2fAJ4QfvuAr0stExAKigxzPX2Ylv4jUv7YiIF90Iw9d4PD3nDIjLWIZZefI
-	kbupPB2rjlIl26ubgX54cXy9GiI7x0k4GOeLPh+/7CpDAhLV75o+NOoJ/7vj20cRFKbGEs
-	Eaak5fF0bOZHq4BV+GfLSsmStPHxkqc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762849315;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Zk9wMRFfHEVY2Jm5yWIcHNEmM7zAyv2N5Xyuix1WNEk=;
-	b=RyY/sz17uwrCn38hEV5+pNuvOhb4TThKBMyAwE4aXpFkTz2aFp6umpRVwugJMcTGEIOaMF
-	Imb6MAhiZ2E9ZxCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 59B8314869;
-	Tue, 11 Nov 2025 08:21:55 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id tpTeFSPyEmnHKwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 11 Nov 2025 08:21:55 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id E6D2AA28C8; Tue, 11 Nov 2025 09:21:50 +0100 (CET)
-Date: Tue, 11 Nov 2025 09:21:50 +0100
-From: Jan Kara <jack@suse.cz>
-To: Andrei Vagin <avagin@google.com>
-Cc: Christian Brauner <brauner@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH] fs/namespace: correctly handle errors returned by
- grab_requested_mnt_ns
-Message-ID: <qfo4k2dkvfw3nhttuw63xhhlar2ixupi37uk6uskctt3672ntf@3mtjgep63msk>
-References: <20251111062815.2546189-1-avagin@google.com>
+	s=arc-20240116; t=1762849538; c=relaxed/simple;
+	bh=5eMAE6CFiVek50M/mKTSUsxSKOVLCCBxb48Ff6yt/jc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pwhqj0xG639uo3uNbZxLKz6CBrkbTJW+mmxwWoGNjZANxEvTn2kgLN+VAFArwwpdf6IQzSkmYpuR5SO5ATLI0HuQvXijCGW9Ah6PZM8TD9p3OuL+JI2HxImX6aYYskf0nQ+vTwd1KfygfxmUy/ZfSba9aJJ9HdFrLKddHmwyfHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=themaw.net; spf=pass smtp.mailfrom=themaw.net; dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b=cqChozWH; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ttTB93KD; arc=none smtp.client-ip=202.12.124.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=themaw.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=themaw.net
+Received: from phl-compute-11.internal (phl-compute-11.internal [10.202.2.51])
+	by mailfout.stl.internal (Postfix) with ESMTP id A83941D0011B;
+	Tue, 11 Nov 2025 03:25:34 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-11.internal (MEProxy); Tue, 11 Nov 2025 03:25:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1762849534;
+	 x=1762935934; bh=l0CyVOrIIDerJtiqzpcuJ4aRtoPzZBuAKsadBTgU3lY=; b=
+	cqChozWHQz4YQ4GAsADWCl6mgvRpr4kDdxzIDR4QzHIkhRSMZ7IXmsd4cnO7Fb9X
+	lyG1bE64KlAPeRf52+BFTaA2UBfWBHLtKzcSyLHegvumd2eUg1GVDRZ5nZIjOP3X
+	vIg7+a0g6W2yGYMJoQf75ppfS2tkMn6PzbBgqn5KUqmkprCNg8WBx7ra058ilzi9
+	UR4fOcjHPbLJ6z0G46A5VsBXOelxqxE1Y8SfnxGw/AXlcLGVCfv0xMnRKV5N3G7k
+	I+IKGNmZTFsRVS2kX5VSJq0YJ7Zx9wpZX83TjjVKXvx6GSXOumrfz9Se06Zle8Yj
+	5Tsx4u5jaR5wIp6K/ngWOw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762849534; x=
+	1762935934; bh=l0CyVOrIIDerJtiqzpcuJ4aRtoPzZBuAKsadBTgU3lY=; b=t
+	tTB93KDhHGCiA+aRdUfw6nZ/gIt8HfEYg1NWAIFd7e2BjoRAo2JLTDmYGS4zwM8B
+	P+O6/daZpmW0rRI9cVEGL+JSZ1+hrMlWDxa+Ed0MB375+OLKP5WOmWP0z65zV8t1
+	ooXjYzMTh94YfHC4nO7VPlK6dhxzh6OY1feFS+TANJODCbF5dO24u4hs3yThb6bu
+	YRhuIESZ1rp8lk1wscb3lyhR+31DyW0ekrHAPi8mxc5yeY298tiGDWSqMmMkfGb6
+	NqeY+ZrHAViOtijscrE9dkgjkcBmU600ExXirwkmzcu9nxwidbQSBR2DhQv/jp0y
+	vVrlt8fpJtJ+0sHqikytw==
+X-ME-Sender: <xms:_vISaUtcsznWYqcI6DYwb3TfybqjoGQyZ-XPZ4qUJhZemU7R3VLgCA>
+    <xme:_vISaawdW7l0pT4YYjZtANInwwJyqK0ozWeGAVwUtb-Pd5Ci2tAB3fVfEz3ok9pdI
+    hH8vcqBZPn0YXlTjyJNF1CFzHdYL3q6-cCZotoFof4CPBw>
+X-ME-Received: <xmr:_vISaXD5ebHbxe3gK2Z2CV2lr9gyVl0yWaEUncWIljFIfHu4qRQYWGMTdyxjLN1ix47izkgKiB5GA42zw1JzVqb3aDpNUkz9mA89waxxfZxTiMrVzG4xCM8>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvtddtjedtucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpefkrghnucfm
+    vghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecuggftrfgrthhtvghrnhepfe
+    ekhfegieegteelffegleetjeekuddvhfehjefhheeuiedtheeuhfekueekffehnecuvehl
+    uhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprhgrvhgvnhesth
+    hhvghmrgifrdhnvghtpdhnsggprhgtphhtthhopeehpdhmohguvgepshhmthhpohhuthdp
+    rhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpdhrtghpth
+    htohepsghrrghunhgvrheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidq
+    khgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghuthhofh
+    hssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqfhhsuggv
+    vhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:_vISaYfzecnlaDhpCPpS3J6hVZHdH08l83SGZ8P1vcq3TTdo-1KNLA>
+    <xmx:_vISaRlxNPpSl0JAVONhQsubMO055r3ML4aP78KuAa2QQdpcPnnBzA>
+    <xmx:_vISafGhypXovJyTdteDft53P2W2DujrzIZyMK-CvHkld1lCdU4qMg>
+    <xmx:_vISaZ5VNQgqaKePtOMqsjI_lAExHEYmGVLniIXgDV9UheA6xIwT3A>
+    <xmx:_vISaQ7davWr2zTAcsW4El_ii1Msvl36FptnOx1eNOMC6qfBawKRGwof>
+Feedback-ID: i31e841b0:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 11 Nov 2025 03:25:32 -0500 (EST)
+Message-ID: <d8040d10-3e2a-44d9-9df2-f275dc050fcd@themaw.net>
+Date: Tue, 11 Nov 2025 16:25:29 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251111062815.2546189-1-avagin@google.com>
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 6505D21C07
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Spam-Score: -4.01
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] autofs: dont trigger mount if it cant succeed
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Christian Brauner <brauner@kernel.org>,
+ Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ autofs mailing list <autofs@vger.kernel.org>,
+ linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <20251111060439.19593-1-raven@themaw.net>
+ <20251111060439.19593-3-raven@themaw.net> <20251111065951.GQ2441659@ZenIV>
+Content-Language: en-AU
+From: Ian Kent <raven@themaw.net>
+Autocrypt: addr=raven@themaw.net;
+ keydata= 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
+In-Reply-To: <20251111065951.GQ2441659@ZenIV>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue 11-11-25 06:28:15, Andrei Vagin wrote:
-> grab_requested_mnt_ns was changed to return error codes on failure, but
-> its callers were not updated to check for error pointers, still checking
-> only for a NULL return value.
-> 
-> This commit updates the callers to use IS_ERR() or IS_ERR_OR_NULL() and
-> PTR_ERR() to correctly check for and propagate errors.
-> 
-> Fixes: 7b9d14af8777 ("fs: allow mount namespace fd")
-> Cc: Christian Brauner <brauner@kernel.org>
-> Signed-off-by: Andrei Vagin <avagin@google.com>
+On 11/11/25 14:59, Al Viro wrote:
+> On Tue, Nov 11, 2025 at 02:04:39PM +0800, Ian Kent wrote:
+>
+>> diff --git a/fs/autofs/inode.c b/fs/autofs/inode.c
+>> index f5c16ffba013..0a29761f39c0 100644
+>> --- a/fs/autofs/inode.c
+>> +++ b/fs/autofs/inode.c
+>> @@ -251,6 +251,7 @@ static struct autofs_sb_info *autofs_alloc_sbi(void)
+>>   	sbi->min_proto = AUTOFS_MIN_PROTO_VERSION;
+>>   	sbi->max_proto = AUTOFS_MAX_PROTO_VERSION;
+>>   	sbi->pipefd = -1;
+>> +	sbi->owner = current->nsproxy->mnt_ns;
+>>   
+>>   	set_autofs_type_indirect(&sbi->type);
+>>   	mutex_init(&sbi->wq_mutex);
+>> diff --git a/fs/autofs/root.c b/fs/autofs/root.c
+>> index 174c7205fee4..8cce86158f20 100644
+>> --- a/fs/autofs/root.c
+>> +++ b/fs/autofs/root.c
+>> @@ -341,6 +341,14 @@ static struct vfsmount *autofs_d_automount(struct path *path)
+>>   	if (autofs_oz_mode(sbi))
+>>   		return NULL;
+>>   
+>> +	/* Refuse to trigger mount if current namespace is not the owner
+>> +	 * and the mount is propagation private.
+>> +	 */
+>> +	if (sbi->owner != current->nsproxy->mnt_ns) {
+>> +		if (vfsmount_to_propagation_flags(path->mnt) & MS_PRIVATE)
+>> +			return ERR_PTR(-EPERM);
+>> +	}
+>> +
+> Huh?  What's to guarantee that superblock won't outlive the namespace?
 
-Looks good. Feel free to add:
+Not 30 minutes after I posted these I was thinking about the case the daemon
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+(that mounted this) going away, very loosely similar I think. Setting the
 
-								Honza
+mounting process's namespace when it mounts it is straight forward but what
 
-> ---
->  fs/namespace.c | 23 ++++++++++++++---------
->  1 file changed, 14 insertions(+), 9 deletions(-)
-> 
-> diff --git a/fs/namespace.c b/fs/namespace.c
-> index d82910f33dc4..9124465dca55 100644
-> --- a/fs/namespace.c
-> +++ b/fs/namespace.c
-> @@ -144,8 +144,10 @@ static inline struct mnt_namespace *node_to_mnt_ns(const struct rb_node *node)
->  
->  static void mnt_ns_release(struct mnt_namespace *ns)
->  {
-> +	if (IS_ERR_OR_NULL(ns))
-> +		return;
->  	/* keep alive for {list,stat}mount() */
-> -	if (ns && refcount_dec_and_test(&ns->passive)) {
-> +	if (refcount_dec_and_test(&ns->passive)) {
->  		fsnotify_mntns_delete(ns);
->  		put_user_ns(ns->user_ns);
->  		kfree(ns);
-> @@ -5756,8 +5758,10 @@ static struct mnt_namespace *grab_requested_mnt_ns(const struct mnt_id_req *kreq
->  	if (kreq->mnt_ns_id && kreq->spare)
->  		return ERR_PTR(-EINVAL);
->  
-> -	if (kreq->mnt_ns_id)
-> -		return lookup_mnt_ns(kreq->mnt_ns_id);
-> +	if (kreq->mnt_ns_id) {
-> +		mnt_ns = lookup_mnt_ns(kreq->mnt_ns_id);
-> +		return mnt_ns ? : ERR_PTR(-ENOENT);
-> +	}
->  
->  	if (kreq->spare) {
->  		struct ns_common *ns;
-> @@ -5801,8 +5805,8 @@ SYSCALL_DEFINE4(statmount, const struct mnt_id_req __user *, req,
->  		return ret;
->  
->  	ns = grab_requested_mnt_ns(&kreq);
-> -	if (!ns)
-> -		return -ENOENT;
-> +	if (IS_ERR(ns))
-> +		return PTR_ERR(ns);
->  
->  	if (kreq.mnt_ns_id && (ns != current->nsproxy->mnt_ns) &&
->  	    !ns_capable_noaudit(ns->user_ns, CAP_SYS_ADMIN))
-> @@ -5912,8 +5916,8 @@ static void __free_klistmount_free(const struct klistmount *kls)
->  static inline int prepare_klistmount(struct klistmount *kls, struct mnt_id_req *kreq,
->  				     size_t nr_mnt_ids)
->  {
-> -
->  	u64 last_mnt_id = kreq->param;
-> +	struct mnt_namespace *ns;
->  
->  	/* The first valid unique mount id is MNT_UNIQUE_ID_OFFSET + 1. */
->  	if (last_mnt_id != 0 && last_mnt_id <= MNT_UNIQUE_ID_OFFSET)
-> @@ -5927,9 +5931,10 @@ static inline int prepare_klistmount(struct klistmount *kls, struct mnt_id_req *
->  	if (!kls->kmnt_ids)
->  		return -ENOMEM;
->  
-> -	kls->ns = grab_requested_mnt_ns(kreq);
-> -	if (!kls->ns)
-> -		return -ENOENT;
-> +	ns = grab_requested_mnt_ns(kreq);
-> +	if (IS_ERR(ns))
-> +		return PTR_ERR(ns);
-> +	kls->ns = ns;
->  
->  	kls->mnt_parent_id = kreq->mnt_id;
->  	return 0;
-> -- 
-> 2.51.2.1041.gc1ab5b90ca-goog
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+can I do if the process crashes ...
+
+
+I did think that if the namespace is saved away by the process that mounts
+
+it that the mount namespace would be valid at least until it umounts it but
+
+yes there are a few things that can go wrong ...
+
+
+Any ideas how I can identify this case?
+
+Ian
+
 
