@@ -1,313 +1,374 @@
-Return-Path: <linux-fsdevel+bounces-67852-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67824-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A344C4C059
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 08:14:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C71A9C4BF6D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 08:09:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7DEA18C0E62
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 07:07:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A2AA189C6FD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 07:03:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A12E434C155;
-	Tue, 11 Nov 2025 06:57:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7495A3570D0;
+	Tue, 11 Nov 2025 06:55:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="CeGOKRB5";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="v4ntsIjo"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="g/CU5/uH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5782434BA4C;
-	Tue, 11 Nov 2025 06:57:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762844259; cv=fail; b=KDFxcPXoSNaxzS7fX3RDVZL0je9PUJ8hwq5PF8qsK3+p7Vs36HomP+KCZPjD82GqYZQmX9la9kP2uetU7B1sW2iio3Hu2bE6SeEoCRgFcUihdTgAKjCMCRs25yRRTi3CgfqcLI2NBHqd/2XcrEpIdnUD95s04iKxyx/7l0s7BSQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762844259; c=relaxed/simple;
-	bh=0Ulmm2vysEQqSmGigJEuILnr0bbibURIoMbSmm7dlvg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=pOSTVhiXRHKiF9ajhMIO0xJdu4JabakHLL7tX/jnEZ9nY9pE1+PUVrA8T032q31mRs9P21Yvn9PEokzM0T65vtgG113S8gOg+HhCWpK4U0lA/PsEUXZQPhcmZN4KODAWfOhdtOG/6pgSzA8YEK6aaqIbNThJDKJobEp6mCR4f7w=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=CeGOKRB5; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=v4ntsIjo; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5AB6bfDp012861;
-	Tue, 11 Nov 2025 06:51:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=yuQcnOzcZJMxbeYdOQ
-	xwJyuF8YqG1ECabVmeipVG3Rw=; b=CeGOKRB5B2lj5s7ixjQoqw+39532FwrKAG
-	ztpJkpE9lUOa7uOUqiPuFn5CV9jafTTF/5eZMakVOwOwajXJcs5lv5U25GvBLhG7
-	1IBCoPvvlbRrRwQGIHvLjB+sTDiqgMCozKKDyz7nC7NUb0zEO44MAWCnwv8J92vS
-	wKoz0/FtE0dU7+3P2We+Tly8zUnieoG7P4aeaCavqn3QLDQ7nUVFmUerWmyJAkCU
-	Jl1N2NvJ1linwZcdA0sAb9MvIHLGt4MXNvTt5WP6Cw7UzQk7S63Yn01TSbOpN02i
-	SgTapxPzJONvpJccZm4HTeBkANIB23AUOMtFfY9Yx3jULTw1K5vQ==
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4abxrt83x4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 11 Nov 2025 06:51:28 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5AB4saro001045;
-	Tue, 11 Nov 2025 06:51:27 GMT
-Received: from byapr05cu005.outbound.protection.outlook.com (mail-westusazon11010058.outbound.protection.outlook.com [52.101.85.58])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4a9vad5guj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 11 Nov 2025 06:51:27 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VB/m5GCVBQBES1qKWsWaEjtodM7T/+blKjkCF/mFWfWUHO406Vp7l1OT4G+NbAgXOsSYHhox/vFCCbNw8uhr7tekfmwVEzSznyvhRxs2dBwUevnqD9xw762blnlGgAD/JEST1bQOcggSMgSLcp6AziIQ8A+TTbq/nnKlQo8JbC/SXU6xRVKPV6bQ5LwB3gVrUn64vGuL/MSDq3mslk9Q9Nv1IEyFFpQM0D7oJ5XXdhNU31xXv+DOhnhXbIM3CUykh++r4xYqXNFZVTgUVdwiehQL31E5cR6hovuG8dESeoGXfZYIP27L4lowaTgnCGa11nnrjzZfUNcMTVVGJspwsw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=yuQcnOzcZJMxbeYdOQxwJyuF8YqG1ECabVmeipVG3Rw=;
- b=QO1f85Xuzxde0NiXR5wNcgyrlRpqqCCtb0w/h/1Jcn42zaVw3pSifcdreJXk5e7RTiGbYEDdldWHThNFewGMinqx2jmp7OzgVAAMQYeTf4tKgLH7hQnbGlQOclaJY0F9obOEfOlboh5oOp7y2JYrf3AFDaUn4vZEidjC482D50Do6+k6QnJLSrCmpmbdugYLVcDt5xkaZgQK5lpqiT2M8AgOrOcVvHG4Z/2PHs31uGkX1AqFR/0y+DvgvdOsizCg3M2I9EnUOyOyS0Xh3oCEaPr33LuEhM0vfLnSQTPvIrHyDnuhuJL4gBxgRuIglQ88LCbjBNCcUsAQwiCkxQLW/A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=yuQcnOzcZJMxbeYdOQxwJyuF8YqG1ECabVmeipVG3Rw=;
- b=v4ntsIjop52N6rPEyt1EP4K7h4x3AI1Ufc1+Qs2V+3klxdtoMqqrYRwC+xVD/vRpylpyjG0g3XfLWyLGR5/gsQQxytB4SsUz2u0Uy7Ksf7lAOl2OEsH4PblTuBvU/EK1JSG4V0rmKLCCspwIr9RsUEhgKomgmOej/WvHion0h6A=
-Received: from BL4PR10MB8229.namprd10.prod.outlook.com (2603:10b6:208:4e6::14)
- by PH8PR10MB6528.namprd10.prod.outlook.com (2603:10b6:510:228::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.12; Tue, 11 Nov
- 2025 06:51:22 +0000
-Received: from BL4PR10MB8229.namprd10.prod.outlook.com
- ([fe80::552b:16d2:af:c582]) by BL4PR10MB8229.namprd10.prod.outlook.com
- ([fe80::552b:16d2:af:c582%6]) with mapi id 15.20.9298.015; Tue, 11 Nov 2025
- 06:51:22 +0000
-Date: Tue, 11 Nov 2025 06:51:20 +0000
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Hugh Dickins <hughd@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Chris Li <chrisl@kernel.org>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        Claudio Imbrenda <imbrenda@linux.ibm.com>,
-        David Hildenbrand <david@redhat.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>, Peter Xu <peterx@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-        Arnd Bergmann <arnd@arndb.de>, Zi Yan <ziy@nvidia.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
-        Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
-        Lance Yang <lance.yang@linux.dev>, Muchun Song <muchun.song@linux.dev>,
-        Oscar Salvador <osalvador@suse.de>, Vlastimil Babka <vbabka@suse.cz>,
-        Mike Rapoport <rppt@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
-        Matthew Brost <matthew.brost@intel.com>,
-        Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
-        Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>,
-        Ying Huang <ying.huang@linux.alibaba.com>,
-        Alistair Popple <apopple@nvidia.com>,
-        Axel Rasmussen <axelrasmussen@google.com>,
-        Yuanchu Xie <yuanchu@google.com>, Wei Xu <weixugc@google.com>,
-        Kemeng Shi <shikemeng@huaweicloud.com>,
-        Kairui Song <kasong@tencent.com>, Nhat Pham <nphamcs@gmail.com>,
-        Baoquan He <bhe@redhat.com>, SeongJae Park <sj@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>, Jason Gunthorpe <jgg@ziepe.ca>,
-        Leon Romanovsky <leon@kernel.org>, Xu Xin <xu.xin16@zte.com.cn>,
-        Chengming Zhou <chengming.zhou@linux.dev>,
-        Jann Horn <jannh@google.com>, Miaohe Lin <linmiaohe@huawei.com>,
-        Naoya Horiguchi <nao.horiguchi@gmail.com>,
-        Pedro Falcato <pfalcato@suse.de>,
-        Pasha Tatashin <pasha.tatashin@soleen.com>,
-        Rik van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-arch@vger.kernel.org, damon@lists.linux.dev
-Subject: Re: [PATCH v2 00/16] mm: remove is_swap_[pte, pmd]() + non-swap
- entries, introduce leaf entries
-Message-ID: <55b50b8a-818b-4304-aea4-42d549deca36@lucifer.local>
-References: <cover.1762621567.git.lorenzo.stoakes@oracle.com>
- <CACePvbVq3kFtrue2smXRSZ86+EuNVf6q+awQnU-n7=Q4x7U9Lw@mail.gmail.com>
- <5b60f6e8-7eab-4518-808a-b34331662da5@lucifer.local>
- <CACePvbUvQu+So7OoUbJTMLODz8YDAOgWaM8A-RXFj2U_Qc-dng@mail.gmail.com>
- <3c0e9dd0-70ac-4588-813b-ffb24d40f067@lucifer.local>
- <c9e3ad0e-02ef-077c-c12c-f72057eb7817@google.com>
- <20251110162313.baee36f4815b3aeb3f12921e@linux-foundation.org>
- <ba5d8603-4140-1678-b2d5-d49ab1a40fe0@google.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ba5d8603-4140-1678-b2d5-d49ab1a40fe0@google.com>
-X-ClientProxiedBy: LO2P265CA0161.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:9::29) To BL4PR10MB8229.namprd10.prod.outlook.com
- (2603:10b6:208:4e6::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9564347BA7;
+	Tue, 11 Nov 2025 06:55:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762844133; cv=none; b=Bf8naPhV57omuzm0TH7iJtXkL84z7aVvdqS3yqFkMtjs/Q9EOw28l5nSNMxeJopw+vW8PrWzvWCyArUgrn82yghY6R8Wrd/zu05yrvLtgpptVyubx1ta3tEMLpZmccBU7tmmn1913VbIFJeOSlLnnuP1otN8wo+YezgD6RqA4U4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762844133; c=relaxed/simple;
+	bh=76utv+v6hAue0oAKoeyxG4KBaw0uyktirE097PvBq7M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jk9VqzltsBj58QT98jSxbBicQLiDIvvPtrDnGFnevFJFlxiNIvsSIEZJqrottVW5IChDRlAEgmM17K9KydhL1BY1lK2HUkwDgdjRAnYXWqHvWfQX34w1cz0a7Kr6Zu9oFDey5b6PPn+hxkJZxu4ltzF43aJOCsHXbnHyCc2lJNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=g/CU5/uH; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=leW8GA4y7Pxp64vNo8XjzZTbPYZFOmxFXD/3OiiHgBc=; b=g/CU5/uH4HMjhxdKjr30ByWuse
+	rR0MjDbFLTtzuzJzfLZ6mL3bQtXs39KLmW5eMtB8fy2iJ+Ek/cufD5MhxJm9nmL6JE35GYmhCA0zJ
+	MGohTr1R34wWNYPCSJynjsoDjcufcWoEdaxIZ3UR5jUz2YHCTlD/7fJk+wJjbGrMzS/nf2oSco7rb
+	nXsNbo1V1rcCz/TKMwiqhPOeGfzkyF9yi5zQ8niVbVkYrZRsjK122F/JpFHx9/AVSZgDLA1/deZ+f
+	QYljuYONnRgAnVNuv67jjtz+ZF7RHbe/g8d4Ku2qpM3uvXthA0cXcCWtgxeXvvfintzgotKgCvsIJ
+	SEVTFaKw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vIiHg-0000000BwrA-3Mp4;
+	Tue, 11 Nov 2025 06:55:21 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: linux-fsdevel@vger.kernel.org
+Cc: torvalds@linux-foundation.org,
+	brauner@kernel.org,
+	jack@suse.cz,
+	raven@themaw.net,
+	miklos@szeredi.hu,
+	neil@brown.name,
+	a.hindborg@kernel.org,
+	linux-mm@kvack.org,
+	linux-efi@vger.kernel.org,
+	ocfs2-devel@lists.linux.dev,
+	kees@kernel.org,
+	rostedt@goodmis.org,
+	gregkh@linuxfoundation.org,
+	linux-usb@vger.kernel.org,
+	paul@paul-moore.com,
+	casey@schaufler-ca.com,
+	linuxppc-dev@lists.ozlabs.org,
+	john.johansen@canonical.com,
+	selinux@vger.kernel.org,
+	borntraeger@linux.ibm.com,
+	bpf@vger.kernel.org
+Subject: [PATCH v3 00/50] tree-in-dcache stuff
+Date: Tue, 11 Nov 2025 06:54:29 +0000
+Message-ID: <20251111065520.2847791-1-viro@zeniv.linux.org.uk>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL4PR10MB8229:EE_|PH8PR10MB6528:EE_
-X-MS-Office365-Filtering-Correlation-Id: f449063b-4098-4a76-2448-08de20eeb99a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|366016|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ltb12i/HICxy/ljPsiee7RSHpKy0NMseHipZnxB5JNzdT9Y960yna14Q7kuj?=
- =?us-ascii?Q?g5JfyiMpaPJVHkWDKQPH9CpLUKE+WCKS7dcMIe3xYs6p+NLG76KznsPLjvVF?=
- =?us-ascii?Q?aTYtmkLiaMW87gkgXOB/rjYcoc4U+GiBbqKtlGqSQAkmEMCNmfs8VdWVXcWk?=
- =?us-ascii?Q?xAfIUjCofcZDcwSDoiBa6IsXIJNEyMnrdvQYpdq9DSAoLe9aMlMNX2l070e4?=
- =?us-ascii?Q?SpBjrnMdBlLgDY2Exj+KKNsFjI88kpgc1jq4qPgLjrWMJYL4PhHVPguhSZw7?=
- =?us-ascii?Q?vRUXZHj7Iiu3PAF6FpmvRuQ77v2h1n66ACRPUhzGB5fuKyMDZ5EOnkgdzfZu?=
- =?us-ascii?Q?aNVpABd8uI7N4X4alECBtKXmAyTTSNSjSvmm+8Ekmipsvb+ZnMWfSaPIBCyh?=
- =?us-ascii?Q?6flV3YS/89s2UPlC/CoMJUq1zEyJPmPS5sC/zbfe5KOMgiH3y08s4GfR2s/U?=
- =?us-ascii?Q?54rrDOw0n+mDtaAKtciY9Vs6zSOd8OebRlf6jYzgo7d7qPSZHFb1kfeYwbje?=
- =?us-ascii?Q?FSkzAcYt/m34544l7KnJFs6bUc/1+K2+StHW74bPECKfGyDcRxs3wbFfOcjm?=
- =?us-ascii?Q?iQCza8MAc6Lqvj4hlhBbyrcomthUDfoH/f//+s4ahrtXx2Y8/cryGRAMWad6?=
- =?us-ascii?Q?1MFwmr+ypaP6LxQD87OtdZFt2uemgMCrPJ3QAfljq4GKFVTmh2M49HieARG3?=
- =?us-ascii?Q?Vu9v3PNXhO9Z+7IO5aa9jc9hSC8OtNiG6FZkJwJqF/3xa9Qr0g8gkREW6xPz?=
- =?us-ascii?Q?XJjJOrup9v8oTnxOF9E+RvBBzx0pXmfP+Rwz1JWroJ+SP7NpGe0uOV6KQddM?=
- =?us-ascii?Q?LUYpL5KMdNQkOQkRHBvP8230tKsA/W/NtjgGdI660kUV+aohte5Fc4y5Cpt1?=
- =?us-ascii?Q?LFWPwbtY+hgZt6YC3gEF3GI/YBn/+RE0nfshOVtaEpqFEnaQR4XEfm2VBb2F?=
- =?us-ascii?Q?lV8m5jPOV7dQ8x7aMKdZ2bUf+SdOac6LwfRb1XYY4zayS3vFNdctudbffKZr?=
- =?us-ascii?Q?+TTClOc3KTcilfhEzuOdojQxrmKc8NDBnzAHzojNxNmka6rqlnf4qkG6Ab03?=
- =?us-ascii?Q?ZIsGJLXCSPP4nAlAYgGy6xiPjXAV3bJiYT8h/WIET6G+yRNEA175O/csLDwh?=
- =?us-ascii?Q?8rjmRr0JqxoRTE8vI5O8Vx/MWu5CbDF/kIy7O8z4V5QErFKvP8fEZ/EO9GLE?=
- =?us-ascii?Q?aSmj30d0NqFBvkD7g3Ya+JEPhL9/pqJX0OmMv5bheY2V0lrh8AsWY4QbJyUc?=
- =?us-ascii?Q?Xm/r08Mff6n5mR8wFBDI068cggaGKjsJlS86iPyJzmTWYAzvLudhkuutGklE?=
- =?us-ascii?Q?P+H5W7nCb+wft6kTpmImBj/jPTVjrUaddo4HtagSKNDOjZ8Xu+cYBK3lMh6x?=
- =?us-ascii?Q?EsKOWKr2oE8gSs3x78EtQ2+oGGT7TdCAnP8Gknq3Bsgdy5ne2zCH7xrH9V77?=
- =?us-ascii?Q?GJbFH/GbQE+oYwOZ6gBI59tz2t7yVTu3?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL4PR10MB8229.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?v5SomZpuS+/xPRusksUtS5DSFCrVHiG3OCuvw433LhWeO9QF5A5OxX5P5sVN?=
- =?us-ascii?Q?1scNbyApQIou4cGoT+ltpBr/pfSTZ+9VALwRA6Ktxa+FAP+anj/vpTeJTwuf?=
- =?us-ascii?Q?Pg88GwQlsFwczmS5mJGwUNyV5TTRb+NOG2gQ4jSvmmqPFYF77eDufK4404Sz?=
- =?us-ascii?Q?nMnlzSKgX43k5oHIa0huCfnwG91aCPDTEv04k3f8l+WtXcg5a0mUCCV8s/uA?=
- =?us-ascii?Q?wPqep12IUHKxNvH92BsKuOnlQTEUH2sggzy7K26OzgB5mxvnBGM5J0Rf4etO?=
- =?us-ascii?Q?6ArpmngjB0LKUh9daLBAUvScGdsye4KJvyoYM8j6+5n2UeTl2EmSb0qrYO0N?=
- =?us-ascii?Q?G3Pgb8fw4CXtXnPjcUGJJk4o9EqFlqemxLjlvvphWBp6Gc+3YlEkBDR3Lueu?=
- =?us-ascii?Q?LHYIUqsU8K0uKhneHWtGOtALziWj8nG+oEmRF1rSL8Kf6+YkxKv3CvQJ/RTx?=
- =?us-ascii?Q?+ML6vtMvFLcDoqS5Ek3ZsPGv0tHrm2ubTPIZ+zO34A9PcrwycSBM7MPm8Wd6?=
- =?us-ascii?Q?3r4LTbBpzX73TRRkfSlVfkNw5i5TDnHIqgVVbZIw0/4da8MEwPEAGzexiTK3?=
- =?us-ascii?Q?6TCRhzMQlfhwFJC2iPCXQoMtOlUnKTUwuNyxSSZGJ+k8RS9amCf936uDMC5Z?=
- =?us-ascii?Q?62xWq/yavMV4XxcHfRXizZlg1co77N1CNuyCcACiF9RDHP3R2LAFhSL++rmo?=
- =?us-ascii?Q?mC9qwBVvpPk9x3YcEO2GuN4lzELMFaFbYyTAueOI7NoKLNLbTZcGxQ8AsqIh?=
- =?us-ascii?Q?oon1XcvhjTQKnudN30bfIaqszPHZ1s42s+4BhnuGkKEvm6Hc6g8tMOkmXdTE?=
- =?us-ascii?Q?VkPW6y4PK8DtTYcBB0fG/P1EFJO0BpJN65VZ3NIEBSIHXifsrQq2eyItvdUg?=
- =?us-ascii?Q?TlIXQl0NU9y6+1dAuZz30Aun5StV/1ZLaYSi7pliZ3uXKpE8wetTWulbyInQ?=
- =?us-ascii?Q?A0BzsN0OyUWTVfyX/aGCxEZ3KoUimJ04MMUg+wjyN2KFlIobechz0KEvXHgd?=
- =?us-ascii?Q?6O+N41fLerGsG4t6ZgPAyxrKeB3eBxJy1zaetTSZS2eYkWsm4AiRCj1geTA1?=
- =?us-ascii?Q?YJ3fmVYrrhRZMD/pcl41AmZ5IT64NubCvZFukCxCd5Bvu1vFHg9mcC1UCX3s?=
- =?us-ascii?Q?DNZRyDUTPexLbwF4N0sNzk+W5F6KE15XLfVAd7+Fv2couah7YcnmrXD6M+yJ?=
- =?us-ascii?Q?QIVG20eME6YkkbN5QFOBW0axjZlHgf9ilLnOAHcxp0vawKGR8tKrr769fmSQ?=
- =?us-ascii?Q?J7LzHVXDd1BV9fHNihGdO6XQAetoIls1f4ZBlDbgBuPLrGGkc7bLOAxn29qL?=
- =?us-ascii?Q?N/xXUlluMzAz1gYrMU9OJTtasmK+M/RilD1MmNgEHWTbLYKZ0iMDcp8dcVec?=
- =?us-ascii?Q?jU8yQtILBFJ7JIHqxt+CnHQoQgJKEEGPXhXfOBSmbUXZfXznTMjkZnctvrL0?=
- =?us-ascii?Q?U9NnJIrM3EZhlvVGs46NPaGAQXkgP+QhC0sFaIrqXEaTSZdHWegaZRPTJFi8?=
- =?us-ascii?Q?fxgSKwcOgCoLGFNChY79soyHkZZn//EBOi6O4+tf1VVQdzsLNvSwqC4r/LJE?=
- =?us-ascii?Q?7/Z6zmw6AkxBruen610Onqk6YVMXpBy0mf+wgczn5HfgghYmCM0Rno7LPSoG?=
- =?us-ascii?Q?Bw=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	EfufIKE69uiF0WnhEjnsLwykyq6SB3eufI5pN0Cl9ehV44YN26qvp/OfA4xe1XbYH3hodBW13u/Rhd73XlaFrnVRXvvPBQAV6eHOEgC8GiZ/zq2d68vurSIfDM44QX95FYY1daiSuF4WOum74bG1+yq/D5pTTJWL41OxdOS8E48p3xS+rEUJ0b+xJMHlcjs2IpksKlc/IPLfFxylKRgpQhcECNn02TAzADnjbfFicZaHZu3RXsMRPG4rO2PjYZBy9Me69+u8tMSpD7I+KXzkwrFbTn7y+x1UxQa7G5KeOCRYLNv0TdZD4BtoSUK9vBrxSpYJhyJdD5nIihdufVbfXhBgqs7jQQDL6GZWlUSEkplUbjvk4iIkrP0/nILKHWTMYOSv8joLFsKKuYAmj5k3d3xijxaucyA2uMoLm7iE8RHp4jSP5StSHanq68BrbZcoM79MyrQdRa8po3/afqh7JNVgFj2gUyHbKuKn2sTtf4rw1WHCKvfd90QjnsA9/zizHiZvOdQ5/2o3wpf2r+WsnhSCyi7r+v8Km77mFm679M1TqkI68r6lwnVhfK9YICRrj7vryQhQU087HWJ6C6BSoPaElftVb/Vl5XzUfaSWiug=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f449063b-4098-4a76-2448-08de20eeb99a
-X-MS-Exchange-CrossTenant-AuthSource: BL4PR10MB8229.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Nov 2025 06:51:22.2293
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: YsZdtgARCZP/d54qOmJDAvmwByJjM8ah1OpQKMQSwLsDtNu7A+Prv1fvM22pnn9MjK/eUp6+nLk1Fg9TuqIwaUcLE5nSTXhCOAlAWVl1SCA=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR10MB6528
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-11_01,2025-11-11_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 adultscore=0
- malwarescore=0 spamscore=0 suspectscore=0 bulkscore=0 mlxscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2510240000 definitions=main-2511110051
-X-Authority-Analysis: v=2.4 cv=c7+mgB9l c=1 sm=1 tr=0 ts=6912dcf0 b=1 cx=c_pps
- a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=6UeiqGixMTsA:10 a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=1XWaLZrsAAAA:8 a=zwa8OM-7MrPvge9kbwQA:9 a=CjuIK1q_8ugA:10 cc=ntf
- awl=host:13634
-X-Proofpoint-GUID: f0VuoopIzwJ2hus2mUZ-yEVTSrnV3gi1
-X-Proofpoint-ORIG-GUID: f0VuoopIzwJ2hus2mUZ-yEVTSrnV3gi1
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTExMDAzNyBTYWx0ZWRfX9emDQ9TSVE18
- G0S6fhq9kSYr4AXkDAgO7D/bz2dFCSfeIrSsazdM1EhTQzMC5xf5xy7pTvvjBrkrKdSLxkLriEB
- iCzoATBuhAmvzK0oSZcSIn7kx+TB+wvr5XDaVRplAb0GEx9Y1xt4Kls7vtYrbU8C6A1VSjHI8E+
- /c44RhYYsmRUfyl2r2m7sjequ1A0ZpOjph55g/a/JP2d1vAcgnuGO6am+uXcPB70e7jUKoVd+pT
- pHoRkN3uOf9/vndw4L4fc8o97WmOqW83NppLhXFAhEUk+NztHJKEV2pPWP4tm+Dq50NBwKkL9VP
- hziPT8eGtEy7oThz63iTXJ9HZSLPa6aCO7/8EzDDobZwVj7zDQVIA4AMBRNg1dAz8q3AA9WeA5R
- TjhM6H3G3D/zoKxe0knATKBHP89w8GZLX1XnEYXgZ+quUPmAHKM=
+Content-Transfer-Encoding: 8bit
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Andrew - in light of the below can we put this back in mm-unstable please?
-I'd like the bots to be on this and obviously hoping for inclusion in 6.19
-:)
+Some filesystems use a kinda-sorta controlled dentry refcount leak to pin
+dentries of created objects in dcache (and undo it when removing those).
+Reference is grabbed and not released, but it's not actually _stored_
+anywhere.  That works, but it's hard to follow and verify; among other
+things, we have no way to tell _which_ of the increments is intended
+to be an unpaired one.  Worse, on removal we need to decide whether
+the reference had already been dropped, which can be non-trivial if
+that removal is on umount and we need to figure out if this dentry is
+pinned due to e.g. unlink() not done.  Usually that is handled by using
+kill_litter_super() as ->kill_sb(), but there are open-coded special
+cases of the same (consider e.g. /proc/self).
 
-On Mon, Nov 10, 2025 at 08:07:34PM -0800, Hugh Dickins wrote:
-> On Mon, 10 Nov 2025, Andrew Morton wrote:
-> > On Mon, 10 Nov 2025 15:38:55 -0800 (PST) Hugh Dickins <hughd@google.com> wrote:
-> >
-> > > > I'm sorry but this is not a reasonable request. I am being as empathetic and
-> > > > kind as I can be here, but this series is proceeding without arbitrary delay.
-> > > >
-> > > > I will do everything I can to accommodate any concerns or issues you may have
-> > > > here _within reason_ :)
-> > >
-> > > But Lorenzo, have you even tested your series properly yet, with
-> > > swapping and folio migration and huge pages and tmpfs under load?
-> > > Please do.
+Things get simpler if we introduce a new dentry flag (DCACHE_PERSISTENT)
+marking those "leaked" dentries.  Having it set claims responsibility
+for +1 in refcount.
 
-I did a whole bunch of testing, of course it's never enough in practice :)
+The end result this series is aiming for:
 
-> > >
-> > > I haven't had time to bisect yet, maybe there's nothing more needed
-> > > than a one-liner fix somewhere; but from my experience it is not yet
-> > > ready for inclusion in mm and next - it stops testing other folks' work.
-> > >
-> > > I haven't tried today's v3, but from the cover letter of differences,
-> > > it didn't look like much of importance is fixed since v2: which
-> > > (after a profusion of "Bad swap offet entry 3ffffffffffff" messages,
-> > > not seen with v1, and probably not really serious) soon hits an Oops
-> > > or a BUG or something (as v1 did) - I don't have any logs or notes
-> > > to give yet, just forewarning before pursuing later in the day.
-> > >
-> > > If you think v3 has fixed real crashes under load, please say so:
-> > > otherwise, I doubt it's worth Andrew hurrying to replace v2 by v3.
-> >
-> > Oh.  Thanks.  I'll move the v3 series into mm-new for now.
->
-> Lorenzo, I can happily apologize: the v3 series in mm-everything-
-> 2025-11-11-01-20 is a big improvement over v2 and v1, it is showing
-> none of the bad behaviours I saw with those.  I've not searched or
-> compared for what actually fixed those symptoms (though have now
-> spotted mails from Shivank and Kairui regarding 3ffffffffffff),
-> I'm content now to move on to unrelated work...
+* get these unbalanced dget() and dput() replaced with new primitives that
+  would, in addition to adjusting refcount, set and clear persistency flag.
+* instead of having kill_litter_super() mess with removing the remaining
+  "leaked" references (e.g. for all tmpfs files that hadn't been removed
+  prior to umount), have the regular shrink_dcache_for_umount() strip
+  DCACHE_PERSISTENT of all dentries, dropping the corresponding
+  reference if it had been set.  After that kill_litter_super() becomes
+  an equivalent of kill_anon_super().
 
-Thanks yeah there were a couple oversights, one due to shenanigans around
-how zero swap entries are represented, and another due to some frankly
-insane code in the swap implementation.
+Doing that in a single step is not feasible - it would affect too many places
+in too many filesystems.  It has to be split into a series.
 
-I feel this change is very necessary for us to a. have clearer
-understanding of this logic, and b. to be able to build upon it sensibly in
-future.
+This work has really started early in 2024; quite a few preliminary pieces
+have already gone into mainline.  This chunk is finally getting to the
+meat of that stuff - infrastructure and most of the conversions to it.
 
-This change is selfish also in that I intend to add huge guard markers in
-future, and a previous attempt building upon the mass of confusion and
-horror that was 'non-swap swap' felt borderline unworkable :)
+Some pieces are still sitting in the local branches, but the bulk of
+that stuff is here.
 
->
-> Thanks,
-> Hugh
+Compared to v2:
+	* 23/50: fixed a braino in spufs conversion
+	* 6/50: added a placeholder comment in d_make_discardable() at
+the point where it's introduced, promising a WARN_ON() in its place
+in the final, along with explanations of the reasons for delay.
+Comment goes away in 50/50, once WARN_ON() gets there.
 
-Cheers, Lorenzo
+The branch is -rc5-based; it lives in
+git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git #work.persistency
+individual patches in followups.
+
+Please, help with review and testing.  If nobody objects, in a few days it
+goes into #for-next.
+
+Shortlog:
+      fuse_ctl_add_conn(): fix nlink breakage in case of early failure
+      tracefs: fix a leak in eventfs_create_events_dir()
+      new helper: simple_remove_by_name()
+      new helper: simple_done_creating()
+      introduce a flag for explicitly marking persistently pinned dentries
+      primitives for maintaining persisitency
+      convert simple_{link,unlink,rmdir,rename,fill_super}() to new primitives
+      convert ramfs and tmpfs
+      procfs: make /self and /thread_self dentries persistent
+      configfs, securityfs: kill_litter_super() not needed
+      convert xenfs
+      convert smackfs
+      convert hugetlbfs
+      convert mqueue
+      convert bpf
+      convert dlmfs
+      convert fuse_ctl
+      convert pstore
+      convert tracefs
+      convert debugfs
+      debugfs: remove duplicate checks in callers of start_creating()
+      convert efivarfs
+      convert spufs
+      convert ibmasmfs
+      ibmasmfs: get rid of ibmasmfs_dir_ops
+      convert devpts
+      binderfs: use simple_start_creating()
+      binderfs_binder_ctl_create(): kill a bogus check
+      convert binderfs
+      autofs_{rmdir,unlink}: dentry->d_fsdata->dentry == dentry there
+      convert autofs
+      convert binfmt_misc
+      selinuxfs: don't stash the dentry of /policy_capabilities
+      selinuxfs: new helper for attaching files to tree
+      convert selinuxfs
+      functionfs: switch to simple_remove_by_name()
+      convert functionfs
+      gadgetfs: switch to simple_remove_by_name()
+      convert gadgetfs
+      hypfs: don't pin dentries twice
+      hypfs: switch hypfs_create_str() to returning int
+      hypfs: swich hypfs_create_u64() to returning int
+      convert hypfs
+      convert rpc_pipefs
+      convert nfsctl
+      convert rust_binderfs
+      get rid of kill_litter_super()
+      convert securityfs
+      kill securityfs_recursive_remove()
+      d_make_discardable(): warn if given a non-persistent dentry
+
+Diffstat:
+ Documentation/filesystems/porting.rst     |   7 ++
+ arch/powerpc/platforms/cell/spufs/inode.c |  17 ++-
+ arch/s390/hypfs/hypfs.h                   |   6 +-
+ arch/s390/hypfs/hypfs_diag_fs.c           |  60 ++++------
+ arch/s390/hypfs/hypfs_vm_fs.c             |  21 ++--
+ arch/s390/hypfs/inode.c                   |  82 +++++--------
+ drivers/android/binder/rust_binderfs.c    | 121 ++++++-------------
+ drivers/android/binderfs.c                |  82 +++----------
+ drivers/base/devtmpfs.c                   |   2 +-
+ drivers/misc/ibmasm/ibmasmfs.c            |  24 ++--
+ drivers/usb/gadget/function/f_fs.c        |  54 ++++-----
+ drivers/usb/gadget/legacy/inode.c         |  49 ++++----
+ drivers/xen/xenfs/super.c                 |   2 +-
+ fs/autofs/inode.c                         |   2 +-
+ fs/autofs/root.c                          |  11 +-
+ fs/binfmt_misc.c                          |  69 ++++++-----
+ fs/configfs/dir.c                         |  10 +-
+ fs/configfs/inode.c                       |   3 +-
+ fs/configfs/mount.c                       |   2 +-
+ fs/dcache.c                               | 111 +++++++++++-------
+ fs/debugfs/inode.c                        |  32 ++----
+ fs/devpts/inode.c                         |  57 ++++-----
+ fs/efivarfs/inode.c                       |   7 +-
+ fs/efivarfs/super.c                       |   5 +-
+ fs/fuse/control.c                         |  38 +++---
+ fs/hugetlbfs/inode.c                      |  12 +-
+ fs/internal.h                             |   1 -
+ fs/libfs.c                                |  52 +++++++--
+ fs/nfsd/nfsctl.c                          |  18 +--
+ fs/ocfs2/dlmfs/dlmfs.c                    |   8 +-
+ fs/proc/base.c                            |   6 +-
+ fs/proc/internal.h                        |   1 +
+ fs/proc/root.c                            |  14 +--
+ fs/proc/self.c                            |  10 +-
+ fs/proc/thread_self.c                     |  11 +-
+ fs/pstore/inode.c                         |   7 +-
+ fs/ramfs/inode.c                          |   8 +-
+ fs/super.c                                |   8 --
+ fs/tracefs/event_inode.c                  |   7 +-
+ fs/tracefs/inode.c                        |  13 +--
+ include/linux/dcache.h                    |   4 +-
+ include/linux/fs.h                        |   6 +-
+ include/linux/proc_fs.h                   |   2 -
+ include/linux/security.h                  |   2 -
+ init/do_mounts.c                          |   2 +-
+ ipc/mqueue.c                              |  12 +-
+ kernel/bpf/inode.c                        |  15 +--
+ mm/shmem.c                                |  38 ++----
+ net/sunrpc/rpc_pipe.c                     |  27 ++---
+ security/apparmor/apparmorfs.c            |  13 ++-
+ security/inode.c                          |  35 +++---
+ security/selinux/selinuxfs.c              | 185 +++++++++++++-----------------
+ security/smack/smackfs.c                  |   2 +-
+ 53 files changed, 586 insertions(+), 807 deletions(-)
+
+	Overview:
+
+First two commits are bugfixes (fusectl and tracefs resp.)
+
+[1/50] fuse_ctl_add_conn(): fix nlink breakage in case of early failure
+[2/50] tracefs: fix a leak in eventfs_create_events_dir()
+
+Next, two commits adding a couple of useful helpers, the next three adding
+the infrastructure and the rest consists of per-filesystem conversions.
+
+[3/50] new helper: simple_remove_by_name()
+[4/50] new helper: simple_done_creating()
+	end_creating_path() analogue for internal object creation; unlike
+end_creating_path() no mount is passed to it (or guaranteed to exist, for
+that matter - it might be used during the filesystem setup, before the
+superblock gets attached to any mounts).
+
+Infrastructure:
+[5/50] introduce a flag for explicitly marking persistently pinned dentries
+	* introduce the new flag
+	* teach shrink_dcache_for_umount() to handle it (i.e. remove
+and drop refcount on anything that survives to umount with that flag
+still set)
+	* teach kill_litter_super() that anything with that flag does
+*not* need to be unpinned.
+[6/50] primitives for maintaining persisitency
+	* d_make_persistent(dentry, inode) - bump refcount, mark persistent
+and make hashed positive.  Return value is a borrowed reference to dentry;
+it can be used until something removes persistency (at the very least,
+until the parent gets unlocked, but some filesystems may have stronger
+exclusion).
+	* d_make_discardable() - remove persistency mark and drop reference.
+
+NOTE: at that stage d_make_discardable() does not reject dentries not
+marked persistent - it acts as if the mark been set.
+
+Rationale: less noise in series splitup that way.  We want (and on the
+next commit will get) simple_unlink() to do the right thing - remove
+persistency, if it's there.  However, it's used by many filesystems.
+We would have either to convert them all at once or split simple_unlink()
+into "want persistent" and "don't want persistent" versions, the latter
+being the old one.  In the course of the series almost all callers
+would migrate to the replacement, leaving only two pathological cases
+with the old one.  The same goes for simple_rmdir() (two callers left in
+the end), simple_recursive_removal() (all callers gone in the end), etc.
+That's a lot of noise and it's easier to start with d_make_discardable()
+quietly accepting non-persistent dentries, then, in the end, add private
+copies of simple_unlink() and simple_rmdir() for two weird users (configfs
+and apparmorfs) and have those use dput() instead of d_make_discardable().
+At that point we'd be left with all callers of d_make_discardable()
+always passing persistent dentries, allowing to add a warning in it.
+
+[7/50] convert simple_{link,unlink,rmdir,rename,fill_super}() to new primitives
+	See above re quietly accepting non-peristent dentries in
+simple_unlink(), simple_rmdir(), etc.
+
+	Converting filesystems:
+[8/50] convert ramfs and tmpfs
+[9/50] procfs: make /self and /thread_self dentries persistent
+[10/50] configfs, securityfs: kill_litter_super() not needed
+[11/50] convert xenfs
+[12/50] convert smackfs
+[13/50] convert hugetlbfs
+[14/50] convert mqueue
+[15/50] convert bpf
+[16/50] convert dlmfs
+[17/50] convert fuse_ctl
+[18/50] convert pstore
+[19/50] convert tracefs
+[20/50] convert debugfs
+[21/50] debugfs: remove duplicate checks in callers of start_creating()
+[22/50] convert efivarfs
+[23/50] convert spufs
+[24/50] convert ibmasmfs
+[25/50] ibmasmfs: get rid of ibmasmfs_dir_ops
+[26/50] convert devpts
+[27/50] binderfs: use simple_start_creating()
+[28/50] binderfs_binder_ctl_create(): kill a bogus check
+[29/50] convert binderfs
+[30/50] autofs_{rmdir,unlink}: dentry->d_fsdata->dentry == dentry there
+[31/50] convert autofs
+[32/50] convert binfmt_misc
+[33/50] selinuxfs: don't stash the dentry of /policy_capabilities
+[34/50] selinuxfs: new helper for attaching files to tree
+[35/50] convert selinuxfs
+[36/50] functionfs: switch to simple_remove_by_name()
+[37/50] convert functionfs
+[38/50] gadgetfs: switch to simple_remove_by_name()
+[39/50] convert gadgetfs
+[40/50] hypfs: don't pin dentries twice
+[41/50] hypfs: switch hypfs_create_str() to returning int
+[42/50] hypfs: swich hypfs_create_u64() to returning int
+[43/50] convert hypfs
+[44/50] convert rpc_pipefs
+[45/50] convert nfsctl
+[46/50] convert rust_binderfs
+
+	... and no kill_litter_super() callers remain, so we
+can take it out:
+[47/50] get rid of kill_litter_super()
+	
+	Followups:
+[48/50] convert securityfs
+	That was the last remaining user of simple_recursive_removal()
+that did *not* mark things persistent.  Now the only places where
+d_make_discardable() is still called for dentries that are not marked
+persistent are the calls of simple_{unlink,rmdir}() in configfs and
+apparmorfs.
+
+[49/50] kill securityfs_recursive_remove()
+	Unused macro...
+
+[50/50] d_make_discardable(): warn if given a non-persistent dentry
+
+At this point there are very few call chains that might lead to
+d_make_discardable() on a dentry that hadn't been made persistent:
+calls of simple_unlink() and simple_rmdir() in configfs and
+apparmorfs.
+
+Both filesystems do pin (part of) their contents in dcache, but
+they are currently playing very unusual games with that.  Converting
+them to more usual patterns might be possible, but it's definitely
+going to be a long series of changes in both cases.
+
+For now the easiest solution is to have both stop using simple_unlink()
+and simple_rmdir() - that allows to make d_make_discardable() warn
+when given a non-persistent dentry.
+
+Rather than giving them full-blown private copies (with calls of
+d_make_discardable() replaced with dput()), let's pull the parts of
+simple_unlink() and simple_rmdir() that deal with timestamps and link
+counts into separate helpers (__simple_unlink() and __simple_rmdir()
+resp.) and have those used by configfs and apparmorfs.
 
