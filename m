@@ -1,135 +1,77 @@
-Return-Path: <linux-fsdevel+bounces-67912-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67913-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62B04C4D607
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 12:20:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E088C4D670
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 12:28:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 89B014F79B2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 11:14:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9B763B4B47
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 11:23:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 322553546FB;
-	Tue, 11 Nov 2025 11:14:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 662A13559C4;
+	Tue, 11 Nov 2025 11:23:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JVl1T59E"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sQi5GVpX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E98ED34B1AF
-	for <linux-fsdevel@vger.kernel.org>; Tue, 11 Nov 2025 11:13:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DAE72F90DE;
+	Tue, 11 Nov 2025 11:23:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762859639; cv=none; b=rMPfv0q/5d89olX4Oc9uudM6TlVN21RtIvSWb3OJE4F1enYXPR1qbpkOwbTd0+jE2B+tJkf9+NHctsnbPL5icnKyr7sgu3GnmV4VwMtzH1UnxbUK9iCE++0N8osTypvPL2utNSEbJti81PdiRc3BBrzzlJb6sPD/QQAPiBMl5qY=
+	t=1762860207; cv=none; b=r0c1UI9IDtuYtYWVsfViZTQ9yy3Iuaqm0EHCx03nhSPwewNm9babyOA0xkPZs/Gj5GI0Zj4l4Rj2vsLzHRNZC9PxxWkodw6JQFqJiSmg0JgKHIyO021NOi026CYNbsECRBp05I5Iis3qb35OG90tSKmWhd/Vt8dmhqTkQbLb7Pk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762859639; c=relaxed/simple;
-	bh=mfpxJized6ddPC3qHoBNdHGOU71qGPnLof2yVroAmRQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=un48Hy01HayiOPaXuHkG+aKspOOlBNdwBq+gZ6ba1xaD4DX25o4A//XEe+o5D90k6qv6VWoUPyxUPGfKaWlruPzBguV2SMVo9ebhN454+aokr3BaizXkdKvjXyzQT2p6+exdoJIXP+fJu4ix+uOL01guzafPFqRLN9uKDwqzooE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JVl1T59E; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b472842981fso527624766b.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Nov 2025 03:13:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762859636; x=1763464436; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qI0L2Ed/xTKonR94/9lycNCAUJYqkyjIqxvcRxrvF7Y=;
-        b=JVl1T59Eq9WfU1MqgYtSBDr+hiCxT34sTKZLjD4yIRxZGniaBCiRjAvSBHzwBbIv45
-         OLN6Gc9G6V0TItqECZ8UktcrUadOL7Cf2hffaGIfTNXrxrlTZvAmGkOtnXhmWt+5e/H5
-         T2Z3Ut+jCo//8jPxJEtpLeSi7SWIg14OxNlyTlWZ0wNhfXi79EHvOI/smIvu79I1OY3H
-         njXPj9LTcUVt61M/Vhb8/n0zYo56FVpfy3DgLTPAmwysYllMOUfXTRLdyojK64H67h5z
-         F4748dSmKDhoh01WD7UCuG5AtHfl22/0tMKLAMdWSe9uo8vr/A84Ls/X33eHzukY5SNC
-         qtPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762859636; x=1763464436;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=qI0L2Ed/xTKonR94/9lycNCAUJYqkyjIqxvcRxrvF7Y=;
-        b=qPCG+UzfYkK8HwSYpYFfBoxXlckU41AqsLAbIEgJNlGyHWn/+bjuXDtR3zqHhf7xDU
-         /gXwJ9gMPRnPL34uMdZSIGYH+WFznzcaIv3beoXeBI6nWrnqSXEW99/FZrIaqslyesYt
-         R9kauQQ+IPQ7rpeld9cZEEdcRgr9kWnRZDjPkueqM2rL7ae1gmtoL6Xta/bLFPI0cveS
-         8QJAUo/FwAB/LjMAepQ8pfLRk2IJQuqij3QjW0vf2SapXbumetaXXFkHaw29xou/e9qi
-         XRsKgNhBFM6wGRwyDaRaACxD1OBOf3xmHeJl83iO2wLCnaxlUcF1JSgco5lnA0UB/VuR
-         tlrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW8U/qujrnqQmc/99+xs3Rlv2P4pBWtIcQFXtyS8jPqpTV21WXwTRrdtvscjym+NrgLAkeYcCbaFitg9Hcg@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyg6Ov5lhriWm2oVAOrxqZCB5Wijto/t0UxhaDBqyVi9N2EwLjd
-	Bw9oxY0tmnRU2hQpmawxQUDq2SxPf/8wvJKi/XlG+nE2zL6ZkVH32U6GMU5Gt9U8A/PuEiJbpuz
-	z2wOatLYAghwnCVw74og00w10V+7Dp+0=
-X-Gm-Gg: ASbGncu/qh0MXjoLuwzLQ2bK77C4rxq3WYv9KJpBGEKZ42U5vZ/Mo5RKhLcCDIm4p9A
-	Wms9WjPNIzgSNYtgN4wZf5zqZgKcRXEhMqVIHir4xv5lPewX0Mh4+y+ZhTO7l8Ep4eM1OvxNkVM
-	U8ith+azlZH3C9qA6XaWF7Y/Pxrl1Lb2BTdE1aAM0Fu0U51VRpadPjwMYPM5li//Tb0LpEeYpcb
-	0MvCPb1Lx4diE2yVtUNIZ4xB6ChG9PQGBVaf91jmhfwQOTbUXdyPOTilqxy/sPKHkbtCK3Or4Kl
-	QkxjSUqHU4f6ibAKnZVYGaU3sQ==
-X-Google-Smtp-Source: AGHT+IFCERcs0ehjjKA/2M2GTFXwzqYa8iiT/pNklRVmaRpQgF44uW7J1kvaXulSj9Snkld7WJIal5/64pd1gpBwVGA=
-X-Received: by 2002:a17:907:1c9f:b0:b72:7dbd:3c6 with SMTP id
- a640c23a62f3a-b72e05bd010mr1112366566b.55.1762859636167; Tue, 11 Nov 2025
- 03:13:56 -0800 (PST)
+	s=arc-20240116; t=1762860207; c=relaxed/simple;
+	bh=Thw9gqzu/5zeb1wIIdMk1FSZcopEkspAzVBeJtniQYA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K6jZMDxTolXOEmI/EKei47iL+V9TNVBvRzmZhnxoJGKpYMl/gPHyqJ5fDIf1IfwLGsB0wJzqm1GnrAeIMRop7OOO3vkQY/H++I5itdh2XBHdgztQs0hYB/UY3DJQ0M94nUF7HNvdHKDjX4aeCRTxMOCU0wtBvQNPDgMaf0nwE0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sQi5GVpX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 759D4C19425;
+	Tue, 11 Nov 2025 11:23:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762860207;
+	bh=Thw9gqzu/5zeb1wIIdMk1FSZcopEkspAzVBeJtniQYA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sQi5GVpX52PRCMj5gkIAH3YRXiiuANNgtGHcppPScXsYfdyl02sFfNzrO3aH+a/Ax
+	 3TuLFVEa0u8rU2MSpSVNrhAuMVX2bSSoXzlUxvgfHAPpK9AN0v4w0qGvpV0F8jgPgn
+	 8uWk759FEvUsB9g3yf1epocdoWilRVE9s3+GHQHDjLz3k1htz/iQPi2PI5XdOqtruH
+	 4d1Q7M02OXK0Znvb2uxqv2F741E82EdwV82NP4DBWhgim5fkJDVA6Lu3t1buNOvchV
+	 CStv+8B1S/nj4DSDhQfNCnELeTWHXq/7wXAT2BsdhKSSUSyRlamKFJ2E84bZRrghdU
+	 kjp0x3ofb/xWQ==
+Date: Tue, 11 Nov 2025 12:23:18 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: syzbot <syzbot+0b2e79f91ff6579bfa5b@syzkaller.appspotmail.com>
+Cc: akpm@linux-foundation.org, bpf@vger.kernel.org, bsegall@google.com, 
+	david@redhat.com, dietmar.eggemann@arm.com, jack@suse.cz, jsavitz@redhat.com, 
+	juri.lelli@redhat.com, kartikey406@gmail.com, kees@kernel.org, liam.howlett@oracle.com, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-security-module@vger.kernel.org, lorenzo.stoakes@oracle.com, mgorman@suse.de, mhocko@suse.com, 
+	mingo@redhat.com, mjguzik@gmail.com, oleg@redhat.com, paul@paul-moore.com, 
+	peterz@infradead.org, rostedt@goodmis.org, rppt@kernel.org, sergeh@kernel.org, 
+	surenb@google.com, syzkaller-bugs@googlegroups.com, vbabka@suse.cz, 
+	vincent.guittot@linaro.org, viro@zeniv.linux.org.uk, vschneid@redhat.com
+Subject: Re: [syzbot] [fs?] WARNING in nsproxy_ns_active_put
+Message-ID: <20251111-dozent-losgefahren-0a3a086b293e@brauner>
+References: <20251111-anbraten-suggerieren-da8ca707af2c@brauner>
+ <691317ab.a70a0220.22f260.0135.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251110100503.1434167-1-mjguzik@gmail.com> <20251111-entkriminalisierung-chatbot-feeb7455fc74@brauner>
-In-Reply-To: <20251111-entkriminalisierung-chatbot-feeb7455fc74@brauner>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Tue, 11 Nov 2025 12:13:43 +0100
-X-Gm-Features: AWmQ_bn1Oq353vLtOaM933qqCHZui_Cj9HtV86r-w72vSSCxVFbxshwkj6NlrZc
-Message-ID: <CAGudoHHi7+gy5sRsOimLqSy02814cYKN6FQZ8hQcATue0PV8gg@mail.gmail.com>
-Subject: Re: [PATCH v2] fs: avoid calls to legitimize_links() if possible
-To: Christian Brauner <brauner@kernel.org>
-Cc: jack@suse.cz, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <691317ab.a70a0220.22f260.0135.GAE@google.com>
 
-this patch is obsolete, I posted a v3 (and later v4) with more
-predicts in the area:
-https://lore.kernel.org/linux-fsdevel/20251110165901.1491476-1-mjguzik@gmai=
-l.com/
+On Tue, Nov 11, 2025 at 03:02:03AM -0800, syzbot wrote:
+> Hello,
+> 
+> syzbot tried to test the proposed patch but the build/boot failed:
 
-but that will require at least a v5 later
-
-tl;dr please drop this patch
-
-On Tue, Nov 11, 2025 at 10:47=E2=80=AFAM Christian Brauner <brauner@kernel.=
-org> wrote:
->
-> On Mon, 10 Nov 2025 11:05:03 +0100, Mateusz Guzik wrote:
-> > The routine is always called towards the end of lookup.
-> >
-> > According to bpftrace on my boxen and boxen of people I asked, the dept=
-h
-> > count is almost always 0, thus the call can be avoided in the common ca=
-se.
-> >
-> > one-liner:
-> > bpftrace -e 'kprobe:legitimize_links { @[((struct nameidata *)arg0)->de=
-pth] =3D count(); }'
-> >
-> > [...]
->
-> Applied to the vfs-6.19.misc branch of the vfs/vfs.git tree.
-> Patches in the vfs-6.19.misc branch should appear in linux-next soon.
->
-> Please report any outstanding bugs that were missed during review in a
-> new review to the original patch series allowing us to drop it.
->
-> It's encouraged to provide Acked-bys and Reviewed-bys even though the
-> patch has now been applied. If possible patch trailers will be updated.
->
-> Note that commit hashes shown below are subject to change due to rebase,
-> trailer updates or similar. If in doubt, please check the listed branch.
->
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-> branch: vfs-6.19.misc
->
-> [1/1] fs: avoid calls to legitimize_links() if possible
->       https://git.kernel.org/vfs/vfs/c/ab328bc1eb61
+I think that's unrelated. Anyway, I managed to point this to the wrong
+branch. I'll send another test request in a bit.
 
