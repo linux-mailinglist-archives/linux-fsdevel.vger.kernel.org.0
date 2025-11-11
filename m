@@ -1,84 +1,108 @@
-Return-Path: <linux-fsdevel+bounces-67931-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67932-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7D17C4E349
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 14:41:14 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2935FC4E385
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 14:45:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DF6E3AC91B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 13:41:11 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 96FA44E9E7C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 13:45:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11F8434250A;
-	Tue, 11 Nov 2025 13:41:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7212B34250D;
+	Tue, 11 Nov 2025 13:44:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="iVR2yBi+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1038033121E;
-	Tue, 11 Nov 2025 13:40:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE72B331235
+	for <linux-fsdevel@vger.kernel.org>; Tue, 11 Nov 2025 13:44:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762868461; cv=none; b=IzIihlEJZleOhwq2CxWWfvAmEC6Gje/uxVC+tH57ZiMmfL1IBd1epdo58Cea6lpS724DnkRlcuALH+0LnOP5vv6fAQ7sMfIJhz8BaDcFxCoLXwUGU0loXOrZF7BYk2xAtOk7ZOcPLszyyGjAtmbldr5k98SJ8FARjfkv1BkkBLA=
+	t=1762868694; cv=none; b=BjNp2R5LlFQFJCWc4zRQP79TTNzdhm2dxEnJ+Vq1ZNV/k83CGgski9oPcutxpq3tcGLDERkusaK1f7XaeU3Tv5rYoy5A3oDcUvzcgTjK1DnfwXTJdDjZs+w5T2VoBHRPe0OuuklQDjLx2mslKPWIZS/sNJgnhycVKHsDFJKTsXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762868461; c=relaxed/simple;
-	bh=XxB0ZGyv31koe51CUNbQjeRNDFOX4C7Jft4vuVG+Thc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kw6k6QJ5j4ckRJCGe+J2Te5vWYke/odYJGnq6FDKaXXjLincvrgB13QW+rbb+rFgJRBydjhQkX5wxw66W6mzPx+BTJ0JANT9S4X+DYqdyw85NZeDZyZVoVqOIWfdIvVFyeQAMpXqT9WJ/NHT9yvLYdmzg68TlA1oQsPHo7CvJys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 761E5227AAA; Tue, 11 Nov 2025 14:40:56 +0100 (CET)
-Date: Tue, 11 Nov 2025 14:40:56 +0100
-From: hch <hch@lst.de>
-To: Florian Weimer <fweimer@redhat.com>
-Cc: hch <hch@lst.de>, Hans Holmberg <Hans.Holmberg@wdc.com>,
-	"linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-	Carlos Maiolino <cem@kernel.org>,
-	Dave Chinner <david@fromorbit.com>,
-	"Darrick J . Wong" <djwong@kernel.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"libc-alpha@sourceware.org" <libc-alpha@sourceware.org>,
-	Matthew Wilcox <willy@infradead.org>
-Subject: Re: [RFC] xfs: fake fallocate success for always CoW inodes
-Message-ID: <20251111134056.GA748@lst.de>
-References: <20251106133530.12927-1-hans.holmberg@wdc.com> <lhuikfngtlv.fsf@oldenburg.str.redhat.com> <20251106135212.GA10477@lst.de> <aQyz1j7nqXPKTYPT@casper.infradead.org> <20251106144610.GA14909@lst.de> <8b9e31f4-0ec6-4817-8214-4dfc4e988265@wdc.com> <20251111090547.GC11723@lst.de> <lhu4ir0kiei.fsf@oldenburg.str.redhat.com>
+	s=arc-20240116; t=1762868694; c=relaxed/simple;
+	bh=BNOzgUYOcnJc6jUkH0FdQt5N0+21shSFRmdxMj09ooM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FYf+cQBZDzvK5rkbXgGvCxIh2Bcb/ndJS4JCsKZF4PsTNpxFSMPH+dJCdug+V42wlmDEMrwZobdv2aeWqmkUzzSfTwCG5WyYOPGmaZrhOEepoNMzNVhQuUQzVCDPcDgwtYv3llkrw9Jh8PUVH6BJFRUh05fjbk266i4kxM5+VbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=iVR2yBi+; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4ed72cc09ddso22404511cf.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Nov 2025 05:44:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1762868692; x=1763473492; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=p5k10nsHfVcysSEr6r8VgK9nyddtwoeg+8UBvBlu+UM=;
+        b=iVR2yBi+p0/CxxmjW8z/R7YLCC3cfo1vUTqFNr5IWDLXMh68VqfXsbfsOh6uHElp79
+         6ZsoU5Pov9DYmffEf5+OcnabUCqsGuAZhMuJlQZyI+DVVcnbhxMS8r+ci2F1pbPXPLsV
+         kYSM8PgPR0IjhZ6g7Dhi3C4MvWIbD77nyA3yU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762868692; x=1763473492;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=p5k10nsHfVcysSEr6r8VgK9nyddtwoeg+8UBvBlu+UM=;
+        b=Hq9vOpI2uhFomEHwkanEzo6np95Pt0C4MdgV8IF3ZsoKhB2OPSMwfIA2dm5awvbabD
+         JaGDfOTojfKnS88V9sUUB/2nzWUoTcdEvY65GfGI19MWfRzga2OsD4rHG2vngzeGcDJW
+         fyO+3NIFrj7qnw19X+cmSiEI/7FtBPeh7q8V1tvDBENB8veFaiC1vJgEgG1JRZs1J3FE
+         x+bxjk+62j9mYU3J4R8mPqfZ7G6bRfU1B8GHfc7a2Mc1zPI4vLq2HKMbvX+q0ozH/zBu
+         hzxMEn1cAfbE62fSkBdnobH8sD60P6YnhtyXKtxb+NiyywGNhOvuyRW+wL6MbblDHzcf
+         z+ng==
+X-Forwarded-Encrypted: i=1; AJvYcCV1VxeBt5H4YvyKU8j9VISrKRqMn9SZQoUK2bWn+A3a4EbtS48ZMu+X5jEIhcYbWjklScvWbSkTVdsCbI8S@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPPoQOCkx2RlCXUgQE9g4hHjkDjQDTWtYKgjhyXHy94lg7lB9m
+	N/2iKZ/z1tez2QBTrnaQDDWxzacdlaiUy/on+sWcEt1yRSj4NO+eA8IZ4TxgKE2LinXpkLQGyja
+	qXmvfDLwCnpbt0r0Z+fNc/GgJOqCsTNsuhMBgjdDIBw==
+X-Gm-Gg: ASbGncvl47GDm30ghbnhxJV2vI4Ua8eF99x+fiTnOaA+tH07WIehPr0N8yMHF4BhFdo
+	Y4vR4ugJdIi/8layvRCH9q/T83AC7c8NBr7Rjpy+FYWLSKS1PDFXP9St2vuqTXWoT66P7SuP5v9
+	mtcHUrot5BxUr0MyBedeMwveNb3Wpx3chAeKYSA4E6BUdAp7AjqF8fd/fHmoNBSERQWY5JI41j4
+	p+RFy+q5gjqNvsGDqw5s02I3g+vUUGFUXDM28iqWpq1b2PJ7LvTC9GbgBU=
+X-Google-Smtp-Source: AGHT+IGU1JVoYyv7CzlTWKa1ok4sgDwrvXsmRYqaQymnTJaYvBz9aHj6lCwmrP45DypLkDeS6k2ETKDOOEEc/ip0FCM=
+X-Received: by 2002:ac8:59ca:0:b0:4e7:2d8b:ce5f with SMTP id
+ d75a77b69052e-4eda4ec5ea1mr146269961cf.36.1762868691867; Tue, 11 Nov 2025
+ 05:44:51 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <lhu4ir0kiei.fsf@oldenburg.str.redhat.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+References: <20251021-io-uring-fixes-copy-finish-v1-0-913ecf8aa945@ddn.com>
+ <20251021-io-uring-fixes-copy-finish-v1-1-913ecf8aa945@ddn.com> <CAJnrk1aOsh-mFuueX0y=wvzvzF=MghNaLr85y+odToPB2pustg@mail.gmail.com>
+In-Reply-To: <CAJnrk1aOsh-mFuueX0y=wvzvzF=MghNaLr85y+odToPB2pustg@mail.gmail.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Tue, 11 Nov 2025 14:44:40 +0100
+X-Gm-Features: AWmQ_bnJaLVOFkPGKtY0u21R6DEAFTB_g34UsCx6_brZ8Fndr61_N1ZAbAs77Es
+Message-ID: <CAJfpegsXbmzPkVzg4HabnCeTmRFzsTjD_ESeR-JRhV7MPeO4NA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] fuse: missing copy_finish in fuse-over-io-uring
+ argument copies
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: Bernd Schubert <bschubert@ddn.com>, Luis Henriques <luis@igalia.com>, 
+	Miklos Szeredi <mszeredi@redhat.com>, linux-fsdevel@vger.kernel.org, 
+	Cheng Ding <cding@ddn.com>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Nov 11, 2025 at 10:50:13AM +0100, Florian Weimer wrote:
-> > On Tue, Nov 11, 2025 at 08:31:30AM +0000, Hans Holmberg wrote:
-> >> In stead of returning success in fallocate(2), could we in stead return
-> >> an distinct error code that would tell the caller that:
-> >> 
-> >> The optimized allocation not supported, AND there is no use trying to
-> >> preallocate data using writes?
-> >> 
-> >> EUSELESS would be nice to have, but that is not available.
-> >> 
-> >> Then posix_fallocate could fail with -EINVAL (which looks legit according
-> >> to the man page "the underlying filesystem does not support the operation")
-> >> or skip the writes and return success (whatever is preferable)
-> >
-> > The problem is that both the existing direct callers of fallocate(2)
-> > including all currently released glibc versions do not expect that
-> > return value.
-> 
-> That could be covered by putting a flag into the mode argument of
-> allocate that triggers the new behavior.
+On Fri, 31 Oct 2025 at 22:30, Joanne Koong <joannelkoong@gmail.com> wrote:
 
-Which basically makes it a new mode, just encoded as a flag for all
-purposes ;-)
+> --- a/fs/fuse/dev_uring.c
+> +++ b/fs/fuse/dev_uring.c
+> @@ -649,6 +649,7 @@ static int fuse_uring_args_to_ring(struct
+> fuse_ring *ring, struct fuse_req *req,
+>         /* copy the payload */
+>         err = fuse_copy_args(&cs, num_args, args->in_pages,
+>                              (struct fuse_arg *)in_args, 0);
+> +       fuse_copy_finish(&cs);
+>         if (err) {
+>                 pr_info_ratelimited("%s fuse_copy_args failed\n", __func__);
+>                 return err;
+>
 
+Applied this variant.
+
+Thanks,
+Miklos
 
