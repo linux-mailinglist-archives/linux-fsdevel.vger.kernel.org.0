@@ -1,85 +1,89 @@
-Return-Path: <linux-fsdevel+bounces-67918-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67919-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1EA7C4D99D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 13:12:06 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23B56C4D937
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 13:06:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E51F54F327B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 12:04:15 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 78F2134FD42
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 12:06:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 875933559F8;
-	Tue, 11 Nov 2025 12:04:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35EFA3570AB;
+	Tue, 11 Nov 2025 12:05:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e9o0NZ/J"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BBkaD78x"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0F923009F8;
-	Tue, 11 Nov 2025 12:04:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DDEA248F78;
+	Tue, 11 Nov 2025 12:05:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762862649; cv=none; b=cttK39N0xHZwrYdvXTD8Dos/SKEvK5sWAghj/5fKoYZmGoZ8kE7VG4YQjqGFwXB3u9nvwPEM7UJ36gx19pnneN6MOHs+M8oKxwGYBl8hmqQ1K4BpRFKTqcZUdf3dVbt67bBBAkQRiy6wmOB1xUZyRoLmf5Tg7xJEiLoF2sNOKvc=
+	t=1762862756; cv=none; b=NvxG4qd+Ux+5jr/LSi4jCsXWDb9gTaKytBpwnV6PIC4C+bYyBEJMXmYQAl6nXWdgYiKaCZxu1OwUnVRHMHKTj1H4wQB9wilHH9qAOcPR+aH5JAW+gEtFmbr6tf5MJLLUIWmKTXzCRheCiDX16qMVZ7WvJQ54D70gqpZM2jrfT0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762862649; c=relaxed/simple;
-	bh=CXuSHy0O31aSj5lEOnrDTRMS+CyKcDRXkUzk/B6pN8E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ExcMxD7xnyTKMOvrLh1vOEWDACBhV90M5k5PMIy9CLyGLwVr45e3yCyNBYSAEvE4zGN6dgrReXT2LURxOnFo8KDWpqOTMA+4wmNUrjeDnAOH0D954NQBI0PsriOYGfIpMuwcXc7w1QmSIpwMBWgDECRKvfo1+GyY2lsgovB3RqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e9o0NZ/J; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACBADC4CEF7;
-	Tue, 11 Nov 2025 12:04:07 +0000 (UTC)
+	s=arc-20240116; t=1762862756; c=relaxed/simple;
+	bh=VRGcAN2yTGan9iucsJQd7KhaDHf/oFMbWEQdpOAsvMM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Yvj916gIWEyNMP3CVKHluzE4R2ZcNY824zTGePt7uf2Yp9Qgq56LE/rorqqOdLBlfL9unhI+YU1paiGEmkvUgEARC+Rs5IFIYyA6QMwDQ2Nv6kQ0fK5/Vhn0E3UfEdbj2tsSZOY1kP4XNYYcO5HPE1ifOtOhY+YNDyH9/Wt+jVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BBkaD78x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89DDCC4CEFB;
+	Tue, 11 Nov 2025 12:05:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762862649;
-	bh=CXuSHy0O31aSj5lEOnrDTRMS+CyKcDRXkUzk/B6pN8E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=e9o0NZ/JbFwc0f+dXwdos4UAh8440bpnL5TeGbCKyOfGKD2tdnW54cbgFD2Q1lqv+
-	 XZeOb4LHNLZbP5jojQY33R+6tdtQhEzdHhovDkJ0xnU6X7wKw63U0A5CwNd0mMzGpm
-	 9USvbr7UPvBhO6scn1T2nrQycv9252QaPeurZL6R719Mxlch60WxMkXwpUXYuXykQN
-	 /smLJi9G0/OFRzJinqppGQzQYdiJIiKOrEn97bfPMPZhSVAhWZxHwtSpRddx+18gP7
-	 2vh7WJjkjsABJwADhBthuN5WeGXHgcgIq4eJj9ovehL9/vPatK/na/fIGi1MU4syba
-	 HAJaFhlxg6IGA==
-Date: Tue, 11 Nov 2025 13:04:05 +0100
+	s=k20201202; t=1762862756;
+	bh=VRGcAN2yTGan9iucsJQd7KhaDHf/oFMbWEQdpOAsvMM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=BBkaD78xZB2M2FqoTBASK5HU+V+uR/G8wS0lTNNTGtaskHHJgzou32mKxXgRetCOF
+	 VsN/AyORBEug0eaBi1ov27cyevAnzJyyqtnR6JGPOLaVC76ugBSeG6ybg5RBnjrZ5r
+	 UaDKBtuYNACP8hhvxXWejn9C+BnUfQr+FdCOZsPJj2zO5tx+Z3YQJ8vTJ35jbSLneo
+	 vx5NcuUaUr0mLttM1AC/lXfU0y8ALB8/bKxUD9Gg7ZTCWNV6eonkrbL6oHREz0Dyta
+	 51FKsW43zWntQu1mZC3onEZsCNyRYdmEawF9wWaNYR6jzYtry9XR8e9f1FdVw8jF0R
+	 HzZkMsdJ17uIw==
 From: Christian Brauner <brauner@kernel.org>
-To: syzbot <syzbot+0a8655a80e189278487e@syzkaller.appspotmail.com>
-Cc: jack@suse.cz, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Subject: Re: [syzbot] [fs?] WARNING in nsproxy_ns_active_get
-Message-ID: <20251111-komponente-verprellen-a5ba489f5830@brauner>
-References: <690bfb60.050a0220.2e3c35.0012.GAE@google.com>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fs: hide dentry_cache behind runtime const machinery
+Date: Tue, 11 Nov 2025 13:05:51 +0100
+Message-ID: <20251111-lobpreisen-nebel-8c71952ada8b@brauner>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20251105153622.758836-1-mjguzik@gmail.com>
+References: <20251105153622.758836-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <690bfb60.050a0220.2e3c35.0012.GAE@google.com>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=843; i=brauner@kernel.org; h=from:subject:message-id; bh=VRGcAN2yTGan9iucsJQd7KhaDHf/oFMbWEQdpOAsvMM=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQKq83/84DNQEZnwuW8OKYpk399OSjpa9QmGeHFfrD9h ESydMSljlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgInotjEy7DCwO/w91Du3f+as bIugQtFkJo1NWmneC08qyGTJvtI5ysjQ2vp6yZzVGzzfL2FIfz7nD+OSQ07TeDZYVjws4GyN/z2 RDwA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Wed, Nov 05, 2025 at 05:35:28PM -0800, syzbot wrote:
-> Hello,
+On Wed, 05 Nov 2025 16:36:22 +0100, Mateusz Guzik wrote:
 > 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    17490bd0527f Add linux-next specific files for 20251104
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1006532f980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=9995c0d2611ab121
-> dashboard link: https://syzkaller.appspot.com/bug?extid=0a8655a80e189278487e
-> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1406532f980000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1166ff34580000
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/a4d318147846/disk-17490bd0.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/86641a470170/vmlinux-17490bd0.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/35c008a540c8/bzImage-17490bd0.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+0a8655a80e189278487e@syzkaller.appspotmail.com
 
-#syz test: https://github.com/brauner/linux.git namespace-6.19
+
+Applied to the vfs-6.19.misc branch of the vfs/vfs.git tree.
+Patches in the vfs-6.19.misc branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.19.misc
+
+[1/1] fs: hide dentry_cache behind runtime const machinery
+      https://git.kernel.org/vfs/vfs/c/15e78f24ccf0
 
