@@ -1,98 +1,155 @@
-Return-Path: <linux-fsdevel+bounces-67915-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67916-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 789CDC4D8B6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 12:58:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 16B2BC4D892
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 12:56:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D3A484FE08D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 11:47:00 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BE2AD4F6281
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 11:47:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 437C2347BA8;
-	Tue, 11 Nov 2025 11:46:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6399533CE91;
+	Tue, 11 Nov 2025 11:47:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NUuU+Oon"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kedGt62l"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BE00252904;
-	Tue, 11 Nov 2025 11:46:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 381A128FFF6
+	for <linux-fsdevel@vger.kernel.org>; Tue, 11 Nov 2025 11:47:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762861589; cv=none; b=dAztAunCCK8SXEjbrRrWGZTDOUbK/DCiqgjdCJPerCzTpzWXqH+HZ5CdJHvEwN1DrNBe9Sl3NwA3JDgQ55I0dzZ8wLFBAqhaoRuUCKKxHvhalDSQfWc22hE4w2Mb3VLct0a1Vn4YQueyAbtumisHmBdfwa+QYkO5IGKII1WKt/I=
+	t=1762861668; cv=none; b=Gg0G8wKP2aamnVnL3S0lYuS/FRI6UwePL2nKM5yuO+klQDiTB3lzcZladcbaXHNylG1q8eB/WFkc7SbBxi4fin+skOqAa4p8Hu0Ou6QQGD9Fx51/6zMJvtFvoh/VaHnSSR3OtWZ0np648aGTbThYebWSpumkeSYsPLLVs4mHwUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762861589; c=relaxed/simple;
-	bh=kzGd0t16keZQLp1SKkjVyEBBXkKF8aj2R550ABn6Dqc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EtEcUDKgYB8YhTSOTxxEy0Q8CFMdHzV+N/4pJN4DsKtwiOqdFHNWP/Hlww7MVeVkLeLknNEXckHvNf/8jn4a25yEkKK6sryaB+F61hQ6xcfGHYYZn3Lpct3H9lz5xRV86XlWMf/57UFgS6z/AhK+62Myhk6J78ULl9QjYaf3sDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NUuU+Oon; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EFEEC4CEF7;
-	Tue, 11 Nov 2025 11:46:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762861589;
-	bh=kzGd0t16keZQLp1SKkjVyEBBXkKF8aj2R550ABn6Dqc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=NUuU+OonWudRKa2CYq8IqDXxenOAqb54+6/1IRp5B3gGdYreV6M+DjYXFJlZj+Ce6
-	 JuVgwOZBaOr1cTWKmxLc3StqgKTMKHDGWetcTFuDHBWhl+pHWAj+rfeC0tOfN+fhQm
-	 gvwUe3uaR8o+5oKUHM2adcTJOybuG/cD6rJNU2bG+5aMJJycjXIwAsvLtOXJqxGKAs
-	 WhNG0Ad4tImKT3gkMYdI7TW+WYZvv7UZS3UddWFws6LmU5YfV6iNvfA4R7TAIlPtce
-	 +V/JkBq1w9rk5r51kbXm243A7MInOPh/UrqcFSqO0ExWF/8Ww+Tb1LIzTd/1Eg+WZ0
-	 mW8KSQ/wZjuRQ==
-From: Christian Brauner <brauner@kernel.org>
-To: mic@digikod.net,
-	Mateusz Guzik <mjguzik@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-security-module@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	viro@zeniv.linux.org.uk,
-	eadavis@qq.com,
-	gnoack@google.com,
-	jack@suse.cz,
-	jannh@google.com,
-	max.kellermann@ionos.com,
-	m@maowtm.org,
-	syzbot+12479ae15958fc3f54ec@syzkaller.appspotmail.com
-Subject: Re: [PATCH 1/2] fs: add iput_not_last()
-Date: Tue, 11 Nov 2025 12:46:21 +0100
-Message-ID: <20251111-fluss-vokabel-7be060af7f11@brauner>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251105212025.807549-1-mjguzik@gmail.com>
-References: <20251105212025.807549-1-mjguzik@gmail.com>
+	s=arc-20240116; t=1762861668; c=relaxed/simple;
+	bh=jhqtP7s3J6aXUrsWY8SH4BcYvf5qE7GblQujzK699wo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ka1L1WJXar9E0GCNADCTuYQv/R5J53bxjLzMGPK3i17Uw324AG7YbIx13EzCPQgLPz9zuz6ZHLYX1ZTwCWrGhVlZmz/nFzf9bpTaW0jWz3/yR+ODsWcguJqC9inG0Gv7EMc2iIZNT6bHN0w03dn2zGEW0a+imJ5FYoEFZgIuygo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kedGt62l; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-640c6577120so7486280a12.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Nov 2025 03:47:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762861666; x=1763466466; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8y/CoERQP/gGJ1rgb0QyOuyq2NoruU8Gd9wvvvICRo8=;
+        b=kedGt62ldvN4v2vAxqdPzD0PeRYq+puEI1PlzsiE6hYiLMw7BiKre47WRdDZjc+/wc
+         TO/RVIv8XdHBTLluK9aiRF3PMYl9B35gp92gifjk41QkKy3mr1ckJBGlEE98A/pyD2oT
+         mHvN2Q2FFQyT137UkIAKRzR9VVVH/60840wCCH9mQtDRSRSBWr4V6T8iNqQT90mPzfZN
+         E7REPmmsC97EUZ2mlHJPQCLkk/oUQNZfKAjQJAH0SgSTv1A2AZ5ATrbCU/Vexq/df4Jj
+         4AnaZ1xKpMyfaaB1ILLYpyWffCHBH3B/lPgmDcdwq9fUseRoa4ElpZVhivvfEQFLthSO
+         B2HQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762861666; x=1763466466;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=8y/CoERQP/gGJ1rgb0QyOuyq2NoruU8Gd9wvvvICRo8=;
+        b=IzGeJZg7C75BA9jJFbnQ4f2QfSopcS/e+mBzJAmmclXfYrcmb0zXVF84NkDGgX/2v+
+         KaPfCPiWDGIFcPJOku6DKdnNDKQUrla70n4Nc7TuRnUEPbaajA0kpKtCECtIrk5Coidf
+         7zxRAz+7esbW87QmcSkrHA+obxst3MY1NYK0CIorXeLIR3EAOGxQfy043xfQGjjSw1HF
+         w3uxQ1mNMh+DcFC7DRBsD/+zXV7vmp5EJ9u2hXsO8VAjmFVhHHC2vcpW5GGSIzoT5CzY
+         ygGe1RHgspuIwQLi8ROJ2sbJnb5BOez/9YRaGVgEaAe8AuoznsPGcEeG32s8r/dybalb
+         POiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWPeRcjiiybns/SOU+prto1hCv2HclzANhu5/Iwb6blaE7IXn/Hi+HS+cfXXSztLk3E226KluyEpWIH3dbk@vger.kernel.org
+X-Gm-Message-State: AOJu0YyStAg09+yhvkZgfOKoGHStgGuCp7snuHj28kYll93VYHdV3vAp
+	Zkuh+cyMVtvJlhF4v7Gq+VskBqd2q+CDLf2W9mwZm2npHeSmby+0ROoxRTESEue/Dc4oJbqZTUc
+	R29y77AhJNbKBDSiHvEPtzb90Unq1P3rHAtV3
+X-Gm-Gg: ASbGncufjgX84KDYB9fOsKOdnEC6baaHuEOy1pLOMDdiDAqbfSwuak7N1/RgmbSNrz0
+	Uuziun8wTfDcB8QFGJpBLlkJ23z7orN13sqyjjGm8gu86vjRXb1UF9S0M12k0pWUWGZRNz39rhv
+	lBRSpdbUhQTdsbvfJ1fkOIoOTqW5wlB3ZH9p/dIc9+xNDZbNe0aKxdsiac+C86cvS4bP7LcUzEZ
+	5Z83qTBqR9vawyIyKLDfT7SprDQCactalZ+/ajHx9LdHoMbhDyHJ9k4lXUkgrCf2HXn57fFEhnl
+	Mwm/ZT9gZBage9bdB/JjxISCNg==
+X-Google-Smtp-Source: AGHT+IHPgX7/cQUS/SIkRBOM8pcz3hJsiOAlFjo0Fb0yGdPgC0U7mQuUxEs+ewdADJ8NOEpX3yO5a/UCUe9UhwbXEp8=
+X-Received: by 2002:a05:6402:27d0:b0:640:c8b8:d55 with SMTP id
+ 4fb4d7f45d1cf-6415dbf4b40mr10417786a12.3.1762861665470; Tue, 11 Nov 2025
+ 03:47:45 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=949; i=brauner@kernel.org; h=from:subject:message-id; bh=kzGd0t16keZQLp1SKkjVyEBBXkKF8aj2R550ABn6Dqc=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQKK/FvCJhyV1Y4zHmC/OojRk/FdQQczrYLLUqYkHnpv WzBe4vFHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABPJW8/wv9xiibkr51dHu59X TPyzWnQvmD6rd3zrvT3qZdDh5R83XGP47x99/eCNPV/+Ox94lXb+zHaV7c2JJdIcvK87ljDEG6s ycQIA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+References: <20251107142149.989998-1-mjguzik@gmail.com> <20251107142149.989998-2-mjguzik@gmail.com>
+ <20251111-zeitablauf-plagen-8b0406abbdc6@brauner> <CAGudoHEXQb0yYG8K10HfLdwKF4s7jKpdYHJxsASDAvkrTjd0bw@mail.gmail.com>
+In-Reply-To: <CAGudoHEXQb0yYG8K10HfLdwKF4s7jKpdYHJxsASDAvkrTjd0bw@mail.gmail.com>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Tue, 11 Nov 2025 12:47:33 +0100
+X-Gm-Features: AWmQ_bmVl00-gq76dJA6KDpo9yPluWXIzE9z1CQp_8ryN3rR25PxN1oBL_2n39I
+Message-ID: <CAGudoHHGvXsks+V2Gd0dr66idZdM9bJFriHrqzx5z_vfA9CA0g@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] fs: speed up path lookup with cheaper handling of MAY_EXEC
+To: Christian Brauner <brauner@kernel.org>
+Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, tytso@mit.edu, 
+	torvalds@linux-foundation.org, josef@toxicpanda.com, 
+	linux-btrfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 05 Nov 2025 22:20:24 +0100, Mateusz Guzik wrote:
-> 
+On Tue, Nov 11, 2025 at 11:51=E2=80=AFAM Mateusz Guzik <mjguzik@gmail.com> =
+wrote:
+>
+> On Tue, Nov 11, 2025 at 10:41=E2=80=AFAM Christian Brauner <brauner@kerne=
+l.org> wrote:
+> >
+> > On Fri, Nov 07, 2025 at 03:21:47PM +0100, Mateusz Guzik wrote:
+> > > +     if (unlikely(((inode->i_mode & 0111) !=3D 0111) || !no_acl_inod=
+e(inode)))
+> >
+> > Can you send a follow-up where 0111 is a constant with some descriptive
+> > name, please? Can be local to the file. I hate these raw-coded
+> > permission masks with a passion.
+> >
+>
+> #define UNIX_PERM_ALL_X 0111?
+>
+> I have no opinion about hardcoding this vs using a macro, but don't
+> have a good name for that one either.
 
+Apart from usage added by me here there is:
 
-Applied to the vfs-6.19.inode branch of the vfs/vfs.git tree.
-Patches in the vfs-6.19.inode branch should appear in linux-next soon.
+fs/coredump.c:          if
+((READ_ONCE(file_inode(vma->vm_file)->i_mode) & 0111) !=3D 0)
+fs/namei.c:      *  - multiplying by 0111 spreads them out to all of ugo
+fs/namei.c:     if (!((mask & 7) * 0111 & ~mode)) {
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+That's ignoring other spots which definitely want 0111 spelled out in
+per-fs code.
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+I would argue the other 2 in namei.c want this spelled out numerically as w=
+ell:
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+          =E2=94=82*  - 'mask&7' is the requested permission bit set
+          =E2=94=82*  - multiplying by 0111 spreads them out to all of ugo
+          =E2=94=82*  - '& ~mode' looks for missing inode permission bits
+          =E2=94=82*  - the '!' is for "no missing permissions"
+[snip]
+          if (!((mask & 7) * 0111 & ~mode)) {
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.19.inode
+But then it may make sense to keep this numerical in the new code as
+well so that anyone looking at lookup_inode_permission_may_exec() and
+inode_permission()->generic_permission()->acl_permission_check() can
+see it's the same thing.
 
-[1/2] fs: add iput_not_last()
-      https://git.kernel.org/vfs/vfs/c/a1cece5d8881
-[2/2] landlock: fix splats from iput() after it started calling might_sleep()
-      https://git.kernel.org/vfs/vfs/c/9638e5c3b673
+I figured maybe a comment would do the trick above the 0111 usage, but
+the commentary added at the top of the func imo covers it:
+   * Since majority of real-world traversal happens on inodes which
+grant it for
+   * everyone, we check it upfront and only resort to more expensive
+work if it
+   * fails.
+
+All that said, now that I look at it, I think the code is best left
+off with spelled out 0111 in place so I wont be submitting a patch to
+change that.
+
+Given that hiding it behind some name or adding a comment is a trivial
+edit, I don't think it's much of a burden for you to do it should you
+chose to make such a change anyway.
 
