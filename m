@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-67803-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67811-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72889C4BCC8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 07:58:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87454C4BE10
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 08:02:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00BCF18899C2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 06:57:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6ED31898613
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 06:59:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6846034C820;
-	Tue, 11 Nov 2025 06:55:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3F4634FF6A;
+	Tue, 11 Nov 2025 06:55:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="KJyJxRMc"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="HiKTZzZ/"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7D973446C9;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A217434402B;
 	Tue, 11 Nov 2025 06:55:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762844131; cv=none; b=Z1TPl/2ujCOajYlAWDDC1z4fgNo6iqkaJKt6+vcUgUO0QzIYKy3L14agOEnyEi3QctL1zPxw/Ps6IwNJAfZAk4fXNBHe3pSnmWgHFTJu/5gi2wXYyRf2i024tsqFk1AGQ5OSElQGfVrUHX7ZPrbEMOmEIGzmYqAc4U7wYG2yqbQ=
+	t=1762844132; cv=none; b=doYmHcOaxT2InUQG0sjqhMCrSskfRgf3nUYXlGljSvjDOrw17j6qoIiCb69I5EeAmgz32MIr8WjdhXD2URczRHOQluKQhf4bv0RZJVdc9d6zJzs1b3zoSvD1MPwV4s0Md+GV3/4bOMZWR8rnMIcv3BTBMp9BdjQgivxXII1P5gU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762844131; c=relaxed/simple;
-	bh=aQb2qy2J1pCZ1132PoicrKjRnzTEBFPwnGLeE5EsJfc=;
+	s=arc-20240116; t=1762844132; c=relaxed/simple;
+	bh=jGXLbtBoU52kB5fq2se2ip0WlsiUE6GUM8W8byZni/8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mzoh4o4RBqx172UmT6ni+8YMZxFSdPRMgP+vBcoFzO5+WzLfsW97OB7Y5HoHa0vAnLjrIkcTdpvATSLlrG8qEAIdvebhMqhuTARxV17IR2b1tR4OxgneGw5VXKUcZ0LDoqHfCu9ukiW07Kz2kXGdA5xYV80mRtvhsClC/lrEAco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=KJyJxRMc; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=px/SPc6Jqb556BYShkwCPl84q32GUQq9i1G2S4GPvs1E8YgVKZVUOKo+5CRhjB4+LQqXKMQ2ECyWMY3lYF861CnoMjbHD57WKnjjDlDLLpSdfde2ykKg5vbKnSxfGuz7dO9xpAR2ZOTUMDWHgE+szf1wtQrdo5i104/KtCe6+go=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=HiKTZzZ/; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=JiG9nHcsxcwZpHb/L0Tx41DaV7imD29tLb/ai1sU578=; b=KJyJxRMc0dvbQcOITZBVA+WBk6
-	ifKPkydBj5RdVYpkYeX6lt/kJ7ld5xb0t53muvLxLstYnB5Kj+ibW1kF1JoNVPQmbi/Msmgp6IIua
-	rxkVOKwaX09nya1yIHsO/LXlke4OexR2bBkWG9LhOwtpTOY2ugBYceF0WF/wnns6qgtdqeY6EhATx
-	NaphnnRAzZNypERmbf3t7xl0oXOouhXWk5Ks9Gq+2D+L1HLZ20izPqJ7SWklcqVqWcK8WfltyTXu1
-	JWzC4NyfbA4dtQ5vb8jg0/lTWmXs+f02YOh/csRHhSEvARsXS9htgina50+ZEPcUaq8myz/AFR1Nu
-	i5DDMhaA==;
+	bh=XM4FZa0do0+xkZhNaAyLfkF8FdfO7rZo+6nC0ji7Cc4=; b=HiKTZzZ/q4UOe5+JDM6CDFXNw+
+	HyDR5VqKNtpjR2amfKboMkRHLZr4PaGe7CCAYJP+76LUWUXz8vpbtEKAIPStBmmhP8Sjxzs+thRRb
+	rJWYPOUAtvnPrutA0+F0/TY1GdkWOThpY2oCwiyCD0KsJ/zHRyjJ4bPea0L/z8x5fffm3GVWTUX/F
+	C1klgokjca5tCzuxZN45ZPaBHqDRnIqHcrhKNk50YL8SEnnGxVsxtfM/mF0CaVVxuNE6g5P/XIX9V
+	OIeVgxtX/90DlBBBiZxd8xJJxrKK6b8c92oeeg8BBKwc8nngThjXp3MfbnCwxU5TS6sArZUNYqKB0
+	MGm2kVNA==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vIiHj-0000000BwyK-2Gux;
+	id 1vIiHj-0000000BwyW-3XSb;
 	Tue, 11 Nov 2025 06:55:23 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
@@ -67,9 +67,9 @@ Cc: torvalds@linux-foundation.org,
 	selinux@vger.kernel.org,
 	borntraeger@linux.ibm.com,
 	bpf@vger.kernel.org
-Subject: [PATCH v3 14/50] convert mqueue
-Date: Tue, 11 Nov 2025 06:54:43 +0000
-Message-ID: <20251111065520.2847791-15-viro@zeniv.linux.org.uk>
+Subject: [PATCH v3 17/50] convert fuse_ctl
+Date: Tue, 11 Nov 2025 06:54:46 +0000
+Message-ID: <20251111065520.2847791-18-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20251111065520.2847791-1-viro@zeniv.linux.org.uk>
 References: <20251111065520.2847791-1-viro@zeniv.linux.org.uk>
@@ -82,56 +82,52 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-All modifications via normal VFS codepaths; just take care of making
-persistent in in mqueue_create_attr() and discardable in mqueue_unlink()
-and it doesn't need kill_litter_super() at all.
+objects are created in fuse_ctl_add_dentry() by d_alloc_name()+d_add(),
+removed by simple_remove_by_name().
 
-mqueue_unlink() side is best handled by having it call simple_unlink()
-rather than duplicating its guts...
+What we return is a borrowed reference - it is valid until the call of
+fuse_ctl_remove_conn() and we depend upon the exclusion (on fuse_mutex)
+for safety.  Return value is used only within the caller
+(fuse_ctl_add_conn()).
+
+Replace d_add() with d_make_persistent() + dput().  dput() is paired
+with d_alloc_name() and return value is the result of d_make_persistent().
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- ipc/mqueue.c | 12 +++---------
- 1 file changed, 3 insertions(+), 9 deletions(-)
+ fs/fuse/control.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-diff --git a/ipc/mqueue.c b/ipc/mqueue.c
-index 093551fe66a7..5737130137bf 100644
---- a/ipc/mqueue.c
-+++ b/ipc/mqueue.c
-@@ -599,8 +599,7 @@ static int mqueue_create_attr(struct dentry *dentry, umode_t mode, void *arg)
- 	dir->i_size += DIRENT_SIZE;
- 	simple_inode_init_ts(dir);
- 
--	d_instantiate(dentry, inode);
--	dget(dentry);
-+	d_make_persistent(dentry, inode);
- 	return 0;
- out_unlock:
- 	spin_unlock(&mq_lock);
-@@ -617,13 +616,8 @@ static int mqueue_create(struct mnt_idmap *idmap, struct inode *dir,
- 
- static int mqueue_unlink(struct inode *dir, struct dentry *dentry)
- {
--	struct inode *inode = d_inode(dentry);
+diff --git a/fs/fuse/control.c b/fs/fuse/control.c
+index 3dca752127ff..140bd5730d99 100644
+--- a/fs/fuse/control.c
++++ b/fs/fuse/control.c
+@@ -236,8 +236,14 @@ static struct dentry *fuse_ctl_add_dentry(struct dentry *parent,
+ 		inc_nlink(inode);
+ 	}
+ 	inode->i_private = fc;
+-	d_add(dentry, inode);
 -
--	simple_inode_init_ts(dir);
- 	dir->i_size -= DIRENT_SIZE;
--	drop_nlink(inode);
--	dput(dentry);
--	return 0;
-+	return simple_unlink(dir, dentry);
++	d_make_persistent(dentry, inode);
++	dput(dentry);
++
++	/*
++	 * We are returning a borrowed reference here - it's only good while
++	 * fuse_mutex is held.  Actually it's d_make_persistent() return
++	 * value...
++	 */
+ 	return dentry;
  }
  
- /*
-@@ -1638,7 +1632,7 @@ static const struct fs_context_operations mqueue_fs_context_ops = {
- static struct file_system_type mqueue_fs_type = {
- 	.name			= "mqueue",
- 	.init_fs_context	= mqueue_init_fs_context,
--	.kill_sb		= kill_litter_super,
-+	.kill_sb		= kill_anon_super,
- 	.fs_flags		= FS_USERNS_MOUNT,
- };
+@@ -346,7 +352,7 @@ static void fuse_ctl_kill_sb(struct super_block *sb)
+ 	fuse_control_sb = NULL;
+ 	mutex_unlock(&fuse_mutex);
  
+-	kill_litter_super(sb);
++	kill_anon_super(sb);
+ }
+ 
+ static struct file_system_type fuse_ctl_fs_type = {
 -- 
 2.47.3
 
