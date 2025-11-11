@@ -1,71 +1,71 @@
-Return-Path: <linux-fsdevel+bounces-67797-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67798-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AEB2C4B9B5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 07:06:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEBE2C4B9B2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 07:06:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 781701894F4E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 06:06:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F7A63B926A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 06:05:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 663B1296BB8;
-	Tue, 11 Nov 2025 06:05:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 335B8299927;
+	Tue, 11 Nov 2025 06:05:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b="t80ElG2Z";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="0MI1pVxU"
+	dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b="ISFGi8VP";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Oxay8t3j"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from fout-b5-smtp.messagingengine.com (fout-b5-smtp.messagingengine.com [202.12.124.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A764A288C34;
-	Tue, 11 Nov 2025 06:05:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C89F229A33E;
+	Tue, 11 Nov 2025 06:05:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762841125; cv=none; b=L41ZrSEeiy+4UaT2JbmBcNSHNzfUnnoyUDuDd3+jXIJIUMTJkUuNLqKIBAPdfnFYDWg37CEEn2MAEztrCxu5Zx4lNZpVV2PBiKs7Fps4Ex0rxf+B30ythWo+N379Z+lP2g+HFWL0d+jEuxN6P6JkLayLgWOjGllAdmm3scmyMdM=
+	t=1762841128; cv=none; b=sx6YZWrCh6rDIgg2dYFv7kcVhloGQ7nrDCK5AEv9qhtq8Th+1yCY/d9cC5tYi7PUNtPlsY/qj3zCDpWQ2d1ufy2lGRRTbfio9w+kgCXVHG8jGN6GNJYl+F/37vuaixkGoJpj4o72yb/OM0iIUmRSanXMNphlm66zNIBcmiDrCUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762841125; c=relaxed/simple;
-	bh=uiTxSEGBsQ1l76wvFYeax1OY2fDYVsM47J/jwqix4f4=;
+	s=arc-20240116; t=1762841128; c=relaxed/simple;
+	bh=RT7cHie7/z9LHjbRhmoQ7VroOQ9rcZfk+ZV6dtTT0w8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ClBffEYDnujrWi9DLdbgbB+uyrNMJjB0T6njb/RHmiDqlqApGa1EiXEX6Xgc0uj42fogtP9dTe79/McHQJKg1Imi3Jq0ODBjKXO/pR9tXDpIdginFm/XVu1Hk38bB6CcSRz6SpoOLqEhb5a4M3C3dQgkgdSzfKe/C7YMpQiX6HM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=themaw.net; spf=pass smtp.mailfrom=themaw.net; dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b=t80ElG2Z; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=0MI1pVxU; arc=none smtp.client-ip=202.12.124.148
+	 MIME-Version; b=os9CpQ7KHhtzw+hMN91iXSaLiTuKNU8Gr1kvstpGEDi83P+bogwhr9vMP5nr5C16PBDUior+UlyUlqh8diyX17nAJbD1+/OJ4RvkDXf5loBw46fae2LNap5T02KLdrlxkWpxG9qx2xxrahFkYAVCQ32I6R1Su+VLOdUMWfLA57I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=themaw.net; spf=pass smtp.mailfrom=themaw.net; dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b=ISFGi8VP; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Oxay8t3j; arc=none smtp.client-ip=202.12.124.148
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=themaw.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=themaw.net
-Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
-	by mailfout.stl.internal (Postfix) with ESMTP id 9CEBE1D00230;
-	Tue, 11 Nov 2025 01:05:22 -0500 (EST)
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfout.stl.internal (Postfix) with ESMTP id E0AC81D00231;
+	Tue, 11 Nov 2025 01:05:25 -0500 (EST)
 Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-12.internal (MEProxy); Tue, 11 Nov 2025 01:05:22 -0500
+  by phl-compute-04.internal (MEProxy); Tue, 11 Nov 2025 01:05:26 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=cc
 	:cc:content-transfer-encoding:content-type:date:date:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm2; t=1762841122; x=
-	1762927522; bh=eDhL4iSqCzLIdSVrbnb+njLWZ1dhF39Ky+xApv/W9/4=; b=t
-	80ElG2ZQ3o5OpF/KqHf7x6YjfGToT4mR4+0jDCLfJC9wQvrMcdRvxow7FNnjKQ0f
-	Ad/EwJal6UrjG7ySvwpff+qKh0FKAA4HV1Sz89z2Ld/27nm+fyK8lixHTjMuSbbe
-	lp5h0oYjsI1qHt0ulhFUVtIvSgVVfKA6wTKWxsrv3HpxKGQuInQhMdne0QNfoejm
-	8V5IfozZK5YEP4VCXubA9+J+KAz0N9yPn3KzCGMD6UHXqdHtZb+PH+0o1pCS58G1
-	Jepk7mX8Jum05XCQYLW76sIs9NCwx2+qw8YXJegotA83KVyH0fb0uBFnEnqjnpBI
-	PK+fdb5+aF2WzcTzb6lGA==
+	:reply-to:subject:subject:to:to; s=fm2; t=1762841125; x=
+	1762927525; bh=weQyEFLrwhiAqZUXXte+JUsWt13LSOjWmWUMwpPby44=; b=I
+	SFGi8VPd0Dkbek+Hikwe6v+w7rOqbYHabAF9WkYgcznOOTtQ1mM7c6T1w7tgxg7G
+	kjlcGcrSq7kwfVzFCKvjP/HRZrHrliv2Uih7kmiOAZIg0U05BoV4Mh9bLZwy+P79
+	Dli0azD2UiTDxNRkHRuRE+OkOeaKFtN9PlI3TIVD0zWHfKfw27QoTLEE/E5jGI/c
+	8HX81i3+BDC5SDEQfGq6dwYkYRyMg43LZrE+R5b+R/TS3cFrDvh1T1g4lIerjzPB
+	Su2mDkyLUkAqOJaHuA6N6lBNwM1paOk4m9vPxhEda3/RJdIekpSiB388JslmWMeo
+	Yy1D3cGs2RSurpY14h0Hw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:date:date:feedback-id:feedback-id:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
 	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm3; t=1762841122; x=1762927522; bh=e
-	DhL4iSqCzLIdSVrbnb+njLWZ1dhF39Ky+xApv/W9/4=; b=0MI1pVxU2oE2r5vxs
-	EVxfcCOB68simJ9ZBOdy9LaCN2URUSTKxko3AwKNoUnfW0bPnkhHV8WvoccYMoGq
-	1QBx/Ww+HKKMfAKXhrETFH0asrILib/5Z5FVbxi4wnP/+F6DRZbCBnBdSQpcI4+L
-	4w0FhuZd/CS+d2rVYCVXBeMIHQEVDaxKlondmx/e0BetU880ue5TdskJmVnsNBdR
-	kFTFOFeLp/OKAkWG6f23bS5PKiecs5naujqz22CroY5BZkxsp5bYW17osIZQrkWv
-	9M0UHrdZjFaEVvaV7NFC6jh3TsAtszUffNtVlY4rjExh6RzZ70iDtn2qO0osfBMA
-	n/cww==
-X-ME-Sender: <xms:IdISaa-nBjMx7PbWhb2e80scFXcbqFLgJWUMzYg7RV4s9mJHOw0fCw>
-    <xme:IdISabYNgJrUjiFtWXAeAapEuD2zMusGzYrJoN0_t1Xb6hxl6gpsehms2JxuTVL7b
-    _SKSkKDasKAlj0kb2kUmvWvugb8KaMVeQkkNKAEijarNSqB>
-X-ME-Received: <xmr:IdISaeMuVJRo6J2oa_vgXXqCTP8Y-LZlFghfgMcrWbD0SmrxFl6bnhSnUnbtBPSvanYrLH7RzLiOU3ztgbaUtcIks0k2miKYfGN-3zKv2BHvbf04k_pyBuCHcw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvtddtgedvucetufdoteggodetrf
+	:x-me-sender:x-sasl-enc; s=fm3; t=1762841125; x=1762927525; bh=w
+	eQyEFLrwhiAqZUXXte+JUsWt13LSOjWmWUMwpPby44=; b=Oxay8t3jCDSFQGMPc
+	gdN9nJukt0uKOdWnyhV746aqq5mOpvL7uKLfQZaBbDtm70712UN6k8VqHjkXtR+Q
+	ln+SPPdycnNK2/Cx5DM28soYQvGBcYyMMnsAnBEK8b0cJjvkFDWnKrXodf34LLng
+	3HcPQucTFXgWhsOw4xy+PE5lgZBeVFLkkHHr91Av4X4QDseY+YrBrM/C3P/jgDAW
+	PlK/gvRUrE1HH9AA6CwS7U7l+Ql/L/gCrF76Mn9Ijh8fcXtm+LPHYT4gMT6bK/Ql
+	5sZ7lDdV+vjNZug9NJLLENsbFJRZXRuu7wFIS2KR/BGCx7Nj4TYVXC+Q52T60cXQ
+	/+cfA==
+X-ME-Sender: <xms:JdISaX8kcmFEtuMMxFPADyWQW0QT6WTfMufGWwLiRoRNqmfUKGt-cw>
+    <xme:JdISaUYSJ2DfGN0wUxgtA5mZTf67r3kGX3GIggiDfkzuHJMD2kMs7s2BQWdGrCclD
+    dKKHxUkdXgD9m3UADRueRDmnlCFFMrr7t6ZGO2QKFGe2lsE>
+X-ME-Received: <xmr:JdISaTOASt_LweWi9adUb-Tszsds0PLnp12okdF8yWRut-klqHiTkp16oroTkExFPT7YKNN9LcGkDflbjZ1eiKVAoVJoJGlFdYj70Ja1AqB9wKoi8plPOt8YbQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvtddtgeefucetufdoteggodetrf
     dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
     rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
     gurhephffvvefufffkofgjfhgggfestdekredtredttdenucfhrhhomhepkfgrnhcumfgv
@@ -79,14 +79,14 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvtddtgedvucetufdote
     esvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhfshguvghv
     vghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhgrvhgvnhesthhhvg
     hmrgifrdhnvght
-X-ME-Proxy: <xmx:ItISaXBIiS9WcC3fwIVVyXdmkZHQAXqfxiHPL1lDlGNHLZHvTi9ljw>
-    <xmx:ItISaVLTou8UQiLxRI937uqlU1_U5-yOks184XIFZa4XmFCYwyCEoQ>
-    <xmx:ItISaQOhMMzw29ML9MV-w6gQaWHEg-glAcxc-WDfdhg0G7eK2g3R5Q>
-    <xmx:ItISaT7-rT1W1tgkCR7hiJWxznc1gt4ET6hAOkAP_0FSharI4JDwjg>
-    <xmx:ItISaVu7pNoJC6MxjA6SqocCdYq3KA6cA9ZwXl2sZq0_bXyE0r93kgPZ>
+X-ME-Proxy: <xmx:JdISaYDHN73YvNvx_jURvJNBrSFdr_p5Q3TbGdytoAqo87ljdG1O6g>
+    <xmx:JdISaSJN1wsjLP71wmjWgEVI3Yb82BMmkUBkS7mo6S_G0e5wgnsb8Q>
+    <xmx:JdISaZNeuZ8i05LjN9oZVdhGfeqccWFF5KTjF5JUUlcNL-0VNvMwxg>
+    <xmx:JdISaY4U9sltm50N6U5Ucaqg7q867Lu5zg_lOvSwiIo_Vjr8Bz6ucA>
+    <xmx:JdISaatnaHtb1Nx8aQw0z8VH6CzTCFIO3sS7lYfBn6QWqYRPQCD5yMc8>
 Feedback-ID: i31e841b0:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 11 Nov 2025 01:05:19 -0500 (EST)
+ 11 Nov 2025 01:05:23 -0500 (EST)
 From: Ian Kent <raven@themaw.net>
 To: Christian Brauner <brauner@kernel.org>,
 	Al Viro <viro@ZenIV.linux.org.uk>,
@@ -94,9 +94,9 @@ To: Christian Brauner <brauner@kernel.org>,
 	autofs mailing list <autofs@vger.kernel.org>,
 	linux-fsdevel <linux-fsdevel@vger.kernel.org>
 Cc: Ian Kent <raven@themaw.net>
-Subject: [PATCH 1/2] autofs: fix per-dentry timeout warning
-Date: Tue, 11 Nov 2025 14:04:38 +0800
-Message-ID: <20251111060439.19593-2-raven@themaw.net>
+Subject: [PATCH 2/2] autofs: dont trigger mount if it cant succeed
+Date: Tue, 11 Nov 2025 14:04:39 +0800
+Message-ID: <20251111060439.19593-3-raven@themaw.net>
 X-Mailer: git-send-email 2.51.1
 In-Reply-To: <20251111060439.19593-1-raven@themaw.net>
 References: <20251111060439.19593-1-raven@themaw.net>
@@ -108,62 +108,111 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The check that determines if the message that warns about the per-dentry
-timeout being greater than the super block timeout is not correct.
+If a mount namespace contains autofs mounts, and they are propagation
+private, and there is no namespace specific automount daemon to handle
+possible automounting then attempted path resolution will loop until
+MAXSYMLINKS is reached before failing causing quite a bit of noise in
+the log.
 
-The initial value for this field is -1 and the type of the field is
-unsigned long.
-
-I could change the type to long but the message is in the wrong place
-too, it should come after the timeout setting. So leave everything else
-as it is and move the message and check the timeout is actually set
-as an additional condition on issuing the message. Also fix the timeout
-comparison.
+Add a check for this in autofs ->d_automount() so that the VFS can
+immediately return an error in this case. Since the mount is propagation
+private an EPERM return seems most appropriate.
 
 Signed-off-by: Ian Kent <raven@themaw.net>
 ---
- fs/autofs/dev-ioctl.c | 22 ++++++++++++----------
- 1 file changed, 12 insertions(+), 10 deletions(-)
+ fs/autofs/autofs_i.h | 4 ++++
+ fs/autofs/inode.c    | 1 +
+ fs/autofs/root.c     | 8 ++++++++
+ fs/namespace.c       | 6 ++++++
+ include/linux/fs.h   | 1 +
+ 5 files changed, 20 insertions(+)
 
-diff --git a/fs/autofs/dev-ioctl.c b/fs/autofs/dev-ioctl.c
-index d8dd150cbd74..8adef8caa863 100644
---- a/fs/autofs/dev-ioctl.c
-+++ b/fs/autofs/dev-ioctl.c
-@@ -449,16 +449,6 @@ static int autofs_dev_ioctl_timeout(struct file *fp,
- 		if (!autofs_type_indirect(sbi->type))
- 			return -EINVAL;
+diff --git a/fs/autofs/autofs_i.h b/fs/autofs/autofs_i.h
+index 23cea74f9933..34533587c66b 100644
+--- a/fs/autofs/autofs_i.h
++++ b/fs/autofs/autofs_i.h
+@@ -16,6 +16,7 @@
+ #include <linux/wait.h>
+ #include <linux/sched.h>
+ #include <linux/sched/signal.h>
++#include <uapi/linux/mount.h>
+ #include <linux/mount.h>
+ #include <linux/namei.h>
+ #include <linux/uaccess.h>
+@@ -109,11 +110,14 @@ struct autofs_wait_queue {
+ #define AUTOFS_SBI_STRICTEXPIRE 0x0002
+ #define AUTOFS_SBI_IGNORE	0x0004
  
--		/* An expire timeout greater than the superblock timeout
--		 * could be a problem at shutdown but the super block
--		 * timeout itself can change so all we can really do is
--		 * warn the user.
--		 */
--		if (timeout >= sbi->exp_timeout)
--			pr_warn("per-mount expire timeout is greater than "
--				"the parent autofs mount timeout which could "
--				"prevent shutdown\n");
--
- 		dentry = try_lookup_noperm(&QSTR_LEN(param->path, path_len),
- 					   base);
- 		if (IS_ERR_OR_NULL(dentry))
-@@ -487,6 +477,18 @@ static int autofs_dev_ioctl_timeout(struct file *fp,
- 			ino->flags |= AUTOFS_INF_EXPIRE_SET;
- 			ino->exp_timeout = timeout * HZ;
- 		}
++struct mnt_namespace;
 +
-+		/* An expire timeout greater than the superblock timeout
-+		 * could be a problem at shutdown but the super block
-+		 * timeout itself can change so all we can really do is
-+		 * warn the user.
-+		 */
-+		if (ino->flags & AUTOFS_INF_EXPIRE_SET &&
-+		    ino->exp_timeout > sbi->exp_timeout)
-+			pr_warn("per-mount expire timeout is greater than "
-+				"the parent autofs mount timeout which could "
-+				"prevent shutdown\n");
+ struct autofs_sb_info {
+ 	u32 magic;
+ 	int pipefd;
+ 	struct file *pipe;
+ 	struct pid *oz_pgrp;
++	struct mnt_namespace *owner;
+ 	int version;
+ 	int sub_version;
+ 	int min_proto;
+diff --git a/fs/autofs/inode.c b/fs/autofs/inode.c
+index f5c16ffba013..0a29761f39c0 100644
+--- a/fs/autofs/inode.c
++++ b/fs/autofs/inode.c
+@@ -251,6 +251,7 @@ static struct autofs_sb_info *autofs_alloc_sbi(void)
+ 	sbi->min_proto = AUTOFS_MIN_PROTO_VERSION;
+ 	sbi->max_proto = AUTOFS_MAX_PROTO_VERSION;
+ 	sbi->pipefd = -1;
++	sbi->owner = current->nsproxy->mnt_ns;
+ 
+ 	set_autofs_type_indirect(&sbi->type);
+ 	mutex_init(&sbi->wq_mutex);
+diff --git a/fs/autofs/root.c b/fs/autofs/root.c
+index 174c7205fee4..8cce86158f20 100644
+--- a/fs/autofs/root.c
++++ b/fs/autofs/root.c
+@@ -341,6 +341,14 @@ static struct vfsmount *autofs_d_automount(struct path *path)
+ 	if (autofs_oz_mode(sbi))
+ 		return NULL;
+ 
++	/* Refuse to trigger mount if current namespace is not the owner
++	 * and the mount is propagation private.
++	 */
++	if (sbi->owner != current->nsproxy->mnt_ns) {
++		if (vfsmount_to_propagation_flags(path->mnt) & MS_PRIVATE)
++			return ERR_PTR(-EPERM);
++	}
 +
- 		dput(dentry);
- 	}
+ 	/*
+ 	 * If an expire request is pending everyone must wait.
+ 	 * If the expire fails we're still mounted so continue
+diff --git a/fs/namespace.c b/fs/namespace.c
+index d82910f33dc4..27bb12693cba 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -5150,6 +5150,12 @@ static u64 mnt_to_propagation_flags(struct mount *m)
+ 	return propagation;
+ }
+ 
++u64 vfsmount_to_propagation_flags(struct vfsmount *mnt)
++{
++	return mnt_to_propagation_flags(real_mount(mnt));
++}
++EXPORT_SYMBOL_GPL(vfsmount_to_propagation_flags);
++
+ static void statmount_sb_basic(struct kstatmount *s)
+ {
+ 	struct super_block *sb = s->mnt->mnt_sb;
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index c895146c1444..a5c2077ce6ed 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3269,6 +3269,7 @@ extern struct file * open_exec(const char *);
+ /* fs/dcache.c -- generic fs support functions */
+ extern bool is_subdir(struct dentry *, struct dentry *);
+ extern bool path_is_under(const struct path *, const struct path *);
++u64 vfsmount_to_propagation_flags(struct vfsmount *mnt);
+ 
+ extern char *file_path(struct file *, char *, int);
  
 -- 
 2.51.1
