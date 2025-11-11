@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-67804-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67828-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A26DBC4BCE6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 07:58:28 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8E7EC4BE37
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 08:03:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7470C188DD73
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 06:57:29 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7428934EE4A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 07:03:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B643F34CFC0;
-	Tue, 11 Nov 2025 06:55:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74F853570D4;
+	Tue, 11 Nov 2025 06:55:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="hUv5N0YJ"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="NvA4L2Zw"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E29F3168F2;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F57332AAB9;
 	Tue, 11 Nov 2025 06:55:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762844131; cv=none; b=WxAjNh8XQjJuDajLU7Salx7kSJfTH3g3J1ec/2Vnf7xOkVH/5Om0cLWpad71TJLBZ1B4b03yvCrOhs1nkMTGUF9c8wWUBLDMakK1eb10QN6kITq2vi2gd5zVkTknygtUeqNsnkxgburL7LWUxbSJq3XXvEaAfL02cdJlZx/ALqQ=
+	t=1762844134; cv=none; b=OnRKAi5+xqWJGcGqtg3+9ifSfT4shJ5uhpsHu7AzZHSwu3o5fbA3QoQDFTmSYmB0DV1ytFKoqDUi8qyEuBu9u46CxIJ+lUShRri9yr7G9IGDQqx3FyAFCWKhI9JMwTCXImJ8ADJhcTxkl9uW+MkJ4EExRLv6gHkM2Qq2k8OruhM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762844131; c=relaxed/simple;
-	bh=fOevxjAZDWF39Ou5j+d+tqBmG/dAKefXb84c0nkAeKM=;
+	s=arc-20240116; t=1762844134; c=relaxed/simple;
+	bh=EqYlDwL28zt1FMBzJNKg9kXWjfUikMGKlrA5yQ6cSlc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sXfFUOq1qVKlDFxtANaUWclROlluE84KE6vc3W44dodzRkzvOPHsSynlqb+ykm3knMhJ6smvpI/QQEEOtEDphswjAlAj3UzBLVpvz6jhqWdquBaNdcErMNW/Rxv6u3lu7o6B51eHlGRaU/Q8XfX6KWfaB+B9zuVbcpj+SxKRDkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=hUv5N0YJ; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=W8VIBXW5gZngHqF4jB2OseLdAMm/KjB6G8qmO9URoZO+gc1uqjeU3FQX+AWajevMaaj7zrZJj/Ivk+FV+q/gPC6s6Bf0fkE6TozmqyOrxLCg7u2DdAIRuiP7J7jbeFVJib+LXLbFnTMdtUD9ygSQGZc3moFIAZeCB9dsE1mVN4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=NvA4L2Zw; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=AteBZg1Rl8HXmlwF9pQEJDfnqUw3H67agXJaoVo2v7U=; b=hUv5N0YJTnik1pbrNSxtqUBlQw
-	9cOvz0bTB4Y27X5wtakM2e5mLlL+A1vWqkpKBScibz62/7hNSxH8Qhl/fXtcMmytQT7KieaNS93ca
-	hSKrCcXInNpOmxOg9eQWON/uKQvv6Y+fuhHuN2yUosFBERdlRKC96DkJ1Mf2tvSoj85JiuuFtleeN
-	YlqExq3xf5s14ARGwCA+sxhLM52ngQal5Zw4sXygbVTV9c58CEwdgjIEIq3AGep0pSKwDneTJaDmC
-	CHzBiKcobHsZWXnkvKcGNSyWFwPNG1YHAhBgL/Jbp8AOUXxVE9E06HJMW//0RGDcGPaDreuMcr9cb
-	CfuCNGUA==;
+	bh=KjlhtDhBu18/9JmgPyyx9lDuBAywfgEoPZuaBcmvHHc=; b=NvA4L2ZwRtUeHW7QuJvY2SyLmK
+	RV8qnqzYay1FuvT3UE6H/54cBzg4DqPMeUKeJSdgeNeO9GmXF94fsND+sL+kHe2P/SEz/SzruMejC
+	KC+vAFArMaR4Ab2WBlEhCiNphiaWVR/RSO1HFienvay3iqhf5PaLC0KcKeuFjdEvwYxidZN7ylSeZ
+	lHhRmrqaTzX2ctZFOtAQ1ASzsxi923LvOSaksum1niBBc/aXEOfT7i9Xr+cAzQAQKVr+JuHbRn34K
+	18XCZshuF9YyNevfgXnWMq6+t6aQK9xTZjd7wkgoorB+bOwQIMSp4onK30UsLV5x8ND5Wb5eqKLft
+	Y3mHOsnQ==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vIiHh-0000000Bwu0-1wva;
+	id 1vIiHh-0000000Bwv2-34MT;
 	Tue, 11 Nov 2025 06:55:21 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
@@ -67,9 +67,9 @@ Cc: torvalds@linux-foundation.org,
 	selinux@vger.kernel.org,
 	borntraeger@linux.ibm.com,
 	bpf@vger.kernel.org
-Subject: [PATCH v3 02/50] tracefs: fix a leak in eventfs_create_events_dir()
-Date: Tue, 11 Nov 2025 06:54:31 +0000
-Message-ID: <20251111065520.2847791-3-viro@zeniv.linux.org.uk>
+Subject: [PATCH v3 03/50] new helper: simple_remove_by_name()
+Date: Tue, 11 Nov 2025 06:54:32 +0000
+Message-ID: <20251111065520.2847791-4-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20251111065520.2847791-1-viro@zeniv.linux.org.uk>
 References: <20251111065520.2847791-1-viro@zeniv.linux.org.uk>
@@ -82,38 +82,81 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-If we have LOCKDOWN_TRACEFS, the function bails out - *after*
-having locked the parent directory and without bothering to
-undo that.  Just check it before tracefs_start_creating()...
+simple_recursive_removal(), but instead of victim dentry it takes
+parent + name.
 
-Fixes: e24709454c45 "tracefs/eventfs: Add missing lockdown checks"
-Acked-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+Used to be open-coded in fs/fuse/control.c, but there's no need to expose
+the guts of that thing there and there are other potential users, so
+let's lift it into libfs...
+
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/tracefs/event_inode.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fs/fuse/control.c  |  7 +------
+ fs/libfs.c         | 13 +++++++++++++
+ include/linux/fs.h |  2 ++
+ 3 files changed, 16 insertions(+), 6 deletions(-)
 
-diff --git a/fs/tracefs/event_inode.c b/fs/tracefs/event_inode.c
-index 8705c77a9e75..93c231601c8e 100644
---- a/fs/tracefs/event_inode.c
-+++ b/fs/tracefs/event_inode.c
-@@ -757,7 +757,7 @@ struct eventfs_inode *eventfs_create_events_dir(const char *name, struct dentry
- 						const struct eventfs_entry *entries,
- 						int size, void *data)
+diff --git a/fs/fuse/control.c b/fs/fuse/control.c
+index 5247df896c5d..3dca752127ff 100644
+--- a/fs/fuse/control.c
++++ b/fs/fuse/control.c
+@@ -290,18 +290,13 @@ static void remove_one(struct dentry *dentry)
+  */
+ void fuse_ctl_remove_conn(struct fuse_conn *fc)
  {
--	struct dentry *dentry = tracefs_start_creating(name, parent);
+-	struct dentry *dentry;
+ 	char name[32];
+ 
+ 	if (!fuse_control_sb || fc->no_control)
+ 		return;
+ 
+ 	sprintf(name, "%u", fc->dev);
+-	dentry = lookup_noperm_positive_unlocked(&QSTR(name), fuse_control_sb->s_root);
+-	if (!IS_ERR(dentry)) {
+-		simple_recursive_removal(dentry, remove_one);
+-		dput(dentry);	// paired with lookup_noperm_positive_unlocked()
+-	}
++	simple_remove_by_name(fuse_control_sb->s_root, name, remove_one);
+ }
+ 
+ static int fuse_ctl_fill_super(struct super_block *sb, struct fs_context *fsc)
+diff --git a/fs/libfs.c b/fs/libfs.c
+index ce8c496a6940..d029aff41f66 100644
+--- a/fs/libfs.c
++++ b/fs/libfs.c
+@@ -655,6 +655,19 @@ void simple_recursive_removal(struct dentry *dentry,
+ }
+ EXPORT_SYMBOL(simple_recursive_removal);
+ 
++void simple_remove_by_name(struct dentry *parent, const char *name,
++                           void (*callback)(struct dentry *))
++{
 +	struct dentry *dentry;
- 	struct eventfs_root_inode *rei;
- 	struct eventfs_inode *ei;
- 	struct tracefs_inode *ti;
-@@ -768,6 +768,7 @@ struct eventfs_inode *eventfs_create_events_dir(const char *name, struct dentry
- 	if (security_locked_down(LOCKDOWN_TRACEFS))
- 		return NULL;
- 
-+	dentry = tracefs_start_creating(name, parent);
- 	if (IS_ERR(dentry))
- 		return ERR_CAST(dentry);
- 
++
++	dentry = lookup_noperm_positive_unlocked(&QSTR(name), parent);
++	if (!IS_ERR(dentry)) {
++		simple_recursive_removal(dentry, callback);
++		dput(dentry);	// paired with lookup_noperm_positive_unlocked()
++	}
++}
++EXPORT_SYMBOL(simple_remove_by_name);
++
+ /* caller holds parent directory with I_MUTEX_PARENT */
+ void locked_recursive_removal(struct dentry *dentry,
+                               void (*callback)(struct dentry *))
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index c895146c1444..28bd4e8d3892 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3631,6 +3631,8 @@ extern int simple_rename(struct mnt_idmap *, struct inode *,
+ 			 unsigned int);
+ extern void simple_recursive_removal(struct dentry *,
+                               void (*callback)(struct dentry *));
++extern void simple_remove_by_name(struct dentry *, const char *,
++                              void (*callback)(struct dentry *));
+ extern void locked_recursive_removal(struct dentry *,
+                               void (*callback)(struct dentry *));
+ extern int noop_fsync(struct file *, loff_t, loff_t, int);
 -- 
 2.47.3
 
