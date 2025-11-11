@@ -1,129 +1,300 @@
-Return-Path: <linux-fsdevel+bounces-67996-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67997-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C827C4FC8E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 22:04:56 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3122C4FD9A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 22:30:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B758218C0147
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 21:04:21 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 41E9F34C539
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 21:30:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6D7635CBD6;
-	Tue, 11 Nov 2025 21:00:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DC78352F93;
+	Tue, 11 Nov 2025 21:30:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="awfdXOPJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uGKgOZih"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F1AA35CBBE
-	for <linux-fsdevel@vger.kernel.org>; Tue, 11 Nov 2025 21:00:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5206B33D6D1;
+	Tue, 11 Nov 2025 21:29:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762894828; cv=none; b=QXHKlYKuKa2x4rUYlkTHPbWAqYQaZg6W1FxSIbrWVygB6jn6mYyiz6T0Val+PLT4Ta0Fy187SuybQAZq9fiWsul5kgPAmijVEyPPrBTTRnDvJD7o4zAjbkDWx/9h9qGef16nPfAhfRzTsV1vzsohNjdykzSe4IR5YNEa+7LMxFI=
+	t=1762896599; cv=none; b=LmSoLQkaOoNz+2Yj90u730p41z3IljaPO8zLTmkZXy3eC6itbRMdCMlKhPB7vU7MCRCUjLrKvf9K60AigDc145zyy7qgBgt1KUFyHB6w2OzUdsOH00zF8nENvYCRh96ezVbathLKh9VX/bXInii19lUff+F7+8Shj1uGMR6yiis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762894828; c=relaxed/simple;
-	bh=Fp+8AG6pBI0jJ/x1v+sgWdRn9Lp3GBtp4uOEuA09BJA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rC9l7+hIriu4M3u/XswL8Mk4kc0bs1VDZl60PnQFpZYPaCao5Yna6yrSwwSUjw630bGY45NqiDjxCxSVM6X02yBR4Su85ajMFTgIO7kFA70lZSVk3EZ9P12ttRrjEMGK5lf76MwwDTCXyzc/2Gpa0A6HIQ7aGSs6dsEkWHf0xeA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=awfdXOPJ; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-641977dc00fso152239a12.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Nov 2025 13:00:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1762894825; x=1763499625; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Fp+8AG6pBI0jJ/x1v+sgWdRn9Lp3GBtp4uOEuA09BJA=;
-        b=awfdXOPJLudXiU59sgZ/KAWFiTttCUDew6wPsWzJGbRX6aI0opyW6TbrEpeX0mDJaw
-         kkxnZQzUoGuDtUafQowngoRnJrdoKOA0YBGoh0eJIwQ/RO4X5UUE9Df52tXka0swmX++
-         9568gdp8kD6chvjgXunC4os2/bvF5/+CEZ473tvnDj+tmfglnytzw6EdOwodHQjOvUrM
-         DhzqY6PScZRCVw4L4lDBTfzQZyuTnVOpOgC9Qm4Pii8HstZnVxSKBr30UP9X/DkUZoP7
-         252iZD6C+OlZCWDzcI3uEMrS4f2sRa1bir0CLZJ1wGpJ/fEJc8jsuzCZ8BFgVklN3U4K
-         4vQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762894825; x=1763499625;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Fp+8AG6pBI0jJ/x1v+sgWdRn9Lp3GBtp4uOEuA09BJA=;
-        b=MZseS/SYzLZtcTMoyDKOAJDVqnWkjGobsJ5c6BKzxTBuxzyjMNojQxb+xJKVquZ6uo
-         T6gC9ZamK3u0iRG0BtbUd6TRy83J83+nXZ0VraomQockh+P1mO3+FhF1Sg/+ZHgwfx+q
-         l96mCQ7r0cCcb5Qwwfh6fnMMxRgCJ/eaIR4D2kEJM0NU32f+4qp0VMV9N69iDGf9JuUS
-         C6Z5IQjTW0RlwpPuKEMyIDmFIzXge3ydwcQzyeoKyg5wQMakWkoBSx42tpm7mx2QRHK6
-         1GTZVajC9bqr8MlTyYq3Y3mI2NDkhHaSyKGu6RUfyOZrN0NrBSRb8A5wsRKLJxb2pyqL
-         cb7g==
-X-Forwarded-Encrypted: i=1; AJvYcCV+7eiIgtlL9GJMnCb6ZrVRf1p1Z8x25P03/Zwvi2vzRKM60voVQmgx4ms6UKM6c+ZwJtCxlL0SHfQKCsEc@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhFKVo149Paz7HjFusECIANHrwpTu53w2ZiazTZ9JAS0olUDOl
-	rnrAIbxFBvZfx1Z+dUCnj2IS5fYhmrAPByCApWWjsfez5nVLsS+qZ2P2DMwI0sSzODOc1we4waT
-	xDpB7W0qSGLAUBilmct3+f2hMij8aU5Yeic09xZJwxA==
-X-Gm-Gg: ASbGnctgxZO11GxrFAMr0ne43Vs8FiVFw3GyLEC6Zj9uDMV9FJYyiWRn6K17E0kE1cF
-	p9SnrNCrNm+tLXFh8StTtpZjxkZmcwqdg0z8XuBJkdmbiHS+cxOac0EUgdLgdvUCTxU/jYoucRH
-	BwXNTANTd+ZaFBIm48xd1r0j7p3qBXaLD5skKEjAmBnuK3l7wctXWL2VJKbu00n5BQqDBeMbNCt
-	DP+LOvY+2t2GLr5XM9PuOm7YBa10Yia5iHAGpChgYFcj8FB3blGWsVEINTgJMnJ1VXQ
-X-Google-Smtp-Source: AGHT+IH+e0YsGvHk4dFv4/hkj2NgB2ttZSxI+gZm+9yj2ImFkWPrLek2DaIdjfDu/vAiHUMqP9wuFNVI+e9wnD3MABk=
-X-Received: by 2002:a05:6402:51c7:b0:640:ceef:7e4d with SMTP id
- 4fb4d7f45d1cf-6431a55d74emr573319a12.32.1762894824747; Tue, 11 Nov 2025
- 13:00:24 -0800 (PST)
+	s=arc-20240116; t=1762896599; c=relaxed/simple;
+	bh=/bC50lhCtcx6OG7oIZHLvFZOizTdGgNdqLCTc3tazgg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=NQP8WoZOmI238qE13vbIgKwzS5UitDzRHGBkvd8s98EHtZERrK90nf+8mZZpT05uz4lGj9MUaauQW4fy+1UBPksuR5mK2K9HlWXowkSsHxyYFQgCtEzSLb+eDPkao6n7XXFsjcsCq7XGK5BLzGmANnHy5btieP+CwF4IKTJ1OXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uGKgOZih; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CBE2C116D0;
+	Tue, 11 Nov 2025 21:29:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762896598;
+	bh=/bC50lhCtcx6OG7oIZHLvFZOizTdGgNdqLCTc3tazgg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=uGKgOZihX6WkxOXaYaMp7Ce45mAoZy1EdfFSGzxey8lL8ehrEFIL28KuIarmg/MNN
+	 q3HW4jyWthAJ8uUu/tNQsUJIcWjqrwAyZYS2WAzJFEVqjfCokNpJ+pA5pdwBRqWMey
+	 bPGuKEJQFW0OLIvy59Fzs8zpgRKcZmZjpPqjwd1hcYyG4KMM7du5CZ+tP62TLx16s2
+	 vDik8OOPhpjo+w0OVb0HfR9Y1msHmcC+CUnE13AHRG//Nak7D47T7MeOw4cM6XUuLE
+	 SN+jmchssstwp47zqOcbrNN6mzaZpHQXpJoluWRAwVhesyL1Yvf7L+IGOI9KCkFGB8
+	 ZB7mc1l3UU0Dw==
+From: Christian Brauner <brauner@kernel.org>
+To: syzbot <syzbot+0b2e79f91ff6579bfa5b@syzkaller.appspotmail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	akpm@linux-foundation.org,
+	bpf@vger.kernel.org,
+	bsegall@google.com,
+	david@redhat.com,
+	dietmar.eggemann@arm.com,
+	jack@suse.cz,
+	jsavitz@redhat.com,
+	juri.lelli@redhat.com,
+	kartikey406@gmail.com,
+	kees@kernel.org,
+	liam.howlett@oracle.com,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-security-module@vger.kernel.org,
+	lorenzo.stoakes@oracle.com,
+	mgorman@suse.de,
+	mhocko@suse.com,
+	mingo@redhat.com,
+	mjguzik@gmail.com,
+	oleg@redhat.com,
+	paul@paul-moore.com,
+	peterz@infradead.org,
+	rostedt@goodmis.org,
+	rppt@kernel.org,
+	sergeh@kernel.org,
+	surenb@google.com,
+	syzkaller-bugs@googlegroups.com,
+	vbabka@suse.cz,
+	vincent.guittot@linaro.org,
+	viro@zeniv.linux.org.uk,
+	vschneid@redhat.com,
+	syzbot+0a8655a80e189278487e@syzkaller.appspotmail.com
+Subject: [PATCH] nsproxy: fix free_nsproxy() and simplify create_new_namespaces()
+Date: Tue, 11 Nov 2025 22:29:44 +0100
+Message-ID: <20251111-sakralbau-guthaben-7dcc277d337f@brauner>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <691360cc.a70a0220.22f260.013e.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251107210526.257742-1-pasha.tatashin@soleen.com>
- <20251107210526.257742-6-pasha.tatashin@soleen.com> <aRHe3syRvOrCYC9u@kernel.org>
- <CA+CK2bA=cQkibx4dSxJQTVxVxqkAsZPfFoPJip6rx8DqX62aEA@mail.gmail.com> <aROaJUjyyZqJ19Wo@kernel.org>
-In-Reply-To: <aROaJUjyyZqJ19Wo@kernel.org>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Tue, 11 Nov 2025 15:59:47 -0500
-X-Gm-Features: AWmQ_bnYdSMroRMjjVnLSAE6-uLxVnY6rxuibiqAyIlNle_pZdH3zG6_TS_O-10
-Message-ID: <CA+CK2bAwfChKVNtHxVi3NWbE=LCLFacB_tD=ZamM-2UTNHOnzg@mail.gmail.com>
-Subject: Re: [PATCH v5 05/22] liveupdate: kho: when live update add KHO image
- during kexec load
-To: Mike Rapoport <rppt@kernel.org>
-Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com, 
-	dmatlack@google.com, rientjes@google.com, corbet@lwn.net, 
-	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, 
-	ojeda@kernel.org, aliceryhl@google.com, masahiroy@kernel.org, 
-	akpm@linux-foundation.org, tj@kernel.org, yoann.congal@smile.fr, 
-	mmaurer@google.com, roman.gushchin@linux.dev, chenridong@huawei.com, 
-	axboe@kernel.dk, mark.rutland@arm.com, jannh@google.com, 
-	vincent.guittot@linaro.org, hannes@cmpxchg.org, dan.j.williams@intel.com, 
-	david@redhat.com, joel.granados@kernel.org, rostedt@goodmis.org, 
-	anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn, 
-	linux@weissschuh.net, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-mm@kvack.org, gregkh@linuxfoundation.org, tglx@linutronix.de, 
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, 
-	hpa@zytor.com, rafael@kernel.org, dakr@kernel.org, 
-	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com, 
-	myungjoo.ham@samsung.com, yesanishhere@gmail.com, Jonathan.Cameron@huawei.com, 
-	quic_zijuhu@quicinc.com, aleksander.lobakin@intel.com, ira.weiny@intel.com, 
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
-	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net, 
-	brauner@kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	saeedm@nvidia.com, ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com, 
-	leonro@nvidia.com, witu@nvidia.com, hughd@google.com, skhawaja@google.com, 
-	chrisl@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6748; i=brauner@kernel.org; h=from:subject:message-id; bh=/bC50lhCtcx6OG7oIZHLvFZOizTdGgNdqLCTc3tazgg=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQKrzr99kkW6wzH6+UP/PreNc3KE2rfU+NbHrZ+xbWOF t7s6PTXHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABPRDmVkuJPxT1/H9VJg0TpP bYu9tkz6hpfdpUT+6F3i3+xsae+1ieGv0BItmR8v/+iyT+J6VCyx5du09JVfWi1ua75+sX5Kp8w rHgA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-> I believe that when my concerns about "[PATCH v5 02/22] liveupdate:
-> luo_core: integrate with KHO" [1] are resolved this patch won't be needed.
->
-> [1] https://lore.kernel.org/all/aROZi043lxtegqWE@kernel.org/
+Make it possible to handle NULL being passed to the reference count
+helpers instead of forcing the caller to handle this. Afterwards we can
+nicely allow a cleanup guard to handle nsproxy freeing.
 
-Thank you, I replied to your comments in that patch. However, until
-KHO becomes statless this change is needed. We *must* have KHO image
-as part of kexec load if liveupdate=1.
+Active reference count handling is not done in nsproxy_free() but rather
+in free_nsproxy() as nsproxy_free() is also called from setns() failure
+paths where a new nsproxy has been prepared but has not been marked as
+active via switch_task_namespaces().
 
->
-> > Pasha
->
-> --
-> Sincerely yours,
-> Mike.
+Fixes: 3c9820d5c64a ("ns: add active reference count")
+Reported-by: syzbot+0b2e79f91ff6579bfa5b@syzkaller.appspotmail.com
+Reported-by: syzbot+0a8655a80e189278487e@syzkaller.appspotmail.com
+Link: https://lore.kernel.org/690bfb9e.050a0220.2e3c35.0013.GAE@google.com
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+ include/linux/ns_common.h |  11 ++--
+ kernel/nsproxy.c          | 107 +++++++++++++++-----------------------
+ 2 files changed, 48 insertions(+), 70 deletions(-)
+
+diff --git a/include/linux/ns_common.h b/include/linux/ns_common.h
+index 136f6a322e53..825f5865bfc5 100644
+--- a/include/linux/ns_common.h
++++ b/include/linux/ns_common.h
+@@ -114,11 +114,14 @@ static __always_inline __must_check bool __ns_ref_dec_and_lock(struct ns_common
+ }
+ 
+ #define ns_ref_read(__ns) __ns_ref_read(to_ns_common((__ns)))
+-#define ns_ref_inc(__ns) __ns_ref_inc(to_ns_common((__ns)))
+-#define ns_ref_get(__ns) __ns_ref_get(to_ns_common((__ns)))
+-#define ns_ref_put(__ns) __ns_ref_put(to_ns_common((__ns)))
++#define ns_ref_inc(__ns) \
++	do { if (__ns) __ns_ref_inc(to_ns_common((__ns))); } while (0)
++#define ns_ref_get(__ns) \
++	((__ns) ? __ns_ref_get(to_ns_common((__ns))) : false)
++#define ns_ref_put(__ns) \
++	((__ns) ? __ns_ref_put(to_ns_common((__ns))) : false)
+ #define ns_ref_put_and_lock(__ns, __ns_lock) \
+-	__ns_ref_dec_and_lock(to_ns_common((__ns)), __ns_lock)
++	((__ns) ? __ns_ref_dec_and_lock(to_ns_common((__ns)), __ns_lock) : false)
+ 
+ #define ns_ref_active_read(__ns) \
+ 	((__ns) ? __ns_ref_active_read(to_ns_common(__ns)) : 0)
+diff --git a/kernel/nsproxy.c b/kernel/nsproxy.c
+index 94c2cfe0afa1..2c94452dc793 100644
+--- a/kernel/nsproxy.c
++++ b/kernel/nsproxy.c
+@@ -60,6 +60,27 @@ static inline struct nsproxy *create_nsproxy(void)
+ 	return nsproxy;
+ }
+ 
++static inline void nsproxy_free(struct nsproxy *ns)
++{
++	put_mnt_ns(ns->mnt_ns);
++	put_uts_ns(ns->uts_ns);
++	put_ipc_ns(ns->ipc_ns);
++	put_pid_ns(ns->pid_ns_for_children);
++	put_time_ns(ns->time_ns);
++	put_time_ns(ns->time_ns_for_children);
++	put_cgroup_ns(ns->cgroup_ns);
++	put_net(ns->net_ns);
++	kmem_cache_free(nsproxy_cachep, ns);
++}
++
++DEFINE_FREE(nsproxy_free, struct nsproxy *, if (_T) nsproxy_free(_T))
++
++void free_nsproxy(struct nsproxy *ns)
++{
++	nsproxy_ns_active_put(ns);
++	nsproxy_free(ns);
++}
++
+ /*
+  * Create new nsproxy and all of its the associated namespaces.
+  * Return the newly created nsproxy.  Do not attach this to the task,
+@@ -69,76 +90,45 @@ static struct nsproxy *create_new_namespaces(u64 flags,
+ 	struct task_struct *tsk, struct user_namespace *user_ns,
+ 	struct fs_struct *new_fs)
+ {
+-	struct nsproxy *new_nsp;
+-	int err;
++	struct nsproxy *new_nsp __free(nsproxy_free) = NULL;
+ 
+ 	new_nsp = create_nsproxy();
+ 	if (!new_nsp)
+ 		return ERR_PTR(-ENOMEM);
+ 
+ 	new_nsp->mnt_ns = copy_mnt_ns(flags, tsk->nsproxy->mnt_ns, user_ns, new_fs);
+-	if (IS_ERR(new_nsp->mnt_ns)) {
+-		err = PTR_ERR(new_nsp->mnt_ns);
+-		goto out_ns;
+-	}
++	if (IS_ERR(new_nsp->mnt_ns))
++		return ERR_CAST(new_nsp->mnt_ns);
+ 
+ 	new_nsp->uts_ns = copy_utsname(flags, user_ns, tsk->nsproxy->uts_ns);
+-	if (IS_ERR(new_nsp->uts_ns)) {
+-		err = PTR_ERR(new_nsp->uts_ns);
+-		goto out_uts;
+-	}
++	if (IS_ERR(new_nsp->uts_ns))
++		return ERR_CAST(new_nsp->uts_ns);
+ 
+ 	new_nsp->ipc_ns = copy_ipcs(flags, user_ns, tsk->nsproxy->ipc_ns);
+-	if (IS_ERR(new_nsp->ipc_ns)) {
+-		err = PTR_ERR(new_nsp->ipc_ns);
+-		goto out_ipc;
+-	}
++	if (IS_ERR(new_nsp->ipc_ns))
++		return ERR_CAST(new_nsp->ipc_ns);
+ 
+-	new_nsp->pid_ns_for_children =
+-		copy_pid_ns(flags, user_ns, tsk->nsproxy->pid_ns_for_children);
+-	if (IS_ERR(new_nsp->pid_ns_for_children)) {
+-		err = PTR_ERR(new_nsp->pid_ns_for_children);
+-		goto out_pid;
+-	}
++	new_nsp->pid_ns_for_children = copy_pid_ns(flags, user_ns,
++						   tsk->nsproxy->pid_ns_for_children);
++	if (IS_ERR(new_nsp->pid_ns_for_children))
++		return ERR_CAST(new_nsp->pid_ns_for_children);
+ 
+ 	new_nsp->cgroup_ns = copy_cgroup_ns(flags, user_ns,
+ 					    tsk->nsproxy->cgroup_ns);
+-	if (IS_ERR(new_nsp->cgroup_ns)) {
+-		err = PTR_ERR(new_nsp->cgroup_ns);
+-		goto out_cgroup;
+-	}
++	if (IS_ERR(new_nsp->cgroup_ns))
++		return ERR_CAST(new_nsp->cgroup_ns);
+ 
+ 	new_nsp->net_ns = copy_net_ns(flags, user_ns, tsk->nsproxy->net_ns);
+-	if (IS_ERR(new_nsp->net_ns)) {
+-		err = PTR_ERR(new_nsp->net_ns);
+-		goto out_net;
+-	}
++	if (IS_ERR(new_nsp->net_ns))
++		return ERR_CAST(new_nsp->net_ns);
+ 
+ 	new_nsp->time_ns_for_children = copy_time_ns(flags, user_ns,
+-					tsk->nsproxy->time_ns_for_children);
+-	if (IS_ERR(new_nsp->time_ns_for_children)) {
+-		err = PTR_ERR(new_nsp->time_ns_for_children);
+-		goto out_time;
+-	}
++						     tsk->nsproxy->time_ns_for_children);
++	if (IS_ERR(new_nsp->time_ns_for_children))
++		return ERR_CAST(new_nsp->time_ns_for_children);
+ 	new_nsp->time_ns = get_time_ns(tsk->nsproxy->time_ns);
+ 
+-	return new_nsp;
+-
+-out_time:
+-	put_net(new_nsp->net_ns);
+-out_net:
+-	put_cgroup_ns(new_nsp->cgroup_ns);
+-out_cgroup:
+-	put_pid_ns(new_nsp->pid_ns_for_children);
+-out_pid:
+-	put_ipc_ns(new_nsp->ipc_ns);
+-out_ipc:
+-	put_uts_ns(new_nsp->uts_ns);
+-out_uts:
+-	put_mnt_ns(new_nsp->mnt_ns);
+-out_ns:
+-	kmem_cache_free(nsproxy_cachep, new_nsp);
+-	return ERR_PTR(err);
++	return no_free_ptr(new_nsp);
+ }
+ 
+ /*
+@@ -185,21 +175,6 @@ int copy_namespaces(u64 flags, struct task_struct *tsk)
+ 	return 0;
+ }
+ 
+-void free_nsproxy(struct nsproxy *ns)
+-{
+-	nsproxy_ns_active_put(ns);
+-
+-	put_mnt_ns(ns->mnt_ns);
+-	put_uts_ns(ns->uts_ns);
+-	put_ipc_ns(ns->ipc_ns);
+-	put_pid_ns(ns->pid_ns_for_children);
+-	put_time_ns(ns->time_ns);
+-	put_time_ns(ns->time_ns_for_children);
+-	put_cgroup_ns(ns->cgroup_ns);
+-	put_net(ns->net_ns);
+-	kmem_cache_free(nsproxy_cachep, ns);
+-}
+-
+ /*
+  * Called from unshare. Unshare all the namespaces part of nsproxy.
+  * On success, returns the new nsproxy.
+@@ -338,7 +313,7 @@ static void put_nsset(struct nsset *nsset)
+ 	if (nsset->fs && (flags & CLONE_NEWNS) && (flags & ~CLONE_NEWNS))
+ 		free_fs_struct(nsset->fs);
+ 	if (nsset->nsproxy)
+-		free_nsproxy(nsset->nsproxy);
++		nsproxy_free(nsset->nsproxy);
+ }
+ 
+ static int prepare_nsset(unsigned flags, struct nsset *nsset)
+-- 
+2.47.3
+
 
