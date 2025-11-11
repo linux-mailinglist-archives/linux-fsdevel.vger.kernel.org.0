@@ -1,313 +1,131 @@
-Return-Path: <linux-fsdevel+bounces-67922-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67923-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44DA0C4DCFE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 13:44:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84503C4E05F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 14:07:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47FFE3A9206
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 12:41:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A07F71885609
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 13:03:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C3DE35A126;
-	Tue, 11 Nov 2025 12:27:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b="h21gR9aU";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="homK9s+4"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C7E4324702;
+	Tue, 11 Nov 2025 13:03:06 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh-a4-smtp.messagingengine.com (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF6963587B8;
-	Tue, 11 Nov 2025 12:27:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38D343246F1
+	for <linux-fsdevel@vger.kernel.org>; Tue, 11 Nov 2025 13:03:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762864072; cv=none; b=WJ1FcvtqOZdLFacyoKd74AdYK0EiIHnzUzH2H5y8hlsyqSgHgRC3RpG6TVSykl4z5qMTKaYOifr05o2vhd1ZkgNeRcYnKYL6zSYpgebzux98Yd5218xEgUsjvNFXgDgLzQw3txQjVg09h9bP3wiOAReXOSa7DdEt0yRKloF8KCg=
+	t=1762866185; cv=none; b=ty5bF2uF6DsQzmunYaafot/TBmOyC79DbOOPYGVJRufoEwzR4gLqsV8bDBZoSSfkEodIOamJCIrzJm1/9PcdrFopL+DAxOHmSBJmK/ydtmUYJ43SqJvnGfkNpYl9mj1kMlh/fu3F/+Im2htbrzDS4ilYNQQ8OlgFIqWJIikYyRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762864072; c=relaxed/simple;
-	bh=9BI5n61qLiP4hmzl3oxkvSzARLyEY3ntDVuVCOxRJ6Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LAwuMlI38vO5aZlMk19ffdmY9PHQ6SWPhUbktrVb+508UZ9DINIpv+l0svxlVsuNGEHVc2cOpDHiSmPMOWDNqEfLZjikhOQRLccj2h8MGHmgs+boKkggkOinD4dwifo/iHg5B5wnYht9XKPyLvPAiggqysvRW/XWDb5JDqFs8Tk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=themaw.net; spf=pass smtp.mailfrom=themaw.net; dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b=h21gR9aU; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=homK9s+4; arc=none smtp.client-ip=103.168.172.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=themaw.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=themaw.net
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id C470C14001D9;
-	Tue, 11 Nov 2025 07:27:48 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-04.internal (MEProxy); Tue, 11 Nov 2025 07:27:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1762864068;
-	 x=1762950468; bh=odCvzHzflLTAc8B/UiMMglkBWYTEtUU7jHdHxgB3fu8=; b=
-	h21gR9aUOjzrDzAhSZHB7JQQ+BsTGhFXXEzoBZ5s7/flcm0VWAf+PzOtW/HJCAAO
-	Uqn18ITg0JbKiLcbuA4MYBSyTEu2yel106bMnSDYzNRk1zIlxLeRRlrugtY0wqjx
-	pFwVwflzl7QuyGR4MfGXOEGae44I/m+QZWU699e8AM/rzjKeOOKBMdKWo6ObCgve
-	Sa9zaIgu7ZF+btnPbayXxz7EibphXSUpJtRHMxlHKZ1kxx7VxF+1q8O2ly0mbUzx
-	1GxoeV6lt6G6sRAchwqOlLZPSpig4bj4h02diKgtg6qw9QzhFe9joRDSBYErCAna
-	Fu9swYJFkKtQCX+VWfq7ug==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762864068; x=
-	1762950468; bh=odCvzHzflLTAc8B/UiMMglkBWYTEtUU7jHdHxgB3fu8=; b=h
-	omK9s+4cw843BfJ15NlcQmt1hTjPuTJMtjylCmmXyNW/TVxjvpth7xn5OqCHhGnU
-	j78yDG9O0vZPj8KyjSCjEHVIiOGjCeYtfVsQBTtYKpebg5Y6PSJi+cBMzhOEKtAa
-	jOMOppcZHLdZV3fudg7zLyY8UwRROCR0nlBdjCbppF+UZzoIxoeZIfiTJeyJ/675
-	UnVaQqDO6hqgiwQm//ZEZWYoW9NJ0NVY8pEf0uyX+eW7A3Ufef2r4OBBY8FmniWq
-	fG2RDvlaIuWsfGao6jLLYr16IV5qvue4W4onQXY6ZcWo2byS7tWyYtkaphcxSEOJ
-	/Xq32TVFASmOaB97K6R7Q==
-X-ME-Sender: <xms:xCsTaZ2hZStZuDiLGavtSkYgB3ucdUSzfqZ8a7g4treYvYx9LxGnLg>
-    <xme:xCsTaZZNItA3yn9Au_LvAbT8IArlLEgWX2gVEK3erYL0EVHGCPMP-4EzosTMMNbVD
-    XScEcukpOqtTrXH0ZIe-7RNlo8gSCtcS4aMtX3WfePjPA64-g>
-X-ME-Received: <xmr:xCsTaRKcDXEImi27sN60Fo4ZJqzZmHvwzC-6VfhE3gpdE1UidP8FEd1kTpp0F_OTayABvowlhOXE--nl8e8qPEuhst4uK1fvo4NCJLwcpg3UeLCHsv8JL-s>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvtdduudelucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpefkrghnucfm
-    vghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecuggftrfgrthhtvghrnhepfe
-    ekhfegieegteelffegleetjeekuddvhfehjefhheeuiedtheeuhfekueekffehnecuvehl
-    uhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprhgrvhgvnhesth
-    hhvghmrgifrdhnvghtpdhnsggprhgtphhtthhopeehpdhmohguvgepshhmthhpohhuthdp
-    rhgtphhtthhopegsrhgruhhnvghrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehvih
-    hrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpdhrtghpthhtoheplhhinhhugidq
-    khgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghuthhofh
-    hssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqfhhsuggv
-    vhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:xCsTaYG-y2h-kozUbttnhTpRY9rFAM5tX7IoEoUxdeEpPp-IRNIMqg>
-    <xmx:xCsTaYt53DaTaCAgoabxYzX8txS4o2HaS37qTar8osSBBohk8CrdMQ>
-    <xmx:xCsTaXumBAYW8PPVSeoFF32V3RiS3mCZTKCNWiXnjvi_OELvhZjcEw>
-    <xmx:xCsTaWBANcwvItT1cvjIUz4lZaaXixuaxbDDNqQV1TgNLKo38JLUOg>
-    <xmx:xCsTaXhY5wdpZLNuruvlKeUNSrPkeljlpaVztqMCBMvsUCWGEuMZ-up1>
-Feedback-ID: i31e841b0:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 11 Nov 2025 07:27:46 -0500 (EST)
-Message-ID: <bd4fc8ce-ca3f-4e0f-86c0-f9aaa931a066@themaw.net>
-Date: Tue, 11 Nov 2025 20:27:42 +0800
+	s=arc-20240116; t=1762866185; c=relaxed/simple;
+	bh=Vt1k5EQoPqh3Nrp0Bhb6ewVSEmyuqnxy7cXy4xH/yLA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=DAfOAwtvXe15f5YBJdAft5DPw+sG7erU2AxiE6OFMNwn9CRN3ZT8dg0j9dnGxeXGShl1Iypg6Olw06F1O7VnN7xi1dqCKaCvLH41CKujJm5PxCo5htnzPx1fKjfMAg3Ok/SJAqEo3cFvbDYCT6I1YIoTwbcapCmq2NekH12zSHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-43470d72247so1808935ab.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Nov 2025 05:03:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762866183; x=1763470983;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CGB/TAKZOcKtrhPxjpEL/9Rt1n53HiPGQxYzu5TTEyA=;
+        b=knev6aein9wyfLYVCKsxEKKmFKojpLmBlgqVCNuio4Z6bVqH2YT26VgQda4fMfkjxU
+         +jNi4BbQYQeb7jMbyK66rTa4cFISbZzEsRijSfG0vfI4wx4/5BzQX31BGeeZDQ3FSPQv
+         Ls8A8skl0dlsPAij+y/OXU88t4ZbnfQ68qltUItQQhy7R4d3QKUGBrrNPuSTkzy8uYqr
+         OUTz+YtSU5RkRMNwaJ5wmvy4wMn+IFbmDFFTYTMswU0lRh2ShnlP3c5KrtxJ+cAt9vKG
+         FqGVWWotc5nbC1uMCxKkZ39SL3mUV9PlRsdxK/1dp1K1ofkEOVDQ0B7uYw/kIwCZc5GE
+         hQZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVjTmv4H+v038LDd4biS/AMcRAAeetQekeTR1BuD674SDLsm8POBQbfJn6GNdz2AvEBRGo4ZM4O9cme3+aD@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHRoRAs+cJIIXOv5ossahA8t8R54DpxJO/BbfCu9WpPNUOCr1r
+	4uf86MegkVWqVN0Jl+ZDc0ZLBPAgctbJOk3pENWt7H+aQvhkhLSwrFZETAH/MqOetGsB/Xi9+L0
+	3lJTw3A+FjiYnolAZf8xcFJwW1Uyi6Z950NqFEzbmFz2T4xh0q6fHSapl9QI=
+X-Google-Smtp-Source: AGHT+IEpTzA/3NqtQbsss3Bt9ogTGA39GU8M8pGLRnvPzS3lXufcYtJkf55mtmGcYxBah4LCmhDhp2qV1vWIUjAYrBjwalX4qAqr
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] autofs: dont trigger mount if it cant succeed
-To: Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>
-Cc: Kernel Mailing List <linux-kernel@vger.kernel.org>,
- autofs mailing list <autofs@vger.kernel.org>,
- linux-fsdevel <linux-fsdevel@vger.kernel.org>
-References: <20251111060439.19593-1-raven@themaw.net>
- <20251111060439.19593-3-raven@themaw.net>
- <20251111-zunahm-endeffekt-c8fb3f90a365@brauner>
- <20251111102435.GW2441659@ZenIV>
- <20251111-ortseinfahrt-lithium-21455428ab30@brauner>
-Content-Language: en-AU
-From: Ian Kent <raven@themaw.net>
-Autocrypt: addr=raven@themaw.net;
- keydata= xsFNBE6c/ycBEADdYbAI5BKjE+yw+dOE+xucCEYiGyRhOI9JiZLUBh+PDz8cDnNxcCspH44o
- E7oTH0XPn9f7Zh0TkXWA8G6BZVCNifG7mM9K8Ecp3NheQYCk488ucSV/dz6DJ8BqX4psd4TI
- gpcs2iDQlg5CmuXDhc5z1ztNubv8hElSlFX/4l/U18OfrdTbbcjF/fivBkzkVobtltiL+msN
- bDq5S0K2KOxRxuXGaDShvfbz6DnajoVLEkNgEnGpSLxQNlJXdQBTE509MA30Q2aGk6oqHBQv
- zxjVyOu+WLGPSj7hF8SdYOjizVKIARGJzDy8qT4v/TLdVqPa2d0rx7DFvBRzOqYQL13/Zvie
- kuGbj3XvFibVt2ecS87WCJ/nlQxCa0KjGy0eb3i4XObtcU23fnd0ieZsQs4uDhZgzYB8LNud
- WXx9/Q0qsWfvZw7hEdPdPRBmwRmt2O1fbfk5CQN1EtNgS372PbOjQHaIV6n+QQP2ELIa3X5Z
- RnyaXyzwaCt6ETUHTslEaR9nOG6N3sIohIwlIywGK6WQmRBPyz5X1oF2Ld9E0crlaZYFPMRH
- hQtFxdycIBpTlc59g7uIXzwRx65HJcyBflj72YoTzwchN6Wf2rKq9xmtkV2Eihwo8WH3XkL9
- cjVKjg8rKRmqIMSRCpqFBWJpT1FzecQ8EMV0fk18Q5MLj441yQARAQABzRtJYW4gS2VudCA8
- cmF2ZW5AdGhlbWF3Lm5ldD7CwXsEEwECACUCGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheA
- BQJOnjOcAhkBAAoJEOdnc4D1T9iphrYQALHK3J5rjzy4qPiLJ0EE9eJkyV1rqtzct5Ah9pu6
- LSkqxgQCfN3NmKOoj+TpbXGagg28qTGjkFvJSlpNY7zAj+fA11UVCxERgQBOJcPrbgaeYZua
- E4ST+w/inOdatNZRnNWGugqvez80QGuxFRQl1ttMaky7VxgwNTXcFNjClW3ifdD75gHlrU0V
- ZUULa1a0UVip0rNc7mFUKxhEUk+8NhowRZUk0nt1JUwezlyIYPysaN7ToVeYE4W0VgpWczmA
- tHtkRGIAgwL7DCNNJ6a+H50FEsyixmyr/pMuNswWbr3+d2MiJ1IYreZLhkGfNq9nG/+YK/0L
- Q2/OkIsz8bOrkYLTw8WwzfTz2RXV1N2NtsMKB/APMcuuodkSI5bzzgyu1cDrGLz43faFFmB9
- xAmKjibRLk6ChbmrZhuCYL0nn+RkL036jMLw5F1xiu2ltEgK2/gNJhm29iBhvScUKOqUnbPw
- DSMZ2NipMqj7Xy3hjw1CStEy3pCXp8/muaB8KRnf92VvjO79VEls29KuX6rz32bcBM4qxsVn
- cOqyghSE69H3q4SY7EbhdIfacUSEUV+m/pZK5gnJIl6n1Rh6u0MFXWttvu0j9JEl92Ayj8u8
- J/tYvFMpag3nTeC3I+arPSKpeWDX08oisrEp0Yw15r+6jbPjZNz7LvrYZ2fa3Am6KRn0zsFN
- BE6c/ycBEADZzcb88XlSiooYoEt3vuGkYoSkz7potX864MSNGekek1cwUrXeUdHUlw5zwPoC
- 4H5JF7D8q7lYoelBYJ+Mf0vdLzJLbbEtN5+v+s2UEbkDlnUQS1yRo1LxyNhJiXsQVr7WVA/c
- 8qcDWUYX7q/4Ckg77UO4l/eHCWNnHu7GkvKLVEgRjKPKroIEnjI0HMK3f6ABDReoc741RF5X
- X3qwmCgKZx0AkLjObXE3W769dtbNbWmW0lgFKe6dxlYrlZbq25Aubhcu2qTdQ/okx6uQ41+v
- QDxgYtocsT/CG1u0PpbtMeIm3mVQRXmjDFKjKAx9WOX/BHpk7VEtsNQUEp1lZo6hH7jeo5me
- CYFzgIbXdsMA9TjpzPpiWK9GetbD5KhnDId4ANMrWPNuGC/uPHDjtEJyf0cwknsRFLhL4/NJ
- KvqAuiXQ57x6qxrkuuinBQ3S9RR3JY7R7c3rqpWyaTuNNGPkIrRNyePky/ZTgTMA5of8Wioy
- z06XNhr6mG5xT+MHztKAQddV3xFy9f3Jrvtd6UvFbQPwG7Lv+/UztY5vPAzp7aJGz2pDbb0Q
- BC9u1mrHICB4awPlja/ljn+uuIb8Ow3jSy+Sx58VFEK7ctIOULdmnHXMFEihnOZO3NlNa6q+
- XZOK7J00Ne6y0IBAaNTM+xMF+JRc7Gx6bChES9vxMyMbXwARAQABwsFfBBgBAgAJBQJOnP8n
- AhsMAAoJEOdnc4D1T9iphf4QAJuR1jVyLLSkBDOPCa3ejvEqp4H5QUogl1ASkEboMiWcQJQd
- LaH6zHNySMnsN6g/UVhuviANBxtW2DFfANPiydox85CdH71gLkcOE1J7J6Fnxgjpc1Dq5kxh
- imBSqa2hlsKUt3MLXbjEYL5OTSV2RtNP04KwlGS/xMfNwQf2O2aJoC4mSs4OeZwsHJFVF8rK
- XDvL/NzMCnysWCwjVIDhHBBIOC3mecYtXrasv9nl77LgffyyaAAQZz7yZcvn8puj9jH9h+mr
- L02W+gd+Sh6Grvo5Kk4ngzfT/FtscVGv9zFWxfyoQHRyuhk0SOsoTNYN8XIWhosp9GViyDtE
- FXmrhiazz7XHc32u+o9+WugpTBZktYpORxLVwf9h1PY7CPDNX4EaIO64oyy9O3/huhOTOGha
- nVvqlYHyEYCFY7pIfaSNhgZs2aV0oP13XV6PGb5xir5ah+NW9gQk/obnvY5TAVtgTjAte5tZ
- +coCSBkOU1xMiW5Td7QwkNmtXKHyEF6dxCAMK1KHIqxrBaZO27PEDSHaIPHePi7y4KKq9C9U
- 8k5V5dFA0mqH/st9Sw6tFbqPkqjvvMLETDPVxOzinpU2VBGhce4wufSIoVLOjQnbIo1FIqWg
- Dx24eHv235mnNuGHrG+EapIh7g/67K0uAzwp17eyUYlE5BMcwRlaHMuKTil6
-In-Reply-To: <20251111-ortseinfahrt-lithium-21455428ab30@brauner>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:2408:b0:433:29c3:c512 with SMTP id
+ e9e14a558f8ab-43367e2d24emr143895815ab.21.1762866183264; Tue, 11 Nov 2025
+ 05:03:03 -0800 (PST)
+Date: Tue, 11 Nov 2025 05:03:03 -0800
+In-Reply-To: <20251111-covern-deklamieren-ee89b7b4e502@brauner>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <69133407.a70a0220.22f260.0138.GAE@google.com>
+Subject: Re: [syzbot] [fs?] WARNING in nsproxy_ns_active_put
+From: syzbot <syzbot+0b2e79f91ff6579bfa5b@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, bpf@vger.kernel.org, brauner@kernel.org, 
+	bsegall@google.com, david@redhat.com, dietmar.eggemann@arm.com, jack@suse.cz, 
+	jsavitz@redhat.com, juri.lelli@redhat.com, kartikey406@gmail.com, 
+	kees@kernel.org, liam.howlett@oracle.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-security-module@vger.kernel.org, lorenzo.stoakes@oracle.com, 
+	mgorman@suse.de, mhocko@suse.com, mingo@redhat.com, mjguzik@gmail.com, 
+	oleg@redhat.com, paul@paul-moore.com, peterz@infradead.org, 
+	rostedt@goodmis.org, rppt@kernel.org, sergeh@kernel.org, surenb@google.com, 
+	syzkaller-bugs@googlegroups.com, vbabka@suse.cz, vincent.guittot@linaro.org, 
+	viro@zeniv.linux.org.uk, vschneid@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 11/11/25 18:55, Christian Brauner wrote:
-> On Tue, Nov 11, 2025 at 10:24:35AM +0000, Al Viro wrote:
->> On Tue, Nov 11, 2025 at 11:19:59AM +0100, Christian Brauner wrote:
->>
->>>> +	sbi->owner = current->nsproxy->mnt_ns;
->>> ns_ref_get()
->>> Can be called directly on the mount namespace.
->> ... and would leak all mounts in the mount tree, unless I'm missing
->> something subtle.
-> Right, I thought you actually wanted to pin it.
-> Anyway, you could take a passive reference but I think that's nonsense
-> as well. The following should do it:
+Hello,
 
-Right, I'll need to think about this for a little while, I did think
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+WARNING in __ns_ref_active_put
 
-of using an id for the comparison but I diverged down the wrong path so
-
-this is a very welcome suggestion. There's still the handling of where
-
-the daemon goes away (crash or SIGKILL, yes people deliberately do this
-
-at times, think simulated disaster recovery) which I've missed in this
-
-revision.
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 6581 at kernel/nscommon.c:171 __ns_ref_active_put+0x3d7/0x450 kernel/nscommon.c:171
+Modules linked in:
+CPU: 0 UID: 0 PID: 6581 Comm: syz.0.18 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+RIP: 0010:__ns_ref_active_put+0x3d7/0x450 kernel/nscommon.c:171
+Code: 4d 8b 3e e9 1b fd ff ff e8 76 62 32 00 90 0f 0b 90 e9 29 fd ff ff e8 68 62 32 00 90 0f 0b 90 e9 59 fd ff ff e8 5a 62 32 00 90 <0f> 0b 90 e9 72 ff ff ff e8 4c 62 32 00 90 0f 0b 90 e9 64 ff ff ff
+RSP: 0018:ffffc9000238fd68 EFLAGS: 00010293
+RAX: ffffffff818e5946 RBX: 00000000ffffffff RCX: ffff8880302ebc80
+RDX: 0000000000000000 RSI: 00000000ffffffff RDI: 0000000000000000
+RBP: ffffc9000238fe00 R08: ffff888078968c2b R09: 1ffff1100f12d185
+R10: dffffc0000000000 R11: ffffed100f12d186 R12: dffffc0000000000
+R13: 1ffff1100f12d184 R14: ffff888078968c20 R15: ffff888078968c28
+FS:  00007efc0fd536c0(0000) GS:ffff888125cf3000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000001b33263fff CR3: 0000000030876000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ nsproxy_ns_active_put+0x4a/0x200 fs/nsfs.c:701
+ free_nsproxy kernel/nsproxy.c:80 [inline]
+ put_nsset kernel/nsproxy.c:316 [inline]
+ __do_sys_setns kernel/nsproxy.c:-1 [inline]
+ __se_sys_setns+0x1349/0x1b60 kernel/nsproxy.c:534
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7efc0ef90ef7
+Code: 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 b8 34 01 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007efc0fd52fd8 EFLAGS: 00000246 ORIG_RAX: 0000000000000134
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007efc0ef90ef7
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00000000000000c9
+RBP: 00007efc0f011f91 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007efc0f1e6038 R14: 00007efc0f1e5fa0 R15: 00007fff5692b648
+ </TASK>
 
 
-Al, thoughts please?
+Tested on:
 
+commit:         cc719c88 nsproxy: fix free_nsproxy() and simplify crea..
+git tree:       https://github.com/brauner/linux.git namespace-6.19
+console output: https://syzkaller.appspot.com/x/log.txt?x=1613f17c580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=59952e73920025e4
+dashboard link: https://syzkaller.appspot.com/bug?extid=0b2e79f91ff6579bfa5b
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
 
->
-> UNTESTED, UNCOMPILED
-
-I'll give it a whirl, ;)
-
-
->
-> ---
->   fs/autofs/autofs_i.h |  4 ++++
->   fs/autofs/inode.c    |  3 +++
->   fs/autofs/root.c     | 10 ++++++++++
->   fs/namespace.c       |  6 ++++++
->   include/linux/fs.h   |  1 +
->   5 files changed, 24 insertions(+)
->
-> diff --git a/fs/autofs/autofs_i.h b/fs/autofs/autofs_i.h
-> index 23cea74f9933..2b9d2300d351 100644
-> --- a/fs/autofs/autofs_i.h
-> +++ b/fs/autofs/autofs_i.h
-> @@ -16,6 +16,7 @@
->   #include <linux/wait.h>
->   #include <linux/sched.h>
->   #include <linux/sched/signal.h>
-> +#include <uapi/linux/mount.h>
->   #include <linux/mount.h>
->   #include <linux/namei.h>
->   #include <linux/uaccess.h>
-> @@ -109,11 +110,14 @@ struct autofs_wait_queue {
->   #define AUTOFS_SBI_STRICTEXPIRE 0x0002
->   #define AUTOFS_SBI_IGNORE	0x0004
->   
->   struct autofs_sb_info {
->   	u32 magic;
->   	int pipefd;
->   	struct file *pipe;
->   	struct pid *oz_pgrp;
-> +	u64 mnt_ns_id;
->   	int version;
->   	int sub_version;
->   	int min_proto;
-> diff --git a/fs/autofs/inode.c b/fs/autofs/inode.c
-> index f5c16ffba013..247a5784d192 100644
-> --- a/fs/autofs/inode.c
-> +++ b/fs/autofs/inode.c
-> @@ -6,8 +6,10 @@
->   
->   #include <linux/seq_file.h>
->   #include <linux/pagemap.h>
-> +#include <linux/ns_common.h>
->   
->   #include "autofs_i.h"
-> +#include "../mount.h"
-
-As a module I try really hard to avoid use of non-public definitions.
-
-But if everyone is happy I'm happy too!
-
-
->   
->   struct autofs_info *autofs_new_ino(struct autofs_sb_info *sbi)
->   {
-> @@ -251,6 +253,7 @@ static struct autofs_sb_info *autofs_alloc_sbi(void)
->   	sbi->min_proto = AUTOFS_MIN_PROTO_VERSION;
->   	sbi->max_proto = AUTOFS_MAX_PROTO_VERSION;
->   	sbi->pipefd = -1;
-> +	sbi->mnt_ns_id = to_ns_common(current->nsproxy->mnt_ns)->ns_id;
->   
->   	set_autofs_type_indirect(&sbi->type);
->   	mutex_init(&sbi->wq_mutex);
-> diff --git a/fs/autofs/root.c b/fs/autofs/root.c
-> index 174c7205fee4..f06f62d23e76 100644
-> --- a/fs/autofs/root.c
-> +++ b/fs/autofs/root.c
-> @@ -7,8 +7,10 @@
->   
->   #include <linux/capability.h>
->   #include <linux/compat.h>
-> +#include <linux/ns_common.h>
->   
->   #include "autofs_i.h"
-> +#include "../mount.h"
->   
->   static int autofs_dir_permission(struct mnt_idmap *, struct inode *, int);
->   static int autofs_dir_symlink(struct mnt_idmap *, struct inode *,
-> @@ -341,6 +343,14 @@ static struct vfsmount *autofs_d_automount(struct path *path)
->   	if (autofs_oz_mode(sbi))
->   		return NULL;
->   
-> +	/* Refuse to trigger mount if current namespace is not the owner
-> +	 * and the mount is propagation private.
-> +	 */
-> +	if (sbi->mnt_ns_id != to_ns_common(current->nsproxy->mnt_ns)->ns_id) {
-> +		if (vfsmount_to_propagation_flags(path->mnt) & MS_PRIVATE)
-> +			return ERR_PTR(-EPERM);
-> +	}
-> +
->   	/*
->   	 * If an expire request is pending everyone must wait.
->   	 * If the expire fails we're still mounted so continue
-> diff --git a/fs/namespace.c b/fs/namespace.c
-> index d82910f33dc4..27bb12693cba 100644
-> --- a/fs/namespace.c
-> +++ b/fs/namespace.c
-> @@ -5150,6 +5150,12 @@ static u64 mnt_to_propagation_flags(struct mount *m)
->   	return propagation;
->   }
->   
-> +u64 vfsmount_to_propagation_flags(struct vfsmount *mnt)
-> +{
-> +	return mnt_to_propagation_flags(real_mount(mnt));
-> +}
-> +EXPORT_SYMBOL_GPL(vfsmount_to_propagation_flags);
-> +
->   static void statmount_sb_basic(struct kstatmount *s)
->   {
->   	struct super_block *sb = s->mnt->mnt_sb;
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index c895146c1444..a5c2077ce6ed 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -3269,6 +3269,7 @@ extern struct file * open_exec(const char *);
->   /* fs/dcache.c -- generic fs support functions */
->   extern bool is_subdir(struct dentry *, struct dentry *);
->   extern bool path_is_under(const struct path *, const struct path *);
-> +u64 vfsmount_to_propagation_flags(struct vfsmount *mnt);
->   
->   extern char *file_path(struct file *, char *, int);
->   
+Note: no patches were applied.
 
