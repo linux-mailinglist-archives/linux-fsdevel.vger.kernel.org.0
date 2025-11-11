@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-67844-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-67833-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86C56C4C020
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 08:12:52 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F2B0C4BEC7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 08:06:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 213F6189EFB4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 07:06:04 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CCA9D4F7222
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Nov 2025 07:03:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 481A0359710;
-	Tue, 11 Nov 2025 06:55:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEF86357A22;
+	Tue, 11 Nov 2025 06:55:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="DzriejRZ"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="XIQ+y+Vl"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0136317555;
-	Tue, 11 Nov 2025 06:55:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2759D348867;
+	Tue, 11 Nov 2025 06:55:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762844136; cv=none; b=mpk8Hz+VL4tXveykRBSlRJS/ecWbTwffWAeOkEoW0BnCWUyq622HZIM7dZ0XF6Gn5UL67eCK9+QbWRIX0sHhb14pdfAQjiS114kSj3rB/rochAA0I7vObHIzeSgKcx9vbe12XFnU2QY6iWmoPB5eXR0u30QXXPbFiYhCeorK0hY=
+	t=1762844134; cv=none; b=mwn5iD4EbNw/mi1uBvzakbQvHUQMMpj4sQYCo7X2gKqBcXMbvgd45kVgKj6tPwS+V19Haed1YkY3Qeipf9uD0CrjLx1TBZ+Qjpx7pWS6HirgTjdBQ72ZLwgs/yGZYbMlXBO88/n6/t6wKv6hf4OjYKlkps6l7qZM0YI3z+CCepE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762844136; c=relaxed/simple;
-	bh=il8mOVf2818vHOFW/JAhYdqvQSi0sBbx783nwZmQsx4=;
+	s=arc-20240116; t=1762844134; c=relaxed/simple;
+	bh=JNS4GZ7CCFPFECzgiJ71+maFY7CIDmqN0fMb5CQ92e8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Mjar8XE5DgsDZApau/H3ZoVURm0snHy0z/Vo0TWLNDuIhsDFJGzxEuHe8oIxxjuQK9CBT+Lq6kGwuorYWElxTM75km8mclOer0miA5WuHX9wEawZo3rPfVUW+4QPBHxZwNSdRQv569VI1qa+lwns/azCzGtjho5qyC+Qz6pmQVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=DzriejRZ; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version:Content-Type; b=NIwoa7nVce1wF9fosEuT4AfiIJkjdzg1v9LVqKX4oVe9yOSZUfKwqzn8yDeHNfugZA1OJrDPKR8r4ojceoPb3NBJUuTb5+kYnYkvHuDHPUPIIeSuDxOpGqncYMdlCPgAbS3ga+OYEN0MyT+2jf3j30CiOxq117VJcBuxq5+b5jM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=XIQ+y+Vl; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
-	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=FZUuqKrs+nqWkpfLt5q4RrHggbnk1CWWQm+NX1Cw0DM=; b=DzriejRZZQpruszS7u6QC+IdRW
-	m8VOUhOtMXPLPfg1uzbUoRaGSvI80iQTbB3p+zXHNIuxZTwBCQVvFgGCz9BSCgvSFvRHYvqidcdDD
-	O7PzWdxvMjtiWFwEvZnkF1dhlqSlBrZIWXop+WsyNUkSms1zy+RxzvMLuWaBLkaKJDNrpJxThD3Jd
-	68X03LVc81pymNdyvH/wtvo3A6N71LJ6iC9TVhNEWZBfDhCjaQEH8e54sTvmm7XBJcnxG7zOCh2xa
-	E7e3c0h19awSVEQDA5mldox9o/Su4zTtUURoXRL+ztaC9dVF/a508XCBHJnnMVFyL66bJV8zCGElE
-	RVN/gSyw==;
+	Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:
+	To:From:Reply-To:Content-ID:Content-Description;
+	bh=N+tXunEOs6X459keGHQ5swXgQ1VhlYiy4rVqOJxhLx8=; b=XIQ+y+VlFDH+1yuCJgvoROjDye
+	zPueB2Z9hy0fbTNFgwsJjwwNUqLSFZXY+uzh/rvreoEu3pkRb38Jj7WMS/xAUSH/r5lBM1Ra/Z9Cj
+	H3RzfsUCTskyAGw/Tufvoa/hESm+kdI/n4tbYqd4a+avsp9p3jpsa/4jOB+z91B+sOPf1F6xQx/MY
+	eJ8Kp4OjBdKXt8krqSxOZ+Wo0ZokSKMjr7uvMGTYw9awSO0hnlIvfHeOU6AvBEfNeTU+iFcz7czvc
+	KdwIP1k/9CIvkLpZhbqncS5dAaBf+h+h5fzsXzPtIDidV/XIh7NDxq5fZ2lS3Cxn+IeObHNr48f/O
+	212tHJww==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vIiHn-0000000Bx4o-2hjO;
-	Tue, 11 Nov 2025 06:55:27 +0000
+	id 1vIiHn-0000000Bx5D-3qL0;
+	Tue, 11 Nov 2025 06:55:28 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
 Cc: torvalds@linux-foundation.org,
@@ -67,9 +67,9 @@ Cc: torvalds@linux-foundation.org,
 	selinux@vger.kernel.org,
 	borntraeger@linux.ibm.com,
 	bpf@vger.kernel.org
-Subject: [PATCH v3 35/50] convert selinuxfs
-Date: Tue, 11 Nov 2025 06:55:04 +0000
-Message-ID: <20251111065520.2847791-36-viro@zeniv.linux.org.uk>
+Subject: [PATCH v3 36/50] functionfs: switch to simple_remove_by_name()
+Date: Tue, 11 Nov 2025 06:55:05 +0000
+Message-ID: <20251111065520.2847791-37-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20251111065520.2847791-1-viro@zeniv.linux.org.uk>
 References: <20251111065520.2847791-1-viro@zeniv.linux.org.uk>
@@ -79,64 +79,129 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Tree has invariant part + two subtrees that get replaced upon each
-policy load.  Invariant parts stay for the lifetime of filesystem,
-these two subdirs - from policy load to policy load (serialized
-on lock_rename(root, ...)).
+No need to return dentry from ffs_sb_create_file() or keep it around
+afterwards.
 
-All object creations are via d_alloc_name()+d_add() inside selinuxfs,
-all removals are via simple_recursive_removal().
-
-Turn those d_add() into d_make_persistent()+dput() and that's mostly it.
-
-Acked-by: Paul Moore <paul@paul-moore.com>
-Reviewed-by: Stephen Smalley <stephen.smalley.work@gmail.com>
-Tested-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- security/selinux/selinuxfs.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/usb/gadget/function/f_fs.c | 39 ++++++++++++------------------
+ 1 file changed, 15 insertions(+), 24 deletions(-)
 
-diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
-index f088776dbbd3..eae565358db4 100644
---- a/security/selinux/selinuxfs.c
-+++ b/security/selinux/selinuxfs.c
-@@ -1205,7 +1205,8 @@ static struct dentry *sel_attach(struct dentry *parent, const char *name,
- 		iput(inode);
- 		return ERR_PTR(-ENOMEM);
- 	}
--	d_add(dentry, inode);
-+	d_make_persistent(dentry, inode);
-+	dput(dentry);
- 	return dentry;
+diff --git a/drivers/usb/gadget/function/f_fs.c b/drivers/usb/gadget/function/f_fs.c
+index 47cfbe41fdff..43dcd39b76c5 100644
+--- a/drivers/usb/gadget/function/f_fs.c
++++ b/drivers/usb/gadget/function/f_fs.c
+@@ -160,8 +160,6 @@ struct ffs_epfile {
+ 	struct ffs_data			*ffs;
+ 	struct ffs_ep			*ep;	/* P: ffs->eps_lock */
+ 
+-	struct dentry			*dentry;
+-
+ 	/*
+ 	 * Buffer for holding data from partial reads which may happen since
+ 	 * we’re rounding user read requests to a multiple of a max packet size.
+@@ -273,9 +271,8 @@ struct ffs_desc_helper {
+ static int  __must_check ffs_epfiles_create(struct ffs_data *ffs);
+ static void ffs_epfiles_destroy(struct ffs_epfile *epfiles, unsigned count);
+ 
+-static struct dentry *
+-ffs_sb_create_file(struct super_block *sb, const char *name, void *data,
+-		   const struct file_operations *fops);
++static int ffs_sb_create_file(struct super_block *sb, const char *name,
++			      void *data, const struct file_operations *fops);
+ 
+ /* Devices management *******************************************************/
+ 
+@@ -1866,9 +1863,8 @@ ffs_sb_make_inode(struct super_block *sb, void *data,
  }
  
-@@ -1934,10 +1935,11 @@ static struct dentry *sel_make_swapover_dir(struct super_block *sb,
- 	/* directory inodes start off with i_nlink == 2 (for "." entry) */
- 	inc_nlink(inode);
- 	inode_lock(sb->s_root->d_inode);
--	d_add(dentry, inode);
-+	d_make_persistent(dentry, inode);
- 	inc_nlink(sb->s_root->d_inode);
- 	inode_unlock(sb->s_root->d_inode);
--	return dentry;
-+	dput(dentry);
-+	return dentry;	// borrowed
- }
- 
- #define NULL_FILE_NAME "null"
-@@ -2080,7 +2082,7 @@ static int sel_init_fs_context(struct fs_context *fc)
- static void sel_kill_sb(struct super_block *sb)
+ /* Create "regular" file */
+-static struct dentry *ffs_sb_create_file(struct super_block *sb,
+-					const char *name, void *data,
+-					const struct file_operations *fops)
++static int ffs_sb_create_file(struct super_block *sb, const char *name,
++			      void *data, const struct file_operations *fops)
  {
- 	selinux_fs_info_free(sb);
--	kill_litter_super(sb);
-+	kill_anon_super(sb);
+ 	struct ffs_data	*ffs = sb->s_fs_info;
+ 	struct dentry	*dentry;
+@@ -1876,16 +1872,16 @@ static struct dentry *ffs_sb_create_file(struct super_block *sb,
+ 
+ 	dentry = d_alloc_name(sb->s_root, name);
+ 	if (!dentry)
+-		return NULL;
++		return -ENOMEM;
+ 
+ 	inode = ffs_sb_make_inode(sb, data, fops, NULL, &ffs->file_perms);
+ 	if (!inode) {
+ 		dput(dentry);
+-		return NULL;
++		return -ENOMEM;
+ 	}
+ 
+ 	d_add(dentry, inode);
+-	return dentry;
++	return 0;
  }
  
- static struct file_system_type sel_fs_type = {
+ /* Super block */
+@@ -1928,10 +1924,7 @@ static int ffs_sb_fill(struct super_block *sb, struct fs_context *fc)
+ 		return -ENOMEM;
+ 
+ 	/* EP0 file */
+-	if (!ffs_sb_create_file(sb, "ep0", ffs, &ffs_ep0_operations))
+-		return -ENOMEM;
+-
+-	return 0;
++	return ffs_sb_create_file(sb, "ep0", ffs, &ffs_ep0_operations);
+ }
+ 
+ enum {
+@@ -2323,6 +2316,7 @@ static int ffs_epfiles_create(struct ffs_data *ffs)
+ {
+ 	struct ffs_epfile *epfile, *epfiles;
+ 	unsigned i, count;
++	int err;
+ 
+ 	count = ffs->eps_count;
+ 	epfiles = kcalloc(count, sizeof(*epfiles), GFP_KERNEL);
+@@ -2339,12 +2333,11 @@ static int ffs_epfiles_create(struct ffs_data *ffs)
+ 			sprintf(epfile->name, "ep%02x", ffs->eps_addrmap[i]);
+ 		else
+ 			sprintf(epfile->name, "ep%u", i);
+-		epfile->dentry = ffs_sb_create_file(ffs->sb, epfile->name,
+-						 epfile,
+-						 &ffs_epfile_operations);
+-		if (!epfile->dentry) {
++		err = ffs_sb_create_file(ffs->sb, epfile->name,
++					 epfile, &ffs_epfile_operations);
++		if (err) {
+ 			ffs_epfiles_destroy(epfiles, i - 1);
+-			return -ENOMEM;
++			return err;
+ 		}
+ 	}
+ 
+@@ -2355,13 +2348,11 @@ static int ffs_epfiles_create(struct ffs_data *ffs)
+ static void ffs_epfiles_destroy(struct ffs_epfile *epfiles, unsigned count)
+ {
+ 	struct ffs_epfile *epfile = epfiles;
++	struct dentry *root = epfile->ffs->sb->s_root;
+ 
+ 	for (; count; --count, ++epfile) {
+ 		BUG_ON(mutex_is_locked(&epfile->mutex));
+-		if (epfile->dentry) {
+-			simple_recursive_removal(epfile->dentry, NULL);
+-			epfile->dentry = NULL;
+-		}
++		simple_remove_by_name(root, epfile->name, NULL);
+ 	}
+ 
+ 	kfree(epfiles);
 -- 
 2.47.3
 
