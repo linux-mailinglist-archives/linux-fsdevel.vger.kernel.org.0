@@ -1,114 +1,124 @@
-Return-Path: <linux-fsdevel+bounces-68040-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68041-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5A20C51B3B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Nov 2025 11:37:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D411C51C82
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Nov 2025 11:54:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBFE71889B29
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Nov 2025 10:35:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58B323A2D7B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Nov 2025 10:44:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F19E32FFDE4;
-	Wed, 12 Nov 2025 10:34:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7423305068;
+	Wed, 12 Nov 2025 10:44:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OwE9SkE4"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MBX0gD6U"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BACE267B02
-	for <linux-fsdevel@vger.kernel.org>; Wed, 12 Nov 2025 10:34:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C38E12F9D94
+	for <linux-fsdevel@vger.kernel.org>; Wed, 12 Nov 2025 10:44:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762943683; cv=none; b=smXhctdgzD2DDCfoyKRgsguuBkhBtEJaQk7n9ryGEhw+23LElAAIKTgiQVRD5noocJOiqbe4Xhed6x+9WF/eN5MN1Qeh2lsuvFJ9JO53a/wRAL53Ve1H4bT2fy9vT68aVfuFscAya63TRuUR2/OYa/m6tgVwuZRplMM+GlOyAnI=
+	t=1762944285; cv=none; b=RhM3GItOGs7z0ZpxlHGiogNjviO58XAgwiEurzSecIKX52HjAd9qiUF79QFfB3micm2AMWK+CiDqBL9cflbA44h695Zzcb7anbltbGUTaqKI4hea3xmaCYInH6D+O/OxruS6v+Qp8tlI88DAHe7c90bm5aXshu75Q6IGPvys3Ck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762943683; c=relaxed/simple;
-	bh=2vG33zjVaWSRfnjXOQi6T2luGXpjj4r30wwUtiucVF8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YvKDb4UnPDBb0F9QZoB5iYfIb7ij7Dlc0xQSZjCZY1yCzpU6B2jgPDzAGH8DjDmamNK5DQWvGuUNKhmYxkdaeZJwDcMRsxIioKRPD1VgCe+8ecM3c7xHXM0EFZuX8lT5CYM4eJ1H+G3aG6bVvGPZ8QRC43ANW/wsKXSCchbEl7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OwE9SkE4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03A86C2BC9E;
-	Wed, 12 Nov 2025 10:34:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762943682;
-	bh=2vG33zjVaWSRfnjXOQi6T2luGXpjj4r30wwUtiucVF8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=OwE9SkE4hr76C3XhPzG1c9UDAI9zITZzSRl9hcD/CMzJDhTp683KlsCY52R2aDMic
-	 zV0+PNrCM0Ajs7cKtPK2JwlqIjYSAsLxdgzRqCNQ0CaUk/k14jv2AfxbOxBeFUohq4
-	 9z2s4XBmpypcjKEAW+bJOud+Q5k9u7VcWnqBanbsMj5Rqetwhq36qGZvlC2KQesQoV
-	 mdUYjXpcy3PUOImdq7lYlPw2LNHCYzBzVAlVPoKLl1Ls4s0kL6weuwzhXop0ehkHwm
-	 BPkcQSPjYliNwf8VlWnxeXBj2kTK1WF9vdAwaLmGlUROksLB2YbewBUUs2XCZTa/Os
-	 hcIcL85G+tFhw==
-From: Christian Brauner <brauner@kernel.org>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	hch@infradead.org,
-	djwong@kernel.org,
-	bfoster@redhat.com,
+	s=arc-20240116; t=1762944285; c=relaxed/simple;
+	bh=fybpzSb46YiF9J26GboN2B+pgJim56okIxMbRhK5hcU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tr0MdnzhUStMRnw8yEGn7jwQP6kH8LHY35pO9EGAs2GuzxKe69ZXKS077Rq+ZJAyD/o03raTA8PhLzGIt12ArMiAIfycG74xzTB7FEOeRczfLZZrYrTFcaZEX1lauK1/Sjjs0bLX1ybw+rzRPlpKjDp6yCzkPGDMMf92p7ZD6Rg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MBX0gD6U; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b71397df721so110737866b.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Nov 2025 02:44:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762944282; x=1763549082; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vFUEBsO/Qu/uezzNpLMFcp573WoF1qga0QGU2MJ64f4=;
+        b=MBX0gD6UwHChen2bu9z3uDyw9h14E02S93I26e1P7RJUh60njWEKD/GxFZO/DeEedQ
+         1tXl4siLMT2AWnuuDwZG3DXytRv0ynUPFI9WlMdktHH/rPwwDPvz2W79MvY+30uNqzPW
+         Ej1n1mKXpsSa7HjcgrFecIzjJL+cKoW2Y1gpQxShp1lDle0B8+cefQPih1uRpOeLT2dF
+         YTbutq8n05dSSFwXWUhQh0saiouOfLJRRxs1pwh8JRNKUAqyEHkF2BI17pQ/L0Rl1czc
+         sNDnsu2djQr8q2lasuJd4MqLMpWJi0eInZZyUcwfHbS3u280Fjhm6oTN66kGq9g7yU9X
+         s/Yg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762944282; x=1763549082;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vFUEBsO/Qu/uezzNpLMFcp573WoF1qga0QGU2MJ64f4=;
+        b=CT721j1K936/TdvgZOEhT4jLqtB/v9yPSeEM7qjmo6NvNHCWrk8xhrvsSIaRc1lMOv
+         pv9qTbkZrQA5RdmNKAwIJQIcF5d4OJ1zF1tb8oegz+P8gkgv9jYDajgYRcLsQMDcK3zy
+         K9b0CNuutFa8jPHUqhOEHF9bmH3jfPgmxZmj5DwujWHWrY/AyDjh31LGgYzN/NW0Uzbk
+         9MHDNGz3NvduXY+CylcZE/wjYXDErfBlSSuGv2Sog7adZggxLx2FfazU+fskVfE0NYDK
+         pr6jVW1Mh5PTkl9mwdlNFwCX9aomz/IMatNx5lz1OHrZQpNXoAGIBtRYb3X6xhvyQQ7G
+         922g==
+X-Forwarded-Encrypted: i=1; AJvYcCV134LFjgOza7oi6oXQLg/p0f0FFnxx5gk6qXWyeQ5Fw+WKqPUsTbfF+oyVEdZc1M5uoRK88h8HvXNmT3LY@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywa6v5nscNdGOj4BTOMgZNpkA7WTfI6GBwH/tPnpoIQVuyN0m9u
+	ypa3wX+E5dGzDVi6tjdHc97CEfQrqAbOi39yIU+vzjgYBxJ//kI7HH73
+X-Gm-Gg: ASbGncsY1OC+asuG1PE03yjBhmtE5FlAV329sO0bDDHPOcgWIQD3VTtJIzgoIJ5f77d
+	hZVQgSNUXGrsP6ERuyENOHfGYsW7kG8eLu18aDFL9nyO5xtTB7ekygDi9ydeBy8DjuJICBb+48A
+	jhOpPp0CgqjzQDUblIJSV68fDFDNZbjhi2FMpu7CIPff9uJjNjEjUJrYRicGL8t33PXrJBUr/Fp
+	Y5dZu6vlZ2FfT9oUclIWlnLp7YQn14ZoYVpGmYHes4ytTB42VlmX6RZ4PAQugTdKmT0LITsHBRB
+	cWIeX1KGw3oiATgGmUGkZsKv10eBsrQOP4uM6EqgeQW3vqOcBhTDkUA0OHVQ3wi8um5K2JtIUgp
+	uy5zD2kNfOQMaeUvVj9QQEwh8yYB1ruIpyToeXJAmyoqBGwpgyQWqLZFRICsf1fVfr9YdRWC2r5
+	YnVqZ40c7mIppZgog7t1U1wEHvyb8sPJe+ws1R0dsW/UXsFMjX
+X-Google-Smtp-Source: AGHT+IHrZmIs8nk5ArTcfh60GG2k3h+jurwLNlYK2ksnYIGUN7QecVUHw/+hmvKIg0JO4bHSSO/DUg==
+X-Received: by 2002:a17:906:ee82:b0:b73:1e09:7377 with SMTP id a640c23a62f3a-b7331aee6b3mr247579066b.58.1762944282086;
+        Wed, 12 Nov 2025 02:44:42 -0800 (PST)
+Received: from f.. (cst-prg-14-82.cust.vodafone.cz. [46.135.14.82])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bf9bc874sm1606655466b.54.2025.11.12.02.44.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Nov 2025 02:44:41 -0800 (PST)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: brauner@kernel.org,
+	jlayton@kernel.org
+Cc: viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
-	kernel-team@meta.com
-Subject: Re: [PATCH v4 0/9] iomap: buffered io changes
-Date: Wed, 12 Nov 2025 11:34:35 +0100
-Message-ID: <20251112-zuerkannt-lobgesang-bdc74266e9c2@brauner>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251111193658.3495942-1-joannelkoong@gmail.com>
-References: <20251111193658.3495942-1-joannelkoong@gmail.com>
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH v2 1/2] filelock: use a consume fence in locks_inode_context()
+Date: Wed, 12 Nov 2025 11:44:31 +0100
+Message-ID: <20251112104432.1785404-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2008; i=brauner@kernel.org; h=from:subject:message-id; bh=2vG33zjVaWSRfnjXOQi6T2luGXpjj4r30wwUtiucVF8=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSKJO2rvFp8XO1X8oKEnVc+Xg22MTnFnSs24/D0jro0b 2bLYNOujlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgInM4GT4zSJgn+/Ep9bX88pm wZuktyLd0krhc7svpSU//PZnWcrtiYwMv5lm5X183KDS9adxenXSzoTbq9cfVPloppRxZRP/cdl pvAA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-On Tue, 11 Nov 2025 11:36:49 -0800, Joanne Koong wrote:
-> This series is on top of the vfs-6.19.iomap branch (head commit ca3557a68684)
-> in Christian's vfs tree.
-> 
-> Thanks,
-> Joanne
-> 
-> Changelog
-> ---------
-> 
-> [...]
+Matches the idiom of storing a pointer with a release fence and safely
+getting the content with a consume fence after.
 
-Applied to the vfs-6.19.iomap branch of the vfs/vfs.git tree.
-Patches in the vfs-6.19.iomap branch should appear in linux-next soon.
+Eliminates an actual fence on some archs.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+---
+ include/linux/filelock.h | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+diff --git a/include/linux/filelock.h b/include/linux/filelock.h
+index c2ce8ba05d06..37e1b33bd267 100644
+--- a/include/linux/filelock.h
++++ b/include/linux/filelock.h
+@@ -232,7 +232,10 @@ bool locks_owner_has_blockers(struct file_lock_context *flctx,
+ static inline struct file_lock_context *
+ locks_inode_context(const struct inode *inode)
+ {
+-	return smp_load_acquire(&inode->i_flctx);
++	/*
++	 * Paired with the fence in locks_get_lock_context().
++	 */
++	return READ_ONCE(inode->i_flctx);
+ }
+ 
+ #else /* !CONFIG_FILE_LOCKING */
+-- 
+2.48.1
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.19.iomap
-
-[1/9] iomap: rename bytes_pending/bytes_accounted to bytes_submitted/bytes_not_submitted
-      https://git.kernel.org/vfs/vfs/c/a0f1cabe294c
-[2/9] iomap: account for unaligned end offsets when truncating read range
-      https://git.kernel.org/vfs/vfs/c/9d875e0eef8e
-[3/9] docs: document iomap writeback's iomap_finish_folio_write() requirement
-      https://git.kernel.org/vfs/vfs/c/7e6cea5ae2f5
-[4/9] iomap: optimize pending async writeback accounting
-      https://git.kernel.org/vfs/vfs/c/6b1fd2281fb0
-[5/9] iomap: simplify ->read_folio_range() error handling for reads
-      https://git.kernel.org/vfs/vfs/c/f8eaf79406fe
-[6/9] iomap: simplify when reads can be skipped for writes
-      https://git.kernel.org/vfs/vfs/c/a298febc47e0
-[7/9] iomap: use loff_t for file positions and offsets in writeback code
-      https://git.kernel.org/vfs/vfs/c/b94488503277
-[8/9] iomap: use find_next_bit() for dirty bitmap scanning
-      https://git.kernel.org/vfs/vfs/c/e46cdbfa2029
-[9/9] iomap: use find_next_bit() for uptodate bitmap scanning
-      https://git.kernel.org/vfs/vfs/c/608f00b56c31
 
