@@ -1,119 +1,131 @@
-Return-Path: <linux-fsdevel+bounces-68083-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68084-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBAC8C53F41
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Nov 2025 19:43:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3E2BC53F59
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Nov 2025 19:44:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 401D834831B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Nov 2025 18:36:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 508CD3B63A9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Nov 2025 18:39:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD9CF3587D2;
-	Wed, 12 Nov 2025 18:26:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 428DE34FF67;
+	Wed, 12 Nov 2025 18:29:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vIN//E/o"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HO5qqAZ2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE0483587BC;
-	Wed, 12 Nov 2025 18:26:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 419D03431E9
+	for <linux-fsdevel@vger.kernel.org>; Wed, 12 Nov 2025 18:29:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762971979; cv=none; b=PBQV8Rcj1mnpLFyCZ+9QWK258ITPOCMmp/PNn899SwtVfgNCw2rAfWBY9b8S9jI/4Cr4XWBv7Bua2hv7LI8Hy/7+yHs06blv6ovJnnL1ripj42hBXhnm4lBuAVJNc3lwsIeDXNsNWqTI/Fmia3Eu3e6A2+wYXT+7xmVQydtKT2k=
+	t=1762972198; cv=none; b=mNvGgWslrjDraAF/s/YDhth0asv4MGolkt8q9CYyika18rdkwG9nWnv4T6gnFW5Lt7lM+ru6ToqlAq2JHk8Fubj2cnPP8bqpO3Tzv+yuvau/VQO1JTez490ymP+qqmCZSFp6TrjQI2x6sqc8cL7sIScHb/sDehZxXfuw05hcTHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762971979; c=relaxed/simple;
-	bh=M2QaiZHzhlVmKdu1Ysw4zOqywmtC0K6SP9pJS6pFKZU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dMk2ci0GjnJOZK0KxmCTeygp3Q+goH7Hn1FMmfD/d8S9AyTSwIUNTJ7D0kLVETBcSmmizXG+f7x5PXLoJPKWlj45wWahc+SumkghQfd+sDvC25vcVRi56QEwyEqlAAWK1Pk4HwnuvR9LCa1vDljHFLTIk89ZIWc+5vRJivhy9uk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vIN//E/o; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FB41C19421;
-	Wed, 12 Nov 2025 18:26:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762971978;
-	bh=M2QaiZHzhlVmKdu1Ysw4zOqywmtC0K6SP9pJS6pFKZU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vIN//E/oQ1vxpNSBmDP/lsaElc/MyeK8RIhdQpkM5IbjPQHN4ML5LjL5Vh7NHm3Ht
-	 8xoh4ideAyxQt36+pfmpig3GCO252aTCFKzrAVezz0j/SjunEfBq1tBmZp9k/U2rTt
-	 SMYd5gXvV7LBEFnU23qZI9eho9gtKrAhSopgk4r6gEm+iREOhGBZGc1LeUcYdlR+cz
-	 T7RRggiD8lNVVfWAxMhpjZsVSUCPnUrB154RVac0OHSonpAkU8S1KA04C8gfZ0hTXe
-	 Syjn+g56FawapdI75HAgt7T62lsAn1OdBy4czMoIN/6qTmaC44BosthBSnuzaRmfnd
-	 FaIvqaD0VLtLA==
-Date: Wed, 12 Nov 2025 10:26:17 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Baokun Li <libaokun1@huawei.com>
-Cc: zlang@redhat.com, neal@gompa.dev, fstests@vger.kernel.org,
-	linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	joannelkoong@gmail.com, bernd@bsbernd.com
-Subject: Re: [PATCH 04/33] common/rc: skip test if swapon doesn't work
-Message-ID: <20251112182617.GH196366@frogsfrogsfrogs>
-References: <176169819804.1433624.11241650941850700038.stgit@frogsfrogsfrogs>
- <176169820051.1433624.4158113392739761085.stgit@frogsfrogsfrogs>
- <016f51ff-6129-4265-827e-3c2ae8314fe1@huawei.com>
+	s=arc-20240116; t=1762972198; c=relaxed/simple;
+	bh=m+1Ia7kTgcgwak0tup6RnzackIUD2uj9VJ66wpL5vGU=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=P88Hs+GPgaFySKfcAk2PfnqAfNPaRAVEmoRaXJBJtNzow5TEdSflIGzKMZeBZzGSQH1o1P4dUYfoq31Ztvvzyx1q7iJ4fCN31cTg9Z4oXXgzyp+9ZJcw1rRPdNQdIT09qmdoe80RKB5tMsxayrcIdgOuXJ9aDUUHN2WPZnY5Nmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HO5qqAZ2; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-297dc3e299bso11489485ad.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Nov 2025 10:29:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762972196; x=1763576996; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=m+1Ia7kTgcgwak0tup6RnzackIUD2uj9VJ66wpL5vGU=;
+        b=HO5qqAZ2+Gl5VjkG2JSxHnyizcDJJvWMPSuF1MP/DI6trW1yhrZRkin+PzYaYHUjS2
+         RBcDDcacxNXxzTpkQ/9QSU8fDNFrnL3ojfLUMFAHe6rrP5dycCLZCJR2tOaEHv4GroS3
+         vk5iiwOrc79Da3t+l4gAEAkQLQwCl4cvMyasv2eAP7TtSuNngSJwsg3EDzbRKarxMB4j
+         CMLdpb9tw8Uo08ghQ046tPNG5SYpAxjbAymnPkLiuOTc9QR3XE1IMJrXuLAaui5sHjDB
+         pXuJL2WENAvfEN1rNqM8iUhPKOX0ptF3OIQMAGOtcy1ZhDcsox6MwrRyW6w/1JAip8oC
+         2Iwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762972196; x=1763576996;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-gg:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=m+1Ia7kTgcgwak0tup6RnzackIUD2uj9VJ66wpL5vGU=;
+        b=Ppw9X0Vqxl3Wcu+b0zabmERKwoui66+FJ9jnvsVDYaADMJzKkxR+d//EI2iNOnMkoV
+         estWkacYMuEL0jppzxf2m+WRvCByk8XHAoFdOkpU0/4aXoNwzTStV+VPWO0WTj0ocI3V
+         Kiwp2ihRbuEnZ4oamiptiXdTFasdUb2CPqBGPFtPS2e9c4E11Y2UwIBbPYPxoQbMdQ+K
+         GNC0DLbupyFcuyE9kkWWof8LPGEAWOxnOdtvyMMto+vKXlBTKfpwlLbUCJNCTamVMsgG
+         dJlpxs68kS428sQgEcYSM2oXmEK8PKf4zvjQTSkfeR6H0SaaQP9/S5XyetkiHRTAzmtX
+         pBzg==
+X-Forwarded-Encrypted: i=1; AJvYcCXkhjJg0qwH/fVZcBNNKn63gWWlW9x4KrmwVpWwTK5jWuXfE2Dww9CrFwZ3eWPTNqiZDSDs/bUCMnjPSwAD@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8ek3F8Reqrn1giMA1preIioz4sQ5Gmu/X1BEQ056ceT0hKb7J
+	OeLF18QgT713O+iGiM322M429oMlk0cIQLFlRGIlt0VWLLq5qoUMBcjJ
+X-Gm-Gg: ASbGncsJk3tOXJiL6rFvNxkXsQN5nDwBEdh0eADeo4P2+s5CwcdJWavc+beahLK1KsE
+	BfSrC7j4tMDRMbcy7eW/JplUBoOVXlTFv+ocuHRjwFEt1iy43zfAr0iEBpoSutHl7qMuHv7h+bR
+	il2cWaYrIHocNyoZFifkeNw0qiaCoDUz8ayTYv3ZMuGx2vEc96jRtehRwTZx3D9LySGRU93WXff
+	PB15IWV3W5VZ7M9oCIdxhBKY6oEwTR9dYs0j8fBXE5qkoRFh6ldKpQ8WbAYs5KQx9k8NSDveDG2
+	Bn/wpa8Gi/aaQWVl4ueQz0Vl2KeWFQ1qpCQ4riLOQWw/MECP2wSZsZ2OzBfZEzaEzBs4YYXgD4T
+	fJIOVa6nqP1/OHbDCyLt8XR9byml5jQlzo2hbmcTaRYUJ2dIv4D+978I2Db/yqmDa9l6CCAqeMR
+	EInHRM
+X-Google-Smtp-Source: AGHT+IFVnSebX+tve6ow5sKGnu/YjQAUbucUwHpAyxG58VlkbMSagtb5MvrLUf3x+LSxMJMf4HjlNQ==
+X-Received: by 2002:a17:903:286:b0:295:4d24:31bd with SMTP id d9443c01a7336-2984ed45e40mr49939405ad.17.1762972196331;
+        Wed, 12 Nov 2025 10:29:56 -0800 (PST)
+Received: from localhost ([2405:201:3017:184:2d1c:8c4c:2945:3f7c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2984dc9f8f1sm37254355ad.54.2025.11.12.10.29.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Nov 2025 10:29:55 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <016f51ff-6129-4265-827e-3c2ae8314fe1@huawei.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 12 Nov 2025 23:59:48 +0530
+Message-Id: <DE6XHERVPQ7Y.163VOB8V2BURD@gmail.com>
+Cc: "Alexander Viro" <viro@zeniv.linux.org.uk>, "Christian Brauner"
+ <brauner@kernel.org>, <linux-fsdevel@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <criu@lists.linux.dev>, "Aleksa Sarai"
+ <cyphar@cyphar.com>, "Pavel Tikhomirov" <ptikhomirov@virtuozzo.com>, "Jan
+ Kara" <jack@suse.cz>, "John Garry" <john.g.garry@oracle.com>, "Arnaldo
+ Carvalho de Melo" <acme@redhat.com>, "Darrick J . Wong"
+ <djwong@kernel.org>, "Namhyung Kim" <namhyung@kernel.org>, "Ingo Molnar"
+ <mingo@kernel.org>, "Alexander Mikhalitsyn" <alexander@mihalicyn.com>
+Subject: Re: [PATCH v5] statmount: accept fd as a parameter
+From: "Bhavik Sachdev" <b.sachdev1904@gmail.com>
+To: "Andrei Vagin" <avagin@gmail.com>, "Bhavik Sachdev"
+ <b.sachdev1904@gmail.com>
+X-Mailer: aerc 0.21.0
+References: <20251109053921.1320977-2-b.sachdev1904@gmail.com>
+ <CANaxB-wjqGDiy523w6s+CDKpC0JbQLsQB6ZipW20jieNPe3G6Q@mail.gmail.com>
+In-Reply-To: <CANaxB-wjqGDiy523w6s+CDKpC0JbQLsQB6ZipW20jieNPe3G6Q@mail.gmail.com>
 
-On Wed, Nov 12, 2025 at 02:35:32PM +0800, Baokun Li wrote:
-> Hi Darrick,
-> 
-> On 2025-10-29 09:21, Darrick J. Wong wrote:
-> > From: Darrick J. Wong <djwong@kernel.org>
-> >
-> > In _require_scratch_swapfile, skip the test if swapon fails for whatever
-> > reason, just like all the other filesystems.
-> >
-> > Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
-> > ---
-> >  common/rc |    2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> >
-> > diff --git a/common/rc b/common/rc
-> > index 18d11e2c5cad3a..98609cb6e7a058 100644
-> > --- a/common/rc
-> > +++ b/common/rc
-> > @@ -3278,7 +3278,7 @@ _require_scratch_swapfile()
-> >  				_notrun "swapfiles are not supported"
-> >  			else
-> >  				_scratch_unmount
-> > -				_fail "swapon failed for $FSTYP"
-> > +				_notrun "swapon failed for $FSTYP"
-> >  			fi
-> >  		fi
-> >  		;;
-> 
-> Could you also clean up the corresponding comments?
-> 
->     # ext* has supported all variants of swap files since their
->     # introduction, so swapon should not fail.
-> 
-> At present, swap files don’t support block sizes greater than the page
-> size, which means swapon will fail when LBS is enabled.
+On Wed Nov 12, 2025 at 11:30 PM IST, Andrei Vagin wrote:
+> On Sat, Nov 8, 2025 at 9:40=E2=80=AFPM Bhavik Sachdev <b.sachdev1904@gmai=
+l.com> wrote:
+>>
+>> Extend `struct mnt_id_req` to take in a fd and introduce STATMOUNT_BY_FD
+>> flag. When a valid fd is provided and STATMOUNT_BY_FD is set, statmount
+>> will return mountinfo about the mount the fd is on.
+>
+> It would be great to add self-tests for this new feature in
+> `tools/testing/selftests/filesystems/statmount/`. These tests would
+> serve two purposes:
+> demonstrate the functionality of the new feature and ensure its
+> continued stability
+> against future changes.
+>
 
-Well at that point we might as well collapse everything into:
+We are currently working on adding selftests!
 
-	if ! swapon "$SCRATCH_MNT/swap" >/dev/null 2>&1; then
-		_scratch_unmount
-		_notrun "swapfiles are not supported for $FSTYP"
-	fi
+You can see the progress on this branch on github [1] and this commit
+[2]. We will try to send a patch as soon as possible.
 
-(note the removal of the case "$FSTYP"...esac code)
+[1]: https://github.com/bsach64/linux/tree/statmount-fd-tests
+[2]: https://github.com/bsach64/linux/commit/9ad91e5e2f01d5c7a8ac24b6e13c79=
+42457a5270
 
----D
-
-> 
-> Thanks,
-> Baokun
-> 
-> 
+Kind Regards,
+Bhavik
 
