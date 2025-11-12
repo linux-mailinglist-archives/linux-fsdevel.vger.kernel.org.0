@@ -1,79 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-68047-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68048-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F188BC51D89
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Nov 2025 12:10:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53E04C51E0B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Nov 2025 12:17:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEC571882652
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Nov 2025 11:08:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D7FA4221F3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Nov 2025 11:08:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FB0830F52B;
-	Wed, 12 Nov 2025 11:07:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47E1B30FC3D;
+	Wed, 12 Nov 2025 11:07:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="CNh9saPB"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="hdaGaeA9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 620EA30DD0F;
-	Wed, 12 Nov 2025 11:07:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF47E30E0D3;
+	Wed, 12 Nov 2025 11:07:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762945650; cv=none; b=K/5DVbJ+IX2hk6EA8vXd2Ia8CtBUIkqQl5xeFBrtaoEtELO04P57f2Kp6z8AC0wO5pPMv6Yio1UL3Mo6IHW32n3MsIqwCLIsXiY7EVyq9Py9YGEyvwm4hpwquvSp2VRLGuqE1U7IspsnMLDC5EicPn8dkeybEc4KIbLAClUQAPk=
+	t=1762945651; cv=none; b=KOCDejXo1X+FRtYPKPYdE5ET0HoQBtvyr4Tmhw6CSorH5U4bI8H9jB7Mk96hUynqI0QVV+RkEQeoaXFAcl40n+37D/mrbx/+H4JFrnUAzvE4SicVkC6Wr0g26i1S5v+3XntN2xIgqSc4jemWnFy4uUJD4GcEvAVG1MKvVDC5Ad4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762945650; c=relaxed/simple;
-	bh=0hn4x7y3RdafhF+sw9aYc80jSchaY5r4idcjJCTvt+A=;
+	s=arc-20240116; t=1762945651; c=relaxed/simple;
+	bh=HuBylNmXprk+5AT+RGf/JL2WhkvqEme6UgO4B6JJ0bg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=T9HtOfjeRiZt7vULaS2NfbcU7e0efB/f72ApNTer2tOkciUJYsboUAiP2xeg2RhKGeE0XdftkuQVY7PmQAP0IFvgfj8lauCMyGcmYFENzFYLoDHfmanNH9iQ42Wv1AaA2h2qQbNfgZW8nv70Wl52vMkdCAEVpd1+HCFu/FnPnTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=CNh9saPB; arc=none smtp.client-ip=148.163.158.5
+	 MIME-Version; b=dLfYJ7Ac55+szW/hTmfxU1iKklKVZqNk4h148qAB/CD6nbXj+Qm4jgBwVo5TNmpJk+670/dzEUZ8uBGVHdrKcIfg5zSw4CC/J2nFbCSZVn9QrUlRuirkuEYiNCPAMssF+xQ5KbyNHCvz936cEVy9tZQ2a8T1Xh2QOt/F+R7+Mos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=hdaGaeA9; arc=none smtp.client-ip=148.163.156.1
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5AC75R3S006381;
-	Wed, 12 Nov 2025 11:07:02 GMT
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5AC1H5ZP006228;
+	Wed, 12 Nov 2025 11:07:08 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
 	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=mW0pKyBwlZQvck5vc
-	KM5MUZDXfpxzSNxq6d+pSQ5Jas=; b=CNh9saPBrKG1sEn+nLEFZ6607f9QJOqFY
-	xzJ6e/L4AJ0kSr8zGiCUnxn20Z9+LUQaZOcix6xn4RDzpb3No1ygaQ2tzY6cNjpY
-	9FBW4JK8IO8pbpBpyNCoXyTfSZKqoU49nZeuj8oJu97w0A0pYvY3/9PJaz4kl8mG
-	7Rum/Be0qM+X4ExAPdXqSyLo6GPi6pA+detTIWEA7YLzgF7APdp71S2lYG/Ag1Zq
-	BmPJGD4VX+rWM7sW7PnLDz+N+kihcv+gdxmXtdEp6/zqwCVirG44F/us7BWbwFqF
-	UXEp/lGm9tpEudTltQQ4UYB/x3Qf18pGL8AZahy9f8akFO3oh51iA==
+	:mime-version:references:subject:to; s=pp1; bh=JJFr4keXRYU2BQ2OG
+	girGNGca9qGjwsLa/SbnM3D8iw=; b=hdaGaeA9BldZ8pKKwfDsXLBrZoO1PaP/P
+	IOeuwCb9cfxZHgOr+Qqt9w1uN/9W6GBdyr99dYcZAirZkz/sQrQj7A2cPDpsoOEi
+	c2LHXZdznXCWyQjBI/WEt4boKQuoghxSBSfO+QjY7ddEInPq2CyR4/tXdb3qajbW
+	XX8p/ur/tfAWoXS93Gg9uPgTrItikzIrKcS5Wv/XzKHAUz9rboOkfIArFQEck2dj
+	IOFz3Tt+WkABOdm7rYV5Vo+O37yPS5LoeKhG05r7RwikguIMFkEL4v+Fyma1C4B8
+	tj1iAF1gA4MuX9cpYZJdOWCb39rWIauGUedSZa/84qENQllsHK+wg==
 Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a9wgx0q3b-1
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a9wc7a4sc-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Nov 2025 11:07:01 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5ACB71vS031404;
-	Wed, 12 Nov 2025 11:07:01 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a9wgx0q39-1
+	Wed, 12 Nov 2025 11:07:07 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5ACB77Zv006058;
+	Wed, 12 Nov 2025 11:07:07 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a9wc7a4s8-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Nov 2025 11:07:01 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5ACA6he4007314;
-	Wed, 12 Nov 2025 11:07:00 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4aajdjfjmw-1
+	Wed, 12 Nov 2025 11:07:07 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5AC9pwaY028880;
+	Wed, 12 Nov 2025 11:07:06 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 4aag6sfwtj-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Nov 2025 11:07:00 +0000
+	Wed, 12 Nov 2025 11:07:06 +0000
 Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5ACB6wtC62849296
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5ACB749A14942606
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 12 Nov 2025 11:06:58 GMT
+	Wed, 12 Nov 2025 11:07:04 GMT
 Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6632F20043;
+	by IMSVA (Postfix) with ESMTP id 9609A2004F;
+	Wed, 12 Nov 2025 11:07:03 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id CD17220040;
 	Wed, 12 Nov 2025 11:06:58 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 79CD120040;
-	Wed, 12 Nov 2025 11:06:53 +0000 (GMT)
 Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.124.210.190])
 	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 12 Nov 2025 11:06:53 +0000 (GMT)
+	Wed, 12 Nov 2025 11:06:58 +0000 (GMT)
 From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
 To: Christian Brauner <brauner@kernel.org>, djwong@kernel.org,
         ritesh.list@gmail.com, john.g.garry@oracle.com, tytso@mit.edu,
@@ -83,9 +83,9 @@ Cc: linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mm@kvack.org, jack@suse.cz, nilay@linux.ibm.com,
         martin.petersen@oracle.com, rostedt@goodmis.org, axboe@kernel.dk,
         linux-block@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: [RFC PATCH 3/8] fs: Add initial buffered atomic write support info to statx
-Date: Wed, 12 Nov 2025 16:36:06 +0530
-Message-ID: <d304a337c17ba42092d7475ff1374bc481f72b32.1762945505.git.ojaswin@linux.ibm.com>
+Subject: [RFC PATCH 4/8] iomap: buffered atomic write support
+Date: Wed, 12 Nov 2025 16:36:07 +0530
+Message-ID: <8229fb9bcd2504b80caf0e763b1984d7ee6178b0.1762945505.git.ojaswin@linux.ibm.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <cover.1762945505.git.ojaswin@linux.ibm.com>
 References: <cover.1762945505.git.ojaswin@linux.ibm.com>
@@ -97,467 +97,317 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: ZzKbyI_GzfEh3BUnmUWsa68tSjkRaDI7
-X-Proofpoint-ORIG-GUID: LWs0wFaB3T-4QBBE3xPobpPwgyOlT-Iq
-X-Authority-Analysis: v=2.4 cv=VMPQXtPX c=1 sm=1 tr=0 ts=69146a55 cx=c_pps
- a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA4MDAxOCBTYWx0ZWRfX/EFQSS99HVuT
+ vjXvGh6n+TI2CpvVloLf9Dt/q2EePju9VVIVE11xJPxBEprRFhkfRf9Mm/zduTxHjXMfSQ76bBB
+ bxf2rG0JIBJsicSlPxn7zpGXTbqgA1I/o75kYFOWEOwByybE2zyY++1t+VNqWY8hoWrjAFGizQJ
+ knZ7DDImDJPHKsGhOp+oqZp+J26IZmr9M9F5+OUxtkHV2p3rVQfvQp1DbYYDpZiWvVK6eh76YaX
+ R9HhHGpbqM7Imeu0mEAXYq+FRpB1Miuky1OdFoER1eRNafyVJyyNf+BiyBfrf6CYvkIgVUmJwi5
+ 7oACn6C1nTrPJQuj+DdIt2FnZ2cY1gj3zlreSxLKlkMuOkU5eflEXWEpjlPB819Ok5XXaDGqGAk
+ hkWXrQvAIuJUw9Gsj3LdXNJeJoVvWA==
+X-Authority-Analysis: v=2.4 cv=GcEaXAXL c=1 sm=1 tr=0 ts=69146a5b cx=c_pps
+ a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
  a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=yPCof4ZbAAAA:8 a=VnNF1IyMAAAA:8
- a=8MBPUBWLlftwMkNx52MA:9 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA4MDAyMiBTYWx0ZWRfX6GWhHtiOHnq9
- p0fly0Ldo2r+tn7E6bg+JHOSWHbSyNWIDjk60jmdC1D1nG3Zw8DoNsEMDo4BLsefeGHn6VhvmRF
- SxBmYmdGZLahlYcVv6fesTsVM4wCE11+M7cObL1PJmCBgYuCZwI0PxDLaF1SeOkuFaZll1YhtUS
- 72BAu2QCs60XjwVx3+sY88svKkGhPNcHEpUB2t+zns+Dtaz/Ernb+FRVuyin86JkUQJ868d9Hgx
- emkigW7MiN0y4jx6XnC2aVd7Tg4KEtmdO5OKlGPYOF1sffcRqE+IksuQ0bCY3sG8GgyfHqOpfNe
- yJ1JddKMXG8VfuDkZmxb9zGQUq0gNt2KXxO/OHsDmnFL8SqngTj5yjY93CeoF/piXsVWpxjLdNA
- 9Dlpjh1QjRuFNQzR6BolY68orNbofA==
+ a=dV1BHfAgKDRkxd7NJUoA:9 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-GUID: tIXMLBmZYTUoyOIrw_fe93mzLokeKu4D
+X-Proofpoint-ORIG-GUID: caDOk5hfyFffsVCTQpLSUncy-bdl3obK
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
  definitions=2025-11-12_03,2025-11-11_03,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 priorityscore=1501 lowpriorityscore=0 bulkscore=0
- clxscore=1011 phishscore=0 spamscore=0 malwarescore=0 adultscore=0
- suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510240000
- definitions=main-2511080022
+ suspectscore=0 malwarescore=0 bulkscore=0 adultscore=0 impostorscore=0
+ lowpriorityscore=0 clxscore=1015 spamscore=0 priorityscore=1501 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2511080018
 
-Extend statx system call to return additional info for buffered atomic
-write support for a file. Currently only direct IO is supported.
+Add special handling of PG_atomic flag to iomap buffered write path.
 
-New flags STATX_WRITE_ATOMIC_BUF and STATX_ATTR_WRITE_ATOMIC_BUF are for
-indicating whether the file knows and supports buffered atomic writes.
+To flag an iomap iter for an atomic write, set IOMAP_ATOMIC. For a folio
+associated with a write which has IOMAP_ATOMIC set, set PG_atomic.
+Otherwise, when IOMAP_ATOMIC is unset, clear PG_atomic.
 
-Structure statx members stx_atomic_write_unit_{min, max, segments_max}
-will be reused for bufferd atomic writes. Flags STATX_WRITE_ATOMIC_DIO
-and STATX_WRITE_ATOMIC_BUF are mutually exclusive. With both flags set,
-statx will ignore the request and neither fields in statx.result_mask
-will be set.
+This means that for an "atomic" folio which has not been written back,
+it loses it "atomicity". So if userspace issues a write with RWF_ATOMIC
+set and another write with RWF_ATOMIC unset, that folio is not written back
+atomically. For such a scenario to occur, it would be considered a userspace
+usage error.
 
-Also, make sure ext4 and xfs report atomic write unit min and max of 0
-when the new flag is passed.
+To ensure that a buffered atomic write is written back atomically when
+the write syscall returns, RWF_SYNC or similar needs to be used (in
+conjunction with RWF_ATOMIC).
+
+Only a single BIO should ever be submitted for an atomic write. So
+modify iomap_add_to_ioend() to ensure that we don't try to write back an
+atomic folio as part of a larger mixed-atomicity BIO.
+
+In iomap_alloc_ioend(), handle an atomic write by setting REQ_ATOMIC for
+the allocated BIO. When a folio is written back, again clear PG_atomic,
+as it is no longer required.
+
+Currently, RWF_ATOMIC with buffered IO is limited to single block
+size writes, and has 2 main restrictions:
+
+1. Only blocksize == pagesize is supported
+2. Writes where the user buffer is not aligned to PAGE_SIZE are not
+   supported
+
+For more details, refer to the comment in generic_atomic_write_valid()
 
 Co-developed-by: John Garry <john.g.garry@oracle.com>
 Signed-off-by: John Garry <john.g.garry@oracle.com>
 Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
 ---
- block/bdev.c                                  |   3 +-
- fs/ext4/inode.c                               |   7 +-
- fs/stat.c                                     |  33 +++--
- fs/xfs/xfs_file.c                             |   9 +-
- fs/xfs/xfs_iops.c                             | 121 ++++++++++--------
- fs/xfs/xfs_iops.h                             |   6 +-
- include/linux/fs.h                            |   3 +-
- include/trace/misc/fs.h                       |   1 +
- include/uapi/linux/stat.h                     |   2 +
- tools/include/uapi/linux/stat.h               |   2 +
- .../trace/beauty/include/uapi/linux/stat.h    |   2 +
- 11 files changed, 119 insertions(+), 70 deletions(-)
+ fs/iomap/buffered-io.c | 48 ++++++++++++++++++++++++++++++++++++------
+ fs/iomap/ioend.c       | 18 ++++++++++++----
+ fs/read_write.c        | 34 ++++++++++++++++++++++++++++--
+ include/linux/iomap.h  |  2 ++
+ 4 files changed, 89 insertions(+), 13 deletions(-)
 
-diff --git a/block/bdev.c b/block/bdev.c
-index 3bc90d5feb4c..8f0eab0a1ecf 100644
---- a/block/bdev.c
-+++ b/block/bdev.c
-@@ -1335,8 +1335,7 @@ void bdev_statx(const struct path *path, struct kstat *stat, u32 request_mask)
- 
- 		generic_fill_statx_atomic_writes(stat,
- 			queue_atomic_write_unit_min_bytes(bd_queue),
--			queue_atomic_write_unit_max_bytes(bd_queue),
--			0);
-+			queue_atomic_write_unit_max_bytes(bd_queue), 0, true);
- 	}
- 
- 	stat->blksize = bdev_io_min(bdev);
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 9555149a8ba6..0d5013993fba 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -6106,8 +6106,11 @@ int ext4_getattr(struct mnt_idmap *idmap, const struct path *path,
- 			awu_max = sbi->s_awu_max;
- 		}
- 
--		generic_fill_statx_atomic_writes(stat, awu_min, awu_max, 0);
--	}
-+		generic_fill_statx_atomic_writes(stat, awu_min, awu_max, 0,
-+						 true);
-+	} else if (request_mask & STATX_WRITE_ATOMIC_BUF)
-+		/* Atomic writes for buferred IO not supported yet */
-+		generic_fill_statx_atomic_writes(stat, 0, 0, 0, false);
- 
- 	flags = ei->i_flags & EXT4_FL_USER_VISIBLE;
- 	if (flags & EXT4_APPEND_FL)
-diff --git a/fs/stat.c b/fs/stat.c
-index 7eb2a247ab67..8ba3993dcd09 100644
---- a/fs/stat.c
-+++ b/fs/stat.c
-@@ -137,20 +137,27 @@ EXPORT_SYMBOL(generic_fill_statx_attr);
-  * @unit_min:	Minimum supported atomic write length in bytes
-  * @unit_max:	Maximum supported atomic write length in bytes
-  * @unit_max_opt: Optimised maximum supported atomic write length in bytes
-+ * @is_dio:	Is the stat request for dio
-  *
-- * Fill in the STATX{_ATTR}_WRITE_ATOMIC_DIO flags in the kstat structure from
-- * atomic write unit_min and unit_max values.
-+ * Fill in the STATX{_ATTR}_WRITE_ATOMIC_{DIO,BUF} flags in the kstat structure
-+ * from atomic write unit_min and unit_max values.
-  */
- void generic_fill_statx_atomic_writes(struct kstat *stat,
- 				      unsigned int unit_min,
- 				      unsigned int unit_max,
--				      unsigned int unit_max_opt)
-+				      unsigned int unit_max_opt,
-+				      bool is_dio)
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index f099c086cbe8..947c76c2688a 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -850,11 +850,13 @@ static int iomap_write_begin(struct iomap_iter *iter,
  {
--	/* Confirm that the request type is known */
--	stat->result_mask |= STATX_WRITE_ATOMIC_DIO;
-+	if (is_dio) {
-+		/* Confirm that the request type is known */
-+		stat->result_mask |= STATX_WRITE_ATOMIC_DIO;
+ 	const struct iomap *srcmap = iomap_iter_srcmap(iter);
+ 	loff_t pos;
+-	u64 len = min_t(u64, SIZE_MAX, iomap_length(iter));
++	u64 orig_len = min_t(u64, SIZE_MAX, iomap_length(iter));
++	u64 len;
+ 	struct folio *folio;
+ 	int status = 0;
++	bool is_atomic = iter->flags & IOMAP_ATOMIC;
  
--	/* Confirm that the file attribute type is known */
--	stat->attributes_mask |= STATX_ATTR_WRITE_ATOMIC_DIO;
-+		/* Confirm that the file attribute type is known */
-+		stat->attributes_mask |= STATX_ATTR_WRITE_ATOMIC_DIO;
-+	} else {
-+		stat->result_mask |= STATX_WRITE_ATOMIC_BUF;
-+		stat->attributes_mask |= STATX_ATTR_WRITE_ATOMIC_BUF;
-+	}
+-	len = min_not_zero(len, *plen);
++	len = min_not_zero(orig_len, *plen);
+ 	*foliop = NULL;
+ 	*plen = 0;
  
- 	if (unit_min) {
- 		stat->atomic_write_unit_min = unit_min;
-@@ -160,7 +167,10 @@ void generic_fill_statx_atomic_writes(struct kstat *stat,
- 		stat->atomic_write_segments_max = 1;
+@@ -922,6 +924,11 @@ static int iomap_write_begin(struct iomap_iter *iter,
+ 	if (unlikely(status))
+ 		goto out_unlock;
  
- 		/* Confirm atomic writes are actually supported */
--		stat->attributes |= STATX_ATTR_WRITE_ATOMIC_DIO;
-+		if (is_dio)
-+			stat->attributes |= STATX_ATTR_WRITE_ATOMIC_DIO;
-+		else
-+			stat->attributes |= STATX_ATTR_WRITE_ATOMIC_BUF;
- 	}
- }
- EXPORT_SYMBOL_GPL(generic_fill_statx_atomic_writes);
-@@ -206,6 +216,13 @@ int vfs_getattr_nosec(const struct path *path, struct kstat *stat,
- 	stat->attributes_mask |= (STATX_ATTR_AUTOMOUNT |
- 				  STATX_ATTR_DAX);
- 
-+	if (request_mask & STATX_WRITE_ATOMIC_BUF &&
-+	    request_mask & STATX_WRITE_ATOMIC_DIO) {
-+		/* Both are mutually exclusive, disable them */
-+		request_mask &=
-+			~(STATX_WRITE_ATOMIC_BUF | STATX_WRITE_ATOMIC_DIO);
++	if (is_atomic && (len != orig_len)) {
++		status = -EINVAL;
++		goto out_unlock;
 +	}
 +
- 	idmap = mnt_idmap(path->mnt);
- 	if (inode->i_op->getattr) {
- 		int ret;
-diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-index 5b9864c8582e..3efa575570ed 100644
---- a/fs/xfs/xfs_file.c
-+++ b/fs/xfs/xfs_file.c
-@@ -1087,6 +1087,7 @@ xfs_file_write_iter(
- 	struct xfs_inode	*ip = XFS_I(inode);
- 	ssize_t			ret;
- 	size_t			ocount = iov_iter_count(from);
-+	bool is_dio = iocb->ki_flags & IOCB_DIRECT;
- 
- 	XFS_STATS_INC(ip->i_mount, xs_write_calls);
- 
-@@ -1097,10 +1098,10 @@ xfs_file_write_iter(
- 		return -EIO;
- 
- 	if (iocb->ki_flags & IOCB_ATOMIC) {
--		if (ocount < xfs_get_atomic_write_min(ip))
-+		if (ocount < xfs_get_atomic_write_min(ip, is_dio))
- 			return -EINVAL;
- 
--		if (ocount > xfs_get_atomic_write_max(ip))
-+		if (ocount > xfs_get_atomic_write_max(ip, is_dio))
- 			return -EINVAL;
- 
- 		ret = generic_atomic_write_valid(iocb, from);
-@@ -1111,7 +1112,7 @@ xfs_file_write_iter(
- 	if (IS_DAX(inode))
- 		return xfs_file_dax_write(iocb, from);
- 
--	if (iocb->ki_flags & IOCB_DIRECT) {
-+	if (is_dio) {
- 		/*
- 		 * Allow a directio write to fall back to a buffered
- 		 * write *only* in the case that we're doing a reflink
-@@ -1568,7 +1569,7 @@ xfs_file_open(
- 	if (xfs_is_shutdown(XFS_M(inode->i_sb)))
- 		return -EIO;
- 	file->f_mode |= FMODE_NOWAIT | FMODE_CAN_ODIRECT;
--	if (xfs_get_atomic_write_min(XFS_I(inode)) > 0)
-+	if (xfs_get_atomic_write_min(XFS_I(inode), file->f_flags & O_DIRECT) > 0)
- 		file->f_mode |= FMODE_CAN_ATOMIC_WRITE;
- 	return generic_file_open(inode, file);
+ 	*foliop = folio;
+ 	*plen = len;
+ 	return 0;
+@@ -931,7 +938,7 @@ static int iomap_write_begin(struct iomap_iter *iter,
+ 	return status;
  }
-diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
-index f41fcdd3043b..f036c46b19c5 100644
---- a/fs/xfs/xfs_iops.c
-+++ b/fs/xfs/xfs_iops.c
-@@ -601,81 +601,99 @@ xfs_report_dioalign(
  
- unsigned int
- xfs_get_atomic_write_min(
--	struct xfs_inode	*ip)
-+	struct xfs_inode	*ip,
-+	bool			is_dio)
+-static bool __iomap_write_end(struct inode *inode, loff_t pos, size_t len,
++static bool __iomap_write_end(struct iomap_iter *iter, loff_t pos, size_t len,
+ 		size_t copied, struct folio *folio)
  {
--	struct xfs_mount	*mp = ip->i_mount;
-+	if (is_dio) {
-+		struct xfs_mount *mp = ip->i_mount;
+ 	flush_dcache_folio(folio);
+@@ -951,7 +958,27 @@ static bool __iomap_write_end(struct inode *inode, loff_t pos, size_t len,
+ 		return false;
+ 	iomap_set_range_uptodate(folio, offset_in_folio(folio, pos), len);
+ 	iomap_set_range_dirty(folio, offset_in_folio(folio, pos), copied);
+-	filemap_dirty_folio(inode->i_mapping, folio);
++	filemap_dirty_folio(iter->inode->i_mapping, folio);
++
++	/*
++	 * Policy: non atomic write over a previously atomic range makes the
++	 * range non-atomic. Handle this here.
++	 */
++	if (iter->flags & IOMAP_ATOMIC) {
++		if (copied < len) {
++			/*
++			 * A short atomic write is only okay as long as nothing
++			 * is written at all. If we have a partial write, there
++			 * is a bug in our code.
++			 */
++			WARN_ON_ONCE(copied != 0);
++
++			return false;
++		}
++		folio_set_atomic(folio);
++	} else
++		folio_clear_atomic(folio);
++
+ 	return true;
+ }
  
--	/*
--	 * If we can complete an atomic write via atomic out of place writes,
--	 * then advertise a minimum size of one fsblock.  Without this
--	 * mechanism, we can only guarantee atomic writes up to a single LBA.
--	 *
--	 * If out of place writes are not available, we can guarantee an atomic
--	 * write of exactly one single fsblock if the bdev will make that
--	 * guarantee for us.
--	 */
--	if (xfs_inode_can_hw_atomic_write(ip) ||
--	    xfs_inode_can_sw_atomic_write(ip))
--		return mp->m_sb.sb_blocksize;
+@@ -997,7 +1024,7 @@ static bool iomap_write_end(struct iomap_iter *iter, size_t len, size_t copied,
+ 		return bh_written == copied;
+ 	}
+ 
+-	return __iomap_write_end(iter->inode, pos, len, copied, folio);
++	return __iomap_write_end(iter, pos, len, copied, folio);
+ }
+ 
+ static int iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i,
+@@ -1124,6 +1151,8 @@ iomap_file_buffered_write(struct kiocb *iocb, struct iov_iter *i,
+ 		iter.flags |= IOMAP_NOWAIT;
+ 	if (iocb->ki_flags & IOCB_DONTCACHE)
+ 		iter.flags |= IOMAP_DONTCACHE;
++	if (iocb->ki_flags & IOCB_ATOMIC)
++		iter.flags |= IOMAP_ATOMIC;
+ 
+ 	while ((ret = iomap_iter(&iter, ops)) > 0)
+ 		iter.status = iomap_write_iter(&iter, i, write_ops);
+@@ -1588,6 +1617,7 @@ static int iomap_folio_mkwrite_iter(struct iomap_iter *iter,
+ 	} else {
+ 		WARN_ON_ONCE(!folio_test_uptodate(folio));
+ 		folio_mark_dirty(folio);
++		folio_clear_atomic(folio);
+ 	}
+ 
+ 	return iomap_iter_advance(iter, length);
+@@ -1642,8 +1672,10 @@ void iomap_finish_folio_write(struct inode *inode, struct folio *folio,
+ 	WARN_ON_ONCE(i_blocks_per_folio(inode, folio) > 1 && !ifs);
+ 	WARN_ON_ONCE(ifs && atomic_read(&ifs->write_bytes_pending) <= 0);
+ 
+-	if (!ifs || atomic_sub_and_test(len, &ifs->write_bytes_pending))
++	if (!ifs || atomic_sub_and_test(len, &ifs->write_bytes_pending)) {
++		folio_clear_atomic(folio);
+ 		folio_end_writeback(folio);
++	}
+ }
+ EXPORT_SYMBOL_GPL(iomap_finish_folio_write);
+ 
+@@ -1807,8 +1839,10 @@ int iomap_writeback_folio(struct iomap_writepage_ctx *wpc, struct folio *folio)
+ 		if (atomic_dec_and_test(&ifs->write_bytes_pending))
+ 			folio_end_writeback(folio);
+ 	} else {
+-		if (!wb_pending)
++		if (!wb_pending) {
++			folio_clear_atomic(folio);
+ 			folio_end_writeback(folio);
++		}
+ 	}
+ 	mapping_set_error(inode->i_mapping, error);
+ 	return error;
+diff --git a/fs/iomap/ioend.c b/fs/iomap/ioend.c
+index b49fa75eab26..c129a695ceca 100644
+--- a/fs/iomap/ioend.c
++++ b/fs/iomap/ioend.c
+@@ -98,13 +98,17 @@ int iomap_ioend_writeback_submit(struct iomap_writepage_ctx *wpc, int error)
+ EXPORT_SYMBOL_GPL(iomap_ioend_writeback_submit);
+ 
+ static struct iomap_ioend *iomap_alloc_ioend(struct iomap_writepage_ctx *wpc,
+-		loff_t pos, u16 ioend_flags)
++					     loff_t pos, u16 ioend_flags,
++					     bool atomic)
+ {
+ 	struct bio *bio;
++	blk_opf_t opf = REQ_OP_WRITE | wbc_to_write_flags(wpc->wbc);
++
++	if (atomic)
++		opf |= REQ_ATOMIC;
+ 
+ 	bio = bio_alloc_bioset(wpc->iomap.bdev, BIO_MAX_VECS,
+-			       REQ_OP_WRITE | wbc_to_write_flags(wpc->wbc),
+-			       GFP_NOFS, &iomap_ioend_bioset);
++			       opf, GFP_NOFS, &iomap_ioend_bioset);
+ 	bio->bi_iter.bi_sector = iomap_sector(&wpc->iomap, pos);
+ 	bio->bi_write_hint = wpc->inode->i_write_hint;
+ 	wbc_init_bio(wpc->wbc, bio);
+@@ -122,6 +126,9 @@ static bool iomap_can_add_to_ioend(struct iomap_writepage_ctx *wpc, loff_t pos,
+ 	if ((ioend_flags & IOMAP_IOEND_NOMERGE_FLAGS) !=
+ 	    (ioend->io_flags & IOMAP_IOEND_NOMERGE_FLAGS))
+ 		return false;
++	if ((ioend_flags & IOMAP_IOEND_ATOMIC) ||
++	    (ioend->io_flags & IOMAP_IOEND_ATOMIC))
++		return false;
+ 	if (pos != ioend->io_offset + ioend->io_size)
+ 		return false;
+ 	if (!(wpc->iomap.flags & IOMAP_F_ANON_WRITE) &&
+@@ -156,6 +163,7 @@ ssize_t iomap_add_to_ioend(struct iomap_writepage_ctx *wpc, struct folio *folio,
+ 	unsigned int ioend_flags = 0;
+ 	unsigned int map_len = min_t(u64, dirty_len,
+ 		wpc->iomap.offset + wpc->iomap.length - pos);
++	bool is_atomic = folio_test_atomic(folio);
+ 	int error;
+ 
+ 	trace_iomap_add_to_ioend(wpc->inode, pos, dirty_len, &wpc->iomap);
+@@ -180,6 +188,8 @@ ssize_t iomap_add_to_ioend(struct iomap_writepage_ctx *wpc, struct folio *folio,
+ 		ioend_flags |= IOMAP_IOEND_DONTCACHE;
+ 	if (pos == wpc->iomap.offset && (wpc->iomap.flags & IOMAP_F_BOUNDARY))
+ 		ioend_flags |= IOMAP_IOEND_BOUNDARY;
++	if (is_atomic)
++		ioend_flags |= IOMAP_IOEND_ATOMIC;
+ 
+ 	if (!ioend || !iomap_can_add_to_ioend(wpc, pos, ioend_flags)) {
+ new_ioend:
+@@ -188,7 +198,7 @@ ssize_t iomap_add_to_ioend(struct iomap_writepage_ctx *wpc, struct folio *folio,
+ 			if (error)
+ 				return error;
+ 		}
+-		wpc->wb_ctx = ioend = iomap_alloc_ioend(wpc, pos, ioend_flags);
++		wpc->wb_ctx = ioend = iomap_alloc_ioend(wpc, pos, ioend_flags, is_atomic);
+ 	}
+ 
+ 	if (!bio_add_folio(&ioend->io_bio, folio, map_len, poff))
+diff --git a/fs/read_write.c b/fs/read_write.c
+index 833bae068770..37546aa40f0d 100644
+--- a/fs/read_write.c
++++ b/fs/read_write.c
+@@ -1802,6 +1802,8 @@ int generic_file_rw_checks(struct file *file_in, struct file *file_out)
+ 
+ int generic_atomic_write_valid(struct kiocb *iocb, struct iov_iter *iter)
+ {
++	struct super_block *sb = iocb->ki_filp->f_mapping->host->i_sb;
++
+ 	size_t len = iov_iter_count(iter);
+ 
+ 	if (!iter_is_ubuf(iter))
+@@ -1813,8 +1815,36 @@ int generic_atomic_write_valid(struct kiocb *iocb, struct iov_iter *iter)
+ 	if (!IS_ALIGNED(iocb->ki_pos, len))
+ 		return -EINVAL;
+ 
+-	if (!(iocb->ki_flags & IOCB_DIRECT))
+-		return -EOPNOTSUPP;
++	if (!(iocb->ki_flags & IOCB_DIRECT)) {
++		/* Some restrictions to buferred IO */
++
 +		/*
-+		 * If we can complete an atomic write via atomic out of place writes,
-+		 * then advertise a minimum size of one fsblock.  Without this
-+		 * mechanism, we can only guarantee atomic writes up to a single LBA.
++		 * We only support block size == page size
++		 * right now. This is to avoid the following:
++		 * 1. 4kb block atomic write marks the complete 64kb folio as
++		 *    atomic.
++		 * 2. Other writes, dirty the whole 64kb folio.
++		 * 3. Writeback sees the whole folio dirty and atomic and tries
++		 *    to send a 64kb atomic write, which might exceed the
++		 *    allowed size and fail.
 +		 *
-+		 * If out of place writes are not available, we can guarantee an atomic
-+		 * write of exactly one single fsblock if the bdev will make that
-+		 * guarantee for us.
++		 * Once we support sub-page atomic write tracking, we can remove
++		 * this restriction.
 +		 */
-+		if (xfs_inode_can_hw_atomic_write(ip) ||
-+		    xfs_inode_can_sw_atomic_write(ip))
-+			return mp->m_sb.sb_blocksize;
++		if (sb->s_blocksize != PAGE_SIZE)
++			return -EOPNOTSUPP;
++
++		/*
++		 * If the user buffer of atomic write crosses page boundary,
++		 * there's a possibility of short write, example if 1 user page
++		 * could not be faulted or got reclaimed before the copy
++		 * operation. For now don't allow such a scenario by ensuring
++		 * user buffer is page aligned.
++		 */
++		if (!PAGE_ALIGNED(iov_iter_alignment(iter)))
++			return -EOPNOTSUPP;
++
 +	}
  
-+	/* buffered IO not supported yet so return 0 right away */
  	return 0;
  }
+diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+index 8b1ac08c7474..693f3e5ad03c 100644
+--- a/include/linux/iomap.h
++++ b/include/linux/iomap.h
+@@ -390,6 +390,8 @@ sector_t iomap_bmap(struct address_space *mapping, sector_t bno,
+ #define IOMAP_IOEND_DIRECT		(1U << 3)
+ /* is DONTCACHE I/O */
+ #define IOMAP_IOEND_DONTCACHE		(1U << 4)
++/* is atomic I/O. These are never merged */
++#define IOMAP_IOEND_ATOMIC		(1U << 5)
  
- unsigned int
- xfs_get_atomic_write_max(
--	struct xfs_inode	*ip)
-+	struct xfs_inode	*ip,
-+	bool			is_dio)
- {
- 	struct xfs_mount	*mp = ip->i_mount;
- 
--	/*
--	 * If out of place writes are not available, we can guarantee an atomic
--	 * write of exactly one single fsblock if the bdev will make that
--	 * guarantee for us.
--	 */
--	if (!xfs_inode_can_sw_atomic_write(ip)) {
--		if (xfs_inode_can_hw_atomic_write(ip))
--			return mp->m_sb.sb_blocksize;
--		return 0;
-+	if (is_dio) {
-+		/*
-+		 * If out of place writes are not available, we can guarantee an atomic
-+		 * write of exactly one single fsblock if the bdev will make that
-+		 * guarantee for us.
-+		 */
-+		if (!xfs_inode_can_sw_atomic_write(ip)) {
-+			if (xfs_inode_can_hw_atomic_write(ip))
-+				return mp->m_sb.sb_blocksize;
-+			return 0;
-+		}
-+
-+		/*
-+		 * If we can complete an atomic write via atomic out of place writes,
-+		 * then advertise a maximum size of whatever we can complete through
-+		 * that means.  Hardware support is reported via max_opt, not here.
-+		 */
-+		if (XFS_IS_REALTIME_INODE(ip))
-+			return XFS_FSB_TO_B(mp, mp->m_groups[XG_TYPE_RTG].awu_max);
-+		return XFS_FSB_TO_B(mp, mp->m_groups[XG_TYPE_AG].awu_max);
- 	}
- 
--	/*
--	 * If we can complete an atomic write via atomic out of place writes,
--	 * then advertise a maximum size of whatever we can complete through
--	 * that means.  Hardware support is reported via max_opt, not here.
--	 */
--	if (XFS_IS_REALTIME_INODE(ip))
--		return XFS_FSB_TO_B(mp, mp->m_groups[XG_TYPE_RTG].awu_max);
--	return XFS_FSB_TO_B(mp, mp->m_groups[XG_TYPE_AG].awu_max);
-+	/* buffered IO not supported yet so return 0 right away */
-+	return 0;
- }
- 
- unsigned int
- xfs_get_atomic_write_max_opt(
--	struct xfs_inode	*ip)
-+	struct xfs_inode	*ip,
-+	bool			is_dio)
- {
--	unsigned int		awu_max = xfs_get_atomic_write_max(ip);
-+	if (is_dio) {
-+		unsigned int awu_max = xfs_get_atomic_write_max(ip, is_dio);
- 
--	/* if the max is 1x block, then just keep behaviour that opt is 0 */
--	if (awu_max <= ip->i_mount->m_sb.sb_blocksize)
--		return 0;
-+		/* if the max is 1x block, then just keep behaviour that opt is 0 */
-+		if (awu_max <= ip->i_mount->m_sb.sb_blocksize)
-+			return 0;
- 
--	/*
--	 * Advertise the maximum size of an atomic write that we can tell the
--	 * block device to perform for us.  In general the bdev limit will be
--	 * less than our out of place write limit, but we don't want to exceed
--	 * the awu_max.
--	 */
--	return min(awu_max, xfs_inode_buftarg(ip)->bt_awu_max);
-+		/*
-+		 * Advertise the maximum size of an atomic write that we can tell the
-+		 * block device to perform for us.  In general the bdev limit will be
-+		 * less than our out of place write limit, but we don't want to exceed
-+		 * the awu_max.
-+		 */
-+		return min(awu_max, xfs_inode_buftarg(ip)->bt_awu_max);
-+	}
-+
-+	/* buffered IO not supported yet so return 0 right away */
-+	return 0;
- }
- 
- static void
- xfs_report_atomic_write(
- 	struct xfs_inode	*ip,
--	struct kstat		*stat)
-+	struct kstat		*stat,
-+	bool			is_dio)
- {
- 	generic_fill_statx_atomic_writes(stat,
--			xfs_get_atomic_write_min(ip),
--			xfs_get_atomic_write_max(ip),
--			xfs_get_atomic_write_max_opt(ip));
-+					 xfs_get_atomic_write_min(ip, is_dio),
-+					 xfs_get_atomic_write_max(ip, is_dio),
-+					 xfs_get_atomic_write_max_opt(ip, is_dio),
-+					 is_dio);
- }
- 
- STATIC int
-@@ -741,8 +759,11 @@ xfs_vn_getattr(
- 	case S_IFREG:
- 		if (request_mask & (STATX_DIOALIGN | STATX_DIO_READ_ALIGN))
- 			xfs_report_dioalign(ip, stat);
--		if (request_mask & STATX_WRITE_ATOMIC_DIO)
--			xfs_report_atomic_write(ip, stat);
-+		if (request_mask &
-+		    (STATX_WRITE_ATOMIC_DIO | STATX_WRITE_ATOMIC_BUF))
-+			xfs_report_atomic_write(ip, stat,
-+						(request_mask &
-+						 STATX_WRITE_ATOMIC_DIO));
- 		fallthrough;
- 	default:
- 		stat->blksize = xfs_stat_blksize(ip);
-diff --git a/fs/xfs/xfs_iops.h b/fs/xfs/xfs_iops.h
-index 0896f6b8b3b8..09e79263add1 100644
---- a/fs/xfs/xfs_iops.h
-+++ b/fs/xfs/xfs_iops.h
-@@ -19,8 +19,8 @@ int xfs_inode_init_security(struct inode *inode, struct inode *dir,
- extern void xfs_setup_inode(struct xfs_inode *ip);
- extern void xfs_setup_iops(struct xfs_inode *ip);
- extern void xfs_diflags_to_iflags(struct xfs_inode *ip, bool init);
--unsigned int xfs_get_atomic_write_min(struct xfs_inode *ip);
--unsigned int xfs_get_atomic_write_max(struct xfs_inode *ip);
--unsigned int xfs_get_atomic_write_max_opt(struct xfs_inode *ip);
-+unsigned int xfs_get_atomic_write_min(struct xfs_inode *ip, bool is_dio);
-+unsigned int xfs_get_atomic_write_max(struct xfs_inode *ip, bool is_dio);
-+unsigned int xfs_get_atomic_write_max_opt(struct xfs_inode *ip, bool is_dio);
- 
- #endif /* __XFS_IOPS_H__ */
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index c895146c1444..2dec66913e97 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3563,7 +3563,8 @@ void generic_fill_statx_attr(struct inode *inode, struct kstat *stat);
- void generic_fill_statx_atomic_writes(struct kstat *stat,
- 				      unsigned int unit_min,
- 				      unsigned int unit_max,
--				      unsigned int unit_max_opt);
-+				      unsigned int unit_max_opt,
-+				      bool is_dio);
- extern int vfs_getattr_nosec(const struct path *, struct kstat *, u32, unsigned int);
- extern int vfs_getattr(const struct path *, struct kstat *, u32, unsigned int);
- void __inode_add_bytes(struct inode *inode, loff_t bytes);
-diff --git a/include/trace/misc/fs.h b/include/trace/misc/fs.h
-index 19ea9339b9bd..3b69910a5998 100644
---- a/include/trace/misc/fs.h
-+++ b/include/trace/misc/fs.h
-@@ -162,4 +162,5 @@
- 		{ STATX_MNT_ID_UNIQUE,	"MNT_ID_UNIQUE" },	\
- 		{ STATX_SUBVOL,		"SUBVOL" },		\
- 		{ STATX_WRITE_ATOMIC_DIO,	"WRITE_ATOMIC_DIO" },   \
-+		{ STATX_WRITE_ATOMIC_BUF,	"WRITE_ATOMIC_BUF" },   \
- 		{ STATX_DIO_READ_ALIGN,	"DIO_READ_ALIGN" })
-diff --git a/include/uapi/linux/stat.h b/include/uapi/linux/stat.h
-index 57f558be933e..2d77da04df23 100644
---- a/include/uapi/linux/stat.h
-+++ b/include/uapi/linux/stat.h
-@@ -221,6 +221,7 @@ struct statx {
- /* Old name kept for backward compatibility */
- #define STATX_WRITE_ATOMIC	STATX_WRITE_ATOMIC_DIO
- #define STATX_DIO_READ_ALIGN	0x00020000U	/* Want/got dio read alignment info */
-+#define STATX_WRITE_ATOMIC_BUF	0x00040000U	/* Want/got buf-io atomic_write_* fields */
- 
- #define STATX__RESERVED		0x80000000U	/* Reserved for future struct statx expansion */
- 
-@@ -259,6 +260,7 @@ struct statx {
- #define STATX_ATTR_WRITE_ATOMIC_DIO	0x00400000 /* File supports dio atomic write operations */
- /* Old name kept for backward compatibility */
- #define STATX_ATTR_WRITE_ATOMIC	STATX_ATTR_WRITE_ATOMIC_DIO
-+#define STATX_ATTR_WRITE_ATOMIC_BUF	0x00800000 /* File supports buf-io atomic write operations */
- 
- 
- #endif /* _UAPI_LINUX_STAT_H */
-diff --git a/tools/include/uapi/linux/stat.h b/tools/include/uapi/linux/stat.h
-index 57f558be933e..a7e0036669c2 100644
---- a/tools/include/uapi/linux/stat.h
-+++ b/tools/include/uapi/linux/stat.h
-@@ -221,6 +221,7 @@ struct statx {
- /* Old name kept for backward compatibility */
- #define STATX_WRITE_ATOMIC	STATX_WRITE_ATOMIC_DIO
- #define STATX_DIO_READ_ALIGN	0x00020000U	/* Want/got dio read alignment info */
-+#define STATX_WRITE_ATOMIC_BUF  0x00040000U	/* Want/got buf-io atomic_write_* fields */
- 
- #define STATX__RESERVED		0x80000000U	/* Reserved for future struct statx expansion */
- 
-@@ -259,6 +260,7 @@ struct statx {
- #define STATX_ATTR_WRITE_ATOMIC_DIO	0x00400000 /* File supports dio atomic write operations */
- /* Old name kept for backward compatibility */
- #define STATX_ATTR_WRITE_ATOMIC	STATX_ATTR_WRITE_ATOMIC_DIO
-+#define STATX_ATTR_WRITE_ATOMIC_BUF	0x00800000 /* File supports buf-io atomic write operations */
- 
- 
- #endif /* _UAPI_LINUX_STAT_H */
-diff --git a/tools/perf/trace/beauty/include/uapi/linux/stat.h b/tools/perf/trace/beauty/include/uapi/linux/stat.h
-index 57f558be933e..2d77da04df23 100644
---- a/tools/perf/trace/beauty/include/uapi/linux/stat.h
-+++ b/tools/perf/trace/beauty/include/uapi/linux/stat.h
-@@ -221,6 +221,7 @@ struct statx {
- /* Old name kept for backward compatibility */
- #define STATX_WRITE_ATOMIC	STATX_WRITE_ATOMIC_DIO
- #define STATX_DIO_READ_ALIGN	0x00020000U	/* Want/got dio read alignment info */
-+#define STATX_WRITE_ATOMIC_BUF	0x00040000U	/* Want/got buf-io atomic_write_* fields */
- 
- #define STATX__RESERVED		0x80000000U	/* Reserved for future struct statx expansion */
- 
-@@ -259,6 +260,7 @@ struct statx {
- #define STATX_ATTR_WRITE_ATOMIC_DIO	0x00400000 /* File supports dio atomic write operations */
- /* Old name kept for backward compatibility */
- #define STATX_ATTR_WRITE_ATOMIC	STATX_ATTR_WRITE_ATOMIC_DIO
-+#define STATX_ATTR_WRITE_ATOMIC_BUF	0x00800000 /* File supports buf-io atomic write operations */
- 
- 
- #endif /* _UAPI_LINUX_STAT_H */
+ /*
+  * Flags that if set on either ioend prevent the merge of two ioends.
 -- 
 2.51.0
 
