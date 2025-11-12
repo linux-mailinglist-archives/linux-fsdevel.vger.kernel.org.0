@@ -1,105 +1,66 @@
-Return-Path: <linux-fsdevel+bounces-68105-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68106-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 267E4C5450D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Nov 2025 21:01:29 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43A1FC545A6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Nov 2025 21:08:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7F0DF345535
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Nov 2025 20:01:26 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 677BA34B829
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Nov 2025 20:06:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECE162459E7;
-	Wed, 12 Nov 2025 20:01:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D4C728314E;
+	Wed, 12 Nov 2025 20:06:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="cQ0HUPOE";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="6JJ2g3+g";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="cQ0HUPOE";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="6JJ2g3+g"
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="ggZzRfk1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF6AE1CAA79
-	for <linux-fsdevel@vger.kernel.org>; Wed, 12 Nov 2025 20:01:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C687280329
+	for <linux-fsdevel@vger.kernel.org>; Wed, 12 Nov 2025 20:06:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762977675; cv=none; b=BdUYQVBpeNHLGkM8thJzQn4l0mVsy7FzWOeEuY0ncFVJlGa8cOxGZEHnPiZXdk5o2VG//f8E9WldEQoh0JF0UA+j/AD9paWkAgtK3LxWTYP24SI3gksN6/JUqBoeAvoxYQIeWzdnk0Pvwq3ALoL6HTVAHriVwisqmvdsA/C1ZOY=
+	t=1762977975; cv=none; b=dOGFDzgUhhg1Q0e1hZBNRaZrbeL7/HPBdmXVA1RGaR7848vgkY4pTPTn1T6VhJ/rpELhgi1p+D8tcs+3M7dEBx7LLqOjgWlEyNt5O9UIo+9lrvX9APLd6DDXN6oe2NO4BzhzE4NVnPLsVar+2F+nrObgh77y75mM0A31uE1mzD8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762977675; c=relaxed/simple;
-	bh=YtK1OyCwqDjMY90QSr67ySWnLA4nfv642DKX7fB/xSk=;
+	s=arc-20240116; t=1762977975; c=relaxed/simple;
+	bh=YidZ2iaBMgBfIyOZoPUl0ZumXjccVvctwYCN9vaa7S4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RADF8G255oyckBJXvNNslqQNWhiY72DgU9v7HEeMX7t9VASwVIg+lVj06fFPAFTUhOGTDuYadzX1R3+XZJ6tYag600L1A0Wl/GcZziZd6VkX9RuR9WR+Z6nHT55YhVI8Iw3IiFjAhUBXiQvbzUsvtWRhe8IF+omrBhWlbDfNOCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=cQ0HUPOE; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=6JJ2g3+g; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=cQ0HUPOE; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=6JJ2g3+g; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 970851F798;
-	Wed, 12 Nov 2025 20:01:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762977671; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ro+8XEn8cUPxIfpNjirevtHnURuFXv4ubUOeipd+Pkk=;
-	b=cQ0HUPOEeHkdXeIcgF0drnoSyj+3Mlrgc2s0sHT+G5sYaBHTvFrseiTdzrMKXNZ0EZZeJY
-	ieijHnwsTaZR9B2n1FGsKGcJ4B8MX15fm3I8lcGk1wlMrUd77992OQ1olr+Pa+yTu05Kug
-	2TUXjTfGqAej8gpfCs6iT2Vc0blQf9M=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762977671;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ro+8XEn8cUPxIfpNjirevtHnURuFXv4ubUOeipd+Pkk=;
-	b=6JJ2g3+gNtyHXoLXrhkcOeFnHTuqxp8/vH67GR1LjHInDoX0WnOw6aSHc6CDCkdnb5gCA6
-	DAKqDOvbFEBHocDA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=cQ0HUPOE;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=6JJ2g3+g
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762977671; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ro+8XEn8cUPxIfpNjirevtHnURuFXv4ubUOeipd+Pkk=;
-	b=cQ0HUPOEeHkdXeIcgF0drnoSyj+3Mlrgc2s0sHT+G5sYaBHTvFrseiTdzrMKXNZ0EZZeJY
-	ieijHnwsTaZR9B2n1FGsKGcJ4B8MX15fm3I8lcGk1wlMrUd77992OQ1olr+Pa+yTu05Kug
-	2TUXjTfGqAej8gpfCs6iT2Vc0blQf9M=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762977671;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ro+8XEn8cUPxIfpNjirevtHnURuFXv4ubUOeipd+Pkk=;
-	b=6JJ2g3+gNtyHXoLXrhkcOeFnHTuqxp8/vH67GR1LjHInDoX0WnOw6aSHc6CDCkdnb5gCA6
-	DAKqDOvbFEBHocDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8BC953EA61;
-	Wed, 12 Nov 2025 20:01:11 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id eVweIofnFGl+eQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 12 Nov 2025 20:01:11 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 31084A06F7; Wed, 12 Nov 2025 21:01:11 +0100 (CET)
-Date: Wed, 12 Nov 2025 21:01:11 +0100
-From: Jan Kara <jack@suse.cz>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Christian Brauner <brauner@kernel.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, "Darrick J. Wong" <djwong@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Jens Axboe <axboe@kernel.dk>, Avi Kivity <avi@scylladb.com>, 
-	Damien Le Moal <dlemoal@kernel.org>, Naohiro Aota <naohiro.aota@wdc.com>, 
-	Johannes Thumshirn <jth@kernel.org>, linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	io-uring@vger.kernel.org
-Subject: Re: [PATCH 2/5] iomap: always run error completions in user context
-Message-ID: <hyya7rzf6aysxvjqooyjgjh4wuuxgtdwg4rz6ivv27ywedw4ws@4kpbdhq2varb>
-References: <20251112072214.844816-1-hch@lst.de>
- <20251112072214.844816-3-hch@lst.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=smSsiIyRBauwetZjYIirB3ELg1CI0ApYk4GJ6T+wm9/61YqpAQxWXYsBY6VxlaQG1ETCMbwwtH9XCvgEjsUIkfBAaR7l8SXSvm6gbm4B8IySTpNIga7pwOfnw//dJfl6CtBCQvad+BrAMtZRPEbNZhN+i0X+sacUTAxroG+aj5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=ggZzRfk1; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from trampoline.thunk.org (pool-173-48-82-200.bstnma.fios.verizon.net [173.48.82.200])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 5ACK5eQT024470
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Nov 2025 15:05:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1762977943; bh=C28Oa7WcfAdQg4Gfs4Lt81ztqf7ENvQBvIcZtxopAbw=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=ggZzRfk1rAV++4yYImW8ycBzitiVkxYScyVjgkr5RbWEXzVVwiy5jI/JeBrpq5v7s
+	 ijf3n5lf5KpnNkFU2GfUEqnfeS8vgux1MRK2RSsroEHb4oCQdM7709GwqdfOD4z/1+
+	 vIwuW+gC4ATR1ql9BIh6/m2hW15LjRYLdBwWGb3L/kr7JFqFBrhtoCZtVm2uguPY/N
+	 ztQ4C1PRDixs3VXH11iQVp801Ah8njnleXs8NpxlAiD9INrj4N3InXtyoIc6kDPCk1
+	 v6xwbVYETd4LGvGx8Sym/eLk4JQtPis0oja7pf+Y6gwh/zDe8lBCgOVjDy60AU/RSK
+	 hN9XGsQzoZ46A==
+Received: by trampoline.thunk.org (Postfix, from userid 15806)
+	id D487D2E00D9; Wed, 12 Nov 2025 15:05:40 -0500 (EST)
+Date: Wed, 12 Nov 2025 15:05:40 -0500
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Baokun Li <libaokun1@huawei.com>, zlang@redhat.com, neal@gompa.dev,
+        fstests@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, joannelkoong@gmail.com,
+        bernd@bsbernd.com
+Subject: Re: [PATCH 04/33] common/rc: skip test if swapon doesn't work
+Message-ID: <20251112200540.GD3131573@mit.edu>
+References: <176169819804.1433624.11241650941850700038.stgit@frogsfrogsfrogs>
+ <176169820051.1433624.4158113392739761085.stgit@frogsfrogsfrogs>
+ <016f51ff-6129-4265-827e-3c2ae8314fe1@huawei.com>
+ <20251112182617.GH196366@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -108,86 +69,21 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251112072214.844816-3-hch@lst.de>
-X-Rspamd-Queue-Id: 970851F798
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,lst.de:email,suse.cz:email,suse.cz:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -4.01
-X-Spam-Level: 
+In-Reply-To: <20251112182617.GH196366@frogsfrogsfrogs>
 
-On Wed 12-11-25 08:21:26, Christoph Hellwig wrote:
-> At least zonefs expects error completions to be able to sleep.  Because
-> error completions aren't performance critical, just defer them to workqueue
-> context unconditionally.
+On Wed, Nov 12, 2025 at 10:26:17AM -0800, Darrick J. Wong wrote:
 > 
-> Fixes: 8dcc1a9d90c1 ("fs: New zonefs file system")
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-
-Looks good. Feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-> ---
->  fs/iomap/direct-io.c | 13 ++++++++++++-
->  1 file changed, 12 insertions(+), 1 deletion(-)
+> Well at that point we might as well collapse everything into:
 > 
-> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-> index 7659db85083a..765ab6dd6637 100644
-> --- a/fs/iomap/direct-io.c
-> +++ b/fs/iomap/direct-io.c
-> @@ -173,7 +173,18 @@ static void iomap_dio_done(struct iomap_dio *dio)
->  
->  		WRITE_ONCE(dio->submit.waiter, NULL);
->  		blk_wake_io_task(waiter);
-> -	} else if (dio->flags & IOMAP_DIO_INLINE_COMP) {
-> +		return;
-> +	}
-> +
-> +	/*
-> +	 * Always run error completions in user context.  These are not
-> +	 * performance critical and some code relies on taking sleeping locks
-> +	 * for error handling.
-> +	 */
-> +	if (dio->error)
-> +		dio->flags &= ~IOMAP_DIO_INLINE_COMP;
-> +
-> +	if (dio->flags & IOMAP_DIO_INLINE_COMP) {
->  		WRITE_ONCE(iocb->private, NULL);
->  		iomap_dio_complete_work(&dio->aio.work);
->  	} else {
-> -- 
-> 2.47.3
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> 	if ! swapon "$SCRATCH_MNT/swap" >/dev/null 2>&1; then
+> 		_scratch_unmount
+> 		_notrun "swapfiles are not supported for $FSTYP"
+> 	fi
+
+Agreed.  I don't think the ext4 special case makes sense here.  If we
+want to have a specific "swapfiles are working when we expect them
+to", let's do that as a single file system specific test.  Let's keep
+_require_scratch_swapfile simple.
+
+						- Ted
 
