@@ -1,79 +1,80 @@
-Return-Path: <linux-fsdevel+bounces-68092-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68093-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F229C5437B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Nov 2025 20:44:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89674C543A2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Nov 2025 20:45:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B6BAB4F9CCF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Nov 2025 19:32:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CAFF3BCAED
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Nov 2025 19:32:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76F01352943;
-	Wed, 12 Nov 2025 19:30:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49925352F9A;
+	Wed, 12 Nov 2025 19:30:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="Ra73BIaP"
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="XQPrCBO0"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86AC834EEEE
-	for <linux-fsdevel@vger.kernel.org>; Wed, 12 Nov 2025 19:30:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B04727B50F
+	for <linux-fsdevel@vger.kernel.org>; Wed, 12 Nov 2025 19:30:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762975810; cv=none; b=RsbvqW4SrbValby5qul/WulKrTrDC6vZVZxIiD3z6rsd6Tktm/XM69rhi4Wenib0lP5Arv3SUmjr2r53wrF0yYPAI4DotL0bNqA4P84jaa6Y9wQsfj7s0tUG3pVaua84s4EFyUHmv4fLw3Xdwl1VN33OPQ+bBR+8PjD28q3kKt8=
+	t=1762975813; cv=none; b=s8ir5xHz+3+onFWPm6+aI1xl17aXMeCF78J6fhz3Ky3zhD+hjQDe4E/FfidE5ZN+8NrWFrkgEBrVQUcL+F0IrHidGzsneh59+4TevrZDex58nbaeporndP7akim6MA6n7O4cOal85v8uMD3wrDaFuyY7kINuDbq5vafggfEo3MI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762975810; c=relaxed/simple;
-	bh=3eQAOWVLWYdFH8IRSCtox2dkM9KAIfvHkmeNLhZe/t0=;
+	s=arc-20240116; t=1762975813; c=relaxed/simple;
+	bh=6BwwMBgEL/VCSv0hU+JRwWUReqTxvIqTXz0u7krmCXU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TT7OKOWag9d97jHUkCL+BdCGSqzuMSGlpR4Ut2pBm9KS4/RixNUfpLXzjezKQJg+nisBaRuBn37LSU2why/xZSj0GsXJXRvZWNC8OWcBUNMj2euJQKMIytKAPIhKviCOqM7M3icyh8nPVPTkoZIA6Ix0Q7hmxYlO7iC2LXTltgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=Ra73BIaP; arc=none smtp.client-ip=209.85.222.176
+	 MIME-Version; b=uWb/Soq7tBMm8KRQjvMkMx7iFvsPijVNEcmbEao3phGGi0QRl6xYt1AdMiT+ydYgtxKJ+ZnrsyZB1Wch72awveUn53w1Xqc6PT8JrZWAgJ1UZ9QuQPQKPrWqvK30j6SYEa84k9Tp3+0Gse1ezex6+4PXM+VkCGH9zFPQMuWuo/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=XQPrCBO0; arc=none smtp.client-ip=209.85.222.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-88f239686f2so4952085a.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Nov 2025 11:30:07 -0800 (PST)
+Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-8b22a30986fso3527885a.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Nov 2025 11:30:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1762975806; x=1763580606; darn=vger.kernel.org;
+        d=gourry.net; s=google; t=1762975809; x=1763580609; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=AhBmvL59ycsUz3ibQ/6uOqgLkj12C0XSyaG6LdtCjSY=;
-        b=Ra73BIaPFVGmm0r33U2vrLFcTXXy999T+1/SWzTgw2hA102EnexfBxEbFL7SIT0sW9
-         FlON92KJezoRn54eoUiH9rADe8DiMmvY+oifuZ8lq8xC4AvVZVJAz4YWm95BiT8TmdSI
-         tgh0IUmr72TRt8T5VTwciZOcOfYY6MBXYjOvAJvePwNWZ96ui1Lvd2knTEaQ+LVa553d
-         11XAxv0HYO4VSffQxsEzOhQ8XRcZ+bAF0Rz7a90gUwIuyl1JHHhc9ZLf0uIapLdFW7W2
-         xFzOYfWskeJ/8zgDNGCDExulWO6JRRHNI2TMH37DuA+0Kw159Wm/TTuB9ZEvtp8Okqam
-         6MHw==
+        bh=q3IcU6Qzmbokcc6SWwuh5Ibj7p8oAnPPqespIDCjwME=;
+        b=XQPrCBO0XBRF/9jTJbtRssz1MKYQsSHIe7/dNbwmBS+o8gmseH5+6xK4eOm4h/no/h
+         9jgkZCLLFuDzrObX0jC15tVmLm0PHyQKlMRnZdiHuuGlqYgf7SM24vAj6t91O1sqmmFI
+         B90I9yNZPr8WxHJa6gva3D9PBBFJpvDj8MiaMiQcmZEBCv3n/k2zN9CSZy9d9Eih57hE
+         aBmZMPtg8/4ikO9+znv4tj2pE8yEzaxD7fzcpYzTTvRtr1bdIusmFQT+rzIgcETcvvbH
+         zL98EBhIlgXplKyAP/NH0YewQ2Tncd+hURWUHogc1pYBsbDp/1CmP/tZGiHVxKJ3sEgy
+         GgOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762975806; x=1763580606;
+        d=1e100.net; s=20230601; t=1762975809; x=1763580609;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=AhBmvL59ycsUz3ibQ/6uOqgLkj12C0XSyaG6LdtCjSY=;
-        b=QFQJxS6A6NO8Ko8Aw1swVye8jyZ7FLNsbFrEbsGBm/yY9Ei7FkUwDryjwmc8/SvjMd
-         dtvria+c5UuwpTTaPZLhMh1dFtgKrubsbcmT0nyBRK9eGLuilxcVABa8lvEAAgyvsOFM
-         HKXj7T2+yPmMM82dqJBEwu+uJforqjp/deZTz3hQOhY8aUPILk5TWFrb8Ga98zcb3faS
-         oCc194zTGZ9B7nHDrlmtZxuGMfKG2n9ZHyROHWcggkiCwZrBOboHKPXtCGPii0ODnHw3
-         g5U4j3uOADov0/gqit45LNNqsUvSwgcoizeNtFnqNLvpRjPSSi7gQm2sfqxX5+8Mp1u8
-         DIAg==
-X-Forwarded-Encrypted: i=1; AJvYcCXlspRylVGv3ppADl8zgEC0MyOZGEZpBgEYj9EfHGJ+IOgpQF61eIKDQ1vdJhG81GomPtkmD27D1giVJ6K8@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyrre8+bvZeiHTwkniFXtO5NKTdHhp0ZUuRxGSSgmVlB+4RkJc/
-	d6oFcKiRbeAZXis+Q1RNC3Rdi6+9CyEj5pFR+NKT8A+A0UD0DvBw4KTDJM4TbAH7EX8=
-X-Gm-Gg: ASbGncvRZD7DLpbvMZ6ozTSJUwXKDloyjX4U7Y7xRKssPPJgvkj48olYnNUTgMRO7UL
-	3PcaYzq4QswwnyumMSvwP16XB8ACOUaCk8p/NhsJL0QfQGsw7mAE7R7taMtoqroJIjfzNXEp9Ub
-	TTwzvbkKBIlSAaD7eK80WzqiyDEUhIdVTTOC9dDPNrhUW9qtfKYF4Hr6eQm+QEXIchatm7Pja9W
-	A0zPzh0UH4q6yekNwMmsD2Si70RrG9JZEd8OcL5iy6FoPgunZSVWGnsIEGWjx+VJHLySOmgW+9Q
-	Xhr2nAbjrDO71L6wGCg0BkGIhTEH89ZdoCq/4MAC/ToULehesq5RRsyw7wZPhCZK7o4w55+UyIb
-	/yGOY9xv5UJqbJ/yPRJyc2gE7yiZHW4o8gJ1sNvJgWhp70fcNzdOPdVkmJFNGQcjxg8j4it6AfY
-	6H8bPuMhU62aU5XPCXMPDSlXivW2agCl7EM87n7inosDHD5mh4S+59IVRJ5VbdH1wL
-X-Google-Smtp-Source: AGHT+IGTEVLf9O0yaDcu/kw8dFzHlv1Pot58wNRLhXzP9mTYCvcWg0Vdidkl8DHHnj9i/GN8ZNY6bg==
-X-Received: by 2002:a05:620a:3941:b0:8b2:1568:82e4 with SMTP id af79cd13be357-8b29b77a0famr523474785a.25.1762975806067;
-        Wed, 12 Nov 2025 11:30:06 -0800 (PST)
+        bh=q3IcU6Qzmbokcc6SWwuh5Ibj7p8oAnPPqespIDCjwME=;
+        b=vjCMKoMdqtkelw4DJPPeeaF37l+B0n/QjUo+ETCOFuGWJhVrqCDvoDIugkSCg6ZuGH
+         Ez6yxsaa3gaBgd7NHqZtmQQNFw2eQdoOBeQ8uYxk7kSlXFJZKxqiViVD7P2sSfnwmO0n
+         E1OXeyd6stK/9ipJ8Mo1RdXkDOlUJWTm9Z1hkrcefiG4RcgSRjXZFc44lHoyy8Hz6f50
+         I0KurkteOF63HLhklMZpe71IjawKLiTZHZQP9lw5LmxuQszCV4sQHtPoB6gtw0dM5S6e
+         mXxMNBeSF8khmSBaoOQex17MVmcGPJ+SJy1rEe2cENFvaQgyRcWOv584WsitkaloqOgU
+         +ieA==
+X-Forwarded-Encrypted: i=1; AJvYcCWQ4uGankLrcktaP7zeCV93qq87BTX3qjW4K/L6C8z6yEEd5BGEag3EonP8ICTrqcS9nYFY16zX0JVspVtJ@vger.kernel.org
+X-Gm-Message-State: AOJu0YxB2YVivGsJJzxj6JU33/XOQo8ojhwEZ5yI7V2ZcuZCWa6m2oP1
+	uF2tsTHzbooqs3QahsNZ+QdnkjzWoObzHhHlW0KKodaMWlw/4TxqsV4S+rt4ClkQwZQ=
+X-Gm-Gg: ASbGnct9kZZNKmGsWDG2kgBtbl8SLtsaqMUd/CQ/P+FHIgInqet4q0CIDYjpHh3nxDK
+	qoWpROHqZX+MKKEY5WElcfOq/kzAQz/LYvnuyO779pCuMANStxJCFe8YEbRLjwveK61Nuv1aDN4
+	7mXDcca54x6FQ920H9bq29npclP+QGsFO5V9wGrMxH1brSQq1k0X3jWFf+jeporZY62tiwy9xPJ
+	NTARe9vjtPE/xtp3vLoo6JXLNB0GHYs8qAnEaR4dlEA06qJc4fUpMo4ji4CVjv0j4p5d9hrfvMW
+	Je8a6tYrXOAag1rJLFwS88/+zb64ecMroN6DYLcR2HxSw7O0NTa7cz8NR/jQKvMkFnpP9yUPPCo
+	Y+KAABYHUIcoazJqmpqy1pKcjWrZF21CsFdUTdnA3XG+V3EQ8YJ0NSrR1B0UOuKiqpj0jNh0icY
+	ntOf9cGmKn7Vwo5HjR2dZ+DLUVXd4LwKf8G8vgr6jq6YHmzrZ3TepdD1jtx+0hlnhyPzZ7XPoHF
+	4A=
+X-Google-Smtp-Source: AGHT+IGzXDA3pFOlRkp+KwBypVXBUVkP9rTexoWChXscaSu4KBqspgRTeSQKPufdx+F4Isa7aW22uA==
+X-Received: by 2002:a05:620a:f05:b0:86e:ff4e:d55e with SMTP id af79cd13be357-8b29b78aa43mr510566785a.39.1762975809008;
+        Wed, 12 Nov 2025 11:30:09 -0800 (PST)
 Received: from gourry-fedora-PF4VCD3F.lan (pool-96-255-20-138.washdc.ftas.verizon.net. [96.255.20.138])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8b29aa0082esm243922885a.50.2025.11.12.11.30.04
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8b29aa0082esm243922885a.50.2025.11.12.11.30.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Nov 2025 11:30:05 -0800 (PST)
+        Wed, 12 Nov 2025 11:30:08 -0800 (PST)
 From: Gregory Price <gourry@gourry.net>
 To: linux-mm@kvack.org
 Cc: kernel-team@meta.com,
@@ -143,9 +144,9 @@ Cc: kernel-team@meta.com,
 	namcao@linutronix.de,
 	escape@linux.alibaba.com,
 	dongjoo.seo1@samsung.com
-Subject: [RFC PATCH v2 06/11] mm,cpusets: rename task->mems_allowed to task->sysram_nodes
-Date: Wed, 12 Nov 2025 14:29:22 -0500
-Message-ID: <20251112192936.2574429-7-gourry@gourry.net>
+Subject: [RFC PATCH v2 07/11] cpuset: introduce cpuset.mems.sysram
+Date: Wed, 12 Nov 2025 14:29:23 -0500
+Message-ID: <20251112192936.2574429-8-gourry@gourry.net>
 X-Mailer: git-send-email 2.51.1
 In-Reply-To: <20251112192936.2574429-1-gourry@gourry.net>
 References: <20251112192936.2574429-1-gourry@gourry.net>
@@ -157,783 +158,459 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-task->mems_allowed actually contains the value of cpuset.effective_mems
+mems_sysram contains only SystemRAM nodes (omitting SPM Nodes). The
+nodelist is effectively intersect(effective_mems, mt_sysram_nodelist).
 
-The value of cpuset.mems.effective is the intersection of mems_allowed
-and the cpuset's parent's mems.effective.  This creates a confusing
-naming scheme between references to task->mems_allowed, and cpuset
-mems_allowed and effective_mems.
+When checking mems_allowed, check for GFP_SPM_NODE to determine if
+the check should be made against mems_sysram or mems_allowed, since
+mems_sysram only contains sysram nodes.
 
-With the intent of making this nodemask only contain SystemRAM Nodes
-(i.e. omitting Specific Purpose Memory Nodes), rename task->mems_allowed
-to task->sysram_nodes.  This accomplishes two things:
-
-1) Detach task->mems_allowed and cpuset.mems_allowed naming scheme,
-   making it slightly clearer that these may contain different values.
-
-2) To enable cpusets.mems_allowed to contain SPM Nodes, letting a cgroup
-   still control whether SPM nodes are "allowed" for that context, even
-   if these nodes are not reachable through existing means.
+This omits "Specific Purpose Memory Nodes" from default mems_allowed
+checks, making those nodes unreachable via "normal" allocation paths
+(page faults, mempolicies, etc).
 
 Signed-off-by: Gregory Price <gourry@gourry.net>
 ---
- fs/proc/array.c           |  2 +-
- include/linux/cpuset.h    | 54 ++++++++++++++-------------
- include/linux/mempolicy.h |  2 +-
- include/linux/sched.h     |  6 +--
- init/init_task.c          |  2 +-
- kernel/cgroup/cpuset.c    | 78 +++++++++++++++++++--------------------
- kernel/fork.c             |  2 +-
- kernel/sched/fair.c       |  4 +-
- mm/hugetlb.c              |  8 ++--
- mm/mempolicy.c            | 28 +++++++-------
- mm/oom_kill.c             |  6 +--
- mm/page_alloc.c           | 16 ++++----
- mm/show_mem.c             |  2 +-
- 13 files changed, 106 insertions(+), 104 deletions(-)
+ include/linux/cpuset.h          |  8 ++--
+ kernel/cgroup/cpuset-internal.h |  8 ++++
+ kernel/cgroup/cpuset-v1.c       |  7 +++
+ kernel/cgroup/cpuset.c          | 84 ++++++++++++++++++++++++---------
+ mm/memcontrol.c                 |  3 +-
+ mm/mempolicy.c                  |  6 +--
+ mm/migrate.c                    |  4 +-
+ 7 files changed, 88 insertions(+), 32 deletions(-)
 
-diff --git a/fs/proc/array.c b/fs/proc/array.c
-index 2ae63189091e..61ee857a5caf 100644
---- a/fs/proc/array.c
-+++ b/fs/proc/array.c
-@@ -456,7 +456,7 @@ int proc_pid_status(struct seq_file *m, struct pid_namespace *ns,
- 	task_cap(m, task);
- 	task_seccomp(m, task);
- 	task_cpus_allowed(m, task);
--	cpuset_task_status_allowed(m, task);
-+	cpuset_task_status_sysram(m, task);
- 	task_context_switch_counts(m, task);
- 	arch_proc_pid_thread_features(m, task);
- 	return 0;
 diff --git a/include/linux/cpuset.h b/include/linux/cpuset.h
-index 548eaf7ef8d0..9baaf19431b5 100644
+index 9baaf19431b5..375bf446b66e 100644
 --- a/include/linux/cpuset.h
 +++ b/include/linux/cpuset.h
-@@ -23,14 +23,14 @@
- /*
-  * Static branch rewrites can happen in an arbitrary order for a given
-  * key. In code paths where we need to loop with read_mems_allowed_begin() and
-- * read_mems_allowed_retry() to get a consistent view of mems_allowed, we need
-- * to ensure that begin() always gets rewritten before retry() in the
-+ * read_mems_allowed_retry() to get a consistent view of task->sysram_nodes, we
-+ * need to ensure that begin() always gets rewritten before retry() in the
-  * disabled -> enabled transition. If not, then if local irqs are disabled
-  * around the loop, we can deadlock since retry() would always be
-- * comparing the latest value of the mems_allowed seqcount against 0 as
-+ * comparing the latest value of the sysram_nodes seqcount against 0 as
-  * begin() still would see cpusets_enabled() as false. The enabled -> disabled
-  * transition should happen in reverse order for the same reasons (want to stop
-- * looking at real value of mems_allowed.sequence in retry() first).
-+ * looking at real value of sysram_nodes.sequence in retry() first).
-  */
- extern struct static_key_false cpusets_pre_enable_key;
- extern struct static_key_false cpusets_enabled_key;
-@@ -78,9 +78,10 @@ extern void cpuset_cpus_allowed(struct task_struct *p, struct cpumask *mask);
+@@ -77,7 +77,7 @@ extern void cpuset_unlock(void);
+ extern void cpuset_cpus_allowed(struct task_struct *p, struct cpumask *mask);
  extern bool cpuset_cpus_allowed_fallback(struct task_struct *p);
  extern bool cpuset_cpu_is_isolated(int cpu);
- extern nodemask_t cpuset_mems_allowed(struct task_struct *p);
--#define cpuset_current_mems_allowed (current->mems_allowed)
--void cpuset_init_current_mems_allowed(void);
--int cpuset_nodemask_valid_mems_allowed(const nodemask_t *nodemask);
-+#define cpuset_current_sysram_nodes (current->sysram_nodes)
-+#define cpuset_current_mems_allowed (cpuset_current_sysram_nodes)
-+void cpuset_init_current_sysram_nodes(void);
-+int cpuset_nodemask_valid_sysram_nodes(const nodemask_t *nodemask);
- 
- extern bool cpuset_current_node_allowed(int node, gfp_t gfp_mask);
- 
-@@ -96,7 +97,7 @@ static inline bool cpuset_zone_allowed(struct zone *z, gfp_t gfp_mask)
- 	return true;
- }
- 
--extern int cpuset_mems_allowed_intersects(const struct task_struct *tsk1,
-+extern int cpuset_sysram_nodes_intersects(const struct task_struct *tsk1,
- 					  const struct task_struct *tsk2);
- 
- #ifdef CONFIG_CPUSETS_V1
-@@ -111,8 +112,8 @@ extern void __cpuset_memory_pressure_bump(void);
- static inline void cpuset_memory_pressure_bump(void) { }
- #endif
- 
--extern void cpuset_task_status_allowed(struct seq_file *m,
--					struct task_struct *task);
-+extern void cpuset_task_status_sysram(struct seq_file *m,
-+				      struct task_struct *task);
- extern int proc_cpuset_show(struct seq_file *m, struct pid_namespace *ns,
- 			    struct pid *pid, struct task_struct *tsk);
- 
-@@ -128,12 +129,12 @@ extern bool current_cpuset_is_being_rebound(void);
- extern void dl_rebuild_rd_accounting(void);
- extern void rebuild_sched_domains(void);
- 
--extern void cpuset_print_current_mems_allowed(void);
-+extern void cpuset_print_current_sysram_nodes(void);
- extern void cpuset_reset_sched_domains(void);
- 
- /*
-- * read_mems_allowed_begin is required when making decisions involving
-- * mems_allowed such as during page allocation. mems_allowed can be updated in
-+ * read_mems_allowed_begin is required when making decisions involving a task's
-+ * sysram_nodes such as during page allocation. sysram_nodes can be updated in
-  * parallel and depending on the new value an operation can fail potentially
-  * causing process failure. A retry loop with read_mems_allowed_begin and
-  * read_mems_allowed_retry prevents these artificial failures.
-@@ -143,13 +144,13 @@ static inline unsigned int read_mems_allowed_begin(void)
- 	if (!static_branch_unlikely(&cpusets_pre_enable_key))
- 		return 0;
- 
--	return read_seqcount_begin(&current->mems_allowed_seq);
-+	return read_seqcount_begin(&current->sysram_nodes_seq);
- }
- 
- /*
-  * If this returns true, the operation that took place after
-  * read_mems_allowed_begin may have failed artificially due to a concurrent
-- * update of mems_allowed. It is up to the caller to retry the operation if
-+ * update of sysram_nodes. It is up to the caller to retry the operation if
-  * appropriate.
-  */
- static inline bool read_mems_allowed_retry(unsigned int seq)
-@@ -157,7 +158,7 @@ static inline bool read_mems_allowed_retry(unsigned int seq)
- 	if (!static_branch_unlikely(&cpusets_enabled_key))
- 		return false;
- 
--	return read_seqcount_retry(&current->mems_allowed_seq, seq);
-+	return read_seqcount_retry(&current->sysram_nodes_seq, seq);
- }
- 
- static inline void set_mems_allowed(nodemask_t nodemask)
-@@ -166,9 +167,9 @@ static inline void set_mems_allowed(nodemask_t nodemask)
- 
- 	task_lock(current);
- 	local_irq_save(flags);
--	write_seqcount_begin(&current->mems_allowed_seq);
--	current->mems_allowed = nodemask;
--	write_seqcount_end(&current->mems_allowed_seq);
-+	write_seqcount_begin(&current->sysram_nodes_seq);
-+	current->sysram_nodes = nodemask;
-+	write_seqcount_end(&current->sysram_nodes_seq);
- 	local_irq_restore(flags);
+-extern nodemask_t cpuset_mems_allowed(struct task_struct *p);
++extern nodemask_t cpuset_sysram_nodes_allowed(struct task_struct *p);
+ #define cpuset_current_sysram_nodes (current->sysram_nodes)
+ #define cpuset_current_mems_allowed (cpuset_current_sysram_nodes)
+ void cpuset_init_current_sysram_nodes(void);
+@@ -174,7 +174,7 @@ static inline void set_mems_allowed(nodemask_t nodemask)
  	task_unlock(current);
  }
-@@ -216,10 +217,11 @@ static inline nodemask_t cpuset_mems_allowed(struct task_struct *p)
+ 
+-extern bool cpuset_node_allowed(struct cgroup *cgroup, int nid);
++extern bool cpuset_sysram_node_allowed(struct cgroup *cgroup, int nid);
+ #else /* !CONFIG_CPUSETS */
+ 
+ static inline bool cpusets_enabled(void) { return false; }
+@@ -212,7 +212,7 @@ static inline bool cpuset_cpu_is_isolated(int cpu)
+ 	return false;
+ }
+ 
+-static inline nodemask_t cpuset_mems_allowed(struct task_struct *p)
++static inline nodemask_t cpuset_sysram_nodes_allowed(struct task_struct *p)
+ {
  	return node_possible_map;
  }
- 
--#define cpuset_current_mems_allowed (node_states[N_MEMORY])
--static inline void cpuset_init_current_mems_allowed(void) {}
-+#define cpuset_current_sysram_nodes (node_states[N_MEMORY])
-+#define cpuset_current_mems_allowed (cpuset_current_sysram_nodes)
-+static inline void cpuset_init_current_sysram_nodes(void) {}
- 
--static inline int cpuset_nodemask_valid_mems_allowed(const nodemask_t *nodemask)
-+static inline int cpuset_nodemask_valid_sysram_nodes(const nodemask_t *nodemask)
- {
- 	return 1;
+@@ -296,7 +296,7 @@ static inline bool read_mems_allowed_retry(unsigned int seq)
+ 	return false;
  }
-@@ -234,7 +236,7 @@ static inline bool cpuset_zone_allowed(struct zone *z, gfp_t gfp_mask)
+ 
+-static inline bool cpuset_node_allowed(struct cgroup *cgroup, int nid)
++static inline bool cpuset_sysram_node_allowed(struct cgroup *cgroup, int nid)
+ {
  	return true;
  }
+diff --git a/kernel/cgroup/cpuset-internal.h b/kernel/cgroup/cpuset-internal.h
+index 337608f408ce..64e48fe040ed 100644
+--- a/kernel/cgroup/cpuset-internal.h
++++ b/kernel/cgroup/cpuset-internal.h
+@@ -53,6 +53,7 @@ typedef enum {
+ 	FILE_MEMORY_MIGRATE,
+ 	FILE_CPULIST,
+ 	FILE_MEMLIST,
++	FILE_MEMS_SYSRAM,
+ 	FILE_EFFECTIVE_CPULIST,
+ 	FILE_EFFECTIVE_MEMLIST,
+ 	FILE_SUBPARTS_CPULIST,
+@@ -104,6 +105,13 @@ struct cpuset {
+ 	cpumask_var_t effective_cpus;
+ 	nodemask_t effective_mems;
  
--static inline int cpuset_mems_allowed_intersects(const struct task_struct *tsk1,
-+static inline int cpuset_sysram_nodes_intersects(const struct task_struct *tsk1,
- 						 const struct task_struct *tsk2)
- {
- 	return 1;
-@@ -242,8 +244,8 @@ static inline int cpuset_mems_allowed_intersects(const struct task_struct *tsk1,
++	/*
++	 * SystemRAM Memory Nodes for tasks.
++	 * This is the intersection of effective_mems and mt_sysram_nodelist.
++	 * Tasks will have their sysram_nodes set to this value.
++	 */
++	nodemask_t mems_sysram;
++
+ 	/*
+ 	 * Exclusive CPUs dedicated to current cgroup (default hierarchy only)
+ 	 *
+diff --git a/kernel/cgroup/cpuset-v1.c b/kernel/cgroup/cpuset-v1.c
+index 12e76774c75b..c58215d7230e 100644
+--- a/kernel/cgroup/cpuset-v1.c
++++ b/kernel/cgroup/cpuset-v1.c
+@@ -293,6 +293,7 @@ void cpuset1_hotplug_update_tasks(struct cpuset *cs,
+ 	cpumask_copy(cs->effective_cpus, new_cpus);
+ 	cs->mems_allowed = *new_mems;
+ 	cs->effective_mems = *new_mems;
++	cpuset_update_tasks_nodemask(cs);
+ 	cpuset_callback_unlock_irq();
  
- static inline void cpuset_memory_pressure_bump(void) {}
+ 	/*
+@@ -532,6 +533,12 @@ struct cftype cpuset1_files[] = {
+ 		.private = FILE_EFFECTIVE_MEMLIST,
+ 	},
  
--static inline void cpuset_task_status_allowed(struct seq_file *m,
--						struct task_struct *task)
-+static inline void cpuset_task_status_sysram(struct seq_file *m,
-+					     struct task_struct *task)
- {
- }
- 
-@@ -276,7 +278,7 @@ static inline void cpuset_reset_sched_domains(void)
- 	partition_sched_domains(1, NULL, NULL);
- }
- 
--static inline void cpuset_print_current_mems_allowed(void)
-+static inline void cpuset_print_current_sysram_nodes(void)
- {
- }
- 
-diff --git a/include/linux/mempolicy.h b/include/linux/mempolicy.h
-index 0fe96f3ab3ef..f9a2b1bed3fa 100644
---- a/include/linux/mempolicy.h
-+++ b/include/linux/mempolicy.h
-@@ -52,7 +52,7 @@ struct mempolicy {
- 	int home_node;		/* Home node to use for MPOL_BIND and MPOL_PREFERRED_MANY */
- 
- 	union {
--		nodemask_t cpuset_mems_allowed;	/* relative to these nodes */
-+		nodemask_t cpuset_sysram_nodes;	/* relative to these nodes */
- 		nodemask_t user_nodemask;	/* nodemask passed by user */
- 	} w;
- };
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index b469878de25c..ad2d0cb00772 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -1223,7 +1223,7 @@ struct task_struct {
- 	u64				parent_exec_id;
- 	u64				self_exec_id;
- 
--	/* Protection against (de-)allocation: mm, files, fs, tty, keyrings, mems_allowed, mempolicy: */
-+	/* Protection against (de-)allocation: mm, files, fs, tty, keyrings, sysram_nodes, mempolicy: */
- 	spinlock_t			alloc_lock;
- 
- 	/* Protection of the PI data structures: */
-@@ -1314,9 +1314,9 @@ struct task_struct {
- #endif
- #ifdef CONFIG_CPUSETS
- 	/* Protected by ->alloc_lock: */
--	nodemask_t			mems_allowed;
-+	nodemask_t			sysram_nodes;
- 	/* Sequence number to catch updates: */
--	seqcount_spinlock_t		mems_allowed_seq;
-+	seqcount_spinlock_t		sysram_nodes_seq;
- 	int				cpuset_mem_spread_rotor;
- #endif
- #ifdef CONFIG_CGROUPS
-diff --git a/init/init_task.c b/init/init_task.c
-index a55e2189206f..857a5978d403 100644
---- a/init/init_task.c
-+++ b/init/init_task.c
-@@ -173,7 +173,7 @@ struct task_struct init_task __aligned(L1_CACHE_BYTES) = {
- 	.trc_blkd_node = LIST_HEAD_INIT(init_task.trc_blkd_node),
- #endif
- #ifdef CONFIG_CPUSETS
--	.mems_allowed_seq = SEQCNT_SPINLOCK_ZERO(init_task.mems_allowed_seq,
-+	.sysram_nodes_seq = SEQCNT_SPINLOCK_ZERO(init_task.sysram_nodes_seq,
- 						 &init_task.alloc_lock),
- #endif
- #ifdef CONFIG_RT_MUTEXES
++	{
++		.name = "mems_sysram",
++		.seq_show = cpuset_common_seq_show,
++		.private = FILE_MEMS_SYSRAM,
++	},
++
+ 	{
+ 		.name = "cpu_exclusive",
+ 		.read_u64 = cpuset_read_u64,
 diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-index cd3e2ae83d70..f0c59621a7f2 100644
+index f0c59621a7f2..e08b59a0cf99 100644
 --- a/kernel/cgroup/cpuset.c
 +++ b/kernel/cgroup/cpuset.c
-@@ -240,7 +240,7 @@ static struct cpuset top_cpuset = {
-  * If a task is only holding callback_lock, then it has read-only
-  * access to cpusets.
+@@ -29,6 +29,7 @@
+ #include <linux/mempolicy.h>
+ #include <linux/mm.h>
+ #include <linux/memory.h>
++#include <linux/memory-tiers.h>
+ #include <linux/export.h>
+ #include <linux/rcupdate.h>
+ #include <linux/sched.h>
+@@ -428,11 +429,11 @@ static void guarantee_active_cpus(struct task_struct *tsk,
   *
-- * Now, the task_struct fields mems_allowed and mempolicy may be changed
-+ * Now, the task_struct fields sysram_nodes and mempolicy may be changed
-  * by other task, we use alloc_lock in the task_struct fields to protect
-  * them.
-  *
-@@ -2678,11 +2678,11 @@ static void schedule_flush_migrate_mm(void)
+  * Call with callback_lock or cpuset_mutex held.
+  */
+-static void guarantee_online_mems(struct cpuset *cs, nodemask_t *pmask)
++static void guarantee_online_sysram_nodes(struct cpuset *cs, nodemask_t *pmask)
+ {
+-	while (!nodes_intersects(cs->effective_mems, node_states[N_MEMORY]))
++	while (!nodes_intersects(cs->mems_sysram, node_states[N_MEMORY]))
+ 		cs = parent_cs(cs);
+-	nodes_and(*pmask, cs->effective_mems, node_states[N_MEMORY]);
++	nodes_and(*pmask, cs->mems_sysram, node_states[N_MEMORY]);
  }
  
- /*
-- * cpuset_change_task_nodemask - change task's mems_allowed and mempolicy
-+ * cpuset_change_task_nodemask - change task's sysram_nodes and mempolicy
-  * @tsk: the task to change
-  * @newmems: new nodes that the task will be set
-  *
-- * We use the mems_allowed_seq seqlock to safely update both tsk->mems_allowed
-+ * We use the sysram_nodes_seq seqlock to safely update both tsk->sysram_nodes
-  * and rebind an eventual tasks' mempolicy. If the task is allocating in
-  * parallel, it might temporarily see an empty intersection, which results in
-  * a seqlock check and retry before OOM or allocation failure.
-@@ -2693,13 +2693,13 @@ static void cpuset_change_task_nodemask(struct task_struct *tsk,
- 	task_lock(tsk);
- 
- 	local_irq_disable();
--	write_seqcount_begin(&tsk->mems_allowed_seq);
-+	write_seqcount_begin(&tsk->sysram_nodes_seq);
- 
--	nodes_or(tsk->mems_allowed, tsk->mems_allowed, *newmems);
-+	nodes_or(tsk->sysram_nodes, tsk->sysram_nodes, *newmems);
- 	mpol_rebind_task(tsk, newmems);
--	tsk->mems_allowed = *newmems;
-+	tsk->sysram_nodes = *newmems;
- 
--	write_seqcount_end(&tsk->mems_allowed_seq);
-+	write_seqcount_end(&tsk->sysram_nodes_seq);
- 	local_irq_enable();
- 
- 	task_unlock(tsk);
-@@ -2709,9 +2709,9 @@ static void *cpuset_being_rebound;
- 
  /**
-  * cpuset_update_tasks_nodemask - Update the nodemasks of tasks in the cpuset.
-- * @cs: the cpuset in which each task's mems_allowed mask needs to be changed
-+ * @cs: the cpuset in which each task's sysram_nodes mask needs to be changed
-  *
-- * Iterate through each task of @cs updating its mems_allowed to the
-+ * Iterate through each task of @cs updating its sysram_nodes to the
-  * effective cpuset's.  As this function is called with cpuset_mutex held,
-  * cpuset membership stays stable.
-  */
-@@ -3763,7 +3763,7 @@ static void cpuset_fork(struct task_struct *task)
- 			return;
+@@ -2723,7 +2724,7 @@ void cpuset_update_tasks_nodemask(struct cpuset *cs)
  
- 		set_cpus_allowed_ptr(task, current->cpus_ptr);
--		task->mems_allowed = current->mems_allowed;
-+		task->sysram_nodes = current->sysram_nodes;
- 		return;
+ 	cpuset_being_rebound = cs;		/* causes mpol_dup() rebind */
+ 
+-	guarantee_online_mems(cs, &newmems);
++	guarantee_online_sysram_nodes(cs, &newmems);
+ 
+ 	/*
+ 	 * The mpol_rebind_mm() call takes mmap_lock, which we couldn't
+@@ -2748,7 +2749,7 @@ void cpuset_update_tasks_nodemask(struct cpuset *cs)
+ 
+ 		migrate = is_memory_migrate(cs);
+ 
+-		mpol_rebind_mm(mm, &cs->mems_allowed);
++		mpol_rebind_mm(mm, &cs->mems_sysram);
+ 		if (migrate)
+ 			cpuset_migrate_mm(mm, &cs->old_mems_allowed, &newmems);
+ 		else
+@@ -2808,6 +2809,7 @@ static void update_nodemasks_hier(struct cpuset *cs, nodemask_t *new_mems)
+ 
+ 		spin_lock_irq(&callback_lock);
+ 		cp->effective_mems = *new_mems;
++		mt_nodemask_sysram_mask(&cp->mems_sysram, &cp->effective_mems);
+ 		spin_unlock_irq(&callback_lock);
+ 
+ 		WARN_ON(!is_in_v2_mode() &&
+@@ -3234,11 +3236,11 @@ static void cpuset_attach(struct cgroup_taskset *tset)
+ 	 * by skipping the task iteration and update.
+ 	 */
+ 	if (cpuset_v2() && !cpus_updated && !mems_updated) {
+-		cpuset_attach_nodemask_to = cs->effective_mems;
++		cpuset_attach_nodemask_to = cs->mems_sysram;
+ 		goto out;
  	}
  
-@@ -4205,9 +4205,9 @@ bool cpuset_cpus_allowed_fallback(struct task_struct *tsk)
+-	guarantee_online_mems(cs, &cpuset_attach_nodemask_to);
++	guarantee_online_sysram_nodes(cs, &cpuset_attach_nodemask_to);
+ 
+ 	cgroup_taskset_for_each(task, css, tset)
+ 		cpuset_attach_task(cs, task);
+@@ -3249,7 +3251,7 @@ static void cpuset_attach(struct cgroup_taskset *tset)
+ 	 * if there is no change in effective_mems and CS_MEMORY_MIGRATE is
+ 	 * not set.
+ 	 */
+-	cpuset_attach_nodemask_to = cs->effective_mems;
++	cpuset_attach_nodemask_to = cs->mems_sysram;
+ 	if (!is_memory_migrate(cs) && !mems_updated)
+ 		goto out;
+ 
+@@ -3371,6 +3373,9 @@ int cpuset_common_seq_show(struct seq_file *sf, void *v)
+ 	case FILE_EFFECTIVE_MEMLIST:
+ 		seq_printf(sf, "%*pbl\n", nodemask_pr_args(&cs->effective_mems));
+ 		break;
++	case FILE_MEMS_SYSRAM:
++		seq_printf(sf, "%*pbl\n", nodemask_pr_args(&cs->mems_sysram));
++		break;
+ 	case FILE_EXCLUSIVE_CPULIST:
+ 		seq_printf(sf, "%*pbl\n", cpumask_pr_args(cs->exclusive_cpus));
+ 		break;
+@@ -3482,6 +3487,12 @@ static struct cftype dfl_files[] = {
+ 		.private = FILE_EFFECTIVE_MEMLIST,
+ 	},
+ 
++	{
++		.name = "mems.sysram",
++		.seq_show = cpuset_common_seq_show,
++		.private = FILE_MEMS_SYSRAM,
++	},
++
+ 	{
+ 		.name = "cpus.partition",
+ 		.seq_show = cpuset_partition_show,
+@@ -3585,6 +3596,7 @@ static int cpuset_css_online(struct cgroup_subsys_state *css)
+ 	if (is_in_v2_mode()) {
+ 		cpumask_copy(cs->effective_cpus, parent->effective_cpus);
+ 		cs->effective_mems = parent->effective_mems;
++		mt_nodemask_sysram_mask(&cs->mems_sysram, &cs->effective_mems);
+ 	}
+ 	spin_unlock_irq(&callback_lock);
+ 
+@@ -3616,6 +3628,7 @@ static int cpuset_css_online(struct cgroup_subsys_state *css)
+ 	spin_lock_irq(&callback_lock);
+ 	cs->mems_allowed = parent->mems_allowed;
+ 	cs->effective_mems = parent->mems_allowed;
++	mt_nodemask_sysram_mask(&cs->mems_sysram, &cs->effective_mems);
+ 	cpumask_copy(cs->cpus_allowed, parent->cpus_allowed);
+ 	cpumask_copy(cs->effective_cpus, parent->cpus_allowed);
+ 	spin_unlock_irq(&callback_lock);
+@@ -3769,7 +3782,7 @@ static void cpuset_fork(struct task_struct *task)
+ 
+ 	/* CLONE_INTO_CGROUP */
+ 	mutex_lock(&cpuset_mutex);
+-	guarantee_online_mems(cs, &cpuset_attach_nodemask_to);
++	guarantee_online_sysram_nodes(cs, &cpuset_attach_nodemask_to);
+ 	cpuset_attach_task(cs, task);
+ 
+ 	dec_attach_in_progress_locked(cs);
+@@ -3818,7 +3831,8 @@ int __init cpuset_init(void)
+ 	cpumask_setall(top_cpuset.effective_xcpus);
+ 	cpumask_setall(top_cpuset.exclusive_cpus);
+ 	nodes_setall(top_cpuset.effective_mems);
+-
++	mt_nodemask_sysram_mask(&top_cpuset.mems_sysram,
++				&top_cpuset.effective_mems);
+ 	fmeter_init(&top_cpuset.fmeter);
+ 	INIT_LIST_HEAD(&remote_children);
+ 
+@@ -3848,6 +3862,7 @@ hotplug_update_tasks(struct cpuset *cs,
+ 	spin_lock_irq(&callback_lock);
+ 	cpumask_copy(cs->effective_cpus, new_cpus);
+ 	cs->effective_mems = *new_mems;
++	mt_nodemask_sysram_mask(&cs->mems_sysram, &cs->effective_mems);
+ 	spin_unlock_irq(&callback_lock);
+ 
+ 	if (cpus_updated)
+@@ -4039,6 +4054,8 @@ static void cpuset_handle_hotplug(void)
+ 		if (!on_dfl)
+ 			top_cpuset.mems_allowed = new_mems;
+ 		top_cpuset.effective_mems = new_mems;
++		mt_nodemask_sysram_mask(&top_cpuset.mems_sysram,
++					&top_cpuset.effective_mems);
+ 		spin_unlock_irq(&callback_lock);
+ 		cpuset_update_tasks_nodemask(&top_cpuset);
+ 	}
+@@ -4109,6 +4126,8 @@ void __init cpuset_init_smp(void)
+ 
+ 	cpumask_copy(top_cpuset.effective_cpus, cpu_active_mask);
+ 	top_cpuset.effective_mems = node_states[N_MEMORY];
++	mt_nodemask_sysram_mask(&top_cpuset.mems_sysram,
++				&top_cpuset.effective_mems);
+ 
+ 	hotplug_node_notifier(cpuset_track_online_nodes, CPUSET_CALLBACK_PRI);
+ 
+@@ -4205,14 +4224,18 @@ bool cpuset_cpus_allowed_fallback(struct task_struct *tsk)
  	return changed;
  }
  
--void __init cpuset_init_current_mems_allowed(void)
-+void __init cpuset_init_current_sysram_nodes(void)
++/*
++ * At this point in time, no hotplug nodes can have been added, so just set
++ * the sysram_nodes of the init task to the set of N_MEMORY nodes.
++ */
+ void __init cpuset_init_current_sysram_nodes(void)
  {
--	nodes_setall(current->mems_allowed);
-+	nodes_setall(current->sysram_nodes);
+-	nodes_setall(current->sysram_nodes);
++	current->sysram_nodes = node_states[N_MEMORY];
  }
  
  /**
-@@ -4233,14 +4233,14 @@ nodemask_t cpuset_mems_allowed(struct task_struct *tsk)
- }
- 
- /**
-- * cpuset_nodemask_valid_mems_allowed - check nodemask vs. current mems_allowed
-+ * cpuset_nodemask_valid_sysram_nodes - check nodemask vs. current sysram_nodes
-  * @nodemask: the nodemask to be checked
+- * cpuset_mems_allowed - return mems_allowed mask from a tasks cpuset.
+- * @tsk: pointer to task_struct from which to obtain cpuset->mems_allowed.
++ * cpuset_sysram_nodes_allowed - return mems_sysram mask from a tasks cpuset.
++ * @tsk: pointer to task_struct from which to obtain cpuset->mems_sysram.
   *
-- * Are any of the nodes in the nodemask allowed in current->mems_allowed?
-+ * Are any of the nodes in the nodemask allowed in current->sysram_nodes?
+  * Description: Returns the nodemask_t mems_allowed of the cpuset
+  * attached to the specified @tsk.  Guaranteed to return some non-empty
+@@ -4220,13 +4243,13 @@ void __init cpuset_init_current_sysram_nodes(void)
+  * tasks cpuset.
+  **/
+ 
+-nodemask_t cpuset_mems_allowed(struct task_struct *tsk)
++nodemask_t cpuset_sysram_nodes_allowed(struct task_struct *tsk)
+ {
+ 	nodemask_t mask;
+ 	unsigned long flags;
+ 
+ 	spin_lock_irqsave(&callback_lock, flags);
+-	guarantee_online_mems(task_cs(tsk), &mask);
++	guarantee_online_sysram_nodes(task_cs(tsk), &mask);
+ 	spin_unlock_irqrestore(&callback_lock, flags);
+ 
+ 	return mask;
+@@ -4295,17 +4318,30 @@ static struct cpuset *nearest_hardwall_ancestor(struct cpuset *cs)
+  *	tsk_is_oom_victim   - any node ok
+  *	GFP_KERNEL   - any node in enclosing hardwalled cpuset ok
+  *	GFP_USER     - only nodes in current tasks mems allowed ok.
++ *	GFP_SPM_NODE - allow specific purpose memory nodes in mems_allowed
   */
--int cpuset_nodemask_valid_mems_allowed(const nodemask_t *nodemask)
-+int cpuset_nodemask_valid_sysram_nodes(const nodemask_t *nodemask)
+ bool cpuset_current_node_allowed(int node, gfp_t gfp_mask)
  {
--	return nodes_intersects(*nodemask, current->mems_allowed);
-+	return nodes_intersects(*nodemask, current->sysram_nodes);
- }
+ 	struct cpuset *cs;		/* current cpuset ancestors */
+ 	bool allowed;			/* is allocation in zone z allowed? */
+ 	unsigned long flags;
++	bool sp_node = gfp_mask & __GFP_SPM_NODE;
  
- /*
-@@ -4262,7 +4262,7 @@ static struct cpuset *nearest_hardwall_ancestor(struct cpuset *cs)
-  * @gfp_mask: memory allocation flags
-  *
-  * If we're in interrupt, yes, we can always allocate.  If @node is set in
-- * current's mems_allowed, yes.  If it's not a __GFP_HARDWALL request and this
-+ * current's sysram_nodes, yes.  If it's not a __GFP_HARDWALL request and this
-  * node is set in the nearest hardwalled cpuset ancestor to current's cpuset,
-  * yes.  If current has access to memory reserves as an oom victim, yes.
-  * Otherwise, no.
-@@ -4276,7 +4276,7 @@ static struct cpuset *nearest_hardwall_ancestor(struct cpuset *cs)
-  * Scanning up parent cpusets requires callback_lock.  The
-  * __alloc_pages() routine only calls here with __GFP_HARDWALL bit
-  * _not_ set if it's a GFP_KERNEL allocation, and all nodes in the
-- * current tasks mems_allowed came up empty on the first pass over
-+ * current tasks sysram_nodes came up empty on the first pass over
-  * the zonelist.  So only GFP_KERNEL allocations, if all nodes in the
-  * cpuset are short of memory, might require taking the callback_lock.
-  *
-@@ -4304,7 +4304,7 @@ bool cpuset_current_node_allowed(int node, gfp_t gfp_mask)
- 
++	/* Only SysRAM nodes are valid in interrupt context */
  	if (in_interrupt())
- 		return true;
--	if (node_isset(node, current->mems_allowed))
-+	if (node_isset(node, current->sysram_nodes))
- 		return true;
+-		return true;
+-	if (node_isset(node, current->sysram_nodes))
+-		return true;
++		return (!sp_node || node_isset(node, mt_sysram_nodelist));
++
++	if (sp_node) {
++		rcu_read_lock();
++		cs = task_cs(current);
++		allowed = node_isset(node, cs->mems_allowed);
++		rcu_read_unlock();
++	} else
++		allowed = node_isset(node, current->sysram_nodes);
++
++	if (allowed)
++		return allowed;
++
  	/*
  	 * Allow tasks that have access to memory reserves because they have
-@@ -4375,13 +4375,13 @@ bool cpuset_node_allowed(struct cgroup *cgroup, int nid)
-  * certain page cache or slab cache pages such as used for file
-  * system buffers and inode caches, then instead of starting on the
-  * local node to look for a free page, rather spread the starting
-- * node around the tasks mems_allowed nodes.
-+ * node around the tasks sysram_nodes nodes.
-  *
+ 	 * been OOM killed to get memory anywhere.
+@@ -4324,11 +4360,15 @@ bool cpuset_current_node_allowed(int node, gfp_t gfp_mask)
+ 	cs = nearest_hardwall_ancestor(task_cs(current));
+ 	allowed = node_isset(node, cs->mems_allowed);
+ 
++	/* If not a SP Node allocation, restrict to sysram nodes */
++	if (!sp_node && !nodes_empty(mt_sysram_nodelist))
++		allowed &= node_isset(node, mt_sysram_nodelist);
++
+ 	spin_unlock_irqrestore(&callback_lock, flags);
+ 	return allowed;
+ }
+ 
+-bool cpuset_node_allowed(struct cgroup *cgroup, int nid)
++bool cpuset_sysram_node_allowed(struct cgroup *cgroup, int nid)
+ {
+ 	struct cgroup_subsys_state *css;
+ 	struct cpuset *cs;
+@@ -4347,7 +4387,7 @@ bool cpuset_node_allowed(struct cgroup *cgroup, int nid)
+ 		return true;
+ 
+ 	/*
+-	 * Normally, accessing effective_mems would require the cpuset_mutex
++	 * Normally, accessing mems_sysram would require the cpuset_mutex
+ 	 * or callback_lock - but node_isset is atomic and the reference
+ 	 * taken via cgroup_get_e_css is sufficient to protect css.
+ 	 *
+@@ -4359,7 +4399,7 @@ bool cpuset_node_allowed(struct cgroup *cgroup, int nid)
+ 	 * cannot make strong isolation guarantees, so this is acceptable.
+ 	 */
+ 	cs = container_of(css, struct cpuset, css);
+-	allowed = node_isset(nid, cs->effective_mems);
++	allowed = node_isset(nid, cs->mems_sysram);
+ 	css_put(css);
+ 	return allowed;
+ }
+@@ -4380,7 +4420,7 @@ bool cpuset_node_allowed(struct cgroup *cgroup, int nid)
   * We don't have to worry about the returned node being offline
   * because "it can't happen", and even if it did, it would be ok.
   *
-  * The routines calling guarantee_online_mems() are careful to
-- * only set nodes in task->mems_allowed that are online.  So it
-+ * only set nodes in task->sysram_nodes that are online.  So it
+- * The routines calling guarantee_online_mems() are careful to
++ * The routines calling guarantee_online_sysram_nodes() are careful to
+  * only set nodes in task->sysram_nodes that are online.  So it
   * should not be possible for the following code to return an
   * offline node.  But if it did, that would be ok, as this routine
-  * is not returning the node where the allocation must be, only
-@@ -4392,7 +4392,7 @@ bool cpuset_node_allowed(struct cgroup *cgroup, int nid)
-  */
- static int cpuset_spread_node(int *rotor)
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index 4deda33625f4..7cac7ff013a7 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -5599,5 +5599,6 @@ subsys_initcall(mem_cgroup_swap_init);
+ 
+ bool mem_cgroup_node_allowed(struct mem_cgroup *memcg, int nid)
  {
--	return *rotor = next_node_in(*rotor, current->mems_allowed);
-+	return *rotor = next_node_in(*rotor, current->sysram_nodes);
+-	return memcg ? cpuset_node_allowed(memcg->css.cgroup, nid) : true;
++	return memcg ? cpuset_sysram_node_allowed(memcg->css.cgroup, nid) :
++		       true;
  }
- 
- /**
-@@ -4402,35 +4402,35 @@ int cpuset_mem_spread_node(void)
- {
- 	if (current->cpuset_mem_spread_rotor == NUMA_NO_NODE)
- 		current->cpuset_mem_spread_rotor =
--			node_random(&current->mems_allowed);
-+			node_random(&current->sysram_nodes);
- 
- 	return cpuset_spread_node(&current->cpuset_mem_spread_rotor);
- }
- 
- /**
-- * cpuset_mems_allowed_intersects - Does @tsk1's mems_allowed intersect @tsk2's?
-+ * cpuset_sysram_nodes_intersects - Does @tsk1's sysram_nodes intersect @tsk2's?
-  * @tsk1: pointer to task_struct of some task.
-  * @tsk2: pointer to task_struct of some other task.
-  *
-- * Description: Return true if @tsk1's mems_allowed intersects the
-- * mems_allowed of @tsk2.  Used by the OOM killer to determine if
-+ * Description: Return true if @tsk1's sysram_nodes intersects the
-+ * sysram_nodes of @tsk2.  Used by the OOM killer to determine if
-  * one of the task's memory usage might impact the memory available
-  * to the other.
-  **/
- 
--int cpuset_mems_allowed_intersects(const struct task_struct *tsk1,
-+int cpuset_sysram_nodes_intersects(const struct task_struct *tsk1,
- 				   const struct task_struct *tsk2)
- {
--	return nodes_intersects(tsk1->mems_allowed, tsk2->mems_allowed);
-+	return nodes_intersects(tsk1->sysram_nodes, tsk2->sysram_nodes);
- }
- 
- /**
-- * cpuset_print_current_mems_allowed - prints current's cpuset and mems_allowed
-+ * cpuset_print_current_sysram_nodes - prints current's cpuset and sysram_nodes
-  *
-  * Description: Prints current's name, cpuset name, and cached copy of its
-- * mems_allowed to the kernel log.
-+ * sysram_nodes to the kernel log.
-  */
--void cpuset_print_current_mems_allowed(void)
-+void cpuset_print_current_sysram_nodes(void)
- {
- 	struct cgroup *cgrp;
- 
-@@ -4439,17 +4439,17 @@ void cpuset_print_current_mems_allowed(void)
- 	cgrp = task_cs(current)->css.cgroup;
- 	pr_cont(",cpuset=");
- 	pr_cont_cgroup_name(cgrp);
--	pr_cont(",mems_allowed=%*pbl",
--		nodemask_pr_args(&current->mems_allowed));
-+	pr_cont(",sysram_nodes=%*pbl",
-+		nodemask_pr_args(&current->sysram_nodes));
- 
- 	rcu_read_unlock();
- }
- 
--/* Display task mems_allowed in /proc/<pid>/status file. */
--void cpuset_task_status_allowed(struct seq_file *m, struct task_struct *task)
-+/* Display task sysram_nodes in /proc/<pid>/status file. */
-+void cpuset_task_status_sysram(struct seq_file *m, struct task_struct *task)
- {
--	seq_printf(m, "Mems_allowed:\t%*pb\n",
--		   nodemask_pr_args(&task->mems_allowed));
--	seq_printf(m, "Mems_allowed_list:\t%*pbl\n",
--		   nodemask_pr_args(&task->mems_allowed));
-+	seq_printf(m, "Sysram_nodes:\t%*pb\n",
-+		   nodemask_pr_args(&task->sysram_nodes));
-+	seq_printf(m, "Sysram_nodes_list:\t%*pbl\n",
-+		   nodemask_pr_args(&task->sysram_nodes));
- }
-diff --git a/kernel/fork.c b/kernel/fork.c
-index 3da0f08615a9..9ca2b59d7f0e 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -2120,7 +2120,7 @@ __latent_entropy struct task_struct *copy_process(
- #endif
- #ifdef CONFIG_CPUSETS
- 	p->cpuset_mem_spread_rotor = NUMA_NO_NODE;
--	seqcount_spinlock_init(&p->mems_allowed_seq, &p->alloc_lock);
-+	seqcount_spinlock_init(&p->sysram_nodes_seq, &p->alloc_lock);
- #endif
- #ifdef CONFIG_TRACE_IRQFLAGS
- 	memset(&p->irqtrace, 0, sizeof(p->irqtrace));
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 5b752324270b..667c53fc3954 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -3317,8 +3317,8 @@ static void task_numa_work(struct callback_head *work)
- 	 * Memory is pinned to only one NUMA node via cpuset.mems, naturally
- 	 * no page can be migrated.
- 	 */
--	if (cpusets_enabled() && nodes_weight(cpuset_current_mems_allowed) == 1) {
--		trace_sched_skip_cpuset_numa(current, &cpuset_current_mems_allowed);
-+	if (cpusets_enabled() && nodes_weight(cpuset_current_sysram_nodes) == 1) {
-+		trace_sched_skip_cpuset_numa(current, &cpuset_current_sysram_nodes);
- 		return;
- 	}
- 
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index 0455119716ec..0d16890c1a4f 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -2366,7 +2366,7 @@ static nodemask_t *policy_mbind_nodemask(gfp_t gfp)
- 	 */
- 	if (mpol->mode == MPOL_BIND &&
- 		(apply_policy_zone(mpol, gfp_zone(gfp)) &&
--		 cpuset_nodemask_valid_mems_allowed(&mpol->nodes)))
-+		 cpuset_nodemask_valid_sysram_nodes(&mpol->nodes)))
- 		return &mpol->nodes;
- #endif
- 	return NULL;
-@@ -2389,9 +2389,9 @@ static int gather_surplus_pages(struct hstate *h, long delta)
- 
- 	mbind_nodemask = policy_mbind_nodemask(htlb_alloc_mask(h));
- 	if (mbind_nodemask)
--		nodes_and(alloc_nodemask, *mbind_nodemask, cpuset_current_mems_allowed);
-+		nodes_and(alloc_nodemask, *mbind_nodemask, cpuset_current_sysram_nodes);
- 	else
--		alloc_nodemask = cpuset_current_mems_allowed;
-+		alloc_nodemask = cpuset_current_sysram_nodes;
- 
- 	lockdep_assert_held(&hugetlb_lock);
- 	needed = (h->resv_huge_pages + delta) - h->free_huge_pages;
-@@ -5084,7 +5084,7 @@ static unsigned int allowed_mems_nr(struct hstate *h)
- 	gfp_t gfp_mask = htlb_alloc_mask(h);
- 
- 	mbind_nodemask = policy_mbind_nodemask(gfp_mask);
--	for_each_node_mask(node, cpuset_current_mems_allowed) {
-+	for_each_node_mask(node, cpuset_current_sysram_nodes) {
- 		if (!mbind_nodemask || node_isset(node, *mbind_nodemask))
- 			nr += array[node];
- 	}
 diff --git a/mm/mempolicy.c b/mm/mempolicy.c
-index eb83cff7db8c..735dabb9c50c 100644
+index 735dabb9c50c..e1e8a1f3e1a2 100644
 --- a/mm/mempolicy.c
 +++ b/mm/mempolicy.c
-@@ -396,7 +396,7 @@ static int mpol_new_preferred(struct mempolicy *pol, const nodemask_t *nodes)
-  * any, for the new policy.  mpol_new() has already validated the nodes
-  * parameter with respect to the policy mode and flags.
-  *
-- * Must be called holding task's alloc_lock to protect task's mems_allowed
-+ * Must be called holding task's alloc_lock to protect task's sysram_nodes
-  * and mempolicy.  May also be called holding the mmap_lock for write.
-  */
- static int mpol_set_nodemask(struct mempolicy *pol,
-@@ -414,7 +414,7 @@ static int mpol_set_nodemask(struct mempolicy *pol,
+@@ -1831,14 +1831,14 @@ static int kernel_migrate_pages(pid_t pid, unsigned long maxnode,
+ 	}
+ 	rcu_read_unlock();
  
- 	/* Check N_MEMORY */
- 	nodes_and(nsc->mask1,
--		  cpuset_current_mems_allowed, node_states[N_MEMORY]);
-+		  cpuset_current_sysram_nodes, node_states[N_MEMORY]);
- 
- 	VM_BUG_ON(!nodes);
- 
-@@ -426,7 +426,7 @@ static int mpol_set_nodemask(struct mempolicy *pol,
- 	if (mpol_store_user_nodemask(pol))
- 		pol->w.user_nodemask = *nodes;
- 	else
--		pol->w.cpuset_mems_allowed = cpuset_current_mems_allowed;
-+		pol->w.cpuset_sysram_nodes = cpuset_current_sysram_nodes;
- 
- 	ret = mpol_ops[pol->mode].create(pol, &nsc->mask2);
- 	return ret;
-@@ -501,9 +501,9 @@ static void mpol_rebind_nodemask(struct mempolicy *pol, const nodemask_t *nodes)
- 	else if (pol->flags & MPOL_F_RELATIVE_NODES)
- 		mpol_relative_nodemask(&tmp, &pol->w.user_nodemask, nodes);
- 	else {
--		nodes_remap(tmp, pol->nodes, pol->w.cpuset_mems_allowed,
-+		nodes_remap(tmp, pol->nodes, pol->w.cpuset_sysram_nodes,
- 								*nodes);
--		pol->w.cpuset_mems_allowed = *nodes;
-+		pol->w.cpuset_sysram_nodes = *nodes;
+-	task_nodes = cpuset_mems_allowed(task);
++	task_nodes = cpuset_sysram_nodes_allowed(task);
+ 	/* Is the user allowed to access the target nodes? */
+ 	if (!nodes_subset(*new, task_nodes) && !capable(CAP_SYS_NICE)) {
+ 		err = -EPERM;
+ 		goto out_put;
  	}
  
- 	if (nodes_empty(tmp))
-@@ -515,14 +515,14 @@ static void mpol_rebind_nodemask(struct mempolicy *pol, const nodemask_t *nodes)
- static void mpol_rebind_preferred(struct mempolicy *pol,
- 						const nodemask_t *nodes)
- {
--	pol->w.cpuset_mems_allowed = *nodes;
-+	pol->w.cpuset_sysram_nodes = *nodes;
- }
+-	task_nodes = cpuset_mems_allowed(current);
++	task_nodes = cpuset_sysram_nodes_allowed(current);
+ 	nodes_and(*new, *new, task_nodes);
+ 	if (nodes_empty(*new))
+ 		goto out_put;
+@@ -2763,7 +2763,7 @@ struct mempolicy *__mpol_dup(struct mempolicy *old)
+ 		*new = *old;
  
- /*
-  * mpol_rebind_policy - Migrate a policy to a different set of nodes
-  *
-  * Per-vma policies are protected by mmap_lock. Allocations using per-task
-- * policies are protected by task->mems_allowed_seq to prevent a premature
-+ * policies are protected by task->sysram_nodes_seq to prevent a premature
-  * OOM/allocation failure due to parallel nodemask modification.
-  */
- static void mpol_rebind_policy(struct mempolicy *pol, const nodemask_t *newmask)
-@@ -530,7 +530,7 @@ static void mpol_rebind_policy(struct mempolicy *pol, const nodemask_t *newmask)
- 	if (!pol || pol->mode == MPOL_LOCAL)
- 		return;
- 	if (!mpol_store_user_nodemask(pol) &&
--	    nodes_equal(pol->w.cpuset_mems_allowed, *newmask))
-+	    nodes_equal(pol->w.cpuset_sysram_nodes, *newmask))
- 		return;
- 
- 	mpol_ops[pol->mode].rebind(pol, newmask);
-@@ -1086,7 +1086,7 @@ static long do_get_mempolicy(int *policy, nodemask_t *nmask,
- 			return -EINVAL;
- 		*policy = 0;	/* just so it's initialized */
- 		task_lock(current);
--		*nmask  = cpuset_current_mems_allowed;
-+		*nmask  = cpuset_current_sysram_nodes;
- 		task_unlock(current);
- 		return 0;
+ 	if (current_cpuset_is_being_rebound()) {
+-		nodemask_t mems = cpuset_mems_allowed(current);
++		nodemask_t mems = cpuset_sysram_nodes_allowed(current);
+ 		mpol_rebind_policy(new, &mems);
  	}
-@@ -2029,7 +2029,7 @@ static unsigned int weighted_interleave_nodes(struct mempolicy *policy)
- 	unsigned int cpuset_mems_cookie;
- 
- retry:
--	/* to prevent miscount use tsk->mems_allowed_seq to detect rebind */
-+	/* to prevent miscount use tsk->sysram_nodes_seq to detect rebind */
- 	cpuset_mems_cookie = read_mems_allowed_begin();
- 	node = current->il_prev;
- 	if (!current->il_weight || !node_isset(node, policy->nodes)) {
-@@ -2051,7 +2051,7 @@ static unsigned int interleave_nodes(struct mempolicy *policy)
- 	unsigned int nid;
- 	unsigned int cpuset_mems_cookie;
- 
--	/* to prevent miscount, use tsk->mems_allowed_seq to detect rebind */
-+	/* to prevent miscount, use tsk->sysram_nodes_seq to detect rebind */
- 	do {
- 		cpuset_mems_cookie = read_mems_allowed_begin();
- 		nid = next_node_in(current->il_prev, policy->nodes);
-@@ -2118,7 +2118,7 @@ static unsigned int read_once_policy_nodemask(struct mempolicy *pol,
- 	/*
- 	 * barrier stabilizes the nodemask locally so that it can be iterated
- 	 * over safely without concern for changes. Allocators validate node
--	 * selection does not violate mems_allowed, so this is safe.
-+	 * selection does not violate sysram_nodes, so this is safe.
+ 	atomic_set(&new->refcnt, 1);
+diff --git a/mm/migrate.c b/mm/migrate.c
+index c0e9f15be2a2..c612f05d23db 100644
+--- a/mm/migrate.c
++++ b/mm/migrate.c
+@@ -2526,7 +2526,7 @@ static struct mm_struct *find_mm_struct(pid_t pid, nodemask_t *mem_nodes)
  	 */
- 	barrier();
- 	memcpy(mask, &pol->nodes, sizeof(nodemask_t));
-@@ -2210,7 +2210,7 @@ static nodemask_t *policy_nodemask(gfp_t gfp, struct mempolicy *pol,
- 	case MPOL_BIND:
- 		/* Restrict to nodemask (but not on lower zones) */
- 		if (apply_policy_zone(pol, gfp_zone(gfp)) &&
--		    cpuset_nodemask_valid_mems_allowed(&pol->nodes))
-+		    cpuset_nodemask_valid_sysram_nodes(&pol->nodes))
- 			nodemask = &pol->nodes;
- 		if (pol->home_node != NUMA_NO_NODE)
- 			*nid = pol->home_node;
-@@ -2738,7 +2738,7 @@ int vma_dup_policy(struct vm_area_struct *src, struct vm_area_struct *dst)
- /*
-  * If mpol_dup() sees current->cpuset == cpuset_being_rebound, then it
-  * rebinds the mempolicy its copying by calling mpol_rebind_policy()
-- * with the mems_allowed returned by cpuset_mems_allowed().  This
-+ * with the sysram_nodes returned by cpuset_mems_allowed().  This
-  * keeps mempolicies cpuset relative after its cpuset moves.  See
-  * further kernel/cpuset.c update_nodemask().
-  *
-diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-index 386b4ceeaeb8..9d13580c21ef 100644
---- a/mm/oom_kill.c
-+++ b/mm/oom_kill.c
-@@ -110,7 +110,7 @@ static bool oom_cpuset_eligible(struct task_struct *start,
- 			 * This is not a mempolicy constrained oom, so only
- 			 * check the mems of tsk's cpuset.
- 			 */
--			ret = cpuset_mems_allowed_intersects(current, tsk);
-+			ret = cpuset_sysram_nodes_intersects(current, tsk);
- 		}
- 		if (ret)
- 			break;
-@@ -300,7 +300,7 @@ static enum oom_constraint constrained_alloc(struct oom_control *oc)
- 
- 	if (cpuset_limited) {
- 		oc->totalpages = total_swap_pages;
--		for_each_node_mask(nid, cpuset_current_mems_allowed)
-+		for_each_node_mask(nid, cpuset_current_sysram_nodes)
- 			oc->totalpages += node_present_pages(nid);
- 		return CONSTRAINT_CPUSET;
- 	}
-@@ -451,7 +451,7 @@ static void dump_oom_victim(struct oom_control *oc, struct task_struct *victim)
- 	pr_info("oom-kill:constraint=%s,nodemask=%*pbl",
- 			oom_constraint_text[oc->constraint],
- 			nodemask_pr_args(oc->nodemask));
--	cpuset_print_current_mems_allowed();
-+	cpuset_print_current_sysram_nodes();
- 	mem_cgroup_print_oom_context(oc->memcg, victim);
- 	pr_cont(",task=%s,pid=%d,uid=%d\n", victim->comm, victim->pid,
- 		from_kuid(&init_user_ns, task_uid(victim)));
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 2ea6a50f6079..e1257cb7aea4 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -3964,7 +3964,7 @@ void warn_alloc(gfp_t gfp_mask, const nodemask_t *nodemask, const char *fmt, ...
- 			nodemask_pr_args(nodemask));
- 	va_end(args);
- 
--	cpuset_print_current_mems_allowed();
-+	cpuset_print_current_sysram_nodes();
- 	pr_cont("\n");
- 	dump_stack();
- 	warn_alloc_show_mem(gfp_mask, nodemask);
-@@ -4601,7 +4601,7 @@ static inline bool
- check_retry_cpuset(int cpuset_mems_cookie, struct alloc_context *ac)
- {
- 	/*
--	 * It's possible that cpuset's mems_allowed and the nodemask from
-+	 * It's possible that cpuset's sysram_nodes and the nodemask from
- 	 * mempolicy don't intersect. This should be normally dealt with by
- 	 * policy_nodemask(), but it's possible to race with cpuset update in
- 	 * such a way the check therein was true, and then it became false
-@@ -4612,13 +4612,13 @@ check_retry_cpuset(int cpuset_mems_cookie, struct alloc_context *ac)
- 	 * caller can deal with a violated nodemask.
- 	 */
- 	if (cpusets_enabled() && ac->nodemask &&
--			!cpuset_nodemask_valid_mems_allowed(ac->nodemask)) {
-+			!cpuset_nodemask_valid_sysram_nodes(ac->nodemask)) {
- 		ac->nodemask = mt_sysram_nodemask();
- 		return true;
+ 	if (!pid) {
+ 		mmget(current->mm);
+-		*mem_nodes = cpuset_mems_allowed(current);
++		*mem_nodes = cpuset_sysram_nodes_allowed(current);
+ 		return current->mm;
  	}
  
- 	/*
--	 * When updating a task's mems_allowed or mempolicy nodemask, it is
-+	 * When updating a task's sysram_nodes or mempolicy nodemask, it is
- 	 * possible to race with parallel threads in such a way that our
- 	 * allocation can fail while the mask is being updated. If we are about
- 	 * to fail, check if the cpuset changed during allocation and if so,
-@@ -4702,7 +4702,7 @@ __alloc_pages_slowpath(gfp_t gfp_mask, unsigned int order,
- 	if (cpusets_insane_config() && (gfp_mask & __GFP_HARDWALL)) {
- 		struct zoneref *z = first_zones_zonelist(ac->zonelist,
- 					ac->highest_zoneidx,
--					&cpuset_current_mems_allowed);
-+					&cpuset_current_sysram_nodes);
- 		if (!zonelist_zone(z))
- 			goto nopage;
- 	}
-@@ -4946,7 +4946,7 @@ static inline bool prepare_alloc_pages(gfp_t gfp_mask, unsigned int order,
- 		 * to the current task context. It means that any node ok.
- 		 */
- 		if (in_task() && !ac->nodemask)
--			ac->nodemask = &cpuset_current_mems_allowed;
-+			ac->nodemask = &cpuset_current_sysram_nodes;
- 		else
- 			*alloc_flags |= ALLOC_CPUSET;
- 	} else if (!ac->nodemask) /* sysram_nodes may be NULL during __init */
-@@ -5194,7 +5194,7 @@ struct page *__alloc_frozen_pages_noprof(gfp_t gfp, unsigned int order,
- 
- 	/*
- 	 * Restore the original nodemask if it was potentially replaced with
--	 * &cpuset_current_mems_allowed to optimize the fast-path attempt.
-+	 * &cpuset_current_sysram_nodes to optimize the fast-path attempt.
- 	 *
- 	 * If not set, default to sysram nodes.
- 	 */
-@@ -5819,7 +5819,7 @@ build_all_zonelists_init(void)
- 		per_cpu_pages_init(&per_cpu(boot_pageset, cpu), &per_cpu(boot_zonestats, cpu));
- 
- 	mminit_verify_zonelist();
--	cpuset_init_current_mems_allowed();
-+	cpuset_init_current_sysram_nodes();
- }
- 
- /*
-diff --git a/mm/show_mem.c b/mm/show_mem.c
-index 24685b5c6dcf..ca7b6872c3d8 100644
---- a/mm/show_mem.c
-+++ b/mm/show_mem.c
-@@ -128,7 +128,7 @@ static bool show_mem_node_skip(unsigned int flags, int nid,
- 	 * have to be precise here.
- 	 */
- 	if (!nodemask)
--		nodemask = &cpuset_current_mems_allowed;
-+		nodemask = &cpuset_current_sysram_nodes;
- 
- 	return !node_isset(nid, *nodemask);
- }
+@@ -2547,7 +2547,7 @@ static struct mm_struct *find_mm_struct(pid_t pid, nodemask_t *mem_nodes)
+ 	mm = ERR_PTR(security_task_movememory(task));
+ 	if (IS_ERR(mm))
+ 		goto out;
+-	*mem_nodes = cpuset_mems_allowed(task);
++	*mem_nodes = cpuset_sysram_nodes_allowed(task);
+ 	mm = get_task_mm(task);
+ out:
+ 	put_task_struct(task);
 -- 
 2.51.1
 
