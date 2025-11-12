@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-68098-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68099-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FC53C54378
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Nov 2025 20:44:03 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3753BC544D4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Nov 2025 20:58:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3224A34DF09
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Nov 2025 19:39:07 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EBCB44E77A9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Nov 2025 19:41:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C89134A78C;
-	Wed, 12 Nov 2025 19:36:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D0DC27EFEF;
+	Wed, 12 Nov 2025 19:38:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SXFkZ64S"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fAUcLiyS"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AFFF19F137;
-	Wed, 12 Nov 2025 19:36:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E87B24C076;
+	Wed, 12 Nov 2025 19:38:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762976192; cv=none; b=dEepY1xZ860dPWkk9iWqZodzs8Axn77WkWuMjymfgdWEYiZZaGlOMP6+tTFlZnZjoJAl7Hb83LB0tk+Ewh9Uc58K2uArw6Q8ABaUVkl0cVO7wXIvO3uzD5fp9GV8/KogqbAAjzpPHZE0YKmatCLmO4q52td/Qw5BKGX7VFEc84w=
+	t=1762976329; cv=none; b=OyHHmPlSHM3WpWECLZIw2NKjVP0U8Ef17d2kNn6u0AKdaE3Zk4TIayom43PvyvMnYJMDyoADvEwM+bM0nsIzu5CwmwiTZj/+/Z3lGKuwW1ZEXcuQJw3N0BlUVZx0iWYL3KlCpS//YIP7eM3CvqfYj8nZ21silqM0A3YmT/FksQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762976192; c=relaxed/simple;
-	bh=p9hYXB8ZS+HmnDb4dTYqYkw5CEH2Z5Ksj0/1/HguPyw=;
+	s=arc-20240116; t=1762976329; c=relaxed/simple;
+	bh=5NFeih4wVntwr/+WrfliojXjVDXW1RoyVUNkfnGCeHI=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Z3kuvARgojsJ2l5bDEWudlE5/PHvNJrW0WRqrnzBVeHzHFwawNHikliVg4n/CeQD8RsIF7yaMU729e4CnPx4CNynnEFpkEDZMZlFJtdpNTCfzhA5MYqFtbdmDXYCn/RFTQHMTKSaAXXwQhNup/9p8w2usceTOd5l0OMcP4uS6QQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SXFkZ64S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB12DC4CEF8;
-	Wed, 12 Nov 2025 19:36:28 +0000 (UTC)
+	 Content-Type:MIME-Version; b=QnwAxer4T14BIGWZKGLodQv9WtwmSKWCXvREljKQmYvWppsLpPwJl8j4nDNxqmPfkKOvJF1F8COKEwfqxN+hdxaSY7E6mxQrzSJF/rSWGxSLMN9qDn3HHPzwykm3xXqTNhx9wU2G093UpI2pORdpU402isFON6DgAdkO0O+zDqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fAUcLiyS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7BD8C4CEF1;
+	Wed, 12 Nov 2025 19:38:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762976192;
-	bh=p9hYXB8ZS+HmnDb4dTYqYkw5CEH2Z5Ksj0/1/HguPyw=;
+	s=k20201202; t=1762976326;
+	bh=5NFeih4wVntwr/+WrfliojXjVDXW1RoyVUNkfnGCeHI=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=SXFkZ64SoYG2qFTcvGq/xOnFtJG7gAz2v/4A3U4j0dETnvH67Jj1Wh4G8hPBlN7Re
-	 /AKGM+pmc6ktFBxd9lczLCVVWLXT7NC/3XF3iXGnY6rSze/D1YSjBB53d1LItSyxRy
-	 sPd1T0c2vSjKP1Dk16XHmijAQxaOyEOPU3wr1PTyVT4lTY6t4wCh5WwBGxQpxogQtq
-	 5z61cFt03JFdG+/uqffbAYxtZc8sZOg+fNABhX97YTRYohRVBkoIeBTQ5hNYzK+RJW
-	 TqfEW9d7xODzA05mvybuk+pnQfhCqFEdSatO5HJEphazueIvBlTQV/C0lj5F5OV6oU
-	 DM/u3zH8SlSjQ==
-Message-ID: <78514a914be35c0ae84574c998f982bc73fdd4cf.camel@kernel.org>
-Subject: Re: [PATCH v5 10/14] VFS/ovl/smb: introduce start_renaming_dentry()
+	b=fAUcLiySJpH/ZP0iU2ZSxZMQRXbhjL4TdVQzqamwXlaC0RS6y5oSuRZTJy0e3EpYs
+	 5yJKIY33smsmUBiq82NBdNnPJOjzVCBJuRFCGFNcn1iGAQ2aAGY951b8Gm3XgZGOM3
+	 qxZCmN9f1S/7eeyBhGVv4QR6r5wMEhVen6yQ2JFTVY9n5vRGZHOUBO/LJ3QHA5div1
+	 0aI1XwHDL0+0y8m5oC18SDTbl/sZRW3qY4NeRkzJjN1eqeLms/vn8j8xBbY0vEK9a6
+	 hhnjVRQMvAph7xF6gv6TBJdhQgixkySbzYt5sOUiO+NnfwIsLyPyJqn3jAsX1i5d5f
+	 KDWcdNVfXJNCA==
+Message-ID: <574cd3d283754497da280b0ee3248a84cd95dce4.camel@kernel.org>
+Subject: Re: [PATCH v5 11/14] Add start_renaming_two_dentries()
 From: Jeff Layton <jlayton@kernel.org>
 To: NeilBrown <neil@brown.name>, Alexander Viro <viro@zeniv.linux.org.uk>, 
  Christian Brauner
@@ -67,10 +67,10 @@ Cc: Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, Chris Mason
  linux-unionfs@vger.kernel.org, 	linux-cifs@vger.kernel.org,
  linux-xfs@vger.kernel.org, 	linux-security-module@vger.kernel.org,
  selinux@vger.kernel.org
-Date: Wed, 12 Nov 2025 14:36:27 -0500
-In-Reply-To: <20251106005333.956321-11-neilb@ownmail.net>
+Date: Wed, 12 Nov 2025 14:38:42 -0500
+In-Reply-To: <20251106005333.956321-12-neilb@ownmail.net>
 References: <20251106005333.956321-1-neilb@ownmail.net>
-	 <20251106005333.956321-11-neilb@ownmail.net>
+	 <20251106005333.956321-12-neilb@ownmail.net>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
  n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
@@ -158,592 +158,395 @@ MIME-Version: 1.0
 On Thu, 2025-11-06 at 11:50 +1100, NeilBrown wrote:
 > From: NeilBrown <neil@brown.name>
 >=20
-> Several callers perform a rename on a dentry they already have, and only
-> require lookup for the target name.  This includes smb/server and a few
-> different places in overlayfs.
+> A few callers want to lock for a rename and already have both dentries.
+> Also debugfs does want to perform a lookup but doesn't want permission
+> checking, so start_renaming_dentry() cannot be used.
 >=20
-> start_renaming_dentry() performs the required lookup and takes the
-> required lock using lock_rename_child()
+> This patch introduces start_renaming_two_dentries() which is given both
+> dentries.  debugfs performs one lookup itself.  As it will only continue
+> with a negative dentry and as those cannot be renamed or unlinked, it is
+> safe to do the lookup before getting the rename locks.
 >=20
-> It is used in three places in overlayfs and in ksmbd_vfs_rename().
+> overlayfs uses start_renaming_two_dentries() in three places and  selinux
+> uses it twice in sel_make_policy_nodes().
 >=20
-> In the ksmbd case, the parent of the source is not important - the
-> source must be renamed from wherever it is.  So start_renaming_dentry()
-> allows rd->old_parent to be NULL and only checks it if it is non-NULL.
-> On success rd->old_parent will be the parent of old_dentry with an extra
-> reference taken.  Other start_renaming function also now take the extra
-> reference and end_renaming() now drops this reference as well.
+> In sel_make_policy_nodes() we now lock for rename twice instead of just
+> once so the combined operation is no longer atomic w.r.t the parent
+> directory locks.  As selinux_state.policy_mutex is held across the whole
+> operation this does open up any interesting races.
 >=20
-> ovl_lookup_temp(), ovl_parent_lock(), and ovl_parent_unlock() are
-> all removed as they are no longer needed.
->=20
-> OVL_TEMPNAME_SIZE and ovl_tempname() are now declared in overlayfs.h so
-> that ovl_check_rename_whiteout() can access them.
->=20
-> ovl_copy_up_workdir() now always cleans up on error.
->=20
-> Reviewed-by: Namjae Jeon <linkinjeon@kernel.org> (for ksmbd part)
 > Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 > Signed-off-by: NeilBrown <neil@brown.name>
-> ---
->  fs/namei.c               | 108 ++++++++++++++++++++++++++++++++++++---
->  fs/overlayfs/copy_up.c   |  54 +++++++++-----------
->  fs/overlayfs/dir.c       |  19 +------
->  fs/overlayfs/overlayfs.h |   8 +--
->  fs/overlayfs/super.c     |  22 ++++----
->  fs/overlayfs/util.c      |  11 ----
->  fs/smb/server/vfs.c      |  60 ++++------------------
->  include/linux/namei.h    |   2 +
->  8 files changed, 150 insertions(+), 134 deletions(-)
 >=20
+> ---
+> changes since v3:
+>  added missing assignment to rd.mnt_idmap in ovl_cleanup_and_whiteout
+> ---
+>  fs/debugfs/inode.c           | 48 ++++++++++++--------------
+>  fs/namei.c                   | 65 ++++++++++++++++++++++++++++++++++++
+>  fs/overlayfs/dir.c           | 43 ++++++++++++++++--------
+>  include/linux/namei.h        |  2 ++
+>  security/selinux/selinuxfs.c | 27 ++++++++++-----
+>  5 files changed, 136 insertions(+), 49 deletions(-)
+>=20
+> diff --git a/fs/debugfs/inode.c b/fs/debugfs/inode.c
+> index f241b9df642a..532bd7c46baf 100644
+> --- a/fs/debugfs/inode.c
+> +++ b/fs/debugfs/inode.c
+> @@ -842,7 +842,8 @@ int __printf(2, 3) debugfs_change_name(struct dentry =
+*dentry, const char *fmt, .
+>  	int error =3D 0;
+>  	const char *new_name;
+>  	struct name_snapshot old_name;
+> -	struct dentry *parent, *target;
+> +	struct dentry *target;
+> +	struct renamedata rd =3D {};
+>  	struct inode *dir;
+>  	va_list ap;
+> =20
+> @@ -855,36 +856,31 @@ int __printf(2, 3) debugfs_change_name(struct dentr=
+y *dentry, const char *fmt, .
+>  	if (!new_name)
+>  		return -ENOMEM;
+> =20
+> -	parent =3D dget_parent(dentry);
+> -	dir =3D d_inode(parent);
+> -	inode_lock(dir);
+> +	rd.old_parent =3D dget_parent(dentry);
+> +	rd.new_parent =3D rd.old_parent;
+> +	rd.flags =3D RENAME_NOREPLACE;
+> +	target =3D lookup_noperm_unlocked(&QSTR(new_name), rd.new_parent);
+> +	if (IS_ERR(target))
+> +		return PTR_ERR(target);
+> =20
+> -	take_dentry_name_snapshot(&old_name, dentry);
+> -
+> -	if (WARN_ON_ONCE(dentry->d_parent !=3D parent)) {
+> -		error =3D -EINVAL;
+> -		goto out;
+> -	}
+> -	if (strcmp(old_name.name.name, new_name) =3D=3D 0)
+> -		goto out;
+> -	target =3D lookup_noperm(&QSTR(new_name), parent);
+> -	if (IS_ERR(target)) {
+> -		error =3D PTR_ERR(target);
+> -		goto out;
+> -	}
+> -	if (d_really_is_positive(target)) {
+> -		dput(target);
+> -		error =3D -EINVAL;
+> +	error =3D start_renaming_two_dentries(&rd, dentry, target);
+> +	if (error) {
+> +		if (error =3D=3D -EEXIST && target =3D=3D dentry)
+> +			/* it isn't an error to rename a thing to itself */
+> +			error =3D 0;
+>  		goto out;
+>  	}
+> -	simple_rename_timestamp(dir, dentry, dir, target);
+> -	d_move(dentry, target);
+> -	dput(target);
+> +
+> +	dir =3D d_inode(rd.old_parent);
+> +	take_dentry_name_snapshot(&old_name, dentry);
+> +	simple_rename_timestamp(dir, dentry, dir, rd.new_dentry);
+> +	d_move(dentry, rd.new_dentry);
+>  	fsnotify_move(dir, dir, &old_name.name, d_is_dir(dentry), NULL, dentry)=
+;
+> -out:
+>  	release_dentry_name_snapshot(&old_name);
+> -	inode_unlock(dir);
+> -	dput(parent);
+> +	end_renaming(&rd);
+> +out:
+> +	dput(rd.old_parent);
+> +	dput(target);
+>  	kfree_const(new_name);
+>  	return error;
+>  }
 > diff --git a/fs/namei.c b/fs/namei.c
-> index bad6c9d540f9..4b740048df97 100644
+> index 4b740048df97..7f0384ceb976 100644
 > --- a/fs/namei.c
 > +++ b/fs/namei.c
-> @@ -3669,7 +3669,7 @@ EXPORT_SYMBOL(unlock_rename);
-> =20
->  /**
->   * __start_renaming - lookup and lock names for rename
-> - * @rd:           rename data containing parent and flags, and
-> + * @rd:           rename data containing parents and flags, and
->   *                for receiving found dentries
->   * @lookup_flags: extra flags to pass to ->lookup (e.g. LOOKUP_REVAL,
->   *                LOOKUP_NO_SYMLINKS etc).
-> @@ -3680,8 +3680,8 @@ EXPORT_SYMBOL(unlock_rename);
->   * rename.
->   *
->   * On success the found dentries are stored in @rd.old_dentry,
-> - * @rd.new_dentry.  These references and the lock are dropped by
-> - * end_renaming().
-> + * @rd.new_dentry and an extra ref is taken on @rd.old_parent.
-> + * These references and the lock are dropped by end_renaming().
->   *
->   * The passed in qstrs must have the hash calculated, and no permission
->   * checking is performed.
-> @@ -3735,6 +3735,7 @@ __start_renaming(struct renamedata *rd, int lookup_=
-flags,
-> =20
->  	rd->old_dentry =3D d1;
->  	rd->new_dentry =3D d2;
-> +	dget(rd->old_parent);
->  	return 0;
-> =20
->  out_dput_d2:
-> @@ -3748,7 +3749,7 @@ __start_renaming(struct renamedata *rd, int lookup_=
-flags,
-> =20
->  /**
->   * start_renaming - lookup and lock names for rename with permission che=
-cking
-> - * @rd:           rename data containing parent and flags, and
-> + * @rd:           rename data containing parents and flags, and
->   *                for receiving found dentries
->   * @lookup_flags: extra flags to pass to ->lookup (e.g. LOOKUP_REVAL,
->   *                LOOKUP_NO_SYMLINKS etc).
-> @@ -3759,8 +3760,8 @@ __start_renaming(struct renamedata *rd, int lookup_=
-flags,
->   * rename.
->   *
->   * On success the found dentries are stored in @rd.old_dentry,
-> - * @rd.new_dentry.  These references and the lock are dropped by
-> - * end_renaming().
-> + * @rd.new_dentry.  Also the refcount on @rd->old_parent is increased.
-> + * These references and the lock are dropped by end_renaming().
->   *
->   * The passed in qstrs need not have the hash calculated, and basic
->   * eXecute permission checking is performed against @rd.mnt_idmap.
-> @@ -3782,11 +3783,106 @@ int start_renaming(struct renamedata *rd, int lo=
-okup_flags,
+> @@ -3877,6 +3877,71 @@ int start_renaming_dentry(struct renamedata *rd, i=
+nt lookup_flags,
 >  }
->  EXPORT_SYMBOL(start_renaming);
+>  EXPORT_SYMBOL(start_renaming_dentry);
 > =20
-> +static int
-> +__start_renaming_dentry(struct renamedata *rd, int lookup_flags,
-> +			struct dentry *old_dentry, struct qstr *new_last)
+> +/**
+> + * start_renaming_two_dentries - Lock to dentries in given parents for r=
+ename
+> + * @rd:           rename data containing parent
+> + * @old_dentry:   dentry of name to move
+> + * @new_dentry:   dentry to move to
+> + *
+> + * Ensure locks are in place for rename and check parentage is still cor=
+rect.
+> + *
+> + * On success the two dentries are stored in @rd.old_dentry and
+> + * @rd.new_dentry and @rd.old_parent and @rd.new_parent are confirmed to
+> + * be the parents of the dentries.
+> + *
+> + * References and the lock can be dropped with end_renaming()
+> + *
+> + * Returns: zero or an error.
+> + */
+> +int
+> +start_renaming_two_dentries(struct renamedata *rd,
+> +			    struct dentry *old_dentry, struct dentry *new_dentry)
 > +{
 > +	struct dentry *trap;
-> +	struct dentry *d2;
-> +	int target_flags =3D LOOKUP_RENAME_TARGET | LOOKUP_CREATE;
 > +	int err;
-> +
-> +	if (rd->flags & RENAME_EXCHANGE)
-> +		target_flags =3D 0;
-> +	if (rd->flags & RENAME_NOREPLACE)
-> +		target_flags |=3D LOOKUP_EXCL;
 > +
 > +	/* Already have the dentry - need to be sure to lock the correct parent=
  */
 > +	trap =3D lock_rename_child(old_dentry, rd->new_parent);
 > +	if (IS_ERR(trap))
 > +		return PTR_ERR(trap);
+> +	err =3D -EINVAL;
 > +	if (d_unhashed(old_dentry) ||
-> +	    (rd->old_parent && rd->old_parent !=3D old_dentry->d_parent)) {
-> +		/* dentry was removed, or moved and explicit parent requested */
-> +		err =3D -EINVAL;
+> +	    (rd->old_parent && rd->old_parent !=3D old_dentry->d_parent))
+> +		/* old_dentry was removed, or moved and explicit parent requested */
 > +		goto out_unlock;
-> +	}
-> +
-> +	d2 =3D lookup_one_qstr_excl(new_last, rd->new_parent,
-> +				  lookup_flags | target_flags);
-> +	err =3D PTR_ERR(d2);
-> +	if (IS_ERR(d2))
+> +	if (d_unhashed(new_dentry) ||
+> +	    rd->new_parent !=3D new_dentry->d_parent)
+> +		/* new_dentry was removed or moved */
 > +		goto out_unlock;
 > +
-> +	if (old_dentry =3D=3D trap) {
+> +	if (old_dentry =3D=3D trap)
 > +		/* source is an ancestor of target */
-> +		err =3D -EINVAL;
-> +		goto out_dput_d2;
-> +	}
+> +		goto out_unlock;
 > +
-> +	if (d2 =3D=3D trap) {
+> +	if (new_dentry =3D=3D trap) {
 > +		/* target is an ancestor of source */
 > +		if (rd->flags & RENAME_EXCHANGE)
 > +			err =3D -EINVAL;
 > +		else
 > +			err =3D -ENOTEMPTY;
-> +		goto out_dput_d2;
+> +		goto out_unlock;
 > +	}
 > +
+> +	err =3D -EEXIST;
+> +	if (d_is_positive(new_dentry) && (rd->flags & RENAME_NOREPLACE))
+> +		goto out_unlock;
+> +
 > +	rd->old_dentry =3D dget(old_dentry);
-> +	rd->new_dentry =3D d2;
+> +	rd->new_dentry =3D dget(new_dentry);
 > +	rd->old_parent =3D dget(old_dentry->d_parent);
 > +	return 0;
 > +
-> +out_dput_d2:
-> +	dput(d2);
 > +out_unlock:
 > +	unlock_rename(old_dentry->d_parent, rd->new_parent);
 > +	return err;
 > +}
-> +
-> +/**
-> + * start_renaming_dentry - lookup and lock name for rename with permissi=
-on checking
-> + * @rd:           rename data containing parents and flags, and
-> + *                for receiving found dentries
-> + * @lookup_flags: extra flags to pass to ->lookup (e.g. LOOKUP_REVAL,
-> + *                LOOKUP_NO_SYMLINKS etc).
-> + * @old_dentry:   dentry of name to move
-> + * @new_last:     name of target in @rd.new_parent
-> + *
-> + * Look up target name and ensure locks are in place for
-> + * rename.
-> + *
-> + * On success the found dentry is stored in @rd.new_dentry and
-> + * @rd.old_parent is confirmed to be the parent of @old_dentry.  If it
-> + * was originally %NULL, it is set.  In either case a reference is taken
-> + * so that end_renaming() can have a stable reference to unlock.
-> + *
-> + * References and the lock can be dropped with end_renaming()
-> + *
-> + * The passed in qstr need not have the hash calculated, and basic
-> + * eXecute permission checking is performed against @rd.mnt_idmap.
-> + *
-> + * Returns: zero or an error.
-> + */
-> +int start_renaming_dentry(struct renamedata *rd, int lookup_flags,
-> +			  struct dentry *old_dentry, struct qstr *new_last)
-> +{
-> +	int err;
-> +
-> +	err =3D lookup_one_common(rd->mnt_idmap, new_last, rd->new_parent);
-> +	if (err)
-> +		return err;
-> +	return __start_renaming_dentry(rd, lookup_flags, old_dentry, new_last);
-> +}
-> +EXPORT_SYMBOL(start_renaming_dentry);
+> +EXPORT_SYMBOL(start_renaming_two_dentries);
 > +
 >  void end_renaming(struct renamedata *rd)
 >  {
 >  	unlock_rename(rd->old_parent, rd->new_parent);
->  	dput(rd->old_dentry);
->  	dput(rd->new_dentry);
-> +	dput(rd->old_parent);
->  }
->  EXPORT_SYMBOL(end_renaming);
-> =20
-> diff --git a/fs/overlayfs/copy_up.c b/fs/overlayfs/copy_up.c
-> index e2bdac4317e7..9911a346b477 100644
-> --- a/fs/overlayfs/copy_up.c
-> +++ b/fs/overlayfs/copy_up.c
-> @@ -523,8 +523,8 @@ static int ovl_create_index(struct dentry *dentry, co=
-nst struct ovl_fh *fh,
->  {
->  	struct ovl_fs *ofs =3D OVL_FS(dentry->d_sb);
->  	struct dentry *indexdir =3D ovl_indexdir(dentry->d_sb);
-> -	struct dentry *index =3D NULL;
->  	struct dentry *temp =3D NULL;
-> +	struct renamedata rd =3D {};
->  	struct qstr name =3D { };
->  	int err;
-> =20
-> @@ -556,17 +556,15 @@ static int ovl_create_index(struct dentry *dentry, =
-const struct ovl_fh *fh,
->  	if (err)
->  		goto out;
-> =20
-> -	err =3D ovl_parent_lock(indexdir, temp);
-> +	rd.mnt_idmap =3D ovl_upper_mnt_idmap(ofs);
-> +	rd.old_parent =3D indexdir;
-> +	rd.new_parent =3D indexdir;
-> +	err =3D start_renaming_dentry(&rd, 0, temp, &name);
->  	if (err)
->  		goto out;
-> -	index =3D ovl_lookup_upper(ofs, name.name, indexdir, name.len);
-> -	if (IS_ERR(index)) {
-> -		err =3D PTR_ERR(index);
-> -	} else {
-> -		err =3D ovl_do_rename(ofs, indexdir, temp, indexdir, index, 0);
-> -		dput(index);
-> -	}
-> -	ovl_parent_unlock(indexdir);
-> +
-> +	err =3D ovl_do_rename_rd(&rd);
-> +	end_renaming(&rd);
->  out:
->  	if (err)
->  		ovl_cleanup(ofs, indexdir, temp);
-> @@ -763,7 +761,8 @@ static int ovl_copy_up_workdir(struct ovl_copy_up_ctx=
- *c)
->  	struct ovl_fs *ofs =3D OVL_FS(c->dentry->d_sb);
->  	struct inode *inode;
->  	struct path path =3D { .mnt =3D ovl_upper_mnt(ofs) };
-> -	struct dentry *temp, *upper, *trap;
-> +	struct renamedata rd =3D {};
-> +	struct dentry *temp;
->  	struct ovl_cu_creds cc;
->  	int err;
->  	struct ovl_cattr cattr =3D {
-> @@ -807,29 +806,24 @@ static int ovl_copy_up_workdir(struct ovl_copy_up_c=
-tx *c)
->  	 * ovl_copy_up_data(), so lock workdir and destdir and make sure that
->  	 * temp wasn't moved before copy up completion or cleanup.
->  	 */
-> -	trap =3D lock_rename(c->workdir, c->destdir);
-> -	if (trap || temp->d_parent !=3D c->workdir) {
-> -		/* temp or workdir moved underneath us? abort without cleanup */
-> -		dput(temp);
-> +	rd.mnt_idmap =3D ovl_upper_mnt_idmap(ofs);
-> +	rd.old_parent =3D c->workdir;
-> +	rd.new_parent =3D c->destdir;
-> +	rd.flags =3D 0;
-> +	err =3D start_renaming_dentry(&rd, 0, temp,
-> +				    &QSTR_LEN(c->destname.name, c->destname.len));
-> +	if (err) {
-> +		/* temp or workdir moved underneath us? map to -EIO */
->  		err =3D -EIO;
-> -		if (!IS_ERR(trap))
-> -			unlock_rename(c->workdir, c->destdir);
-> -		goto out;
->  	}
-> -
-> -	err =3D ovl_copy_up_metadata(c, temp);
->  	if (err)
-> -		goto cleanup;
-> +		goto cleanup_unlocked;
-> =20
-> -	upper =3D ovl_lookup_upper(ofs, c->destname.name, c->destdir,
-> -				 c->destname.len);
-> -	err =3D PTR_ERR(upper);
-> -	if (IS_ERR(upper))
-> -		goto cleanup;
-> +	err =3D ovl_copy_up_metadata(c, temp);
-> +	if (!err)
-> +		err =3D ovl_do_rename_rd(&rd);
-> +	end_renaming(&rd);
-> =20
-> -	err =3D ovl_do_rename(ofs, c->workdir, temp, c->destdir, upper, 0);
-> -	unlock_rename(c->workdir, c->destdir);
-> -	dput(upper);
->  	if (err)
->  		goto cleanup_unlocked;
-> =20
-> @@ -850,8 +844,6 @@ static int ovl_copy_up_workdir(struct ovl_copy_up_ctx=
- *c)
-> =20
->  	return err;
-> =20
-> -cleanup:
-> -	unlock_rename(c->workdir, c->destdir);
->  cleanup_unlocked:
->  	ovl_cleanup(ofs, c->workdir, temp);
->  	dput(temp);
 > diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
-> index cf6fc48459f3..6b2f88edb497 100644
+> index 6b2f88edb497..61e9484e4ab8 100644
 > --- a/fs/overlayfs/dir.c
 > +++ b/fs/overlayfs/dir.c
-> @@ -57,8 +57,7 @@ int ovl_cleanup(struct ovl_fs *ofs, struct dentry *work=
-dir,
->  	return 0;
->  }
-> =20
-> -#define OVL_TEMPNAME_SIZE 20
-> -static void ovl_tempname(char name[OVL_TEMPNAME_SIZE])
-> +void ovl_tempname(char name[OVL_TEMPNAME_SIZE])
+> @@ -123,6 +123,7 @@ int ovl_cleanup_and_whiteout(struct ovl_fs *ofs, stru=
+ct dentry *dir,
+>  			     struct dentry *dentry)
 >  {
->  	static atomic_t temp_id =3D ATOMIC_INIT(0);
-> =20
-> @@ -66,22 +65,6 @@ static void ovl_tempname(char name[OVL_TEMPNAME_SIZE])
->  	snprintf(name, OVL_TEMPNAME_SIZE, "#%x", atomic_inc_return(&temp_id));
->  }
-> =20
-> -struct dentry *ovl_lookup_temp(struct ovl_fs *ofs, struct dentry *workdi=
-r)
-> -{
-> -	struct dentry *temp;
-> -	char name[OVL_TEMPNAME_SIZE];
-> -
-> -	ovl_tempname(name);
-> -	temp =3D ovl_lookup_upper(ofs, name, workdir, strlen(name));
-> -	if (!IS_ERR(temp) && temp->d_inode) {
-> -		pr_err("workdir/%s already exists\n", name);
-> -		dput(temp);
-> -		temp =3D ERR_PTR(-EIO);
-> -	}
-> -
-> -	return temp;
-> -}
-> -
->  static struct dentry *ovl_start_creating_temp(struct ovl_fs *ofs,
->  					      struct dentry *workdir)
->  {
-> diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
-> index 3cc85a893b5c..746bc4ad7b37 100644
-> --- a/fs/overlayfs/overlayfs.h
-> +++ b/fs/overlayfs/overlayfs.h
-> @@ -447,11 +447,6 @@ static inline bool ovl_open_flags_need_copy_up(int f=
-lags)
->  }
-> =20
->  /* util.c */
-> -int ovl_parent_lock(struct dentry *parent, struct dentry *child);
-> -static inline void ovl_parent_unlock(struct dentry *parent)
-> -{
-> -	inode_unlock(parent->d_inode);
-> -}
->  int ovl_get_write_access(struct dentry *dentry);
->  void ovl_put_write_access(struct dentry *dentry);
->  void ovl_start_write(struct dentry *dentry);
-> @@ -888,7 +883,8 @@ struct dentry *ovl_create_real(struct ovl_fs *ofs,
->  			       struct dentry *parent, struct dentry *newdentry,
->  			       struct ovl_cattr *attr);
->  int ovl_cleanup(struct ovl_fs *ofs, struct dentry *workdir, struct dentr=
-y *dentry);
-> -struct dentry *ovl_lookup_temp(struct ovl_fs *ofs, struct dentry *workdi=
-r);
-> +#define OVL_TEMPNAME_SIZE 20
-> +void ovl_tempname(char name[OVL_TEMPNAME_SIZE]);
->  struct dentry *ovl_create_temp(struct ovl_fs *ofs, struct dentry *workdi=
-r,
->  			       struct ovl_cattr *attr);
-> =20
-> diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-> index 6e0816c1147a..a721ef2b90e8 100644
-> --- a/fs/overlayfs/super.c
-> +++ b/fs/overlayfs/super.c
-> @@ -566,9 +566,10 @@ static int ovl_check_rename_whiteout(struct ovl_fs *=
-ofs)
->  {
->  	struct dentry *workdir =3D ofs->workdir;
->  	struct dentry *temp;
-> -	struct dentry *dest;
 >  	struct dentry *whiteout;
->  	struct name_snapshot name;
 > +	struct renamedata rd =3D {};
-> +	char name2[OVL_TEMPNAME_SIZE];
 >  	int err;
+>  	int flags =3D 0;
 > =20
->  	temp =3D ovl_create_temp(ofs, workdir, OVL_CATTR(S_IFREG | 0));
-> @@ -576,23 +577,21 @@ static int ovl_check_rename_whiteout(struct ovl_fs =
-*ofs)
->  	if (IS_ERR(temp))
->  		return err;
+> @@ -134,10 +135,14 @@ int ovl_cleanup_and_whiteout(struct ovl_fs *ofs, st=
+ruct dentry *dir,
+>  	if (d_is_dir(dentry))
+>  		flags =3D RENAME_EXCHANGE;
 > =20
-> -	err =3D ovl_parent_lock(workdir, temp);
+> -	err =3D ovl_lock_rename_workdir(ofs->workdir, whiteout, dir, dentry);
+> +	rd.mnt_idmap =3D ovl_upper_mnt_idmap(ofs);
+> +	rd.old_parent =3D ofs->workdir;
+> +	rd.new_parent =3D dir;
+> +	rd.flags =3D flags;
+> +	err =3D start_renaming_two_dentries(&rd, whiteout, dentry);
+>  	if (!err) {
+> -		err =3D ovl_do_rename(ofs, ofs->workdir, whiteout, dir, dentry, flags)=
+;
+> -		unlock_rename(ofs->workdir, dir);
+> +		err =3D ovl_do_rename_rd(&rd);
+> +		end_renaming(&rd);
+>  	}
+>  	if (err)
+>  		goto kill_whiteout;
+> @@ -388,6 +393,7 @@ static struct dentry *ovl_clear_empty(struct dentry *=
+dentry,
+>  	struct ovl_fs *ofs =3D OVL_FS(dentry->d_sb);
+>  	struct dentry *workdir =3D ovl_workdir(dentry);
+>  	struct dentry *upperdir =3D ovl_dentry_upper(dentry->d_parent);
+> +	struct renamedata rd =3D {};
+>  	struct path upperpath;
+>  	struct dentry *upper;
+>  	struct dentry *opaquedir;
+> @@ -413,7 +419,11 @@ static struct dentry *ovl_clear_empty(struct dentry =
+*dentry,
+>  	if (IS_ERR(opaquedir))
+>  		goto out;
+> =20
+> -	err =3D ovl_lock_rename_workdir(workdir, opaquedir, upperdir, upper);
 > +	rd.mnt_idmap =3D ovl_upper_mnt_idmap(ofs);
 > +	rd.old_parent =3D workdir;
-> +	rd.new_parent =3D workdir;
-> +	rd.flags =3D RENAME_WHITEOUT;
-> +	ovl_tempname(name2);
-> +	err =3D start_renaming_dentry(&rd, 0, temp, &QSTR(name2));
->  	if (err) {
->  		dput(temp);
->  		return err;
->  	}
-> -	dest =3D ovl_lookup_temp(ofs, workdir);
-> -	err =3D PTR_ERR(dest);
-> -	if (IS_ERR(dest)) {
-> -		dput(temp);
-> -		ovl_parent_unlock(workdir);
-> -		return err;
-> -	}
+> +	rd.new_parent =3D upperdir;
+> +	rd.flags =3D RENAME_EXCHANGE;
+> +	err =3D start_renaming_two_dentries(&rd, opaquedir, upper);
+>  	if (err)
+>  		goto out_cleanup_unlocked;
 > =20
->  	/* Name is inline and stable - using snapshot as a copy helper */
->  	take_dentry_name_snapshot(&name, temp);
-> -	err =3D ovl_do_rename(ofs, workdir, temp, workdir, dest, RENAME_WHITEOU=
-T);
-> -	ovl_parent_unlock(workdir);
+> @@ -431,8 +441,8 @@ static struct dentry *ovl_clear_empty(struct dentry *=
+dentry,
+>  	if (err)
+>  		goto out_cleanup;
+> =20
+> -	err =3D ovl_do_rename(ofs, workdir, opaquedir, upperdir, upper, RENAME_=
+EXCHANGE);
+> -	unlock_rename(workdir, upperdir);
 > +	err =3D ovl_do_rename_rd(&rd);
 > +	end_renaming(&rd);
->  	if (err) {
->  		if (err =3D=3D -EINVAL)
->  			err =3D 0;
-> @@ -616,7 +615,6 @@ static int ovl_check_rename_whiteout(struct ovl_fs *o=
-fs)
->  	ovl_cleanup(ofs, workdir, temp);
->  	release_dentry_name_snapshot(&name);
->  	dput(temp);
-> -	dput(dest);
-> =20
->  	return err;
->  }
-> diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
-> index 2da1c035f716..fffc22859211 100644
-> --- a/fs/overlayfs/util.c
-> +++ b/fs/overlayfs/util.c
-> @@ -1548,14 +1548,3 @@ void ovl_copyattr(struct inode *inode)
->  	i_size_write(inode, i_size_read(realinode));
->  	spin_unlock(&inode->i_lock);
->  }
-> -
-> -int ovl_parent_lock(struct dentry *parent, struct dentry *child)
-> -{
-> -	inode_lock_nested(parent->d_inode, I_MUTEX_PARENT);
-> -	if (!child ||
-> -	    (!d_unhashed(child) && child->d_parent =3D=3D parent))
-> -		return 0;
-> -
-> -	inode_unlock(parent->d_inode);
-> -	return -EINVAL;
-> -}
-> diff --git a/fs/smb/server/vfs.c b/fs/smb/server/vfs.c
-> index 7c4ddc43ab39..f54b5b0aaba2 100644
-> --- a/fs/smb/server/vfs.c
-> +++ b/fs/smb/server/vfs.c
-> @@ -663,7 +663,6 @@ int ksmbd_vfs_link(struct ksmbd_work *work, const cha=
-r *oldname,
->  int ksmbd_vfs_rename(struct ksmbd_work *work, const struct path *old_pat=
-h,
->  		     char *newname, int flags)
->  {
-> -	struct dentry *old_parent, *new_dentry, *trap;
->  	struct dentry *old_child =3D old_path->dentry;
->  	struct path new_path;
->  	struct qstr new_last;
-> @@ -673,7 +672,6 @@ int ksmbd_vfs_rename(struct ksmbd_work *work, const s=
-truct path *old_path,
->  	struct ksmbd_file *parent_fp;
->  	int new_type;
->  	int err, lookup_flags =3D LOOKUP_NO_SYMLINKS;
-> -	int target_lookup_flags =3D LOOKUP_RENAME_TARGET | LOOKUP_CREATE;
-> =20
->  	if (ksmbd_override_fsids(work))
->  		return -ENOMEM;
-> @@ -684,14 +682,6 @@ int ksmbd_vfs_rename(struct ksmbd_work *work, const =
-struct path *old_path,
->  		goto revert_fsids;
->  	}
-> =20
-> -	/*
-> -	 * explicitly handle file overwrite case, for compatibility with
-> -	 * filesystems that may not support rename flags (e.g: fuse)
-> -	 */
-> -	if (flags & RENAME_NOREPLACE)
-> -		target_lookup_flags |=3D LOOKUP_EXCL;
-> -	flags &=3D ~(RENAME_NOREPLACE);
-> -
->  retry:
->  	err =3D vfs_path_parent_lookup(to, lookup_flags | LOOKUP_BENEATH,
->  				     &new_path, &new_last, &new_type,
-> @@ -708,17 +698,14 @@ int ksmbd_vfs_rename(struct ksmbd_work *work, const=
- struct path *old_path,
 >  	if (err)
->  		goto out2;
+>  		goto out_cleanup_unlocked;
 > =20
-> -	trap =3D lock_rename_child(old_child, new_path.dentry);
-> -	if (IS_ERR(trap)) {
-> -		err =3D PTR_ERR(trap);
-> +	rd.mnt_idmap		=3D mnt_idmap(old_path->mnt);
-> +	rd.old_parent		=3D NULL;
-> +	rd.new_parent		=3D new_path.dentry;
-> +	rd.flags		=3D flags;
-> +	rd.delegated_inode	=3D NULL,
-> +	err =3D start_renaming_dentry(&rd, lookup_flags, old_child, &new_last);
-> +	if (err)
->  		goto out_drop_write;
-> -	}
-> -
-> -	old_parent =3D dget(old_child->d_parent);
-> -	if (d_unhashed(old_child)) {
-> -		err =3D -EINVAL;
-> -		goto out3;
-> -	}
+> @@ -445,7 +455,7 @@ static struct dentry *ovl_clear_empty(struct dentry *=
+dentry,
+>  	return opaquedir;
 > =20
->  	parent_fp =3D ksmbd_lookup_fd_inode(old_child->d_parent);
->  	if (parent_fp) {
-> @@ -731,44 +718,17 @@ int ksmbd_vfs_rename(struct ksmbd_work *work, const=
- struct path *old_path,
->  		ksmbd_fd_put(work, parent_fp);
->  	}
-> =20
-> -	new_dentry =3D lookup_one_qstr_excl(&new_last, new_path.dentry,
-> -					  lookup_flags | target_lookup_flags);
-> -	if (IS_ERR(new_dentry)) {
-> -		err =3D PTR_ERR(new_dentry);
-> -		goto out3;
-> -	}
-> -
-> -	if (d_is_symlink(new_dentry)) {
-> +	if (d_is_symlink(rd.new_dentry)) {
->  		err =3D -EACCES;
-> -		goto out4;
-> -	}
-> -
-> -	if (old_child =3D=3D trap) {
-> -		err =3D -EINVAL;
-> -		goto out4;
-> -	}
-> -
-> -	if (new_dentry =3D=3D trap) {
-> -		err =3D -ENOTEMPTY;
-> -		goto out4;
-> +		goto out3;
->  	}
-> =20
-> -	rd.mnt_idmap		=3D mnt_idmap(old_path->mnt),
-> -	rd.old_parent		=3D old_parent,
-> -	rd.old_dentry		=3D old_child,
-> -	rd.new_parent		=3D new_path.dentry,
-> -	rd.new_dentry		=3D new_dentry,
-> -	rd.flags		=3D flags,
-> -	rd.delegated_inode	=3D NULL,
->  	err =3D vfs_rename(&rd);
->  	if (err)
->  		ksmbd_debug(VFS, "vfs_rename failed err %d\n", err);
-> =20
-> -out4:
-> -	dput(new_dentry);
->  out3:
-> -	dput(old_parent);
-> -	unlock_rename(old_parent, new_path.dentry);
+>  out_cleanup:
+> -	unlock_rename(workdir, upperdir);
 > +	end_renaming(&rd);
->  out_drop_write:
->  	mnt_drop_write(old_path->mnt);
->  out2:
+>  out_cleanup_unlocked:
+>  	ovl_cleanup(ofs, workdir, opaquedir);
+>  	dput(opaquedir);
+> @@ -468,6 +478,7 @@ static int ovl_create_over_whiteout(struct dentry *de=
+ntry, struct inode *inode,
+>  	struct ovl_fs *ofs =3D OVL_FS(dentry->d_sb);
+>  	struct dentry *workdir =3D ovl_workdir(dentry);
+>  	struct dentry *upperdir =3D ovl_dentry_upper(dentry->d_parent);
+> +	struct renamedata rd =3D {};
+>  	struct dentry *upper;
+>  	struct dentry *newdentry;
+>  	int err;
+> @@ -499,7 +510,11 @@ static int ovl_create_over_whiteout(struct dentry *d=
+entry, struct inode *inode,
+>  	if (IS_ERR(newdentry))
+>  		goto out_dput;
+> =20
+> -	err =3D ovl_lock_rename_workdir(workdir, newdentry, upperdir, upper);
+> +	rd.mnt_idmap =3D ovl_upper_mnt_idmap(ofs);
+> +	rd.old_parent =3D workdir;
+> +	rd.new_parent =3D upperdir;
+> +	rd.flags =3D 0;
+> +	err =3D start_renaming_two_dentries(&rd, newdentry, upper);
+>  	if (err)
+>  		goto out_cleanup_unlocked;
+> =20
+> @@ -536,16 +551,16 @@ static int ovl_create_over_whiteout(struct dentry *=
+dentry, struct inode *inode,
+>  		if (err)
+>  			goto out_cleanup;
+> =20
+> -		err =3D ovl_do_rename(ofs, workdir, newdentry, upperdir, upper,
+> -				    RENAME_EXCHANGE);
+> -		unlock_rename(workdir, upperdir);
+> +		rd.flags =3D RENAME_EXCHANGE;
+> +		err =3D ovl_do_rename_rd(&rd);
+> +		end_renaming(&rd);
+>  		if (err)
+>  			goto out_cleanup_unlocked;
+> =20
+>  		ovl_cleanup(ofs, workdir, upper);
+>  	} else {
+> -		err =3D ovl_do_rename(ofs, workdir, newdentry, upperdir, upper, 0);
+> -		unlock_rename(workdir, upperdir);
+> +		err =3D ovl_do_rename_rd(&rd);
+> +		end_renaming(&rd);
+>  		if (err)
+>  			goto out_cleanup_unlocked;
+>  	}
+> @@ -565,7 +580,7 @@ static int ovl_create_over_whiteout(struct dentry *de=
+ntry, struct inode *inode,
+>  	return err;
+> =20
+>  out_cleanup:
+> -	unlock_rename(workdir, upperdir);
+> +	end_renaming(&rd);
+>  out_cleanup_unlocked:
+>  	ovl_cleanup(ofs, workdir, newdentry);
+>  	dput(newdentry);
 > diff --git a/include/linux/namei.h b/include/linux/namei.h
-> index 7fdd9fdcbd2b..c47713e9867c 100644
+> index c47713e9867c..9104c7104191 100644
 > --- a/include/linux/namei.h
 > +++ b/include/linux/namei.h
-> @@ -159,6 +159,8 @@ extern struct dentry *lock_rename_child(struct dentry=
- *, struct dentry *);
->  extern void unlock_rename(struct dentry *, struct dentry *);
->  int start_renaming(struct renamedata *rd, int lookup_flags,
+> @@ -161,6 +161,8 @@ int start_renaming(struct renamedata *rd, int lookup_=
+flags,
 >  		   struct qstr *old_last, struct qstr *new_last);
-> +int start_renaming_dentry(struct renamedata *rd, int lookup_flags,
-> +			  struct dentry *old_dentry, struct qstr *new_last);
+>  int start_renaming_dentry(struct renamedata *rd, int lookup_flags,
+>  			  struct dentry *old_dentry, struct qstr *new_last);
+> +int start_renaming_two_dentries(struct renamedata *rd,
+> +				struct dentry *old_dentry, struct dentry *new_dentry);
 >  void end_renaming(struct renamedata *rd);
 > =20
 >  /**
+> diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
+> index 232e087bce3e..a224ef9bb831 100644
+> --- a/security/selinux/selinuxfs.c
+> +++ b/security/selinux/selinuxfs.c
+> @@ -506,6 +506,7 @@ static int sel_make_policy_nodes(struct selinux_fs_in=
+fo *fsi,
+>  {
+>  	int ret =3D 0;
+>  	struct dentry *tmp_parent, *tmp_bool_dir, *tmp_class_dir;
+> +	struct renamedata rd =3D {};
+>  	unsigned int bool_num =3D 0;
+>  	char **bool_names =3D NULL;
+>  	int *bool_values =3D NULL;
+> @@ -539,22 +540,30 @@ static int sel_make_policy_nodes(struct selinux_fs_=
+info *fsi,
+>  	if (ret)
+>  		goto out;
+> =20
+> -	lock_rename(tmp_parent, fsi->sb->s_root);
+> +	rd.old_parent =3D tmp_parent;
+> +	rd.new_parent =3D fsi->sb->s_root;
+> =20
+>  	/* booleans */
+> -	d_exchange(tmp_bool_dir, fsi->bool_dir);
+> +	ret =3D start_renaming_two_dentries(&rd, tmp_bool_dir, fsi->bool_dir);
+> +	if (!ret) {
+> +		d_exchange(tmp_bool_dir, fsi->bool_dir);
+> =20
+> -	swap(fsi->bool_num, bool_num);
+> -	swap(fsi->bool_pending_names, bool_names);
+> -	swap(fsi->bool_pending_values, bool_values);
+> +		swap(fsi->bool_num, bool_num);
+> +		swap(fsi->bool_pending_names, bool_names);
+> +		swap(fsi->bool_pending_values, bool_values);
+> =20
+> -	fsi->bool_dir =3D tmp_bool_dir;
+> +		fsi->bool_dir =3D tmp_bool_dir;
+> +		end_renaming(&rd);
+> +	}
+> =20
+>  	/* classes */
+> -	d_exchange(tmp_class_dir, fsi->class_dir);
+> -	fsi->class_dir =3D tmp_class_dir;
+> +	ret =3D start_renaming_two_dentries(&rd, tmp_class_dir, fsi->class_dir)=
+;
+> +	if (ret =3D=3D 0) {
+> +		d_exchange(tmp_class_dir, fsi->class_dir);
+> +		fsi->class_dir =3D tmp_class_dir;
+> =20
+> -	unlock_rename(tmp_parent, fsi->sb->s_root);
+> +		end_renaming(&rd);
+> +	}
+> =20
+>  out:
+>  	sel_remove_old_bool_data(bool_num, bool_names, bool_values);
 
 Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
