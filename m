@@ -1,166 +1,89 @@
-Return-Path: <linux-fsdevel+bounces-68035-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68036-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A515C517DF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Nov 2025 10:54:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8A19C51A24
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Nov 2025 11:24:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33D6E188C7D7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Nov 2025 09:53:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51BD53ABB6C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Nov 2025 10:18:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B828D2FFF94;
-	Wed, 12 Nov 2025 09:52:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Qx+reW0v"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 722932FFF9B;
+	Wed, 12 Nov 2025 10:18:08 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 934372FDC5B
-	for <linux-fsdevel@vger.kernel.org>; Wed, 12 Nov 2025 09:52:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A832820FAAB
+	for <linux-fsdevel@vger.kernel.org>; Wed, 12 Nov 2025 10:18:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762941169; cv=none; b=aEAq+1Hf7SjRn7zXy4PaSCyjX5gPDKM6KWZjmEiR7k1RqkYKlSkT4/LjRLDu6+HLHM/n1aIRr27zf7a1sNz5YTF9/I9tSkhvq6Cq3hNGKhLP7LuQ4PGrDkpCK5K2BsVEPqkF6dshyUaPso2gdWXIApYzjbPTy4Xrv+/5ahvPeLs=
+	t=1762942688; cv=none; b=ObmaloMkEqDUs+K9USdqso0AxPzvTxqrrbwC62+EESr+9qmRDtp7BJXGgrCVT1ySe9wR+1OxmmTf4akxQUvDVkfM/FC/WgUkD4EwDwjkRs6sCf49m+ewMUtLemn3/+eHiKr7j5wxoVKVagi9QPW2PzX88nL9RmY9xCPXdyNvRhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762941169; c=relaxed/simple;
-	bh=qieoI6be/NucVGDXoIOFCAFq9yqK2SgJwSK5f9zar58=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E0aCBuoC8yRHl9qmdgj1cpWAklQVHLmKVaG8v8ChiM9D9Few7hLdyPKKKxMbc9Pf4+N6LHFG6CO5V3IcSmLGANj/tyGqvYWHdf2GaOZGLA80BFWMPuC0ClX6j25bdQNUlbts5UD16H6K/PU8hRYkVrQ95ljaCdB0NDkjJR4JABI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Qx+reW0v; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762941166;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NhHDG/RYOkgjp1iTZiVveFurISFNmM/HJtxHwxRJDf8=;
-	b=Qx+reW0vrhJmkf6ybZN4Ko1CcJLOVr/pMVjQ2m0GU+zaxPqbrHEjFkkN6WK8jZaXywe4NA
-	Bml7u5jR9fVvlktTd96f0klHWonWarWAB7dxBl0CgQe13QS0qmvqSm5aS2fRISxp0FWD23
-	i4xC3DPaDBE0XoWe6IGdCCYMQlheteY=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-151-thKX29d8MDyDCSuebjYMpA-1; Wed,
- 12 Nov 2025 04:52:43 -0500
-X-MC-Unique: thKX29d8MDyDCSuebjYMpA-1
-X-Mimecast-MFC-AGG-ID: thKX29d8MDyDCSuebjYMpA_1762941158
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9FED31800650;
-	Wed, 12 Nov 2025 09:52:35 +0000 (UTC)
-Received: from fedora (unknown [10.44.34.114])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 8BECE1800451;
-	Wed, 12 Nov 2025 09:52:14 +0000 (UTC)
-Received: by fedora (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Wed, 12 Nov 2025 10:52:35 +0100 (CET)
-Date: Wed, 12 Nov 2025 10:52:13 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: Bernd Edlinger <bernd.edlinger@hotmail.de>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Alexey Dobriyan <adobriyan@gmail.com>, Kees Cook <kees@kernel.org>,
-	Andy Lutomirski <luto@amacapital.net>,
-	Will Drewry <wad@chromium.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Michal Hocko <mhocko@suse.com>, Serge Hallyn <serge@hallyn.com>,
-	James Morris <jamorris@linux.microsoft.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Yafang Shao <laoar.shao@gmail.com>, Helge Deller <deller@gmx.de>,
-	"Eric W. Biederman" <ebiederm@xmission.com>,
-	Adrian Reber <areber@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>, Jens Axboe <axboe@kernel.dk>,
-	Alexei Starovoitov <ast@kernel.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
-	linux-security-module@vger.kernel.org,
-	tiozhang <tiozhang@didiglobal.com>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	"Paulo Alcantara (SUSE)" <pc@manguebit.com>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	YueHaibing <yuehaibing@huawei.com>,
-	Paul Moore <paul@paul-moore.com>, Aleksa Sarai <cyphar@cyphar.com>,
-	Stefan Roesch <shr@devkernel.io>, Chao Yu <chao@kernel.org>,
-	xu xin <xu.xin16@zte.com.cn>, Jeff Layton <jlayton@kernel.org>,
-	Jan Kara <jack@suse.cz>, David Hildenbrand <david@redhat.com>,
-	Dave Chinner <dchinner@redhat.com>, Shuah Khan <shuah@kernel.org>,
-	Elena Reshetova <elena.reshetova@intel.com>,
-	David Windsor <dwindsor@gmail.com>,
-	Mateusz Guzik <mjguzik@gmail.com>, Ard Biesheuvel <ardb@kernel.org>,
-	"Joel Fernandes (Google)" <joel@joelfernandes.org>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Hans Liljestrand <ishkamiel@gmail.com>,
-	Penglei Jiang <superman.xpt@gmail.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Adrian Ratiu <adrian.ratiu@collabora.com>,
-	Ingo Molnar <mingo@kernel.org>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	Cyrill Gorcunov <gorcunov@gmail.com>,
-	Eric Dumazet <edumazet@google.com>
-Subject: Re: [PATCH v17] exec: Fix dead-lock in de_thread with ptrace_attach
-Message-ID: <aRRYzb2FxHzpKhms@redhat.com>
-References: <AS8P193MB12851AC1F862B97FCE9B3F4FE4AAA@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <AS8P193MB1285FF445694F149B70B21D0E46C2@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <AS8P193MB1285937F9831CECAF2A9EEE2E4752@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <GV2PPF74270EBEEEDE0B9742310DE91E9A7E431A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
- <GV2PPF74270EBEE9EF78827D73D3D7212F7E432A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
- <20251105143210.GA25535@redhat.com>
- <20251111-ankreiden-augen-eadcf9bbdfaa@brauner>
- <GV2PPF74270EBEEDCF80CEE0F08891ED37BE4CFA@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
- <aRM2POTDTxEzeF2F@redhat.com>
- <GV2PPF74270EBEE16FE36CF873C5C2309A9E4CFA@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+	s=arc-20240116; t=1762942688; c=relaxed/simple;
+	bh=j6zU9E8/y0C65fl0xXr+Lxr++CUVJidoLOO92dvmDk8=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=gd/AD4aexUq4688H1PjyARKmik+d1pXvhynaSbxQbSn6L2aDQ51x/kareV2YlP6NIB/Kfr0Nqvc5HN13PoRymYCtkodZwzM5iKI5nbXZAqmR39q0jG7Mp3aKis891tD6nCAujGraDvyA9YHp8/AkKZscMS8p39tITbJLk473rq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-4337e3aca0cso6124135ab.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Nov 2025 02:18:06 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762942686; x=1763547486;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5ydwsIp/N1SK5PZm+wrWCTPbimcP98aU1H27UJH0frI=;
+        b=hBe8ipi2Kns1M5SQwIVNrE96pFxYGPLwf8NYICFqzHbZBPqX7ybooMXGcnHu5CaBDw
+         vb2o+UdN/FKDZn+uV9Pt+mJQ5/I8qRPP5LiEMpqMlwyYidKbzFKLDmIRVM3QWsAjmXWU
+         Omq1+Zi9YsHqCGfreaejLgrCqm3FAOsTHE0lO8aWLKi0W3GUrqSXDTSwiuaQYseUY5Tt
+         WAdcX2a51V64BuWqdzcVqb8gFKLzM3MNA2f7W/cUJGHU4Dz8iaV169ZNhVG0UnjjAAk+
+         na1KZySLjwNYncH7X06E3tW1OyD+PZC1LVh7mTIxbJAVyhiA5QbF6vpy4mX7XSGucxIN
+         8Dow==
+X-Forwarded-Encrypted: i=1; AJvYcCWU/av6voCfY/AYqyDGt15uiOK0oDbeu0JP8TBg+OdwnaoKU2zdr7rcukAOGR85wrD0ytO1vlaI1Wv94D7m@vger.kernel.org
+X-Gm-Message-State: AOJu0YySQspqh6RMnQPAjB2UzJlkFqbjfdNk0l54EO2EJ51Alc7UA2Bt
+	RE8mo+73pUKQBFwAV0lZqKsmbWncz5A1mX1RACbDqKGYkJ1xS5I+JRPmGq0v/Vrf/AzWuJjVqPZ
+	8kH1HZa2ajNekP60KFr0SlY2F8qwxBgLlI1X6+wDTpCUyGw5911FGhFHTTeo=
+X-Google-Smtp-Source: AGHT+IEwCOorlomunj5Yu48khKiNlihTq+cCIdqellMLyEdeTyySXda6PUSFEaJFZ+u8spiTznag8gxrG9VrgRzdhpaci7YlA6iC
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <GV2PPF74270EBEE16FE36CF873C5C2309A9E4CFA@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+X-Received: by 2002:a05:6e02:3789:b0:433:1b32:2a6a with SMTP id
+ e9e14a558f8ab-43473c56168mr33335085ab.0.1762942685755; Wed, 12 Nov 2025
+ 02:18:05 -0800 (PST)
+Date: Wed, 12 Nov 2025 02:18:05 -0800
+In-Reply-To: <20251112-ferien-trott-4d99d59d676d@brauner>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <69145edd.a70a0220.22f260.015b.GAE@google.com>
+Subject: Re: [syzbot] [fs?] WARNING in nsproxy_ns_active_get
+From: syzbot <syzbot+0a8655a80e189278487e@syzkaller.appspotmail.com>
+To: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 
-On 11/11, Bernd Edlinger wrote:
->
-> On 11/11/25 14:12, Oleg Nesterov wrote:
-> > On 11/11, Bernd Edlinger wrote:
-> >>
-> >> Well when this is absolutely not acceptable then I would have to change
-> >> all security engines to be aware of the current and the new credentials.
-> >
-> > Hmm... even if we find another way to avoid the deadlock? Say, the patches
-> > I sent...
-> >
->
-> Maybe, but it looks almost too simple ;-)
->
->    164          sleep(2);
->    165          /* deadlock may happen here */
->    166          k = ptrace(PTRACE_ATTACH, thread2_tid, 0L, 0L);
->
-> what happens if you change the test expectation here, that the
-> ptrace may fail instead of succeed?
->
-> What signals does the debugger receive after that point?
-> Is the debugger notified that the debugged process continues,
-> has the same PID, and is no longer ptraced?
+Hello,
 
-Ah, but this is another thing... OK, you dislike 3/3 and I have to agree.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Yes, de_thread() silently untraces/reaps the old leader and after 3/3 debugger
-can't rely on PTRACE_EVENT_EXIT, so unless the debugger has already attached to
-all sub-threads (at least to execing thread) it looks as if the leader was just
-untraced somehow.
+Reported-by: syzbot+0a8655a80e189278487e@syzkaller.appspotmail.com
+Tested-by: syzbot+0a8655a80e189278487e@syzkaller.appspotmail.com
 
-OK, this is probably too bad, we need another solution...
+Tested on:
 
-Oleg.
+commit:         53974b87 nsproxy: fix free_nsproxy() and simplify crea..
+git tree:       https://github.com/brauner/linux.git namespace-6.19
+console output: https://syzkaller.appspot.com/x/log.txt?x=143dec12580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=59952e73920025e4
+dashboard link: https://syzkaller.appspot.com/bug?extid=0a8655a80e189278487e
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
 
+Note: no patches were applied.
+Note: testing is done by a robot and is best-effort only.
 
