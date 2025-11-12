@@ -1,56 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-68055-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68057-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47559C521BC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Nov 2025 12:53:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3567C52470
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Nov 2025 13:38:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDB731898CB1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Nov 2025 11:49:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 618793B60D3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Nov 2025 12:32:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01673313535;
-	Wed, 12 Nov 2025 11:49:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52FA9332EAE;
+	Wed, 12 Nov 2025 12:31:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bXxuIpaz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p6QGQBfF"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AFDD2F90EA;
-	Wed, 12 Nov 2025 11:49:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9839331A5A;
+	Wed, 12 Nov 2025 12:31:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762948163; cv=none; b=NlQ61pckoTJVZ2PQ9j/xnIgBd6Ls8iddDtTkKiXrW0obP+aWHFiU9CXx/SoLJFAu3JwfMCmaUKcHUVJCCnuJZn0Uj0fzpzwJ88Tb5CXxrwc9T9qvdWDg1qSKAWvSP+VTYA+qKeQ7/4UKF+9oPkT3w6tnSuuzXzXvocFljJZ5ky4=
+	t=1762950718; cv=none; b=TXFbxlhPcYA9u/8q1NG42nA8bgO2piVLrW3GGGvEp6ZhpH6BPCs5/qnCmFj1ZFYQEGjMfbvXMSg/cS+tAo0ejLxzE9C2MFBP4aYajCjIpiTE40Z1jc7GNzESwbhulGAwexQFvMfhmUtVADVyeqYi/26dH/THGGZPtZITY8OFAgU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762948163; c=relaxed/simple;
-	bh=6BIme0FDPzc955adDyCxbwzXRD1+Fd5T030B1tZJV0c=;
+	s=arc-20240116; t=1762950718; c=relaxed/simple;
+	bh=GlKYuKsEEyi4V2HY2b7ezLSnFWQ2Pyb/BCq/tb6wv9k=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Kp+05SgrOzfE39yoErMJLtaeg2qFZabyTa8x0OAd/JeXBPTJkRwDHIKuTQyIwiHMRhxIqMANLlE6VqnwgMQZ9CTPA5e0OjyMopQOJmPt4pBUcV/t19r+NuJscfvdOeI4gkCcWtyAe4dVIeHr4ARmilY0jQztRlgBHELNj4OGxqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bXxuIpaz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 347A3C2BC9E;
-	Wed, 12 Nov 2025 11:49:22 +0000 (UTC)
+	 Content-Type:MIME-Version; b=ZaRpvht5rBEX9NKzaDdlcjvUYTyDT2q6mdxA9kdFxzQkQE4t1LQygcacE/mjfqdLFYsvfZ17PbhGCTFGgVzXXuyRyKstIefz2TKaGSFZakI1Ox3iAhuw+1shTbNwyf3jDRllBHgtIkCtUSl0J3AJKfHEmALycnh78FzfygMMnoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p6QGQBfF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7F2AC4CEF8;
+	Wed, 12 Nov 2025 12:31:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762948162;
-	bh=6BIme0FDPzc955adDyCxbwzXRD1+Fd5T030B1tZJV0c=;
+	s=k20201202; t=1762950718;
+	bh=GlKYuKsEEyi4V2HY2b7ezLSnFWQ2Pyb/BCq/tb6wv9k=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=bXxuIpaztK4VKQ4toI9UR5161BxQlbzN8mUBtx2lilFuh/bRnWA0EZQnLuxtMklHt
-	 XcrdEk5BBhW85Q9HWfhKJC76ezqqkeyrsPQPjeDo02luFM/imWH2jviT/1VXhI2OFA
-	 3tVDlTOFJwZSFCeKFqZ7E10gcxEHTrGenmdcoeEPBRZrwnbNEkIctWTePHospy+oWp
-	 ELrd8/Y/CFB6el4Z0yOQKYuCSSdJXqPauvkhENp0TFmQdRfSQEcE7efrF8WHtVdoy1
-	 OB7HPOmz1HvE8ppaXfC8yO9nucZRXJbQoLqWp7ydULggjYZ5AcDYbhiSna9gzQvi26
-	 Py2Po9HfQlMxw==
-Message-ID: <1d73231c675b6d77ca42d8f7a0a866c82c3be821.camel@kernel.org>
-Subject: Re: [PATCH v2 1/2] filelock: use a consume fence in
- locks_inode_context()
+	b=p6QGQBfFo45yhdgOmFWmNdPNAXGoJujKk2obqH/VXsA7nBYPLNAevEsvYGaLM9Fpc
+	 9tPag9hIk8T2GGvk5QGxRRASWyj9Pafm31liXjiUpkiWN30/r7RaWpllN2xELUzD5i
+	 6BaqKmdcelwVqaw4f3DxGaRpBzSvbXmk7n6fd4JYaGZinnFPSvQwysWip+YDxL0wNR
+	 cq54hv4a9v64z8WHWxcxgI71vr1XO3FVc+T0JXgX14YirfZ//mi8fAEx7Nz/4IzaLV
+	 rEClr9jjSkK6xyPLRgd09wvZT2Az9UpT1QPDGoIy9/ZQAL3wkFlkN63g3bSYYAxVue
+	 ejvEFAKTGPUrw==
+Message-ID: <9fe596e42cbb68111901eb0354c76bdd8cd86287.camel@kernel.org>
+Subject: Re: [PATCH v2 2/2] fs: track the inode having file locks with a
+ flag in ->i_opflags
 From: Jeff Layton <jlayton@kernel.org>
 To: Mateusz Guzik <mjguzik@gmail.com>, brauner@kernel.org
 Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
 	linux-fsdevel@vger.kernel.org
-Date: Wed, 12 Nov 2025 06:49:21 -0500
-In-Reply-To: <20251112104432.1785404-1-mjguzik@gmail.com>
+Date: Wed, 12 Nov 2025 07:31:56 -0500
+In-Reply-To: <20251112104432.1785404-2-mjguzik@gmail.com>
 References: <20251112104432.1785404-1-mjguzik@gmail.com>
+	 <20251112104432.1785404-2-mjguzik@gmail.com>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
  n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
@@ -136,35 +137,155 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
 On Wed, 2025-11-12 at 11:44 +0100, Mateusz Guzik wrote:
-> Matches the idiom of storing a pointer with a release fence and safely
-> getting the content with a consume fence after.
+> Opening and closing an inode dirties the ->i_readcount field.
 >=20
-> Eliminates an actual fence on some archs.
+> Depending on the alignment of the inode, it may happen to false-share
+> with other fields loaded both for both operations to various extent.
+>=20
+> This notably concerns the ->i_flctx field.
+>=20
+> Since most inodes don't have the field populated, this bit can be managed
+> with a flag in ->i_opflags instead which bypasses the problem.
+>=20
+> Here are results I obtained while opening a file read-only in a loop
+> with 24 cores doing the work on Sapphire Rapids. Utilizing the flag as
+> opposed to reading ->i_flctx field was toggled at runtime as the benchmar=
+k
+> was running, to make sure both results come from the same alignment.
+>=20
+> before: 3233740
+> after:  3373346 (+4%)
+>=20
+> before: 3284313
+> after:  3518711 (+7%)
+>=20
+> before: 3505545
+> after:  4092806 (+16%)
+>=20
+> Or to put it differently, this varies wildly depending on how (un)lucky
+> you get.
+>=20
+> The primary bottleneck before and after is the avoidable lockref trip in
+> do_dentry_open().
 >=20
 > Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
 > ---
->  include/linux/filelock.h | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
 >=20
+> v2:
+> - fix smatch warning:
+> ./include/linux/filelock.h:241:24: warning: Using plain integer as NULL p=
+ointer
+>=20
+>  fs/locks.c               | 14 ++++++++++++--
+>  include/linux/filelock.h | 15 +++++++++++----
+>  include/linux/fs.h       |  1 +
+>  3 files changed, 24 insertions(+), 6 deletions(-)
+>=20
+> diff --git a/fs/locks.c b/fs/locks.c
+> index 04a3f0e20724..9cd23dd2a74e 100644
+> --- a/fs/locks.c
+> +++ b/fs/locks.c
+> @@ -178,7 +178,6 @@ locks_get_lock_context(struct inode *inode, int type)
+>  {
+>  	struct file_lock_context *ctx;
+> =20
+> -	/* paired with cmpxchg() below */
+>  	ctx =3D locks_inode_context(inode);
+>  	if (likely(ctx) || type =3D=3D F_UNLCK)
+>  		goto out;
+> @@ -196,7 +195,18 @@ locks_get_lock_context(struct inode *inode, int type=
+)
+>  	 * Assign the pointer if it's not already assigned. If it is, then
+>  	 * free the context we just allocated.
+>  	 */
+> -	if (cmpxchg(&inode->i_flctx, NULL, ctx)) {
+> +	spin_lock(&inode->i_lock);
+> +	if (!(inode->i_opflags & IOP_FLCTX)) {
+> +		VFS_BUG_ON_INODE(inode->i_flctx, inode);
+> +		WRITE_ONCE(inode->i_flctx, ctx);
+> +		/*
+> +		 * Paired with locks_inode_context().
+> +		 */
+> +		smp_store_release(&inode->i_opflags, inode->i_opflags | IOP_FLCTX);
+> +		spin_unlock(&inode->i_lock);
+
+Not thrilled with having to deal with the i_lock here, but this is the
+slow path and we typically only go through it once per inode. I can
+believe that IOP_FLCTX helps the more common case where the i_flctx is
+already present.
+
+> +	} else {
+> +		VFS_BUG_ON_INODE(!inode->i_flctx, inode);
+> +		spin_unlock(&inode->i_lock);
+>  		kmem_cache_free(flctx_cache, ctx);
+>  		ctx =3D locks_inode_context(inode);
+>  	}
 > diff --git a/include/linux/filelock.h b/include/linux/filelock.h
-> index c2ce8ba05d06..37e1b33bd267 100644
+> index 37e1b33bd267..9dc57b3dcfae 100644
 > --- a/include/linux/filelock.h
 > +++ b/include/linux/filelock.h
-> @@ -232,7 +232,10 @@ bool locks_owner_has_blockers(struct file_lock_conte=
-xt *flctx,
->  static inline struct file_lock_context *
+> @@ -233,8 +233,12 @@ static inline struct file_lock_context *
 >  locks_inode_context(const struct inode *inode)
 >  {
-> -	return smp_load_acquire(&inode->i_flctx);
-> +	/*
-> +	 * Paired with the fence in locks_get_lock_context().
-> +	 */
-> +	return READ_ONCE(inode->i_flctx);
+>  	/*
+> -	 * Paired with the fence in locks_get_lock_context().
+> +	 * Paired with smp_store_release in locks_get_lock_context().
+> +	 *
+> +	 * Ensures ->i_flctx will be visible if we spotted the flag.
+>  	 */
+> +	if (likely(!(smp_load_acquire(&inode->i_opflags) & IOP_FLCTX)))
+> +		return NULL;
+>  	return READ_ONCE(inode->i_flctx);
 >  }
 > =20
->  #else /* !CONFIG_FILE_LOCKING */
+> @@ -441,7 +445,7 @@ static inline int break_lease(struct inode *inode, un=
+signed int mode)
+>  	 * could end up racing with tasks trying to set a new lease on this
+>  	 * file.
+>  	 */
+> -	flctx =3D READ_ONCE(inode->i_flctx);
+> +	flctx =3D locks_inode_context(inode);
+>  	if (!flctx)
+>  		return 0;
+>  	smp_mb();
+> @@ -460,7 +464,7 @@ static inline int break_deleg(struct inode *inode, un=
+signed int mode)
+>  	 * could end up racing with tasks trying to set a new lease on this
+>  	 * file.
+>  	 */
+> -	flctx =3D READ_ONCE(inode->i_flctx);
+> +	flctx =3D locks_inode_context(inode);
+>  	if (!flctx)
+>  		return 0;
+>  	smp_mb();
+> @@ -493,8 +497,11 @@ static inline int break_deleg_wait(struct inode **de=
+legated_inode)
+> =20
+>  static inline int break_layout(struct inode *inode, bool wait)
+>  {
+> +	struct file_lock_context *flctx;
+> +
+>  	smp_mb();
+> -	if (inode->i_flctx && !list_empty_careful(&inode->i_flctx->flc_lease))
+> +	flctx =3D locks_inode_context(inode);
+> +	if (flctx && !list_empty_careful(&flctx->flc_lease))
+>  		return __break_lease(inode,
+>  				wait ? O_WRONLY : O_WRONLY | O_NONBLOCK,
+>  				FL_LAYOUT);
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index b803a592c07e..b3d9230c310f 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -655,6 +655,7 @@ is_uncached_acl(struct posix_acl *acl)
+>  #define IOP_MGTIME		0x0020
+>  #define IOP_CACHED_LINK		0x0040
+>  #define IOP_FASTPERM_MAY_EXEC	0x0080
+> +#define IOP_FLCTX		0x0100
+> =20
+>  /*
+>   * Inode state bits.  Protected by inode->i_lock
 
-Seems reasonable
+This looks correct to me.
 
 Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
