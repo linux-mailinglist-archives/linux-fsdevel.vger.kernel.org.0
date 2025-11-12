@@ -1,48 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-68099-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68100-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3753BC544D4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Nov 2025 20:58:43 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5E5FC54408
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Nov 2025 20:49:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EBCB44E77A9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Nov 2025 19:41:46 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A5884342807
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Nov 2025 19:42:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D0DC27EFEF;
-	Wed, 12 Nov 2025 19:38:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4504534DB63;
+	Wed, 12 Nov 2025 19:41:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fAUcLiyS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TB/2F25h"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E87B24C076;
-	Wed, 12 Nov 2025 19:38:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C2C1265CA2;
+	Wed, 12 Nov 2025 19:41:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762976329; cv=none; b=OyHHmPlSHM3WpWECLZIw2NKjVP0U8Ef17d2kNn6u0AKdaE3Zk4TIayom43PvyvMnYJMDyoADvEwM+bM0nsIzu5CwmwiTZj/+/Z3lGKuwW1ZEXcuQJw3N0BlUVZx0iWYL3KlCpS//YIP7eM3CvqfYj8nZ21silqM0A3YmT/FksQo=
+	t=1762976500; cv=none; b=ByGvVMZiFcXvaE3HtHLhV5drdW3v4nLtdyZynEtRZ7+WBsdC/kOZMIiEwVo3xBN+iPCJn9JONl+0NrbBsQyIze9y111g0dCkVoi5OYon8b3vkjL8Hk9JWZG7a0xP+oHVft/DnwWmrHRKJs94xlcb/QjBauFnpvXe1sq9ch2RAcU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762976329; c=relaxed/simple;
-	bh=5NFeih4wVntwr/+WrfliojXjVDXW1RoyVUNkfnGCeHI=;
+	s=arc-20240116; t=1762976500; c=relaxed/simple;
+	bh=Hj3j3OT3s1rQpHHI3xOj05x8VeFVMmrBY6TBTRy5mGk=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=QnwAxer4T14BIGWZKGLodQv9WtwmSKWCXvREljKQmYvWppsLpPwJl8j4nDNxqmPfkKOvJF1F8COKEwfqxN+hdxaSY7E6mxQrzSJF/rSWGxSLMN9qDn3HHPzwykm3xXqTNhx9wU2G093UpI2pORdpU402isFON6DgAdkO0O+zDqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fAUcLiyS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7BD8C4CEF1;
-	Wed, 12 Nov 2025 19:38:43 +0000 (UTC)
+	 Content-Type:MIME-Version; b=Jd5RzNGTnZaSMxa2imVqweJqx+/k33xcCWtRXGMsCBAUe3yo0GjCmQ18DvIg6AuzfYT7kHrmdWgpYVLVZRD9qSWZ6YYgMMcnoBgIv8Pnb5SHvWbbVs6TlJJgac9iXLeZi6UHoLd0CzZBsbBAOfbpDq8RDXyMSBAUyatSKB/bOq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TB/2F25h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD71CC4CEF1;
+	Wed, 12 Nov 2025 19:41:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762976326;
-	bh=5NFeih4wVntwr/+WrfliojXjVDXW1RoyVUNkfnGCeHI=;
+	s=k20201202; t=1762976499;
+	bh=Hj3j3OT3s1rQpHHI3xOj05x8VeFVMmrBY6TBTRy5mGk=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=fAUcLiySJpH/ZP0iU2ZSxZMQRXbhjL4TdVQzqamwXlaC0RS6y5oSuRZTJy0e3EpYs
-	 5yJKIY33smsmUBiq82NBdNnPJOjzVCBJuRFCGFNcn1iGAQ2aAGY951b8Gm3XgZGOM3
-	 qxZCmN9f1S/7eeyBhGVv4QR6r5wMEhVen6yQ2JFTVY9n5vRGZHOUBO/LJ3QHA5div1
-	 0aI1XwHDL0+0y8m5oC18SDTbl/sZRW3qY4NeRkzJjN1eqeLms/vn8j8xBbY0vEK9a6
-	 hhnjVRQMvAph7xF6gv6TBJdhQgixkySbzYt5sOUiO+NnfwIsLyPyJqn3jAsX1i5d5f
-	 KDWcdNVfXJNCA==
-Message-ID: <574cd3d283754497da280b0ee3248a84cd95dce4.camel@kernel.org>
-Subject: Re: [PATCH v5 11/14] Add start_renaming_two_dentries()
+	b=TB/2F25h56FgcDh7VSajolPQGA1DbS25embWOeauSgyZKAdgGgXsPYvrsiR8jdKXM
+	 uUWC7zawJ9KeZDZBlh6Xfhv6ChhF5hhMIVjWWyNQLBVR3zwiZ+BAD0JpB//2Grq490
+	 83mdpcyIzE0AiwMlDDwExsoBZvQOj4pNTwYlkKadRyjoo2qDimlBA//Ux6P4n2iQ0h
+	 4bWueJdf5KQpHl9OeVeibp4lCzY1zLfZADgOkwgAt5rizZvQI288KsVg5JxSXO/bRk
+	 OC5v9oj2TwYtReAhawAj5Ndld+OvAkSNgvCwQTFS1Ze83BDZ0dEjt3rpiSWLY8DXkl
+	 W4ofwrza3r0Eg==
+Message-ID: <c8e194d04c0d1debbaa367a0727cc5b412c73842.camel@kernel.org>
+Subject: Re: [PATCH v5 12/14] ecryptfs: use new
+ start_creating/start_removing APIs
 From: Jeff Layton <jlayton@kernel.org>
 To: NeilBrown <neil@brown.name>, Alexander Viro <viro@zeniv.linux.org.uk>, 
  Christian Brauner
@@ -67,10 +68,10 @@ Cc: Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, Chris Mason
  linux-unionfs@vger.kernel.org, 	linux-cifs@vger.kernel.org,
  linux-xfs@vger.kernel.org, 	linux-security-module@vger.kernel.org,
  selinux@vger.kernel.org
-Date: Wed, 12 Nov 2025 14:38:42 -0500
-In-Reply-To: <20251106005333.956321-12-neilb@ownmail.net>
+Date: Wed, 12 Nov 2025 14:41:35 -0500
+In-Reply-To: <20251106005333.956321-13-neilb@ownmail.net>
 References: <20251106005333.956321-1-neilb@ownmail.net>
-	 <20251106005333.956321-12-neilb@ownmail.net>
+	 <20251106005333.956321-13-neilb@ownmail.net>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
  n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
@@ -158,395 +159,389 @@ MIME-Version: 1.0
 On Thu, 2025-11-06 at 11:50 +1100, NeilBrown wrote:
 > From: NeilBrown <neil@brown.name>
 >=20
-> A few callers want to lock for a rename and already have both dentries.
-> Also debugfs does want to perform a lookup but doesn't want permission
-> checking, so start_renaming_dentry() cannot be used.
->=20
-> This patch introduces start_renaming_two_dentries() which is given both
-> dentries.  debugfs performs one lookup itself.  As it will only continue
-> with a negative dentry and as those cannot be renamed or unlinked, it is
-> safe to do the lookup before getting the rename locks.
->=20
-> overlayfs uses start_renaming_two_dentries() in three places and  selinux
-> uses it twice in sel_make_policy_nodes().
->=20
-> In sel_make_policy_nodes() we now lock for rename twice instead of just
-> once so the combined operation is no longer atomic w.r.t the parent
-> directory locks.  As selinux_state.policy_mutex is held across the whole
-> operation this does open up any interesting races.
+> This requires the addition of start_creating_dentry() which is given the
+> dentry which has already been found, and asks for it to be locked and
+> its parent validated.
 >=20
 > Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 > Signed-off-by: NeilBrown <neil@brown.name>
 >=20
 > ---
-> changes since v3:
->  added missing assignment to rd.mnt_idmap in ovl_cleanup_and_whiteout
+> changes since v4
+> - two places in ecryptfs uses dget_parent(dentry->d_parent),
+>   thus incorrectly. getting grandparent.  Changed to
+>   dget_parent(dentry).
 > ---
->  fs/debugfs/inode.c           | 48 ++++++++++++--------------
->  fs/namei.c                   | 65 ++++++++++++++++++++++++++++++++++++
->  fs/overlayfs/dir.c           | 43 ++++++++++++++++--------
->  include/linux/namei.h        |  2 ++
->  security/selinux/selinuxfs.c | 27 ++++++++++-----
->  5 files changed, 136 insertions(+), 49 deletions(-)
+>  fs/ecryptfs/inode.c   | 153 ++++++++++++++++++++----------------------
+>  fs/namei.c            |  33 +++++++++
+>  include/linux/namei.h |   2 +
+>  3 files changed, 107 insertions(+), 81 deletions(-)
 >=20
-> diff --git a/fs/debugfs/inode.c b/fs/debugfs/inode.c
-> index f241b9df642a..532bd7c46baf 100644
-> --- a/fs/debugfs/inode.c
-> +++ b/fs/debugfs/inode.c
-> @@ -842,7 +842,8 @@ int __printf(2, 3) debugfs_change_name(struct dentry =
-*dentry, const char *fmt, .
->  	int error =3D 0;
->  	const char *new_name;
->  	struct name_snapshot old_name;
-> -	struct dentry *parent, *target;
-> +	struct dentry *target;
-> +	struct renamedata rd =3D {};
->  	struct inode *dir;
->  	va_list ap;
+> diff --git a/fs/ecryptfs/inode.c b/fs/ecryptfs/inode.c
+> index fc6d37419753..37d6293600c7 100644
+> --- a/fs/ecryptfs/inode.c
+> +++ b/fs/ecryptfs/inode.c
+> @@ -24,18 +24,26 @@
+>  #include <linux/unaligned.h>
+>  #include "ecryptfs_kernel.h"
 > =20
-> @@ -855,36 +856,31 @@ int __printf(2, 3) debugfs_change_name(struct dentr=
-y *dentry, const char *fmt, .
->  	if (!new_name)
->  		return -ENOMEM;
+> -static int lock_parent(struct dentry *dentry,
+> -		       struct dentry **lower_dentry,
+> -		       struct inode **lower_dir)
+> +static struct dentry *ecryptfs_start_creating_dentry(struct dentry *dent=
+ry)
+>  {
+> -	struct dentry *lower_dir_dentry;
+> +	struct dentry *parent =3D dget_parent(dentry);
+> +	struct dentry *ret;
 > =20
-> -	parent =3D dget_parent(dentry);
-> -	dir =3D d_inode(parent);
-> -	inode_lock(dir);
-> +	rd.old_parent =3D dget_parent(dentry);
-> +	rd.new_parent =3D rd.old_parent;
-> +	rd.flags =3D RENAME_NOREPLACE;
-> +	target =3D lookup_noperm_unlocked(&QSTR(new_name), rd.new_parent);
-> +	if (IS_ERR(target))
-> +		return PTR_ERR(target);
+> -	lower_dir_dentry =3D ecryptfs_dentry_to_lower(dentry->d_parent);
+> -	*lower_dir =3D d_inode(lower_dir_dentry);
+> -	*lower_dentry =3D ecryptfs_dentry_to_lower(dentry);
+> +	ret =3D start_creating_dentry(ecryptfs_dentry_to_lower(parent),
+> +				    ecryptfs_dentry_to_lower(dentry));
+> +	dput(parent);
+> +	return ret;
+> +}
 > =20
-> -	take_dentry_name_snapshot(&old_name, dentry);
-> -
-> -	if (WARN_ON_ONCE(dentry->d_parent !=3D parent)) {
-> -		error =3D -EINVAL;
-> -		goto out;
-> -	}
-> -	if (strcmp(old_name.name.name, new_name) =3D=3D 0)
-> -		goto out;
-> -	target =3D lookup_noperm(&QSTR(new_name), parent);
-> -	if (IS_ERR(target)) {
-> -		error =3D PTR_ERR(target);
-> -		goto out;
-> -	}
-> -	if (d_really_is_positive(target)) {
-> -		dput(target);
-> -		error =3D -EINVAL;
-> +	error =3D start_renaming_two_dentries(&rd, dentry, target);
-> +	if (error) {
-> +		if (error =3D=3D -EEXIST && target =3D=3D dentry)
-> +			/* it isn't an error to rename a thing to itself */
-> +			error =3D 0;
->  		goto out;
->  	}
-> -	simple_rename_timestamp(dir, dentry, dir, target);
-> -	d_move(dentry, target);
-> -	dput(target);
+> -	inode_lock_nested(*lower_dir, I_MUTEX_PARENT);
+> -	return (*lower_dentry)->d_parent =3D=3D lower_dir_dentry ? 0 : -EINVAL;
+> +static struct dentry *ecryptfs_start_removing_dentry(struct dentry *dent=
+ry)
+> +{
+> +	struct dentry *parent =3D dget_parent(dentry);
+> +	struct dentry *ret;
 > +
-> +	dir =3D d_inode(rd.old_parent);
-> +	take_dentry_name_snapshot(&old_name, dentry);
-> +	simple_rename_timestamp(dir, dentry, dir, rd.new_dentry);
-> +	d_move(dentry, rd.new_dentry);
->  	fsnotify_move(dir, dir, &old_name.name, d_is_dir(dentry), NULL, dentry)=
-;
-> -out:
->  	release_dentry_name_snapshot(&old_name);
-> -	inode_unlock(dir);
-> -	dput(parent);
-> +	end_renaming(&rd);
-> +out:
-> +	dput(rd.old_parent);
-> +	dput(target);
->  	kfree_const(new_name);
->  	return error;
+> +	ret =3D start_removing_dentry(ecryptfs_dentry_to_lower(parent),
+> +				    ecryptfs_dentry_to_lower(dentry));
+> +	dput(parent);
+> +	return ret;
 >  }
+> =20
+>  static int ecryptfs_inode_test(struct inode *inode, void *lower_inode)
+> @@ -141,15 +149,12 @@ static int ecryptfs_do_unlink(struct inode *dir, st=
+ruct dentry *dentry,
+>  	struct inode *lower_dir;
+>  	int rc;
+> =20
+> -	rc =3D lock_parent(dentry, &lower_dentry, &lower_dir);
+> -	dget(lower_dentry);	// don't even try to make the lower negative
+> -	if (!rc) {
+> -		if (d_unhashed(lower_dentry))
+> -			rc =3D -EINVAL;
+> -		else
+> -			rc =3D vfs_unlink(&nop_mnt_idmap, lower_dir, lower_dentry,
+> -					NULL);
+> -	}
+> +	lower_dentry =3D ecryptfs_start_removing_dentry(dentry);
+> +	if (IS_ERR(lower_dentry))
+> +		return PTR_ERR(lower_dentry);
+> +
+> +	lower_dir =3D lower_dentry->d_parent->d_inode;
+> +	rc =3D vfs_unlink(&nop_mnt_idmap, lower_dir, lower_dentry, NULL);
+>  	if (rc) {
+>  		printk(KERN_ERR "Error in vfs_unlink; rc =3D [%d]\n", rc);
+>  		goto out_unlock;
+> @@ -158,8 +163,7 @@ static int ecryptfs_do_unlink(struct inode *dir, stru=
+ct dentry *dentry,
+>  	set_nlink(inode, ecryptfs_inode_to_lower(inode)->i_nlink);
+>  	inode_set_ctime_to_ts(inode, inode_get_ctime(dir));
+>  out_unlock:
+> -	dput(lower_dentry);
+> -	inode_unlock(lower_dir);
+> +	end_removing(lower_dentry);
+>  	if (!rc)
+>  		d_drop(dentry);
+>  	return rc;
+> @@ -186,10 +190,12 @@ ecryptfs_do_create(struct inode *directory_inode,
+>  	struct inode *lower_dir;
+>  	struct inode *inode;
+> =20
+> -	rc =3D lock_parent(ecryptfs_dentry, &lower_dentry, &lower_dir);
+> -	if (!rc)
+> -		rc =3D vfs_create(&nop_mnt_idmap, lower_dir,
+> -				lower_dentry, mode, true);
+> +	lower_dentry =3D ecryptfs_start_creating_dentry(ecryptfs_dentry);
+> +	if (IS_ERR(lower_dentry))
+> +		return ERR_CAST(lower_dentry);
+> +	lower_dir =3D lower_dentry->d_parent->d_inode;
+> +	rc =3D vfs_create(&nop_mnt_idmap, lower_dir,
+> +			lower_dentry, mode, true);
+>  	if (rc) {
+>  		printk(KERN_ERR "%s: Failure to create dentry in lower fs; "
+>  		       "rc =3D [%d]\n", __func__, rc);
+> @@ -205,7 +211,7 @@ ecryptfs_do_create(struct inode *directory_inode,
+>  	fsstack_copy_attr_times(directory_inode, lower_dir);
+>  	fsstack_copy_inode_size(directory_inode, lower_dir);
+>  out_lock:
+> -	inode_unlock(lower_dir);
+> +	end_creating(lower_dentry, NULL);
+>  	return inode;
+>  }
+> =20
+> @@ -433,10 +439,12 @@ static int ecryptfs_link(struct dentry *old_dentry,=
+ struct inode *dir,
+> =20
+>  	file_size_save =3D i_size_read(d_inode(old_dentry));
+>  	lower_old_dentry =3D ecryptfs_dentry_to_lower(old_dentry);
+> -	rc =3D lock_parent(new_dentry, &lower_new_dentry, &lower_dir);
+> -	if (!rc)
+> -		rc =3D vfs_link(lower_old_dentry, &nop_mnt_idmap, lower_dir,
+> -			      lower_new_dentry, NULL);
+> +	lower_new_dentry =3D ecryptfs_start_creating_dentry(new_dentry);
+> +	if (IS_ERR(lower_new_dentry))
+> +		return PTR_ERR(lower_new_dentry);
+> +	lower_dir =3D lower_new_dentry->d_parent->d_inode;
+> +	rc =3D vfs_link(lower_old_dentry, &nop_mnt_idmap, lower_dir,
+> +		      lower_new_dentry, NULL);
+>  	if (rc || d_really_is_negative(lower_new_dentry))
+>  		goto out_lock;
+>  	rc =3D ecryptfs_interpose(lower_new_dentry, new_dentry, dir->i_sb);
+> @@ -448,7 +456,7 @@ static int ecryptfs_link(struct dentry *old_dentry, s=
+truct inode *dir,
+>  		  ecryptfs_inode_to_lower(d_inode(old_dentry))->i_nlink);
+>  	i_size_write(d_inode(new_dentry), file_size_save);
+>  out_lock:
+> -	inode_unlock(lower_dir);
+> +	end_creating(lower_new_dentry, NULL);
+>  	return rc;
+>  }
+> =20
+> @@ -468,9 +476,11 @@ static int ecryptfs_symlink(struct mnt_idmap *idmap,
+>  	size_t encoded_symlen;
+>  	struct ecryptfs_mount_crypt_stat *mount_crypt_stat =3D NULL;
+> =20
+> -	rc =3D lock_parent(dentry, &lower_dentry, &lower_dir);
+> -	if (rc)
+> -		goto out_lock;
+> +	lower_dentry =3D ecryptfs_start_creating_dentry(dentry);
+> +	if (IS_ERR(lower_dentry))
+> +		return PTR_ERR(lower_dentry);
+> +	lower_dir =3D lower_dentry->d_parent->d_inode;
+> +
+>  	mount_crypt_stat =3D &ecryptfs_superblock_to_private(
+>  		dir->i_sb)->mount_crypt_stat;
+>  	rc =3D ecryptfs_encrypt_and_encode_filename(&encoded_symname,
+> @@ -490,7 +500,7 @@ static int ecryptfs_symlink(struct mnt_idmap *idmap,
+>  	fsstack_copy_attr_times(dir, lower_dir);
+>  	fsstack_copy_inode_size(dir, lower_dir);
+>  out_lock:
+> -	inode_unlock(lower_dir);
+> +	end_creating(lower_dentry, NULL);
+>  	if (d_really_is_negative(dentry))
+>  		d_drop(dentry);
+>  	return rc;
+> @@ -501,12 +511,14 @@ static struct dentry *ecryptfs_mkdir(struct mnt_idm=
+ap *idmap, struct inode *dir,
+>  {
+>  	int rc;
+>  	struct dentry *lower_dentry;
+> +	struct dentry *lower_dir_dentry;
+>  	struct inode *lower_dir;
+> =20
+> -	rc =3D lock_parent(dentry, &lower_dentry, &lower_dir);
+> -	if (rc)
+> -		goto out;
+> -
+> +	lower_dentry =3D ecryptfs_start_creating_dentry(dentry);
+> +	if (IS_ERR(lower_dentry))
+> +		return lower_dentry;
+> +	lower_dir_dentry =3D dget(lower_dentry->d_parent);
+> +	lower_dir =3D lower_dir_dentry->d_inode;
+>  	lower_dentry =3D vfs_mkdir(&nop_mnt_idmap, lower_dir,
+>  				 lower_dentry, mode);
+>  	rc =3D PTR_ERR(lower_dentry);
+> @@ -522,7 +534,7 @@ static struct dentry *ecryptfs_mkdir(struct mnt_idmap=
+ *idmap, struct inode *dir,
+>  	fsstack_copy_inode_size(dir, lower_dir);
+>  	set_nlink(dir, lower_dir->i_nlink);
+>  out:
+> -	inode_unlock(lower_dir);
+> +	end_creating(lower_dentry, lower_dir_dentry);
+>  	if (d_really_is_negative(dentry))
+>  		d_drop(dentry);
+>  	return ERR_PTR(rc);
+> @@ -534,21 +546,18 @@ static int ecryptfs_rmdir(struct inode *dir, struct=
+ dentry *dentry)
+>  	struct inode *lower_dir;
+>  	int rc;
+> =20
+> -	rc =3D lock_parent(dentry, &lower_dentry, &lower_dir);
+> -	dget(lower_dentry);	// don't even try to make the lower negative
+> -	if (!rc) {
+> -		if (d_unhashed(lower_dentry))
+> -			rc =3D -EINVAL;
+> -		else
+> -			rc =3D vfs_rmdir(&nop_mnt_idmap, lower_dir, lower_dentry);
+> -	}
+> +	lower_dentry =3D ecryptfs_start_removing_dentry(dentry);
+> +	if (IS_ERR(lower_dentry))
+> +		return PTR_ERR(lower_dentry);
+> +	lower_dir =3D lower_dentry->d_parent->d_inode;
+> +
+> +	rc =3D vfs_rmdir(&nop_mnt_idmap, lower_dir, lower_dentry);
+>  	if (!rc) {
+>  		clear_nlink(d_inode(dentry));
+>  		fsstack_copy_attr_times(dir, lower_dir);
+>  		set_nlink(dir, lower_dir->i_nlink);
+>  	}
+> -	dput(lower_dentry);
+> -	inode_unlock(lower_dir);
+> +	end_removing(lower_dentry);
+>  	if (!rc)
+>  		d_drop(dentry);
+>  	return rc;
+> @@ -562,10 +571,12 @@ ecryptfs_mknod(struct mnt_idmap *idmap, struct inod=
+e *dir,
+>  	struct dentry *lower_dentry;
+>  	struct inode *lower_dir;
+> =20
+> -	rc =3D lock_parent(dentry, &lower_dentry, &lower_dir);
+> -	if (!rc)
+> -		rc =3D vfs_mknod(&nop_mnt_idmap, lower_dir,
+> -			       lower_dentry, mode, dev);
+> +	lower_dentry =3D ecryptfs_start_creating_dentry(dentry);
+> +	if (IS_ERR(lower_dentry))
+> +		return PTR_ERR(lower_dentry);
+> +	lower_dir =3D lower_dentry->d_parent->d_inode;
+> +
+> +	rc =3D vfs_mknod(&nop_mnt_idmap, lower_dir, lower_dentry, mode, dev);
+>  	if (rc || d_really_is_negative(lower_dentry))
+>  		goto out;
+>  	rc =3D ecryptfs_interpose(lower_dentry, dentry, dir->i_sb);
+> @@ -574,7 +585,7 @@ ecryptfs_mknod(struct mnt_idmap *idmap, struct inode =
+*dir,
+>  	fsstack_copy_attr_times(dir, lower_dir);
+>  	fsstack_copy_inode_size(dir, lower_dir);
+>  out:
+> -	inode_unlock(lower_dir);
+> +	end_removing(lower_dentry);
+>  	if (d_really_is_negative(dentry))
+>  		d_drop(dentry);
+>  	return rc;
+> @@ -590,7 +601,6 @@ ecryptfs_rename(struct mnt_idmap *idmap, struct inode=
+ *old_dir,
+>  	struct dentry *lower_new_dentry;
+>  	struct dentry *lower_old_dir_dentry;
+>  	struct dentry *lower_new_dir_dentry;
+> -	struct dentry *trap;
+>  	struct inode *target_inode;
+>  	struct renamedata rd =3D {};
+> =20
+> @@ -605,31 +615,13 @@ ecryptfs_rename(struct mnt_idmap *idmap, struct ino=
+de *old_dir,
+> =20
+>  	target_inode =3D d_inode(new_dentry);
+> =20
+> -	trap =3D lock_rename(lower_old_dir_dentry, lower_new_dir_dentry);
+> -	if (IS_ERR(trap))
+> -		return PTR_ERR(trap);
+> -	dget(lower_new_dentry);
+> -	rc =3D -EINVAL;
+> -	if (lower_old_dentry->d_parent !=3D lower_old_dir_dentry)
+> -		goto out_lock;
+> -	if (lower_new_dentry->d_parent !=3D lower_new_dir_dentry)
+> -		goto out_lock;
+> -	if (d_unhashed(lower_old_dentry) || d_unhashed(lower_new_dentry))
+> -		goto out_lock;
+> -	/* source should not be ancestor of target */
+> -	if (trap =3D=3D lower_old_dentry)
+> -		goto out_lock;
+> -	/* target should not be ancestor of source */
+> -	if (trap =3D=3D lower_new_dentry) {
+> -		rc =3D -ENOTEMPTY;
+> -		goto out_lock;
+> -	}
+> +	rd.mnt_idmap  =3D &nop_mnt_idmap;
+> +	rd.old_parent =3D lower_old_dir_dentry;
+> +	rd.new_parent =3D lower_new_dir_dentry;
+> +	rc =3D start_renaming_two_dentries(&rd, lower_old_dentry, lower_new_den=
+try);
+> +	if (rc)
+> +		return rc;
+> =20
+> -	rd.mnt_idmap		=3D &nop_mnt_idmap;
+> -	rd.old_parent		=3D lower_old_dir_dentry;
+> -	rd.old_dentry		=3D lower_old_dentry;
+> -	rd.new_parent		=3D lower_new_dir_dentry;
+> -	rd.new_dentry		=3D lower_new_dentry;
+>  	rc =3D vfs_rename(&rd);
+>  	if (rc)
+>  		goto out_lock;
+> @@ -640,8 +632,7 @@ ecryptfs_rename(struct mnt_idmap *idmap, struct inode=
+ *old_dir,
+>  	if (new_dir !=3D old_dir)
+>  		fsstack_copy_attr_all(old_dir, d_inode(lower_old_dir_dentry));
+>  out_lock:
+> -	dput(lower_new_dentry);
+> -	unlock_rename(lower_old_dir_dentry, lower_new_dir_dentry);
+> +	end_renaming(&rd);
+>  	return rc;
+>  }
+> =20
 > diff --git a/fs/namei.c b/fs/namei.c
-> index 4b740048df97..7f0384ceb976 100644
+> index 7f0384ceb976..2444c7ddb926 100644
 > --- a/fs/namei.c
 > +++ b/fs/namei.c
-> @@ -3877,6 +3877,71 @@ int start_renaming_dentry(struct renamedata *rd, i=
-nt lookup_flags,
+> @@ -3397,6 +3397,39 @@ struct dentry *start_removing_noperm(struct dentry=
+ *parent,
 >  }
->  EXPORT_SYMBOL(start_renaming_dentry);
+>  EXPORT_SYMBOL(start_removing_noperm);
 > =20
 > +/**
-> + * start_renaming_two_dentries - Lock to dentries in given parents for r=
-ename
-> + * @rd:           rename data containing parent
-> + * @old_dentry:   dentry of name to move
-> + * @new_dentry:   dentry to move to
+> + * start_creating_dentry - prepare to create a given dentry
+> + * @parent: directory from which dentry should be removed
+> + * @child:  the dentry to be removed
 > + *
-> + * Ensure locks are in place for rename and check parentage is still cor=
-rect.
+> + * A lock is taken to protect the dentry again other dirops and
+> + * the validity of the dentry is checked: correct parent and still hashe=
+d.
 > + *
-> + * On success the two dentries are stored in @rd.old_dentry and
-> + * @rd.new_dentry and @rd.old_parent and @rd.new_parent are confirmed to
-> + * be the parents of the dentries.
+> + * If the dentry is valid and negative a reference is taken and
+> + * returned.  If not an error is returned.
 > + *
-> + * References and the lock can be dropped with end_renaming()
+> + * end_creating() should be called when creation is complete, or aborted=
+.
 > + *
-> + * Returns: zero or an error.
+> + * Returns: the valid dentry, or an error.
 > + */
-> +int
-> +start_renaming_two_dentries(struct renamedata *rd,
-> +			    struct dentry *old_dentry, struct dentry *new_dentry)
+> +struct dentry *start_creating_dentry(struct dentry *parent,
+> +				     struct dentry *child)
 > +{
-> +	struct dentry *trap;
-> +	int err;
-> +
-> +	/* Already have the dentry - need to be sure to lock the correct parent=
- */
-> +	trap =3D lock_rename_child(old_dentry, rd->new_parent);
-> +	if (IS_ERR(trap))
-> +		return PTR_ERR(trap);
-> +	err =3D -EINVAL;
-> +	if (d_unhashed(old_dentry) ||
-> +	    (rd->old_parent && rd->old_parent !=3D old_dentry->d_parent))
-> +		/* old_dentry was removed, or moved and explicit parent requested */
-> +		goto out_unlock;
-> +	if (d_unhashed(new_dentry) ||
-> +	    rd->new_parent !=3D new_dentry->d_parent)
-> +		/* new_dentry was removed or moved */
-> +		goto out_unlock;
-> +
-> +	if (old_dentry =3D=3D trap)
-> +		/* source is an ancestor of target */
-> +		goto out_unlock;
-> +
-> +	if (new_dentry =3D=3D trap) {
-> +		/* target is an ancestor of source */
-> +		if (rd->flags & RENAME_EXCHANGE)
-> +			err =3D -EINVAL;
-> +		else
-> +			err =3D -ENOTEMPTY;
-> +		goto out_unlock;
+> +	inode_lock_nested(parent->d_inode, I_MUTEX_PARENT);
+> +	if (unlikely(IS_DEADDIR(parent->d_inode) ||
+> +		     child->d_parent !=3D parent ||
+> +		     d_unhashed(child))) {
+> +		inode_unlock(parent->d_inode);
+> +		return ERR_PTR(-EINVAL);
 > +	}
-> +
-> +	err =3D -EEXIST;
-> +	if (d_is_positive(new_dentry) && (rd->flags & RENAME_NOREPLACE))
-> +		goto out_unlock;
-> +
-> +	rd->old_dentry =3D dget(old_dentry);
-> +	rd->new_dentry =3D dget(new_dentry);
-> +	rd->old_parent =3D dget(old_dentry->d_parent);
-> +	return 0;
-> +
-> +out_unlock:
-> +	unlock_rename(old_dentry->d_parent, rd->new_parent);
-> +	return err;
+> +	if (d_is_positive(child)) {
+> +		inode_unlock(parent->d_inode);
+> +		return ERR_PTR(-EEXIST);
+> +	}
+> +	return dget(child);
 > +}
-> +EXPORT_SYMBOL(start_renaming_two_dentries);
+> +EXPORT_SYMBOL(start_creating_dentry);
 > +
->  void end_renaming(struct renamedata *rd)
->  {
->  	unlock_rename(rd->old_parent, rd->new_parent);
-> diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
-> index 6b2f88edb497..61e9484e4ab8 100644
-> --- a/fs/overlayfs/dir.c
-> +++ b/fs/overlayfs/dir.c
-> @@ -123,6 +123,7 @@ int ovl_cleanup_and_whiteout(struct ovl_fs *ofs, stru=
-ct dentry *dir,
->  			     struct dentry *dentry)
->  {
->  	struct dentry *whiteout;
-> +	struct renamedata rd =3D {};
->  	int err;
->  	int flags =3D 0;
-> =20
-> @@ -134,10 +135,14 @@ int ovl_cleanup_and_whiteout(struct ovl_fs *ofs, st=
-ruct dentry *dir,
->  	if (d_is_dir(dentry))
->  		flags =3D RENAME_EXCHANGE;
-> =20
-> -	err =3D ovl_lock_rename_workdir(ofs->workdir, whiteout, dir, dentry);
-> +	rd.mnt_idmap =3D ovl_upper_mnt_idmap(ofs);
-> +	rd.old_parent =3D ofs->workdir;
-> +	rd.new_parent =3D dir;
-> +	rd.flags =3D flags;
-> +	err =3D start_renaming_two_dentries(&rd, whiteout, dentry);
->  	if (!err) {
-> -		err =3D ovl_do_rename(ofs, ofs->workdir, whiteout, dir, dentry, flags)=
-;
-> -		unlock_rename(ofs->workdir, dir);
-> +		err =3D ovl_do_rename_rd(&rd);
-> +		end_renaming(&rd);
->  	}
->  	if (err)
->  		goto kill_whiteout;
-> @@ -388,6 +393,7 @@ static struct dentry *ovl_clear_empty(struct dentry *=
-dentry,
->  	struct ovl_fs *ofs =3D OVL_FS(dentry->d_sb);
->  	struct dentry *workdir =3D ovl_workdir(dentry);
->  	struct dentry *upperdir =3D ovl_dentry_upper(dentry->d_parent);
-> +	struct renamedata rd =3D {};
->  	struct path upperpath;
->  	struct dentry *upper;
->  	struct dentry *opaquedir;
-> @@ -413,7 +419,11 @@ static struct dentry *ovl_clear_empty(struct dentry =
-*dentry,
->  	if (IS_ERR(opaquedir))
->  		goto out;
-> =20
-> -	err =3D ovl_lock_rename_workdir(workdir, opaquedir, upperdir, upper);
-> +	rd.mnt_idmap =3D ovl_upper_mnt_idmap(ofs);
-> +	rd.old_parent =3D workdir;
-> +	rd.new_parent =3D upperdir;
-> +	rd.flags =3D RENAME_EXCHANGE;
-> +	err =3D start_renaming_two_dentries(&rd, opaquedir, upper);
->  	if (err)
->  		goto out_cleanup_unlocked;
-> =20
-> @@ -431,8 +441,8 @@ static struct dentry *ovl_clear_empty(struct dentry *=
-dentry,
->  	if (err)
->  		goto out_cleanup;
-> =20
-> -	err =3D ovl_do_rename(ofs, workdir, opaquedir, upperdir, upper, RENAME_=
-EXCHANGE);
-> -	unlock_rename(workdir, upperdir);
-> +	err =3D ovl_do_rename_rd(&rd);
-> +	end_renaming(&rd);
->  	if (err)
->  		goto out_cleanup_unlocked;
-> =20
-> @@ -445,7 +455,7 @@ static struct dentry *ovl_clear_empty(struct dentry *=
-dentry,
->  	return opaquedir;
-> =20
->  out_cleanup:
-> -	unlock_rename(workdir, upperdir);
-> +	end_renaming(&rd);
->  out_cleanup_unlocked:
->  	ovl_cleanup(ofs, workdir, opaquedir);
->  	dput(opaquedir);
-> @@ -468,6 +478,7 @@ static int ovl_create_over_whiteout(struct dentry *de=
-ntry, struct inode *inode,
->  	struct ovl_fs *ofs =3D OVL_FS(dentry->d_sb);
->  	struct dentry *workdir =3D ovl_workdir(dentry);
->  	struct dentry *upperdir =3D ovl_dentry_upper(dentry->d_parent);
-> +	struct renamedata rd =3D {};
->  	struct dentry *upper;
->  	struct dentry *newdentry;
->  	int err;
-> @@ -499,7 +510,11 @@ static int ovl_create_over_whiteout(struct dentry *d=
-entry, struct inode *inode,
->  	if (IS_ERR(newdentry))
->  		goto out_dput;
-> =20
-> -	err =3D ovl_lock_rename_workdir(workdir, newdentry, upperdir, upper);
-> +	rd.mnt_idmap =3D ovl_upper_mnt_idmap(ofs);
-> +	rd.old_parent =3D workdir;
-> +	rd.new_parent =3D upperdir;
-> +	rd.flags =3D 0;
-> +	err =3D start_renaming_two_dentries(&rd, newdentry, upper);
->  	if (err)
->  		goto out_cleanup_unlocked;
-> =20
-> @@ -536,16 +551,16 @@ static int ovl_create_over_whiteout(struct dentry *=
-dentry, struct inode *inode,
->  		if (err)
->  			goto out_cleanup;
-> =20
-> -		err =3D ovl_do_rename(ofs, workdir, newdentry, upperdir, upper,
-> -				    RENAME_EXCHANGE);
-> -		unlock_rename(workdir, upperdir);
-> +		rd.flags =3D RENAME_EXCHANGE;
-> +		err =3D ovl_do_rename_rd(&rd);
-> +		end_renaming(&rd);
->  		if (err)
->  			goto out_cleanup_unlocked;
-> =20
->  		ovl_cleanup(ofs, workdir, upper);
->  	} else {
-> -		err =3D ovl_do_rename(ofs, workdir, newdentry, upperdir, upper, 0);
-> -		unlock_rename(workdir, upperdir);
-> +		err =3D ovl_do_rename_rd(&rd);
-> +		end_renaming(&rd);
->  		if (err)
->  			goto out_cleanup_unlocked;
->  	}
-> @@ -565,7 +580,7 @@ static int ovl_create_over_whiteout(struct dentry *de=
-ntry, struct inode *inode,
->  	return err;
-> =20
->  out_cleanup:
-> -	unlock_rename(workdir, upperdir);
-> +	end_renaming(&rd);
->  out_cleanup_unlocked:
->  	ovl_cleanup(ofs, workdir, newdentry);
->  	dput(newdentry);
+>  /**
+>   * start_removing_dentry - prepare to remove a given dentry
+>   * @parent: directory from which dentry should be removed
 > diff --git a/include/linux/namei.h b/include/linux/namei.h
-> index c47713e9867c..9104c7104191 100644
+> index 9104c7104191..0e6b1b9afc26 100644
 > --- a/include/linux/namei.h
 > +++ b/include/linux/namei.h
-> @@ -161,6 +161,8 @@ int start_renaming(struct renamedata *rd, int lookup_=
-flags,
->  		   struct qstr *old_last, struct qstr *new_last);
->  int start_renaming_dentry(struct renamedata *rd, int lookup_flags,
->  			  struct dentry *old_dentry, struct qstr *new_last);
-> +int start_renaming_two_dentries(struct renamedata *rd,
-> +				struct dentry *old_dentry, struct dentry *new_dentry);
->  void end_renaming(struct renamedata *rd);
+> @@ -101,6 +101,8 @@ struct dentry *start_removing_killable(struct mnt_idm=
+ap *idmap,
+>  				       struct qstr *name);
+>  struct dentry *start_creating_noperm(struct dentry *parent, struct qstr =
+*name);
+>  struct dentry *start_removing_noperm(struct dentry *parent, struct qstr =
+*name);
+> +struct dentry *start_creating_dentry(struct dentry *parent,
+> +				     struct dentry *child);
+>  struct dentry *start_removing_dentry(struct dentry *parent,
+>  				     struct dentry *child);
 > =20
->  /**
-> diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
-> index 232e087bce3e..a224ef9bb831 100644
-> --- a/security/selinux/selinuxfs.c
-> +++ b/security/selinux/selinuxfs.c
-> @@ -506,6 +506,7 @@ static int sel_make_policy_nodes(struct selinux_fs_in=
-fo *fsi,
->  {
->  	int ret =3D 0;
->  	struct dentry *tmp_parent, *tmp_bool_dir, *tmp_class_dir;
-> +	struct renamedata rd =3D {};
->  	unsigned int bool_num =3D 0;
->  	char **bool_names =3D NULL;
->  	int *bool_values =3D NULL;
-> @@ -539,22 +540,30 @@ static int sel_make_policy_nodes(struct selinux_fs_=
-info *fsi,
->  	if (ret)
->  		goto out;
-> =20
-> -	lock_rename(tmp_parent, fsi->sb->s_root);
-> +	rd.old_parent =3D tmp_parent;
-> +	rd.new_parent =3D fsi->sb->s_root;
-> =20
->  	/* booleans */
-> -	d_exchange(tmp_bool_dir, fsi->bool_dir);
-> +	ret =3D start_renaming_two_dentries(&rd, tmp_bool_dir, fsi->bool_dir);
-> +	if (!ret) {
-> +		d_exchange(tmp_bool_dir, fsi->bool_dir);
-> =20
-> -	swap(fsi->bool_num, bool_num);
-> -	swap(fsi->bool_pending_names, bool_names);
-> -	swap(fsi->bool_pending_values, bool_values);
-> +		swap(fsi->bool_num, bool_num);
-> +		swap(fsi->bool_pending_names, bool_names);
-> +		swap(fsi->bool_pending_values, bool_values);
-> =20
-> -	fsi->bool_dir =3D tmp_bool_dir;
-> +		fsi->bool_dir =3D tmp_bool_dir;
-> +		end_renaming(&rd);
-> +	}
-> =20
->  	/* classes */
-> -	d_exchange(tmp_class_dir, fsi->class_dir);
-> -	fsi->class_dir =3D tmp_class_dir;
-> +	ret =3D start_renaming_two_dentries(&rd, tmp_class_dir, fsi->class_dir)=
-;
-> +	if (ret =3D=3D 0) {
-> +		d_exchange(tmp_class_dir, fsi->class_dir);
-> +		fsi->class_dir =3D tmp_class_dir;
-> =20
-> -	unlock_rename(tmp_parent, fsi->sb->s_root);
-> +		end_renaming(&rd);
-> +	}
-> =20
->  out:
->  	sel_remove_old_bool_data(bool_num, bool_names, bool_values);
 
 Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
