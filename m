@@ -1,48 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-68066-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68067-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E456EC52F68
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Nov 2025 16:20:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 621DCC535BE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Nov 2025 17:22:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E66934268EF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Nov 2025 14:57:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0667C56318B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Nov 2025 15:02:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E314D347BBD;
-	Wed, 12 Nov 2025 14:47:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DAD9340294;
+	Wed, 12 Nov 2025 14:51:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="itV1AiRM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MiQOmAw7"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 188B734575F;
-	Wed, 12 Nov 2025 14:47:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF61033BBD8;
+	Wed, 12 Nov 2025 14:51:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762958848; cv=none; b=k6xHHeoTb8YVXU75bHo0kVd3H03zPb/Hgf/Fiz8z7a3pI/hE/AkVjrTJKpPJzXm83PNGpG3SP7lIE8zwBzvHFTJO6r+f4PfT1cLgW+wmZBdwDg0u7X/vaLKtTCTXIf5h3UApdvXJlvQksa5fVweOUfSvZXtdJVCncy8ZcdWxHOs=
+	t=1762959104; cv=none; b=FtDY0fVEPduw1LkBbBasMLQO2yt4Rhg2i9jUI6KGvw4SuL1WMaUqBhZOkb87Dv3+p+aAPzwCVFjTQaeuGQH52nqd1oji1MufcsXBVEHK9hvcYpc8F4qvGs2fLjVBDXstJXoOYHKD8fCNZxjE0vaPZXlhLIxXjuyVnyV4uxZAumc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762958848; c=relaxed/simple;
-	bh=LGC+gPUi20dbwpDZ2iiKklnaCXgd8YE+RKxSMV7nTb4=;
+	s=arc-20240116; t=1762959104; c=relaxed/simple;
+	bh=zBtRfSBRDSlQlfWa7ypA6PUKFo3/OFgFG8qDYccyYTo=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=RsM9idpJTjqVMPqVP92gnHCq+RiJS4XoIuTMfbpPrdWHbpfqwsdwSzcdq0xQa5KQk8odVdzc+tdyKrvNnHI0mAGkqfVr/qI4bivCfB+yXap/QLpjqAGCC1pfpYrOhEIOekjEgZRNA1Z14mYSkdN/+Xsec95JFwpHnQ5ppzttzXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=itV1AiRM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 947FAC4CEF5;
-	Wed, 12 Nov 2025 14:47:24 +0000 (UTC)
+	 Content-Type:MIME-Version; b=gOGSaIX5H80mZd8/2OVvAw6xHOmcmEfN9+184qzkCE/psHxwgC20mOJyngP3QSMlJgRRxCMR92WUjPTvabBw5tRBG0SwZfRaciQjfWAx1vniZckyuYlQgpXsgr7esmkyXdWCuo4N5OkIBoSe142qqREoN6f4W7z8MdVsgI285fE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MiQOmAw7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D77AC16AAE;
+	Wed, 12 Nov 2025 14:51:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762958847;
-	bh=LGC+gPUi20dbwpDZ2iiKklnaCXgd8YE+RKxSMV7nTb4=;
+	s=k20201202; t=1762959104;
+	bh=zBtRfSBRDSlQlfWa7ypA6PUKFo3/OFgFG8qDYccyYTo=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=itV1AiRMd7y4y3qoxBClifgykBN9dX5H7xtjMIBkeXRP3xGyVaMjTXJJAN0gGrHsZ
-	 SgyGKheDoapWW5FXVi+DYMUm3y1rgkONtUqLRqgkyDwL3ARG6NMIWQn7gcE/46gFN4
-	 ABiR8sBoNyZIo1ywp5kx8xENwIlZ9W5rVgye1h2F9qeSbh2PYpdlQT/YLb5fUa276F
-	 xpUJUGUX9/+RochbyH65lbOusP/VHDJPgOTJetAosZanQwSCPntDezuM/aHGuPwzlm
-	 Twg42xIYipa7RVmrBvxsAIR48NnKJOFr5wOEVF1xvrb27fGIFpnYNQdeVpwQo1a5W1
-	 cf1+xmznQr+OA==
-Message-ID: <cb5e89380ea2f156e1fed63835c649d125c78fe1.camel@kernel.org>
-Subject: Re: [PATCH v5 03/14] VFS: tidy up do_unlinkat()
+	b=MiQOmAw7PdZSwBXHVuNcaPxtvpuQX2BHkG3MpBJNtKrbdCEMs+Qu8I6xnmJBQa3nN
+	 CXorYZJk2PprCtwIlzEHjo6Idg/No7ZXTUMTn+pJYrjIwejrVTngXcmT8NPwm2FBuM
+	 w+L5xInZtgP80NoX5nhPi3O/F3PiSyZRiWaqAmdNwhzquMXy5nYtz664W1DpgtJQ2o
+	 MoAuyLqv15qocCT9MjrRgF9M8tvCOvth2fwBNsRuSi+VHYOz7RI/RAHbSMDr0w1P4S
+	 spMC7X7VpFFWSakK8NkTPGimch3Y2yUlIp8BZO2ydRDb/QzhqijALYqyUOTG4Zs1i4
+	 eFUgamR0DdvUA==
+Message-ID: <230c32bf9997f26b0cfe8c1a4c9309cf91c5071c.camel@kernel.org>
+Subject: Re: [PATCH v5 05/14] VFS/nfsd/cachefiles/ovl: introduce
+ start_removing() and end_removing()
 From: Jeff Layton <jlayton@kernel.org>
 To: NeilBrown <neil@brown.name>, Alexander Viro <viro@zeniv.linux.org.uk>, 
  Christian Brauner
@@ -67,10 +68,10 @@ Cc: Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, Chris Mason
  linux-unionfs@vger.kernel.org, 	linux-cifs@vger.kernel.org,
  linux-xfs@vger.kernel.org, 	linux-security-module@vger.kernel.org,
  selinux@vger.kernel.org
-Date: Wed, 12 Nov 2025 09:47:23 -0500
-In-Reply-To: <20251106005333.956321-4-neilb@ownmail.net>
+Date: Wed, 12 Nov 2025 09:51:40 -0500
+In-Reply-To: <20251106005333.956321-6-neilb@ownmail.net>
 References: <20251106005333.956321-1-neilb@ownmail.net>
-	 <20251106005333.956321-4-neilb@ownmail.net>
+	 <20251106005333.956321-6-neilb@ownmail.net>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
  n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
@@ -158,120 +159,387 @@ MIME-Version: 1.0
 On Thu, 2025-11-06 at 11:50 +1100, NeilBrown wrote:
 > From: NeilBrown <neil@brown.name>
 >=20
-> The simplification of locking in the previous patch opens up some room
-> for tidying up do_unlinkat()
+> start_removing() is similar to start_creating() but will only return a
+> positive dentry with the expectation that it will be removed.  This is
+> used by nfsd, cachefiles, and overlayfs.  They are changed to also use
+> end_removing() to terminate the action begun by start_removing().  This
+> is a simple alias for end_dirop().
 >=20
-> - change all "exit" labels to describe what will happen at the label.
-> - always goto an exit label on an error - unwrap the "if (!IS_ERR())" bra=
-nch.
-> - Move the "slashes" handing inline, but mark it as unlikely()
-> - simplify use of the "inode" variable - we no longer need to test for NU=
-LL.
+> Apart from changes to the error paths, as we no longer need to unlock on
+> a lookup error, an effect on callers is that they don't need to test if
+> the found dentry is positive or negative - they can be sure it is
+> positive.
 >=20
 > Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 > Signed-off-by: NeilBrown <neil@brown.name>
 > ---
->  fs/namei.c | 55 ++++++++++++++++++++++++++----------------------------
->  1 file changed, 26 insertions(+), 29 deletions(-)
+>  fs/cachefiles/namei.c    | 32 ++++++++++++++------------------
+>  fs/namei.c               | 27 +++++++++++++++++++++++++++
+>  fs/nfsd/nfs4recover.c    | 18 +++++-------------
+>  fs/nfsd/vfs.c            | 26 ++++++++++----------------
+>  fs/overlayfs/dir.c       | 15 +++++++--------
+>  fs/overlayfs/overlayfs.h |  8 ++++++++
+>  include/linux/namei.h    | 18 ++++++++++++++++++
+>  7 files changed, 89 insertions(+), 55 deletions(-)
 >=20
+> diff --git a/fs/cachefiles/namei.c b/fs/cachefiles/namei.c
+> index 0a136eb434da..c7f0c6ab9b88 100644
+> --- a/fs/cachefiles/namei.c
+> +++ b/fs/cachefiles/namei.c
+> @@ -260,6 +260,7 @@ static int cachefiles_unlink(struct cachefiles_cache =
+*cache,
+>   * - File backed objects are unlinked
+>   * - Directory backed objects are stuffed into the graveyard for userspa=
+ce to
+>   *   delete
+> + * On entry dir must be locked.  It will be unlocked on exit.
+>   */
+>  int cachefiles_bury_object(struct cachefiles_cache *cache,
+>  			   struct cachefiles_object *object,
+> @@ -274,28 +275,30 @@ int cachefiles_bury_object(struct cachefiles_cache =
+*cache,
+> =20
+>  	_enter(",'%pd','%pd'", dir, rep);
+> =20
+> +	/* end_removing() will dput() @rep but we need to keep
+> +	 * a ref, so take one now.  This also stops the dentry
+> +	 * being negated when unlinked which we need.
+> +	 */
+> +	dget(rep);
+> +
+>  	if (rep->d_parent !=3D dir) {
+> -		inode_unlock(d_inode(dir));
+> +		end_removing(rep);
+>  		_leave(" =3D -ESTALE");
+>  		return -ESTALE;
+>  	}
+> =20
+>  	/* non-directories can just be unlinked */
+>  	if (!d_is_dir(rep)) {
+> -		dget(rep); /* Stop the dentry being negated if it's only pinned
+> -			    * by a file struct.
+> -			    */
+>  		ret =3D cachefiles_unlink(cache, object, dir, rep, why);
+> -		dput(rep);
+> +		end_removing(rep);
+> =20
+> -		inode_unlock(d_inode(dir));
+>  		_leave(" =3D %d", ret);
+>  		return ret;
+>  	}
+> =20
+>  	/* directories have to be moved to the graveyard */
+>  	_debug("move stale object to graveyard");
+> -	inode_unlock(d_inode(dir));
+> +	end_removing(rep);
+> =20
+>  try_again:
+>  	/* first step is to make up a grave dentry in the graveyard */
+> @@ -749,26 +752,20 @@ static struct dentry *cachefiles_lookup_for_cull(st=
+ruct cachefiles_cache *cache,
+>  	struct dentry *victim;
+>  	int ret =3D -ENOENT;
+> =20
+> -	inode_lock_nested(d_inode(dir), I_MUTEX_PARENT);
+> +	victim =3D start_removing(&nop_mnt_idmap, dir, &QSTR(filename));
+> =20
+> -	victim =3D lookup_one(&nop_mnt_idmap, &QSTR(filename), dir);
+>  	if (IS_ERR(victim))
+>  		goto lookup_error;
+> -	if (d_is_negative(victim))
+> -		goto lookup_put;
+>  	if (d_inode(victim)->i_flags & S_KERNEL_FILE)
+>  		goto lookup_busy;
+>  	return victim;
+> =20
+>  lookup_busy:
+>  	ret =3D -EBUSY;
+> -lookup_put:
+> -	inode_unlock(d_inode(dir));
+> -	dput(victim);
+> +	end_removing(victim);
+>  	return ERR_PTR(ret);
+> =20
+>  lookup_error:
+> -	inode_unlock(d_inode(dir));
+>  	ret =3D PTR_ERR(victim);
+>  	if (ret =3D=3D -ENOENT)
+>  		return ERR_PTR(-ESTALE); /* Probably got retired by the netfs */
+> @@ -816,18 +813,17 @@ int cachefiles_cull(struct cachefiles_cache *cache,=
+ struct dentry *dir,
+> =20
+>  	ret =3D cachefiles_bury_object(cache, NULL, dir, victim,
+>  				     FSCACHE_OBJECT_WAS_CULLED);
+> +	dput(victim);
+>  	if (ret < 0)
+>  		goto error;
+> =20
+>  	fscache_count_culled();
+> -	dput(victim);
+>  	_leave(" =3D 0");
+>  	return 0;
+> =20
+>  error_unlock:
+> -	inode_unlock(d_inode(dir));
+> +	end_removing(victim);
+>  error:
+> -	dput(victim);
+>  	if (ret =3D=3D -ENOENT)
+>  		return -ESTALE; /* Probably got retired by the netfs */
+> =20
 > diff --git a/fs/namei.c b/fs/namei.c
-> index 231e1ffd4b8d..93c5fce2d814 100644
+> index 8873ad0f05b0..38dda29552f6 100644
 > --- a/fs/namei.c
 > +++ b/fs/namei.c
-> @@ -4755,65 +4755,62 @@ int do_unlinkat(int dfd, struct filename *name)
->  	struct path path;
->  	struct qstr last;
->  	int type;
-> -	struct inode *inode =3D NULL;
-> +	struct inode *inode;
->  	struct inode *delegated_inode =3D NULL;
->  	unsigned int lookup_flags =3D 0;
->  retry:
->  	error =3D filename_parentat(dfd, name, lookup_flags, &path, &last, &typ=
-e);
->  	if (error)
-> -		goto exit1;
-> +		goto exit_putname;
+> @@ -3248,6 +3248,33 @@ struct dentry *start_creating(struct mnt_idmap *id=
+map, struct dentry *parent,
+>  }
+>  EXPORT_SYMBOL(start_creating);
 > =20
->  	error =3D -EISDIR;
->  	if (type !=3D LAST_NORM)
-> -		goto exit2;
-> +		goto exit_path_put;
+> +/**
+> + * start_removing - prepare to remove a given name with permission check=
+ing
+> + * @idmap:  idmap of the mount
+> + * @parent: directory in which to find the name
+> + * @name:   the name to be removed
+> + *
+> + * Locks are taken and a lookup in performed prior to removing
+> + * an object from a directory.  Permission checking (MAY_EXEC) is perfor=
+med
+> + * against @idmap.
+> + *
+> + * If the name doesn't exist, an error is returned.
+> + *
+> + * end_removing() should be called when removal is complete, or aborted.
+> + *
+> + * Returns: a positive dentry, or an error.
+> + */
+> +struct dentry *start_removing(struct mnt_idmap *idmap, struct dentry *pa=
+rent,
+> +			      struct qstr *name)
+> +{
+> +	int err =3D lookup_one_common(idmap, name, parent);
+> +
+> +	if (err)
+> +		return ERR_PTR(err);
+> +	return start_dirop(parent, name, 0);
+> +}
+> +EXPORT_SYMBOL(start_removing);
+> +
+>  #ifdef CONFIG_UNIX98_PTYS
+>  int path_pts(struct path *path)
+>  {
+> diff --git a/fs/nfsd/nfs4recover.c b/fs/nfsd/nfs4recover.c
+> index c247a7c3291c..3eefaa2202e3 100644
+> --- a/fs/nfsd/nfs4recover.c
+> +++ b/fs/nfsd/nfs4recover.c
+> @@ -324,20 +324,12 @@ nfsd4_unlink_clid_dir(char *name, struct nfsd_net *=
+nn)
+>  	dprintk("NFSD: nfsd4_unlink_clid_dir. name %s\n", name);
 > =20
->  	error =3D mnt_want_write(path.mnt);
->  	if (error)
-> -		goto exit2;
-> +		goto exit_path_put;
->  retry_deleg:
->  	dentry =3D start_dirop(path.dentry, &last, lookup_flags);
->  	error =3D PTR_ERR(dentry);
-> -	if (!IS_ERR(dentry)) {
+>  	dir =3D nn->rec_file->f_path.dentry;
+> -	inode_lock_nested(d_inode(dir), I_MUTEX_PARENT);
+> -	dentry =3D lookup_one(&nop_mnt_idmap, &QSTR(name), dir);
+> -	if (IS_ERR(dentry)) {
+> -		status =3D PTR_ERR(dentry);
+> -		goto out_unlock;
+> -	}
+> -	status =3D -ENOENT;
+> -	if (d_really_is_negative(dentry))
+> -		goto out;
+> +	dentry =3D start_removing(&nop_mnt_idmap, dir, &QSTR(name));
 > +	if (IS_ERR(dentry))
-> +		goto exit_drop_write;
-> =20
-> -		/* Why not before? Because we want correct error value */
-> -		if (last.name[last.len])
-> -			goto slashes;
-> -		inode =3D dentry->d_inode;
-> -		ihold(inode);
-> -		error =3D security_path_unlink(&path, dentry);
-> -		if (error)
-> -			goto exit3;
-> -		error =3D vfs_unlink(mnt_idmap(path.mnt), path.dentry->d_inode,
-> -				   dentry, &delegated_inode);
-> -exit3:
-> +	/* Why not before? Because we want correct error value */
-> +	if (unlikely(last.name[last.len])) {
-> +		if (d_is_dir(dentry))
-> +			error =3D -EISDIR;
-> +		else
-> +			error =3D -ENOTDIR;
->  		end_dirop(dentry);
-> +		goto exit_drop_write;
->  	}
-> -	if (inode)
-> -		iput(inode);	/* truncate the inode here */
-> -	inode =3D NULL;
-> +	inode =3D dentry->d_inode;
-> +	ihold(inode);
-> +	error =3D security_path_unlink(&path, dentry);
-> +	if (error)
-> +		goto exit_end_dirop;
-> +	error =3D vfs_unlink(mnt_idmap(path.mnt), path.dentry->d_inode,
-> +			   dentry, &delegated_inode);
-> +exit_end_dirop:
-> +	end_dirop(dentry);
-> +	iput(inode);	/* truncate the inode here */
->  	if (delegated_inode) {
->  		error =3D break_deleg_wait(&delegated_inode);
->  		if (!error)
->  			goto retry_deleg;
->  	}
-> +exit_drop_write:
->  	mnt_drop_write(path.mnt);
-> -exit2:
-> +exit_path_put:
->  	path_put(&path);
->  	if (retry_estale(error, lookup_flags)) {
->  		lookup_flags |=3D LOOKUP_REVAL;
-> -		inode =3D NULL;
->  		goto retry;
->  	}
-> -exit1:
-> +exit_putname:
->  	putname(name);
->  	return error;
-> -
-> -slashes:
-> -	if (d_is_dir(dentry))
-> -		error =3D -EISDIR;
-> -	else
-> -		error =3D -ENOTDIR;
-> -	goto exit3;
+> +		return PTR_ERR(dentry);
+> +
+>  	status =3D vfs_rmdir(&nop_mnt_idmap, d_inode(dir), dentry);
+> -out:
+> -	dput(dentry);
+> -out_unlock:
+> -	inode_unlock(d_inode(dir));
+> +	end_removing(dentry);
+>  	return status;
 >  }
 > =20
->  SYSCALL_DEFINE3(unlinkat, int, dfd, const char __user *, pathname, int, =
-flag)
+> diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
+> index 24e501abad0e..6291c371caa7 100644
+> --- a/fs/nfsd/vfs.c
+> +++ b/fs/nfsd/vfs.c
+> @@ -2044,7 +2044,7 @@ nfsd_unlink(struct svc_rqst *rqstp, struct svc_fh *=
+fhp, int type,
+>  {
+>  	struct dentry	*dentry, *rdentry;
+>  	struct inode	*dirp;
+> -	struct inode	*rinode;
+> +	struct inode	*rinode =3D NULL;
+>  	__be32		err;
+>  	int		host_err;
+> =20
+> @@ -2063,24 +2063,21 @@ nfsd_unlink(struct svc_rqst *rqstp, struct svc_fh=
+ *fhp, int type,
+> =20
+>  	dentry =3D fhp->fh_dentry;
+>  	dirp =3D d_inode(dentry);
+> -	inode_lock_nested(dirp, I_MUTEX_PARENT);
+> =20
+> -	rdentry =3D lookup_one(&nop_mnt_idmap, &QSTR_LEN(fname, flen), dentry);
+> +	rdentry =3D start_removing(&nop_mnt_idmap, dentry, &QSTR_LEN(fname, fle=
+n));
+> +
+>  	host_err =3D PTR_ERR(rdentry);
+>  	if (IS_ERR(rdentry))
+> -		goto out_unlock;
+> +		goto out_drop_write;
+> =20
+> -	if (d_really_is_negative(rdentry)) {
+> -		dput(rdentry);
+> -		host_err =3D -ENOENT;
+> -		goto out_unlock;
+> -	}
+> -	rinode =3D d_inode(rdentry);
+>  	err =3D fh_fill_pre_attrs(fhp);
+>  	if (err !=3D nfs_ok)
+>  		goto out_unlock;
+> =20
+> +	rinode =3D d_inode(rdentry);
+> +	/* Prevent truncation until after locks dropped */
+>  	ihold(rinode);
+> +
+>  	if (!type)
+>  		type =3D d_inode(rdentry)->i_mode & S_IFMT;
+> =20
+> @@ -2102,10 +2099,10 @@ nfsd_unlink(struct svc_rqst *rqstp, struct svc_fh=
+ *fhp, int type,
+>  	}
+>  	fh_fill_post_attrs(fhp);
+> =20
+> -	inode_unlock(dirp);
+> -	if (!host_err)
+> +out_unlock:
+> +	end_removing(rdentry);
+> +	if (!err && !host_err)
+>  		host_err =3D commit_metadata(fhp);
+> -	dput(rdentry);
+>  	iput(rinode);    /* truncate the inode here */
+> =20
+>  out_drop_write:
+> @@ -2123,9 +2120,6 @@ nfsd_unlink(struct svc_rqst *rqstp, struct svc_fh *=
+fhp, int type,
+>  	}
+>  out:
+>  	return err !=3D nfs_ok ? err : nfserrno(host_err);
+> -out_unlock:
+> -	inode_unlock(dirp);
+> -	goto out_drop_write;
+>  }
+> =20
+>  /*
+> diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
+> index b9160fefbd00..20682afdbd20 100644
+> --- a/fs/overlayfs/dir.c
+> +++ b/fs/overlayfs/dir.c
+> @@ -866,17 +866,17 @@ static int ovl_remove_upper(struct dentry *dentry, =
+bool is_dir,
+>  			goto out;
+>  	}
+> =20
+> -	inode_lock_nested(dir, I_MUTEX_PARENT);
+> -	upper =3D ovl_lookup_upper(ofs, dentry->d_name.name, upperdir,
+> -				 dentry->d_name.len);
+> +	upper =3D ovl_start_removing_upper(ofs, upperdir,
+> +					 &QSTR_LEN(dentry->d_name.name,
+> +						   dentry->d_name.len));
+>  	err =3D PTR_ERR(upper);
+>  	if (IS_ERR(upper))
+> -		goto out_unlock;
+> +		goto out_dput;
+> =20
+>  	err =3D -ESTALE;
+>  	if ((opaquedir && upper !=3D opaquedir) ||
+>  	    (!opaquedir && !ovl_matches_upper(dentry, upper)))
+> -		goto out_dput_upper;
+> +		goto out_unlock;
+> =20
+>  	if (is_dir)
+>  		err =3D ovl_do_rmdir(ofs, dir, upper);
+> @@ -892,10 +892,9 @@ static int ovl_remove_upper(struct dentry *dentry, b=
+ool is_dir,
+>  	 */
+>  	if (!err)
+>  		d_drop(dentry);
+> -out_dput_upper:
+> -	dput(upper);
+>  out_unlock:
+> -	inode_unlock(dir);
+> +	end_removing(upper);
+> +out_dput:
+>  	dput(opaquedir);
+>  out:
+>  	return err;
+> diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
+> index beeba96cfcb2..49ad65f829dc 100644
+> --- a/fs/overlayfs/overlayfs.h
+> +++ b/fs/overlayfs/overlayfs.h
+> @@ -423,6 +423,14 @@ static inline struct dentry *ovl_start_creating_uppe=
+r(struct ovl_fs *ofs,
+>  			      parent, name);
+>  }
+> =20
+> +static inline struct dentry *ovl_start_removing_upper(struct ovl_fs *ofs=
+,
+> +						      struct dentry *parent,
+> +						      struct qstr *name)
+> +{
+> +	return start_removing(ovl_upper_mnt_idmap(ofs),
+> +			      parent, name);
+> +}
+> +
+>  static inline bool ovl_open_flags_need_copy_up(int flags)
+>  {
+>  	if (!flags)
+> diff --git a/include/linux/namei.h b/include/linux/namei.h
+> index 37b72f4a64f0..6d1069f93ebf 100644
+> --- a/include/linux/namei.h
+> +++ b/include/linux/namei.h
+> @@ -91,6 +91,8 @@ struct dentry *lookup_one_positive_killable(struct mnt_=
+idmap *idmap,
+> =20
+>  struct dentry *start_creating(struct mnt_idmap *idmap, struct dentry *pa=
+rent,
+>  			      struct qstr *name);
+> +struct dentry *start_removing(struct mnt_idmap *idmap, struct dentry *pa=
+rent,
+> +			      struct qstr *name);
+> =20
+>  /**
+>   * end_creating - finish action started with start_creating
+> @@ -122,6 +124,22 @@ static inline void end_creating(struct dentry *child=
+, struct dentry *parent)
+>  		end_dirop(child);
+>  }
+> =20
+> +/**
+> + * end_removing - finish action started with start_removing
+> + * @child:  dentry returned by start_removing()
+> + * @parent: dentry given to start_removing()
+> + *
+> + * Unlock and release the child.
+> + *
+> + * This is identical to end_dirop().  It can be passed the result of
+> + * start_removing() whether that was successful or not, but it not neede=
+d
+> + * if start_removing() failed.
+> + */
+> +static inline void end_removing(struct dentry *child)
+> +{
+> +	end_dirop(child);
+> +}
+> +
+>  extern int follow_down_one(struct path *);
+>  extern int follow_down(struct path *path, unsigned int flags);
+>  extern int follow_up(struct path *);
+
+This looks fine to me (particularly the knfsd parts), but doesn't ksmbd
+need to be similarly converted?
 
 Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
