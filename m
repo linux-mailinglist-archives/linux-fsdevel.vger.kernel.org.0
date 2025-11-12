@@ -1,176 +1,86 @@
-Return-Path: <linux-fsdevel+bounces-68058-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68059-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97E6AC5250A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Nov 2025 13:49:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4750C525D4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Nov 2025 14:02:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C2D11888DD6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Nov 2025 12:47:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF48D3BDF78
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Nov 2025 12:53:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1696C3358A6;
-	Wed, 12 Nov 2025 12:47:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 435A432BF20;
+	Wed, 12 Nov 2025 12:53:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="jUvqWmJa"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="nqcgdMv0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C9D52BE636
-	for <linux-fsdevel@vger.kernel.org>; Wed, 12 Nov 2025 12:47:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CDFB274FF5;
+	Wed, 12 Nov 2025 12:53:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762951624; cv=none; b=tImwWbBug2nmNzEiZGaQ9qF7NAIAHYO/48ocdVQuhqgWeAHwOQApC7H1/vSxqQ7WX1Ck+bgnZR3pDzzgg8Q7Bare2q1cj4MQUm7qEcohPPNpeUaLE3v9VZM9TBWFeGx0J9F+Rh3O6MNlgfU4Bf2FtzBUIhUGaC5LsLcSt6zFqRE=
+	t=1762952035; cv=none; b=LZopOrEOl3Mjcw/m7r25mhFEjzbR+DMXJO+TdPPv7a8eTanWHeOh8mZgMC9Ysxq9OQAsnMztDz6jCE0+c3sl5elOaGgnjgoIXjX4N5kwS0byllIajKntxTblS4VIKRcY32d8M2ZwSrtrGn9u8po2dcTPBdLGQAFtGXSL65TtgXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762951624; c=relaxed/simple;
-	bh=znZuQwa1aOziNsVVDXXpqJjJ+lN7ig6byCFqqLdTusA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Rt0MbsVXmszA9j4eAm5rW5Iuwkc6dw/SxaXqVf5O715j0cW7BBXpGD45w8ePdMhoEvPsYj0orQXkPgCvzg9WIlIXpC8ZjM1XmrRnD6A7mtJk4GrCj5QZw+Iqmpdq+j8hteyAdGls2CsD/2l90134wPD+UXIyq+OqashtwZ5CiOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=jUvqWmJa; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-64088c6b309so1235674a12.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Nov 2025 04:47:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1762951621; x=1763556421; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NlYd6Xq+AnhKekfFM+8+8cT83BwyMkqy6p8G3DXg5+E=;
-        b=jUvqWmJaXXN0cLEFVgCu1IoCmnJo4k8vi984y/p5n95rUUkqfnAAuIfq7cVevvIql+
-         /XzUQpvtZujaqXLy9a7qyr9HqBncxaSBiP9TMtKSmtsRZvg4VyAytzD1QqrmvEnwzaqa
-         0/hGsRWJ7fWOtg97EaV3/FG3Lf7PwYnhAPEhJiOry93QV7b1929GxqqRFtdmDHL4VbkU
-         83pQT9I/AKnQ9BEvYiHaKl5lncv6/47ge4iv6d/KUsYfMbNm62XodQPUPPq/Nkdo11b7
-         8n4HyHw7fRDxG8XpgnzpOHwtj75vn2lgHDvzrdARfG+mJZ6UYldPnwuV2U7D7v41ZNRz
-         cRlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762951621; x=1763556421;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=NlYd6Xq+AnhKekfFM+8+8cT83BwyMkqy6p8G3DXg5+E=;
-        b=rftFYkQ1ujbwFugekJ+RVE++EkZA+rbVa98MYpzeIraVtzotWAkviolbTSrSAmhtYl
-         1/nMZhXT0wFAE50YM4RhCd+aId19RkAccNyZxt+Cua61C+qphPaxopqZXMJp/ySbWAmw
-         KcCS/3T1zGDucG4qMc4CKJ2W5hnEkT2gC7Nb2tB7OJVW+sUihfK4KLQIGkXeOjUhwBY7
-         a3DGKhFqbzpixj2Z4yql2YtAZY6wMjLO5PFBTi3jlcDSrC7G1tqWa+uwux0CuAyH+PNp
-         PeAT+S3cxFOk4mX2lQ0HS5BcUwQBDlJjF3fz/7xu9O3LHsNKEMG1JCFaw5VoR17urcWM
-         mozA==
-X-Forwarded-Encrypted: i=1; AJvYcCUhy/3coLuEVfOFE9LnmuqGLExLr/TNSr0w0a1GUbfMDy8Zo8thj6jVknw/sFxSfzC2i9Jn1/c8pROZ1JT+@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzq9UO0iCnIGGCaooOqhx7UhYVqTc6Toup/QBMv9O2nAnPMwu4k
-	0tdZx8NdD6L75RLOotkbctSAK5+ursfhPbUZyn5uq1xxi4X7xfOxME1LQkNCtpWw1BVnZg4sX1i
-	eG+chVJv2qc09qX05DxFU93jP/raf2OWkCsdYxGlbxw==
-X-Gm-Gg: ASbGncugeZzW2g+gY3D/Vz4zSYsH2SaK1XX2PS9Fi8zlsqcyWtuVvMubkpw7wINofau
-	hV9fpE1BJdb2XAfPGhvk0oNlKDmkL8miJbtA7je7Tb41Qh2qBLAoyDd5QoCdzwP41mfR/9SD3jf
-	UJeRADkshpik4caQ3Lh+2AlOt7h+7++lvX+aFzA7v/ck51SY8qU2sy+Lvqh33+27rU4LVfsSxqc
-	uw8v3Iqo4rjxEMmoqmkQ6PsQ0tqELF9hPMma8tK8G0i/YNDVfYAhr2xfA==
-X-Google-Smtp-Source: AGHT+IHPQjz/pJ437pH7YFtSiDGAQ3VcFvPXvPvzuQHBM0+kWPerbB0r4L6RkLw74giNqTUgcHTcvt5mHbrdxH4Haek=
-X-Received: by 2002:a05:6402:5186:b0:640:9c99:bfac with SMTP id
- 4fb4d7f45d1cf-6431a4d609bmr2586786a12.13.1762951620623; Wed, 12 Nov 2025
- 04:47:00 -0800 (PST)
+	s=arc-20240116; t=1762952035; c=relaxed/simple;
+	bh=z8S/99uZskvY300XNWmpm8V4inQtKLtvvDWMbV1GgMg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A2uirJy6CoUzh16OntagfIatI6bvAtNq8c9/lGEsY4tge+ZCiiReucOqSH4sUo6QtWqWLvRaGUr6RqU18Yl9dJebQ5eGoxYdogZ0sKw/LZwilLrbcG+Kp1tCdtm47uTRpu2Y/7svnGmr4RzLH+EwRAm27SbSyQFOLof7SU9Ikbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=nqcgdMv0; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=T662K4QHEyU3kT05O5jxYs9Et2+lOD9+Rx0jTzI/Mmo=; b=nqcgdMv0WGGF5JfsxULCwyeTzV
+	gJdSBWl5tNlG4Or1d20Ouqydt1cgo+vSI3HJZUiwQ0SNNVEf5xKQ8pHqbFlzr5LE0b1R6RndwMZ9Z
+	ySswK1pRwFm6K/mjc1cGHQDyuUoMS1W6sgVt/6jNK+y1RuM8d0YgScGOfsJsV3SKF17wLUlQvGFgx
+	8MzCYu6G67Z7c1fyxnw6DxdPmfWeQkGirF13QuUbwBA88azQ3996l9YGZBFBHlSIs7QZSc7sJS9NB
+	sg9ACpNu6+E2MocoNlyBiblo4VOiHItaz3AtII1av1E6RmEfHyA3i701Q6xSpRTILuSEOgWLGCgg9
+	bZ9VfE8A==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vJAMA-00000008nxp-3eqP;
+	Wed, 12 Nov 2025 12:53:50 +0000
+Date: Wed, 12 Nov 2025 04:53:50 -0800
+From: Christoph Hellwig <hch@infradead.org>
+To: Brian Foster <bfoster@redhat.com>
+Cc: Christoph Hellwig <hch@infradead.org>, linux-fsdevel@vger.kernel.org,
+	linux-xfs@vger.kernel.org
+Subject: Re: [PATCH] iomap: replace folio_batch allocation with stack
+ allocation
+Message-ID: <aRSDXpcrs7fZ_ggO@infradead.org>
+References: <20251111175047.321869-1-bfoster@redhat.com>
+ <aRRHzBlw6pc3cQjr@infradead.org>
+ <aRR_FdE96gzkskqP@bfoster>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251107210526.257742-1-pasha.tatashin@soleen.com>
- <20251107210526.257742-3-pasha.tatashin@soleen.com> <aRObz4bQzRHH5hJb@kernel.org>
- <CA+CK2bDnaLJS9GdO_7Anhwah2uQrYYk_RhQMSiRL-YB=8ZZZWQ@mail.gmail.com>
- <CA+CK2bD3hps+atqUZ2LKyuoOSRRUWpTPE+frd5g13js4EAFK8g@mail.gmail.com> <aRRflLTejNQXWa1Z@kernel.org>
-In-Reply-To: <aRRflLTejNQXWa1Z@kernel.org>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Wed, 12 Nov 2025 07:46:23 -0500
-X-Gm-Features: AWmQ_bl87XR7836bCxIna383p3224VYBM84reJOLcIDxOxFdtSf2hXG1yTbnSeY
-Message-ID: <CA+CK2bB8731z-EKv2K8-x5SH8rjOTTuWkfkrc4Qj6skW+Kr7-g@mail.gmail.com>
-Subject: Re: [PATCH v5 02/22] liveupdate: luo_core: integrate with KHO
-To: Mike Rapoport <rppt@kernel.org>
-Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com, 
-	dmatlack@google.com, rientjes@google.com, corbet@lwn.net, 
-	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, 
-	ojeda@kernel.org, aliceryhl@google.com, masahiroy@kernel.org, 
-	akpm@linux-foundation.org, tj@kernel.org, yoann.congal@smile.fr, 
-	mmaurer@google.com, roman.gushchin@linux.dev, chenridong@huawei.com, 
-	axboe@kernel.dk, mark.rutland@arm.com, jannh@google.com, 
-	vincent.guittot@linaro.org, hannes@cmpxchg.org, dan.j.williams@intel.com, 
-	david@redhat.com, joel.granados@kernel.org, rostedt@goodmis.org, 
-	anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn, 
-	linux@weissschuh.net, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-mm@kvack.org, gregkh@linuxfoundation.org, tglx@linutronix.de, 
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, 
-	hpa@zytor.com, rafael@kernel.org, dakr@kernel.org, 
-	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com, 
-	myungjoo.ham@samsung.com, yesanishhere@gmail.com, Jonathan.Cameron@huawei.com, 
-	quic_zijuhu@quicinc.com, aleksander.lobakin@intel.com, ira.weiny@intel.com, 
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
-	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net, 
-	brauner@kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	saeedm@nvidia.com, ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com, 
-	leonro@nvidia.com, witu@nvidia.com, hughd@google.com, skhawaja@google.com, 
-	chrisl@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aRR_FdE96gzkskqP@bfoster>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Wed, Nov 12, 2025 at 5:21=E2=80=AFAM Mike Rapoport <rppt@kernel.org> wro=
-te:
->
-> On Tue, Nov 11, 2025 at 03:42:24PM -0500, Pasha Tatashin wrote:
-> > On Tue, Nov 11, 2025 at 3:39=E2=80=AFPM Pasha Tatashin
-> > <pasha.tatashin@soleen.com> wrote:
-> > >
-> > > > >       kho_memory_init();
-> > > > >
-> > > > > +     /* Live Update should follow right after KHO is initialized=
- */
-> > > > > +     liveupdate_init();
-> > > > > +
-> > > >
-> > > > Why do you think it should be immediately after kho_memory_init()?
-> > > > Any reason this can't be called from start_kernel() or even later a=
-s an
-> > > > early_initcall() or core_initall()?
-> > >
-> > > Unfortunately, no, even here it is too late, and we might need to fin=
-d
-> > > a way to move the kho_init/liveupdate_init earlier. We must be able t=
-o
-> > > preserve HugeTLB pages, and those are reserved earlier in boot.
-> >
-> > Just to clarify: liveupdate_init() is needed to start using:
-> > liveupdate_flb_incoming_* API, and FLB data is needed during HugeTLB
-> > reservation.
->
-> Since flb is "file-lifecycle-bound", it implies *file*. Early memory
-> reservations in hugetlb are not bound to files, they end up in file objec=
-ts
-> way later.
+On Wed, Nov 12, 2025 at 07:35:33AM -0500, Brian Foster wrote:
+> Hmm.. well I never really loved the flag return (or the end return), but
+> I wanted to make the iomap helper more consistent with the underlying
+> filemap helper because I think that reduces unnecessary complexity.
 
-FLB global objects act similarly to subsystem-wide data, except their
-data has a clear creation and destruction time tied to preserved
-files. When the first file of a particular type is added to LUO, this
-global data is created; when the last file of that type is removed
-(unpreserved or finished), this global data is destroyed, this is why
-its life is bound to file lifecycle. Crucially, this global data is
-accessible at any time while LUO owns the associated files spanning
-the early boot update boundary.
+Probably.  But the weird filemap (in general, not just the helper)
+calling convention of using page indices and non-inclusive ends doesn't
+really help with making it useful for higher level code.
 
-> So I think for now we can move liveupdate_init() later in boot and we wil=
-l
-> solve the problem of hugetlb reservations when we add support for hugetlb=
-.
+> I
+> suppose we could also make the flags an out param and either return void
+> or just pass through the filemap helper return (i.e. folio count)...
 
-HugeTLB reserves memory early in boot. If we already have preserved
-HugeTLB pages via LUO/KHO, we must ensure they are counted against the
-boot-time reservation. For example, if hugetlb_cma_reserve() needs to
-reserve ten 1G pages, but LUO has already preserved seven, we only
-need to reserve three new pages and the rest are going to be restored
-with the files.
+That would seem more logical to me.  Besides not really liking the new
+convention overly much (but that's a minor nitpick) my main issue was
+that this was hidden in a functional change without any explanation.
 
-Since this count is contained in the FLB global object, that data
-needs to be available during the early reservation phase. (Pratyush is
-working on HugeTLB preservation and can explain further).
-
-Pasha
 
