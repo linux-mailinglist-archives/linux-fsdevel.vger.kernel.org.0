@@ -1,319 +1,472 @@
-Return-Path: <linux-fsdevel+bounces-68007-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68008-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D1ECC506C4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Nov 2025 04:38:10 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8735DC506FD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Nov 2025 04:46:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AE6CA4E93E9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Nov 2025 03:37:22 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0D9C034C04C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Nov 2025 03:46:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEDD12BE035;
-	Wed, 12 Nov 2025 03:37:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB1DF2C0F6C;
+	Wed, 12 Nov 2025 03:46:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jP7jAJmL"
+	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="nWk4y37v"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 218712820DB
-	for <linux-fsdevel@vger.kernel.org>; Wed, 12 Nov 2025 03:37:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762918638; cv=none; b=VGcL7Y9ilmL8usarc4nIshhQcyt1A7nCBshBoUhyFd7wpYwiYSTkpD0IqGF5LYKw3+zEDzgY9Euu6gGzARGV14DvTOE8MKEz1Eu6ixldp3F90JrmP/zKXuvSIl3kv/8zWH4C4aKebUkmEztSmJStQZdEStif362GHM9RBeCqXRs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762918638; c=relaxed/simple;
-	bh=DhBiuBHhj4QOKjeJlb0OHaTCaIWmPT1vhkfV6SR6PGU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HZx4VOMi5UCOfHdtRKrnTem0c1bBEmCImujY6HZhTi8B81ZMrg8O4KDYzVQ7X+uMzHX0Bxirz3UaRyc2s7g9+gJsqZEi1173tQmeQNjxE669AHL8fUpse79Cs9gRz/iJWJuUb47pwi+CTpd615O93Ed3mj1hrFaAL6+3OqzZNew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jP7jAJmL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C37DBC2BC87
-	for <linux-fsdevel@vger.kernel.org>; Wed, 12 Nov 2025 03:37:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762918637;
-	bh=DhBiuBHhj4QOKjeJlb0OHaTCaIWmPT1vhkfV6SR6PGU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=jP7jAJmLr4bjyTIDz2ocjZh7/vJ7bWbVlq2zm3oopz+/0SkTvOu2P/BsonuaMfXwW
-	 bWEV0SborAGcdiThKUeWjcbi/9rcg3VOD0kJ0JE2uZUvqPvSJ65MD6Ke1H1HMcNuEv
-	 jcYC2M9AFRLRjRconH62QHsjmaXl3wbRe33ybNxojCsCyEY0ydiNgJPfRVLXF1CBTs
-	 P+2lZ+QmJHEbv+fGXVRS6rJEEb2RCUAfcudu3PKi9mBDRPdxtRXNc2ciXDVZa++wry
-	 ckKbqsUvOvWEWraLxIXXFrZSRoDgZc9O1eb5nbgcP9vtz5OXTRd9WoOSL5QQ1zgl/c
-	 bIhaHfmATiINg==
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-6418738efa0so621573a12.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Nov 2025 19:37:17 -0800 (PST)
-X-Gm-Message-State: AOJu0YxwV5hpK6hON7dU99X64QUU1ugm3eGs8wdFDLcM3fZHV1c3YeFw
-	n5RuXZlp09EqDKogpAfH4qc3sCtKTbndOxjcoSA6rcP24Ss+hFyG6w2/5QDv1Y6qwuBDT9FZZPy
-	sRYtIOGGAFSu2edvRcFTH8tYuwYD6+kI=
-X-Google-Smtp-Source: AGHT+IHukNbNLmeiNC4vEIccYa/dou23gkyUsfB8nWcmnhRuoTXMLXEWGET38bCmXQzeDQvxqqFXs5YeigpeZJrZcew=
-X-Received: by 2002:a05:6402:1e95:b0:641:27d8:ec4c with SMTP id
- 4fb4d7f45d1cf-6431a4d4523mr1317030a12.16.1762918636228; Tue, 11 Nov 2025
- 19:37:16 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45EC835CBA3;
+	Wed, 12 Nov 2025 03:45:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.153.30
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762919160; cv=fail; b=ONyMF9Gvq4u5+cIFSQPLw+/BEPoWJjnQ4a/8VKX0CSzFO6FJxS/8C19G/tXBbkJDIiPQEgPl2aMp5n3gbMDda066H0ezEHjqVs/a5uNSMwcRLGW7t8O0fRiY0i7a4fsFXPVK2J2dKJF8j3KHOrw1xOeli8KdwSjk1eTp2QRGOcM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762919160; c=relaxed/simple;
+	bh=2t209jREzswk/qRQLHXxP9CCWpkVhp4woD9WpIRgmXc=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=P4IbTwHtLJ8DtzSLIDuU1JDPHNhasLRQhxy9ZXf0EK3ki7che12SYiHImOjdAFiJYzvcIU6MvGMmSYsjE2gE1gAtSjV5BCqk7OzpkoichX0Pp+RsJq+MTsfVdn1oUWVLZcpQzxa5YcOfJ4IpfsPOTVGvb/7uKfP3jzCx2glReZs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=nWk4y37v; arc=fail smtp.client-ip=67.231.153.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
+Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
+	by mx0a-00082601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AC3JXaO1269494;
+	Tue, 11 Nov 2025 19:44:38 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=s2048-2025-q2;
+	 bh=So+hJ3UrUDUfsWuso8KRfSBuvQDAJS88TQsV3WEBAuQ=; b=nWk4y37vsCtn
+	MWTxS9E0wgnrVAVAbpxSG2BukRq+nrHyHriDC6ythghno2Dw6jYwTGUYX3FODz/Q
+	HBozXOyFsHIwHxrazYvc2rS2EswBAyIpiZo7gHK7sB5garFTKa527pbwrKIXq7Y8
+	TRCQS/kifq+WCiY8lBnvGo6DDQ0jRladFTXdDo78154kyTRKmO5w00oTePPJjzgg
+	svG1eMn5mpFrbNUZRUqD7qQqT2c5k5UpkEpvph8P1he6ipEXTubhhdWX3aY59Ux/
+	9r938Glr/JYMp3bU66DL0kBBywlhdyYxn0mV4GFKwSkOHFh5yroE7suioJPCH3+z
+	l0M2FGvYgQ==
+Received: from ch4pr04cu002.outbound.protection.outlook.com (mail-northcentralusazon11013045.outbound.protection.outlook.com [40.107.201.45])
+	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 4acj7t83an-1
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Tue, 11 Nov 2025 19:44:37 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jPuQpjHlAFhlUgxN8jNnNcHh0yAXBnPi/hvZyhZILcAsi5khVVy3eEAiEeE8Je51eV3U5BeYxeqbIsbwTdv/PzFuI3J5gp06Hz42is1glM+B5wep5Zm03OL1c1jLnJz8knydi66G0YUoGIPiIpSUovNCI46smHkGkDKzJxoAFeb4zWHIBxNNoR15mjGw3Kh62Q1HcUhNewcFA5B10oOo2YapcoFr3PYA0MD9CjGOzF7e8fTsn7F96HsM7CwQiyMV3PKEidFgbk8NTLF3HrpZiOimwx469myLVcU+r+0VDFdnVrAuxMh3DNFwv2BVdRSdzc+qmEKsxxc0jmL3VoJz0w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=So+hJ3UrUDUfsWuso8KRfSBuvQDAJS88TQsV3WEBAuQ=;
+ b=gih/VpIpgNOdXKTznD8H+nVipC9HCwI+UgF/4kQSA6LefeQAjz08NoeFd2H/EIwaW0WX361dgfe58KSN3U8h97IR5HRcOSAd+h41TFxN9NH/KAmSkU/3Yxc1ZLRXN/ABenIABx8Nv4N0qvog/vbhHfSF2FIyWBUa0b6+mdEEZsfKj41dGzFLBiW6ml69ID2atZJ6/UoaPbaYY3o9/3ySa43aqPWQAtP/qTX7k4jhBLRNPCrafaL5jq8z+uoqSlh/dxUF3xnjXp6586l+LqRMqDU3V1nDf18dKg7rrTSF9dX7axwyz0tRD/X+JZJszM45GPnq94fXCW3Obr+Z/DeEpA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=meta.com; dmarc=pass action=none header.from=meta.com;
+ dkim=pass header.d=meta.com; arc=none
+Received: from LV3PR15MB6455.namprd15.prod.outlook.com (2603:10b6:408:1ad::10)
+ by SA0PR15MB4064.namprd15.prod.outlook.com (2603:10b6:806:89::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.15; Wed, 12 Nov
+ 2025 03:44:36 +0000
+Received: from LV3PR15MB6455.namprd15.prod.outlook.com
+ ([fe80::8102:bfca:2805:316e]) by LV3PR15MB6455.namprd15.prod.outlook.com
+ ([fe80::8102:bfca:2805:316e%5]) with mapi id 15.20.9298.007; Wed, 12 Nov 2025
+ 03:44:36 +0000
+Message-ID: <e6b90909-fdd7-4c4d-b96e-df27ea9f39c4@meta.com>
+Date: Tue, 11 Nov 2025 22:44:26 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 36/50] functionfs: switch to simple_remove_by_name()
+To: Al Viro <viro@zeniv.linux.org.uk>, bot+bpf-ci@kernel.org
+Cc: linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org,
+        brauner@kernel.org, jack@suse.cz, raven@themaw.net, miklos@szeredi.hu,
+        neil@brown.name, a.hindborg@kernel.org, linux-mm@kvack.org,
+        linux-efi@vger.kernel.org, ocfs2-devel@lists.linux.dev,
+        kees@kernel.org, rostedt@goodmis.org, gregkh@linuxfoundation.org,
+        linux-usb@vger.kernel.org, paul@paul-moore.com, casey@schaufler-ca.com,
+        linuxppc-dev@lists.ozlabs.org, john.johansen@canonical.com,
+        selinux@vger.kernel.org, borntraeger@linux.ibm.com,
+        bpf@vger.kernel.org, ast@kernel.org, andrii@kernel.org,
+        daniel@iogearbox.net, martin.lau@kernel.org, eddyz87@gmail.com,
+        yonghong.song@linux.dev, ihor.solodrai@linux.dev
+References: <20251111065520.2847791-37-viro@zeniv.linux.org.uk>
+ <20754dba9be498daeda5fe856e7276c9c91c271999320ae32331adb25a47cd4f@mail.kernel.org>
+ <20251111092244.GS2441659@ZenIV>
+From: Chris Mason <clm@meta.com>
+Content-Language: en-US
+In-Reply-To: <20251111092244.GS2441659@ZenIV>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MN2PR08CA0001.namprd08.prod.outlook.com
+ (2603:10b6:208:239::6) To LV3PR15MB6455.namprd15.prod.outlook.com
+ (2603:10b6:408:1ad::10)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <690d2bd5.a70a0220.22f260.000f.GAE@google.com>
-In-Reply-To: <690d2bd5.a70a0220.22f260.000f.GAE@google.com>
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Wed, 12 Nov 2025 12:37:03 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd86eFyX5sVi_5exaFJ-wGn2U16n_L1c9ouDBnFGPuH_qg@mail.gmail.com>
-X-Gm-Features: AWmQ_bkDTKsFH4cIqTj1EJ1WAA5Yr-2Kv2RxgHDICiTGssV6riagZcltc37jwtM
-Message-ID: <CAKYAXd86eFyX5sVi_5exaFJ-wGn2U16n_L1c9ouDBnFGPuH_qg@mail.gmail.com>
-Subject: Re: [syzbot] [exfat?] WARNING in __rt_mutex_slowlock_locked (2)
-To: syzbot <syzbot+5216036fc59c43d1ee02@syzkaller.appspotmail.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	sj1557.seo@samsung.com, syzkaller-bugs@googlegroups.com, 
-	"Yuezhang.Mo" <Yuezhang.Mo@sony.com>
-Content-Type: multipart/mixed; boundary="00000000000014fa5706435d7bf9"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV3PR15MB6455:EE_|SA0PR15MB4064:EE_
+X-MS-Office365-Filtering-Correlation-Id: b1758d09-fa50-4319-7288-08de219dcc8c
+X-FB-Source: Internal
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?VWk4bU1CZE1sUHVJbWxzM3l2c05iMTRpUzRQYk9iUDdRZ01YSm5vVkpHZFFs?=
+ =?utf-8?B?anpkRm9hSndtWTN2bk1hK0lpRENuU1lQK0EyckFNeGVhVkNuOFJycU81Z2FO?=
+ =?utf-8?B?TGVRVGhXa0lyeDRjWU1KbHpXeHEwTWlpc0J5bHRUREhFQ093bXFHQm1IWVZn?=
+ =?utf-8?B?Ykp0VTcwamF0NVQvMHFZb2xrODAyVWVhWWZ5TjQ1Y2o1aHVwU1VJNmdxQVJM?=
+ =?utf-8?B?WWdweUErVHBMOTVIWU1oRGtabzVVaXd0aERVQ0FzU1FHRnpmK3EwL0tkOU1E?=
+ =?utf-8?B?bWpUNzdJcFVsUmR1S1JzRGlESisxN3pKYlBISUU2cWl4ck8rWmdsdkFBYXdR?=
+ =?utf-8?B?a2F0WU9oa3hkWkRxWndCN3RXSzgxcnloV05aelh6VXRrSEFzcTR6UWVVdG5l?=
+ =?utf-8?B?NklaQ1RIaFJmUVhGM1dIVVBWYUVyWHg5YzhoNDZHczlOYkNtOVQ2SWRhU3pp?=
+ =?utf-8?B?ckxEeTAybGdtSkM5YWIxWjAvNkhURTZFaWdlV2FzOXN2dEhnYTVJNDQzb0dK?=
+ =?utf-8?B?cmh1b0hMc3EyK0RuR1p4MWNWMmFuUElaWHUrdlJVQTAvYVJsbmVPdEFESFVS?=
+ =?utf-8?B?Y252WVpSdUZKSE93cnYycWh4T2VWVHBpZEdUMC9sK1pkSGFUU05JR2p2WUxq?=
+ =?utf-8?B?VjFwRFhxajlkSS9xbWJKa1RNWjRoVTd6bUMwbzJ6OGFZN0FCbTdtMDFjM2t4?=
+ =?utf-8?B?aU9CU0VyZmlxZ2c2M2FXYkt3U0V1VEhYd2dXWXY5a3JmL0MzZm14K3laRFN6?=
+ =?utf-8?B?MEYraXJvS2plNEFvNlNkSzUxdUZuZFU5djRsYlc2dWwzVGJTd2xiY0JiZlVs?=
+ =?utf-8?B?NUw3TjkxYWE5cnd6WC9rT1ZNUklDRmN1TDFUUFU1RExsSFppWHZnL0hPbUNY?=
+ =?utf-8?B?TThrdWhtNlAzMmlpYXhSYWFGNTFPTlNnVEsxVS9RZHJhU0ZNVmVWYUZFdXlK?=
+ =?utf-8?B?VkJmTGtjMTdNYnVZMWYzVlZuWW45Mnl6S092eFdCOVFCUkNjSzNpZGNrNEtn?=
+ =?utf-8?B?Y2hoc2NoVWRrV01maVRSK1ViVS9IMU9qalF1dzRIcy9HTDhaM1ZBUEZTS0pL?=
+ =?utf-8?B?L3hqc1lPZ09jQ0xVaFlhVFBONm53THdOV0x3a0o1WE5CSHkxMjBXWTEzYXpQ?=
+ =?utf-8?B?b25tZmN3T0sxVzFEL2xhNHl4U2FpbnpiS012SUsxd2dsRjFhbytOazVFYUV6?=
+ =?utf-8?B?QU1PY1MvMW1xNWI5cVN6SCtkRXZUQmVBY0xhOFFSeElwYkxwazBUMUNDVWw5?=
+ =?utf-8?B?ZHNmVjhCVWkwNWlNc2lIeUVhZFV6eURDUUFvK3BqNTdYc3krZ1lXU3pubXEx?=
+ =?utf-8?B?UVFXY3pBaUN5VWo5VHdWS09lb1ZuRjhIWWVZRXhiSXpvMnowS0ZrMHJYU0Fj?=
+ =?utf-8?B?YnJONXZyd0pQc1I0RjQ3clFlZVU1WFBrOE53aDJrZUNBUFFjcVhkMEJGZXdh?=
+ =?utf-8?B?bFhQcEhlOEp3NFR3S0xHWkZBSVhDTHRTVjlvdDBTZzMxYXRlZWxMYkJtRExu?=
+ =?utf-8?B?eUZIZmJvalczc1FVY2EvazBXS295OHI3V096OUFaVmpFRTR2bDUrZzZBWWVM?=
+ =?utf-8?B?WGUyY1hJVUZ4ZjBRVFNMakdYUDBZWGhISzF3Q09zbVQ1Z2ZURlJBdUlQWm1i?=
+ =?utf-8?B?d0lCYktuS1VLOHNZK2dITWFPVStydFJYUzlHa0hrcU81R0FFYlh3djhCZzEz?=
+ =?utf-8?B?aXZSV0RCYU5FS1kvSVVNemQ2VWJtb0FvczdTNWxGenJ4SWN2TnRWVTVrQk1v?=
+ =?utf-8?B?alc3SDBaNHpzWTFPNG81Um1ydFZQRzhKbHQ5V2hPd0wzWnpqZ2owanBtVzVx?=
+ =?utf-8?B?bjF2Kzc0V01ETkJMWUx2c1VsYnRHOGRRNDd4eDNoMFJ1UytwcFlyNXRINFp1?=
+ =?utf-8?B?MWRNT1QyZmtNcXh3SldtYTh1YWlmaFpUVzBZZjkrVmFZY2VFL3I3Unc2QWNp?=
+ =?utf-8?Q?REYaM6L2aPZkMgMPGGyc9tVsw3yfmThu?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR15MB6455.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?VUxkQnU5WjNVbHFxWFMrK2VFYkFUc2paYkJxYTY3MWFxaTU4UkNmOHFNQndq?=
+ =?utf-8?B?ZkFPekNqSE01T1JDanBlUnVnNjJhbDhXWVFyaHo2U3BFc2JYZHhoSmdFbVBk?=
+ =?utf-8?B?bWxiRS9rcTNTRUtqSEJUeVZuZkQyRVp3dldaUVRHWlM5dnRJdytLRXY2QW94?=
+ =?utf-8?B?MEJaZkhsUUhrVGdlTVZGUW42MkNvOHNhSlhmUEdXVWl6S1RaaFExVG5BZFJD?=
+ =?utf-8?B?S25VSkJRbjBhaDVJVEdJN2ZnTDFSaWlIaWRtMUgxdERWNUlyY0FPQnN1UkZS?=
+ =?utf-8?B?aUJTcjBJRjlzaGtKUWFMNDVsZERsWlBlYXRBdUI4V0c0YXdoN0tlZmYxZkRD?=
+ =?utf-8?B?Q01MZ2lYem80em9IamZ1bldyOFdScGZWYnhLaWJxVXVsQXlvOUhDb3p0VzVy?=
+ =?utf-8?B?VlBFc2NOUnJEUCtheGR0c09uUnVreTVRaXRyczgwUXA5bTBteEc3RFllOE42?=
+ =?utf-8?B?SHdTMzlJY3gyYThka01FbjNtZVVYT2tOd3ZBd0dlSlVzdGJXNDZJU0pkMnJK?=
+ =?utf-8?B?eUpLMWg0YVNkV0YrWmY1c1V0ZG11RnBxR2cxdWdERHRubHV2emFJeEJHcitl?=
+ =?utf-8?B?bm0wYU9MblVlSmRqY2JQWGQyWm0wSzVXQzF6OVpKaEhHL0FvVEQ3TEZHNUh1?=
+ =?utf-8?B?VXh1MDlzRnl6ZjBrMnc4bEN6YjRVNWFHaGRFaEM3bFpLZnlIbGJVTjBxdWYv?=
+ =?utf-8?B?MlRIUlYybHUrUnM5YjlMOVJxcis2WTkrOHpCT1dTczFEeFVDWmJHOGRXTEVC?=
+ =?utf-8?B?NXR5NmZDT3ZVL3BKdnZ5b1NxUldRTFRzQU1MaklpOHpWc0Nnb3VzdU5PQlRq?=
+ =?utf-8?B?bmZkRjNYUGNLZmYyUWhNMlVydXczajliQXJremliRjZoVXArOEtwUE5iQzIr?=
+ =?utf-8?B?L3BhbEJBU1NvcDFrTXh5U1JBblNRaEN3RkFwbXRESjhoVVNuUGFKZmlESXZv?=
+ =?utf-8?B?WWpRblY3Q0VKR1o2NUd6RFFVbCtQR2R6YUhUbzVwcnhEYjhtWnY1cHJvTlEv?=
+ =?utf-8?B?aHdvbHRXejkwdzVjZ2FCQkRvVElVaGhWTExaVUdDZWZRTS9adVdscStpOTBj?=
+ =?utf-8?B?aUdzNllGUWVEb1k1TUE4M2RVUjhyVGc5b0lQSTE4Y251Nkx4eHZmclhkeHY0?=
+ =?utf-8?B?SjQyNXlWaEc4Y0NrMU5QZWtSSTRwc2loSjhGWjRUVDlTa25FOUljNVZURHhz?=
+ =?utf-8?B?WE1MTk1udjgxdVo4bTR4Wm1JZSs0YWRUazUxdEs1cnFRN0tQb3ZaUVFkNjRW?=
+ =?utf-8?B?L0o5dURzMkF4R2hoR3FqOWV6aXdHU1h5a0NnM1JUS0Rwd0l3MExGT1VyZll3?=
+ =?utf-8?B?QytLWXgyOSsyd2xaRmlIb252UENnU2hrbkcvQzNma2RTdkxpWjNqY3JJSGNL?=
+ =?utf-8?B?V0syUHl3MGJFSXZWcXNSVUhOVjdiTVpUcEFjTEFFd29zUGlWdDJPUHlMS0xD?=
+ =?utf-8?B?Z25MREtBRzNmMUwrUHdtSVZNenF0aHBiVFdQYk9qOGFLbEFuS1h6aDMrWTRV?=
+ =?utf-8?B?ODBudDlyOGZVdldtY1J1RWZ6WjBMWUlkQVRRcmdWQ29KS24wMDREUm9yZ3RF?=
+ =?utf-8?B?YUNUWmJvb2NrU1dnVzk0M3JWUURyQ1ZMeFRWZEhyYllhKzJYTVQ1N25NY0gv?=
+ =?utf-8?B?MkRKRXNWdnZJaHZ6d055ejVGaUtDSzZWcXUwT21uNHhRdHVraGozeC9tYVlu?=
+ =?utf-8?B?MzVURFNOb2pGa05ySjRnMWpGeFpvaDRmb0lERU9memk3d2grNU5PNDFyLzNI?=
+ =?utf-8?B?dlVGQTE5aS9TNDJVUStIM3BrVC84Q29Kczh4dVRHZHVnWE1aWlUydXpWMmw5?=
+ =?utf-8?B?R2FjTUVYc3A1SFhUTXdXWHlQRzNsMlBodWlPYmIzWkwxRUhjRkFNUG8xcW5G?=
+ =?utf-8?B?WXhrZDBOR3dCb25ocHVMZzVoVGpBY05zdWdDTUhkb3dubk41QWs4Qy9LU0Ux?=
+ =?utf-8?B?RHpQNkg1dW9EdXovSEdaTm1UZmRMZHBIWC9YMWNiaWpKSTBTczdVcGZJS3dz?=
+ =?utf-8?B?OUR5b1R5WFBIS1FkVDNOZUt5dmE3cHFVQ3d3YkRIQktsRTlkaGI3cDZxSXpy?=
+ =?utf-8?B?MEU5ZmNpSXZXVjErdVZSRFcvdnF1SllUNU1VaUhuQVNoc2NOTjdVMjMvNEtT?=
+ =?utf-8?Q?1wa8=3D?=
+X-OriginatorOrg: meta.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b1758d09-fa50-4319-7288-08de219dcc8c
+X-MS-Exchange-CrossTenant-AuthSource: LV3PR15MB6455.namprd15.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2025 03:44:35.9906
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 30wlE+G0iFqZg7YP77hESYVabKebrpAC6BIDrT6Ri/JwgpgMnRKyI13G+7xJIou3
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR15MB4064
+X-Proofpoint-ORIG-GUID: kDZpPp3STOext23uSPrYVjkQb44YOY1E
+X-Proofpoint-GUID: kDZpPp3STOext23uSPrYVjkQb44YOY1E
+X-Authority-Analysis: v=2.4 cv=Wb4BqkhX c=1 sm=1 tr=0 ts=691402a5 cx=c_pps
+ a=IhFJ2QRitvxj7yHj5jvJkw==:117 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19
+ a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
+ a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=_3bh-1Pi-ry9tbEdrMgA:9
+ a=QEXdDO2ut3YA:10 a=DXsff8QfwkrTrK3sU8N1:22 a=Z5ABNNGmrOfJ6cZ5bIyy:22
+ a=bWyr8ysk75zN3GCy5bjg:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEyMDAyNyBTYWx0ZWRfX4vS7V7wdzrvn
+ Qy7Mq/5grhTspsYbWLvBFUKc8TsRggUN0NPCSJiRxOmrG8MflNGqc3SN5sPPSaXohtB4OI6ESXh
+ XxsqMGBS2UvAfSHngWXRGZOJsCAotC7GmdvGjmj2+WftcVouoHmI2bd3Fi5JSmaDWOxyqinPSOt
+ jUcjmWyv6TQ57AcNU4w8Kr3qGYozQO1CeaKe0fhTgO8ureG5XCBEF2iZouhEzdRGgi1QB6qdS2l
+ oNioed6IARsr859zjqDJCV71yQxWxQ2YIxtueCH6kGx+o2kc7etklizNDQYWI0lS1vmoVzfYTe5
+ IkWyOhxeF7dHMS3H13eeUYdA/rU32Haa1tk/CPSa8o4DgNZrMIjD/Rs8aXlSu4aSEpvF3MN3Quo
+ qfz6NKg+pJUAp5Rs2keTyr8wUXXLOg==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-12_01,2025-11-11_03,2025-10-01_01
 
---00000000000014fa5706435d7bf9
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+On 11/11/25 4:22 AM, Al Viro wrote:
+> On Tue, Nov 11, 2025 at 07:53:16AM +0000, bot+bpf-ci@kernel.org wrote:
+> 
+>> When ffs_epfiles_create() calls ffs_epfiles_destroy(epfiles, i - 1) after
+>> the first ffs_sb_create_file() call fails (when i=1), it passes count=0.
+>> The initialization loop starts at i=1, so epfiles[0].ffs is never
+>> initialized.
+> 
+> Incorrect.  The loop in question is
+> 
+> 	epfile = epfiles;
+> 	for (i = 1; i <= count; ++i, ++epfile) {
+> 		epfile->ffs = ffs;
+> 		mutex_init(&epfile->mutex);
+> 		mutex_init(&epfile->dmabufs_mutex);
+> 		INIT_LIST_HEAD(&epfile->dmabufs);
+> 		if (ffs->user_flags & FUNCTIONFS_VIRTUAL_ADDR)
+> 			sprintf(epfile->name, "ep%02x", ffs->eps_addrmap[i]);
+> 		else   
+> 			sprintf(epfile->name, "ep%u", i);
+> 		err = ffs_sb_create_file(ffs->sb, epfile->name,
+> 					 epfile, &ffs_epfile_operations);
+> 		if (err) {
+> 			ffs_epfiles_destroy(epfiles, i - 1);
+> 			return err;
+> 		}
+> 	}
+> 
+> and invariant maintained through the loop is epfile == epfiles + (i - 1).
+> We start with i == 1 and epfile == epfiles, modify neither variable in
+> the loop body and increment both i and epfile by the same amount in
+> the step.
+> 
+> In other words, on the first pass through the loop we access epfiles[0],
+> not epfiles[1].  Granted, the loop could've been more idiomatic, but
+> it is actually correct.
 
-#syz test
+AI was getting confused about epfile vs epfiles and didn't realize they
+were pointing to the same memory.  So I put some changes into the prompt
+to sort that out, and it found a different variation on this same
+complaint.
 
-On Fri, Nov 7, 2025 at 8:14=E2=80=AFAM syzbot
-<syzbot+5216036fc59c43d1ee02@syzkaller.appspotmail.com> wrote:
->
-> Hello,
->
-> syzbot found the following issue on:
->
-> HEAD commit:    c2c2ccfd4ba7 Merge tag 'net-6.18-rc5' of git://git.kernel=
-...
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=3D151be11458000=
-0
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D41ad820f608cb=
-833
-> dashboard link: https://syzkaller.appspot.com/bug?extid=3D5216036fc59c43d=
-1ee02
-> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b797=
-6-1~exp1~20250708183702.136), Debian LLD 20.1.8
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D11062a58580=
-000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D16e1908458000=
-0
->
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/121c46acc3df/dis=
-k-c2c2ccfd.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/eb0aef8fb7a1/vmlinu=
-x-c2c2ccfd.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/a2bba0757aa5/b=
-zImage-c2c2ccfd.xz
-> mounted in repro: https://storage.googleapis.com/syzbot-assets/03760a9baa=
-bf/mount_0.gz
->   fsck result: failed (log: https://syzkaller.appspot.com/x/fsck.log?x=3D=
-12084532580000)
->
-> IMPORTANT: if you fix the issue, please add the following tag to the comm=
-it:
-> Reported-by: syzbot+5216036fc59c43d1ee02@syzkaller.appspotmail.com
->
-> loop0: detected capacity change from 0 to 256
-> exFAT-fs (loop0): start_clu is invalid cluster(0x400)
-> ------------[ cut here ]------------
-> rtmutex deadlock detected
-> WARNING: CPU: 0 PID: 6071 at kernel/locking/rtmutex.c:1674 rt_mutex_handl=
-e_deadlock kernel/locking/rtmutex.c:1674 [inline]
-> WARNING: CPU: 0 PID: 6071 at kernel/locking/rtmutex.c:1674 __rt_mutex_slo=
-wlock kernel/locking/rtmutex.c:1734 [inline]
-> WARNING: CPU: 0 PID: 6071 at kernel/locking/rtmutex.c:1674 __rt_mutex_slo=
-wlock_locked+0xed2/0x25e0 kernel/locking/rtmutex.c:1760
-> Modules linked in:
-> CPU: 0 UID: 0 PID: 6071 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT_{=
-RT,(full)}
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
-oogle 10/02/2025
-> RIP: 0010:rt_mutex_handle_deadlock kernel/locking/rtmutex.c:1674 [inline]
-> RIP: 0010:__rt_mutex_slowlock kernel/locking/rtmutex.c:1734 [inline]
-> RIP: 0010:__rt_mutex_slowlock_locked+0xed2/0x25e0 kernel/locking/rtmutex.=
-c:1760
-> Code: 7c 24 20 dd 4c 8b b4 24 98 00 00 00 0f 85 fd 0a 00 00 48 8b 7c 24 1=
-0 e8 4c 50 28 09 90 48 c7 c7 60 fd ea 8a e8 ef 62 e7 ff 90 <0f> 0b 90 90 48=
- 8b 9c 24 80 00 00 00 43 80 3c 3e 00 74 08 4c 89 e7
-> RSP: 0018:ffffc90003d87a20 EFLAGS: 00010246
-> RAX: 5bae39e042a2bb00 RBX: ffff88802472e4e0 RCX: ffff88802472da00
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-> RBP: ffffc90003d87c10 R08: 0000000000000000 R09: 0000000000000000
-> R10: dffffc0000000000 R11: ffffed101710487b R12: ffff88802472f160
-> R13: ffff88802472da18 R14: 1ffff110048e5e2c R15: dffffc0000000000
-> FS:  00005555931b8500(0000) GS:ffff888126df9000(0000) knlGS:0000000000000=
-000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007ffefdd79178 CR3: 000000003e14c000 CR4: 00000000003526f0
-> Call Trace:
->  <TASK>
->  rt_mutex_slowlock+0xb5/0x160 kernel/locking/rtmutex.c:1800
->  __rt_mutex_lock kernel/locking/rtmutex.c:1815 [inline]
->  rwbase_write_lock+0x14f/0x750 kernel/locking/rwbase_rt.c:244
->  inode_lock include/linux/fs.h:980 [inline]
->  vfs_rmdir+0xf7/0x520 fs/namei.c:4537
->  do_rmdir+0x25f/0x550 fs/namei.c:4603
->  __do_sys_unlinkat fs/namei.c:4777 [inline]
->  __se_sys_unlinkat fs/namei.c:4771 [inline]
->  __x64_sys_unlinkat+0xc2/0xf0 fs/namei.c:4771
->  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->  do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f03a63ff6c9
-> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f=
-7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff=
- ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007ffd1d6ca228 EFLAGS: 00000246 ORIG_RAX: 0000000000000107
-> RAX: ffffffffffffffda RBX: 00007f03a6655fa0 RCX: 00007f03a63ff6c9
-> RDX: 0000000000000200 RSI: 0000200000000040 RDI: 0000000000000006
-> RBP: 00007f03a6481f91 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-> R13: 00007f03a6655fa0 R14: 00007f03a6655fa0 R15: 0000000000000003
->  </TASK>
->
->
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
->
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
->
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before testing.
->
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
->
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
->
-> If you want to undo deduplication, reply with:
-> #syz undup
+We're wandering into fuzzing territory here, and I honestly have no idea
+if this is a valid use of any of this code, but AI managed to make a
+repro that crashes only after your patch.  So, I'll let you decide.
 
---00000000000014fa5706435d7bf9
-Content-Type: text/x-patch; charset="US-ASCII"; 
-	name="0001-exfat-validate-the-cluster-bitmap-bits-of-directory.patch"
-Content-Disposition: attachment; 
-	filename="0001-exfat-validate-the-cluster-bitmap-bits-of-directory.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_mhvg7w4k0>
-X-Attachment-Id: f_mhvg7w4k0
+The new review:
 
-RnJvbSBkYTUzNjY1YWUzODA4MDk0MjdhYWU5ZGY3MmQ5NzMzNDVhM2RlN2FiIE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBOYW1qYWUgSmVvbiA8bGlua2luamVvbkBrZXJuZWwub3JnPgpE
-YXRlOiBXZWQsIDEyIE5vdiAyMDI1IDA5OjQyOjI1ICswOTAwClN1YmplY3Q6IFtQQVRDSF0gZXhm
-YXQ6IHZhbGlkYXRlIHRoZSBjbHVzdGVyIGJpdG1hcCBiaXRzIG9mIGRpcmVjdG9yeQoKU3l6Ym90
-IGNyZWF0ZWQgdGhpcyBpc3N1ZSBieSB0ZXN0aW5nIGFuIGltYWdlIHRoYXQgZGlkIG5vdCBoYXZl
-IHRoZSByb290CmNsdXN0ZXIgYml0bWFwIGJpdCBtYXJrZWQuIEFmdGVyIGFjY2Vzc2luZyBhIGZp
-bGUgdGhyb3VnaCB0aGUgcm9vdApkaXJlY3RvcnkgdmlhIGV4ZmF0X2xvb2t1cCwgd2hlbiBjcmVh
-dGluZyBhIGZpbGUgYWdhaW4gd2l0aCBta2RpciwKdGhlIHJvb3QgY2x1c3RlciBiaXQgY2FuIGJl
-IGFsbG9jYXRlZCBmb3IgZGlyZWNvdHJ5LCB3aGljaCBjYW4gY2F1c2UKdGhlIHJvb3QgY2x1c3Rl
-ciB0byBiZSB6ZXJvZWQgb3V0IGFuZCB0aGUgc2FtZSBlbnRyeSBjYW4gYmUgYWxsb2NhdGVkCmlu
-IHRoZSBzYW1lIGNsdXN0ZXIuIFRoaXMgcGF0Y2ggaW1wcm92ZWQgdGhpcyBpc3N1ZSBieSBhZGRp
-bmcKZXhmYXRfdGVzdF9iaXRtYXAgdG8gdmFsaWRhdGUgdGhlIGNsdXN0ZXIgYml0cyBvZiB0aGUg
-cm9vdCBkaXJlY3RvcnkKYW5kIGRpcmVjdG9yeS4gQW5kIHRoZSBmaXJzdCBjbHVzdGVyIGJpdCBv
-ZiB0aGUgcm9vdCBkaXJlY3Rvcnkgc2hvdWxkCm5ldmVyIGJlIHVuc2V0IGV4Y2VwdCB3aGVuIHN0
-b3JhZ2UgaXMgY29ycnVwdGVkLiBUaGlzIGJpdCBpcyBzZXQgdG8KYWxsb3cgb3BlcmF0aW9ucyBh
-ZnRlciBtb3VudC4KClJldmlld2VkLWJ5OiBTdW5nam9uZyBTZW8gPHNqMTU1Ny5zZW9Ac2Ftc3Vu
-Zy5jb20+ClJldmlld2VkLWJ5OiBZdWV6aGFuZyBNbyA8WXVlemhhbmcuTW9Ac29ueS5jb20+ClNp
-Z25lZC1vZmYtYnk6IE5hbWphZSBKZW9uIDxsaW5raW5qZW9uQGtlcm5lbC5vcmc+Ci0tLQogZnMv
-ZXhmYXQvYmFsbG9jLmMgICB8IDI4ICsrKysrKysrKysrKysrKysrKysrKysrKy0tLS0KIGZzL2V4
-ZmF0L2Rpci5jICAgICAgfCAgNSArKysrKwogZnMvZXhmYXQvZXhmYXRfZnMuaCB8ICA1ICsrKy0t
-CiBmcy9leGZhdC9mYXRlbnQuYyAgIHwgIDYgKysrLS0tCiBmcy9leGZhdC9zdXBlci5jICAgIHwg
-MTEgKysrKysrKysrKysKIDUgZmlsZXMgY2hhbmdlZCwgNDYgaW5zZXJ0aW9ucygrKSwgOSBkZWxl
-dGlvbnMoLSkKCmRpZmYgLS1naXQgYS9mcy9leGZhdC9iYWxsb2MuYyBiL2ZzL2V4ZmF0L2JhbGxv
-Yy5jCmluZGV4IDJkMmQ1MTBmMjM3Mi4uYjM4N2JmN2RmNjVlIDEwMDY0NAotLS0gYS9mcy9leGZh
-dC9iYWxsb2MuYworKysgYi9mcy9leGZhdC9iYWxsb2MuYwpAQCAtMTgzLDExICsxODMsMTAgQEAg
-dm9pZCBleGZhdF9mcmVlX2JpdG1hcChzdHJ1Y3QgZXhmYXRfc2JfaW5mbyAqc2JpKQogCWt2ZnJl
-ZShzYmktPnZvbF9hbWFwKTsKIH0KIAotaW50IGV4ZmF0X3NldF9iaXRtYXAoc3RydWN0IGlub2Rl
-ICppbm9kZSwgdW5zaWduZWQgaW50IGNsdSwgYm9vbCBzeW5jKQoraW50IGV4ZmF0X3NldF9iaXRt
-YXAoc3RydWN0IHN1cGVyX2Jsb2NrICpzYiwgdW5zaWduZWQgaW50IGNsdSwgYm9vbCBzeW5jKQog
-ewogCWludCBpLCBiOwogCXVuc2lnbmVkIGludCBlbnRfaWR4OwotCXN0cnVjdCBzdXBlcl9ibG9j
-ayAqc2IgPSBpbm9kZS0+aV9zYjsKIAlzdHJ1Y3QgZXhmYXRfc2JfaW5mbyAqc2JpID0gRVhGQVRf
-U0Ioc2IpOwogCiAJaWYgKCFpc192YWxpZF9jbHVzdGVyKHNiaSwgY2x1KSkKQEAgLTIwMiwxMSAr
-MjAxLDEwIEBAIGludCBleGZhdF9zZXRfYml0bWFwKHN0cnVjdCBpbm9kZSAqaW5vZGUsIHVuc2ln
-bmVkIGludCBjbHUsIGJvb2wgc3luYykKIAlyZXR1cm4gMDsKIH0KIAotaW50IGV4ZmF0X2NsZWFy
-X2JpdG1hcChzdHJ1Y3QgaW5vZGUgKmlub2RlLCB1bnNpZ25lZCBpbnQgY2x1LCBib29sIHN5bmMp
-CitpbnQgZXhmYXRfY2xlYXJfYml0bWFwKHN0cnVjdCBzdXBlcl9ibG9jayAqc2IsIHVuc2lnbmVk
-IGludCBjbHUsIGJvb2wgc3luYykKIHsKIAlpbnQgaSwgYjsKIAl1bnNpZ25lZCBpbnQgZW50X2lk
-eDsKLQlzdHJ1Y3Qgc3VwZXJfYmxvY2sgKnNiID0gaW5vZGUtPmlfc2I7CiAJc3RydWN0IGV4ZmF0
-X3NiX2luZm8gKnNiaSA9IEVYRkFUX1NCKHNiKTsKIAogCWlmICghaXNfdmFsaWRfY2x1c3Rlcihz
-YmksIGNsdSkpCkBAIC0yMjYsNiArMjI0LDI4IEBAIGludCBleGZhdF9jbGVhcl9iaXRtYXAoc3Ry
-dWN0IGlub2RlICppbm9kZSwgdW5zaWduZWQgaW50IGNsdSwgYm9vbCBzeW5jKQogCXJldHVybiAw
-OwogfQogCitib29sIGV4ZmF0X3Rlc3RfYml0bWFwKHN0cnVjdCBzdXBlcl9ibG9jayAqc2IsIHVu
-c2lnbmVkIGludCBjbHUpCit7CisJaW50IGksIGI7CisJdW5zaWduZWQgaW50IGVudF9pZHg7CisJ
-c3RydWN0IGV4ZmF0X3NiX2luZm8gKnNiaSA9IEVYRkFUX1NCKHNiKTsKKworCWlmICghc2JpLT52
-b2xfYW1hcCkKKwkJcmV0dXJuIHRydWU7CisKKwlpZiAoIWlzX3ZhbGlkX2NsdXN0ZXIoc2JpLCBj
-bHUpKQorCQlyZXR1cm4gZmFsc2U7CisKKwllbnRfaWR4ID0gQ0xVU1RFUl9UT19CSVRNQVBfRU5U
-KGNsdSk7CisJaSA9IEJJVE1BUF9PRkZTRVRfU0VDVE9SX0lOREVYKHNiLCBlbnRfaWR4KTsKKwli
-ID0gQklUTUFQX09GRlNFVF9CSVRfSU5fU0VDVE9SKHNiLCBlbnRfaWR4KTsKKworCWlmICghdGVz
-dF9iaXRfbGUoYiwgc2JpLT52b2xfYW1hcFtpXS0+Yl9kYXRhKSkKKwkJcmV0dXJuIGZhbHNlOwor
-CisJcmV0dXJuIHRydWU7Cit9CisKIC8qCiAgKiBJZiB0aGUgdmFsdWUgb2YgImNsdSIgaXMgMCwg
-aXQgbWVhbnMgY2x1c3RlciAyIHdoaWNoIGlzIHRoZSBmaXJzdCBjbHVzdGVyIG9mCiAgKiB0aGUg
-Y2x1c3RlciBoZWFwLgpkaWZmIC0tZ2l0IGEvZnMvZXhmYXQvZGlyLmMgYi9mcy9leGZhdC9kaXIu
-YwppbmRleCA3MjI5MTQ2ZmUyYmYuLjMwNDVhNThlMTI0YSAxMDA2NDQKLS0tIGEvZnMvZXhmYXQv
-ZGlyLmMKKysrIGIvZnMvZXhmYXQvZGlyLmMKQEAgLTYwNCw2ICs2MDQsMTEgQEAgc3RhdGljIGlu
-dCBleGZhdF9maW5kX2xvY2F0aW9uKHN0cnVjdCBzdXBlcl9ibG9jayAqc2IsIHN0cnVjdCBleGZh
-dF9jaGFpbiAqcF9kaXIKIAlpZiAocmV0KQogCQlyZXR1cm4gcmV0OwogCisJaWYgKCFleGZhdF90
-ZXN0X2JpdG1hcChzYiwgY2x1KSkgeworCQlleGZhdF9lcnIoc2IsICJmYWlsZWQgdG8gdGVzdCBj
-bHVzdGVyIGJpdCgldSkiLCBjbHUpOworCQlyZXR1cm4gLUVJTzsKKwl9CisKIAkvKiBieXRlIG9m
-ZnNldCBpbiBjbHVzdGVyICovCiAJb2ZmID0gRVhGQVRfQ0xVX09GRlNFVChvZmYsIHNiaSk7CiAK
-ZGlmZiAtLWdpdCBhL2ZzL2V4ZmF0L2V4ZmF0X2ZzLmggYi9mcy9leGZhdC9leGZhdF9mcy5oCmlu
-ZGV4IDM4MjEwZmI2OTAxYy4uMTc2ZmVmNjI1NzRjIDEwMDY0NAotLS0gYS9mcy9leGZhdC9leGZh
-dF9mcy5oCisrKyBiL2ZzL2V4ZmF0L2V4ZmF0X2ZzLmgKQEAgLTQ1Miw4ICs0NTIsOSBAQCBpbnQg
-ZXhmYXRfY291bnRfbnVtX2NsdXN0ZXJzKHN0cnVjdCBzdXBlcl9ibG9jayAqc2IsCiAvKiBiYWxs
-b2MuYyAqLwogaW50IGV4ZmF0X2xvYWRfYml0bWFwKHN0cnVjdCBzdXBlcl9ibG9jayAqc2IpOwog
-dm9pZCBleGZhdF9mcmVlX2JpdG1hcChzdHJ1Y3QgZXhmYXRfc2JfaW5mbyAqc2JpKTsKLWludCBl
-eGZhdF9zZXRfYml0bWFwKHN0cnVjdCBpbm9kZSAqaW5vZGUsIHVuc2lnbmVkIGludCBjbHUsIGJv
-b2wgc3luYyk7Ci1pbnQgZXhmYXRfY2xlYXJfYml0bWFwKHN0cnVjdCBpbm9kZSAqaW5vZGUsIHVu
-c2lnbmVkIGludCBjbHUsIGJvb2wgc3luYyk7CitpbnQgZXhmYXRfc2V0X2JpdG1hcChzdHJ1Y3Qg
-c3VwZXJfYmxvY2sgKnNiLCB1bnNpZ25lZCBpbnQgY2x1LCBib29sIHN5bmMpOworaW50IGV4ZmF0
-X2NsZWFyX2JpdG1hcChzdHJ1Y3Qgc3VwZXJfYmxvY2sgKnNiLCB1bnNpZ25lZCBpbnQgY2x1LCBi
-b29sIHN5bmMpOworYm9vbCBleGZhdF90ZXN0X2JpdG1hcChzdHJ1Y3Qgc3VwZXJfYmxvY2sgKnNi
-LCB1bnNpZ25lZCBpbnQgY2x1KTsKIHVuc2lnbmVkIGludCBleGZhdF9maW5kX2ZyZWVfYml0bWFw
-KHN0cnVjdCBzdXBlcl9ibG9jayAqc2IsIHVuc2lnbmVkIGludCBjbHUpOwogaW50IGV4ZmF0X2Nv
-dW50X3VzZWRfY2x1c3RlcnMoc3RydWN0IHN1cGVyX2Jsb2NrICpzYiwgdW5zaWduZWQgaW50ICpy
-ZXRfY291bnQpOwogaW50IGV4ZmF0X3RyaW1fZnMoc3RydWN0IGlub2RlICppbm9kZSwgc3RydWN0
-IGZzdHJpbV9yYW5nZSAqcmFuZ2UpOwpkaWZmIC0tZ2l0IGEvZnMvZXhmYXQvZmF0ZW50LmMgYi9m
-cy9leGZhdC9mYXRlbnQuYwppbmRleCA4MjUwODM2MzRiYTIuLmM5YzVmMmUzYTA1ZSAxMDA2NDQK
-LS0tIGEvZnMvZXhmYXQvZmF0ZW50LmMKKysrIGIvZnMvZXhmYXQvZmF0ZW50LmMKQEAgLTIwNSw3
-ICsyMDUsNyBAQCBzdGF0aWMgaW50IF9fZXhmYXRfZnJlZV9jbHVzdGVyKHN0cnVjdCBpbm9kZSAq
-aW5vZGUsIHN0cnVjdCBleGZhdF9jaGFpbiAqcF9jaGFpbgogCQkJCWN1cl9jbWFwX2kgPSBuZXh0
-X2NtYXBfaTsKIAkJCX0KIAotCQkJZXJyID0gZXhmYXRfY2xlYXJfYml0bWFwKGlub2RlLCBjbHUs
-IChzeW5jICYmIElTX0RJUlNZTkMoaW5vZGUpKSk7CisJCQllcnIgPSBleGZhdF9jbGVhcl9iaXRt
-YXAoc2IsIGNsdSwgKHN5bmMgJiYgSVNfRElSU1lOQyhpbm9kZSkpKTsKIAkJCWlmIChlcnIpCiAJ
-CQkJYnJlYWs7CiAJCQljbHUrKzsKQEAgLTIzMyw3ICsyMzMsNyBAQCBzdGF0aWMgaW50IF9fZXhm
-YXRfZnJlZV9jbHVzdGVyKHN0cnVjdCBpbm9kZSAqaW5vZGUsIHN0cnVjdCBleGZhdF9jaGFpbiAq
-cF9jaGFpbgogCQkJCWN1cl9jbWFwX2kgPSBuZXh0X2NtYXBfaTsKIAkJCX0KIAotCQkJaWYgKGV4
-ZmF0X2NsZWFyX2JpdG1hcChpbm9kZSwgY2x1LCAoc3luYyAmJiBJU19ESVJTWU5DKGlub2RlKSkp
-KQorCQkJaWYgKGV4ZmF0X2NsZWFyX2JpdG1hcChzYiwgY2x1LCAoc3luYyAmJiBJU19ESVJTWU5D
-KGlub2RlKSkpKQogCQkJCWJyZWFrOwogCiAJCQlpZiAoc2JpLT5vcHRpb25zLmRpc2NhcmQpIHsK
-QEAgLTQwOSw3ICs0MDksNyBAQCBpbnQgZXhmYXRfYWxsb2NfY2x1c3RlcihzdHJ1Y3QgaW5vZGUg
-Kmlub2RlLCB1bnNpZ25lZCBpbnQgbnVtX2FsbG9jLAogCQl9CiAKIAkJLyogdXBkYXRlIGFsbG9j
-YXRpb24gYml0bWFwICovCi0JCWlmIChleGZhdF9zZXRfYml0bWFwKGlub2RlLCBuZXdfY2x1LCBz
-eW5jX2JtYXApKSB7CisJCWlmIChleGZhdF9zZXRfYml0bWFwKHNiLCBuZXdfY2x1LCBzeW5jX2Jt
-YXApKSB7CiAJCQlyZXQgPSAtRUlPOwogCQkJZ290byBmcmVlX2NsdXN0ZXI7CiAJCX0KZGlmZiAt
-LWdpdCBhL2ZzL2V4ZmF0L3N1cGVyLmMgYi9mcy9leGZhdC9zdXBlci5jCmluZGV4IDdmOTU5Mjg1
-NmJmNy4uZTQ0MGFiNmI1NTYyIDEwMDY0NAotLS0gYS9mcy9leGZhdC9zdXBlci5jCisrKyBiL2Zz
-L2V4ZmF0L3N1cGVyLmMKQEAgLTYyNiw2ICs2MjYsMTcgQEAgc3RhdGljIGludCBfX2V4ZmF0X2Zp
-bGxfc3VwZXIoc3RydWN0IHN1cGVyX2Jsb2NrICpzYiwKIAkJZ290byBmcmVlX2JoOwogCX0KIAor
-CWlmICghZXhmYXRfdGVzdF9iaXRtYXAoc2IsIHNiaS0+cm9vdF9kaXIpKSB7CisJCWV4ZmF0X3dh
-cm4oc2IsICJmYWlsZWQgdG8gdGVzdCBmaXJzdCBjbHVzdGVyIGJpdCBvZiByb290IGRpcigldSki
-LAorCQkJICAgc2JpLT5yb290X2Rpcik7CisJCS8qCisJCSAqIFRoZSBmaXJzdCBjbHVzdGVyIGJp
-dCBvZiB0aGUgcm9vdCBkaXJlY3Rvcnkgc2hvdWxkIG5ldmVyCisJCSAqIGJlIHVuc2V0IGV4Y2Vw
-dCB3aGVuIHN0b3JhZ2UgaXMgY29ycnVwdGVkLiBUaGlzIGJpdCBpcworCQkgKiBzZXQgdG8gYWxs
-b3cgb3BlcmF0aW9ucyBhZnRlciBtb3VudC4KKwkJICovCisJCWV4ZmF0X3NldF9iaXRtYXAoc2Is
-IHNiaS0+cm9vdF9kaXIsIGZhbHNlKTsKKwl9CisKIAlyZXQgPSBleGZhdF9jb3VudF91c2VkX2Ns
-dXN0ZXJzKHNiLCAmc2JpLT51c2VkX2NsdXN0ZXJzKTsKIAlpZiAocmV0KSB7CiAJCWV4ZmF0X2Vy
-cihzYiwgImZhaWxlZCB0byBzY2FuIGNsdXN0ZXJzIik7Ci0tIAoyLjI1LjEKCg==
---00000000000014fa5706435d7bf9--
+Can this dereference ZERO_SIZE_PTR when eps_count is 0?
+
+When ffs->eps_count is 0, ffs_epfiles_create() calls kcalloc(0, ...) which
+returns ZERO_SIZE_PTR (0x10). The loop never executes so epfiles[0].ffs is
+never initialized. Later, cleanup paths (ffs_data_closed and ffs_data_clear)
+check if (epfiles) which is true for ZERO_SIZE_PTR, and call
+ffs_epfiles_destroy(epfiles, 0).
+
+In the old code, the for loop condition prevented any dereferences when
+count=0. In the new code, "root = epfile->ffs->sb->s_root" dereferences
+epfile before checking count, which would fault on ZERO_SIZE_PTR.
+
+And the crash:
+
+[   21.714645] BUG: kernel NULL pointer dereference, address: 0000000000000030
+[   21.714764] #PF: supervisor read access in kernel mode
+[   21.714851] #PF: error_code(0x0000) - not-present page
+[   21.714968] PGD 10abe6067 P4D 10c0fa067 PUD 10864e067 PMD 0 
+[   21.715155] Oops: Oops: 0000 [#1] SMP
+[   21.715226] CPU: 15 UID: 0 PID: 1071 Comm: test_ffs_crash Tainted: G            E       6.18.0-rc4-g2b3cd169d144 #9 NONE 
+[   21.715404] Tainted: [E]=UNSIGNED_MODULE
+[   21.715468] Hardware name: Red Hat KVM, BIOS 1.16.3-4.el9 04/01/2014
+[   21.715583] RIP: 0010:ffs_epfiles_destroy+0xe/0x70
+[   21.715681] Code: 4d ff ff ff 31 ff b8 01 00 00 00 eb 97 66 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 0f 1f 44 00 00 41 55 41 54 49 89 fc 55 53 <48> 8b 47 20 48 8b 80 50 01 00 00 48 8b 68 68 85 f6 74 3a 89 f6 48
+[   21.716055] RSP: 0018:ffa00000024cbe60 EFLAGS: 00010202
+[   21.716167] RAX: 0000000000000246 RBX: ff1100011ae81a00 RCX: ff11000117810540
+[   21.716286] RDX: 0000000000000001 RSI: 0000000000000000 RDI: 0000000000000010
+[   21.716461] RBP: ff1100011ae81a28 R08: ff1100010c1f7ac0 R09: ff11000111499ea0
+[   21.716568] R10: 0000000000000008 R11: 0000000000000000 R12: 0000000000000010
+[   21.716697] R13: ff11000111499ea0 R14: ff1100010ca5d260 R15: 0000000000000000
+[   21.716828] FS:  00007fdb2dbd6740(0000) GS:ff1100089ae74000(0000) knlGS:0000000000000000
+[   21.716992] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   21.717149] CR2: 0000000000000030 CR3: 000000010a2bb004 CR4: 0000000000771ef0
+[   21.717296] PKRU: 55555554
+[   21.717347] Call Trace:
+[   21.717390]  <TASK>
+[   21.717434]  ffs_data_clear+0xbb/0x140
+[   21.717496]  ffs_data_closed+0x8e/0x1d0
+[   21.717565]  ffs_ep0_release+0xe/0x20
+[   21.717639]  __fput+0xdd/0x2a0
+[   21.717702]  __x64_sys_close+0x39/0x70
+[   21.717768]  do_syscall_64+0x5d/0x920
+[   21.717873]  entry_SYSCALL_64_after_hwframe+0x4b/0x53
+
+And the repro/fuzzer:
+
+/*
+ * Test program to reproduce FunctionFS crash with eps_count=0
+ *
+ * This program creates a USB gadget with no endpoints (only EP0),
+ * which triggers the ZERO_SIZE_PTR dereference bug in ffs_epfiles_destroy().
+ *
+ * Setup:
+ *   mount -t configfs none /sys/kernel/config
+ *   cd /sys/kernel/config/usb_gadget
+ *   mkdir g1 && cd g1
+ *   echo 0x1d6b > idVendor
+ *   echo 0x0104 > idProduct
+ *   mkdir strings/0x409
+ *   echo "1234567890" > strings/0x409/serialnumber
+ *   echo "Manufacturer" > strings/0x409/manufacturer
+ *   echo "Product" > strings/0x409/product
+ *   mkdir configs/c.1
+ *   mkdir configs/c.1/strings/0x409
+ *   echo "Config 1" > configs/c.1/strings/0x409/configuration
+ *   mkdir functions/ffs.test
+ *   mkdir -p /dev/usb-ffs/test
+ *   mount -t functionfs test /dev/usb-ffs/test
+ *
+ * Run:
+ *   gcc -o test_ffs_crash test_ffs_crash.c
+ *   ./test_ffs_crash
+ *
+ * Expected result on buggy kernel:
+ *   Kernel crash when the program exits (cleanup calls ffs_epfiles_destroy
+ *   with count=0, dereferences ZERO_SIZE_PTR)
+ */
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <stdint.h>
+#include <errno.h>
+
+#define FUNCTIONFS_DESCRIPTORS_MAGIC_V2 3
+#define FUNCTIONFS_STRINGS_MAGIC 2
+
+/* FunctionFS flags */
+#define FUNCTIONFS_HAS_FS_DESC  (1 << 0)
+#define FUNCTIONFS_HAS_HS_DESC  (1 << 1)
+
+/* USB descriptor types */
+#define USB_DT_INTERFACE 0x04
+
+struct usb_interface_descriptor {
+	uint8_t  bLength;
+	uint8_t  bDescriptorType;
+	uint8_t  bInterfaceNumber;
+	uint8_t  bAlternateSetting;
+	uint8_t  bNumEndpoints;        /* 0 - no endpoints! */
+	uint8_t  bInterfaceClass;
+	uint8_t  bInterfaceSubClass;
+	uint8_t  bInterfaceProtocol;
+	uint8_t  iInterface;
+} __attribute__((packed));
+
+struct ffs_descriptors {
+	uint32_t magic;
+	uint32_t length;
+	uint32_t flags;
+	uint32_t fs_count;  /* Count of FS descriptors */
+	uint32_t hs_count;  /* Count of HS descriptors */
+	/* Followed by descriptors */
+} __attribute__((packed));
+
+struct ffs_strings {
+	uint32_t magic;
+	uint32_t length;
+	uint32_t str_count;
+	uint32_t lang_count;
+} __attribute__((packed));
+
+int main(void)
+{
+	int ep0_fd;
+	struct {
+		struct ffs_descriptors header;
+		struct usb_interface_descriptor fs_intf;
+		struct usb_interface_descriptor hs_intf;
+	} __attribute__((packed)) descs;
+	int ret;
+
+	printf("Opening /dev/usb-ffs/test/ep0...\n");
+	ep0_fd = open("/dev/usb-ffs/test/ep0", O_RDWR);
+	if (ep0_fd < 0) {
+		perror("open");
+		fprintf(stderr, "\nMake sure to setup configfs first:\n");
+		fprintf(stderr, "See comments at top of source file\n");
+		return 1;
+	}
+
+	printf("Writing descriptors with interface but NO endpoints (eps_count=0)...\n");
+
+	/* Build descriptor structure with interface descriptor but no endpoint descriptors */
+	memset(&descs, 0, sizeof(descs));
+
+	/* Header */
+	descs.header.magic = FUNCTIONFS_DESCRIPTORS_MAGIC_V2;
+	descs.header.length = sizeof(descs);
+	descs.header.flags = FUNCTIONFS_HAS_FS_DESC | FUNCTIONFS_HAS_HS_DESC;
+	descs.header.fs_count = 1;  /* 1 descriptor for full-speed */
+	descs.header.hs_count = 1;  /* 1 descriptor for high-speed */
+
+	/* Full-speed interface descriptor - NO endpoints! */
+	descs.fs_intf.bLength = sizeof(struct usb_interface_descriptor);
+	descs.fs_intf.bDescriptorType = USB_DT_INTERFACE;
+	descs.fs_intf.bInterfaceNumber = 0;
+	descs.fs_intf.bAlternateSetting = 0;
+	descs.fs_intf.bNumEndpoints = 0;  /* KEY: No endpoints! */
+	descs.fs_intf.bInterfaceClass = 0xff;    /* Vendor specific */
+	descs.fs_intf.bInterfaceSubClass = 0;
+	descs.fs_intf.bInterfaceProtocol = 0;
+	descs.fs_intf.iInterface = 0;  /* No string descriptor */
+
+	/* High-speed interface descriptor - also NO endpoints! */
+	descs.hs_intf = descs.fs_intf;
+
+	ret = write(ep0_fd, &descs, sizeof(descs));
+	if (ret < 0) {
+		perror("write descriptors");
+		close(ep0_fd);
+		return 1;
+	}
+	printf("Wrote %d bytes of descriptors (interface with bNumEndpoints=0)\n", ret);
+
+	printf("Writing strings...\n");
+
+	/* Write strings with 1 language, 1 empty string  */
+	struct {
+		struct ffs_strings header;
+		uint16_t lang;
+		char str1[1];  /* Empty string (just null terminator) */
+	} __attribute__((packed)) strings_data;
+
+	memset(&strings_data, 0, sizeof(strings_data));
+	strings_data.header.magic = FUNCTIONFS_STRINGS_MAGIC;
+	strings_data.header.length = sizeof(strings_data);
+	strings_data.header.str_count = 1;   /* 1 string */
+	strings_data.header.lang_count = 1;  /* 1 language */
+	strings_data.lang = 0x0409;  /* English */
+	strings_data.str1[0] = '\0';  /* Empty string */
+
+	ret = write(ep0_fd, &strings_data, sizeof(strings_data));
+	if (ret < 0) {
+		perror("write strings");
+		close(ep0_fd);
+		return 1;
+	}
+	printf("Wrote %d bytes of strings\n", ret);
+
+	/* Closing the file will trigger cleanup path which calls
+	 * ffs_data_closed() -> ffs_epfiles_destroy(ZERO_SIZE_PTR, 0) and crashes */
+	close(ep0_fd);
+
+	return 0;
+}
+
 
