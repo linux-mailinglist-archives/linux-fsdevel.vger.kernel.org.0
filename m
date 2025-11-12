@@ -1,79 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-68095-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68096-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 539B7C54423
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Nov 2025 20:51:08 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2792BC54414
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Nov 2025 20:50:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2052D3BB570
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Nov 2025 19:33:28 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 01D754FBF7B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Nov 2025 19:33:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1F373538A1;
-	Wed, 12 Nov 2025 19:30:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C09EC3546FA;
+	Wed, 12 Nov 2025 19:30:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="amNLZLte"
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="ipZjo2jl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1340435388A
-	for <linux-fsdevel@vger.kernel.org>; Wed, 12 Nov 2025 19:30:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 526803538A7
+	for <linux-fsdevel@vger.kernel.org>; Wed, 12 Nov 2025 19:30:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762975819; cv=none; b=a3fc6HPX9Md0z5X/Z6KOja9av+APf+WFpHQJ0xL55KDaCi4VCR7ed1i0qp/IZmQxOixm4smhSo/fhgrMGVdNOWsmaD3ALuQ5hP5bFHmfXgBMbcmwXugf+m4obTMrpjHfdnSMta849yGcAVJbOt2GhbHrsA+iHA9zpr/x804Kfc0=
+	t=1762975822; cv=none; b=R4eyl8LNPLFLh8rGCqyVJU4gu3Xhc0bAa7qi2B5HGmKaKmkzaFOLiZsSHjmvXe1CNTWu3QU4EhXZwStVhOCxPtZ6G9UgJtRYFgobd7KxlxoCjqMuEdoLI2A6lKgB3VZ5PA1Uw+j5kA0Yk9AXDKOxZK/U7dij0hfMEDxdN/Pcm9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762975819; c=relaxed/simple;
-	bh=KDT4LvBi3S/XOOUfgA+q7nj0PsLuynWQ2oewm937Vbs=;
+	s=arc-20240116; t=1762975822; c=relaxed/simple;
+	bh=xWEyjgvu6RU6fuiMig9vWVi/ppozqErZlNQJst8wywk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WQ7/LUAPrNCjXY+K+3DjPybobYT5+IZWxsMx+ehjkzTBty6DLS2pvmdydB23qwb/81ASivVw/lpkeB/lGGX0fFQT149fjyFohEK/c4rib7dmR6wcyndIRc3fK3eKv8Bx2dJrdjQ1Wo6N169bF0Xpl664L6U1eoKE5hlkGt+GcA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=amNLZLte; arc=none smtp.client-ip=209.85.222.180
+	 MIME-Version; b=JV6n+L/k+MkD4ZTRCXrJBoMbYNYw5/wLJr7tvccg8qWF8xnzTf1E0C56dJY+hDcbl9rJzdee8eRqRlsrMUHS9oVYxkgLialf38JnTFfh4raekFa8xDWX/B+wn7s46zJV+AS9+jJMRmyt3OgEeA3PjRWnmCl10s4EYaAKG+/AQo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=ipZjo2jl; arc=none smtp.client-ip=209.85.222.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-8a3eac7ca30so2811685a.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Nov 2025 11:30:18 -0800 (PST)
+Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-891667bcd82so3560785a.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Nov 2025 11:30:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1762975817; x=1763580617; darn=vger.kernel.org;
+        d=gourry.net; s=google; t=1762975819; x=1763580619; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=x8LOzdRF3F1ID8i/f4610zpV6s32IDb3v5xseVevQWo=;
-        b=amNLZLte6z52p9YaHz3+jCaKyE6uAn7afyWkG/gW6DPEPU7wBcC0/oci8034AOqcUM
-         o4GQE9GHMcFhBshxXBEmWio8YvDixvL+ODunIF3azdo77kjdgxgLPogXqh9s2iwZVCB6
-         q1d8/OtW60343OZJ4adAASAUv9g2VoD7zU9y2xU7J5WZt89s6IRWGJPFp39KP6ILE1yy
-         adVIiT26/shxVDjb4/3p2zheUikEVDvmPBTkOPgRdQU8Kgqg/jgJPB7acpNz7edWhhmf
-         z6ppcWhF+aCY337MPR78OlE6ZXlms9lc3tS54rbrlmqD7Xz4zpx5CY5+evbhFL6usFjJ
-         jNlA==
+        bh=UkWGDFkxsYcV2vUuZc9I0ZRX3P3sH+nyS9DR2ZbJTF8=;
+        b=ipZjo2jl/Dch0d04gT1tjuiNbKIaQvCSX7LpVMMbbuinhKix3MwaREbBnqCMD1m+FQ
+         DFg9FrSCOqtuTwlddeHXjaWuFLlCfCv+4p8vyI7A4OhZCIhVJhaa+xghbWDRM7P2iSYN
+         e6Yd8q/wKZUx/i5zDXpbLF/ArMvm7AYPZO4bxcAd5qPpDSlGu3Hs6McSwDRGDjoIHlf1
+         pWGNF+XWZYhF7IuYCHOKYGvZrpJkjFDbSn1XsQD+//ZH/5agNq9iWky0g10RKnlmf4Dn
+         e4A+PB6ShPyZGe5q8y1Y0BKT4BRCsWvQ5FwTpo8/r56a3Stnpkie+Aaqtgu8ZETdoRnP
+         vUoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762975817; x=1763580617;
+        d=1e100.net; s=20230601; t=1762975819; x=1763580619;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=x8LOzdRF3F1ID8i/f4610zpV6s32IDb3v5xseVevQWo=;
-        b=eot3JrjsX7MvjXXZ1LXkby2+IW871WMdUVpgQbIeOGbVzREmKU5pbK5N17L5t+37IS
-         joXb/aGg/RLFvPBsTn/XJ2EmO4PTWtV66GL2Vh9KIxQxaOR69+IQtrLfjOMCRGLzOeby
-         LjhG5oUOnnIwPVXBdjpF79tGr04FOH/9jZwXlGu7wlPFI4hcv2NQuFKcAketGpGjvdSC
-         KtK6iCkxmHtyTHjIho7KB5K3O9AgTl84mSglEGD6f72vFFci9iNUgDE15kqMC0geKqUZ
-         ctwIY6VKAmqP8FgMeDJYzWcRLxBF53rxYlRnAMclNPPot7cZsPztdysWLeY4FKUtwq5i
-         j1Eg==
-X-Forwarded-Encrypted: i=1; AJvYcCW4d/BAytwaTRNKP76Cex3Ihx7mII/7LGozpEzcm4qZwxjrgouNm4z9qq2fJI76Waf9IqKqTG+Bvd9ZmhrY@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzxr8cr9r4uGYZboE1ccA0myEJeKpiTr5uVQKrCfaOFGojDIUkp
-	mZ4C21c/U+/uartEc2otjmvJJ7TxMirjioX36uvBXukd9OTCdi7C5r9HXHG8QKzgPY8=
-X-Gm-Gg: ASbGncuebSyAitP11lm91HM7g2CcYvtmGoPf5oPHwqFWpBxqqvk4rqOH8hKXPseRVut
-	xxAKUahn0cSiLsGR2mN0n5PWorrGCP7B5TiFCgoVT5pM4PgcgJsZj2AUtYjnR+qty6vWSYO38lp
-	lvGcLRKweHRT7UGY35a4kL9TLybpRDEcHKzMjvSL+QsaQZtGuJoQ0T+RTjwsIIAKkFzBiISGbrJ
-	hJfj9ZNgSOjJ/erlcDQRonHReTbrHZa8Xj0wordw35zsDyB6OdPliac9lKaX6LKZhaSCQ198sx8
-	+KzbDlAg3LKgt66KbHSnTCLEeSU4OpPplg/UH605mxgx0d/1FwWSJRCzGv/DJzx+mvB9ghBcDCf
-	UGQrnRw5972Wcrz3Cno12RqnMAx8q6ocHVKEf+KNJrT9Loqw0O2ZM5LlilhUoQAjKTCHPAs4w+k
-	RQGlH7fU15fVS1k1vfYEtHGKZiAYRTOvX9SmPQKlyH1rf43GLTde4HFMT6I7K04ox2
-X-Google-Smtp-Source: AGHT+IHll+IKPvcEc2EdGPBw2QQZcQZ6T6jlawQUNb6L1NrYv5cDZU0Tf0FeuJID2gzeZN1UxCbY+g==
-X-Received: by 2002:a05:620a:2a0f:b0:84e:2544:6be7 with SMTP id af79cd13be357-8b29b815e49mr640273285a.65.1762975816129;
-        Wed, 12 Nov 2025 11:30:16 -0800 (PST)
+        bh=UkWGDFkxsYcV2vUuZc9I0ZRX3P3sH+nyS9DR2ZbJTF8=;
+        b=PZi3BI1J2dBKD7kP7xsJq73CnupCbGe8pMdi25Qko5jq5qvY+uR6rMtPfVFVpVad3v
+         psOMkFnZKVuayFU3bTQACA07Ew8kW3nfzt+hdhS9+sjyvYEb/AuuNCHJx7b1rsF42XF8
+         vqz56LFQKvX3ta/lP9iPiSCLCtDTLqILPTyu2OQJdXijtMwDpiY7EEugYQVkeKFWBgdz
+         BbiVlikMxmnMDVOWzkqxnBTFLmI9njBrFSJufwtbJe4FnK0LYwTchtzBz9iN0gQ/PTB0
+         xX33FYGTLWTxeGeEoWZlARUVu3bqBAm//vqNdIubpCDK+pTnLfRrwpxJElD1k95phIBJ
+         CV8w==
+X-Forwarded-Encrypted: i=1; AJvYcCX98rV5ZPvl1ob17rwOPWZfLu0mtEq+87+DavJM2n5f2iWXCJ7uuIAE2yyVrlIJzWUOfiBrwhe1QEmQKmLp@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUMBJjRg5Ag9maqHMglZu6bfBmMhmirw2y4i6UnrDsBh9NnAT9
+	4s/m2/Xrdzn2hQUU/XCN6u1v38x3YVRvWvD4h1oTWOVFRs/TgVdHKMw/yNDMZfjgqJI=
+X-Gm-Gg: ASbGncseiuTF0PFgCx7xpPUVAcpZv4zNiJrHUMR1Ok3hoevaVkJyYUwkvXr4GoXCLTH
+	VebdToJ8hraXw77h69suZ5roNxB7Vc2tnZoJX3rrWhka2/0HPpIisQkLmJtHsk7hXfyMGs8AWVp
+	F2QFmxUzt7xX2RohluoqxBN/fMVJ9OtkCn/QfB4v2N81SSGtqBYKEp3zRB+AXWmiCGW4CzZwPGn
+	KNmG+uW6ebT+W1CX1qnQp8wO/RsOeK3mKxGnLeYl3B1ttfy7dMwq26lCkLTwZuOSQLFCVBYSoHV
+	MDwaoOnKXXdduqOD76djmmZSRJi9h897Xcolo/x9kWe4I3Q7AaBX2H6mZSQmyS/+OFDQtmkjUme
+	pk8V7V3sCg1bjUvENCqKmhJeVORNUX4M8ta4PnHVf7iIIIr+KWWG6chbNmUtDT9q6n63AXU2emQ
+	eZ5BMOC8SsH4Dfuw7Bjdykv/KiGbmALhaSsY110BEtSXoY8TE2x29COTL9/Lz/c8B0
+X-Google-Smtp-Source: AGHT+IHnA96vKIbRbEVDdRL2YlwlXqxXxNpoq+1tyGBGVESiKZZsfFfpRROUBFK0hifrTyISq2ufZA==
+X-Received: by 2002:a05:620a:f01:b0:89d:b480:309f with SMTP id af79cd13be357-8b2ac08bd6amr88119885a.7.1762975819003;
+        Wed, 12 Nov 2025 11:30:19 -0800 (PST)
 Received: from gourry-fedora-PF4VCD3F.lan (pool-96-255-20-138.washdc.ftas.verizon.net. [96.255.20.138])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8b29aa0082esm243922885a.50.2025.11.12.11.30.13
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8b29aa0082esm243922885a.50.2025.11.12.11.30.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Nov 2025 11:30:15 -0800 (PST)
+        Wed, 12 Nov 2025 11:30:18 -0800 (PST)
 From: Gregory Price <gourry@gourry.net>
 To: linux-mm@kvack.org
 Cc: kernel-team@meta.com,
@@ -143,9 +143,9 @@ Cc: kernel-team@meta.com,
 	namcao@linutronix.de,
 	escape@linux.alibaba.com,
 	dongjoo.seo1@samsung.com
-Subject: [RFC PATCH v2 09/11] drivers/dax: add spm_node bit to dev_dax
-Date: Wed, 12 Nov 2025 14:29:25 -0500
-Message-ID: <20251112192936.2574429-10-gourry@gourry.net>
+Subject: [RFC PATCH v2 10/11] drivers/cxl: add spm_node bit to cxl region
+Date: Wed, 12 Nov 2025 14:29:26 -0500
+Message-ID: <20251112192936.2574429-11-gourry@gourry.net>
 X-Mailer: git-send-email 2.51.1
 In-Reply-To: <20251112192936.2574429-1-gourry@gourry.net>
 References: <20251112192936.2574429-1-gourry@gourry.net>
@@ -157,39 +157,39 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This bit is used by dax/kmem to determine whether to set the
-MHP_SPM_NODE flags, which determines whether the hotplug memory
-is SysRAM or Specific Purpose Memory.
+Add spm_node bit to cxl region, forward it to the dax device.
+
+This allows auto-hotplug to occur without an intermediate udev
+step to poke the DAX device spm_node bit.
 
 Signed-off-by: Gregory Price <gourry@gourry.net>
 ---
- drivers/dax/bus.c         | 39 +++++++++++++++++++++++++++++++++++++++
- drivers/dax/bus.h         |  1 +
- drivers/dax/dax-private.h |  1 +
- drivers/dax/kmem.c        |  2 ++
- 4 files changed, 43 insertions(+)
+ drivers/cxl/core/region.c | 30 ++++++++++++++++++++++++++++++
+ drivers/cxl/cxl.h         |  2 ++
+ drivers/dax/cxl.c         |  1 +
+ 3 files changed, 33 insertions(+)
 
-diff --git a/drivers/dax/bus.c b/drivers/dax/bus.c
-index fde29e0ad68b..b0de43854112 100644
---- a/drivers/dax/bus.c
-+++ b/drivers/dax/bus.c
-@@ -1361,6 +1361,43 @@ static ssize_t memmap_on_memory_store(struct device *dev,
+diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
+index b06fee1978ba..3348b09dfe9a 100644
+--- a/drivers/cxl/core/region.c
++++ b/drivers/cxl/core/region.c
+@@ -754,6 +754,35 @@ static ssize_t size_show(struct device *dev, struct device_attribute *attr,
  }
- static DEVICE_ATTR_RW(memmap_on_memory);
+ static DEVICE_ATTR_RW(size);
  
 +static ssize_t spm_node_show(struct device *dev,
 +			     struct device_attribute *attr, char *buf)
 +{
-+	struct dev_dax *dev_dax = to_dev_dax(dev);
++	struct cxl_region *cxlr = to_cxl_region(dev);
 +
-+	return sysfs_emit(buf, "%d\n", dev_dax->spm_node);
++	return sysfs_emit(buf, "%d\n", cxlr->spm_node);
 +}
 +
 +static ssize_t spm_node_store(struct device *dev,
-+			      struct device_attribute *attr,
-+			      const char *buf, size_t len)
++				      struct device_attribute *attr,
++				      const char *buf, size_t len)
 +{
-+	struct dev_dax *dev_dax = to_dev_dax(dev);
++	struct cxl_region *cxlr = to_cxl_region(dev);
 +	bool val;
 +	int rc;
 +
@@ -197,79 +197,58 @@ index fde29e0ad68b..b0de43854112 100644
 +	if (rc)
 +		return rc;
 +
-+	rc = down_write_killable(&dax_dev_rwsem);
-+	if (rc)
++	ACQUIRE(rwsem_write_kill, rwsem)(&cxl_rwsem.region);
++	if ((rc = ACQUIRE_ERR(rwsem_read_intr, &rwsem)))
 +		return rc;
 +
-+	if (dev_dax->spm_node != val && dev->driver &&
-+	    to_dax_drv(dev->driver)->type == DAXDRV_KMEM_TYPE) {
-+		up_write(&dax_dev_rwsem);
-+		return -EBUSY;
-+	}
-+
-+	dev_dax->spm_node = val;
-+	up_write(&dax_dev_rwsem);
-+
++	cxlr->spm_node = val;
 +	return len;
 +}
 +static DEVICE_ATTR_RW(spm_node);
 +
- static umode_t dev_dax_visible(struct kobject *kobj, struct attribute *a, int n)
- {
- 	struct device *dev = container_of(kobj, struct device, kobj);
-@@ -1388,6 +1425,7 @@ static struct attribute *dev_dax_attributes[] = {
+ static struct attribute *cxl_region_attrs[] = {
+ 	&dev_attr_uuid.attr,
+ 	&dev_attr_commit.attr,
+@@ -762,6 +791,7 @@ static struct attribute *cxl_region_attrs[] = {
  	&dev_attr_resource.attr,
- 	&dev_attr_numa_node.attr,
- 	&dev_attr_memmap_on_memory.attr,
+ 	&dev_attr_size.attr,
+ 	&dev_attr_mode.attr,
 +	&dev_attr_spm_node.attr,
  	NULL,
  };
  
-@@ -1494,6 +1532,7 @@ static struct dev_dax *__devm_create_dev_dax(struct dev_dax_data *data)
- 	ida_init(&dev_dax->ida);
- 
- 	dev_dax->memmap_on_memory = data->memmap_on_memory;
-+	dev_dax->spm_node = data->spm_node;
- 
- 	inode = dax_inode(dax_dev);
- 	dev->devt = inode->i_rdev;
-diff --git a/drivers/dax/bus.h b/drivers/dax/bus.h
-index cbbf64443098..51ed961b6a3c 100644
---- a/drivers/dax/bus.h
-+++ b/drivers/dax/bus.h
-@@ -24,6 +24,7 @@ struct dev_dax_data {
- 	resource_size_t size;
- 	int id;
- 	bool memmap_on_memory;
-+	bool spm_node;
- };
- 
- struct dev_dax *devm_create_dev_dax(struct dev_dax_data *data);
-diff --git a/drivers/dax/dax-private.h b/drivers/dax/dax-private.h
-index 0867115aeef2..3d1b1f996383 100644
---- a/drivers/dax/dax-private.h
-+++ b/drivers/dax/dax-private.h
-@@ -89,6 +89,7 @@ struct dev_dax {
+diff --git a/drivers/cxl/cxl.h b/drivers/cxl/cxl.h
+index 231ddccf8977..ba7cde06dfd3 100644
+--- a/drivers/cxl/cxl.h
++++ b/drivers/cxl/cxl.h
+@@ -530,6 +530,7 @@ enum cxl_partition_mode {
+  * @coord: QoS access coordinates for the region
+  * @node_notifier: notifier for setting the access coordinates to node
+  * @adist_notifier: notifier for calculating the abstract distance of node
++ * @spm_node: memory can only be added to specific purpose NUMA nodes
+  */
+ struct cxl_region {
  	struct device dev;
- 	struct dev_pagemap *pgmap;
- 	bool memmap_on_memory;
+@@ -543,6 +544,7 @@ struct cxl_region {
+ 	struct access_coordinate coord[ACCESS_COORDINATE_MAX];
+ 	struct notifier_block node_notifier;
+ 	struct notifier_block adist_notifier;
 +	bool spm_node;
- 	int nr_range;
- 	struct dev_dax_range *ranges;
  };
-diff --git a/drivers/dax/kmem.c b/drivers/dax/kmem.c
-index c036e4d0b610..3c3dd1cd052c 100644
---- a/drivers/dax/kmem.c
-+++ b/drivers/dax/kmem.c
-@@ -169,6 +169,8 @@ static int dev_dax_kmem_probe(struct dev_dax *dev_dax)
- 		mhp_flags = MHP_NID_IS_MGID;
- 		if (dev_dax->memmap_on_memory)
- 			mhp_flags |= MHP_MEMMAP_ON_MEMORY;
-+		if (dev_dax->spm_node)
-+			mhp_flags |= MHP_SPM_NODE;
  
- 		/*
- 		 * Ensure that future kexec'd kernels will not treat
+ struct cxl_nvdimm_bridge {
+diff --git a/drivers/dax/cxl.c b/drivers/dax/cxl.c
+index 13cd94d32ff7..968d23fc19ed 100644
+--- a/drivers/dax/cxl.c
++++ b/drivers/dax/cxl.c
+@@ -27,6 +27,7 @@ static int cxl_dax_region_probe(struct device *dev)
+ 		.id = -1,
+ 		.size = range_len(&cxlr_dax->hpa_range),
+ 		.memmap_on_memory = true,
++		.spm_node = cxlr->spm_node,
+ 	};
+ 
+ 	return PTR_ERR_OR_ZERO(devm_create_dev_dax(&data));
 -- 
 2.51.1
 
