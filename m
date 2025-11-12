@@ -1,522 +1,243 @@
-Return-Path: <linux-fsdevel+bounces-68068-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68069-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3AD9C52EC8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Nov 2025 16:14:56 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBF3AC53386
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Nov 2025 16:56:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A67C9353DED
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Nov 2025 15:06:04 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 67C54541EDD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Nov 2025 15:06:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 677EB34889A;
-	Wed, 12 Nov 2025 14:58:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5413033E346;
+	Wed, 12 Nov 2025 14:59:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HhtyOpnK"
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="N9XadKC0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 887E533D6FC;
-	Wed, 12 Nov 2025 14:58:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B283D33D6F1
+	for <linux-fsdevel@vger.kernel.org>; Wed, 12 Nov 2025 14:59:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762959496; cv=none; b=IYOZA1m6aReuWFUbQLXMJbIxA0MMTMY+JCac4I0PVjyaoY1in6hjrIbQbhf7dtQLUxErmXThOe/UJ8qcwFw/SuIkq/XylysXPRM5cB+K3qOYIg+1xRpJqRhAc6ISoxIMI2MJp65MoHVNz6APBb12Gxbd9+CHmP5fvndwxdKf+Rk=
+	t=1762959548; cv=none; b=UiuEI2e3YcZbWuGjvjXTeOuvA6hmwGjngXEi1OLmJNamXEbQZyVjBpZ5X/zJiUXK54ky37jnLdIoidr4VRChukpbxgAvMnPgfxG8shIdWtMELzQOLagkSuNDYgYSG9Pq0ptWvVkAt9uxNykE78dQHepKDZcwnUJs2HpGLXMdqdA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762959496; c=relaxed/simple;
-	bh=QmkuDvFTGlwKlCxWFFmHkzhOPjXSsTblL5h9yBKfpLA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=saO0Y4iM2gL9snDpR7r9FxBK9S0NOjQSfB19qb8VlUlR4XlBqNtwMfdKexCFStuKVEC5W0WqvT2VD9JlRIuQ8OdHq80lLEygDqrUM1a25cvhfekyIHL9tump2X8Qk9G5q8fslxsKuyFZkD4JYhIIJbgklneJRQQGapdANpXNgNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HhtyOpnK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D631C4CEF5;
-	Wed, 12 Nov 2025 14:58:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762959496;
-	bh=QmkuDvFTGlwKlCxWFFmHkzhOPjXSsTblL5h9yBKfpLA=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=HhtyOpnK0brz95gMmr8l379+hE0zHC/jB7UhgRx/tP8ATtCkqCfVcUEcMd6wzC4TM
-	 pdcsVHfFYm7gEY+OsxswwP/Jy0ar5lEdoSiB1QHInCHHVhL25/fBUrtUwcZfMZFCJy
-	 bSElts+0OClYmSCF+6KVUiHIbxil2kesraPzw/V5I2+4CPgiCdKy0pmdLJPZYbcLrj
-	 UOhafJwvH7Q/pzO4S2xHX3LB7Q1mpMYEfyt+Sgib4Gh+vBeRH0x2tYD/YkO/10Rw5a
-	 By1vq11yLJPgguyLDLQTK5FkKuQZwC/aqdr599iYNyAvuilzwUefjHBZgiVSec06jn
-	 CvEVTRHh0YQOw==
-Message-ID: <3d30c6dea58836cbc4f3f0872260cdc9c586e8b4.camel@kernel.org>
-Subject: Re: [PATCH v5 07/14] VFS: introduce start_removing_dentry()
-From: Jeff Layton <jlayton@kernel.org>
-To: NeilBrown <neil@brown.name>, Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner
-	 <brauner@kernel.org>, Amir Goldstein <amir73il@gmail.com>
-Cc: Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, Chris Mason	
- <clm@fb.com>, David Sterba <dsterba@suse.com>, David Howells
- <dhowells@redhat.com>,  Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich	
- <dakr@kernel.org>, Tyler Hicks <code@tyhicks.com>, Miklos Szeredi	
- <miklos@szeredi.hu>, Chuck Lever <chuck.lever@oracle.com>, Olga
- Kornievskaia	 <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, Namjae
- Jeon	 <linkinjeon@kernel.org>, Steve French <smfrench@gmail.com>, Sergey
- Senozhatsky	 <senozhatsky@chromium.org>, Carlos Maiolino <cem@kernel.org>,
- John Johansen	 <john.johansen@canonical.com>, Paul Moore
- <paul@paul-moore.com>, James Morris	 <jmorris@namei.org>, "Serge E. Hallyn"
- <serge@hallyn.com>, Stephen Smalley	 <stephen.smalley.work@gmail.com>,
- Ondrej Mosnacek <omosnace@redhat.com>,  Mateusz Guzik <mjguzik@gmail.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Stefan Berger	
- <stefanb@linux.ibm.com>, "Darrick J. Wong" <djwong@kernel.org>, 
-	linux-kernel@vger.kernel.org, netfs@lists.linux.dev,
- ecryptfs@vger.kernel.org, 	linux-nfs@vger.kernel.org,
- linux-unionfs@vger.kernel.org, 	linux-cifs@vger.kernel.org,
- linux-xfs@vger.kernel.org, 	linux-security-module@vger.kernel.org,
- selinux@vger.kernel.org
-Date: Wed, 12 Nov 2025 09:58:12 -0500
-In-Reply-To: <20251106005333.956321-8-neilb@ownmail.net>
-References: <20251106005333.956321-1-neilb@ownmail.net>
-	 <20251106005333.956321-8-neilb@ownmail.net>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.58.1 (3.58.1-1.fc43) 
+	s=arc-20240116; t=1762959548; c=relaxed/simple;
+	bh=IhGmnjkrIabfR44gd9BIvr7pcokhjZi5UFhbngjXwvw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lhH6+FVtbez8AyKLo6zSXNgq6aWOCwiqTwV7c+l9j3Xocb10O/1bGOHIkM+DKA7KaThMaN10QGKnPOky0wKCSrlHHtNdmL3z+lqc1ptw4DwxDdvnq09BXK3fHXFSyFaQ85DGnnzYJtcNkn8jC+nXTS4lVDlZ9uQwgb6XDajR9jo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=N9XadKC0; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-64088c6b309so1480038a12.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Nov 2025 06:59:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen.com; s=google; t=1762959545; x=1763564345; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0MTLQ2+KzlbyAQxckoGWY8C9+me/+LObO2aCT3fFijI=;
+        b=N9XadKC0UVxFLkY9jzvuAikB7Hg0mTYRuXtJs27Uw4FgaIFVemvrjszSN4H1dk5vYN
+         KQz09WkCXp2gVgk6yu24Fy+ebuaHwYlnjOukIeAWckKRF6M4WkwEldin3m/4t6aC+Wyi
+         v0lW/V8SjFq7pKaDTPNpRZEeM2au0g1pTRXI/0Yq1mYC5vK2bcVQlWp9xME1Ye4Cu6Cc
+         XO9WJo2hL6vaKBioq/V04Hev39SCnbJxedzYvN0dnC8/p81E/eJWtQtTPRPS5QmrxICh
+         YwiYM/3WwUWX7yTfVYp+x0cT+TPse+XD5MXReIB7NxL4HZoltVE5xfchaBNCBwax4uYD
+         7jcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762959545; x=1763564345;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=0MTLQ2+KzlbyAQxckoGWY8C9+me/+LObO2aCT3fFijI=;
+        b=IL1VxnIWYEOKkP61i+wSRl8Po45Yp/k2+zU0ejOaNb6benZPZYqA+/mN4hUj2+Lqm0
+         /AmyHe5uC9+kpOK24NxSNOma+x041O5vBsEh8gg3ustCvCHCJES4abHmsDqphx8iiLrn
+         TAzoKzdm6MpsmpCVkMk841PJ8xI5aK3axibW5afRombZQAqU3pvH7SDLgTR6oFA57k8x
+         JJRuMqO1xoeyedDamoqe3OZMj51m1G5JK04pud/1K26sVK8eI1VzcxpXqZ4j1r5p6DZl
+         y4u0kEbh4SZVGkHeAiSVG7wUjEdxMA3VG0p8stdmLpeYCJNC7QYGLd/5bsNgwC8yVTy+
+         nWYA==
+X-Forwarded-Encrypted: i=1; AJvYcCV+ZjaWr1jvGa0oIrqrHZNdNKTEZPDmdwWCy1PcQuZlHJuHZ9oYnX35MOfqQ9I5yiKZgvRiPTajzwC1O5/r@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2LmH4FD6/Q6KzYIuaZDsjvY6fU13slIQQAxEQ6MusuO+FOidb
+	xHMgrHaW9Axe4P9tflvsPaeUy/XPLZwTuQ3AdzvkBaBB+ioINK+OA1Gjj0KNcXjWe3laPVlhwM+
+	eCM6dJ1rWxJHiReCBdfrozKNILXJjJ2GmuNdm5ifAmQ==
+X-Gm-Gg: ASbGnctrmgnhtG/D86DYmG9Tt4i0O+i3CkGD+PY8mtuCBKUr8QUnMwiYEE6Rjtfm9Se
+	vvNrFUoBckss6RplQtibq/U3K8PCGPVejx2CNCyeCMVQQRXNog1GpopSGreElTHajw5/2mIN55Q
+	heAiB5jMJ0UuSqXEToi3XV/qLsfat0jEHeKkvuIMgeCh7G9kMOIi6uSsJdHHGIlqJiwsd/WoO6o
+	1yaCLYImbhAx5o3WJVObab2CafFlw2kSqNE0AFWa2AIpsuXhktvqzX35w==
+X-Google-Smtp-Source: AGHT+IEdmxSCUrDpzYYdeQ7xGZMZCFuRazVHOEq301lv0Np/o4OtNdmIj/Fd7MlLr72XZf02Ov5bYrL1l7CAevQmQsg=
+X-Received: by 2002:a05:6402:20d5:20b0:640:6650:9173 with SMTP id
+ 4fb4d7f45d1cf-6431a5906c4mr2199942a12.33.1762959544759; Wed, 12 Nov 2025
+ 06:59:04 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20251107210526.257742-1-pasha.tatashin@soleen.com>
+ <20251107210526.257742-3-pasha.tatashin@soleen.com> <aRHiCxoJnEGmj17q@kernel.org>
+ <CA+CK2bCHhbBtSJCx38gxjfR6DM1PjcfsOTD-Pqzqyez1_hXJ7Q@mail.gmail.com>
+ <aROZi043lxtegqWE@kernel.org> <CA+CK2bAsrEqpt9d3s0KXpjcO9WPTJjymdwtiiyWVS6uq5KKNgA@mail.gmail.com>
+ <aRSKrxfAb_GG_2Mw@kernel.org>
+In-Reply-To: <aRSKrxfAb_GG_2Mw@kernel.org>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Wed, 12 Nov 2025 09:58:27 -0500
+X-Gm-Features: AWmQ_bnbzArXLN8aoATNdiGHp809pzMOSngeRCNP27w6LsiaaRY3i_BJDeNIl5I
+Message-ID: <CA+CK2bAq-0Vz4jSRWnb_ut9AqG3RcH67JQj76GhoH0BaspWs2A@mail.gmail.com>
+Subject: Re: [PATCH v5 02/22] liveupdate: luo_core: integrate with KHO
+To: Mike Rapoport <rppt@kernel.org>
+Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com, 
+	dmatlack@google.com, rientjes@google.com, corbet@lwn.net, 
+	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, 
+	ojeda@kernel.org, aliceryhl@google.com, masahiroy@kernel.org, 
+	akpm@linux-foundation.org, tj@kernel.org, yoann.congal@smile.fr, 
+	mmaurer@google.com, roman.gushchin@linux.dev, chenridong@huawei.com, 
+	axboe@kernel.dk, mark.rutland@arm.com, jannh@google.com, 
+	vincent.guittot@linaro.org, hannes@cmpxchg.org, dan.j.williams@intel.com, 
+	david@redhat.com, joel.granados@kernel.org, rostedt@goodmis.org, 
+	anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn, 
+	linux@weissschuh.net, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-mm@kvack.org, gregkh@linuxfoundation.org, tglx@linutronix.de, 
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, 
+	hpa@zytor.com, rafael@kernel.org, dakr@kernel.org, 
+	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com, 
+	myungjoo.ham@samsung.com, yesanishhere@gmail.com, Jonathan.Cameron@huawei.com, 
+	quic_zijuhu@quicinc.com, aleksander.lobakin@intel.com, ira.weiny@intel.com, 
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
+	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net, 
+	brauner@kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	saeedm@nvidia.com, ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com, 
+	leonro@nvidia.com, witu@nvidia.com, hughd@google.com, skhawaja@google.com, 
+	chrisl@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 2025-11-06 at 11:50 +1100, NeilBrown wrote:
-> From: NeilBrown <neil@brown.name>
->=20
-> start_removing_dentry() is similar to start_removing() but instead of
-> providing a name for lookup, the target dentry is given.
->=20
-> start_removing_dentry() checks that the dentry is still hashed and in
-> the parent, and if so it locks and increases the refcount so that
-> end_removing() can be used to finish the operation.
->=20
-> This is used in cachefiles, overlayfs, smb/server, and apparmor.
->=20
-> There will be other users including ecryptfs.
->=20
-> As start_removing_dentry() takes an extra reference to the dentry (to be
-> put by end_removing()), there is no need to explicitly take an extra
-> reference to stop d_delete() from using dentry_unlink_inode() to negate
-> the dentry - as in cachefiles_delete_object(), and ksmbd_vfs_unlink().
->=20
-> cachefiles_bury_object() now gets an extra ref to the victim, which is
-> drops.  As it includes the needed end_removing() calls, the caller
-> doesn't need them.
->=20
-> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-> Signed-off-by: NeilBrown <neil@brown.name>
->=20
-> ---
-> Changes since v4
-> Callers of cachefiles_bury_object() were incorrectly calling
-> end_removing() after that call.  The dput() was needed, the unlock
-> wasn't.  The dput() has been effectively moved into
-> cachefiles_bury_object() by removing a dget() which is now not needed.
-> ---
->  fs/cachefiles/interface.c      | 11 +++++++----
->  fs/cachefiles/namei.c          | 30 ++++++++++++++----------------
->  fs/cachefiles/volume.c         |  9 ++++++---
->  fs/namei.c                     | 33 +++++++++++++++++++++++++++++++++
->  fs/overlayfs/dir.c             | 10 ++++------
->  fs/overlayfs/readdir.c         |  8 ++++----
->  fs/smb/server/vfs.c            | 27 ++++-----------------------
->  include/linux/namei.h          |  2 ++
->  security/apparmor/apparmorfs.c |  8 ++++----
->  9 files changed, 78 insertions(+), 60 deletions(-)
->=20
-> diff --git a/fs/cachefiles/interface.c b/fs/cachefiles/interface.c
-> index 3e63cfe15874..a08250d244ea 100644
-> --- a/fs/cachefiles/interface.c
-> +++ b/fs/cachefiles/interface.c
-> @@ -9,6 +9,7 @@
->  #include <linux/mount.h>
->  #include <linux/xattr.h>
->  #include <linux/file.h>
-> +#include <linux/namei.h>
->  #include <linux/falloc.h>
->  #include <trace/events/fscache.h>
->  #include "internal.h"
-> @@ -428,11 +429,13 @@ static bool cachefiles_invalidate_cookie(struct fsc=
-ache_cookie *cookie)
->  		if (!old_tmpfile) {
->  			struct cachefiles_volume *volume =3D object->volume;
->  			struct dentry *fan =3D volume->fanout[(u8)cookie->key_hash];
-> +			struct dentry *obj;
-> =20
-> -			inode_lock_nested(d_inode(fan), I_MUTEX_PARENT);
-> -			cachefiles_bury_object(volume->cache, object, fan,
-> -					       old_file->f_path.dentry,
-> -					       FSCACHE_OBJECT_INVALIDATED);
-> +			obj =3D start_removing_dentry(fan, old_file->f_path.dentry);
-> +			if (!IS_ERR(obj))
-> +				cachefiles_bury_object(volume->cache, object,
-> +						       fan, obj,
-> +						       FSCACHE_OBJECT_INVALIDATED);
->  		}
->  		fput(old_file);
->  	}
-> diff --git a/fs/cachefiles/namei.c b/fs/cachefiles/namei.c
-> index c7f0c6ab9b88..0104ac00485d 100644
-> --- a/fs/cachefiles/namei.c
-> +++ b/fs/cachefiles/namei.c
-> @@ -261,6 +261,7 @@ static int cachefiles_unlink(struct cachefiles_cache =
-*cache,
->   * - Directory backed objects are stuffed into the graveyard for userspa=
-ce to
->   *   delete
->   * On entry dir must be locked.  It will be unlocked on exit.
-> + * On entry there must be at least 2 refs on rep, one will be dropped on=
- exit.
->   */
->  int cachefiles_bury_object(struct cachefiles_cache *cache,
->  			   struct cachefiles_object *object,
-> @@ -275,12 +276,6 @@ int cachefiles_bury_object(struct cachefiles_cache *=
-cache,
-> =20
->  	_enter(",'%pd','%pd'", dir, rep);
-> =20
-> -	/* end_removing() will dput() @rep but we need to keep
-> -	 * a ref, so take one now.  This also stops the dentry
-> -	 * being negated when unlinked which we need.
-> -	 */
-> -	dget(rep);
-> -
->  	if (rep->d_parent !=3D dir) {
->  		end_removing(rep);
->  		_leave(" =3D -ESTALE");
-> @@ -425,13 +420,12 @@ int cachefiles_delete_object(struct cachefiles_obje=
-ct *object,
-> =20
->  	_enter(",OBJ%x{%pD}", object->debug_id, object->file);
-> =20
-> -	/* Stop the dentry being negated if it's only pinned by a file struct. =
-*/
-> -	dget(dentry);
-> -
-> -	inode_lock_nested(d_backing_inode(fan), I_MUTEX_PARENT);
-> -	ret =3D cachefiles_unlink(volume->cache, object, fan, dentry, why);
-> -	inode_unlock(d_backing_inode(fan));
-> -	dput(dentry);
-> +	dentry =3D start_removing_dentry(fan, dentry);
-> +	if (IS_ERR(dentry))
-> +		ret =3D PTR_ERR(dentry);
-> +	else
-> +		ret =3D cachefiles_unlink(volume->cache, object, fan, dentry, why);
-> +	end_removing(dentry);
->  	return ret;
->  }
-> =20
-> @@ -644,9 +638,13 @@ bool cachefiles_look_up_object(struct cachefiles_obj=
-ect *object)
-> =20
->  	if (!d_is_reg(dentry)) {
->  		pr_err("%pd is not a file\n", dentry);
-> -		inode_lock_nested(d_inode(fan), I_MUTEX_PARENT);
-> -		ret =3D cachefiles_bury_object(volume->cache, object, fan, dentry,
-> -					     FSCACHE_OBJECT_IS_WEIRD);
-> +		struct dentry *de =3D start_removing_dentry(fan, dentry);
-> +		if (IS_ERR(de))
-> +			ret =3D PTR_ERR(de);
-> +		else
-> +			ret =3D cachefiles_bury_object(volume->cache, object,
-> +						     fan, de,
-> +						     FSCACHE_OBJECT_IS_WEIRD);
->  		dput(dentry);
->  		if (ret < 0)
->  			return false;
-> diff --git a/fs/cachefiles/volume.c b/fs/cachefiles/volume.c
-> index 781aac4ef274..90ba926f488e 100644
-> --- a/fs/cachefiles/volume.c
-> +++ b/fs/cachefiles/volume.c
-> @@ -7,6 +7,7 @@
-> =20
->  #include <linux/fs.h>
->  #include <linux/slab.h>
-> +#include <linux/namei.h>
->  #include "internal.h"
->  #include <trace/events/fscache.h>
-> =20
-> @@ -58,9 +59,11 @@ void cachefiles_acquire_volume(struct fscache_volume *=
-vcookie)
->  		if (ret < 0) {
->  			if (ret !=3D -ESTALE)
->  				goto error_dir;
-> -			inode_lock_nested(d_inode(cache->store), I_MUTEX_PARENT);
-> -			cachefiles_bury_object(cache, NULL, cache->store, vdentry,
-> -					       FSCACHE_VOLUME_IS_WEIRD);
-> +			vdentry =3D start_removing_dentry(cache->store, vdentry);
-> +			if (!IS_ERR(vdentry))
-> +				cachefiles_bury_object(cache, NULL, cache->store,
-> +						       vdentry,
-> +						       FSCACHE_VOLUME_IS_WEIRD);
->  			cachefiles_put_directory(volume->dentry);
->  			cond_resched();
->  			goto retry;
-> diff --git a/fs/namei.c b/fs/namei.c
-> index da01b828ede6..729b42fb143b 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -3323,6 +3323,39 @@ struct dentry *start_removing_noperm(struct dentry=
- *parent,
->  }
->  EXPORT_SYMBOL(start_removing_noperm);
-> =20
-> +/**
-> + * start_removing_dentry - prepare to remove a given dentry
-> + * @parent: directory from which dentry should be removed
-> + * @child:  the dentry to be removed
-> + *
-> + * A lock is taken to protect the dentry again other dirops and
-> + * the validity of the dentry is checked: correct parent and still hashe=
-d.
-> + *
-> + * If the dentry is valid and positive, a reference is taken and
-> + * returned.  If not an error is returned.
-> + *
-> + * end_removing() should be called when removal is complete, or aborted.
-> + *
-> + * Returns: the valid dentry, or an error.
-> + */
-> +struct dentry *start_removing_dentry(struct dentry *parent,
-> +				     struct dentry *child)
-> +{
-> +	inode_lock_nested(parent->d_inode, I_MUTEX_PARENT);
-> +	if (unlikely(IS_DEADDIR(parent->d_inode) ||
-> +		     child->d_parent !=3D parent ||
-> +		     d_unhashed(child))) {
-> +		inode_unlock(parent->d_inode);
-> +		return ERR_PTR(-EINVAL);
-> +	}
-> +	if (d_is_negative(child)) {
-> +		inode_unlock(parent->d_inode);
-> +		return ERR_PTR(-ENOENT);
-> +	}
-> +	return dget(child);
-> +}
-> +EXPORT_SYMBOL(start_removing_dentry);
-> +
->  #ifdef CONFIG_UNIX98_PTYS
->  int path_pts(struct path *path)
->  {
-> diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
-> index 20682afdbd20..6d1d0e94e287 100644
-> --- a/fs/overlayfs/dir.c
-> +++ b/fs/overlayfs/dir.c
-> @@ -47,14 +47,12 @@ static int ovl_cleanup_locked(struct ovl_fs *ofs, str=
-uct inode *wdir,
->  int ovl_cleanup(struct ovl_fs *ofs, struct dentry *workdir,
->  		struct dentry *wdentry)
->  {
-> -	int err;
-> -
-> -	err =3D ovl_parent_lock(workdir, wdentry);
-> -	if (err)
-> -		return err;
-> +	wdentry =3D start_removing_dentry(workdir, wdentry);
-> +	if (IS_ERR(wdentry))
-> +		return PTR_ERR(wdentry);
-> =20
->  	ovl_cleanup_locked(ofs, workdir->d_inode, wdentry);
-> -	ovl_parent_unlock(workdir);
-> +	end_removing(wdentry);
-> =20
->  	return 0;
->  }
-> diff --git a/fs/overlayfs/readdir.c b/fs/overlayfs/readdir.c
-> index 1e9792cc557b..77ecc39fc33a 100644
-> --- a/fs/overlayfs/readdir.c
-> +++ b/fs/overlayfs/readdir.c
-> @@ -1242,11 +1242,11 @@ int ovl_workdir_cleanup(struct ovl_fs *ofs, struc=
-t dentry *parent,
->  	if (!d_is_dir(dentry) || level > 1)
->  		return ovl_cleanup(ofs, parent, dentry);
-> =20
-> -	err =3D ovl_parent_lock(parent, dentry);
-> -	if (err)
-> -		return err;
-> +	dentry =3D start_removing_dentry(parent, dentry);
-> +	if (IS_ERR(dentry))
-> +		return PTR_ERR(dentry);
->  	err =3D ovl_do_rmdir(ofs, parent->d_inode, dentry);
-> -	ovl_parent_unlock(parent);
-> +	end_removing(dentry);
->  	if (err) {
->  		struct path path =3D { .mnt =3D mnt, .dentry =3D dentry };
-> =20
-> diff --git a/fs/smb/server/vfs.c b/fs/smb/server/vfs.c
-> index 891ed2dc2b73..7c4ddc43ab39 100644
-> --- a/fs/smb/server/vfs.c
-> +++ b/fs/smb/server/vfs.c
-> @@ -49,24 +49,6 @@ static void ksmbd_vfs_inherit_owner(struct ksmbd_work =
-*work,
->  	i_uid_write(inode, i_uid_read(parent_inode));
->  }
-> =20
-> -/**
-> - * ksmbd_vfs_lock_parent() - lock parent dentry if it is stable
-> - * @parent: parent dentry
-> - * @child: child dentry
-> - *
-> - * Returns: %0 on success, %-ENOENT if the parent dentry is not stable
-> - */
-> -int ksmbd_vfs_lock_parent(struct dentry *parent, struct dentry *child)
-> -{
-> -	inode_lock_nested(d_inode(parent), I_MUTEX_PARENT);
-> -	if (child->d_parent !=3D parent) {
-> -		inode_unlock(d_inode(parent));
-> -		return -ENOENT;
-> -	}
-> -
-> -	return 0;
-> -}
-> -
->  static int ksmbd_vfs_path_lookup(struct ksmbd_share_config *share_conf,
->  				 char *pathname, unsigned int flags,
->  				 struct path *path, bool do_lock)
-> @@ -1084,18 +1066,17 @@ int ksmbd_vfs_unlink(struct file *filp)
->  		return err;
-> =20
->  	dir =3D dget_parent(dentry);
-> -	err =3D ksmbd_vfs_lock_parent(dir, dentry);
-> -	if (err)
-> +	dentry =3D start_removing_dentry(dir, dentry);
-> +	err =3D PTR_ERR(dentry);
-> +	if (IS_ERR(dentry))
->  		goto out;
-> -	dget(dentry);
-> =20
->  	if (S_ISDIR(d_inode(dentry)->i_mode))
->  		err =3D vfs_rmdir(idmap, d_inode(dir), dentry);
->  	else
->  		err =3D vfs_unlink(idmap, d_inode(dir), dentry, NULL);
-> =20
-> -	dput(dentry);
-> -	inode_unlock(d_inode(dir));
-> +	end_removing(dentry);
->  	if (err)
->  		ksmbd_debug(VFS, "failed to delete, err %d\n", err);
->  out:
+On Wed, Nov 12, 2025 at 8:25=E2=80=AFAM Mike Rapoport <rppt@kernel.org> wro=
+te:
+>
+> Hi Pasha,
+>
+> On Tue, Nov 11, 2025 at 03:57:39PM -0500, Pasha Tatashin wrote:
+> > Hi Mike,
+> >
+> > Thank you for review, my comments below:
+> >
+> > > > This is why this call is placed first in reboot(), before any
+> > > > irreversible reboot notifiers or shutdown callbacks are performed. =
+If
+> > > > an allocation problem occurs in KHO, the error is simply reported b=
+ack
+> > > > to userspace, and the live update update is safely aborted.
+>
+> The call to liveupdate_reboot() is just before kernel_kexec(). Why we don=
+'t
+> move it there?
 
-I guess this answers my earlier question.
+Yes, I can move that call into kernel_kexec().
 
-> diff --git a/include/linux/namei.h b/include/linux/namei.h
-> index 0441f5921f87..d089e4e8fdd0 100644
-> --- a/include/linux/namei.h
-> +++ b/include/linux/namei.h
-> @@ -95,6 +95,8 @@ struct dentry *start_removing(struct mnt_idmap *idmap, =
-struct dentry *parent,
->  			      struct qstr *name);
->  struct dentry *start_creating_noperm(struct dentry *parent, struct qstr =
-*name);
->  struct dentry *start_removing_noperm(struct dentry *parent, struct qstr =
-*name);
-> +struct dentry *start_removing_dentry(struct dentry *parent,
-> +				     struct dentry *child);
-> =20
->  /**
->   * end_creating - finish action started with start_creating
-> diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorf=
-s.c
-> index 391a586d0557..9d08d103f142 100644
-> --- a/security/apparmor/apparmorfs.c
-> +++ b/security/apparmor/apparmorfs.c
-> @@ -355,17 +355,17 @@ static void aafs_remove(struct dentry *dentry)
->  	if (!dentry || IS_ERR(dentry))
->  		return;
-> =20
-> +	/* ->d_parent is stable as rename is not supported */
->  	dir =3D d_inode(dentry->d_parent);
-> -	inode_lock(dir);
-> -	if (simple_positive(dentry)) {
-> +	dentry =3D start_removing_dentry(dentry->d_parent, dentry);
-> +	if (!IS_ERR(dentry) && simple_positive(dentry)) {
->  		if (d_is_dir(dentry))
->  			simple_rmdir(dir, dentry);
->  		else
->  			simple_unlink(dir, dentry);
->  		d_delete(dentry);
-> -		dput(dentry);
->  	}
-> -	inode_unlock(dir);
-> +	end_removing(dentry);
->  	simple_release_fs(&aafs_mnt, &aafs_count);
->  }
-> =20
+> And all the liveupdate_reboot() does if kho_finalize() fails it's massagi=
+ng
+> the error value before returning it to userspace. Why kernel_kexec() can'=
+t
+> do the same?
 
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
+We could do that. It would look something like this:
+
+if (liveupdate_enabled())
+   kho_finalize();
+
+Because we want to do kho_finalize() from kernel_kexec only when we do
+live update.
+
+> > > This is fine. But what I don't like is that we can't use kho without
+> > > liveupdate. We are making debugfs optional, we have a way to call
+
+This is exactly the fix I proposed:
+
+1. When live-update is enabled, always disable "finalize" debugfs API.
+2. When live-update is disabled, always enable "finalize" debugfs API.
+
+Once KHO is stateless the "finalize" debugfs API is going to be
+removed, and KHO debugfs itself can be optional.
+
+> > Yes you can: you can disable liveupdate (i.e. not supply liveupdate=3D1
+> > via kernel parameter) and use KHO the old way: drive it from the
+> > userspace. However, if liveupdate is enabled, liveupdate becomes the
+> > driver of KHO as unfortunately KHO has these weird states at the
+> > moment.
+>
+> The "weird state" is the point where KHO builds its FDT. Replacing the
+> current memory tracker with one that does not require serialization won't
+> change it. We still need a way to tell KHO that "there won't be new nodes
+> in FDT, pack it".
+>
+
+see my answer below
+
+> > > kho_finalize() on the reboot path and it does not seem an issue to do=
+ it
+> > > even without liveupdate. But then we force kho_finalize() into
+> > > liveupdate_reboot() allowing weird configurations where kho is there =
+but
+> > > it's unusable.
+> >
+> > What do you mean KHO is there but unusable, we should not have such a s=
+tate...
+>
+> If you compile a kernel with KEXEC_HANDOVER=3Dy, KEXEC_HANDOVER_DEBUGFS=
+=3Dn and
+> LIVEUPDATE=3Dn and boot with kho=3D1 there is nothing to trigger
+> kho_finalize().
+>
+> > > What I'd like to see is that we can finalize KHO on kexec reboot path=
+ even
+> > > when liveupdate is not compiled and until then the patch that makes K=
+HO
+> > > debugfs optional should not go further IMO.
+> > >
+> > > Another thing I didn't check in this series yet is how finalization d=
+riven
+> > > from debugfs interacts with liveupdate internal handling?
+> >
+> > I think what we can do is the following:
+> > - Remove "Kconfig: make debugfs optional" from this series, and
+> > instead make that change as part of stateless KHO work.
+> > - This will ensure that when liveupdate=3D0 always KHO finalize is full=
+y
+> > support the old way.
+> > - When liveupdate=3D1 always disable KHO debugfs "finalize" API, and
+> > allow liveupdate to drive it automatically. It would add another
+> > liveupdate_enable() check to KHO, and is going to be removed as part
+> > of stateless KHO work.
+>
+> KHO should not call into liveupdate. That's layering violation.
+> And "stateless KHO" does not really make it stateless, it only removes th=
+e
+> memory serialization from kho_finalize(), but it's still required to pack
+> the FDT.
+
+This touches on a point I've raised in the KHO sync meetings: to be
+effective, the "stateless KHO" work must also make subtree add/remove
+stateless. There should not be a separate "finalize" state just to
+finish the FDT. The KHO FDT is tiny (only one page), and there are
+only a handful of subtrees. Adding and removing subtrees is cheap; we
+should be able to open FDT, modify it, and finish FDT on every
+operation. There's no need for a special finalization state at kexec
+time. KHO should be totally stateless.
+
+> I think we should allow kho finalization in some form from kernel_kexec()=
+.
+
+If we achieve that, we wouldn't need a kho_finalize() call from
+kernel_kexec() at all. All KHO operations should be allowed at any
+time once KHO is initialized, and they shouldn't depend on the machine
+state. So, even late in shutdown or early in boot, it should be
+possible to preserve KHO memory or a subtree. I'm not saying it's a
+good idea to do that late in shutdown (as preservation may fail), but
+that should be the caller's problem.
+
+Thanks,
+Pasha
 
