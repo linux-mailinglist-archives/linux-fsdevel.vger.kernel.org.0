@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-68065-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68066-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 892C6C52E08
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Nov 2025 16:05:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E456EC52F68
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Nov 2025 16:20:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A4D03353BB8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Nov 2025 14:56:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E66934268EF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Nov 2025 14:57:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4EEA345759;
-	Wed, 12 Nov 2025 14:46:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E314D347BBD;
+	Wed, 12 Nov 2025 14:47:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="daaqerkF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="itV1AiRM"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F33D4345757;
-	Wed, 12 Nov 2025 14:46:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 188B734575F;
+	Wed, 12 Nov 2025 14:47:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762958793; cv=none; b=Hkbl/5VMPuuKSD0BcbG74ZqWOOQwzXt8DL+R1SWsssvH4y998GljXUWko/4Xgupd5IEzcRHa7CWKqHKV17Sc9siHCgs0X6BIDiBHQXW18kIfmm2NdYI4EdFZDFNiNl3xQALnYMUhQxAd611BHUQsbd+8S+L4Ojra917XrIDb/Fs=
+	t=1762958848; cv=none; b=k6xHHeoTb8YVXU75bHo0kVd3H03zPb/Hgf/Fiz8z7a3pI/hE/AkVjrTJKpPJzXm83PNGpG3SP7lIE8zwBzvHFTJO6r+f4PfT1cLgW+wmZBdwDg0u7X/vaLKtTCTXIf5h3UApdvXJlvQksa5fVweOUfSvZXtdJVCncy8ZcdWxHOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762958793; c=relaxed/simple;
-	bh=W09oq+HYxVgVN/kosChQDcZ+ebdWtAbR+9uFU7ZwbLc=;
+	s=arc-20240116; t=1762958848; c=relaxed/simple;
+	bh=LGC+gPUi20dbwpDZ2iiKklnaCXgd8YE+RKxSMV7nTb4=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=QT7hXbcgd7Iget85biBwR1ENfTXqV5goRml2q88sW+FDNZBPs8lpTGXG6TQsPqXKppFBQYXf+JN91bbGaYnnZR/XXWO9LguiHau+wonBqkokxDXjSlcsJnChmgZVOrFTx1mBgK5uPVVYqJBWF6J9BQuXnrC5VTP039U1Vble1dY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=daaqerkF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8509AC4CEF5;
-	Wed, 12 Nov 2025 14:46:28 +0000 (UTC)
+	 Content-Type:MIME-Version; b=RsM9idpJTjqVMPqVP92gnHCq+RiJS4XoIuTMfbpPrdWHbpfqwsdwSzcdq0xQa5KQk8odVdzc+tdyKrvNnHI0mAGkqfVr/qI4bivCfB+yXap/QLpjqAGCC1pfpYrOhEIOekjEgZRNA1Z14mYSkdN/+Xsec95JFwpHnQ5ppzttzXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=itV1AiRM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 947FAC4CEF5;
+	Wed, 12 Nov 2025 14:47:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762958791;
-	bh=W09oq+HYxVgVN/kosChQDcZ+ebdWtAbR+9uFU7ZwbLc=;
+	s=k20201202; t=1762958847;
+	bh=LGC+gPUi20dbwpDZ2iiKklnaCXgd8YE+RKxSMV7nTb4=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=daaqerkF6xj5TaEr/77ce8B3DNX8JX+Dus7t1apkIl0GhPUei/291tbqIexB+BB0p
-	 /KyoISnE0t4xdRZpcMs2CoZOiudDrK3GHCcgq2yTHfzHeln2cpGxm/+npJ6AOX/yDA
-	 opHo54wDKao8o8/BwHwKA3SJkdsD2N/5bCmm21v7zgrRNps5sj4UsJ5U7rhh1VrE0R
-	 +GPXdxqc/Y7ui4Bh0kd0DS1ZceyVKxs4UX2f9XcTV6++mn1yYXr9t9x7Ng0VW3r09u
-	 A7YTdwC64Tkume+ZmW0WRawFCOwySmDmjGb7G3zZJRsCWEL9ZZ5m6Gc+U8yWq8ble0
-	 ys72mKLOArnPg==
-Message-ID: <32e65149e7678ac3cbc7f8dbed26429fd9c7ae78.camel@kernel.org>
-Subject: Re: [PATCH v5 02/14] VFS: introduce start_dirop() and end_dirop()
+	b=itV1AiRMd7y4y3qoxBClifgykBN9dX5H7xtjMIBkeXRP3xGyVaMjTXJJAN0gGrHsZ
+	 SgyGKheDoapWW5FXVi+DYMUm3y1rgkONtUqLRqgkyDwL3ARG6NMIWQn7gcE/46gFN4
+	 ABiR8sBoNyZIo1ywp5kx8xENwIlZ9W5rVgye1h2F9qeSbh2PYpdlQT/YLb5fUa276F
+	 xpUJUGUX9/+RochbyH65lbOusP/VHDJPgOTJetAosZanQwSCPntDezuM/aHGuPwzlm
+	 Twg42xIYipa7RVmrBvxsAIR48NnKJOFr5wOEVF1xvrb27fGIFpnYNQdeVpwQo1a5W1
+	 cf1+xmznQr+OA==
+Message-ID: <cb5e89380ea2f156e1fed63835c649d125c78fe1.camel@kernel.org>
+Subject: Re: [PATCH v5 03/14] VFS: tidy up do_unlinkat()
 From: Jeff Layton <jlayton@kernel.org>
 To: NeilBrown <neil@brown.name>, Alexander Viro <viro@zeniv.linux.org.uk>, 
  Christian Brauner
@@ -67,10 +67,10 @@ Cc: Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, Chris Mason
  linux-unionfs@vger.kernel.org, 	linux-cifs@vger.kernel.org,
  linux-xfs@vger.kernel.org, 	linux-security-module@vger.kernel.org,
  selinux@vger.kernel.org
-Date: Wed, 12 Nov 2025 09:46:27 -0500
-In-Reply-To: <20251106005333.956321-3-neilb@ownmail.net>
+Date: Wed, 12 Nov 2025 09:47:23 -0500
+In-Reply-To: <20251106005333.956321-4-neilb@ownmail.net>
 References: <20251106005333.956321-1-neilb@ownmail.net>
-	 <20251106005333.956321-3-neilb@ownmail.net>
+	 <20251106005333.956321-4-neilb@ownmail.net>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
  n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
@@ -158,330 +158,120 @@ MIME-Version: 1.0
 On Thu, 2025-11-06 at 11:50 +1100, NeilBrown wrote:
 > From: NeilBrown <neil@brown.name>
 >=20
-> The fact that directory operations (create,remove,rename) are protected
-> by a lock on the parent is known widely throughout the kernel.
-> In order to change this - to instead lock the target dentry  - it is
-> best to centralise this knowledge so it can be changed in one place.
+> The simplification of locking in the previous patch opens up some room
+> for tidying up do_unlinkat()
 >=20
-> This patch introduces start_dirop() which is local to VFS code.
-> It performs the required locking for create and remove.  Rename
-> will be handled separately.
->=20
-> Various functions with names like start_creating() or start_removing_path=
-(),
-> some of which already exist, will export this functionality beyond the VF=
-S.
->=20
-> end_dirop() is the partner of start_dirop().  It drops the lock and
-> releases the reference on the dentry.
-> It *is* exported so that various end_creating etc functions can be inline=
-.
->=20
-> As vfs_mkdir() drops the dentry on error we cannot use end_dirop() as
-> that won't unlock when the dentry IS_ERR().  For now we need an explicit
-> unlock when dentry IS_ERR().  I hope to change vfs_mkdir() to unlock
-> when it drops a dentry so that explicit unlock can go away.
->=20
-> end_dirop() can always be called on the result of start_dirop(), but not
-> after vfs_mkdir().  After a vfs_mkdir() we still may need the explicit
-> unlock as seen in end_creating_path().
->=20
-> As well as adding start_dirop() and end_dirop()
-> this patch uses them in:
->  - simple_start_creating (which requires sharing lookup_noperm_common()
->         with libfs.c)
->  - start_removing_path / start_removing_user_path_at
->  - filename_create / end_creating_path()
->  - do_rmdir(), do_unlinkat()
+> - change all "exit" labels to describe what will happen at the label.
+> - always goto an exit label on an error - unwrap the "if (!IS_ERR())" bra=
+nch.
+> - Move the "slashes" handing inline, but mark it as unlikely()
+> - simplify use of the "inode" variable - we no longer need to test for NU=
+LL.
 >=20
 > Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 > Signed-off-by: NeilBrown <neil@brown.name>
 > ---
->  fs/internal.h      |  3 ++
->  fs/libfs.c         | 36 ++++++++---------
->  fs/namei.c         | 98 ++++++++++++++++++++++++++++++++++------------
->  include/linux/fs.h |  2 +
->  4 files changed, 95 insertions(+), 44 deletions(-)
+>  fs/namei.c | 55 ++++++++++++++++++++++++++----------------------------
+>  1 file changed, 26 insertions(+), 29 deletions(-)
 >=20
-> diff --git a/fs/internal.h b/fs/internal.h
-> index 9b2b4d116880..d08d5e2235e9 100644
-> --- a/fs/internal.h
-> +++ b/fs/internal.h
-> @@ -67,6 +67,9 @@ int vfs_tmpfile(struct mnt_idmap *idmap,
->  		const struct path *parentpath,
->  		struct file *file, umode_t mode);
->  struct dentry *d_hash_and_lookup(struct dentry *, struct qstr *);
-> +struct dentry *start_dirop(struct dentry *parent, struct qstr *name,
-> +			   unsigned int lookup_flags);
-> +int lookup_noperm_common(struct qstr *qname, struct dentry *base);
-> =20
->  /*
->   * namespace.c
-> diff --git a/fs/libfs.c b/fs/libfs.c
-> index 1661dcb7d983..2d6657947abd 100644
-> --- a/fs/libfs.c
-> +++ b/fs/libfs.c
-> @@ -2290,27 +2290,25 @@ void stashed_dentry_prune(struct dentry *dentry)
->  	cmpxchg(stashed, dentry, NULL);
->  }
-> =20
-> -/* parent must be held exclusive */
-> +/**
-> + * simple_start_creating - prepare to create a given name
-> + * @parent: directory in which to prepare to create the name
-> + * @name:   the name to be created
-> + *
-> + * Required lock is taken and a lookup in performed prior to creating an
-> + * object in a directory.  No permission checking is performed.
-> + *
-> + * Returns: a negative dentry on which vfs_create() or similar may
-> + *  be attempted, or an error.
-> + */
->  struct dentry *simple_start_creating(struct dentry *parent, const char *=
-name)
->  {
-> -	struct dentry *dentry;
-> -	struct inode *dir =3D d_inode(parent);
-> +	struct qstr qname =3D QSTR(name);
-> +	int err;
-> =20
-> -	inode_lock(dir);
-> -	if (unlikely(IS_DEADDIR(dir))) {
-> -		inode_unlock(dir);
-> -		return ERR_PTR(-ENOENT);
-> -	}
-> -	dentry =3D lookup_noperm(&QSTR(name), parent);
-> -	if (IS_ERR(dentry)) {
-> -		inode_unlock(dir);
-> -		return dentry;
-> -	}
-> -	if (dentry->d_inode) {
-> -		dput(dentry);
-> -		inode_unlock(dir);
-> -		return ERR_PTR(-EEXIST);
-> -	}
-> -	return dentry;
-> +	err =3D lookup_noperm_common(&qname, parent);
-> +	if (err)
-> +		return ERR_PTR(err);
-> +	return start_dirop(parent, &qname, LOOKUP_CREATE | LOOKUP_EXCL);
->  }
->  EXPORT_SYMBOL(simple_start_creating);
 > diff --git a/fs/namei.c b/fs/namei.c
-> index 39c4d52f5b54..231e1ffd4b8d 100644
+> index 231e1ffd4b8d..93c5fce2d814 100644
 > --- a/fs/namei.c
 > +++ b/fs/namei.c
-> @@ -2765,6 +2765,48 @@ static int filename_parentat(int dfd, struct filen=
-ame *name,
->  	return __filename_parentat(dfd, name, flags, parent, last, type, NULL);
->  }
-> =20
-> +/**
-> + * start_dirop - begin a create or remove dirop, performing locking and =
-lookup
-> + * @parent:       the dentry of the parent in which the operation will o=
-ccur
-> + * @name:         a qstr holding the name within that parent
-> + * @lookup_flags: intent and other lookup flags.
-> + *
-> + * The lookup is performed and necessary locks are taken so that, on suc=
-cess,
-> + * the returned dentry can be operated on safely.
-> + * The qstr must already have the hash value calculated.
-> + *
-> + * Returns: a locked dentry, or an error.
-> + *
-> + */
-> +struct dentry *start_dirop(struct dentry *parent, struct qstr *name,
-> +			   unsigned int lookup_flags)
-> +{
-> +	struct dentry *dentry;
-> +	struct inode *dir =3D d_inode(parent);
-> +
-> +	inode_lock_nested(dir, I_MUTEX_PARENT);
-> +	dentry =3D lookup_one_qstr_excl(name, parent, lookup_flags);
-> +	if (IS_ERR(dentry))
-> +		inode_unlock(dir);
-> +	return dentry;
-> +}
-> +
-> +/**
-> + * end_dirop - signal completion of a dirop
-> + * @de: the dentry which was returned by start_dirop or similar.
-> + *
-> + * If the de is an error, nothing happens. Otherwise any lock taken to
-> + * protect the dentry is dropped and the dentry itself is release (dput(=
-)).
-> + */
-> +void end_dirop(struct dentry *de)
-> +{
-> +	if (!IS_ERR(de)) {
-> +		inode_unlock(de->d_parent->d_inode);
-> +		dput(de);
-> +	}
-> +}
-> +EXPORT_SYMBOL(end_dirop);
-> +
->  /* does lookup, returns the object with parent locked */
->  static struct dentry *__start_removing_path(int dfd, struct filename *na=
-me,
->  					   struct path *path)
-> @@ -2781,10 +2823,9 @@ static struct dentry *__start_removing_path(int df=
-d, struct filename *name,
->  		return ERR_PTR(-EINVAL);
->  	/* don't fail immediately if it's r/o, at least try to report other err=
-ors */
->  	error =3D mnt_want_write(parent_path.mnt);
-> -	inode_lock_nested(parent_path.dentry->d_inode, I_MUTEX_PARENT);
-> -	d =3D lookup_one_qstr_excl(&last, parent_path.dentry, 0);
-> +	d =3D start_dirop(parent_path.dentry, &last, 0);
->  	if (IS_ERR(d))
-> -		goto unlock;
-> +		goto drop;
+> @@ -4755,65 +4755,62 @@ int do_unlinkat(int dfd, struct filename *name)
+>  	struct path path;
+>  	struct qstr last;
+>  	int type;
+> -	struct inode *inode =3D NULL;
+> +	struct inode *inode;
+>  	struct inode *delegated_inode =3D NULL;
+>  	unsigned int lookup_flags =3D 0;
+>  retry:
+>  	error =3D filename_parentat(dfd, name, lookup_flags, &path, &last, &typ=
+e);
 >  	if (error)
->  		goto fail;
->  	path->dentry =3D no_free_ptr(parent_path.dentry);
-> @@ -2792,10 +2833,9 @@ static struct dentry *__start_removing_path(int df=
-d, struct filename *name,
->  	return d;
+> -		goto exit1;
+> +		goto exit_putname;
 > =20
->  fail:
-> -	dput(d);
-> +	end_dirop(d);
->  	d =3D ERR_PTR(error);
-> -unlock:
-> -	inode_unlock(parent_path.dentry->d_inode);
-> +drop:
->  	if (!error)
->  		mnt_drop_write(parent_path.mnt);
->  	return d;
-> @@ -2910,7 +2950,7 @@ int vfs_path_lookup(struct dentry *dentry, struct v=
-fsmount *mnt,
->  }
->  EXPORT_SYMBOL(vfs_path_lookup);
+>  	error =3D -EISDIR;
+>  	if (type !=3D LAST_NORM)
+> -		goto exit2;
+> +		goto exit_path_put;
 > =20
-> -static int lookup_noperm_common(struct qstr *qname, struct dentry *base)
-> +int lookup_noperm_common(struct qstr *qname, struct dentry *base)
->  {
->  	const char *name =3D qname->name;
->  	u32 len =3D qname->len;
-> @@ -4223,21 +4263,18 @@ static struct dentry *filename_create(int dfd, st=
-ruct filename *name,
->  	 */
->  	if (last.name[last.len] && !want_dir)
->  		create_flags &=3D ~LOOKUP_CREATE;
-> -	inode_lock_nested(path->dentry->d_inode, I_MUTEX_PARENT);
-> -	dentry =3D lookup_one_qstr_excl(&last, path->dentry,
-> -				      reval_flag | create_flags);
-> +	dentry =3D start_dirop(path->dentry, &last, reval_flag | create_flags);
->  	if (IS_ERR(dentry))
-> -		goto unlock;
-> +		goto out_drop_write;
-> =20
->  	if (unlikely(error))
->  		goto fail;
-> =20
->  	return dentry;
->  fail:
-> -	dput(dentry);
-> +	end_dirop(dentry);
->  	dentry =3D ERR_PTR(error);
-> -unlock:
-> -	inode_unlock(path->dentry->d_inode);
-> +out_drop_write:
->  	if (!error)
->  		mnt_drop_write(path->mnt);
->  out:
-> @@ -4256,11 +4293,26 @@ struct dentry *start_creating_path(int dfd, const=
- char *pathname,
->  }
->  EXPORT_SYMBOL(start_creating_path);
-> =20
-> +/**
-> + * end_creating_path - finish a code section started by start_creating_p=
-ath()
-> + * @path: the path instantiated by start_creating_path()
-> + * @dentry: the dentry returned by start_creating_path()
-> + *
-> + * end_creating_path() will unlock and locks taken by start_creating_pat=
-h()
-> + * and drop an references that were taken.  It should only be called
-> + * if start_creating_path() returned a non-error.
-> + * If vfs_mkdir() was called and it returned an error, that error *shoul=
-d*
-> + * be passed to end_creating_path() together with the path.
-> + */
->  void end_creating_path(const struct path *path, struct dentry *dentry)
->  {
-> -	if (!IS_ERR(dentry))
-> -		dput(dentry);
-> -	inode_unlock(path->dentry->d_inode);
-> +	if (IS_ERR(dentry))
-> +		/* The parent is still locked despite the error from
-> +		 * vfs_mkdir() - must unlock it.
-> +		 */
-> +		inode_unlock(path->dentry->d_inode);
-> +	else
-> +		end_dirop(dentry);
->  	mnt_drop_write(path->mnt);
->  	path_put(path);
->  }
-> @@ -4592,8 +4644,7 @@ int do_rmdir(int dfd, struct filename *name)
+>  	error =3D mnt_want_write(path.mnt);
 >  	if (error)
->  		goto exit2;
-> =20
-> -	inode_lock_nested(path.dentry->d_inode, I_MUTEX_PARENT);
-> -	dentry =3D lookup_one_qstr_excl(&last, path.dentry, lookup_flags);
-> +	dentry =3D start_dirop(path.dentry, &last, lookup_flags);
->  	error =3D PTR_ERR(dentry);
->  	if (IS_ERR(dentry))
->  		goto exit3;
-> @@ -4602,9 +4653,8 @@ int do_rmdir(int dfd, struct filename *name)
->  		goto exit4;
->  	error =3D vfs_rmdir(mnt_idmap(path.mnt), path.dentry->d_inode, dentry);
->  exit4:
-> -	dput(dentry);
-> +	end_dirop(dentry);
->  exit3:
-> -	inode_unlock(path.dentry->d_inode);
->  	mnt_drop_write(path.mnt);
->  exit2:
->  	path_put(&path);
-> @@ -4721,8 +4771,7 @@ int do_unlinkat(int dfd, struct filename *name)
->  	if (error)
->  		goto exit2;
+> -		goto exit2;
+> +		goto exit_path_put;
 >  retry_deleg:
-> -	inode_lock_nested(path.dentry->d_inode, I_MUTEX_PARENT);
-> -	dentry =3D lookup_one_qstr_excl(&last, path.dentry, lookup_flags);
-> +	dentry =3D start_dirop(path.dentry, &last, lookup_flags);
+>  	dentry =3D start_dirop(path.dentry, &last, lookup_flags);
 >  	error =3D PTR_ERR(dentry);
->  	if (!IS_ERR(dentry)) {
+> -	if (!IS_ERR(dentry)) {
+> +	if (IS_ERR(dentry))
+> +		goto exit_drop_write;
 > =20
-> @@ -4737,9 +4786,8 @@ int do_unlinkat(int dfd, struct filename *name)
->  		error =3D vfs_unlink(mnt_idmap(path.mnt), path.dentry->d_inode,
->  				   dentry, &delegated_inode);
->  exit3:
-> -		dput(dentry);
-> +		end_dirop(dentry);
+> -		/* Why not before? Because we want correct error value */
+> -		if (last.name[last.len])
+> -			goto slashes;
+> -		inode =3D dentry->d_inode;
+> -		ihold(inode);
+> -		error =3D security_path_unlink(&path, dentry);
+> -		if (error)
+> -			goto exit3;
+> -		error =3D vfs_unlink(mnt_idmap(path.mnt), path.dentry->d_inode,
+> -				   dentry, &delegated_inode);
+> -exit3:
+> +	/* Why not before? Because we want correct error value */
+> +	if (unlikely(last.name[last.len])) {
+> +		if (d_is_dir(dentry))
+> +			error =3D -EISDIR;
+> +		else
+> +			error =3D -ENOTDIR;
+>  		end_dirop(dentry);
+> +		goto exit_drop_write;
 >  	}
-> -	inode_unlock(path.dentry->d_inode);
->  	if (inode)
->  		iput(inode);	/* truncate the inode here */
->  	inode =3D NULL;
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 03e450dd5211..9e7556e79d19 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -3196,6 +3196,8 @@ extern void iterate_supers_type(struct file_system_=
-type *,
->  void filesystems_freeze(void);
->  void filesystems_thaw(void);
+> -	if (inode)
+> -		iput(inode);	/* truncate the inode here */
+> -	inode =3D NULL;
+> +	inode =3D dentry->d_inode;
+> +	ihold(inode);
+> +	error =3D security_path_unlink(&path, dentry);
+> +	if (error)
+> +		goto exit_end_dirop;
+> +	error =3D vfs_unlink(mnt_idmap(path.mnt), path.dentry->d_inode,
+> +			   dentry, &delegated_inode);
+> +exit_end_dirop:
+> +	end_dirop(dentry);
+> +	iput(inode);	/* truncate the inode here */
+>  	if (delegated_inode) {
+>  		error =3D break_deleg_wait(&delegated_inode);
+>  		if (!error)
+>  			goto retry_deleg;
+>  	}
+> +exit_drop_write:
+>  	mnt_drop_write(path.mnt);
+> -exit2:
+> +exit_path_put:
+>  	path_put(&path);
+>  	if (retry_estale(error, lookup_flags)) {
+>  		lookup_flags |=3D LOOKUP_REVAL;
+> -		inode =3D NULL;
+>  		goto retry;
+>  	}
+> -exit1:
+> +exit_putname:
+>  	putname(name);
+>  	return error;
+> -
+> -slashes:
+> -	if (d_is_dir(dentry))
+> -		error =3D -EISDIR;
+> -	else
+> -		error =3D -ENOTDIR;
+> -	goto exit3;
+>  }
 > =20
-> +void end_dirop(struct dentry *de);
-> +
->  extern int dcache_dir_open(struct inode *, struct file *);
->  extern int dcache_dir_close(struct inode *, struct file *);
->  extern loff_t dcache_dir_lseek(struct file *, loff_t, int);
+>  SYSCALL_DEFINE3(unlinkat, int, dfd, const char __user *, pathname, int, =
+flag)
 
 Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
