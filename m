@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-68302-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68309-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8921CC5922A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 18:26:49 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id E58F2C591A7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 18:23:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E0AAB505556
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 16:45:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 19546563532
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 16:46:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76BE4361DCA;
-	Thu, 13 Nov 2025 16:37:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4997E364033;
+	Thu, 13 Nov 2025 16:38:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XXmQojxF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SRZcepAo"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3C1E35BDAE;
-	Thu, 13 Nov 2025 16:37:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D23135A933;
+	Thu, 13 Nov 2025 16:37:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763051866; cv=none; b=qq4mfliwVJ5DyXaQ20I1F5M38Me7U/1yVb6Xw6cZRuYaoz5R/VkVnDEopNkcK3Hs6SBznNjqzBmpgPoWWuBwAWt0Ee83U23xDi9tHfnEkGTVbDZBjtfmu8uvleS3/vLOnvZdS0xlgML/gL6Nsd9h0i1svV/n1kp1RIlucgAknU8=
+	t=1763051879; cv=none; b=XCZMf8YpadmegGppIUGhN0rrFeOYxPfREIe3PQ3KpfeLnqg0nPV0SUDALjDMyOlawWOxVrw2eX/I8qpRRy9/UkifzNitQmuwFrRIIgAEVtDnrkK/4lBz47GaOQV/qJ/LLPtyjk4bKRf9rWe/lQL8M/pUdcsb8+o60puOdstSEP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763051866; c=relaxed/simple;
-	bh=gJMZ7FuJyEsQkEVnFZtKPZqq8C/tXf/mvq74fsIIrCo=;
+	s=arc-20240116; t=1763051879; c=relaxed/simple;
+	bh=qDyOOnsKgjDMJECVSKZHFCLTntFUXNRakxJ39KMrkIw=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Dh51NQ8gKeMzAT0Xo/uaG0i/N4C966ekN4tSEbTAl+vRe8J2/texkcKNgn9XN5CS8RwyxqpQ44FE0q5+nLJUPkvKH1FUsoHn0nftgKxLj3s5oEijAOX+5u8u74jHK4m6ry0EOg9ixJwqXuy7KVq7ead8BGGOifW+LnU9qMwq2IQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XXmQojxF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22B8CC4CEF5;
-	Thu, 13 Nov 2025 16:37:44 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=KApG5LABA1Y9Sj6AP5zxYAJB8XO3cnZeVA8o6vH787HdukN9ku8GFvuseQj3ibKZYomshVsmaEoOz+yGZmIbcHiOJy8S4wkrcGIFzNdyOLdySi0mxgR46DsRShdl/aAGJcLz4CMLyhzyppTym/3QDzFPyPc30ilZP5QNMUPC+qw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SRZcepAo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25AC6C4CEF1;
+	Thu, 13 Nov 2025 16:37:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763051866;
-	bh=gJMZ7FuJyEsQkEVnFZtKPZqq8C/tXf/mvq74fsIIrCo=;
+	s=k20201202; t=1763051879;
+	bh=qDyOOnsKgjDMJECVSKZHFCLTntFUXNRakxJ39KMrkIw=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=XXmQojxF7ypd8K/y+qU/UZXkCiqiADk1OMus8STuyLT/4oNoL5RREkFlVGTfQqIbf
-	 UbZgk0r6XqulN2SRKmSbnwBm/q8lH8t/CBQeACQM+oxJ1fh/hB49zNvwZx9bXtTJ9l
-	 uni3fQHMg1eARjzr98P2oPmQMdHeRSJnTATuahD9S6GuL4fJU80aPXjF0YzI+iaDhu
-	 zLPti59V/e9UiWhgjtMF1XxAlGOF6QKDDvzaRWZNnfnw3f9S0o1zc4205xOlkMBRd3
-	 D12gmgPLW4La+DRd96lXqcLsGj9loBoxzaz19yPBsOM3ofAwQEps90rlkqR46LVLpm
-	 FxDJQUnY8EtuA==
+	b=SRZcepAo8mCF7wjR35xhT3fyvut6J42TPMa2+0V7T0YYXpfZ4L0YnYOC1VnkxGaou
+	 Mca29Y36mpj56G9KxfStdVZ8+o5RhH0wPm1uPTDdipHHtIHDcL0vKpbc74g5f8IU4k
+	 AbYs9PW94q5F3tbz1O2FDCwVZb9bGbMMsklw0tLYfNlnTxnyWWLQ0ZLlqyHZShd3ah
+	 ne3V+4Ujtu3jU3guBiARqJemTT1z/XXHTji0/576lJIecnjjl8siz4S4sa/vxw+FRT
+	 B4BMkWZLBV6FG/gV28S7lqQzm8dT4bOSeIAlT0tmkN70aI0rnYtJlv+R3HdsIL2ZYt
+	 p6eNKbGUCU/dQ==
 From: Christian Brauner <brauner@kernel.org>
-Date: Thu, 13 Nov 2025 17:37:14 +0100
-Subject: [PATCH v2 09/42] ovl: port ovl_fsync() to cred guard
+Date: Thu, 13 Nov 2025 17:37:21 +0100
+Subject: [PATCH v2 16/42] ovl: port ovl_get_link() to cred guard
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251113-work-ovl-cred-guard-v2-9-c08940095e90@kernel.org>
+Message-Id: <20251113-work-ovl-cred-guard-v2-16-c08940095e90@kernel.org>
 References: <20251113-work-ovl-cred-guard-v2-0-c08940095e90@kernel.org>
 In-Reply-To: <20251113-work-ovl-cred-guard-v2-0-c08940095e90@kernel.org>
 To: Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>
@@ -60,12 +60,12 @@ Cc: Linus Torvalds <torvalds@linux-foundation.org>,
  linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-a6db3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1141; i=brauner@kernel.org;
- h=from:subject:message-id; bh=gJMZ7FuJyEsQkEVnFZtKPZqq8C/tXf/mvq74fsIIrCo=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSKcbpO26h350HbpCV7j/SVT5NgiHoVteTO4vsTVFRv8
- n0/7LHlfUcpC4MYF4OsmCKLQ7tJuNxynorNRpkaMHNYmUCGMHBxCsBE1rxk+MNtKPbdsZGJPbXY
- 82pxQe7XdcoKEzXkUic/WtcnWnpS6wwjQ8uavo0K/7+E5r9fylw8N1rWvfTtgi8Gh/Rzm3m/nnq
- cyAgA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=864; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=qDyOOnsKgjDMJECVSKZHFCLTntFUXNRakxJ39KMrkIw=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSKcbpl7E2xPOrP9MSOYycPu4+q8RPxl5OU9kxfc/yWs
+ 8WBB0ZnO0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACby9Scjw/s15a5in7PKK1Sb
+ 1hyd1d1jOztOaI8DV94GnrNL4h+z3GFkuKAk5bF6Zao444LJ0/O3BbzW1u/8c++akfoTxUc6HxX
+ 38gMA
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
@@ -73,35 +73,32 @@ Use the scoped ovl cred guard.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- fs/overlayfs/file.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+ fs/overlayfs/inode.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
 
-diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
-index e713f27d70aa..6c5aa74f63ec 100644
---- a/fs/overlayfs/file.c
-+++ b/fs/overlayfs/file.c
-@@ -446,7 +446,6 @@ static int ovl_fsync(struct file *file, loff_t start, loff_t end, int datasync)
- 	enum ovl_path_type type;
- 	struct path upperpath;
- 	struct file *upperfile;
+diff --git a/fs/overlayfs/inode.c b/fs/overlayfs/inode.c
+index dca96db19f81..3a35f9b125f4 100644
+--- a/fs/overlayfs/inode.c
++++ b/fs/overlayfs/inode.c
+@@ -327,16 +327,11 @@ static const char *ovl_get_link(struct dentry *dentry,
+ 				struct inode *inode,
+ 				struct delayed_call *done)
+ {
 -	const struct cred *old_cred;
- 	int ret;
- 
- 	ret = ovl_sync_status(OVL_FS(file_inode(file)->i_sb));
-@@ -463,11 +462,8 @@ static int ovl_fsync(struct file *file, loff_t start, loff_t end, int datasync)
- 	if (IS_ERR(upperfile))
- 		return PTR_ERR(upperfile);
- 
--	old_cred = ovl_override_creds(file_inode(file)->i_sb);
--	ret = vfs_fsync_range(upperfile, start, end, datasync);
--	ovl_revert_creds(old_cred);
+-	const char *p;
 -
--	return ret;
-+	with_ovl_creds(file_inode(file)->i_sb)
-+		return vfs_fsync_range(upperfile, start, end, datasync);
+ 	if (!dentry)
+ 		return ERR_PTR(-ECHILD);
+ 
+-	old_cred = ovl_override_creds(dentry->d_sb);
+-	p = vfs_get_link(ovl_dentry_real(dentry), done);
+-	ovl_revert_creds(old_cred);
+-	return p;
++	with_ovl_creds(dentry->d_sb)
++		return vfs_get_link(ovl_dentry_real(dentry), done);
  }
  
- static int ovl_mmap(struct file *file, struct vm_area_struct *vma)
+ #ifdef CONFIG_FS_POSIX_ACL
 
 -- 
 2.47.3
