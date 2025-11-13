@@ -1,146 +1,476 @@
-Return-Path: <linux-fsdevel+bounces-68401-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68402-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id F24F9C5A504
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 23:27:40 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 522CEC5A5C1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 23:42:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C03D134BAAE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 22:27:30 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5DEBA4EBDF5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 22:37:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B35632573A;
-	Thu, 13 Nov 2025 22:27:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06AFC2E093A;
+	Thu, 13 Nov 2025 22:36:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="vuBHp57G";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="HlzJAe6V"
+	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="FhrZg319"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from flow-a8-smtp.messagingengine.com (flow-a8-smtp.messagingengine.com [103.168.172.143])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yx1-f47.google.com (mail-yx1-f47.google.com [74.125.224.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C80C2417F2
-	for <linux-fsdevel@vger.kernel.org>; Thu, 13 Nov 2025 22:27:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.143
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E92F2E0915
+	for <linux-fsdevel@vger.kernel.org>; Thu, 13 Nov 2025 22:36:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763072844; cv=none; b=N7cQj2dELN3OeHtDyW5DM39YsOb/icTKEs1NyC18TFN9xypfZnKQaAxzTVhyNJ4T+KJGBR8VAm6rPgYSjEG8g1db4GYLy9vNNQIa9MjlAb588RdFg932MAGN1P5icHeN3RQsHlpeUpS4TsJ8215HTTFTezWLDYBUI2OSmX7Oh2M=
+	t=1763073411; cv=none; b=dZ1+qq0rjDMmHI1wJjaR74wItZOjcDWxh9UYAaWiHGT7HrhTTYWLvC9y5otLBKcDUiG62905iwTL7GbXKZpztZMAA2fF62CpXtel5w2BMYqgLg3724bJA617Nbh8bUWnNC9IQJGKc18QSk0A4zj6Tl8uLPHqYf90LFDRDoy5Rik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763072844; c=relaxed/simple;
-	bh=vmHsU37ovUzGfmJhQAhQbQoyPFLQoeHRxxJMSgNPBXU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BdyCkGDqw/VRE6GxpYICIM9bds0RUvRULxAJ4upcZ7a+RfTHaLPENAePvRafSVBUkWzScYGGuRci5FVTI1v/AlOImj3HM3u8MuwSpnOXRg5IiYOKS/1j3I10eS4OEHSdN3wRCmICnJaLPwmWTqn6XCco+XQqFtt6e1/505kP1KY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=vuBHp57G; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=HlzJAe6V; arc=none smtp.client-ip=103.168.172.143
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailflow.phl.internal (Postfix) with ESMTP id 143761380160;
-	Thu, 13 Nov 2025 17:27:20 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-05.internal (MEProxy); Thu, 13 Nov 2025 17:27:20 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1763072840;
-	 x=1763080040; bh=6Vos9Y9wNkSZSASDZyZ/X++Mf4Yu5xKq1/JBt/9En2U=; b=
-	vuBHp57GzzuBWIRfq+LsBbpFTHuyWghB95I3RDWY+7g22mPR2oXz8QWfkqhNS/ap
-	xRlK2ICGshCA4A88w65+I15KEuVz5+Tel+QN8s5380Cu/pQ91hEoOT543CyyrnOz
-	WdHJDPjZvEHwGas55twUALDH0nZAMnn7u6tGtFX4ZiqZitqLNY78tSGcsEV8qkFS
-	XE2etcLQBHWs7E8ocC+/dVV9XGIenfAfm83IiFGX+nfCi4ftvrL2LJ65oseVt64V
-	pOK/wh+/HfMyzIWlp0o0KntzXKHaD0bacmwKXA2cLlLCRWmTQmMmN+vXfy7L/B4L
-	EIhqUUk+/ksb46+7dmhZxQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1763072840; x=
-	1763080040; bh=6Vos9Y9wNkSZSASDZyZ/X++Mf4Yu5xKq1/JBt/9En2U=; b=H
-	lzJAe6VRAOg6Kq/TbFJkzWyKV97L6r81eJNdAmdv2nLozBSY72LLSpwF1NnuR9Hu
-	s9SF3b9MVUaCLF0EBSxPJlLryROLogdaaBOME4nnwWG2VWYL4LTtvm/10+QBQVJG
-	zUsTxMRCDLwV7kPrRIVBNSISsRnUN/InFOfGE1cQmNX/mMvj4njdHqqi2LwgBCgp
-	s+E6y8GcXMbwmPP7oRj5wIURMxT7s1UDXj3ItjNOMMfKso4H5bSknk6GaSuwE3ng
-	B3O6reLRFSKx6dA/mNg2uvhAb9BUP/KS5VDDr6TDOysWC+aATOPSH+PA5GnGwNBs
-	MQW2kfSMn5kt0IK7Zgl+A==
-X-ME-Sender: <xms:R1sWaV_jiIr4l2pn8hEDUgwFLr_n5_3kk0kAntLUl6L8559xmr1vmg>
-    <xme:R1sWaQkQURFp-8KHoIxlUdA-2fXHgUgfq5LBSU9POsEp5TQV80yWgZEYmdWTf5l-o
-    hrZ6xnVqKesRmnuQ6Qv2Dw8iGlI4wz0qtWKf48jVzvB4UwkO1Zx>
-X-ME-Received: <xmr:R1sWabV8Sm1no8_2aK5G7v6ohw5I6drDM48A3t6_6cqUBwCygaKoFqMnUid6MCg-N73nLkH7grLkY_oqzsMhLHY3u7pMr3e8mq60O5QkTHeV0QCtJd1g>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvtdekudegucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucfrhhhishhhihhnghdqkffkrfgprhhtucdliedtjedmne
-    cujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeeuvghr
-    nhguucfutghhuhgsvghrthcuoegsvghrnhgusegsshgsvghrnhgurdgtohhmqeenucggtf
-    frrghtthgvrhhnpeejgfeljeeuffehhfeukedvudfhteethedtheefjefhveduteehhfdt
-    tedvkeekveenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuih
-    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnugessghssggvrhhnugdr
-    tghomhdpnhgspghrtghpthhtohephedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoh
-    epmhhikhhlohhssehsiigvrhgvughirdhhuhdprhgtphhtthhopegsshgthhhusggvrhht
-    seguughnrdgtohhmpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrd
-    hkvghrnhgvlhdrohhrghdprhgtphhtthhopehhohifvgihgihusehtvghntggvnhhtrdgt
-    ohhmpdhrtghpthhtohepiihhrghnghhjihgrtghhvghnrdhjrgihtggvvgessgihthgvug
-    grnhgtvgdrtghomh
-X-ME-Proxy: <xmx:R1sWaVHhPueUE6JHxzemDI3MYHrjLXtVLnqch_706n6rDpT1KbqYSQ>
-    <xmx:R1sWaXdy9h3LBYVVsyrSbrxNCl1uhHhke0e1GZeH6R60AxEqxmMQLQ>
-    <xmx:R1sWaWIAduhJcXxXyt0_k_GTbqKSK2cBQCKl1Cs5xlI5uhueAoZVyw>
-    <xmx:R1sWacF9J6vP9-nEc6PjSD5VavbTY3gfn054jGBqIesiiP2nXCz4aQ>
-    <xmx:SFsWaZFbekrbWMkt6AMfh_--0SXNytpLBm8FSlbqnLpfdfxa74TrSju9>
-Feedback-ID: i5c2e48a5:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 13 Nov 2025 17:27:18 -0500 (EST)
-Message-ID: <00ac745d-f0a6-4fe2-8279-a4dcc3101996@bsbernd.com>
-Date: Thu, 13 Nov 2025 23:27:17 +0100
+	s=arc-20240116; t=1763073411; c=relaxed/simple;
+	bh=Px9gLVsLkG4j4m5UiaFd7dY3bn0T+WdRBACT8O9gCew=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KNnLfcnKGkZcj7AEeXHnfI+8hadW3avQSkHDutj3LQGzGRFTZH85t5laWDPgfmDqEGsv+xyrmSVhqNpdzlaRvT839zBRDASTWZpmvMIuNu60Gf6fGCBLMxrju8QOd3OPX/nHa0g03p8r+HCZmxMJV4pq9MDwoJsT2LA3fAhviEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=FhrZg319; arc=none smtp.client-ip=74.125.224.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
+Received: by mail-yx1-f47.google.com with SMTP id 956f58d0204a3-63e19642764so1161717d50.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Nov 2025 14:36:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1763073407; x=1763678207; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FL9JOpgRoly/FumsY/X52GcOZM++/sZDqBg5Ju+EuOI=;
+        b=FhrZg319m+on9l1WEmb+CHDOP2lLgrgz4fG33G5aUjTMWliB+c+GOKqDoH5TZEtHbt
+         EdI8wOaK0t5VG+3xhETbB4p9tFGsrTEsS5KJ8wUPulkoKPwftV0tFXWKRrEPeQAsJ+v3
+         QWdiC/6R7OPNnzt9RKfI5vBNzyfokI218dcgaZnfOlCMHeY+btj2VVLjMjg5U7qaSVgN
+         AKfRLiUHX5qOj8dnRfJkLHlx6r/WrGCMXDX6SJsVGdYRdwBdeEZJNTTT4u50efWWrIYp
+         vbl76d7c5wvG+CaGQOX/2/5yBGacyuTBPde7iBg+AOVlcofNNtsZiQW1hXNcLoV6Qpvx
+         hMbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763073407; x=1763678207;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FL9JOpgRoly/FumsY/X52GcOZM++/sZDqBg5Ju+EuOI=;
+        b=xMciAXMmkB9g6mOFwAK3iQ++LR2S2+8D/RSsMMi8SmvnMX54XzYUYnE4fmjOxsQMzO
+         1r5vqk8kKwvinP523bXNEX1V7lcKznMznMB/JegCyWO4FmpyGHRFNfC5E8VtGqBweg7w
+         A4cb893rGXH++0N41QahSQCC3VS6DP++pX8MaOdWI+G1jL2l0xc47jKfEZotIwrEdw93
+         K50dAvCaw77iTzaW3ihOsOmWjlcaEeuFKbt5EurZRyr39iYRfhvRzlfzrcGDik5bt15e
+         UKHIqk+wztCIwF7tWMYo3Hh6DcVXzwDsWm+rhycQ+KPKXpEpkA1EnjG4uL6gSzHhuuF/
+         H6cw==
+X-Gm-Message-State: AOJu0YwYxzzGK2ShdyirjQ2DIOUev8jdJDoSeU+iWWZWVI/QEBEzBsaU
+	hEcN5vltdh9rGDGlL/ZBfc8ysRxy/UUOOesBXJ2F6oe6RlaajMi5yqwA+eBuUYp8BmY=
+X-Gm-Gg: ASbGncsvD0A8GxhbHvDtMowJIDqSTLdghogFzUVfFg0k6Os3cp3GDMdwuh6OniihXH8
+	K7InrLtCYIUQZyR4z2F01RXavK/nmTIfcIWqdFUviYcoJ/adkRIxjoduVdgFBFHeJHK+JrqIZHY
+	lkV+QqjyQySJS3vwPnznJ86P8hjJvXHfe7nYCW60fRnl3duQrribVpZLXYVR8HXEgxPRD3hcLSe
+	l9ifN4hfavJDfMzVeZaml4hi0h6IIZViNggRnraXSkes6wDsfPAsvXyx9nyD1Vt/9/GJIIV4Cnt
+	EeMTwrzzmrNWKZR/vmdHUISZu6N1kqqhQ7cuv34MqVqwMHXFDak3/tCU1LFmmF4SB6KVSGZfEat
+	L/LUqDmahHbeGTcAUlrTn/sFhV69h0HsItvtvuwqGN+dv3pZAC/Tt03bYANLKxn+HTZI0DKoRc8
+	Jf+TZKg+SUzsXCx9gzWdg=
+X-Google-Smtp-Source: AGHT+IHZZImGSGHYMJpLjUO5BNVGDQVE4s3svn2SD4yF1YCQ3JMU1gemb44xklukNDmvbZ55OLqAtA==
+X-Received: by 2002:a53:d008:0:b0:63f:a856:5f50 with SMTP id 956f58d0204a3-641e755319bmr848109d50.6.1763073407226;
+        Thu, 13 Nov 2025 14:36:47 -0800 (PST)
+Received: from system76-pc.attlocal.net ([2600:1700:6476:1430:c35e:6f4a:5c45:b019])
+        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-6410e9e9641sm1144924d50.2.2025.11.13.14.36.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Nov 2025 14:36:46 -0800 (PST)
+From: Viacheslav Dubeyko <slava@dubeyko.com>
+To: ceph-devel@vger.kernel.org,
+	idryomov@gmail.com
+Cc: linux-fsdevel@vger.kernel.org,
+	pdonnell@redhat.com,
+	amarkuze@redhat.com,
+	Slava.Dubeyko@ibm.com,
+	slava@dubeyko.com,
+	vdubeyko@redhat.com,
+	Pavan.Rallabhandi@ibm.com
+Subject: [PATCH v3] ceph: fix crash in process_v2_sparse_read() for fscrypt-encrypted directories
+Date: Thu, 13 Nov 2025 14:36:24 -0800
+Message-ID: <20251113223623.508000-2-slava@dubeyko.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] fuse: Avoid reading stale page cache after competing
- DIO write
-To: Miklos Szeredi <miklos@szeredi.hu>, Bernd Schubert <bschubert@ddn.com>
-Cc: linux-fsdevel@vger.kernel.org, Hao Xu <howeyxu@tencent.com>,
- Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
-References: <20251023-fix-fopen-direct-io-post-invalidation-v1-0-3f93a411cd00@ddn.com>
- <CAJfpegsL2BiUnK+8a-rRE8gc8i=8SYY1KoiTiadKtscOVmgUZw@mail.gmail.com>
-From: Bernd Schubert <bernd@bsbernd.com>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <CAJfpegsL2BiUnK+8a-rRE8gc8i=8SYY1KoiTiadKtscOVmgUZw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
 
+The crash in process_v2_sparse_read() for fscrypt-encrypted
+directories has been reported [1]. Issue takes place for
+Ceph msgr2 protocol. It can be reproduced by the steps:
 
-On 11/13/25 15:40, Miklos Szeredi wrote:
-> On Thu, 23 Oct 2025 at 00:21, Bernd Schubert <bschubert@ddn.com> wrote:
->>
->> This is for FOPEN_DIRECT_IO only and and fixes xfstests generic/209,
->> which tests direct-io and competing read-ahead.
-> 
-> This is stable material right?
-> 
->> Also modified is the page cache invalidation before the write, the
->> condition on allow_mmap is removed, as file might be opened multiple
->> times - with and without FOPEN_DIRECT_IO.
-> 
-> I don't think the mixed use was considered previously and probably no
-> filesystem does this without NOTIFY_INVAL_INODE in between.   But I
-> agree that this is the correct thing to do.
-> 
-> I guess these are unlikely to have any performance impacts in the no
-> cached pages case, but maybe we should check?
+sudo mount -t ceph :/ /mnt/cephfs/ -o name=admin,fs=cephfs,ms_mode=secure
 
-I can give this a quick testing when I send out the next version
-for the reduced queue patch.
+(1) mkdir /mnt/cephfs/fscrypt-test-3
+(2) cp area_decrypted.tar /mnt/cephfs/fscrypt-test-3
+(3) fscrypt encrypt --source=raw_key --key=./my.key /mnt/cephfs/fscrypt-test-3
+(4) fscrypt lock /mnt/cephfs/fscrypt-test-3
+(5) fscrypt unlock --key=my.key /mnt/cephfs/fscrypt-test-3
+(6) cat /mnt/cephfs/fscrypt-test-3/area_decrypted.tar
+(7) Issue has been triggered
 
-In principle we might re-consider my previous attempt to merge 
-FOPEN_DIRECT_IO and direct-io, as that handled it.
+[  408.072247] ------------[ cut here ]------------
+[  408.072251] WARNING: CPU: 1 PID: 392 at net/ceph/messenger_v2.c:865
+ceph_con_v2_try_read+0x4b39/0x72f0
+[  408.072267] Modules linked in: intel_rapl_msr intel_rapl_common
+intel_uncore_frequency_common intel_pmc_core pmt_telemetry pmt_discovery
+pmt_class intel_pmc_ssram_telemetry intel_vsec kvm_intel joydev kvm irqbypass
+polyval_clmulni ghash_clmulni_intel aesni_intel rapl input_leds psmouse
+serio_raw i2c_piix4 vga16fb bochs vgastate i2c_smbus floppy mac_hid qemu_fw_cfg
+pata_acpi sch_fq_codel rbd msr parport_pc ppdev lp parport efi_pstore
+[  408.072304] CPU: 1 UID: 0 PID: 392 Comm: kworker/1:3 Not tainted 6.17.0-rc7+
+[  408.072307] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
+1.17.0-5.fc42 04/01/2014
+[  408.072310] Workqueue: ceph-msgr ceph_con_workfn
+[  408.072314] RIP: 0010:ceph_con_v2_try_read+0x4b39/0x72f0
+[  408.072317] Code: c7 c1 20 f0 d4 ae 50 31 d2 48 c7 c6 60 27 d5 ae 48 c7 c7 f8
+8e 6f b0 68 60 38 d5 ae e8 00 47 61 fe 48 83 c4 18 e9 ac fc ff ff <0f> 0b e9 06
+fe ff ff 4c 8b 9d 98 fd ff ff 0f 84 64 e7 ff ff 89 85
+[  408.072319] RSP: 0018:ffff88811c3e7a30 EFLAGS: 00010246
+[  408.072322] RAX: ffffed1024874c6f RBX: ffffea00042c2b40 RCX: 0000000000000f38
+[  408.072324] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+[  408.072325] RBP: ffff88811c3e7ca8 R08: 0000000000000000 R09: 00000000000000c8
+[  408.072326] R10: 00000000000000c8 R11: 0000000000000000 R12: 00000000000000c8
+[  408.072327] R13: dffffc0000000000 R14: ffff8881243a6030 R15: 0000000000003000
+[  408.072329] FS:  0000000000000000(0000) GS:ffff88823eadf000(0000)
+knlGS:0000000000000000
+[  408.072331] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  408.072332] CR2: 000000c0003c6000 CR3: 000000010c106005 CR4: 0000000000772ef0
+[  408.072336] PKRU: 55555554
+[  408.072337] Call Trace:
+[  408.072338]  <TASK>
+[  408.072340]  ? sched_clock_noinstr+0x9/0x10
+[  408.072344]  ? __pfx_ceph_con_v2_try_read+0x10/0x10
+[  408.072347]  ? _raw_spin_unlock+0xe/0x40
+[  408.072349]  ? finish_task_switch.isra.0+0x15d/0x830
+[  408.072353]  ? __kasan_check_write+0x14/0x30
+[  408.072357]  ? mutex_lock+0x84/0xe0
+[  408.072359]  ? __pfx_mutex_lock+0x10/0x10
+[  408.072361]  ceph_con_workfn+0x27e/0x10e0
+[  408.072364]  ? metric_delayed_work+0x311/0x2c50
+[  408.072367]  process_one_work+0x611/0xe20
+[  408.072371]  ? __kasan_check_write+0x14/0x30
+[  408.072373]  worker_thread+0x7e3/0x1580
+[  408.072375]  ? __pfx__raw_spin_lock_irqsave+0x10/0x10
+[  408.072378]  ? __pfx_worker_thread+0x10/0x10
+[  408.072381]  kthread+0x381/0x7a0
+[  408.072383]  ? __pfx__raw_spin_lock_irq+0x10/0x10
+[  408.072385]  ? __pfx_kthread+0x10/0x10
+[  408.072387]  ? __kasan_check_write+0x14/0x30
+[  408.072389]  ? recalc_sigpending+0x160/0x220
+[  408.072392]  ? _raw_spin_unlock_irq+0xe/0x50
+[  408.072394]  ? calculate_sigpending+0x78/0xb0
+[  408.072395]  ? __pfx_kthread+0x10/0x10
+[  408.072397]  ret_from_fork+0x2b6/0x380
+[  408.072400]  ? __pfx_kthread+0x10/0x10
+[  408.072402]  ret_from_fork_asm+0x1a/0x30
+[  408.072406]  </TASK>
+[  408.072407] ---[ end trace 0000000000000000 ]---
+[  408.072418] Oops: general protection fault, probably for non-canonical
+address 0xdffffc0000000000: 0000 [#1] SMP KASAN NOPTI
+[  408.072984] KASAN: null-ptr-deref in range [0x0000000000000000-
+0x0000000000000007]
+[  408.073350] CPU: 1 UID: 0 PID: 392 Comm: kworker/1:3 Tainted: G        W
+6.17.0-rc7+ #1 PREEMPT(voluntary)
+[  408.073886] Tainted: [W]=WARN
+[  408.074042] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
+1.17.0-5.fc42 04/01/2014
+[  408.074468] Workqueue: ceph-msgr ceph_con_workfn
+[  408.074694] RIP: 0010:ceph_msg_data_advance+0x79/0x1a80
+[  408.074976] Code: fc ff df 49 8d 77 08 48 c1 ee 03 80 3c 16 00 0f 85 07 11 00
+00 48 ba 00 00 00 00 00 fc ff df 49 8b 5f 08 48 89 de 48 c1 ee 03 <0f> b6 14 16
+84 d2 74 09 80 fa 03 0f 8e 0f 0e 00 00 8b 13 83 fa 03
+[  408.075884] RSP: 0018:ffff88811c3e7990 EFLAGS: 00010246
+[  408.076305] RAX: ffff8881243a6388 RBX: 0000000000000000 RCX: 0000000000000000
+[  408.076909] RDX: dffffc0000000000 RSI: 0000000000000000 RDI: ffff8881243a6378
+[  408.077466] RBP: ffff88811c3e7a20 R08: 0000000000000000 R09: 00000000000000c8
+[  408.078034] R10: ffff8881243a6388 R11: 0000000000000000 R12: ffffed1024874c71
+[  408.078575] R13: dffffc0000000000 R14: ffff8881243a6030 R15: ffff8881243a6378
+[  408.079159] FS:  0000000000000000(0000) GS:ffff88823eadf000(0000)
+knlGS:0000000000000000
+[  408.079736] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  408.080039] CR2: 000000c0003c6000 CR3: 000000010c106005 CR4: 0000000000772ef0
+[  408.080376] PKRU: 55555554
+[  408.080513] Call Trace:
+[  408.080630]  <TASK>
+[  408.080729]  ceph_con_v2_try_read+0x49b9/0x72f0
+[  408.081115]  ? __pfx_ceph_con_v2_try_read+0x10/0x10
+[  408.081348]  ? _raw_spin_unlock+0xe/0x40
+[  408.081538]  ? finish_task_switch.isra.0+0x15d/0x830
+[  408.081768]  ? __kasan_check_write+0x14/0x30
+[  408.081986]  ? mutex_lock+0x84/0xe0
+[  408.082160]  ? __pfx_mutex_lock+0x10/0x10
+[  408.082343]  ceph_con_workfn+0x27e/0x10e0
+[  408.082529]  ? metric_delayed_work+0x311/0x2c50
+[  408.082737]  process_one_work+0x611/0xe20
+[  408.082948]  ? __kasan_check_write+0x14/0x30
+[  408.083156]  worker_thread+0x7e3/0x1580
+[  408.083331]  ? __pfx__raw_spin_lock_irqsave+0x10/0x10
+[  408.083557]  ? __pfx_worker_thread+0x10/0x10
+[  408.083751]  kthread+0x381/0x7a0
+[  408.083922]  ? __pfx__raw_spin_lock_irq+0x10/0x10
+[  408.084139]  ? __pfx_kthread+0x10/0x10
+[  408.084310]  ? __kasan_check_write+0x14/0x30
+[  408.084510]  ? recalc_sigpending+0x160/0x220
+[  408.084708]  ? _raw_spin_unlock_irq+0xe/0x50
+[  408.084917]  ? calculate_sigpending+0x78/0xb0
+[  408.085138]  ? __pfx_kthread+0x10/0x10
+[  408.085335]  ret_from_fork+0x2b6/0x380
+[  408.085525]  ? __pfx_kthread+0x10/0x10
+[  408.085720]  ret_from_fork_asm+0x1a/0x30
+[  408.085922]  </TASK>
+[  408.086036] Modules linked in: intel_rapl_msr intel_rapl_common
+intel_uncore_frequency_common intel_pmc_core pmt_telemetry pmt_discovery
+pmt_class intel_pmc_ssram_telemetry intel_vsec kvm_intel joydev kvm irqbypass
+polyval_clmulni ghash_clmulni_intel aesni_intel rapl input_leds psmouse
+serio_raw i2c_piix4 vga16fb bochs vgastate i2c_smbus floppy mac_hid qemu_fw_cfg
+pata_acpi sch_fq_codel rbd msr parport_pc ppdev lp parport efi_pstore
+[  408.087778] ---[ end trace 0000000000000000 ]---
+[  408.088007] RIP: 0010:ceph_msg_data_advance+0x79/0x1a80
+[  408.088260] Code: fc ff df 49 8d 77 08 48 c1 ee 03 80 3c 16 00 0f 85 07 11 00
+00 48 ba 00 00 00 00 00 fc ff df 49 8b 5f 08 48 89 de 48 c1 ee 03 <0f> b6 14 16
+84 d2 74 09 80 fa 03 0f 8e 0f 0e 00 00 8b 13 83 fa 03
+[  408.089118] RSP: 0018:ffff88811c3e7990 EFLAGS: 00010246
+[  408.089357] RAX: ffff8881243a6388 RBX: 0000000000000000 RCX: 0000000000000000
+[  408.089678] RDX: dffffc0000000000 RSI: 0000000000000000 RDI: ffff8881243a6378
+[  408.090020] RBP: ffff88811c3e7a20 R08: 0000000000000000 R09: 00000000000000c8
+[  408.090360] R10: ffff8881243a6388 R11: 0000000000000000 R12: ffffed1024874c71
+[  408.090687] R13: dffffc0000000000 R14: ffff8881243a6030 R15: ffff8881243a6378
+[  408.091035] FS:  0000000000000000(0000) GS:ffff88823eadf000(0000)
+knlGS:0000000000000000
+[  408.091452] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  408.092015] CR2: 000000c0003c6000 CR3: 000000010c106005 CR4: 0000000000772ef0
+[  408.092530] PKRU: 55555554
+[  417.112915]
+==================================================================
+[  417.113491] BUG: KASAN: slab-use-after-free in
+__mutex_lock.constprop.0+0x1522/0x1610
+[  417.114014] Read of size 4 at addr ffff888124870034 by task kworker/2:0/4951
 
-https://lore.kernel.org/r/20230829161116.2914040-1-bschubert@ddn.com
+[  417.114587] CPU: 2 UID: 0 PID: 4951 Comm: kworker/2:0 Tainted: G      D W
+6.17.0-rc7+ #1 PREEMPT(voluntary)
+[  417.114592] Tainted: [D]=DIE, [W]=WARN
+[  417.114593] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
+1.17.0-5.fc42 04/01/2014
+[  417.114596] Workqueue: events handle_timeout
+[  417.114601] Call Trace:
+[  417.114602]  <TASK>
+[  417.114604]  dump_stack_lvl+0x5c/0x90
+[  417.114610]  print_report+0x171/0x4dc
+[  417.114613]  ? __pfx__raw_spin_lock_irqsave+0x10/0x10
+[  417.114617]  ? kasan_complete_mode_report_info+0x80/0x220
+[  417.114621]  kasan_report+0xbd/0x100
+[  417.114625]  ? __mutex_lock.constprop.0+0x1522/0x1610
+[  417.114628]  ? __mutex_lock.constprop.0+0x1522/0x1610
+[  417.114630]  __asan_report_load4_noabort+0x14/0x30
+[  417.114633]  __mutex_lock.constprop.0+0x1522/0x1610
+[  417.114635]  ? queue_con_delay+0x8d/0x200
+[  417.114638]  ? __pfx___mutex_lock.constprop.0+0x10/0x10
+[  417.114641]  ? __send_subscribe+0x529/0xb20
+[  417.114644]  __mutex_lock_slowpath+0x13/0x20
+[  417.114646]  mutex_lock+0xd4/0xe0
+[  417.114649]  ? __pfx_mutex_lock+0x10/0x10
+[  417.114652]  ? ceph_monc_renew_subs+0x2a/0x40
+[  417.114654]  ceph_con_keepalive+0x22/0x110
+[  417.114656]  handle_timeout+0x6b3/0x11d0
+[  417.114659]  ? _raw_spin_unlock_irq+0xe/0x50
+[  417.114662]  ? __pfx_handle_timeout+0x10/0x10
+[  417.114664]  ? queue_delayed_work_on+0x8e/0xa0
+[  417.114669]  process_one_work+0x611/0xe20
+[  417.114672]  ? __kasan_check_write+0x14/0x30
+[  417.114676]  worker_thread+0x7e3/0x1580
+[  417.114678]  ? __pfx__raw_spin_lock_irqsave+0x10/0x10
+[  417.114682]  ? __pfx_sched_setscheduler_nocheck+0x10/0x10
+[  417.114687]  ? __pfx_worker_thread+0x10/0x10
+[  417.114689]  kthread+0x381/0x7a0
+[  417.114692]  ? __pfx__raw_spin_lock_irq+0x10/0x10
+[  417.114694]  ? __pfx_kthread+0x10/0x10
+[  417.114697]  ? __kasan_check_write+0x14/0x30
+[  417.114699]  ? recalc_sigpending+0x160/0x220
+[  417.114703]  ? _raw_spin_unlock_irq+0xe/0x50
+[  417.114705]  ? calculate_sigpending+0x78/0xb0
+[  417.114707]  ? __pfx_kthread+0x10/0x10
+[  417.114710]  ret_from_fork+0x2b6/0x380
+[  417.114713]  ? __pfx_kthread+0x10/0x10
+[  417.114715]  ret_from_fork_asm+0x1a/0x30
+[  417.114720]  </TASK>
 
-I now also understand why that series had reduced number of xfstest failures.
+[  417.125171] Allocated by task 2:
+[  417.125333]  kasan_save_stack+0x26/0x60
+[  417.125522]  kasan_save_track+0x14/0x40
+[  417.125742]  kasan_save_alloc_info+0x39/0x60
+[  417.125945]  __kasan_slab_alloc+0x8b/0xb0
+[  417.126133]  kmem_cache_alloc_node_noprof+0x13b/0x460
+[  417.126381]  copy_process+0x320/0x6250
+[  417.126595]  kernel_clone+0xb7/0x840
+[  417.126792]  kernel_thread+0xd6/0x120
+[  417.126995]  kthreadd+0x85c/0xbe0
+[  417.127176]  ret_from_fork+0x2b6/0x380
+[  417.127378]  ret_from_fork_asm+0x1a/0x30
 
+[  417.127692] Freed by task 0:
+[  417.127851]  kasan_save_stack+0x26/0x60
+[  417.128057]  kasan_save_track+0x14/0x40
+[  417.128267]  kasan_save_free_info+0x3b/0x60
+[  417.128491]  __kasan_slab_free+0x6c/0xa0
+[  417.128708]  kmem_cache_free+0x182/0x550
+[  417.128906]  free_task+0xeb/0x140
+[  417.129070]  __put_task_struct+0x1d2/0x4f0
+[  417.129259]  __put_task_struct_rcu_cb+0x15/0x20
+[  417.129480]  rcu_do_batch+0x3d3/0xe70
+[  417.129681]  rcu_core+0x549/0xb30
+[  417.129839]  rcu_core_si+0xe/0x20
+[  417.130005]  handle_softirqs+0x160/0x570
+[  417.130190]  __irq_exit_rcu+0x189/0x1e0
+[  417.130369]  irq_exit_rcu+0xe/0x20
+[  417.130531]  sysvec_apic_timer_interrupt+0x9f/0xd0
+[  417.130768]  asm_sysvec_apic_timer_interrupt+0x1b/0x20
 
-Thanks,
-Bernd
+[  417.131082] Last potentially related work creation:
+[  417.131305]  kasan_save_stack+0x26/0x60
+[  417.131484]  kasan_record_aux_stack+0xae/0xd0
+[  417.131695]  __call_rcu_common+0xcd/0x14b0
+[  417.131909]  call_rcu+0x31/0x50
+[  417.132071]  delayed_put_task_struct+0x128/0x190
+[  417.132295]  rcu_do_batch+0x3d3/0xe70
+[  417.132478]  rcu_core+0x549/0xb30
+[  417.132658]  rcu_core_si+0xe/0x20
+[  417.132808]  handle_softirqs+0x160/0x570
+[  417.132993]  __irq_exit_rcu+0x189/0x1e0
+[  417.133181]  irq_exit_rcu+0xe/0x20
+[  417.133353]  sysvec_apic_timer_interrupt+0x9f/0xd0
+[  417.133584]  asm_sysvec_apic_timer_interrupt+0x1b/0x20
+
+[  417.133921] Second to last potentially related work creation:
+[  417.134183]  kasan_save_stack+0x26/0x60
+[  417.134362]  kasan_record_aux_stack+0xae/0xd0
+[  417.134566]  __call_rcu_common+0xcd/0x14b0
+[  417.134782]  call_rcu+0x31/0x50
+[  417.134929]  put_task_struct_rcu_user+0x58/0xb0
+[  417.135143]  finish_task_switch.isra.0+0x5d3/0x830
+[  417.135366]  __schedule+0xd30/0x5100
+[  417.135534]  schedule_idle+0x5a/0x90
+[  417.135712]  do_idle+0x25f/0x410
+[  417.135871]  cpu_startup_entry+0x53/0x70
+[  417.136053]  start_secondary+0x216/0x2c0
+[  417.136233]  common_startup_64+0x13e/0x141
+
+[  417.136894] The buggy address belongs to the object at ffff888124870000
+                which belongs to the cache task_struct of size 10504
+[  417.138122] The buggy address is located 52 bytes inside of
+                freed 10504-byte region [ffff888124870000, ffff888124872908)
+
+[  417.139465] The buggy address belongs to the physical page:
+[  417.140016] page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0
+pfn:0x124870
+[  417.140789] head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0
+pincount:0
+[  417.141519] memcg:ffff88811aa20e01
+[  417.141874] anon flags:
+0x17ffffc0000040(head|node=0|zone=2|lastcpupid=0x1fffff)
+[  417.142600] page_type: f5(slab)
+[  417.142922] raw: 0017ffffc0000040 ffff88810094f040 0000000000000000
+dead000000000001
+[  417.143554] raw: 0000000000000000 0000000000030003 00000000f5000000
+ffff88811aa20e01
+[  417.143954] head: 0017ffffc0000040 ffff88810094f040 0000000000000000
+dead000000000001
+[  417.144329] head: 0000000000000000 0000000000030003 00000000f5000000
+ffff88811aa20e01
+[  417.144710] head: 0017ffffc0000003 ffffea0004921c01 00000000ffffffff
+00000000ffffffff
+[  417.145106] head: ffffffffffffffff 0000000000000000 00000000ffffffff
+0000000000000008
+[  417.145485] page dumped because: kasan: bad access detected
+
+[  417.145859] Memory state around the buggy address:
+[  417.146094]  ffff88812486ff00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+fc
+[  417.146439]  ffff88812486ff80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+fc
+[  417.146791] >ffff888124870000: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+fb
+[  417.147145]                                      ^
+[  417.147387]  ffff888124870080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+fb
+[  417.147751]  ffff888124870100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+fb
+[  417.148123]
+==================================================================
+
+First of all, we have warning in get_bvec_at() because
+cursor->total_resid contains zero value. And, finally,
+we have crash in ceph_msg_data_advance() because
+cursor->data is NULL. It means that get_bvec_at()
+receives not initialized ceph_msg_data_cursor structure
+because data is NULL and total_resid contains zero.
+
+Moreover, we don't have likewise issue for the case of
+Ceph msgr1 protocol because ceph_msg_data_cursor_init()
+has been called before reading sparse data.
+
+This patch adds calling of ceph_msg_data_cursor_init()
+in the beginning of process_v2_sparse_read() with
+the goal to guarantee that logic of reading sparse data
+works correctly for the case of Ceph msgr2 protocol.
+
+v2
+Ilya Dryomov suggested to rework cursor initialization
+logic, and to make additional minor cleanup.
+
+v3
+Ilya Dryomov suggested to use sparse_read_total instead of
+data_length here for consistency with other sparse read
+code paths.
+
+[1] https://tracker.ceph.com/issues/73152
+
+Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+cc: Alex Markuze <amarkuze@redhat.com>
+cc: Ilya Dryomov <idryomov@gmail.com>
+cc: Ceph Development <ceph-devel@vger.kernel.org>
+---
+ net/ceph/messenger_v2.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
+
+diff --git a/net/ceph/messenger_v2.c b/net/ceph/messenger_v2.c
+index 9e39378eda00..9e48623018a3 100644
+--- a/net/ceph/messenger_v2.c
++++ b/net/ceph/messenger_v2.c
+@@ -1061,13 +1061,16 @@ static int decrypt_control_remainder(struct ceph_connection *con)
+ static int process_v2_sparse_read(struct ceph_connection *con,
+ 				  struct page **pages, int spos)
+ {
+-	struct ceph_msg_data_cursor *cursor = &con->v2.in_cursor;
++	struct ceph_msg_data_cursor cursor;
+ 	int ret;
+ 
++	ceph_msg_data_cursor_init(&cursor, con->in_msg,
++				  con->in_msg->sparse_read_total);
++
+ 	for (;;) {
+ 		char *buf = NULL;
+ 
+-		ret = con->ops->sparse_read(con, cursor, &buf);
++		ret = con->ops->sparse_read(con, &cursor, &buf);
+ 		if (ret <= 0)
+ 			return ret;
+ 
+@@ -1085,11 +1088,11 @@ static int process_v2_sparse_read(struct ceph_connection *con,
+ 			} else {
+ 				struct bio_vec bv;
+ 
+-				get_bvec_at(cursor, &bv);
++				get_bvec_at(&cursor, &bv);
+ 				len = min_t(int, len, bv.bv_len);
+ 				memcpy_page(bv.bv_page, bv.bv_offset,
+ 					    spage, soff, len);
+-				ceph_msg_data_advance(cursor, len);
++				ceph_msg_data_advance(&cursor, len);
+ 			}
+ 			spos += len;
+ 			ret -= len;
+-- 
+2.51.1
+
 
