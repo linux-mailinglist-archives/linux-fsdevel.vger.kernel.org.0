@@ -1,36 +1,37 @@
-Return-Path: <linux-fsdevel+bounces-68186-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68183-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5980CC560E0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 08:29:52 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F89BC560D4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 08:29:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1478534D8F9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 07:29:42 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C70424E4985
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 07:29:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D379C325702;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0430C324712;
 	Thu, 13 Nov 2025 07:28:58 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
 	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B23072F693E;
-	Thu, 13 Nov 2025 07:28:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3F54322A0A;
+	Thu, 13 Nov 2025 07:28:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763018938; cv=none; b=YthWRFn5FRhQCDqs9mNlgDiHcgoR99kICJm6LUBogLu9sOm42aq4Kc++3tpOEXZNbeBnp+dCIx056sJz0uRnDYskIFrHgAeoM/7fBId+OCYZIutl86+7C5CAP4QwaLj4Oav2T121sI3RZVCfv3PnxxGJ9asHyj0qHhWZgx5z6Ik=
+	t=1763018937; cv=none; b=IzAlETUntlZMsqVwYCYITRUxcOAaFpDmp8hbPhxRSL+lr87BfcLwlkmrvXUsIIF4ew4Vi9axUHrkvJVhvNLjYSpr1zwCo0ckuz01OAeiT0aLe8bgz0YSr5TLTt/Fkhv0mv4RSPUm3BDtYB4yr3yG/jGezD29sIeOKkP44EhALm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763018938; c=relaxed/simple;
-	bh=+tWDQR/vm/v7tmTJUbQfSwGLeRfkVxgTd7ghh3TZwKc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=S7JOriXfRTXyc9ClDAOrjzgIPV1txiRCL1A9nZvDFSNGjXRIVBMefTsHy9fJYdGR0el3fgmWocNw5eSOA5pr7gB5Byh465T6mj0SayTiJJdp3F/hGeA2sCwwjjIEVrLEnlmtMuJsLfO+FrWu+T1Ao6cob+7O1cE1ns4Kd+WZMOo=
+	s=arc-20240116; t=1763018937; c=relaxed/simple;
+	bh=r1AZvwnizKEVFZ7x/yfyy1OxrO+GmtuOIYmGdD9g6Ho=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Ggc7cHAMD71za/8xuJ0aQmywwXyxHdkBhdsy/8fxcRVLji1JlI7lOWLV0ifUp2calCLr1ekMX47usO17h52qKxUtwYHYwpi05wDt+tGQbAsvHLmHZgZfUAhT5MhZcnipcrVQ1Ebi+hkgLJaHnOnsAxY6yENORmwoK3mjm9+Rh3o=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
 Received: from ubt.. (unknown [210.73.43.101])
-	by APP-05 (Coremail) with SMTP id zQCowABnbG2RiBVpVTOWAA--.33691S2;
-	Thu, 13 Nov 2025 15:28:19 +0800 (CST)
+	by APP-05 (Coremail) with SMTP id zQCowABnbG2RiBVpVTOWAA--.33691S3;
+	Thu, 13 Nov 2025 15:28:21 +0800 (CST)
 From: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
 To: Andrew Morton <akpm@linux-foundation.org>,
 	Paul Walmsley <paul.walmsley@sifive.com>,
@@ -62,10 +63,12 @@ Cc: linux-mm@kvack.org,
 	Jan Kara <jack@suse.cz>,
 	linux-kernel@vger.kernel.org,
 	Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: [PATCH V15 0/6] mm: Add soft-dirty and uffd-wp support for RISC-V
-Date: Thu, 13 Nov 2025 15:28:00 +0800
-Message-Id: <20251113072806.795029-1-zhangchunyan@iscas.ac.cn>
+Subject: [PATCH V15 1/6] mm: softdirty: Add pgtable_supports_soft_dirty()
+Date: Thu, 13 Nov 2025 15:28:01 +0800
+Message-Id: <20251113072806.795029-2-zhangchunyan@iscas.ac.cn>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20251113072806.795029-1-zhangchunyan@iscas.ac.cn>
+References: <20251113072806.795029-1-zhangchunyan@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -73,148 +76,349 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowABnbG2RiBVpVTOWAA--.33691S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3Wr18CrWDAF15CF43Zr4DXFb_yoW7tryUpF
-	4UGry3tr4rtr1Iga93Xw109an0qan8tw15Gw1rX34rA3y2k3Wjvrna9a1rWF1DJr4UWryI
-	qrWakr90934qyaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9mb7Iv0xC_Kw4lb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I2
-	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
-	A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xII
-	jxv20xvEc7CjxVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwV
-	C2z280aVCY1x0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
-	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Gr0_Cr
-	1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4IIrI8v6xkF7I0E8cxan2IY
-	04v7MxkF7I0En4kS14v26r4a6rW5MxkIecxEwVAFwVW8CwCF04k20xvY0x0EwIxGrwCFx2
-	IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v2
-	6r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67
-	AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IY
-	s7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr
-	0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07ba4SwUUUUU=
-X-CM-SenderInfo: x2kd0wxfkx051dq6x2xfdvhtffof0/1tbiDAYFB2kVaThzyQAAsf
+X-CM-TRANSID:zQCowABnbG2RiBVpVTOWAA--.33691S3
+X-Coremail-Antispam: 1UD129KBjvJXoW3CFWUJF1xAr1kAr1kXr1rXrb_yoWkCrW7pF
+	WkG3W5J3y8JF92grWxJr4qv343KrZaga4UCr13u348Aay5t345XF1rJFWrZFnIqry8ua4f
+	ZFsFyw43C39rKr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUmmb7Iv0xC_Kw4lb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I2
+	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI
+	8067AKxVWUGwA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF
+	64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0cI8IcV
+	CY1x0267AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv
+	6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c
+	02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVW8JVWxJwAm72CE
+	4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7
+	CjxVAaw2AFwI0_GFv_Wrylc2xSY4AK67AK6r4xMxAIw28IcxkI7VAKI48JMxC20s026xCa
+	FVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_Jr
+	Wlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j
+	6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWxJVW8Jr1lIxAIcVCF04k26cxKx2IYs7xG6r
+	1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1U
+	YxBIdaVFxhVjvjDU0xZFpf9x07baxRDUUUUU=
+X-CM-SenderInfo: x2kd0wxfkx051dq6x2xfdvhtffof0/1tbiBwwFB2kVabByUgAAsM
 
-This patchset adds support for Svrsw60t59b [1] extension which is ratified now,
-also add soft dirty and userfaultfd write protect tracking for RISC-V.
+Some platforms can customize the PTE PMD entry soft-dirty bit making it
+unavailable even if the architecture provides the resource.
 
-The patches 1 and 2 add macros to allow architectures to define their own checks
-if the soft-dirty / uffd_wp PTE bits are available, in other words for RISC-V,
-the Svrsw60t59b extension is supported on which device the kernel is running.
-Also patch1-2 are removing "ifdef CONFIG_MEM_SOFT_DIRTY"
-"ifdef CONFIG_HAVE_ARCH_USERFAULTFD_WP" and
-"ifdef CONFIG_PTE_MARKER_UFFD_WP" in favor of checks which if not overridden by
+Add an API which architectures can define their specific implementations
+to detect if soft-dirty bit is available on which device the kernel is
+running.
+
+This patch is removing "ifdef CONFIG_MEM_SOFT_DIRTY" in favor of
+pgtable_supports_soft_dirty() checks that defaults to
+IS_ENABLED(CONFIG_MEM_SOFT_DIRTY), if not overridden by
 the architecture, no change in behavior is expected.
 
-This patchset has been tested with kselftest mm suite in which soft-dirty, 
-madv_populate, test_unmerge_uffd_wp, and uffd-unit-tests run and pass,
-and no regressions are observed in any of the other tests.
+We make sure to never set VM_SOFTDIRTY if !pgtable_supports_soft_dirty(),
+so we will never run into VM_SOFTDIRTY checks.
 
-This patchset applies on the mm/mm-new branch commit ea53cb52f919
-("mm/vmalloc: cleanup gfp flag use in new_vmap_block()")
+Acked-by: David Hildenbrand <david@redhat.com>
+Signed-off-by: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
+---
+ fs/proc/task_mmu.c      | 15 ++++++---------
+ include/linux/mm.h      |  3 +++
+ include/linux/pgtable.h | 12 ++++++++++++
+ mm/debug_vm_pgtable.c   | 10 +++++-----
+ mm/huge_memory.c        | 13 +++++++------
+ mm/internal.h           |  2 +-
+ mm/mmap.c               |  6 ++++--
+ mm/mremap.c             | 13 +++++++------
+ mm/userfaultfd.c        | 10 ++++------
+ mm/vma.c                |  6 ++++--
+ mm/vma_exec.c           |  5 ++++-
+ 11 files changed, 57 insertions(+), 38 deletions(-)
 
-[1] https://github.com/riscv-non-isa/riscv-iommu/pull/543
-
-V15:
-- Rebased on to the latest mm-new branch;
-- Removed a redundant space;
-- Added Conor's Acked-by.
-
-V14: https://lore.kernel.org/all/20250918083731.1820327-1-zhangchunyan@iscas.ac.cn/
-- Fix indent inssues in userfaultfd_k.h;
-- Some descriptions and comments minor changes.
-
-V13: https://lore.kernel.org/all/20250917033703.1695933-1-zhangchunyan@iscas.ac.cn/
-- Rebase on mm-new branch;
-- Fixed build errors;
-- Add more exactly descriptions in commit message in patch 1-2;
-- Replace '__always_inline' with 'inline' for uffd_supports_wp_marker();
-- Add Svrsw60t59b description to the extensions dt-binding in patch 6.
-
-V12: https://lore.kernel.org/all/20250915101343.1449546-1-zhangchunyan@iscas.ac.cn/
-- Rename the macro API to pgtable_supports_soft_dirty/uffd_wp();
-- Add changes for setting VM_SOFTDIRTY flags conditionally;
-- Drop changes to show_smap_vma_flags();
-- Drop CONFIG_MEM_SOFT_DIRTY compile condition of clear_soft_dirty() and clear_soft_dirty_pmd();
-- Fix typos;
-- Add uffd_supports_wp_marker() and drop some ifdef CONFIG_PTE_MARKER_UFFD_WP.
-
-V11: https://lore.kernel.org/all/20250911095602.1130290-1-zhangchunyan@iscas.ac.cn/
-- Rename the macro API to pgtable_*_supported() since we also have PMD support;
-- Change the default implementations of two macros, make CONFIG_MEM_SOFT_DIRTY or
-  CONFIG_HAVE_ARCH_USERFAULTFD_WP part of the macros;
-- Correct the order of insertion of RISCV_ISA_EXT_SVRSW60T59B;
-- Rephrase some comments.
-
-V10: https://lore.kernel.org/all/20250909095611.803898-1-zhangchunyan@iscas.ac.cn/
-- Fixed the issue reported by kernel test irobot <lkp@intel.com>.
-
-V9: https://lore.kernel.org/all/20250905103651.489197-1-zhangchunyan@iscas.ac.cn/
-- Add pte_soft_dirty/uffd_wp_available() API to allow dynamically checking
-  if the PTE bit is available for the platform on which the kernel is running.
-
-V8: https://lore.kernel.org/all/20250619065232.1786470-1-zhangchunyan@iscas.ac.cn/)
-- Rebase on v6.16-rc1;
-- Add dependencies to MMU && 64BIT for RISCV_ISA_SVRSW60T59B;
-- Use 'Svrsw60t59b' instead of 'SVRSW60T59B' in Kconfig help paragraph;
-- Add Alex's Reviewed-by tag in patch 1.
-
-V7: https://lore.kernel.org/all/20250409095320.224100-1-zhangchunyan@iscas.ac.cn/
-- Add Svrsw60t59b [1] extension support;
-- Have soft-dirty and uffd-wp depending on the Svrsw60t59b extension to
-  avoid crashes for the hardware which don't have this extension.
-
-V6: https://lore.kernel.org/all/20250408084301.68186-1-zhangchunyan@iscas.ac.cn/
-- Changes to use bits 59-60 which are supported by extension Svrsw60t59b
-  for soft dirty and userfaultfd write protect tracking.
-
-V5: https://lore.kernel.org/all/20241113095833.1805746-1-zhangchunyan@iscas.ac.cn/
-- Fixed typos and corrected some words in Kconfig and commit message;
-- Removed pte_wrprotect() from pte_swp_mkuffd_wp(), this is a copy-paste
-  error;
-- Added Alex's Reviewed-by tag in patch 2.
-
-V4: https://lore.kernel.org/all/20240830011101.3189522-1-zhangchunyan@iscas.ac.cn/
-- Added bit(4) descriptions into "Format of swap PTE".
-
-V3: https://lore.kernel.org/all/20240805095243.44809-1-zhangchunyan@iscas.ac.cn/
-- Fixed the issue reported by kernel test irobot <lkp@intel.com>.
-
-V2: https://lore.kernel.org/all/20240731040444.3384790-1-zhangchunyan@iscas.ac.cn/
-- Add uffd-wp supported;
-- Make soft-dirty uffd-wp and devmap mutually exclusive which all use
-  the same PTE bit;
-- Add test results of CRIU in the cover-letter.
-
-Chunyan Zhang (6):
-  mm: softdirty: Add pgtable_supports_soft_dirty()
-  mm: userfaultfd: Add pgtable_supports_uffd_wp()
-  riscv: Add RISC-V Svrsw60t59b extension support
-  riscv: mm: Add soft-dirty page tracking support
-  riscv: mm: Add userfaultfd write-protect support
-  dt-bindings: riscv: Add Svrsw60t59b extension description
-
- .../devicetree/bindings/riscv/extensions.yaml |   6 +
- arch/riscv/Kconfig                            |  16 ++
- arch/riscv/include/asm/hwcap.h                |   1 +
- arch/riscv/include/asm/pgtable-bits.h         |  37 +++++
- arch/riscv/include/asm/pgtable.h              | 143 +++++++++++++++++-
- arch/riscv/kernel/cpufeature.c                |   1 +
- fs/proc/task_mmu.c                            |  15 +-
- fs/userfaultfd.c                              |  22 +--
- include/asm-generic/pgtable_uffd.h            |  17 +++
- include/linux/mm.h                            |   3 +
- include/linux/mm_inline.h                     |   8 +-
- include/linux/pgtable.h                       |  12 ++
- include/linux/userfaultfd_k.h                 |  69 +++++----
- mm/debug_vm_pgtable.c                         |  10 +-
- mm/huge_memory.c                              |  13 +-
- mm/internal.h                                 |   2 +-
- mm/memory.c                                   |   6 +-
- mm/mmap.c                                     |   6 +-
- mm/mremap.c                                   |  13 +-
- mm/userfaultfd.c                              |  10 +-
- mm/vma.c                                      |   6 +-
- mm/vma_exec.c                                 |   5 +-
- 22 files changed, 337 insertions(+), 84 deletions(-)
-
+diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+index 41b062ce6ad8..2b4ab5718ab5 100644
+--- a/fs/proc/task_mmu.c
++++ b/fs/proc/task_mmu.c
+@@ -1584,8 +1584,6 @@ struct clear_refs_private {
+ 	enum clear_refs_types type;
+ };
+ 
+-#ifdef CONFIG_MEM_SOFT_DIRTY
+-
+ static inline bool pte_is_pinned(struct vm_area_struct *vma, unsigned long addr, pte_t pte)
+ {
+ 	struct folio *folio;
+@@ -1605,6 +1603,8 @@ static inline bool pte_is_pinned(struct vm_area_struct *vma, unsigned long addr,
+ static inline void clear_soft_dirty(struct vm_area_struct *vma,
+ 		unsigned long addr, pte_t *pte)
+ {
++	if (!pgtable_supports_soft_dirty())
++		return;
+ 	/*
+ 	 * The soft-dirty tracker uses #PF-s to catch writes
+ 	 * to pages, so write-protect the pte as well. See the
+@@ -1630,19 +1630,16 @@ static inline void clear_soft_dirty(struct vm_area_struct *vma,
+ 		set_pte_at(vma->vm_mm, addr, pte, ptent);
+ 	}
+ }
+-#else
+-static inline void clear_soft_dirty(struct vm_area_struct *vma,
+-		unsigned long addr, pte_t *pte)
+-{
+-}
+-#endif
+ 
+-#if defined(CONFIG_MEM_SOFT_DIRTY) && defined(CONFIG_TRANSPARENT_HUGEPAGE)
++#if defined(CONFIG_TRANSPARENT_HUGEPAGE)
+ static inline void clear_soft_dirty_pmd(struct vm_area_struct *vma,
+ 		unsigned long addr, pmd_t *pmdp)
+ {
+ 	pmd_t old, pmd = *pmdp;
+ 
++	if (!pgtable_supports_soft_dirty())
++		return;
++
+ 	if (pmd_present(pmd)) {
+ 		/* See comment in change_huge_pmd() */
+ 		old = pmdp_invalidate(vma, addr, pmdp);
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 43eec43da66a..687c462f2a71 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -861,6 +861,7 @@ static inline void vma_init(struct vm_area_struct *vma, struct mm_struct *mm)
+ static inline void vm_flags_init(struct vm_area_struct *vma,
+ 				 vm_flags_t flags)
+ {
++	VM_WARN_ON_ONCE(!pgtable_supports_soft_dirty() && (flags & VM_SOFTDIRTY));
+ 	ACCESS_PRIVATE(vma, __vm_flags) = flags;
+ }
+ 
+@@ -879,6 +880,7 @@ static inline void vm_flags_reset(struct vm_area_struct *vma,
+ static inline void vm_flags_reset_once(struct vm_area_struct *vma,
+ 				       vm_flags_t flags)
+ {
++	VM_WARN_ON_ONCE(!pgtable_supports_soft_dirty() && (flags & VM_SOFTDIRTY));
+ 	vma_assert_write_locked(vma);
+ 	WRITE_ONCE(ACCESS_PRIVATE(vma, __vm_flags), flags);
+ }
+@@ -886,6 +888,7 @@ static inline void vm_flags_reset_once(struct vm_area_struct *vma,
+ static inline void vm_flags_set(struct vm_area_struct *vma,
+ 				vm_flags_t flags)
+ {
++	VM_WARN_ON_ONCE(!pgtable_supports_soft_dirty() && (flags & VM_SOFTDIRTY));
+ 	vma_start_write(vma);
+ 	ACCESS_PRIVATE(vma, __vm_flags) |= flags;
+ }
+diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
+index 32e8457ad535..b13b6f42be3c 100644
+--- a/include/linux/pgtable.h
++++ b/include/linux/pgtable.h
+@@ -1553,6 +1553,18 @@ static inline pgprot_t pgprot_modify(pgprot_t oldprot, pgprot_t newprot)
+ #define arch_start_context_switch(prev)	do {} while (0)
+ #endif
+ 
++/*
++ * Some platforms can customize the PTE soft-dirty bit making it unavailable
++ * even if the architecture provides the resource.
++ * Adding this API allows architectures to add their own checks for the
++ * devices on which the kernel is running.
++ * Note: When overriding it, please make sure the CONFIG_MEM_SOFT_DIRTY
++ * is part of this macro.
++ */
++#ifndef pgtable_supports_soft_dirty
++#define pgtable_supports_soft_dirty()	IS_ENABLED(CONFIG_MEM_SOFT_DIRTY)
++#endif
++
+ #ifdef CONFIG_HAVE_ARCH_SOFT_DIRTY
+ #ifndef CONFIG_ARCH_ENABLE_THP_MIGRATION
+ static inline pmd_t pmd_swp_mksoft_dirty(pmd_t pmd)
+diff --git a/mm/debug_vm_pgtable.c b/mm/debug_vm_pgtable.c
+index 1eae87dbef73..ae9b9310d96f 100644
+--- a/mm/debug_vm_pgtable.c
++++ b/mm/debug_vm_pgtable.c
+@@ -704,7 +704,7 @@ static void __init pte_soft_dirty_tests(struct pgtable_debug_args *args)
+ {
+ 	pte_t pte = pfn_pte(args->fixed_pte_pfn, args->page_prot);
+ 
+-	if (!IS_ENABLED(CONFIG_MEM_SOFT_DIRTY))
++	if (!pgtable_supports_soft_dirty())
+ 		return;
+ 
+ 	pr_debug("Validating PTE soft dirty\n");
+@@ -717,7 +717,7 @@ static void __init pte_swap_soft_dirty_tests(struct pgtable_debug_args *args)
+ 	pte_t pte;
+ 	softleaf_t entry;
+ 
+-	if (!IS_ENABLED(CONFIG_MEM_SOFT_DIRTY))
++	if (!pgtable_supports_soft_dirty())
+ 		return;
+ 
+ 	pr_debug("Validating PTE swap soft dirty\n");
+@@ -734,7 +734,7 @@ static void __init pmd_soft_dirty_tests(struct pgtable_debug_args *args)
+ {
+ 	pmd_t pmd;
+ 
+-	if (!IS_ENABLED(CONFIG_MEM_SOFT_DIRTY))
++	if (!pgtable_supports_soft_dirty())
+ 		return;
+ 
+ 	if (!has_transparent_hugepage())
+@@ -750,8 +750,8 @@ static void __init pmd_leaf_soft_dirty_tests(struct pgtable_debug_args *args)
+ {
+ 	pmd_t pmd;
+ 
+-	if (!IS_ENABLED(CONFIG_MEM_SOFT_DIRTY) ||
+-		!IS_ENABLED(CONFIG_ARCH_ENABLE_THP_MIGRATION))
++	if (!pgtable_supports_soft_dirty() ||
++	    !IS_ENABLED(CONFIG_ARCH_ENABLE_THP_MIGRATION))
+ 		return;
+ 
+ 	if (!has_transparent_hugepage())
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 0184cd915f44..d04fedbbf799 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -2427,12 +2427,13 @@ static inline int pmd_move_must_withdraw(spinlock_t *new_pmd_ptl,
+ 
+ static pmd_t move_soft_dirty_pmd(pmd_t pmd)
+ {
+-#ifdef CONFIG_MEM_SOFT_DIRTY
+-	if (unlikely(pmd_is_migration_entry(pmd)))
+-		pmd = pmd_swp_mksoft_dirty(pmd);
+-	else if (pmd_present(pmd))
+-		pmd = pmd_mksoft_dirty(pmd);
+-#endif
++	if (pgtable_supports_soft_dirty()) {
++		if (unlikely(pmd_is_migration_entry(pmd)))
++			pmd = pmd_swp_mksoft_dirty(pmd);
++		else if (pmd_present(pmd))
++			pmd = pmd_mksoft_dirty(pmd);
++	}
++
+ 	return pmd;
+ }
+ 
+diff --git a/mm/internal.h b/mm/internal.h
+index 929bc4a5dd98..04c307ee33ae 100644
+--- a/mm/internal.h
++++ b/mm/internal.h
+@@ -1554,7 +1554,7 @@ static inline bool vma_soft_dirty_enabled(struct vm_area_struct *vma)
+ 	 * VM_SOFTDIRTY is defined as 0x0, then !(vm_flags & VM_SOFTDIRTY)
+ 	 * will be constantly true.
+ 	 */
+-	if (!IS_ENABLED(CONFIG_MEM_SOFT_DIRTY))
++	if (!pgtable_supports_soft_dirty())
+ 		return false;
+ 
+ 	/*
+diff --git a/mm/mmap.c b/mm/mmap.c
+index dc51680824ec..4bdb9ffa9e25 100644
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -1448,8 +1448,10 @@ static struct vm_area_struct *__install_special_mapping(
+ 		return ERR_PTR(-ENOMEM);
+ 
+ 	vma_set_range(vma, addr, addr + len, 0);
+-	vm_flags_init(vma, (vm_flags | mm->def_flags |
+-		      VM_DONTEXPAND | VM_SOFTDIRTY) & ~VM_LOCKED_MASK);
++	vm_flags |= mm->def_flags | VM_DONTEXPAND;
++	if (pgtable_supports_soft_dirty())
++		vm_flags |= VM_SOFTDIRTY;
++	vm_flags_init(vma, vm_flags & ~VM_LOCKED_MASK);
+ 	vma->vm_page_prot = vm_get_page_prot(vma->vm_flags);
+ 
+ 	vma->vm_ops = ops;
+diff --git a/mm/mremap.c b/mm/mremap.c
+index fdb0485ede74..672264807db6 100644
+--- a/mm/mremap.c
++++ b/mm/mremap.c
+@@ -165,12 +165,13 @@ static pte_t move_soft_dirty_pte(pte_t pte)
+ 	 * Set soft dirty bit so we can notice
+ 	 * in userspace the ptes were moved.
+ 	 */
+-#ifdef CONFIG_MEM_SOFT_DIRTY
+-	if (pte_present(pte))
+-		pte = pte_mksoft_dirty(pte);
+-	else
+-		pte = pte_swp_mksoft_dirty(pte);
+-#endif
++	if (pgtable_supports_soft_dirty()) {
++		if (pte_present(pte))
++			pte = pte_mksoft_dirty(pte);
++		else
++			pte = pte_swp_mksoft_dirty(pte);
++	}
++
+ 	return pte;
+ }
+ 
+diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+index bd1f74a7a5ac..e6dfd5f28acd 100644
+--- a/mm/userfaultfd.c
++++ b/mm/userfaultfd.c
+@@ -1119,9 +1119,8 @@ static long move_present_ptes(struct mm_struct *mm,
+ 
+ 		orig_dst_pte = folio_mk_pte(src_folio, dst_vma->vm_page_prot);
+ 		/* Set soft dirty bit so userspace can notice the pte was moved */
+-#ifdef CONFIG_MEM_SOFT_DIRTY
+-		orig_dst_pte = pte_mksoft_dirty(orig_dst_pte);
+-#endif
++		if (pgtable_supports_soft_dirty())
++			orig_dst_pte = pte_mksoft_dirty(orig_dst_pte);
+ 		if (pte_dirty(orig_src_pte))
+ 			orig_dst_pte = pte_mkdirty(orig_dst_pte);
+ 		orig_dst_pte = pte_mkwrite(orig_dst_pte, dst_vma);
+@@ -1208,9 +1207,8 @@ static int move_swap_pte(struct mm_struct *mm, struct vm_area_struct *dst_vma,
+ 	}
+ 
+ 	orig_src_pte = ptep_get_and_clear(mm, src_addr, src_pte);
+-#ifdef CONFIG_MEM_SOFT_DIRTY
+-	orig_src_pte = pte_swp_mksoft_dirty(orig_src_pte);
+-#endif
++	if (pgtable_supports_soft_dirty())
++		orig_src_pte = pte_swp_mksoft_dirty(orig_src_pte);
+ 	set_pte_at(mm, dst_addr, dst_pte, orig_src_pte);
+ 	double_pt_unlock(dst_ptl, src_ptl);
+ 
+diff --git a/mm/vma.c b/mm/vma.c
+index 6cb082bc5e29..ad3d905a81db 100644
+--- a/mm/vma.c
++++ b/mm/vma.c
+@@ -2555,7 +2555,8 @@ static void __mmap_complete(struct mmap_state *map, struct vm_area_struct *vma)
+ 	 * then new mapped in-place (which must be aimed as
+ 	 * a completely new data area).
+ 	 */
+-	vm_flags_set(vma, VM_SOFTDIRTY);
++	if (pgtable_supports_soft_dirty())
++		vm_flags_set(vma, VM_SOFTDIRTY);
+ 
+ 	vma_set_page_prot(vma);
+ }
+@@ -2860,7 +2861,8 @@ int do_brk_flags(struct vma_iterator *vmi, struct vm_area_struct *vma,
+ 	mm->data_vm += len >> PAGE_SHIFT;
+ 	if (vm_flags & VM_LOCKED)
+ 		mm->locked_vm += (len >> PAGE_SHIFT);
+-	vm_flags_set(vma, VM_SOFTDIRTY);
++	if (pgtable_supports_soft_dirty())
++		vm_flags_set(vma, VM_SOFTDIRTY);
+ 	return 0;
+ 
+ mas_store_fail:
+diff --git a/mm/vma_exec.c b/mm/vma_exec.c
+index 922ee51747a6..8134e1afca68 100644
+--- a/mm/vma_exec.c
++++ b/mm/vma_exec.c
+@@ -107,6 +107,7 @@ int relocate_vma_down(struct vm_area_struct *vma, unsigned long shift)
+ int create_init_stack_vma(struct mm_struct *mm, struct vm_area_struct **vmap,
+ 			  unsigned long *top_mem_p)
+ {
++	unsigned long flags = VM_STACK_FLAGS | VM_STACK_INCOMPLETE_SETUP;
+ 	int err;
+ 	struct vm_area_struct *vma = vm_area_alloc(mm);
+ 
+@@ -137,7 +138,9 @@ int create_init_stack_vma(struct mm_struct *mm, struct vm_area_struct **vmap,
+ 	BUILD_BUG_ON(VM_STACK_FLAGS & VM_STACK_INCOMPLETE_SETUP);
+ 	vma->vm_end = STACK_TOP_MAX;
+ 	vma->vm_start = vma->vm_end - PAGE_SIZE;
+-	vm_flags_init(vma, VM_SOFTDIRTY | VM_STACK_FLAGS | VM_STACK_INCOMPLETE_SETUP);
++	if (pgtable_supports_soft_dirty())
++		flags |= VM_SOFTDIRTY;
++	vm_flags_init(vma, flags);
+ 	vma->vm_page_prot = vm_get_page_prot(vma->vm_flags);
+ 
+ 	err = insert_vm_struct(mm, vma);
 -- 
 2.34.1
 
