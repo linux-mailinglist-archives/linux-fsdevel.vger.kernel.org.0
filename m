@@ -1,1055 +1,193 @@
-Return-Path: <linux-fsdevel+bounces-68215-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68216-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C547C577EA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 13:55:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE30CC57866
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 14:03:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 995794E06E1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 12:55:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D295E3A1469
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 12:58:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EB70350283;
-	Thu, 13 Nov 2025 12:55:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC661350A0F;
+	Thu, 13 Nov 2025 12:58:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QSPALDaj"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="hbrP0trb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9FDA2FE58F
-	for <linux-fsdevel@vger.kernel.org>; Thu, 13 Nov 2025 12:55:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06BA43502AE
+	for <linux-fsdevel@vger.kernel.org>; Thu, 13 Nov 2025 12:57:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763038514; cv=none; b=iop2iNW/eov8l9XAlhf5hSHhNWE+ms3snhr5ZeKu0IklvhS9sAU04BE9ve4Kyg4fwLSW937OTVe7GqhaahGAxL8igbTqEd/usMdAO0Oo7JUIEo3h+5ASAVtUSpQjcDGxzJpj5jaSvvu+YTVOHS3mtsuyYZo/iRSvoqxW1NwYQOU=
+	t=1763038679; cv=none; b=TJrANxO2QKmXeG9bdhmyWgHlzSmsDdWShxKHb8Bfg9cj9c2JdZQwgR5EXBXoTJ7HWnm2FX/jNUrw8yMSkmfYS84r39U/4s/ANQAfrbgetBFjHmSxdCG89aStAacK/oJTu7vQ3NRJVHKQL+Vgevhx7xcBrAztqk/yceie0kOWp2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763038514; c=relaxed/simple;
-	bh=E39gaBYU86EHtd3wQmvjZFmO2CiLZ5MefAoFrHjpzOk=;
+	s=arc-20240116; t=1763038679; c=relaxed/simple;
+	bh=UuykYNghY8cjdLXcnioQh+q4Y/0JQBN6iWveDbD24zI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HCRPQT74atGP5JuHbKvKPGhugSuInWrsEs2n3pXtYEsTKoD0lfYJ66OJQD1d34QSZi8yjTdcCERMJf3VfT1mLi70QgJL6DJ6VrLmBfZp/DQwyJOcRyQEQFUYFUSIyu3mkYHiyZgO0pbJuAktajezGldBu14te7Wn2S9X08ydkbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QSPALDaj; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-b98983bae8eso421550a12.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Nov 2025 04:55:11 -0800 (PST)
+	 To:Cc:Content-Type; b=kMTimp4QxJ4pI/yy7egU125gNlbB5hLlSDP1i8YcmcKkNasdVn0PFAjqGqtFUkCEwhfR0tOSfJB95aU7j6VqCsuIlwtPlZ+kVSgRLXAOXDrr2kwBf9MRpC6aHJx/ip7IWkC5joIWoXS1M89WRGJbjf1Rx0ILYs/+//jzKufIL5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=hbrP0trb; arc=none smtp.client-ip=209.85.160.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4ed82ee9e57so10293811cf.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Nov 2025 04:57:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763038511; x=1763643311; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Trsb27s4O1MVFemgazlHGmUdIAUeCp67avvSbw4ypII=;
-        b=QSPALDajduQi0vm2UEVm0r3uymwqFhnQ1jkFxX8hdH1dUDa0ErRlnlZFuyWlFtHpY8
-         M3EQdnWzdJW6gAWOvuQH5vy3R9pSbhrZqk2UYf45i4YziHnyqHvIVcPLXklY5A36tR+2
-         he0T20Q0/GOhs6I81ekGf6a1On3CMCYi6LKX2hAYwOzZk6HSXBY3//PuTA8erzIuu7jc
-         Lp3V8+7fnZmVGbv2UrED2y5kC+HQ+/IN+eOfhMgQPnniO60kM3Ai/A0QU3kyWMs1BTce
-         LyLH2bjlBcO7HYHxeiU8FWNK+n4lR3z2fH4/lYfgLAHzIPP4nceQU5to0CrZKgmcjcpU
-         tljw==
+        d=szeredi.hu; s=google; t=1763038676; x=1763643476; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=JV5AC59Od/LO61Xrf+sQtKn+a1SsnrSa/ocpfU5ZRqI=;
+        b=hbrP0trbCDmGZiPiO2Rpn1GduWgFvDpGS7fw1GuLKY9JcD6wKGPusAzWhzbQGk2mn6
+         7bvAjXbgLqUqO/aMfKrwUNw4nKqL56+Ey+3ognO8NIPCI1gAsEG67RNqN3IkXDKQBLr6
+         QgczD1q3fBdWJUA68BlsPIe5s5D0AIKVkugEM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763038511; x=1763643311;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Trsb27s4O1MVFemgazlHGmUdIAUeCp67avvSbw4ypII=;
-        b=XDXnggqJ8f8tihDtVZFOD+QaU57suvU+fj9Vv0z167KD8wVbJQP6lEWpGM+k9QSqwY
-         8me+JZyoQAr1BoE0dfAN1rvZgLmk+tXGEzDR3yipKMaYtELXM4uJWbVDKmVEcICbdTry
-         i3woBRGKn+1D4MrmRdA9Al4lqt9ZOUPpseHBRDkH4cYD1+K42V5MIXn31RMyaWdAgYGH
-         fmlv57F1bq5ONvKEvZEpTp4L8nE31S1ENNt6hVG+vljAc9ok13IG1fu//h0GnNYbZDZV
-         EhHE525oL0iD35a48aYM5K4kzfmaL7w6fMg5sloPbp2Rncy5G4QnlchQjuGodcvpyFCP
-         PCVg==
-X-Forwarded-Encrypted: i=1; AJvYcCVJ2duv3mC/eJGSrKx0H7IxTRGQCvP0UD5pFEcbkU2MOBmvb6vBRfGunC7syj0Sfp6Ks8zcClU0SlrJ8GvR@vger.kernel.org
-X-Gm-Message-State: AOJu0YzW+dm5Ky3Fpp5fQ1SELbk6ePsxdx32eoSfGETbFn67dBYR6ALy
-	fJMh/Gph3UbOMf6n3EceYaMwMVrufQ8QD6s7e+KMIow3FP36nka7lPYrGE51gAK8utP1S/cWFwG
-	C2L+Eekb7GCUU/S4QAPk6tbkmQkxpzhId+pwo
-X-Gm-Gg: ASbGncupho0PGJu6Cd6uubvBdIl9b9cbNpw0ZXGCh6ApZr86QoRZ7Nlfn9PekSiKUj8
-	JRpgHQNJkrmdYD8F4CWaXbnY+uUqxwc7KLUmndwLbL8Pg9OD9dK7l2MsCTUO4l/V+LehhF8YY22
-	ecEiA3ZiBI3GPcVQDCmvTLM5dQuNOLPOossjc/UWZctX3L7VhGaJ3Su2cDTYmpvXGHmQOYdJVdB
-	xHkh77dOUOYEt4XzobdVPOkJ7jX6sUfGoJ2WFObErYG9Vp8veNGHP9nbmRWEgtpOHvUXPQcKwiH
-	lvoaKQ==
-X-Google-Smtp-Source: AGHT+IGYwBb9mpRzbeACCSdR5HImpnVYRUfgChuldWA1AKXd7eUeRZ38z5NWsQlvgXCwm1kMEHF7ta364bpvRMNOTwQ=
-X-Received: by 2002:a17:902:f611:b0:27e:ed58:25e5 with SMTP id
- d9443c01a7336-2984ed854damr79638655ad.24.1763038510717; Thu, 13 Nov 2025
- 04:55:10 -0800 (PST)
+        d=1e100.net; s=20230601; t=1763038676; x=1763643476;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JV5AC59Od/LO61Xrf+sQtKn+a1SsnrSa/ocpfU5ZRqI=;
+        b=dlidYdu6GWm6FU/J38XdmhbPGdKD0Y63Sm2NvCVg8Ozp2R9qxgBRkGZgVL3quPAf8a
+         qwIiE0E0NwJnT+oiIxMDykHOhhTUXwVqMZQNXb+zgVSwWqG+LEno5Rec0fTJuLOIBvAv
+         pyXTLHU/+dIluOoftsmlljgFbHxw6kDEYX+yP6EnoJ5cni1BG4gIGTMYcSWXkfU/Hgzk
+         Y6pKErlLjr9O2ngSygiy+t06VI76BpK60yhCN+bSp3kWc8xwX3ftMTFjFGTX8lrQSb3t
+         JfE554JS0t58drcQX1PR79nlKmzYk4kJSQMxfPxgRr2D0k/oEbKVHzz9xhVG3ZIG3Pqa
+         xgMA==
+X-Forwarded-Encrypted: i=1; AJvYcCUyBLd1Y2MfGNznkMAE4wJeAxlImKD5tz2Su0uD9tvKLJCxKEQJE8MF0L8oyeelLsk7yB8ismRlAmbjcsgc@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvFaaKz7MMFMZdai0FqrVEjeZWzTpL+a64HoYm6saUmX3bTREW
+	gnAO1rACNbi7hImyns75ClmrW0BHmQXnGvl/0xtldBg5sho5y6DZgXMLPRY9FOatYJybeMdtxP6
+	PGztS/mtPNyuel4U3T2qP/i0L5ihaSYvo0TtnPlGNcg==
+X-Gm-Gg: ASbGncuAa0nyeeWRgS+8ttQevrVTpCSf4u9Suvf/6RIXnjA3HHkvjuTsGSBKZ2DBm9p
+	RO/zPT5RGBkMiDaToY+Q+mkJwZIqgMACVR8rXWbtgwyRHw5utEP8nzF8R14wMz7Yuh3sO3XzCm3
+	EVPE7a+8j2ShjTxT2yyPHvxm+Rkbf410bNrqsy1ALytg4KsT1NAlzDNDlFooMXamVRr5EZlTsXp
+	tjEbf+d92t33nKbbbJZSi/Mwutuu5leuOq9jRGlO1hDojDnKOjbOSizrvDG
+X-Google-Smtp-Source: AGHT+IEkue0vILCzJ3nMj3uJJ/DyMAkFMn6fvJWDL0szaRfV89d1DYt6jZ9Jd9WTAdCQBL3Kef0VAnEQq9umHAMQkt8=
+X-Received: by 2002:a05:622a:1a20:b0:4ed:aa2b:169c with SMTP id
+ d75a77b69052e-4eddbdd69femr93851171cf.71.1763038675839; Thu, 13 Nov 2025
+ 04:57:55 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251112195246.495313-2-slava@dubeyko.com> <CAOi1vP8swC=q1njp=EPYxkpAMv9cqmcysRNoPzRPpGwCzd3xrQ@mail.gmail.com>
- <fe20de6d968f0c6a2822e77c17545000683bd0f8.camel@ibm.com>
-In-Reply-To: <fe20de6d968f0c6a2822e77c17545000683bd0f8.camel@ibm.com>
-From: Ilya Dryomov <idryomov@gmail.com>
-Date: Thu, 13 Nov 2025 13:54:58 +0100
-X-Gm-Features: AWmQ_bkW7eSYzipzawPLgXEssAzL98w12rkzVf_wNL4niZMdXGNT4OCNNjB4Ibw
-Message-ID: <CAOi1vP_spJYpScu3=ZwZ7wR+if_cXB3k67yR35WFAUztYWX6Lg@mail.gmail.com>
-Subject: Re: [PATCH v2] ceph: fix crash in process_v2_sparse_read() for
- fscrypt-encrypted directories
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-Cc: "slava@dubeyko.com" <slava@dubeyko.com>, 
-	"ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, Patrick Donnelly <pdonnell@redhat.com>, 
-	Alex Markuze <amarkuze@redhat.com>, Pavan Rallabhandi <Pavan.Rallabhandi@ibm.com>
+References: <20251109053921.1320977-2-b.sachdev1904@gmail.com>
+In-Reply-To: <20251109053921.1320977-2-b.sachdev1904@gmail.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Thu, 13 Nov 2025 13:57:44 +0100
+X-Gm-Features: AWmQ_bltIenYvXBn-XTkyay6sGpGShW4dw_IBjKv2NYTfBsQfpdOMLqKp6YJUwM
+Message-ID: <CAJfpeguX8syNaGZahMeOD8cE4ZaQEropPTBMyCXLvgkHgGVjqg@mail.gmail.com>
+Subject: Re: [PATCH v5] statmount: accept fd as a parameter
+To: Bhavik Sachdev <b.sachdev1904@gmail.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	criu@lists.linux.dev, Aleksa Sarai <cyphar@cyphar.com>, 
+	Pavel Tikhomirov <ptikhomirov@virtuozzo.com>, Jan Kara <jack@suse.cz>, 
+	John Garry <john.g.garry@oracle.com>, Arnaldo Carvalho de Melo <acme@redhat.com>, 
+	"Darrick J . Wong" <djwong@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Ingo Molnar <mingo@kernel.org>, 
+	Andrei Vagin <avagin@gmail.com>, Alexander Mikhalitsyn <alexander@mihalicyn.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 12, 2025 at 9:28=E2=80=AFPM Viacheslav Dubeyko
-<Slava.Dubeyko@ibm.com> wrote:
->
-> On Wed, 2025-11-12 at 21:22 +0100, Ilya Dryomov wrote:
-> > On Wed, Nov 12, 2025 at 8:53=E2=80=AFPM Viacheslav Dubeyko <slava@dubey=
-ko.com> wrote:
-> > >
-> > > From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-> > >
-> > > The crash in process_v2_sparse_read() for fscrypt-encrypted
-> > > directories has been reported [1]. Issue takes place for
-> > > Ceph msgr2 protocol. It can be reproduced by the steps:
-> > >
-> > > sudo mount -t ceph :/ /mnt/cephfs/ -o name=3Dadmin,fs=3Dcephfs,ms_mod=
-e=3Dsecure
-> > >
-> > > (1) mkdir /mnt/cephfs/fscrypt-test-3
-> > > (2) cp area_decrypted.tar /mnt/cephfs/fscrypt-test-3
-> > > (3) fscrypt encrypt --source=3Draw_key --key=3D./my.key /mnt/cephfs/f=
-scrypt-test-3
-> > > (4) fscrypt lock /mnt/cephfs/fscrypt-test-3
-> > > (5) fscrypt unlock --key=3Dmy.key /mnt/cephfs/fscrypt-test-3
-> > > (6) cat /mnt/cephfs/fscrypt-test-3/area_decrypted.tar
-> > > (7) Issue has been triggered
-> > >
-> > > [  408.072247] ------------[ cut here ]------------
-> > > [  408.072251] WARNING: CPU: 1 PID: 392 at net/ceph/messenger_v2.c:86=
-5
-> > > ceph_con_v2_try_read+0x4b39/0x72f0
-> > > [  408.072267] Modules linked in: intel_rapl_msr intel_rapl_common
-> > > intel_uncore_frequency_common intel_pmc_core pmt_telemetry pmt_discov=
-ery
-> > > pmt_class intel_pmc_ssram_telemetry intel_vsec kvm_intel joydev kvm i=
-rqbypass
-> > > polyval_clmulni ghash_clmulni_intel aesni_intel rapl input_leds psmou=
-se
-> > > serio_raw i2c_piix4 vga16fb bochs vgastate i2c_smbus floppy mac_hid q=
-emu_fw_cfg
-> > > pata_acpi sch_fq_codel rbd msr parport_pc ppdev lp parport efi_pstore
-> > > [  408.072304] CPU: 1 UID: 0 PID: 392 Comm: kworker/1:3 Not tainted 6=
-.17.0-rc7+
-> > > [  408.072307] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),=
- BIOS
-> > > 1.17.0-5.fc42 04/01/2014
-> > > [  408.072310] Workqueue: ceph-msgr ceph_con_workfn
-> > > [  408.072314] RIP: 0010:ceph_con_v2_try_read+0x4b39/0x72f0
-> > > [  408.072317] Code: c7 c1 20 f0 d4 ae 50 31 d2 48 c7 c6 60 27 d5 ae =
-48 c7 c7 f8
-> > > 8e 6f b0 68 60 38 d5 ae e8 00 47 61 fe 48 83 c4 18 e9 ac fc ff ff <0f=
-> 0b e9 06
-> > > fe ff ff 4c 8b 9d 98 fd ff ff 0f 84 64 e7 ff ff 89 85
-> > > [  408.072319] RSP: 0018:ffff88811c3e7a30 EFLAGS: 00010246
-> > > [  408.072322] RAX: ffffed1024874c6f RBX: ffffea00042c2b40 RCX: 00000=
-00000000f38
-> > > [  408.072324] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00000=
-00000000000
-> > > [  408.072325] RBP: ffff88811c3e7ca8 R08: 0000000000000000 R09: 00000=
-000000000c8
-> > > [  408.072326] R10: 00000000000000c8 R11: 0000000000000000 R12: 00000=
-000000000c8
-> > > [  408.072327] R13: dffffc0000000000 R14: ffff8881243a6030 R15: 00000=
-00000003000
-> > > [  408.072329] FS:  0000000000000000(0000) GS:ffff88823eadf000(0000)
-> > > knlGS:0000000000000000
-> > > [  408.072331] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > > [  408.072332] CR2: 000000c0003c6000 CR3: 000000010c106005 CR4: 00000=
-00000772ef0
-> > > [  408.072336] PKRU: 55555554
-> > > [  408.072337] Call Trace:
-> > > [  408.072338]  <TASK>
-> > > [  408.072340]  ? sched_clock_noinstr+0x9/0x10
-> > > [  408.072344]  ? __pfx_ceph_con_v2_try_read+0x10/0x10
-> > > [  408.072347]  ? _raw_spin_unlock+0xe/0x40
-> > > [  408.072349]  ? finish_task_switch.isra.0+0x15d/0x830
-> > > [  408.072353]  ? __kasan_check_write+0x14/0x30
-> > > [  408.072357]  ? mutex_lock+0x84/0xe0
-> > > [  408.072359]  ? __pfx_mutex_lock+0x10/0x10
-> > > [  408.072361]  ceph_con_workfn+0x27e/0x10e0
-> > > [  408.072364]  ? metric_delayed_work+0x311/0x2c50
-> > > [  408.072367]  process_one_work+0x611/0xe20
-> > > [  408.072371]  ? __kasan_check_write+0x14/0x30
-> > > [  408.072373]  worker_thread+0x7e3/0x1580
-> > > [  408.072375]  ? __pfx__raw_spin_lock_irqsave+0x10/0x10
-> > > [  408.072378]  ? __pfx_worker_thread+0x10/0x10
-> > > [  408.072381]  kthread+0x381/0x7a0
-> > > [  408.072383]  ? __pfx__raw_spin_lock_irq+0x10/0x10
-> > > [  408.072385]  ? __pfx_kthread+0x10/0x10
-> > > [  408.072387]  ? __kasan_check_write+0x14/0x30
-> > > [  408.072389]  ? recalc_sigpending+0x160/0x220
-> > > [  408.072392]  ? _raw_spin_unlock_irq+0xe/0x50
-> > > [  408.072394]  ? calculate_sigpending+0x78/0xb0
-> > > [  408.072395]  ? __pfx_kthread+0x10/0x10
-> > > [  408.072397]  ret_from_fork+0x2b6/0x380
-> > > [  408.072400]  ? __pfx_kthread+0x10/0x10
-> > > [  408.072402]  ret_from_fork_asm+0x1a/0x30
-> > > [  408.072406]  </TASK>
-> > > [  408.072407] ---[ end trace 0000000000000000 ]---
-> > > [  408.072418] Oops: general protection fault, probably for non-canon=
-ical
-> > > address 0xdffffc0000000000: 0000 [#1] SMP KASAN NOPTI
-> > > [  408.072984] KASAN: null-ptr-deref in range [0x0000000000000000-
-> > > 0x0000000000000007]
-> > > [  408.073350] CPU: 1 UID: 0 PID: 392 Comm: kworker/1:3 Tainted: G   =
-     W
-> > > 6.17.0-rc7+ #1 PREEMPT(voluntary)
-> > > [  408.073886] Tainted: [W]=3DWARN
-> > > [  408.074042] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),=
- BIOS
-> > > 1.17.0-5.fc42 04/01/2014
-> > > [  408.074468] Workqueue: ceph-msgr ceph_con_workfn
-> > > [  408.074694] RIP: 0010:ceph_msg_data_advance+0x79/0x1a80
-> > > [  408.074976] Code: fc ff df 49 8d 77 08 48 c1 ee 03 80 3c 16 00 0f =
-85 07 11 00
-> > > 00 48 ba 00 00 00 00 00 fc ff df 49 8b 5f 08 48 89 de 48 c1 ee 03 <0f=
-> b6 14 16
-> > > 84 d2 74 09 80 fa 03 0f 8e 0f 0e 00 00 8b 13 83 fa 03
-> > > [  408.075884] RSP: 0018:ffff88811c3e7990 EFLAGS: 00010246
-> > > [  408.076305] RAX: ffff8881243a6388 RBX: 0000000000000000 RCX: 00000=
-00000000000
-> > > [  408.076909] RDX: dffffc0000000000 RSI: 0000000000000000 RDI: ffff8=
-881243a6378
-> > > [  408.077466] RBP: ffff88811c3e7a20 R08: 0000000000000000 R09: 00000=
-000000000c8
-> > > [  408.078034] R10: ffff8881243a6388 R11: 0000000000000000 R12: ffffe=
-d1024874c71
-> > > [  408.078575] R13: dffffc0000000000 R14: ffff8881243a6030 R15: ffff8=
-881243a6378
-> > > [  408.079159] FS:  0000000000000000(0000) GS:ffff88823eadf000(0000)
-> > > knlGS:0000000000000000
-> > > [  408.079736] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > > [  408.080039] CR2: 000000c0003c6000 CR3: 000000010c106005 CR4: 00000=
-00000772ef0
-> > > [  408.080376] PKRU: 55555554
-> > > [  408.080513] Call Trace:
-> > > [  408.080630]  <TASK>
-> > > [  408.080729]  ceph_con_v2_try_read+0x49b9/0x72f0
-> > > [  408.081115]  ? __pfx_ceph_con_v2_try_read+0x10/0x10
-> > > [  408.081348]  ? _raw_spin_unlock+0xe/0x40
-> > > [  408.081538]  ? finish_task_switch.isra.0+0x15d/0x830
-> > > [  408.081768]  ? __kasan_check_write+0x14/0x30
-> > > [  408.081986]  ? mutex_lock+0x84/0xe0
-> > > [  408.082160]  ? __pfx_mutex_lock+0x10/0x10
-> > > [  408.082343]  ceph_con_workfn+0x27e/0x10e0
-> > > [  408.082529]  ? metric_delayed_work+0x311/0x2c50
-> > > [  408.082737]  process_one_work+0x611/0xe20
-> > > [  408.082948]  ? __kasan_check_write+0x14/0x30
-> > > [  408.083156]  worker_thread+0x7e3/0x1580
-> > > [  408.083331]  ? __pfx__raw_spin_lock_irqsave+0x10/0x10
-> > > [  408.083557]  ? __pfx_worker_thread+0x10/0x10
-> > > [  408.083751]  kthread+0x381/0x7a0
-> > > [  408.083922]  ? __pfx__raw_spin_lock_irq+0x10/0x10
-> > > [  408.084139]  ? __pfx_kthread+0x10/0x10
-> > > [  408.084310]  ? __kasan_check_write+0x14/0x30
-> > > [  408.084510]  ? recalc_sigpending+0x160/0x220
-> > > [  408.084708]  ? _raw_spin_unlock_irq+0xe/0x50
-> > > [  408.084917]  ? calculate_sigpending+0x78/0xb0
-> > > [  408.085138]  ? __pfx_kthread+0x10/0x10
-> > > [  408.085335]  ret_from_fork+0x2b6/0x380
-> > > [  408.085525]  ? __pfx_kthread+0x10/0x10
-> > > [  408.085720]  ret_from_fork_asm+0x1a/0x30
-> > > [  408.085922]  </TASK>
-> > > [  408.086036] Modules linked in: intel_rapl_msr intel_rapl_common
-> > > intel_uncore_frequency_common intel_pmc_core pmt_telemetry pmt_discov=
-ery
-> > > pmt_class intel_pmc_ssram_telemetry intel_vsec kvm_intel joydev kvm i=
-rqbypass
-> > > polyval_clmulni ghash_clmulni_intel aesni_intel rapl input_leds psmou=
-se
-> > > serio_raw i2c_piix4 vga16fb bochs vgastate i2c_smbus floppy mac_hid q=
-emu_fw_cfg
-> > > pata_acpi sch_fq_codel rbd msr parport_pc ppdev lp parport efi_pstore
-> > > [  408.087778] ---[ end trace 0000000000000000 ]---
-> > > [  408.088007] RIP: 0010:ceph_msg_data_advance+0x79/0x1a80
-> > > [  408.088260] Code: fc ff df 49 8d 77 08 48 c1 ee 03 80 3c 16 00 0f =
-85 07 11 00
-> > > 00 48 ba 00 00 00 00 00 fc ff df 49 8b 5f 08 48 89 de 48 c1 ee 03 <0f=
-> b6 14 16
-> > > 84 d2 74 09 80 fa 03 0f 8e 0f 0e 00 00 8b 13 83 fa 03
-> > > [  408.089118] RSP: 0018:ffff88811c3e7990 EFLAGS: 00010246
-> > > [  408.089357] RAX: ffff8881243a6388 RBX: 0000000000000000 RCX: 00000=
-00000000000
-> > > [  408.089678] RDX: dffffc0000000000 RSI: 0000000000000000 RDI: ffff8=
-881243a6378
-> > > [  408.090020] RBP: ffff88811c3e7a20 R08: 0000000000000000 R09: 00000=
-000000000c8
-> > > [  408.090360] R10: ffff8881243a6388 R11: 0000000000000000 R12: ffffe=
-d1024874c71
-> > > [  408.090687] R13: dffffc0000000000 R14: ffff8881243a6030 R15: ffff8=
-881243a6378
-> > > [  408.091035] FS:  0000000000000000(0000) GS:ffff88823eadf000(0000)
-> > > knlGS:0000000000000000
-> > > [  408.091452] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > > [  408.092015] CR2: 000000c0003c6000 CR3: 000000010c106005 CR4: 00000=
-00000772ef0
-> > > [  408.092530] PKRU: 55555554
-> > > [  417.112915]
-> > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > [  417.113491] BUG: KASAN: slab-use-after-free in
-> > > __mutex_lock.constprop.0+0x1522/0x1610
-> > > [  417.114014] Read of size 4 at addr ffff888124870034 by task kworke=
-r/2:0/4951
-> > >
-> > > [  417.114587] CPU: 2 UID: 0 PID: 4951 Comm: kworker/2:0 Tainted: G  =
-    D W
-> > > 6.17.0-rc7+ #1 PREEMPT(voluntary)
-> > > [  417.114592] Tainted: [D]=3DDIE, [W]=3DWARN
-> > > [  417.114593] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),=
- BIOS
-> > > 1.17.0-5.fc42 04/01/2014
-> > > [  417.114596] Workqueue: events handle_timeout
-> > > [  417.114601] Call Trace:
-> > > [  417.114602]  <TASK>
-> > > [  417.114604]  dump_stack_lvl+0x5c/0x90
-> > > [  417.114610]  print_report+0x171/0x4dc
-> > > [  417.114613]  ? __pfx__raw_spin_lock_irqsave+0x10/0x10
-> > > [  417.114617]  ? kasan_complete_mode_report_info+0x80/0x220
-> > > [  417.114621]  kasan_report+0xbd/0x100
-> > > [  417.114625]  ? __mutex_lock.constprop.0+0x1522/0x1610
-> > > [  417.114628]  ? __mutex_lock.constprop.0+0x1522/0x1610
-> > > [  417.114630]  __asan_report_load4_noabort+0x14/0x30
-> > > [  417.114633]  __mutex_lock.constprop.0+0x1522/0x1610
-> > > [  417.114635]  ? queue_con_delay+0x8d/0x200
-> > > [  417.114638]  ? __pfx___mutex_lock.constprop.0+0x10/0x10
-> > > [  417.114641]  ? __send_subscribe+0x529/0xb20
-> > > [  417.114644]  __mutex_lock_slowpath+0x13/0x20
-> > > [  417.114646]  mutex_lock+0xd4/0xe0
-> > > [  417.114649]  ? __pfx_mutex_lock+0x10/0x10
-> > > [  417.114652]  ? ceph_monc_renew_subs+0x2a/0x40
-> > > [  417.114654]  ceph_con_keepalive+0x22/0x110
-> > > [  417.114656]  handle_timeout+0x6b3/0x11d0
-> > > [  417.114659]  ? _raw_spin_unlock_irq+0xe/0x50
-> > > [  417.114662]  ? __pfx_handle_timeout+0x10/0x10
-> > > [  417.114664]  ? queue_delayed_work_on+0x8e/0xa0
-> > > [  417.114669]  process_one_work+0x611/0xe20
-> > > [  417.114672]  ? __kasan_check_write+0x14/0x30
-> > > [  417.114676]  worker_thread+0x7e3/0x1580
-> > > [  417.114678]  ? __pfx__raw_spin_lock_irqsave+0x10/0x10
-> > > [  417.114682]  ? __pfx_sched_setscheduler_nocheck+0x10/0x10
-> > > [  417.114687]  ? __pfx_worker_thread+0x10/0x10
-> > > [  417.114689]  kthread+0x381/0x7a0
-> > > [  417.114692]  ? __pfx__raw_spin_lock_irq+0x10/0x10
-> > > [  417.114694]  ? __pfx_kthread+0x10/0x10
-> > > [  417.114697]  ? __kasan_check_write+0x14/0x30
-> > > [  417.114699]  ? recalc_sigpending+0x160/0x220
-> > > [  417.114703]  ? _raw_spin_unlock_irq+0xe/0x50
-> > > [  417.114705]  ? calculate_sigpending+0x78/0xb0
-> > > [  417.114707]  ? __pfx_kthread+0x10/0x10
-> > > [  417.114710]  ret_from_fork+0x2b6/0x380
-> > > [  417.114713]  ? __pfx_kthread+0x10/0x10
-> > > [  417.114715]  ret_from_fork_asm+0x1a/0x30
-> > > [  417.114720]  </TASK>
-> > >
-> > > [  417.125171] Allocated by task 2:
-> > > [  417.125333]  kasan_save_stack+0x26/0x60
-> > > [  417.125522]  kasan_save_track+0x14/0x40
-> > > [  417.125742]  kasan_save_alloc_info+0x39/0x60
-> > > [  417.125945]  __kasan_slab_alloc+0x8b/0xb0
-> > > [  417.126133]  kmem_cache_alloc_node_noprof+0x13b/0x460
-> > > [  417.126381]  copy_process+0x320/0x6250
-> > > [  417.126595]  kernel_clone+0xb7/0x840
-> > > [  417.126792]  kernel_thread+0xd6/0x120
-> > > [  417.126995]  kthreadd+0x85c/0xbe0
-> > > [  417.127176]  ret_from_fork+0x2b6/0x380
-> > > [  417.127378]  ret_from_fork_asm+0x1a/0x30
-> > >
-> > > [  417.127692] Freed by task 0:
-> > > [  417.127851]  kasan_save_stack+0x26/0x60
-> > > [  417.128057]  kasan_save_track+0x14/0x40
-> > > [  417.128267]  kasan_save_free_info+0x3b/0x60
-> > > [  417.128491]  __kasan_slab_free+0x6c/0xa0
-> > > [  417.128708]  kmem_cache_free+0x182/0x550
-> > > [  417.128906]  free_task+0xeb/0x140
-> > > [  417.129070]  __put_task_struct+0x1d2/0x4f0
-> > > [  417.129259]  __put_task_struct_rcu_cb+0x15/0x20
-> > > [  417.129480]  rcu_do_batch+0x3d3/0xe70
-> > > [  417.129681]  rcu_core+0x549/0xb30
-> > > [  417.129839]  rcu_core_si+0xe/0x20
-> > > [  417.130005]  handle_softirqs+0x160/0x570
-> > > [  417.130190]  __irq_exit_rcu+0x189/0x1e0
-> > > [  417.130369]  irq_exit_rcu+0xe/0x20
-> > > [  417.130531]  sysvec_apic_timer_interrupt+0x9f/0xd0
-> > > [  417.130768]  asm_sysvec_apic_timer_interrupt+0x1b/0x20
-> > >
-> > > [  417.131082] Last potentially related work creation:
-> > > [  417.131305]  kasan_save_stack+0x26/0x60
-> > > [  417.131484]  kasan_record_aux_stack+0xae/0xd0
-> > > [  417.131695]  __call_rcu_common+0xcd/0x14b0
-> > > [  417.131909]  call_rcu+0x31/0x50
-> > > [  417.132071]  delayed_put_task_struct+0x128/0x190
-> > > [  417.132295]  rcu_do_batch+0x3d3/0xe70
-> > > [  417.132478]  rcu_core+0x549/0xb30
-> > > [  417.132658]  rcu_core_si+0xe/0x20
-> > > [  417.132808]  handle_softirqs+0x160/0x570
-> > > [  417.132993]  __irq_exit_rcu+0x189/0x1e0
-> > > [  417.133181]  irq_exit_rcu+0xe/0x20
-> > > [  417.133353]  sysvec_apic_timer_interrupt+0x9f/0xd0
-> > > [  417.133584]  asm_sysvec_apic_timer_interrupt+0x1b/0x20
-> > >
-> > > [  417.133921] Second to last potentially related work creation:
-> > > [  417.134183]  kasan_save_stack+0x26/0x60
-> > > [  417.134362]  kasan_record_aux_stack+0xae/0xd0
-> > > [  417.134566]  __call_rcu_common+0xcd/0x14b0
-> > > [  417.134782]  call_rcu+0x31/0x50
-> > > [  417.134929]  put_task_struct_rcu_user+0x58/0xb0
-> > > [  417.135143]  finish_task_switch.isra.0+0x5d3/0x830
-> > > [  417.135366]  __schedule+0xd30/0x5100
-> > > [  417.135534]  schedule_idle+0x5a/0x90
-> > > [  417.135712]  do_idle+0x25f/0x410
-> > > [  417.135871]  cpu_startup_entry+0x53/0x70
-> > > [  417.136053]  start_secondary+0x216/0x2c0
-> > > [  417.136233]  common_startup_64+0x13e/0x141
-> > >
-> > > [  417.136894] The buggy address belongs to the object at ffff8881248=
-70000
-> > >                 which belongs to the cache task_struct of size 10504
-> > > [  417.138122] The buggy address is located 52 bytes inside of
-> > >                 freed 10504-byte region [ffff888124870000, ffff888124=
-872908)
-> > >
-> > > [  417.139465] The buggy address belongs to the physical page:
-> > > [  417.140016] page: refcount:0 mapcount:0 mapping:0000000000000000 i=
-ndex:0x0
-> > > pfn:0x124870
-> > > [  417.140789] head: order:3 mapcount:0 entire_mapcount:0 nr_pages_ma=
-pped:0
-> > > pincount:0
-> > > [  417.141519] memcg:ffff88811aa20e01
-> > > [  417.141874] anon flags:
-> > > 0x17ffffc0000040(head|node=3D0|zone=3D2|lastcpupid=3D0x1fffff)
-> > > [  417.142600] page_type: f5(slab)
-> > > [  417.142922] raw: 0017ffffc0000040 ffff88810094f040 000000000000000=
-0
-> > > dead000000000001
-> > > [  417.143554] raw: 0000000000000000 0000000000030003 00000000f500000=
-0
-> > > ffff88811aa20e01
-> > > [  417.143954] head: 0017ffffc0000040 ffff88810094f040 00000000000000=
-00
-> > > dead000000000001
-> > > [  417.144329] head: 0000000000000000 0000000000030003 00000000f50000=
-00
-> > > ffff88811aa20e01
-> > > [  417.144710] head: 0017ffffc0000003 ffffea0004921c01 00000000ffffff=
-ff
-> > > 00000000ffffffff
-> > > [  417.145106] head: ffffffffffffffff 0000000000000000 00000000ffffff=
-ff
-> > > 0000000000000008
-> > > [  417.145485] page dumped because: kasan: bad access detected
-> > >
-> > > [  417.145859] Memory state around the buggy address:
-> > > [  417.146094]  ffff88812486ff00: fc fc fc fc fc fc fc fc fc fc fc fc=
- fc fc fc
-> > > fc
-> > > [  417.146439]  ffff88812486ff80: fc fc fc fc fc fc fc fc fc fc fc fc=
- fc fc fc
-> > > fc
-> > > [  417.146791] >ffff888124870000: fa fb fb fb fb fb fb fb fb fb fb fb=
- fb fb fb
-> > > fb
-> > > [  417.147145]                                      ^
-> > > [  417.147387]  ffff888124870080: fb fb fb fb fb fb fb fb fb fb fb fb=
- fb fb fb
-> > > fb
-> > > [  417.147751]  ffff888124870100: fb fb fb fb fb fb fb fb fb fb fb fb=
- fb fb fb
-> > > fb
-> > > [  417.148123]
-> > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > >
-> > > First of all, we have warning in get_bvec_at() because
-> > > cursor->total_resid contains zero value. And, finally,
-> > > we have crash in ceph_msg_data_advance() because
-> > > cursor->data is NULL. It means that get_bvec_at()
-> > > receives not initialized ceph_msg_data_cursor structure
-> > > because data is NULL and total_resid contains zero.
-> > >
-> > > Moreover, we don't have likewise issue for the case of
-> > > Ceph msgr1 protocol because ceph_msg_data_cursor_init()
-> > > has been called before reading sparse data.
-> > >
-> > > This patch adds calling of ceph_msg_data_cursor_init()
-> > > in the beginning of process_v2_sparse_read() with
-> > > the goal to guarantee that logic of reading sparse data
-> > > works correctly for the case of Ceph msgr2 protocol.
-> > >
-> > > v2
-> > > Ilya Dryomov suggested to remove BUG_ON() calls from
-> > > ceph_msg_data_advance(), to rework cursor initialization
-> >
-> > Hi Slava,
-> >
-> > My suggestion was to drop the new BUG_ON that wasn't bringing any
-> > substantial value.  The existing BUG_ON is useful because it catches
-> > much less obvious things like off by one errors and similar attempts to
-> > advance too far early on.
->
-> My question was:
->
-> >
-> > So, should I remove both BUG_ON()?
->
-> Your answer were:
->
-> >> Yes, that would be my preference.
->
-> So, I did what you've asked me finally. No?
+On Sun, 9 Nov 2025 at 06:40, Bhavik Sachdev <b.sachdev1904@gmail.com> wrote:
 
-Hi Slava,
+> diff --git a/fs/namespace.c b/fs/namespace.c
+> index d82910f33dc4..153c0ea85386 100644
+> --- a/fs/namespace.c
+> +++ b/fs/namespace.c
+> @@ -5207,6 +5207,12 @@ static int statmount_mnt_root(struct kstatmount *s, struct seq_file *seq)
+>         return 0;
+>  }
+>
+> +static int statmount_mnt_point_unmounted(struct kstatmount *s, struct seq_file *seq)
+> +{
+> +       seq_puts(seq, "[unmounted]");
 
-Sorry, I must have read that as "this BUG_ON" and took it to mean the
-new !cursor->data BUG_ON which is what both my initial comment and the
-"execution would be stopped on the next statement with a very distinct
-splat" response were limited to.  I didn't mention the existing bytes >
-cursor->resid BUG_ON at any point so it didn't occur to me that you
-would include it in your "should I remove" question.
+Please no, There's statmount.mask for this purpose exactly.
+
+>  static int statmount_mnt_point(struct kstatmount *s, struct seq_file *seq)
+>  {
+>         struct vfsmount *mnt = s->mnt;
+> @@ -5262,7 +5268,10 @@ static int statmount_sb_source(struct kstatmount *s, struct seq_file *seq)
+>  static void statmount_mnt_ns_id(struct kstatmount *s, struct mnt_namespace *ns)
+>  {
+>         s->sm.mask |= STATMOUNT_MNT_NS_ID;
+> -       s->sm.mnt_ns_id = ns->ns.ns_id;
+> +       if (ns)
+> +               s->sm.mnt_ns_id = ns->ns.ns_id;
+> +       else
+> +               s->sm.mnt_ns_id = 0;
+
+Same here.  Please clear mask if the requested field cannot be meaningfully set.
+
+>  /* locks: namespace_shared */
+>  static int do_statmount(struct kstatmount *s, u64 mnt_id, u64 mnt_ns_id,
+> -                       struct mnt_namespace *ns)
+> +                       struct mnt_namespace *ns, unsigned int flags)
+>  {
+>         struct mount *m;
+>         int err;
+>
+>         /* Has the namespace already been emptied? */
+> -       if (mnt_ns_id && mnt_ns_empty(ns))
+> +       if (!(flags & STATMOUNT_BY_FD) && mnt_ns_id && mnt_ns_empty(ns))
+>                 return -ENOENT;
+
+This check does not make sense without the lookup_mnt_in_ns(), so
+please move it right before the lookup.
 
 >
-> >
-> > > logic, and to make additional minor cleanup.
-> > >
-> > > [1] https://tracker.ceph.com/issues/73152
-> > >
-> > > Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-> > > cc: Alex Markuze <amarkuze@redhat.com>
-> > > cc: Ilya Dryomov <idryomov@gmail.com>
-> > > cc: Ceph Development <ceph-devel@vger.kernel.org>
-> > > ---
-> > >  net/ceph/messenger.c    |  1 -
-> > >  net/ceph/messenger_v2.c | 11 +++++++----
-> > >  2 files changed, 7 insertions(+), 5 deletions(-)
-> > >
-> > > diff --git a/net/ceph/messenger.c b/net/ceph/messenger.c
-> > > index f8181acaf870..84c652f4efd8 100644
-> > > --- a/net/ceph/messenger.c
-> > > +++ b/net/ceph/messenger.c
-> > > @@ -1128,7 +1128,6 @@ void ceph_msg_data_advance(struct ceph_msg_data=
-_cursor *cursor, size_t bytes)
-> > >  {
-> > >         bool new_piece;
-> > >
-> > > -       BUG_ON(bytes > cursor->resid);
-> >
-> > Let's keep this.
-> >
-> > >         switch (cursor->data->type) {
-> > >         case CEPH_MSG_DATA_PAGELIST:
-> > >                 new_piece =3D ceph_msg_data_pagelist_advance(cursor, =
-bytes);
-> > > diff --git a/net/ceph/messenger_v2.c b/net/ceph/messenger_v2.c
-> > > index 9e39378eda00..e0e4f094e5a6 100644
-> > > --- a/net/ceph/messenger_v2.c
-> > > +++ b/net/ceph/messenger_v2.c
-> > > @@ -1061,13 +1061,16 @@ static int decrypt_control_remainder(struct c=
-eph_connection *con)
-> > >  static int process_v2_sparse_read(struct ceph_connection *con,
-> > >                                   struct page **pages, int spos)
-> > >  {
-> > > -       struct ceph_msg_data_cursor *cursor =3D &con->v2.in_cursor;
-> > > +       struct ceph_msg_data_cursor cursor;
-> > >         int ret;
-> > >
-> > > +       ceph_msg_data_cursor_init(&cursor, con->in_msg,
-> > > +                                 con->in_msg->data_length);
-> >
-> > I'd use sparse_read_total instead of data_length here for consistency
-> > with other sparse read code paths.
->
-> What is the difference between data_length and sparse_read_total?
+> -       s->mnt = lookup_mnt_in_ns(mnt_id, ns);
+> -       if (!s->mnt)
+> -               return -ENOENT;
+> +       if (!(flags & STATMOUNT_BY_FD)) {
+> +               s->mnt = lookup_mnt_in_ns(mnt_id, ns);
 
-In practice probably next to none, but sparse_read_total covers only
-CEPH_OSD_OP_SPARSE_READ extents so it's more on point.  There is some
-provision in the code for handling messages with more than one OSD op
-(e.g. a mix of regular and sparse reads).
+A comment would be nice about s->mnt being set in caller for the
+STATMOUNT_BY_FD case.
 
-On Wed, Nov 12, 2025 at 9:28=E2=80=AFPM Viacheslav Dubeyko
-<Slava.Dubeyko@ibm.com> wrote:
->
-> On Wed, 2025-11-12 at 21:22 +0100, Ilya Dryomov wrote:
-> > On Wed, Nov 12, 2025 at 8:53=E2=80=AFPM Viacheslav Dubeyko <slava@dubey=
-ko.com> wrote:
-> > >
-> > > From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-> > >
-> > > The crash in process_v2_sparse_read() for fscrypt-encrypted
-> > > directories has been reported [1]. Issue takes place for
-> > > Ceph msgr2 protocol. It can be reproduced by the steps:
-> > >
-> > > sudo mount -t ceph :/ /mnt/cephfs/ -o name=3Dadmin,fs=3Dcephfs,ms_mod=
-e=3Dsecure
-> > >
-> > > (1) mkdir /mnt/cephfs/fscrypt-test-3
-> > > (2) cp area_decrypted.tar /mnt/cephfs/fscrypt-test-3
-> > > (3) fscrypt encrypt --source=3Draw_key --key=3D./my.key /mnt/cephfs/f=
-scrypt-test-3
-> > > (4) fscrypt lock /mnt/cephfs/fscrypt-test-3
-> > > (5) fscrypt unlock --key=3Dmy.key /mnt/cephfs/fscrypt-test-3
-> > > (6) cat /mnt/cephfs/fscrypt-test-3/area_decrypted.tar
-> > > (7) Issue has been triggered
-> > >
-> > > [  408.072247] ------------[ cut here ]------------
-> > > [  408.072251] WARNING: CPU: 1 PID: 392 at net/ceph/messenger_v2.c:86=
-5
-> > > ceph_con_v2_try_read+0x4b39/0x72f0
-> > > [  408.072267] Modules linked in: intel_rapl_msr intel_rapl_common
-> > > intel_uncore_frequency_common intel_pmc_core pmt_telemetry pmt_discov=
-ery
-> > > pmt_class intel_pmc_ssram_telemetry intel_vsec kvm_intel joydev kvm i=
-rqbypass
-> > > polyval_clmulni ghash_clmulni_intel aesni_intel rapl input_leds psmou=
-se
-> > > serio_raw i2c_piix4 vga16fb bochs vgastate i2c_smbus floppy mac_hid q=
-emu_fw_cfg
-> > > pata_acpi sch_fq_codel rbd msr parport_pc ppdev lp parport efi_pstore
-> > > [  408.072304] CPU: 1 UID: 0 PID: 392 Comm: kworker/1:3 Not tainted 6=
-.17.0-rc7+
-> > > [  408.072307] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),=
- BIOS
-> > > 1.17.0-5.fc42 04/01/2014
-> > > [  408.072310] Workqueue: ceph-msgr ceph_con_workfn
-> > > [  408.072314] RIP: 0010:ceph_con_v2_try_read+0x4b39/0x72f0
-> > > [  408.072317] Code: c7 c1 20 f0 d4 ae 50 31 d2 48 c7 c6 60 27 d5 ae =
-48 c7 c7 f8
-> > > 8e 6f b0 68 60 38 d5 ae e8 00 47 61 fe 48 83 c4 18 e9 ac fc ff ff <0f=
-> 0b e9 06
-> > > fe ff ff 4c 8b 9d 98 fd ff ff 0f 84 64 e7 ff ff 89 85
-> > > [  408.072319] RSP: 0018:ffff88811c3e7a30 EFLAGS: 00010246
-> > > [  408.072322] RAX: ffffed1024874c6f RBX: ffffea00042c2b40 RCX: 00000=
-00000000f38
-> > > [  408.072324] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00000=
-00000000000
-> > > [  408.072325] RBP: ffff88811c3e7ca8 R08: 0000000000000000 R09: 00000=
-000000000c8
-> > > [  408.072326] R10: 00000000000000c8 R11: 0000000000000000 R12: 00000=
-000000000c8
-> > > [  408.072327] R13: dffffc0000000000 R14: ffff8881243a6030 R15: 00000=
-00000003000
-> > > [  408.072329] FS:  0000000000000000(0000) GS:ffff88823eadf000(0000)
-> > > knlGS:0000000000000000
-> > > [  408.072331] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > > [  408.072332] CR2: 000000c0003c6000 CR3: 000000010c106005 CR4: 00000=
-00000772ef0
-> > > [  408.072336] PKRU: 55555554
-> > > [  408.072337] Call Trace:
-> > > [  408.072338]  <TASK>
-> > > [  408.072340]  ? sched_clock_noinstr+0x9/0x10
-> > > [  408.072344]  ? __pfx_ceph_con_v2_try_read+0x10/0x10
-> > > [  408.072347]  ? _raw_spin_unlock+0xe/0x40
-> > > [  408.072349]  ? finish_task_switch.isra.0+0x15d/0x830
-> > > [  408.072353]  ? __kasan_check_write+0x14/0x30
-> > > [  408.072357]  ? mutex_lock+0x84/0xe0
-> > > [  408.072359]  ? __pfx_mutex_lock+0x10/0x10
-> > > [  408.072361]  ceph_con_workfn+0x27e/0x10e0
-> > > [  408.072364]  ? metric_delayed_work+0x311/0x2c50
-> > > [  408.072367]  process_one_work+0x611/0xe20
-> > > [  408.072371]  ? __kasan_check_write+0x14/0x30
-> > > [  408.072373]  worker_thread+0x7e3/0x1580
-> > > [  408.072375]  ? __pfx__raw_spin_lock_irqsave+0x10/0x10
-> > > [  408.072378]  ? __pfx_worker_thread+0x10/0x10
-> > > [  408.072381]  kthread+0x381/0x7a0
-> > > [  408.072383]  ? __pfx__raw_spin_lock_irq+0x10/0x10
-> > > [  408.072385]  ? __pfx_kthread+0x10/0x10
-> > > [  408.072387]  ? __kasan_check_write+0x14/0x30
-> > > [  408.072389]  ? recalc_sigpending+0x160/0x220
-> > > [  408.072392]  ? _raw_spin_unlock_irq+0xe/0x50
-> > > [  408.072394]  ? calculate_sigpending+0x78/0xb0
-> > > [  408.072395]  ? __pfx_kthread+0x10/0x10
-> > > [  408.072397]  ret_from_fork+0x2b6/0x380
-> > > [  408.072400]  ? __pfx_kthread+0x10/0x10
-> > > [  408.072402]  ret_from_fork_asm+0x1a/0x30
-> > > [  408.072406]  </TASK>
-> > > [  408.072407] ---[ end trace 0000000000000000 ]---
-> > > [  408.072418] Oops: general protection fault, probably for non-canon=
-ical
-> > > address 0xdffffc0000000000: 0000 [#1] SMP KASAN NOPTI
-> > > [  408.072984] KASAN: null-ptr-deref in range [0x0000000000000000-
-> > > 0x0000000000000007]
-> > > [  408.073350] CPU: 1 UID: 0 PID: 392 Comm: kworker/1:3 Tainted: G   =
-     W
-> > > 6.17.0-rc7+ #1 PREEMPT(voluntary)
-> > > [  408.073886] Tainted: [W]=3DWARN
-> > > [  408.074042] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),=
- BIOS
-> > > 1.17.0-5.fc42 04/01/2014
-> > > [  408.074468] Workqueue: ceph-msgr ceph_con_workfn
-> > > [  408.074694] RIP: 0010:ceph_msg_data_advance+0x79/0x1a80
-> > > [  408.074976] Code: fc ff df 49 8d 77 08 48 c1 ee 03 80 3c 16 00 0f =
-85 07 11 00
-> > > 00 48 ba 00 00 00 00 00 fc ff df 49 8b 5f 08 48 89 de 48 c1 ee 03 <0f=
-> b6 14 16
-> > > 84 d2 74 09 80 fa 03 0f 8e 0f 0e 00 00 8b 13 83 fa 03
-> > > [  408.075884] RSP: 0018:ffff88811c3e7990 EFLAGS: 00010246
-> > > [  408.076305] RAX: ffff8881243a6388 RBX: 0000000000000000 RCX: 00000=
-00000000000
-> > > [  408.076909] RDX: dffffc0000000000 RSI: 0000000000000000 RDI: ffff8=
-881243a6378
-> > > [  408.077466] RBP: ffff88811c3e7a20 R08: 0000000000000000 R09: 00000=
-000000000c8
-> > > [  408.078034] R10: ffff8881243a6388 R11: 0000000000000000 R12: ffffe=
-d1024874c71
-> > > [  408.078575] R13: dffffc0000000000 R14: ffff8881243a6030 R15: ffff8=
-881243a6378
-> > > [  408.079159] FS:  0000000000000000(0000) GS:ffff88823eadf000(0000)
-> > > knlGS:0000000000000000
-> > > [  408.079736] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > > [  408.080039] CR2: 000000c0003c6000 CR3: 000000010c106005 CR4: 00000=
-00000772ef0
-> > > [  408.080376] PKRU: 55555554
-> > > [  408.080513] Call Trace:
-> > > [  408.080630]  <TASK>
-> > > [  408.080729]  ceph_con_v2_try_read+0x49b9/0x72f0
-> > > [  408.081115]  ? __pfx_ceph_con_v2_try_read+0x10/0x10
-> > > [  408.081348]  ? _raw_spin_unlock+0xe/0x40
-> > > [  408.081538]  ? finish_task_switch.isra.0+0x15d/0x830
-> > > [  408.081768]  ? __kasan_check_write+0x14/0x30
-> > > [  408.081986]  ? mutex_lock+0x84/0xe0
-> > > [  408.082160]  ? __pfx_mutex_lock+0x10/0x10
-> > > [  408.082343]  ceph_con_workfn+0x27e/0x10e0
-> > > [  408.082529]  ? metric_delayed_work+0x311/0x2c50
-> > > [  408.082737]  process_one_work+0x611/0xe20
-> > > [  408.082948]  ? __kasan_check_write+0x14/0x30
-> > > [  408.083156]  worker_thread+0x7e3/0x1580
-> > > [  408.083331]  ? __pfx__raw_spin_lock_irqsave+0x10/0x10
-> > > [  408.083557]  ? __pfx_worker_thread+0x10/0x10
-> > > [  408.083751]  kthread+0x381/0x7a0
-> > > [  408.083922]  ? __pfx__raw_spin_lock_irq+0x10/0x10
-> > > [  408.084139]  ? __pfx_kthread+0x10/0x10
-> > > [  408.084310]  ? __kasan_check_write+0x14/0x30
-> > > [  408.084510]  ? recalc_sigpending+0x160/0x220
-> > > [  408.084708]  ? _raw_spin_unlock_irq+0xe/0x50
-> > > [  408.084917]  ? calculate_sigpending+0x78/0xb0
-> > > [  408.085138]  ? __pfx_kthread+0x10/0x10
-> > > [  408.085335]  ret_from_fork+0x2b6/0x380
-> > > [  408.085525]  ? __pfx_kthread+0x10/0x10
-> > > [  408.085720]  ret_from_fork_asm+0x1a/0x30
-> > > [  408.085922]  </TASK>
-> > > [  408.086036] Modules linked in: intel_rapl_msr intel_rapl_common
-> > > intel_uncore_frequency_common intel_pmc_core pmt_telemetry pmt_discov=
-ery
-> > > pmt_class intel_pmc_ssram_telemetry intel_vsec kvm_intel joydev kvm i=
-rqbypass
-> > > polyval_clmulni ghash_clmulni_intel aesni_intel rapl input_leds psmou=
-se
-> > > serio_raw i2c_piix4 vga16fb bochs vgastate i2c_smbus floppy mac_hid q=
-emu_fw_cfg
-> > > pata_acpi sch_fq_codel rbd msr parport_pc ppdev lp parport efi_pstore
-> > > [  408.087778] ---[ end trace 0000000000000000 ]---
-> > > [  408.088007] RIP: 0010:ceph_msg_data_advance+0x79/0x1a80
-> > > [  408.088260] Code: fc ff df 49 8d 77 08 48 c1 ee 03 80 3c 16 00 0f =
-85 07 11 00
-> > > 00 48 ba 00 00 00 00 00 fc ff df 49 8b 5f 08 48 89 de 48 c1 ee 03 <0f=
-> b6 14 16
-> > > 84 d2 74 09 80 fa 03 0f 8e 0f 0e 00 00 8b 13 83 fa 03
-> > > [  408.089118] RSP: 0018:ffff88811c3e7990 EFLAGS: 00010246
-> > > [  408.089357] RAX: ffff8881243a6388 RBX: 0000000000000000 RCX: 00000=
-00000000000
-> > > [  408.089678] RDX: dffffc0000000000 RSI: 0000000000000000 RDI: ffff8=
-881243a6378
-> > > [  408.090020] RBP: ffff88811c3e7a20 R08: 0000000000000000 R09: 00000=
-000000000c8
-> > > [  408.090360] R10: ffff8881243a6388 R11: 0000000000000000 R12: ffffe=
-d1024874c71
-> > > [  408.090687] R13: dffffc0000000000 R14: ffff8881243a6030 R15: ffff8=
-881243a6378
-> > > [  408.091035] FS:  0000000000000000(0000) GS:ffff88823eadf000(0000)
-> > > knlGS:0000000000000000
-> > > [  408.091452] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > > [  408.092015] CR2: 000000c0003c6000 CR3: 000000010c106005 CR4: 00000=
-00000772ef0
-> > > [  408.092530] PKRU: 55555554
-> > > [  417.112915]
-> > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > [  417.113491] BUG: KASAN: slab-use-after-free in
-> > > __mutex_lock.constprop.0+0x1522/0x1610
-> > > [  417.114014] Read of size 4 at addr ffff888124870034 by task kworke=
-r/2:0/4951
-> > >
-> > > [  417.114587] CPU: 2 UID: 0 PID: 4951 Comm: kworker/2:0 Tainted: G  =
-    D W
-> > > 6.17.0-rc7+ #1 PREEMPT(voluntary)
-> > > [  417.114592] Tainted: [D]=3DDIE, [W]=3DWARN
-> > > [  417.114593] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),=
- BIOS
-> > > 1.17.0-5.fc42 04/01/2014
-> > > [  417.114596] Workqueue: events handle_timeout
-> > > [  417.114601] Call Trace:
-> > > [  417.114602]  <TASK>
-> > > [  417.114604]  dump_stack_lvl+0x5c/0x90
-> > > [  417.114610]  print_report+0x171/0x4dc
-> > > [  417.114613]  ? __pfx__raw_spin_lock_irqsave+0x10/0x10
-> > > [  417.114617]  ? kasan_complete_mode_report_info+0x80/0x220
-> > > [  417.114621]  kasan_report+0xbd/0x100
-> > > [  417.114625]  ? __mutex_lock.constprop.0+0x1522/0x1610
-> > > [  417.114628]  ? __mutex_lock.constprop.0+0x1522/0x1610
-> > > [  417.114630]  __asan_report_load4_noabort+0x14/0x30
-> > > [  417.114633]  __mutex_lock.constprop.0+0x1522/0x1610
-> > > [  417.114635]  ? queue_con_delay+0x8d/0x200
-> > > [  417.114638]  ? __pfx___mutex_lock.constprop.0+0x10/0x10
-> > > [  417.114641]  ? __send_subscribe+0x529/0xb20
-> > > [  417.114644]  __mutex_lock_slowpath+0x13/0x20
-> > > [  417.114646]  mutex_lock+0xd4/0xe0
-> > > [  417.114649]  ? __pfx_mutex_lock+0x10/0x10
-> > > [  417.114652]  ? ceph_monc_renew_subs+0x2a/0x40
-> > > [  417.114654]  ceph_con_keepalive+0x22/0x110
-> > > [  417.114656]  handle_timeout+0x6b3/0x11d0
-> > > [  417.114659]  ? _raw_spin_unlock_irq+0xe/0x50
-> > > [  417.114662]  ? __pfx_handle_timeout+0x10/0x10
-> > > [  417.114664]  ? queue_delayed_work_on+0x8e/0xa0
-> > > [  417.114669]  process_one_work+0x611/0xe20
-> > > [  417.114672]  ? __kasan_check_write+0x14/0x30
-> > > [  417.114676]  worker_thread+0x7e3/0x1580
-> > > [  417.114678]  ? __pfx__raw_spin_lock_irqsave+0x10/0x10
-> > > [  417.114682]  ? __pfx_sched_setscheduler_nocheck+0x10/0x10
-> > > [  417.114687]  ? __pfx_worker_thread+0x10/0x10
-> > > [  417.114689]  kthread+0x381/0x7a0
-> > > [  417.114692]  ? __pfx__raw_spin_lock_irq+0x10/0x10
-> > > [  417.114694]  ? __pfx_kthread+0x10/0x10
-> > > [  417.114697]  ? __kasan_check_write+0x14/0x30
-> > > [  417.114699]  ? recalc_sigpending+0x160/0x220
-> > > [  417.114703]  ? _raw_spin_unlock_irq+0xe/0x50
-> > > [  417.114705]  ? calculate_sigpending+0x78/0xb0
-> > > [  417.114707]  ? __pfx_kthread+0x10/0x10
-> > > [  417.114710]  ret_from_fork+0x2b6/0x380
-> > > [  417.114713]  ? __pfx_kthread+0x10/0x10
-> > > [  417.114715]  ret_from_fork_asm+0x1a/0x30
-> > > [  417.114720]  </TASK>
-> > >
-> > > [  417.125171] Allocated by task 2:
-> > > [  417.125333]  kasan_save_stack+0x26/0x60
-> > > [  417.125522]  kasan_save_track+0x14/0x40
-> > > [  417.125742]  kasan_save_alloc_info+0x39/0x60
-> > > [  417.125945]  __kasan_slab_alloc+0x8b/0xb0
-> > > [  417.126133]  kmem_cache_alloc_node_noprof+0x13b/0x460
-> > > [  417.126381]  copy_process+0x320/0x6250
-> > > [  417.126595]  kernel_clone+0xb7/0x840
-> > > [  417.126792]  kernel_thread+0xd6/0x120
-> > > [  417.126995]  kthreadd+0x85c/0xbe0
-> > > [  417.127176]  ret_from_fork+0x2b6/0x380
-> > > [  417.127378]  ret_from_fork_asm+0x1a/0x30
-> > >
-> > > [  417.127692] Freed by task 0:
-> > > [  417.127851]  kasan_save_stack+0x26/0x60
-> > > [  417.128057]  kasan_save_track+0x14/0x40
-> > > [  417.128267]  kasan_save_free_info+0x3b/0x60
-> > > [  417.128491]  __kasan_slab_free+0x6c/0xa0
-> > > [  417.128708]  kmem_cache_free+0x182/0x550
-> > > [  417.128906]  free_task+0xeb/0x140
-> > > [  417.129070]  __put_task_struct+0x1d2/0x4f0
-> > > [  417.129259]  __put_task_struct_rcu_cb+0x15/0x20
-> > > [  417.129480]  rcu_do_batch+0x3d3/0xe70
-> > > [  417.129681]  rcu_core+0x549/0xb30
-> > > [  417.129839]  rcu_core_si+0xe/0x20
-> > > [  417.130005]  handle_softirqs+0x160/0x570
-> > > [  417.130190]  __irq_exit_rcu+0x189/0x1e0
-> > > [  417.130369]  irq_exit_rcu+0xe/0x20
-> > > [  417.130531]  sysvec_apic_timer_interrupt+0x9f/0xd0
-> > > [  417.130768]  asm_sysvec_apic_timer_interrupt+0x1b/0x20
-> > >
-> > > [  417.131082] Last potentially related work creation:
-> > > [  417.131305]  kasan_save_stack+0x26/0x60
-> > > [  417.131484]  kasan_record_aux_stack+0xae/0xd0
-> > > [  417.131695]  __call_rcu_common+0xcd/0x14b0
-> > > [  417.131909]  call_rcu+0x31/0x50
-> > > [  417.132071]  delayed_put_task_struct+0x128/0x190
-> > > [  417.132295]  rcu_do_batch+0x3d3/0xe70
-> > > [  417.132478]  rcu_core+0x549/0xb30
-> > > [  417.132658]  rcu_core_si+0xe/0x20
-> > > [  417.132808]  handle_softirqs+0x160/0x570
-> > > [  417.132993]  __irq_exit_rcu+0x189/0x1e0
-> > > [  417.133181]  irq_exit_rcu+0xe/0x20
-> > > [  417.133353]  sysvec_apic_timer_interrupt+0x9f/0xd0
-> > > [  417.133584]  asm_sysvec_apic_timer_interrupt+0x1b/0x20
-> > >
-> > > [  417.133921] Second to last potentially related work creation:
-> > > [  417.134183]  kasan_save_stack+0x26/0x60
-> > > [  417.134362]  kasan_record_aux_stack+0xae/0xd0
-> > > [  417.134566]  __call_rcu_common+0xcd/0x14b0
-> > > [  417.134782]  call_rcu+0x31/0x50
-> > > [  417.134929]  put_task_struct_rcu_user+0x58/0xb0
-> > > [  417.135143]  finish_task_switch.isra.0+0x5d3/0x830
-> > > [  417.135366]  __schedule+0xd30/0x5100
-> > > [  417.135534]  schedule_idle+0x5a/0x90
-> > > [  417.135712]  do_idle+0x25f/0x410
-> > > [  417.135871]  cpu_startup_entry+0x53/0x70
-> > > [  417.136053]  start_secondary+0x216/0x2c0
-> > > [  417.136233]  common_startup_64+0x13e/0x141
-> > >
-> > > [  417.136894] The buggy address belongs to the object at ffff8881248=
-70000
-> > >                 which belongs to the cache task_struct of size 10504
-> > > [  417.138122] The buggy address is located 52 bytes inside of
-> > >                 freed 10504-byte region [ffff888124870000, ffff888124=
-872908)
-> > >
-> > > [  417.139465] The buggy address belongs to the physical page:
-> > > [  417.140016] page: refcount:0 mapcount:0 mapping:0000000000000000 i=
-ndex:0x0
-> > > pfn:0x124870
-> > > [  417.140789] head: order:3 mapcount:0 entire_mapcount:0 nr_pages_ma=
-pped:0
-> > > pincount:0
-> > > [  417.141519] memcg:ffff88811aa20e01
-> > > [  417.141874] anon flags:
-> > > 0x17ffffc0000040(head|node=3D0|zone=3D2|lastcpupid=3D0x1fffff)
-> > > [  417.142600] page_type: f5(slab)
-> > > [  417.142922] raw: 0017ffffc0000040 ffff88810094f040 000000000000000=
-0
-> > > dead000000000001
-> > > [  417.143554] raw: 0000000000000000 0000000000030003 00000000f500000=
-0
-> > > ffff88811aa20e01
-> > > [  417.143954] head: 0017ffffc0000040 ffff88810094f040 00000000000000=
-00
-> > > dead000000000001
-> > > [  417.144329] head: 0000000000000000 0000000000030003 00000000f50000=
-00
-> > > ffff88811aa20e01
-> > > [  417.144710] head: 0017ffffc0000003 ffffea0004921c01 00000000ffffff=
-ff
-> > > 00000000ffffffff
-> > > [  417.145106] head: ffffffffffffffff 0000000000000000 00000000ffffff=
-ff
-> > > 0000000000000008
-> > > [  417.145485] page dumped because: kasan: bad access detected
-> > >
-> > > [  417.145859] Memory state around the buggy address:
-> > > [  417.146094]  ffff88812486ff00: fc fc fc fc fc fc fc fc fc fc fc fc=
- fc fc fc
-> > > fc
-> > > [  417.146439]  ffff88812486ff80: fc fc fc fc fc fc fc fc fc fc fc fc=
- fc fc fc
-> > > fc
-> > > [  417.146791] >ffff888124870000: fa fb fb fb fb fb fb fb fb fb fb fb=
- fb fb fb
-> > > fb
-> > > [  417.147145]                                      ^
-> > > [  417.147387]  ffff888124870080: fb fb fb fb fb fb fb fb fb fb fb fb=
- fb fb fb
-> > > fb
-> > > [  417.147751]  ffff888124870100: fb fb fb fb fb fb fb fb fb fb fb fb=
- fb fb fb
-> > > fb
-> > > [  417.148123]
-> > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > >
-> > > First of all, we have warning in get_bvec_at() because
-> > > cursor->total_resid contains zero value. And, finally,
-> > > we have crash in ceph_msg_data_advance() because
-> > > cursor->data is NULL. It means that get_bvec_at()
-> > > receives not initialized ceph_msg_data_cursor structure
-> > > because data is NULL and total_resid contains zero.
-> > >
-> > > Moreover, we don't have likewise issue for the case of
-> > > Ceph msgr1 protocol because ceph_msg_data_cursor_init()
-> > > has been called before reading sparse data.
-> > >
-> > > This patch adds calling of ceph_msg_data_cursor_init()
-> > > in the beginning of process_v2_sparse_read() with
-> > > the goal to guarantee that logic of reading sparse data
-> > > works correctly for the case of Ceph msgr2 protocol.
-> > >
-> > > v2
-> > > Ilya Dryomov suggested to remove BUG_ON() calls from
-> > > ceph_msg_data_advance(), to rework cursor initialization
-> >
-> > Hi Slava,
-> >
-> > My suggestion was to drop the new BUG_ON that wasn't bringing any
-> > substantial value.  The existing BUG_ON is useful because it catches
-> > much less obvious things like off by one errors and similar attempts to
-> > advance too far early on.
->
-> My question was:
->
-> >
-> > So, should I remove both BUG_ON()?
->
-> Your answer were:
->
-> >> Yes, that would be my preference.
->
-> So, I did what you've asked me finally. No?
+> -       ns = grab_requested_mnt_ns(&kreq);
+> -       if (!ns)
+> -               return -ENOENT;
+> +       if (flags & STATMOUNT_BY_FD) {
+> +               file_from_fd = fget_raw(kreq.fd);
+> +               if (!file_from_fd)
+> +                       return -EBADF;
+> +
+> +               fd_mnt = file_from_fd->f_path.mnt;
+> +               ns = real_mount(fd_mnt)->mnt_ns;
+> +               if (ns)
+> +                       refcount_inc(&ns->passive);
+> +               else
+> +                       if (!capable(CAP_SYS_ADMIN))
+> +                               return -ENOENT;
 
-Hi Slava,
+Why is this not EPERM?
 
-Sorry, I must have read that as "this BUG_ON" and took it to mean the
-new !cursor->data BUG_ON which is what both my initial comment and the
-"execution would be stopped on the next statement with a very distinct
-splat" response were limited to.  I didn't mention the existing bytes >
-cursor->resid BUG_ON at any point so it didn't occur to me that you
-would include it in your "should I remove" question.
+I think this check belongs together with the  ns_capable_noaudit() check below.
 
+> +       } else {
+> +               ns = grab_requested_mnt_ns(&kreq, flags);
+> +               if (!ns)
+> +                       return -ENOENT;
+> +       }
 >
-> >
-> > > logic, and to make additional minor cleanup.
-> > >
-> > > [1] https://tracker.ceph.com/issues/73152
-> > >
-> > > Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-> > > cc: Alex Markuze <amarkuze@redhat.com>
-> > > cc: Ilya Dryomov <idryomov@gmail.com>
-> > > cc: Ceph Development <ceph-devel@vger.kernel.org>
-> > > ---
-> > >  net/ceph/messenger.c    |  1 -
-> > >  net/ceph/messenger_v2.c | 11 +++++++----
-> > >  2 files changed, 7 insertions(+), 5 deletions(-)
-> > >
-> > > diff --git a/net/ceph/messenger.c b/net/ceph/messenger.c
-> > > index f8181acaf870..84c652f4efd8 100644
-> > > --- a/net/ceph/messenger.c
-> > > +++ b/net/ceph/messenger.c
-> > > @@ -1128,7 +1128,6 @@ void ceph_msg_data_advance(struct ceph_msg_data=
-_cursor *cursor, size_t bytes)
-> > >  {
-> > >         bool new_piece;
-> > >
-> > > -       BUG_ON(bytes > cursor->resid);
-> >
-> > Let's keep this.
-> >
-> > >         switch (cursor->data->type) {
-> > >         case CEPH_MSG_DATA_PAGELIST:
-> > >                 new_piece =3D ceph_msg_data_pagelist_advance(cursor, =
-bytes);
-> > > diff --git a/net/ceph/messenger_v2.c b/net/ceph/messenger_v2.c
-> > > index 9e39378eda00..e0e4f094e5a6 100644
-> > > --- a/net/ceph/messenger_v2.c
-> > > +++ b/net/ceph/messenger_v2.c
-> > > @@ -1061,13 +1061,16 @@ static int decrypt_control_remainder(struct c=
-eph_connection *con)
-> > >  static int process_v2_sparse_read(struct ceph_connection *con,
-> > >                                   struct page **pages, int spos)
-> > >  {
-> > > -       struct ceph_msg_data_cursor *cursor =3D &con->v2.in_cursor;
-> > > +       struct ceph_msg_data_cursor cursor;
-> > >         int ret;
-> > >
-> > > +       ceph_msg_data_cursor_init(&cursor, con->in_msg,
-> > > +                                 con->in_msg->data_length);
-> >
-> > I'd use sparse_read_total instead of data_length here for consistency
-> > with other sparse read code paths.
->
-> What is the difference between data_length and sparse_read_total?
+> -       if (kreq.mnt_ns_id && (ns != current->nsproxy->mnt_ns) &&
+> +       if (ns && (ns != current->nsproxy->mnt_ns) &&
+>             !ns_capable_noaudit(ns->user_ns, CAP_SYS_ADMIN))
+>                 return -ENOENT;
 
-In practice probably next to none, but sparse_read_total covers only
-CEPH_OSD_OP_SPARSE_READ extents so it would be more on point.
+(This should also be EPERM?  Searate patch, though).
+
+Something like this:
+
+        if (ns) {
+                if ((ns != current->nsproxy->mnt_ns) &&
+                    !ns_capable_noaudit(ns->user_ns, CAP_SYS_ADMIN))
+                        return -ENOENT;
+        } else if (!capable(CAP_SYS_ADMIN))
+                return -EPERM;
+        }
 
 Thanks,
-
-                Ilya
+Miklos
 
