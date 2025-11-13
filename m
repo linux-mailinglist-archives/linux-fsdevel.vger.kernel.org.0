@@ -1,154 +1,166 @@
-Return-Path: <linux-fsdevel+bounces-68169-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68170-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 897C8C5543F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 02:36:48 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BA4FC55532
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 02:50:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 418603AF394
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 01:36:47 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8460734D024
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 01:47:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B99F28FFF6;
-	Thu, 13 Nov 2025 01:36:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C558129B764;
+	Thu, 13 Nov 2025 01:42:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ESTeipE0"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Q4lsqY4V"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C10F288C2B
-	for <linux-fsdevel@vger.kernel.org>; Thu, 13 Nov 2025 01:36:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18AD62877C3;
+	Thu, 13 Nov 2025 01:42:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762997801; cv=none; b=bdrDFDAEZzc51o5sT1ZhaOkz59CWCZEORRS+PZG1neiFofykiRDNPbpSr7KPFCCB4TdxPF0ZgM92yASvx/PKOmOul//EQGnF4XsV85IFzb2dH5Tek/Mj9DT7oVU9SSRoEtnu9XFLiHN9bEULdNfCKwniMkqhFfB7ruYR7E/sr/o=
+	t=1762998168; cv=none; b=R7wEYqHrRdrjXMJ3YzZauOk3JWOY5ueEo8SvwUcjEoEG+f+1u/m69Mjb8nYOMvIQYUKhoErqL02JbmrhfW3BxhMj0aonpVKJCRJWk35N0lxfpPDH7shOLweTYNcloXtOTZNHyscN3ASKwkTbYvayxyule/ruXTglZzwkrTU8dCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762997801; c=relaxed/simple;
-	bh=bMdDBLNj03OoDLCv+IHb3i9hv5R5kNipckjW1y7Fk14=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kvfzTaWy59l9Q1yRZd7Qlvyc6R6EJ7UXrnwKgcQivG6gmFFIRFaolRCYuWpJgmcVs/qIvpOhxCRhAoUjteUeaFfll0uqH4QXR0XyGLNs+XTZhSm+qm+H9gSR8DjOJ2bBosxn6pfF/0pekhsA//NPX21Hjdb8lcORVb6U5Nq2Nvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ESTeipE0; arc=none smtp.client-ip=209.85.160.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-3d47192e99bso838499fac.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Nov 2025 17:36:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762997799; x=1763602599; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=3jgQtlJhc0lxfymO4tKYMAAUXywVaSmij9voL4WdtpY=;
-        b=ESTeipE09Ouw4aTYaFw3XMRaJHgmimxe7+5EfWsKO0aQ3Ei1YroLbVQm0wYXTc2aBf
-         OG/0Z1XGaC5sAFfy5jM4qeHymMrmsSl1I5kU7zcgNHwXFPSA3MtoQdzfduFkn7Dioocg
-         X81tFxOJMOP61XPZwkPDKDSd5fYegg9jN4N1d+HAZ85nNuQ1jWbgOFKGgnbsOlH88oiO
-         ZCGRLg2V/mqtEfUekuwioi1Flaa1D2pgG0opmqNk40I6G3JP3QzXIGl0PbdzqtJLxy2n
-         WflAqpGt9WTEF1BfiFFEilGgcue0KWSjtCRIEP+KMx8N6hKwOTVZ6zhLjiqdNQ4/7Ynf
-         jjTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762997799; x=1763602599;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3jgQtlJhc0lxfymO4tKYMAAUXywVaSmij9voL4WdtpY=;
-        b=SpoztZqrw+dJ6I9uDTrpTWbABgDV5Y1akKdxUGVwJDds3WVIh+XLjeDjyfGOlwvoIX
-         2qejPZ4Zl9pfJVW/XOPItFRx4mMpiyRYUoiOY+qy58rq2KmwzkbBmvAW2ZSOx1bnXB0m
-         z0YMJ1H1cgIkK+r1JdGyGzdTo9nbR/HeMCP+f6hpKyzZP+9Lkf44IhqIGwZFbPoqXRk8
-         u5MaztzV6ZptrVImMxJgstgvtaJgAx68YjLsSRruJ2Ts6/MSTa36sT0WRz+Q6EReA/Ww
-         5JyoLEoySwuYpBMYIUtv3hNG5EaxS2FqnJ18HzyqL0d65twYk3u8PquvxFg3zhPtGPyM
-         8e8A==
-X-Forwarded-Encrypted: i=1; AJvYcCWXdmO72lFnV6zTHrWLPWgIfAqelMjpfftsoNKlBw1Wi4ROgKjt/wrBQ/pXGWEZV2i9BRjmQbDIT1Vksr16@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpodoGVwPDNzFYMgb0ugC1vH+Ppu0nNM1QqRLoghab2/+xMl/9
-	Xee3grhUUKRZpt0Bsauju6OqO/HmkugmPWVA8ftWikkNmUdupuom2WQd
-X-Gm-Gg: ASbGnctGAgkqPpU8AQ+EQfzNuYZroMhCM1IPnBe40AHNA+0/kTMWZckkOvrsBXt9MsH
-	7LF2wcd1wbfh/gxbwxAhkeCDnHmjaAnv73/HA4M5JFJaBTEEioei+nC/6EferrJzuqeaRljlk6Y
-	xAVak33LUouKB/Q1Qz7CfCuhATxajn5VtDUoRkxyvQcx7GLwgUeW+YDzKfU+PAeNhxlqz7Wde07
-	46TOVhjtwb/Q2qKz0rYdfHHK4BiC9DeHYkBTsdAy0rrnOjNQxDzJO2FSv79O7qt5WvPArL89DHo
-	YLcCgCzIIXsPlNgK6GUrinni2V3aXObWvfRuulTYag+IBUHvMyDNa+mtg/TLyCdlUUP+wjnh1XF
-	zqjHXUoupTyB94sZkBXzAiciEQ2/+LAdMcBO0gZx++NtVw7NDnMjxDIuJkUnmDtIPaKUSw3/snp
-	orrdp6gmxQmuTrqp0t/p5PovvHDyAJO+qeZeghSsktzVbKpnBUGi0kuB8W8rZqz667gc/yYFTI/
-	t8BjOgLWlHGyTSG1L+Ow1bViu0f
-X-Google-Smtp-Source: AGHT+IENjRfB0Wr8Tt+t2GzNl6io0GJSBGW6XHcXIqQoB6ahGHC1gEyI5aGELtUaPn+tkI9HjmtyHA==
-X-Received: by 2002:a05:6870:247:b0:314:faa7:931b with SMTP id 586e51a60fabf-3e84c6ffc66mr1042812fac.25.1762997799104;
-        Wed, 12 Nov 2025 17:36:39 -0800 (PST)
-Received: from uacde259c55d655.ant.amazon.com (syn-071-040-000-058.biz.spectrum.com. [71.40.0.58])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-3e852058dcesm486754fac.9.2025.11.12.17.36.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Nov 2025 17:36:38 -0800 (PST)
-From: jayxu1990@gmail.com
-To: viro@zeniv.linux.org.uk,
-	brauner@kernel.org
-Cc: jack@suse.cz,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	jayxu1990@gmail.com,
-	rdlee.upstream@gmail.com,
-	avnerkhan@utexas.edu
-Subject: [PATCH] fs: optimize chown_common by skipping unnecessary ownership changes
-Date: Thu, 13 Nov 2025 09:34:49 +0800
-Message-Id: <20251113013449.3874650-1-jayxu1990@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1762998168; c=relaxed/simple;
+	bh=J6kO8MinoWEoGkaYJTyrYhudby1TwSS/GObHrnk96Qk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GUtTbyWl0vrKUboXkgcuTQx7XicOPauO3YV2a2b+YnCe/4SS2jlor3atLzeat6SkrqmmY/FdUiZ9aOxYPCs9QBkJMyXOghaw1wsO/mZgP5aZr4X21HYxOuTiIWYXcQdRca95V6VZmtKE/urTvwxiOa71EviGrJdGvY0NtoY2MfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Q4lsqY4V; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762998166; x=1794534166;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=J6kO8MinoWEoGkaYJTyrYhudby1TwSS/GObHrnk96Qk=;
+  b=Q4lsqY4VXX4igiIgshReZkyUtIgsWlt/3ol98tkOjnkpawdgTu7G5CZs
+   ui2RzS6wPdpnMFN5iQwFkR6HzGCOAvOImdiATC+7tjwBI6hazPLiI+O8U
+   vco0brm5UgrvCLxkxVX/HgaayuGOiKrVyjjFKdib+jDANbt3wA71Css7t
+   bED2XTfJw2/jut2ror+uN0nfcIbKFEuM5AOQlnqVR6sUNJj2f1WGfWLRp
+   psQh/cKHiTwf/rR2pW5orMcOlFlwkDYJeqtOfJluCvGbCmXkGuISNgTmY
+   dvUotlKOeO8l+bWEcYAfFtKtQjMZ1Elge6cFzjB1RnIJEA3JToTFh4COU
+   g==;
+X-CSE-ConnectionGUID: ms54yoDPST6qWb+fTNQQCw==
+X-CSE-MsgGUID: DlDyKHUuRdmHr1puybNetg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11611"; a="65225859"
+X-IronPort-AV: E=Sophos;i="6.19,300,1754982000"; 
+   d="scan'208";a="65225859"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2025 17:42:44 -0800
+X-CSE-ConnectionGUID: UV41EMOGRgSJ6IjRZ/og6g==
+X-CSE-MsgGUID: cb9xlMdyS3Cqc07OKTsBXg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,300,1754982000"; 
+   d="scan'208";a="188618989"
+Received: from yinghaoj-desk.ccr.corp.intel.com (HELO [10.238.1.225]) ([10.238.1.225])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2025 17:42:25 -0800
+Message-ID: <f2bfa5ad-4c74-4b6d-baa7-d0d01d5d9b15@linux.intel.com>
+Date: Thu, 13 Nov 2025 09:42:22 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v1 03/37] KVM: Enumerate support for PRIVATE memory
+ iff kvm_arch_has_private_mem is defined
+To: Ackerley Tng <ackerleytng@google.com>
+Cc: cgroups@vger.kernel.org, kvm@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
+ linux-trace-kernel@vger.kernel.org, x86@kernel.org,
+ akpm@linux-foundation.org, bp@alien8.de, brauner@kernel.org,
+ chao.p.peng@intel.com, chenhuacai@kernel.org, corbet@lwn.net,
+ dave.hansen@intel.com, dave.hansen@linux.intel.com, david@redhat.com,
+ dmatlack@google.com, erdemaktas@google.com, fan.du@intel.com,
+ fvdl@google.com, haibo1.xu@intel.com, hannes@cmpxchg.org, hch@infradead.org,
+ hpa@zytor.com, hughd@google.com, ira.weiny@intel.com,
+ isaku.yamahata@intel.com, jack@suse.cz, james.morse@arm.com,
+ jarkko@kernel.org, jgg@ziepe.ca, jgowans@amazon.com, jhubbard@nvidia.com,
+ jroedel@suse.de, jthoughton@google.com, jun.miao@intel.com,
+ kai.huang@intel.com, keirf@google.com, kent.overstreet@linux.dev,
+ liam.merwick@oracle.com, maciej.wieczor-retman@intel.com,
+ mail@maciej.szmigiero.name, maobibo@loongson.cn,
+ mathieu.desnoyers@efficios.com, maz@kernel.org, mhiramat@kernel.org,
+ mhocko@kernel.org, mic@digikod.net, michael.roth@amd.com, mingo@redhat.com,
+ mlevitsk@redhat.com, mpe@ellerman.id.au, muchun.song@linux.dev,
+ nikunj@amd.com, nsaenz@amazon.es, oliver.upton@linux.dev,
+ palmer@dabbelt.com, pankaj.gupta@amd.com, paul.walmsley@sifive.com,
+ pbonzini@redhat.com, peterx@redhat.com, pgonda@google.com, prsampat@amd.com,
+ pvorel@suse.cz, qperret@google.com, richard.weiyang@gmail.com,
+ rick.p.edgecombe@intel.com, rientjes@google.com, rostedt@goodmis.org,
+ roypat@amazon.co.uk, rppt@kernel.org, seanjc@google.com,
+ shakeel.butt@linux.dev, shuah@kernel.org, steven.price@arm.com,
+ steven.sistare@oracle.com, suzuki.poulose@arm.com, tabba@google.com,
+ tglx@linutronix.de, thomas.lendacky@amd.com, vannapurve@google.com,
+ vbabka@suse.cz, viro@zeniv.linux.org.uk, vkuznets@redhat.com,
+ wei.w.wang@intel.com, will@kernel.org, willy@infradead.org,
+ wyihan@google.com, xiaoyao.li@intel.com, yan.y.zhao@intel.com,
+ yilun.xu@intel.com, yuzenghui@huawei.com, zhiquan1.li@intel.com
+References: <cover.1760731772.git.ackerleytng@google.com>
+ <405686bacd68ce6c76aa5e6ef40f0a5324983c5b.1760731772.git.ackerleytng@google.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <405686bacd68ce6c76aa5e6ef40f0a5324983c5b.1760731772.git.ackerleytng@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-From: Jay Xu <jayxu1990@gmail.com>
 
-Add early return optimization to chown_common() when the requested
-uid/gid already matches the current inode ownership. This avoids
-calling notify_change() and associated filesystem operations when
-no actual change is needed.
 
-The check is performed after acquiring the inode lock to ensure
-atomicity and uses the kernel's uid_eq()/gid_eq() functions for
-proper comparison.
+On 10/18/2025 4:11 AM, Ackerley Tng wrote:
+> From: Sean Christopherson <seanjc@google.com>
+>
+> Explicitly guard reporting support for KVM_MEMORY_ATTRIBUTE_PRIVATE based
+> on kvm_arch_has_private_mem being #defined in anticipation of decoupling
+> kvm_supported_mem_attributes() from CONFIG_KVM_VM_MEMORY_ATTRIBUTES.
+> guest_memfd support for memory attributes will be unconditional to avoid
+> yet more macros (all architectures that support guest_memfd are expect to
+  expect -> expected
 
-This optimization provides several benefits:
-- Reduces unnecessary filesystem metadata updates and journal writes
-- Prevents redundant storage I/O when files are on persistent storage
-- Improves performance for recursive chown operations that encounter
-  files with already-correct ownership
-- Avoids invoking security hooks and filesystem-specific setattr
-  operations when no change is required
-
-Signed-off-by: Jay Xu <jayxu1990@gmail.com>
----
- fs/open.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-diff --git a/fs/open.c b/fs/open.c
-index 3d64372ecc67..82bde70c6c08 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -761,6 +761,7 @@ int chown_common(const struct path *path, uid_t user, gid_t group)
- 	struct iattr newattrs;
- 	kuid_t uid;
- 	kgid_t gid;
-+	bool needs_update = false;
- 
- 	uid = make_kuid(current_user_ns(), user);
- 	gid = make_kgid(current_user_ns(), group);
-@@ -779,6 +780,17 @@ int chown_common(const struct path *path, uid_t user, gid_t group)
- 	error = inode_lock_killable(inode);
- 	if (error)
- 		return error;
-+
-+	/* Check if ownership actually needs to change */
-+	if ((newattrs.ia_valid & ATTR_UID) && !uid_eq(inode->i_uid, uid))
-+		needs_update = true;
-+	if ((newattrs.ia_valid & ATTR_GID) && !gid_eq(inode->i_gid, gid))
-+		needs_update = true;
-+
-+	if (!needs_update) {
-+		inode_unlock(inode);
-+		return 0;
-+	}
- 	if (!S_ISDIR(inode->i_mode))
- 		newattrs.ia_valid |= ATTR_KILL_SUID | ATTR_KILL_PRIV |
- 				     setattr_should_drop_sgid(idmap, inode);
--- 
-2.34.1
+> user per-gmem attributes at some point), at which point enumerating support
+    ^
+   use
+> KVM_MEMORY_ATTRIBUTE_PRIVATE based solely on memory attributes being
+> supported _somewhere_ would result in KVM over-reporting support on arm64.
+>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> ---
+>   include/linux/kvm_host.h | 2 +-
+>   virt/kvm/kvm_main.c      | 2 ++
+>   2 files changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+> index fddb373fcbaaf..21bf30e8d3cc1 100644
+> --- a/include/linux/kvm_host.h
+> +++ b/include/linux/kvm_host.h
+> @@ -721,7 +721,7 @@ static inline int kvm_arch_vcpu_memslots_id(struct kvm_vcpu *vcpu)
+>   }
+>   #endif
+>   
+> -#ifndef CONFIG_KVM_VM_MEMORY_ATTRIBUTES
+> +#ifndef kvm_arch_has_private_mem
+>   static inline bool kvm_arch_has_private_mem(struct kvm *kvm)
+>   {
+>   	return false;
+> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> index f73047ea4333e..591795a3fa124 100644
+> --- a/virt/kvm/kvm_main.c
+> +++ b/virt/kvm/kvm_main.c
+> @@ -2428,8 +2428,10 @@ static int kvm_vm_ioctl_clear_dirty_log(struct kvm *kvm,
+>   #ifdef CONFIG_KVM_VM_MEMORY_ATTRIBUTES
+>   static u64 kvm_supported_mem_attributes(struct kvm *kvm)
+>   {
+> +#ifdef kvm_arch_has_private_mem
+>   	if (!kvm || kvm_arch_has_private_mem(kvm))
+>   		return KVM_MEMORY_ATTRIBUTE_PRIVATE;
+> +#endif
+>   
+>   	return 0;
+>   }
 
 
