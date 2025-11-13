@@ -1,130 +1,204 @@
-Return-Path: <linux-fsdevel+bounces-68352-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68353-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B2FEC598D3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 19:45:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 963B4C59B11
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 20:16:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1047135053A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 18:42:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE8AB3BAE22
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 19:14:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AB2A3126DE;
-	Thu, 13 Nov 2025 18:42:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 017D831A551;
+	Thu, 13 Nov 2025 19:13:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MKLnbqVz"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JjYcinjb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21CD72F5A07
-	for <linux-fsdevel@vger.kernel.org>; Thu, 13 Nov 2025 18:42:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D05F31A051
+	for <linux-fsdevel@vger.kernel.org>; Thu, 13 Nov 2025 19:13:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763059363; cv=none; b=jq/1Rw6jAnWuuFtkgDvMO3soxEVchXFDKoCVmfevzXi3GpOFwFFhw/yiYVSl41+6sdXIK0M21zpDJANVRs6F+IZPJWf5B4dP1CbAJ9/T+Ui9/CzVqV/YtMVlzJrE0R3wTVZo17zpHify6cC8tf9I/focoy6l7f3WrWFANNKHyTQ=
+	t=1763061213; cv=none; b=C87/Ngcn7xFjci0fBFRf659UQWgHdpYib1k7q1H98AahayEWK07j3TcuOwK7JhZt9HN1gzTu7GwgqWqe3hw0EEMX05/dthsYZx5je1ytn4/cMmdu0UCKFd0Q6hNM32uanynWEadri9EOdMliuUU49tc/p0b+GkOKoWBr/OLigso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763059363; c=relaxed/simple;
-	bh=vkMiow+1ms56PcCvTLU0RYUQRyn8k5JItnQgs6sT+60=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bbixQbFNaffI/63L+TTId6EYQeMlvlIVnkRoRDCRt1UD1y5vSDWnVI3r5eMx8b0kIGigTAqfvHIiN0qIy9XDicZUqtWfypY1ARHM3ixxGkzAGBNlC7Pa8jt5+0A3XTQfZp0c/munXOtPLGlmt5PkEvWNEm2XaiQDBw7FgrRPudc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MKLnbqVz; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-b403bb7843eso234390166b.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Nov 2025 10:42:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763059359; x=1763664159; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4vqBsctwl60QsbxzonTsZPrDrAkCw3j2v5Lfpm0yDzA=;
-        b=MKLnbqVz94JXnmBvVVHYT7ZQ00tTi+asWopWuuSCAVCuho1qespfhf2GCNnbH93SS6
-         zHatfac3WNH5D1vDWmJ+v6c4cpGLmYLlQg6V6efB8LMR3moPMGCEBdJqW48CJ6rmcK7g
-         zP76847UswEVf3Nvt5UFd83HQwkF1/44LhUTP8O2F/fw3alPd/Zv36xMto4hts6Voy5L
-         SluWb8UdK/ozwUQ5gBdcNryuqdIelKFfeC8vCG+lIGsBqOSX9TFbjZDjMtN28tRy6dhU
-         Im4NbpWTR0oP8Ynfzwm4SXmEeNLjiJsiEXuxrwT1ZqLo0NyLbG8JdJIAQa1sePe+Q8Lp
-         Mi7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763059359; x=1763664159;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=4vqBsctwl60QsbxzonTsZPrDrAkCw3j2v5Lfpm0yDzA=;
-        b=hR1ih5PnGqTLatYH0OXpmg2HS3C5u63S3PsHzwbkivD6iXTDapN72kyOJZHYs6hfWf
-         B1gZ2jgBVjVt5gLQYUUyBxGFzSsWO16b39DX7ghz+ahAckB72HXDklCkF2fOh0gcicmh
-         oR+vUjltTz9akpKpvXn9aIw/cD66CtFy3qN+9Pv4mPdThbkh/CzLYLafNYapMjlVFIQr
-         yXVo5qTy+GGBe9Ep2b/4cSXbHrWyQWvmcyO/Keyr3J6FiVoX52O1Wimvydjl1cbuJ+/b
-         uWkv43hCGLAQ522HhR6eP9nsQu7BHAzhm4jVKN5xQ+qAmYRzdIRmaJeBgF5Q4WvLNWIz
-         zuHw==
-X-Forwarded-Encrypted: i=1; AJvYcCXgTREzh9aDNV/bV0mzLgKKAQAusw74QwB5ckdfdSNVJFT92F1o9W7NZD5bF5YZM9JPb4e053RmWucFHcTq@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyesj7TjKT8RfKQDRyiWcCMJ+JPNQRluerjNGXEJXy8RIxWkuFr
-	O+1+kRMD8nebQhJg1ZC6uQc00KAyOkxuSYCVT+3fViJ/1RZm+FFtWUiUokg3sgmqNc2i3T34HX8
-	lvXsQnXzlEh7kn+PP5YhmFGCQsiEJZRU=
-X-Gm-Gg: ASbGncsbKilvdg846ERS2BxWG4v79qb540tfzdhbz6kJh0DloLfCMRCyYdeLjmpiVgN
-	1tveuVCxE8WpQ534Mz6ppfVT3IzcDaw20+Wtu32dLvvu4jAKIkDe6uZimR9OKn5fLYEpIwGaHuZ
-	hprWkWr9OhWcjZrT4j/iQOHhexQXAtb6EyiJXsv7qZRubUwTs9VczeKpcQLLe3vHDkW/7XP/ssI
-	9FLr4pRut3CLjI1bJzG/BqHR97PSNo8R9t/IbotOoGRTmizPKIzHLpIhdY6jOhKP1EwXljrYDru
-	hKmFrlObcByCrYaIIMg=
-X-Google-Smtp-Source: AGHT+IGdfn1u3gS/PRRt2HlWgSujLTq7wFcHQiBdhoAo3+LDbZLegcrov/svaaod2/hKCP8QsFjY8gvTgqki0l8K6AI=
-X-Received: by 2002:a17:907:d09:b0:b3f:cc6d:e0a8 with SMTP id
- a640c23a62f3a-b736786e693mr24155166b.17.1763059359232; Thu, 13 Nov 2025
- 10:42:39 -0800 (PST)
+	s=arc-20240116; t=1763061213; c=relaxed/simple;
+	bh=t379PNNDtgqAq91+E+L22RFtXrzOjTEW/ORV3+9ulwo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Yk61CRwoiamOpM9v3w/vvDz0amYBpaYkcY/ux8DzDktcwwFjVhhhHHir/xQpqdGmGV1sbHANtGLUonbofgUTAzh6pytperHe6aMyEUsAlETju1s2cpDUeMRAsuMecsgBNYEVX/ehSccYq4gO0sbCrmNBdUB3mQevdt65URIoisY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JjYcinjb; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1763061209;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=TyHzdpDFZ+y9Xq3UcqZS1nBRZScwrGk9PLsYYKXTicQ=;
+	b=JjYcinjbeb/+TokCga9KKqbeiHL0a3Fd/OxgsR7MiGePH2DS89aR++UDRkbGj1kIW5LH72
+	uogn3PD/e2dVhjCVk+TL5TCpdUUbVO3FmUl0brd9F/EMR7Rv92fma1HKqw+4NR9ij1Vth9
+	CEhvBsuTPNGDu/+qYrutlvkW7FlcRQQ=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-422-15YijcbmNi2ii0LkA0cgSg-1; Thu,
+ 13 Nov 2025 14:13:26 -0500
+X-MC-Unique: 15YijcbmNi2ii0LkA0cgSg-1
+X-Mimecast-MFC-AGG-ID: 15YijcbmNi2ii0LkA0cgSg_1763061204
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A2DD719560A1;
+	Thu, 13 Nov 2025 19:13:23 +0000 (UTC)
+Received: from pasta.fast.eng.rdu2.dc.redhat.com (unknown [10.44.32.90])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 097331800451;
+	Thu, 13 Nov 2025 19:13:15 +0000 (UTC)
+From: Andreas Gruenbacher <agruenba@redhat.com>
+To: gfs2@lists.linux.dev
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Dave Chinner <david@fromorbit.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org,
+	Andreas Gruenbacher <agruenba@redhat.com>,
+	Andrew Price <anprice@redhat.com>
+Subject: [PATCH] gfs2: Prevent recursive memory reclaim
+Date: Thu, 13 Nov 2025 19:13:14 +0000
+Message-ID: <20251113191314.1679300-1-agruenba@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251113-work-ovl-cred-guard-v2-0-c08940095e90@kernel.org> <20251113-work-ovl-cred-guard-v2-42-c08940095e90@kernel.org>
-In-Reply-To: <20251113-work-ovl-cred-guard-v2-42-c08940095e90@kernel.org>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 13 Nov 2025 19:42:28 +0100
-X-Gm-Features: AWmQ_bnsFNc8E8lkJvmBZKTiunyhO62nLio50a0geJBfvLHNV-INFsCrCp-wPDQ
-Message-ID: <CAOQ4uxh5j5wEKRoZrb-Vp+rt3U07A6D2O4Ls_ZWJ9cp2PjR=4A@mail.gmail.com>
-Subject: Re: [PATCH v2 42/42] ovl: detect double credential overrides
-To: Christian Brauner <brauner@kernel.org>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Thu, Nov 13, 2025 at 5:38=E2=80=AFPM Christian Brauner <brauner@kernel.o=
-rg> wrote:
->
-> Overlayfs always allocates a private copy for ofs->creator_creds.
-> So there is never going to be a task that uses ofs->creator_creds.
-> This means we can use an vfs debug assert to detect accidental
-> double credential overrides.
->
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
-> ---
->  fs/overlayfs/util.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
-> index dc521f53d7a3..f41b9d825a0f 100644
-> --- a/fs/overlayfs/util.c
-> +++ b/fs/overlayfs/util.c
-> @@ -66,6 +66,8 @@ const struct cred *ovl_override_creds(struct super_bloc=
-k *sb)
->  {
->         struct ovl_fs *ofs =3D OVL_FS(sb);
->
-> +       /* Detect callchains where we override credentials multiple times=
-. */
-> +       VFS_WARN_ON_ONCE(current->cred =3D=3D ofs->creator_cred);
->         return override_creds(ofs->creator_cred);
->  }
->
->
+Function new_inode() returns a new inode with inode->i_mapping->gfp_mask
+set to GFP_HIGHUSER_MOVABLE.  This value includes the __GFP_FS flag, so
+allocations in that address space can recurse into filesystem memory
+reclaim.  We don't want that to happen because it can consume a
+significant amount of stack memory.
 
-Unfortunately, this assertion is triggered from
+Worse than that is that it can also deadlock: for example, in several
+places, gfs2_unstuff_dinode() is called inside filesystem transactions.
+This calls calls filemap_grab_folio(), which can allocate a new folio,
+which can trigger memory reclaim.  If memory reclaim recurses into the
+filesystem and starts another transaction, a deadlock will ensue.
 
-ovl_iterate() -> ovl_cache_update() -> vfs_getattr() -> ovl_getattr()
+To fix these kinds of problems, prevent memory reclaim from recursing
+into filesystem code by making sure that the gfp_mask of inode address
+spaces doesn't include __GFP_FS.
 
-So we cannot add it without making a lot of changes.
+The "meta" and resource group address spaces were already using GFP_NOFS
+as their gfp_mask (which doesn't include __GFP_FS).  Inodes allocated by
+new_inode() will have their inode->i_mapping->gfp_mask set to
+GFP_HIGHUSER_MOVABLE, which is less restrictive than GFP_NOFS, though.
+To avoid being overly limiting, use the default value and only knock off
+the __GFP_FS flag.  I'm not sure if this will actually make a
+difference, but it also shouldn't hurt.
 
-Thanks,
-Amir.
+This patch is loosely based on commit ad22c7a043c2 ("xfs: prevent stack
+overflows from page cache allocation").
+
+Fixes xfstest generic/273.
+
+Reviewed-by: Andrew Price <anprice@redhat.com>
+Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
+---
+ fs/gfs2/glock.c      |  5 ++++-
+ fs/gfs2/inode.c      | 15 +++++++++++++++
+ fs/gfs2/inode.h      |  1 +
+ fs/gfs2/ops_fstype.c |  2 +-
+ 4 files changed, 21 insertions(+), 2 deletions(-)
+
+diff --git a/fs/gfs2/glock.c b/fs/gfs2/glock.c
+index b677c0e6b9ab..9f2eb7e38569 100644
+--- a/fs/gfs2/glock.c
++++ b/fs/gfs2/glock.c
+@@ -1211,10 +1211,13 @@ int gfs2_glock_get(struct gfs2_sbd *sdp, u64 number,
+ 
+ 	mapping = gfs2_glock2aspace(gl);
+ 	if (mapping) {
++		gfp_t gfp_mask;
++
+                 mapping->a_ops = &gfs2_meta_aops;
+ 		mapping->host = sdp->sd_inode;
+ 		mapping->flags = 0;
+-		mapping_set_gfp_mask(mapping, GFP_NOFS);
++		gfp_mask = mapping_gfp_mask(sdp->sd_inode->i_mapping);
++		mapping_set_gfp_mask(mapping, gfp_mask);
+ 		mapping->i_private_data = NULL;
+ 		mapping->writeback_index = 0;
+ 	}
+diff --git a/fs/gfs2/inode.c b/fs/gfs2/inode.c
+index 8a7ed80d9f2d..d7e35a05c161 100644
+--- a/fs/gfs2/inode.c
++++ b/fs/gfs2/inode.c
+@@ -89,6 +89,19 @@ static int iget_set(struct inode *inode, void *opaque)
+ 	return 0;
+ }
+ 
++void gfs2_setup_inode(struct inode *inode)
++{
++	gfp_t gfp_mask;
++
++	/*
++	 * Ensure all page cache allocations are done from GFP_NOFS context to
++	 * prevent direct reclaim recursion back into the filesystem and blowing
++	 * stacks or deadlocking.
++	 */
++	gfp_mask = mapping_gfp_mask(inode->i_mapping);
++	mapping_set_gfp_mask(inode->i_mapping, gfp_mask & ~__GFP_FS);
++}
++
+ /**
+  * gfs2_inode_lookup - Lookup an inode
+  * @sb: The super block
+@@ -132,6 +145,7 @@ struct inode *gfs2_inode_lookup(struct super_block *sb, unsigned int type,
+ 		struct gfs2_glock *io_gl;
+ 		int extra_flags = 0;
+ 
++		gfs2_setup_inode(inode);
+ 		error = gfs2_glock_get(sdp, no_addr, &gfs2_inode_glops, CREATE,
+ 				       &ip->i_gl);
+ 		if (unlikely(error))
+@@ -752,6 +766,7 @@ static int gfs2_create_inode(struct inode *dir, struct dentry *dentry,
+ 	error = -ENOMEM;
+ 	if (!inode)
+ 		goto fail_gunlock;
++	gfs2_setup_inode(inode);
+ 	ip = GFS2_I(inode);
+ 
+ 	error = posix_acl_create(dir, &mode, &default_acl, &acl);
+diff --git a/fs/gfs2/inode.h b/fs/gfs2/inode.h
+index e43f08eb26e7..2fcd96dd1361 100644
+--- a/fs/gfs2/inode.h
++++ b/fs/gfs2/inode.h
+@@ -86,6 +86,7 @@ static inline int gfs2_check_internal_file_size(struct inode *inode,
+ 	return -EIO;
+ }
+ 
++void gfs2_setup_inode(struct inode *inode);
+ struct inode *gfs2_inode_lookup(struct super_block *sb, unsigned type,
+ 			        u64 no_addr, u64 no_formal_ino,
+ 			        unsigned int blktype);
+diff --git a/fs/gfs2/ops_fstype.c b/fs/gfs2/ops_fstype.c
+index aa15183f9a16..1a2db8053da0 100644
+--- a/fs/gfs2/ops_fstype.c
++++ b/fs/gfs2/ops_fstype.c
+@@ -1183,7 +1183,7 @@ static int gfs2_fill_super(struct super_block *sb, struct fs_context *fc)
+ 
+ 	mapping = gfs2_aspace(sdp);
+ 	mapping->a_ops = &gfs2_rgrp_aops;
+-	mapping_set_gfp_mask(mapping, GFP_NOFS);
++	gfs2_setup_inode(sdp->sd_inode);
+ 
+ 	error = init_names(sdp, silent);
+ 	if (error)
+-- 
+2.51.0
+
 
