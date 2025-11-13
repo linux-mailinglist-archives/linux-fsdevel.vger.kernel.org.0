@@ -1,167 +1,111 @@
-Return-Path: <linux-fsdevel+bounces-68268-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68269-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93F9BC57B15
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 14:35:36 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84657C57B75
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 14:38:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 887D834A406
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 13:33:11 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C5FC93455A5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 13:35:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EC4A1B87C0;
-	Thu, 13 Nov 2025 13:33:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3206D1F2BAD;
+	Thu, 13 Nov 2025 13:34:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OAsBu8BO"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vgp13ZU6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 971DB12D1F1
-	for <linux-fsdevel@vger.kernel.org>; Thu, 13 Nov 2025 13:33:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA150184524
+	for <linux-fsdevel@vger.kernel.org>; Thu, 13 Nov 2025 13:34:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763040784; cv=none; b=XUmt7KjCAa3uiWZDoBvhkX6ngXKWd/jK/DIsVmqSR+uIbDATcm/eG/aash8gjQzKtOIXispp1+vy2RIreRqYUsLOh+MQNixleqc1v/v/B/ydBob/RUbD7Pf5wxAyiFnb4TsvOZ2vuhahZqKX1GSBaXy6zjCnlavx1iWz6FL/ceY=
+	t=1763040870; cv=none; b=uJZ9xLA44yUqscQ8Mh7YUFxC+i+AcRfOQcbplIZxCrLvwUB50WI+db7jSqcM5bGqgNuGnkIWkcfQ2xfm2gmfrP422GABbBDNZ7+WFAcr+zKKMCcDJBmVXRDDKZo4ZHEFGnJIrCT4OhcWT/EzgWWNKNuXEB1L0h9oDnaOuadarXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763040784; c=relaxed/simple;
-	bh=PWdWtpMwm7TK04XxRu0ZWopcsf9EJ+150nhJ8g682Ow=;
+	s=arc-20240116; t=1763040870; c=relaxed/simple;
+	bh=xSuAWsrB+GTJiuXftbiTStIICDoDtQ0BHogVwv2YUEs=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IrO/we3+qvdJdPu7O0BPFmwIq4JLVF/rBqtxZDxeETZMivuMNY0xb/4n1I90fhKhiwBS0q29Lr+btwWAyX+QYlUm8lHGtrsvQ288eLWrFjIgGPHgEagZBbk9T6J4GMnPFgPNRxg8fHn8QbYXYcAlyxyXN6Ov585pI4FHku8L3No=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OAsBu8BO; arc=none smtp.client-ip=209.85.208.53
+	 To:Cc:Content-Type; b=KazILE6JnKAVe7ZCb2hkBqIPs+02sl2IvgADZa/nlvHl5kzbR7GttYpAVoZ6evcOYqlP3n4IB5jz5NmIhghZQGjvqIp60+EOieB4NfzcFMy1iEVwi1zF6sYoDRO6M4fkSPepPyOry17VgDd5+xmH9d6nIEM2ixiKmdgdKp2DGTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vgp13ZU6; arc=none smtp.client-ip=209.85.208.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-640c6577120so1466479a12.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Nov 2025 05:33:02 -0800 (PST)
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-640ca678745so1597440a12.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Nov 2025 05:34:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763040781; x=1763645581; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1763040867; x=1763645667; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=E8LGqwMAvQKE3C9UxWHGkwnvKdBLEoTQWuCK/v1mU08=;
-        b=OAsBu8BOrOHMKkotWz7ZQhQNQm6yBcK7y8MGEqmW4H4ZvkXGCp8dPulCN/9gwIJx+p
-         ZDIQoW00c4mVDafMeO+iHWhi4CRh4/5Wwu7KuXD9IMCdfKEXNTavmMiZV94ycqeTy5DR
-         9C+lKGZA3yIovCGPPS4qIELCSUVl//+g9vW1QU+lABbaI0+zvBDTU6XaO1e97HUKXHM9
-         UizEpUv3xYG0TQtOlDhLbJQtmDnQzlFNe5bv07DoFhY4avhzMXI05TFtVyLfaPj9yHZc
-         ReO5eKjhY+TyVuHiixGojzZs93HhVLkVGTNY2Fp3Tt1vegGFIog4Ps4StLpIp1k5HKjQ
-         6Vpg==
+        bh=xSuAWsrB+GTJiuXftbiTStIICDoDtQ0BHogVwv2YUEs=;
+        b=Vgp13ZU6bWVPwi//9XGBzu7or398DAv2lpAdurSFoWrjKeKhpbT9E3AxFquJC6u5OS
+         3Fjw4lviWwbWruFNvjfq2Ycf5LOMiSkwekR5jAR8EVzVn7fwJerNoTlc40wabFEc0n0q
+         GbOtIq5cmrrxRCFZ5GnpDmU3zbH5EHjEf6VMYX+qO85jIgwc2Os2GCB4prlrIgyKr0fp
+         CpcSKgi8AfSlvUCvs0c+ElD+7bkkwfD4njCdrRtp6kJ/lxY6CU8F47fvM4qrk9d08/U2
+         ECrt3/fHCh8LDtwd8lD5rA0X0tPNRqPe/GkVdwJA5Xs2y7ueLHd0pqemQDrfrgmRvOV0
+         AITA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763040781; x=1763645581;
+        d=1e100.net; s=20230601; t=1763040867; x=1763645667;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=E8LGqwMAvQKE3C9UxWHGkwnvKdBLEoTQWuCK/v1mU08=;
-        b=qfLfga1ojE3TlzatwpLztlmNZFTBwt7AqneoHujY9QZi1I/lIRuTHO2sxf3snANXOk
-         ABPacSDOTZ1Ce3PBn7L5gssgFkJibw40Q7s5jz17LZ14NkRGABCuQFT9MirmufbMHTJf
-         RKU5CaSt2JHYysWZWTEGk/B/ooaT2mWiRdCbxLvw/ISliKwxqbAYah6HFajiaJuipE5o
-         lN4pQEBIUcNU/q+YuZsQ6l7VpB73V7NMJrWPrRrxzT2AEnXyOBC+IpHKPiZxQt5U3eI/
-         /1GiLkicbj3ka9Z6AibCxD014A5OmUcMNJPabLSs4J6lVzK/Uk2clkZ7kPRH0Hhy1Uyp
-         nq7g==
-X-Forwarded-Encrypted: i=1; AJvYcCV5bHc5njl+XwpDhtChhr/seEpvSwcTyR9Dye9dzQEfBDPNo/jsOGM4qc9P+1lTjKudGS1DL/YDv6CWFOGk@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFNmZU1kcEWl/7P9567Foy8zmHa7cX3PIrHrlFpRnWkxMYh8nn
-	ip/bRSr+jI9hA95UIZj5Q1TjMQXW4VZdkibWIk+pmKvivz7tx62amW30or6cvJAuq9qmsPlkSYk
-	v4xa6nA3567867F/5w6EdPaxAhZbR/ZM=
-X-Gm-Gg: ASbGncuTLfSeRiMZLd4ZJ2YRd1/3F/UI+Kp3cJRjEMLEjy6wszvaJ3WizT+dNRqCiCC
-	wUyHnDRYJiuPEqIPpDSM1fdeTFUV6J+7FthUCLlI0fw4VUOZ4QeX57c8/Q5F90ehjp1lmveC6b2
-	UPiS+bpHuq8XPIYHhqiDaeId5GciboYGXtbiyXabbgdQ9pQI9JwmIgeTQ1aeOgZfTiAgzjHz/34
-	9dcfgavWgNx7/XTtgML4lYn1IpjX0tZLDLT2dZ6QlmmxNocI96snzcA5RtQAntSyX6zjvYmjuzl
-	1tdB49HzwJnhiVm/fwlaFsqHZgAorw==
-X-Google-Smtp-Source: AGHT+IEaxOVDhsc9jZw1RYkKWH1/DrDjRSkatluW7LrAZDlgm9qz3UetakvQdTrECJNNy1tI8420S4+sCqsaHLVeMDw=
-X-Received: by 2002:a05:6402:42c1:b0:63c:533f:4b25 with SMTP id
- 4fb4d7f45d1cf-6431a4d60aemr6052357a12.15.1763040780787; Thu, 13 Nov 2025
- 05:33:00 -0800 (PST)
+        bh=xSuAWsrB+GTJiuXftbiTStIICDoDtQ0BHogVwv2YUEs=;
+        b=o4CjvjHeaIMlDNk341IYpjmLxOL5fyA1cMJLopCyiFHyDXMzBLZ/eklfvhkUD0pwzr
+         ACouGwl0Qk2dgnc4QI1vbjASFihCvtU0GKpaBIN8jL4GZjHv9AGCyHym1D7ep91O75oD
+         e8oeUXaMAGLAfevQrmUgNXXspgLh2xH4ElfsuP4PAY0Q7igktpnqUGuCjLN6e0frGFRy
+         zqMWIeNemRCVkFblqd2ubtidC+cqGT3f5oOXZBw+iiJJdKuHNrIyKNOFdXdQPGf0H2eE
+         Anw8p08ssgsPArz8sJM6rPViiex7qfTqOWfmXVQD+CY1+zuA8vzQ1wMv3VLWZFgXpEv6
+         Styw==
+X-Forwarded-Encrypted: i=1; AJvYcCVuOFDuEpKS3C4ZqSA9nC7PWmyjdEQUsdQbChK1Xx6KKWFVw9PmBCd1MF351pY2wgqrtBVT6rlOpF2JUwnL@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpPOi5efMtXJjewHtJtjCDxB5EJSj5Crwub51NxUtHM9A47iS6
+	OTgzJ1DTuUK55TppKf4zOCu1wsGKwL/Uyf1wTzVAZovmwP7fiaXCqiFu1k9dJKw6muHZwBGu/P0
+	BX2tzGuyCw4t9H1i3c3fd/7bk0drXaXA=
+X-Gm-Gg: ASbGncvVe1WJJIDXbRAjVb4XUDFZBb4pIpD3KlZeX+fs5bsvofQxh5/5d+jAelMLYKl
+	8KKofaJ1phXjigyibyl5wLmp3KONXVkTng3dpjYYiz1ynPdlmvdCAttaC7atb91bphXBWhQLB+q
+	ERZHjLNOszTDZOAmEHYxdrGxd76pIDd/OaVeZ/DtnOi1cIuuRTx3VCLJ7MeqNQuXr9nK8t3J1Pn
+	cSyh6scilJa8c/N54LdD5K1K3dPsukDACweSJcZXg7T0QJ2UY34WeJ/pqjGHW7xwjbU2/EMtORf
+	0zPoeAL84ZT6TPzgtiQ4mVAkXMu1Fg==
+X-Google-Smtp-Source: AGHT+IGF6esb7kGa/crhjmb6/aWLvTJVqnAAYAvGO0s6QczR+42b3/p2M4bcL9sRn+PV69DMVD/y4dimDrwFh8MqTEw=
+X-Received: by 2002:a05:6402:27d0:b0:640:c062:8bca with SMTP id
+ 4fb4d7f45d1cf-6431a5481f8mr5585662a12.18.1763040866928; Thu, 13 Nov 2025
+ 05:34:26 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251113-work-ovl-cred-guard-v1-0-fa9887f17061@kernel.org> <20251113-work-ovl-cred-guard-v1-25-fa9887f17061@kernel.org>
-In-Reply-To: <20251113-work-ovl-cred-guard-v1-25-fa9887f17061@kernel.org>
+References: <20251113-work-ovl-cred-guard-v1-0-fa9887f17061@kernel.org>
+ <20251113-work-ovl-cred-guard-v1-3-fa9887f17061@kernel.org> <CAJfpegt9LQe_L=Ki0x6G+OMuNhzof3i4KAcGWGrDNDq3tBfMtA@mail.gmail.com>
+In-Reply-To: <CAJfpegt9LQe_L=Ki0x6G+OMuNhzof3i4KAcGWGrDNDq3tBfMtA@mail.gmail.com>
 From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 13 Nov 2025 14:32:49 +0100
-X-Gm-Features: AWmQ_bllksn6y4glJIYhv-nklVzF7xmCVMWq03fTJp1rH6xOsLLGpbql0Ta6TgE
-Message-ID: <CAOQ4uxhehyGUYS1rSs=8Qo9PHuHAR6S=WkY28r4o+jAjZ6UObw@mail.gmail.com>
-Subject: Re: [PATCH RFC 25/42] ovl: port ovl_check_whiteout() to cred guard
-To: Christian Brauner <brauner@kernel.org>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Linus Torvalds <torvalds@linux-foundation.org>, 
+Date: Thu, 13 Nov 2025 14:34:15 +0100
+X-Gm-Features: AWmQ_bn1bXyA9VHVc-NJr9ApkEqL9TN4PRjFv5uuLP4grJaaT47tUE3C-uFyGpM
+Message-ID: <CAOQ4uxjnmLiLzM-a1acqPpGrFYkLkdrnpuqowD=ggQ=m72zbdg@mail.gmail.com>
+Subject: Re: [PATCH RFC 03/42] ovl: port ovl_create_or_link() to cred guard
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Christian Brauner <brauner@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
 	linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 13, 2025 at 2:03=E2=80=AFPM Christian Brauner <brauner@kernel.o=
-rg> wrote:
+On Thu, Nov 13, 2025 at 2:31=E2=80=AFPM Miklos Szeredi <miklos@szeredi.hu> =
+wrote:
 >
-> Use the scoped ovl cred guard.
+> On Thu, 13 Nov 2025 at 14:02, Christian Brauner <brauner@kernel.org> wrot=
+e:
+> >
+> > Use the scoped ovl cred guard.
 >
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
-> ---
->  fs/overlayfs/readdir.c | 30 +++++++++++++-----------------
->  1 file changed, 13 insertions(+), 17 deletions(-)
+> Would it make sense to re-post the series with --ignore-space-change?
 >
-> diff --git a/fs/overlayfs/readdir.c b/fs/overlayfs/readdir.c
-> index 1e9792cc557b..ba345ceb4559 100644
-> --- a/fs/overlayfs/readdir.c
-> +++ b/fs/overlayfs/readdir.c
-> @@ -350,26 +350,22 @@ static int ovl_check_whiteouts(const struct path *p=
-ath, struct ovl_readdir_data
->  {
->         int err =3D 0;
->         struct dentry *dentry, *dir =3D path->dentry;
-> -       const struct cred *old_cred;
->
-> -       old_cred =3D ovl_override_creds(rdd->dentry->d_sb);
+> Otherwise it's basically impossible for a human to review patches
+> which mostly consist of indentation change.
 
-I think that ovl_override_creds() here can be dropped.
-
-The only caller ovl_dir_read() must be called with mounted_creds
-because it is also calling ovl_path_open() and iterate_dir(realfile
+Or just post a branch where a human reviewer can review changes with
+--ignore-space-change?
 
 Thanks,
 Amir.
-
-> -
-> -       while (rdd->first_maybe_whiteout) {
-> -               struct ovl_cache_entry *p =3D
-> -                       rdd->first_maybe_whiteout;
-> -               rdd->first_maybe_whiteout =3D p->next_maybe_whiteout;
-> -               dentry =3D lookup_one_positive_killable(mnt_idmap(path->m=
-nt),
-> -                                                     &QSTR_LEN(p->name, =
-p->len),
-> -                                                     dir);
-> -               if (!IS_ERR(dentry)) {
-> -                       p->is_whiteout =3D ovl_is_whiteout(dentry);
-> -                       dput(dentry);
-> -               } else if (PTR_ERR(dentry) =3D=3D -EINTR) {
-> -                       err =3D -EINTR;
-> -                       break;
-> +       with_ovl_creds(rdd->dentry->d_sb) {
-> +               while (rdd->first_maybe_whiteout) {
-> +                       struct ovl_cache_entry *p =3D rdd->first_maybe_wh=
-iteout;
-> +                       rdd->first_maybe_whiteout =3D p->next_maybe_white=
-out;
-> +                       dentry =3D lookup_one_positive_killable(mnt_idmap=
-(path->mnt),
-> +                                                             &QSTR_LEN(p=
-->name, p->len), dir);
-> +                       if (!IS_ERR(dentry)) {
-> +                               p->is_whiteout =3D ovl_is_whiteout(dentry=
-);
-> +                               dput(dentry);
-> +                       } else if (PTR_ERR(dentry) =3D=3D -EINTR) {
-> +                               err =3D -EINTR;
-> +                               break;
-> +                       }
->                 }
->         }
-> -       ovl_revert_creds(old_cred);
->
->         return err;
->  }
->
-> --
-> 2.47.3
->
 
