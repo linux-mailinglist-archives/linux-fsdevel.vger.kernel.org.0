@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-68326-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68329-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC3E6C59236
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 18:27:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D861C5916D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 18:21:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6BBB2563C4C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 16:47:12 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 20773563DA2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 16:47:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92CA8328604;
-	Thu, 13 Nov 2025 16:38:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 296D535A949;
+	Thu, 13 Nov 2025 16:38:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pbe3gZr4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Chzns+6r"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E270133EB04;
-	Thu, 13 Nov 2025 16:38:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FC072ED151;
+	Thu, 13 Nov 2025 16:38:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763051911; cv=none; b=CFmetti98DVLOmyROO/kJ6btOcV0Ll8kys1mPnkpmJyO83PJot4e3KerdrMypb223JyU6SfplKH8t+DFu9ZSGmcGK3QDrcyYqTpAde0OB07HVpaxaDMMC+eV6jfMjq2xK0D6rzfr8087Ro9pTYpCZ9WMUeIz3i2KrUieVYH68Oc=
+	t=1763051916; cv=none; b=uNjIKBFzS4nOArRDxzhn42+Y7PEckAsR8/auXEpiiyFJdkytjlfCJHpHyOVfTvpIWOlOSDq8x7hnCVZIUpXsRYRCCkf6VaXyOSWEXY82ct0mQbSRkOA7e091MayYy7MXywsqFbvXHbzoVuX/xqxCYKbJMmfdFm3EI8qaM1yFkrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763051911; c=relaxed/simple;
-	bh=Bb//OKzaSVFiAcF2+yQUlM8gKGDypBLIMvjkpyyH6I0=;
+	s=arc-20240116; t=1763051916; c=relaxed/simple;
+	bh=XfHoqgr/jOzada3r4+zw81o2vnc8LMPvDTKcPUIq/es=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=qV3UvLz59KYqsOMXs/JuYBt43PpQjTucAbJeuXi+yDu+f1+tOoXkde+3646MtFuJT6fPuWae17q/JCQcQhd4okktYdTih9wmQbFAfixjsvlo6DpaJdtM2OWGAcXfGzMUCvFp3FwTstmtDFl6j2ToIexC5LQY+503M2G9Roda6Ag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pbe3gZr4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 864CFC4CEF5;
-	Thu, 13 Nov 2025 16:38:29 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=RQoOOrEYRNza4eApGxc4eLciYiFLXY4gjoDREut4BJ387uyntWjL7XoVqFc7LXv9bESuRC9w8x/0HoR5AIkXT2rl6f0vcxH/sq5hH9yMcG9LE0YQXsQl6geR9PvL8AQmcr3OvwVAazNo1gPaGdVodooyesVQIc0HGLz24hf3WgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Chzns+6r; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5712C4CEF7;
+	Thu, 13 Nov 2025 16:38:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763051910;
-	bh=Bb//OKzaSVFiAcF2+yQUlM8gKGDypBLIMvjkpyyH6I0=;
+	s=k20201202; t=1763051916;
+	bh=XfHoqgr/jOzada3r4+zw81o2vnc8LMPvDTKcPUIq/es=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=Pbe3gZr4drCYyQinXdHO62fT6o5x9ImHX8zZbMmSG86laiM6H5cL2mkk7s6KB9y3Y
-	 5DT85no9FqBG3dUiiMur0CKiYVaJ9drmNvBRwmeKcXFKVV34IguoPRx4n2N2oRSoFb
-	 1i027oh4dRmC9iUirKtbe720AHUITF0HNSiRX3AllvDa3KpMyhqkNdSRT63lJvcS2+
-	 5tsq7tPjK9FV/6rklwXBUjw5qzQt0rAE3cPxqkkUPQ6wQnBeX6ht/AxmwCYL2H2Q9h
-	 yQFtJrdxy+Oaofno9ciXpE8GqLIidih2AZaMP7n+dIHSbzaU/06ZYY42SiisxFdDIk
-	 tArkxK24/BL2w==
+	b=Chzns+6rqOzWqpjMiWJmofKmIj1dyZFatls3BQYnxmuhkX7XRPl5fQwa+sJB5GpTM
+	 JqxbE4JlXlemXoVIMXaZfwGdbJb7Bab40uRQLWdsoJ4rcQbIZXQY+ek4hwNxHWR2At
+	 qWBZdFs92Rj+GF+NsY+LbkRoCsR0eSig8F8sMt3a8W/j0wVS7d09qEqdsVyqwTFxDy
+	 Trh2t8pA+5HyGC0BM1mEkjPMBG/adNeWv6aR1DaAVqhALZvQ3kRxvE3tqT1qdkOzMj
+	 /pcSV6IbRo13CYU86wxILqbh0Ejcg1pEoC8bw3P4q1UhYRWArzwzldLjXFgU6z9tGk
+	 S5KPGMI1deXBw==
 From: Christian Brauner <brauner@kernel.org>
-Date: Thu, 13 Nov 2025 17:37:38 +0100
-Subject: [PATCH v2 33/42] ovl: refactor ovl_rename()
+Date: Thu, 13 Nov 2025 17:37:41 +0100
+Subject: [PATCH v2 36/42] ovl: refactor ovl_lookup()
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251113-work-ovl-cred-guard-v2-33-c08940095e90@kernel.org>
+Message-Id: <20251113-work-ovl-cred-guard-v2-36-c08940095e90@kernel.org>
 References: <20251113-work-ovl-cred-guard-v2-0-c08940095e90@kernel.org>
 In-Reply-To: <20251113-work-ovl-cred-guard-v2-0-c08940095e90@kernel.org>
 To: Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>
@@ -60,404 +60,500 @@ Cc: Linus Torvalds <torvalds@linux-foundation.org>,
  linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-a6db3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=10855; i=brauner@kernel.org;
- h=from:subject:message-id; bh=Bb//OKzaSVFiAcF2+yQUlM8gKGDypBLIMvjkpyyH6I0=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSKcbrHNzVZ2b8IeuG2937vt3N7Fl6xPNP65MrCTw/qo
- mJ23p5ztqOUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAi0tsY/umm+lcxeIf9TL9h
- KbPodprhWwU3vg9JxSW8x5/1pGTcKWX4Z9Dx8dOXl7JfTpSkKD7k87148UaPctBu/5XHSpx9XJo
- smQA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=14580; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=XfHoqgr/jOzada3r4+zw81o2vnc8LMPvDTKcPUIq/es=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSKcbrvebHpVWEZ69kVs7/9mObEMa007nCHxK+Ku+Lbz
+ LYmu30Q6ShlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZjIVV6G/xn5TQca1u2/nxz3
+ YI963qPVqrw7sidxCiXcuFTAZ5Gy9jQjw57pOi+Os6d1MF1MY7O68njB69e6j5e8v3t2A7PQBdG
+ EQywA
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-Make use of fms extensions and add a struct ovl_renamedata which embedds
-the vfs struct and adds overlayfs specific data.
+Split the core into a separate helper in preparation of converting the
+caller to the scoped ovl cred guard.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- fs/overlayfs/dir.c | 272 ++++++++++++++++++++++++++++-------------------------
- 1 file changed, 144 insertions(+), 128 deletions(-)
+ fs/overlayfs/namei.c | 314 ++++++++++++++++++++++++++-------------------------
+ 1 file changed, 161 insertions(+), 153 deletions(-)
 
-diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
-index 86b72bf87833..cd2b397d23a0 100644
---- a/fs/overlayfs/dir.c
-+++ b/fs/overlayfs/dir.c
-@@ -1090,103 +1090,37 @@ static int ovl_set_redirect(struct dentry *dentry, bool samedir)
- 	return err;
+diff --git a/fs/overlayfs/namei.c b/fs/overlayfs/namei.c
+index 49874525cf52..4368f9f6ff9c 100644
+--- a/fs/overlayfs/namei.c
++++ b/fs/overlayfs/namei.c
+@@ -1070,57 +1070,44 @@ static bool ovl_check_follow_redirect(struct ovl_lookup_data *d)
+ 	return true;
  }
  
--static int ovl_rename(struct mnt_idmap *idmap, struct inode *olddir,
--		      struct dentry *old, struct inode *newdir,
--		      struct dentry *new, unsigned int flags)
-+struct ovl_renamedata {
-+	struct renamedata;
-+	struct dentry *opaquedir;
-+	struct dentry *olddentry;
-+	struct dentry *newdentry;
-+	bool cleanup_whiteout;
+-struct dentry *ovl_lookup(struct inode *dir, struct dentry *dentry,
+-			  unsigned int flags)
++struct ovl_lookup_ctx {
++	struct dentry *dentry;
++	struct ovl_entry *oe;
++	struct ovl_path *stack;
++	struct ovl_path *origin_path;
++	struct dentry *upperdentry;
++	struct dentry *index;
++	struct inode *inode;
++	unsigned int ctr;
 +};
 +
-+static int do_ovl_rename(struct ovl_renamedata *ovlrd, struct list_head *list)
++static int do_ovl_lookup(struct ovl_lookup_ctx *ctx, struct ovl_lookup_data *d)
  {
+-	struct ovl_entry *oe = NULL;
+-	const struct cred *old_cred;
++	struct dentry *dentry = ctx->dentry;
+ 	struct ovl_fs *ofs = OVL_FS(dentry->d_sb);
+ 	struct ovl_entry *poe = OVL_E(dentry->d_parent);
+ 	struct ovl_entry *roe = OVL_E(dentry->d_sb->s_root);
+-	struct ovl_path *stack = NULL, *origin_path = NULL;
+-	struct dentry *upperdir, *upperdentry = NULL;
+-	struct dentry *origin = NULL;
+-	struct dentry *index = NULL;
+-	unsigned int ctr = 0;
+-	struct inode *inode = NULL;
+-	bool upperopaque = false;
+ 	bool check_redirect = (ovl_redirect_follow(ofs) || ofs->numdatalayer);
++	struct dentry *upperdir;
+ 	struct dentry *this;
+-	unsigned int i;
 -	int err;
--	struct dentry *old_upperdir;
--	struct dentry *new_upperdir;
--	struct dentry *olddentry = NULL;
--	struct dentry *newdentry = NULL;
--	struct dentry *trap, *de;
--	bool old_opaque;
--	bool new_opaque;
--	bool cleanup_whiteout = false;
--	bool update_nlink = false;
-+	struct dentry *old = ovlrd->old_dentry;
-+	struct dentry *new = ovlrd->new_dentry;
-+	struct ovl_fs *ofs = OVL_FS(old->d_sb);
-+	unsigned int flags = ovlrd->flags;
-+	struct dentry *old_upperdir = ovl_dentry_upper(ovlrd->old_parent);
-+	struct dentry *new_upperdir = ovl_dentry_upper(ovlrd->new_parent);
-+	bool samedir = ovlrd->old_parent == ovlrd->new_parent;
- 	bool overwrite = !(flags & RENAME_EXCHANGE);
- 	bool is_dir = d_is_dir(old);
- 	bool new_is_dir = d_is_dir(new);
--	bool samedir = olddir == newdir;
--	struct dentry *opaquedir = NULL;
--	const struct cred *old_cred = NULL;
--	struct ovl_fs *ofs = OVL_FS(old->d_sb);
--	LIST_HEAD(list);
++	struct dentry *origin = NULL;
++	bool upperopaque = false;
+ 	bool uppermetacopy = false;
+ 	int metacopy_size = 0;
+-	struct ovl_lookup_data d = {
+-		.sb = dentry->d_sb,
+-		.dentry = dentry,
+-		.name = dentry->d_name,
+-		.is_dir = false,
+-		.opaque = false,
+-		.stop = false,
+-		.last = check_redirect ? false : !ovl_numlower(poe),
+-		.redirect = NULL,
+-		.upperredirect = NULL,
+-		.metacopy = 0,
+-	};
 -
--	err = -EINVAL;
--	if (flags & ~(RENAME_EXCHANGE | RENAME_NOREPLACE))
--		goto out;
--
--	flags &= ~RENAME_NOREPLACE;
--
--	/* Don't copy up directory trees */
--	err = -EXDEV;
--	if (!ovl_can_move(old))
--		goto out;
--	if (!overwrite && !ovl_can_move(new))
--		goto out;
--
--	if (overwrite && new_is_dir && !ovl_pure_upper(new)) {
--		err = ovl_check_empty_dir(new, &list);
--		if (err)
--			goto out;
--	}
--
--	if (overwrite) {
--		if (ovl_lower_positive(old)) {
--			if (!ovl_dentry_is_whiteout(new)) {
--				/* Whiteout source */
--				flags |= RENAME_WHITEOUT;
--			} else {
--				/* Switch whiteouts */
--				flags |= RENAME_EXCHANGE;
--			}
--		} else if (is_dir && ovl_dentry_is_whiteout(new)) {
--			flags |= RENAME_EXCHANGE;
--			cleanup_whiteout = true;
--		}
--	}
--
--	err = ovl_copy_up(old);
--	if (err)
--		goto out;
--
--	err = ovl_copy_up(new->d_parent);
--	if (err)
--		goto out;
--	if (!overwrite) {
--		err = ovl_copy_up(new);
--		if (err)
--			goto out;
--	} else if (d_inode(new)) {
--		err = ovl_nlink_start(new);
--		if (err)
--			goto out;
--
--		update_nlink = true;
--	}
--
--	if (!update_nlink) {
--		/* ovl_nlink_start() took ovl_want_write() */
--		err = ovl_want_write(old);
--		if (err)
--			goto out;
--	}
--
--	old_cred = ovl_override_creds(old->d_sb);
-+	struct dentry *trap, *de;
-+	bool old_opaque, new_opaque;
+-	if (dentry->d_name.len > ofs->namelen)
+-		return ERR_PTR(-ENAMETOOLONG);
++	unsigned int i;
 +	int err;
  
--	if (!list_empty(&list)) {
--		opaquedir = ovl_clear_empty(new, &list);
--		err = PTR_ERR(opaquedir);
--		if (IS_ERR(opaquedir)) {
--			opaquedir = NULL;
--			goto out_revert_creds;
+-	old_cred = ovl_override_creds(dentry->d_sb);
+ 	upperdir = ovl_dentry_upper(dentry->d_parent);
+ 	if (upperdir) {
+-		d.layer = &ofs->layers[0];
+-		err = ovl_lookup_layer(upperdir, &d, &upperdentry, true);
++		d->layer = &ofs->layers[0];
++		err = ovl_lookup_layer(upperdir, d, &ctx->upperdentry, true);
+ 		if (err)
+-			goto out;
++			return err;
+ 
+-		if (upperdentry && upperdentry->d_flags & DCACHE_OP_REAL) {
+-			dput(upperdentry);
+-			err = -EREMOTE;
+-			goto out;
 -		}
-+	if (!list_empty(list)) {
-+		de = ovl_clear_empty(new, list);
-+		if (IS_ERR(de))
-+			return PTR_ERR(de);
-+		ovlrd->opaquedir = de;
+-		if (upperdentry && !d.is_dir) {
++		if (ctx->upperdentry && ctx->upperdentry->d_flags & DCACHE_OP_REAL)
++			return -EREMOTE;
++
++		if (ctx->upperdentry && !d->is_dir) {
+ 			/*
+ 			 * Lookup copy up origin by decoding origin file handle.
+ 			 * We may get a disconnected dentry, which is fine,
+@@ -1131,50 +1118,50 @@ struct dentry *ovl_lookup(struct inode *dir, struct dentry *dentry,
+ 			 * number - it's the same as if we held a reference
+ 			 * to a dentry in lower layer that was moved under us.
+ 			 */
+-			err = ovl_check_origin(ofs, upperdentry, &origin_path);
++			err = ovl_check_origin(ofs, ctx->upperdentry, &ctx->origin_path);
+ 			if (err)
+-				goto out_put_upper;
++				return err;
+ 
+-			if (d.metacopy)
++			if (d->metacopy)
+ 				uppermetacopy = true;
+-			metacopy_size = d.metacopy;
++			metacopy_size = d->metacopy;
+ 		}
+ 
+-		if (d.redirect) {
++		if (d->redirect) {
+ 			err = -ENOMEM;
+-			d.upperredirect = kstrdup(d.redirect, GFP_KERNEL);
+-			if (!d.upperredirect)
+-				goto out_put_upper;
+-			if (d.redirect[0] == '/')
++			d->upperredirect = kstrdup(d->redirect, GFP_KERNEL);
++			if (!d->upperredirect)
++				return err;
++			if (d->redirect[0] == '/')
+ 				poe = roe;
+ 		}
+-		upperopaque = d.opaque;
++		upperopaque = d->opaque;
  	}
  
--	old_upperdir = ovl_dentry_upper(old->d_parent);
--	new_upperdir = ovl_dentry_upper(new->d_parent);
--
- 	if (!samedir) {
- 		/*
- 		 * When moving a merge dir or non-dir with copy up origin into
-@@ -1195,32 +1129,30 @@ static int ovl_rename(struct mnt_idmap *idmap, struct inode *olddir,
- 		 * lookup the origin inodes of the entries to fill d_ino.
+-	if (!d.stop && ovl_numlower(poe)) {
++	if (!d->stop && ovl_numlower(poe)) {
+ 		err = -ENOMEM;
+-		stack = ovl_stack_alloc(ofs->numlayer - 1);
+-		if (!stack)
+-			goto out_put_upper;
++		ctx->stack = ovl_stack_alloc(ofs->numlayer - 1);
++		if (!ctx->stack)
++			return err;
+ 	}
+ 
+-	for (i = 0; !d.stop && i < ovl_numlower(poe); i++) {
++	for (i = 0; !d->stop && i < ovl_numlower(poe); i++) {
+ 		struct ovl_path lower = ovl_lowerstack(poe)[i];
+ 
+-		if (!ovl_check_follow_redirect(&d)) {
++		if (!ovl_check_follow_redirect(d)) {
+ 			err = -EPERM;
+-			goto out_put;
++			return err;
+ 		}
+ 
+ 		if (!check_redirect)
+-			d.last = i == ovl_numlower(poe) - 1;
+-		else if (d.is_dir || !ofs->numdatalayer)
+-			d.last = lower.layer->idx == ovl_numlower(roe);
++			d->last = i == ovl_numlower(poe) - 1;
++		else if (d->is_dir || !ofs->numdatalayer)
++			d->last = lower.layer->idx == ovl_numlower(roe);
+ 
+-		d.layer = lower.layer;
+-		err = ovl_lookup_layer(lower.dentry, &d, &this, false);
++		d->layer = lower.layer;
++		err = ovl_lookup_layer(lower.dentry, d, &this, false);
+ 		if (err)
+-			goto out_put;
++			return err;
+ 
+ 		if (!this)
+ 			continue;
+@@ -1183,11 +1170,11 @@ struct dentry *ovl_lookup(struct inode *dir, struct dentry *dentry,
+ 		 * If no origin fh is stored in upper of a merge dir, store fh
+ 		 * of lower dir and set upper parent "impure".
  		 */
- 		if (ovl_type_origin(old)) {
--			err = ovl_set_impure(new->d_parent, new_upperdir);
-+			err = ovl_set_impure(ovlrd->new_parent, new_upperdir);
- 			if (err)
--				goto out_revert_creds;
+-		if (upperdentry && !ctr && !ofs->noxattr && d.is_dir) {
+-			err = ovl_fix_origin(ofs, dentry, this, upperdentry);
++		if (ctx->upperdentry && !ctx->ctr && !ofs->noxattr && d->is_dir) {
++			err = ovl_fix_origin(ofs, dentry, this, ctx->upperdentry);
+ 			if (err) {
+ 				dput(this);
+-				goto out_put;
 +				return err;
+ 			}
  		}
- 		if (!overwrite && ovl_type_origin(new)) {
--			err = ovl_set_impure(old->d_parent, old_upperdir);
-+			err = ovl_set_impure(ovlrd->old_parent, old_upperdir);
- 			if (err)
--				goto out_revert_creds;
+ 
+@@ -1200,23 +1187,23 @@ struct dentry *ovl_lookup(struct inode *dir, struct dentry *dentry,
+ 		 * matches the dentry found using path based lookup,
+ 		 * otherwise error out.
+ 		 */
+-		if (upperdentry && !ctr &&
+-		    ((d.is_dir && ovl_verify_lower(dentry->d_sb)) ||
+-		     (!d.is_dir && ofs->config.index && origin_path))) {
+-			err = ovl_verify_origin(ofs, upperdentry, this, false);
++		if (ctx->upperdentry && !ctx->ctr &&
++		    ((d->is_dir && ovl_verify_lower(dentry->d_sb)) ||
++		     (!d->is_dir && ofs->config.index && ctx->origin_path))) {
++			err = ovl_verify_origin(ofs, ctx->upperdentry, this, false);
+ 			if (err) {
+ 				dput(this);
+-				if (d.is_dir)
++				if (d->is_dir)
+ 					break;
+-				goto out_put;
 +				return err;
+ 			}
+ 			origin = this;
  		}
- 	}
  
- 	trap = lock_rename(new_upperdir, old_upperdir);
--	if (IS_ERR(trap)) {
--		err = PTR_ERR(trap);
--		goto out_revert_creds;
--	}
-+	if (IS_ERR(trap))
-+		return PTR_ERR(trap);
+-		if (!upperdentry && !d.is_dir && !ctr && d.metacopy)
+-			metacopy_size = d.metacopy;
++		if (!ctx->upperdentry && !d->is_dir && !ctx->ctr && d->metacopy)
++			metacopy_size = d->metacopy;
  
- 	de = ovl_lookup_upper(ofs, old->d_name.name, old_upperdir,
- 			      old->d_name.len);
- 	err = PTR_ERR(de);
- 	if (IS_ERR(de))
- 		goto out_unlock;
--	olddentry = de;
-+	ovlrd->olddentry = de;
- 
- 	err = -ESTALE;
--	if (!ovl_matches_upper(old, olddentry))
-+	if (!ovl_matches_upper(old, ovlrd->olddentry))
- 		goto out_unlock;
- 
- 	de = ovl_lookup_upper(ofs, new->d_name.name, new_upperdir,
-@@ -1228,23 +1160,23 @@ static int ovl_rename(struct mnt_idmap *idmap, struct inode *olddir,
- 	err = PTR_ERR(de);
- 	if (IS_ERR(de))
- 		goto out_unlock;
--	newdentry = de;
-+	ovlrd->newdentry = de;
- 
- 	old_opaque = ovl_dentry_is_opaque(old);
- 	new_opaque = ovl_dentry_is_opaque(new);
- 
- 	err = -ESTALE;
- 	if (d_inode(new) && ovl_dentry_upper(new)) {
--		if (opaquedir) {
--			if (newdentry != opaquedir)
-+		if (ovlrd->opaquedir) {
-+			if (ovlrd->newdentry != ovlrd->opaquedir)
- 				goto out_unlock;
+-		if (d.metacopy && ctr) {
++		if (d->metacopy && ctx->ctr) {
+ 			/*
+ 			 * Do not store intermediate metacopy dentries in
+ 			 * lower chain, except top most lower metacopy dentry.
+@@ -1226,15 +1213,15 @@ struct dentry *ovl_lookup(struct inode *dir, struct dentry *dentry,
+ 			dput(this);
+ 			this = NULL;
  		} else {
--			if (!ovl_matches_upper(new, newdentry))
-+			if (!ovl_matches_upper(new, ovlrd->newdentry))
- 				goto out_unlock;
+-			stack[ctr].dentry = this;
+-			stack[ctr].layer = lower.layer;
+-			ctr++;
++			ctx->stack[ctx->ctr].dentry = this;
++			ctx->stack[ctx->ctr].layer = lower.layer;
++			ctx->ctr++;
  		}
- 	} else {
--		if (!d_is_negative(newdentry)) {
--			if (!new_opaque || !ovl_upper_is_whiteout(ofs, newdentry))
-+		if (!d_is_negative(ovlrd->newdentry)) {
-+			if (!new_opaque || !ovl_upper_is_whiteout(ofs, ovlrd->newdentry))
- 				goto out_unlock;
- 		} else {
- 			if (flags & RENAME_EXCHANGE)
-@@ -1252,38 +1184,39 @@ static int ovl_rename(struct mnt_idmap *idmap, struct inode *olddir,
- 		}
- 	}
  
--	if (olddentry == trap)
-+	if (ovlrd->olddentry == trap)
- 		goto out_unlock;
--	if (newdentry == trap)
-+	if (ovlrd->newdentry == trap)
- 		goto out_unlock;
+-		if (d.stop)
++		if (d->stop)
+ 			break;
  
--	if (olddentry->d_inode == newdentry->d_inode)
-+	if (ovlrd->olddentry->d_inode == ovlrd->newdentry->d_inode)
- 		goto out_unlock;
- 
- 	err = 0;
- 	if (ovl_type_merge_or_lower(old))
- 		err = ovl_set_redirect(old, samedir);
--	else if (is_dir && !old_opaque && ovl_type_merge(new->d_parent))
--		err = ovl_set_opaque_xerr(old, olddentry, -EXDEV);
-+	else if (is_dir && !old_opaque && ovl_type_merge(ovlrd->new_parent))
-+		err = ovl_set_opaque_xerr(old, ovlrd->olddentry, -EXDEV);
- 	if (err)
- 		goto out_unlock;
- 
- 	if (!overwrite && ovl_type_merge_or_lower(new))
- 		err = ovl_set_redirect(new, samedir);
- 	else if (!overwrite && new_is_dir && !new_opaque &&
--		 ovl_type_merge(old->d_parent))
--		err = ovl_set_opaque_xerr(new, newdentry, -EXDEV);
-+		 ovl_type_merge(ovlrd->old_parent))
-+		err = ovl_set_opaque_xerr(new, ovlrd->newdentry, -EXDEV);
- 	if (err)
- 		goto out_unlock;
- 
--	err = ovl_do_rename(ofs, old_upperdir, olddentry,
--			    new_upperdir, newdentry, flags);
-+	err = ovl_do_rename(ofs, old_upperdir, ovlrd->olddentry,
-+			    new_upperdir, ovlrd->newdentry, flags);
-+out_unlock:
- 	unlock_rename(new_upperdir, old_upperdir);
- 	if (err)
--		goto out_revert_creds;
+-		if (d.redirect && d.redirect[0] == '/' && poe != roe) {
++		if (d->redirect && d->redirect[0] == '/' && poe != roe) {
+ 			poe = roe;
+ 			/* Find the current layer on the root dentry */
+ 			i = lower.layer->idx - 1;
+@@ -1245,12 +1232,12 @@ struct dentry *ovl_lookup(struct inode *dir, struct dentry *dentry,
+ 	 * Defer lookup of lowerdata in data-only layers to first access.
+ 	 * Don't require redirect=follow and metacopy=on in this case.
+ 	 */
+-	if (d.metacopy && ctr && ofs->numdatalayer && d.absolute_redirect) {
+-		d.metacopy = 0;
+-		ctr++;
+-	} else if (!ovl_check_follow_redirect(&d)) {
++	if (d->metacopy && ctx->ctr && ofs->numdatalayer && d->absolute_redirect) {
++		d->metacopy = 0;
++		ctx->ctr++;
++	} else if (!ovl_check_follow_redirect(d)) {
+ 		err = -EPERM;
+-		goto out_put;
 +		return err;
- 
--	if (cleanup_whiteout)
--		ovl_cleanup(ofs, old_upperdir, newdentry);
-+	if (ovlrd->cleanup_whiteout)
-+		ovl_cleanup(ofs, old_upperdir, ovlrd->newdentry);
- 
- 	if (overwrite && d_inode(new)) {
- 		if (new_is_dir)
-@@ -1292,9 +1225,9 @@ static int ovl_rename(struct mnt_idmap *idmap, struct inode *olddir,
- 			ovl_drop_nlink(new);
  	}
  
--	ovl_dir_modified(old->d_parent, ovl_type_origin(old) ||
-+	ovl_dir_modified(ovlrd->old_parent, ovl_type_origin(old) ||
- 			 (!overwrite && ovl_type_origin(new)));
--	ovl_dir_modified(new->d_parent, ovl_type_origin(old) ||
-+	ovl_dir_modified(ovlrd->new_parent, ovl_type_origin(old) ||
- 			 (d_inode(new) && ovl_type_origin(new)));
+ 	/*
+@@ -1261,20 +1248,20 @@ struct dentry *ovl_lookup(struct inode *dir, struct dentry *dentry,
+ 	 * For metacopy dentry, path based lookup will find lower dentries.
+ 	 * Just make sure a corresponding data dentry has been found.
+ 	 */
+-	if (d.metacopy || (uppermetacopy && !ctr)) {
++	if (d->metacopy || (uppermetacopy && !ctx->ctr)) {
+ 		pr_warn_ratelimited("metacopy with no lower data found - abort lookup (%pd2)\n",
+ 				    dentry);
+ 		err = -EIO;
+-		goto out_put;
+-	} else if (!d.is_dir && upperdentry && !ctr && origin_path) {
+-		if (WARN_ON(stack != NULL)) {
++		return err;
++	} else if (!d->is_dir && ctx->upperdentry && !ctx->ctr && ctx->origin_path) {
++		if (WARN_ON(ctx->stack != NULL)) {
+ 			err = -EIO;
+-			goto out_put;
++			return err;
+ 		}
+-		stack = origin_path;
+-		ctr = 1;
+-		origin = origin_path->dentry;
+-		origin_path = NULL;
++		ctx->stack = ctx->origin_path;
++		ctx->ctr = 1;
++		origin = ctx->origin_path->dentry;
++		ctx->origin_path = NULL;
+ 	}
  
- 	/* copy ctime: */
-@@ -1302,22 +1235,105 @@ static int ovl_rename(struct mnt_idmap *idmap, struct inode *olddir,
- 	if (d_inode(new) && ovl_dentry_upper(new))
- 		ovl_copyattr(d_inode(new));
+ 	/*
+@@ -1296,38 +1283,39 @@ struct dentry *ovl_lookup(struct inode *dir, struct dentry *dentry,
+ 	 * is enabled and if upper had an ORIGIN xattr.
+ 	 *
+ 	 */
+-	if (!upperdentry && ctr)
+-		origin = stack[0].dentry;
++	if (!ctx->upperdentry && ctx->ctr)
++		origin = ctx->stack[0].dentry;
  
--out_revert_creds:
-+	return err;
+ 	if (origin && ovl_indexdir(dentry->d_sb) &&
+-	    (!d.is_dir || ovl_index_all(dentry->d_sb))) {
+-		index = ovl_lookup_index(ofs, upperdentry, origin, true);
+-		if (IS_ERR(index)) {
+-			err = PTR_ERR(index);
+-			index = NULL;
+-			goto out_put;
++	    (!d->is_dir || ovl_index_all(dentry->d_sb))) {
++		ctx->index = ovl_lookup_index(ofs, ctx->upperdentry, origin, true);
++		if (IS_ERR(ctx->index)) {
++			err = PTR_ERR(ctx->index);
++			ctx->index = NULL;
++			return err;
+ 		}
+ 	}
+ 
+-	if (ctr) {
+-		oe = ovl_alloc_entry(ctr);
++	if (ctx->ctr) {
++		ctx->oe = ovl_alloc_entry(ctx->ctr);
+ 		err = -ENOMEM;
+-		if (!oe)
+-			goto out_put;
++		if (!ctx->oe)
++			return err;
+ 
+-		ovl_stack_cpy(ovl_lowerstack(oe), stack, ctr);
++		ovl_stack_cpy(ovl_lowerstack(ctx->oe), ctx->stack, ctx->ctr);
+ 	}
+ 
+ 	if (upperopaque)
+ 		ovl_dentry_set_opaque(dentry);
+-	if (d.xwhiteouts)
++	if (d->xwhiteouts)
+ 		ovl_dentry_set_xwhiteouts(dentry);
+ 
+-	if (upperdentry)
++	if (ctx->upperdentry)
+ 		ovl_dentry_set_upper_alias(dentry);
+-	else if (index) {
++	else if (ctx->index) {
++		char *upperredirect;
+ 		struct path upperpath = {
+-			.dentry = upperdentry = dget(index),
++			.dentry = ctx->upperdentry = dget(ctx->index),
+ 			.mnt = ovl_upper_mnt(ofs),
+ 		};
+ 
+@@ -1336,77 +1324,97 @@ struct dentry *ovl_lookup(struct inode *dir, struct dentry *dentry,
+ 		 * assignment happens only if upperdentry is non-NULL, and
+ 		 * this one only if upperdentry is NULL.
+ 		 */
+-		d.upperredirect = ovl_get_redirect_xattr(ofs, &upperpath, 0);
+-		if (IS_ERR(d.upperredirect)) {
+-			err = PTR_ERR(d.upperredirect);
+-			d.upperredirect = NULL;
+-			goto out_free_oe;
+-		}
++		upperredirect = ovl_get_redirect_xattr(ofs, &upperpath, 0);
++		if (IS_ERR(upperredirect))
++			return PTR_ERR(upperredirect);
++		d->upperredirect = upperredirect;
+ 
+ 		err = ovl_check_metacopy_xattr(ofs, &upperpath, NULL);
+ 		if (err < 0)
+-			goto out_free_oe;
+-		d.metacopy = uppermetacopy = err;
++			return err;
++		d->metacopy = uppermetacopy = err;
+ 		metacopy_size = err;
+ 
+-		if (!ovl_check_follow_redirect(&d)) {
++		if (!ovl_check_follow_redirect(d)) {
+ 			err = -EPERM;
+-			goto out_free_oe;
++			return err;
+ 		}
+ 	}
+ 
+-	if (upperdentry || ctr) {
++	if (ctx->upperdentry || ctx->ctr) {
++		struct inode *inode;
+ 		struct ovl_inode_params oip = {
+-			.upperdentry = upperdentry,
+-			.oe = oe,
+-			.index = index,
+-			.redirect = d.upperredirect,
++			.upperdentry = ctx->upperdentry,
++			.oe = ctx->oe,
++			.index = ctx->index,
++			.redirect = d->upperredirect,
+ 		};
+ 
+ 		/* Store lowerdata redirect for lazy lookup */
+-		if (ctr > 1 && !d.is_dir && !stack[ctr - 1].dentry) {
+-			oip.lowerdata_redirect = d.redirect;
+-			d.redirect = NULL;
++		if (ctx->ctr > 1 && !d->is_dir && !ctx->stack[ctx->ctr - 1].dentry) {
++			oip.lowerdata_redirect = d->redirect;
++			d->redirect = NULL;
+ 		}
++
+ 		inode = ovl_get_inode(dentry->d_sb, &oip);
+-		err = PTR_ERR(inode);
+ 		if (IS_ERR(inode))
+-			goto out_free_oe;
+-		if (upperdentry && !uppermetacopy)
+-			ovl_set_flag(OVL_UPPERDATA, inode);
++			return PTR_ERR(inode);
++
++		ctx->inode = inode;
++		if (ctx->upperdentry && !uppermetacopy)
++			ovl_set_flag(OVL_UPPERDATA, ctx->inode);
+ 
+ 		if (metacopy_size > OVL_METACOPY_MIN_SIZE)
+-			ovl_set_flag(OVL_HAS_DIGEST, inode);
++			ovl_set_flag(OVL_HAS_DIGEST, ctx->inode);
+ 	}
+ 
+-	ovl_dentry_init_reval(dentry, upperdentry, OVL_I_E(inode));
++	ovl_dentry_init_reval(dentry, ctx->upperdentry, OVL_I_E(ctx->inode));
++
++	return 0;
 +}
 +
-+static int ovl_rename(struct mnt_idmap *idmap, struct inode *olddir,
-+		      struct dentry *old, struct inode *newdir,
-+		      struct dentry *new, unsigned int flags)
++struct dentry *ovl_lookup(struct inode *dir, struct dentry *dentry,
++			  unsigned int flags)
 +{
++	const struct cred *old_cred;
++	struct ovl_fs *ofs = OVL_FS(dentry->d_sb);
++	struct ovl_entry *poe = OVL_E(dentry->d_parent);
++	bool check_redirect = (ovl_redirect_follow(ofs) || ofs->numdatalayer);
 +	int err;
-+	bool update_nlink = false;
-+	bool overwrite = !(flags & RENAME_EXCHANGE);
-+	bool is_dir = d_is_dir(old);
-+	bool new_is_dir = d_is_dir(new);
-+	const struct cred *old_cred = NULL;
-+	struct ovl_renamedata ovlrd = {
-+		.old_parent		= old->d_parent,
-+		.old_dentry		= old,
-+		.new_parent		= new->d_parent,
-+		.new_dentry		= new,
-+		.flags			= flags,
-+		.cleanup_whiteout	= false,
++	struct ovl_lookup_ctx ctx = {
++		.dentry = dentry,
 +	};
-+	LIST_HEAD(list);
++	struct ovl_lookup_data d = {
++		.sb	= dentry->d_sb,
++		.dentry = dentry,
++		.name	= dentry->d_name,
++		.last	= check_redirect ? false : !ovl_numlower(poe),
++	};
 +
-+	err = -EINVAL;
-+	if (flags & ~(RENAME_EXCHANGE | RENAME_NOREPLACE))
-+		goto out;
++	if (dentry->d_name.len > ofs->namelen)
++		return ERR_PTR(-ENAMETOOLONG);
 +
-+	flags &= ~RENAME_NOREPLACE;
++	old_cred = ovl_override_creds(dentry->d_sb);
 +
-+	/* Don't copy up directory trees */
-+	err = -EXDEV;
-+	if (!ovl_can_move(old))
-+		goto out;
-+	if (!overwrite && !ovl_can_move(new))
-+		goto out;
-+
-+	if (overwrite && new_is_dir && !ovl_pure_upper(new)) {
-+		err = ovl_check_empty_dir(new, &list);
-+		if (err)
-+			goto out;
-+	}
-+
-+	if (overwrite) {
-+		if (ovl_lower_positive(old)) {
-+			if (!ovl_dentry_is_whiteout(new)) {
-+				/* Whiteout source */
-+				ovlrd.flags |= RENAME_WHITEOUT;
-+			} else {
-+				/* Switch whiteouts */
-+				ovlrd.flags |= RENAME_EXCHANGE;
-+			}
-+		} else if (is_dir && ovl_dentry_is_whiteout(new)) {
-+			ovlrd.flags |= RENAME_EXCHANGE;
-+			ovlrd.cleanup_whiteout = true;
-+		}
-+	}
-+
-+	err = ovl_copy_up(old);
-+	if (err)
-+		goto out;
-+
-+	err = ovl_copy_up(new->d_parent);
-+	if (err)
-+		goto out;
-+	if (!overwrite) {
-+		err = ovl_copy_up(new);
-+		if (err)
-+			goto out;
-+	} else if (d_inode(new)) {
-+		err = ovl_nlink_start(new);
-+		if (err)
-+			goto out;
-+
-+		update_nlink = true;
-+	}
-+
-+	if (!update_nlink) {
-+		/* ovl_nlink_start() took ovl_want_write() */
-+		err = ovl_want_write(old);
-+		if (err)
-+			goto out;
-+	}
-+
-+	old_cred = ovl_override_creds(old->d_sb);
-+
-+	err = do_ovl_rename(&ovlrd, &list);
-+
++	err = do_ovl_lookup(&ctx, &d);
+ 
  	ovl_revert_creds(old_cred);
- 	if (update_nlink)
- 		ovl_nlink_end(new);
- 	else
- 		ovl_drop_write(old);
+-	if (origin_path) {
+-		dput(origin_path->dentry);
+-		kfree(origin_path);
++	if (ctx.origin_path) {
++		dput(ctx.origin_path->dentry);
++		kfree(ctx.origin_path);
+ 	}
+-	dput(index);
+-	ovl_stack_free(stack, ctr);
++	dput(ctx.index);
++	ovl_stack_free(ctx.stack, ctx.ctr);
+ 	kfree(d.redirect);
+-	return d_splice_alias(inode, dentry);
+ 
+-out_free_oe:
+-	ovl_free_entry(oe);
+-out_put:
+-	dput(index);
+-	ovl_stack_free(stack, ctr);
+-out_put_upper:
+-	if (origin_path) {
+-		dput(origin_path->dentry);
+-		kfree(origin_path);
+-	}
+-	dput(upperdentry);
++	if (err) {
++		ovl_free_entry(ctx.oe);
++		dput(ctx.upperdentry);
+ 		kfree(d.upperredirect);
+-out:
+-	kfree(d.redirect);
+-	ovl_revert_creds(old_cred);
+ 		return ERR_PTR(err);
++	}
 +
-+	dput(ovlrd.newdentry);
-+	dput(ovlrd.olddentry);
-+	dput(ovlrd.opaquedir);
- out:
--	dput(newdentry);
--	dput(olddentry);
--	dput(opaquedir);
- 	ovl_cache_free(&list);
- 	return err;
--
--out_unlock:
--	unlock_rename(new_upperdir, old_upperdir);
--	goto out_revert_creds;
++	return d_splice_alias(ctx.inode, dentry);
  }
  
- static int ovl_create_tmpfile(struct file *file, struct dentry *dentry,
+ bool ovl_lower_positive(struct dentry *dentry)
 
 -- 
 2.47.3
