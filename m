@@ -1,236 +1,211 @@
-Return-Path: <linux-fsdevel+bounces-68350-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68351-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9E1DC59696
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 19:17:42 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 583E8C5984C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 19:39:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 00A0D5010C6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 18:01:31 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id EE24634EDCC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 18:38:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3902D35A157;
-	Thu, 13 Nov 2025 17:59:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2BD43101B0;
+	Thu, 13 Nov 2025 18:38:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i4GW79O+"
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="LmR/r5P9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 416EE35971E
-	for <linux-fsdevel@vger.kernel.org>; Thu, 13 Nov 2025 17:59:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CF623126D9
+	for <linux-fsdevel@vger.kernel.org>; Thu, 13 Nov 2025 18:38:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763056747; cv=none; b=W6gYD867nu+rhSQSC2IVYXk6yFNKoMYk5FzB4EBM0DFA+GAajP2iu14maTKiQhG+o98orcIcW1v1jPuss51n8T9v1yK8XlZoHOYY2Tn1cz9sS/WJlrZt1MJrU2FXbaJmB8buzCDIV9NAUVXsD1plyMI7NAA6TKTkwpp4th6FZS8=
+	t=1763059122; cv=none; b=N9Ag/RXaleCtaSDEoyVMBujN/7IUy7tWRlWlumta1PkBkJFJ33AAkOpB+wofkqKEhDqIVesQWP3+SSt7k4uT3brXXz6LnMPmBsnLvw2KN62PSeBKRyBw/XgjVAZjULnmJCmqIRAybHeCHKX7it9KSK0WINjwJpYXoFjtzCaivxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763056747; c=relaxed/simple;
-	bh=6KDipog60jJRtdpe/L8UVeJv+BBHGlJ3knFNcVlyIQs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SKBY1EPz785Sjhv9uXJt+Gapjk87K/SLZUa35YMcR8S0z7g5xwjJQZa0DS3OT7jIBvjY4AG47qUCzvMEqMNrHR7VgDyFf37RiIuDQiRR456AbbI2kquB0XJBJQVOU47khaI3j74VESktfNRvU6L92WGu0L+A/CJl9EG3Fv0MEjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i4GW79O+; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4710022571cso11041385e9.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Nov 2025 09:59:01 -0800 (PST)
+	s=arc-20240116; t=1763059122; c=relaxed/simple;
+	bh=Cv/QbwolssPfl2k/AIydYpdcMQzVyb3+RLFiXzqCKjI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P4uhaFdOP+9W/fHblkNBeHC0/QAK6DTadp4lbHwQ9K2CDsbn5cAHZqRD64+5ONMh92s08YrsHtxkX7ImND02JI3ofxr5VUDBjSx3zr63vkjzCuudHQvRvPzs28QRREEZMQon2njGAvYC9BPZwhp/dUB0r8Jbj18mJnFRXzDi5rY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=LmR/r5P9; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-64074f01a6eso2116631a12.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Nov 2025 10:38:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763056740; x=1763661540; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=soleen.com; s=google; t=1763059118; x=1763663918; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=EhulRitCHLk55X25ktDbKVFp9M47dlMqdu3BLv9Bbao=;
-        b=i4GW79O+Fw9lEfa1HqRHPDOAI1Iy2DlBXuLrqlXnlfpm4UWcupKfQAQAhe4lCSrCcz
-         HryRBXsqxBfKVI6aUuvwhjQfHBlgS1F2qiT9+P+LYIXOsiuJwaUupglQy6d14mcBIp2y
-         UzIhFWR5NmgFOqUVnpyPQb4e3SwXya9nCOtrY+lIGXyPWWYRvrQOXLKGiJQTfELsq3YF
-         hOlaaELum1J+GO0CL3c9Y2H6GfDsdvZwPlydSP07wygtsNRRtTsCOTs2GhoB7VeOadnO
-         pgZ8TKj8xHP+KTjlh0+C9DPFd8RyV3vbTGZ6CDXWhmySEOk5Twc/dxyG6T4MjCirQRCz
-         4HSg==
+        bh=5QzIZolLw0TWeicvPUi5XAG3YGoC32FLVnv2N+ZATiw=;
+        b=LmR/r5P9nSv0fnAvDZE6SNaqXVbp8Ckb0bd82wvAwKZ7cMo0vtgk7RUYeOpQi5MJ4N
+         1igvmfh0EgPGx2/lukRolXS0FXDrwLW6cK1fASpWHTu6bbRjAE2ffo1/tAm40XqZiDqr
+         ES3IOmiz6sRq1a3MmSgGtKmOzB/aLd+AOmjN+IYsRwlN1XzPP4YF2xMf9aROQuVfJjld
+         PVDYOhH+WDleBXykhoFUgkXUor5ojw7QQ1pRDHt5iP73U+1t8DOoO+DzFqJxgnARCLqE
+         4U1zAz03FC2q0kHp8C8I269NlzUy3hnIxFlgLmN+V0jcYDWmeTiaiWbMSszPs5R6A96j
+         ghkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763056740; x=1763661540;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+        d=1e100.net; s=20230601; t=1763059118; x=1763663918;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=EhulRitCHLk55X25ktDbKVFp9M47dlMqdu3BLv9Bbao=;
-        b=IImDcjHSaj6StogC4EXPyLCJOEU03drb7h1rQ9KOja6arQA5TbNyd+XjaWQwcGD05l
-         MJ86aQhJwjpnA1JKSCi97AIC/zI7or8EIxIU9z/X6sMk33/oZs146zmezFigmVtMl4QU
-         +0tC+eW6qTyyzMue+yGo8auHVCgb1cNz2VngJCMkUI1PLWuopPzbdz+zdGX0RpXb0smA
-         nYSJlTnVBlcDssfiQtOP3EIDnn0K+CRZnMdDZG5Te8aOztYjE1cglb9DMSev4tDVnRj9
-         Oa1hlnJjuQT4Qt0IYEj8D36RVFfVvhbkPfrpfRz7NVRbvpZCqjhLBmpMs2XeMdSl5JSG
-         wKOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXTMcPx2ckf/XTMHfK9/b9/jwNHBSNggrXX9GesCNnaVKdBFSDm8A1LKIjQ9t30l/sxA5/GaRNirjzl+xFx@vger.kernel.org
-X-Gm-Message-State: AOJu0YyL+UZjhkHyLpN8oJwqFVEyeuM0o4mIauicx8TUQ+HhMKcmktq5
-	WhOkKTlJs3tojKqh0MCInkIUndcoSSWl2MEJCBYim6+825SrJVgmlCx6
-X-Gm-Gg: ASbGnctQbJbljjvXCK5eppPjJZtXmxMVCV6eSBpA4z0WzZM1q7CLoL/1HCuNYW0Wgnc
-	/yOWEy630dXEeRqK5gyrKSL7JSckyImHAoN20WIuWJRpxj77gRkBJGhJ9VhBDK2o1wq+C8WeCk5
-	nnWXLETMBak4FmMVaOKgIo9LuXMFCe4wrymad+KcfcOUt6ao+LlQ2IYnmPah88HKnhZ8FEbcJnZ
-	BeUZFsiMx1Nkcsaf7SI+BBxe4UsjqWT3m4gzwkyHcP7qJUFieJqnv7xTegdftmqR2SuJW5kHp29
-	xTMa6TbIqa+1U+Pl/mSOXMiq6SUbnNu6KbmGcjrUj641A2AjH4EXtPiDayTb49fEXeJWzH0r8V7
-	AwGL2YTguNLTAanCQB8sghuzOOemx2M/09i9fTz4DzIJ0ZUmTyt//4ejAA2h7/QNMsVzh9UBdHd
-	VM4n+zPLsJOAXhIPL8NAheq+Kk13+PRwYNTSyMFtqaDjUmOeyL
-X-Google-Smtp-Source: AGHT+IGTzdGiyvCT86uYe5CN+05Q9cy2uQL9eBgPXgJR513IAeBmeM4GOHih8eh/jELZCKZbBGNffw==
-X-Received: by 2002:a05:600c:354b:b0:475:da13:257c with SMTP id 5b1f17b1804b1-4778fea1239mr3513065e9.27.1763056739674;
-        Thu, 13 Nov 2025 09:58:59 -0800 (PST)
-Received: from f.. (cst-prg-14-82.cust.vodafone.cz. [46.135.14.82])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47787e95327sm98888575e9.12.2025.11.13.09.58.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Nov 2025 09:58:59 -0800 (PST)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: brauner@kernel.org,
-	jlayton@kernel.org
-Cc: viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH v3 2/2] fs: track the inode having file locks with a flag in ->i_opflags
-Date: Thu, 13 Nov 2025 18:58:51 +0100
-Message-ID: <20251113175852.2022230-2-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251113175852.2022230-1-mjguzik@gmail.com>
-References: <20251113175852.2022230-1-mjguzik@gmail.com>
+        bh=5QzIZolLw0TWeicvPUi5XAG3YGoC32FLVnv2N+ZATiw=;
+        b=TgGanGoZ55LSICTC42KUz1BAp7NkcrAcu/lWknhipyhVkYoz2k3oObz2yJYDLpkzyV
+         dz4ZOjWwknOMecldh6SUDX4tVOII7ZXcNkvJocx6bsFq9cQeEczw0CyczSxvzC7SjfDO
+         7exLcXArB6HXKcQI85SgEq+50Vd+JiJurhHaxzUcbw6fGZwsW2P0okWW4XkLwT24m0Aw
+         cHV1OKoDotMj1QCgJe9iwQYKvjIk07paYsas/IXRYlMGgNXJVnQOpUKzKISvUqcNbI8g
+         yIbCRE5cDLG8aUoDNy6epoxhsJspT/elfv1UuBI0vDNdEbagZ7KMuW+3iJLnnDVM42fU
+         lAOg==
+X-Forwarded-Encrypted: i=1; AJvYcCWpiBRZU7lyjHzKT+dQHlV3L5/dLpX8M8TSrE8enIc4euI1u2Z3/e3NvvYbdgbO+V4vkLZzlBkWTtb7Fb+6@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0Ut/jtVWg2phMPgDNWvR9GGEv3bWZ3ZijIQcVcDRVvtnVvyox
+	ceFKhpQ1gTkuSJpQRU0NXbDa83joD1D8+ZiPMhtwsQAME4paSvRonEpxhMlIdliwfYpYNsOO0E6
+	hVBCrWMtw33VWPd5NzOZXChpaHIpjop3yIeK//+akYQ==
+X-Gm-Gg: ASbGncvqI6v5VLsi25/eabnWwCJCYY+mPp1hhAWGdCiX6kvhr5t0EVdWWXB4h13MOJ/
+	WU8Ra69NSUucrzVwwbroBq2JQDVcKt9qK7HJyj0lF9MKhxYF4g68dTUPTsxoAq5n/QjA8c64ECI
+	+vw5qa7RmimM9PPfGJk7r0YV7z7EkRF4mh6gRfow/TQ8C/lzbcyeb1uAmoDQ9tBV80XwZ8rqc+S
+	Sf2Q6UahqbOVXPZX69BTJu/NW0G2GNF0Mp9sz+pyZM3KNCSSwK38DHdTg==
+X-Google-Smtp-Source: AGHT+IEDdgrLTNweUjb0jeGLJZI3hwXTN5B+vwJRTiRZj6uuz96RHszyffXikSiDLB6+TEf6KwvdNmtJbHmHq1QzP+8=
+X-Received: by 2002:a05:6402:3056:10b0:640:b1cf:f7f7 with SMTP id
+ 4fb4d7f45d1cf-64350ebf795mr201526a12.35.1763059118370; Thu, 13 Nov 2025
+ 10:38:38 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251107210526.257742-1-pasha.tatashin@soleen.com>
+ <20251107210526.257742-3-pasha.tatashin@soleen.com> <aRHiCxoJnEGmj17q@kernel.org>
+ <CA+CK2bCHhbBtSJCx38gxjfR6DM1PjcfsOTD-Pqzqyez1_hXJ7Q@mail.gmail.com>
+ <aROZi043lxtegqWE@kernel.org> <CA+CK2bAsrEqpt9d3s0KXpjcO9WPTJjymdwtiiyWVS6uq5KKNgA@mail.gmail.com>
+ <aRSKrxfAb_GG_2Mw@kernel.org> <CA+CK2bAq-0Vz4jSRWnb_ut9AqG3RcH67JQj76GhoH0BaspWs2A@mail.gmail.com>
+ <aRYH_Ugp1IiUQdlM@kernel.org>
+In-Reply-To: <aRYH_Ugp1IiUQdlM@kernel.org>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Thu, 13 Nov 2025 13:38:01 -0500
+X-Gm-Features: AWmQ_bneOtiUV_-OT7VkHtp8xKlM72B3fH-AsO6J1uV7zz_LDIJjB88yI7q7RiE
+Message-ID: <CA+CK2bC_m=pUHt1uOoW9UMssDATqabHKHRyq7QNbzrb9Vm13Cw@mail.gmail.com>
+Subject: Re: [PATCH v5 02/22] liveupdate: luo_core: integrate with KHO
+To: Mike Rapoport <rppt@kernel.org>
+Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com, 
+	dmatlack@google.com, rientjes@google.com, corbet@lwn.net, 
+	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, 
+	ojeda@kernel.org, aliceryhl@google.com, masahiroy@kernel.org, 
+	akpm@linux-foundation.org, tj@kernel.org, yoann.congal@smile.fr, 
+	mmaurer@google.com, roman.gushchin@linux.dev, chenridong@huawei.com, 
+	axboe@kernel.dk, mark.rutland@arm.com, jannh@google.com, 
+	vincent.guittot@linaro.org, hannes@cmpxchg.org, dan.j.williams@intel.com, 
+	david@redhat.com, joel.granados@kernel.org, rostedt@goodmis.org, 
+	anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn, 
+	linux@weissschuh.net, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-mm@kvack.org, gregkh@linuxfoundation.org, tglx@linutronix.de, 
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, 
+	hpa@zytor.com, rafael@kernel.org, dakr@kernel.org, 
+	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com, 
+	myungjoo.ham@samsung.com, yesanishhere@gmail.com, Jonathan.Cameron@huawei.com, 
+	quic_zijuhu@quicinc.com, aleksander.lobakin@intel.com, ira.weiny@intel.com, 
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
+	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net, 
+	brauner@kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	saeedm@nvidia.com, ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com, 
+	leonro@nvidia.com, witu@nvidia.com, hughd@google.com, skhawaja@google.com, 
+	chrisl@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Opening and closing an inode dirties the ->i_readcount field.
+On Thu, Nov 13, 2025 at 11:32=E2=80=AFAM Mike Rapoport <rppt@kernel.org> wr=
+ote:
+>
+> On Wed, Nov 12, 2025 at 09:58:27AM -0500, Pasha Tatashin wrote:
+> > On Wed, Nov 12, 2025 at 8:25=E2=80=AFAM Mike Rapoport <rppt@kernel.org>=
+ wrote:
+> > >
+> > > Hi Pasha,
+> > >
+> > > On Tue, Nov 11, 2025 at 03:57:39PM -0500, Pasha Tatashin wrote:
+> > > > Hi Mike,
+> > > >
+> > > > Thank you for review, my comments below:
+> > > >
+> > > > > > This is why this call is placed first in reboot(), before any
+> > > > > > irreversible reboot notifiers or shutdown callbacks are perform=
+ed. If
+> > > > > > an allocation problem occurs in KHO, the error is simply report=
+ed back
+> > > > > > to userspace, and the live update update is safely aborted.
+> > >
+> > > The call to liveupdate_reboot() is just before kernel_kexec(). Why we=
+ don't
+> > > move it there?
+> >
+> > Yes, I can move that call into kernel_kexec().
+> >
+> > > And all the liveupdate_reboot() does if kho_finalize() fails it's mas=
+saging
+> > > the error value before returning it to userspace. Why kernel_kexec() =
+can't
+> > > do the same?
+> >
+> > We could do that. It would look something like this:
+> >
+> > if (liveupdate_enabled())
+> >    kho_finalize();
+> >
+> > Because we want to do kho_finalize() from kernel_kexec only when we do
+> > live update.
+> >
+> > > > > This is fine. But what I don't like is that we can't use kho with=
+out
+> > > > > liveupdate. We are making debugfs optional, we have a way to call
+> >
+> > This is exactly the fix I proposed:
+> >
+> > 1. When live-update is enabled, always disable "finalize" debugfs API.
+> > 2. When live-update is disabled, always enable "finalize" debugfs API.
+>
+> I don't mind the concept, what I do mind is sprinkling liveupdate_enabled=
+()
+> in KHO.
 
-Depending on the alignment of the inode, it may happen to false-share
-with other fields loaded both for both operations to various extent.
+Sure, let's just unconditionally do kho_fill_kimage().
 
-This notably concerns the ->i_flctx field.
+> How about we kill debugfs/kho/out/abort and make kho_finalize() overwrite
+> an existing FDT if there was any?
+>
+> Abort was required to allow rollback for subsystems that had kho notifier=
+s,
+> but now notifiers are gone and kho_abort() only frees the memory
+> serialization data. I don't see an issue with kho_finalize() from debugfs
+> being a tad slower because of a call to kho_abort() and the liveupdate pa=
+th
+> anyway won't incur that penalty.
 
-Since most inodes don't have the field populated, this bit can be managed
-with a flag in ->i_opflags instead which bypasses the problem.
+Sounds good to me.
 
-Here are results I obtained while opening a file read-only in a loop
-with 24 cores doing the work on Sapphire Rapids. Utilizing the flag as
-opposed to reading ->i_flctx field was toggled at runtime as the benchmark
-was running, to make sure both results come from the same alignment.
+> > > KHO should not call into liveupdate. That's layering violation.
+> > > And "stateless KHO" does not really make it stateless, it only remove=
+s the
+> > > memory serialization from kho_finalize(), but it's still required to =
+pack
+> > > the FDT.
+> >
+> > This touches on a point I've raised in the KHO sync meetings: to be
+> > effective, the "stateless KHO" work must also make subtree add/remove
+> > stateless. There should not be a separate "finalize" state just to
+> > finish the FDT. The KHO FDT is tiny (only one page), and there are
+> > only a handful of subtrees. Adding and removing subtrees is cheap; we
+> > should be able to open FDT, modify it, and finish FDT on every
+> > operation. There's no need for a special finalization state at kexec
+> > time. KHO should be totally stateless.
+>
+> And as the first step we can drop 'if (!kho_out.finalized)' from
+> kho_fill_kimage(). We might need to massage the check for valid FDT in
+> kho_populate() to avoid unnecessary noise, but largely there's no issue
+> with always passing KHO data in kimage.
 
-before: 3233740
-after:  3373346 (+4%)
+Sounds good, let me work on this patch.
 
-before: 3284313
-after:  3518711 (+7%)
-
-before: 3505545
-after:  4092806 (+16%)
-
-Or to put it differently, this varies wildly depending on how (un)lucky
-you get.
-
-The primary bottleneck before and after is the avoidable lockref trip in
-do_dentry_open().
-
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
----
-
-no changes, rebased on top of https://lore.kernel.org/linux-fsdevel/20251111-dir-deleg-ro-v6-0-52f3feebb2f2@kernel.org/
-
- fs/locks.c               | 14 ++++++++++++--
- include/linux/filelock.h | 15 +++++++++++----
- include/linux/fs.h       |  1 +
- 3 files changed, 24 insertions(+), 6 deletions(-)
-
-diff --git a/fs/locks.c b/fs/locks.c
-index 7f4ccc7974bc..b58f7d65f1a9 100644
---- a/fs/locks.c
-+++ b/fs/locks.c
-@@ -178,7 +178,6 @@ locks_get_lock_context(struct inode *inode, int type)
- {
- 	struct file_lock_context *ctx;
- 
--	/* paired with cmpxchg() below */
- 	ctx = locks_inode_context(inode);
- 	if (likely(ctx) || type == F_UNLCK)
- 		goto out;
-@@ -196,7 +195,18 @@ locks_get_lock_context(struct inode *inode, int type)
- 	 * Assign the pointer if it's not already assigned. If it is, then
- 	 * free the context we just allocated.
- 	 */
--	if (cmpxchg(&inode->i_flctx, NULL, ctx)) {
-+	spin_lock(&inode->i_lock);
-+	if (!(inode->i_opflags & IOP_FLCTX)) {
-+		VFS_BUG_ON_INODE(inode->i_flctx, inode);
-+		WRITE_ONCE(inode->i_flctx, ctx);
-+		/*
-+		 * Paired with locks_inode_context().
-+		 */
-+		smp_store_release(&inode->i_opflags, inode->i_opflags | IOP_FLCTX);
-+		spin_unlock(&inode->i_lock);
-+	} else {
-+		VFS_BUG_ON_INODE(!inode->i_flctx, inode);
-+		spin_unlock(&inode->i_lock);
- 		kmem_cache_free(flctx_cache, ctx);
- 		ctx = locks_inode_context(inode);
- 	}
-diff --git a/include/linux/filelock.h b/include/linux/filelock.h
-index dc15f5427680..4a8912b9653e 100644
---- a/include/linux/filelock.h
-+++ b/include/linux/filelock.h
-@@ -242,8 +242,12 @@ static inline struct file_lock_context *
- locks_inode_context(const struct inode *inode)
- {
- 	/*
--	 * Paired with the fence in locks_get_lock_context().
-+	 * Paired with smp_store_release in locks_get_lock_context().
-+	 *
-+	 * Ensures ->i_flctx will be visible if we spotted the flag.
- 	 */
-+	if (likely(!(smp_load_acquire(&inode->i_opflags) & IOP_FLCTX)))
-+		return NULL;
- 	return READ_ONCE(inode->i_flctx);
- }
- 
-@@ -471,7 +475,7 @@ static inline int break_lease(struct inode *inode, unsigned int mode)
- 	 * could end up racing with tasks trying to set a new lease on this
- 	 * file.
- 	 */
--	flctx = READ_ONCE(inode->i_flctx);
-+	flctx = locks_inode_context(inode);
- 	if (!flctx)
- 		return 0;
- 	smp_mb();
-@@ -490,7 +494,7 @@ static inline int break_deleg(struct inode *inode, unsigned int flags)
- 	 * could end up racing with tasks trying to set a new lease on this
- 	 * file.
- 	 */
--	flctx = READ_ONCE(inode->i_flctx);
-+	flctx = locks_inode_context(inode);
- 	if (!flctx)
- 		return 0;
- 	smp_mb();
-@@ -535,8 +539,11 @@ static inline int break_deleg_wait(struct delegated_inode *di)
- 
- static inline int break_layout(struct inode *inode, bool wait)
- {
-+	struct file_lock_context *flctx;
-+
- 	smp_mb();
--	if (inode->i_flctx && !list_empty_careful(&inode->i_flctx->flc_lease)) {
-+	flctx = locks_inode_context(inode);
-+	if (flctx && !list_empty_careful(&flctx->flc_lease)) {
- 		unsigned int flags = LEASE_BREAK_LAYOUT;
- 
- 		if (!wait)
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index a312700dfce2..867f967719a9 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -656,6 +656,7 @@ is_uncached_acl(struct posix_acl *acl)
- #define IOP_MGTIME		0x0020
- #define IOP_CACHED_LINK		0x0040
- #define IOP_FASTPERM_MAY_EXEC	0x0080
-+#define IOP_FLCTX		0x0100
- 
- /*
-  * Inode state bits.  Protected by inode->i_lock
--- 
-2.48.1
-
+Pasha
 
