@@ -1,152 +1,125 @@
-Return-Path: <linux-fsdevel+bounces-68348-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68349-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1209DC59671
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 19:15:13 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27500C59635
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 19:11:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5B8474F46E7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 17:39:42 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 79A99500B02
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 18:01:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D60C934FF66;
-	Thu, 13 Nov 2025 17:39:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01E1535A12D;
+	Thu, 13 Nov 2025 17:59:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="i4feVA+M"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FtGWwWjq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B7ED2F99A5
-	for <linux-fsdevel@vger.kernel.org>; Thu, 13 Nov 2025 17:39:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 504BF33971D
+	for <linux-fsdevel@vger.kernel.org>; Thu, 13 Nov 2025 17:58:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763055567; cv=none; b=Gl2UaSP/pQzehW3+X+NEnwQYBjKLGl9iamua5A/6xCK+6rvYK7RMpNBjXzGyUr7eAAOzYJxtBE35oTbAcel1K8ipsgN/mBKmOMUjKIzKiN61bEnHm03IZvwq37oKWyn7fY9+5jg00sctsh7gIUCni+1/8/mjjbPE92313BuhVoY=
+	t=1763056742; cv=none; b=YkqujlFWz+uAidfX6AltDT70pyRC7WBjhSG2lVK7X2Ypf3zNc7dgZOaa3OzeGgxdx/39d3v2RxbSTmFciYSujkRFkio5p+rYQhXC9uUh8BfCsBnjD8encLNZOI3cWF3GHDryZ9uHhZuVmVZwFQIyJe489HjLCg1jXK9K4BMm7d0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763055567; c=relaxed/simple;
-	bh=GGp2s0LvtKjt+t1W7yDNtjXdzWykxFnnHM6LUMYRznE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RdzE43pO1uLSdsmfmTDh573lVx2Ib040F7JphPM0mHf0E/FS+E9Z2sF2qzdJB9dsN91Qac5QDEyjkt/LGc1tbbtfpUJcoPqy7Yyzg01pO7WDIkB9HNveQ3qTIoZUJ2BuPFR7e6K0hVDWjksThRpAe7mrCVO84wv9wq0rL0MgC7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=i4feVA+M; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1763055564;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PXiG8WHDv5vtbMZ81FzbMwHzCV62RlyG1r3nUFcyKUo=;
-	b=i4feVA+MVoD/X7npHl0F1AxDCT5IM8+pgCatsJMwQuKkjBQ7ZUkiSHVa72i6jmgLHBuukU
-	zGlOv1ZmMytb18wl4kcY020rFz3NwSFtsD73Z1YBfVIl/O2+oYyiZxMmFGTUI4lQBBOanr
-	UHD2sNIn/jTKS5V6G/x2U4vPkuZqnhc=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-267-E9sQLSMdPc-ALg_OhBjXIQ-1; Thu,
- 13 Nov 2025 12:39:18 -0500
-X-MC-Unique: E9sQLSMdPc-ALg_OhBjXIQ-1
-X-Mimecast-MFC-AGG-ID: E9sQLSMdPc-ALg_OhBjXIQ_1763055557
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 221EC1956070;
-	Thu, 13 Nov 2025 17:39:17 +0000 (UTC)
-Received: from redhat.com (unknown [10.45.224.162])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3D6D9300018D;
-	Thu, 13 Nov 2025 17:39:11 +0000 (UTC)
-Date: Thu, 13 Nov 2025 18:39:07 +0100
-From: Kevin Wolf <kwolf@redhat.com>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Jan Kara <jack@suse.cz>, Keith Busch <kbusch@kernel.org>,
-	Dave Chinner <david@fromorbit.com>,
-	Carlos Maiolino <cem@kernel.org>,
-	Christian Brauner <brauner@kernel.org>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-raid@vger.kernel.org,
-	linux-block@vger.kernel.org
-Subject: Re: fall back from direct to buffered I/O when stable writes are
- required
-Message-ID: <aRYXuwtSQUz6buBs@redhat.com>
-References: <20251029071537.1127397-1-hch@lst.de>
- <aQNJ4iQ8vOiBQEW2@dread.disaster.area>
- <20251030143324.GA31550@lst.de>
- <aQPyVtkvTg4W1nyz@dread.disaster.area>
- <20251031130050.GA15719@lst.de>
- <aQTcb-0VtWLx6ghD@kbusch-mbp>
- <20251031164701.GA27481@lst.de>
- <kpk2od2fuqofdoneqse2l3gvn7wbqx3y4vckmnvl6gc2jcaw4m@hsxqmxshckpj>
- <20251103122111.GA17600@lst.de>
+	s=arc-20240116; t=1763056742; c=relaxed/simple;
+	bh=tzAHs/NW8hzxVyE7YgViwF3ICFGUKDmj3FMEsxS6U1Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aWR4h+9xrmojvY4mQKURog4o8HllrHac+0c0EjTBAYxQcdDRR+9RLtQivGnPCruwTK5k68C3guLOlCC/OQ5e3PKfXiPyuLcDb6rwz1BGXFX1yBlbUzQerlwehiNrplk1GWeqmwmV5lzOV1NeTYLeSmHpXQP3V9FCWIveS5bTPvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FtGWwWjq; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-477549b3082so9991095e9.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Nov 2025 09:58:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1763056737; x=1763661537; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ONlXezZ8rYOFy9RaN+13wK2rQQVa66Pyx3TL3D7WvBY=;
+        b=FtGWwWjqZFjpPt47P6Ju8vQUDh2w77wo3rilojDASBwiLmhr+U4TBZdbK0/XZLsJEL
+         XGryyTvMkwp5vDHs7uV3O8qOa5KjDnn1rRAgIsxCFzc5khwhoVDYtzeeiwDWPaP9HQdw
+         b50QahjM2tWnlynEOd2xg15yRJ30W/HacQOEV8cpeqG5vcE0Ivt33Nxz8b2GOO9dunN4
+         eASNN5elj7l+mKhEu9RnRUsEaQup7Dm9Ejo1lEqZwRPSGRIY9wCZqzb53z5LN4fNzZfk
+         OBNUbzA08oIv9Ud3pxIBrFgrUW24KGwEwzhZMvIDSCd7Evq1uMhyswb3sboH6TPkpB0d
+         kfkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763056737; x=1763661537;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ONlXezZ8rYOFy9RaN+13wK2rQQVa66Pyx3TL3D7WvBY=;
+        b=CgOouFWQM2LUn0tHRgVtVwiU74rTaMzYxaTZSb/p4+d52voKtFjvyiSMSfvb1BO4L3
+         1BgTCdK4RT6djiz1gmKmFB2Vi0+ydZ5bILFe+inmbN4u9A9X7DH9biur6oMYbdOfxN51
+         R6WwYnyuYmnPO3ICrdPHgFOdxTKxROpwmgXZq4qa61dM9h8UTlIlqgXHpJTj8qnGJora
+         68YEIE8Dl8s/063fL4/WwHpTt9gGMqkRrFrgSO5jRGK08eR7+T9K1SsTMvSAx1ehH6bc
+         26U1Nu8JprSUgz4o7wiLhgbU3nrxc0KnPkdeES4i+PMiFpMKajySD6uJTjE9ZG9mkCDD
+         S3yA==
+X-Forwarded-Encrypted: i=1; AJvYcCW6vcqbkGzQ8O720rztT+G3lz04rTmhsjUbC2g8vML+t2W4uxv3cpbo0KJbF0cI7YDozHkRNaR80O9HfE/Q@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrtNiZEBsL/vaSImzwSttsU6vXG3I3NlFzt1LhRllxs4CIOQ0+
+	0nfvVw/bqrLPUOmw+XQKfOCSp7InUAUxUK8UUWJD4de+zOCCjB4Bkv98
+X-Gm-Gg: ASbGnctNn4LMDFezjZrNUgK1Swwh8dlVNOXoIGQxWiTDHNtM5Pj6RYSw/8j/N/BMnKW
+	CYuf7seEObXCFOhVxe7big9y3jhxRsWr4YhUa8du1YT4v0y0vb3MACPMR9vSMixCdTnJNioVlKa
+	pPthMmEGMJ+GAOFPHlIcgWuvwAdZp5zRLvBsAoIqR2N2L1IqCzohgZRnARyTwPox1X6brfJJixp
+	rJX7f1Z2F1Tv9Ah9UuSp8uRfQQ3ceXVjLCr8yJlPs4HBIFyDogAO+srs8btexO7ky+rOD9P0J44
+	3/VJNobMj/adEjR0pGw4HJxumXxVWs1c2ewDoWQaWRaLM1RqYgzA3+hkiZFxVvGnkz8M3LlW8O2
+	fYv/ysclQrwn7Zespeu1mO5m8Kga3qd73Y9WkGqUihy9jLxV5wt0mPkTtQvJkRgnt3b4BYtvlXy
+	kwK3JWPO66wkJUgiEqbS77BBmzU4NTvVHMJfPR/MNcTKhtVtr5
+X-Google-Smtp-Source: AGHT+IHaYkfhslit1+bZ6h2bKwMphvfyMMNqhnEV5TKWd6eJOYYn+BKKgD1tVDFC16Scxd44ybfeUg==
+X-Received: by 2002:a05:600c:3104:b0:471:14f5:126f with SMTP id 5b1f17b1804b1-4778fea6cf6mr3947605e9.33.1763056736734;
+        Thu, 13 Nov 2025 09:58:56 -0800 (PST)
+Received: from f.. (cst-prg-14-82.cust.vodafone.cz. [46.135.14.82])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47787e95327sm98888575e9.12.2025.11.13.09.58.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Nov 2025 09:58:56 -0800 (PST)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: brauner@kernel.org,
+	jlayton@kernel.org
+Cc: viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH v3 1/2] filelock: use a consume fence in locks_inode_context()
+Date: Thu, 13 Nov 2025 18:58:50 +0100
+Message-ID: <20251113175852.2022230-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251103122111.GA17600@lst.de>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Transfer-Encoding: 8bit
 
-Am 03.11.2025 um 13:21 hat Christoph Hellwig geschrieben:
-> On Mon, Nov 03, 2025 at 12:14:06PM +0100, Jan Kara wrote:
-> > I also think the performance cost of the unconditional bounce buffering is
-> > so heavy that it's just a polite way of pushing the app to do proper IO
-> > buffer synchronization itself (assuming it cares about IO performance but
-> > given it bothered with direct IO it presumably does). 
-> >
-> > So the question is how to get out of this mess with the least disruption
-> > possible which IMO also means providing easy way for well-behaved apps to
-> > avoid the overhead.
-> 
-> Remember the cases where this matters is checksumming and parity, where
-> we touch all the cache lines anyway and consume the DRAM bandwidth,
-> although bounce buffering upgrades this from pure reads to also writes.
-> So the overhead is heavy, but if we handle it the right way, that is
-> doing the checksum/parity calculation while the cache line is still hot
-> it should not be prohibitive.  And getting this right in the direct
-> I/O code means that the low-level code could stop bounce buffering
-> for buffered I/O, providing a major speedup there.
-> 
-> I've been thinking a bit more on how to better get the copy close to the
-> checksumming at least for PI, and to avoid the extra copies for RAID5
-> buffered I/O. M maybe a better way is to mark a bio as trusted/untrusted
-> so that the checksumming/raid code can bounce buffer it, and I start to
-> like that idea.
+Matches the idiom of storing a pointer with a release fence and safely
+getting the content with a consume fence after.
 
-This feels like the right idea to me. It's also what I thought of after
-reading your problem description.
+Eliminates an actual fence on some archs.
 
-The problem is not that RAID5 uses bounce buffers. That's the correct
-and safe thing to do when you don't know that the buffer can't change.
-I'd argue changing that would be a RAID5 bug, and the corruption you
-showed earlier in the thread is not a sign of a buggy filesystem or
-application [1], but that you told the device to operate incorrectly.
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+---
+ include/linux/filelock.h | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-What is the problem is that it still uses bounce buffers when you do
-know that the buffer can't change. Then it's just wasteful and doesn't
-contribute to correctness.
-
-Passing down a flag to the device so that it can decide whether the
-bounce buffer is needed seems like the obvious solution for that.
-
-> A complication is that PI could relax that requirement if we support
-> PI passthrough from userspace (currently only for block device, but I
-> plan to add file system support), where the device checks it, but we
-> can't do that for parity RAID.
-
-Not sure I understand the problem here. If it's passed through from
-userspace, isn't its validity the problem of userspace, too? I'd expect
-that you only need a bounce buffer in the kernel if the kernel itself
-does something like a checksum calculation?
-
-Kevin
-
-[1] For a QEMU developer like me, not blaming the application may sound
-    like an excuse, but we're really only in the same position as the
-    kernel here for anything that comes from the guest. Whenever we rely
-    on stable buffers, we already have to use bounce buffers, too.
+diff --git a/include/linux/filelock.h b/include/linux/filelock.h
+index 54b824c05299..dc15f5427680 100644
+--- a/include/linux/filelock.h
++++ b/include/linux/filelock.h
+@@ -241,7 +241,10 @@ bool locks_owner_has_blockers(struct file_lock_context *flctx,
+ static inline struct file_lock_context *
+ locks_inode_context(const struct inode *inode)
+ {
+-	return smp_load_acquire(&inode->i_flctx);
++	/*
++	 * Paired with the fence in locks_get_lock_context().
++	 */
++	return READ_ONCE(inode->i_flctx);
+ }
+ 
+ #else /* !CONFIG_FILE_LOCKING */
+-- 
+2.48.1
 
 
