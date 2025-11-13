@@ -1,223 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-68188-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68189-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DC39C569B5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 10:34:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38D1AC56A43
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 10:39:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 07D1F4E818D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 09:26:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE0C43BA29A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 09:33:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B99D62D8782;
-	Thu, 13 Nov 2025 09:26:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="BZWkX6ff"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4A3C314A86;
+	Thu, 13 Nov 2025 09:33:06 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4452927B359;
-	Thu, 13 Nov 2025 09:26:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9CE62DF154
+	for <linux-fsdevel@vger.kernel.org>; Thu, 13 Nov 2025 09:33:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763026007; cv=none; b=hg0IyaLU6Ivk3mKmi24M/5KPVhwie24LkviNEm25In/84fax4Ah6/Pq0pMXSan72Q89YDEwTRYQXC2fBhvZEqdDZgvK1XmUPMXim1yO7Ld3wpRViNWypHKFagZkmASSV9u5+Hqfr09aRCi74YjQHnL/8MLDyeIFqwu0jPJWBcLs=
+	t=1763026386; cv=none; b=KFcCpswweqTjKmqRSjYk8qhwdI/A4xZP90daEu4RJjmwRX4TiR9qgYa/99Iu/XJ/iYO/a/vMuD+BELp/E9UMejgUk2GUQjpWG9fMH/RuI11ggPrr2FvKSqvXfDZVqDhky1aKMsQ4g2uYgKZvalVN7nCPXUao9mpmjXfYqJjdGZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763026007; c=relaxed/simple;
-	bh=V9v4rcZd8cRDteZ6yt185AXmX9IehUKxWoOSUbyVPQE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gm+k30SNROr3uE8MC0T66+FTRdSZlmMzIXaSmbln1AYrQgIzpQloz3B+n0pKBl/ZYLSf3p54LcPe5UFYZjFRLVncW2KFpB3aTZ80ZcosBlA7oOax4iJPcho7xBfAMrpFB2ZZ6hYs01h+IlGx3eUaGc2yTxFHuMJrtIJacMZuLz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=BZWkX6ff; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=LDUxCZ9a1FBEg+ndXr53elrDsetDAHrRuckIwq+rkq0=; b=BZWkX6ff3GA3RTeDfa4driAPz2
-	WEG9gIlnyiYFdtMOWlbZu9v/maRJmMXsW7OV71VZxaFQzrkQ+QdzfOvUBvZ8qNmBTAaQ0c64+1a4e
-	e2Ntp0fd4Nz2PbSh3xvepolayFe8B+2k6YRJKodfIL7Czycd5Xq28Trj5RrH9AvJL7ifIGizzoNUd
-	S85OBW6rXLf1OGeorqTcGvgW3AVCokPuyfp1wjY7Y3yAbmhvYTcVBNIroydt68NMMAAiPyRPwfcyz
-	nXp2xc7r/dlTreE2iy/5WTgr8kPTqpleSNRGiMCmePXOZMGXGvpta32ZoNyWi03E8Avg9wVxF2qVG
-	6GSVcCPw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vJTbA-0000000HMAd-16pF;
-	Thu, 13 Nov 2025 09:26:36 +0000
-Date: Thu, 13 Nov 2025 09:26:36 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: bot+bpf-ci@kernel.org, linux-fsdevel@vger.kernel.org,
-	torvalds@linux-foundation.org, brauner@kernel.org, jack@suse.cz,
-	raven@themaw.net, miklos@szeredi.hu, neil@brown.name,
-	a.hindborg@kernel.org, linux-mm@kvack.org,
-	linux-efi@vger.kernel.org, ocfs2-devel@lists.linux.dev,
-	kees@kernel.org, rostedt@goodmis.org, gregkh@linuxfoundation.org,
-	linux-usb@vger.kernel.org, paul@paul-moore.com,
-	casey@schaufler-ca.com, linuxppc-dev@lists.ozlabs.org,
-	john.johansen@canonical.com, selinux@vger.kernel.org,
-	borntraeger@linux.ibm.com, bpf@vger.kernel.org, ast@kernel.org,
-	andrii@kernel.org, daniel@iogearbox.net, martin.lau@kernel.org,
-	eddyz87@gmail.com, yonghong.song@linux.dev, ihor.solodrai@linux.dev,
-	Chris Mason <clm@meta.com>
-Subject: [functionfs] mainline UAF (was Re: [PATCH v3 36/50] functionfs:
- switch to simple_remove_by_name())
-Message-ID: <20251113092636.GX2441659@ZenIV>
-References: <20251111065520.2847791-37-viro@zeniv.linux.org.uk>
- <20754dba9be498daeda5fe856e7276c9c91c271999320ae32331adb25a47cd4f@mail.kernel.org>
- <20251111092244.GS2441659@ZenIV>
- <e6b90909-fdd7-4c4d-b96e-df27ea9f39c4@meta.com>
+	s=arc-20240116; t=1763026386; c=relaxed/simple;
+	bh=i/gJ9OdcSlL2P2pnDCmw1Iju5BSX0Wns1jv1nn8Sn1k=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=XtZIJfnXHChDdmIviuodT7BK5IcUL/L7GUb0Ar3jaGzH2Fc7dnyFwK/71SK0krsmdrMe8TeemoV8gL9OHZlgAR5MeUviAa+5gUiLzfu8UTazadNEWwr1lMb8JRsWjHIVqbhid9Pdl/jxw3sl0sghSmU1u7wWyrpHd1jvyWT00ks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-8870219dce3so84874639f.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Nov 2025 01:33:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763026384; x=1763631184;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AnQbfy3BP7tZ5yQYDmEOKUZd+jMnHCYAe2SJPFPgL10=;
+        b=sV7lm2MrSdD7cYAQOX/F8skNoUk7+2SrTVqPgoo7AenKyxSSHiTnLze/WRGqosuNVW
+         J/tsyJfMp4yMu5+LuoFlV+NB4YXAlaPo43eWM3k0J8nVsb8a4NlKcmPb+30/ZwqaFYDC
+         lNRF36PUwFABbxngY7b2qNwty4lCXj+ee37HGO6zgnkrjOLnanS6QTvDR1qx0zyIgapo
+         +Y4RtwTUoEq9xZqFXDLpQjn9sugaCXxsnbh/gippaXvdooF0dijzNDRZ828PdS6nUKq2
+         pDFGaW4DN3nczjaj0/1hTi8t2gxOQBzXrI1aCbF74pnCwf8ekusMogCcGKbldwkjCYzO
+         YbmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVM95qVIWyrtWOm5ngNB8HIkw0DJrocX7g8/L180FSMud4sEtW1eWTp4VjsjvEx21vbZdHaCHaZigUtvo6D@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmLc+06OBKzr+i1f9RDtgv2yjGoAzVAjjno9YrJZ7dFcVZz5ad
+	SFqhPwrL3UAXFath9hWAjT5Sir7Ctv2AVqKjVVgbqpaqWh/860UzWUILpMFsgWDtcQk/4MQzvFb
+	OSBQE9QCfRa89Dz+FrbGdxXRkU+CSHGxqfbOxFTmgSjMP7swlyHPj3hZXBnA=
+X-Google-Smtp-Source: AGHT+IFx/ByR1aVdOKGyVe9jmEMOK9B8X6NWIRr5k9C2ynZaFrg1uVQjjbQrjKW99Za+5V9uS/2k2Fp8j5W5mOS9Ph0LCj+ruzEI
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e6b90909-fdd7-4c4d-b96e-df27ea9f39c4@meta.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Received: by 2002:a05:6602:6c1a:b0:948:a115:db85 with SMTP id
+ ca18e2360f4ac-948c4561832mr789905739f.2.1763026384162; Thu, 13 Nov 2025
+ 01:33:04 -0800 (PST)
+Date: Thu, 13 Nov 2025 01:33:04 -0800
+In-Reply-To: <67886ff3.050a0220.20d369.0021.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6915a5d0.050a0220.3565dc.0023.GAE@google.com>
+Subject: Re: [syzbot] [netfs?] INFO: task hung in netfs_retry_writes
+From: syzbot <syzbot+666a9cb4c41986207cdf@syzkaller.appspotmail.com>
+To: asmadeus@codewreck.org, dhowells@redhat.com, ericvh@kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux_oss@crudebyte.com, lucho@ionkov.net, m@maowtm.org, 
+	netfs@lists.linux.dev, pc@manguebit.org, syzkaller-bugs@googlegroups.com, 
+	v9fs@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Nov 11, 2025 at 10:44:26PM -0500, Chris Mason wrote:
+syzbot suspects this issue was fixed by commit:
 
-> We're wandering into fuzzing territory here, and I honestly have no idea
-> if this is a valid use of any of this code, but AI managed to make a
-> repro that crashes only after your patch.  So, I'll let you decide.
-> 
-> The new review:
-> 
-> Can this dereference ZERO_SIZE_PTR when eps_count is 0?
-> 
-> When ffs->eps_count is 0, ffs_epfiles_create() calls kcalloc(0, ...) which
-> returns ZERO_SIZE_PTR (0x10). The loop never executes so epfiles[0].ffs is
-> never initialized. Later, cleanup paths (ffs_data_closed and ffs_data_clear)
-> check if (epfiles) which is true for ZERO_SIZE_PTR, and call
-> ffs_epfiles_destroy(epfiles, 0).
-> 
-> In the old code, the for loop condition prevented any dereferences when
-> count=0. In the new code, "root = epfile->ffs->sb->s_root" dereferences
-> epfile before checking count, which would fault on ZERO_SIZE_PTR.
+commit 290434474c332a2ba9c8499fe699c7f2e1153280
+Author: Tingmao Wang <m@maowtm.org>
+Date:   Sun Apr 6 16:18:42 2025 +0000
 
-Lovely.  OK, this is a bug.  It is trivial to work around (all callers
-have ffs avaible, so just passing it as an explicit argument solves
-the problem), but there is a real UAF in functionfs since all the way
-back to original merge.  Take a look at
+    fs/9p: Refresh metadata in d_revalidate for uncached mode too
 
-static int
-ffs_epfile_open(struct inode *inode, struct file *file)
-{
-	struct ffs_epfile *epfile = inode->i_private;
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15831c12580000
+start commit:   a2e94e80790b Merge tag 'block-6.17-20250822' of git://git...
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d4703ac89d9e185a
+dashboard link: https://syzkaller.appspot.com/bug?extid=666a9cb4c41986207cdf
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=137d5062580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15e33fa2580000
 
-	if (WARN_ON(epfile->ffs->state != FFS_ACTIVE))
-		return -ENODEV;
+If the result looks correct, please mark the issue as fixed by replying with:
 
-	file->private_data = epfile;
-	ffs_data_opened(epfile->ffs);
+#syz fix: fs/9p: Refresh metadata in d_revalidate for uncached mode too
 
-	return stream_open(inode, file);
-}
-
-and think what happens if that (->open() of dynamic files in there)
-races with file removal.  Specifically, if we get called with ffs->opened
-equal to 1 due to opened ep0 and get preempted away just before the
-call ffs_data_opened().  Another thread closes ep0, hitting
-ffs_data_closed(), dropping ffs->opened to 0 and getting
-			ffs->state = FFS_CLOSING;
-			ffs_data_reset(ffs);
-which calls ffs_data_clear(), where we hit
-		ffs_epfiles_destroy(epfiles, ffs->eps_count);
-All files except ep0 are removed and epfiles gets freed, leaving the
-first thread (in ffs_epfile_open()) with file->private_data pointing
-into a freed array.
-
-open() succeeds, with any subsequent IO on the resulting file leading
-to calls of
-static ssize_t ffs_epfile_io(struct file *file, struct ffs_io_data *io_data)
-{
-	struct ffs_epfile *epfile = file->private_data;
-
-and a bunch of accesses to *epfile later in that function, all of them
-UAF.
-
-As far as I can tell, the damn thing intends to prevent removals between
-ffs_data_opened() and ffs_data_closed(), so other methods would be safe
-if ->open() had been done right.  I'm not happy with the way that FSM
-is done (the real state is a mix of ffs->state, ffs->opened and ffs->mutex,
-and rules bloody awful; I'm still not entirely convinced that ffs itself
-can't be freed with ffs->reset_work scheduled for execution), but that's
-a separate story.  
-
-Another variant of that scenario is with ffs->no_disconnect set;
-in a sense, it's even nastier.  In that case ffs_data_closed() won't
-remove anything - it will set ffs->state to FFS_DEACTIVATED, leaving
-the removals for ffs_data_open().  If we have *two* threads in open(),
-the first one to call ffs_data_open() will do removal; on another CPU
-the second will just get past its increment of ->opened (from 1 to 2)
-and move on, without waiting for anything.
-
-IMO we should just take ffs->mutex in there, getting to ffs via
-inode->i_sb->s_fs_info.  And yes, compare ffs->state with FFS_ACTIVE -
-under ->mutex, without WARN_ON() and after having bumped ->opened
-so that racing ffs_data_closed() would do nothing.  Not FFS_ACTIVE -
-call ffs_data_closed() ourselves on failure exit.
-
-As in
-
-static int
-ffs_epfile_open(struct inode *inode, struct file *file)
-{
-	strict ffs_data *ffs = inode->i_sb->s_fs_info;
-	int ret;
-
-        /* Acquire mutex */
-	ret = ffs_mutex_lock(&ffs->mutex, file->f_flags & O_NONBLOCK);
-	if (ret < 0)
-		return ret;
-
-	ffs_data_opened(ffs);
-	/*
-	 * not FFS_ACTIVE - there might be a pending removal;
-	 * FFS_ACITVE alone is not enough, though - we might have
-	 * been through FFS_CLOSING and back to FFS_ACTIVE,
-	 * with our file already removed.
-	 */
-	if (unlikely(ffs->state != FFS_ACTIVE ||
-		     !simple_positive(file->f_path.dentry))) {
-		ffs_data_closed(ffs);
-		mutex_unlock(&ffs->mutex);
-		return -ENODEV;
-	}
-	mutex_unlock(&ffs->mutex);
-
-	file->private_data = inode->i_private;
-	return stream_open(inode, file);
-}
-
-and
-
-static int ffs_ep0_open(struct inode *inode, struct file *file)
-{
-        struct ffs_data *ffs = inode->i_private;
-	int ret;
-
-        /* Acquire mutex */
-	ret = ffs_mutex_lock(&ffs->mutex, file->f_flags & O_NONBLOCK);
-	if (ret < 0)
-		return ret;
-
-	ffs_data_opened(ffs);
-	if (ffs->state == FFS_CLOSING) {
-		ffs_data_closed(ffs);
-		mutex_unlock(&ffs->mutex);
-		return -EBUSY;
-	}
-	mutex_unlock(&ffs->mutex);
-
-	file->private_data = ffs;
-	return stream_open(inode, file);
-}
-
-Said that, I'm _NOT_ familiar with that code; this is just from a couple
-of days digging through the driver, so I would like to hear comments from
-the maintainer...  Greg?
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
