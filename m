@@ -1,236 +1,131 @@
-Return-Path: <linux-fsdevel+bounces-68338-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68339-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3EEDC5909C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 18:14:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 935AFC591EB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 18:25:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BA724A2CD5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 16:49:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B141426372
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 17:09:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0730364EAA;
-	Thu, 13 Nov 2025 16:41:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C10DA35A951;
+	Thu, 13 Nov 2025 16:56:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="hKalO9U9"
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="dr1KI76g"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 721AA364E91;
-	Thu, 13 Nov 2025 16:41:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CA08328B57
+	for <linux-fsdevel@vger.kernel.org>; Thu, 13 Nov 2025 16:56:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763052069; cv=none; b=d7oervClUIcP9/b2/xbVSi48A0mlaTNDu/n+YGHd611Fj1MtbxjzNljHjjyNQyMtHynwclVHkpc4qfL/q42KMgofccrKKzQZQ5bfIyq7tpAAUfntCjTC5nO51jcpysqUqXOZ587RldpTfg54CP4z+AscvNSzDL2qvAp2a3qOOlQ=
+	t=1763052966; cv=none; b=XbYRk9E+qwBAB5RmKr/IguvL+jIzotUQo68VtMQyNa3YWYfEuOW4OSh7FBfsZWb+V1+IZZ04+4U0L5nGGCaHexd1SPQE1p2YMA7IN4UoAahsnYWAvLh0q/V2XKjJapQih6rafEUHYUzN+DjnOdF4Z1yqklw16bn9x2Nozzz8g6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763052069; c=relaxed/simple;
-	bh=4Rn0vCFHOxl/VzU4cOhHH6GQ0jaVdmc7ugJUND5kF+s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HQwlCo1OK771sgSBg/d2icVhRicdy/1edVQn/Ad+IsXH7klyX2tLqlEy5UTCtJF5tUPxG6UyYXE1u4yq4ouP0l7UyhfUcVVJI8upvvvB7FkUwSrEInVL2d85KnP7rMWTGZupx9G8p4UvsG9lJxepS/8j1aDL55BiTWtTR7SeKZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=hKalO9U9; arc=none smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5ADEA1JJ014807;
-	Thu, 13 Nov 2025 16:40:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=corp-2025-04-25; bh=4M+ZR
-	WcQlgT2VqGUHd87FWqJ9ZR7SqE1GN6V64xvi4A=; b=hKalO9U9hto5IZ0xZQOTl
-	CLznFCa2ke/8bZC4QkDBEsoAwfRAv3qE/uC+xHpje7Xa/hdktyjyLv/7cV2n+y2Y
-	Fahzj5i2RlQhH/TlyniTiHcCNiAD96XOTQWZc21r+e72+n8VjGbJsw4VTDmL2lUN
-	4iiFjse/XCsyTq1RW/yiLRCKoFiXOCt3LDaevjI1y93q8svvHGHQOQda70l5pP1s
-	pmWWzb83vRD145ZMJUjhcDk9t1Qkee4a6VaJ5/8WdWogfKQZZbanqdcoSQRMQRqt
-	kLSI0gwyAugnKtDh/J/2+3flHXlhhmZLrYO9QHtdDd5gX7r/W3jM1xa5Z99N9L5O
-	A==
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4acxwq276q-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 13 Nov 2025 16:40:52 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5ADGAtae003088;
-	Thu, 13 Nov 2025 16:40:51 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4a9vacw50v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 13 Nov 2025 16:40:51 +0000
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 5ADGenxL039586;
-	Thu, 13 Nov 2025 16:40:51 GMT
-Received: from labops-common-sca-01.us.oracle.com (labops-common-sca-01.us.oracle.com [10.132.26.161])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 4a9vacw4y7-3;
-	Thu, 13 Nov 2025 16:40:51 +0000
-From: Dai Ngo <dai.ngo@oracle.com>
-To: chuck.lever@oracle.com, jlayton@kernel.org, neilb@ownmail.net,
-        okorniev@redhat.com, tom@talpey.com, hch@lst.de, alex.aring@gmail.com,
-        viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz
-Cc: linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org
-Subject: [PATCH v2 2/2] NFSD: Fix server hang when there are multiple layout conflicts
-Date: Thu, 13 Nov 2025 08:39:16 -0800
-Message-ID: <20251113164043.1809156-3-dai.ngo@oracle.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251113164043.1809156-1-dai.ngo@oracle.com>
-References: <20251113164043.1809156-1-dai.ngo@oracle.com>
+	s=arc-20240116; t=1763052966; c=relaxed/simple;
+	bh=uGvdD/ipW2kG9og5miefSvlr2P5i5Da/ls3E4y5uIkg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=ZbnNMkKudAULSNspUjmUit9MvfxoknpGRcCDdEjDCvPUKK4w7WisKZob95PTB4f5ObCFni+shZxcW+eyPdmWNMWWhOwKlmQfty+SpIHASGURQ8BKBc4ZqYOh9M7NBpohae7yzZkCrxHJtlHz5GFTqHIWRpsxiqiPlWO/W9bWmDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=dr1KI76g; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-64088c6b309so1819395a12.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Nov 2025 08:56:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen.com; s=google; t=1763052962; x=1763657762; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vMCY5fmkZI76R3Lm7+dKka7numEpthvdX92HaVpx2Bo=;
+        b=dr1KI76g1gnpIh6V24siUjM+7mWoW13NR8UVu0XZREszhttQ3sg5JgHnrgqROqV4Qi
+         ToM2yxDt8f9U8F3EljmVY32kUqRZebZupzv9EcrYhxGGKm4dZi6HTta9CXRqn8YwB5uX
+         9q2xXIuWmYI6yAP30++i3Bsol/vxej349AgL1tAq+XgMzbOUY22a6MVt2yrAWy03By1p
+         Ah8vMhLpWT63v8YxNdu5N1cRs0QkhmcpX43UO2Ef3jgBsBLC4+GE3A8TMqnfqVeYs/Fp
+         pp92Afy93DXuKd0YiT3sYnzOZgV0ZLl+it3sNin5wn3HYikAI9lJseXjQTRpuVfNT41A
+         Y+wA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763052962; x=1763657762;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vMCY5fmkZI76R3Lm7+dKka7numEpthvdX92HaVpx2Bo=;
+        b=B+ltp78kWzqWgCn4OhsWiHcB5cwjtlL4RdF1LPayFBuV8jiEqzBEMuN9g9jrv9GNTk
+         LOu/6A3REaVuqYZz4M+p7tfxsDj2ErorVD3ZIKTFYzz8v/E9g+YcDl4E0iNNXVL6l7n4
+         YrLxA5cgr1LQN8zrsAs8SnEqEJ/B7m8zKGc+or/lECN+Ngh0TdEc0t8UvKwj2BJ1L+K9
+         h/MK7/uE1W2ZHi620s2adgs+aJ18qpDSZGUjZ9qJvUm5U4zzB+4HeX1yqHXxzXOZn0PD
+         iYOWoNo85RNZXywRdeemOuC+PBgv3xo78WDZzhGcgmLkSSAw+i8i1e9LE+3/+XQD26vt
+         yNSg==
+X-Forwarded-Encrypted: i=1; AJvYcCXSwBKXr61ZzeFLx737zVhH7AfLx3l0ReEcG/CAghxHVuj5/jrB50adYJE69amY4VeJpRXl1tUOXJPbIkti@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHlKmhLcIFwReDRqzCzI6X35kIX6qEGbH/uE3W95z2M871EkZX
+	7dL99g6dNJEguide/pu3DlZ/4Hu/XFFszITny/eaNlKGYIys5uasRHjQ4jaJhMLPa+GsOA9sDgH
+	krqZUVE75Vnf1EmQiyCjwHCzHlfD4amu7+buYm6pQcw==
+X-Gm-Gg: ASbGncsdj85hdRBtJLrXmXrSAfWom70uxaz2aC575PLb8xAM1mzXqzvXHl/7CelHSGJ
+	iVGqlIb5Tnw6TNqguGvG1qee+vCwebjngGi1YFhb+L2ot4qpQ+NktCH+wxvO2R2SIZNWj/hvZ9n
+	hmljuFuQzfb2Q1B0ZccrwBCCTVyxR0w/utwH0UAt8Hhvg7UreRkxxtr098J1QprSWYuj453B6Ta
+	Ak+3CEgS3p0BCyaW4GzMVZGb94JAaElUn+g/eLgVKxTuOVcS0X60yNB0lHXp9Ug2HMA
+X-Google-Smtp-Source: AGHT+IF7MT7H/N1FGVv2fGcWDDSq4G0lsAr/9izNZqOxycuQNiS8y26Pa9vU+efWnOrN6wB/Co4CNJQLTQPPNB+6gYM=
+X-Received: by 2002:a05:6402:20d5:20b0:640:6650:9173 with SMTP id
+ 4fb4d7f45d1cf-6431a5906c4mr5014541a12.33.1763052961708; Thu, 13 Nov 2025
+ 08:56:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-13_03,2025-11-13_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 malwarescore=0 spamscore=0
- mlxscore=0 bulkscore=0 suspectscore=0 mlxlogscore=999 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2510240000
- definitions=main-2511130129
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEyMDE0MSBTYWx0ZWRfXx413xExnIwED
- 700TJuTESblpWk5tFVVqZl3oF6GA/NUPIoHfqiBytbToEAZR1Pavk21PDAv7cTgiE0L01QTmsMQ
- 0lpjR5A9+sy7x+hKsuCvlecAAFiWtyxlKyCiwg+aXoqrGjKTy1C2M8XotwXZ+mGUKxNGfH9Ekiw
- 6dWYpGPX69KmNkLCiPQMCqqskuc8UqYIDtD7FgDUR5FPmyjbzZj2Gsbm1s5HJBKSKa0sSnuk0+J
- yo5tPLh5oQNWq5sd2cp4I43F8YUdxtRe8PLK87q2lmyNFQSiP8gjI8fjJ+d9aWWVTrMIMk53KOY
- VKW5/wj3JynyXFXiPkk5w2FRUWsrzB4VgjEtdYc4WIQdmYs3ZYY8pkK1GPfY6A+myOUmCho217i
- OjXkckSHvw9bNdl2fOtMBe6HZkGmng==
-X-Proofpoint-ORIG-GUID: LbbuX_3LE0oaYbTJqARQ8m4R8sZJ7moD
-X-Authority-Analysis: v=2.4 cv=RrjI7SmK c=1 sm=1 tr=0 ts=69160a14 cx=c_pps
- a=XiAAW1AwiKB2Y8Wsi+sD2Q==:117 a=XiAAW1AwiKB2Y8Wsi+sD2Q==:17
- a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=yPCof4ZbAAAA:8
- a=JZ68toWLD79TXSsNRLAA:9 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-GUID: LbbuX_3LE0oaYbTJqARQ8m4R8sZJ7moD
+References: <20251107210526.257742-1-pasha.tatashin@soleen.com> <20251107210526.257742-19-pasha.tatashin@soleen.com>
+In-Reply-To: <20251107210526.257742-19-pasha.tatashin@soleen.com>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Thu, 13 Nov 2025 11:55:25 -0500
+X-Gm-Features: AWmQ_bncXGN-eqIRVfciSwqz1sfkpOsYp0SxgOx72ZS1NRyOW1CKwiM1xe3CWB4
+Message-ID: <CA+CK2bBmSD_YftJ-9w1zidLz2=a4NynnLz_gLPsScF145bu5dQ@mail.gmail.com>
+Subject: Re: [PATCH v5 18/22] docs: add documentation for memfd preservation
+ via LUO
+To: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com, 
+	pasha.tatashin@soleen.com, rppt@kernel.org, dmatlack@google.com, 
+	rientjes@google.com, corbet@lwn.net, rdunlap@infradead.org, 
+	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, ojeda@kernel.org, 
+	aliceryhl@google.com, masahiroy@kernel.org, akpm@linux-foundation.org, 
+	tj@kernel.org, yoann.congal@smile.fr, mmaurer@google.com, 
+	roman.gushchin@linux.dev, chenridong@huawei.com, axboe@kernel.dk, 
+	mark.rutland@arm.com, jannh@google.com, vincent.guittot@linaro.org, 
+	hannes@cmpxchg.org, dan.j.williams@intel.com, david@redhat.com, 
+	joel.granados@kernel.org, rostedt@goodmis.org, anna.schumaker@oracle.com, 
+	song@kernel.org, zhangguopeng@kylinos.cn, linux@weissschuh.net, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
+	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com, 
+	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
+	rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org, 
+	cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com, 
+	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com, 
+	aleksander.lobakin@intel.com, ira.weiny@intel.com, 
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
+	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net, 
+	brauner@kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	saeedm@nvidia.com, ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com, 
+	leonro@nvidia.com, witu@nvidia.com, hughd@google.com, skhawaja@google.com, 
+	chrisl@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-When a layout conflict triggers a call to __break_lease, the function
-nfsd4_layout_lm_break clears the fl_break_time timeout before sending
-the CB_LAYOUTRECALL. As a result, __break_lease repeatedly restarts
-its loop, waiting indefinitely for the conflicting file lease to be
-released.
+> +Limitations
+> +===========
+> +
+> +The current implementation has the following limitations:
+> +
+> +Size
+> +  Currently the size of the file is limited by the size of the FDT. The FDT can
+> +  be at of most ``MAX_PAGE_ORDER`` order. By default this is 4 MiB with 4K
+> +  pages. Each page in the file is tracked using 16 bytes. This limits the
+> +  maximum size of the file to 1 GiB.
 
-If the number of lease conflicts matches the number of NFSD threads
-(which defaults to 8), all available NFSD threads become occupied.
-Consequently, there are no threads left to handle incoming requests
-or callback replies, leading to a total hang of the NFS server.
+The above should be removed, as we are using KHO vmalloc that resolves
+this limitation. Pratyush, I suggest for v6 let's move memfd
+documnetation right into the code: memfd_luo.c and
+liveupdate/abi/memfd.h, and source it from there.
 
-This issue is reliably reproducible by running the Git test suite
-on a configuration using SCSI layout.
+Keeping documentation with the code helps reduce code/doc divergence.
 
-This patch addresses the problem by using the break lease timeout
-and ensures that the unresponsive client is fenced, preventing it
-from accessing the data server directly. Also, threads wait in
-__break_lease for layout conflict must wait until one of the waiting
-threads done with the fencing operation before these threads can
-continue.
-
-Fixes: f99d4fbdae67 ("nfsd: add SCSI layout support")
-Signed-off-by: Dai Ngo <dai.ngo@oracle.com>
----
- fs/locks.c               | 16 +++++++++++++++-
- fs/nfsd/nfs4layouts.c    | 25 +++++++++++++++++++++----
- include/linux/filelock.h |  2 ++
- 3 files changed, 38 insertions(+), 5 deletions(-)
-
-diff --git a/fs/locks.c b/fs/locks.c
-index 1f254e0cd398..c4ec491e181c 100644
---- a/fs/locks.c
-+++ b/fs/locks.c
-@@ -1610,6 +1610,10 @@ int __break_lease(struct inode *inode, unsigned int mode, unsigned int type)
- 		goto out;
- 	}
- 
-+	if (type == FL_LAYOUT && !ctx->flc_conflict) {
-+		ctx->flc_conflict = true;
-+		ctx->flc_wait_for_dispose = false;
-+	}
- restart:
- 	fl = list_first_entry(&ctx->flc_lease, struct file_lease, c.flc_list);
- 	break_time = fl->fl_break_time;
-@@ -1638,14 +1642,24 @@ int __break_lease(struct inode *inode, unsigned int mode, unsigned int type)
- 		 */
- 		if (error == 0)
- 			time_out_leases(inode, &dispose);
--		if (any_leases_conflict(inode, new_fl))
-+		if (any_leases_conflict(inode, new_fl) ||
-+			(type == FL_LAYOUT && ctx->flc_wait_for_dispose))
- 			goto restart;
- 		error = 0;
-+		if (type == FL_LAYOUT)
-+			ctx->flc_wait_for_dispose = true;
- 	}
- out:
- 	spin_unlock(&ctx->flc_lock);
- 	percpu_up_read(&file_rwsem);
- 	locks_dispose_list(&dispose);
-+
-+	if (type == FL_LAYOUT) {
-+		spin_lock(&ctx->flc_lock);
-+		ctx->flc_wait_for_dispose = false;
-+		ctx->flc_conflict = false;
-+		spin_unlock(&ctx->flc_lock);
-+	}
- free_lock:
- 	locks_free_lease(new_fl);
- 	return error;
-diff --git a/fs/nfsd/nfs4layouts.c b/fs/nfsd/nfs4layouts.c
-index 683bd1130afe..4f1388bf6e20 100644
---- a/fs/nfsd/nfs4layouts.c
-+++ b/fs/nfsd/nfs4layouts.c
-@@ -747,11 +747,10 @@ static bool
- nfsd4_layout_lm_break(struct file_lease *fl)
- {
- 	/*
--	 * We don't want the locks code to timeout the lease for us;
--	 * we'll remove it ourself if a layout isn't returned
--	 * in time:
-+	 * Enforce break lease timeout to prevent starvation of
-+	 * NFSD threads in __break_lease that causes server to
-+	 * hang.
- 	 */
--	fl->fl_break_time = 0;
- 	nfsd4_recall_file_layout(fl->c.flc_owner);
- 	return false;
- }
-@@ -764,9 +763,27 @@ nfsd4_layout_lm_change(struct file_lease *onlist, int arg,
- 	return lease_modify(onlist, arg, dispose);
- }
- 
-+static void nfsd_layout_breaker_timedout(struct file_lease *fl)
-+{
-+	struct nfs4_layout_stateid *ls = fl->c.flc_owner;
-+	struct nfsd_file *nf;
-+
-+	rcu_read_lock();
-+	nf = nfsd_file_get(ls->ls_file);
-+	rcu_read_unlock();
-+	if (nf) {
-+		u32 type = ls->ls_layout_type;
-+
-+		if (nfsd4_layout_ops[type]->fence_client)
-+			nfsd4_layout_ops[type]->fence_client(ls, nf);
-+		nfsd_file_put(nf);
-+	}
-+}
-+
- static const struct lease_manager_operations nfsd4_layouts_lm_ops = {
- 	.lm_break	= nfsd4_layout_lm_break,
- 	.lm_change	= nfsd4_layout_lm_change,
-+	.lm_breaker_timedout	= nfsd_layout_breaker_timedout,
- };
- 
- int
-diff --git a/include/linux/filelock.h b/include/linux/filelock.h
-index 06ccd6b66012..95f489806c61 100644
---- a/include/linux/filelock.h
-+++ b/include/linux/filelock.h
-@@ -146,6 +146,8 @@ struct file_lock_context {
- 	struct list_head	flc_flock;
- 	struct list_head	flc_posix;
- 	struct list_head	flc_lease;
-+	bool			flc_conflict;
-+	bool			flc_wait_for_dispose;
- };
- 
- #ifdef CONFIG_FILE_LOCKING
--- 
-2.47.3
-
+Pasha
 
