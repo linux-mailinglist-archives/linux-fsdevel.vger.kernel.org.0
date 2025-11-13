@@ -1,111 +1,206 @@
-Return-Path: <linux-fsdevel+bounces-68269-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68270-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84657C57B75
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 14:38:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D9252C57C02
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 14:44:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C5FC93455A5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 13:35:25 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 881CC358AFD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 13:39:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3206D1F2BAD;
-	Thu, 13 Nov 2025 13:34:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41F5F21D3E6;
+	Thu, 13 Nov 2025 13:38:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vgp13ZU6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U2SPT7ui"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA150184524
-	for <linux-fsdevel@vger.kernel.org>; Thu, 13 Nov 2025 13:34:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85F661DDC0B;
+	Thu, 13 Nov 2025 13:38:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763040870; cv=none; b=uJZ9xLA44yUqscQ8Mh7YUFxC+i+AcRfOQcbplIZxCrLvwUB50WI+db7jSqcM5bGqgNuGnkIWkcfQ2xfm2gmfrP422GABbBDNZ7+WFAcr+zKKMCcDJBmVXRDDKZo4ZHEFGnJIrCT4OhcWT/EzgWWNKNuXEB1L0h9oDnaOuadarXU=
+	t=1763041090; cv=none; b=h353iJQPWs9ZvdKOAY+jCEF8qv9lAy+rqV8jtsW+VvyBPH9cNtUYU9EfrdFnFqQ0Q08nQc9swWfEPxqKoTOgJ9YR5Xpsll6hwtmNHcNyF+pJidqYtXga+zv9mZxRy3oz1ODolUHX0kXmwhJuI9ggK+/DGwcBgJew+8kvkG2M30c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763040870; c=relaxed/simple;
-	bh=xSuAWsrB+GTJiuXftbiTStIICDoDtQ0BHogVwv2YUEs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KazILE6JnKAVe7ZCb2hkBqIPs+02sl2IvgADZa/nlvHl5kzbR7GttYpAVoZ6evcOYqlP3n4IB5jz5NmIhghZQGjvqIp60+EOieB4NfzcFMy1iEVwi1zF6sYoDRO6M4fkSPepPyOry17VgDd5+xmH9d6nIEM2ixiKmdgdKp2DGTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vgp13ZU6; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-640ca678745so1597440a12.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Nov 2025 05:34:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763040867; x=1763645667; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xSuAWsrB+GTJiuXftbiTStIICDoDtQ0BHogVwv2YUEs=;
-        b=Vgp13ZU6bWVPwi//9XGBzu7or398DAv2lpAdurSFoWrjKeKhpbT9E3AxFquJC6u5OS
-         3Fjw4lviWwbWruFNvjfq2Ycf5LOMiSkwekR5jAR8EVzVn7fwJerNoTlc40wabFEc0n0q
-         GbOtIq5cmrrxRCFZ5GnpDmU3zbH5EHjEf6VMYX+qO85jIgwc2Os2GCB4prlrIgyKr0fp
-         CpcSKgi8AfSlvUCvs0c+ElD+7bkkwfD4njCdrRtp6kJ/lxY6CU8F47fvM4qrk9d08/U2
-         ECrt3/fHCh8LDtwd8lD5rA0X0tPNRqPe/GkVdwJA5Xs2y7ueLHd0pqemQDrfrgmRvOV0
-         AITA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763040867; x=1763645667;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=xSuAWsrB+GTJiuXftbiTStIICDoDtQ0BHogVwv2YUEs=;
-        b=o4CjvjHeaIMlDNk341IYpjmLxOL5fyA1cMJLopCyiFHyDXMzBLZ/eklfvhkUD0pwzr
-         ACouGwl0Qk2dgnc4QI1vbjASFihCvtU0GKpaBIN8jL4GZjHv9AGCyHym1D7ep91O75oD
-         e8oeUXaMAGLAfevQrmUgNXXspgLh2xH4ElfsuP4PAY0Q7igktpnqUGuCjLN6e0frGFRy
-         zqMWIeNemRCVkFblqd2ubtidC+cqGT3f5oOXZBw+iiJJdKuHNrIyKNOFdXdQPGf0H2eE
-         Anw8p08ssgsPArz8sJM6rPViiex7qfTqOWfmXVQD+CY1+zuA8vzQ1wMv3VLWZFgXpEv6
-         Styw==
-X-Forwarded-Encrypted: i=1; AJvYcCVuOFDuEpKS3C4ZqSA9nC7PWmyjdEQUsdQbChK1Xx6KKWFVw9PmBCd1MF351pY2wgqrtBVT6rlOpF2JUwnL@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpPOi5efMtXJjewHtJtjCDxB5EJSj5Crwub51NxUtHM9A47iS6
-	OTgzJ1DTuUK55TppKf4zOCu1wsGKwL/Uyf1wTzVAZovmwP7fiaXCqiFu1k9dJKw6muHZwBGu/P0
-	BX2tzGuyCw4t9H1i3c3fd/7bk0drXaXA=
-X-Gm-Gg: ASbGncvVe1WJJIDXbRAjVb4XUDFZBb4pIpD3KlZeX+fs5bsvofQxh5/5d+jAelMLYKl
-	8KKofaJ1phXjigyibyl5wLmp3KONXVkTng3dpjYYiz1ynPdlmvdCAttaC7atb91bphXBWhQLB+q
-	ERZHjLNOszTDZOAmEHYxdrGxd76pIDd/OaVeZ/DtnOi1cIuuRTx3VCLJ7MeqNQuXr9nK8t3J1Pn
-	cSyh6scilJa8c/N54LdD5K1K3dPsukDACweSJcZXg7T0QJ2UY34WeJ/pqjGHW7xwjbU2/EMtORf
-	0zPoeAL84ZT6TPzgtiQ4mVAkXMu1Fg==
-X-Google-Smtp-Source: AGHT+IGF6esb7kGa/crhjmb6/aWLvTJVqnAAYAvGO0s6QczR+42b3/p2M4bcL9sRn+PV69DMVD/y4dimDrwFh8MqTEw=
-X-Received: by 2002:a05:6402:27d0:b0:640:c062:8bca with SMTP id
- 4fb4d7f45d1cf-6431a5481f8mr5585662a12.18.1763040866928; Thu, 13 Nov 2025
- 05:34:26 -0800 (PST)
+	s=arc-20240116; t=1763041090; c=relaxed/simple;
+	bh=TanqNDDou92JeIIiWS3c/wMf1Ii6b9BkUyE/vwk57VY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=omCKQHeYkFK7xPEaoxHGj9Vug4JLwub6xp9fcjrY5SslP+emC+c1JsJPZydAoQrLehj44U46VTNwqPBZv6HbCyoL7Q7PW5MsY5QLGfboMqOQ/MtLIgYXm0nap0OdQpmFl+xpajBRwi46Uhfg2QhW25jqyb4/v/Q5ViLaEa49tF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U2SPT7ui; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 363CCC16AAE;
+	Thu, 13 Nov 2025 13:37:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763041090;
+	bh=TanqNDDou92JeIIiWS3c/wMf1Ii6b9BkUyE/vwk57VY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=U2SPT7uiGDnCCG6zb5qV815Sdj+r/uoSMOEc9j/lDhdWJRl6ShlV3SlTJuqDT9Tgk
+	 RFqKZr6iJlXWjCYWomACcsJ9ChroZfCyo9zV3HtJ+rhsSZp8cOA5ZLSvx9UykS0IlE
+	 sObeATI2JOfkex303JF7L8VsylgtKzcJMtxpc5OB2cLwBE0nBgoPsmDmbuFkOY/lYw
+	 IHqX06nHuXISwbnGRAH11InGI6hhbI8mTYsSN1dTFb5KoYyEe9EtrJBRCEg2qK0fhB
+	 H1BCrwQp8B38S+H3T7Xw/MFbxm0/tJwuhV0uHb4Iaum1bU+pryW8wlml6fPOM/Fadb
+	 TVU+5ngjiikxw==
+Date: Thu, 13 Nov 2025 15:37:44 +0200
+From: Mike Rapoport <rppt@kernel.org>
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com,
+	dmatlack@google.com, rientjes@google.com, corbet@lwn.net,
+	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com,
+	kanie@linux.alibaba.com, ojeda@kernel.org, aliceryhl@google.com,
+	masahiroy@kernel.org, akpm@linux-foundation.org, tj@kernel.org,
+	yoann.congal@smile.fr, mmaurer@google.com, roman.gushchin@linux.dev,
+	chenridong@huawei.com, axboe@kernel.dk, mark.rutland@arm.com,
+	jannh@google.com, vincent.guittot@linaro.org, hannes@cmpxchg.org,
+	dan.j.williams@intel.com, david@redhat.com,
+	joel.granados@kernel.org, rostedt@goodmis.org,
+	anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn,
+	linux@weissschuh.net, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-mm@kvack.org,
+	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com,
+	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
+	hpa@zytor.com, rafael@kernel.org, dakr@kernel.org,
+	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com,
+	myungjoo.ham@samsung.com, yesanishhere@gmail.com,
+	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com,
+	aleksander.lobakin@intel.com, ira.weiny@intel.com,
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de,
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com,
+	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net,
+	brauner@kernel.org, linux-api@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, saeedm@nvidia.com,
+	ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com,
+	leonro@nvidia.com, witu@nvidia.com, hughd@google.com,
+	skhawaja@google.com, chrisl@kernel.org
+Subject: Re: [PATCH v5 01/22] liveupdate: luo_core: luo_ioctl: Live Update
+ Orchestrator
+Message-ID: <aRXfKPfoi96B68Ef@kernel.org>
+References: <20251107210526.257742-1-pasha.tatashin@soleen.com>
+ <20251107210526.257742-2-pasha.tatashin@soleen.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251113-work-ovl-cred-guard-v1-0-fa9887f17061@kernel.org>
- <20251113-work-ovl-cred-guard-v1-3-fa9887f17061@kernel.org> <CAJfpegt9LQe_L=Ki0x6G+OMuNhzof3i4KAcGWGrDNDq3tBfMtA@mail.gmail.com>
-In-Reply-To: <CAJfpegt9LQe_L=Ki0x6G+OMuNhzof3i4KAcGWGrDNDq3tBfMtA@mail.gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 13 Nov 2025 14:34:15 +0100
-X-Gm-Features: AWmQ_bn1bXyA9VHVc-NJr9ApkEqL9TN4PRjFv5uuLP4grJaaT47tUE3C-uFyGpM
-Message-ID: <CAOQ4uxjnmLiLzM-a1acqPpGrFYkLkdrnpuqowD=ggQ=m72zbdg@mail.gmail.com>
-Subject: Re: [PATCH RFC 03/42] ovl: port ovl_create_or_link() to cred guard
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Christian Brauner <brauner@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251107210526.257742-2-pasha.tatashin@soleen.com>
 
-On Thu, Nov 13, 2025 at 2:31=E2=80=AFPM Miklos Szeredi <miklos@szeredi.hu> =
-wrote:
->
-> On Thu, 13 Nov 2025 at 14:02, Christian Brauner <brauner@kernel.org> wrot=
-e:
-> >
-> > Use the scoped ovl cred guard.
->
-> Would it make sense to re-post the series with --ignore-space-change?
->
-> Otherwise it's basically impossible for a human to review patches
-> which mostly consist of indentation change.
+On Fri, Nov 07, 2025 at 04:02:59PM -0500, Pasha Tatashin wrote:
+> Introduce LUO, a mechanism intended to facilitate kernel updates while
+> keeping designated devices operational across the transition (e.g., via
+> kexec). The primary use case is updating hypervisors with minimal
+> disruption to running virtual machines. For userspace side of hypervisor
+> update we have copyless migration. LUO is for updating the kernel.
+> 
+> This initial patch lays the groundwork for the LUO subsystem.
+> 
+> Further functionality, including the implementation of state transition
+> logic, integration with KHO, and hooks for subsystems and file
+> descriptors, will be added in subsequent patches.
+> 
+> Create a character device at /dev/liveupdate.
+> 
+> A new uAPI header, <uapi/linux/liveupdate.h>, will define the necessary
+> structures. The magic number for IOCTL is registered in
+> Documentation/userspace-api/ioctl/ioctl-number.rst.
+> 
+> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+> ---
 
-Or just post a branch where a human reviewer can review changes with
---ignore-space-change?
+...
 
-Thanks,
-Amir.
+> @@ -0,0 +1,46 @@
+> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+> +
+> +/*
+> + * Userspace interface for /dev/liveupdate
+> + * Live Update Orchestrator
+> + *
+> + * Copyright (c) 2025, Google LLC.
+> + * Pasha Tatashin <pasha.tatashin@soleen.com>
+> + */
+> +
+> +#ifndef _UAPI_LIVEUPDATE_H
+> +#define _UAPI_LIVEUPDATE_H
+> +
+> +#include <linux/ioctl.h>
+> +#include <linux/types.h>
+> +
+> +/**
+> + * DOC: General ioctl format
+> + *
+
+It seems it's not linked from Documentation/.../liveupdate.rst
+
+> + * The ioctl interface follows a general format to allow for extensibility. Each
+> + * ioctl is passed in a structure pointer as the argument providing the size of
+> + * the structure in the first u32. The kernel checks that any structure space
+> + * beyond what it understands is 0. This allows userspace to use the backward
+> + * compatible portion while consistently using the newer, larger, structures.
+> + *
+> + * ioctls use a standard meaning for common errnos:
+> + *
+> + *  - ENOTTY: The IOCTL number itself is not supported at all
+> + *  - E2BIG: The IOCTL number is supported, but the provided structure has
+> + *    non-zero in a part the kernel does not understand.
+> + *  - EOPNOTSUPP: The IOCTL number is supported, and the structure is
+> + *    understood, however a known field has a value the kernel does not
+> + *    understand or support.
+> + *  - EINVAL: Everything about the IOCTL was understood, but a field is not
+> + *    correct.
+> + *  - ENOENT: A provided token does not exist.
+> + *  - ENOMEM: Out of memory.
+> + *  - EOVERFLOW: Mathematics overflowed.
+> + *
+> + * As well as additional errnos, within specific ioctls.
+
+...
+
+> --- a/kernel/liveupdate/Kconfig
+> +++ b/kernel/liveupdate/Kconfig
+> @@ -1,7 +1,34 @@
+>  # SPDX-License-Identifier: GPL-2.0-only
+> +#
+> +# Copyright (c) 2025, Google LLC.
+> +# Pasha Tatashin <pasha.tatashin@soleen.com>
+> +#
+> +# Live Update Orchestrator
+> +#
+>  
+>  menu "Live Update and Kexec HandOver"
+>  
+> +config LIVEUPDATE
+> +	bool "Live Update Orchestrator"
+> +	depends on KEXEC_HANDOVER
+> +	help
+> +	  Enable the Live Update Orchestrator. Live Update is a mechanism,
+> +	  typically based on kexec, that allows the kernel to be updated
+> +	  while keeping selected devices operational across the transition.
+> +	  These devices are intended to be reclaimed by the new kernel and
+> +	  re-attached to their original workload without requiring a device
+> +	  reset.
+> +
+> +	  Ability to handover a device from current to the next kernel depends
+> +	  on specific support within device drivers and related kernel
+> +	  subsystems.
+> +
+> +	  This feature primarily targets virtual machine hosts to quickly update
+> +	  the kernel hypervisor with minimal disruption to the running virtual
+> +	  machines.
+> +
+> +	  If unsure, say N.
+> +
+
+Not a big deal, but since LIVEUPDATE depends on KEXEC_HANDOVER, shouldn't
+it go after KEXEC_HANDOVER?
+
+>  config KEXEC_HANDOVER
+>  	bool "kexec handover"
+>  	depends on ARCH_SUPPORTS_KEXEC_HANDOVER && ARCH_SUPPORTS_KEXEC_FILE
+
+-- 
+Sincerely yours,
+Mike.
 
