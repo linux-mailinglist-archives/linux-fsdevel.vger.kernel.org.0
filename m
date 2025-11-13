@@ -1,106 +1,116 @@
-Return-Path: <linux-fsdevel+bounces-68281-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68283-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A89FC57FD9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 15:40:53 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDC38C581A5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 16:00:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E3F10351383
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 14:40:51 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5A57D4E35AA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 15:00:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E05CD2D027F;
-	Thu, 13 Nov 2025 14:40:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 652212DC338;
+	Thu, 13 Nov 2025 15:00:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="W3Oogu5w"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iAxpsHAi"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5420D2C326F
-	for <linux-fsdevel@vger.kernel.org>; Thu, 13 Nov 2025 14:40:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22C822DCF69
+	for <linux-fsdevel@vger.kernel.org>; Thu, 13 Nov 2025 15:00:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763044840; cv=none; b=c9X7HC+LKibJC60ux6aQlzRih/C6arGVkxupbBZh0rwpzgEp+xrBZr+t1dLcbo+C3V+BWiDeWIkelVoUMfEJmZJrtnjCJhBTgPwQ7PWS9H4LFczJb0XTDZ+SUpAd2PYCGdddQRRZK1I5pqzsYQIn43Db1KIe3nfRhoiUsHzw/Qw=
+	t=1763046008; cv=none; b=nHTSfnK8o4ofULOmQzCS+VHMOEnL9DraYlycyCTPVreAyPyWyae/dVd1bk30k3XhEcGym1UPamKzvMDNUYHdBxcc05hhQLipaglmofr1U7AXJQ+uZBEuJRAagBYKv7mMtOJVcYznvlxAPS4OevX9CLYH19XZLisikmmprM8NTY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763044840; c=relaxed/simple;
-	bh=VbRVFaBWB4rkILZm2zCuNmafX52Xy/nu3FKLbgmlQ48=;
+	s=arc-20240116; t=1763046008; c=relaxed/simple;
+	bh=O/yCT7PlPSFi+823nhk2sKmN9yyj5JOnUSuTqphJE/I=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iLZ9dFc14u+WL44sPjVo6VH2iGVrAMG8kaHAzIB7hLCJucznHBfdBoCwaV3cQYdpqA0TyJA5T1vx0pJOaIpQssdVgL0cJoywaReoIvI4XM8CY3LK7GCYbYBUAFtrwMNg9FF/LF+9ML2lBG6alxfN+g66sFqRIY8ncf4/ca09nCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=W3Oogu5w; arc=none smtp.client-ip=209.85.222.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-8909f01bd00so83542485a.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Nov 2025 06:40:38 -0800 (PST)
+	 To:Cc:Content-Type; b=bKbxdNsdGq/ZfjjrJyUuAt1SvGBdCgIpelGBM0eoEN8S/+vbNJEtPlqYlszwCWnV5S1Kzm19yifztRydcn+ZTk6virXHPP51LhKLv23Um3Yt66cjpYOKl4OxVwKrLPAQqb31dsgI5irN/s2E3iT0qWaAL/59vcrW6T6CWokxF34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iAxpsHAi; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-640a503fbe8so1565137a12.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Nov 2025 07:00:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1763044837; x=1763649637; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ovAtTKaxr5GwcIh+q2BgMMVUjUMk4h0Zw7PA7eiEv3s=;
-        b=W3Oogu5wOA6dZvWwwd3HH0KiEkTqIOdb1ig4T6y36hhhbW49wApa/OSePCeny49G9B
-         Zsk/qJBoaMxuzQd+kLim62MTjL6sKzezjRgpnW0T0DX1gsiyMbchFhrke5chUOxYHKZL
-         F8nJAJ45HYNtiN98FQAdR9VZ+l4O1UIQceMJk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763044837; x=1763649637;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1763046005; x=1763650805; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ovAtTKaxr5GwcIh+q2BgMMVUjUMk4h0Zw7PA7eiEv3s=;
-        b=DJlV8lDrB9NGE+zQmEtAI6xwSGGRJVB3+TR4LuXoV8rKcz3DiNCeYNjG6pVeTlk1i5
-         lBj+ra0r+LvmgkcZiHtthZnY5NhZPeiOQnCq7TssX7jNAVUS9A3amYGr1ooFTGG1qS4d
-         oQQRed5gXfCwIB/srPZeDK57g4bvjk3m5ksrgzAWPDCnyEHUdO4gpTZPGhWfG2KN3L8X
-         quOP7EQNaCZNO++W1xktd1f6OL8Kv64anBADbXRHEwIm72MTeX3Bw4W/TQ8t3dd5DdMS
-         A1G3zazO5BEevWc8OthPSgKU/93aAnv86fYAchLXA1ffBD02GjmDawCdO7ZvPwfx25Rx
-         qTOw==
-X-Gm-Message-State: AOJu0YwVAmq8Oa6m9b6yw0iRORDxZy9lPy44Ph4dIfZP964cT7etM9ky
-	AbyOH/V8od63tvLUxebPZB0c91y/0APDybBoD+oW30TKsp3aM+UepfS3Te1vUS5GilPoW+c6wC5
-	6Q1dVzekGA9vdLsW54k54HZlu2VChrNOcDy9XMxXg4Os6JjFm0QbF
-X-Gm-Gg: ASbGncvaYUJbQrPxMaKKke/qrrOd7J72GuBJHlr3QFoqQcbtVvQkrVj9WcKfMCAQfJ8
-	82bT91O+bmNItwGAVvbCLvaU0r1l6/AAjJDdJ10xaLyVNUeoLhKe/xyNRDXwTZ6ZOwm7G9FplS5
-	0jgTFJCp9sNk4tXfuhCi6qppByqG1N9VEi7olBaAuZT117yD+qcU6V7kOfVOBPjylxQib1YbzM2
-	uXlZ0SID9wN9J9B0TTl6K6y79IfiCu2AqbLNO19u6FYxCOtAgDRNqZxi0m8
-X-Google-Smtp-Source: AGHT+IFJVHQ0Av3VsiDkj/7uY6vEjvy5/QQNVO5m8sXzNzFqEXXgmrZOrHRR/22Jk+KT1zvUOtzHptC7jIHtdh3v3uM=
-X-Received: by 2002:a05:620a:4115:b0:8b2:6538:6b64 with SMTP id
- af79cd13be357-8b29b7cd2c8mr903091385a.45.1763044837016; Thu, 13 Nov 2025
- 06:40:37 -0800 (PST)
+        bh=O/yCT7PlPSFi+823nhk2sKmN9yyj5JOnUSuTqphJE/I=;
+        b=iAxpsHAin1M98Rd5jXgyyAd8ikNqjHHPehBjtF/dggU4Bd5OBt581GClGCcuwp6PHe
+         AIzgmAv9SLMCkOoEWsK+vLUh6prLhzeHGQKEu8tNgDB+2CrrUFzP3zljnofB4sY3kCcx
+         IUXc2lAbkmTxkMrUHbep5G5UkXt1Ek65HRvmBXknUUoVIQn1PEw75/nWIIFJqmPnH7VC
+         RIMzh+8DEvz0V8+nqIJsaYIp3/uDT30ByHvJXFUBZrnsBjhqP9exKY1HkiIvCl4Xh6fQ
+         iw50HfdA27ktmNMeYTQp1U89laDh7cbb+MTvg2+fpNCrzcKrvZxMH3ZEjyMQu+y1lefh
+         Jmug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763046005; x=1763650805;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=O/yCT7PlPSFi+823nhk2sKmN9yyj5JOnUSuTqphJE/I=;
+        b=fVXmOjLuGp4Nwx7CjBrhR+AA2P4mlp8qxnudRf5vbjLyE4hyTxHl0bKLB41C4Qxh+I
+         n78F1xBTGMNuB4Rx1KRX0o5108UsZM8ssuF3TkpcapG/ckXYulNGJr+w2fCVxV7SxOyb
+         OXBRbVjBhX9ZfBZytG6JsdfYl/HqgckTlqIkZuKRgn3fKe2wRYBOljRMu369/3r/5QKl
+         YttFAokCsubYl6TQSGu6e6k72G+FrPdLRGL1p+FNOfG76bEhQiIDfYawnuP2TITP02TI
+         c+PsaqSigXnSp+oz4CL+FLFIrwGfQEmUdHZidpRLsH4Hb04MYi8tf5b01Ipwy2Vcd3ZN
+         wTwg==
+X-Forwarded-Encrypted: i=1; AJvYcCUQIsL8m5q9gkC1seCoAke+Tww7Co+kKa+s/TAOIwJFjYQb0z5xe7AvBwR0HkGZByluj5bRAnTa/ZqGeoyA@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8KETfXGa60DSJ4Yr8m7Pc1DjrKM1Dfk3dX+ew7N1HpZPDmHV1
+	yAhYiHJoYl5s4DkN/hOT4UIddCaAOxbFo5x+YwfHDvDDSBBTCYpkWhWGtE0A6nBxRdz60nzJOfH
+	zU/Epr4qo8UDM/DMpYVmlGY6c0Ie+GLA=
+X-Gm-Gg: ASbGncvnyLwV2HRpumzijljCraW2IceQ/2I4FBcIVa78ecBV8fGXbPezYJ+87juhuQr
+	xlEhzq/FCD3xsEZ7XvIPcjE9GRVdkwuxd/DbdAGnwagv8JPtmrPA1xCh42KGhGpKY2SJKucvBx9
+	yKGdf7b/L7+OH5b/m/wCH2o0sleoaHBksoSwyxVw4rTQBD/P0rU2FDA7mk9qOTxIqVVjl+uMGym
+	/eu8BuybCfg7rsm7oHwvomaSuFEnDJzAw7+zIXyXy9YnIITW5HiLc56I3W6wmxMbI8Eq9L9z49k
+	kv4KacjbAMGODvapWIo=
+X-Google-Smtp-Source: AGHT+IEDnnrdyjK2JdHgeBEZ5BnpsnIko9j1ObXf9NNoM+/cKdcKVuz+jY+fl+ySjZunGU4KLJ2MUywEqhqb58AcRWE=
+X-Received: by 2002:a05:6402:5350:20b0:63c:3c63:75ed with SMTP id
+ 4fb4d7f45d1cf-6431a55e44amr5574505a12.22.1763046005246; Thu, 13 Nov 2025
+ 07:00:05 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251023-fix-fopen-direct-io-post-invalidation-v1-0-3f93a411cd00@ddn.com>
-In-Reply-To: <20251023-fix-fopen-direct-io-post-invalidation-v1-0-3f93a411cd00@ddn.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Thu, 13 Nov 2025 15:40:25 +0100
-X-Gm-Features: AWmQ_bmrPnfTGdz33qlltYlCDFktQeg4dpVhIxqtwwtlX9wpXHAB7xC6MHAlA98
-Message-ID: <CAJfpegsL2BiUnK+8a-rRE8gc8i=8SYY1KoiTiadKtscOVmgUZw@mail.gmail.com>
-Subject: Re: [PATCH 0/2] fuse: Avoid reading stale page cache after competing
- DIO write
-To: Bernd Schubert <bschubert@ddn.com>
-Cc: linux-fsdevel@vger.kernel.org, Hao Xu <howeyxu@tencent.com>, 
-	Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
+References: <20251113-work-ovl-cred-guard-v1-0-fa9887f17061@kernel.org>
+In-Reply-To: <20251113-work-ovl-cred-guard-v1-0-fa9887f17061@kernel.org>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Thu, 13 Nov 2025 15:59:54 +0100
+X-Gm-Features: AWmQ_blxDDO7DcV-76HHqY6hmEjNFx9_5jUOH2XhLsxh9hm-3Edqln8C5IadzHQ
+Message-ID: <CAOQ4uxhUMC0+wy1oVKfemy-ia8tAbWe7rezdFy8MH3eB_4C5ng@mail.gmail.com>
+Subject: Re: [PATCH RFC 00/42] ovl: convert to cred guard
+To: Christian Brauner <brauner@kernel.org>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 23 Oct 2025 at 00:21, Bernd Schubert <bschubert@ddn.com> wrote:
+On Thu, Nov 13, 2025 at 2:02=E2=80=AFPM Christian Brauner <brauner@kernel.o=
+rg> wrote:
 >
-> This is for FOPEN_DIRECT_IO only and and fixes xfstests generic/209,
-> which tests direct-io and competing read-ahead.
+> This adds a overlayfs extension of the cred guard infrastructure I
+> introduced. This allows all of overlayfs to be ported to cred guards.
+> I refactored a few functions to reduce the scope of the credguard. I
+> think this is pretty beneficial as it's visually very easy to grasp the
+> scope in one go. Lightly tested.
+>
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
+> ---
 
-This is stable material right?
+All reviewed now.
+Only minor issues found and one ovl_iterate() refactoring patch suggested.
 
-> Also modified is the page cache invalidation before the write, the
-> condition on allow_mmap is removed, as file might be opened multiple
-> times - with and without FOPEN_DIRECT_IO.
+Feel free to remove RFC and add:
+Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 
-I don't think the mixed use was considered previously and probably no
-filesystem does this without NOTIFY_INVAL_INODE in between.   But I
-agree that this is the correct thing to do.
+after addressing the minor review comments.
 
-I guess these are unlikely to have any performance impacts in the no
-cached pages case, but maybe we should check?
+pls provide a branch for testing.
 
-Thanks,
-Miklos
+Thanks a lot for doing this work!!
+Amir.
 
