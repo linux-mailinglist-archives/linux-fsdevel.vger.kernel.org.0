@@ -1,204 +1,228 @@
-Return-Path: <linux-fsdevel+bounces-68353-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68354-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 963B4C59B11
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 20:16:50 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F8D1C5A15E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 22:21:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE8AB3BAE22
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 19:14:30 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 763BD4E702E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 21:20:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 017D831A551;
-	Thu, 13 Nov 2025 19:13:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0BD62580F3;
+	Thu, 13 Nov 2025 21:20:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JjYcinjb"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="S6rUH8FB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D05F31A051
-	for <linux-fsdevel@vger.kernel.org>; Thu, 13 Nov 2025 19:13:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01974261B6D;
+	Thu, 13 Nov 2025 21:20:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763061213; cv=none; b=C87/Ngcn7xFjci0fBFRf659UQWgHdpYib1k7q1H98AahayEWK07j3TcuOwK7JhZt9HN1gzTu7GwgqWqe3hw0EEMX05/dthsYZx5je1ytn4/cMmdu0UCKFd0Q6hNM32uanynWEadri9EOdMliuUU49tc/p0b+GkOKoWBr/OLigso=
+	t=1763068810; cv=none; b=bBPI+T4Ot/+EfAELaILSBXTG2z71TFTVS1Nnh2BERdcK+SRwQAGCdNG6XgKhsOt+hI5iWGJhYabQCUllwzT8h2/QlxPKgRQdugcMlgfbIiSDA+a+RxNImcpPcJYG9GajzvWAE0Ml3VZ151tBo4+Qex2dNn6IPkteOzkiXCFhYHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763061213; c=relaxed/simple;
-	bh=t379PNNDtgqAq91+E+L22RFtXrzOjTEW/ORV3+9ulwo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Yk61CRwoiamOpM9v3w/vvDz0amYBpaYkcY/ux8DzDktcwwFjVhhhHHir/xQpqdGmGV1sbHANtGLUonbofgUTAzh6pytperHe6aMyEUsAlETju1s2cpDUeMRAsuMecsgBNYEVX/ehSccYq4gO0sbCrmNBdUB3mQevdt65URIoisY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JjYcinjb; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1763061209;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=TyHzdpDFZ+y9Xq3UcqZS1nBRZScwrGk9PLsYYKXTicQ=;
-	b=JjYcinjbeb/+TokCga9KKqbeiHL0a3Fd/OxgsR7MiGePH2DS89aR++UDRkbGj1kIW5LH72
-	uogn3PD/e2dVhjCVk+TL5TCpdUUbVO3FmUl0brd9F/EMR7Rv92fma1HKqw+4NR9ij1Vth9
-	CEhvBsuTPNGDu/+qYrutlvkW7FlcRQQ=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-422-15YijcbmNi2ii0LkA0cgSg-1; Thu,
- 13 Nov 2025 14:13:26 -0500
-X-MC-Unique: 15YijcbmNi2ii0LkA0cgSg-1
-X-Mimecast-MFC-AGG-ID: 15YijcbmNi2ii0LkA0cgSg_1763061204
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A2DD719560A1;
-	Thu, 13 Nov 2025 19:13:23 +0000 (UTC)
-Received: from pasta.fast.eng.rdu2.dc.redhat.com (unknown [10.44.32.90])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 097331800451;
-	Thu, 13 Nov 2025 19:13:15 +0000 (UTC)
-From: Andreas Gruenbacher <agruenba@redhat.com>
-To: gfs2@lists.linux.dev
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Dave Chinner <david@fromorbit.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org,
-	Andreas Gruenbacher <agruenba@redhat.com>,
-	Andrew Price <anprice@redhat.com>
-Subject: [PATCH] gfs2: Prevent recursive memory reclaim
-Date: Thu, 13 Nov 2025 19:13:14 +0000
-Message-ID: <20251113191314.1679300-1-agruenba@redhat.com>
+	s=arc-20240116; t=1763068810; c=relaxed/simple;
+	bh=9y9a2c/jVOu6lhfw2KQmK7c70gHOg4s3VbgeD47eFJc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gNuAzWsoblvxysl4MQ6sbrHLRNYKKox5Eo/Gw7+hVtWe17M8V/fSBIpVZm4avNvVZgbRCgrf9NOZuZSF4GJGMJGc2rzraUh4NQWR1TSSPAtIdapMkRX/tq+WsbAkyXBajTYZ7qiumTLCVzbyEuJQ61UZpGmh+1X0yKXtDFFvNN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=S6rUH8FB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60C0AC4CEF5;
+	Thu, 13 Nov 2025 21:20:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1763068809;
+	bh=9y9a2c/jVOu6lhfw2KQmK7c70gHOg4s3VbgeD47eFJc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=S6rUH8FB57R/UUe04bwBSoaGOYGmurKvFQGiKjaRp+69RaYMny8aJztzOQraBcrQq
+	 2lwrKakpi4mw3npKSHEcLjHJYPumZM6bSLsdqs+5vrFZt/jlpgeaTIxOM5qITJXPz9
+	 vcfnIkmnsJ7qWYDomwahLU7DQW/0LJ2QhI+mOxNo=
+Date: Thu, 13 Nov 2025 16:20:08 -0500
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: bot+bpf-ci@kernel.org, linux-fsdevel@vger.kernel.org,
+	torvalds@linux-foundation.org, brauner@kernel.org, jack@suse.cz,
+	raven@themaw.net, miklos@szeredi.hu, neil@brown.name,
+	a.hindborg@kernel.org, linux-mm@kvack.org,
+	linux-efi@vger.kernel.org, ocfs2-devel@lists.linux.dev,
+	kees@kernel.org, rostedt@goodmis.org, linux-usb@vger.kernel.org,
+	paul@paul-moore.com, casey@schaufler-ca.com,
+	linuxppc-dev@lists.ozlabs.org, john.johansen@canonical.com,
+	selinux@vger.kernel.org, borntraeger@linux.ibm.com,
+	bpf@vger.kernel.org, ast@kernel.org, andrii@kernel.org,
+	daniel@iogearbox.net, martin.lau@kernel.org, eddyz87@gmail.com,
+	yonghong.song@linux.dev, ihor.solodrai@linux.dev,
+	Chris Mason <clm@meta.com>
+Subject: Re: [functionfs] mainline UAF (was Re: [PATCH v3 36/50] functionfs:
+ switch to simple_remove_by_name())
+Message-ID: <2025111316-cornfield-sphinx-ba89@gregkh>
+References: <20251111065520.2847791-37-viro@zeniv.linux.org.uk>
+ <20754dba9be498daeda5fe856e7276c9c91c271999320ae32331adb25a47cd4f@mail.kernel.org>
+ <20251111092244.GS2441659@ZenIV>
+ <e6b90909-fdd7-4c4d-b96e-df27ea9f39c4@meta.com>
+ <20251113092636.GX2441659@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251113092636.GX2441659@ZenIV>
 
-Function new_inode() returns a new inode with inode->i_mapping->gfp_mask
-set to GFP_HIGHUSER_MOVABLE.  This value includes the __GFP_FS flag, so
-allocations in that address space can recurse into filesystem memory
-reclaim.  We don't want that to happen because it can consume a
-significant amount of stack memory.
+On Thu, Nov 13, 2025 at 09:26:36AM +0000, Al Viro wrote:
+> On Tue, Nov 11, 2025 at 10:44:26PM -0500, Chris Mason wrote:
+> 
+> > We're wandering into fuzzing territory here, and I honestly have no idea
+> > if this is a valid use of any of this code, but AI managed to make a
+> > repro that crashes only after your patch.  So, I'll let you decide.
+> > 
+> > The new review:
+> > 
+> > Can this dereference ZERO_SIZE_PTR when eps_count is 0?
+> > 
+> > When ffs->eps_count is 0, ffs_epfiles_create() calls kcalloc(0, ...) which
+> > returns ZERO_SIZE_PTR (0x10). The loop never executes so epfiles[0].ffs is
+> > never initialized. Later, cleanup paths (ffs_data_closed and ffs_data_clear)
+> > check if (epfiles) which is true for ZERO_SIZE_PTR, and call
+> > ffs_epfiles_destroy(epfiles, 0).
+> > 
+> > In the old code, the for loop condition prevented any dereferences when
+> > count=0. In the new code, "root = epfile->ffs->sb->s_root" dereferences
+> > epfile before checking count, which would fault on ZERO_SIZE_PTR.
+> 
+> Lovely.  OK, this is a bug.  It is trivial to work around (all callers
+> have ffs avaible, so just passing it as an explicit argument solves
+> the problem), but there is a real UAF in functionfs since all the way
+> back to original merge.  Take a look at
+> 
+> static int
+> ffs_epfile_open(struct inode *inode, struct file *file)
+> {
+> 	struct ffs_epfile *epfile = inode->i_private;
+> 
+> 	if (WARN_ON(epfile->ffs->state != FFS_ACTIVE))
+> 		return -ENODEV;
+> 
+> 	file->private_data = epfile;
+> 	ffs_data_opened(epfile->ffs);
+> 
+> 	return stream_open(inode, file);
+> }
+> 
+> and think what happens if that (->open() of dynamic files in there)
+> races with file removal.  Specifically, if we get called with ffs->opened
+> equal to 1 due to opened ep0 and get preempted away just before the
+> call ffs_data_opened().  Another thread closes ep0, hitting
+> ffs_data_closed(), dropping ffs->opened to 0 and getting
+> 			ffs->state = FFS_CLOSING;
+> 			ffs_data_reset(ffs);
+> which calls ffs_data_clear(), where we hit
+> 		ffs_epfiles_destroy(epfiles, ffs->eps_count);
+> All files except ep0 are removed and epfiles gets freed, leaving the
+> first thread (in ffs_epfile_open()) with file->private_data pointing
+> into a freed array.
+> 
+> open() succeeds, with any subsequent IO on the resulting file leading
+> to calls of
+> static ssize_t ffs_epfile_io(struct file *file, struct ffs_io_data *io_data)
+> {
+> 	struct ffs_epfile *epfile = file->private_data;
+> 
+> and a bunch of accesses to *epfile later in that function, all of them
+> UAF.
+> 
+> As far as I can tell, the damn thing intends to prevent removals between
+> ffs_data_opened() and ffs_data_closed(), so other methods would be safe
+> if ->open() had been done right.  I'm not happy with the way that FSM
+> is done (the real state is a mix of ffs->state, ffs->opened and ffs->mutex,
+> and rules bloody awful; I'm still not entirely convinced that ffs itself
+> can't be freed with ffs->reset_work scheduled for execution), but that's
+> a separate story.  
+> 
+> Another variant of that scenario is with ffs->no_disconnect set;
+> in a sense, it's even nastier.  In that case ffs_data_closed() won't
+> remove anything - it will set ffs->state to FFS_DEACTIVATED, leaving
+> the removals for ffs_data_open().  If we have *two* threads in open(),
+> the first one to call ffs_data_open() will do removal; on another CPU
+> the second will just get past its increment of ->opened (from 1 to 2)
+> and move on, without waiting for anything.
+> 
+> IMO we should just take ffs->mutex in there, getting to ffs via
+> inode->i_sb->s_fs_info.  And yes, compare ffs->state with FFS_ACTIVE -
+> under ->mutex, without WARN_ON() and after having bumped ->opened
+> so that racing ffs_data_closed() would do nothing.  Not FFS_ACTIVE -
+> call ffs_data_closed() ourselves on failure exit.
+> 
+> As in
+> 
+> static int
+> ffs_epfile_open(struct inode *inode, struct file *file)
+> {
+> 	strict ffs_data *ffs = inode->i_sb->s_fs_info;
+> 	int ret;
+> 
+>         /* Acquire mutex */
+> 	ret = ffs_mutex_lock(&ffs->mutex, file->f_flags & O_NONBLOCK);
+> 	if (ret < 0)
+> 		return ret;
+> 
+> 	ffs_data_opened(ffs);
+> 	/*
+> 	 * not FFS_ACTIVE - there might be a pending removal;
+> 	 * FFS_ACITVE alone is not enough, though - we might have
+> 	 * been through FFS_CLOSING and back to FFS_ACTIVE,
+> 	 * with our file already removed.
+> 	 */
+> 	if (unlikely(ffs->state != FFS_ACTIVE ||
+> 		     !simple_positive(file->f_path.dentry))) {
+> 		ffs_data_closed(ffs);
+> 		mutex_unlock(&ffs->mutex);
+> 		return -ENODEV;
+> 	}
+> 	mutex_unlock(&ffs->mutex);
+> 
+> 	file->private_data = inode->i_private;
+> 	return stream_open(inode, file);
+> }
+> 
+> and
+> 
+> static int ffs_ep0_open(struct inode *inode, struct file *file)
+> {
+>         struct ffs_data *ffs = inode->i_private;
+> 	int ret;
+> 
+>         /* Acquire mutex */
+> 	ret = ffs_mutex_lock(&ffs->mutex, file->f_flags & O_NONBLOCK);
+> 	if (ret < 0)
+> 		return ret;
+> 
+> 	ffs_data_opened(ffs);
+> 	if (ffs->state == FFS_CLOSING) {
+> 		ffs_data_closed(ffs);
+> 		mutex_unlock(&ffs->mutex);
+> 		return -EBUSY;
+> 	}
+> 	mutex_unlock(&ffs->mutex);
+> 
+> 	file->private_data = ffs;
+> 	return stream_open(inode, file);
+> }
+> 
+> Said that, I'm _NOT_ familiar with that code; this is just from a couple
+> of days digging through the driver, so I would like to hear comments from
+> the maintainer...  Greg?
+> 
 
-Worse than that is that it can also deadlock: for example, in several
-places, gfs2_unstuff_dinode() is called inside filesystem transactions.
-This calls calls filemap_grab_folio(), which can allocate a new folio,
-which can trigger memory reclaim.  If memory reclaim recurses into the
-filesystem and starts another transaction, a deadlock will ensue.
+Sorry for the delay.  Yes, we should be grabing the mutex in there, good
+catch.  There's been more issues pointed out with the gadget code in the
+past year or so as more people are starting to actually use it and
+stress it more.  So if you have a patch for this, I'll gladly take it :)
 
-To fix these kinds of problems, prevent memory reclaim from recursing
-into filesystem code by making sure that the gfp_mask of inode address
-spaces doesn't include __GFP_FS.
+thanks,
 
-The "meta" and resource group address spaces were already using GFP_NOFS
-as their gfp_mask (which doesn't include __GFP_FS).  Inodes allocated by
-new_inode() will have their inode->i_mapping->gfp_mask set to
-GFP_HIGHUSER_MOVABLE, which is less restrictive than GFP_NOFS, though.
-To avoid being overly limiting, use the default value and only knock off
-the __GFP_FS flag.  I'm not sure if this will actually make a
-difference, but it also shouldn't hurt.
-
-This patch is loosely based on commit ad22c7a043c2 ("xfs: prevent stack
-overflows from page cache allocation").
-
-Fixes xfstest generic/273.
-
-Reviewed-by: Andrew Price <anprice@redhat.com>
-Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
----
- fs/gfs2/glock.c      |  5 ++++-
- fs/gfs2/inode.c      | 15 +++++++++++++++
- fs/gfs2/inode.h      |  1 +
- fs/gfs2/ops_fstype.c |  2 +-
- 4 files changed, 21 insertions(+), 2 deletions(-)
-
-diff --git a/fs/gfs2/glock.c b/fs/gfs2/glock.c
-index b677c0e6b9ab..9f2eb7e38569 100644
---- a/fs/gfs2/glock.c
-+++ b/fs/gfs2/glock.c
-@@ -1211,10 +1211,13 @@ int gfs2_glock_get(struct gfs2_sbd *sdp, u64 number,
- 
- 	mapping = gfs2_glock2aspace(gl);
- 	if (mapping) {
-+		gfp_t gfp_mask;
-+
-                 mapping->a_ops = &gfs2_meta_aops;
- 		mapping->host = sdp->sd_inode;
- 		mapping->flags = 0;
--		mapping_set_gfp_mask(mapping, GFP_NOFS);
-+		gfp_mask = mapping_gfp_mask(sdp->sd_inode->i_mapping);
-+		mapping_set_gfp_mask(mapping, gfp_mask);
- 		mapping->i_private_data = NULL;
- 		mapping->writeback_index = 0;
- 	}
-diff --git a/fs/gfs2/inode.c b/fs/gfs2/inode.c
-index 8a7ed80d9f2d..d7e35a05c161 100644
---- a/fs/gfs2/inode.c
-+++ b/fs/gfs2/inode.c
-@@ -89,6 +89,19 @@ static int iget_set(struct inode *inode, void *opaque)
- 	return 0;
- }
- 
-+void gfs2_setup_inode(struct inode *inode)
-+{
-+	gfp_t gfp_mask;
-+
-+	/*
-+	 * Ensure all page cache allocations are done from GFP_NOFS context to
-+	 * prevent direct reclaim recursion back into the filesystem and blowing
-+	 * stacks or deadlocking.
-+	 */
-+	gfp_mask = mapping_gfp_mask(inode->i_mapping);
-+	mapping_set_gfp_mask(inode->i_mapping, gfp_mask & ~__GFP_FS);
-+}
-+
- /**
-  * gfs2_inode_lookup - Lookup an inode
-  * @sb: The super block
-@@ -132,6 +145,7 @@ struct inode *gfs2_inode_lookup(struct super_block *sb, unsigned int type,
- 		struct gfs2_glock *io_gl;
- 		int extra_flags = 0;
- 
-+		gfs2_setup_inode(inode);
- 		error = gfs2_glock_get(sdp, no_addr, &gfs2_inode_glops, CREATE,
- 				       &ip->i_gl);
- 		if (unlikely(error))
-@@ -752,6 +766,7 @@ static int gfs2_create_inode(struct inode *dir, struct dentry *dentry,
- 	error = -ENOMEM;
- 	if (!inode)
- 		goto fail_gunlock;
-+	gfs2_setup_inode(inode);
- 	ip = GFS2_I(inode);
- 
- 	error = posix_acl_create(dir, &mode, &default_acl, &acl);
-diff --git a/fs/gfs2/inode.h b/fs/gfs2/inode.h
-index e43f08eb26e7..2fcd96dd1361 100644
---- a/fs/gfs2/inode.h
-+++ b/fs/gfs2/inode.h
-@@ -86,6 +86,7 @@ static inline int gfs2_check_internal_file_size(struct inode *inode,
- 	return -EIO;
- }
- 
-+void gfs2_setup_inode(struct inode *inode);
- struct inode *gfs2_inode_lookup(struct super_block *sb, unsigned type,
- 			        u64 no_addr, u64 no_formal_ino,
- 			        unsigned int blktype);
-diff --git a/fs/gfs2/ops_fstype.c b/fs/gfs2/ops_fstype.c
-index aa15183f9a16..1a2db8053da0 100644
---- a/fs/gfs2/ops_fstype.c
-+++ b/fs/gfs2/ops_fstype.c
-@@ -1183,7 +1183,7 @@ static int gfs2_fill_super(struct super_block *sb, struct fs_context *fc)
- 
- 	mapping = gfs2_aspace(sdp);
- 	mapping->a_ops = &gfs2_rgrp_aops;
--	mapping_set_gfp_mask(mapping, GFP_NOFS);
-+	gfs2_setup_inode(sdp->sd_inode);
- 
- 	error = init_names(sdp, silent);
- 	if (error)
--- 
-2.51.0
-
+greg k-h
 
