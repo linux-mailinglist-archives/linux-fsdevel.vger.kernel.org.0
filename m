@@ -1,98 +1,159 @@
-Return-Path: <linux-fsdevel+bounces-68265-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68266-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E20BFC57A2E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 14:25:57 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A01BC57A76
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 14:29:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 683D235536A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 13:25:46 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D03394E6B55
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 13:29:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0431835292C;
-	Thu, 13 Nov 2025 13:25:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 789B735292B;
+	Thu, 13 Nov 2025 13:29:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="KlmdGogW"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eUf+W6FA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43EC3351FAB;
-	Thu, 13 Nov 2025 13:25:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41683351FDA
+	for <linux-fsdevel@vger.kernel.org>; Thu, 13 Nov 2025 13:29:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763040335; cv=none; b=DCkhCBMOCFp48xHg7HVlnug5Rj8oFJaaxf6uWe+1ln+cPgL6lhWmwpJOage7TOmdpm8lsUBkPCSRjonr1zxqVdXe51ubtequyHjnVK/1l3lP0549VeYTcxRf54HUrOawHirJ3SsHJzA3gxR8SHUbr1CO/kQ4Id1jnK/Hl26m3iA=
+	t=1763040547; cv=none; b=ep9MhRqYh28HTXWtDChkWVVEkLM4RYrorKmkO9mBDLaZQdujhSE7M8dVoxM9Abf38CmKq1aMWOg1u7NB5w6Zq0evGBzT9NsOBjWYJvM1+c/GbhJ+0/qa3xbcBlsumhgoPLS4jifZSys5euwrnuEfmhTmxJiwQV+lvjPir/ZE95U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763040335; c=relaxed/simple;
-	bh=5J8IDP0TFvQyAFa3cOY9jKzr3H/7EgsvkcDHzYDPIsg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Lu6KwY5yi9elnJ4cYjoVm8QvUPN9tsDyMe64Nte43AF7ZWsYdWfQJzGuIwTtmhsM1xTMAO1dypOel8XHZyYOFuZvNzUagGuSRxZTzN6KgI0DH9epbBdY8GjfDABt/dvy6CtjuOHL+psHo5UMx8I0AwkHI5AgI7LlFU17gaXfxCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=KlmdGogW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B28FCC113D0;
-	Thu, 13 Nov 2025 13:25:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1763040334;
-	bh=5J8IDP0TFvQyAFa3cOY9jKzr3H/7EgsvkcDHzYDPIsg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KlmdGogWDOTd5cxFL0EnF6XCcEQQQEdzM4Y+n9OGDTffWHBFwrqL42ScQTNKyKONI
-	 oPb0DsW7hQW24DLHlfJtiMVmOPomh/qvAyIlvnJtlwcT30iYRMTiWMLT3iK0cliMEs
-	 QSJBY7L+YPQhPJ393KH25S+EyVZJoF17nXQs/mZ8=
-Date: Thu, 13 Nov 2025 08:25:32 -0500
-From: Greg KH <gregkh@linuxfoundation.org>
-To: "rom.wang" <r4o5m6e8o@163.com>
-Cc: lexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Yufeng Wang <wangyufeng@kylinos.cn>, stable@vger.kernel.org
-Subject: Re: [PATCH] libfs: Fix NULL pointer access in
- simple_recursive_removal
-Message-ID: <2025111343-landowner-bush-149b@gregkh>
-References: <20251113052357.41868-1-r4o5m6e8o@163.com>
+	s=arc-20240116; t=1763040547; c=relaxed/simple;
+	bh=X2R+F/XRtaKhmUDSKPMYcTX6v8IAEUkyS/OWFpx+E2g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XEhmYsiQnSPlnc1qJZnpLHztcyGZsbqa5FKudD3o6rMEQo5gLdHxNW4a0Oh2D78pgwe8yoPuKJcRjxHAYwrFpHFkeFCw6o6O/Xy74Coudqm58mBTXIYJkix9cVZVDh1s30meW8SlWvHeay0B+WTqQwBPf1Xca7taA0qYzzS8LHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eUf+W6FA; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-641977dc00fso1219419a12.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Nov 2025 05:29:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1763040543; x=1763645343; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oY71TIPYVN9PuTiZ3OlvZTDSV+me+lv0LSynZBsnDaM=;
+        b=eUf+W6FARmBejhLDTdbSSxh8+IN5pl4cUzj7BTggr3MXR8y26RgddMXJ8LFw2ZSGHz
+         iebTeyqOE+ghXtuw3N4h0ZqY3naaCk3Aio5UmtawkwpUJ8XcMd/EPVEot02OBvNCk/28
+         NWkCvYTVifpUy1b627ojojUjvtNO+GlhIW/pQoBOEJydxzoJYjyDS7J464WWR5n5rcf7
+         OZhdCyp5ulxhLZTqcSyR3zmeTUnFF3nNHbG3QYtYLNZ4Bu6IPaR073h3jN7Zk4A0AZrs
+         OehtGsDbTXCWxy6TMrHPA1EaTc9z3YL44YnKa+LjDjMN403gnRELCZO8s2Q09RTRnBwU
+         LVeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763040543; x=1763645343;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=oY71TIPYVN9PuTiZ3OlvZTDSV+me+lv0LSynZBsnDaM=;
+        b=O9pw1emYeVXodjjII/Y8nORLsLYXE35MB3dUCqDf+PD+2gKo2P21MfdyLFYSrk5Pk4
+         HQ76K+2PxFi7aOTGr5/H2dtOvHGORfNajG2R5L9gw7Ci66pwgctcPdC3HAkUl4bxg7Zd
+         jXMI+Fd/UP2QnB9QzhtDy/Kic/+HNUpM2JNsEGuAJs6CWsyZTDJkXtK3KJ3M5TyRTTZ8
+         RUeFplgBhObLC0B88e+y3/RTp07KAE7TO7RZIDy4e3fxJgInh5eH0lyJuMY6RCmMMlSE
+         SGZBcHPMI/rFCNFBCjbcTTKL4umPGF3MqtbvHmVhq6oBM3NdE8QSg2a2WU2+oXrNYWj5
+         u4vg==
+X-Forwarded-Encrypted: i=1; AJvYcCWG/uzHO3XZHwDpayXoAuNs7MTpTYl00DFwpM3rCyIE3I9WTAaf1Ar1l2wTAmf2zWAeSM9U4UdvFeSLoN7C@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdTFl5jsbzoTanIUvh4lVd53cmIB7bgYhZDy6HWpWLp+HOTMV0
+	qukMDMHWXHQcQVLk8WMD4HKF8m6u+U1n+W5P9k4Vgp9IgCY1Jx/aQWVc+TWfbFN7EhGbCk1QiP+
+	CaOXlYnFQxNvetPcJO0hYV2ZChxDpG00=
+X-Gm-Gg: ASbGncs6ywzZH/soEtU2sEzwkTDD14vR1PDtYhr6nZiyC+Yvu1h962SH1Bx7/QhArSe
+	ip4I6NoTBa9rChvG0MAJaR1PoO1ITaOUkZF9i9gvRXMml4MGnuM4LtKRir0VcNfjNNtTHeIPKvJ
+	jZiWgwPeKFrXkdmqQ9qytsa/uxs6xrp1cqhWHK/7qr6MfN+23JvpTWmHM4ZImHlTVmgtoogpHuy
+	bzAMDEMUC2uT3XE934wcbXCe/sHQ/km1D62qtiltX/i6xu93wXm4hf8B/VZbikNfIODPuXF/MKn
+	tvyMzdBUsqbtD+nYp8E=
+X-Google-Smtp-Source: AGHT+IG6QRdFBuSfgkoabmXTvXE8ZnDE+eQzyviPPzlvtafhiPqXkvftCkuT4MQoh0Za7vLQNsP91nL7FaNQn+LD8Rw=
+X-Received: by 2002:a05:6402:1cc1:b0:643:46cb:dad6 with SMTP id
+ 4fb4d7f45d1cf-64346cbdd85mr682950a12.19.1763040543274; Thu, 13 Nov 2025
+ 05:29:03 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251113052357.41868-1-r4o5m6e8o@163.com>
+References: <20251113-work-ovl-cred-guard-v1-0-fa9887f17061@kernel.org> <20251113-work-ovl-cred-guard-v1-15-fa9887f17061@kernel.org>
+In-Reply-To: <20251113-work-ovl-cred-guard-v1-15-fa9887f17061@kernel.org>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Thu, 13 Nov 2025 14:28:50 +0100
+X-Gm-Features: AWmQ_bmfC3d1_ow-oZGvxLTAnQ7gAY9RNR8soroa1d8l0d8d2H5GDHsMtZAD7qM
+Message-ID: <CAOQ4uxjGAz+WR0iseLLrMskseqGgQGEoVrJo1Jm_yFCnx=W3YA@mail.gmail.com>
+Subject: Re: [PATCH RFC 15/42] ovl: return directly
+To: Christian Brauner <brauner@kernel.org>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 13, 2025 at 01:23:57PM +0800, rom.wang wrote:
-> From: Yufeng Wang <wangyufeng@kylinos.cn>
-> 
-> There is an issue in the kernel:
-> if inode is NULL pointer. the function "inode_lock_nested"
-> (or function "inode_lock" before)
-> a crash will happen at code "&inode->i_rwsem".
+On Thu, Nov 13, 2025 at 2:02=E2=80=AFPM Christian Brauner <brauner@kernel.o=
+rg> wrote:
+>
+> No need for the goto anymore after we ported to cred guard.
+>
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
+> ---
 
-How is inode NULL?  What is causing that?
+The subject is too generic ;)
+but I think this one should be squashed to prev patch
 
-> [292618.520532] BUG: unable to handle kernel NULL pointer dereference at 00000000000000a0
-> [...]
-> [292618.560398] RIP: 0010:down_write+0x12/0x30
-> [292618.565580] Code: 83 f8 01 74 08 48 c7 47 20 01 00 00 00 f3 c3 66 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 ba 01 00 00 00 ff ff ff ff 48 89 f8 <f0> 48 0f c1 10 85 d2 74 05 e8 00 43 ff ff 65 48 8b 04 25 80 5c 01
-> [292618.587219] RSP: 0018:ffffb898dc86fc20 EFLAGS: 00010246
-> [292618.593666] RAX: 00000000000000a0 RBX: ffff94c84f363950 RCX: ffffff8000000000
-> [292618.602255] RDX: ffffffff00000001 RSI: 0000000000000063 RDI: 00000000000000a0
-> [292618.610844] RBP: ffffb898dc86fc78 R08: 0000000000000000 R09: 0000000000000000
-> [292618.619434] R10: ffffb898dc86fca8 R11: 0000000000000000 R12: 0000000000000000
-> [292618.628022] R13: ffff94c84f362a20 R14: ffff954d3f2fb4a0 R15: ffff954c3afa5010
-> [292618.636612] FS:  0000555555989cc0(0000) GS:ffff956dbf900000(0000) knlGS:0000000000000000
-> [292618.646271] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [292618.653300] CR2: 00000000000000a0 CR3: 000000fc7f25a000 CR4: 00000000003406e0
-> [292618.661888] Call Trace:
-> [292618.665225]  simple_recursive_removal+0x4f/0x230
-> [292618.670994]  ? debug_fill_super+0xe0/0xe0
-> [292618.676079]  debugfs_remove+0x40/0x60
-> [292618.680799]  kvm_vcpu_release+0x19/0x30 [kvm]
-
-Is the kvm code doing something wrong here?  debugfs shouldn't be trying
-to remove an inode that is already removed, so please fix the root
-cause, do not paper over it.
-
-thanks,
-
-greg k-h
+>  fs/overlayfs/inode.c | 7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
+>
+> diff --git a/fs/overlayfs/inode.c b/fs/overlayfs/inode.c
+> index 5fa6376f916b..00e1a47116d4 100644
+> --- a/fs/overlayfs/inode.c
+> +++ b/fs/overlayfs/inode.c
+> @@ -178,7 +178,7 @@ int ovl_getattr(struct mnt_idmap *idmap, const struct=
+ path *path,
+>         type =3D ovl_path_real(dentry, &realpath);
+>         err =3D ovl_real_getattr_nosec(sb, &realpath, stat, request_mask,=
+ flags);
+>         if (err)
+> -               goto out;
+> +               return err;
+>
+>         /* Report the effective immutable/append-only STATX flags */
+>         generic_fill_statx_attr(inode, stat);
+> @@ -204,7 +204,7 @@ int ovl_getattr(struct mnt_idmap *idmap, const struct=
+ path *path,
+>                         err =3D ovl_real_getattr_nosec(sb, &realpath, &lo=
+werstat,
+>                                                      lowermask, flags);
+>                         if (err)
+> -                               goto out;
+> +                               return err;
+>
+>                         /*
+>                          * Lower hardlinks may be broken on copy up to di=
+fferent
+> @@ -258,7 +258,7 @@ int ovl_getattr(struct mnt_idmap *idmap, const struct=
+ path *path,
+>                                                              &lowerdatast=
+at,
+>                                                              lowermask, f=
+lags);
+>                                 if (err)
+> -                                       goto out;
+> +                                       return err;
+>                         } else {
+>                                 lowerdatastat.blocks =3D
+>                                         round_up(stat->size, stat->blksiz=
+e) >> 9;
+> @@ -286,7 +286,6 @@ int ovl_getattr(struct mnt_idmap *idmap, const struct=
+ path *path,
+>         if (!is_dir && ovl_test_flag(OVL_INDEX, d_inode(dentry)))
+>                 stat->nlink =3D dentry->d_inode->i_nlink;
+>
+> -out:
+>         return err;
+>  }
+>
+>
+> --
+> 2.47.3
+>
 
