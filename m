@@ -1,547 +1,196 @@
-Return-Path: <linux-fsdevel+bounces-68120-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68121-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FC16C54D9A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 00:52:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43F9CC54DEB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 01:00:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 510E23A626D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Nov 2025 23:52:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6D403B3CA1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 00:00:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD0EA2ECD27;
-	Wed, 12 Nov 2025 23:51:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F29F0224AE0;
+	Thu, 13 Nov 2025 00:00:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="O8Cw12Ff";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="wqTcIeR9"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="hQLsYzTC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from flow-a4-smtp.messagingengine.com (flow-a4-smtp.messagingengine.com [103.168.172.139])
+Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11010062.outbound.protection.outlook.com [52.101.61.62])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DFDF26F467;
-	Wed, 12 Nov 2025 23:51:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.139
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762991518; cv=none; b=aca2+rF26s50N/wc4jh5CsMlJxuNknJe8U5R2F6QhgY5bDHHoTTsGrqDvgDro49u44wZmFDnyYEKPCuO4Ae/gRoSSC3taFFQwrYtVXKF6Z6L4hE1hTBKwjXxdFZ1gGLTODaCgP+J0mslxOM7blHGruuhYhcpDhQWboPjrm+aIp0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762991518; c=relaxed/simple;
-	bh=dK7IbDcqDtdOuQtskmOfKdPwCiCeuG8ImXE6nIEMOEU=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=AzORPSBIcscIyLUWEJm76fXXeggenJTaVwNhAeT0yVee3/z0c6Eg5TlZNmX+XWylAXhMZ7H7HC+ZFMjOSgehdbLQnjVJ15/85dm+KcPfa0/DoZNRnJV5pVZThNeveVHPg8IbE1S4iWNzc6IIpolukGSJHTvQaQzsJLUUNsLq1yc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=O8Cw12Ff; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=wqTcIeR9; arc=none smtp.client-ip=103.168.172.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
-Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
-	by mailflow.phl.internal (Postfix) with ESMTP id 8CAD713806CD;
-	Wed, 12 Nov 2025 18:51:55 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-02.internal (MEProxy); Wed, 12 Nov 2025 18:51:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to; s=fm3; t=
-	1762991515; x=1762998715; bh=UdcYk1BKf44XnH9Jgk+1ornLG0gv8gXEsFL
-	T4vJdMwg=; b=O8Cw12FfY4TSGDKlLYMYlqpb9reOjchW8/QhIGRaxSufoHZXxkx
-	pGnxW+NUsRU5GrMpOk7reVENeWjn6BK0gCyoFGRvw4+k238K3cWBWljzUIgJXOTm
-	On6YcHPTqcgtciAoRv5PVDYZP0UugTdPHqmQ0SWzVu5iWsXh6jL5UijtODR7mheO
-	cgI/+QX/rDVauTx5HGiuTUWVtB0+Md0CdegROdD8Q47PLL1TP5RH3iH1mT/lNM7M
-	qDWnz64XYviYKX8dFNKvWptdhQPCKGUgo9MQbwxIJHoHwhgyqfCgCk4tX76wrdG0
-	clk0fzc7quDtJS9UJXRPEbc/fNF3LsnxlAg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762991515; x=
-	1762998715; bh=UdcYk1BKf44XnH9Jgk+1ornLG0gv8gXEsFLT4vJdMwg=; b=w
-	qTcIeR9mBTDvTe2kWovm154V2Xd4kdZYaryqecqKuX/zrLfR9lnfhor5tgUO/tUU
-	3hK0Z14Wr/wgEJft7nJN1TAGhG9bPuOn5rAAT9wvcVDnJOfMO24fGYOiL0cYf6/L
-	s1kjlNh1Pgl40x5kaM0mTQur/oImPSvVIDE64z7i7PyjZsclpf4GvJedi2eNnFI2
-	lOwSevCTeur1hu03l78QG2aguYlH1/hk3Q4i4fmWTLbYkgR0VNO+PN/MugSHgajN
-	MWOCOhRoaUJjTE7lK3qCNQL/CCz/3qHGwFJpxmJ7GWkug2iL7/AUNJjsTshE9Z0Y
-	7GPJhz2NaKKUSO4zXymlg==
-X-ME-Sender: <xms:mR0VaemzNyA7060A7K4SgErH2H_FHN0R2aYyPSdBuzs3SsMNJXJ6vg>
-    <xme:mR0Vabk1TZfPr5Z5978pDR82H7X_ZgP08Pzg__H5mrLbKueaKc5S__Cw8LgiXplih
-    KvWLo-FQoG0Le-7LBI38aAftY0c4t-g1mfWL-o2-vAICHtTOg>
-X-ME-Received: <xmr:mR0VaTe33jM6r5M5-roIJ8Is0-xuczQ7YBlT33asdFUgV4hSYg5nNxSE55LWus0TVPq_f643wBbbqyrm0Mr3XE4xwM6qIfCqoWZJpQFJmczJ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvtdehgeegucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurheptgfgggfhvfevufgjfhffkfhrsehtqhertddttdejnecuhfhrohhmpefpvghilheu
-    rhhofihnuceonhgvihhlsgesohifnhhmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnh
-    epleejtdefgeeukeeiteduveehudevfeffvedutefgteduhfegvdfgtdeigeeuudejnecu
-    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhgvihhlsg
-    esohifnhhmrghilhdrnhgvthdpnhgspghrtghpthhtohepgedtpdhmohguvgepshhmthhp
-    ohhuthdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpd
-    hrtghpthhtohepshgvlhhinhhugiesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphht
-    thhopehlihhnuhigqdigfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoh
-    eplhhinhhugidquhhnihhonhhfshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphht
-    thhopehlihhnuhigqdhsvggtuhhrihhthidqmhhoughulhgvsehvghgvrhdrkhgvrhhnvg
-    hlrdhorhhgpdhrtghpthhtoheplhhinhhugidqnhhfshesvhhgvghrrdhkvghrnhgvlhdr
-    ohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlh
-    drohhrghdprhgtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhn
-    vghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqtghifhhssehvghgvrhdrkhgvrhhnvg
-    hlrdhorhhg
-X-ME-Proxy: <xmx:mR0VaZwDtIKh0yj5-HgxKKk477oz_0eMopNhUvqwnpNjwVN6slQb4A>
-    <xmx:mR0Vadu_kFHZiGyiyZ-dZkhRP5t3f3LEeCV3qkOggsMloM4L05E_2A>
-    <xmx:mR0VaeqGHWvsK7C2DZH9aX4CDBZBR1UVGx2T3MuTz5wYXkgOoBH92w>
-    <xmx:mR0VaY1ZJVFyIs_gDKNvSaPa24QH4fIXRo0Zr16C8rURXgIy9aA0jw>
-    <xmx:mx0VafhO9plU1agrOx-UpDm8yN6UYgH7TRSeVqMpsFpxMdL5XSKDCNg6>
-Feedback-ID: iab3e480c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 12 Nov 2025 18:51:43 -0500 (EST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF96A136672;
+	Thu, 13 Nov 2025 00:00:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.62
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762992045; cv=fail; b=hxWHHsNUnvNcOVJdrItwDbU2UBC6qXVC192YVqYFnwQnMW8+W6fU07qlKYVL94ziG9jjuIrmqK/QkcNaGzGI6RPNrmJmHbRXAetsgoiGHyinM3yvG+Bn+Ya+Ms60Vk4sgquyMtjgE/wmnntSnI3XZ/PkrP1KcEjYquksnQ5E8iY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762992045; c=relaxed/simple;
+	bh=bfieta7j6WKZuzS3vcjWAIwdBPSakfsGsQSKDZu0qLM=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=KlVNKrPyPye8yIHIEEQma3wekyADxRTXCjJm8Wp25TwrrPuPae2xd2ROuxaH99JEkjCMnDUXK4aog/Oo/6vKlHj+ZPNFiCA/jsnokvVSWm8vIQQsanGI0ITd95/7HrqynNRDrEsL1LMXxpIWMFTzm+wHTi+9LKHLj7b97nA33zQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=hQLsYzTC; arc=fail smtp.client-ip=52.101.61.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=CpCK0OPC48qhZ6zofAM+tEvGue+OSf9mssZc9s9pyCobu2SxIxMkbQ9lXjK0uePv2rh3Xmgko5YJAVpsvdSxmer2XZi8EgqAkW5uf+LnnN6Xzpq3h5Pe6EXF+Bjhv0sSBDH0E2dECsgstokLYGaYzppNApQTQcVUBRxPYfUs37p8i2NGmi74qRRPsqkyw6wGVu/1lvpj7cCzIiXMUUt2nlHrDTrmQBfzm47vk7Dao5p/S1KyKMqdxo/LbYZUEJYx8ck7yXb1NyLIjXT339YUHPetRoYOfMPg2Ewfk2ngL89c2xZ3H3kyyu4Gg9QnkH2Ph17RgZapfuG4Xm/l7POGZQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=bfieta7j6WKZuzS3vcjWAIwdBPSakfsGsQSKDZu0qLM=;
+ b=VQyNN3bfmaWI/mUUM2CRLf1VQ1iP7NViOL5/7LRrKKGlwT/K6GzzWvVzGKqL9bItHYXo/aqlekGIINQVC2N+5EgSlIp6yywbFX7uiUHFajOCZ2x/46q3jjbulZ4I4LEi5tQ6NFCH+XOA7UQljE6hbkXcu5+/CqaslwtwjHon/ip+fL5C2L/w34eVbsWQ8k7f7+kp3rmqSxrDxKgV7meUeysMRJ/PmS+VbE3VwsQu15PgB+9wCOuP7AzLhve/5R6rPoVSYvyXFFbXf3Rf1u+Kpq1G54Jsfrh9B7FRJKNgf2MwR7ZNr3QV1Vbk2x/qrn1uZCbS1ZULeoFyU4j/eRZkUw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bfieta7j6WKZuzS3vcjWAIwdBPSakfsGsQSKDZu0qLM=;
+ b=hQLsYzTCUFL5V30/36GduBRwPTkj+l6IO/tqRhx8MmwSmOxhrXdxJCQgkSftOdqTJLjI1rZaeGXrCSMkBZDE4nOnbELuYK0PonpHYTBCMgTmhIRR6kM54HU0imU+kkH5DCnM4Se+bkudXUXWF71JvuJ5nXNXnN8UCYp8GS71O9GEU+jqYxgIMmFzT1tCxJLhtsV8qqe1gJ36Q2banKm+gcDCKU0BpHNZKWVEEICXiSQskRF3pO9ZtAieUC70oP+mudNpg9VWxb/jirI4r8uuC/lFCeF+K27beDK2u9MSdY6AWdh+60SOyWA8o9rPC4KCIZMl1xFCIAgbeRXhzwlalw==
+Received: from LV3PR12MB9404.namprd12.prod.outlook.com (2603:10b6:408:219::9)
+ by LV3PR12MB9185.namprd12.prod.outlook.com (2603:10b6:408:199::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.16; Thu, 13 Nov
+ 2025 00:00:36 +0000
+Received: from LV3PR12MB9404.namprd12.prod.outlook.com
+ ([fe80::57ac:82e6:1ec5:f40b]) by LV3PR12MB9404.namprd12.prod.outlook.com
+ ([fe80::57ac:82e6:1ec5:f40b%5]) with mapi id 15.20.9298.015; Thu, 13 Nov 2025
+ 00:00:36 +0000
+From: Chaitanya Kulkarni <chaitanyak@nvidia.com>
+To: Christoph Hellwig <hch@lst.de>, Christian Brauner <brauner@kernel.org>
+CC: Alexander Viro <viro@zeniv.linux.org.uk>, "Darrick J. Wong"
+	<djwong@kernel.org>, Jan Kara <jack@suse.cz>, Jens Axboe <axboe@kernel.dk>,
+	Avi Kivity <avi@scylladb.com>, Damien Le Moal <dlemoal@kernel.org>, Naohiro
+ Aota <naohiro.aota@wdc.com>, Johannes Thumshirn <jth@kernel.org>,
+	"linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"io-uring@vger.kernel.org" <io-uring@vger.kernel.org>
+Subject: Re: [PATCH 1/5] fs, iomap: remove IOCB_DIO_CALLER_COMP
+Thread-Topic: [PATCH 1/5] fs, iomap: remove IOCB_DIO_CALLER_COMP
+Thread-Index: AQHcU6U2nMBhiPBc20OZP1KYy5TWPLTvuceA
+Date: Thu, 13 Nov 2025 00:00:36 +0000
+Message-ID: <a8748927-15ee-4636-a530-4f1e78570c2c@nvidia.com>
+References: <20251112072214.844816-1-hch@lst.de>
+ <20251112072214.844816-2-hch@lst.de>
+In-Reply-To: <20251112072214.844816-2-hch@lst.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Mozilla Thunderbird
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: LV3PR12MB9404:EE_|LV3PR12MB9185:EE_
+x-ms-office365-filtering-correlation-id: 45fe39a2-c6af-4c10-5ab6-08de2247ac79
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|376014|10070799003|7416014|366016|38070700021;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?dzNDS0xmdVFBbXpmUmcwemliekZOKzZXdkpjbVJOYzMrbmk0VUxhenFYSEhB?=
+ =?utf-8?B?YmJ4OEtPRVAzT1ZTbW1tT3ZFdFpGTGhMK2J3SXV5T1RSVWlTYzRBcUdZZTl0?=
+ =?utf-8?B?U05zOWJOM2RxNmd4N1l1NGNwT0VUci94UTh1QTM1Ym5TWGxhRll5Mm1jNVN4?=
+ =?utf-8?B?eW9NN0NueU5JQlJobHZyc0lZckhlTEVrN0tiN21wYXozNEpKK01Vb0FjUVl4?=
+ =?utf-8?B?N3JxZmdkaEU1T1BZeWNJdklXem1wZTgxQWZYdWsxaUM0MXRnU3E5bk9DMlYv?=
+ =?utf-8?B?QWQ2d1B0Q2IrZ3ZaMDRNNGNXYXgyNktGM2R1Tm56YkJFOFVQUUFBTVlpN0ZE?=
+ =?utf-8?B?ZGlUSFBKOWVoZFlRNmV3b2hLVGdpTzJINytiTHI1TW5vUVIxMElrZW9yS1Jm?=
+ =?utf-8?B?L0ZmaDdlSGRta2ttV2lCQVJzMkQ0Sk1ITk85Qm5hQXNTVWE4VXFVazcranJk?=
+ =?utf-8?B?eWczR2hhYVlYemJCeXQ1dFI0Z0NQMmw1UFJycE5yc2k1UU44Zms5TG9HdmF1?=
+ =?utf-8?B?SkQrVnB3dXUyR0luL2VnTU9BK1dkbUdHTmpSRXpSSGJEa3ozZ3paWlBVbFpO?=
+ =?utf-8?B?aUp3YmRwejNFTmxKenIzeEdJSlAwZVVlR1BZeUxxRjFOQ3ROTmxOWjlyRlZP?=
+ =?utf-8?B?dTNmMG1qK0VsV0JEWVVZUFBFTHRrVml6OHc1c3ZnYUNPRmFNYjliUlh3Unpm?=
+ =?utf-8?B?bGkzU0tUcDZIeGtMUFcrNlpZdHpzKzNlNzIrdEtpaVBxeE5aeXl1WWd2TmJZ?=
+ =?utf-8?B?OExoUUt0MjQ0Qms3WWs3cndKa29wYTE5eGJZRUFUVXpBUlNSMUJuRkdBRXVU?=
+ =?utf-8?B?RlRaTWk2ZEl5TEI3bEpRaDdQaStES3ZEMnBXMGhKZk0rOUtyWlpVMlhIcDN2?=
+ =?utf-8?B?cVd5VGxmRjQ2ZndhbTY5dXZJeDRVTDdPUVROcFJQUXZOajB0RlBER0N0Q0hT?=
+ =?utf-8?B?Z0RaRVMvSXhadEFrTHRhNXF6NTFPeXNXRUNTQjhzemMrcWhlYzVCOEJ4QlJ3?=
+ =?utf-8?B?ejhwYmlYZndlekpCMHJkL1ZRdFFmYVlIZ2FKTlhjQkZJdXJCMTNEUGpMWXJI?=
+ =?utf-8?B?aEN2UlJJRThjVVlKQ1FndDV5bVp4Q3Fpa0EyYjg5cDh3QlN0R3FmVXA1djdC?=
+ =?utf-8?B?bHpocDIrSjBNL2dEdW1ybDM1a2dJM0ErMUJwVGh3OW9HcExHdEJLL2hqZ3N2?=
+ =?utf-8?B?NjBUYjZYb2FISTFzMTJVQ3RJdFZTU0huMjlLdjJmT25FVWF3SkFKbGkzejJB?=
+ =?utf-8?B?NUtwREpQNVFsd0xvZUlxQ0k0YkVZSUp1NHhWRE9xM1hCRmgxcTVRd1Fkd1V6?=
+ =?utf-8?B?RHc1NE5xcnR5WGVJN292bXpsbUkrT1VlbDBEcm8wcW5mQVB5My90UTRDd3R5?=
+ =?utf-8?B?RVdWTjJaQXNOR3dPS1lMNnhKK1RZSjA2cUJIdFZ2UzFJcmtWS0RKdThXQ1ZU?=
+ =?utf-8?B?dDIrMWllbS9SUVM4Wk1yVUwzYXBSOFNMZTFNMCtxZ2t6cEU2dnRGUWUrMURm?=
+ =?utf-8?B?VnU2STNqYkltVzdxSU1jOWZVM3FQNkZwY3I4UHN6YWdvQ2x4NjlFaEczQ2NV?=
+ =?utf-8?B?Z09tRnl1STVwYnRvenlkSVFmNmpVSGRaUnZaZ1l3VXc0TXRSY1p1cmxsMlJx?=
+ =?utf-8?B?dVpFeTA4clY4OXFXR3ArN0FGS1R6N05nSzY5eGFvdDdBZnVPWEIxdmpTWjlR?=
+ =?utf-8?B?blhpc3pqUTRicnpwTUZWUkNCZTRXUFRiMGpjY2ZDZkd5eDcrNkpMMS9pOXBU?=
+ =?utf-8?B?cVY3RmZFbGtGS210RnZPR29yV0c0V2dqMllOZUd5T09uNHVPdXRLT0tZb3FM?=
+ =?utf-8?B?K2IrTXBheXJnTmRCNk51WG1ERzlLaTFzZExvRlJkWFliWTBuYUY1UnRIczVX?=
+ =?utf-8?B?VVdIc2V0Q3JjNVNIRTY2bEdZaGJmM0hWeXdjdk1IbU5ZSnFOcVArR3ZhdDUx?=
+ =?utf-8?B?WmM0N2t5T3E4LzFldmUvRHZzVjhkR2htVlhqWXlYdjkrQU1oaTM0R0F3WGFD?=
+ =?utf-8?B?Vy9uNEZSWHJPQ2hhdkRFemdvTFowTzF4U1h5WFBKdWN6OS9kWTh2L090OTdE?=
+ =?utf-8?Q?JXZfOC?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR12MB9404.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(10070799003)(7416014)(366016)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?WHRCQVFYTmZpWTdVOFkzYjk4Rm9oS3djMGo0TXJpQjlvQWtDTUdYSmVwOWtF?=
+ =?utf-8?B?SHhVVWpyNXpVTStuUzMrWDRIMTcrVGhaUnpIYS9rL3JKQlIrZDBSSUJzUSti?=
+ =?utf-8?B?UURMTFkyUkwzeGZNcHpRU1h1dVlXY3FlT1dTVmQ2U2xPdUVJc00yRkV4Qmxn?=
+ =?utf-8?B?TnJvbXIrMDJiMmJpUWFVaElvUm0ycENHWHFNVmZUWmxTM2doNVRIT083ck9Q?=
+ =?utf-8?B?U0dxZmw5VVdVZHFkUFRqNHpGa2hqVDVkOEE3K0QwaVIyOTRTQzgzM0k4RG1G?=
+ =?utf-8?B?a21oMjc3UzdEZWhuZVFLL2htK1ZrZEZPb1dqdU9TRFZtWWFWSzgrbGQzQ1Y5?=
+ =?utf-8?B?dFNGUFRXcWt5MW40ajBEMGFiRUNKZ0t0enU3NE9XWE9VK1llZ2F4UzFyN1VR?=
+ =?utf-8?B?U1JoWVBLMEQwVlIvYnZyVE1TOVRyQ2hta0xRNjh4U0dRRDFCa3hHSFcrTEFL?=
+ =?utf-8?B?QVdIQUhBSXVVaC9rRm5yQ2Z5Zjh3L0VXcFR6LzRacGVZalZlaHhKdXdMNVlv?=
+ =?utf-8?B?TGtNTDQzSjBINjVYVERLK2hMUXRwOWhoemd5dU1FRE9ETWpOQ3ZlRzZSQUNO?=
+ =?utf-8?B?UzhGMTA5cEUxUlVWV2FnVGU4MTFVczVuN1lhS1IyU2hINmpIWGJ6bUE0UUxt?=
+ =?utf-8?B?d1BaS3JQc2tVSFRRVENpR1A3N1VMc2ZSN2F6VzFmaE9PdU5JbVFVSHM3dmVB?=
+ =?utf-8?B?ZDJuV3dJNHFvVWhwZjdlWDhGUzhTaFlRcVdMejlTblNhRUE3cnJCdXdvNnhv?=
+ =?utf-8?B?NkxYY3MzV0tMSWpnL3N1c3VEL2FWM0JZeWFpS3JLQXR0VVVWbTRDYVhGYkJ0?=
+ =?utf-8?B?a2FqL2MvTGFWN0IrajhsVldnK0NGZkxtTkxKRjdwK1NrSE5vNHhrT2RqRnNJ?=
+ =?utf-8?B?ZlRCWCtycDhZS3FzNk9ldm1TcENxcmdVTEhZK3hqU0pXUVVhc3NpdU9ydTNy?=
+ =?utf-8?B?ZHlWc3loMUg5UXRBa0JpTW5FVnU4cy91U1BlT2NyeHlvVjF1UEl3NlhtTmkr?=
+ =?utf-8?B?ZHJpT2ZNWlBrWGxpNGVSM1RJcnZzM0FvYW02YWgyL0cyT3h4c2htVWhWdnAz?=
+ =?utf-8?B?RFVhcFJpNWpYRmtkRnpUdms2MkdabTVQS1RGZnovN2dYcGFobnhIVEVEMTQ4?=
+ =?utf-8?B?a3JZR1ZzRDlWTVNIbkEyTmNROWNkS1J1bVc5TWI4b1BjTHlrU1UrVUFzZXBM?=
+ =?utf-8?B?bktWbitaUDNUMURpVGoyeVBVbU52NHRNWVNIQWtrZkRIenVoRE85S3F6US9l?=
+ =?utf-8?B?TWlqSnZNbE1vSkdiSmpScUg2NnQyMlVTK0w3V3BLWU94M0k3RkZ6Qjd3L01R?=
+ =?utf-8?B?ZFJZc2twaFcxc0gxYTlSYjNrUnJEUmVIUHNXeW1VOFZlQ25hN2lLckc5bTZp?=
+ =?utf-8?B?QnRtTmZtbXRhY0RxaWFYcGxPa2s5REw1NTNlTkdNc2t2Y3ZnMm9sbkx2ZHI1?=
+ =?utf-8?B?cUcrRytUL1lJU3F6SjlNNGRPWG9IMEJ0Q3lmZDFWdGFacFl1RVFSYVVNdjQy?=
+ =?utf-8?B?RmFtaTFKZEtMd2FVbFBjc0h6M094K2Y3RHB2ZzRVTHVhM1JnbmFQdXVYY2E3?=
+ =?utf-8?B?NnpINU5QYzNER1hUalZHcVVGc0VOd1NrRFUrS3VoWmMxMDd3WFVnb0xMVnhZ?=
+ =?utf-8?B?U0ZvVjBuYjY4b1BvN0oxSUR4MUVPaktJSE5OZkNUUUQyQzJ5bjN2Qy8zWXMx?=
+ =?utf-8?B?RlpCUVF4K2NTcnV4ampyYVdRLzgzcUxRZlNNREc0OURtd1NVbjRnZmtKRkZH?=
+ =?utf-8?B?WGFuV1BlY081Mmw2Vm1HYmhaYjErTU5jWjNZL3VZalN3WUMwYXVVZkZxczNw?=
+ =?utf-8?B?VmtWZmZtY0hvd01NY1M3VGNoU09DRytqNUhtQm5hVVY5cW5VcVczaDhSdmc0?=
+ =?utf-8?B?QXo2ZVVhYVRiYUdOMUZjU09pRHNGWWZsTHZLK3hqOTh1blRLbHVYQndLOHB1?=
+ =?utf-8?B?QWRoRDBnVTJJbG9saExMMi9ZYVBTMzQ5cTY1UkJFTzBySDUzRkkrTWF5K0RY?=
+ =?utf-8?B?Q3BUaHErYlRBUXEvbzEvY2x4ajMvZVk4UkpkeExObUViVDNQQUFadDRodi9o?=
+ =?utf-8?B?eEFMVUpRK3IwYytvYTV4V25qZkhLNXQwVkxvOHZRNzhYL2FwYmRsdFcxeDUx?=
+ =?utf-8?B?Ump0MlAzOTYwazc0YXg2UmIrMFZTMVlVOTJwcWRnaEthUVk0SlR4OXNraGw2?=
+ =?utf-8?Q?t9fyZdSIqhyDZun+xikudAk4vJeI6QBDVLnXHro7KyEk?=
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-ID: <28C55A9542527B4EAF24D1CCEC5838AD@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: NeilBrown <neilb@ownmail.net>
-To: "Jeff Layton" <jlayton@kernel.org>
-Cc: "Alexander Viro" <viro@zeniv.linux.org.uk>,
- "Christian Brauner" <brauner@kernel.org>,
- "Amir Goldstein" <amir73il@gmail.com>, "Jan Kara" <jack@suse.cz>,
- linux-fsdevel@vger.kernel.org, "Chris Mason" <clm@fb.com>,
- "David Sterba" <dsterba@suse.com>, "David Howells" <dhowells@redhat.com>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- "Danilo Krummrich" <dakr@kernel.org>, "Tyler Hicks" <code@tyhicks.com>,
- "Miklos Szeredi" <miklos@szeredi.hu>,
- "Chuck Lever" <chuck.lever@oracle.com>,
- "Olga Kornievskaia" <okorniev@redhat.com>,
- "Dai Ngo" <Dai.Ngo@oracle.com>, "Namjae Jeon" <linkinjeon@kernel.org>,
- "Steve French" <smfrench@gmail.com>,
- "Sergey Senozhatsky" <senozhatsky@chromium.org>,
- "Carlos Maiolino" <cem@kernel.org>,
- "John Johansen" <john.johansen@canonical.com>,
- "Paul Moore" <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>,
- "Serge E. Hallyn" <serge@hallyn.com>,
- "Stephen Smalley" <stephen.smalley.work@gmail.com>,
- "Ondrej Mosnacek" <omosnace@redhat.com>,
- "Mateusz Guzik" <mjguzik@gmail.com>,
- "Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>,
- "Stefan Berger" <stefanb@linux.ibm.com>,
- "Darrick J. Wong" <djwong@kernel.org>, linux-kernel@vger.kernel.org,
- netfs@lists.linux.dev, ecryptfs@vger.kernel.org,
- linux-nfs@vger.kernel.org, linux-unionfs@vger.kernel.org,
- linux-cifs@vger.kernel.org, linux-xfs@vger.kernel.org,
- linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Subject: Re: [PATCH v5 05/14] VFS/nfsd/cachefiles/ovl: introduce
- start_removing() and end_removing()
-In-reply-to: <230c32bf9997f26b0cfe8c1a4c9309cf91c5071c.camel@kernel.org>
-References: <20251106005333.956321-1-neilb@ownmail.net>,
- <20251106005333.956321-6-neilb@ownmail.net>,
- <230c32bf9997f26b0cfe8c1a4c9309cf91c5071c.camel@kernel.org>
-Date: Thu, 13 Nov 2025 10:51:38 +1100
-Message-id: <176299149888.634289.17179562954493545471@noble.neil.brown.name>
-Reply-To: NeilBrown <neil@brown.name>
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: LV3PR12MB9404.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 45fe39a2-c6af-4c10-5ab6-08de2247ac79
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Nov 2025 00:00:36.4619
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: zFFdrKnTLPP7pQEw3DJV0Q2FBF8JmD6TK2GJ5AqzMKBfd3Q16V4iFHPB+ceq1fJ7G00/yFfDWhsR+O3mnRSWcA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR12MB9185
 
-On Thu, 13 Nov 2025, Jeff Layton wrote:
-> On Thu, 2025-11-06 at 11:50 +1100, NeilBrown wrote:
-> > From: NeilBrown <neil@brown.name>
-> >=20
-> > start_removing() is similar to start_creating() but will only return a
-> > positive dentry with the expectation that it will be removed.  This is
-> > used by nfsd, cachefiles, and overlayfs.  They are changed to also use
-> > end_removing() to terminate the action begun by start_removing().  This
-> > is a simple alias for end_dirop().
-> >=20
-> > Apart from changes to the error paths, as we no longer need to unlock on
-> > a lookup error, an effect on callers is that they don't need to test if
-> > the found dentry is positive or negative - they can be sure it is
-> > positive.
-> >=20
-> > Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-> > Signed-off-by: NeilBrown <neil@brown.name>
-> > ---
-> >  fs/cachefiles/namei.c    | 32 ++++++++++++++------------------
-> >  fs/namei.c               | 27 +++++++++++++++++++++++++++
-> >  fs/nfsd/nfs4recover.c    | 18 +++++-------------
-> >  fs/nfsd/vfs.c            | 26 ++++++++++----------------
-> >  fs/overlayfs/dir.c       | 15 +++++++--------
-> >  fs/overlayfs/overlayfs.h |  8 ++++++++
-> >  include/linux/namei.h    | 18 ++++++++++++++++++
-> >  7 files changed, 89 insertions(+), 55 deletions(-)
-> >=20
-> > diff --git a/fs/cachefiles/namei.c b/fs/cachefiles/namei.c
-> > index 0a136eb434da..c7f0c6ab9b88 100644
-> > --- a/fs/cachefiles/namei.c
-> > +++ b/fs/cachefiles/namei.c
-> > @@ -260,6 +260,7 @@ static int cachefiles_unlink(struct cachefiles_cache =
-*cache,
-> >   * - File backed objects are unlinked
-> >   * - Directory backed objects are stuffed into the graveyard for userspa=
-ce to
-> >   *   delete
-> > + * On entry dir must be locked.  It will be unlocked on exit.
-> >   */
-> >  int cachefiles_bury_object(struct cachefiles_cache *cache,
-> >  			   struct cachefiles_object *object,
-> > @@ -274,28 +275,30 @@ int cachefiles_bury_object(struct cachefiles_cache =
-*cache,
-> > =20
-> >  	_enter(",'%pd','%pd'", dir, rep);
-> > =20
-> > +	/* end_removing() will dput() @rep but we need to keep
-> > +	 * a ref, so take one now.  This also stops the dentry
-> > +	 * being negated when unlinked which we need.
-> > +	 */
-> > +	dget(rep);
-> > +
-> >  	if (rep->d_parent !=3D dir) {
-> > -		inode_unlock(d_inode(dir));
-> > +		end_removing(rep);
-> >  		_leave(" =3D -ESTALE");
-> >  		return -ESTALE;
-> >  	}
-> > =20
-> >  	/* non-directories can just be unlinked */
-> >  	if (!d_is_dir(rep)) {
-> > -		dget(rep); /* Stop the dentry being negated if it's only pinned
-> > -			    * by a file struct.
-> > -			    */
-> >  		ret =3D cachefiles_unlink(cache, object, dir, rep, why);
-> > -		dput(rep);
-> > +		end_removing(rep);
-> > =20
-> > -		inode_unlock(d_inode(dir));
-> >  		_leave(" =3D %d", ret);
-> >  		return ret;
-> >  	}
-> > =20
-> >  	/* directories have to be moved to the graveyard */
-> >  	_debug("move stale object to graveyard");
-> > -	inode_unlock(d_inode(dir));
-> > +	end_removing(rep);
-> > =20
-> >  try_again:
-> >  	/* first step is to make up a grave dentry in the graveyard */
-> > @@ -749,26 +752,20 @@ static struct dentry *cachefiles_lookup_for_cull(st=
-ruct cachefiles_cache *cache,
-> >  	struct dentry *victim;
-> >  	int ret =3D -ENOENT;
-> > =20
-> > -	inode_lock_nested(d_inode(dir), I_MUTEX_PARENT);
-> > +	victim =3D start_removing(&nop_mnt_idmap, dir, &QSTR(filename));
-> > =20
-> > -	victim =3D lookup_one(&nop_mnt_idmap, &QSTR(filename), dir);
-> >  	if (IS_ERR(victim))
-> >  		goto lookup_error;
-> > -	if (d_is_negative(victim))
-> > -		goto lookup_put;
-> >  	if (d_inode(victim)->i_flags & S_KERNEL_FILE)
-> >  		goto lookup_busy;
-> >  	return victim;
-> > =20
-> >  lookup_busy:
-> >  	ret =3D -EBUSY;
-> > -lookup_put:
-> > -	inode_unlock(d_inode(dir));
-> > -	dput(victim);
-> > +	end_removing(victim);
-> >  	return ERR_PTR(ret);
-> > =20
-> >  lookup_error:
-> > -	inode_unlock(d_inode(dir));
-> >  	ret =3D PTR_ERR(victim);
-> >  	if (ret =3D=3D -ENOENT)
-> >  		return ERR_PTR(-ESTALE); /* Probably got retired by the netfs */
-> > @@ -816,18 +813,17 @@ int cachefiles_cull(struct cachefiles_cache *cache,=
- struct dentry *dir,
-> > =20
-> >  	ret =3D cachefiles_bury_object(cache, NULL, dir, victim,
-> >  				     FSCACHE_OBJECT_WAS_CULLED);
-> > +	dput(victim);
-> >  	if (ret < 0)
-> >  		goto error;
-> > =20
-> >  	fscache_count_culled();
-> > -	dput(victim);
-> >  	_leave(" =3D 0");
-> >  	return 0;
-> > =20
-> >  error_unlock:
-> > -	inode_unlock(d_inode(dir));
-> > +	end_removing(victim);
-> >  error:
-> > -	dput(victim);
-> >  	if (ret =3D=3D -ENOENT)
-> >  		return -ESTALE; /* Probably got retired by the netfs */
-> > =20
-> > diff --git a/fs/namei.c b/fs/namei.c
-> > index 8873ad0f05b0..38dda29552f6 100644
-> > --- a/fs/namei.c
-> > +++ b/fs/namei.c
-> > @@ -3248,6 +3248,33 @@ struct dentry *start_creating(struct mnt_idmap *id=
-map, struct dentry *parent,
-> >  }
-> >  EXPORT_SYMBOL(start_creating);
-> > =20
-> > +/**
-> > + * start_removing - prepare to remove a given name with permission check=
-ing
-> > + * @idmap:  idmap of the mount
-> > + * @parent: directory in which to find the name
-> > + * @name:   the name to be removed
-> > + *
-> > + * Locks are taken and a lookup in performed prior to removing
-> > + * an object from a directory.  Permission checking (MAY_EXEC) is perfor=
-med
-> > + * against @idmap.
-> > + *
-> > + * If the name doesn't exist, an error is returned.
-> > + *
-> > + * end_removing() should be called when removal is complete, or aborted.
-> > + *
-> > + * Returns: a positive dentry, or an error.
-> > + */
-> > +struct dentry *start_removing(struct mnt_idmap *idmap, struct dentry *pa=
-rent,
-> > +			      struct qstr *name)
-> > +{
-> > +	int err =3D lookup_one_common(idmap, name, parent);
-> > +
-> > +	if (err)
-> > +		return ERR_PTR(err);
-> > +	return start_dirop(parent, name, 0);
-> > +}
-> > +EXPORT_SYMBOL(start_removing);
-> > +
-> >  #ifdef CONFIG_UNIX98_PTYS
-> >  int path_pts(struct path *path)
-> >  {
-> > diff --git a/fs/nfsd/nfs4recover.c b/fs/nfsd/nfs4recover.c
-> > index c247a7c3291c..3eefaa2202e3 100644
-> > --- a/fs/nfsd/nfs4recover.c
-> > +++ b/fs/nfsd/nfs4recover.c
-> > @@ -324,20 +324,12 @@ nfsd4_unlink_clid_dir(char *name, struct nfsd_net *=
-nn)
-> >  	dprintk("NFSD: nfsd4_unlink_clid_dir. name %s\n", name);
-> > =20
-> >  	dir =3D nn->rec_file->f_path.dentry;
-> > -	inode_lock_nested(d_inode(dir), I_MUTEX_PARENT);
-> > -	dentry =3D lookup_one(&nop_mnt_idmap, &QSTR(name), dir);
-> > -	if (IS_ERR(dentry)) {
-> > -		status =3D PTR_ERR(dentry);
-> > -		goto out_unlock;
-> > -	}
-> > -	status =3D -ENOENT;
-> > -	if (d_really_is_negative(dentry))
-> > -		goto out;
-> > +	dentry =3D start_removing(&nop_mnt_idmap, dir, &QSTR(name));
-> > +	if (IS_ERR(dentry))
-> > +		return PTR_ERR(dentry);
-> > +
-> >  	status =3D vfs_rmdir(&nop_mnt_idmap, d_inode(dir), dentry);
-> > -out:
-> > -	dput(dentry);
-> > -out_unlock:
-> > -	inode_unlock(d_inode(dir));
-> > +	end_removing(dentry);
-> >  	return status;
-> >  }
-> > =20
-> > diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
-> > index 24e501abad0e..6291c371caa7 100644
-> > --- a/fs/nfsd/vfs.c
-> > +++ b/fs/nfsd/vfs.c
-> > @@ -2044,7 +2044,7 @@ nfsd_unlink(struct svc_rqst *rqstp, struct svc_fh *=
-fhp, int type,
-> >  {
-> >  	struct dentry	*dentry, *rdentry;
-> >  	struct inode	*dirp;
-> > -	struct inode	*rinode;
-> > +	struct inode	*rinode =3D NULL;
-> >  	__be32		err;
-> >  	int		host_err;
-> > =20
-> > @@ -2063,24 +2063,21 @@ nfsd_unlink(struct svc_rqst *rqstp, struct svc_fh=
- *fhp, int type,
-> > =20
-> >  	dentry =3D fhp->fh_dentry;
-> >  	dirp =3D d_inode(dentry);
-> > -	inode_lock_nested(dirp, I_MUTEX_PARENT);
-> > =20
-> > -	rdentry =3D lookup_one(&nop_mnt_idmap, &QSTR_LEN(fname, flen), dentry);
-> > +	rdentry =3D start_removing(&nop_mnt_idmap, dentry, &QSTR_LEN(fname, fle=
-n));
-> > +
-> >  	host_err =3D PTR_ERR(rdentry);
-> >  	if (IS_ERR(rdentry))
-> > -		goto out_unlock;
-> > +		goto out_drop_write;
-> > =20
-> > -	if (d_really_is_negative(rdentry)) {
-> > -		dput(rdentry);
-> > -		host_err =3D -ENOENT;
-> > -		goto out_unlock;
-> > -	}
-> > -	rinode =3D d_inode(rdentry);
-> >  	err =3D fh_fill_pre_attrs(fhp);
-> >  	if (err !=3D nfs_ok)
-> >  		goto out_unlock;
-> > =20
-> > +	rinode =3D d_inode(rdentry);
-> > +	/* Prevent truncation until after locks dropped */
-> >  	ihold(rinode);
-> > +
-> >  	if (!type)
-> >  		type =3D d_inode(rdentry)->i_mode & S_IFMT;
-> > =20
-> > @@ -2102,10 +2099,10 @@ nfsd_unlink(struct svc_rqst *rqstp, struct svc_fh=
- *fhp, int type,
-> >  	}
-> >  	fh_fill_post_attrs(fhp);
-> > =20
-> > -	inode_unlock(dirp);
-> > -	if (!host_err)
-> > +out_unlock:
-> > +	end_removing(rdentry);
-> > +	if (!err && !host_err)
-> >  		host_err =3D commit_metadata(fhp);
-> > -	dput(rdentry);
-> >  	iput(rinode);    /* truncate the inode here */
-> > =20
-> >  out_drop_write:
-> > @@ -2123,9 +2120,6 @@ nfsd_unlink(struct svc_rqst *rqstp, struct svc_fh *=
-fhp, int type,
-> >  	}
-> >  out:
-> >  	return err !=3D nfs_ok ? err : nfserrno(host_err);
-> > -out_unlock:
-> > -	inode_unlock(dirp);
-> > -	goto out_drop_write;
-> >  }
-> > =20
-> >  /*
-> > diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
-> > index b9160fefbd00..20682afdbd20 100644
-> > --- a/fs/overlayfs/dir.c
-> > +++ b/fs/overlayfs/dir.c
-> > @@ -866,17 +866,17 @@ static int ovl_remove_upper(struct dentry *dentry, =
-bool is_dir,
-> >  			goto out;
-> >  	}
-> > =20
-> > -	inode_lock_nested(dir, I_MUTEX_PARENT);
-> > -	upper =3D ovl_lookup_upper(ofs, dentry->d_name.name, upperdir,
-> > -				 dentry->d_name.len);
-> > +	upper =3D ovl_start_removing_upper(ofs, upperdir,
-> > +					 &QSTR_LEN(dentry->d_name.name,
-> > +						   dentry->d_name.len));
-> >  	err =3D PTR_ERR(upper);
-> >  	if (IS_ERR(upper))
-> > -		goto out_unlock;
-> > +		goto out_dput;
-> > =20
-> >  	err =3D -ESTALE;
-> >  	if ((opaquedir && upper !=3D opaquedir) ||
-> >  	    (!opaquedir && !ovl_matches_upper(dentry, upper)))
-> > -		goto out_dput_upper;
-> > +		goto out_unlock;
-> > =20
-> >  	if (is_dir)
-> >  		err =3D ovl_do_rmdir(ofs, dir, upper);
-> > @@ -892,10 +892,9 @@ static int ovl_remove_upper(struct dentry *dentry, b=
-ool is_dir,
-> >  	 */
-> >  	if (!err)
-> >  		d_drop(dentry);
-> > -out_dput_upper:
-> > -	dput(upper);
-> >  out_unlock:
-> > -	inode_unlock(dir);
-> > +	end_removing(upper);
-> > +out_dput:
-> >  	dput(opaquedir);
-> >  out:
-> >  	return err;
-> > diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
-> > index beeba96cfcb2..49ad65f829dc 100644
-> > --- a/fs/overlayfs/overlayfs.h
-> > +++ b/fs/overlayfs/overlayfs.h
-> > @@ -423,6 +423,14 @@ static inline struct dentry *ovl_start_creating_uppe=
-r(struct ovl_fs *ofs,
-> >  			      parent, name);
-> >  }
-> > =20
-> > +static inline struct dentry *ovl_start_removing_upper(struct ovl_fs *ofs,
-> > +						      struct dentry *parent,
-> > +						      struct qstr *name)
-> > +{
-> > +	return start_removing(ovl_upper_mnt_idmap(ofs),
-> > +			      parent, name);
-> > +}
-> > +
-> >  static inline bool ovl_open_flags_need_copy_up(int flags)
-> >  {
-> >  	if (!flags)
-> > diff --git a/include/linux/namei.h b/include/linux/namei.h
-> > index 37b72f4a64f0..6d1069f93ebf 100644
-> > --- a/include/linux/namei.h
-> > +++ b/include/linux/namei.h
-> > @@ -91,6 +91,8 @@ struct dentry *lookup_one_positive_killable(struct mnt_=
-idmap *idmap,
-> > =20
-> >  struct dentry *start_creating(struct mnt_idmap *idmap, struct dentry *pa=
-rent,
-> >  			      struct qstr *name);
-> > +struct dentry *start_removing(struct mnt_idmap *idmap, struct dentry *pa=
-rent,
-> > +			      struct qstr *name);
-> > =20
-> >  /**
-> >   * end_creating - finish action started with start_creating
-> > @@ -122,6 +124,22 @@ static inline void end_creating(struct dentry *child=
-, struct dentry *parent)
-> >  		end_dirop(child);
-> >  }
-> > =20
-> > +/**
-> > + * end_removing - finish action started with start_removing
-> > + * @child:  dentry returned by start_removing()
-> > + * @parent: dentry given to start_removing()
-> > + *
-> > + * Unlock and release the child.
-> > + *
-> > + * This is identical to end_dirop().  It can be passed the result of
-> > + * start_removing() whether that was successful or not, but it not needed
-> > + * if start_removing() failed.
-> > + */
-> > +static inline void end_removing(struct dentry *child)
-> > +{
-> > +	end_dirop(child);
-> > +}
-> > +
-> >  extern int follow_down_one(struct path *);
-> >  extern int follow_down(struct path *path, unsigned int flags);
-> >  extern int follow_up(struct path *);
->=20
-> This looks fine to me (particularly the knfsd parts), but doesn't ksmbd
-> need to be similarly converted?
-
-ksmbd removes names in two places.
-
-ksmbd_vfs_unlink() is changed to use start_removing_dentry() in the next
-patch as you noticed when reviewing it.
-
-ksmbd_vfs_remove_file() is called after ksmbd_vfs_kern_path_locked()
-which is only used there.  I should possible renamed to
-ksmbd_vfs_kern_path_start_removing() and then the "do_lock" flag to
-__ksmbd_vfs_kern_path() and ksmbd_vfs_path_lookup() should become
-"for_remove" and then the lock/lookup in the "if (do_lock)" branch
-(which will become "if (for_remove)") should use start_removing.
-
-I'll insert a patch to do this.
-
->=20
-> Reviewed-by: Jeff Layton <jlayton@kernel.org>
-
-Thanks,
-NeilBrown
-
-
+T24gMTEvMTEvMjUgMjM6MjEsIENocmlzdG9waCBIZWxsd2lnIHdyb3RlOg0KPiBUaGlzIHdhcyBh
+ZGRlZCBieSBjb21taXQgMDk5YWRhMmM4NzI2ICgiaW9fdXJpbmcvcnc6IGFkZCB3cml0ZSBzdXBw
+b3J0DQo+IGZvciBJT0NCX0RJT19DQUxMRVJfQ09NUCIpIGFuZCBkaXNhYmxlZCBhIGxpdHRsZSBs
+YXRlciBieSBjb21taXQNCj4gODM4YjM1YmI2YTg5ICgiaW9fdXJpbmcvcnc6IGRpc2FibGUgSU9D
+Ql9ESU9fQ0FMTEVSX0NPTVAiKSBiZWNhdXNlIGl0DQo+IGRpZG4ndCB3b3JrLiAgUmVtb3ZlIGFs
+bCB0aGUgcmVsYXRlZCBjb2RlIHRoYXQgc2F0IHVudXNlZCBmb3IgMiB5ZWFycy4NCj4NCj4gU2ln
+bmVkLW9mZi1ieTogQ2hyaXN0b3BoIEhlbGx3aWc8aGNoQGxzdC5kZT4NCj4gLS0tDQoNCioqTG9v
+a3MgZ29vZC4NCg0KUmV2aWV3ZWQtYnk6IENoYWl0YW55YSBLdWxrYXJuaSA8a2NoQG52aWRpYS5j
+b20+DQoNCi1jaw0KDQoNCg==
 
