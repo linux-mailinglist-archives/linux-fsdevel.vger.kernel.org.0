@@ -1,173 +1,150 @@
-Return-Path: <linux-fsdevel+bounces-68292-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68293-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2344C591EE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 18:25:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 73CC4C591C1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 18:24:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0443F5614FD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 16:42:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 639914FBAE5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 16:44:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E31253587C6;
-	Thu, 13 Nov 2025 16:32:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18ED92FB085;
+	Thu, 13 Nov 2025 16:37:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NrGC9Z1H"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K/BBnnxk"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17EB1340A79;
-	Thu, 13 Nov 2025 16:32:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4301C23F294;
+	Thu, 13 Nov 2025 16:37:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763051543; cv=none; b=VAaNYfwilOneNi4K9QS/BoP8kZPZKNtpoxIPEsX5KYUqheS/gnCI9T6bWJXqHlf8CMMsDbs9/XhfBS1TRHAKC1s2rMRvqdbtvjrm18oDQL0mIa70UfC24Y64/oAz2va3QVXlkZO9vqVP00bKiT+tW3CS/NZvpTHHImCvMPwfXf8=
+	t=1763051850; cv=none; b=BI3IVpOwNbuUCn4unVdfTYPn6u4fAvseWRlRaVbXH2eb1ukhaJNGQZrdVYtpImy/juTKPPrwHXClsLT4/7ezZrBmxyMEdkIgj+xdRVL7j68R1RfdA4bgmi+NmMIP1gvNVo6gj9pjd4t9Y+mxN3dVkrtNXIwmdldKfigb48bHMcg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763051543; c=relaxed/simple;
-	bh=48cU/r2mCuhBi2o3QbLq7X+wCorzdfK7kjE/pbyUoys=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NzwWJ5DEPbUs1jnz9I6UJ0rb8FSffGq+po83UanJndQ+ZIZZZapR/y5c5lrIYRJKfxELfkvy9TbKPiHcjg0QvSjsjvq8+AARU4CP6l6HPpsou1lgNjJ0dBPl3jP8bXJqmIsUTekyAbQ6fAGtozAY0LMfIHEnamQaMew8+iT6bq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NrGC9Z1H; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B42EC4CEF1;
-	Thu, 13 Nov 2025 16:32:01 +0000 (UTC)
+	s=arc-20240116; t=1763051850; c=relaxed/simple;
+	bh=7qni5pj9X+Ull8FPXbyQ3VGjwmr3AQDKcR5HyLnsH5c=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=JbNuhx4qzu3WgLeJTwRw9p34vw/DEORsK8Tt19nyGdNWPisn2FC9fXrKho8NX1P1HifML2+GiaHZdzsxZ2fE1UJiPmvcoEGPlOkvErMVO2WpCYIPIvn7et3aIRW2pbpcvQSDzZnhj+R5U88a8okOFhrpFPnF7Fa4b9Nr/X2WgwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K/BBnnxk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 695B5C4CEF5;
+	Thu, 13 Nov 2025 16:37:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763051542;
-	bh=48cU/r2mCuhBi2o3QbLq7X+wCorzdfK7kjE/pbyUoys=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NrGC9Z1HvTGjTjRL3xw+mZ4VRxFvPWujkCi0vHliqnjQPxgDj5Iq1rshZmt6ySeMc
-	 HGMSMKVh9VgMIzXnB8CNP7DemQTXKeUC8H36kD7XXCJ8kj8oUOWtKFtV5JfCVlNMUH
-	 vV2Wz9lpEeXMW2vqdMbjTqxar0BcgazuH6zXzm6BsqIwtOVpVA7LeQFXB8qnOtRmO6
-	 ydVLEDH5JNfCnMadYTtk2Srvhd9ymPG9C691mZ4GV2PRr0Iwvc9aecAiVDEwcWPZYX
-	 IzqR46Q59HdXyVhnv/UTfIsTjQPSNCKfiaL+IDedKXACddxrDzR6Q4dn3sl1d1gn/I
-	 R2sYn55yOR5pQ==
-Date: Thu, 13 Nov 2025 18:31:57 +0200
-From: Mike Rapoport <rppt@kernel.org>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com,
-	dmatlack@google.com, rientjes@google.com, corbet@lwn.net,
-	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com,
-	kanie@linux.alibaba.com, ojeda@kernel.org, aliceryhl@google.com,
-	masahiroy@kernel.org, akpm@linux-foundation.org, tj@kernel.org,
-	yoann.congal@smile.fr, mmaurer@google.com, roman.gushchin@linux.dev,
-	chenridong@huawei.com, axboe@kernel.dk, mark.rutland@arm.com,
-	jannh@google.com, vincent.guittot@linaro.org, hannes@cmpxchg.org,
-	dan.j.williams@intel.com, david@redhat.com,
-	joel.granados@kernel.org, rostedt@goodmis.org,
-	anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn,
-	linux@weissschuh.net, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-mm@kvack.org,
-	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com,
-	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
-	hpa@zytor.com, rafael@kernel.org, dakr@kernel.org,
-	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com,
-	myungjoo.ham@samsung.com, yesanishhere@gmail.com,
-	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com,
-	aleksander.lobakin@intel.com, ira.weiny@intel.com,
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de,
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com,
-	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net,
-	brauner@kernel.org, linux-api@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, saeedm@nvidia.com,
-	ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com,
-	leonro@nvidia.com, witu@nvidia.com, hughd@google.com,
-	skhawaja@google.com, chrisl@kernel.org
-Subject: Re: [PATCH v5 02/22] liveupdate: luo_core: integrate with KHO
-Message-ID: <aRYH_Ugp1IiUQdlM@kernel.org>
-References: <20251107210526.257742-1-pasha.tatashin@soleen.com>
- <20251107210526.257742-3-pasha.tatashin@soleen.com>
- <aRHiCxoJnEGmj17q@kernel.org>
- <CA+CK2bCHhbBtSJCx38gxjfR6DM1PjcfsOTD-Pqzqyez1_hXJ7Q@mail.gmail.com>
- <aROZi043lxtegqWE@kernel.org>
- <CA+CK2bAsrEqpt9d3s0KXpjcO9WPTJjymdwtiiyWVS6uq5KKNgA@mail.gmail.com>
- <aRSKrxfAb_GG_2Mw@kernel.org>
- <CA+CK2bAq-0Vz4jSRWnb_ut9AqG3RcH67JQj76GhoH0BaspWs2A@mail.gmail.com>
+	s=k20201202; t=1763051849;
+	bh=7qni5pj9X+Ull8FPXbyQ3VGjwmr3AQDKcR5HyLnsH5c=;
+	h=From:Subject:Date:To:Cc:From;
+	b=K/BBnnxkbxSQ3qmw7L0lU6vMAfBRvNmpTZ9RalhAvGc6v9sZL2ARek+4WYd7JKRQ2
+	 3SzUNZ6cg2li9I/HKLldP7/JS7PGxIwN0KXC22uhZufzQNlRcfza1fTToAwL2bIjWP
+	 s60B7Wo4aEZiHL1A2xd+fgZawDY0Yrk4M+XEksUPbGdfcvVAdi2XFYdw4NMSFX++xh
+	 PNXQ3ykAqfeD4wUUYSccqLen5HsAtq8Abj7hbCVj1ydsw3c6X2paozzqR1P1XnSD0A
+	 Let7MbBFPm4vlpTxQdFEEf8PERlnuCm7IA4wumn5+wNJlBG9VjdFm7qvK60/Dsreym
+	 WrzUY8hiabdIQ==
+From: Christian Brauner <brauner@kernel.org>
+Subject: [PATCH v2 00/42] ovl: convert to cred guard
+Date: Thu, 13 Nov 2025 17:37:05 +0100
+Message-Id: <20251113-work-ovl-cred-guard-v2-0-c08940095e90@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+CK2bAq-0Vz4jSRWnb_ut9AqG3RcH67JQj76GhoH0BaspWs2A@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADEJFmkC/23OTQ7CIBCG4asY1g4BjLa68h6mC36GlrQpZlDUN
+ L270MSdy3cxzzcLS0gBE7vsFkaYQwpxLqH2O2YHPfcIwZVmSqijlFLBK9IIMU9gCR30T00OlHB
+ aG2t86zUrl3dCH96beutKG50QDOnZDtWqyavDi8Orwzenng4hPSJ9tn+yrMBv+vB3OksQ4PW5b
+ RsvG3GS1xFpxolH6lm3rusXyRCKWuIAAAA=
+X-Change-ID: 20251112-work-ovl-cred-guard-20daabcbf8fa
+To: Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
+ linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+ Christian Brauner <brauner@kernel.org>
+X-Mailer: b4 0.15-dev-a6db3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3369; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=7qni5pj9X+Ull8FPXbyQ3VGjwmr3AQDKcR5HyLnsH5c=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSKcbp2uU5tvBu8dZ+D5uMpU2b9+XNHcs7355UJv1tVq
+ xnMHbSdOkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACZyl5XhN0utpJ7gs8XBvH+i
+ pm99WfbkvZzQY6E9QmsEZicrR/8yPsnwz+D0tqaj4TmhfrqB1xRrE9eyGt249FH9uHD11Eexf0q
+ tOAE=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp;
+ fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-On Wed, Nov 12, 2025 at 09:58:27AM -0500, Pasha Tatashin wrote:
-> On Wed, Nov 12, 2025 at 8:25 AM Mike Rapoport <rppt@kernel.org> wrote:
-> >
-> > Hi Pasha,
-> >
-> > On Tue, Nov 11, 2025 at 03:57:39PM -0500, Pasha Tatashin wrote:
-> > > Hi Mike,
-> > >
-> > > Thank you for review, my comments below:
-> > >
-> > > > > This is why this call is placed first in reboot(), before any
-> > > > > irreversible reboot notifiers or shutdown callbacks are performed. If
-> > > > > an allocation problem occurs in KHO, the error is simply reported back
-> > > > > to userspace, and the live update update is safely aborted.
-> >
-> > The call to liveupdate_reboot() is just before kernel_kexec(). Why we don't
-> > move it there?
-> 
-> Yes, I can move that call into kernel_kexec().
-> 
-> > And all the liveupdate_reboot() does if kho_finalize() fails it's massaging
-> > the error value before returning it to userspace. Why kernel_kexec() can't
-> > do the same?
-> 
-> We could do that. It would look something like this:
-> 
-> if (liveupdate_enabled())
->    kho_finalize();
-> 
-> Because we want to do kho_finalize() from kernel_kexec only when we do
-> live update.
-> 
-> > > > This is fine. But what I don't like is that we can't use kho without
-> > > > liveupdate. We are making debugfs optional, we have a way to call
-> 
-> This is exactly the fix I proposed:
-> 
-> 1. When live-update is enabled, always disable "finalize" debugfs API.
-> 2. When live-update is disabled, always enable "finalize" debugfs API.
+This adds an overlayfs specific extension of the cred guard
+infrastructure I introduced. This allows all of overlayfs to be ported
+to cred guards. I refactored a few functions to reduce the scope of the
+cred guard. I think this is beneficial as it's visually very easy to
+grasp the scope in one go. Lightly tested.
 
-I don't mind the concept, what I do mind is sprinkling liveupdate_enabled()
-in KHO.
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+Changes in v2:
+- Fixed ovl_lookup() refactoring.
+- Various other fixes.
+- Added vfs debug assert to detect double credential overrides.
+- Link to v1: https://patch.msgid.link/20251113-work-ovl-cred-guard-v1-0-fa9887f17061@kernel.org
 
-How about we kill debugfs/kho/out/abort and make kho_finalize() overwrite
-an existing FDT if there was any? 
+---
+Amir Goldstein (1):
+      ovl: refactor ovl_iterate() and port to cred guard
 
-Abort was required to allow rollback for subsystems that had kho notifiers,
-but now notifiers are gone and kho_abort() only frees the memory
-serialization data. I don't see an issue with kho_finalize() from debugfs
-being a tad slower because of a call to kho_abort() and the liveupdate path
-anyway won't incur that penalty.
+Christian Brauner (41):
+      ovl: add override_creds cleanup guard extension for overlayfs
+      ovl: port ovl_copy_up_flags() to cred guards
+      ovl: port ovl_create_or_link() to cred guard
+      ovl: port ovl_set_link_redirect() to cred guard
+      ovl: port ovl_do_remove() to cred guard
+      ovl: port ovl_create_tmpfile() to cred guard
+      ovl: port ovl_open_realfile() to cred guard
+      ovl: port ovl_llseek() to cred guard
+      ovl: port ovl_fsync() to cred guard
+      ovl: port ovl_fallocate() to cred guard
+      ovl: port ovl_fadvise() to cred guard
+      ovl: port ovl_flush() to cred guard
+      ovl: port ovl_setattr() to cred guard
+      ovl: port ovl_getattr() to cred guard
+      ovl: port ovl_permission() to cred guard
+      ovl: port ovl_get_link() to cred guard
+      ovl: port do_ovl_get_acl() to cred guard
+      ovl: port ovl_set_or_remove_acl() to cred guard
+      ovl: port ovl_fiemap() to cred guard
+      ovl: port ovl_fileattr_set() to cred guard
+      ovl: port ovl_fileattr_get() to cred guard
+      ovl: port ovl_maybe_validate_verity() to cred guard
+      ovl: port ovl_maybe_lookup_lowerdata() to cred guard
+      ovl: don't override credentials for ovl_check_whiteouts()
+      ovl: port ovl_dir_llseek() to cred guard
+      ovl: port ovl_check_empty_dir() to cred guard
+      ovl: port ovl_nlink_start() to cred guard
+      ovl: port ovl_nlink_end() to cred guard
+      ovl: port ovl_xattr_set() to cred guard
+      ovl: port ovl_xattr_get() to cred guard
+      ovl: port ovl_listxattr() to cred guard
+      ovl: refactor ovl_rename()
+      ovl: port ovl_rename() to cred guard
+      ovl: port ovl_copyfile() to cred guard
+      ovl: refactor ovl_lookup()
+      ovl: port ovl_lookup() to cred guard
+      ovl: port ovl_lower_positive() to cred guard
+      ovl: refactor ovl_fill_super()
+      ovl: port ovl_fill_super() to cred guard
+      ovl: remove ovl_revert_creds()
+      ovl: detect double credential overrides
 
-> > KHO should not call into liveupdate. That's layering violation.
-> > And "stateless KHO" does not really make it stateless, it only removes the
-> > memory serialization from kho_finalize(), but it's still required to pack
-> > the FDT.
-> 
-> This touches on a point I've raised in the KHO sync meetings: to be
-> effective, the "stateless KHO" work must also make subtree add/remove
-> stateless. There should not be a separate "finalize" state just to
-> finish the FDT. The KHO FDT is tiny (only one page), and there are
-> only a handful of subtrees. Adding and removing subtrees is cheap; we
-> should be able to open FDT, modify it, and finish FDT on every
-> operation. There's no need for a special finalization state at kexec
-> time. KHO should be totally stateless.
+ fs/overlayfs/copy_up.c   |   6 +-
+ fs/overlayfs/dir.c       | 427 +++++++++++++++++++++++------------------------
+ fs/overlayfs/file.c      | 101 +++++------
+ fs/overlayfs/inode.c     | 120 ++++++-------
+ fs/overlayfs/namei.c     | 402 ++++++++++++++++++++++----------------------
+ fs/overlayfs/overlayfs.h |   6 +-
+ fs/overlayfs/readdir.c   |  86 ++++------
+ fs/overlayfs/super.c     |  89 +++++-----
+ fs/overlayfs/util.c      |  20 +--
+ fs/overlayfs/xattrs.c    |  35 ++--
+ 10 files changed, 611 insertions(+), 681 deletions(-)
+---
+base-commit: 2902367e352af16cbed9c67ca9022b52a0b738e7
+change-id: 20251112-work-ovl-cred-guard-20daabcbf8fa
 
-And as the first step we can drop 'if (!kho_out.finalized)' from
-kho_fill_kimage(). We might need to massage the check for valid FDT in
-kho_populate() to avoid unnecessary noise, but largely there's no issue
-with always passing KHO data in kimage.
- 
-> Thanks,
-> Pasha
-
--- 
-Sincerely yours,
-Mike.
 
