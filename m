@@ -1,136 +1,169 @@
-Return-Path: <linux-fsdevel+bounces-68171-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68172-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 835D0C55593
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 02:53:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EFCCC55653
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 03:13:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DD3414E3932
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 01:52:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 002B43AA2F0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 02:09:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FC262BE62E;
-	Thu, 13 Nov 2025 01:51:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B63B29BD95;
+	Thu, 13 Nov 2025 02:09:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="U2vt6KLE"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PTy+beqK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from canpmsgout04.his.huawei.com (canpmsgout04.his.huawei.com [113.46.200.219])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FB06299AB5;
-	Thu, 13 Nov 2025 01:51:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.219
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00D9F1F181F
+	for <linux-fsdevel@vger.kernel.org>; Thu, 13 Nov 2025 02:09:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762998702; cv=none; b=YtGk7/Qe+Z90d6wUMadHjmJauDOlL7qzRwsZwIjajsn32efeZno1JH8xK7YES1ozRf0vD+G/0Ba1Ankvm27TfSlblRJEp9Q9q6tkF8iIkL4zWlGkT0LW/nrsGzOXVm6c2JVSswOx1mk4k7WeEf1lMHi9aIUJyrM3kkC4nfqq/nU=
+	t=1762999756; cv=none; b=YdJMipOflGhtdF3qAFNBE/kp/Ek9Oq7fxwyhaZNtOdifDY9DH0SRKIgPpFvSkIf3Gh2HJIf+FYFFPpfimJ05lK/mzX9P3lScocBZuSaV69r0gVaHwTqpgUj1seOwmMgi+Xkp1kFDMjiPy/7k2W/ZfCevxUrHx2mNPAeSO7NkIa8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762998702; c=relaxed/simple;
-	bh=Dk0t3yp7I3dbZZKjBgs5rsR9ZTqzpO3u/ShS8k8IPh4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=jF9yf236F2HwmArXccBOs52TVBdYmAZo14Y1mDEoQRRk69FrXnFirz5o0LTMZSldcGPPOyvzDCz3yYTyAqQfJZ28isL6f6mhKgZzp4/sO0x4fmOGIY6m2nvPnupBi+bWKzmmBAeoRehyWQVmU/kZZDK8hbIxnj03/gY39hXWJlw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=U2vt6KLE; arc=none smtp.client-ip=113.46.200.219
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=qL8ILY1tAoCz6fUcrgnH3Kya3faamKjXzPtGdIrlO08=;
-	b=U2vt6KLE58kKcCF+IcP1XgCZ25INIZCxS/CcmGxmznrriRvrdTVZatUM3So/7STn4Td4M4jyQ
-	DsDNg9X4Yz4S6wb4h3cjjNj0GYTjScq6hU+AfxdrNzmdceh1tzEMkdjfgsJZpPEFZL4VXDUnO+w
-	ZmYs3GW3cJt6n52SLeXDVtQ=
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by canpmsgout04.his.huawei.com (SkyGuard) with ESMTPS id 4d6NW172hsz1prKm;
-	Thu, 13 Nov 2025 09:49:49 +0800 (CST)
-Received: from dggpemf500013.china.huawei.com (unknown [7.185.36.188])
-	by mail.maildlp.com (Postfix) with ESMTPS id 861901401E9;
-	Thu, 13 Nov 2025 09:51:30 +0800 (CST)
-Received: from [127.0.0.1] (10.174.178.254) by dggpemf500013.china.huawei.com
- (7.185.36.188) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 13 Nov
- 2025 09:51:29 +0800
-Message-ID: <b640a61c-6bcb-421e-9dc7-9dff76163dc9@huawei.com>
-Date: Thu, 13 Nov 2025 09:51:28 +0800
+	s=arc-20240116; t=1762999756; c=relaxed/simple;
+	bh=6UwvIGsRbrpFaKVD6/b6P6NuYJ3KfTLF6Du4cbGN6Nc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gZee8HrS4xgMvR+rn57UABckXGTbUvJ5FnVcK9z+kPtD3VDjclyqIfDIAr7Z3cBnY8Ptl/pp/cQduKXslltpXHH8y4g8telFPWoayo2TufR93tbDfRTXxsdhWYwvcNZ7RYE0mnenrdrU8jiYSX32vDi12zB8DYR53wa2dya8eGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PTy+beqK; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b403bb7843eso50751566b.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Nov 2025 18:09:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762999753; x=1763604553; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=YilcDuhj1dhziVhER+kb8IKURkf5X7d7kISKxPO1dD4=;
+        b=PTy+beqK+BHaTpw4dgbyvx4F5AGsL/x/Wz+DmfUuBpHIZ4tjV8mB/gR/MH7aS/FkPV
+         5cJuKOHvyu7nKM85x3q9svHZMOgqLCKVBqsJS51Xpy0cVxc1t7ehDoc17SgRDBoHZlAq
+         Ozfdljg0K7NL8PbqUYhvA7vOyykUTNcStb3V2UXnu70kdsxynCoZvCb6uEHmgqtF+5d6
+         iNVPXvHO1mssIzmjhHAUizkx4DQ007jh/4U39pFcWdD4Ja7JWPbl7hgXsnlmjpJn3aBj
+         bYmV2mkZVTr4uWfFbJxTo8sb4OqYrRhXQaeDYxcivcPx6a9R/u7gouYbWBofmi7RtxIq
+         yO7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762999753; x=1763604553;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YilcDuhj1dhziVhER+kb8IKURkf5X7d7kISKxPO1dD4=;
+        b=wMoa2AK0nn7Aq2dPJ6/KTI5wwbVN34UpcTksWUStEfjQqIuqhjOz7e+RuykSLh54Y+
+         1N7i4i1rB6pPbWe2SYnjMdDJ2Ci5dAI8p+7ORylXLlxRqvnuvrY92Sj/rqwyxjjdRO1S
+         N+q9EZY7OzBNql1BAuQLsbEqJWQyMI5BUCeOHJ/tr1hbxFhmjErrHjWX7bQzYnH9Rsrh
+         pym1GtQSgjtf+byK3q25tdwIOyBpDH5GxoROmdwjJcfYE2LFY58giBi13ZDhpr9Ajmr8
+         dZduCF6W/2tNTy5ctuDsasI68HaWOpcht3baGD2YnHVY/vkZvJLrIDiyV0uumayWkc5b
+         yvbg==
+X-Forwarded-Encrypted: i=1; AJvYcCXc1cwzQvkgpd9XO0D2yVfISSTFJnpcbV+hou2zUubxblkXHVGiizzhKQSAAW1ScbtLo0tNlBI+zrYHtGOE@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4h2CA3HITaLx59FcO6uSbE0rUghRh6u/mxZey9yu13mPYWxrF
+	AINwgbxJy+m6JC/FQo2z4SOHvwVMpQfKBJtR7yZ8pbPVQYma91+LbT/L
+X-Gm-Gg: ASbGncth+EZyq172O2CgbmLsQfwrifi4sc6l7zfItNy7KzC45cvNzYoLqaB3aK2ws9N
+	kjqvlzFZo77EonknbVKaBFQQadKoAGyjKnkIG0Cqx8aVX6v24m7Afj4cZOqCk7P/fRGXby8vtx5
+	sBAgyvHkPyQWZxJ4RFj1ggYqBD0CCMG+X612pLy9SIxPjXB2bTyIlm5wTILCKCjEG5PkPOS4tdb
+	g7IyhXEBnxPXNqV1ybMfrTuce+j2IDN2X5DbkgIT7G+lBd1sadFX4Lmic/CmdxL2sGnUEsS9d5U
+	EHRyFKZngkoGM++Vx/V/qVGxCPX0Bj6JwkfOYnXIc1yqIbcdij9Wzz/QRqK4GDjD7KOV7mZwo8W
+	aU6Hf3IF1iGjMO5SFtCkt1KMuJGd4VRj48eRuPfjDGGQi9HtXFhU9gCMYvZizUr2fVqazKhxLBQ
+	whIIVnkIyywFPWcKpQOpiZFrXRxb8wCScRHkMu1l1LcxgOyQ==
+X-Google-Smtp-Source: AGHT+IFxoYa5KI4RfrUVTTMhZzXg4lGOX/gv1esso0Q+isWJ+ieIFGJgHziAmQfL7z67Pf8gUo2nwQ==
+X-Received: by 2002:a17:907:e895:b0:b5f:c2f6:a172 with SMTP id a640c23a62f3a-b7331a70378mr520934766b.30.1762999753041;
+        Wed, 12 Nov 2025 18:09:13 -0800 (PST)
+Received: from f (cst-prg-14-82.cust.vodafone.cz. [46.135.14.82])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b734fad41e5sm54885666b.19.2025.11.12.18.09.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Nov 2025 18:09:12 -0800 (PST)
+Date: Thu, 13 Nov 2025 03:08:47 +0100
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: jayxu1990@gmail.com
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, rdlee.upstream@gmail.com, 
+	avnerkhan@utexas.edu
+Subject: Re: [PATCH] fs: optimize chown_common by skipping unnecessary
+ ownership changes
+Message-ID: <uh2mcjliqvhew2myuvi4hyvpwv5a7bnnzqlptfpwq5gguiskad@ciafu7tfwr4h>
+References: <20251113013449.3874650-1-jayxu1990@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6.1 04/33] common/rc: skip test if swapon doesn't work
-Content-Language: en-GB
-To: "Darrick J. Wong" <djwong@kernel.org>, Theodore Ts'o <tytso@mit.edu>
-CC: <zlang@redhat.com>, <neal@gompa.dev>, <fstests@vger.kernel.org>,
-	<linux-ext4@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-	<joannelkoong@gmail.com>, <bernd@bsbernd.com>
-References: <176169819804.1433624.11241650941850700038.stgit@frogsfrogsfrogs>
- <176169820051.1433624.4158113392739761085.stgit@frogsfrogsfrogs>
- <016f51ff-6129-4265-827e-3c2ae8314fe1@huawei.com>
- <20251112182617.GH196366@frogsfrogsfrogs> <20251112200540.GD3131573@mit.edu>
- <20251112222920.GO196358@frogsfrogsfrogs>
-From: Baokun Li <libaokun1@huawei.com>
-In-Reply-To: <20251112222920.GO196358@frogsfrogsfrogs>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
- dggpemf500013.china.huawei.com (7.185.36.188)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251113013449.3874650-1-jayxu1990@gmail.com>
 
-On 2025-11-13 06:29, Darrick J. Wong wrote:
-> From: Darrick J. Wong <djwong@kernel.org>
->
-> In _require_scratch_swapfile, skip the test if swapon fails for whatever
-> reason, just like all the other filesystems.  There are certain ext4
-> configurations where swapon isn't supported, such as S_DAX files on
-> pmem, and (for now) blocksize > pagesize filesystems.
->
-> Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
+On Thu, Nov 13, 2025 at 09:34:49AM +0800, jayxu1990@gmail.com wrote:
+> From: Jay Xu <jayxu1990@gmail.com>
+> 
+> Add early return optimization to chown_common() when the requested
+> uid/gid already matches the current inode ownership. This avoids
+> calling notify_change() and associated filesystem operations when
+> no actual change is needed.
+> 
 
-Looks good to me. Thanks for the patch!
+If this is useful in practice, then so is probably chmod.
 
-Reviewed-by: Baokun Li <libaokun1@huawei.com>
+> The check is performed after acquiring the inode lock to ensure
+> atomicity and uses the kernel's uid_eq()/gid_eq() functions for
+> proper comparison.
+> 
+> This optimization provides several benefits:
+> - Reduces unnecessary filesystem metadata updates and journal writes
+> - Prevents redundant storage I/O when files are on persistent storage
+> - Improves performance for recursive chown operations that encounter
+>   files with already-correct ownership
+> - Avoids invoking security hooks and filesystem-specific setattr
+>   operations when no change is required
 
+The last bit is a breaking change in behavior though. For example right
+now invoking chown 0:0 /bin as an unprivileged user fails. It will succeed
+with your patch.
+
+iow you can't avoid any of the security checks.
+
+However, if there are real workloads which chown/chmod to the current
+value already, perhaps it would make sense for the routine to track if
+anything changed and if not to avoid dirtying the inode, which still
+might save on I/O.
+
+> 
+> Signed-off-by: Jay Xu <jayxu1990@gmail.com>
 > ---
-> v6.1: clobber all the ext-specific stuff
-> ---
->  common/rc |   25 ++++---------------------
->  1 file changed, 4 insertions(+), 21 deletions(-)
->
-> diff --git a/common/rc b/common/rc
-> index b62e21f778d938..564235ea2e995c 100644
-> --- a/common/rc
-> +++ b/common/rc
-> @@ -3268,27 +3268,10 @@ _require_scratch_swapfile()
->  	# Minimum size for mkswap is 10 pages
->  	_format_swapfile "$SCRATCH_MNT/swap" $(($(_get_page_size) * 10)) > /dev/null
+>  fs/open.c | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+> 
+> diff --git a/fs/open.c b/fs/open.c
+> index 3d64372ecc67..82bde70c6c08 100644
+> --- a/fs/open.c
+> +++ b/fs/open.c
+> @@ -761,6 +761,7 @@ int chown_common(const struct path *path, uid_t user, gid_t group)
+>  	struct iattr newattrs;
+>  	kuid_t uid;
+>  	kgid_t gid;
+> +	bool needs_update = false;
 >  
-> -	# ext* has supported all variants of swap files since their
-> -	# introduction, so swapon should not fail.
-> -	case "$FSTYP" in
-> -	ext2|ext3|ext4)
-> -		if ! swapon "$SCRATCH_MNT/swap" >/dev/null 2>&1; then
-> -			if _check_s_dax "$SCRATCH_MNT/swap" 1 >/dev/null; then
-> -				_scratch_unmount
-> -				_notrun "swapfiles are not supported"
-> -			else
-> -				_scratch_unmount
-> -				_fail "swapon failed for $FSTYP"
-> -			fi
-> -		fi
-> -		;;
-> -	*)
-> -		if ! swapon "$SCRATCH_MNT/swap" >/dev/null 2>&1; then
-> -			_scratch_unmount
-> -			_notrun "swapfiles are not supported"
-> -		fi
-> -		;;
-> -	esac
-> +	if ! swapon "$SCRATCH_MNT/swap" >/dev/null 2>&1; then
-> +		_scratch_unmount
-> +		_notrun "swapon failed for $FSTYP"
-> +	fi
->  
->  	swapoff "$SCRATCH_MNT/swap" >/dev/null 2>&1
->  	_scratch_unmount
->
-
+>  	uid = make_kuid(current_user_ns(), user);
+>  	gid = make_kgid(current_user_ns(), group);
+> @@ -779,6 +780,17 @@ int chown_common(const struct path *path, uid_t user, gid_t group)
+>  	error = inode_lock_killable(inode);
+>  	if (error)
+>  		return error;
+> +
+> +	/* Check if ownership actually needs to change */
+> +	if ((newattrs.ia_valid & ATTR_UID) && !uid_eq(inode->i_uid, uid))
+> +		needs_update = true;
+> +	if ((newattrs.ia_valid & ATTR_GID) && !gid_eq(inode->i_gid, gid))
+> +		needs_update = true;
+> +
+> +	if (!needs_update) {
+> +		inode_unlock(inode);
+> +		return 0;
+> +	}
+>  	if (!S_ISDIR(inode->i_mode))
+>  		newattrs.ia_valid |= ATTR_KILL_SUID | ATTR_KILL_PRIV |
+>  				     setattr_should_drop_sgid(idmap, inode);
+> -- 
+> 2.34.1
+> 
 
