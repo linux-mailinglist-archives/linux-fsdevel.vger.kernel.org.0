@@ -1,116 +1,152 @@
-Return-Path: <linux-fsdevel+bounces-68347-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68348-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B31FC592BD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 18:32:37 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1209DC59671
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 19:15:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BB333BAA4F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 17:19:48 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5B8474F46E7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 17:39:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7980345CC5;
-	Thu, 13 Nov 2025 17:09:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D60C934FF66;
+	Thu, 13 Nov 2025 17:39:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="ecY8Hi2v"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="i4feVA+M"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9DCF26980F
-	for <linux-fsdevel@vger.kernel.org>; Thu, 13 Nov 2025 17:09:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B7ED2F99A5
+	for <linux-fsdevel@vger.kernel.org>; Thu, 13 Nov 2025 17:39:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763053782; cv=none; b=DXIU1VwIxT1N7mQrBUTOED2j4aycNWvZNmSmnRVb3Qt6A51kZM3HNrd41GLo+Mo7UfajCeNPMAlEwN4mOZkU6+PGxAM5IntTIgwmGNHXO6gxSDWmjXPySkLuEyG2wu0qrChjgs77bLVu8CjohA4wGXhBbG9StxePA63JFvxuR7o=
+	t=1763055567; cv=none; b=Gl2UaSP/pQzehW3+X+NEnwQYBjKLGl9iamua5A/6xCK+6rvYK7RMpNBjXzGyUr7eAAOzYJxtBE35oTbAcel1K8ipsgN/mBKmOMUjKIzKiN61bEnHm03IZvwq37oKWyn7fY9+5jg00sctsh7gIUCni+1/8/mjjbPE92313BuhVoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763053782; c=relaxed/simple;
-	bh=zWvynoWdw7wHKkRFjD6Lw7oxikjttuJ++aEakU34N9w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Zfj1NW37UuODaPTwao5FVJyDUkSZQsyf9VqNcNKcgt+ABZyMHLWwvrHz0yg34ZsYJe5eDg2Sz7aT3x65P8r4oIrHpR+XFZ8Q4zVDt8+k0PZ5v7SfT5yIEZLypvCjwpfth2Co2xvDEIMc7IRk/K5chDhjWV0mf3r24lCU44ZUKZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=ecY8Hi2v; arc=none smtp.client-ip=209.85.166.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-4331d3eea61so8637725ab.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Nov 2025 09:09:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1763053779; x=1763658579; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5ZBaFvCucR+JNZ72iqSisLCQ+iCppiPliY7657kFDp4=;
-        b=ecY8Hi2vSgwEuTOeLxduHUGbbcHl9irSx6/HbCNAyOeopGNC59qFVza/jzmi3KtKRD
-         yrFMgwt6CbNTtAOZelsNF5bAxJJKB21D6pamrHF3vjBCaoKu8E/jdCJcRpZ8Q9j95u4R
-         LPtbmz5SjoPdxFAqDbNSv/fOH72CjtLCt5UD+H80TdpmKl4lTTK7Bx3vQNME7ftf6crZ
-         XX7wg+in4gdNca6KyraP4O498ih0rI2qAPZg3N4VIt+w/mmnvbADApVgiZT78QuxgKaV
-         LFvJKKsIyc34bd+aq71/DM2IrWqlHOSTkdIO61nKGekus8T5DUlxUa71OheAJhimTye2
-         aZuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763053779; x=1763658579;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5ZBaFvCucR+JNZ72iqSisLCQ+iCppiPliY7657kFDp4=;
-        b=LEvhqFQcUDusti7A8q4Ybaog6G4eo6CG3uldzw3ZhAusn/WyRqBIxzNlOkzFWQ4j2o
-         Kd/24yPbTpKGMtBwd+aKC+uQxR/gKUS5CSHmKYh24dZ2z1RnMj9eJAxqHft1TJp3py/D
-         +0v0Bdqxpffgl+UIyS9lspy1NVpPpGDwLLfCyQNHofSuFDmTagNQ8u4n83drORynhrDL
-         tDJHrp9H5hoce2gFvt0CEPsviZ7MjRowou6beEvOUjVoKfZF2YKfkcIcwyWI2P08eXfn
-         CFiWDHIVzOmVeWzVC8YUDeNXfROBfA+ubvCjVPdzECZEBKD8X0SGgzpF/Esbr/1bri2q
-         7MTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUp1TyK5AOhBz+Q88jafWSe0nOwGOLu3AIcOoUy/fuFW+je58hD9wGdiYJk8zAlDmx/wvga2KbduRqJybFo@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrEUlw0C4ErBnuSqTD5IXIA5786V6hMoCzVq02jSPUdxN7mhmK
-	ZbXcpIbvVB7XXP7eZlf1IP4ztXgP1N8LFi+j3pd84DNNxcPX7z+I6FVLaHs7OZhcbSQ=
-X-Gm-Gg: ASbGncva8UQ/dTjfXUvpTBxBqK4WXoRxw0ktGYmbaIMSaoB62YaLgcSOJ0t5kaE0KGb
-	fvu1S6KOXMvfHpdDQdaBvv3qgtCITJXpRugcU5cInxTeDTf0c8e8av0SnActNOqnClJM2wUupLj
-	QGdQIk+9ccuHxRgO9dVTzSj5gAJchXVEg4mcM2EndMg61f+sRM7VF8Rmxu7Emts+sXOYEcHSBlW
-	BG988jkWDGKuJGCKEEHabQDbvbIZZzRohz1rYSaXyfE7dCCjhZMMm7Br/fTgMOju6D4oEh7bKUS
-	dsOWt3/aOa5lqDPrjyYm0qWPLe8sl8/hBH0+Cku9MwcZQebS2pGyE3z35Fngx0DPU7owv4GDp24
-	dkfuL/eYpLmK4SLi+wqJ4+vA0uWjmz7mG55f2M2yl0DuhRXDOYmSVwfq2ZkjckOPJ1HrssWjc
-X-Google-Smtp-Source: AGHT+IHUj8FD9xehxpeszXbRgt8Dc9jtfpmge16x+sbjsSz4SJis1QNpqJZseiw30qoDqxfBrlrydw==
-X-Received: by 2002:a05:6e02:1aa5:b0:433:28c7:6d7c with SMTP id e9e14a558f8ab-4348c8cfac3mr4356185ab.12.1763053778646;
-        Thu, 13 Nov 2025 09:09:38 -0800 (PST)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5b7bd3113c3sm891476173.34.2025.11.13.09.09.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Nov 2025 09:09:38 -0800 (PST)
-Message-ID: <87dfae96-6041-47e3-84ec-643e3aef3dc6@kernel.dk>
-Date: Thu, 13 Nov 2025 10:09:37 -0700
+	s=arc-20240116; t=1763055567; c=relaxed/simple;
+	bh=GGp2s0LvtKjt+t1W7yDNtjXdzWykxFnnHM6LUMYRznE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RdzE43pO1uLSdsmfmTDh573lVx2Ib040F7JphPM0mHf0E/FS+E9Z2sF2qzdJB9dsN91Qac5QDEyjkt/LGc1tbbtfpUJcoPqy7Yyzg01pO7WDIkB9HNveQ3qTIoZUJ2BuPFR7e6K0hVDWjksThRpAe7mrCVO84wv9wq0rL0MgC7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=i4feVA+M; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1763055564;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PXiG8WHDv5vtbMZ81FzbMwHzCV62RlyG1r3nUFcyKUo=;
+	b=i4feVA+MVoD/X7npHl0F1AxDCT5IM8+pgCatsJMwQuKkjBQ7ZUkiSHVa72i6jmgLHBuukU
+	zGlOv1ZmMytb18wl4kcY020rFz3NwSFtsD73Z1YBfVIl/O2+oYyiZxMmFGTUI4lQBBOanr
+	UHD2sNIn/jTKS5V6G/x2U4vPkuZqnhc=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-267-E9sQLSMdPc-ALg_OhBjXIQ-1; Thu,
+ 13 Nov 2025 12:39:18 -0500
+X-MC-Unique: E9sQLSMdPc-ALg_OhBjXIQ-1
+X-Mimecast-MFC-AGG-ID: E9sQLSMdPc-ALg_OhBjXIQ_1763055557
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 221EC1956070;
+	Thu, 13 Nov 2025 17:39:17 +0000 (UTC)
+Received: from redhat.com (unknown [10.45.224.162])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3D6D9300018D;
+	Thu, 13 Nov 2025 17:39:11 +0000 (UTC)
+Date: Thu, 13 Nov 2025 18:39:07 +0100
+From: Kevin Wolf <kwolf@redhat.com>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Jan Kara <jack@suse.cz>, Keith Busch <kbusch@kernel.org>,
+	Dave Chinner <david@fromorbit.com>,
+	Carlos Maiolino <cem@kernel.org>,
+	Christian Brauner <brauner@kernel.org>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-raid@vger.kernel.org,
+	linux-block@vger.kernel.org
+Subject: Re: fall back from direct to buffered I/O when stable writes are
+ required
+Message-ID: <aRYXuwtSQUz6buBs@redhat.com>
+References: <20251029071537.1127397-1-hch@lst.de>
+ <aQNJ4iQ8vOiBQEW2@dread.disaster.area>
+ <20251030143324.GA31550@lst.de>
+ <aQPyVtkvTg4W1nyz@dread.disaster.area>
+ <20251031130050.GA15719@lst.de>
+ <aQTcb-0VtWLx6ghD@kbusch-mbp>
+ <20251031164701.GA27481@lst.de>
+ <kpk2od2fuqofdoneqse2l3gvn7wbqx3y4vckmnvl6gc2jcaw4m@hsxqmxshckpj>
+ <20251103122111.GA17600@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/5] fs, iomap: remove IOCB_DIO_CALLER_COMP
-To: Christoph Hellwig <hch@lst.de>, Christian Brauner <brauner@kernel.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
- "Darrick J. Wong" <djwong@kernel.org>, Jan Kara <jack@suse.cz>,
- Avi Kivity <avi@scylladb.com>, Damien Le Moal <dlemoal@kernel.org>,
- Naohiro Aota <naohiro.aota@wdc.com>, Johannes Thumshirn <jth@kernel.org>,
- linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- io-uring@vger.kernel.org, Chaitanya Kulkarni <kch@nvidia.com>
-References: <20251113170633.1453259-1-hch@lst.de>
- <20251113170633.1453259-2-hch@lst.de>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20251113170633.1453259-2-hch@lst.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251103122111.GA17600@lst.de>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On 11/13/25 10:06 AM, Christoph Hellwig wrote:
-> This was added by commit 099ada2c8726 ("io_uring/rw: add write support
-> for IOCB_DIO_CALLER_COMP") and disabled a little later by commit
-> 838b35bb6a89 ("io_uring/rw: disable IOCB_DIO_CALLER_COMP") because it
-> didn't work.  Remove all the related code that sat unused for 2 years.
+Am 03.11.2025 um 13:21 hat Christoph Hellwig geschrieben:
+> On Mon, Nov 03, 2025 at 12:14:06PM +0100, Jan Kara wrote:
+> > I also think the performance cost of the unconditional bounce buffering is
+> > so heavy that it's just a polite way of pushing the app to do proper IO
+> > buffer synchronization itself (assuming it cares about IO performance but
+> > given it bothered with direct IO it presumably does). 
+> >
+> > So the question is how to get out of this mess with the least disruption
+> > possible which IMO also means providing easy way for well-behaved apps to
+> > avoid the overhead.
+> 
+> Remember the cases where this matters is checksumming and parity, where
+> we touch all the cache lines anyway and consume the DRAM bandwidth,
+> although bounce buffering upgrades this from pure reads to also writes.
+> So the overhead is heavy, but if we handle it the right way, that is
+> doing the checksum/parity calculation while the cache line is still hot
+> it should not be prohibitive.  And getting this right in the direct
+> I/O code means that the low-level code could stop bounce buffering
+> for buffered I/O, providing a major speedup there.
+> 
+> I've been thinking a bit more on how to better get the copy close to the
+> checksumming at least for PI, and to avoid the extra copies for RAID5
+> buffered I/O. M maybe a better way is to mark a bio as trusted/untrusted
+> so that the checksumming/raid code can bounce buffer it, and I start to
+> like that idea.
 
-Fine with me! Still planning on resurrecting this in the future,
-but just never got around to it so far.
+This feels like the right idea to me. It's also what I thought of after
+reading your problem description.
 
-Reviewed-by: Jens Axboe <axboe@kernel.dk>
+The problem is not that RAID5 uses bounce buffers. That's the correct
+and safe thing to do when you don't know that the buffer can't change.
+I'd argue changing that would be a RAID5 bug, and the corruption you
+showed earlier in the thread is not a sign of a buggy filesystem or
+application [1], but that you told the device to operate incorrectly.
 
--- 
-Jens Axboe
+What is the problem is that it still uses bounce buffers when you do
+know that the buffer can't change. Then it's just wasteful and doesn't
+contribute to correctness.
+
+Passing down a flag to the device so that it can decide whether the
+bounce buffer is needed seems like the obvious solution for that.
+
+> A complication is that PI could relax that requirement if we support
+> PI passthrough from userspace (currently only for block device, but I
+> plan to add file system support), where the device checks it, but we
+> can't do that for parity RAID.
+
+Not sure I understand the problem here. If it's passed through from
+userspace, isn't its validity the problem of userspace, too? I'd expect
+that you only need a bounce buffer in the kernel if the kernel itself
+does something like a checksum calculation?
+
+Kevin
+
+[1] For a QEMU developer like me, not blaming the application may sound
+    like an excuse, but we're really only in the same position as the
+    kernel here for anything that comes from the guest. Whenever we rely
+    on stable buffers, we already have to use bounce buffers, too.
 
 
