@@ -1,90 +1,96 @@
-Return-Path: <linux-fsdevel+bounces-68213-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68214-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D56CC576FD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 13:35:38 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50938C5770D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 13:36:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2675234DBFF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 12:34:46 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 5553934E103
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 12:35:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C3B834DCFE;
-	Thu, 13 Nov 2025 12:34:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EOp/uNGL"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0D7034D3B2;
+	Thu, 13 Nov 2025 12:35:41 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9782435979;
-	Thu, 13 Nov 2025 12:34:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C0A62D94A3;
+	Thu, 13 Nov 2025 12:35:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763037269; cv=none; b=ND73IWODeRgk/0JnrsLoTalqAwXjAZZW12uMREkITrKiqglrZn+qZCVTMMIEi1fWhVFrcPfb5Gmzynruq1u+wpcaa7HjDR7H8WqEejJLGAMTm20qJFe+IYn1eMRJgNcgQ5CFjEc+520YquoEAdetjT2m29pEmPvLxBuan1mxQII=
+	t=1763037341; cv=none; b=RjJcaqYQN49OYIaEfnqBiaerIYQQNmwEHkWWAkKucZDQxWRopEnu/YS2ZsiJEWTSQV0Hc2yesYNS3JFR444hNLc4psqCtzvCqq3QftZJ3U1Gc0mF25rH3vOqjUaE4ctM3Pc00uWrQ7NrKqTJku0XvrafZHnD+1EiLIHrRCnH0MQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763037269; c=relaxed/simple;
-	bh=y1FfFIuMb0svp4ymlKmSDs7EFvaJvR5A3gJ3lpcq8Uk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qZ7k2dnf6qFEtUZrvWCDqqivuKl4+p+2tTs8xewhXErHgK/qsFoksVQBp+eDiJfeu6ouBcb/8rwNRQ/BdEApqF3Ps/x/yHnaP6v+WurXjyzKlBUs8JqVEv/38D9guXzZ8KCEMnNy/PwqL/RbOPEJs3GLN5emUO6KdKUT80ujDeY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EOp/uNGL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95A64C4CEF8;
-	Thu, 13 Nov 2025 12:34:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763037269;
-	bh=y1FfFIuMb0svp4ymlKmSDs7EFvaJvR5A3gJ3lpcq8Uk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=EOp/uNGLEJX2/o1A0Oqqre+Il30QU6+REZ6YFDPWH0Meu5sP92HduOMkUe8kYKDAB
-	 VdMLglbLi+06rRrPRmZtPa85qJJEDgpngLeHOzUgN1sNS8CURZ8cVUCHj7//ChyqxF
-	 VuOuLY62yswpDC7bqM25vTrSPw6RUWv/LeQgStQLbLM2OrQuNcrt/3iInfvUmER6AV
-	 Nc+T6QelxZUkCLsxA1HPvQevv9ZkT7AKrzBRgRHmpmiBzB/hsqvjQmmfHqp2ZR80oO
-	 H3l+CR6hjebnQdqloBIy7TOa2FcbeyT4jGxT7OutE15lQOo+L85dtISsLNkHoQJUIp
-	 agdcL9uWkwFxQ==
-Message-ID: <13db54a4-5f02-4b57-8ff9-6298c2c4b8d3@kernel.org>
-Date: Thu, 13 Nov 2025 13:34:22 +0100
+	s=arc-20240116; t=1763037341; c=relaxed/simple;
+	bh=ePxJvEbztbjKYCAVyd7deFPKSp7j62o+wMmttRco0HE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dh/N62Gsns32IrATUuOkhO2rha+QNBBxZoMsHVZ1OfKYrFDoqh5abOnwu/Odiq2gV5+f+IszBz+yaw0L95pk9/9N+yEE+LX6PVTetnRCSum2bvs+bIBO25S+BPIsmcShb23q9Y1xZR5zDNlEaAGmYSMlXh6qRrQ+hw/FhMZigjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 2D9D3227A88; Thu, 13 Nov 2025 13:35:33 +0100 (CET)
+Date: Thu, 13 Nov 2025 13:35:32 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Jan Kara <jack@suse.cz>
+Cc: Christoph Hellwig <hch@lst.de>, Christian Brauner <brauner@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	"Darrick J. Wong" <djwong@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+	Avi Kivity <avi@scylladb.com>, Damien Le Moal <dlemoal@kernel.org>,
+	Naohiro Aota <naohiro.aota@wdc.com>,
+	Johannes Thumshirn <jth@kernel.org>, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
+Subject: Re: [PATCH 4/5] iomap: support write completions from interrupt
+ context
+Message-ID: <20251113123532.GA21292@lst.de>
+References: <20251112072214.844816-1-hch@lst.de> <20251112072214.844816-5-hch@lst.de> <nujtqnweb7jfbyk4ov3a7z5tdtl24xljntzbpecgv6l7aoeytd@nkxsilt6w7d3> <20251113065055.GA29641@lst.de> <x76swsaqkkyko6oyjch2imsbqh3q3dx3uqqofjnktzbzfdkbhe@jog777bckvu6> <20251113100630.GB10056@lst.de> <ewzcc5tots6ughnbqlqmvje4ex2eb5tug2mapzvcf4zstb7fxn@qruu4xs4nblt>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 2/8] mm: Add PG_atomic
-To: Matthew Wilcox <willy@infradead.org>,
- Ojaswin Mujoo <ojaswin@linux.ibm.com>
-Cc: Christian Brauner <brauner@kernel.org>, djwong@kernel.org,
- ritesh.list@gmail.com, john.g.garry@oracle.com, tytso@mit.edu,
- dchinner@redhat.com, hch@lst.de, linux-xfs@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, jack@suse.cz,
- nilay@linux.ibm.com, martin.petersen@oracle.com, rostedt@goodmis.org,
- axboe@kernel.dk, linux-block@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-References: <cover.1762945505.git.ojaswin@linux.ibm.com>
- <5f0a7c62a3c787f2011ada10abe3826a94f99e17.1762945505.git.ojaswin@linux.ibm.com>
- <aRSuH82gM-8BzPCU@casper.infradead.org>
-From: "David Hildenbrand (Red Hat)" <david@kernel.org>
-Content-Language: en-US
-In-Reply-To: <aRSuH82gM-8BzPCU@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ewzcc5tots6ughnbqlqmvje4ex2eb5tug2mapzvcf4zstb7fxn@qruu4xs4nblt>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On 12.11.25 16:56, Matthew Wilcox wrote:
-> On Wed, Nov 12, 2025 at 04:36:05PM +0530, Ojaswin Mujoo wrote:
->> From: John Garry <john.g.garry@oracle.com>
->>
->> Add page flag PG_atomic, meaning that a folio needs to be written back
->> atomically. This will be used by for handling RWF_ATOMIC buffered IO
->> in upcoming patches.
+On Thu, Nov 13, 2025 at 01:06:34PM +0100, Jan Kara wrote:
+> On Thu 13-11-25 11:06:30, Christoph Hellwig wrote:
+> > On Thu, Nov 13, 2025 at 10:54:46AM +0100, Jan Kara wrote:
+> > > > You mean drop the common helper?  How would that be better and less
+> > > > fragile?   Note that I care strongly, but I don't really see the point.
+> > > 
+> > > Sorry I was a bit terse. What I meant is that the two users of
+> > > iomap_dio_is_overwrite() actually care about different things and that
+> > > results in that function having a bit odd semantics IMHO. The first user
+> > > wants to figure out whether calling generic_write_sync() is needed upon io
+> > > completion to make data persistent (crash safe).
+> > 
+> > Yes.
+> > 
+> > > The second user cares
+> > > whether we need to do metadata modifications upon io completion to make data
+> > > visible at all.
+> > 
+> > Not quite.  It cares if either generic_write_sync needs be called,
+> > or we need a metadata modification, because both require the workqueue.
 > 
-> Page flags are a precious resource.  I'm not thrilled about allocating one
-> to this rather niche usecase.
+> I agree but generic_write_sync() calling is handled by 
+> 
+> +       else if (dio->flags & IOMAP_DIO_NEED_SYNC)
+> +               dio->flags &= ~IOMAP_DIO_INLINE_COMP;
+> 
+> in your patch. So I assumed (maybe wrongly) that the second call to
+> iomap_dio_is_overwrite() in iomap_dio_bio_iter() is only about detecting a
+> need of metadata modification. And my argument is that the patch could use
+> IOMAP_DIO_UNWRITTEN | IOMAP_DIO_COW the same way as it uses
+> IOMAP_DIO_NEED_SYNC instead of calling iomap_dio_is_overwrite().
+> 
+> But if you don't like that I don't think it makes a huge difference and the
+> code is correct as is so feel free to add:
 
-Fully agreed.
+I'll take a look if there is a way to clear thing up a bit.
 
--- 
-Cheers
-
-David
 
