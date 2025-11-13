@@ -1,129 +1,99 @@
-Return-Path: <linux-fsdevel+bounces-68185-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68187-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E58BC560E6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 08:29:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EB949C568B3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 10:18:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 997344E455E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 07:29:30 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2CC484E6EBF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 09:03:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8786C325498;
-	Thu, 13 Nov 2025 07:28:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 230A82C1589;
+	Thu, 13 Nov 2025 09:02:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="XIfAo3Dn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5EE8322A15;
-	Thu, 13 Nov 2025 07:28:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F221014AD20
+	for <linux-fsdevel@vger.kernel.org>; Thu, 13 Nov 2025 09:02:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763018938; cv=none; b=SKlM5KrOC5LGfE+shOichP8c3YLjo7zy5kEks3mM9ZiBDxo3OnMEYhBn0dPUcnAXLZqMAteJ5GyNDWAeIWOa0ZzngBJ0rYDRTTr5lMhXUKC36CLn+FzC5hHqLMvaifGc4Uzn6xsyLCXLrwDoVHMuvWPSmOzXOVpsB6gTe8ARm+k=
+	t=1763024574; cv=none; b=LWztTsuwQe0yOmil3NF3yZAdWMdMUocXOmbLEzFpHTiUq2iBjM/lmHnSeP8JpcMuAmxZ43UufUJQxWRbcgbFtMVpSSOR93PEWfX9o7jw7VFQPnspJOhyWS3t9X3EuqBbtF8Zcj1DrGKurXvlB4KeBA47moH3NfXRLRNDtAvfuBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763018938; c=relaxed/simple;
-	bh=sV+58ZCYxvB/UklFcNEd91OSW5P1jpMvbI8BKtpjucY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=FI9pycEOg0p9GC0OU/kIMqVISBfEw8yDuRWeChJrJvALYcLb0Q1YztLUloXBHpD8l6kKASdL51rH+FmZsuPjFr73nKeVgeCbYqHqnLjywsddGM4s6s+ay6fGZ9G/iP55oprjFxFT5Dula9Kq7WkkudWKo/riMreWFv7O2bsjxHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from ubt.. (unknown [210.73.43.101])
-	by APP-05 (Coremail) with SMTP id zQCowABnbG2RiBVpVTOWAA--.33691S8;
-	Thu, 13 Nov 2025 15:28:29 +0800 (CST)
-From: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: linux-mm@kvack.org,
-	Peter Xu <peterx@redhat.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	David Hildenbrand <david@redhat.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Axel Rasmussen <axelrasmussen@google.com>,
-	Yuanchu Xie <yuanchu@google.com>,
-	linux-riscv@lists.infradead.org,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	devicetree@vger.kernel.org,
-	Conor Dooley <conor@kernel.org>,
-	Deepak Gupta <debug@rivosinc.com>,
-	Ved Shanbhogue <ved@rivosinc.com>,
-	linux-fsdevel@vger.kernel.org,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	linux-kernel@vger.kernel.org,
-	Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: [PATCH V15 6/6] dt-bindings: riscv: Add Svrsw60t59b extension description
-Date: Thu, 13 Nov 2025 15:28:06 +0800
-Message-Id: <20251113072806.795029-7-zhangchunyan@iscas.ac.cn>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251113072806.795029-1-zhangchunyan@iscas.ac.cn>
-References: <20251113072806.795029-1-zhangchunyan@iscas.ac.cn>
+	s=arc-20240116; t=1763024574; c=relaxed/simple;
+	bh=+2aYOVpOS5bBgpP7Z5YXww2cJhfLh4MenTeNlSJM53g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=X8b9g6E8nzm+CIFG+ZjSiZPfGjFosdy6iYLFr4p+c6ddWJY9o6kFixu6d8NFl0v7ycpRHteo8MK9HCsRV9f5M8s6FJneW7YSgFJTsb+cN8OpNLpKMTH7nHfpDtyBD096tSCx1l6Z0R/pHc2Jigu+VrNzkiU/Iryn1RHUJnlUBtc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=XIfAo3Dn; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4ed66b5abf7so19581541cf.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Nov 2025 01:02:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1763024571; x=1763629371; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=TWvOwrM4EIFLxWTAr9N2lYCmaASWWMPDLvVsazXwlAU=;
+        b=XIfAo3DnQbdgRZ533BrkbyDd6ceYsOHsMztLiOcA4ibD11yYlXplJM5IdOhFjnyMyM
+         catAXak8nPRgDPdygw4thx+SfVVbVc802MrpPYkGM5OFcWTIF3rtjETH9NQeVFxhUAE7
+         zZ2bAIkO7mUZVgidSAhb8GV+y9nhjDPLsjmWo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763024571; x=1763629371;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TWvOwrM4EIFLxWTAr9N2lYCmaASWWMPDLvVsazXwlAU=;
+        b=cZrK1crFnMQvJPfIfOV6D9ADlK/m5owkIuFwg9DKY778TWcHnLOt/N7calUO5SKJNR
+         mturMUXcIDTRawc765/B0TiTxI/teBzuhMLkBNRFnB/yWyLNSWcRQUvquCVz9+VK8Na5
+         0LrZt3DBtSdrpugiI4M4GXS+yARewdAoPDMa8h6sRgyGTPkOlY2FpfgT65l+RVEwPKPD
+         a/Z2CfkzHLjUiSIVVWX5PzRh+LgzXf9/zEDESHFLMlXa7b+EpWdTI0CvqdEpgDYl9zHO
+         uy87l10J3tNtVF7z75XVbxs5RNJkASjCzRPdcsH28sYHHRfXaDR0DPsPboihuZl48Q/R
+         HyRg==
+X-Forwarded-Encrypted: i=1; AJvYcCXZSfpxU5oa5rbGh4zI3DYPnmufVQoOULl2Fv8orB/rYEb6H1SsDVBhqavqKNEZKpJ5atrrK6hNcZhQB8Or@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0A/yzVf1JPibG7UXRxswWvXLj6hqaAYBnJwt0FqRnYvh5hsR7
+	BjqTXF43qPj5vbOr53V8vC7c+89aPr6dc1ujdkCAbcfev37AogldWfSChs4CO8WaqouT+H9zlur
+	4SNRmsrzhxCP0j8/cKW+wzwsNg+e2vvCQ2xj2M+p0KA==
+X-Gm-Gg: ASbGncv75+8P0kiMMKgpDrTjg0IYUL0T36uSEMO7+klqaR/MiYzYYd7cTJukfrZmhJu
+	yyy+QqWdRwZzgW3bNrGic2jRpeZuwr5NETjxIMqvOKEMhqCq677Z2DshEs01WkyacXq/cwbQQHL
+	hPGx1WD7Cf9iP2r7aOCZVhhY8xnGlnENQSi8XW/oxe5E82RqgWa/cvaNvdiOgIsfNOb4hraKN4x
+	nksz7gCpH9+sFDUa86e49JIxfxcL4PPQ1tZSJKUi1M5f7Bi/P4n46MJo1y3
+X-Google-Smtp-Source: AGHT+IEo1Nrj0O5OxCHbv8cWBfGc+J13Y2GimQJ/FIKMlV9fnh+jQ1vE/xUUtYsbyn/r3EbawVBwW5rbh8Q55a/XjSI=
+X-Received: by 2002:ac8:7f50:0:b0:4ed:ac1d:42f1 with SMTP id
+ d75a77b69052e-4ede700fea0mr40311301cf.16.1763024570563; Thu, 13 Nov 2025
+ 01:02:50 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowABnbG2RiBVpVTOWAA--.33691S8
-X-Coremail-Antispam: 1UD129KBjvdXoWrZr1xtry3AFykZFyktFy7KFg_yoWkurb_Ja
-	1kZa1kZ3yUtFnYvF4qvr48GryfZFsakrWku3Zxtr4vkFyUWFZ8Gas7t345Ar17ur4fu3Za
-	kFn7XrWSgrnFgjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbP8YjsxI4VWxJwAYFVCjjxCrM7AC8VAFwI0_Wr0E3s1l1xkIjI8I
-	6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l82xGYIkIc2x26280x7
-	IE14v26r126s0DM28IrcIa0xkI8VCY1x0267AKxVW5JVCq3wA2ocxC64kIII0Yj41l84x0
-	c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2
-	IY6xkF7I0E14v26r4UJVWxJr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E
-	87Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64
-	kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVW8JVWxJwAm
-	72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI
-	1lc7CjxVAaw2AFwI0_GFv_Wrylc2xSY4AK67AK6r4xMxAIw28IcxkI7VAKI48JMxC20s02
-	6xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_Jr
-	I_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v2
-	6r1I6r4UMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8Jr0_Cr1UMIIF0xvE42xK8VAvwI8IcI
-	k0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4U
-	JVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7IUnTxRDUUUUU==
-X-CM-SenderInfo: x2kd0wxfkx051dq6x2xfdvhtffof0/1tbiDAcFB2kVaThz7gABs4
+References: <20250916135310.51177-1-luis@igalia.com>
+In-Reply-To: <20250916135310.51177-1-luis@igalia.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Thu, 13 Nov 2025 10:02:39 +0100
+X-Gm-Features: AWmQ_bmGnANqif2wG0mv6prd2r-EgODLdtrh0KU2w2tK4xhsFaImIUtLHlAvyxo
+Message-ID: <CAJfpegsy78ZMkodX2+1Y9UiPZwY8dixstPtdcK0A3XphXxGbcw@mail.gmail.com>
+Subject: Re: [RFC PATCH v6 0/4] fuse: work queues to invalided dentries
+To: Luis Henriques <luis@igalia.com>
+Cc: Bernd Schubert <bernd@bsbernd.com>, Laura Promberger <laura.promberger@cern.ch>, 
+	Dave Chinner <david@fromorbit.com>, Matt Harvey <mharvey@jumptrading.com>, 
+	linux-fsdevel@vger.kernel.org, kernel-dev@igalia.com, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Add description for the Svrsw60t59b extension (PTE Reserved for SW
-bits 60:59) extension which was ratified recently in
-riscv-non-isa/riscv-iommu.
+On Tue, 16 Sept 2025 at 15:53, Luis Henriques <luis@igalia.com> wrote:
+>
+> Hi Miklos,
+>
+> Here's a new version of the patchset to invalidate expired dentries.  Most
+> of the changes (and there are a lot of them!) result from the v5 review.
+> See below for details.
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-Signed-off-by: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
----
- Documentation/devicetree/bindings/riscv/extensions.yaml | 6 ++++++
- 1 file changed, 6 insertions(+)
+Applied, thanks.
 
-diff --git a/Documentation/devicetree/bindings/riscv/extensions.yaml b/Documentation/devicetree/bindings/riscv/extensions.yaml
-index 543ac94718e8..194ef4754452 100644
---- a/Documentation/devicetree/bindings/riscv/extensions.yaml
-+++ b/Documentation/devicetree/bindings/riscv/extensions.yaml
-@@ -217,6 +217,12 @@ properties:
-             memory types as ratified in the 20191213 version of the privileged
-             ISA specification.
- 
-+        - const: svrsw60t59b
-+          description:
-+            The Svrsw60t59b extension for providing two more bits[60:59] to
-+            PTE/PMD entry as ratified at commit 28bde925e7a7 ("PTE Reserved
-+            for SW bits 60:59") of riscv-non-isa/riscv-iommu.
-+
-         - const: svvptc
-           description:
-             The standard Svvptc supervisor-level extension for
--- 
-2.34.1
-
+Miklos
 
