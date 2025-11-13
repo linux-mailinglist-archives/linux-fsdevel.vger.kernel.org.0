@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-68307-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68308-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 430ABC58E1E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 17:53:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FCA9C58DF1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 17:52:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CBDF3A7EE1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 16:46:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DD63426C63
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 16:46:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD3D0364027;
-	Thu, 13 Nov 2025 16:37:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF382364023;
+	Thu, 13 Nov 2025 16:37:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W7YE8dLK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P+ROrZ6Q"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2188935A153;
-	Thu, 13 Nov 2025 16:37:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16F1D35A15B;
+	Thu, 13 Nov 2025 16:37:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763051876; cv=none; b=ioZ73jvmtTT7UG5tds8AFjUYE3Iuw7u64Lk0fg8R+bjAxYXoKuS3gcbUF+ty1xH53hSwJ8uvynY5vtvPLoGiZKRtR98kPI9i8bF7pwdH35DlFs2FSt/lOHlAWn1RMTO1DSJYiUYID4iSRTkBYSNr1pgpfVNsu2qBPjvOYCEpT6M=
+	t=1763051878; cv=none; b=ulFoMha1bSItGrHrTCCHWPmbQGWsSR211tE8gbWtv4vqBCdtATm2QWZe/edWlelcHkrTbjzIPMeS963W3/2RX+aaNnJJE7aAUaOgqL+Vjg5In6P+L+M2Otg/dqvWyRUHSOjkbj2EyQI1mieTnFHiMdZ6CAXDDB5HznmcDFMaJ50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763051876; c=relaxed/simple;
-	bh=z9m53fQ2q3fNuotUtjovwyW7BZ4Wfcn695n2STigqJM=;
+	s=arc-20240116; t=1763051878; c=relaxed/simple;
+	bh=vSZZ3kOjDoglfOlN739d6HlBnFXiDUMtxbEUkcA38zA=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=nuIeSa/I72r55rLdf2MgeHkOAIIHju0z5HJwfWBk5r4XVxUmLLzsT0GAk5W0PHlR7zURCPraqgNKMoK2JQbochy/dP7RtV7DwnIL5CABLVLRk1anhK41z8MJgRozWvPa9WNjudw/MTM5sfeyddH4SJu3oh3bVRVMNJAETQM/5GU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W7YE8dLK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C737C113D0;
-	Thu, 13 Nov 2025 16:37:54 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=CZsdKWIrubtLwJ7iUQEUex5k+/+8x3fOFptlYR3Kn/nUtJNlEqY2Lq6T4C9yxq5I9Cy/pmjpmI1YLdxHBSjDnk8VtyINDzglzLubQXM2RTjLSe0z7nIZhVSThZSGnehRiz8rR/xL0y7040QdwZ1gYlVvIp3K6lscigcH1gij6xw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P+ROrZ6Q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67371C4CEFB;
+	Thu, 13 Nov 2025 16:37:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763051876;
-	bh=z9m53fQ2q3fNuotUtjovwyW7BZ4Wfcn695n2STigqJM=;
+	s=k20201202; t=1763051877;
+	bh=vSZZ3kOjDoglfOlN739d6HlBnFXiDUMtxbEUkcA38zA=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=W7YE8dLKygKnzCfFnQKb2LJivpmTagSreLqv8lF5R+LbA8l6HiNlUOHYHNM0pP6QZ
-	 mZWHSWaVrzA/8HxMd7bAsgxhYU+NCdhzFLse0+ptW3Sh3wHBqzwxajeYrtET0QvsUA
-	 jkbQwXV1siialZwWZYbuN4TyLFrSADWYaSxMQd7Mfahj+63OjZ7J6T1s2zt/7jgrkA
-	 repULufKr82GVcfXFBdQwOEqnie2KjgegqYujUN6/9mIkjO5PxBeY7sMdimrAWUbzB
-	 TIYZtPsjWVpGoWSkIUD0zFtN93jyDa0SyaeO/g/84A+TFD6HPM33/4DuOx2Bh3kC5M
-	 xHnTHFszRoynw==
+	b=P+ROrZ6Qu0iAKdlmrgiSEWh7uOrg7REaFd1uNw4Ghs5nELEXF/1Kzi9sVxBjiOBXq
+	 6V23s8sJcHNEg2UfimXLl75X1FyKKCcOr7vp6rFY0Dn6mQX5/lDx3/QiU2Jy4XA8Sd
+	 HweF3rbfXsvbBXQkRy6RPwTHD6MY7UF/qnTnfmA5deqklFW56aeouHMJ4AqU5pWpdb
+	 6179DVwFBQfsGo/jvLD5krN0nM+ahJhyH+5td40SvyoPBb6YYyfQcgKjctC4y1e+4B
+	 MRHdXtd7uoUxU1F51QVdZAcIu6rtEpyB6lO1iOqhaKFBaBROuaTMO+Xa+QBfb2EpDI
+	 oyzd0eOYuIsQA==
 From: Christian Brauner <brauner@kernel.org>
-Date: Thu, 13 Nov 2025 17:37:19 +0100
-Subject: [PATCH v2 14/42] ovl: port ovl_getattr() to cred guard
+Date: Thu, 13 Nov 2025 17:37:20 +0100
+Subject: [PATCH v2 15/42] ovl: port ovl_permission() to cred guard
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251113-work-ovl-cred-guard-v2-14-c08940095e90@kernel.org>
+Message-Id: <20251113-work-ovl-cred-guard-v2-15-c08940095e90@kernel.org>
 References: <20251113-work-ovl-cred-guard-v2-0-c08940095e90@kernel.org>
 In-Reply-To: <20251113-work-ovl-cred-guard-v2-0-c08940095e90@kernel.org>
 To: Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>
@@ -60,101 +60,52 @@ Cc: Linus Torvalds <torvalds@linux-foundation.org>,
  linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-a6db3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2888; i=brauner@kernel.org;
- h=from:subject:message-id; bh=z9m53fQ2q3fNuotUtjovwyW7BZ4Wfcn695n2STigqJM=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSKcbodN3dmPzdPdbL+HqNcVY+ynVJ+rxrzry3kOu3Iv
- cp9kWpvRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwERaZjMy9P8y0zrHYXVqTzi7
- +bH4Fe98/b9xfxbWVdTeN93v5K/DGxj+Z7QH/7C+tXJ/eH7KPD7FeOs55cnnt/sZPP6wYvL8eyH
- S7AA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1210; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=vSZZ3kOjDoglfOlN739d6HlBnFXiDUMtxbEUkcA38zA=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSKcbo5lZ354/Ym2sLvlObZes7C5DB9yz1fGXbOzTao7
+ Cjeulyzo5SFQYyLQVZMkcWh3SRcbjlPxWajTA2YOaxMIEMYuDgFYCI9Oxj+WexYc+LZWeeT5tIV
+ 1/kLb/wUPT1x6Z/sWVXvli++cy2fUYDhrwTz/ZcaarN5GCeH6DwoPjeV/dv9TE6/AxM6bl3mW5d
+ 4iR0A
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-Use the scoped ovl cred guard.
-
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- fs/overlayfs/inode.c | 30 ++++++++++++++++++------------
- 1 file changed, 18 insertions(+), 12 deletions(-)
+ fs/overlayfs/inode.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
 diff --git a/fs/overlayfs/inode.c b/fs/overlayfs/inode.c
-index 7b28318b7f31..00e1a47116d4 100644
+index 00e1a47116d4..dca96db19f81 100644
 --- a/fs/overlayfs/inode.c
 +++ b/fs/overlayfs/inode.c
-@@ -151,13 +151,22 @@ static void ovl_map_dev_ino(struct dentry *dentry, struct kstat *stat, int fsid)
- 	}
- }
- 
-+static inline int ovl_real_getattr_nosec(struct super_block *sb,
-+					 const struct path *path,
-+					 struct kstat *stat, u32 request_mask,
-+					 unsigned int flags)
-+{
-+	with_ovl_creds(sb)
-+		return vfs_getattr_nosec(path, stat, request_mask, flags);
-+}
-+
- int ovl_getattr(struct mnt_idmap *idmap, const struct path *path,
- 		struct kstat *stat, u32 request_mask, unsigned int flags)
- {
- 	struct dentry *dentry = path->dentry;
-+	struct super_block *sb = dentry->d_sb;
- 	enum ovl_path_type type;
+@@ -295,7 +295,6 @@ int ovl_permission(struct mnt_idmap *idmap,
+ 	struct inode *upperinode = ovl_inode_upper(inode);
+ 	struct inode *realinode;
  	struct path realpath;
 -	const struct cred *old_cred;
- 	struct inode *inode = d_inode(dentry);
- 	bool is_dir = S_ISDIR(inode->i_mode);
- 	int fsid = 0;
-@@ -167,10 +176,9 @@ int ovl_getattr(struct mnt_idmap *idmap, const struct path *path,
- 	metacopy_blocks = ovl_is_metacopy_dentry(dentry);
+ 	int err;
  
- 	type = ovl_path_real(dentry, &realpath);
--	old_cred = ovl_override_creds(dentry->d_sb);
--	err = vfs_getattr_nosec(&realpath, stat, request_mask, flags);
-+	err = ovl_real_getattr_nosec(sb, &realpath, stat, request_mask, flags);
+ 	/* Careful in RCU walk mode */
+@@ -313,17 +312,15 @@ int ovl_permission(struct mnt_idmap *idmap,
  	if (err)
--		goto out;
-+		return err;
+ 		return err;
  
- 	/* Report the effective immutable/append-only STATX flags */
- 	generic_fill_statx_attr(inode, stat);
-@@ -193,10 +201,10 @@ int ovl_getattr(struct mnt_idmap *idmap, const struct path *path,
- 					(!is_dir ? STATX_NLINK : 0);
- 
- 			ovl_path_lower(dentry, &realpath);
--			err = vfs_getattr_nosec(&realpath, &lowerstat, lowermask,
--						flags);
-+			err = ovl_real_getattr_nosec(sb, &realpath, &lowerstat,
-+						     lowermask, flags);
- 			if (err)
--				goto out;
-+				return err;
- 
- 			/*
- 			 * Lower hardlinks may be broken on copy up to different
-@@ -246,10 +254,11 @@ int ovl_getattr(struct mnt_idmap *idmap, const struct path *path,
- 
- 			ovl_path_lowerdata(dentry, &realpath);
- 			if (realpath.dentry) {
--				err = vfs_getattr_nosec(&realpath, &lowerdatastat,
-+				err = ovl_real_getattr_nosec(sb, &realpath,
-+							     &lowerdatastat,
- 							     lowermask, flags);
- 				if (err)
--					goto out;
-+					return err;
- 			} else {
- 				lowerdatastat.blocks =
- 					round_up(stat->size, stat->blksize) >> 9;
-@@ -277,9 +286,6 @@ int ovl_getattr(struct mnt_idmap *idmap, const struct path *path,
- 	if (!is_dir && ovl_test_flag(OVL_INDEX, d_inode(dentry)))
- 		stat->nlink = dentry->d_inode->i_nlink;
- 
--out:
+-	old_cred = ovl_override_creds(inode->i_sb);
+ 	if (!upperinode &&
+ 	    !special_file(realinode->i_mode) && mask & MAY_WRITE) {
+ 		mask &= ~(MAY_WRITE | MAY_APPEND);
+ 		/* Make sure mounter can read file for copy up later */
+ 		mask |= MAY_READ;
+ 	}
+-	err = inode_permission(mnt_idmap(realpath.mnt), realinode, mask);
 -	ovl_revert_creds(old_cred);
--
- 	return err;
+ 
+-	return err;
++	with_ovl_creds(inode->i_sb)
++		return inode_permission(mnt_idmap(realpath.mnt), realinode, mask);
  }
  
+ static const char *ovl_get_link(struct dentry *dentry,
 
 -- 
 2.47.3
