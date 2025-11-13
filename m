@@ -1,124 +1,103 @@
-Return-Path: <linux-fsdevel+bounces-68340-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68341-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 779A4C5928B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 18:30:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C2135C592BA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 18:32:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42C074A23A4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 17:13:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0702F3BC760
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 17:17:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27DE136656B;
-	Thu, 13 Nov 2025 17:00:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB57F357A38;
+	Thu, 13 Nov 2025 17:06:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GKpbgHVA"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="EwiCDDcG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 725542BEC43;
-	Thu, 13 Nov 2025 17:00:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1D2B30CD88;
+	Thu, 13 Nov 2025 17:06:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763053202; cv=none; b=MOLfMiT2caJbS9f7jZpngBFbl7g94Ru5WvKRLwOql8J6CodN5fJurXJeuBxezSJ3H8t6RGp6gFzY0BFvnVpdFC5pm9oDtmzifvHkOGDn0K42P8TGGtONxP2P4+uThmuFCvwDZvCrzW0UrNkF08WNzPuhgyPp9zCVRL9BdQGcubU=
+	t=1763053605; cv=none; b=QmTvX5V8diRBUvEHZBxzkh3aUY9xrj39sXjGifWjVXK4ErVY4ANuNC0hrXUbD6YFR9X54mNySDC3RzVnl9i16G1ObOU0vqJqQ6phh5BjPsa9PFGfSr7pv4OFadBVf/Uj057cdiJrRWsRzSGuz2o/zKQfXIp5VP/Vsho20H+wra8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763053202; c=relaxed/simple;
-	bh=OBpr4OfEynmd3QPtz7HpqQa1JuoHzfmsOcTyDkjnDvg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=l9Ov5qE+FPKQaax6Jx7AhaAuMcfk/2+2wr2criXPHMccPQQCkfimg+aIPN9+TjbWWL1ZVKK5uH77X3c+Q0d4QYx3lgOrOdI0XTWHe4NC9Jm5j4TeF/CXb/BPYgHKslciWyu0m1H9hlY/Vv2GQ3F6j22gL62pNLYMkvTUSDSeJnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GKpbgHVA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A7DAC4CEF5;
-	Thu, 13 Nov 2025 16:59:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763053202;
-	bh=OBpr4OfEynmd3QPtz7HpqQa1JuoHzfmsOcTyDkjnDvg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=GKpbgHVAB96CTF2QAU6gGXB9xyAtOYn7EP9js0Mycon0OeXhF2jqHHtX89c5XmG3n
-	 aI+GsuLi5aWWIqQuOeufUD4aA/2oqU4CL3hOKgWLJISLTlCDKD2fvEzTYvo+4axv1Y
-	 RMC80Z36Upuv7S76Aj7akkAJYpehDBHHl02KtLD9+owbFDV5HjZtX2uU4oNhmImcTZ
-	 TB6NozxahkQlkcbHdVJIiuprn3ewx0G92tYj/3ivDFDMjJkdV5nEmpt/dhUVJduyaG
-	 M6PpSxx1REjCjMlgwB+uTMHEl+k2ror8Zzap/3OLPhR5zcZpm4wrMVCWSYXfzyE61t
-	 +lyMXl3tACR7w==
-From: Pratyush Yadav <pratyush@kernel.org>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: pratyush@kernel.org,  jasonmiu@google.com,  graf@amazon.com,
-  rppt@kernel.org,  dmatlack@google.com,  rientjes@google.com,
-  corbet@lwn.net,  rdunlap@infradead.org,  ilpo.jarvinen@linux.intel.com,
-  kanie@linux.alibaba.com,  ojeda@kernel.org,  aliceryhl@google.com,
-  masahiroy@kernel.org,  akpm@linux-foundation.org,  tj@kernel.org,
-  yoann.congal@smile.fr,  mmaurer@google.com,  roman.gushchin@linux.dev,
-  chenridong@huawei.com,  axboe@kernel.dk,  mark.rutland@arm.com,
-  jannh@google.com,  vincent.guittot@linaro.org,  hannes@cmpxchg.org,
-  dan.j.williams@intel.com,  david@redhat.com,  joel.granados@kernel.org,
-  rostedt@goodmis.org,  anna.schumaker@oracle.com,  song@kernel.org,
-  zhangguopeng@kylinos.cn,  linux@weissschuh.net,
-  linux-kernel@vger.kernel.org,  linux-doc@vger.kernel.org,
-  linux-mm@kvack.org,  gregkh@linuxfoundation.org,  tglx@linutronix.de,
-  mingo@redhat.com,  bp@alien8.de,  dave.hansen@linux.intel.com,
-  x86@kernel.org,  hpa@zytor.com,  rafael@kernel.org,  dakr@kernel.org,
-  bartosz.golaszewski@linaro.org,  cw00.choi@samsung.com,
-  myungjoo.ham@samsung.com,  yesanishhere@gmail.com,
-  Jonathan.Cameron@huawei.com,  quic_zijuhu@quicinc.com,
-  aleksander.lobakin@intel.com,  ira.weiny@intel.com,
-  andriy.shevchenko@linux.intel.com,  leon@kernel.org,  lukas@wunner.de,
-  bhelgaas@google.com,  wagi@kernel.org,  djeffery@redhat.com,
-  stuart.w.hayes@gmail.com,  lennart@poettering.net,  brauner@kernel.org,
-  linux-api@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
-  saeedm@nvidia.com,  ajayachandra@nvidia.com,  jgg@nvidia.com,
-  parav@nvidia.com,  leonro@nvidia.com,  witu@nvidia.com,
-  hughd@google.com,  skhawaja@google.com,  chrisl@kernel.org
-Subject: Re: [PATCH v5 18/22] docs: add documentation for memfd preservation
- via LUO
-In-Reply-To: <CA+CK2bBmSD_YftJ-9w1zidLz2=a4NynnLz_gLPsScF145bu5dQ@mail.gmail.com>
-	(Pasha Tatashin's message of "Thu, 13 Nov 2025 11:55:25 -0500")
-References: <20251107210526.257742-1-pasha.tatashin@soleen.com>
-	<20251107210526.257742-19-pasha.tatashin@soleen.com>
-	<CA+CK2bBmSD_YftJ-9w1zidLz2=a4NynnLz_gLPsScF145bu5dQ@mail.gmail.com>
-Date: Thu, 13 Nov 2025 17:59:51 +0100
-Message-ID: <mafs01pm1amwo.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1763053605; c=relaxed/simple;
+	bh=/zjIPPD4KOrimJ9udWn5qaVwvi8DLUkMqY51ffRhLZ4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Y/Na2kvmp0iD1aw3A5IpcNhp2iUwyHtvcOKqfb1sKZEAmQbRiCORAQE/+Nu46q1VtatidbniKF317yBsJOmjELfyDd39KSfIjtcGxy9OrNYLdgwHwQz23F4rkH9ZxzexhxlIOZtT1pNHBle34SzFfgtkyDLraCy/xgHmBc2NbIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=EwiCDDcG; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=vn+kIjooTlqcRMqAM0AeTlCeev9sPeS6FSp/2JfIncE=; b=EwiCDDcGNX1Rpo3PPE5w1E7S62
+	MYPOdAoyx77G5rgbratLxcyXGADYhEV2pfADWE0VTS+I1WmTcTx78lvfRZi3JMBhwGlPokSZdszZi
+	FiSaF0pFcLILkntsy+VkVEXGh2Fz2RxYzpxIBNUomJ5EWS2Sj4tAnsjw4zFFjjF8gzlcOLhwzMGA0
+	wBEyboELB0h6IoRqof3QI2eCXD+FuaxABCDB+Lw5dx4B8xiZrwFPU1cVAzLkK4dGHBHuvMbjjQ2jO
+	AiE684ItIy36zevm1AeyZ6Tfut3s/i7nS0FLv+UIOm+kpSh7CCBzNgDy+Ns9JRgU0e/0vh5qrxjwb
+	o60eeZ3w==;
+Received: from 2a02-8389-2341-5b80-d601-7564-c2e0-491c.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:d601:7564:c2e0:491c] helo=localhost)
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vJamM-0000000AqMr-109a;
+	Thu, 13 Nov 2025 17:06:38 +0000
+From: Christoph Hellwig <hch@lst.de>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Jens Axboe <axboe@kernel.dk>,
+	Avi Kivity <avi@scylladb.com>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Naohiro Aota <naohiro.aota@wdc.com>,
+	Johannes Thumshirn <jth@kernel.org>,
+	linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	io-uring@vger.kernel.org
+Subject: enable iomap dio write completions from interrupt context v2
+Date: Thu, 13 Nov 2025 18:06:25 +0100
+Message-ID: <20251113170633.1453259-1-hch@lst.de>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Thu, Nov 13 2025, Pasha Tatashin wrote:
+Hi all,
 
->> +Limitations
->> +===========
->> +
->> +The current implementation has the following limitations:
->> +
->> +Size
->> +  Currently the size of the file is limited by the size of the FDT. The FDT can
->> +  be at of most ``MAX_PAGE_ORDER`` order. By default this is 4 MiB with 4K
->> +  pages. Each page in the file is tracked using 16 bytes. This limits the
->> +  maximum size of the file to 1 GiB.
->
-> The above should be removed, as we are using KHO vmalloc that resolves
-> this limitation. Pratyush, I suggest for v6 let's move memfd
-> documnetation right into the code: memfd_luo.c and
-> liveupdate/abi/memfd.h, and source it from there.
+Currently iomap defers all write completions to interrupt context.  This
+was based on my assumption that no one cares about the latency of those
+to simplify the code vs the old direct-io.c.  It turns out someone cared,
+as Avi reported a lot of context switches with ScyllaDB, which at least
+in older kernels with workqueue scheduling issues caused really high
+tail latencies.
 
-ACK. I think the section on behavior in different phases is also out of
-date now, and the serialization format too. The format is more
-accurately defined in include/linux/liveupdate/abi/memfd.h. So this
-documentation needs an overhaul.
+Fortunately allowing the direct completions is pretty easy with all the
+other iomap changes we had since.
 
-I don't mind moving it to the code and including it in the HTML docs via
-kernel-doc. Will do that for the next revision.
+While doing this I've also found dead code which gets removed (patch 1)
+and an incorrect assumption in zonefs that read completions are called
+in user context, which it assumes for it's error handling.  Fix this by
+always calling error completions from user context (patch 2).
 
->
-> Keeping documentation with the code helps reduce code/doc divergence.
->
-> Pasha
+Against the vfs-6.19.iomap branch.
 
--- 
-Regards,
-Pratyush Yadav
+Changes since v1:
+ - do away with the iomap_dio_is_overwrite helper to hopefully clean up
+   the logic a bit
+
+Diffstat:
+ Documentation/filesystems/iomap/operations.rst |    4 
+ fs/backing-file.c                              |    6 
+ fs/iomap/direct-io.c                           |  184 ++++++++++++-------------
+ include/linux/fs.h                             |   43 +----
+ io_uring/rw.c                                  |   16 --
+ 5 files changed, 101 insertions(+), 152 deletions(-)
 
