@@ -1,65 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-68170-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68171-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BA4FC55532
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 02:50:01 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 835D0C55593
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 02:53:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8460734D024
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 01:47:35 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DD3414E3932
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 01:52:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C558129B764;
-	Thu, 13 Nov 2025 01:42:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FC262BE62E;
+	Thu, 13 Nov 2025 01:51:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Q4lsqY4V"
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="U2vt6KLE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+Received: from canpmsgout04.his.huawei.com (canpmsgout04.his.huawei.com [113.46.200.219])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18AD62877C3;
-	Thu, 13 Nov 2025 01:42:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FB06299AB5;
+	Thu, 13 Nov 2025 01:51:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.219
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762998168; cv=none; b=R7wEYqHrRdrjXMJ3YzZauOk3JWOY5ueEo8SvwUcjEoEG+f+1u/m69Mjb8nYOMvIQYUKhoErqL02JbmrhfW3BxhMj0aonpVKJCRJWk35N0lxfpPDH7shOLweTYNcloXtOTZNHyscN3ASKwkTbYvayxyule/ruXTglZzwkrTU8dCA=
+	t=1762998702; cv=none; b=YtGk7/Qe+Z90d6wUMadHjmJauDOlL7qzRwsZwIjajsn32efeZno1JH8xK7YES1ozRf0vD+G/0Ba1Ankvm27TfSlblRJEp9Q9q6tkF8iIkL4zWlGkT0LW/nrsGzOXVm6c2JVSswOx1mk4k7WeEf1lMHi9aIUJyrM3kkC4nfqq/nU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762998168; c=relaxed/simple;
-	bh=J6kO8MinoWEoGkaYJTyrYhudby1TwSS/GObHrnk96Qk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GUtTbyWl0vrKUboXkgcuTQx7XicOPauO3YV2a2b+YnCe/4SS2jlor3atLzeat6SkrqmmY/FdUiZ9aOxYPCs9QBkJMyXOghaw1wsO/mZgP5aZr4X21HYxOuTiIWYXcQdRca95V6VZmtKE/urTvwxiOa71EviGrJdGvY0NtoY2MfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Q4lsqY4V; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762998166; x=1794534166;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=J6kO8MinoWEoGkaYJTyrYhudby1TwSS/GObHrnk96Qk=;
-  b=Q4lsqY4VXX4igiIgshReZkyUtIgsWlt/3ol98tkOjnkpawdgTu7G5CZs
-   ui2RzS6wPdpnMFN5iQwFkR6HzGCOAvOImdiATC+7tjwBI6hazPLiI+O8U
-   vco0brm5UgrvCLxkxVX/HgaayuGOiKrVyjjFKdib+jDANbt3wA71Css7t
-   bED2XTfJw2/jut2ror+uN0nfcIbKFEuM5AOQlnqVR6sUNJj2f1WGfWLRp
-   psQh/cKHiTwf/rR2pW5orMcOlFlwkDYJeqtOfJluCvGbCmXkGuISNgTmY
-   dvUotlKOeO8l+bWEcYAfFtKtQjMZ1Elge6cFzjB1RnIJEA3JToTFh4COU
-   g==;
-X-CSE-ConnectionGUID: ms54yoDPST6qWb+fTNQQCw==
-X-CSE-MsgGUID: DlDyKHUuRdmHr1puybNetg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11611"; a="65225859"
-X-IronPort-AV: E=Sophos;i="6.19,300,1754982000"; 
-   d="scan'208";a="65225859"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2025 17:42:44 -0800
-X-CSE-ConnectionGUID: UV41EMOGRgSJ6IjRZ/og6g==
-X-CSE-MsgGUID: cb9xlMdyS3Cqc07OKTsBXg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,300,1754982000"; 
-   d="scan'208";a="188618989"
-Received: from yinghaoj-desk.ccr.corp.intel.com (HELO [10.238.1.225]) ([10.238.1.225])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2025 17:42:25 -0800
-Message-ID: <f2bfa5ad-4c74-4b6d-baa7-d0d01d5d9b15@linux.intel.com>
-Date: Thu, 13 Nov 2025 09:42:22 +0800
+	s=arc-20240116; t=1762998702; c=relaxed/simple;
+	bh=Dk0t3yp7I3dbZZKjBgs5rsR9ZTqzpO3u/ShS8k8IPh4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=jF9yf236F2HwmArXccBOs52TVBdYmAZo14Y1mDEoQRRk69FrXnFirz5o0LTMZSldcGPPOyvzDCz3yYTyAqQfJZ28isL6f6mhKgZzp4/sO0x4fmOGIY6m2nvPnupBi+bWKzmmBAeoRehyWQVmU/kZZDK8hbIxnj03/gY39hXWJlw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=U2vt6KLE; arc=none smtp.client-ip=113.46.200.219
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=qL8ILY1tAoCz6fUcrgnH3Kya3faamKjXzPtGdIrlO08=;
+	b=U2vt6KLE58kKcCF+IcP1XgCZ25INIZCxS/CcmGxmznrriRvrdTVZatUM3So/7STn4Td4M4jyQ
+	DsDNg9X4Yz4S6wb4h3cjjNj0GYTjScq6hU+AfxdrNzmdceh1tzEMkdjfgsJZpPEFZL4VXDUnO+w
+	ZmYs3GW3cJt6n52SLeXDVtQ=
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by canpmsgout04.his.huawei.com (SkyGuard) with ESMTPS id 4d6NW172hsz1prKm;
+	Thu, 13 Nov 2025 09:49:49 +0800 (CST)
+Received: from dggpemf500013.china.huawei.com (unknown [7.185.36.188])
+	by mail.maildlp.com (Postfix) with ESMTPS id 861901401E9;
+	Thu, 13 Nov 2025 09:51:30 +0800 (CST)
+Received: from [127.0.0.1] (10.174.178.254) by dggpemf500013.china.huawei.com
+ (7.185.36.188) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 13 Nov
+ 2025 09:51:29 +0800
+Message-ID: <b640a61c-6bcb-421e-9dc7-9dff76163dc9@huawei.com>
+Date: Thu, 13 Nov 2025 09:51:28 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -67,100 +57,80 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1 03/37] KVM: Enumerate support for PRIVATE memory
- iff kvm_arch_has_private_mem is defined
-To: Ackerley Tng <ackerleytng@google.com>
-Cc: cgroups@vger.kernel.org, kvm@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
- linux-trace-kernel@vger.kernel.org, x86@kernel.org,
- akpm@linux-foundation.org, bp@alien8.de, brauner@kernel.org,
- chao.p.peng@intel.com, chenhuacai@kernel.org, corbet@lwn.net,
- dave.hansen@intel.com, dave.hansen@linux.intel.com, david@redhat.com,
- dmatlack@google.com, erdemaktas@google.com, fan.du@intel.com,
- fvdl@google.com, haibo1.xu@intel.com, hannes@cmpxchg.org, hch@infradead.org,
- hpa@zytor.com, hughd@google.com, ira.weiny@intel.com,
- isaku.yamahata@intel.com, jack@suse.cz, james.morse@arm.com,
- jarkko@kernel.org, jgg@ziepe.ca, jgowans@amazon.com, jhubbard@nvidia.com,
- jroedel@suse.de, jthoughton@google.com, jun.miao@intel.com,
- kai.huang@intel.com, keirf@google.com, kent.overstreet@linux.dev,
- liam.merwick@oracle.com, maciej.wieczor-retman@intel.com,
- mail@maciej.szmigiero.name, maobibo@loongson.cn,
- mathieu.desnoyers@efficios.com, maz@kernel.org, mhiramat@kernel.org,
- mhocko@kernel.org, mic@digikod.net, michael.roth@amd.com, mingo@redhat.com,
- mlevitsk@redhat.com, mpe@ellerman.id.au, muchun.song@linux.dev,
- nikunj@amd.com, nsaenz@amazon.es, oliver.upton@linux.dev,
- palmer@dabbelt.com, pankaj.gupta@amd.com, paul.walmsley@sifive.com,
- pbonzini@redhat.com, peterx@redhat.com, pgonda@google.com, prsampat@amd.com,
- pvorel@suse.cz, qperret@google.com, richard.weiyang@gmail.com,
- rick.p.edgecombe@intel.com, rientjes@google.com, rostedt@goodmis.org,
- roypat@amazon.co.uk, rppt@kernel.org, seanjc@google.com,
- shakeel.butt@linux.dev, shuah@kernel.org, steven.price@arm.com,
- steven.sistare@oracle.com, suzuki.poulose@arm.com, tabba@google.com,
- tglx@linutronix.de, thomas.lendacky@amd.com, vannapurve@google.com,
- vbabka@suse.cz, viro@zeniv.linux.org.uk, vkuznets@redhat.com,
- wei.w.wang@intel.com, will@kernel.org, willy@infradead.org,
- wyihan@google.com, xiaoyao.li@intel.com, yan.y.zhao@intel.com,
- yilun.xu@intel.com, yuzenghui@huawei.com, zhiquan1.li@intel.com
-References: <cover.1760731772.git.ackerleytng@google.com>
- <405686bacd68ce6c76aa5e6ef40f0a5324983c5b.1760731772.git.ackerleytng@google.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <405686bacd68ce6c76aa5e6ef40f0a5324983c5b.1760731772.git.ackerleytng@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v6.1 04/33] common/rc: skip test if swapon doesn't work
+Content-Language: en-GB
+To: "Darrick J. Wong" <djwong@kernel.org>, Theodore Ts'o <tytso@mit.edu>
+CC: <zlang@redhat.com>, <neal@gompa.dev>, <fstests@vger.kernel.org>,
+	<linux-ext4@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+	<joannelkoong@gmail.com>, <bernd@bsbernd.com>
+References: <176169819804.1433624.11241650941850700038.stgit@frogsfrogsfrogs>
+ <176169820051.1433624.4158113392739761085.stgit@frogsfrogsfrogs>
+ <016f51ff-6129-4265-827e-3c2ae8314fe1@huawei.com>
+ <20251112182617.GH196366@frogsfrogsfrogs> <20251112200540.GD3131573@mit.edu>
+ <20251112222920.GO196358@frogsfrogsfrogs>
+From: Baokun Li <libaokun1@huawei.com>
+In-Reply-To: <20251112222920.GO196358@frogsfrogsfrogs>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
+ dggpemf500013.china.huawei.com (7.185.36.188)
 
-
-
-On 10/18/2025 4:11 AM, Ackerley Tng wrote:
-> From: Sean Christopherson <seanjc@google.com>
+On 2025-11-13 06:29, Darrick J. Wong wrote:
+> From: Darrick J. Wong <djwong@kernel.org>
 >
-> Explicitly guard reporting support for KVM_MEMORY_ATTRIBUTE_PRIVATE based
-> on kvm_arch_has_private_mem being #defined in anticipation of decoupling
-> kvm_supported_mem_attributes() from CONFIG_KVM_VM_MEMORY_ATTRIBUTES.
-> guest_memfd support for memory attributes will be unconditional to avoid
-> yet more macros (all architectures that support guest_memfd are expect to
-  expect -> expected
-
-> user per-gmem attributes at some point), at which point enumerating support
-    ^
-   use
-> KVM_MEMORY_ATTRIBUTE_PRIVATE based solely on memory attributes being
-> supported _somewhere_ would result in KVM over-reporting support on arm64.
+> In _require_scratch_swapfile, skip the test if swapon fails for whatever
+> reason, just like all the other filesystems.  There are certain ext4
+> configurations where swapon isn't supported, such as S_DAX files on
+> pmem, and (for now) blocksize > pagesize filesystems.
 >
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
+
+Looks good to me. Thanks for the patch!
+
+Reviewed-by: Baokun Li <libaokun1@huawei.com>
+
 > ---
->   include/linux/kvm_host.h | 2 +-
->   virt/kvm/kvm_main.c      | 2 ++
->   2 files changed, 3 insertions(+), 1 deletion(-)
+> v6.1: clobber all the ext-specific stuff
+> ---
+>  common/rc |   25 ++++---------------------
+>  1 file changed, 4 insertions(+), 21 deletions(-)
 >
-> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-> index fddb373fcbaaf..21bf30e8d3cc1 100644
-> --- a/include/linux/kvm_host.h
-> +++ b/include/linux/kvm_host.h
-> @@ -721,7 +721,7 @@ static inline int kvm_arch_vcpu_memslots_id(struct kvm_vcpu *vcpu)
->   }
->   #endif
->   
-> -#ifndef CONFIG_KVM_VM_MEMORY_ATTRIBUTES
-> +#ifndef kvm_arch_has_private_mem
->   static inline bool kvm_arch_has_private_mem(struct kvm *kvm)
->   {
->   	return false;
-> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-> index f73047ea4333e..591795a3fa124 100644
-> --- a/virt/kvm/kvm_main.c
-> +++ b/virt/kvm/kvm_main.c
-> @@ -2428,8 +2428,10 @@ static int kvm_vm_ioctl_clear_dirty_log(struct kvm *kvm,
->   #ifdef CONFIG_KVM_VM_MEMORY_ATTRIBUTES
->   static u64 kvm_supported_mem_attributes(struct kvm *kvm)
->   {
-> +#ifdef kvm_arch_has_private_mem
->   	if (!kvm || kvm_arch_has_private_mem(kvm))
->   		return KVM_MEMORY_ATTRIBUTE_PRIVATE;
-> +#endif
->   
->   	return 0;
->   }
+> diff --git a/common/rc b/common/rc
+> index b62e21f778d938..564235ea2e995c 100644
+> --- a/common/rc
+> +++ b/common/rc
+> @@ -3268,27 +3268,10 @@ _require_scratch_swapfile()
+>  	# Minimum size for mkswap is 10 pages
+>  	_format_swapfile "$SCRATCH_MNT/swap" $(($(_get_page_size) * 10)) > /dev/null
+>  
+> -	# ext* has supported all variants of swap files since their
+> -	# introduction, so swapon should not fail.
+> -	case "$FSTYP" in
+> -	ext2|ext3|ext4)
+> -		if ! swapon "$SCRATCH_MNT/swap" >/dev/null 2>&1; then
+> -			if _check_s_dax "$SCRATCH_MNT/swap" 1 >/dev/null; then
+> -				_scratch_unmount
+> -				_notrun "swapfiles are not supported"
+> -			else
+> -				_scratch_unmount
+> -				_fail "swapon failed for $FSTYP"
+> -			fi
+> -		fi
+> -		;;
+> -	*)
+> -		if ! swapon "$SCRATCH_MNT/swap" >/dev/null 2>&1; then
+> -			_scratch_unmount
+> -			_notrun "swapfiles are not supported"
+> -		fi
+> -		;;
+> -	esac
+> +	if ! swapon "$SCRATCH_MNT/swap" >/dev/null 2>&1; then
+> +		_scratch_unmount
+> +		_notrun "swapon failed for $FSTYP"
+> +	fi
+>  
+>  	swapoff "$SCRATCH_MNT/swap" >/dev/null 2>&1
+>  	_scratch_unmount
+>
 
 
