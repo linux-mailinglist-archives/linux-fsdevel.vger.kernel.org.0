@@ -1,62 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-68288-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68289-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C258C586D2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 16:38:56 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE45EC5880E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 16:52:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 73AD4353D60
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 15:30:22 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B05A54EEE46
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 15:30:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96B452EC09E;
-	Thu, 13 Nov 2025 15:20:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BBF32F25E6;
+	Thu, 13 Nov 2025 15:21:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b="L/kTzUJS"
+	dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b="HqYti0DL"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41A732E8B85;
-	Thu, 13 Nov 2025 15:20:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FC982F0C62;
+	Thu, 13 Nov 2025 15:21:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.157.23.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763047214; cv=none; b=TqFKhLXo+N57FW75HJ1EBeFSsRlzEttC2j501jLTL2dMO1RyyXYvmP0Sdy9RU4LUffTMdg2uvXdR1gxlNXlR8ZjYRa3o8ZmottKnS9gQHRQTgOctPhOQ/+H9DBHJk0MGO0FiCCmDraf0e2I5KP6RDG69pXoeLa3YGaR28/kGwTE=
+	t=1763047269; cv=none; b=UJLKKVLiV/rGh1p4acdW3qQOGq4ZneMtVY1UMEdFTfdojUgTkJnr0StD+yXACZOGqFKXEsADHQLLyn/Uxe5qwScOw2AY4xs8JCRMcm7EVvTRhlB/EW4EnHIXBwup3njQVWtG9RvZ6+MTTDNGMWjZvbV591BIcxRZ9KTRYFdHxzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763047214; c=relaxed/simple;
-	bh=yCTC8WfVAKzkmwDuVgHQOjKllFtOOs2xRctUuU7j9L0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=giuZNU97l4aQxLSYe6DR90NLgAYYpBkStt/BpSZy/+5ikSRrv50Xwe1BniHNoABsfM489fHXbQGCI/1Z3SVWulw5ywKNEJ3SUXXpe85yFmPpk9fY2M8DR6cgCSGLrD3O6J/5k9AqGJy7Q1769m6Kv/R7EKc12gWV/i8NjiQj5R4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com; spf=pass smtp.mailfrom=paragon-software.com; dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b=L/kTzUJS; arc=none smtp.client-ip=35.157.23.187
+	s=arc-20240116; t=1763047269; c=relaxed/simple;
+	bh=K+cXoWyMnlTMq8bbYqGQRNKQG81e+yalvYB4iNsmOnc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ivFVJXKa/lpQS3p3ff+3/J8xtX8Rj9vbA0y0OfvF6sgGdSj0kLiQLwgXaqrlB3Mf5Qv3XPpDl6+farvkWxolouQNgWuS6cYwx5MKNRJOVqBWQp8S9DSiPfjpgbK/evsFnRjKi2jdEKroXNLxRKW9blxj85KRoEmz240aDaLnEeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com; spf=pass smtp.mailfrom=paragon-software.com; dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b=HqYti0DL; arc=none smtp.client-ip=35.157.23.187
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paragon-software.com
 Received: from relayfre-01.paragon-software.com (unknown [176.12.100.13])
-	by relayaws-01.paragon-software.com (Postfix) with ESMTPS id A36791D47;
-	Thu, 13 Nov 2025 15:16:47 +0000 (UTC)
+	by relayaws-01.paragon-software.com (Postfix) with ESMTPS id A70DE1D47;
+	Thu, 13 Nov 2025 15:17:41 +0000 (UTC)
 Authentication-Results: relayaws-01.paragon-software.com;
-	dkim=pass (1024-bit key; unprotected) header.d=paragon-software.com header.i=@paragon-software.com header.b=L/kTzUJS;
+	dkim=pass (1024-bit key; unprotected) header.d=paragon-software.com header.i=@paragon-software.com header.b=HqYti0DL;
 	dkim-atps=neutral
 Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
-	by relayfre-01.paragon-software.com (Postfix) with ESMTPS id 67DA02151;
-	Thu, 13 Nov 2025 15:20:09 +0000 (UTC)
+	by relayfre-01.paragon-software.com (Postfix) with ESMTPS id 628762151;
+	Thu, 13 Nov 2025 15:21:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=paragon-software.com; s=mail; t=1763047209;
-	bh=oRKtnj2z6SCYHP4wOp0m5s3QGCUzz8qn9uMXPqFR9fE=;
+	d=paragon-software.com; s=mail; t=1763047263;
+	bh=/9X1oIADbCfyIJfAVdtot4DGzNhD/rq0TDB0e6o+OuM=;
 	h=From:To:CC:Subject:Date;
-	b=L/kTzUJStve4HpHjeb2FhjFkS0naszqawAakilORvSF+XX1mPqSUYPLSccM+/TXwZ
-	 AQDS8NFCYs/Ex4OkavnldCHYndqB6To0+fL338/MBKzhb9lVcpRg6wYpC902mFQzEy
-	 brSu9856vIgt8giEIkHh4IhvTDfDxAjvNaqJKhl0=
+	b=HqYti0DLFVaOdRplx8wdkBZSGhoJXiQa9jHAEDFtCUA09f/Te98AIzLF6VfKWjOdO
+	 6+BrvCJ/e2RKK+qhkqIvfukrWnLBbaivBOBK0fLOU1WrSbrPfo0ifbx9z6di+nYtPQ
+	 go1yGo4cc6Un7zamll+MD5KBQGkjzH1dTu+dbEaQ=
 Received: from localhost.localdomain (172.30.20.182) by
  vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.7; Thu, 13 Nov 2025 18:20:07 +0300
+ 15.1.2375.7; Thu, 13 Nov 2025 18:21:02 +0300
 From: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
 To: <ntfs3@lists.linux.dev>
 CC: <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
 	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Subject: [PATCH] fs/ntfs3: check minimum alignment for direct I/O
-Date: Thu, 13 Nov 2025 16:19:58 +0100
-Message-ID: <20251113151958.7626-1-almaz.alexandrovich@paragon-software.com>
+Subject: [PATCH] fs/ntfs3: update mode in xattr when ACL can be reduced to mode
+Date: Thu, 13 Nov 2025 16:20:54 +0100
+Message-ID: <20251113152054.7663-1-almaz.alexandrovich@paragon-software.com>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -66,65 +66,49 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: vobn-exch-01.paragon-software.com (172.30.72.13) To
+X-ClientProxiedBy: vdlg-exch-02.paragon-software.com (172.30.1.105) To
  vdlg-exch-02.paragon-software.com (172.30.1.105)
 
-Add a check for minimum alignment when performing direct I/O reads. If the
-file offset or user buffer is not aligned to the device's logical block
-size, fall back to buffered I/O instead of continuing with unaligned direct I/O.
+If a file's ACL can be reduced to standard mode bits, update mode
+accordingly, persist the change, and update the cached ACL. This keeps
+mode and ACL consistent and avoids redundant xattrs.
 
 Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
 ---
- fs/ntfs3/file.c    | 10 ++++++++++
- fs/ntfs3/ntfs_fs.h |  1 +
- fs/ntfs3/super.c   |  1 +
- 3 files changed, 12 insertions(+)
+ fs/ntfs3/xattr.c | 18 ++++++++++++++----
+ 1 file changed, 14 insertions(+), 4 deletions(-)
 
-diff --git a/fs/ntfs3/file.c b/fs/ntfs3/file.c
-index b9484f48db34..3b22c7375616 100644
---- a/fs/ntfs3/file.c
-+++ b/fs/ntfs3/file.c
-@@ -941,6 +941,16 @@ static ssize_t ntfs_file_read_iter(struct kiocb *iocb, struct iov_iter *iter)
- 		file->f_ra.ra_pages = 0;
- 	}
- 
-+	/* Check minimum alignment for dio. */
-+	if (iocb->ki_flags & IOCB_DIRECT) {
-+		struct super_block *sb = inode->i_sb;
-+		struct ntfs_sb_info *sbi = sb->s_fs_info;
-+		if ((iocb->ki_pos | iov_iter_alignment(iter)) &
-+		    sbi->bdev_blocksize_mask) {
-+			iocb->ki_flags &= ~IOCB_DIRECT;
-+		}
-+	}
+diff --git a/fs/ntfs3/xattr.c b/fs/ntfs3/xattr.c
+index e519e21596a7..c93df55e98d0 100644
+--- a/fs/ntfs3/xattr.c
++++ b/fs/ntfs3/xattr.c
+@@ -654,12 +654,22 @@ static noinline int ntfs_set_acl_ex(struct mnt_idmap *idmap,
+ 	err = ntfs_set_ea(inode, name, name_len, value, size, flags, 0, NULL);
+ 	if (err == -ENODATA && !size)
+ 		err = 0; /* Removing non existed xattr. */
+-	if (!err) {
+-		set_cached_acl(inode, type, acl);
++	if (err)
++		goto out;
 +
- 	return generic_file_read_iter(iocb, iter);
- }
- 
-diff --git a/fs/ntfs3/ntfs_fs.h b/fs/ntfs3/ntfs_fs.h
-index 8ff49c5a2973..a4559c9f64e6 100644
---- a/fs/ntfs3/ntfs_fs.h
-+++ b/fs/ntfs3/ntfs_fs.h
-@@ -212,6 +212,7 @@ struct ntfs_sb_info {
- 
- 	u32 discard_granularity;
- 	u64 discard_granularity_mask_inv; // ~(discard_granularity_mask_inv-1)
-+	u32 bdev_blocksize_mask; // bdev_logical_block_size(bdev) - 1;
- 
- 	u32 cluster_size; // bytes per cluster
- 	u32 cluster_mask; // == cluster_size - 1
-diff --git a/fs/ntfs3/super.c b/fs/ntfs3/super.c
-index 96f56333cf99..f481e9df0237 100644
---- a/fs/ntfs3/super.c
-+++ b/fs/ntfs3/super.c
-@@ -1075,6 +1075,7 @@ static int ntfs_init_from_boot(struct super_block *sb, u32 sector_size,
- 		dev_size += sector_size - 1;
++	if (inode->i_mode != mode) {
++		umode_t old_mode = inode->i_mode;
++		inode->i_mode = mode;
++		err = ntfs_save_wsl_perm(inode, NULL);
++		if (err) {
++			inode->i_mode = old_mode;
++			goto out;
++		}
+ 		inode->i_mode = mode;
+-		inode_set_ctime_current(inode);
+-		mark_inode_dirty(inode);
  	}
++	set_cached_acl(inode, type, acl);
++	inode_set_ctime_current(inode);
++	mark_inode_dirty(inode);
  
-+	sbi->bdev_blocksize_mask = max(boot_sector_size, sector_size) - 1;
- 	sbi->mft.lbo = mlcn << cluster_bits;
- 	sbi->mft.lbo2 = mlcn2 << cluster_bits;
- 
+ out:
+ 	kfree(value);
 -- 
 2.43.0
 
