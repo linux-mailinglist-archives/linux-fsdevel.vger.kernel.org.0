@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-68311-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68312-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8E83C5943D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 18:49:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AEA2C59422
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 18:47:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 03BEA5635E3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 16:46:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A3B63540658
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Nov 2025 16:46:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE9FB35E550;
-	Thu, 13 Nov 2025 16:38:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BCE0366563;
+	Thu, 13 Nov 2025 16:38:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H2/1QTvh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DjK3rV6V"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56BC635A933;
-	Thu, 13 Nov 2025 16:38:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82C323624A0;
+	Thu, 13 Nov 2025 16:38:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763051883; cv=none; b=sLfnoYowPuHzWkGU8yuOeiCyF2tXN5SBTw+lxyL6CZWko+GYlIohxdeuUB9F2amnbQlaJ6ChWfhXiUzf1AC/G+9ygVlUb6lqpKkGl2iCmu9eVpQupKIJpptAfNQfPFUcTKyDatvwTW5jdTwvqG1+E9Iarzg2Z5p38tcqHeXz8qs=
+	t=1763051885; cv=none; b=WzIdbVUTyVKLVQv5YTtx+iPFcHRIaGR48BJraf9YL2rqTj/mW2MCLV4OO1VeQP0V17EZt3u7Z58ow1QHRl5MvDT6TaDqsU4MgsOQCnyX6BgzjN8WhZvw55T5u0Hnq4gwa+0oWn6Pzitnz0dF1s7HProKnb2FhrClBpIR+lsnt6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763051883; c=relaxed/simple;
-	bh=VQ6je3ukNFOauiL1JeTbPRv0RUhTLL5g9uqAfRWJWyw=;
+	s=arc-20240116; t=1763051885; c=relaxed/simple;
+	bh=jLPCMUI1gH+yGj2d6PE+by1iikCIptRkcKk43mWvidU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=gCza/Mow5NgHjwhhlspsQKmVdy03+2SPGI5P92omcu3Oku5RubNrLWhkk0z08K6TJwLwwkA7ekIzijBD/YOliJ77i2pRwxSrbcPCIyoMXvT65zlx2lXqCX8zDQTet5MRxb+SJIghApisea8nxQw0m5G+olo4lsQs1HN/QJ41Sq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H2/1QTvh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6215C4CEF7;
-	Thu, 13 Nov 2025 16:38:01 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=pWQix67dYfCwKHucpXElvLkOE7lBigX7oB2ldWIh/HjJwLeagR2Qiu0F/GUUIxnKzrfie1vkAFgtnUk45UgZdlIT5LC1Yq3CsSyr0e0DwuqiwyKPj3qlorzRzLxTQ+IDnKBe6KRqdmS9XLj8/t4jOdmmhC79mPemdOQ6oC6Wy2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DjK3rV6V; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC2BEC4CEF7;
+	Thu, 13 Nov 2025 16:38:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763051883;
-	bh=VQ6je3ukNFOauiL1JeTbPRv0RUhTLL5g9uqAfRWJWyw=;
+	s=k20201202; t=1763051885;
+	bh=jLPCMUI1gH+yGj2d6PE+by1iikCIptRkcKk43mWvidU=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=H2/1QTvhX6/7mdcD3IkGHpUi8lF+2xYfxb7jQpHztfxuly/3zaGHqZ2NZNBE1P2rh
-	 So4FrZ3Dl4cps3IaksVXk5vrKnrfuvq9PyIcb2DlAXaE5MN5q3YP9yjKxWvM3CuWjR
-	 Nd4msCRybgiwsSRsQE9TKRK0w9Czh2sp8SXKnnRpAVwXf1Z75kQCkPgNoJIW/YAqoA
-	 vQfP5X/rdZInC2cz33BmoHQ9epUut8bsH8ABnWKiSywdowACOqLD5Ye8Sx0t9plR1E
-	 MeyaRhXWVwoxJ2JEIl1+ool6uDXapebQt830gHxfwkDnC/CDExMp7Dt/YTxy3GsZsG
-	 32ADFzdBx1UyQ==
+	b=DjK3rV6VqAWAAeEVCxPDbCMXAQWvM1du3+5/TkqpGEjk0Rx7+kI3toSkH+5ZKMe98
+	 XwCqdffeEk1e3289dw1EAnbAMULRD02wZ3rFpxgJLU36upIpbiv86CnwkbzbG0ASMf
+	 n7Gt07CHwG0ZWGbIKGd616Z/Fx8cROKxTZCyPHLjm7OQgzkAYctgPSooSErNjbgOx1
+	 2Gas3bSCSI2e0g4P4bfA1kmr0Rr2WIzzPn3eMvFQSoA/vOit+tCs8qzxsI2FQtg6fH
+	 iSmBY3QIXH6dDDbBiH3G17lX7K5Zo23jB3SrFFmmpyjdrMcmN6dfOIuDzvoj5/Yavi
+	 ikCrukGXYDgEA==
 From: Christian Brauner <brauner@kernel.org>
-Date: Thu, 13 Nov 2025 17:37:23 +0100
-Subject: [PATCH v2 18/42] ovl: port ovl_set_or_remove_acl() to cred guard
+Date: Thu, 13 Nov 2025 17:37:24 +0100
+Subject: [PATCH v2 19/42] ovl: port ovl_fiemap() to cred guard
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251113-work-ovl-cred-guard-v2-18-c08940095e90@kernel.org>
+Message-Id: <20251113-work-ovl-cred-guard-v2-19-c08940095e90@kernel.org>
 References: <20251113-work-ovl-cred-guard-v2-0-c08940095e90@kernel.org>
 In-Reply-To: <20251113-work-ovl-cred-guard-v2-0-c08940095e90@kernel.org>
 To: Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>
@@ -60,12 +60,12 @@ Cc: Linus Torvalds <torvalds@linux-foundation.org>,
  linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-a6db3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1685; i=brauner@kernel.org;
- h=from:subject:message-id; bh=VQ6je3ukNFOauiL1JeTbPRv0RUhTLL5g9uqAfRWJWyw=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSKcbrxftpjvOFEest1ofBb7o4nZWvlfnel99YfUrpfw
- WYYrRLcUcrCIMbFICumyOLQbhIut5ynYrNRpgbMHFYmkCEMXJwCMJHEdYwMn2qlmxuC+r4IfX75
- YsoEl1DpHuk/J/Tl7647viKldufzGkaGI7Y7dk3hzNnTc6ZoReXWg71rtW6tqhCa+dT8bsN8kcJ
- 1fAA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1114; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=jLPCMUI1gH+yGj2d6PE+by1iikCIptRkcKk43mWvidU=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSKcbotYdi5PK/0Xrl/fvwsa32bfs9mV8bpa942+evkf
+ /u5t296RykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwETMRRkZrvNrnL9RqtG5tHHK
+ t/i9l2bsvXNQzqt3bWBh+VqOld+WFzP8T3y6deLl65Eedd3lf0++VfrJ+/TLjBB/J6nSFXrTtoR
+ M5QMA
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
@@ -73,49 +73,37 @@ Use the scoped ovl cred guard.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- fs/overlayfs/inode.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
+ fs/overlayfs/inode.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
 
 diff --git a/fs/overlayfs/inode.c b/fs/overlayfs/inode.c
-index 1e74b3d9b7f3..e6d6cfd9335d 100644
+index e6d6cfd9335d..5574ce30e0b2 100644
 --- a/fs/overlayfs/inode.c
 +++ b/fs/overlayfs/inode.c
-@@ -474,7 +474,6 @@ static int ovl_set_or_remove_acl(struct dentry *dentry, struct inode *inode,
- 	int err;
- 	struct path realpath;
- 	const char *acl_name;
+@@ -578,9 +578,7 @@ int ovl_update_time(struct inode *inode, int flags)
+ static int ovl_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+ 		      u64 start, u64 len)
+ {
+-	int err;
+ 	struct inode *realinode = ovl_inode_realdata(inode);
 -	const struct cred *old_cred;
- 	struct ovl_fs *ofs = OVL_FS(dentry->d_sb);
- 	struct dentry *upperdentry = ovl_dentry_upper(dentry);
- 	struct dentry *realdentry = upperdentry ?: ovl_dentry_lower(dentry);
-@@ -488,10 +487,8 @@ static int ovl_set_or_remove_acl(struct dentry *dentry, struct inode *inode,
- 		struct posix_acl *real_acl;
  
- 		ovl_path_lower(dentry, &realpath);
--		old_cred = ovl_override_creds(dentry->d_sb);
--		real_acl = vfs_get_acl(mnt_idmap(realpath.mnt), realdentry,
--				       acl_name);
--		ovl_revert_creds(old_cred);
-+		with_ovl_creds(dentry->d_sb)
-+			real_acl = vfs_get_acl(mnt_idmap(realpath.mnt), realdentry, acl_name);
- 		if (IS_ERR(real_acl)) {
- 			err = PTR_ERR(real_acl);
- 			goto out;
-@@ -511,12 +508,12 @@ static int ovl_set_or_remove_acl(struct dentry *dentry, struct inode *inode,
- 	if (err)
- 		goto out;
+ 	if (!realinode)
+ 		return -EIO;
+@@ -588,11 +586,8 @@ static int ovl_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+ 	if (!realinode->i_op->fiemap)
+ 		return -EOPNOTSUPP;
  
--	old_cred = ovl_override_creds(dentry->d_sb);
-+	with_ovl_creds(dentry->d_sb) {
- 		if (acl)
- 			err = ovl_do_set_acl(ofs, realdentry, acl_name, acl);
- 		else
- 			err = ovl_do_remove_acl(ofs, realdentry, acl_name);
+-	old_cred = ovl_override_creds(inode->i_sb);
+-	err = realinode->i_op->fiemap(realinode, fieinfo, start, len);
 -	ovl_revert_creds(old_cred);
-+	}
- 	ovl_drop_write(dentry);
+-
+-	return err;
++	with_ovl_creds(inode->i_sb)
++		return realinode->i_op->fiemap(realinode, fieinfo, start, len);
+ }
  
- 	/* copy c/mtime */
+ /*
 
 -- 
 2.47.3
