@@ -1,126 +1,110 @@
-Return-Path: <linux-fsdevel+bounces-68473-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68474-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 444EAC5CEF6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Nov 2025 12:50:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7750C5CEED
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Nov 2025 12:50:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5ECA64EEB4C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Nov 2025 11:44:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FF3D4215C5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Nov 2025 11:48:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DFAA314D18;
-	Fri, 14 Nov 2025 11:44:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C531313526;
+	Fri, 14 Nov 2025 11:47:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LnL1wgvs"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="swCOEUwF"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1AC2314B62;
-	Fri, 14 Nov 2025 11:44:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6830D31618B;
+	Fri, 14 Nov 2025 11:47:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763120667; cv=none; b=C/gOeWZs+TOe+3sUurSzzRhlH8OZflXdVeB2a2/GdFQ736kKnzgB/XcrFUki3leVg/AF2PO33dpHhX817y8cMq+NBCEsDXlQiB1sDlsBGYWuwRmDnd9Ra2N2QxEs2lpEOW9X2F9m0BXOQ4XDlAYUgqP4xr3S0StEmkpWwh67Nh4=
+	t=1763120851; cv=none; b=MbDKiIIThg6TFWSALCSgLusnviEubfjMZpUYmk7vDjw3L2w5VjUPs9VYRUcBjiQshnDxmOCW5iAyhEPFCC1eI1uyAa2aPyztiCfJgulqPTxtjG/UYc8m9YJ7Y73XdMeIMzQgscTY4XK2qwgO3duV9FtiRo+MqvnPO3HFW3QQHTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763120667; c=relaxed/simple;
-	bh=MSRYIsArI+iaYB41qEQdt9KxZ4hiwpUJOx5IuVhajJk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PfvMU8TiXbpkKJtOtvOcAskKP1vu/OjFL/ngStEzvZljCZrbGdFtK5B4xNK6wmShkBQi5266TG36oNzbpcot5f5SA7zafwbiqnx6kLLnXyblsF98htlzZe/+4Toi4QANPNO7HPJMqLzAB37oQb1VrS41oaJ2uqoF/Bg70oa0KkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LnL1wgvs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A7D7C116D0;
-	Fri, 14 Nov 2025 11:44:25 +0000 (UTC)
+	s=arc-20240116; t=1763120851; c=relaxed/simple;
+	bh=RYmfyxnd44YBm9qRxknxIsvpnN+q7uX4ZyGg3dXJhWs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=X3jb5ilBryEVy9CDe9N5KvFlwgJjzKoT5xP1RTZ5aBNByGZ0U8We0gKXweSOxkZMwTy9KdLZDw2dvUie4f3eZZoWynvKXKj1WNWSRATWls1G3evnbxiOpV1dWO60TgsfBaFT+HxnJlqw9IOV8NN5fBeW+5G1fHhhQKWJzDRyggE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=swCOEUwF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA0E5C16AAE;
+	Fri, 14 Nov 2025 11:47:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763120667;
-	bh=MSRYIsArI+iaYB41qEQdt9KxZ4hiwpUJOx5IuVhajJk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LnL1wgvs62GgB1z7bJb3UQJmKrjEyyGXBvt1UJBgL+/sZiocDK9bGUdXUh0SWaZwZ
-	 F1ax5ROJ38iwdXX0GpdkehFfI1AwQp5DugutCOTzS7O8DhThiNyHFIWmDWO8FduZjW
-	 GZTzxYb2MqlijVgevzE7c+gUwHY1fiXUSZl4buS4uP7jSaNu2prTwNx6v4am8NXQh6
-	 5Bn3HYRSZ34fqIo+JtsuNbEPdTVay24LGb6pnmNMGrlP8m9o2qB3qIyFnzvGiFkhgN
-	 JikCn173Le2EGhqcFDZXekwAxspDqOUxR6KXcu/n4rpMh2g85H4kbtg4c9asC/LF5W
-	 GBncXD/SiI1BA==
-Date: Fri, 14 Nov 2025 12:44:23 +0100
+	s=k20201202; t=1763120850;
+	bh=RYmfyxnd44YBm9qRxknxIsvpnN+q7uX4ZyGg3dXJhWs=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=swCOEUwFDZh8N+CoqAHwqJnNTs9ArbLrXSHUkfNMxzE0dAsJhXF1YK0h4dinnNmnh
+	 AxVxjv5ZiMIo4scYa777S1WkauAAN9o2XKahy9hEbqn/U2842NbuRuc5I6XW6dqlqA
+	 js/BsvNShGpxDkicSX8r01+7sPT2FuMggxoJjoYPJ67bQZ8mPA914Zoz5kZQm+JBlr
+	 AlPBH7CQ4rI4BXLRjmBRToIydgTB2iVCEgK6lGYWeRIqcetLLIjk8J/JU6oJ/4pqJj
+	 EGXUjf2huxpfz9kJQt2bM1LOJjtnPvGO//3QQwl+NRSuQ3elsMJow5RcDmNUzEqbeT
+	 kfRsAo79aRA1Q==
 From: Christian Brauner <brauner@kernel.org>
-To: Ian Kent <raven@themaw.net>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, 
-	Kernel Mailing List <linux-kernel@vger.kernel.org>, autofs mailing list <autofs@vger.kernel.org>, 
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] autofs: dont trigger mount if it cant succeed
-Message-ID: <20251114-rechnen-variieren-aaeb36bb57a0@brauner>
-References: <20251111060439.19593-1-raven@themaw.net>
- <20251111060439.19593-3-raven@themaw.net>
- <20251111-zunahm-endeffekt-c8fb3f90a365@brauner>
- <20251111102435.GW2441659@ZenIV>
- <20251111-ortseinfahrt-lithium-21455428ab30@brauner>
- <bd4fc8ce-ca3f-4e0f-86c0-f9aaa931a066@themaw.net>
- <20251112-kleckern-gebinde-d8dbe0d50e03@brauner>
- <0dfa7fc6-3a15-4adc-ad1d-81bb43f62919@themaw.net>
- <20251113-gechartert-klargemacht-542a0630c88b@brauner>
- <7e040a12-3070-4fad-8b1a-985e71426d41@themaw.net>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Jens Axboe <axboe@kernel.dk>,
+	Avi Kivity <avi@scylladb.com>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Naohiro Aota <naohiro.aota@wdc.com>,
+	Johannes Thumshirn <jth@kernel.org>,
+	linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	io-uring@vger.kernel.org
+Subject: Re: enable iomap dio write completions from interrupt context v2
+Date: Fri, 14 Nov 2025 12:47:23 +0100
+Message-ID: <20251114-postfach-entgleisen-90917e292b3b@brauner>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20251113170633.1453259-1-hch@lst.de>
+References: <20251113170633.1453259-1-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <7e040a12-3070-4fad-8b1a-985e71426d41@themaw.net>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1669; i=brauner@kernel.org; h=from:subject:message-id; bh=RYmfyxnd44YBm9qRxknxIsvpnN+q7uX4ZyGg3dXJhWs=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSKi50R1z5mnR649NWxqalN2uIdtnbppw8FT7raXLQk9 w5HV3t4RykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwEQYEhj+Z65YkBj3kLsuZgWb 5ZumxbsTSq58lD8XN8lo9s1pn+8IcjEyrJ1yW/njkUn8TOtexN3lKy0SN9wrE/wowcDz2E92xnm TeQA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Fri, Nov 14, 2025 at 07:49:53AM +0800, Ian Kent wrote:
-> On 13/11/25 21:19, Christian Brauner wrote:
-> > On Thu, Nov 13, 2025 at 08:14:36AM +0800, Ian Kent wrote:
-> > > On 12/11/25 19:01, Christian Brauner wrote:
-> > > > On Tue, Nov 11, 2025 at 08:27:42PM +0800, Ian Kent wrote:
-> > > > > On 11/11/25 18:55, Christian Brauner wrote:
-> > > > > > On Tue, Nov 11, 2025 at 10:24:35AM +0000, Al Viro wrote:
-> > > > > > > On Tue, Nov 11, 2025 at 11:19:59AM +0100, Christian Brauner wrote:
-> > > > > > > 
-> > > > > > > > > +	sbi->owner = current->nsproxy->mnt_ns;
-> > > > > > > > ns_ref_get()
-> > > > > > > > Can be called directly on the mount namespace.
-> > > > > > > ... and would leak all mounts in the mount tree, unless I'm missing
-> > > > > > > something subtle.
-> > > > > > Right, I thought you actually wanted to pin it.
-> > > > > > Anyway, you could take a passive reference but I think that's nonsense
-> > > > > > as well. The following should do it:
-> > > > > Right, I'll need to think about this for a little while, I did think
-> > > > > 
-> > > > > of using an id for the comparison but I diverged down the wrong path so
-> > > > > 
-> > > > > this is a very welcome suggestion. There's still the handling of where
-> > > > > 
-> > > > > the daemon goes away (crash or SIGKILL, yes people deliberately do this
-> > > > > 
-> > > > > at times, think simulated disaster recovery) which I've missed in this
-> > > > Can you describe the problem in more detail and I'm happy to help you
-> > > > out here. I don't yet understand what the issue is.
-> > > I thought the patch description was ok but I'll certainly try.
-> > I'm sorry, we're talking past each other: I was interested in your
-> > SIGKILL problem when the daemon crashes. You seemed to say that you
-> > needed additional changes for that case. So I'm trying to understand
-> > what the fundamental additional problem is with a crashing daemon that
-> > would require additional changes here.
+On Thu, 13 Nov 2025 18:06:25 +0100, Christoph Hellwig wrote:
+> Currently iomap defers all write completions to interrupt context.  This
+> was based on my assumption that no one cares about the latency of those
+> to simplify the code vs the old direct-io.c.  It turns out someone cared,
+> as Avi reported a lot of context switches with ScyllaDB, which at least
+> in older kernels with workqueue scheduling issues caused really high
+> tail latencies.
 > 
-> Right, sorry.
-> 
-> It's pretty straight forward.
-> 
-> 
-> If the daemon is shutdown (or killed summarily) and there are busy
-> 
-> mounts left mounted then when started again they are "re-connected to"
-> 
-> by the newly running daemon. So there's a need to update the mnt_ns_id in
-> 
-> the ioctl that is used to set the new pipefd.
-> 
-> 
-> I can't provide a patch fragment because I didn't realise the id in
-> ns_common
+> [...]
 
-Before that you can grab it from the mount namespace directly from the
-mntns->seq field.
+Applied to the vfs-6.19.iomap branch of the vfs/vfs.git tree.
+Patches in the vfs-6.19.iomap branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.19.iomap
+
+[1/5] fs, iomap: remove IOCB_DIO_CALLER_COMP
+      https://git.kernel.org/vfs/vfs/c/56749ed317e2
+[2/5] iomap: always run error completions in user context
+      https://git.kernel.org/vfs/vfs/c/222f2c7c6d14
+[3/5] iomap: rework REQ_FUA selection
+      https://git.kernel.org/vfs/vfs/c/845c50436431
+[4/5] iomap: support write completions from interrupt context
+      https://git.kernel.org/vfs/vfs/c/a4ae47e5d2bc
+[5/5] iomap: invert the polarity of IOMAP_DIO_INLINE_COMP
+      https://git.kernel.org/vfs/vfs/c/65a466aef147
 
