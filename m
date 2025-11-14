@@ -1,100 +1,83 @@
-Return-Path: <linux-fsdevel+bounces-68526-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68527-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 884A3C5E6EB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Nov 2025 18:06:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C6A7EC5E26C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Nov 2025 17:18:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id ACF71360E7C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Nov 2025 15:42:21 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B837A387A55
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Nov 2025 15:47:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73532335BD5;
-	Fri, 14 Nov 2025 15:29:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="U4Q1tVN+";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="E6YpF0oV"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6976033D6D8;
+	Fri, 14 Nov 2025 15:35:20 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48C7C3358D5;
-	Fri, 14 Nov 2025 15:29:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68EA932C95D
+	for <linux-fsdevel@vger.kernel.org>; Fri, 14 Nov 2025 15:35:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763134177; cv=none; b=pkUspIqaQb4+4VRIKdTNJA5ekuGJmr4qcnuPKN2mo763KGw96C+BUn79B788q32o2l0XoldwPZ264dlbux8VAjS4knuKdeiEdV31jP9apU5522xqIiXQLcbxS9FnQKoW8wkja8jYC5LP2fNdaUFlrexlC8Fk2qt8vy/UhO7RlU0=
+	t=1763134520; cv=none; b=FS9tc51jgvjd5zfY8af0hFpkyfuSVidNgbphhitDaxEa24ZuMJ7OXIiE8CE910ZpAi2tRyyrdIxAzpjFVYijLIbTTYyjhPZ/uTpiK99xwg2FMKFOQ+slMQjxh1h/oq3vCn7l6UKhXDGOQk+2kGewBAbD3pJ7wmX67zVm6tB2Sas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763134177; c=relaxed/simple;
-	bh=Ppn1MoXtxHXmJpRdIAEUmUVlmJXDEOiIUfyU2xQQuiY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=fEJC9XTs8XX0QlCVU5AHcXSkXPB4VYr7vMLRLIzacAPoBC3MhIyEidZiLK5fhL8hYSPxCXDoBD+8KGC9/HKk84iWwHoVGS7tRALiXWVU7mV9hEo9Ofs+A5cKGNZq2EKUSUGsv1yTUjH3Oulq3mC+rso/lLSmz1EkXzv+ua5UE18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=U4Q1tVN+; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=E6YpF0oV; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1763134174;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aCFThorvRMmcaxjbBvY4SkqTfDyKCosULHbydV+TM3Q=;
-	b=U4Q1tVN+GPpFVuSG9ZiwQX2nmhFEnoqL2AUr38KqD+kXAR+5QsfFpx3TnHyK4FnlGZQaVe
-	c8cNaRfa/BVwVF/wgRwIOu7QaNwoBrcB9c0ZY+Nk7QbIriWJWDWSO9JaGeTcbkrp3JvDpc
-	gmd03xihjYvZS0zF7rQDwOopcwvmMJJ4v92R4GAKU77E518wa5OWNbeNKO1DH06oXGTlH/
-	DdJnNi1eszdb3w0yhKh8UrTae1tzHs3iAGUshiAJ8Qc/iAzMLWJPcs2mHNdaoyU2AYierh
-	OiWBTeZQ9HQo8jY6Nb/6hPi9t3l5N6o5OZO5MEjTN60y/0/bW5r+s4cWSSOlug==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1763134174;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aCFThorvRMmcaxjbBvY4SkqTfDyKCosULHbydV+TM3Q=;
-	b=E6YpF0oVyPlh8suzN701oq+c5X2FSTvYpNPjvHY8fAhILMdEnEUjV9YT1AnosJEK8Ww0GY
-	GQO2qqRM5QDXztDQ==
-To: Christian Brauner <brauner@kernel.org>, Peter Zijlstra
- <peterz@infradead.org>
-Cc: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
- Alexander Viro
- <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Ingo Molnar
- <mingo@redhat.com>, Darren Hart <dvhart@infradead.org>, Davidlohr Bueso
- <dave@stgolabs.net>, =?utf-8?Q?Andr=C3=A9?= Almeida
- <andrealmeid@igalia.com>, Anna-Maria
- Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker
- <frederic@kernel.org>, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] restart_block: simplify expiration timestamps
-In-Reply-To: <20251111-formel-seufzen-bdf2c97c735a@brauner>
-References: <20251110-restart-block-expiration-v1-0-5d39cc93df4f@linutronix.de>
- <20251111-formel-seufzen-bdf2c97c735a@brauner>
-Date: Fri, 14 Nov 2025 16:29:33 +0100
-Message-ID: <87wm3sbpk2.ffs@tglx>
+	s=arc-20240116; t=1763134520; c=relaxed/simple;
+	bh=vZXmjbR2uNAQJmrA3mkG+YKA2NTfnuSkAR3RfzLI6uk=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
+	 In-Reply-To:Content-Type; b=d7OArq/+6acPHWph6AbgwjkBJnEKvXNufpvWXKloAIxTyQn0pCmrDcB1jvRqnEM8GEkCiU5/oduwTxId+NDvJNVVCFj93L7dZh1cUY+ZT5QQObHzuwULwVw8lcr4Z68C/SBUe61bcFT070IzAkLm9qmd2VAQNjNwYI6B3Ai9X0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 5AEFZ6w5060593;
+	Sat, 15 Nov 2025 00:35:06 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.10] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 5AEFZ6xo060589
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Sat, 15 Nov 2025 00:35:06 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <125c234e-9ffb-4372-bcc4-3a1fbc93825b@I-love.SAKURA.ne.jp>
+Date: Sat, 15 Nov 2025 00:35:05 +0900
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] hfsplus: Verify inode mode when loading from disk
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+To: Viacheslav Dubeyko <slava@dubeyko.com>,
+        John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+        Yangtao Li <frank.li@vivo.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <10028383-1d85-402a-a390-3639e49a9b52@I-love.SAKURA.ne.jp>
+ <bfad42ac8e1710e26329b7f1f816199cb1cf0c88.camel@dubeyko.com>
+ <d089dcbd-0db2-48a1-86b0-0df3589de9cc@I-love.SAKURA.ne.jp>
+Content-Language: en-US
+In-Reply-To: <d089dcbd-0db2-48a1-86b0-0df3589de9cc@I-love.SAKURA.ne.jp>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Virus-Status: clean
+X-Anti-Virus-Server: fsav205.rs.sakura.ne.jp
 
-On Tue, Nov 11 2025 at 10:48, Christian Brauner wrote:
-> On Mon, Nov 10, 2025 at 10:38:50AM +0100, Thomas Wei=C3=9Fschuh wrote:
->> Various expiration timestamps are stored in the restart block as
->> different types than their respective subsystem is using.
->>=20
->> Align the types.
->>=20
->> Signed-off-by: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
->> ---
->
-> @Thomas, @Peter, do the timer/futex changes look fine to you?
+Ping?
 
-I take them through tip as they are not conflicting with the poll part.
+Now that BFS got
+https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/commit/?h=vfs.fixes&id=34ab4c75588c07cca12884f2bf6b0347c7a13872 ,
+HFS+ became the last filesystem that has not come to an answer.
 
-Thanks,
-
-        tglx
+On 2025/10/08 20:21, Tetsuo Handa wrote:
+>> As far as I can see, we operate by inode->i_mode here. But if inode
+>> mode has been corrupted on disk, then we assigned wrong value before.
+>> And HFS+ has hfsplus_get_perms() method that assigns perms->mode to
+>> inode->i_mode. So, I think we need to rework hfsplus_get_perms() for
+>> checking the correctness of inode mode before assigning it to inode->
+>> i_mode.
+> 
+> Then, can you give us an authoritative explanation, with historical part
+> fully understood?
 
