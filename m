@@ -1,166 +1,101 @@
-Return-Path: <linux-fsdevel+bounces-68488-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68489-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DDC7C5D396
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Nov 2025 14:04:29 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8C7CC5D523
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Nov 2025 14:23:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0ED324E1145
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Nov 2025 13:01:55 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E36363464C9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Nov 2025 13:17:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C6892EB874;
-	Fri, 14 Nov 2025 13:01:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52231314B95;
+	Fri, 14 Nov 2025 13:17:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O1uJIFYg"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="uhTAacUV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5D692472A2
-	for <linux-fsdevel@vger.kernel.org>; Fri, 14 Nov 2025 13:01:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F405030F52B;
+	Fri, 14 Nov 2025 13:16:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763125309; cv=none; b=egG1Bui9T+reIzc1OXlsVd8YJowAeFKx+mVE/CARW/QUBsnmYY3CN28SIGnIqAFHcPsEmG26tUtS087Ha+d6dwN54lSoF1EYxE+3ipTuJNWrukf7lLkj69ksPtZ4bNCxeDxJBvxc3EeNrK2Ne2u5hybJME97JO1AdAAaaFP/KpI=
+	t=1763126222; cv=none; b=W4Mkx9/DGkwCF+SWm3GFdWJjnmNywXMFrkGJc5vAbzr2PWfvENq4+Etu5B5zawMsWD9mbVb9Jl2ZfuQYIxVw96MNi3DWlMwtR159El0mmqUYV//y5lGgS7DxQPdQuR9HBbkx+jhBocIwCNTdKTTuuCSeeAaYwthKPGV7R76Ty9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763125309; c=relaxed/simple;
-	bh=HpAgGgaEFn90GAP+61OaPTHjskGHvMWPVJKnFRe5/SU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ujeMcDjoMtDKtMY8uquHMrZSWpVGORl266rCrMkUx/qQxRKJ3afNvnnVmx6YH2LMYllXXtwBwjstohNXgP7U5Y7o4H70uq3IV4jk6BHTZOFkRMCYkcwhx/esrESt0dPHKTuuJDOyaUGQUrw58/Q8VhCHgDNWuTSG0TuNI+wsQmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O1uJIFYg; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4775ae77516so21755285e9.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Nov 2025 05:01:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763125306; x=1763730106; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WrJ7wpuffsUOhxttMGNEH1UpdA6aqm646ujYOAqkR8Q=;
-        b=O1uJIFYgf/y6lfrRpBXdOjWUq4jTOxTW6QXaNsDmSPJzPUxgLDB8DGdqYTYHg2plzw
-         6TbrvO8NNOa2OizD6zFMDXdM9ieZKmf5Dum9EwDrUDc1+JGfZ7snMwKv2TDjN6WhTEox
-         nS34KcYkEUEKYUZ4DAh1WCQEwxFwBcVfH0xzvd3OmRBjS0GMi1Uc+0aFXMiBkvLdBahR
-         pNATAh/aacX2tacq2MYxUW63yy92vkSYNhkWMvxfg3BDueig0orDMqPJp//Pmyg35RP3
-         tDBZP/cUfUhYWsB1rY/7wGYukUKk5iSn8MG53Uyc9n+d9dH732Ow/KuI7TDDPfTAsFb+
-         VuuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763125306; x=1763730106;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=WrJ7wpuffsUOhxttMGNEH1UpdA6aqm646ujYOAqkR8Q=;
-        b=rM3bjEchmNuFjqa0FAunBjZG+O/fr0PMn2rX6HoO7FhElTbEPjyAUQ5Ke6z/b7Q5C2
-         nx7WuLxLtpBzurNjO4KG3lTECiJu+PE5KQ+ZsSOOjLhn1AJrGPZMq31P0dK1qAE1DM3J
-         TI5eOsQLT4MjBxj5rKo4bLW2xTZtdt8/mZYnVnkqx0q6eY0xzUrNR0RapgPlyaObVOXN
-         JbIb1IA/mCEGI6MkcwDdaLSK6PRJnqyPJeZTxbM9V0brC9GTgROH1zUiqpdnn0n+Jdx+
-         NATy6bwSENLbrd+mGzZL5PB0s0GVe3wNQ1eZo649g52fVIBLjGNKocyIjtQiY7o2HiV2
-         FD4A==
-X-Forwarded-Encrypted: i=1; AJvYcCVE00iSGtmqCeAEdWg33+C4g/05/y+hneEZ4rUa6IcPA3ACExayPRx20eWNTrr5Km/yV/vOlTpw7ENmJmMI@vger.kernel.org
-X-Gm-Message-State: AOJu0YyoqWemVkkS49iKZc73+amXeMenDjZYyVtUXtjcvNUSNpgY68cu
-	HJdWfFHTLM13VIJE6fRFcRwtEPT9OBfVHZrbol9m2YIM4jG7KKFZQUze3RAnQkFNzo+yZ/r2rq+
-	RtUFFR8OBdIKxAhW9kpVbaLMJ0dcjhy8=
-X-Gm-Gg: ASbGnctyoQaBp+YkvLaFDIDJYPF5+PXMNn/Cur7AcIzks7Lbh0tvP/8fhS1MuPODX7F
-	qaCfClSeEc4FcTDzsnIMy03AHctc2RvOA+Se3EbURaqNPVd2C0ymfMdNORx0aA2BqsCqP1z/G5t
-	9GxCblMaabnNvnggJmElvEw48BwWqyFvkWP+tXMnoteQsKBb4no8cLgifvGAJY/GYpUnILnVE9c
-	vBzozsk2MwgGGCkK/w+qsv6GigprfTpMDWwcftytaCsFBApMkNsOxR2IS22gyKGahiL5bmF5gch
-	At9+rpsu1tQiZ5QYVWI=
-X-Google-Smtp-Source: AGHT+IHDM8QKUyFSrd+0zQEKPdCoF3WxF1zjcOTRuW4aKiXzh3MUt7l88tj/0/w7OQqiDd1Hj2Wm7NhMaFNyqPhLxJ4=
-X-Received: by 2002:a05:600c:1f12:b0:45d:5c71:769a with SMTP id
- 5b1f17b1804b1-4778fe9aedcmr26119325e9.26.1763125305993; Fri, 14 Nov 2025
- 05:01:45 -0800 (PST)
+	s=arc-20240116; t=1763126222; c=relaxed/simple;
+	bh=m25Ht5MJmYjNkEujCtZhivVNuoNdHi2llzCoTBXzsv0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=faUkkKPVboDcIKTbVRyNDVNV+gOsPDgykr0FSJfNDA5MzLQMFQj2kEqhBOzktZr8z43/4l9tuxeEOawYJh7Gn0EWxTs047MgRGs4jpV+sPeV3zg1VxqVMEDgvOT7bAu/ayCi4RAgg581gDbhYSdZ+Afh2QBqmMoXjIpklJHlLVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=uhTAacUV; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Vo+N5YbzZDjZeiNvAhfJhGp+deegDT8E/3cOAOwzUvY=; b=uhTAacUV/flhXWxNQV5FeR3HnC
+	dbisfExygmslgLyDpvLG+2/Hlg/pmt0VQFR60ENfWSheMwZ71gSfJvn5cpAz3jQ4C8GbW22mGZnvr
+	IAvWXV16IcxEqXlj9aGECgc6jWa+TYNslUF/UG5UZnNeVmX9uCBtHkF3/PhZqpKloo53DY7lQjfBs
+	aJlrIOpHrSuxqQ5zFLrpzFxS0hDURfOE1mKKnlaxrFAzISnDVMx2YoDYjEeGrpZfA+xmHgA5z4Aqa
+	ikMn5lzxyvLtVuWvtU3KSheAYA6RnH67j72rXcCqX5yw2ewTbxE7qcEs/APRhRTTgydkga2huH2E1
+	f93tK/uw==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vJtfX-00000009Mru-0lqh;
+	Fri, 14 Nov 2025 13:16:51 +0000
+Date: Fri, 14 Nov 2025 13:16:50 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Ritesh Harjani <ritesh.list@gmail.com>
+Cc: Ojaswin Mujoo <ojaswin@linux.ibm.com>,
+	Christian Brauner <brauner@kernel.org>, djwong@kernel.org,
+	john.g.garry@oracle.com, tytso@mit.edu, dchinner@redhat.com,
+	hch@lst.de, linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, jack@suse.cz, nilay@linux.ibm.com,
+	martin.petersen@oracle.com, rostedt@goodmis.org, axboe@kernel.dk,
+	linux-block@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 2/8] mm: Add PG_atomic
+Message-ID: <aRcrwgxV6cBu2_RH@casper.infradead.org>
+References: <cover.1762945505.git.ojaswin@linux.ibm.com>
+ <5f0a7c62a3c787f2011ada10abe3826a94f99e17.1762945505.git.ojaswin@linux.ibm.com>
+ <aRSuH82gM-8BzPCU@casper.infradead.org>
+ <87ecq18azq.ritesh.list@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251113-work-ovl-cred-guard-v3-0-b35ec983efc1@kernel.org>
- <20251113-work-ovl-cred-guard-v3-33-b35ec983efc1@kernel.org>
- <CAOQ4uxjeZC0V_jWA=8u+vTw0FDWehdu8Owz8qzO8bTqYVb6A_w@mail.gmail.com> <CAOQ4uxi05JPptYgXXzLN_C4LAOWyriZGvJdrWydzjBv-q_aGFg@mail.gmail.com>
-In-Reply-To: <CAOQ4uxi05JPptYgXXzLN_C4LAOWyriZGvJdrWydzjBv-q_aGFg@mail.gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 14 Nov 2025 14:01:34 +0100
-X-Gm-Features: AWmQ_bknCoTAmCyGwxVzXTxM2Q2Ddou5vVmeK1m50HLLQqaH7FXQMQ0KGc9mHeM
-Message-ID: <CAOQ4uxhcVRQvT7pbtmEVBpjYSBwr8zCo5Rao5p2hwS=OFHHttQ@mail.gmail.com>
-Subject: Re: [PATCH v3 33/42] ovl: introduce struct ovl_renamedata
-To: Christian Brauner <brauner@kernel.org>, NeilBrown <neil@brown.name>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87ecq18azq.ritesh.list@gmail.com>
 
-On Fri, Nov 14, 2025 at 11:26=E2=80=AFAM Amir Goldstein <amir73il@gmail.com=
-> wrote:
->
-> On Fri, Nov 14, 2025 at 10:04=E2=80=AFAM Amir Goldstein <amir73il@gmail.c=
-om> wrote:
+On Fri, Nov 14, 2025 at 10:30:09AM +0530, Ritesh Harjani wrote:
+> Matthew Wilcox <willy@infradead.org> writes:
+> 
+> > On Wed, Nov 12, 2025 at 04:36:05PM +0530, Ojaswin Mujoo wrote:
+> >> From: John Garry <john.g.garry@oracle.com>
+> >> 
+> >> Add page flag PG_atomic, meaning that a folio needs to be written back
+> >> atomically. This will be used by for handling RWF_ATOMIC buffered IO
+> >> in upcoming patches.
 > >
-> > On Thu, Nov 13, 2025 at 10:33=E2=80=AFPM Christian Brauner <brauner@ker=
-nel.org> wrote:
-> > >
-> > > Add a struct ovl_renamedata to group rename-related state that was
-> > > previously stored in local variables. Embedd struct renamedata direct=
-ly
-> > > aligning with the vfs.
-> > >
-> > > Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-> > > Signed-off-by: Christian Brauner <brauner@kernel.org>
-> > > ---
-> > >  fs/overlayfs/dir.c | 123 +++++++++++++++++++++++++++++--------------=
-----------
-> > >  1 file changed, 68 insertions(+), 55 deletions(-)
-> > >
-> > > diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
-> > > index 86b72bf87833..052929b9b99d 100644
-> > > --- a/fs/overlayfs/dir.c
-> > > +++ b/fs/overlayfs/dir.c
-> > > @@ -1090,6 +1090,15 @@ static int ovl_set_redirect(struct dentry *den=
-try, bool samedir)
-> > >         return err;
-> > >  }
-> > >
-> > > +struct ovl_renamedata {
-> > > +       struct renamedata;
-> > > +       struct dentry *opaquedir;
-> > > +       struct dentry *olddentry;
-> > > +       struct dentry *newdentry;
-> > > +       bool cleanup_whiteout;
-> > > +       bool overwrite;
-> > > +};
-> > > +
-> >
-> > It's very clever to use fms extensions here
-> > However, considering the fact that Neil's patch
-> > https://lore.kernel.org/linux-fsdevel/20251113002050.676694-11-neilb@ow=
-nmail.net/
-> > creates and uses ovl_do_rename_rd(), it might be better to use separate
-> > struct renamedata *rd, ovl_rename_ctx *ctx
-> > unless fms extensions have a way to refer to the embedded struct?
-> >
->
-> Doh, I really got confused.
-> The dentries in ovl_renamedata are ovl dentries and the entries in
-> renamedata passed to ovl_do_rename_rd() are real dentries.
-> So forget what I said.
+> > Page flags are a precious resource.  I'm not thrilled about allocating one
+> > to this rather niche usecase.  Wouldn't this be more aptly a flag on the
+> > address_space rather than the folio?  ie if we're doing this kind of write
+> > to a file, aren't most/all of the writes to the file going to be atomic?
+> 
+> As of today the atomic writes functionality works on the per-write
+> basis (given it's a per-write characteristic). 
+> 
+> So, we can have two types of dirty folios sitting in the page cache of
+> an inode. Ones which were done using atomic buffered I/O flag
+> (RWF_ATOMIC) and the other ones which were non-atomic writes. Hence a
+> need of a folio flag to distinguish between the two writes.
 
-To help with mine (and others) confusion I think it would be better to
-be explicit about upper vs. plain dentry in ovl functions where
-both types exist. It's one of the easiest things to get wrong in ovl code:
-
-struct ovl_renamedata {
-       struct renamedata;
-       struct dentry *opaquedir;
-       struct dentry *old_upper;
-       struct dentry *new_upper;
-       bool cleanup_whiteout;
-       bool overwrite;
-};
-
-IMO ovl_rename() was not doing a good job with 'old' vs. 'olddentry',
-so for the conversion to ovl_renamedata, we should fix this misnomer.
-
-Thanks,
-Amir.
+I know, but is this useful?  AFAIK, the files where Postgres wants to
+use this functionality are the log files, and all writes to the log
+files will want to use the atomic functionality.  What's the usecase
+for "I want to mix atomic and non-atomic buffered writes to this file"?
 
