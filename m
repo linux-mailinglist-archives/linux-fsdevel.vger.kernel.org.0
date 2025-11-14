@@ -1,47 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-68469-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68470-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46C06C5CDE8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Nov 2025 12:31:06 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C27EC5CE2C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Nov 2025 12:37:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B9E0A34DEF0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Nov 2025 11:30:16 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EDA024EB788
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Nov 2025 11:31:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2055A3148C3;
-	Fri, 14 Nov 2025 11:30:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FCFC313E2E;
+	Fri, 14 Nov 2025 11:31:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Akk7h6Hl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="awS3On4f"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EEFD3112BB;
-	Fri, 14 Nov 2025 11:30:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2CEE221DB6;
+	Fri, 14 Nov 2025 11:31:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763119807; cv=none; b=nNEZgwQmIEW/ddeq/YRb2mXxSVZ28ZZsfUp+MbS8zLJkgbmArfrGU2k19da2jZvqaeeuw2t6bsgFllpTJ8Jokmj7xmsdRimomwrFjHKx98a+B8+Uw2WKkMFeTVX+qJHuPsUn8kttoFbJjSoLRGVxmTf0SmIdKZd+bxOmbAoynVw=
+	t=1763119880; cv=none; b=nzSAulhk/665+9h6sr+qtwGz9sH8cXDbQnluCMhEDfFzKUFoekOhrOy/e82fcKctbzrXGJde5vhOqo5i8G3hCODECx7EYyeGINDXbsHnflpKbBGM0qCLz7TkLeqIDjmoYojH0Ni3y6V0UkGVQKDrbtNQtnYxSB02Rn11PrRIIcg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763119807; c=relaxed/simple;
-	bh=nWQdNFwkseMe3m11T//I7TjOchkTxc0f6sD/wvtcMU0=;
+	s=arc-20240116; t=1763119880; c=relaxed/simple;
+	bh=GaRt8mZMwQZGrcQ9Qajr5lrJ1sWQayWo13cA4bzwsac=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pfamLVoA1cR1D/7fwhLJuMCe1iHL7AApt5pgItsRHMZfAFu8TKBLlrxM9idJzvWlsnqNJGnqsSTEKFitCHMKtJ+frqyWrqW/G3mNGunvYQS0dOO67RcDgRHpRGRpIJkK/gzl1LI3Ld1EukSCbhsAqC1AZFHt3URyWmHUN2pG8JI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Akk7h6Hl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6503CC4CEF1;
-	Fri, 14 Nov 2025 11:29:45 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=L+okO7gO88JMe4wfCEn2+39dDHLbB8VKpNdm4IgZJzMAIIOk6pgozfjnAsBWc/j2Y3F+xKq9vPHUW90+cpd3mbJwzWmcfRmmAszeztIVCkSHlkkUfpaooyaSFfKowSpFmg0443GlcIl00POEN5+BO71Eha40Xpx0PXcqpy3oEX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=awS3On4f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9E5FC4AF09;
+	Fri, 14 Nov 2025 11:30:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763119807;
-	bh=nWQdNFwkseMe3m11T//I7TjOchkTxc0f6sD/wvtcMU0=;
+	s=k20201202; t=1763119880;
+	bh=GaRt8mZMwQZGrcQ9Qajr5lrJ1sWQayWo13cA4bzwsac=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Akk7h6HlDkGyGgeCHZX5VqCq5N2nSt0CHf09pDVbnqBORphhI2YOmYWQy1u7s7HXC
-	 vk2eR2lL3RSSszzGR9ZhrQ9QHgg7YrLsh+41vhXoLLGIoUvW4UsruI26iGVeGzAPcP
-	 84LrN6UJauCgG0t0GQcvjzAMnlfsFZghOoVZaAboWw1so/FBVYjxsoCOb/82AQtq2Z
-	 0NtCLvZKWHuVI1yWzfUj922GUd6PeRI52oxjC49q5F9N+wj9XWPMdbCNqC7iekpi2w
-	 awEJbNAXVGPvsWxl0F2algphSwaLFV5Rgvd/Ls4Ffdpt7rW/ve1asAz7IG+BKt3CL0
-	 RK6yYv8fID0kA==
-Date: Fri, 14 Nov 2025 13:29:41 +0200
+	b=awS3On4flAlVPXnqWsYldgKjJTlVNUrXTI2f2IlBW0Mq9huNwec+HzA0o2vnASTRC
+	 s2wSviLIQxbhJS1cgM3qY8D+PSZoNgxQLJMbhP+D59wrYAIcUTPU1nUTw4uc+kF49i
+	 JZl4ja3iTV9+fg9wbvIbbTxkq6hsIQgI5Ek89x+esVIdOSLBBLRZ7QnfRZ0otnljJz
+	 3Wh4BzCs3j8rdc77ctn6nYA6gqtu42YDZ1g0kDPONFM3yPke2HC09711bzh/M3eSqC
+	 3IN+FfC2sw+CV8iY/M1yskLGfYGhXR7k9C8E7qVXe1HT8PbeiIKUpTprYobKNaWtKt
+	 weG4if40H1QMQ==
+Date: Fri, 14 Nov 2025 13:30:53 +0200
 From: Mike Rapoport <rppt@kernel.org>
 To: Pasha Tatashin <pasha.tatashin@soleen.com>
 Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com,
@@ -72,10 +72,10 @@ Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com,
 	ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com,
 	leonro@nvidia.com, witu@nvidia.com, hughd@google.com,
 	skhawaja@google.com, chrisl@kernel.org
-Subject: Re: [PATCH v5 02/22] liveupdate: luo_core: integrate with KHO
-Message-ID: <aRcSpbwBabFjeYe3@kernel.org>
+Subject: Re: [PATCH v5 03/22] reboot: call liveupdate_reboot() before kexec
+Message-ID: <aRcS7YU0CGc4NdKX@kernel.org>
 References: <20251107210526.257742-1-pasha.tatashin@soleen.com>
- <20251107210526.257742-3-pasha.tatashin@soleen.com>
+ <20251107210526.257742-4-pasha.tatashin@soleen.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -84,182 +84,61 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251107210526.257742-3-pasha.tatashin@soleen.com>
+In-Reply-To: <20251107210526.257742-4-pasha.tatashin@soleen.com>
 
-On Fri, Nov 07, 2025 at 04:03:00PM -0500, Pasha Tatashin wrote:
-> Integrate the LUO with the KHO framework to enable passing LUO state
-> across a kexec reboot.
+On Fri, Nov 07, 2025 at 04:03:01PM -0500, Pasha Tatashin wrote:
+> Modify the reboot() syscall handler in kernel/reboot.c to call
+> liveupdate_reboot() when processing the LINUX_REBOOT_CMD_KEXEC
+> command.
 > 
-> When LUO is transitioned to a "prepared" state, it tells KHO to
-> finalize, so all memory segments that were added to KHO preservation
-> list are getting preserved. After "Prepared" state no new segments
-> can be preserved. If LUO is canceled, it also tells KHO to cancel the
-> serialization, and therefore, later LUO can go back into the prepared
-> state.
+> This ensures that the Live Update Orchestrator is notified just
+> before the kernel executes the kexec jump. The liveupdate_reboot()
+> function triggers the final freeze event, allowing participating
+> FDs perform last-minute check or state saving within the blackout
+> window.
 > 
-> This patch introduces the following changes:
-> - During the KHO finalization phase allocate FDT blob.
-> - Populate this FDT with a LUO compatibility string ("luo-v1").
+> The call is placed immediately before kernel_kexec() to ensure LUO
+> finalization happens at the latest possible moment before the kernel
+> transition.
 > 
-> LUO now depends on `CONFIG_KEXEC_HANDOVER`. The core state transition
-> logic (`luo_do_*_calls`) remains unimplemented in this patch.
+> If liveupdate_reboot() returns an error (indicating a failure during
+> LUO finalization), the kexec operation is aborted to prevent proceeding
+> with an inconsistent state.
 > 
 > Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
 > ---
->  include/linux/liveupdate.h         |   6 +
->  include/linux/liveupdate/abi/luo.h |  54 +++++++
->  kernel/liveupdate/luo_core.c       | 243 ++++++++++++++++++++++++++++-
->  kernel/liveupdate/luo_internal.h   |  17 ++
->  mm/mm_init.c                       |   4 +
->  5 files changed, 323 insertions(+), 1 deletion(-)
->  create mode 100644 include/linux/liveupdate/abi/luo.h
->  create mode 100644 kernel/liveupdate/luo_internal.h
+>  kernel/reboot.c | 4 ++++
+>  1 file changed, 4 insertions(+)
 > 
-> diff --git a/include/linux/liveupdate.h b/include/linux/liveupdate.h
-> index 730b76625fec..0be8804fc42a 100644
-> --- a/include/linux/liveupdate.h
-> +++ b/include/linux/liveupdate.h
-> @@ -13,6 +13,8 @@
+> diff --git a/kernel/reboot.c b/kernel/reboot.c
+> index ec087827c85c..bdeb04a773db 100644
+> --- a/kernel/reboot.c
+> +++ b/kernel/reboot.c
+> @@ -13,6 +13,7 @@
+>  #include <linux/kexec.h>
+>  #include <linux/kmod.h>
+>  #include <linux/kmsg_dump.h>
+> +#include <linux/liveupdate.h>
+>  #include <linux/reboot.h>
+>  #include <linux/suspend.h>
+>  #include <linux/syscalls.h>
+> @@ -797,6 +798,9 @@ SYSCALL_DEFINE4(reboot, int, magic1, int, magic2, unsigned int, cmd,
 >  
->  #ifdef CONFIG_LIVEUPDATE
->  
-> +void __init liveupdate_init(void);
-> +
->  /* Return true if live update orchestrator is enabled */
->  bool liveupdate_enabled(void);
->  
-> @@ -21,6 +23,10 @@ int liveupdate_reboot(void);
->  
->  #else /* CONFIG_LIVEUPDATE */
->  
-> +static inline void liveupdate_init(void)
-> +{
-> +}
+>  #ifdef CONFIG_KEXEC_CORE
+>  	case LINUX_REBOOT_CMD_KEXEC:
+> +		ret = liveupdate_reboot();
+> +		if (ret)
+> +			break;
 
-The common practice is to place brackets at the same line with function
-declaration.
+As we discussed elsewhere, let's move the call to liveupdate_reboot() to
+kernel_kexec().
 
-...
-
-> +static int __init luo_early_startup(void)
-> +{
-> +	phys_addr_t fdt_phys;
-> +	int err, ln_size;
-> +	const void *ptr;
-> +
-> +	if (!kho_is_enabled()) {
-> +		if (liveupdate_enabled())
-> +			pr_warn("Disabling liveupdate because KHO is disabled\n");
-> +		luo_global.enabled = false;
-> +		return 0;
-> +	}
-> +
-> +	/* Retrieve LUO subtree, and verify its format. */
-> +	err = kho_retrieve_subtree(LUO_FDT_KHO_ENTRY_NAME, &fdt_phys);
-> +	if (err) {
-> +		if (err != -ENOENT) {
-> +			pr_err("failed to retrieve FDT '%s' from KHO: %pe\n",
-> +			       LUO_FDT_KHO_ENTRY_NAME, ERR_PTR(err));
-> +			return err;
-> +		}
-> +
-> +		return 0;
-> +	}
-> +
-> +	luo_global.fdt_in = __va(fdt_phys);
-
-phys_to_virt is clearer, isn't it?
-
-> +	err = fdt_node_check_compatible(luo_global.fdt_in, 0,
-> +					LUO_FDT_COMPATIBLE);
-
-...
-
-> +void __init liveupdate_init(void)
-> +{
-> +	int err;
-> +
-> +	err = luo_early_startup();
-> +	if (err) {
-> +		pr_err("The incoming tree failed to initialize properly [%pe], disabling live update\n",
-> +		       ERR_PTR(err));
-> +		luo_global.enabled = false;
-> +	}
-> +}
-> +
-> +/* Called during boot to create LUO fdt tree */
-
-			 ^ create outgoing
-
-> +static int __init luo_late_startup(void)
-> +{
-> +	int err;
-> +
-> +	if (!liveupdate_enabled())
-> +		return 0;
-> +
-> +	err = luo_fdt_setup();
-> +	if (err)
-> +		luo_global.enabled = false;
-> +
-> +	return err;
-> +}
-> +late_initcall(luo_late_startup);
-
-It would be nice to have a comment explaining why late_initcall() is fine
-and why there's no need to initialize the outgoing fdt earlier.
-
-> +/**
-> + * luo_alloc_preserve - Allocate, zero, and preserve memory.
-
-I think this and the "free" counterparts would be useful for any KHO users,
-even those that don't need LUO.
-
-> + * @size: The number of bytes to allocate.
-> + *
-> + * Allocates a physically contiguous block of zeroed pages that is large
-> + * enough to hold @size bytes. The allocated memory is then registered with
-> + * KHO for preservation across a kexec.
-> + *
-> + * Note: The actual allocated size will be rounded up to the nearest
-> + * power-of-two page boundary.
-> + *
-> + * @return A virtual pointer to the allocated and preserved memory on success,
-> + * or an ERR_PTR() encoded error on failure.
-> + */
-> +void *luo_alloc_preserve(size_t size)
-> +{
-> +	struct folio *folio;
-> +	int order, ret;
-> +
-> +	if (!size)
-> +		return ERR_PTR(-EINVAL);
-> +
-> +	order = get_order(size);
-> +	if (order > MAX_PAGE_ORDER)
-> +		return ERR_PTR(-E2BIG);
-
-High order allocations would likely fail or at least cause a heavy reclaim.
-For now it seems that we won't be needing really large contiguous chunks so
-maybe limiting this to PAGE_ALLOC_COSTLY_ORDER?
-
-Later if we'd need higher order allocations we can try to allocate with
-__GFP_NORETRY or __GFP_RETRY_MAYFAIL with a fallback to vmalloc.
-
-> +
-> +	folio = folio_alloc(GFP_KERNEL | __GFP_ZERO, order);
-> +	if (!folio)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	ret = kho_preserve_folio(folio);
-> +	if (ret) {
-> +		folio_put(folio);
-> +		return ERR_PTR(ret);
-> +	}
-> +
-> +	return folio_address(folio);
-> +}
-> +
+>  		ret = kernel_kexec();
+>  		break;
+>  #endif
+> -- 
+> 2.51.2.1041.gc1ab5b90ca-goog
+> 
 
 -- 
 Sincerely yours,
