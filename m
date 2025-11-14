@@ -1,208 +1,225 @@
-Return-Path: <linux-fsdevel+bounces-68502-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68503-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD2FCC5D866
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Nov 2025 15:19:26 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CC1FC5D895
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Nov 2025 15:21:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 204583608E3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Nov 2025 14:09:23 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 08387361956
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Nov 2025 14:10:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3086324B07;
-	Fri, 14 Nov 2025 14:08:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60E552356BE;
+	Fri, 14 Nov 2025 14:10:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jYOZzKO/"
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="Lesn+N1+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD9D623958A
-	for <linux-fsdevel@vger.kernel.org>; Fri, 14 Nov 2025 14:08:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 931FB2517AC
+	for <linux-fsdevel@vger.kernel.org>; Fri, 14 Nov 2025 14:10:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763129321; cv=none; b=e6bJs6fkwuQe3S7XXZzH8nMkUpCE+1BdVjW027EKeyF2TkG2SDUHJjcPp7yezgAxU7iwEaIQt8rF+s70bnYS8+46dYSqIpo3XvGTks/8YZFCzmNoV9Egq6S3rgxiCGFwTjDTcnA5qALYKOdIiKDDr/RL9Hg11Z8Lms8MX8Pw2lY=
+	t=1763129430; cv=none; b=Q+GJu0LEWwTTlHYwBAxFVLIySLifJO1z3nU09GoH9zhOQYUjsyLpijAFHyAjBuNTy1XExlVoujFKkBG5MnYAd4ScNlRbB0yaqfE4vW5h5avSKCzIZZrAxnzA9DZMfhHvvOr9l9HcsmO8ebNMtas0nsR8g2H7Mqq/m3VmDHR/HIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763129321; c=relaxed/simple;
-	bh=oyt5yWDh2i4q0kX2N2Yql05RhNakuSpF89r2uusw1tg=;
+	s=arc-20240116; t=1763129430; c=relaxed/simple;
+	bh=KE+QPebTvEqbnMKEXMooGer5jwtRyU8fzyKcLQ4mw/g=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=i1tgrB0cHFxOc+5HOoasFAqDq+arF2RQc43EbKW1wwfj80NOaaVMXSuxfID4kLTQ4+8AoVji7XQN/P2eIRxWj2eysw/Xw/XA4noN7M/ahp9UJQpfWtyW2Sc2qH7i70ROPaAFYfuVQPk5OrlIA95DOW1lVbIiAnBcjR6R6XlXjLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jYOZzKO/; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-42b387483bbso1684593f8f.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Nov 2025 06:08:36 -0800 (PST)
+	 To:Cc:Content-Type; b=hpfrUkhyNO1lAx14BlKn9+M0e79ZHMhYfY2JcoFhKAFF8c5u+3z3E2+N5oDQCsKeFuxvozxnXSU/Rxb73mGCfbMdGxSlbvkDAeoFTGqbIA2cIZRhOTJzDpNtgphvydrjho0jhjwcEllgMHGctPF9FNt+gYFAl2H61ijPjTOn9g8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=Lesn+N1+; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-b736d883ac4so115404166b.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Nov 2025 06:10:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1763129313; x=1763734113; darn=vger.kernel.org;
+        d=soleen.com; s=google; t=1763129424; x=1763734224; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=1IXxo8d8j8VJ21Y+Lzck+HpFvoDGSHFT7itc7J4IXHQ=;
-        b=jYOZzKO/snO4SXg+i+bXSmCY29AJLUHAh5y0WXNcVwXAaZG9IgRHoZrpTUBtdbcuu9
-         ++Vcr8DSacZDo5ipnkInk9qvplFEkKTUwOgmc3ENe1Q/ovea2QmZxQvsCxEuzHUvPFyZ
-         1YbFaCHI0gm9W+jQL68wJfo/DQ4B88YXNcmO3cUkOsGW35aitacKItZzQcmtomcSDBH9
-         u33vsa4Dav3Z37qDvNprEATyXHRnaU00a2NJhCjigqAalyVKyLD4sGny2QlrPDhcQztd
-         jszMq0RpEgos0jtiJMd0U5iLuYfj9sIS3Edq/UDUl85i1cXCEVU8R+mRkBe1HrU92Tu6
-         Bqvg==
+        bh=wUyLyvVVKlFsH483G8ekZl8QKBp07gDZblbUWMC1jGk=;
+        b=Lesn+N1+up0vOeI4VPrJ65CHM+HZS4l9BYFpy+ZAGPoMWIoEfa6AplEKNUMCfh3Y37
+         WmFW/0RoPrO3YvGhKscMCFM2KozG+YG7ahcyjRq6gmfBazKAab0s1k+UwTubXS0Qqszm
+         j42DCKbj75VSzhxFQGSY7KgO6sbnhjggb2eHqbgQ4oMQu4SrtK+qMRgqSWroQVYN6ulQ
+         Vk2CqF6Z30kY9x+9KFwmhCo2yyDlV1+p/SmFy8PeQ7Je6AqaF2B/cJvPBsDK+46u25W4
+         BpgwKUeZoUNilxvaR+miAbWjM4PVemAFtVhk31u1W4/aI6gw1890X4xbh9vyCYA6J+9V
+         SEfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763129313; x=1763734113;
+        d=1e100.net; s=20230601; t=1763129424; x=1763734224;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=1IXxo8d8j8VJ21Y+Lzck+HpFvoDGSHFT7itc7J4IXHQ=;
-        b=YvApv2fNUN7PTKemX3anYbxfBfADRapXDftJJ+vUxnopCdj0BJ98InVqu5JLI1FCd6
-         rKavCFrXrCjud9cj8pQvV2T0QEyyjzlTylKDnlC/S/mdyFWKGxt8Y4UffzN8pb2D0D0L
-         mSwcBztZ050HDS1z/YCQKixvM4h9HevZ83fcoxBtBIjKgOoeZ+279ycEM7diA38Dkotk
-         S1Zxj4yDs17V20Cd6uZrvalE+diLhwDVWSFCaYKECj5y4pxsWMbaOJB0CCuytl/01J7u
-         Wd/nc8F9C5+BefyAarz3aUQJA0MKyWXuOmuEuPFY6ZlqNKEmX4+q8ZizcIPEPda/hpBN
-         e02A==
-X-Forwarded-Encrypted: i=1; AJvYcCXsURdkYjUffdU7H8DqfeCeTaDmc/gYKFQP5xLKBRUK7vAgD2Ld+RF5h9GSSTx3dc+Xc8uSDyBb6qRaLSoe@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7iByWlfiNyw5jeW4C12Ec57fa4NvyitYH5yKgRb3hHqGU+c/9
-	BB/el1f446U6n64rJgFXZgzqMuCaDXoPXb8GW5leIUn0w1A1VdRa6r5Bdt1BZcmTqD9Uo2sykVE
-	gqq8o2M7Q4xU1B/nYq13gBHMRWkdRILxnCc7DP90M
-X-Gm-Gg: ASbGncv0lMHBl80Z1LlI9ivVg9/Qp15DvEEcMQp/ZQuOvbG0HLgyy45kbjX3ZOCOs7c
-	4Im7tHCz55/kbxzO1yT4UFVsU1azyU+dte7mx5mwEs1wtzhDU8i0bEAPzjqaYg+moxyNoA170iz
-	3WWjLuLJriumh8nXh2wDckoyxHbPIwCKZuEXL7/lg/QTNP9O9QTqi5Kf8isTem2ZdPd1PnyYUzy
-	nbr9T6CjVf7wpw7q8Era+mNlM4giRdQ1RA8AWFwLlXkgzPZOmX7gYlhGwZK9cAtZGoHS4PeCjQ3
-	bm3M66ZN6HCinSN0207fbwApZQ==
-X-Google-Smtp-Source: AGHT+IG4uRI0PEq0NpCoNDKGJg8OF/SBz8TfroxjeXZLoJ/rlBcIJ1dSo30wyhO9fuhyg8jXgMGwvEzpXnS5vWaUElc=
-X-Received: by 2002:a05:6000:2dc9:b0:42b:3131:5436 with SMTP id
- ffacd0b85a97d-42b5934140fmr3150253f8f.16.1763129312876; Fri, 14 Nov 2025
- 06:08:32 -0800 (PST)
+        bh=wUyLyvVVKlFsH483G8ekZl8QKBp07gDZblbUWMC1jGk=;
+        b=qVmcStmS3YCdXZab3GXVsiqQhJNX+ohGtlYecwSTAdWzjxtvM5Y6uS1UgXRxBYcx0Q
+         SK40dlj+5SzdZqgED/beBHjmuuQSqatxM8TiqVkd/FiaChRoQ5p0ESc+d9yr9aWCAd9Z
+         Y/85x/+w+Q4ylCeSAaFVlQXEwnwX76bqJAem7lR9CmzDSKO3RrAuBV7T33maaSbJpfwg
+         3lpglnG99AY1K8p8e56rl4dOZVS0Z99PM6dXHIl2Fut8EngGMsctXh+Zocs7VQq6yJkW
+         owfxk4JkOkAE6PG9yIDhYR9+VV2ZdCtCeb81Boqcx4HzSjDERABFiQc0T/lGAr2LsRZL
+         jtDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW0doh+cNSOwvSJ+7LNQFgQYhGklwjs49CXgJR3Eb4fFUOAzri/Y23NKUYp0DAJO37dMaGQiSqlB7oF/MJZ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6xuWMFdXHvB2daKl2/XaKYYdYP5V6NhbArNkjNCa2bp8ZzpDT
+	LWCfK3cR4P/DMQprdfsjh205VgnSq43M6u1DlPagd+3lcBr7T+vF4Udkdez1p61Fian6XNC5XsK
+	c+UIu09x6ibeF1EW1gQjlouUymdKVVG95OHuqJA3L0Q==
+X-Gm-Gg: ASbGncuQ+iQg2RjqQgjvnv2YxhKneCauiawqV6l0e2KQ+0SQSessN47j1XNDk1f44oW
+	ZpLxgjMCLgMCjzTXk9YkXCDgjU/RUjhQd4ZgO5CcRP8wKKjrTHWw7FCIS4BSysrjt5Us498Id9C
+	+oUYb/LxA7CXmorS3BUnymswt0eEHEk/RYWRHd9bd5CYioCrRpdFfYg/WzPv3Oj0UDzyNsvC+oX
+	g8pBjx126M1NgqR2+hEsJdzC7wNyBmzoL1fYvUHPqoVEpDsNx9hOYiLoGeegzu2HWAo
+X-Google-Smtp-Source: AGHT+IHfDqjVq2HQlgOvTYSXDolFUyeHkC2njHwkXXlWNiYY2vI3dgM9DBu5caW7N/gKzWP7vOw7EXXGJJQDhW4sn3w=
+X-Received: by 2002:a17:906:6601:b0:b73:6998:7bcd with SMTP id
+ a640c23a62f3a-b7369987d82mr195682366b.23.1763129424454; Fri, 14 Nov 2025
+ 06:10:24 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1763126447.git.lorenzo.stoakes@oracle.com>
- <6289d60b6731ea7a111c87c87fb8486881151c25.1763126447.git.lorenzo.stoakes@oracle.com>
- <aRcztRaDVyiDO7aH@google.com> <e98d913e-71bc-4b58-95ec-8ae054c43120@lucifer.local>
-In-Reply-To: <e98d913e-71bc-4b58-95ec-8ae054c43120@lucifer.local>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Fri, 14 Nov 2025 15:08:21 +0100
-X-Gm-Features: AWmQ_blLOyoFop_bk6_FefgrlF5VT0ZZlbzlSQ-G0fF4lbhgUPVCotLgW7GR15A
-Message-ID: <CAH5fLghqBxnXv_3uir6hD7=J-Xs=i8B-B7++7J2vCMwZ-5+wyA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] mm: declare VMA flags by bit
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Muchun Song <muchun.song@linux.dev>, 
-	Oscar Salvador <osalvador@suse.de>, David Hildenbrand <david@redhat.com>, 
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
-	Axel Rasmussen <axelrasmussen@google.com>, Yuanchu Xie <yuanchu@google.com>, 
-	Wei Xu <weixugc@google.com>, Peter Xu <peterx@redhat.com>, Ingo Molnar <mingo@redhat.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, Kees Cook <kees@kernel.org>, 
-	Matthew Wilcox <willy@infradead.org>, Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>, 
-	Leon Romanovsky <leon@kernel.org>, Zi Yan <ziy@nvidia.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Nico Pache <npache@redhat.com>, 
-	Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>, 
-	Lance Yang <lance.yang@linux.dev>, Xu Xin <xu.xin16@zte.com.cn>, 
-	Chengming Zhou <chengming.zhou@linux.dev>, Jann Horn <jannh@google.com>, 
-	Matthew Brost <matthew.brost@intel.com>, Joshua Hahn <joshua.hahnjy@gmail.com>, 
-	Rakie Kim <rakie.kim@sk.com>, Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>, 
-	Ying Huang <ying.huang@linux.alibaba.com>, Alistair Popple <apopple@nvidia.com>, 
-	Pedro Falcato <pfalcato@suse.de>, Shakeel Butt <shakeel.butt@linux.dev>, 
-	David Rientjes <rientjes@google.com>, Rik van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>, 
-	Kemeng Shi <shikemeng@huaweicloud.com>, Kairui Song <kasong@tencent.com>, 
-	Nhat Pham <nphamcs@gmail.com>, Baoquan He <bhe@redhat.com>, Chris Li <chrisl@kernel.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Qi Zheng <zhengqi.arch@bytedance.com>, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	Bjorn Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org
+References: <20251107210526.257742-1-pasha.tatashin@soleen.com>
+ <20251107210526.257742-8-pasha.tatashin@soleen.com> <aRcnRFnqhm3jkqd3@kernel.org>
+In-Reply-To: <aRcnRFnqhm3jkqd3@kernel.org>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Fri, 14 Nov 2025 09:09:48 -0500
+X-Gm-Features: AWmQ_bkHcsPKYBwcaJBkDElGfbsE2VmqDOwwNe9Hzx_22lS14GpcHvhkYld0Zm8
+Message-ID: <CA+CK2bCO=Hu0a4P5-_a4QrOSdKLR7OXEk=Nsz-p6TvjEHV9rwQ@mail.gmail.com>
+Subject: Re: [PATCH v5 07/22] liveupdate: luo_ioctl: add user interface
+To: Mike Rapoport <rppt@kernel.org>
+Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com, 
+	dmatlack@google.com, rientjes@google.com, corbet@lwn.net, 
+	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, 
+	ojeda@kernel.org, aliceryhl@google.com, masahiroy@kernel.org, 
+	akpm@linux-foundation.org, tj@kernel.org, yoann.congal@smile.fr, 
+	mmaurer@google.com, roman.gushchin@linux.dev, chenridong@huawei.com, 
+	axboe@kernel.dk, mark.rutland@arm.com, jannh@google.com, 
+	vincent.guittot@linaro.org, hannes@cmpxchg.org, dan.j.williams@intel.com, 
+	david@redhat.com, joel.granados@kernel.org, rostedt@goodmis.org, 
+	anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn, 
+	linux@weissschuh.net, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-mm@kvack.org, gregkh@linuxfoundation.org, tglx@linutronix.de, 
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, 
+	hpa@zytor.com, rafael@kernel.org, dakr@kernel.org, 
+	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com, 
+	myungjoo.ham@samsung.com, yesanishhere@gmail.com, Jonathan.Cameron@huawei.com, 
+	quic_zijuhu@quicinc.com, aleksander.lobakin@intel.com, ira.weiny@intel.com, 
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
+	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net, 
+	brauner@kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	saeedm@nvidia.com, ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com, 
+	leonro@nvidia.com, witu@nvidia.com, hughd@google.com, skhawaja@google.com, 
+	chrisl@kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 14, 2025 at 3:02=E2=80=AFPM Lorenzo Stoakes
-<lorenzo.stoakes@oracle.com> wrote:
+On Fri, Nov 14, 2025 at 7:58=E2=80=AFAM Mike Rapoport <rppt@kernel.org> wro=
+te:
 >
-> On Fri, Nov 14, 2025 at 01:50:45PM +0000, Alice Ryhl wrote:
-> > On Fri, Nov 14, 2025 at 01:26:08PM +0000, Lorenzo Stoakes wrote:
-> > > diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings=
-_helper.h
-> > > index 2e43c66635a2..4c327db01ca0 100644
-> > > --- a/rust/bindings/bindings_helper.h
-> > > +++ b/rust/bindings/bindings_helper.h
-> > > @@ -108,7 +108,32 @@ const xa_mark_t RUST_CONST_HELPER_XA_PRESENT =3D=
- XA_PRESENT;
-> > >
-> > >  const gfp_t RUST_CONST_HELPER_XA_FLAGS_ALLOC =3D XA_FLAGS_ALLOC;
-> > >  const gfp_t RUST_CONST_HELPER_XA_FLAGS_ALLOC1 =3D XA_FLAGS_ALLOC1;
-> > > +
-> > >  const vm_flags_t RUST_CONST_HELPER_VM_MERGEABLE =3D VM_MERGEABLE;
-> > > +const vm_flags_t RUST_CONST_HELPER_VM_READ =3D VM_READ;
-> > > +const vm_flags_t RUST_CONST_HELPER_VM_WRITE =3D VM_WRITE;
-> > > +const vm_flags_t RUST_CONST_HELPER_VM_EXEC =3D VM_EXEC;
-> > > +const vm_flags_t RUST_CONST_HELPER_VM_SHARED =3D VM_SHARED;
-> > > +const vm_flags_t RUST_CONST_HELPER_VM_MAYREAD =3D VM_MAYREAD;
-> > > +const vm_flags_t RUST_CONST_HELPER_VM_MAYWRITE =3D VM_MAYWRITE;
-> > > +const vm_flags_t RUST_CONST_HELPER_VM_MAYEXEC =3D VM_MAYEXEC;
-> > > +const vm_flags_t RUST_CONST_HELPER_VM_MAYSHARE =3D VM_MAYEXEC;
-> > > +const vm_flags_t RUST_CONST_HELPER_VM_PFNMAP =3D VM_PFNMAP;
-> > > +const vm_flags_t RUST_CONST_HELPER_VM_IO =3D VM_IO;
-> > > +const vm_flags_t RUST_CONST_HELPER_VM_DONTCOPY =3D VM_DONTCOPY;
-> > > +const vm_flags_t RUST_CONST_HELPER_VM_DONTEXPAND =3D VM_DONTEXPAND;
-> > > +const vm_flags_t RUST_CONST_HELPER_VM_LOCKONFAULT =3D VM_LOCKONFAULT=
-;
-> > > +const vm_flags_t RUST_CONST_HELPER_VM_ACCOUNT =3D VM_ACCOUNT;
-> > > +const vm_flags_t RUST_CONST_HELPER_VM_NORESERVE =3D VM_NORESERVE;
-> > > +const vm_flags_t RUST_CONST_HELPER_VM_HUGETLB =3D VM_HUGETLB;
-> > > +const vm_flags_t RUST_CONST_HELPER_VM_SYNC =3D VM_SYNC;
-> > > +const vm_flags_t RUST_CONST_HELPER_VM_ARCH_1 =3D VM_ARCH_1;
-> > > +const vm_flags_t RUST_CONST_HELPER_VM_WIPEONFORK =3D VM_WIPEONFORK;
-> > > +const vm_flags_t RUST_CONST_HELPER_VM_DONTDUMP =3D VM_DONTDUMP;
-> > > +const vm_flags_t RUST_CONST_HELPER_VM_SOFTDIRTY =3D VM_SOFTDIRTY;
-> > > +const vm_flags_t RUST_CONST_HELPER_VM_MIXEDMAP =3D VM_MIXEDMAP;
-> > > +const vm_flags_t RUST_CONST_HELPER_VM_HUGEPAGE =3D VM_HUGEPAGE;
-> > > +const vm_flags_t RUST_CONST_HELPER_VM_NOHUGEPAGE =3D VM_NOHUGEPAGE;
+> On Fri, Nov 07, 2025 at 04:03:05PM -0500, Pasha Tatashin wrote:
+> > Introduce the user-space interface for the Live Update Orchestrator
+> > via ioctl commands, enabling external control over the live update
+> > process and management of preserved resources.
 > >
-> > I got this error:
+> > The idea is that there is going to be a single userspace agent driving
+> > the live update, therefore, only a single process can ever hold this
+> > device opened at a time.
 > >
-> > error[E0428]: the name `VM_SOFTDIRTY` is defined multiple times
-> >       --> rust/bindings/bindings_generated.rs:115967:1
-> >        |
-> > 13440  | pub const VM_SOFTDIRTY: u32 =3D 0;
-> >        | -------------------------------- previous definition of the va=
-lue `VM_SOFTDIRTY` here
-> > ...
-> > 115967 | pub const VM_SOFTDIRTY: vm_flags_t =3D 0;
-> >        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ `VM_SOFTDIRTY` redefin=
-ed here
-> >        |
-> >        =3D note: `VM_SOFTDIRTY` must be defined only once in the value =
-namespace of this module
+> > The following ioctl commands are introduced:
 > >
->
-> That's odd, obviously I build tested this and didn't get the same error.
->
-> Be good to know what config options to enable for testing for rust. I rep=
-ro'd
-> the previously reported issues, and new ones since I'm now declaring thes=
+> > LIVEUPDATE_IOCTL_CREATE_SESSION
+> > Provides a way for userspace to create a named session for grouping fil=
 e
-> values consistently using BIT().
+> > descriptors that need to be preserved. It returns a new file descriptor
+> > representing the session.
+> >
+> > LIVEUPDATE_IOCTL_RETRIEVE_SESSION
+> > Allows the userspace agent in the new kernel to reclaim a preserved
+> > session by its name, receiving a new file descriptor to manage the
+> > restored resources.
+> >
+> > Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+> > ---
+> >  include/uapi/linux/liveupdate.h  |  64 ++++++++++++
+> >  kernel/liveupdate/luo_internal.h |  21 ++++
+> >  kernel/liveupdate/luo_ioctl.c    | 173 +++++++++++++++++++++++++++++++
+> >  3 files changed, 258 insertions(+)
 >
-> But in my build locally, no errors with LLVM=3D1 and CONFIG_RUST=3Dy.
-
-I got this error because my config defines VM_SOFTDIRTY as VM_NONE,
-which bindgen can resolve to zero. You probably have a config where
-it's defined using a function-like macro, so bindgen did not generate
-a duplicate for you.
-
-> > Please add the constants in rust/bindgen_parameters next to
-> > ARCH_KMALLOC_MINALIGN to avoid this error. This ensures that only the
-> > version from bindings_helper.h is generated.
+> ...
 >
-> As in
+> > +static int luo_ioctl_create_session(struct luo_ucmd *ucmd)
+> > +{
+> > +     struct liveupdate_ioctl_create_session *argp =3D ucmd->cmd;
+> > +     struct file *file;
+> > +     int ret;
+> > +
+> > +     argp->fd =3D get_unused_fd_flags(O_CLOEXEC);
+> > +     if (argp->fd < 0)
+> > +             return argp->fd;
+> > +
+> > +     ret =3D luo_session_create(argp->name, &file);
+> > +     if (ret)
 >
-> --block-list-item <VM_blah> for every flag?
+>                 put_unused_fd(fd) ?
 
-Yes.
+Yes, thank you.
 
-Alice
+>
+> > +             return ret;
+> > +
+> > +     ret =3D luo_ucmd_respond(ucmd, sizeof(*argp));
+> > +     if (ret) {
+> > +             fput(file);
+> > +             put_unused_fd(argp->fd);
+> > +             return ret;
+> > +     }
+>
+> I think that using gotos for error handling is more appropriate here.
+
+Sure, I will do that
+
+>
+> > +
+> > +     fd_install(argp->fd, file);
+> > +
+> > +     return 0;
+> > +}
+> > +
+> > +static int luo_ioctl_retrieve_session(struct luo_ucmd *ucmd)
+> > +{
+> > +     struct liveupdate_ioctl_retrieve_session *argp =3D ucmd->cmd;
+> > +     struct file *file;
+> > +     int ret;
+> > +
+> > +     argp->fd =3D get_unused_fd_flags(O_CLOEXEC);
+> > +     if (argp->fd < 0)
+> > +             return argp->fd;
+> > +
+> > +     ret =3D luo_session_retrieve(argp->name, &file);
+> > +     if (ret < 0) {
+> > +             put_unused_fd(argp->fd);
+> > +
+> > +             return ret;
+> > +     }
+> > +
+> > +     ret =3D luo_ucmd_respond(ucmd, sizeof(*argp));
+> > +     if (ret) {
+> > +             fput(file);
+> > +             put_unused_fd(argp->fd);
+> > +             return ret;
+> > +     }
+>
+> and here.
+
+Sure
+
+>
+> > +
+> > +     fd_install(argp->fd, file);
+> > +
+> > +     return 0;
+> > +}
+> > +
+>
+> --
+> Sincerely yours,
+> Mike.
 
