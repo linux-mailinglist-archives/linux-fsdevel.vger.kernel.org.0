@@ -1,124 +1,188 @@
-Return-Path: <linux-fsdevel+bounces-68553-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68554-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B675C5F882
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Nov 2025 23:45:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2764CC5FA56
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Nov 2025 01:00:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C0C864E2660
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Nov 2025 22:45:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85F433BEB9C
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Nov 2025 00:00:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12438301473;
-	Fri, 14 Nov 2025 22:45:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A03D30FC31;
+	Sat, 15 Nov 2025 00:00:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="evzmHh5O"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HhrVLHzT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CC992FFF9C;
-	Fri, 14 Nov 2025 22:45:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5BA730C60B
+	for <linux-fsdevel@vger.kernel.org>; Sat, 15 Nov 2025 00:00:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763160339; cv=none; b=aY0mvFz/MGTUhq5fE7arw43Luc+zlmDQWJsGWrUTG3P9eod8p7GeaBnNjkfcmZDHacv32m0dSD5ksHSHFMOl/MNlWmfAEQvQWlExREvMAccVsZZTAevGsT2ocQYvKFRSkzs3XrC2ouRVMNNEzrDDOgP3sBh1owal71M+prPNt2E=
+	t=1763164807; cv=none; b=tgOP7rmptg4rwaoHoNhAeS3hS9tKriOdvREmDgxHjTnPqDjK4ijgAW4g9NFZSM3Zf59ApjPck5vfa5b6dcUUxUB0Fjg4CY0CFfH9VRyLSJnSXoZUYOJFGHBxMP/l6837m/a124gEgzivL5yj+WSnaPWJrHLEwgenBV0HddbKTHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763160339; c=relaxed/simple;
-	bh=fdRwnB7LIevOLDZngRzWQhpRkGoW8zq3EudhEZZzEKw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=VhWmY9QjgoPKNDvr/FKkQkjTh2W0iaAZND+osEB26h7Jz/xwARtvZFVWb5c0HvI3bI6Z69Wug24KfkOWYqR9nizU4xDZLRKdiMQdm1gs+2Z0xhJxOklExVO13Sc12HXC1HoaYPoamnb8IfHT9/W6lZ6lnQt+JVnvFZ1L2U2IdCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=evzmHh5O; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4D9DC4CEF1;
-	Fri, 14 Nov 2025 22:45:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763160339;
-	bh=fdRwnB7LIevOLDZngRzWQhpRkGoW8zq3EudhEZZzEKw=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=evzmHh5OGDPlrzJlnjN3y2fjDGWW+RwdqoquhAMtOwnvrGpjzncU7pSrgahnSELVo
-	 duCLyyZpVGGKNlKQqjKfNjqhMYBddgAgnImr6Oaqq/qAg2mI5on7KvK8Jx9XXx/geD
-	 LQb6WE6oBfth5cx9TtRfBzX8YgEhU9MF+MWVlx6Jk8OLRC2c3Tnm+3WrkLwSQNlUTa
-	 kcpq7FVTaJWN68VX0BfNyV+TnMm8h0QAtEBo34aYDsnHBK21MXUUMy8laTYAzfrydP
-	 Jv2fhqP0msaCD6mNRiKpp+WpDjigAPKS2nRmchbEAYcMpX7gt/cfZtmhrrZcoaDo/K
-	 ECHv8HULAuogg==
-From: Christian Brauner <brauner@kernel.org>
-Date: Fri, 14 Nov 2025 23:45:26 +0100
-Subject: [PATCH 5/5] ovl: remove struct ovl_cu_creds and associated
- functions
+	s=arc-20240116; t=1763164807; c=relaxed/simple;
+	bh=eUj6MJne0yoSVBbdK6TfheRVbwmwWQqzr8OkId+ZdLk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZbGChyreaaql1mg5QmJ86EwC4g4wzsHhS4zNL+NpqY0jz5YV+TlxIn1xi5uQu2jtQ9hrm2j1hE3MMAmUclL5pmDOAJ0Czy3o7snEv2hL1fiS7xDoYpfMmsjbG5GJV5ExCK153Uf6n4Besfdo//2BHCvvqV7RF/3y3qoCOtNEPZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HhrVLHzT; arc=none smtp.client-ip=209.85.160.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4e88ed3a132so27584701cf.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Nov 2025 16:00:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1763164803; x=1763769603; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qGbzfgmT3B3HxmKWif+aRE4qTK2l+Ffa1Yg6PfdTFSc=;
+        b=HhrVLHzTt9Jf6lADk1vcuCzOWct7rT/ge5XE9kC5fo1d8lYduzG9U1lwjU1E8zrBkY
+         /myPxKAbZIPW3NBX5ompSQnOMHSbTH/Uw7Vrp5hVq1FEX7lPp6bNhEBo8rH57/WT5tkm
+         +GacyqG5TwS6uIJzD+Rt3XZFqfQ1YtcT0FY3yM6d2EWxChr9zqSt89UdQVGy+6GcvxUu
+         McYZ5r15p1utyFw6zVBALELzve3+M2PlH2sBqaYojySaqfdg8V3dRT64GI27RWqrw5t+
+         TsbftT1r0rHAY1Men+4k6fNjBm3sbi2O3/z4sj6R5J5S8i69WMXAJ2siLhHpJQWQX34N
+         vxWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763164803; x=1763769603;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=qGbzfgmT3B3HxmKWif+aRE4qTK2l+Ffa1Yg6PfdTFSc=;
+        b=Jqh3JZcdyEPkHBj0ZgBskRtQQinasBpJ6aVuUZS4LNh3kpt9wFMOIzNp+aXwauFSfS
+         9RVwp76uVTNX/VVpuXLkbD92roSmtlgTlfUg2kdlXdGoBTQzRYvev8yYcukuUTEeaTZM
+         ixmqcO37BfISl+Bw3bmkjlJK0TRllirHHjM38cDFEtaNds+Ol4GBfyE7QCvhevG9r9lF
+         ItM4lKN8sHDemh7iJQ+IkX9q9vF0fjffS6o2JFUazbxsoRqv//3eGPaEjR+zIJ0iQyLI
+         S9J66MicOfPXAywFtpz/nUG9k2E7OabgBdrtWkc/GQzhRdbzxJIQqg5SoJewDAbSkIRL
+         Hs0Q==
+X-Gm-Message-State: AOJu0YxkgjIRjnJGdXVtTwMeWE66JnrHlG7i6mt2IWjIi9YiwECH+ps+
+	78bcHaZ+5PPDZo6+TdFuS5fagVBLHiN/Cur6kEVXYGnVi+8iyXmtMKohK6QwWQYM/TLErai+RoY
+	rv+RcP4IDghu3HYHPgYulzZ9e5GrPaeJ3ILIXMWw=
+X-Gm-Gg: ASbGncsK5XpgtidLbdR+gDYttA+hP8juYAD3RTml3d0eKob1RmUmyLzB9A1/rSFe/2g
+	O9ZLMTX9onpgR/agzahxk4/CBp/Mi+UDIcN1dQds0/5OUKgKlFTnLL4cSU+F87uAReNXkODjqrR
+	Hgj5jsngFTl3FergyB2/ns0LN0Ra2sOiH3k3IpQnGF2lfg0Aq5IL4HgpX02FvpiCYEI8AFnGqjA
+	PaIc4FIUfCvZq6tMky0SMF0yv64zFXiSghd1CyQdhDTbnLU25zSzejAC48=
+X-Google-Smtp-Source: AGHT+IFuXiTIheMG3+4gmC1q+oV5Yb6/nZ5Dj/15NZpvhB9K3y74K4FlHz1GdbdRouCeDasOvS1IpwzwFM/b3I71HzM=
+X-Received: by 2002:a05:622a:1818:b0:4b7:ad20:9393 with SMTP id
+ d75a77b69052e-4edf206c3d3mr76294551cf.4.1763164802938; Fri, 14 Nov 2025
+ 16:00:02 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251114-work-ovl-cred-guard-copyup-v1-5-ea3fb15cf427@kernel.org>
-References: <20251114-work-ovl-cred-guard-copyup-v1-0-ea3fb15cf427@kernel.org>
-In-Reply-To: <20251114-work-ovl-cred-guard-copyup-v1-0-ea3fb15cf427@kernel.org>
-To: Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
- linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
- Christian Brauner <brauner@kernel.org>
-X-Mailer: b4 0.15-dev-a6db3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1218; i=brauner@kernel.org;
- h=from:subject:message-id; bh=fdRwnB7LIevOLDZngRzWQhpRkGoW8zq3EudhEZZzEKw=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSKb+Q44LzrKuP+Y3u4lyvPaQ/byLVsxd/J95LbFzt8Y
- OcVknm7s6OUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAiX1gZ/pdZiTonq2fWihpV
- m1eVfhLjSPzwwKczh+tXnJmv8Mtd/xn+V/o+/CPYz/uGaX1U8UbrzouRrhXM29VUCiQvt+/b/Xk
- yBwA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp;
- fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+References: <20251027222808.2332692-1-joannelkoong@gmail.com>
+In-Reply-To: <20251027222808.2332692-1-joannelkoong@gmail.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Fri, 14 Nov 2025 15:59:52 -0800
+X-Gm-Features: AWmQ_bmRlXebUAoVOMZ3KYImfI2XMgqsAutH5pwXFp2qmwPO8Oe22i50fOp_O8A
+Message-ID: <CAJnrk1bG7fAX8MfwJL_D2jzMNv5Rj9=1cgQvVpqC1=mGaeAwOg@mail.gmail.com>
+Subject: Re: [PATCH v2 0/8] fuse: support io-uring registered buffers
+To: miklos@szeredi.hu, axboe@kernel.dk
+Cc: linux-fsdevel@vger.kernel.org, bschubert@ddn.com, asml.silence@gmail.com, 
+	io-uring@vger.kernel.org, xiaobing.li@samsung.com, csander@purestorage.com, 
+	kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Now that we have this all ported to a cred guard remove the struct and
-the associated helpers.
+On Mon, Oct 27, 2025 at 3:29=E2=80=AFPM Joanne Koong <joannelkoong@gmail.co=
+m> wrote:
+>
+> This patchset adds fuse support for io-uring registered buffers.
+> Daemons may register buffers ahead of time, which will eliminate the over=
+head
+> of pinning/unpinning user pages and translating virtual addresses for eve=
+ry
+> server-kernel interaction.
 
-Signed-off-by: Christian Brauner <brauner@kernel.org>
----
- fs/overlayfs/copy_up.c | 28 ----------------------------
- 1 file changed, 28 deletions(-)
+Registered buffers helps with the I/O overhead, but there's still
+significant memory waste within each buffer. Each entry in a queue
+allocates a dedicated buffer of at least 1 MB (for some performant
+servers like passthrough_hp, each entry's buffer is 4 MB, which adds
+up (eg with the libfuse default queue depth of 8 on a 64-core machine,
+that's 2 GB of buffers per fuse connection)) but most of this space
+goes unused. In practice, entries on a queue will rarely consume their
+full buffer capacity simultaneously.
 
-diff --git a/fs/overlayfs/copy_up.c b/fs/overlayfs/copy_up.c
-index 2176903d4538..537295b17af8 100644
---- a/fs/overlayfs/copy_up.c
-+++ b/fs/overlayfs/copy_up.c
-@@ -727,34 +727,6 @@ static int ovl_copy_up_metadata(struct ovl_copy_up_ctx *c, struct dentry *temp)
- 	return err;
- }
- 
--struct ovl_cu_creds {
--	const struct cred *old;
--	struct cred *new;
--};
--
--static int __maybe_unused ovl_prep_cu_creds(struct dentry *dentry, struct ovl_cu_creds *cc)
--{
--	int err;
--
--	cc->old = cc->new = NULL;
--	err = security_inode_copy_up(dentry, &cc->new);
--	if (err < 0)
--		return err;
--
--	if (cc->new)
--		cc->old = override_creds(cc->new);
--
--	return 0;
--}
--
--static void __maybe_unused ovl_revert_cu_creds(struct ovl_cu_creds *cc)
--{
--	if (cc->new) {
--		revert_creds(cc->old);
--		put_cred(cc->new);
--	}
--}
--
- static const struct cred *ovl_prepare_copy_up_creds(struct dentry *dentry)
- {
- 	struct cred *copy_up_cred = NULL;
+Instead of using registered buffers, I think it's better if we go with
+a kernel managed ring buffer. It'll have the same advantages in
+reducing I/O overhead as registered buffers but also give us
+optionality later on to support IORING_CQE_F_BUF_MORE for incremental
+buffer consumption or add multiple different-sized ring buffer pools
+(eg for large payloads vs small payloads, which is also something we
+have to differentiate between for zero-copy), whereas we would have no
+way of supporting that with registered buffers.
 
--- 
-2.47.3
+For v3, I'm going to go this direction.
 
+Thanks,
+Joanne
+
+>
+> The main logic for fuse registered buffers is in the last patch (patch 8/=
+8).
+> Patch 1/8 adds an io_uring api for fetching the registered buffer and pat=
+ches
+> (2-7)/8 refactors the fuse io_uring code, which additionally will make ad=
+ding
+> in the logic for registered buffers neater.
+>
+> The libfuse changes can be found in this branch:
+> https://github.com/joannekoong/libfuse/tree/registered_buffers. The libfu=
+se
+> implementation first tries registered buffers during registration and if =
+this
+> fails, will retry with non-registered buffers. This prevents having to ad=
+d a
+> new init flag (but does have the downside of printing dmesg errors for th=
+e
+> failed registrations when trying the registered buffers). If using regist=
+ered
+> buffers and the daemon for whatever reason unregisters the buffers midway
+> through, then this will sever server-kernel communication. Libfuse will n=
+ever
+> do this. Libfuse will only unregister the buffers when the entire session=
+ is
+> being destroyed.
+>
+> Benchmarks will be run and posted.
+>
+> Thanks,
+> Joanne
+>
+> v1: https://lore.kernel.org/linux-fsdevel/20251022202021.3649586-1-joanne=
+lkoong@gmail.com/
+> v1 -> v2:
+> * Add io_uring_cmd_import_fixed_full() patch
+> * Construct iter using io_uring_cmd_import_fixed_full() per cmd instead o=
+f recyling
+>   iters.
+> * Kmap the header instead of using bvec iter for iterating/copying. This =
+makes
+>   the code easier to read.
+>
+> Joanne Koong (8):
+>   io_uring/uring_cmd: add io_uring_cmd_import_fixed_full()
+>   fuse: refactor io-uring logic for getting next fuse request
+>   fuse: refactor io-uring header copying to ring
+>   fuse: refactor io-uring header copying from ring
+>   fuse: use enum types for header copying
+>   fuse: add user_ prefix to userspace headers and payload fields
+>   fuse: refactor setting up copy state for payload copying
+>   fuse: support io-uring registered buffers
+>
+>  fs/fuse/dev_uring.c          | 366 +++++++++++++++++++++++++----------
+>  fs/fuse/dev_uring_i.h        |  27 ++-
+>  include/linux/io_uring/cmd.h |   3 +
+>  io_uring/rsrc.c              |  14 ++
+>  io_uring/rsrc.h              |   2 +
+>  io_uring/uring_cmd.c         |  13 ++
+>  6 files changed, 316 insertions(+), 109 deletions(-)
+>
+> --
+> 2.47.3
+>
 
