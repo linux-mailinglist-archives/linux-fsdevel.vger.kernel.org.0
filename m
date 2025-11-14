@@ -1,136 +1,117 @@
-Return-Path: <linux-fsdevel+bounces-68412-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68410-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 390FCC5ACFA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Nov 2025 01:42:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90434C5AC2A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Nov 2025 01:25:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0AA7F35581A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Nov 2025 00:39:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 994FE3B9EE6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Nov 2025 00:25:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E585221F29;
-	Fri, 14 Nov 2025 00:38:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4485C215F42;
+	Fri, 14 Nov 2025 00:25:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XUAnNNjJ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RHkqcUcR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB30919F43A;
-	Fri, 14 Nov 2025 00:38:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0833420F079
+	for <linux-fsdevel@vger.kernel.org>; Fri, 14 Nov 2025 00:25:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763080712; cv=none; b=rDyzGWNXb5IkhWZFfyBnRtwvCRWK7Mgp7x6MsnwUhniVJaA64lALMB4Yke+qr3drCXRvKtJzxRM0n9NEJqToW6F0egytF+kmkptP2fJl7/lTny1hwDxrLFUL2BQTmtUchhxj8qK3Wm222oVX0S30PYaIZXzNEc9/bP98RGSl8/I=
+	t=1763079905; cv=none; b=kn8/PYzEEC0xIY8hi2lqEM9zD/HDUXtCllivHP3admJkVUK//j/blITf+ffTcQDFevhJqe7n4qZYg6+JtNEwjJ6NEy3XAmiIvzQ1xEqhPUrKqOl2jbEy03xaduliFeMvS7hA7kBIjKsnRpRtaTNuKcY8lNMMe6KxtbE4OlTEiBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763080712; c=relaxed/simple;
-	bh=VnC/Cpeb7QXhyfiqkSDO4UcZXLs/noIUYMjxye6egB0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qMG3BsDNwPDPaxes00qaLdY/q9izp6ZwXIFT7rbNjp7GuPTaTzvZnjyzJIzESyoZqSm1VF8Lb5eaciPYdS2VpIFAinp7al0bIPiaqt5d4fH/ry43G7nrpbobkcNeJEPR9X1k0w3ddPdEbD+GIL1IGulz8bmj05D0sP3h4ply3Ew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XUAnNNjJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08769C4CEF8;
-	Fri, 14 Nov 2025 00:37:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763080712;
-	bh=VnC/Cpeb7QXhyfiqkSDO4UcZXLs/noIUYMjxye6egB0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XUAnNNjJ+3nSCgOJ3PR8vZDu67EvX/FawQM01PvWo/ci8bnmP2rNvE/WsnHqZ6L6S
-	 YKJx52A01ibfJBY+6aDXkc9edSsf4tVWTFBLbBPjeEaaFT4ks/H/cxNgYKplSvAVm/
-	 mF0mzwsc2B7Od1fIZWgDi/uuCqoQhcL7Xc0bIvMf88v59R1GUTwcom7oHYlUEAD2WH
-	 H+ShHpfNNlDzA60Z/AqHCux1aFzH0HUcNYhbKHYBsyiJqZJQR9LHP42oOokHTgpgo5
-	 U7AsaeRG2b0CFIMRJEJZBCZ/D+eV2pKlMQjeWCnkd0ktHmQtIc3FdQZxZiMjn/m2aI
-	 iSJdeGllV5Oaw==
-Date: Thu, 13 Nov 2025 16:37:38 -0800
-From: Eric Biggers <ebiggers@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Jens Axboe <axboe@kernel.dk>, Vlastimil Babka <vbabka@suse.cz>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christoph Lameter <cl@gentwo.org>,
-	David Rientjes <rientjes@google.com>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Harry Yoo <harry.yoo@oracle.com>, linux-block@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH 7/9] blk-crypto: handle the fallback above the block layer
-Message-ID: <20251114003738.GC30712@quark>
-References: <20251031093517.1603379-1-hch@lst.de>
- <20251031093517.1603379-8-hch@lst.de>
+	s=arc-20240116; t=1763079905; c=relaxed/simple;
+	bh=vw+FKtjiOcF1jBdCTivAUHD3lvulejQ0pJB12Eyy5yc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=uzngQT3O7aKBYI6oyOkNfB+O3XCBSn4j2ZnX55Cj8/tQ+aEM4LCTVIoJV3oK5yUzm0uvrBKgS6AINLGfgVnxpeLUAK8l6FJJozW19hONbG0Il097h7xdZN8zlG3lyRq0Uaxr+CF2rno3+numIhNNlCxu6M5xfGaCg8eAp/eTSRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RHkqcUcR; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-477782a42a8so918765e9.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Nov 2025 16:25:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1763079902; x=1763684702; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KVG1YLgNpyjkbSIwgMI7KTE7qWYSZZq+m7h7F4aGjIA=;
+        b=RHkqcUcRq9wjxSku2abC9k/hkZatT526IePrbGA5qiOSr1K4cGMpviiaFcqiKbZb36
+         4NdBBnplYNUkFXKtWiAA+H6tY+cFELAMU4rfO7TZmxmuP2VgqJ9tVdTQBA1K42gkxjeD
+         jtnTdiSlNx32KW5+a62WEBHvCsiNgeL/3RG4ZcLC7o13f3Gcd/jtqXKro+veqnjzW4AD
+         MjxelCMLTDjekvyUWc83+pKE9SvPCa4AwXNNwiCKh/TjyV32zZg3yk2fTCZ5anYx9JC8
+         HzZhAiK+Ay0W04rYGPetxDEKGtIEqJ2UQ4r39hAz8sLmfaauuk0isGSED6WSmONthUOu
+         b6ww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763079902; x=1763684702;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=KVG1YLgNpyjkbSIwgMI7KTE7qWYSZZq+m7h7F4aGjIA=;
+        b=lejDkryEIMYRMrDShK+HEDkD7RgcADiZSimRCYfFSmX8JcRJW7hCHfqwxstOi4U0EU
+         yr8BtoN6pWOKjTd99rFWLpbzx1Z9zJWLkZc9LhxxBoNOlF91SSveiP27v31hI4rz2QMF
+         GsaL31xLMLkXxcDux+LwblW7me9NT95IHlDYZmHfBZLJ3nLiWN0lkoL/NtI/Fq682JtT
+         mhKCzd1Xr+PU/hipyy5pDu82c5rLM4LxAn7TnrCPXUFkmffaXMJYuo4noyhcAelvnsYV
+         T01265kmVhmCsLozQ9imSCsycW7k0vvOkTcYPYup299P5XX5e2Whi4BQ7RyA/deEkzqY
+         FAcw==
+X-Forwarded-Encrypted: i=1; AJvYcCXEQIEpllEPjWhKJz7cZvhhxKOkX7mK1IRXd6sX3IefXOHRX+kytABkig7n1EzhdKPEQSqYHgCrDizdwk/0@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFPx+5qYrj2Sd7ZG4PAFSJ6CBU1QheHtFmYSXKHXbq5wpdusVO
+	dDS7/5QBjzS3+v4FbJI1/EX9PsLkyvxar7MAyoS/FG2HbxThP5FpcSo6
+X-Gm-Gg: ASbGncvV70dbeprIDmmDGkHjcc+oH+OsYKTNr4GDEF1i9FwR/Hr7MnFESv/1+ijmrKR
+	gpZ9eoYJ5gvzXLCJ50zSomzKUGgArbgpx4GyjRB6/UflcN5gT/I+S6UpcDqIdQIu4OS3dvcnbSx
+	9EMeqLGbkt+2fjX3ZQo83BYYWi/qJzhUtYaDFGNwXbKd3i4pEgiC4qIjDlKe1nxgTTPzOHC4hv1
+	Q2Cc0fyTC0I/0mezyhS4jnckdXTyGv0Q6ZFuIoPaGfN2JPG2zzGCKuds7UT5qkMYtWPzERCOXFK
+	dBHvt15LW7JOnkSFRXgSdLx7lODoGNji08M6zb0OZHqpLuSLsCbLDY+zjI69exfpXH8+BtmwtL+
+	nvKyUtEpRPFsZW0in86JY9jtUUXPdY+W6npBaxdPququzrhGkeX38GWKlHCU3Wi0T22hdwAReiu
+	yJ97ImSg==
+X-Google-Smtp-Source: AGHT+IG/Jtn43SJqyq/xeqztGox4OpLgLm08jPz7Zkh1bOHmy/r7tVpM2W+J+VaRSxBS86ve6JGvVg==
+X-Received: by 2002:a05:600c:1910:b0:475:decc:2a0b with SMTP id 5b1f17b1804b1-4779028ca82mr3838155e9.3.1763079902209;
+        Thu, 13 Nov 2025 16:25:02 -0800 (PST)
+Received: from bhk ([196.239.132.233])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4778c856c95sm60698225e9.7.2025.11.13.16.25.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Nov 2025 16:25:01 -0800 (PST)
+From: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+To: syzbot+ad45f827c88778ff7df6@syzkaller.appspotmail.com
+Cc: frank.li@vivo.com,
+	glaubitz@physik.fu-berlin.de,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	slava@dubeyko.com,
+	syzkaller-bugs@googlegroups.com,
+	Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+Subject: 
+Date: Fri, 14 Nov 2025 02:24:40 +0100
+Message-ID: <20251114012440.531779-1-mehdi.benhadjkhelifa@gmail.com>
+X-Mailer: git-send-email 2.51.2
+In-Reply-To: <69155e34.050a0220.3565dc.0019.GAE@google.com>
+References: <69155e34.050a0220.3565dc.0019.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251031093517.1603379-8-hch@lst.de>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Oct 31, 2025 at 10:34:37AM +0100, Christoph Hellwig wrote:
-> -/**
-> - * blk_crypto_fallback_bio_prep - Prepare a bio to use fallback en/decryption
-> - *
-> - * @bio_ptr: pointer to the bio to prepare
-> - *
-> - * If bio is doing a WRITE operation, this splits the bio into two parts if it's
-> - * too big (see blk_crypto_fallback_split_bio_if_needed()). It then allocates a
-> - * bounce bio for the first part, encrypts it, and updates bio_ptr to point to
-> - * the bounce bio.
-> - *
-> - * For a READ operation, we mark the bio for decryption by using bi_private and
-> - * bi_end_io.
-> - *
-> - * In either case, this function will make the bio look like a regular bio (i.e.
-> - * as if no encryption context was ever specified) for the purposes of the rest
-> - * of the stack except for blk-integrity (blk-integrity and blk-crypto are not
-> - * currently supported together).
-> - *
-> - * Return: true on success. Sets bio->bi_status and returns false on error.
-> +/*
-> + * bio READ case: Set up a f_ctx in the bio's bi_private and set the bi_end_io
-> + * appropriately to trigger decryption when the bio is ended.
->   */
-> -bool blk_crypto_fallback_bio_prep(struct bio **bio_ptr)
-> +bool blk_crypto_fallback_prep_decrypt_bio(struct bio *bio)
+#syz test
 
-This omits some important details.  Maybe:
+diff --git a/fs/super.c b/fs/super.c
+index 5bab94fb7e03..a9112b17b79f 100644
+--- a/fs/super.c
++++ b/fs/super.c
+@@ -484,6 +484,7 @@ void deactivate_locked_super(struct super_block *s)
+ 
+ 		put_filesystem(fs);
+ 		put_super(s);
++		kfree(s->s_fs_info);
+ 	} else {
+ 		super_unlock_excl(s);
+ 	}
+-- 
+2.51.2
 
-/*
- * bio READ case: Set up a fallback crypt context in the bio's bi_private, clear
- * the bio's original crypt context, and set bi_end_io appropriately to trigger
- * decryption when the bio is ended.  Returns true if bio submission should
- * continue, or false if aborted with bio_endio already called.
- */
-
-> -/**
-> - * __blk_crypto_bio_prep - Prepare bio for inline encryption
-> - *
-> - * @bio_ptr: pointer to original bio pointer
-> - *
-> - * If the bio crypt context provided for the bio is supported by the underlying
-> - * device's inline encryption hardware, do nothing.
-> - *
-> - * Otherwise, try to perform en/decryption for this bio by falling back to the
-> - * kernel crypto API. When the crypto API fallback is used for encryption,
-> - * blk-crypto may choose to split the bio into 2 - the first one that will
-> - * continue to be processed and the second one that will be resubmitted via
-> - * submit_bio_noacct. A bounce bio will be allocated to encrypt the contents
-> - * of the aforementioned "first one", and *bio_ptr will be updated to this
-> - * bounce bio.
-> - *
-> - * Caller must ensure bio has bio_crypt_ctx.
-> - *
-> - * Return: true on success; false on error (and bio->bi_status will be set
-> - *	   appropriately, and bio_endio() will have been called so bio
-> - *	   submission should abort).
-> - */
-> -bool __blk_crypto_bio_prep(struct bio **bio_ptr)
-> +bool __blk_crypto_submit_bio(struct bio *bio)
-
-Similarly, this could at least use a comment about what the return value
-means.  It's true if the caller should continue with submission, or
-false if blk-crypto took ownership of the bio (either by completing the
-bio right away or by arranging for it to be completed later).
-
-- Eric
 
