@@ -1,48 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-68449-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68455-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A84EC5C773
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Nov 2025 11:10:44 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C95CC5C7C1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Nov 2025 11:13:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2CD793434E5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Nov 2025 10:07:12 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9E63E356B1C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Nov 2025 10:08:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD05730DEBB;
-	Fri, 14 Nov 2025 10:07:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F56F3101DB;
+	Fri, 14 Nov 2025 10:07:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="NL0VBnn6"
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="5Sv2DVfY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from canpmsgout03.his.huawei.com (canpmsgout03.his.huawei.com [113.46.200.218])
+Received: from canpmsgout01.his.huawei.com (canpmsgout01.his.huawei.com [113.46.200.216])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0E1E304972;
-	Fri, 14 Nov 2025 10:06:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6E3030F7EA;
+	Fri, 14 Nov 2025 10:07:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763114821; cv=none; b=cCAxKSpr69WUO7f9r9ML38Vv/WoHKRKX+DF+xNsBGYZGLM8+YRptrhKwM5jAIB7OS+31hXNQB0RFEcHPPkCVpNEWnm+QiVSMMNlaqgYVshhR/Hokhc+zaZsPl+Ir55elmg/m1Do6L5xuxyJzksLZt8lrFt/7bbunG1io7ltNot4=
+	t=1763114826; cv=none; b=jPKUWhwLugh1h4hVuOEPWyAqIXe4cVCFuzyLz32XYcmI3yqCCERCaZ/cdSUvO6QXr8xB/Hr+jhK7lDjDP0UNcolaiGrFqz3rvh8itI9T6SbRpfzGE9KdAA+zJD7ohZ5BvlDOue+ZYb95nw5JW5kpN+t2oCjeu8biJ7BwMMgggzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763114821; c=relaxed/simple;
-	bh=NkLUTD2i17lEhKbfG79LvihtsiVC+bV3CjD39WNiXNQ=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZBW21o4QpUiGnzxyE5Y+GEAJ+VuurtGoV2a62Ba8qFDpnygXaa+nKmsjldUO4LUCFUMnOa/FdbHEyxZvJC1UgOcxHoAoZ/BetY1aeTakhMFfL0uCW4lfccVVkI0j2zpo2rwvA5bb9XoVV2UW1KJfpy479/b5kez/I5bjiJ228Hg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=NL0VBnn6; arc=none smtp.client-ip=113.46.200.218
+	s=arc-20240116; t=1763114826; c=relaxed/simple;
+	bh=S+i9I/UqevohlXSVPtPcsSZNYaIQ8MBY912CHMWdSwI=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mG1QXFq1YkBzf4wxwlUFTMcXW2stkzgudjLgwnwUcGYOCgiaLwvfEO8QPKKEi/MLA+dya22oPK9sdQKDchpMk6CdR3hY6vf/+74o28ZX8Am8iVcDAP+cSOf/PMJ+tIRCuIqQmoZPTVf+8LCI1lz+jSFUGOLsZc74PafFLejW4Gs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=5Sv2DVfY; arc=none smtp.client-ip=113.46.200.216
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
 dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
 	c=relaxed/relaxed; q=dns/txt;
 	h=From;
-	bh=WGPZNmadK8DTN/oBaDlP53ThU1FDslwI77UZEyJSZSc=;
-	b=NL0VBnn6O7ZEOj5oPxJfkpZZJoBNQj49HPe15cqG/U7DHd6nfdHTLr5/BlDHeXRLJHkIxVNb/
-	Ljf9KV/jgt0wBzZqB8vpsBZigXUT9aVTfdN2ywnxHSnlaW4i2dIaWi/eHZ68nBrQpiOgpveEVbc
-	8/g0EZ5BmcoYb65uKO88Z1I=
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by canpmsgout03.his.huawei.com (SkyGuard) with ESMTPS id 4d7CS43GwJzpT0G;
-	Fri, 14 Nov 2025 18:05:08 +0800 (CST)
+	bh=K0Uha1E1AoTTdsUqS8ogAzLegDGAzEZvOWEH95Tolb8=;
+	b=5Sv2DVfYlUO5XY0hrSs5KJkDBSjT4n4BjyMTqeRgBOCu/hEpoWKoDtvPeyeiwpN7ITrrKdI+H
+	SUkDpdCFVlqGPxDYdg+28EA8YS0U5/89lTWDTFLCX/kAs7UOW2z69706j/87dD0m2QBL+m40TIX
+	1BM+x9kwrSfbkY4tKSv0d+Q=
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by canpmsgout01.his.huawei.com (SkyGuard) with ESMTPS id 4d7CST1Rt2z1T4LW;
+	Fri, 14 Nov 2025 18:05:29 +0800 (CST)
 Received: from kwepemr500015.china.huawei.com (unknown [7.202.195.162])
-	by mail.maildlp.com (Postfix) with ESMTPS id D588A180B5C;
-	Fri, 14 Nov 2025 18:06:54 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTPS id 4FA03180478;
+	Fri, 14 Nov 2025 18:06:55 +0800 (CST)
 Received: from huawei.com (10.67.174.162) by kwepemr500015.china.huawei.com
  (7.202.195.162) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 14 Nov
@@ -52,336 +53,137 @@ To: <hsiangkao@linux.alibaba.com>, <chao@kernel.org>, <brauner@kernel.org>,
 	<djwong@kernel.org>, <amir73il@gmail.com>, <joannelkoong@gmail.com>
 CC: <linux-fsdevel@vger.kernel.org>, <linux-erofs@lists.ozlabs.org>,
 	<linux-kernel@vger.kernel.org>
-Subject: [PATCH v8 0/9] erofs: inode page cache share feature
-Date: Fri, 14 Nov 2025 09:55:07 +0000
-Message-ID: <20251114095516.207555-1-lihongbo22@huawei.com>
+Subject: [PATCH v8 1/9] iomap: stash iomap read ctx in the private field of iomap_iter
+Date: Fri, 14 Nov 2025 09:55:08 +0000
+Message-ID: <20251114095516.207555-2-lihongbo22@huawei.com>
 X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20251114095516.207555-1-lihongbo22@huawei.com>
+References: <20251114095516.207555-1-lihongbo22@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
  kwepemr500015.china.huawei.com (7.202.195.162)
 
-Enabling page cahe sharing in container scenarios has become increasingly
-crucial, as it can significantly reduce memory usage. In previous efforts,
-Hongzhen has done substantial work to push this feature into the EROFS
-mainline. Due to other commitments, he hasn't been able to continue his
-work recently, and I'm very pleased to build upon his work and continue
-to refine this implementation.
+It's useful to get filesystem-specific information using the
+existing private field in the @iomap_iter passed to iomap_{begin,end}
+for advanced usage for iomap buffered reads, which is much like the
+current iomap DIO.
 
-This patch series is based on Hongzhen's original EROFS shared pagecache
-implementation which was posted about half a year ago:
-https://lore.kernel.org/all/20250301145002.2420830-1-hongzhen@linux.alibaba.com/T/#u
+For example, EROFS needs it to:
 
-In addition to the forward-port, I have also fixed several bugs, resolved
-some prerequisite dependencies and performed some minor cleanup.
+ - implement an efficient page cache sharing feature, since iomap
+   needs to apply to anon inode page cache but we'd like to get the
+   backing inode/fs instead, so filesystem-specific private data is
+   needed to keep such information;
 
-(A recap of Hongzhen's original cover letter is below, edited slightly
-for this serise:)
+ - pass in both struct page * and void * for inline data to avoid
+   kmap_to_page() usage (which is bogus).
 
-Background
-==============
-Currently, reading files with different paths (or names) but the same
-content can consume multiple copies of the page cache, even if the
-content of these caches is identical. For example, reading identical
-files (e.g., *.so files) from two different minor versions of container
-images can result in multiple copies of the same page cache, since
-different containers have different mount points. Therefore, sharing
-the page cache for files with the same content can save memory.
+Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
+---
+ fs/fuse/file.c         | 4 ++--
+ fs/iomap/buffered-io.c | 6 ++++--
+ include/linux/iomap.h  | 8 ++++----
+ 3 files changed, 10 insertions(+), 8 deletions(-)
 
-Proposal
-==============
-
-1. determining file identity
-----------------------------
-First, a way needs to be found to check whether the content of two files
-is the same. Here, the xattr values associated with the file
-fingerprints are assessed for consistency. When creating the EROFS
-image, users can specify the name of the xattr for file fingerprints,
-and the corresponding name will be stored in the packfile. The on-disk
-`ishare_key_start` indicates the index of the xattr name within the
-prefix xattrs:
-
-```
-struct erofs_super_block {
-	__u8 xattr_filter_reserved; /* reserved for xattr name filter */
--	__u8 reserved[3];
-+	__u8 ishare_key_start;	/* start of ishare key */
-+	__u8 reserved[2];
-};
-```
-
-For example, users can specify the first long prefix as the name for the
-file fingerprint as follows:
-
-```
-mkfs.erofs  --ishare_key=trusted.erofs.fingerprint  erofs.img ./dir
-```
-
-In this way, `trusted.erofs.fingerprint` serves as the name of the xattr
-for the file fingerprint. The relevant patch for erofs-utils has been posted
-in:
-
-https://lore.kernel.org/all/20251114092845.207368-1-lihongbo22@huawei.com/
-
-At the same time, for security reasons, this patch series only shares
-files within the same domain, which is achieved by adding
-"-o domain_id=xxxx" during the mounting process:
-
-```
-mount -t erofs -o domain_id=trusted.erofs.fingerprint erofs.img /mnt
-```
-
-If no domain ID is specified, it will fall back to the non-page cache
-sharing mode.
-
-2. Implementation
-==================
-
-2.1. file open & close
-----------------------
-When the file is opened, the ->private_data field of file A or file B is
-set to point to an internal deduplicated file. When the actual read
-occurs, the page cache of this deduplicated file will be accessed.
-
-When the file is opened, if the corresponding erofs inode is newly
-created, then perform the following actions:
-1. add the erofs inode to the backing list of the deduplicated inode;
-2. increase the reference count of the deduplicated inode.
-
-The purpose of step 1 above is to ensure that when a real I/O operation
-occurs, the deduplicated inode can locate one of the disk devices
-(as the deduplicated inode itself is not bound to a specific device).
-Step 2 is for managing the lifecycle of the deduplicated inode.
-
-When the erofs inode is destroyed, the opposite actions mentioned above
-will be taken.
-
-2.2. file reading
------------------
-Assuming the deduplication inode's page cache is PGCache_dedup, there
-are two possible scenarios when reading a file:
-1) the content being read is already present in PGCache_dedup;
-2) the content being read is not present in PGCache_dedup.
-
-In the second scenario, it involves the iomap operation to read from the
-disk.
-
-2.2.1. reading existing data in PGCache_dedup
--------------------------------------------
-In this case, the overall read flowchart is as follows (take ksys_read()
-for example):
-
-         ksys_read
-             │
-             │
-             ▼
-            ...
-             │
-             │
-             ▼
-erofs_ishare_file_read_iter (switch to backing deduplicated file)
-             │
-             │
-             ▼
-
- read PGCache_dedup & return
-
-At this point, the content in PGCache_dedup will be read directly and
-returned.
-
-2.2.2 reading non-existent content in PGCache_dedup
----------------------------------------------------
-In this case, disk I/O operations will be involved. Taking the reading
-of an uncompressed file as an example, here is the reading process:
-
-         ksys_read
-             │
-             │
-             ▼
-            ...
-             │
-             │
-             ▼
-erofs_ishare_file_read_iter (switch to backing deduplicated file)
-             │
-             │
-             ▼
-            ... (allocate pages)
-             │
-             │
-             ▼
-erofs_read_folio/erofs_readahead
-             │
-             │
-             ▼
-            ... (iomap)
-             │
-             │
-             ▼
-        erofs_iomap_begin
-             │
-             │
-             ▼
-            ...
-
-Iomap and the layers below will involve disk I/O operations. As
-described in 2.1, the deduplicated inode itself is not bound to a
-specific device. The deduplicated inode will select an erofs inode from
-the backing list (by default, the first one) to complete the
-corresponding iomap operation.
-
-2.2.3 optimized inode selection
--------------------------------
-The inode selection method described in 2.2.2 may select an "inactive"
-inode. An inactive inode indicates that there may have been no read
-operations on the inode's device for a long time, and there is a high
-likelihood that the device may be unmounted. In this case, unmounting
-the device may experience a slight delay due to other read requests
-being routed to that device. Therefore, we need to select some "active"
-inodes for the iomap operation.
-
-To achieve optimized inode selection, an additional `processing` list
-has been added. At the beginning of erofs_{read_folio,readahead}(), the
-corresponding erofs inode will be added to the `processing` list
-(because they are active). And it is removed at the end of
-erofs_{read_folio,readahead}(). In erofs_read_begin(), the selected
-erofs inode's count is incremented, and in erofs_read_end(), the count
-is decremented.
-
-In this way, even after the erofs inode is removed from the `processing`
-list, the increment in the reference count can ensure the integrity of
-the data reading process. This is somewhat similar to RCU (not exactly
-the same, but similar).
-
-2.3. release page cache
------------------------
-Similar to overlayfs, when dropping the page cache via .fadvise, erofs
-locates the deduplicated file and applies vfs_fadvise to that specific
-file.
-
-Effect
-==================
-I conducted experiments on two aspects across two different minor
-versions of container images:
-
-1. reading all files in two different minor versions of container images
-
-2. run workloads or use the default entrypoint within the containers^[1]
-
-Below is the memory usage for reading all files in two different minor
-versions of container images:
-
-+-------------------+------------------+-------------+---------------+
-|       Image       | Page Cache Share | Memory (MB) |    Memory     |
-|                   |                  |             | Reduction (%) |
-+-------------------+------------------+-------------+---------------+
-|                   |        No        |     241     |       -       |
-|       redis       +------------------+-------------+---------------+
-|   7.2.4 & 7.2.5   |        Yes       |     163     |      33%      |
-+-------------------+------------------+-------------+---------------+
-|                   |        No        |     872     |       -       |
-|      postgres     +------------------+-------------+---------------+
-|    16.1 & 16.2    |        Yes       |     630     |      28%      |
-+-------------------+------------------+-------------+---------------+
-|                   |        No        |     2771    |       -       |
-|     tensorflow    +------------------+-------------+---------------+
-|  2.11.0 & 2.11.1  |        Yes       |     2340    |      16%      |
-+-------------------+------------------+-------------+---------------+
-|                   |        No        |     926     |       -       |
-|       mysql       +------------------+-------------+---------------+
-|  8.0.11 & 8.0.12  |        Yes       |     735     |      21%      |
-+-------------------+------------------+-------------+---------------+
-|                   |        No        |     390     |       -       |
-|       nginx       +------------------+-------------+---------------+
-|   7.2.4 & 7.2.5   |        Yes       |     219     |      44%      |
-+-------------------+------------------+-------------+---------------+
-|       tomcat      |        No        |     924     |       -       |
-| 10.1.25 & 10.1.26 +------------------+-------------+---------------+
-|                   |        Yes       |     474     |      49%      |
-+-------------------+------------------+-------------+---------------+
-
-Additionally, the table below shows the runtime memory usage of the
-container:
-
-+-------------------+------------------+-------------+---------------+
-|       Image       | Page Cache Share | Memory (MB) |    Memory     |
-|                   |                  |             | Reduction (%) |
-+-------------------+------------------+-------------+---------------+
-|                   |        No        |     34.9    |       -       |
-|       redis       +------------------+-------------+---------------+
-|   7.2.4 & 7.2.5   |        Yes       |     33.6    |       4%      |
-+-------------------+------------------+-------------+---------------+
-|                   |        No        |    149.1    |       -       |
-|      postgres     +------------------+-------------+---------------+
-|    16.1 & 16.2    |        Yes       |      95     |      37%      |
-+-------------------+------------------+-------------+---------------+
-|                   |        No        |    1027.9   |       -       |
-|     tensorflow    +------------------+-------------+---------------+
-|  2.11.0 & 2.11.1  |        Yes       |    934.3    |      10%      |
-+-------------------+------------------+-------------+---------------+
-|                   |        No        |    155.0    |       -       |
-|       mysql       +------------------+-------------+---------------+
-|  8.0.11 & 8.0.12  |        Yes       |    139.1    |      11%      |
-+-------------------+------------------+-------------+---------------+
-|                   |        No        |     25.4    |       -       |
-|       nginx       +------------------+-------------+---------------+
-|   7.2.4 & 7.2.5   |        Yes       |     18.8    |      26%      |
-+-------------------+------------------+-------------+---------------+
-|       tomcat      |        No        |     186     |       -       |
-| 10.1.25 & 10.1.26 +------------------+-------------+---------------+
-|                   |        Yes       |      99     |      47%      |
-+-------------------+------------------+-------------+---------------+
-
-It can be observed that when reading all the files in the image, the
-reduced memory usage varies from 16% to 49%, depending on the specific
-image. Additionally, the container's runtime memory usage reduction
-ranges from 4% to 47%.
-
-[1] Below are the workload for these images:
-      - redis: redis-benchmark
-      - postgres: sysbench
-      - tensorflow: app.py of tensorflow.python.platform
-      - mysql: sysbench
-      - nginx: wrk
-      - tomcat: default entrypoint
-
-Changes:
-v7: https://lore.kernel.org/all/20251021104815.70662-1-lihongbo22@huawei.com/
-v6: https://lore.kernel.org/all/20250301145002.2420830-1-hongzhen@linux.alibaba.com/T/#u
-v5: https://lore.kernel.org/all/20250105151208.3797385-1-hongzhen@linux.alibaba.com/
-v4: https://lore.kernel.org/all/20240902110620.2202586-1-hongzhen@linux.alibaba.com/
-v3: https://lore.kernel.org/all/20240828111959.3677011-1-hongzhen@linux.alibaba.com/
-v2: https://lore.kernel.org/all/20240731080704.678259-1-hongzhen@linux.alibaba.com/
-v1: https://lore.kernel.org/all/20240722065355.1396365-1-hongzhen@linux.alibaba.com/
-
-
-Diffstat:
- fs/erofs/Kconfig       |   9 ++
- fs/erofs/Makefile      |   1 +
- fs/erofs/data.c        | 115 +++++++++++---
- fs/erofs/erofs_fs.h    |   6 +-
- fs/erofs/fscache.c     |  13 --
- fs/erofs/inode.c       |   5 +
- fs/erofs/internal.h    |  44 ++++++
- fs/erofs/ishare.c      | 341 +++++++++++++++++++++++++++++++++++++++++
- fs/erofs/ishare.h      |  46 ++++++
- fs/erofs/super.c       |  55 ++++++-
- fs/erofs/xattr.c       |  26 ++++
- fs/erofs/xattr.h       |   6 +
- fs/erofs/zdata.c       |  56 +++++--
- fs/fuse/file.c         |   4 +-
- fs/iomap/buffered-io.c |   6 +-
- include/linux/iomap.h  |   8 +-
- 16 files changed, 682 insertions(+), 59 deletions(-)
- create mode 100644 fs/erofs/ishare.c
- create mode 100644 fs/erofs/ishare.h
-
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index 8275b6681b9b..98dd20f0bb53 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -973,7 +973,7 @@ static int fuse_read_folio(struct file *file, struct folio *folio)
+ 		return -EIO;
+ 	}
+ 
+-	iomap_read_folio(&fuse_iomap_ops, &ctx);
++	iomap_read_folio(&fuse_iomap_ops, &ctx, NULL);
+ 	fuse_invalidate_atime(inode);
+ 	return 0;
+ }
+@@ -1075,7 +1075,7 @@ static void fuse_readahead(struct readahead_control *rac)
+ 	if (fuse_is_bad(inode))
+ 		return;
+ 
+-	iomap_readahead(&fuse_iomap_ops, &ctx);
++	iomap_readahead(&fuse_iomap_ops, &ctx, NULL);
+ }
+ 
+ static ssize_t fuse_cache_read_iter(struct kiocb *iocb, struct iov_iter *to)
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index 6ae031ac8058..8e79303c074e 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -496,13 +496,14 @@ static int iomap_read_folio_iter(struct iomap_iter *iter,
+ }
+ 
+ void iomap_read_folio(const struct iomap_ops *ops,
+-		struct iomap_read_folio_ctx *ctx)
++		struct iomap_read_folio_ctx *ctx, void *private)
+ {
+ 	struct folio *folio = ctx->cur_folio;
+ 	struct iomap_iter iter = {
+ 		.inode		= folio->mapping->host,
+ 		.pos		= folio_pos(folio),
+ 		.len		= folio_size(folio),
++		.private	= private,
+ 	};
+ 	size_t bytes_pending = 0;
+ 	int ret;
+@@ -560,13 +561,14 @@ static int iomap_readahead_iter(struct iomap_iter *iter,
+  * the filesystem to be reentered.
+  */
+ void iomap_readahead(const struct iomap_ops *ops,
+-		struct iomap_read_folio_ctx *ctx)
++		struct iomap_read_folio_ctx *ctx, void *private)
+ {
+ 	struct readahead_control *rac = ctx->rac;
+ 	struct iomap_iter iter = {
+ 		.inode	= rac->mapping->host,
+ 		.pos	= readahead_pos(rac),
+ 		.len	= readahead_length(rac),
++		.private = private,
+ 	};
+ 	size_t cur_bytes_pending;
+ 
+diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+index 8b1ac08c7474..c3ecbbdb14e8 100644
+--- a/include/linux/iomap.h
++++ b/include/linux/iomap.h
+@@ -341,9 +341,9 @@ ssize_t iomap_file_buffered_write(struct kiocb *iocb, struct iov_iter *from,
+ 		const struct iomap_ops *ops,
+ 		const struct iomap_write_ops *write_ops, void *private);
+ void iomap_read_folio(const struct iomap_ops *ops,
+-		struct iomap_read_folio_ctx *ctx);
++		struct iomap_read_folio_ctx *ctx, void *private);
+ void iomap_readahead(const struct iomap_ops *ops,
+-		struct iomap_read_folio_ctx *ctx);
++		struct iomap_read_folio_ctx *ctx, void *private);
+ bool iomap_is_partially_uptodate(struct folio *, size_t from, size_t count);
+ struct folio *iomap_get_folio(struct iomap_iter *iter, loff_t pos, size_t len);
+ bool iomap_release_folio(struct folio *folio, gfp_t gfp_flags);
+@@ -594,7 +594,7 @@ static inline void iomap_bio_read_folio(struct folio *folio,
+ 		.cur_folio	= folio,
+ 	};
+ 
+-	iomap_read_folio(ops, &ctx);
++	iomap_read_folio(ops, &ctx, NULL);
+ }
+ 
+ static inline void iomap_bio_readahead(struct readahead_control *rac,
+@@ -605,7 +605,7 @@ static inline void iomap_bio_readahead(struct readahead_control *rac,
+ 		.rac		= rac,
+ 	};
+ 
+-	iomap_readahead(ops, &ctx);
++	iomap_readahead(ops, &ctx, NULL);
+ }
+ #endif /* CONFIG_BLOCK */
+ 
 -- 
 2.22.0
 
