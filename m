@@ -1,110 +1,167 @@
-Return-Path: <linux-fsdevel+bounces-68474-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68475-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7750C5CEED
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Nov 2025 12:50:29 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 258ACC5CF20
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Nov 2025 12:53:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FF3D4215C5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Nov 2025 11:48:20 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 07FFD353EAF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Nov 2025 11:53:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C531313526;
-	Fri, 14 Nov 2025 11:47:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67AA93101C5;
+	Fri, 14 Nov 2025 11:53:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="swCOEUwF"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jNK46nwF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6830D31618B;
-	Fri, 14 Nov 2025 11:47:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 277E831065A
+	for <linux-fsdevel@vger.kernel.org>; Fri, 14 Nov 2025 11:53:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763120851; cv=none; b=MbDKiIIThg6TFWSALCSgLusnviEubfjMZpUYmk7vDjw3L2w5VjUPs9VYRUcBjiQshnDxmOCW5iAyhEPFCC1eI1uyAa2aPyztiCfJgulqPTxtjG/UYc8m9YJ7Y73XdMeIMzQgscTY4XK2qwgO3duV9FtiRo+MqvnPO3HFW3QQHTs=
+	t=1763121193; cv=none; b=K4/OjJiCsq89V87975trPjs6T8d4m7Jwmmo1woH+e3JsIlPFyp0WorUOVth9wXN74UC57RhirzdzHS4dhUf0HujRfxRAJWilitRqSgnO15ILdO2Jmuw7GXcBl8VT/OE1rbAyv/juaYGt07eEbo97OCFhgG7FjOHh9GJBj2Mcmys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763120851; c=relaxed/simple;
-	bh=RYmfyxnd44YBm9qRxknxIsvpnN+q7uX4ZyGg3dXJhWs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=X3jb5ilBryEVy9CDe9N5KvFlwgJjzKoT5xP1RTZ5aBNByGZ0U8We0gKXweSOxkZMwTy9KdLZDw2dvUie4f3eZZoWynvKXKj1WNWSRATWls1G3evnbxiOpV1dWO60TgsfBaFT+HxnJlqw9IOV8NN5fBeW+5G1fHhhQKWJzDRyggE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=swCOEUwF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA0E5C16AAE;
-	Fri, 14 Nov 2025 11:47:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763120850;
-	bh=RYmfyxnd44YBm9qRxknxIsvpnN+q7uX4ZyGg3dXJhWs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=swCOEUwFDZh8N+CoqAHwqJnNTs9ArbLrXSHUkfNMxzE0dAsJhXF1YK0h4dinnNmnh
-	 AxVxjv5ZiMIo4scYa777S1WkauAAN9o2XKahy9hEbqn/U2842NbuRuc5I6XW6dqlqA
-	 js/BsvNShGpxDkicSX8r01+7sPT2FuMggxoJjoYPJ67bQZ8mPA914Zoz5kZQm+JBlr
-	 AlPBH7CQ4rI4BXLRjmBRToIydgTB2iVCEgK6lGYWeRIqcetLLIjk8J/JU6oJ/4pqJj
-	 EGXUjf2huxpfz9kJQt2bM1LOJjtnPvGO//3QQwl+NRSuQ3elsMJow5RcDmNUzEqbeT
-	 kfRsAo79aRA1Q==
-From: Christian Brauner <brauner@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Jens Axboe <axboe@kernel.dk>,
-	Avi Kivity <avi@scylladb.com>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	Naohiro Aota <naohiro.aota@wdc.com>,
-	Johannes Thumshirn <jth@kernel.org>,
-	linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	io-uring@vger.kernel.org
-Subject: Re: enable iomap dio write completions from interrupt context v2
-Date: Fri, 14 Nov 2025 12:47:23 +0100
-Message-ID: <20251114-postfach-entgleisen-90917e292b3b@brauner>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251113170633.1453259-1-hch@lst.de>
-References: <20251113170633.1453259-1-hch@lst.de>
+	s=arc-20240116; t=1763121193; c=relaxed/simple;
+	bh=tCwBw4AnF2vtIl9rSeHRKWGJE+A+XndJ29JaC2CBIps=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ja2ciRls5eMaXO8SojfimOg7bIl/tCDi2IVUen/IVb3k16fbG+6+qo2gj87wh6kqNh9hCEBW3lx+7C60fh83mu8v3VeTm7ocdDBMTN1E569g24J583IMD+Jvx6+LWPj4nWezM0/pYYLQYPqtMfSJH9kr3iOra/yz5zysmuiCZNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jNK46nwF; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-6417313bddaso3280837a12.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Nov 2025 03:53:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1763121190; x=1763725990; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ksUowDiMBBw0jAf3Vm8E59fNicG0SGTHjGTGP1KX/Rc=;
+        b=jNK46nwFz076NcnM8Kw/MYbGa0ePwD8HKqOPj4mn1tSDkIP0VkY7fBp50a4I0uZBdr
+         UACnW2ct5H0O4hYOzyS5kJOUCgg+o92FBdgJkWq7DRlJ3Kc7XGQMii4eCT3A1Bp1hkTU
+         qinmVtgAAvEX1c4d4sftmIiXpuIqVYT9ApT3eJfi7KTLlYs4EolCWR3zndMpCS/8Mhgz
+         B2OhiedvC+OufyR+U5zdXmNG86s6qGBbcBrBcpxPIfauONoWv2G3Yz1XHoV4T5eGMcvK
+         u9yY/merK3TuiEwRRyN9qcfBY2BAVWfuUosNja+DdEU/KW/97KibzY1k2MF78F9J5Kng
+         9Ofg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763121190; x=1763725990;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=ksUowDiMBBw0jAf3Vm8E59fNicG0SGTHjGTGP1KX/Rc=;
+        b=JDxagA5QpHaJZN9QBouTFOZ/BacSKS1REiKIMLUKiYgl22AH0V9Ji8geubZJ/CgkMl
+         BQTmeNz/ScFofIs03KqVIfFhj6w5U4+gp5Lj63oVienDtCtoBfkAaqlLB149tMWjKTn5
+         aUYKW9T5Oo2BDVDeVW9KUZX7lW5Iqa9C4CZX89rQ2H2PIgkZhkijr5PDl+kg0pEnsfJ0
+         WzA5i/HMbH6PVDUoiB1CQ+A09aJIWsYVkXuR/GCsF9Mn/4vvs2uruVjIqm7gWeq92iaJ
+         0J5DdLBGw4ReMr/tPqiZ89VMChbnj4QTFfrb8uWAJapT3V40w6CPc++f0ZFKym268Auu
+         0QEw==
+X-Forwarded-Encrypted: i=1; AJvYcCVZpag6MKZjhrRWWDUClbhR/eEYfrtT0nYeNhnByUwNoqyFMSuLH1eBB5q/+okUWOjBDi8zkxyfA17AIYhF@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjF6y3fDVn26qxttGZLIJNT5kKV3WH7fVklV+2yOpXyst/rDQ5
+	sMrWabK9iQdHCGC9pANPMHt/MWbeMdBCaEmejI7wK+5NVyPNzOtAjJaxBCtfufo/OOZt1OzqirK
+	jG/u9wQRKDWba2KNlXL5YFe/11EYfXuU=
+X-Gm-Gg: ASbGncv8gB80S8XksrBE95uIhpEQ3VDJddJWPpp1cTNtnmPgC3bIXjLj8MEo9J6Dm3z
+	ofhbpejT2uvpTvgXxF8H7GC7jTJIhxv3X0JiTR9a4lo3WQ1ihxUN4rjltrbCKdi9NYufdKmETmN
+	KhS36scMNAgJnBgzLxBd6GaasrUfb5t61+eVUfO8k7u9WgJdsPDfaaDEOQWvRBi7SOqMfml5jb7
+	p4qsx3DWWVSB1/fuiguPJkmv/EIIxhpL43GF5UvmrCMtKVST/xq+T/v5MJfSwOgto1EiqfUWpwD
+	p+9NIAKdL8xtFQBf5ZnN8Y4mIE08Vg==
+X-Google-Smtp-Source: AGHT+IFkNCbCK3wtGpbvZ8sWyqGdvw8H6M3hi3GmiaEXmGlh4THeFELMo16lZrrcznsxz7tUwsSSgqFG6UbMZJsfjjE=
+X-Received: by 2002:a05:6402:13c8:b0:63b:f67b:3782 with SMTP id
+ 4fb4d7f45d1cf-64350e9e7b4mr2686740a12.27.1763121190367; Fri, 14 Nov 2025
+ 03:53:10 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1669; i=brauner@kernel.org; h=from:subject:message-id; bh=RYmfyxnd44YBm9qRxknxIsvpnN+q7uX4ZyGg3dXJhWs=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSKi50R1z5mnR649NWxqalN2uIdtnbppw8FT7raXLQk9 w5HV3t4RykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwEQYEhj+Z65YkBj3kLsuZgWb 5ZumxbsTSq58lD8XN8lo9s1pn+8IcjEyrJ1yW/njkUn8TOtexN3lKy0SN9wrE/wowcDz2E92xnm TeQA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+References: <20251114-work-ovl-cred-guard-prepare-v1-0-4fc1208afa3d@kernel.org>
+ <20251114-work-ovl-cred-guard-prepare-v1-3-4fc1208afa3d@kernel.org>
+In-Reply-To: <20251114-work-ovl-cred-guard-prepare-v1-3-4fc1208afa3d@kernel.org>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Fri, 14 Nov 2025 12:52:58 +0100
+X-Gm-Features: AWmQ_bmj3WV3e9oB_pc-wmTp-eN0ihrkNcdAYjq3ylUYQU-O6HjG8yRlK0U2GcQ
+Message-ID: <CAOQ4uxhB2am_xAGugZvAiuEx7ud+8QGPJBwcA+M+LmRvWC-nsA@mail.gmail.com>
+Subject: Re: [PATCH 3/6] ovl: reflow ovl_create_or_link()
+To: Christian Brauner <brauner@kernel.org>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 13 Nov 2025 18:06:25 +0100, Christoph Hellwig wrote:
-> Currently iomap defers all write completions to interrupt context.  This
-> was based on my assumption that no one cares about the latency of those
-> to simplify the code vs the old direct-io.c.  It turns out someone cared,
-> as Avi reported a lot of context switches with ScyllaDB, which at least
-> in older kernels with workqueue scheduling issues caused really high
-> tail latencies.
-> 
-> [...]
+On Fri, Nov 14, 2025 at 11:15=E2=80=AFAM Christian Brauner <brauner@kernel.=
+org> wrote:
+>
+> Reflow the creation routine in preparation of porting it to a guard.
+>
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
+> ---
+>  fs/overlayfs/dir.c | 23 +++++++++++++++--------
+>  1 file changed, 15 insertions(+), 8 deletions(-)
+>
+> diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
+> index a276eafb5e78..ff30a91e07f8 100644
+> --- a/fs/overlayfs/dir.c
+> +++ b/fs/overlayfs/dir.c
+> @@ -644,14 +644,23 @@ static const struct cred *ovl_setup_cred_for_create=
+(struct dentry *dentry,
+>         return override_cred;
+>  }
+>
+> +static int do_ovl_create_or_link(struct dentry *dentry, struct inode *in=
+ode,
+> +                                struct ovl_cattr *attr)
 
-Applied to the vfs-6.19.iomap branch of the vfs/vfs.git tree.
-Patches in the vfs-6.19.iomap branch should appear in linux-next soon.
+Trying to avert the bikesheding over do_ovl_ helper name...
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+> +{
+> +       if (!ovl_dentry_is_whiteout(dentry))
+> +               return ovl_create_upper(dentry, inode, attr);
+> +
+> +       return ovl_create_over_whiteout(dentry, inode, attr);
+> +}
+> +
+>  static int ovl_create_or_link(struct dentry *dentry, struct inode *inode=
+,
+>                               struct ovl_cattr *attr, bool origin)
+>  {
+>         int err;
+> -       const struct cred *new_cred __free(put_cred) =3D NULL;
+>         struct dentry *parent =3D dentry->d_parent;
+>
+>         scoped_class(override_creds_ovl, old_cred, dentry->d_sb) {
+> +               const struct cred *new_cred __free(put_cred) =3D NULL;
+>                 /*
+>                  * When linking a file with copy up origin into a new par=
+ent, mark the
+>                  * new parent dir "impure".
+> @@ -662,7 +671,6 @@ static int ovl_create_or_link(struct dentry *dentry, =
+struct inode *inode,
+>                                 return err;
+>                 }
+>
+> -               if (!attr->hardlink) {
+>                 /*
+>                  * In the creation cases(create, mkdir, mknod, symlink),
+>                  * ovl should transfer current's fs{u,g}id to underlying
+> @@ -676,16 +684,15 @@ static int ovl_create_or_link(struct dentry *dentry=
+, struct inode *inode,
+>                  * create a new inode, so just use the ovl mounter's
+>                  * fs{u,g}id.
+>                  */
+> +
+> +               if (attr->hardlink)
+> +                       return do_ovl_create_or_link(dentry, inode, attr)=
+;
+> +
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+^^^ This looks like an optimization (don't setup cred for hardlink).
+Is it really an important optimization that is worth complicating the code =
+flow?
+What if we just drop the optimization instead?
+Would that creak anything?
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.19.iomap
-
-[1/5] fs, iomap: remove IOCB_DIO_CALLER_COMP
-      https://git.kernel.org/vfs/vfs/c/56749ed317e2
-[2/5] iomap: always run error completions in user context
-      https://git.kernel.org/vfs/vfs/c/222f2c7c6d14
-[3/5] iomap: rework REQ_FUA selection
-      https://git.kernel.org/vfs/vfs/c/845c50436431
-[4/5] iomap: support write completions from interrupt context
-      https://git.kernel.org/vfs/vfs/c/a4ae47e5d2bc
-[5/5] iomap: invert the polarity of IOMAP_DIO_INLINE_COMP
-      https://git.kernel.org/vfs/vfs/c/65a466aef147
+Thanks,
+Amir.
 
