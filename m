@@ -1,88 +1,123 @@
-Return-Path: <linux-fsdevel+bounces-68448-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68459-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 736B5C5C716
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Nov 2025 11:06:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C982DC5C870
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Nov 2025 11:20:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7106535A2E4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Nov 2025 10:01:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9A534229FE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Nov 2025 10:15:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1378E30AAC2;
-	Fri, 14 Nov 2025 10:01:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBDB33101A3;
+	Fri, 14 Nov 2025 10:15:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="lRNPsC+8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PPwVByzG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail3-164.sinamail.sina.com.cn (mail3-164.sinamail.sina.com.cn [202.108.3.164])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42E652FB095
-	for <linux-fsdevel@vger.kernel.org>; Fri, 14 Nov 2025 10:01:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.164
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5121230FC18;
+	Fri, 14 Nov 2025 10:15:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763114480; cv=none; b=royvsOXGhrvoxhNX/RMNi1xjvH3nkF53PA3hebrPqMLOiCITCJXw8xXYBPCzUmoz0PVqU5BoW5lWGqbwRGy2EUBcJ9Ffzz6nWlgPcKpLLxijayAOlA59L95NXHsoiTa+yVush7xQHgpoC28kzDLMrSqeYHF9jJUCkQ4HyyM1s74=
+	t=1763115333; cv=none; b=H2AYgcRZ7xkb+xf8zJFaTJI9abzq+3LhRvbZ1FVyTiJ/wWB+kpaPbJWt/JOKOAgIFuEBo9liwnLzYl8IHmBi+fXDQAxy7kB9xkK927zGM9jYVJXQB94or0ACDwLQvHkmgLZdSnlnrcJxi0/VhtdqiSEdlmGiR5PQ/ro4bfhGZZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763114480; c=relaxed/simple;
-	bh=O/9CNivIpNTIOSRrxgzeErucux+xenOPFAqg5h1XSH4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Tu1Ibq2cDN4oMKMD8ywfXrHdefGWipvrqEUIWCGMDv1JoMlct84gpSz8/R5V5ei6vPaf0hyIgWK7rnHH7DDg7wUIC5Ww4idz6W+rPvTnPrlIeS2Yf2THLDgAs4hEhImigZImEx2CROAFB83hkuGl3a4037yzs84oY5r23JyLNIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=lRNPsC+8; arc=none smtp.client-ip=202.108.3.164
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1763114476;
-	bh=EbJ6JYS3tT26cFPjSQHnaaR47knUQ8ZV5EwhAV3uuco=;
-	h=From:Subject:Date:Message-ID;
-	b=lRNPsC+8vh8QHZf+dDfV8oHbOseJXRzStrfrgveMtWVKLhy/JDTke4dMX5VjeCJYg
-	 Aypw8/gbIC96joHsgGQwuIyJYFYETNEDrNuJBDaeSGYf92dLLzs7yWLm89r1GPUC0m
-	 BQH+oT63W20jN4QY1LcW+0Hbz/3qFDOlg7tFfpdA=
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([114.249.57.85])
-	by sina.com (10.54.253.32) with ESMTP
-	id 6916FDBC00000A3A; Fri, 14 Nov 2025 18:00:30 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 9639224456650
-X-SMAIL-UIID: 80B3F8E0F02C4A7FAD795D92F12DE6E2-20251114-180030-1
-From: Hillf Danton <hdanton@sina.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org,
-	Jan Kara <jack@suse.cz>,
-	linux-kernel@vger.kernel.org,
-	syzbot+1957b26299cf3ff7890c@syzkaller.appspotmail.com
-Subject: Re: [PATCH 0/8] ns: fixes for namespace iteration and active reference counting
-Date: Fri, 14 Nov 2025 18:00:18 +0800
-Message-ID: <20251114100019.9259-1-hdanton@sina.com>
-In-Reply-To: <20251110-elastisch-endeffekt-747abc5a614a@brauner>
-References: 
+	s=arc-20240116; t=1763115333; c=relaxed/simple;
+	bh=xxGmr78zm8u4YoVUi2DmguUH+VqTj0pJav3No1te3AM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=M7NVB2a2swXZwNAr6BfRf2JBHYvWIwdD2qj9/CjBjmeso9KS+ihSNM+wNRUt1baA/tkolymbcJcFkWsBxpeZUzMu9DaovBJzJgC/w+03UGiEKZViJsws6DMSJAe72P8Lu+/24ML3hSWcP0DIXdah0IQ75zAtVZ81VZ8MknWK4kY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PPwVByzG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 883B7C4CEF1;
+	Fri, 14 Nov 2025 10:15:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763115331;
+	bh=xxGmr78zm8u4YoVUi2DmguUH+VqTj0pJav3No1te3AM=;
+	h=From:Subject:Date:To:Cc:From;
+	b=PPwVByzGOA7/N182YdkY2QAEqNE4w7EVUeJoTLrzgBmhWji0loZRwQq6t0jIx54Do
+	 Xy24a2/gFN8cp3du2tvIVcI5eBUzDCZYRnhRi59vuQRx9+qGISI+xV0gdz6bTAq3hO
+	 KUMhhQhKrQwMB4xJalO/yxlh+PSVInM+fAANMCAX9Rl46wZFUIc7MnuaFUO+gWhDNo
+	 Ka54/3TcA/RnAHuRLqipkhyx74JG0nuMw1Eabi+H77pv00eJYRSYgke4m6X7l75C0t
+	 5hz3TO0eA3nav1AVTABuFP2N6Ydl9ALthV9iGxeK2AqvNU09GExA6eRnumcJuSP2o9
+	 XddlXolB1MFbw==
+From: Christian Brauner <brauner@kernel.org>
+Subject: [PATCH 0/6] ovl: convert creation credential override to cred
+ guard
+Date: Fri, 14 Nov 2025 11:15:15 +0100
+Message-Id: <20251114-work-ovl-cred-guard-prepare-v1-0-4fc1208afa3d@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADMBF2kC/y3MQQrCMBBA0auUWTuhE1sUryIu0mTaBiUpE6xC6
+ d2dFJf/L94GhSVygVuzgfAaS8xJg04N+NmliTEGbbCt7Ymow0+WJ+b1hV444PR2EnARXpww9md
+ LLV+4o/EKKugf4/fQ7w/twRXGQVzyczVrmuoZ9Uz1zOGZvwf7/gPKkL8koAAAAA==
+X-Change-ID: 20251114-work-ovl-cred-guard-prepare-53210e7e41f8
+To: Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
+ linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+ Christian Brauner <brauner@kernel.org>
+X-Mailer: b4 0.15-dev-a6db3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1854; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=xxGmr78zm8u4YoVUi2DmguUH+VqTj0pJav3No1te3AM=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSKMzqKrjl5maX+oURd3ulpFq3bfv5lDjiyXEly9bqq7
+ nXyUf/ZOkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACYiUMbIsKJst9p9cTn7dc48
+ 1SuWdExsOr1IZ4LsFvEJOtutbn071cjIMH//SkkLMbdZz77+Ncy+yV///Fd13rubSZouRqIKRoV
+ 8TAA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp;
+ fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-On Mon, 10 Nov 2025 09:41:56 +0100 Christian Brauner wrote:
-> On Mon, Nov 10, 2025 at 06:55:26AM +0800, Hillf Danton wrote:
-> > FYI namespace-6.19.fixes failed to survive the syzbot test [1].
-> > 
-> > [1] Subject: Re: [syzbot] [lsm?] WARNING in put_cred_rcu
-> > https://lore.kernel.org/lkml/690eedba.a70a0220.22f260.0075.GAE@google.com/
-> 
-> This used a stale branch that existed for testing:
-> 
-> Tested on:
-> 
-> commit:         00f5a3b5 DO NOT MERGE - This is purely for testing a b..
->
-FYI namespace-6.19 failed to survive syzbot test [2].
+Hey,
 
-[2] Subject: Re: [syzbot] [kernel?] general protection fault in put_pid_ns
-https://lore.kernel.org/lkml/691658dd.a70a0220.3124cb.0033.GAE@google.com/
+This is on top of the overlayfs cleanup guard work I already sent out.
+This cleans up the creation specific credential override.
+
+The current code to override credentials for creation operations is
+pretty difficult to understand as we override the credentials twice:
+
+(1) override with the mounter's credentials
+(2) copy the mounts credentials and override the fs{g,u}id with the inode {u,g}id
+
+And then we elide the revert_creds() because it would be an idempotent
+revert. That elision doesn't buy us anything anymore though because it's
+all reference count less anyway.
+
+The fact that this is done in a function and that the revert is
+happening in the original override makes this a lot to grasp.
+
+By introducing a cleanup guard for the creation case we can make this a
+lot easier to understand and extremely visually prevalent:
+
+with_ovl_creds(dentry->d_sb) {
+	scoped_class(prepare_creds_ovl, cred, dentry, inode, mode) {
+		if (IS_ERR(cred))
+			return PTR_ERR(cred);
+
+		ovl_path_upper(dentry->d_parent, &realparentpath);
+
+		/* more stuff you want to do */
+}
+
+I think this is a big improvement over what we have now.
+
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+Christian Brauner (6):
+      ovl: add prepare_creds_ovl cleanup guard
+      ovl: port ovl_create_tmpfile() to new prepare_creds_ovl cleanup guard
+      ovl: reflow ovl_create_or_link()
+      ovl: mark ovl_setup_cred_for_create() as unused temporarily
+      ovl: port ovl_create_or_link() to new prepare_creds_ovl cleanup guard
+      ovl: drop ovl_setup_cred_for_create()
+
+ fs/overlayfs/dir.c | 151 ++++++++++++++++++++++++++++-------------------------
+ 1 file changed, 80 insertions(+), 71 deletions(-)
+---
+base-commit: b4f90b838f462d46522e17de86431b171937adc2
+change-id: 20251114-work-ovl-cred-guard-prepare-53210e7e41f8
+
 
