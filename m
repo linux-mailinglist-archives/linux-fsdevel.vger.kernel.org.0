@@ -1,339 +1,267 @@
-Return-Path: <linux-fsdevel+bounces-68468-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68469-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E242C5CD94
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Nov 2025 12:26:14 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46C06C5CDE8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Nov 2025 12:31:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 663094EBB94
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Nov 2025 11:19:48 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B9E0A34DEF0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Nov 2025 11:30:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C92C4313530;
-	Fri, 14 Nov 2025 11:19:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2055A3148C3;
+	Fri, 14 Nov 2025 11:30:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W+9GMQiY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Akk7h6Hl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18FFFBE49
-	for <linux-fsdevel@vger.kernel.org>; Fri, 14 Nov 2025 11:19:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EEFD3112BB;
+	Fri, 14 Nov 2025 11:30:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763119182; cv=none; b=gLiR8k4qRqapsTtyWEvUP9YlJy9Ze0rj2RaRwTN3ZopZNp0vpjkT3huDlQhlAzQYeE+465wl7mU8Kdm4daljUAbHOr3Hfjy3CG+CQlty77nlXDXZge2XfOHEZF4mHXO2VAK8bmEn6Hdomoz06jeJbTl330F/G4Zas1N76xELfsA=
+	t=1763119807; cv=none; b=nNEZgwQmIEW/ddeq/YRb2mXxSVZ28ZZsfUp+MbS8zLJkgbmArfrGU2k19da2jZvqaeeuw2t6bsgFllpTJ8Jokmj7xmsdRimomwrFjHKx98a+B8+Uw2WKkMFeTVX+qJHuPsUn8kttoFbJjSoLRGVxmTf0SmIdKZd+bxOmbAoynVw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763119182; c=relaxed/simple;
-	bh=xQl0kwtOKB4hUaJLVPlxW0Z2GQ2BADFX8oBEUcH7TM0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hTFbAX6Hpif7RnaoJEK/G4zmie6KEsgLQJTviKEVv7s/TGRGQWdAY8a0cIMthPILMaX8W8wlIbDLGI1pSnwUDgV1iJ0CeoCfRStzcQEA6k2a6RQ1TOb77OSOOeTyJNgRB8BHQ337DAMiXryIQqaymlW7DGmLxtC6MRPkCKw9Q3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W+9GMQiY; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-64320b9bb4bso3969531a12.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Nov 2025 03:19:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763119178; x=1763723978; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=7rBdBhzlwm7YPA0zoQgUCR4OvA8LuRHjaxMOlqWI3x4=;
-        b=W+9GMQiYSkydETbNhSo/P6dSiGHlRG4koMv/HK49uWs3kjS1/9I2B6RAnAJ6ebx6S8
-         gLAc7a5URdg0QNXYjou6M5+Ar2ifP5nqSFFtywZuSaCZvD2hrLwhqUziG2d4aLoIB015
-         Um1dgSxZr1PGrMY0q1UWU/IGFSWmI35qGofwvMlHZLOEg4lquG44IXcnxyoFXtKq2GmI
-         +oAHV0csuscLVOcFjyfJ0DUFfYyi7YybF7L5KKD0oB/79wFiWMu25Pv8bfWsUsF0S1Tq
-         59X2RuMjifjyCeDt6DtljxUait472txPwxkKq83f/hElGTqAiaYHqY4MQ5N74j4u7skH
-         DDvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763119178; x=1763723978;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7rBdBhzlwm7YPA0zoQgUCR4OvA8LuRHjaxMOlqWI3x4=;
-        b=DZX2z+PvUppkNjJDz1V7ACCRDt4tf6LjyFmVF1uPrZOm5pkPxkVoyWefk+Kq+3dvi6
-         OUt+braOLVV4t+DpyH1wiD2WquupL7J+scbCjOUzMLpj58Y8T+J11wJZKiFIhhQ0tXSK
-         PMaCsFmAt1Nvsf0CPrUvOm8ZPJrDSF74u757VVea8gX6/i0GDXcqIg3RObYNVhiIJp1y
-         1eJh1ssfXGROLDymZOX04vdWcpzezIlLqPBSWG1v3IUGyq+skKDDTSxGBt7XdvbR7E5m
-         kjwxfecR1FBSzIDS36HT2xaIRn33QOAHBOgpvSbinfGUjtRes+PVn8lQ6VjIlJTdcUKF
-         odVg==
-X-Forwarded-Encrypted: i=1; AJvYcCX5qEXgmuHW8JGhCYFUjjSsQOLuLUQsO3za94sgwtBQvIZwtmH7Ged6+9woFpf99mtDTNSJ2OVdePwItuXS@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXAS9W9dd3yTyOh3Tq1C48wGl2Rn5puEUqs5kbeuymKCr9dtA7
-	+cO5fyh+7iBszUNl4ngDLUnrK34r4U5jeuznnoYu1mVmUX2dZ8rZWsrNS1BtttSinLTj+lzNlrf
-	4yBApp/1ohC5vSNgH7oNjTQRb9u9SmiI=
-X-Gm-Gg: ASbGncuuthfBYLTwH8Ox4tYEY8ojKfzP0rJxk5YzBGtRbcHwN+ABH3o7TKpEzGKpztr
-	vHqs1c3+1Jpd1f9CknA7uFL/qnDr0+s09DX3wG/u07JsGSiRERfOH17VPY1RUgqSBpj4CaGw31V
-	I3Uq+nZUj98zEYxCZwBR6BNNnODK4aUicvck6DeHGBKVdkue3RcjZBD9/5xh2xUiR381vWQY47+
-	QZoH4yExmj2e+Rc1iJzIpGEnsZHJOyJLdHXOo4RWPrf5wsIfy8+58VEJCZXDaQE+zVjFSruy99i
-	12sK0fLc2HUukGfXAGE=
-X-Google-Smtp-Source: AGHT+IFfZe0g4fezpRDc+X7fNelXv5yG5z8Dl1kfaKgD+zJaqJyK3GgAr0cpsSdbQrwgHJlqGwBfpnmgbXGH3rI+SB4=
-X-Received: by 2002:aa7:c899:0:b0:640:abb1:5eff with SMTP id
- 4fb4d7f45d1cf-64334c7e578mr4363029a12.8.1763119178278; Fri, 14 Nov 2025
- 03:19:38 -0800 (PST)
+	s=arc-20240116; t=1763119807; c=relaxed/simple;
+	bh=nWQdNFwkseMe3m11T//I7TjOchkTxc0f6sD/wvtcMU0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pfamLVoA1cR1D/7fwhLJuMCe1iHL7AApt5pgItsRHMZfAFu8TKBLlrxM9idJzvWlsnqNJGnqsSTEKFitCHMKtJ+frqyWrqW/G3mNGunvYQS0dOO67RcDgRHpRGRpIJkK/gzl1LI3Ld1EukSCbhsAqC1AZFHt3URyWmHUN2pG8JI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Akk7h6Hl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6503CC4CEF1;
+	Fri, 14 Nov 2025 11:29:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763119807;
+	bh=nWQdNFwkseMe3m11T//I7TjOchkTxc0f6sD/wvtcMU0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Akk7h6HlDkGyGgeCHZX5VqCq5N2nSt0CHf09pDVbnqBORphhI2YOmYWQy1u7s7HXC
+	 vk2eR2lL3RSSszzGR9ZhrQ9QHgg7YrLsh+41vhXoLLGIoUvW4UsruI26iGVeGzAPcP
+	 84LrN6UJauCgG0t0GQcvjzAMnlfsFZghOoVZaAboWw1so/FBVYjxsoCOb/82AQtq2Z
+	 0NtCLvZKWHuVI1yWzfUj922GUd6PeRI52oxjC49q5F9N+wj9XWPMdbCNqC7iekpi2w
+	 awEJbNAXVGPvsWxl0F2algphSwaLFV5Rgvd/Ls4Ffdpt7rW/ve1asAz7IG+BKt3CL0
+	 RK6yYv8fID0kA==
+Date: Fri, 14 Nov 2025 13:29:41 +0200
+From: Mike Rapoport <rppt@kernel.org>
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com,
+	dmatlack@google.com, rientjes@google.com, corbet@lwn.net,
+	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com,
+	kanie@linux.alibaba.com, ojeda@kernel.org, aliceryhl@google.com,
+	masahiroy@kernel.org, akpm@linux-foundation.org, tj@kernel.org,
+	yoann.congal@smile.fr, mmaurer@google.com, roman.gushchin@linux.dev,
+	chenridong@huawei.com, axboe@kernel.dk, mark.rutland@arm.com,
+	jannh@google.com, vincent.guittot@linaro.org, hannes@cmpxchg.org,
+	dan.j.williams@intel.com, david@redhat.com,
+	joel.granados@kernel.org, rostedt@goodmis.org,
+	anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn,
+	linux@weissschuh.net, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-mm@kvack.org,
+	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com,
+	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
+	hpa@zytor.com, rafael@kernel.org, dakr@kernel.org,
+	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com,
+	myungjoo.ham@samsung.com, yesanishhere@gmail.com,
+	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com,
+	aleksander.lobakin@intel.com, ira.weiny@intel.com,
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de,
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com,
+	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net,
+	brauner@kernel.org, linux-api@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, saeedm@nvidia.com,
+	ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com,
+	leonro@nvidia.com, witu@nvidia.com, hughd@google.com,
+	skhawaja@google.com, chrisl@kernel.org
+Subject: Re: [PATCH v5 02/22] liveupdate: luo_core: integrate with KHO
+Message-ID: <aRcSpbwBabFjeYe3@kernel.org>
+References: <20251107210526.257742-1-pasha.tatashin@soleen.com>
+ <20251107210526.257742-3-pasha.tatashin@soleen.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251113-work-ovl-cred-guard-v3-0-b35ec983efc1@kernel.org>
- <20251113-work-ovl-cred-guard-v3-34-b35ec983efc1@kernel.org>
- <CAOQ4uxgumgfM1GVE1oMiiN=aW3RBxM67OZGfVE+7e2qW6Ne_jw@mail.gmail.com> <20251114-zurief-tagebuch-790cf513c676@brauner>
-In-Reply-To: <20251114-zurief-tagebuch-790cf513c676@brauner>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 14 Nov 2025 12:19:26 +0100
-X-Gm-Features: AWmQ_bnW81RKVT4zioOTExERbm9Z_pQrgb_3xg_8UTQcV1TBkOsnnL6nQiY7gQQ
-Message-ID: <CAOQ4uxhB_Jbu=t9VdPBdYLMwbd+HPJf9WX2XBsaonoSPpPLsqw@mail.gmail.com>
-Subject: Re: [PATCH v3 34/42] ovl: extract do_ovl_rename() helper function
-To: Christian Brauner <brauner@kernel.org>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Content-Type: multipart/mixed; boundary="00000000000051b28e06438c2c6a"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251107210526.257742-3-pasha.tatashin@soleen.com>
 
---00000000000051b28e06438c2c6a
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+On Fri, Nov 07, 2025 at 04:03:00PM -0500, Pasha Tatashin wrote:
+> Integrate the LUO with the KHO framework to enable passing LUO state
+> across a kexec reboot.
+> 
+> When LUO is transitioned to a "prepared" state, it tells KHO to
+> finalize, so all memory segments that were added to KHO preservation
+> list are getting preserved. After "Prepared" state no new segments
+> can be preserved. If LUO is canceled, it also tells KHO to cancel the
+> serialization, and therefore, later LUO can go back into the prepared
+> state.
+> 
+> This patch introduces the following changes:
+> - During the KHO finalization phase allocate FDT blob.
+> - Populate this FDT with a LUO compatibility string ("luo-v1").
+> 
+> LUO now depends on `CONFIG_KEXEC_HANDOVER`. The core state transition
+> logic (`luo_do_*_calls`) remains unimplemented in this patch.
+> 
+> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+> ---
+>  include/linux/liveupdate.h         |   6 +
+>  include/linux/liveupdate/abi/luo.h |  54 +++++++
+>  kernel/liveupdate/luo_core.c       | 243 ++++++++++++++++++++++++++++-
+>  kernel/liveupdate/luo_internal.h   |  17 ++
+>  mm/mm_init.c                       |   4 +
+>  5 files changed, 323 insertions(+), 1 deletion(-)
+>  create mode 100644 include/linux/liveupdate/abi/luo.h
+>  create mode 100644 kernel/liveupdate/luo_internal.h
+> 
+> diff --git a/include/linux/liveupdate.h b/include/linux/liveupdate.h
+> index 730b76625fec..0be8804fc42a 100644
+> --- a/include/linux/liveupdate.h
+> +++ b/include/linux/liveupdate.h
+> @@ -13,6 +13,8 @@
+>  
+>  #ifdef CONFIG_LIVEUPDATE
+>  
+> +void __init liveupdate_init(void);
+> +
+>  /* Return true if live update orchestrator is enabled */
+>  bool liveupdate_enabled(void);
+>  
+> @@ -21,6 +23,10 @@ int liveupdate_reboot(void);
+>  
+>  #else /* CONFIG_LIVEUPDATE */
+>  
+> +static inline void liveupdate_init(void)
+> +{
+> +}
 
-On Fri, Nov 14, 2025 at 11:21=E2=80=AFAM Christian Brauner <brauner@kernel.=
-org> wrote:
->
-> On Fri, Nov 14, 2025 at 10:03:56AM +0100, Amir Goldstein wrote:
-> > On Thu, Nov 13, 2025 at 10:33=E2=80=AFPM Christian Brauner <brauner@ker=
-nel.org> wrote:
-> > >
-> > > Extract the code that runs under overridden credentials into a separa=
-te
-> > > do_ovl_rename() helper function. Error handling is simplified. The
-> > > helper returns errors directly instead of using goto labels.
-> > >
-> > > Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-> > > Signed-off-by: Christian Brauner <brauner@kernel.org>
-> > > ---
-> >
-> > For the record, the only way I could review this patch is by manually
-> > moving the helper and doing diff, so while I approve the code
-> > I think this is unreviewable as it is posted.
->
-> This function should've never been allowed to be this large in the first
-> place. It is a giant pain to read and modify.
->
-> If you have an approach where you can refactor it in tiny steps that I
-> can incorporate, be my guest. The only reason I'm doing it is because it
-> gets in my way here.
+The common practice is to place brackets at the same line with function
+declaration.
 
-Here you go
+...
 
-large function split into ovl_rename_start() ovl_rename_upper() ovl_rename_=
-end()
-this is clear, smallish patch and conforming to other overlayfs code.
+> +static int __init luo_early_startup(void)
+> +{
+> +	phys_addr_t fdt_phys;
+> +	int err, ln_size;
+> +	const void *ptr;
+> +
+> +	if (!kho_is_enabled()) {
+> +		if (liveupdate_enabled())
+> +			pr_warn("Disabling liveupdate because KHO is disabled\n");
+> +		luo_global.enabled = false;
+> +		return 0;
+> +	}
+> +
+> +	/* Retrieve LUO subtree, and verify its format. */
+> +	err = kho_retrieve_subtree(LUO_FDT_KHO_ENTRY_NAME, &fdt_phys);
+> +	if (err) {
+> +		if (err != -ENOENT) {
+> +			pr_err("failed to retrieve FDT '%s' from KHO: %pe\n",
+> +			       LUO_FDT_KHO_ENTRY_NAME, ERR_PTR(err));
+> +			return err;
+> +		}
+> +
+> +		return 0;
+> +	}
+> +
+> +	luo_global.fdt_in = __va(fdt_phys);
 
-Also tested that together with your new patches and all tests still pass.
+phys_to_virt is clearer, isn't it?
 
-Thanks,
-Amir.
+> +	err = fdt_node_check_compatible(luo_global.fdt_in, 0,
+> +					LUO_FDT_COMPATIBLE);
 
---00000000000051b28e06438c2c6a
-Content-Type: text/x-patch; charset="US-ASCII"; name="0001-ovl-refactor-ovl_rename.patch"
-Content-Disposition: attachment; 
-	filename="0001-ovl-refactor-ovl_rename.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_mhyr861m0>
-X-Attachment-Id: f_mhyr861m0
+...
 
-RnJvbSA3NmJiMjM5MWQ3NjllMDZjZjBmZTZlZDFiNGVmNmE4N2M5N2YzMjkwIE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBDaHJpc3RpYW4gQnJhdW5lciA8YnJhdW5lckBrZXJuZWwub3Jn
-PgpEYXRlOiBUaHUsIDEzIE5vdiAyMDI1IDIyOjA5OjQ1ICswMTAwClN1YmplY3Q6IFtQQVRDSF0g
-b3ZsOiByZWZhY3RvciBvdmxfcmVuYW1lKCkKCkV4dHJhY3QgdGhlIGNvZGUgdGhhdCBydW5zIHVu
-ZGVyIG92ZXJyaWRkZW4gY3JlZGVudGlhbHMgaW50byBhIHNlcGFyYXRlCm92bF9yZW5hbWVfdXBw
-ZXIoKSBoZWxwZXIgZnVuY3Rpb24gYW5kIHRoZSBjb2RlIHRoYXQgcnVucyBiZWZvcmUgYW5kCmFm
-dGVyIHRvIG92bF9yZW5hbWVfe3N0YXJ0LGVuZH0oKS4gRXJyb3IgaGFuZGxpbmcgaXMgc2ltcGxp
-ZmllZC4gVGhlCmhlbHBlcnMgcmV0dXJucyBlcnJvcnMgZGlyZWN0bHkgaW5zdGVhZCBvZiB1c2lu
-ZyBnb3RvIGxhYmVscy4KClNpZ25lZC1vZmYtYnk6IENocmlzdGlhbiBCcmF1bmVyIDxicmF1bmVy
-QGtlcm5lbC5vcmc+ClNpZ25lZC1vZmYtYnk6IEFtaXIgR29sZHN0ZWluIDxhbWlyNzNpbEBnbWFp
-bC5jb20+Ci0tLQogZnMvb3ZlcmxheWZzL2Rpci5jIHwgMjMyICsrKysrKysrKysrKysrKysrKysr
-KysrKy0tLS0tLS0tLS0tLS0tLS0tLS0tLQogMSBmaWxlIGNoYW5nZWQsIDEyNiBpbnNlcnRpb25z
-KCspLCAxMDYgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZnMvb3ZlcmxheWZzL2Rpci5jIGIv
-ZnMvb3ZlcmxheWZzL2Rpci5jCmluZGV4IDA1MjkyOWI5Yjk5ZDEuLmY2ZDlkNTY4ZTk0NDAgMTAw
-NjQ0Ci0tLSBhL2ZzL292ZXJsYXlmcy9kaXIuYworKysgYi9mcy9vdmVybGF5ZnMvZGlyLmMKQEAg
-LTEwOTYsMTA5ICsxMDk2LDEwMSBAQCBzdHJ1Y3Qgb3ZsX3JlbmFtZWRhdGEgewogCXN0cnVjdCBk
-ZW50cnkgKm9sZGRlbnRyeTsKIAlzdHJ1Y3QgZGVudHJ5ICpuZXdkZW50cnk7CiAJYm9vbCBjbGVh
-bnVwX3doaXRlb3V0OworCWJvb2wgdXBkYXRlX25saW5rOwogCWJvb2wgb3ZlcndyaXRlOwogfTsK
-IAotc3RhdGljIGludCBvdmxfcmVuYW1lKHN0cnVjdCBtbnRfaWRtYXAgKmlkbWFwLCBzdHJ1Y3Qg
-aW5vZGUgKm9sZGRpciwKLQkJICAgICAgc3RydWN0IGRlbnRyeSAqb2xkLCBzdHJ1Y3QgaW5vZGUg
-Km5ld2RpciwKLQkJICAgICAgc3RydWN0IGRlbnRyeSAqbmV3LCB1bnNpZ25lZCBpbnQgZmxhZ3Mp
-CitzdGF0aWMgaW50IG92bF9yZW5hbWVfc3RhcnQoc3RydWN0IG92bF9yZW5hbWVkYXRhICpvdmxy
-ZCwgc3RydWN0IGxpc3RfaGVhZCAqbGlzdCkKIHsKLQlpbnQgZXJyOwotCXN0cnVjdCBkZW50cnkg
-Km9sZF91cHBlcmRpcjsKLQlzdHJ1Y3QgZGVudHJ5ICpuZXdfdXBwZXJkaXI7Ci0Jc3RydWN0IGRl
-bnRyeSAqdHJhcCwgKmRlOwotCWJvb2wgb2xkX29wYXF1ZTsKLQlib29sIG5ld19vcGFxdWU7Ci0J
-Ym9vbCB1cGRhdGVfbmxpbmsgPSBmYWxzZTsKKwlzdHJ1Y3QgZGVudHJ5ICpvbGQgPSBvdmxyZC0+
-b2xkX2RlbnRyeTsKKwlzdHJ1Y3QgZGVudHJ5ICpuZXcgPSBvdmxyZC0+bmV3X2RlbnRyeTsKIAli
-b29sIGlzX2RpciA9IGRfaXNfZGlyKG9sZCk7CiAJYm9vbCBuZXdfaXNfZGlyID0gZF9pc19kaXIo
-bmV3KTsKLQljb25zdCBzdHJ1Y3QgY3JlZCAqb2xkX2NyZWQgPSBOVUxMOwotCXN0cnVjdCBvdmxf
-ZnMgKm9mcyA9IE9WTF9GUyhvbGQtPmRfc2IpOwotCXN0cnVjdCBvdmxfcmVuYW1lZGF0YSBvdmxy
-ZCA9IHsKLQkJLm9sZF9wYXJlbnQJCT0gb2xkLT5kX3BhcmVudCwKLQkJLm9sZF9kZW50cnkJCT0g
-b2xkLAotCQkubmV3X3BhcmVudAkJPSBuZXctPmRfcGFyZW50LAotCQkubmV3X2RlbnRyeQkJPSBu
-ZXcsCi0JCS5mbGFncwkJCT0gZmxhZ3MsCi0JCS5jbGVhbnVwX3doaXRlb3V0CT0gZmFsc2UsCi0J
-CS5vdmVyd3JpdGUJCT0gIShmbGFncyAmIFJFTkFNRV9FWENIQU5HRSksCi0JfTsKLQlMSVNUX0hF
-QUQobGlzdCk7Ci0JYm9vbCBzYW1lZGlyID0gb3ZscmQub2xkX3BhcmVudCA9PSBvdmxyZC5uZXdf
-cGFyZW50OworCWludCBlcnI7CiAKLQllcnIgPSAtRUlOVkFMOwotCWlmIChvdmxyZC5mbGFncyAm
-IH4oUkVOQU1FX0VYQ0hBTkdFIHwgUkVOQU1FX05PUkVQTEFDRSkpCi0JCWdvdG8gb3V0OworCWlm
-IChvdmxyZC0+ZmxhZ3MgJiB+KFJFTkFNRV9FWENIQU5HRSB8IFJFTkFNRV9OT1JFUExBQ0UpKQor
-CQlyZXR1cm4gLUVJTlZBTDsKIAotCW92bHJkLmZsYWdzICY9IH5SRU5BTUVfTk9SRVBMQUNFOwor
-CW92bHJkLT5mbGFncyAmPSB+UkVOQU1FX05PUkVQTEFDRTsKIAogCS8qIERvbid0IGNvcHkgdXAg
-ZGlyZWN0b3J5IHRyZWVzICovCiAJZXJyID0gLUVYREVWOwogCWlmICghb3ZsX2Nhbl9tb3ZlKG9s
-ZCkpCi0JCWdvdG8gb3V0OwotCWlmICghb3ZscmQub3ZlcndyaXRlICYmICFvdmxfY2FuX21vdmUo
-bmV3KSkKLQkJZ290byBvdXQ7CisJCXJldHVybiBlcnI7CisJaWYgKCFvdmxyZC0+b3ZlcndyaXRl
-ICYmICFvdmxfY2FuX21vdmUobmV3KSkKKwkJcmV0dXJuIGVycjsKIAotCWlmIChvdmxyZC5vdmVy
-d3JpdGUgJiYgbmV3X2lzX2RpciAmJiAhb3ZsX3B1cmVfdXBwZXIobmV3KSkgewotCQllcnIgPSBv
-dmxfY2hlY2tfZW1wdHlfZGlyKG5ldywgJmxpc3QpOworCWlmIChvdmxyZC0+b3ZlcndyaXRlICYm
-IG5ld19pc19kaXIgJiYgIW92bF9wdXJlX3VwcGVyKG5ldykpIHsKKwkJZXJyID0gb3ZsX2NoZWNr
-X2VtcHR5X2RpcihuZXcsIGxpc3QpOwogCQlpZiAoZXJyKQotCQkJZ290byBvdXQ7CisJCQlyZXR1
-cm4gZXJyOwogCX0KIAotCWlmIChvdmxyZC5vdmVyd3JpdGUpIHsKKwlpZiAob3ZscmQtPm92ZXJ3
-cml0ZSkgewogCQlpZiAob3ZsX2xvd2VyX3Bvc2l0aXZlKG9sZCkpIHsKIAkJCWlmICghb3ZsX2Rl
-bnRyeV9pc193aGl0ZW91dChuZXcpKSB7CiAJCQkJLyogV2hpdGVvdXQgc291cmNlICovCi0JCQkJ
-b3ZscmQuZmxhZ3MgfD0gUkVOQU1FX1dISVRFT1VUOworCQkJCW92bHJkLT5mbGFncyB8PSBSRU5B
-TUVfV0hJVEVPVVQ7CiAJCQl9IGVsc2UgewogCQkJCS8qIFN3aXRjaCB3aGl0ZW91dHMgKi8KLQkJ
-CQlvdmxyZC5mbGFncyB8PSBSRU5BTUVfRVhDSEFOR0U7CisJCQkJb3ZscmQtPmZsYWdzIHw9IFJF
-TkFNRV9FWENIQU5HRTsKIAkJCX0KIAkJfSBlbHNlIGlmIChpc19kaXIgJiYgb3ZsX2RlbnRyeV9p
-c193aGl0ZW91dChuZXcpKSB7Ci0JCQlvdmxyZC5mbGFncyB8PSBSRU5BTUVfRVhDSEFOR0U7Ci0J
-CQlvdmxyZC5jbGVhbnVwX3doaXRlb3V0ID0gdHJ1ZTsKKwkJCW92bHJkLT5mbGFncyB8PSBSRU5B
-TUVfRVhDSEFOR0U7CisJCQlvdmxyZC0+Y2xlYW51cF93aGl0ZW91dCA9IHRydWU7CiAJCX0KIAl9
-CiAKIAllcnIgPSBvdmxfY29weV91cChvbGQpOwogCWlmIChlcnIpCi0JCWdvdG8gb3V0OworCQly
-ZXR1cm4gZXJyOwogCi0JZXJyID0gb3ZsX2NvcHlfdXAob3ZscmQubmV3X3BhcmVudCk7CisJZXJy
-ID0gb3ZsX2NvcHlfdXAobmV3LT5kX3BhcmVudCk7CiAJaWYgKGVycikKLQkJZ290byBvdXQ7Ci0J
-aWYgKCFvdmxyZC5vdmVyd3JpdGUpIHsKKwkJcmV0dXJuIGVycjsKKwlpZiAoIW92bHJkLT5vdmVy
-d3JpdGUpIHsKIAkJZXJyID0gb3ZsX2NvcHlfdXAobmV3KTsKIAkJaWYgKGVycikKLQkJCWdvdG8g
-b3V0OworCQkJcmV0dXJuIGVycjsKIAl9IGVsc2UgaWYgKGRfaW5vZGUobmV3KSkgewogCQllcnIg
-PSBvdmxfbmxpbmtfc3RhcnQobmV3KTsKIAkJaWYgKGVycikKLQkJCWdvdG8gb3V0OworCQkJcmV0
-dXJuIGVycjsKIAotCQl1cGRhdGVfbmxpbmsgPSB0cnVlOworCQlvdmxyZC0+dXBkYXRlX25saW5r
-ID0gdHJ1ZTsKIAl9CiAKLQlpZiAoIXVwZGF0ZV9ubGluaykgeworCWlmICghb3ZscmQtPnVwZGF0
-ZV9ubGluaykgewogCQkvKiBvdmxfbmxpbmtfc3RhcnQoKSB0b29rIG92bF93YW50X3dyaXRlKCkg
-Ki8KIAkJZXJyID0gb3ZsX3dhbnRfd3JpdGUob2xkKTsKIAkJaWYgKGVycikKLQkJCWdvdG8gb3V0
-OworCQkJcmV0dXJuIGVycjsKIAl9CiAKLQlvbGRfY3JlZCA9IG92bF9vdmVycmlkZV9jcmVkcyhv
-bGQtPmRfc2IpOworCXJldHVybiAwOworfQogCi0JaWYgKCFsaXN0X2VtcHR5KCZsaXN0KSkgewot
-CQlvdmxyZC5vcGFxdWVkaXIgPSBvdmxfY2xlYXJfZW1wdHkobmV3LCAmbGlzdCk7Ci0JCWVyciA9
-IFBUUl9FUlIob3ZscmQub3BhcXVlZGlyKTsKLQkJaWYgKElTX0VSUihvdmxyZC5vcGFxdWVkaXIp
-KSB7Ci0JCQlvdmxyZC5vcGFxdWVkaXIgPSBOVUxMOwotCQkJZ290byBvdXRfcmV2ZXJ0X2NyZWRz
-OwotCQl9Ci0JfQorc3RhdGljIGludCBvdmxfcmVuYW1lX3VwcGVyKHN0cnVjdCBvdmxfcmVuYW1l
-ZGF0YSAqb3ZscmQsIHN0cnVjdCBsaXN0X2hlYWQgKmxpc3QpCit7CisJc3RydWN0IGRlbnRyeSAq
-b2xkID0gb3ZscmQtPm9sZF9kZW50cnk7CisJc3RydWN0IGRlbnRyeSAqbmV3ID0gb3ZscmQtPm5l
-d19kZW50cnk7CisJc3RydWN0IG92bF9mcyAqb2ZzID0gT1ZMX0ZTKG9sZC0+ZF9zYik7CisJdW5z
-aWduZWQgaW50IGZsYWdzID0gb3ZscmQtPmZsYWdzOworCXN0cnVjdCBkZW50cnkgKm9sZF91cHBl
-cmRpciA9IG92bF9kZW50cnlfdXBwZXIob3ZscmQtPm9sZF9wYXJlbnQpOworCXN0cnVjdCBkZW50
-cnkgKm5ld191cHBlcmRpciA9IG92bF9kZW50cnlfdXBwZXIob3ZscmQtPm5ld19wYXJlbnQpOwor
-CWJvb2wgc2FtZWRpciA9IG92bHJkLT5vbGRfcGFyZW50ID09IG92bHJkLT5uZXdfcGFyZW50Owor
-CWJvb2wgaXNfZGlyID0gZF9pc19kaXIob2xkKTsKKwlib29sIG5ld19pc19kaXIgPSBkX2lzX2Rp
-cihuZXcpOworCXN0cnVjdCBkZW50cnkgKnRyYXAsICpkZTsKKwlib29sIG9sZF9vcGFxdWUsIG5l
-d19vcGFxdWU7CisJaW50IGVycjsKIAotCW9sZF91cHBlcmRpciA9IG92bF9kZW50cnlfdXBwZXIo
-b3ZscmQub2xkX3BhcmVudCk7Ci0JbmV3X3VwcGVyZGlyID0gb3ZsX2RlbnRyeV91cHBlcihvdmxy
-ZC5uZXdfcGFyZW50KTsKKwlpZiAoIWxpc3RfZW1wdHkobGlzdCkpIHsKKwkJZGUgPSBvdmxfY2xl
-YXJfZW1wdHkobmV3LCBsaXN0KTsKKwkJaWYgKElTX0VSUihkZSkpCisJCQlyZXR1cm4gUFRSX0VS
-UihkZSk7CisJCW92bHJkLT5vcGFxdWVkaXIgPSBkZTsKKwl9CiAKIAlpZiAoIXNhbWVkaXIpIHsK
-IAkJLyoKQEAgLTEyMDgsMzIgKzEyMDAsMzAgQEAgc3RhdGljIGludCBvdmxfcmVuYW1lKHN0cnVj
-dCBtbnRfaWRtYXAgKmlkbWFwLCBzdHJ1Y3QgaW5vZGUgKm9sZGRpciwKIAkJICogbG9va3VwIHRo
-ZSBvcmlnaW4gaW5vZGVzIG9mIHRoZSBlbnRyaWVzIHRvIGZpbGwgZF9pbm8uCiAJCSAqLwogCQlp
-ZiAob3ZsX3R5cGVfb3JpZ2luKG9sZCkpIHsKLQkJCWVyciA9IG92bF9zZXRfaW1wdXJlKG92bHJk
-Lm5ld19wYXJlbnQsIG5ld191cHBlcmRpcik7CisJCQllcnIgPSBvdmxfc2V0X2ltcHVyZShvdmxy
-ZC0+bmV3X3BhcmVudCwgbmV3X3VwcGVyZGlyKTsKIAkJCWlmIChlcnIpCi0JCQkJZ290byBvdXRf
-cmV2ZXJ0X2NyZWRzOworCQkJCXJldHVybiBlcnI7CiAJCX0KLQkJaWYgKCFvdmxyZC5vdmVyd3Jp
-dGUgJiYgb3ZsX3R5cGVfb3JpZ2luKG5ldykpIHsKLQkJCWVyciA9IG92bF9zZXRfaW1wdXJlKG92
-bHJkLm9sZF9wYXJlbnQsIG9sZF91cHBlcmRpcik7CisJCWlmICghb3ZscmQtPm92ZXJ3cml0ZSAm
-JiBvdmxfdHlwZV9vcmlnaW4obmV3KSkgeworCQkJZXJyID0gb3ZsX3NldF9pbXB1cmUob3ZscmQt
-Pm9sZF9wYXJlbnQsIG9sZF91cHBlcmRpcik7CiAJCQlpZiAoZXJyKQotCQkJCWdvdG8gb3V0X3Jl
-dmVydF9jcmVkczsKKwkJCQlyZXR1cm4gZXJyOwogCQl9CiAJfQogCiAJdHJhcCA9IGxvY2tfcmVu
-YW1lKG5ld191cHBlcmRpciwgb2xkX3VwcGVyZGlyKTsKLQlpZiAoSVNfRVJSKHRyYXApKSB7Ci0J
-CWVyciA9IFBUUl9FUlIodHJhcCk7Ci0JCWdvdG8gb3V0X3JldmVydF9jcmVkczsKLQl9CisJaWYg
-KElTX0VSUih0cmFwKSkKKwkJcmV0dXJuIFBUUl9FUlIodHJhcCk7CiAKIAlkZSA9IG92bF9sb29r
-dXBfdXBwZXIob2ZzLCBvbGQtPmRfbmFtZS5uYW1lLCBvbGRfdXBwZXJkaXIsCiAJCQkgICAgICBv
-bGQtPmRfbmFtZS5sZW4pOwogCWVyciA9IFBUUl9FUlIoZGUpOwogCWlmIChJU19FUlIoZGUpKQog
-CQlnb3RvIG91dF91bmxvY2s7Ci0Jb3ZscmQub2xkZGVudHJ5ID0gZGU7CisJb3ZscmQtPm9sZGRl
-bnRyeSA9IGRlOwogCiAJZXJyID0gLUVTVEFMRTsKLQlpZiAoIW92bF9tYXRjaGVzX3VwcGVyKG9s
-ZCwgb3ZscmQub2xkZGVudHJ5KSkKKwlpZiAoIW92bF9tYXRjaGVzX3VwcGVyKG9sZCwgb3ZscmQt
-Pm9sZGRlbnRyeSkpCiAJCWdvdG8gb3V0X3VubG9jazsKIAogCWRlID0gb3ZsX2xvb2t1cF91cHBl
-cihvZnMsIG5ldy0+ZF9uYW1lLm5hbWUsIG5ld191cHBlcmRpciwKQEAgLTEyNDEsNzMgKzEyMzEs
-NzQgQEAgc3RhdGljIGludCBvdmxfcmVuYW1lKHN0cnVjdCBtbnRfaWRtYXAgKmlkbWFwLCBzdHJ1
-Y3QgaW5vZGUgKm9sZGRpciwKIAllcnIgPSBQVFJfRVJSKGRlKTsKIAlpZiAoSVNfRVJSKGRlKSkK
-IAkJZ290byBvdXRfdW5sb2NrOwotCW92bHJkLm5ld2RlbnRyeSA9IGRlOworCW92bHJkLT5uZXdk
-ZW50cnkgPSBkZTsKIAogCW9sZF9vcGFxdWUgPSBvdmxfZGVudHJ5X2lzX29wYXF1ZShvbGQpOwog
-CW5ld19vcGFxdWUgPSBvdmxfZGVudHJ5X2lzX29wYXF1ZShuZXcpOwogCiAJZXJyID0gLUVTVEFM
-RTsKIAlpZiAoZF9pbm9kZShuZXcpICYmIG92bF9kZW50cnlfdXBwZXIobmV3KSkgewotCQlpZiAo
-b3ZscmQub3BhcXVlZGlyKSB7Ci0JCQlpZiAob3ZscmQubmV3ZGVudHJ5ICE9IG92bHJkLm9wYXF1
-ZWRpcikKKwkJaWYgKG92bHJkLT5vcGFxdWVkaXIpIHsKKwkJCWlmIChvdmxyZC0+bmV3ZGVudHJ5
-ICE9IG92bHJkLT5vcGFxdWVkaXIpCiAJCQkJZ290byBvdXRfdW5sb2NrOwogCQl9IGVsc2Ugewot
-CQkJaWYgKCFvdmxfbWF0Y2hlc191cHBlcihuZXcsIG92bHJkLm5ld2RlbnRyeSkpCisJCQlpZiAo
-IW92bF9tYXRjaGVzX3VwcGVyKG5ldywgb3ZscmQtPm5ld2RlbnRyeSkpCiAJCQkJZ290byBvdXRf
-dW5sb2NrOwogCQl9CiAJfSBlbHNlIHsKLQkJaWYgKCFkX2lzX25lZ2F0aXZlKG92bHJkLm5ld2Rl
-bnRyeSkpIHsKLQkJCWlmICghbmV3X29wYXF1ZSB8fCAhb3ZsX3VwcGVyX2lzX3doaXRlb3V0KG9m
-cywgb3ZscmQubmV3ZGVudHJ5KSkKKwkJaWYgKCFkX2lzX25lZ2F0aXZlKG92bHJkLT5uZXdkZW50
-cnkpKSB7CisJCQlpZiAoIW5ld19vcGFxdWUgfHwgIW92bF91cHBlcl9pc193aGl0ZW91dChvZnMs
-IG92bHJkLT5uZXdkZW50cnkpKQogCQkJCWdvdG8gb3V0X3VubG9jazsKIAkJfSBlbHNlIHsKLQkJ
-CWlmIChvdmxyZC5mbGFncyAmIFJFTkFNRV9FWENIQU5HRSkKKwkJCWlmIChmbGFncyAmIFJFTkFN
-RV9FWENIQU5HRSkKIAkJCQlnb3RvIG91dF91bmxvY2s7CiAJCX0KIAl9CiAKLQlpZiAob3ZscmQu
-b2xkZGVudHJ5ID09IHRyYXApCisJaWYgKG92bHJkLT5vbGRkZW50cnkgPT0gdHJhcCkKIAkJZ290
-byBvdXRfdW5sb2NrOwotCWlmIChvdmxyZC5uZXdkZW50cnkgPT0gdHJhcCkKKwlpZiAob3ZscmQt
-Pm5ld2RlbnRyeSA9PSB0cmFwKQogCQlnb3RvIG91dF91bmxvY2s7CiAKLQlpZiAob3ZscmQub2xk
-ZGVudHJ5LT5kX2lub2RlID09IG92bHJkLm5ld2RlbnRyeS0+ZF9pbm9kZSkKKwlpZiAob3ZscmQt
-Pm9sZGRlbnRyeS0+ZF9pbm9kZSA9PSBvdmxyZC0+bmV3ZGVudHJ5LT5kX2lub2RlKQogCQlnb3Rv
-IG91dF91bmxvY2s7CiAKIAllcnIgPSAwOwogCWlmIChvdmxfdHlwZV9tZXJnZV9vcl9sb3dlcihv
-bGQpKQogCQllcnIgPSBvdmxfc2V0X3JlZGlyZWN0KG9sZCwgc2FtZWRpcik7Ci0JZWxzZSBpZiAo
-aXNfZGlyICYmICFvbGRfb3BhcXVlICYmIG92bF90eXBlX21lcmdlKG92bHJkLm5ld19wYXJlbnQp
-KQotCQllcnIgPSBvdmxfc2V0X29wYXF1ZV94ZXJyKG9sZCwgb3ZscmQub2xkZGVudHJ5LCAtRVhE
-RVYpOworCWVsc2UgaWYgKGlzX2RpciAmJiAhb2xkX29wYXF1ZSAmJiBvdmxfdHlwZV9tZXJnZShv
-dmxyZC0+bmV3X3BhcmVudCkpCisJCWVyciA9IG92bF9zZXRfb3BhcXVlX3hlcnIob2xkLCBvdmxy
-ZC0+b2xkZGVudHJ5LCAtRVhERVYpOwogCWlmIChlcnIpCiAJCWdvdG8gb3V0X3VubG9jazsKIAot
-CWlmICghb3ZscmQub3ZlcndyaXRlICYmIG92bF90eXBlX21lcmdlX29yX2xvd2VyKG5ldykpCisJ
-aWYgKCFvdmxyZC0+b3ZlcndyaXRlICYmIG92bF90eXBlX21lcmdlX29yX2xvd2VyKG5ldykpCiAJ
-CWVyciA9IG92bF9zZXRfcmVkaXJlY3QobmV3LCBzYW1lZGlyKTsKLQllbHNlIGlmICghb3ZscmQu
-b3ZlcndyaXRlICYmIG5ld19pc19kaXIgJiYgIW5ld19vcGFxdWUgJiYKLQkJIG92bF90eXBlX21l
-cmdlKG92bHJkLm9sZF9wYXJlbnQpKQotCQllcnIgPSBvdmxfc2V0X29wYXF1ZV94ZXJyKG5ldywg
-b3ZscmQubmV3ZGVudHJ5LCAtRVhERVYpOworCWVsc2UgaWYgKCFvdmxyZC0+b3ZlcndyaXRlICYm
-IG5ld19pc19kaXIgJiYgIW5ld19vcGFxdWUgJiYKKwkJIG92bF90eXBlX21lcmdlKG92bHJkLT5v
-bGRfcGFyZW50KSkKKwkJZXJyID0gb3ZsX3NldF9vcGFxdWVfeGVycihuZXcsIG92bHJkLT5uZXdk
-ZW50cnksIC1FWERFVik7CiAJaWYgKGVycikKIAkJZ290byBvdXRfdW5sb2NrOwogCi0JZXJyID0g
-b3ZsX2RvX3JlbmFtZShvZnMsIG9sZF91cHBlcmRpciwgb3ZscmQub2xkZGVudHJ5LAotCQkJICAg
-IG5ld191cHBlcmRpciwgb3ZscmQubmV3ZGVudHJ5LCBmbGFncyk7CisJZXJyID0gb3ZsX2RvX3Jl
-bmFtZShvZnMsIG9sZF91cHBlcmRpciwgb3ZscmQtPm9sZGRlbnRyeSwKKwkJCSAgICBuZXdfdXBw
-ZXJkaXIsIG92bHJkLT5uZXdkZW50cnksIGZsYWdzKTsKK291dF91bmxvY2s6CiAJdW5sb2NrX3Jl
-bmFtZShuZXdfdXBwZXJkaXIsIG9sZF91cHBlcmRpcik7CiAJaWYgKGVycikKLQkJZ290byBvdXRf
-cmV2ZXJ0X2NyZWRzOworCQlyZXR1cm4gZXJyOwogCi0JaWYgKG92bHJkLmNsZWFudXBfd2hpdGVv
-dXQpCi0JCW92bF9jbGVhbnVwKG9mcywgb2xkX3VwcGVyZGlyLCBvdmxyZC5uZXdkZW50cnkpOwor
-CWlmIChvdmxyZC0+Y2xlYW51cF93aGl0ZW91dCkKKwkJb3ZsX2NsZWFudXAob2ZzLCBvbGRfdXBw
-ZXJkaXIsIG92bHJkLT5uZXdkZW50cnkpOwogCi0JaWYgKG92bHJkLm92ZXJ3cml0ZSAmJiBkX2lu
-b2RlKG5ldykpIHsKKwlpZiAob3ZscmQtPm92ZXJ3cml0ZSAmJiBkX2lub2RlKG5ldykpIHsKIAkJ
-aWYgKG5ld19pc19kaXIpCiAJCQljbGVhcl9ubGluayhkX2lub2RlKG5ldykpOwogCQllbHNlCiAJ
-CQlvdmxfZHJvcF9ubGluayhuZXcpOwogCX0KIAotCW92bF9kaXJfbW9kaWZpZWQob3ZscmQub2xk
-X3BhcmVudCwgb3ZsX3R5cGVfb3JpZ2luKG9sZCkgfHwKLQkJCSAoIW92bHJkLm92ZXJ3cml0ZSAm
-JiBvdmxfdHlwZV9vcmlnaW4obmV3KSkpOwotCW92bF9kaXJfbW9kaWZpZWQob3ZscmQubmV3X3Bh
-cmVudCwgb3ZsX3R5cGVfb3JpZ2luKG9sZCkgfHwKKwlvdmxfZGlyX21vZGlmaWVkKG92bHJkLT5v
-bGRfcGFyZW50LCBvdmxfdHlwZV9vcmlnaW4ob2xkKSB8fAorCQkJICghb3ZscmQtPm92ZXJ3cml0
-ZSAmJiBvdmxfdHlwZV9vcmlnaW4obmV3KSkpOworCW92bF9kaXJfbW9kaWZpZWQob3ZscmQtPm5l
-d19wYXJlbnQsIG92bF90eXBlX29yaWdpbihvbGQpIHx8CiAJCQkgKGRfaW5vZGUobmV3KSAmJiBv
-dmxfdHlwZV9vcmlnaW4obmV3KSkpOwogCiAJLyogY29weSBjdGltZTogKi8KQEAgLTEzMTUsMjIg
-KzEzMDYsNTEgQEAgc3RhdGljIGludCBvdmxfcmVuYW1lKHN0cnVjdCBtbnRfaWRtYXAgKmlkbWFw
-LCBzdHJ1Y3QgaW5vZGUgKm9sZGRpciwKIAlpZiAoZF9pbm9kZShuZXcpICYmIG92bF9kZW50cnlf
-dXBwZXIobmV3KSkKIAkJb3ZsX2NvcHlhdHRyKGRfaW5vZGUobmV3KSk7CiAKLW91dF9yZXZlcnRf
-Y3JlZHM6Ci0Jb3ZsX3JldmVydF9jcmVkcyhvbGRfY3JlZCk7Ci0JaWYgKHVwZGF0ZV9ubGluaykK
-LQkJb3ZsX25saW5rX2VuZChuZXcpOworCXJldHVybiBlcnI7Cit9CisKK3N0YXRpYyB2b2lkIG92
-bF9yZW5hbWVfZW5kKHN0cnVjdCBvdmxfcmVuYW1lZGF0YSAqb3ZscmQpCit7CisJaWYgKG92bHJk
-LT51cGRhdGVfbmxpbmspCisJCW92bF9ubGlua19lbmQob3ZscmQtPm5ld19kZW50cnkpOwogCWVs
-c2UKLQkJb3ZsX2Ryb3Bfd3JpdGUob2xkKTsKKwkJb3ZsX2Ryb3Bfd3JpdGUob3ZscmQtPm9sZF9k
-ZW50cnkpOworCisJZHB1dChvdmxyZC0+bmV3ZGVudHJ5KTsKKwlkcHV0KG92bHJkLT5vbGRkZW50
-cnkpOworCWRwdXQob3ZscmQtPm9wYXF1ZWRpcik7Cit9CisKK3N0YXRpYyBpbnQgb3ZsX3JlbmFt
-ZShzdHJ1Y3QgbW50X2lkbWFwICppZG1hcCwgc3RydWN0IGlub2RlICpvbGRkaXIsCisJCSAgICAg
-IHN0cnVjdCBkZW50cnkgKm9sZCwgc3RydWN0IGlub2RlICpuZXdkaXIsCisJCSAgICAgIHN0cnVj
-dCBkZW50cnkgKm5ldywgdW5zaWduZWQgaW50IGZsYWdzKQoreworCWNvbnN0IHN0cnVjdCBjcmVk
-ICpvbGRfY3JlZCA9IE5VTEw7CisJc3RydWN0IG92bF9yZW5hbWVkYXRhIG92bHJkID0geworCQku
-b2xkX3BhcmVudAkJPSBvbGQtPmRfcGFyZW50LAorCQkub2xkX2RlbnRyeQkJPSBvbGQsCisJCS5u
-ZXdfcGFyZW50CQk9IG5ldy0+ZF9wYXJlbnQsCisJCS5uZXdfZGVudHJ5CQk9IG5ldywKKwkJLmZs
-YWdzCQkJPSBmbGFncywKKwkJLm92ZXJ3cml0ZQkJPSAhKGZsYWdzICYgUkVOQU1FX0VYQ0hBTkdF
-KSwKKwl9OworCUxJU1RfSEVBRChsaXN0KTsKKwlpbnQgZXJyOworCisJZXJyID0gb3ZsX3JlbmFt
-ZV9zdGFydCgmb3ZscmQsICZsaXN0KTsKKwlpZiAoZXJyKQorCQlnb3RvIG91dDsKKworCW9sZF9j
-cmVkID0gb3ZsX292ZXJyaWRlX2NyZWRzKG9sZC0+ZF9zYik7CisKKwllcnIgPSBvdmxfcmVuYW1l
-X3VwcGVyKCZvdmxyZCwgJmxpc3QpOworCisJb3ZsX3JldmVydF9jcmVkcyhvbGRfY3JlZCk7CisK
-KwlvdmxfcmVuYW1lX2VuZCgmb3ZscmQpOwogb3V0OgotCWRwdXQob3ZscmQubmV3ZGVudHJ5KTsK
-LQlkcHV0KG92bHJkLm9sZGRlbnRyeSk7Ci0JZHB1dChvdmxyZC5vcGFxdWVkaXIpOwogCW92bF9j
-YWNoZV9mcmVlKCZsaXN0KTsKIAlyZXR1cm4gZXJyOwotCi1vdXRfdW5sb2NrOgotCXVubG9ja19y
-ZW5hbWUobmV3X3VwcGVyZGlyLCBvbGRfdXBwZXJkaXIpOwotCWdvdG8gb3V0X3JldmVydF9jcmVk
-czsKIH0KIAogc3RhdGljIGludCBvdmxfY3JlYXRlX3RtcGZpbGUoc3RydWN0IGZpbGUgKmZpbGUs
-IHN0cnVjdCBkZW50cnkgKmRlbnRyeSwKLS0gCjIuNTEuMQoK
---00000000000051b28e06438c2c6a--
+> +void __init liveupdate_init(void)
+> +{
+> +	int err;
+> +
+> +	err = luo_early_startup();
+> +	if (err) {
+> +		pr_err("The incoming tree failed to initialize properly [%pe], disabling live update\n",
+> +		       ERR_PTR(err));
+> +		luo_global.enabled = false;
+> +	}
+> +}
+> +
+> +/* Called during boot to create LUO fdt tree */
+
+			 ^ create outgoing
+
+> +static int __init luo_late_startup(void)
+> +{
+> +	int err;
+> +
+> +	if (!liveupdate_enabled())
+> +		return 0;
+> +
+> +	err = luo_fdt_setup();
+> +	if (err)
+> +		luo_global.enabled = false;
+> +
+> +	return err;
+> +}
+> +late_initcall(luo_late_startup);
+
+It would be nice to have a comment explaining why late_initcall() is fine
+and why there's no need to initialize the outgoing fdt earlier.
+
+> +/**
+> + * luo_alloc_preserve - Allocate, zero, and preserve memory.
+
+I think this and the "free" counterparts would be useful for any KHO users,
+even those that don't need LUO.
+
+> + * @size: The number of bytes to allocate.
+> + *
+> + * Allocates a physically contiguous block of zeroed pages that is large
+> + * enough to hold @size bytes. The allocated memory is then registered with
+> + * KHO for preservation across a kexec.
+> + *
+> + * Note: The actual allocated size will be rounded up to the nearest
+> + * power-of-two page boundary.
+> + *
+> + * @return A virtual pointer to the allocated and preserved memory on success,
+> + * or an ERR_PTR() encoded error on failure.
+> + */
+> +void *luo_alloc_preserve(size_t size)
+> +{
+> +	struct folio *folio;
+> +	int order, ret;
+> +
+> +	if (!size)
+> +		return ERR_PTR(-EINVAL);
+> +
+> +	order = get_order(size);
+> +	if (order > MAX_PAGE_ORDER)
+> +		return ERR_PTR(-E2BIG);
+
+High order allocations would likely fail or at least cause a heavy reclaim.
+For now it seems that we won't be needing really large contiguous chunks so
+maybe limiting this to PAGE_ALLOC_COSTLY_ORDER?
+
+Later if we'd need higher order allocations we can try to allocate with
+__GFP_NORETRY or __GFP_RETRY_MAYFAIL with a fallback to vmalloc.
+
+> +
+> +	folio = folio_alloc(GFP_KERNEL | __GFP_ZERO, order);
+> +	if (!folio)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	ret = kho_preserve_folio(folio);
+> +	if (ret) {
+> +		folio_put(folio);
+> +		return ERR_PTR(ret);
+> +	}
+> +
+> +	return folio_address(folio);
+> +}
+> +
+
+-- 
+Sincerely yours,
+Mike.
 
