@@ -1,144 +1,133 @@
-Return-Path: <linux-fsdevel+bounces-68530-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68534-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5975BC5E462
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Nov 2025 17:36:56 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E30C0C5E99F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Nov 2025 18:37:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 492C44FDBFF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Nov 2025 16:00:33 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 100453A0C85
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Nov 2025 16:58:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCE3A32D428;
-	Fri, 14 Nov 2025 15:53:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0FD3336EFB;
+	Fri, 14 Nov 2025 16:56:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XnNqWYSc"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FZMab8F9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E68032D421
-	for <linux-fsdevel@vger.kernel.org>; Fri, 14 Nov 2025 15:53:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CE3F2C15B6
+	for <linux-fsdevel@vger.kernel.org>; Fri, 14 Nov 2025 16:56:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763135597; cv=none; b=nVhfG85gbS9jjpigq+XvP29Kj6tI1F0MU3kfjJciQLomuokVnCzyGik592SyP95HYV7y/WQzInUoaxou60HTW+yKzpk2qERSlR6rTx5gkJAxTub62iFEXQWucT7yWjSbvnGNAvXR/jkvIJTCSC6VnAhFh3LnAdjtIGWdO3epL34=
+	t=1763139366; cv=none; b=iti2uGbPqn6ooqY+Cms7lI8nFCmDw6/SyXGRd1fkYM9QabzQIj4anWNPGPKSOeKiDQHlQmgvSVt9tFeRe4ogpBtFQ83oZDrqjCWFpPA2s5kiXkPzKkxw+c0Jv0JGfNaZly9VLOhgYFojESlY9RtERJZ6arjqtBPwHYfByDCMoCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763135597; c=relaxed/simple;
-	bh=8WRpsZt54Mswfz2xCcSPYYNBrsqaK3aNc9iH26/F+kU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SmjRHYSqgZfsjv5G7HipheVPDorLnbGqj6+LSf/HnOcHvlMz9RoamPP8q8gDPP+ZUtdjUj567z/iKE5FVv3i43Iss5JNdpeULQi2eMeQtjHTmO+Fn79jc+YFrpgvc0nghtb7bo5/EZPg2Fpu5IggNndmPlCC4uG93jAt0KMVsZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XnNqWYSc; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4775c4197e1so957935e9.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Nov 2025 07:53:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763135594; x=1763740394; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Q8KPdQqhauc0N5/k7s1UlzxI59hwfKTHWBoWJzJ2Gqo=;
-        b=XnNqWYScJ8m1xV/cI396DbMRPuygqN0j2c4tApMhcwo16wdSHnq9qo5jzwOf2rhWJu
-         aGme5SVlqAdkva3aFQHtlkA2MadnFbyOsZwUgGhPY0CoRcCv4OAzARF/1YahueVkRZUK
-         5AWSKuoM4oEqgiPbGlag4/c3pY+iSQQYTrjZO4xnikG5s1/DySCEU8oaXMfcg2eYCAQl
-         Vlv9ZJXpkJU4cZOkE4IfvyNQL7VS+2Jw7WR4DIAG/ptpTWkp8jxaXjruFH5GWCGJ14mn
-         1AeSNWpE3sUrUqw8HqaY36PDsk6H/+OJTrtET+67ryakpLi0bdMNWCUaoTl6zQBAnTO8
-         pbJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763135594; x=1763740394;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Q8KPdQqhauc0N5/k7s1UlzxI59hwfKTHWBoWJzJ2Gqo=;
-        b=wTkjvOhojABtctUXcvoGVNKdmdU5UntgLuTJ6x5LnS/EwEOcLmQ/asVV47+GvjQfdz
-         bPpisYW6RP6RNaeg2W5C7zIRsd7IAskdpLUWAT9r5OLKRFLfNiVWK3XumBiWY5bYTFS7
-         nS4kNhei0bLxiNjd4yObNxDMpz+rpe1ul4lZ21tv5tkTXWp9bnQNUOir2Fc/j/I7fNHp
-         9l4Xt+xB/bg0cUTV3niHewQejxZUfzy9wKfDbqYBcH9sR2EIFMlD56uZs63doyGoHQz8
-         MW19PZi9AGc25wQW0ExQdNdQ0Su25MrlhNVfzJN+JO8k7S4IXM3YY3NReRdYmddsz7eh
-         xn+A==
-X-Forwarded-Encrypted: i=1; AJvYcCWtPHw3Hs0A/1RI61tAuLkNIrIJPm97dtEzP0mjJsDW3fNNjgiYifjgTZlw5fLK1nDWwhbfHTF57qLPcQnJ@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJsUKn9gEBPXNyuicthMCqu/3Zo631PvVBRib7Qtg4TB2OIuNh
-	KuAPUaruF5oqulEGLVlpCwhce59Sr407rk/Zqm/HfTHbYR6JuasY1971
-X-Gm-Gg: ASbGncutas1/ce0Bwub+0nGxl22ggHlT1uNW3mCJVjNEDE4xmM/XMLpruGduJEO7IB1
-	U2DgQgxpF1pXy4vxGMRNiLsiX8pQyxxRgjqsBAxZqNgDqbI2YShZ1zm/whqvyrK7DHn50GeuR53
-	EVqdKmbIy1Hk7GcJz8vztoME3vxAr5QoO0iccHHTMO8YzK66OvITV79zArSOw9AV4NWeMjCxYNT
-	NiuR/IpbhlTjsKfyuyWNx5kgesTJccR52UjQ8/fmhQ4fvbUfma037bPb4zw/h29v8Dy3w9uK9KH
-	uYBfsHEgypo2feY96y1ZWCsvsW9uYuu2TSS2haBG7I2rEU4COndGE4b8fDRpjW16mgcryiwu+Oy
-	425ZKk4ee31a/OOyE/uByTXtUB9u8kJpBWW+dC3yDKe8FBKG7pHBzp8qEW1j5ZCNLlsjx9w00V1
-	02d6n5lA==
-X-Google-Smtp-Source: AGHT+IGT1RDAkilt8ulv0yMxWgpeZ6pkOqR1nVxwseskZoLEsxMf89IT/uT00v+JdAbcSlztK4/FBw==
-X-Received: by 2002:a05:600c:4e8a:b0:477:555b:3411 with SMTP id 5b1f17b1804b1-477902367d2mr16058075e9.1.1763135594359;
-        Fri, 14 Nov 2025 07:53:14 -0800 (PST)
-Received: from bhk ([196.239.132.233])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47795751d08sm8972205e9.7.2025.11.14.07.53.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Nov 2025 07:53:13 -0800 (PST)
-From: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
-To: viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	syzbot+ad45f827c88778ff7df6@syzkaller.appspotmail.com
-Cc: frank.li@vivo.com,
-	glaubitz@physik.fu-berlin.de,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	slava@dubeyko.com,
-	syzkaller-bugs@googlegroups.com,
-	skhan@linuxfoundation.org,
-	david.hunter.linux@gmail.com,
-	khalid@kernel.org,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
-Subject: [PATCH] fs/super: fix memory leak of s_fs_info on setup_bdev_super failure
-Date: Fri, 14 Nov 2025 17:52:27 +0100
-Message-ID: <20251114165255.101361-1-mehdi.benhadjkhelifa@gmail.com>
-X-Mailer: git-send-email 2.51.2
+	s=arc-20240116; t=1763139366; c=relaxed/simple;
+	bh=6TSkTd8QYhGIkuJktBXMhRTbFnRorBPr9gWU+GWWeCY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TY8yMfqQWfnNt9zCrRlRdj+PrBjKmgxtVwSrEB2OjcfbpbEIvY1F+y2RPpLXlqKzTfh9eJaJ4psgrMh4IFbqXokTwYmHXf+XAklPKZuoHtrLkKtuUpymaXfQ7dNTwP7R/cEL0wAWoIhlnx1CCTxjLasFDAWorBN5yd3DvjQdrH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FZMab8F9; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1763139363;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=G+w7fTZt5yUvxxlHlhv9qFh5bl+En30eT9dJ3sbzFCY=;
+	b=FZMab8F9sEMWlmo1JhVuLYsItPORBWp8cFuYIjcFTzfc+A8ggyS2AIMkCLkvG5blD7M2Jz
+	jle050kO6ZUTkmGx1r+79KNOaR5+IDSwyjEvi72gcwWIcFDJPExp4busxZWUFNre0OAGjr
+	mY84cXU/9EG3DG7r7OY+5QCOA+ylPKY=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-693-0Y7IkpOzNdGYfOhy4GdU6A-1; Fri,
+ 14 Nov 2025 11:55:59 -0500
+X-MC-Unique: 0Y7IkpOzNdGYfOhy4GdU6A-1
+X-Mimecast-MFC-AGG-ID: 0Y7IkpOzNdGYfOhy4GdU6A_1763139358
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DB9F019540E8;
+	Fri, 14 Nov 2025 16:55:57 +0000 (UTC)
+Received: from redhat.com (unknown [10.44.33.81])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0E2B618004A3;
+	Fri, 14 Nov 2025 16:55:52 +0000 (UTC)
+Date: Fri, 14 Nov 2025 17:55:49 +0100
+From: Kevin Wolf <kwolf@redhat.com>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Jan Kara <jack@suse.cz>, Keith Busch <kbusch@kernel.org>,
+	Dave Chinner <david@fromorbit.com>,
+	Carlos Maiolino <cem@kernel.org>,
+	Christian Brauner <brauner@kernel.org>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-raid@vger.kernel.org,
+	linux-block@vger.kernel.org
+Subject: Re: fall back from direct to buffered I/O when stable writes are
+ required
+Message-ID: <aRdfFRw1vKUHXqIg@redhat.com>
+References: <aQTcb-0VtWLx6ghD@kbusch-mbp>
+ <20251031164701.GA27481@lst.de>
+ <kpk2od2fuqofdoneqse2l3gvn7wbqx3y4vckmnvl6gc2jcaw4m@hsxqmxshckpj>
+ <20251103122111.GA17600@lst.de>
+ <aRYXuwtSQUz6buBs@redhat.com>
+ <20251114053943.GA26898@lst.de>
+ <aRb2g3VLjz1Q_rLa@redhat.com>
+ <20251114120152.GA13689@lst.de>
+ <aRchGBJA1ExoGi8W@redhat.com>
+ <20251114153644.GA31395@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251114153644.GA31395@lst.de>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-Failure in setup_bdev_super() triggers an error path where
-fc->s_fs_info ownership has already been transferred to the superblock via
-sget_fc() call in get_tree_bdev_flags() and calling put_fs_context() in
-do_new_mount() to free the s_fs_info for the specific filesystem gets
-passed in a NULL pointer.
+Am 14.11.2025 um 16:36 hat Christoph Hellwig geschrieben:
+> On Fri, Nov 14, 2025 at 01:31:20PM +0100, Kevin Wolf wrote:
+> > My main point above was that RAID and (potentially passed through) PI
+> > are independent of each other and I think that's still true with or
+> > without multiple stability levels.
+> > 
+> > If you don't have these levels, you just have to treat level 1 and 2 the
+> > same, i.e. bounce all the time if the kernel needs the guarantee (which
+> > is not for userspace PI, unless the same request needs the bounce buffer
+> > for another reason in a different place like RAID). That might be less
+> > optimal, but still correct and better than what happens today because at
+> > least you don't bounce for level 0 any more.
+> 
+> Agreed.
+> 
+> > If there is something you can optimise by delegating the responsibility
+> > to userspace in some cases - like you can prove that only the
+> > application itself would be harmed by doing things wrong - then having
+> > level 1 separate could certainly be interesting. In this case, I'd
+> > consider adding an RWF_* flag for userspace to make the promise even
+> > outside PI passthrough. But while potentially worthwhile, it feels like
+> > this is a separate optimisation from what you tried to address here.
+> 
+> Agreed as well.
+> 
+> In fact I'm kinda lost what we're even arguing about :)
 
-Pass back the ownership of the s_fs_info pointer to the filesystem context
-once the error path has been triggered to be cleaned up gracefully in
-put_fs_context().
+Probably nothing then. :-) I was just confused because you called PI
+passthrough from userspace a complication, but it seems we agree that
+there is no real complication in the sense that it's hard to get
+correct and the approach can be implemented just like that.
 
-Fixes: cb50b348c71f ("convenience helpers: vfs_get_super() and sget_fc()")
-Reported-by: syzbot+ad45f827c88778ff7df6@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=ad45f827c88778ff7df6
-Signed-off-by: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
----
-Note:This patch might need some more testing as I only did run selftests 
-with no regression, check dmesg output for no regression, run reproducer 
-with no bug.
+That's really why I posted in the first place, to agree with you that
+this approach seems best to me, and because I don't want to see our
+O_DIRECT requests silently fall back to buffered I/O in more cases,
+especially with AIO.
 
-fs/super.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/fs/super.c b/fs/super.c
-index 5bab94fb7e03..8fadf97fcc42 100644
---- a/fs/super.c
-+++ b/fs/super.c
-@@ -1690,6 +1690,11 @@ int get_tree_bdev_flags(struct fs_context *fc,
- 		if (!error)
- 			error = fill_super(s, fc);
- 		if (error) {
-+			/*
-+			 * return s_fs_info ownership to fc to be cleaned up by put_fs_context()
-+			 */
-+			fc->s_fs_info = s->s_fs_info;
-+			s->s_fs_info = NULL;
- 			deactivate_locked_super(s);
- 			return error;
- 		}
--- 
-2.51.2
+Kevin
 
 
