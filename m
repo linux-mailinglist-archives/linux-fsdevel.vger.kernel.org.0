@@ -1,47 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-68409-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68411-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CD43C5AC18
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Nov 2025 01:22:49 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B10EC5AC76
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Nov 2025 01:32:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id EB1223518AF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Nov 2025 00:22:25 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2DAAF34278C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Nov 2025 00:32:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CA692163B2;
-	Fri, 14 Nov 2025 00:22:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FB1621E097;
+	Fri, 14 Nov 2025 00:32:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fdpqz+vm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KP0qAHiU"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D3761DE4EF;
-	Fri, 14 Nov 2025 00:22:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F9C74A02;
+	Fri, 14 Nov 2025 00:32:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763079738; cv=none; b=n1YF+ykwhJq1TQtkMAwfYHkyz9Eb/6emiNzYrcfip73cYroTPO8rT8+2OvDl5pwy2ixVW6z62SSMslVQIlmKmKI5tBOgqcESeJ//FZhq8W80QHX2PVZUVxQvHzqY9FF+GFK5URquf0zauN2sOXM3ox4HV/n6zC+LpI5yaBCr5gM=
+	t=1763080324; cv=none; b=ok2+ENj+HJnJ/TW5ogqF4iS+3PQr5h/gA8YJ0frQ6qUELw1YhoHSvMmHsAUblYoqO61EiTiBW4yZ7aWyVahvjRphR7c1RfjPI4oVp1xWRtj4BDYOAt9r302TzxGjsKK09l7QpksVuf4gew8i/aTA58BFfAXnAmxnbTGDQCPgrSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763079738; c=relaxed/simple;
-	bh=0GfV0jqFwQWzRF/XGv+/zcvWfkWUsWtCyGdJidvbTgM=;
+	s=arc-20240116; t=1763080324; c=relaxed/simple;
+	bh=vemPluv3EUqZUNat690foFoJUo/d3oWc4vaEnI0MUEA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MNGR2T2oouXWgouIx3QxmCWxMRmY2XBGSFlyHmJHf7T+zjvDLcPVO0WQzLB1/5R0R5sjfmW+09EBrodNRXmD7nVP+I9a3+XJ149xJlzM/redPyvaMPEyx57wm93hz5eG2Kb/HvWC2H4BnWubEIG/KF5hJcWpRH7DNO2M21ieRHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fdpqz+vm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF29BC4CEF8;
-	Fri, 14 Nov 2025 00:22:12 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=f2llhORy5ZnMzGCcOBFZHTaYQ8UUwEFIT9w9R48Z6rB1vOxg3ar8ThJ38+C1CVBz2PftVXXgEU6H3VApRYM1RcIDzxpG7p/PxqO6BwFAUxGbinU0AW/wGmkYDbwtbTkZWXwrePsSOlhPt1zcollgZO+IGiU3QoW+Vw6eZ7O09uw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KP0qAHiU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B98AC113D0;
+	Fri, 14 Nov 2025 00:32:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763079734;
-	bh=0GfV0jqFwQWzRF/XGv+/zcvWfkWUsWtCyGdJidvbTgM=;
+	s=k20201202; t=1763080324;
+	bh=vemPluv3EUqZUNat690foFoJUo/d3oWc4vaEnI0MUEA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Fdpqz+vm7c42sbFTFZOC0iJiffZCDm0CNHUPMw2JPCQbGZNWweg9q00gVnvRjR9ve
-	 hnahG3aUd1TZZUohCvCHsjxX4tOBaqlc6iSkso8rmdk3JwDU3KZoShKyR6KFWj6qIM
-	 H4KTYacBo9upHTkvzMGyARULRDWWZKXaK3Qxl0zxAt/oz1kFd7Fp+GUN8hLe7a/+P8
-	 o9WbUwuRpmePsRMBGakAjGW6fTHJMmJeNu/iRHsFnUIWEMxZT2xSEsgiIDhsyKSRzV
-	 rrC/ofvQ9F631xkB8ik0K0j5Oi7/JC7bBbfXfbSy+iX0GHoT5a8ed0PL06sQRznIrj
-	 Q9e+qVxD0A6Xw==
-Date: Thu, 13 Nov 2025 16:22:10 -0800
+	b=KP0qAHiUTfvg82EUnli/odRGIciIEcjFYmZUzQexNdVA/5gAIohyW6j/AzMB9zrmj
+	 117jmLDggBYNn8zEE+BaK4vo6rs6OyAjzjHJHBZx/IAVkZFY5MYkSvGEu+hLvpohsw
+	 gwPcLNnhPyctAy2m3vNOhAcnvEjeRPsJQ7vDTk8epfrFeDrnYezTvbJfZgEBRHLMjk
+	 N5JgyKdrArKKBx5924sGy4qw5H4xQ6d/h8G/kKEWFXp2ZCHBhJ4A5iyY5BQR6EzLHE
+	 Lj3ey+F+QJARs5elpbplC/IXhGXjzcEO955WmprLLox+kOZfAcu8XcOQ2Vu5wBzNjO
+	 bFkaxs/VDo7iA==
+Date: Thu, 13 Nov 2025 16:32:00 -0800
 From: Eric Biggers <ebiggers@kernel.org>
 To: Christoph Hellwig <hch@lst.de>
 Cc: Jens Axboe <axboe@kernel.dk>, Vlastimil Babka <vbabka@suse.cz>,
@@ -52,11 +52,11 @@ Cc: Jens Axboe <axboe@kernel.dk>, Vlastimil Babka <vbabka@suse.cz>,
 	Harry Yoo <harry.yoo@oracle.com>, linux-block@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
 	linux-mm@kvack.org
-Subject: Re: [PATCH 6/9] blk-crypto: optimize bio splitting in
- blk_crypto_fallback_encrypt_bio
-Message-ID: <20251114002210.GA30712@quark>
+Subject: Re: [PATCH 8/9] blk-crypto: use on-stack skciphers for fallback
+ en/decryption
+Message-ID: <20251114003200.GB30712@quark>
 References: <20251031093517.1603379-1-hch@lst.de>
- <20251031093517.1603379-7-hch@lst.de>
+ <20251031093517.1603379-9-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -65,115 +65,60 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251031093517.1603379-7-hch@lst.de>
+In-Reply-To: <20251031093517.1603379-9-hch@lst.de>
 
-On Fri, Oct 31, 2025 at 10:34:36AM +0100, Christoph Hellwig wrote:
-> The current code in blk_crypto_fallback_encrypt_bio is inefficient and
-> prone to deadlocks under memory pressure: It first walks to pass in
-> plaintext bio to see how much of it can fit into a single encrypted
-> bio using up to BIO_MAX_VEC PAGE_SIZE segments, and then allocates a
-> plaintext clone that fits the size, only to allocate another bio for
-> the ciphertext later.  While the plaintext clone uses a bioset to avoid
-> deadlocks when allocations could fail, the ciphertex one uses bio_kmalloc
-> which is a no-go in the file system I/O path.
-> 
-> Switch blk_crypto_fallback_encrypt_bio to walk the source plaintext bio
-> while consuming bi_iter without cloning it, and instead allocate a
-> ciphertext bio at the beginning and whenever we fille up the previous
-> one.  The existing bio_set for the plaintext clones is reused for the
-> ciphertext bios to remove the deadlock risk.
+On Fri, Oct 31, 2025 at 10:34:38AM +0100, Christoph Hellwig wrote:
+> Allocating a skcipher dynamically can deadlock or cause unexpected
+> I/O failures when called from writeback context.  Sidestep the
+> allocation by using on-stack skciphers, similar to what the non
+> blk-crypto fscrypt already does.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  block/blk-crypto-fallback.c | 162 ++++++++++++++----------------------
->  1 file changed, 63 insertions(+), 99 deletions(-)
-> 
-> diff --git a/block/blk-crypto-fallback.c b/block/blk-crypto-fallback.c
-> index 86b27f96051a..1f58010fb437 100644
-> --- a/block/blk-crypto-fallback.c
-> +++ b/block/blk-crypto-fallback.c
-> @@ -152,35 +152,26 @@ static void blk_crypto_fallback_encrypt_endio(struct bio *enc_bio)
->  
->  	src_bio->bi_status = enc_bio->bi_status;
 
-There can now be multiple enc_bios completing for the same src_bio, so
-this needs something like:
+skcipher => skcipher request
 
-	if (enc_bio->bi_status)
-		cmpxchg(&src_bio->bi_status, 0, enc_bio->bi_status);
-
-> -static struct bio *blk_crypto_fallback_clone_bio(struct bio *bio_src)
-> +static struct bio *blk_crypto_alloc_enc_bio(struct bio *bio_src,
-> +		unsigned int nr_segs)
->  {
-> -	unsigned int nr_segs = bio_segments(bio_src);
-> -	struct bvec_iter iter;
-> -	struct bio_vec bv;
->  	struct bio *bio;
->  
-> -	bio = bio_kmalloc(nr_segs, GFP_NOIO);
-> -	if (!bio)
-> -		return NULL;
-> -	bio_init_inline(bio, bio_src->bi_bdev, nr_segs, bio_src->bi_opf);
-> +	bio = bio_alloc_bioset(bio_src->bi_bdev, nr_segs, bio_src->bi_opf,
-> +			GFP_NOIO, &crypto_bio_split);
-
-Rename crypto_bio_split => enc_bio_set?
-
-> @@ -257,34 +222,22 @@ static void blk_crypto_dun_to_iv(const u64 dun[BLK_CRYPTO_DUN_ARRAY_SIZE],
+> @@ -238,12 +223,12 @@ static void blk_crypto_dun_to_iv(const u64 dun[BLK_CRYPTO_DUN_ARRAY_SIZE],
+>   * encryption, encrypts the input bio using crypto API and submits the bounce
+>   * bio.
 >   */
->  static bool blk_crypto_fallback_encrypt_bio(struct bio **bio_ptr)
->  {
+> -void blk_crypto_fallback_encrypt_bio(struct bio *src_bio)
 
-I don't think this patch makes sense by itself, since it leaves the
-bio_ptr argument that is used to return a single enc_bio.  It does get
-updated later in the series, but it seems that additional change to how
-this function is called should go earlier in the series.
+The above comment needs to be updated too.  Maybe leave the static
+function __blk_crypto_fallback_encrypt_bio() uncommented, and write an
+updated comment for the global function
+blk_crypto_fallback_encrypt_bio().  Maybe something like this:
 
-> +	/* Encrypt each page in the origin bio */
+/*
+ * blk-crypto-fallback's encryption routine.  Encrypts the source bio's data
+ * into a sequence of bounce bios (usually 1, but there can be multiple if there
+ * are more than BIO_MAX_VECS pages).  Submits the bounce bios, then completes
+ * the source bio once all the bounce bios are done.  This takes ownership of
+ * the source bio, i.e. the caller mustn't continue with submission.
+ */
 
-Maybe origin => source, so that consistent terminology is used.
+But really that ought to go in the previous commit, not this one.
 
-> +		if (++enc_idx == enc_bio->bi_max_vecs) {
-> +			/*
-> +			 * Each encrypted bio will call bio_endio in the
-> +			 * completion handler, so ensure the remaining count
-> +			 * matches the number of submitted bios.
-> +			 */
-> +			bio_inc_remaining(src_bio);
-> +			submit_bio(enc_bio);
+> +static void blk_crypto_fallback_decrypt_bio(struct work_struct *work)
+> +{
+> +	struct bio_fallback_crypt_ctx *f_ctx =
+> +		container_of(work, struct bio_fallback_crypt_ctx, work);
+> +	struct bio *bio = f_ctx->bio;
+> +	struct bio_crypt_ctx *bc = &f_ctx->crypt_ctx;
+> +	struct blk_crypto_keyslot *slot;
+> +	blk_status_t status;
+> +
+> +	status = blk_crypto_get_keyslot(blk_crypto_fallback_profile,
+> +					bc->bc_key, &slot);
+> +	if (status == BLK_STS_OK) {
+> +		status = __blk_crypto_fallback_decrypt_bio(f_ctx->bio,
+> +				&f_ctx->crypt_ctx, f_ctx->crypt_iter,
+> +				blk_crypto_fallback_tfm(slot));
+> +		blk_crypto_put_keyslot(slot);
+> +	}
 
-The above comment is a bit confusing and could be made clearer.  When we
-get here for the first time for example, we increment remaining from 1
-to 2.  It doesn't match the number of bios submitted so far, but rather
-is one more than it.  The extra one pairs with the submit_bio() outside
-the loop.  Maybe consider the following:
-
-			/*
-			 * For each additional encrypted bio submitted,
-			 * increment the source bio's remaining count.  Each
-			 * encrypted bio's completion handler calls bio_endio on
-			 * the source bio, so this keeps the source bio from
-			 * completing until the last encrypted bio does.
-			 */
-
-> +out_ioerror:
-> +	while (enc_idx > 0)
-> +		mempool_free(enc_bio->bi_io_vec[enc_idx--].bv_page,
-> +			     blk_crypto_bounce_page_pool);
-> +	bio_put(enc_bio);
-> +	src_bio->bi_status = BLK_STS_IOERR;
-
-This error path doesn't seem correct at all.  It would need to free the
-full set of pages in enc_bio, not just the ones initialized so far.  It
-would also need to use cmpxchg() to correctly set an error on the
-src_bio considering that blk_crypto_fallback_encrypt_endio() be trying
-to do it concurrently too, and then call bio_endio() on it.
-
-(It's annoying that encryption errors need to be handled at all.  When I
-eventually convert this to use lib/crypto/, the encryption functions are
-just going to return void.  But for now this is using the traditional
-API, which can fail, so technically errors need to be handled...)
+This is referencing f_ctx->bio and f_ctx->crypt_ctx when they were
+already loaded into local variables.  Either the local variables should
+be used, or they should be removed and the fields always used.
 
 - Eric
 
