@@ -1,115 +1,126 @@
-Return-Path: <linux-fsdevel+bounces-68446-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68447-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C1E1C5C6F2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Nov 2025 11:05:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9017C5C4AB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Nov 2025 10:34:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 639C44F5B84
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Nov 2025 09:28:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB68E3AC505
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Nov 2025 09:30:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CDA9301711;
-	Fri, 14 Nov 2025 09:28:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACBD0306D36;
+	Fri, 14 Nov 2025 09:29:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aOY4qmsy"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ti58+DK9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E1872F6567
-	for <linux-fsdevel@vger.kernel.org>; Fri, 14 Nov 2025 09:28:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8797C303A03
+	for <linux-fsdevel@vger.kernel.org>; Fri, 14 Nov 2025 09:29:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763112513; cv=none; b=HDx9wiEZilkk9EzO7y9gKv35mskIfJj0EYUSBx05Ur8LyTak+eYDEecLFnyLfVUfvu9HQ/pBceaW7ku0U5I3koT1ZyzFJef78tYQYr5U1XcNTGS/dHIs8B0Z5ggKSb6bBnjGGa1p76wGLcATGSbvOPBpgLcDoDwEwZTv1FT9Dds=
+	t=1763112598; cv=none; b=RdnTPJII/Ck85QFaYW9f1FWTH74AO0IPTl2RKl87hv9/trOUTHZg/KD6xoA6g+PaS+DwBIQu02f3G7rGjLcN2yK/+QapxYSDJvwiFlDtrUXCSDp02iPt5Vj+dgm4QfzmtEGmsa+8PhHOAODEnwouHYnQKOPeMcEPy7/vFcBUiXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763112513; c=relaxed/simple;
-	bh=N2HsaVvo0KSEbbEZeR56wpGL3gW/GUIlv6yaZlxQ++Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IhpPhLVLd6uIxPYPtLxE2qEoG2hCw0k6rWGtGlGzHGenufYWTmWoKQ1GnyjN7hl8xMlY5+ezzAguuQE3XDJyH/K8SVQsavp3DC7UZDVUz0DxViUKub23/w9xHMW8YtZwMylFBOcRybHGvMi2S/mLQw7BVZGkYnOYW+mWhQqzdrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aOY4qmsy; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-640bd9039fbso3123253a12.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Nov 2025 01:28:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763112510; x=1763717310; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mdMtsLR/yBE7DI/ay1aYqX9mhRKvn8Ih43ILpIKpzlQ=;
-        b=aOY4qmsyrAn331tkkY5sSZSlo379tqHRGwG2A5xcfT9l70PiBxI9dANnMKUPzRuElt
-         pX7dcfJcV2cBbB92BoyK9H+EucsC6wSYribHEJ0VavesYBpqW8IR+4g1LN45kBUzKsnt
-         9bszre3+CdceeAqKXFbwmg6w0uynebZ9xT92a0cLjGJZp7Nx3uRjbkAdrbSQ0pUIHllX
-         kLRmcR8DT4RRJq99MhCmYqL20R3GDDY2Wa4dxnF7fogeE+Mn5athPbBdK+QmZta7uaIj
-         H8+4A2N7AxH2XsKUtAoRiYNFqS35/7SnABy0kYhp9f6cJAZj8iJZZx7nY8Mlw7CRt3Rt
-         6YmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763112510; x=1763717310;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=mdMtsLR/yBE7DI/ay1aYqX9mhRKvn8Ih43ILpIKpzlQ=;
-        b=GcgQF33xffBKuVQDX5inRSWQpu1IOPDyP+z0bu6Gv9z84pENFv/6EtULcXFasqtRym
-         CymlfrcGWWCR68NUbhgcVX3UejgBT/hdp0QFLmDIL3QblE2BjibrKQHq0RM0ajsPejxN
-         nXJxyIIqCfI0p8WBJgrn4ci9tIhxkskw9/dtFfvPEMJkJZ7RlSm1RNrFi/hdu8vZ/KjV
-         sTxSMdjV46Nie2W7p0REagDnQCwhfJW3PqPOtfaEBnb5SMJrS7cpJ0PRZ0pbGavDPrwJ
-         FAe9DEAEByrkN3qyg69UGtDaUk2k2JydeHFDCLNjtqw7mEpWBAKy0plOVDn9hROXCL/s
-         vraA==
-X-Forwarded-Encrypted: i=1; AJvYcCW9HelLS+LVvgyi47kdDjfMReHjjpZin9oYwjiKPzyJ3Q/2h7V5NSnPJEXU4lkDK9sIZnBXKXZ04Toh5LVa@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywcww1u+pVWBDGtIV0Vd3tlxhs9WQh3UYl6tcNwWz5SEWEspDQI
-	bvKTm9PRcu3M47K7saipT1cyD3r4HwSbWqF4rckJKy6MS0Ag7h5zVbol0Vbubcxu1wLnQwX4KUU
-	2h6dsQzB28f2HAi3sCEqKeAF3lziFeMk=
-X-Gm-Gg: ASbGncvbA/oD18qFBOGTEUOF6ilzhBMW1XO/nmmg3CoyOFgaMd0ZGPMIqU1ePDyDXyk
-	8fVf60XQuKDKHhq/qpbGRIEXsc4Po5Kcp1X5TCiSgsbf/DX3hw0VYoDnvc4Se0yZryVZenuEF8x
-	sosGd6T+zili6Fatzw5KpDtHrby7TgaJERcUvvh87vBqNzKwbIMpOl6mL6sQrZGfzy7jeEkxU6A
-	Vo0uXMi2lrkot79rDMTQreUXMhxA44sEhKCSbX5cGUEE9lAshprq4bgVBGb06Vk4vypcJnYPZIG
-	6XBut/NAV8bexEanOXuRkhEjIcjtCg==
-X-Google-Smtp-Source: AGHT+IEQn9wcqUkGIDv9+SWfVNmW1suJw4n4ETUx4HO3uhrfcZ4SvLzlbujzxBpT/QeYEKI2BB8t32Aqd5/pM7fQaTo=
-X-Received: by 2002:a17:907:874a:b0:b73:6f8c:612a with SMTP id
- a640c23a62f3a-b736f8c6f46mr99527466b.11.1763112509488; Fri, 14 Nov 2025
- 01:28:29 -0800 (PST)
+	s=arc-20240116; t=1763112598; c=relaxed/simple;
+	bh=jN/U10PEACfI2LGvwU3yDap5PnO6nXq6dqmyFFl38SI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VphGdeyEclrRGQAaxrH1JjBqA1AW6Vw/ynpDDZeDe1oKsSokd4yeA4SdehKRUtVj/6FWX1Ba59oBKXffcVJsx/F0wGHUXOJjDhMdN/IGBAe+MV70BHUbCh2yZ6mcxBVEJDNkKI+fG++OaZBxkR3nNYL11YTFLITALevRsvKHvYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ti58+DK9; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1763112595;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2UMGJvbyd+Jx465vz/JOY+McTzX6ECnbNFSuf+fQx5w=;
+	b=Ti58+DK9r6BlIiwMwfPxGwYeT2Rz2uw5o5pd5bR/0HEhZP7cabaXjvWpz5AjWu5ZwwC+qB
+	Cw51/7Ic05QPGCThFTrBKpMmaLusLkF+gkCUYi7gL/EkEspkOrr9ELWfdzYgeutCETmUZX
+	POOCGKUMjPL7hRRejKiyMDC7olVMEpI=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-288-8we_DQwTOeeMbY0saWDPXg-1; Fri,
+ 14 Nov 2025 04:29:48 -0500
+X-MC-Unique: 8we_DQwTOeeMbY0saWDPXg-1
+X-Mimecast-MFC-AGG-ID: 8we_DQwTOeeMbY0saWDPXg_1763112586
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4E3981956080;
+	Fri, 14 Nov 2025 09:29:46 +0000 (UTC)
+Received: from redhat.com (unknown [10.44.33.81])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8D9B5300018D;
+	Fri, 14 Nov 2025 09:29:42 +0000 (UTC)
+Date: Fri, 14 Nov 2025 10:29:39 +0100
+From: Kevin Wolf <kwolf@redhat.com>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Jan Kara <jack@suse.cz>, Keith Busch <kbusch@kernel.org>,
+	Dave Chinner <david@fromorbit.com>,
+	Carlos Maiolino <cem@kernel.org>,
+	Christian Brauner <brauner@kernel.org>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-raid@vger.kernel.org,
+	linux-block@vger.kernel.org
+Subject: Re: fall back from direct to buffered I/O when stable writes are
+ required
+Message-ID: <aRb2g3VLjz1Q_rLa@redhat.com>
+References: <aQNJ4iQ8vOiBQEW2@dread.disaster.area>
+ <20251030143324.GA31550@lst.de>
+ <aQPyVtkvTg4W1nyz@dread.disaster.area>
+ <20251031130050.GA15719@lst.de>
+ <aQTcb-0VtWLx6ghD@kbusch-mbp>
+ <20251031164701.GA27481@lst.de>
+ <kpk2od2fuqofdoneqse2l3gvn7wbqx3y4vckmnvl6gc2jcaw4m@hsxqmxshckpj>
+ <20251103122111.GA17600@lst.de>
+ <aRYXuwtSQUz6buBs@redhat.com>
+ <20251114053943.GA26898@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251113-work-ovl-cred-guard-v3-0-b35ec983efc1@kernel.org>
- <20251113-work-ovl-cred-guard-v3-34-b35ec983efc1@kernel.org> <CAJfpegsdtHgiGFi5EEjaN9but0A7VTZA4M2hSg=Q7ynAozhqAQ@mail.gmail.com>
-In-Reply-To: <CAJfpegsdtHgiGFi5EEjaN9but0A7VTZA4M2hSg=Q7ynAozhqAQ@mail.gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 14 Nov 2025 10:28:18 +0100
-X-Gm-Features: AWmQ_bmGihuGYGvIZV5ONblHyPajU4eus5nTPeVXJfYteHaXhQN19O77H7b7y5s
-Message-ID: <CAOQ4uxhjwt7oKEmoumcf+BidgKNCp7yX57T4CrYi-OWx=+0EnA@mail.gmail.com>
-Subject: Re: [PATCH v3 34/42] ovl: extract do_ovl_rename() helper function
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Christian Brauner <brauner@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251114053943.GA26898@lst.de>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Fri, Nov 14, 2025 at 10:17=E2=80=AFAM Miklos Szeredi <miklos@szeredi.hu>=
- wrote:
->
-> On Thu, 13 Nov 2025 at 22:33, Christian Brauner <brauner@kernel.org> wrot=
-e:
-> >
-> > Extract the code that runs under overridden credentials into a separate
-> > do_ovl_rename() helper function. Error handling is simplified. The
->
-> Hmm, it's getting confusing between ovl_do_rename() and
-> do_ovl_rename().   Also I'd prefer not to lose ovl_ as /the/ prefix
-> unless absolutely necessary.
+Am 14.11.2025 um 06:39 hat Christoph Hellwig geschrieben:
+> On Thu, Nov 13, 2025 at 06:39:07PM +0100, Kevin Wolf wrote:
+> > > A complication is that PI could relax that requirement if we support
+> > > PI passthrough from userspace (currently only for block device, but I
+> > > plan to add file system support), where the device checks it, but we
+> > > can't do that for parity RAID.
+> > 
+> > Not sure I understand the problem here. If it's passed through from
+> > userspace, isn't its validity the problem of userspace, too? I'd expect
+> > that you only need a bounce buffer in the kernel if the kernel itself
+> > does something like a checksum calculation?
+> 
+> Yes, the PI validity is a userspace problem.  But if you then also use
+> software RAID (right now mdraid RAID5/6 does not support PI, so that's a
+> theoretical case), a (potentially malicious) modification of in-flight
+> data could still corrupt data in another stripe.  So we'd still have to
+> bounce buffer for user passed PI when using parity RAID below, but not
+> when just sending on the PI to a device (which also checks the validity
+> and rejects the I/O).
 
-I was just thinking the same thing as I was trying to refactor
-ovl_rename() to ovl_rename_start(); (something); ovl_rename_end()
-I will try to think of a better convention.
+Right, but since this is direct I/O and the approach with only declaring
+I/O from the page cache safe without a bounce buffer means that RAID has
+to use a bounce buffer here anyway (with or without PI), doesn't this
+automatically solve it?
 
-BTW, we also have do_ovl_get_acl() which has managed to escape
-the ovl_ namespace and has the same confusion with the ovl_do_ bunch.
+So if it's only PI, it's the problem of userspace, and if you add RAID
+on top, then the normal rules for RAID apply. (And that the buffer
+doesn't get modified and PI doesn't become invalid until RAID does its
+thing is still a userspace problem.)
 
-Thanks,
-Amir.
+Kevin
+
 
