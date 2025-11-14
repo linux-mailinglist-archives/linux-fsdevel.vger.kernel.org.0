@@ -1,279 +1,448 @@
-Return-Path: <linux-fsdevel+bounces-68523-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68525-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89D4AC5DDDE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Nov 2025 16:29:52 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F45BC5E42F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Nov 2025 17:35:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 235B74FF688
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Nov 2025 15:12:14 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 00ACD36613C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Nov 2025 15:41:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D6733358D0;
-	Fri, 14 Nov 2025 15:03:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M47A5hnB"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E95F334689;
+	Fri, 14 Nov 2025 15:29:07 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFFF1328260
-	for <linux-fsdevel@vger.kernel.org>; Fri, 14 Nov 2025 15:03:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D010A334376
+	for <linux-fsdevel@vger.kernel.org>; Fri, 14 Nov 2025 15:29:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763132595; cv=none; b=ZCTCoGUW+zqBVSmHLlBTecNb5MIobnF0EtE9qwIzoKfzIv9w+P3oFIlXAyhP2ryR39Mq53IScTKBw+G0piDd2FWO4W0k9NwOvTR45C9/yqOhUodjTnuPFRFewoVp2gUeDP/lh8LeC2u3j1zfpyDgTU31bdynFQ+YcVLzUmDySLQ=
+	t=1763134147; cv=none; b=qbaKwv4UM/qJaWlVr3ctTW/j3LZYc4YUi5A3zKEgkJEePQnYLWSKVydDxN4hBUKfWyscNKNZIjMYskpJGoKTGlx45bwrZ4mLGReyUTjKRAbh/Cam4so4gO8CWcW7P9NrIDzHm8A0O+jqZ2khRiyVm+ZWcFwyrJ14Z03IUleu7kg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763132595; c=relaxed/simple;
-	bh=WTL8RpRreoAdIZFnJfMU7kbqcRqRoBl6+KfDIAq64Co=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KSUkCRivMzURtyApU42PCyI10wv9hCRV+bb2N0DeLc1DdoxGUxxUC47UYgNsC605DHvK9LX05Zpn1I1firzl1btS131JR3205+DtUlDiEzpCH2oSY+uQrRlKhxNcymXzxfYMVzwSMMsPjP1ubVl+O6NPlZhw3t9/LY/Q6KbOkwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M47A5hnB; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-b735ce67d1dso217278166b.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Nov 2025 07:03:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763132592; x=1763737392; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iOYDk4ou20EqC7hKmauaNNsT/2lLPOblXJ8i+jliwUk=;
-        b=M47A5hnBnKIYSMBXnKtc1gInY67EjuzXp6DALKv39TEywhBeus+cQ44zl+HD73bIEs
-         9HwRXVm3KTRbawWfpD/U6MJjxlF/Pl70DGZF1XVVvZwcReSSqPOjFkxzJISrTXmVanGw
-         jm0r23dtgj0Dx++MK66cgyGh/hfm3RvBx2kno9+mBb747wtZ+nyeKCy/1uJBAVRTWjX+
-         7+Hge9KxZKxdg/9bjsikh5FmCxW1Mj4yItnUlMPqf96IV4DXtWhaW6Np1qVZMzXUkQYF
-         Qws8znf4oy18WdZzwI9s/HWwHgl3Z4/xiIbarsIQIascg0A61TUhPlxgAHaPbn4ajsF0
-         ZLpQ==
+	s=arc-20240116; t=1763134147; c=relaxed/simple;
+	bh=Oy71zjUUE6ITzj+TQfDiyItxkilWR0FicHKR1XrIxF8=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=S0ezgOwt6U7Xyp0V3/6aUTIezbzHl0d3UMAE/xl2qXKPRROqRSX6SX3D92NJOCvcDbwO+zoBQlwq5+9BZitBMvyMx1ZjysEZiU8a0MBgrbNX29HTKYZSqciUyvOW4QOT/twQwTmp7kyDxzbzHCgFL/AljUwoPLD021tnueQJ61s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-43373024b5eso24371365ab.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Nov 2025 07:29:04 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763132592; x=1763737392;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iOYDk4ou20EqC7hKmauaNNsT/2lLPOblXJ8i+jliwUk=;
-        b=G6Z/OS+u/kVnwKCeYuFiUXXz19lVX8TqtyvjWznviXxVJQ7EZWkX28/9qfc1tgGC+G
-         He61c/KRxWhKsIv3wicPvhZR0sywI6x++Vt37PeGx/Vd4v9fRwwjsz8wNyQme3TGWbTZ
-         JPasvHo/2pi/lZGQl4KmGQnekeWtjsRSD+LXqMx0zFwFJe+DrUuAPkPk/nK4rmsAi1fM
-         svMA2kQFtALGXujM06DUgBx34ZydioVWqq7BZAqfp9Y18YVyxqSJcQ8OLCLCYwccBci6
-         H1NfT9dZrwfiuEBvcQ56of1ksPw/dX8G73Egz963CWv5QJSQmnKikTzGKpNe8j2X2uVc
-         rkqA==
-X-Forwarded-Encrypted: i=1; AJvYcCWpJz3Z2SFOekO04M7OtMq9Bg/mBU/eOyL23+dJOSgCB7i4VG76n5MBOjZyaCXKDAQ50UszMBvKNwT/M3xu@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKjFuQtMW1Gig0bJWaZZWjJ36lcBruxbUQSlPTpBq8KRkPqWva
-	OiS6Ycl8nkBTUi9zI68G/7QjGuSYAOFFuvFWUYyDNuTRGGcpH/o7fMM/
-X-Gm-Gg: ASbGncur06qwODVlBlz3EfZo5v/wt7fbxF9RbFtJ+6HZXQEDF/A4oUiB23QeSmoVaB6
-	b+3RtYE7xRQVI8dvtyAiEYFjgVsTEUP8GT7e5uRridp/063kFIo/vLOADAEZao14F1xjLu7g5N8
-	9PXuhIR8cNCkBMDfy7epujahK5tb1i+7qNNDmytwzPehDGB+Z5Pa7fNkOnaFLcB/fkmq2z5teZO
-	ih9K7WvIz8xJGN6xbHrawkNvHcz2MJlMUZ2A6FzKgJCa/Q7UmTHuGA9IYGiHPcevTqJBllquui8
-	0WhYa5C/I3aZhih3nUrcBqZx675Ln+JXu2gARihkNqYv4kO3PoqCiNZB34Gr30zgXQM581eO+9p
-	y4uAwpLodkA+L9ILMY9Kkxba1/lBE3gM2eSGDMeb6voEtCk7VR3DMYT3YmVEx5HBrJnJD7AbSHR
-	D3khxa1aHX9Q==
-X-Google-Smtp-Source: AGHT+IGH0s9XHBLuAtaFLcMQ3m3V7Wq+tDkgRfw7zp8iVQdntkDjq9dsYOuRcRi5vUPJBoTSJooU+g==
-X-Received: by 2002:a17:907:9622:b0:b73:7280:7821 with SMTP id a640c23a62f3a-b7372807e5emr181589666b.60.1763132591939;
-        Fri, 14 Nov 2025 07:03:11 -0800 (PST)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b734fad4635sm405154766b.26.2025.11.14.07.03.10
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 14 Nov 2025 07:03:11 -0800 (PST)
-Date: Fri, 14 Nov 2025 15:03:10 +0000
-From: Wei Yang <richard.weiyang@gmail.com>
-To: "David Hildenbrand (Red Hat)" <david@kernel.org>
-Cc: Wei Yang <richard.weiyang@gmail.com>, willy@infradead.org,
-	akpm@linux-foundation.org, lorenzo.stoakes@oracle.com,
-	Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org,
-	surenb@google.com, mhocko@suse.com, ziy@nvidia.com,
-	baolin.wang@linux.alibaba.com, npache@redhat.com,
-	ryan.roberts@arm.com, dev.jain@arm.com, baohua@kernel.org,
-	lance.yang@linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH] mm/huge_memory: consolidate order-related checks into
- folio_split_supported()
-Message-ID: <20251114150310.eua55tcgxl4mgdnp@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20251114075703.10434-1-richard.weiyang@gmail.com>
- <827fd8d8-c327-4867-9693-ec06cded55a9@kernel.org>
+        d=1e100.net; s=20230601; t=1763134144; x=1763738944;
+        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
+         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CrBB2ffg9yKc6gkgpK9or7HheidrlQ6drebOdlx+CL0=;
+        b=bqICwBrQm8H4cZNhO/yvalhk7g+54n7zncjgKDIJJqJJLsCa++BGz4WyewyKb8EHwB
+         9UHIb2+7uLdsoPTyShWQH5F/Xq7RvMVktXVp0jqOZa5CRZtk7nDhn3ck1BBNyYZF8AsG
+         a15MIcmhjXgAGeiyyaPp20Lm4yL9fg6MrmlwNDPn+FRwbt+U9Pj2NaXmFdJpqE+gXmea
+         fbeZ+cNw7TTHMnxgFXcrSQXgp7ZVfFMAWtHDgnTzE64Xgbu+Q8QcFOECxFYP2yn+LtXR
+         Vo29XpbxGa49obwxN8UPvcCk34a5VfrZlTyhte699X4yu2wywaUrbO4Dj6+OtoLQBjEv
+         WsyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXSqu+jQJrACab+afRcDgIJE8mx3KbIORG2vzpLtGxeN2A4n9Cho8l6+EQvw1btVfk1t1m+A0EXg0M3VUdy@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywyd5OvWozcPIwMq1rReRSAkYeRpsh8VAgVUL0dYuTP8ADjltBv
+	D1tmEMYpU5vDLOnC8whkScJ7sl5FtTcw2V9kN4zs1MB4SxE2SH6EnjC8f2yULS0cbFnMooZ5esF
+	Gt7rlAz+5TA1BQ2fA9WnbzIRW2rd+K6zHHj7KlJq87ehK9z6rWic+MwxLQmU=
+X-Google-Smtp-Source: AGHT+IFnr48mgB5pYyPM/953EcN/htKgU0MTxKHZ+8TTDgOinWkH5Glta+o1ZrPCl+RoUBZfYKR8msrxeb72kzsIt0mrPVtlXBhW
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <827fd8d8-c327-4867-9693-ec06cded55a9@kernel.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+X-Received: by 2002:a05:6e02:1c0f:b0:434:96ea:ff74 with SMTP id
+ e9e14a558f8ab-43496eb0258mr3089575ab.36.1763134143980; Fri, 14 Nov 2025
+ 07:29:03 -0800 (PST)
+Date: Fri, 14 Nov 2025 07:29:03 -0800
+In-Reply-To: <20251114160222.469860-1-mehdi.benhadjkhelifa@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <69174abf.a70a0220.3124cb.0061.GAE@google.com>
+Subject: Re: [syzbot] [hfs?] memory leak in hfs_init_fs_context
+From: syzbot <syzbot+ad45f827c88778ff7df6@syzkaller.appspotmail.com>
+To: frank.li@vivo.com, glaubitz@physik.fu-berlin.de, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	mehdi.benhadjkhelifa@gmail.com, slava@dubeyko.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 14, 2025 at 09:49:34AM +0100, David Hildenbrand (Red Hat) wrote:
->On 14.11.25 08:57, Wei Yang wrote:
->> The primary goal of the folio_split_supported() function is to validate
->> whether a folio is suitable for splitting and to bail out early if it is
->> not.
->> 
->> Currently, some order-related checks are scattered throughout the
->> calling code rather than being centralized in folio_split_supported().
->> 
->> This commit moves all remaining order-related validation logic into
->> folio_split_supported(). This consolidation ensures that the function
->> serves its intended purpose as a single point of failure and improves
->> the clarity and maintainability of the surrounding code.
->
->Combining the EINVAL handling sounds reasonable.
->
+Hello,
 
-You mean:
+syzbot tried to test the proposed patch but the build/boot failed:
 
-This commit combines the EINVAL handling logic into folio_split_supported().
-This consolidation ... ?
+SYZFAIL: failed to recv rpc
 
->> 
->> Signed-off-by: Wei Yang <richard.weiyang@gmail.com>
->> ---
->>   include/linux/pagemap.h |  6 +++
->>   mm/huge_memory.c        | 88 +++++++++++++++++++++--------------------
->>   2 files changed, 51 insertions(+), 43 deletions(-)
->> 
->> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
->> index 09b581c1d878..d8c8df629b90 100644
->> --- a/include/linux/pagemap.h
->> +++ b/include/linux/pagemap.h
->> @@ -516,6 +516,12 @@ static inline bool mapping_large_folio_support(const struct address_space *mappi
->>   	return mapping_max_folio_order(mapping) > 0;
->>   }
->> +static inline bool
->> +mapping_folio_order_supported(const struct address_space *mapping, unsigned int order)
->> +{
->> +	return (order >= mapping_min_folio_order(mapping) && order <= mapping_max_folio_order(mapping));
->> +}
->
->(unnecessary () and unnecessary long line)
->
->Style in the file seems to want:
->
->static inline bool mapping_folio_order_supported(const struct address_space *mapping,
->						 unsigned int order)
->{
->	return order >= mapping_min_folio_order(mapping) &&
->	       order <= mapping_max_folio_order(mapping);
->}
->
+SYZFAIL: failed to recv rpc
+fd=3D3 want=3D4 recv=3D0 n=3D0 (errno 9: Bad file descriptor)
 
-Adjusted.
 
->
->The mapping_max_folio_order() check is new now. What is the default value of that? Is it always initialized properly?
->
+Warning: Permanently added '10.128.1.80' (ED25519) to the list of known hos=
+ts.
+2025/11/14 15:28:16 parsed 1 programs
+[   40.296558][ T5813] cgroup: Unknown subsys name 'net'
+[   40.388732][ T5813] cgroup: Unknown subsys name 'cpuset'
+[   40.395379][ T5813] cgroup: Unknown subsys name 'rlimit'
+Setting up swapspace version 1, size =3D 127995904 bytes
+[   48.529645][ T5813] Adding 124996k swap on ./swap-file.  Priority:0 exte=
+nts:1 across:124996k=20
+[   49.725319][ T5826] soft_limit_in_bytes is deprecated and will be remove=
+d. Please report your usecase to linux-mm@kvack.org if you depend on this f=
+unctionality.
+[   50.124830][ T5874] Bluetooth: hci0: unexpected cc 0x0c03 length: 249 > =
+1
+[   50.132081][ T5874] Bluetooth: hci0: unexpected cc 0x1003 length: 249 > =
+9
+[   50.139390][ T5874] Bluetooth: hci0: unexpected cc 0x1001 length: 249 > =
+9
+[   50.146668][ T5874] Bluetooth: hci0: unexpected cc 0x0c23 length: 249 > =
+4
+[   50.153951][ T5874] Bluetooth: hci0: unexpected cc 0x0c38 length: 249 > =
+2
+[   50.211546][ T5881] chnl_net:caif_netlink_parms(): no params data found
+[   50.232138][ T5881] bridge0: port 1(bridge_slave_0) entered blocking sta=
+te
+[   50.239234][ T5881] bridge0: port 1(bridge_slave_0) entered disabled sta=
+te
+[   50.246331][ T5881] bridge_slave_0: entered allmulticast mode
+[   50.252736][ T5881] bridge_slave_0: entered promiscuous mode
+[   50.259377][ T5881] bridge0: port 2(bridge_slave_1) entered blocking sta=
+te
+[   50.266469][ T5881] bridge0: port 2(bridge_slave_1) entered disabled sta=
+te
+[   50.273698][ T5881] bridge_slave_1: entered allmulticast mode
+[   50.279872][ T5881] bridge_slave_1: entered promiscuous mode
+[   50.291361][ T5881] bond0: (slave bond_slave_0): Enslaving as an active =
+interface with an up link
+[   50.301121][ T5881] bond0: (slave bond_slave_1): Enslaving as an active =
+interface with an up link
+[   50.314859][ T5881] team0: Port device team_slave_0 added
+[   50.321138][ T5881] team0: Port device team_slave_1 added
+[   50.337350][ T5881] batman_adv: batadv0: Adding interface: batadv_slave_=
+0
+[   50.344455][ T5881] batman_adv: batadv0: The MTU of interface batadv_sla=
+ve_0 is too small (1500) to handle the transport of batman-adv packets. Pac=
+kets going over this interface will be fragmented on layer2 which could imp=
+act the performance. Setting the MTU to 1532 would solve the problem.
+[   50.370408][ T5881] batman_adv: batadv0: Not using interface batadv_slav=
+e_0 (retrying later): interface not active
+[   50.381546][ T5881] batman_adv: batadv0: Adding interface: batadv_slave_=
+1
+[   50.388602][ T5881] batman_adv: batadv0: The MTU of interface batadv_sla=
+ve_1 is too small (1500) to handle the transport of batman-adv packets. Pac=
+kets going over this interface will be fragmented on layer2 which could imp=
+act the performance. Setting the MTU to 1532 would solve the problem.
+[   50.414701][ T5881] batman_adv: batadv0: Not using interface batadv_slav=
+e_1 (retrying later): interface not active
+[   50.432432][ T5881] hsr_slave_0: entered promiscuous mode
+[   50.438187][ T5881] hsr_slave_1: entered promiscuous mode
+[   50.464974][ T5881] netdevsim netdevsim0 netdevsim0: renamed from eth0
+[   50.472557][ T5881] netdevsim netdevsim0 netdevsim1: renamed from eth1
+[   50.480523][ T5881] netdevsim netdevsim0 netdevsim2: renamed from eth2
+[   50.488191][ T5881] netdevsim netdevsim0 netdevsim3: renamed from eth3
+[   50.501383][ T5881] bridge0: port 2(bridge_slave_1) entered blocking sta=
+te
+[   50.508462][ T5881] bridge0: port 2(bridge_slave_1) entered forwarding s=
+tate
+[   50.515715][ T5881] bridge0: port 1(bridge_slave_0) entered blocking sta=
+te
+[   50.522863][ T5881] bridge0: port 1(bridge_slave_0) entered forwarding s=
+tate
+[   50.540612][ T5881] 8021q: adding VLAN 0 to HW filter on device bond0
+[   50.549623][   T31] bridge0: port 1(bridge_slave_0) entered disabled sta=
+te
+[   50.557084][   T31] bridge0: port 2(bridge_slave_1) entered disabled sta=
+te
+[   50.566000][ T5881] 8021q: adding VLAN 0 to HW filter on device team0
+[   50.574224][   T74] bridge0: port 1(bridge_slave_0) entered blocking sta=
+te
+[   50.581282][   T74] bridge0: port 1(bridge_slave_0) entered forwarding s=
+tate
+[   50.589909][   T31] bridge0: port 2(bridge_slave_1) entered blocking sta=
+te
+[   50.596984][   T31] bridge0: port 2(bridge_slave_1) entered forwarding s=
+tate
+[   50.635045][ T5881] 8021q: adding VLAN 0 to HW filter on device batadv0
+[   50.648984][ T5881] veth0_vlan: entered promiscuous mode
+[   50.655799][ T5881] veth1_vlan: entered promiscuous mode
+[   50.666178][ T5881] veth0_macvtap: entered promiscuous mode
+[   50.672895][ T5881] veth1_macvtap: entered promiscuous mode
+[   50.681496][ T5881] batman_adv: batadv0: Interface activated: batadv_sla=
+ve_0
+[   50.690818][ T5881] batman_adv: batadv0: Interface activated: batadv_sla=
+ve_1
+[   50.699598][   T74] netdevsim netdevsim0 netdevsim0: set [1, 0] type 2 f=
+amily 0 port 6081 - 0
+[   50.708503][   T74] netdevsim netdevsim0 netdevsim1: set [1, 0] type 2 f=
+amily 0 port 6081 - 0
+[   50.717969][   T74] netdevsim netdevsim0 netdevsim2: set [1, 0] type 2 f=
+amily 0 port 6081 - 0
+[   50.727859][   T31] netdevsim netdevsim0 netdevsim3: set [1, 0] type 2 f=
+amily 0 port 6081 - 0
+[   50.770674][   T31] netdevsim netdevsim0 netdevsim3 (unregistering): uns=
+et [1, 0] type 2 family 0 port 6081 - 0
+[   50.781957][  T989] wlan0: Created IBSS using preconfigured BSSID 50:50:=
+50:50:50:50
+[   50.790035][  T989] wlan0: Creating new IBSS network, BSSID 50:50:50:50:=
+50:50
+[   50.800571][   T12] wlan1: Created IBSS using preconfigured BSSID 50:50:=
+50:50:50:50
+[   50.808621][   T12] wlan1: Creating new IBSS network, BSSID 50:50:50:50:=
+50:50
+[   50.816550][   T31] netdevsim netdevsim0 netdevsim2 (unregistering): uns=
+et [1, 0] type 2 family 0 port 6081 - 0
+[   50.869426][   T31] netdevsim netdevsim0 netdevsim1 (unregistering): uns=
+et [1, 0] type 2 family 0 port 6081 - 0
+[   50.899153][   T31] netdevsim netdevsim0 netdevsim0 (unregistering): uns=
+et [1, 0] type 2 family 0 port 6081 - 0
+2025/11/14 15:28:29 executed programs: 0
+[   53.832316][   T31] bridge_slave_1: left allmulticast mode
+[   53.838115][   T31] bridge_slave_1: left promiscuous mode
+[   53.843745][   T31] bridge0: port 2(bridge_slave_1) entered disabled sta=
+te
+[   53.851578][   T31] bridge_slave_0: left allmulticast mode
+[   53.857222][   T31] bridge_slave_0: left promiscuous mode
+[   53.862866][   T31] bridge0: port 1(bridge_slave_0) entered disabled sta=
+te
+[   53.918713][   T31] bond0 (unregistering): (slave bond_slave_0): Releasi=
+ng backup interface
+[   53.927986][   T31] bond0 (unregistering): (slave bond_slave_1): Releasi=
+ng backup interface
+[   53.936965][   T31] bond0 (unregistering): Released all slaves
+[   53.989491][   T31] hsr_slave_0: left promiscuous mode
+[   53.995049][   T31] hsr_slave_1: left promiscuous mode
+[   54.000970][   T31] batman_adv: batadv0: Interface deactivated: batadv_s=
+lave_0
+[   54.008418][   T31] batman_adv: batadv0: Removing interface: batadv_slav=
+e_0
+[   54.015806][   T31] batman_adv: batadv0: Interface deactivated: batadv_s=
+lave_1
+[   54.023374][   T31] batman_adv: batadv0: Removing interface: batadv_slav=
+e_1
+[   54.031704][   T31] veth1_macvtap: left promiscuous mode
+[   54.037164][   T31] veth0_macvtap: left promiscuous mode
+[   54.042886][   T31] veth1_vlan: left promiscuous mode
+[   54.048139][   T31] veth0_vlan: left promiscuous mode
+[   54.071579][   T31] team0 (unregistering): Port device team_slave_1 remo=
+ved
+[   54.079731][   T31] team0 (unregistering): Port device team_slave_0 remo=
+ved
+[   56.471062][ T5135] Bluetooth: hci0: unexpected cc 0x0c03 length: 249 > =
+1
+[   56.478199][ T5135] Bluetooth: hci0: unexpected cc 0x1003 length: 249 > =
+9
+[   56.485237][ T5135] Bluetooth: hci0: unexpected cc 0x1001 length: 249 > =
+9
+[   56.492501][ T5135] Bluetooth: hci0: unexpected cc 0x0c23 length: 249 > =
+4
+[   56.499741][ T5135] Bluetooth: hci0: unexpected cc 0x0c38 length: 249 > =
+2
+[   56.533269][ T5987] chnl_net:caif_netlink_parms(): no params data found
+[   56.551048][ T5987] bridge0: port 1(bridge_slave_0) entered blocking sta=
+te
+[   56.558200][ T5987] bridge0: port 1(bridge_slave_0) entered disabled sta=
+te
+[   56.565306][ T5987] bridge_slave_0: entered allmulticast mode
+[   56.571616][ T5987] bridge_slave_0: entered promiscuous mode
+[   56.578339][ T5987] bridge0: port 2(bridge_slave_1) entered blocking sta=
+te
+[   56.585394][ T5987] bridge0: port 2(bridge_slave_1) entered disabled sta=
+te
+[   56.592725][ T5987] bridge_slave_1: entered allmulticast mode
+[   56.599055][ T5987] bridge_slave_1: entered promiscuous mode
+[   56.609383][ T5987] bond0: (slave bond_slave_0): Enslaving as an active =
+interface with an up link
+[   56.619214][ T5987] bond0: (slave bond_slave_1): Enslaving as an active =
+interface with an up link
+[   56.633179][ T5987] team0: Port device team_slave_0 added
+[   56.639450][ T5987] team0: Port device team_slave_1 added
+[   56.649461][ T5987] batman_adv: batadv0: Adding interface: batadv_slave_=
+0
+[   56.656391][ T5987] batman_adv: batadv0: The MTU of interface batadv_sla=
+ve_0 is too small (1500) to handle the transport of batman-adv packets. Pac=
+kets going over this interface will be fragmented on layer2 which could imp=
+act the performance. Setting the MTU to 1532 would solve the problem.
+[   56.682534][ T5987] batman_adv: batadv0: Not using interface batadv_slav=
+e_0 (retrying later): interface not active
+[   56.693636][ T5987] batman_adv: batadv0: Adding interface: batadv_slave_=
+1
+[   56.700652][ T5987] batman_adv: batadv0: The MTU of interface batadv_sla=
+ve_1 is too small (1500) to handle the transport of batman-adv packets. Pac=
+kets going over this interface will be fragmented on layer2 which could imp=
+act the performance. Setting the MTU to 1532 would solve the problem.
+[   56.726541][ T5987] batman_adv: batadv0: Not using interface batadv_slav=
+e_1 (retrying later): interface not active
+[   56.742791][ T5987] hsr_slave_0: entered promiscuous mode
+[   56.748575][ T5987] hsr_slave_1: entered promiscuous mode
+[   56.899621][ T5987] netdevsim netdevsim0 netdevsim0: renamed from eth0
+[   56.907406][ T5987] netdevsim netdevsim0 netdevsim1: renamed from eth1
+[   56.916005][ T5987] netdevsim netdevsim0 netdevsim2: renamed from eth2
+[   56.923914][ T5987] netdevsim netdevsim0 netdevsim3: renamed from eth3
+[   56.936978][ T5987] bridge0: port 2(bridge_slave_1) entered blocking sta=
+te
+[   56.944085][ T5987] bridge0: port 2(bridge_slave_1) entered forwarding s=
+tate
+[   56.951366][ T5987] bridge0: port 1(bridge_slave_0) entered blocking sta=
+te
+[   56.958429][ T5987] bridge0: port 1(bridge_slave_0) entered forwarding s=
+tate
+[   56.978679][ T5987] 8021q: adding VLAN 0 to HW filter on device bond0
+[   56.988116][   T31] bridge0: port 1(bridge_slave_0) entered disabled sta=
+te
+[   56.995621][   T31] bridge0: port 2(bridge_slave_1) entered disabled sta=
+te
+[   57.009787][ T5987] 8021q: adding VLAN 0 to HW filter on device team0
+[   57.019929][   T31] bridge0: port 1(bridge_slave_0) entered blocking sta=
+te
+[   57.026986][   T31] bridge0: port 1(bridge_slave_0) entered forwarding s=
+tate
+[   57.035013][   T31] bridge0: port 2(bridge_slave_1) entered blocking sta=
+te
+[   57.042090][   T31] bridge0: port 2(bridge_slave_1) entered forwarding s=
+tate
+[   57.091660][ T5987] 8021q: adding VLAN 0 to HW filter on device batadv0
+[   57.108045][ T5987] veth0_vlan: entered promiscuous mode
+[   57.115202][ T5987] veth1_vlan: entered promiscuous mode
+[   57.128314][ T5987] veth0_macvtap: entered promiscuous mode
+[   57.135072][ T5987] veth1_macvtap: entered promiscuous mode
+[   57.144855][ T5987] batman_adv: batadv0: Interface activated: batadv_sla=
+ve_0
+[   57.153327][ T5987] batman_adv: batadv0: Interface activated: batadv_sla=
+ve_1
+[   57.163642][   T74] netdevsim netdevsim0 netdevsim0: set [1, 0] type 2 f=
+amily 0 port 6081 - 0
+[   57.175835][   T74] netdevsim netdevsim0 netdevsim1: set [1, 0] type 2 f=
+amily 0 port 6081 - 0
+[   57.187129][   T74] netdevsim netdevsim0 netdevsim2: set [1, 0] type 2 f=
+amily 0 port 6081 - 0
+[   57.200636][   T74] netdevsim netdevsim0 netdevsim3: set [1, 0] type 2 f=
+amily 0 port 6081 - 0
+[   57.217417][   T12] wlan0: Created IBSS using preconfigured BSSID 50:50:=
+50:50:50:50
+[   57.227482][   T12] wlan0: Creating new IBSS network, BSSID 50:50:50:50:=
+50:50
+[   57.228996][   T74] wlan1: Created IBSS using preconfigured BSSID 50:50:=
+50:50:50:50
+SYZFAIL: failed to recv rpc
+fd=3D3 want=3D4 recv=3D0 n=3D0 (errno 9: Bad file descriptor)
+[   57.243335][   T74] wlan1: Creating new IBSS network, BSSID 50:50:50:50:=
+50:50
 
-Not sure "is new now" means what?
 
-Original check use mapping_large_folio_support() which calls
-mapping_max_folio_order(). It looks not new to me.
+syzkaller build log:
+go env (err=3D<nil>)
+AR=3D'ar'
+CC=3D'gcc'
+CGO_CFLAGS=3D'-O2 -g'
+CGO_CPPFLAGS=3D''
+CGO_CXXFLAGS=3D'-O2 -g'
+CGO_ENABLED=3D'1'
+CGO_FFLAGS=3D'-O2 -g'
+CGO_LDFLAGS=3D'-O2 -g'
+CXX=3D'g++'
+GCCGO=3D'gccgo'
+GO111MODULE=3D'auto'
+GOAMD64=3D'v1'
+GOARCH=3D'amd64'
+GOAUTH=3D'netrc'
+GOBIN=3D''
+GOCACHE=3D'/syzkaller/.cache/go-build'
+GOCACHEPROG=3D''
+GODEBUG=3D''
+GOENV=3D'/syzkaller/.config/go/env'
+GOEXE=3D''
+GOEXPERIMENT=3D''
+GOFIPS140=3D'off'
+GOFLAGS=3D''
+GOGCCFLAGS=3D'-fPIC -m64 -pthread -Wl,--no-gc-sections -fmessage-length=3D0=
+ -ffile-prefix-map=3D/tmp/go-build3285272391=3D/tmp/go-build -gno-record-gc=
+c-switches'
+GOHOSTARCH=3D'amd64'
+GOHOSTOS=3D'linux'
+GOINSECURE=3D''
+GOMOD=3D'/syzkaller/jobs/linux/gopath/src/github.com/google/syzkaller/go.mo=
+d'
+GOMODCACHE=3D'/syzkaller/jobs/linux/gopath/pkg/mod'
+GONOPROXY=3D''
+GONOSUMDB=3D''
+GOOS=3D'linux'
+GOPATH=3D'/syzkaller/jobs/linux/gopath'
+GOPRIVATE=3D''
+GOPROXY=3D'https://proxy.golang.org,direct'
+GOROOT=3D'/usr/local/go'
+GOSUMDB=3D'sum.golang.org'
+GOTELEMETRY=3D'local'
+GOTELEMETRYDIR=3D'/syzkaller/.config/go/telemetry'
+GOTMPDIR=3D''
+GOTOOLCHAIN=3D'auto'
+GOTOOLDIR=3D'/usr/local/go/pkg/tool/linux_amd64'
+GOVCS=3D''
+GOVERSION=3D'go1.24.4'
+GOWORK=3D''
+PKG_CONFIG=3D'pkg-config'
 
-If my understanding is correct, struct address_mapping is part of struct
-inode, which is initialized by inode_init_once() which clears flags. So the
-default value is 0.
+git status (err=3D<nil>)
+HEAD detached at 4e1406b4d
+nothing to commit, working tree clean
 
->> +
->>   /* Return the maximum folio size for this pagecache mapping, in bytes. */
->>   static inline size_t mapping_max_folio_size(const struct address_space *mapping)
->>   {
->> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
->> index 0184cd915f44..68faac843527 100644
->> --- a/mm/huge_memory.c
->> +++ b/mm/huge_memory.c
->> @@ -3690,34 +3690,58 @@ static int __split_unmapped_folio(struct folio *folio, int new_order,
->>   bool folio_split_supported(struct folio *folio, unsigned int new_order,
->>   		enum split_type split_type, bool warns)
->>   {
->> +	const int old_order = folio_order(folio);
->
->While at it, make it "unsigned int" like new_order.
->
 
-Adjusted.
+tput: No value for $TERM and no -T specified
+tput: No value for $TERM and no -T specified
+Makefile:31: run command via tools/syz-env for best compatibility, see:
+Makefile:32: https://github.com/google/syzkaller/blob/master/docs/contribut=
+ing.md#using-syz-env
+go list -f '{{.Stale}}' -ldflags=3D"-s -w -X github.com/google/syzkaller/pr=
+og.GitRevision=3D4e1406b4defac0e2a9d9424c70706f79a7750cf3 -X github.com/goo=
+gle/syzkaller/prog.gitRevisionDate=3D20251106-151142"  ./sys/syz-sysgen | g=
+rep -q false || go install -ldflags=3D"-s -w -X github.com/google/syzkaller=
+/prog.GitRevision=3D4e1406b4defac0e2a9d9424c70706f79a7750cf3 -X github.com/=
+google/syzkaller/prog.gitRevisionDate=3D20251106-151142"  ./sys/syz-sysgen
+make .descriptions
+tput: No value for $TERM and no -T specified
+tput: No value for $TERM and no -T specified
+Makefile:31: run command via tools/syz-env for best compatibility, see:
+Makefile:32: https://github.com/google/syzkaller/blob/master/docs/contribut=
+ing.md#using-syz-env
+bin/syz-sysgen
+touch .descriptions
+GOOS=3Dlinux GOARCH=3Damd64 go build -ldflags=3D"-s -w -X github.com/google=
+/syzkaller/prog.GitRevision=3D4e1406b4defac0e2a9d9424c70706f79a7750cf3 -X g=
+ithub.com/google/syzkaller/prog.gitRevisionDate=3D20251106-151142"  -o ./bi=
+n/linux_amd64/syz-execprog github.com/google/syzkaller/tools/syz-execprog
+mkdir -p ./bin/linux_amd64
+g++ -o ./bin/linux_amd64/syz-executor executor/executor.cc \
+	-m64 -O2 -pthread -Wall -Werror -Wparentheses -Wunused-const-variable -Wfr=
+ame-larger-than=3D16384 -Wno-stringop-overflow -Wno-array-bounds -Wno-forma=
+t-overflow -Wno-unused-but-set-variable -Wno-unused-command-line-argument -=
+static-pie -std=3Dc++17 -I. -Iexecutor/_include   -DGOOS_linux=3D1 -DGOARCH=
+_amd64=3D1 \
+	-DHOSTGOOS_linux=3D1 -DGIT_REVISION=3D\"4e1406b4defac0e2a9d9424c70706f79a7=
+750cf3\"
+/usr/bin/ld: /tmp/ccvacM34.o: in function `Connection::Connect(char const*,=
+ char const*)':
+executor.cc:(.text._ZN10Connection7ConnectEPKcS1_[_ZN10Connection7ConnectEP=
+KcS1_]+0x104): warning: Using 'gethostbyname' in statically linked applicat=
+ions requires at runtime the shared libraries from the glibc version used f=
+or linking
+./tools/check-syzos.sh 2>/dev/null
 
->> +
->> +	if (new_order >= old_order)
->> +		return -EINVAL;
->> +
->>   	if (folio_test_anon(folio)) {
->>   		/* order-1 is not supported for anonymous THP. */
->>   		VM_WARN_ONCE(warns && new_order == 1,
->>   				"Cannot split to order-1 folio");
->>   		if (new_order == 1)
->>   			return false;
->> -	} else if (split_type == SPLIT_TYPE_NON_UNIFORM || new_order) {
->> -		if (IS_ENABLED(CONFIG_READ_ONLY_THP_FOR_FS) &&
->> -		    !mapping_large_folio_support(folio->mapping)) {
->> -			/*
->> -			 * We can always split a folio down to a single page
->> -			 * (new_order == 0) uniformly.
->> -			 *
->> -			 * For any other scenario
->> -			 *   a) uniform split targeting a large folio
->> -			 *      (new_order > 0)
->> -			 *   b) any non-uniform split
->> -			 * we must confirm that the file system supports large
->> -			 * folios.
->> -			 *
->> -			 * Note that we might still have THPs in such
->> -			 * mappings, which is created from khugepaged when
->> -			 * CONFIG_READ_ONLY_THP_FOR_FS is enabled. But in that
->> -			 * case, the mapping does not actually support large
->> -			 * folios properly.
->> -			 */
->> +	} else {
->> +		const struct address_space *mapping = NULL;
->> +
->> +		mapping = folio->mapping;
->
->const struct address_space *mapping = folio->mapping;
->
 
-Adjusted.
 
->> +
->> +		/* Truncated ? */
->> +		/*
->> +		 * TODO: add support for large shmem folio in swap cache.
->> +		 * When shmem is in swap cache, mapping is NULL and
->> +		 * folio_test_swapcache() is true.
->> +		 */
->> +		if (!mapping)
->> +			return false;
->> +
->> +		/*
->> +		 * We have two types of split:
->> +		 *
->> +		 *   a) uniform split: split folio directly to new_order.
->> +		 *   b) non-uniform split: create after-split folios with
->> +		 *      orders from (old_order - 1) to new_order.
->> +		 *
->> +		 * For file system, we encodes it supported folio order in
->> +		 * mapping->flags, which could be checked by
->> +		 * mapping_folio_order_supported().
->> +		 *
->> +		 * With these knowledge, we can know whether folio support
->> +		 * split to new_order by:
->> +		 *
->> +		 *   1. check new_order is supported first
->> +		 *   2. check (old_order - 1) is supported if
->> +		 *      SPLIT_TYPE_NON_UNIFORM
->> +		 */
->> +		if (!mapping_folio_order_supported(mapping, new_order)) {
->> +			VM_WARN_ONCE(warns,
->> +				"Cannot split file folio to unsupported order: %d", new_order);
->
->Is that really worth a VM_WARN_ONCE? We didn't have that previously IIUC, we would only return
->-EINVAL.
+Tested on:
 
-Hmm.. it seems not necessary. Thanks
+commit:         6da43bbe Merge tag 'vfio-v6.18-rc6' of https://github...
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3Dcb128cd5cb43980=
+9
+dashboard link: https://syzkaller.appspot.com/bug?extid=3Dad45f827c88778ff7=
+df6
+compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils=
+ for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=3D140237cd9800=
+00
 
->
->-- 
->Cheers
->
->David
-
--- 
-Wei Yang
-Help you, Help me
 
