@@ -1,134 +1,98 @@
-Return-Path: <linux-fsdevel+bounces-68435-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68436-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26203C5C1D8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Nov 2025 09:58:47 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76DE2C5C214
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Nov 2025 10:00:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 060F94EEAF7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Nov 2025 08:53:57 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D4F554F3041
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Nov 2025 08:55:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFDFB30146C;
-	Fri, 14 Nov 2025 08:53:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 589562FFDE2;
+	Fri, 14 Nov 2025 08:55:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r6vbiufQ"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="lvqgDMe+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 451562FFDDF;
-	Fri, 14 Nov 2025 08:53:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E68A2F6569
+	for <linux-fsdevel@vger.kernel.org>; Fri, 14 Nov 2025 08:55:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763110433; cv=none; b=jyIoWTTOB8Tm8tulEQzh1b9XbOtbV1CbV/aO/FrExX1d2uCmBiYmu2HG5bnidMBd5g35dsrajQwLafZszFIr6jL9Zh+d9J/zGkgUwVU1bdAfxYIflm7xHGaGun0EZsqQw//W1vsHkALgs0o6YFtRcPeUDvNbWBbvK2P6Jx1vz+A=
+	t=1763110524; cv=none; b=kKDriO7AFyA4rdGPCGWK5plCpS8PKV5cXCxypQAPujt3gjIt5VzPjtZHGPVP/xWIzFTp3T4QtcF7J53RuvBrF0wWfwlWK8UMRD1Qyv5dEDQPHLQuGXPOfK0D+eSOWB+YpEdGdcPbPoXFXXhuvI6H6V37LEF7EdY7ntY7DtcBHls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763110433; c=relaxed/simple;
-	bh=ssk0rZZhSRHJxG/U1ahZGKzn76bRpJzS5FgN48xgYH8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PNe6HaqNPaiUnEZZ8Q1GkEB4YBSSVEt/asJOEyDUmlvJC4Rw0JVfREI/sApw+sHTD64+q+zVryAjjSlE7VvKOO3i6zkn7FgFY4hy5iduDdag0meV5ydnO4RQN6YgRoGiAntqkdSMDetlxr3WpmxMn+DFT19a0J8v6D2gFZ+P8kU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r6vbiufQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0C75C113D0;
-	Fri, 14 Nov 2025 08:53:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763110433;
-	bh=ssk0rZZhSRHJxG/U1ahZGKzn76bRpJzS5FgN48xgYH8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=r6vbiufQBW7J+aMbNrdMWFyccc3es+js8HLWi55Q47JhyAcAXgzOdGo4sruvML3GZ
-	 MAFhbYwE5GXhDI5g2I8irfZlewedp3Rbig63nOnarsweSMItstUm5ijQOaOVUw1VPX
-	 vRhE1d8uH6IYGVqrNxc34eECqjiaLfv2mJNjWKvEd4TiuLVaayJfRl+cZXNCiOsXlG
-	 RrvKdh9QEC4RmEcNVnq5Beh2wK/xr/BT5x6K1YyQfPHOFri6vxLi9mTnLsFlilxm4D
-	 mncrFl/OUu4eCUjRQEtj45ZPeW+65m2JiLhf14H6i0tgdqceftgP+S3Qo72PzMF3xB
-	 ag2M/NM5Y0VUQ==
-Date: Fri, 14 Nov 2025 09:53:49 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Amir Goldstein <amir73il@gmail.com>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3 24/42] ovl: don't override credentials for
- ovl_check_whiteouts()
-Message-ID: <20251114-gekennzeichnet-girokonten-806fb9e0ae6a@brauner>
-References: <20251113-work-ovl-cred-guard-v3-0-b35ec983efc1@kernel.org>
- <20251113-work-ovl-cred-guard-v3-24-b35ec983efc1@kernel.org>
- <CAJfpegtrXoywfudc+x7tP_riDeSM2AGFwgGwWjdUa3UqQ85ndA@mail.gmail.com>
+	s=arc-20240116; t=1763110524; c=relaxed/simple;
+	bh=7QWyEaWPUG/dP82AsIRFxyl4HGCEfS7+WMTPWWej19w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EfC0fnfWAV7kwanz8X8Ud9lhpRAFOpHAnWkYJMp14giZpQZJ5ccxU1D0G05G2fYs3F+HfXg8pGVrOBKUDzm0xPJO6dfewbl5HXOmSKNPcGNiqTfDYaNy912KmJ23HQnTmTuvXjCIVHGFFZ3hZDKQlWITVCneROiDfoc/TAZOWXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=lvqgDMe+; arc=none smtp.client-ip=209.85.222.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-88e51cf965dso205570985a.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Nov 2025 00:55:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1763110522; x=1763715322; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=7QWyEaWPUG/dP82AsIRFxyl4HGCEfS7+WMTPWWej19w=;
+        b=lvqgDMe+4ALyHXRYirCDOIiThCH5UKgjsiAgqVVIPcc52CVLOfJD79ppT2YVrdp9Yo
+         24RTWShWi8X6F8RIyzI68XVljErIEKgSlwzv0VKSFOo8FpHSauqv6EzWLaI0YjDb7KPh
+         cJk1LR7T/3C0qR/MVRoSBVQIERzQXTY4IwSkA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763110522; x=1763715322;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7QWyEaWPUG/dP82AsIRFxyl4HGCEfS7+WMTPWWej19w=;
+        b=tPXhJPJ4ykVl7lNpct9dszdkMV4/ZIV+8TgR5Wiyf+ZQQ9KlDTAhz30NMAxG5c8b9k
+         +O69uDvUNJJIkSGu1KPbUdVGmBT+igcfwESPhU/f1eDck7fdQBBXzTu6ZMRR1sIsBPVW
+         eNVG1gQeLKwjvj/ZWjpvyshdjgqItDZCBF0kIzgWKGDWp7tOkLeza2mWcoiGI1bG7Prw
+         dOsd3pb1CHG+8GHBXDMkek5ZvX6A+es1UZ6nNX5BduZ04pQRa/FTzEMq9xlEryvU05AY
+         kwMcuwP+0FmiUGDEeo8S4r1vOVFMU9+3MPlLEOe/m27VWOMs+JOgdhfLMSaSk/ZmhePk
+         QPcg==
+X-Forwarded-Encrypted: i=1; AJvYcCV/JuaGuS0avlcwBJyVdu3/2AWeyTzcff2E/uGs4f6x+b8TDD5RljFIJqIag0LcBiapmhxZh8VpuThFBwLs@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOEd0NUS+J+AbdDrRcJFVnNATe+OeA+qDeNI+r67FeTVqiU3Hn
+	PA9oim1PTcRunJ5T8SWIOPX5wsdUcJnrAhlI6UnZ9Uzixax0rNgnr/c0tDyKrrtl3X431s4Vt+k
+	KxCedjSdSqSuDKl6+gTV6WPwTkQ0KxQ6+GtljFsf1Dg==
+X-Gm-Gg: ASbGncuF+6JGDdJnGqO52KitATDJzmWCR04+LOfgPjL4HSC72Asev8ba5vZMPXDi4uN
+	jJZCTvrr8rwyTnrCwTmV6gT5DG2+mYqynoTXsqIuXFmBSPXEPzR6uMKP2u20Y4d91eal+/dSUmC
+	ZYXEVMIUfeC5Q1lsd6QkQE15CoKtI1rQZiLyGBmTt0UJxdJpaWN4tXiNVZZF551TMKhM4lgbc/J
+	UjYae2MPeKLBvBU5n9FOG42kXdgamujHrXAFHwGYshbXClwGt9fCcKSWlPIUstn+JV6A4jdtbYJ
+	C/NTp7GK7Ryrf80y5Q==
+X-Google-Smtp-Source: AGHT+IHFOnYN8Yb+30eRqq4OIG/XqDhxG47QkCyDhPhoPo+n9+yo2rSsEgKlid6IjLr5km5pwKQxSfx3pTNFESrelRw=
+X-Received: by 2002:ad4:5bab:0:b0:882:3759:9155 with SMTP id
+ 6a1803df08f44-882925b3364mr27129646d6.21.1763110522067; Fri, 14 Nov 2025
+ 00:55:22 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJfpegtrXoywfudc+x7tP_riDeSM2AGFwgGwWjdUa3UqQ85ndA@mail.gmail.com>
+References: <20251113-work-ovl-cred-guard-v3-0-b35ec983efc1@kernel.org>
+ <20251113-work-ovl-cred-guard-v3-3-b35ec983efc1@kernel.org>
+ <CAJfpegtLkj_+W_rZxoMQ3zO_ZYrcKstWHPaRd6BmD4j80+SCdA@mail.gmail.com> <20251114-tyrannisieren-esstisch-9a596bcdeb7c@brauner>
+In-Reply-To: <20251114-tyrannisieren-esstisch-9a596bcdeb7c@brauner>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Fri, 14 Nov 2025 09:55:10 +0100
+X-Gm-Features: AWmQ_bmR62PzN-GIUHUeulqHbWxi5iB-_xxM8bQk7cBq0kWzSZBAuSsjjpdtUqw
+Message-ID: <CAJfpeguuzPB0O2suV4F_KDCMY3n8n27ct1gT27fepmG5-GDu8Q@mail.gmail.com>
+Subject: Re: [PATCH v3 03/42] ovl: port ovl_create_or_link() to cred guard
+To: Christian Brauner <brauner@kernel.org>
+Cc: Amir Goldstein <amir73il@gmail.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Nov 14, 2025 at 09:11:50AM +0100, Miklos Szeredi wrote:
-> On Thu, 13 Nov 2025 at 22:32, Christian Brauner <brauner@kernel.org> wrote:
-> >
-> > The function is only called when rdd->dentry is non-NULL:
-> >
-> > if (!err && rdd->first_maybe_whiteout && rdd->dentry)
-> >     err = ovl_check_whiteouts(realpath, rdd);
-> >
-> > | Caller                        | Sets rdd->dentry? | Can call ovl_check_whiteouts()? |
-> > |-------------------------------|-------------------|---------------------------------|
-> > | ovl_dir_read_merged()         | ✓ Yes (line 430)  | ✓ YES                           |
-> > | ovl_dir_read_impure()         | ✗ No              | ✗ NO                            |
-> > | ovl_check_d_type_supported()  | ✗ No              | ✗ NO                            |
-> > | ovl_workdir_cleanup_recurse() | ✗ No              | ✗ NO                            |
-> > | ovl_indexdir_cleanup()        | ✗ No              | ✗ NO                            |
-> >
-> > VFS layer (.iterate_shared file operation)
-> >   → ovl_iterate()
-> >       [CRED OVERRIDE]
-> >       → ovl_cache_get()
-> >           → ovl_dir_read_merged()
-> >               → ovl_dir_read()
-> >                   → ovl_check_whiteouts()
-> >       [CRED REVERT]
-> >
-> > ovl_unlink()
-> >   → ovl_do_remove()
-> >       → ovl_check_empty_dir()
-> >           [CRED OVERRIDE]
-> >           → ovl_dir_read_merged()
-> >               → ovl_dir_read()
-> >                   → ovl_check_whiteouts()
-> >           [CRED REVERT]
-> >
-> > ovl_rename()
-> >   → ovl_check_empty_dir()
-> >       [CRED OVERRIDE]
-> >       → ovl_dir_read_merged()
-> >           → ovl_dir_read()
-> >               → ovl_check_whiteouts()
-> >       [CRED REVERT]
-> >
-> > All valid callchains already override credentials so drop the override.
-> >
-> > Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-> > Signed-off-by: Christian Brauner <brauner@kernel.org>
-> > ---
-> >  fs/overlayfs/readdir.c | 10 ++--------
-> >  1 file changed, 2 insertions(+), 8 deletions(-)
-> >
-> > diff --git a/fs/overlayfs/readdir.c b/fs/overlayfs/readdir.c
-> > index 1e9792cc557b..12f0bb1480d7 100644
-> > --- a/fs/overlayfs/readdir.c
-> > +++ b/fs/overlayfs/readdir.c
-> > @@ -348,11 +348,7 @@ static bool ovl_fill_merge(struct dir_context *ctx, const char *name,
-> >
-> >  static int ovl_check_whiteouts(const struct path *path, struct ovl_readdir_data *rdd)
-> >  {
-> > -       int err = 0;
-> >         struct dentry *dentry, *dir = path->dentry;
-> > -       const struct cred *old_cred;
-> > -
-> > -       old_cred = ovl_override_creds(rdd->dentry->d_sb);
-> 
-> Myabe ovl_assert_override_creds()?
+On Fri, 14 Nov 2025 at 09:53, Christian Brauner <brauner@kernel.org> wrote:
 
-Yeah, I'm thinking about a follow-up series to this one to add a few
-asserts in there.
+> The function doesn't but the cleanup macro (as is customary) does:
+> DEFINE_FREE(put_cred, struct cred *, if (!IS_ERR_OR_NULL(_T)) put_cred(_T))
+
+Ah, missed that.
+
+Thanks,
+Miklos
 
