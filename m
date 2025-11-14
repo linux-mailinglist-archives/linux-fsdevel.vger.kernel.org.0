@@ -1,96 +1,88 @@
-Return-Path: <linux-fsdevel+bounces-68542-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68543-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1BB4C5F109
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Nov 2025 20:39:32 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BF83C5F35C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Nov 2025 21:18:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 348BE4E1A88
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Nov 2025 19:38:02 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 15A1235A424
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Nov 2025 20:18:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FFF6324B1F;
-	Fri, 14 Nov 2025 19:37:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEC8F3431F2;
+	Fri, 14 Nov 2025 20:18:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=vjti.ac.in header.i=@vjti.ac.in header.b="gB/m9qsl"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ggiVU6Pv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD1322DCBF3
-	for <linux-fsdevel@vger.kernel.org>; Fri, 14 Nov 2025 19:37:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61A702D47FE
+	for <linux-fsdevel@vger.kernel.org>; Fri, 14 Nov 2025 20:18:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763149068; cv=none; b=rnUBB7qQtsB51XHhduNUq5q6W+w1KDV9u5/Q/gRxM7yta8C/yQF2lkb0Xw98DgHkP0kGJh1C6D5iuR/C1Q6BDQaQARYSDcE5eqRrCkV3/3/N5XUjfBVcU9xfz7Jy6UFlh+FjQ5godELVk+MxleP1sXEtG8iZ8u6gic5Y6nCN5wk=
+	t=1763151490; cv=none; b=Yb0oLFHvbOfM0aZi1YR1UVzQdFVxOeuZX2swP3sJle83UboQU5qdF/mkc/WAknaDwLwIz22FLUZhV4FnEe7J8XsAOrA5zbkCTTf7/uNytDyXOqNBIZo4UMqnymiL8lBgoDvoGM6kq5k42YxBqCHNNNadvNcIFCCFzlidCXBlSUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763149068; c=relaxed/simple;
-	bh=w8x1vgY5Ytuh+8oAzT9I6DYuO6E1SOohSBxub76r0Qc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mQEkY2s7wkXAb3PzIRYmFrZUVJkqzOVmMfnXhcsypEwEbEBNucArZ2UPursiY8aSbUwGH8r3jDiGO2B6d0JIokqy7RALK3Tv7SkKO3EWAEGzlRgafTBjn1R1fmXhwEj5ahNZ/TI4ptDH9/6As34EXKI8bw6KkblS74eUQuJlsvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ee.vjti.ac.in; spf=none smtp.mailfrom=ee.vjti.ac.in; dkim=pass (1024-bit key) header.d=vjti.ac.in header.i=@vjti.ac.in header.b=gB/m9qsl; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ee.vjti.ac.in
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ee.vjti.ac.in
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7aad4823079so2162593b3a.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Nov 2025 11:37:45 -0800 (PST)
+	s=arc-20240116; t=1763151490; c=relaxed/simple;
+	bh=kKvy37QW1/3BR8fdYquPuqP9EYS4mty39BS6D4AcBpA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dJa0y7wivCqTze6uKDbHTs2X45ZXDaaMn6F93txXHcc42jHRVrinLUe2XJPI9w0uEsPVXeevGIbi2UCE2JehyVbjjmFFji6rPkVVCBKEOIqmMuJp2EM18KLKiqlIoHX1ucQdSNAPABvwqGgdyz3op1grqE4NynyTAOAAnIejDYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ggiVU6Pv; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-42b566859ecso1642106f8f.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Nov 2025 12:18:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=vjti.ac.in; s=google; t=1763149065; x=1763753865; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1763151487; x=1763756287; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=XU8vU/KjPE99lkBMAKIxdrPamg7+p9OoEjvmjp1kXQ0=;
-        b=gB/m9qslmSjHwisTXE47sBgVjnU7/AQn8tPivcaH8mZxuduYsz5HbloRU+NMlal7DH
-         7KmZEDBrWEuIvS/9L5bBjxUMiRY3J9ChalJHBI9q0jwelORF7fVM6siArnFqOnammBKA
-         o/b+82QVEQRa/Laq/Ew+b4Ov8ix11AOpiJxNw=
+        bh=RH2DEqpNSuBdy+arsRdO9BnWsTVg860XrhzdhL1pOfA=;
+        b=ggiVU6PvBcXszn/H13V2VpmhvGHUbeQX616doKn13MxiQgw7ADA09wcDBVl/m3kWgb
+         SKcpiN4Abyyhn2n5AbgM1qlyGthi9TJXwRGhM7Q1QyoBXbDZMSI30ZJma85AqDFzIx9X
+         tINJJotmWXeg0KQ9zbqEkT15JJr2OjbLlGeNBlMH+5494Ygn8anHqp8lY1GxFzddrjjz
+         v8uYe2FTPBMQKVOLi6ACQo1wbh89o5becKU2D1NnQiTsbOcYj6ypWElBrRQrH+uHAIY5
+         +NjjbdkU8hGJSt95ma4OlLLa7FZKHo4wX20U99ASHsWHkcF+mzYhL0bZQNx8dNaJ2/kh
+         mU1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763149065; x=1763753865;
+        d=1e100.net; s=20230601; t=1763151487; x=1763756287;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=XU8vU/KjPE99lkBMAKIxdrPamg7+p9OoEjvmjp1kXQ0=;
-        b=pPeFEi5OtgkAt6BO5gdnG/nRoXHUPREOkP+l+OpmdQ1bcAnj3HDdD3ncEPhXFNeSb+
-         Ibe2dx/8AxfVlCYpY3qhIG/HSIEkVjEF0Qw9Izpcd1av/YWA0lEwvxFG1FcjkLy5S5Ca
-         IUTaGckZGR7STtPKRA0REnrLdFfOOcYarXtMiHJwbb0jaPJ1InLyRu1ozR2JUIDEzLU0
-         r+UodvYrAKBlHyHAbq8zq+f21i8t4MrJfY8qq8logr2MjJBw85ejALM5VvwJhrWBU/Oc
-         crQrqNCrOoSa/xz123j2UQCJmOwQHxg12TdlbCCbWcQ39ANyCqM4+jCM8im57kJCOXT8
-         9DYA==
-X-Forwarded-Encrypted: i=1; AJvYcCVtNGrPtoHlwjOQDLoz6cfFikM2FGZsZqNm7pNycbKR57Y8vklQ725KU6Lies+7k/eVja45yM0pfoQ1HAiZ@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTccXdwn/PU9VOIruyiGO8DG91w7M2S4yK+zKZzVeQDi++YmSF
-	4kh+YlGvmGG0FOPeDSub36tY1w3cx4g9RX9AZOgYVPbOPxcPEsDbVuWIgwbTdlTvHdtV17cVm3u
-	jkL7sPeg=
-X-Gm-Gg: ASbGncuMTFs1SFYMdtnzzGVKH3PVwouXT7xDm7dUQE7v7Q3fEBZm32LhH27cydCmSt5
-	QvoeaNqXpPmFlqFmjaZIuTLqXYAFgbjNy4BoNQOH8gaMq6mv0nsLKSCnc/s5AxOAUbAEjCXUZlz
-	rg22vgwenmOAKJ00uL9WkvbEu4OpAoEYTRdHO8cdH782IZwQKkhJbfUOswGRH/XBvLR7d9syqfa
-	sYW3miPGx81qheNLfXQTzxf4CSiBdOV9+pWk3ZFwWfjpK5EfK04oFDoT1ChnNE6GN5xwKt0pfiT
-	/DCr1CfIOiKlxj6sZDPPtJbKJMX8kYz3GmMRIG+LPUS//TEyfutbKRhDYnk8jmNdNoLhzmDEk1s
-	kl6XaTJVCQ+XJ+ocXPajuGuJABuZNr+7aoW4TRRNNqFuf2OIBI42HnAXfiyfk9TIzAgSaBZGqQN
-	CZ2H+NUoasVNPSICQlQs360yiWKzfrz9KKvfvGMYJU0ttaYx/1XV+w2FsX
-X-Google-Smtp-Source: AGHT+IE+LbpWEktarCB2Dnrv1yWZrNsnZpDCOeAp7apnz9uVsWtNi+RAN9rwFssQKUSctcc6Q3Qc9w==
-X-Received: by 2002:a05:6a00:2e8f:b0:7b9:7349:4f0f with SMTP id d2e1a72fcca58-7ba3799f055mr4742484b3a.0.1763149064968;
-        Fri, 14 Nov 2025 11:37:44 -0800 (PST)
-Received: from ranegod-HP-ENVY-x360-Convertible-13-bd0xxx.. ([2405:201:31:d869:6873:3448:fe16:68a6])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7b9250cd5f6sm5941807b3a.16.2025.11.14.11.37.39
+        bh=RH2DEqpNSuBdy+arsRdO9BnWsTVg860XrhzdhL1pOfA=;
+        b=jmgIg5d1et/f117OOa5qAOF9Mhd7def/bAaU/rlKMmEMpSbu/x+K8fHvP8mGxOyJqn
+         9bxbUJay0g6WtKwSjemFvrmC4Bn7JWSoO+iMZO93f7ITsj9PElMkYBEdeGqSmB5Gi3DZ
+         Uux3aghg+ejbSdtNI0nvf0IPWhqbggBfyloMUINOatUhONibzh1MadMU6Jrl7HbKU4Mr
+         8jHoMEnVMnz0vD/OcUyVmYrR7PEPu8ggEttBYaPGK5AgHDDL44KKmfj0F8mLQC8WVyn7
+         D1woCFwd62AhA2uIH9ZzhgvNTrTwZzqCqCJ7yaUTYKkbIYm+DRHqxtN8k+MwrBGRUUDY
+         4cBA==
+X-Forwarded-Encrypted: i=1; AJvYcCXoD1cAUsfaRVIjR3ZbA4IzWa+RWirTz4wIFtNBsx+X4vlkM9Vj6Mx4Ph3SBenaxEQHfFVJq4KZWdLiFLuZ@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvPz7Zu+5+yAalX1EgEvw5SMOPg1KUCZSQm1qL7Yhcr3/TFUGA
+	pR9zGSr7e1X/xOwl7o1RuUY89W18kqYRCfBNQo4wul9+0noXENiQ5wBc
+X-Gm-Gg: ASbGncsrIczaSLhgqAFl5hn8WWzutqPmaJejtpXFy0ixvzW6XMSj+/XaJGQ5voWBH5x
+	wrYkNeRFNJpU8WiL/TMlr+YnqReSBPsyb5jSVHUs+/njTvMljklddix/KnpCIKdWgCyfzA6pWb3
+	Q1zOBmTqK9smXCRJHg7eGkFhKmY4rq0EE1j6M2cH0UxRRTQQ3C4lSOx1dXROQ8BMT0hEsknsP4h
+	SSoFZCRgWFRBBuSsZMbcTo+uVk8F8IXarL+p2eqDT35qdt0hN3f2SUan2B2lq1rxp+daTXyEEuV
+	/zTUB1J9YSjPkWzUq6//NJ5zGa4CcLVbEHdbmMNg52yHaOj5wX0IhyN9YginyeZDEkoH1mkKpf3
+	GjwXhgz5TYelJKDTR3g2bUkT1lKxHNscaB/lzgP0TXNMQRMfe8Xt9CoQhQBRqqAvJh7GYnD+69F
+	e0FJyqJ6kQxqKJq48OMd7cWiYyhNNnuQf1hhnViWn1PZ4ySHE7/t1z3g0KA5g=
+X-Google-Smtp-Source: AGHT+IEi/ByZwNTkmJ4EcrnRiPDFN+AfIVbFmG1jNcMXN07oSP3veXjXBSY+4y2d2Bmdx4mTbv6+1w==
+X-Received: by 2002:a05:6000:1842:b0:42b:3dfb:645f with SMTP id ffacd0b85a97d-42b59394e14mr4014548f8f.47.1763151486271;
+        Fri, 14 Nov 2025 12:18:06 -0800 (PST)
+Received: from f.. (cst-prg-14-82.cust.vodafone.cz. [46.135.14.82])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b53e84a4fsm11436112f8f.11.2025.11.14.12.18.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Nov 2025 11:37:44 -0800 (PST)
-From: ssrane_b23@ee.vjti.ac.in
-X-Google-Original-From: ssranevjti@gmail.com
-To: willy@infradead.org
-Cc: akpm@linux-foundation.org,
-	shakeel.butt@linux.dev,
-	eddyz87@gmail.com,
-	andrii@kernel.org,
-	ast@kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
+        Fri, 14 Nov 2025 12:18:05 -0800 (PST)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: viro@zeniv.linux.org.uk
+Cc: brauner@kernel.org,
+	jack@suse.cz,
 	linux-kernel@vger.kernel.org,
-	linux-kernel-mentees@lists.linux.dev,
-	skhan@linuxfoundation.org,
-	david.hunter.linux@gmail.com,
-	khalid@kernel.org,
-	Shaurya Rane <ssrane_b23@ee.vjti.ac.in>,
-	syzbot+09b7d050e4806540153d@syzkaller.appspotmail.com
-Subject: [PATCH] mm/filemap: fix NULL pointer dereference in do_read_cache_folio()
-Date: Sat, 15 Nov 2025 01:07:29 +0530
-Message-Id: <20251114193729.251892-1-ssranevjti@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	linux-fsdevel@vger.kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH] fs: move mntput_no_expire() slowpath into a dedicated routine
+Date: Fri, 14 Nov 2025 21:18:03 +0100
+Message-ID: <20251114201803.2183505-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -99,51 +91,131 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Shaurya Rane <ssrane_b23@ee.vjti.ac.in>
+In the stock variant the compiler spills several registers on the stack
+and employs stack smashing protection, adding even more code + a branch
+on exit..
 
-When read_cache_folio() is called with a NULL filler function on a
-mapping that does not implement read_folio, a NULL pointer
-dereference occurs in filemap_read_folio().
+The actual fast path is small enough that the compiler inlines it for
+all callers -- the symbol is no longer emitted.
 
-The crash occurs when:
+Forcing noinline on it just for code-measurement purposes shows the fast
+path dropping from 111 to 39 bytes.
 
-build_id_parse() is called on a VMA backed by a file from a
-filesystem that does not implement ->read_folio() (e.g. procfs,
-sysfs, or other virtual filesystems).
-
-read_cache_folio() is called with filler = NULL.
-
-do_read_cache_folio() assigns filler = mapping->a_ops->read_folio,
-which is still NULL.
-
-filemap_read_folio() calls filler(), causing a NULL pointer
-dereference.
-
-The fix is to add a NULL check after the fallback assignment and return
--EIO. Callers handle this error safely.
-
-Reported-by: syzbot+09b7d050e4806540153d@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=09b7d050e4806540153d
-Fixes: ad41251c290d ("lib/buildid: implement sleepable build_id_parse() API")
-Signed-off-by: Shaurya Rane <ssrane_b23@ee.vjti.ac.in>
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
 ---
- mm/filemap.c | 2 ++
- 1 file changed, 2 insertions(+)
 
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 13f0259d993c..f700fe931d61 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -3980,6 +3980,8 @@ static struct folio *do_read_cache_folio(struct address_space *mapping,
+fast path prior:
+    call   ffffffff81374630 <__fentry__>
+    push   %r15
+    push   %r14
+    push   %r13
+    push   %r12
+    push   %rbp
+    push   %rbx
+    sub    $0x18,%rsp
+    mov    %gs:0x2deef5d(%rip),%rbx        # ffffffff8454f008 <__stack_chk_guard>
+
+    mov    %rbx,0x10(%rsp)
+    mov    %rdi,%rbx
+    mov    %rsp,(%rsp)
+    mov    %rsp,0x8(%rsp)
+    call   ffffffff814615f0 <__rcu_read_lock>
+    mov    0xe8(%rbx),%rax
+    test   %rax,%rax
+    je     ffffffff817600ff <mntput_no_expire+0x6f>
+    mov    0x58(%rbx),%rax
+    decl   %gs:(%rax)
+    call   ffffffff81466810 <__rcu_read_unlock>
+    mov    0x10(%rsp),%rax
+    sub    %gs:0x2deef22(%rip),%rax        # ffffffff8454f008 <__stack_chk_guard>
+
+    jne    ffffffff8176030b <mntput_no_expire+0x27b>
+    add    $0x18,%rsp
+    pop    %rbx
+    pop    %rbp
+    pop    %r12
+    pop    %r13
+    pop    %r14
+    pop    %r15
+    jmp    ffffffff823091f0 <__pi___x86_return_thunk>
+
+after (when forced to be out-of-line):
+    call   ffffffff81374630 <__fentry__>
+    push   %rbx
+    mov    %rdi,%rbx
+    call   ffffffff814615f0 <__rcu_read_lock>
+    mov    0xe8(%rbx),%rax
+    test   %rax,%rax
+    je     ffffffff81760347 <mntput_no_expire+0x27>
+    mov    0x58(%rbx),%rax
+    decl   %gs:(%rax)
+    pop    %rbx
+    jmp    ffffffff81466810 <__rcu_read_unlock>
+
+ fs/namespace.c | 38 ++++++++++++++++++++++----------------
+ 1 file changed, 22 insertions(+), 16 deletions(-)
+
+diff --git a/fs/namespace.c b/fs/namespace.c
+index e8f1fe4bca06..6af6b082043c 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -1346,26 +1346,12 @@ static void delayed_mntput(struct work_struct *unused)
+ }
+ static DECLARE_DELAYED_WORK(delayed_mntput_work, delayed_mntput);
  
- 	if (!filler)
- 		filler = mapping->a_ops->read_folio;
-+	if (!filler)
-+		return ERR_PTR(-EIO);
- repeat:
- 	folio = filemap_get_folio(mapping, index);
- 	if (IS_ERR(folio)) {
+-static void mntput_no_expire(struct mount *mnt)
++static void noinline mntput_no_expire_slowpath(struct mount *mnt)
+ {
+ 	LIST_HEAD(list);
+ 	int count;
+ 
+-	rcu_read_lock();
+-	if (likely(READ_ONCE(mnt->mnt_ns))) {
+-		/*
+-		 * Since we don't do lock_mount_hash() here,
+-		 * ->mnt_ns can change under us.  However, if it's
+-		 * non-NULL, then there's a reference that won't
+-		 * be dropped until after an RCU delay done after
+-		 * turning ->mnt_ns NULL.  So if we observe it
+-		 * non-NULL under rcu_read_lock(), the reference
+-		 * we are dropping is not the final one.
+-		 */
+-		mnt_add_count(mnt, -1);
+-		rcu_read_unlock();
+-		return;
+-	}
++	VFS_BUG_ON(mnt->mnt_ns);
+ 	lock_mount_hash();
+ 	/*
+ 	 * make sure that if __legitimize_mnt() has not seen us grab
+@@ -1416,6 +1402,26 @@ static void mntput_no_expire(struct mount *mnt)
+ 	cleanup_mnt(mnt);
+ }
+ 
++static void mntput_no_expire(struct mount *mnt)
++{
++	rcu_read_lock();
++	if (likely(READ_ONCE(mnt->mnt_ns))) {
++		/*
++		 * Since we don't do lock_mount_hash() here,
++		 * ->mnt_ns can change under us.  However, if it's
++		 * non-NULL, then there's a reference that won't
++		 * be dropped until after an RCU delay done after
++		 * turning ->mnt_ns NULL.  So if we observe it
++		 * non-NULL under rcu_read_lock(), the reference
++		 * we are dropping is not the final one.
++		 */
++		mnt_add_count(mnt, -1);
++		rcu_read_unlock();
++		return;
++	}
++	mntput_no_expire_slowpath(mnt);
++}
++
+ void mntput(struct vfsmount *mnt)
+ {
+ 	if (mnt) {
 -- 
-2.34.1
+2.48.1
 
 
