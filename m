@@ -1,381 +1,334 @@
-Return-Path: <linux-fsdevel+bounces-68571-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68572-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 663E5C60AAB
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Nov 2025 21:21:20 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32947C60CC9
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Nov 2025 00:34:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D562435958D
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Nov 2025 20:21:19 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EC3444E2917
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Nov 2025 23:34:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D5F730C37B;
-	Sat, 15 Nov 2025 20:21:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5555F26CE22;
+	Sat, 15 Nov 2025 23:34:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Fqhr8O4z";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="HPXLet9Z"
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="It+rt+WO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EF3E3081C8;
-	Sat, 15 Nov 2025 20:21:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763238070; cv=fail; b=DnaaeYV6ZE6i0DlnJFL+4+6JmOPcQsu12Fb/cDv4SzHFRMUBu1jzVxTCQUkUiF7Q7tzyZv1LlRpPvxD+X/860oOGcmXZCceqcT1dj9FlOBX9UyV+lXrRqt8HrL3JGPBtT+SUosx8kNozpAO8p48CEZvNsXTXs5wLCSqHT7bvCmY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763238070; c=relaxed/simple;
-	bh=qClcOPz3WAiiKogQnktDVyqbzJX73EhEezLVxaOI3jY=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=sTQzPDOzRdj/XTiLkY440gX9HHHweF2qtVhXA3BQKzDr7oMNRCv6H14YQt/FKaZHRwCq+ufdZ8DlA8h7X2kXQqd7VzePx3s/VVijhlgJh30AcOz2aP1EM5t8ABpiBaiRPoiWcoxCvj2Ebg9uyBq4PJeqBThDRgc+Ony84dVBmTs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Fqhr8O4z; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=HPXLet9Z; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5AFIDYft022668;
-	Sat, 15 Nov 2025 20:20:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2025-04-25; bh=Vu7ITtB1cxeEZhIrfsEybDbb74RL8MtEuuZmZkyxpEk=; b=
-	Fqhr8O4zZ1lV4VZN4E6ACi9RLPPodaWwW/9xNTBUR4/06tISnJvvCqGQcW3FRz+v
-	273kI1Eev0/85wwtxZQSfCC+mL6Vm3smKraUnJyMAPK+y19fynNKWcfDFFxGRtQE
-	1v8xCtPsX9HaDrtixoGGrb5LvFTlHXdvFrZpy4xgfx1fEXPxSCLqU8heITVW2mFt
-	lU576ILQRfpnFeUGNP9rD0kJj1V+jGfd6KzQT0dgK3R8qGx7Cr/JiYz2Lqv9NdQ7
-	RoWOx+LvK5lwOFDMWWTBPGdgkZZPwdaEweJ082kMqPq3ulgJFYU2Mzt0b6xFQPrX
-	05f4kdlxD4GhsF6NrFuUBQ==
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4aej960fk1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sat, 15 Nov 2025 20:20:49 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5AFIk2UK002483;
-	Sat, 15 Nov 2025 20:20:49 GMT
-Received: from sn4pr2101cu001.outbound.protection.outlook.com (mail-southcentralusazon11012022.outbound.protection.outlook.com [40.93.195.22])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4aefy69jcy-2
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sat, 15 Nov 2025 20:20:49 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=na4Q4HJkh00U4Qdhm2xfh0WfSvGNApfKCNtADx/liItxkxTWWJD0Myr3V3BI8B6wh+6ifNiqRb8I4gZs1spiPLjji0a6EaZZnMkNci9joq4Sr5V/bo+wkuz+xqdRlWt1iUE61o/+IeaHx6KZ7WGGZif4sxFtAMZYCBjczJQwWYvgH9NKx7UloP4abxsmty3eVYkKG2ZiiQxJ99NzBieUXFme26q9ijjfKKYG5BYTvV2zC2NG0bIW6t9AGfjwYPPg9d6fgxZwO5qBTGac6p9t/Fxf68fv0ggvEP1VT7MxbZHTD8RVc3ZJCvYa2LsgrTVtEEkaSQqHUhWvuhJ3m+X0fA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Vu7ITtB1cxeEZhIrfsEybDbb74RL8MtEuuZmZkyxpEk=;
- b=m7VOcaguRS6HFL7a50xNImGrW4eD7kkPPSF+hGdNU60/gwzKff39iHqb+2+qtAp2mrlL5H6uoSubArlCGF5ZZqzy3gUrdI99Fj3bJsYyOtLeXk8yw5BJCJLzTJis2JlFjBhSbqi0FLbowXj5OQ7OkAl0fEW57TKdtgo3et2PWfITyXGwpq1hx9NeXgYu/f1qz+yDPNxWcvuV2RtV7rvrNjTAVPX3e2lcoypt/g/tudzgW5wpBHpea1ix7L/4t/HSRomU5YxTzJD7jMzdQZY2XHA60HXwIiSoxZMrOF+3gPKsu533P6Yt3Lt7dt7cTnSErVc1veeLuCJz/onyMGzUdA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CA7E262FCB
+	for <linux-fsdevel@vger.kernel.org>; Sat, 15 Nov 2025 23:34:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1763249658; cv=none; b=HWiNZ3JfsAB+Q33eg1t9bv242mUqD7AJgd8vhXJsV/m83AC8WTB16XinYNIDeAYDnoFXZmOTgiG2/PNGRnQX40RwpLoQwrJ7i5Bn+2sisOrDcEl/DDNHjFxt7ai17W1nXRkcecyNqP4VVZD2MwJrh06JXRBlENN0FnNh6PnA9DY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1763249658; c=relaxed/simple;
+	bh=KC4peQg3ZgK5xdZoWnqcywww4iaBRhdSHDWeNU9db10=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rNo33b9Leax9nBxnnURsTvs/yGhwGNmM5UXUBrzudzyPII/VKtZEeD8KINVunAItlJod5aNz9K4pF3kXPmDwQjQwX+zNZV7p95wYkTII/oRFoDNnghst9GbG0FYGebxZOREKeT3tm1RXpbzHqbM9TRTfTdRJNpFZ2KfV7AZt1uE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=It+rt+WO; arc=none smtp.client-ip=209.85.128.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-787da30c53dso28687337b3.0
+        for <linux-fsdevel@vger.kernel.org>; Sat, 15 Nov 2025 15:34:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Vu7ITtB1cxeEZhIrfsEybDbb74RL8MtEuuZmZkyxpEk=;
- b=HPXLet9Zm+DsO6TLSFFNCUqhat5BbUvGd7HEym6H2Qw/lW4CmtA7fd4lHF/AkLFuk2hYokWcQ44icySddfk5N7xOVyQmFZhGFcvigQGMG1XHhUlaBPtV9d/Qy/nIjwFhTSZURyUiHTUe2V8zOIvHJzFr+0sSkNdsFlZ2r82HMqQ=
-Received: from MW6PR10MB7639.namprd10.prod.outlook.com (2603:10b6:303:244::14)
- by DS4PPF072D269AC.namprd10.prod.outlook.com (2603:10b6:f:fc00::d05) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.18; Sat, 15 Nov
- 2025 20:20:46 +0000
-Received: from MW6PR10MB7639.namprd10.prod.outlook.com
- ([fe80::69ee:3509:9565:9cd6]) by MW6PR10MB7639.namprd10.prod.outlook.com
- ([fe80::69ee:3509:9565:9cd6%5]) with mapi id 15.20.9320.018; Sat, 15 Nov 2025
- 20:20:46 +0000
-Message-ID: <e43b83f1-cc9f-41b6-b659-bb6cf82f7345@oracle.com>
-Date: Sat, 15 Nov 2025 12:20:43 -0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/3] FSD: Fix NFS server hang when there are multiple
- layout conflicts
-To: Chuck Lever <chuck.lever@oracle.com>, jlayton@kernel.org,
-        neilb@ownmail.net, okorniev@redhat.com, tom@talpey.com, hch@lst.de,
-        alex.aring@gmail.com, viro@zeniv.linux.org.uk, brauner@kernel.org,
-        jack@suse.cz
-Cc: linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org
-References: <20251115191722.3739234-1-dai.ngo@oracle.com>
- <20251115191722.3739234-4-dai.ngo@oracle.com>
- <967cc3ea-a764-4acf-b438-94a605611d86@oracle.com>
-Content-Language: en-US
-From: Dai Ngo <dai.ngo@oracle.com>
-In-Reply-To: <967cc3ea-a764-4acf-b438-94a605611d86@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PH2PEPF00003854.namprd17.prod.outlook.com
- (2603:10b6:518:1::74) To MW6PR10MB7639.namprd10.prod.outlook.com
- (2603:10b6:303:244::14)
+        d=soleen.com; s=google; t=1763249655; x=1763854455; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ee7lz4Om+GPES8DwWVPvUGgIK1alarn+M6wiUgt8ct8=;
+        b=It+rt+WOG+XhMPXITo2trVWlnoRA4e+7qLkEUxGuHyk3SPliCy9Ep1hP8QyuiFNqW1
+         7WvH+GScKMIpiRo2SV7k1HgUCIDqrQEypz8OJfK0rLhq057g9XjE2OuhwmHywCgcYup0
+         cv5lslDGxuDoCFXqlLYLxvU2uVEftcR+t2zxdH/srtYFD6kMpo1It4FW+9+MwR4DjzqO
+         zmB9ckZvsH6yl/jHqN9RIkv/0Jxar3JI1QjVzdZqJvcMmdHH7mal29FVEgFoOBMHNN9f
+         NX7NM22aVYLpJqnPfZtSLWtl6tpHzJx2T2DmPJ/ZsXMKsNHNiZUgR71U12GVa8WBdep7
+         O/hQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763249655; x=1763854455;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ee7lz4Om+GPES8DwWVPvUGgIK1alarn+M6wiUgt8ct8=;
+        b=n0CgQVuz6aefjo/+qkrzoU9SPnqKWah9xbVqicWirZFaUAQR9q4NRGu2yrhjAOLgWh
+         oE3f0h4Qdh3j9DTqgpLW2MF9aYi9w3OKki5xQmC+NFKQ39hLCsJhJ2Viwz9O/HxFBtYd
+         NW+oQkq+sA0FIu7V0OxjGGUzNoZfGDXJrC3zpzsEE+/EioRVTxIQpwA7tWAWhSBlG4sy
+         kku+GBioWQI32+w+hwY5iWNlmXQH2dtyB0JFFybbkIrbGzdfyXnh1pzmbDUeTi3UEqt5
+         WdSBUt0Zzh8UJfTTC+0atX8gLV/eskYetKIu7m30IU6/PXgv4oTxfb2ha2qDblOppGgg
+         U5sw==
+X-Forwarded-Encrypted: i=1; AJvYcCXSwDtBMdiSMhu5Z8qehAb/dkxnVrlZA45taJi5OAj5OcjJe14w9dnb4KjmbygpcAmxXPm8P2SaTEhbaSWZ@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUo8mI1iUsIWLPjeW0ofloaLybEVdWcIbiDkcyL9EKwpEWfwl3
+	4pq7tIHhpYglJ4YlszOpPo+nRYwQOdybBBz8cPXJFYKIik8ergb2U17qdhPvKx51Mmw=
+X-Gm-Gg: ASbGncv7qUD3V5m5ejxFTxLevWlCEv2UWiOHnL4RrfOzk+AdiPY3FL060C2b6xJqUFg
+	F9kpDLVtr1D3lvTp6YW1b+rwFzjEidTcR1oAaYUXnbDTpBUJSo7P6WNNaiVBDpgGRrXb+x2ad2b
+	cVqRAO59sae2TrQ9rJ/hgFbb0A8xX1SmdxDk+XIH5ej76JE/hoxQIdM4HLwV/XpGC+8RUiqX7j2
+	Pj8Tbu6xQQThrOU5JZHRBZ/zxgJAL76RMHdW8rxoe40DUMv1gngDHSjcUhF+IWrXt9sAENNFbh0
+	6X3tpf0qaleHfVLDosAMND4mi/SUO1Kp4ka5bStLr/DMltqZK6Fswwz4amrOvvuofJ7iQYkzGVa
+	gXYZY77zk53vSK4/68olcEp9XyncaGtuJLn8ljEcdV1S+wC75JKrt2j3g64yjeWVKU7eTsc5m1i
+	dgGvgwDi9Lf9gij7oYCI3mxOGXq1fiJhs/7vmgvKvv6SfPZ2n5dfYzwcuJqPc1HVt/SIS+g0Xao
+	bggyiP6KBiJg1bVlQ==
+X-Google-Smtp-Source: AGHT+IHY/9H7Rzp2eriASzkL5MJ3Zatp1dgl1eRotDeTufMXyR7gZWjPaOKAzBcpPxEOBX631v43uw==
+X-Received: by 2002:a05:690c:b98:b0:787:f72d:2a57 with SMTP id 00721157ae682-78929e23b6cmr69035687b3.15.1763249654638;
+        Sat, 15 Nov 2025 15:34:14 -0800 (PST)
+Received: from soleen.c.googlers.com.com (182.221.85.34.bc.googleusercontent.com. [34.85.221.182])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-7882218774esm28462007b3.57.2025.11.15.15.34.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 15 Nov 2025 15:34:14 -0800 (PST)
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+To: pratyush@kernel.org,
+	jasonmiu@google.com,
+	graf@amazon.com,
+	pasha.tatashin@soleen.com,
+	rppt@kernel.org,
+	dmatlack@google.com,
+	rientjes@google.com,
+	corbet@lwn.net,
+	rdunlap@infradead.org,
+	ilpo.jarvinen@linux.intel.com,
+	kanie@linux.alibaba.com,
+	ojeda@kernel.org,
+	aliceryhl@google.com,
+	masahiroy@kernel.org,
+	akpm@linux-foundation.org,
+	tj@kernel.org,
+	yoann.congal@smile.fr,
+	mmaurer@google.com,
+	roman.gushchin@linux.dev,
+	chenridong@huawei.com,
+	axboe@kernel.dk,
+	mark.rutland@arm.com,
+	jannh@google.com,
+	vincent.guittot@linaro.org,
+	hannes@cmpxchg.org,
+	dan.j.williams@intel.com,
+	david@redhat.com,
+	joel.granados@kernel.org,
+	rostedt@goodmis.org,
+	anna.schumaker@oracle.com,
+	song@kernel.org,
+	linux@weissschuh.net,
+	linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-mm@kvack.org,
+	gregkh@linuxfoundation.org,
+	tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	x86@kernel.org,
+	hpa@zytor.com,
+	rafael@kernel.org,
+	dakr@kernel.org,
+	bartosz.golaszewski@linaro.org,
+	cw00.choi@samsung.com,
+	myungjoo.ham@samsung.com,
+	yesanishhere@gmail.com,
+	Jonathan.Cameron@huawei.com,
+	quic_zijuhu@quicinc.com,
+	aleksander.lobakin@intel.com,
+	ira.weiny@intel.com,
+	andriy.shevchenko@linux.intel.com,
+	leon@kernel.org,
+	lukas@wunner.de,
+	bhelgaas@google.com,
+	wagi@kernel.org,
+	djeffery@redhat.com,
+	stuart.w.hayes@gmail.com,
+	ptyadav@amazon.de,
+	lennart@poettering.net,
+	brauner@kernel.org,
+	linux-api@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	saeedm@nvidia.com,
+	ajayachandra@nvidia.com,
+	jgg@nvidia.com,
+	parav@nvidia.com,
+	leonro@nvidia.com,
+	witu@nvidia.com,
+	hughd@google.com,
+	skhawaja@google.com,
+	chrisl@kernel.org
+Subject: [PATCH v6 00/20] Live Update Orchestrator
+Date: Sat, 15 Nov 2025 18:33:46 -0500
+Message-ID: <20251115233409.768044-1-pasha.tatashin@soleen.com>
+X-Mailer: git-send-email 2.52.0.rc1.455.g30608eb744-goog
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW6PR10MB7639:EE_|DS4PPF072D269AC:EE_
-X-MS-Office365-Filtering-Correlation-Id: 61980588-1d91-4649-488c-08de2484757f
-X-LD-Processed: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
- BCL:0;ARA:13230040|7416014|376014|366016|1800799024|921020;
-X-Microsoft-Antispam-Message-Info:
- =?utf-8?B?c1UwV1lhUHY4MzJHcTZzZnJqS2ZyY25pQzdkcGUzSFZLdkI1bDhhaVFWQ2pK?=
- =?utf-8?B?TE5GNFBoWDZPV09KV2NWclNhL0tjclBXTmsvTWVVY2dwK3B1UnFsNFZjYVdZ?=
- =?utf-8?B?WUx0QUxEc1RUNUxrdjVlVENCSW1PeUZBTkxicWlqcHFUM2hOOEoyVk9YZW9N?=
- =?utf-8?B?VHc4S2VrNGRqTFptcEt0NmJlNFhrMGg1bEVwOVN1cnJBMkg2c2F6Q2MxSTRX?=
- =?utf-8?B?NS9nTmx4TmU0M1RWaXFrZG9ZQTRQUFlMVTBGTk9JZkVmcm4vVlU3RGU1blZu?=
- =?utf-8?B?cmNvNDJnRUMyc0xQY0dEWGZoSkVuVGwzNDEwYWszVjRkeHAwem5Xb3ZoREQ2?=
- =?utf-8?B?YWFyMWlQTjg4alZ2WTdzTkxVMWJERStpelJoY3BPc3RCb0IwQlNFdE1ZNXNx?=
- =?utf-8?B?clVsZjZ2ZUlxK3RQMm1ZbGI1MTd1SHpBWVhqNmpJbndEeHptdVFGSGhwU2lI?=
- =?utf-8?B?VmZYR0lNY3o0dzZqLzludGZUTk56YXlUTG1BWXdsZjU3cVZZdmVQcm5jV2No?=
- =?utf-8?B?QVpJMWY1czdWT2JZUDUwTFJCNDVmN05wWWY1K1dwUVR6b2tCdVZOSUxqL3Z0?=
- =?utf-8?B?bVM5SWJOZXJPQko2OUtTUGtneE5HR1JHc0JRZWh0OEZ4aVVVVGxGNHE3MlFV?=
- =?utf-8?B?ZjBTL2hEd0hUZUNhZW5GUkgwamlpR1ZzNVgvK1M5d3hKd3FYUTlsQVRFeHdx?=
- =?utf-8?B?WExwdlpHaHZKVmEvVjl0czA5VWgvcWZkRGxVa2hGY3JBR1Y2WU5OWHhkQXhu?=
- =?utf-8?B?RngwOCtNMmFESlFubkRXZk10eVBSbGRaOHVMTndoRzJ2aG5NMjJ3YXFJZTdX?=
- =?utf-8?B?V015eHJNVEdwc3FYSE56Y2F4ZFE1TkJHWHBNUVJuaGlaUS9QMzhoNmtrNW1G?=
- =?utf-8?B?L05IcGhBOTBNd0JQQzdEZ0tVMVMzTWNETnl3dG1TcStzanFoNjJJYm1VaFdx?=
- =?utf-8?B?RlRLRlVGSHBMaVVvY2d0aVorOFRFRVR5eUVmN3NWYm4zT09hSCs3aVMxei9T?=
- =?utf-8?B?TStjUHdYRWkyeUtVQXB5RitDMHVzaDVwaXVZV2ovL3REL1dvb3Z1T3ZqUkhK?=
- =?utf-8?B?OExvdDJNVjlSNlRRc2UyOUpCUVNXNUdNaHhCV0JNcUlUbU1ucWxtcnl3UHZi?=
- =?utf-8?B?ZGR5c1BESm5XNjJyZlB0b0s1c1JYOHdDSUtodVNzT21ld2FQWTFLS0pCOHEz?=
- =?utf-8?B?K0xFMjAzVTdRWHhpclFxSDJZOEVMNGlQc3Y0UHpob2d1Rk0wR3dlV2JPM2VS?=
- =?utf-8?B?aFJod1p1SnhDR0VOZi9DcVB4K1d5VWJrN1NXZDljb3AvZzhMTUU4ejV2K1A5?=
- =?utf-8?B?enRxblVEdFlUb21RTUEyWi9VQUxZcUovajhZYlhiVmpzelJBVHJJSGdadjBQ?=
- =?utf-8?B?VFdybHVPRDl4NERmLzFXTzArakZBODhTRTU1MU9vdEt2NkZZMkFaeFFteXVE?=
- =?utf-8?B?cnZmNHRwSUY5bTQwaXp3T1J3NnhPbDZ1aXBESFA4RlJheXJONzBnUHpEYVNY?=
- =?utf-8?B?ZmNlOGtzN3VIRDREenl2akxUb2xOVnBXQXdJK1c2bnFkblllRCtvSE1VVGpL?=
- =?utf-8?B?Q21iQnA1RGpqa2RkZXNMdHRNMjA3eFpvUitUdXprY0c2K25mQ1g1ZnhRZkFa?=
- =?utf-8?B?eE15UUVvWEJOV2Q4cC8ra1k4Y2pwWStkRnViTU5YbDAvdVFLR09YM0k2c1Rv?=
- =?utf-8?B?cm9DVHhsSzJGKzhMVW1LWEppaW9QdGRVMjFQcWdBNUl2cFhvVzZwdFIxa3Jv?=
- =?utf-8?B?UkwxK1Z4UE5ucUs4R0YwOEZJWlFDUEhmLzVuNU1hcldxY1VCUmhwd0VMUjVz?=
- =?utf-8?B?dTFmZUFEaDVBeUU3bVJsZkQvSlRDSW83dTFlY2hENER5a0dVTHBVQVFIVjRQ?=
- =?utf-8?B?WDZ4Y3Vzek9uUTNHZlpZVENRaWtjb29yOE1rTGM2SnY2TGsvNVAzQTZnamRR?=
- =?utf-8?B?c2w2VDFVTEpJVVNyRzF5SC85Ukl6UFU0a3RBejBNV1lkc0RvTmsxUEFnWFBz?=
- =?utf-8?Q?XzkI7Ksj7Avu9RnB0EYz5iWhP7clDw=3D?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW6PR10MB7639.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?utf-8?B?eXYxZjFrZTJrMjBpNkN0Q3ZJaFVra0RrK1h0cXJuVFdlaytaaWNqQUlyd2Vv?=
- =?utf-8?B?Q0ozemNWZjdlTEM5OXFDeTVoWm9NdHZyaWZOMlcxbzV5WmVjUnFoQno5S1VW?=
- =?utf-8?B?TE1DYmJSbVRRS3dpMDQ0SWViZGc1QkpQYUNSemwzVTB2Vk5IVy9SM0N1TUxL?=
- =?utf-8?B?YmZxWEtFWHlKMzNlZHVLb3JmSEd1aW9EbXBEdE4vcmNWME1pd0hhV3JxS0xy?=
- =?utf-8?B?R0kwMXhhV0liUEdiS3E2a3lBT1lYRjhvK1NPaXdTd0kzU2tZM0dUZW14VzAy?=
- =?utf-8?B?L0FZMHRWSmpRU3lOR3NEcWN3YmlLdkxYQzlOdy9ZOENhd2pmaEFWaXJqaUNY?=
- =?utf-8?B?aXZsYzVWczlMaHY1d1ZEY2grRXROZWlndzlZdWhVSi8zNGc2ZC9oR284UWNC?=
- =?utf-8?B?UWhSbC9sUVlrZ0YwWWc4YXFpYjFQMTBoU1h3aHhlZFprcWlLbGpmZjNnZXE0?=
- =?utf-8?B?RjdyUDZOVGEzUmU4YUVkOE5WSVNZR1BCMkl2OUszWHRRd28zWkFkUzYwelR4?=
- =?utf-8?B?aTVNcVMweWVJZkNzQ1hDc3NwTFJHbWh5VlFWNjBhcmFhN2xJVUcyTDk3bHlR?=
- =?utf-8?B?T1VQR1ZINnE4elJ4c1dpTmVGUnVGSlBXRHU1UEd3emhGUjYxRXoxYjhGMGV6?=
- =?utf-8?B?bktySU5MakljUVp2eVBhOEpXamFnYmJvUEJzVENUWFFSUmVNdmNNZE9YaUxx?=
- =?utf-8?B?cjQ4bFBBNzhZeTRFQ2xLdDRJdjRaWmRSbG9HSnJ3YmxxK3AzS1pzYmJVZDFr?=
- =?utf-8?B?akNtYStZdVkxR3RZZDltelZMcVlJUnUyK0NFRzFUTlNsbzVsek1FdmNyajI5?=
- =?utf-8?B?WlArcGN2TUcvOFkvM3dCdWdaQWxxcGRQdGRNTnFIUjNmam5rb3QweGZGVmlx?=
- =?utf-8?B?Z3JxMkx3VGpsYW5CVXMwQ2pJRVNxWEhqbnVhVjc5MlM4bm54U1VJT2xOR0xo?=
- =?utf-8?B?L0t6ejZhVFR2WHp0VmNGRDZ5VHlQQVlzNSs5cEJpWTVpRGFYNXR4MUhueFg0?=
- =?utf-8?B?aEQ4RkVxdys0YmxvMjJwVlVkNmRHbUR1VjhWYjluSEh2SFhORkpCWE55clFh?=
- =?utf-8?B?Y2NRbnNDUHY1QWNuM1ZSbHdiazlOK09uMGNNWDR0cHJSaEhkM3FaYjRxOWI0?=
- =?utf-8?B?dThOVU1XUDc4c0JyNmpWcHB0T25FZWk2T2diUzJBVDJDaUZCaDVLUWFlaDN5?=
- =?utf-8?B?bXRpQXdkQUl5czUwY1Y3NkJianVyYnJSTCtKZUF3LzB3YzRnWllrNThSejFp?=
- =?utf-8?B?WHVYU2ltU2pCNFNQYW5Nb3ZxdXN1T2lTalVWM05JQnhGSTFDbEkrS1ZIZGti?=
- =?utf-8?B?S3BhenduNk9RQTJaSHZzU3hhZWVkaVN1WU1oa1ZKdStUQW1kTHg2OXQ1cnZN?=
- =?utf-8?B?ZWJMSklnWS9STW1iRXY2aFJFSW9ISEN1V3JPaklDbllrOFhoSlJYQ3B1UzBY?=
- =?utf-8?B?QW5xNS9UQUpoQjVHTmwrTnhsV2d6VjBnOFBGZzZtQXp1ZE9zTHJhRDdaNm9y?=
- =?utf-8?B?WXVHc283V0ZvMnQrK0hhM2Qydkl1d2FSclQ5U2VoeWNXQlVpRS8ycCtVK1Jt?=
- =?utf-8?B?QkhNdkZPcWJqZHBtL1crdVMzeHpwYXJuL2E5NHhTdE1SR0RTcnR4eEtMNG9y?=
- =?utf-8?B?WFF4bTQ3TFc2czg5MGtrTjg1SldHaE82a0UzcHpkK29YSy9ObzR0bHVrWFds?=
- =?utf-8?B?WnlJVGtmVGFUbEMrRU5BTDcrZTNlQTNxZUpGeE5rRVI1ZGN1QjArSXllR3p0?=
- =?utf-8?B?TVJQNWwvc0tFMEl3ek03bmVPc0lvMU1mTXJ4VVMwaGN2czMybUtGYTVvQmNG?=
- =?utf-8?B?Wld4TXh6MlJSdkpxYWNHblhwTVVlY3UyN21WcEg2bWdnV2ZOWVY5cTRiTWgr?=
- =?utf-8?B?S0htY0pTSkhaejhkcmlsV3FMVlJoTkdVQUNHTTVSWEZucDhreE5uWGJvUmI1?=
- =?utf-8?B?TlZQV3U5Um8xYXhJZWxiMkI0Ri9zSWJuL3JWeENqVWFLUDl5UmdjNDFTSE5u?=
- =?utf-8?B?YVg0TFZNVkswcEw2OXcybWZ4d1V6WDJWa1FQWGZOeld0V3pMUDNNOTlYQ2Q4?=
- =?utf-8?B?L0ZISlZWeUdmbHBFbjdMQkU0M0p6dDVYa3doT0dvRTZBeWRNNm4ydGFTUUND?=
- =?utf-8?Q?KhypfFQwaqWGrM6w7l65Pphq6?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	syT/PDVrM5c+r9uwyutPO5GsJQBYlo5RBWD601ymb9tJFDUlBF/zWZI6KRtuHF4ieXidRVCWAl0+PFyDsh3GPd9klq2CQGMWsWZE7hzNXbgBecIBj+1u/MhlL4+QY+ePGMrbwuFqwxtRoEvkgpmL1AYbSw7qll3TnLIyqwD2ATXIAIJ+NZXiLLVBnBKXccJAmA+J2mOvSkTjsHnWdFL6lgF8aTWUTo0mysvMye/8lWFtpxodp+7EyUof7eubL0vg2T/jQP4859qg33qB2vpMfxcREJ0cWDNOQB1jr1+iG2odvYvlC+iKGbMsuPen3FmHXD5Xt/hqOZZ9LNyiXMAKQEhWiUpQK2bKVmUgls0wjw58Q0eOSlVrhPtUV40+d2t58nQB9bBAfwXWBButZuyhFOTzinW73ToYtrqSLYFpQsBKt7YaHnVcXsbMUSg7odvEDhAY8pxiBO98TylfppPyufx47667joUBbwL+DRTXxX3sLQxPNP+eS6oh2+3IZIrmRcCt+T9sUsCu5Jt6gdxlYPayEReKkbujtqx0Ap4eoMNG/jO51AkOjrjey967PMSS/iFZRzQZPIFk2dfF0u2AbmeIX5YvQlttLAZwU3aAwxw=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 61980588-1d91-4649-488c-08de2484757f
-X-MS-Exchange-CrossTenant-AuthSource: MW6PR10MB7639.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Nov 2025 20:20:46.0774
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 2Tvk70a79iabv3QG7OPFuZyQ6K2IVKEV8dQPRekOh6hyI9K2BKfZkNOyR+2H8W+a6kwy92dyQazAFsdLPBL8SQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS4PPF072D269AC
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-15_07,2025-11-13_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 phishscore=0
- malwarescore=0 suspectscore=0 bulkscore=0 spamscore=0 mlxlogscore=999
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2510240000 definitions=main-2511150167
-X-Authority-Analysis: v=2.4 cv=DYoaa/tW c=1 sm=1 tr=0 ts=6918e0a1 b=1 cx=c_pps
- a=WeWmnZmh0fydH62SvGsd2A==:117 a=WeWmnZmh0fydH62SvGsd2A==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=6UeiqGixMTsA:10 a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=yPCof4ZbAAAA:8 a=ea7dN3578Ref1c1bVq8A:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-GUID: Ry7BASg9USqMNeSdR09R6iJWjiWyzReH
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTE1MDAzMSBTYWx0ZWRfX+AJaHiJEMfIV
- tZHUFdjSm4RH5T9Ia/s4BKN0NxxnAGtiO7j7/ZRx7l4OLXy7kql/latsHwQOjnSyj1nzXRZ8ywk
- rH/xpY+HCZF9RYoS88ecej+BM1B3mb12Y8PXXRAIRiuJ9q4k3cDiU42VXQANselPWLUaUCDLc4I
- IRLpWyDB0XBwnvUgKN8LWBYsxef4o2xfa+gX9Deog3z9rTbDaw9eVC1B7+U68DR54lJmEIws27t
- Y34VvHqoq4BIpEwCb7O4aAfiJy+oeKvQfSK1Xfe0OhKI90hAYReQNnoTbxf1YilvJNyV8HWAYY9
- ygWlY0xWNrsz794W580yHJlPYvMVXpxi7YF4T9mZU4OwzqD9T3FVXcQC/whT1DiGanhvfvLw0w2
- j5ryvIFMM5X/nNgkLelWgP2+tAqK7g==
-X-Proofpoint-ORIG-GUID: Ry7BASg9USqMNeSdR09R6iJWjiWyzReH
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 11/15/25 11:44 AM, Chuck Lever wrote:
-> On 11/15/25 2:16 PM, Dai Ngo wrote:
->> When a layout conflict triggers a call to __break_lease, the function
->> nfsd4_layout_lm_break clears the fl_break_time timeout before sending
->> the CB_LAYOUTRECALL. As a result, __break_lease repeatedly restarts
->> its loop, waiting indefinitely for the conflicting file lease to be
->> released.
->>
->> If the number of lease conflicts matches the number of NFSD threads
->> (which defaults to 8),
-> It's 16 now on newer distributions.
+This series introduces the Live Update Orchestrator, a kernel subsystem
+designed to facilitate live kernel updates using a kexec-based reboot.
+This capability is critical for cloud environments, allowing hypervisors
+to be updated with minimal downtime for running virtual machines. LUO
+achieves this by preserving the state of selected resources, such as
+memory, devices and their dependencies, across the kernel transition.
 
-ok, I'll fix the text. Even with 16, it's still a problem when there
-is heavier load. Prefer solution here is dynamic NFSD threads, but
-even that it is not the absolute solution for this problem.
+As a key feature, this series includes support for preserving memfd file
+descriptors, which allows critical in-memory data, such as guest RAM or
+any other large memory region, to be maintained in RAM across the kexec
+reboot.
 
->
->
->> all available NFSD threads become occupied.
->> Consequently, there are no threads left to handle incoming requests
->> or callback replies, leading to a total hang of the NFSD server.
-> This is more of a muse than an actionable review comment, but what if
-> NFSD recognized that there was already a waiter for the conflicted
-> layout and, instead of waiting again, returned NFS4ERR_DELAY for
-> additional waiters?
->
-> That doesn't eliminate the deadlock completely, but gives us a little
-> breathing room, at least.
+The other series that use LUO, are VFIO [1], IOMMU [2], and PCI [3]
+preservations.
 
-break_lease is called from many places - the NFS client and server,
-CIFS and VFS. Many of these callers do not handle error returned
-from break_lease, some don't even check return value from break_lease.
+Github repo of this series [4].
 
-Until we fix all callers of break_lease to handle error return, which
-I think it's much more involved, returning error from break_lease is
-not possible.
+The core of LUO is a framework for managing the lifecycle of preserved
+resources through a userspace-driven interface. Key features include:
 
->
->
->> This issue is reliably reproducible by running the Git test suite
->> on a configuration using the SCSI layout.
-> The git regression test is a single client test. I have to wonder why
-> the layout needs to be recalled and why the client is not responsive.
-> Can you elaborate on what resources are deadlocking?
+- Session Management
+  Userspace agent (i.e. luod [5]) creates named sessions, each
+  represented by a file descriptor (via centralized agent that controls
+  /dev/liveupdate). The lifecycle of all preserved resources within a
+  session is tied to this FD, ensuring automatic kernel cleanup if the
+  controlling userspace agent crashes or exits unexpectedly.
 
-The conflict occurs from these call stacks:
+- File Preservation
+  A handler-based framework allows specific file types (demonstrated
+  here with memfd) to be preserved. Handlers manage the serialization,
+  restoration, and lifecycle of their specific file types.
 
-__break_lease+0x333/0xb90
-xfs_break_leased_layouts+0xb6/0x2f0 [xfs]
-xfs_break_layouts+0x196/0x200 [xfs]
-xfs_vn_setattr+0xe6/0x250 [xfs]
-notify_change+0x84e/0xf10
-__nfsd_setattr+0xef/0x1d0 [nfsd]
-nfsd_setattr+0x504/0x10b0 [nfsd]
-nfsd4_setattr+0x660/0xc70 [nfsd]
-nfsd4_proc_compound+0xc58/0x2360 [nfsd]
-nfsd_dispatch+0x24f/0x6b0 [nfsd]
-svc_process_common+0x101c/0x1aa0 [sunrpc]
-svc_process+0x54a/0x990 [sunrpc]
-svc_handle_xprt+0xd99/0x1430 [sunrpc]
-svc_recv+0x1ff/0x4f0 [sunrpc]
-nfsd+0x24c/0x370 [nfsd]
-kthread+0x391/0x750
+- File-Lifecycle-Bound State
+  A new mechanism for managing shared global state whose lifecycle is
+  tied to the preservation of one or more files. This is crucial for
+  subsystems like IOMMU or HugeTLB, where multiple file descriptors may
+  depend on a single, shared underlying resource that must be preserved
+  only once.
 
-__break_lease+0x333/0xb90
-xfs_break_leased_layouts+0xb6/0x2f0 [xfs]
-xfs_break_layouts+0x196/0x200 [xfs]
-xfs_file_write_checks+0x2fe/0x850 [xfs]
-xfs_file_buffered_write+0x12f/0x8a0 [xfs]
-vfs_iocb_iter_write+0x259/0x6e0
-nfsd_vfs_write+0x6c1/0x1780 [nfsd]
-nfsd4_write+0x2c1/0x610 [nfsd]
-nfsd4_proc_compound+0xc58/0x2360 [nfsd]
-nfsd_dispatch+0x24f/0x6b0 [nfsd]
-svc_process_common+0x101c/0x1aa0 [sunrpc]
-svc_process+0x54a/0x990 [sunrpc]
-svc_handle_xprt+0xd99/0x1430 [sunrpc]
-svc_recv+0x1ff/0x4f0 [sunrpc]
-nfsd+0x24c/0x370 [nfsd]
-kthread+0x391/0x750
-ret_from_fork+0x25d/0x340
-ret_from_fork_asm+0x1a/0x30
+- KHO Integration
+  LUO drives the Kexec Handover framework programmatically to pass its
+  serialized metadata to the next kernel. The LUO state is finalized and
+  added to the kexec image just before the reboot is triggered. In the
+  future this step will also be removed once stateless KHO is
+  merged [6].
 
-I have plan to post a separate patch to check for layout conflict
-caused from the same client and skip the recall - same as what's
-currently done for delegation conflict.
+- Userspace Interface
+  Control is provided via ioctl commands on /dev/liveupdate for creating
+  and retrieving sessions, as well as on session file descriptors for
+  managing individual files.
 
--Dai
+- Testing
+  The series includes a set of selftests, including userspace API
+  validation, kexec-based lifecycle tests for various session and file
+  scenarios, and a new in-kernel test module to validate the FLB logic.
 
+Changelog since v5 [7]
 
->
->
->> This patch addresses the problem by using the break lease timeout
->> and ensures that the unresponsive client is fenced, preventing it
->> from accessing the data server directly.
->>
->> Fixes: f99d4fbdae67 ("nfsd: add SCSI layout support")
->> Signed-off-by: Dai Ngo <dai.ngo@oracle.com>
->> ---
->>   fs/nfsd/nfs4layouts.c | 26 ++++++++++++++++++++++----
->>   1 file changed, 22 insertions(+), 4 deletions(-)
->>
->> diff --git a/fs/nfsd/nfs4layouts.c b/fs/nfsd/nfs4layouts.c
->> index 683bd1130afe..6321fc187825 100644
->> --- a/fs/nfsd/nfs4layouts.c
->> +++ b/fs/nfsd/nfs4layouts.c
->> @@ -747,11 +747,10 @@ static bool
->>   nfsd4_layout_lm_break(struct file_lease *fl)
->>   {
->>   	/*
->> -	 * We don't want the locks code to timeout the lease for us;
->> -	 * we'll remove it ourself if a layout isn't returned
->> -	 * in time:
->> +	 * Enforce break lease timeout to prevent starvation of
->> +	 * NFSD threads in __break_lease that causes server to
->> +	 * hang.
->>   	 */
->> -	fl->fl_break_time = 0;
->>   	nfsd4_recall_file_layout(fl->c.flc_owner);
->>   	return false;
->>   }
->> @@ -764,9 +763,28 @@ nfsd4_layout_lm_change(struct file_lease *onlist, int arg,
->>   	return lease_modify(onlist, arg, dispose);
->>   }
->>   
->> +static void
->> +nfsd_layout_breaker_timedout(struct file_lease *fl)
->> +{
->> +	struct nfs4_layout_stateid *ls = fl->c.flc_owner;
->> +	struct nfsd_file *nf;
->> +
->> +	rcu_read_lock();
->> +	nf = nfsd_file_get(ls->ls_file);
->> +	rcu_read_unlock();
->> +	if (nf) {
->> +		u32 type = ls->ls_layout_type;
->> +
->> +		if (nfsd4_layout_ops[type]->fence_client)
->> +			nfsd4_layout_ops[type]->fence_client(ls, nf);
->> +		nfsd_file_put(nf);
->> +	}
->> +}
->> +
->>   static const struct lease_manager_operations nfsd4_layouts_lm_ops = {
->>   	.lm_break	= nfsd4_layout_lm_break,
->>   	.lm_change	= nfsd4_layout_lm_change,
->> +	.lm_breaker_timedout	= nfsd_layout_breaker_timedout,
->>   };
->>   
->>   int
->
+- Moved internal luo_alloc/free_* memory helpers to generic
+  kho_alloc/free_* APIs, and submitted as a separate KHO series [8].
+
+- Moved the liveupdate_reboot() invocation from kernel/reboot.c to
+  kernel_kexec() in kernel/kexec_core.c.
+
+- Moved generic KHO enabling patches (debugfs, kimage logic) out of this
+  series and into the base KHO series.
+
+- Feedback: Addressed review comments from Mike Rapoport and Pratyush
+  Yadav.
+
+[1] https://lore.kernel.org/all/20251018000713.677779-1-vipinsh@google.com/
+[2] https://lore.kernel.org/linux-iommu/20250928190624.3735830-1-skhawaja@google.com
+[3] https://lore.kernel.org/linux-pci/20250916-luo-pci-v2-0-c494053c3c08@kernel.org
+[4] https://github.com/googleprodkernel/linux-liveupdate/tree/luo/v6
+[5] https://tinyurl.com/luoddesign
+[6] https://lore.kernel.org/all/20251020100306.2709352-1-jasonmiu@google.com
+[7] https://lore.kernel.org/all/20251107210526.257742-1-pasha.tatashin@soleen.com
+[8] https://lore.kernel.org/all/20251114190002.3311679-1-pasha.tatashin@soleen.com
+
+Pasha Tatashin (14):
+  liveupdate: luo_core: luo_ioctl: Live Update Orchestrator
+  liveupdate: luo_core: integrate with KHO
+  kexec: call liveupdate_reboot() before kexec
+  liveupdate: luo_session: add sessions support
+  liveupdate: luo_ioctl: add user interface
+  liveupdate: luo_file: implement file systems callbacks
+  liveupdate: luo_session: Add ioctls for file preservation
+  liveupdate: luo_flb: Introduce File-Lifecycle-Bound global state
+  docs: add luo documentation
+  MAINTAINERS: add liveupdate entry
+  selftests/liveupdate: Add userspace API selftests
+  selftests/liveupdate: Add kexec-based selftest for session lifecycle
+  selftests/liveupdate: Add kexec test for multiple and empty sessions
+  tests/liveupdate: Add in-kernel liveupdate test
+
+Pratyush Yadav (6):
+  mm: shmem: use SHMEM_F_* flags instead of VM_* flags
+  mm: shmem: allow freezing inode mapping
+  mm: shmem: export some functions to internal.h
+  liveupdate: luo_file: add private argument to store runtime state
+  mm: memfd_luo: allow preserving memfd
+  docs: add documentation for memfd preservation via LUO
+
+ Documentation/core-api/index.rst              |   1 +
+ Documentation/core-api/liveupdate.rst         |  71 ++
+ Documentation/mm/index.rst                    |   1 +
+ Documentation/mm/memfd_preservation.rst       |  23 +
+ Documentation/userspace-api/index.rst         |   1 +
+ .../userspace-api/ioctl/ioctl-number.rst      |   2 +
+ Documentation/userspace-api/liveupdate.rst    |  20 +
+ MAINTAINERS                                   |  15 +
+ include/linux/liveupdate.h                    | 265 +++++
+ include/linux/liveupdate/abi/luo.h            | 238 +++++
+ include/linux/liveupdate/abi/memfd.h          |  88 ++
+ include/linux/shmem_fs.h                      |  23 +
+ include/uapi/linux/liveupdate.h               | 216 +++++
+ kernel/kexec_core.c                           |   5 +
+ kernel/liveupdate/Kconfig                     |  27 +
+ kernel/liveupdate/Makefile                    |   9 +
+ kernel/liveupdate/luo_core.c                  | 252 +++++
+ kernel/liveupdate/luo_file.c                  | 906 ++++++++++++++++++
+ kernel/liveupdate/luo_flb.c                   | 658 +++++++++++++
+ kernel/liveupdate/luo_internal.h              |  95 ++
+ kernel/liveupdate/luo_ioctl.c                 | 223 +++++
+ kernel/liveupdate/luo_session.c               | 600 ++++++++++++
+ lib/Kconfig.debug                             |  23 +
+ lib/tests/Makefile                            |   1 +
+ lib/tests/liveupdate.c                        | 143 +++
+ mm/Makefile                                   |   1 +
+ mm/internal.h                                 |   6 +
+ mm/memfd_luo.c                                | 671 +++++++++++++
+ mm/shmem.c                                    |  50 +-
+ tools/testing/selftests/Makefile              |   1 +
+ tools/testing/selftests/liveupdate/.gitignore |   3 +
+ tools/testing/selftests/liveupdate/Makefile   |  40 +
+ tools/testing/selftests/liveupdate/config     |   5 +
+ .../testing/selftests/liveupdate/do_kexec.sh  |  16 +
+ .../testing/selftests/liveupdate/liveupdate.c | 348 +++++++
+ .../selftests/liveupdate/luo_kexec_simple.c   | 114 +++
+ .../selftests/liveupdate/luo_multi_session.c  | 190 ++++
+ .../selftests/liveupdate/luo_test_utils.c     | 168 ++++
+ .../selftests/liveupdate/luo_test_utils.h     |  39 +
+ 39 files changed, 5539 insertions(+), 19 deletions(-)
+ create mode 100644 Documentation/core-api/liveupdate.rst
+ create mode 100644 Documentation/mm/memfd_preservation.rst
+ create mode 100644 Documentation/userspace-api/liveupdate.rst
+ create mode 100644 include/linux/liveupdate.h
+ create mode 100644 include/linux/liveupdate/abi/luo.h
+ create mode 100644 include/linux/liveupdate/abi/memfd.h
+ create mode 100644 include/uapi/linux/liveupdate.h
+ create mode 100644 kernel/liveupdate/luo_core.c
+ create mode 100644 kernel/liveupdate/luo_file.c
+ create mode 100644 kernel/liveupdate/luo_flb.c
+ create mode 100644 kernel/liveupdate/luo_internal.h
+ create mode 100644 kernel/liveupdate/luo_ioctl.c
+ create mode 100644 kernel/liveupdate/luo_session.c
+ create mode 100644 lib/tests/liveupdate.c
+ create mode 100644 mm/memfd_luo.c
+ create mode 100644 tools/testing/selftests/liveupdate/.gitignore
+ create mode 100644 tools/testing/selftests/liveupdate/Makefile
+ create mode 100644 tools/testing/selftests/liveupdate/config
+ create mode 100755 tools/testing/selftests/liveupdate/do_kexec.sh
+ create mode 100644 tools/testing/selftests/liveupdate/liveupdate.c
+ create mode 100644 tools/testing/selftests/liveupdate/luo_kexec_simple.c
+ create mode 100644 tools/testing/selftests/liveupdate/luo_multi_session.c
+ create mode 100644 tools/testing/selftests/liveupdate/luo_test_utils.c
+ create mode 100644 tools/testing/selftests/liveupdate/luo_test_utils.h
+
+-- 
+2.52.0.rc1.455.g30608eb744-goog
+
 
