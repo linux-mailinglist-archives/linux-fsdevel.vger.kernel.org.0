@@ -1,101 +1,69 @@
-Return-Path: <linux-fsdevel+bounces-68562-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68563-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 909C6C6028B
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Nov 2025 10:43:16 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A613C605E5
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Nov 2025 14:24:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 866534E4B3A
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Nov 2025 09:43:08 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C9B1334BE6F
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Nov 2025 13:23:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 785FF274B2E;
-	Sat, 15 Nov 2025 09:43:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E9552BE642;
+	Sat, 15 Nov 2025 13:21:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Irl1Db9s"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="AuInizII"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 391A62749E6
-	for <linux-fsdevel@vger.kernel.org>; Sat, 15 Nov 2025 09:43:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F23129ACDB;
+	Sat, 15 Nov 2025 13:21:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763199784; cv=none; b=CiUkLhxHxPnhR0Pr/TPcjLIVcvPPFDf37VJmNhQFCttWLtjWUmdxDqVE8thjeggOySg93YwCH6+i7/8ejQtdWpJpeWqOQvD8GngmzknYqnOuZQngT5P0p0DRi1MgXo0Q96JwYK9nVJ7wYc+XIPlyB9Ojj6TvnJ6MTuMafq4YnKg=
+	t=1763212898; cv=none; b=Bz4HKE7BFs1FJ/GFAMOcKNGxbDn23wRQCXuQqOCOsh8eTY8sd3O99w7Pem9r2a9yeJXqKQnzLmDOD2BZrgqxe4SM/6yHCT7chL1wKS86+ZnvGfcvN3+YzqtSFw1C1XldAzjR5mBdM7ZClBi06xeRKGStDJTLWDR1UNUPNq1wvPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763199784; c=relaxed/simple;
-	bh=DXSySIzAxH5YmMIDou5gzx2YUuieC3V3X6LeZTrIkxk=;
+	s=arc-20240116; t=1763212898; c=relaxed/simple;
+	bh=Pl9jmC5EL7AGwr+SmsgthHF9drWTTfIqBaIssfzsdWY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KBAYPr2PDfQOSEAWl/zl4kPwJzO+0GHvMv2xj+uHHlaOHz7RcGrEpxKj9VxZ1L3RLsQaFaaEsDwngn3sGoF2VenKEGplBJdlR2EjDMtfE/NJvN0ffyTqC/lQ+kEQA68VXOWSWGYB4rUXnPGy7HLXmktWfaag9OP/YArqXpHrZDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Irl1Db9s; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-640c6577120so4885508a12.1
-        for <linux-fsdevel@vger.kernel.org>; Sat, 15 Nov 2025 01:43:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763199781; x=1763804581; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bu/YvVGS6f/qPnY5owZrNEIEYGYSg1/BJENMGejEMt0=;
-        b=Irl1Db9ssBDiuJZ4zBc0NLnYmiq8uabfziKe1n/FhYdy/+4U5nzDIMpOchP+/i1o/s
-         aHZ+lB0RFuXmVAyZaiIssvveLar/B4I8jCh2z/6TKwR7j0vklP8A5f05vUZ7XLibL1iH
-         QyNW3GBhr8txp6Q7qf6n65Wa9VA7RIBKnS0hyjzHxFep2Xm7jDqw3LRkNgijjMa3blMi
-         X64kFrcN71BvGiCGU5cUwVBEt6D/CwTYvXk6o0jsKFjGKU5tw8joe5U0K7wPYxzTM6IK
-         kN5ed/LGLAtmBrssWMwVMZ87oO79ZzpU0ACt2UTr3CAAKO6m/gYgSBfj92xHX04pB/KM
-         lT5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763199781; x=1763804581;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bu/YvVGS6f/qPnY5owZrNEIEYGYSg1/BJENMGejEMt0=;
-        b=ER8khbA1qxl0FP6i5WBi7ft4r0+e29lEXJO1a8pT05/c9CJyGL60QnjYuswQ1CM97G
-         woLekQQLKdRxlNF/YUgrsAAcRHE9NbJ+J3O5hRibrJKwgZ1YYVQzj/e/+a0VvQbO/LsG
-         RxckXK56vWVf55VXNcG0PcEo7P4aJh6MWce/OEctWqKeQ2dJ8NZFS3arLU2GJtV4xiT8
-         Yx4O5ucEjtGNI8DB6m8FEsqTo+gAU86kisSlY9O4kz/C0SFNT22vpNLPato7jM3KT7lB
-         2wCoBjjDLolswyZndSw6Dp/UMJbszjiimO8o0AzNdA5SJqaSEEb4ekTrGlh1HhfMJGnf
-         ThEA==
-X-Forwarded-Encrypted: i=1; AJvYcCWqW7vsKt5mwwK2e9SyJpEcBIN3/y8CZD/81JgZFzuw239U4Q4QnYS4sm+kDpcZWSd2Y78sRmXVyz31apdJ@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAm+3InWQ6nT7Vtft0+u+LN1v+Sc1vraZ+JAV0Av3oJr7+bGjv
-	wdwVIFlS0rGU8P4Bp+qJPm/QjMHcYjxzGjeyDf//KZlF1ik7jXeboqP8
-X-Gm-Gg: ASbGncvbaiQq/lK9a6964N5LdKh/EvSbUlTVd34XA/LRAM+UIXsOYV/w4HGF7iN9i+w
-	p8Ocbj/LxXJIfrz9+r+01JaO5rRXBIvu6Ezy3yERO3+C7v4CDB+RWDqC86Z1w8lL4knp7/zRjLh
-	PaS+3dW3wpNcxETzRZF1/RyJmcy9fRbCML0BjvJNk7RgNoly3PvHZdn+pSLrT8xXWXhmG3OX5vp
-	kKyQUPunyEd5W7JYGqZJYti2F5EfMqc47hp3mZlte1ZUVNINK/SAna9i89cn3ppoP95qU/8l5b5
-	83OMcw651OzWrkdiRz5wPwcEL0B3Vifg4QRaAOoZ7UGbqKliFTbcF8XxAJhFbNh9tBSyu1kdfsp
-	EBFvDrMP76XZSHizaxSn1J7mJrEGMxDCL4Zn7ObXcsuM+75XLxk4YDTS1FsCOI0CEu368kd4ERY
-	Vfj15z/Ci55Oa3ag==
-X-Google-Smtp-Source: AGHT+IFHioosJ5jTazsiziwouzPq3smTtQsChFlOL19ZuV0U6amI73JZiw1PCFxxEy+MouamqQ1NYQ==
-X-Received: by 2002:a17:907:7f09:b0:b3c:193:820e with SMTP id a640c23a62f3a-b736789d3dcmr582744066b.13.1763199781290;
-        Sat, 15 Nov 2025 01:43:01 -0800 (PST)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b734fad48dcsm575104566b.25.2025.11.15.01.43.00
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 15 Nov 2025 01:43:00 -0800 (PST)
-Date: Sat, 15 Nov 2025 09:43:00 +0000
-From: Wei Yang <richard.weiyang@gmail.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Wei Yang <richard.weiyang@gmail.com>,
-	"David Hildenbrand (Red Hat)" <david@kernel.org>,
-	akpm@linux-foundation.org, lorenzo.stoakes@oracle.com,
-	Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org,
-	surenb@google.com, mhocko@suse.com, ziy@nvidia.com,
-	baolin.wang@linux.alibaba.com, npache@redhat.com,
-	ryan.roberts@arm.com, dev.jain@arm.com, baohua@kernel.org,
-	lance.yang@linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH] mm/huge_memory: consolidate order-related checks into
- folio_split_supported()
-Message-ID: <20251115094300.rgdhse2v73xoivq5@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20251114075703.10434-1-richard.weiyang@gmail.com>
- <827fd8d8-c327-4867-9693-ec06cded55a9@kernel.org>
- <20251114150310.eua55tcgxl4mgdnp@master>
- <64b43302-e8cc-4259-9fa1-e27721c0d193@kernel.org>
- <20251115025109.yerb7gbty4h7h63s@master>
- <aRgKoQT2ZYH_x2wa@casper.infradead.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=FA/6l7KHt9pWcHq0Oqs/BdMWur3vC9xj/k09Z9IhTh3rpKFcCHron3BEg1uhIqm+mmZaMqnNNvOA+/Sk9+76uNFUG221vH3xZefxizDjxBZXqEdNiCBSGxJcHv7UicDCoZBquymHtqrJeSSIYrlrY6PtbhNMqAxmEQ2YJipnCK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=AuInizII; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32C00C16AAE;
+	Sat, 15 Nov 2025 13:21:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1763212898;
+	bh=Pl9jmC5EL7AGwr+SmsgthHF9drWTTfIqBaIssfzsdWY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AuInizIINMwBXTMJu1dR3seLB3VmALsUQ3+5Ndj4MXto6uH9ENTPXUU90Dt/8DjPq
+	 gmWQkfEhamMufZT+G9MKX9xDtzSNmpoxmmi+AH6rv/rpdY47vOYkLaC2Ol/C4V7Kfc
+	 vAlEaytoOD6Xr7/mBkMwSJH6iZ7zuxrbmPJUjTZw=
+Date: Sat, 15 Nov 2025 08:21:34 -0500
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: bot+bpf-ci@kernel.org, linux-fsdevel@vger.kernel.org,
+	torvalds@linux-foundation.org, brauner@kernel.org, jack@suse.cz,
+	raven@themaw.net, miklos@szeredi.hu, neil@brown.name,
+	a.hindborg@kernel.org, linux-mm@kvack.org,
+	linux-efi@vger.kernel.org, ocfs2-devel@lists.linux.dev,
+	kees@kernel.org, rostedt@goodmis.org, linux-usb@vger.kernel.org,
+	paul@paul-moore.com, casey@schaufler-ca.com,
+	linuxppc-dev@lists.ozlabs.org, john.johansen@canonical.com,
+	selinux@vger.kernel.org, borntraeger@linux.ibm.com,
+	bpf@vger.kernel.org, ast@kernel.org, andrii@kernel.org,
+	daniel@iogearbox.net, martin.lau@kernel.org, eddyz87@gmail.com,
+	yonghong.song@linux.dev, ihor.solodrai@linux.dev,
+	Chris Mason <clm@meta.com>
+Subject: Re: [functionfs] mainline UAF (was Re: [PATCH v3 36/50] functionfs:
+ switch to simple_remove_by_name())
+Message-ID: <2025111555-spoon-backslid-8d1f@gregkh>
+References: <20251111065520.2847791-37-viro@zeniv.linux.org.uk>
+ <20754dba9be498daeda5fe856e7276c9c91c271999320ae32331adb25a47cd4f@mail.kernel.org>
+ <20251111092244.GS2441659@ZenIV>
+ <e6b90909-fdd7-4c4d-b96e-df27ea9f39c4@meta.com>
+ <20251113092636.GX2441659@ZenIV>
+ <2025111316-cornfield-sphinx-ba89@gregkh>
+ <20251114074614.GY2441659@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -104,53 +72,65 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aRgKoQT2ZYH_x2wa@casper.infradead.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20251114074614.GY2441659@ZenIV>
 
-On Sat, Nov 15, 2025 at 05:07:45AM +0000, Matthew Wilcox wrote:
->On Sat, Nov 15, 2025 at 02:51:09AM +0000, Wei Yang wrote:
->> I am not 100% for sure. While if we trust it returns 0 if folio doesn't
->> support large folio, I am afraid we can trust it returns correct value it
->> supports. Or that would be the issue to related file system.
->> 
->> To be honest, I am lack of the capability to investigate all file system to
->> make sure this value is properly setup.
->
->Maybe you should just give up on this instead of asking so many
->questions, misunderstanding the answers, and sending more patches full
->of mistakes?
+On Fri, Nov 14, 2025 at 07:46:14AM +0000, Al Viro wrote:
+> On Thu, Nov 13, 2025 at 04:20:08PM -0500, Greg Kroah-Hartman wrote:
+> 
+> > Sorry for the delay.  Yes, we should be grabing the mutex in there, good
+> > catch.  There's been more issues pointed out with the gadget code in the
+> > past year or so as more people are starting to actually use it and
+> > stress it more.  So if you have a patch for this, I'll gladly take it :)
+> 
+> How about the following?
+> 
+> commit 330837c8101578438f64cfaec3fb85521d668e56
+> Author: Al Viro <viro@zeniv.linux.org.uk>
+> Date:   Fri Nov 14 02:18:22 2025 -0500
+> 
+>     functionfs: fix the open/removal races
+>     
+>     ffs_epfile_open() can race with removal, ending up with file->private_data
+>     pointing to freed object.
+>     
+>     There is a total count of opened files on functionfs (both ep0 and
+>     dynamic ones) and when it hits zero, dynamic files get removed.
+>     Unfortunately, that removal can happen while another thread is
+>     in ffs_epfile_open(), but has not incremented the count yet.
+>     In that case open will succeed, leaving us with UAF on any subsequent
+>     read() or write().
+>     
+>     The root cause is that ffs->opened is misused; atomic_dec_and_test() vs.
+>     atomic_add_return() is not a good idea, when object remains visible all
+>     along.
+>     
+>     To untangle that
+>             * serialize openers on ffs->mutex (both for ep0 and for dynamic files)
+>             * have dynamic ones use atomic_inc_not_zero() and fail if we had
+>     zero ->opened; in that case the file we are opening is doomed.
+>             * have the inodes of dynamic files marked on removal (from the
+>     callback of simple_recursive_removal()) - clear ->i_private there.
+>             * have open of dynamic ones verify they hadn't been already removed,
+>     along with checking that state is FFS_ACTIVE.
+>     
+>     Fix another abuse of ->opened, while we are at it - it starts equal to 0,
+>     is incremented on opens and decremented on ->release()... *and* decremented
+>     (always from 0 to -1) in ->kill_sb().  Handling that case has no business
+>     in ffs_data_closed() (or to ->opened); just have ffs_kill_sb() do what
+>     ffs_data_closed() would in case of decrement to negative rather than
+>     calling ffs_data_closed() there.
+>     
+>     And don't bother with bumping ffs->ref when opening a file - superblock
+>     already holds the reference and it won't go away while there are any opened
+>     files on the filesystem.
+>     
+>     Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 
-Hi, Matthew
+Ugh, messy.  But yes, this does look better, thanks for that.  Want me
+to take it through the USB tree, or will you take it through one of
+yours? (I don't remember what started this thread...)
 
-I am glad to see your reply, but your comment makes me feel frustrated.
+thanks,
 
-Well, I think we still talk about the fact. You pointed out three flaws:
-
-  * too many questions
-  * too many misunderstandings
-  * full of mistakes
-
-Per my understanding, there is only one question: whether
-mapping_max_folio_order() works universally. I think it does and also Zi
-suggested to use it. But since I am not sure about this, we can revert it to
-keep the logic same as current.
-
-For misunderstandings, I use the word to be polite and avoid conflict. I
-went through the discussion with Zi and thought I did what he suggested. In
-case I do miss something, Zi would correct me.
-
-For full of mistakes, I am confused. I did some contributions in kernel, small
-of course. Mostly correct and get merged. I know sometimes I made mistakes,
-but full of mistakes, it seems not to be true.
-
-Well, I still think this is a common review process, I am open to comment and
-questions. And also glad to take suggestions from community. I still think it
-is reasonable to combine the EINVAL handling, while the detail need to be
-settled down. 
-
-Have a nice weekend all.
-
--- 
-Wei Yang
-Help you, Help me
+greg k-h
 
