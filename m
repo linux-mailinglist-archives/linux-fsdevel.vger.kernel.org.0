@@ -1,188 +1,227 @@
-Return-Path: <linux-fsdevel+bounces-68554-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68555-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2764CC5FA56
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Nov 2025 01:00:16 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82434C5FC24
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Nov 2025 01:47:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85F433BEB9C
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Nov 2025 00:00:10 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BBA634E3969
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Nov 2025 00:47:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A03D30FC31;
-	Sat, 15 Nov 2025 00:00:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F4197260A;
+	Sat, 15 Nov 2025 00:47:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HhrVLHzT"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BQPKiKh1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5BA730C60B
-	for <linux-fsdevel@vger.kernel.org>; Sat, 15 Nov 2025 00:00:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D6172C859
+	for <linux-fsdevel@vger.kernel.org>; Sat, 15 Nov 2025 00:46:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763164807; cv=none; b=tgOP7rmptg4rwaoHoNhAeS3hS9tKriOdvREmDgxHjTnPqDjK4ijgAW4g9NFZSM3Zf59ApjPck5vfa5b6dcUUxUB0Fjg4CY0CFfH9VRyLSJnSXoZUYOJFGHBxMP/l6837m/a124gEgzivL5yj+WSnaPWJrHLEwgenBV0HddbKTHU=
+	t=1763167620; cv=none; b=aYU8THzDqTWMx1lF+7REf6Xp+aTwUAIOk+qW84BiOLF4EZulrTEa0XB6b4lq4EwxZiB0xMO6uSAFVIbzawP1Bum+e0k2fxd7Sg2ekzY+DhFT7GUQ+/5As6O+dhk0Y6s/PYl4+LL3s3cM+d62t4I+Nt5aBu5mBaUYode2jix4Eqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763164807; c=relaxed/simple;
-	bh=eUj6MJne0yoSVBbdK6TfheRVbwmwWQqzr8OkId+ZdLk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZbGChyreaaql1mg5QmJ86EwC4g4wzsHhS4zNL+NpqY0jz5YV+TlxIn1xi5uQu2jtQ9hrm2j1hE3MMAmUclL5pmDOAJ0Czy3o7snEv2hL1fiS7xDoYpfMmsjbG5GJV5ExCK153Uf6n4Besfdo//2BHCvvqV7RF/3y3qoCOtNEPZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HhrVLHzT; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4e88ed3a132so27584701cf.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Nov 2025 16:00:04 -0800 (PST)
+	s=arc-20240116; t=1763167620; c=relaxed/simple;
+	bh=1/rD70ZHFrBNjJjci45pfQlAUENF4SO4u3lc/h6C+Zc=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=lql9HTEu9HfHJp5Z8lI4xzU2gxySYlamP5JmNJh0mfr2qFC489zWpSWHEB7VnGt2f/0jIMWDEevIYJcQnFkPc/808nRGKKSFTAYkYVwkdZV8NG1ebw81msZXANHw74pgFIZaPSz3IUp23hNSWI2ZvmwWjC2X5odE005CuyeeFIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BQPKiKh1; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-340bb1bf12aso6171744a91.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Nov 2025 16:46:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763164803; x=1763769603; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qGbzfgmT3B3HxmKWif+aRE4qTK2l+Ffa1Yg6PfdTFSc=;
-        b=HhrVLHzTt9Jf6lADk1vcuCzOWct7rT/ge5XE9kC5fo1d8lYduzG9U1lwjU1E8zrBkY
-         /myPxKAbZIPW3NBX5ompSQnOMHSbTH/Uw7Vrp5hVq1FEX7lPp6bNhEBo8rH57/WT5tkm
-         +GacyqG5TwS6uIJzD+Rt3XZFqfQ1YtcT0FY3yM6d2EWxChr9zqSt89UdQVGy+6GcvxUu
-         McYZ5r15p1utyFw6zVBALELzve3+M2PlH2sBqaYojySaqfdg8V3dRT64GI27RWqrw5t+
-         TsbftT1r0rHAY1Men+4k6fNjBm3sbi2O3/z4sj6R5J5S8i69WMXAJ2siLhHpJQWQX34N
-         vxWw==
+        d=google.com; s=20230601; t=1763167617; x=1763772417; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Mr/52DwIA8Vew8AuO0L8R6bm0vR8dQ+5A9WA+WG6t/s=;
+        b=BQPKiKh1yfHcIrDSW59IH51D2rhvPkgu8emslDNrXmC7gsCFmyIVKyaXPuUky4qISc
+         +19Up0qR7WWgxb5rLlc/vAvyxEK+7xSgmw20NRkuvhsi2uNabtm3xwQFagWK4bxGDqS/
+         7gYj1dgRY4Qz6cyLqfB+LbbJ8hPrpBmmNQPY/qOHjAjqEqdl2m5Gvwe2rcSO1iFrvHaC
+         9swHyDubrt6x4xbkszwVPYZjC8xoJlQCUauEvdXnHkEai5Ya/mUGIPDi/aaxO3ZaLOIy
+         FiDZnjit3RNrnR++7shFiwMTsNlkRDSDa1Av00GMtGH845Ycpd83v1N/4tK/TCeKiRf/
+         xCOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763164803; x=1763769603;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=qGbzfgmT3B3HxmKWif+aRE4qTK2l+Ffa1Yg6PfdTFSc=;
-        b=Jqh3JZcdyEPkHBj0ZgBskRtQQinasBpJ6aVuUZS4LNh3kpt9wFMOIzNp+aXwauFSfS
-         9RVwp76uVTNX/VVpuXLkbD92roSmtlgTlfUg2kdlXdGoBTQzRYvev8yYcukuUTEeaTZM
-         ixmqcO37BfISl+Bw3bmkjlJK0TRllirHHjM38cDFEtaNds+Ol4GBfyE7QCvhevG9r9lF
-         ItM4lKN8sHDemh7iJQ+IkX9q9vF0fjffS6o2JFUazbxsoRqv//3eGPaEjR+zIJ0iQyLI
-         S9J66MicOfPXAywFtpz/nUG9k2E7OabgBdrtWkc/GQzhRdbzxJIQqg5SoJewDAbSkIRL
-         Hs0Q==
-X-Gm-Message-State: AOJu0YxkgjIRjnJGdXVtTwMeWE66JnrHlG7i6mt2IWjIi9YiwECH+ps+
-	78bcHaZ+5PPDZo6+TdFuS5fagVBLHiN/Cur6kEVXYGnVi+8iyXmtMKohK6QwWQYM/TLErai+RoY
-	rv+RcP4IDghu3HYHPgYulzZ9e5GrPaeJ3ILIXMWw=
-X-Gm-Gg: ASbGncsK5XpgtidLbdR+gDYttA+hP8juYAD3RTml3d0eKob1RmUmyLzB9A1/rSFe/2g
-	O9ZLMTX9onpgR/agzahxk4/CBp/Mi+UDIcN1dQds0/5OUKgKlFTnLL4cSU+F87uAReNXkODjqrR
-	Hgj5jsngFTl3FergyB2/ns0LN0Ra2sOiH3k3IpQnGF2lfg0Aq5IL4HgpX02FvpiCYEI8AFnGqjA
-	PaIc4FIUfCvZq6tMky0SMF0yv64zFXiSghd1CyQdhDTbnLU25zSzejAC48=
-X-Google-Smtp-Source: AGHT+IFuXiTIheMG3+4gmC1q+oV5Yb6/nZ5Dj/15NZpvhB9K3y74K4FlHz1GdbdRouCeDasOvS1IpwzwFM/b3I71HzM=
-X-Received: by 2002:a05:622a:1818:b0:4b7:ad20:9393 with SMTP id
- d75a77b69052e-4edf206c3d3mr76294551cf.4.1763164802938; Fri, 14 Nov 2025
- 16:00:02 -0800 (PST)
+        d=1e100.net; s=20230601; t=1763167617; x=1763772417;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Mr/52DwIA8Vew8AuO0L8R6bm0vR8dQ+5A9WA+WG6t/s=;
+        b=CVELbqSPJ3iRcXUUd3fwDWNImJ01lVz1p7EBcRtjwml5DKP9G8I1oGRj+R5o6qW7dj
+         qLl+hFOwWKbhubZu6rObGEJz/Y4EZqQJwJ3h7+t9DgBPZ0I70YSnMxZf/FVnhfMaVrTC
+         xvaUQ/HxMUGhi8Fnr8pQy7mrMunlCamSap0pkTNvqX8UJ+zaM31lxZyeCym26iHAY7Ht
+         2v3hMA9c1nqOn8neC7oOrykT98gqODICFEtVrs7jUMpwqnTCfcDM2LXoiN0a5MExiqwp
+         rHw28ulXgFmkCJ5n2ZArMWHWL5UYTfW+R/p4suYfXTVZkR5+1gaE4GlxR4EweeQrbYVB
+         KVQg==
+X-Forwarded-Encrypted: i=1; AJvYcCU+xH2sMISOBqqJG58qJBuzZRAD8xRlmwreYE5OiuDWHG6jujDASBVLtw/FZBpLjAuM2rX5H2FD8x/4UKxX@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGSTmfKTvinH0IyBBhvKkdaJLTum8vYV11Po+4Qk3eU07IruMD
+	jLkJGhfHT0OuzDka0h76sEa6v0zD6S5l68YlVrW4L6hVsAx1ENtD7/A8ReJwUYxDhH1UNe8K1QT
+	YBvtqdWnVOL0MEGItL8MzXSEcFQ==
+X-Google-Smtp-Source: AGHT+IHPDsoGUhVWbmh0UerKKIaGr6kr4KuHT3qBmIvhj2MnXtnNCORQphwRQGqEcjJQnhvfFDaRm0g88w6S7pk3mw==
+X-Received: from pjbdb8.prod.google.com ([2002:a17:90a:d648:b0:343:5c2:dd74])
+ (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:90b:1dc9:b0:340:29a1:1b0c with SMTP id 98e67ed59e1d1-343f9e93781mr5917746a91.7.1763167617416;
+ Fri, 14 Nov 2025 16:46:57 -0800 (PST)
+Date: Fri, 14 Nov 2025 16:46:56 -0800
+In-Reply-To: <aQnGJ5agTohMijj8@yzhao56-desk.sh.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20251027222808.2332692-1-joannelkoong@gmail.com>
-In-Reply-To: <20251027222808.2332692-1-joannelkoong@gmail.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Fri, 14 Nov 2025 15:59:52 -0800
-X-Gm-Features: AWmQ_bmRlXebUAoVOMZ3KYImfI2XMgqsAutH5pwXFp2qmwPO8Oe22i50fOp_O8A
-Message-ID: <CAJnrk1bG7fAX8MfwJL_D2jzMNv5Rj9=1cgQvVpqC1=mGaeAwOg@mail.gmail.com>
-Subject: Re: [PATCH v2 0/8] fuse: support io-uring registered buffers
-To: miklos@szeredi.hu, axboe@kernel.dk
-Cc: linux-fsdevel@vger.kernel.org, bschubert@ddn.com, asml.silence@gmail.com, 
-	io-uring@vger.kernel.org, xiaobing.li@samsung.com, csander@purestorage.com, 
-	kernel-team@meta.com
+Mime-Version: 1.0
+References: <cover.1760731772.git.ackerleytng@google.com> <5a4dfc265a46959953e6c24730d22584972b1179.1760731772.git.ackerleytng@google.com>
+ <aQnGJ5agTohMijj8@yzhao56-desk.sh.intel.com>
+Message-ID: <diqz346gcebj.fsf@google.com>
+Subject: Re: [RFC PATCH v1 11/37] KVM: guest_memfd: Add support for KVM_SET_MEMORY_ATTRIBUTES
+From: Ackerley Tng <ackerleytng@google.com>
+To: Yan Zhao <yan.y.zhao@intel.com>
+Cc: cgroups@vger.kernel.org, kvm@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-mm@kvack.org, 
+	linux-trace-kernel@vger.kernel.org, x86@kernel.org, akpm@linux-foundation.org, 
+	binbin.wu@linux.intel.com, bp@alien8.de, brauner@kernel.org, 
+	chao.p.peng@intel.com, chenhuacai@kernel.org, corbet@lwn.net, 
+	dave.hansen@intel.com, dave.hansen@linux.intel.com, david@redhat.com, 
+	dmatlack@google.com, erdemaktas@google.com, fan.du@intel.com, fvdl@google.com, 
+	haibo1.xu@intel.com, hannes@cmpxchg.org, hch@infradead.org, hpa@zytor.com, 
+	hughd@google.com, ira.weiny@intel.com, isaku.yamahata@intel.com, jack@suse.cz, 
+	james.morse@arm.com, jarkko@kernel.org, jgg@ziepe.ca, jgowans@amazon.com, 
+	jhubbard@nvidia.com, jroedel@suse.de, jthoughton@google.com, 
+	jun.miao@intel.com, kai.huang@intel.com, keirf@google.com, 
+	kent.overstreet@linux.dev, liam.merwick@oracle.com, 
+	maciej.wieczor-retman@intel.com, mail@maciej.szmigiero.name, 
+	maobibo@loongson.cn, mathieu.desnoyers@efficios.com, maz@kernel.org, 
+	mhiramat@kernel.org, mhocko@kernel.org, mic@digikod.net, michael.roth@amd.com, 
+	mingo@redhat.com, mlevitsk@redhat.com, mpe@ellerman.id.au, 
+	muchun.song@linux.dev, nikunj@amd.com, nsaenz@amazon.es, 
+	oliver.upton@linux.dev, palmer@dabbelt.com, pankaj.gupta@amd.com, 
+	paul.walmsley@sifive.com, pbonzini@redhat.com, peterx@redhat.com, 
+	pgonda@google.com, prsampat@amd.com, pvorel@suse.cz, qperret@google.com, 
+	richard.weiyang@gmail.com, rick.p.edgecombe@intel.com, rientjes@google.com, 
+	rostedt@goodmis.org, roypat@amazon.co.uk, rppt@kernel.org, seanjc@google.com, 
+	shakeel.butt@linux.dev, shuah@kernel.org, steven.price@arm.com, 
+	steven.sistare@oracle.com, suzuki.poulose@arm.com, tabba@google.com, 
+	tglx@linutronix.de, thomas.lendacky@amd.com, vannapurve@google.com, 
+	vbabka@suse.cz, viro@zeniv.linux.org.uk, vkuznets@redhat.com, 
+	wei.w.wang@intel.com, will@kernel.org, willy@infradead.org, wyihan@google.com, 
+	xiaoyao.li@intel.com, yilun.xu@intel.com, yuzenghui@huawei.com, 
+	zhiquan1.li@intel.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 27, 2025 at 3:29=E2=80=AFPM Joanne Koong <joannelkoong@gmail.co=
-m> wrote:
->
-> This patchset adds fuse support for io-uring registered buffers.
-> Daemons may register buffers ahead of time, which will eliminate the over=
-head
-> of pinning/unpinning user pages and translating virtual addresses for eve=
-ry
-> server-kernel interaction.
+Yan Zhao <yan.y.zhao@intel.com> writes:
 
-Registered buffers helps with the I/O overhead, but there's still
-significant memory waste within each buffer. Each entry in a queue
-allocates a dedicated buffer of at least 1 MB (for some performant
-servers like passthrough_hp, each entry's buffer is 4 MB, which adds
-up (eg with the libfuse default queue depth of 8 on a 64-core machine,
-that's 2 GB of buffers per fuse connection)) but most of this space
-goes unused. In practice, entries on a queue will rarely consume their
-full buffer capacity simultaneously.
+> On Fri, Oct 17, 2025 at 01:11:52PM -0700, Ackerley Tng wrote:
+>> For shared to private conversions, if refcounts on any of the folios
+>> within the range are elevated, fail the conversion with -EAGAIN.
+>> 
+>> At the point of shared to private conversion, all folios in range are
+>> also unmapped. The filemap_invalidate_lock() is held, so no faulting
+>> can occur. Hence, from that point on, only transient refcounts can be
+>> taken on the folios associated with that guest_memfd.
+>> 
+>> Hence, it is safe to do the conversion from shared to private.
+>> 
+>> After conversion is complete, refcounts may become elevated, but that
+>> is fine since users of transient refcounts don't actually access
+>> memory.
+>> 
+>> For private to shared conversions, there are no refcount checks. any
+>> transient refcounts are expected to drop their refcounts soon. The
+>> conversion process will spin waiting for these transient refcounts to
+>> go away.
+> Where's the code to spin?
+>
 
-Instead of using registered buffers, I think it's better if we go with
-a kernel managed ring buffer. It'll have the same advantages in
-reducing I/O overhead as registered buffers but also give us
-optionality later on to support IORING_CQE_F_BUF_MORE for incremental
-buffer consumption or add multiple different-sized ring buffer pools
-(eg for large payloads vs small payloads, which is also something we
-have to differentiate between for zero-copy), whereas we would have no
-way of supporting that with registered buffers.
+Thanks, I will fix the commit message for the next revision.
 
-For v3, I'm going to go this direction.
+>> +/*
+>> + * Preallocate memory for attributes to be stored on a maple tree, pointed to
+>> + * by mas.  Adjacent ranges with attributes identical to the new attributes
+>> + * will be merged.  Also sets mas's bounds up for storing attributes.
+>> + *
+>> + * This maintains the invariant that ranges with the same attributes will
+>> + * always be merged.
+>> + */
+>> +static int kvm_gmem_mas_preallocate(struct ma_state *mas, u64 attributes,
+>> +				    pgoff_t start, size_t nr_pages)
+>> +{
+>> +	pgoff_t end = start + nr_pages;
+>> +	pgoff_t last = end - 1;
+>> +	void *entry;
+>> +
+>> +	/* Try extending range. entry is NULL on overflow/wrap-around. */
+>> +	mas_set_range(mas, end, end);
+>> +	entry = mas_find(mas, end);
+>> +	if (entry && xa_to_value(entry) == attributes)
+>> +		last = mas->last;
+>> +
+>> +	mas_set_range(mas, start - 1, start - 1);
+> Check start == 0 ?
+>
 
-Thanks,
-Joanne
+Thanks!
 
+>> +	entry = mas_find(mas, start - 1);
+>> +	if (entry && xa_to_value(entry) == attributes)
+>> +		start = mas->index;
+>> +
+>> +	mas_set_range(mas, start, last);
+>> +	return mas_preallocate(mas, xa_mk_value(attributes), GFP_KERNEL);
+>> +}
+> ...
 >
-> The main logic for fuse registered buffers is in the last patch (patch 8/=
-8).
-> Patch 1/8 adds an io_uring api for fetching the registered buffer and pat=
-ches
-> (2-7)/8 refactors the fuse io_uring code, which additionally will make ad=
-ding
-> in the logic for registered buffers neater.
+>> +static long kvm_gmem_set_attributes(struct file *file, void __user *argp)
+>> +{
+>> +	struct gmem_file *f = file->private_data;
+>> +	struct inode *inode = file_inode(file);
+>> +	struct kvm_memory_attributes2 attrs;
+>> +	pgoff_t err_index;
+>> +	size_t nr_pages;
+>> +	pgoff_t index;
+>> +	int r;
+>> +
+>> +	if (copy_from_user(&attrs, argp, sizeof(attrs)))
+>> +		return -EFAULT;
+>> +
+>> +	if (attrs.flags)
+>> +		return -EINVAL;
+>> +	if (attrs.attributes & ~kvm_supported_mem_attributes(f->kvm))
+>> +		return -EINVAL;
+>> +	if (attrs.size == 0 || attrs.offset + attrs.size < attrs.offset)
+>> +		return -EINVAL;
+>> +	if (!PAGE_ALIGNED(attrs.offset) || !PAGE_ALIGNED(attrs.offset))
+> Should be
+> if (!PAGE_ALIGNED(attrs.offset) || !PAGE_ALIGNED(attrs.size))
+> ?
 >
-> The libfuse changes can be found in this branch:
-> https://github.com/joannekoong/libfuse/tree/registered_buffers. The libfu=
-se
-> implementation first tries registered buffers during registration and if =
-this
-> fails, will retry with non-registered buffers. This prevents having to ad=
-d a
-> new init flag (but does have the downside of printing dmesg errors for th=
-e
-> failed registrations when trying the registered buffers). If using regist=
-ered
-> buffers and the daemon for whatever reason unregisters the buffers midway
-> through, then this will sever server-kernel communication. Libfuse will n=
-ever
-> do this. Libfuse will only unregister the buffers when the entire session=
- is
-> being destroyed.
->
-> Benchmarks will be run and posted.
->
-> Thanks,
-> Joanne
->
-> v1: https://lore.kernel.org/linux-fsdevel/20251022202021.3649586-1-joanne=
-lkoong@gmail.com/
-> v1 -> v2:
-> * Add io_uring_cmd_import_fixed_full() patch
-> * Construct iter using io_uring_cmd_import_fixed_full() per cmd instead o=
-f recyling
->   iters.
-> * Kmap the header instead of using bvec iter for iterating/copying. This =
-makes
->   the code easier to read.
->
-> Joanne Koong (8):
->   io_uring/uring_cmd: add io_uring_cmd_import_fixed_full()
->   fuse: refactor io-uring logic for getting next fuse request
->   fuse: refactor io-uring header copying to ring
->   fuse: refactor io-uring header copying from ring
->   fuse: use enum types for header copying
->   fuse: add user_ prefix to userspace headers and payload fields
->   fuse: refactor setting up copy state for payload copying
->   fuse: support io-uring registered buffers
->
->  fs/fuse/dev_uring.c          | 366 +++++++++++++++++++++++++----------
->  fs/fuse/dev_uring_i.h        |  27 ++-
->  include/linux/io_uring/cmd.h |   3 +
->  io_uring/rsrc.c              |  14 ++
->  io_uring/rsrc.h              |   2 +
->  io_uring/uring_cmd.c         |  13 ++
->  6 files changed, 316 insertions(+), 109 deletions(-)
->
-> --
-> 2.47.3
->
+
+Thanks!
+
+>> +		return -EINVAL;
+>> +
+>> +	if (attrs.offset > inode->i_size ||
+> Should be
+> if (attrs.offset >= inode->i_size ||
+> ?
+
+Thanks!
+>> +	    attrs.offset + attrs.size > inode->i_size)
+>> +		return -EINVAL;
+>> +
+>> +	nr_pages = attrs.size >> PAGE_SHIFT;
+>> +	index = attrs.offset >> PAGE_SHIFT;
+>> +	r = __kvm_gmem_set_attributes(inode, index, nr_pages, attrs.attributes,
+>> +				      &err_index);
+>> +	if (r) {
+>> +		attrs.error_offset = err_index << PAGE_SHIFT;
+>> +
+>> +		if (copy_to_user(argp, &attrs, sizeof(attrs)))
+>> +			return -EFAULT;
+>> +	}
+>> +
+>> +	return r;
+>> +}
 
