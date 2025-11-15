@@ -1,80 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-68584-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68585-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FB32C60D74
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Nov 2025 00:39:50 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DA88C60D3E
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Nov 2025 00:38:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0DC7A353FEA
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Nov 2025 23:37:49 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTPS id 2F26C28BFE
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Nov 2025 23:38:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85914299AB5;
-	Sat, 15 Nov 2025 23:34:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68FB930C377;
+	Sat, 15 Nov 2025 23:34:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="abUQnKFp"
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="MU0St5ek"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yx1-f43.google.com (mail-yx1-f43.google.com [74.125.224.43])
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10EBB29ACD7
-	for <linux-fsdevel@vger.kernel.org>; Sat, 15 Nov 2025 23:34:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86CE13074B3
+	for <linux-fsdevel@vger.kernel.org>; Sat, 15 Nov 2025 23:34:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763249687; cv=none; b=SP4+R5EqJhMjvC7sQvcr/JIGPvy3fRuBaUE7Cf4ZcErcb8oXgdVNLxoV4vZqp+B3s5+hettUWFR+BBFQp7+d6BCcunlScDDy2LFualR6xafSpg/y3KsSKRKHW/yqSxmv3U/83Ov4BUZdKHnc7zQisG9TWuA2PyYMELErH+eTK2U=
+	t=1763249689; cv=none; b=leKjYq75tAeEJ/RX63hzxPASTPZz3zYhS8sPM71QkPnrmW8R8EGXCL4WPzQ2JE8x8VSRRZE2YsbkD1ao8EIP9M5nCFl2tPQVlv2trOW9cPAfuJGCbG1OR3nloIXi798Hg2g8jO9Qx1W+K9tQjF70eeqkf9V4rjo8actoOZxRqRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763249687; c=relaxed/simple;
-	bh=h2vjGzbBg4AU2ifY5ek+1jbDzqzMBe5yccYCDtitHbo=;
+	s=arc-20240116; t=1763249689; c=relaxed/simple;
+	bh=ofxtTHhqb802FVk4Sz/AUTZJyer5O95kDxWgWujt1uQ=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bh16/l9HO7gK+/5VxIs/htyKcTAC9M4Vi/gbWM4K5NMwJOAFrqfQQOtSVWQ7B1IBjdvRQLbhNxf1N4aMp1dEC/DhI8OKvZFGhwjhERKmBIDVnvrpfytZ+Gymo/mwrEIkJcmJJWVtvrVYmKri+rwauO6qqE9rFG9BncHaTqFSOvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=abUQnKFp; arc=none smtp.client-ip=74.125.224.43
+	 MIME-Version; b=ebaLfSgUQGp5YfX7lAaokonmJ8FqrneCIWlTpNIWum755untPegaN+BBJ6nkiZT+e4kneyj/venJbK4PNqvOo67N9keMiUYY6ofGCmlkjku9wrRUje8a5Sw36UXVuF36T4FGJgRQCBQWbw5Advixs/AW6Xug5S9ouMQg7yCWvJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=MU0St5ek; arc=none smtp.client-ip=209.85.128.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-yx1-f43.google.com with SMTP id 956f58d0204a3-63e1e1bf882so2603278d50.1
-        for <linux-fsdevel@vger.kernel.org>; Sat, 15 Nov 2025 15:34:44 -0800 (PST)
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-7869deffb47so29921907b3.1
+        for <linux-fsdevel@vger.kernel.org>; Sat, 15 Nov 2025 15:34:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1763249684; x=1763854484; darn=vger.kernel.org;
+        d=soleen.com; s=google; t=1763249686; x=1763854486; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=rjp2i+yn5YhJt0E9Cm6hXiIeiW1VzlvDXGR3nMqDfIY=;
-        b=abUQnKFpmpaAioTjEc5MaZxSqpGfaR0hBJjJPKmL7grHOerbjdMmY/E/rnBdz4Zhp+
-         4f4MzmBxe2yXt3/aZ8GGFg3PoDEr0EK9xI2QfWEyy5kxcZO6eokfC88/6rrn3r0elnUl
-         6rmp6vVwi3S5b7+HYnCUfC35j+v8fLarRvPWy/tys6dv+Vit9G/k0UpS4BI0rn469xk2
-         efuYF2WtmLWf1gnPhZzveTFPrdjrOG92+HC59YwQe98cWvLIgZ7GRWxqkv1RKmlNyG/7
-         T07zhjiovMSPdvCvYYZYNQRa3zmMRuValDIePY9NCniS5ueEd+/NrWk8XrfQ3w1ykU0B
-         i/0g==
+        bh=/eLZ78bp0n4p6Wf1XgYT9EXfbUSCOwy9XSJd2QadY6Y=;
+        b=MU0St5ek5BHZIjMoxb8a/pdJBRZMUeNYvc4Vl6PWIeLG5J2JB65i9eTHN/SrhEYN0y
+         wyYg1CWYQ4SWxauig7H9N8ELoesAOLaqG9WS0S2WmLGe7K0nHQA0RrDhVCwBlu+g16Zv
+         oIYx/CDHRtLWdV1Wr9CAf0rHG2quBj0YLawytcwOJATZAQdqU4f7sraq0weiY9/UQyt7
+         jR1Z4+Phh2UPcKNpPyIGKEDFHGQrffP/fE4dOxTRabTEsreb5r1l5ugoh/bB06e01vrH
+         C/4av6+QbZdPsShCH9vUEEtiwG0p3S37rBYydBBc8lHDmW9ddIuslt99n/RvNuvcrbN9
+         iD+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763249684; x=1763854484;
+        d=1e100.net; s=20230601; t=1763249686; x=1763854486;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=rjp2i+yn5YhJt0E9Cm6hXiIeiW1VzlvDXGR3nMqDfIY=;
-        b=wOfNe2gkdbOPIEzlejvMahS3O8nihfZR3DTb5EOVmRPRrKMEIyFPIzIhdgk0lf0lN5
-         kQgQ8KtZOeIZ+BvuJDjIj8NsTfFIfI0hz+nNJxyR9w/dmENAbSaHjg+wSHrHbr//HDtA
-         NLjIsCAiC9jMjfxR99eOHN9pbjwka/OJSvNalvka4r2ngS+qemdQ5rFjfVcVZ1bWSoni
-         d33azHoOLSaQPbcc91payyt4oiyITv4kdY/uqJGgb93krnbNNVBAIv/947H0xEGOuUFt
-         7/zFy1NReO6HuiNzyDXKVLgq2zi4CdO1GSkg584ccxIRA1g1mYOXz1k5+oLs1dR+cMHa
-         MJ4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUNKdMIVAJrVOId1uLSZyvjV6d7wowYiZaFVZabQOwRbV/CM/JydxLDbWpQMiXaWRzXrdofCPYqVOygY17+@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxi/8/OlgihTN8ZMY2ZQ4eIxQbvucvUf5THIRakhyFPdoMDRkq7
-	87iZcHwvNdaiAWxerqu4uSsu48MgMN2Te0fLVd/hQiD6sUUzw0E0We/CacQNe2ygidg=
-X-Gm-Gg: ASbGncttaHLXggVKmnbtbLXcE0ajylI01UJ7c79elPGiPzxVvVxnjWFtbMe8QXyVjDa
-	dyETxne552cr3hlpwBZB6XCDmOL3jqpJCyK3RNCT8hEnRRpL1nBWufDi4vSiDWjMfjmN5ckextE
-	hhA8k0EzTvPfLbQ4iON7VtW4qQZJoMLdeV4uqg4uEMeB1vg/+1uyqkHExhdUDfWUBnUeeBWJMtA
-	vX7Nex/mf7vr6HpKA6uqfAQctLIadlRSJYKoclB8KqiC6ZQK8kY6BlYSwYGUkF1x2xqNJfUptql
-	J/Ai1xOhMfZC7WnKDbo816v66K8QmRpH64sxTwUslQ/i0IH03hRxfvv0t5TIa09RFDS8Kahagjb
-	6dWE12Cd81tS11zYeXCnK6nqA/QC39ehX1DeAtTOagN1ttbuE8CR2Sxgo75AFVm2ulPlnZUHiBO
-	PpHkuYtXp+Ns+z+8oOlbljUNN5vzDq52sBCQKrCTcL3MjEUUMuMGf1R6r4fV1TgHZKhMWLYcA0a
-	XREoZ4=
-X-Google-Smtp-Source: AGHT+IEqQqw8FjtFSAai2c9iP1dDJFDaXC1XcmhVkOppI5F0MwDFeehYvZcQ8y1up6QBmlqTCYD2LA==
-X-Received: by 2002:a05:690c:7408:b0:787:d456:2e62 with SMTP id 00721157ae682-78929ed2da6mr132263187b3.33.1763249683921;
-        Sat, 15 Nov 2025 15:34:43 -0800 (PST)
+        bh=/eLZ78bp0n4p6Wf1XgYT9EXfbUSCOwy9XSJd2QadY6Y=;
+        b=djHScpzN61jyRFlRVsI0N9Zae9MFnMrpw9PKq2cOKGYijULcB6Y6zDJpUiyOy8DUtc
+         zRPBlrNqLEE5qpw2nmUVzAZFhJLF0zfJU0djrgIoNtWVKKobE/oDHHXxzPm+BRblUUoZ
+         ULCXRIj6m7xYnQ6u/bRm4fu7AaBRTzgR2gCGofotOPjobQefkhprXZqNUTXomVHLwp/j
+         nWxXuusKTO2Z++/QmbOrZa0CBfEwH46q1ePiw8LUBbjOkhZEaZkngDsz2vr6qcNAY+Ck
+         7IeRrbk9nTumhui8YFTA9C1j4apWPA9dTCrk9rkjpcVQ0AGxqNfZ0os4pwkVcKA4woIT
+         /H0g==
+X-Forwarded-Encrypted: i=1; AJvYcCWBk2VwZox0yB8L34YBoN1FqApdaUx8gqDHzbth3fQegVa/JWOddU48iDHCSK70bXJhdAscfXZbVNWhrHYP@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3DDP/k94xxSBBcMBJpDcgNtvhXT4eemPdCbOS6f3c7hoeL1hd
+	5308fCVDwKBIJZlxMG5UyoCyGu+oDPuJ6WxSucJRk8B2e6XutNJN0bQkwCQUjva5U5w=
+X-Gm-Gg: ASbGncvcWEObXAUfoUfVTtPe2AkZaIUQ4AZCDsgYNO+f4yZg0YBCcPLgx+QZXLAbncQ
+	w4OJ2bmwLWTlGh/0F8mnyU1wJ+sCFoYHM19ZespM9TGum8GQ4Gj6ndUP9NB84PfbDAEOy2Y5H6i
+	Wc/ujgWFsF7EB2Ow1rdnplKWipcawQAqOvLyviXIqeSlZ1tkeKesZon+Pn2LOle4LIL+ygngRMP
+	D6pcTrqW52hGMKwwPN3/gEOI7TJgRd4elIhhp46wEZDhszMw4eoTCVTUeK4MLPZVXtCvdHyDUaG
+	sAtVipjseXBQ7zkMT10lvMjhLmpSErZn9urlBKC9y999sCDdlj+smeHGU3LgQcm4hBrqJOhnVC6
+	bM1faY4/0sOZpp5G6eFAsWsyVos9mMLyeZCZ3quuuBxjIZZ6Ncg+ZWQNjs2p7a9QcDYjxrVXtV4
+	yXLi4M5n4H6tJhWZfbX/8LoBkbQFhTpxP3kpj+HtED0QUqYEiQt/GFxiAmbaj4UpxRJmw5
+X-Google-Smtp-Source: AGHT+IHk0jQUizdAzkiK9Xpe2uUL2VAa8k1RUUTK2HykUPyp4K26BcN3/UXlJAExurxnthMVN+vR9Q==
+X-Received: by 2002:a05:690c:2603:b0:786:5be2:d460 with SMTP id 00721157ae682-78929e29f77mr74299087b3.1.1763249686563;
+        Sat, 15 Nov 2025 15:34:46 -0800 (PST)
 Received: from soleen.c.googlers.com.com (182.221.85.34.bc.googleusercontent.com. [34.85.221.182])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-7882218774esm28462007b3.57.2025.11.15.15.34.41
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-7882218774esm28462007b3.57.2025.11.15.15.34.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 15 Nov 2025 15:34:43 -0800 (PST)
+        Sat, 15 Nov 2025 15:34:45 -0800 (PST)
 From: Pasha Tatashin <pasha.tatashin@soleen.com>
 To: pratyush@kernel.org,
 	jasonmiu@google.com,
@@ -149,9 +148,9 @@ To: pratyush@kernel.org,
 	hughd@google.com,
 	skhawaja@google.com,
 	chrisl@kernel.org
-Subject: [PATCH v6 12/20] mm: shmem: allow freezing inode mapping
-Date: Sat, 15 Nov 2025 18:33:58 -0500
-Message-ID: <20251115233409.768044-13-pasha.tatashin@soleen.com>
+Subject: [PATCH v6 13/20] mm: shmem: export some functions to internal.h
+Date: Sat, 15 Nov 2025 18:33:59 -0500
+Message-ID: <20251115233409.768044-14-pasha.tatashin@soleen.com>
 X-Mailer: git-send-email 2.52.0.rc1.455.g30608eb744-goog
 In-Reply-To: <20251115233409.768044-1-pasha.tatashin@soleen.com>
 References: <20251115233409.768044-1-pasha.tatashin@soleen.com>
@@ -165,104 +164,70 @@ Content-Transfer-Encoding: 8bit
 
 From: Pratyush Yadav <ptyadav@amazon.de>
 
-To prepare a shmem inode for live update via the Live Update
-Orchestrator (LUO), its index -> folio mappings must be serialized. Once
-the mappings are serialized, they cannot change since it would cause the
-serialized data to become inconsistent. This can be done by pinning the
-folios to avoid migration, and by making sure no folios can be added to
-or removed from the inode.
-
-While mechanisms to pin folios already exist, the only way to stop
-folios being added or removed are the grow and shrink file seals. But
-file seals come with their own semantics, one of which is that they
-can't be removed. This doesn't work with liveupdate since it can be
-cancelled or error out, which would need the seals to be removed and the
-file's normal functionality to be restored.
-
-Introduce SHMEM_F_MAPPING_FROZEN to indicate this instead. It is
-internal to shmem and is not directly exposed to userspace. It functions
-similar to F_SEAL_GROW | F_SEAL_SHRINK, but additionally disallows hole
-punching, and can be removed.
+shmem_inode_acct_blocks(), shmem_recalc_inode(), and
+shmem_add_to_page_cache() are used by shmem_alloc_and_add_folio(). This
+functionality will also be used in the future by Live Update
+Orchestrator (LUO) to recreate memfd files after a live update.
 
 Signed-off-by: Pratyush Yadav <ptyadav@amazon.de>
 Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
 ---
- include/linux/shmem_fs.h | 17 +++++++++++++++++
- mm/shmem.c               | 12 +++++++++++-
- 2 files changed, 28 insertions(+), 1 deletion(-)
+ mm/internal.h |  6 ++++++
+ mm/shmem.c    | 10 +++++-----
+ 2 files changed, 11 insertions(+), 5 deletions(-)
 
-diff --git a/include/linux/shmem_fs.h b/include/linux/shmem_fs.h
-index 650874b400b5..a9f5db472a39 100644
---- a/include/linux/shmem_fs.h
-+++ b/include/linux/shmem_fs.h
-@@ -24,6 +24,14 @@ struct swap_iocb;
- #define SHMEM_F_NORESERVE	BIT(0)
- /* Disallow swapping. */
- #define SHMEM_F_LOCKED		BIT(1)
-+/*
-+ * Disallow growing, shrinking, or hole punching in the inode. Combined with
-+ * folio pinning, makes sure the inode's mapping stays fixed.
-+ *
-+ * In some ways similar to F_SEAL_GROW | F_SEAL_SHRINK, but can be removed and
-+ * isn't directly visible to userspace.
-+ */
-+#define SHMEM_F_MAPPING_FROZEN	BIT(2)
+diff --git a/mm/internal.h b/mm/internal.h
+index 1561fc2ff5b8..4ba155524f80 100644
+--- a/mm/internal.h
++++ b/mm/internal.h
+@@ -1562,6 +1562,12 @@ void __meminit __init_page_from_nid(unsigned long pfn, int nid);
+ unsigned long shrink_slab(gfp_t gfp_mask, int nid, struct mem_cgroup *memcg,
+ 			  int priority);
  
- struct shmem_inode_info {
- 	spinlock_t		lock;
-@@ -186,6 +194,15 @@ static inline bool shmem_file(struct file *file)
- 	return shmem_mapping(file->f_mapping);
- }
- 
-+/* Must be called with inode lock taken exclusive. */
-+static inline void shmem_i_mapping_freeze(struct inode *inode, bool freeze)
-+{
-+	if (freeze)
-+		SHMEM_I(inode)->flags |= SHMEM_F_MAPPING_FROZEN;
-+	else
-+		SHMEM_I(inode)->flags &= ~SHMEM_F_MAPPING_FROZEN;
-+}
++int shmem_add_to_page_cache(struct folio *folio,
++			    struct address_space *mapping,
++			    pgoff_t index, void *expected, gfp_t gfp);
++int shmem_inode_acct_blocks(struct inode *inode, long pages);
++bool shmem_recalc_inode(struct inode *inode, long alloced, long swapped);
 +
- /*
-  * If fallocate(FALLOC_FL_KEEP_SIZE) has been used, there may be pages
-  * beyond i_size's notion of EOF, which fallocate has committed to reserving:
+ #ifdef CONFIG_SHRINKER_DEBUG
+ static inline __printf(2, 0) int shrinker_debugfs_name_alloc(
+ 			struct shrinker *shrinker, const char *fmt, va_list ap)
 diff --git a/mm/shmem.c b/mm/shmem.c
-index 1d5036dec08a..05c3db840257 100644
+index 05c3db840257..c3dc4af59c14 100644
 --- a/mm/shmem.c
 +++ b/mm/shmem.c
-@@ -1292,7 +1292,8 @@ static int shmem_setattr(struct mnt_idmap *idmap,
- 		loff_t newsize = attr->ia_size;
+@@ -219,7 +219,7 @@ static inline void shmem_unacct_blocks(unsigned long flags, long pages)
+ 		vm_unacct_memory(pages * VM_ACCT(PAGE_SIZE));
+ }
  
- 		/* protected by i_rwsem */
--		if ((newsize < oldsize && (info->seals & F_SEAL_SHRINK)) ||
-+		if ((info->flags & SHMEM_F_MAPPING_FROZEN) ||
-+		    (newsize < oldsize && (info->seals & F_SEAL_SHRINK)) ||
- 		    (newsize > oldsize && (info->seals & F_SEAL_GROW)))
- 			return -EPERM;
- 
-@@ -3289,6 +3290,10 @@ shmem_write_begin(const struct kiocb *iocb, struct address_space *mapping,
- 			return -EPERM;
- 	}
- 
-+	if (unlikely((info->flags & SHMEM_F_MAPPING_FROZEN) &&
-+		     pos + len > inode->i_size))
-+		return -EPERM;
-+
- 	ret = shmem_get_folio(inode, index, pos + len, &folio, SGP_WRITE);
- 	if (ret)
- 		return ret;
-@@ -3662,6 +3667,11 @@ static long shmem_fallocate(struct file *file, int mode, loff_t offset,
- 
- 	inode_lock(inode);
- 
-+	if (info->flags & SHMEM_F_MAPPING_FROZEN) {
-+		error = -EPERM;
-+		goto out;
-+	}
-+
- 	if (mode & FALLOC_FL_PUNCH_HOLE) {
- 		struct address_space *mapping = file->f_mapping;
- 		loff_t unmap_start = round_up(offset, PAGE_SIZE);
+-static int shmem_inode_acct_blocks(struct inode *inode, long pages)
++int shmem_inode_acct_blocks(struct inode *inode, long pages)
+ {
+ 	struct shmem_inode_info *info = SHMEM_I(inode);
+ 	struct shmem_sb_info *sbinfo = SHMEM_SB(inode->i_sb);
+@@ -435,7 +435,7 @@ static void shmem_free_inode(struct super_block *sb, size_t freed_ispace)
+  *
+  * Return: true if swapped was incremented from 0, for shmem_writeout().
+  */
+-static bool shmem_recalc_inode(struct inode *inode, long alloced, long swapped)
++bool shmem_recalc_inode(struct inode *inode, long alloced, long swapped)
+ {
+ 	struct shmem_inode_info *info = SHMEM_I(inode);
+ 	bool first_swapped = false;
+@@ -861,9 +861,9 @@ static void shmem_update_stats(struct folio *folio, int nr_pages)
+ /*
+  * Somewhat like filemap_add_folio, but error if expected item has gone.
+  */
+-static int shmem_add_to_page_cache(struct folio *folio,
+-				   struct address_space *mapping,
+-				   pgoff_t index, void *expected, gfp_t gfp)
++int shmem_add_to_page_cache(struct folio *folio,
++			    struct address_space *mapping,
++			    pgoff_t index, void *expected, gfp_t gfp)
+ {
+ 	XA_STATE_ORDER(xas, &mapping->i_pages, index, folio_order(folio));
+ 	unsigned long nr = folio_nr_pages(folio);
 -- 
 2.52.0.rc1.455.g30608eb744-goog
 
