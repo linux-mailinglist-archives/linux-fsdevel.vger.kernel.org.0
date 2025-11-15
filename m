@@ -1,57 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-68564-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68565-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22070C60811
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Nov 2025 16:52:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC1A4C6081F
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Nov 2025 16:53:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFBEC3AE6B9
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Nov 2025 15:52:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A9C33BC31B
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Nov 2025 15:53:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F5CD29D266;
-	Sat, 15 Nov 2025 15:52:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ED2829CB52;
+	Sat, 15 Nov 2025 15:53:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bSRDkmmk";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="q9EioKQO"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="SLEtXJs9";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="fCWvnkFh"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8823222586;
-	Sat, 15 Nov 2025 15:52:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E77C221F13;
+	Sat, 15 Nov 2025 15:53:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763221928; cv=none; b=m3davOqYT9ttI4w9ijsv8u9LzUC9ch9uwJsPghqGZFdcvCsDnnbMyy0vSAnsqhTixDQvdY20DxLyWCNjlwXCNcgWj9BxQ0YdeiKa32+DmiPim+bjKBccZWUDoE4/Hizy0BtTkenI32b2NzTEn+D7NgEnsZHdCg+NWlv2gbpsBR4=
+	t=1763222014; cv=none; b=YOaRKnLceNphbc3EbUzul39tmSNdxf3ra1vdu8xtQeL5R8jJB/qfW2II3N/7PM9nPIzkGJE/OzwYiD54o01Xvzx20fKSxbE7ffQRp5AEBRBkkYVLxCroU+/aklGgkHlbiVq+brvnRSE7/lRKRnkNTurqDvG/IqXANyp64NCzgmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763221928; c=relaxed/simple;
-	bh=Qji/R0XqJN/+axAWSVhTCyVa2zmi8tBsBdc+EwMtP6Y=;
+	s=arc-20240116; t=1763222014; c=relaxed/simple;
+	bh=EwI8Hmw+254IZUwdLgVMHCQUgGZu/DpRy2TKDt3lpxg=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=L6PvEWkJVW00yiyifGGoJtqMMeA02775Uz2yr71JUea2Aantnga5s3SIFt3ZVXRtx/u9DHYDRQ6oSiOdJ8GyPuLZh/X9yNrcV7yk53D04IVznlLRQpM2v3d4uwiMON4Z1V10ld+M4x7JAIykgs5j7OVttSI5JwZFBIXe8G64YWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bSRDkmmk; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=q9EioKQO; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version:Content-Type; b=cA4KvByywCF0279xvn0aqkG44ePnQMyvJ2Fa1KUbuyRBYHkQlno35KTmLADG3AOrB3/AFF8Yss83UBJJi8G2mPwNRm43FoM6kis7X76bhrHzskPlcKX2+8tR2Jik9L/2ghHKguj29yI9MIpKctzmULjdOOXwdQZJ6A/Fl8eJ5LY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=SLEtXJs9; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=fCWvnkFh; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: Thomas Gleixner <tglx@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1763221920;
+	s=2020; t=1763222011;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=HSPnZMDPrSmy6ZnP5yUFLoTkZttJ+ulSH2tuXAA3xPU=;
-	b=bSRDkmmkFM+3H86HARt9T+Nmon/tHmmTmfBcVZ4meeRSD/6sMoF05cS6o02IaEF/X5+AEp
-	hGCyUIWGfdlI4ROZmuOkcp6c7VwUy1/HYtgAeUur21/RD6NrfG2g0tOyKkY5OR3ghE4Bdy
-	OirG2HWhgC9w1EtGdh5jSgAE4WIwhxnYOTwp5Wp1uknEDQ5rbTlo7cvZP0n6HojpnCqu6x
-	lonK55GQltRVV07NyHSFktsseUp4Z2NUBUcwMuX2XeP/hY0n+HDSIkuASxqHOB7Ll/+859
-	xqV7wA1p/qgQo31iITdEy1A0lWOY32oK3oOUYgmokDoqg5BNgkF5nfXIq+64mg==
+	bh=xZ3ruAdoiAVL5AiOWMufuanCJT2Hk+KKUqr8L/GImxg=;
+	b=SLEtXJs90G/7NF9CrSjBMolaz51zpek96DGbr3R8BvIftzWculk19f97DkjJIqgyyOE5b1
+	rJq4JYu+8eltZRC6K+Ky57qlhN2irEA0MVU6CbJrmV6I2WxV6d7H4STn3FmW2Nm2iAukJ1
+	Lb8+gYcxQTz8PXfTHVLntDKFeg/wHLmYTUNXVU7q8+YKUJOK7GGJ4Ht7pDCTSTNrD9qetm
+	bwZVGPoW3pSFcoWuUh5ciT5paxc6cOtYOyWcMyrDIjB0kKPRd+w9rnUbKiuawGL22julqt
+	2tsXicGSHUzzZFnVkQbPDZJumodu0COCelq70rNBeeac/Ib2X38KS/w1VXZucw==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1763221920;
+	s=2020e; t=1763222011;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=HSPnZMDPrSmy6ZnP5yUFLoTkZttJ+ulSH2tuXAA3xPU=;
-	b=q9EioKQOs2kPRGrhP2HBDkWUx314/kUIkP+PNQvawiMxyrLHb6u/YSqyHWKp7a/d4AxH90
-	QE0X4Os16XT0NFCA==
+	bh=xZ3ruAdoiAVL5AiOWMufuanCJT2Hk+KKUqr8L/GImxg=;
+	b=fCWvnkFhaCE05joawZuvor/UjHcnZb/Uv1cgWtTEj3z+VMFBzvtxj4oixCLjs41kiNl59I
+	ipV96EcnsYStGXCg==
 To: Christophe Leroy <christophe.leroy@csgroup.eu>, Alexander Viro
  <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan
  Kara <jack@suse.cz>, Ingo Molnar <mingo@redhat.com>, Peter Zijlstra
@@ -68,13 +68,13 @@ Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
  linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
  linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH v4 02/10] uaccess: Add speculation barrier to
- copy_from_user_iter()
-In-Reply-To: <598e9ec31716ce351f1456c81eee140477d4ecc4.1762427933.git.christophe.leroy@csgroup.eu>
+Subject: Re: [PATCH v4 03/10] uaccess: Use
+ masked_user_{read/write}_access_begin when required
+In-Reply-To: <5effda898b110d413dc84a53c5664d4c9d11c1bf.1762427933.git.christophe.leroy@csgroup.eu>
 References: <cover.1762427933.git.christophe.leroy@csgroup.eu>
- <598e9ec31716ce351f1456c81eee140477d4ecc4.1762427933.git.christophe.leroy@csgroup.eu>
-Date: Sat, 15 Nov 2025 16:51:59 +0100
-Message-ID: <87jyzr9tuo.ffs@tglx>
+ <5effda898b110d413dc84a53c5664d4c9d11c1bf.1762427933.git.christophe.leroy@csgroup.eu>
+Date: Sat, 15 Nov 2025 16:53:30 +0100
+Message-ID: <87h5uv9ts5.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -84,32 +84,18 @@ MIME-Version: 1.0
 Content-Type: text/plain
 
 On Thu, Nov 06 2025 at 12:31, Christophe Leroy wrote:
-> The results of "access_ok()" can be mis-speculated.  The result is that
-> you can end speculatively:
->
-> 	if (access_ok(from, size))
-> 		// Right here
+> diff --git a/net/core/scm.c b/net/core/scm.c
+> index 66eaee783e8be..4a65f9baa87e7 100644
+> --- a/net/core/scm.c
+> +++ b/net/core/scm.c
+> @@ -274,7 +274,7 @@ int put_cmsg(struct msghdr * msg, int level, int type, int len, void *data)
+>  		check_object_size(data, cmlen - sizeof(*cm), true);
+>  
+>  		if (can_do_masked_user_access())
+> -			cm = masked_user_access_begin(cm);
+> +			cm = masked_user_write_access_begin(cm);
+>  		else if (!user_write_access_begin(cm, cmlen))
+>  			goto efault;
 
-This is actually the wrong patch ordering as the barrier is missing in
-the current code. So please add the missing barrier first.
-
-As a bonus the subject of the first patch makes actually sense
-then. Right now it does not because there is nothing to avoid :)
-
-Also please use the same prefix for these two patches which touch the
-iter code.
-
-> For the same reason as done in copy_from_user() by
-> commit 74e19ef0ff80 ("uaccess: Add speculation barrier to
-> copy_from_user()"), add a speculation barrier to copy_from_user_iter().
->
-> See commit 74e19ef0ff80 ("uaccess: Add speculation barrier to
-> copy_from_user()") for more details.
-
-No need to repeat that. Anyone with more than two braincells can look at
-that commit, which you mentioned already two lines above already.
-
-Thanks,
-
-        tglx
+Shouldn't this be converted to scoped_....() ?
 
