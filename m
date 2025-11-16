@@ -1,249 +1,330 @@
-Return-Path: <linux-fsdevel+bounces-68613-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68614-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C88FC61719
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Nov 2025 15:56:17 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F88AC618EE
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Nov 2025 18:08:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by tor.lore.kernel.org (Postfix) with ESMTPS id 76FCA290FD
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Nov 2025 14:56:15 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 06D0E4EBBCB
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Nov 2025 17:06:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C093309DCE;
-	Sun, 16 Nov 2025 14:56:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42CDD30CD91;
+	Sun, 16 Nov 2025 17:06:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="fcJFop89"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FULWZXYE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 991D42FAC18
-	for <linux-fsdevel@vger.kernel.org>; Sun, 16 Nov 2025 14:56:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ECAC2F5B;
+	Sun, 16 Nov 2025 17:06:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763304970; cv=none; b=nzdPpIPWODt8cG4+2x759YkLSKShnz1N6HwxZQZrck5F0nJWp/HFXwWnyQFPAYklMk6dYXMQgZn4oSMmQTJV8nWJDjJN/UoZeZI7OY6cXIpUSG74gF1kTmY+/7Uw8pmiGitFoKFQHNV6QOx60KZrhSzzyHPNoiuJzL7KIYsNr34=
+	t=1763312783; cv=none; b=QFi5oX9og4T/TqwMhdFIKuca8DTjIJXwSjpYm5hB9uafWDyUi69OCzZAlKr7H2cZ5MtbSWHzxFbQOF5HzS2K+VtpmaOh3eSqYUS29nu3Rh0zkG6guZHDum8nR2rhtRo5NHnkrUOHO3aYazC8v95alxQWBmCcfCybEJJwToird/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763304970; c=relaxed/simple;
-	bh=rBf3npL0TguhJ7wrCV0Npvl2SjtmmS/0ePqEurjh7DI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=I1d2AFuH3anrbpdc2UjokHXQKDgpLGM9QwFKvYImAeyZSRucMp2LzUNcVbWiM+7FRbaJGRT/h7Bup4XsUcgozk1PN87nBcJxzF0CkjiNhJM4h3aX6tJ/+cb6bCRFsCqYBw7ofjOnxXuiibazIkH3rDERfNIK5LXrDYhmn8Sv7dg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=fcJFop89; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-640b0639dabso6078301a12.3
-        for <linux-fsdevel@vger.kernel.org>; Sun, 16 Nov 2025 06:56:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1763304967; x=1763909767; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0/CQAuhHNkCADrkQvHG3hd8paJ2zmTnw1jvvtqelozg=;
-        b=fcJFop89Tq4g3isdbYw0hz/G5AyjF6vLTQDh4IvlycyrhxuVLx9jkPB2KesW8wLnPa
-         PaxH7ka3TlHTBjx18s+JqqU4dpIHPY/3HsXp5bH4By1fJGdUzDVgr0yL4zXmpCzWtBt1
-         UJ/qLZ8N1FnrFXO4K1pGQLB5CCsh7LZvqOryeqBpFwrRLUguhE8AQ3t+INokKLu6WXFJ
-         +1SvSM8hePfVhr3xqOhOpv+DarI2RaVLjO7MkKqqx2lZPgrguNOSDXJESs2v/7y8GCzi
-         epjmYN6hxRRa4QFaV/dllEz5GK3pHYzp82j7h1ktPxGKtlCFVXoDSt3vPVLVBi2ZBTBn
-         /gzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763304967; x=1763909767;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=0/CQAuhHNkCADrkQvHG3hd8paJ2zmTnw1jvvtqelozg=;
-        b=ZVos9tMxPZKgN+0C4DgE6+kQaeO9cNimCl1V/YkHMsvXBNeJ0dOJhB0IYpYTYmzkCY
-         Q8K+oRyIucMqYDQXRywc7PjF62hcig4DvNRZBPBuvZLpbPUftuqeGcgAxrvf106MjpOM
-         cfvVt2Cd1Vq2o2iqDNZHwu/vaGc7Jw2dlU1I3WuGTTTl9fMwa1QjmqI/JGuTk3PBgTRT
-         lAdXWMu8aZpU9cTMvHWOb+951wJvCfClrbNlUNYyGJkOTF+AAecBMrtasXGSWEsNZrla
-         t1XbiPVmPFtQD03wFlMoiN3oAXWa3TGsUUnJEZdtvLNXxo9gr0hTCuQrlFWuTg9xiB78
-         ocDw==
-X-Forwarded-Encrypted: i=1; AJvYcCUi4yRBBirmRaf/dHoNvV8n9wJfCC8FltBirf+NIuGaaQS0kN2SXJJNjBDYn3qUYH69VaRKEWDdtYK1jcjR@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMo5YP5PWWkM+WorMMfQGaYlPDzhMfEhPcoXuIuF50H/QzFSK/
-	yKirhK5kXk0XB5Gg7YObUMW6qYkxdn8Xw2UEz9wYGRDq0V8xQ7Povw5Tsis8qZwPO6Nt7icGkYq
-	h6iDi6mjoV7b/rKIoN5lx17nlYF+uN65o6ncD3gScpQ==
-X-Gm-Gg: ASbGncsErDQ5DojFeAl06U0TANa+CBGPDBBSXfQZkXR9wtbKWkR4abIAPIHN2zJyqWx
-	ERLRX7VlWlKKnNEh0wld6NaNAJLKuC1e4HAxU1XMfl7m9OL2yXoS5eYMhkOvaCrF5UluWeg+Epu
-	a4TzW52064OmXa02vCgYzR4/ikxorNF9V2ZBPbMkIlSLAgnhlXoJ4/lnR3bkTed4SHvSHW2eIxQ
-	kuT5h1BHeyHL2MhEwXr9AQD8gFP1o3jSwXx8jy3rQALq2T9NkbzWlDvco2Sg8QMvwZ/RMw1DIWe
-	dI9bR0q3LQ97Nr4vFV1Nu0Nk5nng
-X-Google-Smtp-Source: AGHT+IGNPxKwLz6m1hNQQtO/HUlURpwzye7xb9Bg+A8R04/hYPqwQLHKZYopHY79DJqzQnd0DKSzDXSuqpY0Dvll30c=
-X-Received: by 2002:a05:6402:34c6:b0:640:ceef:7e44 with SMTP id
- 4fb4d7f45d1cf-64350e9ff14mr9315924a12.28.1763304966695; Sun, 16 Nov 2025
- 06:56:06 -0800 (PST)
+	s=arc-20240116; t=1763312783; c=relaxed/simple;
+	bh=sE5PAkx03kSWVxfn6P/KcKgNoFqgW26StGDSttnoICA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mGlIo3c42t9dXropnhcRjEV/WTPNNAuYxe8S91/bapQ8D6dbC5b+nKpe+SyG1WsqeSr6WxQMBShtiAOn0vZ5G94okvJyjgiEwRBSXrwKnfjA+2hMKWURGMHxf8sDiLp/BGM8BCHpYuEcSmuFf6PXkWYsiU8+G42o7auliy7Wyeo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FULWZXYE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8822C4CEFB;
+	Sun, 16 Nov 2025 17:06:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763312783;
+	bh=sE5PAkx03kSWVxfn6P/KcKgNoFqgW26StGDSttnoICA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FULWZXYEYNfsWVuphzDEmuHpZCY7ou6y7Z8MsRuLjfoJVtckvvtAsAIwpYVhm6PR4
+	 nJGXcMRZ9wnTVfBToQ6bQgbDhSmeahEcv8PJpTfmJ/ajABcYPPJLJjTvzOnPhwakFC
+	 2UsHX2XgerJB5RoR3lRx8r2krOXsIbuoOGq4cChptjXfzXbB+Mtc3AF3RtKZnIXFUw
+	 +RJKlQbSHDF7u+k47gqrdq50JXRjaE/K54OKknbiCOHrR4MB00n9ur7qCJ/H01t9sv
+	 78sKtPik2J136oJlb9SguRGKwaoeB8RpY2vgEd8LgIgtdMn1Ln2y6jOOe6HiC+lo5w
+	 jMu29QI/z5xEQ==
+Date: Sun, 16 Nov 2025 19:05:58 +0200
+From: Mike Rapoport <rppt@kernel.org>
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com,
+	dmatlack@google.com, rientjes@google.com, corbet@lwn.net,
+	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com,
+	kanie@linux.alibaba.com, ojeda@kernel.org, aliceryhl@google.com,
+	masahiroy@kernel.org, akpm@linux-foundation.org, tj@kernel.org,
+	yoann.congal@smile.fr, mmaurer@google.com, roman.gushchin@linux.dev,
+	chenridong@huawei.com, axboe@kernel.dk, mark.rutland@arm.com,
+	jannh@google.com, vincent.guittot@linaro.org, hannes@cmpxchg.org,
+	dan.j.williams@intel.com, david@redhat.com,
+	joel.granados@kernel.org, rostedt@goodmis.org,
+	anna.schumaker@oracle.com, song@kernel.org, linux@weissschuh.net,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-mm@kvack.org, gregkh@linuxfoundation.org, tglx@linutronix.de,
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+	x86@kernel.org, hpa@zytor.com, rafael@kernel.org, dakr@kernel.org,
+	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com,
+	myungjoo.ham@samsung.com, yesanishhere@gmail.com,
+	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com,
+	aleksander.lobakin@intel.com, ira.weiny@intel.com,
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de,
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com,
+	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net,
+	brauner@kernel.org, linux-api@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, saeedm@nvidia.com,
+	ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com,
+	leonro@nvidia.com, witu@nvidia.com, hughd@google.com,
+	skhawaja@google.com, chrisl@kernel.org
+Subject: Re: [PATCH v6 04/20] liveupdate: luo_session: add sessions support
+Message-ID: <aRoEduya5EO8Xc1b@kernel.org>
+References: <20251115233409.768044-1-pasha.tatashin@soleen.com>
+ <20251115233409.768044-5-pasha.tatashin@soleen.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251115233409.768044-1-pasha.tatashin@soleen.com>
- <20251115233409.768044-3-pasha.tatashin@soleen.com> <aRnG8wDSSAtkEI_z@kernel.org>
-In-Reply-To: <aRnG8wDSSAtkEI_z@kernel.org>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Sun, 16 Nov 2025 09:55:30 -0500
-X-Gm-Features: AWmQ_bmM-aRBqtNYsNPIqAwGT0quxlyXWlezggSpTwsXJzseK1QN4lUsqunxqQU
-Message-ID: <CA+CK2bDu2FdzyotSwBpGwQtiisv=3f6gC7DzOpebPCxmmpwMYw@mail.gmail.com>
-Subject: Re: [PATCH v6 02/20] liveupdate: luo_core: integrate with KHO
-To: Mike Rapoport <rppt@kernel.org>
-Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com, 
-	dmatlack@google.com, rientjes@google.com, corbet@lwn.net, 
-	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, 
-	ojeda@kernel.org, aliceryhl@google.com, masahiroy@kernel.org, 
-	akpm@linux-foundation.org, tj@kernel.org, yoann.congal@smile.fr, 
-	mmaurer@google.com, roman.gushchin@linux.dev, chenridong@huawei.com, 
-	axboe@kernel.dk, mark.rutland@arm.com, jannh@google.com, 
-	vincent.guittot@linaro.org, hannes@cmpxchg.org, dan.j.williams@intel.com, 
-	david@redhat.com, joel.granados@kernel.org, rostedt@goodmis.org, 
-	anna.schumaker@oracle.com, song@kernel.org, linux@weissschuh.net, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
-	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com, 
-	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
-	rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org, 
-	cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com, 
-	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com, 
-	aleksander.lobakin@intel.com, ira.weiny@intel.com, 
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
-	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net, 
-	brauner@kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	saeedm@nvidia.com, ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com, 
-	leonro@nvidia.com, witu@nvidia.com, hughd@google.com, skhawaja@google.com, 
-	chrisl@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251115233409.768044-5-pasha.tatashin@soleen.com>
 
-On Sun, Nov 16, 2025 at 7:43=E2=80=AFAM Mike Rapoport <rppt@kernel.org> wro=
-te:
->
-> On Sat, Nov 15, 2025 at 06:33:48PM -0500, Pasha Tatashin wrote:
-> > Integrate the LUO with the KHO framework to enable passing LUO state
-> > across a kexec reboot.
-> >
-> > When LUO is transitioned to a "prepared" state, it tells KHO to
-> > finalize, so all memory segments that were added to KHO preservation
-> > list are getting preserved. After "Prepared" state no new segments
-> > can be preserved. If LUO is canceled, it also tells KHO to cancel the
-> > serialization, and therefore, later LUO can go back into the prepared
-> > state.
-> >
-> > This patch introduces the following changes:
-> > - During the KHO finalization phase allocate FDT blob.
->
-> This happens much earlier, isn't it?
+On Sat, Nov 15, 2025 at 06:33:50PM -0500, Pasha Tatashin wrote:
+> Introduce concept of "Live Update Sessions" within the LUO framework.
+> LUO sessions provide a mechanism to group and manage `struct file *`
+> instances (representing file descriptors) that need to be preserved
+> across a kexec-based live update.
+> 
+> Each session is identified by a unique name and acts as a container
+> for file objects whose state is critical to a userspace workload, such
+> as a virtual machine or a high-performance database, aiming to maintain
+> their functionality across a kernel transition.
+> 
+> This groundwork establishes the framework for preserving file-backed
+> state across kernel updates, with the actual file data preservation
+> mechanisms to be implemented in subsequent patches.
+> 
+> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+> ---
+>  include/linux/liveupdate/abi/luo.h |  83 +++++-
+>  include/uapi/linux/liveupdate.h    |   3 +
+>  kernel/liveupdate/Makefile         |   3 +-
+>  kernel/liveupdate/luo_core.c       |  10 +
+>  kernel/liveupdate/luo_internal.h   |  52 ++++
+>  kernel/liveupdate/luo_session.c    | 421 +++++++++++++++++++++++++++++
+>  6 files changed, 570 insertions(+), 2 deletions(-)
+>  create mode 100644 kernel/liveupdate/luo_internal.h
+>  create mode 100644 kernel/liveupdate/luo_session.c
 
-It is, this commit log needs to be updated, it still talks about
-prepare/cancel, where they are since v5 replaced with
-preserve/unfreeze.
+...
 
->
-> > - Populate this FDT with a LUO compatibility string ("luo-v1").
-> >
-> > LUO now depends on `CONFIG_KEXEC_HANDOVER`. The core state transition
-> > logic (`luo_do_*_calls`) remains unimplemented in this patch.
-> >
-> > Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
-> > ---
-> >  include/linux/liveupdate/abi/luo.h |  54 ++++++++++
-> >  kernel/liveupdate/luo_core.c       | 153 ++++++++++++++++++++++++++++-
-> >  2 files changed, 206 insertions(+), 1 deletion(-)
-> >  create mode 100644 include/linux/liveupdate/abi/luo.h
-> >
-> > diff --git a/include/linux/liveupdate/abi/luo.h b/include/linux/liveupd=
-ate/abi/luo.h
-> > new file mode 100644
-> > index 000000000000..9483a294287f
-> > --- /dev/null
-> > +++ b/include/linux/liveupdate/abi/luo.h
-> > @@ -0,0 +1,54 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 */
-> > +
-> > +/*
-> > + * Copyright (c) 2025, Google LLC.
-> > + * Pasha Tatashin <pasha.tatashin@soleen.com>
-> > + */
-> > +
-> > +/**
-> > + * DOC: Live Update Orchestrator ABI
-> > + *
-> > + * This header defines the stable Application Binary Interface used by=
- the
-> > + * Live Update Orchestrator to pass state from a pre-update kernel to =
-a
-> > + * post-update kernel. The ABI is built upon the Kexec HandOver framew=
-ork
-> > + * and uses a Flattened Device Tree to describe the preserved data.
-> > + *
-> > + * This interface is a contract. Any modification to the FDT structure=
-, node
-> > + * properties, compatible strings, or the layout of the `__packed` ser=
-ialization
-> > + * structures defined here constitutes a breaking change. Such changes=
- require
-> > + * incrementing the version number in the relevant `_COMPATIBLE` strin=
-g to
-> > + * prevent a new kernel from misinterpreting data from an old kernel.
->
-> I'd add a sentence that stresses that ABI changes are possible as long th=
-ey
-> include changes to the FDT version.
-> This is indeed implied by the last paragraph, but I think it's worth
-> spelling it explicitly.
->
-> Another thing that I think this should mention is that compatibility is
-> only guaranteed for the kernels that use the same ABI version.
+> +/**
+> + * struct luo_session_ser - Represents the serialized metadata for a LUO session.
+> + * @name:    The unique name of the session, copied from the `luo_session`
+> + *           structure.
 
-Sure, I will add both.
+I'd phase it as
 
-> > + *
-> > + * FDT Structure Overview:
-> > + *   The entire LUO state is encapsulated within a single KHO entry na=
-med "LUO".
-> > + *   This entry contains an FDT with the following layout:
-> > + *
-> > + *   .. code-block:: none
-> > + *
-> > + *     / {
-> > + *         compatible =3D "luo-v1";
-> > + *         liveupdate-number =3D <...>;
-> > + *     };
-> > + *
-> > + * Main LUO Node (/):
-> > + *
-> > + *   - compatible: "luo-v1"
-> > + *     Identifies the overall LUO ABI version.
-> > + *   - liveupdate-number: u64
-> > + *     A counter tracking the number of successful live updates perfor=
-med.
-> > + */
-> ...
->
-> > +static int __init liveupdate_early_init(void)
-> > +{
-> > +     int err;
-> > +
-> > +     err =3D luo_early_startup();
-> > +     if (err) {
-> > +             pr_err("The incoming tree failed to initialize properly [=
-%pe], disabling live update\n",
-> > +                    ERR_PTR(err));
->
-> How do we report this to the userspace?
-> I think the decision what to do in this case belongs there. Even if it's
-> down to choosing between plain kexec and full reboot, it's still a policy
-> that should be implemented in userspace.
+		The unique name of the session provided by the userspace at
+		the time of session creation.
 
-I agree that policy belongs in userspace, and that is how we designed
-it. In this specific failure case (ABI mismatch or corrupt FDT), the
-preserved state is unrecoverable by the kernel. We cannot parse the
-incoming data, so we cannot offer it to userspace.
+> + * @files:   The physical address of a contiguous memory block that holds
+> + *           the serialized state of files.
 
-We report this state by not registering the /dev/liveupdate device.
-When the userspace agent attempts to initialize, it receives ENOENT.
-At that point, the agent exercises its policy:
+Maybe add                                    ^ in this session?
 
-- Check dmesg for the specific error and report the failure to the
-fleet control plane.
-- Trigger a fresh (kexec or cold) reboot to reset unreclaimable resources.
+> + * @pgcnt:   The number of pages occupied by the `files` memory block.
+> + * @count:   The total number of files that were part of this session during
+> + *           serialization. Used for iteration and validation during
+> + *           restoration.
+> + *
+> + * This structure is used to package session-specific metadata for transfer
+> + * between kernels via Kexec Handover. An array of these structures (one per
+> + * session) is created and passed to the new kernel, allowing it to reconstruct
+> + * the session context.
+> + *
+> + * If this structure is modified, LUO_SESSION_COMPATIBLE must be updated.
 
-Pasha
+This comment applies to the luo_session_header_ser description as well.
+
+> + */
+> +struct luo_session_ser {
+> +	char name[LIVEUPDATE_SESSION_NAME_LENGTH];
+> +	u64 files;
+> +	u64 pgcnt;
+> +	u64 count;
+> +} __packed;
+> +
+>  #endif /* _LINUX_LIVEUPDATE_ABI_LUO_H */
+> diff --git a/include/uapi/linux/liveupdate.h b/include/uapi/linux/liveupdate.h
+> index df34c1642c4d..d2ef2f7e0dbd 100644
+> --- a/include/uapi/linux/liveupdate.h
+> +++ b/include/uapi/linux/liveupdate.h
+> @@ -43,4 +43,7 @@
+>  /* The ioctl type, documented in ioctl-number.rst */
+>  #define LIVEUPDATE_IOCTL_TYPE		0xBA
+>  
+> +/* The maximum length of session name including null termination */
+> +#define LIVEUPDATE_SESSION_NAME_LENGTH 56
+
+You decided not to bump it to 64 in the end? ;-)
+
+> +
+>  #endif /* _UAPI_LIVEUPDATE_H */
+> diff --git a/kernel/liveupdate/Makefile b/kernel/liveupdate/Makefile
+> index 413722002b7a..83285e7ad726 100644
+> --- a/kernel/liveupdate/Makefile
+> +++ b/kernel/liveupdate/Makefile
+> @@ -2,7 +2,8 @@
+>  
+>  luo-y :=								\
+>  		luo_core.o						\
+> -		luo_ioctl.o
+> +		luo_ioctl.o						\
+> +		luo_session.o
+>  
+>  obj-$(CONFIG_KEXEC_HANDOVER)		+= kexec_handover.o
+>  obj-$(CONFIG_KEXEC_HANDOVER_DEBUG)	+= kexec_handover_debug.o
+
+...
+
+> +int luo_session_retrieve(const char *name, struct file **filep)
+> +{
+> +	struct luo_session_header *sh = &luo_session_global.incoming;
+> +	struct luo_session *session = NULL;
+> +	struct luo_session *it;
+> +	int err;
+> +
+> +	scoped_guard(rwsem_read, &sh->rwsem) {
+> +		list_for_each_entry(it, &sh->list, list) {
+> +			if (!strncmp(it->name, name, sizeof(it->name))) {
+> +				session = it;
+> +				break;
+> +			}
+> +		}
+> +	}
+> +
+> +	if (!session)
+> +		return -ENOENT;
+> +
+> +	scoped_guard(mutex, &session->mutex) {
+> +		if (session->retrieved)
+> +			return -EINVAL;
+> +	}
+> +
+> +	err = luo_session_getfile(session, filep);
+> +	if (!err) {
+> +		scoped_guard(mutex, &session->mutex)
+> +			session->retrieved = true;
+
+Retaking the mutex here seems a bit odd. 
+Do we really have to lock session->mutex in luo_session_getfile()?
+
+> +	}
+> +
+> +	return err;
+> +}
+
+...
+
+> +int __init luo_session_setup_incoming(void *fdt_in)
+> +{
+> +	struct luo_session_header_ser *header_ser;
+> +	int err, header_size, offset;
+> +	u64 header_ser_pa;
+> +	const void *ptr;
+> +
+> +	offset = fdt_subnode_offset(fdt_in, 0, LUO_FDT_SESSION_NODE_NAME);
+> +	if (offset < 0) {
+> +		pr_err("Unable to get session node: [%s]\n",
+> +		       LUO_FDT_SESSION_NODE_NAME);
+> +		return -EINVAL;
+> +	}
+> +
+> +	err = fdt_node_check_compatible(fdt_in, offset,
+> +					LUO_FDT_SESSION_COMPATIBLE);
+> +	if (err) {
+> +		pr_err("Session node incompatible [%s]\n",
+> +		       LUO_FDT_SESSION_COMPATIBLE);
+> +		return -EINVAL;
+> +	}
+> +
+> +	header_size = 0;
+> +	ptr = fdt_getprop(fdt_in, offset, LUO_FDT_SESSION_HEADER, &header_size);
+> +	if (!ptr || header_size != sizeof(u64)) {
+> +		pr_err("Unable to get session header '%s' [%d]\n",
+> +		       LUO_FDT_SESSION_HEADER, header_size);
+> +		return -EINVAL;
+> +	}
+> +
+> +	header_ser_pa = get_unaligned((u64 *)ptr);
+> +	header_ser = phys_to_virt(header_ser_pa);
+> +
+> +	luo_session_global.incoming.header_ser = header_ser;
+> +	luo_session_global.incoming.ser = (void *)(header_ser + 1);
+> +	INIT_LIST_HEAD(&luo_session_global.incoming.list);
+> +	init_rwsem(&luo_session_global.incoming.rwsem);
+> +	luo_session_global.incoming.active = true;
+> +
+> +	return 0;
+> +}
+> +
+> +bool luo_session_is_deserialized(void)
+> +{
+> +	return luo_session_global.deserialized;
+> +}
+> +
+> +int luo_session_deserialize(void)
+> +{
+> +	struct luo_session_header *sh = &luo_session_global.incoming;
+> +	int err;
+> +
+> +	if (luo_session_is_deserialized())
+> +		return 0;
+> +
+> +	luo_session_global.deserialized = true;
+> +	if (!sh->active) {
+> +		INIT_LIST_HEAD(&sh->list);
+> +		init_rwsem(&sh->rwsem);
+> +		return 0;
+
+How this can happen? luo_session_deserialize() is supposed to be called
+from ioctl and luo_session_global.incoming should be set up way earlier.
+
+And, why don't we initialize ->list and ->rwsem statically?
+
+> +	}
+> +
+> +	for (int i = 0; i < sh->header_ser->count; i++) {
+> +		struct luo_session *session;
+> +
+> +		session = luo_session_alloc(sh->ser[i].name);
+> +		if (IS_ERR(session)) {
+> +			pr_warn("Failed to allocate session [%s] during deserialization %pe\n",
+> +				sh->ser[i].name, session);
+> +			return PTR_ERR(session);
+> +		}
+
+The allocated sessions still need to be freed if an insert fails ;-)
+
+> +
+> +		err = luo_session_insert(sh, session); 
+> +		if (err) {
+> +			luo_session_free(session);
+> +			pr_warn("Failed to insert session [%s] %pe\n",
+> +				session->name, ERR_PTR(err));
+> +			return err;
+> +		}
+> +
+> +		session->count = sh->ser[i].count;
+> +		session->files = sh->ser[i].files ? phys_to_virt(sh->ser[i].files) : 0;
+> +		session->pgcnt = sh->ser[i].pgcnt;
+> +	}
+> +
+> +	kho_restore_free(sh->header_ser);
+> +	sh->header_ser = NULL;
+> +	sh->ser = NULL;
+> +
+> +	return 0;
+> +}
+
+-- 
+Sincerely yours,
+Mike.
 
