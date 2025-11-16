@@ -1,93 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-68605-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68606-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 844E3C613D3
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Nov 2025 12:46:25 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3B5AC613EB
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Nov 2025 12:51:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8D91E35DB84
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Nov 2025 11:46:22 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3913135D081
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Nov 2025 11:51:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E41512BDC3E;
-	Sun, 16 Nov 2025 11:46:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE4622C11DF;
+	Sun, 16 Nov 2025 11:51:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="tR5be4N8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CE0A16D9C2
-	for <linux-fsdevel@vger.kernel.org>; Sun, 16 Nov 2025 11:46:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DB6F201278;
+	Sun, 16 Nov 2025 11:51:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763293567; cv=none; b=G86gNLKg5V+KuZwIleyaDyJziMpaBIXBFUKMoE5mQKvUUmDzkqHUG56Jjo4HspnYFxw3xlazKvDLYftp5K5H+PenGvzPG/QmwId3CUZhcWdU6WJhJ7rI/8t326zi2fwLQsN5o+eRPoPln7jl/segfBxfz93aIb1m2A3Fia6xKOM=
+	t=1763293901; cv=none; b=I0etOF+5c/EvM2V3s9SH4DbFGYu+Zry82Ujl/vs35IaENHLEpPO40l1Rheeb7QGDN+yJ8eVdBQNxe8GFF0Pj6GfA+6vmoXtwZNeCkVLJxQHYpE8VXKAa4pD1OzNzNBHcrAxr+RPk3xuI8WGwL+JyEKW07RGyWGNeXPgzn2v61N8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763293567; c=relaxed/simple;
-	bh=yGAwkub6rt9vLAhGWICf4t2U/chgu3O41SupnrFW5Xg=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=cBIQBd/ctyeCqwbN3pVMg3vBNiPjH+qE2xIHH0Yxbkb6+53cYqZvsJIMFbur6BAGgmJlr6HYmvj3Gf7AI0W76QVUOsnpgl+3o1oqNVrCTuQv6Y1iALgVkgCCWMSLpwUMWHprZNEW7s6xScs1iRNV99FAK+UsUf+KEPIlKvLZejc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-948fb707ca7so78375439f.0
-        for <linux-fsdevel@vger.kernel.org>; Sun, 16 Nov 2025 03:46:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763293563; x=1763898363;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fBGUdra7I0KPg9A8GJPQU74ijMDEHlDWO+T4yNix8O8=;
-        b=UkGT08YlRMKc9AUWwljV9UphZEgEk1VIGX4RmnnWZjvMylFZvQ0XCpvQu+evQ+vT/3
-         HNaheY7r2uqAKXKM81n6eOe81WMFe1+Uy0aUTXj1QXKcMzs2Axz2bjb8xbofqSfQsoTx
-         rTXb6Gn6popm7iyUHTAkf36+6uKP9bRwexsfntuHziuOa7l7PHNTpV6dtkpM8mrGIoGq
-         JBk1bCL0ISroe6JZG/un0oCYN3rKx7aRl5Tt71UrgQR/oYR5rHN+C2LE4FzSQWHTRdmR
-         2W3RTGbQgYqB+gXyORnTfu372NvVXQwe2n8D86UNwGfAluqDaXk003vZo86T8r9Q0vRU
-         DfGA==
-X-Forwarded-Encrypted: i=1; AJvYcCUFIdxV0W1sTzJ+G4UBVr9YEUdkZnqVfXmSsB76MjaBiUp5jO+vHjx5vEcsgYOBo+pUadv5DW51CmUeqoR1@vger.kernel.org
-X-Gm-Message-State: AOJu0YymZl1vKgBCcWXQPuYVZRLhv/5+m7IVqNziKXeBvh/3Gen5SJZ7
-	2/aH8DChc9T34E5kbD9Pub6Djdo3zoKiN7fhfu2XUoQfJ2GQx7V0tGCJoTqwphZl3LdbpmZF7CU
-	jArbLxEUwfACegoOKNj13/b4k+XdN0DS/vOfIPRTeVnaGMfjaL30WQQvY+Fw=
-X-Google-Smtp-Source: AGHT+IFDaEzOVJjzE1l206Xg8DiBkhgPO85Zzi/e2ALGTYYCQDYltjniZalDFu2ErwC4GP84EOWq9rBYCTx6CIki6c6FH4cj2Vju
+	s=arc-20240116; t=1763293901; c=relaxed/simple;
+	bh=DVTqHgvj/7b2wg+60/ovYcqGcYReV+koF/0UPF6xvtM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xb9a4hV+c51acd2tTxbfBFIHZXwv5/D24b6qtjf9hdzuFM8RLrWEnibiYKFRu97yI7gg5Jzhs0pWRqh9itiRaxopczqBwdFmVipvOyulRVSHJutaub1httzXPkx1x97bMF5K18E9GQzwNUCRz1MivNpOIbQpv37ZEvC4FGgVgVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=tR5be4N8; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=pz4BJwDyaALcHK3BMUpJeAT6g0IIQz8aJIQbynT13Jc=; b=tR5be4N8jR/gONcUW9m+u85yKY
+	BoyXLT7+NeCHca4j1SubH/JuFKIaLjhZxsrI8BoJy2o2hDKtAokJLs0hJunMQi/8BWXQbc1rtzweZ
+	XQ7FiMEJogdOLNTQ6k/9nrqq0KDP3FdA3JoojqeLQuOfCVJapf7Dwg+z+axpYn7ZwFAheBDRDrBxn
+	J54Ydo5HI0vJDaU/8mc1seP/vC5w557HnjAMRalYiJrIs9apje2KaL2TaXEZu4r7l1NTdhn4Ssfln
+	xJ8Pzcf4t2lHZoGNuhkLIA6AfYs8Em2bcEn+SNo1lP6Ev8VfJupnHGk5B1RT+pE7JmMErU1JhpIOC
+	5EC8ZXGA==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vKbHm-0000000CFKM-15FF;
+	Sun, 16 Nov 2025 11:51:14 +0000
+Date: Sun, 16 Nov 2025 11:51:14 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Jiaqi Yan <jiaqiyan@google.com>
+Cc: nao.horiguchi@gmail.com, linmiaohe@huawei.com, ziy@nvidia.com,
+	david@redhat.com, lorenzo.stoakes@oracle.com,
+	william.roche@oracle.com, harry.yoo@oracle.com, tony.luck@intel.com,
+	wangkefeng.wang@huawei.com, jane.chu@oracle.com,
+	akpm@linux-foundation.org, osalvador@suse.de, muchun.song@linux.dev,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v1 1/2] mm/huge_memory: introduce
+ uniform_split_unmapped_folio_to_zero_order
+Message-ID: <aRm6shtKizyrq_TA@casper.infradead.org>
+References: <20251116014721.1561456-1-jiaqiyan@google.com>
+ <20251116014721.1561456-2-jiaqiyan@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:c:b0:434:96ea:ff71 with SMTP id
- e9e14a558f8ab-43496eb02b9mr94585865ab.33.1763293563248; Sun, 16 Nov 2025
- 03:46:03 -0800 (PST)
-Date: Sun, 16 Nov 2025 03:46:03 -0800
-In-Reply-To: <68ed75c7.050a0220.91a22.01ee.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6919b97b.a70a0220.3124cb.007c.GAE@google.com>
-Subject: Re: [syzbot] [exfat?] KASAN: stack-out-of-bounds Read in exfat_nls_to_ucs2
-From: syzbot <syzbot+29934710e7fb9cb71f33@syzkaller.appspotmail.com>
-To: aha310510@gmail.com, eadavis@qq.com, ethan.ferguson@zetier.com, 
-	linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, sj1557.seo@samsung.com, 
-	syzkaller-bugs@googlegroups.com, yuezhang.mo@sony.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251116014721.1561456-2-jiaqiyan@google.com>
 
-syzbot suspects this issue was fixed by commit:
+On Sun, Nov 16, 2025 at 01:47:20AM +0000, Jiaqi Yan wrote:
+> Introduce uniform_split_unmapped_folio_to_zero_order, a wrapper
+> to the existing __split_unmapped_folio. Caller can use it to
+> uniformly split an unmapped high-order folio into 0-order folios.
 
-commit 2d8636119b92970ba135c3c4da87d24dbfdeb8ca
-Author: Jeongjun Park <aha310510@gmail.com>
-Date:   Wed Oct 15 07:34:54 2025 +0000
+Please don't make this function exist.  I appreciate what you're trying
+to do, but let's try to do it differently?
 
-    exfat: fix out-of-bounds in exfat_nls_to_ucs2()
+When we have struct folio separately allocated from struct page,
+splitting a folio will mean allocating new struct folios for every
+new folio created.  I anticipate an order-0 folio will be about 80 or
+96 bytes.  So if we create 512 * 512 folios in a single go, that'll be
+an allocation of 20MB.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17f5a212580000
-start commit:   67029a49db6c Merge tag 'trace-v6.18-3' of git://git.kernel..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1921939e847e6e87
-dashboard link: https://syzkaller.appspot.com/bug?extid=29934710e7fb9cb71f33
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11aa067c580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12ba29e2580000
+This is why I asked Zi Yan to create the asymmetrical folio split, so we
+only end up creating log() of this.  In the case of a single hwpoison page
+in an order-18 hugetlb, that'd be 19 allocations totallying 1520 bytes.
 
-If the result looks correct, please mark the issue as fixed by replying with:
-
-#syz fix: exfat: fix out-of-bounds in exfat_nls_to_ucs2()
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+But since we're only doing this on free, we won't need to do folio
+allocations at all; we'll just be able to release the good pages to the
+page allocator and sequester the hwpoison pages.
 
