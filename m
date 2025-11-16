@@ -1,47 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-68614-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68615-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F88AC618EE
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Nov 2025 18:08:06 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A61CC61947
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Nov 2025 18:16:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 06D0E4EBBCB
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Nov 2025 17:06:33 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTPS id 83162291C5
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Nov 2025 17:16:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42CDD30CD91;
-	Sun, 16 Nov 2025 17:06:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E011130EF91;
+	Sun, 16 Nov 2025 17:16:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FULWZXYE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jujxuJqf"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ECAC2F5B;
-	Sun, 16 Nov 2025 17:06:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 345D9286A7;
+	Sun, 16 Nov 2025 17:16:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763312783; cv=none; b=QFi5oX9og4T/TqwMhdFIKuca8DTjIJXwSjpYm5hB9uafWDyUi69OCzZAlKr7H2cZ5MtbSWHzxFbQOF5HzS2K+VtpmaOh3eSqYUS29nu3Rh0zkG6guZHDum8nR2rhtRo5NHnkrUOHO3aYazC8v95alxQWBmCcfCybEJJwToird/E=
+	t=1763313373; cv=none; b=IM3PeKEAj1WgZLkEYqkxSxggGIK7peQw6aoFBhNt7H+pEUPpU26Fa2cFgj5LNQSa1s1DyNhyJQofItNw0WdUoS5m3ePNf7lgH/TDUO2cPxIRIuo/NJIe/1yMWFBHMyKLjSaL8mu1lSUNeRnZd0GC4/qA6ut3VcnAZ46qhgzTVLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763312783; c=relaxed/simple;
-	bh=sE5PAkx03kSWVxfn6P/KcKgNoFqgW26StGDSttnoICA=;
+	s=arc-20240116; t=1763313373; c=relaxed/simple;
+	bh=/aS5zOK93eyNIDDSGRNBWnqRTTEpByObHgcF6orN4Iw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mGlIo3c42t9dXropnhcRjEV/WTPNNAuYxe8S91/bapQ8D6dbC5b+nKpe+SyG1WsqeSr6WxQMBShtiAOn0vZ5G94okvJyjgiEwRBSXrwKnfjA+2hMKWURGMHxf8sDiLp/BGM8BCHpYuEcSmuFf6PXkWYsiU8+G42o7auliy7Wyeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FULWZXYE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8822C4CEFB;
-	Sun, 16 Nov 2025 17:06:01 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=sdz0dx0/0JtHbAt0DYKyuzM2Rjj9fHL59+PUvRzo2ORGQUfqyPazjpWp3bRyKy2oGokn+1rViv58T9jBApP/YGxEHSUETihGmhS4pkN8JVBOVE/5SSZg77KhfEq0Ed83339wsYyAfPo77cj6tEP/CRWXDALEDz/29+kVDRKOKQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jujxuJqf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CB34C16AAE;
+	Sun, 16 Nov 2025 17:15:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763312783;
-	bh=sE5PAkx03kSWVxfn6P/KcKgNoFqgW26StGDSttnoICA=;
+	s=k20201202; t=1763313371;
+	bh=/aS5zOK93eyNIDDSGRNBWnqRTTEpByObHgcF6orN4Iw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FULWZXYEYNfsWVuphzDEmuHpZCY7ou6y7Z8MsRuLjfoJVtckvvtAsAIwpYVhm6PR4
-	 nJGXcMRZ9wnTVfBToQ6bQgbDhSmeahEcv8PJpTfmJ/ajABcYPPJLJjTvzOnPhwakFC
-	 2UsHX2XgerJB5RoR3lRx8r2krOXsIbuoOGq4cChptjXfzXbB+Mtc3AF3RtKZnIXFUw
-	 +RJKlQbSHDF7u+k47gqrdq50JXRjaE/K54OKknbiCOHrR4MB00n9ur7qCJ/H01t9sv
-	 78sKtPik2J136oJlb9SguRGKwaoeB8RpY2vgEd8LgIgtdMn1Ln2y6jOOe6HiC+lo5w
-	 jMu29QI/z5xEQ==
-Date: Sun, 16 Nov 2025 19:05:58 +0200
+	b=jujxuJqfEHQLA+NHUZtmuGW81W1OL1qTjc5WyfrkQftkmGPK/zBQzbVt9iCpAA1oe
+	 eV4iWJF8aZwgSEzgVawAZxt6qwtJM9riD1s2xCfBtZnVaDJfY67sYec8l1E1BwUGrT
+	 ne0AXCC4cEGXSAx9hONsxDx+NWdin5jmGJYp/cO7PKIOsTy1QaBsMS2gIq8/8sXSKW
+	 dh3f6gm9soJeSlOw/UkCWIHfFz9ybmiZ4kOWi9ldf9L7+Kh0CAbx+9nji2SbQuZb1A
+	 k2Cm/rs2qWps2B0rjtvlV6TbhjGTKw0yACvKl1vuToWrd3hYf33MI0d3CJqGaXy8sA
+	 A/YK4OZgtqdWg==
+Date: Sun, 16 Nov 2025 19:15:47 +0200
 From: Mike Rapoport <rppt@kernel.org>
 To: Pasha Tatashin <pasha.tatashin@soleen.com>
 Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com,
@@ -71,10 +71,10 @@ Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com,
 	ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com,
 	leonro@nvidia.com, witu@nvidia.com, hughd@google.com,
 	skhawaja@google.com, chrisl@kernel.org
-Subject: Re: [PATCH v6 04/20] liveupdate: luo_session: add sessions support
-Message-ID: <aRoEduya5EO8Xc1b@kernel.org>
+Subject: Re: [PATCH v6 05/20] liveupdate: luo_ioctl: add user interface
+Message-ID: <aRoGw9gml3vozrbz@kernel.org>
 References: <20251115233409.768044-1-pasha.tatashin@soleen.com>
- <20251115233409.768044-5-pasha.tatashin@soleen.com>
+ <20251115233409.768044-6-pasha.tatashin@soleen.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -83,246 +83,266 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251115233409.768044-5-pasha.tatashin@soleen.com>
+In-Reply-To: <20251115233409.768044-6-pasha.tatashin@soleen.com>
 
-On Sat, Nov 15, 2025 at 06:33:50PM -0500, Pasha Tatashin wrote:
-> Introduce concept of "Live Update Sessions" within the LUO framework.
-> LUO sessions provide a mechanism to group and manage `struct file *`
-> instances (representing file descriptors) that need to be preserved
-> across a kexec-based live update.
+On Sat, Nov 15, 2025 at 06:33:51PM -0500, Pasha Tatashin wrote:
+> Introduce the user-space interface for the Live Update Orchestrator
+> via ioctl commands, enabling external control over the live update
+> process and management of preserved resources.
 > 
-> Each session is identified by a unique name and acts as a container
-> for file objects whose state is critical to a userspace workload, such
-> as a virtual machine or a high-performance database, aiming to maintain
-> their functionality across a kernel transition.
+> The idea is that there is going to be a single userspace agent driving
+> the live update, therefore, only a single process can ever hold this
+> device opened at a time.
 > 
-> This groundwork establishes the framework for preserving file-backed
-> state across kernel updates, with the actual file data preservation
-> mechanisms to be implemented in subsequent patches.
+> The following ioctl commands are introduced:
+> 
+> LIVEUPDATE_IOCTL_CREATE_SESSION
+> Provides a way for userspace to create a named session for grouping file
+> descriptors that need to be preserved. It returns a new file descriptor
+> representing the session.
+> 
+> LIVEUPDATE_IOCTL_RETRIEVE_SESSION
+> Allows the userspace agent in the new kernel to reclaim a preserved
+> session by its name, receiving a new file descriptor to manage the
+> restored resources.
 > 
 > Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
 > ---
->  include/linux/liveupdate/abi/luo.h |  83 +++++-
->  include/uapi/linux/liveupdate.h    |   3 +
->  kernel/liveupdate/Makefile         |   3 +-
->  kernel/liveupdate/luo_core.c       |  10 +
->  kernel/liveupdate/luo_internal.h   |  52 ++++
->  kernel/liveupdate/luo_session.c    | 421 +++++++++++++++++++++++++++++
->  6 files changed, 570 insertions(+), 2 deletions(-)
->  create mode 100644 kernel/liveupdate/luo_internal.h
->  create mode 100644 kernel/liveupdate/luo_session.c
-
-...
-
-> +/**
-> + * struct luo_session_ser - Represents the serialized metadata for a LUO session.
-> + * @name:    The unique name of the session, copied from the `luo_session`
-> + *           structure.
-
-I'd phase it as
-
-		The unique name of the session provided by the userspace at
-		the time of session creation.
-
-> + * @files:   The physical address of a contiguous memory block that holds
-> + *           the serialized state of files.
-
-Maybe add                                    ^ in this session?
-
-> + * @pgcnt:   The number of pages occupied by the `files` memory block.
-> + * @count:   The total number of files that were part of this session during
-> + *           serialization. Used for iteration and validation during
-> + *           restoration.
-> + *
-> + * This structure is used to package session-specific metadata for transfer
-> + * between kernels via Kexec Handover. An array of these structures (one per
-> + * session) is created and passed to the new kernel, allowing it to reconstruct
-> + * the session context.
-> + *
-> + * If this structure is modified, LUO_SESSION_COMPATIBLE must be updated.
-
-This comment applies to the luo_session_header_ser description as well.
-
-> + */
-> +struct luo_session_ser {
-> +	char name[LIVEUPDATE_SESSION_NAME_LENGTH];
-> +	u64 files;
-> +	u64 pgcnt;
-> +	u64 count;
-> +} __packed;
-> +
->  #endif /* _LINUX_LIVEUPDATE_ABI_LUO_H */
+>  include/uapi/linux/liveupdate.h  |  66 +++++++++++-
+>  kernel/liveupdate/luo_internal.h |  21 ++++
+>  kernel/liveupdate/luo_ioctl.c    | 178 +++++++++++++++++++++++++++++++
+>  3 files changed, 264 insertions(+), 1 deletion(-)
+> 
 > diff --git a/include/uapi/linux/liveupdate.h b/include/uapi/linux/liveupdate.h
-> index df34c1642c4d..d2ef2f7e0dbd 100644
+> index d2ef2f7e0dbd..6e04254ee535 100644
 > --- a/include/uapi/linux/liveupdate.h
 > +++ b/include/uapi/linux/liveupdate.h
-> @@ -43,4 +43,7 @@
->  /* The ioctl type, documented in ioctl-number.rst */
+> @@ -44,6 +44,70 @@
 >  #define LIVEUPDATE_IOCTL_TYPE		0xBA
 >  
-> +/* The maximum length of session name including null termination */
-> +#define LIVEUPDATE_SESSION_NAME_LENGTH 56
-
-You decided not to bump it to 64 in the end? ;-)
-
+>  /* The maximum length of session name including null termination */
+> -#define LIVEUPDATE_SESSION_NAME_LENGTH 56
+> +#define LIVEUPDATE_SESSION_NAME_LENGTH 64
 > +
+> +/* The /dev/liveupdate ioctl commands */
+> +enum {
+> +	LIVEUPDATE_CMD_BASE = 0x00,
+> +	LIVEUPDATE_CMD_CREATE_SESSION = LIVEUPDATE_CMD_BASE,
+> +	LIVEUPDATE_CMD_RETRIEVE_SESSION = 0x01,
+> +};
+> +
+> +/**
+> + * struct liveupdate_ioctl_create_session - ioctl(LIVEUPDATE_IOCTL_CREATE_SESSION)
+> + * @size:	Input; sizeof(struct liveupdate_ioctl_create_session)
+> + * @fd:		Output; The new file descriptor for the created session.
+> + * @name:	Input; A null-terminated string for the session name, max
+> + *		length %LIVEUPDATE_SESSION_NAME_LENGTH including termination
+> + *		char.
+
+Nit:          ^ character
+
+> + *
+> + * Creates a new live update session for managing preserved resources.
+> + * This ioctl can only be called on the main /dev/liveupdate device.
+> + *
+> + * Return: 0 on success, negative error code on failure.
+> + */
+> +struct liveupdate_ioctl_create_session {
+> +	__u32		size;
+> +	__s32		fd;
+> +	__u8		name[LIVEUPDATE_SESSION_NAME_LENGTH];
+> +};
+> +
+> +#define LIVEUPDATE_IOCTL_CREATE_SESSION					\
+> +	_IO(LIVEUPDATE_IOCTL_TYPE, LIVEUPDATE_CMD_CREATE_SESSION)
+> +
+> +/**
+> + * struct liveupdate_ioctl_retrieve_session - ioctl(LIVEUPDATE_IOCTL_RETRIEVE_SESSION)
+> + * @size:    Input; sizeof(struct liveupdate_ioctl_retrieve_session)
+> + * @fd:      Output; The new file descriptor for the retrieved session.
+> + * @name:    Input; A null-terminated string identifying the session to retrieve.
+> + *           The name must exactly match the name used when the session was
+> + *           created in the previous kernel.
+> + *
+> + * Retrieves a handle (a new file descriptor) for a preserved session by its
+> + * name. This is the primary mechanism for a userspace agent to regain control
+> + * of its preserved resources after a live update.
+> + *
+> + * The userspace application provides the null-terminated `name` of a session
+> + * it created before the live update. If a preserved session with a matching
+> + * name is found, the kernel instantiates it and returns a new file descriptor
+> + * in the `fd` field. This new session FD can then be used for all file-specific
+> + * operations, such as restoring individual file descriptors with
+> + * LIVEUPDATE_SESSION_RETRIEVE_FD.
+> + *
+> + * It is the responsibility of the userspace application to know the names of
+> + * the sessions it needs to retrieve. If no session with the given name is
+> + * found, the ioctl will fail with -ENOENT.
+> + *
+> + * This ioctl can only be called on the main /dev/liveupdate device when the
+> + * system is in the LIVEUPDATE_STATE_UPDATED state.
+> + */
+> +struct liveupdate_ioctl_retrieve_session {
+> +	__u32		size;
+> +	__s32		fd;
+> +	__u8		name[LIVEUPDATE_SESSION_NAME_LENGTH];
+> +};
+> +
+> +#define LIVEUPDATE_IOCTL_RETRIEVE_SESSION \
+> +	_IO(LIVEUPDATE_IOCTL_TYPE, LIVEUPDATE_CMD_RETRIEVE_SESSION)
+>  
 >  #endif /* _UAPI_LIVEUPDATE_H */
-> diff --git a/kernel/liveupdate/Makefile b/kernel/liveupdate/Makefile
-> index 413722002b7a..83285e7ad726 100644
-> --- a/kernel/liveupdate/Makefile
-> +++ b/kernel/liveupdate/Makefile
-> @@ -2,7 +2,8 @@
+> diff --git a/kernel/liveupdate/luo_internal.h b/kernel/liveupdate/luo_internal.h
+> index 245373edfa6f..5185ad37a8c1 100644
+> --- a/kernel/liveupdate/luo_internal.h
+> +++ b/kernel/liveupdate/luo_internal.h
+> @@ -9,6 +9,27 @@
+>  #define _LINUX_LUO_INTERNAL_H
 >  
->  luo-y :=								\
->  		luo_core.o						\
-> -		luo_ioctl.o
-> +		luo_ioctl.o						\
-> +		luo_session.o
->  
->  obj-$(CONFIG_KEXEC_HANDOVER)		+= kexec_handover.o
->  obj-$(CONFIG_KEXEC_HANDOVER_DEBUG)	+= kexec_handover_debug.o
-
-...
-
-> +int luo_session_retrieve(const char *name, struct file **filep)
+>  #include <linux/liveupdate.h>
+> +#include <linux/uaccess.h>
+> +
+> +struct luo_ucmd {
+> +	void __user *ubuffer;
+> +	u32 user_size;
+> +	void *cmd;
+> +};
+> +
+> +static inline int luo_ucmd_respond(struct luo_ucmd *ucmd,
+> +				   size_t kernel_cmd_size)
 > +{
-> +	struct luo_session_header *sh = &luo_session_global.incoming;
-> +	struct luo_session *session = NULL;
-> +	struct luo_session *it;
+> +	/*
+> +	 * Copy the minimum of what the user provided and what we actually
+> +	 * have.
+> +	 */
+> +	if (copy_to_user(ucmd->ubuffer, ucmd->cmd,
+> +			 min_t(size_t, ucmd->user_size, kernel_cmd_size))) {
+> +		return -EFAULT;
+> +	}
+> +	return 0;
+> +}
+>  
+>  /**
+>   * struct luo_session - Represents an active or incoming Live Update session.
+> diff --git a/kernel/liveupdate/luo_ioctl.c b/kernel/liveupdate/luo_ioctl.c
+> index 44d365185f7c..367385efa962 100644
+> --- a/kernel/liveupdate/luo_ioctl.c
+> +++ b/kernel/liveupdate/luo_ioctl.c
+> @@ -5,15 +5,192 @@
+>   * Pasha Tatashin <pasha.tatashin@soleen.com>
+>   */
+>  
+> +/**
+> + * DOC: LUO ioctl Interface
+> + *
+> + * The IOCTL user-space control interface for the LUO subsystem.
+> + * It registers a character device, typically found at ``/dev/liveupdate``,
+> + * which allows a userspace agent to manage the LUO state machine and its
+> + * associated resources, such as preservable file descriptors.
+> + *
+> + * To ensure that the state machine is controlled by a single entity, access
+> + * to this device is exclusive: only one process is permitted to have
+> + * ``/dev/liveupdate`` open at any given time. Subsequent open attempts will
+> + * fail with -EBUSY until the first process closes its file descriptor.
+> + * This singleton model simplifies state management by preventing conflicting
+> + * commands from multiple userspace agents.
+> + */
+> +
+> +#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+> +
+> +#include <linux/atomic.h>
+> +#include <linux/errno.h>
+> +#include <linux/file.h>
+> +#include <linux/fs.h>
+> +#include <linux/init.h>
+> +#include <linux/kernel.h>
+>  #include <linux/liveupdate.h>
+>  #include <linux/miscdevice.h>
+> +#include <uapi/linux/liveupdate.h>
+> +#include "luo_internal.h"
+>  
+>  struct luo_device_state {
+>  	struct miscdevice miscdev;
+> +	atomic_t in_use;
+> +};
+> +
+> +static int luo_ioctl_create_session(struct luo_ucmd *ucmd)
+> +{
+> +	struct liveupdate_ioctl_create_session *argp = ucmd->cmd;
+> +	struct file *file;
 > +	int err;
 > +
-> +	scoped_guard(rwsem_read, &sh->rwsem) {
-> +		list_for_each_entry(it, &sh->list, list) {
-> +			if (!strncmp(it->name, name, sizeof(it->name))) {
-> +				session = it;
-> +				break;
-> +			}
-> +		}
-> +	}
+> +	argp->fd = get_unused_fd_flags(O_CLOEXEC);
+> +	if (argp->fd < 0)
+> +		return argp->fd;
 > +
-> +	if (!session)
-> +		return -ENOENT;
+> +	err = luo_session_create(argp->name, &file);
+> +	if (err)
+> +		goto err_put_fd;
 > +
-> +	scoped_guard(mutex, &session->mutex) {
-> +		if (session->retrieved)
-> +			return -EINVAL;
-> +	}
+> +	err = luo_ucmd_respond(ucmd, sizeof(*argp));
+> +	if (err)
+> +		goto err_put_file;
 > +
-> +	err = luo_session_getfile(session, filep);
-> +	if (!err) {
-> +		scoped_guard(mutex, &session->mutex)
-> +			session->retrieved = true;
-
-Retaking the mutex here seems a bit odd. 
-Do we really have to lock session->mutex in luo_session_getfile()?
-
-> +	}
+> +	fd_install(argp->fd, file);
+> +
+> +	return 0;
+> +
+> +err_put_file:
+> +	fput(file);
+> +err_put_fd:
+> +	put_unused_fd(argp->fd);
 > +
 > +	return err;
 > +}
-
-...
-
-> +int __init luo_session_setup_incoming(void *fdt_in)
+> +
+> +static int luo_ioctl_retrieve_session(struct luo_ucmd *ucmd)
 > +{
-> +	struct luo_session_header_ser *header_ser;
-> +	int err, header_size, offset;
-> +	u64 header_ser_pa;
-> +	const void *ptr;
-> +
-> +	offset = fdt_subnode_offset(fdt_in, 0, LUO_FDT_SESSION_NODE_NAME);
-> +	if (offset < 0) {
-> +		pr_err("Unable to get session node: [%s]\n",
-> +		       LUO_FDT_SESSION_NODE_NAME);
-> +		return -EINVAL;
-> +	}
-> +
-> +	err = fdt_node_check_compatible(fdt_in, offset,
-> +					LUO_FDT_SESSION_COMPATIBLE);
-> +	if (err) {
-> +		pr_err("Session node incompatible [%s]\n",
-> +		       LUO_FDT_SESSION_COMPATIBLE);
-> +		return -EINVAL;
-> +	}
-> +
-> +	header_size = 0;
-> +	ptr = fdt_getprop(fdt_in, offset, LUO_FDT_SESSION_HEADER, &header_size);
-> +	if (!ptr || header_size != sizeof(u64)) {
-> +		pr_err("Unable to get session header '%s' [%d]\n",
-> +		       LUO_FDT_SESSION_HEADER, header_size);
-> +		return -EINVAL;
-> +	}
-> +
-> +	header_ser_pa = get_unaligned((u64 *)ptr);
-> +	header_ser = phys_to_virt(header_ser_pa);
-> +
-> +	luo_session_global.incoming.header_ser = header_ser;
-> +	luo_session_global.incoming.ser = (void *)(header_ser + 1);
-> +	INIT_LIST_HEAD(&luo_session_global.incoming.list);
-> +	init_rwsem(&luo_session_global.incoming.rwsem);
-> +	luo_session_global.incoming.active = true;
-> +
-> +	return 0;
-> +}
-> +
-> +bool luo_session_is_deserialized(void)
-> +{
-> +	return luo_session_global.deserialized;
-> +}
-> +
-> +int luo_session_deserialize(void)
-> +{
-> +	struct luo_session_header *sh = &luo_session_global.incoming;
+> +	struct liveupdate_ioctl_retrieve_session *argp = ucmd->cmd;
+> +	struct file *file;
 > +	int err;
 > +
-> +	if (luo_session_is_deserialized())
-> +		return 0;
+> +	argp->fd = get_unused_fd_flags(O_CLOEXEC);
+> +	if (argp->fd < 0)
+> +		return argp->fd;
 > +
-> +	luo_session_global.deserialized = true;
-> +	if (!sh->active) {
-> +		INIT_LIST_HEAD(&sh->list);
-> +		init_rwsem(&sh->rwsem);
-> +		return 0;
+> +	err = luo_session_retrieve(argp->name, &file);
+> +	if (err < 0)
+> +		goto err_put_fd;
+> +
+> +	err = luo_ucmd_respond(ucmd, sizeof(*argp));
+> +	if (err)
+> +		goto err_put_file;
+> +
+> +	fd_install(argp->fd, file);
+> +
+> +	return 0;
+> +
+> +err_put_file:
+> +	fput(file);
+> +err_put_fd:
+> +	put_unused_fd(argp->fd);
+> +
+> +	return err;
+> +}
+> +
+> +static int luo_open(struct inode *inodep, struct file *filep)
+> +{
+> +	struct luo_device_state *ldev = container_of(filep->private_data,
+> +						     struct luo_device_state,
+> +						     miscdev);
+> +
+> +	if (atomic_cmpxchg(&ldev->in_use, 0, 1))
+> +		return -EBUSY;
+> +
+> +	luo_session_deserialize();
 
-How this can happen? luo_session_deserialize() is supposed to be called
-from ioctl and luo_session_global.incoming should be set up way earlier.
+Why luo_session_deserialize() is tied to the first open of the chardev?
 
-And, why don't we initialize ->list and ->rwsem statically?
-
-> +	}
-> +
-> +	for (int i = 0; i < sh->header_ser->count; i++) {
-> +		struct luo_session *session;
-> +
-> +		session = luo_session_alloc(sh->ser[i].name);
-> +		if (IS_ERR(session)) {
-> +			pr_warn("Failed to allocate session [%s] during deserialization %pe\n",
-> +				sh->ser[i].name, session);
-> +			return PTR_ERR(session);
-> +		}
-
-The allocated sessions still need to be freed if an insert fails ;-)
-
-> +
-> +		err = luo_session_insert(sh, session); 
-> +		if (err) {
-> +			luo_session_free(session);
-> +			pr_warn("Failed to insert session [%s] %pe\n",
-> +				session->name, ERR_PTR(err));
-> +			return err;
-> +		}
-> +
-> +		session->count = sh->ser[i].count;
-> +		session->files = sh->ser[i].files ? phys_to_virt(sh->ser[i].files) : 0;
-> +		session->pgcnt = sh->ser[i].pgcnt;
-> +	}
-> +
-> +	kho_restore_free(sh->header_ser);
-> +	sh->header_ser = NULL;
-> +	sh->ser = NULL;
 > +
 > +	return 0;
 > +}
+> +
 
 -- 
 Sincerely yours,
