@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-68608-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68609-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94045C61406
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Nov 2025 12:55:04 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54624C61445
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Nov 2025 13:02:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4008735DACC
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Nov 2025 11:55:04 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 821404EA2B5
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Nov 2025 12:02:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE4042C21F7;
-	Sun, 16 Nov 2025 11:54:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18D472C21DF;
+	Sun, 16 Nov 2025 12:01:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="W6/ozjk2"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="ct94zb+Y"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
+Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EC2A2C21EA;
-	Sun, 16 Nov 2025 11:54:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89F0A27B358;
+	Sun, 16 Nov 2025 12:01:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763294098; cv=none; b=tzRnGroe4oVnce34MTifXwgKimg9EnwZtyls9/oJWxj/6uHZwk9YESpX0V8B6bFghIeB09AxzMs6BPgAZCt2FbG1wjtNqB3HQorKjVFUDs0YG7K7F3ommHZnQ+fHwU2OgDtc59aJfHoGNMXSRPotqKE92r1AeJnRc1QY0lRB+Ns=
+	t=1763294498; cv=none; b=AMbcZAMncBE6d4gAmEo2TLUrPlfRgPmgRNhQPVKv8VDiQafpUG5tyN4gD8zpFdHvx/DEQWslKBw+2rOpOHjQG+nyHqGU/w/B5pYZhSw+ODb4F3LGy8Udv7gu8kOup130g/QmRfHXl3t2trQOH0YgXcidVNSlUD4/qjaZ0UtMFyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763294098; c=relaxed/simple;
-	bh=xtk8UQzrIzPbNaQvN2j0/EIZALpVBPnp+tlD9FHVG/I=;
+	s=arc-20240116; t=1763294498; c=relaxed/simple;
+	bh=6h324CmcpE1QnCciiHMSZSzKHPisb2qv228GlvfkZRg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ErzzTkEL2dc1+maZSCOEUCzBzRlN8YvYC2lDWUxyuTIdV1WohEpegR85CSVXB2iBaDbXg5h3x0MnLZZEJIHA5cEP/2e1jB47kzcZsU7nLwyKVtA8naWTtaTRgjZE4h4oLHxKJSfWg5pZ911yz1Jg0K+GJlgC5R/oAX9JfT/qpzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=W6/ozjk2; arc=none smtp.client-ip=115.124.30.97
+	 In-Reply-To:Content-Type; b=XdzDVb9kodMv86UvU5T+62zZeL1XpfCH1UpuU6DdiL22H4gnZLxXI3VxOOYp7w4dkYtQUJl/tIFWVuWpk1I6oDmvTVK4s3EQd9JJs/gVHqOcqlT6sB3gl1E0AvSElihVKOBZ3nVqDICHFRwJbPDwzvESwWVpMIyV/jnHPqxgqxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=ct94zb+Y; arc=none smtp.client-ip=115.124.30.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
 DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
 	d=linux.alibaba.com; s=default;
-	t=1763294087; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=4v60toLnC7F9DIrdXiLX89QoxpYhFyqY7LCwty780Vs=;
-	b=W6/ozjk2T9hvtvLrA8ogA8Zl0Qx0bZOVmgMjyDf3BouuKiDuwlRNtk6jaSj7neF/bA7rXxyiHZHKvB9x/I7bEAr4FctO3sIMStrVPMd4aYhxn43dCtpVBaz9coTeg0vK+quQStq2epd3pZZrYdoczhDhYJso6XjvRO234Q22tiU=
-Received: from 30.170.196.81(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WsSHQp._1763294083 cluster:ay36)
+	t=1763294485; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=gneyMDW+YpWlILj4VMhSNxwPUQEUD67fBdmsbKndoUU=;
+	b=ct94zb+Ye/jPP4TzyHNuArUBTFGNIutZGWjOmU7MAhqka1fByfD+mgoH65z6crqANcmZC5tKkFHJ+NVzfgpOrYxFq2IdhD2Oc/ChY/QqOXoLK9jwd9j5zqkSDC0GaVZgz9uCPcKAuMgo3RoYqgBoG/sdFsgnTcqFu/YIUAXzhgg=
+Received: from 30.170.196.81(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WsSHSBM_1763294484 cluster:ay36)
           by smtp.aliyun-inc.com;
-          Sun, 16 Nov 2025 19:54:44 +0800
-Message-ID: <9e121004-fa70-4461-932b-9d30fd3733cc@linux.alibaba.com>
-Date: Sun, 16 Nov 2025 19:54:43 +0800
+          Sun, 16 Nov 2025 20:01:25 +0800
+Message-ID: <f714479d-703c-4fc6-ad5a-b18d92f0a9b7@linux.alibaba.com>
+Date: Sun, 16 Nov 2025 20:01:24 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -48,43 +48,206 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 1/9] iomap: stash iomap read ctx in the private field
- of iomap_iter
+Subject: Re: [PATCH v8 2/9] erofs: hold read context in iomap_iter if needed
 To: Hongbo Li <lihongbo22@huawei.com>, chao@kernel.org, brauner@kernel.org,
  djwong@kernel.org, amir73il@gmail.com, joannelkoong@gmail.com
 Cc: linux-fsdevel@vger.kernel.org, linux-erofs@lists.ozlabs.org,
  linux-kernel@vger.kernel.org
 References: <20251114095516.207555-1-lihongbo22@huawei.com>
- <20251114095516.207555-2-lihongbo22@huawei.com>
+ <20251114095516.207555-3-lihongbo22@huawei.com>
 From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <20251114095516.207555-2-lihongbo22@huawei.com>
+In-Reply-To: <20251114095516.207555-3-lihongbo22@huawei.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 
 
 On 2025/11/14 17:55, Hongbo Li wrote:
-> It's useful to get filesystem-specific information using the
-> existing private field in the @iomap_iter passed to iomap_{begin,end}
-> for advanced usage for iomap buffered reads, which is much like the
-> current iomap DIO.
+> Uncoming page cache sharing needs pass read context to iomap_iter,
+> here we unify the way of passing the read context in EROFS. Moreover,
+> bmap and fiemap don't need to map the inline data.
 > 
-> For example, EROFS needs it to:
-> 
->   - implement an efficient page cache sharing feature, since iomap
->     needs to apply to anon inode page cache but we'd like to get the
->     backing inode/fs instead, so filesystem-specific private data is
->     needed to keep such information;
-> 
->   - pass in both struct page * and void * for inline data to avoid
->     kmap_to_page() usage (which is bogus).
+> Note that we keep `struct page *` in `struct erofs_iomap_iter_ctx` as
+> well to avoid bogus kmap_to_page usage.
 > 
 > Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
+> ---
+>   fs/erofs/data.c | 79 ++++++++++++++++++++++++++++++++++++-------------
+>   1 file changed, 59 insertions(+), 20 deletions(-)
+> 
+> diff --git a/fs/erofs/data.c b/fs/erofs/data.c
+> index bb13c4cb8455..bd3d85c61341 100644
+> --- a/fs/erofs/data.c
+> +++ b/fs/erofs/data.c
+> @@ -266,14 +266,23 @@ void erofs_onlinefolio_end(struct folio *folio, int err, bool dirty)
+>   	folio_end_read(folio, !(v & BIT(EROFS_ONLINEFOLIO_EIO)));
+>   }
+>   
+> +struct erofs_iomap_iter_ctx {
+> +	struct page *page;
+> +	void *base;
+> +};
+> +
+>   static int erofs_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
+>   		unsigned int flags, struct iomap *iomap, struct iomap *srcmap)
+>   {
+>   	int ret;
+> +	struct erofs_iomap_iter_ctx *ctx;
+>   	struct super_block *sb = inode->i_sb;
+>   	struct erofs_map_blocks map;
+>   	struct erofs_map_dev mdev;
+> +	struct iomap_iter *iter;
+>   
+> +	iter = container_of(iomap, struct iomap_iter, iomap);
+> +	ctx = iter->private;
 
-LGTM, and I think the case 2) is useful even without
-the main feature:
+Can you just rearrange it as:
 
-Reviewed-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+	struct iomap_iter *iter = container_of(iomap, struct iomap_iter, iomap);
+	struct erofs_iomap_iter_ctx *ctx = iter->private;
+
+?
+
+>   	map.m_la = offset;
+>   	map.m_llen = length;
+>   	ret = erofs_map_blocks(inode, &map);
+> @@ -283,7 +292,8 @@ static int erofs_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
+>   	iomap->offset = map.m_la;
+>   	iomap->length = map.m_llen;
+>   	iomap->flags = 0;
+> -	iomap->private = NULL;
+> +	if (ctx)
+> +		ctx->base = NULL;
+
+I think this line is unnecessary if iter->private == ctx;
+
+>   	iomap->addr = IOMAP_NULL_ADDR;
+>   	if (!(map.m_flags & EROFS_MAP_MAPPED)) {
+>   		iomap->type = IOMAP_HOLE;
+> @@ -309,16 +319,20 @@ static int erofs_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
+>   	}
+>   
+>   	if (map.m_flags & EROFS_MAP_META) {
+> -		void *ptr;
+> -		struct erofs_buf buf = __EROFS_BUF_INITIALIZER;
+> -
+>   		iomap->type = IOMAP_INLINE;
+> -		ptr = erofs_read_metabuf(&buf, sb, map.m_pa,
+> -					 erofs_inode_in_metabox(inode));
+> -		if (IS_ERR(ptr))
+> -			return PTR_ERR(ptr);
+> -		iomap->inline_data = ptr;
+> -		iomap->private = buf.base;
+> +		/* read context should read the inlined data */
+> +		if (ctx) {
+> +			void *ptr;
+> +			struct erofs_buf buf = __EROFS_BUF_INITIALIZER;
+
+better to resort them as:
+			struct erofs_buf buf = __EROFS_BUF_INITIALIZER;
+			void *ptr;
+
+> +
+> +			ptr = erofs_read_metabuf(&buf, sb, map.m_pa,
+> +						 erofs_inode_in_metabox(inode));
+> +			if (IS_ERR(ptr))
+> +				return PTR_ERR(ptr);
+> +			iomap->inline_data = ptr;
+> +			ctx->page = buf.page;
+> +			ctx->base = buf.base;
+> +		}
+>   	} else {
+>   		iomap->type = IOMAP_MAPPED;
+>   	}
+> @@ -328,18 +342,19 @@ static int erofs_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
+>   static int erofs_iomap_end(struct inode *inode, loff_t pos, loff_t length,
+>   		ssize_t written, unsigned int flags, struct iomap *iomap)
+>   {
+> -	void *ptr = iomap->private;
+> +	struct erofs_iomap_iter_ctx *ctx;
+> +	struct iomap_iter *iter;
+>   
+> -	if (ptr) {
+> +	iter = container_of(iomap, struct iomap_iter, iomap);
+> +	ctx = iter->private;
+> +	if (ctx && ctx->base) {
+>   		struct erofs_buf buf = {
+> -			.page = kmap_to_page(ptr),
+> -			.base = ptr,
+> +			.page = ctx->page,
+> +			.base = ctx->base,
+>   		};
+>   
+>   		DBG_BUGON(iomap->type != IOMAP_INLINE);
+>   		erofs_put_metabuf(&buf);
+
+so need to nullify ctx->base here:
+
+		ctx->base = NULL;
+
+> -	} else {
+> -		DBG_BUGON(iomap->type == IOMAP_INLINE);
+>   	}
+>   	return written;
+>   }
+> @@ -369,18 +384,36 @@ int erofs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+>    */
+>   static int erofs_read_folio(struct file *file, struct folio *folio)
+>   {
+> +	struct iomap_read_folio_ctx read_ctx = {
+> +		.ops		= &iomap_bio_read_ops,
+> +		.cur_folio	= folio,
+> +	};
+> +	struct erofs_iomap_iter_ctx iter_ctx = {
+> +		.page		= NULL,
+> +		.base		= NULL,
+> +	};
+
+it can be initialized just by:
+	struct erofs_iomap_iter_ctx iter_ctx = {};
+
+> +
+>   	trace_erofs_read_folio(folio, true);
+>   
+> -	iomap_bio_read_folio(folio, &erofs_iomap_ops);
+> +	iomap_read_folio(&erofs_iomap_ops, &read_ctx, &iter_ctx);
+>   	return 0;
+>   }
+>   
+>   static void erofs_readahead(struct readahead_control *rac)
+>   {
+> +	struct iomap_read_folio_ctx read_ctx = {
+> +		.ops		= &iomap_bio_read_ops,
+> +		.rac		= rac,
+> +	};
+> +	struct erofs_iomap_iter_ctx iter_ctx = {
+> +		.page		= NULL,
+> +		.base		= NULL,
+> +	};
+
+Same here.
+
+> +
+>   	trace_erofs_readahead(rac->mapping->host, readahead_index(rac),
+>   					readahead_count(rac), true);
+>   
+> -	iomap_bio_readahead(rac, &erofs_iomap_ops);
+> +	iomap_readahead(&erofs_iomap_ops, &read_ctx, &iter_ctx);
+>   }
+>   
+>   static sector_t erofs_bmap(struct address_space *mapping, sector_t block)
+> @@ -400,9 +433,15 @@ static ssize_t erofs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+>   	if (IS_DAX(inode))
+>   		return dax_iomap_rw(iocb, to, &erofs_iomap_ops);
+>   #endif
+> -	if ((iocb->ki_flags & IOCB_DIRECT) && inode->i_sb->s_bdev)
+> +	if ((iocb->ki_flags & IOCB_DIRECT) && inode->i_sb->s_bdev) {
+> +		struct erofs_iomap_iter_ctx iter_ctx = {
+> +			.page = NULL,
+> +			.base = NULL,
+> +		};
+
+Same here again.
 
 Thanks,
 Gao Xiang
