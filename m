@@ -1,70 +1,70 @@
-Return-Path: <linux-fsdevel+bounces-68598-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68599-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49572C60EAF
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Nov 2025 02:48:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BCF12C60EB2
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Nov 2025 02:48:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4040E3B1B8E
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Nov 2025 01:47:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 081253BD565
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Nov 2025 01:47:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B93D921D3DC;
-	Sun, 16 Nov 2025 01:47:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CBC71DA23;
+	Sun, 16 Nov 2025 01:47:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nPp+9hLO"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fMyDMWoz"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E63C17A2E8
-	for <linux-fsdevel@vger.kernel.org>; Sun, 16 Nov 2025 01:47:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B2D7219A86
+	for <linux-fsdevel@vger.kernel.org>; Sun, 16 Nov 2025 01:47:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763257648; cv=none; b=EX4FzKSzSrFEZfdZJJvSnaB8I1jeXHQGUJQALC1mWLfoWDxoe2/fZTBUAnPRDANxxUJi5BijmdjPZfg8h2K0ZNjgvh2o5kv4MF7US1xSvlXVYvHup4lY+zxwcD/dhu/FaZhYl6knv8ytyEXy3JOlHYql9w/qlTPLeyW8SOoPOOw=
+	t=1763257649; cv=none; b=qiPl49OrZuEMXchW8n1lR9mL/oLS3VKvZ6vluw+pcUPnN1tVs8evzZwobCvHDSn6WA+Fl7H/cTv2uWnf0ZN5xFXG7kOglWiqMAxM5/zPywKGuS2BPwzbwmkq2woAlKHb/EszSQqv4EdplpE9YF74jJPZ6y0G+cXMBdKF5j5Z2n0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763257648; c=relaxed/simple;
-	bh=56cMUgnKf+QaHfDzv3rUqe4MzNOeCRhzSSrVCQXlcxc=;
+	s=arc-20240116; t=1763257649; c=relaxed/simple;
+	bh=uyaZF+lF6L8ptszVVGKgVrp5Zdu7E4WsbkiWNa/nfUg=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=lXIRqc2vq7VmX7tneQy47UXtPdH781CXmxp7cCfUkEm5nauPP+PP3awQto3pzV+gu1QUk1PfSxc1Xejj214v7bV0Hp9PDnzknX68gItnAC/cOkNM8LRHZWfuq3ylUgtYlzZj0cwrFcRZkSJWGMQxoUMJM0KIg2ziDLMv5B4kIuc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jiaqiyan.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nPp+9hLO; arc=none smtp.client-ip=209.85.216.73
+	 To:Cc:Content-Type; b=TXimZwybtZsR+R4Vm6acm4hUFnsC/lahw7iDcMHXL3EfsnhcoZrE2sFGyFnW0/hSVz5q7fYFyqvgoZjaZaERt8w3U9xoM2g81/mbYE/s7Xm0AXbSPLFbXYUwazLp4T1Xvlo9X87gCnv5XrUrO3JZSetF/AhrV1sUhX6peTqslVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jiaqiyan.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fMyDMWoz; arc=none smtp.client-ip=209.85.216.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jiaqiyan.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-343e17d7ed5so3746579a91.0
-        for <linux-fsdevel@vger.kernel.org>; Sat, 15 Nov 2025 17:47:26 -0800 (PST)
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-340c0604e3dso3969479a91.2
+        for <linux-fsdevel@vger.kernel.org>; Sat, 15 Nov 2025 17:47:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1763257646; x=1763862446; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1763257647; x=1763862447; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8iahc/OE7c9HoKRDc0duvnCB5sVq2ZelHCgN4s7hCPM=;
-        b=nPp+9hLOz1wIoI4UevvUSi8X8yvg8fNaxbZTp43dXN7W6v2Ii7V66HOkjakWKYZzzE
-         HacvoCw7gUm9aOjSnWIeJaiEkhsz/cq43eEcjb502ht9c7PjtEy8jwchjRxNEqdr2JRv
-         EZjOdQ7S74krvRn2LcLwNrL7elhXiH1wWELb9pQle2VK+sr3yo3Qx1/5dK53QjICzcU1
-         kQIdHKHSTQ6XaScvt4n3nnBYWCMADFGjoqo6Ewk4UW7TQKB2bJw7+wbh+nr94RKyWfS1
-         IzFmKwNG3pxkrJGfxWAlBoW3w+TFiTTFlMVvaeRscgU1leaA4PFWM2qDCigqK0GInbr+
-         /zgA==
+        bh=ydqY8kHaLqM8e+ckUd1GoyNEbjtXYhx/4GzlhdYJPLg=;
+        b=fMyDMWozbrb5BfRiljWMQSZzEe0aWv1+q/mxVFZ/MyXodqTLv5Ma+z2zfuS9HLOiTG
+         xFeQFwavoMrucVTvLUfk46/g9ItiNJ+vCzivLpZt1cRPBj/pH3japS31PhODAInsII8m
+         7W+GzfAn9VHj7GURMFHNk7OA2OExMBEuUKxefnELE3mmzzhX8glmDQ3C7Wz0YjyDIfzg
+         Wo+EXkjCIj+Z4Y/AOEMFGkqoHFsIjI/IqMC5MKBC8E2lSpGJ1NlulKJjfViv+ttbDv6Q
+         2ke0FJt+3SYjNnPdx9Rc6BOKzUZsDDhMHtmdQ1Zi1pRD4ZloThQDfBwX3rWuYMUDImXO
+         k6HA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763257646; x=1763862446;
+        d=1e100.net; s=20230601; t=1763257647; x=1763862447;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8iahc/OE7c9HoKRDc0duvnCB5sVq2ZelHCgN4s7hCPM=;
-        b=J7/FqnTJMHtA0yGrsTEo8bubBOiTA53h3kon3RvbMJMVew4Z6ORDw1j1ESLieA/mk2
-         ElLUKbkXMPsJ9bq6wEonUSNjTb43iDIf0+S3UB+/rC4NPllI1QunM/Ddim8HbG6KGCxz
-         23rPgzGMOY8OYli9GzG3cpR3+f7wxRmpDmFsB6ZGc3EPgRbZuj+icjR1D1bzZNNixoys
-         HUjhjcZZZDh1ftR1OWpiYAxwnxoFKj7B/pr5puZyrlflVdNdePFFzkdgoUjXj43TP0nP
-         DWMNjeJwdJuLw1V7tr06x+bMPiF8qH0/2xhE9Xf/bbi7W5tm6YSzgIwoPnJ48Le/gyGb
-         8f9A==
-X-Forwarded-Encrypted: i=1; AJvYcCWqMZcTGHXAARd6RjSlCvXT3Yf927QkqXE1UbkTfKpQ1LhiWzItohZriaVq9Jt0Ov9dY7lW9tCkM3xtVKtD@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9sUXT2d4zTCJ3870yTwaL2koS6zbr+D/1nIJM31BCY4awThHS
-	eA+GsJ9L6ktkPLgbjy4yQWGuyyYUHd8+m7kuoDzdC7yifkgK1RkJ6GUbt4XVX5AcJIK1YMK49Q6
-	k08njJm7UcwHHCQ==
-X-Google-Smtp-Source: AGHT+IENVvEwJMRWsbG8t8DKamJf+m7Kq67/5OJ3seeLWXwPuYI2slv5FtZcLQnrkEJ74Z2KnexNe0JoOpqTUg==
-X-Received: from pjod1.prod.google.com ([2002:a17:90a:8d81:b0:33b:b692:47b0])
+        bh=ydqY8kHaLqM8e+ckUd1GoyNEbjtXYhx/4GzlhdYJPLg=;
+        b=dHQMM6yygSKR/Q7wGokfIvWGwfL8DlkasuogrzIpACzatpzrNV2DYl7tfD1n8xDnmv
+         poElfvWGjeB7RUQf1YpMz41rcfAJWWZayJXIbmOpYN7zI3pJcBy8Y7oYEbCDeAQgbO+9
+         H8MQRXpDUXvsIVrL1Jdj8fWbRHWfcrnS9Uac7Y+HhlUIeZeraJjERu8gpZVNIqvGtZz9
+         eaxOUBjIR7R4HwT2izWnvrUz3WqYTDb8UIQxrJGuY5MSNy7SlLezoZPtOraH7Uh+mJ/j
+         aTMoi3u2DH92++kwI3LFLdP7Whyq/bNQSSLTiLCNF6DzFnTzyP5dIaPPZWReTHnqhLiC
+         vcew==
+X-Forwarded-Encrypted: i=1; AJvYcCVsUYxW7zQgo6DEOYj/fHC6MVVOv8m/6g/jnPay3xniKS7fh4+31cQAE/cdiY3pYMQ3RaLUlTZ2suvqoGiN@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzrtAE2sgfrLn181MTiKzgjmSYjQem12Wp4K5G3Xexkt7QAhXq
+	/Ao1UiZdUy9IL3H8nT1HZYbAN536qAK+rvVhl4zY4RY7dEnyb7KU3efXSyK+XBKWAV9M0MiByyU
+	fnmLhlRNTKztExA==
+X-Google-Smtp-Source: AGHT+IG+V3JoR1zxw8jLEaEAc7T7dwC4LvlgdWGc3WKTGU3XOduJztVqaChJIeTyJ4+Ey/Vrzth5e+wjM1k7sA==
+X-Received: from pjbnk23.prod.google.com ([2002:a17:90b:1957:b0:343:c010:4493])
  (user=jiaqiyan job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:90b:1a8a:b0:341:69e3:785a with SMTP id 98e67ed59e1d1-343f9fdf8efmr10663049a91.16.1763257645886;
- Sat, 15 Nov 2025 17:47:25 -0800 (PST)
-Date: Sun, 16 Nov 2025 01:47:20 +0000
+ 2002:a17:90b:3fd0:b0:330:bca5:13d9 with SMTP id 98e67ed59e1d1-343fa732781mr7620970a91.32.1763257647429;
+ Sat, 15 Nov 2025 17:47:27 -0800 (PST)
+Date: Sun, 16 Nov 2025 01:47:21 +0000
 In-Reply-To: <20251116014721.1561456-1-jiaqiyan@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -74,8 +74,8 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20251116014721.1561456-1-jiaqiyan@google.com>
 X-Mailer: git-send-email 2.52.0.rc1.455.g30608eb744-goog
-Message-ID: <20251116014721.1561456-2-jiaqiyan@google.com>
-Subject: [PATCH v1 1/2] mm/huge_memory: introduce uniform_split_unmapped_folio_to_zero_order
+Message-ID: <20251116014721.1561456-3-jiaqiyan@google.com>
+Subject: [PATCH v1 2/2] mm/memory-failure: avoid free HWPoison high-order folio
 From: Jiaqi Yan <jiaqiyan@google.com>
 To: nao.horiguchi@gmail.com, linmiaohe@huawei.com, ziy@nvidia.com
 Cc: david@redhat.com, lorenzo.stoakes@oracle.com, william.roche@oracle.com, 
@@ -86,67 +86,145 @@ Cc: david@redhat.com, lorenzo.stoakes@oracle.com, william.roche@oracle.com,
 	Jiaqi Yan <jiaqiyan@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-When freeing a high-order folio that contains HWPoison pages,
-to ensure these HWPoison pages are not added to buddy allocator,
-we can first uniformly split a free and unmapped high-order folio
-to 0-order folios first, then only add non-HWPoison folios to
-buddy allocator and exclude HWPoison ones.
+At the end of dissolve_free_hugetlb_folio, when a free HugeTLB
+folio becomes non-HugeTLB, it is released to buddy allocator
+as a high-order folio, e.g. a folio that contains 262144 pages
+if the folio was a 1G HugeTLB hugepage.
 
-Introduce uniform_split_unmapped_folio_to_zero_order, a wrapper
-to the existing __split_unmapped_folio. Caller can use it to
-uniformly split an unmapped high-order folio into 0-order folios.
+This is problematic if the HugeTLB hugepage contained HWPoison
+subpages. In that case, since buddy allocator does not check
+HWPoison for non-zero-order folio, the raw HWPoison page can
+be given out with its buddy page and be re-used by either
+kernel or userspace.
 
-No functional change. It will be used in a subsequent commit.
+Memory failure recovery (MFR) in kernel does attempt to take
+raw HWPoison page off buddy allocator after
+dissolve_free_hugetlb_folio. However, there is always a time
+window between freed to buddy allocator and taken off from
+buddy allocator.
+
+One obvious way to avoid this problem is to add page sanity
+checks in page allocate or free path. However, it is against
+the past efforts to reduce sanity check overhead [1,2,3].
+
+Introduce hugetlb_free_hwpoison_folio to solve this problem.
+The idea is, in case a HugeTLB folio for sure contains HWPoison
+page(s), first split the non-HugeTLB high-order folio uniformly
+into 0-order folios, then let healthy pages join the buddy
+allocator while reject the HWPoison ones.
+
+[1] https://lore.kernel.org/linux-mm/1460711275-1130-15-git-send-email-mgorman@techsingularity.net/
+[2] https://lore.kernel.org/linux-mm/1460711275-1130-16-git-send-email-mgorman@techsingularity.net/
+[3] https://lore.kernel.org/all/20230216095131.17336-1-vbabka@suse.cz
 
 Signed-off-by: Jiaqi Yan <jiaqiyan@google.com>
 ---
- include/linux/huge_mm.h | 6 ++++++
- mm/huge_memory.c        | 8 ++++++++
- 2 files changed, 14 insertions(+)
+ include/linux/hugetlb.h |  4 ++++
+ mm/hugetlb.c            |  8 ++++++--
+ mm/memory-failure.c     | 43 +++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 53 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index 71ac78b9f834f..ef6a84973e157 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -365,6 +365,7 @@ unsigned long thp_get_unmapped_area_vmflags(struct file *filp, unsigned long add
- 		vm_flags_t vm_flags);
+diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
+index 8e63e46b8e1f0..e1c334a7db2fe 100644
+--- a/include/linux/hugetlb.h
++++ b/include/linux/hugetlb.h
+@@ -870,8 +870,12 @@ int dissolve_free_hugetlb_folios(unsigned long start_pfn,
+ 				    unsigned long end_pfn);
  
- bool can_split_folio(struct folio *folio, int caller_pins, int *pextra_pins);
-+int uniform_split_unmapped_folio_to_zero_order(struct folio *folio);
- int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
- 		unsigned int new_order);
- int min_order_for_split(struct folio *folio);
-@@ -569,6 +570,11 @@ can_split_folio(struct folio *folio, int caller_pins, int *pextra_pins)
- {
- 	return false;
- }
-+static inline int uniform_split_unmapped_folio_to_zero_order(struct folio *folio)
+ #ifdef CONFIG_MEMORY_FAILURE
++extern void hugetlb_free_hwpoison_folio(struct folio *folio);
+ extern void folio_clear_hugetlb_hwpoison(struct folio *folio);
+ #else
++static inline void hugetlb_free_hwpoison_folio(struct folio *folio)
 +{
-+	VM_WARN_ON_ONCE_PAGE(1, page);
-+	return -EINVAL;
 +}
- static inline int
- split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
- 		unsigned int new_order)
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 323654fb4f8cf..c7b6c1c75a18e 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -3515,6 +3515,14 @@ static int __split_unmapped_folio(struct folio *folio, int new_order,
+ static inline void folio_clear_hugetlb_hwpoison(struct folio *folio)
+ {
+ }
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index 0455119716ec0..801ca1a14c0f0 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -1596,6 +1596,7 @@ static void __update_and_free_hugetlb_folio(struct hstate *h,
+ 						struct folio *folio)
+ {
+ 	bool clear_flag = folio_test_hugetlb_vmemmap_optimized(folio);
++	bool has_hwpoison = folio_test_hwpoison(folio);
+ 
+ 	if (hstate_is_gigantic(h) && !gigantic_page_runtime_supported())
+ 		return;
+@@ -1638,12 +1639,15 @@ static void __update_and_free_hugetlb_folio(struct hstate *h,
+ 	 * Move PageHWPoison flag from head page to the raw error pages,
+ 	 * which makes any healthy subpages reusable.
+ 	 */
+-	if (unlikely(folio_test_hwpoison(folio)))
++	if (unlikely(has_hwpoison))
+ 		folio_clear_hugetlb_hwpoison(folio);
+ 
+ 	folio_ref_unfreeze(folio, 1);
+ 
+-	hugetlb_free_folio(folio);
++	if (unlikely(has_hwpoison))
++		hugetlb_free_hwpoison_folio(folio);
++	else
++		hugetlb_free_folio(folio);
+ }
+ 
+ /*
+diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+index 3edebb0cda30b..e6a9deba6292a 100644
+--- a/mm/memory-failure.c
++++ b/mm/memory-failure.c
+@@ -2002,6 +2002,49 @@ int __get_huge_page_for_hwpoison(unsigned long pfn, int flags,
  	return ret;
  }
  
-+int uniform_split_unmapped_folio_to_zero_order(struct folio *folio)
++void hugetlb_free_hwpoison_folio(struct folio *folio)
 +{
-+	return __split_unmapped_folio(folio, /*new_order=*/0,
-+				      /*split_at=*/&folio->page,
-+				      /*xas=*/NULL, /*mapping=*/NULL,
-+				      /*uniform_split=*/true);
++	struct folio *curr, *next;
++	struct folio *end_folio = folio_next(folio);
++	int ret;
++
++	VM_WARN_ON_FOLIO(folio_ref_count(folio) != 1, folio);
++
++	ret = uniform_split_unmapped_folio_to_zero_order(folio);
++	if (ret) {
++		/*
++		 * In case of split failure, none of the pages in folio
++		 * will be freed to buddy allocator.
++		 */
++		pr_err("%#lx: failed to split free %d-order folio with HWPoison page(s): %d\n",
++		       folio_pfn(folio), folio_order(folio), ret);
++		return;
++	}
++
++	/* Expect 1st folio's refcount==1, and other's refcount==0. */
++	for (curr = folio; curr != end_folio; curr = next) {
++		next = folio_next(curr);
++
++		VM_WARN_ON_FOLIO(folio_order(curr), curr);
++
++		if (PageHWPoison(&curr->page)) {
++			if (curr != folio)
++				folio_ref_inc(curr);
++
++			VM_WARN_ON_FOLIO(folio_ref_count(curr) != 1, curr);
++			pr_warn("%#lx: prevented freeing HWPoison page\n",
++				folio_pfn(curr));
++			continue;
++		}
++
++		if (curr == folio)
++			folio_ref_dec(curr);
++
++		VM_WARN_ON_FOLIO(folio_ref_count(curr), curr);
++		free_frozen_pages(&curr->page, folio_order(curr));
++	}
 +}
 +
- bool non_uniform_split_supported(struct folio *folio, unsigned int new_order,
- 		bool warns)
- {
+ /*
+  * Taking refcount of hugetlb pages needs extra care about race conditions
+  * with basic operations like hugepage allocation/free/demotion.
 -- 
 2.52.0.rc1.455.g30608eb744-goog
 
