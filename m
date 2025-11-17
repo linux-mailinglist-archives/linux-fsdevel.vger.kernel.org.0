@@ -1,166 +1,258 @@
-Return-Path: <linux-fsdevel+bounces-68768-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68769-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD1ECC65B8F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Nov 2025 19:30:39 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 483D3C65C16
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Nov 2025 19:42:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 700FA4E18D9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Nov 2025 18:30:36 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTPS id 48E1628EAC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Nov 2025 18:42:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 576DE2E03EC;
-	Mon, 17 Nov 2025 18:30:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3C4131B814;
+	Mon, 17 Nov 2025 18:42:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="XQBhjdNm"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GIKVZNAg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2B992D24BD
-	for <linux-fsdevel@vger.kernel.org>; Mon, 17 Nov 2025 18:30:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 630843161B2
+	for <linux-fsdevel@vger.kernel.org>; Mon, 17 Nov 2025 18:42:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763404228; cv=none; b=f6CKjQpIY6vDwkaRZdCmo+yc2C79VyvxnfnVHvTXEDNfz3V/bUZhFj/B57T7Jn+jtxGPelxg1rFZcfyIWTzl91ttMVSpdgi5SPfrLsGBaJtUmWUZeyVpLD6yNy363qe6wDl8dRsx03s1IgOIL0aVHwTcMivz8DwdAkIHZuFEhEI=
+	t=1763404950; cv=none; b=D2HYH9n7Ykk6NxW0g6jtCcXySvDFp6Pq+iwcbW1EumysAjMEuQKSvPaLGMtXN69LfJ0QCmpUF0cUiyYkt0/7fR1TtbBDxqPDMzxTffiw9tO1wItYfw92KA6UEwVagF5gBBSD5bx2uH7DciWPkZgV2+3UodzI1kVw9VW+T+tKbRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763404228; c=relaxed/simple;
-	bh=XmGPnc3Nhnm1pE/IxNN2voQ/65Pq6bmkez9grZd7nic=;
+	s=arc-20240116; t=1763404950; c=relaxed/simple;
+	bh=9pRuuZLVf8exleeu5aME3a+ZFOSFZVB2RRP475jUT0o=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gfHxARf1+BMWfGDjZJao6JMf1Nz4NcD8hBK97CX8Sp/lbmGiXIt02a7GoY4rhStzOmFo5Xo+DTh+6obK3Kb+qSvugyzYisPvWfNerDzYj9BK2uV4539tymaapeVh4A1e/wjIUItl0Z2YpCgaJ/cDJlU5lxtjCUPlAkaupHQNUH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=XQBhjdNm; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-644fcafdce9so336398a12.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Nov 2025 10:30:26 -0800 (PST)
+	 To:Cc:Content-Type; b=S+hu/L+w1YgjJiXH1V9rfYWlJppMIRU69q/JJ4U4c8FOUB2fXZ2t5p7A4lna5r+0TluA7hfJMBSpMIDWBTBFsh3W5gWmFAuPBvyG6FBBzNzdUmpBuSaBIRfEP/gjtmQJPebORw2Gh8GcBO51Ea2Ti6/YvH2A/8D0nMK6Kd61omU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GIKVZNAg; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-298144fb9bcso49287675ad.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Nov 2025 10:42:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1763404225; x=1764009025; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1763404948; x=1764009748; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=mo7Fpew4SCWgreWKkBa60zvQOZX9oGrQ6m1RkCiDUC0=;
-        b=XQBhjdNm8mbkVN0tkxf1aaX9kmALdiA2V4APUS7DHQrvHclx6lcc8m7Et9wUGYcoKI
-         7xvcriNTjyK4SOHajOKl9I+rQFutvt3f38qj9jcxe9wkcxmh1MwH6usB4A8ZCu9FaXFf
-         /+Zu+vfKRIww2iioDFPLi8AlNVJ0JWKunRiUYUC8+EI4kS+jDsIoWeWs2MX8lo2sNlju
-         c1GdqeCARWjYXtfoYmd+OkrBGdr30CcmwSSwKjbznkJnnG3d6FRRDvQuS6zh9z2Cpx0G
-         o3hpo9e0hmPQK3Ah1hqPEbeFbLzfNPv1WxfNmD/E2lksTn31QuycufYZ/rhB7Cu1qzg+
-         Sggg==
+        bh=+GT+Mvcn48BVfqy5/WD1n2ZA/hN2dz1BCZmhQdhw608=;
+        b=GIKVZNAgAxjmU4lnE5Y4BFk5dlkELgKM5Fkh/dWmNle5s0R4ZR3Gms7tLgFK5uAiSH
+         /260LVr9LwpjxAEAwBk7ydCIbPENF1nL8Q9nQZa17W1oWEqqAHqIg3ZIQIKgr2UZsUi9
+         vhOOWZ6J963McjkW5XlppgZVZBbCzskUIWQ0arX5slHHx+8OdZsmESg6Hsjbv+MoMMn3
+         GLGDOm/8T+QtzwFtROEkftyU9IedheAM9GNk3I1RFaxXaWa0E9QwEDDunA/jettHslLC
+         aK6iUNEb3/1/rZTvV0YcXD3Kdob380QLmIl5ABTkWOrqoSbMf+QKunWDpH3BJV5kBgFm
+         EcHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763404225; x=1764009025;
+        d=1e100.net; s=20230601; t=1763404948; x=1764009748;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=mo7Fpew4SCWgreWKkBa60zvQOZX9oGrQ6m1RkCiDUC0=;
-        b=vgi2ulhp6M7TpnRA4frTFH6E2HB/jcEy631f704IWG+12X5PxDucPfDj69nNQidjAv
-         7jsWa81QAlnXdiuZiB+nUHyegVKttU1vsamp4qULOV5G1rsEbamLATOcMETgsWO6Qlkz
-         0lQdZSSAj2VgVgLbCTpahPrL4/2TBv9kgaQ+XaHXGLZ/bgY9jcKQ2HElmW4gHFVCHfOf
-         MvROjSppQhutNaANyEIgqSYYmot/S+jd8bGMgLSDvYl9QZ5wyiidkXglwyCTJF3IEbJS
-         fYeGKibJl6YlSdtGY8nb3qUC8Tj0/Cnh0GsIVQHeObLCA/LfK2+5JxCR1tklQriYTHo7
-         2StA==
-X-Forwarded-Encrypted: i=1; AJvYcCW+CDuv23nSMlYx6zo8sEq5Y1spfrOnHkETURkHyuFovMPYxjFyXnSRN1y9pcWe9qa3v+jsK9mLw8BVhAw7@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhC56rFscvOurtPM7FCqO+yB4uvjPzTdTXgiHA3VZsL9dedpsb
-	JGnO4zOkoyaVbFJDJYCdwfJu2YrVZkCaaDLO+Fc0V2w5/nSfLKp3su4r1zVQTZVRqzAKFc1J+tY
-	i8p6DSN54LwjZd8ZWjadfnYq4vVSU76eAmSCbF2vcNw==
-X-Gm-Gg: ASbGncvcx+SagfqpW8Rg3u6ccH6wi/iAH4tlhENx5NQI8Usy6cJQnYILaBqe1LGCk+1
-	Lo9T129zmP8BuOHW/ZUO/5qPbVwU1z4gl607hhuUd3DuYyaEbDrlMF0GK0nnwmDDWyHge2lsXaC
-	RQW0Er8lO34CtlTAGCkmNRaY53ZdsBjam4bI/iceUClUkkakWtei8k2YHmLbd9Znrsc5AYcK99s
-	5VE+1YKLOKyLNRdMnZTD4ygGepH4UWYPGEY14XqLBfsoT2ip6FSRM4qadoySvJa4nQe
-X-Google-Smtp-Source: AGHT+IGbft8Z+rAKPet8Z4NE8LDyUX4MgwKnPbmIzDODsbkkevdfT0+fNvskHAAOPS9NtBXhUCGNpo/Yz/tzbQHQBNw=
-X-Received: by 2002:a05:6402:27c8:b0:641:8b4d:cc6f with SMTP id
- 4fb4d7f45d1cf-64350e899b0mr11672843a12.23.1763404225103; Mon, 17 Nov 2025
- 10:30:25 -0800 (PST)
+        bh=+GT+Mvcn48BVfqy5/WD1n2ZA/hN2dz1BCZmhQdhw608=;
+        b=tnJ7NAj/FQ8EwzAhA/diyf2mezY3kZSv586rELets2stoYdcBxaZTSk+f89q6+xXjp
+         sS1Wo/lkTKgVLBy0LrTN9Ft89hIpjeo+vy0aTlekgsybhVg9XESjU6c6oKZU/Ix8KEHg
+         owT2wCELU3C8z0GmNeqbT9ql1orfm6sD/FcJ6sopHLXAXXhQPIDqLuGXZBNCnVmMKME0
+         gAwO11XVj2Nz+r4S9DKpJrfhwQvaGTcwALIGBbr+X3K2jKwkfkS0nDlT7RDOY0H1E4ot
+         L3hHlKaZsCLAd6PqJdFNmVf7Kst9X6IHF4nj9wct43jYm8nq12LA+q7mDdTb+e3ubcxL
+         ptUg==
+X-Forwarded-Encrypted: i=1; AJvYcCUk3o6OczIq6fw0mvbQvKXqkRpcCYz+FcWVlQNq/VBzT8jyV/NB0qWREJ+crEOuP1HvDfdRxIsJ/kTZKblt@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywbf1LvpysXqwi+4QCO5iyOBJY6fG6oi4gjYeii5lAsxPi8wsEz
+	ViZWuhEUY+/b9jbkCLs+TKD31X5s6cHqBQrdBZ8zUU5SYIbcsMtpUJ62LcwHWeYY0kTh0krJz+3
+	Yt9DnQJC29yak0MS/z7ucuIKq4wZCWlA=
+X-Gm-Gg: ASbGnct0WFl6plBUZ+ql51wrqHlDAwmi9/hVXXtQPSZwMfuDoTgQ0WqiPPn7pCNswq4
+	UkikNNC4diJ39FDXqWiO0rApILBUPDAOlI905+0r7qW5hOXB9CP9goLi7yB0YbKsLMbAH02B2aR
+	J+KIWioSwH3umRoiXtjc9GDNkhMx01qpz/zqVbC7d3l6bWeutt7MsqBfyhUB5KFaM0qyTGOz0Af
+	toywlsskJDVg5+KAUC45OQU4Lge/85GVuIWIxc0IWLYQ//lKw5C4dJS3LZd3+1Zrfw9WnKdOFQz
+X-Google-Smtp-Source: AGHT+IGlCOta17/ddsZWnD9v3ffWOGOnFpGs6oqmTfDQtnnrJ2sc9E7ozUdVinCK+4CGR9Q0e/Sf5CFPt1dugRYiBPM=
+X-Received: by 2002:a17:903:1aed:b0:297:d764:9874 with SMTP id
+ d9443c01a7336-2986a6cbe5cmr156328205ad.21.1763404947533; Mon, 17 Nov 2025
+ 10:42:27 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251115233409.768044-1-pasha.tatashin@soleen.com>
- <20251115233409.768044-3-pasha.tatashin@soleen.com> <aRnG8wDSSAtkEI_z@kernel.org>
- <CA+CK2bDu2FdzyotSwBpGwQtiisv=3f6gC7DzOpebPCxmmpwMYw@mail.gmail.com> <aRoi-Pb8jnjaZp0X@kernel.org>
-In-Reply-To: <aRoi-Pb8jnjaZp0X@kernel.org>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Mon, 17 Nov 2025 13:29:47 -0500
-X-Gm-Features: AWmQ_bmhhbDUMBKFxNnFMOPCeOApSAwekkwuL9HuN6ynW1cSRitKeGbWllXoez0
-Message-ID: <CA+CK2bBEs2nr0TmsaV18S-xJTULkobYgv0sU9=RCdReiS0CbPQ@mail.gmail.com>
-Subject: Re: [PATCH v6 02/20] liveupdate: luo_core: integrate with KHO
-To: Mike Rapoport <rppt@kernel.org>
-Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com, 
-	dmatlack@google.com, rientjes@google.com, corbet@lwn.net, 
-	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, 
-	ojeda@kernel.org, aliceryhl@google.com, masahiroy@kernel.org, 
-	akpm@linux-foundation.org, tj@kernel.org, yoann.congal@smile.fr, 
-	mmaurer@google.com, roman.gushchin@linux.dev, chenridong@huawei.com, 
-	axboe@kernel.dk, mark.rutland@arm.com, jannh@google.com, 
-	vincent.guittot@linaro.org, hannes@cmpxchg.org, dan.j.williams@intel.com, 
-	david@redhat.com, joel.granados@kernel.org, rostedt@goodmis.org, 
-	anna.schumaker@oracle.com, song@kernel.org, linux@weissschuh.net, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
-	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com, 
-	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
-	rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org, 
-	cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com, 
-	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com, 
-	aleksander.lobakin@intel.com, ira.weiny@intel.com, 
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
-	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net, 
-	brauner@kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	saeedm@nvidia.com, ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com, 
-	leonro@nvidia.com, witu@nvidia.com, hughd@google.com, skhawaja@google.com, 
-	chrisl@kernel.org
+References: <20251114193729.251892-1-ssranevjti@gmail.com> <aReUv1kVACh3UKv-@casper.infradead.org>
+ <CANNWa07Y_GPKuYNQ0ncWHGa4KX91QFosz6WGJ9P6-AJQniD3zw@mail.gmail.com>
+ <aRpQ7LTZDP-Xz-Sr@casper.infradead.org> <aRsqwndQ459VN8I9@ranegod-HP-ENVY-x360-Convertible-13-bd0xxx>
+In-Reply-To: <aRsqwndQ459VN8I9@ranegod-HP-ENVY-x360-Convertible-13-bd0xxx>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Mon, 17 Nov 2025 10:42:15 -0800
+X-Gm-Features: AWmQ_blI9jblEa7JMJ2vTFmsIQ2D6lp_5HRLH235a5mwf0VK6MfqNFE0M2tzyYY
+Message-ID: <CAEf4Bzboqf+1KUZCb2fBnLZUkzi5X4zOk+wy72eTu3VLB+z7RQ@mail.gmail.com>
+Subject: Re: [PATCH] mm/filemap: fix NULL pointer dereference in do_read_cache_folio()
+To: Shaurya Rane <ssrane_b23@ee.vjti.ac.in>
+Cc: Matthew Wilcox <willy@infradead.org>, akpm@linux-foundation.org, shakeel.butt@linux.dev, 
+	eddyz87@gmail.com, andrii@kernel.org, ast@kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev, 
+	skhan@linuxfoundation.org, david.hunter.linux@gmail.com, khalid@kernel.org, 
+	syzbot+09b7d050e4806540153d@syzkaller.appspotmail.com, 
+	bpf <bpf@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Nov 16, 2025 at 2:16=E2=80=AFPM Mike Rapoport <rppt@kernel.org> wro=
-te:
++ bpf@
+
+On Mon, Nov 17, 2025 at 6:10=E2=80=AFAM Shaurya Rane <ssrane_b23@ee.vjti.ac=
+.in> wrote:
 >
-> On Sun, Nov 16, 2025 at 09:55:30AM -0500, Pasha Tatashin wrote:
-> > On Sun, Nov 16, 2025 at 7:43=E2=80=AFAM Mike Rapoport <rppt@kernel.org>=
- wrote:
-> > >
-> > > > +static int __init liveupdate_early_init(void)
-> > > > +{
-> > > > +     int err;
-> > > > +
-> > > > +     err =3D luo_early_startup();
-> > > > +     if (err) {
-> > > > +             pr_err("The incoming tree failed to initialize proper=
-ly [%pe], disabling live update\n",
-> > > > +                    ERR_PTR(err));
-> > >
-> > > How do we report this to the userspace?
-> > > I think the decision what to do in this case belongs there. Even if i=
-t's
-> > > down to choosing between plain kexec and full reboot, it's still a po=
-licy
-> > > that should be implemented in userspace.
+> On Sun, Nov 16, 2025 at 10:32:12PM +0000, Matthew Wilcox wrote:
+> > First, some process things ;-)
 > >
-> > I agree that policy belongs in userspace, and that is how we designed
-> > it. In this specific failure case (ABI mismatch or corrupt FDT), the
-> > preserved state is unrecoverable by the kernel. We cannot parse the
-> > incoming data, so we cannot offer it to userspace.
+> > 1. Thank you for working on this.  Andrii has been ignoring it since
+> > August, which is bad.  So thank you for picking it up.
+
+It is bad, I'm sorry for this. I was surprised to read this, though,
+as I was not aware of any bug related to build ID parsing code, so I
+went looking at syzbot history of the issue. August timeframe you are
+referring to implies those "Monthly fs report" emails, which
+unfortunately I didn't receive as I'm not subscribed to linux-fsdevel,
+but I do see that there was earlier report back in April, which I did
+get in my inbox, apparently. So I'm sorry again for dropping the ball.
+Please feel free to ping me or BPF mailing list next time when you see
+something not being addressed in a timely manner.
+
 > >
-> > We report this state by not registering the /dev/liveupdate device.
-> > When the userspace agent attempts to initialize, it receives ENOENT.
-> > At that point, the agent exercises its policy:
+> > 2. Sending a v2 while we're having a discussion is generally a bad idea=
+.
+> > It's fine to send a patch as a reply, but going as far as a v2 isn't
+> > necessary.  If conversation has died down, then a v2 is definitely
+> > warranted, but you and I are still having a discussion ;-)
 > >
-> > - Check dmesg for the specific error and report the failure to the
-> > fleet control plane.
+> > 3. When you do send a v2 (or, now that you've sent a v2, send a v3),
+> > do it as a new thread rather then in reply to the v1 thread.  That play=
+s
+> > better with the tooling we have like b4 which will pull in all patches
+> > in a thread.
+> >
+> Apologies for the process errors regarding the v2 submission. I appreciat=
+e the guidance on the workflow and threading; I will ensure the next versio=
+n is sent as a clean, new thread once we have agreed on the technical solut=
+ion.
+> > With that over with, on to the fun technical stuff.
+> >
+> > On Sun, Nov 16, 2025 at 11:13:42AM +0530, SHAURYA RANE wrote:
+> > > On Sat, Nov 15, 2025 at 2:14=E2=80=AFAM Matthew Wilcox <willy@infrade=
+ad.org> wrote:
+> > > >
+> > > > On Sat, Nov 15, 2025 at 01:07:29AM +0530, ssrane_b23@ee.vjti.ac.in =
+wrote:
+> > > > > When read_cache_folio() is called with a NULL filler function on =
+a
+> > > > > mapping that does not implement read_folio, a NULL pointer
+> > > > > dereference occurs in filemap_read_folio().
+> > > > >
+> > > > > The crash occurs when:
+> > > > >
+> > > > > build_id_parse() is called on a VMA backed by a file from a
+> > > > > filesystem that does not implement ->read_folio() (e.g. procfs,
+> > > > > sysfs, or other virtual filesystems).
+> > > >
+> > > > Not a fan of this approach, to be honest.  This should be caught at
+> > > > a higher level.  In __build_id_parse(), there's already a check:
+> > > >
+> > > >         /* only works for page backed storage  */
+> > > >         if (!vma->vm_file)
+> > > >                 return -EINVAL;
+> > > >
+> > > > which is funny because the comment is correct, but the code is not.
+> > > > I suspect the right answer is to add right after it:
+> > > >
+> > > > +       if (vma->vm_file->f_mapping->a_ops =3D=3D &empty_aops)
+> > > > +               return -EINVAL;
+> > > >
+> > > > Want to test that out?
+> > > Thanks for the suggestion.
+> > > Checking for
+> > >     a_ops =3D=3D &empty_aops
+> > > is not enough. Certain filesystems for example XFS with DAX use
+> > > their own a_ops table (not empty_aops) but still do not implement
+> > > ->read_folio(). In those cases read_cache_folio() still ends up with
+> > > filler =3D NULL and filemap_read_folio(NULL) crashes.
+> >
+> > Ah, right.  I had assumed that the only problem was synthetic
+> > filesystems like sysfs and procfs which can't have buildids because
+> > buildids only exist in executables.  And neither procfs nor sysfs
+> > contain executables.
+> >
+> > But DAX is different.  You can absolutely put executables on a DAX
+> > filesystem.  So we shouldn't filter out DAX here.  And we definitely
+> > shouldn't *silently* fail for DAX.  Otherwise nobody will ever realise
+> > that the buildid people just couldn't be bothered to make DAX work.
+> >
+> > I don't think it's necessarily all that hard to make buildid work
+> > for DAX.  It's probably something like:
+> >
+> >       if (IS_DAX(file_inode(file)))
+> >               kernel_read(file, buf, count, &pos);
+> >
+> > but that's just off the top of my head.
+> >
+> >
+> I agree that DAX needs proper support rather than silent filtering.
+> However, investigating the actual syzbot reproducer revealed that the iss=
+ue extends beyond just DAX. The crash is actually triggering on tmpfs (shme=
+m).I verified via debug logging that the crashing VMA is backed by `shmem_a=
+ops`. Looking at `mm/shmem.c`, tmpfs legitimately lacks a `.read_folio` imp=
+lementation by design.
+> It seems there are several "real" filesystems that can contain executable=
+s/libraries but lack `.read_folio`:
+> 1. tmpfs/shmem
+> 2. OverlayFS (delegates I/O)
+> 3. DAX filesystems
+> Given that this affects multiple filesystem types, handling them all corr=
+ectly via `kernel_read` might be a larger scope than fixing the immediate c=
+rash. I worry about missing edge cases in tmpfs or OverlayFS if we try to i=
+mplement the fallback immediately in this patch.
+> > I really don't want the check for filler being NULL in read_cache_folio=
+().
+> > I want it to crash noisily if callers are doing something stupid.
+> I propose the following approach for v3. It avoids the silent failure you=
+ are concerned about, but prevents the kernel panic:
 >
-> Hmm, this is not nice. I think we still should register /dev/liveupdate a=
-nd
-> let userspace discover this error via /dev/liveupdate ABIs.
+> 1. Silent reject for `empty_aops` (procfs/sysfs), as they legitimately ca=
+n't contain build IDs.
+> 2. Loud warning + Error for other cases (DAX, tmpfs, OverlayFS).
+>
 
-Not registering the device is the correct approach here for two reasons:
+Tbh, it seems a bit fragile to have to hard-code such file
+system-specific logic in higher-level build ID fetching logic, where
+all we really ask for from filemap_get_folio() + read_cache_folio()
+combo is to give us requested piece of file or let us know (without
+crashing) that this was not possible.
 
-1. This follows the standard Linux driver pattern. If a driver fails
-to initialize its underlying resources (hardware, firmware, or in this
-case, the incoming FDT), it does not register a character device.
-2. Registering a "zombie" device that exists solely to return errors
-adds significant complexity. We would need to introduce a specific
-"broken" state to the state machine and add checks to IOCTLs to reject
-commands with a specific error code.
+But if there is no way to abstract this away, then I think Shaurya
+proposed with failing known-not-supported cases and warning on
+unexpected ones would be a reasonable solution, I suppose. I see that
+Matthew is discussing generalizing kernel_read, so maybe that will be
+a better solution, let's see.
 
-Pasha
+
+> The code would look like this:
+>
+>     /* pseudo-filesystems */
+>     if (vma->vm_file->f_mapping->a_ops =3D=3D &empty_aops)
+>         return -EINVAL;
+>
+>     /* Real filesystems missing read_folio (DAX, tmpfs, OverlayFS, etc.) =
+*/
+>     if (!vma->vm_file->f_mapping->a_ops->read_folio) {
+>         /*
+>          * TODO: Implement kernel_read() fallback for DAX/tmpfs.
+>          * For now, fail loudly so we know what we are missing.
+>          */
+>         pr_warn_once("build_id_parse: filesystem %s lacks read_folio supp=
+ort\n",
+>                      vma->vm_file->f_path.dentry->d_sb->s_type->name);
+>         return -EOPNOTSUPP;
+>     }
+>
+> This highlights exactly which filesystems are missing support in the logs=
+ without crashing the machine
+> Thanks,
+> Shaurya
 
