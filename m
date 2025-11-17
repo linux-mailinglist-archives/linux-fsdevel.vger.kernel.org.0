@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-68757-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68758-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5F96C6584F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Nov 2025 18:33:43 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11A5EC657A1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Nov 2025 18:27:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B6B963A125A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Nov 2025 17:16:36 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 93F814ECBBC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Nov 2025 17:19:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E944630CD94;
-	Mon, 17 Nov 2025 17:12:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBD843396FD;
+	Mon, 17 Nov 2025 17:15:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X38QDWbx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bxbrXTDR"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0A2F30AD0D;
-	Mon, 17 Nov 2025 17:12:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 285BB33769F;
+	Mon, 17 Nov 2025 17:15:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763399531; cv=none; b=kv5A/pcZs2MNzxELfQQXoEldANv6Ee9tRr8AmQrOWcOzLhFizSCOw4rS4CI6CJ7Xem2qDovSVc2EU91A6baNV4euonoyowUW4tEzFG2cm7OreRn4rkrU82YhloDG3uP8nqN5/LW7lCRrbuocrkuXQUkPmNEL42ks6aYZchroBm0=
+	t=1763399713; cv=none; b=M7eE9n23PYg1bX0YDX+vYOLLuy8cMpk/4q/OCs0ToSlmZlwwLaqppc/X6l/wAp/O1eYlD6llAS701BV5oCsh/RY4W5o5iomj40fkspunmo/EClj0mCLP4gLlh+U8WgYW6WoPqhzWB8QG52KcTp5A3oLscknn280977dFkt2NYHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763399531; c=relaxed/simple;
-	bh=d5Mnypq6wDJc2sGNmVWWVeUIAR/ILc0h228u/LGZuww=;
+	s=arc-20240116; t=1763399713; c=relaxed/simple;
+	bh=RLJWDgvqexJm3kpqTl9EZT21sIb+C2Qyt8z0WQg5EU4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BQGSEp/DI9ilWI6yTuBNOTnkJeqV5WK//uT93SrEYWuNHP3k/TiH1XfSmaABsCcfg/RJki7EljvYbtzIaIs95s1gWb651A9ajQPvT13xoUtWhxBQYqOYeCT3UHzKdgIemt+HUAlwI4F0UTLV28oWqelUaeBhPUmWaNLGDo3VWP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X38QDWbx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F953C19423;
-	Mon, 17 Nov 2025 17:12:07 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=nj57JjsQHLUEu46+Eqo9UakU/QfNYgDadjwEW/l6iDT9suwFIqgH3YvXviqIr0f477a4Y9/Dqaym1Wj95vG9zh0t84WotIvohjd6lzToCMXdQzCy1BoULquMff0gVdSzlabsvXafgNk4K5rbamhaRiBcuJccfwCaaCXW7wYWIkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bxbrXTDR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9913DC19422;
+	Mon, 17 Nov 2025 17:15:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763399531;
-	bh=d5Mnypq6wDJc2sGNmVWWVeUIAR/ILc0h228u/LGZuww=;
+	s=k20201202; t=1763399712;
+	bh=RLJWDgvqexJm3kpqTl9EZT21sIb+C2Qyt8z0WQg5EU4=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=X38QDWbx7NnvZpofmhjuhcucQQctW3dwbl33jMr22mYBTNe4W4yMzWmwXqeZ+TPYx
-	 18Zd7RdYuMtJC6b1Ova/QprEbncPpveX8fWmPw3S2CrQ+xAlVjGgyGeML8t6+O7NWd
-	 qEnw0hmusYTbsvVwUN6U3Uwyj6duJsHM2Yrwh8SFuYot/p09AjApKIeS+Dxbk26X0O
-	 +PARQdPUaQbJYCdgJIW4hvdIchPfgtu3yFfHzSMtY4E8Xd5LuQBFmDh70p+Pkb7CDF
-	 VqbrAwAWrAYiIhnH/d2y3hbtm92KfhhvqP8GCx8CPiD7Xdt/mjgCxAHbsZAN51k3I2
-	 O+N2LrxCNknHA==
-Message-ID: <5f1e139d-cd6f-438f-8b5f-be356314d9aa@kernel.org>
-Date: Mon, 17 Nov 2025 18:12:05 +0100
+	b=bxbrXTDR84ASz4tPia6zDAvidOkIROEQEVrS/yyvBNhsrAhCaKYTV112+R5LelGFB
+	 InCyMARDK+hXkSXbbxVgeKbwVuhXdG9Yh0+m2kg9c3sQT3/8cI4SSnUY16OdAujjvW
+	 uWuQddql+Nc7DiV9Sy/n7TcNnn/xIyyeGgNcjqUSSlH9+AbGVlDUt5ZqK3BZnnketu
+	 Uy7uwb9ufarWAAZ75hnHiCLrhI3TYfQCzAfcflxc0CwsSTP8sO9HIfAnMH5g4qJeyh
+	 nHrA8yWDZDzzkWUK3By7nEghAXuTg9/nkAPxcyCnBHAwW++NssX7203zMAgbqOcYdt
+	 ZcB8/XtwKCfzQ==
+Message-ID: <bcfd5575-cff0-4ead-9136-dd509bf11f64@kernel.org>
+Date: Mon, 17 Nov 2025 18:15:06 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -50,8 +50,8 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/2] mm/huge_memory: introduce
- uniform_split_unmapped_folio_to_zero_order
+Subject: Re: [PATCH v1 2/2] mm/memory-failure: avoid free HWPoison high-order
+ folio
 To: Jiaqi Yan <jiaqiyan@google.com>, nao.horiguchi@gmail.com,
  linmiaohe@huawei.com, ziy@nvidia.com
 Cc: lorenzo.stoakes@oracle.com, william.roche@oracle.com,
@@ -60,57 +60,67 @@ Cc: lorenzo.stoakes@oracle.com, william.roche@oracle.com,
  osalvador@suse.de, muchun.song@linux.dev, linux-mm@kvack.org,
  linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
 References: <20251116014721.1561456-1-jiaqiyan@google.com>
- <20251116014721.1561456-2-jiaqiyan@google.com>
+ <20251116014721.1561456-3-jiaqiyan@google.com>
 From: "David Hildenbrand (Red Hat)" <david@kernel.org>
 Content-Language: en-US
-In-Reply-To: <20251116014721.1561456-2-jiaqiyan@google.com>
+In-Reply-To: <20251116014721.1561456-3-jiaqiyan@google.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 16.11.25 02:47, Jiaqi Yan wrote:
-> When freeing a high-order folio that contains HWPoison pages,
-> to ensure these HWPoison pages are not added to buddy allocator,
-> we can first uniformly split a free and unmapped high-order folio
-> to 0-order folios first, then only add non-HWPoison folios to
-> buddy allocator and exclude HWPoison ones.
+> At the end of dissolve_free_hugetlb_folio, when a free HugeTLB
+> folio becomes non-HugeTLB, it is released to buddy allocator
+> as a high-order folio, e.g. a folio that contains 262144 pages
+> if the folio was a 1G HugeTLB hugepage.
 > 
-> Introduce uniform_split_unmapped_folio_to_zero_order, a wrapper
-> to the existing __split_unmapped_folio. Caller can use it to
-> uniformly split an unmapped high-order folio into 0-order folios.
+> This is problematic if the HugeTLB hugepage contained HWPoison
+> subpages. In that case, since buddy allocator does not check
+> HWPoison for non-zero-order folio, the raw HWPoison page can
+> be given out with its buddy page and be re-used by either
+> kernel or userspace.
 > 
-> No functional change. It will be used in a subsequent commit.
+> Memory failure recovery (MFR) in kernel does attempt to take
+> raw HWPoison page off buddy allocator after
+> dissolve_free_hugetlb_folio. However, there is always a time
+> window between freed to buddy allocator and taken off from
+> buddy allocator.
+> 
+> One obvious way to avoid this problem is to add page sanity
+> checks in page allocate or free path. However, it is against
+> the past efforts to reduce sanity check overhead [1,2,3].
+> 
+> Introduce hugetlb_free_hwpoison_folio to solve this problem.
+> The idea is, in case a HugeTLB folio for sure contains HWPoison
+> page(s), first split the non-HugeTLB high-order folio uniformly
+> into 0-order folios, then let healthy pages join the buddy
+> allocator while reject the HWPoison ones.
+> 
+> [1] https://lore.kernel.org/linux-mm/1460711275-1130-15-git-send-email-mgorman@techsingularity.net/
+> [2] https://lore.kernel.org/linux-mm/1460711275-1130-16-git-send-email-mgorman@techsingularity.net/
+> [3] https://lore.kernel.org/all/20230216095131.17336-1-vbabka@suse.cz
 > 
 > Signed-off-by: Jiaqi Yan <jiaqiyan@google.com>
-> ---
->   include/linux/huge_mm.h | 6 ++++++
->   mm/huge_memory.c        | 8 ++++++++
->   2 files changed, 14 insertions(+)
-> 
-> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-> index 71ac78b9f834f..ef6a84973e157 100644
-> --- a/include/linux/huge_mm.h
-> +++ b/include/linux/huge_mm.h
-> @@ -365,6 +365,7 @@ unsigned long thp_get_unmapped_area_vmflags(struct file *filp, unsigned long add
->   		vm_flags_t vm_flags);
->   
->   bool can_split_folio(struct folio *folio, int caller_pins, int *pextra_pins);
-> +int uniform_split_unmapped_folio_to_zero_order(struct folio *folio);
->   int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
->   		unsigned int new_order);
->   int min_order_for_split(struct folio *folio);
-> @@ -569,6 +570,11 @@ can_split_folio(struct folio *folio, int caller_pins, int *pextra_pins)
->   {
->   	return false;
->   }
-> +static inline int uniform_split_unmapped_folio_to_zero_order(struct folio *folio)
-> +{
-> +	VM_WARN_ON_ONCE_PAGE(1, page);
-> +	return -EINVAL;
-> +}
 
-IIUC this patch won't be required (I agree that ideally the page 
-allocator takes care of this), but for the future, let's consistently 
-name these things "folio_split_XXX".
+
+[...]
+
+>   /*
+> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+> index 3edebb0cda30b..e6a9deba6292a 100644
+> --- a/mm/memory-failure.c
+> +++ b/mm/memory-failure.c
+> @@ -2002,6 +2002,49 @@ int __get_huge_page_for_hwpoison(unsigned long pfn, int flags,
+>   	return ret;
+>   }
+>   
+> +void hugetlb_free_hwpoison_folio(struct folio *folio)
+
+What is hugetlb specific in here? :)
+
+Hint: if there is nothing, likely it should be generic infrastructure.
+
+But I would prefer if the page allocator could just take care of that 
+when freeing a folio.
 
 -- 
 Cheers
