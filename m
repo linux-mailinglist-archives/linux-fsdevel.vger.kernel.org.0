@@ -1,154 +1,169 @@
-Return-Path: <linux-fsdevel+bounces-68750-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68753-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54B36C65369
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Nov 2025 17:42:17 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59374C6540B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Nov 2025 17:51:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sin.lore.kernel.org (Postfix) with ESMTPS id B9CB12917F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Nov 2025 16:42:03 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTPS id 1580F2907D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Nov 2025 16:51:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 787242DF13F;
-	Mon, 17 Nov 2025 16:41:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BruVpwO/"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C41FE2FFDDE;
+	Mon, 17 Nov 2025 16:50:46 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7C7A289374;
-	Mon, 17 Nov 2025 16:41:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B17502FD7CD;
+	Mon, 17 Nov 2025 16:50:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763397716; cv=none; b=iRdm4YREyoEMlKViKK6BS6EpOVGCZ0FFF9H88EvHVDXPfGbHp6Jx/OQ20o5gl9P63/kfEou/gPuCMgkdhqPbM/BEeOdDzu+VstTywUDmaGSb0Tm7L4uynVc3+dfZkUYeUnArxH6n1usuCqFDNKqHBVpY8PEhf5Lcl0cWuhxP97Q=
+	t=1763398246; cv=none; b=PTD/yEJhO6CmIhhBHIWqPduWIcMOktt3eKZyOumIsX2JeT512qvfCAhr3tkj+T30DoC/cOyEHs6ZmFizCPgoai0u/PpiiVV/NNbCxNYtupxhY0ecbhcFdQP6XQk4BwPrXJunuT1wXRdfFnsLkafmQeKGfvB4H8JadbekSKh4bWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763397716; c=relaxed/simple;
-	bh=dZ251Jd6bLrB7WwBSwgnKezSZ9PfbBw2z/HUXlRFHck=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZfaWovyAikNNLbXXe2j+1E2fpQzzAshTzki7+GRkVecebb4VbHISSWLL1C4qoEAKaxUA/rLok998qlemcVRkOOJTZKuuFE1QDQG8+JdbtGxEtv3GlwF7ksHrzSbPoibv8nHq88+NBKUewpF6vxERbipBefCrpu9AVPPfdd1n/Y4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BruVpwO/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44E29C4CEF1;
-	Mon, 17 Nov 2025 16:41:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763397716;
-	bh=dZ251Jd6bLrB7WwBSwgnKezSZ9PfbBw2z/HUXlRFHck=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BruVpwO/difzdwaljwe0afX7jV92ylBmozwdxiXCjvaF6TEIEG5ryBKnybz3fiGT5
-	 I1OH4hkoVayKGLETjl491dwOdYOavboux+e7EUqEou8Jg8sYUgmfKJ/FmilBlMrS3D
-	 gFGjNykzMWImAvhr3OGZ6uXUaGAEN8F4yY+UfU3uS4JHUF2fO8+rcCnLycChGRwdei
-	 u/Ms5MCTO7G36cjNebz8mxWh23JNDqdeNVcacbdpJ26dofOzKHwtIT8k2JzXtdXWco
-	 REQtZBARylVp5ozlrK1R6uXUWIptSeqXw7L682LwSLz46BP9qPHYv4P9l68nYe0baS
-	 4ri6o4cLaXURg==
-Date: Mon, 17 Nov 2025 08:41:55 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: SHAURYA RANE <ssrane_b23@ee.vjti.ac.in>, akpm@linux-foundation.org,
-	shakeel.butt@linux.dev, eddyz87@gmail.com, andrii@kernel.org,
-	ast@kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev,
-	skhan@linuxfoundation.org, david.hunter.linux@gmail.com,
-	khalid@kernel.org,
-	syzbot+09b7d050e4806540153d@syzkaller.appspotmail.com
-Subject: Re: [PATCH] mm/filemap: fix NULL pointer dereference in
- do_read_cache_folio()
-Message-ID: <20251117164155.GB196362@frogsfrogsfrogs>
-References: <20251114193729.251892-1-ssranevjti@gmail.com>
- <aReUv1kVACh3UKv-@casper.infradead.org>
- <CANNWa07Y_GPKuYNQ0ncWHGa4KX91QFosz6WGJ9P6-AJQniD3zw@mail.gmail.com>
- <aRpQ7LTZDP-Xz-Sr@casper.infradead.org>
+	s=arc-20240116; t=1763398246; c=relaxed/simple;
+	bh=WGqKFA3mz9XHJ6cj5G5VuhtGqL7z2AHwH/JWwrDAKcU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=h4bzKaTle3EF/aEIHzTlaqClA/fKrNlMjpASwAq58HeKNhaVeN1gEisCtUr8qqe7qwHVHsmoIxUC8w5UEAEy0YwL9LTkl85vsmrJ0sWSTkEXfHbZWr2MzeK4FF1M3QvtxlS+O17Req3Mo47f7cKjPbH7j3Mk/DzA562QcJu8O88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4d9D953HZVz9sSK;
+	Mon, 17 Nov 2025 17:44:09 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id iWUAGZWJZEEK; Mon, 17 Nov 2025 17:44:09 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4d9D952NXHz9sS8;
+	Mon, 17 Nov 2025 17:44:09 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 3CC7E8B769;
+	Mon, 17 Nov 2025 17:44:09 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id TzQbKMy7QXZa; Mon, 17 Nov 2025 17:44:09 +0100 (CET)
+Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id C93EF8B763;
+	Mon, 17 Nov 2025 17:44:07 +0100 (CET)
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Ingo Molnar <mingo@redhat.com>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	"Andre Almeida" <andrealmeid@igalia.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Kuniyuki Iwashima <kuniyu@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Willem de Bruijn <willemb@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Simon Horman <horms@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nichlas Piggin <npiggin@gmail.com>,
+	linux-block@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH v5 0/4] uaccess: Prepare for masked user access on powerpc
+Date: Mon, 17 Nov 2025 17:43:40 +0100
+Message-ID: <cover.1763396724.git.christophe.leroy@csgroup.eu>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3522; i=christophe.leroy@csgroup.eu; h=from:subject:message-id; bh=WGqKFA3mz9XHJ6cj5G5VuhtGqL7z2AHwH/JWwrDAKcU=; b=owGbwMvMwCV2d0KB2p7V54MZT6slMWRKB+x//GA1v1ClgdYODW2ZTXLbzU/ZRjV/eKQu6mewe ZpfUUFuRykLgxgXg6yYIsvx/9y7ZnR9Sc2fuksfZg4rE8gQBi5OAZjIrP2MDE+3/HiwSHXz054e sW9T6m8y2UyYrVbctHBZQWh6hr3ILzlGhs8i3SbnnRO3ckQYW04rkjo930th+7PFh0R8ehe170m JYAEA
+X-Developer-Key: i=christophe.leroy@csgroup.eu; a=openpgp; fpr=10FFE6F8B390DE17ACC2632368A92FEB01B8DD78
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <aRpQ7LTZDP-Xz-Sr@casper.infradead.org>
 
-On Sun, Nov 16, 2025 at 10:32:12PM +0000, Matthew Wilcox wrote:
-> First, some process things ;-)
-> 
-> 1. Thank you for working on this.  Andrii has been ignoring it since
-> August, which is bad.  So thank you for picking it up.
-> 
-> 2. Sending a v2 while we're having a discussion is generally a bad idea.
-> It's fine to send a patch as a reply, but going as far as a v2 isn't
-> necessary.  If conversation has died down, then a v2 is definitely
-> warranted, but you and I are still having a discussion ;-)
-> 
-> 3. When you do send a v2 (or, now that you've sent a v2, send a v3),
-> do it as a new thread rather then in reply to the v1 thread.  That plays
-> better with the tooling we have like b4 which will pull in all patches
-> in a thread.
-> 
-> With that over with, on to the fun technical stuff.
-> 
-> On Sun, Nov 16, 2025 at 11:13:42AM +0530, SHAURYA RANE wrote:
-> > On Sat, Nov 15, 2025 at 2:14 AM Matthew Wilcox <willy@infradead.org> wrote:
-> > >
-> > > On Sat, Nov 15, 2025 at 01:07:29AM +0530, ssrane_b23@ee.vjti.ac.in wrote:
-> > > > When read_cache_folio() is called with a NULL filler function on a
-> > > > mapping that does not implement read_folio, a NULL pointer
-> > > > dereference occurs in filemap_read_folio().
-> > > >
-> > > > The crash occurs when:
-> > > >
-> > > > build_id_parse() is called on a VMA backed by a file from a
-> > > > filesystem that does not implement ->read_folio() (e.g. procfs,
-> > > > sysfs, or other virtual filesystems).
-> > >
-> > > Not a fan of this approach, to be honest.  This should be caught at
-> > > a higher level.  In __build_id_parse(), there's already a check:
-> > >
-> > >         /* only works for page backed storage  */
-> > >         if (!vma->vm_file)
-> > >                 return -EINVAL;
-> > >
-> > > which is funny because the comment is correct, but the code is not.
-> > > I suspect the right answer is to add right after it:
-> > >
-> > > +       if (vma->vm_file->f_mapping->a_ops == &empty_aops)
-> > > +               return -EINVAL;
-> > >
-> > > Want to test that out?
-> > Thanks for the suggestion.
-> > Checking for
-> >     a_ops == &empty_aops
-> > is not enough. Certain filesystems for example XFS with DAX use
-> > their own a_ops table (not empty_aops) but still do not implement
-> > ->read_folio(). In those cases read_cache_folio() still ends up with
-> > filler = NULL and filemap_read_folio(NULL) crashes.
-> 
-> Ah, right.  I had assumed that the only problem was synthetic
-> filesystems like sysfs and procfs which can't have buildids because
-> buildids only exist in executables.  And neither procfs nor sysfs
-> contain executables.
-> 
-> But DAX is different.  You can absolutely put executables on a DAX
-> filesystem.  So we shouldn't filter out DAX here.  And we definitely
-> shouldn't *silently* fail for DAX.  Otherwise nobody will ever realise
-> that the buildid people just couldn't be bothered to make DAX work.
-> 
-> I don't think it's necessarily all that hard to make buildid work
-> for DAX.  It's probably something like:
-> 
-> 	if (IS_DAX(file_inode(file)))
-> 		kernel_read(file, buf, count, &pos);
-> 
-> but that's just off the top of my head.
+This is v5 of the series "powerpc: Implement masked user access". This
+version only includes the preparatory patches to enable merging of
+powerpc architecture patches that depend on them on next cycle.
 
-I wondered why this whole thing opencodes kernel_read, but then I
-noticed zero fstests for it and decid*******************************
-*****.
+It applies on top of commit 6ec821f050e2 (tag: core-scoped-uaccess)
+from tip tree.
 
---D
+Thomas, Peter, could you please take those preparatory patches
+in tip tree for v6.19, then Maddy will take powerpc patches
+into powerpc-next for v6.20.
 
-> 
-> I really don't want the check for filler being NULL in read_cache_folio().
-> I want it to crash noisily if callers are doing something stupid.
-> 
+Masked user access avoids the address/size verification by access_ok().
+Allthough its main purpose is to skip the speculation in the
+verification of user address and size hence avoid the need of spec
+mitigation, it also has the advantage to reduce the amount of
+instructions needed so it also benefits to platforms that don't
+need speculation mitigation, especially when the size of the copy is
+not know at build time.
+
+Patches 1 and 2 are preparing to clean-up some redundant barrier_nospec()
+introduced by commit 74e19ef0ff80 ("uaccess: Add speculation barrier
+to copy_from_user()"). To do that, a speculation barrier is added to
+copy_from_user_iter() so that the barrier in powerpc raw_copy_from_user()
+which is redundant with the one in copy_from_user() can be removed. To
+avoid impacting x86, copy_from_user_iter() is first converted to using
+masked user access.
+
+Patch 3 convert put_cmsg() to scoped user access.
+
+Patch 4 replaces remaining wrong calls to masked_user_access_begin()
+with calls to masked_user_read_access_begin() and
+masked_user_write_access_begin() to match with user_read_access_end()
+and user_write_access_end().
+
+Entire series is availiable at https://git.kernel.org/pub/scm/linux/kernel/git/chleroy/linux branch masked-uaccess
+
+Changes in v5:
+- Taken comments from tglx
+- Only include core preparatory patches, powerpc patches are kept for following kernel development cycle
+- Reworded patch 1 to make it more explicit it needs to come before patch 2
+- Added patch 3 to convert put_cmsg() to scoped user access instead of just fixing the direction of the uacess
+- Renamed patch 4 as it now only handles fonctions from lib/strn*.c
+
+Changes in v4:
+- Rebased on top of commit 6ec821f050e2 (tag: core-scoped-uaccess) from tip tree
+- Patch 3: Simplified as masked_user_read_access_begin() and masked_user_write_access_begin() are already there.
+- Patch 10: Simplified mask_user_address_simple() as suggested by Gabriel.
+
+Changes in v3:
+- Rebased on top of v6.18-rc1
+- Patch 3: Impact on recently modified net/core/scm.c
+- Patch 10: Rewrite mask_user_address_simple() for a smaller result on powerpc64, suggested by Gabriel
+
+Changes in v2:
+- Converted copy_from_user_iter() to using masked user access.
+- Cleaned up powerpc uaccess function to minimise code duplication
+when adding masked user access
+- Automated TASK_SIZE calculation to minimise use of BUILD_BUG_ON()
+- Tried to make some commit messages more clean based on feedback from
+version 1 of the series.
+
+Christophe Leroy (4):
+  iov_iter: Convert copy_from_user_iter() to masked user access
+  iov_iter: Add missing speculation barrier to copy_from_user_iter()
+  scm: Convert put_cmsg() to scoped user access
+  lib/strn*,uaccess: Use masked_user_{read/write}_access_begin when
+    required
+
+ lib/iov_iter.c          | 22 +++++++++++++++++-----
+ lib/strncpy_from_user.c |  2 +-
+ lib/strnlen_user.c      |  2 +-
+ net/core/scm.c          | 20 +++++++-------------
+ 4 files changed, 26 insertions(+), 20 deletions(-)
+
+-- 
+2.49.0
+
 
