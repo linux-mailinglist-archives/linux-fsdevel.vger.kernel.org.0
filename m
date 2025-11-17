@@ -1,118 +1,353 @@
-Return-Path: <linux-fsdevel+bounces-68724-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68722-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 834EEC646F9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Nov 2025 14:44:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CBF0C64609
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Nov 2025 14:35:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2EBBC35939C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Nov 2025 13:37:40 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B53EF36400F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Nov 2025 13:29:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71BE2332EA7;
-	Mon, 17 Nov 2025 13:37:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EB3C331A69;
+	Mon, 17 Nov 2025 13:27:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="ykDEiun6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KW4FrsJS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from canpmsgout05.his.huawei.com (canpmsgout05.his.huawei.com [113.46.200.220])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17A04331A5B;
-	Mon, 17 Nov 2025 13:37:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.220
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B5ED331218;
+	Mon, 17 Nov 2025 13:27:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763386643; cv=none; b=pq4rp/Jlg8Iv4qmsWIZvxhGIrzXcMhxgY4tL5uzcITG9AjLqJ9p9xoiVUe+BgJEJbCbBcBSFhLSFkS1ScswbUwRHXz+rRIA4LOeLlD5Dc7h0tgULve04Xex5Ov5bcNmc9ZBpqMkKga7TaII1jDVFwU/OMhycUwFjEMBpUjhJ07Q=
+	t=1763386042; cv=none; b=E/ENmDVRkhPkAOSXcgBHis6zroNkwt38/Vk5Ulmgkkf+NSOIWOf3EtJahS+Kuy+VXENAHwhKbrOtf6T6nzDOD4Pzhjg8zUu9BBwBXaV9r9bmrVqppNkw0WIwAskD3ouA9WD54khDgisJRRxWl5JWxFxLAUmj1Y06qfMDOARvUcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763386643; c=relaxed/simple;
-	bh=tk/BLR6SGDHZd8PgqWActDpF5QWDgHXfHSMSbURwoo8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YoFdZLZakQWAlTFRagmA1uUk1T7RTt/Dl5RyPbixGVsM4YQCc9nRuEaICu0SqD8YF5CMFVvSL+ixyxlgQhmyPhirW/aICkyFpLlas13AFkYQhTqAXMiYO0s+26dZkFd96RJCwZPc17+l/isISRUFCuCWGEVfuldg32Rk6Qcvewg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=ykDEiun6; arc=none smtp.client-ip=113.46.200.220
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=p0umYnge/9FjlLkpy4PvS2wcFW3FASjdMXzdFE5g+6g=;
-	b=ykDEiun6uQV0x6mT1Z3+CS6s2um2ALZmoXqzXZGY9B7fYbgrrdPioYXkHBidFDyRjPXiFpoX5
-	tfyRDEhEfpPqwNAu49HkEEPW+idu9Q908Jdp9+RqzZdOZ8pM6dvRNpwCDF+rAULgwyGFT/BDItI
-	i9tinlXEg7iqM4Ht/Uxq20Y=
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by canpmsgout05.his.huawei.com (SkyGuard) with ESMTPS id 4d97zq2zltz12Lfd;
-	Mon, 17 Nov 2025 21:35:51 +0800 (CST)
-Received: from kwepemr500015.china.huawei.com (unknown [7.202.195.162])
-	by mail.maildlp.com (Postfix) with ESMTPS id 043B1180471;
-	Mon, 17 Nov 2025 21:37:20 +0800 (CST)
-Received: from huawei.com (10.67.174.162) by kwepemr500015.china.huawei.com
- (7.202.195.162) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 17 Nov
- 2025 21:37:19 +0800
-From: Hongbo Li <lihongbo22@huawei.com>
-To: <hsiangkao@linux.alibaba.com>, <chao@kernel.org>, <brauner@kernel.org>,
-	<djwong@kernel.org>, <amir73il@gmail.com>, <joannelkoong@gmail.com>
-CC: <lihongbo22@huawei.com>, <linux-fsdevel@vger.kernel.org>,
-	<linux-erofs@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v9 10/10] erofs: implement .fadvise for page cache share
-Date: Mon, 17 Nov 2025 13:25:37 +0000
-Message-ID: <20251117132537.227116-11-lihongbo22@huawei.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20251117132537.227116-1-lihongbo22@huawei.com>
-References: <20251117132537.227116-1-lihongbo22@huawei.com>
+	s=arc-20240116; t=1763386042; c=relaxed/simple;
+	bh=x+01MxsIpOH7u3pgyOnjl+mUnt4UzsqDJ8bIv9TPSfg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=EHb0w8pBl+sFOOpIoMekVN1YQf1a4uJ+qh+BAmLnaZP2x9gjIiNepLG7sDRUfaKnlUhzZs4nIKTqCChSjWLUlLRXzTGDluvbpobHxbnQdTBmrRthtLc3N34ttFOeOuBTQ957T8MMVvU/3IjXSC2rt5Eb4CaiHhbgaoTsthSWz6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KW4FrsJS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65ACEC19422;
+	Mon, 17 Nov 2025 13:27:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763386042;
+	bh=x+01MxsIpOH7u3pgyOnjl+mUnt4UzsqDJ8bIv9TPSfg=;
+	h=From:Date:Subject:To:Cc:From;
+	b=KW4FrsJSBGKLvACVATXiXM8mKj9Q0SrPQEblQAFoHYEg5JIg6zPzQGr4hniwp1cjF
+	 TtygQ0yeSOYCr3pEYZwtphTvgMzZWb0NWEzjgSLiz4qaDc1llmvE7bXTIK4hskymmF
+	 VaIHzW4kl7XwGoLcFdOyiGEKtpkzADiRZEw5t3mCiK7KlrC8Li7tj97w9x3ygjt7Y4
+	 QMLfjotg/+3oLJESuVpF529EFDqkr2Fygq/RwekMUFQNTibXIyxFklkDHQrIXGxqjG
+	 zr0MHQ4nhp0PoT22Ru8VMLuj4eJDWx/JrD0evDdH8Yb/4S0rl/VdcxVO7Be6fLL0Tz
+	 yOsDZRaKg3Uqw==
+From: Jeff Layton <jlayton@kernel.org>
+Date: Mon, 17 Nov 2025 08:27:11 -0500
+Subject: [PATCH v7] vfs: expose delegation support to userland
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
- kwepemr500015.china.huawei.com (7.202.195.162)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251117-dir-deleg-ro-v7-1-f8bfd13a3791@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/x3MQQqAIBBA0avIrBtQqaSuEi0kJxsIjREiCO+et
+ HyL/18oJEwFZvWC0M2Fc2pwnYLt8CkScmgGq+1gjHEYWDDQSRElo6XR9s4br/0ELbmEdn7+3bL
+ W+gFQqKP1XgAAAA==
+X-Change-ID: 20251117-dir-deleg-ro-2e6247a1a0a9
+To: Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+ Chuck Lever <chuck.lever@oracle.com>, 
+ Alexander Aring <alex.aring@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-fsdevel@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=8733; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=x+01MxsIpOH7u3pgyOnjl+mUnt4UzsqDJ8bIv9TPSfg=;
+ b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBpGyK5aez9IO3bGODnW2Da1yO3BwW3nYORBTe2P
+ DF+Gtbf3myJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaRsiuQAKCRAADmhBGVaC
+ FVpaD/0cCKDdTFuRrVn8SFwgU56yVqMAajBKLwPPvDvtaRzjv7Z5h1DzkeETgMLxj8wH+DsN9wB
+ 8muSzhcvHsnkAY2ef4wMsuoDvWavTkMloN9UxKkF7nkFbQN6JBy3I/HfryypjBknKmgIIW21WUi
+ iDlX04yHZNke38Gw+XioPWLPTD3t9bweAXdryX/PFXGQQpEIodFx35ow3Ti9aaQtWonAIm19/fM
+ X0nkhGe6F+5VappDKArzSa6XtwN7tosGauSqa3VrmPBfzhdUBGrYbpoeMemsMEKYy0MOiCdYBx6
+ QCa12yqmEgQDpYhseSdFnCdNbcL70sMfuqWeV0+V1osWVWYfXCE6DC82zSqEnAANYDexDV2HDCX
+ NOn6fCKWJDo5v22c31/p2NoaPqKbanUDERSVhwJpGZ4S50sObuL3PWOHvk51SGaQ5tZ/6KqB3Vf
+ Zr8sM6vJrXD6oKzzoPVHBIZ9sD31cvpgUMwrg9bo3sTpQPqtGqDE/mhqqSvmOHOY0r3gR4QM4qr
+ pQdfXKNlfPXEpAZtDe4VEI1o57GX8N6SSZ4bIg6ZuiPAag8ISUnjhAwA9d/GQ2Lw6vwcjrmHVuW
+ /Zpz0p+dOycaAboexOiygVCMh3DKsf0Oj8VTRqyFuhyw2FgZmRgX5kk3jmZkGF9JKdmY8V0rvux
+ kE2ZLSwflHNFZQg==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-From: Hongzhen Luo <hongzhen@linux.alibaba.com>
+Now that support for recallable directory delegations is available,
+expose this functionality to userland with new F_SETDELEG and F_GETDELEG
+commands for fcntl().
 
-This patch implements the .fadvise interface for page cache share.
-Similar to overlayfs, it drops those clean, unused pages through
-vfs_fadvise().
+Note that this also allows userland to request a FL_DELEG type lease on
+files too. Userland applications that do will get signalled when there
+are metadata changes in addition to just data changes (which is a
+limitation of FL_LEASE leases).
 
-Reviewed-by: Gao Xiang <hsiangkao@linux.alibaba.com>
-Signed-off-by: Hongzhen Luo <hongzhen@linux.alibaba.com>
-Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
+These commands accept a new "struct delegation" argument that contains a
+flags field for future expansion.
+
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+Link: https://patch.msgid.link/20251111-dir-deleg-ro-v6-17-52f3feebb2f2@kernel.org
+Reviewed-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- fs/erofs/ishare.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+Stephen hit a couple of problems while merging the last patch in the
+directory delegation series. Christian, could you drop the last patch in
+your vfs-6.19.directory.delegations branch and pick up this one instead?
+I think it should address all of the problems he reported. Let me know
+if you'd rather I resend the whole series.
 
-diff --git a/fs/erofs/ishare.c b/fs/erofs/ishare.c
-index da735d69f21f..d8bff0cdf702 100644
---- a/fs/erofs/ishare.c
-+++ b/fs/erofs/ishare.c
-@@ -230,6 +230,16 @@ static int erofs_ishare_mmap(struct file *file, struct vm_area_struct *vma)
- 	return generic_file_readonly_mmap(file, vma);
+Changes in v7:
+- have fcntl.h include proper headers for stdint.h integers
+- move comment above fcntl_getlease() to the proper place
+- add a kerneldoc comment over fcntl_getdeleg()
+---
+ fs/fcntl.c                 | 13 +++++++
+ fs/locks.c                 | 94 ++++++++++++++++++++++++++++++++++------------
+ include/linux/filelock.h   | 12 ++++++
+ include/uapi/linux/fcntl.h | 16 ++++++++
+ 4 files changed, 110 insertions(+), 25 deletions(-)
+
+diff --git a/fs/fcntl.c b/fs/fcntl.c
+index 72f8433d9109889eecef56b32d20a85b4e12ea44..f93dbca0843557d197bd1e023519cfa0f00ad78f 100644
+--- a/fs/fcntl.c
++++ b/fs/fcntl.c
+@@ -445,6 +445,7 @@ static long do_fcntl(int fd, unsigned int cmd, unsigned long arg,
+ 		struct file *filp)
+ {
+ 	void __user *argp = (void __user *)arg;
++	struct delegation deleg;
+ 	int argi = (int)arg;
+ 	struct flock flock;
+ 	long err = -EINVAL;
+@@ -550,6 +551,18 @@ static long do_fcntl(int fd, unsigned int cmd, unsigned long arg,
+ 	case F_SET_RW_HINT:
+ 		err = fcntl_set_rw_hint(filp, arg);
+ 		break;
++	case F_GETDELEG:
++		if (copy_from_user(&deleg, argp, sizeof(deleg)))
++			return -EFAULT;
++		err = fcntl_getdeleg(filp, &deleg);
++		if (!err && copy_to_user(argp, &deleg, sizeof(deleg)))
++			return -EFAULT;
++		break;
++	case F_SETDELEG:
++		if (copy_from_user(&deleg, argp, sizeof(deleg)))
++			return -EFAULT;
++		err = fcntl_setdeleg(fd, filp, &deleg);
++		break;
+ 	default:
+ 		break;
+ 	}
+diff --git a/fs/locks.c b/fs/locks.c
+index dd290a87f58eb5d522f03fa99d612fbad84dacf3..3df07871b5ab7bbe883cdd8fba822d130282da8e 100644
+--- a/fs/locks.c
++++ b/fs/locks.c
+@@ -1680,6 +1680,34 @@ void lease_get_mtime(struct inode *inode, struct timespec64 *time)
  }
+ EXPORT_SYMBOL(lease_get_mtime);
  
-+static int erofs_ishare_fadvise(struct file *file, loff_t offset,
-+				      loff_t len, int advice)
++static int __fcntl_getlease(struct file *filp, unsigned int flavor)
 +{
-+	struct file *realfile = file->private_data;
++	struct file_lease *fl;
++	struct inode *inode = file_inode(filp);
++	struct file_lock_context *ctx;
++	int type = F_UNLCK;
++	LIST_HEAD(dispose);
 +
-+	if (!realfile)
-+		return -EINVAL;
-+	return vfs_fadvise(realfile, offset, len, advice);
++	ctx = locks_inode_context(inode);
++	if (ctx && !list_empty_careful(&ctx->flc_lease)) {
++		percpu_down_read(&file_rwsem);
++		spin_lock(&ctx->flc_lock);
++		time_out_leases(inode, &dispose);
++		list_for_each_entry(fl, &ctx->flc_lease, c.flc_list) {
++			if (fl->c.flc_file != filp)
++				continue;
++			if (fl->c.flc_flags & flavor)
++				type = target_leasetype(fl);
++			break;
++		}
++		spin_unlock(&ctx->flc_lock);
++		percpu_up_read(&file_rwsem);
++
++		locks_dispose_list(&dispose);
++	}
++	return type;
 +}
 +
- const struct file_operations erofs_ishare_fops = {
- 	.open		= erofs_ishare_file_open,
- 	.llseek		= generic_file_llseek,
-@@ -238,6 +248,7 @@ const struct file_operations erofs_ishare_fops = {
- 	.release	= erofs_ishare_file_release,
- 	.get_unmapped_area = thp_get_unmapped_area,
- 	.splice_read	= filemap_splice_read,
-+	.fadvise	= erofs_ishare_fadvise,
- };
+ /**
+  *	fcntl_getlease - Enquire what lease is currently active
+  *	@filp: the file
+@@ -1705,29 +1733,24 @@ EXPORT_SYMBOL(lease_get_mtime);
+  */
+ int fcntl_getlease(struct file *filp)
+ {
+-	struct file_lease *fl;
+-	struct inode *inode = file_inode(filp);
+-	struct file_lock_context *ctx;
+-	int type = F_UNLCK;
+-	LIST_HEAD(dispose);
+-
+-	ctx = locks_inode_context(inode);
+-	if (ctx && !list_empty_careful(&ctx->flc_lease)) {
+-		percpu_down_read(&file_rwsem);
+-		spin_lock(&ctx->flc_lock);
+-		time_out_leases(inode, &dispose);
+-		list_for_each_entry(fl, &ctx->flc_lease, c.flc_list) {
+-			if (fl->c.flc_file != filp)
+-				continue;
+-			type = target_leasetype(fl);
+-			break;
+-		}
+-		spin_unlock(&ctx->flc_lock);
+-		percpu_up_read(&file_rwsem);
++	return __fcntl_getlease(filp, FL_LEASE);
++}
  
+-		locks_dispose_list(&dispose);
+-	}
+-	return type;
++/**
++ * fcntl_getdeleg - enquire what sort of delegation is active
++ * @filp: file to be tested
++ * @deleg: structure where the result is stored
++ *
++ * Returns 0 on success or errno on failure. On success,
++ * deleg->d_type will contain the type of currently set lease
++ * (F_RDLCK, F_WRLCK or F_UNLCK).
++ */
++int fcntl_getdeleg(struct file *filp, struct delegation *deleg)
++{
++	if (deleg->d_flags != 0 || deleg->__pad != 0)
++		return -EINVAL;
++	deleg->d_type = __fcntl_getlease(filp, FL_DELEG);
++	return 0;
+ }
+ 
+ /**
+@@ -2039,13 +2062,13 @@ vfs_setlease(struct file *filp, int arg, struct file_lease **lease, void **priv)
+ }
+ EXPORT_SYMBOL_GPL(vfs_setlease);
+ 
+-static int do_fcntl_add_lease(unsigned int fd, struct file *filp, int arg)
++static int do_fcntl_add_lease(unsigned int fd, struct file *filp, unsigned int flavor, int arg)
+ {
+ 	struct file_lease *fl;
+ 	struct fasync_struct *new;
+ 	int error;
+ 
+-	fl = lease_alloc(filp, FL_LEASE, arg);
++	fl = lease_alloc(filp, flavor, arg);
+ 	if (IS_ERR(fl))
+ 		return PTR_ERR(fl);
+ 
+@@ -2081,7 +2104,28 @@ int fcntl_setlease(unsigned int fd, struct file *filp, int arg)
+ 
+ 	if (arg == F_UNLCK)
+ 		return vfs_setlease(filp, F_UNLCK, NULL, (void **)&filp);
+-	return do_fcntl_add_lease(fd, filp, arg);
++	return do_fcntl_add_lease(fd, filp, FL_LEASE, arg);
++}
++
++/**
++ *	fcntl_setdeleg	-	sets a delegation on an open file
++ *	@fd: open file descriptor
++ *	@filp: file pointer
++ *	@deleg: delegation request from userland
++ *
++ *	Call this fcntl to establish a delegation on the file.
++ *	Note that you also need to call %F_SETSIG to
++ *	receive a signal when the lease is broken.
++ */
++int fcntl_setdeleg(unsigned int fd, struct file *filp, struct delegation *deleg)
++{
++	/* For now, no flags are supported */
++	if (deleg->d_flags != 0 || deleg->__pad != 0)
++		return -EINVAL;
++
++	if (deleg->d_type == F_UNLCK)
++		return vfs_setlease(filp, F_UNLCK, NULL, (void **)&filp);
++	return do_fcntl_add_lease(fd, filp, FL_DELEG, deleg->d_type);
+ }
+ 
+ /**
+diff --git a/include/linux/filelock.h b/include/linux/filelock.h
+index 208d108df2d73a9df65e5dc9968d074af385f881..54b824c05299261e6bd6acc4175cb277ea35b35d 100644
+--- a/include/linux/filelock.h
++++ b/include/linux/filelock.h
+@@ -159,6 +159,8 @@ int fcntl_setlk64(unsigned int, struct file *, unsigned int,
+ 
+ int fcntl_setlease(unsigned int fd, struct file *filp, int arg);
+ int fcntl_getlease(struct file *filp);
++int fcntl_setdeleg(unsigned int fd, struct file *filp, struct delegation *deleg);
++int fcntl_getdeleg(struct file *filp, struct delegation *deleg);
+ 
+ static inline bool lock_is_unlock(struct file_lock *fl)
+ {
+@@ -278,6 +280,16 @@ static inline int fcntl_getlease(struct file *filp)
+ 	return F_UNLCK;
+ }
+ 
++static inline int fcntl_setdeleg(unsigned int fd, struct file *filp, struct delegation *deleg)
++{
++	return -EINVAL;
++}
++
++static inline int fcntl_getdeleg(struct file *filp, struct delegation *deleg)
++{
++	return -EINVAL;
++}
++
+ static inline bool lock_is_unlock(struct file_lock *fl)
+ {
+ 	return false;
+diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
+index 3741ea1b73d8500061567b6590ccf5fb4c6770f0..5e277fd955aae50fa59e93f23d462415ac0ca171 100644
+--- a/include/uapi/linux/fcntl.h
++++ b/include/uapi/linux/fcntl.h
+@@ -4,6 +4,11 @@
+ 
+ #include <asm/fcntl.h>
+ #include <linux/openat2.h>
++#ifdef __KERNEL__
++#include <linux/types.h>
++#else
++#include <stdint.h>
++#endif
+ 
+ #define F_SETLEASE	(F_LINUX_SPECIFIC_BASE + 0)
+ #define F_GETLEASE	(F_LINUX_SPECIFIC_BASE + 1)
+@@ -79,6 +84,17 @@
+  */
+ #define RWF_WRITE_LIFE_NOT_SET	RWH_WRITE_LIFE_NOT_SET
+ 
++/* Set/Get delegations */
++#define F_GETDELEG		(F_LINUX_SPECIFIC_BASE + 15)
++#define F_SETDELEG		(F_LINUX_SPECIFIC_BASE + 16)
++
++/* Argument structure for F_GETDELEG and F_SETDELEG */
++struct delegation {
++	uint32_t	d_flags;	/* Must be 0 */
++	uint16_t	d_type;		/* F_RDLCK, F_WRLCK, F_UNLCK */
++	uint16_t	__pad;		/* Must be 0 */
++};
++
  /*
+  * Types of directory notifications that may be requested.
+  */
+
+---
+base-commit: 8b99f6a8c116f664a6788737705f6da2772cc96a
+change-id: 20251117-dir-deleg-ro-2e6247a1a0a9
+
+Best regards,
 -- 
-2.22.0
+Jeff Layton <jlayton@kernel.org>
 
 
