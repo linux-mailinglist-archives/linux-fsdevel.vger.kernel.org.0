@@ -1,97 +1,125 @@
-Return-Path: <linux-fsdevel+bounces-68718-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68719-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54732C63ED9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Nov 2025 12:52:05 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26FABC63F75
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Nov 2025 12:58:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 18A634EFA67
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Nov 2025 11:48:04 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTPS id 17B3D23FA0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Nov 2025 11:57:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F44D32D7F7;
-	Mon, 17 Nov 2025 11:47:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 745F932B997;
+	Mon, 17 Nov 2025 11:57:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toke.dk header.i=@toke.dk header.b="OER8VvtA"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Tdq5EzmW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail.toke.dk (mail.toke.dk [45.145.95.4])
+Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2108E32B9AE;
-	Mon, 17 Nov 2025 11:47:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.145.95.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17ACF126C02;
+	Mon, 17 Nov 2025 11:57:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763380036; cv=none; b=rf5bzaKX71raR0x7fYUM64t9uaw3DKYKeN5+/NjDd6eAGhugBM/tc0L9gpgvt336FsBf3dNnbEf8dDqsNKsSApXexbyzIJPK3bWHmpSk9Znfgt36c0DHNTnkFRqfsHY8RJ6DtZ/sItN0o09Y/njoczSME3OIwlW1dy8ToTz9J94=
+	t=1763380671; cv=none; b=qRD+f7VH/wC8cGjIXdCeMj4VYC1yFpMth8Bvy5gwcQWhErxvb8WezkRvyjuEmGCQVUgiHFA4WWnwgUpBu2nN/x43Klp6Zuaq0zGjWvMQCkhso2Qx+ZkoGi+iX3JDScj8HccP2mnFrajqNrrOy3gD38FyQKxYCmYlUPsuDztSTV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763380036; c=relaxed/simple;
-	bh=18AThoJ1F5XQlVvAYjRYKKUnjnNDdRj8jhe5/a7p0Ss=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=fihHClnSu06lbwCCo62Xbt7+OoD3hFTTQQ4IH+bL2cCx4bpESFf/+pz7KtIOHyDNKGPnXwpXHHQM/+U2N9TvX+L8pi48mBLRnwGi+m/W0w3bR7AJnVZgOJ0CM9W/sKP5OfbZUONM9VCprJH3eJUuh1OarZKtHTcWBMG7XOcrWwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=toke.dk; spf=pass smtp.mailfrom=toke.dk; dkim=pass (2048-bit key) header.d=toke.dk header.i=@toke.dk header.b=OER8VvtA; arc=none smtp.client-ip=45.145.95.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=toke.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=toke.dk
-From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=toke.dk; s=20161023;
-	t=1763380031; bh=18AThoJ1F5XQlVvAYjRYKKUnjnNDdRj8jhe5/a7p0Ss=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=OER8VvtAWTP0L0fklHIXgvMbFN6jQ42q7ikGcR7PT1lfcpE+sk1vaFPlgwmYfxh2u
-	 Pq0y/kJUlVETtENUzSDWBD29nZ2oAwTrefvL8GaBT/YWNG1U5Mjq4+u8N2zaMvWGEW
-	 D0+efZ3KilUrlzGa4RTfgyZqCWS8ZZBaKN5UMhTzrzKUnNddCaSBPAq9WMvcT+Ds69
-	 3092p0XYV87EDLK8QwERXg2JcshEZMZcTB0vts1w1Xkp4t6mwezRfsELFuLCBJODqY
-	 ihba2OAwwWb9Fs/T1FQnHaijPFLuUVe/E+WYicL9bzWdCRfMuTnCXAFDCbIwAZWgF0
-	 sOcUAGdTe3FmA==
-To: pengdonglin <dolinux.peng@gmail.com>, tj@kernel.org,
- tony.luck@intel.com, jani.nikula@linux.intel.com, ap420073@gmail.com,
- jv@jvosburgh.net, freude@linux.ibm.com, bcrl@kvack.org,
- trondmy@kernel.org, longman@redhat.com, kees@kernel.org
-Cc: bigeasy@linutronix.de, hdanton@sina.com, paulmck@kernel.org,
- linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
- linux-nfs@vger.kernel.org, linux-aio@kvack.org,
- linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org,
- netdev@vger.kernel.org, intel-gfx@lists.freedesktop.org,
- linux-wireless@vger.kernel.org, linux-acpi@vger.kernel.org,
- linux-s390@vger.kernel.org, cgroups@vger.kernel.org, pengdonglin
- <dolinux.peng@gmail.com>, Jakub Kicinski <kuba@kernel.org>, pengdonglin
- <pengdonglin@xiaomi.com>
-Subject: Re: [PATCH v3 14/14] wifi: ath9k: Remove redundant
- rcu_read_lock/unlock() in spin_lock
-In-Reply-To: <20250916044735.2316171-15-dolinux.peng@gmail.com>
-References: <20250916044735.2316171-1-dolinux.peng@gmail.com>
- <20250916044735.2316171-15-dolinux.peng@gmail.com>
-Date: Mon, 17 Nov 2025 12:47:07 +0100
-X-Clacks-Overhead: GNU Terry Pratchett
-Message-ID: <87fracop8k.fsf@toke.dk>
+	s=arc-20240116; t=1763380671; c=relaxed/simple;
+	bh=WpfAyrTR6tAa35DZWR0KQ/vrlIgvmEBTTTWux9aoJ8o=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=PPvs5smABY40Sbs4IeIiiOU2/FxfW+7VvkVn+/MnD+wNgt2JJP/iJtoyD5mcl0lbNRtGtavimURIpg7KVpSei+k+/7bBFAUt1g7bB7ff/zDJcwF+KhWRExWkEksAFG3cSBomwtYAOf3837HOR0mV2vlpTb4ekFVxu8OEFzth36k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Tdq5EzmW; arc=none smtp.client-ip=115.124.30.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1763380656; h=From:To:Subject:Date:Message-ID:MIME-Version;
+	bh=v0wEwbBITgaXOrGzJ60sclrLTHa0QY/zRQTEJSVjsA4=;
+	b=Tdq5EzmWsm7vmQzYB67MQrPXXu3ZwdvwrIpnTKB0DSBtrOUPs7GtnijFUB0imnp+1RYHgoSEnxmw+PUnz5ygizQJMVm9xZNQmE18P5Iz9Kjkjq5Iwc7w5tX2A4cojeoT0E3q5Z5PwehshZqGUVPyd4FKPpIw6ejVMhVSiHt318c=
+Received: from x31i01179.sqa.na131.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WsZmeTQ_1763380651 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Mon, 17 Nov 2025 19:57:35 +0800
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+To: linux-erofs@lists.ozlabs.org
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	Gao Xiang <hsiangkao@linux.alibaba.com>,
+	syzbot+31b8fb02cb8a25bd5e78@syzkaller.appspotmail.com,
+	Yuezhang Mo <Yuezhang.Mo@sony.com>
+Subject: [PATCH] erofs: correct FSDAX detection
+Date: Mon, 17 Nov 2025 19:57:29 +0800
+Message-ID: <20251117115729.626525-1-hsiangkao@linux.alibaba.com>
+X-Mailer: git-send-email 2.43.5
+In-Reply-To: <691af9f6.a70a0220.3124cb.0097.GAE@google.com>
+References: <691af9f6.a70a0220.3124cb.0097.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-pengdonglin <dolinux.peng@gmail.com> writes:
+The detection of the primary device is skipped incorrectly
+if the multiple or flattened feature is enabled.
 
-> From: pengdonglin <pengdonglin@xiaomi.com>
->
-> Since commit a8bb74acd8efe ("rcu: Consolidate RCU-sched update-side funct=
-ion definitions")
-> there is no difference between rcu_read_lock(), rcu_read_lock_bh() and
-> rcu_read_lock_sched() in terms of RCU read section and the relevant grace
-> period. That means that spin_lock(), which implies rcu_read_lock_sched(),
-> also implies rcu_read_lock().
->
-> There is no need no explicitly start a RCU read section if one has already
-> been started implicitly by spin_lock().
->
-> Simplify the code and remove the inner rcu_read_lock() invocation.
->
-> Cc: "Toke" <toke@toke.dk>
-> Cc: Jakub Kicinski <kuba@kernel.org>
-> Signed-off-by: pengdonglin <pengdonglin@xiaomi.com>
-> Signed-off-by: pengdonglin <dolinux.peng@gmail.com>
+It also fixes the FSDAX misdetection for non-block extra blobs.
 
-Acked-by: Toke H=C3=B8iland-J=C3=B8rgensen <toke@toke.dk>
+Fixes: c6993c4cb918 ("erofs: Fallback to normal access if DAX is not supported on extra device")
+Reported-by: syzbot+31b8fb02cb8a25bd5e78@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/r/691af9f6.a70a0220.3124cb.0097.GAE@google.com
+Cc: Yuezhang Mo <Yuezhang.Mo@sony.com>
+Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+---
+ fs/erofs/super.c | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
+
+diff --git a/fs/erofs/super.c b/fs/erofs/super.c
+index f3f8d8c066e4..cd8ff98c2938 100644
+--- a/fs/erofs/super.c
++++ b/fs/erofs/super.c
+@@ -174,15 +174,15 @@ static int erofs_init_device(struct erofs_buf *buf, struct super_block *sb,
+ 		if (!erofs_is_fileio_mode(sbi)) {
+ 			dif->dax_dev = fs_dax_get_by_bdev(file_bdev(file),
+ 					&dif->dax_part_off, NULL, NULL);
+-			if (!dif->dax_dev && test_opt(&sbi->opt, DAX_ALWAYS)) {
+-				erofs_info(sb, "DAX unsupported by %s. Turning off DAX.",
+-					   dif->path);
+-				clear_opt(&sbi->opt, DAX_ALWAYS);
+-			}
+ 		} else if (!S_ISREG(file_inode(file)->i_mode)) {
+ 			fput(file);
+ 			return -EINVAL;
+ 		}
++		if (!dif->dax_dev && test_opt(&sbi->opt, DAX_ALWAYS)) {
++			erofs_info(sb, "DAX unsupported by %s. Turning off DAX.",
++				   dif->path);
++			clear_opt(&sbi->opt, DAX_ALWAYS);
++		}
+ 		dif->file = file;
+ 	}
+ 
+@@ -215,13 +215,13 @@ static int erofs_scan_devices(struct super_block *sb,
+ 			  ondisk_extradevs, sbi->devs->extra_devices);
+ 		return -EINVAL;
+ 	}
+-	if (!ondisk_extradevs) {
+-		if (test_opt(&sbi->opt, DAX_ALWAYS) && !sbi->dif0.dax_dev) {
+-			erofs_info(sb, "DAX unsupported by block device. Turning off DAX.");
+-			clear_opt(&sbi->opt, DAX_ALWAYS);
+-		}
+-		return 0;
++
++	if (test_opt(&sbi->opt, DAX_ALWAYS) && !sbi->dif0.dax_dev) {
++		erofs_info(sb, "DAX unsupported by block device. Turning off DAX.");
++		clear_opt(&sbi->opt, DAX_ALWAYS);
+ 	}
++	if (!ondisk_extradevs)
++		return 0;
+ 
+ 	if (!sbi->devs->extra_devices && !erofs_is_fscache_mode(sb))
+ 		sbi->devs->flatdev = true;
+-- 
+2.43.5
 
 
