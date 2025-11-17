@@ -1,209 +1,130 @@
-Return-Path: <linux-fsdevel+bounces-68771-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68773-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B0D0C65C4F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Nov 2025 19:45:59 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC291C65E1F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Nov 2025 20:10:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by tor.lore.kernel.org (Postfix) with ESMTPS id 4CA442925B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Nov 2025 18:45:58 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTPS id C6F8129DE9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Nov 2025 19:06:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AEDF324B24;
-	Mon, 17 Nov 2025 18:45:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A40C33374E;
+	Mon, 17 Nov 2025 19:00:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NDT9Jk/0"
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="V4BdmbS2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B17C299A81
-	for <linux-fsdevel@vger.kernel.org>; Mon, 17 Nov 2025 18:45:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD18B32ED58
+	for <linux-fsdevel@vger.kernel.org>; Mon, 17 Nov 2025 19:00:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763405146; cv=none; b=TsUM4BtxUjmFkLpSE21nsjwii11M0iw45yzY738m9TB22MNMeIGZsnlrnuJC4gzuEmin87l6+43Kct86LmGT8YhgAzH5kw45jpZx0gY1cMZBcGd4x3e0tE4MswfEkcETypSLUTiiSfqZGfZeAzaTpJ1B5vIr1+rLHdCVz60coaQ=
+	t=1763406056; cv=none; b=DyMO/keWw9mzYg1bm7P+bie7uD09EYUZn+zKnv0poEWZpwSRl3BBnYrilQsA7TeMbpxMBtwplAMloZ3RMmhZ+5bS2VrA/Y2UgO3MOCtYt4yHrppvGaIfPGOvf+396WK9abp/p+SPC4PLeRe2ljPw+NtTET87eLhHGbcwZEOHaKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763405146; c=relaxed/simple;
-	bh=XfpLeaMZaftJPa7XH4d6g3rAc3/MCc5v2eE3X/twjBg=;
+	s=arc-20240116; t=1763406056; c=relaxed/simple;
+	bh=W/pP15q1CttsZvUfyX6F2C+iK5S6h3qctb/NEBwupaE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iCR2qH3RSkNiFaGksdGA3CmACLUtm+zYduDfINH/ZStXgBV9T2OG0Pea68yE8HhqAxJ30j7W22ftpPdaY8t+dM7YCe5wgxRBVxIZv6O+GIKeqYp1PO08bb4mepwRWQ6B1DBE5NYQZWMET4QJKSLmPxWiR6x0pewG00HTX0gj8Xc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NDT9Jk/0; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-3437af8444cso4818549a91.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Nov 2025 10:45:45 -0800 (PST)
+	 To:Cc:Content-Type; b=RofIhm8OCdAHf9s1pxn/grxrNOFIZdpOlctHbcseAb22EdW6xX1ahl34lAvaUkxgZOJjvdoh2YKwHBvpgfMjEJxuRiGE3aqpObLD8N0+W42IlW+uUVMP5awSZnh6smlQxeQhbStu5gcZNthxh6U+0qDIVmvGcb35tTm75rKMtS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=V4BdmbS2; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-640aa1445c3so7132612a12.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Nov 2025 11:00:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763405144; x=1764009944; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7wucYSeQ2nsQ8Jk+wJRdH9jEs+0g/nJs2i4hQi0un/g=;
-        b=NDT9Jk/03fRZAfArZZL/XY7N7/BgR+DWtY00ece4zt7N+HqmLihjkUv8R0YivBeRvf
-         M95T5gF4dtM7eXldobq0fZCXDV9YIRxIDed3tD5GfktI9Myix88xMOqZdhf9mI+OcYCc
-         eCemSmoUxF3oCqBfqS88oNrmnMqPejhSdg3rDhuffI1novuF4pHYe3vXum+WIO72Hefm
-         WR39u1HzPKPrIIoGoVCHtKKgmluVghyvL0VsrryBsKOiw+g6VhD9MOQ+synLhNYQSW5Y
-         cItMPmOiyn7+L6I2a1/h3WZHDFef5GPviPHZqza2KdnZa/ZWjO00e4GBLBwRDxu56gNY
-         +8pQ==
+        d=soleen.com; s=google; t=1763406053; x=1764010853; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=HPFoc/+4ns3fO2ktzkE/+/lUeXaO04xK8Lezo7jSI84=;
+        b=V4BdmbS2aYVd3zPMLXZ8nNGnKhBWGeLQk1Rmw45vzvGzqb8xoAOlOWeQLht45ONAkU
+         oRlsa8N5dj8Dbap92l9JEemjKwZxJbBu9+MXeeWtPbkMhm1KxXwk7BXyfmjGl0Wm2kNg
+         sBIFQ0J4SVi1SM0ASfD30Gqf0b6Nk+Vb6yJX5MZaZx5oay8nyuaorRTe94iA1YqaGqv7
+         Br+pWhCp7cnFXqj5bs75RyT2Tl8iWRKESqjBkIb13AB25scneGG54OmEGl5G+y3L1q6E
+         HZWahSHEdcC2pkD5fNyhhLXRT+k324xymdsFLV/+g6pZjADxD3ouZ6hXEY/svxUJLKVp
+         AUYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763405144; x=1764009944;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=7wucYSeQ2nsQ8Jk+wJRdH9jEs+0g/nJs2i4hQi0un/g=;
-        b=QJEAGzhBF+c6ju6QnOStUH848OazedT1MTsmEAkObEYjLa0r0Ctf2xtpgdx1n8pLEZ
-         KVxCKv8MEtEPsaNObaJlAmwv6lgvGanDuwiBLrJX/0WGI9kNij3L6SgUw2IwyiXCXJxw
-         KpUBNXFNbp93/tvX3Or/78UR02O7cGycjxu0t04A+PvdHDgkceYDiG/MbWpDKUSgLJHV
-         uyF6FomZGjZ49kpwSaJsgG48eJ/PzqRAez5wmVCBWejE69szktcW20I2N+jR7VYd4upK
-         +V7s/OXop6rgCcwx2934sJuSkuKdxDm3aYFIH5jXg3ENzm16jXHptmubm8n6nZdw5J5E
-         GCQg==
-X-Forwarded-Encrypted: i=1; AJvYcCWlSGF4GMyXioTgGcl5JC3jBOFq/MeDEWZ8kEE50J7QcXo0V5bfJvYXfBQw33UzOTFtR9JU/gQsEs0h5ji+@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRPh+2EapdC6kc6mGEnPUKUs+lkb1XhbZcA7AxNlgb5WEt9eJV
-	fgR/A6EInT3TJH/6xxHjXEtUbZf/DimCdMqVEE6JBT3KhJ7196K4uJNHbcjerL3WRFKr0Z0gqDj
-	OMA8c1XBEozZxrzt9UiFtKyWUFqoY4VY=
-X-Gm-Gg: ASbGnct/P0gmftxRqPZmtnOjsRBE54Sbve0WXwQnQMdO8/ic1VEImVQvRo5OnZlSfV3
-	gg6zHjXHf50foBpAshrGAJmXtQ64izUSgd6ljpM0rnrTqOFcVv59lpMBwYLuuGOnlSiby7g0NHO
-	Fg+kBfvWRZmA/wYX5W99OxUgi9eXMqCLhhNqMzcFuHi2C9al9/yDlwO53WiF0h56gOD+K0ABENH
-	a1kICvQ1K8ptVWzGdVCSDRHeTVcSh8Yd91cKWdT5fixDMxY2PY5tpFTIy4iQ35ZpqqxRvMdrpuF
-X-Google-Smtp-Source: AGHT+IHaGw3phEOQw4Qpur0eLmyhxso8M4IG4GnZLwbf/2toORgNJUKXRKe/uLp0l71+D3q3BCbIbJuZDTs9RGbD+0c=
-X-Received: by 2002:a17:90b:510c:b0:343:b610:901c with SMTP id
- 98e67ed59e1d1-343fa74be77mr14049811a91.26.1763405144456; Mon, 17 Nov 2025
- 10:45:44 -0800 (PST)
+        d=1e100.net; s=20230601; t=1763406053; x=1764010853;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HPFoc/+4ns3fO2ktzkE/+/lUeXaO04xK8Lezo7jSI84=;
+        b=B57GEeZsn9tJQXS/jodyTddvX2dXHF5mxgpvHSNxzdb4iuitmSU6+oM6p8qHG22e5C
+         mzE58UHQvr5WiUQZojrZxURns7vuS53YLm+hpfxgTd35izYD6S10s2g9bIdD1JnPOTgp
+         3I2lnbx7wpUKH4fel6TnWN/EfIrXDLrGIkQ1VL/BxznTyaGbkcicRxrCpKCOhlKwUER0
+         +R2P4lfGwwPb0Ds6RqS/RYCYvYX5UexSHkyiur+Uz+Vk4V2il/eZk/JcQr0p+R7GjAXW
+         AnKI0qZlweCT89bVnlotsArkebZ4koGOi28uKz/iq4M/y1w/Fqfz/MtPcgyXTysMlR0+
+         0kWg==
+X-Forwarded-Encrypted: i=1; AJvYcCVfnfHg7KZpgev19Eot4Ub9NMADERKQWFswT2B3NyQe5doZBvTWUfGcA4tF+I4YbH5yt1YhgFJpAryNDGwC@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOgxtZTFsnC/sE4k/ZXRZBitr1bsIDP9t6Z/EwxTb07MYRMFU6
+	EcqJomeeWbskzQMjwKtPMgTyqj4RoVz4ckdylF89OjrPdYzzaEYBXn+3gBB6RzqBmcj+xW2RZ+T
+	BpEfWLHJrmv1p7Fw0PG6uCf15jR8oi5nhiOXk0tsqQA==
+X-Gm-Gg: ASbGnctp4J00jG0qVYqqeREtoruOeo78ngIhXUok7mH4seAqvgUkDziKi92Ozmul5w9
+	pzpkL+STyh4Aut2K6etFqzKQLxORXHXojgkTpZe8Qk19GmKxaQldx7xO29dcHJ6WnddO6i1iX3I
+	7N5irF2iJi83k9Qasodd9rQKDM8N4o0d0Q1biyEaWiSS2RCfS+SOaHwTE4eU+ADcUY/ZfwXS0Mn
+	OHtQoPTr6mUaDejmKRsGwWri5bgLH9ZmUaPEEb6EmTzVGxKSELtxXPb8/Kay6HEoGfL
+X-Google-Smtp-Source: AGHT+IFV4NJXr23fgmib+nZZop8ZpcGlfzValh3mFozDE5HCWs4UKMYvFXIv7w0dSviSfrbdSBGLz4YMmJN++K6QINE=
+X-Received: by 2002:a05:6402:2812:b0:640:bb28:9a28 with SMTP id
+ 4fb4d7f45d1cf-64350e237b9mr14060340a12.15.1763406052900; Mon, 17 Nov 2025
+ 11:00:52 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251114193729.251892-1-ssranevjti@gmail.com> <aReUv1kVACh3UKv-@casper.infradead.org>
- <CANNWa07Y_GPKuYNQ0ncWHGa4KX91QFosz6WGJ9P6-AJQniD3zw@mail.gmail.com>
- <aRpQ7LTZDP-Xz-Sr@casper.infradead.org> <20251117164155.GB196362@frogsfrogsfrogs>
- <aRtjfN7sC6_Bv4bx@casper.infradead.org>
-In-Reply-To: <aRtjfN7sC6_Bv4bx@casper.infradead.org>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Mon, 17 Nov 2025 10:45:31 -0800
-X-Gm-Features: AWmQ_bnuhsyqplW3EwmS5X2rilTR8nQ_4xwujfWlx5dY8gU3dMEgLDCj7uI7O6I
-Message-ID: <CAEf4BzZu+u-F9SjhcY5GN5vumOi6X=3AwUom+KJXeCpvC+-ppQ@mail.gmail.com>
-Subject: Re: [PATCH] mm/filemap: fix NULL pointer dereference in do_read_cache_folio()
-To: Matthew Wilcox <willy@infradead.org>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, SHAURYA RANE <ssrane_b23@ee.vjti.ac.in>, 
-	akpm@linux-foundation.org, shakeel.butt@linux.dev, eddyz87@gmail.com, 
-	andrii@kernel.org, ast@kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	linux-kernel-mentees@lists.linux.dev, skhan@linuxfoundation.org, 
-	david.hunter.linux@gmail.com, khalid@kernel.org, 
-	syzbot+09b7d050e4806540153d@syzkaller.appspotmail.com, 
-	bpf <bpf@vger.kernel.org>
+References: <20251115233409.768044-1-pasha.tatashin@soleen.com>
+ <20251115233409.768044-21-pasha.tatashin@soleen.com> <aRsDb-4bXFQ9Zmtu@kernel.org>
+In-Reply-To: <aRsDb-4bXFQ9Zmtu@kernel.org>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Mon, 17 Nov 2025 14:00:15 -0500
+X-Gm-Features: AWmQ_bm3PVSUD_ScaaBFLOLZ3gtlTTKqmWWQ6wfPBc2TSiFgvBGhnxI_qyTqjOU
+Message-ID: <CA+CK2bCfPeY558f499JHKN7aekDzsxQkZJ9Uz4e+saR0qtXyfg@mail.gmail.com>
+Subject: Re: [PATCH v6 20/20] tests/liveupdate: Add in-kernel liveupdate test
+To: Mike Rapoport <rppt@kernel.org>
+Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com, 
+	dmatlack@google.com, rientjes@google.com, corbet@lwn.net, 
+	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, 
+	ojeda@kernel.org, aliceryhl@google.com, masahiroy@kernel.org, 
+	akpm@linux-foundation.org, tj@kernel.org, yoann.congal@smile.fr, 
+	mmaurer@google.com, roman.gushchin@linux.dev, chenridong@huawei.com, 
+	axboe@kernel.dk, mark.rutland@arm.com, jannh@google.com, 
+	vincent.guittot@linaro.org, hannes@cmpxchg.org, dan.j.williams@intel.com, 
+	david@redhat.com, joel.granados@kernel.org, rostedt@goodmis.org, 
+	anna.schumaker@oracle.com, song@kernel.org, linux@weissschuh.net, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
+	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com, 
+	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
+	rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org, 
+	cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com, 
+	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com, 
+	aleksander.lobakin@intel.com, ira.weiny@intel.com, 
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
+	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net, 
+	brauner@kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	saeedm@nvidia.com, ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com, 
+	leonro@nvidia.com, witu@nvidia.com, hughd@google.com, skhawaja@google.com, 
+	chrisl@kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-+ bpf@
+> >  #endif /* _LINUX_LIVEUPDATE_ABI_LUO_H */
+> > diff --git a/kernel/liveupdate/luo_file.c b/kernel/liveupdate/luo_file.c
+> > index df337c9c4f21..9a531096bdb5 100644
+> > --- a/kernel/liveupdate/luo_file.c
+> > +++ b/kernel/liveupdate/luo_file.c
+> > @@ -834,6 +834,8 @@ int liveupdate_register_file_handler(struct liveupdate_file_handler *fh)
+> >       INIT_LIST_HEAD(&fh->flb_list);
+> >       list_add_tail(&fh->list, &luo_file_handler_list);
+> >
+> > +     liveupdate_test_register(fh);
+> > +
+>
+> Why this cannot be called from the test?
 
-On Mon, Nov 17, 2025 at 10:03=E2=80=AFAM Matthew Wilcox <willy@infradead.or=
-g> wrote:
->
-> On Mon, Nov 17, 2025 at 08:41:55AM -0800, Darrick J. Wong wrote:
-> > I wondered why this whole thing opencodes kernel_read, but then I
-> > noticed zero fstests for it and decid*******************************
-> > *****.
->
-> I wondered the same thing!  And the answer is that it's special BPF
-> stuff:
->
->         /* if sleeping is allowed, wait for the page, if necessary */
->         if (r->may_fault && (IS_ERR(r->folio) || !folio_test_uptodate(r->=
-folio))) {
->                 filemap_invalidate_lock_shared(r->file->f_mapping);
->                 r->folio =3D read_cache_folio(r->file->f_mapping, file_of=
-f >> PAGE_SHIFT,
->                                             NULL, r->file);
->                 filemap_invalidate_unlock_shared(r->file->f_mapping);
->         }
->
-> if 'may_fault' (a misnomer since it really means "may sleep"), then we
-> essentially do kernel_read().
->
-> Now, maybe the right thing to do here is rip out almost all of
-> lib/buildid.c and replace it with an iocb with IOCB_NOWAIT set (or not).
-> I was hesitant to suggest this earlier as it's a bit of a big ask of
-> someone who was just trying to submit a one-line change.  But now that
-> "it's also shmem" has entered the picture, I'm leaning more towards this
-> approach anyway.
+Because test does not have access to all file_handlers that are being
+registered with LUO.
 
-As I replied on another email, ideally we'd have some low-level file
-reading interface where we wouldn't have to know about secretmem, or
-XFS+DAX, or whatever other unusual combination of conditions where
-exposed internal APIs like filemap_get_folio() + read_cache_folio()
-can crash.
-
-The only real limitation is that we'd like to be able to control
-whether we are ok sleeping or not, as this code can be called from
-pretty much anywhere BPF might run, which includes NMI context.
-
-Would this kiocb_read() approach work under those circumstances?
-
->
-> Looking at it though, it's a bit weird that we don't have a
-> kiocb_read().  It feels like __kernel_read() needs to be split into
-> half like:
->
-> diff --git a/fs/read_write.c b/fs/read_write.c
-> index 833bae068770..a3bf962836a7 100644
-> --- a/fs/read_write.c
-> +++ b/fs/read_write.c
-> @@ -503,14 +503,29 @@ static int warn_unsupported(struct file *file, cons=
-t char *op)
->         return -EINVAL;
->  }
->
-> -ssize_t __kernel_read(struct file *file, void *buf, size_t count, loff_t=
- *pos)
-> +ssize_t kiocb_read(struct kiocb *iocb, void *buf, size_t count)
->  {
-> +       struct file *file =3D iocb->ki_filp;
->         struct kvec iov =3D {
->                 .iov_base       =3D buf,
->                 .iov_len        =3D min_t(size_t, count, MAX_RW_COUNT),
->         };
-> -       struct kiocb kiocb;
->         struct iov_iter iter;
-> +       int ret;
-> +
-> +       iov_iter_kvec(&iter, ITER_DEST, &iov, 1, iov.iov_len);
-> +       ret =3D file->f_op->read_iter(iocb, &iter);
-> +       if (ret > 0) {
-> +               fsnotify_access(file);
-> +               add_rchar(current, ret);
-> +       }
-> +       inc_syscr(current);
-> +       return ret;
-> +}
-> +
-> +ssize_t __kernel_read(struct file *file, void *buf, size_t count, loff_t=
- *pos)
-> +{
-> +       struct kiocb kiocb;
->         ssize_t ret;
->
->         if (WARN_ON_ONCE(!(file->f_mode & FMODE_READ)))
-> @@ -526,15 +541,9 @@ ssize_t __kernel_read(struct file *file, void *buf, =
-size_t count, loff_t *pos)
->
->         init_sync_kiocb(&kiocb, file);
->         kiocb.ki_pos =3D pos ? *pos : 0;
-> -       iov_iter_kvec(&iter, ITER_DEST, &iov, 1, iov.iov_len);
-> -       ret =3D file->f_op->read_iter(&kiocb, &iter);
-> -       if (ret > 0) {
-> -               if (pos)
-> -                       *pos =3D kiocb.ki_pos;
-> -               fsnotify_access(file);
-> -               add_rchar(current, ret);
-> -       }
-> -       inc_syscr(current);
-> +       ret =3D kiocb_read(&kiocb, buf, count);
-> +       if (pos && ret > 0)
-> +               *pos =3D kiocb.ki_pos;
->         return ret;
->  }
->
+Pasha
 
