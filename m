@@ -1,160 +1,161 @@
-Return-Path: <linux-fsdevel+bounces-68763-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68764-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 668FCC65A6D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Nov 2025 19:04:14 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D75DC65B12
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Nov 2025 19:20:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F318A4E4AE9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Nov 2025 18:04:10 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 581BF4E1C51
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Nov 2025 18:20:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AA543064B3;
-	Mon, 17 Nov 2025 18:03:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9614302756;
+	Mon, 17 Nov 2025 18:20:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="eHaFn+bN"
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="IpzOdkO/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEE082848AA;
-	Mon, 17 Nov 2025 18:03:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B133930AD00
+	for <linux-fsdevel@vger.kernel.org>; Mon, 17 Nov 2025 18:20:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763402628; cv=none; b=JwYVbDFkOpuXTr4Ah2ffJBFoHGO7P14fXfvWw/v01R0kttGJUt7lu0T+HDNeNbvD1PKzFixs6ACDw/eeDYOP67yC4AnPR61YX+A4RKbblPmnH/t5gB5mP/dcOyNjplfD7aIVJeRzaU+gOXvwA/tYCd4YsaXxBJMkNATT2NpPxFc=
+	t=1763403648; cv=none; b=s6OENTUXsWil4PNH6hASODSwvQ4iVviV11YAFn71VrCnXFzRkjn1ZfuFpV8GIpJvqNccNgG7EzWW+j+zIgFSeH8QqVnzMpUr3HD5WVJKca4a9wdPDRsJnRW60VJ3eftwGGOPMvxi/8oWK0ermGCDjweKb/5fHMep5Mwe5GoJRrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763402628; c=relaxed/simple;
-	bh=9uMwZN9krUdS78DbjxNt+iqrRQ4nPzVTYJyUwBnvW5A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fjCKNRW8jFslMuAPZmhWFNJu3HrORXhtKtC4wL2px+kKkNw6YDAI+iVwHbAZW2wQoT62Gp+7ZevKrjuep5rtulYhK20vmWRqOZ6R/av57hgA9QBPiMxEaSK5Tdzbj8pX8HhJzObK/OcmEbNDZDxqk8Q838Gv6J8npRW97iSbahw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=eHaFn+bN; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=U5Cie80ik2JSvccL39+8gipzyyJCojAXux/hEMXLbb0=; b=eHaFn+bNRcbBqqPbDECTU1nha+
-	8ki4ktpeVqfjrOojFTJy4b9CsRE7DSDpiExAIK3uzWeofkrlLPwdhdwxMXhHe3VZW8PtST3ZW88Pl
-	Mb8itCOIMTljNTR12RzQJWDMna902aYOJpxvJyIfpZR96OFCALwZxEM3RMHkbiIXpi8azElvRRL+o
-	LNuvhXUzES1FgnU8cEMpzaBUqAB9XoqOY0mI7SKxuGXU1HMnorWwn+3kNsON1xIn/WQynngm2/gsM
-	s8xKMfEQlUL7uY19UD0Cmucf9uEgC4IVsl3h+psRtvvDS6i942u/P+P+TZbpHXhiD2VdxV8kzrBle
-	XxvP7Akg==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vL3Zl-0000000EEaq-0Kni;
-	Mon, 17 Nov 2025 18:03:41 +0000
-Date: Mon, 17 Nov 2025 18:03:40 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: SHAURYA RANE <ssrane_b23@ee.vjti.ac.in>, akpm@linux-foundation.org,
-	shakeel.butt@linux.dev, eddyz87@gmail.com, andrii@kernel.org,
-	ast@kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev,
-	skhan@linuxfoundation.org, david.hunter.linux@gmail.com,
-	khalid@kernel.org,
-	syzbot+09b7d050e4806540153d@syzkaller.appspotmail.com
-Subject: Re: [PATCH] mm/filemap: fix NULL pointer dereference in
- do_read_cache_folio()
-Message-ID: <aRtjfN7sC6_Bv4bx@casper.infradead.org>
-References: <20251114193729.251892-1-ssranevjti@gmail.com>
- <aReUv1kVACh3UKv-@casper.infradead.org>
- <CANNWa07Y_GPKuYNQ0ncWHGa4KX91QFosz6WGJ9P6-AJQniD3zw@mail.gmail.com>
- <aRpQ7LTZDP-Xz-Sr@casper.infradead.org>
- <20251117164155.GB196362@frogsfrogsfrogs>
+	s=arc-20240116; t=1763403648; c=relaxed/simple;
+	bh=CZtsj+hifIsZJbKTfeb8TuUonR9rJOLyCJoinWAfVZM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=H91UGlq+Op+2sOsrYBNF3D+AHnETJicl2r3jbrkdPmcX2k6h0nYfJkWp2O1jbOTa3JIRvAGBmPWzHL2pVDwaX5rFk0QT62LN/RLS7n6GwCoIB5yB5jdQXaScDcWzFD0SeoDkk5SZAxM6L21vVtvGgz/zR9eMJ8CQvTRgxwcAVY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=IpzOdkO/; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-640bd9039fbso7887383a12.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Nov 2025 10:20:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen.com; s=google; t=1763403645; x=1764008445; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=j8uyJ9UgvBm8P+z5AaxjU/5GgC74k2Y8kBRaWb+wv/8=;
+        b=IpzOdkO/TAphkuNLFQKOlMCFibMB7FXtwyELkClcZK/UQMitx5pYr6aLyTVD7HivrA
+         yZ9TyaHfpn1tXwTDvcz9UE1jK6kILYxxIprO1UczbPyJAhZQF/Zw5wKmGg5uBjvB/0Ed
+         wu9eUfc8dA9n4Sw2YarHZh4P0Mb7oNH+ULUozCRT/M4kNFBJulpSFaeq19eUR24SWdNA
+         tU62ePkikquYMiUW0xcCZfA0igD2z5u5cAGVoxi5edaVuxaUPurQM1FlznHFZ98QCjaD
+         olouksHmBWu3Fqn30s2sg1M/TWI9mLVwCrvGVuSL9o1TBhIuPeUTXIt8lrSAsnsOMwEv
+         35KA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763403645; x=1764008445;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=j8uyJ9UgvBm8P+z5AaxjU/5GgC74k2Y8kBRaWb+wv/8=;
+        b=XiRHNeLBoJie92tcd37AE/ajt4pObRtpxGMvkzTm0cFXUVUenDz+Z31lrtPBn/IQ3R
+         s2TDsbPwceWis6YUHhStOONzViYZrCIi9+YbVFBYGNtHYQJwh96dvKYEZ1UYVU71qP3k
+         eoXoPH5v5/nyLbo0RRmADf3VzQsZD+DcEdkVl0ajlt9XSoNS3YIzfBWDj1JcJLeMCYrY
+         Wj2BtyrCpF8h9Px2+UCMDjcvJvzrtTZ1fQNyPIdSMqs5zhXWxf/zeSPmWRXos5xT5ba/
+         SNPQqt9xOBulPWYj/2/+DZteP6lCL8xctAfyfOMKO0jhfXbWnaun90hNyCSviTQrPtSS
+         pLrw==
+X-Forwarded-Encrypted: i=1; AJvYcCWprDA7Db7UVI2kwU1JYVrs/bSKNeIiyBUXGyW/gG85cV2IgbVVwDlwgirmj7n0uH1it6tT/7WaN/blJQ4L@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywcj/jj0jX0zJnK6lKeTM9tU1cSMTSNZdTBZn1ommFtrK6pi5Y4
+	y/xqu+ibeuEMJNkC3IsL7I93YN4gjts8AxFES9dMBE0BZ8ExnP83ZyMw4UWSX9rQLvu2t4pAlhG
+	qhSHjYgA4IC8gfDfhsm97bVFNs2iFIBrDSISVorwPPQ==
+X-Gm-Gg: ASbGnct76Yn9/u3yKrhug6KBxbAwcbxsX4eAgno7b+rhgOoOGdo3/a5H0xUQhuaPYKL
+	H34xpk5Puvi8ZFH3mooWtgKs5PDhA7vpwp9V7MbsDRUx6YXsVnZoE6o2wTqZD01UN5oRY6K2rKd
+	6qvLhhkdIigRaapDG/npLYh0EpahOGKWsAxasSkkmW6Kg5eikTx7BOqYjgZTXXxMf8HbI/grAHz
+	WS96Gfbi1tQVk4/qe2hPIw7bAUhRtpgV3+FpbXm3MxKTQ6ocT4f5AUHxkmrzKT8H1Ko
+X-Google-Smtp-Source: AGHT+IGM1Tr15Cbgk4QQHnvYqnvMCGG164LW1Q1ssAN2iVzR9VtHS4h71YwFJlzXxkn+A9bvWz6u1Z5jGfTyNzSIJ9I=
+X-Received: by 2002:a05:6402:50d1:b0:640:c807:6af8 with SMTP id
+ 4fb4d7f45d1cf-64350e9c5c3mr10832591a12.30.1763403644857; Mon, 17 Nov 2025
+ 10:20:44 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251117164155.GB196362@frogsfrogsfrogs>
+References: <20251115233409.768044-1-pasha.tatashin@soleen.com>
+ <20251115233409.768044-11-pasha.tatashin@soleen.com> <aRrtmy--AWCEEbtg@kernel.org>
+In-Reply-To: <aRrtmy--AWCEEbtg@kernel.org>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Mon, 17 Nov 2025 13:20:07 -0500
+X-Gm-Features: AWmQ_bngMkZtOLXtzvbIhDYg36rxAp3uf7c25ogdWq8dWGd7IJgw-yYh-gP9XSc
+Message-ID: <CA+CK2bCVf2RppZbALAuFZyZarWukzhwkmOgtG2PcKqUQuao6uw@mail.gmail.com>
+Subject: Re: [PATCH v6 10/20] MAINTAINERS: add liveupdate entry
+To: Mike Rapoport <rppt@kernel.org>
+Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com, 
+	dmatlack@google.com, rientjes@google.com, corbet@lwn.net, 
+	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, 
+	ojeda@kernel.org, aliceryhl@google.com, masahiroy@kernel.org, 
+	akpm@linux-foundation.org, tj@kernel.org, yoann.congal@smile.fr, 
+	mmaurer@google.com, roman.gushchin@linux.dev, chenridong@huawei.com, 
+	axboe@kernel.dk, mark.rutland@arm.com, jannh@google.com, 
+	vincent.guittot@linaro.org, hannes@cmpxchg.org, dan.j.williams@intel.com, 
+	david@redhat.com, joel.granados@kernel.org, rostedt@goodmis.org, 
+	anna.schumaker@oracle.com, song@kernel.org, linux@weissschuh.net, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
+	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com, 
+	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
+	rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org, 
+	cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com, 
+	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com, 
+	aleksander.lobakin@intel.com, ira.weiny@intel.com, 
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
+	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net, 
+	brauner@kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	saeedm@nvidia.com, ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com, 
+	leonro@nvidia.com, witu@nvidia.com, hughd@google.com, skhawaja@google.com, 
+	chrisl@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 17, 2025 at 08:41:55AM -0800, Darrick J. Wong wrote:
-> I wondered why this whole thing opencodes kernel_read, but then I
-> noticed zero fstests for it and decid*******************************
-> *****.
+On Mon, Nov 17, 2025 at 4:41=E2=80=AFAM Mike Rapoport <rppt@kernel.org> wro=
+te:
+>
+> On Sat, Nov 15, 2025 at 06:33:56PM -0500, Pasha Tatashin wrote:
+> > Add a MAINTAINERS file entry for the new Live Update Orchestrator
+> > introduced in previous patches.
+> >
+> > Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+> > ---
+> >  MAINTAINERS | 11 +++++++++++
+> >  1 file changed, 11 insertions(+)
+> >
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index 500789529359..bc9f5c6f0e80 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -14464,6 +14464,17 @@ F:   kernel/module/livepatch.c
+> >  F:   samples/livepatch/
+> >  F:   tools/testing/selftests/livepatch/
+> >
+> > +LIVE UPDATE
+> > +M:   Pasha Tatashin <pasha.tatashin@soleen.com>
+>
+> Please count me in :)
+>
 
-I wondered the same thing!  And the answer is that it's special BPF
-stuff:
+Sure, added.
 
-        /* if sleeping is allowed, wait for the page, if necessary */
-        if (r->may_fault && (IS_ERR(r->folio) || !folio_test_uptodate(r->folio))) {
-                filemap_invalidate_lock_shared(r->file->f_mapping);
-                r->folio = read_cache_folio(r->file->f_mapping, file_off >> PAGE_SHIFT,
-                                            NULL, r->file);
-                filemap_invalidate_unlock_shared(r->file->f_mapping);
-        }
-
-if 'may_fault' (a misnomer since it really means "may sleep"), then we
-essentially do kernel_read().
-
-Now, maybe the right thing to do here is rip out almost all of
-lib/buildid.c and replace it with an iocb with IOCB_NOWAIT set (or not).
-I was hesitant to suggest this earlier as it's a bit of a big ask of
-someone who was just trying to submit a one-line change.  But now that
-"it's also shmem" has entered the picture, I'm leaning more towards this
-approach anyway.
-
-Looking at it though, it's a bit weird that we don't have a
-kiocb_read().  It feels like __kernel_read() needs to be split into
-half like:
-
-diff --git a/fs/read_write.c b/fs/read_write.c
-index 833bae068770..a3bf962836a7 100644
---- a/fs/read_write.c
-+++ b/fs/read_write.c
-@@ -503,14 +503,29 @@ static int warn_unsupported(struct file *file, const char *op)
- 	return -EINVAL;
- }
- 
--ssize_t __kernel_read(struct file *file, void *buf, size_t count, loff_t *pos)
-+ssize_t kiocb_read(struct kiocb *iocb, void *buf, size_t count)
- {
-+	struct file *file = iocb->ki_filp;
- 	struct kvec iov = {
- 		.iov_base	= buf,
- 		.iov_len	= min_t(size_t, count, MAX_RW_COUNT),
- 	};
--	struct kiocb kiocb;
- 	struct iov_iter iter;
-+	int ret;
-+
-+	iov_iter_kvec(&iter, ITER_DEST, &iov, 1, iov.iov_len);
-+	ret = file->f_op->read_iter(iocb, &iter);
-+	if (ret > 0) {
-+		fsnotify_access(file);
-+		add_rchar(current, ret);
-+	}
-+	inc_syscr(current);
-+	return ret;
-+}
-+
-+ssize_t __kernel_read(struct file *file, void *buf, size_t count, loff_t *pos)
-+{
-+	struct kiocb kiocb;
- 	ssize_t ret;
- 
- 	if (WARN_ON_ONCE(!(file->f_mode & FMODE_READ)))
-@@ -526,15 +541,9 @@ ssize_t __kernel_read(struct file *file, void *buf, size_t count, loff_t *pos)
- 
- 	init_sync_kiocb(&kiocb, file);
- 	kiocb.ki_pos = pos ? *pos : 0;
--	iov_iter_kvec(&iter, ITER_DEST, &iov, 1, iov.iov_len);
--	ret = file->f_op->read_iter(&kiocb, &iter);
--	if (ret > 0) {
--		if (pos)
--			*pos = kiocb.ki_pos;
--		fsnotify_access(file);
--		add_rchar(current, ret);
--	}
--	inc_syscr(current);
-+	ret = kiocb_read(&kiocb, buf, count);
-+	if (pos && ret > 0)
-+		*pos = kiocb.ki_pos;
- 	return ret;
- }
- 
+> > +L:   linux-kernel@vger.kernel.org
+> > +S:   Maintained
+> > +F:   Documentation/core-api/liveupdate.rst
+> > +F:   Documentation/userspace-api/liveupdate.rst
+> > +F:   include/linux/liveupdate.h
+> > +F:   include/linux/liveupdate/
+> > +F:   include/uapi/linux/liveupdate.h
+> > +F:   kernel/liveupdate/
+> > +
+> >  LLC (802.2)
+> >  L:   netdev@vger.kernel.org
+> >  S:   Odd fixes
+> > --
+> > 2.52.0.rc1.455.g30608eb744-goog
+> >
+>
+> --
+> Sincerely yours,
+> Mike.
 
