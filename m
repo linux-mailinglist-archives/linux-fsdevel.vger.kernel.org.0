@@ -1,151 +1,171 @@
-Return-Path: <linux-fsdevel+bounces-68787-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68788-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31680C66320
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Nov 2025 22:05:52 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E86A4C66332
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Nov 2025 22:07:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C8C9335B12F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Nov 2025 21:05:51 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DC7924EA638
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Nov 2025 21:07:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87A8E34C141;
-	Mon, 17 Nov 2025 21:05:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59DE034C141;
+	Mon, 17 Nov 2025 21:07:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mIbGksYJ"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nXpvWS2w"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C69BB25BF18;
-	Mon, 17 Nov 2025 21:05:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74F2034C9AF
+	for <linux-fsdevel@vger.kernel.org>; Mon, 17 Nov 2025 21:07:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763413543; cv=none; b=HX8Ua0IeNa/czgfa6Ls2MO8Ny/jo9Ju/JC4LxoGjuDE+f8+G2T5JwfFWFLtwW+waD5DG5I/seeED+Mn62NDbN+BvpoaoFrPIxSCp+gH1p+ZE6SFs/p3a/F+1TlX+JRMywFGrQexppBs7oQK5fGd8nQS8tGWotjsMiJ+HM+MVbPc=
+	t=1763413640; cv=none; b=mGJz5Gp8zjwjqFYoTNMAowVffXbHkx9/iPq50zDr/DDxC9NcEeQQMWwR/FQ2HRmGnmvRIM9Mku9TgOZ5muLTI6LmDqS2XIDpOsoqwvxMUrVz4iiwRWMYzVfFgSDj13yKNs3q6p4acLRBi86hd2Si3YoH05/KKvjOO4R0D25hYRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763413543; c=relaxed/simple;
-	bh=vX0RgenvtHRJqNATnowFhh/xzwC45LGhd8zfOW/YcSM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Oz3Xj9whaLOubtuRVBYKYzoBJpE6zfaScBABYib4Gp4aWxgglIQtlKtS7L4PlKLsmH811MPK2M0K+kUwzz85M1y/RUZyRWPHg9L2OleKoGW/Q56Tw6pYCfcdoVSFTfbVJOVJioHELK1ZPIPVuNEJWOYRTZPQ29Hi/meCiUO9bF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mIbGksYJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13C9CC19421;
-	Mon, 17 Nov 2025 21:05:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763413543;
-	bh=vX0RgenvtHRJqNATnowFhh/xzwC45LGhd8zfOW/YcSM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mIbGksYJvNHHKqcnEkxP8edGCkFvrR3zIlacYJ/GfH25Vv7qTIVyrFKH5sk31x0yZ
-	 xei+n4/cKhC86cLFzgajOHFrRuzy9Cf4NfBHjUYYpp0CoA35nA6AulbEH6m9QsaiRP
-	 j1DTCkXcSjm7izViODv57OuwLXGHry7hOOLvnIWve8ZFi70kPLjCwoPZn/T+iS3iMV
-	 rB8SMgpHVZ70/BTPln3obMUZOvsm2vNDyY6atz57c34ZQGgRN69rzy70cjVuaXdMHV
-	 Jz6kL5EugQncLiwGz7CwcyM4akaYfMZrA7Dh6fmt85JSxwEixmrs1XXvoRl3A8eWzO
-	 2HUdgkejx4kxg==
-Date: Mon, 17 Nov 2025 23:05:16 +0200
-From: Mike Rapoport <rppt@kernel.org>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com,
-	dmatlack@google.com, rientjes@google.com, corbet@lwn.net,
-	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com,
-	kanie@linux.alibaba.com, ojeda@kernel.org, aliceryhl@google.com,
-	masahiroy@kernel.org, akpm@linux-foundation.org, tj@kernel.org,
-	yoann.congal@smile.fr, mmaurer@google.com, roman.gushchin@linux.dev,
-	chenridong@huawei.com, axboe@kernel.dk, mark.rutland@arm.com,
-	jannh@google.com, vincent.guittot@linaro.org, hannes@cmpxchg.org,
-	dan.j.williams@intel.com, david@redhat.com,
-	joel.granados@kernel.org, rostedt@goodmis.org,
-	anna.schumaker@oracle.com, song@kernel.org, linux@weissschuh.net,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-mm@kvack.org, gregkh@linuxfoundation.org, tglx@linutronix.de,
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
-	x86@kernel.org, hpa@zytor.com, rafael@kernel.org, dakr@kernel.org,
-	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com,
-	myungjoo.ham@samsung.com, yesanishhere@gmail.com,
-	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com,
-	aleksander.lobakin@intel.com, ira.weiny@intel.com,
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de,
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com,
-	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net,
-	brauner@kernel.org, linux-api@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, saeedm@nvidia.com,
-	ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com,
-	leonro@nvidia.com, witu@nvidia.com, hughd@google.com,
-	skhawaja@google.com, chrisl@kernel.org
-Subject: Re: [PATCH v6 02/20] liveupdate: luo_core: integrate with KHO
-Message-ID: <aRuODFfqP-qsxa-j@kernel.org>
-References: <20251115233409.768044-1-pasha.tatashin@soleen.com>
- <20251115233409.768044-3-pasha.tatashin@soleen.com>
- <aRnG8wDSSAtkEI_z@kernel.org>
- <CA+CK2bDu2FdzyotSwBpGwQtiisv=3f6gC7DzOpebPCxmmpwMYw@mail.gmail.com>
- <aRoi-Pb8jnjaZp0X@kernel.org>
- <CA+CK2bBEs2nr0TmsaV18S-xJTULkobYgv0sU9=RCdReiS0CbPQ@mail.gmail.com>
+	s=arc-20240116; t=1763413640; c=relaxed/simple;
+	bh=UxmlAnre1tVYYLXz6QjhoShZeYckMkMwCvEkzjPXsI8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=S+5ze5LKcKQbI/EPrijUbkUy0wny9euReW8AWC2GkZrk68rgUPBXLXJeoWCkg+EHr5oAB3OiWrFmD4OMphZWe4v4vogMCENIW7URie58GNSOUk8v8YWU+KP0npa6mnnHzJ9S1FB0bDa0P1M/qfpvNHnFr+ad06yp0+zJuTWG3A8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nXpvWS2w; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5957ac0efc2so5233548e87.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Nov 2025 13:07:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1763413636; x=1764018436; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=I+3ZnbBnm9x5rG+AzfKnEqBF2B1DtWvuci9iSsNvxto=;
+        b=nXpvWS2wegxGuSyADug0MDEIPxD4CnEwuLpPYRNvqqXMnusDrkCfAnNTpY97PNIhj3
+         C+y+W+R80j5Y4GT0kE7r5DkStEG5uWvGgeBokHWw39doRWx6PV+p1GJ2Dgctzu6tQf8y
+         cu8r7ozG3dowtrVT/wlbcjuFcw4qtN6CeyJkM2cbAPVHJGkrOYXjxwCzst3RuaxSzphc
+         6NSHgaBl8j2zBF3fKAX3FqVaik0XFQqtVgr82577VC8/x0KUWVIVHMkSvk17YH6knImX
+         7vfDpdxkhMAK3ss3S8CBA95Telxi6Olx62Ft4OiNWCVyOhz4oiYgkyFNWUreuMpJowRB
+         RtOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763413636; x=1764018436;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=I+3ZnbBnm9x5rG+AzfKnEqBF2B1DtWvuci9iSsNvxto=;
+        b=Fm92Frdt+qg2PA6qYXQ0fExzeWm6Jwx0buIFJv8KMRmPjQMEaQ9wysFWMIrHLwjwpZ
+         QDC29u/8gz45ZEA+f2DJUyAIALhlMiAWJJUtzjymZSs8afhplmRnU7po4au7Q/JJifto
+         OkwDxYZm28uy7E8RtQSjk2qZEWsieDbZqrSQGPQnQtqzU7JN+faQjOp1uH0N+o9h7nue
+         6DQ6VpDum7od/BxYIbCFTIhAbW9K2TLgP0XdPTJ1t67HAoXxGFmhIbBG9TLHEhuUUIFs
+         OCNj9/DLydQ09Cur+1jVDkBCCboZYQG2qoZG4Cu2cWeJWbEslLrOGDiA3gEE+PYpOkda
+         ubMA==
+X-Forwarded-Encrypted: i=1; AJvYcCXpLSZARNVbRhH2x+qS1WUODNgxdb7/GF/NGgImKc5yr0S3fUYeuw6ro+in7YBWQ/vqWYjwgJOJYSSJ6O+G@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+kas9k11FpC8haPpLipANMkogoUdapeBkOY+kq2Ge71+bm0RF
+	Z+3KQVezl5Hd+TFh8PAZ/n1w/IrMq0gK3X6hWTjPF5KrhsK9vyClR8sLidOg/guWSrexMW0wJBn
+	wkwxhDdvtxTFRmYY6A/tPsivlcH6qqYlSDzLasUL9
+X-Gm-Gg: ASbGnctT+cqpeZdw4mDxK+qrC3nUq+cF4b8U2KCLOJZY1n/tg+97okyu4+kg2t3IOtp
+	CaPCXAUlAnxN6AMgWUdGXbjIgG2z6X4Qkb7CCzKMaxKhp2ljBt5PecLAeICuRfEmv4bTlpqDFS9
+	SEheuHC2Z5DRcgD0d1uktMoDEWv4j7fUI4GVshqX34v2yOrxFAdD8TKeO/aXYWgDwpvs64fmJUF
+	FbqRzyfacCiCisj6VkkyA/LyYJtwuOY+/xEU8hP5Dns9wsVAO8IcYBUl1wNYUjWKavcJcWGKPsS
+	LZRNrQ==
+X-Google-Smtp-Source: AGHT+IEyRglFL6CLF2ix5p5nwaJTHq0lTJqTXp+UMeRzhbiWib00PWpc4ebiQNIEHbNxWSgpi8VFmGwgM1LVS1XHG0w=
+X-Received: by 2002:a05:6512:2216:b0:594:522b:c6a4 with SMTP id
+ 2adb3069b0e04-595841c0afemr4885332e87.23.1763413635580; Mon, 17 Nov 2025
+ 13:07:15 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+CK2bBEs2nr0TmsaV18S-xJTULkobYgv0sU9=RCdReiS0CbPQ@mail.gmail.com>
+References: <20251115233409.768044-1-pasha.tatashin@soleen.com>
+ <20251115233409.768044-19-pasha.tatashin@soleen.com> <CALzav=edxTsa7uO7XxiUSx+DZiX169T4WL39vYsn3_WcUuVKrg@mail.gmail.com>
+ <CALzav=f+6hQ-UYBpwmAyKHPmtvEq-Q=mOL20_rZmAcTyd87+Vg@mail.gmail.com>
+In-Reply-To: <CALzav=f+6hQ-UYBpwmAyKHPmtvEq-Q=mOL20_rZmAcTyd87+Vg@mail.gmail.com>
+From: David Matlack <dmatlack@google.com>
+Date: Mon, 17 Nov 2025 13:06:47 -0800
+X-Gm-Features: AWmQ_blb0RWuMLLJQNAkTQ6osFyJ4ZWbxByNX4sxBWFP3gs7sBB_s2cCPqr0fg8
+Message-ID: <CALzav=ekHM8a3yYHHUJNgtYVwLYf1hFhEmrXJjHUXRt=xrSy4A@mail.gmail.com>
+Subject: Re: [PATCH v6 18/20] selftests/liveupdate: Add kexec-based selftest
+ for session lifecycle
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com, rppt@kernel.org, 
+	rientjes@google.com, corbet@lwn.net, rdunlap@infradead.org, 
+	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, ojeda@kernel.org, 
+	aliceryhl@google.com, masahiroy@kernel.org, akpm@linux-foundation.org, 
+	tj@kernel.org, yoann.congal@smile.fr, mmaurer@google.com, 
+	roman.gushchin@linux.dev, chenridong@huawei.com, axboe@kernel.dk, 
+	mark.rutland@arm.com, jannh@google.com, vincent.guittot@linaro.org, 
+	hannes@cmpxchg.org, dan.j.williams@intel.com, david@redhat.com, 
+	joel.granados@kernel.org, rostedt@goodmis.org, anna.schumaker@oracle.com, 
+	song@kernel.org, linux@weissschuh.net, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-mm@kvack.org, gregkh@linuxfoundation.org, 
+	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, rafael@kernel.org, 
+	dakr@kernel.org, bartosz.golaszewski@linaro.org, cw00.choi@samsung.com, 
+	myungjoo.ham@samsung.com, yesanishhere@gmail.com, Jonathan.Cameron@huawei.com, 
+	quic_zijuhu@quicinc.com, aleksander.lobakin@intel.com, ira.weiny@intel.com, 
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
+	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net, 
+	brauner@kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	saeedm@nvidia.com, ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com, 
+	leonro@nvidia.com, witu@nvidia.com, hughd@google.com, skhawaja@google.com, 
+	chrisl@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 17, 2025 at 01:29:47PM -0500, Pasha Tatashin wrote:
-> On Sun, Nov 16, 2025 at 2:16 PM Mike Rapoport <rppt@kernel.org> wrote:
+On Mon, Nov 17, 2025 at 12:08=E2=80=AFPM David Matlack <dmatlack@google.com=
+> wrote:
+>
+> On Mon, Nov 17, 2025 at 11:27=E2=80=AFAM David Matlack <dmatlack@google.c=
+om> wrote:
+>
+> > Putting it all together, here is what I'd recommend for this Makefile
+> > (drop-in replacement for the current Makefile). This will also make it
+> > easier for me to share the library code with VFIO selftests, which
+> > I'll need to do in the VFIO series.
 > >
-> > On Sun, Nov 16, 2025 at 09:55:30AM -0500, Pasha Tatashin wrote:
-> > > On Sun, Nov 16, 2025 at 7:43 AM Mike Rapoport <rppt@kernel.org> wrote:
-> > > >
-> > > > > +static int __init liveupdate_early_init(void)
-> > > > > +{
-> > > > > +     int err;
-> > > > > +
-> > > > > +     err = luo_early_startup();
-> > > > > +     if (err) {
-> > > > > +             pr_err("The incoming tree failed to initialize properly [%pe], disabling live update\n",
-> > > > > +                    ERR_PTR(err));
-> > > >
-> > > > How do we report this to the userspace?
-> > > > I think the decision what to do in this case belongs there. Even if it's
-> > > > down to choosing between plain kexec and full reboot, it's still a policy
-> > > > that should be implemented in userspace.
-> > >
-> > > I agree that policy belongs in userspace, and that is how we designed
-> > > it. In this specific failure case (ABI mismatch or corrupt FDT), the
-> > > preserved state is unrecoverable by the kernel. We cannot parse the
-> > > incoming data, so we cannot offer it to userspace.
-> > >
-> > > We report this state by not registering the /dev/liveupdate device.
-> > > When the userspace agent attempts to initialize, it receives ENOENT.
-> > > At that point, the agent exercises its policy:
-> > >
-> > > - Check dmesg for the specific error and report the failure to the
-> > > fleet control plane.
-> >
-> > Hmm, this is not nice. I think we still should register /dev/liveupdate and
-> > let userspace discover this error via /dev/liveupdate ABIs.
-> 
-> Not registering the device is the correct approach here for two reasons:
-> 
-> 1. This follows the standard Linux driver pattern. If a driver fails
-> to initialize its underlying resources (hardware, firmware, or in this
-> case, the incoming FDT), it does not register a character device.
-> 2. Registering a "zombie" device that exists solely to return errors
-> adds significant complexity. We would need to introduce a specific
-> "broken" state to the state machine and add checks to IOCTLs to reject
-> commands with a specific error code.
+> > (Sorry in advance for the line wrap. I had to send this through gmail.)
+>
+> Oops I dropped the build rule for liveupdate.c. Here it is with that incl=
+uded:
+>
+> # SPDX-License-Identifier: GPL-2.0-only
+>
+> LIBLIVEUPDATE_C +=3D luo_test_utils.c
+>
+> TEST_GEN_PROGS +=3D liveupdate
+> TEST_GEN_PROGS_EXTENDED +=3D luo_kexec_simple
+> TEST_GEN_PROGS_EXTENDED +=3D luo_multi_session
+>
+> TEST_FILES +=3D do_kexec.sh
+>
+> include ../lib.mk
+>
+> CFLAGS +=3D $(KHDR_INCLUDES)
+> CFLAGS +=3D -Wall -O2 -Wno-unused-function
+> CFLAGS +=3D -MD
+> CFLAGS +=3D $(EXTRA_CFLAGS)
+>
+> LIBLIVEUPDATE_O :=3D $(patsubst %.c, $(OUTPUT)/%.o, $(LIBLIVEUPDATE_C))
+> TEST_PROGS :=3D $(TEST_GEN_PROGS) $(TEST_GEN_PROGS_EXTENDED)
 
-You can avoid that complexity if you register the device with a different
-fops, but that's technicality.
+Correction: I forgot that TEST_PROGS is reserved for test shell
+scripts, so this variable needs a different name.
 
-Your point about treating the incoming FDT as an underlying resource that
-failed to initialize makes sense, but nevertheless userspace needs a
-reliable way to detect it and parsing dmesg is not something we should rely
-on.
-
-> Pasha
-
--- 
-Sincerely yours,
-Mike.
+> TEST_PROGS_O :=3D $(patsubst %, %.o, $(TEST_PROGS))
+>
+> TEST_DEP_FILES +=3D $(patsubst %.o, %.d, $(LIBLIVEUPDATE_O))
+> TEST_DEP_FILES +=3D $(patsubst %.o, %.d, $(TEST_PROGS_O))
+> -include $(TEST_DEP_FILES)
+>
+> $(LIBLIVEUPDATE_O): $(OUTPUT)/%.o: %.c
+>         $(CC) $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c $< -o $@
+>
+> $(TEST_PROGS): %: %.o $(LIBLIVEUPDATE_O)
+>         $(CC) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) $(TARGET_ARCH) $<
+> $(LIBLIVEUPDATE_O) $(LDLIBS) -o $@
+>
+> EXTRA_CLEAN +=3D $(LIBLIVEUPDATE_O)
+> EXTRA_CLEAN +=3D $(TEST_PROGS_O)
+> EXTRA_CLEAN +=3D $(TEST_DEP_FILES)
 
