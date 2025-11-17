@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-68653-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68654-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id D734BC633AF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Nov 2025 10:41:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BB20C6343C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Nov 2025 10:42:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 57EC8362FFA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Nov 2025 09:36:17 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0735D363943
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Nov 2025 09:36:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 581F03271E2;
-	Mon, 17 Nov 2025 09:34:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D8AB328B7F;
+	Mon, 17 Nov 2025 09:34:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="glStNzvH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bt2dnxsK"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71F54328B47;
-	Mon, 17 Nov 2025 09:34:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC1A0329380;
+	Mon, 17 Nov 2025 09:34:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763372043; cv=none; b=tQw4McXbFUe/0iP9SK9H68LuqdE90441SHN6xXrdQ3jU0BS1lGvIqyX5UXBE+eLWitBygBcV+wLW2oWiutFzuGiBh9nV+LOIik1XDuGK0fIHmOytR/p0kL8+2UhLUmTbV+U87fEVMYPAQlqJt96CcDwDZNfAHS0PPtp2+ob8RE8=
+	t=1763372044; cv=none; b=cVtue/IICfbiSbXzb3uBsRNArhGk9i7WTE9sitlQY5il3TOWIYeo6M1b9ObnfUgGUwyBIkK8dTPUL5SYrEO5Wg5BJa9oV6eucTMEWNW4WZceR9nltLqEM4XA3qhetQ8f7dJW6tABEQ8TCVrTjNnCp6nN2vDKHvWZMrJM8EvQLw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763372043; c=relaxed/simple;
-	bh=NoVjUYZ1utZcTOi9AJM0qIsrY7IB57NX1QwQdKEtCe0=;
+	s=arc-20240116; t=1763372044; c=relaxed/simple;
+	bh=8ekCz0i+nQCss2JlZWQ8Ri5tJPGzRNJjeyfMjnRa8gY=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Z1FYhgzVPMNeisOy/Kj2/OhFooCBQl4A/6n9/pl/aVuRT+A21G/1KOg1baj8nbEQRoksApLJ8njuelC/i2GPJGVX29riJ1HBdQpfBix5sJLz6jY6rFkM2NNo2zAaQUE8yTrb8G7xlgs3Oj/dAzQoqSWdKlzEg2u8Q6ThdQgPnDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=glStNzvH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90A6CC4CEFB;
-	Mon, 17 Nov 2025 09:34:01 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=J+yLdJhNZ2RyHydleAKwn/2Krl/dvqTeowCH1eu4w3xJIxmHcR+WXi0M6C16SXjjDzVbyB7PFm8zitSd7dxrYJfwtYt+Yg77ekeJp4VN4NVzzpA+XrHQrsj6vb8tPMAED9/+7ObGGsq7C6SY0bH5NVXVNGzhrnCTZO16y3AiIZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bt2dnxsK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F120C4CEF5;
+	Mon, 17 Nov 2025 09:34:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763372042;
-	bh=NoVjUYZ1utZcTOi9AJM0qIsrY7IB57NX1QwQdKEtCe0=;
+	s=k20201202; t=1763372044;
+	bh=8ekCz0i+nQCss2JlZWQ8Ri5tJPGzRNJjeyfMjnRa8gY=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=glStNzvHbAT1rB8gwqIQrypm4Zrvpvig0YLeFrWyHS+VS5DYyZ7UUCq3xbTqdiBH0
-	 reMT0wT1XBIkTy1ot1xRA3C1/SVSaWS58v5s7RH1Ad+XB3Abew0RL5l3MNuFvnXSRF
-	 I6fcXLKcoL1xdxGPZqk8W2X4IeD4jUqM6KMKElJVQpjDLX+u4PNwMojzjMjpIkub9V
-	 /EkIHQb25zZeFkCynqHxgIuGpvyUu/DapvQ/t8S///1FauOv06g4apVZjRXXUOH9s7
-	 jvVIqmgrYg93lgC1l7nCO29B9ro74LOOEZbTKXQvZ73qtXQqZonNYPON5r193xbrt3
-	 f7Hemc0wTGGqQ==
+	b=bt2dnxsKHqGjem+fON7ORKyxISYo1ViRVXeWNnGe28+Cg634p0qSSTGOetPrOxwHF
+	 6DLsSaEQsxI3i3CwFIih6APrj5iAx5YuRTGacuLKcHKiNLwxEZ5ZlBxlUlJYHzTfX6
+	 PRUn7LV2K4yAcVr3AHyjPIVic3RW2ZGZZbX6QP/9vX1lsRXozdG6GYzNJ3yF5Lafqq
+	 555mNrDC2aYQujPFDTOap+MUQ4g0lu8Wv8mctnSRJLSVrxpybCi4psr7zUjqi5LdFq
+	 Kw5xHD2iMot7febR8SakZyerHt/rqxHzihBJ78QfTQwRkcO08S8gAGfG/iQR99NhrG
+	 BGzp3jbX7wLXg==
 From: Christian Brauner <brauner@kernel.org>
-Date: Mon, 17 Nov 2025 10:33:41 +0100
-Subject: [PATCH v4 10/42] ovl: port ovl_fallocate() to cred guard
+Date: Mon, 17 Nov 2025 10:33:42 +0100
+Subject: [PATCH v4 11/42] ovl: port ovl_fadvise() to cred guard
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251117-work-ovl-cred-guard-v4-10-b31603935724@kernel.org>
+Message-Id: <20251117-work-ovl-cred-guard-v4-11-b31603935724@kernel.org>
 References: <20251117-work-ovl-cred-guard-v4-0-b31603935724@kernel.org>
 In-Reply-To: <20251117-work-ovl-cred-guard-v4-0-b31603935724@kernel.org>
 To: Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>
@@ -60,12 +60,12 @@ Cc: Linus Torvalds <torvalds@linux-foundation.org>,
  linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-a6db3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1013; i=brauner@kernel.org;
- h=from:subject:message-id; bh=NoVjUYZ1utZcTOi9AJM0qIsrY7IB57NX1QwQdKEtCe0=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWRKvf76Vendg6Behl1Lz/PcT9ypuYBlf6H9GS0LB97TS
- icSGo9zdZSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEyETZCRod2AIXdN7IEKxltz
- 5ko/Sc7i5hbp6T9UdsZ1Y+vndy6HFRgZ2hhD0+xy3K+XOsnqrLx4qyzgfq3PphXMPGd7p1itMN3
- DDQA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1039; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=8ekCz0i+nQCss2JlZWQ8Ri5tJPGzRNJjeyfMjnRa8gY=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWRKvf4qGZ0s497+cFbnhYaqo+97dZaUfK6pLmXhlNfr/
+ vxg+4n7HaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABOpzmf4Z2Gys8N659vq4vB2
+ SdMJe/zKf8jq5U6frb5UYJq35dNJwowMMxXCDy69v8Z6U7wqb0nubrld5vN27ImePZNFcZ+eXMk
+ HLgA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
@@ -74,32 +74,34 @@ Use the scoped ovl cred guard.
 Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- fs/overlayfs/file.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ fs/overlayfs/file.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
 
 diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
-index 6c5aa74f63ec..28263ad00dee 100644
+index 28263ad00dee..f562f908f48a 100644
 --- a/fs/overlayfs/file.c
 +++ b/fs/overlayfs/file.c
-@@ -481,7 +481,6 @@ static long ovl_fallocate(struct file *file, int mode, loff_t offset, loff_t len
+@@ -510,18 +510,13 @@ static long ovl_fallocate(struct file *file, int mode, loff_t offset, loff_t len
+ static int ovl_fadvise(struct file *file, loff_t offset, loff_t len, int advice)
  {
- 	struct inode *inode = file_inode(file);
  	struct file *realfile;
 -	const struct cred *old_cred;
- 	int ret;
+-	int ret;
  
- 	inode_lock(inode);
-@@ -496,9 +495,8 @@ static long ovl_fallocate(struct file *file, int mode, loff_t offset, loff_t len
+ 	realfile = ovl_real_file(file);
  	if (IS_ERR(realfile))
- 		goto out_unlock;
+ 		return PTR_ERR(realfile);
  
 -	old_cred = ovl_override_creds(file_inode(file)->i_sb);
-+	with_ovl_creds(inode->i_sb)
- 		ret = vfs_fallocate(realfile, mode, offset, len);
+-	ret = vfs_fadvise(realfile, offset, len, advice);
 -	ovl_revert_creds(old_cred);
+-
+-	return ret;
++	with_ovl_creds(file_inode(file)->i_sb)
++		return vfs_fadvise(realfile, offset, len, advice);
+ }
  
- 	/* Update size */
- 	ovl_file_modified(file);
+ enum ovl_copyop {
 
 -- 
 2.47.3
