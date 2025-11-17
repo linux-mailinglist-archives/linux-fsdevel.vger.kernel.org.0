@@ -1,279 +1,98 @@
-Return-Path: <linux-fsdevel+bounces-68623-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68624-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33A7CC62069
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Nov 2025 02:45:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D4BDC622A7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Nov 2025 03:55:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6A7AF4E50F4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Nov 2025 01:45:40 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1BB804E77C8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Nov 2025 02:54:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11F291C8611;
-	Mon, 17 Nov 2025 01:45:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B4A1258EC1;
+	Mon, 17 Nov 2025 02:54:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="dyzgxSYS"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="bQLyaVBd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from canpmsgout01.his.huawei.com (canpmsgout01.his.huawei.com [113.46.200.216])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16E161FB1;
-	Mon, 17 Nov 2025 01:45:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 781FA22FE11;
+	Mon, 17 Nov 2025 02:54:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763343933; cv=none; b=WqkRWLomxdoqWwKAGsK2Nxigr0NzLjbCvqEHdRXg5gEeIL16Umk6oDFHuhJikY0+v44ObSUKLQzaumamS+0mMPQfuUrZbLTjDrGB65vZl9/A85ldrIj2R4hxbWbjjrmrN1O3OaSSdy5uvxR7Xg64frqklevmO+SfOV3Xcmx6QBY=
+	t=1763348049; cv=none; b=WNzpVsGaj4CbUTyK4MFoQN6rw/7wAA8CWNjyHZXf9vgVUNoQZIMdmwnVQqb/XeZC27IKEI50Do17dVYiponOoQ+EZp/5jnoV9AhD7kXQS8A7OUq5ZcRZl+gBqFJ62MXGPUU6mUkgsvPV3RhATYsaSYARJsV/FNj10Q+M8w97Bk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763343933; c=relaxed/simple;
-	bh=sp8hLbpfq58tymC5gtjzY8kJz5QFWJB40KMerk+aKOA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=hq+gDSjdC5fgq7wcGfL94CHo+2FiamVo1qoQzwUG0MDQ5GCqYMNPrqk/WRFG1MWfvMBMpFQ4anRTRjtl5xXF87EWqKOxTopAldo63sR/aiHiegmEA7kNcmLNQlhshCvPgop8gjFyI30YGrVEkLT9msYl3wW+1OXlrOL1dn8bJTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=dyzgxSYS; arc=none smtp.client-ip=113.46.200.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=FuG5ZFIMPnpMFGvhLCDkKKPsJcNw/LoD6bJD83gzIZQ=;
-	b=dyzgxSYSzURMtGG4Wt8H4XVmPTKbEK0U2aqQ2QKnIFFKXOGo6MXJc93yo7ump0IblB75kMmsw
-	pFydBAovYfDWQtYuLYuXyIi3u0T/eBA11x63/HkykHWbpfzh9CE45Bf3+lOK5s320fZoo4dqLDI
-	Jy9qZb7IGHrT5ASW69CEHfU=
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by canpmsgout01.his.huawei.com (SkyGuard) with ESMTPS id 4d8rBN3T9Nz1T4Fq;
-	Mon, 17 Nov 2025 09:43:56 +0800 (CST)
-Received: from kwepemr500015.china.huawei.com (unknown [7.202.195.162])
-	by mail.maildlp.com (Postfix) with ESMTPS id 4E1CA140132;
-	Mon, 17 Nov 2025 09:45:26 +0800 (CST)
-Received: from [10.67.111.104] (10.67.111.104) by
- kwepemr500015.china.huawei.com (7.202.195.162) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 17 Nov 2025 09:45:25 +0800
-Message-ID: <d2f9f55d-1112-4252-b662-a36398f88aaa@huawei.com>
-Date: Mon, 17 Nov 2025 09:45:25 +0800
+	s=arc-20240116; t=1763348049; c=relaxed/simple;
+	bh=gT/Jws3TUOkv78ezuhBECn5hn2F6V7xxYmqRwPANJYE=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=BalYQpneS6/D+CRkW2RbmPCPsAcHOl5A7kYmhhzjugOf7PFQmw6e3YrnyIW7wZ01gxE88H4XImXG67IONWAz1/jFICGPQ1idDEsIKGjMG3KL4K3insfTLof0hNTGX5hNXHIJYUq2ptX7ASzpTu2fnph5et57aSfNKT5KNUrdoIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=bQLyaVBd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D54D8C116D0;
+	Mon, 17 Nov 2025 02:54:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1763348048;
+	bh=gT/Jws3TUOkv78ezuhBECn5hn2F6V7xxYmqRwPANJYE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=bQLyaVBdbyyM0oXtWKIvXOqoUHpgxlgK76A/wKmfxsmbwJ8Q8MJDoTghEtIMGocF8
+	 Evr+ry6/+JjQBdutYhbOJrfavqGhrLBedJ7368KUCce+O982gvu3WJH3U9itu8l0qj
+	 ayUgSBpevbPlBYCVx+7S9qMk6srbxSOGxd+WdmWA=
+Date: Sun, 16 Nov 2025 18:54:06 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com,
+ rppt@kernel.org, dmatlack@google.com, rientjes@google.com, corbet@lwn.net,
+ rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com,
+ kanie@linux.alibaba.com, ojeda@kernel.org, aliceryhl@google.com,
+ masahiroy@kernel.org, tj@kernel.org, yoann.congal@smile.fr,
+ mmaurer@google.com, roman.gushchin@linux.dev, chenridong@huawei.com,
+ axboe@kernel.dk, mark.rutland@arm.com, jannh@google.com,
+ vincent.guittot@linaro.org, hannes@cmpxchg.org, dan.j.williams@intel.com,
+ david@redhat.com, joel.granados@kernel.org, rostedt@goodmis.org,
+ anna.schumaker@oracle.com, song@kernel.org, linux@weissschuh.net,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-mm@kvack.org, gregkh@linuxfoundation.org, tglx@linutronix.de,
+ mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+ x86@kernel.org, hpa@zytor.com, rafael@kernel.org, dakr@kernel.org,
+ bartosz.golaszewski@linaro.org, cw00.choi@samsung.com,
+ myungjoo.ham@samsung.com, yesanishhere@gmail.com,
+ Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com,
+ aleksander.lobakin@intel.com, ira.weiny@intel.com,
+ andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de,
+ bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com,
+ stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net,
+ brauner@kernel.org, linux-api@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, saeedm@nvidia.com, ajayachandra@nvidia.com,
+ jgg@nvidia.com, parav@nvidia.com, leonro@nvidia.com, witu@nvidia.com,
+ hughd@google.com, skhawaja@google.com, chrisl@kernel.org
+Subject: Re: [PATCH v6 01/20] liveupdate: luo_core: luo_ioctl: Live Update
+ Orchestrator
+Message-Id: <20251116185406.0fb85a3c52c16c91af1a0c80@linux-foundation.org>
+In-Reply-To: <20251115233409.768044-2-pasha.tatashin@soleen.com>
+References: <20251115233409.768044-1-pasha.tatashin@soleen.com>
+	<20251115233409.768044-2-pasha.tatashin@soleen.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 2/9] erofs: hold read context in iomap_iter if needed
-Content-Language: en-US
-To: Gao Xiang <hsiangkao@linux.alibaba.com>, <chao@kernel.org>,
-	<brauner@kernel.org>, <djwong@kernel.org>, <amir73il@gmail.com>,
-	<joannelkoong@gmail.com>
-CC: <linux-fsdevel@vger.kernel.org>, <linux-erofs@lists.ozlabs.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20251114095516.207555-1-lihongbo22@huawei.com>
- <20251114095516.207555-3-lihongbo22@huawei.com>
- <f714479d-703c-4fc6-ad5a-b18d92f0a9b7@linux.alibaba.com>
-From: Hongbo Li <lihongbo22@huawei.com>
-In-Reply-To: <f714479d-703c-4fc6-ad5a-b18d92f0a9b7@linux.alibaba.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
- kwepemr500015.china.huawei.com (7.202.195.162)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Xiang,
+On Sat, 15 Nov 2025 18:33:47 -0500 Pasha Tatashin <pasha.tatashin@soleen.com> wrote:
 
-On 2025/11/16 20:01, Gao Xiang wrote:
-> 
-> 
-> On 2025/11/14 17:55, Hongbo Li wrote:
->> Uncoming page cache sharing needs pass read context to iomap_iter,
->> here we unify the way of passing the read context in EROFS. Moreover,
->> bmap and fiemap don't need to map the inline data.
->>
->> Note that we keep `struct page *` in `struct erofs_iomap_iter_ctx` as
->> well to avoid bogus kmap_to_page usage.
->>
->> Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
->> ---
->>   fs/erofs/data.c | 79 ++++++++++++++++++++++++++++++++++++-------------
->>   1 file changed, 59 insertions(+), 20 deletions(-)
->>
->> diff --git a/fs/erofs/data.c b/fs/erofs/data.c
->> index bb13c4cb8455..bd3d85c61341 100644
->> --- a/fs/erofs/data.c
->> +++ b/fs/erofs/data.c
->> @@ -266,14 +266,23 @@ void erofs_onlinefolio_end(struct folio *folio, 
->> int err, bool dirty)
->>       folio_end_read(folio, !(v & BIT(EROFS_ONLINEFOLIO_EIO)));
->>   }
->> +struct erofs_iomap_iter_ctx {
->> +    struct page *page;
->> +    void *base;
->> +};
->> +
->>   static int erofs_iomap_begin(struct inode *inode, loff_t offset, 
->> loff_t length,
->>           unsigned int flags, struct iomap *iomap, struct iomap *srcmap)
->>   {
->>       int ret;
->> +    struct erofs_iomap_iter_ctx *ctx;
->>       struct super_block *sb = inode->i_sb;
->>       struct erofs_map_blocks map;
->>       struct erofs_map_dev mdev;
->> +    struct iomap_iter *iter;
->> +    iter = container_of(iomap, struct iomap_iter, iomap);
->> +    ctx = iter->private;
-> 
-> Can you just rearrange it as:
-> 
->      struct iomap_iter *iter = container_of(iomap, struct iomap_iter, 
-> iomap);
->      struct erofs_iomap_iter_ctx *ctx = iter->private;
-> 
-> ?
-> 
+> Introduce LUO, a mechanism intended to facilitate kernel updates while
+> keeping designated devices operational across the transition (e.g., via
+> kexec). 
 
-Thanks for your through review. The points you raised are quite 
-reasonable, and I will address them in later version.
+Thanks, I updated mm.git's mm-unstable branch to this version.  I
+expect at least one more version as a result of feedback for this v6.
 
-Thanks,
-Hongbo
+I wasn't able to reproduce Stephen's build error
+(https://lkml.kernel.org/r/20251117093614.1490d048@canb.auug.org.au)
+with this series.
 
->>       map.m_la = offset;
->>       map.m_llen = length;
->>       ret = erofs_map_blocks(inode, &map);
->> @@ -283,7 +292,8 @@ static int erofs_iomap_begin(struct inode *inode, 
->> loff_t offset, loff_t length,
->>       iomap->offset = map.m_la;
->>       iomap->length = map.m_llen;
->>       iomap->flags = 0;
->> -    iomap->private = NULL;
->> +    if (ctx)
->> +        ctx->base = NULL;
-> 
-> I think this line is unnecessary if iter->private == ctx;
-> 
->>       iomap->addr = IOMAP_NULL_ADDR;
->>       if (!(map.m_flags & EROFS_MAP_MAPPED)) {
->>           iomap->type = IOMAP_HOLE;
->> @@ -309,16 +319,20 @@ static int erofs_iomap_begin(struct inode 
->> *inode, loff_t offset, loff_t length,
->>       }
->>       if (map.m_flags & EROFS_MAP_META) {
->> -        void *ptr;
->> -        struct erofs_buf buf = __EROFS_BUF_INITIALIZER;
->> -
->>           iomap->type = IOMAP_INLINE;
->> -        ptr = erofs_read_metabuf(&buf, sb, map.m_pa,
->> -                     erofs_inode_in_metabox(inode));
->> -        if (IS_ERR(ptr))
->> -            return PTR_ERR(ptr);
->> -        iomap->inline_data = ptr;
->> -        iomap->private = buf.base;
->> +        /* read context should read the inlined data */
->> +        if (ctx) {
->> +            void *ptr;
->> +            struct erofs_buf buf = __EROFS_BUF_INITIALIZER;
-> 
-> better to resort them as:
->              struct erofs_buf buf = __EROFS_BUF_INITIALIZER;
->              void *ptr;
-> 
->> +
->> +            ptr = erofs_read_metabuf(&buf, sb, map.m_pa,
->> +                         erofs_inode_in_metabox(inode));
->> +            if (IS_ERR(ptr))
->> +                return PTR_ERR(ptr);
->> +            iomap->inline_data = ptr;
->> +            ctx->page = buf.page;
->> +            ctx->base = buf.base;
->> +        }
->>       } else {
->>           iomap->type = IOMAP_MAPPED;
->>       }
->> @@ -328,18 +342,19 @@ static int erofs_iomap_begin(struct inode 
->> *inode, loff_t offset, loff_t length,
->>   static int erofs_iomap_end(struct inode *inode, loff_t pos, loff_t 
->> length,
->>           ssize_t written, unsigned int flags, struct iomap *iomap)
->>   {
->> -    void *ptr = iomap->private;
->> +    struct erofs_iomap_iter_ctx *ctx;
->> +    struct iomap_iter *iter;
->> -    if (ptr) {
->> +    iter = container_of(iomap, struct iomap_iter, iomap);
->> +    ctx = iter->private;
->> +    if (ctx && ctx->base) {
->>           struct erofs_buf buf = {
->> -            .page = kmap_to_page(ptr),
->> -            .base = ptr,
->> +            .page = ctx->page,
->> +            .base = ctx->base,
->>           };
->>           DBG_BUGON(iomap->type != IOMAP_INLINE);
->>           erofs_put_metabuf(&buf);
-> 
-> so need to nullify ctx->base here:
-> 
->          ctx->base = NULL;
-> 
->> -    } else {
->> -        DBG_BUGON(iomap->type == IOMAP_INLINE);
->>       }
->>       return written;
->>   }
->> @@ -369,18 +384,36 @@ int erofs_fiemap(struct inode *inode, struct 
->> fiemap_extent_info *fieinfo,
->>    */
->>   static int erofs_read_folio(struct file *file, struct folio *folio)
->>   {
->> +    struct iomap_read_folio_ctx read_ctx = {
->> +        .ops        = &iomap_bio_read_ops,
->> +        .cur_folio    = folio,
->> +    };
->> +    struct erofs_iomap_iter_ctx iter_ctx = {
->> +        .page        = NULL,
->> +        .base        = NULL,
->> +    };
-> 
-> it can be initialized just by:
->      struct erofs_iomap_iter_ctx iter_ctx = {};
-> 
->> +
->>       trace_erofs_read_folio(folio, true);
->> -    iomap_bio_read_folio(folio, &erofs_iomap_ops);
->> +    iomap_read_folio(&erofs_iomap_ops, &read_ctx, &iter_ctx);
->>       return 0;
->>   }
->>   static void erofs_readahead(struct readahead_control *rac)
->>   {
->> +    struct iomap_read_folio_ctx read_ctx = {
->> +        .ops        = &iomap_bio_read_ops,
->> +        .rac        = rac,
->> +    };
->> +    struct erofs_iomap_iter_ctx iter_ctx = {
->> +        .page        = NULL,
->> +        .base        = NULL,
->> +    };
-> 
-> Same here.
-> 
->> +
->>       trace_erofs_readahead(rac->mapping->host, readahead_index(rac),
->>                       readahead_count(rac), true);
->> -    iomap_bio_readahead(rac, &erofs_iomap_ops);
->> +    iomap_readahead(&erofs_iomap_ops, &read_ctx, &iter_ctx);
->>   }
->>   static sector_t erofs_bmap(struct address_space *mapping, sector_t 
->> block)
->> @@ -400,9 +433,15 @@ static ssize_t erofs_file_read_iter(struct kiocb 
->> *iocb, struct iov_iter *to)
->>       if (IS_DAX(inode))
->>           return dax_iomap_rw(iocb, to, &erofs_iomap_ops);
->>   #endif
->> -    if ((iocb->ki_flags & IOCB_DIRECT) && inode->i_sb->s_bdev)
->> +    if ((iocb->ki_flags & IOCB_DIRECT) && inode->i_sb->s_bdev) {
->> +        struct erofs_iomap_iter_ctx iter_ctx = {
->> +            .page = NULL,
->> +            .base = NULL,
->> +        };
-> 
-> Same here again.
-> 
-> Thanks,
-> Gao Xiang
 
