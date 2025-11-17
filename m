@@ -1,47 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-68694-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68695-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA132C6356B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Nov 2025 10:50:32 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C751C635DA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Nov 2025 10:54:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DA6444EF2D9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Nov 2025 09:43:45 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2F5EB34A9DC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Nov 2025 09:48:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 420A8326D65;
-	Mon, 17 Nov 2025 09:41:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96E09324B34;
+	Mon, 17 Nov 2025 09:48:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WZw1HmSe"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SXc3AudH"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85F8632692A;
-	Mon, 17 Nov 2025 09:41:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6C932D24B7;
+	Mon, 17 Nov 2025 09:48:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763372469; cv=none; b=guIx/jmhtU7JVfBATG2wsk0qOKCv0MIu6UunPEbhV1cRA7QIqTKA48WRalGUb9Yw1fSiP9TEkGjKknPfhLs/yISnpsiQ/rlaNDVeFKMgHx3H4/yb9VajX5dh7I2Vriv2KS1w05iCVCUOZvokBO3DPSf2jQz/cg6I2G6jCpU92c0=
+	t=1763372928; cv=none; b=g8UwuOL9RRaf1gZ7YLkhbRcLrArNHwY7jffSA3KYlNi0T8QA7Njjxex7ch0uWTO7fjO5zCsKAotqE3NDX7IBqkMOfsEA8HM/kADCvF0wCeEUGHcYTj+faZwOBVxn19rkSAC8RJAzAI4WD56d3WTKsfl3bchvQ3LvDOl8KjSGKGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763372469; c=relaxed/simple;
-	bh=LD55be3edOh4ynHvlMDm/XHjOHztjZ05X5TLRldv6n4=;
+	s=arc-20240116; t=1763372928; c=relaxed/simple;
+	bh=lm1w5FuS0DFB8h8yriOEHrATD1xOM/lURkIhKIQpwx4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KgRq1wqBgxkJorzQs5MK2Upm3/Ut7B9wC+DY6Ny0jbLHrimXVkn/QSz7oRfBT1twFZ/kO2AG/4U7DsD7nL/Q0Z8MTrudJ9NT6YQ1xt7eMkjMjUXCQpbe4oOfyQSt68aqNq+o6XKP/ITfJDfmMSfAdioNGrhVecZ56iBljCFuoOE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WZw1HmSe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 294ACC4CEF5;
-	Mon, 17 Nov 2025 09:40:46 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=CUDlf5qDz+gILLpTna6AFzSlGHzkH01fVeGrL1hejHB/PTj/XXJWGCyKsFsVAUG9Jpd6d+t1yPlTfdCgqmYn8ikai765XijUmZ3xsVDoXvEOmOiavwnf3jQEhqt7O79VO2U36xpkcZlatFKITdgPeAUxXiKdAwsPbSxkDeTCHfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SXc3AudH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CEF7C4CEF5;
+	Mon, 17 Nov 2025 09:48:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763372468;
-	bh=LD55be3edOh4ynHvlMDm/XHjOHztjZ05X5TLRldv6n4=;
+	s=k20201202; t=1763372928;
+	bh=lm1w5FuS0DFB8h8yriOEHrATD1xOM/lURkIhKIQpwx4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WZw1HmSe6e5SFAhumoJoHd0IXoPQTP7+MM7Y+b8c2vcXdarBS83di9/hyntP8Bwin
-	 QoUWbpZMGv8BUQLEhg5/B1QhjlObNdlqeqG91VFVurp9EWnhWkrfPd+wi4VUWtf3HO
-	 l5tPEffj4bxsk3DE84PYjUHLcb9eQokPwtApJ8+RsXygkP3/+K2tUR2j2V+GkAS/rx
-	 8hVpFGSKb16yzjkjNRPW9MAxWCY1qHhILkXy91NV+lQrn0avug6sJRmSAbrWCZE0Us
-	 /cwZ1J7nuJ9g5szal7SnFP7JqhWGSgsgSX5FVOj5dyIHN1vYwYt9xNndhqpSqSQ7dX
-	 VsczE/cGhyjIA==
-Date: Mon, 17 Nov 2025 11:40:43 +0200
+	b=SXc3AudH1OcuTxWg9OhFFVFP1nWirXtdO1p8OrOMzac+67OuDLkRz4ILPP6fVSALp
+	 /FbXlUfKN2ZqyIZO3SFzOhbbbqmC2Z86SKwLoD9XyFGPsHtZU+1VwzcobeHdGPdC5m
+	 54CJLuAlBSE64se+irsZX2F5e70m/vq92kn/oHf3DGlIeWfbhsCCrasmYoDchg7fRR
+	 BY4na8GLM3cbXQevPwcrFoOhVgHiO9zWC/7t8Dh0EgtknybsgJlwU8qjyFgFQP+eV3
+	 ZlRWl0ggiJpxxK7ALwoCwBJzw5EWBAi4stEaB7qIPc7tc6pfgp491Hjf3BtbERlnOu
+	 LCc5gzOIltBsw==
+Date: Mon, 17 Nov 2025 11:48:24 +0200
 From: Mike Rapoport <rppt@kernel.org>
 To: Pasha Tatashin <pasha.tatashin@soleen.com>
 Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com,
@@ -71,10 +71,11 @@ Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com,
 	ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com,
 	leonro@nvidia.com, witu@nvidia.com, hughd@google.com,
 	skhawaja@google.com, chrisl@kernel.org
-Subject: Re: [PATCH v6 10/20] MAINTAINERS: add liveupdate entry
-Message-ID: <aRrtmy--AWCEEbtg@kernel.org>
+Subject: Re: [PATCH v6 11/20] mm: shmem: use SHMEM_F_* flags instead of VM_*
+ flags
+Message-ID: <aRrvaHh-cP8jygAF@kernel.org>
 References: <20251115233409.768044-1-pasha.tatashin@soleen.com>
- <20251115233409.768044-11-pasha.tatashin@soleen.com>
+ <20251115233409.768044-12-pasha.tatashin@soleen.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -83,42 +84,164 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251115233409.768044-11-pasha.tatashin@soleen.com>
+In-Reply-To: <20251115233409.768044-12-pasha.tatashin@soleen.com>
 
-On Sat, Nov 15, 2025 at 06:33:56PM -0500, Pasha Tatashin wrote:
-> Add a MAINTAINERS file entry for the new Live Update Orchestrator
-> introduced in previous patches.
+On Sat, Nov 15, 2025 at 06:33:57PM -0500, Pasha Tatashin wrote:
+> From: Pratyush Yadav <ptyadav@amazon.de>
 > 
+> shmem_inode_info::flags can have the VM flags VM_NORESERVE and
+> VM_LOCKED. These are used to suppress pre-accounting or to lock the
+> pages in the inode respectively. Using the VM flags directly makes it
+> difficult to add shmem-specific flags that are unrelated to VM behavior
+> since one would need to find a VM flag not used by shmem and re-purpose
+> it.
+> 
+> Introduce SHMEM_F_NORESERVE and SHMEM_F_LOCKED which represent the same
+> information, but their bits are independent of the VM flags. Callers can
+> still pass VM_NORESERVE to shmem_get_inode(), but it gets transformed to
+> the shmem-specific flag internally.
+> 
+> No functional changes intended.
+> 
+> Signed-off-by: Pratyush Yadav <ptyadav@amazon.de>
 > Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+
+Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+
 > ---
->  MAINTAINERS | 11 +++++++++++
->  1 file changed, 11 insertions(+)
+>  include/linux/shmem_fs.h |  6 ++++++
+>  mm/shmem.c               | 28 +++++++++++++++-------------
+>  2 files changed, 21 insertions(+), 13 deletions(-)
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 500789529359..bc9f5c6f0e80 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -14464,6 +14464,17 @@ F:	kernel/module/livepatch.c
->  F:	samples/livepatch/
->  F:	tools/testing/selftests/livepatch/
+> diff --git a/include/linux/shmem_fs.h b/include/linux/shmem_fs.h
+> index 0e47465ef0fd..650874b400b5 100644
+> --- a/include/linux/shmem_fs.h
+> +++ b/include/linux/shmem_fs.h
+> @@ -10,6 +10,7 @@
+>  #include <linux/xattr.h>
+>  #include <linux/fs_parser.h>
+>  #include <linux/userfaultfd_k.h>
+> +#include <linux/bits.h>
 >  
-> +LIVE UPDATE
-> +M:	Pasha Tatashin <pasha.tatashin@soleen.com>
-
-Please count me in :)
-
-> +L:	linux-kernel@vger.kernel.org
-> +S:	Maintained
-> +F:	Documentation/core-api/liveupdate.rst
-> +F:	Documentation/userspace-api/liveupdate.rst
-> +F:	include/linux/liveupdate.h
-> +F:	include/linux/liveupdate/
-> +F:	include/uapi/linux/liveupdate.h
-> +F:	kernel/liveupdate/
+>  struct swap_iocb;
+>  
+> @@ -19,6 +20,11 @@ struct swap_iocb;
+>  #define SHMEM_MAXQUOTAS 2
+>  #endif
+>  
+> +/* Suppress pre-accounting of the entire object size. */
+> +#define SHMEM_F_NORESERVE	BIT(0)
+> +/* Disallow swapping. */
+> +#define SHMEM_F_LOCKED		BIT(1)
 > +
->  LLC (802.2)
->  L:	netdev@vger.kernel.org
->  S:	Odd fixes
+>  struct shmem_inode_info {
+>  	spinlock_t		lock;
+>  	unsigned int		seals;		/* shmem seals */
+> diff --git a/mm/shmem.c b/mm/shmem.c
+> index 58701d14dd96..1d5036dec08a 100644
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -175,20 +175,20 @@ static inline struct shmem_sb_info *SHMEM_SB(struct super_block *sb)
+>   */
+>  static inline int shmem_acct_size(unsigned long flags, loff_t size)
+>  {
+> -	return (flags & VM_NORESERVE) ?
+> +	return (flags & SHMEM_F_NORESERVE) ?
+>  		0 : security_vm_enough_memory_mm(current->mm, VM_ACCT(size));
+>  }
+>  
+>  static inline void shmem_unacct_size(unsigned long flags, loff_t size)
+>  {
+> -	if (!(flags & VM_NORESERVE))
+> +	if (!(flags & SHMEM_F_NORESERVE))
+>  		vm_unacct_memory(VM_ACCT(size));
+>  }
+>  
+>  static inline int shmem_reacct_size(unsigned long flags,
+>  		loff_t oldsize, loff_t newsize)
+>  {
+> -	if (!(flags & VM_NORESERVE)) {
+> +	if (!(flags & SHMEM_F_NORESERVE)) {
+>  		if (VM_ACCT(newsize) > VM_ACCT(oldsize))
+>  			return security_vm_enough_memory_mm(current->mm,
+>  					VM_ACCT(newsize) - VM_ACCT(oldsize));
+> @@ -206,7 +206,7 @@ static inline int shmem_reacct_size(unsigned long flags,
+>   */
+>  static inline int shmem_acct_blocks(unsigned long flags, long pages)
+>  {
+> -	if (!(flags & VM_NORESERVE))
+> +	if (!(flags & SHMEM_F_NORESERVE))
+>  		return 0;
+>  
+>  	return security_vm_enough_memory_mm(current->mm,
+> @@ -215,7 +215,7 @@ static inline int shmem_acct_blocks(unsigned long flags, long pages)
+>  
+>  static inline void shmem_unacct_blocks(unsigned long flags, long pages)
+>  {
+> -	if (flags & VM_NORESERVE)
+> +	if (flags & SHMEM_F_NORESERVE)
+>  		vm_unacct_memory(pages * VM_ACCT(PAGE_SIZE));
+>  }
+>  
+> @@ -1551,7 +1551,7 @@ int shmem_writeout(struct folio *folio, struct swap_iocb **plug,
+>  	int nr_pages;
+>  	bool split = false;
+>  
+> -	if ((info->flags & VM_LOCKED) || sbinfo->noswap)
+> +	if ((info->flags & SHMEM_F_LOCKED) || sbinfo->noswap)
+>  		goto redirty;
+>  
+>  	if (!total_swap_pages)
+> @@ -2910,15 +2910,15 @@ int shmem_lock(struct file *file, int lock, struct ucounts *ucounts)
+>  	 * ipc_lock_object() when called from shmctl_do_lock(),
+>  	 * no serialization needed when called from shm_destroy().
+>  	 */
+> -	if (lock && !(info->flags & VM_LOCKED)) {
+> +	if (lock && !(info->flags & SHMEM_F_LOCKED)) {
+>  		if (!user_shm_lock(inode->i_size, ucounts))
+>  			goto out_nomem;
+> -		info->flags |= VM_LOCKED;
+> +		info->flags |= SHMEM_F_LOCKED;
+>  		mapping_set_unevictable(file->f_mapping);
+>  	}
+> -	if (!lock && (info->flags & VM_LOCKED) && ucounts) {
+> +	if (!lock && (info->flags & SHMEM_F_LOCKED) && ucounts) {
+>  		user_shm_unlock(inode->i_size, ucounts);
+> -		info->flags &= ~VM_LOCKED;
+> +		info->flags &= ~SHMEM_F_LOCKED;
+>  		mapping_clear_unevictable(file->f_mapping);
+>  	}
+>  	retval = 0;
+> @@ -3062,7 +3062,7 @@ static struct inode *__shmem_get_inode(struct mnt_idmap *idmap,
+>  	spin_lock_init(&info->lock);
+>  	atomic_set(&info->stop_eviction, 0);
+>  	info->seals = F_SEAL_SEAL;
+> -	info->flags = flags & VM_NORESERVE;
+> +	info->flags = (flags & VM_NORESERVE) ? SHMEM_F_NORESERVE : 0;
+>  	info->i_crtime = inode_get_mtime(inode);
+>  	info->fsflags = (dir == NULL) ? 0 :
+>  		SHMEM_I(dir)->fsflags & SHMEM_FL_INHERITED;
+> @@ -5804,8 +5804,10 @@ static inline struct inode *shmem_get_inode(struct mnt_idmap *idmap,
+>  /* common code */
+>  
+>  static struct file *__shmem_file_setup(struct vfsmount *mnt, const char *name,
+> -			loff_t size, unsigned long flags, unsigned int i_flags)
+> +				       loff_t size, unsigned long vm_flags,
+> +				       unsigned int i_flags)
+>  {
+> +	unsigned long flags = (vm_flags & VM_NORESERVE) ? SHMEM_F_NORESERVE : 0;
+>  	struct inode *inode;
+>  	struct file *res;
+>  
+> @@ -5822,7 +5824,7 @@ static struct file *__shmem_file_setup(struct vfsmount *mnt, const char *name,
+>  		return ERR_PTR(-ENOMEM);
+>  
+>  	inode = shmem_get_inode(&nop_mnt_idmap, mnt->mnt_sb, NULL,
+> -				S_IFREG | S_IRWXUGO, 0, flags);
+> +				S_IFREG | S_IRWXUGO, 0, vm_flags);
+>  	if (IS_ERR(inode)) {
+>  		shmem_unacct_size(flags, size);
+>  		return ERR_CAST(inode);
 > -- 
 > 2.52.0.rc1.455.g30608eb744-goog
 > 
