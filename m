@@ -1,71 +1,75 @@
-Return-Path: <linux-fsdevel+bounces-68734-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68735-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id F332DC64756
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Nov 2025 14:49:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13338C64882
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Nov 2025 15:02:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1DB3F354754
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Nov 2025 13:43:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD1A93A4FD4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Nov 2025 13:58:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 061983328F3;
-	Mon, 17 Nov 2025 13:43:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D178138DF9;
+	Mon, 17 Nov 2025 13:58:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Jjh93+km"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nR7o+vQS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EF6C31B82B;
-	Mon, 17 Nov 2025 13:43:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6F7335CBA5;
+	Mon, 17 Nov 2025 13:58:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763387004; cv=none; b=iDuyK3seuJcn3ZxxWgPV0tEpKr7TRVG2+EjJj9fqW7fmQ8dtLTvrwN5NK7oQ24ummno5p2mclIa6uf5gpmFw4mFGoWALktfkY/gbiqUdO7scg1MmiSkwjr7wixFu2/I/j1y7VI4Zo2VGTx02C2mngn7ZyYIWb4gueDx9p/l5cdM=
+	t=1763387888; cv=none; b=sSKdOXpIsuLbN7Zx/RZJcm1Zh1DoPpGaG6qNyF1vr5yGYBVtiUUglvugbE3RmxU8OQ9ESYUvtHy0WFU0UiJ8HpXLOs5PcLh71BiTK9U8/oyyPlDixmPW3zT7zgCIH1QKXtlLKCZyf2y0x2le+jq6JYqLS1hdhJ7DU5PmnPxR30E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763387004; c=relaxed/simple;
-	bh=KnwUkpe7bz24RPLJCJ5lZs9XdB2oXkXKJIgzjZFUM1U=;
+	s=arc-20240116; t=1763387888; c=relaxed/simple;
+	bh=aOOep/LMZyjCFb+0figw9x6/fU0tp4jqTN9xUA9l1RY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PRssK0vQ81ohUTdIDqnG/UqBIVqaNy2JXOXUmMi98vl8qaABjlu6jX13sgnFl8mHBWt9ZDVPib+xJUfWUQLeL7eCldHlZd4oWGnI5ahn7c6hzpz7A7U3lo5NHC/BhonnsM5h+KJ7buB2wyDBMJZehxOYh8dNCEIWqo8WvHlumaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Jjh93+km; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=9YVuu7zAULl0ixowM1tYF4wrONsB1jmbz+W8pAwYhcU=; b=Jjh93+kmr9SpMk/YF5lvhgC2u1
-	ZlLsFwt+ATReBnLApmCMvDdJSY2oNVNipqTUPFWCQry6k8bU6FXiczgKhMtGrjOEm0kvGhrY+PTH5
-	7aynII8OLBrKH8zYUJV1vdToERpFDa8P6bWYOHLmbH7JpYg29hoM3vHl0jll7oo+MHeVcxV21b3XJ
-	S+kqdLRnmwBA75pDGLJDgsSWUY+NB3F2rS+32Suu8VkMT1mloxKDd1vZ8xc1rMCTp+DIYxKLls+fD
-	oW0POF7znBkybXltQwPWEILV7jBbFvCKGZm952EKG3CmTi+AyRzaylIyPLpvyIbLFobnUvKx10mR9
-	+7DS/e5w==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vKzVY-0000000DtlN-38y7;
-	Mon, 17 Nov 2025 13:43:04 +0000
-Date: Mon, 17 Nov 2025 13:43:04 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Harry Yoo <harry.yoo@oracle.com>
-Cc: Jiaqi Yan <jiaqiyan@google.com>, nao.horiguchi@gmail.com,
-	linmiaohe@huawei.com, ziy@nvidia.com, david@redhat.com,
-	lorenzo.stoakes@oracle.com, william.roche@oracle.com,
-	tony.luck@intel.com, wangkefeng.wang@huawei.com,
-	jane.chu@oracle.com, akpm@linux-foundation.org, osalvador@suse.de,
-	muchun.song@linux.dev, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Brendan Jackman <jackmanb@google.com>,
-	Johannes Weiner <hannes@cmpxchg.org>
-Subject: Re: [PATCH v1 1/2] mm/huge_memory: introduce
- uniform_split_unmapped_folio_to_zero_order
-Message-ID: <aRsmaIfCAGy-DRcx@casper.infradead.org>
-References: <20251116014721.1561456-1-jiaqiyan@google.com>
- <20251116014721.1561456-2-jiaqiyan@google.com>
- <aRm6shtKizyrq_TA@casper.infradead.org>
- <aRqTLmJBuvBcLYMx@hyeyoo>
+	 Content-Type:Content-Disposition:In-Reply-To; b=F7BQdvWKDEUSffVSX0iux2VVJ+XWsIMuQDhH7LZTRpH36p2DKFNILXZpsoSoi5JQ99yB1BJu0900urXnLDxCKP9L4epr9sHTZXJG/6FKSl3Fa0YtgSF7mO1xa4eourXSnrxjXO4sedOiflUubTeMO479/VKTrEY3hpRLj+TWioE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nR7o+vQS; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1763387887; x=1794923887;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=aOOep/LMZyjCFb+0figw9x6/fU0tp4jqTN9xUA9l1RY=;
+  b=nR7o+vQSL/4iihVMG4+mtmM6f087KkQ0eko1Popij5LLyE84Oer1B76b
+   bgeu167rkqjj3vJl0yFKNAuiobPpl73mzwZ7+paOrtA5Aiu30LwXW5iwU
+   pKL4nHBnFdDMIHwqrVAdb4jrZvLoGphnt2nyDPb8Pk1VroenZgGt6RRLb
+   NY8vf1TRUho6ZMeY/RHvXzSaw6h3jGkIfwjLBAalwOU+YqanyjE+PUa8p
+   aoNS6ZWLHOumoSb0JTIuEsCXHLXReQQLkUvKBngOmQpryrgIhS+0BkGWi
+   M97rIyepxEY3xPMBrpeZdNMmoopU814jaEZXHMbA9cLz4UpVqItNL2VAP
+   w==;
+X-CSE-ConnectionGUID: QpBlt1yeQT69rwarQR4D1A==
+X-CSE-MsgGUID: v4g5jzvwTeCKcbkA2fdBOQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11616"; a="88034659"
+X-IronPort-AV: E=Sophos;i="6.19,312,1754982000"; 
+   d="scan'208";a="88034659"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Nov 2025 05:58:06 -0800
+X-CSE-ConnectionGUID: poikwz5BTcuAOY6uTKtFlw==
+X-CSE-MsgGUID: GFanoOrsSq6EKzc2fr1N6w==
+X-ExtLoop1: 1
+Received: from lkp-server01.sh.intel.com (HELO adf6d29aa8d9) ([10.239.97.150])
+  by fmviesa003.fm.intel.com with ESMTP; 17 Nov 2025 05:58:04 -0800
+Received: from kbuild by adf6d29aa8d9 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vKzk2-0000ch-0F;
+	Mon, 17 Nov 2025 13:58:02 +0000
+Date: Mon, 17 Nov 2025 21:57:12 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ye Bin <yebin@huaweicloud.com>, viro@zeniv.linux.org.uk,
+	brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	yebin10@huawei.com
+Subject: Re: [PATCH v2 2/3] sysctl: add support for drop_caches for
+ individual filesystem
+Message-ID: <202511172139.326qNHOk-lkp@intel.com>
+References: <20251117112735.4170831-3-yebin@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -74,66 +78,104 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aRqTLmJBuvBcLYMx@hyeyoo>
+In-Reply-To: <20251117112735.4170831-3-yebin@huaweicloud.com>
 
-On Mon, Nov 17, 2025 at 12:15:23PM +0900, Harry Yoo wrote:
-> On Sun, Nov 16, 2025 at 11:51:14AM +0000, Matthew Wilcox wrote:
-> > But since we're only doing this on free, we won't need to do folio
-> > allocations at all; we'll just be able to release the good pages to the
-> > page allocator and sequester the hwpoison pages.
-> 
-> [+Cc PAGE ALLOCATOR folks]
-> 
-> So we need an interface to free only healthy portion of a hwpoison folio.
-> 
-> I think a proper approach to this should be to "free a hwpoison folio
-> just like freeing a normal folio via folio_put() or free_frozen_pages(),
-> then the page allocator will add only healthy pages to the freelist and
-> isolate the hwpoison pages". Oherwise we'll end up open coding a lot,
-> which is too fragile.
+Hi Ye,
 
-Yes, I think it should be handled by the page allocator.  There may be
-some complexity to this that I've missed, eg if hugetlb wants to retain
-the good 2MB chunks of a 1GB allocation.  I'm not sure that's a useful
-thing to do or not.
+kernel test robot noticed the following build errors:
 
-> In fact, that can be done by teaching free_pages_prepare() how to handle
-> the case where one or more subpages of a folio are hwpoison pages.
-> 
-> How this should be implemented in the page allocator in memdescs world?
-> Hmm, we'll want to do some kind of non-uniform split, without actually
-> splitting the folio but allocating struct buddy?
+[auto build test ERROR on viro-vfs/for-next]
+[also build test ERROR on linus/master brauner-vfs/vfs.all v6.18-rc6 next-20251117]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Let me sketch that out, realising that it's subject to change.
+url:    https://github.com/intel-lab-lkp/linux/commits/Ye-Bin/vfs-introduce-reclaim_icache_sb-and-reclaim_dcache_sb-helper/20251117-193502
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git for-next
+patch link:    https://lore.kernel.org/r/20251117112735.4170831-3-yebin%40huaweicloud.com
+patch subject: [PATCH v2 2/3] sysctl: add support for drop_caches for individual filesystem
+config: alpha-allnoconfig (https://download.01.org/0day-ci/archive/20251117/202511172139.326qNHOk-lkp@intel.com/config)
+compiler: alpha-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251117/202511172139.326qNHOk-lkp@intel.com/reproduce)
 
-A page in buddy state can't need a memdesc allocated.  Otherwise we're
-allocating memory to free memory, and that way lies madness.  We can't
-do the hack of "embed struct buddy in the page that we're freeing"
-because HIGHMEM.  So we'll never shrink struct page smaller than struct
-buddy (which is fine because I've laid out how to get to a 64 bit struct
-buddy, and we're probably two years from getting there anyway).
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202511172139.326qNHOk-lkp@intel.com/
 
-My design for handling hwpoison is that we do allocate a struct hwpoison
-for a page.  It looks like this (for now, in my head):
+All errors (new ones prefixed by >>):
 
-struct hwpoison {
-	memdesc_t original;
-	... other things ...
-};
+   fs/drop_caches.c: In function 'drop_fs_caches':
+>> fs/drop_caches.c:107:25: error: implicit declaration of function 'syscall_set_return_value'; did you mean 'syscall_get_return_value'? [-Wimplicit-function-declaration]
+     107 |                         syscall_set_return_value(current,
+         |                         ^~~~~~~~~~~~~~~~~~~~~~~~
+         |                         syscall_get_return_value
 
-So we can replace the memdesc in a page with a hwpoison memdesc when we
-encounter the error.  We still need a folio flag to indicate that "this
-folio contains a page with hwpoison".  I haven't put much thought yet
-into interaction with HUGETLB_PAGE_OPTIMIZE_VMEMMAP; maybe "other things"
-includes an index of where the actually poisoned page is in the folio,
-so it doesn't matter if the pages alias with each other as we can recover
-the information when it becomes useful to do so.
 
-> But... for now I think hiding this complexity inside the page allocator
-> is good enough. For now this would just mean splitting a frozen page
-> inside the page allocator (probably non-uniform?). We can later re-implement
-> this to provide better support for memdescs.
+vim +107 fs/drop_caches.c
 
-Yes, I like this approach.  But then I'm not the page allocator
-maintainer ;-)
+    91	
+    92	static void drop_fs_caches(struct callback_head *twork)
+    93	{
+    94		int ret;
+    95		struct super_block *sb;
+    96		static bool suppress;
+    97		struct drop_fs_caches_work *work = container_of(twork,
+    98				struct drop_fs_caches_work, task_work);
+    99		unsigned int ctl = work->ctl;
+   100		dev_t dev = work->dev;
+   101	
+   102		if (work->path) {
+   103			struct path path;
+   104	
+   105			ret = kern_path(work->path, LOOKUP_FOLLOW, &path);
+   106			if (ret) {
+ > 107				syscall_set_return_value(current,
+   108							 current_pt_regs(),
+   109							 0, ret);
+   110				goto out;
+   111			}
+   112			dev = path.dentry->d_sb->s_dev;
+   113			/* Make this file's dentry and inode recyclable */
+   114			path_put(&path);
+   115		}
+   116	
+   117		sb = user_get_super(dev, false);
+   118		if (!sb) {
+   119			syscall_set_return_value(current, current_pt_regs(), 0,
+   120						 -EINVAL);
+   121			goto out;
+   122		}
+   123	
+   124		if (ctl & BIT(0)) {
+   125			lru_add_drain_all();
+   126			drop_pagecache_sb(sb, NULL);
+   127			count_vm_event(DROP_PAGECACHE);
+   128		}
+   129	
+   130		if (ctl & BIT(1)) {
+   131			reclaim_dcache_sb(sb);
+   132			reclaim_icache_sb(sb);
+   133			count_vm_event(DROP_SLAB);
+   134		}
+   135	
+   136		if (!READ_ONCE(suppress)) {
+   137			pr_info("%s (%d): %s: %d %u:%u\n", current->comm,
+   138				task_pid_nr(current), __func__, ctl,
+   139				MAJOR(sb->s_dev), MINOR(sb->s_dev));
+   140	
+   141			if (ctl & BIT(2))
+   142				WRITE_ONCE(suppress, true);
+   143		}
+   144	
+   145		drop_super(sb);
+   146	out:
+   147		kfree(work->path);
+   148		kfree(work);
+   149	}
+   150	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
