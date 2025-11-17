@@ -1,205 +1,137 @@
-Return-Path: <linux-fsdevel+bounces-68706-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68707-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9309C6383C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Nov 2025 11:23:46 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E1A8C6396D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Nov 2025 11:38:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BA80E360805
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Nov 2025 10:16:37 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B5CA335C09A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Nov 2025 10:30:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEB8F31D756;
-	Mon, 17 Nov 2025 10:16:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 617DD3093C3;
+	Mon, 17 Nov 2025 10:30:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dVxQd+jd"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="YlW0EMnh"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C0C12D97AA;
-	Mon, 17 Nov 2025 10:16:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59EDD272E5A
+	for <linux-fsdevel@vger.kernel.org>; Mon, 17 Nov 2025 10:30:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763374580; cv=none; b=uj7Zi2NQsb6sXWvp48p4tQAKj+eza3lPYONEGyaydvVhtFJs8KYBgxd47+D1+gd/7doFTfZPiXOOxOnOa5mhCtsqVJ607+UNUdzzpkd3QJ55R5ffxIuYNzA5CuR+Pup2+0s5g6d+YVAgA7KHqRJm2ys2y1OAc31xKGol92dRtmY=
+	t=1763375421; cv=none; b=skQr5maBTLkJFIsHeavXVKK04Fjcketb2fmKcFSn7UcibBbWXzBKekJk6duCGQnaQVLsOxPMjK8Mm0U9hFi7GLU6/Wza4/+7U2wR6mhq5jfJjd9VOseUHkh3iV+J0sFFkrJWqv/pAWCODH4PWH4Rl/BRR1SjopWoQdwTucZByTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763374580; c=relaxed/simple;
-	bh=3pqt/emoxDXMJPc9sIUv8mSiIo4NlUAIW0OPRzW2AvE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X6Zd546okZW1EuOQcN+w0GQozfL7/YklU8zzbwwPLhSmuXU4GFqhqRECUUIbD9mcHkqXambRpQ5r9w6TSBLknz/BsaiQukpM13hYV4y/E5480GanaZrhLdmRESVXIOPm7NHOLT+bsou8OBosxaqsXl8aLjRjjF5OoR08HgIGlnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dVxQd+jd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CA8CC19422;
-	Mon, 17 Nov 2025 10:16:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763374579;
-	bh=3pqt/emoxDXMJPc9sIUv8mSiIo4NlUAIW0OPRzW2AvE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dVxQd+jd5trmwBgh/3zu4hTlLkx/9p5IL33qFYnWaBIb3WLOyiuAgzqHpcoyY8DvC
-	 ZKiyBaH9cpng8Pso5NAbKGCW1AMqksvLeji0z7vLUtQynPZB7dfXmSo5pGdXpGyo+1
-	 9y1zMypZS9pqu5U01wxSxH6kHOxp1xOme4U3op9CTwfVOcLKDGW9HLxzfcokqvHM1X
-	 N5dXERXMh6/b5uyPBs0Z2qK1b8rH9LyONeVyW6Q8jsrspPSPTwlC3Vk/hn6kNAKrIF
-	 IkGYpSBwyj2A2bCkDZfCTKCKnmMjwvr+Fr8ufs+Q1LYALnWpYdlaUoyTJeOPu56txT
-	 eO8bZlmOwn+hA==
-Date: Mon, 17 Nov 2025 12:15:57 +0200
-From: Mike Rapoport <rppt@kernel.org>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com,
-	dmatlack@google.com, rientjes@google.com, corbet@lwn.net,
-	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com,
-	kanie@linux.alibaba.com, ojeda@kernel.org, aliceryhl@google.com,
-	masahiroy@kernel.org, akpm@linux-foundation.org, tj@kernel.org,
-	yoann.congal@smile.fr, mmaurer@google.com, roman.gushchin@linux.dev,
-	chenridong@huawei.com, axboe@kernel.dk, mark.rutland@arm.com,
-	jannh@google.com, vincent.guittot@linaro.org, hannes@cmpxchg.org,
-	dan.j.williams@intel.com, david@redhat.com,
-	joel.granados@kernel.org, rostedt@goodmis.org,
-	anna.schumaker@oracle.com, song@kernel.org, linux@weissschuh.net,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-mm@kvack.org, gregkh@linuxfoundation.org, tglx@linutronix.de,
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
-	x86@kernel.org, hpa@zytor.com, rafael@kernel.org, dakr@kernel.org,
-	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com,
-	myungjoo.ham@samsung.com, yesanishhere@gmail.com,
-	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com,
-	aleksander.lobakin@intel.com, ira.weiny@intel.com,
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de,
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com,
-	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net,
-	brauner@kernel.org, linux-api@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, saeedm@nvidia.com,
-	ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com,
-	leonro@nvidia.com, witu@nvidia.com, hughd@google.com,
-	skhawaja@google.com, chrisl@kernel.org
-Subject: Re: [PATCH v6 14/20] liveupdate: luo_file: add private argument to
- store runtime state
-Message-ID: <aRr13Q1xk9eunilo@kernel.org>
-References: <20251115233409.768044-1-pasha.tatashin@soleen.com>
- <20251115233409.768044-15-pasha.tatashin@soleen.com>
+	s=arc-20240116; t=1763375421; c=relaxed/simple;
+	bh=uDCCQXzcWKHDdw6+FUnhEhT/EnEM+9jDsx38khAZyt0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cqkrcoYT3pokMgP73xU/DkgmYKBlJGhrA6RK0Zmia4M0nvVm+FQ7sxWWk9+vDPuYLmrp2mnHbFLVKmWVxuYuSy+SfB2U8LIL7Z46Q3w/SOfXk0/mRN+mtIZwiGjPfeb6/BvfCkfMwUF9Sc2pHWJXItdP9J2v49qTH3OKQSohyEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=YlW0EMnh; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-b735b7326e5so567452366b.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Nov 2025 02:30:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1763375416; x=1763980216; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ghXYPE/gMEzITHPum2kYyeM5dHW4Nj/tBMdJSh+GKnc=;
+        b=YlW0EMnhOziFpGjQAD97RkWmScG7BMRkkGsGc7YR+cCepvcyxg2A5y+qzBujQwumXU
+         zl8Zp9FfImtchdcikNdAFO3bOeX8kbXG3SrA0PyLRAMyqc/XehYwM90MpEJsEMTATnn7
+         erY2+h2+GYy8HjcqQEBppGSmOVSWNUJjk5pXc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763375416; x=1763980216;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ghXYPE/gMEzITHPum2kYyeM5dHW4Nj/tBMdJSh+GKnc=;
+        b=BoWOB2YBi3PjvY48Jue0zpp+dYDYHDoGhTLFOQt0dZzko3pkBJQJ6z9eKvNdPBC7Hw
+         3gHK6FLB+rKNdRmfslNNDYOn769m+9M34AiFS17ssJn1L34cjfHf8MKhCLZg0aLeGgTZ
+         UWxEbcHmNvZ1y9ggd6zCoymmTmUAQLKTVsngGdoFe+qMFwSj09dJL1F+quKFXRw+nRGq
+         YTSwSzshuniZKW+TjPj6EZo5pVK2JF8gNhnZZq41/1BB1aq+bK0y561aezeCgHWTq6N+
+         CxpretZG+RG+uyJddsH5nkTylkXWG3jP5PIMpS5tEU9WqkvHPKvcNmEXMNWJKbQ6zTRS
+         POWg==
+X-Forwarded-Encrypted: i=1; AJvYcCUCjbniJD81kYEgvYYtL6qa2LS1SCa30Yei9mDiLviokd0wj4w/4lnq4CYvPTH66DdOzoKTLFIIEnc5c0jI@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXA3LJGYGrIQ6VHUXUFyhfZQfk+ZWywVBObo2HjdGsatBmw1CN
+	WqusGIf6LIcFeRxIb62Kmpg3Z6frcFYWc8VQw0oqC9KeXST44NeXDu77L35UNihtG5WtmGlLaFf
+	sO+A8/C4=
+X-Gm-Gg: ASbGncvljgnKoMLYhtcK8vvDr5C9J3WXMYAGjJpJ+47zySH6tSMqD893V+e9i77t1Ll
+	7H3bSBYbu6hIf3sgZ4wW68aY23d7GpLRfDiiSsk6nq0zkG0ed7Cj4OL2KeOdRnmeLDIydqsLkdM
+	PsZo9UgPHVgwqKirD35qsNlfHgrCVJYcsP0MlsMsV2m5ykDzoSurFuqgc0iM3jXH39AAHfxScJE
+	uRY8HwFGe71CJ2NaKlMsto0RlriKdpV9lQn6rHEVqbjWsgK24LqjneSFHr1KwOegR/Xiq082UOl
+	YSeYb+LImoG3wIfdIolC1jrmU3BYxF9FWo8sQE+JeVtE/Mq+5KPsxMR/7tlPoymbwMf4BzPxFaR
+	MZmlNovpeXVaSmHSJUEpv/eL9j016GfxQyS3m0KBwKFtFzv8IcUjMzK6Cr50tIaNcdZjd619llu
+	aZKVaYUd0q39tWxN8njgl/rT5GpkVVi3OXFmdhzzfTBBSURQmWeA==
+X-Google-Smtp-Source: AGHT+IG5f7peeXqok2mDMivOBdyLry3We36VkFGw3+3duE3gWPC32d+AR2RdH2iC6mo/5NAdyNc+7w==
+X-Received: by 2002:a17:906:1701:b0:b73:8d49:d291 with SMTP id a640c23a62f3a-b738d49d45amr438101466b.0.1763375416322;
+        Mon, 17 Nov 2025 02:30:16 -0800 (PST)
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com. [209.85.208.44])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b734fd80a3asm1034190766b.37.2025.11.17.02.30.15
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Nov 2025 02:30:15 -0800 (PST)
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-64320b9bb4bso2792038a12.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Nov 2025 02:30:15 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVNfJm7OpNvj9mAN4x9oD84iPUGRj6v2sx09eVbxA7Q6sdP5bmkGMhy3rjjwkiqCMr8YqxA2diREq3QHs4M@vger.kernel.org
+X-Received: by 2002:aa7:d8da:0:b0:643:130b:c615 with SMTP id
+ 4fb4d7f45d1cf-64334c7e125mr10982774a12.6.1763375414716; Mon, 17 Nov 2025
+ 02:30:14 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251115233409.768044-15-pasha.tatashin@soleen.com>
+References: <20251117-work-ovl-cred-guard-v4-0-b31603935724@kernel.org> <20251117-work-ovl-cred-guard-v4-35-b31603935724@kernel.org>
+In-Reply-To: <20251117-work-ovl-cred-guard-v4-35-b31603935724@kernel.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 17 Nov 2025 02:29:58 -0800
+X-Gmail-Original-Message-ID: <CAHk-=whrCSbimz8jDhh+q8AJH2Ut9V3dgyLxVotn3WLCTyoN4g@mail.gmail.com>
+X-Gm-Features: AWmQ_bnwhUgEdQVd21k4V-Ihe66DJElQUz0jrc4qSGDc6kLcbscsjeq-o69GauQ
+Message-ID: <CAHk-=whrCSbimz8jDhh+q8AJH2Ut9V3dgyLxVotn3WLCTyoN4g@mail.gmail.com>
+Subject: Re: [PATCH v4 35/42] ovl: port ovl_rename() to cred guard
+To: Christian Brauner <brauner@kernel.org>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>, linux-unionfs@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Sat, Nov 15, 2025 at 06:34:00PM -0500, Pasha Tatashin wrote:
-> From: Pratyush Yadav <pratyush@kernel.org>
-> 
-> Currently file handlers only get the serialized_data field to store
-> their state. This field has a pointer to the serialized state of the
-> file, and it becomes a part of LUO file's serialized state.
-> 
-> File handlers can also need some runtime state to track information that
-> shouldn't make it in the serialized data.
-> 
-> One such example is a vmalloc pointer. While kho_preserve_vmalloc()
-> preserves the memory backing a vmalloc allocation, it does not store the
-> original vmap pointer, since that has no use being passed to the next
-> kernel. The pointer is needed to free the memory in case the file is
-> unpreserved.
-> 
-> Provide a private field in struct luo_file and pass it to all the
-> callbacks. The field's can be set by preserve, and must be freed by
-> unpreserve.
-> 
-> Signed-off-by: Pratyush Yadav <pratyush@kernel.org>
-> Co-developed-by: Pasha Tatashin <pasha.tatashin@soleen.com>
-> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+Does this old "goto out" make any sense any more:
 
-Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+On Mon, 17 Nov 2025 at 01:34, Christian Brauner <brauner@kernel.org> wrote:
+>
+> @@ -1337,11 +1336,9 @@ static int ovl_rename(struct mnt_idmap *idmap, struct inode *olddir,
+>         if (err)
+>                 goto out;
+>
+> -       old_cred = ovl_override_creds(old->d_sb);
+> -
+> +       with_ovl_creds(old->d_sb)
+>                 err = ovl_rename_upper(&ovlrd, &list);
+>
+> -       ovl_revert_creds(old_cred);
+>         ovl_rename_end(&ovlrd);
+>  out:
+>         dput(ovlrd.new_upper);
 
-> ---
->  include/linux/liveupdate.h   | 5 +++++
->  kernel/liveupdate/luo_file.c | 9 +++++++++
->  2 files changed, 14 insertions(+)
-> 
-> diff --git a/include/linux/liveupdate.h b/include/linux/liveupdate.h
-> index 36a831ae3ead..defc69a1985d 100644
-> --- a/include/linux/liveupdate.h
-> +++ b/include/linux/liveupdate.h
-> @@ -29,6 +29,10 @@ struct file;
->   *                    this to the file being operated on.
->   * @serialized_data:  The opaque u64 handle, preserve/prepare/freeze may update
->   *                    this field.
-> + * @private_data:     Private data for the file used to hold runtime state that
-> + *                    is not preserved. Set by the handler's .preserve()
-> + *                    callback, and must be freed in the handler's
-> + *                    .unpreserve() callback.
->   *
->   * This structure bundles all parameters for the file operation callbacks.
->   * The 'data' and 'file' fields are used for both input and output.
-> @@ -39,6 +43,7 @@ struct liveupdate_file_op_args {
->  	bool retrieved;
->  	struct file *file;
->  	u64 serialized_data;
-> +	void *private_data;
->  };
->  
->  /**
-> diff --git a/kernel/liveupdate/luo_file.c b/kernel/liveupdate/luo_file.c
-> index 3d3bd84cb281..df337c9c4f21 100644
-> --- a/kernel/liveupdate/luo_file.c
-> +++ b/kernel/liveupdate/luo_file.c
-> @@ -126,6 +126,10 @@ static LIST_HEAD(luo_file_handler_list);
->   *                 This handle is passed back to the handler's .freeze(),
->   *                 .retrieve(), and .finish() callbacks, allowing it to track
->   *                 and update its serialized state across phases.
-> + * @private_data:  Pointer to the private data for the file used to hold runtime
-> + *                 state that is not preserved. Set by the handler's .preserve()
-> + *                 callback, and must be freed in the handler's .unpreserve()
-> + *                 callback.
->   * @retrieved:     A flag indicating whether a user/kernel in the new kernel has
->   *                 successfully called retrieve() on this file. This prevents
->   *                 multiple retrieval attempts.
-> @@ -152,6 +156,7 @@ struct luo_file {
->  	struct liveupdate_file_handler *fh;
->  	struct file *file;
->  	u64 serialized_data;
-> +	void *private_data;
->  	bool retrieved;
->  	struct mutex mutex;
->  	struct list_head list;
-> @@ -309,6 +314,7 @@ int luo_preserve_file(struct luo_session *session, u64 token, int fd)
->  		goto exit_err;
->  	} else {
->  		luo_file->serialized_data = args.serialized_data;
-> +		luo_file->private_data = args.private_data;
->  		list_add_tail(&luo_file->list, &session->files_list);
->  		session->count++;
->  	}
-> @@ -356,6 +362,7 @@ void luo_file_unpreserve_files(struct luo_session *session)
->  		args.session = (struct liveupdate_session *)session;
->  		args.file = luo_file->file;
->  		args.serialized_data = luo_file->serialized_data;
-> +		args.private_data = luo_file->private_data;
->  		luo_file->fh->ops->unpreserve(&args);
->  		luo_flb_file_unpreserve(luo_file->fh);
->  
-> @@ -384,6 +391,7 @@ static int luo_file_freeze_one(struct luo_session *session,
->  		args.session = (struct liveupdate_session *)session;
->  		args.file = luo_file->file;
->  		args.serialized_data = luo_file->serialized_data;
-> +		args.private_data = luo_file->private_data;
->  
->  		err = luo_file->fh->ops->freeze(&args);
->  		if (!err)
-> @@ -405,6 +413,7 @@ static void luo_file_unfreeze_one(struct luo_session *session,
->  		args.session = (struct liveupdate_session *)session;
->  		args.file = luo_file->file;
->  		args.serialized_data = luo_file->serialized_data;
-> +		args.private_data = luo_file->private_data;
->  
->  		luo_file->fh->ops->unfreeze(&args);
->  	}
-> -- 
-> 2.52.0.rc1.455.g30608eb744-goog
-> 
+when it all could just be
 
--- 
-Sincerely yours,
-Mike.
+        if (!err) {
+                with_ovl_creds(old->d_sb)
+                        err = ovl_rename_upper(&ovlrd, &list);
+                ovl_rename_end(&ovlrd);
+        }
+
+and no "goto out" any more?
+
+In fact, I think that "goto out" could possibly have already been done
+as part of the previous patch ("refactor ovl_rename"), but after this
+one the thing it jumps over is just _really_ trivial.
+
+Hmm?
+
+              Linus
+
+                Linus
 
