@@ -1,149 +1,165 @@
-Return-Path: <linux-fsdevel+bounces-68784-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68785-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4480C66176
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Nov 2025 21:17:55 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 204CEC66239
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Nov 2025 21:46:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9D9493608F8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Nov 2025 20:17:49 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTPS id 3509B291B0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Nov 2025 20:46:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9545333733;
-	Mon, 17 Nov 2025 20:17:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12CAB2FB62A;
+	Mon, 17 Nov 2025 20:46:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="VSEiF0ni"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="sruGxpUK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42D1830F954
-	for <linux-fsdevel@vger.kernel.org>; Mon, 17 Nov 2025 20:17:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DF26268C42
+	for <linux-fsdevel@vger.kernel.org>; Mon, 17 Nov 2025 20:46:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763410659; cv=none; b=lMRGDgGAPx/5xXRybrxUf5MebWJSfHQk0TVMd2o90d+nhQgpklduhly6iRljJpSMeOz+i4jQjgWT5B+vvgUjpMP99aNwIvicIHW6p2FC5qpweZk7eqpM8SOsvvWeN3yBMzYeztP6w572yCQiH6jsz7RNrl6vKjuXxEcZkbdxxbk=
+	t=1763412404; cv=none; b=OW9bmlfomRzWJm3hd/GSyDlDaY+4G8GGCtx6s4D6LVSvlbf2RAJhR1nYZAiLQuZJ1K1fmmxGsnoVOepiS/H39p+Ej4bLNMELwYx6RO/gf/EN4e2jdVm4is+NwD08HjzRc31VQgqR5u16OU/ROPl7ibWzzoOBYphXxpqkN8YbYHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763410659; c=relaxed/simple;
-	bh=S33O+CF2B1r3tkcDztO9KxprMMVy543GWsitFXBZZIM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qweBmACjRfgGRWKMBlwLCCbqFJmFna0DE5leuGJnUzZSzQV3X74Uzm6Q9/VO62E+5sGgZCjs/LtCfmmyZRAsqDQzFYve7EaXG29wMERFnDKPnRiAxuMIP/M+JNg8z9/cCAIrZjIPZkH6ScnpCnpiNIw4mxrN5ovAENHOOwtCQVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=VSEiF0ni; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-6417313bddaso7744665a12.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Nov 2025 12:17:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1763410653; x=1764015453; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=S33O+CF2B1r3tkcDztO9KxprMMVy543GWsitFXBZZIM=;
-        b=VSEiF0niubI0/T1KkAyD6Jo1VIJgW5qOyli6sh6xtCuKlNwx7nkMIDeNbeEmY/ggDM
-         iqot6HUzbBRC4iyPdUjF3f64CrBQJ+AY8trjtbRKH1JkbVbPwgTktAUXcy0+zFHqSZYq
-         3kXVPSjsCTnAlHkwgQsmyJrjc11eVSC3EoLxztHxnz3t6QPQQUTTkWCjZ38TNFWBlEyf
-         1m6i2io51I2wdRKgXKYmN0SjKcN78/ji2w8A1WxqMH0OLiQiGgsFTuIHPZK+Yvv91CyG
-         HWK4b8QQkVnIJDCGDmOHyH2g6GzeIQjA6EjOFCi0rO+2yaQG7978KNbfDc1iG5VHbkPW
-         Y9Jg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763410653; x=1764015453;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=S33O+CF2B1r3tkcDztO9KxprMMVy543GWsitFXBZZIM=;
-        b=SV+DZUfNw9+Utb1PdkGC75THHxEtq4/707uDvzbXbENgDDLiG+krcQNGdsrPIhta1B
-         3FB2mZ66uihWA2Juo+OHDAZDj0Y0M7sXMKVuUR14ffvwQ0y4HrbI2yk1SuydDodM3wcb
-         Eh3n7uci6fYZqM5NiG/O1xGy2OtBGeaKUa7s4MaiBoZMb1fMrAul1DsIP/RTUmBaeGap
-         BokQSSSonkZwxhyRb6k17CJBZPJfBdOIBesm0BIaJ4HcVdyzkYrIqewsG1O4GeB/qT1S
-         ueWpsA7xGrrwP92cDElqde8lwtDkOSiKSWBNi98E9yp15kZ1WH0bkLpgRtyr5xi+zpZQ
-         kTAg==
-X-Forwarded-Encrypted: i=1; AJvYcCXN8ESu7koEuNor1Xqz4gAR1meouYAgKhU6Fps/VJC0UKTyFGAgjAlQQUDrviXFGezJPdGg/3kfdYEfXzXv@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtZAZbEsPqktvp1oxb04s1RPlJh962LRZM6kG+6RbHkYQk90QB
-	NnQwx5kT3oPurfDXK8LhFGhjmpIbEC26V57zwRc4MZQ8oC1zPligrnGVNYsqtWkYsLkgZdgOJWV
-	4wdY3KUMzBWX0zKcZFipuh6lxBckB4ykaITblGPXoaA==
-X-Gm-Gg: ASbGnctjDJ1GL3nsuA/dfO+I+XDyoFpebN3YWl8od/PDTmGq1MU44kuF7qqX9JEEYcT
-	yYRkbCojDft95Jx9b570y1c193wfP1dy1vFRcrdCakK4olrlRewAcmUjoNYk9jfXqxWtTrwkTcN
-	iQYDpdve5elU9XfkmH2Cdi8j4HeOTeEADjupapDUGqurbh/jmlpsh4pP5zTh/+u9gWAIQg3UtY6
-	jMCP56ehdqSfJL8AauL5Aeb8cThioEWn1vz4S3RLtfUYEMV+TZHz53MkDhToXgN0/nW
-X-Google-Smtp-Source: AGHT+IFItSdGQdOgeoVWjbSlLG/sP/FZzoFWO1rtvgD6y2lU/+PX1v1prFL+slWcS3blQ8WlJsrEVKQ7VXI5F5genq4=
-X-Received: by 2002:a05:6402:50cd:b0:640:ebe3:dd55 with SMTP id
- 4fb4d7f45d1cf-64350e04b82mr11009068a12.6.1763410653320; Mon, 17 Nov 2025
- 12:17:33 -0800 (PST)
+	s=arc-20240116; t=1763412404; c=relaxed/simple;
+	bh=IOFT1afgQxY7PNXndscjuXLUvFY3EknSJ6WAMRGo/DQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mltzQ1y49ETZIocy0/UOWNP7BCwVoqkqZ2pYVLviwItG8meYM0jQYrTybU+Xp6etWmpCYJ+2AMH/qV7QcQtWkuM0g2e5QP7sZotMBgBxOhdhgZadFI7YQj+K1fGDI/zO2kOrOLNb9t/nKn05sPC1T41f0q8Fbx4S4++orFchX/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=sruGxpUK; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=7aoKKwEvCEvV8XCxzFGnhwGdK81sm1EtauBn21f8K4A=; b=sruGxpUKOk+6q3bHr4AbZ+iaMn
+	urSdRhVza4FjaA71Bs5rjfq0D9JPHOxuThWGD5XlzfmGxVbV7ATnP/k/dPNATnU9+N70OCxqb0Vbe
+	YJ//Fz1MJnN4Z2CCBcyncSX11V8yWlJ/QyoOQKXAQEkkcqYl8S2vULWtSB7+t/LBPgaPh5pIbGSH6
+	YUWLGVvhm1Rs30fm3iyCgqfM0B935aHMqwh0fR74FF3/Lew+ruM0DiAOBKAnoHwxMz29LSaJV6KOd
+	RS8zt/tzogjZP10lgF1tYfA1vQYv1n+UgokTM2lGDK6UGJTbPxCnNQwYQF4rYMLdMHjQpbm4o5DAM
+	Ig6QewWA==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vL67Q-0000000EPid-0mIG;
+	Mon, 17 Nov 2025 20:46:36 +0000
+Date: Mon, 17 Nov 2025 20:46:35 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: brauner@kernel.org, hch@infradead.org, djwong@kernel.org,
+	bfoster@redhat.com, linux-fsdevel@vger.kernel.org,
+	kernel-team@meta.com, Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH v4 5/9] iomap: simplify ->read_folio_range() error
+ handling for reads
+Message-ID: <aRuJqxE3XRoLcWrz@casper.infradead.org>
+References: <20251111193658.3495942-1-joannelkoong@gmail.com>
+ <20251111193658.3495942-6-joannelkoong@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251115233409.768044-1-pasha.tatashin@soleen.com>
- <20251115233409.768044-18-pasha.tatashin@soleen.com> <CALzav=eskApQk6kstsQWThwV=h4Qmd85kAw3CxZt=6hj=JS-Xw@mail.gmail.com>
-In-Reply-To: <CALzav=eskApQk6kstsQWThwV=h4Qmd85kAw3CxZt=6hj=JS-Xw@mail.gmail.com>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Mon, 17 Nov 2025 15:16:56 -0500
-X-Gm-Features: AWmQ_bm_MkoZE--tsc-fA0lwBQn6VGwYgaMcS7NtBv5sswRv0JDdatkuBxPFasI
-Message-ID: <CA+CK2bD-57sMM1pm9GkdrpRkvk5qCf3CfQ1yr1q=X5+e4dgmoA@mail.gmail.com>
-Subject: Re: [PATCH v6 17/20] selftests/liveupdate: Add userspace API selftests
-To: David Matlack <dmatlack@google.com>
-Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com, rppt@kernel.org, 
-	rientjes@google.com, corbet@lwn.net, rdunlap@infradead.org, 
-	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, ojeda@kernel.org, 
-	aliceryhl@google.com, masahiroy@kernel.org, akpm@linux-foundation.org, 
-	tj@kernel.org, yoann.congal@smile.fr, mmaurer@google.com, 
-	roman.gushchin@linux.dev, chenridong@huawei.com, axboe@kernel.dk, 
-	mark.rutland@arm.com, jannh@google.com, vincent.guittot@linaro.org, 
-	hannes@cmpxchg.org, dan.j.williams@intel.com, david@redhat.com, 
-	joel.granados@kernel.org, rostedt@goodmis.org, anna.schumaker@oracle.com, 
-	song@kernel.org, linux@weissschuh.net, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-mm@kvack.org, gregkh@linuxfoundation.org, 
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, rafael@kernel.org, 
-	dakr@kernel.org, bartosz.golaszewski@linaro.org, cw00.choi@samsung.com, 
-	myungjoo.ham@samsung.com, yesanishhere@gmail.com, Jonathan.Cameron@huawei.com, 
-	quic_zijuhu@quicinc.com, aleksander.lobakin@intel.com, ira.weiny@intel.com, 
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
-	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net, 
-	brauner@kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	saeedm@nvidia.com, ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com, 
-	leonro@nvidia.com, witu@nvidia.com, hughd@google.com, skhawaja@google.com, 
-	chrisl@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251111193658.3495942-6-joannelkoong@gmail.com>
 
-On Mon, Nov 17, 2025 at 2:39=E2=80=AFPM David Matlack <dmatlack@google.com>=
- wrote:
->
-> On Sat, Nov 15, 2025 at 3:34=E2=80=AFPM Pasha Tatashin
-> <pasha.tatashin@soleen.com> wrote:
->
-> > diff --git a/tools/testing/selftests/liveupdate/.gitignore b/tools/test=
-ing/selftests/liveupdate/.gitignore
-> > new file mode 100644
-> > index 000000000000..af6e773cf98f
-> > --- /dev/null
-> > +++ b/tools/testing/selftests/liveupdate/.gitignore
-> > @@ -0,0 +1 @@
-> > +/liveupdate
->
-> I would recommend the following .gitignore so you don't have to keep
-> updating it every time there's a new executable or other build
-> artifact. This is what we use in the KVM and VFIO selftests.
+On Tue, Nov 11, 2025 at 11:36:54AM -0800, Joanne Koong wrote:
+> Instead of requiring that the caller calls iomap_finish_folio_read()
+> even if the ->read_folio_range() callback returns an error, account for
+> this internally in iomap instead, which makes the interface simpler and
+> makes it match writeback's ->read_folio_range() error handling
+> expectations.
 
-Good idea, I will do that.
+Bisection of next-20251117 leads to this patch (commit
+f8eaf79406fe9415db0e7a5c175b50cb01265199)
 
-Thanks,
-Pasha
+Here's the failure:
 
->
-> # SPDX-License-Identifier: GPL-2.0-only
-> *
-> !/**/
-> !*.c
-> !*.h
-> !*.S
-> !*.sh
-> !*.mk
-> !.gitignore
-> !config
-> !Makefile
+generic/008       run fstests generic/008 at 2025-11-17 20:40:31
+page: refcount:5 mapcount:0 mapping:00000000101f858e index:0x4 pfn:0x12d4f8
+head: order:2 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+memcg:ffff8881120315c0
+aops:xfs_address_space_operations ino:83 dentry name(?):"008.2222"
+flags: 0x8000000000014069(locked|uptodate|lru|private|head|reclaim|zone=2)
+raw: 8000000000014069 ffffea0004b69f48 ffffea0004a0a508 ffff8881139d83f0
+raw: 0000000000000004 ffff8881070b4420 00000005ffffffff ffff8881120315c0
+head: 8000000000014069 ffffea0004b69f48 ffffea0004a0a508 ffff8881139d83f0
+head: 0000000000000004 ffff8881070b4420 00000005ffffffff ffff8881120315c0
+head: 8000000000000202 ffffea0004b53e01 00000000ffffffff 00000000ffffffff
+head: ffffffffffffffff 0000000000000000 00000000ffffffff 0000000000000004
+page dumped because: VM_BUG_ON_FOLIO(success && folio_test_uptodate(folio))
+------------[ cut here ]------------
+kernel BUG at mm/filemap.c:1538!
+Oops: invalid opcode: 0000 [#1] SMP NOPTI
+CPU: 1 UID: 0 PID: 2607 Comm: xfs_io Not tainted 6.18.0-rc1-ktest-00033-gf8eaf79406fe #151 NONE
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+RIP: 0010:folio_end_read+0x68/0x70
+Code: 8e e9 04 00 0f 0b 48 8b 07 48 89 c2 48 c1 ea 03 a8 08 74 00 83 e2 01 b8 09 00 00 00 74 c2 48 c7 c6 a0 6e 3e 82 e8 68 e9 04 00 <0f> 0b 90 0f 1f 44 00 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90
+RSP: 0018:ffff888112333870 EFLAGS: 00010286
+RAX: 000000000000004b RBX: ffffea0004b53e00 RCX: 0000000000000027
+RDX: ffff888179657c08 RSI: 0000000000000001 RDI: ffff888179657c00
+RBP: ffff888112333870 R08: 00000000fffbffff R09: ffff88817f1fdfa8
+R10: 0000000000000003 R11: 0000000000000000 R12: ffff8881070b4420
+R13: 0000000000000001 R14: ffff888112333b28 R15: ffffea0004b53e00
+FS:  00007f7b1ad91880(0000) GS:ffff8881f6b0b000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055d7455da018 CR3: 00000001111ac000 CR4: 0000000000750eb0
+PKRU: 55555554
+Call Trace:
+ <TASK>
+ iomap_read_end+0xac/0x130
+ iomap_readahead+0x1e1/0x330
+ xfs_vm_readahead+0x3d/0x50
+ read_pages+0x69/0x270
+ page_cache_ra_order+0x2c2/0x4d0
+ page_cache_async_ra+0x204/0x3c0
+ filemap_readahead.isra.0+0x67/0x80
+ filemap_get_pages+0x376/0x8a0
+ ? find_held_lock+0x31/0x90
+ ? try_charge_memcg+0x21a/0x750
+ ? lock_acquire+0xb2/0x290
+ ? __memcg_kmem_charge_page+0x160/0x3c0
+ filemap_read+0x106/0x4c0
+ ? __might_fault+0x35/0x80
+ generic_file_read_iter+0xbc/0x110
+ xfs_file_buffered_read+0xa9/0x110
+ xfs_file_read_iter+0x82/0xf0
+ vfs_read+0x277/0x360
+ __x64_sys_pread64+0x7a/0xa0
+ x64_sys_call+0x1b03/0x1da0
+ do_syscall_64+0x6a/0x2e0
+ entry_SYSCALL_64_after_hwframe+0x76/0x7e
+RIP: 0033:0x7f7b1b0efd07
+Code: 08 89 3c 24 48 89 4c 24 18 e8 55 76 fa ff 4c 8b 54 24 18 48 8b 54 24 10 41 89 c0 48 8b 74 24 08 8b 3c 24 b8 11 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 31 44 89 c7 48 89 04 24 e8 a5 76 fa ff 48 8b
+RSP: 002b:00007ffc4a4b8080 EFLAGS: 00000293 ORIG_RAX: 0000000000000011
+RAX: ffffffffffffffda RBX: 0000000000001000 RCX: 00007f7b1b0efd07
+RDX: 0000000000001000 RSI: 000055d7455d8000 RDI: 0000000000000003
+RBP: 0000000000001000 R08: 0000000000000000 R09: 0000000000000003
+R10: 0000000000001000 R11: 0000000000000293 R12: 0000000000000001
+R13: 0000000000020000 R14: 000000000001f000 R15: 0000000000001000
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:folio_end_read+0x68/0x70
+Code: 8e e9 04 00 0f 0b 48 8b 07 48 89 c2 48 c1 ea 03 a8 08 74 00 83 e2 01 b8 09 00 00 00 74 c2 48 c7 c6 a0 6e 3e 82 e8 68 e9 04 00 <0f> 0b 90 0f 1f 44 00 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90
+RSP: 0018:ffff888112333870 EFLAGS: 00010286
+RAX: 000000000000004b RBX: ffffea0004b53e00 RCX: 0000000000000027
+RDX: ffff888179657c08 RSI: 0000000000000001 RDI: ffff888179657c00
+RBP: ffff888112333870 R08: 00000000fffbffff R09: ffff88817f1fdfa8
+R10: 0000000000000003 R11: 0000000000000000 R12: ffff8881070b4420
+R13: 0000000000000001 R14: ffff888112333b28 R15: ffffea0004b53e00
+FS:  00007f7b1ad91880(0000) GS:ffff8881f6b0b000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055d7455da018 CR3: 00000001111ac000 CR4: 0000000000750eb0
+PKRU: 55555554
+Kernel panic - not syncing: Fatal exception
+Kernel Offset: disabled
+---[ end Kernel panic - not syncing: Fatal exception ]---
+
+You're calling folio_end_read(folio, true) for a folio which is already
+marked uptodate!  I haven't looked through your patch to see what the
+problem is yet.  Very reproducible, you only have to run generic/008
+with a 1kB blocksize XFS.  And CONFIG_VM_DEBUG set, of course.
 
