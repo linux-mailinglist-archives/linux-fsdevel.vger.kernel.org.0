@@ -1,197 +1,179 @@
-Return-Path: <linux-fsdevel+bounces-68737-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68738-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8B97C6496C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Nov 2025 15:14:20 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96C75C6498D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Nov 2025 15:16:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D0E20345ADB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Nov 2025 14:08:17 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id CEA263482DD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Nov 2025 14:10:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4B60245012;
-	Mon, 17 Nov 2025 14:08:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFF793328F3;
+	Mon, 17 Nov 2025 14:10:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YxgnXrRQ"
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="fI36bZ2C"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 681539463;
-	Mon, 17 Nov 2025 14:08:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F15F1F19A
+	for <linux-fsdevel@vger.kernel.org>; Mon, 17 Nov 2025 14:10:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763388490; cv=none; b=kfRvngYCEUfilbYsM6qX7zWxJuei4wtxBrPyL2I7AMFsUpcgqJbMzp6lachfFsqmBNst4ZScdOWEwRKChfFNSxJzsNjyDR7Yz1rPdUqcBYo2elDCgnG9iyJ4BJfBTyRMJhWcBL/OTgdj8bv2GmM2a2mXdJ+/elKlL9PZFyrpW5c=
+	t=1763388609; cv=none; b=nhhZm3yrtWgQN36mR4exbZlhQn+xzuU7EmkxMZHbuQVX0slek96ZQCUSS3IPTXbjlUOoztuFHLMT7qTZKcofaiQiOxL0aLnp/7twnaBUGSopTf20RmdfRmlTmTcqP+NAYOmpKIG9fM04XpPmUmDYkDKHdy1OnGbbSo4IPmPaFOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763388490; c=relaxed/simple;
-	bh=M26THjNlfMkmKsBJemZjpNdpo8Lu0cMCPqCNMjiXeRk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C/MDxbdRmSa0IWw/Y81cv5+SLZ1oum0BcLoOEuNUSbxlHhMEJJSaCF/u2GCHPVJP0X/Jkq3qniYvQeym3gYRs5bHZm/jAAHWN9x3O24l+iR1cCpWul4mP2JNILoUumc8MJdKgOmA3OGhiyPdp2O9nPaFsMaWQnEiU04ijJiRvvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YxgnXrRQ; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1763388488; x=1794924488;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=M26THjNlfMkmKsBJemZjpNdpo8Lu0cMCPqCNMjiXeRk=;
-  b=YxgnXrRQhFySOT/DD3g26fmMlttjs++ygrx8R6k4SaS7ynj9fBvhYq1G
-   /5PYI4WBOfffa5b0YxngsJGknrBgQU/5RmNvkSiHlQd6DfwT/Ik1Po/vV
-   iB2f19bSxUr0Ki2Jswk/rg6QiCiZUXhfM9bLlA401yC8K4vQZcUXadOuI
-   NNGuhZ8ZbEv6wh8sG1XB121wzBwPwtVN24EFTsl731eQNVoXZZGaC7Gw2
-   JUlmcaaP/Zknbs4bngHyA3W8LcFSvKk1VYtGaZ801qavopEqGjDO6hhrU
-   x20q7gJcguVGOpiXhN4SLdiJhJSKnUN+ysIdD0CBuif2W6v1Boue6ELhC
-   w==;
-X-CSE-ConnectionGUID: 4oeALRBlQPqtxdwaoyt0+w==
-X-CSE-MsgGUID: zUzbK076TxGvsG5eXzHWGA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11616"; a="65322071"
-X-IronPort-AV: E=Sophos;i="6.19,312,1754982000"; 
-   d="scan'208";a="65322071"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Nov 2025 06:08:08 -0800
-X-CSE-ConnectionGUID: jG+3AP1pSB6SC8XgN/SNxA==
-X-CSE-MsgGUID: oQ5qCuP6RLeT91PmOAQ5zA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,312,1754982000"; 
-   d="scan'208";a="221353846"
-Received: from lkp-server01.sh.intel.com (HELO adf6d29aa8d9) ([10.239.97.150])
-  by fmviesa001.fm.intel.com with ESMTP; 17 Nov 2025 06:08:05 -0800
-Received: from kbuild by adf6d29aa8d9 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vKztj-0000dT-0Z;
-	Mon, 17 Nov 2025 14:08:03 +0000
-Date: Mon, 17 Nov 2025 22:07:30 +0800
-From: kernel test robot <lkp@intel.com>
-To: Ye Bin <yebin@huaweicloud.com>, viro@zeniv.linux.org.uk,
-	brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, yebin10@huawei.com
-Subject: Re: [PATCH v2 2/3] sysctl: add support for drop_caches for
- individual filesystem
-Message-ID: <202511172149.q8geOAvk-lkp@intel.com>
-References: <20251117112735.4170831-3-yebin@huaweicloud.com>
+	s=arc-20240116; t=1763388609; c=relaxed/simple;
+	bh=ji/Y9Qq7wFGzKoh1h+90Adh1o23a0XJeM2uSU9uvfvo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=e/apgME5c8ndZyETTjr3ApeVWVVaDBxV9pKsZq9CBi3gKlW0luE2YD8pUmHASNr8XX9MTAgbcYdjnFcTclXeCuxqUjJFM0KIOPTbRraOIg1rosP47dpk3b0So/Apktt1eeF1xvZ/xnh7qo850e480P1C6LeOerT6+ANZs9aG310=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=fI36bZ2C; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-64320b9bb4bso3220127a12.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Nov 2025 06:10:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen.com; s=google; t=1763388605; x=1763993405; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3PGJ4MM2xZvUtFSBpssoTJJO3KUHMCo+rFkEgLZfONk=;
+        b=fI36bZ2Cd/qh4g9R+lz5NPae3/nblICrVl7RFEg9qFGGSM6MyPhMPgG1rrR8qiNahz
+         f+Q962bfAxR6K+qlQFlnfI5qxMl6akntKsp0p/rlq0T9tmCJB4lgyP+4DNDnOa9yqTy3
+         C+FCUsvW9Lvjs7FniB5f2YQnfts5dGhLTK8k8MuxQZNMFhik1MJt+JJeRzogpcZ007XT
+         KLZhSV1RB25chIA3MZV5FiAOHGqw3g2ZeUxO4AykVyTLv1BJnqzkO9z5LYvJ5yR17JSk
+         YZePBcZK56I8FLibQe6SUYf7qgpHbs8yqL7qI9fNM9vRhoJG7G6N9aN0nXgVJxWx1560
+         dMLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763388605; x=1763993405;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=3PGJ4MM2xZvUtFSBpssoTJJO3KUHMCo+rFkEgLZfONk=;
+        b=ZdtkS0lECHP6Kptn6zs14XrTQcvEmHgjqWsbnvTfnc6918nwFJ6+znKcyasYmVt4Xn
+         +LV+C8GbC2zjKLuNbBux0fbzrFTqDG46/mZlY3Ik/gAqhs3KmfqxtaHSfzvxT2SpC+Kd
+         cbTwj27ckRBl6/AziWqVl4Stv6Xr9nctoNdU9iiMUqukDdtWGkeB2pxftVvrxM6c6948
+         b0Adyg9fZzFe+3TqizFSCKfw/NzWuWtkH9XfjOO7sE9wf746axC5eFWZYmGIRO/34Aqy
+         w3T6Oqgzud6uIW6gPFIOc4QXk6QyYI1gAq1rag9GjCYNe2zfN11G4Eiqd5GaBTmRalkk
+         ziXg==
+X-Forwarded-Encrypted: i=1; AJvYcCV+htbsHIyovjqVQXw0cT9ttk56zlHbERbZJvsfh/OWF0Up7nFn8fheVn/TcqMi/LUQyAsoinZJaj5g/aFD@vger.kernel.org
+X-Gm-Message-State: AOJu0YxH5/isyuQ3tKuyzyNk4gsMdQzJ/rQu8NsPakyJMh9gtOHKRR+s
+	mpqyiqWV91vC3XEOMuSzIapiShXBnJBiedPAog+sEMdZxPnMHQp0absew8No6hmUGIXP8afsuJj
+	PRD6G7vcJMXRDZTukrlzC3ZnvnASeZbna3hN0/+/gHQ==
+X-Gm-Gg: ASbGnctglxl51Up6ohczRWP5dGtPFiFDrG6/SA3dxyXCzp0cWnN3lNrRM5rpyvPAzEc
+	tdhodXYwSZStBGnZOq5EonzWaNF0pJ/wnhvUzSiO+PbTVNpSBECvC5QqLtxljt3/umQroA1PGQS
+	quy+maH52EYYmoe7LiJndxk2f7FKozZZhb2ufk4nOMowPZTKpori4KUMDYyG0AdmoKZRLNNrf+C
+	3QcQXluIJfQvwzVxPqUQPt2LOqbiZfz+BxVNOZTQZIIukU86YLwbTSMcA==
+X-Google-Smtp-Source: AGHT+IHyLzyeccVSv3nqReJu90qTJog06h04xHxwwv6NgUkMio7F7ZWagqKrKcNrhIU9HnI/zZ5Tv0lJMZm643IIHWQ=
+X-Received: by 2002:a05:6402:13d3:b0:640:ef03:82de with SMTP id
+ 4fb4d7f45d1cf-6434f80ffe7mr13322416a12.4.1763388605308; Mon, 17 Nov 2025
+ 06:10:05 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251117112735.4170831-3-yebin@huaweicloud.com>
+References: <20251107210526.257742-1-pasha.tatashin@soleen.com>
+ <20251107210526.257742-23-pasha.tatashin@soleen.com> <aRTs3ZouoL1CGHst@kernel.org>
+ <CA+CK2bBVRHwBu6a77gkvsbmWkQFDcTvNo+5aOT586mie13zqqA@mail.gmail.com> <aRoZq2bYYm5MGihy@kernel.org>
+In-Reply-To: <aRoZq2bYYm5MGihy@kernel.org>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Mon, 17 Nov 2025 09:09:27 -0500
+X-Gm-Features: AWmQ_bn46kZnBDhZ7XIZjxCaG1X1VXV9A3jh512R99RJsaOy_fU1KnHkeK4KJxI
+Message-ID: <CA+CK2bCeYfUGHo49PWqC4sngxKWP3MjcSL9EU7bNNCfsJtDCXg@mail.gmail.com>
+Subject: Re: [PATCH v5 22/22] tests/liveupdate: Add in-kernel liveupdate test
+To: Mike Rapoport <rppt@kernel.org>
+Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com, 
+	dmatlack@google.com, rientjes@google.com, corbet@lwn.net, 
+	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, 
+	ojeda@kernel.org, aliceryhl@google.com, masahiroy@kernel.org, 
+	akpm@linux-foundation.org, tj@kernel.org, yoann.congal@smile.fr, 
+	mmaurer@google.com, roman.gushchin@linux.dev, chenridong@huawei.com, 
+	axboe@kernel.dk, mark.rutland@arm.com, jannh@google.com, 
+	vincent.guittot@linaro.org, hannes@cmpxchg.org, dan.j.williams@intel.com, 
+	david@redhat.com, joel.granados@kernel.org, rostedt@goodmis.org, 
+	anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn, 
+	linux@weissschuh.net, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-mm@kvack.org, gregkh@linuxfoundation.org, tglx@linutronix.de, 
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, 
+	hpa@zytor.com, rafael@kernel.org, dakr@kernel.org, 
+	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com, 
+	myungjoo.ham@samsung.com, yesanishhere@gmail.com, Jonathan.Cameron@huawei.com, 
+	quic_zijuhu@quicinc.com, aleksander.lobakin@intel.com, ira.weiny@intel.com, 
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
+	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net, 
+	brauner@kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	saeedm@nvidia.com, ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com, 
+	leonro@nvidia.com, witu@nvidia.com, hughd@google.com, skhawaja@google.com, 
+	chrisl@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Ye,
+On Sun, Nov 16, 2025 at 1:36=E2=80=AFPM Mike Rapoport <rppt@kernel.org> wro=
+te:
+>
+> On Wed, Nov 12, 2025 at 03:40:53PM -0500, Pasha Tatashin wrote:
+> > On Wed, Nov 12, 2025 at 3:24=E2=80=AFPM Mike Rapoport <rppt@kernel.org>=
+ wrote:
+> > >
+> > > On Fri, Nov 07, 2025 at 04:03:20PM -0500, Pasha Tatashin wrote:
+> > > > Introduce an in-kernel test module to validate the core logic of th=
+e
+> > > > Live Update Orchestrator's File-Lifecycle-Bound feature. This
+> > > > provides a low-level, controlled environment to test FLB registrati=
+on
+> > > > and callback invocation without requiring userspace interaction or
+> > > > actual kexec reboots.
+> > > >
+> > > > The test is enabled by the CONFIG_LIVEUPDATE_TEST Kconfig option.
+> > > >
+> > > > Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+> > > > ---
+> > > >  kernel/liveupdate/luo_file.c     |   2 +
+> > > >  kernel/liveupdate/luo_internal.h |   8 ++
+> > > >  lib/Kconfig.debug                |  23 ++++++
+> > > >  lib/tests/Makefile               |   1 +
+> > > >  lib/tests/liveupdate.c           | 130 +++++++++++++++++++++++++++=
+++++
+> > > >  5 files changed, 164 insertions(+)
+> > > >  create mode 100644 lib/tests/liveupdate.c
+> > > >
+> > > > diff --git a/kernel/liveupdate/luo_file.c b/kernel/liveupdate/luo_f=
+ile.c
+> > > > index 713069b96278..4c0a75918f3d 100644
+> > > > --- a/kernel/liveupdate/luo_file.c
+> > > > +++ b/kernel/liveupdate/luo_file.c
+> > > > @@ -829,6 +829,8 @@ int liveupdate_register_file_handler(struct liv=
+eupdate_file_handler *fh)
+> > > >       INIT_LIST_HEAD(&fh->flb_list);
+> > > >       list_add_tail(&fh->list, &luo_file_handler_list);
+> > > >
+> > > > +     liveupdate_test_register(fh);
+> > > > +
+> > >
+> > > Do it mean that every flb user will be added here?
+> >
+> > No, FLB users will use:
+> >
+> > liveupdate_register_flb() from various subsystems. This
+> > liveupdate_test_register() is only to allow kernel test to register
+> > test-FLBs to every single file-handler for in-kernel testing purpose
+> > only.
+>
+> Why the in kernel test cannot liveupdate_register_flb()?
 
-kernel test robot noticed the following build errors:
+The kernel tests call liveupdate_register_flb() with every
+file-handler that registers with LUO. It is unreasonable to expect
+that all file handlers from various subsystems are going to be
+exported and accessible to kernel test.
 
-[auto build test ERROR on viro-vfs/for-next]
-[also build test ERROR on linus/master brauner-vfs/vfs.all v6.18-rc6 next-20251117]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Ye-Bin/vfs-introduce-reclaim_icache_sb-and-reclaim_dcache_sb-helper/20251117-193502
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git for-next
-patch link:    https://lore.kernel.org/r/20251117112735.4170831-3-yebin%40huaweicloud.com
-patch subject: [PATCH v2 2/3] sysctl: add support for drop_caches for individual filesystem
-config: x86_64-allnoconfig (https://download.01.org/0day-ci/archive/20251117/202511172149.q8geOAvk-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251117/202511172149.q8geOAvk-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202511172149.q8geOAvk-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> fs/drop_caches.c:108:8: error: call to undeclared function 'task_stack_page'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-     108 |                                                  current_pt_regs(),
-         |                                                  ^
-   include/linux/ptrace.h:389:27: note: expanded from macro 'current_pt_regs'
-     389 | #define current_pt_regs() task_pt_regs(current)
-         |                           ^
-   arch/x86/include/asm/processor.h:650:39: note: expanded from macro 'task_pt_regs'
-     650 |         unsigned long __ptr = (unsigned long)task_stack_page(task);     \
-         |                                              ^
-   fs/drop_caches.c:119:37: error: call to undeclared function 'task_stack_page'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-     119 |                 syscall_set_return_value(current, current_pt_regs(), 0,
-         |                                                   ^
-   include/linux/ptrace.h:389:27: note: expanded from macro 'current_pt_regs'
-     389 | #define current_pt_regs() task_pt_regs(current)
-         |                           ^
-   arch/x86/include/asm/processor.h:650:39: note: expanded from macro 'task_pt_regs'
-     650 |         unsigned long __ptr = (unsigned long)task_stack_page(task);     \
-         |                                              ^
-   2 errors generated.
-
-
-vim +/task_stack_page +108 fs/drop_caches.c
-
-    91	
-    92	static void drop_fs_caches(struct callback_head *twork)
-    93	{
-    94		int ret;
-    95		struct super_block *sb;
-    96		static bool suppress;
-    97		struct drop_fs_caches_work *work = container_of(twork,
-    98				struct drop_fs_caches_work, task_work);
-    99		unsigned int ctl = work->ctl;
-   100		dev_t dev = work->dev;
-   101	
-   102		if (work->path) {
-   103			struct path path;
-   104	
-   105			ret = kern_path(work->path, LOOKUP_FOLLOW, &path);
-   106			if (ret) {
-   107				syscall_set_return_value(current,
- > 108							 current_pt_regs(),
-   109							 0, ret);
-   110				goto out;
-   111			}
-   112			dev = path.dentry->d_sb->s_dev;
-   113			/* Make this file's dentry and inode recyclable */
-   114			path_put(&path);
-   115		}
-   116	
-   117		sb = user_get_super(dev, false);
-   118		if (!sb) {
-   119			syscall_set_return_value(current, current_pt_regs(), 0,
-   120						 -EINVAL);
-   121			goto out;
-   122		}
-   123	
-   124		if (ctl & BIT(0)) {
-   125			lru_add_drain_all();
-   126			drop_pagecache_sb(sb, NULL);
-   127			count_vm_event(DROP_PAGECACHE);
-   128		}
-   129	
-   130		if (ctl & BIT(1)) {
-   131			reclaim_dcache_sb(sb);
-   132			reclaim_icache_sb(sb);
-   133			count_vm_event(DROP_SLAB);
-   134		}
-   135	
-   136		if (!READ_ONCE(suppress)) {
-   137			pr_info("%s (%d): %s: %d %u:%u\n", current->comm,
-   138				task_pid_nr(current), __func__, ctl,
-   139				MAJOR(sb->s_dev), MINOR(sb->s_dev));
-   140	
-   141			if (ctl & BIT(2))
-   142				WRITE_ONCE(suppress, true);
-   143		}
-   144	
-   145		drop_super(sb);
-   146	out:
-   147		kfree(work->path);
-   148		kfree(work);
-   149	}
-   150	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>
+> > Pasha
+>
+> --
+> Sincerely yours,
+> Mike.
 
