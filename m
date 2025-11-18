@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-68842-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68853-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EEB2C677AA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 06:22:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A6D71C67862
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 06:25:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 072CF4F132A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 05:18:52 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D62594F556A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 05:20:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FA112E4266;
-	Tue, 18 Nov 2025 05:16:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CA402F4A05;
+	Tue, 18 Nov 2025 05:16:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="YMQMfC95"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="RIcNzlCx"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 102F22877C2;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D1581EB9FA;
 	Tue, 18 Nov 2025 05:16:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763442977; cv=none; b=FAXjNiH4leoJviBv3V8Hb2QPZLZPUq/Q2+22deRmd5QFmBzJMcxqWdLTCUo3FE7J4C4vfky7Jjzf6EbPsMDf0E1p4SkzPwKClHYxZbh7NHyR4SyyIO7LWZMDMEelS/Bw5Y7qux0E27PmfZ18N2ERaPgsboLY5cYHOdohyphyiJM=
+	t=1763442977; cv=none; b=eJdgfgecKOJHMc5f8695KVTyLqpKS6vnY2FQVEBR+9HvUcFrQxYMh0pPnQiShFDRPobQojXcNICvGWOk3WaNuApEkRHq/XDIJMqCi5tFQzAMjl0MAmEmeF+IUONKtcPxuIZK6bcG8LaK+m3RCyKxWc21O8m4wLvjHFASLN4UuiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1763442977; c=relaxed/simple;
-	bh=g0DzPIcsJ7FGStG4d77ktIfa76GpIX47vIyEYt5ulTE=;
+	bh=qQDGAzXgYN6NfbzcXi0oWbzU++36rpBDhX5KI8HQOik=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tlHj87qFdKIg5npWWkEhqb9aJ/HGzGTvaGASotT9cHMnrAyRxtBuLr/f4rPFNUCGwWdSfGHgxsNIJKFcUMjSsWGHE1lZ+B2YYIhbUggucdc0wugFvwXIFWyDeacCaGUORXI1y1yYZrUDjegQXO2Q65Y2vgC30/tKrQ50JeXYiP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=YMQMfC95; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=kSrjQMX85upTtth2FTBV+o1FiO3WV4Gvjmk3Auw2buWPpYh7DPZkhnqfpfHiIDMxgdqRVcmJuRA8Vk0eCfvqEIQXp0Nwwr1AatKxaNkQ/3E6wllXAldRJLPKGcsGN8DTIShyikfanu/3cTBdO9A9/QCSenipDieO0REuojsvhXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=RIcNzlCx; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=0EOMkT/UFsYLOkQCFILn7xjwHlMa0Zq2h7YoVPTnFkU=; b=YMQMfC95UzXpLnsV+MX99bUiC4
-	cvz/Aak/sdeVYYm1wdUV2YNlDYiycXWNQYdo5idTX2iZSBMODEOrqf4iSHEKVdt1TzvhXFOF8RzX8
-	IjdaoaRvSduE7wcMeRcl64wQ4BFqwO5ZwHxbzRIzCFv5e1kXQa14bytNI9mbxuasJ7R1jVElyQutN
-	mFeKClenuE+KOJAHjbE9U4qouT6EwdCy+N1wlVRFH4D4GHTd4vxsByBID2Z4RPzSpkigpAVv5ENuw
-	BCETuW6vudii5uC+ts1uwJiaMtJT2YzEASyX1/UfwsObbbvb55Z/pqkAsIEdy3RZhKajBuUQDb7Yg
-	G/fThDHw==;
+	bh=IB7wA0wn9kq4oYSSbdEKk+jzajBsWCKDcw62G4pXAEY=; b=RIcNzlCxypdVE8ScZwxqGu7uz3
+	BZZmn19Sfl1c+AGAni1l/B1tw0I7OiittgQdONblK0uvOG0BOnNz18MAfGCHYVSldRYK9HsKrQS6F
+	IE1hZj+Q592h63uzN+w0Zfuipg91jlABb2gf2/EMl7/FnkN31YNe7l4b7Pvl7RbYU0dkWPMh+WK8t
+	/chZNjq3N56pMgEKku1kqYeIfn5/qWNIKiJ/TL32e9O5MsM4nXRu+FZ6BgOxPMgG6M7EWMTmICYiL
+	vZAxw0cbtuWPbRxU7vceiKcHvvHDfsSzRIHPe47ruBNdzMjN6z4LfnWG0cAuOhRQFgAXr10ly4n6N
+	xdIJnDYg==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vLE4W-0000000GESc-0zv6;
+	id 1vLE4W-0000000GESj-1Ust;
 	Tue, 18 Nov 2025 05:16:08 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
@@ -68,9 +68,9 @@ Cc: torvalds@linux-foundation.org,
 	borntraeger@linux.ibm.com,
 	bpf@vger.kernel.org,
 	clm@meta.com
-Subject: [PATCH v4 30/54] autofs_{rmdir,unlink}: dentry->d_fsdata->dentry == dentry there
-Date: Tue, 18 Nov 2025 05:15:39 +0000
-Message-ID: <20251118051604.3868588-31-viro@zeniv.linux.org.uk>
+Subject: [PATCH v4 31/54] convert autofs
+Date: Tue, 18 Nov 2025 05:15:40 +0000
+Message-ID: <20251118051604.3868588-32-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20251118051604.3868588-1-viro@zeniv.linux.org.uk>
 References: <20251118051604.3868588-1-viro@zeniv.linux.org.uk>
@@ -83,38 +83,83 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
+creation/removal is via normal VFS paths; make ->mkdir() and ->symlink()
+use d_make_persistent(); ->rmdir() and ->unlink() - d_make_discardable()
+instead of dput() and that's it.
+
+d_make_persistent() works for unhashed just fine...
+
+Note that only persistent dentries are ever hashed there; unusual absense
+of ->d_delete() in dentry_operations is due to that - anything that has
+refcount reach 0 will be unhashed there, so it won't get to checking
+->d_delete anyway.
+
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/autofs/root.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ fs/autofs/inode.c |  2 +-
+ fs/autofs/root.c  | 10 ++++------
+ 2 files changed, 5 insertions(+), 7 deletions(-)
 
+diff --git a/fs/autofs/inode.c b/fs/autofs/inode.c
+index f5c16ffba013..eb86f893efbb 100644
+--- a/fs/autofs/inode.c
++++ b/fs/autofs/inode.c
+@@ -55,7 +55,7 @@ void autofs_kill_sb(struct super_block *sb)
+ 	}
+ 
+ 	pr_debug("shutting down\n");
+-	kill_litter_super(sb);
++	kill_anon_super(sb);
+ 	if (sbi)
+ 		kfree_rcu(sbi, rcu);
+ }
 diff --git a/fs/autofs/root.c b/fs/autofs/root.c
-index 174c7205fee4..39794633d484 100644
+index 39794633d484..fb6c8215456c 100644
 --- a/fs/autofs/root.c
 +++ b/fs/autofs/root.c
-@@ -623,12 +623,11 @@ static int autofs_dir_symlink(struct mnt_idmap *idmap,
- static int autofs_dir_unlink(struct inode *dir, struct dentry *dentry)
- {
- 	struct autofs_sb_info *sbi = autofs_sbi(dir->i_sb);
--	struct autofs_info *ino = autofs_dentry_ino(dentry);
- 	struct autofs_info *p_ino;
+@@ -594,9 +594,8 @@ static int autofs_dir_symlink(struct mnt_idmap *idmap,
+ 	}
+ 	inode->i_private = cp;
+ 	inode->i_size = size;
+-	d_add(dentry, inode);
+ 
+-	dget(dentry);
++	d_make_persistent(dentry, inode);
+ 	p_ino = autofs_dentry_ino(dentry->d_parent);
+ 	p_ino->count++;
+ 
+@@ -627,7 +626,7 @@ static int autofs_dir_unlink(struct inode *dir, struct dentry *dentry)
  
  	p_ino = autofs_dentry_ino(dentry->d_parent);
  	p_ino->count--;
--	dput(ino->dentry);
-+	dput(dentry);
+-	dput(dentry);
++	d_make_discardable(dentry);
  
  	d_inode(dentry)->i_size = 0;
  	clear_nlink(d_inode(dentry));
-@@ -710,7 +709,7 @@ static int autofs_dir_rmdir(struct inode *dir, struct dentry *dentry)
+@@ -709,7 +708,7 @@ static int autofs_dir_rmdir(struct inode *dir, struct dentry *dentry)
  
  	p_ino = autofs_dentry_ino(dentry->d_parent);
  	p_ino->count--;
--	dput(ino->dentry);
-+	dput(dentry);
+-	dput(dentry);
++	d_make_discardable(dentry);
  	d_inode(dentry)->i_size = 0;
  	clear_nlink(d_inode(dentry));
  
+@@ -739,12 +738,11 @@ static struct dentry *autofs_dir_mkdir(struct mnt_idmap *idmap,
+ 	inode = autofs_get_inode(dir->i_sb, S_IFDIR | mode);
+ 	if (!inode)
+ 		return ERR_PTR(-ENOMEM);
+-	d_add(dentry, inode);
+ 
+ 	if (sbi->version < 5)
+ 		autofs_set_leaf_automount_flags(dentry);
+ 
+-	dget(dentry);
++	d_make_persistent(dentry, inode);
+ 	p_ino = autofs_dentry_ino(dentry->d_parent);
+ 	p_ino->count++;
+ 	inc_nlink(dir);
 -- 
 2.47.3
 
