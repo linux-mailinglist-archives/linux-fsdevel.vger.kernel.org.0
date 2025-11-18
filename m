@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-68833-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68845-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3614C675EE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 06:17:53 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84D5CC676F6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 06:20:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by tor.lore.kernel.org (Postfix) with ESMTPS id CDA652A263
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 05:17:30 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTPS id 425F12A209
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 05:20:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D4FD2D948A;
-	Tue, 18 Nov 2025 05:16:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E31112F12B6;
+	Tue, 18 Nov 2025 05:16:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="gJiPdzY0"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="W5CxE2G+"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E0FC270545;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B21F298CAF;
 	Tue, 18 Nov 2025 05:16:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763442975; cv=none; b=iHcqMaN9qMkPVagcV1JnA2VOSGTYYsvFwSTQ1EbHNzBC6ZG3vKGEhx+5vXAczRjw6WoRWzc0SaGx15KvLHPG5JdOF1+G3JrJjINljPL79ER4OngroDCIqvCPJgZXlI4czL/VuggpuvIiSofOqFzi08YQJ+1iycUcH/KzzCnX15E=
+	t=1763442976; cv=none; b=SALypRG1xuufc7DtDK19hJNx/5siOf1PJpOwIi3Yifn66ue9qvE0zKbsSUeEc8SAArqzXaNxUA83gmNP2SdLOY4o0oKccdq56SK3czD0JvV0MvJlOFf/aLD1kgnvS8WiCn97X6meD2feecjhP6YMIvzNdLBnyCRYH0iS1IjEWGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763442975; c=relaxed/simple;
-	bh=35MbVjxtToOQyUh5FTs7bBeOlum4Q1e4+S1+OrjjcRo=;
+	s=arc-20240116; t=1763442976; c=relaxed/simple;
+	bh=CyVivJufSb4sh4+oM9l7NXmE+V2B9EmDQGjIticKJ8E=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TQ1uFTLti9WA9qxtvScpVDhUXSS6eFRKNAi5Si9K6bUstS/5uNIb31CDxs+CJaDzknTW1brO2PeX7X8aCtnKaN4DK/HXj69bT6y+c3hiNvyHb6ytKhLXIAwzVGdMIFhvWg0mpF08VWgnWp+U82Lkbd8dzmfpW1dYlMOHp9E4T74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=gJiPdzY0; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=Zn6GG91spQPMrgxPTymaQupjKh+wn5dkIvso1cHJZoN4QbROed8fSCb82gYhRESA3pPmEgX/slSxnzrHnc1W4/I5igW1g5koMFzH8qv6lTmlRuhRrkRTdv2NZGNKg9XzweYlZgKEreKswgjD2GD1z/HtJZNuBBbqTzITvjNhsWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=W5CxE2G+; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=o92Omq0psZ3ukvz3ytEXVDnarOtbezsCR+bO9JM0kAQ=; b=gJiPdzY0TRltDme/VDbpmSj937
-	voGiIUGCZf3gef7x1o6bLNE3mWjRZt2mYVc7BPhPcTWRNNQFndEeftSQ/3vYeJLVJT1roZB2tWHmQ
-	URVsY+tmfEYDP9HhZM5fLamP1J8SAp+WeegXyDlN0Z4bVN9uWRFUKgH9GU20hX5GPpD6jfRpmRQC2
-	9QQn+Wp/FsAQcqK8JpkX9h+sEJyr9YtkruhstFYaXO7s79ohZh+nRXaFvYWutUTMwwU6ZHwahXc28
-	I9t7nAb6ObHn41+9ek5a/PWQ21NefE2VCFPt4dTgxTtjkPZp9cgxIOUGFu5a+s2M0zqiGp41lP0qU
-	j3bGGQgQ==;
+	bh=TcFcmzxfGV+3rJDGgJ/eg0JcSdO3AKCKkQ7NxQ/vrvI=; b=W5CxE2G+pz0zka36Chgqh74FiO
+	cRYX5sQWDySvLhRRmUwtmg4b1hrWJgA5vwF3FtuANeE6NxgQWtwFPgD7T7he47I3ZurEFvJu8GR2C
+	Jz7cvj49hsQBuawm1xWIBDKanExaqmCHAmR4G9RIj6yakgAF2DS+ahb1Qf5U1RZ8ll7rixJA/55ia
+	bdpXnq5wi3zR1d8OXTCUHspdujQZBKOidarzYCwS0knu+HJku1ydZcLBvOtywlKuAnOqBZs49dlIk
+	+W08eu0rhTh98USxk1nWqN0G8NlAy7HmVoIZO7WjuL7DGMvR+xx3EB/AIQu/ueZ0Zz39ee9ra8jce
+	dibIiFNw==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vLE4V-0000000GERs-2LuP;
+	id 1vLE4V-0000000GES0-2eS7;
 	Tue, 18 Nov 2025 05:16:07 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
@@ -68,9 +68,9 @@ Cc: torvalds@linux-foundation.org,
 	borntraeger@linux.ibm.com,
 	bpf@vger.kernel.org,
 	clm@meta.com
-Subject: [PATCH v4 23/54] convert spufs
-Date: Tue, 18 Nov 2025 05:15:32 +0000
-Message-ID: <20251118051604.3868588-24-viro@zeniv.linux.org.uk>
+Subject: [PATCH v4 24/54] convert ibmasmfs
+Date: Tue, 18 Nov 2025 05:15:33 +0000
+Message-ID: <20251118051604.3868588-25-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20251118051604.3868588-1-viro@zeniv.linux.org.uk>
 References: <20251118051604.3868588-1-viro@zeniv.linux.org.uk>
@@ -83,78 +83,86 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-have spufs_new_file() use d_make_persistent() instead of d_add() and
-do an uncondition dput() in the caller; the rest is completely
-straightforward.
+static contents for each "service processor", whatever the fuck it is.
+Congruent subdirectories of root, created at mount time, taken out
+by kill_litter_super().  All dentries created with d_alloc_name() and are
+left pinned.  The odd part is that the list of service providers is
+assumed to be unchanging - no locking, nothing to handle removals or
+extra elements added later on.
 
-[a braino in spufs_mkgang() fixed]
+... and it's a PCI device.  If you ever tell it to remove an instance,
+you are fucked - it doesn't bother with removing its directory from filesystem,
+it has a strange check that presumably wanted to be a check for removed
+devices, but it had never been fleshed out.
+
+Anyway, d_add() -> d_make_persistent()+dput() in ibmasmfs_create_dir() and
+ibmasmfs_create_file(), and make the latter return int - no need to even
+borrow that dentry, callers completely ignore it.
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- arch/powerpc/platforms/cell/spufs/inode.c | 17 +++++++----------
- 1 file changed, 7 insertions(+), 10 deletions(-)
+ drivers/misc/ibmasm/ibmasmfs.c | 18 ++++++++++--------
+ 1 file changed, 10 insertions(+), 8 deletions(-)
 
-diff --git a/arch/powerpc/platforms/cell/spufs/inode.c b/arch/powerpc/platforms/cell/spufs/inode.c
-index 7ec60290abe6..fc8ccf4dc159 100644
---- a/arch/powerpc/platforms/cell/spufs/inode.c
-+++ b/arch/powerpc/platforms/cell/spufs/inode.c
-@@ -127,7 +127,7 @@ spufs_new_file(struct super_block *sb, struct dentry *dentry,
- 	inode->i_fop = fops;
- 	inode->i_size = size;
- 	inode->i_private = SPUFS_I(inode)->i_ctx = get_spu_context(ctx);
--	d_add(dentry, inode);
-+	d_make_persistent(dentry, inode);
- out:
+diff --git a/drivers/misc/ibmasm/ibmasmfs.c b/drivers/misc/ibmasm/ibmasmfs.c
+index b26c930e3edb..a6cde74efb68 100644
+--- a/drivers/misc/ibmasm/ibmasmfs.c
++++ b/drivers/misc/ibmasm/ibmasmfs.c
+@@ -103,7 +103,7 @@ static struct file_system_type ibmasmfs_type = {
+ 	.owner          = THIS_MODULE,
+ 	.name           = "ibmasmfs",
+ 	.init_fs_context = ibmasmfs_init_fs_context,
+-	.kill_sb        = kill_litter_super,
++	.kill_sb        = kill_anon_super,
+ };
+ MODULE_ALIAS_FS("ibmasmfs");
+ 
+@@ -144,7 +144,7 @@ static struct inode *ibmasmfs_make_inode(struct super_block *sb, int mode)
  	return ret;
  }
-@@ -163,10 +163,9 @@ static int spufs_fill_dir(struct dentry *dir,
- 			return -ENOMEM;
- 		ret = spufs_new_file(dir->d_sb, dentry, files->ops,
- 					files->mode & mode, files->size, ctx);
--		if (ret) {
--			dput(dentry);
-+		dput(dentry);
-+		if (ret)
- 			return ret;
--		}
- 		files++;
+ 
+-static struct dentry *ibmasmfs_create_file(struct dentry *parent,
++static int ibmasmfs_create_file(struct dentry *parent,
+ 			const char *name,
+ 			const struct file_operations *fops,
+ 			void *data,
+@@ -155,19 +155,20 @@ static struct dentry *ibmasmfs_create_file(struct dentry *parent,
+ 
+ 	dentry = d_alloc_name(parent, name);
+ 	if (!dentry)
+-		return NULL;
++		return -ENOMEM;
+ 
+ 	inode = ibmasmfs_make_inode(parent->d_sb, S_IFREG | mode);
+ 	if (!inode) {
+ 		dput(dentry);
+-		return NULL;
++		return -ENOMEM;
  	}
- 	return 0;
-@@ -241,11 +240,10 @@ spufs_mkdir(struct inode *dir, struct dentry *dentry, unsigned int flags,
  
- 	inode_lock(inode);
+ 	inode->i_fop = fops;
+ 	inode->i_private = data;
  
--	dget(dentry);
- 	inc_nlink(dir);
- 	inc_nlink(inode);
- 
--	d_instantiate(dentry, inode);
+-	d_add(dentry, inode);
+-	return dentry;
 +	d_make_persistent(dentry, inode);
++	dput(dentry);
++	return 0;
+ }
  
- 	if (flags & SPU_CREATE_NOSCHED)
- 		ret = spufs_fill_dir(dentry, spufs_dir_nosched_contents,
-@@ -479,10 +477,9 @@ spufs_mkgang(struct inode *dir, struct dentry *dentry, umode_t mode)
+ static struct dentry *ibmasmfs_create_dir(struct dentry *parent,
+@@ -189,8 +190,9 @@ static struct dentry *ibmasmfs_create_dir(struct dentry *parent,
  	inode->i_op = &simple_dir_inode_operations;
- 	inode->i_fop = &simple_dir_operations;
+ 	inode->i_fop = ibmasmfs_dir_ops;
  
--	d_instantiate(dentry, inode);
--	dget(dentry);
- 	inc_nlink(dir);
--	inc_nlink(d_inode(dentry));
-+	inc_nlink(inode);
+-	d_add(dentry, inode);
+-	return dentry;
 +	d_make_persistent(dentry, inode);
- 	return ret;
++	dput(dentry);
++	return dentry; // borrowed
+ }
  
- out_iput:
-@@ -780,7 +777,7 @@ static struct file_system_type spufs_type = {
- 	.name = "spufs",
- 	.init_fs_context = spufs_init_fs_context,
- 	.parameters	= spufs_fs_parameters,
--	.kill_sb = kill_litter_super,
-+	.kill_sb = kill_anon_super,
- };
- MODULE_ALIAS_FS("spufs");
- 
+ int ibmasmfs_register(void)
 -- 
 2.47.3
 
