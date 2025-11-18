@@ -1,165 +1,132 @@
-Return-Path: <linux-fsdevel+bounces-68955-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68956-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id E52F9C6A592
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 16:38:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 73E58C6A59E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 16:39:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by tor.lore.kernel.org (Postfix) with ESMTPS id E014E2C650
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 15:38:18 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTPS id 76C782C724
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 15:39:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1156F2E2DF2;
-	Tue, 18 Nov 2025 15:38:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE8BC2E2DF2;
+	Tue, 18 Nov 2025 15:38:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="ATjLX8UZ"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="HHqcw1gB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3C951E47A3
-	for <linux-fsdevel@vger.kernel.org>; Tue, 18 Nov 2025 15:38:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 572493148DD
+	for <linux-fsdevel@vger.kernel.org>; Tue, 18 Nov 2025 15:38:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763480291; cv=none; b=pUFdeL4ZWvrXXn3eDx9lU8MSruQYrx2uKzE5tZWcNoc7X7AMUM6xwOipZBUQIah8jcNPW2CpZ6T22IrWnqyjTmoOc3SS3YyMAY2Zlyb9k233YrqIRZm2rBysLvBhgLCd6zD10+zQWErh8SXDkhWCwXrLJZVL2XVR9BxA6Ir0+iI=
+	t=1763480327; cv=none; b=uc8o3RkYy95SD55O3XI0T7cFSIJeaTKJVhMMyNotDjztBL46KtHBAb7sXfQKqKfRUPtZIvTlzTfqAZ6RP84Fr99FBgwoP3mqio7EM+pfB9GT52gzE6lQeDSAIk5xT3MojSE14/qNLVVKgZhQ+6r6t9HwQz7npqL5nqpDwx1I/y0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763480291; c=relaxed/simple;
-	bh=B6uekXVR+jn/Plqa3NW/kjSUDt55yanBt9ufFPxdFs0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OcNicf+FXSQ0FiQm6rPCexe/XMUldNgnOD7dCSik1Guj6+5WAIaVJ4n7zXf2esBQnl5JU4fOKkK5Qvd2LTZph8/DXo47FtuFSS361B7wz9Zdvow6DIQDnSvPxlltnvyX/AJ4uRQGRbjQ2dZQhpOJq9N8yx64y73Ziml3wWEub4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=ATjLX8UZ; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-64166a57f3bso8808663a12.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Nov 2025 07:38:09 -0800 (PST)
+	s=arc-20240116; t=1763480327; c=relaxed/simple;
+	bh=hDOXd0eCTllGjlvphmdoQTkCI4o/v1tiBMI/JQFO+Oc=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=jQnx8v9o+Aqr7Z9lniJZIZT8RUK/GK+FxN5B5wxwhV2wZUQwCxF9kHdo63E27vDWHejUtAePOaD55QhA3fd6/oZDBpt8FO/4B7xTB5XI6NRdBVYvb+uqv1tA2mW7WIsexnCpm9djKkZBkl6yuyw1/7C/70cyXsB0WYZ6A4hShHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=HHqcw1gB; arc=none smtp.client-ip=209.85.166.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-434a80e5463so7910655ab.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Nov 2025 07:38:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1763480288; x=1764085088; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1763480324; x=1764085124; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=B6uekXVR+jn/Plqa3NW/kjSUDt55yanBt9ufFPxdFs0=;
-        b=ATjLX8UZtWxHrtg5aJUXJkDwbx3GXE3jiyzFXB5PM6vXc+Q2JEWz5kEtrHB/BkQi0B
-         vDp+xu5TaBP5K33rI3r2NtDI8h9JW77buIRtCONzRO6P7uCSbMsRCQPt3yTu7THpgGTj
-         6IZx2QxgjkJWrn3hfyxWQNxp7I94xi9z7nFLnRqDxW7dHJVStPWZiwVMwiVjIQvd6Fbf
-         OLhMLLFps9tS5pJxkJmEyFSKIuxcs4WTZA8LUiwjrpPfuIfsVUbgvow7VmvrKUfcG+9z
-         m6mxe11b57pmEEq8FM5CmlPK7eESRS+31R6A+fU9CIcepoUabLjK/Jo4MRk2YKwR7ANj
-         LJFA==
+        bh=Mop0BXbeVA7pz+P89+67JHjYtUjDwIbDaVAf0R8oLm4=;
+        b=HHqcw1gBBMRx4taAkSTWpBBwyTdVqwTxIuNPM3SZCvmXQNm+QHLFFhFoG6S2YvaQhC
+         tpqL1nwyku3/VU2gQHGX3mRtU+zhbxbwTDeyjf9jGRJw66WsL4OmjQgdLuZSTFe2+IEi
+         TGZwZXS2d2o/65TUSD69ruBySfEXfulRnaWnoSScu05lk/qAgl7/G7rsFsOnkdOrMxbb
+         W2ZAqZSSx9phKCptfna3YQCnco1+AK8BM/5FzEsRkXsrR88TtN2t6T9xOkt8UEdjmYns
+         yTTAbC9NLAdn7lCGuLiDVYNZhdNr6IcGYwtA/BmpC3FN0mnpo0x5RX5sKUsGdqxVKPnA
+         TW+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763480288; x=1764085088;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+        d=1e100.net; s=20230601; t=1763480324; x=1764085124;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=B6uekXVR+jn/Plqa3NW/kjSUDt55yanBt9ufFPxdFs0=;
-        b=oN3eFNDgqiCF4hcLxO3094FiuAzJvSMtzwzpvo4f0FggKUpQv8D4RGpI4QMGKc7h9b
-         4F4mBltJsKkc+WpEH2f6EHx1JJNdbjdkrvpZa5JyE+xKfHMpijQIXSO1vHpVvgK20dYR
-         sWJ/x2tCI8JiiOBtz7V/x8gVHXcsz4OFdarJVYApf/j/iUeZfZEud7kpNMXxP8PqLA6L
-         o/XWdLVdA5O4cwG2tNet/ihoWCOWEVyFgsg+Q16/ei5jQVPCwEC+CnT12SlvtfjLamd1
-         7Folaui54A+0aXb4W9QDtro/CWznYTZzmeFupZ1Mo9SuMWtzsdYJUDGAxUl+9sZEw3iD
-         7g7A==
-X-Forwarded-Encrypted: i=1; AJvYcCUk/F9e1bPJ8HE4mlyfyIiBVPqlBCQ2QzjqG7Yt6oj+n4KfUnH+jz0gcqyMe6ASHxpxgzbkh8atryrkezw1@vger.kernel.org
-X-Gm-Message-State: AOJu0YxaZ+QKChSq2qc/UbMewA3S36/dl5tgc5D4TRtZnpw0MtJuTQ6Z
-	QJ32gOM3asNvmAJobOOWuHT80MvWXT69W9qlJh92EKuBEJzFYo9ox/QVv7HQHaEGoZbAg3H3xea
-	yfiEYnUrQYqqPzCC0GqIcv4Ss4/IzNsxn1a6qNuoO4w==
-X-Gm-Gg: ASbGnct4XpFYMBaFvg7WBYdJtH8r62gpdXXWQfdz6fSighiC+9gFAiPZGl69rqll3aw
-	bINCQN/IygCXqvHu/YqnSyDM6fJdZO7X3Xv5A14DQITaPXEASEGQj55x1gyu0YSdV3FoYZ9gxdN
-	Huf9l8bnR+QVKuOcAIIbWCiLTWDxLSLFQWVG28yjrLmeM5l6HxUAfwTY5CLwLtBDgRrxBJT9R0e
-	KUxLv9uNTsZL9AmmfRE8CdkGAugeNBvlRT7dETOKTfHVnUfrCfEnGEavETVli35oqbXS+HCRbW8
-	kjs=
-X-Google-Smtp-Source: AGHT+IGrjPyW93BjIwBqBDRqzXa58mN2pSY6sOqPun6CMHKlu12QPm0Wx9wn3sNAxL6K2ljWwKgu92DgB9iBQq14qms=
-X-Received: by 2002:a05:6402:2112:b0:641:1d64:8dce with SMTP id
- 4fb4d7f45d1cf-64350e8e0fdmr16538410a12.17.1763480287895; Tue, 18 Nov 2025
- 07:38:07 -0800 (PST)
+        bh=Mop0BXbeVA7pz+P89+67JHjYtUjDwIbDaVAf0R8oLm4=;
+        b=EBDOYl3CugKbgIlQWbDn4gltITydNXGQ4oS7wS6HIBcl9Ff2/gjIwK8+4U31sU/OPl
+         WCJKGI8ozdSUH6O1NB6nhIbbdzccj8mLSyo6e0JomZRswA1jCCTI6TzWiQ6Awj8zXYrR
+         qHnqlfYDFEM+fPzB0sVqyfykGTuAFui8ktFNDd9mrWEGxGNGlfqzl59V5c9rmB3M3SnG
+         Spdk6jotbINtK+pbQ72b0cj3aH828QRD0PeXWK1SiT8n36MJct34qI/Ltv78w7gGnkDd
+         5uQhoUgKs5fB94rGZu/zVUhmwnQ+HLDJqXMe03BEd4ZkkmW6hsDuu+K793X4xaQdFGWB
+         ZvTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXtY9lgAuWg1rJE/TiTvQ1Q93eQpILqdy5yQyJcBKdZ7YL8F0rbDRZgmoYdTjwsVF3zlT4Ap9YPEV14Q1ty@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4WrXMwjhdM/kDiYAO5gOl3+WSxAyIZ48e8qBFdGpx9H2ENqmI
+	I8oGxvMhAKUNxVaoG6EpTFfOiQwtzYknsOamIFMmvWOmiT9k49VPoaH5JP4RSeRzl5k=
+X-Gm-Gg: ASbGnctpdU3k6IZCQImCNBsDyFwr6voYrskXFcs7HVXGSJj0YYAWNRFD+tPii7vRdA3
+	QvBDzcDi6a4HIHzOs8wipu1pcZ6pofEddY6agnP/R+nUvVWHLvNrqGNoiuJBb1czg58sgRdUf1l
+	d5C/vnvjc7iF3hnAgN1MrRZVvjyl5F6n/j8TZHLD0l6a7PY9xsHbYwjWoJjhLd4koncxLDXrQEp
+	7P1xI+rmCyDCTGELHpRC2K4FYqXcdJuoCmYflfkdoisGuqWU+q8EYyLmOvLda+yJmt/g8tLXK0B
+	QyksiMSYyoF4Vk4txROggYueKTNDHG4w73XuT4E73i2wnnLn2PfA3bElbV+orbnCN4bVZYJdd7s
+	p3tEWPCAlDyBlb6CqOrmCmixD7vtzsx/HtTEhLx4MwudEiRT19uAcwceNlZj5DrDHj/wDEcf44i
+	PJiCJly2+c4paAxg==
+X-Google-Smtp-Source: AGHT+IG8+S4XnZehtbJh2wZVxg2hQEO6XU1apy+1d/G7wa7Jeq7lGc5uai8Q9QxowXUoeU7qPJOUrA==
+X-Received: by 2002:a05:6e02:1845:b0:434:70bd:8b47 with SMTP id e9e14a558f8ab-4348c8be2acmr204639365ab.11.1763480324489;
+        Tue, 18 Nov 2025 07:38:44 -0800 (PST)
+Received: from [127.0.0.1] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-434833e94f1sm83498515ab.10.2025.11.18.07.38.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Nov 2025 07:38:43 -0800 (PST)
+From: Jens Axboe <axboe@kernel.dk>
+To: linux-block@vger.kernel.org, Ming Lei <ming.lei@redhat.com>
+Cc: Mikulas Patocka <mpatocka@redhat.com>, 
+ Zhaoyang Huang <zhaoyang.huang@unisoc.com>, 
+ Dave Chinner <dchinner@redhat.com>, linux-fsdevel@vger.kernel.org, 
+ Christoph Hellwig <hch@lst.de>
+In-Reply-To: <20251015110735.1361261-1-ming.lei@redhat.com>
+References: <20251015110735.1361261-1-ming.lei@redhat.com>
+Subject: Re: [PATCH V5 0/6] loop: improve loop aio perf by IOCB_NOWAIT
+Message-Id: <176348032339.300553.10948808566145680135.b4-ty@kernel.dk>
+Date: Tue, 18 Nov 2025 08:38:43 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251115233409.768044-1-pasha.tatashin@soleen.com>
- <20251115233409.768044-9-pasha.tatashin@soleen.com> <aRrtRfJaaIHw5DZN@kernel.org>
- <CA+CK2bBxVNRkJ-8Qv1AzfHEwpxnc4fSxdzKCL_7ku0TMd6Rjow@mail.gmail.com> <aRxYQKrQeP8BzR_2@kernel.org>
-In-Reply-To: <aRxYQKrQeP8BzR_2@kernel.org>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Tue, 18 Nov 2025 10:37:30 -0500
-X-Gm-Features: AWmQ_bmD9p5Nn1RKDLqeZ98HzkdyZzvLR0FYSVXPyrJripjLvaLejIY3K1PEUqg
-Message-ID: <CA+CK2bASYtBndN24HZhkndDpsrU1rwjCokE=9eLZUq2Jhj6bag@mail.gmail.com>
-Subject: Re: [PATCH v6 08/20] liveupdate: luo_flb: Introduce
- File-Lifecycle-Bound global state
-To: Mike Rapoport <rppt@kernel.org>
-Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com, 
-	dmatlack@google.com, rientjes@google.com, corbet@lwn.net, 
-	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, 
-	ojeda@kernel.org, aliceryhl@google.com, masahiroy@kernel.org, 
-	akpm@linux-foundation.org, tj@kernel.org, yoann.congal@smile.fr, 
-	mmaurer@google.com, roman.gushchin@linux.dev, chenridong@huawei.com, 
-	axboe@kernel.dk, mark.rutland@arm.com, jannh@google.com, 
-	vincent.guittot@linaro.org, hannes@cmpxchg.org, dan.j.williams@intel.com, 
-	david@redhat.com, joel.granados@kernel.org, rostedt@goodmis.org, 
-	anna.schumaker@oracle.com, song@kernel.org, linux@weissschuh.net, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
-	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com, 
-	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
-	rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org, 
-	cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com, 
-	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com, 
-	aleksander.lobakin@intel.com, ira.weiny@intel.com, 
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
-	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net, 
-	brauner@kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	saeedm@nvidia.com, ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com, 
-	leonro@nvidia.com, witu@nvidia.com, hughd@google.com, skhawaja@google.com, 
-	chrisl@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3
 
-On Tue, Nov 18, 2025 at 6:28=E2=80=AFAM Mike Rapoport <rppt@kernel.org> wro=
-te:
->
-> On Mon, Nov 17, 2025 at 10:54:29PM -0500, Pasha Tatashin wrote:
-> > >
-> > > The concept makes sense to me, but it's hard to review the implementa=
-tion
-> > > without an actual user.
-> >
-> > There are three users: we will have HugeTLB support that is going to
-> > be posted as RFC in a few weeks. Also, in two weeks we are going to
-> > have an updated VFIO and IOMMU series posted both using FLBs. In the
-> > mean time, this series provides an FLB in-kernel test that verifies
-> > that multiple FLBs can be attached to File-Handlers, and the basic
-> > interfaces are working.
->
-> Which means that essentially there won't be a real kernel user for FLB fo=
-r
-> a while.
-> We usually don't merge dead code because some future patchset depends on
-> it.
 
-I understand the concern. I would prefer to merge FLB with the rest of
-the LUO series; I don't view it as completely dead code since I have
-added the in-kernel test that specifically exercises and validates
-this API.
+On Wed, 15 Oct 2025 19:07:25 +0800, Ming Lei wrote:
+> This patchset improves loop aio perf by using IOCB_NOWAIT for avoiding to queue aio
+> command to workqueue context, meantime refactor lo_rw_aio() a bit.
+> 
+> In my test VM, loop disk perf becomes very close to perf of the backing block
+> device(nvme/mq virtio-scsi).
+> 
+> And Mikulas verified that this way can improve 12jobs sequential readwrite io by
+> ~5X, and basically solve the reported problem together with loop MQ change.
+> 
+> [...]
 
-> I think it should stay in mm-nonmm-unstable if Andrew does not mind keepi=
-ng
-> it there until the first user is going to land and then FLB will move
-> upstream along with that user.
+Applied, thanks!
 
-My reasoning for pushing for inclusion now is that there are many
-developers who currently depend on the FLB functionality. Having it in
-a public tree, preferably upstream, or at least linux-next, would be
-highly beneficial for their development and testing.
+[1/6] loop: add helper lo_cmd_nr_bvec()
+      commit: c3e6c11147f6f05c15e9c2d74f5d234a6661013c
+[2/6] loop: add helper lo_rw_aio_prep()
+      commit: fd858d1ca9694c88703a8a936d5c7596c86ada74
+[3/6] loop: add lo_submit_rw_aio()
+      commit: c66e9708f92760147a1ea7f66c7b60ec801f85e3
+[4/6] loop: move command blkcg/memcg initialization into loop_queue_work
+      commit: f4788ae9d7bc01735cb6ada333b038c2e3fff260
+[5/6] loop: try to handle loop aio command via NOWAIT IO first
+      commit: 0ba93a906dda7ede9e7669adefe005ee18f3ff42
+[6/6] loop: add hint for handling aio via IOCB_NOWAIT
+      commit: 837ed303964673cf0c7e6a4624cd68d8cf254827
 
-However, to avoid blocking the entire series, I am going to move the
-FLB patch and the in-kernel test patch to be the last two patches in
-LUOv7.
+Best regards,
+-- 
+Jens Axboe
 
-This way, the rest of the LUO series can be merged without them if
-they are blocked, however, in this case it would be best if the two
-FLB patches stayed in mm tree to allow VFIO/IOMMU/PCI/HugeTLB
-preservation developers to use them, as they all depend on functional
-FLB.
 
-Pasha
+
 
