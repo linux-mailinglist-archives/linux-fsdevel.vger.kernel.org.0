@@ -1,171 +1,191 @@
-Return-Path: <linux-fsdevel+bounces-69016-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69017-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CB9FC6B77F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 20:39:07 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96A22C6B875
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 21:09:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C877035820D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 19:39:04 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2BF6B4E7008
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 20:08:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E4BC2E8B98;
-	Tue, 18 Nov 2025 19:38:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16BE42F5A06;
+	Tue, 18 Nov 2025 20:08:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gio1JkrR"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TYuePBAR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53EFB2DE6E9
-	for <linux-fsdevel@vger.kernel.org>; Tue, 18 Nov 2025 19:38:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC2CD2DCBF8
+	for <linux-fsdevel@vger.kernel.org>; Tue, 18 Nov 2025 20:08:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763494731; cv=none; b=PFyOJNWqmbOysyPDkcOb/kVNkL9jIu+e+prTLcwby6m2FzYv5US8uPYFfREhBAeJUz6YykEOvv/yxtbmUuTP7RxXnhu3/VZ0KzX7H+IlSVfMKfaEwsvBZk5QtvqUb+MS7hwa5R/ms0mLco8LCKd1dhCiqLw79fc91C9MBMGVHdo=
+	t=1763496526; cv=none; b=e6UJd7eu+JVFQVGD13HEw3m5oU6y8akMGRnP//8Dde4FxtZm3Po0Z+vsJtCCSx04t6Gc+DIC31ULgaMsl9DPz2e6a14rAa7zs4r2p2cuPgaQVQFPTeFvPLRONv23OP+dAFwkXi2PizvCe5f94Kg/VqcfxXtSNAJxLrdDo0o67Hg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763494731; c=relaxed/simple;
-	bh=8o/mKyv3A3lFC7y0XtOvzYtcPxEWOuachx5Hy4zXOOo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mj/mDbiHIqXb0JEwZa03FMKcXxno0kxIOCxuvEfYrmR1Xq642DPYyxe8RVKwlnNjiuYkkWnNbIm9c5rc4A5c/T5gYF/n3B4EC/61s8PIVyjMGuV/9RsGANirT5cUnPK0vKOaRvDTjGFgMUn6ujQaXKv8zeNXfO0hqBmZS7E9ywo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gio1JkrR; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-343806688c5so6339058a91.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Nov 2025 11:38:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763494729; x=1764099529; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xP8obOsgLV+Mi7QU5SctjthhRGiNVWVhn+AWfuje1og=;
-        b=gio1JkrRtXa0JWCCqwBGY4AUvzlRNAG4qW+qsdqiI8DSwBPqBmU7bIzVw+lMg2hYjz
-         ohwVIYI1amhnS7ZBiLxw3q5H039FWvlX4NPVIY6PUftmfymkNj5RpLUcspLIloP/a1Af
-         /3+H1RvemGSRpEJ59kFESK0EpUTLCHSzyP668sNwgZgi+y6IN97XzGPep2xz9A4bdq46
-         mvN2i5X+ZOXAzVop2e+o0J4fQXvwe6B3pzWu8dg8NTP/4/gJO9lwGPjTGnQBgnH+rYcJ
-         vf9hIXJBnl2RMd3mXuSDkvJjdgIfDLS5lg1uZ82G8KrqXjw4YQTIV66LHxPA+bBMswEn
-         Phcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763494729; x=1764099529;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=xP8obOsgLV+Mi7QU5SctjthhRGiNVWVhn+AWfuje1og=;
-        b=f/dnnNRG8zb59YgyFv783wwGieCBeFvSp5hA7HFO+O0Bn6R8RffnX9/7F3Zn/evW4T
-         cs9+Y9wqhbnabeEh6AFpq238RveXisK1zg1T20qvrfeliC+MfK3a8u0Va1xU3sVch4ID
-         vMjFmLv9q/azrRQnKL1/R6piL23Yx6eyIrdVrsVF58DGTBYRjbfaS1RxCkZPNKnNxn6f
-         zQQpnep3F6ZEqBuOpZkr8CoDLb8r0uUyERrQLaNFZyYPS30b1pTVzR4IQPq8dwFMRfb2
-         oMf7OQqc0O8GK5ROLhehcno9VGfarlPXdaDzAv57vDdOYwxXmTrewoPAP1E2EWQsAfku
-         MqQA==
-X-Forwarded-Encrypted: i=1; AJvYcCXmG5d/3vSsQ0FxKkyvNq39cdSKasJU3Zoy8pZLBeWj1CD++OTL0g+Zfbi1JLJR6aXebCDR0Q43aYreOg1M@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2cLduroVQcjN7xHPPEdNoQfbjGrhFkwJ8nRglBNhFeAhoyM1o
-	/sZITINZhtARtTPEBcbUFiAIciw949yale62ZtZYexx873S5h25U63S916r5Ft5LpCi5n2I2Ymn
-	fkzJg0NBrVL/GX3uzq75vziNzdLrrTtE=
-X-Gm-Gg: ASbGncvLfMIb/bvE8a3nU4DZi/OTdgozPrXTcVp+ApYtEf+Fh0IsCUH6UsLdEDor3SR
-	yVSWDF+1aQIgqXweL3D9s5ArqS0sWHkgw2slZqS1Rqa5/5DngfoO+kCXpH+kuPtYkptAF6sdVO2
-	M2BZCySRnIaE8FBcnLKaB2rvB7MfgmONNiKDEqfGI7hWiTSewh9fKWggZjAXW7AxDKQWd/yQ0Uw
-	VmfvQBe5/5Q4lSjST72A/tSKSyN9IrZIPDyqIKxGnM9A3+jMLBh9CsaoZJl+q5TO+4CXkyo3Hns
-	FFRVPbeP/a7wb3i2LER6eA==
-X-Google-Smtp-Source: AGHT+IHjQ5qI54V48OaD9lOMuf97MRj94VnLpjJI2NcKNfYtXCw0gbO/k0nfKsSQ9TEAtm7URf1eXdHMpVdLUVZFnJg=
-X-Received: by 2002:a17:90b:58ef:b0:343:7714:4ca6 with SMTP id
- 98e67ed59e1d1-343fa62be93mr16554523a91.22.1763494728613; Tue, 18 Nov 2025
- 11:38:48 -0800 (PST)
+	s=arc-20240116; t=1763496526; c=relaxed/simple;
+	bh=zKyz003uJALUvMNRCDsF88+LaqoAo6S0DQMxbylWp5M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FXkk3SR7XG2H3AbO/r0RYzgAf+w9mLmmbFnEyBv/5nYlF7ELDIEf1jMotpqlVMMTa1bNtKDie8mLa2E06Q9TBVTodmdoIyOh8kE6w3jRBUeQfE1UmxTHflkKOEzKpKkUqopm85wDrRzrikl46ktgyPnaZfE2tZDfT/ysD/QGf0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TYuePBAR; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1763496523;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ab7N6fkP8RMKQvUh/0BuymZtJzOzx//JiTSo7GZWmts=;
+	b=TYuePBARxcaT+3SDwErG+2Hr5yAdElS0BZz6obdPRf//2zno5G4/dH1ofMWK03yBdQprH3
+	5sfQWep54JviXYbh9NviQLyGv7CiGWgtJlsdrv/B9LHYaz6ce7yUVn4QHst4/CeH17c/f+
+	LLmnjLZDEs8TZhoIIHSOZH0ybkiQl5o=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-549-YbsAIlmUP_62PIzFvXvlfw-1; Tue,
+ 18 Nov 2025 15:08:39 -0500
+X-MC-Unique: YbsAIlmUP_62PIzFvXvlfw-1
+X-Mimecast-MFC-AGG-ID: YbsAIlmUP_62PIzFvXvlfw_1763496518
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C3B471800650;
+	Tue, 18 Nov 2025 20:08:38 +0000 (UTC)
+Received: from bfoster (unknown [10.22.64.29])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 076D9180047F;
+	Tue, 18 Nov 2025 20:08:37 +0000 (UTC)
+Date: Tue, 18 Nov 2025 15:08:35 -0500
+From: Brian Foster <bfoster@redhat.com>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH 3/6] xfs: flush eof folio before insert range size update
+Message-ID: <aRzSQypQIad3TsBT@bfoster>
+References: <20251016190303.53881-1-bfoster@redhat.com>
+ <20251016190303.53881-4-bfoster@redhat.com>
+ <20251105001445.GW196370@frogsfrogsfrogs>
+ <aQtughoBHt6LRTUx@bfoster>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251114193729.251892-1-ssranevjti@gmail.com> <aReUv1kVACh3UKv-@casper.infradead.org>
- <CANNWa07Y_GPKuYNQ0ncWHGa4KX91QFosz6WGJ9P6-AJQniD3zw@mail.gmail.com>
- <aRpQ7LTZDP-Xz-Sr@casper.infradead.org> <20251117164155.GB196362@frogsfrogsfrogs>
- <aRtjfN7sC6_Bv4bx@casper.infradead.org> <CAEf4BzZu+u-F9SjhcY5GN5vumOi6X=3AwUom+KJXeCpvC+-ppQ@mail.gmail.com>
- <aRxunCkc4VomEUdo@infradead.org> <aRySpQbNuw3Y5DN-@casper.infradead.org> <20251118161220.GE196362@frogsfrogsfrogs>
-In-Reply-To: <20251118161220.GE196362@frogsfrogsfrogs>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Tue, 18 Nov 2025 11:38:36 -0800
-X-Gm-Features: AWmQ_bk9sXea8jL7B_XWSvq1NtCko5Jbx6_OaVtFvyVo8HnLwKRsCuuE1XHa0Cc
-Message-ID: <CAEf4BzYkPxUcQK2VWEE+8N=U5CXjtUNs6GfbfW2+GoTDebk19A@mail.gmail.com>
-Subject: Re: [PATCH] mm/filemap: fix NULL pointer dereference in do_read_cache_folio()
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Matthew Wilcox <willy@infradead.org>, Christoph Hellwig <hch@infradead.org>, 
-	SHAURYA RANE <ssrane_b23@ee.vjti.ac.in>, akpm@linux-foundation.org, 
-	shakeel.butt@linux.dev, eddyz87@gmail.com, andrii@kernel.org, ast@kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev, 
-	skhan@linuxfoundation.org, david.hunter.linux@gmail.com, khalid@kernel.org, 
-	syzbot+09b7d050e4806540153d@syzkaller.appspotmail.com, 
-	bpf <bpf@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aQtughoBHt6LRTUx@bfoster>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Tue, Nov 18, 2025 at 8:12=E2=80=AFAM Darrick J. Wong <djwong@kernel.org>=
- wrote:
->
-> On Tue, Nov 18, 2025 at 03:37:09PM +0000, Matthew Wilcox wrote:
-> > On Tue, Nov 18, 2025 at 05:03:24AM -0800, Christoph Hellwig wrote:
-> > > On Mon, Nov 17, 2025 at 10:45:31AM -0800, Andrii Nakryiko wrote:
-> > > > As I replied on another email, ideally we'd have some low-level fil=
-e
-> > > > reading interface where we wouldn't have to know about secretmem, o=
-r
-> > > > XFS+DAX, or whatever other unusual combination of conditions where
-> > > > exposed internal APIs like filemap_get_folio() + read_cache_folio()
-> > > > can crash.
-> > >
-> > > The problem is that you did something totally insane and it kinda wor=
-ks
-> > > most of the time.
-> >
-> > ... on 64-bit systems.  The HIGHMEM handling is screwed up too.
-> >
-> > > But bpf or any other file system consumer has
-> > > absolutely not business poking into the page cache to start with.
-> >
-> > Agreed.
-> >
-> > > And I'm really pissed off that you wrote and merged this code without
-> > > ever bothering to talk to a FS or MM person who have immediately told
-> > > you so.  Let's just rip out this buildid junk for now and restart
-> > > because the problem isn't actually that easy.
-> >
-> > Oh, they did talk to fs & mm people originally and were told NO, so the=
-y
-> > sneaked it in through the BPF tree.
-> >
-> > https://lore.kernel.org/all/20230316170149.4106586-1-jolsa@kernel.org/
-> >
-> > > > The only real limitation is that we'd like to be able to control
-> > > > whether we are ok sleeping or not, as this code can be called from
-> > > > pretty much anywhere BPF might run, which includes NMI context.
-> > > >
-> > > > Would this kiocb_read() approach work under those circumstances?
-> > >
-> > > No.  IOCB_NOWAIT is just a hint to avoid blocking function calls.
-> > > It is not guarantee and a guarantee is basically impossible.
-> >
-> > I'm not sure I'd go that far -- I think we're pretty good about not
-> > sleeping when IOCB_NOWAIT is specified and any remaining places can
-> > be fixed up.
-> >
-> > But I am inclined to rip out the buildid code, just because the
-> > authors have been so rude.
->
-> Which fstest actually checks the functionality of the buildid code?
-> I don't find any, which means none of the fs people have a good signal
-> for breakage in this, um, novel file I/O path.
+On Wed, Nov 05, 2025 at 10:34:26AM -0500, Brian Foster wrote:
+> On Tue, Nov 04, 2025 at 04:14:45PM -0800, Darrick J. Wong wrote:
+> > On Thu, Oct 16, 2025 at 03:03:00PM -0400, Brian Foster wrote:
+> > > The flush in xfs_buffered_write_iomap_begin() for zero range over a
+> > > data fork hole fronted by COW fork prealloc is primarily designed to
+> > > provide correct zeroing behavior in particular pagecache conditions.
+> > > As it turns out, this also partially masks some odd behavior in
+> > > insert range (via zero range via setattr).
+> > > 
+> > > Insert range bumps i_size the length of the new range, flushes,
+> > > unmaps pagecache and cancels COW prealloc, and then right shifts
+> > > extents from the end of the file back to the target offset of the
+> > > insert. Since the i_size update occurs before the pagecache flush,
+> > > this creates a transient situation where writeback around EOF can
+> > > behave differently.
+> > 
+> > Why not flush the file from @offset to EOF, flush the COW
+> > preallocations, extend i_size, and only then start shifting extents?
+> > That would seem a lot more straightforward to me.
+> > 
+> 
+> I agree. I noted in the cover letter that I started with this approach
+> of reordering the existing sequence of operations, but the factoring
+> looked ugly enough that I stopped and wanted to solicit input.
+> 
 
-We have plenty of build ID tests in BPF selftest that validate this
-functionality:
+Well this is annoying.. I looked into lifting the prepare shift bits a
+level up and just invoking it before the truncate, but that actually
+appears to be incorrect in at least one case. I.e., the truncate up for
+insert range invokes zero eof for partial zeroing of the eof block,
+which brings a folio back into pagecache (after the lifted flush/unmap)
+within the range being shfited. This then creates a post-shift cache
+inconsistency. This is resolved by restoring the flush/unmap between the
+truncate and extent shift, so we end up just having it in both places.
 
-  - tools/testing/selftests/bpf/prog_tests/stacktrace_build_id.c
-  - tools/testing/selftests/bpf/prog_tests/stacktrace_build_id_nmi.c
-  - tools/testing/selftests/bpf/prog_tests/build_id.c
+So atm I'm not really sure if there's a better option than what this
+patch is doing. There are probably other ways to implement it, like
+perhaps introducing ability to convert blocks that are shifted out from
+eof, but that just seems like unnecessary complexity for basically
+implementing the same sort of thing.
 
-This functionality is exposed to BPF (and PROCMAP_QUERY, which has its
-own mm selftests), so that's where we test this. So we'll know at the
-very least when trees merge that something is broken.
+I dunno.. insert range is odd in this regard. I'll think a bit more
+about it while I look into the zero range cow mapping reporting thing.
 
->
-> --D
+Brian
+
+> The details of that fell out of my brain since I posted this,
+> unfortunately. I suspect it may have been related to layering or
+> something wrt the prepare_shift factoring, but I'll take another look in
+> that direction for v2 and once I've got some feedback on the rest of the
+> series.. Thanks.
+> 
+> Brian
+> 
+> > --D
+> > 
+> > > This appears to be corner case situation, but if happens to be
+> > > fronted by COW fork speculative preallocation and a large, dirty
+> > > folio that contains at least one full COW block beyond EOF, the
+> > > writeback after i_size is bumped may remap that COW fork block into
+> > > the data fork within EOF. The block is zeroed and then shifted back
+> > > out to post-eof, but this is unexpected in that it leads to a
+> > > written post-eof data fork block. This can cause a zero range
+> > > warning on a subsequent size extension, because we should never find
+> > > blocks that require physical zeroing beyond i_size.
+> > > 
+> > > To avoid this quirk, flush the EOF folio before the i_size update
+> > > during insert range. The entire range will be flushed, unmapped and
+> > > invalidated anyways, so this should be relatively unnoticeable.
+> > > 
+> > > Signed-off-by: Brian Foster <bfoster@redhat.com>
+> > > ---
+> > >  fs/xfs/xfs_file.c | 17 +++++++++++++++++
+> > >  1 file changed, 17 insertions(+)
+> > > 
+> > > diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
+> > > index 5b9864c8582e..cc3a9674ad40 100644
+> > > --- a/fs/xfs/xfs_file.c
+> > > +++ b/fs/xfs/xfs_file.c
+> > > @@ -1226,6 +1226,23 @@ xfs_falloc_insert_range(
+> > >  	if (offset >= isize)
+> > >  		return -EINVAL;
+> > >  
+> > > +	/*
+> > > +	 * Let writeback clean up EOF folio state before we bump i_size. The
+> > > +	 * insert flushes before it starts shifting and under certain
+> > > +	 * circumstances we can write back blocks that should technically be
+> > > +	 * considered post-eof (and thus should not be submitted for writeback).
+> > > +	 *
+> > > +	 * For example, a large, dirty folio that spans EOF and is backed by
+> > > +	 * post-eof COW fork preallocation can cause block remap into the data
+> > > +	 * fork. This shifts back out beyond EOF, but creates an expectedly
+> > > +	 * written post-eof block. The insert is going to flush, unmap and
+> > > +	 * cancel prealloc across this whole range, so flush EOF now before we
+> > > +	 * bump i_size to provide consistent behavior.
+> > > +	 */
+> > > +	error = filemap_write_and_wait_range(inode->i_mapping, isize, isize);
+> > > +	if (error)
+> > > +		return error;
+> > > +
+> > >  	error = xfs_falloc_setsize(file, isize + len);
+> > >  	if (error)
+> > >  		return error;
+> > > -- 
+> > > 2.51.0
+> > > 
+> > > 
+> > 
+> 
+> 
+
 
