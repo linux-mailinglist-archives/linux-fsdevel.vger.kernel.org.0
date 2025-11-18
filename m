@@ -1,144 +1,132 @@
-Return-Path: <linux-fsdevel+bounces-69007-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68997-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5E8CC6B2D1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 19:18:09 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05FD0C6AFE7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 18:34:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 74D994E117E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 18:18:08 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9F3214F1519
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 17:27:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED02D35FF5D;
-	Tue, 18 Nov 2025 18:17:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA26021B9C9;
+	Tue, 18 Nov 2025 17:27:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MrGIWm9L"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NsIroKa+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44F0A262815;
-	Tue, 18 Nov 2025 18:17:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2381C36C0CE
+	for <linux-fsdevel@vger.kernel.org>; Tue, 18 Nov 2025 17:27:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763489879; cv=none; b=YnA4gQUo9a2TjMVOdEq+VVvYvmeoR35DpjYMmFYX+dbLLbJWx4GNfZqpMC7dyURwXHN4oDi4DiaH8GsqeXgM98x1rcE1dLlTvpoHKOAwjPT469YBuKBZ3KUDjqDPuS8yY/ToZ/K0PnhFeU6ZphpHok1U8r9fG9qeSyd2x7He2Do=
+	t=1763486854; cv=none; b=NrRolQ8jM0+C6IuZ/+10UHNjroQvycTVY7JxDAsFsSq8SHU502xQWkQjBNUT5LT6t4KuS5e7Hh+dMHP7CyRuT3itHq5on9s5/C+W9oKHTgvqYfaWW3bycHHKp/wNdd8IL4VhM4XdGgZCEJFU4FguMu4oTncBIWQHZplxEgCs2gE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763489879; c=relaxed/simple;
-	bh=MuaIcliWFm+wXQbyLOy+ePW5Z5hGnw7S19zVdOoRU9Y=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=DUzhC5DxdUdb8GE+R1c3Fl5F4GkfCaLXTi7HphXKSK78d71YhvJboEycRK6+3akJN5QOgoYRGmCY+7JYoMSTXlGhHOJBGbCJltexDGg9ct4Ka3GW+Ovrj6yB2FZtDrV1n9yyR4l7sl+HmTMuDgLvDUCf78zrfqCTz4PoxdS4xEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MrGIWm9L; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81F00C4CEFB;
-	Tue, 18 Nov 2025 18:17:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763489876;
-	bh=MuaIcliWFm+wXQbyLOy+ePW5Z5hGnw7S19zVdOoRU9Y=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=MrGIWm9LWqZsfMs7ulgLTqd+vSnlbOrkGvCLSVQRDuELbIodah+F4M3f3FTCxDsYn
-	 ubnteG6atXRRKp8sze6lQ6WYH+8u9RRxKmACuQIsUF/fNgOgsfrvg6HbHIadYL33zl
-	 toHmEIuMukisjBAK6rWuEqeWX+hlpLLONOpACy4sSOUgXkzAModu7TG7oFE4qTZkaD
-	 QjNS5JBnayMhMagSvhPUUG5/NOt4b0LbXnn8v67kdCBH+QUpOE0zhUWa2zlaT7cUHq
-	 JvgpcxfLJiIEoAkXjzZaCmSMloZQu8GTaTAAgOXhJgT4nRevn5hDsdQFhJgF1pvmif
-	 wFptWQwi5kylw==
-From: Pratyush Yadav <pratyush@kernel.org>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: Pratyush Yadav <pratyush@kernel.org>,  David Matlack
- <dmatlack@google.com>,  jasonmiu@google.com,  graf@amazon.com,
-  rppt@kernel.org,  rientjes@google.com,  corbet@lwn.net,
-  rdunlap@infradead.org,  ilpo.jarvinen@linux.intel.com,
-  kanie@linux.alibaba.com,  ojeda@kernel.org,  aliceryhl@google.com,
-  masahiroy@kernel.org,  akpm@linux-foundation.org,  tj@kernel.org,
-  yoann.congal@smile.fr,  mmaurer@google.com,  roman.gushchin@linux.dev,
-  chenridong@huawei.com,  axboe@kernel.dk,  mark.rutland@arm.com,
-  jannh@google.com,  vincent.guittot@linaro.org,  hannes@cmpxchg.org,
-  dan.j.williams@intel.com,  david@redhat.com,  joel.granados@kernel.org,
-  rostedt@goodmis.org,  anna.schumaker@oracle.com,  song@kernel.org,
-  linux@weissschuh.net,  linux-kernel@vger.kernel.org,
-  linux-doc@vger.kernel.org,  linux-mm@kvack.org,
-  gregkh@linuxfoundation.org,  tglx@linutronix.de,  mingo@redhat.com,
-  bp@alien8.de,  dave.hansen@linux.intel.com,  x86@kernel.org,
-  hpa@zytor.com,  rafael@kernel.org,  dakr@kernel.org,
-  bartosz.golaszewski@linaro.org,  cw00.choi@samsung.com,
-  myungjoo.ham@samsung.com,  yesanishhere@gmail.com,
-  Jonathan.Cameron@huawei.com,  quic_zijuhu@quicinc.com,
-  aleksander.lobakin@intel.com,  ira.weiny@intel.com,
-  andriy.shevchenko@linux.intel.com,  leon@kernel.org,  lukas@wunner.de,
-  bhelgaas@google.com,  wagi@kernel.org,  djeffery@redhat.com,
-  stuart.w.hayes@gmail.com,  lennart@poettering.net,  brauner@kernel.org,
-  linux-api@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
-  saeedm@nvidia.com,  ajayachandra@nvidia.com,  jgg@nvidia.com,
-  parav@nvidia.com,  leonro@nvidia.com,  witu@nvidia.com,
-  hughd@google.com,  skhawaja@google.com,  chrisl@kernel.org
-Subject: Re: [PATCH v6 06/20] liveupdate: luo_file: implement file systems
- callbacks
-In-Reply-To: <CA+CK2bAqisSdZ7gSBd7=hGd1VbLHX5WXfBazR=rO8BOVCRx3pg@mail.gmail.com>
-	(Pasha Tatashin's message of "Tue, 18 Nov 2025 12:58:20 -0500")
-References: <20251115233409.768044-1-pasha.tatashin@soleen.com>
-	<20251115233409.768044-7-pasha.tatashin@soleen.com>
-	<aRyvG308oNRVzuN7@google.com> <mafs05xb744pb.fsf@kernel.org>
-	<CA+CK2bAqisSdZ7gSBd7=hGd1VbLHX5WXfBazR=rO8BOVCRx3pg@mail.gmail.com>
-Date: Tue, 18 Nov 2025 19:17:42 +0100
-Message-ID: <mafs01plv433t.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1763486854; c=relaxed/simple;
+	bh=7KAJHaucmzr2KSWD/RzRx3vu/nMq7h6SRh+D1lHndEk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=HsTvqrbJj4oyPXnCaOEgpt0/kRuB25NJJJVXTe/dsltJQPi8U72m0VTvd/rkwyocWDMrU9Xh/2Hx4P+KSTiXeUb2Uww4Jz9XzGalpsMeNk4pN6pm+Vpp164VjXpLCLBPWn9WTCFdd/wgOkZbSFNp89GVYpE3hqyofD8+Txo6LME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NsIroKa+; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4779b49d724so3815345e9.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Nov 2025 09:27:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1763486850; x=1764091650; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ekVUjgKbtkArT9PPsSfxvr4Ab7eAnGY1uh3uSoRQalI=;
+        b=NsIroKa+y5+G/aqu1zi6AB38X8/78XrvvBY+0fWNcYY5urJAirafFN0vdpRxrlrkQn
+         mvWOgHKjcWSa0y6Do7JeDoqgA53KEEVrI8s7Tv1eF8rp3DM5Zhu/GhmcAYp3rzpd1cLj
+         Mh+iTFjqH1IU2HI3JVC6DsqiOgB1/k6YdzrTI3zr4zlXl5nyHAw8Fet3mH+WakFHgnPF
+         2ldsCvdgGkCGcVcPduHXrRCwF7aDEaIOxAwz1cQ5gFaAI/QmhdD2sI2X0kk2gC1IVgBh
+         ZnpjAtmNeNHMCAPP1VAz6IiRhqSSViUCKGUbRe01qv1k/tdBBQGYzaSA13tf8Dhj4/7o
+         DXfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763486850; x=1764091650;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=ekVUjgKbtkArT9PPsSfxvr4Ab7eAnGY1uh3uSoRQalI=;
+        b=lwjoP6XaNQ7w/lbOI1tmb4ZJhI8/v1yJfP8WExwz25W/U8Q/WObyed0KOuzo4uVQkQ
+         figRpO/YZORNez+PF78rSsjOKW1zNmiQiwSebvt189Ku+OJsXOtUBLjq1aAoBIPmgafr
+         PpkTtXPnJhWGBVfUlBtLrQDwL99dVrQV5cs+evm4aqW7TYth8Pe5TLL1XELXDYbfd3mE
+         FLtUBOieLMvownBL+FqB7v3RnahyVmxvmV1wwcDRM1Cb9NPdGZLAiTZ3EzHbmoHT58dG
+         RXb2Don8hBVjvtqdEJImWPkH9EPQU/wDwx59fAMk3Q5DrUvc3zYQS+HmfHCpUZ6gWAlY
+         q9BQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWF6cLHnpLCB8ae+N3E3PJWzyGDYzJ7VIM9DtevlgnY2L9kAhmGSFz2Fwr3BcrdqHBZJrCtQ1KWqBKtUgVK@vger.kernel.org
+X-Gm-Message-State: AOJu0YyI6V3G2hRJztt6JagVmpoVWbzbL83QTaFjWgzqjWxtUp97RcXx
+	+T4sKlZhCfLLcO4CMy2LkfnNTE7jsivRymWO1coDeNdBBnMDSYXBUMv4
+X-Gm-Gg: ASbGncs0lpNZEHGXuK++Nnlm9fUhfMluBZusJ4pP4fSAkjslsKUPp+Bpfm8U31FbLOh
+	imLCIoauTXoh7a5q3wGx6qd9+QYs3+fHwLwsIFXXbjAcKHmvDjKsRJnhzjfVrwWJDTNwRa6IZ08
+	JFNpW18oL8lsAKRx+SYo20mKL9eUCFEP2FK0Y5OgZP0hspLTpEenCmpdtMNca/lST4SMJPnBFg7
+	VYdRpP5y3RQoBtQDqM2I7yjEul9Xw4IhS/Net7T7hwjHpYorgy0SAMMD9xC8z32/VlGuOa5jDTP
+	Cca0eeIXubs67V29dIFmuvUoBYGNSwH2aHepvw4ssbN8sYh2Zqohg8mpzI1SzTqKZCgpxfUgd2F
+	/bhUgYm6KSYKLTNCC55iwqeX466GNgiWwyFp/rmhlTxjSGLn/a9ZQaJxDrqwCL4br4t0xzytlmf
+	Ukb3Xzo15ye0ekTA==
+X-Google-Smtp-Source: AGHT+IHrQctkzo7habYnuQPZpAYorsefys/0nx6p99wB0XARQXvDWuu/ORPVGLomOanVMaCrRzqvkw==
+X-Received: by 2002:a05:600c:4ec7:b0:477:9fa8:bc99 with SMTP id 5b1f17b1804b1-477a9c2aa35mr16817505e9.4.1763486850088;
+        Tue, 18 Nov 2025 09:27:30 -0800 (PST)
+Received: from bhk ([165.50.73.153])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-477a9d198a0sm22658835e9.1.2025.11.18.09.27.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Nov 2025 09:27:29 -0800 (PST)
+From: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+To: syzbot+ad45f827c88778ff7df6@syzkaller.appspotmail.com
+Cc: frank.li@vivo.com,
+	glaubitz@physik.fu-berlin.de,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	slava@dubeyko.com,
+	syzkaller-bugs@googlegroups.com,
+	Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+Subject: 
+Date: Tue, 18 Nov 2025 19:27:06 +0100
+Message-ID: <20251118182710.51972-1-mehdi.benhadjkhelifa@gmail.com>
+X-Mailer: git-send-email 2.52.0
+In-Reply-To: <69155e34.050a0220.3565dc.0019.GAE@google.com>
+References: <69155e34.050a0220.3565dc.0019.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Nov 18 2025, Pasha Tatashin wrote:
+#syz test
 
-> On Tue, Nov 18, 2025 at 12:43=E2=80=AFPM Pratyush Yadav <pratyush@kernel.=
-org> wrote:
->>
->> On Tue, Nov 18 2025, David Matlack wrote:
->>
->> > On 2025-11-15 06:33 PM, Pasha Tatashin wrote:
->> >> This patch implements the core mechanism for managing preserved
->> >> files throughout the live update lifecycle. It provides the logic to
->> >> invoke the file handler callbacks (preserve, unpreserve, freeze,
->> >> unfreeze, retrieve, and finish) at the appropriate stages.
->> >>
->> >> During the reboot phase, luo_file_freeze() serializes the final
->> >> metadata for each file (handler compatible string, token, and data
->> >> handle) into a memory region preserved by KHO. In the new kernel,
->> >> luo_file_deserialize() reconstructs the in-memory file list from this
->> >> data, preparing the session for retrieval.
->> >>
->> >> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
->> >
->> >> +int liveupdate_register_file_handler(struct liveupdate_file_handler =
-*h);
->> >
->> > Should there be a way to unregister a file handler?
->> >
->> > If VFIO is built as module then I think it  would need to be able to
->> > unregister its file handler when the module is unloaded to avoid leaki=
-ng
->> > pointers to its text in LUO.
->
-> I actually had full unregister functionality in v4 and earlier, but I
-> dropped it from this series to minimize the footprint and get the core
-> infrastructure landed first.
->
-> For now, safety is guaranteed because
-> liveupdate_register_file_handler() and liveupdate_register_flb() take
-> a module reference. This effectively pins any module that registers
-> with LUO, meaning those driver modules cannot be unloaded or upgraded
-> dynamically, they can only be updated via Live Update or full reboot.
+diff --git a/fs/hfs/super.c b/fs/hfs/super.c
+index 47f50fa555a4..46cdff89fb00 100644
+--- a/fs/hfs/super.c
++++ b/fs/hfs/super.c
+@@ -431,10 +431,21 @@ static int hfs_init_fs_context(struct fs_context *fc)
+ 	return 0;
+ }
+ 
++static void hfs_kill_sb(struct super_block *sb)
++{
++	generic_shutdown_super(sb);
++	hfs_mdb_put(sb);
++	if (sb->s_bdev) {
++		sync_blockdev(sb->s_bdev);
++		bdev_fput(sb->s_bdev_file);
++	}
++
++}
++
+ static struct file_system_type hfs_fs_type = {
+ 	.owner		= THIS_MODULE,
+ 	.name		= "hfs",
+-	.kill_sb	= kill_block_super,
++	.kill_sb	= hfs_kill_sb,
+ 	.fs_flags	= FS_REQUIRES_DEV,
+ 	.init_fs_context = hfs_init_fs_context,
+ };
+-- 
+2.52.0
 
-What if liveupdate_register_flb() fails? It would need to unregister its
-file handler too, since the file handler can't really work without its
-FLB. Shouldn't happen in practice, but still LUO clients need a way to
-handle this failure.
-
-[...]
-
---=20
-Regards,
-Pratyush Yadav
 
