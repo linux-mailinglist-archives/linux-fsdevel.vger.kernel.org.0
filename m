@@ -1,85 +1,85 @@
-Return-Path: <linux-fsdevel+bounces-68929-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68926-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id E46B1C68C9A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 11:21:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DD4EC68C81
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 11:20:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sto.lore.kernel.org (Postfix) with ESMTPS id 5F30B28AF3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 10:21:14 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTPS id 9D82228B66
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 10:20:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82F993491F5;
-	Tue, 18 Nov 2025 10:19:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2172334678C;
+	Tue, 18 Nov 2025 10:19:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="kSBP5eQQ";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="WCSDnmrQ"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="WD3gnKP4";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="oRY6yfgd"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29ABB3469EC;
-	Tue, 18 Nov 2025 10:19:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84EBB344057;
+	Tue, 18 Nov 2025 10:19:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763461187; cv=fail; b=X7CbqcWgA5GOpA9kGRhoknjercI1fSXh/5jxa00Ps98DqeCxEQLMGCJP2dJNzxdOTUgUqRUwCzr5qjMtQXQBdUNNFwd7SzWV9RoRvf1NsnBeSyPce7LFe06AR3+ju8Ns1QdgaF7Qi7pOH2D9Vzk4znZ4y5+n2VJGZik/Mpp6imE=
+	t=1763461183; cv=fail; b=V/bVo9CNJRLVytei1xGfDGeRzJ0vrj9rn8Jxp2+Nd3vEeuoXhxBV0nCy9rOhEK5CuC8B+Kuk/QLBPVxcya86RFCWbP+10sWMLdIUqT3iG+gIDW3eSmOuKcVlmRbZZJkNu2REKg91OTJ3etjVcJbeTuLU85p0uRAq92S9vusLEZQ=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763461187; c=relaxed/simple;
-	bh=QnQcnOxovO4S7zCugiGwGLr4Ev8Mi69WxfyWLQnpBOo=;
+	s=arc-20240116; t=1763461183; c=relaxed/simple;
+	bh=er0llcBZGx8WnGYVgZhTRCCxKmQ44DQr13KwH00huUI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=qHCC84zZPUUQ5MBsttgxgV7spNv0DflVZ1a1WUWP3SGVTSgESygn6Tk0FMs6jDxFRWXBAKtw05SEM6DqPdow9qJgXgb4V2uP9SO/n1+GaGCJLXvzECMdlOBTTpAemgPVjA5kW+M1QJCZf2OWw9SBOcQek4wYa7O3iU0lNG5nixY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=kSBP5eQQ; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=WCSDnmrQ; arc=fail smtp.client-ip=205.220.165.32
+	 Content-Type:MIME-Version; b=TgGA2Z51yQXB350wz5cVAfqfvl0fFZLSp7VaXvEWBhcfJAVkhu9Xwit1lrPm6e4SulyH+S010yIXWCrDuGDTJH/6/7ila6/3dG7dgAvfCI5sgOftUzgdNyyXXlbaWUmOsY6Z+e2DxSqyQDSw5AQXkvIlxEQzgi3NSBuYdhKicpQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=WD3gnKP4; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=oRY6yfgd; arc=fail smtp.client-ip=205.220.165.32
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5AI9CcQZ008436;
-	Tue, 18 Nov 2025 10:18:41 GMT
+Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5AI9CiHv026659;
+	Tue, 18 Nov 2025 10:18:42 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
 	:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=
-	corp-2025-04-25; bh=8+qMUa249jGesoN0N9VZs8Tj7kmeN3hEi+xQZzoB/bQ=; b=
-	kSBP5eQQH3u91rhHkKQtefyVlL+8qpnFsIT9m0psyfNHi10TuH/NlKzCcrt3GmUm
-	/CnNi6OsCVQWQnHGMSRTya9E6ApPjuD9lzp24zpbxl6xW1y+dRc/4DKaErIW4s49
-	HrL8lnlymjiZprXDvCY/S4UibGA8L6f2SOibPk3fg/sxffh+O2qV428Zk8nn3yIp
-	7KZSR9slS1r2D5hI8rQOQJyFESXpVOmEGsk+r8LUyl+l5Zn7JBuXDkD0RxZy2Qc9
-	F5RvBTpfswQB8YRMN6VKywvVpWtoWTEM1wJDVVw1NnukckAQN7Bb8w2WyWFc8A0+
-	FrqVqhHcxD+4ZR0xQtN21Q==
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4aej964gyv-1
+	corp-2025-04-25; bh=2Racm7SUJaZEFwX/ZNz2EJODs9wLk4W9UjaEYg9ICkY=; b=
+	WD3gnKP4dWXKftVXh473ofEDtlozJ/F1VxrEQ6531hI6tE7X1udlDrj23864N8vm
+	IW6FCJ+nB2W0CGHdUd76NM2IHx0JkyJHWR6XsSwGBEqaIixQVf0Dzo0SbA85WfL8
+	+o28aWZrL9EqES2ag5EivzBiPZc21B70QesLeqPwkFugycYU5w7/kRYCnVs4EZ9c
+	eASD9c6sboZludsNajEdTcm8TZUFZ+3X7G4rzrYCxnPLgBlGCje+cf3fS0n0QIOP
+	kmIhox0g2YduONAztYkmJb8PYJITHikdYEEIr5OnEO4aTus0sCIOQSiZcx7IK99a
+	3agINSYJx0xu9Bgtp3vK+A==
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4aejd1cgcq-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 18 Nov 2025 10:18:40 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5AI8wjfo004268;
+	Tue, 18 Nov 2025 10:18:41 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5AI9NsrX040040;
 	Tue, 18 Nov 2025 10:18:40 GMT
-Received: from dm1pr04cu001.outbound.protection.outlook.com (mail-centralusazon11010048.outbound.protection.outlook.com [52.101.61.48])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4aefy8pp85-4
+Received: from sn4pr0501cu005.outbound.protection.outlook.com (mail-southcentralusazon11011045.outbound.protection.outlook.com [40.93.194.45])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4aefyk8qpj-3
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
 	Tue, 18 Nov 2025 10:18:40 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gTlxx7Pff/wkeQCeM7kDX8EKeR0hBOxEyyspZ3wUm6NSrdiLig88y2GDWd6VQOY/PQu/wKmBWaR4iB5P77Et/0QCIq1p3Ls0+xkrIHcFzm51Odr7YQwAkemP7zfBG63zb/FibVMi/JQ4Yk2GTuVoazJMg1oH4TE7lXSjIybymHpdwfFFV9E2V9w0OQuPNcEDRW43BF8T53UvKwzBl1rMcbhL1II1ayvKLuMenGBfHjWMhIl1MDl88w93W/hcarYwxEvPbHsFkM2MhvAMuo29RkHH0biaIh1V1kMa4lbu9bA9foC1jaeK7UKBuLM7aDu1S2M4QfazCVD5RI0T+Ys3Rg==
+ b=LHrYFDp+FVqWwuuCmSwK+W+to78Y2Z8ytF9MPGIGwzJF9Sk7k8dTzC0Ct4Lf2Bn0OCyFIwIQoBKtMxnESYfagc+FSydHZw+98p/Dnthn6mzNONLKJBSwmKQWAztzKgbPLJJyOz//7b3eh8EMTu1snnaYblAb2DtfyI6T8D8oALxyE7HoZmWmj0wTeg9FxrPTYV7MTTpsUBmCz7G93IDJ/51Pw1UNv1dm6DPoIkMi2HLty+tjRPgevaju6L1svWgvqajE9kaTNuRVOqGL377TjK3mpVIy3IQ04wjP983A5j6vbltewSZfIuv9pAYiJ99RuRl0WbUNAUivfZouJcsUbg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8+qMUa249jGesoN0N9VZs8Tj7kmeN3hEi+xQZzoB/bQ=;
- b=I9wmdQqWLZBU1aiDCbpoDZ4Iv0RItRawPo1KdbDWUwzQdCb4RAcig5GxfPgKSMUG13ZM7AZtXYjUFQ2YbJbc7xk34p7k5C8NAQLFCOq2LwURKArIoiwDT3Wkr3/lEaPdq4Aeb+aIxqtgC2/GrUM5kPUVgGHtXOw/si15t7GHVQ/P0YC36828CGEbg7KPVXUJzeHoPL2OdTeHd2saHYb1mivPeANSBW2kUBO7mCZ72EqxfjFMRllGnwHQZl/RQt4pAC49iHf8epiwe3Jsrqo7BCBbGMl9N5/0QP2ctCkKHmyAevZxxhBYtaCMajBaInfyIf3jPEcusVetnGEdYljKdA==
+ bh=2Racm7SUJaZEFwX/ZNz2EJODs9wLk4W9UjaEYg9ICkY=;
+ b=i/ycdzTBNylGinBPb+EzEXXRHb8t+LVOZox79E5SB0aa0I9gxQbxO7CP3HatC5VlTEA7oHazOrhNGNh75+1lDnsVA3oUzOrrLZr2sB1BlW4qq6wso6hdZWJZ/bicg5D3aewpYODcTcQjfgkAVK7J//gZxSMhsu8ChjhDKIQuQzLx1NFqDXJYiB7crZeYuE28FjO5yd089GcBuekxrFbJ2L3Z06l+WR1Gg3KE4vyCK4U8Xi5zk6RJaFGfx5siMa80yeDGAGXhe5Y4zA3+laCtmcv7lxDtIeNB1t2yfgvrurswqUocif4Lqwl54t2Drr0MUWfijvi6VouaceiC3ygajw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
  dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8+qMUa249jGesoN0N9VZs8Tj7kmeN3hEi+xQZzoB/bQ=;
- b=WCSDnmrQiywQlMLw8e29LYcVmUTbpDi276JZAgedqbRVRNVsm+SQXr8aToM/OLgX3yd2m/yXq1hPjxp3fqJoPky50aOQ/hsIejlcAtcMxv8c46MTicJ9Uh/fU6MKqYrcC/bSiOW1Abk6zmvlbIFaZA7KzkxDniaZk4vA8Qk/OkU=
+ bh=2Racm7SUJaZEFwX/ZNz2EJODs9wLk4W9UjaEYg9ICkY=;
+ b=oRY6yfgdKL+zD8+Jy7/5fsKuwtYkUMLmcGblXnkaroc/FxYLGm/K33W7BSsmtOYMO3XuvJiX/Qb23hOcWaviuaUYX/K/Bi/HQSSVksHKm16lKsv3KcPZkt9GvYKk//HPcvhlvaPBAdl54APvW2lYVTjroGEBDkCMzsYTcjjsa2A=
 Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
  by IA4PR10MB8756.namprd10.prod.outlook.com (2603:10b6:208:562::7) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.21; Tue, 18 Nov
- 2025 10:18:31 +0000
+ 2025 10:18:33 +0000
 Received: from DM4PR10MB8218.namprd10.prod.outlook.com
  ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
  ([fe80::2650:55cf:2816:5f2%7]) with mapi id 15.20.9343.009; Tue, 18 Nov 2025
- 10:18:31 +0000
+ 10:18:33 +0000
 From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: Jonathan Corbet <corbet@lwn.net>, David Hildenbrand <david@redhat.com>,
@@ -97,16 +97,16 @@ Cc: Jonathan Corbet <corbet@lwn.net>, David Hildenbrand <david@redhat.com>,
         linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
         linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org,
         linux-kselftest@vger.kernel.org, Andrei Vagin <avagin@gmail.com>
-Subject: [PATCH v4 5/9] mm: introduce copy-on-fork VMAs and make VM_MAYBE_GUARD one
-Date: Tue, 18 Nov 2025 10:17:47 +0000
-Message-ID: <5d41b24e7bc622cda0af92b6d558d7f4c0d1bc8c.1763460113.git.lorenzo.stoakes@oracle.com>
+Subject: [PATCH v4 6/9] mm: set the VM_MAYBE_GUARD flag on guard region install
+Date: Tue, 18 Nov 2025 10:17:48 +0000
+Message-ID: <e9e9ce95b6ac17497de7f60fc110c7dd9e489e8d.1763460113.git.lorenzo.stoakes@oracle.com>
 X-Mailer: git-send-email 2.51.2
 In-Reply-To: <cover.1763460113.git.lorenzo.stoakes@oracle.com>
 References: <cover.1763460113.git.lorenzo.stoakes@oracle.com>
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: LO2P265CA0275.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:a1::23) To DM4PR10MB8218.namprd10.prod.outlook.com
+X-ClientProxiedBy: LO4P123CA0609.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:314::11) To DM4PR10MB8218.namprd10.prod.outlook.com
  (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -116,244 +116,324 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|IA4PR10MB8756:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0625fa5f-e4ee-4cc3-abfc-08de268bd2c5
+X-MS-Office365-Filtering-Correlation-Id: b27b4857-95c1-4617-23ae-08de268bd42f
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?QQqLpxgn/2ZubEQS7Vyj36G7bbX4glrKyQE3OP0CE280ZMKkDuCaRpEqGBOs?=
- =?us-ascii?Q?xqzVrPI2bB5W17U5t+ulwP19beG3gjJR0EaTJoNgVqWLdPRgLPkD+riF4VVh?=
- =?us-ascii?Q?gn86/AEDM7kLLxD6zy/CFaarRBLKgeCRk/9+DUovuYgQvznfKVogIgbp/6OD?=
- =?us-ascii?Q?t3Tb+dDJw7HjtJi8uw6M68LSLeP6B5nfOj6/xz6k0iNBzautz3qU0ma+hg+O?=
- =?us-ascii?Q?6stl8rCw3vV7i7o1msvMqOZDK6DIcffxJ4ft0dB1ZJnZZc4JJWSjnJaHu5/u?=
- =?us-ascii?Q?1Ub52SIuy9PhP+sMRHv+7+KitHFL4m0lSFw3ZUo0S5Yzmc2PCkdC9irgY/4x?=
- =?us-ascii?Q?enGfEzODrz/DlD21o7pvK5LnG0zcK/P3nn8oFEY1VUnfsN71liXueeloLZAo?=
- =?us-ascii?Q?F1oWZumyLBSUlCielG8FGcbMlDjaEoEZg3god2bQorWEVCatwD66eukyyzgM?=
- =?us-ascii?Q?ZXwIB7s9RcYDWuSwAD9Z6RpKqka1QUqKG5lC45FosoaNRvixxuxyPrEkujnw?=
- =?us-ascii?Q?gs5DdYlrfcu8X6Hrywk1y3HqQLnXqnpLCapYSFUSLbfhYUcc15v8GvpMArHH?=
- =?us-ascii?Q?MM4XElUh3Gic6IdS679Vn6aR8DVKkB8Fn5my+YDHcPRIp83kVSf4YqvdT27r?=
- =?us-ascii?Q?erjTt/BpIPXUnrzYKZbY3SRI1g6V4mIXFMyYi7gwmdWy2tOx6WelnkpNViZ8?=
- =?us-ascii?Q?I2IXY+bycfjwSI0KXjjrM6aToIvYyyXiQLqTwnQsjn/Uxd7dgNOocS3vuSZK?=
- =?us-ascii?Q?UJt5TWoc7gEb2xniyAb/G7RtDR7+3dWxa5kioRr/XEjvS0IA2MhKGoQrgy/I?=
- =?us-ascii?Q?OmWspTeE97sbnR7p9dBBQqZrsaInyrVnyRxshQ8NId7v8OKpi7olt3BGecMO?=
- =?us-ascii?Q?Y8+veB3Bfxbl37L1f6lcMe69PDBfCnr3Updwpvm1pUf5COuLvwZftnIHOF7Q?=
- =?us-ascii?Q?vfi6V4dd4PPR4TH2sy3EQRWK00Zf5LQlbbau08rYErmXY092HiojLoAvQRO/?=
- =?us-ascii?Q?pD22QRo3eZDAuAfG44u5CVyppQ/PS3W+Bj3pMaaL+MOloH+dydw1p6SNSdQE?=
- =?us-ascii?Q?lXGxrAy4vBezwhEYZaF9HYXZrayWNISWl7aIzefVQ1OdFQ9i7xnvN5BBRwOR?=
- =?us-ascii?Q?oL2Brow/HtpmjKa8mSjIRjx/pxnNazy7iFAtG7D1v9yMuJ+S3TArTBHBewAc?=
- =?us-ascii?Q?Uow4KL8lFlG2oIP89FhYcuj4O9QEz+p0Ie/6jWEAjdHME/4u7zkkU/ezzSDX?=
- =?us-ascii?Q?WAeRzL2rFeP9vmsbWbIGAb7rHBAIjfmAwUKIfiPjc/mn742vqEuqQnJgY80G?=
- =?us-ascii?Q?bOfZ3BKWV9WzanXqSQqL8viowsRt3HuYiWcjEBwtnPeT3h6y5uOnX42kHfPc?=
- =?us-ascii?Q?bAXLuCcam7apijXBXM0tg3S9GOuXCzI4C+MnaVFmAqSwGA3gZ+1JZ5vtJ8px?=
- =?us-ascii?Q?iKkoLBaYvrt4+ioDJe5DDoNypmo+/ITp?=
+	=?us-ascii?Q?rZr2hzDXr7Vy5k0WWNUVMDKrJ5n+Hm4cpHrJStwwXq533vLVQ7wXCt2xAk83?=
+ =?us-ascii?Q?pUoST5sdjsCl8cms3WIJUJcQSmQ40snIO27t39xBZbgvhB2+8XL/2bPoGVi5?=
+ =?us-ascii?Q?8d6hszzP5Jo2Qxyq9wDzJw2iQZflElzLs5/aqKSgTo1METDkujyoVhDjT72Z?=
+ =?us-ascii?Q?gR5w7pFbvL/HxppzF8Eq4zzV1+pQS77RE+nPMvYa7+M8ZZMzO+t/KWUKlIiq?=
+ =?us-ascii?Q?nwpts9rrMe3RgIFfZCqwAgwvfmmUXNMxRiKOp02XeQFyJcD5Nx+vDJ4dHMt0?=
+ =?us-ascii?Q?17wmUtT3zQFjdlI0jq+f0twgJNZQnWVk4u32k7AZwQ3QotrzYn1GVkJHfOqv?=
+ =?us-ascii?Q?zgSrKCCCQxa95jZdr7v/irNTlaSMs7pAebJgmniacLzy30TYDvmqW7171hzR?=
+ =?us-ascii?Q?zwKJTTXz/1cnxII0MRAc7BD6nJCEgtha/EWvd51AJn3brWPyqLuFsx3DuKjF?=
+ =?us-ascii?Q?ULUb1ogB9aOz8elOHaj5Bg9fsbERji/PP4GFhuxB91eX/4Bp/zKjvIdbGefQ?=
+ =?us-ascii?Q?TX5lmvyFMeqUHfl1HJQk026VqFlQKREWa4tiJAW/CX1dltOGq454TS9r6dYW?=
+ =?us-ascii?Q?i2eIB9U7MEXan5MZbpoDX0IsPiK1GyTSZ5WkBqMMkMZFCtMM/p+6Qkd+tBzb?=
+ =?us-ascii?Q?odew7eoLBul7DqKwsjTYy1d5n51yE4/1GXbr6QNp+iTJbdqmPIYqfxRpWrOo?=
+ =?us-ascii?Q?Z/lOvXwhoEO/cb/JtA/qQJJVKPNOED//7IQCjtJ4tkqkNif35+8p+Zi8+MJM?=
+ =?us-ascii?Q?LstkP2TlmTNlDygzATauSNybHJ8+1DTfleKYXA4tDrWrQWoFS+kr2WCquwHa?=
+ =?us-ascii?Q?IYLi6zck41QJ4U0poftJMHPInjWYunjV1BakB703FWXlERVpcNcGU7Fkji5N?=
+ =?us-ascii?Q?O3vgaYIsGhbKy0k3+ACyNfpvoy1UVO0zGo8CwveUR3lWQqd0aSGWgPPwvPou?=
+ =?us-ascii?Q?WjuM6osgA9eCx4Orb0KDLAqYa1f9NgqH1BbQncMLyMwjj0e29AF1lwTjnapz?=
+ =?us-ascii?Q?MoB7T68WFLt6ohYhN09WGdQaiN3SonDe3SUfmevPM7kzOv9f3sWBZuU6/4Uu?=
+ =?us-ascii?Q?pm11crCnJgg4oV9owntnvlGRVJmmdHDEU5iS2WL+827/UVbJH4xM+t+gA0qN?=
+ =?us-ascii?Q?eAzi7hAAo2DyftzHx8olF96hNY3mIo33MSUCSA6/tg7nQ6oFMWHsyT6NRW3i?=
+ =?us-ascii?Q?opSFFmY8nQBpygocJi7kZKNdtU9ytf5QXCu/8Q/H9iri+7WHwhNzOKjHN2hP?=
+ =?us-ascii?Q?1Prrp0k+RAO4lBwefyXYDQK2Q9zqF0qKz3sG/lOFM4QnHMWvGq0hBOHcIT44?=
+ =?us-ascii?Q?3IiKW5H23bp/W56DfzxNqOeVsPpysL0aKVOALcwZhzuAlLKa9LmPyOkrvfbt?=
+ =?us-ascii?Q?YL860rOvfXATzjnv+CgRVmNLYzVqEnQU3HjA22+sqWxQuq4YMM5c8OONth6C?=
+ =?us-ascii?Q?a4YAswviELqaWY4W+FY8Py9IOWfkRe1x?=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?MQcMLru/XakJDb1pfznJUXDvHmGRP2CZlzp4TNEO2x28wp6xLSnWXQZxwGcE?=
- =?us-ascii?Q?nsRaL1amUAsMO1mawYAeaSiKHv5H4Pw7bFUOa4iheiuU89wKYXod614bUCii?=
- =?us-ascii?Q?fV2pCAIk1/N884ADS3OZXx8zvbGC9yDwSR9lBhh9x8zk9MjJdaCkgG3hgG8V?=
- =?us-ascii?Q?5FFEnh4GTLvXQpthFs1AHO8+pIwE8YbtiGb0nLBWmzDt9N3H+cDGaIjzs+jy?=
- =?us-ascii?Q?VDbKFi8VIIYEo1epAPQe8kz4H6giUYUgeY1CF56RdWC/PxBl+rcnWV3rriei?=
- =?us-ascii?Q?ql4BFPiO68r+EnjFJ/9fsL3+AIfxUEtzA6QQhQKIB6RKquR2lpQnWS01Hig9?=
- =?us-ascii?Q?LWXrMSZv5Vjz0h5szBve+f5ZT/r8b2BVLg3tKU3zyGdf5t3MpWFf5UfsDZLb?=
- =?us-ascii?Q?jOhnzUM0inCYpQVsmVdlA4bToks/aZNxR2/NzVoIIJ/oBJ8Fai4pyYpDAlL9?=
- =?us-ascii?Q?rD7WdJEWOaHhExpvndbKpOUe02sqagclUkxwX1151BwH29bNIjO+6Nc0qReu?=
- =?us-ascii?Q?/743i4PXYyTib0YgLEflO79aIVn48avJMvr2PiyAh6PEPJvrV1tGVLiGyNS/?=
- =?us-ascii?Q?NeEN2+svuh+WUU+YfjyoHEGNLJLL1S05LpSr9ltAXPXF6fMKSiy2+yzGhOEC?=
- =?us-ascii?Q?x0ZZbU4qpjNqzNYq30PaexVH1KzEIfbJSvbZP3RUjAhPthbkAiK1i7aWAcUx?=
- =?us-ascii?Q?tX05cWKtwIa1YQQ80uMEt1+EQr7lFvDPpmLKbwK+nIolcZwjWdkUNp/3aCCm?=
- =?us-ascii?Q?LXGgeEE/yr0/gKnayUV9WTPLkNGU1ZUM992Lobzv7zqQLZFRB0VFd935Ux2d?=
- =?us-ascii?Q?z3xpNHAsSaHXwjtbWd1H8FeazhHbhvj5xmyhnQulrkXm/2i7unJ+uxjmvR6K?=
- =?us-ascii?Q?y9gaGIWBJWoVCmiAVKCh2aIyrBcUB3slf1wddcyyAsXYsZ8r4LgBiAbAP1Yh?=
- =?us-ascii?Q?64JpVD7pJHjbjs4JftTos34AnHqORqvxokXlzhzPhtS1IBjklopPlG3eSR2H?=
- =?us-ascii?Q?WCFk5FuVOrFenvSzyDTtZ+TZraJWiYJiP5MLwolFFjPLizLv1Ij1yZEaqp6j?=
- =?us-ascii?Q?v60Q8ejxGsjc3X80nbKSRgYazfgMAEF4CRIvqani3DmXX6eSVUmaSDVEk10y?=
- =?us-ascii?Q?P8H58n18G579CL2IUrbHWu+UZRj4ppDH3tt9BOooeqhorMFXnjYhPuZGnUI4?=
- =?us-ascii?Q?GF3m6CnKduR08ziszTxIFs80QjGOS76Sij8+QzV6O9vtptXAcigfM0xAuojR?=
- =?us-ascii?Q?Rc9YebaTgfn+/VLKYGvA/9DL8BTK2P3LIm9inn4VBrUtLmjGOU/G0DpCD7wC?=
- =?us-ascii?Q?CZzdpBUIEXFG08NMXiEtBqMEXlzrPWbqZtCaI97+sblExXaeNy8O/Cy1rMk7?=
- =?us-ascii?Q?MtqEFXCeQtzIPkOjlwEx4u1ssELLSrzIwoaZ5VcyHXzrbdNclyxpCgnWpgYd?=
- =?us-ascii?Q?sUV4UHWUxhJ/PA4kmEXYHXLXYRsINoNPQVVRwlD14zAa3SKCu3HbNyY40OQO?=
- =?us-ascii?Q?2+IZxl7NCuK/9LMk18uF/YJFh6JIn+y/eW5kK0W4yFFsgbUZAE/lYtgSY7SZ?=
- =?us-ascii?Q?ZpTm/OzFYTjY7pn3yIto2i6M6FPfXGcoV610MdFnDh1KnnKXPLlCoDyOCinI?=
- =?us-ascii?Q?Mg=3D=3D?=
+	=?us-ascii?Q?Co4lX67WxGUq+0Sc3IZdrWnzsPbLGEj+4wF7eUVheAAtJscCn41QdFuXgkQZ?=
+ =?us-ascii?Q?/lav1rr7ONle59XrjZeSgswcJejitLO0p7bL4ye02I6VxiVCfIefbvy5EnON?=
+ =?us-ascii?Q?6OwiKg/CCwop0IyQTrIFi2jHOehTd8eA3ugpKg9bQISsQV6atn/JiBzTcN/O?=
+ =?us-ascii?Q?UflE1NXlic4Rvxn44QER/4gg2Vq4iZiR9BjEOQhI8d7ObgxIE4ez3XtxzOJ/?=
+ =?us-ascii?Q?pdpKHaFMVkfCsoiKwV9IMBLfIomqo2czskt/F01ujRTLW3hGb7Z9MgyCzy2x?=
+ =?us-ascii?Q?EF/onMv5A8MU/pZ3vq3V9h+hgcHCd+zeB4oK7HFe+HYSggT9ptecFASgQ+2b?=
+ =?us-ascii?Q?OC+9PNkR5rSfz8rj9LQ+7yoaL5XuLYAQkWLOAvV9pvl6ZFVjhFUhy88J6thT?=
+ =?us-ascii?Q?jCrTY6zJqjn+wTIPKaFF8pKDuB2eOUaCqYaePQ1zLZizr3eikjRNnvgBlzjn?=
+ =?us-ascii?Q?Avc64V+Xgjc9hqDM6sumvBrdlN8kyX1+NyeDPcxfElq/UF1giDA8NOxLLfsi?=
+ =?us-ascii?Q?SzvpVn7zLEFml0mTHyTR1MlB/Rcs8S6tiH6rjrajbEkzFH6pH1Sncr4GoJsD?=
+ =?us-ascii?Q?rCG/rEAntlIqDgi0Jg2bg8gM6gC/fTgenQdSbNhY57CahaCEs+Xis48TIcGO?=
+ =?us-ascii?Q?buEoSIJ9sKxRweu1UEg1rGunJKO2qdvdjQ5+MzCSvkQL91l7OnYQp+frhpti?=
+ =?us-ascii?Q?U5/Zmg/czsgP1pfiykz0j94cL+QZ4nMXKp8F1DKZljXHGVk+DPcjcLmk9jEP?=
+ =?us-ascii?Q?pz7LYBY6YCSvCPsJ/pRzFrsGvGvS+HsSpRfnOCTHVNapJOM0hbM7jdp3SYRv?=
+ =?us-ascii?Q?g0v36o2+/Imcl35VFKSmCNagkUMSsldRHfqTTyP/QMB1ruTAjJAw2SyAdUE3?=
+ =?us-ascii?Q?oHvmTZi5/hYqzb1+sk6e+se4ph8OCJpm+jQg5R1hB9eHo0LG7HN37eDeAnDs?=
+ =?us-ascii?Q?39wOmYSctKDH3yMXj+kqxs0viJeP+m4U1fS+OhrFIhJneR/TfHBgfd/I21yT?=
+ =?us-ascii?Q?jiht2NpczzTMmFjhxTCX4/RJbLlho0eeKwifGI/vAGkjsPMuVECocjFYIp6j?=
+ =?us-ascii?Q?bvNlqMQB1kxS5V9rZXVJrX+GgpR9+8CgahzMkDkSdL8QWoJclz3xQ/E2DYLW?=
+ =?us-ascii?Q?1PEUNconrsi42S6oH4pEgJTnsHa+t1SGMgx/HBFRjG7c1xKTGewOH6RltuHP?=
+ =?us-ascii?Q?lvft5FDq4f9mX3aejRk2id36oAn/YqZn5mdUbi/6Zlrn8hlOR0Nh2Ug1uqaw?=
+ =?us-ascii?Q?WgI//TgaZp1+hPCpY6kkO26xpQFpItZC1SZnlVMndTL4zcsC1nUz9SN6RPLo?=
+ =?us-ascii?Q?2/xv6UHdyDXW0UP4Tb2j5pRdTGUAaHf0WgSC9M+HMdU9UaQdwqv9HXHX6/yY?=
+ =?us-ascii?Q?2CImrGE/gcrNKFY2BgrXKKp1hmGvUbKNcPfH60nLwgx+z2V8PT1Q5P08TIG5?=
+ =?us-ascii?Q?HIEqwQSksepNk7Tup/pXsd3+DwGQ/PsNKH7yusxjGUbIm0zftU3nB6dIylBn?=
+ =?us-ascii?Q?tWKazn/FQ9rKPJRfcrrjouUXHBHbULOXBmuYbymAO/WlSHMoP1PHUlotzQOq?=
+ =?us-ascii?Q?nwD16Us0oywX/gb6s/nWC4ZKUFR14+uscKAQxJ0rY2oDt0erdx4ZiuIAV3GJ?=
+ =?us-ascii?Q?ew=3D=3D?=
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	VZDgPxnyOiF2oeO5KGplXNGeCqjsvqVA/oPiPuHwvojC9Ga8K1MXOoYP9QJNvP+lQvKfa/ng1fXn1KnuptWDyWMwcX95NgiKEXTYDa1BVWFSdnt7nSSnfQ3GyzREHxhaehYBiBEWYQyc7pUiU7pZ6x3C9olanuLIRj+K0KDz/OHgsQ6eGFhrrN8TQkl4tomrprmvaTVA581huCahjNwy2ez71kttOlMdqmSap8gVilZS2t5kOpK73nIr65FPBbyoB0ct42fVDQD0JnVdLREaesxQ9wXo7IBaypLiNaYd+WA4HR6JHGTqYMSUkC/oIUEq2w+uv7ME8PhpPWkRN2Vof7OXR7EJBLlOegTtSxBdD+iMHQgcbzlObFE4MKx+RO5hS1DC3nPktMMrLzLiqPYpMb7+u7Y/l1GTi0qHMglOgCYEOMp5eAALEYRt1VE8YpctclPvXQkAqM4lM5Uppvj0rQYPpIhXiidLpsdgiPM+5WAxntAN9I5xsgxNgl6t0jNg6zNlqcdRbRFm9jxI+fC+4W7soDQCrdBF5Q0+wVYQ3YiCWWZboo8z2rgoztYXtnuWJ26a0TrTnyIOLbdcDWjMzMDryCWiVO+hRggjPdsS0z4=
+	hFd0Wm7AQk12FGPrVdgt1XiHrIrQPDNjTZyrHuy5T1dFH13M3MTndGKMhcYUserWJEjjU+dII2K9sJM9uSHx1Yaf6+rKVEsWcGJPFJPdPOx0SSNYjXU67BN5WNANMUNRXJjWf07B9fbN9S4dlLCGHyKqxbCJCBp8pW2iig5SHwiWnPZg5Yhptjai3Qi2YyyTL9eO+cHI+MW/tXZc/g/Om9G0AYRDiPJAzeXtxJHp2Nbeq8O7T99pVE+GMOO4UT5df5eFdEQyxSgLEINtJCOthVO3PywX14agboI7XizpM6sXdTJjIricHHOwRCDQIpkc00ZV8R4sYYwtG1SBbCYrbna0EqOc9lct8/icUUfhE3GyLaSvAY3ZEtDYdyJo1gSp3j7EsThz06qPaqFRvRBi8z6zxC3yTZci911TDGFfHLsyhHklktBhVgZKe89RR4vIdwrCtvQKu1VAKx5TbZKz1EvfF+SnArJS/zhR1x4U5w3hwyGlJD807hIXvjeE+ckVcxXlXnVh9PRfP+cVikfhFZ2Q7+TtE8Fd+1gphaDIbkLeRNqDoVDM54eeB7/6Tf+oiPN9GkB8DEs+5syGaf3fwoLUEefYdBKypnkMnwvgulI=
 X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0625fa5f-e4ee-4cc3-abfc-08de268bd2c5
+X-MS-Exchange-CrossTenant-Network-Message-Id: b27b4857-95c1-4617-23ae-08de268bd42f
 X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Nov 2025 10:18:31.3395
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Nov 2025 10:18:33.6911
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 91JGSxKe19zEyvuqRskn/z60X5qsqKIfguopjw9TsDXL91543I4+gvt1/6UJ6yAjUbouH6JvnpmC1PvmgEdWp8KLjeC0ek0tgM9czr1wwAs=
+X-MS-Exchange-CrossTenant-UserPrincipalName: 0wiXI+5UyhrZuvxaJ/ytvyNO26RH8rj7NjwnRxv7y9L4RLMzVde1o9A6fAdcJ/PdakOCp0zlPO5nkYm0sZes2QwsFHKrV5SEaYfy5/TZyFA=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA4PR10MB8756
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
  definitions=2025-11-17_04,2025-11-13_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxlogscore=999
- suspectscore=0 malwarescore=0 mlxscore=0 bulkscore=0 phishscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2510240000 definitions=main-2511180082
-X-Authority-Analysis: v=2.4 cv=DYoaa/tW c=1 sm=1 tr=0 ts=691c4801 cx=c_pps
- a=XiAAW1AwiKB2Y8Wsi+sD2Q==:117 a=XiAAW1AwiKB2Y8Wsi+sD2Q==:17
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 suspectscore=0 spamscore=0
+ adultscore=0 mlxscore=0 mlxlogscore=999 phishscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2510240000
+ definitions=main-2511180082
+X-Proofpoint-GUID: Lm-P4E8PjDXnGg7Z3aAAUB1nh89Cns3q
+X-Authority-Analysis: v=2.4 cv=Z/jh3XRA c=1 sm=1 tr=0 ts=691c4802 b=1 cx=c_pps
+ a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17
  a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
  a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=6UeiqGixMTsA:10
  a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22 a=yPCof4ZbAAAA:8
- a=iU0FZCYCfJC6mG8IRBoA:9 a=nl4s5V0KI7Kw-pW0DWrs:22 a=pHzHmUro8NiASowvMSCR:22
- a=xoEH_sTeL_Rfw54TyV31:22
-X-Proofpoint-GUID: JitUu5YnEDqhZKiJdEGwpaOWH4F6hwIw
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTE1MDAzMSBTYWx0ZWRfX0CkLnIhQ0pZw
- icCMmrsMIQzl4pnT/MNclfgc/FotfRI/ZAy2IHF5U3sdC4a83hODpB0UI4asgBT7trEYuXqBrhe
- z2PXuIMAHy57QIHE2NN1nD0yKXmnqIgav0XbljORBUL2JGiRK5fUzmD4k9+ITncmHop+i3UTcsx
- ohCnKZWNeg16Yiy+C/anOLNSeL/lxlERDGDEDeQZ9KrZTBU8qtgzd4zLBj/H3BzGIYdMS5ACJDa
- B4ZCqedBRZ7AquVhaW9IqVQJ8XoKUaZFbgBS96KW/yUD4bVYC4WzOmj7uJPcpFIRGdMSzAMBeDl
- DUZIiJJ6s81MMPHO1QLVrLl/p+u0L0EBwwzj/+UmXBbhm1q5vhu6poG8xd0E4pfFoFC4Aj0/ZN1
- pqsiAmoD0UK8n+nCM/iBRmMhSszVYw==
-X-Proofpoint-ORIG-GUID: JitUu5YnEDqhZKiJdEGwpaOWH4F6hwIw
+ a=NNagTMxLXCr8bz9WFNoA:9 cc=ntf awl=host:12099
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTE1MDAzMSBTYWx0ZWRfX20VPG9hxB3O+
+ WsYSYm9LpvA5V8ONo+DUFpmYwdKkMJa4+QHa+RNat6tv4f7LPMw5jqargnjU+gPGOBOzmlT3Iwa
+ rkEftyfWWgKaCf4+S2XjdKzKxHQM/w2R4+IOScIPXCdQkMW7Kq4vZiSVgwm3Bomv8ifdjHRqBip
+ hs5oFeYOHjpqQXkGdTLx2Bg5g6Ia2mIGFQzYXk1pcc/kGdNA7/SWexVchh15+i3pSdMyUDf1Dae
+ Pq4ayGZlg29gcjv+Qm9pU8tD54/hCPEQo287GVPMxGEecP9ylg/3/f51m+hHNyNtFdbZiEKVzP5
+ tRzVQEVst2QTHtZYCpOWpBTKDDfI59aGSPIzo67ScP2jyXuzC7yaUn2KUtZEZSsrMlQfBt0Oaeq
+ KcnfBuMoJc8cUtLkO2gXEIhg72zheJWLwnz2dgKtilC/s5DW71Y=
+X-Proofpoint-ORIG-GUID: Lm-P4E8PjDXnGg7Z3aAAUB1nh89Cns3q
 
-Gather all the VMA flags whose presence implies that page tables must be
-copied on fork into a single bitmap - VM_COPY_ON_FORK - and use this
-rather than specifying individual flags in vma_needs_copy().
+Now we have established the VM_MAYBE_GUARD flag and added the capacity to
+set it atomically, do so upon MADV_GUARD_INSTALL.
 
-We also add VM_MAYBE_GUARD to this list, as it being set on a VMA implies
-that there may be metadata contained in the page tables (that is - guard
-markers) which would will not and cannot be propagated upon fork.
+The places where this flag is used currently and matter are:
 
-This was already being done manually previously in vma_needs_copy(), but
-this makes it very explicit, alongside VM_PFNMAP, VM_MIXEDMAP and
-VM_UFFD_WP all of which imply the same.
+* VMA merge - performed under mmap/VMA write lock, therefore excluding
+  racing writes.
 
-Note that VM_STICKY flags ought generally to be marked VM_COPY_ON_FORK too
-- because equally a flag being VM_STICKY indicates that the VMA contains
-metadat that is not propagated by being faulted in - i.e.  that the VMA
-metadata does not fully describe the VMA alone, and thus we must propagate
-whatever metadata there is on a fork.
+* /proc/$pid/smaps - can race the write, however this isn't meaningful
+  as the flag write is performed at the point of the guard region being
+  established, and thus an smaps reader can't reasonably expect to avoid
+  races.  Due to atomicity, a reader will observe either the flag being
+  set or not.  Therefore consistency will be maintained.
 
-However, for maximum flexibility, we do not make this necessarily the case
-here.
+In all other cases the flag being set is irrelevant and atomicity
+guarantees other flags will be read correctly.
+
+Note that non-atomic updates of unrelated flags do not cause an issue with
+this flag being set atomically, as writes of other flags are performed
+under mmap/VMA write lock, and these atomic writes are performed under
+mmap/VMA read lock, which excludes the write, avoiding RMW races.
+
+Note that we do not encounter issues with KCSAN by adjusting this flag
+atomically, as we are only updating a single bit in the flag bitmap and
+therefore we do not need to annotate these changes.
+
+We intentionally set this flag in advance of actually updating the page
+tables, to ensure that any racing atomic read of this flag will only
+return false prior to page tables being updated, to allow for
+serialisation via page table locks.
+
+Note that we set vma->anon_vma for anonymous mappings.  This is because
+the expectation for anonymous mappings is that an anon_vma is established
+should they possess any page table mappings.  This is also consistent with
+what we were doing prior to this patch (unconditionally setting anon_vma
+on guard region installation).
+
+We also need to update retract_page_tables() to ensure that madvise(...,
+MADV_COLLAPSE) doesn't incorrectly collapse file-backed ranges contain
+guard regions.
+
+This was previously guarded by anon_vma being set to catch MAP_PRIVATE
+cases, but the introduction of VM_MAYBE_GUARD necessitates that we check
+this flag instead.
+
+We utilise vma_flag_test_atomic() to do so - we first perform an
+optimistic check, then after the PTE page table lock is held, we can check
+again safely, as upon guard marker install the flag is set atomically
+prior to the page table lock being taken to actually apply it.
+
+So if the initial check fails either:
+
+* Page table retraction acquires page table lock prior to VM_MAYBE_GUARD
+  being set - guard marker installation will be blocked until page table
+  retraction is complete.
+
+OR:
+
+* Guard marker installation acquires page table lock after setting
+  VM_MAYBE_GUARD, which raced and didn't pick this up in the initial
+  optimistic check, blocking page table retraction until the guard regions
+  are installed - the second VM_MAYBE_GUARD check will prevent page table
+  retraction.
+
+Either way we're safe.
+
+We refactor the retraction checks into a single
+file_backed_vma_is_retractable(), there doesn't seem to be any reason that
+the checks were separated as before.
+
+Note that VM_MAYBE_GUARD being set atomically remains correct as
+vma_needs_copy() is invoked with the mmap and VMA write locks held,
+excluding any race with madvise_guard_install().
 
 Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Reviewed-by: Pedro Falcato <pfalcato@suse.de>
 Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
 ---
- include/linux/mm.h               | 26 ++++++++++++++++++++++++++
- mm/memory.c                      | 18 ++++--------------
- tools/testing/vma/vma_internal.h | 26 ++++++++++++++++++++++++++
- 3 files changed, 56 insertions(+), 14 deletions(-)
+ mm/khugepaged.c | 71 ++++++++++++++++++++++++++++++++-----------------
+ mm/madvise.c    | 22 +++++++++------
+ 2 files changed, 61 insertions(+), 32 deletions(-)
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index fea113d1d723..af2904aeb163 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -555,6 +555,32 @@ extern unsigned int kobjsize(const void *objp);
-  */
- #define VM_IGNORE_MERGE (VM_SOFTDIRTY | VM_STICKY)
+diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+index f6ed1072ed6e..af1c162c9a94 100644
+--- a/mm/khugepaged.c
++++ b/mm/khugepaged.c
+@@ -1710,6 +1710,43 @@ int collapse_pte_mapped_thp(struct mm_struct *mm, unsigned long addr,
+ 	return result;
+ }
  
-+/*
-+ * Flags which should result in page tables being copied on fork. These are
-+ * flags which indicate that the VMA maps page tables which cannot be
-+ * reconsistuted upon page fault, so necessitate page table copying upon
-+ *
-+ * VM_PFNMAP / VM_MIXEDMAP - These contain kernel-mapped data which cannot be
-+ *                           reasonably reconstructed on page fault.
-+ *
-+ *              VM_UFFD_WP - Encodes metadata about an installed uffd
-+ *                           write protect handler, which cannot be
-+ *                           reconstructed on page fault.
-+ *
-+ *                           We always copy pgtables when dst_vma has uffd-wp
-+ *                           enabled even if it's file-backed
-+ *                           (e.g. shmem). Because when uffd-wp is enabled,
-+ *                           pgtable contains uffd-wp protection information,
-+ *                           that's something we can't retrieve from page cache,
-+ *                           and skip copying will lose those info.
-+ *
-+ *          VM_MAYBE_GUARD - Could contain page guard region markers which
-+ *                           by design are a property of the page tables
-+ *                           only and thus cannot be reconstructed on page
-+ *                           fault.
-+ */
-+#define VM_COPY_ON_FORK (VM_PFNMAP | VM_MIXEDMAP | VM_UFFD_WP | VM_MAYBE_GUARD)
++/* Can we retract page tables for this file-backed VMA? */
++static bool file_backed_vma_is_retractable(struct vm_area_struct *vma)
++{
++	/*
++	 * Check vma->anon_vma to exclude MAP_PRIVATE mappings that
++	 * got written to. These VMAs are likely not worth removing
++	 * page tables from, as PMD-mapping is likely to be split later.
++	 */
++	if (READ_ONCE(vma->anon_vma))
++		return false;
 +
- /*
-  * mapping from the currently active vm_flags protection bits (the
-  * low four bits) to a page protection mask..
-diff --git a/mm/memory.c b/mm/memory.c
-index a520720702f0..732414852570 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -1463,25 +1463,15 @@ copy_p4d_range(struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma,
- static bool
- vma_needs_copy(struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma)
++	/*
++	 * When a vma is registered with uffd-wp, we cannot recycle
++	 * the page table because there may be pte markers installed.
++	 * Other vmas can still have the same file mapped hugely, but
++	 * skip this one: it will always be mapped in small page size
++	 * for uffd-wp registered ranges.
++	 */
++	if (userfaultfd_wp(vma))
++		return false;
++
++	/*
++	 * If the VMA contains guard regions then we can't collapse it.
++	 *
++	 * This is set atomically on guard marker installation under mmap/VMA
++	 * read lock, and here we may not hold any VMA or mmap lock at all.
++	 *
++	 * This is therefore serialised on the PTE page table lock, which is
++	 * obtained on guard region installation after the flag is set, so this
++	 * check being performed under this lock excludes races.
++	 */
++	if (vma_flag_test_atomic(vma, VM_MAYBE_GUARD_BIT))
++		return false;
++
++	return true;
++}
++
+ static void retract_page_tables(struct address_space *mapping, pgoff_t pgoff)
  {
-+	if (src_vma->vm_flags & VM_COPY_ON_FORK)
-+		return true;
- 	/*
--	 * Always copy pgtables when dst_vma has uffd-wp enabled even if it's
--	 * file-backed (e.g. shmem). Because when uffd-wp is enabled, pgtable
--	 * contains uffd-wp protection information, that's something we can't
--	 * retrieve from page cache, and skip copying will lose those info.
-+	 * The presence of an anon_vma indicates an anonymous VMA has page
-+	 * tables which naturally cannot be reconstituted on page fault.
- 	 */
--	if (userfaultfd_wp(dst_vma))
--		return true;
--
--	if (src_vma->vm_flags & (VM_PFNMAP | VM_MIXEDMAP))
--		return true;
--
- 	if (src_vma->anon_vma)
- 		return true;
+ 	struct vm_area_struct *vma;
+@@ -1724,14 +1761,6 @@ static void retract_page_tables(struct address_space *mapping, pgoff_t pgoff)
+ 		spinlock_t *ptl;
+ 		bool success = false;
  
--	/* Guard regions have modified page tables that require copying. */
--	if (src_vma->vm_flags & VM_MAYBE_GUARD)
--		return true;
+-		/*
+-		 * Check vma->anon_vma to exclude MAP_PRIVATE mappings that
+-		 * got written to. These VMAs are likely not worth removing
+-		 * page tables from, as PMD-mapping is likely to be split later.
+-		 */
+-		if (READ_ONCE(vma->anon_vma))
+-			continue;
 -
- 	/*
- 	 * Don't copy ptes where a page fault will fill them correctly.  Fork
- 	 * becomes much lighter when there are big shared or private readonly
-diff --git a/tools/testing/vma/vma_internal.h b/tools/testing/vma/vma_internal.h
-index 73c2025777e6..233819a9e7ee 100644
---- a/tools/testing/vma/vma_internal.h
-+++ b/tools/testing/vma/vma_internal.h
-@@ -145,6 +145,32 @@ extern unsigned long dac_mmap_min_addr;
-  */
- #define VM_IGNORE_MERGE (VM_SOFTDIRTY | VM_STICKY)
+ 		addr = vma->vm_start + ((pgoff - vma->vm_pgoff) << PAGE_SHIFT);
+ 		if (addr & ~HPAGE_PMD_MASK ||
+ 		    vma->vm_end < addr + HPAGE_PMD_SIZE)
+@@ -1743,14 +1772,8 @@ static void retract_page_tables(struct address_space *mapping, pgoff_t pgoff)
  
-+/*
-+ * Flags which should result in page tables being copied on fork. These are
-+ * flags which indicate that the VMA maps page tables which cannot be
-+ * reconsistuted upon page fault, so necessitate page table copying upon
-+ *
-+ * VM_PFNMAP / VM_MIXEDMAP - These contain kernel-mapped data which cannot be
-+ *                           reasonably reconstructed on page fault.
-+ *
-+ *              VM_UFFD_WP - Encodes metadata about an installed uffd
-+ *                           write protect handler, which cannot be
-+ *                           reconstructed on page fault.
-+ *
-+ *                           We always copy pgtables when dst_vma has uffd-wp
-+ *                           enabled even if it's file-backed
-+ *                           (e.g. shmem). Because when uffd-wp is enabled,
-+ *                           pgtable contains uffd-wp protection information,
-+ *                           that's something we can't retrieve from page cache,
-+ *                           and skip copying will lose those info.
-+ *
-+ *          VM_MAYBE_GUARD - Could contain page guard region markers which
-+ *                           by design are a property of the page tables
-+ *                           only and thus cannot be reconstructed on page
-+ *                           fault.
-+ */
-+#define VM_COPY_ON_FORK (VM_PFNMAP | VM_MIXEDMAP | VM_UFFD_WP | VM_MAYBE_GUARD)
+ 		if (hpage_collapse_test_exit(mm))
+ 			continue;
+-		/*
+-		 * When a vma is registered with uffd-wp, we cannot recycle
+-		 * the page table because there may be pte markers installed.
+-		 * Other vmas can still have the same file mapped hugely, but
+-		 * skip this one: it will always be mapped in small page size
+-		 * for uffd-wp registered ranges.
+-		 */
+-		if (userfaultfd_wp(vma))
 +
- #define FIRST_USER_ADDRESS	0UL
- #define USER_PGTABLES_CEILING	0UL
++		if (!file_backed_vma_is_retractable(vma))
+ 			continue;
  
+ 		/* PTEs were notified when unmapped; but now for the PMD? */
+@@ -1777,15 +1800,15 @@ static void retract_page_tables(struct address_space *mapping, pgoff_t pgoff)
+ 			spin_lock_nested(ptl, SINGLE_DEPTH_NESTING);
+ 
+ 		/*
+-		 * Huge page lock is still held, so normally the page table
+-		 * must remain empty; and we have already skipped anon_vma
+-		 * and userfaultfd_wp() vmas.  But since the mmap_lock is not
+-		 * held, it is still possible for a racing userfaultfd_ioctl()
+-		 * to have inserted ptes or markers.  Now that we hold ptlock,
+-		 * repeating the anon_vma check protects from one category,
+-		 * and repeating the userfaultfd_wp() check from another.
++		 * Huge page lock is still held, so normally the page table must
++		 * remain empty; and we have already skipped anon_vma and
++		 * userfaultfd_wp() vmas.  But since the mmap_lock is not held,
++		 * it is still possible for a racing userfaultfd_ioctl() or
++		 * madvise() to have inserted ptes or markers.  Now that we hold
++		 * ptlock, repeating the retractable checks protects us from
++		 * races against the prior checks.
+ 		 */
+-		if (likely(!vma->anon_vma && !userfaultfd_wp(vma))) {
++		if (likely(file_backed_vma_is_retractable(vma))) {
+ 			pgt_pmd = pmdp_collapse_flush(vma, addr, pmd);
+ 			pmdp_get_lockless_sync();
+ 			success = true;
+diff --git a/mm/madvise.c b/mm/madvise.c
+index 0b3280752bfb..5dbe40be7c65 100644
+--- a/mm/madvise.c
++++ b/mm/madvise.c
+@@ -1141,15 +1141,21 @@ static long madvise_guard_install(struct madvise_behavior *madv_behavior)
+ 		return -EINVAL;
+ 
+ 	/*
+-	 * If we install guard markers, then the range is no longer
+-	 * empty from a page table perspective and therefore it's
+-	 * appropriate to have an anon_vma.
+-	 *
+-	 * This ensures that on fork, we copy page tables correctly.
++	 * Set atomically under read lock. All pertinent readers will need to
++	 * acquire an mmap/VMA write lock to read it. All remaining readers may
++	 * or may not see the flag set, but we don't care.
++	 */
++	vma_flag_set_atomic(vma, VM_MAYBE_GUARD_BIT);
++
++	/*
++	 * If anonymous and we are establishing page tables the VMA ought to
++	 * have an anon_vma associated with it.
+ 	 */
+-	err = anon_vma_prepare(vma);
+-	if (err)
+-		return err;
++	if (vma_is_anonymous(vma)) {
++		err = anon_vma_prepare(vma);
++		if (err)
++			return err;
++	}
+ 
+ 	/*
+ 	 * Optimistically try to install the guard marker pages first. If any
 -- 
 2.51.2
 
