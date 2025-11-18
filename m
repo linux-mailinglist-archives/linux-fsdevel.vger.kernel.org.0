@@ -1,132 +1,190 @@
-Return-Path: <linux-fsdevel+bounces-68956-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68957-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73E58C6A59E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 16:39:06 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 746F1C6A63A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 16:48:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by tor.lore.kernel.org (Postfix) with ESMTPS id 76C782C724
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 15:39:05 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 72DBC34E39C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 15:46:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE8BC2E2DF2;
-	Tue, 18 Nov 2025 15:38:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15AD621FF25;
+	Tue, 18 Nov 2025 15:46:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="HHqcw1gB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ct0PkeIs"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 572493148DD
-	for <linux-fsdevel@vger.kernel.org>; Tue, 18 Nov 2025 15:38:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 445FB34DB64;
+	Tue, 18 Nov 2025 15:46:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763480327; cv=none; b=uc8o3RkYy95SD55O3XI0T7cFSIJeaTKJVhMMyNotDjztBL46KtHBAb7sXfQKqKfRUPtZIvTlzTfqAZ6RP84Fr99FBgwoP3mqio7EM+pfB9GT52gzE6lQeDSAIk5xT3MojSE14/qNLVVKgZhQ+6r6t9HwQz7npqL5nqpDwx1I/y0=
+	t=1763480773; cv=none; b=T0/zecAvguTT+E35ZX8zwLTLGr6MnQCsPIZn91FZs1+u1TohUMTs+uq6iYTtH71BhTfqtzsGKCtd39QJ6rNe1hZ/ecWXlThCvBmyVjKZnJwXbOjgyz1AmsIVLybMsXuRymbWCH/cS1TNiH0GMP/BSO+VgEFLKsQq6anJMb4frEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763480327; c=relaxed/simple;
-	bh=hDOXd0eCTllGjlvphmdoQTkCI4o/v1tiBMI/JQFO+Oc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=jQnx8v9o+Aqr7Z9lniJZIZT8RUK/GK+FxN5B5wxwhV2wZUQwCxF9kHdo63E27vDWHejUtAePOaD55QhA3fd6/oZDBpt8FO/4B7xTB5XI6NRdBVYvb+uqv1tA2mW7WIsexnCpm9djKkZBkl6yuyw1/7C/70cyXsB0WYZ6A4hShHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=HHqcw1gB; arc=none smtp.client-ip=209.85.166.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-434a80e5463so7910655ab.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Nov 2025 07:38:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1763480324; x=1764085124; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Mop0BXbeVA7pz+P89+67JHjYtUjDwIbDaVAf0R8oLm4=;
-        b=HHqcw1gBBMRx4taAkSTWpBBwyTdVqwTxIuNPM3SZCvmXQNm+QHLFFhFoG6S2YvaQhC
-         tpqL1nwyku3/VU2gQHGX3mRtU+zhbxbwTDeyjf9jGRJw66WsL4OmjQgdLuZSTFe2+IEi
-         TGZwZXS2d2o/65TUSD69ruBySfEXfulRnaWnoSScu05lk/qAgl7/G7rsFsOnkdOrMxbb
-         W2ZAqZSSx9phKCptfna3YQCnco1+AK8BM/5FzEsRkXsrR88TtN2t6T9xOkt8UEdjmYns
-         yTTAbC9NLAdn7lCGuLiDVYNZhdNr6IcGYwtA/BmpC3FN0mnpo0x5RX5sKUsGdqxVKPnA
-         TW+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763480324; x=1764085124;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Mop0BXbeVA7pz+P89+67JHjYtUjDwIbDaVAf0R8oLm4=;
-        b=EBDOYl3CugKbgIlQWbDn4gltITydNXGQ4oS7wS6HIBcl9Ff2/gjIwK8+4U31sU/OPl
-         WCJKGI8ozdSUH6O1NB6nhIbbdzccj8mLSyo6e0JomZRswA1jCCTI6TzWiQ6Awj8zXYrR
-         qHnqlfYDFEM+fPzB0sVqyfykGTuAFui8ktFNDd9mrWEGxGNGlfqzl59V5c9rmB3M3SnG
-         Spdk6jotbINtK+pbQ72b0cj3aH828QRD0PeXWK1SiT8n36MJct34qI/Ltv78w7gGnkDd
-         5uQhoUgKs5fB94rGZu/zVUhmwnQ+HLDJqXMe03BEd4ZkkmW6hsDuu+K793X4xaQdFGWB
-         ZvTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXtY9lgAuWg1rJE/TiTvQ1Q93eQpILqdy5yQyJcBKdZ7YL8F0rbDRZgmoYdTjwsVF3zlT4Ap9YPEV14Q1ty@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4WrXMwjhdM/kDiYAO5gOl3+WSxAyIZ48e8qBFdGpx9H2ENqmI
-	I8oGxvMhAKUNxVaoG6EpTFfOiQwtzYknsOamIFMmvWOmiT9k49VPoaH5JP4RSeRzl5k=
-X-Gm-Gg: ASbGnctpdU3k6IZCQImCNBsDyFwr6voYrskXFcs7HVXGSJj0YYAWNRFD+tPii7vRdA3
-	QvBDzcDi6a4HIHzOs8wipu1pcZ6pofEddY6agnP/R+nUvVWHLvNrqGNoiuJBb1czg58sgRdUf1l
-	d5C/vnvjc7iF3hnAgN1MrRZVvjyl5F6n/j8TZHLD0l6a7PY9xsHbYwjWoJjhLd4koncxLDXrQEp
-	7P1xI+rmCyDCTGELHpRC2K4FYqXcdJuoCmYflfkdoisGuqWU+q8EYyLmOvLda+yJmt/g8tLXK0B
-	QyksiMSYyoF4Vk4txROggYueKTNDHG4w73XuT4E73i2wnnLn2PfA3bElbV+orbnCN4bVZYJdd7s
-	p3tEWPCAlDyBlb6CqOrmCmixD7vtzsx/HtTEhLx4MwudEiRT19uAcwceNlZj5DrDHj/wDEcf44i
-	PJiCJly2+c4paAxg==
-X-Google-Smtp-Source: AGHT+IG8+S4XnZehtbJh2wZVxg2hQEO6XU1apy+1d/G7wa7Jeq7lGc5uai8Q9QxowXUoeU7qPJOUrA==
-X-Received: by 2002:a05:6e02:1845:b0:434:70bd:8b47 with SMTP id e9e14a558f8ab-4348c8be2acmr204639365ab.11.1763480324489;
-        Tue, 18 Nov 2025 07:38:44 -0800 (PST)
-Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-434833e94f1sm83498515ab.10.2025.11.18.07.38.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Nov 2025 07:38:43 -0800 (PST)
-From: Jens Axboe <axboe@kernel.dk>
-To: linux-block@vger.kernel.org, Ming Lei <ming.lei@redhat.com>
-Cc: Mikulas Patocka <mpatocka@redhat.com>, 
- Zhaoyang Huang <zhaoyang.huang@unisoc.com>, 
- Dave Chinner <dchinner@redhat.com>, linux-fsdevel@vger.kernel.org, 
- Christoph Hellwig <hch@lst.de>
-In-Reply-To: <20251015110735.1361261-1-ming.lei@redhat.com>
-References: <20251015110735.1361261-1-ming.lei@redhat.com>
-Subject: Re: [PATCH V5 0/6] loop: improve loop aio perf by IOCB_NOWAIT
-Message-Id: <176348032339.300553.10948808566145680135.b4-ty@kernel.dk>
-Date: Tue, 18 Nov 2025 08:38:43 -0700
+	s=arc-20240116; t=1763480773; c=relaxed/simple;
+	bh=NvD+wD7hmOypGfZvut1BGQBiSML9gfkbHDd/jrJynOE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=V7V+XUXRhVnSrGv0LWwRgxLA1O7z1L2nKVPCmscngQ3oNqImQBTBUP5fpb6RBdEQp99Cp1OsSA0He4yV0kcylR8FurFIBmjn08lVU0s2W8CyLZgEGV/OwfGNhGcImUNNhB51g+LX9ZnvS/LvDrA73GbTVWMYPtXZJMH9i5bFL5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ct0PkeIs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BA31C2BCB3;
+	Tue, 18 Nov 2025 15:45:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763480771;
+	bh=NvD+wD7hmOypGfZvut1BGQBiSML9gfkbHDd/jrJynOE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=Ct0PkeIs59PlX7LBGwYra2RgxeAFbO3eu3CW387XaQ0vnkjlGKnXy1w+S0G/oOYtF
+	 3ZEbbLXi1D05J9bfC9Kp3vmdRxAT/lXrLySZHirFUBiRot+9TB2RrRq26O7Vyp+RfT
+	 gNP+w3+ra/xuIrI2I1+G366IiaCHP516oJrICW32YHHy2eRDL990BKAN74RCPNZofw
+	 fpDz1EdIYhN3k5zNwgWwtSRzGcmztFet9HWsWS4eqFTwcAMlf1L0X+iaqRkb9oxm/M
+	 p287zHialGlUvSLnD7038deHegCI7IXtkUuXEri/bq2MleKqO/m3O6QK9Fw7NLVrbR
+	 +OOcRa9wAkakg==
+From: Pratyush Yadav <pratyush@kernel.org>
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: pratyush@kernel.org,  jasonmiu@google.com,  graf@amazon.com,
+  rppt@kernel.org,  dmatlack@google.com,  rientjes@google.com,
+  corbet@lwn.net,  rdunlap@infradead.org,  ilpo.jarvinen@linux.intel.com,
+  kanie@linux.alibaba.com,  ojeda@kernel.org,  aliceryhl@google.com,
+  masahiroy@kernel.org,  akpm@linux-foundation.org,  tj@kernel.org,
+  yoann.congal@smile.fr,  mmaurer@google.com,  roman.gushchin@linux.dev,
+  chenridong@huawei.com,  axboe@kernel.dk,  mark.rutland@arm.com,
+  jannh@google.com,  vincent.guittot@linaro.org,  hannes@cmpxchg.org,
+  dan.j.williams@intel.com,  david@redhat.com,  joel.granados@kernel.org,
+  rostedt@goodmis.org,  anna.schumaker@oracle.com,  song@kernel.org,
+  linux@weissschuh.net,  linux-kernel@vger.kernel.org,
+  linux-doc@vger.kernel.org,  linux-mm@kvack.org,
+  gregkh@linuxfoundation.org,  tglx@linutronix.de,  mingo@redhat.com,
+  bp@alien8.de,  dave.hansen@linux.intel.com,  x86@kernel.org,
+  hpa@zytor.com,  rafael@kernel.org,  dakr@kernel.org,
+  bartosz.golaszewski@linaro.org,  cw00.choi@samsung.com,
+  myungjoo.ham@samsung.com,  yesanishhere@gmail.com,
+  Jonathan.Cameron@huawei.com,  quic_zijuhu@quicinc.com,
+  aleksander.lobakin@intel.com,  ira.weiny@intel.com,
+  andriy.shevchenko@linux.intel.com,  leon@kernel.org,  lukas@wunner.de,
+  bhelgaas@google.com,  wagi@kernel.org,  djeffery@redhat.com,
+  stuart.w.hayes@gmail.com,  lennart@poettering.net,  brauner@kernel.org,
+  linux-api@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
+  saeedm@nvidia.com,  ajayachandra@nvidia.com,  jgg@nvidia.com,
+  parav@nvidia.com,  leonro@nvidia.com,  witu@nvidia.com,
+  hughd@google.com,  skhawaja@google.com,  chrisl@kernel.org
+Subject: Re: [PATCH v6 01/20] liveupdate: luo_core: luo_ioctl: Live Update
+ Orchestrator
+In-Reply-To: <20251115233409.768044-2-pasha.tatashin@soleen.com> (Pasha
+	Tatashin's message of "Sat, 15 Nov 2025 18:33:47 -0500")
+References: <20251115233409.768044-1-pasha.tatashin@soleen.com>
+	<20251115233409.768044-2-pasha.tatashin@soleen.com>
+Date: Tue, 18 Nov 2025 16:45:57 +0100
+Message-ID: <mafs0ecpv4a4q.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3
+Content-Type: text/plain
 
+On Sat, Nov 15 2025, Pasha Tatashin wrote:
 
-On Wed, 15 Oct 2025 19:07:25 +0800, Ming Lei wrote:
-> This patchset improves loop aio perf by using IOCB_NOWAIT for avoiding to queue aio
-> command to workqueue context, meantime refactor lo_rw_aio() a bit.
-> 
-> In my test VM, loop disk perf becomes very close to perf of the backing block
-> device(nvme/mq virtio-scsi).
-> 
-> And Mikulas verified that this way can improve 12jobs sequential readwrite io by
-> ~5X, and basically solve the reported problem together with loop MQ change.
-> 
-> [...]
+> Introduce LUO, a mechanism intended to facilitate kernel updates while
+> keeping designated devices operational across the transition (e.g., via
+> kexec). The primary use case is updating hypervisors with minimal
+> disruption to running virtual machines. For userspace side of hypervisor
+> update we have copyless migration. LUO is for updating the kernel.
+>
+> This initial patch lays the groundwork for the LUO subsystem.
+>
+> Further functionality, including the implementation of state transition
+> logic, integration with KHO, and hooks for subsystems and file
+> descriptors, will be added in subsequent patches.
+>
+> Create a character device at /dev/liveupdate.
+>
+> A new uAPI header, <uapi/linux/liveupdate.h>, will define the necessary
+> structures. The magic number for IOCTL is registered in
+> Documentation/userspace-api/ioctl/ioctl-number.rst.
+>
+> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+[...]
+> diff --git a/kernel/liveupdate/luo_core.c b/kernel/liveupdate/luo_core.c
+> new file mode 100644
+> index 000000000000..0e1ab19fa1cd
+> --- /dev/null
+> +++ b/kernel/liveupdate/luo_core.c
+> @@ -0,0 +1,86 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +/*
+> + * Copyright (c) 2025, Google LLC.
+> + * Pasha Tatashin <pasha.tatashin@soleen.com>
+> + */
+> +
+> +/**
+> + * DOC: Live Update Orchestrator (LUO)
+> + *
+> + * Live Update is a specialized, kexec-based reboot process that allows a
+> + * running kernel to be updated from one version to another while preserving
+> + * the state of selected resources and keeping designated hardware devices
+> + * operational. For these devices, DMA activity may continue throughout the
+> + * kernel transition.
+> + *
+> + * While the primary use case driving this work is supporting live updates of
+> + * the Linux kernel when it is used as a hypervisor in cloud environments, the
+> + * LUO framework itself is designed to be workload-agnostic. Much like Kernel
+> + * Live Patching, which applies security fixes regardless of the workload,
+> + * Live Update facilitates a full kernel version upgrade for any type of system.
 
-Applied, thanks!
+Nit: I think live update is very different from live patching. It has
+very different limitations and advantages. In fact, I view live patching
+and live update on two opposite ends of the "applying security patches"
+spectrum. I think this line is going to mislead or confuse people.
 
-[1/6] loop: add helper lo_cmd_nr_bvec()
-      commit: c3e6c11147f6f05c15e9c2d74f5d234a6661013c
-[2/6] loop: add helper lo_rw_aio_prep()
-      commit: fd858d1ca9694c88703a8a936d5c7596c86ada74
-[3/6] loop: add lo_submit_rw_aio()
-      commit: c66e9708f92760147a1ea7f66c7b60ec801f85e3
-[4/6] loop: move command blkcg/memcg initialization into loop_queue_work
-      commit: f4788ae9d7bc01735cb6ada333b038c2e3fff260
-[5/6] loop: try to handle loop aio command via NOWAIT IO first
-      commit: 0ba93a906dda7ede9e7669adefe005ee18f3ff42
-[6/6] loop: add hint for handling aio via IOCB_NOWAIT
-      commit: 837ed303964673cf0c7e6a4624cd68d8cf254827
+I think it would better to either spend more lines explaining the
+difference between the two, or just drop it from here.
 
-Best regards,
+> + *
+> + * For example, a non-hypervisor system running an in-memory cache like
+> + * memcached with many gigabytes of data can use LUO. The userspace service
+> + * can place its cache into a memfd, have its state preserved by LUO, and
+> + * restore it immediately after the kernel kexec.
+> + *
+> + * Whether the system is running virtual machines, containers, a
+> + * high-performance database, or networking services, LUO's primary goal is to
+> + * enable a full kernel update by preserving critical userspace state and
+> + * keeping essential devices operational.
+> + *
+> + * The core of LUO is a mechanism that tracks the progress of a live update,
+> + * along with a callback API that allows other kernel subsystems to participate
+> + * in the process. Example subsystems that can hook into LUO include: kvm,
+> + * iommu, interrupts, vfio, participating filesystems, and memory management.
+> + *
+> + * LUO uses Kexec Handover to transfer memory state from the current kernel to
+> + * the next kernel. For more details see
+> + * Documentation/core-api/kho/concepts.rst.
+> + */
+> +
+[...]
+> diff --git a/kernel/liveupdate/luo_ioctl.c b/kernel/liveupdate/luo_ioctl.c
+> new file mode 100644
+> index 000000000000..44d365185f7c
+> --- /dev/null
+> +++ b/kernel/liveupdate/luo_ioctl.c
+[...]
+> +MODULE_LICENSE("GPL");
+> +MODULE_AUTHOR("Pasha Tatashin");
+> +MODULE_DESCRIPTION("Live Update Orchestrator");
+> +MODULE_VERSION("0.1");
+
+Nit: do we really need the module version? I don't think LUO can even be
+used as a module. What does this number mean then?
+
+Other than these two nitpicks,
+
+Reviewed-by: Pratyush Yadav <pratyush@kernel.org>
+
 -- 
-Jens Axboe
-
-
-
+Regards,
+Pratyush Yadav
 
