@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-68838-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68830-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44F86C67669
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 06:19:15 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3221BC67712
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 06:21:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by tor.lore.kernel.org (Postfix) with ESMTPS id AACFB2A1F5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 05:18:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 521ED4F0754
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 05:18:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FBA12E1730;
-	Tue, 18 Nov 2025 05:16:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DA012D8779;
+	Tue, 18 Nov 2025 05:16:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="drr6P6/I"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Vl/3NOTL"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16A6128F50F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11D7528A704;
 	Tue, 18 Nov 2025 05:16:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763442976; cv=none; b=p4xObV6bp8vKV6QFXJRl8n9/r12CsC+64QdTZMd8zaLgOKAKQDeA14+/loQw6uiJ0qYn2Dk/8eIXkZgV62vlhIp0kc7rWUu9Ykp2O8tRT9weop85ri4oRL6ziNz6npXh5CVDsOCj0aprIjANcAbg48IsxgR/RxTNmsY9UAseUI8=
+	t=1763442975; cv=none; b=qH5OoL8QH/3Wv/x9xysvHT80Qga4AHYhSf+vm6x09Ytv174hwPcFlP4X/NnfNhnLvMApeDw0CCp818iDM2e8PzcLBbdXo2MfQWWivCVxkR7f4FlU8MpUj8TRtq3fUYUms8DWl7gIuaXO6GP9IHQQ6NVeAgkEjJUGRjwxDvQLuxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763442976; c=relaxed/simple;
-	bh=zwvv7t8MBgANRD5S0+TL/wuEbc9ZMEz6rxvOZJPG75Y=;
+	s=arc-20240116; t=1763442975; c=relaxed/simple;
+	bh=uIkWhT5lBZMbGKboTZYEGGJGOnQwh5txmBIVng9mTCc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cRiCjMjxrfW6omBC3xtt57ywl1f49NtzeFE15eWJgwTDIMyGtnL9bK3Ss8NFeGHFBhvv4KtjuyYWI2fanNDCkcSDV1fahiV/wDozmZwiUdscBVM2eKtdqApOce/lzZ6J7qFsl/gaYe3maOCWlPE3PrNWi5+G6uj449bTbYYpTtU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=drr6P6/I; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=OuPvc6HF4GkY/3ExnnODNBPg35tVf253YXXWzxJFnlRYY5zLOTD3E0ForG8QV20XX32QK8f6lLHBAcMJ5USWf5DHcDKW+Hn6pKiCF1BF1yMrpzk7zPzQXh/aXiLLXjEj8iYl3+jDVaBG6Y60WCvs2lRhIQ8+R7dqFG9KyhkTP2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=Vl/3NOTL; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=WKINhvrphJyrNwMIsOfgnLwqrkhKPlvlu+weyrXrIrI=; b=drr6P6/ImDwO/t9/k7B747NbnQ
-	2NNpVUCzrwlO4WPEqnMN1C5vUIu1JwP9bNUnldZd1a71TrolnehTHK9+jrp+oJNDVuCG4no5+7mwx
-	+2osw5kE94CsjuVBAWO/KVsNQMqX+0RkuAh9I+5WH/8RdScDn9eVGgjDbWi0KV0NFh+QSOtbjg1ot
-	olAWidgyu9oIdnGKdczwLgH5GpCcSpeNk4qBmUz/FxLORprEREsuLf/Tzp0Zp6U7NQ/cZ3CCtsRSm
-	tbogeVwJBiD5TavPaIvgYzIJTas34LzcQNI4b3uIuie0hDfXaD5198X10oVYWQqVgMoWZb3/MMyN9
-	nHpHfRjg==;
+	bh=nXGw1nJCnekakkZR178NLSh8+iviODtKUClSm5rridQ=; b=Vl/3NOTLarYBwB87GqxphHKkQI
+	7nr+xrUdOHGzbQvNgPwTh/+ZuDIklH3LjYUAJTNerzga8Stv121nDnS3dDUlEWMDcLUPP0vdvR7CY
+	bwy1nf84MahGcCd/mXVTinqlKGe/gh3FEFU4G0XTQY2caZj4q/ktudPogUMWC6fe4UAt6FUnBzwDI
+	wlEBeCbvC+oK7xQDjQ7Gp/b5U1/DIQzgr2komhocDqrOpYndVRm6Prd84cwdTe/IF2ZycbvfTJfwh
+	/cdvCBu8/rsMTkT9oC8Hh15d+60epPGvbHco9HjSlcLntpJEtmjdXQst25vMXn5ZTu5l4vga99Rih
+	xpFUYzEg==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vLE4U-0000000GEQb-0vTT;
+	id 1vLE4U-0000000GEQg-1EYJ;
 	Tue, 18 Nov 2025 05:16:06 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
@@ -68,9 +68,9 @@ Cc: torvalds@linux-foundation.org,
 	borntraeger@linux.ibm.com,
 	bpf@vger.kernel.org,
 	clm@meta.com
-Subject: [PATCH v4 10/54] configfs, securityfs: kill_litter_super() not needed
-Date: Tue, 18 Nov 2025 05:15:19 +0000
-Message-ID: <20251118051604.3868588-11-viro@zeniv.linux.org.uk>
+Subject: [PATCH v4 11/54] convert xenfs
+Date: Tue, 18 Nov 2025 05:15:20 +0000
+Message-ID: <20251118051604.3868588-12-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20251118051604.3868588-1-viro@zeniv.linux.org.uk>
 References: <20251118051604.3868588-1-viro@zeniv.linux.org.uk>
@@ -83,50 +83,27 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-These are guaranteed to be empty by the time they are shut down;
-both are single-instance and there is an internal mount maintained
-for as long as there is any contents.
+entirely static tree, populated by simple_fill_super().  Can switch
+to kill_anon_super() without any other changes.
 
-Both have that internal mount pinned by every object in root.
-
-In other words, kill_litter_super() boils down to kill_anon_super()
-for those.
-
-Reviewed-by: Joel Becker <jlbec@evilplan.org>
-Acked-by: Paul Moore <paul@paul-moore> (LSM)
-Acked-by: Andreas Hindborg <a.hindborg@kernel.org> (configfs)
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/configfs/mount.c | 2 +-
- security/inode.c    | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/xen/xenfs/super.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/configfs/mount.c b/fs/configfs/mount.c
-index 456c4a2efb53..4929f3431189 100644
---- a/fs/configfs/mount.c
-+++ b/fs/configfs/mount.c
-@@ -116,7 +116,7 @@ static struct file_system_type configfs_fs_type = {
- 	.owner		= THIS_MODULE,
- 	.name		= "configfs",
- 	.init_fs_context = configfs_init_fs_context,
--	.kill_sb	= kill_litter_super,
-+	.kill_sb	= kill_anon_super,
- };
- MODULE_ALIAS_FS("configfs");
- 
-diff --git a/security/inode.c b/security/inode.c
-index 43382ef8896e..bf7b5e2e6955 100644
---- a/security/inode.c
-+++ b/security/inode.c
-@@ -70,7 +70,7 @@ static struct file_system_type fs_type = {
+diff --git a/drivers/xen/xenfs/super.c b/drivers/xen/xenfs/super.c
+index d7d64235010d..37ea7c5c0346 100644
+--- a/drivers/xen/xenfs/super.c
++++ b/drivers/xen/xenfs/super.c
+@@ -88,7 +88,7 @@ static struct file_system_type xenfs_type = {
  	.owner =	THIS_MODULE,
- 	.name =		"securityfs",
- 	.init_fs_context = securityfs_init_fs_context,
+ 	.name =		"xenfs",
+ 	.init_fs_context = xenfs_init_fs_context,
 -	.kill_sb =	kill_litter_super,
 +	.kill_sb =	kill_anon_super,
  };
+ MODULE_ALIAS_FS("xenfs");
  
- /**
 -- 
 2.47.3
 
