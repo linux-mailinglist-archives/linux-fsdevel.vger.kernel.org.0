@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-68973-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68974-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68337C6A704
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 16:56:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7692CC6A70E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 16:56:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A363C3626DB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 15:51:00 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 43F423630DA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 15:51:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F3F436999D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB74236998E;
 	Tue, 18 Nov 2025 15:50:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="saVDCpLg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mwCfkqu0"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D1693002B9
-	for <linux-fsdevel@vger.kernel.org>; Tue, 18 Nov 2025 15:50:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12BC9369990
+	for <linux-fsdevel@vger.kernel.org>; Tue, 18 Nov 2025 15:50:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763481007; cv=none; b=mJyh3hHFEmtZvfKKyWsvw/a/xwjBLJGMn+O+slaeEzAc661hVKUqqaxauGU5u4Yg6jP4MvEjQBwWgPg3MZTdUCS6u+uCx/j7lLeqWL/bpvOd7uGo0PJdnBFwaXWoObOUjmcskRRkKldrF5yZcFQsmQcP6RhE33hmRRINZncEs1Y=
+	t=1763481008; cv=none; b=P3HsqvyI2iA/y5kkQSbyZBl1duR95AxMVcxLxJa/OlY0QBWvrw/6/TR7hydxgA3Oep+ZAENS3tWKMF6le9Bih9p8BtA40rqFY4BlzF0900RoOIMNh0LxNaZPOTJr2MZ81fWkRr2Vck98FpgCFjo9RTREZGtVInrEtigTOlCiI3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763481007; c=relaxed/simple;
-	bh=6SvvODGgVYpym1A0YSQ5AKcKJgakkNCty92YHK2ZaPk=;
+	s=arc-20240116; t=1763481008; c=relaxed/simple;
+	bh=YEqrx8szKXwPFtnAIVa7V3oMoLR+Hbrueaiqf5h9KQM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=bZlpwigpf+aOj6/3sCTxr4heZtLB8wkvRvXxsrXb0zfh/8gnaKTjpH3rrzLMOHXbeyEulm1Hlv6nc6v+gnHXtnbw0qgO/aSKKghpmzb5jKgyQL/fk5xVFNe/C+Zh6LTB8R7iKej3iFM1LIO2RUMNiiQLcRt1bdQybhcmKBe7ba8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=saVDCpLg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C03BC4AF13;
-	Tue, 18 Nov 2025 15:50:04 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=PyLZLlOWkVP6LywXnyoaxMcCYaiEAHv3QoYluwH1wymklS3vnHpFXpSvNRbn6G6PjVlGr+/rWA6anPt3SWHMx1Om2G6flRznRzEZO//L85/UK4Zlue2YrwGr46mNcJYpSdLycBNyh2ytY2vAWFvIRwileB0XjVB4FF0Lf9pfF7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mwCfkqu0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E4C2C19424;
+	Tue, 18 Nov 2025 15:50:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763481005;
-	bh=6SvvODGgVYpym1A0YSQ5AKcKJgakkNCty92YHK2ZaPk=;
+	s=k20201202; t=1763481007;
+	bh=YEqrx8szKXwPFtnAIVa7V3oMoLR+Hbrueaiqf5h9KQM=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=saVDCpLg8KgVRKx36sSsB9eBoJF3eKXYkfqG2HuO7GHdVGymU9ST4735kU9r+NYwP
-	 vRNfrWK+sgdjdSBtBke0hB3YROQX7Mn4JsyfnIPjO5Bse6kfiSMuKWm+3o0WwboJSE
-	 E1vwYMYMhcIBtGu8RVhqHHFqzzp4j2kfg8vORhZ4/sZwi1SdciGPGQ6GWH8n3X4nat
-	 MUspcROFfiAzfVjR3pFWGCxSBEg5I5CiQtE/ELaTLLG8VEAsDk4SxN+rQnrccbr5Wr
-	 Ld7rcCMUsFxnhYJ97esdFCP4Q3q6ThA9OlNKbmNA5ZqM7EE0qUM/LdR7iwHiPvdciB
-	 LOGoZ59opGUvg==
+	b=mwCfkqu0zJAUKTDFsyOrtNJdmuffAmcanEWJTjC0BGr/ITsTZz/WJr/ACSHa6yOag
+	 bhNKc7EBe7V8S/UUr//9HJe/ecybfPq6JrDBACpm2JvmRxBQai3hYQrGnpht9RC2Ic
+	 Dbsok4gyN4CQkSNFY5QcVWkux7l1oMPEgaKFWLf0oRDA6654e9hftvqQCHz3qLeGOk
+	 ouRrMTFDtlmrK/XQN83Ia9Qo7aNtgOAE2r4NgKRm5TP6qlketHjKKJ3e4gJBDHqzsm
+	 n0i9+whyw+BN8JB6WjYTwwQrbt0hOUbPDBBBk/J+RhBIt3N0ilLtyBlaO73nvHp05p
+	 3UMrFsV9e4ZYQ==
 From: Christian Brauner <brauner@kernel.org>
-Date: Tue, 18 Nov 2025 16:48:54 +0100
-Subject: [PATCH DRAFT RFC UNTESTED 14/18] fs: signalfd64
+Date: Tue, 18 Nov 2025 16:48:55 +0100
+Subject: [PATCH DRAFT RFC UNTESTED 15/18] fs: timerfd
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,19 +52,19 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251118-work-fd-prepare-v1-14-c20504d97375@kernel.org>
+Message-Id: <20251118-work-fd-prepare-v1-15-c20504d97375@kernel.org>
 References: <20251118-work-fd-prepare-v1-0-c20504d97375@kernel.org>
 In-Reply-To: <20251118-work-fd-prepare-v1-0-c20504d97375@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
  linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-a6db3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1825; i=brauner@kernel.org;
- h=from:subject:message-id; bh=6SvvODGgVYpym1A0YSQ5AKcKJgakkNCty92YHK2ZaPk=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWTKTO2/ZiNyR1vuUNYxm8M3KlsXve83jIy0nmT2jUPrY
- FKDX/TWjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIk0+jMyfH/xcqEj69M/ucXs
- OVaz8zx3BCpw3lSbfrBprmOUbpOWIiPD/zbHrD1nt+tNlLiqed9MobDhw17n7KUXEngO7z1Ss3U
- zNwA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1600; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=YEqrx8szKXwPFtnAIVa7V3oMoLR+Hbrueaiqf5h9KQM=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWTKTO0P5ndZ287w7re193GTXLNDN57PLal5WvpBL9CA7
+ 23ZntdTOkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACZycAPDP4uTt2viprnyfGG3
+ OdG553ZOlOKlVxk2N7YaLH72Ver5xnsM/9S65x+/ft2H6fjvyUtdPMUv8kaapOcKW+xtsNGzfeN
+ /mRkA
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
@@ -72,64 +72,56 @@ Placeholder commit message.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- fs/signalfd.c | 28 +++++++++++-----------------
- 1 file changed, 11 insertions(+), 17 deletions(-)
+ fs/timerfd.c | 28 +++++++++-------------------
+ 1 file changed, 9 insertions(+), 19 deletions(-)
 
-diff --git a/fs/signalfd.c b/fs/signalfd.c
-index d469782f97f4..45ba6000e9a9 100644
---- a/fs/signalfd.c
-+++ b/fs/signalfd.c
-@@ -250,8 +250,6 @@ static const struct file_operations signalfd_fops = {
+diff --git a/fs/timerfd.c b/fs/timerfd.c
+index c68f28d9c426..acaad0a086b1 100644
+--- a/fs/timerfd.c
++++ b/fs/timerfd.c
+@@ -393,9 +393,7 @@ static const struct file_operations timerfd_fops = {
  
- static int do_signalfd4(int ufd, sigset_t *mask, int flags)
+ SYSCALL_DEFINE2(timerfd_create, int, clockid, int, flags)
  {
--	struct signalfd_ctx *ctx;
+-	int ufd;
+-	struct timerfd_ctx *ctx;
+-	struct file *file;
++	struct timerfd_ctx *ctx __free(kfree) = NULL;
+ 
+ 	/* Check the TFD_* constants for consistency.  */
+ 	BUILD_BUG_ON(TFD_CLOEXEC != O_CLOEXEC);
+@@ -432,23 +430,15 @@ SYSCALL_DEFINE2(timerfd_create, int, clockid, int, flags)
+ 
+ 	ctx->moffs = ktime_mono_to_real(0);
+ 
+-	ufd = get_unused_fd_flags(flags & TFD_SHARED_FCNTL_FLAGS);
+-	if (ufd < 0) {
+-		kfree(ctx);
+-		return ufd;
+-	}
 -
- 	/* Check the SFD_* constants for consistency.  */
- 	BUILD_BUG_ON(SFD_CLOEXEC != O_CLOEXEC);
- 	BUILD_BUG_ON(SFD_NONBLOCK != O_NONBLOCK);
-@@ -263,7 +261,7 @@ static int do_signalfd4(int ufd, sigset_t *mask, int flags)
- 	signotset(mask);
+-	file = anon_inode_getfile_fmode("[timerfd]", &timerfd_fops, ctx,
+-			    O_RDWR | (flags & TFD_SHARED_FCNTL_FLAGS),
+-			    FMODE_NOWAIT);
+-	if (IS_ERR(file)) {
+-		put_unused_fd(ufd);
+-		kfree(ctx);
+-		return PTR_ERR(file);
+-	}
++	FD_PREPARE(fdprep, flags & TFD_SHARED_FCNTL_FLAGS,
++		   anon_inode_getfile_fmode("[timerfd]", &timerfd_fops, ctx,
++					    O_RDWR | (flags & TFD_SHARED_FCNTL_FLAGS),
++					    FMODE_NOWAIT));
++	if (fd_prepare_failed(fdprep))
++		return fd_prepare_error(fdprep);
  
- 	if (ufd == -1) {
--		struct file *file;
-+		struct signalfd_ctx *ctx __free(kfree) = NULL;
+-	fd_install(ufd, file);
+-	return ufd;
++	retain_and_null_ptr(ctx);
++	return fd_publish(fdprep);
+ }
  
- 		ctx = kmalloc(sizeof(*ctx), GFP_KERNEL);
- 		if (!ctx)
-@@ -271,22 +269,18 @@ static int do_signalfd4(int ufd, sigset_t *mask, int flags)
- 
- 		ctx->sigmask = *mask;
- 
--		ufd = get_unused_fd_flags(flags & O_CLOEXEC);
--		if (ufd < 0) {
--			kfree(ctx);
--			return ufd;
--		}
-+		FD_PREPARE(fdprep, flags & O_CLOEXEC,
-+			   anon_inode_getfile_fmode("[signalfd]", &signalfd_fops, ctx,
-+						    O_RDWR | (flags & O_NONBLOCK),
-+				   		    FMODE_NOWAIT));
-+		if (fd_prepare_failed(fdprep))
-+			return fd_prepare_error(fdprep);
- 
--		file = anon_inode_getfile_fmode("[signalfd]", &signalfd_fops,
--					ctx, O_RDWR | (flags & O_NONBLOCK),
--					FMODE_NOWAIT);
--		if (IS_ERR(file)) {
--			put_unused_fd(ufd);
--			kfree(ctx);
--			return PTR_ERR(file);
--		}
--		fd_install(ufd, file);
-+		retain_and_null_ptr(ctx);
-+		return fd_publish(fdprep);
- 	} else {
-+		struct signalfd_ctx *ctx;
-+
- 		CLASS(fd, f)(ufd);
- 		if (fd_empty(f))
- 			return -EBADF;
+ static int do_timerfd_settime(int ufd, int flags, 
 
 -- 
 2.47.3
