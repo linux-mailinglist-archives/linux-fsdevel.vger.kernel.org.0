@@ -1,47 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-68937-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68938-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63035C690BE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 12:22:30 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B7ACC69127
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 12:29:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by tor.lore.kernel.org (Postfix) with ESMTPS id 6540B2AF33
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 11:22:29 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 5C175350684
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 11:29:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F8392BE644;
-	Tue, 18 Nov 2025 11:22:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B46B3546E1;
+	Tue, 18 Nov 2025 11:28:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PiVE8uzM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GQLu+9rZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62F1B345CD0;
-	Tue, 18 Nov 2025 11:22:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69185350A15;
+	Tue, 18 Nov 2025 11:28:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763464921; cv=none; b=nYcdWVAOKvwz1SHNsLDc+rqAAuCjdlLXaRMm/+YrKLrRlkDobHxcBUnHin9JZFbmJ9mujr7bXEoBNrFUr2/M7Pk7YqaWmZl/hZlOONDT/nZ8SAqrUnNkjgOakJNqgAJsK7/8EuvJz0fdMyLv8ELEEN2s8rFDCgIb3t0k2BBX4Ho=
+	t=1763465307; cv=none; b=RBZMvy9JeT0J9nYJgSLhRDEZ90oIez6ruSW+8Fqu9YIbwA4I2jyIE0/drE8ZdBBj4n3s/cUSpwwgAVaFjfGaUovA81JeLxMMngNbbLxPSuxjsl9pyEEOb/m2iHVLVykImT2iUqEBBEGNufajWm6jQg4hKgi012Wjbz3J4Lni+Ao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763464921; c=relaxed/simple;
-	bh=OSqrTzVKPfEphWSOWozqjN2DP6jQ1KyGCt3LKIzrAwA=;
+	s=arc-20240116; t=1763465307; c=relaxed/simple;
+	bh=B3Ck+ZeJMAqa97fGHBodXk952kfsyzlVaAaz1fhsUjU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nKuflkr3uMeHWXmjsjte6c11WP/XEWppW4d9JkGKJReZquBjrwc9eFAARyu5XxKif2/YPP3uaIGfTShJf+TJ4m/9ffMjhQd/IK57XLsqzNmyDuOt4aDTrUjVCM6baXAOnDW07O3OAuM1mzptn7W4O/k3/aRNc4Yd9oGmQIaZwIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PiVE8uzM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD7B3C19423;
-	Tue, 18 Nov 2025 11:21:38 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=t8m4eQLQkVpwIcLgeqvfIUpWzJa+XJdEHnd6Ma5+966zU37kFXc3MpY+gBYzh/tA+Pwc+VvHffTY5c/Qa9fQO8z7Oq8tq1k1WG/u1k+PvNoTTvuYf4s3FiajWp3Nd14b1vNLf+BRAd8t7DYbAlAMgSpscyqLwNecIe8np4cjAUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GQLu+9rZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFA73C2BCB2;
+	Tue, 18 Nov 2025 11:28:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763464920;
-	bh=OSqrTzVKPfEphWSOWozqjN2DP6jQ1KyGCt3LKIzrAwA=;
+	s=k20201202; t=1763465306;
+	bh=B3Ck+ZeJMAqa97fGHBodXk952kfsyzlVaAaz1fhsUjU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PiVE8uzMlUpbGMOt63k6vT8hw2abfpbdQAia0dP8s95gP0HGX5fqQBVw6T71VApzj
-	 KxmYgAGG71dqGOdUg4HjnG6IuQfg5PpRaH9zD70xx5QpJ7SyM66AJNLOx41zAmQA76
-	 Se7qyl+Bj42AlkZ9gFU1Kz+G0qbs1PPVvgf6TZpliCSjdo57yFzup0baGiLn44pKgD
-	 ovt78WFggNj7PnxWuPJy7GVjcsYBZ9hWBPefxqqiLlACZYHUOKyU51ZYZ1hV8/c5am
-	 LqW7CgaFMV4iZ3wVEipl+0eGPKrwlgcDDl07AGZJpMGkGhJL2ogQFrtaNtLOsITVkS
-	 VYdo9nZgRP7GA==
-Date: Tue, 18 Nov 2025 13:21:34 +0200
+	b=GQLu+9rZRRAXOUo92WAJWcJwMQwCECdt5VEQNNd+yp5MfU6CT/SCqQGSMA1LzumqT
+	 NfCkJGz3WVbw4jmetvEnNdBIZtFyXHwH0Uv1STbCTH3FpF6egZEea/8IThMQV2AnE7
+	 Xva49r63Ie+VmHsEwIVC3bWqvEFIsND9oBQ2SEDO0+Ttol+YON6Nqe0C0GMP8C0p/x
+	 nFs3/rjxgKCHsFSL3CWTeJs90Qo4ldWBUDxa8ow5mCspZWSwIXVih7aEib8XXJ+3jN
+	 3u9YDrfXHY0BGetjelUPwh1a9YTF4bmTsULA+0awTrM4pf/hzkdGxtAY8qVHPr80PG
+	 yj/Y/ua4PKjzw==
+Date: Tue, 18 Nov 2025 13:28:00 +0200
 From: Mike Rapoport <rppt@kernel.org>
 To: Pasha Tatashin <pasha.tatashin@soleen.com>
 Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com,
@@ -71,16 +71,13 @@ Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com,
 	ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com,
 	leonro@nvidia.com, witu@nvidia.com, hughd@google.com,
 	skhawaja@google.com, chrisl@kernel.org
-Subject: Re: [PATCH v6 02/20] liveupdate: luo_core: integrate with KHO
-Message-ID: <aRxWvsdv1dQz8oZ4@kernel.org>
+Subject: Re: [PATCH v6 08/20] liveupdate: luo_flb: Introduce
+ File-Lifecycle-Bound global state
+Message-ID: <aRxYQKrQeP8BzR_2@kernel.org>
 References: <20251115233409.768044-1-pasha.tatashin@soleen.com>
- <20251115233409.768044-3-pasha.tatashin@soleen.com>
- <aRnG8wDSSAtkEI_z@kernel.org>
- <CA+CK2bDu2FdzyotSwBpGwQtiisv=3f6gC7DzOpebPCxmmpwMYw@mail.gmail.com>
- <aRoi-Pb8jnjaZp0X@kernel.org>
- <CA+CK2bBEs2nr0TmsaV18S-xJTULkobYgv0sU9=RCdReiS0CbPQ@mail.gmail.com>
- <aRuODFfqP-qsxa-j@kernel.org>
- <CA+CK2bAEdNE0Rs1i7GdHz8Q3DK9Npozm8sRL8Epa+o50NOMY7A@mail.gmail.com>
+ <20251115233409.768044-9-pasha.tatashin@soleen.com>
+ <aRrtRfJaaIHw5DZN@kernel.org>
+ <CA+CK2bBxVNRkJ-8Qv1AzfHEwpxnc4fSxdzKCL_7ku0TMd6Rjow@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -89,32 +86,31 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CA+CK2bAEdNE0Rs1i7GdHz8Q3DK9Npozm8sRL8Epa+o50NOMY7A@mail.gmail.com>
+In-Reply-To: <CA+CK2bBxVNRkJ-8Qv1AzfHEwpxnc4fSxdzKCL_7ku0TMd6Rjow@mail.gmail.com>
 
-On Mon, Nov 17, 2025 at 11:22:54PM -0500, Pasha Tatashin wrote:
-> > You can avoid that complexity if you register the device with a different
-> > fops, but that's technicality.
+On Mon, Nov 17, 2025 at 10:54:29PM -0500, Pasha Tatashin wrote:
 > >
-> > Your point about treating the incoming FDT as an underlying resource that
-> > failed to initialize makes sense, but nevertheless userspace needs a
-> > reliable way to detect it and parsing dmesg is not something we should rely
-> > on.
+> > The concept makes sense to me, but it's hard to review the implementation
+> > without an actual user.
 > 
-> I see two solutions:
-> 
-> 1. LUO fails to retrieve the preserved data, the user gets informed by
-> not finding /dev/liveupdate, and studying the dmesg for what has
-> happened (in reality in fleets version mismatches should not be
-> happening, those should be detected in quals).
-> 2. Create a zombie device to return some errno on open, and still
-> study dmesg to understand what really happened.
-
-User should not study dmesg. We need another solution.
-What's wrong with e.g. ioctl()?
+> There are three users: we will have HugeTLB support that is going to
+> be posted as RFC in a few weeks. Also, in two weeks we are going to
+> have an updated VFIO and IOMMU series posted both using FLBs. In the
+> mean time, this series provides an FLB in-kernel test that verifies
+> that multiple FLBs can be attached to File-Handlers, and the basic
+> interfaces are working.
  
-> I think that 1 is better
-> 
-> Pasha
+Which means that essentially there won't be a real kernel user for FLB for
+a while.
+We usually don't merge dead code because some future patchset depends on
+it.
+
+I think it should stay in mm-nonmm-unstable if Andrew does not mind keeping
+it there until the first user is going to land and then FLB will move
+upstream along with that user.
+
+If keeping FLB in mm tree is an issue we can set up an integration tree for
+LUO/KHO.
 
 -- 
 Sincerely yours,
