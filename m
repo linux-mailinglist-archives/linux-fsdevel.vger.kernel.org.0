@@ -1,167 +1,185 @@
-Return-Path: <linux-fsdevel+bounces-68977-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68978-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98716C6A722
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 16:57:02 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7069C6A7A9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 17:03:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4F77F4F0E6D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 15:51:30 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1F88B35C788
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 15:58:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EC6C36A029;
-	Tue, 18 Nov 2025 15:50:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CF2C365A05;
+	Tue, 18 Nov 2025 15:57:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VjB0fTH4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vPtsI8po"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB7E936657A
-	for <linux-fsdevel@vger.kernel.org>; Tue, 18 Nov 2025 15:50:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00E812F39BF
+	for <linux-fsdevel@vger.kernel.org>; Tue, 18 Nov 2025 15:57:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763481014; cv=none; b=exS8dziD1J8ZMPXHfW7BCdnx5ivkylOQeSf87B2jSumnLu/u7Mcz645QbHpsLMzX0iN2F0TjuJ5oclYLA36dU/ex6hvpo3lKPk64eSCSJsqKaWHK3ququWHX3bCNgk/m6M2NhXvR1RHigFtLv7xyt8KPaGPOG+8wSAsD6ItcPNo=
+	t=1763481476; cv=none; b=ZD+mNA6C0OFEttKhGVbstiauirE6tICV+y62nEm6/a1a44iKa6WAGLAQpwyxW13dyJRf4jG84sS/V0PBRMgulxooehMHQ1P4rBKFUETHa7ivf9hTF5mG/dulx9gj+0GDJdkclvI7w0+wJkDU2WEd+zssEdKoEubpxF/0MppcYFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763481014; c=relaxed/simple;
-	bh=GXW4A1bZnWzriWcf1kjt6u78qMnWvjaz/owpBpT+gHY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=OXjFM7Bhrjq3rMNDh5zMWW9893m8FofMbGKyp5FF+x5gPcAMQJW31iTjobff3DeFwD2VortUVb8viH0JKoX/+wdTCNysH0pk8AQEj5UVttFOdxLCxHiBY80eI3W1HR/+xvRD6B+TVIRedzWGsl/sJFfm99oc7Xi2ZOKCZKrGtgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VjB0fTH4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91AF0C4CEF1;
-	Tue, 18 Nov 2025 15:50:12 +0000 (UTC)
+	s=arc-20240116; t=1763481476; c=relaxed/simple;
+	bh=8sVYl4pC/X5livBGaJ2LiYLUoOSFKiZzZ0IqHOKEtq4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hXQl8F1bd6aS6Ggh7Wkn2lxghhZi4JehJIH/ka4rlbsq9DkrUIMa2I9gs9K77NcWHcozVcaspN6tU8Y/48U0W34vFZ5zzSuAJ1GISZkuLfiTC/Z9W9OlX9E31TV6Men5FnNDvb/O+34OS+5xZzG/EHwr5qkE/tYN0vCAYyekcqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vPtsI8po; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F2CCC2BCB0;
+	Tue, 18 Nov 2025 15:57:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763481014;
-	bh=GXW4A1bZnWzriWcf1kjt6u78qMnWvjaz/owpBpT+gHY=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=VjB0fTH4nlHICIYetpCHEMcwODYtwKQ9Lpuy7FxnsltQ7tyWxwjnGrfElUPgzwDeB
-	 c5FseKK2qCb3XKjI0YYPwHSCh6c4jkce5IHkq7GKb/+6889z11HB9rkICeeZWh5DIX
-	 m/wYXtSKeBbiVcDut6dW2gwgZ0HYYVqI8KFlqSxdyWZDAo39SzYtFm2shxnVmVjRu3
-	 30oMQ8mXHofkH9pXphQ8P9C2SV5tsOFWjyKl6F98JTC+A6ldtKlgNrTSv/Sw+df3EH
-	 M4JCnCncT6uaS1jP4iTaRiTiYEfGbSYgyr21BEc7e0wcErugeEFk7rty9fKf6TYwuM
-	 I9vRnOfEZsA2w==
-From: Christian Brauner <brauner@kernel.org>
-Date: Tue, 18 Nov 2025 16:48:58 +0100
-Subject: [PATCH DRAFT RFC UNTESTED 18/18] drivers: drm_lease
+	s=k20201202; t=1763481475;
+	bh=8sVYl4pC/X5livBGaJ2LiYLUoOSFKiZzZ0IqHOKEtq4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vPtsI8poe0HxfVHPV987Qg0XfP8kYrIFh8Nip1pBRr691Zpfujpq6zko8/AWZ0h6O
+	 Jf4d4zNQ4i7SC7rd1OGbQ2ge0h/CM3AbVEgNZZ9sWBcX9TpIFR9LQkhXskcTwj9jZy
+	 B4KdYd2IdHow5GOaw1aFFd97kl76mk10EdOjCaXUGqOx+nljGRYrb06iYv71bZC8Qh
+	 GholQIPH9jOCVYla7nNAbaTJLoe2DtxRDyuRvRuYPpRva1k1LWpaXr5a9essHAaU9e
+	 G8piMv/wjajR7i+Vfkiyf8oGFilr83+soHpcS4K+NAKhdzKpEUYYeSVWxwZulgpD7p
+	 TuJyDsjM06zYQ==
+Date: Tue, 18 Nov 2025 07:57:54 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fs: Add uoff_t
+Message-ID: <20251118155754.GC196362@frogsfrogsfrogs>
+References: <20251118152935.3735484-1-willy@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251118-work-fd-prepare-v1-18-c20504d97375@kernel.org>
-References: <20251118-work-fd-prepare-v1-0-c20504d97375@kernel.org>
-In-Reply-To: <20251118-work-fd-prepare-v1-0-c20504d97375@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
- linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
-X-Mailer: b4 0.15-dev-a6db3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2646; i=brauner@kernel.org;
- h=from:subject:message-id; bh=GXW4A1bZnWzriWcf1kjt6u78qMnWvjaz/owpBpT+gHY=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWTKTO0v4ivY9fPALRbNGB1tU32tRWsepp3j0z4fI7CPo
- /en4DTHjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIms+cjIsPVI3N1+gQ1Zm5d0
- fgifZbNB78TsWW/59s3tXGHfqMX2X46RYdX8zpDTS3V4fx2U01M+/Gte5OE9p1LWbOFj7PugZuz
- DwQcA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp;
- fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251118152935.3735484-1-willy@infradead.org>
 
-Placeholder commit message.
+On Tue, Nov 18, 2025 at 03:29:33PM +0000, Matthew Wilcox (Oracle) wrote:
+> In a recent commit, I inadvertently changed a comparison from being an
+> unsigned comparison (on 64-bit systems) to being a signed comparison
+> (which it had always been on 32-bit systems).  This led to a sporadic
+> fstests failure.
+> 
+> To make sure this comparison is always unsigned, introduce a new type,
+> uoff_t which is the unsigned version of loff_t.  Generally file sizes
+> are restricted to being a signed integer, but in these two places it is
+> convenient to pass -1 to indicate "up to the end of the file".
 
-Signed-off-by: Christian Brauner <brauner@kernel.org>
----
- drivers/gpu/drm/drm_lease.c | 44 ++++++++++++++------------------------------
- 1 file changed, 14 insertions(+), 30 deletions(-)
+Soo... truncate_inode_pages passes 16EB as the lend parameter to
+truncate_inode_pages_range now?  I suppose that makes sense, though the
+casting to loff_t by that caller no longer does...
 
-diff --git a/drivers/gpu/drm/drm_lease.c b/drivers/gpu/drm/drm_lease.c
-index 94375c6a5425..3feee39e464b 100644
---- a/drivers/gpu/drm/drm_lease.c
-+++ b/drivers/gpu/drm/drm_lease.c
-@@ -514,8 +514,7 @@ int drm_mode_create_lease_ioctl(struct drm_device *dev,
- 					       object_count, sizeof(__u32));
- 		if (IS_ERR(object_ids)) {
- 			ret = PTR_ERR(object_ids);
--			idr_destroy(&leases);
--			goto out_lessor;
-+			goto out_idr;
- 		}
- 
- 		/* fill and validate the object idr */
-@@ -524,35 +523,26 @@ int drm_mode_create_lease_ioctl(struct drm_device *dev,
- 		kfree(object_ids);
- 		if (ret) {
- 			drm_dbg_lease(dev, "lease object lookup failed: %i\n", ret);
--			idr_destroy(&leases);
--			goto out_lessor;
-+			goto out_idr;
- 		}
- 	}
- 
--	/* Allocate a file descriptor for the lease */
--	fd = get_unused_fd_flags(cl->flags & (O_CLOEXEC | O_NONBLOCK));
--	if (fd < 0) {
--		idr_destroy(&leases);
--		ret = fd;
--		goto out_lessor;
-+	drm_dbg_lease(dev, "Allocating lease file\n");
-+	FD_PREPARE(fdprep, cl->flags & (O_CLOEXEC | O_NONBLOCK),
-+		   file_clone_open(lessor_file));
-+	if (fd_prepare_failed(fdprep)) {
-+		ret = fd_prepare_error(fdprep);
-+		goto out_idr;
- 	}
- 
-+	lessee_file = fd_prepare_file(fdprep);
-+
- 	drm_dbg_lease(dev, "Creating lease\n");
- 	/* lessee will take the ownership of leases */
- 	lessee = drm_lease_create(lessor, &leases);
--
- 	if (IS_ERR(lessee)) {
- 		ret = PTR_ERR(lessee);
--		idr_destroy(&leases);
--		goto out_leases;
--	}
--
--	/* Clone the lessor file to create a new file for us */
--	drm_dbg_lease(dev, "Allocating lease file\n");
--	lessee_file = file_clone_open(lessor_file);
--	if (IS_ERR(lessee_file)) {
--		ret = PTR_ERR(lessee_file);
--		goto out_lessee;
-+		goto out_idr;
- 	}
- 
- 	lessee_priv = lessee_file->private_data;
-@@ -564,21 +554,15 @@ int drm_mode_create_lease_ioctl(struct drm_device *dev,
- 
- 	/* Pass fd back to userspace */
- 	drm_dbg_lease(dev, "Returning fd %d id %d\n", fd, lessee->lessee_id);
--	cl->fd = fd;
- 	cl->lessee_id = lessee->lessee_id;
--
--	/* Hook up the fd */
--	fd_install(fd, lessee_file);
-+	cl->fd = fd_publish(fdprep);
- 
- 	drm_master_put(&lessor);
- 	drm_dbg_lease(dev, "drm_mode_create_lease_ioctl succeeded\n");
- 	return 0;
- 
--out_lessee:
--	drm_master_put(&lessee);
--
--out_leases:
--	put_unused_fd(fd);
-+out_idr:
-+	idr_destroy(&leases);
- 
- out_lessor:
- 	drm_master_put(&lessor);
+--D
 
--- 
-2.47.3
-
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> ---
+>  include/linux/mm.h                     | 8 ++++----
+>  include/linux/shmem_fs.h               | 2 +-
+>  include/linux/types.h                  | 1 +
+>  include/uapi/asm-generic/posix_types.h | 1 +
+>  mm/shmem.c                             | 4 ++--
+>  mm/truncate.c                          | 2 +-
+>  6 files changed, 10 insertions(+), 8 deletions(-)
+> 
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index fe995cc3ba5c..a69ab017c370 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -3650,10 +3650,10 @@ struct vm_unmapped_area_info {
+>  extern unsigned long vm_unmapped_area(struct vm_unmapped_area_info *info);
+>  
+>  /* truncate.c */
+> -extern void truncate_inode_pages(struct address_space *, loff_t);
+> -extern void truncate_inode_pages_range(struct address_space *,
+> -				       loff_t lstart, loff_t lend);
+> -extern void truncate_inode_pages_final(struct address_space *);
+> +void truncate_inode_pages(struct address_space *mapping, loff_t lstart);
+> +void truncate_inode_pages_range(struct address_space *mapping, loff_t lstart,
+> +		uoff_t lend);
+> +void truncate_inode_pages_final(struct address_space *mapping);
+>  
+>  /* generic vm_area_ops exported for stackable file systems */
+>  extern vm_fault_t filemap_fault(struct vm_fault *vmf);
+> diff --git a/include/linux/shmem_fs.h b/include/linux/shmem_fs.h
+> index 08f497673b06..94c6237acdc9 100644
+> --- a/include/linux/shmem_fs.h
+> +++ b/include/linux/shmem_fs.h
+> @@ -126,7 +126,7 @@ struct page *shmem_read_mapping_page_gfp(struct address_space *mapping,
+>  					pgoff_t index, gfp_t gfp_mask);
+>  int shmem_writeout(struct folio *folio, struct swap_iocb **plug,
+>  		struct list_head *folio_list);
+> -void shmem_truncate_range(struct inode *inode, loff_t start, loff_t end);
+> +void shmem_truncate_range(struct inode *inode, loff_t start, uoff_t end);
+>  int shmem_unuse(unsigned int type);
+>  
+>  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> diff --git a/include/linux/types.h b/include/linux/types.h
+> index 6dfdb8e8e4c3..d4437e9c452c 100644
+> --- a/include/linux/types.h
+> +++ b/include/linux/types.h
+> @@ -50,6 +50,7 @@ typedef __kernel_old_gid_t	old_gid_t;
+>  
+>  #if defined(__GNUC__)
+>  typedef __kernel_loff_t		loff_t;
+> +typedef __kernel_uoff_t		uoff_t;
+>  #endif
+>  
+>  /*
+> diff --git a/include/uapi/asm-generic/posix_types.h b/include/uapi/asm-generic/posix_types.h
+> index b5f7594eee7a..0a90ad92dbf3 100644
+> --- a/include/uapi/asm-generic/posix_types.h
+> +++ b/include/uapi/asm-generic/posix_types.h
+> @@ -86,6 +86,7 @@ typedef struct {
+>   */
+>  typedef __kernel_long_t	__kernel_off_t;
+>  typedef long long	__kernel_loff_t;
+> +typedef unsigned long long	__kernel_uoff_t;
+>  typedef __kernel_long_t	__kernel_old_time_t;
+>  #ifndef __KERNEL__
+>  typedef __kernel_long_t	__kernel_time_t;
+> diff --git a/mm/shmem.c b/mm/shmem.c
+> index 0a25ee095b86..728f2e04911e 100644
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -1105,7 +1105,7 @@ static struct folio *shmem_get_partial_folio(struct inode *inode, pgoff_t index)
+>   * Remove range of pages and swap entries from page cache, and free them.
+>   * If !unfalloc, truncate or punch hole; if unfalloc, undo failed fallocate.
+>   */
+> -static void shmem_undo_range(struct inode *inode, loff_t lstart, loff_t lend,
+> +static void shmem_undo_range(struct inode *inode, loff_t lstart, uoff_t lend,
+>  								 bool unfalloc)
+>  {
+>  	struct address_space *mapping = inode->i_mapping;
+> @@ -1256,7 +1256,7 @@ static void shmem_undo_range(struct inode *inode, loff_t lstart, loff_t lend,
+>  	shmem_recalc_inode(inode, 0, -nr_swaps_freed);
+>  }
+>  
+> -void shmem_truncate_range(struct inode *inode, loff_t lstart, loff_t lend)
+> +void shmem_truncate_range(struct inode *inode, loff_t lstart, uoff_t lend)
+>  {
+>  	shmem_undo_range(inode, lstart, lend, false);
+>  	inode_set_mtime_to_ts(inode, inode_set_ctime_current(inode));
+> diff --git a/mm/truncate.c b/mm/truncate.c
+> index d08340afc768..12467c1bd711 100644
+> --- a/mm/truncate.c
+> +++ b/mm/truncate.c
+> @@ -364,7 +364,7 @@ long mapping_evict_folio(struct address_space *mapping, struct folio *folio)
+>   * page aligned properly.
+>   */
+>  void truncate_inode_pages_range(struct address_space *mapping,
+> -				loff_t lstart, loff_t lend)
+> +				loff_t lstart, uoff_t lend)
+>  {
+>  	pgoff_t		start;		/* inclusive */
+>  	pgoff_t		end;		/* exclusive */
+> -- 
+> 2.47.2
+> 
+> 
 
