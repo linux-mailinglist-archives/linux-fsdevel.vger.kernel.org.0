@@ -1,139 +1,88 @@
-Return-Path: <linux-fsdevel+bounces-68821-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68822-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3EE5C6713A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 03:59:21 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFA85C6715C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 04:03:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AD68E4E6D6F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 02:59:20 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7F78035C4DD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 03:03:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9748E324B2C;
-	Tue, 18 Nov 2025 02:59:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="S09RxRum"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFCCA3195F4;
+	Tue, 18 Nov 2025 03:03:06 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C194262FC0
-	for <linux-fsdevel@vger.kernel.org>; Tue, 18 Nov 2025 02:59:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5B452EC081
+	for <linux-fsdevel@vger.kernel.org>; Tue, 18 Nov 2025 03:03:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763434751; cv=none; b=RNzisBXCGI266OKMnmF9eEMuPLuSUxk6q7N/xqbLXW07eWgKn/0NQv59w/jY/NdE4yKb2pER6Dsxv9Lc1TGfES+faTyrp5g/1qkwHMF62KCW2cdlp4ZKs06kK8vFhU8E1uCTFjIF5nrsKoU0qKz1qwevElniVWudoX8tKjm4kCc=
+	t=1763434986; cv=none; b=kJxeLC7xzQvwzLg4dcp5rsym4DOPi+F2OR9kbGqIDJ2+aE1n/F0DAOiGipIt37jt9AGh7YNtR5UFCm6rM58rKO5pg43hr3q5u7QqHLf/Uurbu3GQdarf1H07jxlA+bK37b9ZUSrYYEBNv/VzEcRVcaNpK9zzfQOE2ZHUgSV7bWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763434751; c=relaxed/simple;
-	bh=BUBQVqhYuDQpDKj8kaZMnE/33PjZCxGNIoQaBsNI2GI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=E3xejM4gDQyTT2a8bPKh6KVSLDCQmhnnU5zB5EDF7dhJeOH8pqf/0VAEaok77MrwzMn7rbU5bXiK/qtDRamZnEJFkBFO/I9lRpzKa61kWXTidgVMAzikfuy8lM4F/yARhg8OahSVe8vnnNb4dd71PBt8Fb2YdHeDKVNP8tW3ygs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=S09RxRum; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-b736d883ac4so642096866b.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Nov 2025 18:59:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1763434747; x=1764039547; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=uyA/z3+NX1r8lmPy90ZzbFhLB6Y/TGoAYT7nzfduTWI=;
-        b=S09RxRum2xa9YUFARKFQLyZAIUb8pzrLmc5No4pxbFN+0VZWRe2eAA3w9TdG+UWb0I
-         djrbsFgJmBy3SIxTG2f1dkRjT4C7HYeWKwBeSFma16HkIEuXNSzQ2hsS3kB17R2/GOqv
-         p4m1geAB8IsA+7AMUClVb3R3Qg0pGN7Ba4V36qUTpdK0yJpkNitMFoyW5fINQUMXbMW9
-         w3pN+WvtgyQkYLc8yarZpknb4hbDt466t4ChGD6/o7tk1pltNHmYjQoBL04Zxl9+Z/EX
-         U4S56eyXw6C3jcvIfeZ8BBnmWW+2tzKj6u+vjIfXh+KP8c5FDQbyU5yyTuhJIwFcl4g5
-         3MyA==
+	s=arc-20240116; t=1763434986; c=relaxed/simple;
+	bh=2Cb6nyuCU84hwMH3woh9BQ/HanwBqbsFrhaC68L7BJc=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=eI8TVKBvwUGaw9YK3TslnveeuEYde48gOokbXs42ouUftY88lFUmS4CDTbhmcfmsgo9mDwKsWSZn3wwsTxzvNxNRLJrZrZnonSTBdtmCZ7woRqgv9ULrW2blDK+bJxbgWSD/0OrLrxpQVom5u6Bax85y19DhUo9D9jEXjYDnXlQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-43329b607e0so57391195ab.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Nov 2025 19:03:04 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763434747; x=1764039547;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uyA/z3+NX1r8lmPy90ZzbFhLB6Y/TGoAYT7nzfduTWI=;
-        b=VGbwtzZAIsnqGBHCLnZGblR6Yhd2g4KPTN2h9sM0RNkj+3I27XeAU9j/iUcqJhT8pw
-         qO1gZ11PSaLIlOB6qOQ7XBQ+Gvk2YQo+O3OjENZvawWSzffee2NtFGxjXcna7aUDCMQz
-         U1E1pf1lAv/lpk/FLgi+lS8kwJxC1r6U2vdJxwPJRsku6ysrS2UdeLmBovxu85zhUfFU
-         8qS96K8lBZxgT2mghjQtOsPFlpRNVC7JpN89Z2uaUPvajU7dH2zWw8npKLrMZ/hsv2Rh
-         vF8PjIIcy88PJJrqlhZUBfDI1vr63aYJ6LRBW/ChHtimXLDAdr2bSPvWNA1vPi8KF0mw
-         APcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXrys6Rrwa8JUMHg6tUd9x9DeShZULwF7UshUlXFmhpa72qAp+pu1+Tc30VPCcbmzIsTJNOXrahJloA5+Xk@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8XRCNgY+2vIf30NASH08Io+9LILMKzxiplvo4CF9ZcHlc6BgM
-	rVC2fhoxFi8KuT3tp8HDbtl4WNyTf1Y1a8AzDL5ZAZEjlWGyjAJafEUp0ZuhPlrhouuZ8IXJvg9
-	9+BcZ730+HykLOb3m9wZYyA1sKadkV2qQx0MO+dQuUQ==
-X-Gm-Gg: ASbGncvxqKNhI67uaB3XUhK5RUS9Pd0rp5I+hIPWO/CE2lJxkbME9Ybxu0JGNBohaM2
-	lDK3/HW4pBSut3qZdOcN+jirXEscRv79vr1qUNond6lQiSVF8m3moNqWH6kzgR9MnZCsF9KlbZi
-	9T4/DsxV70bs1GuYhbLrD8njkctAgCz6OPAup6Kj0Bxa00+xCLpttHUGNYhV++lne44eTONJGfT
-	7JmPFf9nrMqQmGi0Vpo3XRXlPqW5wPB75ocshPrYDGplax3HzHRI73IsqPckeq5zKGDn8KoYj6l
-	GP0=
-X-Google-Smtp-Source: AGHT+IE+Xmu/XKzqDItZxK55uKODQ4pXWe1jCDf3/zyE5l7HA0zpyHUAc1wH5fOIbLOq/qTekDcDuTCEd4KGgBq5NiA=
-X-Received: by 2002:a17:907:d9e:b0:b73:9792:919b with SMTP id
- a640c23a62f3a-b739792959cmr714211466b.13.1763434747412; Mon, 17 Nov 2025
- 18:59:07 -0800 (PST)
+        d=1e100.net; s=20230601; t=1763434984; x=1764039784;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jwUXJQvDPxKgUhbRNl7QLSBBPCG1b/BMbMJ8Tq/IhSo=;
+        b=ihAvMrzBCl05exUuuUTfXc1iUHHAkT9mF/DH8OeQfWaFqQzyF8FzUOG7E0DQW2peVu
+         k/aMZNHFZUOUrDsjXvpNLMSx1Pjjavvh8Gu5sy3WXByjjKWnxWEC0bjUQ5jW54CCymnE
+         0p0vu5L9D8uYZJQtxzi/d0hfH0VjiDqfrbe8i58x7p7gRPmJB7aBxz87XEUsZF39BWTC
+         14FKnN1zUpHpk7zWGTYJsZzYfBHhZTDR4U5edBTOCr7aE6NUwHQESCrdRO7yUSL/+Ehf
+         KorFgrjKMfEZbiQpu5ppvmmk7TPCfcZv0Noma62ZBPuqmwR3wgsrykRAn4VLeHmDBstn
+         uWdA==
+X-Forwarded-Encrypted: i=1; AJvYcCVICMAcC0p00gocjatoljGqqA4ueq+R4zh0xHn/8zEkaoanHHPbl0UL7QLH4uJ55jwnI4XqukAw2uqOL78w@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2vVlGgBaG57HifPgOd60+0OVWLaJzAJ8eDsaBGF34otPCDsbF
+	L3N8dtlPNru38QpvlJ8uH+BZ4w9PdOkannw6URVpFRfcLHKaEnEx8XylTTkiREBJ3ro8lryHmMa
+	a6FtAlhxZpfNppg1DBy1ys9JHiI7chaXCdylXsdSfcWQHztM+AttTDB52hzw=
+X-Google-Smtp-Source: AGHT+IGWQ6WJpxRVbSfPJex/xQncmPfLJ9KXRGuf2RAfLdJPjQC9WHBPDaZQTxkpK3S25vI3HYwzhOKHJzrGQkstqf7aREcKrZPC
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251115233409.768044-1-pasha.tatashin@soleen.com>
- <20251115233409.768044-8-pasha.tatashin@soleen.com> <aRoXGYC4GeAoNKPl@kernel.org>
-In-Reply-To: <aRoXGYC4GeAoNKPl@kernel.org>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Mon, 17 Nov 2025 21:58:31 -0500
-X-Gm-Features: AWmQ_bmEx3-y1qL666uuCkHAOhqd8xREWBuFy8c9Q6i-THXVQGPt4k4Gmg9IHVA
-Message-ID: <CA+CK2bDyKzeZBZvNM7OdSm5dBt3ADjsyXc2X3_YedV_xnphMww@mail.gmail.com>
-Subject: Re: [PATCH v6 07/20] liveupdate: luo_session: Add ioctls for file preservation
-To: Mike Rapoport <rppt@kernel.org>
-Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com, 
-	dmatlack@google.com, rientjes@google.com, corbet@lwn.net, 
-	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, 
-	ojeda@kernel.org, aliceryhl@google.com, masahiroy@kernel.org, 
-	akpm@linux-foundation.org, tj@kernel.org, yoann.congal@smile.fr, 
-	mmaurer@google.com, roman.gushchin@linux.dev, chenridong@huawei.com, 
-	axboe@kernel.dk, mark.rutland@arm.com, jannh@google.com, 
-	vincent.guittot@linaro.org, hannes@cmpxchg.org, dan.j.williams@intel.com, 
-	david@redhat.com, joel.granados@kernel.org, rostedt@goodmis.org, 
-	anna.schumaker@oracle.com, song@kernel.org, linux@weissschuh.net, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
-	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com, 
-	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
-	rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org, 
-	cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com, 
-	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com, 
-	aleksander.lobakin@intel.com, ira.weiny@intel.com, 
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
-	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net, 
-	brauner@kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	saeedm@nvidia.com, ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com, 
-	leonro@nvidia.com, witu@nvidia.com, hughd@google.com, skhawaja@google.com, 
-	chrisl@kernel.org
+X-Received: by 2002:a05:6e02:2789:b0:434:96ea:ff62 with SMTP id
+ e9e14a558f8ab-43496eb0173mr144411975ab.35.1763434984030; Mon, 17 Nov 2025
+ 19:03:04 -0800 (PST)
+Date: Mon, 17 Nov 2025 19:03:04 -0800
+In-Reply-To: <20251118002044.9391-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <691be1e8.a70a0220.f6df1.004c.GAE@google.com>
+Subject: Re: [syzbot] [kernel?] general protection fault in put_ipc_ns
+From: syzbot <syzbot+b4c65e7d749285a82467@syzkaller.appspotmail.com>
+To: brauner@kernel.org, hdanton@sina.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
-> >  static int luo_session_release(struct inode *inodep, struct file *filep)
-> >  {
-> >       struct luo_session *session = filep->private_data;
-> >       struct luo_session_header *sh;
-> > +     int err = 0;
-> >
-> >       /* If retrieved is set, it means this session is from incoming list */
-> > -     if (session->retrieved)
-> > +     if (session->retrieved) {
-> >               sh = &luo_session_global.incoming;
-> > -     else
-> > +
-> > +             err = luo_session_finish_one(session);
-> > +             if (err) {
-> > +                     pr_warn("Unable to finish session [%s] on release\n",
-> > +                             session->name);
->
->                         return err;
->
-> and then else can go away here and luo_session_remove() and
-> luo_session_free() can be moved outside if (session->retrieved).
+Hello,
 
-Done.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Thanks,
-Pasha
+Reported-by: syzbot+b4c65e7d749285a82467@syzkaller.appspotmail.com
+Tested-by: syzbot+b4c65e7d749285a82467@syzkaller.appspotmail.com
+
+Tested on:
+
+commit:         cc7d6c65 nstree: fix kernel-doc comments for internal ..
+git tree:       https://github.com/brauner/linux.git namespace-6.19
+console output: https://syzkaller.appspot.com/x/log.txt?x=10d8e212580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1e17ff55912ea78d
+dashboard link: https://syzkaller.appspot.com/bug?extid=b4c65e7d749285a82467
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+
+Note: no patches were applied.
+Note: testing is done by a robot and is best-effort only.
 
