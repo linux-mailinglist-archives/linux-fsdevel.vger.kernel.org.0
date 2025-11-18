@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-68959-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68960-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A01E2C6A6C1
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32F7FC6A6BE
 	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 16:54:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B45E035255C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 15:49:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7336A4EE06B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 15:49:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1E233587A1;
-	Tue, 18 Nov 2025 15:49:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03259364EB2;
+	Tue, 18 Nov 2025 15:49:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mk9TBIFO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VQo3q1uz"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CF2021FF25
-	for <linux-fsdevel@vger.kernel.org>; Tue, 18 Nov 2025 15:49:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6256721FF25
+	for <linux-fsdevel@vger.kernel.org>; Tue, 18 Nov 2025 15:49:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763480978; cv=none; b=UHLNeJErAgKS1eSg+uNWYEMOQkO0dcROnptpxMpwom2kQgjez00/6g9RPV+VPqqTtkHZNis/JS+yu4yL3K/SoAYk8gPEGHqIVbbp+Jg5EjPZlF+97ZdlGPHuT+wZhivbd5Qr9ij5eIT3EMTNQRG84vENopn8tP3lbtPxxBJROn4=
+	t=1763480980; cv=none; b=YpYxk9OXPJ9Rg3lVCypCyRqirRaLYH/DPtpyercr5oTky+JOIQ3iB/1qnaXpSpY9A7xc6u6/9AKiKsVIgSLssu4zf/7dv7gm/ZwCUk972t6qbPyPeKmLqaY/AqKcxVG7bOl2uDLwuEqf51ppQMYfiusmSlV/te+gQI1ilh4E8BI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763480978; c=relaxed/simple;
-	bh=Pl9ndB1Hzxig78Gp8xcHs2aJ7D3UOYiI+1jyXX5hrz8=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Gi5M7l5q5WrbTanpehFxNS7ae4G9p86djGAXEZrBl/uFL2k1PVCgV1bcHbttMwlHSbVJ/5a6DhsKwFVuQ/qtBDYHg/9lN1HtWdqt9BGS7mfV0kesC6w/yY4HvSoOsiRd0fPyzvvvn5kTdfs58gfaIcGzQ6buqIp89VHv0R491Jg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mk9TBIFO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3025EC2BCC4;
-	Tue, 18 Nov 2025 15:49:35 +0000 (UTC)
+	s=arc-20240116; t=1763480980; c=relaxed/simple;
+	bh=6Ww0oKNJC99eL61+w1MZF9Z5cAYvlZxENuGtf6xhVoU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=m1Mt8vct6g6kZt7UNtc6znKpUkQaOW4ad1jfS+3h27PZGPjeVhM5xt9r2Vozd/MgR6SxrJPujuQbvxR+ZfYN1zJMu4uIxP7goCHqqLgaHYvaYylX6QjsReuth3TsG4IvgmGCNCGyDT2Ms4jxAepHs0GmRG8HSgViKfOXRC1EXcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VQo3q1uz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5758FC116D0;
+	Tue, 18 Nov 2025 15:49:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763480977;
-	bh=Pl9ndB1Hzxig78Gp8xcHs2aJ7D3UOYiI+1jyXX5hrz8=;
-	h=From:Subject:Date:To:Cc:From;
-	b=Mk9TBIFOdvG4PiozbjqM0vdUcZRDfiMotht2U5XTxeRcO4v2dO9jcVRwwv7Nv6u0e
-	 9GepMpSMGwhOIkZ2PsZbAgw1bhIJSYhxuqmox0HWg8upihIxdN1pTYPKmeUrkMknvS
-	 eI7wIUVUdJ8PjwgrzIUgtnNsXsEBWRUHWRIkeQdwRet15+gCWa7lhF2FwFqZRSwdjf
-	 rIahjhxEKwV/vk4zCDZM4UEPEt5/BuMqP5X+WsBXkQrAYZ1ygOQu18Pk2TR/pg23UX
-	 mB7d0khDQVxxXYoL5vO6kWoR1khfGsdDiNr2U/WKK3IFlbOwaP4BxjpZvU+J0PdIYj
-	 Ckos/T6P5BaYQ==
+	s=k20201202; t=1763480979;
+	bh=6Ww0oKNJC99eL61+w1MZF9Z5cAYvlZxENuGtf6xhVoU=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=VQo3q1uzXedbr00Q4jzmO7TFJA/2U0N5PXMimLmHBQTBwtXnrqLlqDBxy528sUhRp
+	 r2dTKAY1w2OH6OWt2U6+vCelhruSGVcwKx3GRGmrJsHVQrLXBE+uA8GTaJGTVtXfpx
+	 RZgncQNjyhFwi3021a4dRS+fUdm9b+8XZTbsXFgHC2rqut3nE92++rHSUPVRBz43um
+	 DojWbjmU/G08XVSX11zry0iOXUtf9pqgo5QlKWsfydYv6fNjjXrXVvkcPZYvL7Ib5u
+	 rgnAiOsI+p+3ZB2vTFf6O/pmfbEnKL+A3cTCRsYPAfyz2iRE9L9SdRzioC8GBA9D7R
+	 nqm9RjQH3Eh7Q==
 From: Christian Brauner <brauner@kernel.org>
-Subject: [PATCH DRAFT RFC UNTESTED 00/18] file: FD_PREPARE()
-Date: Tue, 18 Nov 2025 16:48:40 +0100
-Message-Id: <20251118-work-fd-prepare-v1-0-c20504d97375@kernel.org>
+Date: Tue, 18 Nov 2025 16:48:41 +0100
+Subject: [PATCH DRAFT RFC UNTESTED 01/18] file: add FD_PREPARE()
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,128 +52,243 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAFiVHGkC/y2Nyw6CMBBFf6WZtUWLkhh3hsfSBeLKuGjpFCYmh
- Ux9JYR/txiX93XuBAGZMMBBTMD4okCDj0KtBLS99h1KslFDukkzpdRevge+S2flyDhqRul2KtN
- b4zJnNcRV9B19fsQrFPWxakRd5eJyaspzUxZwix2jA0rD2rf9wh6YOvKyo0f/NOslTJaXxNnk/
- wLz/AViSrjcqgAAAA==
-X-Change-ID: 20251118-work-fd-prepare-f415a3bf5fda
+Message-Id: <20251118-work-fd-prepare-v1-1-c20504d97375@kernel.org>
+References: <20251118-work-fd-prepare-v1-0-c20504d97375@kernel.org>
+In-Reply-To: <20251118-work-fd-prepare-v1-0-c20504d97375@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
  linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-a6db3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3744; i=brauner@kernel.org;
- h=from:subject:message-id; bh=Pl9ndB1Hzxig78Gp8xcHs2aJ7D3UOYiI+1jyXX5hrz8=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWTKTO3TZom9enr7nFuKm/Zb37pS8WBnecn9gh6tRjeFI
- l02tTi5jlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIkUKjL89/1zMXPtmcKX11a6
- i6TlStgt7hSU483ZOLvoyeY8BcHATwz/DA8k16ZceLenpl9L1nkTv8yk4OkGiudybmrq7H7lefA
- YLwA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=7427; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=6Ww0oKNJC99eL61+w1MZF9Z5cAYvlZxENuGtf6xhVoU=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWTKTO1reSy0v8qpY2uzyO4PL2WuLp3yIGrt6UlOs0+uO
+ z+vOaCHoaOUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAiKQEMfyUu5nB6brDIs5BV
+ Zdm5r11vorXZE87VTxSWKa+M2twursnwV/rjrPPXVzeavwzgUH/xuqN175nqhA3cN+Zs2Wq40G5
+ jDzsA
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-Hey,
-
-I've been playing with an idea to allow for some flexible usage of the
-get_unused_fd_flags() + create file + fd_install() pattern that's used
-quite extensively.
-
-How callers allocate files is really heterogenous so it's not really
-convenient to fold them into a single class. It's possibe to split them
-into subclasses like for anon inodes. I think that's not necessarily
-nice as well so my take is:
-
-FD_PREPARE(fdprep, open_flag, file_open_handle(&path, open_flag));
-if (fd_prepare_failed(fdprep))
-	return fd_prepare_error(fdprep);
-
-return fd_publish(fdprep);
-
-or
-
-FD_PREPARE(fdprep, 0, dentry_open(&path, hreq->oflags, cred));
-dput(dentry);
-if (fd_prepare_failed(fdprep))
-        return fd_prepare_error(fdprep);
-
-if (S_ISREG(inode->i_mode)) {
-        struct file *filp = fd_prepare_file(fdprep);
-
-        filp->f_flags |= O_NOATIME;
-        filp->f_mode |= FMODE_NOCMTIME;
-}
-
-return fd_publish(fdprep);
-
-That's somewhat akin to how we use wait_event() to allow for arbitrary
-things to be used as a condition in it. Here we obviously expect the
-function to return a struct file.
-
-It's centered around struct fd_prepare { int fd; struct file *file; }.
-FD_PREPARE() encapsulates all of allocation and cleanup logic and must
-be followed by a call to fd_publish() which consumes the fd and file
-otherwise they're deallocated.
-
-It mandates a specific order for fd and file allocation which should be
-fine I think.
-
-We won't be able to convert everything to it but most cases can be made
-to work with this pattern allowing to shed a bunch of cleanup code on
-the way. To me it looks like it simplifies a bunch of code but it
-obviously has assumptions, e.g., that it may freely consume the
-reference by the file passed to it. I didn't see this as a big issue
-though.
-
-There's room for extending this in a way that you'd have subclasses for
-some particularly often use patterns but as I said I'm not even sure
-that's worth it.
-
-I've converted a about 17 callers to see that they can be folded into
-this pattern.
-
-I'd like to gather early feedback. It's a draft, haven't compiled it or
-tested it. Just played around with this today and thought I'd better get
-yelled at early.
-
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
-Christian Brauner (18):
-      file: add FD_PREPARE()
-      fs: anon_inodes
-      fs: eventfd
-      fs: fhandle
-      fs: open_tree()
-      fs: namespace
-      fs: fanotify
-      fs: nsfs
-      fs: autofs
-      fs: eventpoll
-      fs: open_tree_attr()
-      fs: nsfs2
-      fs: open
-      fs: signalfd64
-      fs: timerfd
-      fs: userfaultfd
-      fs: xfs
-      drivers: drm_lease
+ include/linux/cleanup.h |  22 ++++++++
+ include/linux/file.h    | 137 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 159 insertions(+)
 
- drivers/gpu/drm/drm_lease.c        |  44 ++++--------
- fs/anon_inodes.c                   |  26 ++-----
- fs/autofs/dev-ioctl.c              |  32 +++------
- fs/eventfd.c                       |  32 ++++-----
- fs/eventpoll.c                     |  33 +++------
- fs/fhandle.c                       |  30 ++++----
- fs/namespace.c                     |  87 ++++++++---------------
- fs/notify/fanotify/fanotify_user.c |  19 ++---
- fs/nsfs.c                          |  48 +++++--------
- fs/open.c                          |  18 ++---
- fs/signalfd.c                      |  28 +++-----
- fs/timerfd.c                       |  28 +++-----
- fs/userfaultfd.c                   |  29 +++-----
- fs/xfs/xfs_handle.c                |  22 ++----
- include/linux/cleanup.h            |  22 ++++++
- include/linux/file.h               | 137 +++++++++++++++++++++++++++++++++++++
- 16 files changed, 321 insertions(+), 314 deletions(-)
----
-base-commit: a71e4f103aed69e7a11ea913312726bb194c76ee
-change-id: 20251118-work-fd-prepare-f415a3bf5fda
+diff --git a/include/linux/cleanup.h b/include/linux/cleanup.h
+index 2573585b7f06..b35b9a1da026 100644
+--- a/include/linux/cleanup.h
++++ b/include/linux/cleanup.h
+@@ -255,12 +255,20 @@ const volatile void * __must_check_fn(const volatile void *val)
+  *	@exit is an expression using '_T' -- similar to FREE above.
+  *	@init is an expression in @init_args resulting in @type
+  *
++ * DEFINE_CLASS_TYPE(name, type, exit):
++ *	Like DEFINE_CLASS but without a constructor. Use with CLASS_INIT()
++ *	for classes that need custom initialization expressions per usage.
++ *
+  * EXTEND_CLASS(name, ext, init, init_args...):
+  *	extends class @name to @name@ext with the new constructor
+  *
+  * CLASS(name, var)(args...):
+  *	declare the variable @var as an instance of the named class
+  *
++ * CLASS_INIT(name, var, init_expr):
++ *	declare the variable @var as an instance of the named class with
++ *	custom initialization expression. Use with DEFINE_CLASS_TYPE().
++ *
+  * Ex.
+  *
+  * DEFINE_CLASS(fdget, struct fd, fdput(_T), fdget(fd), int fd)
+@@ -270,6 +278,12 @@ const volatile void * __must_check_fn(const volatile void *val)
+  *		return -EBADF;
+  *
+  *	// use 'f' without concern
++ *
++ * DEFINE_CLASS_TYPE(fd_file, struct { int fd; struct file *file; }, ...)
++ *
++ *	CLASS_INIT(fd_file, ff, custom_init_expression);
++ *	if (ff.fd < 0)
++ *		return ff.fd;
+  */
+ 
+ #define DEFINE_CLASS(_name, _type, _exit, _init, _init_args...)		\
+@@ -279,6 +293,11 @@ static inline void class_##_name##_destructor(_type *p)			\
+ static inline _type class_##_name##_constructor(_init_args)		\
+ { _type t = _init; return t; }
+ 
++#define DEFINE_CLASS_TYPE(_name, _type, _exit)				\
++typedef _type class_##_name##_t;					\
++static inline void class_##_name##_destructor(_type *p)		\
++{ _type _T = *p; _exit; }
++
+ #define EXTEND_CLASS(_name, ext, _init, _init_args...)			\
+ typedef class_##_name##_t class_##_name##ext##_t;			\
+ static inline void class_##_name##ext##_destructor(class_##_name##_t *p)\
+@@ -290,6 +309,9 @@ static inline class_##_name##_t class_##_name##ext##_constructor(_init_args) \
+ 	class_##_name##_t var __cleanup(class_##_name##_destructor) =	\
+ 		class_##_name##_constructor
+ 
++#define CLASS_INIT(_name, _var, _init_expr)				\
++	class_##_name##_t _var __cleanup(class_##_name##_destructor) = (_init_expr)
++
+ #define scoped_class(_name, var, args)                          \
+ 	for (CLASS(_name, var)(args);                           \
+ 	     __guard_ptr(_name)(&var) || !__is_cond_ptr(_name); \
+diff --git a/include/linux/file.h b/include/linux/file.h
+index af1768d934a0..331b07f9a6fd 100644
+--- a/include/linux/file.h
++++ b/include/linux/file.h
+@@ -12,6 +12,7 @@
+ #include <linux/errno.h>
+ #include <linux/cleanup.h>
+ #include <linux/err.h>
++#include <linux/vfsdebug.h>
+ 
+ struct file;
+ 
+@@ -127,4 +128,140 @@ extern void __fput_sync(struct file *);
+ 
+ extern unsigned int sysctl_nr_open_min, sysctl_nr_open_max;
+ 
++/*
++ * fd_prepare class: Combined fd + file allocation with automatic cleanup.
++ *
++ * Allocates an fd and a file together. On error paths, automatically cleans
++ * up whichever resource was successfully allocated. Allows flexible file
++ * allocation with different functions per usage.
++ */
++
++struct fd_prepare {
++	int fd;
++	struct file *file;
++};
++
++/*
++ * fd_prepare_fd() - Get fd from fd_prepare structure
++ * @fd_prepare: struct fd_prepare to extract fd from
++ *
++ * Returns the file descriptor from an fd_prepare structure.
++ *
++ * Return: The file descriptor
++ */
++static inline int fd_prepare_fd(struct fd_prepare fdp)
++{
++	return fdp.fd;
++}
++
++/*
++ * fd_prepare_file() - Get file from fd_prepare structure
++ * @fd_prepare: struct fd_prepare to extract file from
++ *
++ * Returns the file pointer from an fd_prepare structure.
++ *
++ * Return: The file pointer
++ */
++static inline struct file *fd_prepare_file(struct fd_prepare fdp)
++{
++	return fdp.file;
++}
++
++/*
++ * fd_prepare_failed() - Check if fd_prepare allocation failed
++ * @fd_prepare: struct fd_prepare to check
++ *
++ * Checks whether either the fd allocation or file allocation failed.
++ *
++ * Return: true if either allocation failed, false otherwise
++ */
++static inline bool fd_prepare_failed(struct fd_prepare fdp)
++{
++	VFS_WARN_ON_ONCE(fdp.fd < 0 && IS_ERR(fdp.file));
++	return fdp.fd < 0 || IS_ERR(fdp.file);
++}
++
++/*
++ * fd_prepare_error() - Get error from failed fd_prepare
++ * @fd_prepare: struct fd_prepare to extract error from
++ *
++ * Returns the error code from the first allocation that failed.
++ * Should only be called after fd_prepare_failed() returns true.
++ *
++ * Return: Negative error code
++ */
++static inline int fd_prepare_error(struct fd_prepare fdp)
++{
++	if (fdp.fd < 0) {
++		VFS_WARN_ON_ONCE(fdp.file);
++		return fdp.fd;
++	}
++	if (!fdp.file)
++		return -ENOMEM;
++	return PTR_ERR(fdp.file);
++}
++
++static inline void __fd_prepare_put(struct fd_prepare fdp)
++{
++	if (fdp.fd >= 0)
++		put_unused_fd(fdp.fd);
++	if (!IS_ERR_OR_NULL(fdp.file))
++		fput(fdp.file);
++}
++
++DEFINE_CLASS_TYPE(fd_prepare, struct fd_prepare, __fd_prepare_put(_T))
++
++/*
++ * __FD_PREPARE_INIT(fd_flags, file_init_expr):
++ *     Helper to initialize fd_prepare class.
++ *     @fd_flags: flags for get_unused_fd_flags()
++ *     @file_init_expr: expression that returns struct file *
++ *
++ * Returns a struct fd_prepare with fd and file set.
++ * If fd allocation fails, file will be NULL.
++ * If fd succeeds but file_init_expr fails, fd will be cleaned up.
++ */
++#define __FD_PREPARE_INIT(_fd_flags, _file_init)                \
++	({                                                    \
++		struct fd_prepare _fd_prepare = {             \
++			.fd = get_unused_fd_flags(_fd_flags), \
++		};                                            \
++		if (_fd_prepare.fd >= 0)                      \
++			_fd_prepare.file = (_file_init);      \
++		_fd_prepare;                                  \
++	})
++
++/*
++ * FD_PREPARE(var, fd_flags, file_init_expr):
++ *     Convenience wrapper for CLASS_INIT(fd_prepare, ...).
++ *
++ * Ex.
++ * FD_PREPARE(ff, O_RDWR | O_CLOEXEC,
++ *                  anon_inode_getfile("[eventpoll]", &eventpoll_fops, ep, O_RDWR));
++ * if (fd_prepare_failed(ff))
++ *     return fd_prepare_error(ff);
++ *
++ * ep->file = fd_prepare_file(ff);
++ * return fd_publish(ff);
++ *
++ * Or with different file init function:
++ *
++ * FD_PREPARE(ff, flags,
++ *                  anon_inode_getfile_fmode("[eventfd]", &eventfd_fops, ctx, flags, FMODE_NOWAIT));
++ * if (fd_prepare_failed(ff))
++ *     return fd_prepare_error(ff);
++ *
++ * return fd_publish(ff);
++ */
++#define FD_PREPARE(_var, _fd_flags, _file_init) \
++	CLASS_INIT(fd_prepare, _var, __FD_PREPARE_INIT(_fd_flags, _file_init))
++
++#define fd_publish(_fd_prepare)                          \
++	({                                               \
++		struct fd_prepare *__p = &(_fd_prepare); \
++		fd_install(__p->fd, __p->file);          \
++		retain_and_null_ptr(__p->file);          \
++		take_fd(__p->fd);                        \
++	})
++
+ #endif /* __LINUX_FILE_H */
+
+-- 
+2.47.3
 
 
