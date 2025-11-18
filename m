@@ -1,74 +1,73 @@
-Return-Path: <linux-fsdevel+bounces-68823-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68824-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8CFDC67312
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 04:55:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 762E0C673AE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 05:14:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A4D994E4E45
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 03:55:21 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B905B4EDC18
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 04:14:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F172316191;
-	Tue, 18 Nov 2025 03:55:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A1F628640F;
+	Tue, 18 Nov 2025 04:14:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="FWq9X/6R"
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="X8UhUr/u"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABF422D23A3
-	for <linux-fsdevel@vger.kernel.org>; Tue, 18 Nov 2025 03:55:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8CF927467E
+	for <linux-fsdevel@vger.kernel.org>; Tue, 18 Nov 2025 04:14:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763438110; cv=none; b=lqOATREg9TMBq+Mi18iHSjyo/BOSJK3muW0Mw8JrOwo1NZz3cJexoe+5ul+7IVSi+E3fkz/xHZPf/0JOiKIDtcDAU8jfQLPZHhnGIWZy0QdxGahcNCPCzN2pqzfwnjVQw4TIXBqOBwyMqkP2/Or5WgrN5waZi2xzDv8aCEE5/40=
+	t=1763439260; cv=none; b=Cf4kLIN4gwru3j8foVLepL9kRL4odUmNttfRhL5F/Gce0EqczW5nGAdonJY/gS2SzWs+eIBnR/z95/ahmDuICEDV1kHc/ycQLrBW5ijA8t8yiLkYtYjw0D+tt4ZFqYxcXAnuiejnvCdma8Kd515Y0FyK/pbiNstGhDh35ikZuwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763438110; c=relaxed/simple;
-	bh=GJQXAYpVXf9WIODL6aAeQUdinB0yRoRp5YgQ/TK1Wps=;
+	s=arc-20240116; t=1763439260; c=relaxed/simple;
+	bh=ts1YP1pM3KgXnMVQbSukSL8QcmoDGRWp0/OUxrRR1xM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Yjzqgh2e6brjFowjBsnL/rX8bKWm4SDBUFlXjaj3ExMCswZfBg1k1emFEPPE82cDSactwRfJlA2jDLUf+hIxqsLipqqJcVIqLumHWQ3reZDRO39blIAD0pUQuSH1eNwhrcMCn2WQ8nyUb+0orMiVIIW2qFfJALmublzUGD2WAMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=FWq9X/6R; arc=none smtp.client-ip=209.85.208.48
+	 To:Cc:Content-Type; b=BRkCm/h9nAcIvnuaGkvvXjhigAQf5OHpzLUvtxVEC+sl+MuKJpWfRVJCmvFeLPfLvRFna3SqgwSj1O8qg1oaVyahypFfYLyplI5MBr+or9US3aAac5PODxGhb6a8BkFJBNphuZYRpcgK4nnzwZxtYBGAIZ0kVmEsXXkCTU3eTcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=X8UhUr/u; arc=none smtp.client-ip=209.85.208.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-644f90587e5so1203564a12.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Nov 2025 19:55:07 -0800 (PST)
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-640ca678745so8459131a12.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Nov 2025 20:14:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1763438106; x=1764042906; darn=vger.kernel.org;
+        d=soleen.com; s=google; t=1763439256; x=1764044056; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=skgPOZZQd9xc8fmG59fpZy24V3xOREPCSLrN+c1B0bM=;
-        b=FWq9X/6R+JY9PBAjJenHvh8+hVE9S3ytgRdX7L0XnZ/GOmHbh5RoiSASwRPRDmRwu+
-         8F9AiOyhwUwkmb1/EQs21bnF8moYR4OoCgxIrrhbryBoSxNpNWwUgIrJdSJhBVY8t6ge
-         62BFYy8gK7fwnHpG0v+nROjhgF5kZGYNLyCZjX2vlE7ZbFoEFYHdvK/D03s/EHoRQPv9
-         DzfW4kEkpqLEWApA9j+Vv5JNEnDse09V9CHnbCPzHfm5sckQ2o9j4a7GddA6Ko9I8hf/
-         sya+uLeGoZ2f8qT4bgAzVkqWnR+Xi0N2oO5tuoB2TS1q8REgxdQVGLFpzM5dTjIGQdE1
-         s6yw==
+        bh=07HeZKjyOA8sg+0j8XO2NQGRkS4H44zMUY+FSrwKOW8=;
+        b=X8UhUr/uDMN8miCltzMbNWGLcTUtbXmoeDmt9YDmo3R36JQP6r6agnLotGnTdNtPiX
+         Exf26RpcbpXEIPw0Q4BTDiOc0QpZq3axJWZbPQpyhOTq23zV+58m/DTqNpnrRGyCVOlY
+         dOB4VfbV0ycLFcL3pQeEuLSKtQveAbfU4NGHrSUbsmXqiqYq5WiAZpioazvRdyKwe2em
+         hR/RGZgwkOXcrnr2p2VVpEKM6242vsuRPrbV/frGbGYDmt3fVwLSsQMyDTDJD1N6vaur
+         dm8H6fsNmobg/yyGuwqzitl5V/TYutGvl6c3M0eisyMdKyyBKjCbV9KuQog19b+NS3Yv
+         XIOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763438106; x=1764042906;
+        d=1e100.net; s=20230601; t=1763439256; x=1764044056;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=skgPOZZQd9xc8fmG59fpZy24V3xOREPCSLrN+c1B0bM=;
-        b=GAUW4/s7Aa7nb3S34JbB3qG6er1H++hf0WSdN9LM/SINEmtAKtGl+O+U1OErhyBC5b
-         niv2EEcJmG+7ryHTjdwGAWPxzVLWZYIoeY5awf/bPEAg/CxwLbks/smPrwXIM4geTq7r
-         uOfhkHXH9UxxT4XXE3cf8O6Ph2jiHNw4ugCkVVo+SvMly4H+gtSo4Gp0PeSWjxogf0Lc
-         +kq5Q/bddnMN7kNrCthYb0uGI+hE8+lmPWx9guIz/3sWKBT2FdkquXl16x0HScIjlX9u
-         XEu6v6xl9tRezQ+YyPRFgaEUkYlaHMgA5TZ+JMwmRlbonTCFG4uvQwizVNN9fiLWb4TZ
-         ZfkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXGdiXl0Bf4hI/PyUqZgqhBL/WsHNep905kfyk6sMKTcjOFY6PHwKMCMWwWchFNEzffyOuYz6kxnqzpRuAx@vger.kernel.org
-X-Gm-Message-State: AOJu0YxI+NIVYo4vYvxL0Xe+ZaY3EX5p+7XTbhHHPO/m1WaKEjAGJw7G
-	XeZ38MxETMk1wDx6Cy7uBSE+1q19yan6Wz/JruK9GZUBdg25rQ5CmqElg/KJyEC3rpqg+ggrUWB
-	8OaeHL2tmgCaAFpwI9/wncbg6nK/Xt5c34SSW/j7M2A==
-X-Gm-Gg: ASbGncuyVQQUmfV1tEP23zm8Ts0WtCmroqgIFMX94wv3F/aK8qA6wrpfCH5TeA8MUAT
-	Gc2ju6V4cPEs03xTtnCZoUFEZEim45X5vP1SV8Tplhp61UIezz2Z7X05+IODT8JdWJRssjBXwu2
-	WITdMJ8omTyr2/uWMaPsLF9lCamBv/sCgDRw0sT5oshjhLy/WqU+/euLMv8qu8A15q/wpIdtFPR
-	PAokPVsDi+lYYSPPk8em3cD0TU9dxYPxMcwGR3Bx7jMcIpJb1zvxMoBz06RzDZ5ohxUXnEGlEZA
-	13M=
-X-Google-Smtp-Source: AGHT+IGpZOWjW5LZWKY0Iok3QDFR7NYQQcE+w3n/xTVgTcedHnVbwsy/RegtbkWq0MjsVKCBcc+Ff3JZMy+ys8CEjC0=
-X-Received: by 2002:a05:6402:5056:b0:640:ebca:e66f with SMTP id
- 4fb4d7f45d1cf-64350ec0198mr11607004a12.34.1763438105963; Mon, 17 Nov 2025
- 19:55:05 -0800 (PST)
+        bh=07HeZKjyOA8sg+0j8XO2NQGRkS4H44zMUY+FSrwKOW8=;
+        b=UkwuhJTJoYS8acDeUhwwDjxsznijZuaroF/DPMj3OGt7ljpjvy3XsqNBVcvWx055fX
+         Ti7xHSgF3WVSdXRQs41F5ho2L4u8RA5HcjNjiz2x7V5XexPLTN+LNcoEKLqBFSqxVcxj
+         Q3kuxH/nmJviWcFk208M/nl93iaNUjpXvp2Yq6cDh9JTWjKj7kIAcLGVfk1y2klkdGsV
+         HsMUwApIydbISlWuXRVEN8ifea0oL40uanh2nd4Q3RLsCRIIXfrXRguGjSf4Zbbd5I8H
+         HAKx/z4+2Tbsdw/TOJbp8BtevEhuT1UKLhKVAoFloi4nYAy7Nu1diIeB4kwSASrHqqEq
+         xYLw==
+X-Forwarded-Encrypted: i=1; AJvYcCXnYqJZL1Fh01jSxr8SajsmgXOtcI23ouKoSW7ZG2mjndQvS43ydPzMZHj9ZPs28+/bW7NCob5mylJS4qx6@vger.kernel.org
+X-Gm-Message-State: AOJu0YzcibKLZJENShsf7m65/EERjHF3BBxN18Dho6AyCLDC0YSpCmVf
+	tLdivgxMwR2kwpx9febBjQzLIxeuWapwQ6uhqN5mKBEmGNLZXzmV2haroYiU1IraCbBecI7Uu0G
+	oTi+hKclgRQvd0kSKPOdTX6SKtBXe5cFrlPIRvLdY7w==
+X-Gm-Gg: ASbGncvDlmycQqcjl/07/hFmlPMvKvgVbJ7D7PRqKF0zVRwBZj0l8aZ89rSo6nk1Uf8
+	ZBRoNeJyaUvYk/ulzZ5XjM+E3YmU0/E95nVQcalwt/U7QlvJAk67QA0DM0dJQe/aBvUgfi/nUFt
+	jIa+ihpaGgjw56zdIYt5Sec6PKVbNrnNXOSFpI9aSSFEXgXbNvn4SLf7ko1AThjA0UWqNL2vwn2
+	DOKF+9QaQ3DmxGXhtxTdfPiJjdDwts2SIuXOq8uMcfdV+VJZJmvPXvozsggEa2ppZUu
+X-Google-Smtp-Source: AGHT+IF7odRYhWUKE4hEH/yqZovWuRxLWp+QjpvspuEPYgC7PACIvotSh+56pMkd5f5Wg4bGjW+/7/Gip+y+Hfcb0Tw=
+X-Received: by 2002:a05:6402:1445:b0:640:e75a:f95d with SMTP id
+ 4fb4d7f45d1cf-64350e06df6mr15371153a12.15.1763439255422; Mon, 17 Nov 2025
+ 20:14:15 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -76,14 +75,13 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20251115233409.768044-1-pasha.tatashin@soleen.com>
- <20251115233409.768044-9-pasha.tatashin@soleen.com> <aRrtRfJaaIHw5DZN@kernel.org>
-In-Reply-To: <aRrtRfJaaIHw5DZN@kernel.org>
+ <20251115233409.768044-13-pasha.tatashin@soleen.com> <aRr0CQsV16usRW1J@kernel.org>
+In-Reply-To: <aRr0CQsV16usRW1J@kernel.org>
 From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Mon, 17 Nov 2025 22:54:29 -0500
-X-Gm-Features: AWmQ_bkZQMN1UOxORLYbivUdr8-ENGLbMFsVRw8DEyZxpK5fJGoXi0eN_5cEvNg
-Message-ID: <CA+CK2bBxVNRkJ-8Qv1AzfHEwpxnc4fSxdzKCL_7ku0TMd6Rjow@mail.gmail.com>
-Subject: Re: [PATCH v6 08/20] liveupdate: luo_flb: Introduce
- File-Lifecycle-Bound global state
+Date: Mon, 17 Nov 2025 23:13:39 -0500
+X-Gm-Features: AWmQ_blVntX9altpCY4SXrXyEKO7X1UIHIxI-cPMY5rvalxcvtOdur6QxS28SKk
+Message-ID: <CA+CK2bC7O4B=R7Wb2wZ7QYH2_Ujo-REXVqUX1ukfPJ-XDubtLA@mail.gmail.com>
+Subject: Re: [PATCH v6 12/20] mm: shmem: allow freezing inode mapping
 To: Mike Rapoport <rppt@kernel.org>
 Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com, 
 	dmatlack@google.com, rientjes@google.com, corbet@lwn.net, 
@@ -111,190 +109,77 @@ Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com,
 	chrisl@kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
+> > +/* Must be called with inode lock taken exclusive. */
+> > +static inline void shmem_i_mapping_freeze(struct inode *inode, bool freeze)
 >
-> The concept makes sense to me, but it's hard to review the implementation
-> without an actual user.
+> _mapping usually refers to operations on struct address_space.
+> It seems that all shmem methods that take inode are just shmem_<operation>,
+> so shmem_freeze() looks more appropriate.
 
-There are three users: we will have HugeTLB support that is going to
-be posted as RFC in a few weeks. Also, in two weeks we are going to
-have an updated VFIO and IOMMU series posted both using FLBs. In the
-mean time, this series provides an FLB in-kernel test that verifies
-that multiple FLBs can be attached to File-Handlers, and the basic
-interfaces are working.
-
-
-> > +struct liveupdate_flb {
-> > +     const struct liveupdate_flb_ops *ops;
-> > +     const char compatible[LIVEUPDATE_FLB_COMPAT_LENGTH];
-> > +     struct list_head list;
-> > +     void *internal;
->
-> Can't list be a part of internal?
-
-Yes, I moved it inside internal, and also, I removed
-liveupdate_init_flb function (do that automatically now), and use the
-__private as you suggested earlier, and also removed the kmalloc() for
-the internal data, so FLBs can be safely used early in boot.
-
-> And don't we usually call this .private rather than .internal?
-
-Renamed.
+Done, renamed to shmem_freeze()
 
 >
-> >  };
-> >
-> >  #ifdef CONFIG_LIVEUPDATE
-> > @@ -111,6 +187,17 @@ int liveupdate_get_file_incoming(struct liveupdate_session *s, u64 token,
-> >  int liveupdate_get_token_outgoing(struct liveupdate_session *s,
-> >                                 struct file *file, u64 *tokenp);
-> >
-> > +/* Before using FLB for the first time it should be initialized */
-> > +int liveupdate_init_flb(struct liveupdate_flb *flb);
-> > +
-> > +int liveupdate_register_flb(struct liveupdate_file_handler *h,
-> > +                         struct liveupdate_flb *flb);
->
-> While these are obvious ...
->
-> > +
-> > +int liveupdate_flb_incoming_locked(struct liveupdate_flb *flb, void **objp);
-> > +void liveupdate_flb_incoming_unlock(struct liveupdate_flb *flb, void *obj);
-> > +int liveupdate_flb_outgoing_locked(struct liveupdate_flb *flb, void **objp);
-> > +void liveupdate_flb_outgoing_unlock(struct liveupdate_flb *flb, void *obj);
-> > +
->
-> ... it's not very clear what these APIs are for and how they are going to be
-> used.
-
-Global resource that is accessible either while a file is getting
-preserved or anytime during boot.
-
->
-> >  #else /* CONFIG_LIVEUPDATE */
->
-> ...
->
-> > +int liveupdate_register_flb(struct liveupdate_file_handler *h,
-> > +                         struct liveupdate_flb *flb)
 > > +{
-> > +     struct luo_flb_internal *internal = flb->internal;
-> > +     struct luo_flb_link *link __free(kfree) = NULL;
-> > +     static DEFINE_MUTEX(register_flb_lock);
-> > +     struct liveupdate_flb *gflb;
-> > +     struct luo_flb_link *iter;
-> > +
-> > +     if (!liveupdate_enabled())
-> > +             return -EOPNOTSUPP;
-> > +
-> > +     if (WARN_ON(!h || !flb || !internal))
-> > +             return -EINVAL;
-> > +
-> > +     if (WARN_ON(!flb->ops->preserve || !flb->ops->unpreserve ||
-> > +                 !flb->ops->retrieve || !flb->ops->finish)) {
-> > +             return -EINVAL;
-> > +     }
-> > +
-> > +     /*
-> > +      * Once session/files have been deserialized, FLBs cannot be registered,
-> > +      * it is too late. Deserialization uses file handlers, and FLB registers
-> > +      * to file handlers.
-> > +      */
-> > +     if (WARN_ON(luo_session_is_deserialized()))
-> > +             return -EBUSY;
-> > +
-> > +     /*
-> > +      * File handler must already be registered, as it is initializes the
-> > +      * flb_list
-> > +      */
-> > +     if (WARN_ON(list_empty(&h->list)))
-> > +             return -EINVAL;
-> > +
-> > +     link = kzalloc(sizeof(*link), GFP_KERNEL);
-> > +     if (!link)
-> > +             return -ENOMEM;
-> > +
-> > +     guard(mutex)(&register_flb_lock);
-> > +
-> > +     /* Check that this FLB is not already linked to this file handler */
-> > +     list_for_each_entry(iter, &h->flb_list, list) {
-> > +             if (iter->flb == flb)
-> > +                     return -EEXIST;
-> > +     }
-> > +
-> > +     /* Is this FLB linked to global list ? */
->
-> Maybe:
->
->         /*
->          * If this FLB is not linked to global list it's first time the FLB
->          * is registered
->          */
-
-Done
-
-
-> > +/**
-> > + * liveupdate_flb_incoming_unlock - Unlock an incoming FLB object.
-> > + * @flb: The FLB definition.
-> > + * @obj: The object that was returned by the _locked call (used for validation).
-> > + *
-> > + * Releases the internal lock acquired by liveupdate_flb_incoming_locked().
-> > + */
-> > +void liveupdate_flb_incoming_unlock(struct liveupdate_flb *flb, void *obj)
-> > +{
-> > +     struct luo_flb_internal *internal = flb->internal;
-> > +
-> > +     lockdep_assert_held(&internal->incoming.lock);
-> > +     internal->incoming.obj = obj;
->
-> The comment says obj is for validation and here it's assigned to flb.
-> Something is off here :)
-
-Thank you for catching stale comment, fixed.
-
-> > +     mutex_unlock(&internal->incoming.lock);
+> > +     if (freeze)
+> > +             SHMEM_I(inode)->flags |= SHMEM_F_MAPPING_FROZEN;
+> > +     else
+> > +             SHMEM_I(inode)->flags &= ~SHMEM_F_MAPPING_FROZEN;
 > > +}
 > > +
-> > +/**
-> > + * liveupdate_flb_outgoing_locked - Lock and retrieve the outgoing FLB object.
-> > + * @flb:  The FLB definition.
-> > + * @objp: Output parameter; will be populated with the live shared object.
-> > + *
-> > + * Acquires the FLB's internal lock and returns a pointer to its shared live
-> > + * object for the outgoing (pre-reboot) path.
-> > + *
-> > + * This function assumes the object has already been created by the FLB's
-> > + * .preserve() callback, which is triggered when the first dependent file
-> > + * is preserved.
-> > + *
-> > + * The caller MUST call liveupdate_flb_outgoing_unlock() to release the lock.
-> > + *
-> > + * Return: 0 on success, or a negative errno on failure.
-> > + */
-> > +int liveupdate_flb_outgoing_locked(struct liveupdate_flb *flb, void **objp)
-> > +{
-> > +     struct luo_flb_internal *internal = flb->internal;
-> > +
-> > +     if (!liveupdate_enabled())
-> > +             return -EOPNOTSUPP;
-> > +
-> > +     if (WARN_ON(!internal))
-> > +             return -EINVAL;
-> > +
-> > +     mutex_lock(&internal->outgoing.lock);
-> > +
-> > +     /* The object must exist if any file is being preserved */
-> > +     if (WARN_ON_ONCE(!internal->outgoing.obj)) {
-> > +             mutex_unlock(&internal->outgoing.lock);
-> > +             return -ENOENT;
-> > +     }
+> >  /*
+> >   * If fallocate(FALLOC_FL_KEEP_SIZE) has been used, there may be pages
+> >   * beyond i_size's notion of EOF, which fallocate has committed to reserving:
+> > diff --git a/mm/shmem.c b/mm/shmem.c
+> > index 1d5036dec08a..05c3db840257 100644
+> > --- a/mm/shmem.c
+> > +++ b/mm/shmem.c
+> > @@ -1292,7 +1292,8 @@ static int shmem_setattr(struct mnt_idmap *idmap,
+> >               loff_t newsize = attr->ia_size;
+> >
+> >               /* protected by i_rwsem */
+> > -             if ((newsize < oldsize && (info->seals & F_SEAL_SHRINK)) ||
+> > +             if ((info->flags & SHMEM_F_MAPPING_FROZEN) ||
 >
-> _incoming_locked() and outgoing_locked() are nearly identical, it seems we
-> can have the common part in a
-> static liveupdate_flb_locked(struct luo_flb_state *state).
->
-> liveupdate_flb_incoming_locked() will be oneline wrapper and
-> liveupdate_flb_outgoing_locked() will have this WARN_ON if obj is NULL.
+> A corner case: if newsize == oldsize this will be a false positive
 
-Done
+Added a fix.
+
+Thanks,
+Pasha
+
+>
+> > +                 (newsize < oldsize && (info->seals & F_SEAL_SHRINK)) ||
+> >                   (newsize > oldsize && (info->seals & F_SEAL_GROW)))
+> >                       return -EPERM;
+> >
+> > @@ -3289,6 +3290,10 @@ shmem_write_begin(const struct kiocb *iocb, struct address_space *mapping,
+> >                       return -EPERM;
+> >       }
+> >
+> > +     if (unlikely((info->flags & SHMEM_F_MAPPING_FROZEN) &&
+> > +                  pos + len > inode->i_size))
+> > +             return -EPERM;
+> > +
+> >       ret = shmem_get_folio(inode, index, pos + len, &folio, SGP_WRITE);
+> >       if (ret)
+> >               return ret;
+> > @@ -3662,6 +3667,11 @@ static long shmem_fallocate(struct file *file, int mode, loff_t offset,
+> >
+> >       inode_lock(inode);
+> >
+> > +     if (info->flags & SHMEM_F_MAPPING_FROZEN) {
+> > +             error = -EPERM;
+> > +             goto out;
+> > +     }
+> > +
+> >       if (mode & FALLOC_FL_PUNCH_HOLE) {
+> >               struct address_space *mapping = file->f_mapping;
+> >               loff_t unmap_start = round_up(offset, PAGE_SIZE);
+> > --
+> > 2.52.0.rc1.455.g30608eb744-goog
+> >
+>
+> --
+> Sincerely yours,
+> Mike.
 
