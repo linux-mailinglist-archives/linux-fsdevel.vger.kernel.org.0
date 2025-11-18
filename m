@@ -1,171 +1,199 @@
-Return-Path: <linux-fsdevel+bounces-68898-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68899-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1690EC67B6D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 07:23:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B23FC67B88
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 07:24:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E0D924E1361
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 06:23:36 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ED8C64E1D85
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 06:24:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CA002E973C;
-	Tue, 18 Nov 2025 06:23:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6FFE2E62A9;
+	Tue, 18 Nov 2025 06:24:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rG7bh+AR"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HTZXh48y"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BEDF2D9787;
-	Tue, 18 Nov 2025 06:23:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DA2C29E10F
+	for <linux-fsdevel@vger.kernel.org>; Tue, 18 Nov 2025 06:24:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763446982; cv=none; b=oOmR7Smb9+vHJGabii2S53sQLRQiYJpaIXnH7IrKdcLKmzgB/f04O/14Ohx865ihKPGUCDq2SKErm87g22zzM8p19uRf5O/pobC8xwD5z7TPPfY1F58Aj8iWlWJnKCbLJBh8piJr+JwCC3FqFd0S1VtRtJjtZrta8r9rHo0RsqM=
+	t=1763447082; cv=none; b=YwIOnQv3aa5BqfD7oUeroBe5TH5U1G4I0d+iw2kU9mlvPrXPm7So3C/QIhEf+mYqB1vC76DRBjvN+aR09aqJ86mNxPejBz6uRuOjGpfvUr3/l55UGuVuc1DWSaS5r2DdAMPXYA6T69X8JSvwb2GgTaWQCyG5UButwjaxQ1b4r4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763446982; c=relaxed/simple;
-	bh=DRUg08tPNIbEXSFUWcxJlSLxrGKsbEQwv4xqnlsG6gI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Lpmv4fr6IvkYWUsEWu8e3l6MHOgrKljFOmVW2yrGSmCNk9o84Iky/t+EeQ2iekEoCLSPI7N6UUCDdhA/zGt2DddKtJIQFI3pU214MyStNVY5AjE9ACgXTA31ZENEjl8PVbeP7WcYVVDiQgQYjx5Lk0Xdib9HLbly8KcnkIMX+wM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=rG7bh+AR; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
-	:Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=maKopu2ueksKXHtq1fc6D/pIVzIQjjOXmEvWcRyAhDQ=; b=rG7bh+ARUqJdOqoyrjC/caIkr3
-	zZteJG5gaJIXz8GFA0EXypEhTWiAQQ7eMClmcognNt2wwpLAfmNh8PP0ePK6nRoJWxDpUrPvV5p6/
-	FpYzw+rpQDSPMcLhQKxaIgVwqUIJROVcpY6Lg2dQ1o0wUT93P9KHVdRXFLCRFzg2CmxhDtS8a/fCp
-	yygaSAhL5LCdxZQ/1PXF6TXdf7c56ME6fUu1J51jm3ZTbRQa4YntPWNeA2J8rteE2TXR7CRk58EBB
-	SGK4eSyxUbnhMmumpQAakxdqFHw4Hdg59urW8c4pbEOtP4OGtsMzST82bZeUe9aZVi5t/14728de6
-	fLdlvhiw==;
-Received: from 2a02-8389-2341-5b80-d601-7564-c2e0-491c.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:d601:7564:c2e0:491c] helo=localhost)
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vLF7E-0000000HUS0-1oBS;
-	Tue, 18 Nov 2025 06:23:00 +0000
-From: Christoph Hellwig <hch@lst.de>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: "Theodore Y. Ts'o" <tytso@mit.edu>,
-	Jaegeuk Kim <jaegeuk@kernel.org>,
-	Andreas Dilger <adilger.kernel@dilger.ca>,
-	Chao Yu <chao@kernel.org>,
-	Christian Brauner <brauner@kernel.org>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	linux-fscrypt@vger.kernel.org,
-	linux-ext4@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 11/11] fscrypt: pass a real sector_t to fscrypt_zeroout_range
-Date: Tue, 18 Nov 2025 07:21:54 +0100
-Message-ID: <20251118062159.2358085-12-hch@lst.de>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251118062159.2358085-1-hch@lst.de>
-References: <20251118062159.2358085-1-hch@lst.de>
+	s=arc-20240116; t=1763447082; c=relaxed/simple;
+	bh=KEniiT5ZH+CjU7O9bfckXLKM/uCgytrdWVhbzu0XPkI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CUAQM+3+lAVbLMOM5RpldV1F2qHP/x1627pdL3xreJmx/655dbQW2XXjN0xpli1SI677JwUomdpNelxwew1ck5eU792f3sWcmJasqATBM1wvACb/i4lHPaGYuJkFWSAz6nB99yKtagHnGW9q+kQdQOoYrWcJLRapfcvZg0e3FV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HTZXh48y; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4779a4fb9bfso35215e9.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Nov 2025 22:24:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1763447079; x=1764051879; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TLvAPfrkI/zYgSNVGp/8sP/HrwQJdzRKS9oKpDwAHUc=;
+        b=HTZXh48yjLKlpgFb53EUKqqxfa78mWwXU7Tic7AhDiIE0yU0cZcqeSt/kzPyu8ZKwp
+         PkU4sh1OZh1VEBqxmX6FRE/6gGrCVeNPfg2fU9RjZh+A0AoGcQFa3OFFVIhyInqF4+BN
+         w6W4uJ5fDLShjymp8B1zrNUvE4U5GYJtmnItwu5Swb8sqIIbrMhS3k67DBFqNJs3MG/r
+         0YQNoowRNQRl6ly0DO/rB+eRVKECebzLtV+plRvUNduNJsDuBvk2aC5ZbTOyOgHg15j0
+         Rv2qEuVUmCjbn3LF8Thgy+W6YaxRJmUGOnztxfpn3SEttSVUCNXYAfiTPNL5ZEialP/U
+         nQWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763447079; x=1764051879;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=TLvAPfrkI/zYgSNVGp/8sP/HrwQJdzRKS9oKpDwAHUc=;
+        b=mV0Mx7tokGcY1Tk+Y6btXdi0Udtf1ENbY4LgSRZL1FKubjzCVjafVMzmQb7IUvI4Vb
+         dxsNfNhxlYKKbK1wieaTYP9mZJ92EPS3Ybql/d9334STTik40gNq+dBXzat8o/Pn2HOc
+         7KWRz2TQ0B+pknWZ5lO+T0LfLOYcBy8EpyReTRnfL/+59lq4asWfQLB/X5jGH2mpOaVG
+         Jmfn2l4Mdyo8r1fZ8s+6Y4pZZlhlLv/2tdpGSgPuEYcZ6KhqdqSUhijsUuvxOZbd6hsI
+         iZb6VywUhdiz0WFp+V2xcpTOjDlSOHn7CzICWwkiY29e9DC7Uf40r7D47LK64tPlt7hi
+         Viaw==
+X-Forwarded-Encrypted: i=1; AJvYcCUGx8Sw3qTbkOkQ0YX0nX2vx5+gmaNSdp5Rwn2+nsEBC9roZXphr489NfyT0a9SKFSI7PWCunTk7rBiulC2@vger.kernel.org
+X-Gm-Message-State: AOJu0YxegQ4XMlmS5yRICFQjBE+gsNf8x1l2gENHd68GkqyY/TS2cBj7
+	IND1KuY8iRZ26rESHVu2MEYOhv+F84Z2X22vfLGLaHx1q5jBENr1I6ecBAX4II0GTG0E7Mx+AGq
+	wz4WEdpnhn76tUTYL80pVJ5OtX104s9MRgm0LFHuc
+X-Gm-Gg: ASbGncu8BgCmo22iFGalhcJLNByBGYxPEXdFKOLVDXWEYjqwLxxHllPsNdQ+3MAZe6q
+	2m37Ig3hwpTsXQimHS9Aj4JsTdj+EiO/LrLNTVsIFBXEQXcm0veSSAOlgNZUzyFwVhjmFYBEsN/
+	AK3862zZJIzAhRixdQt7IBfR0w+1qQRUexHDOVxmh3LTSICrXi3DGq8W2lnsSmG+fQaMTxpyGpv
+	TEOXdfmyVrSE6p20nyse5uWAxeiwL9cKzCUCDpVbVNrIIGPV4vazldOrxea6WsedQtOiEM6XX67
+	TDURpDvD4y1zYIW97mPt8UHfUFIY
+X-Google-Smtp-Source: AGHT+IGUrL8vb1I+w3aQwLjf+9ccRyeGCNs9+TZ7n9gxUlnGLthm8mqk5SxO7W68VRy8YDjsnkdfmM2JXkmraVH+nPU=
+X-Received: by 2002:a05:600c:c0d9:b0:477:76cb:18e2 with SMTP id
+ 5b1f17b1804b1-477aca5a719mr89855e9.0.1763447078727; Mon, 17 Nov 2025 22:24:38
+ -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+References: <20251116014721.1561456-1-jiaqiyan@google.com> <20251116014721.1561456-2-jiaqiyan@google.com>
+ <aRm6shtKizyrq_TA@casper.infradead.org> <aRqTLmJBuvBcLYMx@hyeyoo> <aRsmaIfCAGy-DRcx@casper.infradead.org>
+In-Reply-To: <aRsmaIfCAGy-DRcx@casper.infradead.org>
+From: Jiaqi Yan <jiaqiyan@google.com>
+Date: Mon, 17 Nov 2025 22:24:27 -0800
+X-Gm-Features: AWmQ_bmQYN1uUL7Hku5AMHcByQa7MIWapAaD7bovPggfmM_Xzv2AdbuM5SMKUMk
+Message-ID: <CACw3F50E=AZtgfoExCA-nwS6=NYdFFWpf6+GBUYrWiJOz4xwaw@mail.gmail.com>
+Subject: Re: [PATCH v1 1/2] mm/huge_memory: introduce uniform_split_unmapped_folio_to_zero_order
+To: Matthew Wilcox <willy@infradead.org>, Harry Yoo <harry.yoo@oracle.com>, ziy@nvidia.com, 
+	david@redhat.com, Vlastimil Babka <vbabka@suse.cz>
+Cc: nao.horiguchi@gmail.com, linmiaohe@huawei.com, lorenzo.stoakes@oracle.com, 
+	william.roche@oracle.com, tony.luck@intel.com, wangkefeng.wang@huawei.com, 
+	jane.chu@oracle.com, akpm@linux-foundation.org, osalvador@suse.de, 
+	muchun.song@linux.dev, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, Michal Hocko <mhocko@suse.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Brendan Jackman <jackmanb@google.com>, 
+	Johannes Weiner <hannes@cmpxchg.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-While the pblk argument to fscrypt_zeroout_range is declared as a
-sector_t, it actually is interpreted as a logical block size unit, which
-is highly unusual.  Switch to passing the 512 byte units that sector_t is
-defined for.
+On Mon, Nov 17, 2025 at 5:43=E2=80=AFAM Matthew Wilcox <willy@infradead.org=
+> wrote:
+>
+> On Mon, Nov 17, 2025 at 12:15:23PM +0900, Harry Yoo wrote:
+> > On Sun, Nov 16, 2025 at 11:51:14AM +0000, Matthew Wilcox wrote:
+> > > But since we're only doing this on free, we won't need to do folio
+> > > allocations at all; we'll just be able to release the good pages to t=
+he
+> > > page allocator and sequester the hwpoison pages.
+> >
+> > [+Cc PAGE ALLOCATOR folks]
+> >
+> > So we need an interface to free only healthy portion of a hwpoison foli=
+o.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- fs/crypto/bio.c         | 6 ++----
- fs/ext4/inode.c         | 3 ++-
- fs/f2fs/file.c          | 2 +-
- include/linux/fscrypt.h | 4 ++--
- 4 files changed, 7 insertions(+), 8 deletions(-)
++1, with some of my own thoughts below.
 
-diff --git a/fs/crypto/bio.c b/fs/crypto/bio.c
-index 4e9893664c0f..63bb53aeac4a 100644
---- a/fs/crypto/bio.c
-+++ b/fs/crypto/bio.c
-@@ -114,7 +114,7 @@ static int fscrypt_zeroout_range_inline_crypt(const struct inode *inode,
-  * fscrypt_zeroout_range() - zero out a range of blocks in an encrypted file
-  * @inode: the file's inode
-  * @pos: the first file logical offset (in bytes) to zero out
-- * @pblk: the first filesystem physical block to zero out
-+ * @sector: the first sector to zero out
-  * @len: bytes to zero out
-  *
-  * Zero out filesystem blocks in an encrypted regular file on-disk, i.e. write
-@@ -128,7 +128,7 @@ static int fscrypt_zeroout_range_inline_crypt(const struct inode *inode,
-  * Return: 0 on success; -errno on failure.
-  */
- int fscrypt_zeroout_range(const struct inode *inode, loff_t pos,
--			  sector_t pblk, unsigned int len)
-+			  sector_t sector, unsigned int len)
- {
- 	const struct fscrypt_inode_info *ci = fscrypt_get_inode_info_raw(inode);
- 	const unsigned int du_bits = ci->ci_data_unit_bits;
-@@ -137,8 +137,6 @@ int fscrypt_zeroout_range(const struct inode *inode, loff_t pos,
- 	const unsigned int du_per_page = 1U << du_per_page_bits;
- 	u64 du_index = pos >> du_bits;
- 	u64 du_remaining = len >> du_bits;
--	loff_t pos = (loff_t)lblk << inode->i_blkbits;
--	sector_t sector = pblk << (inode->i_blkbits - SECTOR_SHIFT);
- 	struct page *pages[16]; /* write up to 16 pages at a time */
- 	unsigned int nr_pages;
- 	unsigned int i;
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 3743260b70d4..d8a845da2881 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -403,7 +403,8 @@ int ext4_issue_zeroout(struct inode *inode, ext4_lblk_t lblk, ext4_fsblk_t pblk,
- 
- 	if (IS_ENCRYPTED(inode) && S_ISREG(inode->i_mode))
- 		return fscrypt_zeroout_range(inode,
--				(loff_t)lblk << inode->i_blkbits, pblk,
-+				(loff_t)lblk << inode->i_blkbits,
-+				pblk << (inode->i_blkbits - SECTOR_SHIFT),
- 				len << inode->i_blkbits);
- 
- 	ret = sb_issue_zeroout(inode->i_sb, pblk, len, GFP_NOFS);
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 45ec6f83fcda..315816ac07be 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -4143,7 +4143,7 @@ static int f2fs_secure_erase(struct block_device *bdev, struct inode *inode,
- 	if (!ret && (flags & F2FS_TRIM_FILE_ZEROOUT)) {
- 		if (IS_ENCRYPTED(inode))
- 			ret = fscrypt_zeroout_range(inode,
--					(loff_t)off << inode->i_blkbits, block,
-+					(loff_t)off << inode->i_blkbits, sector,
- 					len << inode->i_blkbits);
- 		else
- 			ret = blkdev_issue_zeroout(bdev, sector, nr_sects,
-diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
-index 065f909ebda2..11464bf0a241 100644
---- a/include/linux/fscrypt.h
-+++ b/include/linux/fscrypt.h
-@@ -451,7 +451,7 @@ u64 fscrypt_fname_siphash(const struct inode *dir, const struct qstr *name);
- /* bio.c */
- bool fscrypt_decrypt_bio(struct bio *bio);
- int fscrypt_zeroout_range(const struct inode *inode, loff_t pos,
--			  sector_t pblk, unsigned int len);
-+			  sector_t sector, unsigned int len);
- 
- /* hooks.c */
- int fscrypt_file_open(struct inode *inode, struct file *filp);
-@@ -756,7 +756,7 @@ static inline bool fscrypt_decrypt_bio(struct bio *bio)
- }
- 
- static inline int fscrypt_zeroout_range(const struct inode *inode, loff_t pos,
--					sector_t pblk, unsigned int len)
-+					sector_t sector, unsigned int len)
- {
- 	return -EOPNOTSUPP;
- }
--- 
-2.47.3
+> >
+> > I think a proper approach to this should be to "free a hwpoison folio
+> > just like freeing a normal folio via folio_put() or free_frozen_pages()=
+,
+> > then the page allocator will add only healthy pages to the freelist and
+> > isolate the hwpoison pages". Oherwise we'll end up open coding a lot,
+> > which is too fragile.
+>
+> Yes, I think it should be handled by the page allocator.  There may be
 
+I agree with Matthew, Harry, and David. The page allocator seems best
+suited to handle HWPoison subpages without any new folio allocations.
+
+> some complexity to this that I've missed, eg if hugetlb wants to retain
+> the good 2MB chunks of a 1GB allocation.  I'm not sure that's a useful
+> thing to do or not.
+>
+> > In fact, that can be done by teaching free_pages_prepare() how to handl=
+e
+> > the case where one or more subpages of a folio are hwpoison pages.
+> >
+> > How this should be implemented in the page allocator in memdescs world?
+> > Hmm, we'll want to do some kind of non-uniform split, without actually
+> > splitting the folio but allocating struct buddy?
+>
+> Let me sketch that out, realising that it's subject to change.
+>
+> A page in buddy state can't need a memdesc allocated.  Otherwise we're
+> allocating memory to free memory, and that way lies madness.  We can't
+> do the hack of "embed struct buddy in the page that we're freeing"
+> because HIGHMEM.  So we'll never shrink struct page smaller than struct
+> buddy (which is fine because I've laid out how to get to a 64 bit struct
+> buddy, and we're probably two years from getting there anyway).
+>
+> My design for handling hwpoison is that we do allocate a struct hwpoison
+> for a page.  It looks like this (for now, in my head):
+>
+> struct hwpoison {
+>         memdesc_t original;
+>         ... other things ...
+> };
+>
+> So we can replace the memdesc in a page with a hwpoison memdesc when we
+> encounter the error.  We still need a folio flag to indicate that "this
+> folio contains a page with hwpoison".  I haven't put much thought yet
+> into interaction with HUGETLB_PAGE_OPTIMIZE_VMEMMAP; maybe "other things"
+> includes an index of where the actually poisoned page is in the folio,
+> so it doesn't matter if the pages alias with each other as we can recover
+> the information when it becomes useful to do so.
+>
+> > But... for now I think hiding this complexity inside the page allocator
+> > is good enough. For now this would just mean splitting a frozen page
+
+I want to add one more thing. For HugeTLB, kernel clears the HWPoison
+flag on the folio and move it to every raw pages in raw_hwp_page list
+(see folio_clear_hugetlb_hwpoison). So page allocator has no hint that
+some pages passed into free_frozen_pages has HWPoison. It has to
+traverse 2^order pages to tell, if I am not mistaken, which goes
+against the past effort to reduce sanity checks. I believe this is one
+reason I choosed to handle the problem in hugetlb / memory-failure.
+
+For the new interface Harry requested, is it the caller's
+responsibility to ensure that the folio contains HWPoison pages (to be
+even better, maybe point out the exact ones?), so that page allocator
+at least doesn't waste cycles to search non-exist HWPoison in the set
+of pages?
+
+Or caller and page allocator need to agree on some contract? Say
+caller has to set has_hwpoisoned flag in non-zero order folio to free.
+This allows the old interface free_frozen_pages an easy way using the
+has_hwpoison flag from the second page. I know has_hwpoison is "#if
+defined" on THP and using it for hugetlb probably is not very clean,
+but are there other concerns?
+
+
+> > inside the page allocator (probably non-uniform?). We can later re-impl=
+ement
+> > this to provide better support for memdescs.
+>
+> Yes, I like this approach.  But then I'm not the page allocator
+> maintainer ;-)
+
+If page allocator maintainers can weigh in here, that will be very helpful!
 
