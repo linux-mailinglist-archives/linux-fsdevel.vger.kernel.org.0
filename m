@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-68876-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68877-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94289C67915
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 06:30:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 298EAC67912
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 06:30:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 360E94F85D4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 05:24:34 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 300BB4EFC72
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 05:24:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11A7D30FC11;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11C2D30FC23;
 	Tue, 18 Nov 2025 05:16:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="tvP+Rm/V"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="g0mv9RTw"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F78B2C21C1;
-	Tue, 18 Nov 2025 05:16:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34DDE2D0C89;
+	Tue, 18 Nov 2025 05:16:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763442979; cv=none; b=hQYl2Rn8DsVP0g+19HQkoJ72Us/9xBngrMcwpfTIS0PFCO1dm+8a5OshEWPyCj9nFeMcE2ZSKufeYmyhSGKmf5S1myBQun34atrLD0uRfg+ktpffVTMagEm4aL3/Cypmbb8YSOU3oALp0a5Eudj8dYlqrAyC1Q7kgMk4uBYXbTs=
+	t=1763442980; cv=none; b=KD2QRDlWZoxUPibuBUYScZgbD8UEIqicwFySI43f6Qas8guDECtxwyWWcNlnz0aKj7jU7I25EAG1aJNw01OT6VOI4xhbNc+9Xf35Gor9ajpGqk3IB1b6JYEM5re5z9RryI8FeiyLPWJ4LDN/0xmIwIh47XUTv6EqdKbIYGMDd0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763442979; c=relaxed/simple;
-	bh=zPYbbdJMbimCH8CGuafAZf5bHfgge+LaaShYJQxoDwY=;
+	s=arc-20240116; t=1763442980; c=relaxed/simple;
+	bh=hvKn4v226vlFPVcEMTmI8vKLyXW8b3xQk740dDR1S7k=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YUNM5Hmt/Ju2ZjQM+yPy1Kd1YzNEJJ/OHQrasrd7+TUaxhwtRSzwvXDLck8e2gqgCCbyIpNqqeiv2vIZBnRWDThbQ7xwtW8xW3mvgCpDOpxtDY4FE6mh5C5RPwFj4UKdI/UPq/dLNdOh01ph4RDb3F/zZHe7x8JdUobF711osBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=tvP+Rm/V; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=PHNIQkx7kg7UB7p+a9IRODVzPyH1S1SxTyxWwURTdYrlX+TmxJh7xU5DG25Ve1rQefxZI//Xq9soIG40VwpNauRYqftA1fMtcmdBIHA9kJA24nDN0sdH++ldzwMPXJwdi9RQiTQrJ9KE9WmVxz3dUWryOySUTs/VCHOAZ6wxwd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=g0mv9RTw; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=sU0Rwyb1f70hxWqGLaDrX9gfHmhzhxjXEuqfS3xyBnk=; b=tvP+Rm/VUpFEtjTr5flW9AZmbU
-	EzRtigGLTzsKq+yofPuIueTOmYfV6zi1I2TwuPtT4PHJPyuXP1Nc9lVhj59h2gYy4cFJq4LhZprop
-	8ROzJjA86BGtttEVo7zzpWV8snzvasJlqumptzAGTNUTgNkToBAF6Mo6SjcDieMNQ7YYjtXCzisGi
-	xYIVaaWwZiJNaqIArUEL4pOtTYOpcwX81Jc4rYYhr0q/ERBWw7VHcz3FQjVCL3Z1fPKPvorH8ODG4
-	+Lr1JnaIN5qc2SyQI2UEBN9yNgcAtpy83rsAK2ffeQM7yd8Lt/4NmPt35xVbfRI9BzvSluCk2t3ZX
-	lNMovGhw==;
+	bh=aIO5z+XlaxOUN+dxGxWKQXIfyt7HKUVO8xN2mehuHOs=; b=g0mv9RTw6hRIGfNojwuJd8DIlg
+	XAxjmgYDdyfJFsN0XD3Jfka9gaG3VCqgvyJYgUHM3pHn4tE2GkDDLVYWsS1+nG2WOjG/E/QYbPbLm
+	oS8OrknvRjHCSGPkjGufGgVowrmAwSNv3kKFhKSBFVuQ2yuai9WjpyevBpRLNU+NuzLZB55IDIxj2
+	Y3OnvimbyRDK7fSziC0/rbfNELdS8QpJ1dewvrXyb3YNWXwdcSbyOFLAHfhcX7R5nCntGQNYmxIC1
+	DSgxk9NtEWBm4phOxWU9BtEC7870tYpDVsa6Dxw7UUorh+9/ptM/tkE3aLCy7yxa6f6pbKa718xMa
+	Qs6TyoXQ==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vLE4Z-0000000GEZu-0Uh8;
+	id 1vLE4Z-0000000GEaZ-1Umn;
 	Tue, 18 Nov 2025 05:16:11 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
@@ -68,9 +68,9 @@ Cc: torvalds@linux-foundation.org,
 	borntraeger@linux.ibm.com,
 	bpf@vger.kernel.org,
 	clm@meta.com
-Subject: [PATCH v4 47/54] convert hypfs
-Date: Tue, 18 Nov 2025 05:15:56 +0000
-Message-ID: <20251118051604.3868588-48-viro@zeniv.linux.org.uk>
+Subject: [PATCH v4 48/54] convert rpc_pipefs
+Date: Tue, 18 Nov 2025 05:15:57 +0000
+Message-ID: <20251118051604.3868588-49-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20251118051604.3868588-1-viro@zeniv.linux.org.uk>
 References: <20251118051604.3868588-1-viro@zeniv.linux.org.uk>
@@ -83,64 +83,98 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-just have hypfs_create_file() do the usual simple_start_creating()/
-d_make_persistent()/simple_done_creating() and that's it
+Just use d_make_persistent() + dput() (and fold the latter into
+simple_finish_creating()) and that's it...
+
+NOTE: pipe->dentry is a borrowed reference - it does not contribute
+to dentry refcount.
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- arch/s390/hypfs/inode.c | 23 +++++++++--------------
- 1 file changed, 9 insertions(+), 14 deletions(-)
+ net/sunrpc/rpc_pipe.c | 27 ++++++++++++---------------
+ 1 file changed, 12 insertions(+), 15 deletions(-)
 
-diff --git a/arch/s390/hypfs/inode.c b/arch/s390/hypfs/inode.c
-index 6a80ab2692be..98952543d593 100644
---- a/arch/s390/hypfs/inode.c
-+++ b/arch/s390/hypfs/inode.c
-@@ -311,7 +311,7 @@ static void hypfs_kill_super(struct super_block *sb)
- 	struct hypfs_sb_info *sb_info = sb->s_fs_info;
+diff --git a/net/sunrpc/rpc_pipe.c b/net/sunrpc/rpc_pipe.c
+index 0bd1df2ebb47..379daefc4847 100644
+--- a/net/sunrpc/rpc_pipe.c
++++ b/net/sunrpc/rpc_pipe.c
+@@ -536,17 +536,16 @@ static int rpc_new_file(struct dentry *parent,
  
- 	hypfs_last_dentry = NULL;
+ 	inode = rpc_get_inode(dir->i_sb, S_IFREG | mode);
+ 	if (unlikely(!inode)) {
+-		dput(dentry);
+-		inode_unlock(dir);
++		simple_done_creating(dentry);
+ 		return -ENOMEM;
+ 	}
+ 	inode->i_ino = iunique(dir->i_sb, 100);
+ 	if (i_fop)
+ 		inode->i_fop = i_fop;
+ 	rpc_inode_setowner(inode, private);
+-	d_instantiate(dentry, inode);
++	d_make_persistent(dentry, inode);
+ 	fsnotify_create(dir, dentry);
+-	inode_unlock(dir);
++	simple_done_creating(dentry);
+ 	return 0;
+ }
+ 
+@@ -563,18 +562,17 @@ static struct dentry *rpc_new_dir(struct dentry *parent,
+ 
+ 	inode = rpc_get_inode(dir->i_sb, S_IFDIR | mode);
+ 	if (unlikely(!inode)) {
+-		dput(dentry);
+-		inode_unlock(dir);
++		simple_done_creating(dentry);
+ 		return ERR_PTR(-ENOMEM);
+ 	}
+ 
+ 	inode->i_ino = iunique(dir->i_sb, 100);
+ 	inc_nlink(dir);
+-	d_instantiate(dentry, inode);
++	d_make_persistent(dentry, inode);
+ 	fsnotify_mkdir(dir, dentry);
+-	inode_unlock(dir);
++	simple_done_creating(dentry);
+ 
+-	return dentry;
++	return dentry; // borrowed
+ }
+ 
+ static int rpc_populate(struct dentry *parent,
+@@ -657,8 +655,7 @@ int rpc_mkpipe_dentry(struct dentry *parent, const char *name,
+ 
+ 	inode = rpc_get_inode(dir->i_sb, umode);
+ 	if (unlikely(!inode)) {
+-		dput(dentry);
+-		inode_unlock(dir);
++		simple_done_creating(dentry);
+ 		err = -ENOMEM;
+ 		goto failed;
+ 	}
+@@ -668,10 +665,10 @@ int rpc_mkpipe_dentry(struct dentry *parent, const char *name,
+ 	rpci->private = private;
+ 	rpci->pipe = pipe;
+ 	rpc_inode_setowner(inode, private);
+-	d_instantiate(dentry, inode);
+-	pipe->dentry = dentry;
++	pipe->dentry = dentry; // borrowed
++	d_make_persistent(dentry, inode);
+ 	fsnotify_create(dir, dentry);
+-	inode_unlock(dir);
++	simple_done_creating(dentry);
+ 	return 0;
+ 
+ failed:
+@@ -1206,7 +1203,7 @@ static void rpc_kill_sb(struct super_block *sb)
+ 					   sb);
+ 	mutex_unlock(&sn->pipefs_sb_lock);
+ out:
 -	kill_litter_super(sb);
 +	kill_anon_super(sb);
- 	kfree(sb_info);
+ 	put_net(net);
  }
  
-@@ -321,17 +321,13 @@ static struct dentry *hypfs_create_file(struct dentry *parent, const char *name,
- 	struct dentry *dentry;
- 	struct inode *inode;
- 
--	inode_lock(d_inode(parent));
--	dentry = lookup_noperm(&QSTR(name), parent);
--	if (IS_ERR(dentry)) {
--		dentry = ERR_PTR(-ENOMEM);
--		goto fail;
--	}
-+	dentry = simple_start_creating(parent, name);
-+	if (IS_ERR(dentry))
-+		return ERR_PTR(-ENOMEM);
- 	inode = hypfs_make_inode(parent->d_sb, mode);
- 	if (!inode) {
--		dput(dentry);
--		dentry = ERR_PTR(-ENOMEM);
--		goto fail;
-+		simple_done_creating(dentry);
-+		return ERR_PTR(-ENOMEM);
- 	}
- 	if (S_ISREG(mode)) {
- 		inode->i_fop = &hypfs_file_ops;
-@@ -346,10 +342,9 @@ static struct dentry *hypfs_create_file(struct dentry *parent, const char *name,
- 	} else
- 		BUG();
- 	inode->i_private = data;
--	d_instantiate(dentry, inode);
--fail:
--	inode_unlock(d_inode(parent));
--	return dentry;
-+	d_make_persistent(dentry, inode);
-+	simple_done_creating(dentry);
-+	return dentry;	 // borrowed
- }
- 
- struct dentry *hypfs_mkdir(struct dentry *parent, const char *name)
 -- 
 2.47.3
 
