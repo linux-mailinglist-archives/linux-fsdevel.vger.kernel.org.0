@@ -1,153 +1,197 @@
-Return-Path: <linux-fsdevel+bounces-68951-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68984-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E424FC6A4E6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 16:29:15 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B482C6AAAD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 17:36:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 35EA34E8FC5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 15:22:29 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTPS id 8553D2CB43
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 16:36:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D523364024;
-	Tue, 18 Nov 2025 15:22:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D946426F2B6;
+	Tue, 18 Nov 2025 16:34:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PM+HfwLi"
+	dkim=pass (1024-bit key) header.d=hammerspace.com header.i=@hammerspace.com header.b="Vma0xz9l"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11020133.outbound.protection.outlook.com [52.101.193.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32BB03559FE
-	for <linux-fsdevel@vger.kernel.org>; Tue, 18 Nov 2025 15:22:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763479342; cv=none; b=g/xuSWTuWtSUsd9Nj0CC+QE7qlEMEDoOmsWN1v8G5ECa4x94K1MIEqyGrtqqL8/cdSkzw9r3mhOYMLzfienc5zXlI3/yCZPbVOrt2Tiigvx4TWnQMoV1CoSWPJaumz9ZPGVfYfpPwHYwuQNpd6z005IGIcauzGICyxs9AGwWEfw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763479342; c=relaxed/simple;
-	bh=pIX1ASwg7OhBsi3EZ3XfrBnxCe6n/AJc03zsxsrHwP8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=r9mi7NfjyL9qgXnop2h9gu7OCOi8iEPmmy8E0OnjgGuPUJbtTPUWXxdhvIDh1AVyUNiw3nE0YYD9hW+CAJO1O27TjoIT8xCDhifTHXEI/4Rz4OJkJH1//8PJvxkbubcgvF58COkZpy7i5gQ4qUiCGX5KTH/a87Xkong6ecxwNyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PM+HfwLi; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-477782a42a8so3822085e9.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Nov 2025 07:22:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763479339; x=1764084139; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=00wCf0bwjC2Ib9qVy8nbg3pTPrjzk9HywzDkbpGaRDY=;
-        b=PM+HfwLiPbU2+zR5eXYlkj9L4Oco2jVRXiJhj+WzE2/E6GXJnQpPiqVe42p0wtbAvy
-         qIZ5GAKt5B3QUTMXon89q7eqIULta7YwRX2DVRY6Sh+9ZtEUSTFSj2/p90UasDho7giR
-         rHnYIfj8KlK2Y1IIt6ve8K4cEfdXw17xkgBE1TgIaKMITb8D8PYn99Jym/7i1aBg6vOR
-         zX+UcsAczajZM+V94AbPDjDwn4eWDCGUdCoXNQdev8wI3KOzxyMlZ5FzYWbxvDm/aMJl
-         0dipssG/7W3loY2zzI2PtGnm11LKlOBrnUKoFjOS46f/1b1UEFtt8q/tuUP+J670or9h
-         DAEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763479339; x=1764084139;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=00wCf0bwjC2Ib9qVy8nbg3pTPrjzk9HywzDkbpGaRDY=;
-        b=cSOxbjhAsBC5VHkO7iLLYaFnj0xRJORMd1YnI9I5DMVuQ/9PBz1vJyHzmAVSqdKk40
-         RUwE8xZME0ltfCz/tkUsN3XdPIOYpFtanZyOo94d9KVdB5+jYh0hGlKjAEJpUVljXHFT
-         u9SzF/4OFxwbXo/zrb/np9lOo6tEJEjxk9Qh0i3X5NqWd8xdTRD0Z4iYVR2ziUPuVY13
-         n9cbRGnk9woVhL9TNyXZQtdU5TefjFlDTBzVUqUHmTxrW0eTVpK1oMs914MCQYXK9eL1
-         y/OYMRsbRHuxm33290GOIG4bO0jJM+h/613PPAG76gABvc/CmGbS5lnCzpDy4qWNK6cl
-         ROPw==
-X-Forwarded-Encrypted: i=1; AJvYcCVYE6FQoQtUdVUKnuOjOaX+NFNPEuMfkZy+sSd1LYaDSq7k3Lxgd4TzBlj7fctDZxy0dKvef8jTw2o/tkIK@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmTTXkNpcN5pVQIQsIb/pMnijnkQ8CLKhMWi/NEjlifUYPhZ+E
-	9IfxaD7P5RjRxSizfmDmgfT8ElUJ2RvH/if+6oOSKCtHA92m15JZbuQg
-X-Gm-Gg: ASbGncvxvFVbo0KLozVMon4m8X51lhBEiMJ8itwoBE4ikssPLLF73AIoyFI52VSbCDT
-	koGfT2OmYC9+M3NpP5qb1NueWzPVGZHCxyk/HOEuRhH3HxwmVYsVqT16nkkODtcujKsEAKJS86R
-	LQW+Zx5c3Da5unjVHY1Brsa0YpuYCD+PUDbk17KFIUA49hibU6JANS5rUJrsMpne/S/k47ODkwK
-	FekeqFsX63nU01T8zFY3UQ7StZrLE2MWyd8qAhHMU0MZz+Sf1xiAPg86kMlo5aLPU/PceSfy/4X
-	mli4FDA07z3JmYnhYO2S4HHmf4nizZjhs0hu53iBjrnkPeXPGxU+l/cXbO/CkGCIEWi8Iwfk+wM
-	SROi4Q6C+UTVAlbC9iRQYBGnXRJppjfax2zLb+8DREII+M4C7taEo/43P4YQjXIArorPk+5kg5o
-	Jpk1xDBdWm5nDjavQZuBc=
-X-Google-Smtp-Source: AGHT+IE6FmLDcglT4gILuNBc5RTAP0dPVN+aT7yWU1j9JzA4iMRVSgkf9aSmY0C/KZIkLhmEkiHEHA==
-X-Received: by 2002:a05:600c:1c1f:b0:477:a478:3f94 with SMTP id 5b1f17b1804b1-477a9c3c5efmr19525875e9.5.1763479339217;
-        Tue, 18 Nov 2025 07:22:19 -0800 (PST)
-Received: from [192.168.1.105] ([165.50.73.153])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4779920f2cdsm228071925e9.10.2025.11.18.07.22.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Nov 2025 07:22:18 -0800 (PST)
-Message-ID: <6c482108-78b8-4e09-814a-67820a5c021e@gmail.com>
-Date: Tue, 18 Nov 2025 17:21:59 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC07E227E95;
+	Tue, 18 Nov 2025 16:34:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.133
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1763483648; cv=fail; b=S0cHiJlIg7FmPu9PeRnyo4b5+NEGHaNgU1Ad86lf0vsHZd70qzzCZvRI2Rkg5H95AWSSedOkVdmExaiOXli4MYKlxHgvlZ587saEEUYfqgzyMEOoa7EtUlVe6QJZgeU21R9tH4h0OXA8SuULPFrcRBTar+3pq6i5yhQRb2KkBBc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1763483648; c=relaxed/simple;
+	bh=x81UXgM01z8r/Yofo8uV6Hpa7uheWtcBI1CyjDi4WH4=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=NpOegqpeb8ztFMc0XcoHe4PI9aXmCAdqqjEf3r+gVQF3kG4XQ5MXbfYS43PE5ZGXTx5I3Nxk+MXL7kZwy/5tAHBAqRyXak+ANStkwvHztdRuMmZp88JVCZOWC+GZWP2XMplClLPs4PwVRODwTxV7swf/e8VxD/F95yS0ZxlNzyA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hammerspace.com; spf=pass smtp.mailfrom=hammerspace.com; dkim=pass (1024-bit key) header.d=hammerspace.com header.i=@hammerspace.com header.b=Vma0xz9l; arc=fail smtp.client-ip=52.101.193.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hammerspace.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hammerspace.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=P4S7WV5FZbRzpKOsV131QP6O6Tc7cGbh4TlYLzhLhBVdm+um89tpJk5tdJG1RFVkJE0BTj/tfbK/ceKU0viWAdDX6aVcnNpjuSg6TLQ6j+nBGV0G+daQSZVjiaaxxrjkGtVd2nq5S7L8CZjUSqZC7Y7EDiWlm+NSgl0rVbV39iCrvTtusU0lt+vhkkgfIvuLgz7YlkEy9/a0yeIuz67A/nCNysV/aLgFZG/avbfCn/FV0eKnI2C1YqImZ2OxUtzpE2zQloul95SCJ/tH34pTXCG4Z8iGZA/wy6KM5PwA951xPm/Rtd17SJaI5ctYtpgzJU0KNbXZmd8OUUagTrGgjg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=euERY4AlAEJzqGugAVxu1vJEKMoCOC+ILb8A6g95u/A=;
+ b=xnOhHdGxcjvWdmol6jkrhcEF3Z+NmWp8Q4b2saJbqYhqWsuc5vXSpYfFu1DEVmuEC4/XfWRuBQB2yZxCkZEbTKv2Lyj+yHygVJmNjj8XtKaP7gHblFlUgFxN9dAEYvMZAGBN16YeuwfDDpFA4bTYUCo4QTDlpg4po6QEYj6SzCSt0OaphTr6aY5GnWoKMTbUpfNT9z/KaBxfH/sAlTMW/HeBHeaT/Ve/SxMkTzPRj4OC5ztoVZYtZiUdqqDLFhEy91f/dH2OvXjD5wJve7ObZD1exkZ5WdnrPLQ5zCtUvuPTufPMfLJfCV1J160REOYOQuQlZ0qNvXYMOkfZCABT2w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=hammerspace.com; dmarc=pass action=none
+ header.from=hammerspace.com; dkim=pass header.d=hammerspace.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hammerspace.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=euERY4AlAEJzqGugAVxu1vJEKMoCOC+ILb8A6g95u/A=;
+ b=Vma0xz9l5whq2yAgvJdE9uz4XVWfibNt7u7US41h7/bH1BlNrE7aQ8nbKaIksYeFTBlGW4I7UjeDqu8CyVVppnan+vp3i4ZwwDuQFZHopEND5A3hDdGhTWYaoFuExy4RP5vaSIs7iX3TitGXiBY7sQzXPjzMLXFABy1osMxxrJw=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=hammerspace.com;
+Received: from SN6PR13MB2365.namprd13.prod.outlook.com (2603:10b6:805:5a::14)
+ by MN2PR13MB4072.namprd13.prod.outlook.com (2603:10b6:208:26e::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.16; Tue, 18 Nov
+ 2025 16:34:03 +0000
+Received: from SN6PR13MB2365.namprd13.prod.outlook.com
+ ([fe80::9127:c65a:b5c5:a9d]) by SN6PR13MB2365.namprd13.prod.outlook.com
+ ([fe80::9127:c65a:b5c5:a9d%7]) with mapi id 15.20.9343.009; Tue, 18 Nov 2025
+ 16:34:02 +0000
+From: Benjamin Coddington <bcodding@hammerspace.com>
+To: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	NeilBrown <neil@brown.name>,
+	Olga Kornievskaia <okorniev@redhat.com>,
+	Dai Ngo <Dai.Ngo@oracle.com>,
+	Tom Talpey <tom@talpey.com>
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-nfs@vger.kernel.org,
+	Trond Myklebust <trondmy@kernel.org>,
+	Mike Snitzer <snitzer@kernel.org>
+Subject: [PATCH v1 0/3] Allow knfsd to use atomic_open()
+Date: Tue, 18 Nov 2025 11:33:56 -0500
+Message-ID: <cover.1763483341.git.bcodding@hammerspace.com>
+X-Mailer: git-send-email 2.50.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: PH7P223CA0021.NAMP223.PROD.OUTLOOK.COM
+ (2603:10b6:510:338::16) To SN6PR13MB2365.namprd13.prod.outlook.com
+ (2603:10b6:805:5a::14)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fs/super: fix memory leak of s_fs_info on
- setup_bdev_super failure
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: brauner@kernel.org, jack@suse.cz,
- syzbot+ad45f827c88778ff7df6@syzkaller.appspotmail.com, frank.li@vivo.com,
- glaubitz@physik.fu-berlin.de, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, slava@dubeyko.com,
- syzkaller-bugs@googlegroups.com, skhan@linuxfoundation.org,
- david.hunter.linux@gmail.com, khalid@kernel.org,
- linux-kernel-mentees@lists.linuxfoundation.org
-References: <20251114165255.101361-1-mehdi.benhadjkhelifa@gmail.com>
- <20251118145957.GD2441659@ZenIV>
-Content-Language: en-US
-From: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
-In-Reply-To: <20251118145957.GD2441659@ZenIV>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN6PR13MB2365:EE_|MN2PR13MB4072:EE_
+X-MS-Office365-Filtering-Correlation-Id: 33a63630-cc89-4783-726d-08de26c04882
+X-MS-Exchange-AtpMessageProperties: SA
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?kkgnenJ0SPWrci4eMLel6zyP0EQ4vhodEl7vQ//IpeNPtdIew+9rUoHRWRRh?=
+ =?us-ascii?Q?olkDEM3CfbQD4NK+uZKuIaBBNa246lHaGp8WqYF4V4Em4eQhhAsGAbcNOCcY?=
+ =?us-ascii?Q?BGQqhhVXwUSNiuIziCIFldPT4X9UKplhprW/uTPtlmOoCdb3b3Jc67ayBT4Q?=
+ =?us-ascii?Q?S6oZIlKtV7fYID3hP6z5HGrLek8pvSj4Fh+NxdaXNprRSgIjtsnUN7sGvkcR?=
+ =?us-ascii?Q?+6/O++PW2thv/yuJL4phYJLoaOzioDjvL2xvmmvc89RkUBMRtEiIakku5wt1?=
+ =?us-ascii?Q?pvndS6BeYFo11xyQ3yncFobMg0ey1tb0mf5CW7l+UisGSaH6Akg27gluIRvR?=
+ =?us-ascii?Q?PG68b+AvXh7oQ2+N9tfmlzJb/DZ4emcdH1ekYe6Es/X+ga1F/y4ED/t0FmOk?=
+ =?us-ascii?Q?820IE+G+6krSGBbabFNVEgHapqcXgh8h92L4Q8SowERDZL662RdAXzMn9TR7?=
+ =?us-ascii?Q?zKourZlLy46bEv5SsWM2+xOp4HqHpaviBKgnq6vQVMNUPT/77Ucdwi99gf5C?=
+ =?us-ascii?Q?pirWbDt4qV4HKIrBKCFTZuIsr1exyr8gNPtoVUy9ymMy4/6ilyXXJjUIxuIY?=
+ =?us-ascii?Q?C4SeMx+pBvJCK3yztfoHXwswXDsKsy4wBPVgByDxWjqrmfOg/17u9hXzEIvx?=
+ =?us-ascii?Q?uOcrAcl/5LQBeG7mCAFyrEW0U0HG8DJpcvZZISQe/w2HFM4bO1nQSNKIA0BC?=
+ =?us-ascii?Q?gNNCU+6A5xzHJumTQ7KeVxRlikDzrPgbm/3kykF9BgQtgFREjmGdWS1qT604?=
+ =?us-ascii?Q?dGjq/dVbhCj1/yUKo53SSQu23KSzWgLu56SW4Kc49P7StdMqRQY7Z/odV5N4?=
+ =?us-ascii?Q?pXjMnNXK6ObxjEidT6FzIAvKxhobdq7E8WUukLYN/6WlsSZys9/SRyUvUexd?=
+ =?us-ascii?Q?jN0Z/ITBu2vCunyWjpQMVqgGTektpy02DqXgAYC+Ji+aXKqZTiLwHASBTd9F?=
+ =?us-ascii?Q?AevygYDjqA9Qx3We2M1hMSWexfjrZcpvFQ9XhZQuUwwg8IvDrw4NU+1O6UuX?=
+ =?us-ascii?Q?NyHZX9JF2Qiu4cQ7nv8kfPbs1R0NAfYmFDjw0WxN9IuHcT1uKaMDJGY/TZ1L?=
+ =?us-ascii?Q?r136qRKYo79CecCN016Jip3B1rdhoBgcbOtUjPXaO+9I9ZxVacEiG8nvWwLa?=
+ =?us-ascii?Q?uk+MeaiKQLT9BpNDY4NvEwuGVvkb7kT/hWlj7HugE5zfOe6yFXx/NIXtRVm7?=
+ =?us-ascii?Q?gQBmrKxvgStKkQIs+AUl12HxqQIB/sDGfncs/sM8alH5o3/gBss8JW4/ecrg?=
+ =?us-ascii?Q?+G7a7EJOld2W8pzq10ccoGKZdmQZGw9Ow0wsRFHq2wW2YL+cUvsIOlxLezuA?=
+ =?us-ascii?Q?9ETdrHMrx3Ikcgl5i/4ZeDqWczsiYtRy/3VJz97CrVvGL0ZJroXy/AjUwYE6?=
+ =?us-ascii?Q?znUmssRg2Pq0LR9AAxv1NSGnRihkjNBbVtc2iLaT6ga7uNyjG0FuMEBt9gxr?=
+ =?us-ascii?Q?eVbnrcGsSKYc+KGOruirJFPzxLhRjpqw?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN6PR13MB2365.namprd13.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?q9/9ARv5S1YJDILLZldKZA1mtLdwp4ns4x1qB24GNHS0l4l6aMRX6YNx9bO1?=
+ =?us-ascii?Q?Uaei4E5C97DGo0N/NM1O27wwrq2YLu5GHO6SJBNCFbybvpn1idXVfCoILPNr?=
+ =?us-ascii?Q?s5m4pWKKbMLsMNuqJE39SqggZIcd6h106pCtxaBGoiJbcNfaBt2sKTCULyWB?=
+ =?us-ascii?Q?aChhBxmYiT8t7gng8pmXFEHIebfEdqXE54L83tmz8/JbFcREmi2XotYG2Dp/?=
+ =?us-ascii?Q?NC53KDv38D515xM7MYW4VsAa/fDlVbbXc4AAIzmxtYYdEVMzHBywWSUBS7Zf?=
+ =?us-ascii?Q?Gh35/23/TxWCFKH7tlBhp32CKCpbDs5z4JxxH+RTEWsweilui5nuCV66N0et?=
+ =?us-ascii?Q?rjf9XJXg/TTmJG+/ujhJwc3zztsw1G/DY36zQbQkhP8PYZkb7ErIOrUrczux?=
+ =?us-ascii?Q?h1xyC6wyO8T1UBMHE+UFM+tIQyb7FW2ftQfMtXoc6anayvtqNfEndE4Fa6Lc?=
+ =?us-ascii?Q?XqwQCGMI31h6eUvbxHdrdV8T0CnsWI+2r6qdgtFDLuZCPivWfTUm7KFQw0Oq?=
+ =?us-ascii?Q?QCW34nBrO9DdQU+NOaoVCnFvesasAxK/WkqgB7ExEppfU+2tMMXMYZbcyy5x?=
+ =?us-ascii?Q?ki0EM/CcNRRychvJB0+E3b2zOmjGH7617H2To5knO4wvGmY1i5215HukThoz?=
+ =?us-ascii?Q?o5PKNmNSEFNhAlvRIMcn/RG+rOQvtTkVZP7E1p84A1dsqaRJBzXJLcRxeT6D?=
+ =?us-ascii?Q?gthj1tIptUcXApxI6y3WAEwfwfLKp2AX3SKi2fh49ip3kogAvk34Ac2slQpe?=
+ =?us-ascii?Q?wlRtNYhd6brky2TuH04ApD7LZSsBVdsCfXCpMWEtfewCzWJ6DKiYnyznhm23?=
+ =?us-ascii?Q?EvQ0PdL0WMuBaTbHGhCrc8Pn9aEc5uhh1m1LAZjS88DypEFxQdaT/U+IwEJP?=
+ =?us-ascii?Q?NlCHQ6FXleSjwjCxlAbiF21ZMx7dwXco1n/6IYrr9vCudr0KagieyWiOcTcv?=
+ =?us-ascii?Q?1TTmjSIFNsbgzBJRIC9v4bB0YEMUuEd+4L38lfR9GkwH5BjhM1TB2PrDXPS4?=
+ =?us-ascii?Q?dI+rggUNDN8ftJP17caI/KPuRsqjCUWnJsnOePUVJskAl/NiA9wwqpQGKJD+?=
+ =?us-ascii?Q?D2Un4Q+fUmfa1YG+rqQYbOIWzVd8sqN/oQAOA7nZZQ7lzHLr3Q3keev86A2r?=
+ =?us-ascii?Q?LJ+wk93o50JwD146SQtLaqClQ01AAaTBjNJva31GfNzYw65RJLAyR5+wPAq9?=
+ =?us-ascii?Q?YUO3VvlyKa6Lc1rLBdwU/+DccVImr5JTbzEpgymzeGIMti68ZUsUNY20MrQt?=
+ =?us-ascii?Q?jrW6Rk8HL6+fkqkIfBY2DrJdjqrrMqkg2r/9vFYVd0jrQd+aNdYBFl1CGujR?=
+ =?us-ascii?Q?YqzXJ22F3ojCgrl7qg+w6YI4gOd/ppYch3P3d2Qs/g5hILA2Yp9FJUvDyDAB?=
+ =?us-ascii?Q?HKxZODTUpyupzXFjZTvXVvBzCyHqtF3cfibgbUDa5wJp1ax5EkpGIj09Kj9j?=
+ =?us-ascii?Q?KAbN7pRNvUTAb3RWzfetr7anW+oZTLO2FD6OO2QXhJvuZXo1HhRxzBS45CE5?=
+ =?us-ascii?Q?xmcHMuH8NqHkSAKWi8auhC6Yy69SRQLtHy3qcQNKGmn6Mc5hD8kvatRZ5Kg1?=
+ =?us-ascii?Q?PSL8aeY+Ln14+zrnM4bLSCULdpKuN02BdJfqo8rxO8hM5io9EBr1YDvKNCCG?=
+ =?us-ascii?Q?VA=3D=3D?=
+X-OriginatorOrg: hammerspace.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 33a63630-cc89-4783-726d-08de26c04882
+X-MS-Exchange-CrossTenant-AuthSource: SN6PR13MB2365.namprd13.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Nov 2025 16:34:02.8035
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 0d4fed5c-3a70-46fe-9430-ece41741f59e
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 6p2qRSNT8YgzzxI3ARNSMTg6J8o3+I/n9lwVzhczA7TNnV3TE7lNxcB9CzYSWT6thXvQpX7g3by/U2T7UF9pDXSy7ceWA55OOwKx9EarZtU=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR13MB4072
 
-On 11/18/25 3:59 PM, Al Viro wrote:
-> On Fri, Nov 14, 2025 at 05:52:27PM +0100, Mehdi Ben Hadj Khelifa wrote:
->> Failure in setup_bdev_super() triggers an error path where
->> fc->s_fs_info ownership has already been transferred to the superblock via
->> sget_fc() call in get_tree_bdev_flags() and calling put_fs_context() in
->> do_new_mount() to free the s_fs_info for the specific filesystem gets
->> passed in a NULL pointer.
->>
->> Pass back the ownership of the s_fs_info pointer to the filesystem context
->> once the error path has been triggered to be cleaned up gracefully in
->> put_fs_context().
->>
->> Fixes: cb50b348c71f ("convenience helpers: vfs_get_super() and sget_fc()")
->> Reported-by: syzbot+ad45f827c88778ff7df6@syzkaller.appspotmail.com
->> Closes: https://syzkaller.appspot.com/bug?extid=ad45f827c88778ff7df6
->> Signed-off-by: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
->> ---
->> Note:This patch might need some more testing as I only did run selftests
->> with no regression, check dmesg output for no regression, run reproducer
->> with no bug.
-> 
-> Almost certainly bogus; quite a few fill_super() callbacks seriously count
-> upon "->kill_sb() will take care care of cleanup if we return an error".
+We have workloads that will benefit from allowing knfsd to use atomic_open()
+in the open/create path.  There are two benefits; the first is the original
+matter of correctness: when knfsd must perform both vfs_create() and
+vfs_open() in series there can be races or error results that cause the
+caller to receive unexpected results.  The second benefit is that for some
+network filesystems, we can reduce the number of remote round-trip
+operations by using a single atomic_open() path which provides a performance
+benefit. 
 
-So should I then free the allocated s_fs_info in the kill_block_super 
-instead and check for the null pointer in put_fs_context to not execute 
-kfree in subsequent call to hfs_free_fc()?
+I've implemented this with the simplest possible change - by modifying
+dentry_create() which has a single user: knfsd.  The changes cause us to
+insert ourselves part-way into the previously closed/static atomic_open()
+path, so I expect VFS folks to have some good ideas about potentially
+superior approaches.
 
-Because the error generated in setup_bdev_super() when returned to 
-do_new_mount() (after a lot of error propagation) it doesn't get handled:	
-	if (!err)
-		err = do_new_mount_fc(fc, path, mnt_flags);
-	put_fs_context(fc);
-	return err;
+Thanks for any comment and critique.
 
-Also doesn't get handled anywhere in the call stack after IIUC:
+Benjamin Coddington (3):
+  VFS: move dentry_create() from fs/open.c to fs/namei.c
+  VFS: Prepare atomic_open() for dentry_create()
+  VFS/knfsd: Teach dentry_create() to use atomic_open()
 
-In path_mount:
-	return do_new_mount(path, type_page, sb_flags, mnt_flags, dev_name,
-			    data_page);
+ fs/namei.c         | 84 ++++++++++++++++++++++++++++++++++++++++++----
+ fs/nfsd/nfs4proc.c |  8 +++--
+ fs/open.c          | 41 ----------------------
+ include/linux/fs.h |  2 +-
+ 4 files changed, 83 insertions(+), 52 deletions(-)
 
-In do_mount:
-	return path_mount(dev_name, &path, type_page, flags, data_page);
+-- 
+2.50.1
 
-So what is recommended in this case ?
-
-Best Regards,
-Mehdi Ben Hadj Khelifa
 
