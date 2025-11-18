@@ -1,150 +1,85 @@
-Return-Path: <linux-fsdevel+bounces-68941-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68942-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2B98C697F5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 13:56:16 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5791EC697F8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 13:56:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3FFA6368496
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 12:56:10 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 61BD73805BF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 12:56:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79307257AEC;
-	Tue, 18 Nov 2025 12:56:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50E8B2641C6;
+	Tue, 18 Nov 2025 12:56:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XUxC5c5K";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="e+TtFDs9"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="G9T+jZSG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B26D23F413
-	for <linux-fsdevel@vger.kernel.org>; Tue, 18 Nov 2025 12:55:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E932D531;
+	Tue, 18 Nov 2025 12:56:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763470560; cv=none; b=XHFJ6Lcip5pDgNYaETHV5u1nV2UdKkPtyFPqgo+2gRxSXiSfVR+q2wZx2bYbDz0b139VGThFfjrkUANrcKL3J6FvEE68Ng6GddvgCX/luMLD2m/r8J2lruaVSFT9v2dI01Vozgn4FmIEMKhkFoHBdQ3+9PHQWWb+DykTTXNo6pE=
+	t=1763470564; cv=none; b=LC42L13OVroPS0+Upz7xF+OOItVX+3zHtY2PEeMavTrGDXaG7RFaZr3WWyX210ld8XqQFgBIlLFQgbYkp0XB8pH40ULwYdSww8oA6kpPSxISPgMY6OkLxrpNjxETuOqvUY/w/ZMTDu3KGUqgZ5j+jtnCeU6KSeI9E3hDCKfPI+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763470560; c=relaxed/simple;
-	bh=lmIU4dJ8YNpHWVTMmfiND8CwlczZGnQ+nZ73SDmDCpQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NmGyRGcF/U2LpU+ZWR5sU5BO6Ou+iSj2Awb/BObyQ6EryGisxIaLlMPvFff3zFE35o2T6jJrvjLfvpsF6ndNLgBBH+FYezHFU0w11uLz+c4lsmQqktmT86ylvkUdNPBrQiCnI7tI49ZFoETvYzQmr/TibOYmIVWGhrKui7/Tp7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XUxC5c5K; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=e+TtFDs9; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1763470558;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5Fc9QzHwqwCPN8psk/oOw+0uctePk68TJ3HFsDWmmro=;
-	b=XUxC5c5K7lFUeraNBdaC4xmleZon2BODNkaOHuoO+MB/Ydv3EUEvzkT/f7Kc5ylPtpnXzO
-	XfHEwwj6vq7PoVzzqJwRqSjWwLil9zneh+iLYB63fPtpZ5THsvTagKtlRoLVOS502CPgcF
-	FadGolyQO99Iuoti/bjhU4Tj4/Y3cZY=
-Received: from mail-ua1-f69.google.com (mail-ua1-f69.google.com
- [209.85.222.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-638-yEhxDwYiP--Gjon3uWtfWw-1; Tue, 18 Nov 2025 07:55:57 -0500
-X-MC-Unique: yEhxDwYiP--Gjon3uWtfWw-1
-X-Mimecast-MFC-AGG-ID: yEhxDwYiP--Gjon3uWtfWw_1763470556
-Received: by mail-ua1-f69.google.com with SMTP id a1e0cc1a2514c-9371a5de3f0so11878909241.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Nov 2025 04:55:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1763470556; x=1764075356; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5Fc9QzHwqwCPN8psk/oOw+0uctePk68TJ3HFsDWmmro=;
-        b=e+TtFDs9JCYVRaC6LmN6X9VHdwDwBTRuyDG3JrcM532+qI/ni8wew10K271EWpfR4J
-         cDeNTaCqyfoGRshkzdyrKEuPlRC5NZ6ye/a5hkmkxFU3dNsrYuxySce7IQyC28QW+mtT
-         JcpT4rha1n8usBpne69lwfC6keSs6/W9RcxpzSJ4vAtwUfLlwyL1WHBSLUSICIdVU0gb
-         qi4JAPEErLxnSrRwixKAlhY97ep5B3od4Xn9FMMuRNZ7S9WnlULEC5Ztj269lNxb0o9+
-         MYC9HqzxyUeEVwxuSWIBkfxKheU50AaL/UN361TlIiOCG3sfBgjFyCMudkyXwDpNoAW0
-         dHZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763470556; x=1764075356;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=5Fc9QzHwqwCPN8psk/oOw+0uctePk68TJ3HFsDWmmro=;
-        b=OJsuYafVB5UGPtsDNLAITUto2IFdWdbcraHW7Qi49rMsixT5XLdAgb+mgv2XXuH13D
-         NYJYbpIFmZxT4qAcI1OWu445NZPxVEUSXP8Qv3kYe0eoPd+fJW34FQX+v/aUsswEjmng
-         WljLwwatdcyK8x3w3h0cpfHCMNGoFiTXeWNmdro0cuaqhuZ0tHmwm+AJe0a5Jf2QdtlK
-         jWdAwDrKYi0AM4f0DUpS0LhZzBZkVY1n3zPmj7AarM86C9J1vqazFXnvbbR8QrlG8USc
-         iZ+fc1lZSuCoO7m4Ik2/kF1ICoQ+yWWN1EEhIhfg2Czhmkd6XR92fYbp6kbKhyHYGJ20
-         gqIw==
-X-Forwarded-Encrypted: i=1; AJvYcCVil2s4giuab1tDQuFccM0tTi+jp6m9Gcj3To5kCcUvOIlT/6I/3FRIF0S+lVzoW5BaqNzYNE2F1RjdF9+Z@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6yRO3lI4Vk3/LxCHFFQwrYsm15zdxEabjxpSwHP1ha5Pmvxxy
-	4Xdu+rM4CK+cSjPRVeEE+UuDHT2lybXsQ4I+0iuOvvPere3wc3wk5cfUQvqRd1kKSGtFmsmPS4L
-	s/wvuTMDgKXAsmy49Y+NLCOpeBvgF/2HlIFMu7aBbf8UnjMUTzKxrZicCN14BNsJaycmhROu8Lt
-	F7ADpeHXuIACRjxH5FHomoB7o37WUQQxyikkm9OWld6Q==
-X-Gm-Gg: ASbGncuJY+ZkprNN9ON5dwJUQMg4Aq7U77yB5CHnkO99GtgowbVxvO42et2UEIiAqQ0
-	7xpGNgkM5lpQ/DMn19nkMsb+xsgegiyNf7WuVGlB7DN4AGtQ/aEPCrjRaV7AJGoP2EYteCB2S1f
-	3izbs7pCz0fOJ++9t54NNFj56TqoCI3dIppeQ+NP0Ypzd+m1wCIj2w3+Jb
-X-Received: by 2002:a05:6102:f0e:b0:5d5:f6ae:38ee with SMTP id ada2fe7eead31-5dfc5bcd631mr5861779137.37.1763470556399;
-        Tue, 18 Nov 2025 04:55:56 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGggoAwNLD7qoBxaLa9hRuYfYH4dkVq/JJ8RpPcw949GPP/ke6lOGR0gxRJ+LgZCGTJ7HGV2cjSg32NhHTTDTo=
-X-Received: by 2002:a05:6102:f0e:b0:5d5:f6ae:38ee with SMTP id
- ada2fe7eead31-5dfc5bcd631mr5861773137.37.1763470555989; Tue, 18 Nov 2025
- 04:55:55 -0800 (PST)
+	s=arc-20240116; t=1763470564; c=relaxed/simple;
+	bh=7E1d1GKG8Mn2da/vkipoPU2v5+gS0lNiqIcc16vR3lo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ej8DKGwu6+Fs9oTTlD2XzUJBvu59v/TIyoKKZ6fkt1bkjCW0nf4Af2rg73BaRloWUY3miVt0I85x9SS6R3OvPENwgps33TA/erJpStRzY73gj8OImX8cyMBrLL5XXjbf81cGWYLhZvArHtmG2viqKj3K/UzoLnA7z77kuRLhF/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=G9T+jZSG; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=ZUndLiRuj8VVDQpGylc0ouZ9CH3E0910nA/n2o+vuEo=; b=G9T+jZSGmN2RpYit1OqCM6L1Is
+	EnIgIp4P+aq7z2k/XbFrerQkkzdPKcMkX6oD1q+p6/UaSVDsYLWJHQrilJ4HyeK5jUS3ptbpOncmq
+	F5mXJmRmVnKx9Y646K6Iv9vOh29j8bxtXwemJAS1hvnslqoYIE/b/4l9OrvlBDcW9ogTelDKZtA72
+	7ZkOoRu0tbJ4AygUZ4GIVWaBYDPhzhAL5NmIBwJ2kOFWuzQ1eBsaCZSPB+w7jTajQzGdGDU0oB78D
+	ry/+M8SiSBIlI8y6GyD4fdfnRBxeZYkMRBlzx83EVzFgtKLSsA3tTctQHzb0aa7znpoRuFOlvWy3s
+	xNzus25A==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vLLFZ-00000000RiH-0tvq;
+	Tue, 18 Nov 2025 12:56:01 +0000
+Date: Tue, 18 Nov 2025 04:56:01 -0800
+From: Christoph Hellwig <hch@infradead.org>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Christoph Hellwig <hch@infradead.org>,
+	SHAURYA RANE <ssrane_b23@ee.vjti.ac.in>, akpm@linux-foundation.org,
+	shakeel.butt@linux.dev, eddyz87@gmail.com, andrii@kernel.org,
+	ast@kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev,
+	skhan@linuxfoundation.org, david.hunter.linux@gmail.com,
+	khalid@kernel.org,
+	syzbot+09b7d050e4806540153d@syzkaller.appspotmail.com
+Subject: Re: [PATCH] mm/filemap: fix NULL pointer dereference in
+ do_read_cache_folio()
+Message-ID: <aRxs4djsaELyeBf9@infradead.org>
+References: <20251114193729.251892-1-ssranevjti@gmail.com>
+ <aReUv1kVACh3UKv-@casper.infradead.org>
+ <CANNWa07Y_GPKuYNQ0ncWHGa4KX91QFosz6WGJ9P6-AJQniD3zw@mail.gmail.com>
+ <aRpQ7LTZDP-Xz-Sr@casper.infradead.org>
+ <aRv-jfh0WkVZLd_d@infradead.org>
+ <aRxr5l-usmPvenbM@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251015110735.1361261-1-ming.lei@redhat.com>
-In-Reply-To: <20251015110735.1361261-1-ming.lei@redhat.com>
-From: Ming Lei <ming.lei@redhat.com>
-Date: Tue, 18 Nov 2025 20:55:44 +0800
-X-Gm-Features: AWmQ_bkMXSxdfduGkjESg1ynruIWs4HY2ohtTvtSrm3enUkgrPdfO3Ne2r9d0t0
-Message-ID: <CAFj5m9+UFxDg9=RwiHd5v2jhHaCcpRd+nLF6S3QhTy4v37W2tw@mail.gmail.com>
-Subject: Re: [PATCH V5 0/6] loop: improve loop aio perf by IOCB_NOWAIT
-To: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org
-Cc: Mikulas Patocka <mpatocka@redhat.com>, Zhaoyang Huang <zhaoyang.huang@unisoc.com>, 
-	Dave Chinner <dchinner@redhat.com>, linux-fsdevel@vger.kernel.org, 
-	Christoph Hellwig <hch@lst.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aRxr5l-usmPvenbM@casper.infradead.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Wed, Oct 15, 2025 at 7:07=E2=80=AFPM Ming Lei <ming.lei@redhat.com> wrot=
-e:
->
-> Hello Jens,
->
-> This patchset improves loop aio perf by using IOCB_NOWAIT for avoiding to=
- queue aio
-> command to workqueue context, meantime refactor lo_rw_aio() a bit.
->
-> In my test VM, loop disk perf becomes very close to perf of the backing b=
-lock
-> device(nvme/mq virtio-scsi).
->
-> And Mikulas verified that this way can improve 12jobs sequential readwrit=
-e io by
-> ~5X, and basically solve the reported problem together with loop MQ chang=
-e.
->
-> https://lore.kernel.org/linux-block/a8e5c76a-231f-07d1-a394-847de930f638@=
-redhat.com/
->
-> Zhaoyang Huang also mentioned it may fix their performance issue on Andro=
-id
-> use case.
->
-> The loop MQ change will be posted as standalone patch, because it needs
-> UAPI change.
->
-> V5:
->         - only try nowait in case that backing file supports it (Yu Kuai)
->         - fix one lockdep assert (syzbot)
->         - improve comment log (Christoph)
+On Tue, Nov 18, 2025 at 12:51:50PM +0000, Matthew Wilcox wrote:
+> Please read the rest of the thread; this code can be called in contexts
+> that can't block.  That was why I proposed the kiocb_read() refactoring
+> that I would expect you to have an opinion on.
 
-Hi Jens,
-
-Ping...
-
-thanks,
-
+Doing file reads from context that can't block is just broken.  Let's
+just kill the code before it causes more harm.
 
