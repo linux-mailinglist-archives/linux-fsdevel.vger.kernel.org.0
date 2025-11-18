@@ -1,103 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-68947-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68948-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 758BCC6A0E1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 15:42:45 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E2A0C6A319
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 16:04:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 756D14FAFB5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 14:30:09 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTPS id E2CB12D02E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 15:00:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B51DF32ED2C;
-	Tue, 18 Nov 2025 14:29:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82B1C363C70;
+	Tue, 18 Nov 2025 15:00:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="UEKPZFD8";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="h/sRwr7x"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="bIA2cuiL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 257322BEC28;
-	Tue, 18 Nov 2025 14:29:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89F833624B2;
+	Tue, 18 Nov 2025 15:00:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763476174; cv=none; b=L8OrEyRXAXw/N5cHkOnL+LBkqSNBYoKyL/dsPOkxZgICXzqxDgJzd/UWNzg7enibXyFU7Xbq8dCvETNfjRdAoqie4jiS3lkiz26HgvO5fArqd7NBaXakJgezfsn2Qp62vnOjQ2twPByi7UalwRoRv8Z6JJqv0CLRlXcaAc2IVk4=
+	t=1763478005; cv=none; b=RYWBDJfZ9p71L+R/BYXefrygQVvlwYx7tgvXWkpiULuAOg7QqpoVQ311XRubVVpiX6XbOMg6Ci0dxb0vqb5nENB1rLd/c6gZE2MmB+QMvEW6iIe/Gm82HN3bOjexeFzy/YTl9pWDYHsZgQ0G4KNKXlxlNwrt3RfR8m2panLi2xk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763476174; c=relaxed/simple;
-	bh=bsTGiYCeUGyKymNT/zymuRlkd9lPzEB0+jj26ocRViM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Nn7LEjuUpkZTK+P5ch77gWpWvUC/094llUhjvllCE2VhsrzdlNID8KC6qq76YZrZA3TsbOHTvVp1ipkGiX/Otkhyl0WA7IzCbPozbVGBWr/eqDn9P7Hl8/gUtNtNhQvhCs/IJN9lKEUjeJXkWPDK9SzBp86DEFW5Ze7cqWjnJ+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=UEKPZFD8; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=h/sRwr7x; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1763476171;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0n9UnbJWA0qi+JmKy/6pHK84BHEidvZ9wIicmRWTn88=;
-	b=UEKPZFD8IIH9dBvKhwzK+fXlmTby97FDKBDH31b76QtLz4uD0gbhWa+W7SG6f2imgKHsWF
-	nu7N2cXnD+OCXTKolN3SzKUxx0O8+YMYrf0DJRqkmvAsYU7YQt4xMRIRn31eSNTDdyUdTG
-	IT2upU2s7XedV+LOJih1/IaYmQwaNjbWORnGZX5SwX7NuvSC4KD3ikvjJIvhOM46GhQd01
-	52oJbqmp9xU9wMBK5pfo+VUj795hv5/+DoNV18rIIGuY7Np5J8ffKQgUsoL/5nUfJg3+NS
-	VL74Yn4la+CYnL9s6qvPYaEX2wHWgAZZrqm1x678CcgHB2dDbTcn5wYaPqQxpw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1763476171;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0n9UnbJWA0qi+JmKy/6pHK84BHEidvZ9wIicmRWTn88=;
-	b=h/sRwr7xzeJWCEHSEV2dmP1lyM8HmabFe+SrA74S6/B5KUksS4LoIrxmGid+rFGCLsbVgL
-	qsdlJxY2x7xXHyBw==
-To: Christophe Leroy <christophe.leroy@csgroup.eu>, Peter Zijlstra
- <peterz@infradead.org>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>, Alexander Viro
- <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan
- Kara <jack@suse.cz>, Ingo Molnar <mingo@redhat.com>, Darren Hart
- <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>, Andre Almeida
- <andrealmeid@igalia.com>, Andrew Morton <akpm@linux-foundation.org>, Eric
- Dumazet <edumazet@google.com>, Kuniyuki Iwashima <kuniyu@google.com>,
- Paolo Abeni <pabeni@redhat.com>, Willem de Bruijn <willemb@google.com>,
- "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
- Simon Horman <horms@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Dave Hansen <dave.hansen@linux.intel.com>, Madhavan Srinivasan
- <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Nichlas
- Piggin <npiggin@gmail.com>, linux-block@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH v5 0/4] uaccess: Prepare for masked user access on powerpc
-In-Reply-To: <cover.1763396724.git.christophe.leroy@csgroup.eu>
-References: <cover.1763396724.git.christophe.leroy@csgroup.eu>
-Date: Tue, 18 Nov 2025 15:29:29 +0100
-Message-ID: <87y0o35s8m.ffs@tglx>
+	s=arc-20240116; t=1763478005; c=relaxed/simple;
+	bh=3tC/7RGBTLAz6SX00JnXVxOOzBzpTg9gCtsy6n2iSAc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z6QpFd9I4a4DVBfk+NgCLLm0Rxw5NlKScd0kvVTJi1EuRtKMlopsBFW5V5KHAemPkBMn7pYep6TqTA2TOUEKhLj4cHw4DsIwyNxEVrn5wnsFsiekmALdk9h2RcQneii+RjclnrvjKUPGJi8MoMn/DbNkgSmTGTgcP75Nmbo77dQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=bIA2cuiL; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=y9XALeKfiEwQpLNtrIYQtwh2NhbNt1WeeA0fPDhNUO8=; b=bIA2cuiLTuGAw1R3PEQz/pYIC2
+	qBCCwuijAQ6cKvzeMGBJ+NyF8sk4ZxWsfMDfMn4NfDOpY5OwIu/CZocxTBXLrxZBCGX1N1f6vKEnw
+	vWhr+xbOrLCgO1s9EbdIOJRw3ZTjrLof2N+yew8uL2lsXjI+ViqSBgXf0uJmEWTuUuAkuL8XIT00B
+	LiQAoQtFjdi80MPxMiloqqTob+o2fpXxa5WilP585rB/2yQlnce8u5DDcx0Yyrbzr6Z14imM2qBcw
+	M8/6c8CWWIW3dwFaI5gb2O+qb9dgeSkd/3vIeqt9r8+lUJjZp5GcD/sHyk9Fzaz2gqnn3tE49b6tR
+	h0UkFfvw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vLNBV-00000008sEd-3aUE;
+	Tue, 18 Nov 2025 14:59:57 +0000
+Date: Tue, 18 Nov 2025 14:59:57 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+Cc: brauner@kernel.org, jack@suse.cz,
+	syzbot+ad45f827c88778ff7df6@syzkaller.appspotmail.com,
+	frank.li@vivo.com, glaubitz@physik.fu-berlin.de,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	slava@dubeyko.com, syzkaller-bugs@googlegroups.com,
+	skhan@linuxfoundation.org, david.hunter.linux@gmail.com,
+	khalid@kernel.org, linux-kernel-mentees@lists.linuxfoundation.org
+Subject: Re: [PATCH] fs/super: fix memory leak of s_fs_info on
+ setup_bdev_super failure
+Message-ID: <20251118145957.GD2441659@ZenIV>
+References: <20251114165255.101361-1-mehdi.benhadjkhelifa@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251114165255.101361-1-mehdi.benhadjkhelifa@gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Mon, Nov 17 2025 at 17:43, Christophe Leroy wrote:
-> This is v5 of the series "powerpc: Implement masked user access". This
-> version only includes the preparatory patches to enable merging of
-> powerpc architecture patches that depend on them on next cycle.
->
-> It applies on top of commit 6ec821f050e2 (tag: core-scoped-uaccess)
-> from tip tree.
->
-> Thomas, Peter, could you please take those preparatory patches
-> in tip tree for v6.19, then Maddy will take powerpc patches
-> into powerpc-next for v6.20.
+On Fri, Nov 14, 2025 at 05:52:27PM +0100, Mehdi Ben Hadj Khelifa wrote:
+> Failure in setup_bdev_super() triggers an error path where
+> fc->s_fs_info ownership has already been transferred to the superblock via
+> sget_fc() call in get_tree_bdev_flags() and calling put_fs_context() in
+> do_new_mount() to free the s_fs_info for the specific filesystem gets
+> passed in a NULL pointer.
+> 
+> Pass back the ownership of the s_fs_info pointer to the filesystem context
+> once the error path has been triggered to be cleaned up gracefully in
+> put_fs_context().
+> 
+> Fixes: cb50b348c71f ("convenience helpers: vfs_get_super() and sget_fc()")
+> Reported-by: syzbot+ad45f827c88778ff7df6@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=ad45f827c88778ff7df6
+> Signed-off-by: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+> ---
+> Note:This patch might need some more testing as I only did run selftests 
+> with no regression, check dmesg output for no regression, run reproducer 
+> with no bug.
 
-I've applied them to tip core/uaccess, which contains only the uaccess
-related bits. That branch is immutable and could be consumed by PPC if
-required.
-
-Thanks,
-
-        tglx
+Almost certainly bogus; quite a few fill_super() callbacks seriously count
+upon "->kill_sb() will take care care of cleanup if we return an error".
 
