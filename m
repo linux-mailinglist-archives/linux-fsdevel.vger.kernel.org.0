@@ -1,124 +1,165 @@
-Return-Path: <linux-fsdevel+bounces-68954-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68955-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA6CBC6A5AA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 16:40:02 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id E52F9C6A592
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 16:38:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id DEBA034C846
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 15:37:26 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTPS id E014E2C650
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 15:38:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB9CD364EA0;
-	Tue, 18 Nov 2025 15:37:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1156F2E2DF2;
+	Tue, 18 Nov 2025 15:38:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="OnohOJXb"
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="ATjLX8UZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66BB42BEC3A;
-	Tue, 18 Nov 2025 15:37:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3C951E47A3
+	for <linux-fsdevel@vger.kernel.org>; Tue, 18 Nov 2025 15:38:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763480234; cv=none; b=TT2PknGFmEjtnfevmsPCRC/TTFrpFk1qkuEaOoFvhhMDFJNyyoi8wLtDSKe/IVfxNLeUhCc2CKrCvZEdhEiVrj1g49Rs/Ufw/jNy1FonHQsq0Ywe3ArqVTBf59ANiRFWuATBO1h5Tiq3KnWNDXpqR9OSg8Bf3T+OWcoGhH6P43U=
+	t=1763480291; cv=none; b=pUFdeL4ZWvrXXn3eDx9lU8MSruQYrx2uKzE5tZWcNoc7X7AMUM6xwOipZBUQIah8jcNPW2CpZ6T22IrWnqyjTmoOc3SS3YyMAY2Zlyb9k233YrqIRZm2rBysLvBhgLCd6zD10+zQWErh8SXDkhWCwXrLJZVL2XVR9BxA6Ir0+iI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763480234; c=relaxed/simple;
-	bh=6xlKYzD6EOZfLwu07/W6iZb9R+p741L+sRVO+pYXTPM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SfIcPCOrBn0Ut9OUvTN0lx6WLb6dv9q/9z7qU4RwPKZGZUI5aitiM0PIvveosf5sjG8w2w/M+vImkjwj0o+jiMxda/9wPHC2kokXByyBE6yD6prVrIjcGEkgrXfsq5vpvdwBWIXtovJ7S/RHe9dxHy7L0JyYklNHfEtUKaQ2blI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=OnohOJXb; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=9qRBOpRFp/y3fjy/IOWET6iwhgiraMFiQ0WP7HK72L8=; b=OnohOJXbkOwQ7YKpHLtvPNlxnX
-	zCJ7Gu6R/b6rQm45h7RhZAQIhc9gMHB/1TUz8nEr81ED1rXx55nva88Vg0XwIZPBDpf9i2THDUJQu
-	As49cZ11Y611hd0FpeIdAbKsQLZXJQRWfiJhuM+plSknTqYXy2lxCljOrQrDNstY1KZZbJ1ezrN0l
-	tBlq3e0g4r5B0W6xufYIi3Bovt3Dfyl0BIy8O0VsZOdSN7wVf6g6r7PpOtkPu4lrOLyTTAAMVjBqN
-	YftY6B/THUev24ihZV0FRT/NTZ1YBE4nSACUOZTAc6MnMD+OF85SE6r5iQJzs6OWcshv1/IzCOX9c
-	WsYj+WnA==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vLNlV-0000000FgQf-2CDq;
-	Tue, 18 Nov 2025 15:37:09 +0000
-Date: Tue, 18 Nov 2025 15:37:09 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	SHAURYA RANE <ssrane_b23@ee.vjti.ac.in>, akpm@linux-foundation.org,
-	shakeel.butt@linux.dev, eddyz87@gmail.com, andrii@kernel.org,
-	ast@kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev,
-	skhan@linuxfoundation.org, david.hunter.linux@gmail.com,
-	khalid@kernel.org,
-	syzbot+09b7d050e4806540153d@syzkaller.appspotmail.com,
-	bpf <bpf@vger.kernel.org>
-Subject: Re: [PATCH] mm/filemap: fix NULL pointer dereference in
- do_read_cache_folio()
-Message-ID: <aRySpQbNuw3Y5DN-@casper.infradead.org>
-References: <20251114193729.251892-1-ssranevjti@gmail.com>
- <aReUv1kVACh3UKv-@casper.infradead.org>
- <CANNWa07Y_GPKuYNQ0ncWHGa4KX91QFosz6WGJ9P6-AJQniD3zw@mail.gmail.com>
- <aRpQ7LTZDP-Xz-Sr@casper.infradead.org>
- <20251117164155.GB196362@frogsfrogsfrogs>
- <aRtjfN7sC6_Bv4bx@casper.infradead.org>
- <CAEf4BzZu+u-F9SjhcY5GN5vumOi6X=3AwUom+KJXeCpvC+-ppQ@mail.gmail.com>
- <aRxunCkc4VomEUdo@infradead.org>
+	s=arc-20240116; t=1763480291; c=relaxed/simple;
+	bh=B6uekXVR+jn/Plqa3NW/kjSUDt55yanBt9ufFPxdFs0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OcNicf+FXSQ0FiQm6rPCexe/XMUldNgnOD7dCSik1Guj6+5WAIaVJ4n7zXf2esBQnl5JU4fOKkK5Qvd2LTZph8/DXo47FtuFSS361B7wz9Zdvow6DIQDnSvPxlltnvyX/AJ4uRQGRbjQ2dZQhpOJq9N8yx64y73Ziml3wWEub4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=ATjLX8UZ; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-64166a57f3bso8808663a12.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Nov 2025 07:38:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen.com; s=google; t=1763480288; x=1764085088; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=B6uekXVR+jn/Plqa3NW/kjSUDt55yanBt9ufFPxdFs0=;
+        b=ATjLX8UZtWxHrtg5aJUXJkDwbx3GXE3jiyzFXB5PM6vXc+Q2JEWz5kEtrHB/BkQi0B
+         vDp+xu5TaBP5K33rI3r2NtDI8h9JW77buIRtCONzRO6P7uCSbMsRCQPt3yTu7THpgGTj
+         6IZx2QxgjkJWrn3hfyxWQNxp7I94xi9z7nFLnRqDxW7dHJVStPWZiwVMwiVjIQvd6Fbf
+         OLhMLLFps9tS5pJxkJmEyFSKIuxcs4WTZA8LUiwjrpPfuIfsVUbgvow7VmvrKUfcG+9z
+         m6mxe11b57pmEEq8FM5CmlPK7eESRS+31R6A+fU9CIcepoUabLjK/Jo4MRk2YKwR7ANj
+         LJFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763480288; x=1764085088;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=B6uekXVR+jn/Plqa3NW/kjSUDt55yanBt9ufFPxdFs0=;
+        b=oN3eFNDgqiCF4hcLxO3094FiuAzJvSMtzwzpvo4f0FggKUpQv8D4RGpI4QMGKc7h9b
+         4F4mBltJsKkc+WpEH2f6EHx1JJNdbjdkrvpZa5JyE+xKfHMpijQIXSO1vHpVvgK20dYR
+         sWJ/x2tCI8JiiOBtz7V/x8gVHXcsz4OFdarJVYApf/j/iUeZfZEud7kpNMXxP8PqLA6L
+         o/XWdLVdA5O4cwG2tNet/ihoWCOWEVyFgsg+Q16/ei5jQVPCwEC+CnT12SlvtfjLamd1
+         7Folaui54A+0aXb4W9QDtro/CWznYTZzmeFupZ1Mo9SuMWtzsdYJUDGAxUl+9sZEw3iD
+         7g7A==
+X-Forwarded-Encrypted: i=1; AJvYcCUk/F9e1bPJ8HE4mlyfyIiBVPqlBCQ2QzjqG7Yt6oj+n4KfUnH+jz0gcqyMe6ASHxpxgzbkh8atryrkezw1@vger.kernel.org
+X-Gm-Message-State: AOJu0YxaZ+QKChSq2qc/UbMewA3S36/dl5tgc5D4TRtZnpw0MtJuTQ6Z
+	QJ32gOM3asNvmAJobOOWuHT80MvWXT69W9qlJh92EKuBEJzFYo9ox/QVv7HQHaEGoZbAg3H3xea
+	yfiEYnUrQYqqPzCC0GqIcv4Ss4/IzNsxn1a6qNuoO4w==
+X-Gm-Gg: ASbGnct4XpFYMBaFvg7WBYdJtH8r62gpdXXWQfdz6fSighiC+9gFAiPZGl69rqll3aw
+	bINCQN/IygCXqvHu/YqnSyDM6fJdZO7X3Xv5A14DQITaPXEASEGQj55x1gyu0YSdV3FoYZ9gxdN
+	Huf9l8bnR+QVKuOcAIIbWCiLTWDxLSLFQWVG28yjrLmeM5l6HxUAfwTY5CLwLtBDgRrxBJT9R0e
+	KUxLv9uNTsZL9AmmfRE8CdkGAugeNBvlRT7dETOKTfHVnUfrCfEnGEavETVli35oqbXS+HCRbW8
+	kjs=
+X-Google-Smtp-Source: AGHT+IGrjPyW93BjIwBqBDRqzXa58mN2pSY6sOqPun6CMHKlu12QPm0Wx9wn3sNAxL6K2ljWwKgu92DgB9iBQq14qms=
+X-Received: by 2002:a05:6402:2112:b0:641:1d64:8dce with SMTP id
+ 4fb4d7f45d1cf-64350e8e0fdmr16538410a12.17.1763480287895; Tue, 18 Nov 2025
+ 07:38:07 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aRxunCkc4VomEUdo@infradead.org>
+References: <20251115233409.768044-1-pasha.tatashin@soleen.com>
+ <20251115233409.768044-9-pasha.tatashin@soleen.com> <aRrtRfJaaIHw5DZN@kernel.org>
+ <CA+CK2bBxVNRkJ-8Qv1AzfHEwpxnc4fSxdzKCL_7ku0TMd6Rjow@mail.gmail.com> <aRxYQKrQeP8BzR_2@kernel.org>
+In-Reply-To: <aRxYQKrQeP8BzR_2@kernel.org>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Tue, 18 Nov 2025 10:37:30 -0500
+X-Gm-Features: AWmQ_bmD9p5Nn1RKDLqeZ98HzkdyZzvLR0FYSVXPyrJripjLvaLejIY3K1PEUqg
+Message-ID: <CA+CK2bASYtBndN24HZhkndDpsrU1rwjCokE=9eLZUq2Jhj6bag@mail.gmail.com>
+Subject: Re: [PATCH v6 08/20] liveupdate: luo_flb: Introduce
+ File-Lifecycle-Bound global state
+To: Mike Rapoport <rppt@kernel.org>
+Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com, 
+	dmatlack@google.com, rientjes@google.com, corbet@lwn.net, 
+	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, 
+	ojeda@kernel.org, aliceryhl@google.com, masahiroy@kernel.org, 
+	akpm@linux-foundation.org, tj@kernel.org, yoann.congal@smile.fr, 
+	mmaurer@google.com, roman.gushchin@linux.dev, chenridong@huawei.com, 
+	axboe@kernel.dk, mark.rutland@arm.com, jannh@google.com, 
+	vincent.guittot@linaro.org, hannes@cmpxchg.org, dan.j.williams@intel.com, 
+	david@redhat.com, joel.granados@kernel.org, rostedt@goodmis.org, 
+	anna.schumaker@oracle.com, song@kernel.org, linux@weissschuh.net, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
+	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com, 
+	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
+	rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org, 
+	cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com, 
+	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com, 
+	aleksander.lobakin@intel.com, ira.weiny@intel.com, 
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
+	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net, 
+	brauner@kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	saeedm@nvidia.com, ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com, 
+	leonro@nvidia.com, witu@nvidia.com, hughd@google.com, skhawaja@google.com, 
+	chrisl@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 18, 2025 at 05:03:24AM -0800, Christoph Hellwig wrote:
-> On Mon, Nov 17, 2025 at 10:45:31AM -0800, Andrii Nakryiko wrote:
-> > As I replied on another email, ideally we'd have some low-level file
-> > reading interface where we wouldn't have to know about secretmem, or
-> > XFS+DAX, or whatever other unusual combination of conditions where
-> > exposed internal APIs like filemap_get_folio() + read_cache_folio()
-> > can crash.
-> 
-> The problem is that you did something totally insane and it kinda works
-> most of the time.
+On Tue, Nov 18, 2025 at 6:28=E2=80=AFAM Mike Rapoport <rppt@kernel.org> wro=
+te:
+>
+> On Mon, Nov 17, 2025 at 10:54:29PM -0500, Pasha Tatashin wrote:
+> > >
+> > > The concept makes sense to me, but it's hard to review the implementa=
+tion
+> > > without an actual user.
+> >
+> > There are three users: we will have HugeTLB support that is going to
+> > be posted as RFC in a few weeks. Also, in two weeks we are going to
+> > have an updated VFIO and IOMMU series posted both using FLBs. In the
+> > mean time, this series provides an FLB in-kernel test that verifies
+> > that multiple FLBs can be attached to File-Handlers, and the basic
+> > interfaces are working.
+>
+> Which means that essentially there won't be a real kernel user for FLB fo=
+r
+> a while.
+> We usually don't merge dead code because some future patchset depends on
+> it.
 
-... on 64-bit systems.  The HIGHMEM handling is screwed up too.
+I understand the concern. I would prefer to merge FLB with the rest of
+the LUO series; I don't view it as completely dead code since I have
+added the in-kernel test that specifically exercises and validates
+this API.
 
-> But bpf or any other file system consumer has
-> absolutely not business poking into the page cache to start with.
+> I think it should stay in mm-nonmm-unstable if Andrew does not mind keepi=
+ng
+> it there until the first user is going to land and then FLB will move
+> upstream along with that user.
 
-Agreed.
+My reasoning for pushing for inclusion now is that there are many
+developers who currently depend on the FLB functionality. Having it in
+a public tree, preferably upstream, or at least linux-next, would be
+highly beneficial for their development and testing.
 
-> And I'm really pissed off that you wrote and merged this code without
-> ever bothering to talk to a FS or MM person who have immediately told
-> you so.  Let's just rip out this buildid junk for now and restart
-> because the problem isn't actually that easy.
+However, to avoid blocking the entire series, I am going to move the
+FLB patch and the in-kernel test patch to be the last two patches in
+LUOv7.
 
-Oh, they did talk to fs & mm people originally and were told NO, so they
-sneaked it in through the BPF tree.
+This way, the rest of the LUO series can be merged without them if
+they are blocked, however, in this case it would be best if the two
+FLB patches stayed in mm tree to allow VFIO/IOMMU/PCI/HugeTLB
+preservation developers to use them, as they all depend on functional
+FLB.
 
-https://lore.kernel.org/all/20230316170149.4106586-1-jolsa@kernel.org/
-
-> > The only real limitation is that we'd like to be able to control
-> > whether we are ok sleeping or not, as this code can be called from
-> > pretty much anywhere BPF might run, which includes NMI context.
-> > 
-> > Would this kiocb_read() approach work under those circumstances?
-> 
-> No.  IOCB_NOWAIT is just a hint to avoid blocking function calls.
-> It is not guarantee and a guarantee is basically impossible.
-
-I'm not sure I'd go that far -- I think we're pretty good about not
-sleeping when IOCB_NOWAIT is specified and any remaining places can
-be fixed up.
-
-But I am inclined to rip out the buildid code, just because the
-authors have been so rude.
+Pasha
 
