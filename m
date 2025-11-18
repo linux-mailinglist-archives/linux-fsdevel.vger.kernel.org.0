@@ -1,113 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-69000-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69001-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81AB2C6B08A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 18:44:59 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0952CC6B09F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 18:46:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ABA414EC79A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 17:38:57 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E3C4934F685
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 17:40:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0ABE1EB9FA;
-	Tue, 18 Nov 2025 17:38:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FCD9349AE6;
+	Tue, 18 Nov 2025 17:40:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zFGecU9H"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="hNDh5Csr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E4CB28312D
-	for <linux-fsdevel@vger.kernel.org>; Tue, 18 Nov 2025 17:38:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9125320C488;
+	Tue, 18 Nov 2025 17:40:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763487524; cv=none; b=P3mrZ/rvkVA4DG0IWyPU0+r3qRm1wrPYDgUniNnLv2FUQCe9K4QGr8avBPEbG2iRsjbDZ4uAbMem/WJ9ZwGOdJwC9sj0b9d3oTb0AbX6mWFyQm9oTmzCh4/gFyRazfBK/LlyDo1TWFHdmbZgkyBiEP3y3eGJkXRdKWUhpSLtYM0=
+	t=1763487609; cv=none; b=vDTbGYmx3PngaMWYvCkjjaRZk34os739RaKl20Q8DhBBiK8wuXrJE12LLupt3W8313gaFiEOqq0mYhQEaQqB/Ll+rDYrH5fv/vuXPyIh8bvM2kNjX595DxldrcKmuJKlkv/q97PlqKpmTNERBLc5qCFbqgDi1nPEdgq7b/1+rIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763487524; c=relaxed/simple;
-	bh=0R9nNh+fcxIvM+QvxY30LzRC0hI4TwT1hpwj1bidwn4=;
+	s=arc-20240116; t=1763487609; c=relaxed/simple;
+	bh=1q1etgJN40RUnwwpwCI47diO3ILxUsBbFSCF0n9NLjM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t9WnO6kdeeJvUiz4DNlDyRctEE4DlPCuCjexjdlcr/JFSLZR8yZMOFYGV3Gk/zDaoggSVy1W/FIj9GhXKcL3iEyvhEps9CTTCGZCtm3gDLoWQ26yFP7aKyF2faogjZ8ydlYZ+zrhcy52r479Idoo8aUCafTQ9vwpq5BItyjRmF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zFGecU9H; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-7aae5f2633dso6552568b3a.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Nov 2025 09:38:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1763487522; x=1764092322; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+KOpYFcon0iDNFMIs3t+r9Ea1btmn7c7oPi7Nmj2oec=;
-        b=zFGecU9Hi+7IGywYRFjuy/UyYCOwT7m2Psq0CRVAHdKpKQ8X00QXCaPNs2ndTQotyv
-         BCswsOxVw4gW5EJx+uDvIv113R641UBvb/cjb90QEOWRZ+KLNGYcD/4dmSYN8iq20VfH
-         zD7S3wpdmFldzMnthMWqUybuJbxDad8mdTKi9UUzZ2V5zTfgs2ScxYH0RumXplH0hmFk
-         hCjyMNMoqdYbYO3C9Kqu0vlpF71u/WVX40Eh+2UsZOel6VDh/g5hjE/tu9t2VA9E+0Zr
-         mwf4FofvcXjL72aXiYvTNckIcT3X+U9lXVEq7Bpidk9JPPbEB4Pd9elNmMccEgTNGxSC
-         TmQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763487522; x=1764092322;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+KOpYFcon0iDNFMIs3t+r9Ea1btmn7c7oPi7Nmj2oec=;
-        b=N1oSDPfQChLRxxkqfPicYERFHKsmSoXDRN0hKu+gZXNgj6v2zZoXoknFKZ66iPrhAC
-         ShpLyqbcdQGBqjaVVE5ikS4IBGdIFcu93PtIEWcad0jt8G3pzftOAXKrhV1+xjeUi3xS
-         2vFxrdWOmFjEgAEse0X4ukAJzf08BODAUkwwswYHqglhgZb3e4e2hOLlFqbxii9cwbN8
-         51KG4G8FgKe3rHWvA2tRCWLMTBqZwV07MHx/qA5yUuDs1yTsZyVZAWqp6+Td20j4abhL
-         xflh4AeGAFOwFO6qOA0rTYobASWMZ03U3Eh43ALhzG5F6eOh+MOTqZZUKtJMEwdroHCc
-         RMQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXG5MPbOB0SXEV7cQT7S/TAY6WraaUBFjQOB6qAukMLXPdYik/5UdwDkwuX6zl9vyOD4CgsdlGrdgAL20fj@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyk0YpL+n7Bvt1zqlAKm8OD5yBezYBvPpCv7lB4pz9T0FYFXsBt
-	lya5F69KJxV14eznMBV0tmim0fgjLaSbKIdR2QFpgXVj1wL8RCT+TewAeEsAyBLFBQ==
-X-Gm-Gg: ASbGnctydPx+P/gX4D9e4S+6sB87fNF4ANggIyr2Cv8vK5AqJ4Y7xyFucBWFOE0Xuvo
-	iA+kHU+h87QH/oyg6R4pVxsCYKTlM6doTI3SKOCYdB8zHXy2GcGXycpqIm78tExnOdht9oWgMXI
-	w+ze2eRJqZc0hQBuXArI9KuNgbMwLHTzJ4dOy8B3GYw9nCsZje+XFWRZjC83AhfGEvBl05rhyb2
-	okDCLXyS5JTfOuHmUC8pmvWZFVYBfaimmhQyqnTalENlG/PdKbSrJICgscH/17sFqU3VHK2khGE
-	YgkxaItDeJFjx2ZX8bFFL9F98ytemAklqcXhubRv9gVWr6ohfoRZi4obeLZjEvc+aSGflbxs8nF
-	NITtBT6iVZzaRZfWS0VYh+QPXmodQwBcdhWhKM0o3yiOf6xGllCdEfqZRKkb9pgZJB2HCerOc4r
-	pKgPWBmUtkvMrmd6DTy+3N6jkThgO1m8ylbqUfjYMPf4tUskIgd1IK
-X-Google-Smtp-Source: AGHT+IFHhg72xm2TGOlgC80Jpbc+gsGTnmY9bbV9Ns7ch2lY+9eWvW41JSseHQ0nLr5q5q73zE6FJQ==
-X-Received: by 2002:a05:6a00:9aa:b0:7aa:93d5:822c with SMTP id d2e1a72fcca58-7ba3c27267emr14948626b3a.23.1763487521172;
-        Tue, 18 Nov 2025 09:38:41 -0800 (PST)
-Received: from google.com (132.200.185.35.bc.googleusercontent.com. [35.185.200.132])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7b92782d390sm17124484b3a.60.2025.11.18.09.38.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Nov 2025 09:38:39 -0800 (PST)
-Date: Tue, 18 Nov 2025 17:38:35 +0000
-From: David Matlack <dmatlack@google.com>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com,
-	rppt@kernel.org, rientjes@google.com, corbet@lwn.net,
-	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com,
-	kanie@linux.alibaba.com, ojeda@kernel.org, aliceryhl@google.com,
-	masahiroy@kernel.org, akpm@linux-foundation.org, tj@kernel.org,
-	yoann.congal@smile.fr, mmaurer@google.com, roman.gushchin@linux.dev,
-	chenridong@huawei.com, axboe@kernel.dk, mark.rutland@arm.com,
-	jannh@google.com, vincent.guittot@linaro.org, hannes@cmpxchg.org,
-	dan.j.williams@intel.com, david@redhat.com,
-	joel.granados@kernel.org, rostedt@goodmis.org,
-	anna.schumaker@oracle.com, song@kernel.org, linux@weissschuh.net,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-mm@kvack.org, gregkh@linuxfoundation.org, tglx@linutronix.de,
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
-	x86@kernel.org, hpa@zytor.com, rafael@kernel.org, dakr@kernel.org,
-	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com,
-	myungjoo.ham@samsung.com, yesanishhere@gmail.com,
-	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com,
-	aleksander.lobakin@intel.com, ira.weiny@intel.com,
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de,
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com,
-	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net,
-	brauner@kernel.org, linux-api@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, saeedm@nvidia.com,
-	ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com,
-	leonro@nvidia.com, witu@nvidia.com, hughd@google.com,
-	skhawaja@google.com, chrisl@kernel.org
-Subject: Re: [PATCH v6 06/20] liveupdate: luo_file: implement file systems
- callbacks
-Message-ID: <aRyvG308oNRVzuN7@google.com>
-References: <20251115233409.768044-1-pasha.tatashin@soleen.com>
- <20251115233409.768044-7-pasha.tatashin@soleen.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=kZhBU3czqP6YTAcpZfg/m6vYGgWGPUAzaXkdRYTVJRje8npHNibryQoN4Leckark2XGhE+H1cmATAd0eSlLv5nBYwTDRrAOW3AVxkV+VjChr/E+iLOFciDyqYwIIJnAwCjcGqoc/65yOEcQTT/tcQsfLkwqCLaTPHAgnmBB1xHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=hNDh5Csr; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=yqb7N0H4JGGBYJ84ZI4yNhHyWkJXbpKpv+8rNSsx5Ng=; b=hNDh5CsrtAFot4np8VyoX7ziwg
+	VWbZhzuVD1wJdM1yiwM5rTqSpZidVbaEjIZJjXL0NPR0o6XnntZCSd4bsjZ8q7oyqXK4YFD7SkdUc
+	AnQSMoMgnRNkCUjLNd8MupDZ35YVMp52NFLZw0u3fBn+dMkrBDIbi59SOAimr9mo0NVZWoPolhZPp
+	y3FqaD+kSeQ22yFUzahHPlNsUyirxeQE4TOULofT2h/3nZ9GyqtCSWWdAzxNP7FmptP2Zx+LOsUBL
+	uAU0t+3OrR8RlI+OkdaC8lUjtL5wO5ersRzRCsuaKh2mscuFw7SRdpCNan7m+OY+5W8guSLiRcR2W
+	IgmsUJzw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vLPgR-0000000C9SY-3QSx;
+	Tue, 18 Nov 2025 17:40:03 +0000
+Date: Tue, 18 Nov 2025 17:40:03 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+Cc: syzbot+ad45f827c88778ff7df6@syzkaller.appspotmail.com,
+	frank.li@vivo.com, glaubitz@physik.fu-berlin.de,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	slava@dubeyko.com, syzkaller-bugs@googlegroups.com
+Subject: Re:
+Message-ID: <20251118174003.GH2441659@ZenIV>
+References: <69155e34.050a0220.3565dc.0019.GAE@google.com>
+ <20251118182710.51972-1-mehdi.benhadjkhelifa@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -116,27 +63,40 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251115233409.768044-7-pasha.tatashin@soleen.com>
+In-Reply-To: <20251118182710.51972-1-mehdi.benhadjkhelifa@gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On 2025-11-15 06:33 PM, Pasha Tatashin wrote:
-> This patch implements the core mechanism for managing preserved
-> files throughout the live update lifecycle. It provides the logic to
-> invoke the file handler callbacks (preserve, unpreserve, freeze,
-> unfreeze, retrieve, and finish) at the appropriate stages.
+On Tue, Nov 18, 2025 at 07:27:06PM +0100, Mehdi Ben Hadj Khelifa wrote:
+> #syz test
 > 
-> During the reboot phase, luo_file_freeze() serializes the final
-> metadata for each file (handler compatible string, token, and data
-> handle) into a memory region preserved by KHO. In the new kernel,
-> luo_file_deserialize() reconstructs the in-memory file list from this
-> data, preparing the session for retrieval.
-> 
-> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+> diff --git a/fs/hfs/super.c b/fs/hfs/super.c
+> index 47f50fa555a4..46cdff89fb00 100644
+> --- a/fs/hfs/super.c
+> +++ b/fs/hfs/super.c
+> @@ -431,10 +431,21 @@ static int hfs_init_fs_context(struct fs_context *fc)
+>  	return 0;
+>  }
+>  
+> +static void hfs_kill_sb(struct super_block *sb)
+> +{
+> +	generic_shutdown_super(sb);
+> +	hfs_mdb_put(sb);
+> +	if (sb->s_bdev) {
+> +		sync_blockdev(sb->s_bdev);
+> +		bdev_fput(sb->s_bdev_file);
+> +	}
+> +
+> +}
+> +
+>  static struct file_system_type hfs_fs_type = {
+>  	.owner		= THIS_MODULE,
+>  	.name		= "hfs",
+> -	.kill_sb	= kill_block_super,
+> +	.kill_sb	= hfs_kill_sb,
+>  	.fs_flags	= FS_REQUIRES_DEV,
+>  	.init_fs_context = hfs_init_fs_context,
+>  };
 
-> +int liveupdate_register_file_handler(struct liveupdate_file_handler *h);
-
-Should there be a way to unregister a file handler?
-
-If VFIO is built as module then I think it  would need to be able to
-unregister its file handler when the module is unloaded to avoid leaking
-pointers to its text in LUO.
+Remove the calls of hfs_mdb_put() from hfs_fill_super() and
+hfs_put_super() in addition to that.
 
