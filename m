@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-68835-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68862-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23643C67747
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 06:21:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 55BCEC678E5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 06:28:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CB1124F283E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 05:18:18 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 440434F6E49
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 05:22:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D9122DF701;
-	Tue, 18 Nov 2025 05:16:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA5BF30277D;
+	Tue, 18 Nov 2025 05:16:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="gGHivrs5"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="uebdJF5p"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19A182989B4;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E975287502;
 	Tue, 18 Nov 2025 05:16:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763442975; cv=none; b=IVdnl6kxDwA9uKro9HP8/zBt8UewICNChu7RQ81XHyo3c69df1TUC8FL+ZWOvrg+0zBTPCGKNXwgoPVyj0mitkQ3X5GpycKGoB8zOzIhl1Pv8MGQKrrV8TVH/5j1ODCNTq+zM819IPqypChGpOfPNeCjFclsqtw1avNQh6rOG78=
+	t=1763442981; cv=none; b=LoNihHW30g2orDDRkfw5ZFsQOOj5baaWHGE5z3P+rZGCz476t+oor2Y35Jf7CedzyVS+5F/w9qiD5xPk0xUKQ/2e2bqxF5VCF1B534UeR+UacOZWpcJ8p40Yz+fsycMNItnaB/Xrrf4NoTvFlRvaFr/EyqrfuhZrhVrPVslOZDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763442975; c=relaxed/simple;
-	bh=hKWw//UHdNOEXYtTeSMvdJHHjlwjZ1X78l74U5NCXO8=;
+	s=arc-20240116; t=1763442981; c=relaxed/simple;
+	bh=fOevxjAZDWF39Ou5j+d+tqBmG/dAKefXb84c0nkAeKM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VxfVqywzdAUi/gRAJDaJyk3c6FBO3iSPWDXLd5Uuq+2oEKwdKXwps19jAZ6uRSOvVfkkKdjXgPdID2nFlNuyPwo0Ja85GGlQ4gEULoGoVvP8XPkZaRW3RtLUAchfCl17eA5A5V04sTag14AGxTQfiGYDCkdlzySTvmI9+wq2vu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=gGHivrs5; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=W0Se08N/7PZ/bNjD36JMuISz/+8SahoBOk2oUnesNJ60hp7pU/RwtUzHArfTwdgsf7DdnbrXG1VV7yLpvN2NNcTgj88bMle6/ZYJjkpD/OJ2YtOhblmPzHQait2KdXpeYT1pAkOf5aR32qQVSvG1rvwm0e5QhcsEyGmlXMcnKSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=uebdJF5p; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=BK+HD9eFsxlpB9DT0f/M/+bf/xKzOtOP84IbBFRjnBU=; b=gGHivrs5VQYbp4P2WHM7xvl1vI
-	ax4AH360oXnMEt1pRtc4JNx9Mxj27G7Ntlw1mm2vR1YKwsbAJ7BIDIj7eFRTT5DnvK8JCUY03Da8N
-	fSZOXX/fBbd9LVbSGFm1KbrbLVwJmrOCLc3+6IQCZPiNgcegz18/qFCXOQsbpNt3DjC7U07vYtsPs
-	9Rhmie54jINi8XG2EuV19IWK3Ct6nuMbf1bu4GhYd7sCTgGxsorbv2ahk2JRFthbRoeXfeiF8W2c5
-	DoQk1Kfd0U8wa560MOaJXOVqC5lEJpoM0utWOPXCu1ozCSlbpkmyZddLcoFla63XBFJB319IxTbwC
-	cWQnABmg==;
+	bh=AteBZg1Rl8HXmlwF9pQEJDfnqUw3H67agXJaoVo2v7U=; b=uebdJF5pf07uYuFSwWcvMcjJA4
+	aMBIgBZ07P6Z7Z5i2y6WJB9aj7c4VP5/O9k2aF7DzcSYPG1dwqEOTubJtzYsWoiPZo0kA2/jDUEF2
+	b7r0UsEwbChuPZROhUWdb3uUGI7EdA5kZNpkgsHvboUEniW8t2gp12fPx3iHxPaq0vSuAJbv2p1HI
+	kHCzgWGRfgOsZmsmtrjipM9tulW2sRBO40L3kgNJMHpw6+JqgEQ+1w2YyYwLjGPaQ73xX5QhOeyew
+	yKSk130DpWM8QXtbXxc9lfE7z25d/IUY835TAk/kl1TCuVJN7Mr7fefmvVmRISgxVpvMmFWtqSBgp
+	DZssowdQ==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vLE4T-0000000GEPd-0X8R;
+	id 1vLE4T-0000000GEPl-14AR;
 	Tue, 18 Nov 2025 05:16:05 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
@@ -68,9 +68,9 @@ Cc: torvalds@linux-foundation.org,
 	borntraeger@linux.ibm.com,
 	bpf@vger.kernel.org,
 	clm@meta.com
-Subject: [PATCH v4 01/54] fuse_ctl_add_conn(): fix nlink breakage in case of early failure
-Date: Tue, 18 Nov 2025 05:15:10 +0000
-Message-ID: <20251118051604.3868588-2-viro@zeniv.linux.org.uk>
+Subject: [PATCH v4 02/54] tracefs: fix a leak in eventfs_create_events_dir()
+Date: Tue, 18 Nov 2025 05:15:11 +0000
+Message-ID: <20251118051604.3868588-3-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20251118051604.3868588-1-viro@zeniv.linux.org.uk>
 References: <20251118051604.3868588-1-viro@zeniv.linux.org.uk>
@@ -83,75 +83,37 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-fuse_ctl_remove_conn() used to decrement the link count of root
-manually; that got subsumed by simple_recursive_removal(), but
-in case when subdirectory creation has failed the latter won't
-get called.
+If we have LOCKDOWN_TRACEFS, the function bails out - *after*
+having locked the parent directory and without bothering to
+undo that.  Just check it before tracefs_start_creating()...
 
-Just move the modification of parent's link count into
-fuse_ctl_add_dentry() to keep the things simple.  Allows to
-get rid of the nlink argument as well...
-
-Fixes: fcaac5b42768 "fuse_ctl: use simple_recursive_removal()"
-Acked-by: Miklos Szeredi <mszeredi@redhat.com>
+Fixes: e24709454c45 "tracefs/eventfs: Add missing lockdown checks"
+Acked-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/fuse/control.c | 19 ++++++++++---------
- 1 file changed, 10 insertions(+), 9 deletions(-)
+ fs/tracefs/event_inode.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/fs/fuse/control.c b/fs/fuse/control.c
-index bb407705603c..5247df896c5d 100644
---- a/fs/fuse/control.c
-+++ b/fs/fuse/control.c
-@@ -205,8 +205,7 @@ static const struct file_operations fuse_conn_congestion_threshold_ops = {
- 
- static struct dentry *fuse_ctl_add_dentry(struct dentry *parent,
- 					  struct fuse_conn *fc,
--					  const char *name,
--					  int mode, int nlink,
-+					  const char *name, int mode,
- 					  const struct inode_operations *iop,
- 					  const struct file_operations *fop)
+diff --git a/fs/tracefs/event_inode.c b/fs/tracefs/event_inode.c
+index 8705c77a9e75..93c231601c8e 100644
+--- a/fs/tracefs/event_inode.c
++++ b/fs/tracefs/event_inode.c
+@@ -757,7 +757,7 @@ struct eventfs_inode *eventfs_create_events_dir(const char *name, struct dentry
+ 						const struct eventfs_entry *entries,
+ 						int size, void *data)
  {
-@@ -232,7 +231,10 @@ static struct dentry *fuse_ctl_add_dentry(struct dentry *parent,
- 	if (iop)
- 		inode->i_op = iop;
- 	inode->i_fop = fop;
--	set_nlink(inode, nlink);
-+	if (S_ISDIR(mode)) {
-+		inc_nlink(d_inode(parent));
-+		inc_nlink(inode);
-+	}
- 	inode->i_private = fc;
- 	d_add(dentry, inode);
+-	struct dentry *dentry = tracefs_start_creating(name, parent);
++	struct dentry *dentry;
+ 	struct eventfs_root_inode *rei;
+ 	struct eventfs_inode *ei;
+ 	struct tracefs_inode *ti;
+@@ -768,6 +768,7 @@ struct eventfs_inode *eventfs_create_events_dir(const char *name, struct dentry
+ 	if (security_locked_down(LOCKDOWN_TRACEFS))
+ 		return NULL;
  
-@@ -252,22 +254,21 @@ int fuse_ctl_add_conn(struct fuse_conn *fc)
- 		return 0;
- 
- 	parent = fuse_control_sb->s_root;
--	inc_nlink(d_inode(parent));
- 	sprintf(name, "%u", fc->dev);
--	parent = fuse_ctl_add_dentry(parent, fc, name, S_IFDIR | 0500, 2,
-+	parent = fuse_ctl_add_dentry(parent, fc, name, S_IFDIR | 0500,
- 				     &simple_dir_inode_operations,
- 				     &simple_dir_operations);
- 	if (!parent)
- 		goto err;
- 
--	if (!fuse_ctl_add_dentry(parent, fc, "waiting", S_IFREG | 0400, 1,
-+	if (!fuse_ctl_add_dentry(parent, fc, "waiting", S_IFREG | 0400,
- 				 NULL, &fuse_ctl_waiting_ops) ||
--	    !fuse_ctl_add_dentry(parent, fc, "abort", S_IFREG | 0200, 1,
-+	    !fuse_ctl_add_dentry(parent, fc, "abort", S_IFREG | 0200,
- 				 NULL, &fuse_ctl_abort_ops) ||
- 	    !fuse_ctl_add_dentry(parent, fc, "max_background", S_IFREG | 0600,
--				 1, NULL, &fuse_conn_max_background_ops) ||
-+				 NULL, &fuse_conn_max_background_ops) ||
- 	    !fuse_ctl_add_dentry(parent, fc, "congestion_threshold",
--				 S_IFREG | 0600, 1, NULL,
-+				 S_IFREG | 0600, NULL,
- 				 &fuse_conn_congestion_threshold_ops))
- 		goto err;
++	dentry = tracefs_start_creating(name, parent);
+ 	if (IS_ERR(dentry))
+ 		return ERR_CAST(dentry);
  
 -- 
 2.47.3
