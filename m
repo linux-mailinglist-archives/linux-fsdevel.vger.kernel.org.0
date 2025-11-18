@@ -1,178 +1,178 @@
-Return-Path: <linux-fsdevel+bounces-68950-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-68952-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C4E2C6A474
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 16:20:40 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86918C6A4EF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 16:29:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0A3D938440E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 15:19:19 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTPS id 6FB452C504
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Nov 2025 15:29:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8823A364023;
-	Tue, 18 Nov 2025 15:19:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC071364030;
+	Tue, 18 Nov 2025 15:29:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="LyTWWGQq"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MXwsZ5rF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88FBD3624DB
-	for <linux-fsdevel@vger.kernel.org>; Tue, 18 Nov 2025 15:19:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21A3831770F
+	for <linux-fsdevel@vger.kernel.org>; Tue, 18 Nov 2025 15:29:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763479151; cv=none; b=LaszgaKwdrZMtDJfNvIhoOaejz/NISXjioqn2uTg51N6jMRlY7iv+ebYBz5KvAoRtL3gE8ZmDMwVxG2NATQsRSuCZy+I3LCv3fret0ppr52rLrd38eP06FfJzgXzMpY/IevJkQ+CIfCITgM2m1S77qmbPKpulSX72QNi0HUW9V0=
+	t=1763479781; cv=none; b=SfM9t/AdpYDDZrRVliz8ocLs5qLcxLS436OT3LvPBADxvLezu+PTD5egwQzDehDCvoIrPlqS+1N91hAUhoaCTcKgsQnKYQ8VW9mpVQr3EJzUqR8jZBu9tq+8wvqdTLsPAHvNJqnWj0OS6w1y4maIgtvCqQk7zXxV6XP3/pTFWjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763479151; c=relaxed/simple;
-	bh=hk0ZXs9FzwYps2jxvQYT5vEXRk0C4Qe8Vs15fTPcizc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WPPJfkOrucXrWf/8VSqQoJPs6IoINITO15xB1QMFGZdmEmILHyC596MihjpVUFRb5oB3v3rh0OwEL3KZqUJ5VZjRZ3hrdPgTtqPDOTqbp2YsTbBtxLXtzSdxG4A4xLqH8GzERSIMin7b6qB2dm1HWmg6B5vjPK5dzOrf9O8ec+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=LyTWWGQq; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-6417313bddaso9052805a12.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Nov 2025 07:19:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1763479148; x=1764083948; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hk0ZXs9FzwYps2jxvQYT5vEXRk0C4Qe8Vs15fTPcizc=;
-        b=LyTWWGQq/MS5Oc5q/vluF3zrsa08FP9Mv9wwXDtpU4ZbuwWAMFtMVgoEBHN0LitWnL
-         JkrHgRWceTDrk6qmuCuYbtXQ3OSCwW48EZWSN4NKMrRnzMhkRxxjYjdB0E2W3P2E9/ON
-         F8MslExmuSsuKtEte6M6x92HyJ8CRtJownbcTOLCqLasBKKAoVmyXjiaI8Yoc9CJuHDB
-         nVlNmbOXV2reLHYzOi5lXhQAX+BF5v9AYIaeatKRJzpDyLKOnaGYCxD4ttS5Qm6Mqb7C
-         aVZB83HrAKwrlBZFJ8FMaqyoTN1I6Sais39TD9COrnagpvdycj9RsQr2APvmaxvFE+nl
-         bcVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763479148; x=1764083948;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=hk0ZXs9FzwYps2jxvQYT5vEXRk0C4Qe8Vs15fTPcizc=;
-        b=N2lxQs6DAFAjxSQ+qGSVeQ8OMwrLJcnkY6ef+cuVZWUM+WkD3aEOSIjVQ/6Q1eNBBn
-         td5V1QiBMrwZmrBnthXmRYj31SSam3pjq9UIxr3gTX+aXQriSbQLLRqN+xOXlP3Ioh4x
-         CKLIGrK6um3ORLtgWe85/rk9V4paHPy4ouVUHNGLodDxHeWh54xOkfHOLOed64dqErqq
-         f2z/2bAp712niNTVa8BNNQu50tu1eOCV62TIJrbr2+nlWNcmiaAgR+Nm1lUL2lZ+YJtn
-         NAWQtjkdR2nBnBklYSpOffze37sTibio3qPi2Q66EsnKhhVye7thrXm7E7oK+RUzSBsa
-         VMqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV8tVQPDTHgoKUpHGLhdGNF0vbvBq6UE0949pQo20tKfzvpjrN2G0Y30rAjYgAQyelmsOP6CNnSTsBWuNks@vger.kernel.org
-X-Gm-Message-State: AOJu0YylR6f3nmfuI5H+MHnwnWDAKbE52ArUt1YlsfsrjAPfwG/h+2S2
-	QyiJAL99pNY8tYOmiRRG9Ri2y9ModooA1dHybdlaBWBxNZ/qe9nNfIcgW++YdrXrfehaG+JpBTE
-	c1caz3uA73aQzForMkkHLtwSayZEdkP5v2vfXknSInA==
-X-Gm-Gg: ASbGncuquhI/HOXUP6tO6lw9XOzOEqus8iCrh3SuNq2CJ9Glv5T9XvNGFJwo7b9If9/
-	7GMH5LsMNXWe2U357pXspuf8pY8hVplySozx7u3HfYqbE9mSFA9qZs4MBLVow9mf/qKeOVODsZF
-	ort2z36NshfbYxCOaVROWIQFtrlzV0cyX+UGr8X0lqOoB7F+loCmozDyFYaBQCJTEesHIOCRSSI
-	JZ8nRA4GxnXjZ3QEJRT0++iBA5RIKD9rsRqJF+V/r751e2+Z/xFGHo4o8JOJEjJydRM
-X-Google-Smtp-Source: AGHT+IH73uaGXtkqWxA+vOqKSKXyc2f3xkXFQtsjUi4wNeWbkqpozwjKaxfRNk8v2eP437M4d3oprpw2Yh3MBItYnTs=
-X-Received: by 2002:a05:6402:1d54:b0:641:9aac:e4a9 with SMTP id
- 4fb4d7f45d1cf-64350e20d78mr16134284a12.15.1763479146917; Tue, 18 Nov 2025
- 07:19:06 -0800 (PST)
+	s=arc-20240116; t=1763479781; c=relaxed/simple;
+	bh=eQ+8hKPx0XpTMHsJSYSHhV+ijJCD9u25JYikDqFdWBY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=u0wm8QHW6zUREtAfjdfQxTktFnfMjIDyr15IAeLLmKkkaF+ualadxz2bBKcmQ8xl3+wfeplhIL4mrcOJC3Gu8RIM4/KuRfv4PAPbkxLv0YUCeF7THoRv+WM0xqmqkhJ9nM893nh39V0eKIfR0Qhdcbvh7vkk1Fpl4ITH4RdLhek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=MXwsZ5rF; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:In-Reply-To:References;
+	bh=vfZiX7wznAvtDODkuSMzlx7Ahjg1kuchR1T7I45xBlk=; b=MXwsZ5rFDZfZnNgkflNZC3gMPi
+	OEFiK76GgHVOE/oc+eIluWmgC3he1QF+k5rTI2g8lCNWZJ+jR6HdG01eDw7NPBtCp1pxbh+/FUIAv
+	1u+1UT8abXfYh+on75A4UDxANYtJD9kYK+nA2cxQlxeoaKBDS2mRjyf/laYdUXHUQXmmtM/JVk5vF
+	4sg237zsjJoOcOv/b9zyU66VPyc5pGg9rz5HhCzvUC3/bVAyk6tlCzSGZzOhCjYfKMxn8a8+bHEwu
+	RzlHKX409H1490FnNVySLcXGgkLVr+zUW83jJg7W/GYD6PBZq+qDjlmVNxCItV4VUAHH3lMQEtiws
+	WPTcDNgA==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vLNeD-0000000Fflz-0M2N;
+	Tue, 18 Nov 2025 15:29:37 +0000
+From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH] fs: Add uoff_t
+Date: Tue, 18 Nov 2025 15:29:33 +0000
+Message-ID: <20251118152935.3735484-1-willy@infradead.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251115233409.768044-1-pasha.tatashin@soleen.com>
- <20251115233409.768044-3-pasha.tatashin@soleen.com> <aRnG8wDSSAtkEI_z@kernel.org>
- <CA+CK2bDu2FdzyotSwBpGwQtiisv=3f6gC7DzOpebPCxmmpwMYw@mail.gmail.com>
- <aRoi-Pb8jnjaZp0X@kernel.org> <CA+CK2bBEs2nr0TmsaV18S-xJTULkobYgv0sU9=RCdReiS0CbPQ@mail.gmail.com>
- <aRuODFfqP-qsxa-j@kernel.org> <CA+CK2bAEdNE0Rs1i7GdHz8Q3DK9Npozm8sRL8Epa+o50NOMY7A@mail.gmail.com>
- <aRxWvsdv1dQz8oZ4@kernel.org> <20251118140300.GK10864@nvidia.com> <aRyLbB8yoQwUJ3dh@kernel.org>
-In-Reply-To: <aRyLbB8yoQwUJ3dh@kernel.org>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Tue, 18 Nov 2025 10:18:28 -0500
-X-Gm-Features: AWmQ_bmBeX4hEJXb1SebGbQCukqm3GOn5m3ynIQiDheXLPwAAGR4LZnSH-Cy4rU
-Message-ID: <CA+CK2bBFtG3LWmCtLs-5vfS8FYm_r24v=jJra9gOGPKKcs=55g@mail.gmail.com>
-Subject: Re: [PATCH v6 02/20] liveupdate: luo_core: integrate with KHO
-To: Mike Rapoport <rppt@kernel.org>
-Cc: Jason Gunthorpe <jgg@nvidia.com>, pratyush@kernel.org, jasonmiu@google.com, 
-	graf@amazon.com, dmatlack@google.com, rientjes@google.com, corbet@lwn.net, 
-	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, 
-	ojeda@kernel.org, aliceryhl@google.com, masahiroy@kernel.org, 
-	akpm@linux-foundation.org, tj@kernel.org, yoann.congal@smile.fr, 
-	mmaurer@google.com, roman.gushchin@linux.dev, chenridong@huawei.com, 
-	axboe@kernel.dk, mark.rutland@arm.com, jannh@google.com, 
-	vincent.guittot@linaro.org, hannes@cmpxchg.org, dan.j.williams@intel.com, 
-	david@redhat.com, joel.granados@kernel.org, rostedt@goodmis.org, 
-	anna.schumaker@oracle.com, song@kernel.org, linux@weissschuh.net, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
-	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com, 
-	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
-	rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org, 
-	cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com, 
-	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com, 
-	aleksander.lobakin@intel.com, ira.weiny@intel.com, 
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
-	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net, 
-	brauner@kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	saeedm@nvidia.com, ajayachandra@nvidia.com, parav@nvidia.com, 
-	leonro@nvidia.com, witu@nvidia.com, hughd@google.com, skhawaja@google.com, 
-	chrisl@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Nov 18, 2025 at 10:06=E2=80=AFAM Mike Rapoport <rppt@kernel.org> wr=
-ote:
->
-> On Tue, Nov 18, 2025 at 10:03:00AM -0400, Jason Gunthorpe wrote:
-> > On Tue, Nov 18, 2025 at 01:21:34PM +0200, Mike Rapoport wrote:
-> > > On Mon, Nov 17, 2025 at 11:22:54PM -0500, Pasha Tatashin wrote:
-> > > > > You can avoid that complexity if you register the device with a d=
-ifferent
-> > > > > fops, but that's technicality.
-> > > > >
-> > > > > Your point about treating the incoming FDT as an underlying resou=
-rce that
-> > > > > failed to initialize makes sense, but nevertheless userspace need=
-s a
-> > > > > reliable way to detect it and parsing dmesg is not something we s=
-hould rely
-> > > > > on.
-> > > >
-> > > > I see two solutions:
-> > > >
-> > > > 1. LUO fails to retrieve the preserved data, the user gets informed=
- by
-> > > > not finding /dev/liveupdate, and studying the dmesg for what has
-> > > > happened (in reality in fleets version mismatches should not be
-> > > > happening, those should be detected in quals).
-> > > > 2. Create a zombie device to return some errno on open, and still
-> > > > study dmesg to understand what really happened.
-> > >
-> > > User should not study dmesg. We need another solution.
-> > > What's wrong with e.g. ioctl()?
-> >
-> > It seems very dangerous to even boot at all if the next kernel doesn't
-> > understand the serialization information..
-> >
-> > IMHO I think we should not even be thinking about this, it is up to
-> > the predecessor environment to prevent it from happening. The ideas to
-> > use ELF metadata/etc to allow a pre-flight validation are the right
-> > solution.
+In a recent commit, I inadvertently changed a comparison from being an
+unsigned comparison (on 64-bit systems) to being a signed comparison
+(which it had always been on 32-bit systems).  This led to a sporadic
+fstests failure.
 
-100% agreed, this is the goal.
+To make sure this comparison is always unsigned, introduce a new type,
+uoff_t which is the unsigned version of loff_t.  Generally file sizes
+are restricted to being a signed integer, but in these two places it is
+convenient to pass -1 to indicate "up to the end of the file".
 
-> > If we get into the next kernel and it receives information it cannot
-> > process it should just BUG_ON and die, or some broad equivalent.
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+---
+ include/linux/mm.h                     | 8 ++++----
+ include/linux/shmem_fs.h               | 2 +-
+ include/linux/types.h                  | 1 +
+ include/uapi/asm-generic/posix_types.h | 1 +
+ mm/shmem.c                             | 4 ++--
+ mm/truncate.c                          | 2 +-
+ 6 files changed, 10 insertions(+), 8 deletions(-)
 
-I initially had a panic() that would kill the kernel, but after
-further consideration, I realized that we can still boot into
-"maintenance" mode and allow the user to decide when and how to reboot
-the machine back to a normal state.
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index fe995cc3ba5c..a69ab017c370 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -3650,10 +3650,10 @@ struct vm_unmapped_area_info {
+ extern unsigned long vm_unmapped_area(struct vm_unmapped_area_info *info);
+ 
+ /* truncate.c */
+-extern void truncate_inode_pages(struct address_space *, loff_t);
+-extern void truncate_inode_pages_range(struct address_space *,
+-				       loff_t lstart, loff_t lend);
+-extern void truncate_inode_pages_final(struct address_space *);
++void truncate_inode_pages(struct address_space *mapping, loff_t lstart);
++void truncate_inode_pages_range(struct address_space *mapping, loff_t lstart,
++		uoff_t lend);
++void truncate_inode_pages_final(struct address_space *mapping);
+ 
+ /* generic vm_area_ops exported for stackable file systems */
+ extern vm_fault_t filemap_fault(struct vm_fault *vmf);
+diff --git a/include/linux/shmem_fs.h b/include/linux/shmem_fs.h
+index 08f497673b06..94c6237acdc9 100644
+--- a/include/linux/shmem_fs.h
++++ b/include/linux/shmem_fs.h
+@@ -126,7 +126,7 @@ struct page *shmem_read_mapping_page_gfp(struct address_space *mapping,
+ 					pgoff_t index, gfp_t gfp_mask);
+ int shmem_writeout(struct folio *folio, struct swap_iocb **plug,
+ 		struct list_head *folio_list);
+-void shmem_truncate_range(struct inode *inode, loff_t start, loff_t end);
++void shmem_truncate_range(struct inode *inode, loff_t start, uoff_t end);
+ int shmem_unuse(unsigned int type);
+ 
+ #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+diff --git a/include/linux/types.h b/include/linux/types.h
+index 6dfdb8e8e4c3..d4437e9c452c 100644
+--- a/include/linux/types.h
++++ b/include/linux/types.h
+@@ -50,6 +50,7 @@ typedef __kernel_old_gid_t	old_gid_t;
+ 
+ #if defined(__GNUC__)
+ typedef __kernel_loff_t		loff_t;
++typedef __kernel_uoff_t		uoff_t;
+ #endif
+ 
+ /*
+diff --git a/include/uapi/asm-generic/posix_types.h b/include/uapi/asm-generic/posix_types.h
+index b5f7594eee7a..0a90ad92dbf3 100644
+--- a/include/uapi/asm-generic/posix_types.h
++++ b/include/uapi/asm-generic/posix_types.h
+@@ -86,6 +86,7 @@ typedef struct {
+  */
+ typedef __kernel_long_t	__kernel_off_t;
+ typedef long long	__kernel_loff_t;
++typedef unsigned long long	__kernel_uoff_t;
+ typedef __kernel_long_t	__kernel_old_time_t;
+ #ifndef __KERNEL__
+ typedef __kernel_long_t	__kernel_time_t;
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 0a25ee095b86..728f2e04911e 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -1105,7 +1105,7 @@ static struct folio *shmem_get_partial_folio(struct inode *inode, pgoff_t index)
+  * Remove range of pages and swap entries from page cache, and free them.
+  * If !unfalloc, truncate or punch hole; if unfalloc, undo failed fallocate.
+  */
+-static void shmem_undo_range(struct inode *inode, loff_t lstart, loff_t lend,
++static void shmem_undo_range(struct inode *inode, loff_t lstart, uoff_t lend,
+ 								 bool unfalloc)
+ {
+ 	struct address_space *mapping = inode->i_mapping;
+@@ -1256,7 +1256,7 @@ static void shmem_undo_range(struct inode *inode, loff_t lstart, loff_t lend,
+ 	shmem_recalc_inode(inode, 0, -nr_swaps_freed);
+ }
+ 
+-void shmem_truncate_range(struct inode *inode, loff_t lstart, loff_t lend)
++void shmem_truncate_range(struct inode *inode, loff_t lstart, uoff_t lend)
+ {
+ 	shmem_undo_range(inode, lstart, lend, false);
+ 	inode_set_mtime_to_ts(inode, inode_set_ctime_current(inode));
+diff --git a/mm/truncate.c b/mm/truncate.c
+index d08340afc768..12467c1bd711 100644
+--- a/mm/truncate.c
++++ b/mm/truncate.c
+@@ -364,7 +364,7 @@ long mapping_evict_folio(struct address_space *mapping, struct folio *folio)
+  * page aligned properly.
+  */
+ void truncate_inode_pages_range(struct address_space *mapping,
+-				loff_t lstart, loff_t lend)
++				loff_t lstart, uoff_t lend)
+ {
+ 	pgoff_t		start;		/* inclusive */
+ 	pgoff_t		end;		/* exclusive */
+-- 
+2.47.2
 
-Crashing during early boot has its own disadvantages: the crash kernel
-is not available. Also, because live-update has to be very fast, the
-console is likely to be disabled. Therefore, getting to userspace and
-allowing the user to investigate what happened (e.g., automatically
-retrieving dmesg or a core dump and filing a bug) before rebooting
-seems like the most sensible approach.
-
-This won't leak data, as /dev/liveupdate is completely disabled, so
-nothing preserved in memory will be recoverable.
-
-Pasha
 
