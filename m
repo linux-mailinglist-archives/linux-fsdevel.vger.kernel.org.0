@@ -1,153 +1,191 @@
-Return-Path: <linux-fsdevel+bounces-69052-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69053-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96F91C6CF29
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 07:34:15 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11730C6CF5E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 07:40:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7651F385E5E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 06:31:15 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 71CBC4F2DB9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 06:39:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 461B531B808;
-	Wed, 19 Nov 2025 06:29:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60FFD2F2916;
+	Wed, 19 Nov 2025 06:39:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ICUwuB8e"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mujQnR5c"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8111131984C;
-	Wed, 19 Nov 2025 06:29:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D63A27A130
+	for <linux-fsdevel@vger.kernel.org>; Wed, 19 Nov 2025 06:39:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763533783; cv=none; b=arApvLuiDEZ9aladKWB02P/W+7wHlELCgeqdWH/TFu20lwPSkNhc/hpA1wLtWy95SxVHJY0oLlEnHfTzL2qC5XAGUGfX/dx58mTwnF5NTtqhWVmczf/JhHJff206siyoOFvAwzsQ6mMLJabCuXCusl2r1cjbdYkSMR0dEysZ3lA=
+	t=1763534349; cv=none; b=uDXN/lOJDtm/PDquj6fOUkNC5bfqmJDSf+8CPIYWBowpHcINbilZJsJWIhYbtCbaCA+vDkgNKyrK4OSFgUbDO47nSCGeyXNtghArpfJ8t7CrMPvWkqOaA2yJKaTZsI5zePntTkftsHlBMtlGgPVfLm2Svmn6AACcowhFAWdLmbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763533783; c=relaxed/simple;
-	bh=j4jzM65eMJ8upAfaVJtxFTNQTor5sIf6Au4okDTN5Z0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZZDVoP4S1F+7895a5mG8fWpXzOQMBD7yGxptdgvtgPQnz7trrjgi5Pm6gj56vVRS2d0xOrcFTdMZ/3UIaE0MiYOQsN/lRen5e1Km/5j1byTJXKYNXHoZysVkVkMqdAEIOe5LCP26jhpTo8V+l7ZKqJHWuoM9mZtFRmIp9r6eBw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ICUwuB8e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80499C2BCB8;
-	Wed, 19 Nov 2025 06:29:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763533782;
-	bh=j4jzM65eMJ8upAfaVJtxFTNQTor5sIf6Au4okDTN5Z0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ICUwuB8eXhY6IyN+rUtf1idZGkjP6gvdnW4JPd1qpyAO4bXwdKdAlmzpB+dC6k+g3
-	 nop7z27kCcURFARY1nR5/VBH9UKLGLDz7a0EiM+7L+a1p5gVAWHttRBOi+pCNN44Ce
-	 z3zfJgUEyxI5S2MlrMdmPjOHR3e6VsLDQq6mRRJeQOSvzYPXE8rWo0m+2Zik7tcdm8
-	 qDW1YnQ4F1E+1ce96CYJ5XMq8eEy+X/0uRp65LurPVFQIV9lFY5d43LxK215yZql/R
-	 7XmAi9TqfpIhI2g3SEJgHS2dxrNSi7sl/ln/9aunkp81T9WPhgNqszZzYUGglYwWyH
-	 BXidO39mzhX+g==
-Date: Tue, 18 Nov 2025 22:29:41 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Matthew Wilcox <willy@infradead.org>,
-	Christoph Hellwig <hch@infradead.org>,
-	SHAURYA RANE <ssrane_b23@ee.vjti.ac.in>, akpm@linux-foundation.org,
-	shakeel.butt@linux.dev, eddyz87@gmail.com, andrii@kernel.org,
-	ast@kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev,
-	skhan@linuxfoundation.org, david.hunter.linux@gmail.com,
+	s=arc-20240116; t=1763534349; c=relaxed/simple;
+	bh=iv/2V65ay3MYD+zg/uXmPYJEYt6c0/sS7ygSOWw1Tzc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DkWLQt9CsWdXarEy7CJPXYUY20euMHOkSnn0Oc9Bj5PiCyXt5YwDPctpO/cknGWe5uAMr49b42sLMGBqqSGhVltU4uTZD2Qtla7Zqf7GEh1baHsga7FCnPwBIOUxtZvpXlm8Gkq8TfD0JoIclTShLa9F79WCNoDQnRW+Vj53CbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mujQnR5c; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4779b49d724so4697475e9.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Nov 2025 22:39:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1763534346; x=1764139146; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=h1xVzQCUtlha4eANiMsZQcVMtYn0VURMct9OKFdBU5k=;
+        b=mujQnR5cm4jZfz7oOQzKaA4KWYK2BCmaYns2n/3X4eAmouc7xgHYmFjDjDDPrLAl8C
+         VKfyJ6jIHa3cZQqEFrrUd/yeINLDI5cuteJcI9sXCB6Fk+gTE2DTxzJcB994y4Wc9O8S
+         51oZ6tNzwyXqW/EzrdpHvUZh6+ZbldV5Q7cpqKK4rg4JzR+JFD1EnyIZsp0g3+jxK/F6
+         kWy5hBbEwTPMW2du/pa5GE99nvGIlUt/QqivU8Res/WdDNwgwIqhcjKUO+hcYUB8ZNUn
+         iB1RywsLy0fSCxVKcpVCciygky7IbSzg0Pb+jKuGIO3l+GKOepmV10OEkT/XEqgZ7Kif
+         QIGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763534346; x=1764139146;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=h1xVzQCUtlha4eANiMsZQcVMtYn0VURMct9OKFdBU5k=;
+        b=ZCxcYBsrKIbksTJDSfXdViz7pAAyn+a9WjDmtFsPu1IFNRMlGCmn3Z5stk6gF7Els+
+         HKDsMSt9cGBLV5mclQnJwRjC3elfUure0ccvR4T+lgnNVDnzqMXW7nx3t9O2Vi7lzotN
+         LXf8etXL4M47TORFOFk1+EaHIi2+kbq4YiFR2sfKUl1jeqE5oFaUGtmPKmBy516siAkH
+         2IJ53Hh9dtQC/0M2IpR2sJWyA/tRkYswfRUZJFvv8A6/+g/AEuEVpAl6n5FSTzjSCsLv
+         L7E/IAu945jFEduBFokdnSv30lB3mgGP9pSIk+CIRYSW2dHBsus+iDXAkICecxAuKh+5
+         GC9w==
+X-Gm-Message-State: AOJu0YxPm8up6HD4Dz3PxBdovzzY8CEMYqyBwLL5M9pzO19dV82mm7A0
+	oMQkNzaPysTLglzAeXfqhyVbjTxvrcySC7AATJo3NYK/NdrkQSU271IhktzS7g==
+X-Gm-Gg: ASbGnctbP7T0xLYIC0bbZfmiltp9eXxjP3jbkPdLxUsrVbd7UczVBGjB9k/ke+7t9l9
+	qs3W6yGSkUZ7G24rwzqmU8JihWD9484bY9XHnPMQqJw16XgodPjoVH+aiucaVb+76QLGpKJ0NZi
+	rt1RIDRUZCzOXUkr86Nkksl3VEdHUE4fajWpJcVxdgBeJfIywE4/xOYs1hbe/rWguryuO/1YsNW
+	QGnPeGfvnjZy/hL/t/ET0wePnZXjrf2ozPi+6rZHIxi/2SySFGZb2ZaOQENFMefHQgMCvkdesqJ
+	B4ISJMKsreagrIk9drdSH/9kIjhCinIO6gnq44wwtEkH7HUPWvpWyY9YBhgDx6M/mAhm9VZJXLO
+	bBeOR3bNG26PvSW4uCsEjBBpvpb78GM49vctkRBhOqPWV7hnurMpHZXtx3eSt/oFST9QJVJGsNl
+	gDXM+UD9KtSTpq4ek=
+X-Google-Smtp-Source: AGHT+IFVKoZk9N7QhSRfuxnSPuUS4Q1FHG+IbsLr577Ad9xm7bFuDNcywKGc+cpHM2PozpRA9AyIIw==
+X-Received: by 2002:a05:600c:1d1b:b0:477:5ca6:4d51 with SMTP id 5b1f17b1804b1-477a9c2aa7amr29179765e9.3.1763534346199;
+        Tue, 18 Nov 2025 22:39:06 -0800 (PST)
+Received: from bhk ([165.50.116.232])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-477b10173a3sm29112015e9.5.2025.11.18.22.39.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Nov 2025 22:39:05 -0800 (PST)
+From: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+To: slava@dubeyko.com,
+	glaubitz@physik.fu-berlin.de,
+	frank.li@vivo.com,
+	brauner@kernel.org,
+	jack@suse.cz,
+	viro@zeniv.linux.org.uk
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	david.hunter.linux@gmail.com,
 	khalid@kernel.org,
-	syzbot+09b7d050e4806540153d@syzkaller.appspotmail.com,
-	bpf <bpf@vger.kernel.org>
-Subject: Re: [PATCH] mm/filemap: fix NULL pointer dereference in
- do_read_cache_folio()
-Message-ID: <20251119062941.GF196362@frogsfrogsfrogs>
-References: <aReUv1kVACh3UKv-@casper.infradead.org>
- <CANNWa07Y_GPKuYNQ0ncWHGa4KX91QFosz6WGJ9P6-AJQniD3zw@mail.gmail.com>
- <aRpQ7LTZDP-Xz-Sr@casper.infradead.org>
- <20251117164155.GB196362@frogsfrogsfrogs>
- <aRtjfN7sC6_Bv4bx@casper.infradead.org>
- <CAEf4BzZu+u-F9SjhcY5GN5vumOi6X=3AwUom+KJXeCpvC+-ppQ@mail.gmail.com>
- <aRxunCkc4VomEUdo@infradead.org>
- <aRySpQbNuw3Y5DN-@casper.infradead.org>
- <20251118161220.GE196362@frogsfrogsfrogs>
- <CAEf4BzYkPxUcQK2VWEE+8N=U5CXjtUNs6GfbfW2+GoTDebk19A@mail.gmail.com>
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>,
+	syzbot+ad45f827c88778ff7df6@syzkaller.appspotmail.com
+Subject: [PATCH v2] fs/hfs: fix s_fs_info leak on setup_bdev_super() failure
+Date: Wed, 19 Nov 2025 08:38:20 +0100
+Message-ID: <20251119073845.18578-1-mehdi.benhadjkhelifa@gmail.com>
+X-Mailer: git-send-email 2.52.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEf4BzYkPxUcQK2VWEE+8N=U5CXjtUNs6GfbfW2+GoTDebk19A@mail.gmail.com>
 
-On Tue, Nov 18, 2025 at 11:38:36AM -0800, Andrii Nakryiko wrote:
-> On Tue, Nov 18, 2025 at 8:12 AM Darrick J. Wong <djwong@kernel.org> wrote:
-> >
-> > On Tue, Nov 18, 2025 at 03:37:09PM +0000, Matthew Wilcox wrote:
-> > > On Tue, Nov 18, 2025 at 05:03:24AM -0800, Christoph Hellwig wrote:
-> > > > On Mon, Nov 17, 2025 at 10:45:31AM -0800, Andrii Nakryiko wrote:
-> > > > > As I replied on another email, ideally we'd have some low-level file
-> > > > > reading interface where we wouldn't have to know about secretmem, or
-> > > > > XFS+DAX, or whatever other unusual combination of conditions where
-> > > > > exposed internal APIs like filemap_get_folio() + read_cache_folio()
-> > > > > can crash.
-> > > >
-> > > > The problem is that you did something totally insane and it kinda works
-> > > > most of the time.
-> > >
-> > > ... on 64-bit systems.  The HIGHMEM handling is screwed up too.
-> > >
-> > > > But bpf or any other file system consumer has
-> > > > absolutely not business poking into the page cache to start with.
-> > >
-> > > Agreed.
-> > >
-> > > > And I'm really pissed off that you wrote and merged this code without
-> > > > ever bothering to talk to a FS or MM person who have immediately told
-> > > > you so.  Let's just rip out this buildid junk for now and restart
-> > > > because the problem isn't actually that easy.
-> > >
-> > > Oh, they did talk to fs & mm people originally and were told NO, so they
-> > > sneaked it in through the BPF tree.
-> > >
-> > > https://lore.kernel.org/all/20230316170149.4106586-1-jolsa@kernel.org/
-> > >
-> > > > > The only real limitation is that we'd like to be able to control
-> > > > > whether we are ok sleeping or not, as this code can be called from
-> > > > > pretty much anywhere BPF might run, which includes NMI context.
-> > > > >
-> > > > > Would this kiocb_read() approach work under those circumstances?
-> > > >
-> > > > No.  IOCB_NOWAIT is just a hint to avoid blocking function calls.
-> > > > It is not guarantee and a guarantee is basically impossible.
-> > >
-> > > I'm not sure I'd go that far -- I think we're pretty good about not
-> > > sleeping when IOCB_NOWAIT is specified and any remaining places can
-> > > be fixed up.
-> > >
-> > > But I am inclined to rip out the buildid code, just because the
-> > > authors have been so rude.
-> >
-> > Which fstest actually checks the functionality of the buildid code?
-> > I don't find any, which means none of the fs people have a good signal
-> > for breakage in this, um, novel file I/O path.
-> 
-> We have plenty of build ID tests in BPF selftest that validate this
-> functionality:
-> 
->   - tools/testing/selftests/bpf/prog_tests/stacktrace_build_id.c
->   - tools/testing/selftests/bpf/prog_tests/stacktrace_build_id_nmi.c
->   - tools/testing/selftests/bpf/prog_tests/build_id.c
-> 
-> This functionality is exposed to BPF (and PROCMAP_QUERY, which has its
-> own mm selftests), so that's where we test this. So we'll know at the
-> very least when trees merge that something is broken.
+The regression introduced by commit aca740cecbe5 ("fs: open block device
+after superblock creation") allows setup_bdev_super() to fail after a new
+superblock has been allocated by sget_fc(), but before hfs_fill_super()
+takes ownership of the filesystem-specific s_fs_info data.
 
-Only if you're testing the buildid functionality with all known file I/O
-paths implemented by all filesystems.  Or you could add a new testcase
-to fstests and we'd do all that *for* you.
+In that case, hfs_put_super() and the failure paths of hfs_fill_super()
+are never reached, leaving the HFS mdb structures attached to s->s_fs_info
+unreleased.The default kill_block_super() teardown also does not free 
+HFS-specific resources, resulting in a memory leak on early mount failure.
 
---D
+Fix this by moving all HFS-specific teardown (hfs_mdb_put()) from
+hfs_put_super() and the hfs_fill_super() failure path into a dedicated
+hfs_kill_sb() implementation. This ensures that both normal unmount and
+early teardown paths (including setup_bdev_super() failure) correctly
+release HFS metadata.
 
-> >
-> > --D
-> 
+This also preserves the intended layering: generic_shutdown_super()
+handles VFS-side cleanup, while HFS filesystem state is fully destroyed
+afterwards.
+
+Fixes: aca740cecbe5 ("fs: open block device after superblock creation")
+Reported-by: syzbot+ad45f827c88778ff7df6@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=ad45f827c88778ff7df6
+Tested-by: syzbot+ad45f827c88778ff7df6@syzkaller.appspotmail.com
+Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+---
+ChangeLog:
+
+Changes from v1:
+
+-Changed the patch direction to focus on hfs changes specifically as 
+suggested by al viro
+
+Link:https://lore.kernel.org/all/20251114165255.101361-1-mehdi.benhadjkhelifa@gmail.com/
+
+Note:This patch might need some more testing as I only did run selftests 
+with no regression, check dmesg output for no regression, run reproducer 
+with no bug and test it with syzbot as well.
+
+ fs/hfs/super.c | 16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
+
+diff --git a/fs/hfs/super.c b/fs/hfs/super.c
+index 47f50fa555a4..06e1c25e47dc 100644
+--- a/fs/hfs/super.c
++++ b/fs/hfs/super.c
+@@ -49,8 +49,6 @@ static void hfs_put_super(struct super_block *sb)
+ {
+ 	cancel_delayed_work_sync(&HFS_SB(sb)->mdb_work);
+ 	hfs_mdb_close(sb);
+-	/* release the MDB's resources */
+-	hfs_mdb_put(sb);
+ }
+ 
+ static void flush_mdb(struct work_struct *work)
+@@ -383,7 +381,6 @@ static int hfs_fill_super(struct super_block *sb, struct fs_context *fc)
+ bail_no_root:
+ 	pr_err("get root inode failed\n");
+ bail:
+-	hfs_mdb_put(sb);
+ 	return res;
+ }
+ 
+@@ -431,10 +428,21 @@ static int hfs_init_fs_context(struct fs_context *fc)
+ 	return 0;
+ }
+ 
++static void hfs_kill_sb(struct super_block *sb)
++{
++	generic_shutdown_super(sb);
++	hfs_mdb_put(sb);
++	if (sb->s_bdev) {
++		sync_blockdev(sb->s_bdev);
++		bdev_fput(sb->s_bdev_file);
++	}
++
++}
++
+ static struct file_system_type hfs_fs_type = {
+ 	.owner		= THIS_MODULE,
+ 	.name		= "hfs",
+-	.kill_sb	= kill_block_super,
++	.kill_sb	= hfs_kill_sb,
+ 	.fs_flags	= FS_REQUIRES_DEV,
+ 	.init_fs_context = hfs_init_fs_context,
+ };
+-- 
+2.52.0
+
 
