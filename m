@@ -1,135 +1,358 @@
-Return-Path: <linux-fsdevel+bounces-69149-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69150-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED298C71311
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 22:51:34 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6645BC71341
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 22:57:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by tor.lore.kernel.org (Postfix) with ESMTPS id 06B842940E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 21:51:34 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTPS id 1E1F52BC37
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 21:57:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF5D73093CD;
-	Wed, 19 Nov 2025 21:51:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA5B330BBB6;
+	Wed, 19 Nov 2025 21:56:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="yLOQQZvu"
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="BKkJUaQ9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB3BC2D063E;
-	Wed, 19 Nov 2025 21:51:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54B9130ACED
+	for <linux-fsdevel@vger.kernel.org>; Wed, 19 Nov 2025 21:56:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763589076; cv=none; b=f1KdzgcmjlNd6CnAx5ahUOXxSYcCLSjsrVLcq9dnbneiHLa1ZJQJqS76tAuj1laB8Edn+0ZSD7R5H7h8523T6B4ROlz68WYeBuS9x7hbkYsJi3uPI76M4eA9XAfNN01lyHSpQcGQNvpGDiwWSZ4ysK0hFV/Ro0zUvp6vJenuedY=
+	t=1763589411; cv=none; b=sBKSOPCuIWuQBre52w0a6mX3anZSiGRaCtElXRwBrl3aHjwbtbczUrs4YiZdQAg43WEkT+L9APnWqPSHh1f94r/3tPPwFFr4ozp24KPKvXsIEy6TKup98JLO5ZuJ6F46eoWT8eoI4pUMpujYws1yIR/9Ck12Jra3dU+pRikqeQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763589076; c=relaxed/simple;
-	bh=rjO8/EIU0uGA9VyCRUHGKIFo2Cfr0MckSaPfGU8kzbA=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=WFCLIFObOH1+oc6KSgHJL1yq91ZOsj/Bow/kKIpxfVIMB38sv9QwcvsJtBhaLsghx4GTCsUylK51TIIhbXRFfndMpjBFmbOhFUzeZoWT8pVgj/jsUmeOfZi6NdP0bbT78Ycl2s7yYBLEsu/9FYidi9jEvoZZtIXikYE3LkZrMl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=yLOQQZvu; arc=none smtp.client-ip=115.124.30.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1763589069; h=Message-ID:Date:MIME-Version:Subject:From:To:Content-Type;
-	bh=a2ebXqu2wMZ+a9A6Ssx3+/b3Gpxusqda3SSXvC7SSQ8=;
-	b=yLOQQZvutSRbuB9Ucuc14XqT2mgHARH9ug/oJGPBc3n8xJVFZdd+Xis/eA/4gIitrYtanHgyVngLIGQ0yFZW3XJxlZAwgmTNn3grOWTitv2hQzHI9W7DKbVC9w8/K2/Jd+ZnQVMS17YjU427Xqru4ziFqiLC5WbhJTT7l9yYJLg=
-Received: from 30.170.82.147(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WsqMdLV_1763589067 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 20 Nov 2025 05:51:08 +0800
-Message-ID: <1be4cb25-50e2-46fa-ba86-d6342e997e63@linux.alibaba.com>
-Date: Thu, 20 Nov 2025 05:51:07 +0800
+	s=arc-20240116; t=1763589411; c=relaxed/simple;
+	bh=i0u8LZ3aaYfvsLZbvUV+TzVs9K3+rQ8JzEPutleCOFo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZP5ufTW0XgBQEdM8tUemKZQFn1nOoWrRk4Q7P/449zZfBZcIHXglvqvF0HKXUrSFy5ws3UygRcp+zDQwU4d1BJWpFv1apINKRSHtD866B4H6WdDUJhYyfG7wg2t0xfmjS1Um9lNvW3cEsDuV7wYQdLwgLI3ROm+X03pXLgbaiJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=BKkJUaQ9; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-640860f97b5so258809a12.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Nov 2025 13:56:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen.com; s=google; t=1763589408; x=1764194208; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GNCgiEwH4yoLxLSeabt8BIXDk+2v90qbq38QcBVyYpw=;
+        b=BKkJUaQ9aOKG62XBaw9bwJZL2qD4ZfgVW/VtrgSokPGG42Bv0szJGCMUMc2Xk/2VGw
+         u3/kIo9ZoUwTtAenHUCHWX9q72Y+I2ItqJXP773Las8YZGSmnSyyqG5FLTNHxeY9TvwH
+         YdFLtbbODZMr8If0U7MPfz1wpn4Ft2li81G08K8IDKY0UqhNpXiyXBygReUEtJdmyBqG
+         taVTGzcPi0ZMMB0gSi/SRgXxkKtkNOcVk6ztrdn7HWig973bIPQ+NraSVtehsZFj0JJS
+         u9Qz+OGPt92EbY6sibQebv/ODCNgjYZTfnl+oRFaKNbybV4v3h+QM9hZ1hoW84h/AlxE
+         qCfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763589408; x=1764194208;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=GNCgiEwH4yoLxLSeabt8BIXDk+2v90qbq38QcBVyYpw=;
+        b=GAfMYtatQQEBuPOv+aBLkHnpYdsVgz+DbcpyRTWTU/RVqjDIycHxZelnN85RC8ZX+O
+         qI15eOlqu2ChJlOWk8eK2/O28R+rmziRiCCs0ey+sfT+oTJnB1MpMHsRL3aWqbP4uNe4
+         HQa5B2vdQpH8RlmRNYoeUUBWSWBv33d3MHHT8sqEcDP4yFrpBMhbODcn8yuTRvptO7UH
+         GKauor6Z9+2o8hLciJPzzE2qqKbe/jfV9lnzpUrLz7Xs7aZf0j+1QoINKe+QzEbVMv5q
+         YmuCDHrhiLG/EYOjOBJO9k0xE/4OJ47uKikShhfv9G7m3sMNt0wvBhopPl5OWZ3/sU+k
+         1ojA==
+X-Forwarded-Encrypted: i=1; AJvYcCVp5ZHxp4TzU6oWYqjLQERnTpna0cnBwjvMcMdiYmt5j015DdxE6AX7mNV64IcStd0ZyonLJcrtqgUdTkjR@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJDZ5ktUAPuuaS3DwPU3ZPnLS7dsj+zBwuNafUl+mqxBTAty7I
+	8I3na3dmNUOO6CbBgiAUVos2TU/ENO/w1slXIHKvx3fp/fWEcEGsf1LliMM2NVd3DeFIWS/bkX4
+	Dtv0p+OLDSuOq4jiQDuSHExRSThCe0QsptZ8OYaL1ZA==
+X-Gm-Gg: ASbGncuG5C4vmt8w2uDRyqR1N0RhqrNpSXJMwAxEIRlk9kzApRTyU3dWek+kawq79Z8
+	2s7C837K9r3+vxUkKrIiFuop9PGXz9+1/OxYEhsrWKEyYtk2IPjsYGpISGMFYm11g8hzTGVNld9
+	nSqSSVF70GyujQ3sih089QN4qni98ZUnLj6pbXobWTc80CTQHTdVPtJqTmLgZvcEAQIy6lFcpEj
+	V/OyRc4UkM0tYxM6MsT48U/0aAtm5/R1HO9bJY3Qv3frIRxmwmP+u/nGlKVCrbFJrAdnVsTSrOx
+	rBY=
+X-Google-Smtp-Source: AGHT+IFLyS+wG0rWTlTQxvo48mFxi5vli+cxPH15GpPZdhy+X8F56gfcnoxRYXFwUVFltbkM5G+J1V5jBE1mGtvRoNo=
+X-Received: by 2002:a05:6402:27cc:b0:643:8301:d107 with SMTP id
+ 4fb4d7f45d1cf-645364828ddmr742149a12.30.1763589407434; Wed, 19 Nov 2025
+ 13:56:47 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHSET v6 4/8] fuse: allow servers to use iomap for better
- file IO performance
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-To: "Darrick J. Wong" <djwong@kernel.org>,
- Demi Marie Obenour <demiobenour@gmail.com>
-Cc: bernd@bsbernd.com, joannelkoong@gmail.com, linux-ext4@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, miklos@szeredi.hu, neal@gompa.dev,
- linux-bcachefs@vger.kernel.org, linux-btrfs@vger.kernel.org,
- zfs-devel@list.zfsonlinux.org
-References: <176169810144.1424854.11439355400009006946.stgit@frogsfrogsfrogs>
- <d0a122b8-3b25-44e6-8c60-538c81b35228@gmail.com>
- <20251119180449.GS196358@frogsfrogsfrogs>
- <af9a8030-cd19-457c-8c15-cb63e8140dfc@linux.alibaba.com>
-In-Reply-To: <af9a8030-cd19-457c-8c15-cb63e8140dfc@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20251115233409.768044-1-pasha.tatashin@soleen.com>
+ <20251115233409.768044-16-pasha.tatashin@soleen.com> <aRsBHy5aQ_Ypyy9r@kernel.org>
+In-Reply-To: <aRsBHy5aQ_Ypyy9r@kernel.org>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Wed, 19 Nov 2025 16:56:10 -0500
+X-Gm-Features: AWmQ_bkST9g5qeVKeHrDii74Rowe2_O-kbr5Wx0FA7LJaDDxeXF38UaoBxVWMYo
+Message-ID: <CA+CK2bADcVsRnovkwWftPCbubXoaFrPzSavMU+G9f3XAz3YMLQ@mail.gmail.com>
+Subject: Re: [PATCH v6 15/20] mm: memfd_luo: allow preserving memfd
+To: Mike Rapoport <rppt@kernel.org>
+Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com, 
+	dmatlack@google.com, rientjes@google.com, corbet@lwn.net, 
+	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, 
+	ojeda@kernel.org, aliceryhl@google.com, masahiroy@kernel.org, 
+	akpm@linux-foundation.org, tj@kernel.org, yoann.congal@smile.fr, 
+	mmaurer@google.com, roman.gushchin@linux.dev, chenridong@huawei.com, 
+	axboe@kernel.dk, mark.rutland@arm.com, jannh@google.com, 
+	vincent.guittot@linaro.org, hannes@cmpxchg.org, dan.j.williams@intel.com, 
+	david@redhat.com, joel.granados@kernel.org, rostedt@goodmis.org, 
+	anna.schumaker@oracle.com, song@kernel.org, linux@weissschuh.net, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
+	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com, 
+	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
+	rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org, 
+	cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com, 
+	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com, 
+	aleksander.lobakin@intel.com, ira.weiny@intel.com, 
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
+	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net, 
+	brauner@kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	saeedm@nvidia.com, ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com, 
+	leonro@nvidia.com, witu@nvidia.com, hughd@google.com, skhawaja@google.com, 
+	chrisl@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Nov 17, 2025 at 6:04=E2=80=AFAM Mike Rapoport <rppt@kernel.org> wro=
+te:
+>
+> On Sat, Nov 15, 2025 at 06:34:01PM -0500, Pasha Tatashin wrote:
+> > From: Pratyush Yadav <ptyadav@amazon.de>
+> >
+> > The ability to preserve a memfd allows userspace to use KHO and LUO to
+> > transfer its memory contents to the next kernel. This is useful in many
+> > ways. For one, it can be used with IOMMUFD as the backing store for
+> > IOMMU page tables. Preserving IOMMUFD is essential for performing a
+> > hypervisor live update with passthrough devices. memfd support provides
+> > the first building block for making that possible.
+> >
+> > For another, applications with a large amount of memory that takes time
+> > to reconstruct, reboots to consume kernel upgrades can be very
+> > expensive. memfd with LUO gives those applications reboot-persistent
+> > memory that they can use to quickly save and reconstruct that state.
+> >
+> > While memfd is backed by either hugetlbfs or shmem, currently only
+> > support on shmem is added. To be more precise, support for anonymous
+> > shmem files is added.
+> >
+> > The handover to the next kernel is not transparent. All the properties
+> > of the file are not preserved; only its memory contents, position, and
+> > size. The recreated file gets the UID and GID of the task doing the
+> > restore, and the task's cgroup gets charged with the memory.
+> >
+> > Once preserved, the file cannot grow or shrink, and all its pages are
+> > pinned to avoid migrations and swapping. The file can still be read fro=
+m
+> > or written to.
+> >
+> > Use vmalloc to get the buffer to hold the folios, and preserve
+> > it using kho_preserve_vmalloc(). This doesn't have the size limit.
+> >
+> > Co-developed-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+> > Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+> > Signed-off-by: Pratyush Yadav <ptyadav@amazon.de>
+>
+> The order of signed-offs seems wrong, Pasha's should be the last one.
+
+Updated.
 
 
+> > + * This interface is a contract. Any modification to the FDT structure=
+,
+> > + * node properties, compatible string, or the layout of the serializat=
+ion
+> > + * structures defined here constitutes a breaking change. Such changes=
+ require
+> > + * incrementing the version number in the MEMFD_LUO_FH_COMPATIBLE stri=
+ng.
+>
+> The same comment about contract as for the generic LUO documentation
+> applies here (https://lore.kernel.org/all/aRnG8wDSSAtkEI_z@kernel.org/)
 
-On 2025/11/20 05:00, Gao Xiang wrote:
-> 
-> 
-> On 2025/11/20 02:04, Darrick J. Wong wrote:
->> On Wed, Nov 19, 2025 at 04:19:36AM -0500, Demi Marie Obenour wrote:
->>>> By keeping the I/O path mostly within the kernel, we can dramatically
->>>> increase the speed of disk-based filesystems.
->>>
->>> ZFS, BTRFS, and bcachefs all support compression, checksumming,
->>> and RAID.  ZFS and bcachefs also support encryption, and f2fs and
->>> ext4 support fscrypt.
->>>
->>> Will this patchset be able to improve FUSE implementations of these
->>> filesystems?  I'd rather not be in the situation where one can have
->>> a FUSE filesystem that is fast, but only if it doesn't support modern
->>> data integrity or security features.
->>
->> Not on its own, no.
->>
->>> I'm not a filesystem developer, but here are some ideas (that you
->>> can take or leave):
->>>
->>> 1. Keep the compression, checksumming, and/or encryption in-kernel,
->>>     and have userspace tell the kernel what algorithm and/or encryption
->>>     key to use.  These algorithms are generally well-known and secure
->>>     against malicious input.  It might be necessary to make an extra
->>>     data copy, but ideally that copy could just stay within the
->>>     CPU caches.
->>
->> I think this is easily doable for fscrypt and compression since (IIRC)
->> the kernel filesystems already know how to transform data for I/O, and
->> nowadays iomap allows hooking of bios before submission and/or after
->> endio.  Obviously you'd have to store encryption keys in the kernel
->> somewhere.
-> 
-> I think it depends, since (this way) it tries to reuse some of the
-> existing kernel filesystem implementations (and assuming the code is
-> safe), so at least it still needs to load a dedicated kernel module
-> for such usage at least.
-> 
-> I think it's not an issue for userspace ext4 of course (because ext4
-> and fscrypt is almost builtin for all kernels), but for out-of-tree
-> fses even pure userspace fses, I'm not sure it's doable to load the
-> module in a container context.
+Added.
 
-Two examples for reference:
+>
+> > + *
+> > + * FDT Structure Overview:
+> > + *   The memfd state is contained within a single FDT with the followi=
+ng layout:
+>
+> ...
+>
+> > +static struct memfd_luo_folio_ser *memfd_luo_preserve_folios(struct fi=
+le *file, void *fdt,
+> > +                                                          u64 *nr_foli=
+osp)
+> > +{
+>
+> If we are already returning nr_folios by reference, we might do it for
+> memfd_luo_folio_ser as well and make the function return int.
 
-  - For compression, in-tree f2fs already has a compression header
-    in data of each compressed extent:
-    https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs/f2fs/f2fs.h?h=v6.17#n1497
+Done
 
-    while other fs may store additional metadata in extent metadata
-    or other place.
+>
+> > +     struct inode *inode =3D file_inode(file);
+> > +     struct memfd_luo_folio_ser *pfolios;
+> > +     struct kho_vmalloc *kho_vmalloc;
+> > +     unsigned int max_folios;
+> > +     long i, size, nr_pinned;
+> > +     struct folio **folios;
+>
+> pfolios and folios read like the former is a pointer to latter.
+> I'd s/pfolios/folios_ser/
 
-  - gocryptfs (a pure userspace FUSE fs) uses a different format
-    from fscrypt (encrypted data seems even unaligned on disk):
-    https://github.com/rfjakob/gocryptfs/blob/master/Documentation/file-format.md
+Done
 
-> 
-> Maybe eBPF is useful for this area, but it's still not quite
-> flexible compared to native kernel filesystems.
-> 
-> Thanks,
-> Gao Xiang
+> > +     int err =3D -EINVAL;
+> > +     pgoff_t offset;
+> > +     u64 nr_folios;
+>
+> ...
+>
+> > +     kvfree(folios);
+> > +     *nr_foliosp =3D nr_folios;
+> > +     return pfolios;
+> > +
+> > +err_unpreserve:
+> > +     i--;
+> > +     for (; i >=3D 0; i--)
+>
+> Maybe a single line
+>
+>         for (--i; i >=3D 0; --i)
 
+Done, but wrote it as:
+for (i =3D i - 1; i >=3D 0; i--)
+Which looks a little cleaner to me.
+
+>
+> > +             kho_unpreserve_folio(folios[i]);
+> > +     vfree(pfolios);
+> > +err_unpin:
+> > +     unpin_folios(folios, nr_folios);
+> > +err_free_folios:
+> > +     kvfree(folios);
+> > +     return ERR_PTR(err);
+> > +}
+> > +
+> > +static void memfd_luo_unpreserve_folios(void *fdt, struct memfd_luo_fo=
+lio_ser *pfolios,
+> > +                                     u64 nr_folios)
+> > +{
+> > +     struct kho_vmalloc *kho_vmalloc;
+> > +     long i;
+> > +
+> > +     if (!nr_folios)
+> > +             return;
+> > +
+> > +     kho_vmalloc =3D (struct kho_vmalloc *)fdt_getprop(fdt, 0, MEMFD_F=
+DT_FOLIOS, NULL);
+> > +     /* The FDT was created by this kernel so expect it to be sane. */
+> > +     WARN_ON_ONCE(!kho_vmalloc);
+>
+> The FDT won't have FOLIOS property if size was zero, will it?
+> I think that if we add kho_vmalloc handle to struct memfd_luo_private and
+> pass that around it will make things easier and simpler.
+
+I am actually thinking of removing FDTs and using versioned struct directly=
+.
+
+>
+> > +     kho_unpreserve_vmalloc(kho_vmalloc);
+> > +
+> > +     for (i =3D 0; i < nr_folios; i++) {
+> > +             const struct memfd_luo_folio_ser *pfolio =3D &pfolios[i];
+> > +             struct folio *folio;
+> > +
+> > +             if (!pfolio->foliodesc)
+> > +                     continue;
+>
+> How can this happen? Can pfolios be a sparse array?
+
+With the current implementation of memfd_pin_folios, which populates
+holes, this array will be dense. This check is defensive coding in
+case we switch to a sparse preservation mechanism in the future. I
+will add a comment, and add a warn_on_once.
+
+>
+> > +             folio =3D pfn_folio(PRESERVED_FOLIO_PFN(pfolio->foliodesc=
+));
+> > +
+> > +             kho_unpreserve_folio(folio);
+> > +             unpin_folio(folio);
+> > +     }
+> > +
+> > +     vfree(pfolios);
+> > +}
+>
+> ...
+>
+> > +static void memfd_luo_finish(struct liveupdate_file_op_args *args)
+> > +{
+> > +     const struct memfd_luo_folio_ser *pfolios;
+> > +     struct folio *fdt_folio;
+> > +     const void *fdt;
+> > +     u64 nr_folios;
+> > +
+> > +     if (args->retrieved)
+> > +             return;
+> > +
+> > +     fdt_folio =3D memfd_luo_get_fdt(args->serialized_data);
+> > +     if (!fdt_folio) {
+> > +             pr_err("failed to restore memfd FDT\n");
+> > +             return;
+> > +     }
+> > +
+> > +     fdt =3D folio_address(fdt_folio);
+> > +
+> > +     pfolios =3D memfd_luo_fdt_folios(fdt, &nr_folios);
+> > +     if (!pfolios)
+> > +             goto out;
+> > +
+> > +     memfd_luo_discard_folios(pfolios, nr_folios);
+>
+> Does not this free the actual folios that were supposed to be preserved?
+
+It does, when memfd was not reclaimed.
+
+>
+> > +     vfree(pfolios);
+> > +
+> > +out:
+> > +     folio_put(fdt_folio);
+> > +}
+>
+> ...
+>
+> > +static int memfd_luo_retrieve(struct liveupdate_file_op_args *args)
+> > +{
+> > +     struct folio *fdt_folio;
+> > +     const u64 *pos, *size;
+> > +     struct file *file;
+> > +     int len, ret =3D 0;
+> > +     const void *fdt;
+> > +
+> > +     fdt_folio =3D memfd_luo_get_fdt(args->serialized_data);
+>
+> Why do we need to kho_restore_folio() twice? Here and in
+> memfd_luo_finish()?
+
+Here we retrieve memfd and give it to userspace. In finish, discard
+whatever was not reclaimed.
+
+>
+> > +     if (!fdt_folio)
+> > +             return -ENOENT;
+> > +
+> > +     fdt =3D page_to_virt(folio_page(fdt_folio, 0));
+>
+> folio_address()
+
+Done
+
+>
+
+>
+> --
+> Sincerely yours,
+> Mike.
 
