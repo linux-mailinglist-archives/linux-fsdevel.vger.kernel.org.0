@@ -1,158 +1,76 @@
-Return-Path: <linux-fsdevel+bounces-69162-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69160-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19709C715D6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 23:51:42 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCE62C71543
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 23:45:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sto.lore.kernel.org (Postfix) with ESMTPS id 87B212B180
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 22:51:41 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTPS id B61B12F8CA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 22:45:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27100357A5A;
-	Wed, 19 Nov 2025 22:43:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EAD8332EA1;
+	Wed, 19 Nov 2025 22:42:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=runbox.com header.i=@runbox.com header.b="PsN5RGYw"
+	dkim=pass (2048-bit key) header.d=runbox.com header.i=@runbox.com header.b="zAjm3AIV"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mailtransmit04.runbox.com (mailtransmit04.runbox.com [185.226.149.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D915BE5E;
-	Wed, 19 Nov 2025 22:43:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51ABF31CA4E;
+	Wed, 19 Nov 2025 22:42:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.226.149.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763592194; cv=none; b=MOl6pN743l6jfbyMkZ0izdN9yLYrMIib2bdv63e1sLauv3UHeJc3sO0BT7v9MSVo6nvGvdyyeFMyqPq7lesZ1DqKM++KBQ3YACnK3317bdu1adrkFwFr3SptOh6FY0DzOXJgKsbKaO4xeGAEwyo8S3az3DVd3Pz1F+Tu1ENTz6o=
+	t=1763592170; cv=none; b=p2pG0Z8PvnMUBQcMF/Uj8CNf0zgtpoN4FWwaAAl1UD3U9VE/o+yhbviyCH39xxCplQFrhu6Hx2A8s2oVecFdWCp0UFAoCzF7uGHg6S07aNHUumBArwH34NMBBYXilLHKCeryZBisYrdgtjAvlBEUaBanGQdQlWd7vP8frhfy5As=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763592194; c=relaxed/simple;
-	bh=SB6KrqYz2LaY0bnmGLgzebEVm2460Yuuig9I59sAzLQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qmfU/YO31BpDk0UvupRPFKIkbMyB9lEnUNM6GKukcLrSPVcU+bGr5UCSKMQlz/ZpehbqYEeyHCXfWzp7RaGvrIk74Hrb+GvFL6S+DZbGe5BQ8WyfyXrqtYEXPfrIk9eTNG2M9HiTBzxnDbVt+afOLcqysZzQ1lsHUfLCg4gX4SA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=runbox.com; dkim=pass (2048-bit key) header.d=runbox.com header.i=@runbox.com header.b=PsN5RGYw; arc=none smtp.client-ip=185.226.149.37
+	s=arc-20240116; t=1763592170; c=relaxed/simple;
+	bh=UsSoZiy+1nMHZ0p5txeT4iFPKqhi6guap0+rcMJ/Rb4=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=En7CrFv5DeAMX3sUEoUuieqspfN+g5vrSA9e4jLFa48KkPu61OtPYV/Sny1H9Vn7xCFSiVij45qSQPY45CK650WRpjFGZ7DfA9smyshD7uy0j6GfvwBEWtuJbf2/tQ2hgLG0b/zxI/1swsYyo9r6tebBRGDpxJs1bVgBedZnr3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=runbox.com; dkim=pass (2048-bit key) header.d=runbox.com header.i=@runbox.com header.b=zAjm3AIV; arc=none smtp.client-ip=185.226.149.37
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=runbox.com
-Received: from mailtransmit02.runbox ([10.9.9.162] helo=aibo.runbox.com)
+Received: from mailtransmit03.runbox ([10.9.9.163] helo=aibo.runbox.com)
 	by mailtransmit04.runbox.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
 	(Exim 4.93)
 	(envelope-from <david.laight.linux_spam@runbox.com>)
-	id 1vLqsC-006yiG-CY; Wed, 19 Nov 2025 23:42:00 +0100
+	id 1vLqst-006yqT-V1; Wed, 19 Nov 2025 23:42:43 +0100
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=runbox.com;
-	 s=selector1; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:
-	Subject:Cc:To:From; bh=vH8FIvcSxGANwVWko1oGmXX5GS5gNWUC/JCXBzpAFv8=; b=PsN5RG
-	Yw4adVp36kJvtQBzaOeT30b6SW8wtA5jYGrJdbMMMsYsvDj4CzgnWokM1Sou28r+uOGKmcLsCEfjF
-	x7vRqk4x0ZUk5Q3m4pLyHeUUi+2iNW4NTnKESfxwnZdG/Am3FVwILrLSmsIUe5z7hIsRaqS00FKIb
-	wpBgN3ajl01apzJtdlTrMHmSUaRE77jg78EefkqX+M/OVhBFzrdgCcdKMETn1d8vUsGL8F9h+RdA+
-	wbd/Fhu7XqijCSkRTMRCMNALzN5ANR/Nkxu1LF1FZnjDAvEZUMlegQ7pY4fPBR4It4haMp7qd5v5s
-	K6zPsakFUTM6CKZVixkuDzeoxeCg==;
+	 s=selector1; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To
+	:Message-Id:Date:Subject:Cc:To:From;
+	bh=vO7m5qP2A9vVNTA8gRtFqJvwI1Y/pavLSEelmj0I3GM=; b=zAjm3AIVhb5JXtwqa2DXJ3XcjP
+	NRHRr2fM2TOD1SDfChTuYTNW6Xw2SqIbJFjG/OWGO8y4iW7cKtluhdsFRF0JLpm9xJpD1t05rLP16
+	dYHKZ9/5NlKar3NX7NN3Aw/Xh902jfi6XdGEWcb+4BSjxJsOGIijJNy/xSHfTuqKkjY4NXgQjW1Mn
+	V8wzx3P8ulJpjvIyvLv1Stl/Lxb0T3Kf+FlOCeMbGvAUwZzaaXwkDel56c/Wl4Ggs1qtmHedINWr8
+	iXQVLFtPr6RKgEr19snAdxhuDWgV1SFWopndEL7GjrTCQQnEh5nzTPrSU5sxT4Xl4TxR/FE9bIVT1
+	r49qx26g==;
 Received: from [10.9.9.74] (helo=submission03.runbox)
-	by mailtransmit02.runbox with esmtp (Exim 4.86_2)
+	by mailtransmit03.runbox with esmtp (Exim 4.86_2)
 	(envelope-from <david.laight.linux_spam@runbox.com>)
-	id 1vLqs5-0007yi-PP; Wed, 19 Nov 2025 23:41:53 +0100
+	id 1vLqst-0000Ch-EE; Wed, 19 Nov 2025 23:42:43 +0100
 Received: by submission03.runbox with esmtpsa  [Authenticated ID (1493616)]  (TLS1.2:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
 	(Exim 4.93)
-	id 1vLqs1-00Fos6-6h; Wed, 19 Nov 2025 23:41:49 +0100
+	id 1vLqsj-00Fos6-5A; Wed, 19 Nov 2025 23:42:33 +0100
 From: david.laight.linux@gmail.com
-To: linux-kernel@vger.kernel.org
-Cc: Alan Stern <stern@rowland.harvard.edu>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Andreas Dilger <adilger.kernel@dilger.ca>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Christian Brauner <brauner@kernel.org>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	Christoph Hellwig <hch@lst.de>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	David Ahern <dsahern@kernel.org>,
-	David Hildenbrand <david@redhat.com>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	"David S. Miller" <davem@davemloft.net>,
-	Dennis Zhou <dennis@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Ingo Molnar <mingo@redhat.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Jakub Sitnicki <jakub@cloudflare.com>,
-	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	"Jason A. Donenfeld" <Jason@zx2c4.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	John Allen <john.allen@amd.com>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Juergen Gross <jgross@suse.com>,
-	Kees Cook <kees@kernel.org>,
-	KP Singh <kpsingh@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Mika Westerberg <westeri@kernel.org>,
-	Mike Rapoport <rppt@kernel.org>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Neal Cardwell <ncardwell@google.com>,
-	nic_swsd@realtek.com,
-	OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-	Olivia Mackall <olivia@selenic.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Peter Huewe <peterhuewe@gmx.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Sean Christopherson <seanjc@google.com>,
-	Srinivas Kandagatla <srini@kernel.org>,
-	Stefano Stabellini <sstabellini@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Tejun Heo <tj@kernel.org>,
-	"Theodore Ts'o" <tytso@mit.edu>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
-	x86@kernel.org,
-	Yury Norov <yury.norov@gmail.com>,
-	amd-gfx@lists.freedesktop.org,
-	bpf@vger.kernel.org,
-	cgroups@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	io-uring@vger.kernel.org,
-	kvm@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	linux-block@vger.kernel.org,
-	linux-crypto@vger.kernel.org,
-	linux-cxl@vger.kernel.org,
-	linux-efi@vger.kernel.org,
+To: linux-kernel@vger.kernel.org,
 	linux-ext4@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-i2c@vger.kernel.org,
-	linux-integrity@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-nvme@lists.infradead.org,
-	linux-pci@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	linux-scsi@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	mptcp@lists.linux.dev,
-	netdev@vger.kernel.org,
-	usb-storage@lists.one-eyed-alien.net,
+	linux-mm@kvack.org
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Andreas Dilger <adilger.kernel@dilger.ca>,
+	Christian Brauner <brauner@kernel.org>,
+	Kees Cook <kees@kernel.org>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+	"Theodore Ts'o" <tytso@mit.edu>,
 	David Laight <david.laight.linux@gmail.com>
-Subject: [PATCH 00/44] Change a lot of min_t() that might mask high bits
-Date: Wed, 19 Nov 2025 22:40:56 +0000
-Message-Id: <20251119224140.8616-1-david.laight.linux@gmail.com>
+Subject: [PATCH 30/44] fs: use min() or umin() instead of min_t()
+Date: Wed, 19 Nov 2025 22:41:26 +0000
+Message-Id: <20251119224140.8616-31-david.laight.linux@gmail.com>
 X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20251119224140.8616-1-david.laight.linux@gmail.com>
+References: <20251119224140.8616-1-david.laight.linux@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -163,173 +81,207 @@ Content-Transfer-Encoding: 8bit
 
 From: David Laight <david.laight.linux@gmail.com>
 
-It in not uncommon for code to use min_t(uint, a, b) when one of a or b
-is 64bit and can have a value that is larger than 2^32;
-This is particularly prevelant with:
-	uint_var = min_t(uint, uint_var, uint64_expression);
+min_t(unsigned int, a, b) casts an 'unsigned long' to 'unsigned int'.
+Use min(a, b) instead as it promotes any 'unsigned int' to 'unsigned long'
+and so cannot discard significant bits.
 
-Casts to u8 and u16 are very likely to discard significant bits.
+A couple of places need umin() because of loops like:
+	nfolios = DIV_ROUND_UP(ret + start, PAGE_SIZE);
 
-These can be detected at compile time by changing min_t(), for example:
-#define CHECK_SIZE(fn, type, val) \
-	BUILD_BUG_ON_MSG(sizeof (val) > sizeof (type) && \
-		!statically_true(((val) >> 8 * (sizeof (type) - 1)) < 256), \
-		fn "() significant bits of '" #val "' may be discarded")
+	for (i = 0; i < nfolios; i++) {
+		struct folio *folio = page_folio(pages[i]);
+		...
+		unsigned int len = umin(ret, PAGE_SIZE - start);
+		...
+		ret -= len;
+		...
+	}
+where the compiler doesn't track things well enough to know that
+'ret' is never negative.
 
-#define min_t(type, x, y) ({ \
-	CHECK_SIZE("min_t", type, x); \
-	CHECK_SIZE("min_t", type, y); \
-	__cmp_once(min, type, x, y); })
+The alternate loop:
+        for (i = 0; ret > 0; i++) {
+                struct folio *folio = page_folio(pages[i]);
+                ...
+                unsigned int len = min(ret, PAGE_SIZE - start);
+                ...
+                ret -= len;
+                ...
+        }
+would be equivalent and doesn't need 'nfolios'.
 
-(and similar changes to max_t() and clamp_t().)
+Most of the 'unsigned long' actually come from PAGE_SIZE.
 
-This shows up some real bugs, some unlikely bugs and some false positives.
-In most cases both arguments are unsigned type (just different ones)
-and min_t() can just be replaced by min().
+Detected by an extra check added to min_t().
 
-The patches are all independant and are most of the ones needed to
-get the x86-64 kernel I build to compile.
-I've not tried building an allyesconfig or allmodconfig kernel.
-I've also not included the patch to minmax.h itself.
+Signed-off-by: David Laight <david.laight.linux@gmail.com>
+---
+ fs/buffer.c       | 2 +-
+ fs/exec.c         | 2 +-
+ fs/ext4/mballoc.c | 3 +--
+ fs/ext4/resize.c  | 2 +-
+ fs/ext4/super.c   | 2 +-
+ fs/fat/dir.c      | 4 ++--
+ fs/fat/file.c     | 3 +--
+ fs/fuse/dev.c     | 2 +-
+ fs/fuse/file.c    | 8 +++-----
+ fs/splice.c       | 2 +-
+ 10 files changed, 13 insertions(+), 17 deletions(-)
 
-I've tried to put the patches that actually fix things first.
-The last one is 0009.
-
-I gave up on fixing sched/fair.c - it is too broken for a single patch!
-The patch for net/ipv4/tcp.c is also absent because do_tcp_getsockopt()
-needs multiple/larger changes to make it 'sane'.
-
-I've had to trim the 124 maintainers/lists that get_maintainer.pl finds
-from 124 to under 100 to be able to send the cover letter.
-The individual patches only go to the addresses found for the associated files.
-That reduces the number of emails to a less unsane number.
-
-David Laight (44):
-  x86/asm/bitops: Change the return type of variable__ffs() to unsigned
-    int
-  ext4: Fix saturation of 64bit inode times for old filesystems
-  perf: Fix branch stack callchain limit
-  io_uring/net: Change some dubious min_t()
-  ipc/msg: Fix saturation of percpu counts in msgctl_info()
-  bpf: Verifier, remove some unusual uses of min_t() and max_t()
-  net/core/flow_dissector: Fix cap of __skb_flow_dissect() return value.
-  net: ethtool: Use min3() instead of nested min_t(u16,...)
-  ipv6: __ip6_append_data() don't abuse max_t() casts
-  x86/crypto: ctr_crypt() use min() instead of min_t()
-  arch/x96/kvm: use min() instead of min_t()
-  block: use min() instead of min_t()
-  drivers/acpi: use min() instead of min_t()
-  drivers/char/hw_random: use min3() instead of nested min_t()
-  drivers/char/tpm: use min() instead of min_t()
-  drivers/crypto/ccp: use min() instead of min_t()
-  drivers/cxl: use min() instead of min_t()
-  drivers/gpio: use min() instead of min_t()
-  drivers/gpu/drm/amd: use min() instead of min_t()
-  drivers/i2c/busses: use min() instead of min_t()
-  drivers/net/ethernet/realtek: use min() instead of min_t()
-  drivers/nvme: use min() instead of min_t()
-  arch/x86/mm: use min() instead of min_t()
-  drivers/nvmem: use min() instead of min_t()
-  drivers/pci: use min() instead of min_t()
-  drivers/scsi: use min() instead of min_t()
-  drivers/tty/vt: use umin() instead of min_t(u16, ...) for row/col
-    limits
-  drivers/usb/storage: use min() instead of min_t()
-  drivers/xen: use min() instead of min_t()
-  fs: use min() or umin() instead of min_t()
-  block: bvec.h: use min() instead of min_t()
-  nodemask: use min() instead of min_t()
-  ipc: use min() instead of min_t()
-  bpf: use min() instead of min_t()
-  bpf_trace: use min() instead of min_t()
-  lib/bucket_locks: use min() instead of min_t()
-  lib/crypto/mpi: use min() instead of min_t()
-  lib/dynamic_queue_limits: use max() instead of max_t()
-  mm: use min() instead of min_t()
-  net: Don't pass bitfields to max_t()
-  net/core: Change loop conditions so min() can be used
-  net: use min() instead of min_t()
-  net/netlink: Use umin() to avoid min_t(int, ...) discarding high bits
-  net/mptcp: Change some dubious min_t(int, ...) to min()
-
- arch/x86/crypto/aesni-intel_glue.c            |  3 +-
- arch/x86/include/asm/bitops.h                 | 18 +++++-------
- arch/x86/kvm/emulate.c                        |  3 +-
- arch/x86/kvm/lapic.c                          |  2 +-
- arch/x86/kvm/mmu/mmu.c                        |  2 +-
- arch/x86/mm/pat/set_memory.c                  | 12 ++++----
- block/blk-iocost.c                            |  6 ++--
- block/blk-settings.c                          |  2 +-
- block/partitions/efi.c                        |  3 +-
- drivers/acpi/property.c                       |  2 +-
- drivers/char/hw_random/core.c                 |  2 +-
- drivers/char/tpm/tpm1-cmd.c                   |  2 +-
- drivers/char/tpm/tpm_tis_core.c               |  4 +--
- drivers/crypto/ccp/ccp-dev.c                  |  2 +-
- drivers/cxl/core/mbox.c                       |  2 +-
- drivers/gpio/gpiolib-acpi-core.c              |  2 +-
- .../gpu/drm/amd/amdgpu/amdgpu_doorbell_mgr.c  |  4 +--
- drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c        |  2 +-
- .../gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c |  2 +-
- drivers/i2c/busses/i2c-designware-master.c    |  2 +-
- drivers/net/ethernet/realtek/r8169_main.c     |  3 +-
- drivers/nvme/host/pci.c                       |  3 +-
- drivers/nvme/host/zns.c                       |  3 +-
- drivers/nvmem/core.c                          |  2 +-
- drivers/pci/probe.c                           |  3 +-
- drivers/scsi/hosts.c                          |  2 +-
- drivers/tty/vt/selection.c                    |  9 +++---
- drivers/usb/storage/protocol.c                |  3 +-
- drivers/xen/grant-table.c                     |  2 +-
- fs/buffer.c                                   |  2 +-
- fs/exec.c                                     |  2 +-
- fs/ext4/ext4.h                                |  2 +-
- fs/ext4/mballoc.c                             |  3 +-
- fs/ext4/resize.c                              |  2 +-
- fs/ext4/super.c                               |  2 +-
- fs/fat/dir.c                                  |  4 +--
- fs/fat/file.c                                 |  3 +-
- fs/fuse/dev.c                                 |  2 +-
- fs/fuse/file.c                                |  8 ++---
- fs/splice.c                                   |  2 +-
- include/linux/bvec.h                          |  3 +-
- include/linux/nodemask.h                      |  9 +++---
- include/linux/perf_event.h                    |  2 +-
- include/net/tcp_ecn.h                         |  5 ++--
- io_uring/net.c                                |  6 ++--
- ipc/mqueue.c                                  |  4 +--
- ipc/msg.c                                     |  6 ++--
- kernel/bpf/core.c                             |  4 +--
- kernel/bpf/log.c                              |  2 +-
- kernel/bpf/verifier.c                         | 29 +++++++------------
- kernel/trace/bpf_trace.c                      |  2 +-
- lib/bucket_locks.c                            |  2 +-
- lib/crypto/mpi/mpicoder.c                     |  2 +-
- lib/dynamic_queue_limits.c                    |  2 +-
- mm/gup.c                                      |  4 +--
- mm/memblock.c                                 |  2 +-
- mm/memory.c                                   |  2 +-
- mm/percpu.c                                   |  2 +-
- mm/truncate.c                                 |  3 +-
- mm/vmscan.c                                   |  2 +-
- net/core/datagram.c                           |  6 ++--
- net/core/flow_dissector.c                     |  7 ++---
- net/core/net-sysfs.c                          |  3 +-
- net/core/skmsg.c                              |  4 +--
- net/ethtool/cmis_cdb.c                        |  7 ++---
- net/ipv4/fib_trie.c                           |  2 +-
- net/ipv4/tcp_input.c                          |  4 +--
- net/ipv4/tcp_output.c                         |  5 ++--
- net/ipv4/tcp_timer.c                          |  4 +--
- net/ipv6/addrconf.c                           |  8 ++---
- net/ipv6/ip6_output.c                         |  7 +++--
- net/ipv6/ndisc.c                              |  5 ++--
- net/mptcp/protocol.c                          |  8 ++---
- net/netlink/genetlink.c                       |  9 +++---
- net/packet/af_packet.c                        |  2 +-
- net/unix/af_unix.c                            |  4 +--
- 76 files changed, 141 insertions(+), 176 deletions(-)
-
+diff --git a/fs/buffer.c b/fs/buffer.c
+index 6a8752f7bbed..26c4c760b6c6 100644
+--- a/fs/buffer.c
++++ b/fs/buffer.c
+@@ -2354,7 +2354,7 @@ bool block_is_partially_uptodate(struct folio *folio, size_t from, size_t count)
+ 	if (!head)
+ 		return false;
+ 	blocksize = head->b_size;
+-	to = min_t(unsigned, folio_size(folio) - from, count);
++	to = min(folio_size(folio) - from, count);
+ 	to = from + to;
+ 	if (from < blocksize && to > folio_size(folio) - blocksize)
+ 		return false;
+diff --git a/fs/exec.c b/fs/exec.c
+index 4298e7e08d5d..6d699e48df82 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -555,7 +555,7 @@ int copy_string_kernel(const char *arg, struct linux_binprm *bprm)
+ 		return -E2BIG;
+ 
+ 	while (len > 0) {
+-		unsigned int bytes_to_copy = min_t(unsigned int, len,
++		unsigned int bytes_to_copy = min(len,
+ 				min_not_zero(offset_in_page(pos), PAGE_SIZE));
+ 		struct page *page;
+ 
+diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
+index 9087183602e4..cb68ea974de6 100644
+--- a/fs/ext4/mballoc.c
++++ b/fs/ext4/mballoc.c
+@@ -4254,8 +4254,7 @@ void ext4_mb_mark_bb(struct super_block *sb, ext4_fsblk_t block,
+ 		 * get the corresponding group metadata to work with.
+ 		 * For this we have goto again loop.
+ 		 */
+-		thisgrp_len = min_t(unsigned int, (unsigned int)len,
+-			EXT4_BLOCKS_PER_GROUP(sb) - EXT4_C2B(sbi, blkoff));
++		thisgrp_len = min(len, EXT4_BLOCKS_PER_GROUP(sb) - EXT4_C2B(sbi, blkoff));
+ 		clen = EXT4_NUM_B2C(sbi, thisgrp_len);
+ 
+ 		if (!ext4_sb_block_valid(sb, NULL, block, thisgrp_len)) {
+diff --git a/fs/ext4/resize.c b/fs/ext4/resize.c
+index 050f26168d97..76842f0957b5 100644
+--- a/fs/ext4/resize.c
++++ b/fs/ext4/resize.c
+@@ -1479,7 +1479,7 @@ static void ext4_update_super(struct super_block *sb,
+ 
+ 	/* Update the global fs size fields */
+ 	sbi->s_groups_count += flex_gd->count;
+-	sbi->s_blockfile_groups = min_t(ext4_group_t, sbi->s_groups_count,
++	sbi->s_blockfile_groups = min(sbi->s_groups_count,
+ 			(EXT4_MAX_BLOCK_FILE_PHYS / EXT4_BLOCKS_PER_GROUP(sb)));
+ 
+ 	/* Update the reserved block counts only once the new group is
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index 33e7c08c9529..e116fe48ff43 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -4830,7 +4830,7 @@ static int ext4_check_geometry(struct super_block *sb,
+ 		return -EINVAL;
+ 	}
+ 	sbi->s_groups_count = blocks_count;
+-	sbi->s_blockfile_groups = min_t(ext4_group_t, sbi->s_groups_count,
++	sbi->s_blockfile_groups = min(sbi->s_groups_count,
+ 			(EXT4_MAX_BLOCK_FILE_PHYS / EXT4_BLOCKS_PER_GROUP(sb)));
+ 	if (((u64)sbi->s_groups_count * sbi->s_inodes_per_group) !=
+ 	    le32_to_cpu(es->s_inodes_count)) {
+diff --git a/fs/fat/dir.c b/fs/fat/dir.c
+index 92b091783966..8375e7fbc1a5 100644
+--- a/fs/fat/dir.c
++++ b/fs/fat/dir.c
+@@ -1353,7 +1353,7 @@ int fat_add_entries(struct inode *dir, void *slots, int nr_slots,
+ 
+ 		/* Fill the long name slots. */
+ 		for (i = 0; i < long_bhs; i++) {
+-			int copy = min_t(int, sb->s_blocksize - offset, size);
++			int copy = umin(sb->s_blocksize - offset, size);
+ 			memcpy(bhs[i]->b_data + offset, slots, copy);
+ 			mark_buffer_dirty_inode(bhs[i], dir);
+ 			offset = 0;
+@@ -1364,7 +1364,7 @@ int fat_add_entries(struct inode *dir, void *slots, int nr_slots,
+ 			err = fat_sync_bhs(bhs, long_bhs);
+ 		if (!err && i < nr_bhs) {
+ 			/* Fill the short name slot. */
+-			int copy = min_t(int, sb->s_blocksize - offset, size);
++			int copy = umin(sb->s_blocksize - offset, size);
+ 			memcpy(bhs[i]->b_data + offset, slots, copy);
+ 			mark_buffer_dirty_inode(bhs[i], dir);
+ 			if (IS_DIRSYNC(dir))
+diff --git a/fs/fat/file.c b/fs/fat/file.c
+index 4fc49a614fb8..f48435e586c7 100644
+--- a/fs/fat/file.c
++++ b/fs/fat/file.c
+@@ -140,8 +140,7 @@ static int fat_ioctl_fitrim(struct inode *inode, unsigned long arg)
+ 	if (copy_from_user(&range, user_range, sizeof(range)))
+ 		return -EFAULT;
+ 
+-	range.minlen = max_t(unsigned int, range.minlen,
+-			     bdev_discard_granularity(sb->s_bdev));
++	range.minlen = max(range.minlen, bdev_discard_granularity(sb->s_bdev));
+ 
+ 	err = fat_trim_fs(inode, &range);
+ 	if (err < 0)
+diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+index 132f38619d70..0c9fb0db1de1 100644
+--- a/fs/fuse/dev.c
++++ b/fs/fuse/dev.c
+@@ -1813,7 +1813,7 @@ static int fuse_notify_store(struct fuse_conn *fc, unsigned int size,
+ 			goto out_iput;
+ 
+ 		folio_offset = ((index - folio->index) << PAGE_SHIFT) + offset;
+-		nr_bytes = min_t(unsigned, num, folio_size(folio) - folio_offset);
++		nr_bytes = min(num, folio_size(folio) - folio_offset);
+ 		nr_pages = (offset + nr_bytes + PAGE_SIZE - 1) >> PAGE_SHIFT;
+ 
+ 		err = fuse_copy_folio(cs, &folio, folio_offset, nr_bytes, 0);
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index f1ef77a0be05..f4ffa559ad26 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -1252,10 +1252,8 @@ static ssize_t fuse_fill_write_pages(struct fuse_io_args *ia,
+ static inline unsigned int fuse_wr_pages(loff_t pos, size_t len,
+ 				     unsigned int max_pages)
+ {
+-	return min_t(unsigned int,
+-		     ((pos + len - 1) >> PAGE_SHIFT) -
+-		     (pos >> PAGE_SHIFT) + 1,
+-		     max_pages);
++	return min(((pos + len - 1) >> PAGE_SHIFT) - (pos >> PAGE_SHIFT) + 1,
++		   max_pages);
+ }
+ 
+ static ssize_t fuse_perform_write(struct kiocb *iocb, struct iov_iter *ii)
+@@ -1550,7 +1548,7 @@ static int fuse_get_user_pages(struct fuse_args_pages *ap, struct iov_iter *ii,
+ 			struct folio *folio = page_folio(pages[i]);
+ 			unsigned int offset = start +
+ 				(folio_page_idx(folio, pages[i]) << PAGE_SHIFT);
+-			unsigned int len = min_t(unsigned int, ret, PAGE_SIZE - start);
++			unsigned int len = umin(ret, PAGE_SIZE - start);
+ 
+ 			ap->descs[ap->num_folios].offset = offset;
+ 			ap->descs[ap->num_folios].length = len;
+diff --git a/fs/splice.c b/fs/splice.c
+index f5094b6d00a0..41ce3a4ef74f 100644
+--- a/fs/splice.c
++++ b/fs/splice.c
+@@ -1467,7 +1467,7 @@ static ssize_t iter_to_pipe(struct iov_iter *from,
+ 
+ 		n = DIV_ROUND_UP(left + start, PAGE_SIZE);
+ 		for (i = 0; i < n; i++) {
+-			int size = min_t(int, left, PAGE_SIZE - start);
++			int size = umin(left, PAGE_SIZE - start);
+ 
+ 			buf.page = pages[i];
+ 			buf.offset = start;
 -- 
 2.39.5
 
