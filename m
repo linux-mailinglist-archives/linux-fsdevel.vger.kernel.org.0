@@ -1,71 +1,71 @@
-Return-Path: <linux-fsdevel+bounces-69036-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69037-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40863C6C40E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 02:32:48 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB7F5C6C47D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 02:42:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sea.lore.kernel.org (Postfix) with ESMTPS id EE88729936
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 01:32:46 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 269A535D440
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 01:42:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24D5A23EABA;
-	Wed, 19 Nov 2025 01:32:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA3732459DC;
+	Wed, 19 Nov 2025 01:42:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="KYNg/gMv";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="FpAtXxPI"
+	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="KufHchDi";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="oebLLX7K"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh-b8-smtp.messagingengine.com (fhigh-b8-smtp.messagingengine.com [202.12.124.159])
+Received: from fhigh-b1-smtp.messagingengine.com (fhigh-b1-smtp.messagingengine.com [202.12.124.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 427C81DFF0;
-	Wed, 19 Nov 2025 01:32:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3F714A07;
+	Wed, 19 Nov 2025 01:41:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763515951; cv=none; b=pis5b5nbZGIeBZOc5r4r4zB8eGk6ld8rAeN+uDQaFMWHSZxxxiGfGXNN1OtSHOEapFYvGBpuLjdIwmqT2+KZYqAQkaLSdgOCeA89F89T15cNpx30NjoTBmrSDR9CdzriHGdJY7iERX0GQwcFzQ39f1Q1vw28em6bg9FtR7vxJ7Y=
+	t=1763516520; cv=none; b=G2ri7yPY5etBN8ZpiE/ycftbcrRT3Pj3EQjTXV/s6Uy54phdC2uMU5mbsju1z3F/fX9GHCyP5RcCqPJtat3/ZrgG+c0OIcjQ6rIR5Uj3O1g8AhBxeKRFIBSuDAzsQx3tmHHBxol/nvMDNy7vM+hwu2ziTg6rUDDDST8WgrjkTno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763515951; c=relaxed/simple;
-	bh=ZMaEExuy0R7E3HiwV+cFQtBGnv3p6z3fGHZRS46B1Gs=;
+	s=arc-20240116; t=1763516520; c=relaxed/simple;
+	bh=9zx6PRWxiuorYGN9hUJfJjzYBWtLPrz42DSIdSv0NGI=;
 	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=S4AyTieW5Yo2z42EjwKn/LsH3Gyo8p72WoOjG6a0badCWlI6sQId3KHQitBPrpLX7wy+A391QALtb+EEdvJEdSu2RygsxuNBtMijOH3sHNklqgvY66GrjFo1VYGR/TiYyFdDz1oEbJMY4Aswh9nzWG8evz1RGcF3q5U3XUjJCAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=KYNg/gMv; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=FpAtXxPI; arc=none smtp.client-ip=202.12.124.159
+	 References:Date:Message-id; b=JcDYTgpfMMNONLui9EiMI77snwPNRw2oEm3K0qoKzXuh/d6i+Yt2bysRlL6i1EyVyiur6tmVvqSGJqdJRFcRdy5dSAwgwVDNiu6XvDT0d2TpoqFjCptUl4naZK+alpvQiBT4e+jC8K3IB5/eAtFJhpejRFH80loOGWdXHc6rMFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=KufHchDi; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=oebLLX7K; arc=none smtp.client-ip=202.12.124.152
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id E95E77A018D;
-	Tue, 18 Nov 2025 20:32:27 -0500 (EST)
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id E38A67A0158;
+	Tue, 18 Nov 2025 20:41:56 -0500 (EST)
 Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-03.internal (MEProxy); Tue, 18 Nov 2025 20:32:28 -0500
+  by phl-compute-05.internal (MEProxy); Tue, 18 Nov 2025 20:41:57 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
 	cc:cc:content-transfer-encoding:content-type:content-type:date
 	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
 	:references:reply-to:reply-to:subject:subject:to:to; s=fm3; t=
-	1763515947; x=1763602347; bh=uyvlm+7slp3Xhn6FwDY2xuuurVl4pI+qbti
-	kYgXbSzU=; b=KYNg/gMvOMYEccaXzH/hbbBXQVKiA86OW+mWuOHwK3KW3YL1ofo
-	eL3SURW7Q8exFHZ0T24qQ9p0blxSjyOwesIx6lepRAvG1RVYrP6pWSFV9nIdYPRB
-	xQTKDCexUrHv8DOTngFinB1vpBEe2XRWmfwS7r3DmadMlyZwM2m/HkiveDwKAHDH
-	vv8uT1I0oNjXtY0Ta4nObHw6IhFG+xhmRe8raRtLjJ9CNjQ0G6mbxNHYuHLEfM6n
-	vMkMoaVx6R/N26G8zGKV5Kv7TFqZcGEwqbStPt51akU1Dx/Gh8yNxreA9vvTdGZF
-	aBei67e1vFfbxx/tKlVs7fJqSX+8clUZlxg==
+	1763516516; x=1763602916; bh=ZpBsCDWU6THsmo9uFpTvF33wiOwigBPz6V+
+	GM1yD//E=; b=KufHchDiERV58Ou2bwjeJjt7swGhBwQ20BN4poEpP5LehIFWHdO
+	N091+Q2qkcmEsGZ2azhAly6dc8tU/GPZDpPB0jTjQkYq1wtqZNO5Idd+cA5KR6yP
+	v9SrrpFkvbmm8Tq+XDaVycN1uRiOTvz4MGHrZmbVotQMJ8tuIUoVu0YK+eBe0uiD
+	TPCScJNw73xws4qiOf7F5VViiWIhmfZQVjY6mEIUzxlD+gnlEI4BLN3HCjGzCMb7
+	WEYSH4mz5j8ZTTqKngVTK4e9Zkgxgp/dGmlDLFWR5vmlOMhahu87OZMGSujmmyla
+	whaRQFkFTqW8aIJj0S1+bJTkfTpYPN2/Yww==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:content-type:date:date:feedback-id:feedback-id
 	:from:from:in-reply-to:in-reply-to:message-id:mime-version
 	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1763515947; x=
-	1763602347; bh=uyvlm+7slp3Xhn6FwDY2xuuurVl4pI+qbtikYgXbSzU=; b=F
-	pAtXxPIvjwuyDJafId4n4Y4oThcnzgBOSWRR+nJP4vJw6CFkd0shvabTo5DvfEYu
-	+v5dq7h5c9SuPHe61cIaNo8i8reSX/2Zw4cnpSBci/F4kJvOWBo96pGEMMsJ2JS8
-	JkdpgNoTbC8yyej1X2e99rfH+EKZMSBD2toJdFma6XVqNZt+HshM/1QxyH2ug5Ii
-	24jrmy/Zhq8PWD8e6tpVF1X7Mb0xdsxxvTt3aJqPrC7ID92ujJ1lO+qtaKilvsSV
-	FBBTOVSBKBhpj6Z/FnrLaSudu5L8iept48wa+DrVsPgXUo0mIujwW2pqw2/rE2nC
-	WzujydwadH0mWoUL2yl0g==
-X-ME-Sender: <xms:Kx4daf7I3hxdyoiDyh81pVkpdhlzzlXaCFCUHOmspmW8PW44ZMigOw>
-    <xme:Kx4dafTczIg0o7iffC1YqC0r1t_KfpcTZCkr6DuvQxdY_54MzAaq2YMVOM8Ugll6v
-    xS93fqfq6Z7b9O1hp9npjsv5qduKbjOJbXzIEb3cFRFje89Nis>
-X-ME-Received: <xmr:Kx4dacnrc0O7JBN5DwxfrXOWBMyodj_45_Hgcz6ZOuoQDSGMi2EhZw54bWCkZHO01HEJC9Kfr25VfKhQWMheB2lJBESh8w5yy3XUexthzxDK>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvvddvkeelucetufdoteggodetrf
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1763516516; x=
+	1763602916; bh=ZpBsCDWU6THsmo9uFpTvF33wiOwigBPz6V+GM1yD//E=; b=o
+	ebLLX7KdlvwSh3M7JV7i3YGtQFN+8gKfaeX6UeNG3rznU0U3+h59gfyduZPExzRX
+	9YZ1KKAsGNuCcyKAxRWU0fRsJ/hTQXKLQvFIvQd6DHhoqL5yoSTJaPQfHWBRyp8o
+	MLEHUtz7VKV44V7y8AQw4XELhjgOPRLi/LLLD3niX5KvV1gyScU8VMBcwzKVW72K
+	CALiKi7jxd8rpU65P4uZNqZ4F0cbzL25dkl4/KnUIhG1ovO/IJ2tEzI8BBTmwRIC
+	OHj5H+QIwUC4eL/NKY6qm6K68fb9wsOIY5qF4tG4Eff0q/Dgmm87Fr3pq+YQuzsh
+	qotJs/gLv/bXPaQi/ox4w==
+X-ME-Sender: <xms:ZCAdaT311pSZgnFkaEpBXeQD6MjvWrrv3jyD2NVY2pqtWn7V-ev_lQ>
+    <xme:ZCAdacdNTAGE6z3T6E-n0EIv7vjAogVb-5wi8tkhrLX4w9nvboTmPTVIi5gUb0Hjq
+    3hHt6BYopRcPsnjv7s_Ii58xD2DTNKojkhxrWzBbyhl1476cQ>
+X-ME-Received: <xmr:ZCAdaaCHmA3SlRm7-l6uOefALoyk9VH30ZtdG1RkVgWqX3qE875K5ScRQ7UWW2tTITouf8bEMLkGAYzHcpbXUBT_VfOEGWasyU2aKTFhYEqi>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvvddvleduucetufdoteggodetrf
     dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
     rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
     gurheptgfgggfhvfevufgjfhffkfhrsehtqhertddttdejnecuhfhrohhmpefpvghilheu
@@ -81,14 +81,14 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvvddvkeelucetufdote
     hsuhhsvgdrtgiipdhrtghpthhtohepohhkohhrnhhivghvsehrvgguhhgrthdrtghomhdp
     rhgtphhtthhopegthhhutghkrdhlvghvvghrsehorhgrtghlvgdrtghomhdprhgtphhtth
     hopegurghirdhnghhosehorhgrtghlvgdrtghomh
-X-ME-Proxy: <xmx:Kx4dabQe5aQ44_mLzRrEeOCOUXwBZU9im07xwWzD_xRtZODLtDAenQ>
-    <xmx:Kx4dabvPPglEzDnRZJ6J88vcWFm8MMC-TAzInqZammEGWrfKObZmdA>
-    <xmx:Kx4dac7nbjycc_WWxdJDpPvsHfCVRFdowiUEH4zk5SlVpoU9I5znHA>
-    <xmx:Kx4daeg2RxYEW_R0iuN-Najmwp_eIpGrNOG_G7B9R5Qcvrw4UHW94w>
-    <xmx:Kx4daem0XdWhkpCYKA7g6MNs8TjTertgigpaPa-Jii_IdhVYTob-AjQ7>
+X-ME-Proxy: <xmx:ZCAdaT-jsrbF-qTC5b1MCNnNY2alLdmKIudULvyMeNPhyCoDuzr_7Q>
+    <xmx:ZCAdaeog-fzc-V5K8-FtXS3az7KvZFMGKCG1y9M7Zct4DDLJBOOfqA>
+    <xmx:ZCAdadGyBwHSGExcqG0OJ8vil02sBt3wSN-7rFy-wEdgQ-9A2XA95g>
+    <xmx:ZCAdaS9ZftLH0JuFB4lvZCo8mlOzzJptVgfjUXIvj2a3ax_JCR3FpQ>
+    <xmx:ZCAdaXDl9He-qGf93OfQsegDGcdAZqkyjJ6yQtxqfH0JrWuKjCyZpwUx>
 Feedback-ID: iab3e480c:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 18 Nov 2025 20:32:23 -0500 (EST)
+ 18 Nov 2025 20:41:52 -0500 (EST)
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
@@ -106,80 +106,169 @@ Cc: "Alexander Viro" <viro@zeniv.linux.org.uk>,
  "Tom Talpey" <tom@talpey.com>, linux-fsdevel@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
  "Trond Myklebust" <trondmy@kernel.org>, "Mike Snitzer" <snitzer@kernel.org>
-Subject: Re: [PATCH v1 2/3] VFS: Prepare atomic_open() for dentry_create()
-In-reply-to: =?utf-8?q?=3C333c7f8940bd9b14a2311d5e65b6c007e8079966=2E1763483?=
+Subject:
+ Re: [PATCH v1 3/3] VFS/knfsd: Teach dentry_create() to use atomic_open()
+In-reply-to: =?utf-8?q?=3C149570774f6cb48bf469514ca37cd636612f49b1=2E1763483?=
  =?utf-8?q?341=2Egit=2Ebcodding=40hammerspace=2Ecom=3E?=
-References: <cover.1763483341.git.bcodding@hammerspace.com>, =?utf-8?q?=3C33?=
- =?utf-8?q?3c7f8940bd9b14a2311d5e65b6c007e8079966=2E1763483341=2Egit=2Ebcodd?=
+References: <cover.1763483341.git.bcodding@hammerspace.com>, =?utf-8?q?=3C14?=
+ =?utf-8?q?9570774f6cb48bf469514ca37cd636612f49b1=2E1763483341=2Egit=2Ebcodd?=
  =?utf-8?q?ing=40hammerspace=2Ecom=3E?=
-Date: Wed, 19 Nov 2025 12:32:21 +1100
-Message-id: <176351594168.634289.2632498932696325048@noble.neil.brown.name>
+Date: Wed, 19 Nov 2025 12:41:46 +1100
+Message-id: <176351650615.634289.9329113019464329973@noble.neil.brown.name>
 Reply-To: NeilBrown <neil@brown.name>
 
 On Wed, 19 Nov 2025, Benjamin Coddington wrote:
-> The next patch allows dentry_create() to call atomic_open(), but it does
-> not have fabricated nameidata.  Let atomic_open() take a path instead.
-
-I think this commit message could usefully be longer and more details.
-
- atomic_open() currently takes a nameidata of which it only uses the
- path and the flags.  Flags are only used to update open_flags.  That
- update can happen before atomic_open() is called which would mean that
- only the path need be passed to atomic_open() rather than the whole
- nameidata.  This will make it easier for dentry_create() To call
- atomic_open().
-=09
-Thanks,
-NeilBrown
-
+> While knfsd offers combined exclusive create and open results to clients,
+> on some filesystems those results may not be atomic.  This behavior can be
+> observed.  For example, an open O_CREAT with mode 0 will succeed in creating
+> the file but unexpectedly return -EACCES from vfs_open().
+>=20
+> Additionally reducing the number of remote RPC calls required for O_CREAT
+> on network filesystem provides a performance benefit in the open path.
+>=20
+> Teach knfsd's helper create_dentry() to use atomic_open() for filesystems
+> that support it.
 >=20
 > Signed-off-by: Benjamin Coddington <bcodding@hammerspace.com>
 > ---
->  fs/namei.c | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
+>  fs/namei.c         | 43 ++++++++++++++++++++++++++++++++++++-------
+>  fs/nfsd/nfs4proc.c |  8 +++++---
+>  include/linux/fs.h |  2 +-
+>  3 files changed, 42 insertions(+), 11 deletions(-)
 >=20
 > diff --git a/fs/namei.c b/fs/namei.c
-> index e2bfd2a73cba..9c0aad5bbff7 100644
+> index 9c0aad5bbff7..70ab74fb5e95 100644
 > --- a/fs/namei.c
 > +++ b/fs/namei.c
-> @@ -3552,19 +3552,16 @@ static int may_o_create(struct mnt_idmap *idmap,
->   *
->   * Returns an error code otherwise.
+> @@ -4208,21 +4208,50 @@ EXPORT_SYMBOL(user_path_create);
+>   * On success, returns a "struct file *". Otherwise a ERR_PTR
+>   * is returned.
 >   */
-> -static struct dentry *atomic_open(struct nameidata *nd, struct dentry *den=
-try,
-> +static struct dentry *atomic_open(const struct path *path, struct dentry *=
-dentry,
->  				  struct file *file,
->  				  int open_flag, umode_t mode)
+> -struct file *dentry_create(const struct path *path, int flags, umode_t mod=
+e,
+> +struct file *dentry_create(struct path *path, int flags, umode_t mode,
+
+I don't like that you dropped "const" without telling us why.
+It is because we not assign to path->dentry, which is because
+atomic_open() returns a dentry....  which will only be different for
+directories (I think).
+
+But do we need to update path?  The returned file will point to the
+correct dentry - isn't that all that matters?
+
+I guess that I'd like an explanation for why the const is being dropped,
+and why 'path' is being changed.
+
+Thanks,
+NeilBrown
+
+
+
+>  			   const struct cred *cred)
 >  {
->  	struct dentry *const DENTRY_NOT_SET =3D (void *) -1UL;
-> -	struct inode *dir =3D  nd->path.dentry->d_inode;
-> +	struct inode *dir =3D  path->dentry->d_inode;
->  	int error;
+> +	struct dentry *dentry =3D path->dentry;
+> +	struct dentry *dir =3D dentry->d_parent;
+> +	struct inode *dir_inode =3D d_inode(dir);
+> +	struct mnt_idmap *idmap;
+>  	struct file *file;
+> -	int error;
+> +	int error, create_error;
 > =20
-> -	if (nd->flags & LOOKUP_DIRECTORY)
-> -		open_flag |=3D O_DIRECTORY;
-> -
->  	file->f_path.dentry =3D DENTRY_NOT_SET;
-> -	file->f_path.mnt =3D nd->path.mnt;
-> +	file->f_path.mnt =3D path->mnt;
->  	error =3D dir->i_op->atomic_open(dir, dentry, file,
->  				       open_to_namei_flags(open_flag), mode);
->  	d_lookup_done(dentry);
-> @@ -3676,7 +3673,10 @@ static struct dentry *lookup_open(struct nameidata *=
-nd, struct file *file,
->  	if (create_error)
->  		open_flag &=3D ~O_CREAT;
->  	if (dir_inode->i_op->atomic_open) {
-> -		dentry =3D atomic_open(nd, dentry, file, open_flag, mode);
-> +		if (nd->flags & LOOKUP_DIRECTORY)
-> +			open_flag |=3D O_DIRECTORY;
+>  	file =3D alloc_empty_file(flags, cred);
+>  	if (IS_ERR(file))
+>  		return file;
+> =20
+> -	error =3D vfs_create(mnt_idmap(path->mnt),
+> -			   d_inode(path->dentry->d_parent),
+> -			   path->dentry, mode, true);
+> -	if (!error)
+> -		error =3D vfs_open(path, file);
+> +	idmap =3D mnt_idmap(path->mnt);
 > +
-> +		dentry =3D atomic_open(&nd->path, dentry, file, open_flag, mode);
->  		if (unlikely(create_error) && dentry =3D=3D ERR_PTR(-ENOENT))
->  			dentry =3D ERR_PTR(create_error);
->  		return dentry;
+> +	if (dir_inode->i_op->atomic_open) {
+> +		path->dentry =3D dir;
+> +		mode =3D vfs_prepare_mode(idmap, dir_inode, mode, S_IALLUGO, S_IFREG);
+> +
+> +		create_error =3D may_o_create(idmap, path, dentry, mode);
+> +		if (create_error)
+> +			flags &=3D ~O_CREAT;
+> +
+> +		dentry =3D atomic_open(path, dentry, file, flags, mode);
+> +		error =3D PTR_ERR_OR_ZERO(dentry);
+> +
+> +		if (unlikely(create_error) && error =3D=3D -ENOENT)
+> +			error =3D create_error;
+> +
+> +		if (!error) {
+> +			if (file->f_mode & FMODE_CREATED)
+> +				fsnotify_create(dir->d_inode, dentry);
+> +			if (file->f_mode & FMODE_OPENED)
+> +				fsnotify_open(file);
+> +		}
+> +
+> +		path->dentry =3D dentry;
+> +
+> +	} else {
+> +		error =3D vfs_create(idmap, dir_inode, dentry, mode, true);
+> +		if (!error)
+> +			error =3D vfs_open(path, file);
+> +	}
+> =20
+>  	if (unlikely(error)) {
+>  		fput(file);
+> diff --git a/fs/nfsd/nfs4proc.c b/fs/nfsd/nfs4proc.c
+> index 71b428efcbb5..7ff7e5855e58 100644
+> --- a/fs/nfsd/nfs4proc.c
+> +++ b/fs/nfsd/nfs4proc.c
+> @@ -194,7 +194,7 @@ static inline bool nfsd4_create_is_exclusive(int create=
+mode)
+>  }
+> =20
+>  static __be32
+> -nfsd4_vfs_create(struct svc_fh *fhp, struct dentry *child,
+> +nfsd4_vfs_create(struct svc_fh *fhp, struct dentry **child,
+>  		 struct nfsd4_open *open)
+>  {
+>  	struct file *filp;
+> @@ -214,9 +214,11 @@ nfsd4_vfs_create(struct svc_fh *fhp, struct dentry *ch=
+ild,
+>  	}
+> =20
+>  	path.mnt =3D fhp->fh_export->ex_path.mnt;
+> -	path.dentry =3D child;
+> +	path.dentry =3D *child;
+>  	filp =3D dentry_create(&path, oflags, open->op_iattr.ia_mode,
+>  			     current_cred());
+> +	*child =3D path.dentry;
+> +
+>  	if (IS_ERR(filp))
+>  		return nfserrno(PTR_ERR(filp));
+> =20
+> @@ -353,7 +355,7 @@ nfsd4_create_file(struct svc_rqst *rqstp, struct svc_fh=
+ *fhp,
+>  	status =3D fh_fill_pre_attrs(fhp);
+>  	if (status !=3D nfs_ok)
+>  		goto out;
+> -	status =3D nfsd4_vfs_create(fhp, child, open);
+> +	status =3D nfsd4_vfs_create(fhp, &child, open);
+>  	if (status !=3D nfs_ok)
+>  		goto out;
+>  	open->op_created =3D true;
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 601d036a6c78..772b734477e5 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -2878,7 +2878,7 @@ struct file *dentry_open(const struct path *path, int=
+ flags,
+>  			 const struct cred *creds);
+>  struct file *dentry_open_nonotify(const struct path *path, int flags,
+>  				  const struct cred *cred);
+> -struct file *dentry_create(const struct path *path, int flags, umode_t mod=
+e,
+> +struct file *dentry_create(struct path *path, int flags, umode_t mode,
+>  			   const struct cred *cred);
+>  struct path *backing_file_user_path(const struct file *f);
+> =20
 > --=20
 > 2.50.1
 >=20
