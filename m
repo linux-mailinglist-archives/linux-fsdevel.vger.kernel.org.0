@@ -1,386 +1,153 @@
-Return-Path: <linux-fsdevel+bounces-69128-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69129-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 048DDC70756
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 18:29:26 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC3EBC7091D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 19:06:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C25EC4EED37
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 17:20:47 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTPS id E1E082F2AD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 18:05:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D08E35B12B;
-	Wed, 19 Nov 2025 17:20:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EB162FFFA8;
+	Wed, 19 Nov 2025 18:04:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZDDAtNxT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KAQFXiD0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oo1-f53.google.com (mail-oo1-f53.google.com [209.85.161.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52F0E2FF660
-	for <linux-fsdevel@vger.kernel.org>; Wed, 19 Nov 2025 17:20:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 549B0265CC2;
+	Wed, 19 Nov 2025 18:04:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763572822; cv=none; b=MgCoQ4hnE/H6b0FOfQBV4jh7vE/srbUKEYYbzU/ytqE/3LODvy2spd5LjsnqP9b4uNFcb8gBKLWVRhQmVUVAhYUoOMGrJWYcGIj88UzaATdbfQryVL/q6l3CPQSjX3sVD88ylp183VMBfuX1su/cWyzgffKXWZ6G/3qubGJkK1M=
+	t=1763575490; cv=none; b=aOuLOv7Gb0OQuQcNK2hxqWXxO6/qtW55Td3xF4CgdluCV3r+QFOTiFCyEuihKREOYw9y7KeAUAkoEK4yPOvq9aVL9F0zsPcJxn9Ruku220blbRYBLS+0CZVx9tMorw67cshPGoFSecjoV/3ogZdqMrzLGf0Oj/nxv6thVpKkp0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763572822; c=relaxed/simple;
-	bh=nwrUb8CRYXPmtiKaGbKckfkZqulSg07POIGJ6MQydeA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Iaz/n2oJ6qdw8H4ylgQC+1wWQqUEe/CKPfr90Z5k5eYucPOs0Pyo+BhnrDS0np3Zj3xBoiEgeE3aiAdN4Ki5VqK8Zc0YgyxXivw/6b64LerIrBLkSul0lNtKJ7LlvKDinmZyPxwl7HkcQ8sm4JN41S5tVt/RHUy+Lnyw2CZ8xOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZDDAtNxT; arc=none smtp.client-ip=209.85.161.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-6574de1cda1so1792196eaf.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Nov 2025 09:20:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763572818; x=1764177618; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Nvg61x5/8oMI9qMKzJR3J4oGKwF9G/bV4i+z0z+k1f8=;
-        b=ZDDAtNxTSPeuI3vcidPgC9DJAO7rgeGVzKcn0OVK0W4hapLACLQnLV7CsOhlpZiUVR
-         d6ccpHup9JHPmEb6OJgh75gM6FvL5sob+FO5FZENGL7It09TBrOcO3MZz/Oo9Qqua/54
-         uo66hJ1NXF+PPBmtbwzGOHHbbMM+sE/qZDI2zO40JizVGXQqI6gxl0UjzVDL6q8RqPaS
-         Hl3EQkT+xqMJgQvy+KmwDYW6J8TQwk+3+b7pQkEczoXdq+YpA+Zz/kyLimJEReLqUBw+
-         acD/Rx0BwPIz10zPzXAbWfqnuH03xuEpC5t9otStqr3do1hETlR2Uz0SLdqIsBSKLHM+
-         4blg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763572818; x=1764177618;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Nvg61x5/8oMI9qMKzJR3J4oGKwF9G/bV4i+z0z+k1f8=;
-        b=AxwZyE6A+rkqU2dxtge6BYEAIaFrDyDlAsf/URN4MPi8LbrPDUaKLjMNWNKUSuoT6Y
-         xLuv+wT8K7eALguO8yld5Fza3JNikb9CR2HHvTcsytXRilr2I2VDyjW5p6s6393cQa7s
-         Va28pOiws371bis6PE9zzbO3T2RB/B5okU1gbZJ89VwBZsWJHoDseZ1McqzEoXZ/UhaR
-         z7tPNRpwuRkvByc0mw6tw8Qv+3mUIWPjnaTwaFLyAdCoRsPsed8P+QmujwtZDYQNvicU
-         YMLRAmfVHPSfNDAqgwR91x/JWb3zt4QTScg1bSK9pdiarxZtJkvrawDknQ7LRduDeA/P
-         03DQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXdKmO8CHePsJlQXHx07y8HqXoUR/4xRWLxb6tBLNxrchIQK456GKusNRI9IRcoC3AV3oaZwsXuG5TuaOw9@vger.kernel.org
-X-Gm-Message-State: AOJu0Yygpp2Jhk7JpFOLSE+Ks1hFpXD8ePK99M5Q9ySBAqn6kIQFtXoc
-	Rs4MaHsqkxVKZcOxpXDGK4Gp9sPxBiUn4c2zOAB+GQIEQ6MIXsl7P69yE8CiPpOrnK+alGITgx9
-	eEP38izHipzBoNd/uRS/v0nSyHu/FkG0=
-X-Gm-Gg: ASbGncshLpaPkt67Pow1tLTZhuOKEFDzajGDfndXlmUx9ITl8j95hJ5WRDrJo6m2Eit
-	C06dti0+v+xONQsbD8GDUn3ijP9UyGY33NqSU89sYsL4onP1c6FnB+qFHV7wZGUTvaIxf84ZbC1
-	Fzmj4HrqCvMxvDSQo0lpHAy0Q8EKJiAbhwCZHe1HPZi3Hljy45vHFsOMtNHlb7E3uOqjfdoA+1M
-	Gb/AQC7EBLs3szLpgee23uJPF2wcau3Q0qN2ZdnzCq5UwhxF0lDXGn0LqAir1TuyfGY9E/Uttki
-	OB9ZKR8=
-X-Google-Smtp-Source: AGHT+IGKPgur4p0IUHzaDttJY7fPbrfjd802yiBdjKL2Lc3dpo6Z7xClxsOJdBjhR9vBzaXgicR/QwPfo5YrXCKKY/Q=
-X-Received: by 2002:a05:6870:9619:b0:3d1:f53e:ba47 with SMTP id
- 586e51a60fabf-3ec9a3d5d9bmr71394fac.24.1763572817469; Wed, 19 Nov 2025
- 09:20:17 -0800 (PST)
+	s=arc-20240116; t=1763575490; c=relaxed/simple;
+	bh=1YXtVbAvN/jPWxo7e+RkPYTJZrgTlOf0lbDEv90MBaU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lkZfVEp+y12VflmPBZYJ/eRDOd5/A+uT1TV0PDF4He/DLZI2oa/q9N925/xMdkCLbAReasUoXk84bp3aCRDzem6UgsEOLl79Y4QJXCGMRcZojGoXIWdaPgl4LtvBGTTFrI8mF6PACh13uY6eiabb7F6h7hNNhY1d+fmdysR53Uw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KAQFXiD0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0A8BC4CEF5;
+	Wed, 19 Nov 2025 18:04:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763575489;
+	bh=1YXtVbAvN/jPWxo7e+RkPYTJZrgTlOf0lbDEv90MBaU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KAQFXiD0QvsSRRp1WkB8gQDo4wmVk704OghRXzeAqKYkQB06Mpv1YyIOp1IH5MfyF
+	 H1J0W9FtuRB2tb0Zvsk/mRndyxbzfzZx3HEZaMe2konljT4HQ0QYU4ym/WX/Ej7UOk
+	 3KTSGcxS6SDxOqRtWskVqyhwpu7fxhBkmY8kP+EtbbyBzAvSG6GsvyvNtUmWdJ2HIZ
+	 eEYDDC0B2/0FPsN+xK83dK1lSEEKfVmr9ItAe5y7E53hthWBM91FbpY1/Y7luF8EQI
+	 BuCF0QTWMpgFj1EogzEx4gR1qsKaRA8n52+8kMZEN6GD0RFZxRGpg2bd6+KsMfC/6r
+	 KqBEUxnsagv3Q==
+Date: Wed, 19 Nov 2025 10:04:49 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Demi Marie Obenour <demiobenour@gmail.com>
+Cc: bernd@bsbernd.com, joannelkoong@gmail.com, linux-ext4@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, miklos@szeredi.hu, neal@gompa.dev,
+	linux-bcachefs@vger.kernel.org, linux-btrfs@vger.kernel.org,
+	zfs-devel@list.zfsonlinux.org
+Subject: Re: [PATCHSET v6 4/8] fuse: allow servers to use iomap for better
+ file IO performance
+Message-ID: <20251119180449.GS196358@frogsfrogsfrogs>
+References: <176169810144.1424854.11439355400009006946.stgit@frogsfrogsfrogs>
+ <d0a122b8-3b25-44e6-8c60-538c81b35228@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251118084836.2114503-1-b.sachdev1904@gmail.com> <20251118084836.2114503-3-b.sachdev1904@gmail.com>
-In-Reply-To: <20251118084836.2114503-3-b.sachdev1904@gmail.com>
-From: Andrei Vagin <avagin@gmail.com>
-Date: Wed, 19 Nov 2025 09:20:05 -0800
-X-Gm-Features: AWmQ_bmLgoebhL5bptj_-CNY4siyrG2szLu07p34etPBYN5vjQ7wJbGZh4fmXFA
-Message-ID: <CANaxB-zG3JQRzZSF+rwfGqLRP8eWvc+J1w+2yZoB5uk5jhGyPA@mail.gmail.com>
-Subject: Re: [PATCH v6 2/2] statmount: accept fd as a parameter
-To: Bhavik Sachdev <b.sachdev1904@gmail.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	criu@lists.linux.dev, Aleksa Sarai <cyphar@cyphar.com>, 
-	Pavel Tikhomirov <ptikhomirov@virtuozzo.com>, Jan Kara <jack@suse.cz>, 
-	John Garry <john.g.garry@oracle.com>, Arnaldo Carvalho de Melo <acme@redhat.com>, 
-	"Darrick J . Wong" <djwong@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Ingo Molnar <mingo@kernel.org>, 
-	Alexander Mikhalitsyn <alexander@mihalicyn.com>, Miklos Szeredi <miklos@szeredi.hu>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d0a122b8-3b25-44e6-8c60-538c81b35228@gmail.com>
 
-On Tue, Nov 18, 2025 at 12:49=E2=80=AFAM Bhavik Sachdev <b.sachdev1904@gmai=
-l.com> wrote:
->
-> Extend `struct mnt_id_req` to take in a fd and introduce STATMOUNT_BY_FD
-> flag. When a valid fd is provided and STATMOUNT_BY_FD is set, statmount
-> will return mountinfo about the mount the fd is on.
->
-> This even works for "unmounted" mounts (mounts that have been umounted
-> using umount2(mnt, MNT_DETACH)), if you have access to a file descriptor
-> on that mount. These "umounted" mounts will have no mountpoint and no
-> valid mount namespace. Hence, we unset the STATMOUNT_MNT_POINT and
-> STATMOUNT_MNT_NS_ID in statmount.mask for "unmounted" mounts.
->
-> In case of STATMOUNT_BY_FD, given that we already have access to an fd
-> on the mount, accessing mount information without a capability check
-> seems fine because of the following reasons:
->
-> - All fs related information is available via fstatfs() without any
->   capability check.
-> - Mount information is also available via /proc/pid/mountinfo (without
->   any capability check).
-> - Given that we have access to a fd on the mount which tells us that we
->   had access to the mount at some point (or someone that had access gave
->   us the fd). So, we should be able to access mount info.
->
-> Co-developed-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
-> Signed-off-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
-> Signed-off-by: Bhavik Sachdev <b.sachdev1904@gmail.com>
-> ---
->  fs/namespace.c             | 99 ++++++++++++++++++++++++++------------
->  include/uapi/linux/mount.h |  7 ++-
->  2 files changed, 74 insertions(+), 32 deletions(-)
->
-> diff --git a/fs/namespace.c b/fs/namespace.c
-> index ee36d67f1ac2..1c41c6e2304a 100644
-> --- a/fs/namespace.c
-> +++ b/fs/namespace.c
-> @@ -5563,29 +5563,41 @@ static int grab_requested_root(struct mnt_namespa=
-ce *ns, struct path *root)
->
->  /* locks: namespace_shared */
->  static int do_statmount(struct kstatmount *s, u64 mnt_id, u64 mnt_ns_id,
-> -                       struct mnt_namespace *ns)
-> +                       struct mnt_namespace *ns, unsigned int flags)
->  {
->         struct mount *m;
->         int err;
->
-> -       /* Has the namespace already been emptied? */
-> -       if (mnt_ns_id && mnt_ns_empty(ns))
-> -               return -ENOENT;
-> +       /* caller sets s->mnt in case of STATMOUNT_BY_FD */
-> +       if (!(flags & STATMOUNT_BY_FD)) {
-> +               /* Has the namespace already been emptied? */
-> +               if (mnt_ns_id && mnt_ns_empty(ns))
-> +                       return -ENOENT;
->
-> -       s->mnt =3D lookup_mnt_in_ns(mnt_id, ns);
-> -       if (!s->mnt)
-> -               return -ENOENT;
-> +               s->mnt =3D lookup_mnt_in_ns(mnt_id, ns);
-> +               if (!s->mnt)
-> +                       return -ENOENT;
-> +       }
->
-> -       err =3D grab_requested_root(ns, &s->root);
-> -       if (err)
-> -               return err;
-> +       if (ns) {
-> +               err =3D grab_requested_root(ns, &s->root);
-> +               if (err)
-> +                       return err;
-> +       } else {
-> +               /*
-> +                * We can't set mount point and mnt_ns_id since we don't =
-have a
-> +                * ns for the mount. This can happen if the mount is unmo=
-unted
-> +                * with MNT_DETACH.
-> +                */
-> +               s->mask &=3D ~(STATMOUNT_MNT_POINT | STATMOUNT_MNT_NS_ID)=
-;
-> +       }
->
->         /*
->          * Don't trigger audit denials. We just want to determine what
->          * mounts to show users.
->          */
->         m =3D real_mount(s->mnt);
-> -       if (!is_path_reachable(m, m->mnt.mnt_root, &s->root) &&
-> +       if (ns && !is_path_reachable(m, m->mnt.mnt_root, &s->root) &&
->             !ns_capable_noaudit(ns->user_ns, CAP_SYS_ADMIN))
->                 return -EPERM;
->
-> @@ -5709,7 +5721,7 @@ static int prepare_kstatmount(struct kstatmount *ks=
-, struct mnt_id_req *kreq,
->  }
->
->  static int copy_mnt_id_req(const struct mnt_id_req __user *req,
-> -                          struct mnt_id_req *kreq)
-> +                          struct mnt_id_req *kreq, unsigned int flags)
->  {
->         int ret;
->         size_t usize;
-> @@ -5727,11 +5739,18 @@ static int copy_mnt_id_req(const struct mnt_id_re=
-q __user *req,
->         ret =3D copy_struct_from_user(kreq, sizeof(*kreq), req, usize);
->         if (ret)
->                 return ret;
-> -       if (kreq->mnt_ns_fd !=3D 0 && kreq->mnt_ns_id)
-> -               return -EINVAL;
-> -       /* The first valid unique mount id is MNT_UNIQUE_ID_OFFSET + 1. *=
-/
-> -       if (kreq->mnt_id <=3D MNT_UNIQUE_ID_OFFSET)
-> -               return -EINVAL;
-> +
-> +       if (flags & STATMOUNT_BY_FD) {
-> +               if (kreq->mnt_id || kreq->mnt_ns_id)
-> +                       return -EINVAL;
-> +       } else {
-> +               if (kreq->fd !=3D 0 && kreq->mnt_ns_id)
-> +                       return -EINVAL;
-> +
-> +               /* The first valid unique mount id is MNT_UNIQUE_ID_OFFSE=
-T + 1. */
-> +               if (kreq->mnt_id <=3D MNT_UNIQUE_ID_OFFSET)
-> +                       return -EINVAL;
-> +       }
->         return 0;
->  }
->
-> @@ -5740,16 +5759,18 @@ static int copy_mnt_id_req(const struct mnt_id_re=
-q __user *req,
->   * that, or if not simply grab a passive reference on our mount namespac=
-e and
->   * return that.
->   */
-> -static struct mnt_namespace *grab_requested_mnt_ns(const struct mnt_id_r=
-eq *kreq)
-> +static struct mnt_namespace *grab_requested_mnt_ns(const struct mnt_id_r=
-eq *kreq,
-> +                                                  unsigned int flags)
+On Wed, Nov 19, 2025 at 04:19:36AM -0500, Demi Marie Obenour wrote:
+> > By keeping the I/O path mostly within the kernel, we can dramatically
+> > increase the speed of disk-based filesystems.
+> 
+> ZFS, BTRFS, and bcachefs all support compression, checksumming,
+> and RAID.  ZFS and bcachefs also support encryption, and f2fs and
+> ext4 support fscrypt.
+> 
+> Will this patchset be able to improve FUSE implementations of these
+> filesystems?  I'd rather not be in the situation where one can have
+> a FUSE filesystem that is fast, but only if it doesn't support modern
+> data integrity or security features.
 
-In patch, grab_requested_mnt_ns is always called with zero flags, do we
-really need adding flags here?
+Not on its own, no.
 
->  {
->         struct mnt_namespace *mnt_ns;
->
->         if (kreq->mnt_ns_id) {
->                 mnt_ns =3D lookup_mnt_ns(kreq->mnt_ns_id);
-> -       } else if (kreq->mnt_ns_fd) {
-> +       /* caller sets mnt_ns in case of STATMOUNT_BY_FD */
-> +       } else if (!(flags & STATMOUNT_BY_FD) && kreq->fd) {
+> I'm not a filesystem developer, but here are some ideas (that you
+> can take or leave):
+> 
+> 1. Keep the compression, checksumming, and/or encryption in-kernel,
+>    and have userspace tell the kernel what algorithm and/or encryption
+>    key to use.  These algorithms are generally well-known and secure
+>    against malicious input.  It might be necessary to make an extra
+>    data copy, but ideally that copy could just stay within the
+>    CPU caches.
 
-I don't understand this part. If STATMOUNT_BY_FD is set, we take a
-reference to the current mount namespace. What is the idea here?
+I think this is easily doable for fscrypt and compression since (IIRC)
+the kernel filesystems already know how to transform data for I/O, and
+nowadays iomap allows hooking of bios before submission and/or after
+endio.  Obviously you'd have to store encryption keys in the kernel
+somewhere.
 
-It looks like we don't need to change this function at all.
+Checksumming is harder though, since the checksum information has to be
+persisted in the metadata somewhere and AFAICT each checksumming fs does
+things differently.  For that, I think the fuse server would have to
+convey to the kernel (a) a description of the checksum geometry and (b)
+a buffer for storing the checksums.  On write the kernel would compute
+the checksum and write it to the buffer for the fs to persist as part of
+the ioend; and for read the fuse server would have to read the checksums
+into the buffer and pass that to the kernel.
 
->                 struct ns_common *ns;
->
-> -               CLASS(fd, f)(kreq->mnt_ns_fd);
-> +               CLASS(fd, f)(kreq->fd);
->                 if (fd_empty(f))
->                         return ERR_PTR(-EBADF);
->
-> @@ -5777,25 +5798,38 @@ SYSCALL_DEFINE4(statmount, const struct mnt_id_re=
-q __user *, req,
->  {
->         struct mnt_namespace *ns __free(mnt_ns_release) =3D NULL;
->         struct kstatmount *ks __free(kfree) =3D NULL;
-> +       struct file *file_from_fd __free(fput) =3D NULL;
-> +       struct vfsmount *fd_mnt;
->         struct mnt_id_req kreq;
->         /* We currently support retrieval of 3 strings. */
->         size_t seq_size =3D 3 * PATH_MAX;
->         int ret;
->
-> -       if (flags)
-> +       if (flags & ~STATMOUNT_BY_FD)
->                 return -EINVAL;
->
-> -       ret =3D copy_mnt_id_req(req, &kreq);
-> +       ret =3D copy_mnt_id_req(req, &kreq, flags);
->         if (ret)
->                 return ret;
->
-> -       ns =3D grab_requested_mnt_ns(&kreq);
-> -       if (IS_ERR(ns))
-> -               return PTR_ERR(ns);
-> +       if (flags & STATMOUNT_BY_FD) {
-> +               file_from_fd =3D fget_raw(kreq.fd);
-> +               if (!file_from_fd)
-> +                       return -EBADF;
->
-> -       if (kreq.mnt_ns_id && (ns !=3D current->nsproxy->mnt_ns) &&
-> -           !ns_capable_noaudit(ns->user_ns, CAP_SYS_ADMIN))
-> -               return -EPERM;
-> +               fd_mnt =3D file_from_fd->f_path.mnt;
-> +               ns =3D real_mount(fd_mnt)->mnt_ns;
+(Note that fsverity won't have this problem because all current
+implementations stuff the merkle tree in post-eof datablocks; the
+fsverity code only wants fses to read it in the pagecache; and pass it
+the page)
 
-I think accessing mnt_ns here should be guarded with a lock/rcu.
+> 2. Somehow integrate with the blk-crypto framework.  This has the
+>    advantage that it supports inline encryption hardware, which
+>    I suspect is needed for this to be usable on mobile devices.
+>    After all, the keys on these systems are often not even visible
+>    to the kernel, let alone to userspace.
 
-> +               if (ns)
-> +                       refcount_inc(&ns->passive);
-> +       } else {
-> +               ns =3D grab_requested_mnt_ns(&kreq, 0);
-> +               if (IS_ERR(ns))
-> +                       return PTR_ERR(ns);
-> +
-> +               if (kreq.mnt_ns_id && (ns !=3D current->nsproxy->mnt_ns) =
-&&
-> +                   !ns_capable_noaudit(ns->user_ns, CAP_SYS_ADMIN))
-> +                       return -EPERM;
-> +       }
->
->         ks =3D kmalloc(sizeof(*ks), GFP_KERNEL_ACCOUNT);
->         if (!ks)
-> @@ -5806,8 +5840,11 @@ SYSCALL_DEFINE4(statmount, const struct mnt_id_req=
- __user *, req,
->         if (ret)
->                 return ret;
->
-> +       if (flags & STATMOUNT_BY_FD)
-> +               ks->mnt =3D fd_mnt;
-> +
->         scoped_guard(namespace_shared)
-> -               ret =3D do_statmount(ks, kreq.mnt_id, kreq.mnt_ns_id, ns)=
-;
-> +               ret =3D do_statmount(ks, kreq.mnt_id, kreq.mnt_ns_id, ns,=
- flags);
->
->         if (!ret)
->                 ret =3D copy_statmount_to_user(ks);
-> @@ -5916,7 +5953,7 @@ static inline int prepare_klistmount(struct klistmo=
-unt *kls, struct mnt_id_req *
->         if (!kls->kmnt_ids)
->                 return -ENOMEM;
->
-> -       ns =3D grab_requested_mnt_ns(kreq);
-> +       ns =3D grab_requested_mnt_ns(kreq, 0);
->         if (IS_ERR(ns))
->                 return PTR_ERR(ns);
->         kls->ns =3D ns;
-> @@ -5947,7 +5984,7 @@ SYSCALL_DEFINE4(listmount, const struct mnt_id_req =
-__user *, req,
->         if (!access_ok(mnt_ids, nr_mnt_ids * sizeof(*mnt_ids)))
->                 return -EFAULT;
->
-> -       ret =3D copy_mnt_id_req(req, &kreq);
-> +       ret =3D copy_mnt_id_req(req, &kreq, 0);
->         if (ret)
->                 return ret;
->
-> diff --git a/include/uapi/linux/mount.h b/include/uapi/linux/mount.h
-> index 5d3f8c9e3a62..a2156599ddc6 100644
-> --- a/include/uapi/linux/mount.h
-> +++ b/include/uapi/linux/mount.h
-> @@ -197,7 +197,7 @@ struct statmount {
->   */
->  struct mnt_id_req {
->         __u32 size;
-> -       __u32 mnt_ns_fd;
-> +       __u32 fd;
+Yes, that would be even easier than messing around with bounce buffers.
 
-we can consider using union here:
-      union {
-            __u32 mnt_ns_fd;
-            __u32 mnt_fd;
-       };
+> 3. Figure out a way to make a userspace data path fast enough.
+>    To prevent data corruption by unprivileged users of the FS,
+>    it's necessary to make a copy before checksumming, compression,
+>    or authenticated encryption.  If this copy is done in the kernel,
+>    the server doesn't have to perform its own copy.  By using large
+>    ring buffers, it might be possible to amortize the context switch
+>    cost away.
+> 
+>    Authenticated encryption also needs a copy in the *other* direction:
+>    if the (untrusted) client can see unauthenticated plaintext, it's
+>    a security vulnerability.  That needs another copy from server
+>    buffers to client buffers, and the kernel can do that as well.
+> 
+> 4. Make context switches much faster.  L4-style IPC is incredibly fast,
+>    at least if one doesn't have to worry about Spectre.  Unfortunately,
+>    nowadays one *does* need to worry about Spectre.
 
->         __u64 mnt_id;
->         __u64 param;
->         __u64 mnt_ns_id;
-> @@ -232,4 +232,9 @@ struct mnt_id_req {
->  #define LSMT_ROOT              0xffffffffffffffff      /* root mount */
->  #define LISTMOUNT_REVERSE      (1 << 0) /* List later mounts first */
->
-> +/*
-> + * @flag bits for statmount(2)
-> + */
-> +#define STATMOUNT_BY_FD                0x00000001U     /* want mountinfo=
- for given fd */
-> +
->  #endif /* _UAPI_LINUX_MOUNT_H */
-> --
-> 2.51.1
->
+I don't think context switching overhead is going down.
+
+> Obviously, none of these will be as fast as doing DMA directly to user
+> buffers.  However, all of these features (except for encryption using
+> inline encryption hardware) come at a performance penalty already.
+> I just don't want a FUSE server to have to pay a much larger penalty
+> than a kernel filesystem would.
+> 
+> I'm CCing the bcachefs, BTRFS, and ZFS-on-Linux mailing lists.
+> -- 
+> Sincerely,
+> Demi Marie Obenour (she/her/hers)
+
+
+
+
+
 
