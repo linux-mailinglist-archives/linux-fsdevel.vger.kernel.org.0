@@ -1,78 +1,77 @@
-Return-Path: <linux-fsdevel+bounces-69038-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69039-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE9EDC6C5B7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 03:20:07 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FE81C6C78B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 03:56:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sea.lore.kernel.org (Postfix) with ESMTPS id 71DC72989A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 02:20:06 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AF5E64F43B0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 02:54:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25DE7283142;
-	Wed, 19 Nov 2025 02:19:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FAAC2DE6F1;
+	Wed, 19 Nov 2025 02:51:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iiGkeake"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PgZNmtWL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE1B028134C
-	for <linux-fsdevel@vger.kernel.org>; Wed, 19 Nov 2025 02:19:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D7602DC79C;
+	Wed, 19 Nov 2025 02:51:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763518787; cv=none; b=fgPM4O+j1+CWPU/ABBlXb7Zk6WiCWYBM8XQQr4sHLvsep7UuqVrEEAD+KhEeGUHAxOaQZsh9gLpFXbt5ku/aiVYdK+ImA0reBVArNcuiNfbLRHZgOE3FDx6Os4x36I1mLZ317qMC44ivjbbd4Ekg0sfWWYZU/wDYj3ZmudTLPIA=
+	t=1763520711; cv=none; b=WFuDxUWg2e4tQQyCI+3Zv1jmNlr/3g6TKzwjDsFgdTLHWCmgmvIAGLoEHju3vESkFUmPTpsDDaf9PCdosDHfY03osfScoknB1E2pCjdXnMtpehN5yh0KC+7YWLONyqgMNB2I2JpQwbsdtzbiC8OY+Gw992eXvCaHetsHPvnXXpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763518787; c=relaxed/simple;
-	bh=x4fsNKLODk4xY43RQL9Z083LN/fJNbxsVGa9jR/CsCg=;
+	s=arc-20240116; t=1763520711; c=relaxed/simple;
+	bh=f59lkW1kLsorsgVtNx1U5dbGIq5GqpNOYfD81YTZl84=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jEeFeBt8lmBpbvsKjvmBeEF6NdSqj9fvLEthiZUgbo6qv9GNCcm+C0NQV5ICsHwXei+CTHx5XNCrgy/pL7CRU8FIyLxDXRSO8NmE/S8KDloq+6DkkQJfHl+tWla+5ugPNa/MhhoPnP7LhcyKX5Doyzi5cx2hc9ZOoMi/YN4uDbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iiGkeake; arc=none smtp.client-ip=198.175.65.20
+	 Content-Type:Content-Disposition:In-Reply-To; b=UY8Kznpnp8H8wU20t58NGymHDYMuhhq6z7gK1rQZBPgbVICDov2q6LJKr6IiHT7r9KeCxAcfiLslzom+mKJrNX87Jmi6sOpbIMii8V1sOBmNMQYdr/RA0Uh8XTs3wCqk5Vmg0BnECk1KlEUrwzhfszhXzsdb3fnOhN7OGD8eELU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PgZNmtWL; arc=none smtp.client-ip=198.175.65.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1763518786; x=1795054786;
+  t=1763520709; x=1795056709;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=x4fsNKLODk4xY43RQL9Z083LN/fJNbxsVGa9jR/CsCg=;
-  b=iiGkeakeq7KCNhgMt0DXX7OHrPB8R10p+r6BLv1H4mQjuksxKDIaJupI
-   oPdhImwQ0UaY2HkWhnelDmUeBmT2C3pTUlyWTvay0OvdqRVY2T3/rCVUN
-   FfBvTv/7oKrg7YhHwybbTXRqstArRrJG1EN80oiig7BIH9TSHEmyOmbxV
-   qpCVh4T+2ZrhlondZMzS685OwJWn/sSgXH0wRUL96WQosQejdQXjrxAzp
-   Nzub6f8ltXEOaX67xxQdSEBwVeaLBgK6xZ3snLntee7tMeptBnvnThq+y
-   3Pnt4wx8GD1K+druSuqg+ER1+FSayFgLP/507ULzkIbjyMbTib1ApwNO4
-   Q==;
-X-CSE-ConnectionGUID: PjXtCuEeTc2Zi6VwShVktQ==
-X-CSE-MsgGUID: aBxw80mcSuCPVLj4bkekqA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11617"; a="65257007"
+  bh=f59lkW1kLsorsgVtNx1U5dbGIq5GqpNOYfD81YTZl84=;
+  b=PgZNmtWLfdGW2jJJh0bP+vGjj4UelcnRs6ku5gbhF5d/Yd6e6oR4/lS2
+   X5R95FbWCE7ZTAMUwzpSpe42dYxI4k/ZGoNArbSWW34E1PAe01DIBZUsh
+   H1qHXiZw2iu7TDLX38bulSovZAAl0p9hPi4KTVJVeN4nPGV0F3e7AzzXh
+   YCLdl2b/MdCAc2MY0IlWgPt+dh66Ibm37JueWGtshqKfEQ3Dp2YUUm3JG
+   bwq0S/IlEl+k+2dl4gouTtPy4YQeFeAHsknqiJed0DXw94hmnw8+XnD9c
+   rTy79UzaSxs2i10e74ORbt5zuS2kvlnz865k5xH6odtyVNRrVG/wD1YDb
+   g==;
+X-CSE-ConnectionGUID: Uv3MgbifTrqTdSdew6GGRg==
+X-CSE-MsgGUID: zvthpDdFQPGIp4kghLF3KA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11617"; a="76660157"
 X-IronPort-AV: E=Sophos;i="6.19,315,1754982000"; 
-   d="scan'208";a="65257007"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2025 18:19:46 -0800
-X-CSE-ConnectionGUID: VDWR0AucRSCVkceEYfMb7Q==
-X-CSE-MsgGUID: edC4kfhzQEOTvK/LkfE7mA==
+   d="scan'208";a="76660157"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2025 18:51:48 -0800
+X-CSE-ConnectionGUID: /UTULZkSSMeUHoEUgtgfBA==
+X-CSE-MsgGUID: UGMkM4H5QlOWBxOgduCEMg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.19,315,1754982000"; 
-   d="scan'208";a="214307012"
+   d="scan'208";a="195855738"
 Received: from lkp-server01.sh.intel.com (HELO adf6d29aa8d9) ([10.239.97.150])
-  by fmviesa002.fm.intel.com with ESMTP; 18 Nov 2025 18:19:43 -0800
+  by fmviesa004.fm.intel.com with ESMTP; 18 Nov 2025 18:51:47 -0800
 Received: from kbuild by adf6d29aa8d9 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1vLXnJ-0002Lr-0d;
-	Wed, 19 Nov 2025 02:19:41 +0000
-Date: Wed, 19 Nov 2025 10:19:25 +0800
+	id 1vLYIL-0002NT-0I;
+	Wed, 19 Nov 2025 02:51:45 +0000
+Date: Wed, 19 Nov 2025 10:51:02 +0800
 From: kernel test robot <lkp@intel.com>
-To: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Christian Brauner <brauner@kernel.org>
+To: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+	ntfs3@lists.linux.dev
 Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fs: Add uoff_t
-Message-ID: <202511190917.pXdJRhD8-lkp@intel.com>
-References: <20251118152935.3735484-1-willy@infradead.org>
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Subject: Re: [PATCH] fs/ntfs3: check for shutdown in fsync
+Message-ID: <202511191004.GdiCxONs-lkp@intel.com>
+References: <20251118130705.411336-1-almaz.alexandrovich@paragon-software.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -81,55 +80,64 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251118152935.3735484-1-willy@infradead.org>
+In-Reply-To: <20251118130705.411336-1-almaz.alexandrovich@paragon-software.com>
 
-Hi Matthew,
+Hi Konstantin,
 
-kernel test robot noticed the following build errors:
+kernel test robot noticed the following build warnings:
 
-[auto build test ERROR on akpm-mm/mm-everything]
-[also build test ERROR on arnd-asm-generic/master linus/master v6.18-rc6 next-20251118]
-[cannot apply to brauner-vfs/vfs.all]
+[auto build test WARNING on brauner-vfs/vfs.all]
+[also build test WARNING on linus/master v6.18-rc6 next-20251118]
 [If your patch is applied to the wrong git tree, kindly drop us a note.
 And when submitting patch, we suggest to use '--base' as documented in
 https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Matthew-Wilcox-Oracle/fs-Add-uoff_t/20251118-233038
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/20251118152935.3735484-1-willy%40infradead.org
-patch subject: [PATCH] fs: Add uoff_t
-config: arm-allnoconfig (https://download.01.org/0day-ci/archive/20251119/202511190917.pXdJRhD8-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 0bba1e76581bad04e7d7f09f5115ae5e2989e0d9)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251119/202511190917.pXdJRhD8-lkp@intel.com/reproduce)
+url:    https://github.com/intel-lab-lkp/linux/commits/Konstantin-Komarov/fs-ntfs3-check-for-shutdown-in-fsync/20251118-210835
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
+patch link:    https://lore.kernel.org/r/20251118130705.411336-1-almaz.alexandrovich%40paragon-software.com
+patch subject: [PATCH] fs/ntfs3: check for shutdown in fsync
+config: i386-buildonly-randconfig-004-20251119 (https://download.01.org/0day-ci/archive/20251119/202511191004.GdiCxONs-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251119/202511191004.GdiCxONs-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202511190917.pXdJRhD8-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202511191004.GdiCxONs-lkp@intel.com/
 
-All errors (new ones prefixed by >>):
+All warnings (new ones prefixed by >>):
 
->> mm/shmem.c:5810:6: error: conflicting types for 'shmem_truncate_range'
-    5810 | void shmem_truncate_range(struct inode *inode, loff_t lstart, loff_t lend)
-         |      ^
-   include/linux/shmem_fs.h:129:6: note: previous declaration is here
-     129 | void shmem_truncate_range(struct inode *inode, loff_t start, uoff_t end);
-         |      ^
-   mm/shmem.c:5838:16: warning: unused variable 'flags' [-Wunused-variable]
-    5838 |         unsigned long flags = (vm_flags & VM_NORESERVE) ? SHMEM_F_NORESERVE : 0;
-         |                       ^~~~~
-   1 warning and 1 error generated.
+>> fs/ntfs3/file.c:1381:5: warning: no previous prototype for function 'ntfs_file_fsync' [-Wmissing-prototypes]
+    1381 | int ntfs_file_fsync(struct file *file, loff_t start, loff_t end, int datasync)
+         |     ^
+   fs/ntfs3/file.c:1381:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
+    1381 | int ntfs_file_fsync(struct file *file, loff_t start, loff_t end, int datasync)
+         | ^
+         | static 
+   fs/ntfs3/file.c:1415:12: warning: initializer overrides prior initialization of this subobject [-Winitializer-overrides]
+    1415 |         .fsync          = ntfs_file_fsync,
+         |                           ^~~~~~~~~~~~~~~
+   fs/ntfs3/file.c:1412:12: note: previous initialization is here
+    1412 |         .fsync          = generic_file_fsync,
+         |                           ^~~~~~~~~~~~~~~~~~
+   2 warnings generated.
 
 
-vim +/shmem_truncate_range +5810 mm/shmem.c
+vim +/ntfs_file_fsync +1381 fs/ntfs3/file.c
 
-c01d5b300774d13 Hugh Dickins 2016-07-26  5809  
-41ffe5d5ceef7f7 Hugh Dickins 2011-08-03 @5810  void shmem_truncate_range(struct inode *inode, loff_t lstart, loff_t lend)
-94c1e62df4494b7 Hugh Dickins 2011-06-27  5811  {
-41ffe5d5ceef7f7 Hugh Dickins 2011-08-03  5812  	truncate_inode_pages_range(inode->i_mapping, lstart, lend);
-94c1e62df4494b7 Hugh Dickins 2011-06-27  5813  }
-94c1e62df4494b7 Hugh Dickins 2011-06-27  5814  EXPORT_SYMBOL_GPL(shmem_truncate_range);
-94c1e62df4494b7 Hugh Dickins 2011-06-27  5815  
+  1377	
+  1378	/*
+  1379	 * ntfs_file_fsync - file_operations::fsync
+  1380	 */
+> 1381	int ntfs_file_fsync(struct file *file, loff_t start, loff_t end, int datasync)
+  1382	{
+  1383		struct inode *inode = file_inode(file);
+  1384		if (unlikely(ntfs3_forced_shutdown(inode->i_sb)))
+  1385			return -EIO;
+  1386	
+  1387		return generic_file_fsync(file, start, end, datasync);
+  1388	}
+  1389	
 
 -- 
 0-DAY CI Kernel Test Service
