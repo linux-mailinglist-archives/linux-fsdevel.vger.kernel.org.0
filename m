@@ -1,76 +1,104 @@
-Return-Path: <linux-fsdevel+bounces-69057-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69058-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BC08C6D8FB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 10:03:51 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EB4CC6D9AE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 10:10:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sea.lore.kernel.org (Postfix) with ESMTPS id 866E12D729
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 09:03:48 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 09D52351606
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 09:07:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C9E0333437;
-	Wed, 19 Nov 2025 09:03:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 256163358DD;
+	Wed, 19 Nov 2025 09:06:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OtVFxRZI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE806332ED3;
-	Wed, 19 Nov 2025 09:03:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C9BA33557E;
+	Wed, 19 Nov 2025 09:06:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763543022; cv=none; b=RY2PxUQSWnPyqu//9Vkw9FoHyBBR4ribao+G4ESJntF3O5fO7TiTSAnjBKPyAWrms0m6L7wYK1oBynF7S+uzw/qHW9988fgkgS8OZ3jklPyjYZ8ylkZjiTlToq2Bue3pSmZ4G45yvdKds2+brdrrRqBYlHBPkVCQKYzKDnBJQrk=
+	t=1763543212; cv=none; b=sGcyaQ9DsFXIopTsVtcVumAJjduaj7UwGyAtLscozZcVrm+DKbVfnUbDCsJndnCcxnwS3jIX8iRVnWc8wydCwN7ubcCXq3R2JhriptM0CR/jvEWXxGfYZ4Y0gSegH+bA9F/v0E1IUlWGEWaKVtC2q1W/AJpweeRmY/PRGN4HYCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763543022; c=relaxed/simple;
-	bh=xWTsceOLcm5alMX7P+IpSRBOivCIAs3CfpJmkO28e9k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tynFSJTVS6I7zbZ2FBBbV/Q6+yvZEeRRs28MMnGWgmAOrKHsBlel0YDrbfvW3omSOaw7vd8krb+GGQJ1ML83mqSp7aQJF+ThttRjdOK9VyBxwFSIfLVaFleCUFaR4kKQEA1b+AgTRqQFYAzZY5u5gktbsKB9871YFwGYbhdllS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 571276732A; Wed, 19 Nov 2025 10:03:36 +0100 (CET)
-Date: Wed, 19 Nov 2025 10:03:36 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Christian Brauner <brauner@kernel.org>
-Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-fsdevel@vger.kernel.org,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	linux-kbuild@vger.kernel.org
-Subject: Re: [PATCH] fs: unexport ioctl_getflags
-Message-ID: <20251119090336.GC24598@lst.de>
-References: <20251118070941.2368011-1-hch@lst.de> <20251119-frist-vertragen-22e1d099b118@brauner>
+	s=arc-20240116; t=1763543212; c=relaxed/simple;
+	bh=9VkQQVp1GUJZvklIUdL6yF9pgR7bsQTx3z4kO9z5dMw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gkZhfmJS5BzGr6ln5WbU+ofXXRD6NBfaXwOc7I5ERbjyvNOZ0TGrvzY+ifxts/HWblOegGwV46qaUHZtZzhPtizra7c4RLz1qox3odaq61zG3F9P932K+JPbxna64SFdQeOlLObpb/e48hbJ8yiMdfmdAIp6qXHw7Bn56gYWDp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OtVFxRZI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB818C19422;
+	Wed, 19 Nov 2025 09:06:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763543209;
+	bh=9VkQQVp1GUJZvklIUdL6yF9pgR7bsQTx3z4kO9z5dMw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=OtVFxRZIeWCKgm/wX8Mh4xSUKUsDu7TC61ZcbwB7p755P/p8D1UbOzn887vZKWsiT
+	 LT8Hkl3H3DdI8TLAeKktrX3yWPQQeQzoD5az9ce9h9AJFO474lVbcQaSZN4cdtnOd8
+	 qMzgerN86Kq5LjGLmF8Xvx0kt31CQR/SNyrzETsVCfIlrjxK/jwXc0n9+UEq8FW+87
+	 frsGoVcUKPI4zE7zMA2vs5hS+GVhuQnNfj1tCMielj1RrXvfjcbkBaPmp99gNYG86X
+	 g8w2OOyBsEud9UYPSoka4/54CHPtP2JqM1W+W7dvk4+P26CuXNiNahahWDLbiZIptV
+	 UKv7ewASeZOgA==
+Message-ID: <9b18ee75-bf06-46d7-96f3-395cb159217b@kernel.org>
+Date: Wed, 19 Nov 2025 10:06:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251119-frist-vertragen-22e1d099b118@brauner>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/9] mm: add atomic VMA flags and set VM_MAYBE_GUARD as
+ such
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Jonathan Corbet <corbet@lwn.net>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>,
+ Zi Yan <ziy@nvidia.com>, Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+ Lance Yang <lance.yang@linux.dev>, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, Andrei Vagin <avagin@gmail.com>
+References: <cover.1763460113.git.lorenzo.stoakes@oracle.com>
+ <97e57abed09f2663077ed7a36fb8206e243171a9.1763460113.git.lorenzo.stoakes@oracle.com>
+From: "David Hildenbrand (Red Hat)" <david@kernel.org>
+Content-Language: en-US
+In-Reply-To: <97e57abed09f2663077ed7a36fb8206e243171a9.1763460113.git.lorenzo.stoakes@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Nov 19, 2025 at 09:45:46AM +0100, Christian Brauner wrote:
-> On Tue, Nov 18, 2025 at 08:09:41AM +0100, Christoph Hellwig wrote:
-> > No modular users, nor should there be any for a dispatcher like this.
-> > 
-> > Signed-off-by: Christoph Hellwig <hch@lst.de>
-> > ---
+On 18.11.25 11:17, Lorenzo Stoakes wrote:
+> This patch adds the ability to atomically set VMA flags with only the mmap
+> read/VMA read lock held.
 > 
-> Ideally we'd be able to catch unnecessary exports automatically.
-> Which would also be nice because it would mean that we could enforce
-> automatic removal of unused exports. I'm pretty sure we have a bunch of
-> them without realizing it.
+> As this could be hugely problematic for VMA flags in general given that
+> all other accesses are non-atomic and serialised by the mmap/VMA locks, we
+> implement this with a strict allow-list - that is, only designated flags
+> are allowed to do this.
+> 
+> We make VM_MAYBE_GUARD one of these flags.
+> 
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> Reviewed-by: Pedro Falcato <pfalcato@suse.de>
+> Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
+> ---
 
-The problem with that is that it is so configuration dependent.
+IIUC all other flag modifications need a write lock, so this should just 
+work.
 
-Also there are occasional cases where we add exports in one merge window
-for the users to appear in the next one to reduce cross-subsystem
-dependencies, so we'd nee to do this manually.
+Acked-by: David Hildenbrand (Red Hat) <david@kernel.org>
 
-Maybe just having CONFIG_TRIM_UNUSED_KSYMS outout the unused symbols
-in a log file and manually looking over that for various allmodconfigs
-might be a good start.
+-- 
+Cheers
+
+David
 
