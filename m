@@ -1,101 +1,174 @@
-Return-Path: <linux-fsdevel+bounces-69034-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69035-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F6CBC6C389
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 02:15:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D340C6C3CC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 02:25:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 81CEC4E729F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 01:14:58 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4DD414EFF4F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 01:23:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 559C522A7E5;
-	Wed, 19 Nov 2025 01:14:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5764523B60A;
+	Wed, 19 Nov 2025 01:23:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="XahLDQ/m"
+	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="QdclkoG1";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="toI0Qua+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from fout-b8-smtp.messagingengine.com (fout-b8-smtp.messagingengine.com [202.12.124.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7423822154B;
-	Wed, 19 Nov 2025 01:14:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDD221AC44D;
+	Wed, 19 Nov 2025 01:23:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763514891; cv=none; b=N1GeDBxicen6cquyQGQgJYAKHz/ahtMU9KgsEwclg3dzkRL4YUr+f4+ZGMHaizVK90M3NclwbnuY8q589cEmmqfLJoqBxpdiP31HzYXGJLexN9DjZxyabjtv9HPVJIQ0Pd5kzhIjeH9FeXZwGoQFn9/+XUUdzhgt4+EVQwdSDJc=
+	t=1763515397; cv=none; b=Rjmjh/l/J2/3FkuK0902tQnqMtq/viBt710Xe6f+vIJZaCiK4Wksbpjwhj4vcC4YLkcBhUkFTxIvErDfbjYt8nuOnhGFxWnET+x+hV7z8m02moWMoWkguEOszuOyi71Of45ix0hZ20Gs2BTgk1X4XT65Z1CxOIpJlheuFeNm7Yc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763514891; c=relaxed/simple;
-	bh=Wu7LjLAOBb0+e+MQ/Py5o+8QQLdZuMlq15GHQwj4YeM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T/WcI+ppamKGHc0QPEstCxM2iLygJtkbAyYYpqenKcjxN5qfXmUfxxX3Y5rFOCgD0fEqZNHaqUuECvp81YTZHSviUQwt74ekfcpOTLBLCN8XTao/f8BBLw8+gVHVj9IAa0xGAuH90Y5+aDXY96wPdHusO7gvVXtZSzKAlQZveQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=XahLDQ/m; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=kRUa2+eEEst0Qe7yL2Pj2TauMzIwNCDek+dlaGZLtqY=; b=XahLDQ/mnKV7z4FMalMSxSBhh9
-	7bkDhrG1p2tqEOMkPLkxl5kr7Nc9VtceSrFcJgqAPNJouYnHJO/C0D1CJsQvz4Y5zCJJkXt7iw61C
-	qvEkUEvsL/YhyVTtxAe6mxmssV8SPP4/+d61o0V5BYqOLWfzYtVGE+wKLBVZKAEPY7lwa3mpj+m9x
-	/XDsyZQAWhDdSyyfg8LvcvWZ6JIDtSF4R83QJa3SUqhH5bcuTBoUrV00kI3giXitxOAgfcXgHD0g9
-	JJD7F1hSNDn2rQZZlovMY2g4jFEAq24lDMD82LWC0ogtA09NHT2W3CDqTAjdvij8RGD2SzSeRUXio
-	b9enR0Zg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vLWmV-00000004AzB-3MnT;
-	Wed, 19 Nov 2025 01:14:47 +0000
-Date: Wed, 19 Nov 2025 01:14:47 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org,
-	brauner@kernel.org, jack@suse.cz, mjguzik@gmail.com,
-	paul@paul-moore.com, audit@vger.kernel.org,
-	io-uring@vger.kernel.org
-Subject: Re: [RFC][PATCH 11/13] allow incomplete imports of filenames
-Message-ID: <20251119011447.GM2441659@ZenIV>
-References: <20251109063745.2089578-1-viro@zeniv.linux.org.uk>
- <20251109063745.2089578-12-viro@zeniv.linux.org.uk>
- <257804ed-438e-4085-a8c2-ac107fe4c73d@kernel.dk>
- <20251119011223.GL2441659@ZenIV>
+	s=arc-20240116; t=1763515397; c=relaxed/simple;
+	bh=3BHJOsDDaOjY+Ze1ZaiDkI2nwvPFCAPbRYjw3SnvSQk=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=ksRUjFmWxoMYRMJ0zW61BRclsAVxxAZLxS8YrCBE9c4KR0DwIQ/Jonuxw1BanT41NP2DfCzWlGaLsx/BOcKsymLvL8q2JZLwmA5t449f053rPfT62cluLi9npxqEA21v/fPDtFWOdshzpTJFg2MPMgdXY85/h00g8iwQbDLgAZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=QdclkoG1; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=toI0Qua+; arc=none smtp.client-ip=202.12.124.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+	by mailfout.stl.internal (Postfix) with ESMTP id 8745B1D0017D;
+	Tue, 18 Nov 2025 20:23:12 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-03.internal (MEProxy); Tue, 18 Nov 2025 20:23:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to; s=fm3; t=
+	1763515392; x=1763601792; bh=n2MGgKYiTWxHbSt+dHoU+fa1gyL54VHILoL
+	P5RKKXLY=; b=QdclkoG1kvEF+kfN7YN/XcYFix+N5zo8Y/gHLU5KjHmZYSToJE0
+	R5JtltQG5LjL2t1yGNIbYhVQMhykL6MMni9YA8Y5Atfeq2db0E1jopd5mDaDs4n9
+	tUkwbWXLboFUReT7ONUntnIF8j17ilp2BoWwCKFNEKb6YyZbX8AP9sNdEcu1igSD
+	UHxE8nsDmFyCCmwg5lFr0t/4aIpZCJhgREo5K8+BIVz+WBCxR8z88Ke3c3yf3y+r
+	m1d4triTVmpyFchv/1zAlk5lHIhejFJMWUZYVzHik5rhlzAHipmnwkmnNRniKN05
+	sazRpSAy7VyQHZrUf92QK5KnpMaWugvp8bg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1763515392; x=
+	1763601792; bh=n2MGgKYiTWxHbSt+dHoU+fa1gyL54VHILoLP5RKKXLY=; b=t
+	oI0Qua+riG7y8gKygXou/aYOBw5XGwk+DgAETOSTylr6z2uKy1XGRd5wAS0uyvnz
+	4sYigzWLd0EjUg2f8V54dyt0OTKXYiDpOIlX/Ae/A0LO/854iJies3DUArWWVYR0
+	KQJInc+SPOnAHCe7CjfkSXTjQxbj0Ay2eRJ+QajFBDfG7y9cQT0xhIXJRNVmUN1l
+	C+c9050gyV+D9fHlMytvI3owvhXDhoH/+Gk8d0yaPbN5c28MRenD5OMzbTTwi7LT
+	f9JlcI0O9794vccgGBen5ym+YUKK+i7OS7husePEp/ikwKM+FEl3bbob2pHlVOZC
+	fNE8h8/ReNWI+EBKKs2Ug==
+X-ME-Sender: <xms:_xsdaQKZdDm7ylRJQfWTKziJxcrt4ZlKhBkEyywWms2X9L8uUyV6kw>
+    <xme:_xsdab-Ru66599RME46Fn9lJy41CL9eo_3wE6IzU63yF9BN1eWBMjMLc1mLT-O2cg
+    _wbP9hUdzIIJMkS1W67QeYXoHuna4OADh6-kia5LYhXeqabGw>
+X-ME-Received: <xmr:_xsdaXLMSQR0HDbm0t-I4PkU9peWbsmUzw1p-IjBHKzSxVSszoWDc3pgTDwrVoR5pAD4D2sn9IM2Gv0qAgp0cwzWF7KRT2yRrWerLwDkFJHG>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvvddvkeeiucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurheptgfgggfhvfevufgjfhffkfhrsehtjeertddttdejnecuhfhrohhmpefpvghilheu
+    rhhofihnuceonhgvihhlsgesohifnhhmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnh
+    epudetfefhudevhedvfeeufedvffekveekgfdtfefggfekheejgefhteeihffggfelnecu
+    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhgvihhlsg
+    esohifnhhmrghilhdrnhgvthdpnhgspghrtghpthhtohepudegpdhmohguvgepshhmthhp
+    ohhuthdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpd
+    hrtghpthhtoheplhhinhhugidqnhhfshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgt
+    phhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprh
+    gtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+    pdhrtghpthhtohepthhomhesthgrlhhpvgihrdgtohhmpdhrtghpthhtohepjhgrtghkse
+    hsuhhsvgdrtgiipdhrtghpthhtohepohhkohhrnhhivghvsehrvgguhhgrthdrtghomhdp
+    rhgtphhtthhopegthhhutghkrdhlvghvvghrsehorhgrtghlvgdrtghomhdprhgtphhtth
+    hopegurghirdhnghhosehorhgrtghlvgdrtghomh
+X-ME-Proxy: <xmx:_xsdaaF9XQoTzVDEnKvzgqs5aB29bT4RpSbEPtLJyC2xAfZk31ok4Q>
+    <xmx:_xsdabyWwwoiByplJZ9O1KcRcgxxBKVobqcVuVHGozjCQuOxt9xbrQ>
+    <xmx:_xsdaT6G56xgELWalyX3zkqHWnYRBvVh-BzNd5hsgrxwPjvu7CIYgw>
+    <xmx:_xsdaQes6XzKGWv6fg5EyZ_GrQOezJ7oVUnzY9jAUhlLBb8HJx38hA>
+    <xmx:ABwdaVV8gI2AyT87anhxrpgiwOH85TwSNl_EomBS0-hFlpIawynUeFmq>
+Feedback-ID: iab3e480c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 18 Nov 2025 20:23:07 -0500 (EST)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251119011223.GL2441659@ZenIV>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+From: NeilBrown <neilb@ownmail.net>
+To: "Benjamin Coddington" <bcodding@hammerspace.com>
+Cc: "Alexander Viro" <viro@zeniv.linux.org.uk>,
+ "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>,
+ "Chuck Lever" <chuck.lever@oracle.com>, "Jeff Layton" <jlayton@kernel.org>,
+ "Olga Kornievskaia" <okorniev@redhat.com>, "Dai Ngo" <Dai.Ngo@oracle.com>,
+ "Tom Talpey" <tom@talpey.com>, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
+ "Trond Myklebust" <trondmy@kernel.org>, "Mike Snitzer" <snitzer@kernel.org>
+Subject: Re: [PATCH v1 0/3] Allow knfsd to use atomic_open()
+In-reply-to: <cover.1763483341.git.bcodding@hammerspace.com>
+References: <cover.1763483341.git.bcodding@hammerspace.com>
+Date: Wed, 19 Nov 2025 12:23:00 +1100
+Message-id: <176351538077.634289.8846523947369398554@noble.neil.brown.name>
+Reply-To: NeilBrown <neil@brown.name>
 
-On Wed, Nov 19, 2025 at 01:12:23AM +0000, Al Viro wrote:
-
-> int putname_to_incomplete(struct incomplete_name *v, struct filename *name)
-> {
-> 	if (likely(name->refcnt == 1)) {
-> 		v->__incomplete_filename = name;
-> 		return 0;
-> 	}
-> 	v->__incomplete_filename = <duplicate name>;
-> 	putname(name);
-> 	if (unlikely(!v->__incomplete_filename))
-> 		return -ENOMEM;
-> 	return 0;
-> }
+On Wed, 19 Nov 2025, Benjamin Coddington wrote:
+> We have workloads that will benefit from allowing knfsd to use atomic_open()
+> in the open/create path.  There are two benefits; the first is the original
+> matter of correctness: when knfsd must perform both vfs_create() and
+> vfs_open() in series there can be races or error results that cause the
+> caller to receive unexpected results.  The second benefit is that for some
+> network filesystems, we can reduce the number of remote round-trip
+> operations by using a single atomic_open() path which provides a performance
+> benefit. 
 > 
-> and have
->                 if (ret == -EAGAIN &&
-> 		    (!resolve_nonblock && (issue_flags & IO_URING_F_NONBLOCK))) {
-> 			ret = putname_to_incomplete(&open->filename,
-> 						    no_free_ptr(name));
-> 			if (unlikely(ret))
-> 				goto err;
-> 			return -EAGAIN;
-> 		}
-> 
-> in io_openat2() (in addition to what's already done in 11/13).  Workable or
-> too disgusting?
+> I've implemented this with the simplest possible change - by modifying
+> dentry_create() which has a single user: knfsd.  The changes cause us to
+> insert ourselves part-way into the previously closed/static atomic_open()
+> path, so I expect VFS folks to have some good ideas about potentially
+> superior approaches.
 
-Note that copying would happen only if extra references had been grabbed
-and are still held; that's already a slow path.
+I think using atomic_open is important - thanks for doing this.
+
+I think there is another race this fixes.
+If the client ends and unchecked v4 OPEN request, nfsd does a lookup and
+finds the name doesn't exist, it will then (currently) use vfs_create()
+requesting an exclusive create.  If this races with a create happening
+from another client, this could result in -EEXIST which is not what the
+client would expect.  Using atomic_open would fix this.
+
+However I cannot see that you ever pass O_EXCL to atomic_open (or did I
+miss something?).  So I don't think the code is quite right yet.  O_EXCL
+should be passed is an exclusive or checked create was requested.
+
+With a VFS hat on, I would rather there were more shared code between
+dentry_create() and lookup_open().  I don't know exactly what this would
+look like, and I wouldn't want that desire to hold up this patch, but it
+might be worth thinking about to see if there are any easy similarities
+to exploit.
+
+Thanks,
+NeilBrown
+
+
+> 
+> Thanks for any comment and critique.
+> 
+> Benjamin Coddington (3):
+>   VFS: move dentry_create() from fs/open.c to fs/namei.c
+>   VFS: Prepare atomic_open() for dentry_create()
+>   VFS/knfsd: Teach dentry_create() to use atomic_open()
+> 
+>  fs/namei.c         | 84 ++++++++++++++++++++++++++++++++++++++++++----
+>  fs/nfsd/nfs4proc.c |  8 +++--
+>  fs/open.c          | 41 ----------------------
+>  include/linux/fs.h |  2 +-
+>  4 files changed, 83 insertions(+), 52 deletions(-)
+> 
+> -- 
+> 2.50.1
+> 
+> 
+
 
