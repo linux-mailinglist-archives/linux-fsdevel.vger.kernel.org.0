@@ -1,211 +1,249 @@
-Return-Path: <linux-fsdevel+bounces-69086-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69087-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DCB8C6E960
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 13:51:53 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0021AC6EA4B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 14:01:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sea.lore.kernel.org (Postfix) with ESMTPS id D73CB2E023
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 12:51:51 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F2AE44FEB71
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 12:53:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D472835F8BC;
-	Wed, 19 Nov 2025 12:46:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 744763612E6;
+	Wed, 19 Nov 2025 12:49:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hammerspace.com header.i=@hammerspace.com header.b="R5cdKvt2"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YD8GoMr3";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="ia0W/+1C"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11020125.outbound.protection.outlook.com [52.101.61.125])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E20435FF47;
-	Wed, 19 Nov 2025 12:46:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.125
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763556413; cv=fail; b=dhCvLhBlQ03CHWOlTidpagNQHvYgQOc7WXav1gm7l4oSBHo1q09D7gBzv010orciR4102gO1XctnAPBgRoDAjgxHI6nYBV9x8U0hKL9GnoKdt/5rvcS5ytFM1E3Qklvfp6nA7KllYIiEiPVc9gn2iTpFZ7sCWASUPhQ0P7o/jSs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763556413; c=relaxed/simple;
-	bh=D9PUjxbEiMTrUSMk4l66BWNiH+Q6KLCmau40oATESNI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=pTaoFnFzB5/O0fytPTODx5AvrD1i6ajbwrn1yVTj0Yu4kMrhclgnHhIm5hgzMYKcIIJAX0WdK2kxbMmE3SWgfUN02gFVAE9fUv91ou9s9xVO/OpXYjaJ/Qjch3RapOaaU0ZRZaB4BN6iF3hrleums3ancxpDP0CaTR56IFspllM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hammerspace.com; spf=pass smtp.mailfrom=hammerspace.com; dkim=pass (1024-bit key) header.d=hammerspace.com header.i=@hammerspace.com header.b=R5cdKvt2; arc=fail smtp.client-ip=52.101.61.125
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hammerspace.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hammerspace.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=MbAx1KfYaV/Khj5mhnCAgoYhCsfag3uTWK6nss6DAPCoqu603HjnjOmWbOqklAtMN5Mh0WZ2G23PWljQdd9awCvcP1KlSFIepQDKezlmUKsxooSWWffR8IdBofMMtwjYdsiLtHIdUt/uF8LOrjksxyf0tsdBoc764dDNxAibYNb+IAtbl+zBjoYDQ5a34UxQJp2v7bYSeP2nECV29OtTdBI+j36MrySTDloeUF+suhwoUb3v4lbL9n/6fpnT6coOc6SliC+GBOM40BmSKtOMsMCTddUFawRZF+PK9GprFl1Xiwzbdf1gDn3k08TZGpVst//KZwfYWlQosqa5YAvYIQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Hw3amHdHdwbYV6NEFGKAopJGhUsvLI59J/EyJaN/VJk=;
- b=LFEvLQ0o4IKeQvxFV1LAhRFm1AcBi8DvQO8v8FnK0oT7p48xZzJ9qlBvtM41VWlTv0CLN2SsYN8qD042ylhgGkQs4aMSGpQyw0KR1gmywW7z3QAu4ibsAhN5O4h3/ym8e2QbqFWfe5GvldHn9ASkUo8ULhtekgu3yx5MFsdDsCS2md8nDHKxoBGR0HnJvgWecyftkcqqWIxeXB8r4+dKew6GCbgo/9eo0hbNAABL4mc+FE9omRS9cliFogK6ee+P/8Rki5ospMj8hNgALvwYPfFeO2z/OzWy3ByQe5PtJNCELTppvc/kfxqRvl81DKJ5ewDmkdWz6XR1e3eSJRYlgg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=hammerspace.com; dmarc=pass action=none
- header.from=hammerspace.com; dkim=pass header.d=hammerspace.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hammerspace.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Hw3amHdHdwbYV6NEFGKAopJGhUsvLI59J/EyJaN/VJk=;
- b=R5cdKvt2oJb4sYw7GNbeQb1keRTZAiIzGjSQ6Cm6VS3ve+xFFHIN+PNgFU3cL9uQwM+0ccHJwUifTBvb1a0BUVlRDCng3BH9fps1d4Heoy08ws+cdu0JjRtuD8zz2jml/7Hkfls/hebL8A8knlRd2BG8Fi1OYkkubRZSr965m+s=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=hammerspace.com;
-Received: from SN6PR13MB2365.namprd13.prod.outlook.com (2603:10b6:805:5a::14)
- by CH0PR13MB5097.namprd13.prod.outlook.com (2603:10b6:610:ec::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9343.10; Wed, 19 Nov
- 2025 12:46:47 +0000
-Received: from SN6PR13MB2365.namprd13.prod.outlook.com
- ([fe80::9127:c65a:b5c5:a9d]) by SN6PR13MB2365.namprd13.prod.outlook.com
- ([fe80::9127:c65a:b5c5:a9d%7]) with mapi id 15.20.9343.009; Wed, 19 Nov 2025
- 12:46:47 +0000
-From: Benjamin Coddington <bcodding@hammerspace.com>
-To: NeilBrown <neil@brown.name>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>,
- Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>,
- Tom Talpey <tom@talpey.com>, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
- Trond Myklebust <trondmy@kernel.org>, Mike Snitzer <snitzer@kernel.org>
-Subject: Re: [PATCH v1 0/3] Allow knfsd to use atomic_open()
-Date: Wed, 19 Nov 2025 07:46:43 -0500
-X-Mailer: MailMate (2.0r6272)
-Message-ID: <0C9008B1-2C70-43C4-8532-52D91D6B7ED1@hammerspace.com>
-In-Reply-To: <176351538077.634289.8846523947369398554@noble.neil.brown.name>
-References: <cover.1763483341.git.bcodding@hammerspace.com>
- <176351538077.634289.8846523947369398554@noble.neil.brown.name>
-Content-Type: text/plain
-X-ClientProxiedBy: PH8P221CA0061.NAMP221.PROD.OUTLOOK.COM
- (2603:10b6:510:349::17) To SN6PR13MB2365.namprd13.prod.outlook.com
- (2603:10b6:805:5a::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9BA23612D8
+	for <linux-fsdevel@vger.kernel.org>; Wed, 19 Nov 2025 12:49:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1763556585; cv=none; b=ff0bTQ0U8rVnlde0wE+rO0w4Qb+Upoq1MVkb3nO58W4i7TbsFeu5dumYYVOwiPS66Dmk1LIVjmowzqh9S+8Xx0p64LcqAHdzPYfFkedscFXisloMse1pPEypqxAVUkFNdNSsAQ9Yj4KCGysf+fZwD+DpIWOXRTpjOpGAsOUpfLU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1763556585; c=relaxed/simple;
+	bh=Aml9mhbo5ieOTq8KwkIuEkeGr1B1i0U6iqTTRe5f7Zo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RcuxVqbO1/mP4fQBe1DrXJ6qnN+6P2rp5Pkcj+Y3Qto6wCcwB/3CTVbM1wVCVPNuM3I6tUjcmAnFP2Xzx57/+g5HVOkMelUI8o+vqNCeXgVTy14vwh0nn1yeFkK89lGuPixuVKEB7rT9eVXeSHfTKBvKur8FOwuEEDw3y43CWqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YD8GoMr3; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=ia0W/+1C; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1763556580;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=flkABsEx2eMbyuz8BLkDw0Qlh05ntEkhFH7p7w45OwQ=;
+	b=YD8GoMr39Q3Qi2FH5id1z5PvRrGuNTW9GbhEfoqftNXrop62w1hJ3GRRvmQJQbxteDGgn4
+	DcJL1mq4dNEQBpy3HT9lvT2P2SoCq3T0YQKy4Rz/zeZqMRakq7Ghx7C/EIdBCEWfAYIa4l
+	UQ283K9Ty1eyZi1oKecQL89ORqe/cRo=
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
+ [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-96-eUCduBQiP0KU5ogyVhoBtA-1; Wed, 19 Nov 2025 07:49:38 -0500
+X-MC-Unique: eUCduBQiP0KU5ogyVhoBtA-1
+X-Mimecast-MFC-AGG-ID: eUCduBQiP0KU5ogyVhoBtA_1763556575
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-298389232c4so106390855ad.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Nov 2025 04:49:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1763556575; x=1764161375; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=flkABsEx2eMbyuz8BLkDw0Qlh05ntEkhFH7p7w45OwQ=;
+        b=ia0W/+1CXj//F4QwCbEfblaDrxfK5qzB6pLz1YTm2o1ebEnHDyjdCuqiRKY6vGfGV8
+         UIn8uJuVMp0W93MKqflQzuM7GA6uJ9jgxuGObEjinFGWvfY/cQzon6w5FWvgWaAjC5El
+         traZkpN3kubUAv6rn1ykkP4yy+5LIAg2PAbg1jSLP6SD8BGknjrJTkFTLbyyaxGhakgY
+         t0EeZ3AgMyVV6YUeM4fUJ7EESPIXdoySI3P4Vd04xn9tiMKUsy2Xn6F+tIAG6S6E0rdC
+         sPoT7vS1fSTT3qvIWHd4yaoz8AOe3TEXbOgkQUusowzdSM8lqTHN9YC7CfoPeUP2ZMYw
+         /tKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763556575; x=1764161375;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=flkABsEx2eMbyuz8BLkDw0Qlh05ntEkhFH7p7w45OwQ=;
+        b=S5M0zAiVXf3uXTRpVaQQKsx6mVXil3iFVKm/+BeaysYSq1p2bDFuuJlKwInkT9Ki76
+         4r9QKi/xSksWB86dsmeIvlTOkO4RU1fTy+FdiOJ75dBnYQQ6AI6KOCjeoYZxsFAQ8iPz
+         VBuFNifub00Kwkq1yw9hQ/pI8V2m98AkziV3BEPZbbUSIUmYHxuRNM75Nu14A+3vHZ0f
+         yjYGXtsv8FHa0Po0aL0mPS++FrQfdq1JqxceRNn1jXUrB48z+YzNOgFX6cXwGVNiNd9J
+         MKIVQICca1mvq9fOc/nn0R9UQoH5rB8UjpTiS8/QmLRqlO8oht9cD7K0uxbfCg0QaYJp
+         bLuw==
+X-Forwarded-Encrypted: i=1; AJvYcCVtJElZ0F2pXLJXsLqthPe7M+OpqFWCUaAeN217d5HuoY4+qYE3930ZntEjN9kucqffx04+5le27kjeuikf@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZ1ihGqMCsQaWbWEgbjINrKunAKwg8YzytG/txHjTASXk4DlWs
+	hwkm2bVn5a4B1aXkKVzU+V2Ufu+/xn3gG8QXm44SbPVNtTKPRV1ssrdARHdNsMglukV1+cL6Smu
+	9rFg4ZfqVNrLAVFQGysulORQIVltP2QrGrt9ZLexGAbj2ed5s+a/TCzvCpbs+bkLGy9E=
+X-Gm-Gg: ASbGnctfj5i5PQmhq7d/qdmzgVe0LtmAl/HVw1Wvjm7mpVkB0fOjW75TWPwXa2Y/ASw
+	PxNxgOnUmo97njBEbhsb2uM8OyaHNR1KF6QfQuUQ9Cc+FaLiDo2aaHItTevdQkQ8bkmc0fTk2WK
+	k2SNJ0x6QN51GOXHnJtJMapbt0A0X0GAmUsKDV5o0WrC2DSLs6q3+KJTd2K4OyESf/VcX5I9w4O
+	kT8x/beYs/nvIBnuiWgOKHW8QBx2FG+btUz3H6Db4BZwOEHacdrSHwUx6XhOmfGY46/gPWPhZ3f
+	4p80kivSSfD14mKUPbM2ulHTki7UHPGB9B4yq485VHejL7zXDKOcxGCfC2CH+qc2am2o6Si1ehk
+	xPvQg5c+J4oPaTkibkvcl0F95SztCuNkbh9aHrWSP4OkUwxM9rg==
+X-Received: by 2002:a17:902:e788:b0:295:9cb5:ae07 with SMTP id d9443c01a7336-2986a72bfa8mr210273915ad.38.1763556575377;
+        Wed, 19 Nov 2025 04:49:35 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHbH9UiL2wp1w2nlF+UYaofJ7mKdhhfcN9stx+h2/YWunOFbKhq9ZMAdbKY9c4oxzla47t0Ag==
+X-Received: by 2002:a17:902:e788:b0:295:9cb5:ae07 with SMTP id d9443c01a7336-2986a72bfa8mr210273645ad.38.1763556574905;
+        Wed, 19 Nov 2025 04:49:34 -0800 (PST)
+Received: from dell-per750-06-vm-08.rhts.eng.pek2.redhat.com ([209.132.188.88])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2985c2b0d68sm208240305ad.61.2025.11.19.04.49.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Nov 2025 04:49:34 -0800 (PST)
+Date: Wed, 19 Nov 2025 20:49:30 +0800
+From: Zorro Lang <zlang@redhat.com>
+To: Jakob Unterwurzacher <jakobunt@gmail.com>
+Cc: fstests@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	Miklos Szeredi <mszeredi@redhat.com>
+Subject: Re: [PATCH] fstests: add fuse.gocryptfs support
+Message-ID: <20251119124930.mefocqn25p3j2fbm@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+References: <20251116184545.3450048-1-jakobunt@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN6PR13MB2365:EE_|CH0PR13MB5097:EE_
-X-MS-Office365-Filtering-Correlation-Id: 382ebcc7-4bd5-49bb-315d-08de2769b390
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?6HK7W+bZfJUUEvL6S5LFFft7mZtTzWhk1KH/5udZrkslJYX89tqcPwGNUnEv?=
- =?us-ascii?Q?LJFyrEsf4qeVb/Z/WocSxM97hrF481DK4rrcyNXsqNKymcBvV9CIYZVK0Ymx?=
- =?us-ascii?Q?YWLIckXx0nj51g3dzgSrWYx+CmX4e8dyj9QQsTmQRZM45oJIZ06yIP1+0Aev?=
- =?us-ascii?Q?OT8xeEet4+ybWoSdbo394WgVKhf2RqKDmIpZd1Euc6TlW5crDUrPYjO0hCCj?=
- =?us-ascii?Q?B1ldWKtnbghcxkuEbXlE8NgDbpQkDc8msjS2kwg5+dGC7CmqPx0ajB9JY0eu?=
- =?us-ascii?Q?n0Y7A+mSTZIv50eWiZYrjpBmY3s+1gDSfA8R4mvFWk52qUsWU+fkHtQk6z46?=
- =?us-ascii?Q?UwLRs8TKB5E4IgWdw/6UvA8qg/l5N6T5dLarOI+o9vnR7qnbNU42fhNy+Lw7?=
- =?us-ascii?Q?f6Wf19lU5oWpGvxPFYcH4cOmQdnOBssYBv5Sg95qMjNyQ8Z8CfDutbNM3hpC?=
- =?us-ascii?Q?v57OZB23vlEffXZy4OE1ybRxnQb0QATFiaAQHe6Nb8/rBSQSSqXmN2jWJnMO?=
- =?us-ascii?Q?1HIr1Rg91h3CqlzbBNS5lB7HgP7CpyecnnFgliq7/7Lw6OoUR58o5YeZVcVy?=
- =?us-ascii?Q?n5zvlgfpSmpBT8/3VJqZB0+rF2jCbtJkOa2WHQYRhsqsIJGsB0uSZkO8QiPW?=
- =?us-ascii?Q?1nVp6BVSWiQQoPbCb7o5CzmLKpospWwuAedD9xfgR+2BllYXY+gM72ZXFPWv?=
- =?us-ascii?Q?dkLnx6D4RbS63o6iD0XaFZJTqrudkf9s3XDl1boDvUGpFRFpglEv1Nkrvly9?=
- =?us-ascii?Q?nP+AENqXHapbu5QE1ZH98Frd0ocloNxic+phNwSGYqyJawIgE2HFwx4OK9V+?=
- =?us-ascii?Q?V/IJqgutknX/sjLIfvGP+rfrQ/VOCzeVvQLc1leAOce7jcipuJpIHJ7mKihO?=
- =?us-ascii?Q?rlIXtGIp55tH7I7f9p5rC9qzwvX4gcNZosyaabg1rR0lq3jUO7Ubaqe4p4yL?=
- =?us-ascii?Q?hFTwhfQEoVMWZe48n1WX1xAzXg40NDOPzNcwQEnX3YWifXB/5uhEzla3z422?=
- =?us-ascii?Q?Xe7uB+Tb0C8bDFAbeZynww4sE4vBPjNe1tbPZCApKdq7IEg/NvufFDW0NcBp?=
- =?us-ascii?Q?XRMqIUoUhDEQNEzcTRGCR6I104MRIMF6nqceFuMh6OyGlX69ZPdWxUOssuk7?=
- =?us-ascii?Q?WZTipLkwM+qX+ik7ykeJZSiZ6lEpnsEqWSWiIJ5hal+C6do3HOUVTCAeICfm?=
- =?us-ascii?Q?8BfQYFb7jpGFYmwiwmg7ReI+aUJUnwqghwKE2n095taun+EYY4jV7+Up2gjD?=
- =?us-ascii?Q?wYK0fIE/4MuUaWodDsHyGaF6VM0Cdh2TdvnthquHPIjF/QITe9qFECua7TqG?=
- =?us-ascii?Q?QN+BPS0yZPw+EPNGhrxPav4vWl6FtXXlfdwMbaEEZK5pN/ozonsYPNEBJx5n?=
- =?us-ascii?Q?v17mx5vgAAwtDZQOl7QozIptrc7YO6ePKZxpfbI5hyGty2Gwh9EtBqUNXFYc?=
- =?us-ascii?Q?byMRrQbzDF2WnYQQyNgkfjQ0bB4RUb7I?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN6PR13MB2365.namprd13.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?DE158B6BaUX+eC/YH3P910rs89XzIjOZCnq7aHylj3KvuCgZ4tP+51m9EcQy?=
- =?us-ascii?Q?C8ZHU08AqxnG3bztwRhmDkz5FZzhHeYTXdgyIvMCbzpPw1GywsfdvAJExTsz?=
- =?us-ascii?Q?MLdcF7w5fySxDqkXvlVvZAWmgUFowXSo5UfrCmnqKayNUiuzK4nyECRCliEx?=
- =?us-ascii?Q?cvlXZLkL0YCNtDu4yTWUBxgJr6pA1uGrNvUIW7As+tEqtMFVQ4gmPw+2QZKW?=
- =?us-ascii?Q?SxtNxaq4MvMXCCRniLJamFFcS0WlNEW5yUrKfDGo0HPwT/t/yVUAjeKPiMRF?=
- =?us-ascii?Q?RMA04TBGGT0kKA+2yjYHXw8cPCDQmbYqu1+mrkwpS33E0Uhd6O/J7ynaZRjz?=
- =?us-ascii?Q?hnyAlilnk3Favzmlkgwa+pifUlJbuHv3/5/5m3sli6SY1qu+mgvP+u1NIKSE?=
- =?us-ascii?Q?FQFLB/y9jDKqKol795WzIQz6cy8MkP7j4USMNjitsUtAcNbKgjDQWoXQWjUZ?=
- =?us-ascii?Q?IVNQghiaJK3dheZ26wcW6c82sd8vGiS6shUInUlSuXSN93E7yqKNHQP/RgbD?=
- =?us-ascii?Q?mNoCzht4iWKF1i+nOzqSSQwCv9SASTTwTMthmoW0+Po+Up8Ij6JpQzkNEK7y?=
- =?us-ascii?Q?7hncEEj/Bea+IMd44JWBu3uVaruokMJzMQSKdZTSYiGAxMSQ8E1KsfPMG6SJ?=
- =?us-ascii?Q?ymIk0LVUlEAIzyJU1g0fQ+uepf0gwjXYN1QiPw7pJmVqQla+IuOapaLpLDxk?=
- =?us-ascii?Q?+MuZN9S+MYc07pwroo/rybtp3Hfjtm5lQOcZgdKXZGDgiNrTQoci3tn4WoMB?=
- =?us-ascii?Q?b1+A7EMDzlSOknIdAzbMhOlxl3bGdI5MLD8C6Af0bkH7N3Dpd9r1GC+nSsdU?=
- =?us-ascii?Q?uoOJwoJjQZi7PxCqps94r9COFY3H8xVp5ayiJFCuOc7SkOBwFMnIdd9h3eYT?=
- =?us-ascii?Q?ZEQ/L9phnHFGc0bGtWsbdaOVA2bn4hxKopKo60nwzpB4dUp/leBJzj30Mdip?=
- =?us-ascii?Q?awGQsDJJWtAG/f+/9WWjyVUxzK354gt0jb7Bz55bQS2QFfH76+jYzfGlfOnx?=
- =?us-ascii?Q?qHlUMiInNjAHnqcEou/GQCXJRg9Ea85NgI+7KF3AD0SF+F1szxF5VSKj1Oi/?=
- =?us-ascii?Q?OSaYxBTX2nmmE0pyWSrMs51Sh2CIvQ18iFoE9Yn00b1dKoJcGO24F0+/U6D5?=
- =?us-ascii?Q?BrzZ7sDLJC+5raMlueDvQHS3/HpuqIXZfujBXoKbaApfiUSudxYOUFHjFFCu?=
- =?us-ascii?Q?yabAeH+LUj2wZ1WOzm7JZ+vyh0FvKdfOlCne8PLU9nVNX0hau0lQ6Qb1EJh/?=
- =?us-ascii?Q?Rzmnhae0wDs37lINCKKR5Ps2ZAcR+RQMcL5Xiejxcjrmbq5+8wIX1HMsEqAN?=
- =?us-ascii?Q?BcaDH/O+8XNMq08K7gPyR8YA1yww7uCnqQZv26g792zhHBu1Mu3Z5MjrodQR?=
- =?us-ascii?Q?nm1tf3CjxyBvKypu5G/7lCRoL+VgUPOBSI49d7daoJV0ZjBRGnFBWd9LcM45?=
- =?us-ascii?Q?6xEfLo+VH9gw8WKMnvInoi1lzpxKQVIj8gmFLmisqTYiaRwvQkFjy3m0H09w?=
- =?us-ascii?Q?6E1Ja6dC4b/wODrOEwm+lt2bfKctVQ6uM9OWoHZfqANFudsolnDZvVlLtmag?=
- =?us-ascii?Q?FsASh7P6Wxl9WLVKqKnyHU/8+n8HYz9rWVKkl/eBMQZP124yk687i7JM8ZTX?=
- =?us-ascii?Q?Cw=3D=3D?=
-X-OriginatorOrg: hammerspace.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 382ebcc7-4bd5-49bb-315d-08de2769b390
-X-MS-Exchange-CrossTenant-AuthSource: SN6PR13MB2365.namprd13.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Nov 2025 12:46:47.3625
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0d4fed5c-3a70-46fe-9430-ece41741f59e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: KLqqtvFl/URKwRjmcwW7XkmIG2uX/vCYOFmp8e14P2nygQmTpY4Y1gS5R1WHZE2xOgS5YrR/U9IIC2OellZ/RJqS1QCTrIrwl8eurtcLpgQ=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR13MB5097
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251116184545.3450048-1-jakobunt@gmail.com>
 
-On 18 Nov 2025, at 20:23, NeilBrown wrote:
+On Sun, Nov 16, 2025 at 07:45:38PM +0100, Jakob Unterwurzacher wrote:
+> Add instructions for testing gocryptfs, an encrypted overlay filesystem,
+> and a few small changes that were needed for gocryptfs compatibility:
+> 
+> 1) _scratch_unmount and _test_unmount now unmount fuse filesystems
+> via mountpoint instead of via device. Unmounting via device fails when
+> the "device" is actually a directory on a different filesystem.
+> Unmounting via mountpoint always works.
+> 
+> 2) Add subtype=passthrough_ll to the passthrough_ll mount options.
+> This makes passthrough_ll behave more like most other fuse filesystems
+> which do set a subtype. Example from my Fedora box:
+> 
+> 	$ mount | grep -o "type fuse\\..* "
+> 	type fuse.gvfsd-fuse
+> 	type fuse.portal
+> 	type fuse.gocryptfs
+> 	type fuse.encfs
+> 	type fuse.passthrough_ll
+> 
+> With this change, _check_mounted_on can match on $FSTYP$FUSE_SUBTYP
+> for passthrough_ll, which also works for gocryptfs and likely most
+> other fuse filesystems.
+> 
+> Results for passthrough_ll on top of tmpfs:
+> 
+> 	Failures: generic/120 generic/125 generic/184 generic/294 generic/306 generic/317 generic/355
+> 	generic/363 generic/426 generic/434 generic/452 generic/467 generic/477 generic/633 generic/647
+> 	generic/653 generic/675 generic/683 generic/684 generic/729 generic/745 generic/751 generic/756
+> 	generic/777
+> 	Failed 24 of 769 tests
+> 
+> Results for gocryptfs on top of tmpfs:
+> 
+> 	Failures: generic/020 generic/062 generic/093 generic/099 generic/103 generic/120 generic/125
+> 	generic/184 generic/285 generic/294 generic/306 generic/317 generic/319 generic/426 generic/434
+> 	generic/444 generic/452 generic/467 generic/471 generic/477 generic/633 generic/676 generic/683
+> 	generic/688 generic/696 generic/697 generic/707 generic/756 generic/777
+> 	Failed 29 of 769 tests
+> 
+> Signed-off-by: Jakob Unterwurzacher <jakobunt@gmail.com>
+> ---
+>  README.fuse | 34 ++++++++++++++++++++++++++++++++--
+>  common/rc   | 11 ++++++++++-
+>  2 files changed, 42 insertions(+), 3 deletions(-)
+> 
+> diff --git a/README.fuse b/README.fuse
+> index 969dbd5d..df248681 100644
+> --- a/README.fuse
+> +++ b/README.fuse
+> @@ -1,3 +1,6 @@
+> +passthrough_ll
+> +==============
+> +
+>  Here are instructions for testing fuse using the passthrough_ll example
+>  filesystem provided in the libfuse source tree:
+>  
+> @@ -22,5 +25,32 @@ export SCRATCH_DEV=non2
+>  export SCRATCH_MNT=/mnt/scratch
+>  export FSTYP=fuse
+>  export FUSE_SUBTYP=.passthrough_ll
+> -export MOUNT_OPTIONS="-osource=/home/test/scratch,allow_other,default_permissions"
+> -export TEST_FS_MOUNT_OPTS="-osource=/home/test/test,allow_other,default_permissions"
+> +export MOUNT_OPTIONS="-osource=/home/test/scratch,subtype=passthrough_ll,allow_other,default_permissions"
+> +export TEST_FS_MOUNT_OPTS="-osource=/home/test/test,subtype=passthrough_ll,allow_other,default_permissions"
 
-> On Wed, 19 Nov 2025, Benjamin Coddington wrote:
->> We have workloads that will benefit from allowing knfsd to use atomic_open()
->> in the open/create path.  There are two benefits; the first is the original
->> matter of correctness: when knfsd must perform both vfs_create() and
->> vfs_open() in series there can be races or error results that cause the
->> caller to receive unexpected results.  The second benefit is that for some
->> network filesystems, we can reduce the number of remote round-trip
->> operations by using a single atomic_open() path which provides a performance
->> benefit.
->>
->> I've implemented this with the simplest possible change - by modifying
->> dentry_create() which has a single user: knfsd.  The changes cause us to
->> insert ourselves part-way into the previously closed/static atomic_open()
->> path, so I expect VFS folks to have some good ideas about potentially
->> superior approaches.
->
-> I think using atomic_open is important - thanks for doing this.
->
-> I think there is another race this fixes.
-> If the client ends and unchecked v4 OPEN request, nfsd does a lookup and
-> finds the name doesn't exist, it will then (currently) use vfs_create()
-> requesting an exclusive create.  If this races with a create happening
-> from another client, this could result in -EEXIST which is not what the
-> client would expect.  Using atomic_open would fix this.
->
-> However I cannot see that you ever pass O_EXCL to atomic_open (or did I
-> miss something?).  So I don't think the code is quite right yet.  O_EXCL
-> should be passed is an exclusive or checked create was requested.
+This patch changes the required parameter to test FUSE, cc fuse list to get
+more review.
 
-Ah, it's true.  I did not validate knfsd's behaviors, only its interface with
-VFS.  IIUC knfsd gets around needing to pass O_EXCL by holding the directory
-inode lock over the create, and since it doesn't need to do lookup because
-it already has a filehandle, I think O_EXCL is moot.
+> +
+> +
+> +gocryptfs
+> +=========
+> +
+> +Here are the instructions for gocryptfs:
+> +
+> +git clone https://github.com/rfjakob/gocryptfs.git
+> +cd gocryptfs
+> +./build.bash
+> +cat << EOF | sudo tee /sbin/mount.fuse.gocryptfs
+> +#!/bin/bash
+> +exec $(pwd)/gocryptfs -q -allow_other -acl -extpass "echo test" "\$@"
+> +EOF
+> +sudo chmod +x /sbin/mount.fuse.gocryptfs
+> +mkdir -p /mnt/gocryptfs.test /mnt/gocryptfs.scratch /home/test/gocryptfs.test /home/test/gocryptfs.scratch
+> +gocryptfs -init -q -scryptn=10 -extpass "echo test" /home/test/gocryptfs.test
+> +gocryptfs -init -q -scryptn=10 -extpass "echo test" /home/test/gocryptfs.scratch
+> +
+> +Use the following local.config file:
+> +
+> +export TEST_DEV=/home/test/gocryptfs.test
+> +export TEST_DIR=/mnt/gocryptfs.test
+> +export SCRATCH_DEV=/home/test/gocryptfs.scratch
+> +export SCRATCH_MNT=/mnt/gocryptfs.scratch
+> +export FSTYP=fuse
+> +export FUSE_SUBTYP=.gocryptfs
+> diff --git a/common/rc b/common/rc
+> index 8fd7876a..da8be16e 100644
+> --- a/common/rc
+> +++ b/common/rc
+> @@ -512,6 +512,11 @@ _scratch_unmount()
+>  	tmpfs)
+>  		_unmount $SCRATCH_MNT
+>  		;;
+> +	fuse)
+> +		# The "source device" can be an arbitrary string for fuse filesystems
+> +		# and may not be unique. Unmount by mountpoint instead.
+> +		_unmount $SCRATCH_MNT
+> +		;;
+>  	*)
+>  		_unmount $SCRATCH_DEV
+>  		;;
+> @@ -703,6 +708,10 @@ _test_unmount()
+>  {
+>  	if [ "$FSTYP" == "overlay" ]; then
+>  		_overlay_test_unmount
+> +	elif [ "$FSTYP" == "fuse" ]; then
+> +		# The "source device" can be an arbitrary string for fuse filesystems
+> +		# and may not be unique. Unmount by mountpoint instead.
+> +		_unmount $TEST_DIR
+>  	else
+>  		_unmount $TEST_DEV
+>  	fi
+> @@ -5021,7 +5030,7 @@ init_rc()
+>  
+>  	# Sanity check that TEST partition is not mounted at another mount point
+>  	# or as another fs type
+> -	_check_mounted_on TEST_DEV $TEST_DEV TEST_DIR $TEST_DIR $FSTYP || _exit 1
+> +	_check_mounted_on TEST_DEV $TEST_DEV TEST_DIR $TEST_DIR $FSTYP$FUSE_SUBTYP || exit 1
+>  	if [ -n "$SCRATCH_DEV" ]; then
+>  		# Sanity check that SCRATCH partition is not mounted at another
+>  		# mount point, because it is about to be unmounted and formatted.
+> -- 
+> 2.51.0
+> 
+> 
 
-> With a VFS hat on, I would rather there were more shared code between
-> dentry_create() and lookup_open().  I don't know exactly what this would
-> look like, and I wouldn't want that desire to hold up this patch, but it
-> might be worth thinking about to see if there are any easy similarities
-> to exploit.
-
-I agree, that would be nice.  It would definitely be a bigger touch, and I
-was going for the minimal change here.
-
-Thanks for looking at this Neil.
-
-Ben
 
