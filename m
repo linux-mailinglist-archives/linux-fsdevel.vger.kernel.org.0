@@ -1,90 +1,149 @@
-Return-Path: <linux-fsdevel+bounces-69044-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69043-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDAC5C6CCCF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 06:20:00 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40BDCC6CBF0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 05:32:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D205935DD62
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 05:19:25 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTPS id EE6972C66E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 04:32:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7BF230CD83;
-	Wed, 19 Nov 2025 05:19:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBBF93043BE;
+	Wed, 19 Nov 2025 04:32:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RzNCpV0Y"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B89EF30C361
-	for <linux-fsdevel@vger.kernel.org>; Wed, 19 Nov 2025 05:19:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2591A303A22
+	for <linux-fsdevel@vger.kernel.org>; Wed, 19 Nov 2025 04:32:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763529549; cv=none; b=Ydai6iqkqiSSc3LVhH2ltRIVQ83cs6AQOF5Ih/fm0z/NI9iGZTGwfn5OSyRJUOyaOgLEYkLeMbEHdJFQ5X4kG3pYtimiEZ5OK7kk0LIDNGKIsx/R/6+Qlz7PIIUX2AfeUXdkLj4Aw3Kf/kP8h0GDXGomyR6UW2ZwRyvAIc+UU3o=
+	t=1763526747; cv=none; b=kJ0B3yCcfHKaBsw8YsG15fsL6N9+rERV0EtgXpc0zOlsmaGNfVVzmjORLezvMsNxF/GC2bN2ImOy8ymHWVbYnRNDSnq8C2sLS4kweg/wynOWPYd4aWUhpkfEU6ibbjXN3I08eYQ/c82ze0wawJVmVDQzOTbFyMy3S1OwfW3GY94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763529549; c=relaxed/simple;
-	bh=66irg/y7C8vP/7qiKAPYRNi9VYkMnk9pFDFaG4owRng=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=nHYrxi7NMot93innrB8XTb+42tuD6tGAILrLOiQpYLSqyhGyEENRs3J2cSe59zfvOYetgTwBuYhJnXmy+DZFRkWk6panL/kI+jVE5gY2qiPMkHZ3/rNxw4Eqmks/CU+I8KX73gpmld8RUZaIT1Q8hk8Ro9IiN7sk14mNxz/5C50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-43331ea8ed8so58782335ab.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Nov 2025 21:19:03 -0800 (PST)
+	s=arc-20240116; t=1763526747; c=relaxed/simple;
+	bh=J6QpUVaBN7ELwTVyLXvuU4LTNlx718jbhoIxJj0L/R0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=aHAcW9/KYMyC52N4MIDuZ2OJHW2S18iVfKP/wo0qMsS/lkHkhKAvHSrn7spvxiyXf6mjTPaH46Wk3lwbN0PwzA1b8ZLErSvMMY2k2ko0jgdN8dN4MulqL7CEB4kU8P5F2ArJwnOtLdvEmHNGgADvmHvgqBNcB+t+o8k5Fn+daWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RzNCpV0Y; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4779b49d724so4564705e9.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Nov 2025 20:32:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1763526743; x=1764131543; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sjLmqO/zAiu0IkPhB8Ik8VNVezTV8p8dxDm9h/l3wGY=;
+        b=RzNCpV0Y6NZTOkAJgzm3Sn6sWDwgTFldIxa6CadYeX176nanaPIKacruH4IXEyqXJB
+         neJ2dwwdOmjUVijWbCexPFnMhsMmhHPH1UjFs+tohS6I48libgBbEDrXiYq4qswLs0lR
+         zJlJQQgDg7qmEq32PM6/K9jYoX3qAVeRAGzYCQym+IJ4tbAkst7TMtHmRwY4V6rlT1R6
+         RHqH0D9wRCmRxrh0p9fRUUIXEJF+fviF/twFmG31bMXrMMuKnPHxfW3Zz0SeFSS1b6J2
+         D33WOcWqOtAUSPhLdLh1Nv3fRkhXyVTZ9clATG0wXHAakYXDrSyxPbuWZU/Y9oCSQ9eU
+         i9ww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763529543; x=1764134343;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bAccIO2NACimBngnRYo3AqFTiOzlZuN3wkqbb6Dx+WA=;
-        b=fJd6xJZqvLpoyuTdyPFf9tfgH816gFAsN3VQOehWOzKWoQ1MVaBkEVKGOAwspY0KIX
-         LI0ccenmZgFmJBoAEqyceEcRjWXoNhUMJspOgZ0BkLNqRpb3t7N/4U88WSRSQZj9XvvX
-         uN85u8Mbi0geQFub94kZj58R1JYgOvkcrP+BAKZO6ql42/Nm76J3UeDQZYXj334Qkuxd
-         JbLLZgnna66m18oIhdErJfeNsLT13CvKUGrTrNFRuCfJC+m7ltkMPwQYjXE+lG4sRwEZ
-         88cqakYYQx+YTiFLLusbXxFVwXAl/i/cmZxM6V0r3loJYLuMwe4+GOWeFWSIG6sTcML0
-         NhCg==
-X-Forwarded-Encrypted: i=1; AJvYcCX/OTw8Jb2bAieOA9IZj0kfXhdFi++NvADx6d/8tXjkpuZyNebK851fnWVok07YQPZSIHyGWpj/HIXfI9d3@vger.kernel.org
-X-Gm-Message-State: AOJu0Yytm+0KljszcCPt/qQnUP8IUypYQud4SS34ia+yzk4oVMb9DE2D
-	xaF6OPTmlxA0SjWwIXcRaR8gIjDHhkoZ9UE75hR8dAOn0UXyLt2l3IzK5HCUoFJ7DGLTN12JNlR
-	SFZZh2Zg+biuhLhW5rKsX7M+IYUegyyTFK7hADzU1jcUeZ3XJeN1Rt4HaCUg=
-X-Google-Smtp-Source: AGHT+IHTMcSPBDdHwQPC4eX8dn9llg26ONAuOsZb+hKsWFYzFcz4E97PttHIcdqZO+qrrvpaI8sE1xmrYQbkvigWeIA3te9lnmKN
+        d=1e100.net; s=20230601; t=1763526743; x=1764131543;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=sjLmqO/zAiu0IkPhB8Ik8VNVezTV8p8dxDm9h/l3wGY=;
+        b=kc6DeWVV/rnvW3G2hE4Tcye+qKLPw8iTCLeTRXwjZIKFprSEBaodJMgfyBqmkPD+0I
+         WMf8i9ldOCJQxfzvnhWFYrXCRaoAoTcW4BgmURKs4uFknW8fduWO+7Im8GbKgKzHgRZW
+         aeEpuDCYFP1UXjMrZ//pzkJT8Oy9gg7PekfHuprWRMskQ00HPV8mL1w5HatFV1WSlkQV
+         cgINYCVXvQi21ab5y4pxc2VaDWeKF+nfNnuHNM0PyM9sBxMLLmm+InblFeb8swGRA9g4
+         RVgPTFlQhN4xOkjsq6YDbgqSun4DwtPp3XV7dXkMXXf2Bg87ESV9X/niR8WNl4ocgrVZ
+         d8wg==
+X-Forwarded-Encrypted: i=1; AJvYcCUtkOZf6Teii42QMHca6pvuhuQPuz5K0uNL21GqtYWqqZPKOkMtau8tQHYXapah7K4vKhWr0nDyX2gaApGR@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyer+OeO7ctCJlO1mazPyd/blTfko/zQRggFrKTN8LKJnbiJdYj
+	u+ACgqbGARZwT/pz37FKIv6+FqRvMGOuFiV6n1T3X90B2QaXe1szAFSu
+X-Gm-Gg: ASbGncvCY3hwDyTjfgQ/iiKMJnoWPu28NzFEoS5UB6MDuwVrWQW2ySOAvVEe/1cYXOf
+	TuExuwKWKy0CD9E0FzZzVBpsW3h3Kv2Dy/uScHaGBpx+SRl1xbfLKbRavstVVC9wbVpd/Dl36jX
+	3rmklrNl+tvvcTPnW0rtzxw38qpRGeEKVntajTGyWq8Jm2HZLoqxNCpoFM6nA9bUHplVBEqVBBY
+	c2EKJF97EpdeR6Jlo2hzoXhLNyirW/USmx4K6cwdHEA6JJwQUPSX0/r2wIwQnCBGjtSMeAZInMs
+	omfbS7Ng/Y2j4RZm6ZVcDOtlCryBqzrxdj96UhxCP2x7ZncPFOBrxs+5On7hHZvIB4B+P1wLa+g
+	vxEcncJBvUAcgai0AP3XOpcnZ+n+64olworYwC1zYZQJvsvWN2NAAHUSj1beYKVSpiO36Cg1G0H
+	jN0c+4WN6EnAw9DDg=
+X-Google-Smtp-Source: AGHT+IH9h7L8UGbkTIf/vhce/CGqiB2jS+9MochxYSfFOpcpEv5k/l1SvklqjJmKWtJeC1L76MRaUQ==
+X-Received: by 2002:a05:600c:1c24:b0:477:a450:7aa2 with SMTP id 5b1f17b1804b1-477a9bdb645mr30738265e9.1.1763526742941;
+        Tue, 18 Nov 2025 20:32:22 -0800 (PST)
+Received: from bhk ([165.50.116.232])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42ca01b074csm14959251f8f.34.2025.11.18.20.32.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Nov 2025 20:32:22 -0800 (PST)
+From: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+To: syzbot+ad45f827c88778ff7df6@syzkaller.appspotmail.com
+Cc: frank.li@vivo.com,
+	glaubitz@physik.fu-berlin.de,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	slava@dubeyko.com,
+	syzkaller-bugs@googlegroups.com,
+	Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+Subject: 
+Date: Wed, 19 Nov 2025 06:31:51 +0100
+Message-ID: <20251119053201.2949-1-mehdi.benhadjkhelifa@gmail.com>
+X-Mailer: git-send-email 2.52.0
+In-Reply-To: <69155e34.050a0220.3565dc.0019.GAE@google.com>
+References: <69155e34.050a0220.3565dc.0019.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:17cd:b0:433:2711:c5cc with SMTP id
- e9e14a558f8ab-4348c9491b2mr263067285ab.32.1763529542833; Tue, 18 Nov 2025
- 21:19:02 -0800 (PST)
-Date: Tue, 18 Nov 2025 21:19:02 -0800
-In-Reply-To: <20251119053201.2949-1-mehdi.benhadjkhelifa@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <691d5346.a70a0220.d98e3.0006.GAE@google.com>
-Subject: Re: [syzbot] [hfs?] memory leak in hfs_init_fs_context
-From: syzbot <syzbot+ad45f827c88778ff7df6@syzkaller.appspotmail.com>
-To: frank.li@vivo.com, glaubitz@physik.fu-berlin.de, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	mehdi.benhadjkhelifa@gmail.com, slava@dubeyko.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+#syz test
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+diff --git a/fs/hfs/super.c b/fs/hfs/super.c
+index 47f50fa555a4..06e1c25e47dc 100644
+--- a/fs/hfs/super.c
++++ b/fs/hfs/super.c
+@@ -49,8 +49,6 @@ static void hfs_put_super(struct super_block *sb)
+ {
+ 	cancel_delayed_work_sync(&HFS_SB(sb)->mdb_work);
+ 	hfs_mdb_close(sb);
+-	/* release the MDB's resources */
+-	hfs_mdb_put(sb);
+ }
+ 
+ static void flush_mdb(struct work_struct *work)
+@@ -383,7 +381,6 @@ static int hfs_fill_super(struct super_block *sb, struct fs_context *fc)
+ bail_no_root:
+ 	pr_err("get root inode failed\n");
+ bail:
+-	hfs_mdb_put(sb);
+ 	return res;
+ }
+ 
+@@ -431,10 +428,21 @@ static int hfs_init_fs_context(struct fs_context *fc)
+ 	return 0;
+ }
+ 
++static void hfs_kill_sb(struct super_block *sb)
++{
++	generic_shutdown_super(sb);
++	hfs_mdb_put(sb);
++	if (sb->s_bdev) {
++		sync_blockdev(sb->s_bdev);
++		bdev_fput(sb->s_bdev_file);
++	}
++
++}
++
+ static struct file_system_type hfs_fs_type = {
+ 	.owner		= THIS_MODULE,
+ 	.name		= "hfs",
+-	.kill_sb	= kill_block_super,
++	.kill_sb	= hfs_kill_sb,
+ 	.fs_flags	= FS_REQUIRES_DEV,
+ 	.init_fs_context = hfs_init_fs_context,
+ };
+-- 
+2.52.0
 
-Reported-by: syzbot+ad45f827c88778ff7df6@syzkaller.appspotmail.com
-Tested-by: syzbot+ad45f827c88778ff7df6@syzkaller.appspotmail.com
-
-Tested on:
-
-commit:         8b690556 Merge tag 'for-linus' of git://git.kernel.org..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14c40742580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f30cc590c4f6da44
-dashboard link: https://syzkaller.appspot.com/bug?extid=ad45f827c88778ff7df6
-compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=16949658580000
-
-Note: testing is done by a robot and is best-effort only.
 
