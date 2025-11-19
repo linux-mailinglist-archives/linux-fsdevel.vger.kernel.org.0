@@ -1,95 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-69050-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69051-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77B57C6CD57
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 06:53:26 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3DEBC6CE2A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 07:17:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3928234CA41
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 05:52:25 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTPS id E3F472D091
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 06:17:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72BC5311C15;
-	Wed, 19 Nov 2025 05:52:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C208530EF91;
+	Wed, 19 Nov 2025 06:17:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="DCDGMOIt"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="LwUxrE4x"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F48E21257E;
-	Wed, 19 Nov 2025 05:52:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE1DA25BEF8;
+	Wed, 19 Nov 2025 06:17:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763531532; cv=none; b=ZFb7NGX9hNmRv1n1JIPgUKwogK0hB3FxyijDacJ26ErXHl9GOe5Cr0RQ8E1hhpoF0ZDll0b4/mVbaaz73XX/3RdbwqvBbD1MOBImqoanB+Iem+JkXFFLdXiQFk6SGbMnt3IK8EkHST341jj86UB0BBJn2o/VyR5qoEtFQQjKnpo=
+	t=1763533036; cv=none; b=t4kRVSYmcSlENQE7lbfTDX6C2jaieZYzFu2kceWLY04VV0ZDQaRvMnE0FkoeaSkoeogcPJx66T/7pHvPP6ZJ3GloOMA2RT24UHS5C4Zmkfeu2UDtv0zZ9LkdHLay4BWA4ExXqb1OLqeMj9018iLRzCPrs5C039HWfgw9XxGTf1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763531532; c=relaxed/simple;
-	bh=I8I1AprjDBUOj7jue2dl3t9Iqf4Cwq10RSkL95tBmzw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QPFTSr/g9GCHgV6Cu9eLPec5Af951i/DcbeEwOHokcwqCeTwhWIkBp0akLFPMTNinR/+DI3F4oJoPwY2HvNroueZnsdgloBSOIBxCjoxykHzu1br+J4O82ugGLZ5ZZlZSdMxNhWnPF7p8PxECDkS+510qY84vCQnp1DX2Mn5BbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=DCDGMOIt; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=I8I1AprjDBUOj7jue2dl3t9Iqf4Cwq10RSkL95tBmzw=; b=DCDGMOItsmmDvLY2JYHYouj2Xc
-	OMO73rZ6noq0tsz/j4b9DcP9NFeBYTfCbxfUML6nP9c2GxYLjlRYa787wx5GKEyAsMLJgZNRbOfd9
-	NAAe/QcIO5vwHMXsvm0u7IRRN+j5fetrVEXgu/rAqG9m4KGIs7BTr0t3S8mqm43c2TH+k6j+erJwd
-	OuF+otZTirQnwvM+rCvPmSCSsRzaKg6eCV7DFxxX99OsbSnkmCR6v8VEOjtDAH8m3zFTkL9VENnRX
-	ISVNVDCFed/qMXULXTivoZJDh+55W0Pa5NmvrW8V9YxisnUpjpQsyv1w2o63rKf3sSBpF4l8wUhKe
-	SxK9wpqg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vLb6p-00000002Rs3-1eOi;
-	Wed, 19 Nov 2025 05:52:03 +0000
-Date: Tue, 18 Nov 2025 21:52:03 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: "Darrick J. Wong" <djwong@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Christoph Hellwig <hch@infradead.org>,
-	SHAURYA RANE <ssrane_b23@ee.vjti.ac.in>, akpm@linux-foundation.org,
-	shakeel.butt@linux.dev, eddyz87@gmail.com, andrii@kernel.org,
-	ast@kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev,
-	skhan@linuxfoundation.org, david.hunter.linux@gmail.com,
-	khalid@kernel.org,
-	syzbot+09b7d050e4806540153d@syzkaller.appspotmail.com,
-	bpf <bpf@vger.kernel.org>
-Subject: Re: [PATCH] mm/filemap: fix NULL pointer dereference in
- do_read_cache_folio()
-Message-ID: <aR1bAzXYJF5TicnS@infradead.org>
-References: <aReUv1kVACh3UKv-@casper.infradead.org>
- <CANNWa07Y_GPKuYNQ0ncWHGa4KX91QFosz6WGJ9P6-AJQniD3zw@mail.gmail.com>
- <aRpQ7LTZDP-Xz-Sr@casper.infradead.org>
- <20251117164155.GB196362@frogsfrogsfrogs>
- <aRtjfN7sC6_Bv4bx@casper.infradead.org>
- <CAEf4BzZu+u-F9SjhcY5GN5vumOi6X=3AwUom+KJXeCpvC+-ppQ@mail.gmail.com>
- <aRxunCkc4VomEUdo@infradead.org>
- <aRySpQbNuw3Y5DN-@casper.infradead.org>
- <20251118161220.GE196362@frogsfrogsfrogs>
- <CAEf4BzYkPxUcQK2VWEE+8N=U5CXjtUNs6GfbfW2+GoTDebk19A@mail.gmail.com>
+	s=arc-20240116; t=1763533036; c=relaxed/simple;
+	bh=/dZgyzuLUkuILxW1pDzr6u+owNzlVAntyNq6QMOAT38=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dV1wiVOvnVZjRMRBH8AZ93g1MaXwSXXM1TiAKhTzP/m48EYNVzVDkkpddzsvK2a00I/A9SDqJoR7vgKjTFg//4Y+C5Inh6NQKiz9iJzbeO0bZDwsuY7EDImc5UPXF/jrRBv8VCmALx2ubwlbEK/FGDjG+k9JgRkZReZspn67KW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=LwUxrE4x; arc=none smtp.client-ip=115.124.30.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1763533029; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=kJM2+txK39zSBZAW6+j8p6tvdTb3h7gwyHWV6tLX5Pw=;
+	b=LwUxrE4xUjxxXLufHFzUA5nBMoIgGTSqT+KKq1p9GTIMK2rfk60+KJ652r6aPFrxJdMNfJO7vmmj93YnM8cxME9yfNYzqK2ow7DOz6+W8WIG59Q71rbDitLJdvFzEKBcQju+9jNVqeK3Wpa0JfFQg6XQbkxtto20Y29jMK9spcA=
+Received: from 30.221.131.104(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WsnTUov_1763533027 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 19 Nov 2025 14:17:08 +0800
+Message-ID: <e572c851-fcbb-4814-b24e-5e0e2e67c732@linux.alibaba.com>
+Date: Wed, 19 Nov 2025 14:17:07 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAEf4BzYkPxUcQK2VWEE+8N=U5CXjtUNs6GfbfW2+GoTDebk19A@mail.gmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 01/10] iomap: stash iomap read ctx in the private field
+ of iomap_iter
+To: Christoph Hellwig <hch@lst.de>
+Cc: brauner@kernel.org, djwong@kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-erofs@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+ Chao Yu <chao@kernel.org>, Amir Goldstein <amir73il@gmail.com>,
+ Joanne Koong <joannelkoong@gmail.com>, Hongbo Li <lihongbo22@huawei.com>
+References: <20251117132537.227116-1-lihongbo22@huawei.com>
+ <20251117132537.227116-2-lihongbo22@huawei.com>
+ <f3938037-1292-470d-aace-e5c620428a1d@linux.alibaba.com>
+ <add21bbf-1359-4659-9518-bdb1ef34ea48@linux.alibaba.com>
+ <20251119054946.GA20142@lst.de>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <20251119054946.GA20142@lst.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Nov 18, 2025 at 11:38:36AM -0800, Andrii Nakryiko wrote:
-> We have plenty of build ID tests in BPF selftest that validate this
-> functionality:
+Hi Christoph,
 
-And none of them is run on a wide variety of file systems, presumably
-because they are only run by BFP developers.
+On 2025/11/19 13:49, Christoph Hellwig wrote:
+> On Tue, Nov 18, 2025 at 03:35:45PM +0800, Gao Xiang wrote:
+>> (... try to add Christoph..)
+> 
+> What are you asking me for?
 
-IFF we allow for magic file access methods it needs to be part of
-regular file system testing.
+Sorry about the confusion.
 
+Hongbo didn't Cc you on this thread (I think he just added
+recipients according to MAINTAINERS), but I know you played
+a key role in iomap development, so I think you should be
+in the loop about the iomap change too.
+
+Could you give some comments (maybe review) on this patch
+if possible?  My own opinion is that if the first two
+patches can be applied in the next cycle (6.19) (I understand
+it will be too late for the whole feature into 6.19) , it
+would be very helpful to us so at least the vfs iomap branch
+won't be coupled anymore if the first two patch can be landed
+in advance.
+
+Thanks,
+Gao Xiang
 
