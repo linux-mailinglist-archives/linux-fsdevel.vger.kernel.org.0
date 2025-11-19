@@ -1,206 +1,246 @@
-Return-Path: <linux-fsdevel+bounces-69157-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69153-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE30CC71452
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 23:27:21 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8DC5C71408
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 23:24:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sea.lore.kernel.org (Postfix) with ESMTPS id 9B43C2C411
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 22:27:20 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ACDE04E20EB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 22:24:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9B2930DEB1;
-	Wed, 19 Nov 2025 22:27:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2C662ED159;
+	Wed, 19 Nov 2025 22:24:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R8k/DZ8/"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GMO8ckR6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A93A30BB8C
-	for <linux-fsdevel@vger.kernel.org>; Wed, 19 Nov 2025 22:26:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C1881F0E32
+	for <linux-fsdevel@vger.kernel.org>; Wed, 19 Nov 2025 22:24:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763591220; cv=none; b=LwXKqgnzXQh7TBQiBfrJwAHRb7wTsHmlvrOeIHm5ruMRGFIkDCL6Rqe+feW2C4KXLbzpd993KZSY2MG7iPrMLGDDfzMTCLqnXWVsNQdt+Uq2aXyGYHmWyAtnzYvmQ30g5nF0+/+XJCPMOsoI3A/L4xsrZIjgwaDMigvVTuY+HLg=
+	t=1763591062; cv=none; b=ZVTgNbMMJ9rjf72iWyW39pdT5NOv/8pc1nAbOl8iyAe+Z6OIQvbP5xhhVWYM8ZDx/vHHF5ml+7MF3NiJYjJ2c8fNxr5tp7j805PSbpoXEVIj4bBYyZiADkTHFhtL1dmA3iYjvuJFI9bkzHMNmmwsSCBxTsCunlMQhREveLNdXvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763591220; c=relaxed/simple;
-	bh=qOnnawt4egcjVD3EMm4ADkZ2z7Vo9vrDOjzvgdq3kes=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EeBurcFnV3v08ev3CAhDhWnL//5U5/Wlg3OM7upqz+9o0/+OJXfs1g0Sr1aj6O7s0CwBecTfvrziQA0zfgxQiciHtMFhnHbz41RZPXmyfXCcuCNNHUUX1f7OJW86UsWqGzfPEsoBmzcdOv4aJP6qVHwvr65y9aTrTrQ1wrpcxzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R8k/DZ8/; arc=none smtp.client-ip=209.85.167.51
+	s=arc-20240116; t=1763591062; c=relaxed/simple;
+	bh=xaPyOxNT/HcBqaLOWWrNAr3jgVtnKXjwmxRR4CkbxzM=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=ImBktCNEcp9m+MCtGEqSiUVJUdct4dcILuWBGFZBgO8YLCOZYb0A5voTk5L3NC7TTXHwMB+H3O2N6QanXNSWKWlvPCn6hGn99iS5v90Zu+CFBAKfTE4AY75lYR0l1jKtww8TT8qZABz8RyE96QbzlLZ45vsUnOJnybTDw64wMwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GMO8ckR6; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-594285c6509so157647e87.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Nov 2025 14:26:58 -0800 (PST)
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-47798f4059fso393055e9.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Nov 2025 14:24:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763591216; x=1764196016; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IBHV1EUw0WBXSKlFcI/NhGu5XRuHQn0XLzAOgD+DTYU=;
-        b=R8k/DZ8/ZkWu1ODdCi03BUhd0F6wJ+SI26jz55vpEOV1pSnPERLev3IwAQeGU9Ksnb
-         xjiOXUCNbqNR3md5yGCT9dIVKjPaIS3mpoLpkuyO+XWoQLOU2mnh+9SDElRz5SHfHh3Q
-         B0Wp03c6n0pUeFnj//hlczVj1aLV2ivD34FgWCLm3Wp2rJmju2T6TENUxfmee1/qUvse
-         xHh5AEGWJi1knuZfskaA8eIhL5PpmlkU5smszODFrAzYd+ZNUXTteOUwRFrOEC4wNHEL
-         l9c+nmG/rJdGmgVVAigFNQxltkX3V8NVu3TMSbQcqLexwAuvZ+VR2gIcAI3nv0pI67PG
-         Rfkw==
+        d=gmail.com; s=20230601; t=1763591059; x=1764195859; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=T7WmQOx6iAlsV0MHuZ9X9eaYiLcx+jdU4wVC787CH7Y=;
+        b=GMO8ckR6d4O6tLM3eAXBIYx9a0SdGlJ31rIkY+5ZMSbXgLTWm4OZ/ujcGTFUXQs6HQ
+         neELZUbg9fWIYoNswBstelxp2FVjHp1EvtPbx5MQ+6dDhnXS1Qtk6tcgYgTREp4kYEmQ
+         IvZ1ripUvfP1+hNAKPPY/8m08vq+u8hehmYCugLiDEJ2uIK2CjxBI+Vn2F2voZosPfW5
+         3ZC6D5XNp5Jt5A2V/JManyiMKHcIIm+1NEor+ADf3LlFFi/kK9dp8SlF0WGjLoU8h8av
+         +CuY5JqzfJ1l6AEbdUYPzu9nzprGGxiyrHK7ZF7V8nVB8W3/7UHtyeoUXInD6dK0kjvd
+         hfng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763591216; x=1764196016;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=IBHV1EUw0WBXSKlFcI/NhGu5XRuHQn0XLzAOgD+DTYU=;
-        b=iv5EFc3S+rya0uGS5G8uAATM3lt/5tGMEEavlAG/nSaqcEDFm60zOkGkDIBd7qzNXL
-         /EDIC2wq0nwjKNzPQQ7Bn4truyr8NWd0IKZUFa6OsOMO7hEojuZfDwgkOa4kbZq7zjRs
-         TTozsEeh+6f+L6HDfnyoedyvbR7EZTFvZfJY9fyhoNBGxm3lIVBvQSaLvgGPW012VjDt
-         McKaw7tqXUXgT55XC2xR1dOJ9RyGO2H0eAjZjnt+NPjE/+dpatGEKtwUPOkYfnCGDwkv
-         HRUV50tZqtq8Z3reRs6pUhYWvnp4j40p6rlS0dY6P+EsKQzLAlU0/wrVFv4qiFySQDlo
-         BbZA==
-X-Gm-Message-State: AOJu0YxLiWEDU9RjFN6qizbAud5Guw/cDjv+JGWhKK2a0TleINl2L+f3
-	Jefn4Urt5yVtYWfryCUoYKP0/O/QUAVKjDbb34YYKKmjPw1wpBwGL9UOHdYc2Q==
-X-Gm-Gg: ASbGnctJDKEbQUjQ+QDUEzhZ3C5+SoUZWbBDQiet66VYwYKAaeOnBRDUW2hOgPLVPp7
-	1hDMUGFGItHMi6Zmf9hoczRRgLirKQYlhXaMMN384S9Vv4c0/m0kVDWm5xHf6009MTiLrHUHv3s
-	eE9IlhCDbSqGFBW7ZzZsk+ec4FbILknBpWhT+a1TdqaGULiQ6SR1swr5ikxJdbbK+DV5/GDdkc3
-	FCj3gE3dS49RpFVICkqJshsELlCPc0W/ZovWG1+BK4b1WnaogzvVTfaPuZKrrhUhEQme384vs64
-	eY12KJ8PgV+bprmQ0AHO7r54se1CssV6Ha4ZtaZ2hWwJWXu1OoGrC5+khaoaiRaSczyn1l/4FdP
-	QANAqiPFJMV+ic/WJMZF1epRJKE8zWf8bREU0mRudg3s7bbdu6bK3EfIR/nyEZ4mGBb2vDbKnuI
-	MvlFqnF3th
-X-Google-Smtp-Source: AGHT+IFgA9RKL+uFTnctiFZKqulaPxewVQd+eAgCSkyCWbVEq5Iah76Q4RixKmx92rXz16tT6l4F2g==
-X-Received: by 2002:a05:6512:3d08:b0:594:25e6:8a3a with SMTP id 2adb3069b0e04-5969e2e74d7mr178185e87.20.1763591216022;
-        Wed, 19 Nov 2025 14:26:56 -0800 (PST)
-Received: from localhost ([109.167.240.218])
-        by smtp.gmail.com with UTF8SMTPSA id 2adb3069b0e04-5969db8989csm168021e87.39.2025.11.19.14.26.54
+        d=1e100.net; s=20230601; t=1763591059; x=1764195859;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=T7WmQOx6iAlsV0MHuZ9X9eaYiLcx+jdU4wVC787CH7Y=;
+        b=pCOBVrgE3Q5bNjV1zPbiSwxhj29I6RhVfbp84WD4UTBf4F5YJvuLubJ7v6hZtZDBEp
+         qjLVKhu/laEh2tajIqlfPvWKqzkTA2OLnBsfmmk9psnyoF7LRykbbyL67vZjLh4SzwCi
+         ruiVocY9M4NhUM4ZQnpd7a+/OlPPi6KF1X+2PK/uE7u/4ll0GspTYuc+cWcy0IEDxUJr
+         GEQ/jiwD7feCImTUjRUIVvAjEY1kzNktV9uHVfqo2+l//1d+t7WxiLCraH//UdwrTytI
+         Uw/fXXS/LGUgiRtbFfU+JkPswgTSt5/Ass69n5Hj+uU/VbbYh38pzkBUn+VtHGmsXM7j
+         U1ew==
+X-Forwarded-Encrypted: i=1; AJvYcCUz9CxVYnQ6ujg3ug1M8DE9b0gmPUct/clRvhudoiE4l967QLlFFCo8GhjZsBc3tP52RTHlgBbIN2fT2R2/@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCo+lANKWSAhQwJBUyu6ZE2FPr2/ILpQWYRZDLDt70023l8HJB
+	z+WPTbiuyGEGDPz9fG7VRuoWkfd/HyZbPkPWy+g5ABbLkPrXm6he1UlN
+X-Gm-Gg: ASbGncsGw8YiqgDkAv1vsDvbDK6VFsxc8yJQyfKXu9CK4uXnW3OqrK2mXl/Y1zZO0f4
+	c8AihpdrOp/i+/XTlHPq7xYdwLHGMtzHKzudbOL4rxSfeSaEyjDj98zKLU2xDux8y8wme/mCsLf
+	5khCSyksw58MCOL5brlt9Qgrxr3rSyBhebrmQXJ2QdFTI5bK6DpooH8URCDpP4913nA6SjvrM+l
+	JiZmIAgjNQt/E5VY0SpoIEGejRxbTyd52i4dVX7/rzjF2GELlJnTjAPHiCrSBmlca4dvmPrpE8u
+	dHM9bzxdZMgxEzF/AvYo0OP0viPm8tz/UIsCyozYm5h+BRmsHr5795Gpor2zsWr2bP97gCzRxHv
+	ulGOVMqaPbfOicMoufu+rpl86hMFbCzcGKfLeBvfRkef2U08Buhz6kvvS5GS/JlXjPT+iLu8CZi
+	QLykNkxuWqxzaHIWLuW4IiuXjxAhcr1VlVxycCJzcA++edqD1D
+X-Google-Smtp-Source: AGHT+IEsHyRMQ5pcW3Ld7TQbeWKn9n9tuuRTUNEesIDP2g12lL/hprJtX1I0mMWZv0u25tvMu6LN2Q==
+X-Received: by 2002:a05:600c:1c2a:b0:477:a203:66dd with SMTP id 5b1f17b1804b1-477b8579778mr5398185e9.2.1763591058508;
+        Wed, 19 Nov 2025 14:24:18 -0800 (PST)
+Received: from [192.168.1.111] ([165.50.70.6])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-477a9d21591sm52867025e9.2.2025.11.19.14.24.16
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Nov 2025 14:26:54 -0800 (PST)
-From: Askar Safin <safinaskar@gmail.com>
-To: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>,
-	Christoph Hellwig <hch@lst.de>,
-	Jens Axboe <axboe@kernel.dk>,
-	Andy Shevchenko <andy.shevchenko@gmail.com>,
-	Aleksa Sarai <cyphar@cyphar.com>,
-	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
-	Julian Stecklina <julian.stecklina@cyberus-technology.de>,
-	Gao Xiang <hsiangkao@linux.alibaba.com>,
-	Art Nikpal <email2tema@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Alexander Graf <graf@amazon.com>,
-	Rob Landley <rob@landley.net>,
-	Lennart Poettering <mzxreary@0pointer.de>,
-	linux-arch@vger.kernel.org,
-	linux-block@vger.kernel.org,
-	initramfs@vger.kernel.org,
-	linux-api@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	Michal Simek <monstr@monstr.eu>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Kees Cook <kees@kernel.org>,
-	Thorsten Blum <thorsten.blum@linux.dev>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Dave Young <dyoung@redhat.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Jessica Clarke <jrtc27@jrtc27.com>,
-	Nicolas Schichan <nschichan@freebox.fr>,
-	David Disseldorp <ddiss@suse.de>,
-	patches@lists.linux.dev
-Subject: [PATCH v4 3/3] init: remove /proc/sys/kernel/real-root-dev
-Date: Wed, 19 Nov 2025 22:24:07 +0000
-Message-ID: <20251119222407.3333257-4-safinaskar@gmail.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251119222407.3333257-1-safinaskar@gmail.com>
-References: <20251119222407.3333257-1-safinaskar@gmail.com>
+        Wed, 19 Nov 2025 14:24:18 -0800 (PST)
+Message-ID: <42a9f815-fcda-4bfe-918c-8a676909c9ac@gmail.com>
+Date: Wed, 19 Nov 2025 23:24:18 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] fs/hfs: fix s_fs_info leak on setup_bdev_super()
+ failure
+From: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
+ "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
+ "frank.li@vivo.com" <frank.li@vivo.com>,
+ "slava@dubeyko.com" <slava@dubeyko.com>,
+ "brauner@kernel.org" <brauner@kernel.org>,
+ "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+ "jack@suse.cz" <jack@suse.cz>
+Cc: "khalid@kernel.org" <khalid@kernel.org>,
+ "linux-kernel-mentees@lists.linuxfoundation.org"
+ <linux-kernel-mentees@lists.linuxfoundation.org>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "skhan@linuxfoundation.org" <skhan@linuxfoundation.org>,
+ "david.hunter.linux@gmail.com" <david.hunter.linux@gmail.com>,
+ "syzbot+ad45f827c88778ff7df6@syzkaller.appspotmail.com"
+ <syzbot+ad45f827c88778ff7df6@syzkaller.appspotmail.com>
+References: <20251119073845.18578-1-mehdi.benhadjkhelifa@gmail.com>
+ <c19c6ebedf52f0362648a32c0eabdc823746438f.camel@ibm.com>
+ <25434098-4bf0-4330-b7b1-527983d9c903@gmail.com>
+Content-Language: en-US
+In-Reply-To: <25434098-4bf0-4330-b7b1-527983d9c903@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-It is not used anymore.
+On 11/19/25 11:21 PM, Mehdi Ben Hadj Khelifa wrote:
+> On 11/19/25 8:58 PM, Viacheslav Dubeyko wrote:
+>> On Wed, 2025-11-19 at 08:38 +0100, Mehdi Ben Hadj Khelifa wrote:
+>>> The regression introduced by commit aca740cecbe5 ("fs: open block device
+>>> after superblock creation") allows setup_bdev_super() to fail after a 
+>>> new
+>>> superblock has been allocated by sget_fc(), but before hfs_fill_super()
+>>> takes ownership of the filesystem-specific s_fs_info data.
+>>>
+>>> In that case, hfs_put_super() and the failure paths of hfs_fill_super()
+>>> are never reached, leaving the HFS mdb structures attached to s- 
+>>> >s_fs_info
+>>> unreleased.The default kill_block_super() teardown also does not free
+>>> HFS-specific resources, resulting in a memory leak on early mount 
+>>> failure.
+>>>
+>>> Fix this by moving all HFS-specific teardown (hfs_mdb_put()) from
+>>> hfs_put_super() and the hfs_fill_super() failure path into a dedicated
+>>> hfs_kill_sb() implementation. This ensures that both normal unmount and
+>>> early teardown paths (including setup_bdev_super() failure) correctly
+>>> release HFS metadata.
+>>>
+>>> This also preserves the intended layering: generic_shutdown_super()
+>>> handles VFS-side cleanup, while HFS filesystem state is fully destroyed
+>>> afterwards.
+>>>
+>>> Fixes: aca740cecbe5 ("fs: open block device after superblock creation")
+>>> Reported-by: syzbot+ad45f827c88778ff7df6@syzkaller.appspotmail.com
+>>> Closes: https://syzkaller.appspot.com/bug?extid=ad45f827c88778ff7df6
+>>> Tested-by: syzbot+ad45f827c88778ff7df6@syzkaller.appspotmail.com
+>>> Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
+>>> Signed-off-by: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+>>> ---
+>>> ChangeLog:
+>>>
+>>> Changes from v1:
+>>>
+>>> -Changed the patch direction to focus on hfs changes specifically as
+>>> suggested by al viro
+>>>
+>>> Link:https://lore.kernel.org/all/20251114165255.101361-1- 
+>>> mehdi.benhadjkhelifa@gmail.com/
+>>>
+>>> Note:This patch might need some more testing as I only did run selftests
+>>> with no regression, check dmesg output for no regression, run reproducer
+>>> with no bug and test it with syzbot as well.
+>>
+>> Have you run xfstests for the patch? Unfortunately, we have multiple 
+>> xfstests
+>> failures for HFS now. And you can check the list of known issues here 
+>> [1]. The
+>> main point of such run of xfstests is to check that maybe some 
+>> issue(s) could be
+>> fixed by the patch. And, more important that you don't introduce new 
+>> issues. ;)
+>>
+> I did not know of such tests. I will try to run them for both my patch 
+> and christian's patch[1] and report the results.
 
-Signed-off-by: Askar Safin <safinaskar@gmail.com>
----
- Documentation/admin-guide/sysctl/kernel.rst |  6 ------
- include/uapi/linux/sysctl.h                 |  1 -
- init/do_mounts_initrd.c                     | 20 --------------------
- 3 files changed, 27 deletions(-)
+Forgot to reference the mentioned link "[1]". Sorry for the noise.
 
-diff --git a/Documentation/admin-guide/sysctl/kernel.rst b/Documentation/admin-guide/sysctl/kernel.rst
-index f3ee807b5d8b..218265babaf9 100644
---- a/Documentation/admin-guide/sysctl/kernel.rst
-+++ b/Documentation/admin-guide/sysctl/kernel.rst
-@@ -1215,12 +1215,6 @@ that support this feature.
- ==  ===========================================================================
- 
- 
--real-root-dev
--=============
--
--See Documentation/admin-guide/initrd.rst.
--
--
- reboot-cmd (SPARC only)
- =======================
- 
-diff --git a/include/uapi/linux/sysctl.h b/include/uapi/linux/sysctl.h
-index 63d1464cb71c..1c7fe0f4dca4 100644
---- a/include/uapi/linux/sysctl.h
-+++ b/include/uapi/linux/sysctl.h
-@@ -92,7 +92,6 @@ enum
- 	KERN_DOMAINNAME=8,	/* string: domainname */
- 
- 	KERN_PANIC=15,		/* int: panic timeout */
--	KERN_REALROOTDEV=16,	/* real root device to mount after initrd */
- 
- 	KERN_SPARC_REBOOT=21,	/* reboot command on Sparc */
- 	KERN_CTLALTDEL=22,	/* int: allow ctl-alt-del to reboot */
-diff --git a/init/do_mounts_initrd.c b/init/do_mounts_initrd.c
-index fe335dbc95e0..892e69ab41c4 100644
---- a/init/do_mounts_initrd.c
-+++ b/init/do_mounts_initrd.c
-@@ -8,31 +8,11 @@
- 
- unsigned long initrd_start, initrd_end;
- int initrd_below_start_ok;
--static unsigned int real_root_dev;	/* do_proc_dointvec cannot handle kdev_t */
- static int __initdata mount_initrd = 1;
- 
- phys_addr_t phys_initrd_start __initdata;
- unsigned long phys_initrd_size __initdata;
- 
--#ifdef CONFIG_SYSCTL
--static const struct ctl_table kern_do_mounts_initrd_table[] = {
--	{
--		.procname       = "real-root-dev",
--		.data           = &real_root_dev,
--		.maxlen         = sizeof(int),
--		.mode           = 0644,
--		.proc_handler   = proc_dointvec,
--	},
--};
--
--static __init int kernel_do_mounts_initrd_sysctls_init(void)
--{
--	register_sysctl_init("kernel", kern_do_mounts_initrd_table);
--	return 0;
--}
--late_initcall(kernel_do_mounts_initrd_sysctls_init);
--#endif /* CONFIG_SYSCTL */
--
- static int __init no_initrd(char *str)
- {
- 	pr_warn("noinitrd option is deprecated and will be removed soon\n");
--- 
-2.47.3
+[1]:https://github.com/brauner/linux/commit/058747cefb26196f3c192c76c631051581b29b27
+
+>>>
+>>>   fs/hfs/super.c | 16 ++++++++++++----
+>>>   1 file changed, 12 insertions(+), 4 deletions(-)
+>>>
+>>> diff --git a/fs/hfs/super.c b/fs/hfs/super.c
+>>> index 47f50fa555a4..06e1c25e47dc 100644
+>>> --- a/fs/hfs/super.c
+>>> +++ b/fs/hfs/super.c
+>>> @@ -49,8 +49,6 @@ static void hfs_put_super(struct super_block *sb)
+>>>   {
+>>>       cancel_delayed_work_sync(&HFS_SB(sb)->mdb_work);
+>>>       hfs_mdb_close(sb);
+>>> -    /* release the MDB's resources */
+>>> -    hfs_mdb_put(sb);
+>>>   }
+>>>   static void flush_mdb(struct work_struct *work)
+>>> @@ -383,7 +381,6 @@ static int hfs_fill_super(struct super_block *sb, 
+>>> struct fs_context *fc)
+>>>   bail_no_root:
+>>>       pr_err("get root inode failed\n");
+>>>   bail:
+>>> -    hfs_mdb_put(sb);
+>>>       return res;
+>>>   }
+>>> @@ -431,10 +428,21 @@ static int hfs_init_fs_context(struct 
+>>> fs_context *fc)
+>>>       return 0;
+>>>   }
+>>> +static void hfs_kill_sb(struct super_block *sb)
+>>> +{
+>>> +    generic_shutdown_super(sb);
+>>> +    hfs_mdb_put(sb);
+>>> +    if (sb->s_bdev) {
+>>> +        sync_blockdev(sb->s_bdev);
+>>> +        bdev_fput(sb->s_bdev_file);
+>>> +    }
+>>> +
+>>> +}
+>>> +
+>>>   static struct file_system_type hfs_fs_type = {
+>>>       .owner        = THIS_MODULE,
+>>>       .name        = "hfs",
+>>> -    .kill_sb    = kill_block_super,
+>>
+>> It looks like we have the same issue for the case of HFS+ [2]. Could 
+>> you please
+>> double check that HFS+ should be fixed too?
+>>
+> Yes, I will check it tomorrow in addition to running xfstests and report 
+> my findings in response to this email. But I'm not sure if my solution 
+> would be the attended fix or a similar solution to what christian did is 
+> preferred instead for HFS+. We'll discuss it when I send a response.
+>> Thanks,
+>> Slava.
+>>
+> Thank you for your insights Slava!
+> 
+> Best Regards,
+> Mehdi Ben Hadj Khelifa
+
+>>> +    .kill_sb    = hfs_kill_sb,
+>>>       .fs_flags    = FS_REQUIRES_DEV,
+>>>       .init_fs_context = hfs_init_fs_context,
+>>>   };
+>>
+>> [1] https://github.com/hfs-linux-kernel/hfs-linux-kernel/issues
+>> [2] https://elixir.bootlin.com/linux/v6.18-rc6/source/fs/hfsplus/ 
+>> super.c#L694
+> 
 
 
