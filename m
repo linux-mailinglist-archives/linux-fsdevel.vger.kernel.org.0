@@ -1,426 +1,379 @@
-Return-Path: <linux-fsdevel+bounces-69118-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69119-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E3EEC6FD24
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 16:54:19 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3918C701DB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 17:35:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1067F4E457E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 15:44:04 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 492C74FD42D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 16:28:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8398B358D34;
-	Wed, 19 Nov 2025 15:43:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B7C3366DCA;
+	Wed, 19 Nov 2025 16:24:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q4Pp8vUK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q91IXr/F"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97F592E9EA0;
-	Wed, 19 Nov 2025 15:43:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E789327C0C;
+	Wed, 19 Nov 2025 16:24:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763567002; cv=none; b=kPMpo4tH4Ckz71qNUpHiCXVc7ae2OEVZ/2jQML42uvanHAVIM2/FoO9/mcGfdao1iBvbV7okhcBQaSvCeGZwJbLU32b/Y7ipyeTl3TYf1buYqmMDIy+IZRt9t+28/Opk+lNsGKR7/zyYFi90XaujFrmOlhnT2iXqcgj1ckjcS5Y=
+	t=1763569480; cv=none; b=jb3wHl2tMDVXZHWVL9nwkRsBay/I73PCNuShR4M2O0ycOv2PJi59FcceFKfI1Ubf0YkIovjs6exN6HcVbApFwW0smZgXg+9lsmgSHjp/7ceoU1NbS0DlRloz8EYoezmcdyCvTqiGWm47WhG/kZHLAPWiAZbSlBMWjk7fquV0SNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763567002; c=relaxed/simple;
-	bh=XWWhCLs5lgbAxHMUMRreuQUftolIPDX5VuvwOjvFE5g=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=k9tzbiX/m6StKZlZrSy3apVhfAm5fEbmvYTTbfRG98auj25zY80ppgrEsVg/86IxUmQo7NE37JN6Hqe9zuO8NbPBaNjDODe8IOtCUXkKsNg8D1Rak1y8sl/duOS7Ogo5fn2P7H890iThkTVaf4JDbKM/CRYj84b0xSr6+qXzO7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q4Pp8vUK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7080CC2BC87;
-	Wed, 19 Nov 2025 15:43:20 +0000 (UTC)
+	s=arc-20240116; t=1763569480; c=relaxed/simple;
+	bh=k3LKx2x4kEPnJQVwGRf0BS2K3uQDuHJQ6+W82NgmB4U=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=r5+7VDvJRg+pLfZkDB7zh9UX59d5ouxjO1EZX3imfSA3O8kf3MDy3098gOFim2WUPw2HJ3uw5gLbD2nrJcNi2aTalNwseinuN8r0RCOtoPWcE87joo1N/6+eihQ1kuH6Nq7n8FnVcVHKX9LrI3957hwgote9KlI8jw8wnbeyXNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q91IXr/F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11197C4CEF5;
+	Wed, 19 Nov 2025 16:24:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763567000;
-	bh=XWWhCLs5lgbAxHMUMRreuQUftolIPDX5VuvwOjvFE5g=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=Q4Pp8vUK6fKAtlVkEBvPpKMyPaU0qychmVGmIeGxUH5//nF2QdyOY7RetJSDVKRyH
-	 iVFjU3DozPSjxcnnVC9taRt/zL6FxgPep8QJiMJlpRMo9Y1Vl1SscQnV12on5ky4vg
-	 0bp1fQCoNMS4v3YNFxvdspuZO3P3dSukwYji39pfj5bf61ELV4b9H72MSmHzBOR23w
-	 ncMPlpvWzcDYNgsR5fouUzOCEINmdiB+HITkiOhp8tWSfLIRvqG3+kWklEu8PFiPhx
-	 p/lO2dYeUWnjL1IeMadtk2Ubk7qjQytIIx+xOEkTrFZKfrf8+88Rs74PA2jbqS6MLy
-	 NEQiJe5jjCrww==
-From: Jeff Layton <jlayton@kernel.org>
-Date: Wed, 19 Nov 2025 10:43:05 -0500
-Subject: [PATCH fstests v2 3/3] generic: add tests for file delegations
+	s=k20201202; t=1763569479;
+	bh=k3LKx2x4kEPnJQVwGRf0BS2K3uQDuHJQ6+W82NgmB4U=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=q91IXr/FpjdsiUfmpoyz/2nEsOf60mmtnyRCeNB86rSzln+6XviST7nII7FsP/XcK
+	 wLlmNZgEqFAJ7ypIFNyzrd2D4eNzeW9BoAm7mLjh8+Zg3nsJMb97OoUcXVWs+XvKg9
+	 yDYmczcFZeERuo0q3WC9xt46q9vQCW8sI3TwG/oI/8DZB6uusSZJ8YIqiE+TL7lvB+
+	 ts1ws3T4/eZlTPMEAYX//AniaoBqPGuiRu1Gf//Hy1IF/oyfJvjCPYrG6E2+QKrLu4
+	 I93h1QyDa+3rw9uSNLp6wKIDlQywPu3emfYacThDvf5mOL6dU0T6oghzj+IZ0gdjLu
+	 HtnKa42PoijKg==
+Date: Wed, 19 Nov 2025 09:24:35 -0700 (MST)
+From: Paul Walmsley <pjw@kernel.org>
+To: Deepak Gupta <debug@rivosinc.com>
+cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+    Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+    x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
+    Andrew Morton <akpm@linux-foundation.org>, 
+    "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+    Vlastimil Babka <vbabka@suse.cz>, 
+    Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+    Paul Walmsley <paul.walmsley@sifive.com>, 
+    Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+    Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
+    Krzysztof Kozlowski <krzk+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+    Christian Brauner <brauner@kernel.org>, 
+    Peter Zijlstra <peterz@infradead.org>, Oleg Nesterov <oleg@redhat.com>, 
+    Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, 
+    Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, 
+    Jann Horn <jannh@google.com>, Conor Dooley <conor+dt@kernel.org>, 
+    Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+    Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+    =?ISO-8859-15?Q?Bj=F6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+    Andreas Hindborg <a.hindborg@kernel.org>, 
+    Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+    Benno Lossin <lossin@kernel.org>, linux-kernel@vger.kernel.org, 
+    linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+    linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
+    linux-arch@vger.kernel.org, linux-doc@vger.kernel.org, 
+    linux-kselftest@vger.kernel.org, alistair.francis@wdc.com, 
+    richard.henderson@linaro.org, jim.shu@sifive.com, andybnac@gmail.com, 
+    kito.cheng@sifive.com, charlie@rivosinc.com, atishp@rivosinc.com, 
+    evan@rivosinc.com, cleger@rivosinc.com, alexghiti@rivosinc.com, 
+    samitolvanen@google.com, broonie@kernel.org, rick.p.edgecombe@intel.com, 
+    rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v23 21/28] riscv: kernel command line option to opt out
+ of user cfi
+In-Reply-To: <20251112-v5_user_cfi_series-v23-21-b55691eacf4f@rivosinc.com>
+Message-ID: <fe83a3cc-e8fb-e15b-4673-8caaf1ab39b8@kernel.org>
+References: <20251112-v5_user_cfi_series-v23-0-b55691eacf4f@rivosinc.com> <20251112-v5_user_cfi_series-v23-21-b55691eacf4f@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251119-dir-deleg-v2-3-f952ba272384@kernel.org>
-References: <20251119-dir-deleg-v2-0-f952ba272384@kernel.org>
-In-Reply-To: <20251119-dir-deleg-v2-0-f952ba272384@kernel.org>
-To: fstests@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, 
- Jeff Layton <jlayton@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=11342; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=XWWhCLs5lgbAxHMUMRreuQUftolIPDX5VuvwOjvFE5g=;
- b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBpHeWVGRFgaul7jbV9/39vNFmbiHO3ijEsYUpJH
- igCbLjDXlOJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaR3llQAKCRAADmhBGVaC
- Fa1AEACZ3Nt0BrgPqutUnfHFrvqstStEZfgoR0Q/nnuTkeVRE/dK0y62CGTrKzM5E41U0aAu6nl
- UaoY8F/DOuzHfFsIzFHhJ7cCwPcEIitWxZI7bJJsICQNgH9ZAJwutP9Ysm3uFV46nOy4+UoQSFx
- 4Ueqw4vjUPGbugL3VpQ3UybWiZOy2yEKviJpgRo/hBZjAy5d0s6AvlDRPTPWAc9pziSHnW/WkSE
- 1lkYazUf1jym6wh7nIJifnbKcY5/NcZZ4hk3IKkc7ODjjqcnn2mtYjMW21G1F9Cz7tf/5Dbwxho
- PrBO2IUSSyRt9JeeqvE4FSnWUXrqpCmc+MJcIUl6XFqvbU9yKBkshL2gP0p7DWpclLb7il4iJNn
- 0Joseuj6tdkSbSTTAkUnxy6E+BM0IhpokKY4h4Asj5MG3ToD2SoidWbpiA9nYIijT8BkPianf4n
- q0NdDG89lkxRq4WENkmEtfKtuMNALOH8n7KTsNlCyy4r738If7RWf/izeI/sBOS6sEF5RzwlFFT
- /okkXNtvl9PykKNsZRz9kYvKpQChsYB1Irrv4WoYrh9zT2qHeYQQVAUs2DfFxqGca5Su+9TqeBQ
- 0valLyEKteWIQg14xtFT75y03dM2k7sXaBKjNP2ihb7D5Uif/Bj5OFY6GEZNG2wJarh2zWYToas
- 5fpc6YpG3StSP7g==
-X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
- fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
+Content-Type: text/plain; charset=US-ASCII
 
-Mostly the same ones as leases, but some additional tests to validate
-that they are broken on metadata changes.
+On Wed, 12 Nov 2025, Deepak Gupta via B4 Relay wrote:
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> From: Deepak Gupta <debug@rivosinc.com>
+> 
+> This commit adds a kernel command line option using which user cfi can be
+> disabled. User backward cfi and forward cfi can be enabled independently.
+> Kernel command line parameter "riscv_nousercfi" can take below values:
+>  - "all" : Disable forward and backward cfi both.
+>  - "bcfi" : Disable backward cfi.
+>  - "fcfi" : Disable forward cfi
+> 
+> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
+
+I fixed the checkpatch warnings on this patch and cleaned up the patch 
+description slightly; see below.
+
+
+- Paul
+
+From: Deepak Gupta <debug@rivosinc.com>
+Date: Wed, 12 Nov 2025 16:43:19 -0800
+Subject: [PATCH v23 21/28] riscv: add kernel command line option to opt out of user cfi
+
+This commit adds a kernel command line option to disable part or all of
+user cfi.  User backward cfi and forward cfi can be controlled independently.
+Kernel command line parameter "riscv_nousercfi" can take the following values:
+ - "all" : Disable forward and backward cfi both
+ - "bcfi" : Disable backward cfi
+ - "fcfi" : Disable forward cfi
+
+Signed-off-by: Deepak Gupta <debug@rivosinc.com>
+Link: https://patch.msgid.link/20251112-v5_user_cfi_series-v23-21-b55691eacf4f@rivosinc.com
+[pjw@kernel.org: fixed warnings from checkpatch; cleaned up patch description]
+Signed-off-by: Paul Walmsley <pjw@kernel.org>
 ---
- common/locktest       |   5 ++
- src/locktest.c        | 202 +++++++++++++++++++++++++++++++++++++++++++++++++-
- tests/generic/998     |  22 ++++++
- tests/generic/998.out |   2 +
- 4 files changed, 229 insertions(+), 2 deletions(-)
+ .../admin-guide/kernel-parameters.txt         |  8 +++
+ arch/riscv/include/asm/usercfi.h              |  9 +++
+ arch/riscv/kernel/cpufeature.c                |  9 ++-
+ arch/riscv/kernel/usercfi.c                   | 58 +++++++++++++++----
+ 4 files changed, 71 insertions(+), 13 deletions(-)
 
-diff --git a/common/locktest b/common/locktest
-index 609078485dac9358da7298082ad5ca5acada51dc..7654e9ea792ced93cdf2b35b0ed7f877df76ba84 100644
---- a/common/locktest
-+++ b/common/locktest
-@@ -101,3 +101,8 @@ _run_dirleasetest() {
- 	TESTFILE=$DELEGDIR
- 	_run_generic "-D"
- }
-+
-+_run_filedelegtest() {
-+	TESTFILE=$DELEGDIR
-+	_run_generic "-F"
-+}
-diff --git a/src/locktest.c b/src/locktest.c
-index eb40dce3f1b28ef34752518808ec2f3999cd4257..54ee1f07539ef08e768d2c809c40327f315d43e7 100644
---- a/src/locktest.c
-+++ b/src/locktest.c
-@@ -126,6 +126,8 @@ static char *child[] = { "child0", "child1" };
- #define		CMD_CHMOD	19
- #define		CMD_MKDIR	20
- #define		CMD_RMDIR	21
-+#define		CMD_UNLINK_S	22
-+#define		CMD_RENAME_S	23
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 6c42061ca20e..453127ef8746 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -6453,6 +6453,14 @@
+ 			replacement properties are not found. See the Kconfig
+ 			entry for RISCV_ISA_FALLBACK.
  
- #define		PASS 	0
- #define		FAIL	1
-@@ -169,6 +171,8 @@ static char *get_cmd_str(int cmd)
- 		case CMD_CHMOD: return "Chmod"; break;
- 		case CMD_MKDIR: return "Mkdir"; break;
- 		case CMD_RMDIR: return "Rmdir"; break;
-+		case CMD_UNLINK_S: return "Remove Self"; break;
-+		case CMD_RENAME_S: return "Rename Self"; break;
- 	}
- 	return "unknown";
- }
-@@ -716,6 +720,150 @@ static int64_t lease_tests[][6] =
- 		{0,0,0,0,0,CLIENT}
- 	};
++	riscv_nousercfi=
++		all	Disable user cfi ABI to userspace even if cpu extension
++			are available.
++		bcfi	Disable user backward cfi ABI to userspace even if
++			shadow stack extension is available.
++		fcfi	Disable user forward cfi ABI to userspace even if landing
++			pad extension is available.
++
+ 	ro		[KNL] Mount root device read-only on boot
  
-+char *filedeleg_descriptions[] = {
-+    /*  1 */"Take Read Deleg",
-+    /*  2 */"Take Write Deleg",
-+    /*  3 */"Fail Write Deleg if file is open somewhere else",
-+    /*  4 */"Fail Read Deleg if opened with write permissions",
-+    /*  5 */"Read deleg gets SIGIO on write open",
-+    /*  6 */"Write deleg gets SIGIO on read open",
-+    /*  7 */"Read deleg does _not_ get SIGIO on read open",
-+    /*  8 */"Read deleg gets SIGIO on write open",
-+    /*  9 */"Write deleg gets SIGIO on truncate",
-+    /* 10 */"Read deleg gets SIGIO on truncate",
-+    /* 11 */"Read deleg gets SIGIO on chmod",
-+    /* 12 */"Read deleg gets SIGIO on unlink",
-+    /* 13 */"Read deleg gets SIGIO on rename",
-+};
-+
-+static int64_t filedeleg_tests[][6] =
-+	/*	test #	Action	[offset|flags|arg]	length		expected	server/client */
-+	/*			[sigio_wait_time]						*/
-+	{
-+	/* Various tests to exercise delegs */
-+
-+	/* SECTION 1: Simple verification of being able to take delegs */
-+	/* Take Read Deleg */
-+	{1,	CMD_CLOSE,	0,		0,	PASS,		CLIENT	},
-+	{1,	CMD_OPEN,	O_RDONLY,	0,	PASS,		CLIENT	},
-+	{1,	CMD_CLOSE,	0,		0,	PASS,		SERVER	},
-+	{1,	CMD_OPEN,	O_RDONLY,	0,	PASS,		SERVER	},
-+	{1,	CMD_SETDELEG,	F_RDLCK,	0,	PASS,		SERVER	},
-+	{1,	CMD_GETDELEG,	F_RDLCK,	0,	PASS,		SERVER	},
-+	{1,	CMD_SETDELEG,	F_UNLCK,	0,	PASS,		SERVER	},
-+	{1,	CMD_CLOSE,	0,		0,	PASS,		SERVER	},
-+	{1,	CMD_CLOSE,	0,		0,	PASS,		CLIENT	},
-+
-+	/* Take Write Deleg */
-+	{2,	CMD_OPEN,	O_RDWR,		0,	PASS,		SERVER	},
-+	{2,	CMD_SETDELEG,	F_WRLCK,	0,	PASS,		SERVER	},
-+	{2,	CMD_GETDELEG,	F_WRLCK,	0,	PASS,		SERVER	},
-+	{2,	CMD_SETDELEG,	F_UNLCK,	0,	PASS,		SERVER	},
-+	{2,	CMD_CLOSE,	0,		0,	PASS,		SERVER	},
-+	/* Fail Write Deleg with other users */
-+	{3,	CMD_OPEN,	O_RDONLY,	0,	PASS,		CLIENT  },
-+	{3,	CMD_OPEN,	O_RDWR,		0,	PASS,		SERVER	},
-+	{3,	CMD_SETDELEG,	F_WRLCK,	0,	FAIL,		SERVER	},
-+	{3,	CMD_GETDELEG,	F_WRLCK,	0,	FAIL,		SERVER	},
-+	{3,	CMD_CLOSE,	0,		0,	PASS,		SERVER	},
-+	{3,	CMD_CLOSE,	0,		0,	PASS,		CLIENT	},
-+	/* Fail Read Deleg if opened for write */
-+	{4,	CMD_OPEN,	O_RDWR,		0,	PASS,		SERVER	},
-+	{4,	CMD_SETDELEG,	F_RDLCK,	0,	FAIL,		SERVER	},
-+	{4,	CMD_GETDELEG,	F_RDLCK,	0,	FAIL,		SERVER	},
-+	{4,	CMD_CLOSE,	0,		0,	PASS,		SERVER	},
-+
-+	/* SECTION 2: Proper SIGIO notifications */
-+	/* Get SIGIO when read deleg is broken by write */
-+	{5,	CMD_OPEN,	O_RDONLY,	0,	PASS,		CLIENT	},
-+	{5,	CMD_SETDELEG,	F_RDLCK,	0,	PASS,		CLIENT	},
-+	{5,	CMD_GETDELEG,	F_RDLCK,	0,	PASS,		CLIENT	},
-+	{5,	CMD_SIGIO,	0,		0,	PASS,		CLIENT	},
-+	{5,	CMD_OPEN,	O_RDWR,		0,	PASS,		SERVER	},
-+	{5,	CMD_WAIT_SIGIO,	5,		0,	PASS,		CLIENT	},
-+	{5,	CMD_CLOSE,	0,		0,	PASS,		SERVER	},
-+	{5,	CMD_CLOSE,	0,		0,	PASS,		CLIENT	},
-+
-+	/* Get SIGIO when write deleg is broken by read */
-+	{6,	CMD_OPEN,	O_RDWR,		0,	PASS,		CLIENT	},
-+	{6,	CMD_SETDELEG,	F_WRLCK,	0,	PASS,		CLIENT	},
-+	{6,	CMD_GETDELEG,	F_WRLCK,	0,	PASS,		CLIENT	},
-+	{6,	CMD_SIGIO,	0,		0,	PASS,		CLIENT	},
-+	{6,	CMD_OPEN,	O_RDONLY,	0,	PASS,		SERVER	},
-+	{6,	CMD_WAIT_SIGIO,	5,		0,	PASS,		CLIENT	},
-+	{6,	CMD_CLOSE,	0,		0,	PASS,		SERVER	},
-+	{6,	CMD_CLOSE,	0,		0,	PASS,		CLIENT	},
-+
-+	/* Don't get SIGIO when read deleg is taken by read */
-+	{7,	CMD_OPEN,	O_RDONLY,	0,	PASS,		CLIENT	},
-+	{7,	CMD_SETDELEG,	F_RDLCK,	0,	PASS,		CLIENT	},
-+	{7,	CMD_GETDELEG,	F_RDLCK,	0,	PASS,		CLIENT	},
-+	{7,	CMD_SIGIO,	0,		0,	PASS,		CLIENT	},
-+	{7,	CMD_OPEN,	O_RDONLY,	0,	PASS,		SERVER	},
-+	{7,	CMD_WAIT_SIGIO,	5,		0,	FAIL,		CLIENT	},
-+	{7,	CMD_CLOSE,	0,		0,	PASS,		SERVER	},
-+	{7,	CMD_CLOSE,	0,		0,	PASS,		CLIENT	},
-+
-+	/* Get SIGIO when Read deleg is broken by Write */
-+	{8,	CMD_OPEN,	O_RDONLY,	0,	PASS,		CLIENT	},
-+	{8,	CMD_SETDELEG,	F_RDLCK,	0,	PASS,		CLIENT	},
-+	{8,	CMD_GETDELEG,	F_RDLCK,	0,	PASS,		CLIENT	},
-+	{8,	CMD_SIGIO,	0,		0,	PASS,		CLIENT	},
-+	{8,	CMD_OPEN,	O_RDWR,		0,	PASS,		SERVER	},
-+	{8,	CMD_WAIT_SIGIO,	5,		0,	PASS,		CLIENT	},
-+	{8,	CMD_CLOSE,	0,		0,	PASS,		SERVER	},
-+	{8,	CMD_CLOSE,	0,		0,	PASS,		CLIENT	},
-+
-+	/* Get SIGIO when Write deleg is broken by Truncate */
-+	{9,	CMD_OPEN,	O_RDWR,		0,	PASS,		CLIENT	},
-+	{9,	CMD_SETDELEG,	F_WRLCK,	0,	PASS,		CLIENT	},
-+	{9,	CMD_GETDELEG,	F_WRLCK,	0,	PASS,		CLIENT	},
-+	{9,	CMD_SIGIO,	0,		0,	PASS,		CLIENT	},
-+	{9,	CMD_TRUNCATE,	FILE_SIZE/2,	0,	PASS,		CLIENT	},
-+	{9,	CMD_WAIT_SIGIO,	5,		0,	PASS,		CLIENT	},
-+	{9,	CMD_CLOSE,	0,		0,	PASS,		CLIENT	},
-+
-+	/* Get SIGIO when Read deleg is broken by Truncate */
-+	{10,	CMD_OPEN,	O_RDONLY,	0,	PASS,		CLIENT	},
-+	{10,	CMD_SETDELEG,	F_RDLCK,	0,	PASS,		CLIENT	},
-+	{10,	CMD_GETDELEG,	F_RDLCK,	0,	PASS,		CLIENT	},
-+	{10,	CMD_SIGIO,	0,		0,	PASS,		CLIENT	},
-+	{10,	CMD_TRUNCATE,	FILE_SIZE/2,	0,	PASS,		SERVER	},
-+	{10,	CMD_WAIT_SIGIO,	5,		0,	PASS,		CLIENT	},
-+	{10,	CMD_CLOSE,	0,		0,	PASS,		CLIENT	},
-+
-+	/* Get SIGIO when Read deleg is broken by Chmod */
-+	{11,	CMD_OPEN,	O_RDONLY,	0,	PASS,		SERVER	},
-+	{11,	CMD_SETDELEG,	F_RDLCK,	0,	PASS,		SERVER	},
-+	{11,	CMD_GETDELEG,	F_RDLCK,	0,	PASS,		SERVER	},
-+	{11,	CMD_SIGIO,	0,		0,	PASS,		SERVER	},
-+	{11,	CMD_CHMOD,	0644,		0,	PASS,		CLIENT	},
-+	{11,	CMD_WAIT_SIGIO,	5,		0,	PASS,		SERVER	},
-+	{11,	CMD_CLOSE,	0,		0,	PASS,		SERVER	},
-+
-+	/* Get SIGIO when file is unlinked */
-+	{12,	CMD_OPEN,	O_RDONLY,	0,	PASS,		SERVER	},
-+	{12,	CMD_SETDELEG,	F_RDLCK,	0,	PASS,		SERVER	},
-+	{12,	CMD_GETDELEG,	F_RDLCK,	0,	PASS,		SERVER	},
-+	{12,	CMD_SIGIO,	0,		0,	PASS,		SERVER	},
-+	{12,	CMD_UNLINK_S,	0,		0,	PASS,		CLIENT	},
-+	{12,	CMD_WAIT_SIGIO,	5,		0,	PASS,		SERVER	},
-+	{12,	CMD_CLOSE,	0,		0,	PASS,		SERVER	},
-+
-+	/* Get SIGIO when file is renamed */
-+	{13,	CMD_OPEN,	O_RDONLY,	0,	PASS,		SERVER	},
-+	{13,	CMD_SETDELEG,	F_RDLCK,	0,	PASS,		SERVER	},
-+	{13,	CMD_GETDELEG,	F_RDLCK,	0,	PASS,		SERVER	},
-+	{13,	CMD_SIGIO,	0,		0,	PASS,		SERVER	},
-+	{13,	CMD_RENAME_S,	0,		0,	PASS,		CLIENT	},
-+	{13,	CMD_WAIT_SIGIO,	5,		0,	PASS,		SERVER	},
-+	{13,	CMD_CLOSE,	0,		0,	PASS,		SERVER	},
-+
-+	/* indicate end of array */
-+	{0,0,0,0,0,SERVER},
-+	{0,0,0,0,0,CLIENT}
-+};
-+
- char *dirdeleg_descriptions[] = {
-     /*  1 */"Take Read Lease",
-     /*  2 */"Write Lease Should Fail",
-@@ -1124,6 +1272,37 @@ int do_chmod(int mode)
- 	return PASS;
- }
+ 	rodata=		[KNL,EARLY]
+diff --git a/arch/riscv/include/asm/usercfi.h b/arch/riscv/include/asm/usercfi.h
+index ec4b8a53eb74..7495baae1e3c 100644
+--- a/arch/riscv/include/asm/usercfi.h
++++ b/arch/riscv/include/asm/usercfi.h
+@@ -5,6 +5,10 @@
+ #ifndef _ASM_RISCV_USERCFI_H
+ #define _ASM_RISCV_USERCFI_H
  
-+int do_unlink_self(void)
-+{
-+	int ret;
++#define CMDLINE_DISABLE_RISCV_USERCFI_FCFI	1
++#define CMDLINE_DISABLE_RISCV_USERCFI_BCFI	2
++#define CMDLINE_DISABLE_RISCV_USERCFI		3
 +
-+	ret = unlink(filename);
-+	if (ret < 0) {
-+		perror("unlink");
-+		return FAIL;
-+	}
-+	return PASS;
-+}
+ #ifndef __ASSEMBLER__
+ #include <linux/types.h>
+ #include <linux/prctl.h>
+@@ -13,6 +17,8 @@
+ struct task_struct;
+ struct kernel_clone_args;
+ 
++extern unsigned long riscv_nousercfi;
 +
-+int do_rename_self(void)
-+{
-+	int ret;
-+	char target[PATH_MAX];
+ #ifdef CONFIG_RISCV_USER_CFI
+ struct cfi_state {
+ 	unsigned long ubcfi_en : 1; /* Enable for backward cfi. */
+@@ -83,6 +89,9 @@ void set_indir_lp_lock(struct task_struct *task);
+ 
+ #endif /* CONFIG_RISCV_USER_CFI */
+ 
++bool is_user_shstk_enabled(void);
++bool is_user_lpad_enabled(void);
 +
-+	ret = snprintf(target, sizeof(target), "%s2", filename);
-+	if (ret >= sizeof(target)) {
-+		perror("snprintf");
-+		return FAIL;
-+	}
+ #endif /* __ASSEMBLER__ */
+ 
+ #endif /* _ASM_RISCV_USERCFI_H */
+diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeature.c
+index 106f6bcde5c8..b220fec9a239 100644
+--- a/arch/riscv/kernel/cpufeature.c
++++ b/arch/riscv/kernel/cpufeature.c
+@@ -28,6 +28,7 @@
+ #include <asm/vector.h>
+ #include <asm/vendor_extensions.h>
+ #include <asm/vendor_extensions/thead.h>
++#include <asm/usercfi.h>
+ 
+ #define NUM_ALPHA_EXTS ('z' - 'a' + 1)
+ 
+@@ -45,6 +46,8 @@ struct riscv_isainfo hart_isa[NR_CPUS];
+ 
+ u32 thead_vlenb_of;
+ 
++unsigned long riscv_nousercfi;
 +
-+	ret = rename(filename, target);
-+	if (ret < 0) {
-+		perror("unlink");
-+		return FAIL;
-+	}
-+	return PASS;
-+}
-+
- static int do_lock(int cmd, int type, int start, int length)
+ /**
+  * riscv_isa_extension_base() - Get base extension word
+  *
+@@ -277,7 +280,8 @@ static int riscv_ext_svadu_validate(const struct riscv_isa_ext_data *data,
+ static int riscv_cfilp_validate(const struct riscv_isa_ext_data *data,
+ 				const unsigned long *isa_bitmap)
  {
-     int ret;
-@@ -1347,6 +1526,7 @@ main(int argc, char *argv[])
-     int fail_count = 0;
-     int run_leases = 0;
-     int run_dirdelegs = 0;
-+    int run_filedelegs = 0;
-     int test_setlease = 0;
-     
-     atexit(cleanup);
-@@ -1360,7 +1540,7 @@ main(int argc, char *argv[])
- 	    prog = p+1;
-     }
+-	if (!IS_ENABLED(CONFIG_RISCV_USER_CFI))
++	if (!IS_ENABLED(CONFIG_RISCV_USER_CFI) ||
++	    (riscv_nousercfi & CMDLINE_DISABLE_RISCV_USERCFI_FCFI))
+ 		return -EINVAL;
  
--    while ((c = getopt(argc, argv, "dDLn:h:p:t?")) != EOF) {
-+    while ((c = getopt(argc, argv, "dDFLn:h:p:t?")) != EOF) {
- 	switch (c) {
+ 	return 0;
+@@ -286,7 +290,8 @@ static int riscv_cfilp_validate(const struct riscv_isa_ext_data *data,
+ static int riscv_cfiss_validate(const struct riscv_isa_ext_data *data,
+ 				const unsigned long *isa_bitmap)
+ {
+-	if (!IS_ENABLED(CONFIG_RISCV_USER_CFI))
++	if (!IS_ENABLED(CONFIG_RISCV_USER_CFI) ||
++	    (riscv_nousercfi & CMDLINE_DISABLE_RISCV_USERCFI_BCFI))
+ 		return -EINVAL;
  
- 	case 'd':	/* debug flag */
-@@ -1371,6 +1551,10 @@ main(int argc, char *argv[])
- 	    run_dirdelegs = 1;
- 	    break;
+ 	return 0;
+diff --git a/arch/riscv/kernel/usercfi.c b/arch/riscv/kernel/usercfi.c
+index 33c955d56eb3..d7a973c58943 100644
+--- a/arch/riscv/kernel/usercfi.c
++++ b/arch/riscv/kernel/usercfi.c
+@@ -17,6 +17,8 @@
+ #include <asm/csr.h>
+ #include <asm/usercfi.h>
  
-+	case 'F':
-+	    run_filedelegs = 1;
-+	    break;
++unsigned long riscv_nousercfi;
 +
- 	case 'L':	/* Lease testing */
- 	    run_leases = 1;
- 	    break;
-@@ -1430,7 +1614,7 @@ main(int argc, char *argv[])
-     if (test_setlease == 1) {
- 	struct delegation deleg = { .d_type = F_UNLCK };
+ #define SHSTK_ENTRY_SIZE sizeof(void *)
  
--	if (run_dirdelegs)
-+	if (run_dirdelegs || run_filedelegs)
- 		fcntl(f_fd, F_SETDELEG, &deleg);
- 	else
- 		fcntl(f_fd, F_SETLEASE, F_UNLCK);
-@@ -1568,6 +1752,8 @@ main(int argc, char *argv[])
-      */
-     if (run_dirdelegs)
- 	fail_count = run(dirdeleg_tests, dirdeleg_descriptions);
-+    else if (run_filedelegs)
-+	fail_count = run(filedeleg_tests, filedeleg_descriptions);
-     else if (run_leases)
- 	fail_count = run(lease_tests, lease_descriptions);
-     else
-@@ -1673,6 +1859,12 @@ int run(int64_t tests[][6], char *descriptions[])
- 			case CMD_RMDIR:
- 			    result = do_rmdir(tests[index][ARG]);
- 			    break;
-+			case CMD_UNLINK_S:
-+			    result = do_unlink_self();
-+			    break;
-+			case CMD_RENAME_S:
-+			    result = do_rename_self();
-+			    break;
- 		    }
- 		    if( result != tests[index][RESULT]) {
- 			fail_flag++;
-@@ -1817,6 +2009,12 @@ int run(int64_t tests[][6], char *descriptions[])
- 		case CMD_RMDIR:
- 		    result = do_rmdir(ctl.offset);
- 		    break;
-+		case CMD_UNLINK_S:
-+		    result = do_unlink_self();
-+		    break;
-+		case CMD_RENAME_S:
-+		    result = do_rename_self();
-+		    break;
- 	    }
- 	    if( result != ctl.result ) {
- 		fprintf(stderr,"Failure in %d:%s\n",
-diff --git a/tests/generic/998 b/tests/generic/998
-new file mode 100755
-index 0000000000000000000000000000000000000000..5e7e62137ba3a52c62718f9f674094a107e3edca
---- /dev/null
-+++ b/tests/generic/998
-@@ -0,0 +1,22 @@
-+#! /bin/bash
-+# SPDX-License-Identifier: GPL-2.0
-+# Copyright (c) 2019 Intel, Corp.  All Rights Reserved.
-+#
-+# FSQA Test No. XXX
-+#
-+# file delegation test
-+#
-+. ./common/preamble
-+_begin_fstest auto quick
+ bool is_shstk_enabled(struct task_struct *task)
+@@ -59,7 +61,7 @@ unsigned long get_active_shstk(struct task_struct *task)
+ 
+ void set_shstk_status(struct task_struct *task, bool enable)
+ {
+-	if (!cpu_supports_shadow_stack())
++	if (!is_user_shstk_enabled())
+ 		return;
+ 
+ 	task->thread_info.user_cfi_state.ubcfi_en = enable ? 1 : 0;
+@@ -89,7 +91,7 @@ bool is_indir_lp_locked(struct task_struct *task)
+ 
+ void set_indir_lp_status(struct task_struct *task, bool enable)
+ {
+-	if (!cpu_supports_indirect_br_lp_instr())
++	if (!is_user_lpad_enabled())
+ 		return;
+ 
+ 	task->thread_info.user_cfi_state.ufcfi_en = enable ? 1 : 0;
+@@ -259,7 +261,7 @@ SYSCALL_DEFINE3(map_shadow_stack, unsigned long, addr, unsigned long, size, unsi
+ 	bool set_tok = flags & SHADOW_STACK_SET_TOKEN;
+ 	unsigned long aligned_size = 0;
+ 
+-	if (!cpu_supports_shadow_stack())
++	if (!is_user_shstk_enabled())
+ 		return -EOPNOTSUPP;
+ 
+ 	/* Anything other than set token should result in invalid param */
+@@ -306,7 +308,7 @@ unsigned long shstk_alloc_thread_stack(struct task_struct *tsk,
+ 	unsigned long addr, size;
+ 
+ 	/* If shadow stack is not supported, return 0 */
+-	if (!cpu_supports_shadow_stack())
++	if (!is_user_shstk_enabled())
+ 		return 0;
+ 
+ 	/*
+@@ -352,7 +354,7 @@ void shstk_release(struct task_struct *tsk)
+ {
+ 	unsigned long base = 0, size = 0;
+ 	/* If shadow stack is not supported or not enabled, nothing to release */
+-	if (!cpu_supports_shadow_stack() || !is_shstk_enabled(tsk))
++	if (!is_user_shstk_enabled() || !is_shstk_enabled(tsk))
+ 		return;
+ 
+ 	/*
+@@ -381,7 +383,7 @@ int arch_get_shadow_stack_status(struct task_struct *t, unsigned long __user *st
+ {
+ 	unsigned long bcfi_status = 0;
+ 
+-	if (!cpu_supports_shadow_stack())
++	if (!is_user_shstk_enabled())
+ 		return -EINVAL;
+ 
+ 	/* this means shadow stack is enabled on the task */
+@@ -395,7 +397,7 @@ int arch_set_shadow_stack_status(struct task_struct *t, unsigned long status)
+ 	unsigned long size = 0, addr = 0;
+ 	bool enable_shstk = false;
+ 
+-	if (!cpu_supports_shadow_stack())
++	if (!is_user_shstk_enabled())
+ 		return -EINVAL;
+ 
+ 	/* Reject unknown flags */
+@@ -448,7 +450,7 @@ int arch_lock_shadow_stack_status(struct task_struct *task,
+ 				  unsigned long arg)
+ {
+ 	/* If shtstk not supported or not enabled on task, nothing to lock here */
+-	if (!cpu_supports_shadow_stack() ||
++	if (!is_user_shstk_enabled() ||
+ 	    !is_shstk_enabled(task) || arg != 0)
+ 		return -EINVAL;
+ 
+@@ -461,7 +463,7 @@ int arch_get_indir_br_lp_status(struct task_struct *t, unsigned long __user *sta
+ {
+ 	unsigned long fcfi_status = 0;
+ 
+-	if (!cpu_supports_indirect_br_lp_instr())
++	if (!is_user_lpad_enabled())
+ 		return -EINVAL;
+ 
+ 	/* indirect branch tracking is enabled on the task or not */
+@@ -474,7 +476,7 @@ int arch_set_indir_br_lp_status(struct task_struct *t, unsigned long status)
+ {
+ 	bool enable_indir_lp = false;
+ 
+-	if (!cpu_supports_indirect_br_lp_instr())
++	if (!is_user_lpad_enabled())
+ 		return -EINVAL;
+ 
+ 	/* indirect branch tracking is locked and further can't be modified by user */
+@@ -498,7 +500,7 @@ int arch_lock_indir_br_lp_status(struct task_struct *task,
+ 	 * If indirect branch tracking is not supported or not enabled on task,
+ 	 * nothing to lock here
+ 	 */
+-	if (!cpu_supports_indirect_br_lp_instr() ||
++	if (!is_user_lpad_enabled() ||
+ 	    !is_indir_lp_enabled(task) || arg != 0)
+ 		return -EINVAL;
+ 
+@@ -506,3 +508,37 @@ int arch_lock_indir_br_lp_status(struct task_struct *task,
+ 
+ 	return 0;
+ }
 +
-+# Import common functions.
-+. ./common/filter
-+. ./common/locktest
++bool is_user_shstk_enabled(void)
++{
++	return (cpu_supports_shadow_stack() &&
++		!(riscv_nousercfi & CMDLINE_DISABLE_RISCV_USERCFI_BCFI));
++}
 +
-+_require_test
-+_require_test_fcntl_advisory_locks
-+_require_test_fcntl_setdeleg
++bool is_user_lpad_enabled(void)
++{
++	return (cpu_supports_indirect_br_lp_instr() &&
++		!(riscv_nousercfi & CMDLINE_DISABLE_RISCV_USERCFI_FCFI));
++}
 +
-+_run_filedelegtest
++static int __init setup_global_riscv_enable(char *str)
++{
++	if (strcmp(str, "all") == 0)
++		riscv_nousercfi = CMDLINE_DISABLE_RISCV_USERCFI;
 +
-+exit
-diff --git a/tests/generic/998.out b/tests/generic/998.out
-new file mode 100644
-index 0000000000000000000000000000000000000000..b65a7660fea895dc4d60cec8fabe7be1695beabe
---- /dev/null
-+++ b/tests/generic/998.out
-@@ -0,0 +1,2 @@
-+QA output created by 998
-+success!
-
++	if (strcmp(str, "fcfi") == 0)
++		riscv_nousercfi |= CMDLINE_DISABLE_RISCV_USERCFI_FCFI;
++
++	if (strcmp(str, "bcfi") == 0)
++		riscv_nousercfi |= CMDLINE_DISABLE_RISCV_USERCFI_BCFI;
++
++	if (riscv_nousercfi)
++		pr_info("riscv user cfi disabled via cmdline - shadow stack status : %s, landing pad status : %s\n",
++			(riscv_nousercfi & CMDLINE_DISABLE_RISCV_USERCFI_BCFI) ? "disabled" :
++			"enabled", (riscv_nousercfi & CMDLINE_DISABLE_RISCV_USERCFI_FCFI) ?
++			"disabled" : "enabled");
++
++	return 1;
++}
++
++__setup("riscv_nousercfi=", setup_global_riscv_enable);
 -- 
-2.51.1
+2.48.1
 
 
