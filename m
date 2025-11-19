@@ -1,71 +1,63 @@
-Return-Path: <linux-fsdevel+bounces-69055-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69056-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 164AFC6D818
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 09:47:20 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F4EAC6D8CD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 10:01:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B47C3352884
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 08:46:34 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTPS id 7F2A82D6E1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 09:01:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E0492FD69B;
-	Wed, 19 Nov 2025 08:45:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N1pT7hJO"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAA2E330335;
+	Wed, 19 Nov 2025 09:01:05 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B06D307ADA
-	for <linux-fsdevel@vger.kernel.org>; Wed, 19 Nov 2025 08:45:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB04C32E72A
+	for <linux-fsdevel@vger.kernel.org>; Wed, 19 Nov 2025 09:01:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763541952; cv=none; b=ourfmCJSW2b7V4E52uBWs7ImK3p+V6MENB/q9BbIg3enWgtlKXw0AAVoisB/RSA1afVuUiKSr426nFHQq9jPwzHGC2tPd2tJTPxGQfSdH+0viWYZosPSBPXxNFN3/Pd6gEurhWs4IVtBHdJNHNuAsyGZbBrFi7vfHpOVJ32+uV8=
+	t=1763542865; cv=none; b=sjejzPg2t1Wo2/ymZz7ExtCUf5ONdP0FfM9Bs6Q8ts6JhO4YQChXtzveVklQhY81Rj6jt9zDsZP3bca/jPh+E0nz79gztqaCw3BXcuIJk6lVAo6xeBprJ/hSfDL1aWL3FlHYrOccB30KscHpRYDNuWLZ4BfvkX/90ALuXNvyqGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763541952; c=relaxed/simple;
-	bh=w4xwkKVpoaVrg2jXzvPhwTDzCqeAgrxF+VGrZxku6tQ=;
+	s=arc-20240116; t=1763542865; c=relaxed/simple;
+	bh=Q9mjZvm6bk5XNA0xh9n+9vsYyCIHmC6kJTw6Jyt8Tv4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SymVGdZIC8f77efGnFXfvxwMGX7hnDMzyWogUyEXa2YJZti2IXFFfpb2HEvcACgP6cS81SlUuBi3AkQ2ohPD1OhNl1pop5gRuAICRpMlTj9I/Ev0h7VFJuThGXiIv4dSD9ghsrmcTTe3j3TQbZk51eUUBe/koVOP5lUQYYVo6uo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N1pT7hJO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FFA5C2BCB0;
-	Wed, 19 Nov 2025 08:45:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763541951;
-	bh=w4xwkKVpoaVrg2jXzvPhwTDzCqeAgrxF+VGrZxku6tQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=N1pT7hJOzLkvDN7nFrioT4Y8RF9c6LA3bQQb00k3IvuNVKQQVGjKw/rrM3s3MAs65
-	 hhI5IlTLSojMZL+sv+FVqwSAkmM1KS9mjjc0IxYFyCY5wUqQpiIauaTZhy8oKhzeAl
-	 GuDiTBQVPHYJAJSrgXRUz/1RiRZWCPWJaExLP2vZb1Amm1zbcXBtXSgZ5+dhj/3mdl
-	 Xyls5U1vAnTs3jEXeSUNXYfdbmEG7+DET1msEKd64wbscyo+ysJFUu3TC+eVzge8pV
-	 psOypSiruW6BfDvJn1hL3PxrTas9S8RbGfkv/njrQ4ZnAL1k5aUUeAs5GuIyuebt7d
-	 cq/tc204dnP9A==
-Date: Wed, 19 Nov 2025 09:45:46 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-fsdevel@vger.kernel.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=HwFu4/9GG7SaoqR38Lmnzq7nDxPELzaMIiCHrFmAqX3HEbnxRa6lrW+O75Cjn3o6wlfuEOf3haejP58+iIyVf/zZSkbdH9CxFgIM8C/CEAZ7o9wzoNVWjxWnIYiw7YszUZ2AYrldWCzy5tka8ssmHRKh5De+yIoLJ5hm9b11pl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 67F056732A; Wed, 19 Nov 2025 10:01:00 +0100 (CET)
+Date: Wed, 19 Nov 2025 10:01:00 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Christoph Hellwig <hch@lst.de>, jack@suse.cz,
+	linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk
 Subject: Re: [PATCH] fs: unexport ioctl_getflags
-Message-ID: <20251119-frist-vertragen-22e1d099b118@brauner>
-References: <20251118070941.2368011-1-hch@lst.de>
+Message-ID: <20251119090100.GB24598@lst.de>
+References: <20251118070941.2368011-1-hch@lst.de> <20251119-kampagne-baumhaus-275e14d62e2f@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251118070941.2368011-1-hch@lst.de>
+In-Reply-To: <20251119-kampagne-baumhaus-275e14d62e2f@brauner>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Tue, Nov 18, 2025 at 08:09:41AM +0100, Christoph Hellwig wrote:
-> No modular users, nor should there be any for a dispatcher like this.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
+On Wed, Nov 19, 2025 at 09:42:53AM +0100, Christian Brauner wrote:
+> On Tue, 18 Nov 2025 08:09:41 +0100, Christoph Hellwig wrote:
+> > No modular users, nor should there be any for a dispatcher like this.
+> > 
+> > 
 
-Ideally we'd be able to catch unnecessary exports automatically.
-Which would also be nice because it would mean that we could enforce
-automatic removal of unused exports. I'm pretty sure we have a bunch of
-them without realizing it.
+I was going to send a patch doing all the exports in file_attr.c in one
+go.  I can do that incrementally, but I think it would be a tad
+cleaner.
+
 
