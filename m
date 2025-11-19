@@ -1,144 +1,95 @@
-Return-Path: <linux-fsdevel+bounces-69109-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69100-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F0E8C6F623
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 15:45:20 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12CBEC6F0D7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 14:53:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B81244FD1F7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 14:29:20 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTPS id 1A3A42E6FC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 13:50:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A475936C0CD;
-	Wed, 19 Nov 2025 14:25:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCB733612DE;
+	Wed, 19 Nov 2025 13:50:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alyssa.is header.i=@alyssa.is header.b="Msp/8Ugq";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="OXw9+CMn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XClUMDYa"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh-a3-smtp.messagingengine.com (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C979A2E7165;
-	Wed, 19 Nov 2025 14:25:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21E0D328604;
+	Wed, 19 Nov 2025 13:50:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763562320; cv=none; b=el+Zxp+6cFP3z5I9fUwSeg23DB5Ozw4pBAWwa9ERaNDWl6gQqlwed6y3RDQcP2ueiDCt5YzSdebNGNmAvOj7kBpymlaP3CNdNyyK7jRKiu7DG8B/nP5YnPhhkEuHmQPSIx89fBIakJ1EoChtIRXKUhUlyCuBwMOHdglRcXth8/M=
+	t=1763560217; cv=none; b=GX1Bz0XCmhLudPLAU3oNXqTVJjn4XXKFluKsUE/6EGleBIFxumB+4nfPv6f1unL2+ZE2xXvZzf99JViaNnJmnoPks+8RBlJDSIYAwYmH/s/wfvNUPAfbOvSjK0nRrhhi2OscsMKZ0nRjnGZBglL7HgJ0Ty0n45m4XFyQ9pLa1D0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763562320; c=relaxed/simple;
-	bh=9SkXPt2mWvs5IIt4XRK/mbXVzF3jutwQkYzM57Xh1a8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hlR523Vl2HsvPLCZGykA4RHoR7N7GsztruZ3rzeFW+uSUgfwapSLSULNwKiESAxaSRbiQllMGQLyQDGOLT3MymbqwbgRJb7zZ9jHBaijgaEGQE7FPcNohivXHuDVYi6fHpZiFSPP5yrn3oUEPkQBQ0YkBn5HrT0nWXw+Q5hL8sE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alyssa.is; spf=pass smtp.mailfrom=alyssa.is; dkim=pass (2048-bit key) header.d=alyssa.is header.i=@alyssa.is header.b=Msp/8Ugq; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=OXw9+CMn; arc=none smtp.client-ip=103.168.172.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alyssa.is
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alyssa.is
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 656701400076;
-	Wed, 19 Nov 2025 09:25:15 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-01.internal (MEProxy); Wed, 19 Nov 2025 09:25:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alyssa.is; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:message-id:mime-version:reply-to:subject:subject:to:to; s=fm2;
-	 t=1763562315; x=1763648715; bh=uSLyGu3lXBDz6tpjXdnJ72JFOQcMhNbl
-	D6TTCrVdXuE=; b=Msp/8UgqaOnRUDuOe0373Q/9yP49p8WR4cUbZI78nXF8HcR6
-	0eiTHDvtSsZd2CX1J6kD3BuJe88BS7VRNU2WN1sXYXxnAA+wS/GA0R0Fc71q/xG6
-	bFVVmGGdWxlCoMP8kyxe5vkwIXsUl5BTbsNtG5INnPqgobN/Ctp7z8yl3/hgCRUs
-	zVdy03AxBa41JNA8Xb2HhSrAllACb+ONbAgdC6cHkW6PQT2FcvhZ6wgOgPOho1pz
-	jj2SD6v3yO3rK35qKAv+wH+dgmgofnTRuskytfG/Q1/mjIycJEgyYnVzviPwJkxU
-	LLGrSdgNAmliJN51ZYBe44tnzqtEjSRyTM+Gyw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:message-id
-	:mime-version:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1763562315; x=
-	1763648715; bh=uSLyGu3lXBDz6tpjXdnJ72JFOQcMhNblD6TTCrVdXuE=; b=O
-	Xw9+CMn+lJ0H/1etQPGXj2wbErAwthvuBv/3FDaJKYXWAHGpG0CigTZO4QKVAOMD
-	Bv76Wd6o/E88t4Vvga6XwC9MG+IxaDPRA3S/L4w77/J0eMO3aZ6MlBXBMa/rwjY1
-	0fWTvy7Uf9A48h+EUu95jazAJyRhRRbejKAYzXEv5jACPuM4YmQtBzdUGx5siW65
-	p1X5XW2SAZkC8AxfmqFJa63fYvoC4n6PT2BcyDf2f5jSGviZE3aDUpg7qsx4BDA2
-	/3mY5RmZpIsOueusg548P+CNtevLc4gndxkrw//jaNZY+Rt6TRTO/Nt8w4KT1b1J
-	YPzRANi97EDckp/zUSSkA==
-X-ME-Sender: <xms:StMdacsOUp53RTmf_pMuxo8HYTuZvvrkO_TUTsLgHorNjLhMb8Nmuw>
-    <xme:StMdaS36xKDpnR4dE0Dg9xq_SU1BBpbjb-TlcWdru7qz0SkOqCzHqiP8A1EuphRc7
-    Wdt6rx99K3kszc0mvq6EBUyOX23md_1E6QeVmLt_2mjv2lVQRCxhT4>
-X-ME-Received: <xmr:StMdaQQxHuTIiniNpoQSWmXFzffVI0DBa8k86gbMG7MLj_z_U7ryADSCqOWTDvZTX7CAaBhYD8GamaJaSvo2_ySaNuOTkpfI_0YRrYfh>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvvdeggeegucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhephffvvefufffkgggtsehgtderredttddtnecuhfhrohhmpeetlhihshhsrgcutfho
-    shhsuceohhhisegrlhihshhsrgdrihhsqeenucggtffrrghtthgvrhhnpeekjeevuefgue
-    ekheejvddvjeeulefgtedtledtjeefheehtdduvdegtedtleelleenucffohhmrghinhep
-    khgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrg
-    hilhhfrhhomhephhhisegrlhihshhsrgdrihhspdhnsggprhgtphhtthhopeduiedpmhho
-    uggvpehsmhhtphhouhhtpdhrtghpthhtoheprghrnhgusegrrhhnuggsrdguvgdprhgtph
-    htthhopegthihphhgrrhestgihphhhrghrrdgtohhmpdhrtghpthhtohepsghfihgvlhgu
-    shesfhhivghlughsvghsrdhorhhgpdhrtghpthhtohepuggvmhhiohgsvghnohhurhesgh
-    hmrghilhdrtghomhdprhgtphhtthhopehjrghnnhhhsehgohhoghhlvgdrtghomhdprhgt
-    phhtthhopegsrhgruhhnvghrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehjlhgrhi
-    htohhnsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehluhhtoheskhgvrhhnvghlrdho
-    rhhgpdhrtghpthhtohepshhhuhgrhheskhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:StMdaev0zCR3HVwOji2NighyzGEXgQ4XlWAe_9sQN3qcUgbjGuhQPw>
-    <xmx:StMdaeJvoEDTbvtczkGll2QoFVE-blA0Eoiqm6l_dB9QqyPW6uWJUA>
-    <xmx:StMdaSd5rnbF7n7y6DrA6RQgexvH5iXkiqdddbTxaniPAg0h9oBE0Q>
-    <xmx:StMdaQVCDIVVYeKQoMRRNtmkdtN66zxTaTnwuDFSHrvWd7K65gVsYg>
-    <xmx:S9MdaUg_Q-6U049TOA6ao_zzE74uxVh9f3NschoiGEGf6JRTntFE3HBi>
-Feedback-ID: i12284293:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 19 Nov 2025 09:25:13 -0500 (EST)
-Received: by fw12.qyliss.net (Postfix, from userid 1000)
-	id D0CC22287CB7; Wed, 19 Nov 2025 14:46:37 +0100 (CET)
-From: Alyssa Ross <hi@alyssa.is>
-To: linux-fsdevel@vger.kernel.org
-Cc: Demi Marie Obenour <demiobenour@gmail.com>, Aleksa Sarai
- <cyphar@cyphar.com>, Jann Horn <jannh@google.com>, "Eric W. Biederman"
- <ebiederm@xmission.com>, jlayton@kernel.org, Bruce Fields
- <bfields@fieldses.org>, Al Viro <viro@zeniv.linux.org.uk>, Arnd Bergmann
- <arnd@arndb.de>, shuah@kernel.org, David Howells <dhowells@redhat.com>,
- Andy Lutomirski <luto@kernel.org>, Christian Brauner <brauner@kernel.org>,
- Tycho Andersen <tycho@tycho.pizza>, linux-kernel@vger.kernel.org,
- linux-api@vger.kernel.org
-Subject: Safety of resolving untrusted paths with detached mount dirfd
-Date: Wed, 19 Nov 2025 14:46:35 +0100
-Message-ID: <87cy5eqgn8.fsf@alyssa.is>
+	s=arc-20240116; t=1763560217; c=relaxed/simple;
+	bh=5/z60YZ4HDwgQcWS+xT3OG+VFbEseWYjLnf2sArfWCM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Lwtg5xIIJv/+cd7EB00ev9Tm/1darMsF6A4BcMnLsQvjXTzHCN7ebUmIluzvtMMCJJoZiz90G0i5R6O3vLmycqgrjpvEo140FXrk0GL5rrtehaK0yuN3yiY99i+AhgY2LpWDCOjRknPYdbcT3SwSRopfeMk50qj4XioXURSDyrE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XClUMDYa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9204AC19424;
+	Wed, 19 Nov 2025 13:50:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763560216;
+	bh=5/z60YZ4HDwgQcWS+xT3OG+VFbEseWYjLnf2sArfWCM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=XClUMDYaYwGTE17d0UHvhDbzy1mPDyfVpq4GszeLO48WcdWlWRoy1s3fkomIuP7cD
+	 AQnUVdqEfp9pZYBFYAoJs+KPNInwSbdjhpxV6sU1h6JAX5yFVPjDzF/ZAXx763hGxk
+	 IEAFJ7hOI9epd9f5rftPbGUx0e9CZfPv36Uj90mSs1LELWveMXH6dF5gMoZfrJWb8h
+	 FXoPR+DKOHql3Ehtx/y8rH8EdEdCuMZL2wtU52Tl1nt49D5egAOWctVVFAg60EbyOx
+	 Cmdr+3367xomNeEe0Kciy4ke0o4L99HwLyg1fJJFBdMcZ5jgIEMxnoh1kMnOsBY3CK
+	 ne/D5w94DParQ==
+From: Christian Brauner <brauner@kernel.org>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	viro@zeniv.linux.org.uk
+Subject: Re: [PATCH] fs: move mntput_no_expire() slowpath into a dedicated routine
+Date: Wed, 19 Nov 2025 14:50:04 +0100
+Message-ID: <20251119-anlocken-gekippt-adc0ab055229@brauner>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20251114201803.2183505-1-mjguzik@gmail.com>
+References: <20251114201803.2183505-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha512; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1150; i=brauner@kernel.org; h=from:subject:message-id; bh=5/z60YZ4HDwgQcWS+xT3OG+VFbEseWYjLnf2sArfWCM=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWTKnhaSN2Bk3Kf9bq579effz2WbN65b4PFcZeqbyKYw1 p2py88zdZSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAExEehYjw9KXUx2q9/OoqN16 vvRz8HVh7bQu7/MftHZMLEhYu6XzxBRGhsPhFan2k9lE9k/TNbnZL2av9jrketxqHycDbr65dUf 1uQE=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
---=-=-=
-Content-Type: text/plain
+On Fri, 14 Nov 2025 21:18:03 +0100, Mateusz Guzik wrote:
+> In the stock variant the compiler spills several registers on the stack
+> and employs stack smashing protection, adding even more code + a branch
+> on exit..
+> 
+> The actual fast path is small enough that the compiler inlines it for
+> all callers -- the symbol is no longer emitted.
+> 
+> [...]
 
-Hello,
+Applied to the vfs-6.19.misc branch of the vfs/vfs.git tree.
+Patches in the vfs-6.19.misc branch should appear in linux-next soon.
 
-As we know, it's not safe to use chroot() for resolving untrusted paths
-within some root, as a subdirectory could be moved outside of the
-process root while walking the path[1].  On the other hand,
-LOOKUP_BENEATH is supposed to be robust against this, and going by [2],
-it sounds like resolving with the mount namespace root as dirfd should
-also be.
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-My question is: would resolving an untrusted path against a detached
-mount root dirfd opened with OPEN_TREE_CLONE (not necessarily a
-filesystem root) also be expected to be robust against traversal issues?
-i.e. can I rely on an untrusted path never resolving to a path that
-isn't under the mount root?
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-[1]: https://lore.kernel.org/lkml/CAG48ez30WJhbsro2HOc_DR7V91M+hNFzBP5ogRMZaxbAORvqzg@mail.gmail.com/
-[2]: https://lore.kernel.org/lkml/C89D720F-3CC4-4FA9-9CBB-E41A67360A6B@amacapital.net/
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.19.misc
 
------BEGIN PGP SIGNATURE-----
-
-iHUEARYKAB0WIQQGoGac7QfI+H5ZtFCZddwkt31pFQUCaR3KOwAKCRCZddwkt31p
-Fdj3AP0SAsCZF1PqR/445B52H+Yf19RvjVlHJh0I/X3OdGW/kAEA3flerEzGP+Fw
-5F0hSZBlcJJwaEN7yFPo51mFvvMT1wA=
-=74+2
------END PGP SIGNATURE-----
---=-=-=--
+[1/1] fs: move mntput_no_expire() slowpath into a dedicated routine
+      https://git.kernel.org/vfs/vfs/c/bfef6e1f3488
 
