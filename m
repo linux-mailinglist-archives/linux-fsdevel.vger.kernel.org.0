@@ -1,215 +1,229 @@
-Return-Path: <linux-fsdevel+bounces-69151-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69152-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EAB1C713AA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 23:13:20 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84959C713EA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 23:21:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 856B3349BCC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 22:13:19 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTPS id 8FE78295A9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 22:21:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4544530DEB1;
-	Wed, 19 Nov 2025 22:13:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C83C312816;
+	Wed, 19 Nov 2025 22:21:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="L6v3xULV"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JP0FCFJH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47E322FC899
-	for <linux-fsdevel@vger.kernel.org>; Wed, 19 Nov 2025 22:13:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3D4726E703
+	for <linux-fsdevel@vger.kernel.org>; Wed, 19 Nov 2025 22:21:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763590385; cv=none; b=ixew2AotcOSrv87AolWZcfYGhhqalG60lRDb+JsuQLEYSvWC/V7fXeO7ZlqVowVYCUYu1DmchX0ilgj8K3VIshz1aonel+K0KISeO0t1xINe77sD9Zmp4O6yERYr8Q80Zzr6UI3a9x9u7/WTMkYY4lYSlDdsBfKzEGCtoKA2O4M=
+	t=1763590866; cv=none; b=otPLPNz1k8Ax+CONG4CLzygnev/vNfwCtBpq4U0R2bD+VEAlYRpbuKuRXqXhfAYb1qhEfhruGVV/LBt1n7aWl8fZER3tfuNPQl84A8+gdpcC44c2U2gT+tdNbBxDto12y63TcCbvzuMv3IX6PLmm7upn6a8DI4BcNqNWpMRvy58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763590385; c=relaxed/simple;
-	bh=0r7R5FGvy0RXdYfaciazSHP/k6sy56Z0pCJRwQ5fY7M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pq7RisLf8d7yKVMj4NY3vkbU8quXtnGKkw6HJ5H67DsU+unrYwr8DwvHF2KsJTBUt/xbp9LdSRqwRO60lXILpLo1X5GWZAc4Ufy3r0I0g8htWBwCoHgO4CnN0Zf6drSwMkuu8GV/Oj0aZOoMbW+NqAr55iYEaTZcQTpGjoNi74s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=L6v3xULV; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-64320b9bb4bso413961a12.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Nov 2025 14:13:03 -0800 (PST)
+	s=arc-20240116; t=1763590866; c=relaxed/simple;
+	bh=50Q9sBTjpmF9okPX4ahM+W4f4BYMCV2mUkt/5FtAic0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tu0lS+e8vy2YPC5EZERE53G5a8Rfb1iP7WO5keGjBXv0wUewydXhHyndLfn67uULCzwPEwgUu5zcryk8Qg34TotrZjVNuITAVcospnyQYO5Z/1N31g5wog3DbnbzNxZwZjwH76XZgvphlxK+eJY/TCZFIdgIYANfcLpaAxH78NY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JP0FCFJH; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4779b49d724so453815e9.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Nov 2025 14:21:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1763590382; x=1764195182; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jmO/rmQDeDDD4oFLN2kD77+FOiHPR0yrD5sudAmDUFo=;
-        b=L6v3xULVVDqIxPP4b1FuHfWXPbWXhUB+5NXUmRtpRm1qMFYQ3FnzePaTAXxo6WDtxq
-         rlfHhhjeGD6fhwBwfxbgsEZDXm+zfzaF79h1dp+a4w+FxaUC08ab0U3L5K0gAtDW5mqy
-         5c7q0Gd8inTTHMuJgOoJ1DpvxXLhvBzUQhW+OO1N0YFyRTAxydyuhZFiUdxz+4xxw9dM
-         vieAAxXrgV9O1myy0A7N1PHv4LJ7tuTVoRQVX5m8K96aSYbJYpRhTlXaTCyGScEkBZDO
-         g7D6NH73LGazx3PkwA7sZiuLhsO0W+7qhCp1bxS/7iFFQNGAqpHQmYzUBbVPsVtSu3rP
-         NT6A==
+        d=gmail.com; s=20230601; t=1763590862; x=1764195662; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=288Dw9sswG0A+z/lBkxnm7oNArScrtV4EVd6dIg2R2Y=;
+        b=JP0FCFJHP2X5MXrAcMtQ+4dXgB7O2fhO5EEGwlNDXRVDWKtUvmuF82KPPc12AAfcGm
+         doVt/W4Q/AYtsOQBjUtCtQ6gJUzNGTIWDhudlQpJKG56ZnAwZQmahr0wCQf6CP/haD7I
+         7BXQycyHTvPIBCLdaZvaiDLpI+GV5pV+0EYsFaFVlTdrI7OBiP3Gf4fd84scioTZqba6
+         y3TpcoRo1ASM9uo424amHjfUluJK6pGHd0oPs42osgsv42/adXv0osiqJGB7RBw8Oy1s
+         Ens32drV7bvJduLuXLKA2Oxif1b3U5fRH4L3qxcAO42TvxA+BJ8jzCJo+f01+kCqdGeh
+         fziw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763590382; x=1764195182;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=jmO/rmQDeDDD4oFLN2kD77+FOiHPR0yrD5sudAmDUFo=;
-        b=deDjuZ6GOR6YqhqLzYQNg9usQ3LqA5nZN/Lknq7AvnQdyjm2YPRFiPuLnFkKJMhjFv
-         hwTxEj41cxkQZZsv5kjuvWCeqCq33rqRsmfEkFDIal0kF3vU9J9wMo/2eCE5cIHEcf6u
-         ndnOTZgOh1DwdKotTPY1ZiR+POCQALpkp35+hF4Fa+qqh9q1VsmayVwRpJfxi3uP8+Is
-         NQWgE/YnpvDeazss1Nm1yOZRc/fJGDBw5+5socrAKrGYN9KHhBvfKpZWi44O96NDl/zN
-         FLSUQ3E8FqLTXviGxxN9fiOokrttl0iIHJkxzI/2PYttss9Q6vQG8rFtz0BvGYe3/0/L
-         y6PQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXTgP7Rrue5vHhqvpAkEIHoDkyBxENFeNDotGSzn7JAb+mFTVhmfKAMey1TwSAWCKxMSwXjvS1zC8z+WCT/@vger.kernel.org
-X-Gm-Message-State: AOJu0YzV06cq2+AVooUkldj3bvSYJmikMI9d7rNv4+g5N7/zB5a0wOyO
-	ZJgk3hchCrYelxfUgZQoSHh3YsBonFM8QNi0YOfrfb2YWYxPbHVclu3aXc9B+wP/9cM0zlmzPVQ
-	/U3ZJYB3sZWLBD1ersjzxAoWFHRTQJsvoXmnLewRJQQ==
-X-Gm-Gg: ASbGncu8xBAqGAab5w3woEQ71RzymC6uP31gkWCEtASa5YiSD8UH6Aeuz0qPVteLIWJ
-	kewvzYBWoE0iAATPPzbeRrm3ssqlIwUHugbvXRq+wVozl4Qrr/TJPNGMjoPeQh7vmmHsB/gFQcW
-	EtC0wsn6dCKcXqP/aYK55aRm1TfVDCs6+2EH115uY7vVIWGNZxxQ0RxhCEO+VILQSv3hv6H9Wc1
-	dNAdiP3fwbBVccI7JY4oSnRqZfvqX8U0PNOKiF+YirBNCDAeVRSfgBR/4vTGYK4P7g/oEWAa6ZH
-	J2SxSjraPESr+g==
-X-Google-Smtp-Source: AGHT+IFw6kDorU2RenWoIYJjhBpjj+66hDpPciDjAImJ3B8hxUcjgpzXU/StGuyx3A6WKe/RvhzZdqNdpa9gP61f3nc=
-X-Received: by 2002:a05:6402:3492:b0:640:b625:b920 with SMTP id
- 4fb4d7f45d1cf-6453966533fmr137250a12.6.1763590381585; Wed, 19 Nov 2025
- 14:13:01 -0800 (PST)
+        d=1e100.net; s=20230601; t=1763590862; x=1764195662;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=288Dw9sswG0A+z/lBkxnm7oNArScrtV4EVd6dIg2R2Y=;
+        b=OW3qsuRe5j1rKpTkV8dA4aVkIsTyLPtAksS6ZwyzkJgGZWcEnlOuW5xqtfmYfQ2oho
+         3J7xSsoHyJ2DCoAyCLi+m97k5d0zIXQEvVS4sMn2hbWzJB+/2xouX4+UI457OWRZ0+iP
+         sUOxJMRM3jiGmF8QLKHpdmUaOHo+T4Mjvt2nYZg5qrds1zKt0VFuu/arZVCeb15yf5A9
+         wsIlr6272vY3VaIjQ/qphXC/YngzrquT2j4NPfSifHXIN4iIHFIjdDi2WiqxDcZnBB0v
+         67W//+GtvTr7h9ed91Ws2PJk+Npdywct8O2ofcaUW+YL7PTAekFgGMg3ec/59YZXRX89
+         GpmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXbvoWnPv/uVzX7xRORrWfh8HZe9w7cdy9ZG4VAhDzPBKz5jdiEneGvJ5e0UoRm2j82Lv2i+YLUN49N4Q2j@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZfwTB6KOQhz8H2mmU+EnQ168JVCHiOZl32rk4P4cRst74k2rr
+	2zEg+m3ENXtcZbVbA0tC4QvE+/tQtV0vlPjMSjwuXX/P2F2JVd/RAYHJ
+X-Gm-Gg: ASbGnctClAhiXhpWSLkbbo6sVO18ZFoAcpeFs2A8IGM0AII7sFavuA84asC/Nkozl8/
+	jMjLgd2dAS6j/G2+U3LtYMO+LQvXamOlSowQi+mAFdXjNwoxpAd/VtO0F31OyeQL9Yz4S5XrfmA
+	FUl51V9ONPpPRZlgRdUOXVQEYfwhzCwCl9WC7cuC/nSar6/hBUdQg+3DPG+r62W0N1LB2zAvKO9
+	I+lvyve85N4aCFWrfxogSm9DBeQV49omXG/iw/oDzl6jH0cceObDvu8vEOsdwpF/OjEVMwJtbjp
+	FjJHOxCSqQax6IEU0ILa4t6EyW9kVCEJXHRRtZPagReQXA2HQF7WW+nyHjGRuB6euzHd+Q+QjKr
+	GGG3+QX0x4nIBDB5fP5pwkZMkOZ2K6a3Qefgw5DPMNXJxIE8rxLJn25+weSXm0Ro+kzWWP0H1ke
+	Ez39C7uSJz+kceeIKBudIiZhUSquyKq4PHLubACw==
+X-Google-Smtp-Source: AGHT+IG/wJ7Aaz37mXLzcO74yWwcjdbnF8mjOxzLT81DyT1s3fbL9Pty3G5JtiVp6En9+zLPVH7muw==
+X-Received: by 2002:a05:600c:4f0b:b0:477:a16e:fec5 with SMTP id 5b1f17b1804b1-477b8355ed8mr4060285e9.0.1763590862068;
+        Wed, 19 Nov 2025 14:21:02 -0800 (PST)
+Received: from [192.168.1.111] ([165.50.70.6])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-477b106a9b0sm72950165e9.11.2025.11.19.14.20.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Nov 2025 14:21:01 -0800 (PST)
+Message-ID: <25434098-4bf0-4330-b7b1-527983d9c903@gmail.com>
+Date: Wed, 19 Nov 2025 23:21:01 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251115233409.768044-1-pasha.tatashin@soleen.com>
- <20251115233409.768044-19-pasha.tatashin@soleen.com> <aR40oVOxZ-dezpy0@google.com>
-In-Reply-To: <aR40oVOxZ-dezpy0@google.com>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Wed, 19 Nov 2025 17:12:24 -0500
-X-Gm-Features: AWmQ_bn2ZiiYRRhjdL5Zxy3O1nTVtrU9qOIx56eMo9t0_SUIdxuoIchWFpNGDbY
-Message-ID: <CA+CK2bBoantuwMxqe1=PnRO+RX86Qo0epf89kbmZx5z8i2ivLQ@mail.gmail.com>
-Subject: Re: [PATCH v6 18/20] selftests/liveupdate: Add kexec-based selftest
- for session lifecycle
-To: David Matlack <dmatlack@google.com>
-Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com, rppt@kernel.org, 
-	rientjes@google.com, corbet@lwn.net, rdunlap@infradead.org, 
-	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, ojeda@kernel.org, 
-	aliceryhl@google.com, masahiroy@kernel.org, akpm@linux-foundation.org, 
-	tj@kernel.org, yoann.congal@smile.fr, mmaurer@google.com, 
-	roman.gushchin@linux.dev, chenridong@huawei.com, axboe@kernel.dk, 
-	mark.rutland@arm.com, jannh@google.com, vincent.guittot@linaro.org, 
-	hannes@cmpxchg.org, dan.j.williams@intel.com, david@redhat.com, 
-	joel.granados@kernel.org, rostedt@goodmis.org, anna.schumaker@oracle.com, 
-	song@kernel.org, linux@weissschuh.net, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-mm@kvack.org, gregkh@linuxfoundation.org, 
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, rafael@kernel.org, 
-	dakr@kernel.org, bartosz.golaszewski@linaro.org, cw00.choi@samsung.com, 
-	myungjoo.ham@samsung.com, yesanishhere@gmail.com, Jonathan.Cameron@huawei.com, 
-	quic_zijuhu@quicinc.com, aleksander.lobakin@intel.com, ira.weiny@intel.com, 
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
-	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net, 
-	brauner@kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	saeedm@nvidia.com, ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com, 
-	leonro@nvidia.com, witu@nvidia.com, hughd@google.com, skhawaja@google.com, 
-	chrisl@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] fs/hfs: fix s_fs_info leak on setup_bdev_super()
+ failure
+To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
+ "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
+ "frank.li@vivo.com" <frank.li@vivo.com>,
+ "slava@dubeyko.com" <slava@dubeyko.com>,
+ "brauner@kernel.org" <brauner@kernel.org>,
+ "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+ "jack@suse.cz" <jack@suse.cz>
+Cc: "khalid@kernel.org" <khalid@kernel.org>,
+ "linux-kernel-mentees@lists.linuxfoundation.org"
+ <linux-kernel-mentees@lists.linuxfoundation.org>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "skhan@linuxfoundation.org" <skhan@linuxfoundation.org>,
+ "david.hunter.linux@gmail.com" <david.hunter.linux@gmail.com>,
+ "syzbot+ad45f827c88778ff7df6@syzkaller.appspotmail.com"
+ <syzbot+ad45f827c88778ff7df6@syzkaller.appspotmail.com>
+References: <20251119073845.18578-1-mehdi.benhadjkhelifa@gmail.com>
+ <c19c6ebedf52f0362648a32c0eabdc823746438f.camel@ibm.com>
+Content-Language: en-US
+From: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+In-Reply-To: <c19c6ebedf52f0362648a32c0eabdc823746438f.camel@ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Nov 19, 2025 at 4:20=E2=80=AFPM David Matlack <dmatlack@google.com>=
- wrote:
->
-> On 2025-11-15 06:34 PM, Pasha Tatashin wrote:
->
-> > diff --git a/tools/testing/selftests/liveupdate/do_kexec.sh b/tools/tes=
-ting/selftests/liveupdate/do_kexec.sh
-> > new file mode 100755
-> > index 000000000000..3c7c6cafbef8
-> > --- /dev/null
-> > +++ b/tools/testing/selftests/liveupdate/do_kexec.sh
-> > @@ -0,0 +1,16 @@
-> > +#!/bin/sh
-> > +# SPDX-License-Identifier: GPL-2.0
-> > +set -e
-> > +
-> > +# Use $KERNEL and $INITRAMFS to pass custom Kernel and optional initra=
-mfs
->
-> It'd be nice to use proper command line options for KERNEL and INITRAMFS
-> instead of relying on environment variables.
+On 11/19/25 8:58 PM, Viacheslav Dubeyko wrote:
+> On Wed, 2025-11-19 at 08:38 +0100, Mehdi Ben Hadj Khelifa wrote:
+>> The regression introduced by commit aca740cecbe5 ("fs: open block device
+>> after superblock creation") allows setup_bdev_super() to fail after a new
+>> superblock has been allocated by sget_fc(), but before hfs_fill_super()
+>> takes ownership of the filesystem-specific s_fs_info data.
+>>
+>> In that case, hfs_put_super() and the failure paths of hfs_fill_super()
+>> are never reached, leaving the HFS mdb structures attached to s->s_fs_info
+>> unreleased.The default kill_block_super() teardown also does not free
+>> HFS-specific resources, resulting in a memory leak on early mount failure.
+>>
+>> Fix this by moving all HFS-specific teardown (hfs_mdb_put()) from
+>> hfs_put_super() and the hfs_fill_super() failure path into a dedicated
+>> hfs_kill_sb() implementation. This ensures that both normal unmount and
+>> early teardown paths (including setup_bdev_super() failure) correctly
+>> release HFS metadata.
+>>
+>> This also preserves the intended layering: generic_shutdown_super()
+>> handles VFS-side cleanup, while HFS filesystem state is fully destroyed
+>> afterwards.
+>>
+>> Fixes: aca740cecbe5 ("fs: open block device after superblock creation")
+>> Reported-by: syzbot+ad45f827c88778ff7df6@syzkaller.appspotmail.com
+>> Closes: https://syzkaller.appspot.com/bug?extid=ad45f827c88778ff7df6
+>> Tested-by: syzbot+ad45f827c88778ff7df6@syzkaller.appspotmail.com
+>> Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
+>> Signed-off-by: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+>> ---
+>> ChangeLog:
+>>
+>> Changes from v1:
+>>
+>> -Changed the patch direction to focus on hfs changes specifically as
+>> suggested by al viro
+>>
+>> Link:https://lore.kernel.org/all/20251114165255.101361-1-mehdi.benhadjkhelifa@gmail.com/
+>>
+>> Note:This patch might need some more testing as I only did run selftests
+>> with no regression, check dmesg output for no regression, run reproducer
+>> with no bug and test it with syzbot as well.
+> 
+> Have you run xfstests for the patch? Unfortunately, we have multiple xfstests
+> failures for HFS now. And you can check the list of known issues here [1]. The
+> main point of such run of xfstests is to check that maybe some issue(s) could be
+> fixed by the patch. And, more important that you don't introduce new issues. ;)
+> 
+I did not know of such tests. I will try to run them for both my patch 
+and christian's patch[1] and report the results.
+>>
+>>   fs/hfs/super.c | 16 ++++++++++++----
+>>   1 file changed, 12 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/fs/hfs/super.c b/fs/hfs/super.c
+>> index 47f50fa555a4..06e1c25e47dc 100644
+>> --- a/fs/hfs/super.c
+>> +++ b/fs/hfs/super.c
+>> @@ -49,8 +49,6 @@ static void hfs_put_super(struct super_block *sb)
+>>   {
+>>   	cancel_delayed_work_sync(&HFS_SB(sb)->mdb_work);
+>>   	hfs_mdb_close(sb);
+>> -	/* release the MDB's resources */
+>> -	hfs_mdb_put(sb);
+>>   }
+>>   
+>>   static void flush_mdb(struct work_struct *work)
+>> @@ -383,7 +381,6 @@ static int hfs_fill_super(struct super_block *sb, struct fs_context *fc)
+>>   bail_no_root:
+>>   	pr_err("get root inode failed\n");
+>>   bail:
+>> -	hfs_mdb_put(sb);
+>>   	return res;
+>>   }
+>>   
+>> @@ -431,10 +428,21 @@ static int hfs_init_fs_context(struct fs_context *fc)
+>>   	return 0;
+>>   }
+>>   
+>> +static void hfs_kill_sb(struct super_block *sb)
+>> +{
+>> +	generic_shutdown_super(sb);
+>> +	hfs_mdb_put(sb);
+>> +	if (sb->s_bdev) {
+>> +		sync_blockdev(sb->s_bdev);
+>> +		bdev_fput(sb->s_bdev_file);
+>> +	}
+>> +
+>> +}
+>> +
+>>   static struct file_system_type hfs_fs_type = {
+>>   	.owner		= THIS_MODULE,
+>>   	.name		= "hfs",
+>> -	.kill_sb	= kill_block_super,
+> 
+> It looks like we have the same issue for the case of HFS+ [2]. Could you please
+> double check that HFS+ should be fixed too?
+> 
+Yes, I will check it tomorrow in addition to running xfstests and report 
+my findings in response to this email. But I'm not sure if my solution 
+would be the attended fix or a similar solution to what christian did is 
+preferred instead for HFS+. We'll discuss it when I send a response.
+> Thanks,
+> Slava.
+> 
+Thank you for your insights Slava!
 
-Now that tests and do_kexec are separate, I do not think we should
-complicate do_kexec.sh to support every possible environment. On most
-modern distros kexec is managed via systemd, and the load and reboot
-commands are going to be handled through systemd. do_kexec.sh is meant
-for a very simplistic environment such as with busybox rootfs to
-perform selftests.
+Best Regards,
+Mehdi Ben Hadj Khelifa
+>> +	.kill_sb	= hfs_kill_sb,
+>>   	.fs_flags	= FS_REQUIRES_DEV,
+>>   	.init_fs_context = hfs_init_fs_context,
+>>   };
+> 
+> [1] https://github.com/hfs-linux-kernel/hfs-linux-kernel/issues
+> [2] https://elixir.bootlin.com/linux/v6.18-rc6/source/fs/hfsplus/super.c#L694
 
-> e.g.
->
->   ./do_kexec.sh -k <kernel> -i <initramfs>
->
-> > +
-> > +KERNEL=3D"${KERNEL:-/boot/bzImage}"
-> > +set -- -l -s --reuse-cmdline "$KERNEL"
->
-> I've observed --reuse-cmdline causing overload of the kernel command
-> line when doing repeated kexecs, since it includes the built-in command
-> line (CONFIG_CMDLINE) which then also gets added by the next kernel
-> during boot.
-
-There is a problem with CONFIG_CMDLINE + KEXEC, ideally, it should be
-addressed in the kernel
-
->
-> Should we have something like this instead?
->
-> diff --git a/tools/testing/selftests/liveupdate/do_kexec.sh b/tools/testi=
-ng/selftests/liveupdate/do_kexec.sh
-> index 3c7c6cafbef8..2590a870993d 100755
-> --- a/tools/testing/selftests/liveupdate/do_kexec.sh
-> +++ b/tools/testing/selftests/liveupdate/do_kexec.sh
-> @@ -4,8 +4,16 @@ set -e
->
->  # Use $KERNEL and $INITRAMFS to pass custom Kernel and optional initramf=
-s
->
-> +# Determine the boot command line we need to pass to the kexec kernel.  =
-Note
-> +# that the kernel will append to it its builtin command line, so make su=
-re we
-> +# subtract the builtin command to avoid accumulating kernel parameters a=
-nd
-> +# eventually overflowing the command line.
-> +full_cmdline=3D$(cat /proc/cmdline)
-> +builtin_cmdline=3D$(zcat /proc/config.gz|grep CONFIG_CMDLINE=3D|cut -f2 =
--d\")
-
-This also implies we have /proc/config.gz or CONFIG_IKCONFIG_PROC ...
-
-> +cmdline=3D${full_cmdline/$builtin_cmdline /}
-> +
->  KERNEL=3D"${KERNEL:-/boot/bzImage}"
-> -set -- -l -s --reuse-cmdline "$KERNEL"
-> +set -- -l -s --command-line=3D"${cmdline}" "$KERNEL"
->
->  INITRAMFS=3D"${INITRAMFS:-/boot/initramfs}"
->  if [ -f "$INITRAMFS" ]; then
->
-> > +
-> > +INITRAMFS=3D"${INITRAMFS:-/boot/initramfs}"
-> > +if [ -f "$INITRAMFS" ]; then
-> > +    set -- "$@" --initrd=3D"$INITRAMFS"
-> > +fi
-> > +
-> > +kexec "$@"
-> > +kexec -e
->
-> Consider separating the kexec load into its own script, in case systems h=
-ave
-> their own ways of shutting down for kexec.
-
-I think, if do_kexec.sh does not work (load + reboot), the user should
-use whatever the standard way on a distro to do kexec.
-
->
-> e.g. a kexec_load.sh script that does everything that do_kexec.sh does ex=
-ecpt
-> the `kexec -e`. Then do_kexec.sh just calls kexec_load.sh and kexec -e.
 
