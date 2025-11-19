@@ -1,246 +1,362 @@
-Return-Path: <linux-fsdevel+bounces-69153-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69158-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8DC5C71408
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 23:24:31 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72C9EC71489
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 23:32:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ACDE04E20EB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 22:24:29 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTPS id 581502960A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 22:32:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2C662ED159;
-	Wed, 19 Nov 2025 22:24:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4006F2DE701;
+	Wed, 19 Nov 2025 22:32:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GMO8ckR6"
+	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="CI72Guqp"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+Received: from mail-oa1-f51.google.com (mail-oa1-f51.google.com [209.85.160.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C1881F0E32
-	for <linux-fsdevel@vger.kernel.org>; Wed, 19 Nov 2025 22:24:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76DD2275114
+	for <linux-fsdevel@vger.kernel.org>; Wed, 19 Nov 2025 22:32:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763591062; cv=none; b=ZVTgNbMMJ9rjf72iWyW39pdT5NOv/8pc1nAbOl8iyAe+Z6OIQvbP5xhhVWYM8ZDx/vHHF5ml+7MF3NiJYjJ2c8fNxr5tp7j805PSbpoXEVIj4bBYyZiADkTHFhtL1dmA3iYjvuJFI9bkzHMNmmwsSCBxTsCunlMQhREveLNdXvU=
+	t=1763591571; cv=none; b=gp8/q8vcJp/ptKtE8pnwKoyyrwcAy9NQ0/UEWSoopCV2C9MHwHe0jLq0VJC4D0yPxBvdcgpwfPZf9YlOnpq8y2avi5fSkYO9Non8qE3ieAheBjHAdcup8UF3/oe5tppQFlfkgPXAvhHescm651CfsfhbMh2Gw+uAcYCiIu2P4M8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763591062; c=relaxed/simple;
-	bh=xaPyOxNT/HcBqaLOWWrNAr3jgVtnKXjwmxRR4CkbxzM=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=ImBktCNEcp9m+MCtGEqSiUVJUdct4dcILuWBGFZBgO8YLCOZYb0A5voTk5L3NC7TTXHwMB+H3O2N6QanXNSWKWlvPCn6hGn99iS5v90Zu+CFBAKfTE4AY75lYR0l1jKtww8TT8qZABz8RyE96QbzlLZ45vsUnOJnybTDw64wMwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GMO8ckR6; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-47798f4059fso393055e9.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Nov 2025 14:24:20 -0800 (PST)
+	s=arc-20240116; t=1763591571; c=relaxed/simple;
+	bh=8F0L/lnyWRnul8q1qGlqaS9eZbPWbHznj5RDR9Lo1W4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DViZriu6qmxR3DKgXjqYlGKan8QQZxLV6QYxr5L3GgHQAuX6yrHCc36baiyRfBzW08zxC7EOqh/o3RzQyMnpyTgHRSFHp47bfwQ5ZSSWUNtbYYb2Kk2y8+CbTkGKJN8aMVvdh3PZm+uvDMLM9lgk+eTJOvODbbohOvdbfdV2yMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=CI72Guqp; arc=none smtp.client-ip=209.85.160.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
+Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-3e898ba2a03so116731fac.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Nov 2025 14:32:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763591059; x=1764195859; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=T7WmQOx6iAlsV0MHuZ9X9eaYiLcx+jdU4wVC787CH7Y=;
-        b=GMO8ckR6d4O6tLM3eAXBIYx9a0SdGlJ31rIkY+5ZMSbXgLTWm4OZ/ujcGTFUXQs6HQ
-         neELZUbg9fWIYoNswBstelxp2FVjHp1EvtPbx5MQ+6dDhnXS1Qtk6tcgYgTREp4kYEmQ
-         IvZ1ripUvfP1+hNAKPPY/8m08vq+u8hehmYCugLiDEJ2uIK2CjxBI+Vn2F2voZosPfW5
-         3ZC6D5XNp5Jt5A2V/JManyiMKHcIIm+1NEor+ADf3LlFFi/kK9dp8SlF0WGjLoU8h8av
-         +CuY5JqzfJ1l6AEbdUYPzu9nzprGGxiyrHK7ZF7V8nVB8W3/7UHtyeoUXInD6dK0kjvd
-         hfng==
+        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1763591568; x=1764196368; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=PyDEw5FxanGWwO9UWC5jtZDAVdVVWOhVodJ1zg59fkk=;
+        b=CI72Guqp7iCShkJoz7ZoDXZ5f/l6H0go3my/PVTX/G51IRFVdH8poQJMVqbLdzMuzp
+         4mTAziBqf4Z4LY6j5p9TJkHNG0proraOBUgcjR06cz9xpWQ5YPyOVChfEs300SUtZb95
+         7aaTUOSHh2ytQvtih9hYA2qpb4J02zgHPvKRo+na/VScHVSJu8FXZagi7nTaF9AqScpq
+         t5xfS2Qm/COvKDNJFhKRQ5gSJt2G4U9BRlCGoDIBdfwnKIqRowuz1QNmMD/O1OJ8fTZb
+         9RSFmV2YYj1uAtCZ4OUT6oplsn4ku5/bOQxZbtppzynjcG8Y5bc+slbRrQeAcYxxKf0s
+         6S7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763591059; x=1764195859;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=T7WmQOx6iAlsV0MHuZ9X9eaYiLcx+jdU4wVC787CH7Y=;
-        b=pCOBVrgE3Q5bNjV1zPbiSwxhj29I6RhVfbp84WD4UTBf4F5YJvuLubJ7v6hZtZDBEp
-         qjLVKhu/laEh2tajIqlfPvWKqzkTA2OLnBsfmmk9psnyoF7LRykbbyL67vZjLh4SzwCi
-         ruiVocY9M4NhUM4ZQnpd7a+/OlPPi6KF1X+2PK/uE7u/4ll0GspTYuc+cWcy0IEDxUJr
-         GEQ/jiwD7feCImTUjRUIVvAjEY1kzNktV9uHVfqo2+l//1d+t7WxiLCraH//UdwrTytI
-         Uw/fXXS/LGUgiRtbFfU+JkPswgTSt5/Ass69n5Hj+uU/VbbYh38pzkBUn+VtHGmsXM7j
-         U1ew==
-X-Forwarded-Encrypted: i=1; AJvYcCUz9CxVYnQ6ujg3ug1M8DE9b0gmPUct/clRvhudoiE4l967QLlFFCo8GhjZsBc3tP52RTHlgBbIN2fT2R2/@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCo+lANKWSAhQwJBUyu6ZE2FPr2/ILpQWYRZDLDt70023l8HJB
-	z+WPTbiuyGEGDPz9fG7VRuoWkfd/HyZbPkPWy+g5ABbLkPrXm6he1UlN
-X-Gm-Gg: ASbGncsGw8YiqgDkAv1vsDvbDK6VFsxc8yJQyfKXu9CK4uXnW3OqrK2mXl/Y1zZO0f4
-	c8AihpdrOp/i+/XTlHPq7xYdwLHGMtzHKzudbOL4rxSfeSaEyjDj98zKLU2xDux8y8wme/mCsLf
-	5khCSyksw58MCOL5brlt9Qgrxr3rSyBhebrmQXJ2QdFTI5bK6DpooH8URCDpP4913nA6SjvrM+l
-	JiZmIAgjNQt/E5VY0SpoIEGejRxbTyd52i4dVX7/rzjF2GELlJnTjAPHiCrSBmlca4dvmPrpE8u
-	dHM9bzxdZMgxEzF/AvYo0OP0viPm8tz/UIsCyozYm5h+BRmsHr5795Gpor2zsWr2bP97gCzRxHv
-	ulGOVMqaPbfOicMoufu+rpl86hMFbCzcGKfLeBvfRkef2U08Buhz6kvvS5GS/JlXjPT+iLu8CZi
-	QLykNkxuWqxzaHIWLuW4IiuXjxAhcr1VlVxycCJzcA++edqD1D
-X-Google-Smtp-Source: AGHT+IEsHyRMQ5pcW3Ld7TQbeWKn9n9tuuRTUNEesIDP2g12lL/hprJtX1I0mMWZv0u25tvMu6LN2Q==
-X-Received: by 2002:a05:600c:1c2a:b0:477:a203:66dd with SMTP id 5b1f17b1804b1-477b8579778mr5398185e9.2.1763591058508;
-        Wed, 19 Nov 2025 14:24:18 -0800 (PST)
-Received: from [192.168.1.111] ([165.50.70.6])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-477a9d21591sm52867025e9.2.2025.11.19.14.24.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Nov 2025 14:24:18 -0800 (PST)
-Message-ID: <42a9f815-fcda-4bfe-918c-8a676909c9ac@gmail.com>
-Date: Wed, 19 Nov 2025 23:24:18 +0100
+        d=1e100.net; s=20230601; t=1763591568; x=1764196368;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PyDEw5FxanGWwO9UWC5jtZDAVdVVWOhVodJ1zg59fkk=;
+        b=HP9/m9APysWGs/i71Z02XqH7gFlq4yhELHxx424kePjZYnmToN1DToXQgPuB7WGyg9
+         V7A/6HFuLla4YtvBXtbz0e1ucXWR+8Ordp4uKwbiTZ1BXotE4ESqHmws7oBh/XrCbB60
+         rfL9+75uFq1aM1koG1fT4Do5/XluqgXQXD5OeFBsXnIL1rxAsSe3VEmL4jzzKwk78hcb
+         IqAxva3kt8Y+rd7bbwbO9ru/Y4RvaIxTqMBFyGzG4L1WE+XFAGnGTlANUZYh3W9Lmike
+         jyc5IR5KVfaV7V/igHDBJCtblLqHw7TY/v4V+DsHLNSg+xJsOc7Ex8WUa7PjIM0xBNih
+         I2qw==
+X-Forwarded-Encrypted: i=1; AJvYcCVDmKvWMgqJh+IkUShydLU92d4wgGu1mRPDlMCuPDagb+bEU/89kvedQfvg8KBpbDve2MIaExXJbx7iSQoi@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkAxKuPORrzPhAl8ssD12nh4XwfqfgtUB9O8GUMJgUTz0yJRu+
+	Nqv/lqeIzBU4tbTHf4E74k/7xR8resXqz3Vvk28kdpTTW+zV18eHKSL/PQIsN98gj8I=
+X-Gm-Gg: ASbGncsSxebTOO0mCxIEv28WOe7yB/aEd11Fmm8AT6kkCk4nPWtjOUqED8Ns96qTXtq
+	hMDKdlvZL3zSWadjzz7D6xexPDvJ3b0erR9MXs6pGFF4Z6i0e4xuMOJMGdXda1w+DBHHx3uF9RX
+	DDchuy5BezN/rLl3Xc1DJQnCAyt9Dzt5skB6YLBVFDKXWu9CAJfEVQUTPFqPQhmZnHtuUkUza/7
+	2MrAsaLNyjxdjhGR/X9PFd3IcqqFyMLRRKPf0XZK7lnLZvgqb9VVM+V2f6CHqLVk//gIyh41I3D
+	MQ+e6jGKRp9DfkGNd4phhBR4kbInzeN57KVk/DToY1rRoGBJnWaSbRlhcpzYSz8gl1DOElPM8N8
+	KObmFE4puVw0wpftI9W+2FxF1HRGmNHTj8NmDAxj+hakRHAjhersW0PM9jHSAC+dfsbGPOPXW3H
+	HtNGBenen5p8FgVHjsuv93R8Tp7Kp38dztug==
+X-Google-Smtp-Source: AGHT+IHFqi7TUpaZE/ychYHbyOul6TQuS3OF6zpBdAG9gl7CJSZZd2oiXH4Ra0/4kCNc6bh8WA/Imw==
+X-Received: by 2002:a05:6808:6c8e:b0:44d:aa8b:58f6 with SMTP id 5614622812f47-450ff22f5d4mr522961b6e.1.1763591568496;
+        Wed, 19 Nov 2025 14:32:48 -0800 (PST)
+Received: from pop-os.attlocal.net ([2600:1700:6476:1430:9eaa:1f08:489b:dabc])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-450fffbf1fbsm190877b6e.19.2025.11.19.14.32.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Nov 2025 14:32:47 -0800 (PST)
+From: Viacheslav Dubeyko <slava@dubeyko.com>
+To: glaubitz@physik.fu-berlin.de,
+	linux-fsdevel@vger.kernel.org,
+	frank.li@vivo.com
+Cc: Slava.Dubeyko@ibm.com,
+	Viacheslav Dubeyko <slava@dubeyko.com>
+Subject: [PATCH] hfsplus: fix volume corruption issue for generic/101
+Date: Wed, 19 Nov 2025 14:32:20 -0800
+Message-Id: <20251119223219.1824434-1-slava@dubeyko.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] fs/hfs: fix s_fs_info leak on setup_bdev_super()
- failure
-From: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
- "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
- "frank.li@vivo.com" <frank.li@vivo.com>,
- "slava@dubeyko.com" <slava@dubeyko.com>,
- "brauner@kernel.org" <brauner@kernel.org>,
- "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
- "jack@suse.cz" <jack@suse.cz>
-Cc: "khalid@kernel.org" <khalid@kernel.org>,
- "linux-kernel-mentees@lists.linuxfoundation.org"
- <linux-kernel-mentees@lists.linuxfoundation.org>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "skhan@linuxfoundation.org" <skhan@linuxfoundation.org>,
- "david.hunter.linux@gmail.com" <david.hunter.linux@gmail.com>,
- "syzbot+ad45f827c88778ff7df6@syzkaller.appspotmail.com"
- <syzbot+ad45f827c88778ff7df6@syzkaller.appspotmail.com>
-References: <20251119073845.18578-1-mehdi.benhadjkhelifa@gmail.com>
- <c19c6ebedf52f0362648a32c0eabdc823746438f.camel@ibm.com>
- <25434098-4bf0-4330-b7b1-527983d9c903@gmail.com>
-Content-Language: en-US
-In-Reply-To: <25434098-4bf0-4330-b7b1-527983d9c903@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 11/19/25 11:21 PM, Mehdi Ben Hadj Khelifa wrote:
-> On 11/19/25 8:58 PM, Viacheslav Dubeyko wrote:
->> On Wed, 2025-11-19 at 08:38 +0100, Mehdi Ben Hadj Khelifa wrote:
->>> The regression introduced by commit aca740cecbe5 ("fs: open block device
->>> after superblock creation") allows setup_bdev_super() to fail after a 
->>> new
->>> superblock has been allocated by sget_fc(), but before hfs_fill_super()
->>> takes ownership of the filesystem-specific s_fs_info data.
->>>
->>> In that case, hfs_put_super() and the failure paths of hfs_fill_super()
->>> are never reached, leaving the HFS mdb structures attached to s- 
->>> >s_fs_info
->>> unreleased.The default kill_block_super() teardown also does not free
->>> HFS-specific resources, resulting in a memory leak on early mount 
->>> failure.
->>>
->>> Fix this by moving all HFS-specific teardown (hfs_mdb_put()) from
->>> hfs_put_super() and the hfs_fill_super() failure path into a dedicated
->>> hfs_kill_sb() implementation. This ensures that both normal unmount and
->>> early teardown paths (including setup_bdev_super() failure) correctly
->>> release HFS metadata.
->>>
->>> This also preserves the intended layering: generic_shutdown_super()
->>> handles VFS-side cleanup, while HFS filesystem state is fully destroyed
->>> afterwards.
->>>
->>> Fixes: aca740cecbe5 ("fs: open block device after superblock creation")
->>> Reported-by: syzbot+ad45f827c88778ff7df6@syzkaller.appspotmail.com
->>> Closes: https://syzkaller.appspot.com/bug?extid=ad45f827c88778ff7df6
->>> Tested-by: syzbot+ad45f827c88778ff7df6@syzkaller.appspotmail.com
->>> Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
->>> Signed-off-by: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
->>> ---
->>> ChangeLog:
->>>
->>> Changes from v1:
->>>
->>> -Changed the patch direction to focus on hfs changes specifically as
->>> suggested by al viro
->>>
->>> Link:https://lore.kernel.org/all/20251114165255.101361-1- 
->>> mehdi.benhadjkhelifa@gmail.com/
->>>
->>> Note:This patch might need some more testing as I only did run selftests
->>> with no regression, check dmesg output for no regression, run reproducer
->>> with no bug and test it with syzbot as well.
->>
->> Have you run xfstests for the patch? Unfortunately, we have multiple 
->> xfstests
->> failures for HFS now. And you can check the list of known issues here 
->> [1]. The
->> main point of such run of xfstests is to check that maybe some 
->> issue(s) could be
->> fixed by the patch. And, more important that you don't introduce new 
->> issues. ;)
->>
-> I did not know of such tests. I will try to run them for both my patch 
-> and christian's patch[1] and report the results.
+The xfstests' test-case generic/101 leaves HFS+ volume
+in corrupted state:
 
-Forgot to reference the mentioned link "[1]". Sorry for the noise.
+sudo ./check generic/101
+FSTYP -- hfsplus
+PLATFORM -- Linux/x86_64 hfsplus-testing-0001 6.17.0-rc1+ #4 SMP PREEMPT_DYNAMIC Wed Oct 1 15:02:44 PDT 2025
+MKFS_OPTIONS -- /dev/loop51
+MOUNT_OPTIONS -- /dev/loop51 /mnt/scratch
 
-[1]:https://github.com/brauner/linux/commit/058747cefb26196f3c192c76c631051581b29b27
+generic/101 _check_generic_filesystem: filesystem on /dev/loop51 is inconsistent
+(see XFSTESTS-2/xfstests-dev/results//generic/101.full for details)
 
->>>
->>>   fs/hfs/super.c | 16 ++++++++++++----
->>>   1 file changed, 12 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/fs/hfs/super.c b/fs/hfs/super.c
->>> index 47f50fa555a4..06e1c25e47dc 100644
->>> --- a/fs/hfs/super.c
->>> +++ b/fs/hfs/super.c
->>> @@ -49,8 +49,6 @@ static void hfs_put_super(struct super_block *sb)
->>>   {
->>>       cancel_delayed_work_sync(&HFS_SB(sb)->mdb_work);
->>>       hfs_mdb_close(sb);
->>> -    /* release the MDB's resources */
->>> -    hfs_mdb_put(sb);
->>>   }
->>>   static void flush_mdb(struct work_struct *work)
->>> @@ -383,7 +381,6 @@ static int hfs_fill_super(struct super_block *sb, 
->>> struct fs_context *fc)
->>>   bail_no_root:
->>>       pr_err("get root inode failed\n");
->>>   bail:
->>> -    hfs_mdb_put(sb);
->>>       return res;
->>>   }
->>> @@ -431,10 +428,21 @@ static int hfs_init_fs_context(struct 
->>> fs_context *fc)
->>>       return 0;
->>>   }
->>> +static void hfs_kill_sb(struct super_block *sb)
->>> +{
->>> +    generic_shutdown_super(sb);
->>> +    hfs_mdb_put(sb);
->>> +    if (sb->s_bdev) {
->>> +        sync_blockdev(sb->s_bdev);
->>> +        bdev_fput(sb->s_bdev_file);
->>> +    }
->>> +
->>> +}
->>> +
->>>   static struct file_system_type hfs_fs_type = {
->>>       .owner        = THIS_MODULE,
->>>       .name        = "hfs",
->>> -    .kill_sb    = kill_block_super,
->>
->> It looks like we have the same issue for the case of HFS+ [2]. Could 
->> you please
->> double check that HFS+ should be fixed too?
->>
-> Yes, I will check it tomorrow in addition to running xfstests and report 
-> my findings in response to this email. But I'm not sure if my solution 
-> would be the attended fix or a similar solution to what christian did is 
-> preferred instead for HFS+. We'll discuss it when I send a response.
->> Thanks,
->> Slava.
->>
-> Thank you for your insights Slava!
-> 
-> Best Regards,
-> Mehdi Ben Hadj Khelifa
+Ran: generic/101
+Failures: generic/101
+Failed 1 of 1 tests
 
->>> +    .kill_sb    = hfs_kill_sb,
->>>       .fs_flags    = FS_REQUIRES_DEV,
->>>       .init_fs_context = hfs_init_fs_context,
->>>   };
->>
->> [1] https://github.com/hfs-linux-kernel/hfs-linux-kernel/issues
->> [2] https://elixir.bootlin.com/linux/v6.18-rc6/source/fs/hfsplus/ 
->> super.c#L694
-> 
+sudo fsck.hfsplus -d /dev/loop51
+** /dev/loop51
+Using cacheBlockSize=32K cacheTotalBlock=1024 cacheSize=32768K.
+Executing fsck_hfs (version 540.1-Linux).
+** Checking non-journaled HFS Plus Volume.
+The volume name is untitled
+** Checking extents overflow file.
+** Checking catalog file.
+** Checking multi-linked files.
+** Checking catalog hierarchy.
+** Checking extended attributes file.
+** Checking volume bitmap.
+** Checking volume information.
+Invalid volume free block count
+(It should be 2614350 instead of 2614382)
+Verify Status: VIStat = 0x8000, ABTStat = 0x0000 EBTStat = 0x0000
+CBTStat = 0x0000 CatStat = 0x00000000
+** Repairing volume.
+** Rechecking volume.
+** Checking non-journaled HFS Plus Volume.
+The volume name is untitled
+** Checking extents overflow file.
+** Checking catalog file.
+** Checking multi-linked files.
+** Checking catalog hierarchy.
+** Checking extended attributes file.
+** Checking volume bitmap.
+** Checking volume information.
+** The volume untitled was repaired successfully.
+
+This test executes such steps: "Test that if we truncate a file
+to a smaller size, then truncate it to its original size or
+a larger size, then fsyncing it and a power failure happens,
+the file will have the range [first_truncate_size, last_size[ with
+all bytes having a value of 0x00 if we read it the next time
+the filesystem is mounted.".
+
+HFS+ keeps volume's free block count in the superblock.
+However, hfsplus_file_fsync() doesn't store superblock's
+content. As a result, superblock contains not correct
+value of free blocks if a power failure happens.
+
+This patch adds functionality of saving superblock's
+content during hfsplus_file_fsync() call.
+
+sudo ./check generic/101
+FSTYP         -- hfsplus
+PLATFORM      -- Linux/x86_64 hfsplus-testing-0001 6.18.0-rc3+ #96 SMP PREEMPT_DYNAMIC Wed Nov 19 12:47:37 PST 2025
+MKFS_OPTIONS  -- /dev/loop51
+MOUNT_OPTIONS -- /dev/loop51 /mnt/scratch
+
+generic/101 32s ...  30s
+Ran: generic/101
+Passed all 1 tests
+
+sudo fsck.hfsplus -d /dev/loop51
+** /dev/loop51
+	Using cacheBlockSize=32K cacheTotalBlock=1024 cacheSize=32768K.
+   Executing fsck_hfs (version 540.1-Linux).
+** Checking non-journaled HFS Plus Volume.
+   The volume name is untitled
+** Checking extents overflow file.
+** Checking catalog file.
+** Checking multi-linked files.
+** Checking catalog hierarchy.
+** Checking extended attributes file.
+** Checking volume bitmap.
+** Checking volume information.
+** The volume untitled appears to be OK.
+
+Signed-off-by: Viacheslav Dubeyko <slava@dubeyko.com>
+cc: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+cc: Yangtao Li <frank.li@vivo.com>
+cc: linux-fsdevel@vger.kernel.org
+---
+ fs/hfsplus/hfsplus_fs.h |  2 +
+ fs/hfsplus/inode.c      |  9 +++++
+ fs/hfsplus/super.c      | 87 +++++++++++++++++++++++++----------------
+ 3 files changed, 65 insertions(+), 33 deletions(-)
+
+diff --git a/fs/hfsplus/hfsplus_fs.h b/fs/hfsplus/hfsplus_fs.h
+index 89e8b19c127b..de801942ae47 100644
+--- a/fs/hfsplus/hfsplus_fs.h
++++ b/fs/hfsplus/hfsplus_fs.h
+@@ -477,6 +477,8 @@ int hfs_part_find(struct super_block *sb, sector_t *part_start,
+ /* super.c */
+ struct inode *hfsplus_iget(struct super_block *sb, unsigned long ino);
+ void hfsplus_mark_mdb_dirty(struct super_block *sb);
++void hfsplus_prepare_volume_header_for_commit(struct hfsplus_vh *vhdr);
++int hfsplus_commit_superblock(struct super_block *sb);
+ 
+ /* tables.c */
+ extern u16 hfsplus_case_fold_table[];
+diff --git a/fs/hfsplus/inode.c b/fs/hfsplus/inode.c
+index b51a411ecd23..bb5c37eb0662 100644
+--- a/fs/hfsplus/inode.c
++++ b/fs/hfsplus/inode.c
+@@ -305,6 +305,7 @@ int hfsplus_file_fsync(struct file *file, loff_t start, loff_t end,
+ 	struct inode *inode = file->f_mapping->host;
+ 	struct hfsplus_inode_info *hip = HFSPLUS_I(inode);
+ 	struct hfsplus_sb_info *sbi = HFSPLUS_SB(inode->i_sb);
++	struct hfsplus_vh *vhdr = sbi->s_vhdr;
+ 	int error = 0, error2;
+ 
+ 	error = file_write_and_wait_range(file, start, end);
+@@ -348,6 +349,14 @@ int hfsplus_file_fsync(struct file *file, loff_t start, loff_t end,
+ 			error = error2;
+ 	}
+ 
++	mutex_lock(&sbi->vh_mutex);
++	hfsplus_prepare_volume_header_for_commit(vhdr);
++	mutex_unlock(&sbi->vh_mutex);
++
++	error2 = hfsplus_commit_superblock(inode->i_sb);
++	if (!error)
++		error = error2;
++
+ 	if (!test_bit(HFSPLUS_SB_NOBARRIER, &sbi->flags))
+ 		blkdev_issue_flush(inode->i_sb->s_bdev);
+ 
+diff --git a/fs/hfsplus/super.c b/fs/hfsplus/super.c
+index 16bc4abc67e0..67a7a2a09347 100644
+--- a/fs/hfsplus/super.c
++++ b/fs/hfsplus/super.c
+@@ -187,40 +187,15 @@ static void hfsplus_evict_inode(struct inode *inode)
+ 	}
+ }
+ 
+-static int hfsplus_sync_fs(struct super_block *sb, int wait)
++int hfsplus_commit_superblock(struct super_block *sb)
+ {
+ 	struct hfsplus_sb_info *sbi = HFSPLUS_SB(sb);
+ 	struct hfsplus_vh *vhdr = sbi->s_vhdr;
+ 	int write_backup = 0;
+-	int error, error2;
+-
+-	if (!wait)
+-		return 0;
++	int error = 0, error2;
+ 
+ 	hfs_dbg("starting...\n");
+ 
+-	/*
+-	 * Explicitly write out the special metadata inodes.
+-	 *
+-	 * While these special inodes are marked as hashed and written
+-	 * out peridocically by the flusher threads we redirty them
+-	 * during writeout of normal inodes, and thus the life lock
+-	 * prevents us from getting the latest state to disk.
+-	 */
+-	error = filemap_write_and_wait(sbi->cat_tree->inode->i_mapping);
+-	error2 = filemap_write_and_wait(sbi->ext_tree->inode->i_mapping);
+-	if (!error)
+-		error = error2;
+-	if (sbi->attr_tree) {
+-		error2 =
+-		    filemap_write_and_wait(sbi->attr_tree->inode->i_mapping);
+-		if (!error)
+-			error = error2;
+-	}
+-	error2 = filemap_write_and_wait(sbi->alloc_file->i_mapping);
+-	if (!error)
+-		error = error2;
+-
+ 	mutex_lock(&sbi->vh_mutex);
+ 	mutex_lock(&sbi->alloc_mutex);
+ 	vhdr->free_blocks = cpu_to_be32(sbi->free_blocks);
+@@ -249,11 +224,52 @@ static int hfsplus_sync_fs(struct super_block *sb, int wait)
+ 				  sbi->part_start + sbi->sect_count - 2,
+ 				  sbi->s_backup_vhdr_buf, NULL, REQ_OP_WRITE);
+ 	if (!error)
+-		error2 = error;
++		error = error2;
+ out:
+ 	mutex_unlock(&sbi->alloc_mutex);
+ 	mutex_unlock(&sbi->vh_mutex);
+ 
++	hfs_dbg("finished: err %d\n", error);
++
++	return error;
++}
++
++static int hfsplus_sync_fs(struct super_block *sb, int wait)
++{
++	struct hfsplus_sb_info *sbi = HFSPLUS_SB(sb);
++	int error, error2;
++
++	if (!wait)
++		return 0;
++
++	hfs_dbg("starting...\n");
++
++	/*
++	 * Explicitly write out the special metadata inodes.
++	 *
++	 * While these special inodes are marked as hashed and written
++	 * out peridocically by the flusher threads we redirty them
++	 * during writeout of normal inodes, and thus the life lock
++	 * prevents us from getting the latest state to disk.
++	 */
++	error = filemap_write_and_wait(sbi->cat_tree->inode->i_mapping);
++	error2 = filemap_write_and_wait(sbi->ext_tree->inode->i_mapping);
++	if (!error)
++		error = error2;
++	if (sbi->attr_tree) {
++		error2 =
++		    filemap_write_and_wait(sbi->attr_tree->inode->i_mapping);
++		if (!error)
++			error = error2;
++	}
++	error2 = filemap_write_and_wait(sbi->alloc_file->i_mapping);
++	if (!error)
++		error = error2;
++
++	error2 = hfsplus_commit_superblock(sb);
++	if (!error)
++		error = error2;
++
+ 	if (!test_bit(HFSPLUS_SB_NOBARRIER, &sbi->flags))
+ 		blkdev_issue_flush(sb->s_bdev);
+ 
+@@ -395,6 +411,15 @@ static const struct super_operations hfsplus_sops = {
+ 	.show_options	= hfsplus_show_options,
+ };
+ 
++void hfsplus_prepare_volume_header_for_commit(struct hfsplus_vh *vhdr)
++{
++	vhdr->last_mount_vers = cpu_to_be32(HFSP_MOUNT_VERSION);
++	vhdr->modify_date = hfsp_now2mt();
++	be32_add_cpu(&vhdr->write_count, 1);
++	vhdr->attributes &= cpu_to_be32(~HFSPLUS_VOL_UNMNT);
++	vhdr->attributes |= cpu_to_be32(HFSPLUS_VOL_INCNSTNT);
++}
++
+ static int hfsplus_fill_super(struct super_block *sb, struct fs_context *fc)
+ {
+ 	struct hfsplus_vh *vhdr;
+@@ -562,11 +587,7 @@ static int hfsplus_fill_super(struct super_block *sb, struct fs_context *fc)
+ 		 * H+LX == hfsplusutils, H+Lx == this driver, H+lx is unused
+ 		 * all three are registered with Apple for our use
+ 		 */
+-		vhdr->last_mount_vers = cpu_to_be32(HFSP_MOUNT_VERSION);
+-		vhdr->modify_date = hfsp_now2mt();
+-		be32_add_cpu(&vhdr->write_count, 1);
+-		vhdr->attributes &= cpu_to_be32(~HFSPLUS_VOL_UNMNT);
+-		vhdr->attributes |= cpu_to_be32(HFSPLUS_VOL_INCNSTNT);
++		hfsplus_prepare_volume_header_for_commit(vhdr);
+ 		hfsplus_sync_fs(sb, 1);
+ 
+ 		if (!sbi->hidden_dir) {
+-- 
+2.43.0
 
 
