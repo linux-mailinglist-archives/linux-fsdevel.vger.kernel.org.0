@@ -1,49 +1,77 @@
-Return-Path: <linux-fsdevel+bounces-69048-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69049-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46C14C6CD3C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 06:50:23 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 744A3C6CD42
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 06:51:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0A7413815AA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 05:50:00 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTPS id 2D0032A137
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 05:51:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B581F30E859;
-	Wed, 19 Nov 2025 05:49:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67A50311946;
+	Wed, 19 Nov 2025 05:51:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Gl1NeohW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC47524EF76;
-	Wed, 19 Nov 2025 05:49:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 749B62ECD14;
+	Wed, 19 Nov 2025 05:51:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763531391; cv=none; b=mbJ2C0KEjzq3UO8MG9TUPHCLabKCF+i0qzoupb4EFGmW9AQvUSKyLU7TfHKyqxE1CjN22DBxXlzdyRsUKIeAVpjPOzK9c1BiZFuR09J0ZDO/6L4ojEzarNpNRYfRGTbUJcsAuc290eYRRecGoNHxZxbsb3wJSUw+8ZVBQy3EgVE=
+	t=1763531462; cv=none; b=Q4J/GotFgE1BoIvH0xbmtDqCeY5jRgsm2RqEGmLEqj/MNlikFn1xblnLdMBGZA8TPztZExLL3VwCqvAQU7mdT51Jv0KThv1XVP3y7oYqvohIJHIwCg/tk088oGQMn3lu9UvI+1PFiK6e0ptZ+xZaBlfaY16JEqkfkebPmcWwjDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763531391; c=relaxed/simple;
-	bh=wo526rARRm+OOJkOvOMWW78YziTKANQUFagQnH8e+Nw=;
+	s=arc-20240116; t=1763531462; c=relaxed/simple;
+	bh=zO8zOpKaiSIXJHk0EPgcQ227CLXzPZYpyzntHJwRjdc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FgarzUX5VJLnXIjrALd72zw3Bytrni8D8rFjWjSrpZzexO68sXyMJvqiWWthGlLcJagCYbk2Ycsha5KkzUYPgLQU5Ozo7Ol1JEPox18neEWX0pw/bYwEV7FYng66W14V0B4uT3yx/J1xgRLDJmgvzzgqopEYevgz/MRjubm9Usw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 8D6BE68AFE; Wed, 19 Nov 2025 06:49:46 +0100 (CET)
-Date: Wed, 19 Nov 2025 06:49:46 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Gao Xiang <hsiangkao@linux.alibaba.com>
-Cc: brauner@kernel.org, djwong@kernel.org, Christoph Hellwig <hch@lst.de>,
-	linux-fsdevel@vger.kernel.org, linux-erofs@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org, Chao Yu <chao@kernel.org>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Joanne Koong <joannelkoong@gmail.com>,
-	Hongbo Li <lihongbo22@huawei.com>
-Subject: Re: [PATCH v9 01/10] iomap: stash iomap read ctx in the private
- field of iomap_iter
-Message-ID: <20251119054946.GA20142@lst.de>
-References: <20251117132537.227116-1-lihongbo22@huawei.com> <20251117132537.227116-2-lihongbo22@huawei.com> <f3938037-1292-470d-aace-e5c620428a1d@linux.alibaba.com> <add21bbf-1359-4659-9518-bdb1ef34ea48@linux.alibaba.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ebJ2+rqQSZbyVPmScXGnxHIQIgPPz54X0KOsjmlkUtECS20t6/u0Db/RZWucJ8mqjCYgcaqBb6dMJ4go6S1S/Mvxm9IMu3lhT75TOXm75+W5FE5mMfWWKxf+M4pgQrhmonFaAhIPHdGEHssAk2wq9JSIQDBGto5q6jCGhsCzzuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Gl1NeohW; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=oSUCW2aTXazbvbtd8t7tT7TQJ2omNwxbKL/AucooRco=; b=Gl1NeohWW4D63QJy037NIx5AwG
+	0hK0i3ORimeuhGTfy4ed0DNW3HMXWUDMF9+ZtXM6c3JgtTbWP4TzcT7yfS3Jdru/LulygCgwo9jOb
+	MK8+YlbPb6aCLDH269juL/NLJJUPQ+LvPLV1fPDZvftwQ+YSQJ2WqnG0sQqQUqsYb7XQoLgO2UmHG
+	nOl9BEtF/T8Xx+M+E+vnEbw+aD5QzBGs2v0+HNJT4P7BLAbSEqXFxvyM0ckeVaZedGV5irsLEkycD
+	tJBKEhTWOUPiM6pE1MuNBha9J5v7mjdcyemLxC9o1TWST/i1IGn10uxmGvZ8MYINZVW9h4zPO/81a
+	0n9JbTtQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vLb5k-00000002RCL-2l21;
+	Wed, 19 Nov 2025 05:50:56 +0000
+Date: Tue, 18 Nov 2025 21:50:56 -0800
+From: Christoph Hellwig <hch@infradead.org>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Matthew Wilcox <willy@infradead.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Christoph Hellwig <hch@infradead.org>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	SHAURYA RANE <ssrane_b23@ee.vjti.ac.in>, akpm@linux-foundation.org,
+	shakeel.butt@linux.dev, eddyz87@gmail.com, andrii@kernel.org,
+	ast@kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev,
+	skhan@linuxfoundation.org, david.hunter.linux@gmail.com,
+	khalid@kernel.org,
+	syzbot+09b7d050e4806540153d@syzkaller.appspotmail.com,
+	bpf <bpf@vger.kernel.org>
+Subject: Re: [PATCH] mm/filemap: fix NULL pointer dereference in
+ do_read_cache_folio()
+Message-ID: <aR1awLOhdOXNMl9c@infradead.org>
+References: <20251114193729.251892-1-ssranevjti@gmail.com>
+ <aReUv1kVACh3UKv-@casper.infradead.org>
+ <CANNWa07Y_GPKuYNQ0ncWHGa4KX91QFosz6WGJ9P6-AJQniD3zw@mail.gmail.com>
+ <aRpQ7LTZDP-Xz-Sr@casper.infradead.org>
+ <20251117164155.GB196362@frogsfrogsfrogs>
+ <aRtjfN7sC6_Bv4bx@casper.infradead.org>
+ <CAEf4BzZu+u-F9SjhcY5GN5vumOi6X=3AwUom+KJXeCpvC+-ppQ@mail.gmail.com>
+ <aRxunCkc4VomEUdo@infradead.org>
+ <aRySpQbNuw3Y5DN-@casper.infradead.org>
+ <CAEf4BzY1fu+7pqotaW6DxH_vvwCY8rTuX=+0RO96-baKJDeB_Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,12 +80,29 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <add21bbf-1359-4659-9518-bdb1ef34ea48@linux.alibaba.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <CAEf4BzY1fu+7pqotaW6DxH_vvwCY8rTuX=+0RO96-baKJDeB_Q@mail.gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Tue, Nov 18, 2025 at 03:35:45PM +0800, Gao Xiang wrote:
-> (... try to add Christoph..)
+On Tue, Nov 18, 2025 at 11:27:47AM -0800, Andrii Nakryiko wrote:
+> Then please help make it better, give us interfaces you think are
+> appropriate. People do use this functionality in production, it's
+> important and we are not going to drop it. In non-sleepable mode it's
+> best-effort, if the requested part of the file is paged in, we'll
+> successfully read data (such as ELF's build ID), and if not, we'll
+> report that to the BPF program as -EFAULT. In sleepable mode, we'll
+> wait for that part of the file to be paged in before proceeding.
+> PROCMAP_QUERY ioctl() is always in sleepable mode, so it will wait for
+> file data to be read.
 
-What are you asking me for?
+That's pretty demanding:  "If you don't give me the interface that I want
+I'll just poke into internals and do broken shit" isn't really the
+best way to make friends and win influence.,
 
+> If you don't like the implementation, please help improve it, don't
+> just request dropping it "because BPF folks" or anything like that.
+
+Again, you're trying to put a lot of work you should have done on
+others.  Everyone here is pretty helpful guiding when asking for help,
+but being asked at gunpoint to cleanup the mess your created is not
+going to get everyone drop their work and jump onto your project.
 
