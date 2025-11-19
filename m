@@ -1,95 +1,114 @@
-Return-Path: <linux-fsdevel+bounces-69076-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69077-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0DB4C6DEE0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 11:16:50 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CDEDC6DF55
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 11:24:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sin.lore.kernel.org (Postfix) with ESMTPS id 68C7C2F06D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 10:12:48 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2A4524F9F51
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 10:14:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB480346E66;
-	Wed, 19 Nov 2025 10:12:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ADB9347FFA;
+	Wed, 19 Nov 2025 10:14:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sdL2su6a"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="q8g9lEJG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F22E33DEFC
-	for <linux-fsdevel@vger.kernel.org>; Wed, 19 Nov 2025 10:12:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7396C349AE1
+	for <linux-fsdevel@vger.kernel.org>; Wed, 19 Nov 2025 10:14:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763547155; cv=none; b=a/ylxuPZrLpAJBnlY5HOs9whbYBjJD6abBkrkgJ59/CxNPy+Q6wII0gDfjaNME5h/tOyhEiPhIVXWe2H2UNSCmBIbsUfCiOZLelcsUJ+R4hIpicj8wRNfa+8aHYHjpkrPLuKAIbRaApDZeXi/kUhibsg3A/Er58pguDlxGPJB6Q=
+	t=1763547266; cv=none; b=mPbx6ZSQvPv9FmUt8rl4udwrEFpDie21i084ClEKv8PSeF+Gf32DpEjqTb2Xhhv5hBZWMoOh3Ct2nRn84E1MYRoY5lW4fSoLs2hxHdJpp5kzpZn4tQhTJehoN1lztiOhdS9PLJAj0ZhHCNIz4KDZXYPqzuscAGy9PsYXKIX6PY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763547155; c=relaxed/simple;
-	bh=s4y3hIjKIKqq2PO03z1odmZRvi1xixNzpQ8u45u0goY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qdsQECAeNPLXpwebn+N+8oZUX5WYiHrFMU7b4NNO/uz4F1Pn46UhfmjsWKSN5GMQQ8cpEkbHAIFy1jCvBJWZ4TNutWRTVVK3VmCHUPIJDeCIvqqPsRl0FvzLHEeXW3y3MY2cc0lEQEb7G+JbCGPk51RjnaDEyV9CUXDw2H3cKNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sdL2su6a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53ED2C116D0;
-	Wed, 19 Nov 2025 10:12:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763547153;
-	bh=s4y3hIjKIKqq2PO03z1odmZRvi1xixNzpQ8u45u0goY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=sdL2su6aA8Hh98YIkR07lJyx10hDfK4xWXaB5KiCc7J6GOiCcgO4xIXAAw+ugLIo5
-	 7phPgdb8dPC7suFVwt7lOPzx1c96lN8lbYChVkajs1Lqn7iGs6bDskrT+Ng3tkZAc9
-	 Q7rN937bvlxD03oylfA+8MYARdhbjBHfTbwTwzRgpTyLXaewtkqGdNx8fTSk1LwHgH
-	 NmK+fhVMqA//bJyNtuvmXqglqLEOLzOeNzSCgHBA6YN/4wezOEL1j5X8GIY/t+fZ80
-	 ivtx4bVDD9VGdQNtv79JpYjl28QIv3jwF7FAZdgW3TiA2DadMYc0TN4X4EY0CC6aa/
-	 jvzzkVuUfqeLA==
-From: Christian Brauner <brauner@kernel.org>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	djwong@kernel.org,
-	hch@infradead.org,
-	linux-fsdevel@vger.kernel.org,
-	willy@infradead.org
-Subject: Re: [PATCH v2 0/1] iomap: fix iomap_read_end() for already uptodate folios
-Date: Wed, 19 Nov 2025 11:12:27 +0100
-Message-ID: <20251119-artgenossen-fleischfrei-aae8aa265bb6@brauner>
+	s=arc-20240116; t=1763547266; c=relaxed/simple;
+	bh=pFy+qi+KQMrFT81uvuVvey4h2O+273gG7N6dXlT0s0s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MSMCfuIrEbLbStFG+YeS5RsxBCj8HJG213V0sh2qUDR6iIGfybq8wPiyYhxmR4+A4BGESxgrZpl0inJFOgFUKTYoFGVZN1MO9plTd27GHG9d/oRSzcs9udKkoA2yd1M7ALxGKIHLEMmXXmNGQBULN0YE/g1k33PveMBiyOUBHeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=q8g9lEJG; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=LBZbpWAl2kSwbOy4eK4JP+qjdiXAXjfeJWmSsIuUX98=; b=q8g9lEJGb7U3YomCHJpYpbN7sa
+	KG9dY6ootlhQB3daKQU/O4iOgx3OZeNfZMkSCUXesjHSPitYGd5UzF2L5pF5CZWmseAlMECZs5mPp
+	g+MSu5t0khS5xxM8KyrRotIyaUTuEG4UnhkjSi/vOiiPnzD+iE80vPJ32Jkv84UuJ2zW4TPlH8lyr
+	8z52pqvaWvkkvlwe2oahvGz4rkjpIQ4lKvsnShzyN/wrkN034UBr5DXZrQ4XzJrlRS185uuwp7g0u
+	Nq/buAA3EMsH5kxJf5UvQN3K6yfEwI69fjNeEhRnbEyHVvnp9iAIDrU+5vHnVcHPsgLXZY8CG1PCz
+	wFP7J4rg==;
+Received: from 2a02-8389-2341-5b80-d601-7564-c2e0-491c.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:d601:7564:c2e0:491c] helo=localhost)
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vLfCd-00000002wnN-0w9a;
+	Wed, 19 Nov 2025 10:14:19 +0000
+From: Christoph Hellwig <hch@lst.de>
+To: viro@zeniv.linux.org.uk,
+	brauner@kernel.org
+Cc: aalbersh@redhat.com,
+	jack@suse.cz,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH] fs: remove spurious exports in fs/file_attr.c
+Date: Wed, 19 Nov 2025 11:14:15 +0100
+Message-ID: <20251119101415.2732320-1-hch@lst.de>
 X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251118211111.1027272-1-joannelkoong@gmail.com>
-References: <20251118211111.1027272-1-joannelkoong@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1063; i=brauner@kernel.org; h=from:subject:message-id; bh=s4y3hIjKIKqq2PO03z1odmZRvi1xixNzpQ8u45u0goY=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWTKzuDO87qrNDn3Qczi+JSlfx50PbxasV3+iQFH5ryq1 rDSnNnWHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABN5aMnwV8phrVJkXPNZu935 n6M2Cz7rer/x7Y4fuvGKZUw7gzlzbBn+WYmu2yhtari0Xkbt2pSijdlXvSy4HZfO7D0z8YaHW6A eBwA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Tue, 18 Nov 2025 13:11:10 -0800, Joanne Koong wrote:
-> This is a fix for commit f8eaf79406fe in the 'vfs-6.19.iomap' branch. It
-> would be great if this could get folded up into that original commit, if it's
-> not too late to do so.
-> 
-> Thanks,
-> Joanne
-> 
-> [...]
+Commit 2f952c9e8fe1 ("fs: split fileattr related helpers into separate
+file") added various exports without users despite claiming to be a
+simple refactor.  Drop them again.
 
-Applied to the vfs-6.19.iomap branch of the vfs/vfs.git tree.
-Patches in the vfs-6.19.iomap branch should appear in linux-next soon.
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ fs/file_attr.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+diff --git a/fs/file_attr.c b/fs/file_attr.c
+index 1dcec88c0680..4c4916632f11 100644
+--- a/fs/file_attr.c
++++ b/fs/file_attr.c
+@@ -316,7 +316,6 @@ int ioctl_getflags(struct file *file, unsigned int __user *argp)
+ 		err = put_user(fa.flags, argp);
+ 	return err;
+ }
+-EXPORT_SYMBOL(ioctl_getflags);
+ 
+ int ioctl_setflags(struct file *file, unsigned int __user *argp)
+ {
+@@ -337,7 +336,6 @@ int ioctl_setflags(struct file *file, unsigned int __user *argp)
+ 	}
+ 	return err;
+ }
+-EXPORT_SYMBOL(ioctl_setflags);
+ 
+ int ioctl_fsgetxattr(struct file *file, void __user *argp)
+ {
+@@ -350,7 +348,6 @@ int ioctl_fsgetxattr(struct file *file, void __user *argp)
+ 
+ 	return err;
+ }
+-EXPORT_SYMBOL(ioctl_fsgetxattr);
+ 
+ int ioctl_fssetxattr(struct file *file, void __user *argp)
+ {
+@@ -369,7 +366,6 @@ int ioctl_fssetxattr(struct file *file, void __user *argp)
+ 	}
+ 	return err;
+ }
+-EXPORT_SYMBOL(ioctl_fssetxattr);
+ 
+ SYSCALL_DEFINE5(file_getattr, int, dfd, const char __user *, filename,
+ 		struct file_attr __user *, ufattr, size_t, usize,
+-- 
+2.47.3
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.19.iomap
-
-[1/1] iomap: fix iomap_read_end() for already uptodate folios
-      https://git.kernel.org/vfs/vfs/c/2e7278a6e951
 
