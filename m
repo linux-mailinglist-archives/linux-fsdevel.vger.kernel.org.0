@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-69117-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69118-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABD2CC6FD39
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 16:54:40 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E3EEC6FD24
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 16:54:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 39F0D4FC257
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 15:43:59 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1067F4E457E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 15:44:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AF282E973F;
-	Wed, 19 Nov 2025 15:43:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8398B358D34;
+	Wed, 19 Nov 2025 15:43:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OhkCUMCi"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q4Pp8vUK"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B500527F16C;
-	Wed, 19 Nov 2025 15:43:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97F592E9EA0;
+	Wed, 19 Nov 2025 15:43:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763567000; cv=none; b=uKzbXuloyTpueHtGsZxkp6YAnITHi3Hv/205ofkOvYds8j+TWUfVMPOH4NmI6TWJlVtOmSiY+FjmbflaQRlP41dJKqZEdHMmQyvu4VZ4yOEDFd2Mu3hP48ZEZp9I56GHG1OpGbL2PD0cjvGeKBMOBrS5QDXyQ/wO9ir6P9UsYgc=
+	t=1763567002; cv=none; b=kPMpo4tH4Ckz71qNUpHiCXVc7ae2OEVZ/2jQML42uvanHAVIM2/FoO9/mcGfdao1iBvbV7okhcBQaSvCeGZwJbLU32b/Y7ipyeTl3TYf1buYqmMDIy+IZRt9t+28/Opk+lNsGKR7/zyYFi90XaujFrmOlhnT2iXqcgj1ckjcS5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763567000; c=relaxed/simple;
-	bh=7BjXx3mEgAh8vrx8RJAPZ5HBe6wN4mhQLqpyv1v7Un0=;
+	s=arc-20240116; t=1763567002; c=relaxed/simple;
+	bh=XWWhCLs5lgbAxHMUMRreuQUftolIPDX5VuvwOjvFE5g=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=HL+VtfCyppGKLgQxUvA+3xbS4IYORLlvwz63LgU7ei95k8FZslQ3YcffIGqsoV7qs0gTGi4dI8W8tLWXBYQeO8WKFWj1ozaCZKccEt0a6NttA/rw2V3Y+upOGRJOWwaSETrv3xGdxXUSW00ZSRfUAuqbtZ//m1uMINk1vDW/7VA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OhkCUMCi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A213EC116C6;
-	Wed, 19 Nov 2025 15:43:19 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=k9tzbiX/m6StKZlZrSy3apVhfAm5fEbmvYTTbfRG98auj25zY80ppgrEsVg/86IxUmQo7NE37JN6Hqe9zuO8NbPBaNjDODe8IOtCUXkKsNg8D1Rak1y8sl/duOS7Ogo5fn2P7H890iThkTVaf4JDbKM/CRYj84b0xSr6+qXzO7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q4Pp8vUK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7080CC2BC87;
+	Wed, 19 Nov 2025 15:43:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1763567000;
-	bh=7BjXx3mEgAh8vrx8RJAPZ5HBe6wN4mhQLqpyv1v7Un0=;
+	bh=XWWhCLs5lgbAxHMUMRreuQUftolIPDX5VuvwOjvFE5g=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=OhkCUMCiQZprY418Zo6U954wRWPHnJsh0ZGttII5kR1niokvDE12GgewWr94+Udk3
-	 bjpe4ra5qSLA8z62FDTlQEVWwBvWXBEdPIVR0HQUGxv9XacEgR8Lf2eva5qcfy9sJV
-	 YUoy1GCyg90aaPUzgfBsY3oWzz6lmjrzcorG6iiMDQgtDWi7Yi58maJa9ywCXZl0aS
-	 7L8TS0rjsnlBtxl7TjIgWamgcUW6DPoHwpFUyBa5P6wSbkAWlcJViDNq9ONkFlZ+ie
-	 XMya0ReeQFcra/AVpupNiA2+i9aPjhuiqZnE2nnIzKNJXi5/aynfloPIrTP48pmg2r
-	 F2itGu4T0dJlw==
+	b=Q4Pp8vUK6fKAtlVkEBvPpKMyPaU0qychmVGmIeGxUH5//nF2QdyOY7RetJSDVKRyH
+	 iVFjU3DozPSjxcnnVC9taRt/zL6FxgPep8QJiMJlpRMo9Y1Vl1SscQnV12on5ky4vg
+	 0bp1fQCoNMS4v3YNFxvdspuZO3P3dSukwYji39pfj5bf61ELV4b9H72MSmHzBOR23w
+	 ncMPlpvWzcDYNgsR5fouUzOCEINmdiB+HITkiOhp8tWSfLIRvqG3+kWklEu8PFiPhx
+	 p/lO2dYeUWnjL1IeMadtk2Ubk7qjQytIIx+xOEkTrFZKfrf8+88Rs74PA2jbqS6MLy
+	 NEQiJe5jjCrww==
 From: Jeff Layton <jlayton@kernel.org>
-Date: Wed, 19 Nov 2025 10:43:04 -0500
-Subject: [PATCH fstests v2 2/3] generic: add test for directory delegations
+Date: Wed, 19 Nov 2025 10:43:05 -0500
+Subject: [PATCH fstests v2 3/3] generic: add tests for file delegations
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,418 +52,236 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251119-dir-deleg-v2-2-f952ba272384@kernel.org>
+Message-Id: <20251119-dir-deleg-v2-3-f952ba272384@kernel.org>
 References: <20251119-dir-deleg-v2-0-f952ba272384@kernel.org>
 In-Reply-To: <20251119-dir-deleg-v2-0-f952ba272384@kernel.org>
 To: fstests@vger.kernel.org
 Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, 
  Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=19579; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=7BjXx3mEgAh8vrx8RJAPZ5HBe6wN4mhQLqpyv1v7Un0=;
- b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBpHeWVYWTpYw/S6qSz6ek7Mhb3MFBthhTd9VWiw
- MBv9Jobp32JAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaR3llQAKCRAADmhBGVaC
- FRGLD/9WLz0p51l4lTZZikWWIrBAtUEncGP6pcF7F95Ys5dhGJoW7D2Krh4lOXTazVGPM9yfXuh
- LZWNIjrdDTBSdVklTtXYEZXggkEYYlRs43a0bzGH3pAlQAXU+bPvH+K4KEiX4PCdx3oVC3++8nM
- tD3S8VpFZYzb2xK8B1OZwB+ulL7SBcev71wqmjEr3We6yA+NvQVL9N0PW2VDWiEvVlq1oop9X3q
- arWt/Ss6uSFXKYo1dPjJ8Aw1uqmfI/3/8tmxhV1JHtd7NXqDIXdX79bqj0D6ZtBVmuYjLxuBb5V
- HjaNrxUg0m46PS+RsGTLe3fNJAJLi4Jd1A6b2QDl82Y0rv8Je/zJV5msyFuR/RPTJak8riOskMA
- KroGjCPlg4w8/Yz52QO6xTWgScIqFvDN+yh3VpvV6UMTZE3WfQHJdXG0zs1dg8FLStuZPvwU8Wo
- IQ2CaudDastIFDnvYA2nYUNyHkt19hdhrgSenTWc2MxPkoTYkQLcO5rom8zLT40adwVJk7sKq/2
- 9Wf2iYolLOzbMAg7fhaRxPhFZM+GhmTrpOK/UaB3E1RuswwILjmgRInM51BVjaW1QSkhlsQvND0
- ctq9gGis5tBS62PmWkXubZenk9ib5/t6m1FJ0JaONBEMgTNu/EwZkKB4jhMUxpajRLxGqVlUSNn
- 5ut2ZzliMGkGapA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=11342; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=XWWhCLs5lgbAxHMUMRreuQUftolIPDX5VuvwOjvFE5g=;
+ b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBpHeWVGRFgaul7jbV9/39vNFmbiHO3ijEsYUpJH
+ igCbLjDXlOJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaR3llQAKCRAADmhBGVaC
+ Fa1AEACZ3Nt0BrgPqutUnfHFrvqstStEZfgoR0Q/nnuTkeVRE/dK0y62CGTrKzM5E41U0aAu6nl
+ UaoY8F/DOuzHfFsIzFHhJ7cCwPcEIitWxZI7bJJsICQNgH9ZAJwutP9Ysm3uFV46nOy4+UoQSFx
+ 4Ueqw4vjUPGbugL3VpQ3UybWiZOy2yEKviJpgRo/hBZjAy5d0s6AvlDRPTPWAc9pziSHnW/WkSE
+ 1lkYazUf1jym6wh7nIJifnbKcY5/NcZZ4hk3IKkc7ODjjqcnn2mtYjMW21G1F9Cz7tf/5Dbwxho
+ PrBO2IUSSyRt9JeeqvE4FSnWUXrqpCmc+MJcIUl6XFqvbU9yKBkshL2gP0p7DWpclLb7il4iJNn
+ 0Joseuj6tdkSbSTTAkUnxy6E+BM0IhpokKY4h4Asj5MG3ToD2SoidWbpiA9nYIijT8BkPianf4n
+ q0NdDG89lkxRq4WENkmEtfKtuMNALOH8n7KTsNlCyy4r738If7RWf/izeI/sBOS6sEF5RzwlFFT
+ /okkXNtvl9PykKNsZRz9kYvKpQChsYB1Irrv4WoYrh9zT2qHeYQQVAUs2DfFxqGca5Su+9TqeBQ
+ 0valLyEKteWIQg14xtFT75y03dM2k7sXaBKjNP2ihb7D5Uif/Bj5OFY6GEZNG2wJarh2zWYToas
+ 5fpc6YpG3StSP7g==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-With the advent of directory delegation support coming to the kernel,
-add support for testing them to the existing locktest.c program, and add
-testcases for all of the different ways that they can be broken.
+Mostly the same ones as leases, but some additional tests to validate
+that they are broken on metadata changes.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- common/locktest       |  14 +-
- common/rc             |  10 ++
- src/locktest.c        | 423 ++++++++++++++++++++++++++++++++++++++++++++++++--
- tests/generic/999     |  22 +++
- tests/generic/999.out |   2 +
- 5 files changed, 456 insertions(+), 15 deletions(-)
+ common/locktest       |   5 ++
+ src/locktest.c        | 202 +++++++++++++++++++++++++++++++++++++++++++++++++-
+ tests/generic/998     |  22 ++++++
+ tests/generic/998.out |   2 +
+ 4 files changed, 229 insertions(+), 2 deletions(-)
 
 diff --git a/common/locktest b/common/locktest
-index 61e7dd42785dd3d4f21050e10bd5ec9d76a3b15a..609078485dac9358da7298082ad5ca5acada51dc 100644
+index 609078485dac9358da7298082ad5ca5acada51dc..7654e9ea792ced93cdf2b35b0ed7f877df76ba84 100644
 --- a/common/locktest
 +++ b/common/locktest
-@@ -6,6 +6,7 @@ SERVER_LOG=$TEST_DIR/server.out
- SERVER_PORT=$TEST_DIR/server.port
- CLIENT_LOG=$TEST_DIR/client.out
- TESTFILE=$TEST_DIR/lock_file
-+DELEGDIR=$TEST_DIR/dirdeleg
- client_pid=""
- server_pid=""
- 
-@@ -13,7 +14,7 @@ _cleanup()
- {
- 	kill $client_pid > /dev/null 2>&1
- 	kill $server_pid > /dev/null 2>&1
--	rm -f $TESTFILE
-+	rm -rf $TESTFILE $DELEGDIR
- }
- 
- _dump_logs_fail()
-@@ -42,8 +43,6 @@ _run_generic() {
- 	rm -f $CLIENT_LOG
- 	touch $CLIENT_LOG
- 
--	touch $TESTFILE
--
- 	# Start the server
- 	$here/src/locktest $mode $TESTFILE 2> $SERVER_LOG 1> $SERVER_PORT &
- 	server_pid=$!
-@@ -87,9 +86,18 @@ _run_generic() {
- }
- 
- _run_locktest() {
-+	touch $TESTFILE
-+
- 	_run_generic ""
- }
- 
- _run_leasetest() {
-+	touch $TESTFILE
-+
- 	_run_generic "-L"
+@@ -101,3 +101,8 @@ _run_dirleasetest() {
+ 	TESTFILE=$DELEGDIR
+ 	_run_generic "-D"
  }
 +
-+_run_dirleasetest() {
++_run_filedelegtest() {
 +	TESTFILE=$DELEGDIR
-+	_run_generic "-D"
++	_run_generic "-F"
 +}
-diff --git a/common/rc b/common/rc
-index 116216ca8aeb4e53f3e0d741cc99a050cb3a7462..8df2b387a8a85c7dafeea02f9f9422f52a7d0d01 100644
---- a/common/rc
-+++ b/common/rc
-@@ -4662,6 +4662,16 @@ _require_test_fcntl_setlease()
- 		_notrun "NFS requires delegation before setlease"
- }
- 
-+_require_test_fcntl_setdeleg()
-+{
-+	_require_test_program "locktest"
-+	mkdir $TEST_DIR/setdeleg_testdir
-+	$here/src/locktest -t -D $TEST_DIR/setdeleg_testdir >/dev/null 2>&1
-+	local ret=$?
-+	rm -rf $TEST_DIR/setdeleg_testdir
-+	[ $ret -eq 22 ] && _notrun "Require fcntl setdeleg support"
-+}
-+
- _require_ofd_locks()
- {
- 	# Give a test run by getlk wrlck on testfile.
 diff --git a/src/locktest.c b/src/locktest.c
-index a6cf3b1d5a99dc2cf78f7ceb79622e1ab135c42c..eb40dce3f1b28ef34752518808ec2f3999cd4257 100644
+index eb40dce3f1b28ef34752518808ec2f3999cd4257..54ee1f07539ef08e768d2c809c40327f315d43e7 100644
 --- a/src/locktest.c
 +++ b/src/locktest.c
-@@ -28,6 +28,7 @@
- #include <errno.h>
- #include <string.h>
- #include <signal.h>
-+#include <limits.h>
+@@ -126,6 +126,8 @@ static char *child[] = { "child0", "child1" };
+ #define		CMD_CHMOD	19
+ #define		CMD_MKDIR	20
+ #define		CMD_RMDIR	21
++#define		CMD_UNLINK_S	22
++#define		CMD_RENAME_S	23
  
- #define     HEX_2_ASC(x)    ((x) > 9) ? (x)-10+'a' : (x)+'0'
- #define 	FILE_SIZE	1024
-@@ -60,8 +61,6 @@ extern int h_errno;
- #define SOCKET_CLOSE(S)     (close(S))
- #define INVALID_SOCKET      -1
- 
--#define O_BINARY            0
--       
- #define HANDLE              int
- #define INVALID_HANDLE      -1
- #define SEEK(H, O)          (lseek(H, O, SEEK_SET))
-@@ -78,6 +77,17 @@ extern int h_errno;
- #define ALLOC_ALIGNED(S)    (memalign(65536, S)) 
- #define FREE_ALIGNED(P)     (free(P)) 
- 
-+#ifndef F_GETDELEG
-+#define F_GETDELEG	(1024 + 15)
-+#define F_SETDELEG	(1024 + 16)
-+
-+struct delegation {
-+	uint32_t d_flags;
-+	uint16_t d_type;
-+	uint16_t __pad;
-+};
-+#endif
-+
- static char	*prog;
- static char	*filename = 0;
- static int	debug = 0;
-@@ -86,11 +96,14 @@ static int	port = 0;
- static int 	testnumber = -1;
- static int	saved_errno = 0;
- static int      got_sigio = 0;
-+static int	lease_is_deleg = 0;
- 
- static SOCKET	s_fd = -1;              /* listen socket    */
- static SOCKET	c_fd = -1;	        /* IPC socket       */
- static HANDLE	f_fd = INVALID_HANDLE;	/* shared file      */
- 
-+static char *child[] = { "child0", "child1" };
-+
- #define 	CMD_WRLOCK	0
- #define 	CMD_RDLOCK	1
- #define		CMD_UNLOCK	2
-@@ -103,9 +116,19 @@ static HANDLE	f_fd = INVALID_HANDLE;	/* shared file      */
- #define		CMD_SIGIO	9
- #define		CMD_WAIT_SIGIO	10
- #define		CMD_TRUNCATE	11
--
--#define		PASS 	1
--#define		FAIL	0
-+#define		CMD_GETDELEG	12
-+#define		CMD_SETDELEG	13
-+#define		CMD_CREATE	14
-+#define		CMD_UNLINK	15
-+#define		CMD_RENAME	16
-+#define		CMD_SYMLINK	17
-+#define		CMD_MKNOD	18
-+#define		CMD_CHMOD	19
-+#define		CMD_MKDIR	20
-+#define		CMD_RMDIR	21
-+
-+#define		PASS 	0
-+#define		FAIL	1
- 
- #define		SERVER	0
- #define		CLIENT	1
-@@ -119,6 +142,7 @@ static HANDLE	f_fd = INVALID_HANDLE;	/* shared file      */
- #define		FLAGS		2 /* index 2 is also used for do_open() flag, see below */
- #define		ARG		FLAGS /* Arguments for Lease operations */
- #define		TIME		FLAGS /* Time for waiting on sigio */
-+#define		ARG2		3 /* second argument for dir operations */
- 
- static char *get_cmd_str(int cmd)
- {
-@@ -135,6 +159,16 @@ static char *get_cmd_str(int cmd)
- 		case CMD_SIGIO:    return "Setup SIGIO"; break;
- 		case CMD_WAIT_SIGIO: return "Wait for SIGIO"; break;
- 		case CMD_TRUNCATE: return "Truncate"; break;
-+		case CMD_SETDELEG: return "Set Delegation"; break;
-+		case CMD_GETDELEG: return "Get Delegation"; break;
-+		case CMD_CREATE: return "Create"; break;
-+		case CMD_UNLINK: return "Remove"; break;
-+		case CMD_RENAME: return "Rename"; break;
-+		case CMD_SYMLINK: return "Symlink"; break;
-+		case CMD_MKNOD: return "Mknod"; break;
-+		case CMD_CHMOD: return "Chmod"; break;
-+		case CMD_MKDIR: return "Mkdir"; break;
-+		case CMD_RMDIR: return "Rmdir"; break;
+ #define		PASS 	0
+ #define		FAIL	1
+@@ -169,6 +171,8 @@ static char *get_cmd_str(int cmd)
+ 		case CMD_CHMOD: return "Chmod"; break;
+ 		case CMD_MKDIR: return "Mkdir"; break;
+ 		case CMD_RMDIR: return "Rmdir"; break;
++		case CMD_UNLINK_S: return "Remove Self"; break;
++		case CMD_RENAME_S: return "Rename Self"; break;
  	}
  	return "unknown";
  }
-@@ -682,6 +716,123 @@ static int64_t lease_tests[][6] =
+@@ -716,6 +720,150 @@ static int64_t lease_tests[][6] =
  		{0,0,0,0,0,CLIENT}
  	};
  
-+char *dirdeleg_descriptions[] = {
-+    /*  1 */"Take Read Lease",
-+    /*  2 */"Write Lease Should Fail",
-+    /*  3 */"Dir Lease Should Be Broken on Create",
-+    /*  4 */"Dir Lease Should Be Broken on Unlink",
-+    /*  5 */"Dir Lease Should Be Broken on Rename",
-+    /*  6 */"Dir Lease Should Be Broken on Symlink",
-+    /*  7 */"Dir Lease Should Be Broken on Mknod",
-+    /*  8 */"Dir Lease Should Be Broken on Chmod",
-+    /*  9 */"Dir Lease Should Be Broken on Mkdir",
-+    /* 10 */"Dir Lease Should Be Broken on Rmdir",
++char *filedeleg_descriptions[] = {
++    /*  1 */"Take Read Deleg",
++    /*  2 */"Take Write Deleg",
++    /*  3 */"Fail Write Deleg if file is open somewhere else",
++    /*  4 */"Fail Read Deleg if opened with write permissions",
++    /*  5 */"Read deleg gets SIGIO on write open",
++    /*  6 */"Write deleg gets SIGIO on read open",
++    /*  7 */"Read deleg does _not_ get SIGIO on read open",
++    /*  8 */"Read deleg gets SIGIO on write open",
++    /*  9 */"Write deleg gets SIGIO on truncate",
++    /* 10 */"Read deleg gets SIGIO on truncate",
++    /* 11 */"Read deleg gets SIGIO on chmod",
++    /* 12 */"Read deleg gets SIGIO on unlink",
++    /* 13 */"Read deleg gets SIGIO on rename",
 +};
 +
-+static int64_t dirdeleg_tests[][6] =
++static int64_t filedeleg_tests[][6] =
 +	/*	test #	Action	[offset|flags|arg]	length		expected	server/client */
 +	/*			[sigio_wait_time]						*/
-+{
-+	/* Various tests to exercise leases */
++	{
++	/* Various tests to exercise delegs */
 +
-+/* SECTION 1: Simple verification of being able to take leases */
-+	/* Take Read Lease, and release it */
-+	{1,	CMD_OPEN,	O_DIRECTORY|O_RDONLY,	0,	PASS,		SERVER	},
-+	{1,	CMD_SETDELEG,	F_RDLCK,		0,	PASS,		SERVER	},
-+	{1,	CMD_GETDELEG,	F_RDLCK,		0,	PASS,		SERVER	},
-+	{1,	CMD_SETDELEG,	F_UNLCK,		0,	PASS,		SERVER	},
-+	{1,	CMD_CLOSE,	0,			0,	PASS,		SERVER	},
++	/* SECTION 1: Simple verification of being able to take delegs */
++	/* Take Read Deleg */
++	{1,	CMD_CLOSE,	0,		0,	PASS,		CLIENT	},
++	{1,	CMD_OPEN,	O_RDONLY,	0,	PASS,		CLIENT	},
++	{1,	CMD_CLOSE,	0,		0,	PASS,		SERVER	},
++	{1,	CMD_OPEN,	O_RDONLY,	0,	PASS,		SERVER	},
++	{1,	CMD_SETDELEG,	F_RDLCK,	0,	PASS,		SERVER	},
++	{1,	CMD_GETDELEG,	F_RDLCK,	0,	PASS,		SERVER	},
++	{1,	CMD_SETDELEG,	F_UNLCK,	0,	PASS,		SERVER	},
++	{1,	CMD_CLOSE,	0,		0,	PASS,		SERVER	},
++	{1,	CMD_CLOSE,	0,		0,	PASS,		CLIENT	},
 +
-+	/* Write Lease should fail */
-+	{2,	CMD_OPEN,	O_DIRECTORY|O_RDONLY,	0,	PASS,		SERVER	},
-+	{2,	CMD_SETDELEG,	F_WRLCK,		0,	FAIL,		SERVER	},
-+	{2,	CMD_CLOSE,	0,			0,	PASS,		SERVER	},
++	/* Take Write Deleg */
++	{2,	CMD_OPEN,	O_RDWR,		0,	PASS,		SERVER	},
++	{2,	CMD_SETDELEG,	F_WRLCK,	0,	PASS,		SERVER	},
++	{2,	CMD_GETDELEG,	F_WRLCK,	0,	PASS,		SERVER	},
++	{2,	CMD_SETDELEG,	F_UNLCK,	0,	PASS,		SERVER	},
++	{2,	CMD_CLOSE,	0,		0,	PASS,		SERVER	},
++	/* Fail Write Deleg with other users */
++	{3,	CMD_OPEN,	O_RDONLY,	0,	PASS,		CLIENT  },
++	{3,	CMD_OPEN,	O_RDWR,		0,	PASS,		SERVER	},
++	{3,	CMD_SETDELEG,	F_WRLCK,	0,	FAIL,		SERVER	},
++	{3,	CMD_GETDELEG,	F_WRLCK,	0,	FAIL,		SERVER	},
++	{3,	CMD_CLOSE,	0,		0,	PASS,		SERVER	},
++	{3,	CMD_CLOSE,	0,		0,	PASS,		CLIENT	},
++	/* Fail Read Deleg if opened for write */
++	{4,	CMD_OPEN,	O_RDWR,		0,	PASS,		SERVER	},
++	{4,	CMD_SETDELEG,	F_RDLCK,	0,	FAIL,		SERVER	},
++	{4,	CMD_GETDELEG,	F_RDLCK,	0,	FAIL,		SERVER	},
++	{4,	CMD_CLOSE,	0,		0,	PASS,		SERVER	},
 +
-+	/* Get SIGIO when dir lease is broken by a create */
-+	{3,	CMD_OPEN,	O_DIRECTORY|O_RDONLY,	0,	PASS,		SERVER	},
-+	{3,	CMD_SETDELEG,	F_RDLCK,		0,	PASS,		SERVER	},
-+	{3,	CMD_GETDELEG,	F_RDLCK,		0,	PASS,		SERVER	},
-+	{3,	CMD_SIGIO,	0,			0,	PASS,		SERVER	},
-+	{3,	CMD_CREATE,	0,			0,	PASS,		CLIENT	},
-+	{3,	CMD_WAIT_SIGIO,	5,			0,	PASS,		SERVER	},
-+	{3,	CMD_UNLINK,	0,			0,	PASS,		SERVER	},
-+	{3,	CMD_CLOSE,	0,			0,	PASS,		SERVER	},
++	/* SECTION 2: Proper SIGIO notifications */
++	/* Get SIGIO when read deleg is broken by write */
++	{5,	CMD_OPEN,	O_RDONLY,	0,	PASS,		CLIENT	},
++	{5,	CMD_SETDELEG,	F_RDLCK,	0,	PASS,		CLIENT	},
++	{5,	CMD_GETDELEG,	F_RDLCK,	0,	PASS,		CLIENT	},
++	{5,	CMD_SIGIO,	0,		0,	PASS,		CLIENT	},
++	{5,	CMD_OPEN,	O_RDWR,		0,	PASS,		SERVER	},
++	{5,	CMD_WAIT_SIGIO,	5,		0,	PASS,		CLIENT	},
++	{5,	CMD_CLOSE,	0,		0,	PASS,		SERVER	},
++	{5,	CMD_CLOSE,	0,		0,	PASS,		CLIENT	},
 +
-+	/* Get SIGIO when dir lease is broken by unlink */
-+	{4,	CMD_OPEN,	O_DIRECTORY|O_RDONLY,	0,	PASS,		SERVER	},
-+	{4,	CMD_CREATE,	0,			0,	PASS,		SERVER	},
-+	{4,	CMD_SETDELEG,	F_RDLCK,		0,	PASS,		SERVER	},
-+	{4,	CMD_GETDELEG,	F_RDLCK,		0,	PASS,		SERVER	},
-+	{4,	CMD_SIGIO,	0,			0,	PASS,		SERVER	},
-+	{4,	CMD_UNLINK,	0,			0,	PASS,		CLIENT	},
-+	{4,	CMD_WAIT_SIGIO,	5,			0,	PASS,		SERVER	},
-+	{4,	CMD_CLOSE,	0,			0,	PASS,		SERVER	},
++	/* Get SIGIO when write deleg is broken by read */
++	{6,	CMD_OPEN,	O_RDWR,		0,	PASS,		CLIENT	},
++	{6,	CMD_SETDELEG,	F_WRLCK,	0,	PASS,		CLIENT	},
++	{6,	CMD_GETDELEG,	F_WRLCK,	0,	PASS,		CLIENT	},
++	{6,	CMD_SIGIO,	0,		0,	PASS,		CLIENT	},
++	{6,	CMD_OPEN,	O_RDONLY,	0,	PASS,		SERVER	},
++	{6,	CMD_WAIT_SIGIO,	5,		0,	PASS,		CLIENT	},
++	{6,	CMD_CLOSE,	0,		0,	PASS,		SERVER	},
++	{6,	CMD_CLOSE,	0,		0,	PASS,		CLIENT	},
 +
-+	/* Get SIGIO when dir lease is broken by rename */
-+	{5,	CMD_OPEN,	O_DIRECTORY|O_RDONLY,	0,	PASS,		SERVER	},
-+	{5,	CMD_CREATE,	0,			0,	PASS,		SERVER	},
-+	{5,	CMD_SETDELEG,	F_RDLCK,		0,	PASS,		SERVER	},
-+	{5,	CMD_GETDELEG,	F_RDLCK,		0,	PASS,		SERVER	},
-+	{5,	CMD_SIGIO,	0,			0,	PASS,		SERVER	},
-+	{5,	CMD_RENAME,	0,			1,	PASS,		CLIENT	},
-+	{5,	CMD_WAIT_SIGIO,	5,			0,	PASS,		SERVER	},
-+	{5,	CMD_UNLINK,	1,			0,	PASS,		CLIENT	},
-+	{5,	CMD_CLOSE,	0,			0,	PASS,		SERVER	},
++	/* Don't get SIGIO when read deleg is taken by read */
++	{7,	CMD_OPEN,	O_RDONLY,	0,	PASS,		CLIENT	},
++	{7,	CMD_SETDELEG,	F_RDLCK,	0,	PASS,		CLIENT	},
++	{7,	CMD_GETDELEG,	F_RDLCK,	0,	PASS,		CLIENT	},
++	{7,	CMD_SIGIO,	0,		0,	PASS,		CLIENT	},
++	{7,	CMD_OPEN,	O_RDONLY,	0,	PASS,		SERVER	},
++	{7,	CMD_WAIT_SIGIO,	5,		0,	FAIL,		CLIENT	},
++	{7,	CMD_CLOSE,	0,		0,	PASS,		SERVER	},
++	{7,	CMD_CLOSE,	0,		0,	PASS,		CLIENT	},
 +
-+	/* Get SIGIO when dir lease is broken by symlink */
-+	{6,	CMD_OPEN,	O_DIRECTORY|O_RDONLY,	0,	PASS,		SERVER	},
-+	{6,	CMD_SETDELEG,	F_RDLCK,		0,	PASS,		SERVER	},
-+	{6,	CMD_GETDELEG,	F_RDLCK,		0,	PASS,		SERVER	},
-+	{6,	CMD_SIGIO,	0,			0,	PASS,		SERVER	},
-+	{6,	CMD_SYMLINK,	0,			1,	PASS,		CLIENT	},
-+	{6,	CMD_WAIT_SIGIO,	5,			0,	PASS,		SERVER	},
-+	{6,	CMD_UNLINK,	0,			0,	PASS,		CLIENT	},
-+	{6,	CMD_CLOSE,	0,			0,	PASS,		SERVER	},
++	/* Get SIGIO when Read deleg is broken by Write */
++	{8,	CMD_OPEN,	O_RDONLY,	0,	PASS,		CLIENT	},
++	{8,	CMD_SETDELEG,	F_RDLCK,	0,	PASS,		CLIENT	},
++	{8,	CMD_GETDELEG,	F_RDLCK,	0,	PASS,		CLIENT	},
++	{8,	CMD_SIGIO,	0,		0,	PASS,		CLIENT	},
++	{8,	CMD_OPEN,	O_RDWR,		0,	PASS,		SERVER	},
++	{8,	CMD_WAIT_SIGIO,	5,		0,	PASS,		CLIENT	},
++	{8,	CMD_CLOSE,	0,		0,	PASS,		SERVER	},
++	{8,	CMD_CLOSE,	0,		0,	PASS,		CLIENT	},
 +
-+	/* Get SIGIO when dir lease is broken by mknod */
-+	{7,	CMD_OPEN,	O_DIRECTORY|O_RDONLY,	0,	PASS,		SERVER	},
-+	{7,	CMD_SETDELEG,	F_RDLCK,		0,	PASS,		SERVER	},
-+	{7,	CMD_GETDELEG,	F_RDLCK,		0,	PASS,		SERVER	},
-+	{7,	CMD_SIGIO,	0,			0,	PASS,		SERVER	},
-+	{7,	CMD_MKNOD,	0,			0,	PASS,		CLIENT	},
-+	{7,	CMD_WAIT_SIGIO,	5,			0,	PASS,		SERVER	},
-+	{7,	CMD_UNLINK,	0,			0,	PASS,		CLIENT	},
-+	{7,	CMD_CLOSE,	0,			0,	PASS,		SERVER	},
++	/* Get SIGIO when Write deleg is broken by Truncate */
++	{9,	CMD_OPEN,	O_RDWR,		0,	PASS,		CLIENT	},
++	{9,	CMD_SETDELEG,	F_WRLCK,	0,	PASS,		CLIENT	},
++	{9,	CMD_GETDELEG,	F_WRLCK,	0,	PASS,		CLIENT	},
++	{9,	CMD_SIGIO,	0,		0,	PASS,		CLIENT	},
++	{9,	CMD_TRUNCATE,	FILE_SIZE/2,	0,	PASS,		CLIENT	},
++	{9,	CMD_WAIT_SIGIO,	5,		0,	PASS,		CLIENT	},
++	{9,	CMD_CLOSE,	0,		0,	PASS,		CLIENT	},
 +
-+	/* Get SIGIO when dir lease is broken by chmod */
-+	{8,	CMD_OPEN,	O_DIRECTORY|O_RDONLY,	0,	PASS,		SERVER	},
-+	{8,	CMD_SETDELEG,	F_RDLCK,		0,	PASS,		SERVER	},
-+	{8,	CMD_GETDELEG,	F_RDLCK,		0,	PASS,		SERVER	},
-+	{8,	CMD_SIGIO,	0,			0,	PASS,		SERVER	},
-+	{8,	CMD_CHMOD,	0775,			0,	PASS,		CLIENT	},
-+	{8,	CMD_WAIT_SIGIO,	5,			0,	PASS,		SERVER	},
-+	{8,	CMD_CLOSE,	0,			0,	PASS,		SERVER	},
++	/* Get SIGIO when Read deleg is broken by Truncate */
++	{10,	CMD_OPEN,	O_RDONLY,	0,	PASS,		CLIENT	},
++	{10,	CMD_SETDELEG,	F_RDLCK,	0,	PASS,		CLIENT	},
++	{10,	CMD_GETDELEG,	F_RDLCK,	0,	PASS,		CLIENT	},
++	{10,	CMD_SIGIO,	0,		0,	PASS,		CLIENT	},
++	{10,	CMD_TRUNCATE,	FILE_SIZE/2,	0,	PASS,		SERVER	},
++	{10,	CMD_WAIT_SIGIO,	5,		0,	PASS,		CLIENT	},
++	{10,	CMD_CLOSE,	0,		0,	PASS,		CLIENT	},
 +
-+	/* Get SIGIO when dir lease is broken by mkdir */
-+	{9,	CMD_OPEN,	O_DIRECTORY|O_RDONLY,	0,	PASS,		SERVER	},
-+	{9,	CMD_SETDELEG,	F_RDLCK,		0,	PASS,		SERVER	},
-+	{9,	CMD_GETDELEG,	F_RDLCK,		0,	PASS,		SERVER	},
-+	{9,	CMD_SIGIO,	0,			0,	PASS,		SERVER	},
-+	{9,	CMD_MKDIR,	0,			0,	PASS,		CLIENT	},
-+	{9,	CMD_WAIT_SIGIO,	5,			0,	PASS,		SERVER	},
-+	{9,	CMD_RMDIR,	0,			0,	PASS,		SERVER	},
-+	{9,	CMD_CLOSE,	0,			0,	PASS,		SERVER	},
++	/* Get SIGIO when Read deleg is broken by Chmod */
++	{11,	CMD_OPEN,	O_RDONLY,	0,	PASS,		SERVER	},
++	{11,	CMD_SETDELEG,	F_RDLCK,	0,	PASS,		SERVER	},
++	{11,	CMD_GETDELEG,	F_RDLCK,	0,	PASS,		SERVER	},
++	{11,	CMD_SIGIO,	0,		0,	PASS,		SERVER	},
++	{11,	CMD_CHMOD,	0644,		0,	PASS,		CLIENT	},
++	{11,	CMD_WAIT_SIGIO,	5,		0,	PASS,		SERVER	},
++	{11,	CMD_CLOSE,	0,		0,	PASS,		SERVER	},
 +
-+	/* Get SIGIO when dir lease is broken by rmdir */
-+	{10,	CMD_OPEN,	O_DIRECTORY|O_RDONLY,	0,	PASS,		SERVER	},
-+	{10,	CMD_MKDIR,	0,			0,	PASS,		SERVER	},
-+	{10,	CMD_SETDELEG,	F_RDLCK,		0,	PASS,		SERVER	},
-+	{10,	CMD_GETDELEG,	F_RDLCK,		0,	PASS,		SERVER	},
-+	{10,	CMD_SIGIO,	0,			0,	PASS,		SERVER	},
-+	{10,	CMD_RMDIR,	0,			0,	PASS,		CLIENT	},
-+	{10,	CMD_WAIT_SIGIO,	5,			0,	PASS,		SERVER	},
-+	{10,	CMD_CLOSE,	0,			0,	PASS,		SERVER	},
++	/* Get SIGIO when file is unlinked */
++	{12,	CMD_OPEN,	O_RDONLY,	0,	PASS,		SERVER	},
++	{12,	CMD_SETDELEG,	F_RDLCK,	0,	PASS,		SERVER	},
++	{12,	CMD_GETDELEG,	F_RDLCK,	0,	PASS,		SERVER	},
++	{12,	CMD_SIGIO,	0,		0,	PASS,		SERVER	},
++	{12,	CMD_UNLINK_S,	0,		0,	PASS,		CLIENT	},
++	{12,	CMD_WAIT_SIGIO,	5,		0,	PASS,		SERVER	},
++	{12,	CMD_CLOSE,	0,		0,	PASS,		SERVER	},
++
++	/* Get SIGIO when file is renamed */
++	{13,	CMD_OPEN,	O_RDONLY,	0,	PASS,		SERVER	},
++	{13,	CMD_SETDELEG,	F_RDLCK,	0,	PASS,		SERVER	},
++	{13,	CMD_GETDELEG,	F_RDLCK,	0,	PASS,		SERVER	},
++	{13,	CMD_SIGIO,	0,		0,	PASS,		SERVER	},
++	{13,	CMD_RENAME_S,	0,		0,	PASS,		CLIENT	},
++	{13,	CMD_WAIT_SIGIO,	5,		0,	PASS,		SERVER	},
++	{13,	CMD_CLOSE,	0,		0,	PASS,		SERVER	},
 +
 +	/* indicate end of array */
 +	{0,0,0,0,0,SERVER},
 +	{0,0,0,0,0,CLIENT}
 +};
 +
- static struct {
-     int32_t		test;
-     int32_t		command;
-@@ -763,9 +914,14 @@ again:
- 
- void release_lease(int fd)
- {
-+	struct delegation deleg = { .d_type = F_UNLCK };
- 	int rc;
- 
--	rc = fcntl(fd, F_SETLEASE, F_UNLCK);
-+	if (lease_is_deleg)
-+		rc = fcntl(fd, F_SETDELEG, &deleg);
-+	else
-+		rc = fcntl(fd, F_SETLEASE, F_UNLCK);
-+
- 	if (rc != 0)
- 		fprintf(stderr, "%s Failed to remove lease %d : %d %s\n",
- 			__FILE__, rc, errno, strerror(errno));
-@@ -826,9 +982,39 @@ int do_wait_sigio(int32_t time)
-     return (got_sigio ? PASS: FAIL);
+ char *dirdeleg_descriptions[] = {
+     /*  1 */"Take Read Lease",
+     /*  2 */"Write Lease Should Fail",
+@@ -1124,6 +1272,37 @@ int do_chmod(int mode)
+ 	return PASS;
  }
  
-+int create_directory(void)
-+{
-+	int ret;
-+	struct stat st;
-+
-+	ret = mkdir(filename, 0777);
-+	if (ret == 0)
-+		return PASS;
-+
-+	if (errno != EEXIST) {
-+		perror("directory create");
-+		return FAIL;
-+	}
-+
-+	ret = stat(filename, &st);
-+	if (ret < 0) {
-+		perror("stat");
-+		return FAIL;
-+	}
-+
-+	if (S_ISDIR(st.st_mode))
-+		return PASS;
-+
-+	fprintf(stderr, "%s is not a directory\n", filename);
-+	return FAIL;
-+}
-+
- int do_open(int flag)
- {
--    int flags = flag|O_CREAT|O_BINARY;
-+    int flags = flag;
-+
-+    if (!(flag & O_DIRECTORY))
-+	flags |= O_CREAT;
- 
-     if(debug > 1)
- 	fprintf(stderr, "do_open %s 0x%x\n", filename, flags);
-@@ -841,6 +1027,103 @@ int do_open(int flag)
-     return PASS;
- }
- 
-+int do_create(int idx)
-+{
-+	int fd;
-+
-+	fd = openat(f_fd, child[idx], O_WRONLY|O_CREAT, 0666);
-+	if (fd < 0) {
-+		perror("openat");
-+		return FAIL;
-+	}
-+	close(fd);
-+	return PASS;
-+}
-+
-+int do_unlink(int idx)
++int do_unlink_self(void)
 +{
 +	int ret;
 +
-+	ret = unlinkat(f_fd, child[idx], 0);
++	ret = unlink(filename);
 +	if (ret < 0) {
 +		perror("unlink");
 +		return FAIL;
@@ -471,73 +289,20 @@ index a6cf3b1d5a99dc2cf78f7ceb79622e1ab135c42c..eb40dce3f1b28ef34752518808ec2f39
 +	return PASS;
 +}
 +
-+int do_rename(int old, int new)
++int do_rename_self(void)
 +{
 +	int ret;
++	char target[PATH_MAX];
 +
-+	ret = renameat(f_fd, child[old], f_fd, child[new]);
-+	if (ret < 0) {
-+		perror("rename");
++	ret = snprintf(target, sizeof(target), "%s2", filename);
++	if (ret >= sizeof(target)) {
++		perror("snprintf");
 +		return FAIL;
 +	}
-+	return PASS;
-+}
 +
-+int do_symlink(int path, int target)
-+{
-+	int ret;
-+
-+	ret = symlinkat(child[target], f_fd, child[path]);
++	ret = rename(filename, target);
 +	if (ret < 0) {
-+		perror("symlink");
-+		return FAIL;
-+	}
-+	return PASS;
-+}
-+
-+int do_mknod(int idx)
-+{
-+	int ret;
-+
-+	ret = mknodat(f_fd, child[idx], S_IFREG, 0);
-+	if (ret < 0) {
-+		perror("mknod");
-+		return FAIL;
-+	}
-+	return PASS;
-+}
-+
-+int do_mkdir(int idx)
-+{
-+	int ret;
-+
-+	ret = mkdirat(f_fd, child[idx], 0777);
-+	if (ret < 0) {
-+		perror("mkdir");
-+		return FAIL;
-+	}
-+	return PASS;
-+}
-+
-+int do_rmdir(int idx)
-+{
-+	int ret;
-+
-+	ret = unlinkat(f_fd, child[idx], AT_REMOVEDIR);
-+	if (ret < 0) {
-+		perror("mkdir");
-+		return FAIL;
-+	}
-+	return PASS;
-+}
-+
-+int do_chmod(int mode)
-+{
-+	int ret;
-+
-+	ret = chmod(filename, mode);
-+	if (ret < 0) {
-+		perror("chmod");
++		perror("unlink");
 +		return FAIL;
 +	}
 +	return PASS;
@@ -546,218 +311,83 @@ index a6cf3b1d5a99dc2cf78f7ceb79622e1ab135c42c..eb40dce3f1b28ef34752518808ec2f39
  static int do_lock(int cmd, int type, int start, int length)
  {
      int ret;
-@@ -884,6 +1167,7 @@ static int do_lease(int cmd, int arg, int expected)
- 
-     errno = 0;
- 
-+    lease_is_deleg = 0;
-     ret = fcntl(f_fd, cmd, arg);
-     saved_errno = errno;
- 
-@@ -897,6 +1181,37 @@ static int do_lease(int cmd, int arg, int expected)
-     return(ret==0?PASS:FAIL);
- }
- 
-+static int do_deleg(int cmd, unsigned short arg, int expected)
-+{
-+    struct delegation deleg = { .d_type = arg };
-+    int ret;
-+
-+    if(debug > 1)
-+	fprintf(stderr, "do_deleg: cmd=%d arg=%d exp=%X\n",
-+		cmd, arg, expected);
-+
-+    if (f_fd < 0)
-+	return f_fd;
-+
-+    errno = 0;
-+
-+    lease_is_deleg = 1;
-+    ret = fcntl(f_fd, cmd, &deleg);
-+    saved_errno = errno;
-+
-+    if (cmd == F_GETDELEG && ret == 0)
-+	    ret = deleg.d_type;
-+
-+    if (expected && (expected == ret))
-+	    ret = 0;
-+
-+    if(ret)
-+	fprintf(stderr, "%s do_deleg: ret = %d, errno = %d (%s)\n",
-+		__FILE__, ret, errno, strerror(errno));
-+
-+    return(ret==0?PASS:FAIL);
-+}
-+
- int do_close(void)
- {	
-     if(debug > 1) {
-@@ -1020,6 +1335,7 @@ main(int argc, char *argv[])
- {
-     int		i, sts;
-     int		c;
-+    int		openflags;
-     struct sockaddr_in	myAddr;
-     struct linger	noLinger = {1, 0};
-     char	*host = NULL;
-@@ -1030,6 +1346,7 @@ main(int argc, char *argv[])
-     extern int	optind;
+@@ -1347,6 +1526,7 @@ main(int argc, char *argv[])
      int fail_count = 0;
      int run_leases = 0;
-+    int run_dirdelegs = 0;
+     int run_dirdelegs = 0;
++    int run_filedelegs = 0;
      int test_setlease = 0;
      
      atexit(cleanup);
-@@ -1043,13 +1360,17 @@ main(int argc, char *argv[])
+@@ -1360,7 +1540,7 @@ main(int argc, char *argv[])
  	    prog = p+1;
      }
  
--    while ((c = getopt(argc, argv, "dLn:h:p:t?")) != EOF) {
-+    while ((c = getopt(argc, argv, "dDLn:h:p:t?")) != EOF) {
+-    while ((c = getopt(argc, argv, "dDLn:h:p:t?")) != EOF) {
++    while ((c = getopt(argc, argv, "dDFLn:h:p:t?")) != EOF) {
  	switch (c) {
  
  	case 'd':	/* debug flag */
- 	    debug++;
+@@ -1371,6 +1551,10 @@ main(int argc, char *argv[])
+ 	    run_dirdelegs = 1;
  	    break;
  
-+	case 'D':
-+	    run_dirdelegs = 1;
++	case 'F':
++	    run_filedelegs = 1;
 +	    break;
 +
  	case 'L':	/* Lease testing */
  	    run_leases = 1;
  	    break;
-@@ -1090,13 +1411,29 @@ main(int argc, char *argv[])
-     }
- 
-     filename=argv[optind];
-+
-+    if (run_dirdelegs && create_directory() == FAIL)
-+	    exit(1);
-+
-     if (debug)
- 	fprintf(stderr, "Working on file : %s\n", filename);
--    if (do_open(O_RDWR) == FAIL)
-+
-+    if (run_dirdelegs) {
-+	openflags = O_RDONLY | O_DIRECTORY;
-+    } else {
-+	openflags = O_RDWR;
-+    }
-+
-+    if (do_open(openflags) == FAIL)
- 	exit(1);
- 
+@@ -1430,7 +1614,7 @@ main(int argc, char *argv[])
      if (test_setlease == 1) {
--	fcntl(f_fd, F_SETLEASE, F_UNLCK);
-+	struct delegation deleg = { .d_type = F_UNLCK };
-+
-+	if (run_dirdelegs)
-+		fcntl(f_fd, F_SETDELEG, &deleg);
-+	else
-+		fcntl(f_fd, F_SETLEASE, F_UNLCK);
- 	saved_errno = errno;
- 	close(f_fd);
- 	exit(saved_errno);
-@@ -1220,7 +1557,7 @@ main(int argc, char *argv[])
- 	SRAND(6789L);
-     }
+ 	struct delegation deleg = { .d_type = F_UNLCK };
  
--    if (server)
-+    if (server && !run_dirdelegs)
- 	/* only server need do shared file */
- 	initialize(f_fd);
- 
-@@ -1229,7 +1566,9 @@ main(int argc, char *argv[])
-      *
-      * real work is in here ...
+-	if (run_dirdelegs)
++	if (run_dirdelegs || run_filedelegs)
+ 		fcntl(f_fd, F_SETDELEG, &deleg);
+ 	else
+ 		fcntl(f_fd, F_SETLEASE, F_UNLCK);
+@@ -1568,6 +1752,8 @@ main(int argc, char *argv[])
       */
--    if (run_leases)
-+    if (run_dirdelegs)
-+	fail_count = run(dirdeleg_tests, dirdeleg_descriptions);
-+    else if (run_leases)
+     if (run_dirdelegs)
+ 	fail_count = run(dirdeleg_tests, dirdeleg_descriptions);
++    else if (run_filedelegs)
++	fail_count = run(filedeleg_tests, filedeleg_descriptions);
+     else if (run_leases)
  	fail_count = run(lease_tests, lease_descriptions);
      else
- 	fail_count = run(lock_tests, lock_descriptions);
-@@ -1304,6 +1643,36 @@ int run(int64_t tests[][6], char *descriptions[])
- 			case CMD_TRUNCATE:
- 			    result = do_truncate(tests[index][OFFSET]);
+@@ -1673,6 +1859,12 @@ int run(int64_t tests[][6], char *descriptions[])
+ 			case CMD_RMDIR:
+ 			    result = do_rmdir(tests[index][ARG]);
  			    break;
-+			case CMD_SETDELEG:
-+			    result = do_deleg(F_SETDELEG, tests[index][ARG], 0);
++			case CMD_UNLINK_S:
++			    result = do_unlink_self();
 +			    break;
-+			case CMD_GETDELEG:
-+			    result = do_deleg(F_GETDELEG, tests[index][ARG], tests[index][ARG]);
-+			    break;
-+			case CMD_CREATE:
-+			    result = do_create(tests[index][ARG]);
-+			    break;
-+			case CMD_UNLINK:
-+			    result = do_unlink(tests[index][ARG]);
-+			    break;
-+			case CMD_RENAME:
-+			    result = do_rename(tests[index][ARG], tests[index][ARG2]);
-+			    break;
-+			case CMD_SYMLINK:
-+			    result = do_symlink(tests[index][ARG], tests[index][ARG2]);
-+			    break;
-+			case CMD_MKNOD:
-+			    result = do_mknod(tests[index][ARG]);
-+			    break;
-+			case CMD_CHMOD:
-+			    result = do_chmod(tests[index][ARG]);
-+			    break;
-+			case CMD_MKDIR:
-+			    result = do_mkdir(tests[index][ARG]);
-+			    break;
-+			case CMD_RMDIR:
-+			    result = do_rmdir(tests[index][ARG]);
++			case CMD_RENAME_S:
++			    result = do_rename_self();
 +			    break;
  		    }
  		    if( result != tests[index][RESULT]) {
  			fail_flag++;
-@@ -1418,6 +1787,36 @@ int run(int64_t tests[][6], char *descriptions[])
- 		case CMD_TRUNCATE:
- 		    result = do_truncate(ctl.offset);
+@@ -1817,6 +2009,12 @@ int run(int64_t tests[][6], char *descriptions[])
+ 		case CMD_RMDIR:
+ 		    result = do_rmdir(ctl.offset);
  		    break;
-+		case CMD_SETDELEG:
-+		    result = do_deleg(F_SETDELEG, ctl.offset, 0);
++		case CMD_UNLINK_S:
++		    result = do_unlink_self();
 +		    break;
-+		case CMD_GETDELEG:
-+		    result = do_deleg(F_GETDELEG, ctl.offset, ctl.offset);
-+		    break;
-+		case CMD_CREATE:
-+		    result = do_create(ctl.offset);
-+		    break;
-+		case CMD_UNLINK:
-+		    result = do_unlink(ctl.offset);
-+		    break;
-+		case CMD_RENAME:
-+		    result = do_rename(ctl.offset, ctl.length);
-+		    break;
-+		case CMD_SYMLINK:
-+		    result = do_symlink(ctl.offset, ctl.length);
-+		    break;
-+		case CMD_MKNOD:
-+		    result = do_mknod(ctl.offset);
-+		    break;
-+		case CMD_CHMOD:
-+		    result = do_chmod(ctl.offset);
-+		    break;
-+		case CMD_MKDIR:
-+		    result = do_mkdir(ctl.offset);
-+		    break;
-+		case CMD_RMDIR:
-+		    result = do_rmdir(ctl.offset);
++		case CMD_RENAME_S:
++		    result = do_rename_self();
 +		    break;
  	    }
  	    if( result != ctl.result ) {
  		fprintf(stderr,"Failure in %d:%s\n",
-diff --git a/tests/generic/999 b/tests/generic/999
+diff --git a/tests/generic/998 b/tests/generic/998
 new file mode 100755
-index 0000000000000000000000000000000000000000..1392e98c937d65d2d6402f1eb5822f22bc265342
+index 0000000000000000000000000000000000000000..5e7e62137ba3a52c62718f9f674094a107e3edca
 --- /dev/null
-+++ b/tests/generic/999
++++ b/tests/generic/998
 @@ -0,0 +1,22 @@
 +#! /bin/bash
 +# SPDX-License-Identifier: GPL-2.0
@@ -765,7 +395,7 @@ index 0000000000000000000000000000000000000000..1392e98c937d65d2d6402f1eb5822f22
 +#
 +# FSQA Test No. XXX
 +#
-+# lease test
++# file delegation test
 +#
 +. ./common/preamble
 +_begin_fstest auto quick
@@ -778,16 +408,16 @@ index 0000000000000000000000000000000000000000..1392e98c937d65d2d6402f1eb5822f22
 +_require_test_fcntl_advisory_locks
 +_require_test_fcntl_setdeleg
 +
-+_run_dirleasetest
++_run_filedelegtest
 +
 +exit
-diff --git a/tests/generic/999.out b/tests/generic/999.out
+diff --git a/tests/generic/998.out b/tests/generic/998.out
 new file mode 100644
-index 0000000000000000000000000000000000000000..c2a252d46cdcd730cf1ed2c503fa9631e9fcdd06
+index 0000000000000000000000000000000000000000..b65a7660fea895dc4d60cec8fabe7be1695beabe
 --- /dev/null
-+++ b/tests/generic/999.out
++++ b/tests/generic/998.out
 @@ -0,0 +1,2 @@
-+QA output created by 999
++QA output created by 998
 +success!
 
 -- 
