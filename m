@@ -1,177 +1,120 @@
-Return-Path: <linux-fsdevel+bounces-69114-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69115-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD598C6FAD5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 16:35:47 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6474C6FCF2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 16:53:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9987834B8EC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 15:28:03 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AA0AC4EB1DC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Nov 2025 15:43:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CE6C364028;
-	Wed, 19 Nov 2025 15:27:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F312C2F5A13;
+	Wed, 19 Nov 2025 15:43:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HbR7yRWD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OTDeeA9v"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8293364049
-	for <linux-fsdevel@vger.kernel.org>; Wed, 19 Nov 2025 15:27:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AF2E2E8881;
+	Wed, 19 Nov 2025 15:43:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763566071; cv=none; b=PGvEAkDYB9OEk6Y7iL0CJzAE18HOAsOVdvwBup5HTrXSp1hhwJj8trr40/nCww2Mn1EINVSgLRHgGMd27+OL1z4RTKhuHW5Oe4XI5aYtW6AWXOU1AAjf8lxSp4cMFnYojx1zVo+3r6qHPJ5Uvi8fQIQsvXOYOthXJcWY6QMAZ28=
+	t=1763566999; cv=none; b=LwWHUncFfIBZBv5ZJc0apIvXZvvnyXEJbydByms3n105eCx1aM1pslv/o/DQxP642ZQblE9PEuX9X7Mi6APM5pRE0r4vPuhZioSH7m/ez0/mr4D6mX7ChP9r7CV7zfWpvNTOmkmqj3arVNsNPk49+LVf+leqyEwSbeaxv2DcK/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763566071; c=relaxed/simple;
-	bh=zc0c92v94+c39p1GxVGMWNJwmp8GnlSUT+L0SN1NYIw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fL0DTnr71Wx0DeDvKnw8giiPdS1CQuVXzSnXAEoIqObQWnbsTwI1oIKnxYsJHGlnl0sS+//3tNb0csKqt/4xDgAxa7OJ6h5XcrY9LPO5xDVpJ0ZBV822+uJeQYozcWCdrbxewaDRKdlDRdYkOiTIWSdiaam7iA7CnAvrnkaOCEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HbR7yRWD; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-42b2dd19681so813756f8f.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Nov 2025 07:27:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763566067; x=1764170867; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8koxPyuC5jyMlaKzeByoi15oYsrGRaCW8yGrTb2Etg4=;
-        b=HbR7yRWDlc5kdRnpKpX9sM6D6Hq3mzy/e4V8iNo19PRl4pDHxAJ49iOBA/buMbkQW4
-         YSuC1eMZ6oKsvs5lVMjZbqiOaxCHU/vfXzfMA6GH66JtC4nF1LO8yglmacMykU4m1Pq0
-         Ld3VnXnKd8vS73B3vfG1HNpGmswHAyPtVG6/vJvnh71qtKp2iuQbTwfXId6+3N9sFWuZ
-         ls6QA/Ry/1NYByZqQVcmvj0PU0ZwIxVO2/hiYS5Mys3giBNaYUiAq+T8ReQEGDkEs5aG
-         HWsIK7pK+zvJ8YKcxJIkobkmFyQ2VcAlCnwQa91+WuR9w77oq1E/ZOuz5ST+2XSmeta9
-         SOTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763566067; x=1764170867;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8koxPyuC5jyMlaKzeByoi15oYsrGRaCW8yGrTb2Etg4=;
-        b=swmwzEwZD7aYD3HjZtgyZAE1PWO+MhIBiDCoQ4dKdNhy8tJTJuA+3GN/wDgAQWcWH0
-         fspqIi3prqk8qn2q/5FM+sdlM+bqG2nVa1I87oemnUMWJxe0U1oudxLcvgihyYbrE3KC
-         OF9aTy1sAIDBYny3z/thv7Zt2ygpiUfMNb7KAUdPnHXHT0LuWmTA8zCt9tflJVumFRMr
-         7Fd/5tWFfAT+qskNaSta2X+SJSzThNiAEfiD9JoMFmYLVhWOjUkmruGJiaHjaBes4qjR
-         VVvb8lHcSSqwJdtPsIwmANrtpw0SZTV7Vnrkw3B2sQtUAxOGxzpDGJ6rfasrv3SzFFum
-         KE4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUtqZJEQZCZPuWaMzvYssf++PeQI0fYojLdCOi1x8wPpj1StnomfRkGqYl//7bONhvlEtxFuu9Uq8Wy/bXg@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUnkJcSTKr8ZqL8t5UGp/IX4iIt+Gh84nuWt7FfeZiNMRJhsoa
-	jNqR6lFaxsqe96DChrV0iSrtN+3kLDNQJbl495k2krjMK/3hQCruRc08
-X-Gm-Gg: ASbGnctBqz6Od+Rtl1R2m26A2GE3bntsVUTjQLjJbDNjh+mJsUO0kCbOS7fWAq1llhb
-	GRzIfuUqRO7h5OwtRGCNZIvh+lCeTBkS/FjMIppw2JStk3vbt72hdHrZ31QluM4fytf+YHMW/Cm
-	EmWuMVpRp3Aq0kirlKwglcTUFz8A56daOCJ6xUayy0qw9HnZSxS26YND3bgiyul+HNrEjxRyK9e
-	yxGhqCcoPHlsU2ujgA8ap/4SrkrfPLUaI06Ik5bfBmb1SEAsMXE4/36WnZXMkz5wkgXt7JQ7yRw
-	Fkwc0DIHpaGCqZFml9j1UJsg/VD1Rh8WbrmWHXUHDJyywXhS0OPsFiztt3RfMyfDI25wE9lieJx
-	qNGOeyxoldt11/RNq/0mY6tjl+gbI2vSrpwb1PKexainew7cQpBq0p2OnFTUXPhpaZclGMEQ+bZ
-	qh6QBBzMUGCQo8fw0ALaVDjuOozEWlVus=
-X-Google-Smtp-Source: AGHT+IGmcs/ijfQpxwyqnmCNTQIUwm9J8y0zVTa9t7azKCtRyKlkdqKG6wKiny9IvR5MH+HFqGC4kQ==
-X-Received: by 2002:a05:6000:4010:b0:42b:3ad7:fdbb with SMTP id ffacd0b85a97d-42caa05f14bmr4061111f8f.3.1763566066814;
-        Wed, 19 Nov 2025 07:27:46 -0800 (PST)
-Received: from [192.168.1.111] ([165.50.116.232])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b53e7ae16sm38958846f8f.3.2025.11.19.07.27.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Nov 2025 07:27:46 -0800 (PST)
-Message-ID: <dc78b78d-14fc-456d-ae21-e79225b77afa@gmail.com>
-Date: Wed, 19 Nov 2025 16:27:47 +0100
+	s=arc-20240116; t=1763566999; c=relaxed/simple;
+	bh=mvasbVVmomAazEvpFHNxRIYCxvJpoXa10PgqdP8z3Z8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=NLUQXA4GErG71XiIa+Wb3wQhofahWdx1vTVTWYg+c/zRSmgcsl5R0QsjI9mQYzFQlv8eMO2V168Yd1bvZFnNyO2WIla4aGAgRbbNdeL2aGeYI0CQbPUSc3ODHB8zypnS96wx0Y3Lt8dCb8v6uqNtmKMBKX3Wpeyy/HNilin6Oz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OTDeeA9v; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B1C2C4CEF5;
+	Wed, 19 Nov 2025 15:43:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763566998;
+	bh=mvasbVVmomAazEvpFHNxRIYCxvJpoXa10PgqdP8z3Z8=;
+	h=From:Subject:Date:To:Cc:From;
+	b=OTDeeA9vQKnh5uxllbDPT1RRSAImMzB0ayWmHYuA4OpVQS3+WbA+331kk/puFeTNk
+	 7BWRpMi9aBKk/rcks2iS7H5Re6tc7/i4Y0q2LISV1t/smFOqb5hamkOGGe4CrflLpR
+	 O+8QyhRX7kfHxAdAwV1azsGes29lkFd0gE+SH8qdcYTNoP4TM+arRQwc5r/f7bb21J
+	 PFiXBemB3pYXqt2VTUv2/4LfadjGhU5lHx4Lk4clpBhNZrJoH4ovUS+UDOhewufVzy
+	 5gyq8RRKgpQ4BkZ4Hz2lsnzQeyOSRoLYJJ6685zFtYSBQnbLCgYXuxg1S0B0gLDzZy
+	 PBEttHWgwSSMQ==
+From: Jeff Layton <jlayton@kernel.org>
+Subject: [PATCH fstests v2 0/3] fstests: new testcases for delegation
+ support
+Date: Wed, 19 Nov 2025 10:43:02 -0500
+Message-Id: <20251119-dir-deleg-v2-0-f952ba272384@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] fs/hfs: fix s_fs_info leak on setup_bdev_super()
- failure
-To: Christian Brauner <brauner@kernel.org>
-Cc: slava@dubeyko.com, glaubitz@physik.fu-berlin.de, frank.li@vivo.com,
- jack@suse.cz, viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
- david.hunter.linux@gmail.com, khalid@kernel.org,
- linux-kernel-mentees@lists.linuxfoundation.org,
- syzbot+ad45f827c88778ff7df6@syzkaller.appspotmail.com
-References: <20251119073845.18578-1-mehdi.benhadjkhelifa@gmail.com>
- <20251119-delfin-bioladen-6bf291941d4f@brauner>
-Content-Language: en-US
-From: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
-In-Reply-To: <20251119-delfin-bioladen-6bf291941d4f@brauner>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/22NwQqDMBBEf0X23JQkNS301P8QD1Yncalo2RVpE
+ f+9IefO7THDm50UwlC6VzsJNlZe5gz+VFE/dnOC4SEzeeuDyzEDixkwIZkYbbDu0nehtpT3b0H
+ kT3E1FHWFrkptLkbWdZFv+dhcqf/oNmcy1rcr7LN3QHi8IDOm8yKJ2uM4fi4cevasAAAA
+X-Change-ID: 20251111-dir-deleg-ff05013ca540
+To: fstests@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, 
+ Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1462; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=mvasbVVmomAazEvpFHNxRIYCxvJpoXa10PgqdP8z3Z8=;
+ b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBpHeWR7+v6ZOiwpTFaG4XoKK47DZq/icNHiI+Vn
+ aH8g46793yJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaR3lkQAKCRAADmhBGVaC
+ FXfjD/9kxhHF06z++XPNgSuUNVuE+MHGiA1ZQ81YaUFUzBb/p4mAAcSSXIIsHMEsGoh7jcIWIDN
+ J9YW/yhR9+b9NMXJMSr9VvJ7eern+vteRO/yBBhvAFkVzTwMMzCJ+uaCEOfxYrSGxzc341wVnby
+ DbYBlP5IjeT1FIXOMeO6SunOuRaRpAXMC9vcvoUwOz77YjAmccyGDhyeenzTYOrz85fGQb1rBhS
+ 9zFfCVMftUE0Qwu+tbeGY1WnBPjWaWO7ixMoYg2RC7WYAnKelEOpZq2FsZcJsXFfxqjsG59BuZE
+ Tm3N3cLCnGHLmzuJJwQkiAtE5f/DUPDKHBGenFTQKti1pCak5xk8HBJOw+7XXin6brvkWW/TD+R
+ K+TJ2Rad+1HA0vLumzzCy7X4DGNmAG5lwKRaf17J0bXCupVYdCj/Omv7qF8q1oc1QT/RAQd78Fk
+ nnIa2HOkcYj4PoLl7LhhwIQ42k7wjMU7S+8LAOlabFAkK0gI4YP3gPvF73sYdtmjjEmNhJ/kVek
+ ANPh96lxXrHRAk8W1kX+GSvJAAZvXztNz5YOblOnOd8JKy1cZiJF5TTMZaryagHOZQvrN8+cXhW
+ sjqRSI6pAyzT2ISgJYfdLx/N7MqBBfl2/mvX47G2Kdb6iehAAHqnM1XsgXJ8gQHRkZvUFWjMtRG
+ 6BskWTkRckpw1Yg==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-On 11/19/25 3:14 PM, Christian Brauner wrote:
-> On Wed, Nov 19, 2025 at 08:38:20AM +0100, Mehdi Ben Hadj Khelifa wrote:
->> The regression introduced by commit aca740cecbe5 ("fs: open block device
->> after superblock creation") allows setup_bdev_super() to fail after a new
->> superblock has been allocated by sget_fc(), but before hfs_fill_super()
->> takes ownership of the filesystem-specific s_fs_info data.
->>
->> In that case, hfs_put_super() and the failure paths of hfs_fill_super()
->> are never reached, leaving the HFS mdb structures attached to s->s_fs_info
->> unreleased.The default kill_block_super() teardown also does not free
->> HFS-specific resources, resulting in a memory leak on early mount failure.
->>
->> Fix this by moving all HFS-specific teardown (hfs_mdb_put()) from
->> hfs_put_super() and the hfs_fill_super() failure path into a dedicated
->> hfs_kill_sb() implementation. This ensures that both normal unmount and
->> early teardown paths (including setup_bdev_super() failure) correctly
->> release HFS metadata.
->>
->> This also preserves the intended layering: generic_shutdown_super()
->> handles VFS-side cleanup, while HFS filesystem state is fully destroyed
->> afterwards.
->>
->> Fixes: aca740cecbe5 ("fs: open block device after superblock creation")
-> 
-> I don't think that's correct.
-> 
-> The bug was introduced when hfs was converted to the new mount api as
-> this was the point where sb->s_fs_info allocation was moved from
-> fill_super() to init_fs_context() in ffcd06b6d13b ("hfs: convert hfs to
-> use the new mount api") which was way after that commit.
-Ah, That then is definitely the cause since the allocation is from 
-init_fs_context() and in this error path that leaks it didn't call 
-fill_super() yet where in old code would be the allocation of the 
-s_fs_info struct that is being leaked... so that would be where the bug 
-is introduced as you have mentionned thanks for pointing that out!
+This version of the patchset does a bit of cleanup first, adds a
+directory delegation test and then a set of tests for file delegations.
 
-> 
-> I also think this isn't the best way to do it. There's no need to
-> open-code kill_block_super() at all.
-> 
-I did think do call kill_block_super() instead in hfs_kill_sb() instead 
-of open-coding it but I went with what Al Viro has suggested...
-> That whole hfs_mdb_get() calling hfs_mdb_put() is completely backwards
-> and the cleanup labels make no sense - predated anything you did ofc. It
-> should not call hfs_mdb_put(). It's only caller is fill_super() which
-> already cleans everything up. So really hfs_kill_super() should just
-> free the allocation and it should be moved out of hfs_mdb_put().
-> 
-I also thought of such solution to make things clearer of the 
-deallocation of the memory of s_fs_info and to separate it from the 
-deloading/freeing of it's contents.
-> And that solution is already something I mentioned in my earlier review.
-I thought you have suggested the same as what the al viro has suggested 
-by your second point here:"
-or add a wrapper
-around kill_block_super() for hfs and free it after ->kill_sb() has run.
-"
+Christian has taken the initial directory delegation series into his
+vfs-6.19.directory.delegations branch [1]. There is a follow-on set of
+patches to fix some bugs as well [2].
 
-> Let me test a patch.
-I just checked your patch and seems to be what I'm thinking about except 
-the stuff that is in hfs_mdb_get() which I didn't know about.But since 
-the hfs_kill_super() is now implemented with freeing the s_fs_info 
-instead of just referring to kill_block_super(), It should fix the issue.
+[1]: https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/log/?h=vfs-6.19.directory.delegations
+[2]: https://lore.kernel.org/linux-fsdevel/20251119-dir-deleg-ro-v8-0-81b6cf5485c6@kernel.org/
 
-I did just download your patch and test it by running local repro, boot 
-the kernel, run selftests before and after with no seen regression.Does 
-that add the Tested-by tag?
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+Changes in v2:
+- Add tests for file delegations
+- Clean up after testing whether leases are supported
+- Link to v1: https://lore.kernel.org/r/20251111-dir-deleg-v1-1-d476e0bc1ee5@kernel.org
 
-Thanks for you insights Christian! Tell me if I should send something as 
-a follow up for my patch.
+---
+Jeff Layton (3):
+      common/rc: clean up after the _require_test_fcntl_setlease() test
+      generic: add test for directory delegations
+      generic: add tests for file delegations
 
-Best Regards,
-Mehdi Ben Hadj Khelifa
+ common/locktest       |  19 +-
+ common/rc             |  11 +
+ src/locktest.c        | 621 +++++++++++++++++++++++++++++++++++++++++++++++++-
+ tests/generic/998     |  22 ++
+ tests/generic/998.out |   2 +
+ tests/generic/999     |  22 ++
+ tests/generic/999.out |   2 +
+ 7 files changed, 684 insertions(+), 15 deletions(-)
+---
+base-commit: 5b75444bc9123f261e0aa95f72328af4c827786a
+change-id: 20251111-dir-deleg-ff05013ca540
+
+Best regards,
+-- 
+Jeff Layton <jlayton@kernel.org>
+
 
