@@ -1,155 +1,171 @@
-Return-Path: <linux-fsdevel+bounces-69255-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69256-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BDC4C75AF1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Nov 2025 18:31:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 41FA7C75B1A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Nov 2025 18:33:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 5E877359200
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Nov 2025 17:26:10 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 5850234B602
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Nov 2025 17:27:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A02936654B;
-	Thu, 20 Nov 2025 17:17:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD724377EAC;
+	Thu, 20 Nov 2025 17:20:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=vjti.ac.in header.i=@vjti.ac.in header.b="MlnmexGa"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sap5ecG9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f196.google.com (mail-pl1-f196.google.com [209.85.214.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0DDE2BF000
-	for <linux-fsdevel@vger.kernel.org>; Thu, 20 Nov 2025 17:17:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AB6D334C27;
+	Thu, 20 Nov 2025 17:20:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763659076; cv=none; b=eEsKqkJk8byEz53psOc0t08aJrDlEKrUIehmvA4Ms6NenVzwjJuFk+oZwaEmzjWM6FP8TQeZFfq2YXPJUqisOf3jlUIaHTgAY02T2hHXdlAOqxRqE6ycwC2Q+idiBWPldcweHk+hb3ypG6pAXL2YmW4Ev5Kk+lZwUJOtU3KelCE=
+	t=1763659249; cv=none; b=qR8++v9h50IWFptlQGTaQfrXYn7oh+QtiIZkGjcx/sKuxiDokWZqllwGwTmEid2IRA2BzUdlR1m+P+SrLk8SRLdqe++sJKpPPyc/fO9YSfks9S5EnHYcSzyKINJEmgyM5SVl4PLIslRiWoQNCqS8dyH6blJtS83bTHVqlCxcvE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763659076; c=relaxed/simple;
-	bh=p3ApoAA1CanQQdozSlHOXOSokHr0N8H00lCqp1aC2iI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=plBa2SZLMlGYhHEqtvGl8K1J4GvzGfeAUoKWkvmyUKHKNjH1+YP0rHhP/ri3WqSoVRsR69mjdh3qNqnUL0m8nEU+hsUuRBmKLKD+RZx7HAzWnqbPtBFwaGhakSi1IL7uN5O62CZ/y3xZd5TzeLqXhQV7I7nObCN4LHbfb4Dd+nQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ee.vjti.ac.in; spf=none smtp.mailfrom=ee.vjti.ac.in; dkim=pass (1024-bit key) header.d=vjti.ac.in header.i=@vjti.ac.in header.b=MlnmexGa; arc=none smtp.client-ip=209.85.214.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ee.vjti.ac.in
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ee.vjti.ac.in
-Received: by mail-pl1-f196.google.com with SMTP id d9443c01a7336-29558061c68so15255695ad.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Nov 2025 09:17:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=vjti.ac.in; s=google; t=1763659072; x=1764263872; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=lxUmT50gh4iATr6XFekF1hQSSR5/JtG5gjuDPPL7SIo=;
-        b=MlnmexGaMVr3imvxoJ4QGKECxdM+vAXKLmRiJQYIzLsJI671TUmLGe07p5Xu6rdLAz
-         VBeJy/Hg8xz3XJgTc3/utqERb3/wcWZ0COG0LJ2kecUHYWOWt3t805xW5OLMi32bU33C
-         vogr2jZfdEnJ0FTH/WEnYjSI2LU9+nwh0XLT0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763659072; x=1764263872;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lxUmT50gh4iATr6XFekF1hQSSR5/JtG5gjuDPPL7SIo=;
-        b=btoWx8dY27jY3LwTbgXdeSzhGlGoI6BJSt35CgeSrhEfVdokY3PVmlzWKGkkubLQ/j
-         SwFfd7yIC3f+1rx7Xmajkc+Kas0lXzaDH6d1bFUYDBW7SaD7C0vh7Zdee7eofylKujkO
-         5ORQPdPDlyGWNDv8LaK5jDWzcx5iRH9UetHu3ryITpTIkOd7HNJhQkkZvOS+2o2e54qm
-         4qAk3PFmjSL/8FS5zeDxwtfOJui5fudvImA4hEAXprX4gSHTg7nGDGlX+YLqBIbLjPTy
-         wJUkSgBvmGHn8SzhG/uGdUAvDzjBz/vpYcYyeboUbAlzWfi5mP6qRF/sWXPUOaXWquO9
-         gj3A==
-X-Forwarded-Encrypted: i=1; AJvYcCWaUM6CgUj21rgm+kIpXE2Ty33vMWRfrdctFBZ0e937fEWKiFtA/GGPhEHAtvRexnz2q9+U3Q6/+Zc9uyap@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzil3On+mXyhKiGqjREuIrXcGjCYEYy8sdhaMuSDkoV6wb2ITkQ
-	kUqDy7m5bqHhkZzYQJIbcReMYaI4WJx/ihHbjt7gDlGnC7r28F0V77JlByCqBQiGQnA=
-X-Gm-Gg: ASbGncswUcAxwrM0AnGrjpuy+3HtyZOiyWEe3cPtrzASSYRlElD7mjrFwtDdrY2EA37
-	j4W8kKUPc/Q7tVVOPwZT3DPiFCSli0KdsjBlknXd6u/YnA1STU4wITxc9G/Bb2ZuwscgNUhr9yr
-	u/FcwAZvbwWfttlktuEUKU1CnyBtjdhWX12wcAZjp1UxfjN2PVGg7dcKVYqtPymu5wY8234oN2+
-	mgXQH37N5EBboS8wtWAUvZ8VU3VrZk8fhJeoWz0lyQzZ3+S2vNKpvpOmBn67xg88AA3tMlYTPBQ
-	e11CaykJnLHPF8A//Q8rTum9402qrVZEkSdbCIr4Hv8D/6s2iMxYrxkNwWWUyehgcphONjlqP3Y
-	hDjdXX8KjyY+ja/THRnTQbMx+iNdN0quQmlmQg3bsoFCamLGUIWMUMW7h1MpvgXPhWLCRVkyvL8
-	wZqwOqYy0V2PZlZu9DUAku5sgDzTQ1QIUtiqWdTU4P4d/HzOPRaEf3/N0M
-X-Google-Smtp-Source: AGHT+IHCvcH3jSOL7T+a7yDjy7MxfxbirT83K6TJhLThLkL3l4+krsnqHTMe0gk5zEdG6sGJ5ZT/Vg==
-X-Received: by 2002:a17:902:f791:b0:298:3545:81e2 with SMTP id d9443c01a7336-29b5ebbf688mr43341815ad.22.1763659072115;
-        Thu, 20 Nov 2025 09:17:52 -0800 (PST)
-Received: from ranegod-HP-ENVY-x360-Convertible-13-bd0xxx.. ([2405:201:31:d869:1daf:dd82:99d2:95eb])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29b5b2700ddsm32223085ad.70.2025.11.20.09.17.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Nov 2025 09:17:51 -0800 (PST)
-From: ssrane_b23@ee.vjti.ac.in
-X-Google-Original-From: ssranevjti@gmail.com
-To: slava@dubeyko.com,
-	glaubitz@physik.fu-berlin.de,
-	frank.li@vivo.com,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linux.dev,
-	david.hunter.linux@gmail.com,
-	khalid@kernel.org,
-	Shaurya Rane <ssrane_b23@ee.vjti.ac.in>,
-	syzbot+905d785c4923bea2c1db@syzkaller.appspotmail.com
-Subject: [PATCH] hfsplus: fix uninit-value in hfsplus_cat_build_record
-Date: Thu, 20 Nov 2025 22:47:40 +0530
-Message-Id: <20251120171740.19537-1-ssranevjti@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1763659249; c=relaxed/simple;
+	bh=fD6KjoGzF7YWD+p5+muskUl3aspahvddrqQqiF5E0oc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bIsntqcRgIlbS+G6ClOhGGqKajVbU+E+jXuuWRZPMJMNH1ypAfAaA0fZMBrBv/04SNACp3d733zSzCxt4boeH/Z8rWMLccy+dTkcPhG3wcvYDYUAnE2oll6XnNu8TSx4+8FRLjLD7GmfjO5kpod75dhQ2/b/CaWQYKxoZtutnSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sap5ecG9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7B32C4CEF1;
+	Thu, 20 Nov 2025 17:20:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763659246;
+	bh=fD6KjoGzF7YWD+p5+muskUl3aspahvddrqQqiF5E0oc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sap5ecG9LGJ8wpTAYDVKAIMrPJKlHSE68WffXz2yNvUZnXdIBn7l8lIGbnotMc9qc
+	 4UvFnri9+3qxNKGHl1DKfj1kfzW8tWjCrq0Wav7skSZi671Y+Xf3BWLH2EFS6gHBXG
+	 uUEEe+2Dwp3dW/x64f0jRgjdsbxlTY8DsC3kGsqTj3QqbdbduJse9G9Z7WSNL0FsbB
+	 asf3PkIfJ9IBdOPz2qY0QGN/6cAH7zMJK4iiliG2tCWB3F2jLmuZ8MrGZSMjJPqcmJ
+	 YC8Sp0VH+4R5da77Tmu8lT9QmYW4efCZoC+vDVYT9qDRZBb1/fTjzStTuXldlhqgnJ
+	 gMvfzGioMt3RA==
+Date: Thu, 20 Nov 2025 19:20:23 +0200
+From: Mike Rapoport <rppt@kernel.org>
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com,
+	dmatlack@google.com, rientjes@google.com, corbet@lwn.net,
+	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com,
+	kanie@linux.alibaba.com, ojeda@kernel.org, aliceryhl@google.com,
+	masahiroy@kernel.org, akpm@linux-foundation.org, tj@kernel.org,
+	yoann.congal@smile.fr, mmaurer@google.com, roman.gushchin@linux.dev,
+	chenridong@huawei.com, axboe@kernel.dk, mark.rutland@arm.com,
+	jannh@google.com, vincent.guittot@linaro.org, hannes@cmpxchg.org,
+	dan.j.williams@intel.com, david@redhat.com,
+	joel.granados@kernel.org, rostedt@goodmis.org,
+	anna.schumaker@oracle.com, song@kernel.org, linux@weissschuh.net,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-mm@kvack.org, gregkh@linuxfoundation.org, tglx@linutronix.de,
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+	x86@kernel.org, hpa@zytor.com, rafael@kernel.org, dakr@kernel.org,
+	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com,
+	myungjoo.ham@samsung.com, yesanishhere@gmail.com,
+	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com,
+	aleksander.lobakin@intel.com, ira.weiny@intel.com,
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de,
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com,
+	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net,
+	brauner@kernel.org, linux-api@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, saeedm@nvidia.com,
+	ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com,
+	leonro@nvidia.com, witu@nvidia.com, hughd@google.com,
+	skhawaja@google.com, chrisl@kernel.org
+Subject: Re: [PATCH v6 06/20] liveupdate: luo_file: implement file systems
+ callbacks
+Message-ID: <aR9N14KWaz6SdFcw@kernel.org>
+References: <20251115233409.768044-1-pasha.tatashin@soleen.com>
+ <20251115233409.768044-7-pasha.tatashin@soleen.com>
+ <aRoU1DSgVmplHr3E@kernel.org>
+ <CA+CK2bBFS754hdPfNAkMp_PqNpOB2nY02OkWbhRdoUiZ+ah=jw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+CK2bBFS754hdPfNAkMp_PqNpOB2nY02OkWbhRdoUiZ+ah=jw@mail.gmail.com>
 
-From: Shaurya Rane <ssrane_b23@ee.vjti.ac.in>
-
-The root cause is in hfsplus_cat_build_record(), which builds catalog
-entries using the union hfsplus_cat_entry. This union contains three
-members with significantly different sizes:
-
-  struct hfsplus_cat_folder folder;    (88 bytes)
-  struct hfsplus_cat_file file;        (248 bytes)
-  struct hfsplus_cat_thread thread;    (520 bytes)
-
-The function was only zeroing the specific member being used (folder or
-file), not the entire union. This left significant uninitialized data:
-
-  For folders: 520 - 88  = 432 bytes uninitialized
-  For files:   520 - 248 = 272 bytes uninitialized
-
-This uninitialized data was then written to disk via hfs_brec_insert(),
-read back through the loop device, and eventually copied to userspace
-via filemap_read(), resulting in a leak of kernel stack memory.
-Fix this by zeroing the entire union before initializing the specific
-member. This ensures no uninitialized bytes remain.
-
-Reported-by: syzbot+905d785c4923bea2c1db@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=905d785c4923bea2c1db
-Fixes: 1da177e4c3f4
-
-Signed-off-by: Shaurya Rane <ssrane_b23@ee.vjti.ac.in>
----
- fs/hfsplus/catalog.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/fs/hfsplus/catalog.c b/fs/hfsplus/catalog.c
-index 02c1eee4a4b8..4d42e7139f3b 100644
---- a/fs/hfsplus/catalog.c
-+++ b/fs/hfsplus/catalog.c
-@@ -111,7 +111,8 @@ static int hfsplus_cat_build_record(hfsplus_cat_entry *entry,
- 		struct hfsplus_cat_folder *folder;
+On Mon, Nov 17, 2025 at 12:50:56PM -0500, Pasha Tatashin wrote:
+> > > +struct liveupdate_file_handler;
+> > > +struct liveupdate_session;
+> >
+> > Why struct liveupdate_session is a part of public LUO API?
+> 
+> It is an obscure version of private "struct luo_session", in order to
+> give subsystem access to:
+> liveupdate_get_file_incoming(s, token, filep)
+> liveupdate_get_token_outgoing(s, file, tokenp)
+> 
+> For example, if your FD depends on another FD within a session, you
+> can check if another FD is already preserved via
+> liveupdate_get_token_outgoing(), and during retrieval time you can
+> retrieve the "struct file" for your dependency.
  
- 		folder = &entry->folder;
--		memset(folder, 0, sizeof(*folder));
-+		/* Zero the entire union to avoid leaking uninitialized data */
-+		memset(entry, 0, sizeof(*entry));
- 		folder->type = cpu_to_be16(HFSPLUS_FOLDER);
- 		if (test_bit(HFSPLUS_SB_HFSX, &sbi->flags))
- 			folder->flags |= cpu_to_be16(HFSPLUS_HAS_FOLDER_COUNT);
-@@ -130,7 +131,8 @@ static int hfsplus_cat_build_record(hfsplus_cat_entry *entry,
- 		struct hfsplus_cat_file *file;
- 
- 		file = &entry->file;
--		memset(file, 0, sizeof(*file));
-+		/* Zero the entire union to avoid leaking uninitialized data */
-+		memset(entry, 0, sizeof(*entry));
- 		file->type = cpu_to_be16(HFSPLUS_FILE);
- 		file->flags = cpu_to_be16(HFSPLUS_FILE_THREAD_EXISTS);
- 		file->id = cpu_to_be32(cnid);
+And it's essentially unused right now.
+
+> > > +     }
+> > > +
+> > > +     return 0;
+> > > +
+> > > +exit_err:
+> > > +     fput(file);
+> > > +     luo_session_free_files_mem(session);
+> >
+> > The error handling in this function is a mess. Pasha, please, please, use
+> > goto consistently.
+> 
+> How is this a mess? There is a single exit_err destination, no
+> exception, no early returns except at the very top of the function
+> where we do early returns before fget() which makes total sense.
+> 
+> Do you want to add a separate destination for
+> luo_session_free_files_mem() ? But that is not necessary, in many
+> places it is considered totally reasonable for free(NULL) to work
+> correctly...
+
+You have a mix of releasing resources with goto or inside if (err).
+And while basic free() primitives like kfree() and vfree() work correctly
+with NULL as a parameter, luo_session_free_files_mem() is already not a
+basic primitive and it may grow with a time. It already has two conditions
+that essentially prevent anything from freeing and this will grow with the
+time.
+
+So yes, I want a separate goto destination for freeing each resource and a
+goto for 
+
+	err = fh->ops->preserve(&args);
+	if (err)
+
+case.
+
+> > > +             luo_file = kzalloc(sizeof(*luo_file), GFP_KERNEL);
+> > > +             if (!luo_file)
+> > > +                     return -ENOMEM;
+> >
+> > Shouldn't we free files allocated on the previous iterations?
+> 
+> No, for the same reason explained in luo_session.c :-)
+
+A comment here as well please :)
+
+> > > +int liveupdate_get_file_incoming(struct liveupdate_session *s, u64 token,
+> > > +                              struct file **filep)
+> > > +{
+> >
+> > Ditto.
+> 
+> These two functions are part of the public API allowing dependency
+> tracking for vfio->iommu->memfd during preservation.
+
+So like with FLB, until we get actual users for them they are dead code. 
+And until it's clear how exactly dependency tracking for vfio->iommu->memfd
+will work, we won't know if this API is useful at all or we'll need
+something else in the end.
+
 -- 
-2.34.1
-
+Sincerely yours,
+Mike.
 
