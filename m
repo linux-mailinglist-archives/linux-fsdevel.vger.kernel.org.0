@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-69287-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69288-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93BDEC76816
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Nov 2025 23:32:45 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48988C7681C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Nov 2025 23:32:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0F21134DDB6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Nov 2025 22:32:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B4DB24E36D4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Nov 2025 22:32:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA02030AAB7;
-	Thu, 20 Nov 2025 22:32:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C89A928B7D7;
+	Thu, 20 Nov 2025 22:32:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HNaJKAIA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M2AWGobv"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18AED28B7D7
-	for <linux-fsdevel@vger.kernel.org>; Thu, 20 Nov 2025 22:32:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31BC32FF660
+	for <linux-fsdevel@vger.kernel.org>; Thu, 20 Nov 2025 22:32:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763677954; cv=none; b=Q9njr6Qw7Lpz9hTtFh0+E4lhRtAG7KXWyjTXhdtEn6tlI1eZuVl1BX6q/PdRb61Zie9/ey3w9c3D78xf/F2Q+YhTXgb8ftXu3/jXUjNWKTzG9CyIXO9gxkvH2wL6TYbIYk278c9bSQNQckWyTnGYBPEbjnmGP40jxyhjxPXOqyM=
+	t=1763677956; cv=none; b=sr8Zvf7Wr8uj4rSwxpq036XDl/Oyyo+z5NKo4NadPt8irskagoRz3hhbf3QdyF+a++QsH0rZvxPoGA1z6TieQyblz9QZFN8osf1dygKFDwDKe0rXwnya6bJo19k1P5Nca6/DB3IRpmXXkPHnv9TtCegHQpwZ6tO3I+cpjsNGn38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763677954; c=relaxed/simple;
-	bh=TGSVYHdNdJGAWWG7xqL6SSs97oQUM89nVu4eCxJTGnc=;
+	s=arc-20240116; t=1763677956; c=relaxed/simple;
+	bh=e77/aj7THF+655lv8uvvO3GedR5xomFbG9K8AXl1egA=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=XbNa2+8iSyZqmths3RdFHFh6Q97SC0vdagxWmcaryHxHzDRj8faL2gdyOUtncgbcpEHvXT/R0BJKAQUeYuSP/XHlVDWo4BjmpOPlx85k0Y1c61Wn3dGcMP6HDXaWu7Gin+L9WPyfA70w2MPOzdz9ze1A58aDNi6+2nIM/PINjn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HNaJKAIA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43212C4CEF1;
-	Thu, 20 Nov 2025 22:32:32 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=llSFKo+fWyslch4KxK1NrNGV8Iqlm+Wrs6i3Dtayurrpgfj61zrrh5iktuF+doAPQVIAonRV2eJFNqH1KoO6P11OPZl5yyIkuxBgJhmKxH4hS1cpTXqIEdh2zzp+iwWB8AH4cpy/x0h3JU8lXSOgGT1hIxXjJuCYy1d6EmhU15U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M2AWGobv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C08BC116B1;
+	Thu, 20 Nov 2025 22:32:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763677953;
-	bh=TGSVYHdNdJGAWWG7xqL6SSs97oQUM89nVu4eCxJTGnc=;
+	s=k20201202; t=1763677956;
+	bh=e77/aj7THF+655lv8uvvO3GedR5xomFbG9K8AXl1egA=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=HNaJKAIAAy5CfolDIkklqwcLChx87gZNh7syAAKJEFeTd5pyivPu5SbgnEtttjlKj
-	 BFykvuvP6vLLogC1Qt8m8eCsw+fgY0DTH4p438EyKZDqsdZhkkcvwVkR9ZERDpGexb
-	 tjLuCZWhm4S+aX+nTTg+pkRcRX6YhN1uhRiGLZEOiKyCYveTcA54eoXHJPEXe0FCPC
-	 TMZZmk7JRQ7p3HQgOVxuEGK4o9ITgEfP/qYSTPPwn31hPOidy8OPyoZ5BHBrYClX7X
-	 bUcOcV69FNYtgQTiVBeEDdDdqvgaJrMEOrf2PTo/CHqPU9Iajv8AUXs+vuLju7Tcp2
-	 yUMWCybBz8r3A==
+	b=M2AWGobvemDcgDrs20EJ/icu662H/8vHzyFVLfKp8V3C2Gz5QuI3yTEyUBPXho22/
+	 An91JYW/68aM0cDV5oU9CQFZGpOSJ26gWXsl6PHUGFWurKo6rI788yhbJiX62x5/Ss
+	 BBCW4sECzgFUT4JlDM0REi3CjnaTtGXwxMXS3wbBHYjbkn8CX6bdDIOtVfeSZIbyfp
+	 dEDk2v2SaJSPON2v9ccUe1uLsSA8SqCdR5E/0CQfC09Y7v2y9OJ7HuxWypcp1Ls/hS
+	 +rsu6lq9hwFKMzTLigfayKmZhAc4ZztEUJwvuRhnEnt5C7tvXvgeAW2J0Eyrg7Z4Ck
+	 4KEui1HTNNuVw==
 From: Christian Brauner <brauner@kernel.org>
-Date: Thu, 20 Nov 2025 23:32:05 +0100
-Subject: [PATCH RFC v2 08/48] fanotify: convert fanotify_init() to
+Date: Thu, 20 Nov 2025 23:32:06 +0100
+Subject: [PATCH RFC v2 09/48] nsfs: convert open_namespace() to
  FD_PREPARE()
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -53,7 +53,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251120-work-fd-prepare-v2-8-fef6ebda05d3@kernel.org>
+Message-Id: <20251120-work-fd-prepare-v2-9-fef6ebda05d3@kernel.org>
 References: <20251120-work-fd-prepare-v2-0-fef6ebda05d3@kernel.org>
 In-Reply-To: <20251120-work-fd-prepare-v2-0-fef6ebda05d3@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>, 
@@ -62,58 +62,54 @@ To: Linus Torvalds <torvalds@linux-foundation.org>,
 Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
  linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-a6db3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1519; i=brauner@kernel.org;
- h=from:subject:message-id; bh=TGSVYHdNdJGAWWG7xqL6SSs97oQUM89nVu4eCxJTGnc=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWTKT3tz2kBO+UjE1cC6Tk5nHi32vy/ZGs7tXHrMpPj44
- Q/TmyvOdZSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEyEg4OR4WjN1X0Pve8f/m7/
- oy903q+kqNDFUdc+TQ3YO+tU2Z3ZFmyMDD12v9Q+MicYz2V9w8TV8ZvLsOeRZrdBV3Hiy6w9lQd
- auAE=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1062; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=e77/aj7THF+655lv8uvvO3GedR5xomFbG9K8AXl1egA=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWTKT3tTfGJV9A4GmT2slhdy4jj/XHN8u3mT4Du1bPku0
+ fKwv45vO0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACby7TfDX8HYTdoH/zlU7N14
+ af+ZtIBurp3SnwM4HVeqOl3fJZCn5MHIsJ9d9cQ9rW/FnruCfBL/XplSmeBc+nh39ZFzn+aavdi
+ 9mxcA
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- fs/notify/fanotify/fanotify_user.c | 18 ++++++------------
- 1 file changed, 6 insertions(+), 12 deletions(-)
+ fs/nsfs.c | 15 +++++----------
+ 1 file changed, 5 insertions(+), 10 deletions(-)
 
-diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-index 1dadda82cae5..f1541970c2f3 100644
---- a/fs/notify/fanotify/fanotify_user.c
-+++ b/fs/notify/fanotify/fanotify_user.c
-@@ -1606,7 +1606,6 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
- 	unsigned int fid_mode = flags & FANOTIFY_FID_BITS;
- 	unsigned int class = flags & FANOTIFY_CLASS_BITS;
- 	unsigned int internal_flags = 0;
--	struct file *file;
+diff --git a/fs/nsfs.c b/fs/nsfs.c
+index 79b026a36fb6..ee1b2ecddf0f 100644
+--- a/fs/nsfs.c
++++ b/fs/nsfs.c
+@@ -108,7 +108,6 @@ int ns_get_path(struct path *path, struct task_struct *task,
+ int open_namespace(struct ns_common *ns)
+ {
+ 	struct path path __free(path_put) = {};
+-	struct file *f;
+ 	int err;
  
- 	pr_debug("%s: flags=%x event_f_flags=%x\n",
- 		 __func__, flags, event_f_flags);
-@@ -1755,19 +1754,14 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
- 			goto out_destroy_group;
- 	}
+ 	/* call first to consume reference */
+@@ -116,16 +115,12 @@ int open_namespace(struct ns_common *ns)
+ 	if (err < 0)
+ 		return err;
  
--	fd = get_unused_fd_flags(f_flags);
+-	CLASS(get_unused_fd, fd)(O_CLOEXEC);
 -	if (fd < 0)
--		goto out_destroy_group;
-+	FD_PREPARE(fdf, f_flags,
-+		   anon_inode_getfile_fmode("[fanotify]", &fanotify_fops, group,
-+					    f_flags, FMODE_NONOTIFY)) {
-+		if (!fd_prepare_failed(fdf))
-+			return fd_publish(fdf);
+-		return fd;
++	FD_PREPARE(fdf, O_CLOEXEC, dentry_open(&path, O_RDONLY, current_cred())) {
++		if (fd_prepare_failed(fdf))
++			return fd_prepare_error(fdf);
  
--	file = anon_inode_getfile_fmode("[fanotify]", &fanotify_fops, group,
--					f_flags, FMODE_NONOTIFY);
--	if (IS_ERR(file)) {
--		put_unused_fd(fd);
--		fd = PTR_ERR(file);
--		goto out_destroy_group;
-+		fd = fd_prepare_error(fdf);
- 	}
--	fd_install(fd, file);
--	return fd;
+-	f = dentry_open(&path, O_RDONLY, current_cred());
+-	if (IS_ERR(f))
+-		return PTR_ERR(f);
+-
+-	fd_install(fd, f);
+-	return take_fd(fd);
++		return fd_publish(fdf);
++	}
+ }
  
- out_destroy_group:
- 	fsnotify_destroy_group(group);
+ int open_related_ns(struct ns_common *ns,
 
 -- 
 2.47.3
