@@ -1,96 +1,155 @@
-Return-Path: <linux-fsdevel+bounces-69254-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69255-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C715C7586C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Nov 2025 18:04:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BDC4C75AF1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Nov 2025 18:31:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9A82D356EFB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Nov 2025 17:00:40 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 5E877359200
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Nov 2025 17:26:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C065D36C589;
-	Thu, 20 Nov 2025 17:00:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A02936654B;
+	Thu, 20 Nov 2025 17:17:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Kx1m9Bcg"
+	dkim=pass (1024-bit key) header.d=vjti.ac.in header.i=@vjti.ac.in header.b="MlnmexGa"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f196.google.com (mail-pl1-f196.google.com [209.85.214.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06E5533D6D2;
-	Thu, 20 Nov 2025 17:00:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0DDE2BF000
+	for <linux-fsdevel@vger.kernel.org>; Thu, 20 Nov 2025 17:17:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763658021; cv=none; b=SuLAQYm+VDdjGK7IuI3nW1iEfkTU07ZlLt3ZThADvU4J1+E7e5tqEtUS8htzH//1BHd+ZlQCG58A1Ta0wPA8cri2NitnnhTsSpU1zBiBEoor9cQv6YA7ILEuCsoidV3CIeBOzaJnzZG3afDW8hQv4tprrKB1f3aEFEOTJJ0r2XY=
+	t=1763659076; cv=none; b=eEsKqkJk8byEz53psOc0t08aJrDlEKrUIehmvA4Ms6NenVzwjJuFk+oZwaEmzjWM6FP8TQeZFfq2YXPJUqisOf3jlUIaHTgAY02T2hHXdlAOqxRqE6ycwC2Q+idiBWPldcweHk+hb3ypG6pAXL2YmW4Ev5Kk+lZwUJOtU3KelCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763658021; c=relaxed/simple;
-	bh=BTd+vQXQPl+C76Tq/JUAHFOL3Ruw9RqkWlJyEAZrfck=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rJsQ7wyCQlqxyjRHTdBc84SoicTLWnY6qkOEx8gL7qlWDLkEaCPwlqzNgMEQpD+2mrm8iCiLzkC/7b40Y7Nl50EHHRX2+hnqb9o5muYrQGWJ82v3Vp1HdrvXh5mHZZCbSM1YrYl24ohlYIF/hNbXfDdoAXXGD0DwznlwshcnX/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Kx1m9Bcg; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=re2tiGZL7IZwaCp1/yGWEfyF4epuwIDXTzQ2HA1ACdI=; b=Kx1m9BcgcI0haXR+zGeSAWaIw9
-	G0fPgYE3/vT6S94x5gDbWpNv9di7Oz6fLCKbHPUhUTEN5662TE8kzwSE2A+aRpkEXCFXXMHDKKbo3
-	6WIsXxeKbgIwvJN93YZ6yV+NLX2cc+altMh+dmz5ZbvOEjHuDYYTKwPyvKQ/0Nocd1d02SjYt6P5L
-	xpk0W8fKlUvLFB71q2xjiqXTxBbfAdGflCcv7A5adjSBE6PFDnYNRQg6SCBBdRnBdfmDyMm4nTt9B
-	+q2Itwb7APatwg0U1FBtKNAZg36UO1tqyLl1oQlhYpmUd3T+rFRLfHDMcAMaTh81uI/s349eJi9jn
-	PPccvL1g==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vM80l-00000001Vsl-0MTK;
-	Thu, 20 Nov 2025 16:59:59 +0000
-Date: Thu, 20 Nov 2025 16:59:58 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Kiryl Shutsemau <kirill@shutemov.name>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@redhat.com>,
-	Hugh Dickins <hughd@google.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>, Rik van Riel <riel@surriel.com>,
-	Harry Yoo <harry.yoo@oracle.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	Dave Chinner <david@fromorbit.com>, linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Kiryl Shutsemau <kas@kernel.org>, Chris Mason <clm@meta.com>
-Subject: Re: [PATCH] mm/filemap: Fix logic around SIGBUS in
- filemap_map_pages()
-Message-ID: <aR9JDud3PS-A_hcg@casper.infradead.org>
-References: <20251120161411.859078-1-kirill@shutemov.name>
+	s=arc-20240116; t=1763659076; c=relaxed/simple;
+	bh=p3ApoAA1CanQQdozSlHOXOSokHr0N8H00lCqp1aC2iI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=plBa2SZLMlGYhHEqtvGl8K1J4GvzGfeAUoKWkvmyUKHKNjH1+YP0rHhP/ri3WqSoVRsR69mjdh3qNqnUL0m8nEU+hsUuRBmKLKD+RZx7HAzWnqbPtBFwaGhakSi1IL7uN5O62CZ/y3xZd5TzeLqXhQV7I7nObCN4LHbfb4Dd+nQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ee.vjti.ac.in; spf=none smtp.mailfrom=ee.vjti.ac.in; dkim=pass (1024-bit key) header.d=vjti.ac.in header.i=@vjti.ac.in header.b=MlnmexGa; arc=none smtp.client-ip=209.85.214.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ee.vjti.ac.in
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ee.vjti.ac.in
+Received: by mail-pl1-f196.google.com with SMTP id d9443c01a7336-29558061c68so15255695ad.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Nov 2025 09:17:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=vjti.ac.in; s=google; t=1763659072; x=1764263872; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lxUmT50gh4iATr6XFekF1hQSSR5/JtG5gjuDPPL7SIo=;
+        b=MlnmexGaMVr3imvxoJ4QGKECxdM+vAXKLmRiJQYIzLsJI671TUmLGe07p5Xu6rdLAz
+         VBeJy/Hg8xz3XJgTc3/utqERb3/wcWZ0COG0LJ2kecUHYWOWt3t805xW5OLMi32bU33C
+         vogr2jZfdEnJ0FTH/WEnYjSI2LU9+nwh0XLT0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763659072; x=1764263872;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lxUmT50gh4iATr6XFekF1hQSSR5/JtG5gjuDPPL7SIo=;
+        b=btoWx8dY27jY3LwTbgXdeSzhGlGoI6BJSt35CgeSrhEfVdokY3PVmlzWKGkkubLQ/j
+         SwFfd7yIC3f+1rx7Xmajkc+Kas0lXzaDH6d1bFUYDBW7SaD7C0vh7Zdee7eofylKujkO
+         5ORQPdPDlyGWNDv8LaK5jDWzcx5iRH9UetHu3ryITpTIkOd7HNJhQkkZvOS+2o2e54qm
+         4qAk3PFmjSL/8FS5zeDxwtfOJui5fudvImA4hEAXprX4gSHTg7nGDGlX+YLqBIbLjPTy
+         wJUkSgBvmGHn8SzhG/uGdUAvDzjBz/vpYcYyeboUbAlzWfi5mP6qRF/sWXPUOaXWquO9
+         gj3A==
+X-Forwarded-Encrypted: i=1; AJvYcCWaUM6CgUj21rgm+kIpXE2Ty33vMWRfrdctFBZ0e937fEWKiFtA/GGPhEHAtvRexnz2q9+U3Q6/+Zc9uyap@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzil3On+mXyhKiGqjREuIrXcGjCYEYy8sdhaMuSDkoV6wb2ITkQ
+	kUqDy7m5bqHhkZzYQJIbcReMYaI4WJx/ihHbjt7gDlGnC7r28F0V77JlByCqBQiGQnA=
+X-Gm-Gg: ASbGncswUcAxwrM0AnGrjpuy+3HtyZOiyWEe3cPtrzASSYRlElD7mjrFwtDdrY2EA37
+	j4W8kKUPc/Q7tVVOPwZT3DPiFCSli0KdsjBlknXd6u/YnA1STU4wITxc9G/Bb2ZuwscgNUhr9yr
+	u/FcwAZvbwWfttlktuEUKU1CnyBtjdhWX12wcAZjp1UxfjN2PVGg7dcKVYqtPymu5wY8234oN2+
+	mgXQH37N5EBboS8wtWAUvZ8VU3VrZk8fhJeoWz0lyQzZ3+S2vNKpvpOmBn67xg88AA3tMlYTPBQ
+	e11CaykJnLHPF8A//Q8rTum9402qrVZEkSdbCIr4Hv8D/6s2iMxYrxkNwWWUyehgcphONjlqP3Y
+	hDjdXX8KjyY+ja/THRnTQbMx+iNdN0quQmlmQg3bsoFCamLGUIWMUMW7h1MpvgXPhWLCRVkyvL8
+	wZqwOqYy0V2PZlZu9DUAku5sgDzTQ1QIUtiqWdTU4P4d/HzOPRaEf3/N0M
+X-Google-Smtp-Source: AGHT+IHCvcH3jSOL7T+a7yDjy7MxfxbirT83K6TJhLThLkL3l4+krsnqHTMe0gk5zEdG6sGJ5ZT/Vg==
+X-Received: by 2002:a17:902:f791:b0:298:3545:81e2 with SMTP id d9443c01a7336-29b5ebbf688mr43341815ad.22.1763659072115;
+        Thu, 20 Nov 2025 09:17:52 -0800 (PST)
+Received: from ranegod-HP-ENVY-x360-Convertible-13-bd0xxx.. ([2405:201:31:d869:1daf:dd82:99d2:95eb])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29b5b2700ddsm32223085ad.70.2025.11.20.09.17.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Nov 2025 09:17:51 -0800 (PST)
+From: ssrane_b23@ee.vjti.ac.in
+X-Google-Original-From: ssranevjti@gmail.com
+To: slava@dubeyko.com,
+	glaubitz@physik.fu-berlin.de,
+	frank.li@vivo.com,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: skhan@linuxfoundation.org,
+	linux-kernel-mentees@lists.linux.dev,
+	david.hunter.linux@gmail.com,
+	khalid@kernel.org,
+	Shaurya Rane <ssrane_b23@ee.vjti.ac.in>,
+	syzbot+905d785c4923bea2c1db@syzkaller.appspotmail.com
+Subject: [PATCH] hfsplus: fix uninit-value in hfsplus_cat_build_record
+Date: Thu, 20 Nov 2025 22:47:40 +0530
+Message-Id: <20251120171740.19537-1-ssranevjti@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251120161411.859078-1-kirill@shutemov.name>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Nov 20, 2025 at 04:14:11PM +0000, Kiryl Shutsemau wrote:
-> Chris noticed that filemap_map_pages() calculates can_map_large only
-> once for the first page in the fault around range. The value is not
-> valid for the following pages in the range and must be recalculated.
-> 
-> Instead of recalculating can_map_large on each iteration, pass down
-> file_end to filemap_map_folio_range() and let it make the decision on
-> what can be mapped.
-> 
-> Signed-off-by: Kiryl Shutsemau <kas@kernel.org>
-> Reported-by: Chris Mason <clm@meta.com>
-> Fixes: 74207de2ba10 ("mm/memory: do not populate page table entries beyond i_size")h
+From: Shaurya Rane <ssrane_b23@ee.vjti.ac.in>
 
-Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+The root cause is in hfsplus_cat_build_record(), which builds catalog
+entries using the union hfsplus_cat_entry. This union contains three
+members with significantly different sizes:
+
+  struct hfsplus_cat_folder folder;    (88 bytes)
+  struct hfsplus_cat_file file;        (248 bytes)
+  struct hfsplus_cat_thread thread;    (520 bytes)
+
+The function was only zeroing the specific member being used (folder or
+file), not the entire union. This left significant uninitialized data:
+
+  For folders: 520 - 88  = 432 bytes uninitialized
+  For files:   520 - 248 = 272 bytes uninitialized
+
+This uninitialized data was then written to disk via hfs_brec_insert(),
+read back through the loop device, and eventually copied to userspace
+via filemap_read(), resulting in a leak of kernel stack memory.
+Fix this by zeroing the entire union before initializing the specific
+member. This ensures no uninitialized bytes remain.
+
+Reported-by: syzbot+905d785c4923bea2c1db@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=905d785c4923bea2c1db
+Fixes: 1da177e4c3f4
+
+Signed-off-by: Shaurya Rane <ssrane_b23@ee.vjti.ac.in>
+---
+ fs/hfsplus/catalog.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/fs/hfsplus/catalog.c b/fs/hfsplus/catalog.c
+index 02c1eee4a4b8..4d42e7139f3b 100644
+--- a/fs/hfsplus/catalog.c
++++ b/fs/hfsplus/catalog.c
+@@ -111,7 +111,8 @@ static int hfsplus_cat_build_record(hfsplus_cat_entry *entry,
+ 		struct hfsplus_cat_folder *folder;
+ 
+ 		folder = &entry->folder;
+-		memset(folder, 0, sizeof(*folder));
++		/* Zero the entire union to avoid leaking uninitialized data */
++		memset(entry, 0, sizeof(*entry));
+ 		folder->type = cpu_to_be16(HFSPLUS_FOLDER);
+ 		if (test_bit(HFSPLUS_SB_HFSX, &sbi->flags))
+ 			folder->flags |= cpu_to_be16(HFSPLUS_HAS_FOLDER_COUNT);
+@@ -130,7 +131,8 @@ static int hfsplus_cat_build_record(hfsplus_cat_entry *entry,
+ 		struct hfsplus_cat_file *file;
+ 
+ 		file = &entry->file;
+-		memset(file, 0, sizeof(*file));
++		/* Zero the entire union to avoid leaking uninitialized data */
++		memset(entry, 0, sizeof(*entry));
+ 		file->type = cpu_to_be16(HFSPLUS_FILE);
+ 		file->flags = cpu_to_be16(HFSPLUS_FILE_THREAD_EXISTS);
+ 		file->id = cpu_to_be32(cnid);
+-- 
+2.34.1
+
 
