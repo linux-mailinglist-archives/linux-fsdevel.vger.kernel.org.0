@@ -1,50 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-69326-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69327-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42635C76870
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Nov 2025 23:34:56 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF173C76876
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Nov 2025 23:34:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sea.lore.kernel.org (Postfix) with ESMTPS id 0B8E12B2B4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Nov 2025 22:34:55 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTPS id CE76A29D86
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Nov 2025 22:34:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7104A33373D;
-	Thu, 20 Nov 2025 22:33:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82982368E12;
+	Thu, 20 Nov 2025 22:33:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lle70Ohs"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A9DmDs0h"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE5BE2FB09A
-	for <linux-fsdevel@vger.kernel.org>; Thu, 20 Nov 2025 22:33:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E04DF2FB09A
+	for <linux-fsdevel@vger.kernel.org>; Thu, 20 Nov 2025 22:33:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763678032; cv=none; b=nKHvqvRKB5zD7GSmYW4tB1ylSZt/KUfVXdQKexmKx7WKhJtZIq0Cx5P1pshH9862XQPD8CEn3rwYnMHbJ3UMYCD8+LwX2FieQ+M//nW6Ge5hp6wKZMl+tZHIP8l3xIIjfaGsat8LZitH5DNa6EvAEPQHZnP/g6ciGcEBeKVT7HU=
+	t=1763678035; cv=none; b=dVfUmLDWtSHseV7/dl2ANNNuBoFhvl2H0wMElvnogbAF45YLfoE05aN82Q/XWeo/oJBVP1aMARDiS75MwEFAr5I0wqw3x3pBLMtu/kz+XOAVa1ubQevW6ZKsRWI0UDA88nPDNfKVe/wQzMwMKLG1AfH4A3s3t0rHsFYueQFqM5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763678032; c=relaxed/simple;
-	bh=NwimdXCZcXjpJsQsJrK1ua/m3Br4wF/poAIpiqFFL08=;
+	s=arc-20240116; t=1763678035; c=relaxed/simple;
+	bh=pnsN1eWNLvBaN626N+uhslNofKWgHfrtxabNK2ZIO0Q=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=UaT0wf2v8cQvcda2Oybe7IGRdSOqytbCIiJQfLUVStwkRW2N3bMworO66N4IVB6pA/BM8eFI0jZMKtab8C35ambsr2oJ5v3p7KsMi30Z7ZnG9t1PkGmozfA4QnIcn8LMkFVBjIuHLMblsD581tANgk5flCk2znfv9ogMqWGKalo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lle70Ohs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 194A9C113D0;
-	Thu, 20 Nov 2025 22:33:50 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=NsMyyUpaqff+zbEvUYIuwLq/0WfWl3zTDYjoCOw0I2+Pz52VqvoA3lt53RRJDeypBe5TPvU8NZOAYC/OsVqrLXjgEykWBhFw1TWxcN2y6mhoupwHYhw4PltgT2YFq3usItoGX6/V3dMFdzT+hLdDeSzWC9NL7iQd9sQWbm1Im9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A9DmDs0h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28840C4CEF1;
+	Thu, 20 Nov 2025 22:33:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763678032;
-	bh=NwimdXCZcXjpJsQsJrK1ua/m3Br4wF/poAIpiqFFL08=;
+	s=k20201202; t=1763678034;
+	bh=pnsN1eWNLvBaN626N+uhslNofKWgHfrtxabNK2ZIO0Q=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=Lle70OhsvvIyzcA5EiW0tkEEV8JS9kKY6y6gpbJ/c+ia+B5/YZSVe8Zx5g895KYdA
-	 rUJfA/kJAGYlXzrCwJOZqEmV55BI7CoWWpp1ayA6jbCodEO/Zbbw+KKIS7zgMEGdcY
-	 Vxx6mz1gxsx12FQPWS3U1WvOkA8h43xny7Xfl4/jdiz5EK1dDc4mXt4FabakzpO/CR
-	 NNfnSoWRo/ivXPU0MZK6ypsDHDbILc01U/58KU1UrDEyXIkEnF0BVFi9s/WSYTjzEO
-	 GCcGpSIG+PuXEViXns0Pj6NCsb6FnE8Y0q3hywugzQZM1wA9gSPBQpIsu5L5okUAY7
-	 FGldSL+h2kzBg==
+	b=A9DmDs0hKFLVZXTdFee1VZUG5iD1oTlmF3AH1dr33EOd+rxNtfm3rblAUaNqSp2TU
+	 c6FppBPU+KC7SEPJiv/GaP4B7NzjWPNs5Vis/dj8pjY+gqDve7dAjd9La6C6R8Q2EB
+	 pVP/nRYKVCuk+cYyporpaVWeHin92xL8wE0T/rtPHeE6EexcW9Aez6W1bzwaarSt4j
+	 amiQau+5rFplTrkhpnY8Ypsr4s1jCtdQU6LGc8TUJmmYdLbEzqW+/LtmLAI8OjiKn/
+	 Nc0cBuIzxaft78X+5a6vGcaDpJbdcpvBTjGhQY53Mm8qR3oCOKVEUH5ri78/ME6er/
+	 7MdHB0TVQ/iWg==
 From: Christian Brauner <brauner@kernel.org>
-Date: Thu, 20 Nov 2025 23:32:43 +0100
-Subject: [PATCH RFC v2 46/48] io_uring: convert io_create_mock_file() to
- FD_PREPARE()
+Date: Thu, 20 Nov 2025 23:32:44 +0100
+Subject: [PATCH RFC v2 47/48] kvm: convert
+ kvm_arch_supports_gmem_init_shared() to FD_PREPARE()
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -53,7 +53,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251120-work-fd-prepare-v2-46-fef6ebda05d3@kernel.org>
+Message-Id: <20251120-work-fd-prepare-v2-47-fef6ebda05d3@kernel.org>
 References: <20251120-work-fd-prepare-v2-0-fef6ebda05d3@kernel.org>
 In-Reply-To: <20251120-work-fd-prepare-v2-0-fef6ebda05d3@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>, 
@@ -62,101 +62,116 @@ To: Linus Torvalds <torvalds@linux-foundation.org>,
 Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
  linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-a6db3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2610; i=brauner@kernel.org;
- h=from:subject:message-id; bh=NwimdXCZcXjpJsQsJrK1ua/m3Br4wF/poAIpiqFFL08=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWTKT3t/c/mD9YrN2gFrTorXMDUFmEuEi8xlP3rFJuQ25
- 9pfztuvdpSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEyE6zIjw9Nr6cfCvC+/Zzic
- 0Ouqp7BRNnzVyUj/Q7oOogt1un5/6mD47/DnzGK7Nb05Jx+tXVW8pWCVuyH7639bos7d1/vpfeP
- pVVYA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2997; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=pnsN1eWNLvBaN626N+uhslNofKWgHfrtxabNK2ZIO0Q=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWTKT3vfsG+n5BuT9k8/g7PNZOIsfp2UEMupWZmx9PdGH
+ 3dhIekzHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABORnMrwP+iWbPDaD+7LTi3K
+ elK1UHoep6rr/mdcd25Ol9Eqy2a0OsTI0Mlj02L1cQ//y1SWtx3Mx0PjjgS9nG+6bWF06GRBGbZ
+ 5XAA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- io_uring/mock_file.c | 53 +++++++++++++++++++++-------------------------------
- 1 file changed, 21 insertions(+), 32 deletions(-)
+ virt/kvm/guest_memfd.c | 81 ++++++++++++++++++++++----------------------------
+ 1 file changed, 35 insertions(+), 46 deletions(-)
 
-diff --git a/io_uring/mock_file.c b/io_uring/mock_file.c
-index 45d3735b2708..f3d2823824d9 100644
---- a/io_uring/mock_file.c
-+++ b/io_uring/mock_file.c
-@@ -211,10 +211,8 @@ static int io_create_mock_file(struct io_uring_cmd *cmd, unsigned int issue_flag
- 	const struct file_operations *fops = &io_mock_fops;
- 	const struct io_uring_sqe *sqe = cmd->sqe;
- 	struct io_uring_mock_create mc, __user *uarg;
--	struct io_mock_file *mf = NULL;
--	struct file *file = NULL;
-+	struct io_mock_file *mf __free(kfree) = NULL;
- 	size_t uarg_size;
--	int fd = -1, ret;
- 
- 	/*
- 	 * It's a testing only driver that allows exercising edge cases
-@@ -246,10 +244,6 @@ static int io_create_mock_file(struct io_uring_cmd *cmd, unsigned int issue_flag
- 	if (!mf)
- 		return -ENOMEM;
- 
--	ret = fd = get_unused_fd_flags(O_RDWR | O_CLOEXEC);
+diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
+index fbca8c0972da..c536423424ef 100644
+--- a/virt/kvm/guest_memfd.c
++++ b/virt/kvm/guest_memfd.c
+@@ -493,56 +493,45 @@ bool __weak kvm_arch_supports_gmem_init_shared(struct kvm *kvm)
+ static int __kvm_gmem_create(struct kvm *kvm, loff_t size, u64 flags)
+ {
+ 	const char *anon_name = "[kvm-gmem]";
+-	struct kvm_gmem *gmem;
++	struct kvm_gmem *gmem __free(kfree) = NULL;
+ 	struct inode *inode;
+-	struct file *file;
+-	int fd, err;
+-
+-	fd = get_unused_fd_flags(0);
 -	if (fd < 0)
--		goto fail;
--
- 	init_waitqueue_head(&mf->poll_wq);
- 	mf->size = mc.file_size;
- 	mf->rw_delay_ns = mc.rw_delay_ns;
-@@ -258,33 +252,28 @@ static int io_create_mock_file(struct io_uring_cmd *cmd, unsigned int issue_flag
- 		mf->pollable = true;
- 	}
+-		return fd;
  
--	file = anon_inode_create_getfile("[io_uring_mock]", fops,
--					 mf, O_RDWR | O_CLOEXEC, NULL);
--	if (IS_ERR(file)) {
--		ret = PTR_ERR(file);
--		goto fail;
--	}
-+	FD_PREPARE(fdf, O_RDWR | O_CLOEXEC,
-+		   anon_inode_create_getfile("[io_uring_mock]", fops,
-+					     mf, O_RDWR | O_CLOEXEC, NULL)) {
+ 	gmem = kzalloc(sizeof(*gmem), GFP_KERNEL);
+-	if (!gmem) {
+-		err = -ENOMEM;
+-		goto err_fd;
++	if (!gmem)
++		return -ENOMEM;
++
++	FD_PREPARE(fdf, 0, anon_inode_create_getfile(anon_name, &kvm_gmem_fops,
++						     gmem, O_RDWR, NULL)) {
 +		struct file *file;
- 
--	file->f_mode |= FMODE_READ | FMODE_CAN_READ |
--			FMODE_WRITE | FMODE_CAN_WRITE |
--			FMODE_LSEEK;
--	if (mc.flags & IORING_MOCK_CREATE_F_SUPPORT_NOWAIT)
--		file->f_mode |= FMODE_NOWAIT;
--
--	mc.out_fd = fd;
--	if (copy_to_user(uarg, &mc, uarg_size)) {
--		fput(file);
--		ret = -EFAULT;
--		goto fail;
--	}
++
 +		if (fd_prepare_failed(fdf))
 +			return fd_prepare_error(fdf);
- 
--	fd_install(fd, file);
--	return 0;
--fail:
--	if (fd >= 0)
--		put_unused_fd(fd);
--	kfree(mf);
--	return ret;
++
 +		file = fd_prepare_file(fdf);
-+		file->f_mode |= FMODE_READ | FMODE_CAN_READ |
-+				FMODE_WRITE | FMODE_CAN_WRITE |
-+				FMODE_LSEEK;
-+		if (mc.flags & IORING_MOCK_CREATE_F_SUPPORT_NOWAIT)
-+			file->f_mode |= FMODE_NOWAIT;
++		file->f_flags |= O_LARGEFILE;
 +
-+		mc.out_fd = fd_prepare_fd(fdf);
-+		if (copy_to_user(uarg, &mc, uarg_size))
-+			return -EFAULT;
++		inode = file->f_inode;
++		WARN_ON(file->f_mapping != inode->i_mapping);
 +
-+		retain_and_null_ptr(mf);
++		inode->i_private = (void *)(unsigned long)flags;
++		inode->i_op = &kvm_gmem_iops;
++		inode->i_mapping->a_ops = &kvm_gmem_aops;
++		inode->i_mode |= S_IFREG;
++		inode->i_size = size;
++		mapping_set_gfp_mask(inode->i_mapping, GFP_HIGHUSER);
++		mapping_set_inaccessible(inode->i_mapping);
++		/* Unmovable mappings are supposed to be marked unevictable as well. */
++		WARN_ON_ONCE(!mapping_unevictable(inode->i_mapping));
++
++		kvm_get_kvm(kvm);
++		gmem->kvm = kvm;
++		xa_init(&gmem->bindings);
++		list_add(&gmem->entry, &inode->i_mapping->i_private_list);
++
++		/* Ownership of gmem transferred to file */
++		retain_and_null_ptr(gmem);
 +		return fd_publish(fdf);
-+	}
+ 	}
+-
+-	file = anon_inode_create_getfile(anon_name, &kvm_gmem_fops, gmem,
+-					 O_RDWR, NULL);
+-	if (IS_ERR(file)) {
+-		err = PTR_ERR(file);
+-		goto err_gmem;
+-	}
+-
+-	file->f_flags |= O_LARGEFILE;
+-
+-	inode = file->f_inode;
+-	WARN_ON(file->f_mapping != inode->i_mapping);
+-
+-	inode->i_private = (void *)(unsigned long)flags;
+-	inode->i_op = &kvm_gmem_iops;
+-	inode->i_mapping->a_ops = &kvm_gmem_aops;
+-	inode->i_mode |= S_IFREG;
+-	inode->i_size = size;
+-	mapping_set_gfp_mask(inode->i_mapping, GFP_HIGHUSER);
+-	mapping_set_inaccessible(inode->i_mapping);
+-	/* Unmovable mappings are supposed to be marked unevictable as well. */
+-	WARN_ON_ONCE(!mapping_unevictable(inode->i_mapping));
+-
+-	kvm_get_kvm(kvm);
+-	gmem->kvm = kvm;
+-	xa_init(&gmem->bindings);
+-	list_add(&gmem->entry, &inode->i_mapping->i_private_list);
+-
+-	fd_install(fd, file);
+-	return fd;
+-
+-err_gmem:
+-	kfree(gmem);
+-err_fd:
+-	put_unused_fd(fd);
+-	return err;
  }
  
- static int io_probe_mock(struct io_uring_cmd *cmd)
+ int kvm_gmem_create(struct kvm *kvm, struct kvm_create_guest_memfd *args)
 
 -- 
 2.47.3
