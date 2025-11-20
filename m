@@ -1,162 +1,166 @@
-Return-Path: <linux-fsdevel+bounces-69244-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69245-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2A63C75100
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Nov 2025 16:43:04 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78E00C75316
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Nov 2025 16:59:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by tor.lore.kernel.org (Postfix) with ESMTPS id 38A072BEF1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Nov 2025 15:41:43 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTPS id 9CF6F332C6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Nov 2025 15:46:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D0713451BB;
-	Thu, 20 Nov 2025 15:34:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2075D2E8E14;
+	Thu, 20 Nov 2025 15:44:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BSbuSzzK"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MQeYuG1G"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50D29358D2A;
-	Thu, 20 Nov 2025 15:34:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85631376BD4
+	for <linux-fsdevel@vger.kernel.org>; Thu, 20 Nov 2025 15:44:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763652896; cv=none; b=I9Q99evnoWraEOrWEyaWz3wDtsYxCPKCQeZhaRnLubudz7vWp5YLxU1PmVD9SZNn6+63XJyURLiZmD0AKFtiCePCmfdnDnwlbdRSuCbowiA2W2ugp/nSkQ2JBcpRkGOPaNw2EN5uNOgkg/ehqLILQulVR7nRjA0/yvs58axxEs0=
+	t=1763653451; cv=none; b=QL3ESbpIFj6UhwmxjmfMrfOVcy3H2qFmN9fqm2NyGf/V8ZZe+vIYh7Dc2VDPOyIjsSNeyH6amh3U1mNQ7pWSqOSVbFk05ghaXwdaDRJkrvLZW3VaZUKjFMZC08IJW8YuQOWYoFseqq6redIebonqg9E2UZw/LMQK5674JR/b6rw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763652896; c=relaxed/simple;
-	bh=iLlpiIoq6RvRNwPu4wKmwbysrxXgehN/NeIhRBCyojQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ARL+nk8+1+u3RA4PD7xRKQ7u9TvOxX55HU6f/0Ppjeo5imGL6FHwsPG+uLPVqwK8VXJibCDzWymo4pA1I+6i5ldUqshDarXeCMYecid8n5cvN4pl1To39CMijYC0QkJ5pzzMsgNF9TVhRIuKuV3IU7s7/0YGDgZ2eiXfD9ueGsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BSbuSzzK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A36EEC4CEF1;
-	Thu, 20 Nov 2025 15:34:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763652895;
-	bh=iLlpiIoq6RvRNwPu4wKmwbysrxXgehN/NeIhRBCyojQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=BSbuSzzK7NmUg46X6Xqg6ULra0bk2IOvd4ky2Uu2VfaVLOtcvXkx17NUhrXYC5ucU
-	 PJfv6TgrN2RCJfDTXq3QFuGducBydTpyGGuTVt1tX1UsYx158hZaIw6KucGedSBdnj
-	 cnWvat7/iCNuhM3D4FhcULyewVEYpxKNXTsxKMFgotaIX21VGAH+F5QnMtqCQtdQ/z
-	 u0eFdZ3lwuu0TO7ycFLhQMuIe6rxYzaKbfyXFMQmSh3psyGpXYrvKSG8c5ZUAthpep
-	 YZM6LAvl7j2Lgl6pytE3RCmARngLlNipOyV3xf4vphQJBndBwXD2Xe912KrSst9b9D
-	 szpXLx0N6hkVw==
-From: Pratyush Yadav <pratyush@kernel.org>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: Mike Rapoport <rppt@kernel.org>,  pratyush@kernel.org,
-  jasonmiu@google.com,  graf@amazon.com,  dmatlack@google.com,
-  rientjes@google.com,  corbet@lwn.net,  rdunlap@infradead.org,
-  ilpo.jarvinen@linux.intel.com,  kanie@linux.alibaba.com,
-  ojeda@kernel.org,  aliceryhl@google.com,  masahiroy@kernel.org,
-  akpm@linux-foundation.org,  tj@kernel.org,  yoann.congal@smile.fr,
-  mmaurer@google.com,  roman.gushchin@linux.dev,  chenridong@huawei.com,
-  axboe@kernel.dk,  mark.rutland@arm.com,  jannh@google.com,
-  vincent.guittot@linaro.org,  hannes@cmpxchg.org,
-  dan.j.williams@intel.com,  david@redhat.com,  joel.granados@kernel.org,
-  rostedt@goodmis.org,  anna.schumaker@oracle.com,  song@kernel.org,
-  linux@weissschuh.net,  linux-kernel@vger.kernel.org,
-  linux-doc@vger.kernel.org,  linux-mm@kvack.org,
-  gregkh@linuxfoundation.org,  tglx@linutronix.de,  mingo@redhat.com,
-  bp@alien8.de,  dave.hansen@linux.intel.com,  x86@kernel.org,
-  hpa@zytor.com,  rafael@kernel.org,  dakr@kernel.org,
-  bartosz.golaszewski@linaro.org,  cw00.choi@samsung.com,
-  myungjoo.ham@samsung.com,  yesanishhere@gmail.com,
-  Jonathan.Cameron@huawei.com,  quic_zijuhu@quicinc.com,
-  aleksander.lobakin@intel.com,  ira.weiny@intel.com,
-  andriy.shevchenko@linux.intel.com,  leon@kernel.org,  lukas@wunner.de,
-  bhelgaas@google.com,  wagi@kernel.org,  djeffery@redhat.com,
-  stuart.w.hayes@gmail.com,  lennart@poettering.net,  brauner@kernel.org,
-  linux-api@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
-  saeedm@nvidia.com,  ajayachandra@nvidia.com,  jgg@nvidia.com,
-  parav@nvidia.com,  leonro@nvidia.com,  witu@nvidia.com,
-  hughd@google.com,  skhawaja@google.com,  chrisl@kernel.org
-Subject: Re: [PATCH v6 15/20] mm: memfd_luo: allow preserving memfd
-In-Reply-To: <CA+CK2bADcVsRnovkwWftPCbubXoaFrPzSavMU+G9f3XAz3YMLQ@mail.gmail.com>
-	(Pasha Tatashin's message of "Wed, 19 Nov 2025 16:56:10 -0500")
-References: <20251115233409.768044-1-pasha.tatashin@soleen.com>
-	<20251115233409.768044-16-pasha.tatashin@soleen.com>
-	<aRsBHy5aQ_Ypyy9r@kernel.org>
-	<CA+CK2bADcVsRnovkwWftPCbubXoaFrPzSavMU+G9f3XAz3YMLQ@mail.gmail.com>
-Date: Thu, 20 Nov 2025 16:34:45 +0100
-Message-ID: <mafs0a50g3ega.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1763653451; c=relaxed/simple;
+	bh=5SJdDsNIzpAiSSWDtnGIqvp7M7NjjLQ9tdPcSngvhOM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bRB43yjjYnE+KkxqlQgIjyKIYrP9eLkdZtGoBXJVBO6UwA/DK6/XJF6lzmczsgA1eFNnhGCG4Oz5DQF66FwI/zoP5F2Wa4uGw0bUD/7ouv9e9TYrVuJjwh+W0OiuBBi540g1mpMtlRQXL3zgAsQAiOQOnGhZvnKFIGSeebZ5lsM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MQeYuG1G; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-477a1c28778so12646395e9.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Nov 2025 07:44:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1763653448; x=1764258248; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=V/ugw1qh5Js/ttrR8EDVGlYrGkAdfYtHHIqpSwNHbFo=;
+        b=MQeYuG1GDX9e3y6vgFW0eeN2eqphzE0xb/h3CH8Q5oNQhsSzdC7+x8wt8xmQ3/QbgH
+         Wft7rTbPSsJIz0K7fwhm+dZyF+xoo4fjyp1FH9BNU21NGF3fhevaBQzK0VGM/LHGNP8c
+         2Nn5JAjIa9ME+zfKmSPPDqWzVwDpto/2go6a4++gXqGnI+L1EUiCjiJAbHQi9nK0d8Zx
+         dHpxzHnxCDlw74ZDYPgXXz0rPbWWNHDGmKhY1aA+jzZ2CMy/fBAMUmDhkMXsJmZyH2ut
+         rs6jVIZ6HPewK4EaR/wop1l5UC02yU/c7DPaN/Q60awNQVrA7McDU8/rETJ1o+FUtphT
+         t1LA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763653448; x=1764258248;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=V/ugw1qh5Js/ttrR8EDVGlYrGkAdfYtHHIqpSwNHbFo=;
+        b=smxuc4qkLCqOeFaq2rUvfIb+52QQYcExEZrYiM/0fLxFVvFhO28E2VHdjGgkt0vmRf
+         OIsl6Cnj2AgskqCeYln+SiSype6cAoqCPtPv20mVh00xXfu8ZBANXg9rCha7rqdKL072
+         22tZOX9tMFCSPjl6SWOdn3QVI1SYR0mPBBVjkV2F1Q+LgEHjeYcawPjjni+J9Ptfnebe
+         dy/HhjYW2yQplGYcfwtEasDsSzzVb4H6ORJJ2QIyj6bH3KPkkQkWx/o29A6DfJikA6Vs
+         4OhWD1yQjwDtxirDCqtOfAHFe9npplYoKcQdFkSn7yJcq0AKwE8Z/NDesixyLY9a2WB7
+         nh2A==
+X-Forwarded-Encrypted: i=1; AJvYcCU+oQoHxOOHWFDjhYCXqrFH38tY3XHxDdGvTdycaxs6yd0GYAc7BuGBQYd95KFzsaIrJOst3SJkyAObEZPe@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx25UeC3rCtD1aZjqW3OGq6a3OO0/hr5NyTTTo+zxxpeSyBwRlD
+	Ey/UpesdIkFQR/dYCFd2OuQE4M2dsy+eXttBEj9i8dYfnwv902o4bKIt
+X-Gm-Gg: ASbGnctk5x5/pyOgznSyZJPcdESjf/WuH9PEYC3z+MsnfszPkyxAfVuXfdVPt88gNkL
+	xOpvvbCD0W3vXoXqyIOxYlXkxeOzx8IbgSZpKwmKd9f0xfVobvk6lvk3Pkvsn7d7oDtaqEP742H
+	VYj63tWJLzolY2OoJS/lXdrRZ76uOay74o9rLcfBk22I5J+rXKzvz/Wz82/IMNAdBhpgkb1BssI
+	6YktP64QLz8HBM4Ewgohzx2FTKVQ6oEJP03ujsXFpzFkYo7IW7ep8c3rwVlzomTHwOAMRU+O7Ms
+	Ivh0Wu2TBXEhhwuLRk3reRdlOphoEp/3AWIAso6WfxEyhAyI5pCL34jmbtn8V/DZEnrqQVhEscm
+	eIy+T3FjzqI4KPxNcQGvEzbgQRGzAFftCp4AFG32Nht7bH4U9+qI7oiM9BFwyDtYZk6lJjtfyeK
+	rLN9O4FckIKTG8A+cTf3hnAzmKA8bywK2S+aweTTXH9AvbjFo2JyWT
+X-Google-Smtp-Source: AGHT+IHZscOyGXLMcLEwSzXG79SY8Qx2G6gT/YROcc1hUDKG1pZJxcFyYdrYEnvMt+Oi8xS02ts8rg==
+X-Received: by 2002:a05:600c:450f:b0:475:e067:f23d with SMTP id 5b1f17b1804b1-477b8a98d52mr31212975e9.25.1763653447408;
+        Thu, 20 Nov 2025 07:44:07 -0800 (PST)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42cb7fba20esm5977502f8f.37.2025.11.20.07.44.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Nov 2025 07:44:07 -0800 (PST)
+Date: Thu, 20 Nov 2025 15:44:05 +0000
+From: David Laight <david.laight.linux@gmail.com>
+To: "David Hildenbrand (Red Hat)" <david@kernel.org>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, Axel
+ Rasmussen <axelrasmussen@google.com>, Christoph Lameter <cl@gentwo.org>,
+ Dennis Zhou <dennis@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>, Mike Rapoport
+ <rppt@kernel.org>, Tejun Heo <tj@kernel.org>, Yuanchu Xie
+ <yuanchu@google.com>
+Subject: Re: [PATCH 39/44] mm: use min() instead of min_t()
+Message-ID: <20251120154405.7bcf9a6e@pumpkin>
+In-Reply-To: <e06666bf-6d19-4ed7-a870-012dff1fe077@kernel.org>
+References: <20251119224140.8616-1-david.laight.linux@gmail.com>
+	<20251119224140.8616-40-david.laight.linux@gmail.com>
+	<0c264126-b7ff-4509-93a6-582d928769ea@lucifer.local>
+	<20251120125505.7ec8dfc6@pumpkin>
+	<e06666bf-6d19-4ed7-a870-012dff1fe077@kernel.org>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Nov 19 2025, Pasha Tatashin wrote:
+On Thu, 20 Nov 2025 14:42:24 +0100
+"David Hildenbrand (Red Hat)" <david@kernel.org> wrote:
 
-> On Mon, Nov 17, 2025 at 6:04=E2=80=AFAM Mike Rapoport <rppt@kernel.org> w=
-rote:
->>
->> On Sat, Nov 15, 2025 at 06:34:01PM -0500, Pasha Tatashin wrote:
->> > From: Pratyush Yadav <ptyadav@amazon.de>
->> >
->> > The ability to preserve a memfd allows userspace to use KHO and LUO to
->> > transfer its memory contents to the next kernel. This is useful in many
->> > ways. For one, it can be used with IOMMUFD as the backing store for
->> > IOMMU page tables. Preserving IOMMUFD is essential for performing a
->> > hypervisor live update with passthrough devices. memfd support provides
->> > the first building block for making that possible.
->> >
->> > For another, applications with a large amount of memory that takes time
->> > to reconstruct, reboots to consume kernel upgrades can be very
->> > expensive. memfd with LUO gives those applications reboot-persistent
->> > memory that they can use to quickly save and reconstruct that state.
->> >
->> > While memfd is backed by either hugetlbfs or shmem, currently only
->> > support on shmem is added. To be more precise, support for anonymous
->> > shmem files is added.
->> >
->> > The handover to the next kernel is not transparent. All the properties
->> > of the file are not preserved; only its memory contents, position, and
->> > size. The recreated file gets the UID and GID of the task doing the
->> > restore, and the task's cgroup gets charged with the memory.
->> >
->> > Once preserved, the file cannot grow or shrink, and all its pages are
->> > pinned to avoid migrations and swapping. The file can still be read fr=
-om
->> > or written to.
->> >
->> > Use vmalloc to get the buffer to hold the folios, and preserve
->> > it using kho_preserve_vmalloc(). This doesn't have the size limit.
->> >
->> > Co-developed-by: Pasha Tatashin <pasha.tatashin@soleen.com>
->> > Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
->> > Signed-off-by: Pratyush Yadav <ptyadav@amazon.de>
-[...]
->> > +     struct inode *inode =3D file_inode(file);
->> > +     struct memfd_luo_folio_ser *pfolios;
->> > +     struct kho_vmalloc *kho_vmalloc;
->> > +     unsigned int max_folios;
->> > +     long i, size, nr_pinned;
->> > +     struct folio **folios;
->>
->> pfolios and folios read like the former is a pointer to latter.
->> I'd s/pfolios/folios_ser/
+> >>  
+> >>>
+> >>> Signed-off-by: David Laight <david.laight.linux@gmail.com>
+> >>> ---
+> >>>   mm/gup.c      | 4 ++--
+> >>>   mm/memblock.c | 2 +-
+> >>>   mm/memory.c   | 2 +-
+> >>>   mm/percpu.c   | 2 +-
+> >>>   mm/truncate.c | 3 +--
+> >>>   mm/vmscan.c   | 2 +-
+> >>>   6 files changed, 7 insertions(+), 8 deletions(-)
+> >>>
+> >>> diff --git a/mm/gup.c b/mm/gup.c
+> >>> index a8ba5112e4d0..55435b90dcc3 100644
+> >>> --- a/mm/gup.c
+> >>> +++ b/mm/gup.c
+> >>> @@ -237,8 +237,8 @@ static inline struct folio *gup_folio_range_next(struct page *start,
+> >>>   	unsigned int nr = 1;
+> >>>
+> >>>   	if (folio_test_large(folio))
+> >>> -		nr = min_t(unsigned int, npages - i,
+> >>> -			   folio_nr_pages(folio) - folio_page_idx(folio, next));
+> >>> +		nr = min(npages - i,
+> >>> +			 folio_nr_pages(folio) - folio_page_idx(folio, next));  
+> >>
+> >> There's no cases where any of these would discard significant bits. But we
+> >> ultimately cast to unisnged int anyway (nr) so not sure this achieves anything.  
+> > 
+> > The (implicit) cast to unsigned int is irrelevant - that happens after the min().
+> > The issue is that 'npages' is 'unsigned long' so can (in theory) be larger than 4G.
+> > Ok that would be a 16TB buffer, but someone must have decided that npages might
+> > not fit in 32 bits otherwise they wouldn't have used 'unsigned long'.  
+> 
+> See commit fa17bcd5f65e ("mm: make folio page count functions return 
+> unsigned") why that function used to return "long" instead of "unsigned 
+> int" and how we changed it to "unsigned long".
+> 
+> Until that function actually returns something that large might take a 
+> while, so no need to worry about that right now.
 
-folios_ser is a tricky name, it is very close to folio_ser (which is
-what you might use for one member of the array).
+Except that it gives a false positive on a compile-time test that finds a
+few real bugs.
 
-I was bit by this when hacking on some hugetlb preservation code. I
-wrote folios_ser instead of folio_ser in a loop, and then had to spend
-half an hour trying to figure out why the code wasn't working. It is
-kinda hard to differentiate between the two visually.
+I've been (slowly) fixing 'allmodconfig' and found 'goodies' like:
+	min_t(u32, MAX_UINT, expr)
+and
+	min_t(u8, expr, 255)
 
-Not that I have a better name off the top of my head. Just saying that
-this naming causes weird readability problems.
+Pretty much all the min_t(unsigned xxx) that compile when changed to min()
+are safe changes and might fix an obscure bug.
+Probably 99% make no difference.
 
->
-> Done
->
-[...]
+So I'd like to get rid of the ones that make no difference.
 
---=20
-Regards,
-Pratyush Yadav
+	David
+
+
 
