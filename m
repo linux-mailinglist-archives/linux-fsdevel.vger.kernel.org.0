@@ -1,60 +1,61 @@
-Return-Path: <linux-fsdevel+bounces-69177-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69178-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C9E1C71F51
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Nov 2025 04:20:26 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BBEAC71F5A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Nov 2025 04:20:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DBB784E484E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Nov 2025 03:20:01 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B0D574E4963
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Nov 2025 03:20:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3F592C11E7;
-	Thu, 20 Nov 2025 03:19:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F6BA2C3770;
+	Thu, 20 Nov 2025 03:19:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Fy2agbIl"
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="gJ/beCaH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from PH8PR06CU001.outbound.protection.outlook.com (mail-westus3azon11012057.outbound.protection.outlook.com [40.107.209.57])
+Received: from CY7PR03CU001.outbound.protection.outlook.com (mail-westcentralusazon11010037.outbound.protection.outlook.com [40.93.198.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B4F717DE36;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7706E256C9E;
 	Thu, 20 Nov 2025 03:19:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.209.57
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.198.37
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763608783; cv=fail; b=impg64ROH/C10nopJ7dBrHd8jBGoC34s/8/ei7QHwIqjNwshU4lEV76QJ4HmmLMJCASRhTM4sP+CXwPL3Z/oIWBQMyA30Et+1SjgW7u3U8gNIxOPv7TXQOftBfd55CvBBHLBXsLWAlZa7n24UOuLh2En6nSbMxx68KCd/AHl6F0=
+	t=1763608783; cv=fail; b=fd5uBMCSY9f0CO0w9y0NHxoLkpu3xMi5KIKq9kF4d9pNMYyR2n/NkVzr1sacApWzRdzBrccKmDTYSgmCk4vlB02oeJOwXDkt6S6jNQunoWmyp1k47Fcbx7NMzHX7e15tgYSWTOxYcm5jNjOGW1HJMkM0sQm1Kb2tS99XC5BzYg4=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1763608783; c=relaxed/simple;
-	bh=D5CDPxzMuUGawfcPDKzZEDXvyblSIQdNZa7YtrmUtRo=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=oXWtn48hcbtF5MS1SiC4jkC1sVAr6h+8jvScDzTg4wNnADIceCBTjT6qefKIO8FmxOk5ugi/BLy3DBKqpIPvFjGitZtbLiICNibd1hsTM+3pM85i0Xu3Y9k7Wp9gj+sJfJ/WXIHM2wI3HoLuhe1/dZhz2+nFrzN6z+XeV5EJun0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Fy2agbIl; arc=fail smtp.client-ip=40.107.209.57
+	bh=RFEx0pmpZhf4F8ppIyx9aB8xkQiJ/ojPe0UbZpXWBAA=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bDS9KuRDQq0y/nihSUGQGDlEYTL5VGX148gV7P+Ae6P6CD/uKMxjhRTuS78XESnbeSY5ePXwJxCjh8ePdZRY5QKLj/CLom5V3QFE21iiQW9LV43GGkg69qtjzFI/C8988lAB/G8FS5scoWZHTnqdWDe0uLFFCjcN//iolsGqZf8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=gJ/beCaH; arc=fail smtp.client-ip=40.93.198.37
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ZaltEn4EyzrC5cPhdh81K+Bs5ZNh60Yu75RX7dbiQJsvPkJoAKY98DpHaubv8C01eMX3LifV4HjfJdYfaxmpPbP8f0y/EV/fUPFwBOfWDt+73TDBMsmvesAAZR5V4vDFihVvV6+wwHLYMuTJkJA/LkW8zVxPPDhbdV+alj3nWH7zJo/D/PuDmVTx0eq72XMuZ8wVRTqrGw/CPLM1vUocSu9hU8a16Z9At+9yH5zYDaeU3MJ9HiHptPE+cB00JLQmjSflfeGCBQ0Q4a+LSwUYsvtlrnhVPkfYJov2IzLdkAy/RK+ZFArVfxSS0CChf6w5+fbW3kfEYCAC/OlYd1NuLw==
+ b=L5jZR5ZZM1uEIEij1So+2sZlzkAUR5NRUgbpWNdSHkpOemkDPJrwlVQKdBkx5tYrDTSSQ51nKIh2dy4tthtKSN3acDCHMY0vxZqicP2b65IudKELlPRTrdeqGGeguUG0Z3BvPSBNee4LyNCOwp9bzHl0x6aPmZoD2xdsHWWVBWweBP9h29uV+vwwT0o3iNt/3cfmVn6tM8M1RE3d5FZd26WRyZTp1BFt0sA1jiRHsqdrVxkbPZws7CaFCF+SL/vi4NWILoCB7hV0KmzEsaRIOuZQ1L9pcNIVAmGWULev6wR6FhxU7XX2hXIStJA7Q142AWY9GwWAgF4wb9hfgTLqfg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=SS4qU1N4keZM94fTFGZtwA0lL0Yw4dPTpjSifNKUZY0=;
- b=QLYR0+sNBPWUXiKisftZWUYSN+aSm53c9kZOXcWUVYlFGaEOjturfBTJajZPo3mjuEbzBo2/Lt7Zhpb5rin1Svvg84XlImD5pvb34WK+vBb+McnXXS3TBsGqxJfzJj95JjmKuQ49HZy1u2U0r5sHlMipvtc+LwBw+gLvLhz0LNaUhGBjoYeMi+pCeUBmr8QEKP/WKcdZcvl1JKSjSQB0xw905KKGbUvxNZcXruzGPtLX9n6dyeX/sFY0UWYWNFFU4QFgjLEEIv8RGV9EQWyodizVMsGYac0a97/mmKfTUmC8H3cMqn1qMjZGfLelPAIvT1T7yp1sqCfUI/n5cgZAYA==
+ bh=Qd0Mke/S9wEMVjc8P6hlfH/ROlPlZSCD2uUSrFFSKyM=;
+ b=bjxqJ3OidrxhEYyJhPaFGdP2wn+J8poUfVH3ec3kEM2Z01MkIPbqzTVZOi5FmjSJNSLqJjkAtO9nTy9LIYix0GDuip85xE5JcNYc/cOsKAu9k/tczQhSv2Otckoc97SMJTIxuEYpQzomuZFb6DXV6StBE/tfXAi8XMP9KNoBSbYGbUldfqheyo3qnX+R4ZWtXouSNuqfJ/xu4VWh36MgM8YpyympwUktLzLIZqzSTCfS0DVTHCBV9B7kiu1nzqkWifzRe9+fHpa1EA54MOOMbjgcLljKa3O3wafO/UzlnETYGV6gEVXgpm4UpNfQInWraHL4zOTbpUqkZrSg1Nq1Og==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
  dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
  header.from=amd.com; dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SS4qU1N4keZM94fTFGZtwA0lL0Yw4dPTpjSifNKUZY0=;
- b=Fy2agbIlgB5xDqOa8ijAmIOn8Sk9u7caV/jKr94yspYJu7vZo9xr2spb3860W6K4yU0Op7x/O3wD+Vdl4jyYmmeqJ+YaMwi89wREvAT0y10zxtfNyXlwIwWW/VJMyhTvkT7Va0YIPEnxMm+OesT4t2SjpfbBgtw1WXuRc4CC9Fw=
-Received: from CH0PR03CA0450.namprd03.prod.outlook.com (2603:10b6:610:10e::28)
- by SA3PR12MB8045.namprd12.prod.outlook.com (2603:10b6:806:31d::5) with
+ bh=Qd0Mke/S9wEMVjc8P6hlfH/ROlPlZSCD2uUSrFFSKyM=;
+ b=gJ/beCaHplHjSulQwbZTXj/sce79ZWJzFzyozFraO6Nmxvvht21/hSJzA6H5rmGrULPJwR8n79NJLQKLfWSAdll7YvmJihsBAhOpGOObscSf0nD6XPjkS5nAUuwiBiZ7bIETJUYYGkjEpX7lwf5eu55/u4FF3qEECEOKVwf0zaw=
+Received: from CH0PR03CA0441.namprd03.prod.outlook.com (2603:10b6:610:10e::34)
+ by DM6PR12MB4187.namprd12.prod.outlook.com (2603:10b6:5:212::11) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9343.10; Thu, 20 Nov
- 2025 03:19:36 +0000
+ 2025 03:19:37 +0000
 Received: from CH1PEPF0000AD7A.namprd04.prod.outlook.com
- (2603:10b6:610:10e:cafe::f0) by CH0PR03CA0450.outlook.office365.com
- (2603:10b6:610:10e::28) with Microsoft SMTP Server (version=TLS1_3,
+ (2603:10b6:610:10e:cafe::64) by CH0PR03CA0441.outlook.office365.com
+ (2603:10b6:610:10e::34) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.20.9343.10 via Frontend Transport; Thu,
- 20 Nov 2025 03:19:36 +0000
+ 20 Nov 2025 03:19:37 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
@@ -64,11 +65,11 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
 Received: from satlexmb07.amd.com (165.204.84.17) by
  CH1PEPF0000AD7A.mail.protection.outlook.com (10.167.244.59) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9343.9 via Frontend Transport; Thu, 20 Nov 2025 03:19:36 +0000
+ 15.20.9343.9 via Frontend Transport; Thu, 20 Nov 2025 03:19:37 +0000
 Received: from ethanolx50f7host.amd.com (10.180.168.240) by satlexmb07.amd.com
  (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Wed, 19 Nov
- 2025 19:19:35 -0800
+ 2025 19:19:36 -0800
 From: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
 To: <linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
 	<nvdimm@lists.linux.dev>, <linux-fsdevel@vger.kernel.org>,
@@ -87,10 +88,12 @@ CC: Alison Schofield <alison.schofield@intel.com>, Vishal Verma
 	<terry.bowman@amd.com>, Robert Richter <rrichter@amd.com>, Benjamin Cheatham
 	<benjamin.cheatham@amd.com>, Zhijian Li <lizhijian@fujitsu.com>, "Borislav
  Petkov" <bp@alien8.de>, Ard Biesheuvel <ardb@kernel.org>
-Subject: [PATCH v4 0/9] dax/hmem, cxl: Coordinate Soft Reserved handling with CXL and HMEM
-Date: Thu, 20 Nov 2025 03:19:16 +0000
-Message-ID: <20251120031925.87762-1-Smita.KoralahalliChannabasappa@amd.com>
+Subject: [PATCH v4 1/9] dax/hmem, e820, resource: Defer Soft Reserved insertion until hmem is ready
+Date: Thu, 20 Nov 2025 03:19:17 +0000
+Message-ID: <20251120031925.87762-2-Smita.KoralahalliChannabasappa@amd.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20251120031925.87762-1-Smita.KoralahalliChannabasappa@amd.com>
+References: <20251120031925.87762-1-Smita.KoralahalliChannabasappa@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -102,229 +105,350 @@ X-ClientProxiedBy: satlexmb07.amd.com (10.181.42.216) To satlexmb07.amd.com
  (10.181.42.216)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH1PEPF0000AD7A:EE_|SA3PR12MB8045:EE_
-X-MS-Office365-Filtering-Correlation-Id: 95719299-ec36-4d87-287c-08de27e3a249
+X-MS-TrafficTypeDiagnostic: CH1PEPF0000AD7A:EE_|DM6PR12MB4187:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9dfcb96a-98dd-4d02-e9ff-08de27e3a2d0
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|82310400026|376014|7416014|36860700013|13003099007;
+	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|376014|7416014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?XjgXOf2PkooVS53Myaz3AQzaaVetdmG+4oSHBBcxpBNhLK3taDgKUeGlkVVs?=
- =?us-ascii?Q?nZZMtVEeoAZVDzWOIHOOL6GOQcYT0WtxFHkuLzBVkVTLJPxm6PRaOy5Q9tgy?=
- =?us-ascii?Q?qb67ivaMYOFeO2MG+ANdN5J+n/JGDYV0AJ5/UvupzFgLbJDo33C4TMCFpMPH?=
- =?us-ascii?Q?XhosANW9Zwu7iggTVLoc+in72ODDrDYSfXkZK28G3ERUV47h75ObWFGN1zCy?=
- =?us-ascii?Q?jmaP45Mx9JHJWh4czMOBUKGQkbEsoeqyXP5V/l09mkhOQiXu49la4fq3h5IX?=
- =?us-ascii?Q?oq7JRFWBYh3J/XQxV3/60sGGSOhzMj2n+k7C0xfLKkO7iRMxTqy1+Vb8mm5L?=
- =?us-ascii?Q?6z2eZjxkQq6zWrzMHlJyjrp+OeEtsW9Cbl0mVxfOQUlq9ge5V2zZdj9Y7kOV?=
- =?us-ascii?Q?CVHVa4r7vuDD+6NmdGT7jDm305j1wa7+hBnX30uoRpd3xH7WxaN6AJYuH+Ry?=
- =?us-ascii?Q?Mw46ctB2OEq172E8CNDsJUz2AHJYOHDq3P9g8vboKDKZvXQ7AfZKiClkAfpH?=
- =?us-ascii?Q?j3ZeQF85e3guO+ht+yOhLL9uX1qx49wpy/IGExrQos0YTJolVovSdHareAy6?=
- =?us-ascii?Q?CRb7+TdKxZbjHMNTgAfXB2UvUclNR6oPxsQdl6bbSQZAt2+xkfokCUkP5ROP?=
- =?us-ascii?Q?WzG+fvC/M+lIZ7xMsVw6Fp6CA4+z5BhJEANbd721/oJips7c+IH9EDR9Khtl?=
- =?us-ascii?Q?R6RGxOpmIFfHF92jQv/RYMS80OVMMKiPcpY0KMeX86dlVcY65jokchPyUfqF?=
- =?us-ascii?Q?3+YP5ozn1m5JaE7IsTPxIPLsag2UCPTeIwasI12qJV+89zUln4zxx/8OpwdM?=
- =?us-ascii?Q?Yv7i2yzSCCc1adiv5VZdJS7mzOXra9all8kB4YQE9Dnqa73O0s3rAiPcrTRg?=
- =?us-ascii?Q?sXuFb5aXSaZ3lxMoima/iB2EJfUAyLHhMe+4rX2LhT04bcqLCKwsq4lTDkSb?=
- =?us-ascii?Q?iD5oE2NH9e/JiTOVST3PnzhgJdZlj1J6m9kvZfobUZXdyyM82sgnLJRvQKkK?=
- =?us-ascii?Q?nA9LFK9NwG7ZXWmZdc4VUSJtPlkxy0BsEFeoG6Qy57znpbjrJvYb1IOENYX0?=
- =?us-ascii?Q?TvqZhq7PxUaDbfvlUtOy9Ike+JogwoS/cBkvsSGobA8yXJrNaZNhqZU+ET5s?=
- =?us-ascii?Q?FvHi14F5lKStZIIomh0FrHTqC9HVRYK0+P5zFHa2xM/SjzXUs1Uvy3AwKIME?=
- =?us-ascii?Q?b2G4YYF2Az5PKOam756bxz6rGFStLdzOvQR55EqJy5pC4Xw3CHMHP7Os7xIT?=
- =?us-ascii?Q?LRsOnPZYig+yJrD+7vorhPkXik4klqg8RNWY3jGpjXsARqy5ppYnzOLM8BEm?=
- =?us-ascii?Q?w7J2VTJFGyokHqqPWKDnsJPYvd8Sl6MTgv31rJ4xD34DQGS2jAUe1W64s5Rb?=
- =?us-ascii?Q?25Lyp6QxiqkZ4djGc6j/j+WZTgHGXeftK/6ZkHvmzF0UCCnh2NnpeFFUReVe?=
- =?us-ascii?Q?CRikTs204U1taCZxt+6pqtmMf7bvDfn7S3FSMb6XbPJXiZYBskzhSlkXrilo?=
- =?us-ascii?Q?QFo6UvgSCkknsocLSsp5fQh91j7IlrQuxqkxjpuWdY0EJJlE4W+8+C3VYtmu?=
- =?us-ascii?Q?hnK11MD1SC8sHrlHWxI=3D?=
+	=?us-ascii?Q?Os3U+mGKs4LdhYCNM2+eeFLN1kHciZeuiSa9RNVFhz/Wxb+I5/r9VPO96fHh?=
+ =?us-ascii?Q?k9d1ZPhF8327lJ1ihxLpDGsMulztcr7hjM5rImNsXNaPBRrk1MrG3ugt3CBe?=
+ =?us-ascii?Q?/rik08PMmglub2BjPPGUE9+93MOdrPdwm1piyX4582N54YbP82QWL2CGVi6d?=
+ =?us-ascii?Q?at9m+9rpOSoUMJLxxCvvPDjzI8KmxHkT5KvvDctmGWr3V/sQO3SyfyLpcfqn?=
+ =?us-ascii?Q?Oy3GuIKcySrCT2s6WVsUuhgWaITKOSudZl2aFidRmdBRInv4ktjdfXMTQblI?=
+ =?us-ascii?Q?YMdBs6fy8+i2mVWM5nwPO9Cieag0MBBUomqQfuW79M1R/APx4g05iAqg3JTQ?=
+ =?us-ascii?Q?iVEWCMpeTdJxhRPeKyCHNur4OPzA1omnPBuQmvk113y8M9TEXTDFlalYoYm8?=
+ =?us-ascii?Q?dwPvne2SBq1yeAagihZwUj4uuPo8TdBFloOr2eDrKTBDgLpveMRYJlDjTQs/?=
+ =?us-ascii?Q?3/FE3+/VL99MvE4pm9Q+AscSYTtBRhL/S+DsGIWgxr1Prv+Mjw2kjsRXd1rZ?=
+ =?us-ascii?Q?Wn7phA/k6OpJAb/0vOkttKvYHLYmpYCJsx3lM/qwDd8ej/XNZpDyH8YI57eh?=
+ =?us-ascii?Q?AjO9f5z6ueBYCdrxjFHlH0WmoUOzFryDZoDZIct1hKD5Oss17yQzBT9vRt81?=
+ =?us-ascii?Q?HD3bwxxaTsqcW3gvRSh04l7iwFnYBfPpWqFJMWiQscWbKaH7TOE6SH23LR63?=
+ =?us-ascii?Q?LoHNizk0safrLAhb/GR8Aa07ptZ6/uwPagCxOkozH8D0s8IzARfFof7KKP8y?=
+ =?us-ascii?Q?cOlghw6u+pP78w1crwk50/wCFBLNw6frc2OWMjWUvX/txOD4OntdkT26DWk1?=
+ =?us-ascii?Q?BJmOUmJV7OgY0v9LrrzgqwIoL/ZJSvOVtfkVgA1qbDuKzSVyOmAuwY6OfeSh?=
+ =?us-ascii?Q?pLj0WiLVTEi/QlpGZuRCDr2HB4aE23zunRr4DSaK5HS3ZZaW8NTH++KhF0hr?=
+ =?us-ascii?Q?r88B92pqF7lS5jvcElJyiXet5eho9hdN3mEs3cZPF+kERnLAP+ygDb5Ney3S?=
+ =?us-ascii?Q?JbhC9xjeN9Z3dC0OFe6RfcXsDv3rEC5RL6EYoilQoKsUB1spH/5fa12bJW95?=
+ =?us-ascii?Q?3Si6Ls9igRhbzMTfPhWSLMzwPy48WKJFTTEtwCfMLRSxonbJEZO4ZyGhkrTJ?=
+ =?us-ascii?Q?IHdjtwFuMkjw1W2SNWH4lpsMSUV7IXX96aVVLseor6ad8zSHCFHqIffZ5d4X?=
+ =?us-ascii?Q?bpxYl88YhgF+0OmD+IoO7IcG5TP4Y95YvJpHkcuqOz9lJt+Y6+Nwosmd3YfK?=
+ =?us-ascii?Q?tXJH/0/YOTB7ClEEFOovTyg9gBlptE7uApPSbKIMmGjZy1bBlt493fhOMOiz?=
+ =?us-ascii?Q?zPpzJBBlhWG4C8Pi4aPTWE9u3QNm0TPNdKKRyCxV2uQxsewy12YAcoFmP8ch?=
+ =?us-ascii?Q?dOFdiT8RH6INDfw8MXb+RATjPE+ofWlRh0S1SfqX22GnoFZRTtw5C0o0lVfK?=
+ =?us-ascii?Q?yJhQy75VF96xEklKm3YYAl0/YgKPkkcZSsRhgdCTKlpw/uXiDD4ZNJBaomFy?=
+ =?us-ascii?Q?I1TQ1AfcBAVRoyjvQMDQYrmOjl/vgJQH+AQnbL8o5VO9XS5YEEHtwm0WJ+fY?=
+ =?us-ascii?Q?TGIIbYpcUaKUKmB2TEs=3D?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(376014)(7416014)(36860700013)(13003099007);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014)(7416014);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Nov 2025 03:19:36.6609
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Nov 2025 03:19:37.5522
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 95719299-ec36-4d87-287c-08de27e3a249
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9dfcb96a-98dd-4d02-e9ff-08de27e3a2d0
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
 	CH1PEPF0000AD7A.namprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB8045
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4187
 
-This series aims to address long-standing conflicts between HMEM and
-CXL when handling Soft Reserved memory ranges.
+From: Dan Williams <dan.j.williams@intel.com>
 
-Reworked from Dan's patch:
-https://git.kernel.org/pub/scm/linux/kernel/git/cxl/cxl.git/patch/?id=ab70c6227ee6165a562c215d9dcb4a1c55620d5d
+Insert Soft Reserved memory into a dedicated soft_reserve_resource tree
+instead of the iomem_resource tree at boot. Delay publishing these ranges
+into the iomem hierarchy until ownership is resolved and the HMEM path
+is ready to consume them.
 
-Previous work:
-https://lore.kernel.org/all/20250715180407.47426-1-Smita.KoralahalliChannabasappa@amd.com/
+Publishing Soft Reserved ranges into iomem too early conflicts with CXL
+hotplug and prevents region assembly when those ranges overlap CXL
+windows.
 
-Link to v3:
-https://lore.kernel.org/all/20250930044757.214798-1-Smita.KoralahalliChannabasappa@amd.com
+Follow up patches will reinsert Soft Reserved ranges into iomem after CXL
+window publication is complete and HMEM is ready to claim the memory. This
+provides a cleaner handoff between EFI-defined memory ranges and CXL
+resource management without trimming or deleting resources later.
 
-This series should be applied on top of:
-"214291cbaace: acpi/hmat: Fix lockdep warning for hmem_register_resource()"
-and is based on:
-base-commit: 211ddde0823f1442e4ad052a2f30f050145ccada
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Signed-off-by: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
+---
+ arch/x86/kernel/e820.c    |  2 +-
+ drivers/cxl/acpi.c        |  2 +-
+ drivers/dax/hmem/device.c |  4 +-
+ drivers/dax/hmem/hmem.c   |  7 ++-
+ include/linux/ioport.h    | 13 +++++-
+ kernel/resource.c         | 92 +++++++++++++++++++++++++++++++++------
+ 6 files changed, 100 insertions(+), 20 deletions(-)
 
-I initially tried picking up the three probe ordering patches from v20/v21
-of Type 2 support, but I hit a NULL pointer dereference in
-devm_cxl_add_memdev() and cycle dependency with all patches so I left
-them out for now. With my current series rebased on 6.18-rc2 plus
-214291cbaace, probe ordering behaves correctly on AMD systems and I have
-verified the scenarios mentioned below. I can pull those three patches
-back in for a future revision once the failures are sorted out.
-
-Probe order patches of interest:
-cxl/mem: refactor memdev allocation
-cxl/mem: Arrange for always-synchronous memdev attach
-cxl/port: Arrange for always synchronous endpoint attach
-
-[1] Hotplug looks okay. After offlining the memory I can tear down the
-regions and recreate it back if CXL owns entire SR range as Soft Reserved
-is gone. dax_cxl creates dax devices and onlines memory.
-850000000-284fffffff : CXL Window 0
-  850000000-284fffffff : region0
-    850000000-284fffffff : dax0.0
-      850000000-284fffffff : System RAM (kmem)
-
-[2] With CONFIG_CXL_REGION disabled, all the resources are handled by
-HMEM. Soft Reserved range shows up in /proc/iomem, no regions come up
-and dax devices are created from HMEM.
-850000000-284fffffff : CXL Window 0
-  850000000-284fffffff : Soft Reserved
-    850000000-284fffffff : dax0.0
-      850000000-284fffffff : System RAM (kmem)
-
-[3] Region assembly failures also behave okay and work same as [2].
-
-Before:
-2850000000-484fffffff : Soft Reserved
-  2850000000-484fffffff : CXL Window 1
-    2850000000-484fffffff : dax4.0
-      2850000000-484fffffff : System RAM (kmem)
-
-After tearing down dax4.0 and creating it back:
-
-Logs:
-[  547.847764] unregister_dax_mapping:  mapping0: unregister_dax_mapping
-[  547.855000] trim_dev_dax_range: dax dax4.0: delete range[0]: 0x2850000000:0x484fffffff
-[  622.474580] alloc_dev_dax_range: dax dax4.1: alloc range[0]: 0x0000002850000000:0x000000484fffffff
-[  752.766194] Fallback order for Node 0: 0 1
-[  752.766199] Fallback order for Node 1: 1 0
-[  752.766200] Built 2 zonelists, mobility grouping on.  Total pages: 8096220
-[  752.783234] Policy zone: Normal
-[  752.808604] Demotion targets for Node 0: preferred: 1, fallback: 1
-[  752.815509] Demotion targets for Node 1: null
-
-After:
-2850000000-484fffffff : Soft Reserved
-  2850000000-484fffffff : CXL Window 1
-    2850000000-484fffffff : dax4.1
-      2850000000-484fffffff : System RAM (kmem)
-
-[4] A small hack to tear down the fully assembled and probed region
-(i.e region in committed state) for range 850000000-284fffffff.
-This is to test the region teardown path for regions which don't
-fully cover the Soft Reserved range.
-
-850000000-284fffffff : Soft Reserved
-  850000000-284fffffff : CXL Window 0
-    850000000-284fffffff : dax5.0
-      850000000-284fffffff : System RAM (kmem)
-2850000000-484fffffff : CXL Window 1
-  2850000000-484fffffff : region1
-    2850000000-484fffffff : dax1.0
-      2850000000-484fffffff : System RAM (kmem)
-.4850000000-684fffffff : CXL Window 2
-  4850000000-684fffffff : region2
-    4850000000-684fffffff : dax2.0
-      4850000000-684fffffff : System RAM (kmem)
-
-daxctl list -R -u
-[
-  {
-    "path":"\/platform\/ACPI0017:00\/root0\/decoder0.1\/region1\/dax_region1",
-    "id":1,
-    "size":"128.00 GiB (137.44 GB)",
-    "align":2097152
-  },
-  {
-    "path":"\/platform\/hmem.5",
-    "id":5,
-    "size":"128.00 GiB (137.44 GB)",
-    "align":2097152
-  },
-  {
-    "path":"\/platform\/ACPI0017:00\/root0\/decoder0.2\/region2\/dax_region2",
-    "id":2,
-    "size":"128.00 GiB (137.44 GB)",
-    "align":2097152
-  }
-]
-
-I couldn't test multiple regions under same Soft Reserved range
-with/without contiguous mapping due to limiting BIOS support. Hopefully
-that works.
-
-v4 updates:
-- No changes patches 1-3.
-- New patches 4-7.
-- handle_deferred_cxl() has been enhanced to handle case where CXL
-regions do not contiguously and fully cover Soft Reserved ranges.
-- Support added to defer cxl_dax registration.
-- Support added to teardown cxl regions.
-
-v3 updates:
- - Fixed two "From".
-
-v2 updates:
- - Removed conditional check on CONFIG_EFI_SOFT_RESERVE as dax_hmem
-   depends on CONFIG_EFI_SOFT_RESERVE. (Zhijian)
- - Added TODO note. (Zhijian)
- - Included region_intersects_soft_reserve() inside CONFIG_EFI_SOFT_RESERVE
-   conditional check. (Zhijian)
- - insert_resource_late() -> insert_resource_expand_to_fit() and
-   __insert_resource_expand_to_fit() replacement. (Boris)
- - Fixed Co-developed and Signed-off by. (Dan)
- - Combined 2/6 and 3/6 into a single patch. (Zhijian).
- - Skip local variable in remove_soft_reserved. (Jonathan)
- - Drop kfree with __free(). (Jonathan)
- - return 0 -> return dev_add_action_or_reset(host...) (Jonathan)
- - Dropped 6/6.
- - Reviewed-by tags (Dave, Jonathan)
-
-Dan Williams (4):
-  dax/hmem, e820, resource: Defer Soft Reserved insertion until hmem is
-    ready
-  dax/hmem: Request cxl_acpi and cxl_pci before walking Soft Reserved
-    ranges
-  dax/hmem: Gate Soft Reserved deferral on DEV_DAX_CXL
-  dax/hmem: Defer handling of Soft Reserved ranges that overlap CXL
-    windows
-
-Smita Koralahalli (5):
-  cxl/region, dax/hmem: Arbitrate Soft Reserved ownership with
-    cxl_regions_fully_map()
-  cxl/region: Add register_dax flag to control probe-time devdax setup
-  cxl/region, dax/hmem: Register devdax only when CXL owns Soft Reserved
-    span
-  cxl/region, dax/hmem: Tear down CXL regions when HMEM reclaims Soft
-    Reserved
-  dax/hmem: Reintroduce Soft Reserved ranges back into the iomem tree
-
- arch/x86/kernel/e820.c    |   2 +-
- drivers/cxl/acpi.c        |   2 +-
- drivers/cxl/core/region.c | 181 ++++++++++++++++++++++++++++++++++++--
- drivers/cxl/cxl.h         |  17 ++++
- drivers/dax/Kconfig       |   2 +
- drivers/dax/hmem/device.c |   4 +-
- drivers/dax/hmem/hmem.c   | 137 ++++++++++++++++++++++++++---
- include/linux/ioport.h    |  13 ++-
- kernel/resource.c         |  92 ++++++++++++++++---
- 9 files changed, 415 insertions(+), 35 deletions(-)
-
-base-commit: 211ddde0823f1442e4ad052a2f30f050145ccada
+diff --git a/arch/x86/kernel/e820.c b/arch/x86/kernel/e820.c
+index c3acbd26408b..c32f144f0e4a 100644
+--- a/arch/x86/kernel/e820.c
++++ b/arch/x86/kernel/e820.c
+@@ -1153,7 +1153,7 @@ void __init e820__reserve_resources_late(void)
+ 	res = e820_res;
+ 	for (i = 0; i < e820_table->nr_entries; i++) {
+ 		if (!res->parent && res->end)
+-			insert_resource_expand_to_fit(&iomem_resource, res);
++			insert_resource_expand_to_fit(res);
+ 		res++;
+ 	}
+ 
+diff --git a/drivers/cxl/acpi.c b/drivers/cxl/acpi.c
+index bd2e282ca93a..b37858f797be 100644
+--- a/drivers/cxl/acpi.c
++++ b/drivers/cxl/acpi.c
+@@ -847,7 +847,7 @@ static int add_cxl_resources(struct resource *cxl_res)
+ 		 */
+ 		cxl_set_public_resource(res, new);
+ 
+-		insert_resource_expand_to_fit(&iomem_resource, new);
++		__insert_resource_expand_to_fit(&iomem_resource, new);
+ 
+ 		next = res->sibling;
+ 		while (next && resource_overlaps(new, next)) {
+diff --git a/drivers/dax/hmem/device.c b/drivers/dax/hmem/device.c
+index f9e1a76a04a9..22732b729017 100644
+--- a/drivers/dax/hmem/device.c
++++ b/drivers/dax/hmem/device.c
+@@ -83,8 +83,8 @@ static __init int hmem_register_one(struct resource *res, void *data)
+ 
+ static __init int hmem_init(void)
+ {
+-	walk_iomem_res_desc(IORES_DESC_SOFT_RESERVED,
+-			IORESOURCE_MEM, 0, -1, NULL, hmem_register_one);
++	walk_soft_reserve_res_desc(IORES_DESC_SOFT_RESERVED, IORESOURCE_MEM, 0,
++				   -1, NULL, hmem_register_one);
+ 	return 0;
+ }
+ 
+diff --git a/drivers/dax/hmem/hmem.c b/drivers/dax/hmem/hmem.c
+index c18451a37e4f..48f4642f4bb8 100644
+--- a/drivers/dax/hmem/hmem.c
++++ b/drivers/dax/hmem/hmem.c
+@@ -73,11 +73,14 @@ static int hmem_register_device(struct device *host, int target_nid,
+ 		return 0;
+ 	}
+ 
+-	rc = region_intersects(res->start, resource_size(res), IORESOURCE_MEM,
+-			       IORES_DESC_SOFT_RESERVED);
++	rc = region_intersects_soft_reserve(res->start, resource_size(res),
++					    IORESOURCE_MEM,
++					    IORES_DESC_SOFT_RESERVED);
+ 	if (rc != REGION_INTERSECTS)
+ 		return 0;
+ 
++	/* TODO: Add Soft-Reserved memory back to iomem */
++
+ 	id = memregion_alloc(GFP_KERNEL);
+ 	if (id < 0) {
+ 		dev_err(host, "memregion allocation failure for %pr\n", res);
+diff --git a/include/linux/ioport.h b/include/linux/ioport.h
+index e8b2d6aa4013..e20226870a81 100644
+--- a/include/linux/ioport.h
++++ b/include/linux/ioport.h
+@@ -232,6 +232,9 @@ struct resource_constraint {
+ /* PC/ISA/whatever - the normal PC address spaces: IO and memory */
+ extern struct resource ioport_resource;
+ extern struct resource iomem_resource;
++#ifdef CONFIG_EFI_SOFT_RESERVE
++extern struct resource soft_reserve_resource;
++#endif
+ 
+ extern struct resource *request_resource_conflict(struct resource *root, struct resource *new);
+ extern int request_resource(struct resource *root, struct resource *new);
+@@ -242,7 +245,8 @@ extern void reserve_region_with_split(struct resource *root,
+ 			     const char *name);
+ extern struct resource *insert_resource_conflict(struct resource *parent, struct resource *new);
+ extern int insert_resource(struct resource *parent, struct resource *new);
+-extern void insert_resource_expand_to_fit(struct resource *root, struct resource *new);
++extern void __insert_resource_expand_to_fit(struct resource *root, struct resource *new);
++extern void insert_resource_expand_to_fit(struct resource *new);
+ extern int remove_resource(struct resource *old);
+ extern void arch_remove_reservations(struct resource *avail);
+ extern int allocate_resource(struct resource *root, struct resource *new,
+@@ -409,6 +413,13 @@ walk_system_ram_res_rev(u64 start, u64 end, void *arg,
+ extern int
+ walk_iomem_res_desc(unsigned long desc, unsigned long flags, u64 start, u64 end,
+ 		    void *arg, int (*func)(struct resource *, void *));
++extern int
++walk_soft_reserve_res_desc(unsigned long desc, unsigned long flags,
++			   u64 start, u64 end, void *arg,
++			   int (*func)(struct resource *, void *));
++extern int
++region_intersects_soft_reserve(resource_size_t start, size_t size,
++			       unsigned long flags, unsigned long desc);
+ 
+ struct resource *devm_request_free_mem_region(struct device *dev,
+ 		struct resource *base, unsigned long size);
+diff --git a/kernel/resource.c b/kernel/resource.c
+index b9fa2a4ce089..208eaafcc681 100644
+--- a/kernel/resource.c
++++ b/kernel/resource.c
+@@ -321,13 +321,14 @@ static bool is_type_match(struct resource *p, unsigned long flags, unsigned long
+ }
+ 
+ /**
+- * find_next_iomem_res - Finds the lowest iomem resource that covers part of
+- *			 [@start..@end].
++ * find_next_res - Finds the lowest resource that covers part of
++ *		   [@start..@end].
+  *
+  * If a resource is found, returns 0 and @*res is overwritten with the part
+  * of the resource that's within [@start..@end]; if none is found, returns
+  * -ENODEV.  Returns -EINVAL for invalid parameters.
+  *
++ * @parent:	resource tree root to search
+  * @start:	start address of the resource searched for
+  * @end:	end address of same resource
+  * @flags:	flags which the resource must have
+@@ -337,9 +338,9 @@ static bool is_type_match(struct resource *p, unsigned long flags, unsigned long
+  * The caller must specify @start, @end, @flags, and @desc
+  * (which may be IORES_DESC_NONE).
+  */
+-static int find_next_iomem_res(resource_size_t start, resource_size_t end,
+-			       unsigned long flags, unsigned long desc,
+-			       struct resource *res)
++static int find_next_res(struct resource *parent, resource_size_t start,
++			 resource_size_t end, unsigned long flags,
++			 unsigned long desc, struct resource *res)
+ {
+ 	struct resource *p;
+ 
+@@ -351,7 +352,7 @@ static int find_next_iomem_res(resource_size_t start, resource_size_t end,
+ 
+ 	read_lock(&resource_lock);
+ 
+-	for_each_resource(&iomem_resource, p, false) {
++	for_each_resource(parent, p, false) {
+ 		/* If we passed the resource we are looking for, stop */
+ 		if (p->start > end) {
+ 			p = NULL;
+@@ -382,16 +383,23 @@ static int find_next_iomem_res(resource_size_t start, resource_size_t end,
+ 	return p ? 0 : -ENODEV;
+ }
+ 
+-static int __walk_iomem_res_desc(resource_size_t start, resource_size_t end,
+-				 unsigned long flags, unsigned long desc,
+-				 void *arg,
+-				 int (*func)(struct resource *, void *))
++static int find_next_iomem_res(resource_size_t start, resource_size_t end,
++			       unsigned long flags, unsigned long desc,
++			       struct resource *res)
++{
++	return find_next_res(&iomem_resource, start, end, flags, desc, res);
++}
++
++static int walk_res_desc(struct resource *parent, resource_size_t start,
++			 resource_size_t end, unsigned long flags,
++			 unsigned long desc, void *arg,
++			 int (*func)(struct resource *, void *))
+ {
+ 	struct resource res;
+ 	int ret = -EINVAL;
+ 
+ 	while (start < end &&
+-	       !find_next_iomem_res(start, end, flags, desc, &res)) {
++	       !find_next_res(parent, start, end, flags, desc, &res)) {
+ 		ret = (*func)(&res, arg);
+ 		if (ret)
+ 			break;
+@@ -402,6 +410,15 @@ static int __walk_iomem_res_desc(resource_size_t start, resource_size_t end,
+ 	return ret;
+ }
+ 
++static int __walk_iomem_res_desc(resource_size_t start, resource_size_t end,
++				 unsigned long flags, unsigned long desc,
++				 void *arg,
++				 int (*func)(struct resource *, void *))
++{
++	return walk_res_desc(&iomem_resource, start, end, flags, desc, arg, func);
++}
++
++
+ /**
+  * walk_iomem_res_desc - Walks through iomem resources and calls func()
+  *			 with matching resource ranges.
+@@ -426,6 +443,26 @@ int walk_iomem_res_desc(unsigned long desc, unsigned long flags, u64 start,
+ }
+ EXPORT_SYMBOL_GPL(walk_iomem_res_desc);
+ 
++#ifdef CONFIG_EFI_SOFT_RESERVE
++struct resource soft_reserve_resource = {
++	.name	= "Soft Reserved",
++	.start	= 0,
++	.end	= -1,
++	.desc	= IORES_DESC_SOFT_RESERVED,
++	.flags	= IORESOURCE_MEM,
++};
++EXPORT_SYMBOL_GPL(soft_reserve_resource);
++
++int walk_soft_reserve_res_desc(unsigned long desc, unsigned long flags,
++			       u64 start, u64 end, void *arg,
++			       int (*func)(struct resource *, void *))
++{
++	return walk_res_desc(&soft_reserve_resource, start, end, flags, desc,
++			     arg, func);
++}
++EXPORT_SYMBOL_GPL(walk_soft_reserve_res_desc);
++#endif
++
+ /*
+  * This function calls the @func callback against all memory ranges of type
+  * System RAM which are marked as IORESOURCE_SYSTEM_RAM and IORESOUCE_BUSY.
+@@ -648,6 +685,22 @@ int region_intersects(resource_size_t start, size_t size, unsigned long flags,
+ }
+ EXPORT_SYMBOL_GPL(region_intersects);
+ 
++#ifdef CONFIG_EFI_SOFT_RESERVE
++int region_intersects_soft_reserve(resource_size_t start, size_t size,
++				   unsigned long flags, unsigned long desc)
++{
++	int ret;
++
++	read_lock(&resource_lock);
++	ret = __region_intersects(&soft_reserve_resource, start, size, flags,
++				  desc);
++	read_unlock(&resource_lock);
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(region_intersects_soft_reserve);
++#endif
++
+ void __weak arch_remove_reservations(struct resource *avail)
+ {
+ }
+@@ -966,7 +1019,7 @@ EXPORT_SYMBOL_GPL(insert_resource);
+  * Insert a resource into the resource tree, possibly expanding it in order
+  * to make it encompass any conflicting resources.
+  */
+-void insert_resource_expand_to_fit(struct resource *root, struct resource *new)
++void __insert_resource_expand_to_fit(struct resource *root, struct resource *new)
+ {
+ 	if (new->parent)
+ 		return;
+@@ -997,7 +1050,20 @@ void insert_resource_expand_to_fit(struct resource *root, struct resource *new)
+  * to use this interface. The former are built-in and only the latter,
+  * CXL, is a module.
+  */
+-EXPORT_SYMBOL_NS_GPL(insert_resource_expand_to_fit, "CXL");
++EXPORT_SYMBOL_NS_GPL(__insert_resource_expand_to_fit, "CXL");
++
++void insert_resource_expand_to_fit(struct resource *new)
++{
++	struct resource *root = &iomem_resource;
++
++#ifdef CONFIG_EFI_SOFT_RESERVE
++	if (new->desc == IORES_DESC_SOFT_RESERVED)
++		root = &soft_reserve_resource;
++#endif
++
++	__insert_resource_expand_to_fit(root, new);
++}
++EXPORT_SYMBOL_GPL(insert_resource_expand_to_fit);
+ 
+ /**
+  * remove_resource - Remove a resource in the resource tree
 -- 
 2.17.1
 
