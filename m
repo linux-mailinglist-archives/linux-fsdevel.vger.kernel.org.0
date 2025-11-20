@@ -1,236 +1,398 @@
-Return-Path: <linux-fsdevel+bounces-69175-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69176-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53822C71DD8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Nov 2025 03:34:42 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 528FBC71DF0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Nov 2025 03:39:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by tor.lore.kernel.org (Postfix) with ESMTPS id 571C828E0F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Nov 2025 02:34:41 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BDF2B34CCF2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Nov 2025 02:39:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E3042DF12F;
-	Thu, 20 Nov 2025 02:34:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48F682EC56F;
+	Thu, 20 Nov 2025 02:39:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pa8H596M"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7F0028725A;
-	Thu, 20 Nov 2025 02:34:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+Received: from mail-yx1-f41.google.com (mail-yx1-f41.google.com [74.125.224.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 298672C15B8
+	for <linux-fsdevel@vger.kernel.org>; Thu, 20 Nov 2025 02:39:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763606065; cv=none; b=jYwr2+6wEACyI9/NLUcaLmsUifXbBN5ExkpJTnAy7p3OElohJhoQMm26cI68bu9bFpRCp+a2qJE05cD3EkQfWAaLYrFnQX9nPOuUlYG1HN6FbPXiY5dljp4orqw4Wi8XTBEnAx1IteB5BDMd3SMc11Ctbzlrxbh6eybJtMISwvI=
+	t=1763606385; cv=none; b=oramILPYuDLBzl2ncN/kCi5+Lck/AiycQOZtfW07RNwgKnb9ubSzYXcqmyGUKj+KK8ESGC5/Xxj1TEeE7mGY0xGbXj/OL81MBhOUEzl+3ExSHnSmpXjEPiIA5Ggbsx7SdjisKDnS/qoFttfO9xpoVKJlSPQzq0vm2Uk9L/sWrj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763606065; c=relaxed/simple;
-	bh=/EG5zoBd9EOTX77N44tGF7qVruGgiPwa1ndxkUQivj4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PgHiAhW590Z/lBWCgyPPXJGPgD4WHwVEQ9rqpjRujQgMNOSi3o1ixJLMv9o3Sjhn5kEJnb04Sr4jvxstHh0AtvAVvjQo1mZ7HoYLUUhqDYLZNOdP2M0iiWxT/7zFNcP+MCglsJoU5B4KlbeLJBVaxEnjTyWB8nFRgOARRSGmEkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-c2dff70000001609-2b-691e7e2bd269
-Date: Thu, 20 Nov 2025 11:34:13 +0900
-From: Byungchul Park <byungchul@sk.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: linux-kernel@vger.kernel.org, kernel_team@skhynix.com,
-	torvalds@linux-foundation.org, damien.lemoal@opensource.wdc.com,
-	linux-ide@vger.kernel.org, adilger.kernel@dilger.ca,
-	linux-ext4@vger.kernel.org, mingo@redhat.com, peterz@infradead.org,
-	will@kernel.org, tglx@linutronix.de, rostedt@goodmis.org,
-	joel@joelfernandes.org, sashal@kernel.org, daniel.vetter@ffwll.ch,
-	duyuyang@gmail.com, johannes.berg@intel.com, tj@kernel.org,
-	tytso@mit.edu, david@fromorbit.com, amir73il@gmail.com,
-	gregkh@linuxfoundation.org, kernel-team@lge.com, linux-mm@kvack.org,
-	akpm@linux-foundation.org, mhocko@kernel.org, minchan@kernel.org,
-	hannes@cmpxchg.org, vdavydov.dev@gmail.com, sj@kernel.org,
-	jglisse@redhat.com, dennis@kernel.org, cl@linux.com,
-	penberg@kernel.org, rientjes@google.com, vbabka@suse.cz,
-	ngupta@vflare.org, linux-block@vger.kernel.org,
-	josef@toxicpanda.com, linux-fsdevel@vger.kernel.org, jack@suse.cz,
-	jlayton@kernel.org, dan.j.williams@intel.com, hch@infradead.org,
-	djwong@kernel.org, dri-devel@lists.freedesktop.org,
-	rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com,
-	hamohammed.sa@gmail.com, harry.yoo@oracle.com,
-	chris.p.wilson@intel.com, gwan-gyeong.mun@intel.com,
-	max.byungchul.park@gmail.com, boqun.feng@gmail.com,
-	longman@redhat.com, yunseong.kim@ericsson.com, ysk@kzalloc.com,
-	yeoreum.yun@arm.com, netdev@vger.kernel.org,
-	matthew.brost@intel.com, her0gyugyu@gmail.com, corbet@lwn.net,
-	catalin.marinas@arm.com, bp@alien8.de, dave.hansen@linux.intel.com,
-	x86@kernel.org, hpa@zytor.com, luto@kernel.org,
-	sumit.semwal@linaro.org, gustavo@padovan.org,
-	christian.koenig@amd.com, andi.shyti@kernel.org, arnd@arndb.de,
-	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
-	rppt@kernel.org, surenb@google.com, mcgrof@kernel.org,
-	petr.pavlu@suse.com, da.gomez@kernel.org, samitolvanen@google.com,
-	paulmck@kernel.org, frederic@kernel.org, neeraj.upadhyay@kernel.org,
-	joelagnelf@nvidia.com, josh@joshtriplett.org, urezki@gmail.com,
-	mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
-	qiang.zhang@linux.dev, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	bsegall@google.com, mgorman@suse.de, vschneid@redhat.com,
-	chuck.lever@oracle.com, neil@brown.name, okorniev@redhat.com,
-	Dai.Ngo@oracle.com, tom@talpey.com, trondmy@kernel.org,
-	anna@kernel.org, kees@kernel.org, bigeasy@linutronix.de,
-	clrkwllms@kernel.org, mark.rutland@arm.com, ada.coupriediaz@arm.com,
-	kristina.martsenko@arm.com, wangkefeng.wang@huawei.com,
-	broonie@kernel.org, kevin.brodsky@arm.com, dwmw@amazon.co.uk,
-	shakeel.butt@linux.dev, ast@kernel.org, ziy@nvidia.com,
-	yuzhao@google.com, baolin.wang@linux.alibaba.com,
-	usamaarif642@gmail.com, joel.granados@kernel.org,
-	richard.weiyang@gmail.com, geert+renesas@glider.be,
-	tim.c.chen@linux.intel.com, linux@treblig.org,
-	alexander.shishkin@linux.intel.com, lillian@star-ark.net,
-	chenhuacai@kernel.org, francesco@valla.it,
-	guoweikang.kernel@gmail.com, link@vivo.com, jpoimboe@kernel.org,
-	masahiroy@kernel.org, brauner@kernel.org,
-	thomas.weissschuh@linutronix.de, oleg@redhat.com, mjguzik@gmail.com,
-	andrii@kernel.org, wangfushuai@baidu.com, linux-doc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
-	linaro-mm-sig@lists.linaro.org, linux-i2c@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-modules@vger.kernel.org,
-	rcu@vger.kernel.org, linux-nfs@vger.kernel.org,
-	linux-rt-devel@lists.linux.dev
-Subject: Re: [PATCH v17 44/47] dept: introduce APIs to set page usage and use
- subclasses_evt for the usage
-Message-ID: <20251120023413.GA27403@system.software.com>
-References: <20251002081247.51255-1-byungchul@sk.com>
- <20251002081247.51255-45-byungchul@sk.com>
- <20251119105312.GA11582@system.software.com>
- <aR3WHf9QZ_dizNun@casper.infradead.org>
- <20251120020909.GA78650@system.software.com>
+	s=arc-20240116; t=1763606385; c=relaxed/simple;
+	bh=a0D237kTvqSy7G3B/ggbMldWsTQ5jNT9DYm7SEqR+4Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gS4s6zYCZiUcB4GPMYJys7X5u7YFW//KLGmwaU156xXpZrPLVxSQBJSTq8jopgDlXua+pPJPvjulTWRpgL9llGf6sOAP7NzcJLxlh0IUviFNUaXEihfcHUFIDPMCvA0LTdDR+JsxcPzC5Xa8hTVgtVcL9MZUxgJBaHjotT2kgjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pa8H596M; arc=none smtp.client-ip=74.125.224.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yx1-f41.google.com with SMTP id 956f58d0204a3-6420c0cf4abso293431d50.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Nov 2025 18:39:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1763606383; x=1764211183; darn=vger.kernel.org;
+        h=in-reply-to:autocrypt:from:content-language:references:cc:to
+         :subject:user-agent:mime-version:date:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=p/BGlbnjlK2xDtSVf8eh0jaXQUCtUbkhDDh5/hXYEJQ=;
+        b=Pa8H596MjqDHZ7w/4/RAqbyZEu5/jmzrDTYvOijLIp4N+/slgMO+esbfuu7cwq/4y7
+         HMdN1cOsyMek9MaG2ECnqmAVuG6aOxGpO84R4Cl0D0bDLA7G+XXT67lyNFX4Cdh/Zl3r
+         8Fod67eQb7/kFRDjtqaUOfct+RTHT2KJAnatM6c5igXcOXs9lgKdK1lzcR3r9p2hsQi5
+         5XJCBk647MSAD/mi8refomJqKxnG5nMaKL2gxcAskiia3w3XzHXcNb2Eol1Rsoywb7TL
+         s9iexyh8iGThMbiiHOaGJ71QLrltD6nu6X5vJivJzuy6PwlP+53norpwZehfxvjO/rts
+         F7JQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763606383; x=1764211183;
+        h=in-reply-to:autocrypt:from:content-language:references:cc:to
+         :subject:user-agent:mime-version:date:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=p/BGlbnjlK2xDtSVf8eh0jaXQUCtUbkhDDh5/hXYEJQ=;
+        b=L+/XmosWx0Tvpt1yX2jWl8NpccmFVpON/TX5mjUyBz7y83CWE3VFfGR7KFvwjsLjxL
+         GMBaxHT+Ru4SqQyXfFxSO+cMotm3AXkgOP27xruzgjapJD/PqD53hg3rIv4+TRaOdnka
+         oOxU/+ZPjTuxTk1Se7LB5xdi/2kZo0eg5svMC0rlr0n8SQnqNzUiiHt7WgwNtDQ48tBu
+         sWFXYa2kHdmag87dgRBi5RPCTLhLKS86wiZ5nSGo1MWCBlLv+p2VACVjHhsuNNY32v0n
+         b4w9U7a0cY0UBUJRkE6bzVHmNsxX8uuCSIDcOyljgKRdPUfNshYU7a4gJJksVubqF07X
+         wNzg==
+X-Gm-Message-State: AOJu0YwBDRZUrPKAKcS8b68iUUlJvw/ypy2QebXldZmxXN3/GwsaTThb
+	hhpi9sgVSl+6FZljUYWU8iOplEaxqz87wyw+5UayOYB6jm30mjpyK+Lt
+X-Gm-Gg: ASbGncsmErxrHLWiV9znIcT0Vl3eyUjFuvDFb9ixBTrQNicMhm4WwVrs+hRAe3I7NaV
+	S0MDRAZzm6o0VpT9hCvBOqpiSnpd23cCwfkrdUoRJvHGX6o7uam23FJfGDhK6PIClGEU18ePBYf
+	K+kPwMxwR8Pt22BeENlnV4DcvT97EV4zcZj8aHQTD/O6KE+VJG0W/cuKouUnNL6rh4ntAwc8qkJ
+	LLEGurA+YPm3WPxxtPtfh8APvXfjacGwJ6A1CdZrWTQFRlQvZRHXNXanVwheeDhkrWd3shxwELp
+	Yil4ylVv5EDLEU2SvG1/l5SQol1dU6tvYYjFJYOzW/Fi9nUdpduAmIqP+NkofTnxuVBlG9YbwWS
+	jvJHMeLolaOchJzav4qujB4Hg/d+Hu1YmSxNagbgQ7gFxw4Exnk7nds9mRwrubAAfG0jemw6NcU
+	kvw+opfsc7eyeDwycSyXZJpN0ijvMp4ipxH+WHKs6XlNGxRMIRJb7jN2GPDydrBIWF9tRPxoAvN
+	CeUbFuHKAMtVQNN3HKUKDBmiwY=
+X-Google-Smtp-Source: AGHT+IHBTuLq69Gvfbr66ez8lbBS1N4ktmEnj0xsmrMpR6VUfoQpjm/xu8sHO0mLgebF/zU8OV36Og==
+X-Received: by 2002:a05:690e:14c1:b0:63e:1f47:f504 with SMTP id 956f58d0204a3-642f7da8b41mr984026d50.50.1763606382757;
+        Wed, 19 Nov 2025 18:39:42 -0800 (PST)
+Received: from [10.138.34.110] (h96-60-249-169.cncrtn.broadband.dynamic.tds.net. [96.60.249.169])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-78a79925b99sm3837167b3.36.2025.11.19.18.39.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Nov 2025 18:39:42 -0800 (PST)
+Message-ID: <cdf9deb2-7a09-48c5-97e2-2ea6d5901882@gmail.com>
+Date: Wed, 19 Nov 2025 21:39:36 -0500
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251120020909.GA78650@system.software.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0yTZxTH8zzvhZeGJo/VzUeZxNQ1LjicGoxHsyxTE/N+MHGLH6Yz2fY6
-	XqWzraRFLt5SMi6FTGxQRKqBKjoNl4ItsI1VVrkUmBcKibUhEFBuVi5Gbm4B2VqN0W///M4/
-	v3M+HIFRdXMrBa0hWTYaJJ2aV7CKiagrcetOx2g33J/UwOyMhQWLs5gDn6MCQf+sBcF0zSIP
-	Y81TCAofD/FQFMxg4b++UQxDnhwEry4cgdKrrhAv9CF4WhNCE12XMXgrRiPAMdHJwdhIAQ/9
-	bdkc3O5ZB8UlvTy4b3eE1ryaQfBLTR0H5ksvOageDWDobKji4PqjLgwB6zCCbo89ZLJ/CHV/
-	ZSFoO+PBkPP0Tx6yr93C0GgZwNBS/RsGZ6Wfh+bZcQznuu08+AtKeajoYqFwwcLDpYx8BJaW
-	OQYyezfDPzWDHExaZ7gvN4gvs/JZsdxVj8XKkkokZrpSxT9sfRFiZmNPhGh3HhNdN2PFMncQ
-	i87yXF7s9bt58Yq5kBFLOr4Wy/LPceKL4R5WfN74kP9q6beKzxNknTZFNn72xQ+KRKfXh5Ou
-	rU6rH6xFZtRH81CkQEk8bX/QjN9m82AfykOCwBINLWnYEsY8WUsDgX+ZMF5GPqHjtZvykEJg
-	yNVoWvX3HS7cWUp0dK7FERHOSgI0+94CFy6pyDNE66y17JvBEtpRPPQ6MySWBhaDOCxlSDS9
-	sSiEcSTZSv2ugtfOD8ga6qlvw2EPJSOR1G8bQ2/uXEHv3AywVkRs72lt72lt77R2xJQjldaQ
-	ope0uvj1iekGbdr6H4/qnSj0ab+eWjjwO5ry7W1CREDqKOU+7yqtipNSTOn6JkQFRr1Mqdn+
-	kValTJDSj8vGo98bj+lkUxOKFlj1cuWmudQEFTksJctHZDlJNr6dYiFypRnFmN3zKfrvFpn9
-	P1ONtVXxJK7o+s6z57c2Je0INGgk++Hc5ScPMKbLW27tCaYWKBOmUz8Nbvu4bCTHcbBMjo+K
-	4TxM+oCr09F+l2TulpovVlWXnhq5kEzrY70d5iH98K6BE153Q5Rlx5nV/odFF0uHv2k9tPHQ
-	s/m4OB/OOfiTQc2aEqWNsYzRJP0PGukI72UDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Se0xTZxTPd7/7orPLtbLxKZtxNUSjwc1Ns7NHli1b4MbEjWQm6jYzm3kj
-	V0rBVhGWoMVaR5hzpVlLaFUYaEHAgm0lQwNBxDpUIo+JRKlYLSqTR6aAQ0pZ67LMf05+5/fK
-	+ePwWBVmFvGybpek12m0alZBKz7/wJS8cu9i+S13H4K+glYaJicKaThSX8dCoaeUgS53LYLB
-	yUIET2ecGMxNczTMWv0cTEzf4mCu2Y/A3m3FUOcroOBJQ4SFRxceI7AFQyyUDBfQMO46hMBx
-	38nB8MVUGB08x8Bc4AEFN6ZGELhCEQpCrT8gmLVnQFmFl4WZzmsYSmxdCH4NBjA8bIiKPv9t
-	BM3V+1kYspzB0Bt6Gf6YHGehw/YjC6PdRygYa2ChfH8zA0edVgSmynoW7Ec9NDTdOctB96Mw
-	BQN2KwW1nvUw6LpPwxVLBRW9L+o6nQDOEhMVHQ8psJ06R8G0q4aDq5UDNLiMSeDs7GXgbrWD
-	g3BwNcyVZ4G/9gEHgZ9tNLhHrzEf25D41HyYFmu8jZRo7pllxbpjdUiceWZF4sQJExbNluh6
-	YWQciwe8e8QTV0ZY8dnkdVZsniqnxcsVRCzuTBabHAFOPNByk0t7/yvFh9skrZwj6d/8aKsi
-	3ePvorKPL8ltvOdDRhQgRSiOJ8IaYrwXQEWI52khiRw7+26MZoVlpL9/GsfoeGE5GfG9XYQU
-	PBYqEsmpy+eZmGeBoCVT7W4uhpUCkINXw0zMpBL+ROSMxUf/K8wnHaWh5xgLK0h/ZJiKlWIh
-	kVRF+BgdJ7xH+rzW552vCEtJa+MlyoKUjhfSjhfSjv/T5QjXoHhZl5OpkbVrVxky0vN0cu6q
-	77IyPSj6k678cPFvaKI3tQ0JPFLPU27yvy6rGE2OIS+zDREeq+OVSZ+8JquU2zR530v6rG/1
-	u7WSoQ0l8rQ6Qbluo7RVJWzX7JIyJClb0v+nUnzcIiNKyZ6u+rL1SdpL2+mFZY9Nd/YuLZzB
-	r1r+2jJl8q9sGUv5Zd+AuequbvGenp4kb9rp4oadBz/bfD5i2ZGivl6p34eHNm7QlG1u/+bv
-	Hcaf3PX2ky1DN2/83rLzndS1h+xy8Ovx3QsWJuQOLEle193x6bxg/uHSLe1VYzg/f836NPfy
-	6i/eUNOGdM3qFVhv0PwDJjjDWY8DAAA=
-X-CFilter-Loop: Reflected
+User-Agent: Mozilla Thunderbird
+Subject: Re: Safety of resolving untrusted paths with detached mount dirfd
+To: Aleksa Sarai <cyphar@cyphar.com>, Alyssa Ross <hi@alyssa.is>
+Cc: linux-fsdevel@vger.kernel.org, Jann Horn <jannh@google.com>,
+ "Eric W. Biederman" <ebiederm@xmission.com>, jlayton@kernel.org,
+ Bruce Fields <bfields@fieldses.org>, Al Viro <viro@zeniv.linux.org.uk>,
+ Arnd Bergmann <arnd@arndb.de>, shuah@kernel.org,
+ David Howells <dhowells@redhat.com>, Andy Lutomirski <luto@kernel.org>,
+ Christian Brauner <brauner@kernel.org>, Tycho Andersen <tycho@tycho.pizza>,
+ linux-kernel@vger.kernel.org, linux-api@vger.kernel.org
+References: <87cy5eqgn8.fsf@alyssa.is>
+ <2025-11-20-limber-salted-luncheon-scads-7AT044@cyphar.com>
+Content-Language: en-US
+From: Demi Marie Obenour <demiobenour@gmail.com>
+Autocrypt: addr=demiobenour@gmail.com; keydata=
+ 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
+ +MYSfkEjBz0E8CLOcAw7JIwAaeBT
+In-Reply-To: <2025-11-20-limber-salted-luncheon-scads-7AT044@cyphar.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------pQ0lEQ9hLDflRFiGxpQgU0gK"
 
-On Thu, Nov 20, 2025 at 11:09:09AM +0900, Byungchul Park wrote:
-> On Wed, Nov 19, 2025 at 02:37:17PM +0000, Matthew Wilcox wrote:
-> > On Wed, Nov 19, 2025 at 07:53:12PM +0900, Byungchul Park wrote:
-> > > On Thu, Oct 02, 2025 at 05:12:44PM +0900, Byungchul Park wrote:
-> > > > False positive reports have been observed since dept works with the
-> > > > assumption that all the pages have the same dept class, but the class
-> > > > should be split since the problematic call paths are different depending
-> > > > on what the page is used for.
-> > > >
-> > > > At least, ones in block device's address_space and ones in regular
-> > > > file's address_space have exclusively different usages.
-> > > >
-> > > > Thus, define usage candidates like:
-> > > >
-> > > >    DEPT_PAGE_REGFILE_CACHE /* page in regular file's address_space */
-> > > >    DEPT_PAGE_BDEV_CACHE    /* page in block device's address_space */
-> > > >    DEPT_PAGE_DEFAULT       /* the others */
-> > >
-> > > 1. I'd like to annotate a page to DEPT_PAGE_REGFILE_CACHE when the page
-> > >    starts to be associated with a page cache for fs data.
-> > >
-> > > 2. And I'd like to annotate a page to DEPT_PAGE_BDEV_CACHE when the page
-> > >    starts to be associated with meta data of fs e.g. super block.
-> > >
-> > > 3. Lastly, I'd like to reset the annotated value if any, that has been
-> > >    set in the page, when the page ends the assoication with either page
-> > >    cache or meta block of fs e.g. freeing the page.
-> > >
-> > > Can anyone suggest good places in code for the annotation 1, 2, 3?  It'd
-> > > be totally appreciated. :-)
-> > 
-> > I don't think it makes sense to track lock state in the page (nor
-> > folio).  Partly bcause there's just so many of them, but also because
-> > the locking rules don't really apply to individual folios so much as
-> > they do to the mappings (or anon_vmas) that contain folios.
-> 
-> Thank you for the suggestion!
-> 
-> Since two folios associated to different mappings might appear in the
-> same callpath that usually be classified to a single class, I need to
-> think how to reflect the suggestion.
-> 
-> I guess you wanted to tell me a folio can only be associated to a single
-> mapping at once.  Right?  If so, sure, I should reflect it.
-> 
-> > If you're looking to find deadlock scenarios, I think it makes more
-> > sense to track all folio locks in a given mapping as the same lock
-> > type rather than track each folio's lock status.
-> > 
-> > For example, let's suppose we did something like this in the
-> > page fault path:
-> > 
-> > Look up and lock a folio (we need folios locked to insert them into
-> > the page tables to avoid a race with truncate)
-> > Try to allocate a page table
-> > Go into reclaim, attempt to reclaim a folio from this mapping
-> > 
-> > We ought to detect that as a potential deadlock, regardless of which
-> > folio in the mapping we attempt to reclaim.  So can we track folio
-> 
-> Did you mean 'regardless' for 'potential' detection, right?
-> 
-> > locking at the mapping/anon_vma level instead?
-> 
-> Piece of cake.  Even though it may increase the number of DEPT classes,
-> I hope it will be okay.  I just need to know the points in code where
-> folios start/end being associated to their specific mappings.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------pQ0lEQ9hLDflRFiGxpQgU0gK
+Content-Type: multipart/mixed; boundary="------------HMozd5V45JYglr0q2XDYAHfy";
+ protected-headers="v1"
+From: Demi Marie Obenour <demiobenour@gmail.com>
+To: Aleksa Sarai <cyphar@cyphar.com>, Alyssa Ross <hi@alyssa.is>
+Cc: linux-fsdevel@vger.kernel.org, Jann Horn <jannh@google.com>,
+ "Eric W. Biederman" <ebiederm@xmission.com>, jlayton@kernel.org,
+ Bruce Fields <bfields@fieldses.org>, Al Viro <viro@zeniv.linux.org.uk>,
+ Arnd Bergmann <arnd@arndb.de>, shuah@kernel.org,
+ David Howells <dhowells@redhat.com>, Andy Lutomirski <luto@kernel.org>,
+ Christian Brauner <brauner@kernel.org>, Tycho Andersen <tycho@tycho.pizza>,
+ linux-kernel@vger.kernel.org, linux-api@vger.kernel.org
+Message-ID: <cdf9deb2-7a09-48c5-97e2-2ea6d5901882@gmail.com>
+Subject: Re: Safety of resolving untrusted paths with detached mount dirfd
+References: <87cy5eqgn8.fsf@alyssa.is>
+ <2025-11-20-limber-salted-luncheon-scads-7AT044@cyphar.com>
+In-Reply-To: <2025-11-20-limber-salted-luncheon-scads-7AT044@cyphar.com>
+Autocrypt-Gossip: addr=hi@alyssa.is; keydata=
+ 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
+ wGxvGU7TX5ou
 
-Assuming that I understand what you meant correctly, I can use the
-@mapping value in struct page as a second key in DEPT.  Of course, it
-doesn't guarantee unique ids of the mappings for ever.  However, I think
-it can be a good and quite simple start.
+--------------HMozd5V45JYglr0q2XDYAHfy
+Content-Type: multipart/mixed; boundary="------------FZH1bzujXbklYqgofMmGxWNw"
 
-	Byungchul
+--------------FZH1bzujXbklYqgofMmGxWNw
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-> 	Byungchul
-> 
-> > ---
-> > 
-> > My current understanding of folio locking rules:
-> > 
-> > If you hold a lock on folio A, you can take a lock on folio B if:
-> > 
-> > 1. A->mapping == B->mapping and A->index < B->index
-> >    (for example writeback; we take locks on all folios to be written
-> >     back in order)
-> > 2. !S_ISBLK(A->mapping->host) and S_ISBLK(B->mapping->host)
-> > 3. S_ISREG(A->mapping->host) and S_ISREG(B->mapping->host) with
-> >    inode_lock() held on both and A->index < B->index
-> >    (the remap_range code)
+On 11/19/25 21:18, Aleksa Sarai wrote:
+> On 2025-11-19, Alyssa Ross <hi@alyssa.is> wrote:
+>> Hello,
+>>
+>> As we know, it's not safe to use chroot() for resolving untrusted path=
+s
+>> within some root, as a subdirectory could be moved outside of the
+>> process root while walking the path[1].  On the other hand,
+>> LOOKUP_BENEATH is supposed to be robust against this, and going by [2]=
+,
+>> it sounds like resolving with the mount namespace root as dirfd should=
+
+>> also be.
+>>
+>> My question is: would resolving an untrusted path against a detached
+>> mount root dirfd opened with OPEN_TREE_CLONE (not necessarily a
+>> filesystem root) also be expected to be robust against traversal issue=
+s?
+>> i.e. can I rely on an untrusted path never resolving to a path that
+>> isn't under the mount root?
+>=20
+> No, if you hit an absolute symlink or use an absolute path it will
+> resolve to your current->fs->root (mount namespace root or chroot).
+> However, OPEN_TREE_CLONE will stop ".." from naively stepping out of th=
+e
+> detached bind-mount. If you are dealing with procfs then magic-links ca=
+n
+> also jump out.
+
+Is using open_tree_attr() with MOUNT_ATTR_NOSYMFOLLOW enough to prevent
+these?  Will it still provide protection even if someone concurrently
+renames one of the files out from under the root?  I know that can
+escape a chroot, but I wonder if this provides more guarantees.
+https://github.com/QubesOS/qubes-secpack/blob/main/QSBs/qsb-014-2015.txt
+was the chroot breakout.
+
+> You can always use RESOLVE_BENEATH or RESOLVE_IN_ROOT in combination
+> with OPEN_TREE_CLONE.
+Unfortunately not everything supports that.  For instance, mkdirat()
+doesn't.
+--=20
+Sincerely,
+Demi Marie Obenour (she/her/hers)
+--------------FZH1bzujXbklYqgofMmGxWNw
+Content-Type: application/pgp-keys; name="OpenPGP_0xB288B55FFF9C22C1.asc"
+Content-Disposition: attachment; filename="OpenPGP_0xB288B55FFF9C22C1.asc"
+Content-Description: OpenPGP public key
+Content-Transfer-Encoding: quoted-printable
+
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+
+xsFNBFp+A0oBEADffj6anl9/BHhUSxGTICeVl2tob7hPDdhHNgPR4C8xlYt5q49y
+B+l2nipdaq+4Gk6FZfqC825TKl7eRpUjMriwle4r3R0ydSIGcy4M6eb0IcxmuPYf
+bWpr/si88QKgyGSVZ7GeNW1UnzTdhYHuFlk8dBSmB1fzhEYEk0RcJqg4AKoq6/3/
+UorR+FaSuVwT7rqzGrTlscnTDlPWgRzrQ3jssesI7sZLm82E3pJSgaUoCdCOlL7M
+MPCJwI8JpPlBedRpe9tfVyfu3euTPLPxwcV3L/cfWPGSL4PofBtB8NUU6QwYiQ9H
+zx4xOyn67zW73/G0Q2vPPRst8LBDqlxLjbtx/WLR6h3nBc3eyuZ+q62HS1pJ5EvU
+T1vjyJ1ySrqtUXWQ4XlZyoEFUfpJxJoN0A9HCxmHGVckzTRl5FMWo8TCniHynNXs
+BtDQbabt7aNEOaAJdE7to0AH3T/Bvwzcp0ZJtBk0EM6YeMLtotUut7h2Bkg1b//r
+6bTBswMBXVJ5H44Qf0+eKeUg7whSC9qpYOzzrm7+0r9F5u3qF8ZTx55TJc2g656C
+9a1P1MYVysLvkLvS4H+crmxA/i08Tc1h+x9RRvqba4lSzZ6/Tmt60DPM5Sc4R0nS
+m9BBff0Nm0bSNRS8InXdO1Aq3362QKX2NOwcL5YaStwODNyZUqF7izjK4QARAQAB
+zTxEZW1pIE9iZW5vdXIgKElUTCBFbWFpbCBLZXkpIDxhdGhlbmFAaW52aXNpYmxl
+dGhpbmdzbGFiLmNvbT7CwY4EEwEIADgWIQR2h02fEza6IlkHHHGyiLVf/5wiwQUC
+X6YJvQIbAwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgAAKCRCyiLVf/5wiwWRhD/0Y
+R+YYC5Kduv/2LBgQJIygMsFiRHbR4+tWXuTFqgrxxFSlMktZ6gQrQCWe38WnOXkB
+oY6n/5lSJdfnuGd2UagZ/9dkaGMUkqt+5WshLFly4BnP7pSsWReKgMP7etRTwn3S
+zk1OwFx2lzY1EnnconPLfPBc6rWG2moA6l0WX+3WNR1B1ndqpl2hPSjT2jUCBWDV
+rGOUSX7r5f1WgtBeNYnEXPBCUUM51pFGESmfHIXQrqFDA7nBNiIVFDJTmQzuEqIy
+Jl67pKNgooij5mKzRhFKHfjLRAH4mmWZlB9UjDStAfFBAoDFHwd1HL5VQCNQdqEc
+/9lZDApqWuCPadZN+pGouqLysesIYsNxUhJ7dtWOWHl0vs7/3qkWmWun/2uOJMQh
+ra2u8nA9g91FbOobWqjrDd6x3ZJoGQf4zLqjmn/P514gb697788e573WN/MpQ5XI
+Fl7aM2d6/GJiq6LC9T2gSUW4rbPBiqOCeiUx7Kd/sVm41p9TOA7fEG4bYddCfDsN
+xaQJH6VRK3NOuBUGeL+iQEVF5Xs6Yp+U+jwvv2M5Lel3EqAYo5xXTx4ls0xaxDCu
+fudcAh8CMMqx3fguSb7Mi31WlnZpk0fDuWQVNKyDP7lYpwc4nCCGNKCj622ZSocH
+AcQmX28L8pJdLYacv9pU3jPy4fHcQYvmTavTqowGnM08RGVtaSBNYXJpZSBPYmVu
+b3VyIChsb3ZlciBvZiBjb2RpbmcpIDxkZW1pb2Jlbm91ckBnbWFpbC5jb20+wsF4
+BBMBAgAiBQJafgNKAhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRCyiLVf
+/5wiwYa/EACv8a2+MMou9cSCNoZBQaU+fTmyzft9hUE+0d5W2UY1RY3OsjFIzm9R
+/4SVccfsqOYLEo+S0vQMIIIqFEq3FCpXXwPzyimotps05VA8U3Bd7yseojFygOgK
+sAMOAee2RCaDDOnoJue01dfZMzzHPO/TVdp3OvnpWipfv5G1Xg96rwbhMLE3tg6N
+xwAHa31Bv4/Xq8CJOoIWvx6fcmZQpz01/lSvsYn0KrfEbTKkuUf0vM9JrCTCP2oz
+VNN5BYzqaq2M4r+jmSyeXLim922VOWqGkUEQ85BSEemqrRS06IU6NtEMsF8EWt/b
+hWjk/9GDKTcnpdJHTrMxTspExBiNrvpI2t+YPU5B/dJJAUxvmhFrbSIbdB8umBZs
+I3AMYrEmpAbh5x7jEjoskUC7uN3o9vpg1oCLS2ePDLtAtyBtbHnkA4xGD7ar8mem
+xpH9lY/i+sC6CyyIUWcUDnnagKyJP0m9ks0GLsTeOCA0bft2XA6rD6aaCnMUsndT
+ctrab42CV5XypjmC4U1rPJ8JQJUh1/3P48/8sMH+3krxpJ06KNWNFaUbaMTGiltZ
+7x9DngklSYrX0T+2G4kVXNmjaljwkoLahwLla2gUWwBSyofXdqyhQdwZsp01KXNQ
+UCyT/Pg+aDcm/E7OMV3d4lf7g/CSxiX2GSEe6BlhSz+Lmd7ZJ3g32M1ARGVtaSBN
+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
+EtJuZYM5blWncBOJCoWMnBEcTEo/viU3GgcVRw=3D=3D
+=3Dx94R
+-----END PGP PUBLIC KEY BLOCK-----
+
+--------------FZH1bzujXbklYqgofMmGxWNw--
+
+--------------HMozd5V45JYglr0q2XDYAHfy--
+
+--------------pQ0lEQ9hLDflRFiGxpQgU0gK
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEopQtqVJW1aeuo9/sszaHOrMp8lMFAmkef2gACgkQszaHOrMp
+8lO3ZhAAmZA03bcOAmYW6yxHo3mjR7tfRejmiIQemfIgZM9syr29NsKegdJKah/U
+7L9YND6HgQmkVTMXN3gavdWNkgL80JbMvjC819kbOzcAlenw4WP0GqepVSGGMuia
+xO9Osrfa7Ibj6Sa1pJ3EQCV+uyh84yIAivOmeY9BF9g9On84AHwH3nIPcNrihRfu
+giz9whOaUISztCBVfm2YRXDMBk/jdeJP4swIN9oQLBFhaNVeP9VM6wWht8dWVoBZ
+sVwB6F0h3Uzs9BHAvOv1WzmZUc+IEY2epHXq9A6KV9D3dsyiKBM6ppzvR0jXaNvU
+eYq2AlHOpFZbTyX/N/f3VEJCe5QswGCNzIkB/1t7Q1gJRGGG+7ehjOMRc3txVlqc
+Bkv2WamQMfDGO+zmLIEXGKpQnFPxm4TJbvl6i+UtckTvETQiioYZtlQvxK85Ij0x
+CrKpTjGOYcJ0+vuJoL4t9OfDdAQS4xMEEwFFNC50VHRKhJ/HogCshZYhOeldyq7n
+fpGMVVaKTHrDZz0QlsLeb2sqdWqDho4KR8jyCJ1OsCAQCzgvPg/KTqtD/hW3z8lI
+fRRnERNCstJ5kLkksqgOV1tNBIPEHGzDKGvxzOQt6/q37j7U6LSZDbpfeO0dZT5N
+p9oHusfbm6s5KOFLJFQIV84tOqWDHyJIckHg4VYznIJcGfsmPvU=
+=h5sF
+-----END PGP SIGNATURE-----
+
+--------------pQ0lEQ9hLDflRFiGxpQgU0gK--
 
