@@ -1,230 +1,235 @@
-Return-Path: <linux-fsdevel+bounces-69186-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69187-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5500BC71FAB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Nov 2025 04:23:15 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2436CC723AA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Nov 2025 06:14:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sin.lore.kernel.org (Postfix) with ESMTPS id E2E692B34C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Nov 2025 03:23:08 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTPS id E417E29DE6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Nov 2025 05:14:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F2653128C2;
-	Thu, 20 Nov 2025 03:20:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="jeYKwExK"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 053B82E9726;
+	Thu, 20 Nov 2025 05:14:24 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11011002.outbound.protection.outlook.com [52.101.52.2])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D40C030FC0C;
-	Thu, 20 Nov 2025 03:20:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.52.2
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763608805; cv=fail; b=Qst2lSHypqn3HO3n5EoA462uDPsgFjuavChO//7JJeky5Aq9u0cWTQv1eapXEdAMN0HEGKGFzlq9wzcF3z62cuE3eYDTpKDHpK6zETTv7zCswJXAAoCuRjWZl/tbvjzGqA1ErtkUQ44KEBklK7gpkYMjuwpz7RivdWnx1LpVIXs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763608805; c=relaxed/simple;
-	bh=EHX/DvhCVyz6Vnsxchbt4UURzEGn2DCP2LvKu4nmETA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HzYyCaSwG8nSQPsvmQts+2OozYZ/TxCdBXCFwXvxZ+AzKS/AKG/RF3TZZmmrqMk4iX/Qq6liOVMsA3S45NQgH/RhVYaF3Z1KgRZyhysSrLGce6/ptkdFmK51H+Q/S2MPJ0G0ROF/xUHg62AaVSZalyQHA3ynIOWwMwrjajC5gcQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=jeYKwExK; arc=fail smtp.client-ip=52.101.52.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=PHWuhxVFTqbLXtSzw4iQlR1fPbJ/f6fG/ephokVAiIAWd03Evw7LDWBSHbHUfHxKfSvrEZHCN4bU//noGpLZvGOplyc4vVFRAitRdcPGCFoiN9LGCQSChV8bimlP2pjp/KttO4lxo7p+VtFsWIAvN1LKCW2DnEcTPZuo3VyY3fN1eIDJlHyiJgjOZ093mMq/M4RTwfuCpt4WHpbqM2t9UJiUbz2PkKSpRDxBP5e49DHyu2GH0q3CV3KKa8SfForY0nFuSdUafyCKUx4EZXCEz+uW5hs0r+uMKSeE3rKV7WJLb46l6WRIZGR++RHC5aZaoqAIIhbLT+IBOJuhPxHxkw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nFodpRhLBNvZ8lYQ5rn8WkUcu6dYAZJOvPlu7kNMu+U=;
- b=Y1xml+FwxPdG30uy1ai5QmbyXzMzEDTTZDYYq6s4HaC0MHVxpD3RczZHbxPNC7yMDVUFm0W4IsW/8086rUqVS4cvWc2R6c9mR9BwspafHEETZEvMF90biGwwXv9cbhVl0KbLDNcIwZZIGs8B+zwNhcrPAVrDB+avXZ7wkWBMv+RbM7ElKWtw/7GXPKsxL6mMjcw6Z/1wrD9XDFpZypu/JeuNpS2OEKI/kln6csytNTDmSVn8ZJCc4alTAk9zH/FSgsCRB0EnWe5nu7km70UaO8bnAOUWp6EBbD34cp5XdwV3KlaNDexBLZ92CWY6L+pK2O5UI471XB61xCaNRhgW1g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nFodpRhLBNvZ8lYQ5rn8WkUcu6dYAZJOvPlu7kNMu+U=;
- b=jeYKwExKl448KJ0TRCygezPCxOzzeHhUrRaaisJ9BN/iWbRlMcn0I6Erupb5VIEe+NTrFNl12KZDw0XY+qEXapeNNKCWsM3d7PeR4LFasg+XLu7eYKV4aZh/dGxYrBafFpG0yNsBHneUwEv4Yady9m1eR3oFaftpffE/JBQhNB0=
-Received: from CH2PR18CA0039.namprd18.prod.outlook.com (2603:10b6:610:55::19)
- by PH7PR12MB7209.namprd12.prod.outlook.com (2603:10b6:510:204::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9343.10; Thu, 20 Nov
- 2025 03:19:57 +0000
-Received: from CH1PEPF0000AD7B.namprd04.prod.outlook.com
- (2603:10b6:610:55:cafe::79) by CH2PR18CA0039.outlook.office365.com
- (2603:10b6:610:55::19) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9343.10 via Frontend Transport; Thu,
- 20 Nov 2025 03:19:57 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- CH1PEPF0000AD7B.mail.protection.outlook.com (10.167.244.58) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9343.9 via Frontend Transport; Thu, 20 Nov 2025 03:19:57 +0000
-Received: from ethanolx50f7host.amd.com (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Wed, 19 Nov
- 2025 19:19:43 -0800
-From: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
-To: <linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<nvdimm@lists.linux.dev>, <linux-fsdevel@vger.kernel.org>,
-	<linux-pm@vger.kernel.org>
-CC: Alison Schofield <alison.schofield@intel.com>, Vishal Verma
-	<vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan Williams
-	<dan.j.williams@intel.com>, Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Yazen Ghannam <yazen.ghannam@amd.com>, Dave Jiang <dave.jiang@intel.com>,
-	Davidlohr Bueso <dave@stgolabs.net>, Matthew Wilcox <willy@infradead.org>,
-	Jan Kara <jack@suse.cz>, "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown
-	<len.brown@intel.com>, Pavel Machek <pavel@kernel.org>, Li Ming
-	<ming.li@zohomail.com>, Jeff Johnson <jeff.johnson@oss.qualcomm.com>, "Ying
- Huang" <huang.ying.caritas@gmail.com>, Yao Xingtao <yaoxt.fnst@fujitsu.com>,
-	Peter Zijlstra <peterz@infradead.org>, Greg KH <gregkh@linuxfoundation.org>,
-	Nathan Fontenot <nathan.fontenot@amd.com>, Terry Bowman
-	<terry.bowman@amd.com>, Robert Richter <rrichter@amd.com>, Benjamin Cheatham
-	<benjamin.cheatham@amd.com>, Zhijian Li <lizhijian@fujitsu.com>, "Borislav
- Petkov" <bp@alien8.de>, Ard Biesheuvel <ardb@kernel.org>
-Subject: [PATCH v4 9/9] dax/hmem: Reintroduce Soft Reserved ranges back into the iomem tree
-Date: Thu, 20 Nov 2025 03:19:25 +0000
-Message-ID: <20251120031925.87762-10-Smita.KoralahalliChannabasappa@amd.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20251120031925.87762-1-Smita.KoralahalliChannabasappa@amd.com>
-References: <20251120031925.87762-1-Smita.KoralahalliChannabasappa@amd.com>
+Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89347242D7D;
+	Thu, 20 Nov 2025 05:14:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1763615663; cv=none; b=nflZCYJUOm5Mz0jNwUcOlYYgkNugM4AaDleTFMt/Baqto0PuF1/IZ7UrBrHNGklkP8o0u5lbNAa844ipJnkKzvvGkDF7XQvjvvw2Yqz1Zi0tJROzfgi/C9fipX4bsrJZVRkVC0Bi0tFv1U/o38ZVzN882ilwIVlJ3JhcyYqpVmA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1763615663; c=relaxed/simple;
+	bh=uUrpx+g526d5GVlYUAYE7oeVYDK91OLrSvMwSuOHD5o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cXJs4qlwaZhMeUPnBCnKdA7PNn/U4dda1kotzi/HyM0qW+JC3V90u7vUxxazeaJUq6ZV5J9m2fHxpCXo+A4OlzaBo8tKBHt+OMyeOuQeETJeV4mN+n3LNwf1wlNUDqk90GfUoWox816CvLbx3vjJ0WdbQlOpt+gI8m8YrgzgRvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-c2dff70000001609-90-691ea3a8ad9b
+Date: Thu, 20 Nov 2025 14:14:11 +0900
+From: Byungchul Park <byungchul@sk.com>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: linux-kernel@vger.kernel.org, kernel_team@skhynix.com,
+	torvalds@linux-foundation.org, damien.lemoal@opensource.wdc.com,
+	linux-ide@vger.kernel.org, adilger.kernel@dilger.ca,
+	linux-ext4@vger.kernel.org, mingo@redhat.com, peterz@infradead.org,
+	will@kernel.org, tglx@linutronix.de, rostedt@goodmis.org,
+	joel@joelfernandes.org, sashal@kernel.org, daniel.vetter@ffwll.ch,
+	duyuyang@gmail.com, johannes.berg@intel.com, tj@kernel.org,
+	tytso@mit.edu, david@fromorbit.com, amir73il@gmail.com,
+	gregkh@linuxfoundation.org, kernel-team@lge.com, linux-mm@kvack.org,
+	akpm@linux-foundation.org, mhocko@kernel.org, minchan@kernel.org,
+	hannes@cmpxchg.org, vdavydov.dev@gmail.com, sj@kernel.org,
+	jglisse@redhat.com, dennis@kernel.org, cl@linux.com,
+	penberg@kernel.org, rientjes@google.com, vbabka@suse.cz,
+	ngupta@vflare.org, linux-block@vger.kernel.org,
+	josef@toxicpanda.com, linux-fsdevel@vger.kernel.org, jack@suse.cz,
+	jlayton@kernel.org, dan.j.williams@intel.com, hch@infradead.org,
+	djwong@kernel.org, dri-devel@lists.freedesktop.org,
+	rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com,
+	hamohammed.sa@gmail.com, harry.yoo@oracle.com,
+	chris.p.wilson@intel.com, gwan-gyeong.mun@intel.com,
+	max.byungchul.park@gmail.com, boqun.feng@gmail.com,
+	longman@redhat.com, yunseong.kim@ericsson.com, ysk@kzalloc.com,
+	yeoreum.yun@arm.com, netdev@vger.kernel.org,
+	matthew.brost@intel.com, her0gyugyu@gmail.com, corbet@lwn.net,
+	catalin.marinas@arm.com, bp@alien8.de, dave.hansen@linux.intel.com,
+	x86@kernel.org, hpa@zytor.com, luto@kernel.org,
+	sumit.semwal@linaro.org, gustavo@padovan.org,
+	christian.koenig@amd.com, andi.shyti@kernel.org, arnd@arndb.de,
+	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
+	rppt@kernel.org, surenb@google.com, mcgrof@kernel.org,
+	petr.pavlu@suse.com, da.gomez@kernel.org, samitolvanen@google.com,
+	paulmck@kernel.org, frederic@kernel.org, neeraj.upadhyay@kernel.org,
+	joelagnelf@nvidia.com, josh@joshtriplett.org, urezki@gmail.com,
+	mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
+	qiang.zhang@linux.dev, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	bsegall@google.com, mgorman@suse.de, vschneid@redhat.com,
+	chuck.lever@oracle.com, neil@brown.name, okorniev@redhat.com,
+	Dai.Ngo@oracle.com, tom@talpey.com, trondmy@kernel.org,
+	anna@kernel.org, kees@kernel.org, bigeasy@linutronix.de,
+	clrkwllms@kernel.org, mark.rutland@arm.com, ada.coupriediaz@arm.com,
+	kristina.martsenko@arm.com, wangkefeng.wang@huawei.com,
+	broonie@kernel.org, kevin.brodsky@arm.com, dwmw@amazon.co.uk,
+	shakeel.butt@linux.dev, ast@kernel.org, ziy@nvidia.com,
+	yuzhao@google.com, baolin.wang@linux.alibaba.com,
+	usamaarif642@gmail.com, joel.granados@kernel.org,
+	richard.weiyang@gmail.com, geert+renesas@glider.be,
+	tim.c.chen@linux.intel.com, linux@treblig.org,
+	alexander.shishkin@linux.intel.com, lillian@star-ark.net,
+	chenhuacai@kernel.org, francesco@valla.it,
+	guoweikang.kernel@gmail.com, link@vivo.com, jpoimboe@kernel.org,
+	masahiroy@kernel.org, brauner@kernel.org,
+	thomas.weissschuh@linutronix.de, oleg@redhat.com, mjguzik@gmail.com,
+	andrii@kernel.org, wangfushuai@baidu.com, linux-doc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+	linaro-mm-sig@lists.linaro.org, linux-i2c@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-modules@vger.kernel.org,
+	rcu@vger.kernel.org, linux-nfs@vger.kernel.org,
+	linux-rt-devel@lists.linux.dev
+Subject: Re: [PATCH v17 44/47] dept: introduce APIs to set page usage and use
+ subclasses_evt for the usage
+Message-ID: <20251120051411.GA18291@system.software.com>
+References: <20251002081247.51255-1-byungchul@sk.com>
+ <20251002081247.51255-45-byungchul@sk.com>
+ <20251119105312.GA11582@system.software.com>
+ <aR3WHf9QZ_dizNun@casper.infradead.org>
+ <20251120020909.GA78650@system.software.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: satlexmb07.amd.com (10.181.42.216) To satlexmb07.amd.com
- (10.181.42.216)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH1PEPF0000AD7B:EE_|PH7PR12MB7209:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5abf1174-0537-438e-4cbb-08de27e3aea7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|7416014|82310400026|36860700013|13003099007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?xgm8uBuiCQ2jbCHmlUzTGXZNLxqSiu9ydXLESsadK6cVuTdqEsgO+LU8D8+O?=
- =?us-ascii?Q?4F8rPzpJUAfLwsejiLj09ftFQAEA6IDhA9qabfobNu0XN5x7viyxPyOPBQjY?=
- =?us-ascii?Q?fOESXHHB3MUvBpwd7kNxGZwbs+H5abqnLsfhu1Lmbl2ifSEvZv9NaaR9pSnm?=
- =?us-ascii?Q?4LH2M2K5/trzEAGN6euC4XOOAgk1geFlZDoalHfQSyiehPwx6tjwazvv3BaW?=
- =?us-ascii?Q?F8CN27vfpwDgUDgS4kPbpkQ+E1Jr051vm1HDg2RGvsjZBSiy/QnlVRNpaR5Y?=
- =?us-ascii?Q?WcrBTLWHdkjIZGa7aSQdYB2UEFYThM5aQTI4geRA9AnJjQla4mF7CGnqV8ZP?=
- =?us-ascii?Q?BDG9S3Qz8kD026MSmv0ZDanmiaUiER3xCnxitr1f2EjLIAdjnCzyQIsKNpvA?=
- =?us-ascii?Q?opbteYKvfoScFRFHwwAgZR+FjffNHhZbye20hTeRejbvEBREe0QC6rZyUu69?=
- =?us-ascii?Q?SkqHlsC+P6Di1XnR5SkueOrwTaW6EK8HxrrRVZL9vDAvk/cjrX0lBSSG2dju?=
- =?us-ascii?Q?q48BA48Avqj97/42Xmmro2e2Qk9HWQSJ30XNeVP8gAHOej5kBMgXi19Xhl4R?=
- =?us-ascii?Q?AP+T2E3+ayo55ZtcDm0ZFu/P6PNxrFU+jOVY13pomfvaKLGnd+AODt7O60hD?=
- =?us-ascii?Q?hrxorGTe4jlGpPW/LHgbmRoAW+P8fh2LXH25ta4Cor1IKSuf2xCvWIfgPNXK?=
- =?us-ascii?Q?9z2nvOcxSXKOJbRR+p1Gr3CnRL66xIjvxjBr9SZ2zBszkjPNWVljaT8Dkc1U?=
- =?us-ascii?Q?epQkcNSDX/Ihmvjm/i7HcuvkIdcUQOvs+83wN1xJeFVLgANQHrIvdta26qkR?=
- =?us-ascii?Q?bDMRmmafc5nEDOuL2SJeSAA+oOWp19IlZ5MhlAi8ASmMZwP/TUbIsezehYqp?=
- =?us-ascii?Q?f+l3vN0AW95SLV0/V29QIhJGyKOLZUaig+7Bu/Thw+iIN6zfaowp3lJkCBMe?=
- =?us-ascii?Q?vsAKSu8KbRRUTq8Dt6fOdx9JxXsd8T0lNIX5bcAvez1A7Z1DQF5g6rh2YMVl?=
- =?us-ascii?Q?XR4bvBZvtp/X+WplOUTTZ9Y/rVH0fPEsVVGA6hp9m6TcDWj8zZVFUb+zbuRi?=
- =?us-ascii?Q?EiOs65AZsV2zjDJXJdYs5uhQkD62+TopW7GXJ4+Xn/XieOG31MCDgehk1DsC?=
- =?us-ascii?Q?o4R9X0bu6QL+w8cTHjr02wXDuSViVF6BBkcvyau0jJ/k9eoq9iCVqx+oG7mh?=
- =?us-ascii?Q?fWD57wsbtsXPvuYzmzRHB47rEAc2AWbGNM+I+gHPUGWPHi6Kcv7hl1z9U7ii?=
- =?us-ascii?Q?VwzTz78/Q2kFf4HZunv6E513hRzPuC64zo/gRpjFB539VYxRBhWU1wu5lz98?=
- =?us-ascii?Q?1gHtbXY3qzAFCqZqSTQ89ZdBAmtfGG7Duuj0Yv1zGEoRSc27ewxTdZwlD8QB?=
- =?us-ascii?Q?PsyMjHctiXUXyc2ebonuy185wPwGvOn9gpwwwl+fzkRY3U/yZAUd3g/faEEL?=
- =?us-ascii?Q?en6dgc9aCLASzuqYDehFTVYes5wqtT+ceew9QuvZLfha84MyLkp9/S19El19?=
- =?us-ascii?Q?5RigZap4ujmZZ7ArFJfB8DZzdhyN9Hz/dhDP1NDwIpBN2MT1u2lE/2j7NDxM?=
- =?us-ascii?Q?u40FYHM3XueCEDV2ink=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(82310400026)(36860700013)(13003099007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Nov 2025 03:19:57.4129
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5abf1174-0537-438e-4cbb-08de27e3aea7
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH1PEPF0000AD7B.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7209
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251120020909.GA78650@system.software.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sf1DTdRjH7/P9vR3Tb1PiEyvvWqcWHZhK9VTW5R9d3z/oxyneefVHfS++
+	JzvHsIEoXD/IXBEJjSXrGKA7PAfClPUFtKFwiIIgcoAUfTXHWI0R4dIDBHUBbXRe/vd+nud1
+	r+f54+FI7VEmkTOYciWzSTTqGTWlDsfVJJ84tsbw3HgwDqoa3QwUyRU0+O8UIZiPVJJg8S5R
+	sGDrZmGprRuBfchGgrv5CwJmPIsMTF2YRlAeCDLgCFWyMNn1JoT9Z2lY8k0Q4AouEhDs+BrB
+	gn03HK1pYiDSP0DCn55oq63uAAPj1hYShoMrIDxURcDfHgacB9poqK60RTdVyxR4x1pZuGG3
+	EdAgvwV+V4iCHyYZsP+YAOUnzxJwz1XPQmX/MA2/1zmiJzqzobthggXfd+UUnAoP0DAVsjHg
+	v/QVDfK1LgSzPwcIcB8KkSD/MUJDxZEbDJxr66VguLWKgUOeFhpG3Us0DHb00XC1YZCCxgmF
+	gF7HCQqO/zpEwFypDgbLSmhQrOMIXHdusa9nCPOWUkqobzpNCJarC4zgPuJGQuS+DQmzx78k
+	BYs1Wl64eYsUyvqTBa/DxwoH26+zglPeKxy8GKaFY+cmCeH61KuCXP8N827Se+otGZLRkCeZ
+	N7z2oTqzxx1h9txes99yt50oRL0JxUjFYT4Vd3mqmQd59PL3bCxT/Frc4w0vZ4ZfjxXlHlmM
+	OG41/zS+2bypGKk5kq/R4ZOXz9MxZhVvxHMXT7ExRsMDnvdsiTFa/i+EW6zNVIzR8I/g3org
+	cib5JKwsThIxnuR1uHaRi7VV/Et4pMm2rIznn8Idpy8RMQ/mQyrcekZG/935GD5fp1BWxDse
+	0joe0jr+1zoRWY+0BlNelmgwpqZk5psM+1M+ys6SUfRtXZ/+8/5PaHpweyfiOaSP0+zsfsKg
+	pcW8nPysToQ5Ur9as3br4watJkPML5DM2R+Y9xqlnE6k4yh9gmbT3L4MLb9LzJV2S9Ieyfxg
+	SnCqxEJ0eORjZfOKQEngZTrxjSn3lVEPXZG7Izv9Mx83+4J2bpV/pz3dLxeMlDWltEdg37ep
+	136ZedGb1rcyvqekdl1Vde0noVdun1EKH33HVbryc/E3lfO+N9CoK5h5vjR587PTb/fdlaVt
+	8aYx31jxgG5bEfNkF0S2pz2zQ1S2KumHe9L0VE6muDGJNOeI/wILdggfsgMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0xTdxTH87v39t5Lt+qlsvBDHHE1RCMKaLbkuJnFRzJ+IRsx/qMxIdrI
+	jRTKI61DWbJIhUaCZtbOQmhFOgiVQEUolYAGwkMroMhrY920MmbloWWYjYc8u5Zkmf+cfM/5
+	fr4n54/D0/IVyWZelXlW1GQq1QpWykiTvsjfXV0ZpYp/+WwrjOjaGZibLWTgxh07C4WOUgkM
+	1NUiGJ0rRLCwbKFB3+JnYNXo4mB28RkH/lYXguJBIw12p46Cf+rXWHjT9TcC05iXhZIpHQMz
+	tisIzOMWDqYeJsD06H0J+D0TFPw670Ng865R4G2/hGC1OB3KKxpZWO7rp6HENIDgpzEPDZP1
+	AdPpeoGgtfoiC68Md2kY9m6An+dmWOgxXWZhevAGBX/Vs2C92CqBMosRQX7lHRaKyxwMtPxx
+	j4PBNysUPC82UlDr+AZGbeMMPDZUUIH7AlRDOFhK8qlAmaTAdPs+BYu2Gg6eVD5nwJYXDZa+
+	YQn8WW3mYGVsD/itWeCqneDAc9XEQN10v+SACZEF/Q8MqWlsooh+aJUl9pt2RJaXjIjMVuXT
+	RG8ItF2+GZoUNJ4jVY99LFma+4UlrfNWhvRWYHKtbzdpMXs4UtD2O3fk8xPS/SmiWpUjauK+
+	PCVN7bYvs9lvo87r37VReagnvAiF8Fj4FL/o/ZELakaIxt0t0+uaFbZjt3uRLkI8HybswD7n
+	3iIk5WmhIhLf7u2QBJlNghrPP6jjgoxMALxQvz/IyIXXCN81OJkgIxNCcU+pd13Twk7sXpui
+	gjwtROJba3xwHCLswyONxvWVHwnbcHvTI8qAZOb30ub30ub/01ZE16AwVWZOhlKl/ixWm56a
+	m6k6H3s6K8OBAj9p+37lWjOaHU7oRAKPFB/Kjrs+VsklyhxtbkYnwjytCJNFH9yikstSlLnf
+	iZqsk5pv1aK2E0XyjCJclnhMPCUXzijPiumimC1q/nMpPmRzHtq7o2DoxPHYmeqy1IMDhzu2
+	7DrXxI9uHLyZeCbu6aR1rFv/22H3oZdXbKFX9yUlNmx9p0s+etQfP+6oc0RsvP4qxZdY5CGf
+	HCjsbiMRX+OIXULZyAdfdbAx7nju5K3QDeOHtkddb2Z8F/QdzTFpyZcMS5d9D9MMb8vLJywI
+	zzvTdApGm6rcs5PWaJX/An0YZayPAwAA
+X-CFilter-Loop: Reflected
 
-Reworked from a patch by Alison Schofield <alison.schofield@intel.com>
+On Thu, Nov 20, 2025 at 11:09:09AM +0900, Byungchul Park wrote:
+> On Wed, Nov 19, 2025 at 02:37:17PM +0000, Matthew Wilcox wrote:
+> > On Wed, Nov 19, 2025 at 07:53:12PM +0900, Byungchul Park wrote:
+> > > On Thu, Oct 02, 2025 at 05:12:44PM +0900, Byungchul Park wrote:
+> > > > False positive reports have been observed since dept works with the
+> > > > assumption that all the pages have the same dept class, but the class
+> > > > should be split since the problematic call paths are different depending
+> > > > on what the page is used for.
+> > > >
+> > > > At least, ones in block device's address_space and ones in regular
+> > > > file's address_space have exclusively different usages.
+> > > >
+> > > > Thus, define usage candidates like:
+> > > >
+> > > >    DEPT_PAGE_REGFILE_CACHE /* page in regular file's address_space */
+> > > >    DEPT_PAGE_BDEV_CACHE    /* page in block device's address_space */
+> > > >    DEPT_PAGE_DEFAULT       /* the others */
+> > >
+> > > 1. I'd like to annotate a page to DEPT_PAGE_REGFILE_CACHE when the page
+> > >    starts to be associated with a page cache for fs data.
+> > >
+> > > 2. And I'd like to annotate a page to DEPT_PAGE_BDEV_CACHE when the page
+> > >    starts to be associated with meta data of fs e.g. super block.
+> > >
+> > > 3. Lastly, I'd like to reset the annotated value if any, that has been
+> > >    set in the page, when the page ends the assoication with either page
+> > >    cache or meta block of fs e.g. freeing the page.
+> > >
+> > > Can anyone suggest good places in code for the annotation 1, 2, 3?  It'd
+> > > be totally appreciated. :-)
+> > 
+> > I don't think it makes sense to track lock state in the page (nor
+> > folio).  Partly bcause there's just so many of them, but also because
+> > the locking rules don't really apply to individual folios so much as
+> > they do to the mappings (or anon_vmas) that contain folios.
+> 
+> Thank you for the suggestion!
+> 
+> Since two folios associated to different mappings might appear in the
+> same callpath that usually be classified to a single class, I need to
+> think how to reflect the suggestion.
+> 
+> I guess you wanted to tell me a folio can only be associated to a single
+> mapping at once.  Right?  If so, sure, I should reflect it.
+> 
+> > If you're looking to find deadlock scenarios, I think it makes more
+> > sense to track all folio locks in a given mapping as the same lock
+> > type rather than track each folio's lock status.
+> > 
+> > For example, let's suppose we did something like this in the
+> > page fault path:
+> > 
+> > Look up and lock a folio (we need folios locked to insert them into
+> > the page tables to avoid a race with truncate)
+> > Try to allocate a page table
+> > Go into reclaim, attempt to reclaim a folio from this mapping
+> > 
+> > We ought to detect that as a potential deadlock, regardless of which
+> > folio in the mapping we attempt to reclaim.  So can we track folio
+> 
+> Did you mean 'regardless' for 'potential' detection, right?
+> 
+> > locking at the mapping/anon_vma level instead?
+> 
+> Piece of cake.  Even though it may increase the number of DEPT classes,
 
-Reintroduce Soft Reserved range into the iomem_resource tree for HMEM
-to consume.
+Might be not as easy as I thought it'd be.  I need to think it more..
 
-This restores visibility in /proc/iomem for ranges actively in use, while
-avoiding the early-boot conflicts that occurred when Soft Reserved was
-published into iomem before CXL window and region discovery.
+	Byungchul
 
-Link: https://lore.kernel.org/linux-cxl/29312c0765224ae76862d59a17748c8188fb95f1.1692638817.git.alison.schofield@intel.com/
-Co-developed-by: Alison Schofield <alison.schofield@intel.com>
-Signed-off-by: Alison Schofield <alison.schofield@intel.com>
-Co-developed-by: Zhijian Li <lizhijian@fujitsu.com>
-Signed-off-by: Zhijian Li <lizhijian@fujitsu.com>
-Signed-off-by: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
----
- drivers/dax/hmem/hmem.c | 32 +++++++++++++++++++++++++++++++-
- 1 file changed, 31 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/dax/hmem/hmem.c b/drivers/dax/hmem/hmem.c
-index 7d874ee169ac..5f36b0374cf4 100644
---- a/drivers/dax/hmem/hmem.c
-+++ b/drivers/dax/hmem/hmem.c
-@@ -71,6 +71,34 @@ struct dax_defer_work {
- 	struct work_struct work;
- };
- 
-+static void remove_soft_reserved(void *r)
-+{
-+	remove_resource(r);
-+	kfree(r);
-+}
-+
-+static int add_soft_reserve_into_iomem(struct device *host,
-+				       const struct resource *res)
-+{
-+	struct resource *soft __free(kfree) =
-+		kzalloc(sizeof(*soft), GFP_KERNEL);
-+	int rc;
-+
-+	if (!soft)
-+		return -ENOMEM;
-+
-+	*soft = DEFINE_RES_NAMED_DESC(res->start, (res->end - res->start + 1),
-+				      "Soft Reserved", IORESOURCE_MEM,
-+				      IORES_DESC_SOFT_RESERVED);
-+
-+	rc = insert_resource(&iomem_resource, soft);
-+	if (rc)
-+		return rc;
-+
-+	return devm_add_action_or_reset(host, remove_soft_reserved,
-+					no_free_ptr(soft));
-+}
-+
- static int hmem_register_device(struct device *host, int target_nid,
- 				const struct resource *res)
- {
-@@ -103,7 +131,9 @@ static int hmem_register_device(struct device *host, int target_nid,
- 	if (rc != REGION_INTERSECTS)
- 		return 0;
- 
--	/* TODO: Add Soft-Reserved memory back to iomem */
-+	rc = add_soft_reserve_into_iomem(host, res);
-+	if (rc)
-+		return rc;
- 
- 	id = memregion_alloc(GFP_KERNEL);
- 	if (id < 0) {
--- 
-2.17.1
-
+> I hope it will be okay.  I just need to know the points in code where
+> folios start/end being associated to their specific mappings.
+> 
+> 	Byungchul
+> 
+> > ---
+> > 
+> > My current understanding of folio locking rules:
+> > 
+> > If you hold a lock on folio A, you can take a lock on folio B if:
+> > 
+> > 1. A->mapping == B->mapping and A->index < B->index
+> >    (for example writeback; we take locks on all folios to be written
+> >     back in order)
+> > 2. !S_ISBLK(A->mapping->host) and S_ISBLK(B->mapping->host)
+> > 3. S_ISREG(A->mapping->host) and S_ISREG(B->mapping->host) with
+> >    inode_lock() held on both and A->index < B->index
+> >    (the remap_range code)
 
