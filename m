@@ -1,695 +1,394 @@
-Return-Path: <linux-fsdevel+bounces-69223-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69224-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84625C73976
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Nov 2025 11:59:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C701C73E84
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Nov 2025 13:11:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6A5C535A47B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Nov 2025 10:57:12 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 54987354C7B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Nov 2025 12:10:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 030F1330337;
-	Thu, 20 Nov 2025 10:56:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DF08330D4C;
+	Thu, 20 Nov 2025 12:09:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="TPTXq3wP"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="nWxDQkWz";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="VyKK7ICs"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D68FA1A00F0;
-	Thu, 20 Nov 2025 10:55:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763636162; cv=none; b=WUt4N4gqoThUf1Yuvho2Vqzt79H1KG6wUoGIrA41i5jI6TunNIYisGIJyfDGViwGc9ywihwR64HVDJirZIjdK9mBQdJvSsktaruYMgc4uglphMSagE1b3IgS1wfaWqVAx74MuLB6MKXAiaSnN3FDa+fY/bwmiGXyzP+2QIeB1uM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763636162; c=relaxed/simple;
-	bh=HoqBklTZVf0NZl3P+lbBf9/SaNmVKq6F03ocZqZsED4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NAol93pz82APS1xPR+hub0hoSKOJ3KiGPglBKPnbQX4cLjg78vuELYRggy16udqWT/XrtxhFfohLnXg6QsF8MV0ufTKItCOeBuhbrxA3Y+K20wc3AtWHA50MjhmcaIxVhLs9uAzF8vMLIJ806nyFQ2sEBdyW6bUtkGNRPWT8fA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=TPTXq3wP; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
-	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=+6qT6KYRpG3gOmJNyUnhTkX48gjbIOviuneFgsusu6c=; b=TPTXq3wPUz6WK0TJVphDcr7gDs
-	B3b2fIQnTu3ZeG++LQidwqQ5KMoIgDDTcK/oaUiO4EEp3YcNqQOUdw7iDYLPfd2kJNkK1XJ5usRhM
-	JdmFzgVGiIrSQzYEJJmuNgXdb0fOucJozZ1NwKZhsTDzh2TfyRXLTntRH0lpVmXrQj4dHh5obnVOJ
-	koIbcgz/Awg1r/HP/E0KLjr0woIuPDswZG13O5+txz/Gy7DYO2omC8gjeJdZ+10qjSvC6qzlUjczR
-	NVCBCsBpmXX7NAe1ipQKx38AW+4/Oi7p8Cz6pxIrPmVudH8XPy2x7WJA0jb1Bs6Mh3Fh2hANDHEB/
-	bRixh40g==;
-Received: from bl17-145-117.dsl.telepac.pt ([188.82.145.117] helo=localhost)
-	by fanzine2.igalia.com with utf8esmtpsa 
-	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1vM2KF-003CKD-QZ; Thu, 20 Nov 2025 11:55:43 +0100
-From: Luis Henriques <luis@igalia.com>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Amir Goldstein <amir73il@gmail.com>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	Bernd Schubert <bschubert@ddn.com>,
-	Kevin Chen <kchen@ddn.com>,
-	Horst Birthelmer <hbirthelmer@ddn.com>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Matt Harvey <mharvey@jumptrading.com>,
-	kernel-dev@igalia.com,
-	Luis Henriques <luis@igalia.com>
-Subject: [RFC PATCH v1 3/3] fuse: implementation of the FUSE_LOOKUP_HANDLE operation
-Date: Thu, 20 Nov 2025 10:55:35 +0000
-Message-ID: <20251120105535.13374-4-luis@igalia.com>
-In-Reply-To: <20251120105535.13374-1-luis@igalia.com>
-References: <20251120105535.13374-1-luis@igalia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10F3A20459A;
+	Thu, 20 Nov 2025 12:09:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1763640573; cv=fail; b=SSVg+nEHoKSEnca/i7hKIofwYdavK8ytBPUaZ66gDafovbt1WsUAjd79hkgStzmiwDrOlJY0jCjHcHZPOjXIG4KPmfMtRrjy6vC/g7qb8ikvkAYh8fayXcIXTU0IbgVSO8rwqeSmDfmULtB5h2xqNyHmoB1neto73VCqiYGCE60=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1763640573; c=relaxed/simple;
+	bh=8N9Z2qz/aPaY1bwCKi4TrYhphlcItcxT/gq6xrr8ajY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=oyhZPl1ECvXfgTYBEtIDEucxOPp+5Ig2AVWp3JqjauvXbbNQ1X2MsfVm01Axblryy8XNMCr20b3p1nBXWFoy/j20CIXdsj88Z3a3zQShg/3NKjBTA2wiZExpAVtDUQ7g6hl1x9+tdGte5xpYDeXRKaEuDb5BukAPfBz9TRBxwa0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=nWxDQkWz; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=VyKK7ICs; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5AKB6feY008728;
+	Thu, 20 Nov 2025 12:09:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=kGx6rTnYT7Hd6AU8ED
+	8gO8XCVsk/a3cuQttexsc+OpM=; b=nWxDQkWzgUujo5cOOwfVOdQPmPvbNuAd2q
+	fzEbFYi49YTED8iDOxsn64ZK77AvXyLwGBAF8WvJ/p+CXwfbFsL9iSW0Kl5zkDbk
+	451NUjmp8G2WR+t5d/wOuEkl2qZDZUErBxQLdsKkGSH0auOFLsP9cN1I406f6dzm
+	lDhGj8ohRjEcY6/VghbyxjThp2nYwROuzPiLkmkvmJ5gIFK+lk5zPJUBqu/UUqpo
+	CjymDdWbeEZajq0EbX5sLq5Dz257mrAkWhCD2iOGvDjWbjKP4NVY7oJ0VK5u+ODT
+	rExSdOxk6Wq20VRXDU2Njefpg4em/ayvi4egwMpV8tKwGI4/iOEw==
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4aejbursrw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 20 Nov 2025 12:09:12 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5AKBP62l004341;
+	Thu, 20 Nov 2025 12:09:11 GMT
+Received: from mw6pr02cu001.outbound.protection.outlook.com (mail-westus2azon11012031.outbound.protection.outlook.com [52.101.48.31])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4aefybr42f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 20 Nov 2025 12:09:11 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=fwVYYB3We2kkeOgo8QMaLhh7Dcs/HVZpbGWhod84wvnVeZqdrBQ2thmxF11b4+IveRBz1UB32KM9E98lcmcWLGgLAvvfnUh6G/lAOIZ61Nx7PoyKyfxYAC+qwEEHmEHrwDMICpHhT5cZ/o9dOp1gFHYNLYfCyX+anNhD18EkSpdezMTKDD35vx8laNQiULg8mzJE91UvBV2oxiTBBkkeYswcySJp/lI5n0G2YCOmyL1TYOoEDReJ9TYC1Y8yWtrsylawEZRfIfzG2D+qD0nacH6QDjPUsfrMD4USUEXQjbc0Noal6wQhlnyGdve+fDVGoLah98ymTo2gxIUjtC4dsw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=kGx6rTnYT7Hd6AU8ED8gO8XCVsk/a3cuQttexsc+OpM=;
+ b=PFv0lj5xAhy3Bvqw0ZHsi3v1IfyyU/3G4l9wYbUqOO4PdF+nLV+jqUp67LVPCUCQnyu4sOxQee507z+y6o8p5wr0X+a4HtgrANpdUc2e36+RF/Akk9/km70/szIFlL3uksCxmUVJofp0PdLnqnB7AjxYoM9dDXIXCq9UuxNdonYHhicHMtLJfkueqWZev2Up4spDGEerKLD10L1joIlQbWDuPetSka6A2HNZPL5Kr+Azd1u5awec9mA/JEd8J8nMXnic84IR2+GEwOTLo0L1cepqjH0MDHdel4wB+Gr5OnfPcDWTBu4rmLCffEJa1Ay1fXSwqRUCE2Ju9BhKITLP1w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=kGx6rTnYT7Hd6AU8ED8gO8XCVsk/a3cuQttexsc+OpM=;
+ b=VyKK7ICsnhXWLfAUKwvywr1G83jju9b7KDGOuZMnWhIz4iPxXtj1ntrBdG7SxoTdJ00piICqPeKPXpUVTaPMtW/cN4WxByM91bWi5diGH4XF87aMK2qepQ3JIH1pixgqPBfXZx7JdLgQS5r9qa/xWm/qLnKxQKRntGNP/AYv3ZM=
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
+ by SJ0PR10MB5744.namprd10.prod.outlook.com (2603:10b6:a03:3ef::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9343.10; Thu, 20 Nov
+ 2025 12:09:08 +0000
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2%7]) with mapi id 15.20.9343.011; Thu, 20 Nov 2025
+ 12:09:08 +0000
+Date: Thu, 20 Nov 2025 12:09:06 +0000
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: david.laight.linux@gmail.com
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        Christoph Lameter <cl@gentwo.org>,
+        David Hildenbrand <david@redhat.com>, Dennis Zhou <dennis@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Mike Rapoport <rppt@kernel.org>, Tejun Heo <tj@kernel.org>,
+        Yuanchu Xie <yuanchu@google.com>
+Subject: Re: [PATCH 39/44] mm: use min() instead of min_t()
+Message-ID: <3330fff1-5c45-4ba6-8f22-7501e0e6383b@lucifer.local>
+References: <20251119224140.8616-1-david.laight.linux@gmail.com>
+ <20251119224140.8616-40-david.laight.linux@gmail.com>
+ <0c264126-b7ff-4509-93a6-582d928769ea@lucifer.local>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0c264126-b7ff-4509-93a6-582d928769ea@lucifer.local>
+X-ClientProxiedBy: LO4P265CA0144.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:2c4::17) To DM4PR10MB8218.namprd10.prod.outlook.com
+ (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|SJ0PR10MB5744:EE_
+X-MS-Office365-Filtering-Correlation-Id: 21e516d0-5ba1-41fe-0bd1-08de282d9bca
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|7416014|366016|376014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?abmTJcyHBAYG/DjiKw5Y4RSKPx7EeRUtRhgcmfCtsbAF4q7qScLKxs7cTLeE?=
+ =?us-ascii?Q?KkSPe4ZXbyXv59uDBBPtsBC9tlvwQ6q7O/4mcVOD5ZtLfaIVJNwJymbvTUrO?=
+ =?us-ascii?Q?U4HTNPcDcuixIkvPFEmEBD+uR2PUbye0p7nzO2tysu4UELK1VrWeno+D54Pv?=
+ =?us-ascii?Q?68GTd+Ad0PdMWdxF+od3sid6Qr6fNYqd4EmkNmzoCn0lY6cZDxXFij0jNQPi?=
+ =?us-ascii?Q?T86yqWBJNerTFR9m2JfwCOmX96OUEf95qePTNFyOIkN4NLNnwjRvnjStE84B?=
+ =?us-ascii?Q?S5nsORVIC5KeJ+DepFMypaBtffHaoTDmZoKXiRPC7/hzzp7/eZSDS4gpXNTj?=
+ =?us-ascii?Q?U4ffxTFEMh7Dkrgiz8gKINEkjb4MUZayoWwjF50a97O9fCxtbstMFFPaJN3D?=
+ =?us-ascii?Q?r9F5ghzK7P44viN49otgcjQ1TD/wMa19kUWoQzNEYkZMtqXe0CaVMsDItB3K?=
+ =?us-ascii?Q?+fNRVbJZNgTFsndEkfPnb4nA54xQq8cDGRY8JqCf85WWIFuwO1SrUBdWSiDx?=
+ =?us-ascii?Q?GaGCWT3Kv4/5MdKO2W0P1qaafjj9ntXpTS7d3FNo2UxVmF7fzYjdh94LSYXC?=
+ =?us-ascii?Q?7fQCeFK5VEtdMgUQ22LQBzBA5M3Lpjqgcn5sULT89oysknOva6603kWw0W9s?=
+ =?us-ascii?Q?pp/gcd2MkrCSRI+FY3EwrUc9LH6/Z+5f4qA3hJiwLKSMLRaqmCdsvgyPoldi?=
+ =?us-ascii?Q?0dNuAzTccY1Egrn1Q/kx7pYoAgax6y8LU4RDBZsdh+gWy6i5pkO5PiKPRGVc?=
+ =?us-ascii?Q?Y7n5fi1D5wSI2DAGlYrt/9ReVBQEr6RtcHLkXv6VOcFbXcFdPLKRN+DucPkr?=
+ =?us-ascii?Q?x7ziMgBSDDysgudh0YhHE8KtdwqmWcV8q9DWZ/8dnP3MBt4XkVw0GWMQr/Q9?=
+ =?us-ascii?Q?7gmctGi7qnqM2RZwPdqbf0qsM6KOvpXv3VCEDAhrtm+q/SPOERXIa6iFi8R5?=
+ =?us-ascii?Q?U/ihi6fQuB2lyYD3f3U7DPKsjbsVqb4j0Amlqy8tSojn055lpgIE+GHbK2F7?=
+ =?us-ascii?Q?VWCRMSjYXRtWF3KQ2d57ltFxyc1vSVrPKevocr6ZfTAiusbUl92ZsLrdzVpP?=
+ =?us-ascii?Q?wxtNL2XwuV4TlbvEsE6IVvufF5u4tq+TcGmjDmIPNI1ocdlWIM2Ba1GtT3Be?=
+ =?us-ascii?Q?Yjm4Ah1XOu50NQ5x2kc9XeAWmfQgUjz7h/IyqmdvX+d5vVTbAIcFxKpSe7Ly?=
+ =?us-ascii?Q?kJ7ERv6FiQo3Ojojdj1lJIEX7rbx3nEdTb0G8omft/fMRBEAenvtnifhoUhB?=
+ =?us-ascii?Q?o3VHPhCSvRPGzqufExPcdGqQhJ16GJd0SygoJ4c7In7Uev/g1McwIrt86B/o?=
+ =?us-ascii?Q?qEOeay/91NSUWxFkrtTkkD16SnYMrHAlNbDIJ2GH+I0V41Krj8DDz2wRV5v0?=
+ =?us-ascii?Q?HvlXGsOvH52Xkuj5dionVqQxpna4m2pp1NG/Y9ZVuVcS9lxy5HCzT/CNRl/K?=
+ =?us-ascii?Q?Mngt2Ck48dIE8kabvrPmbhZC0elPfhK1?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(366016)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?jM01guC0sPsnqONjAKvCDCTj6EsAI46hna2cLZ5zsQibfTOgCTEDHOk9udqi?=
+ =?us-ascii?Q?2WWYG9cOqnWPxs1QUjA8WXq3+fr+EQrMvVZn8KwIKVcz35+o2iN/8dcxikrz?=
+ =?us-ascii?Q?SNMV2cA1pP76el91awL6roaOKLzXnzVC6sq+UIlFwIsixeAn97GE95wPYQBa?=
+ =?us-ascii?Q?CUalKZ1c7jFd3Fi8YhYGAAbsIucGiTVyOMqZGjN1Xs/TU5azxP6SUEb4RZEO?=
+ =?us-ascii?Q?VfQk7Ir9bcGm3GTPPdC8F3EduAxdXs9k6jx34SgFNkNT4p+WKCq7nxO0irwi?=
+ =?us-ascii?Q?GnPDaVYzfW5IRLqiERUcUyb5wXJXIEZ8t73ngJoHhH8bsehVrxza2ZsMHT/x?=
+ =?us-ascii?Q?dP/PlOmsbInc+xMEuLwhvu0dHBXtEbyjKV9EPDd2jGFz1MNuDiaah0htbHfo?=
+ =?us-ascii?Q?RB5X57KqtTVb7zaGZtCEsW+Avm4BJfWq4K1QFT4+lncrikOFMz78IJUM/R/j?=
+ =?us-ascii?Q?VrbDcuqKbIoNrZliX9qmfLilNEh1tzPlQQO1pl3V3mi7J+PEWlpoqqx8V/Ho?=
+ =?us-ascii?Q?jX3Q3L3WSxdNp9CeFXeCt0Ly7xC2AdEy+ROp8rm6AoMeGBqyudPABryibKCx?=
+ =?us-ascii?Q?gGJO04Px49v5Ec/Kgf14txx+nsq1wkMFZ25ON0RiYC6bIb/Kyr0jTdsr2Uut?=
+ =?us-ascii?Q?x9noczR/GoL1Wm7hM2gcG5Tw4KSimtI7z96tWydE6WxnDWwZ5Ohr0hkJu34e?=
+ =?us-ascii?Q?cv3GBZtDiW/TnnFVueqL/hj6djYK0yaKldfVv4G8kwxsfsZk7mNKTUJsqccU?=
+ =?us-ascii?Q?4ixMmQiB94lrB2Z4qESn2frFdzIiNaSZ/p9dPkavJi2dcjOS0XvbPuuD2/82?=
+ =?us-ascii?Q?e+t7JSw/6bNZze3spAtrV4ofMOi0ep+SCJpcbsx997ZBsHy3Z3wsrapaQoeJ?=
+ =?us-ascii?Q?GNdGG/OUiunNfW7ttSj1Rhni6GXpxQJW9uybFhXquiVu23JLoS5+fSx5xUYJ?=
+ =?us-ascii?Q?SNDTQ7YLCo/BAWMRB8hk3pLpF06eLGKa5mksynxKCZaw+ZYVuXWbnixbtE/N?=
+ =?us-ascii?Q?RIFew3F1UVQGqrC74xJUA7U9YopRcQMnt873sNj4a/7AsZFoNZyR+iYggPjz?=
+ =?us-ascii?Q?P9QdzzFFcH7djxaoQ/uJdIVD5Bia7HsTbJlOh36kkGy9IctO4UTvHIeq7+QJ?=
+ =?us-ascii?Q?mbusfQ+0NrDfx3MYFY7MfqdiqTnthY/JSNYthqyA9rpZCJD214CeInXYVd7y?=
+ =?us-ascii?Q?e4P4MnY7XiVcn1LRUscDwYr7mVHWueDHjLNqyX34sDVjtiU+Od/vj2MSWSWC?=
+ =?us-ascii?Q?ibodsP7Jjk6rgYfyqz1g4n8qqBsHy8z0po4nHnK15JV0z6WJBi5cla9j834p?=
+ =?us-ascii?Q?seb9O8U/JwQj4zUrHlk8XVrtiLUwdbTG/fZc9zk7eaajYJJsOdEehTjUPs0s?=
+ =?us-ascii?Q?2fP1ry2EiH/XC41ufeu0EwD+cOnXlbHhjPBvdyQ19p1mAXa75Lh0tjNfAE/1?=
+ =?us-ascii?Q?RXjTGgga25DsrxjlZceyWP1nNfuDz3jmKEBQjJdoIjdAe/+e/tFfQZKFH02L?=
+ =?us-ascii?Q?l39lwcfT8bU7VLCgeMk7oR7e6WcwzN9ZEFUSITE5epdj5++PYmm15pJaKSXi?=
+ =?us-ascii?Q?Jx39lXGzZZP9PaUIY4k7lgQoMEVB6HGBqIre7JFvMPUSXqYYeARHcLzsMw8+?=
+ =?us-ascii?Q?jw=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	9IuDX0qfFYEo44lE6cnuyTDxEOgvhZAG5anhMPGWDTGff3a854YDkdJ40JUsaMk+F0rcjcr1k22VFn3DdaA6OjrcDsduYa74bbrYeK2CU3fsQmzyJDJ17tF1/tOV6esncuVwl5/LxUvSUApU1X6swJnvR2/8VO3ZsJofdEgsDjXnZCxfrrWDK2OiRsZN/pL9TuHERcByaBHRB7yduSkywIf36I/l2kFNsRkODIxGAzCnxoKyq9OfKgKDK09cTWRZexmFcnPTb1o4iFj+BtWxyYFYRyYRf1WqxX5yGgKDOk1X2k57zsFOfmBKUDxpxtFSHRH6TqEXSycARMPnNhNO7ihbO98i1nQEwn+PjKUj/4rJbn7X2CDEWwduZG4v4gMSC3DjCOlUG74ny4Igs57TAfJEn0c425QS2l13BN9bzv3TnU6kfcgCG0rxglsu1xJKKjRC3SKPnRljO/rDixdSds925/UdiS4BYTi7yVZKT7d5BtIevjmIaH+wDdsgEGRXjUXxCTMN5J5A4H1R9+HsF5KNlA+iV12l/s4xRXnGxnu9091An4ENKdCiyST3Cr3nJRCYZk7dpadgYn4ig7PYnJhWCz6GCrbRghu9CGQumZ8=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 21e516d0-5ba1-41fe-0bd1-08de282d9bca
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Nov 2025 12:09:08.7351
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: IRbLUrJzxO+vXU/7D13KD03NNOZkL1iPPluA2OC/HzQozoG6wt9FYFUcGLBiz8ONAzshxQovC3K9fdOZ1AEfQBjgLy7rFXdRUoVJbK1emVE=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB5744
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-20_04,2025-11-20_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxlogscore=999
+ suspectscore=0 malwarescore=0 mlxscore=0 bulkscore=0 phishscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2510240000 definitions=main-2511200076
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTE1MDAzMiBTYWx0ZWRfX0tmq55KyRNhF
+ lAtz3M5yqX6NmPfwgdDtWWLUxIhHPOSQufGBewZjDuMDU76d5/7NaxYfJdTHv08JDzS8UQ4MeQL
+ wlk/Eyua0HcyQVfjzS5Gnc2McEHUXKIKbJafA4ab/1+L66yeD29ShdTmHrW78er4HjlqLnx1/iy
+ qiINukV5PU1P8q3LnWAyRQdMCKpNZB0j3rxE/5kIYQVsyfnBqC02o6NRUGrJZ7hhl6yhQtSlS2r
+ aJ3dyu9LofCIWrV28vTBNa2lrcUidkVm1QV21BT9SPky+jmt4SPY050nackiFVQ1gXZ/K8fV5I8
+ ytnP0Ria+Rv0G55pK8csWF8B8dayaL2X6l8WgrIh4TT95hPnD194hbKq5Z2ti3yA88mfcUHAzhR
+ rViH4r/2nwbFHxGHWcoJiPbCmjElGQ==
+X-Proofpoint-GUID: Hc0cyazDXvz2YFyQC0qOKsBxO9k-HL4g
+X-Proofpoint-ORIG-GUID: Hc0cyazDXvz2YFyQC0qOKsBxO9k-HL4g
+X-Authority-Analysis: v=2.4 cv=Rdydyltv c=1 sm=1 tr=0 ts=691f04e8 cx=c_pps
+ a=XiAAW1AwiKB2Y8Wsi+sD2Q==:117 a=XiAAW1AwiKB2Y8Wsi+sD2Q==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=6UeiqGixMTsA:10 a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=pGLkceISAAAA:8 a=yPCof4ZbAAAA:8 a=kgHi4e0kVQvgMnxFnJMA:9 a=CjuIK1q_8ugA:10
 
-The implementation of LOOKUP_HANDLE simply modifies the LOOKUP operation to
-include an extra inarg: the file handle for the parent directory (if it is
-available).  Also, because fuse_entry_out now has a extra variable size
-struct (the actual handle), it also sets the out_argvar flag to true.
+On Thu, Nov 20, 2025 at 10:36:16AM +0000, Lorenzo Stoakes wrote:
+> I guess you decided to drop all reviewers for the series...?
+>
+> I do wonder what the aversion to sending to more people is, email for review is
+> flawed but I don't think it's problematic to ensure that people signed up to
+> review everything for maintained files are cc'd...
+>
+> On Wed, Nov 19, 2025 at 10:41:35PM +0000, david.laight.linux@gmail.com wrote:
+> > From: David Laight <david.laight.linux@gmail.com>
+> >
+> > min_t(unsigned int, a, b) casts an 'unsigned long' to 'unsigned int'.
+> > Use min(a, b) instead as it promotes any 'unsigned int' to 'unsigned long'
+> > and so cannot discard significant bits.
+>
+> you're changing min_t(int, ...) too? This commit message seems incomplete as a
+> result.
+>
+> None of the changes you make here seem to have any bearing on reality, so I
+> think the commit message should reflect that this is an entirely pedantic change
+> for the sake of satisfying a check you feel will reveal actual bugs in the
+> future or something?
+>
+> Commit messages should include actual motivation rather than a theoretical one.
+>
+> >
+> > In this case the 'unsigned long' values are small enough that the result
+> > is ok.
+> >
+> > (Similarly for clamp_t().)
+> >
+> > Detected by an extra check added to min_t().
+>
+> In general I really question the value of the check when basically every use
+> here is pointless...?
+>
+> I guess idea is in future it'll catch some real cases right?
+>
+> Is this check implemented in this series at all? Because presumably with the
+> cover letter saying you couldn't fix the CFS code etc. you aren't? So it's just
+> laying the groundwork for this?
+>
+> >
+> > Signed-off-by: David Laight <david.laight.linux@gmail.com>
 
-Most of the other modifications in this patch are a fallout from these
-changes: because fuse_entry_out has been modified to include a variable size
-struct, every operation that receives such a parameter have to take this
-into account:
+I mean I don't see anything wrong here, and on the basis that this will be
+useful in adding this upcoming check, with the nit about commit msg above, this
+LGTM so:
 
-  CREATE, LINK, LOOKUP, MKDIR, MKNOD, READDIRPLUS, SYMLINK, TMPFILE
+Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
-The export_operations were also modified to use this new file handle instead
-if the lookup_handle operation is implemented for the file system.
-
-Signed-off-by: Luis Henriques <luis@igalia.com>
----
- fs/fuse/dev.c             |   1 +
- fs/fuse/dir.c             |  75 +++++++++++++++-----
- fs/fuse/fuse_i.h          |  34 ++++++++--
- fs/fuse/inode.c           | 139 +++++++++++++++++++++++++++++++++-----
- fs/fuse/readdir.c         |  10 +--
- include/uapi/linux/fuse.h |   8 +++
- 6 files changed, 224 insertions(+), 43 deletions(-)
-
-diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-index 132f38619d70..2f659e70a088 100644
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -632,6 +632,7 @@ static void fuse_adjust_compat(struct fuse_conn *fc, struct fuse_args *args)
- 			break;
- 		}
- 	}
-+	/* XXX handle FUSE_COMPAT_45_ENTRY_OUT_SIZE */
- }
- 
- static void fuse_force_creds(struct fuse_req *req)
-diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index 77d50ea30b61..a40f7aa700b0 100644
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -169,7 +169,8 @@ static void fuse_invalidate_entry(struct dentry *entry)
- }
- 
- static void fuse_lookup_init(struct fuse_conn *fc, struct fuse_args *args,
--			     u64 nodeid, const struct qstr *name,
-+			     u64 nodeid, struct inode *dir,
-+			     const struct qstr *name,
- 			     struct fuse_entry_out *outarg)
- {
- 	args->opcode = FUSE_LOOKUP;
-@@ -181,8 +182,20 @@ static void fuse_lookup_init(struct fuse_conn *fc, struct fuse_args *args,
- 	args->in_args[2].size = 1;
- 	args->in_args[2].value = "";
- 	args->out_numargs = 1;
--	args->out_args[0].size = sizeof(struct fuse_entry_out);
-+	args->out_args[0].size = sizeof(*outarg) + outarg->fh.size;
- 	args->out_args[0].value = outarg;
-+
-+	if (fc->lookup_handle && dir) {
-+		struct fuse_inode *fi = get_fuse_inode(dir);
-+
-+		args->opcode = FUSE_LOOKUP_HANDLE;
-+		if (fi && fi->fh) {
-+			args->in_numargs = 4;
-+			args->in_args[3].size = sizeof(*fi->fh) + fi->fh->size;
-+			args->in_args[3].value = fi->fh;
-+		}
-+		args->out_argvar = true;
-+	}
- }
- 
- /*
-@@ -240,7 +253,7 @@ static int fuse_dentry_revalidate(struct inode *dir, const struct qstr *name,
- 
- 		attr_version = fuse_get_attr_version(fm->fc);
- 
--		fuse_lookup_init(fm->fc, &args, get_node_id(dir),
-+		fuse_lookup_init(fm->fc, &args, get_node_id(dir), dir,
- 				 name, outarg);
- 		ret = fuse_simple_request(fm, &args);
- 		/* Zero nodeid is same as -ENOENT */
-@@ -248,7 +261,8 @@ static int fuse_dentry_revalidate(struct inode *dir, const struct qstr *name,
- 			ret = -ENOENT;
- 		if (!ret) {
- 			fi = get_fuse_inode(inode);
--			if (outarg->nodeid != get_node_id(inode) ||
-+			if (!fuse_file_handle_is_equal(fm->fc, fi->fh, &outarg->fh) ||
-+			    outarg->nodeid != get_node_id(inode) ||
- 			    (bool) IS_AUTOMOUNT(inode) != (bool) (outarg->attr.flags & FUSE_ATTR_SUBMOUNT)) {
- 				fuse_queue_forget(fm->fc, forget,
- 						  outarg->nodeid, 1);
-@@ -365,8 +379,9 @@ bool fuse_invalid_attr(struct fuse_attr *attr)
- 	return !fuse_valid_type(attr->mode) || !fuse_valid_size(attr->size);
- }
- 
--int fuse_lookup_name(struct super_block *sb, u64 nodeid, const struct qstr *name,
--		     struct fuse_entry_out *outarg, struct inode **inode)
-+int fuse_lookup_name(struct super_block *sb, u64 nodeid, struct inode *dir,
-+		     const struct qstr *name, struct fuse_entry_out *outarg,
-+		     struct inode **inode)
- {
- 	struct fuse_mount *fm = get_fuse_mount_super(sb);
- 	FUSE_ARGS(args);
-@@ -388,14 +403,15 @@ int fuse_lookup_name(struct super_block *sb, u64 nodeid, const struct qstr *name
- 	attr_version = fuse_get_attr_version(fm->fc);
- 	evict_ctr = fuse_get_evict_ctr(fm->fc);
- 
--	fuse_lookup_init(fm->fc, &args, nodeid, name, outarg);
-+	fuse_lookup_init(fm->fc, &args, nodeid, dir, name, outarg);
- 	err = fuse_simple_request(fm, &args);
- 	/* Zero nodeid is same as -ENOENT, but with valid timeout */
--	if (err || !outarg->nodeid)
-+	if (err < 0 || !outarg->nodeid) // XXX err = size if args->out_argvar = true
- 		goto out_put_forget;
- 
- 	err = -EIO;
--	if (fuse_invalid_attr(&outarg->attr))
-+	if (fuse_invalid_attr(&outarg->attr) ||
-+	    fuse_invalid_file_handle(fm->fc, &outarg->fh))
- 		goto out_put_forget;
- 	if (outarg->nodeid == FUSE_ROOT_ID && outarg->generation != 0) {
- 		pr_warn_once("root generation should be zero\n");
-@@ -404,7 +420,8 @@ int fuse_lookup_name(struct super_block *sb, u64 nodeid, const struct qstr *name
- 
- 	*inode = fuse_iget(sb, outarg->nodeid, outarg->generation,
- 			   &outarg->attr, ATTR_TIMEOUT(outarg),
--			   attr_version, evict_ctr);
-+			   attr_version, evict_ctr,
-+			   &outarg->fh);
- 	err = -ENOMEM;
- 	if (!*inode) {
- 		fuse_queue_forget(fm->fc, forget, outarg->nodeid, 1);
-@@ -440,14 +457,14 @@ static struct dentry *fuse_lookup(struct inode *dir, struct dentry *entry,
- 		return ERR_PTR(-ENOMEM);
- 
- 	locked = fuse_lock_inode(dir);
--	err = fuse_lookup_name(dir->i_sb, get_node_id(dir), &entry->d_name,
-+	err = fuse_lookup_name(dir->i_sb, get_node_id(dir), dir, &entry->d_name,
- 			       outarg, &inode);
- 	fuse_unlock_inode(dir, locked);
- 	if (err == -ENOENT) {
- 		outarg_valid = false;
- 		err = 0;
- 	}
--	if (err)
-+	if (err < 0) // XXX err = size if args->out_argvar = true
- 		goto out_err;
- 
- 	err = -EIO;
-@@ -688,8 +705,16 @@ static int fuse_create_open(struct mnt_idmap *idmap, struct inode *dir,
- 	args.in_args[0].value = &inarg;
- 	args.in_args[1].size = entry->d_name.len + 1;
- 	args.in_args[1].value = entry->d_name.name;
-+	if (fm->fc->lookup_handle) {
-+		fi = get_fuse_inode(dir);
-+		if (fi->fh) {
-+			args.in_numargs = 3;
-+			args.in_args[2].size = sizeof(*fi->fh) + fi->fh->size;
-+			args.in_args[3].value = fi->fh;
-+		}
-+	}
- 	args.out_numargs = 2;
--	args.out_args[0].size = sizeof(*outentry);
-+	args.out_args[0].size = sizeof(*outentry) + outentry->fh.size;
- 	args.out_args[0].value = outentry;
- 	/* Store outarg for fuse_finish_open() */
- 	outopenp = &ff->args->open_outarg;
-@@ -707,6 +732,7 @@ static int fuse_create_open(struct mnt_idmap *idmap, struct inode *dir,
- 
- 	err = -EIO;
- 	if (!S_ISREG(outentry->attr.mode) || invalid_nodeid(outentry->nodeid) ||
-+	    fuse_invalid_file_handle(fm->fc, &outentry->fh) ||
- 	    fuse_invalid_attr(&outentry->attr))
- 		goto out_free_outentry;
- 
-@@ -714,7 +740,8 @@ static int fuse_create_open(struct mnt_idmap *idmap, struct inode *dir,
- 	ff->nodeid = outentry->nodeid;
- 	ff->open_flags = outopenp->open_flags;
- 	inode = fuse_iget(dir->i_sb, outentry->nodeid, outentry->generation,
--			  &outentry->attr, ATTR_TIMEOUT(outentry), 0, 0);
-+			  &outentry->attr, ATTR_TIMEOUT(outentry), 0, 0,
-+			  &outentry->fh);
- 	if (!inode) {
- 		flags &= ~(O_CREAT | O_EXCL | O_TRUNC);
- 		fuse_sync_release(NULL, ff, flags);
-@@ -828,9 +855,21 @@ static struct dentry *create_new_entry(struct mnt_idmap *idmap, struct fuse_moun
- 		goto out_put_forget_req;
- 	}
- 
-+	if (fm->fc->lookup_handle) {
-+		struct fuse_inode *fi = get_fuse_inode(dir);
-+		int idx = args->in_numargs;
-+
-+		WARN_ON_ONCE(idx >= 4);
-+
-+		if (fi->fh) {
-+			args->in_args[idx].size = sizeof(*fi->fh) + fi->fh->size;
-+			args->in_args[idx].value = fi->fh;
-+			args->in_numargs++;
-+		}
-+	}
- 	args->nodeid = get_node_id(dir);
- 	args->out_numargs = 1;
--	args->out_args[0].size = sizeof(*outarg);
-+	args->out_args[0].size = sizeof(*outarg) + outarg->fh.size;
- 	args->out_args[0].value = outarg;
- 
- 	if (args->opcode != FUSE_LINK) {
-@@ -845,14 +884,16 @@ static struct dentry *create_new_entry(struct mnt_idmap *idmap, struct fuse_moun
- 		goto out_free_outarg;
- 
- 	err = -EIO;
--	if (invalid_nodeid(outarg->nodeid) || fuse_invalid_attr(&outarg->attr))
-+	if (invalid_nodeid(outarg->nodeid) || fuse_invalid_attr(&outarg->attr) ||
-+	    fuse_invalid_file_handle(fm->fc, &outarg->fh))
- 		goto out_free_outarg;
- 
- 	if ((outarg->attr.mode ^ mode) & S_IFMT)
- 		goto out_free_outarg;
- 
- 	inode = fuse_iget(dir->i_sb, outarg->nodeid, outarg->generation,
--			  &outarg->attr, ATTR_TIMEOUT(outarg), 0, 0);
-+			  &outarg->attr, ATTR_TIMEOUT(outarg), 0, 0,
-+			  &outarg->fh);
- 	if (!inode) {
- 		fuse_queue_forget(fm->fc, forget, outarg->nodeid, 1);
- 		kfree(outarg);
-diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index d997fdcede9b..ad9477394e4b 100644
---- a/fs/fuse/fuse_i.h
-+++ b/fs/fuse/fuse_i.h
-@@ -216,6 +216,8 @@ struct fuse_inode {
- 	 * so preserve the blocksize specified by the server.
- 	 */
- 	u8 cached_i_blkbits;
-+
-+	struct fuse_file_handle *fh;
- };
- 
- /** FUSE inode state bits */
-@@ -1065,6 +1067,26 @@ static inline int invalid_nodeid(u64 nodeid)
- 	return !nodeid || nodeid == FUSE_ROOT_ID;
- }
- 
-+static inline bool fuse_invalid_file_handle(struct fuse_conn *fc,
-+					    struct fuse_file_handle *handle)
-+{
-+	if (!fc->lookup_handle)
-+		return false;
-+
-+	return !handle->size || (handle->size >= FUSE_MAX_HANDLE_SZ);
-+}
-+
-+static inline bool fuse_file_handle_is_equal(struct fuse_conn *fc,
-+					     struct fuse_file_handle *fh1,
-+					     struct fuse_file_handle *fh2)
-+{
-+	if (!fc->lookup_handle || !fh2->size || // XXX more OPs without handle
-+	    ((fh1->size == fh2->size) &&
-+	     (!memcmp(fh1->handle, fh2->handle, fh1->size))))
-+		return true;
-+	return false;
-+}
-+
- static inline u64 fuse_get_attr_version(struct fuse_conn *fc)
- {
- 	return atomic64_read(&fc->attr_version);
-@@ -1096,7 +1118,10 @@ static inline struct fuse_entry_out *fuse_entry_out_alloc(struct fuse_conn *fc)
- {
- 	struct fuse_entry_out *entryout;
- 
--	entryout = kzalloc(sizeof(*entryout), GFP_KERNEL_ACCOUNT);
-+	entryout = kzalloc(sizeof(*entryout) + fc->max_handle_sz,
-+			   GFP_KERNEL_ACCOUNT);
-+	if (entryout)
-+		entryout->fh.size = fc->max_handle_sz;
- 
- 	return entryout;
- }
-@@ -1143,10 +1168,11 @@ extern const struct dentry_operations fuse_dentry_operations;
- struct inode *fuse_iget(struct super_block *sb, u64 nodeid,
- 			int generation, struct fuse_attr *attr,
- 			u64 attr_valid, u64 attr_version,
--			u64 evict_ctr);
-+			u64 evict_ctr, struct fuse_file_handle *fh);
- 
--int fuse_lookup_name(struct super_block *sb, u64 nodeid, const struct qstr *name,
--		     struct fuse_entry_out *outarg, struct inode **inode);
-+int fuse_lookup_name(struct super_block *sb, u64 nodeid, struct inode *dir,
-+		     const struct qstr *name, struct fuse_entry_out *outarg,
-+		     struct inode **inode);
- 
- /**
-  * Send FORGET command
-diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index 30ee37c29057..23b8e4932da8 100644
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -95,6 +95,25 @@ static struct fuse_submount_lookup *fuse_alloc_submount_lookup(void)
- 	return NULL;
- }
- 
-+/*
-+ * XXX postpone this allocation and later use the real size instead of max
-+ */
-+static bool fuse_inode_handle_alloc(struct super_block *sb,
-+				    struct fuse_inode *fi)
-+{
-+	struct fuse_conn *fc = get_fuse_conn_super(sb);
-+
-+	fi->fh = NULL;
-+	if (fc->lookup_handle) {
-+		fi->fh = kzalloc(sizeof(*fi->fh) + fc->max_handle_sz,
-+				 GFP_KERNEL_ACCOUNT);
-+		if (!fi->fh)
-+			return false;
-+	}
-+
-+	return true;
-+}
-+
- static struct inode *fuse_alloc_inode(struct super_block *sb)
- {
- 	struct fuse_inode *fi;
-@@ -120,8 +139,15 @@ static struct inode *fuse_alloc_inode(struct super_block *sb)
- 	if (IS_ENABLED(CONFIG_FUSE_PASSTHROUGH))
- 		fuse_inode_backing_set(fi, NULL);
- 
-+	if (!fuse_inode_handle_alloc(sb, fi))
-+		goto out_free_dax;
-+
- 	return &fi->inode;
- 
-+out_free_dax:
-+#ifdef CONFIG_FUSE_DAX
-+	kfree(fi->dax);
-+#endif
- out_free_forget:
- 	kfree(fi->forget);
- out_free:
-@@ -132,6 +158,7 @@ static struct inode *fuse_alloc_inode(struct super_block *sb)
- static void fuse_free_inode(struct inode *inode)
- {
- 	struct fuse_inode *fi = get_fuse_inode(inode);
-+	struct fuse_conn *fc = get_fuse_conn(inode);
- 
- 	mutex_destroy(&fi->mutex);
- 	kfree(fi->forget);
-@@ -141,6 +168,9 @@ static void fuse_free_inode(struct inode *inode)
- 	if (IS_ENABLED(CONFIG_FUSE_PASSTHROUGH))
- 		fuse_backing_put(fuse_inode_backing(fi));
- 
-+	if (fc->lookup_handle)
-+		kfree(fi->fh);
-+
- 	kmem_cache_free(fuse_inode_cachep, fi);
- }
- 
-@@ -465,7 +495,7 @@ static int fuse_inode_set(struct inode *inode, void *_nodeidp)
- struct inode *fuse_iget(struct super_block *sb, u64 nodeid,
- 			int generation, struct fuse_attr *attr,
- 			u64 attr_valid, u64 attr_version,
--			u64 evict_ctr)
-+			u64 evict_ctr, struct fuse_file_handle *fh)
- {
- 	struct inode *inode;
- 	struct fuse_inode *fi;
-@@ -505,14 +535,29 @@ struct inode *fuse_iget(struct super_block *sb, u64 nodeid,
- 	if (!inode)
- 		return NULL;
- 
-+	fi = get_fuse_inode(inode);
-+	if (fc->lookup_handle && fh->size) {
-+		if (fi->fh->size == 0) {
-+			if (fh->size >= fc->max_handle_sz)
-+				pr_warn("Truncating file handle size (%u)\n",
-+					fh->size);
-+			fi->fh->size = fh->size < fc->max_handle_sz ?
-+				fh->size : fc->max_handle_sz - 1;
-+			memcpy(fi->fh->handle, fh->handle, fi->fh->size);
-+		} else
-+			pr_warn("handle was already set (size: %u)\n",
-+				fi->fh->size);
-+	}
- 	if ((inode->i_state & I_NEW)) {
- 		inode->i_flags |= S_NOATIME;
- 		if (!fc->writeback_cache || !S_ISREG(attr->mode))
- 			inode->i_flags |= S_NOCMTIME;
- 		inode->i_generation = generation;
-+
- 		fuse_init_inode(inode, attr, fc);
- 		unlock_new_inode(inode);
--	} else if (fuse_stale_inode(inode, generation, attr)) {
-+	} else if (fuse_stale_inode(inode, generation, attr) ||
-+		   !fuse_file_handle_is_equal(fc, fi->fh, fh)) {
- 		/* nodeid was reused, any I/O on the old inode should fail */
- 		fuse_make_bad(inode);
- 		if (inode != d_inode(sb->s_root)) {
-@@ -521,7 +566,6 @@ struct inode *fuse_iget(struct super_block *sb, u64 nodeid,
- 			goto retry;
- 		}
- 	}
--	fi = get_fuse_inode(inode);
- 	spin_lock(&fi->lock);
- 	fi->nlookup++;
- 	spin_unlock(&fi->lock);
-@@ -1059,12 +1103,23 @@ static struct inode *fuse_get_root_inode(struct super_block *sb, unsigned int mo
- 	attr.mode = mode;
- 	attr.ino = FUSE_ROOT_ID;
- 	attr.nlink = 1;
--	return fuse_iget(sb, FUSE_ROOT_ID, 0, &attr, 0, 0, 0);
-+	return fuse_iget(sb, FUSE_ROOT_ID, 0, &attr, 0, 0, 0, NULL); // XXX
- }
- 
-+enum {
-+	HANDLE_TYPE_NODEID      = 0,
-+	HANDLE_TYPE_HANDLE      = 1,
-+};
-+
- struct fuse_inode_handle {
--	u64 nodeid;
--	u32 generation;
-+	u32 type;
-+	union {
-+		struct {
-+			u64 nodeid;
-+			u32 generation;
-+		};
-+		struct fuse_file_handle fh;
-+	};
- };
- 
- static struct dentry *fuse_get_dentry(struct super_block *sb,
-@@ -1092,7 +1147,7 @@ static struct dentry *fuse_get_dentry(struct super_block *sb,
- 			goto out_err;
- 		}
- 
--		err = fuse_lookup_name(sb, handle->nodeid, &name, outarg,
-+		err = fuse_lookup_name(sb, handle->nodeid, NULL, &name, outarg,
- 				       &inode);
- 		kfree(outarg);
- 		if (err && err != -ENOENT)
-@@ -1121,13 +1176,42 @@ static struct dentry *fuse_get_dentry(struct super_block *sb,
- 	return ERR_PTR(err);
- }
- 
-+static int fuse_encode_lookup_fh(struct inode *inode, u32 *fh, int *max_len,
-+				 struct inode *parent)
-+{
-+	struct fuse_inode *fi = get_fuse_inode(inode);
-+	int total_len, len;
-+
-+	total_len = len = sizeof(struct fuse_file_handle);
-+	if (parent)
-+		total_len *= 2;
-+
-+	if (*max_len < total_len)
-+		return FILEID_INVALID;
-+
-+	memcpy(fh, &fi->fh, len);
-+	if (parent) {
-+		fi = get_fuse_inode(parent);
-+		memcpy((fh + len), &fi->fh, len);
-+	}
-+
-+	*max_len = total_len;
-+
-+	/* XXX define new fid_type */
-+	return parent ? FILEID_INO64_GEN_PARENT : FILEID_INO64_GEN;
-+}
-+
- static int fuse_encode_fh(struct inode *inode, u32 *fh, int *max_len,
- 			   struct inode *parent)
- {
-+	struct fuse_conn *fc = get_fuse_conn(inode);
- 	int len = parent ? 6 : 3;
- 	u64 nodeid;
- 	u32 generation;
- 
-+	if (fc->lookup_handle)
-+		return fuse_encode_lookup_fh(inode, fh, max_len, parent);
-+
- 	if (*max_len < len) {
- 		*max_len = len;
- 		return  FILEID_INVALID;
-@@ -1156,30 +1240,51 @@ static int fuse_encode_fh(struct inode *inode, u32 *fh, int *max_len,
- static struct dentry *fuse_fh_to_dentry(struct super_block *sb,
- 		struct fid *fid, int fh_len, int fh_type)
- {
-+	struct fuse_conn *fc = get_fuse_conn_super(sb);
- 	struct fuse_inode_handle handle;
- 
- 	if ((fh_type != FILEID_INO64_GEN &&
- 	     fh_type != FILEID_INO64_GEN_PARENT) || fh_len < 3)
- 		return NULL;
- 
--	handle.nodeid = (u64) fid->raw[0] << 32;
--	handle.nodeid |= (u64) fid->raw[1];
--	handle.generation = fid->raw[2];
-+	if (fc->lookup_handle) {
-+		if (fh_len < sizeof(struct fuse_file_handle))
-+			return NULL;
-+		handle.type = HANDLE_TYPE_HANDLE;
-+		memcpy(&handle.fh, &fid->raw[0],
-+		       sizeof(struct fuse_file_handle));
-+	} else {
-+		handle.nodeid = (u64) fid->raw[0] << 32;
-+		handle.nodeid |= (u64) fid->raw[1];
-+		handle.generation = fid->raw[2];
-+	}
- 	return fuse_get_dentry(sb, &handle);
- }
- 
- static struct dentry *fuse_fh_to_parent(struct super_block *sb,
- 		struct fid *fid, int fh_len, int fh_type)
- {
--	struct fuse_inode_handle parent;
-+	struct fuse_conn *fc = get_fuse_conn_super(sb);
-+	struct fuse_inode_handle handle;
- 
- 	if (fh_type != FILEID_INO64_GEN_PARENT || fh_len < 6)
- 		return NULL;
- 
--	parent.nodeid = (u64) fid->raw[3] << 32;
--	parent.nodeid |= (u64) fid->raw[4];
--	parent.generation = fid->raw[5];
--	return fuse_get_dentry(sb, &parent);
-+	if (fc->lookup_handle) {
-+		struct fuse_file_handle *fh = (struct fuse_file_handle *)fid->raw;
-+
-+		if (fh_len < sizeof(struct fuse_file_handle) * 2)
-+			return NULL;
-+		handle.type = HANDLE_TYPE_HANDLE;
-+		memcpy(&handle.fh, &fh[1],
-+		       sizeof(struct fuse_file_handle));
-+	} else {
-+		handle.type = HANDLE_TYPE_NODEID;
-+		handle.nodeid = (u64) fid->raw[3] << 32;
-+		handle.nodeid |= (u64) fid->raw[4];
-+		handle.generation = fid->raw[5];
-+	}
-+	return fuse_get_dentry(sb, &handle);
- }
- 
- static struct dentry *fuse_get_parent(struct dentry *child)
-@@ -1199,7 +1304,7 @@ static struct dentry *fuse_get_parent(struct dentry *child)
- 		return ERR_PTR(-ENOMEM);
- 
- 	err = fuse_lookup_name(child_inode->i_sb, get_node_id(child_inode),
--			       &dotdot_name, outarg, &inode);
-+			       child_inode, &dotdot_name, outarg, &inode);
- 	kfree(outarg);
- 	if (err) {
- 		if (err == -ENOENT)
-@@ -1757,7 +1862,7 @@ static int fuse_fill_super_submount(struct super_block *sb,
- 
- 	fuse_fill_attr_from_inode(&root_attr, parent_fi);
- 	root = fuse_iget(sb, parent_fi->nodeid, 0, &root_attr, 0, 0,
--			 fuse_get_evict_ctr(fm->fc));
-+			 fuse_get_evict_ctr(fm->fc), NULL); // XXX
- 	/*
- 	 * This inode is just a duplicate, so it is not looked up and
- 	 * its nlookup should not be incremented.  fuse_iget() does
-diff --git a/fs/fuse/readdir.c b/fs/fuse/readdir.c
-index c2aae2eef086..04fb6636c4c0 100644
---- a/fs/fuse/readdir.c
-+++ b/fs/fuse/readdir.c
-@@ -185,12 +185,12 @@ static int fuse_direntplus_link(struct file *file,
- 			return 0;
- 	}
- 
--	if (invalid_nodeid(o->nodeid))
--		return -EIO;
--	if (fuse_invalid_attr(&o->attr))
-+	fc = get_fuse_conn(dir);
-+
-+	if (invalid_nodeid(o->nodeid) || fuse_invalid_attr(&o->attr) ||
-+	    fuse_invalid_file_handle(fc, &o->fh))
- 		return -EIO;
- 
--	fc = get_fuse_conn(dir);
- 	epoch = atomic_read(&fc->epoch);
- 
- 	name.hash = full_name_hash(parent, name.name, name.len);
-@@ -235,7 +235,7 @@ static int fuse_direntplus_link(struct file *file,
- 	} else {
- 		inode = fuse_iget(dir->i_sb, o->nodeid, o->generation,
- 				  &o->attr, ATTR_TIMEOUT(o),
--				  attr_version, evict_ctr);
-+				  attr_version, evict_ctr, &o->fh);
- 		if (!inode)
- 			inode = ERR_PTR(-ENOMEM);
- 
-diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-index 4acf71b407c9..b75744d2d75d 100644
---- a/include/uapi/linux/fuse.h
-+++ b/include/uapi/linux/fuse.h
-@@ -690,6 +690,13 @@ enum fuse_notify_code {
- #define FUSE_MIN_READ_BUFFER 8192
- 
- #define FUSE_COMPAT_ENTRY_OUT_SIZE 120
-+#define FUSE_COMPAT_45_ENTRY_OUT_SIZE 128
-+
-+struct fuse_file_handle {
-+	uint32_t	size;
-+	uint32_t	type;
-+	char		handle[0];
-+};
- 
- struct fuse_entry_out {
- 	uint64_t	nodeid;		/* Inode ID */
-@@ -700,6 +707,7 @@ struct fuse_entry_out {
- 	uint32_t	entry_valid_nsec;
- 	uint32_t	attr_valid_nsec;
- 	struct fuse_attr attr;
-+	struct fuse_file_handle fh;
- };
- 
- struct fuse_forget_in {
+> > ---
+> >  mm/gup.c      | 4 ++--
+> >  mm/memblock.c | 2 +-
+> >  mm/memory.c   | 2 +-
+> >  mm/percpu.c   | 2 +-
+> >  mm/truncate.c | 3 +--
+> >  mm/vmscan.c   | 2 +-
+> >  6 files changed, 7 insertions(+), 8 deletions(-)
+> >
+> > diff --git a/mm/gup.c b/mm/gup.c
+> > index a8ba5112e4d0..55435b90dcc3 100644
+> > --- a/mm/gup.c
+> > +++ b/mm/gup.c
+> > @@ -237,8 +237,8 @@ static inline struct folio *gup_folio_range_next(struct page *start,
+> >  	unsigned int nr = 1;
+> >
+> >  	if (folio_test_large(folio))
+> > -		nr = min_t(unsigned int, npages - i,
+> > -			   folio_nr_pages(folio) - folio_page_idx(folio, next));
+> > +		nr = min(npages - i,
+> > +			 folio_nr_pages(folio) - folio_page_idx(folio, next));
+>
+> There's no cases where any of these would discard significant bits. But we
+> ultimately cast to unisnged int anyway (nr) so not sure this achieves anything.
+>
+> But at the same time I guess no harm.
+>
+> >
+> >  	*ntails = nr;
+> >  	return folio;
+> > diff --git a/mm/memblock.c b/mm/memblock.c
+> > index e23e16618e9b..19b491d39002 100644
+> > --- a/mm/memblock.c
+> > +++ b/mm/memblock.c
+> > @@ -2208,7 +2208,7 @@ static void __init __free_pages_memory(unsigned long start, unsigned long end)
+> >  		 * the case.
+> >  		 */
+> >  		if (start)
+> > -			order = min_t(int, MAX_PAGE_ORDER, __ffs(start));
+> > +			order = min(MAX_PAGE_ORDER, __ffs(start));
+>
+> I guess this would already be defaulting to int anyway.
+>
+> >  		else
+> >  			order = MAX_PAGE_ORDER;
+> >
+> > diff --git a/mm/memory.c b/mm/memory.c
+> > index 74b45e258323..72f7bd71d65f 100644
+> > --- a/mm/memory.c
+> > +++ b/mm/memory.c
+> > @@ -2375,7 +2375,7 @@ static int insert_pages(struct vm_area_struct *vma, unsigned long addr,
+> >
+> >  	while (pages_to_write_in_pmd) {
+> >  		int pte_idx = 0;
+> > -		const int batch_size = min_t(int, pages_to_write_in_pmd, 8);
+> > +		const int batch_size = min(pages_to_write_in_pmd, 8);
+>
+> Feels like there's just a mistake in pages_to_write_in_pmd being unsigned long?
+>
+> Again I guess correct because we're not going to even come close to ulong64
+> issues with a count of pages to write.
+>
+> >
+> >  		start_pte = pte_offset_map_lock(mm, pmd, addr, &pte_lock);
+> >  		if (!start_pte) {
+> > diff --git a/mm/percpu.c b/mm/percpu.c
+> > index 81462ce5866e..cad59221d298 100644
+> > --- a/mm/percpu.c
+> > +++ b/mm/percpu.c
+> > @@ -1228,7 +1228,7 @@ static int pcpu_alloc_area(struct pcpu_chunk *chunk, int alloc_bits,
+> >  	/*
+> >  	 * Search to find a fit.
+> >  	 */
+> > -	end = min_t(int, start + alloc_bits + PCPU_BITMAP_BLOCK_BITS,
+> > +	end = umin(start + alloc_bits + PCPU_BITMAP_BLOCK_BITS,
+> >  		    pcpu_chunk_map_bits(chunk));
+>
+> Is it really that useful to use umin() here? I mean in examples above all the
+> values would be positive too. Seems strange to use umin() when everything involves an int?
+>
+> >  	bit_off = pcpu_find_zero_area(chunk->alloc_map, end, start, alloc_bits,
+> >  				      align_mask, &area_off, &area_bits);
+> > diff --git a/mm/truncate.c b/mm/truncate.c
+> > index 91eb92a5ce4f..7a56372d39a3 100644
+> > --- a/mm/truncate.c
+> > +++ b/mm/truncate.c
+> > @@ -849,8 +849,7 @@ void pagecache_isize_extended(struct inode *inode, loff_t from, loff_t to)
+> >  		unsigned int offset, end;
+> >
+> >  		offset = from - folio_pos(folio);
+> > -		end = min_t(unsigned int, to - folio_pos(folio),
+> > -			    folio_size(folio));
+> > +		end = umin(to - folio_pos(folio), folio_size(folio));
+>
+> Again confused about why we choose to use umin() here...
+>
+> min(loff_t - loff_t, size_t)
+>
+> so min(long long, unsigned long)
+>
+> And I guess based on fact we don't expect delta between from and folio start to
+> be larger than a max folio size.
+>
+> So probably fine.
+>
+> >  		folio_zero_segment(folio, offset, end);
+> >  	}
+> >
+> > diff --git a/mm/vmscan.c b/mm/vmscan.c
+> > index b2fc8b626d3d..82cd99a5d843 100644
+> > --- a/mm/vmscan.c
+> > +++ b/mm/vmscan.c
+> > @@ -3489,7 +3489,7 @@ static struct folio *get_pfn_folio(unsigned long pfn, struct mem_cgroup *memcg,
+> >
+> >  static bool suitable_to_scan(int total, int young)
+> >  {
+> > -	int n = clamp_t(int, cache_line_size() / sizeof(pte_t), 2, 8);
+> > +	int n = clamp(cache_line_size() / sizeof(pte_t), 2, 8);
+>
+> int, size_t (but a size_t way < INT_MAX), int, int
+>
+> So seems fine.
+>
+> >
+> >  	/* suitable if the average number of young PTEs per cacheline is >=1 */
+> >  	return young * n >= total;
+> > --
+> > 2.39.5
+> >
+>
+> Generally the changes look to be correct but pointless.
 
