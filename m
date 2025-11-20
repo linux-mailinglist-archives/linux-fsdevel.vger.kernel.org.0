@@ -1,109 +1,129 @@
-Return-Path: <linux-fsdevel+bounces-69191-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69192-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EA8AC7251E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Nov 2025 07:21:35 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F097C72652
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Nov 2025 07:51:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sin.lore.kernel.org (Postfix) with ESMTPS id 50F3629125
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Nov 2025 06:21:33 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D25374E6809
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Nov 2025 06:49:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83C03255F52;
-	Thu, 20 Nov 2025 06:20:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B3892EB86D;
+	Thu, 20 Nov 2025 06:49:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OgY6jP3Y"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SJCkRycS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B447A2D1F44
-	for <linux-fsdevel@vger.kernel.org>; Thu, 20 Nov 2025 06:20:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C48542BDC01;
+	Thu, 20 Nov 2025 06:49:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763619658; cv=none; b=bsJhEyZrDuMoCnJc+XGlpt69EiH+RajQfMS3hOCfGemS3vbfoP7AkBB8r0YT8eAKGzuChuhKjT5Zt/RQhKMvN5uG2SpgrlYpOJV1nc9L8aJr8WbPSHYGooMG0Sut+It++CSlM6X5jaZu22eJUTCM2vTyozLuMk9vrSXuax4oDUU=
+	t=1763621357; cv=none; b=YzyZRNQYcrE/04m5TW3gjMvWu/36eyxUscq13fmhDni+s4CqS9Lc0xHfD6qe/z3zqxB60hpek2iwqKpeT7xp0jZzUrF8Sym53qgVPo1AA1J+XfZwGMGMW83HcrrlCqaFhrBkeePKyeMxpbanevgwSyvuvHerUIDRVil5VLzFO+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763619658; c=relaxed/simple;
-	bh=i1NP3IWopgW0QMasmGf4QqA2C3cFRGyymbSFlIMorKY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZuCnDt1Ocp/gF3T+l1cfEPYCdl3k12KyX2kzc7FwI23gNbYw7VsRAJHDhW0Z+xO3Hkgpcd7LLFQ9avANPV7xEzIwlmEcJm4soQ84JNqg+pVgf/NYdE26aYk4LyfmebjAWRftjZEWU1XtNsncb6tk49nMWk8kid/uDgMztKJX8J0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OgY6jP3Y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63B92C4AF09
-	for <linux-fsdevel@vger.kernel.org>; Thu, 20 Nov 2025 06:20:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763619658;
-	bh=i1NP3IWopgW0QMasmGf4QqA2C3cFRGyymbSFlIMorKY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=OgY6jP3YhMIMoocrsXDzUFptzlkJfRShT1DtcdFzPJCjZODiCFhchlhn9pH3RWDHo
-	 z6T1u62TAIuN2OYmhzVj1gKyj84jjnlXuUEPMHoIToW2sGZ5UWHAyh4P21dVuw7Uex
-	 MGRfQsGyO6b8F08W2DbhX2iteZZRgwtz09QD2j0Wgk9zG3vK1nDRyYDW+K/uuuu3JE
-	 cf8ilMcknSwAcJ3i2C6znsmw9fFWaInuYUHTzoK8kIsRE3s2Dg0zOzgzhsX14OILNp
-	 sBH4p8K1b18NpuPtHNzGcC0nx53paEJlO8lAirZ4I3I+Y/ifxxTXRPdCrHvTc2sfr3
-	 RU9+cu0LKAXFQ==
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b728a43e410so93986066b.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Nov 2025 22:20:58 -0800 (PST)
-X-Gm-Message-State: AOJu0YzbiogN9bFh4NqbRPRImJPUxXV9kAT1zZQaNt3bhemuD5lz6hjs
-	jyYav36VZPFa1uQ4Wort0nK0Wl0HS6melDSVE4qN7imnVztLVUPPIjnS/hZhldCKNslqvcsXwrI
-	FOhk0YKevX9ZIW8bDlgUhEEF7X8xW0C8=
-X-Google-Smtp-Source: AGHT+IEG2GsHT8NA+ZSq3ZWfa9DxTwhWShbR015i0ao8CZ5MnzeL0Y81HT9SpXgUVabdgbXd+i4oTb0vGck+X39CdnU=
-X-Received: by 2002:a17:907:9287:b0:b3c:3c8e:189d with SMTP id
- a640c23a62f3a-b7654eb1ec8mr204295466b.32.1763619656955; Wed, 19 Nov 2025
- 22:20:56 -0800 (PST)
+	s=arc-20240116; t=1763621357; c=relaxed/simple;
+	bh=xFOx6jB1/jIm33IEiFx9URMIFU3GJ8PppOUR2OvBCbk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=c6ztSwXEaDyn3YuIJEczuc+I+oxxM4t1knMyBOaQpyd1gzgTxS/CfLQb0XA/foWOvdZO8g4FJpRMDqb7gj3mhZowehID5MWQOanWWCaerUMiBCineMu2GH/aZFf9D8lZkn5YdHGtCFxMXQ05bJkAkm+Yw9NWNSj1KLniGW/Usqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=SJCkRycS; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=cpTungSQVD0x31/iY7Zqb7COYgAEJ4A1OQabJ1J5QlM=; b=SJCkRycSr6fdZe2w2Malbw+wDx
+	UlHo/HdCKiU6GT+xcemjeVOiyv+dNYh2rX3GmHhobtpwqY//BhuzXigVUxDjwLG2zTKaOWVZ1FVh6
+	HUWzTcNFgwZhh6RVzGeGvXXiyAbM6ZAYEin2V+HDp0J7p0TPASVyKvrQDmxlLhKFtWqyMMGHLU+0F
+	7XK3BWmiWfIb5sDxa4zyl4uY0/re7eXjQwqM4J/VIWR+kgrqVtNeq5sZQG9ag1CXSDINAzmldZFmf
+	V/ne7pIhibJjqLxQOxQQnIzyPb3feN3FMoYwZAeoJNeaZtxjsLDPSIdM1xL7Y208qQHMjn0MsbAjD
+	YCL0MuHg==;
+Received: from 2a02-8389-2341-5b80-d601-7564-c2e0-491c.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:d601:7564:c2e0:491c] helo=localhost)
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vLyTc-00000006Ed6-2HbS;
+	Thu, 20 Nov 2025 06:49:09 +0000
+From: Christoph Hellwig <hch@lst.de>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>,
+	David Sterba <dsterba@suse.com>,
+	Jan Kara <jack@suse.cz>,
+	Mike Marshall <hubcap@omnibond.com>,
+	Martin Brandenburg <martin@omnibond.com>,
+	Carlos Maiolino <cem@kernel.org>,
+	Stefan Roesch <shr@fb.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	linux-btrfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	gfs2@lists.linux.dev,
+	io-uring@vger.kernel.org,
+	devel@lists.orangefs.org,
+	linux-unionfs@vger.kernel.org,
+	linux-mtd@lists.infradead.org,
+	linux-xfs@vger.kernel.org,
+	linux-nfs@vger.kernel.org
+Subject: re-enable IOCB_NOWAIT writes to files v2
+Date: Thu, 20 Nov 2025 07:47:21 +0100
+Message-ID: <20251120064859.2911749-1-hch@lst.de>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <OcRf3_Q--F-9@tutamail.com> <CAKYAXd8yo8HH2E0QWgLTBdnjVfpD_8LUPpOXbcKT4p91TLRh6A@mail.gmail.com>
-In-Reply-To: <CAKYAXd8yo8HH2E0QWgLTBdnjVfpD_8LUPpOXbcKT4p91TLRh6A@mail.gmail.com>
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Thu, 20 Nov 2025 15:20:45 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd-jmAnSGfM1LxfPD+s9=WcSDQmoXHSGmc6v1Sj-FF+W9A@mail.gmail.com>
-X-Gm-Features: AWmQ_bm7AdpHnK-FKEl8K0RuC_eIlf0-4qzih83TCVCM3i6Ua7ZGIYOj6R_RYH0
-Message-ID: <CAKYAXd-jmAnSGfM1LxfPD+s9=WcSDQmoXHSGmc6v1Sj-FF+W9A@mail.gmail.com>
-Subject: Re: [FS-DEV][NTFSPLUS][BUGREPORT]NtfsPlus extend mft data allocation error.
-To: craftfever@tutamail.com
-Cc: Linux Fsdevel <linux-fsdevel@vger.kernel.org>, 
-	Linux Kernel <linux-kernel@vger.kernel.org>, Iamjoonsoo Kim <iamjoonsoo.kim@lge.com>, 
-	Cheol Lee <cheol.lee@lge.com>, Jay Sim <jay.sim@lge.com>, Gunho Lee <gunho.lee@lge.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Tue, Oct 28, 2025 at 11:08=E2=80=AFAM Namjae Jeon <linkinjeon@kernel.org=
-> wrote:
->
-> On Sun, Oct 26, 2025 at 3:40=E2=80=AFAM <craftfever@tutamail.com> wrote:
-> >
-> >
-> >
-Hi,
-> > Hi, I' decided to test your new driver, as I found ntfs3 driver buggy a=
-nd causing system crush under huge amount of files writing ti disk ("I'm re=
-ported this bug already on lore.kernel maillists). The thing is ntfsplus de=
-monstrated buggy behavior in somewhat similar situation, but without system=
- crushing or partition corruption. When I try, for example, download many s=
-mall files through download manager, download can interrupt, and cosole ver=
-sion writes about memory allocation error. Similar error was in ntfs3 drive=
-r, but in this case with ntfsplus there is no program/system crash, just so=
-ft-erroring and interrupting, but files cannot be wrote in this case. In dm=
-esg this errors follow up with this messages:
-> >
-> > [16952.870880] ntfsplus: (device sdc1): ntfs_mft_record_alloc(): Failed=
- to extend mft data allocation.
-> > [16954.299230] ntfsplus: (device sdc1): ntfs_mft_data_extend_allocation=
-_nolock(): Not enough space in this mft record to accommodate extended mft =
-data attribute extent.  Cannot handle this yet.
-> >
-> > I know. that driver in development now, so I'm reporting this bug in ti=
-me when development is still in process. Thank you
-> I will take a look and fix the next version.
-> Thanks for your report!
-Could you check if your problem has been improved in the branch below?
+Hi all,
 
-git clone --branch=3Dntfs-next
-https://git.kernel.org/pub/scm/linux/kernel/git/linkinjeon/ntfs.git
+commit 66fa3cedf16a ("fs: Add async write file modification handling.")
+effectively disabled IOCB_NOWAIT writes as timestamp updates currently
+always require blocking, and the modern timestamp resolution means we
+always update timestamps.  This leads to a lot of context switches from
+applications using io_uring to submit file writes, making it often worse
+than using the legacy aio code that is not using IOCB_NOWAIT.
 
-Thanks!
+This series allows non-blocking updates for lazytime if the file system
+supports it, and adds that support for XFS.
+
+It also fixes the layering bypass in btrfs when updating timestamps on
+device files for devices removed from btrfs usage, and FMODE_NOCMTIME
+handling in the VFS now that nfsd started using it.  Note that I'm still
+not sure that nfsd usage is fully correct for all file systems, as only
+XFS explicitly supports FMODE_NOCMTIME, but at least the generic code
+does the right thing now.
+
+Changes since v1:
+ - more regular numbering of the S_* flags
+ - fix XFS to actually not block
+ - don't ignore the generic_update_time return value in
+   file_update_time_flags
+ - fix the sync_lazytime return value
+ - fix an out of data comment in btrfs
+ - fix a race that would update i_version before returning -EAGAIN in XFS
+
+Diffstat:
+ Documentation/filesystems/locking.rst |    2 
+ Documentation/filesystems/vfs.rst     |    6 +
+ fs/btrfs/inode.c                      |   15 ++-
+ fs/btrfs/volumes.c                    |   11 --
+ fs/fat/misc.c                         |    3 
+ fs/fs-writeback.c                     |   56 ++++++++++---
+ fs/gfs2/inode.c                       |    6 -
+ fs/inode.c                            |  143 ++++++++++++++++------------------
+ fs/internal.h                         |    3 
+ fs/nfs/inode.c                        |    4 
+ fs/orangefs/inode.c                   |   10 ++
+ fs/overlayfs/inode.c                  |    3 
+ fs/sync.c                             |    4 
+ fs/ubifs/file.c                       |   11 +-
+ fs/utimes.c                           |    1 
+ fs/xfs/xfs_iops.c                     |   35 +++++++-
+ fs/xfs/xfs_super.c                    |   29 ------
+ include/linux/fs.h                    |   19 ++--
+ include/trace/events/writeback.h      |    6 -
+ 19 files changed, 209 insertions(+), 158 deletions(-)
 
