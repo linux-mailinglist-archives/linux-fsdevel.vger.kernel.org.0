@@ -1,171 +1,190 @@
-Return-Path: <linux-fsdevel+bounces-69256-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69258-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41FA7C75B1A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Nov 2025 18:33:04 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4E37C75DF4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Nov 2025 19:14:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 5850234B602
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Nov 2025 17:27:06 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 13768351A90
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Nov 2025 18:13:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD724377EAC;
-	Thu, 20 Nov 2025 17:20:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sap5ecG9"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5D3634CFD4;
+	Thu, 20 Nov 2025 18:13:41 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out02.mta.xmission.com (out02.mta.xmission.com [166.70.13.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AB6D334C27;
-	Thu, 20 Nov 2025 17:20:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84E9F2FE59C;
+	Thu, 20 Nov 2025 18:13:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763659249; cv=none; b=qR8++v9h50IWFptlQGTaQfrXYn7oh+QtiIZkGjcx/sKuxiDokWZqllwGwTmEid2IRA2BzUdlR1m+P+SrLk8SRLdqe++sJKpPPyc/fO9YSfks9S5EnHYcSzyKINJEmgyM5SVl4PLIslRiWoQNCqS8dyH6blJtS83bTHVqlCxcvE8=
+	t=1763662421; cv=none; b=gJDHAytPdGJbfnxPSRcJHvZmqPj9FtyalBtrRRSS1b4EG3Y5DCr2RWEgbpgMPkAHS30GLfTHPEGf4gzARozBJxiUzOMp2xv8Uy9VuOsKywRhUqZ7Hdls71MCTKZl65PiFd6BeTBji7GbcVx2bxUnxpFnUIGVeNW+OwnAYbIm2ps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763659249; c=relaxed/simple;
-	bh=fD6KjoGzF7YWD+p5+muskUl3aspahvddrqQqiF5E0oc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bIsntqcRgIlbS+G6ClOhGGqKajVbU+E+jXuuWRZPMJMNH1ypAfAaA0fZMBrBv/04SNACp3d733zSzCxt4boeH/Z8rWMLccy+dTkcPhG3wcvYDYUAnE2oll6XnNu8TSx4+8FRLjLD7GmfjO5kpod75dhQ2/b/CaWQYKxoZtutnSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sap5ecG9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7B32C4CEF1;
-	Thu, 20 Nov 2025 17:20:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763659246;
-	bh=fD6KjoGzF7YWD+p5+muskUl3aspahvddrqQqiF5E0oc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sap5ecG9LGJ8wpTAYDVKAIMrPJKlHSE68WffXz2yNvUZnXdIBn7l8lIGbnotMc9qc
-	 4UvFnri9+3qxNKGHl1DKfj1kfzW8tWjCrq0Wav7skSZi671Y+Xf3BWLH2EFS6gHBXG
-	 uUEEe+2Dwp3dW/x64f0jRgjdsbxlTY8DsC3kGsqTj3QqbdbduJse9G9Z7WSNL0FsbB
-	 asf3PkIfJ9IBdOPz2qY0QGN/6cAH7zMJK4iiliG2tCWB3F2jLmuZ8MrGZSMjJPqcmJ
-	 YC8Sp0VH+4R5da77Tmu8lT9QmYW4efCZoC+vDVYT9qDRZBb1/fTjzStTuXldlhqgnJ
-	 gMvfzGioMt3RA==
-Date: Thu, 20 Nov 2025 19:20:23 +0200
-From: Mike Rapoport <rppt@kernel.org>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com,
-	dmatlack@google.com, rientjes@google.com, corbet@lwn.net,
-	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com,
-	kanie@linux.alibaba.com, ojeda@kernel.org, aliceryhl@google.com,
-	masahiroy@kernel.org, akpm@linux-foundation.org, tj@kernel.org,
-	yoann.congal@smile.fr, mmaurer@google.com, roman.gushchin@linux.dev,
-	chenridong@huawei.com, axboe@kernel.dk, mark.rutland@arm.com,
-	jannh@google.com, vincent.guittot@linaro.org, hannes@cmpxchg.org,
-	dan.j.williams@intel.com, david@redhat.com,
-	joel.granados@kernel.org, rostedt@goodmis.org,
-	anna.schumaker@oracle.com, song@kernel.org, linux@weissschuh.net,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-mm@kvack.org, gregkh@linuxfoundation.org, tglx@linutronix.de,
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
-	x86@kernel.org, hpa@zytor.com, rafael@kernel.org, dakr@kernel.org,
-	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com,
-	myungjoo.ham@samsung.com, yesanishhere@gmail.com,
-	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com,
-	aleksander.lobakin@intel.com, ira.weiny@intel.com,
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de,
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com,
-	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net,
-	brauner@kernel.org, linux-api@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, saeedm@nvidia.com,
-	ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com,
-	leonro@nvidia.com, witu@nvidia.com, hughd@google.com,
-	skhawaja@google.com, chrisl@kernel.org
-Subject: Re: [PATCH v6 06/20] liveupdate: luo_file: implement file systems
- callbacks
-Message-ID: <aR9N14KWaz6SdFcw@kernel.org>
-References: <20251115233409.768044-1-pasha.tatashin@soleen.com>
- <20251115233409.768044-7-pasha.tatashin@soleen.com>
- <aRoU1DSgVmplHr3E@kernel.org>
- <CA+CK2bBFS754hdPfNAkMp_PqNpOB2nY02OkWbhRdoUiZ+ah=jw@mail.gmail.com>
+	s=arc-20240116; t=1763662421; c=relaxed/simple;
+	bh=QIS6mpBdq2N3xQljBgRUlhU8C+c5gVyatzHM0SIxhyQ=;
+	h=From:To:Cc:In-Reply-To:References:Date:Message-ID:MIME-Version:
+	 Content-Type:Subject; b=cxt/aEyJotjk1o79gWNWXLKSN6hM3DxDYFkQHZUHaMHN3reTx9PaKLiFHx1JAz/bAiFNIis4F3DT/mPBuYuS+xrZ/3ROzwK2WTNcBpGkht8Ka/OP7LOlpTWu1OozuO/xvJssizzxYD/3dl6NGvgEOgbT5bsczrku6g4QEZIwYpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
+Received: from in01.mta.xmission.com ([166.70.13.51]:36142)
+	by out02.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1vM8TC-0080O5-W2; Thu, 20 Nov 2025 10:29:23 -0700
+Received: from ip72-198-198-28.om.om.cox.net ([72.198.198.28]:33708 helo=email.froward.int.ebiederm.org.xmission.com)
+	by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1vM8TB-00Fz5d-R2; Thu, 20 Nov 2025 10:29:22 -0700
+From: "Eric W. Biederman" <ebiederm@xmission.com>
+To: Bernd Edlinger <bernd.edlinger@hotmail.de>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,  Alexey Dobriyan
+ <adobriyan@gmail.com>,  Oleg Nesterov <oleg@redhat.com>,  Kees Cook
+ <kees@kernel.org>,  Andy Lutomirski <luto@amacapital.net>,  Will Drewry
+ <wad@chromium.org>,  Christian Brauner <brauner@kernel.org>,  Andrew
+ Morton <akpm@linux-foundation.org>,  Michal Hocko <mhocko@suse.com>,
+  Serge Hallyn <serge@hallyn.com>,  James Morris
+ <jamorris@linux.microsoft.com>,  Randy Dunlap <rdunlap@infradead.org>,
+  Suren Baghdasaryan <surenb@google.com>,  Yafang Shao
+ <laoar.shao@gmail.com>,  Helge Deller <deller@gmx.de>,  Adrian Reber
+ <areber@redhat.com>,  Thomas Gleixner <tglx@linutronix.de>,  Jens Axboe
+ <axboe@kernel.dk>,  Alexei Starovoitov <ast@kernel.org>,
+  "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+  "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+  linux-kselftest@vger.kernel.org,  linux-mm@kvack.org,
+  linux-security-module@vger.kernel.org,  tiozhang
+ <tiozhang@didiglobal.com>,  Luis Chamberlain <mcgrof@kernel.org>,  "Paulo
+ Alcantara (SUSE)" <pc@manguebit.com>,  Sergey Senozhatsky
+ <senozhatsky@chromium.org>,  Frederic Weisbecker <frederic@kernel.org>,
+  YueHaibing <yuehaibing@huawei.com>,  Paul Moore <paul@paul-moore.com>,
+  Aleksa Sarai <cyphar@cyphar.com>,  Stefan Roesch <shr@devkernel.io>,
+  Chao Yu <chao@kernel.org>,  xu xin <xu.xin16@zte.com.cn>,  Jeff Layton
+ <jlayton@kernel.org>,  Jan Kara <jack@suse.cz>,  David Hildenbrand
+ <david@redhat.com>,  Dave Chinner <dchinner@redhat.com>,  Shuah Khan
+ <shuah@kernel.org>,  Elena Reshetova <elena.reshetova@intel.com>,  David
+ Windsor <dwindsor@gmail.com>,  Mateusz Guzik <mjguzik@gmail.com>,  Ard
+ Biesheuvel <ardb@kernel.org>,  "Joel Fernandes (Google)"
+ <joel@joelfernandes.org>,  "Matthew Wilcox (Oracle)"
+ <willy@infradead.org>,  Hans Liljestrand <ishkamiel@gmail.com>,  Penglei
+ Jiang <superman.xpt@gmail.com>,  Lorenzo Stoakes
+ <lorenzo.stoakes@oracle.com>,  Adrian Ratiu <adrian.ratiu@collabora.com>,
+  Ingo Molnar <mingo@kernel.org>,  "Peter Zijlstra (Intel)"
+ <peterz@infradead.org>,  Cyrill Gorcunov <gorcunov@gmail.com>,  Eric
+ Dumazet <edumazet@google.com>
+In-Reply-To: <87tsyozqdu.fsf@email.froward.int.ebiederm.org> (Eric
+	W. Biederman's message of "Thu, 20 Nov 2025 09:15:57 -0600")
+References: <AM8PR10MB470801D01A0CF24BC32C25E7E40E9@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
+	<AM8PR10MB470875B22B4C08BEAEC3F77FE4169@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
+	<AS8P193MB1285DF698D7524EDE22ABFA1E4A1A@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+	<AS8P193MB12851AC1F862B97FCE9B3F4FE4AAA@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+	<AS8P193MB1285FF445694F149B70B21D0E46C2@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+	<AS8P193MB1285937F9831CECAF2A9EEE2E4752@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+	<GV2PPF74270EBEEEDE0B9742310DE91E9A7E431A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+	<GV2PPF74270EBEE9EF78827D73D3D7212F7E432A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+	<GV2PPF74270EBEEE807D016A79FE7A2F463E4D6A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+	<87tsyozqdu.fsf@email.froward.int.ebiederm.org>
+Date: Thu, 20 Nov 2025 11:29:14 -0600
+Message-ID: <87wm3ky5n9.fsf@email.froward.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+CK2bBFS754hdPfNAkMp_PqNpOB2nY02OkWbhRdoUiZ+ah=jw@mail.gmail.com>
+Content-Type: text/plain
+X-XM-SPF: eid=1vM8TB-00Fz5d-R2;;;mid=<87wm3ky5n9.fsf@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=72.198.198.28;;;frm=ebiederm@xmission.com;;;spf=pass
+X-XM-AID: U2FsdGVkX18WRCiEc86RNupml3aU1I9F5t8x9s6oRjc=
+X-Spam-Level: 
+X-Spam-Report: 
+	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+	*  0.1 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+	*      [score: 0.5000]
+	*  0.7 XMSubLong Long Subject
+	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+	*      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
+	*  1.0 XM_B_SpammyTLD Contains uncommon/spammy TLD
+	*  0.0 T_TooManySym_01 4+ unique symbols in subject
+X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Bernd Edlinger <bernd.edlinger@hotmail.de>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 514 ms - load_scoreonly_sql: 0.05 (0.0%),
+	signal_user_changed: 11 (2.1%), b_tie_ro: 9 (1.8%), parse: 1.07 (0.2%),
+	 extract_message_metadata: 17 (3.4%), get_uri_detail_list: 1.68 (0.3%),
+	 tests_pri_-2000: 14 (2.8%), tests_pri_-1000: 11 (2.1%),
+	tests_pri_-950: 1.22 (0.2%), tests_pri_-900: 1.10 (0.2%),
+	tests_pri_-90: 92 (17.9%), check_bayes: 81 (15.7%), b_tokenize: 18
+	(3.5%), b_tok_get_all: 8 (1.5%), b_comp_prob: 3.2 (0.6%),
+	b_tok_touch_all: 49 (9.4%), b_finish: 0.90 (0.2%), tests_pri_0: 352
+	(68.5%), check_dkim_signature: 0.56 (0.1%), check_dkim_adsp: 2.4
+	(0.5%), poll_dns_idle: 0.53 (0.1%), tests_pri_10: 2.2 (0.4%),
+	tests_pri_500: 8 (1.6%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH v18] exec: Fix dead-lock in de_thread with ptrace_attach
+X-SA-Exim-Connect-IP: 166.70.13.51
+X-SA-Exim-Rcpt-To: too long (recipient list exceeded maximum allowed size of 512 bytes)
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-SA-Exim-Scanned: No (on out02.mta.xmission.com); SAEximRunCond expanded to false
 
-On Mon, Nov 17, 2025 at 12:50:56PM -0500, Pasha Tatashin wrote:
-> > > +struct liveupdate_file_handler;
-> > > +struct liveupdate_session;
-> >
-> > Why struct liveupdate_session is a part of public LUO API?
-> 
-> It is an obscure version of private "struct luo_session", in order to
-> give subsystem access to:
-> liveupdate_get_file_incoming(s, token, filep)
-> liveupdate_get_token_outgoing(s, file, tokenp)
-> 
-> For example, if your FD depends on another FD within a session, you
-> can check if another FD is already preserved via
-> liveupdate_get_token_outgoing(), and during retrieval time you can
-> retrieve the "struct file" for your dependency.
- 
-And it's essentially unused right now.
+"Eric W. Biederman" <ebiederm@xmission.com> writes:
 
-> > > +     }
-> > > +
-> > > +     return 0;
-> > > +
-> > > +exit_err:
-> > > +     fput(file);
-> > > +     luo_session_free_files_mem(session);
-> >
-> > The error handling in this function is a mess. Pasha, please, please, use
-> > goto consistently.
-> 
-> How is this a mess? There is a single exit_err destination, no
-> exception, no early returns except at the very top of the function
-> where we do early returns before fget() which makes total sense.
-> 
-> Do you want to add a separate destination for
-> luo_session_free_files_mem() ? But that is not necessary, in many
-> places it is considered totally reasonable for free(NULL) to work
-> correctly...
+> Bernd Edlinger <bernd.edlinger@hotmail.de> writes:
+>
+>> This introduces signal->exec_bprm, which is used to
+>> fix the case when at least one of the sibling threads
+>> is traced, and therefore the trace process may dead-lock
+>> in ptrace_attach, but de_thread will need to wait for the
+>> tracer to continue execution.
+>
+> A small quibble it isn't a dead lock.  It isn't even really a live lock,
+> as it is possible to SIGKILL our way out.
+>
+> Thinking about this there is a really silly and simple way we can deal
+> with this situation for PTRACE_ATTACH.  We can send SIGSTOP and wait for
+> the thread to stop before doing anything with cred_guard_mutex.
+>
+> PTRACE_ATTACH already implies sending SIGSTOP so as long as we have
+> enough permissions to send SIGSTOP I don't see that being a problem.
+>
+> The worst case I can see is that we get a case where we stop the
+> process, the permission check fails under cred_guard_mutex and
+> and ptrace attach has fails and has to send SIGCONT to undo it's
+> premature SIGSTOP.  That might almost be visible, but it would still
+> be legitimate because we can still check that we have permission to
+> send SIGSTOP.
 
-You have a mix of releasing resources with goto or inside if (err).
-And while basic free() primitives like kfree() and vfree() work correctly
-with NULL as a parameter, luo_session_free_files_mem() is already not a
-basic primitive and it may grow with a time. It already has two conditions
-that essentially prevent anything from freeing and this will grow with the
-time.
+Bah no I am full of it.
 
-So yes, I want a separate goto destination for freeing each resource and a
-goto for 
+The challenging behavior is in the semantics of the kernel operations.
+We need to describe it as such please.
 
-	err = fh->ops->preserve(&args);
-	if (err)
+It is the same class of problem as a single threaded process calls exec
+with a pipe attached to both stdin and stdout of the new process.
 
-case.
+For the stdin and stdout we can say just use pull and nonblocking I/O.
 
-> > > +             luo_file = kzalloc(sizeof(*luo_file), GFP_KERNEL);
-> > > +             if (!luo_file)
-> > > +                     return -ENOMEM;
-> >
-> > Shouldn't we free files allocated on the previous iterations?
-> 
-> No, for the same reason explained in luo_session.c :-)
+The problem is that both PTRACE_ATTACH and PTRACE_SEIZE block over
+the duration of exec, and if exec is waiting for a thread to exit,
+and that thread is blocked in PTRACE_EVENT_EXIT waiting for that very
+same tracer those processes will hang. Not deadlock.
 
-A comment here as well please :)
 
-> > > +int liveupdate_get_file_incoming(struct liveupdate_session *s, u64 token,
-> > > +                              struct file **filep)
-> > > +{
-> >
-> > Ditto.
-> 
-> These two functions are part of the public API allowing dependency
-> tracking for vfio->iommu->memfd during preservation.
+I haven't seen anyone clearly describe the problem lately so I am
+repeating it.
 
-So like with FLB, until we get actual users for them they are dead code. 
-And until it's clear how exactly dependency tracking for vfio->iommu->memfd
-will work, we won't know if this API is useful at all or we'll need
-something else in the end.
 
--- 
-Sincerely yours,
-Mike.
+Just looking at the code I don't think there is any fundamental reason
+to call commit_creds after de_thread.  If we can change that we can sort
+this out without any change in userspace semantics.
+
+If we can't move commit_creds we have to either give
+PTRACE_ATTACH/PTRACE_SEIZE a non-block mode, or break out of
+PTRACE_EVENT_EXIT in de_thread.
+
+I will post a proof of concept of moving commit_creds in just a minute.
+
+Eric
 
