@@ -1,169 +1,174 @@
-Return-Path: <linux-fsdevel+bounces-69329-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69330-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61442C768A7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Nov 2025 23:37:17 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2D5AC76946
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Nov 2025 00:11:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by tor.lore.kernel.org (Postfix) with ESMTPS id 60A6229BAC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Nov 2025 22:37:16 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 901624E4332
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Nov 2025 23:09:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10AC32ECD28;
-	Thu, 20 Nov 2025 22:37:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 028392EA171;
+	Thu, 20 Nov 2025 23:09:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="RgOMbhD2"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="SSSw5Krf"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 853AB2E8DE2
-	for <linux-fsdevel@vger.kernel.org>; Thu, 20 Nov 2025 22:37:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1F962EFD9C
+	for <linux-fsdevel@vger.kernel.org>; Thu, 20 Nov 2025 23:09:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763678225; cv=none; b=sV40PRMPoOH2W6buQr5ftDZGvKPvofPxymt2rmd4N4/yym3D1pFu13GFBaFYGY3Y5L4DbvtR2JSG9wj6T27NNOpjtJ4/3+2CjOLjDUpwFkuf/oBdbuEbjsmZc3vwss6v2Y3jCZqarowngrcyMeuiyIzjXl6g5QqktGNrAz7Wd74=
+	t=1763680150; cv=none; b=KtHVkt+dJnbf5bQJXx3eVnIy4qBwm7b7drdTR0F+/71Xz+5ArIOkBm1nz/jqy/1sz2gQ0wabI47EYvnDIYStJnywWUkIjoo2hD9o4gPTpZQVa+EjXzoARBroQeDl9w9lOtHvh6nqopjE7GwMTBKqCQP51s0GDhlhlEBPPoqhiJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763678225; c=relaxed/simple;
-	bh=AcwuMcZ/RJFqblpVlPWKyfVp/SwXhjj1Ku4QknIGlW4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aPfhnLZQoBuGBy2PO7rbOMfi3hO/RhSKxIGAAM05BNOkz24tMXahvMp7FYKb4v905yROJ8qgPvwKz3H89CzlL7eNu+EABL377FAdhxkraYcm2GLTVsdZi72/+4rOuFLkO8FP4w51+9KP2Bl4UijFyRzuuwstYAFXyRXo57Xyqzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=RgOMbhD2; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-429c8632fcbso831501f8f.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Nov 2025 14:37:02 -0800 (PST)
+	s=arc-20240116; t=1763680150; c=relaxed/simple;
+	bh=TKnw+OoeFXKrSIMOkDLLXN8wfsBqkPiaZwhXse0nKiI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=n/e2K2Li1qUceh41IWcN47Ojc7t+OGbXyqFCOnpxPPLHYnq9tR19ScjXxtHV/DE6AEmv0W6HYybkJM5ASo2mlAi+I6SZZe/gCnPUQWUF8GJlfHpBU7c3WseoUBb8ZM6mkUtEe4/MWNR2KYopB5dHyEQO6MLMYrgpmxz53mVbQjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=SSSw5Krf; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-b736ffc531fso219884066b.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Nov 2025 15:09:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1763678221; x=1764283021; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=teHzbHAZt4K2w/tuw2YsIconSZped389koaKoK927cs=;
-        b=RgOMbhD2Lo2pLWRPXs3aBFQvMHOq6MABjqbv3xby5ctGfm347SnhOxLVDGymWAuPc1
-         thR0MWDyM7ciFjrj+/fmYnRQWy6hymEKs/M+sULcwuagt88ndpwucE+emblAS2zLY7nf
-         gkJFwXB/iJzO3mDOY4y6hftELTvjwvZahE+aYUpNbFrLZl1KoxA3cX1Nzx85ITwDz7Ff
-         5ew61T2oTqMI5lwLTOm1AIvGP5+Ncp/kFnXkBnvKeDM+H405xNcC++3ac2pzlAEAJ+du
-         hGLrXmn5DkG+ryy/YhcSOIHCsxwGZ1ieXK5ffjvctdhHgGDuY4aEZZgn9BJC3ixam9Qp
-         v55A==
+        d=linux-foundation.org; s=google; t=1763680145; x=1764284945; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=nd0tv/L5fCexSxeIvmkzK+SbOnMMqlQT0pF+PJBx99g=;
+        b=SSSw5KrfXLz4RfSkCiMxPrp5GCY3XwssoY2KGJy6pnYAZ4myEa6k1e6qF5+M2Z9s2V
+         Ybf3D36mEVV3Di8e9g0h4TDWWX75N3IqLksWxbuM7kk1nXVErf2d5dhPO2ehAOeux9+W
+         b9EorJmlyDHoGEtqIcUG4gn76laVo38+gviLg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763678221; x=1764283021;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1763680145; x=1764284945;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=teHzbHAZt4K2w/tuw2YsIconSZped389koaKoK927cs=;
-        b=jkmjh5glT20A01Qig69PzdhJykRYJL4QCcO3TN4BqrCyHj9paOxzaQDu1JtuuTK2YI
-         twvROOYOedDCMB0W0NLRRK6468mMrC9yOsXEAKIo2L6e0t/SlGU5IcMvbZ+8muD/Niet
-         ptOpMtSAJZ0x1EQkeLaVV+cW/4NMGXc4rSef96wkNrESaeJ55RUfZEIuxOM4DTV8oVso
-         VouS7y/d+Evj1l1fp4HyVgwg7+f4rxm5SmOCxv0ZwGK6Mw4+Uxbi5u/OICq3H7RVQAez
-         uiEw62xW9q7Y4n5Jx4YCCQWA64DgzePVWj9i6BTW8tD5biwUGiwR+f+FTbpDtHQ5/2cv
-         Otgw==
-X-Forwarded-Encrypted: i=1; AJvYcCXXCAeIh5HYtAw07+Zp89TQ7lLNypuxNRI8cq4EptAf0HdafhVqjGfbP7AgTdxaKg8Oz6HtPBak6J1QbsOi@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+XdLGzkEA2x9oLEMrFeRBve4ZCva//GnB18VmqwayT/mr5b2h
-	sJCFyGijFukYMD+kAPWCUNjv8k78HKWNzihlPPtsH3xVoNaiVWwuQYOuC7hrIU6wSvc=
-X-Gm-Gg: ASbGncuehFzw6YjBQNQVUNBwoL/ldqZoREKRfX0KnJ3aWyqVNlbhqnd8SGY//D5Y/Dp
-	66tpse6nElRzeL8fpdpWo3UkUVj+lgmeXQK6sg4cyECENcRqXi41ZgSHM7FFHwApf9aHCndYDcb
-	kZHLxuQX9ucuk0E9Zsu/CM2Dro0Ke4WuxEQhL/dPc4CtcPAh8X9BQarfVQtwrun8OuL3BBls2h6
-	jO7p0j8zBSxd7kyHyw3Vsle9MAA5whcf5ZlqoP4xpMasy/7lfwtqIYh0ewII0EEH0H2mJOoxSj1
-	htrfJs/0/bf5VYzsyomKDEcAVSmS43sgVEdIdTjE1mizzz04GylSqx2GmJg3gjSkYNfvqOhiucV
-	Z/0rLnL5nzP86bYY10+EkEcZN7fgm3nzc36M31eoRmqqDH22kcNtSEhrB5xq1nf3Gkq50zXSqRW
-	u09BAypIncPAr6pu88h55VoYnReLjEphN8f4HRmaY=
-X-Google-Smtp-Source: AGHT+IEi30R7PUEVbcV7RZ1AGGSluhU9fB1gMEH2YtJ/it/mkxTjTJpP3f7nP1Hpolp5Du9gRTeh+Q==
-X-Received: by 2002:a05:6000:612:b0:429:c54d:8bd3 with SMTP id ffacd0b85a97d-42cbfb43efamr1062637f8f.53.1763678220800;
-        Thu, 20 Nov 2025 14:37:00 -0800 (PST)
-Received: from ?IPV6:2403:580d:fda1::299? (2403-580d-fda1--299.ip6.aussiebb.net. [2403:580d:fda1::299])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-bd75def6321sm3584201a12.6.2025.11.20.14.36.57
+        bh=nd0tv/L5fCexSxeIvmkzK+SbOnMMqlQT0pF+PJBx99g=;
+        b=rnDGYTBNni9iLVgM3yYh3WmBLnHw79M+4/BRDjso2o7Te1KUMS3LLM/wLSsViZkXgi
+         CnnAN08kt7eVO0GEAfDsSJAOpT9SrRmoa5OsPAQND+CPWARqqK56ZowD5w9ksLSKtulf
+         +oe/UTi+OqH+MqDbjlnImjc9pc+cuwYjXCCh/OvLVDENFrUnWH6av10qTXpYKOZnWatc
+         z6PqdqNFLpD8yZ2dxGWjMabrVaMftpsteFhPbSWhM9VeT8jPDPQ80bHEYaYYCwya8gog
+         PI686YkQ9AJCPJNiw5lHcvEEn58qbajA51cFFFIrXqFiJNPnTwpXplX2qlEBRrxvuDAM
+         FRHg==
+X-Forwarded-Encrypted: i=1; AJvYcCUxUAfweMLwXDog447dSe8DozrmkZJS3/C90VVXTnI+WR0AzynJWMq2v/J4pbmS3Z3k0ZHDT7r8RM5SBPS8@vger.kernel.org
+X-Gm-Message-State: AOJu0YxcZVJN9Rzu/VTSTH61w9lzPLsFCPuGc6parL8SE42OG+3/GRmV
+	5+lNQ0zQ9KmxWRYZsj+eoMGA6MNlvxYVHOaYgfYGiMQRPS+B0mNLF6QrQququsxJsCZ2aw2Oa4C
+	cCo0tFkdg6A==
+X-Gm-Gg: ASbGnctEHRos7QHkejClc7Dgi1U6lr/ytPJUnbogNkhCZOdX1N2+RvbAUTMKzoBEosk
+	UA2jr0QNug8Mz0kHIgcIdv6VBXYir+kDq87w8Cqp8dnTYeGtieZELKZDBBz4jw1tkRIAjCfFqrJ
+	X+GIN03m2EIB23kTEsjSfIvuKHS2ycWQQJZ0SugUuds9OuK1/iQbkuJrLt7fxN2FeXq0zSxnHIw
+	lcAVExz4TEqu9sYrmmi7quixj/kCWF2BbV2o7tjT2LeYdN6Q15mnpUpWR9V4lSGHykXz4I9u/Wx
+	yNQaIUKXYXJfBm+lGQrz5B+OcXnzmagMJbqqdXfMC3D3+N5G9eO0+YjLXoHTCjFmmhsur0DoJtb
+	dXCzKO59U/xmzrDR/maQz54pOhaTJMk6El/lpmCFH0FlTwfzYLFE/s0Yss1VprmPazglxxl4sax
+	HXhXqO7kZqU/PG+vlNd4nrLV2q2HnloUyTcMYeizUCYT25+hRGrAv99VI7g9fk
+X-Google-Smtp-Source: AGHT+IHweIRyUaN1R1Pe76i+TliaNEOInkTL7NBxFI63D5aSYhiIrzVm5fluoQ7D6ZbUynGBHe3Xcw==
+X-Received: by 2002:a17:906:dc90:b0:b04:c373:2833 with SMTP id a640c23a62f3a-b7671695555mr2445266b.32.1763680144852;
+        Thu, 20 Nov 2025 15:09:04 -0800 (PST)
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com. [209.85.218.54])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b765502840csm304927566b.59.2025.11.20.15.09.03
+        for <linux-fsdevel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Nov 2025 14:37:00 -0800 (PST)
-Message-ID: <832a46d9-8766-4fcd-a319-940e23a4d765@suse.com>
-Date: Fri, 21 Nov 2025 09:06:55 +1030
+        Thu, 20 Nov 2025 15:09:03 -0800 (PST)
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b73161849e1so373371466b.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Nov 2025 15:09:03 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCV6Uu0W3LxlQqTrZkkXqBqhmynCKl2vHH3OBj++g3GW1C/tc/C/cmbnRYnRCqioEiwPBlsNy8TV7FI8r57D@vger.kernel.org
+X-Received: by 2002:a17:907:9618:b0:b73:6495:fa91 with SMTP id
+ a640c23a62f3a-b7671547e9fmr5323766b.16.1763680143091; Thu, 20 Nov 2025
+ 15:09:03 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Questions about encryption and (possibly weak) checksum
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: linux-crypto@vger.kernel.org, linux-btrfs <linux-btrfs@vger.kernel.org>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- Daniel Vacek <neelx@suse.com>, Josef Bacik <josef@toxicpanda.com>
-References: <48a91ada-c413-492f-86a4-483355392d98@suse.com>
- <20251120223248.GA3532564@google.com>
-Content-Language: en-US
-From: Qu Wenruo <wqu@suse.com>
-Autocrypt: addr=wqu@suse.com; keydata=
- xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
- 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
- 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
- 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
- gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
- AAHNGFF1IFdlbnJ1byA8d3F1QHN1c2UuY29tPsLAlAQTAQgAPgIbAwULCQgHAgYVCAkKCwIE
- FgIDAQIeAQIXgBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXVgBQkQ/lqxAAoJEMI9kfOh
- Jf6o+jIH/2KhFmyOw4XWAYbnnijuYqb/obGae8HhcJO2KIGcxbsinK+KQFTSZnkFxnbsQ+VY
- fvtWBHGt8WfHcNmfjdejmy9si2jyy8smQV2jiB60a8iqQXGmsrkuR+AM2V360oEbMF3gVvim
- 2VSX2IiW9KERuhifjseNV1HLk0SHw5NnXiWh1THTqtvFFY+CwnLN2GqiMaSLF6gATW05/sEd
- V17MdI1z4+WSk7D57FlLjp50F3ow2WJtXwG8yG8d6S40dytZpH9iFuk12Sbg7lrtQxPPOIEU
- rpmZLfCNJJoZj603613w/M8EiZw6MohzikTWcFc55RLYJPBWQ+9puZtx1DopW2jOwE0EWdWB
- rwEIAKpT62HgSzL9zwGe+WIUCMB+nOEjXAfvoUPUwk+YCEDcOdfkkM5FyBoJs8TCEuPXGXBO
- Cl5P5B8OYYnkHkGWutAVlUTV8KESOIm/KJIA7jJA+Ss9VhMjtePfgWexw+P8itFRSRrrwyUf
- E+0WcAevblUi45LjWWZgpg3A80tHP0iToOZ5MbdYk7YFBE29cDSleskfV80ZKxFv6koQocq0
- vXzTfHvXNDELAuH7Ms/WJcdUzmPyBf3Oq6mKBBH8J6XZc9LjjNZwNbyvsHSrV5bgmu/THX2n
- g/3be+iqf6OggCiy3I1NSMJ5KtR0q2H2Nx2Vqb1fYPOID8McMV9Ll6rh8S8AEQEAAcLAfAQY
- AQgAJgIbDBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXWBBQkQ/lrSAAoJEMI9kfOhJf6o
- cakH+QHwDszsoYvmrNq36MFGgvAHRjdlrHRBa4A1V1kzd4kOUokongcrOOgHY9yfglcvZqlJ
- qfa4l+1oxs1BvCi29psteQTtw+memmcGruKi+YHD7793zNCMtAtYidDmQ2pWaLfqSaryjlzR
- /3tBWMyvIeWZKURnZbBzWRREB7iWxEbZ014B3gICqZPDRwwitHpH8Om3eZr7ygZck6bBa4MU
- o1XgbZcspyCGqu1xF/bMAY2iCDcq6ULKQceuKkbeQ8qxvt9hVxJC2W3lHq8dlK1pkHPDg9wO
- JoAXek8MF37R8gpLoGWl41FIUb3hFiu3zhDDvslYM4BmzI18QgQTQnotJH8=
-In-Reply-To: <20251120223248.GA3532564@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20251120-work-fd-prepare-v2-0-fef6ebda05d3@kernel.org>
+In-Reply-To: <20251120-work-fd-prepare-v2-0-fef6ebda05d3@kernel.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 20 Nov 2025 15:08:46 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wg+61ucgtDpK4kAL0cpNi1pk-t6=hTWumbF+L7b4_pfTg@mail.gmail.com>
+X-Gm-Features: AWmQ_blWme1kiGn6EN4-PgsxVK1iEinPS6vjF76rAIjMZbQcYxATSCKbnCGYgpc
+Message-ID: <CAHk-=wg+61ucgtDpK4kAL0cpNi1pk-t6=hTWumbF+L7b4_pfTg@mail.gmail.com>
+Subject: Re: [PATCH RFC v2 00/48] file: add and convert to FD_PREPARE()
+To: Christian Brauner <brauner@kernel.org>
+Cc: Jeff Layton <jlayton@kernel.org>, Amir Goldstein <amir73il@gmail.com>, Jens Axboe <axboe@kernel.dk>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+On Thu, 20 Nov 2025 at 14:32, Christian Brauner <brauner@kernel.org> wrote:
+>
+> My take is to add a scope-based FD_PREPARE() primitive that work as
+> follows:
+>
+> FD_PREPARE(fdprep, open_flag, file_open_handle(&path, open_flag)) {
+>         if (fd_prepare_failed(fdprep))
+>                 return fd_prepare_error(fdprep);
+>
+>         return fd_publish(fdprep);
+> }
 
+I'm really not a fan of the syntax.
 
-在 2025/11/21 09:02, Eric Biggers 写道:
-> On Fri, Nov 21, 2025 at 08:28:38AM +1030, Qu Wenruo wrote:
->> Hi,
->>
->> Recently Daniel is reviving the fscrypt support for btrfs, and one thing
->> caught my attention, related the sequence of encryption and checksum.
->>
->> What is the preferred order between encryption and (possibly weak) checksum?
->>
->> The original patchset implies checksum-then-encrypt, which follows what ext4
->> is doing when both verity and fscrypt are involved.
->>
->>
->> But on the other hand, btrfs' default checksum (CRC32C) is definitely not a
->> cryptography level HMAC, it's mostly for btrfs to detect incorrect content
->> from the storage and switch to another mirror.
->>
->> Furthermore, for compression, btrfs follows the idea of
->> compress-then-checksum, thus to me the idea of encrypt-then-checksum looks
->> more straightforward, and easier to implement.
->>
->> Finally, the btrfs checksum itself is not encrypted (at least for now),
->> meaning the checksum is exposed for any one to modify as long as they
->> understand how to re-calculate the checksum of the metadata.
->>
->>
->> So my question here is:
->>
->> - Is there any preferred sequence between encryption and checksum?
->>
->> - Will a weak checksum (CRC32C) introduce any extra attack vector?
-> 
-> If you won't be encrypting the checksums, then it needs to be
-> encrypt+checksum so that the checksums don't leak information about the
-> plaintext.  It doesn't matter how "strong" the checksum is.
+The scoping in particular makes absolutely no sense. The fallthrough
+case is just a silent and very non-obvious failure case - I don't
+think there is any sane use case that falls through. You *have* to
+basically end it with fd_publish(), nothing else makes sense, but it
+means that the whole usage pattern effectively *has* to be that
 
-Great, that matches my expectation.
+        FD_PREPARE(fdf, flags, something()) {
+                if (fd_prepare_failed(fdf))
+                        return fd_prepare_error(fdf);
+                ...
+                return fd_publish(fdf);
+        }
 
-Thanks,
-Qu
+and absolutely nothing else. Yes, the variations are of the form "do
+extra cleanup of other things before the returns", and some of those
+are then done *outside* the scope by having other variables from
+outside the scope, but it all feels really nasty.
 
-> - Eric
+And so in most cases, all the scoping does is to make for an extra
+indentation level - it doesn't make the code clearer.
 
+The docs you add in 01/48 are showing some other syntax entirely, ie
+the comments say
+
++ * FD_PREPARE(fdf, O_RDWR | O_CLOEXEC,
++ *                  anon_inode_getfile("[eventpoll]",
+&eventpoll_fops, ep, O_RDWR));
++ * if (fd_prepare_failed(fdf))
++ *     return fd_prepare_error(fdf);
++ *
++ * ep->file = fd_prepare_file(fdf);
++ * return fd_publish(fdf);
+
+and that non-scoped version would actually be more legible, I feel.
+But given the implementation, that's actively *wrong*, because it
+doesn't do the scope at all. The scope silently ended at the
+FD_PREPARE, and I don't think that example would ever even compile, as
+far as I can tell. You need to add the  { } around the block that then
+uses the fdf. No?
+
+And I think the reason the docs are wrong is that the syntax makes so
+little sense.
+
+Now, if the whole odd sequence of   FD_PREPARE / fd_prepare_failed /
+fd_prepare_error / fd_publish coudl somehow be encapsulated by the
+macro, that would be one thing. But this macro forces that really
+stilted and odd format for the code that uses it.
+
+Admittedly then most cases do pretty much *only* that minimum required
+pattern and absolutely nothing else, but I feel like you made the odd
+syntax choices for the few cases that wanted something more, and in
+the process made everybody have that nasty thing.
+
+And yes, the code that uses this ends up shorter, so you do remove
+more lines than you add overall.
+
+But I really wish the end result wouldn't look so odd. This is a case
+where the scoping seems to hurt more than help.
+
+                  Linus
 
