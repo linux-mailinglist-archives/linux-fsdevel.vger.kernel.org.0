@@ -1,161 +1,215 @@
-Return-Path: <linux-fsdevel+bounces-69359-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69360-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id F303DC779B9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Nov 2025 07:50:46 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28B18C77AC8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Nov 2025 08:21:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by tor.lore.kernel.org (Postfix) with ESMTPS id F30EC2BBEA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Nov 2025 06:50:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 152C54E96FB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Nov 2025 07:19:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 740193328EC;
-	Fri, 21 Nov 2025 06:50:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="R2BU6Nop"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECF19337104;
+	Fri, 21 Nov 2025 07:19:14 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from out03.mta.xmission.com (out03.mta.xmission.com [166.70.13.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D3AC332907;
-	Fri, 21 Nov 2025 06:50:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CB69250BEC;
+	Fri, 21 Nov 2025 07:19:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763707836; cv=none; b=CB2Tg6Y8fPPbg96gs5/g2x1TRDm/aQzELW5csiYdokFQJ4jHxDcn5L8ChS5Ccn7tVPOcwtFKXJK+ArBRg25tqhNHKTKW+zfoLFCdzU5Nu4EPlbpy5yliyPtIceHb4lfW2NOtvl7WZ5jc8pUGbt0ZSwlEblsrQf+iMg/dUAmbp54=
+	t=1763709554; cv=none; b=aKM7Eek+p3lssHqo4dfg5FI3nf4cowlx4gonO6We3tkdQRm/2tDcEsWSQeSzwBEogidi1quK76ECjZYJxe+qHjILrlO2JmVilq/JoLoA5QWIlyyzL4DJ4xBuEBX8jYylKZ3wsAnFGcvMWvoO9dg4gwuYJ6Fk8bMO1NsP7mWbT2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763707836; c=relaxed/simple;
-	bh=Boh3AYZTWIm4evsvBtDYmxyijjhWa8vWA9Vc7bExy2k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RJVG5Igkppou2WA8XKOib5Axxkqfpa4bSUTt7M4EAt1ixzBbw0huy7MuFNC6vsGsYPCq61cyK3Vx+Lm1MxyvEnqqr8gu0i+u7F0PJ8Nc2JPtBl/ex8GQs+fR0+3RwKj02nz0FLklYdSrJ9sg6vahWz3FVROzq/gO3zFOvlFUR84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=R2BU6Nop; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=vo2CYkxvIT2Wjjh88hsMNfehDmvCrW9LP6F7KKNOnOM=; b=R2BU6NopA+aJdjWX0pOQHAp99x
-	KFL2tyCvJUebfU3KFAdDCgw/dfuwctywKfhlJhBccOKQ9/uuy28mzO8NUtzMR0H4sPH5HEV9SbnDY
-	izyjpuxwmNYj2JnifkM2+Wh0I6wwXW9HQ8wXH2S8Nsbz2n8xO42lP5CAhvDnysJo+DCYAbsHr5+9D
-	xqDgKZNV3+q2CjDickAQX/gbqJ2aGEImWMWVbXt/gSR45a9N2KzL3DKCs+T8CK69IOZHFWcqppOHc
-	uwIMA/n5ubuPXy+p1ZD0uWLXqM6TuvjGKiU1z/cuBofNEhprXz2o5yYpBVbeZb5kuw+JmKJNP3mp7
-	lKZEXKEg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vMKyS-00000007wM0-0d5O;
-	Fri, 21 Nov 2025 06:50:28 +0000
-Date: Thu, 20 Nov 2025 22:50:28 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-	Matthew Wilcox <willy@infradead.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH] f2fs: add a way to change the desired readahead folio
- order
-Message-ID: <aSALtF5Cty38G2UV@infradead.org>
-References: <20251121014846.1971924-1-jaegeuk@kernel.org>
+	s=arc-20240116; t=1763709554; c=relaxed/simple;
+	bh=D/T+ry2i0aqr/sSamTTezDsRAWCyIn+Fl8q8hzbWTIY=;
+	h=From:To:Cc:In-Reply-To:References:Date:Message-ID:MIME-Version:
+	 Content-Type:Subject; b=X5G9RFLnXnxBhox0QCVNo/5qdNZXDQdTadfHCQLZl2tmA46iPNfEyxkjisQoZemkaSLrrQAmAv07qaXJrTj3JlXP3/MvBcXrWw5bAlsIg7XRUNgsHguer0455QfDHndYhSsS92XDUQMqNK+scEm9D5XtsXqawoKZwdlOhO7jSPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
+Received: from in02.mta.xmission.com ([166.70.13.52]:38322)
+	by out03.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1vMLQ6-00Cn6i-9s; Fri, 21 Nov 2025 00:19:02 -0700
+Received: from ip72-198-198-28.om.om.cox.net ([72.198.198.28]:55264 helo=email.froward.int.ebiederm.org.xmission.com)
+	by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1vMLQ4-00CUPL-D2; Fri, 21 Nov 2025 00:19:01 -0700
+From: "Eric W. Biederman" <ebiederm@xmission.com>
+To: Bernd Edlinger <bernd.edlinger@hotmail.de>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,  Alexey Dobriyan
+ <adobriyan@gmail.com>,  Oleg Nesterov <oleg@redhat.com>,  Kees Cook
+ <kees@kernel.org>,  Andy Lutomirski <luto@amacapital.net>,  Will Drewry
+ <wad@chromium.org>,  Christian Brauner <brauner@kernel.org>,  Andrew
+ Morton <akpm@linux-foundation.org>,  Michal Hocko <mhocko@suse.com>,
+  Serge Hallyn <serge@hallyn.com>,  James Morris
+ <jamorris@linux.microsoft.com>,  Randy Dunlap <rdunlap@infradead.org>,
+  Suren Baghdasaryan <surenb@google.com>,  Yafang Shao
+ <laoar.shao@gmail.com>,  Helge Deller <deller@gmx.de>,  Adrian Reber
+ <areber@redhat.com>,  Thomas Gleixner <tglx@linutronix.de>,  Jens Axboe
+ <axboe@kernel.dk>,  Alexei Starovoitov <ast@kernel.org>,
+  "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+  "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+  linux-kselftest@vger.kernel.org,  linux-mm@kvack.org,
+  linux-security-module@vger.kernel.org,  tiozhang
+ <tiozhang@didiglobal.com>,  Luis Chamberlain <mcgrof@kernel.org>,  "Paulo
+ Alcantara (SUSE)" <pc@manguebit.com>,  Sergey Senozhatsky
+ <senozhatsky@chromium.org>,  Frederic Weisbecker <frederic@kernel.org>,
+  YueHaibing <yuehaibing@huawei.com>,  Paul Moore <paul@paul-moore.com>,
+  Aleksa Sarai <cyphar@cyphar.com>,  Stefan Roesch <shr@devkernel.io>,
+  Chao Yu <chao@kernel.org>,  xu xin <xu.xin16@zte.com.cn>,  Jeff Layton
+ <jlayton@kernel.org>,  Jan Kara <jack@suse.cz>,  David Hildenbrand
+ <david@redhat.com>,  Dave Chinner <dchinner@redhat.com>,  Shuah Khan
+ <shuah@kernel.org>,  Elena Reshetova <elena.reshetova@intel.com>,  David
+ Windsor <dwindsor@gmail.com>,  Mateusz Guzik <mjguzik@gmail.com>,  Ard
+ Biesheuvel <ardb@kernel.org>,  "Joel Fernandes (Google)"
+ <joel@joelfernandes.org>,  "Matthew Wilcox (Oracle)"
+ <willy@infradead.org>,  Hans Liljestrand <ishkamiel@gmail.com>,  Penglei
+ Jiang <superman.xpt@gmail.com>,  Lorenzo Stoakes
+ <lorenzo.stoakes@oracle.com>,  Adrian Ratiu <adrian.ratiu@collabora.com>,
+  Ingo Molnar <mingo@kernel.org>,  "Peter Zijlstra (Intel)"
+ <peterz@infradead.org>,  Cyrill Gorcunov <gorcunov@gmail.com>,  Eric
+ Dumazet <edumazet@google.com>
+In-Reply-To: <GV2PPF74270EBEEAD4CACA124C05BE1CE45E4D5A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+	(Bernd Edlinger's message of "Fri, 21 Nov 2025 03:59:56 +0100")
+References: <AM8PR10MB470801D01A0CF24BC32C25E7E40E9@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
+	<AM8PR10MB470875B22B4C08BEAEC3F77FE4169@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
+	<AS8P193MB1285DF698D7524EDE22ABFA1E4A1A@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+	<AS8P193MB12851AC1F862B97FCE9B3F4FE4AAA@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+	<AS8P193MB1285FF445694F149B70B21D0E46C2@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+	<AS8P193MB1285937F9831CECAF2A9EEE2E4752@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+	<GV2PPF74270EBEEEDE0B9742310DE91E9A7E431A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+	<GV2PPF74270EBEE9EF78827D73D3D7212F7E432A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+	<GV2PPF74270EBEEE807D016A79FE7A2F463E4D6A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+	<87tsyozqdu.fsf@email.froward.int.ebiederm.org>
+	<87wm3ky5n9.fsf@email.froward.int.ebiederm.org>
+	<87h5uoxw06.fsf_-_@email.froward.int.ebiederm.org>
+	<87a50gxo0i.fsf@email.froward.int.ebiederm.org>
+	<GV2PPF74270EBEEAD4CACA124C05BE1CE45E4D5A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+Date: Fri, 21 Nov 2025 01:18:54 -0600
+Message-ID: <87o6ovx38h.fsf@email.froward.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251121014846.1971924-1-jaegeuk@kernel.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain
+X-XM-SPF: eid=1vMLQ4-00CUPL-D2;;;mid=<87o6ovx38h.fsf@email.froward.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=72.198.198.28;;;frm=ebiederm@xmission.com;;;spf=pass
+X-XM-AID: U2FsdGVkX1/iHCtWSAl7NFlir4kFAhXy3/S8BzfxSNE=
+X-Spam-Level: ****
+X-Spam-Report: 
+	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+	*  0.1 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+	*      [score: 0.5000]
+	*  1.5 TR_Symld_Words too many words that have symbols inside
+	*  0.7 XMSubLong Long Subject
+	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+	*      [sa08 1397; Body=1 Fuz1=1 Fuz2=1]
+	*  1.0 XM_B_SpammyTLD Contains uncommon/spammy TLD
+	*  1.0 XM_B_Phish_Phrases Commonly used Phishing Phrases
+	*  0.0 TR_XM_PhishingBody Phishing flag in body of message
+	*  1.5 XM_B_SpammyTLD3 Phishing rule with uncommon/spammy TLD Combo
+X-Spam-DCC: XMission; sa08 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ****;Bernd Edlinger <bernd.edlinger@hotmail.de>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 1314 ms - load_scoreonly_sql: 0.06 (0.0%),
+	signal_user_changed: 12 (0.9%), b_tie_ro: 10 (0.8%), parse: 1.19
+	(0.1%), extract_message_metadata: 15 (1.1%), get_uri_detail_list: 1.98
+	(0.2%), tests_pri_-2000: 12 (0.9%), tests_pri_-1000: 9 (0.7%),
+	tests_pri_-950: 0.95 (0.1%), tests_pri_-900: 0.82 (0.1%),
+	tests_pri_-90: 89 (6.8%), check_bayes: 87 (6.6%), b_tokenize: 16
+	(1.2%), b_tok_get_all: 14 (1.1%), b_comp_prob: 3.4 (0.3%),
+	b_tok_touch_all: 47 (3.6%), b_finish: 1.34 (0.1%), tests_pri_0: 365
+	(27.7%), check_dkim_signature: 0.58 (0.0%), check_dkim_adsp: 8 (0.6%),
+	poll_dns_idle: 789 (60.1%), tests_pri_10: 1.92 (0.1%), tests_pri_500:
+	805 (61.3%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [RFC][PATCH] exec: Move cred computation under exec_update_lock
+X-SA-Exim-Connect-IP: 166.70.13.52
+X-SA-Exim-Rcpt-To: too long (recipient list exceeded maximum allowed size of 512 bytes)
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-SA-Exim-Scanned: No (on out03.mta.xmission.com); SAEximRunCond expanded to false
 
-On Fri, Nov 21, 2025 at 01:48:46AM +0000, Jaegeuk Kim wrote:
-> This patch adds a sysfs entry to change the folio order for readahead.
+Bernd Edlinger <bernd.edlinger@hotmail.de> writes:
 
-You'll need to explain why this is useful.  And why this is f2fs
-specific instead of generic.
+> Hi Eric,
+>
+> thanks for you valuable input on the topic.
+>
+> On 11/21/25 00:50, Eric W. Biederman wrote:
+>> "Eric W. Biederman" <ebiederm@xmission.com> writes:
+>> 
+>>> Instead of computing the new cred before we pass the point of no
+>>> return compute the new cred just before we use it.
+>>>
+>>> This allows the removal of fs_struct->in_exec and cred_guard_mutex.
+>>>
+>>> I am not certain why we wanted to compute the cred for the new
+>>> executable so early.  Perhaps I missed something but I did not see any
+>>> common errors being signaled.   So I don't think we loose anything by
+>>> computing the new cred later.
+>> 
+>> I should add that the permission checks happen in open_exec,
+>> everything that follows credential wise is just about representing in
+>> struct cred the credentials the new executable will have.
+>> 
+>> So I am really at a loss why we have had this complicated way of
+>> computing of computed the credentials all of these years full of
+>> time of check to time of use problems.
+>> 
+>
+> Well, I think I see a problem with your patch:
+>
+> When the security engine gets the LSM_UNSAFE_PTRACE flag, it might
+> e.g. return -EPERM in bprm_creds_for_exec in the apparmor, selinux
+> or the smack security engines at least.  Previously that callback
+> was called before the point of no return, and the return code should
+> be returned as a return code the the caller of execve.  But if we move
+> that check after the point of no return, the caller will get killed
+> due to the failed security check.
+>
+> Or did I miss something?
 
-> 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> ---
->  fs/f2fs/data.c  | 1 +
->  fs/f2fs/f2fs.h  | 3 +++
->  fs/f2fs/super.c | 1 +
->  fs/f2fs/sysfs.c | 9 +++++++++
->  4 files changed, 14 insertions(+)
-> 
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index c80d7960b652..faf1faa27c41 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -2764,6 +2764,7 @@ int f2fs_readahead_pages(struct file *file, loff_t offset, loff_t len)
->  	while (nrpages) {
->  		unsigned long this_chunk = min(nrpages, ra_pages);
->  
-> +		ractl.ra->desired_order = F2FS_I_SB(inode)->ra_folio_order;
->  		ractl.ra->ra_pages = this_chunk;
->  
->  		page_cache_sync_ra(&ractl, this_chunk << 1);
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 934287cc5624..0e61e253d861 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -1921,6 +1921,9 @@ struct f2fs_sb_info {
->  	/* carve out reserved_blocks from total blocks */
->  	bool carve_out;
->  
-> +	/* enable large folio. */
-> +	unsigned int ra_folio_order;
-> +
->  #ifdef CONFIG_F2FS_FS_COMPRESSION
->  	struct kmem_cache *page_array_slab;	/* page array entry */
->  	unsigned int page_array_slab_size;	/* default page array slab size */
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index d47ec718f3be..dabac6f288f0 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -4287,6 +4287,7 @@ static void init_sb_info(struct f2fs_sb_info *sbi)
->  			NAT_ENTRY_PER_BLOCK));
->  	sbi->allocate_section_hint = le32_to_cpu(raw_super->section_count);
->  	sbi->allocate_section_policy = ALLOCATE_FORWARD_NOHINT;
-> +	sbi->ra_folio_order = 0;
->  	F2FS_ROOT_INO(sbi) = le32_to_cpu(raw_super->root_ino);
->  	F2FS_NODE_INO(sbi) = le32_to_cpu(raw_super->node_ino);
->  	F2FS_META_INO(sbi) = le32_to_cpu(raw_super->meta_ino);
-> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-> index c42f4f979d13..2537a25986a6 100644
-> --- a/fs/f2fs/sysfs.c
-> +++ b/fs/f2fs/sysfs.c
-> @@ -906,6 +906,13 @@ static ssize_t __sbi_store(struct f2fs_attr *a,
->  		return count;
->  	}
->  
-> +	if (!strcmp(a->attr.name, "ra_folio_order")) {
-> +		if (t < 0 || t > MAX_PAGECACHE_ORDER)
-> +			return -EINVAL;
-> +		sbi->ra_folio_order = t;
-> +		return count;
-> +	}
-> +
->  	*ui = (unsigned int)t;
->  
->  	return count;
-> @@ -1180,6 +1187,7 @@ F2FS_SBI_GENERAL_RW_ATTR(migration_window_granularity);
->  F2FS_SBI_GENERAL_RW_ATTR(dir_level);
->  F2FS_SBI_GENERAL_RW_ATTR(allocate_section_hint);
->  F2FS_SBI_GENERAL_RW_ATTR(allocate_section_policy);
-> +F2FS_SBI_GENERAL_RW_ATTR(ra_folio_order);
->  #ifdef CONFIG_F2FS_IOSTAT
->  F2FS_SBI_GENERAL_RW_ATTR(iostat_enable);
->  F2FS_SBI_GENERAL_RW_ATTR(iostat_period_ms);
-> @@ -1422,6 +1430,7 @@ static struct attribute *f2fs_attrs[] = {
->  	ATTR_LIST(reserved_pin_section),
->  	ATTR_LIST(allocate_section_hint),
->  	ATTR_LIST(allocate_section_policy),
-> +	ATTR_LIST(ra_folio_order),
->  	NULL,
->  };
->  ATTRIBUTE_GROUPS(f2fs);
-> -- 
-> 2.52.0.487.g5c8c507ade-goog
-> 
-> 
----end quoted text---
+I think we definitely need to document this change in behavior.  I would
+call ending the exec with SIGSEGV vs -EPERM a quality of implementation
+issue.  The exec is failing one way or the other so I don't see it as a
+correctness issue.
+
+In the case of ptrace in general I think it is a bug if the mere act of
+debugging a program changes it's behavior.  So which buggy behavior
+should we prefer?  SIGSEGV where it is totally clear that the behavior
+has changed or -EPERM and ask the debugged program to handle it.
+I lean towards SIGSEGV because then it is clear the code should not
+handle it.
+
+In the case of LSM_UNSAFE_NO_NEW_PRIVS I believe the preferred way to
+handle unexpected things happening is to terminate the application.
+
+In the case of LSM_UNSAFE_SHARE -EPERM might be better.  I don't know
+of any good uses of any good uses of sys_clone(CLONE_FS ...) outside
+of CLONE_THREAD.
+
+
+Plus all of these things are only considerations if we are exec'ing a
+program that transitions to a different set of credentials.  Something
+that happens but is quite rare itself.
+
+In practice I don't expect there is anything that depends on the exact
+behavior of what happens when exec'ing a suid executable to gain
+privileges when ptraced.   The closes I can imagine is upstart and
+I think upstart ran as root when ptracing other programs so there is no
+gaining of privilege and thus no reason for a security module to
+complain.
+
+Who knows I could be wrong, and someone could actually care.  Which is
+hy I think we should document it.
+
+Eric
+
 
