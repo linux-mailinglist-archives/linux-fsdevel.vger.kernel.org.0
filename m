@@ -1,298 +1,104 @@
-Return-Path: <linux-fsdevel+bounces-69450-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69452-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB4AAC7B5CE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Nov 2025 19:43:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 77807C7B62C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Nov 2025 19:52:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2D9F735DC8F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Nov 2025 18:43:15 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0FBBB363B9A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Nov 2025 18:51:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E720E2F5480;
-	Fri, 21 Nov 2025 18:42:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC9042E8B9F;
+	Fri, 21 Nov 2025 18:51:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="UnKYWy8x";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="8ZePVM5W";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="UnKYWy8x";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="8ZePVM5W"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Mqq83c+A"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EBC82F5465
-	for <linux-fsdevel@vger.kernel.org>; Fri, 21 Nov 2025 18:42:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2AF326FA6C;
+	Fri, 21 Nov 2025 18:51:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763750575; cv=none; b=buDtE4fYDhJU8CH3Dm+yimqKMg2KN8SCwdSyMK/678AHxhKH4fy/jHICAiEy1vfNqvfy9suaxdBuSIafG0N0nYQMD7mJ2jTikhl/3ZjzB2ufOGF4CWgKm9QXsyo9w+i+/Rho8fSHbJRQxexTapCrRUOgx6C01V+Yro1kW6ErSXg=
+	t=1763751094; cv=none; b=IRcwrFA9G9cBZ+yxpI22yoiB+nymHeWOl7pKIw0Bi49k/Ij+6RqR5d7In9eokqTBVpY03nyeh7EtOc/kR2ILbuAmbWdxrb/iq59tRhDeLexQ88Cxmlj1Z98gzZ/B8hDEpKX/kyjygKP779Z2sVm6Gr6NPDgXSI10ovSJCU7USy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763750575; c=relaxed/simple;
-	bh=W4dgOURNudK83HIJKjpjqonBEvCmGgfIsv55zR4rHdo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jglr/B4ZMNowY9apg5bvzYreWPVcKFOyTy2nV+PhcfeDV6zza9AxowjEHUnpocxciyituoYYwY9havouBtWVVhzeniwPIhLBz3vESHCokQ3QVdoOnZg5s+cExwjbp/4Iml9dgX+OvGeOh/jqkMm1j8dEHLeEuj+Y8j7vigslmJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=UnKYWy8x; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=8ZePVM5W; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=UnKYWy8x; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=8ZePVM5W; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 10BDF5BCCD;
-	Fri, 21 Nov 2025 18:42:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1763750571; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ldBKjiorZcKSWMx/nlx25VPXqX0kjWoWAmr1aGdzduM=;
-	b=UnKYWy8x4jc/1mtLqy8WJ6r81TuO/JefeO53rOMwLy+zmuNBfVRphZUpE1wGCOhsS4cEYv
-	6HBq1BSr+g/oTXNPoYJig0a4csUE27c2crKbt1SmYfqdgXBbM6kqKgyXpojSdOK7E4zgs0
-	iyMiFr55bPbvkRA+4zZ9d/q+/QmQV+0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1763750571;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ldBKjiorZcKSWMx/nlx25VPXqX0kjWoWAmr1aGdzduM=;
-	b=8ZePVM5WojCur/oRcjlGiisf/UGtdzxReXY1X2x5xpWvoQOXwKLmN9q2cp1CBtynRysqj+
-	VJOcPx4zykO19hCQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=UnKYWy8x;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=8ZePVM5W
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1763750571; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ldBKjiorZcKSWMx/nlx25VPXqX0kjWoWAmr1aGdzduM=;
-	b=UnKYWy8x4jc/1mtLqy8WJ6r81TuO/JefeO53rOMwLy+zmuNBfVRphZUpE1wGCOhsS4cEYv
-	6HBq1BSr+g/oTXNPoYJig0a4csUE27c2crKbt1SmYfqdgXBbM6kqKgyXpojSdOK7E4zgs0
-	iyMiFr55bPbvkRA+4zZ9d/q+/QmQV+0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1763750571;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ldBKjiorZcKSWMx/nlx25VPXqX0kjWoWAmr1aGdzduM=;
-	b=8ZePVM5WojCur/oRcjlGiisf/UGtdzxReXY1X2x5xpWvoQOXwKLmN9q2cp1CBtynRysqj+
-	VJOcPx4zykO19hCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 974BF3EA61;
-	Fri, 21 Nov 2025 18:42:50 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id RUSaJKqyIGmdCwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Fri, 21 Nov 2025 18:42:50 +0000
-Message-ID: <68f18daf-cc45-479f-ac6f-0b4dce153ea7@suse.cz>
-Date: Fri, 21 Nov 2025 19:42:50 +0100
+	s=arc-20240116; t=1763751094; c=relaxed/simple;
+	bh=d2GokLH9Jn7Ay35MXv4HSVUXdJS/fnCjmcIwOcL9BgA=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=aNvZVVJlOdRugTsNA/dWBjKY5hQTfzSmP1zDv6cOJapaaEa6ZT5XfkEBrGjtkc31IkKMUGJ7xzGt2NBHRIFEmaTBR3klR5Q+2n7Ta0mkltmzDOJnqEgIbjBzNYkcSZQhsUZxuGuUD+RVsrPzpOd//SyqrbU8i1hIbNrlcbsMcgU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Mqq83c+A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8378DC4CEF1;
+	Fri, 21 Nov 2025 18:51:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1763751093;
+	bh=d2GokLH9Jn7Ay35MXv4HSVUXdJS/fnCjmcIwOcL9BgA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Mqq83c+AcV3bkcoekyHmiQP/DqqYSLvxbz5l/EP7TMtFKSF7Y1Dfuq6nLL5ZCwD7I
+	 Z4Y7RhDpT3IL2ZJF3wsSy+RVz56gobTC3n8MTAfklAdDkzaGyJupYGWQUMDvbJM1Wr
+	 m3urCQ1obcfSRU4B9FjtR5fbCIr1Z4wBKfqeREiQ=
+Date: Fri, 21 Nov 2025 10:51:31 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Muchun Song <muchun.song@linux.dev>, Oscar Salvador <osalvador@suse.de>,
+ David Hildenbrand <david@redhat.com>, "Liam R . Howlett"
+ <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport
+ <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko
+ <mhocko@suse.com>, Axel Rasmussen <axelrasmussen@google.com>, Yuanchu Xie
+ <yuanchu@google.com>, Wei Xu <weixugc@google.com>, Peter Xu
+ <peterx@redhat.com>, Ingo Molnar <mingo@redhat.com>, Peter Zijlstra
+ <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot
+ <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel
+ Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, Kees
+ Cook <kees@kernel.org>, Matthew Wilcox <willy@infradead.org>, Jason
+ Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>, Leon
+ Romanovsky <leon@kernel.org>, Zi Yan <ziy@nvidia.com>, Baolin Wang
+ <baolin.wang@linux.alibaba.com>, Nico Pache <npache@redhat.com>, Ryan
+ Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, Barry Song
+ <baohua@kernel.org>, Lance Yang <lance.yang@linux.dev>, Xu Xin
+ <xu.xin16@zte.com.cn>, Chengming Zhou <chengming.zhou@linux.dev>, Jann Horn
+ <jannh@google.com>, Matthew Brost <matthew.brost@intel.com>, Joshua Hahn
+ <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>, Byungchul Park
+ <byungchul@sk.com>, Gregory Price <gourry@gourry.net>, Ying Huang
+ <ying.huang@linux.alibaba.com>, Alistair Popple <apopple@nvidia.com>, Pedro
+ Falcato <pfalcato@suse.de>, Shakeel Butt <shakeel.butt@linux.dev>, David
+ Rientjes <rientjes@google.com>, Rik van Riel <riel@surriel.com>, Harry Yoo
+ <harry.yoo@oracle.com>, Kemeng Shi <shikemeng@huaweicloud.com>, Kairui Song
+ <kasong@tencent.com>, Nhat Pham <nphamcs@gmail.com>, Baoquan He
+ <bhe@redhat.com>, Chris Li <chrisl@kernel.org>, Johannes Weiner
+ <hannes@cmpxchg.org>, Qi Zheng <zhengqi.arch@bytedance.com>,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor
+ <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo
+ <gary@garyguo.net>, Bjorn Roy Baron <bjorn3_gh@protonmail.com>, Benno
+ Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, Alice
+ Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo
+ Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v2 4/4] mm: introduce VMA flags bitmap type
+Message-Id: <20251121105131.1dea1fbd744587b433390116@linux-foundation.org>
+In-Reply-To: <c82d75d1-5795-4401-92f8-58df6ac8dbd3@lucifer.local>
+References: <cover.1763126447.git.lorenzo.stoakes@oracle.com>
+	<195625e7d1a8ff9156cb9bb294eb128b6a4e9294.1763126447.git.lorenzo.stoakes@oracle.com>
+	<c82d75d1-5795-4401-92f8-58df6ac8dbd3@lucifer.local>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 10/16] mm: replace pmd_to_swp_entry() with
- softleaf_from_pmd()
-Content-Language: en-US
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Christian Borntraeger <borntraeger@linux.ibm.com>,
- Janosch Frank <frankja@linux.ibm.com>,
- Claudio Imbrenda <imbrenda@linux.ibm.com>,
- David Hildenbrand <david@redhat.com>,
- Alexander Gordeev <agordeev@linux.ibm.com>,
- Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
- Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>, Peter Xu <peterx@redhat.com>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Arnd Bergmann <arnd@arndb.de>, Zi Yan <ziy@nvidia.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>, Nico Pache
- <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
- Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
- Lance Yang <lance.yang@linux.dev>, Muchun Song <muchun.song@linux.dev>,
- Oscar Salvador <osalvador@suse.de>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- Matthew Brost <matthew.brost@intel.com>,
- Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
- Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>,
- Ying Huang <ying.huang@linux.alibaba.com>,
- Alistair Popple <apopple@nvidia.com>,
- Axel Rasmussen <axelrasmussen@google.com>, Yuanchu Xie <yuanchu@google.com>,
- Wei Xu <weixugc@google.com>, Kemeng Shi <shikemeng@huaweicloud.com>,
- Kairui Song <kasong@tencent.com>, Nhat Pham <nphamcs@gmail.com>,
- Baoquan He <bhe@redhat.com>, Chris Li <chrisl@kernel.org>,
- SeongJae Park <sj@kernel.org>, Matthew Wilcox <willy@infradead.org>,
- Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
- Xu Xin <xu.xin16@zte.com.cn>, Chengming Zhou <chengming.zhou@linux.dev>,
- Jann Horn <jannh@google.com>, Miaohe Lin <linmiaohe@huawei.com>,
- Naoya Horiguchi <nao.horiguchi@gmail.com>, Pedro Falcato <pfalcato@suse.de>,
- Pasha Tatashin <pasha.tatashin@soleen.com>, Rik van Riel <riel@surriel.com>,
- Harry Yoo <harry.yoo@oracle.com>, Hugh Dickins <hughd@google.com>,
- linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
- linux-s390@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linux-arch@vger.kernel.org, damon@lists.linux.dev
-References: <cover.1762812360.git.lorenzo.stoakes@oracle.com>
- <3fb431699639ded8fdc63d2210aa77a38c8891f1.1762812360.git.lorenzo.stoakes@oracle.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <3fb431699639ded8fdc63d2210aa77a38c8891f1.1762812360.git.lorenzo.stoakes@oracle.com>
-Content-Type: text/plain; charset=UTF-8
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 10BDF5BCCD
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MID_RHS_MATCH_FROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[linux.ibm.com,redhat.com,zeniv.linux.org.uk,kernel.org,suse.cz,arndb.de,nvidia.com,linux.alibaba.com,oracle.com,arm.com,linux.dev,suse.de,google.com,suse.com,intel.com,gmail.com,sk.com,gourry.net,huaweicloud.com,tencent.com,infradead.org,ziepe.ca,zte.com.cn,huawei.com,soleen.com,surriel.com,vger.kernel.org,kvack.org,lists.linux.dev];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[oracle.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
-	TO_MATCH_ENVRCPT_SOME(0.00)[];
-	RCPT_COUNT_GT_50(0.00)[65];
-	RCVD_COUNT_TWO(0.00)[2];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -3.01
-X-Spam-Level: 
 
-On 11/10/25 23:21, Lorenzo Stoakes wrote:
-> Introduce softleaf_from_pmd() to do the equivalent operation for PMDs that
-> softleaf_from_pte() fulfils, and cascade changes through code base
-> accordingly, introducing helpers as necessary.
+On Fri, 21 Nov 2025 17:44:43 +0000 Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
 
-Some of that is adding new pte stuff too, so it could have been separate
-patch, but it's not a big deal.
-
-> We are then able to eliminate pmd_to_swp_entry(), is_pmd_migration_entry(),
-> is_pmd_device_private_entry() and is_pmd_non_present_folio_entry().
+> As Vlastimil noticed, something has gone fairly horribly wrong here in the
+> actual commit [0] vs. the patch here for tools/testing/vma/vma_internal.h.
 > 
-> This further establishes the use of leaf operations throughout the code
-> base and further establishes the foundations for eliminating is_swap_pmd().
-> 
-> No functional change intended.
-> 
-> Reviewed-by: SeongJae Park <sj@kernel.org>
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> We should only have the delta shown here, let me know if I need to help with a
+> conflict resolution! :)
 
-Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
-
-Assuming the below is fixed. Glad I could demonstrate I'm not just rubber
-stamping all this ;P
-(probably missed stuff anyway, as usual)
-
-> --- a/mm/page_table_check.c
-> +++ b/mm/page_table_check.c
-> @@ -8,7 +8,7 @@
->  #include <linux/mm.h>
->  #include <linux/page_table_check.h>
->  #include <linux/swap.h>
-> -#include <linux/swapops.h>
-> +#include <linux/leafops.h>
->  
->  #undef pr_fmt
->  #define pr_fmt(fmt)	"page_table_check: " fmt
-> @@ -179,10 +179,10 @@ void __page_table_check_pud_clear(struct mm_struct *mm, pud_t pud)
->  EXPORT_SYMBOL(__page_table_check_pud_clear);
->  
->  /* Whether the swap entry cached writable information */
-> -static inline bool swap_cached_writable(swp_entry_t entry)
-> +static inline bool softleaf_cached_writable(softleaf_t entry)
->  {
-> -	return is_writable_device_private_entry(entry) ||
-> -	       is_writable_migration_entry(entry);
-> +	return softleaf_is_device_private(entry) ||
-
-Shouldn't there be softleaf_is_device_private_write(entry) ?
-
-> +		softleaf_is_migration_write(entry);
->  }
->  
->  static void page_table_check_pte_flags(pte_t pte)
-> @@ -190,9 +190,9 @@ static void page_table_check_pte_flags(pte_t pte)
->  	if (pte_present(pte)) {
->  		WARN_ON_ONCE(pte_uffd_wp(pte) && pte_write(pte));
->  	} else if (pte_swp_uffd_wp(pte)) {
-> -		const swp_entry_t entry = pte_to_swp_entry(pte);
-> +		const softleaf_t entry = softleaf_from_pte(pte);
->  
-> -		WARN_ON_ONCE(swap_cached_writable(entry));
-> +		WARN_ON_ONCE(softleaf_cached_writable(entry));
->  	}
->  }
->  
-> @@ -219,9 +219,9 @@ static inline void page_table_check_pmd_flags(pmd_t pmd)
->  		if (pmd_uffd_wp(pmd))
->  			WARN_ON_ONCE(pmd_write(pmd));
->  	} else if (pmd_swp_uffd_wp(pmd)) {
-> -		swp_entry_t entry = pmd_to_swp_entry(pmd);
-> +		const softleaf_t entry = softleaf_from_pmd(pmd);
->  
-> -		WARN_ON_ONCE(swap_cached_writable(entry));
-> +		WARN_ON_ONCE(softleaf_cached_writable(entry));
->  	}
->  }
->  
+OK, thanks, easy fix.
 
