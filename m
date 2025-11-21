@@ -1,50 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-69415-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69416-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32F2EC7B304
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Nov 2025 19:03:36 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAC53C7B334
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Nov 2025 19:04:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1D5544EBCF3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Nov 2025 18:02:08 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8AA7D3441B6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Nov 2025 18:02:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D29C5351FC9;
-	Fri, 21 Nov 2025 18:01:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE355351FDB;
+	Fri, 21 Nov 2025 18:01:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KJSIxBly"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d+s8of9m"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24BA6238159
-	for <linux-fsdevel@vger.kernel.org>; Fri, 21 Nov 2025 18:01:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36CA1238159
+	for <linux-fsdevel@vger.kernel.org>; Fri, 21 Nov 2025 18:01:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763748088; cv=none; b=qXDMPwhoJZ1AjjYUst78IH8ANEgpxvCyMNvqQEBEEaDjHttftFROwEFzbPHp3G2i5k8DLfWVFhE3sfbEqyob0iMxBmIKqhMfy2GFlHICTb5HRXfqNyeCbiWB6J70YmghxMRV0BCfQxlyghtlUQn1ieufWk8SQDqCv3xz8wDvYdY=
+	t=1763748090; cv=none; b=qy+FLKNuvkox4Bkg3iBfLSYnnyarYkH6v+vkw40B/crbU08mRBDpkJjdZxkCHmH2i9fuu0T7iuqYy/VjPw2IHpDOHJYGYx7YF6ttXW0i4J+x9GXiDwdztZ8My5k8ZXZNz4pMTh3h5nq0B6Pf3mObZQhso86zod4lK6xNq08rZug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763748088; c=relaxed/simple;
-	bh=YCMBijmzhGTJGLB2u74sW9Sy5Q6BJL06hrQDe61GfO0=;
+	s=arc-20240116; t=1763748090; c=relaxed/simple;
+	bh=RYqxwxufxnpL/5YMjuhGn21FAcsUpnSepu8Pr9+QNIo=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=bv0ZvEC0bMOZjD/AMorwKdtD2kr/onnbEG9D+KPg1LSzUHc3q4QYSjOhB+HugFI88HOMMPNOWjrnOx50UqJVauetiTN+gcdaHJaUH1QfU9FeqHww+u5mQF+Ix056jCblFysQlgOIfjlEh0nr6cCDcnozzDu+MWu2lZKF16spjAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KJSIxBly; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F27FDC116C6;
-	Fri, 21 Nov 2025 18:01:25 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=ZNQjC1w3Cnz20hKEbGnUlYj8dPBs++gRln9QRVjD9Z0yhGyCu1RcsMXNWo4dP+oeBZvoN/VbyCBgJ0FI3hh9nk/r+A5lhUm6Htax7HOKxLSTOZcvFlCkGUVpkVQO4t1M5A9ogic/NPxZGu7IMw81m0HgvNExkNyQhUyHCEPHumM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d+s8of9m; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17E4FC4CEF1;
+	Fri, 21 Nov 2025 18:01:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763748087;
-	bh=YCMBijmzhGTJGLB2u74sW9Sy5Q6BJL06hrQDe61GfO0=;
+	s=k20201202; t=1763748089;
+	bh=RYqxwxufxnpL/5YMjuhGn21FAcsUpnSepu8Pr9+QNIo=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=KJSIxBly8y6wzh8R4c3ZmMhbdPYo19KeKxP97KOeRz+5n18cbW36Z9av4F4PECwfO
-	 8FIFC7JABf9wPH6IRKWyky45vgCUo93sS/+oVTS8BmcEd9cUbMXqvfx50azfWFQX2E
-	 44hh5Hnat6EHSt9rmqgVfMaHiUlCjhTwsQXw1eOm/GpoWvUQCEV7AMSavVPtYBO0WY
-	 TchFDGrwzjNjqpeX8N5rtK3s/XcMF5Q0cz+nN49A0/5s5kyGTTlw89oCOZn/MmdDyV
-	 5O952/o0kGvYBD247s7NwEkCGnf7JoTh7Q4SsGeBp6x955AXZ9jO6LRYt/MKS67jpl
-	 30Ad3ygbx/Yfg==
+	b=d+s8of9mGE348cpaEJMyg4fCsB13dp8l535m+p+NlqaN7GaOrY1rfptSBZeuPvM9q
+	 M7HcEQ9oj4JxbxIGiWYNTbeTJ+YRmwaB2uQT1vXjyRuY5317lD/YjJJMh0bWokaI4b
+	 xfKkREa8b7N6/gVD1oWm3U9IpEqLBQ1g+5nn4+YzIxSlSdlN5Q+zz4bD4946PVyiWC
+	 6th1A/4y3/GqujpSLA0JwHYWHdklPEOmIoN+2Rx2WjZATi8Vp9HacD9/uRXoqrgwhp
+	 6IeirwmoZrmXnipQuWTiTXD535bJXjav5Nxd+XDrRxkx6nTA+GYs/QhK9n6v+e+EVS
+	 8y1t1Os7uE5Lw==
 From: Christian Brauner <brauner@kernel.org>
-Date: Fri, 21 Nov 2025 19:00:56 +0100
-Subject: [PATCH RFC v3 17/47] xfs: convert xfs_open_by_handle() to
- FD_PREPARE()
+Date: Fri, 21 Nov 2025 19:00:57 +0100
+Subject: [PATCH RFC v3 18/47] dma: convert dma_buf_fd() to FD_PREPARE()
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -53,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251121-work-fd-prepare-v3-17-2c6444d13e0e@kernel.org>
+Message-Id: <20251121-work-fd-prepare-v3-18-2c6444d13e0e@kernel.org>
 References: <20251121-work-fd-prepare-v3-0-2c6444d13e0e@kernel.org>
 In-Reply-To: <20251121-work-fd-prepare-v3-0-2c6444d13e0e@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>, 
@@ -62,113 +61,49 @@ To: Linus Torvalds <torvalds@linux-foundation.org>,
 Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
  linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-a6db3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2473; i=brauner@kernel.org;
- h=from:subject:message-id; bh=YCMBijmzhGTJGLB2u74sW9Sy5Q6BJL06hrQDe61GfO0=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQqrLjAWucWff6o1vzub0enuezd07N50sLYRVPMO3OTp
- /Arb+/c3lHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCRnN+MDI+W9hRL3P0tN1F7
- o/qH9Sus+itZnIMTRU+d89pn+e5HxQdGhkv7bx/36G2S454ntaDgouI0v1i1H3vecxy/fzzeujZ
- sMzsA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=875; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=RYqxwxufxnpL/5YMjuhGn21FAcsUpnSepu8Pr9+QNIo=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQqrLgQtkPv8LcI9z6tLb6bZVzNDBfVdR9PfjxVjKHSw
+ Fd1xYR1HaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABOZJMTI8Ir3NU/b99eFFi9W
+ /eBoYjklrNU9PyvST/Ko43Ub6eubZzMy/PdcpGt568S3gjPpKl+jlHYaVVdmxLiwLt8159bB2H/
+ XeQA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- fs/xfs/xfs_handle.c | 53 +++++++++++++++++------------------------------------
- 1 file changed, 17 insertions(+), 36 deletions(-)
+ drivers/dma-buf/dma-buf.c | 14 ++++++--------
+ 1 file changed, 6 insertions(+), 8 deletions(-)
 
-diff --git a/fs/xfs/xfs_handle.c b/fs/xfs/xfs_handle.c
-index f19fce557354..3c1895f7009d 100644
---- a/fs/xfs/xfs_handle.c
-+++ b/fs/xfs/xfs_handle.c
-@@ -234,13 +234,11 @@ xfs_open_by_handle(
+diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
+index 2bcf9ceca997..e46d8719d61b 100644
+--- a/drivers/dma-buf/dma-buf.c
++++ b/drivers/dma-buf/dma-buf.c
+@@ -768,18 +768,16 @@ EXPORT_SYMBOL_NS_GPL(dma_buf_export, "DMA_BUF");
+  */
+ int dma_buf_fd(struct dma_buf *dmabuf, int flags)
  {
- 	const struct cred	*cred = current_cred();
- 	int			error;
--	int			fd;
- 	int			permflag;
--	struct file		*filp;
- 	struct inode		*inode;
- 	struct dentry		*dentry;
- 	fmode_t			fmode;
--	struct path		path;
-+	struct path		path __free(path_put) = {};
+-	int fd;
++	int ret;
  
- 	if (!capable(CAP_SYS_ADMIN))
- 		return -EPERM;
-@@ -252,8 +250,7 @@ xfs_open_by_handle(
+ 	if (!dmabuf || !dmabuf->file)
+ 		return -EINVAL;
  
- 	/* Restrict xfs_open_by_handle to directories & regular files. */
- 	if (!(S_ISREG(inode->i_mode) || S_ISDIR(inode->i_mode))) {
--		error = -EPERM;
--		goto out_dput;
-+		return -EPERM;
- 	}
- 
- #if BITS_PER_LONG != 32
-@@ -263,48 +260,32 @@ xfs_open_by_handle(
- 	permflag = hreq->oflags;
- 	fmode = OPEN_FMODE(permflag);
- 	if ((!(permflag & O_APPEND) || (permflag & O_TRUNC)) &&
--	    (fmode & FMODE_WRITE) && IS_APPEND(inode)) {
--		error = -EPERM;
--		goto out_dput;
--	}
-+	    (fmode & FMODE_WRITE) && IS_APPEND(inode))
-+		return -EPERM;
- 
--	if ((fmode & FMODE_WRITE) && IS_IMMUTABLE(inode)) {
--		error = -EPERM;
--		goto out_dput;
--	}
-+	if ((fmode & FMODE_WRITE) && IS_IMMUTABLE(inode))
-+		return -EPERM;
- 
- 	/* Can't write directories. */
--	if (S_ISDIR(inode->i_mode) && (fmode & FMODE_WRITE)) {
--		error = -EISDIR;
--		goto out_dput;
--	}
+-	fd = get_unused_fd_flags(flags);
+-	if (fd < 0)
+-		return fd;
 -
--	fd = get_unused_fd_flags(0);
--	if (fd < 0) {
--		error = fd;
--		goto out_dput;
--	}
-+	if (S_ISDIR(inode->i_mode) && (fmode & FMODE_WRITE))
-+		return -EISDIR;
- 
--	path.mnt = parfilp->f_path.mnt;
-+	path.mnt = mntget(parfilp->f_path.mnt);
- 	path.dentry = dentry;
--	filp = dentry_open(&path, hreq->oflags, cred);
--	dput(dentry);
--	if (IS_ERR(filp)) {
--		put_unused_fd(fd);
--		return PTR_ERR(filp);
--	}
-+
-+	FD_PREPARE(fdf, 0, dentry_open(&path, hreq->oflags, cred));
-+	error = ACQUIRE_ERR(fd_prepare, &fdf);
-+	if (error)
-+		return error;
- 
- 	if (S_ISREG(inode->i_mode)) {
-+		struct file *filp = fd_prepare_file(fdf);
-+
- 		filp->f_flags |= O_NOATIME;
- 		filp->f_mode |= FMODE_NOCMTIME;
- 	}
- 
--	fd_install(fd, filp);
+-	fd_install(fd, dmabuf->file);
+-
 -	return fd;
--
-- out_dput:
--	dput(dentry);
--	return error;
++	FD_PREPARE(fdf, flags, dmabuf->file);
++	ret = ACQUIRE_ERR(fd_prepare, &fdf);
++	if (ret)
++		return ret;
 +	return fd_publish(fdf);
  }
+ EXPORT_SYMBOL_NS_GPL(dma_buf_fd, "DMA_BUF");
  
- int
 
 -- 
 2.47.3
