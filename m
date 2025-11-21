@@ -1,124 +1,195 @@
-Return-Path: <linux-fsdevel+bounces-69344-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69358-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51ADAC77843
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Nov 2025 07:12:15 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF220C779B3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Nov 2025 07:50:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 183EB4E8404
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Nov 2025 06:11:13 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B9C7C35CA05
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Nov 2025 06:50:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE96B2F658D;
-	Fri, 21 Nov 2025 06:10:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F6D133508E;
+	Fri, 21 Nov 2025 06:49:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LfFscgXA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 184B52DEA75;
-	Fri, 21 Nov 2025 06:10:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 784B8334374;
+	Fri, 21 Nov 2025 06:49:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763705431; cv=none; b=ttDyHqcF9fMDM5+IrmVeumgNwy6NsWQlavCIVxr/aOfM4EnrBN1IKZXUPHB2wpQ8/5zixkJ0daubI3YspvBjOZjEXtwUYJoNuqwHznxibvKSK65kc9Gp2pwMkmM/WSYsTFDavmYnVlAqpmgC/dhCbTnY/McI8NWZW65meutWXMw=
+	t=1763707790; cv=none; b=S1xrSFG04gAu+jiZJsy5iogMQRQ8ECsNTNcTpDQWzivEtxMSpeDkUZ6caWZ0ekI/Arg8+8Hx2V/HMQblPAlQPwimj3/ORz1kluEioVetiNm9/aBJ1rNZXG7oQ814fZtQy6KI9/HQlx2XqzumL1CS9+r9B8TNMsvJ0/ylsPcw1xc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763705431; c=relaxed/simple;
-	bh=AEEiqz0MmrNjByI5u5ZZOfzdxppiSBGwo4kurejNhaE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=T27VrpBLMzN9/rr28s/4FVSVww5nudEMuBNuAx5twmLvn8jEaHYdq6+9lJPRV/KcXEUVnzgGXpF+xVQG9qLma6O0yqpz10RnJ1JxOcIlMb8/bdrSDyY7bMBnMlD+90cAs4CxsvibnLwXPd6BdnwFcHA5ttDCvqAjGFJgtah8a7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4dCPvD22SYzYQv4M;
-	Fri, 21 Nov 2025 14:09:44 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 53EA21A0EE7;
-	Fri, 21 Nov 2025 14:10:27 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.50.85.155])
-	by APP2 (Coremail) with SMTP id Syh0CgD3VHtAAiBp_of0BQ--.63807S17;
-	Fri, 21 Nov 2025 14:10:27 +0800 (CST)
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-To: linux-ext4@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	tytso@mit.edu,
-	adilger.kernel@dilger.ca,
-	jack@suse.cz,
-	yi.zhang@huawei.com,
-	yi.zhang@huaweicloud.com,
-	yizhang089@gmail.com,
-	libaokun1@huawei.com,
-	yangerkun@huawei.com
-Subject: [PATCH v2 13/13] ext4: drop the TODO comment in ext4_es_insert_extent()
-Date: Fri, 21 Nov 2025 14:08:11 +0800
-Message-ID: <20251121060811.1685783-14-yi.zhang@huaweicloud.com>
-X-Mailer: git-send-email 2.46.1
-In-Reply-To: <20251121060811.1685783-1-yi.zhang@huaweicloud.com>
-References: <20251121060811.1685783-1-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1763707790; c=relaxed/simple;
+	bh=Oy/3exAGfxwDg3eFLTOEHnCYzIB8o5gq5VjqAAj6IGA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kcN9QezoJ7h/trzGpO6F4Tuw5h7szNcY0SVTD0iymkQEIb1jAxh0TyniawW/KbCAS68baTazBmG8fNcjqDdvakpZa3v2WtuEvT8VY1YsMrZly4iW3Zrg3hOtoOk47QMSok39UBoK8GaxS6Xv9ScfrsUXtGkVFNK7T3yvasZQXWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=LfFscgXA; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=6Z2wSgy2zyNNpnV1+nFigOTTA+9f/wicUJMD/M0cv00=; b=LfFscgXAyljwTAzbKdofiwBSIr
+	YWYUsofssn/tG0skiwGrltv9b8ePvZePS7jNfK4RiziTFvUhkQwfCVX/Lhj34YMREUQNJtx3cnCgo
+	7h6LtpoUjQ/SHzly93tP7y0XPAcX+U9M/upev6JqoLrk4y1DP9fa1XHxIggGAPOwcKCENGyKgCkoS
+	l7IE7EycCTEb4p1yAlk1+4qtFZu0vsjCOPrWRmB2Rfq+uRivgN5cuIFXfFhaRUGjJTorUn1WlZCXR
+	MePwiN9IDZ21Z1yUzef3f1Kaz1xYhy1CXVJqw8KHuyYeBDZBIBIgusRaoCC+kZf163AJiYgRPDfEr
+	QKnUeDaw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vMKxa-00000007wJZ-1QWX;
+	Fri, 21 Nov 2025 06:49:34 +0000
+Date: Thu, 20 Nov 2025 22:49:34 -0800
+From: Christoph Hellwig <hch@infradead.org>
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+	Matthew Wilcox <willy@infradead.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH 1/2] f2fs: improve readahead for POSIX_FADV_WILLNEED
+Message-ID: <aSALfvLUObUGSx-e@infradead.org>
+References: <20251121014202.1969909-1-jaegeuk@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgD3VHtAAiBp_of0BQ--.63807S17
-X-Coremail-Antispam: 1UD129KBjvJXoW7uF4kXw4kAF15Xw13GF4kWFg_yoW8JF4fpr
-	sxCw48Jr4fXa1vkayxGF4UXryfGa40krW7Cr97Kw4SkFW5JFyS9F1qyFWYvFyfWrWxXrW5
-	ZFW8Kwn8Wa15JaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUmS14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
-	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
-	z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F
-	4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq
-	3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7
-	IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4U
-	M4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2
-	kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkE
-	bVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67
-	AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVW8JVW5JwCI
-	42IY6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF
-	4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBI
-	daVFxhVjvjDU0xZFpf9x0JUQFxUUUUUU=
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251121014202.1969909-1-jaegeuk@kernel.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-From: Zhang Yi <yi.zhang@huawei.com>
+On Fri, Nov 21, 2025 at 01:42:01AM +0000, Jaegeuk Kim wrote:
+> This patch boosts readahead for POSIX_FADV_WILLNEED.
 
-Now we have ext4_es_cache_extent() to cache on-disk extents instead of
-ext4_es_insert_extent(), so drop the TODO comment.
+How?  That's not a good changelog.
 
-Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
----
- fs/ext4/extents_status.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+Also open coding the read-ahead logic is not a good idea.  The only
+f2fs-specific bits are the compression check, and the extent precaching,
+but you surely should be able to share a read-ahead helper with common
+code instead of duplicating the logic.
 
-diff --git a/fs/ext4/extents_status.c b/fs/ext4/extents_status.c
-index e370240555ec..b681bd0c3dc0 100644
---- a/fs/ext4/extents_status.c
-+++ b/fs/ext4/extents_status.c
-@@ -898,7 +898,8 @@ static int __es_insert_extent(struct inode *inode, struct extent_status *newes,
- 
- /*
-  * ext4_es_insert_extent() adds information to an inode's extent
-- * status tree.
-+ * status tree. This interface is used for modifying extents. To cache
-+ * on-disk extents, use ext4_es_cache_extent() instead.
-  */
- void ext4_es_insert_extent(struct inode *inode, ext4_lblk_t lblk,
- 			   ext4_lblk_t len, ext4_fsblk_t pblk,
-@@ -977,10 +978,6 @@ void ext4_es_insert_extent(struct inode *inode, ext4_lblk_t lblk,
- 		}
- 		pending = err3;
- 	}
--	/*
--	 * TODO: For cache on-disk extents, there is no need to increment
--	 * the sequence counter, this requires future optimization.
--	 */
- 	ext4_es_inc_seq(inode);
- error:
- 	write_unlock(&EXT4_I(inode)->i_es_lock);
--- 
-2.46.1
-
+> 
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+>  fs/f2fs/data.c | 61 ++++++++++++++++++++++++++++++++++++++++++++++++++
+>  fs/f2fs/f2fs.h |  1 +
+>  fs/f2fs/file.c |  9 +++++---
+>  3 files changed, 68 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index a0433c8a4d84..d95974d79fb3 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -2710,6 +2710,67 @@ static void f2fs_readahead(struct readahead_control *rac)
+>  	f2fs_mpage_readpages(inode, rac, NULL);
+>  }
+>  
+> +int f2fs_readahead_pages(struct file *file, loff_t offset, loff_t len)
+> +{
+> +	struct inode *inode = file_inode(file);
+> +	struct address_space *mapping = file->f_mapping;
+> +	pgoff_t start_index = offset >> PAGE_SHIFT;
+> +	loff_t endbyte = offset + len;
+> +	pgoff_t end_index;
+> +	unsigned long nrpages;
+> +	unsigned long ra_pages = (16 * 1024 * 1024) / PAGE_SIZE;
+> +	DEFINE_READAHEAD(ractl, NULL, &file->f_ra, mapping, start_index);
+> +
+> +	if (!S_ISREG(inode->i_mode))
+> +		return -EOPNOTSUPP;
+> +
+> +	/* Should be read only. */
+> +	if (!(file->f_mode & FMODE_READ))
+> +		return -EBADF;
+> +
+> +	/* Do not support compressed file for large folio. */
+> +	if (f2fs_compressed_file(inode))
+> +		return -EINVAL;
+> +
+> +	if (!mapping || len < 0)
+> +		return -EINVAL;
+> +
+> +	if (unlikely(!mapping->a_ops->read_folio && !mapping->a_ops->readahead))
+> +		return -EINVAL;
+> +
+> +	/* Load extent cache at the first readahead. */
+> +	f2fs_precache_extents(inode);
+> +
+> +	/*
+> +	 * Careful about overflows. Len == 0 means "as much as possible".  Use
+> +	 * unsigned math because signed overflows are undefined and UBSan
+> +	 * complains.
+> +	 */
+> +	if (!len || endbyte > i_size_read(inode) || endbyte < len)
+> +		endbyte = i_size_read(inode) - 1;
+> +	else
+> +		endbyte--;		/* inclusive */
+> +
+> +	/* First and last PARTIAL page! */
+> +	end_index = endbyte >> PAGE_SHIFT;
+> +
+> +	if (start_index > end_index)
+> +		return 0;
+> +
+> +	nrpages = end_index - start_index + 1;
+> +
+> +	while (nrpages) {
+> +		unsigned long this_chunk = min(nrpages, ra_pages);
+> +
+> +		ractl.ra->ra_pages = this_chunk;
+> +
+> +		page_cache_sync_ra(&ractl, this_chunk << 1);
+> +
+> +		nrpages -= this_chunk;
+> +	}
+> +	return 0;
+> +}
+> +
+>  int f2fs_encrypt_one_page(struct f2fs_io_info *fio)
+>  {
+>  	struct inode *inode = fio_inode(fio);
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 3340db04a7c2..934287cc5624 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -4047,6 +4047,7 @@ int f2fs_init_bio_entry_cache(void);
+>  void f2fs_destroy_bio_entry_cache(void);
+>  void f2fs_submit_read_bio(struct f2fs_sb_info *sbi, struct bio *bio,
+>  			  enum page_type type);
+> +int f2fs_readahead_pages(struct file *file, loff_t offset, loff_t len);
+>  int f2fs_init_write_merge_io(struct f2fs_sb_info *sbi);
+>  void f2fs_submit_merged_write(struct f2fs_sb_info *sbi, enum page_type type);
+>  void f2fs_submit_merged_write_cond(struct f2fs_sb_info *sbi,
+> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> index d7047ca6b98d..b6f71efd6d2a 100644
+> --- a/fs/f2fs/file.c
+> +++ b/fs/f2fs/file.c
+> @@ -5305,9 +5305,12 @@ static int f2fs_file_fadvise(struct file *filp, loff_t offset, loff_t len,
+>  		filp->f_mode &= ~FMODE_RANDOM;
+>  		spin_unlock(&filp->f_lock);
+>  		return 0;
+> -	} else if (advice == POSIX_FADV_WILLNEED && offset == 0) {
+> -		/* Load extent cache at the first readahead. */
+> -		f2fs_precache_extents(inode);
+> +	} else if (advice == POSIX_FADV_WILLNEED) {
+> +		if (offset == 0 && len == -1) {
+> +			f2fs_precache_extents(inode);
+> +			return 0;
+> +		}
+> +		return f2fs_readahead_pages(filp, offset, len);
+>  	}
+>  
+>  	err = generic_fadvise(filp, offset, len, advice);
+> -- 
+> 2.52.0.487.g5c8c507ade-goog
+> 
+> 
+---end quoted text---
 
