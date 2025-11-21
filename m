@@ -1,134 +1,118 @@
-Return-Path: <linux-fsdevel+bounces-69377-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69378-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67FD3C79208
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Nov 2025 14:08:06 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 803A3C7974E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Nov 2025 14:34:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2162934F526
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Nov 2025 13:03:52 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 663C44E390C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Nov 2025 13:34:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A6A53431EF;
-	Fri, 21 Nov 2025 13:03:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C77EC34C802;
+	Fri, 21 Nov 2025 13:34:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="QFUx4fh4"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Gx8rZv18"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0A92343D9B
-	for <linux-fsdevel@vger.kernel.org>; Fri, 21 Nov 2025 13:03:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C66E11F09B3
+	for <linux-fsdevel@vger.kernel.org>; Fri, 21 Nov 2025 13:34:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763730190; cv=none; b=eehbB+EoIHbBS68mw0ek3dMPsg8zooJDKqae0cDy5Pm1un/6Q/eCzYHpYfUcVQr2nMuAOlCOXjaBcYZePqHmNE+hx53mda67g2hw35mehIaiwqLziS8fztJEwu37KvfsVyO4WvCDKeIX9xLjT9gxUCYa5TNOPtovypjY+zfjIUY=
+	t=1763732056; cv=none; b=R70vLesbuYN9Id7tlgq4X+j9PHG3N7uLxINe5lvsDPrdlxlJjntboyCVBmgPFIszIdWOg7YCm7YI7vfj15MTx+hpOF49hhVnbwRqYhXmjxKesFWmHQuAlxvmTlFkG/ct5Xq0HS2IhHfg3MNS/jRsFbL7+Dgpo54cnYAiXDTc9WI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763730190; c=relaxed/simple;
-	bh=RE8inZJACUTjbhJ7R5bdkx+O4GyPgbuPgpvQX5rm+4A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nOFeznWRWlcAbjXL23UoKIg6HdzNNf3Wab3OqV7NCJ0C7ijiwa0n8y3KVVjgYnmHQO6v5HYCj4JLe6A3o8+YWi3NCu1ZO2wjiD+byJ0ZCY5s00Rv8ugfUMx2TVy8W9J5/Q+0pysQaxhDLsiZFxBGP08JXZSXx4fYmL3bw3XWQe8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=QFUx4fh4; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-477b1cc8fb4so12347205e9.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Nov 2025 05:03:07 -0800 (PST)
+	s=arc-20240116; t=1763732056; c=relaxed/simple;
+	bh=zQUJYBQmVk0ptf5pEgHcnojTUQKHmZAz1Da32yhlxZc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=WjuqDP9mVTBnPKpg30vg7G+bDImyjPUCqhjNIzomcpzyoMa32r9F+dpmiHo8PfmcLsqNIquUGoqyg2bKkrr6O4t7VwIXmB70WkEiXgaIol9annAXGMEowHCOXFn3GDAxrx/7t6e93Zt9MJI/k+tFEdbe3LV3OW9WMxgsqF6pK7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Gx8rZv18; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4779cc419b2so21910895e9.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Nov 2025 05:34:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1763730186; x=1764334986; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=RE8inZJACUTjbhJ7R5bdkx+O4GyPgbuPgpvQX5rm+4A=;
-        b=QFUx4fh4YCD5UE1/uehzPoKxMW0qLKeaDtTAwwXWN7f5V9z+KakJ2nGk+Rj+3Nfmip
-         V6OqdGFZN070ieMOEg6rzUpNhLQ/axXXp0F5H6tns5+UWOruK8XjnwrG8ZRwiwQGDTMd
-         yW29K1l3bJ9WdI44Z1MwR/tXr4jyVKh7oJTBm34OcQvsSzvC48fU5hvjKPm0dLwihXbp
-         AqwWaO4x9ImsyFBAGzu45Jb5UkjrtbI4GcoMhiIa2iC0S0suUo+bWvP6t0W5PtrJhJWL
-         8uR4f6zMRbWn4J1AiPFqtrle07yecLBaTUTnjY4JTFsBXwMzQ+qJF+R/repYvRpYIDzU
-         c4pg==
+        d=linaro.org; s=google; t=1763732052; x=1764336852; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=W+L4T0l17WSA4vjG+LcSmcOxNpZmSPrGCylTE0ZSJZE=;
+        b=Gx8rZv18ziUuus34WjMIIjx0W2fJqdk5fGwFyfP0IVcN/NKcULkyArzUYdz/W3mqbY
+         9WqAUsY9Z1MSv6+IQg/H5/mZyk9xEtFhc2gBlWcpFT+oWvZAx7LAKNSKTSVmM88gW3Nx
+         a1/iUuqpgWZwCVpxhZfpj66v5P09296SvUXEHl3IY1ijEqSHtACsd0UPxThdw0yTf+YJ
+         FE0wWBBmZWfboOdXDTDNyLKW9eegVDhTNeik1q2b3gkeHis1tCWL0UBh0HLTN0Dr5IUl
+         6019lvIhyy953MzODmcjPiK3eiVHAEyT+RsEC272x/6mxzbPrukA5cHnL28sDcyIDxLs
+         tRVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763730186; x=1764334986;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RE8inZJACUTjbhJ7R5bdkx+O4GyPgbuPgpvQX5rm+4A=;
-        b=SC1qC+Pt6KJpQY2RcWEPoDn+1VbtWZwHFXo47+3zXBNsb7rz7dvwW+cz1HyAhWDn3H
-         Iy0+4KEXVtARXTDBc8YjZlb4cwDz+Jp4bmpIuPG0Tq667YjrpAq9SCTj1Xcro7eMgM2v
-         z1J48bjPWmWjpCrirULkr/aep4Mg0/x6586dlatsIA6rCn0WNKn6UcIlITr76Sz5WPkO
-         7VHkbkezNF2D88AQfEXDL6W7GBV6d+ltUSjE+42un5WKiXNUVLaOVpJjXBEiysXD/W0q
-         0seowbtne9FBGFnnJA+j7Cg5a9HHgelx527aLC3hW1b+7DO8QUOYCU0UHvC3FJpq7dS0
-         egyA==
-X-Forwarded-Encrypted: i=1; AJvYcCUZpbIeDSlqQ4UTqZqcd5mwFWz+G4nhQN9ZNDazZQWh5v8s9H48exSQ9JZJO2HziRKIorlF9V3UF3GSA1DP@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxH1zNZYNvR1mlBjgRyahU5i+AQ8czNLZoocgaP+dIECgsrwUT
-	e36wSKyLMWdYSRr/BNg8QN1vQRZHzHprTJ91lpj4Rp1nSIP40v7y4geequVKsMtmBHWyjnp2VeV
-	DNcIvO7ZEj/uGEJ9rhFPTW8sJYNLft6HAKxnozxn+jQ==
-X-Gm-Gg: ASbGncvanjo5cD2hlll9XyAnVYCKRfzUbAOrbKiUuQ5gTrC/qCQ2yJeuofNc9/UypdA
-	nA2lm2OG4pP/hlnN8+Bwa+Xle/Lxy1pSveZAvX3BRgoxp3Nyc/w3p21S+V0VK5OfwbVcqt+yJia
-	JGWJA+nI0HXPbukcRsAYfLqVkCM1yt3fFe3Fhjsyb9SXo8M0Yv/ala6ieSvX91n1qGyPp3ygmVr
-	K8KyE9Yc2KQO2M/gjiJMhEKcVobzgpXiIBJ552lFJg1WaFTaDMLvnFcsTG5WyDsCqoVPg5f8blV
-	DUtrfkeKpL+wwZxebHmyKDgBhCKadRBvsII9KCNUw/Tf+6L4H0d/SyDEIiET4UjFA3n7AseswNb
-	E62Y=
-X-Google-Smtp-Source: AGHT+IFKvlzMGUOsQjurJJO1/ddu129s8U6J9Qzr1L7YObQFc0ULUukUbdKdK6XW7KVAHd+E0Lj6QT3HD9PKGyA2iIw=
-X-Received: by 2002:a05:600c:4e8e:b0:477:7925:f7fb with SMTP id
- 5b1f17b1804b1-477c0180d42mr21139625e9.10.1763730185944; Fri, 21 Nov 2025
- 05:03:05 -0800 (PST)
+        d=1e100.net; s=20230601; t=1763732052; x=1764336852;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=W+L4T0l17WSA4vjG+LcSmcOxNpZmSPrGCylTE0ZSJZE=;
+        b=azec7P+JggK9RVsoHnPlu3NpEqoNSEz0RIM9No5AJwe1BgaHNj91igSCRkoh4SKcys
+         rfDh02wNxJEQKwoFkqKtBOl4yoFCetsk7wxNlnFv+JiFB+JeiqMmH0FD4eXt0cLLX6VV
+         E8/ZKAdSxxfXjtunNkjlwDGUsJ9UNJuOiwo3FHui7wEd5hTkPeQYnsCcfSeajiFlv4fb
+         YoFEbxaiKa/mzvkcMqBsrxwww6N1kKWgGaa3FhdJowAVrALQCod9xjWUqk04g3q9Msj/
+         +hi9gumyuOzCR6YBexjZjXgwGcvM2iCceFywzNzcYOgAhRrLtrioIfEljMWhgTqL8U8b
+         UGsA==
+X-Forwarded-Encrypted: i=1; AJvYcCWuqhCVEcNEFuIha3jTKGZq7pPlIr3jEulGtnYiZb3P2aA+Bi6cRy8/q/5MCbuTyhPtpfPERtGSgzp1doFi@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLATwUKqfl0Ci+96u6GvxsO9ZRc8tmKUFfoTBkEYT/JfwHUZog
+	PdprFHOE6jLJ4S1liqpeD3d817X/gijyJaTsFgkvzV1Us4Bvoi/IPbPW+3+1giiDa98=
+X-Gm-Gg: ASbGncuUJea1QDGnTzyhhs6h8j3uEorcka7nJf6baE9or/7Ge5x4S2zn5yv5aYh1t7m
+	AZgCGRuzRPZWD/T2H1E6VndOiU+0O+iP/D6S6S5CVeDaAhMwVtwdPh0A4p9SAPob9ZfJJeMbwHM
+	HATftTY0DzT1VJoQOTBoBsVFuYLfso2wcRvFwUM/cG97KB7HqMr9STOsGqHyFFHvddeazjNZ6M8
+	tSRYAw+l6U0XqJ6OwY0ftmhYJBKZPI4A3hdRED1n6xf2A9jBdcrzj/DKPLPZ3gt71tIJelBJiRB
+	NSsC66l86jb7n9OfHiRCGcV+vNd/mQqP4GoegH18aK2GzfJq3YEmjWkk/pxDgzfXm3BKb0AJXmg
+	QUMUg3jEhmsJyBufq1ziMvURik+NqlhFKEfqdsANLKibv5wtlJV59DRISZUxfpjqrGXkC/3fAd+
+	ogTxYb2fVMjhD7dn3s
+X-Google-Smtp-Source: AGHT+IF1+crTfIYeEU9M7DsXBYJ60sLjbKYxri2d7Qo/kMnDk4ENkEccSfjGCmcuopV5Y5KjHpyOyQ==
+X-Received: by 2002:a05:600c:4691:b0:477:8a2a:1244 with SMTP id 5b1f17b1804b1-477c110e521mr21905045e9.11.1763732051761;
+        Fri, 21 Nov 2025 05:34:11 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-477bf22dfcesm43851275e9.13.2025.11.21.05.34.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Nov 2025 05:34:11 -0800 (PST)
+Date: Fri, 21 Nov 2025 16:34:08 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Luis Henriques <luis@igalia.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH next] fuse: Uninitialized variable in fuse_epoch_work()
+Message-ID: <aSBqUPeT2JCLDsGk@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <48a91ada-c413-492f-86a4-483355392d98@suse.com>
-In-Reply-To: <48a91ada-c413-492f-86a4-483355392d98@suse.com>
-From: Daniel Vacek <neelx@suse.com>
-Date: Fri, 21 Nov 2025 14:02:54 +0100
-X-Gm-Features: AWmQ_bmlrTSQRB-IyIJw_d7QEyrSrCi1L10PR-iyaSdF9L9qt__gjWsRdUJNCmQ
-Message-ID: <CAPjX3Ffrs28a6wC3PvtXpPy5Hw9pOmGYqchpg7WRtTwdDo1mgg@mail.gmail.com>
-Subject: Re: Questions about encryption and (possibly weak) checksum
-To: Qu Wenruo <wqu@suse.com>
-Cc: linux-crypto@vger.kernel.org, linux-btrfs <linux-btrfs@vger.kernel.org>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, Josef Bacik <josef@toxicpanda.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-On Thu, 20 Nov 2025 at 22:58, Qu Wenruo <wqu@suse.com> wrote:
-> Hi,
->
-> Recently Daniel is reviving the fscrypt support for btrfs, and one thing
-> caught my attention, related the sequence of encryption and checksum.
->
-> What is the preferred order between encryption and (possibly weak) checksum?
->
-> The original patchset implies checksum-then-encrypt, which follows what
-> ext4 is doing when both verity and fscrypt are involved.
+The "fm" pointer is either valid or uninitialized so checking for NULL
+doesn't work.  Check the "inode" pointer instead.
 
-If by "the original patchset" you mean the few latest btrfs encryption
-support iterations sent by Josef a couple years back then you may have
-misunderstood the implementation. The design is precisely taking
-checksum of the encrypted data which is exactly the right thing to do.
-And I'm not touching that part at all. You can check it out when I'll
-post the next iteration (or check the v5 on ML archive).
+Fixes: 64becd224ff9 ("fuse: new work queue to invalidate dentries from old epochs")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ fs/fuse/dir.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-But I'm happy you care :-)
+diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+index 761f4a14dc95..ec5042b47abb 100644
+--- a/fs/fuse/dir.c
++++ b/fs/fuse/dir.c
+@@ -201,7 +201,7 @@ void fuse_epoch_work(struct work_struct *work)
+ 	inode = fuse_ilookup(fc, FUSE_ROOT_ID, &fm);
+ 	iput(inode);
+ 
+-	if (fm) {
++	if (inode) {
+ 		/* Remove all possible active references to cached inodes */
+ 		shrink_dcache_sb(fm->sb);
+ 	} else
+-- 
+2.51.0
 
---nX
-
-> But on the other hand, btrfs' default checksum (CRC32C) is definitely
-> not a cryptography level HMAC, it's mostly for btrfs to detect incorrect
-> content from the storage and switch to another mirror.
->
-> Furthermore, for compression, btrfs follows the idea of
-> compress-then-checksum, thus to me the idea of encrypt-then-checksum
-> looks more straightforward, and easier to implement.
->
-> Finally, the btrfs checksum itself is not encrypted (at least for now),
-> meaning the checksum is exposed for any one to modify as long as they
-> understand how to re-calculate the checksum of the metadata.
->
->
-> So my question here is:
->
-> - Is there any preferred sequence between encryption and checksum?
->
-> - Will a weak checksum (CRC32C) introduce any extra attack vector?
->
-> Thanks,
-> Qu
 
