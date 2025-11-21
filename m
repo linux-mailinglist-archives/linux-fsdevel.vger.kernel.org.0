@@ -1,215 +1,216 @@
-Return-Path: <linux-fsdevel+bounces-69360-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69361-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28B18C77AC8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Nov 2025 08:21:47 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75414C77ADD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Nov 2025 08:23:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 152C54E96FB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Nov 2025 07:19:27 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTPS id 97EDC2C953
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Nov 2025 07:22:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECF19337104;
-	Fri, 21 Nov 2025 07:19:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4A342BE7DF;
+	Fri, 21 Nov 2025 07:22:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MgUBHAWc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out03.mta.xmission.com (out03.mta.xmission.com [166.70.13.233])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CB69250BEC;
-	Fri, 21 Nov 2025 07:19:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BE003358BF
+	for <linux-fsdevel@vger.kernel.org>; Fri, 21 Nov 2025 07:22:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763709554; cv=none; b=aKM7Eek+p3lssHqo4dfg5FI3nf4cowlx4gonO6We3tkdQRm/2tDcEsWSQeSzwBEogidi1quK76ECjZYJxe+qHjILrlO2JmVilq/JoLoA5QWIlyyzL4DJ4xBuEBX8jYylKZ3wsAnFGcvMWvoO9dg4gwuYJ6Fk8bMO1NsP7mWbT2o=
+	t=1763709767; cv=none; b=PVoO1XMaN0RZGtBEROEC1e6w6bvSwmAXdMPLU7PtZHp7/V5O5zyPdqK3EOvMbHqzzLLleiBA9fZAPSG3krvGYJWVUDRasizlC//6mJu5F8TqX/9tQeXbEO0ZNWG/RgiMcroAMsfwOnE9uMUHkZhM5NoplgXfYFeZl4svUw0hFo4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763709554; c=relaxed/simple;
-	bh=D/T+ry2i0aqr/sSamTTezDsRAWCyIn+Fl8q8hzbWTIY=;
-	h=From:To:Cc:In-Reply-To:References:Date:Message-ID:MIME-Version:
-	 Content-Type:Subject; b=X5G9RFLnXnxBhox0QCVNo/5qdNZXDQdTadfHCQLZl2tmA46iPNfEyxkjisQoZemkaSLrrQAmAv07qaXJrTj3JlXP3/MvBcXrWw5bAlsIg7XRUNgsHguer0455QfDHndYhSsS92XDUQMqNK+scEm9D5XtsXqawoKZwdlOhO7jSPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
-Received: from in02.mta.xmission.com ([166.70.13.52]:38322)
-	by out03.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1vMLQ6-00Cn6i-9s; Fri, 21 Nov 2025 00:19:02 -0700
-Received: from ip72-198-198-28.om.om.cox.net ([72.198.198.28]:55264 helo=email.froward.int.ebiederm.org.xmission.com)
-	by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1vMLQ4-00CUPL-D2; Fri, 21 Nov 2025 00:19:01 -0700
-From: "Eric W. Biederman" <ebiederm@xmission.com>
-To: Bernd Edlinger <bernd.edlinger@hotmail.de>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,  Alexey Dobriyan
- <adobriyan@gmail.com>,  Oleg Nesterov <oleg@redhat.com>,  Kees Cook
- <kees@kernel.org>,  Andy Lutomirski <luto@amacapital.net>,  Will Drewry
- <wad@chromium.org>,  Christian Brauner <brauner@kernel.org>,  Andrew
- Morton <akpm@linux-foundation.org>,  Michal Hocko <mhocko@suse.com>,
-  Serge Hallyn <serge@hallyn.com>,  James Morris
- <jamorris@linux.microsoft.com>,  Randy Dunlap <rdunlap@infradead.org>,
-  Suren Baghdasaryan <surenb@google.com>,  Yafang Shao
- <laoar.shao@gmail.com>,  Helge Deller <deller@gmx.de>,  Adrian Reber
- <areber@redhat.com>,  Thomas Gleixner <tglx@linutronix.de>,  Jens Axboe
- <axboe@kernel.dk>,  Alexei Starovoitov <ast@kernel.org>,
-  "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-  "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-  linux-kselftest@vger.kernel.org,  linux-mm@kvack.org,
-  linux-security-module@vger.kernel.org,  tiozhang
- <tiozhang@didiglobal.com>,  Luis Chamberlain <mcgrof@kernel.org>,  "Paulo
- Alcantara (SUSE)" <pc@manguebit.com>,  Sergey Senozhatsky
- <senozhatsky@chromium.org>,  Frederic Weisbecker <frederic@kernel.org>,
-  YueHaibing <yuehaibing@huawei.com>,  Paul Moore <paul@paul-moore.com>,
-  Aleksa Sarai <cyphar@cyphar.com>,  Stefan Roesch <shr@devkernel.io>,
-  Chao Yu <chao@kernel.org>,  xu xin <xu.xin16@zte.com.cn>,  Jeff Layton
- <jlayton@kernel.org>,  Jan Kara <jack@suse.cz>,  David Hildenbrand
- <david@redhat.com>,  Dave Chinner <dchinner@redhat.com>,  Shuah Khan
- <shuah@kernel.org>,  Elena Reshetova <elena.reshetova@intel.com>,  David
- Windsor <dwindsor@gmail.com>,  Mateusz Guzik <mjguzik@gmail.com>,  Ard
- Biesheuvel <ardb@kernel.org>,  "Joel Fernandes (Google)"
- <joel@joelfernandes.org>,  "Matthew Wilcox (Oracle)"
- <willy@infradead.org>,  Hans Liljestrand <ishkamiel@gmail.com>,  Penglei
- Jiang <superman.xpt@gmail.com>,  Lorenzo Stoakes
- <lorenzo.stoakes@oracle.com>,  Adrian Ratiu <adrian.ratiu@collabora.com>,
-  Ingo Molnar <mingo@kernel.org>,  "Peter Zijlstra (Intel)"
- <peterz@infradead.org>,  Cyrill Gorcunov <gorcunov@gmail.com>,  Eric
- Dumazet <edumazet@google.com>
-In-Reply-To: <GV2PPF74270EBEEAD4CACA124C05BE1CE45E4D5A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
-	(Bernd Edlinger's message of "Fri, 21 Nov 2025 03:59:56 +0100")
-References: <AM8PR10MB470801D01A0CF24BC32C25E7E40E9@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
-	<AM8PR10MB470875B22B4C08BEAEC3F77FE4169@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
-	<AS8P193MB1285DF698D7524EDE22ABFA1E4A1A@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
-	<AS8P193MB12851AC1F862B97FCE9B3F4FE4AAA@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
-	<AS8P193MB1285FF445694F149B70B21D0E46C2@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
-	<AS8P193MB1285937F9831CECAF2A9EEE2E4752@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
-	<GV2PPF74270EBEEEDE0B9742310DE91E9A7E431A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
-	<GV2PPF74270EBEE9EF78827D73D3D7212F7E432A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
-	<GV2PPF74270EBEEE807D016A79FE7A2F463E4D6A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
-	<87tsyozqdu.fsf@email.froward.int.ebiederm.org>
-	<87wm3ky5n9.fsf@email.froward.int.ebiederm.org>
-	<87h5uoxw06.fsf_-_@email.froward.int.ebiederm.org>
-	<87a50gxo0i.fsf@email.froward.int.ebiederm.org>
-	<GV2PPF74270EBEEAD4CACA124C05BE1CE45E4D5A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
-Date: Fri, 21 Nov 2025 01:18:54 -0600
-Message-ID: <87o6ovx38h.fsf@email.froward.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1763709767; c=relaxed/simple;
+	bh=QU7UgbrRQWIE5jt+i0Rs5HLMeVgJ47HBJ/y0Eje87Ac=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BvSiPK6z3DLO7tKcJ5FXxp0ujSINp+u3G7/waipPKgxXuuDXYAoiPyI0PLw3r0AuIOkWqcLOHEaZLVZ3rFeNhKdE572xYYsLNEqdVaJalAhRQ4bl245bKFBz1oCQbnA7IVdLokW2D4nUQrspNBf5ndG2JusdwqcwHatW4IS/9/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MgUBHAWc; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-42bb288c219so1554524f8f.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Nov 2025 23:22:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1763709763; x=1764314563; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qBonvU1U3ZemupKyXYNMEJLvdVev/yCBsIjnIBAPUGc=;
+        b=MgUBHAWcmcbNGdST01Mn+EjPHK85Ej8jrbibhgw/MDJMxtq2TJ1jI0qNosa3JsdoUo
+         J2shLOSZCgwFl1GfuiNIpE0rpCxsQZdSeXB1XwKLytQd4o/fMdji/O4O+Wys6yT4QSn1
+         ow3xAuhqmUBkaZLy07eBiFEAMYefRM5EVfg/V8aVsUWyoZFZjimzqGpTzF05yiP1Mp5u
+         WjK6wDopONFwhdPgdwnjsOXtDu06d6s0oSlWlddJOb1j+RwPkm21qPaUPLfiXShoSdk8
+         e453Jr/qMBsbuWpga8iDraoP8ozc5P2cSjGhHiEeAgVtFDx1OHuSZxl2IMqF46ins4Xz
+         T5lA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763709763; x=1764314563;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qBonvU1U3ZemupKyXYNMEJLvdVev/yCBsIjnIBAPUGc=;
+        b=ntIkz47gvPkAu6xzXxnvhSIcBUDJzom8xgIVEKQ3HvGrRv0mUOuy8mOENFBWx4XulO
+         kJQNPqvj6SYL8i50MK9xSUaNaIg+/Sh7HpN+iHeWvldKOpIim9EN8TVhBCS4pfjAZAsw
+         dPsswyp/rbtueSq4PzARF/dQeUgCJfb9GMnAg4BcEp6frewTeAdPGg55ZVkVLU7XoJnd
+         nLiytatgyBxKENues9JCZFyRKxunf+1gW6+iTu9ErRnsciOrG5elX2oychkdLNF70UMo
+         bO3kT+4qoohY9+KbZSI4RBKNV7WEyXoiFiqzr0qgrpuiyYj3CptwKWnbQ6e8VHCIVGT1
+         8FTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUbfqk2/k6DgRMWEbVTQkazjDopGUVHGwg1Fabux+TWLbPc/fu3VvDaC+0BL29uFeAO5M8rLz83pNYgNBoc@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0ka8ZC3SyQJyFBYebywRKW59q4iBAiUb54SzrF/TfL5I+5bgh
+	uqDi1YyZBeJivJ9jOmKOMhWFo45EsR8eiVuRWT9yDB60TjhYYEK75WSo
+X-Gm-Gg: ASbGncvuU/pJGr+P0h12ZFX+qcnfnwr0pQgm6yJTpaB9x+ztDPJjig7daOqjkQeAFJC
+	vI1xF0ZRFKplqbaP7+a+3jPfR6Yxs/qzw7RDd0Cx5SdckYCMXKRQ7KpUJKbtOFQPLu3jn/h5wxs
+	SR+cGu+UdC0n+xpOA+ztCFVyzDaJTNCE9nPvz+9IU2bLiz330fgTbiNUSwJ4dY3WV9bdS6iHG5f
+	b4TkE+hCQ9ziziN0iOFUbli8fz1xxt1BmAsKLIvPt2+lDImh4YMogjlGqr/cAWnDtv8jftYa9+t
+	a73ZNXxf59iFSG4qMji+hLeRcsjiWAC+6mZ/9dFJ/5NnoHV+Ogwd6Y20N377xOInfjmi7Rxfuaz
+	pf4s6qkEclVIn4zgK6bwF+re7xibbagGdADEmrBIU1ksNcqXGWOI6W6J243rIrT48re47WhU8WO
+	20x4dWrUu9NYfq8nkApsu7keoWMFl5lcFsBtOCSPBL03HbzkNispUvzKTs7bc=
+X-Google-Smtp-Source: AGHT+IHCa/mDVJYgIa60qmXsx8NLFXfcSCtUIzYM70iUWvyZT9ae/OaYZVKQJFWWylGnkkowy1Q1pg==
+X-Received: by 2002:a05:6000:228a:b0:42b:3e60:18ba with SMTP id ffacd0b85a97d-42cc1ac9ca3mr1072320f8f.8.1763709763103;
+        Thu, 20 Nov 2025 23:22:43 -0800 (PST)
+Received: from f.. (cst-prg-14-82.cust.vodafone.cz. [46.135.14.82])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42cb7f34ff3sm9986431f8f.16.2025.11.20.23.22.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Nov 2025 23:22:42 -0800 (PST)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: brauner@kernel.org
+Cc: viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH] fs: scale opening of character devices
+Date: Fri, 21 Nov 2025 08:22:37 +0100
+Message-ID: <20251121072237.3230021-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1vMLQ4-00CUPL-D2;;;mid=<87o6ovx38h.fsf@email.froward.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=72.198.198.28;;;frm=ebiederm@xmission.com;;;spf=pass
-X-XM-AID: U2FsdGVkX1/iHCtWSAl7NFlir4kFAhXy3/S8BzfxSNE=
-X-Spam-Level: ****
-X-Spam-Report: 
-	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-	*  0.1 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-	*      [score: 0.5000]
-	*  1.5 TR_Symld_Words too many words that have symbols inside
-	*  0.7 XMSubLong Long Subject
-	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-	*      [sa08 1397; Body=1 Fuz1=1 Fuz2=1]
-	*  1.0 XM_B_SpammyTLD Contains uncommon/spammy TLD
-	*  1.0 XM_B_Phish_Phrases Commonly used Phishing Phrases
-	*  0.0 TR_XM_PhishingBody Phishing flag in body of message
-	*  1.5 XM_B_SpammyTLD3 Phishing rule with uncommon/spammy TLD Combo
-X-Spam-DCC: XMission; sa08 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ****;Bernd Edlinger <bernd.edlinger@hotmail.de>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 1314 ms - load_scoreonly_sql: 0.06 (0.0%),
-	signal_user_changed: 12 (0.9%), b_tie_ro: 10 (0.8%), parse: 1.19
-	(0.1%), extract_message_metadata: 15 (1.1%), get_uri_detail_list: 1.98
-	(0.2%), tests_pri_-2000: 12 (0.9%), tests_pri_-1000: 9 (0.7%),
-	tests_pri_-950: 0.95 (0.1%), tests_pri_-900: 0.82 (0.1%),
-	tests_pri_-90: 89 (6.8%), check_bayes: 87 (6.6%), b_tokenize: 16
-	(1.2%), b_tok_get_all: 14 (1.1%), b_comp_prob: 3.4 (0.3%),
-	b_tok_touch_all: 47 (3.6%), b_finish: 1.34 (0.1%), tests_pri_0: 365
-	(27.7%), check_dkim_signature: 0.58 (0.0%), check_dkim_adsp: 8 (0.6%),
-	poll_dns_idle: 789 (60.1%), tests_pri_10: 1.92 (0.1%), tests_pri_500:
-	805 (61.3%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [RFC][PATCH] exec: Move cred computation under exec_update_lock
-X-SA-Exim-Connect-IP: 166.70.13.52
-X-SA-Exim-Rcpt-To: too long (recipient list exceeded maximum allowed size of 512 bytes)
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-SA-Exim-Scanned: No (on out03.mta.xmission.com); SAEximRunCond expanded to false
+Content-Transfer-Encoding: 8bit
 
-Bernd Edlinger <bernd.edlinger@hotmail.de> writes:
+chrdev_open() always takes cdev_lock, which is only needed to synchronize
+against cd_forget(). But the latter is only ever called by inode evict(),
+meaning these two can never legally race. Solidify this with asserts.
 
-> Hi Eric,
->
-> thanks for you valuable input on the topic.
->
-> On 11/21/25 00:50, Eric W. Biederman wrote:
->> "Eric W. Biederman" <ebiederm@xmission.com> writes:
->> 
->>> Instead of computing the new cred before we pass the point of no
->>> return compute the new cred just before we use it.
->>>
->>> This allows the removal of fs_struct->in_exec and cred_guard_mutex.
->>>
->>> I am not certain why we wanted to compute the cred for the new
->>> executable so early.  Perhaps I missed something but I did not see any
->>> common errors being signaled.   So I don't think we loose anything by
->>> computing the new cred later.
->> 
->> I should add that the permission checks happen in open_exec,
->> everything that follows credential wise is just about representing in
->> struct cred the credentials the new executable will have.
->> 
->> So I am really at a loss why we have had this complicated way of
->> computing of computed the credentials all of these years full of
->> time of check to time of use problems.
->> 
->
-> Well, I think I see a problem with your patch:
->
-> When the security engine gets the LSM_UNSAFE_PTRACE flag, it might
-> e.g. return -EPERM in bprm_creds_for_exec in the apparmor, selinux
-> or the smack security engines at least.  Previously that callback
-> was called before the point of no return, and the return code should
-> be returned as a return code the the caller of execve.  But if we move
-> that check after the point of no return, the caller will get killed
-> due to the failed security check.
->
-> Or did I miss something?
+More cleanups are needed here but this is enough to get the thing out of
+the way.
 
-I think we definitely need to document this change in behavior.  I would
-call ending the exec with SIGSEGV vs -EPERM a quality of implementation
-issue.  The exec is failing one way or the other so I don't see it as a
-correctness issue.
+Rationale is funny-sounding at first: opening of /dev/zero happens to be
+a contention point in large-scale package building (think 100+ packages
+at the same with a thread count to support it). Such a workload is not
+only very fork+exec heavy, but frequently involves scripts which use the
+idiom of silencing output by redirecting it to /dev/null.
 
-In the case of ptrace in general I think it is a bug if the mere act of
-debugging a program changes it's behavior.  So which buggy behavior
-should we prefer?  SIGSEGV where it is totally clear that the behavior
-has changed or -EPERM and ask the debugged program to handle it.
-I lean towards SIGSEGV because then it is clear the code should not
-handle it.
+A non-large-scale microbenchmark of opening /dev/null in a loop in 16
+processes:
+before:	2865472
+after:	4011960 (+40%)
 
-In the case of LSM_UNSAFE_NO_NEW_PRIVS I believe the preferred way to
-handle unexpected things happening is to terminate the application.
+Code goes from being bottlenecked on the spinlock to being bottlenecked
+on lockref.
 
-In the case of LSM_UNSAFE_SHARE -EPERM might be better.  I don't know
-of any good uses of any good uses of sys_clone(CLONE_FS ...) outside
-of CLONE_THREAD.
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+---
 
+I'll note for interested my experience with the workload at hand comes
+from FreeBSD and was surprised to find /dev/null on the profile. Given
+that Linux is globally serializing on it, it has to be a factor as well
+in this case.
 
-Plus all of these things are only considerations if we are exec'ing a
-program that transitions to a different set of credentials.  Something
-that happens but is quite rare itself.
+ fs/char_dev.c        | 20 +++++++++++---------
+ fs/inode.c           |  2 +-
+ include/linux/cdev.h |  2 +-
+ 3 files changed, 13 insertions(+), 11 deletions(-)
 
-In practice I don't expect there is anything that depends on the exact
-behavior of what happens when exec'ing a suid executable to gain
-privileges when ptraced.   The closes I can imagine is upstart and
-I think upstart ran as root when ptracing other programs so there is no
-gaining of privilege and thus no reason for a security module to
-complain.
-
-Who knows I could be wrong, and someone could actually care.  Which is
-hy I think we should document it.
-
-Eric
+diff --git a/fs/char_dev.c b/fs/char_dev.c
+index c2ddb998f3c9..dfde57cb5eed 100644
+--- a/fs/char_dev.c
++++ b/fs/char_dev.c
+@@ -374,15 +374,15 @@ static int chrdev_open(struct inode *inode, struct file *filp)
+ {
+ 	const struct file_operations *fops;
+ 	struct cdev *p;
+-	struct cdev *new = NULL;
+ 	int ret = 0;
+ 
+-	spin_lock(&cdev_lock);
+-	p = inode->i_cdev;
++	VFS_BUG_ON_INODE(icount_read(inode) < 1, inode);
++
++	p = READ_ONCE(inode->i_cdev);
+ 	if (!p) {
+ 		struct kobject *kobj;
++		struct cdev *new;
+ 		int idx;
+-		spin_unlock(&cdev_lock);
+ 		kobj = kobj_lookup(cdev_map, inode->i_rdev, &idx);
+ 		if (!kobj)
+ 			return -ENXIO;
+@@ -392,19 +392,19 @@ static int chrdev_open(struct inode *inode, struct file *filp)
+ 		   we dropped the lock. */
+ 		p = inode->i_cdev;
+ 		if (!p) {
+-			inode->i_cdev = p = new;
++			p = new;
++			WRITE_ONCE(inode->i_cdev, p);
+ 			list_add(&inode->i_devices, &p->list);
+ 			new = NULL;
+ 		} else if (!cdev_get(p))
+ 			ret = -ENXIO;
++		spin_unlock(&cdev_lock);
++		cdev_put(new);
+ 	} else if (!cdev_get(p))
+ 		ret = -ENXIO;
+-	spin_unlock(&cdev_lock);
+-	cdev_put(new);
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = -ENXIO;
+ 	fops = fops_get(p->ops);
+ 	if (!fops)
+ 		goto out_cdev_put;
+@@ -423,8 +423,10 @@ static int chrdev_open(struct inode *inode, struct file *filp)
+ 	return ret;
+ }
+ 
+-void cd_forget(struct inode *inode)
++void inode_cdev_forget(struct inode *inode)
+ {
++	VFS_BUG_ON_INODE(!(inode_state_read_once(inode) & I_FREEING), inode);
++
+ 	spin_lock(&cdev_lock);
+ 	list_del_init(&inode->i_devices);
+ 	inode->i_cdev = NULL;
+diff --git a/fs/inode.c b/fs/inode.c
+index a62032864ddf..88be1f20782d 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -840,7 +840,7 @@ static void evict(struct inode *inode)
+ 		clear_inode(inode);
+ 	}
+ 	if (S_ISCHR(inode->i_mode) && inode->i_cdev)
+-		cd_forget(inode);
++		inode_cdev_forget(inode);
+ 
+ 	remove_inode_hash(inode);
+ 
+diff --git a/include/linux/cdev.h b/include/linux/cdev.h
+index 0e8cd6293deb..bed99967ad90 100644
+--- a/include/linux/cdev.h
++++ b/include/linux/cdev.h
+@@ -34,6 +34,6 @@ void cdev_device_del(struct cdev *cdev, struct device *dev);
+ 
+ void cdev_del(struct cdev *);
+ 
+-void cd_forget(struct inode *);
++void inode_cdev_forget(struct inode *);
+ 
+ #endif
+-- 
+2.48.1
 
 
