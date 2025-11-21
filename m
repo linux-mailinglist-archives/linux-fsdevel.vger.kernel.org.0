@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-69410-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69411-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAFD2C7B32B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Nov 2025 19:04:17 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E43DBC7B2FE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Nov 2025 19:03:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id CA005358110
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Nov 2025 18:01:52 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D5E104EB1BB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Nov 2025 18:01:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EB4D351FA8;
-	Fri, 21 Nov 2025 18:01:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 392B7350D7E;
+	Fri, 21 Nov 2025 18:01:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N4m8d8Se"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N2n3XTg+"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1E5B27FB34
-	for <linux-fsdevel@vger.kernel.org>; Fri, 21 Nov 2025 18:01:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98BA134F248
+	for <linux-fsdevel@vger.kernel.org>; Fri, 21 Nov 2025 18:01:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763748077; cv=none; b=odjbsLfyppMJemdNGX7s5ap920XNGayxs2OlEWfKaeHYyFeK6UkWlb0Oxs0Wj0udHn5UwUgXufLm7MkMLZpBMK4cOHMRxqAuVscAWdncinHJK7FEeEG8w1Ifo9t7BvMZf0S9hfcGN+96VJRm4JWphgCJXrlt68ID717bYJWEfhY=
+	t=1763748079; cv=none; b=SGGHuE8wCZ0AnX0Q8txYu0kymcwcmBf8ht5D5rG9EkzmpjblTfnYCfS6105TiXQ16Dp3Fblbjl9mMfO/mAk+dF8aU+Sbjw5yokJMBmb+PZCUclxNBgIDYLcvkyVYvyvDQcV7NH2CsOse5Jgp5BmKEarbMlg8SE2f/ovcdIjt15M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763748077; c=relaxed/simple;
-	bh=dJLpBN+VfahAfPI5YMmxMh7BU2ZugfXdb2dCaLqrz90=;
+	s=arc-20240116; t=1763748079; c=relaxed/simple;
+	bh=LskDtvD/Y0zigIriafxUjxIzNpfNJp9mFCxAppJ2g4I=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=FPeDEPKWrtwjWkx5Gg41INk2S2sYHr0GRPt8dOnpZMAgD0IS7hii2codWxTNxH5cDVPZXCWMR+DOxWvDKgxAbdtDDBp1J9Ht5mam+aWwpDl88Q0UoEFHyi6iOMAf58uwnig+cgshKF/CpNwDc0NkiM/dcumOjPRNPAhjyde274I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N4m8d8Se; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A5D7C16AAE;
-	Fri, 21 Nov 2025 18:01:15 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=PoM5n5siUJrI4j+6Q9HgR+mrDfrxci+ayNbVd2VXGJVjWApSFzDMTV37yodHQnywxoxBYJFz04BdMjUUcM8tS0ajmmYZOJ/rpcBV/TfZgg4znlbKIHJ3MS0TFLWRBCEVGZNLOJFyJzlaDRGXqQEF4A4YSKzOOu15CmrrY830OUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N2n3XTg+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A12E9C116D0;
+	Fri, 21 Nov 2025 18:01:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763748077;
-	bh=dJLpBN+VfahAfPI5YMmxMh7BU2ZugfXdb2dCaLqrz90=;
+	s=k20201202; t=1763748079;
+	bh=LskDtvD/Y0zigIriafxUjxIzNpfNJp9mFCxAppJ2g4I=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=N4m8d8SeLMAh9DJ0jV21/ntnwTqgqyEHvkxZX2z2DggLgJKkvpiyWK4bQ4wyqqR1p
-	 gb5mXt9FhQbXrHzd7G0kFCftnXMU+ppY0gQy5gN4ATEBZCQ0c+MULJyURF8eZkJr1Y
-	 5RcYcdI5vzjNIVFGlg520Xebm8MSfsfL6ScQHd9TSl2RRM76N6Bx4DnmiflDAGEOnq
-	 OF8oMxC5Bdg+JkD6BU8GUeXedqkq68Xc1q8JhRlYMjmbmv4PvMUVLJMCxBbhXOQ+E5
-	 lDk4DyolIz4A2VNydTmnKfh0NnhTJuvjatb0fc8xFlsRUfvXr+xs1h0Swq1ATDZr5g
-	 injQR2m3ZBb6w==
+	b=N2n3XTg+HTGB4n6S7c9hbotpdGtrnsOXahAWUs6C8d11byaxZpdHzcOTRiE9BnWW0
+	 Qf1awiQkPXdgpI9NTBNKsKaCG5bGNU7U3hDQmQuwgN1pdTB5yrUhzYi1dZxZ5JbiMm
+	 FQMonr/eI7ALhYDRcyxjrfy6lZ9fXuZOuoK0hvs6J0Pow7Xv1Lcm4BnRO2PmlfgKIv
+	 NIO1DtWGRnHG44m2qG21D0WFmS5CrQsEiIk7XTAXWJ1CBgsEsZgZ13Pe17RwC98trB
+	 U3DSKH4eDzkiV3q9edG4GvUDoH7c6zYgh4jc7qtRsFaIY+6BOCvHm7yt6CCKhJ+1UY
+	 sKu8PvAEc0n3g==
 From: Christian Brauner <brauner@kernel.org>
-Date: Fri, 21 Nov 2025 19:00:51 +0100
-Subject: [PATCH RFC v3 12/47] eventpoll: convert do_epoll_create() to
+Date: Fri, 21 Nov 2025 19:00:52 +0100
+Subject: [PATCH RFC v3 13/47] open: convert do_sys_openat2() to
  FD_PREPARE()
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -53,7 +53,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251121-work-fd-prepare-v3-12-2c6444d13e0e@kernel.org>
+Message-Id: <20251121-work-fd-prepare-v3-13-2c6444d13e0e@kernel.org>
 References: <20251121-work-fd-prepare-v3-0-2c6444d13e0e@kernel.org>
 In-Reply-To: <20251121-work-fd-prepare-v3-0-2c6444d13e0e@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>, 
@@ -62,72 +62,59 @@ To: Linus Torvalds <torvalds@linux-foundation.org>,
 Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
  linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-a6db3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1663; i=brauner@kernel.org;
- h=from:subject:message-id; bh=dJLpBN+VfahAfPI5YMmxMh7BU2ZugfXdb2dCaLqrz90=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQqrDgvFvhkX73av+/FeuliVznXFyfH9S1Z4Faxznr3s
- obpM5MOd5SyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAExEpJDhn+3i96anDX9dil8T
- eOXve8kmvSfzfXWWLjml5Pze9Gv5qX0Mf3i5n5fY/Pp1eIpe4R2NqgK7uT+V1f/Jb3qvKqhyceb
- W6bwA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1223; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=LskDtvD/Y0zigIriafxUjxIzNpfNJp9mFCxAppJ2g4I=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQqrDgfof/PRijXfPWWV7eU0n8UOc8WkHa/y6T2jy+hd
+ mYU8xqjjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgImkWjIydH97ICUjkHN7wpp7
+ ib57GQQYBaWkF3i9OlFs6nDt3syqKEaGE7/Nbtur6c6Ocj/qwMjpv+DdhHNtTV3njM2Cpl2dIDu
+ XBQA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- fs/eventpoll.c | 33 +++++++++++----------------------
- 1 file changed, 11 insertions(+), 22 deletions(-)
+ fs/open.c | 21 +++++++--------------
+ 1 file changed, 7 insertions(+), 14 deletions(-)
 
-diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-index ee7c4b683ec3..f694252d9614 100644
---- a/fs/eventpoll.c
-+++ b/fs/eventpoll.c
-@@ -2165,9 +2165,8 @@ static void clear_tfile_check_list(void)
-  */
- static int do_epoll_create(int flags)
+diff --git a/fs/open.c b/fs/open.c
+index 3d64372ecc67..5b86cea07a89 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -1421,8 +1421,8 @@ static int do_sys_openat2(int dfd, const char __user *filename,
+ 			  struct open_how *how)
  {
--	int error, fd;
--	struct eventpoll *ep = NULL;
--	struct file *file;
-+	int error;
-+	struct eventpoll *ep;
+ 	struct open_flags op;
+-	struct filename *tmp;
+-	int err, fd;
++	struct filename *tmp __free(putname);
++	int err;
  
- 	/* Check the EPOLL_* constant for consistency.  */
- 	BUILD_BUG_ON(EPOLL_CLOEXEC != O_CLOEXEC);
-@@ -2184,26 +2183,16 @@ static int do_epoll_create(int flags)
- 	 * Creates all the items needed to setup an eventpoll file. That is,
- 	 * a file structure and a free file descriptor.
- 	 */
--	fd = get_unused_fd_flags(O_RDWR | (flags & O_CLOEXEC));
--	if (fd < 0) {
--		error = fd;
--		goto out_free_ep;
+ 	err = build_open_flags(how, &op);
+ 	if (unlikely(err))
+@@ -1432,18 +1432,11 @@ static int do_sys_openat2(int dfd, const char __user *filename,
+ 	if (IS_ERR(tmp))
+ 		return PTR_ERR(tmp);
+ 
+-	fd = get_unused_fd_flags(how->flags);
+-	if (likely(fd >= 0)) {
+-		struct file *f = do_filp_open(dfd, tmp, &op);
+-		if (IS_ERR(f)) {
+-			put_unused_fd(fd);
+-			fd = PTR_ERR(f);
+-		} else {
+-			fd_install(fd, f);
+-		}
 -	}
--	file = anon_inode_getfile("[eventpoll]", &eventpoll_fops, ep,
--				 O_RDWR | (flags & O_CLOEXEC));
--	if (IS_ERR(file)) {
--		error = PTR_ERR(file);
--		goto out_free_fd;
-+	FD_PREPARE(fdf, O_RDWR | (flags & O_CLOEXEC),
-+		   anon_inode_getfile("[eventpoll]", &eventpoll_fops, ep,
-+				      O_RDWR | (flags & O_CLOEXEC)));
-+	error = ACQUIRE_ERR(fd_prepare, &fdf);
-+	if (error) {
-+		ep_clear_and_put(ep);
-+		return error;
- 	}
--	ep->file = file;
--	fd_install(fd, file);
+-	putname(tmp);
 -	return fd;
--
--out_free_fd:
--	put_unused_fd(fd);
--out_free_ep:
--	ep_clear_and_put(ep);
--	return error;
-+	ep->file = fd_prepare_file(fdf);
++	FD_PREPARE(fdf, how->flags, do_filp_open(dfd, tmp, &op));
++	err = ACQUIRE_ERR(fd_prepare, &fdf);
++	if (err)
++		return err;
 +	return fd_publish(fdf);
  }
  
- SYSCALL_DEFINE1(epoll_create1, int, flags)
+ int do_sys_open(int dfd, const char __user *filename, int flags, umode_t mode)
 
 -- 
 2.47.3
