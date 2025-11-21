@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-69413-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69414-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FBC9C7B331
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Nov 2025 19:04:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26A3FC7B2BF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Nov 2025 19:02:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C77BD360690
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Nov 2025 18:02:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8BE23A4083
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Nov 2025 18:02:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72CE934F248;
-	Fri, 21 Nov 2025 18:01:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4ED5351FCE;
+	Fri, 21 Nov 2025 18:01:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="do7tLp5y"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R0giy5R3"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8442A34EEE2
-	for <linux-fsdevel@vger.kernel.org>; Fri, 21 Nov 2025 18:01:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10C24238159
+	for <linux-fsdevel@vger.kernel.org>; Fri, 21 Nov 2025 18:01:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763748083; cv=none; b=J4P/H1MODWPHV/zEBhM5BiH4o7LV+EaHTeJJDIIS1dxDJOppLgK3qdbiMLwN7rOyfnqFvmGP/74ZRWfcefgDimfcOPeXpz8g83ZlKdZ1lXu8IN1Ay4Iv1sXnAucR7NIncT0gjAM+S508pH2yTve2xKsKpUkdNLUCgvgxqTgV2fY=
+	t=1763748086; cv=none; b=CbCYDig5pJLVyxCTjJn5b31QeH8sF0c7QvNDAXSbcjm7kB50rz9fTuzyQVqiBUFP4Hy/rGr7Zwp4gX3db/ZlpOA6LnmGZDAEhGmuYnz/z6ZRlE2s3TU4whRTIYIQjsmDNAUEnq7AD6Yu3FnVXZqL6v21Ubj5gKyRi459mOyyO98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763748083; c=relaxed/simple;
-	bh=w+NeU71+lrf66/e5n9RfiZ5xmaRhBBpuc9WW6IBRFig=;
+	s=arc-20240116; t=1763748086; c=relaxed/simple;
+	bh=7u8LvFB0x0JeGQMkpimDJgmyXP7RHSsDTIgn3lrCRGM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=SVBkp1N2Y6yxoaVMIjWmqvLvCSaFM7UgVbWM4vntMQ+iyQ22Z2EztkDi0nxkVhhyGRRjMZ288dq/gBr0Isf0RaZOiAsuDpGVvP6O/IpOK6OOqNF6e9szcs6R1FqKqPQcpzCGsX7yP1CcLKjY2OM6XBHRi1VRz4jtbRvPvKIimm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=do7tLp5y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2D8DC4CEF1;
-	Fri, 21 Nov 2025 18:01:21 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=dZh7Wxcfo+ILsg1dUPw6UI8V1hMlSS51ffFbTSBoUvOXP9GY22RX0iDaBokdlBRfsTDQEkR40AguEjdvzjhzAwio84lQ3vhqfBJIAH5a0Q9n8rUOXsKRWx5O4oEc1ZqO4l9xZhw9u99h4bOd0c46IZCJePcjXyM36x2hu7xKJr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R0giy5R3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1253C4CEF1;
+	Fri, 21 Nov 2025 18:01:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763748083;
-	bh=w+NeU71+lrf66/e5n9RfiZ5xmaRhBBpuc9WW6IBRFig=;
+	s=k20201202; t=1763748085;
+	bh=7u8LvFB0x0JeGQMkpimDJgmyXP7RHSsDTIgn3lrCRGM=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=do7tLp5yWnl77mU2eLXkS/2aV5SE3f0sEdGW/IOQ++yhb98lM2WegnLyqtiC7qImL
-	 +pF+8kBgcAMrBxYqbZMUcWNXsYx6yYgx8AJxKadhhIu7YWvD6eIbxRgUD0CpXdhlu3
-	 EhJ1iwX6o3jj6AqyimicE+AP6oi+KbVAIz35R8MPOCEISPa979u0RfneOnmvWsMmiW
-	 AGk5HpmZQZ/uln848Ei9Gp0AsIBAqYXRgoTsXqbKPQyBlwo1N8NotoJw/hPeEdjvPe
-	 AbIn/Db0NVTL82Tv5UbzLPpIJVlPgqujRU33pLKGxi5G6p/ULN0wHnFTLTAfl30Koj
-	 Hcc5W5RXUfTYw==
+	b=R0giy5R3Euu/b0dy0/RHITLytAbLNKS1pc9LFGHIKFEWmLNBiJRZmG7wXvmzLqZOU
+	 WlIOEWrvy8gDk3ksfhkmBo8c6j20ssMI1joQMaUBDmW6ykvPfPjBr4CGIanZZM0fD3
+	 SyhPLBI6PIxWvzfTVbjSQxTI4EMbJEJlWrkJaSOdDr0MpEpCO3MU9H+wNSPIW9jpyD
+	 95A8SD7LCChzfQJWYBYT+BPxVycEUZWdYFBMs0qvkU98x1/oWv5g1aaKLGm4JqDPYt
+	 qAwBHXEbiIpP6oF4vq+zgW0UErL0j8NIhhE5i0wEXa0nN3kL6YvcrVHxEEO79VR302
+	 wNiEhT3MVUl8w==
 From: Christian Brauner <brauner@kernel.org>
-Date: Fri, 21 Nov 2025 19:00:54 +0100
-Subject: [PATCH RFC v3 15/47] timerfd: convert timerfd_create() to
+Date: Fri, 21 Nov 2025 19:00:55 +0100
+Subject: [PATCH RFC v3 16/47] userfaultfd: convert new_userfaultfd() to
  FD_PREPARE()
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -53,7 +53,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251121-work-fd-prepare-v3-15-2c6444d13e0e@kernel.org>
+Message-Id: <20251121-work-fd-prepare-v3-16-2c6444d13e0e@kernel.org>
 References: <20251121-work-fd-prepare-v3-0-2c6444d13e0e@kernel.org>
 In-Reply-To: <20251121-work-fd-prepare-v3-0-2c6444d13e0e@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>, 
@@ -62,69 +62,73 @@ To: Linus Torvalds <torvalds@linux-foundation.org>,
 Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
  linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-a6db3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1575; i=brauner@kernel.org;
- h=from:subject:message-id; bh=w+NeU71+lrf66/e5n9RfiZ5xmaRhBBpuc9WW6IBRFig=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQqrDh/fmL+x/TFNx1vHLB/5nnc/pL3HYk5i6dm9eX8u
- xL/Ob0xt6OUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAif3QZ/tdJL15pxdTpEmbR
- w3nyTeHqE6k/8hLdNyf9unC55mPpjCUM/1Sn/rveq/TIr7Cv8O+5PY4pv1faFHxy85pqrsce81o
- ymQ8A
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1793; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=7u8LvFB0x0JeGQMkpimDJgmyXP7RHSsDTIgn3lrCRGM=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQqrDjP6byvtD3rxtbj75fzGS6Rt0zq//PihePf9W6Rz
+ I5sx09Wd5SyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAExE/yQjw654+w/5C30nfPog
+ X+Q8/+Jr5T0/a9qnv1Kfc+13xm9D4yUMf7g1paacr95X8lW1+fCJFdJG3IJ9c0RXvtoi/ODkzZe
+ 8M9gB
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- fs/timerfd.c | 30 +++++++++++-------------------
- 1 file changed, 11 insertions(+), 19 deletions(-)
+ fs/userfaultfd.c | 32 ++++++++++++--------------------
+ 1 file changed, 12 insertions(+), 20 deletions(-)
 
-diff --git a/fs/timerfd.c b/fs/timerfd.c
-index c68f28d9c426..2ae31663cc63 100644
---- a/fs/timerfd.c
-+++ b/fs/timerfd.c
-@@ -393,9 +393,8 @@ static const struct file_operations timerfd_fops = {
+diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+index 54c6cc7fe9c6..6388a525cdb1 100644
+--- a/fs/userfaultfd.c
++++ b/fs/userfaultfd.c
+@@ -2111,9 +2111,8 @@ static void init_once_userfaultfd_ctx(void *mem)
  
- SYSCALL_DEFINE2(timerfd_create, int, clockid, int, flags)
+ static int new_userfaultfd(int flags)
  {
--	int ufd;
--	struct timerfd_ctx *ctx;
+-	struct userfaultfd_ctx *ctx;
 -	struct file *file;
-+	struct timerfd_ctx *ctx __free(kfree) = NULL;
+-	int fd;
 +	int ret;
++	struct userfaultfd_ctx *ctx __free(kfree) = NULL;
  
- 	/* Check the TFD_* constants for consistency.  */
- 	BUILD_BUG_ON(TFD_CLOEXEC != O_CLOEXEC);
-@@ -432,23 +431,16 @@ SYSCALL_DEFINE2(timerfd_create, int, clockid, int, flags)
+ 	VM_WARN_ON_ONCE(!current->mm);
  
- 	ctx->moffs = ktime_mono_to_real(0);
+@@ -2135,26 +2134,19 @@ static int new_userfaultfd(int flags)
+ 	atomic_set(&ctx->mmap_changing, 0);
+ 	ctx->mm = current->mm;
  
--	ufd = get_unused_fd_flags(flags & TFD_SHARED_FCNTL_FLAGS);
--	if (ufd < 0) {
--		kfree(ctx);
--		return ufd;
--	}
--
--	file = anon_inode_getfile_fmode("[timerfd]", &timerfd_fops, ctx,
--			    O_RDWR | (flags & TFD_SHARED_FCNTL_FLAGS),
--			    FMODE_NOWAIT);
--	if (IS_ERR(file)) {
--		put_unused_fd(ufd);
--		kfree(ctx);
--		return PTR_ERR(file);
--	}
-+	FD_PREPARE(fdf, flags & TFD_SHARED_FCNTL_FLAGS,
-+		   anon_inode_getfile_fmode("[timerfd]", &timerfd_fops, ctx,
-+					    O_RDWR | (flags & TFD_SHARED_FCNTL_FLAGS),
-+					    FMODE_NOWAIT));
+-	fd = get_unused_fd_flags(flags & UFFD_SHARED_FCNTL_FLAGS);
+-	if (fd < 0)
+-		goto err_out;
++	FD_PREPARE(fdf, flags & UFFD_SHARED_FCNTL_FLAGS,
++		   anon_inode_create_getfile("[userfaultfd]", &userfaultfd_fops, ctx,
++					     O_RDONLY | (flags & UFFD_SHARED_FCNTL_FLAGS),
++					     NULL));
 +	ret = ACQUIRE_ERR(fd_prepare, &fdf);
 +	if (ret)
 +		return ret;
  
--	fd_install(ufd, file);
--	return ufd;
+-	/* Create a new inode so that the LSM can block the creation.  */
+-	file = anon_inode_create_getfile("[userfaultfd]", &userfaultfd_fops, ctx,
+-			O_RDONLY | (flags & UFFD_SHARED_FCNTL_FLAGS), NULL);
+-	if (IS_ERR(file)) {
+-		put_unused_fd(fd);
+-		fd = PTR_ERR(file);
+-		goto err_out;
+-	}
+ 	/* prevent the mm struct to be freed */
+ 	mmgrab(ctx->mm);
+-	file->f_mode |= FMODE_NOWAIT;
+-	fd_install(fd, file);
+-	return fd;
+-err_out:
+-	kmem_cache_free(userfaultfd_ctx_cachep, ctx);
+-	return fd;
++	fd_prepare_file(fdf)->f_mode |= FMODE_NOWAIT;
 +	retain_and_null_ptr(ctx);
 +	return fd_publish(fdf);
  }
  
- static int do_timerfd_settime(int ufd, int flags, 
+ static inline bool userfaultfd_syscall_allowed(int flags)
 
 -- 
 2.47.3
