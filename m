@@ -1,314 +1,469 @@
-Return-Path: <linux-fsdevel+bounces-69472-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69468-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40FBFC7BEB4
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Nov 2025 00:07:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CDDDC7BD48
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Nov 2025 23:17:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BA3D43640EB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Nov 2025 23:07:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BBA73A6C69
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Nov 2025 22:17:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBDC02DE6EF;
-	Fri, 21 Nov 2025 23:07:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1BFA30ACEA;
+	Fri, 21 Nov 2025 22:17:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b="TLbXuSMe"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="heCfVo9O"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AC6B2777FC
-	for <linux-fsdevel@vger.kernel.org>; Fri, 21 Nov 2025 23:07:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE8C93064A1
+	for <linux-fsdevel@vger.kernel.org>; Fri, 21 Nov 2025 22:17:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763766457; cv=none; b=ttB3G34RVJ67mw5NlUaZTOvaj+f72uFdPOI7WdJcCCUljNsl/WiqiUcO/DNYQ6v6fscsLRAGQNvk/HWdS4RIYJcDb1Fr/yOLoE8WZ5tHCXcaGc/v5kXk2r3SGJK3SSiEmqIEcZlCsdJYln3hFF4YY40meqstuArOaH3FRF0Yx8c=
+	t=1763763432; cv=none; b=TiXXygP8MK+t/kxYh6hYKaT1VRNXeoPqSTth9BkVtTmkIpmgt13gRKd8ObGsZXAyu3UIhzKIYoWWVP15rcwyWsssc6+bCHJ6QPXI+3MOifmAknzQ1lEXuMaXzCh+xcGcChyS0/QVttFsba4iUwUjroHcxwTCHx21v/D9SZFqRMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763766457; c=relaxed/simple;
-	bh=VDL6/Wkzo+nHYBUJmIFWZKGy/WAbBJD7BKdCRJT3tcI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rF8oZXOnE8EEGKEJj+hI+d0Z9HAGH4CpDa62tQKS4qJTcs2IYtwNvF9i8W6urZT1T8i8cZxXrPAjy6+eRC/tb8NtB6SXu/pCAv3KdRdlYJEe+rrLzhzqg+SQjh2bYBRcdZARQVWKfPw06k2AS9X3RbPbIdi4mbjPlKk8Qqhid98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b=TLbXuSMe; arc=none smtp.client-ip=185.125.188.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-yw1-f197.google.com (mail-yw1-f197.google.com [209.85.128.197])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id AC94A3FBA9
-	for <linux-fsdevel@vger.kernel.org>; Fri, 21 Nov 2025 23:07:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20251003; t=1763766435;
-	bh=mURGdZgdGyl5h9hsbUzCtRvDVWH4yABOB0i1o0xgZtw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type;
-	b=TLbXuSMe+47jkt4cH+W8sE704E3CutvDhdUkTqbxzX+b3UauFlmorJJaLxVvRGunj
-	 nvQQdSYF0nJ3fBBEHgmhzO31IZXHpV0gp8SDYyBDqdcMeIVq6TY/OHhaDf9WwBCkv+
-	 2PRMvJ9eWulinlmDwU/LrTycOY6qRJ0Y59ZHzARcLPLcSKw0A8E3xqJYv+LoVeK3by
-	 5Ud4tJDYZ0psONkNeVhApU+UzevEmDFmIu8auOhxvC/o6G6IcNaTrva1BPe8ls7jLm
-	 F7KqmBVdcjjYcAKx0RWRH9OTKkMKGqDeDuWQoYi5rw/MfzJUGNFhlsaXkCLz+xckFY
-	 qbuhaLUa1Tmv1jytWqdiPlVVhdpZLOeXKetZm/mbRFgmVsgelOGj+tWG4sWq218974
-	 trqfJt8poV082WyPQJNmw8xddr7l0TSfgYMKLlEl4EHMdGrv2m8MJpzboe0ddnb+bB
-	 G9MIxxvZAguhBVjdSQiAgPWN0hHxyN2XYngCY1uwbBRYuMHtAaskDZtsrAEOYU/vw3
-	 b0SsmXZmoxzgTnrviP8XHzJzcgEaPmk5zsclR2aOldnBTsJtppKa9Cy9sDDtfG42Sm
-	 Eg7w9bBr8ERkYfZIfe0DvMLJ51vi2qiBN8KSIP9x7qMBh8lX6zBPlM/t9FPNzZJby0
-	 wyvMXxBDLuNdQ+A0/OEcnCNw=
-Received: by mail-yw1-f197.google.com with SMTP id 00721157ae682-78692e4e1faso69193477b3.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Nov 2025 15:07:15 -0800 (PST)
+	s=arc-20240116; t=1763763432; c=relaxed/simple;
+	bh=F3Ucy630lBb29dMSz9cBr5OjNw1LUT7NQn1ngcAFpAw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MiseOurU2jIeqR5F8ISJ5jntQAWun++D5SsnqJ1DmetmcrRNzraJRLjJRUMZIYqW9fPROMwA/4kgNq2GYaj9Cn9ov3NrrCI/wdXL5b3of5rVjjoUZZNBzRP4twp95aDugkRUsT0rOqVxIRzYvSYozJo0whXQpt2ni+Tj+zFIFsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=heCfVo9O; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-47798089d30so825295e9.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Nov 2025 14:17:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1763763428; x=1764368228; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nTlzag198UU6LPBXQ2tJ4Usmpmo5bf2oKXS/NU4+wO4=;
+        b=heCfVo9ODGIjmEnsulCxwT0Dyg9D/0V94u/N+qwqRkw0cYyBKhRTCWrq1liF5uTOnr
+         gKOMDudJ2B+3/PhINLYUZ0wTuoB1ChNsQ8B/K4bBH68qQ83Wp5Hwu7UwNPAP9H10D+VW
+         J1oHeCr9xZ7GS0ACwgLVMedt+hdIZE8Av7/Wy3pRgIl4/fGGYNnUjDXP8DwK/x++Jlyu
+         8C6skgUnDvGp9N8nXQXmrjO/lvS+A35/5ibMrpUASas/GViMFlCKdGBDVCErYVIIGEwj
+         6EABQJ7RC+pg93aqk/Jm81wUBQU3qeYjAEkNaQF51MEmyhLvNH1lm4/ZEn5EMRKJmAhX
+         rLcw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763766429; x=1764371229;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=mURGdZgdGyl5h9hsbUzCtRvDVWH4yABOB0i1o0xgZtw=;
-        b=ItrCKe6SFSBcUP4o7BcDoNMuDPgorbCUwPmJwWn5Zh3326OBCFTgLgJaDWtRyvl9L+
-         6C0xzhN3VgZ3wHSRP6LLUIi2d01cYEM8i46hbDi89cWuf29HY68x5yhvKWsHEEFL24is
-         iNrZm541W15sG9eGcgM+pl9Gd3/ZtEbP4djm9UQNZM+qnSMp5JhV1htK2NII2dgoQBB9
-         3bqmhNJsq5Bs4qB2nuBjFNvpIp7dgc5yL+Bxe8HF+jSY5/uj7t9Ok0FTimWQmZMYWC9s
-         B1O+f2cxILdZn6BJSDTfwfEFvRBmtl5I/NbjFuaPr2vF6uUWGFgV/5wtGWg4hQxKZZjS
-         xtgw==
-X-Forwarded-Encrypted: i=1; AJvYcCUKv/pKXEQlcopMvS9Sy5C5ocB8y1yPZCtbatysLoD9nnyzRZnVqFkpSjaxIFYLHZvdfw+okt/3RAv42djS@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxv0LzLCCHP4cLIzsuua14Yuzs1MULbnWRGzF6F8gplmSQxai4F
-	+ipTfB5g5ZB9NJ8qUZVXe/HML3Tl2gqkiXk6E+7qbY3MK1xBG3oJL7iZGbVVaaLur9LIxN1FxuK
-	4yEiu5veaiKWpSnZJH4n/tOhlpYEuGElxVzrI76AXxg6cC97vJalFeQC3vwBEXPQFIpBfGiIsIk
-	oKRoKQJjrp5RBHz4NBcYD+FsmK6WxMT2M+J3Yw8g6eOS5gJBIeCW4JMhOdFQ==
-X-Gm-Gg: ASbGncvL55EeL0tHNa0SfF+XgZcZ8PxXyK/jR42uwcSIFG4E+34WaLEAao5SFxX0bP7
-	kb8Te4Di/8GgA5hujaHhFyagZRelnEZW65czmEQ0iD1mCFeZKQPfXLD+7nkKuqbXSHxUw3ggCVP
-	NShOjvy+ia9s2bFTCcqJlNT6DvBwYnjw//yE1msl3cx5U5QUUjsrWP28rkCNlnP4hYww==
-X-Received: by 2002:a53:b10a:0:b0:63f:c019:23bc with SMTP id 956f58d0204a3-642f8e30acamr6393269d50.27.1763766428806;
-        Fri, 21 Nov 2025 15:07:08 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGNbsczd5MfsDryDTrdB8miQHCP9n6FhmNbRk59/WbSb6lt9I6iTtdnnpp053CuQIcThR+YHVO/xZ+HKm10C6g=
-X-Received: by 2002:a53:b10a:0:b0:63f:c019:23bc with SMTP id
- 956f58d0204a3-642f8e30acamr6393202d50.27.1763766428362; Fri, 21 Nov 2025
- 15:07:08 -0800 (PST)
+        d=1e100.net; s=20230601; t=1763763428; x=1764368228;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nTlzag198UU6LPBXQ2tJ4Usmpmo5bf2oKXS/NU4+wO4=;
+        b=LzA1l59eX4r4xfdNrjDEeq/9EYJ98zGZ+KzFHGR3jk+w7aN3rdD7iNslv2ojbv/NBR
+         srStN5V/S0/YXXpq3w7VSK4s7yJ2AjeQJnKU1yFkeoZCEh7Jrz98armPlNmdekVnzoEc
+         GZRd6DC8l/gpa+P2MjksxZip+xvZP3IiKZ3jnTKFl0h2TcJz3tjmw5WodJJGIkjgVC1k
+         qDFjN67Mu02/DwCGoJhHbJJErerSUZSL9hNRLqcyKbT2uiBt1ZwQJja0VRX+RktDDJ8w
+         kYwGlX/fTfP7mPLfbzs/AGWz/gjF85SzlAoJoIRXP4sY1zo6/fxc/ztGrBq2eVXkUeQ4
+         Zg+g==
+X-Forwarded-Encrypted: i=1; AJvYcCX6DW5Hx1ScNOt2Gq4LBVYqiA/8IU1oqSYUUpV2NC0NTZfef5aRkVB7ZAHFWes/dLM/ugD1ihSCa7lRF8JM@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2tVGPD8fwePyB81ug86iT1rlfbKHukG9pt1/j8dWQ7k2iN+PQ
+	kStH2s8GJLl5IDUvuECjcoSyhkF4CeUroYVDhVf4gHV6hJQT8TerlIWJ
+X-Gm-Gg: ASbGnctCyssVCm9UD0oSdhD3kbBLn9Ojl8d48XjiuW7Rsb0skeRT31hlxgy4S55kXZm
+	Wbnp8y5RG2cahF59fkIcakGzfqWzNqKvEqzEVtVKqXcmOukFT1f3eElUMWep7p6jxkBoszTim9j
+	/JGCOk0SZQxn3aekHN/7wMbnDFYNTz5YY6qxmrCdhXOkncCIyz1ajv4Nh8vCXetsUntb+keWlEx
+	nRBR0nF610evZdyrUJq9Cm2i2b6Z0CDMsibNTH38bZhYBCrWStMqHXYP94+kWo/BfGqrxluCjC1
+	yrE3cqvXnSqByNk78pNyvKUcUA3JYsILpAaTL+Fx94RRkkBav1sx0934PP3kMCYGXQtfHER0Bae
+	tub3MGchDNZw3utihS0OKmbsCnD7wvOs2laA9SMmMv46FHGMPa3vuxgjSo3gnC2tSbuvHNdqDWo
+	lYoO3XLlzL3xT8BhsB38N61eZkBeo=
+X-Google-Smtp-Source: AGHT+IE/tQ0FrPvYqzri7lctPFL5Hg9iFxk8x3eEzNO/qMkOcGRYEdHNAwaHhCiM/KGMRWGFK8eatQ==
+X-Received: by 2002:a05:600c:4693:b0:477:9d54:58ce with SMTP id 5b1f17b1804b1-477c311cdc6mr18599145e9.1.1763763427706;
+        Fri, 21 Nov 2025 14:17:07 -0800 (PST)
+Received: from [192.168.1.105] ([165.50.70.6])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-477bf227ae2sm64319535e9.9.2025.11.21.14.17.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Nov 2025 14:17:07 -0800 (PST)
+Message-ID: <6ddd2fd3-5f62-4181-a505-38a5d37fa793@gmail.com>
+Date: Sat, 22 Nov 2025 00:16:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <AM8PR10MB470801D01A0CF24BC32C25E7E40E9@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
- <AS8P193MB12851AC1F862B97FCE9B3F4FE4AAA@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <AS8P193MB1285FF445694F149B70B21D0E46C2@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <AS8P193MB1285937F9831CECAF2A9EEE2E4752@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <GV2PPF74270EBEEEDE0B9742310DE91E9A7E431A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
- <GV2PPF74270EBEE9EF78827D73D3D7212F7E432A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
- <GV2PPF74270EBEEE807D016A79FE7A2F463E4D6A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
- <87tsyozqdu.fsf@email.froward.int.ebiederm.org> <87wm3ky5n9.fsf@email.froward.int.ebiederm.org>
- <87h5uoxw06.fsf_-_@email.froward.int.ebiederm.org> <87a50gxo0i.fsf@email.froward.int.ebiederm.org>
- <GV2PPF74270EBEEAD4CACA124C05BE1CE45E4D5A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
- <87o6ovx38h.fsf@email.froward.int.ebiederm.org> <GV2PPF74270EBEEFA106F4EF26B087ED898E4D5A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
- <GV2PPF74270EBEED0840E45459881C0EDD4E4D5A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
- <87ikf3w5us.fsf@email.froward.int.ebiederm.org>
-In-Reply-To: <87ikf3w5us.fsf@email.froward.int.ebiederm.org>
-From: Ryan Lee <ryan.lee@canonical.com>
-Date: Fri, 21 Nov 2025 15:06:57 -0800
-X-Gm-Features: AWmQ_bl4fHuqSO33WuXiPW9zqHuMd1nfWUHzCuIgifbxs4kTz1ezfJlXQS9fZjo
-Message-ID: <CAKCV-6sH03G2xuZrhqEMExx-AAKPZgQ7Z1BnDgV5HimFVGCWwg@mail.gmail.com>
-Subject: Re: [RFC][PATCH] exec: Move cred computation under exec_update_lock
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Bernd Edlinger <bernd.edlinger@hotmail.de>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Alexey Dobriyan <adobriyan@gmail.com>, Oleg Nesterov <oleg@redhat.com>, Kees Cook <kees@kernel.org>, 
-	Andy Lutomirski <luto@amacapital.net>, Will Drewry <wad@chromium.org>, 
-	Christian Brauner <brauner@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Michal Hocko <mhocko@suse.com>, Serge Hallyn <serge@hallyn.com>, 
-	James Morris <jamorris@linux.microsoft.com>, Randy Dunlap <rdunlap@infradead.org>, 
-	Suren Baghdasaryan <surenb@google.com>, Yafang Shao <laoar.shao@gmail.com>, Helge Deller <deller@gmx.de>, 
-	Adrian Reber <areber@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Jens Axboe <axboe@kernel.dk>, 
-	Alexei Starovoitov <ast@kernel.org>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-kselftest@vger.kernel.org, 
-	linux-mm@kvack.org, linux-security-module@vger.kernel.org, 
-	tiozhang <tiozhang@didiglobal.com>, Luis Chamberlain <mcgrof@kernel.org>, 
-	"Paulo Alcantara (SUSE)" <pc@manguebit.com>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	Frederic Weisbecker <frederic@kernel.org>, YueHaibing <yuehaibing@huawei.com>, 
-	Paul Moore <paul@paul-moore.com>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Stefan Roesch <shr@devkernel.io>, Chao Yu <chao@kernel.org>, xu xin <xu.xin16@zte.com.cn>, 
-	Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.cz>, David Hildenbrand <david@redhat.com>, 
-	Dave Chinner <dchinner@redhat.com>, Shuah Khan <shuah@kernel.org>, 
-	Elena Reshetova <elena.reshetova@intel.com>, David Windsor <dwindsor@gmail.com>, 
-	Mateusz Guzik <mjguzik@gmail.com>, Ard Biesheuvel <ardb@kernel.org>, 
-	"Joel Fernandes (Google)" <joel@joelfernandes.org>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
-	Hans Liljestrand <ishkamiel@gmail.com>, Penglei Jiang <superman.xpt@gmail.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Adrian Ratiu <adrian.ratiu@collabora.com>, 
-	Ingo Molnar <mingo@kernel.org>, "Peter Zijlstra (Intel)" <peterz@infradead.org>, 
-	Cyrill Gorcunov <gorcunov@gmail.com>, Eric Dumazet <edumazet@google.com>, 
-	apparmor <apparmor@lists.ubuntu.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] fs/hfs: fix s_fs_info leak on setup_bdev_super()
+ failure
+To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>, "jack@suse.cz"
+ <jack@suse.cz>, "glaubitz@physik.fu-berlin.de"
+ <glaubitz@physik.fu-berlin.de>, "slava@dubeyko.com" <slava@dubeyko.com>,
+ "frank.li@vivo.com" <frank.li@vivo.com>,
+ "brauner@kernel.org" <brauner@kernel.org>,
+ "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>
+Cc: "linux-kernel-mentees@lists.linuxfoundation.org"
+ <linux-kernel-mentees@lists.linuxfoundation.org>,
+ "david.hunter.linux@gmail.com" <david.hunter.linux@gmail.com>,
+ "khalid@kernel.org" <khalid@kernel.org>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "syzbot+ad45f827c88778ff7df6@syzkaller.appspotmail.com"
+ <syzbot+ad45f827c88778ff7df6@syzkaller.appspotmail.com>,
+ "skhan@linuxfoundation.org" <skhan@linuxfoundation.org>
+References: <20251119073845.18578-1-mehdi.benhadjkhelifa@gmail.com>
+ <c19c6ebedf52f0362648a32c0eabdc823746438f.camel@ibm.com>
+ <3ad2e91e-2c7f-488b-a119-51d62a6e95b8@gmail.com>
+ <8727342f9a168c7e8008178e165a5a14fa7f470d.camel@ibm.com>
+ <15d946bd-ed55-4fcc-ba35-e84f0a3a391c@gmail.com>
+ <148f1324cd2ae50059e1dcdc811cccdee667b9ae.camel@ibm.com>
+Content-Language: en-US
+From: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+In-Reply-To: <148f1324cd2ae50059e1dcdc811cccdee667b9ae.camel@ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Nov 21, 2025 at 11:20=E2=80=AFAM Eric W. Biederman
-<ebiederm@xmission.com> wrote:
->
-> Bernd Edlinger <bernd.edlinger@hotmail.de> writes:
->
-> > On 11/21/25 10:35, Bernd Edlinger wrote:
-> >> On 11/21/25 08:18, Eric W. Biederman wrote:
-> >>> Bernd Edlinger <bernd.edlinger@hotmail.de> writes:
-> >>>
-> >>>> Hi Eric,
-> >>>>
-> >>>> thanks for you valuable input on the topic.
-> >>>>
-> >>>> On 11/21/25 00:50, Eric W. Biederman wrote:
-> >>>>> "Eric W. Biederman" <ebiederm@xmission.com> writes:
-> >>>>>
-> >>>>>> Instead of computing the new cred before we pass the point of no
-> >>>>>> return compute the new cred just before we use it.
-> >>>>>>
-> >>>>>> This allows the removal of fs_struct->in_exec and cred_guard_mutex=
-.
-> >>>>>>
-> >>>>>> I am not certain why we wanted to compute the cred for the new
-> >>>>>> executable so early.  Perhaps I missed something but I did not see=
- any
-> >>>>>> common errors being signaled.   So I don't think we loose anything=
- by
-> >>>>>> computing the new cred later.
-> >>>>>
-> >>>>> I should add that the permission checks happen in open_exec,
-> >>>>> everything that follows credential wise is just about representing =
-in
-> >>>>> struct cred the credentials the new executable will have.
-> >>>>>
-> >>>>> So I am really at a loss why we have had this complicated way of
-> >>>>> computing of computed the credentials all of these years full of
-> >>>>> time of check to time of use problems.
-> >>>>>
-> >>>>
-> >>>> Well, I think I see a problem with your patch:
-> >>>>
-> >>>> When the security engine gets the LSM_UNSAFE_PTRACE flag, it might
-> >>>> e.g. return -EPERM in bprm_creds_for_exec in the apparmor, selinux
-> >>>> or the smack security engines at least.  Previously that callback
-> >>>> was called before the point of no return, and the return code should
-> >>>> be returned as a return code the the caller of execve.  But if we mo=
-ve
-> >>>> that check after the point of no return, the caller will get killed
-> >>>> due to the failed security check.
-> >>>>
-> >>>> Or did I miss something?
-> >>>
-> >>> I think we definitely need to document this change in behavior.  I wo=
-uld
-> >>> call ending the exec with SIGSEGV vs -EPERM a quality of implementati=
-on
-> >>> issue.  The exec is failing one way or the other so I don't see it as=
- a
-> >>> correctness issue.
-> >>>
-> >>> In the case of ptrace in general I think it is a bug if the mere act =
-of
-> >>> debugging a program changes it's behavior.  So which buggy behavior
-> >>> should we prefer?  SIGSEGV where it is totally clear that the behavio=
-r
-> >>> has changed or -EPERM and ask the debugged program to handle it.
-> >>> I lean towards SIGSEGV because then it is clear the code should not
-> >>> handle it.
-> >>>
-> >>> In the case of LSM_UNSAFE_NO_NEW_PRIVS I believe the preferred way to
-> >>> handle unexpected things happening is to terminate the application.
-> >>>
-> >>> In the case of LSM_UNSAFE_SHARE -EPERM might be better.  I don't know
-> >>> of any good uses of any good uses of sys_clone(CLONE_FS ...) outside
-> >>> of CLONE_THREAD.
-> >>>
-> >>>
-> >>> Plus all of these things are only considerations if we are exec'ing a
-> >>> program that transitions to a different set of credentials.  Somethin=
-g
-> >>> that happens but is quite rare itself.
+On 11/21/25 11:04 PM, Viacheslav Dubeyko wrote:
+> On Fri, 2025-11-21 at 23:48 +0100, Mehdi Ben Hadj Khelifa wrote:
+>> On 11/21/25 10:15 PM, Viacheslav Dubeyko wrote:
+>>> On Fri, 2025-11-21 at 20:44 +0100, Mehdi Ben Hadj Khelifa wrote:
+>>>> On 11/19/25 8:58 PM, Viacheslav Dubeyko wrote:
+>>>>> On Wed, 2025-11-19 at 08:38 +0100, Mehdi Ben Hadj Khelifa wrote:
+>>>>>> The regression introduced by commit aca740cecbe5 ("fs: open block device
+>>>>>> after superblock creation") allows setup_bdev_super() to fail after a new
+>>>>>> superblock has been allocated by sget_fc(), but before hfs_fill_super()
+>>>>>> takes ownership of the filesystem-specific s_fs_info data.
+>>>>>>
+>>>>>> In that case, hfs_put_super() and the failure paths of hfs_fill_super()
+>>>>>> are never reached, leaving the HFS mdb structures attached to s->s_fs_info
+>>>>>> unreleased.The default kill_block_super() teardown also does not free
+>>>>>> HFS-specific resources, resulting in a memory leak on early mount failure.
+>>>>>>
+>>>>>> Fix this by moving all HFS-specific teardown (hfs_mdb_put()) from
+>>>>>> hfs_put_super() and the hfs_fill_super() failure path into a dedicated
+>>>>>> hfs_kill_sb() implementation. This ensures that both normal unmount and
+>>>>>> early teardown paths (including setup_bdev_super() failure) correctly
+>>>>>> release HFS metadata.
+>>>>>>
+>>>>>> This also preserves the intended layering: generic_shutdown_super()
+>>>>>> handles VFS-side cleanup, while HFS filesystem state is fully destroyed
+>>>>>> afterwards.
+>>>>>>
+>>>>>> Fixes: aca740cecbe5 ("fs: open block device after superblock creation")
+>>>>>> Reported-by: syzbot+ad45f827c88778ff7df6@syzkaller.appspotmail.com
+>>>>>> Closes: https://syzkaller.appspot.com/bug?extid=ad45f827c88778ff7df6
+>>>>>> Tested-by: syzbot+ad45f827c88778ff7df6@syzkaller.appspotmail.com
+>>>>>> Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
+>>>>>> Signed-off-by: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+>>>>>> ---
+>>>>>> ChangeLog:
+>>>>>>
+>>>>>> Changes from v1:
+>>>>>>
+>>>>>> -Changed the patch direction to focus on hfs changes specifically as
+>>>>>> suggested by al viro
+>>>>>>
+>>>>>> Link:https://lore.kernel.org/all/20251114165255.101361-1-mehdi.benhadjkhelifa@gmail.com/
+>>>>>>
+>>>>>> Note:This patch might need some more testing as I only did run selftests
+>>>>>> with no regression, check dmesg output for no regression, run reproducer
+>>>>>> with no bug and test it with syzbot as well.
+>>>>>
+>>>>> Have you run xfstests for the patch? Unfortunately, we have multiple xfstests
+>>>>> failures for HFS now. And you can check the list of known issues here [1]. The
+>>>>> main point of such run of xfstests is to check that maybe some issue(s) could be
+>>>>> fixed by the patch. And, more important that you don't introduce new issues. ;)
+>>>>>
+>>>> I have tried to run the xfstests with a kernel built with my patch and
+>>>> also without my patch for TEST and SCRATCH devices and in both cases my
+>>>> system crashes in running the generic/631 test.Still unsure of the
+>>>> cause. For more context, I'm running the tests on the 6.18-rc5 version
+>>>> of the kernel and the devices and the environment setup is as follows:
+>>>>
+>>>> For device creation and mounting(also tried it with dd and had same
+>>>> results):
+>>>> fallocate -l 10G test.img
+>>>> fallocate -l 10G scratch.img
+>>>> sudo mkfs.hfs test.img
+>>>> sudo losetup /dev/loop0 ./test.img
+>>>> sudo losetup /dev/loop1 ./scratch.img
+>>>> sudo mkdir -p /mnt/test /mnt/scratch
+>>>> sudo mount /dev/loop0 /mnt/test
+>>>>
+>>>> For environment setup(local.config):
+>>>> export TEST_DEV=/dev/loop0
+>>>> export TEST_DIR=/mnt/test
+>>>> export SCRATCH_DEV=/dev/loop1
+>>>> export SCRATCH_MNT=/mnt/scratch
+>>>
+>>> This is my configuration:
+>>>
+>>> export TEST_DEV=/dev/loop50
+>>> export TEST_DIR=/mnt/test
+>>> export SCRATCH_DEV=/dev/loop51
+>>> export SCRATCH_MNT=/mnt/scratch
+>>>
+>>> export FSTYP=hfs
+>>>
+>> Ah, Missed that option. I will try with that in my next testing.
+>>> Probably, you've missed FSTYP. Did you tried to run other file system at first
+>>> (for example, ext4) to be sure that everything is good?
+>>>
+>> No, I barely squeezed in time today to the testing for the HFS so I
+>> didn't do any preliminary testing but I will check that too my next run
+>> before trying to test HFS.
+>>>>
+>>>> Ran the tests using:sudo ./check -g auto
+>>>>
+>>>
+>>> You are brave guy. :) Currently, I am trying to fix the issues for quick group:
+>>>
+>>> sudo ./check -g quick
+>>>
+>> I thought I needed to do a more exhaustive testing so I went with auto.
+>> I will try to experiment with quick my next round of testing. Thanks for
+>> the heads up!
+>>>> If more context is needed to know the point of failure or if I have made
+>>>> a mistake during setup I'm happy to receive your comments since this is
+>>>> my first time trying to run xfstests.
+>>>>
+>>>
+>>> I don't see the crash on my side.
+>>>
+>>> sudo ./check generic/631
+>>> FSTYP         -- hfs
+>>> PLATFORM      -- Linux/x86_64 hfsplus-testing-0001 6.18.0-rc3+ #96 SMP
+>>> PREEMPT_DYNAMIC Wed Nov 19 12:47:37 PST 2025
+>>> MKFS_OPTIONS  -- /dev/loop51
+>>> MOUNT_OPTIONS -- /dev/loop51 /mnt/scratch
+>>>
+>>> generic/631       [not run] attr namespace trusted not supported by this
+>>> filesystem type: hfs
+>>> Ran: generic/631
+>>> Not run: generic/631
+>>> Passed all 1 tests
+>>>
+>>> This test simply is not running for HFS case.
+>>>
+>>> I see that HFS+ is failing for generic/631, but I don't see the crash. I am
+>>> running 6.18.0-rc3+ but I am not sure that 6.18.0-rc5+ could change something
+>>> dramatically.
+>>>
+>>> My guess that, maybe, xfstests suite is trying to run some other file system but
+>>> not HFS.
+>>>
+>> I'm assuming that it's running HFSPLUS testing foir me because I just
+>> realised that the package that I downloaded to do mkfs.hfs is just a
+>> symlink to mkfs.hfsplus. Also I didn't find a package(in arch) for
+>> mkfs.hfs in my quick little search now. All refer to mkfs.hfsplus as if
+>> mkfs.hfs is deprecated somehow. I will probably build it from source if
+>> available with fsck.hfs... Eitherway, even if i was testing for HFSPLUS
+>> i don't think that a fail on generic/631 would crash my system multiple
+>> times with different kernels. I would have to test with ext4 before and
+>> play around more to find out why that happened..
+> 
+> The mkfs.hfs is symlink on mkfs.hfsplus and the same for fsck. The mkfs.hfsplus
+> can create HFS volume by using this option:
+> 
+> -h create an HFS format filesystem (HFS Plus is the default)
+> 
+> I don't have any special package installed for HFS on my side.
+> 
+In my case, -h option in mkfs.hfsplus doesn't create hfs format 
+filesystem. I checked kernel docs and found this[1] which refers to a 
+package called hfsutils which has hformat as a binary for creating HFS 
+filesystems. I just got it and used it successfully. I will be rerunning 
+all tests soon.
+[1]:https://docs.kernel.org/filesystems/hfs.html
+> Thanks,
+> Slava.
+> 
+Also did you check my other comments on the code part of your last 
+reply? Just making sure. Thanks.
 
-AppArmor's exec rules rely heavily on transitioning to different creds
-on exec. For example, an AppArmor policy like
+Best Regards,
+Mehdi Ben Hadj Khelifa
+>>>>>>
+>>>>>>     fs/hfs/super.c | 16 ++++++++++++----
+>>>>>>     1 file changed, 12 insertions(+), 4 deletions(-)
+>>>>>>
+>>>>>> diff --git a/fs/hfs/super.c b/fs/hfs/super.c
+>>>>>> index 47f50fa555a4..06e1c25e47dc 100644
+>>>>>> --- a/fs/hfs/super.c
+>>>>>> +++ b/fs/hfs/super.c
+>>>>>> @@ -49,8 +49,6 @@ static void hfs_put_super(struct super_block *sb)
+>>>>>>     {
+>>>>>>     	cancel_delayed_work_sync(&HFS_SB(sb)->mdb_work);
+>>>>>>     	hfs_mdb_close(sb);
+>>>>>> -	/* release the MDB's resources */
+>>>>>> -	hfs_mdb_put(sb);
+>>>>>>     }
+>>>>>>     
+>>>>>>     static void flush_mdb(struct work_struct *work)
+>>>>>> @@ -383,7 +381,6 @@ static int hfs_fill_super(struct super_block *sb, struct fs_context *fc)
+>>>>>>     bail_no_root:
+>>>>>>     	pr_err("get root inode failed\n");
+>>>>>>     bail:
+>>>>>> -	hfs_mdb_put(sb);
+>>>>>>     	return res;
+>>>>>>     }
+>>>>>>     
+>>>>>> @@ -431,10 +428,21 @@ static int hfs_init_fs_context(struct fs_context *fc)
+>>>>>>     	return 0;
+>>>>>>     }
+>>>>>>     
+>>>>>> +static void hfs_kill_sb(struct super_block *sb)
+>>>>>> +{
+>>>>>> +	generic_shutdown_super(sb);
+>>>>>> +	hfs_mdb_put(sb);
+>>>>>> +	if (sb->s_bdev) {
+>>>>>> +		sync_blockdev(sb->s_bdev);
+>>>>>> +		bdev_fput(sb->s_bdev_file);
+>>>>>> +	}
+>>>>>> +
+>>>>>> +}
+>>>>>> +
+>>>>>>     static struct file_system_type hfs_fs_type = {
+>>>>>>     	.owner		= THIS_MODULE,
+>>>>>>     	.name		= "hfs",
+>>>>>> -	.kill_sb	= kill_block_super,
+>>>
+>>> I've realized that if we are trying to solve the issue with pure call of
+>>> kill_block_super() for the case of HFS/HFS+, then we could have the same trouble
+>>> for other file systems. It make sense to check that we do not have likewise
+>>> trouble for: bfs, hpfs, fat, nilfs2, ext2, ufs, adfs, omfs, isofs, udf, minix,
+>>> jfs, squashfs, freevxfs, befs.
+>> While I was doing my original fix for hfs, I did notice that too. Many
+>> other filesystems(not all) don't have a "custom" super block destroyer
+>> and they just refer to the generic kill_block_super() function which
+>> might lead to the same problem as HFS and HFS+. That would more digging
+>> too. I will see what I can do next when we finish HFS and potentially
+>> HFS+ first.
+>>>
+>>>>>
+>>>>> It looks like we have the same issue for the case of HFS+ [2]. Could you please
+>>>>> double check that HFS+ should be fixed too?
+>>>>>
+>>>> I have checked the same error path and it seems that hfsplus_sb_info is
+>>>> not freed in that path(I could provide the exact call stack which would
+>>>> cause such a memory leak) although I didn't create or run any
+>>>> reproducers for this particular filesystem type.
+>>>> If you would like a patch for this issue, would something like what is
+>>>> shown below be acceptable? :
+>>>>
+>>>> +static void hfsplus_kill_super(struct super_block *sb)
+>>>> +{
+>>>> +       struct hfsplus_sb_info *sbi = HFSPLUS_SB(sb);
+>>>> +
+>>>> +       kill_block_super(sb);
+>>>> +       kfree(sbi);
+>>>> +}
+>>>> +
+>>>>     static struct file_system_type hfsplus_fs_type = {
+>>>>            .owner          = THIS_MODULE,
+>>>>            .name           = "hfsplus",
+>>>> -       .kill_sb        = kill_block_super,
+>>>> +       .kill_sb        = hfsplus_kill_super,
+>>>>            .fs_flags       = FS_REQUIRES_DEV,
+>>>>            .init_fs_context = hfsplus_init_fs_context,
+>>>>     };
+>>>>
+>>>> If there is something to add, remove or adjust. Please let me know in
+>>>> the case of you willing accepting such a patch of course.
+>>>
+>>> We call hfs_mdb_put() for the case of HFS:
+>>>
+>>> void hfs_mdb_put(struct super_block *sb)
+>>> {
+>>> 	if (!HFS_SB(sb))
+>>> 		return;
+>>> 	/* free the B-trees */
+>>> 	hfs_btree_close(HFS_SB(sb)->ext_tree);
+>>> 	hfs_btree_close(HFS_SB(sb)->cat_tree);
+>>>
+>>> 	/* free the buffers holding the primary and alternate MDBs */
+>>> 	brelse(HFS_SB(sb)->mdb_bh);
+>>> 	brelse(HFS_SB(sb)->alt_mdb_bh);
+>>>
+>>> 	unload_nls(HFS_SB(sb)->nls_io);
+>>> 	unload_nls(HFS_SB(sb)->nls_disk);
+>>>
+>>> 	kfree(HFS_SB(sb)->bitmap);
+>>> 	kfree(HFS_SB(sb));
+>>> 	sb->s_fs_info = NULL;
+>>> }
+>>>
+>>> So, we need likewise course of actions for HFS+ because we have multiple
+>>> pointers in superblock too:
+>>>
+>> IIUC, hfs_mdb_put() isn't called in the case of hfs_kill_super() in
+>> christian's patch because fill_super() (for the each specific
+>> filesystem) is responsible for cleaning up the superblock in case of
+>> failure and you can reference christian's patch[1] which he explained
+>> the reasoning for here[2].And in the error path the we are trying to
+>> fix, fill_super() isn't even called yet. So such pointers shouldn't be
+>> pointing to anything allocated yet hence only freeing the pointer to the
+>> sb_info here is sufficient I think.
+>> [1]:https://github.com/brauner/linux/commit/058747cefb26196f3c192c76c631051581b29b27
+>> [2]:https://lore.kernel.org/all/20251119-delfin-bioladen-6bf291941d4f@brauner/
+>>> struct hfsplus_sb_info {
+>>> 	void *s_vhdr_buf;
+>>> 	struct hfsplus_vh *s_vhdr;
+>>> 	void *s_backup_vhdr_buf;
+>>> 	struct hfsplus_vh *s_backup_vhdr;
+>>> 	struct hfs_btree *ext_tree;
+>>> 	struct hfs_btree *cat_tree;
+>>> 	struct hfs_btree *attr_tree;
+>>> 	atomic_t attr_tree_state;
+>>> 	struct inode *alloc_file;
+>>> 	struct inode *hidden_dir;
+>>> 	struct nls_table *nls;
+>>>
+>>> 	/* Runtime variables */
+>>> 	u32 blockoffset;
+>>> 	u32 min_io_size;
+>>> 	sector_t part_start;
+>>> 	sector_t sect_count;
+>>> 	int fs_shift;
+>>>
+>>> 	/* immutable data from the volume header */
+>>> 	u32 alloc_blksz;
+>>> 	int alloc_blksz_shift;
+>>> 	u32 total_blocks;
+>>> 	u32 data_clump_blocks, rsrc_clump_blocks;
+>>>
+>>> 	/* mutable data from the volume header, protected by alloc_mutex */
+>>> 	u32 free_blocks;
+>>> 	struct mutex alloc_mutex;
+>>>
+>>> 	/* mutable data from the volume header, protected by vh_mutex */
+>>> 	u32 next_cnid;
+>>> 	u32 file_count;
+>>> 	u32 folder_count;
+>>> 	struct mutex vh_mutex;
+>>>
+>>> 	/* Config options */
+>>> 	u32 creator;
+>>> 	u32 type;
+>>>
+>>> 	umode_t umask;
+>>> 	kuid_t uid;
+>>> 	kgid_t gid;
+>>>
+>>> 	int part, session;
+>>> 	unsigned long flags;
+>>>
+>>> 	int work_queued;               /* non-zero delayed work is queued */
+>>> 	struct delayed_work sync_work; /* FS sync delayed work */
+>>> 	spinlock_t work_lock;          /* protects sync_work and work_queued */
+>>> 	struct rcu_head rcu;
+>>> };
+>>>
+>>
+>>
+>>> Thanks,
+>>> Slava.
+>>>
+>> Best Regards,
+>> Mehdi Ben Hadj Khelifa
+>>
+>>>>
+>>>>>> +	.kill_sb	= hfs_kill_sb,
+>>>>>>     	.fs_flags	= FS_REQUIRES_DEV,
+>>>>>>     	.init_fs_context = hfs_init_fs_context,
+>>>>>>     };
+>>>>>
+>>>>> [1] https://github.com/hfs-linux-kernel/hfs-linux-kernel/issues
+>>>>> [2] https://elixir.bootlin.com/linux/v6.18-rc6/source/fs/hfsplus/super.c#L694
 
-profile example_1 /usr/bin/example_1 {
-    /usr/bin/example_2 Px -> example_2_profile,
-    /usr/bin/example_3 Px,
-}
-
-will allow binary example_1 to execute binaries example_2 and
-example_3, launching those processes under a different confinement
-(example_2_profile and a profile that attaches to /usr/bin/example_3,
-respectively). We will need to look into how much this patch (or a
-corresponding change in behavior) would affect our use case, but
-confinement transitions (where the confinement information is stored
-as an LSM blob on the cred struct) are extremely common in a system
-that uses AppArmor as an LSM.
-
-> >>>
-> >>> In practice I don't expect there is anything that depends on the exac=
-t
-> >>> behavior of what happens when exec'ing a suid executable to gain
-> >>> privileges when ptraced.   The closes I can imagine is upstart and
-> >>> I think upstart ran as root when ptracing other programs so there is =
-no
-> >>> gaining of privilege and thus no reason for a security module to
-> >>> complain.
-> >>>
-> >>> Who knows I could be wrong, and someone could actually care.  Which i=
-s
-> >>> hy I think we should document it.>>
-> >>
-> >>
-> >> Well, I dont know for sure, but the security engine could deny the exe=
-cution
-> >> for any reason, not only because of being ptraced.
-> >> Maybe there can be a policy which denies user X to execute e.g. any su=
-id programs.
-> >>
-> >>
-> >> Bernd.
-> >>
-> >
-> > Hmm, funny..
-> >
-> > I installed this patch on top of
-> >
-> > commit fd95357fd8c6778ac7dea6c57a19b8b182b6e91f (HEAD -> master, origin=
-/master, origin/HEAD)
-> > Merge: c966813ea120 7b6216baae75
-> > Author: Linus Torvalds <torvalds@linux-foundation.org>
-> > Date:   Thu Nov 20 11:04:37 2025 -0800
-> >
-> > but it does panic when I try to boot:
-> >
-> > [  0.870539]     TERM=3D1inux
-> > [  0.870573] Starting init: /bin/sh exists but couldn't execute it (err=
-or -14) 0.8705751 Kernel panic- not syncing: No working init found. Try pas=
-sing i mit=3D option to kernel. See Linux Documentation/admin-guide/init.rs=
-t for guidance
-> > [  0.870577] CPU: UID: 0 PID: 1 Comm: sh Not tainted 6.18.0-rc6+ #1 PRE=
-EMPT(voluntary)
-> > [  0.870579] Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS Vi=
-rtualBo x 12/01/2006
-> > [  0.870580] Call Trace:
-> > [  0.870590]  <TASK>
-> > [  0.870592]  vpanic+0x36d/0x380
-> > [  0.870607]  ? __pfx_kernel_init+0x10/0x10
-> > [  0.870615]  panic+0x5b/0x60
-> > [  0.870617]  kernel_init+0x17d/0x1c0
-> > [  0.870623]  ret_from_fork+0x124/0x150
-> > [  0.870625}  ? __pfx_kernel_init+0x10/0x10
-> > [  0.870627]  ret_from_fork_asm+0x1a/0x30
-> > [  0.870632]  </TASK>
-> > [  0.8706631 Kernel Offset: 0x3a800000 from Oxffffffff81000000 (relocat=
-ion ran ge: 0xffffffff80000000-0xffffffffbfffffff)
-> > [  0.880034] ---[ end Kernel panic - not syncing: No working init found=
-. Try passing init option to kernel. See Linux Documentation/admin-guide/in=
-it.rst for guidance. 1---`
-> >
-> >
-> > Is that a known problem?
->
-> Nope.  It looks like the code needs a little bit bug fixing testing.
->
-> I will take see about taking a look.
->
-> Eric
->
-
-I've also CC'ed the AppArmor mailing list on this patch to facilitate
-discussion if, upon further investigation, this patch would require
-changes or cause other problems on the AppArmor side.
 
