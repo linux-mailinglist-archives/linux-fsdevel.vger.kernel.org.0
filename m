@@ -1,228 +1,232 @@
-Return-Path: <linux-fsdevel+bounces-69397-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69398-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E7C2C7B289
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Nov 2025 18:59:12 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 683A1C7B2DD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Nov 2025 19:03:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07A2F3A206E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Nov 2025 17:59:11 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8D14D3805CE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Nov 2025 18:00:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD2C0350D76;
-	Fri, 21 Nov 2025 17:58:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20CE9238159;
+	Fri, 21 Nov 2025 18:00:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="PNf/GEz2";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="BA6od6MC";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="PNf/GEz2";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="BA6od6MC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Axix+c8B"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83FD53469F6
-	for <linux-fsdevel@vger.kernel.org>; Fri, 21 Nov 2025 17:58:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50E262E8B76
+	for <linux-fsdevel@vger.kernel.org>; Fri, 21 Nov 2025 18:00:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763747926; cv=none; b=TZ+ArxpcDz907e9lgc6htBRcHpZl3jjMdErDsuCbg4IlLHLY8DG5L83o/7M0xtl/1EKPlAJw/9r8WMelQI+1YA80BYIkZeEKHUHejpdVfCN4L5SbFQjPMXkY/HOeC6gSD+L0/KEcoCQIN/0MD2oD1RKdPRx89g7kkxK80PXKT5k=
+	t=1763748052; cv=none; b=eWrw7SnVmH5ZsaHe/Kd8Y7Q0jIAwBoAvfSclQaey7JBr3ukUAQDKeh8eRICuulRfV25wxnBRBkokLzSx5Ml/c2cRc4ABAcuibn8KeFrYiasMPmdoCbiWir1eHSuM36I7G3ola61f8BW50qkSyr4rgjS9JazORkPmdhNngRjOM9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763747926; c=relaxed/simple;
-	bh=yV2WQRNM08+GiLVHoJtsuyOXBwHVeo6J3ujZgU0P0VQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AZ2YlFaeW8GDTzTs4wuofzoxos2Hl8UHpLvlvVDTnZxEy4kxflWlYSq4cZhO954ChPdyCBuWMjwVdWpCf6f+8vXx0CldE1UAJgXkRwIXMbziBJmV9wAhXcheErGhtU1UW7drswPohCf9/Mg4+ODEiw09jZCxrQ+xtKrVAf/Sk/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=PNf/GEz2; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=BA6od6MC; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=PNf/GEz2; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=BA6od6MC; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id C6A09219A6;
-	Fri, 21 Nov 2025 17:58:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1763747922; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=u4u/nMM+KNkjjkTjIpcny8cl0z0ryRicvd/zDPGEOSs=;
-	b=PNf/GEz2AfAl9PN7kljSM47+pWoLj/riChRqrJQJiVWBgx+VBW6bbjtyTb5mpzHNzk9eL5
-	xIx9qXoci04ogBP/rTerIwxIUiXMgtTKV0UmQhrNa1Lxv9Rv51B9LgU+Pjk4AigPhASx6+
-	lj6FnSfZxQ8iT9RNeSvQh1a0TCdN/JI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1763747922;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=u4u/nMM+KNkjjkTjIpcny8cl0z0ryRicvd/zDPGEOSs=;
-	b=BA6od6MCv7fGYdd8JUjEdbBLZ4bw0kTt3dYnK1UMw8UDIkbzMj1fPB6zD+rKzhyaqxJn0Y
-	d4bgo5XtAg5WusDA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1763747922; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=u4u/nMM+KNkjjkTjIpcny8cl0z0ryRicvd/zDPGEOSs=;
-	b=PNf/GEz2AfAl9PN7kljSM47+pWoLj/riChRqrJQJiVWBgx+VBW6bbjtyTb5mpzHNzk9eL5
-	xIx9qXoci04ogBP/rTerIwxIUiXMgtTKV0UmQhrNa1Lxv9Rv51B9LgU+Pjk4AigPhASx6+
-	lj6FnSfZxQ8iT9RNeSvQh1a0TCdN/JI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1763747922;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=u4u/nMM+KNkjjkTjIpcny8cl0z0ryRicvd/zDPGEOSs=;
-	b=BA6od6MCv7fGYdd8JUjEdbBLZ4bw0kTt3dYnK1UMw8UDIkbzMj1fPB6zD+rKzhyaqxJn0Y
-	d4bgo5XtAg5WusDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 54F8A3EA61;
-	Fri, 21 Nov 2025 17:58:42 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id +ExXE1KoIGmOYQAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Fri, 21 Nov 2025 17:58:42 +0000
-Message-ID: <38461f6f-6e47-49b1-90b6-1649dc39d5cc@suse.cz>
-Date: Fri, 21 Nov 2025 18:58:41 +0100
+	s=arc-20240116; t=1763748052; c=relaxed/simple;
+	bh=sbUQfjBToyS0st25T5fMakI2n8sTyb9aO0j2vGIQZkc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=O9i6He4j1qJyC/SJwSrn09v4ZDRcuq1kbXCJEmKZR7Zu2oFjOoMSUfx1IqqiHuEEQeL210PIkXDeIywt/cytvbRFGqNdf5+DQ4cqhZhuccwDGjrca/uiEy88csvqv0rpAR8ljCLAL+wztQoaSUH+P8t58/ZiTMfk3Ed2RoKW944=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Axix+c8B; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38738C116C6;
+	Fri, 21 Nov 2025 18:00:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763748051;
+	bh=sbUQfjBToyS0st25T5fMakI2n8sTyb9aO0j2vGIQZkc=;
+	h=From:Subject:Date:To:Cc:From;
+	b=Axix+c8BnYy6aKfV7ndMNmIWaDpgo4RUwzSQqIHT+IvRkCIC3LqMoPxnkslWKf1VM
+	 cW215hBjoP7G4Plbw/YJY4rsDJDDcLOPCDqGj/woVRzwfjtxhcXmEFTD5FwLSTQ1PG
+	 4FAsUrekY3RsWcG8vpPaks0uayB4AIQpRk1W8247q3aON8yyRgtMXvq829QHIkjSIN
+	 6NL8e681oShUpFD1nmQ3fuAZK4MGeefVzotQRYFxBm0810tpQyiM3ATx4SET3LBXv0
+	 OXzg3b3tVz6pbcQiYNpu8fQ5a29Kq/drunwHXSYBmeZpfp0qtYjnlFmYuEf2JRFB/3
+	 PqfalflF+6gWQ==
+From: Christian Brauner <brauner@kernel.org>
+Subject: [PATCH RFC v3 00/47] file: add and convert to FD_PREPARE()
+Date: Fri, 21 Nov 2025 19:00:39 +0100
+Message-Id: <20251121-work-fd-prepare-v3-0-2c6444d13e0e@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 09/16] mm/huge_memory: refactor change_huge_pmd()
- non-present logic
-Content-Language: en-US
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Christian Borntraeger <borntraeger@linux.ibm.com>,
- Janosch Frank <frankja@linux.ibm.com>,
- Claudio Imbrenda <imbrenda@linux.ibm.com>,
- David Hildenbrand <david@redhat.com>,
- Alexander Gordeev <agordeev@linux.ibm.com>,
- Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
- Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>, Peter Xu <peterx@redhat.com>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Arnd Bergmann <arnd@arndb.de>, Zi Yan <ziy@nvidia.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>, Nico Pache
- <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
- Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
- Lance Yang <lance.yang@linux.dev>, Muchun Song <muchun.song@linux.dev>,
- Oscar Salvador <osalvador@suse.de>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- Matthew Brost <matthew.brost@intel.com>,
- Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
- Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>,
- Ying Huang <ying.huang@linux.alibaba.com>,
- Alistair Popple <apopple@nvidia.com>,
- Axel Rasmussen <axelrasmussen@google.com>, Yuanchu Xie <yuanchu@google.com>,
- Wei Xu <weixugc@google.com>, Kemeng Shi <shikemeng@huaweicloud.com>,
- Kairui Song <kasong@tencent.com>, Nhat Pham <nphamcs@gmail.com>,
- Baoquan He <bhe@redhat.com>, Chris Li <chrisl@kernel.org>,
- SeongJae Park <sj@kernel.org>, Matthew Wilcox <willy@infradead.org>,
- Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
- Xu Xin <xu.xin16@zte.com.cn>, Chengming Zhou <chengming.zhou@linux.dev>,
- Jann Horn <jannh@google.com>, Miaohe Lin <linmiaohe@huawei.com>,
- Naoya Horiguchi <nao.horiguchi@gmail.com>, Pedro Falcato <pfalcato@suse.de>,
- Pasha Tatashin <pasha.tatashin@soleen.com>, Rik van Riel <riel@surriel.com>,
- Harry Yoo <harry.yoo@oracle.com>, Hugh Dickins <hughd@google.com>,
- linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
- linux-s390@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linux-arch@vger.kernel.org, damon@lists.linux.dev
-References: <cover.1762812360.git.lorenzo.stoakes@oracle.com>
- <451b85636ad711e307fdfbff19af699fdab4d05f.1762812360.git.lorenzo.stoakes@oracle.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <451b85636ad711e307fdfbff19af699fdab4d05f.1762812360.git.lorenzo.stoakes@oracle.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TAGGED_RCPT(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[linux.ibm.com,redhat.com,zeniv.linux.org.uk,kernel.org,suse.cz,arndb.de,nvidia.com,linux.alibaba.com,oracle.com,arm.com,linux.dev,suse.de,google.com,suse.com,intel.com,gmail.com,sk.com,gourry.net,huaweicloud.com,tencent.com,infradead.org,ziepe.ca,zte.com.cn,huawei.com,soleen.com,surriel.com,vger.kernel.org,kvack.org,lists.linux.dev];
-	URIBL_BLOCKED(0.00)[suse.cz:mid,suse.cz:email,oracle.com:email,imap1.dmz-prg2.suse.org:helo];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_SOME(0.00)[];
-	RCPT_COUNT_GT_50(0.00)[65];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[oracle.com:email,suse.cz:mid,suse.cz:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -2.80
-X-Spam-Level: 
+X-B4-Tracking: v=1; b=H4sIAMeoIGkC/3XOTW7CMBAF4Ksgr5lgO5ifrpCQeoBuEQs7HicjK
+ huNadoK5e44EQsQYvneaD69q8jIhFl8zK6CsadMKZZQz2ei6WxsEciXLLTURim1gd/EJwgezox
+ nywhhqYytXTDBW1G+Sh/obxIP4utzL46ldDYjOLax6UYsMbUUoaVL9+MW47Ea2Sr46s6OUkf5k
+ vh/mtaryXu7olcgodHSyKXfruu12Z2QI35XidtpQa8fAC1fAV2AgGGFzltpfP0EDMNwA9suUdA
+ qAQAA
+X-Change-ID: 20251118-work-fd-prepare-f415a3bf5fda
+To: Linus Torvalds <torvalds@linux-foundation.org>, 
+ Jeff Layton <jlayton@kernel.org>, Amir Goldstein <amir73il@gmail.com>, 
+ Jens Axboe <axboe@kernel.dk>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+ linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
+X-Mailer: b4 0.15-dev-a6db3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=8223; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=sbUQfjBToyS0st25T5fMakI2n8sTyb9aO0j2vGIQZkc=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQqrDjX/+iE3PH57nwJjDsNpqfcu/i4/JvwJ+5trxyba
+ nmnrGC36yhlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZjI7FCGvwITbxdknzXzDPxj
+ 0uXwrV3+svIh6y6J69zrLom/LfDsM2H4w6kvoehzz2fPdu1L9cUfHvavrXLesvruLY79wgXrk7+
+ s5wIA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp;
+ fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-On 11/10/25 23:21, Lorenzo Stoakes wrote:
-> Similar to copy_huge_pmd(), there is a large mass of open-coded logic for
-> the CONFIG_ARCH_ENABLE_THP_MIGRATION non-present entry case that does not
-> use thp_migration_supported() consistently.
-> 
-> Resolve this by separating out this logic and introduce
-> change_non_present_huge_pmd().
-> 
-> No functional change intended.
-> 
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Hey,
 
-Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
+I've been playing with this to allow for moderately flexible usage of
+the get_unused_fd_flags() + create file + fd_install() pattern that's
+used quite extensively.
+
+How callers allocate files is really heterogenous so it's not really
+convenient to fold them into a single class. It's possibe to split them
+into subclasses like for anon inodes. I think that's not necessarily
+nice as well.
+
+My take is to add a FD_PREPARE() primitive that integrates tightly with
+the new ACQUIRE_ERR() scheme that was recently added by peterz:
+
+FD_PREPARE(fdf, open_flag, file_open_handle(&path, open_flag));
+ret = ACQUIRE_ERR(fd_prepare, &fdf);
+if (ret)
+	return ret;
+
+return fd_publish(fdf);
+
+I've converted all of the easy cases over to it and it gets rid of a lot
+of convoluted cleanup logic.
+
+It's centered around struct fd_prepare. FD_PREPARE() encapsulates all of
+allocation and cleanup logic and must be followed by a call to
+fd_publish() which associates the fd with the file and installs it into
+the callers fdtable. If fd_publish() isn't called both are deallocated.
+
+It mandates a specific order namely that first we allocate the fd and
+then instantiate the file. But that shouldn't be a problem nearly
+everyone I've converted uses this exact pattern anyway.
+
+There's a bunch of additional cases where it would be easy to convert
+them to this pattern. For example, the whole sync file stuff in dma
+currently retains the containing structure of the file instead of the
+file itself even though it's only used to allocate files. Changing that
+would make it fall into the FD_PREPARE() pattern easily. I've not done
+that work yet.
+
+There's room for extending this in a way that wed'd have subclasses for
+some particularly often use patterns but as I said I'm not even sure
+that's worth it.
+
+Anyway, I'm not a macro wizard per se so maybe I missed some very
+obvious bugs. Expect there to still be rough edges.
+
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+Changes in v3:
+- Remove scope-based variant.
+- Link to v2: https://patch.msgid.link/20251120-work-fd-prepare-v2-0-fef6ebda05d3@kernel.org
+
+Changes in v2:
+- Make FD_PREPARE() use a separate scope.
+- Convert most easy cases.
+- Link to v1: https://patch.msgid.link/20251118-work-fd-prepare-v1-0-c20504d97375@kernel.org
+
+---
+Christian Brauner (47):
+      file: add FD_PREPARE()
+      anon_inodes: convert __anon_inode_getfd() to FD_PREPARE()
+      eventfd: convert do_eventfd() to FD_PREPARE()
+      fhandle: convert do_handle_open() to FD_PREPARE()
+      namespace: convert open_tree() to FD_PREPARE()
+      namespace: convert open_tree_attr() to FD_PREPARE()
+      namespace: convert fsmount() to FD_PREPARE()
+      fanotify: convert fanotify_init() to FD_PREPARE()
+      nsfs: convert open_namespace() to FD_PREPARE()
+      nsfs: convert ns_ioctl() to FD_PREPARE()
+      autofs: convert autofs_dev_ioctl_open_mountpoint() to FD_PREPARE()
+      eventpoll: convert do_epoll_create() to FD_PREPARE()
+      open: convert do_sys_openat2() to FD_PREPARE()
+      signalfd: convert do_signalfd4() to FD_PREPARE()
+      timerfd: convert timerfd_create() to FD_PREPARE()
+      userfaultfd: convert new_userfaultfd() to FD_PREPARE()
+      xfs: convert xfs_open_by_handle() to FD_PREPARE()
+      dma: convert dma_buf_fd() to FD_PREPARE()
+      af_unix: convert unix_file_open() to FD_PREPARE()
+      dma: convert sync_file_ioctl_merge() to FD_PREPARE()
+      exec: convert begin_new_exec() to FD_PREPARE()
+      ipc: convert do_mq_open() to FD_PREPARE()
+      bpf: convert bpf_iter_new_fd() to FD_PREPARE()
+      bpf: convert bpf_token_create() to FD_PREPARE()
+      memfd: convert memfd_create() to FD_PREPARE()
+      secretmem: convert memfd_secret() to FD_PREPARE()
+      net/handshake: convert handshake_nl_accept_doit() to FD_PREPARE()
+      net/kcm: convert kcm_ioctl() to FD_PREPARE()
+      net/sctp: convert sctp_getsockopt_peeloff_common() to FD_PREPARE()
+      net/socket: convert sock_map_fd() to FD_PREPARE()
+      net/socket: convert __sys_accept4_file() to FD_PREPARE()
+      spufs: convert spufs_context_open() to FD_PREPARE()
+      papr-hvpipe: convert papr_hvpipe_dev_create_handle() to FD_PREPARE()
+      spufs: convert spufs_gang_open() to FD_PREPARE()
+      pseries: convert papr_platform_dump_create_handle() to FD_PREPARE()
+      pseries: port papr_rtas_setup_file_interface() to FD_PREPARE()
+      dma: port sw_sync_ioctl_create_fence() to FD_PREPARE()
+      gpio: convert linehandle_create() to FD_PREPARE()
+      hv: convert mshv_ioctl_create_partition() to FD_PREPARE()
+      media: convert media_request_alloc() to FD_PREPARE()
+      ntsync: convert ntsync_obj_get_fd() to FD_PREPARE()
+      tty: convert ptm_open_peer() to FD_PREPARE()
+      vfio: convert vfio_group_ioctl_get_device_fd() to FD_PREPARE()
+      file: convert replace_fd() to FD_PREPARE()
+      io_uring: convert io_create_mock_file() to FD_PREPARE()
+      kvm: convert kvm_arch_supports_gmem_init_shared() to FD_PREPARE()
+      kvm: convert kvm_vcpu_ioctl_get_stats_fd() to FD_PREPARE()
+
+ arch/powerpc/platforms/cell/spufs/inode.c          | 38 +++------
+ arch/powerpc/platforms/pseries/papr-hvpipe.c       | 37 +++------
+ .../powerpc/platforms/pseries/papr-platform-dump.c | 39 +++------
+ arch/powerpc/platforms/pseries/papr-rtas-common.c  | 32 +++-----
+ drivers/dma-buf/dma-buf.c                          | 14 ++--
+ drivers/dma-buf/sw_sync.c                          | 42 ++++------
+ drivers/dma-buf/sync_file.c                        | 54 +++++--------
+ drivers/gpio/gpiolib-cdev.c                        | 61 +++++++-------
+ drivers/hv/mshv_root_main.c                        | 30 ++-----
+ drivers/media/mc/mc-request.c                      | 33 +++-----
+ drivers/misc/ntsync.c                              | 22 ++----
+ drivers/tty/pty.c                                  | 34 +++-----
+ drivers/vfio/group.c                               | 27 ++-----
+ fs/anon_inodes.c                                   | 25 ++----
+ fs/autofs/dev-ioctl.c                              | 34 +++-----
+ fs/eventfd.c                                       | 33 +++-----
+ fs/eventpoll.c                                     | 33 +++-----
+ fs/exec.c                                          |  8 +-
+ fs/fhandle.c                                       | 31 ++++----
+ fs/file.c                                          | 20 +++--
+ fs/namespace.c                                     | 92 ++++++++--------------
+ fs/notify/fanotify/fanotify_user.c                 | 63 ++++++---------
+ fs/nsfs.c                                          | 51 +++++-------
+ fs/open.c                                          | 21 ++---
+ fs/signalfd.c                                      | 29 +++----
+ fs/timerfd.c                                       | 30 +++----
+ fs/userfaultfd.c                                   | 32 +++-----
+ fs/xfs/xfs_handle.c                                | 53 ++++---------
+ include/linux/cleanup.h                            |  7 ++
+ include/linux/file.h                               | 75 ++++++++++++++++++
+ io_uring/mock_file.c                               | 46 ++++-------
+ ipc/mqueue.c                                       | 34 +++-----
+ kernel/bpf/bpf_iter.c                              | 30 +++----
+ kernel/bpf/token.c                                 | 48 ++++-------
+ mm/memfd.c                                         | 32 +++-----
+ mm/secretmem.c                                     | 23 ++----
+ net/handshake/netlink.c                            | 32 ++++----
+ net/kcm/kcmsock.c                                  | 24 ++----
+ net/sctp/socket.c                                  | 89 ++++++---------------
+ net/socket.c                                       | 38 +++------
+ net/unix/af_unix.c                                 | 20 ++---
+ virt/kvm/guest_memfd.c                             | 37 +++------
+ virt/kvm/kvm_main.c                                | 24 +++---
+ 43 files changed, 597 insertions(+), 980 deletions(-)
+---
+base-commit: c8e00cdc7425d5c60fd1ce6e7f71e5fb1b236991
+change-id: 20251118-work-fd-prepare-f415a3bf5fda
 
 
