@@ -1,263 +1,342 @@
-Return-Path: <linux-fsdevel+bounces-69456-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69457-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37159C7B7B1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Nov 2025 20:20:44 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA46FC7B80B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Nov 2025 20:26:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9DFE24E5612
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Nov 2025 19:20:36 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4B58134FC49
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Nov 2025 19:24:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4FDD2FF15F;
-	Fri, 21 Nov 2025 19:20:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A3592F99BD;
+	Fri, 21 Nov 2025 19:24:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="dKAaVM//";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="wEJocE9E"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out01.mta.xmission.com (out01.mta.xmission.com [166.70.13.231])
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A9852D8367;
-	Fri, 21 Nov 2025 19:20:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.231
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763752820; cv=none; b=QvpB7+hPiS630JGDi1vvwcrtT9CL5/mq2ZdYP6PyaXT7C1E4UOdXtydkHg4rBBBNF7YgBCAK/v2UN2GrhDsc3Zol7OWhtAs3ZTViTcX012BDXK7EtpaGzwrewwhVgzunS/XspurT8b8JtekPzMOMWnFKbTyO4e18PlLptIeoKi0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763752820; c=relaxed/simple;
-	bh=JTxhSWA6jxw9e4SLyOt7ueqSOQ+RMIIFCViCtct749k=;
-	h=From:To:Cc:In-Reply-To:References:Date:Message-ID:MIME-Version:
-	 Content-Type:Subject; b=CYwahzyNfyUz1iuvheaRsCQa0yk6gOEA7fpzyB3v5hPX3wZ0ddUEfiiaywoRPTBAOdC8lRIki1GvrMhLuiqUPjDFG56FF2dIJ7ln3cjG6hAaluBOU0TZ+LK471ihbWhssrhvsGp7RR3U5NK9mMxiUIJ3kdcjcP856xwiBubp4L4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.231
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
-Received: from in01.mta.xmission.com ([166.70.13.51]:56436)
-	by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1vMWfr-00EM7W-Dy; Fri, 21 Nov 2025 12:20:03 -0700
-Received: from ip72-198-198-28.om.om.cox.net ([72.198.198.28]:50660 helo=email.froward.int.ebiederm.org.xmission.com)
-	by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1vMWfp-000k4P-Vv; Fri, 21 Nov 2025 12:20:03 -0700
-From: "Eric W. Biederman" <ebiederm@xmission.com>
-To: Bernd Edlinger <bernd.edlinger@hotmail.de>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,  Alexey Dobriyan
- <adobriyan@gmail.com>,  Oleg Nesterov <oleg@redhat.com>,  Kees Cook
- <kees@kernel.org>,  Andy Lutomirski <luto@amacapital.net>,  Will Drewry
- <wad@chromium.org>,  Christian Brauner <brauner@kernel.org>,  Andrew
- Morton <akpm@linux-foundation.org>,  Michal Hocko <mhocko@suse.com>,
-  Serge Hallyn <serge@hallyn.com>,  James Morris
- <jamorris@linux.microsoft.com>,  Randy Dunlap <rdunlap@infradead.org>,
-  Suren Baghdasaryan <surenb@google.com>,  Yafang Shao
- <laoar.shao@gmail.com>,  Helge Deller <deller@gmx.de>,  Adrian Reber
- <areber@redhat.com>,  Thomas Gleixner <tglx@linutronix.de>,  Jens Axboe
- <axboe@kernel.dk>,  Alexei Starovoitov <ast@kernel.org>,
-  "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-  "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-  linux-kselftest@vger.kernel.org,  linux-mm@kvack.org,
-  linux-security-module@vger.kernel.org,  tiozhang
- <tiozhang@didiglobal.com>,  Luis Chamberlain <mcgrof@kernel.org>,  "Paulo
- Alcantara (SUSE)" <pc@manguebit.com>,  Sergey Senozhatsky
- <senozhatsky@chromium.org>,  Frederic Weisbecker <frederic@kernel.org>,
-  YueHaibing <yuehaibing@huawei.com>,  Paul Moore <paul@paul-moore.com>,
-  Aleksa Sarai <cyphar@cyphar.com>,  Stefan Roesch <shr@devkernel.io>,
-  Chao Yu <chao@kernel.org>,  xu xin <xu.xin16@zte.com.cn>,  Jeff Layton
- <jlayton@kernel.org>,  Jan Kara <jack@suse.cz>,  David Hildenbrand
- <david@redhat.com>,  Dave Chinner <dchinner@redhat.com>,  Shuah Khan
- <shuah@kernel.org>,  Elena Reshetova <elena.reshetova@intel.com>,  David
- Windsor <dwindsor@gmail.com>,  Mateusz Guzik <mjguzik@gmail.com>,  Ard
- Biesheuvel <ardb@kernel.org>,  "Joel Fernandes (Google)"
- <joel@joelfernandes.org>,  "Matthew Wilcox (Oracle)"
- <willy@infradead.org>,  Hans Liljestrand <ishkamiel@gmail.com>,  Penglei
- Jiang <superman.xpt@gmail.com>,  Lorenzo Stoakes
- <lorenzo.stoakes@oracle.com>,  Adrian Ratiu <adrian.ratiu@collabora.com>,
-  Ingo Molnar <mingo@kernel.org>,  "Peter Zijlstra (Intel)"
- <peterz@infradead.org>,  Cyrill Gorcunov <gorcunov@gmail.com>,  Eric
- Dumazet <edumazet@google.com>
-In-Reply-To: <GV2PPF74270EBEED0840E45459881C0EDD4E4D5A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
-	(Bernd Edlinger's message of "Fri, 21 Nov 2025 12:26:48 +0100")
-References: <AM8PR10MB470801D01A0CF24BC32C25E7E40E9@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
-	<AS8P193MB12851AC1F862B97FCE9B3F4FE4AAA@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
-	<AS8P193MB1285FF445694F149B70B21D0E46C2@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
-	<AS8P193MB1285937F9831CECAF2A9EEE2E4752@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
-	<GV2PPF74270EBEEEDE0B9742310DE91E9A7E431A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
-	<GV2PPF74270EBEE9EF78827D73D3D7212F7E432A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
-	<GV2PPF74270EBEEE807D016A79FE7A2F463E4D6A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
-	<87tsyozqdu.fsf@email.froward.int.ebiederm.org>
-	<87wm3ky5n9.fsf@email.froward.int.ebiederm.org>
-	<87h5uoxw06.fsf_-_@email.froward.int.ebiederm.org>
-	<87a50gxo0i.fsf@email.froward.int.ebiederm.org>
-	<GV2PPF74270EBEEAD4CACA124C05BE1CE45E4D5A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
-	<87o6ovx38h.fsf@email.froward.int.ebiederm.org>
-	<GV2PPF74270EBEEFA106F4EF26B087ED898E4D5A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
-	<GV2PPF74270EBEED0840E45459881C0EDD4E4D5A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
-Date: Fri, 21 Nov 2025 13:19:55 -0600
-Message-ID: <87ikf3w5us.fsf@email.froward.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A899155757;
+	Fri, 21 Nov 2025 19:24:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1763753071; cv=fail; b=HAMnhgNQnPdI4kZtnQLw3Kinay+Q4VeRq+kJD58r9suRW2bLiLmBSworru/e1d6xm2apZ70Sm5uLXLaoo62/mTS20fUDTEUOwyGDj2zvY8uUX/kN0qFDELDHNi8avjTGPqgObqoUmYIKKOpKT9AoAKCo2Y8X718F4lrxH7ud+Js=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1763753071; c=relaxed/simple;
+	bh=oxbnwVrh+wHc5Qx+DGqojISj5xCdyZl6HUDrI5I2l38=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=ZCLPuofCRDxkcg8W+PKIRKqhjuPJ4WLu0w5cK/2uZSwV8vuL955PXYCp3ci74TGhUM25EGxySGfE9KuL38Gt52fJC217s9Vw1x11pAiwyppFmn51sb7GguDXc4LIrALE1rh4LujdlYC4XxyS5J7Ay2erDEl10bvexmV4z5q4ptU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=dKAaVM//; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=wEJocE9E; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5ALEgmVl027975;
+	Fri, 21 Nov 2025 19:23:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=itcg/Vi6yyJZG1n5lX
+	tc2QILAlGcU8Z+sDBKQQM/1Gk=; b=dKAaVM//p1kI0Io0ccWNymMJlB81C2tpZA
+	ngHUid8vN6/lxAOkzjWbCKUDyQPliv9e+5XIE6iOXkqfig6AL8WJaJ4cVsMkKbKf
+	pl8qGOxEe30GnWL6O87pXPbFBFPu7WoJ/wDxwLroJSH/SSN4w3H5BkXoLXHtszdc
+	HgPoTY1ve+OaWTGid26MtVVTIeHUfsAnF84jmLQG5Lu+zQ9XUaEhiPqMtyFxbkFs
+	7lmAP1plzP9gCMgf/Sgiea6LpFwTRZdV7NXonMr8n2p5O5B4Dqf6fJIHJsyiQRn3
+	cB+dgfzizHGlLgl1lbGHlfe/xmg5reyRayD6w3+aPs7dbpD770yw==
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4aej96c8bd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 21 Nov 2025 19:23:24 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5ALIHqJL005110;
+	Fri, 21 Nov 2025 19:23:23 GMT
+Received: from sn4pr2101cu001.outbound.protection.outlook.com (mail-southcentralusazon11012014.outbound.protection.outlook.com [40.93.195.14])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4aefydseyq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 21 Nov 2025 19:23:23 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=EmObPST5YJgZJvrMgpBoxBTMIRNfqYcWVsIHmYDJRq3Eo/NYSR/Qj7y+07rk3mLZ8rCHEhB+EUA1LG59B9Grpp9XYlIfk0IBDjBVu8YUEGotgT3OpiTQYtKfnSKl6fXj0SJdItWVNdSgC98flDkIblz5WcLdhLyh4057tPSBHdTEFXQ5Yvd1ZV8Te3hHc6BrFa7CwlJy7UEjDa8R49LRNPeK4LE6RFHJzVqv1VsxTj2ccX7Rw649a3z4dZAGhBekxPABFRG6v/GR5Qp+RjKKgSEiC4JO9xRfD1gQTDopjRMFn+VvkC4q3xH3tlwj8fz/JNuPqYIbmj0GKFMaLBajPQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=itcg/Vi6yyJZG1n5lXtc2QILAlGcU8Z+sDBKQQM/1Gk=;
+ b=hwcJ0epTQQkycOeyR05k4Om1snBx5XerMhw34lL7Rrnz4zGy0TcKZPYGDf8SIMF4EBu3fAh49zKuj9OEqCaBs4bpdyb1kfr7qM9aJ3kKRXCFYaQQ/sCQ7X2Wp6crI0bC7QQPyK7ZQ5NiA1Vr3ce3TwJTnzPx1wuzT2ImObuPFqi7blRv+TcymDtKIa3bmy8y/3dSIQxbz9FxZCNkKoAXetBWvjzcTvvAavbJZTL55zbRluK4OLFo0XVXOpZ4gnZiFlYZCnkho/xWL5hMXXsPME7ua9w93hm2h3uojw6VWVmMq5N2iTGIsHvu2Cf97CIKvJp8C3ddkhFQGbcqWNkw9A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=itcg/Vi6yyJZG1n5lXtc2QILAlGcU8Z+sDBKQQM/1Gk=;
+ b=wEJocE9EknuHaO0QvoDgCpKbe5tB5PXz02PTDHkLvof+jFKv76zwNV4bYJPuPcXsF0AJiUW3MH2W3KsLZU9sXVJktcEixbXWW75YCtIEr82nv+tHspGysbxgd5r2igzzBQ4Wb4fkHa6keNeHpONML5tWqOTy/+DG62+BEvvwNLg=
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
+ by CO1PR10MB4722.namprd10.prod.outlook.com (2603:10b6:303:9e::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9343.11; Fri, 21 Nov
+ 2025 19:22:44 +0000
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2%7]) with mapi id 15.20.9343.011; Fri, 21 Nov 2025
+ 19:22:44 +0000
+Date: Fri, 21 Nov 2025 19:22:41 +0000
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        Claudio Imbrenda <imbrenda@linux.ibm.com>,
+        David Hildenbrand <david@redhat.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>, Peter Xu <peterx@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+        Arnd Bergmann <arnd@arndb.de>, Zi Yan <ziy@nvidia.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+        Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+        Lance Yang <lance.yang@linux.dev>, Muchun Song <muchun.song@linux.dev>,
+        Oscar Salvador <osalvador@suse.de>, Mike Rapoport <rppt@kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+        Matthew Brost <matthew.brost@intel.com>,
+        Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
+        Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>,
+        Ying Huang <ying.huang@linux.alibaba.com>,
+        Alistair Popple <apopple@nvidia.com>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        Yuanchu Xie <yuanchu@google.com>, Wei Xu <weixugc@google.com>,
+        Kemeng Shi <shikemeng@huaweicloud.com>,
+        Kairui Song <kasong@tencent.com>, Nhat Pham <nphamcs@gmail.com>,
+        Baoquan He <bhe@redhat.com>, Chris Li <chrisl@kernel.org>,
+        SeongJae Park <sj@kernel.org>, Matthew Wilcox <willy@infradead.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
+        Xu Xin <xu.xin16@zte.com.cn>,
+        Chengming Zhou <chengming.zhou@linux.dev>,
+        Jann Horn <jannh@google.com>, Miaohe Lin <linmiaohe@huawei.com>,
+        Naoya Horiguchi <nao.horiguchi@gmail.com>,
+        Pedro Falcato <pfalcato@suse.de>,
+        Pasha Tatashin <pasha.tatashin@soleen.com>,
+        Rik van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>,
+        Hugh Dickins <hughd@google.com>, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-arch@vger.kernel.org, damon@lists.linux.dev
+Subject: Re: [PATCH v3 10/16] mm: replace pmd_to_swp_entry() with
+ softleaf_from_pmd()
+Message-ID: <0c429a7d-cc12-49b6-bc71-4b219683743c@lucifer.local>
+References: <cover.1762812360.git.lorenzo.stoakes@oracle.com>
+ <3fb431699639ded8fdc63d2210aa77a38c8891f1.1762812360.git.lorenzo.stoakes@oracle.com>
+ <68f18daf-cc45-479f-ac6f-0b4dce153ea7@suse.cz>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <68f18daf-cc45-479f-ac6f-0b4dce153ea7@suse.cz>
+X-ClientProxiedBy: LO4P123CA0018.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:150::23) To DM4PR10MB8218.namprd10.prod.outlook.com
+ (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1vMWfp-000k4P-Vv;;;mid=<87ikf3w5us.fsf@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=72.198.198.28;;;frm=ebiederm@xmission.com;;;spf=pass
-X-XM-AID: U2FsdGVkX18mnrD+bsi9GaqPd61WTLqlIJTub8z3bTo=
-X-Spam-Level: ****
-X-Spam-Report: 
-	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-	*  0.1 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-	*      [score: 0.5000]
-	*  1.5 TR_Symld_Words too many words that have symbols inside
-	*  0.7 XMSubLong Long Subject
-	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-	*      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
-	*  1.0 XM_B_Phish_Phrases Commonly used Phishing Phrases
-	*  1.0 XM_B_SpammyTLD Contains uncommon/spammy TLD
-	*  0.0 TR_XM_PhishingBody Phishing flag in body of message
-	*  1.5 XM_B_SpammyTLD3 Phishing rule with uncommon/spammy TLD Combo
-X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ****;Bernd Edlinger <bernd.edlinger@hotmail.de>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 871 ms - load_scoreonly_sql: 0.05 (0.0%),
-	signal_user_changed: 11 (1.2%), b_tie_ro: 9 (1.1%), parse: 1.97 (0.2%),
-	 extract_message_metadata: 32 (3.7%), get_uri_detail_list: 6 (0.7%),
-	tests_pri_-2000: 48 (5.5%), tests_pri_-1000: 11 (1.3%),
-	tests_pri_-950: 1.33 (0.2%), tests_pri_-900: 1.19 (0.1%),
-	tests_pri_-90: 124 (14.3%), check_bayes: 123 (14.1%), b_tokenize: 23
-	(2.7%), b_tok_get_all: 17 (1.9%), b_comp_prob: 4.6 (0.5%),
-	b_tok_touch_all: 73 (8.4%), b_finish: 0.89 (0.1%), tests_pri_0: 619
-	(71.1%), check_dkim_signature: 0.63 (0.1%), check_dkim_adsp: 2.4
-	(0.3%), poll_dns_idle: 0.67 (0.1%), tests_pri_10: 3.1 (0.4%),
-	tests_pri_500: 13 (1.5%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [RFC][PATCH] exec: Move cred computation under exec_update_lock
-X-SA-Exim-Connect-IP: 166.70.13.51
-X-SA-Exim-Rcpt-To: too long (recipient list exceeded maximum allowed size of 512 bytes)
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-SA-Exim-Scanned: No (on out01.mta.xmission.com); SAEximRunCond expanded to false
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|CO1PR10MB4722:EE_
+X-MS-Office365-Filtering-Correlation-Id: b5a6725d-92ea-4c14-ff57-08de29335902
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|7416014|376014|366016|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?ZYVGsgnZlPJvOWHnsNys2k8KmgtLKLK4YreQZeW+kSL1IMsdwiscRltzN2kg?=
+ =?us-ascii?Q?quSHc9atQAjQqH7w9qsaP+k2LtmdGm+4XClxnq97AKhs0taVnxHCVG+X116w?=
+ =?us-ascii?Q?aAUVHK7O/8neUOZBEta8xPWLVd+Gftu+xSfPQubS6XneGe7ugZ71kL62/ifi?=
+ =?us-ascii?Q?CEzvrI/dgqo3Q5Whjhj4jEVxC8oWa5lL4G7LQmhsc8XtRve3RZBzQwL5bNXP?=
+ =?us-ascii?Q?a19NvNFDCKHKmLne+saD6DgZNJpemRD2w5IlLFHLMUszloGYgK16ZA5oF87p?=
+ =?us-ascii?Q?XWeyEoVQdQwhT/GIsAlUvSfEmiwHX/c92TDud9SWzUHNAIo+ea4zT3r8Grxf?=
+ =?us-ascii?Q?oZW3soHXqwxS1vq2xwOQQs5pySc9EK+OnrCv7aofOvbJVD30EFfYt/ybo+CL?=
+ =?us-ascii?Q?MzrG1STwEwnfZ//pVY3BgcviAYveGuplFGiDKechQ2hE1aCWjOECEjev5fPO?=
+ =?us-ascii?Q?+RD90rkm/MWyqNM2YIAexs3yXFCGDW09EISOoFEpC23VKzWbxSlt+aFHb1+O?=
+ =?us-ascii?Q?WgFJ/BS48HssS3J+/w7l8vV3rSN4g2i53RQyXT+viL6g6KfREf0vV2prlKQO?=
+ =?us-ascii?Q?RrTo83Cl3rbuCdeEWzpJXR5XOXQagZtRBPJQbyFOe5wawpdYqHW/uab5sOWS?=
+ =?us-ascii?Q?gszOOiuG4TgUECnoNts8BTMsVP8+bfdQ7PiAWRlvDtiTVu/qBNnUIMg1fv6F?=
+ =?us-ascii?Q?ApYO18cIzgQB0t+27aUdqudG3ggenYdGKZV6PsYhX/6jj7Zu6e/fPWDHCEYn?=
+ =?us-ascii?Q?Xw4iURcjUNr8oIpwaQ8G38UfaQe0CXo+3F2N8jPMmJlys2HsQ8aR+6+wF1bQ?=
+ =?us-ascii?Q?C4laraIB09xKtPMAMMsEUSquHL8rUpzuZ8pWKG1wDhjY4XiyjHkOrwhn3Z/Z?=
+ =?us-ascii?Q?rlqrV/mW0OKNMJ1BiRGerV4tl+wx1+HLu/q6SH7dAuoBZy0QreCIKa6KP5Nq?=
+ =?us-ascii?Q?UjRDwPaDtkdyRMaBroWlOTwrTGHkIyhbKtRQCG7hx9penBtZwITTsua8Li0X?=
+ =?us-ascii?Q?KN/tvsFSLfXw+j1SvP0jGKhy59PV8Vq6zuEPRJNodvQw4yZubdN2LO/KOOY5?=
+ =?us-ascii?Q?Zh+633qDHacCpC9FnOQTKVcq8iZluWSspAr8YSOOq6LuskjHjO2QMSGWEIFS?=
+ =?us-ascii?Q?yJNsqLZrq9FraFFWZ8hha9vJHrbxoqPRw1eoeUZ9j9cvZPXi6hnMzcf+Zdrt?=
+ =?us-ascii?Q?j2UNKgdXuKwqcM/5lAZLy4nyMbvhUoE+HPpytlKrEoJ71jhm4xYMErJoTTXf?=
+ =?us-ascii?Q?wl4BPUSxFPMIwCmQI2NYe2njdWdobM3sZQFDG8xpGZ7go/Z/qfFPE6RztzDG?=
+ =?us-ascii?Q?bDYaC07vu+OknBWq+ACFiGQne06A3XT5fG57+SI6R9cRSMDCwdrPNzj5HYUw?=
+ =?us-ascii?Q?TJNNux0WqZV9WAqi6lsnUeHFToDBEaPUSs54JRkw6y4+3tTj+vvDvvuDgcf4?=
+ =?us-ascii?Q?QMIq7LNp9fkTnLhw3kE6uSWNza0lSuM8?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?ygaPl0qM1b3cXr1hC1xtAFcvEVetgAJFbl96OUQrwPDlgdUyIRhgYBBTvCfs?=
+ =?us-ascii?Q?oYss0AFsGXYI10/f9Nbj4xsnoDkD2C0EJmQQiDVR5IeNl9U7cQgUfauyk8Nc?=
+ =?us-ascii?Q?BaBxx+voprsO+3bR4pEAEIjZFucKBkF6ZO2LABHZqaCIqU0WWh6MYCRuFsXM?=
+ =?us-ascii?Q?JHFZi92lXHvbq373gcjX1ofz+408zrjDtDIwCd1KPgoYO80Xsxdwo6RzLkFd?=
+ =?us-ascii?Q?yyDyH3urHCMN0fqif2WhSr9p7CL30OAbaNbx8EhswpU2j88DVgg2ceMMY768?=
+ =?us-ascii?Q?byCpf9X/ULaUVD8l1FIjf+kX0r7OOgAl341k2ARGFAnfyHqMFlXm35XfjllZ?=
+ =?us-ascii?Q?iNKCSrI8RPhRSRUP6mIA+Ruzh9JaNWe+I3w3IonFm77JKz8Bv6CjsHx3maRb?=
+ =?us-ascii?Q?mOxZNKtFIouvfN0gpjVhm6nDCkyOHy0hCjYTCIa8GXikoNJuLgxhvMJrJKTY?=
+ =?us-ascii?Q?RhK3cAKnWLQyyg6+VYQiLytrBctSrekN96CPnE9QAG/PUOS5DPjvUoE4l05C?=
+ =?us-ascii?Q?eJTvbS99xtrclN+wmfxqkARohqo5+ox3a63+bV6EfInfHdKA86q/Dvt1iHHX?=
+ =?us-ascii?Q?S9C09e2go6ecuSXLVxEg1hZeHz+PJ974wo6b+05SgINZyRRHv9CkV8+4kSGD?=
+ =?us-ascii?Q?Q8cKvTmHhrq7j0IyDMF+fnOP7ZdC9ObwhAA6XI8brhQ5h6o0voXh7d614h5M?=
+ =?us-ascii?Q?GVMqyTuOIdkXDpSAqUCF90D86JT5AUbF6gWhQLEGs2BsEGOfon3FgGeib83J?=
+ =?us-ascii?Q?i5j9aBDHMkEAzsfVthSz96C+mzaxJ9ragdTodLHg2u8sCVs8aptp43ZEvDuI?=
+ =?us-ascii?Q?rdzSOERfVeAy/W6cGYD5lBl8n44A+it6yUQd8wKCNKVd45FJIKj4/bds8aEh?=
+ =?us-ascii?Q?Aei9TOSgi5KUjFz61yAmTJw4cl5iuOcJNwo2o1y0bfx2nNQQzIr+TixIRPg9?=
+ =?us-ascii?Q?V4h079y62xKwZle0+u7u1DWlBlDFlMPMrTLiawK3UFMgCy5Wj6+2uWTHdPUb?=
+ =?us-ascii?Q?YWQFvly1x4NdrCPqh59japjGvbt4fWt5bW324JG2AGvye6XKVHex3CF05tOm?=
+ =?us-ascii?Q?/ew9ZF8HNz2yB/GWwb/LKG2g3YWE6wQYrJkoTmAvxNxttg86p3zD0NpSg9B2?=
+ =?us-ascii?Q?IqH9QO3frS8sCLb3B6c1lgpI7bf9cuiZBv1xnWjvvilQNyR7G2rzYSQwrSfn?=
+ =?us-ascii?Q?dSq2k75ZPCWwwXpslIasrZ9OSu4V3cDhcsmxV6unZA7DYnZWuA1LNiyXAkC5?=
+ =?us-ascii?Q?TLWUkWDkQtzuYs4gYkqn2v2GMYnBOmYeljd0HQkALMAu1EJC5SnetuTf2qPd?=
+ =?us-ascii?Q?EgLrO2fOzQTQKKQOP0qxFmYviBUeAn97/llIMdq+pl0jTJECHJgDGJoaOs+L?=
+ =?us-ascii?Q?0YXasqI8KYUvc46uXEEtO2fzm6D6zqR2n21D/0H7qtY76eQRAYPH3/oCOzTL?=
+ =?us-ascii?Q?inc0/ndE765GtN9QjeM3L0s+NIJ9XrROf/6aZI6sDGqFVxnMy6sVV3ISuoKA?=
+ =?us-ascii?Q?9ApFljzM95RfAH+5KgeeouwxUTgAWv8oghEYSkGVE0UMpJEqmC4SXaCIAwDd?=
+ =?us-ascii?Q?edd5CukKeBEt+vKsNg49/ex2OZ1p6HaMC0RXXlJNu9i/MWmwDkxKF9lyaXP7?=
+ =?us-ascii?Q?DA=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	9i/GE7fRMV3KMtLWHeJ5/GPSrlm7ZEJ6anK4s0tM/u8aDJGBkTeXxB5RqrX5987p7HZudKW4j0pvaQu5lNL0Fo2sQ7LCsi0d1HTovUIq+3TAX4oYp/inv04sxGOxLoEktKM3R4yHQE4J3x8EV6CNzQHnlcUtsypBYtLWzspjWq0uegKsxzTNQXXBIovjQtjBgjoTO+QIB0yMku1WEohVhkc8z5s1kbkDW47KI3D6/axyPz/JntdkyhEUWXZ3avMc6kFz3xCpmulFVTHvdCepePuR7WmhQCvFEZkDY3FwE3WLp7ywcOox1bQmxmAE8XgOu1ZiEWMxqq3sTXAyvLjE3tgQqxvlrrm/ciN16cSK/GdqmMgOnVJX0jVU+pz9kkjCsqwFIAtxhiSV6lahTE993lmwrVCr49WgFnojH/L0KeIcmHQhJijVpGSUtp48j8kTxGcDPpdHQbF9n9zpHYEuxhXASwjNOBrpInH2bH1BTAb8XhaEAc+ZCptf7FFlwsIahqE5briLIgdpkwJX+lPed8GoSgkbkllBX7jMmvSTQGdXwc1oGzEpbsgoNtWQWmA9YP19NL7Pfc2MGrsEXe0I5ZXsbqqhpBN6ZlOpc4uV/QE=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b5a6725d-92ea-4c14-ff57-08de29335902
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Nov 2025 19:22:44.7343
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: /qB0rDGItDgygzZDJvd16PRaZXhVDh+d/RxJYe0CfzoX6XP943AycITwPjJ5TaEKV+8RrU1jxjd2JzYuY6VLKT4qrHlVeUSdX566TxYKr/8=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR10MB4722
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-21_05,2025-11-21_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxlogscore=999
+ suspectscore=0 malwarescore=0 mlxscore=0 bulkscore=0 phishscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2510240000 definitions=main-2511210147
+X-Authority-Analysis: v=2.4 cv=DYoaa/tW c=1 sm=1 tr=0 ts=6920bc2c cx=c_pps
+ a=XiAAW1AwiKB2Y8Wsi+sD2Q==:117 a=XiAAW1AwiKB2Y8Wsi+sD2Q==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=6UeiqGixMTsA:10 a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=VwQbUJbxAAAA:8 a=yPCof4ZbAAAA:8 a=Mbr5WjKDFZc3idkGdFwA:9 a=CjuIK1q_8ugA:10
+X-Proofpoint-GUID: 6_6RF7ZwKMfMYcnhFJ4wm3-0QuXf7w5h
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTE1MDAzMSBTYWx0ZWRfX+qjfnqz1KG6I
+ /OVLgr/UFz9cCfa6neMo46Yrivm2Bx3kiuWRAZb0kcFCdXuD+s/Jot032F0Yi2aY4eYGc5DhCM0
+ FIiCdjBaLaQIXFQPSpt8Zztr9Lumci6BhV8+bTYa+QogycrXPiKFpuAdlZKghMj2qhA2d5Kcg1F
+ OtQUtriGytcyauysYVmXqO7p1PLZVFrrqUiv45f7YkEhf71VR8ZPTfJEy4L8xLv801tj/vWEFGg
+ x9t5+7tcbOYj94ej5SHiMlsURIA212Vr0P9t80S2Vtvz+SDtwQbCkA5GUevkQhmFXzVgo9RlYD/
+ kQqJJ3hBO1B4b6oGKlvX2+zzewgk7Z8yDnHRN3O1yhRnPcudR/UFW8vCxZfAf04p4+NdxJdn0Ye
+ tuN2pg0uGSH6FYpvFRCk+byFg7rAOA==
+X-Proofpoint-ORIG-GUID: 6_6RF7ZwKMfMYcnhFJ4wm3-0QuXf7w5h
 
-Bernd Edlinger <bernd.edlinger@hotmail.de> writes:
+On Fri, Nov 21, 2025 at 07:42:50PM +0100, Vlastimil Babka wrote:
+> On 11/10/25 23:21, Lorenzo Stoakes wrote:
+> > Introduce softleaf_from_pmd() to do the equivalent operation for PMDs that
+> > softleaf_from_pte() fulfils, and cascade changes through code base
+> > accordingly, introducing helpers as necessary.
+>
+> Some of that is adding new pte stuff too, so it could have been separate
+> patch, but it's not a big deal.
 
-> On 11/21/25 10:35, Bernd Edlinger wrote:
->> On 11/21/25 08:18, Eric W. Biederman wrote:
->>> Bernd Edlinger <bernd.edlinger@hotmail.de> writes:
->>>
->>>> Hi Eric,
->>>>
->>>> thanks for you valuable input on the topic.
->>>>
->>>> On 11/21/25 00:50, Eric W. Biederman wrote:
->>>>> "Eric W. Biederman" <ebiederm@xmission.com> writes:
->>>>>
->>>>>> Instead of computing the new cred before we pass the point of no
->>>>>> return compute the new cred just before we use it.
->>>>>>
->>>>>> This allows the removal of fs_struct->in_exec and cred_guard_mutex.
->>>>>>
->>>>>> I am not certain why we wanted to compute the cred for the new
->>>>>> executable so early.  Perhaps I missed something but I did not see any
->>>>>> common errors being signaled.   So I don't think we loose anything by
->>>>>> computing the new cred later.
->>>>>
->>>>> I should add that the permission checks happen in open_exec,
->>>>> everything that follows credential wise is just about representing in
->>>>> struct cred the credentials the new executable will have.
->>>>>
->>>>> So I am really at a loss why we have had this complicated way of
->>>>> computing of computed the credentials all of these years full of
->>>>> time of check to time of use problems.
->>>>>
->>>>
->>>> Well, I think I see a problem with your patch:
->>>>
->>>> When the security engine gets the LSM_UNSAFE_PTRACE flag, it might
->>>> e.g. return -EPERM in bprm_creds_for_exec in the apparmor, selinux
->>>> or the smack security engines at least.  Previously that callback
->>>> was called before the point of no return, and the return code should
->>>> be returned as a return code the the caller of execve.  But if we move
->>>> that check after the point of no return, the caller will get killed
->>>> due to the failed security check.
->>>>
->>>> Or did I miss something?
->>>
->>> I think we definitely need to document this change in behavior.  I would
->>> call ending the exec with SIGSEGV vs -EPERM a quality of implementation
->>> issue.  The exec is failing one way or the other so I don't see it as a
->>> correctness issue.
->>>
->>> In the case of ptrace in general I think it is a bug if the mere act of
->>> debugging a program changes it's behavior.  So which buggy behavior
->>> should we prefer?  SIGSEGV where it is totally clear that the behavior
->>> has changed or -EPERM and ask the debugged program to handle it.
->>> I lean towards SIGSEGV because then it is clear the code should not
->>> handle it.
->>>
->>> In the case of LSM_UNSAFE_NO_NEW_PRIVS I believe the preferred way to
->>> handle unexpected things happening is to terminate the application.
->>>
->>> In the case of LSM_UNSAFE_SHARE -EPERM might be better.  I don't know
->>> of any good uses of any good uses of sys_clone(CLONE_FS ...) outside
->>> of CLONE_THREAD.
->>>
->>>
->>> Plus all of these things are only considerations if we are exec'ing a
->>> program that transitions to a different set of credentials.  Something
->>> that happens but is quite rare itself.
->>>
->>> In practice I don't expect there is anything that depends on the exact
->>> behavior of what happens when exec'ing a suid executable to gain
->>> privileges when ptraced.   The closes I can imagine is upstart and
->>> I think upstart ran as root when ptracing other programs so there is no
->>> gaining of privilege and thus no reason for a security module to
->>> complain.
->>>
->>> Who knows I could be wrong, and someone could actually care.  Which is
->>> hy I think we should document it.>>
->> 
->> 
->> Well, I dont know for sure, but the security engine could deny the execution
->> for any reason, not only because of being ptraced.
->> Maybe there can be a policy which denies user X to execute e.g. any suid programs.
->> 
->> 
->> Bernd.
->> 
->
-> Hmm, funny..
->
-> I installed this patch on top of
->
-> commit fd95357fd8c6778ac7dea6c57a19b8b182b6e91f (HEAD -> master, origin/master, origin/HEAD)
-> Merge: c966813ea120 7b6216baae75
-> Author: Linus Torvalds <torvalds@linux-foundation.org>
-> Date:   Thu Nov 20 11:04:37 2025 -0800
->
-> but it does panic when I try to boot:
->
-> [  0.870539]     TERM=1inux
-> [  0.870573] Starting init: /bin/sh exists but couldn't execute it (error -14) 0.8705751 Kernel panic- not syncing: No working init found. Try passing i mit= option to kernel. See Linux Documentation/admin-guide/init.rst for guidance
-> [  0.870577] CPU: UID: 0 PID: 1 Comm: sh Not tainted 6.18.0-rc6+ #1 PREEMPT(voluntary)
-> [  0.870579] Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBo x 12/01/2006
-> [  0.870580] Call Trace:
-> [  0.870590]  <TASK>
-> [  0.870592]  vpanic+0x36d/0x380
-> [  0.870607]  ? __pfx_kernel_init+0x10/0x10
-> [  0.870615]  panic+0x5b/0x60
-> [  0.870617]  kernel_init+0x17d/0x1c0
-> [  0.870623]  ret_from_fork+0x124/0x150
-> [  0.870625}  ? __pfx_kernel_init+0x10/0x10
-> [  0.870627]  ret_from_fork_asm+0x1a/0x30
-> [  0.870632]  </TASK>
-> [  0.8706631 Kernel Offset: 0x3a800000 from Oxffffffff81000000 (relocation ran ge: 0xffffffff80000000-0xffffffffbfffffff)
-> [  0.880034] ---[ end Kernel panic - not syncing: No working init found. Try passing init option to kernel. See Linux Documentation/admin-guide/init.rst for guidance. 1---`
->
->
-> Is that a known problem?
+Yeah is always tricky to figure out how to separate things so tried to get
+a reasonable balance :)
 
-Nope.  It looks like the code needs a little bit bug fixing testing.
+>
+> > We are then able to eliminate pmd_to_swp_entry(), is_pmd_migration_entry(),
+> > is_pmd_device_private_entry() and is_pmd_non_present_folio_entry().
+> >
+> > This further establishes the use of leaf operations throughout the code
+> > base and further establishes the foundations for eliminating is_swap_pmd().
+> >
+> > No functional change intended.
+> >
+> > Reviewed-by: SeongJae Park <sj@kernel.org>
+> > Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+>
+> Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
 
-I will take see about taking a look.
+Thanks!
 
-Eric
+>
+> Assuming the below is fixed. Glad I could demonstrate I'm not just rubber
+> stamping all this ;P
+> (probably missed stuff anyway, as usual)
+
+:)
+
+>
+> > --- a/mm/page_table_check.c
+> > +++ b/mm/page_table_check.c
+> > @@ -8,7 +8,7 @@
+> >  #include <linux/mm.h>
+> >  #include <linux/page_table_check.h>
+> >  #include <linux/swap.h>
+> > -#include <linux/swapops.h>
+> > +#include <linux/leafops.h>
+> >
+> >  #undef pr_fmt
+> >  #define pr_fmt(fmt)	"page_table_check: " fmt
+> > @@ -179,10 +179,10 @@ void __page_table_check_pud_clear(struct mm_struct *mm, pud_t pud)
+> >  EXPORT_SYMBOL(__page_table_check_pud_clear);
+> >
+> >  /* Whether the swap entry cached writable information */
+> > -static inline bool swap_cached_writable(swp_entry_t entry)
+> > +static inline bool softleaf_cached_writable(softleaf_t entry)
+> >  {
+> > -	return is_writable_device_private_entry(entry) ||
+> > -	       is_writable_migration_entry(entry);
+> > +	return softleaf_is_device_private(entry) ||
+>
+> Shouldn't there be softleaf_is_device_private_write(entry) ?
+
+Ah yeah you're right. I don't think this probably matters here in practice
+(as in, it'd probably be a bug if pmd_swp_uffd_wp() was true but also read
+device private entry).
+
+But it's incorrect obviously and a mistake, will send fix-patch! Thanks! :)
+
+>
+> > +		softleaf_is_migration_write(entry);
+> >  }
+> >
+> >  static void page_table_check_pte_flags(pte_t pte)
+> > @@ -190,9 +190,9 @@ static void page_table_check_pte_flags(pte_t pte)
+> >  	if (pte_present(pte)) {
+> >  		WARN_ON_ONCE(pte_uffd_wp(pte) && pte_write(pte));
+> >  	} else if (pte_swp_uffd_wp(pte)) {
+> > -		const swp_entry_t entry = pte_to_swp_entry(pte);
+> > +		const softleaf_t entry = softleaf_from_pte(pte);
+> >
+> > -		WARN_ON_ONCE(swap_cached_writable(entry));
+> > +		WARN_ON_ONCE(softleaf_cached_writable(entry));
+> >  	}
+> >  }
+> >
+> > @@ -219,9 +219,9 @@ static inline void page_table_check_pmd_flags(pmd_t pmd)
+> >  		if (pmd_uffd_wp(pmd))
+> >  			WARN_ON_ONCE(pmd_write(pmd));
+> >  	} else if (pmd_swp_uffd_wp(pmd)) {
+> > -		swp_entry_t entry = pmd_to_swp_entry(pmd);
+> > +		const softleaf_t entry = softleaf_from_pmd(pmd);
+> >
+> > -		WARN_ON_ONCE(swap_cached_writable(entry));
+> > +		WARN_ON_ONCE(softleaf_cached_writable(entry));
+> >  	}
+> >  }
+> >
 
