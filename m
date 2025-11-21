@@ -1,177 +1,298 @@
-Return-Path: <linux-fsdevel+bounces-69449-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69450-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CE82C7B5D6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Nov 2025 19:43:24 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB4AAC7B5CE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Nov 2025 19:43:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3F2D24E6457
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Nov 2025 18:43:06 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2D9F735DC8F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Nov 2025 18:43:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E7C72F39BD;
-	Fri, 21 Nov 2025 18:42:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E720E2F5480;
+	Fri, 21 Nov 2025 18:42:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Cc4Aqxk8"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="UnKYWy8x";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="8ZePVM5W";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="UnKYWy8x";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="8ZePVM5W"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFF1D2F1FCA
-	for <linux-fsdevel@vger.kernel.org>; Fri, 21 Nov 2025 18:42:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EBC82F5465
+	for <linux-fsdevel@vger.kernel.org>; Fri, 21 Nov 2025 18:42:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763750573; cv=none; b=N/544tH5Y9CryQlIlMxQzmr9SLQ5q9UG2UYzgHLRt7/7zgfw7wdf1cUON/+fDr7Bv7RDKKruJ0Atd+J23lAyPArAAI5Vfzx3PS4ajMc3fOvyTeF7E4NX5Kjlw7CQjltthx/U+N6aqlAjVvrleKccZxmxz+cjVKNlJY93/AJgG1M=
+	t=1763750575; cv=none; b=buDtE4fYDhJU8CH3Dm+yimqKMg2KN8SCwdSyMK/678AHxhKH4fy/jHICAiEy1vfNqvfy9suaxdBuSIafG0N0nYQMD7mJ2jTikhl/3ZjzB2ufOGF4CWgKm9QXsyo9w+i+/Rho8fSHbJRQxexTapCrRUOgx6C01V+Yro1kW6ErSXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763750573; c=relaxed/simple;
-	bh=pP7IE0ptFG+z92q5nmZ1V3S1z9NWYDQ+50kpokca4Os=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dc+1cRLBgpIU5dpN7ZyzaV40geQJuEUxevCuu0/JYSxSwsPoWfan0u88p3pnF109LkjK1OyhbI8Q6qVKux+WGDadBWkeodalvX6D2ARswTqudfEa0Zw4VnmrbYJHLDgvU7RZw7EA9lmVIjgI1A7wOFZLk/XukJwYfJ4L/gwRx68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Cc4Aqxk8; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-64175dfc338so4120087a12.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Nov 2025 10:42:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1763750569; x=1764355369; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=YaGqj6qhvxsCaKPO1FZ2VNrm9hXCF3tI+Y3lpcaSAOA=;
-        b=Cc4Aqxk83oGN81zJhqyx6+K2QhqkjmRFKbfT38569zy8BqzOMxqguLAIUFDL877osn
-         CyAlBPUAQJ4etEQchyy7S/blvjBtUGhYHTWrJSH975C07Bt8lUsfHFaYucQy+F/oXuHD
-         olg8y6lzKA7Et/bV1ypWijE35qkmwEA/RPtXs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763750569; x=1764355369;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YaGqj6qhvxsCaKPO1FZ2VNrm9hXCF3tI+Y3lpcaSAOA=;
-        b=SLprjUOHXXZ1Ibxk0YAxLI78lV4HipQbamABnVN8jNjeCHkGxFUlcKdOUGQlLo/NVg
-         UQ2qh0hZjnbubSV2P2oo7/REZUKKGxGW2tYqQ6ZiZqS6bhLPZzbG+V/wkc2qFRo2YRR9
-         6Dv2ICOW3kpiF3e1vmywQcj5HD6femXwAlSf9BlROafmYASYFYsTA+QYfz7/cB/l7UKG
-         y+Z1Kv5odBxmpClEFIrsxpQ1Ps6lGIGdUXDePZV+HmdYo8cerpUiop9BnC6eApgNq4rB
-         Bq74N6xOxRi9UD6dRAZCNZfvGQGbOsV/q8ykLCTNg0Yu3kmS8+1nJAm19rclU4QYHpPA
-         bXNw==
-X-Forwarded-Encrypted: i=1; AJvYcCV9T7SfIDC+CNXeOnFXAQDupmbodS5MDq74ix1lzq/MmTAdT41epnxlau69qmn3ou8IIW7DN+U59zEF/qrF@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFa7I0yfefbnrYyWs0boW2D/Utkzt+9R7gbKSaelXigpo5t/pg
-	F3Mu5/QEi0FfRcHyRdVmjRR3TUPL5Me5mj56QRLAEg2ZVVrQVHdP00sy5cY/ryL3fait7vi8Lb7
-	3ezakTQw=
-X-Gm-Gg: ASbGnctuwRzz7zrxeSt8fGSy22K6JigPo0/Dwn5z69E9uyAJQKh9AzyrNGML/s0wpRF
-	GrQRcK4j8SmwyvrwEWkfJAqOZI8WZ9lF87UbytAtZfkO4hd6NubpG1yUamYxDePDCvsL5EdTLwW
-	Eim/JdnB2++BqFbY2iJJ46FDmBZUHU5Vn4o5ez92At/cucX8KMmLObk6fFdw46RXPgo3Tbvhop8
-	QcSpUEaiZvQpCZs6WvWFW8FYvVYimiCumTX8OHV/nf2jgCmpkQHnC/147znG8pTCByJ97c6xN3B
-	i3cSYjPMf50qgpMM8WNHg4r+T1G2kyoQO7LXYAqKZgWLXOaj+1rk7Xy72qlT56YGeWOLvPTTNXR
-	aeT0bcqk8onPTaAa8nu2iPDRPRvi2Xiw3UABdUR0XfMoRDzpc0AMx3MBfm9MWWGtacZqPqB6mKY
-	Ch5XcZQMVMd7GZz1bZ5VN/sED9u5cJaNi4JQmMAXEvdqtxayxhXx4oB5vwCWAG
-X-Google-Smtp-Source: AGHT+IGtsu4pcdBwZ95NoiFm3wpWok+ime2L9S+2IvOPldTkUI7aww3oXBlh2QzPIaAtAm0AW1eThQ==
-X-Received: by 2002:a05:6402:5244:b0:640:f2cd:831 with SMTP id 4fb4d7f45d1cf-6455443f4bemr3147628a12.10.1763750568903;
-        Fri, 21 Nov 2025 10:42:48 -0800 (PST)
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com. [209.85.218.43])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-645363ac98asm5026530a12.5.2025.11.21.10.42.44
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Nov 2025 10:42:45 -0800 (PST)
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-b7370698a8eso304955566b.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Nov 2025 10:42:44 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXRETF5i5uIKk6YdA/22AIoUjALqoS+Htox0jqTVVEvopiW6lFRDMVUrR+YNSa3UjU5MARH9gyH3aUCfeOr@vger.kernel.org
-X-Received: by 2002:a17:907:d8f:b0:b75:721:4297 with SMTP id
- a640c23a62f3a-b767183c209mr348578666b.47.1763750564580; Fri, 21 Nov 2025
- 10:42:44 -0800 (PST)
+	s=arc-20240116; t=1763750575; c=relaxed/simple;
+	bh=W4dgOURNudK83HIJKjpjqonBEvCmGgfIsv55zR4rHdo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jglr/B4ZMNowY9apg5bvzYreWPVcKFOyTy2nV+PhcfeDV6zza9AxowjEHUnpocxciyituoYYwY9havouBtWVVhzeniwPIhLBz3vESHCokQ3QVdoOnZg5s+cExwjbp/4Iml9dgX+OvGeOh/jqkMm1j8dEHLeEuj+Y8j7vigslmJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=UnKYWy8x; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=8ZePVM5W; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=UnKYWy8x; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=8ZePVM5W; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 10BDF5BCCD;
+	Fri, 21 Nov 2025 18:42:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1763750571; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ldBKjiorZcKSWMx/nlx25VPXqX0kjWoWAmr1aGdzduM=;
+	b=UnKYWy8x4jc/1mtLqy8WJ6r81TuO/JefeO53rOMwLy+zmuNBfVRphZUpE1wGCOhsS4cEYv
+	6HBq1BSr+g/oTXNPoYJig0a4csUE27c2crKbt1SmYfqdgXBbM6kqKgyXpojSdOK7E4zgs0
+	iyMiFr55bPbvkRA+4zZ9d/q+/QmQV+0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1763750571;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ldBKjiorZcKSWMx/nlx25VPXqX0kjWoWAmr1aGdzduM=;
+	b=8ZePVM5WojCur/oRcjlGiisf/UGtdzxReXY1X2x5xpWvoQOXwKLmN9q2cp1CBtynRysqj+
+	VJOcPx4zykO19hCQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=UnKYWy8x;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=8ZePVM5W
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1763750571; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ldBKjiorZcKSWMx/nlx25VPXqX0kjWoWAmr1aGdzduM=;
+	b=UnKYWy8x4jc/1mtLqy8WJ6r81TuO/JefeO53rOMwLy+zmuNBfVRphZUpE1wGCOhsS4cEYv
+	6HBq1BSr+g/oTXNPoYJig0a4csUE27c2crKbt1SmYfqdgXBbM6kqKgyXpojSdOK7E4zgs0
+	iyMiFr55bPbvkRA+4zZ9d/q+/QmQV+0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1763750571;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ldBKjiorZcKSWMx/nlx25VPXqX0kjWoWAmr1aGdzduM=;
+	b=8ZePVM5WojCur/oRcjlGiisf/UGtdzxReXY1X2x5xpWvoQOXwKLmN9q2cp1CBtynRysqj+
+	VJOcPx4zykO19hCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 974BF3EA61;
+	Fri, 21 Nov 2025 18:42:50 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id RUSaJKqyIGmdCwAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Fri, 21 Nov 2025 18:42:50 +0000
+Message-ID: <68f18daf-cc45-479f-ac6f-0b4dce153ea7@suse.cz>
+Date: Fri, 21 Nov 2025 19:42:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251121-work-fd-prepare-v3-0-2c6444d13e0e@kernel.org> <20251121-work-fd-prepare-v3-4-2c6444d13e0e@kernel.org>
-In-Reply-To: <20251121-work-fd-prepare-v3-4-2c6444d13e0e@kernel.org>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Fri, 21 Nov 2025 10:42:28 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wgs2+RyEaWM+5pb2ZxdawHThdXxRWjY8RZwY+dDZZUurQ@mail.gmail.com>
-X-Gm-Features: AWmQ_bnLSJkTAnJpDzXAQxsB7pWHwV4gAWaGPp7Se2t0GLuEEbV62Fc7qor2anU
-Message-ID: <CAHk-=wgs2+RyEaWM+5pb2ZxdawHThdXxRWjY8RZwY+dDZZUurQ@mail.gmail.com>
-Subject: Re: [PATCH RFC v3 04/47] fhandle: convert do_handle_open() to FD_PREPARE()
-To: Christian Brauner <brauner@kernel.org>
-Cc: Jeff Layton <jlayton@kernel.org>, Amir Goldstein <amir73il@gmail.com>, Jens Axboe <axboe@kernel.dk>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 10/16] mm: replace pmd_to_swp_entry() with
+ softleaf_from_pmd()
+Content-Language: en-US
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Janosch Frank <frankja@linux.ibm.com>,
+ Claudio Imbrenda <imbrenda@linux.ibm.com>,
+ David Hildenbrand <david@redhat.com>,
+ Alexander Gordeev <agordeev@linux.ibm.com>,
+ Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+ Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>, Peter Xu <peterx@redhat.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Arnd Bergmann <arnd@arndb.de>, Zi Yan <ziy@nvidia.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>, Nico Pache
+ <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+ Lance Yang <lance.yang@linux.dev>, Muchun Song <muchun.song@linux.dev>,
+ Oscar Salvador <osalvador@suse.de>, Mike Rapoport <rppt@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+ Matthew Brost <matthew.brost@intel.com>,
+ Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
+ Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>,
+ Ying Huang <ying.huang@linux.alibaba.com>,
+ Alistair Popple <apopple@nvidia.com>,
+ Axel Rasmussen <axelrasmussen@google.com>, Yuanchu Xie <yuanchu@google.com>,
+ Wei Xu <weixugc@google.com>, Kemeng Shi <shikemeng@huaweicloud.com>,
+ Kairui Song <kasong@tencent.com>, Nhat Pham <nphamcs@gmail.com>,
+ Baoquan He <bhe@redhat.com>, Chris Li <chrisl@kernel.org>,
+ SeongJae Park <sj@kernel.org>, Matthew Wilcox <willy@infradead.org>,
+ Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
+ Xu Xin <xu.xin16@zte.com.cn>, Chengming Zhou <chengming.zhou@linux.dev>,
+ Jann Horn <jannh@google.com>, Miaohe Lin <linmiaohe@huawei.com>,
+ Naoya Horiguchi <nao.horiguchi@gmail.com>, Pedro Falcato <pfalcato@suse.de>,
+ Pasha Tatashin <pasha.tatashin@soleen.com>, Rik van Riel <riel@surriel.com>,
+ Harry Yoo <harry.yoo@oracle.com>, Hugh Dickins <hughd@google.com>,
+ linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+ linux-s390@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-arch@vger.kernel.org, damon@lists.linux.dev
+References: <cover.1762812360.git.lorenzo.stoakes@oracle.com>
+ <3fb431699639ded8fdc63d2210aa77a38c8891f1.1762812360.git.lorenzo.stoakes@oracle.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <3fb431699639ded8fdc63d2210aa77a38c8891f1.1762812360.git.lorenzo.stoakes@oracle.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 10BDF5BCCD
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MID_RHS_MATCH_FROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[linux.ibm.com,redhat.com,zeniv.linux.org.uk,kernel.org,suse.cz,arndb.de,nvidia.com,linux.alibaba.com,oracle.com,arm.com,linux.dev,suse.de,google.com,suse.com,intel.com,gmail.com,sk.com,gourry.net,huaweicloud.com,tencent.com,infradead.org,ziepe.ca,zte.com.cn,huawei.com,soleen.com,surriel.com,vger.kernel.org,kvack.org,lists.linux.dev];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[oracle.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
+	TO_MATCH_ENVRCPT_SOME(0.00)[];
+	RCPT_COUNT_GT_50(0.00)[65];
+	RCVD_COUNT_TWO(0.00)[2];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: -3.01
+X-Spam-Level: 
 
-On Fri, 21 Nov 2025 at 10:01, Christian Brauner <brauner@kernel.org> wrote:
->
-> +       FD_PREPARE(fdf, open_flag, file_open_handle(&path, open_flag));
-> +       retval = ACQUIRE_ERR(fd_prepare, &fdf);
-> +       if (retval)
-> +               return retval;
->
-> -       fd_install(fd, file);
-> -       return take_fd(fd);
-> +       return fd_publish(fdf);
+On 11/10/25 23:21, Lorenzo Stoakes wrote:
+> Introduce softleaf_from_pmd() to do the equivalent operation for PMDs that
+> softleaf_from_pte() fulfils, and cascade changes through code base
+> accordingly, introducing helpers as necessary.
 
-Ok, this looks nicer to me, but can we take it one more step further?
+Some of that is adding new pte stuff too, so it could have been separate
+patch, but it's not a big deal.
 
-Can we just make that FD_PREPARE() macro ust _contain_ the
-ACQUIRE_ERR(fd_prepare) thing too?
+> We are then able to eliminate pmd_to_swp_entry(), is_pmd_migration_entry(),
+> is_pmd_device_private_entry() and is_pmd_non_present_folio_entry().
+> 
+> This further establishes the use of leaf operations throughout the code
+> base and further establishes the foundations for eliminating is_swap_pmd().
+> 
+> No functional change intended.
+> 
+> Reviewed-by: SeongJae Park <sj@kernel.org>
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
-I realize that you can't make FD_PREPARE() just return the error code,
-because it needs to be a statement (in order to declare the new class
-variable). So while I'd have *preferred* to see something like
+Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
 
-        retval = FD_PREPARE(fdf, open_flag, open_fn(...));
-        if (retval)
-                return retval;
-        return fd_publish(fdf);
+Assuming the below is fixed. Glad I could demonstrate I'm not just rubber
+stamping all this ;P
+(probably missed stuff anyway, as usual)
 
-that doesn't work syntactically. Foiled by the pitiful C preprocessor again.
+> --- a/mm/page_table_check.c
+> +++ b/mm/page_table_check.c
+> @@ -8,7 +8,7 @@
+>  #include <linux/mm.h>
+>  #include <linux/page_table_check.h>
+>  #include <linux/swap.h>
+> -#include <linux/swapops.h>
+> +#include <linux/leafops.h>
+>  
+>  #undef pr_fmt
+>  #define pr_fmt(fmt)	"page_table_check: " fmt
+> @@ -179,10 +179,10 @@ void __page_table_check_pud_clear(struct mm_struct *mm, pud_t pud)
+>  EXPORT_SYMBOL(__page_table_check_pud_clear);
+>  
+>  /* Whether the swap entry cached writable information */
+> -static inline bool swap_cached_writable(swp_entry_t entry)
+> +static inline bool softleaf_cached_writable(softleaf_t entry)
+>  {
+> -	return is_writable_device_private_entry(entry) ||
+> -	       is_writable_migration_entry(entry);
+> +	return softleaf_is_device_private(entry) ||
 
-But since absolutely everybody *has* to have that
+Shouldn't there be softleaf_is_device_private_write(entry) ?
 
-        retval = ACQUIRE_ERR(fd_prepare, &fdf);
-        if (retval)
-                ...
-
-sequence immediately after the FD_PREPARE(), and since that really
-looks like magic line noise, I feel that it should at least be better
-integrated.
-
-It could be done multiple ways, I'm sure, but _one_ way to do it would
-be to just add the error variable name as an argument, and write it
-all as
-
-        FD_PREPARE(fdf, retval, open_flag, open_fn(...));
-        if (retval)
-                return retval;
-
-which at least avoids *some* of the line noise.
-
-Another way would be to literally just add the "if ()" thing entirely
-into it, and declare a local error variable. That can be done by using
-a "for()" as an if-statement, ie the final part of the FD_PREPARE()
-macro would be
-
-        for (int FD_ERR = ACQUIRE_ERR(fd_prepare, &_var); FD_ERR; FD_ERR=0)
-
-and then you could write all of this out as
-
-        FD_PREPARE(fdf, retval, open_flag, open_fn(...))
-                return FD_ERR;
-        return fd_publish(fdf);
-
-which admittedly looks a bit odd, but at least avoids having to know
-to write out that ACQUIRE_ERR(fd_prepare..) thing, and generally looks
-pretty readable to me.
-
-That last thing is certainly compact and avoids any extra noise, but I
-think the FD_PREPARE name might need changing to reflect the fact that
-it now acts as a if-statement?
-
-Maybe IF_FD_PREP_ERR() or something like that would make it more
-natural to have that error condition as part of it?
-
-Anyway, I think this RFC v3 version you posted is certainly
-_acceptable_ in this form already, but I get the feeling that it could
-be bikeshedded a *bit* more to be even simpler to use and not have
-quite as much boilerplate...
-
-              Linus
+> +		softleaf_is_migration_write(entry);
+>  }
+>  
+>  static void page_table_check_pte_flags(pte_t pte)
+> @@ -190,9 +190,9 @@ static void page_table_check_pte_flags(pte_t pte)
+>  	if (pte_present(pte)) {
+>  		WARN_ON_ONCE(pte_uffd_wp(pte) && pte_write(pte));
+>  	} else if (pte_swp_uffd_wp(pte)) {
+> -		const swp_entry_t entry = pte_to_swp_entry(pte);
+> +		const softleaf_t entry = softleaf_from_pte(pte);
+>  
+> -		WARN_ON_ONCE(swap_cached_writable(entry));
+> +		WARN_ON_ONCE(softleaf_cached_writable(entry));
+>  	}
+>  }
+>  
+> @@ -219,9 +219,9 @@ static inline void page_table_check_pmd_flags(pmd_t pmd)
+>  		if (pmd_uffd_wp(pmd))
+>  			WARN_ON_ONCE(pmd_write(pmd));
+>  	} else if (pmd_swp_uffd_wp(pmd)) {
+> -		swp_entry_t entry = pmd_to_swp_entry(pmd);
+> +		const softleaf_t entry = softleaf_from_pmd(pmd);
+>  
+> -		WARN_ON_ONCE(swap_cached_writable(entry));
+> +		WARN_ON_ONCE(softleaf_cached_writable(entry));
+>  	}
+>  }
+>  
 
