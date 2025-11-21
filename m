@@ -1,115 +1,87 @@
-Return-Path: <linux-fsdevel+bounces-69370-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69371-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id C21C9C78507
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Nov 2025 11:06:04 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0625C78814
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Nov 2025 11:25:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sea.lore.kernel.org (Postfix) with ESMTPS id 7EAD72D844
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Nov 2025 10:06:03 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 903D14EE028
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Nov 2025 10:22:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06C50313269;
-	Fri, 21 Nov 2025 10:01:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C28E30F941;
+	Fri, 21 Nov 2025 10:22:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="JT+VfaOe"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="wd0WWixo"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB4BD26F476;
-	Fri, 21 Nov 2025 10:01:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C9332F6180;
+	Fri, 21 Nov 2025 10:22:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763719271; cv=none; b=aCNMKArib23gSsIQQMSqsDE98nbot1m7G6qEk5KcYAASpKG5uLlfH344YXnakSwgC5BXw5m+PQwrl9Sbj0z/f7GQfUW1PoOUP/stxyn7CuhxGd8OgSNi9Q90F7dBxiKT2LuwLbkoeAZTQJIVPSX/uC9P+aiA4+cJ+P2xYEAEKq0=
+	t=1763720536; cv=none; b=Hk1AmS4UN5xVftTnJUCQnwvOg0q1BA26xCWiCVBEUPtd3qGmPYlqG/0w/1yQojP7CqkSele4dVDWdASELxSzWCDsjEBTmj3zcANkeZQecj5k4gZBJk65OM7tt/UtDi5tMsOTujcOUwQFMlBFUSX3Za/Vs8NsT3ev9z8XG9pwiE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763719271; c=relaxed/simple;
-	bh=SjoUlAw2ukcXyZ8NNf2rTO3brvJiVAhcx7Rh0Mx77iU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=eXVjwdpB+40pVRZAS19iN8kg0vSDDLRzUMS1iKPP+v7kjenX5TMn8mUR2FgWxmCroq7cdDmZcLMuqaZy553GL8sjY3DJuK/bo0ih40b/Hz2lXlUVv5kH0id8Xoo6yK4Esr0qC7j2G+lwJvr3mgr4PsLcVFJX52G9S9AHFYuCWlo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=JT+VfaOe; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
-	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=Hyf31XcQR3ynpTH3x2l2y6J5zQWbB6VJts3/4lJi4q8=; b=JT+VfaOe6+dzMlJJoSzQCpWD2H
-	dxwJVSdGvJJJ67e3PkL5mvjN5Z+lhbwNiCgthix187t9d8aIbVXIGam84/B5y8AMxpehOA9EfPxdo
-	RfmYwfUX6T+jMk6b8jAU/+wPDjvEfYOpboBY8eUEQjTRDqPUMH6XcNhi6c6xnSp8MuAPi9zpjKOYz
-	JEYD3naZ0/cZ45HFhF/7Zbv6RR6JH/HqiFk+2CMa9fjSU8IuwnSPLrN63bN8Q/kUavlRN9VgyFnhR
-	fIw0DuzupHiTw/3z31pflgMUktrJj/YIDqNNBXcSyOm+1drWMrhf4GexhouX8E4JZu5hVZwfnURvT
-	uITzYvAA==;
-Received: from bl17-145-117.dsl.telepac.pt ([188.82.145.117] helo=localhost)
-	by fanzine2.igalia.com with utf8esmtpsa 
-	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1vMNwq-003bry-CR; Fri, 21 Nov 2025 11:01:00 +0100
-From: Luis Henriques <luis@igalia.com>
-To: Bernd Schubert <bschubert@ddn.com>
-Cc: Amir Goldstein <amir73il@gmail.com>,  Miklos Szeredi
- <miklos@szeredi.hu>,  "Darrick J. Wong" <djwong@kernel.org>,  Kevin Chen
- <kchen@ddn.com>,  Horst Birthelmer <hbirthelmer@ddn.com>,
-  "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-  "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,  Matt
- Harvey <mharvey@jumptrading.com>,  "kernel-dev@igalia.com"
- <kernel-dev@igalia.com>
-Subject: Re: [RFC PATCH v1 3/3] fuse: implementation of the
- FUSE_LOOKUP_HANDLE operation
-In-Reply-To: <6e561ea7-f7dd-4c94-854e-83c2fb9b0133@ddn.com> (Bernd Schubert's
-	message of "Fri, 21 Nov 2025 09:06:42 +0000")
-References: <20251120105535.13374-1-luis@igalia.com>
-	<20251120105535.13374-4-luis@igalia.com>
-	<CAOQ4uxgN5du9ukfYLBPh88+NMLt6AzSSgx4F+UJmugZ86CvB1g@mail.gmail.com>
-	<6e561ea7-f7dd-4c94-854e-83c2fb9b0133@ddn.com>
-Date: Fri, 21 Nov 2025 10:00:59 +0000
-Message-ID: <878qfzn1r8.fsf@wotan.olymp>
+	s=arc-20240116; t=1763720536; c=relaxed/simple;
+	bh=SZiBvCMjel6CPR2XuRKUj5SuwhGtc8zfltPMNXMep2M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jZ1ZlJcnOBAv3frUw2F57b4eH0MutUb+DpHhKpVezn1mTEBZcXy0Z50K0vt7o6FG1I2y7wPK5CH1Vhoo5cFqfJWqYg6KOmav9aCH/mBwKgjOqGS39a9eWeTxm8mV+acFx8wC7oXti2GsXiX72a4vcadqYHp7Z+HBegCCkBHcpoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=wd0WWixo; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=hWR1A0AVq7ooSj8qggv8jU7Tj18Snz116UqmuyhuTBY=; b=wd0WWixoa6sJDztd1wLXDr4AoV
+	Y6udtxNR09ix5FKLFDEUbwdAj3oPh0FItpl6EIEfyfCWWaOHZZskZWn9th3pSy94jFlPWyUHCiU10
+	43wUx9BvraFI9ln9h0YWgKKr84cqoN9XuFDAUXSdXuwS+rKiZYLkJIkHxkyz+OE4/WneSjQjE1msY
+	bC+Yubwcw8I1DMHxk99SjVh6VwWHgD3DUKLRfnvnR1lhziSr5RBxRoXSCvQAbljvZua4z3l3MJ627
+	tGN3o/LZepWTQdegAwy23JTFsShsGxTEdfjkb6BsrY/9tud/yXdUh2z8nVa2EZ6O+xvIO4bbKhvgY
+	MhuzaVYQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vMOHN-00000008EGz-1nEN;
+	Fri, 21 Nov 2025 10:22:13 +0000
+Date: Fri, 21 Nov 2025 02:22:13 -0800
+From: Christoph Hellwig <hch@infradead.org>
+To: guzebing <guzebing1612@gmail.com>
+Cc: brauner@kernel.org, djwong@kernel.org, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	guzebing <guzebing@bytedance.com>,
+	Fengnan Chang <changfengnan@bytedance.com>
+Subject: Re: [PATCH] iomap: add allocation cache for iomap_dio
+Message-ID: <aSA9VTO8vDPYZxNx@infradead.org>
+References: <20251121090052.384823-1-guzebing1612@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251121090052.384823-1-guzebing1612@gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Fri, Nov 21 2025, Bernd Schubert wrote:
+On Fri, Nov 21, 2025 at 05:00:52PM +0800, guzebing wrote:
+> From: guzebing <guzebing@bytedance.com>
+> 
+> As implemented by the bio structure, we do the same thing on the
+> iomap-dio structure. Add a per-cpu cache for iomap_dio allocations,
+> enabling us to quickly recycle them instead of going through the slab
+> allocator.
+> 
+> By making such changes, we can reduce memory allocation on the direct
+> IO path, so that direct IO will not block due to insufficient system
+> memory. In addition, for direct IO, the read performance of io_uring
+> is improved by about 2.6%.
 
-> Thanks a lot for this Luis!
->
-> On 11/21/25 08:49, Amir Goldstein wrote:
->> On Thu, Nov 20, 2025 at 11:55=E2=80=AFAM Luis Henriques <luis@igalia.com=
-> wrote:
->>>
->>> The implementation of LOOKUP_HANDLE simply modifies the LOOKUP operatio=
-n to
->>> include an extra inarg: the file handle for the parent directory (if it=
- is
->>> available).  Also, because fuse_entry_out now has a extra variable size
->>> struct (the actual handle), it also sets the out_argvar flag to true.
->>>
->>> Most of the other modifications in this patch are a fallout from these
->>> changes: because fuse_entry_out has been modified to include a variable=
- size
->>> struct, every operation that receives such a parameter have to take this
->>> into account:
->>>
->>>   CREATE, LINK, LOOKUP, MKDIR, MKNOD, READDIRPLUS, SYMLINK, TMPFILE
->>>
->>=20
->> Overall, this is exactly what I had in mind.
->> Maybe it's utter garbage but that's what I was aiming for ;)
->>=20
->> I'd like to get feedback from Miklos and Bernd on the details of the
->> protocol extension, especially w.r.t backward compat aspects.
->
-> I will look into it in the late afternoon
+Have you checked how much of that you'd get by using a dedicated
+slab cache that should also do per-cpu allocations?  Note that even
+if we had a dedicated per-cpu cache we'd probably still want that.
 
-That'd be awesome, thanks a lot Bernd!
+Also any chance you could factor this into common code?
 
-Cheers,
---=20
-Lu=C3=ADs
 
