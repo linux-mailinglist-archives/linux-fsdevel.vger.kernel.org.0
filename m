@@ -1,47 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-69479-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69480-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2290C7D562
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Nov 2025 19:19:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 15392C7D571
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Nov 2025 19:29:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B6C834E32FF
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Nov 2025 18:19:24 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3D44F4E1D3A
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Nov 2025 18:29:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF9E126FDB2;
-	Sat, 22 Nov 2025 18:19:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC5D829AB05;
+	Sat, 22 Nov 2025 18:29:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iJX4qxzJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pHFRdYqO"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09A2C846F;
-	Sat, 22 Nov 2025 18:19:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE46A217F36;
+	Sat, 22 Nov 2025 18:29:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763835557; cv=none; b=me86mnIx1IJoUG5LtyBeUorYLxO58rk01hDQewvzS5UyhDIR9hk0I32HsDmxEA62alreBjfrlXM/oRaE2qNcJXLUV3Hu/3jPCk+8ZSa9pVsmwF169xinXrvpeIay276+IhLN6KqFEe5ku/rPkN+qiENkATyQB1SIYZ1dmh8uYfo=
+	t=1763836169; cv=none; b=cDGCQ2696T2tDbACZ8FImgHcLMnt6ylvmaewKaYV1PAgcKhkY4mS7jtUO4IR8w/SkcWbHrmdSshghN8NahBoWI85jkZt3jW9IG2wQp8ZKwDy8aogdUzr7FQ/q8+Cb2avyGeIrgXVy50cPCR4H9mB5fe2OucV+ZGfkTaLSnv/PTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763835557; c=relaxed/simple;
-	bh=evUzKx3L4rrqlSjgN6yULWLWGPrGF5cq0KQWOKa1cCY=;
+	s=arc-20240116; t=1763836169; c=relaxed/simple;
+	bh=8xw7rhH6O9SdjYiT0aP0fzTrgTnB7q3imFTDnslqKkg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qgwjt9AcKx17/5PkKmlxwTn3ejB6l+eTTwTdWLndV6uam78c5RrwIIHCz/KEIk4eeh1u4ikH6Bt9MUKeyR9HTeMj+o9J1idNVfVV6ahLblJCLdRNy5z+evpGMBmTroWKDLtOIzohevEX1Vn/8/IfFsOByeFKIc+L1ejkaX9vkgI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iJX4qxzJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01035C4CEF5;
-	Sat, 22 Nov 2025 18:19:15 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=tMg/H6tEhEnn2WXHcxbh1aoAAvlfZxur9c/DFXLwlF00Mu1KJnYxo1jz2kZAxML4nff4OkQybHx96RhNS5jSkUpNlrdI+mprNjIl2Jrq/MrOVo9CSXGAaLwoWMrsg4r/0OAudseR0rhGIqGOpdErTcNwiK6FVEA9EJBA2c/9wTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pHFRdYqO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E29B5C4CEF5;
+	Sat, 22 Nov 2025 18:29:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763835556;
-	bh=evUzKx3L4rrqlSjgN6yULWLWGPrGF5cq0KQWOKa1cCY=;
+	s=k20201202; t=1763836168;
+	bh=8xw7rhH6O9SdjYiT0aP0fzTrgTnB7q3imFTDnslqKkg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iJX4qxzJDek73qTk6QjQ4ZYHTwS7FNpz23Q8XgjBF79QTyAZTdVHqQXjWzEWeGbDh
-	 N+pMJcoxquWoZAyx8a3gQeDJHyhof/pp5esTjWUInn0N3vb28YU1y9ZdA1Zxugw9c2
-	 M8/LpF24kl03DYMylnggdh3TT9k8Ho/6CZ8RAC9l+Zz82tPPcPP1bKtkwhVE6r1a6I
-	 zMqIF6CPoR7TVxbBt9t6KlT/v1LXKbOaMAQIYlb7CjQoGBSu/numimc4grxUSxKzSg
-	 28Jm6KM2/KT7MLx0tW1C4g/LbrPOs7a8N9cGyQ0N/j5cTLCyLDBrZMz72DI4zDFz/2
-	 4ID9ZGG+tetcQ==
-Date: Sat, 22 Nov 2025 10:19:14 -0800
+	b=pHFRdYqOPaQX70zmfnjBGRk3tGDlaAS2Jsb7U1vVsHowf+qQ2S/cXKybSueG1RSBe
+	 khJ2DDVb4v1G/nHgmkDibOsm8EcRQMfHDiM/PONLXco8bieclt85EWjtezvmpUop49
+	 tAmJNsVrerfklQpFkfZ35arZjm3eOxTm/nUh5EbkluMhEfWAhTb4kNwt9V5vQxd7tk
+	 o3goh49Axy0FLzNQ6gBSYH0t28ml89l1Q47HdOD9xT22oIGVjV+NlEanAdLF0fAyaf
+	 TAoz3S5eLQ6OkJCdVBQ5cT4ooEYsBYzDS3JeDNnkWQO5NLI4KGv5WyRt+y/9l5iDbO
+	 bkyjmhWiOkqvA==
+Date: Sat, 22 Nov 2025 10:29:26 -0800
 From: Eric Biggers <ebiggers@kernel.org>
 To: Christoph Hellwig <hch@lst.de>
 Cc: "Theodore Y. Ts'o" <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>,
@@ -51,11 +51,11 @@ Cc: "Theodore Y. Ts'o" <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>,
 	linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org,
 	linux-f2fs-devel@lists.sourceforge.net,
 	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 08/11] fscrypt: return a byte offset from
- bh_get_inode_and_lblk_num
-Message-ID: <20251122181914.GB1626@quark>
+Subject: Re: [PATCH 10/11] fscrypt: pass a byte length to
+ fscrypt_zeroout_range
+Message-ID: <20251122182926.GC1626@quark>
 References: <20251118062159.2358085-1-hch@lst.de>
- <20251118062159.2358085-9-hch@lst.de>
+ <20251118062159.2358085-11-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -64,51 +64,46 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251118062159.2358085-9-hch@lst.de>
+In-Reply-To: <20251118062159.2358085-11-hch@lst.de>
 
-On Tue, Nov 18, 2025 at 07:21:51AM +0100, Christoph Hellwig wrote:
-> All the callers now want a byte offset into the inode, so return
-> that from bh_get_inode_and_lblk_num.
+On Tue, Nov 18, 2025 at 07:21:53AM +0100, Christoph Hellwig wrote:
+> Range lengths are usually expressed as bytes in the VFS, switch
+> fscrypt_zeroout_range to this convention.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 > ---
->  fs/crypto/inline_crypt.c | 18 ++++++++----------
->  1 file changed, 8 insertions(+), 10 deletions(-)
+>  fs/crypto/bio.c | 6 +++---
+>  fs/ext4/inode.c | 3 ++-
+>  fs/f2fs/file.c  | 2 +-
+>  3 files changed, 6 insertions(+), 5 deletions(-)
 > 
-> diff --git a/fs/crypto/inline_crypt.c b/fs/crypto/inline_crypt.c
-> index c069958c4819..128268adf960 100644
-> --- a/fs/crypto/inline_crypt.c
-> +++ b/fs/crypto/inline_crypt.c
-> @@ -315,7 +315,7 @@ EXPORT_SYMBOL_GPL(fscrypt_set_bio_crypt_ctx);
->  /* Extract the inode and logical block number from a buffer_head. */
+> diff --git a/fs/crypto/bio.c b/fs/crypto/bio.c
+> index 235dd1c3d443..4e9893664c0f 100644
+> --- a/fs/crypto/bio.c
+> +++ b/fs/crypto/bio.c
+> @@ -115,7 +115,7 @@ static int fscrypt_zeroout_range_inline_crypt(const struct inode *inode,
+>   * @inode: the file's inode
+>   * @pos: the first file logical offset (in bytes) to zero out
+>   * @pblk: the first filesystem physical block to zero out
+> - * @len: number of blocks to zero out
+> + * @len: bytes to zero out
+[...]
+> int fscrypt_zeroout_range(const struct inode *inode, loff_t pos,                 
+>                           sector_t sector, unsigned int len)
 
-inode and file position
+The type of 'len' is still unsigned int, so this reduces the maximum
+length accepted by fscrypt_zeroout_range() from UINT32_MAX blocks to
+UINT32_MAX bytes.  Is that really okay?
 
->  static bool bh_get_inode_and_lblk_num(const struct buffer_head *bh,
->  				      const struct inode **inode_ret,
-> -				      u64 *lblk_num_ret)
-> +				      loff_t *pos_ret)
+Both ext4 and f2fs call this from functions where they have the length
+as a u32 number of logical blocks.  And of course both filesystems
+support files longer than UINT32_MAX bytes.  So it's not clear to me.
+ext4 extents have a smaller size limit, so maybe at least ext4 is okay.
+But different extents can be contiguous and operated on together.  So
+we'd have to check the callers of the callers, etc.
 
-Rename to bh_get_inode_and_pos()
-
-> * Same as fscrypt_set_bio_crypt_ctx(), except this takes a buffer_head instead  
-> * of an inode and block number directly.                                        
-> */                                                                              
-> void fscrypt_set_bio_crypt_ctx_bh(struct bio *bio,                               
->                                  const struct buffer_head *first_bh,            
->                                  gfp_t gfp_mask)                
-
-inode and file position
-
-> * Same as fscrypt_mergeable_bio(), except this takes a buffer_head instead of
-> * an inode and block number directly.
-> *
-> * Return: true iff the I/O is mergeable
-> */
-> bool fscrypt_mergeable_bio_bh(struct bio *bio,
->                              const struct buffer_head *next_bh)
-
-inode and file position
+It would be safer to change the type to u64 and have the callers do
+(u64)len_in_blocks << blockbits.
 
 - Eric
 
