@@ -1,123 +1,115 @@
-Return-Path: <linux-fsdevel+bounces-69474-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69475-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0A13C7C941
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Nov 2025 08:20:12 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 718F0C7CC9A
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Nov 2025 11:24:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 02F234E3055
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Nov 2025 07:20:06 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4FDF2358524
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Nov 2025 10:23:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 687552836BE;
-	Sat, 22 Nov 2025 07:20:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 206102F747A;
+	Sat, 22 Nov 2025 10:23:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="imPLo215"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="L3BeEm46"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f202.google.com (mail-il1-f202.google.com [209.85.166.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65F0B17BA1
-	for <linux-fsdevel@vger.kernel.org>; Sat, 22 Nov 2025 07:19:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B18F2561A7;
+	Sat, 22 Nov 2025 10:23:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763795999; cv=none; b=UCBFG+MZXlW6/p5UfMCPCPPlS4pVgwIVQbKr9zUNJ6gwdplAVmvv9MvrDpManDpk9sf/wgeAQPx9STTOmaCWT/XyRGp6d6Q12ltrsD1IdbPifJ8MYeUd3h6XM9OZ0noicrDBubhZ2PvpO86LnJruQQC/VD6MqBBQIQ1PTWcToYc=
+	t=1763807025; cv=none; b=lHS0YmnmZoF6wbZIqQYjEdV/Fj9jHKRNDNcsPR9Y2rX3DTis6m0rwnSnQ6REdd9fopmn0r1xZ0B5P6yajECToMy/lMm8fBfeFYImp7yaxPxdYSMtu+PVGtqfk5pFndzShIHJNrKaq9cDrgaezEdjyvmwgvsVvqx6PkbmIMjl9Vw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763795999; c=relaxed/simple;
-	bh=FFdNK+3ZLxXxPnEZRkbPwb5NdvomInu1/DRGUUi4Nqk=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=d0bjjysqqibfJ31CMUqurDdt57fgtoHyO1jQ+LXmQ/pukpU7vq+KPsCNR8CtBnbH1q5X8KwkZS+/bUwFNYxqg4EemIVJDQIYsVnk9Z712tGcbAaf4Vxo1ZpuufNlFq+PCVhjLbL3qezWYY49wYSLCxuqVRNwhTv1Lu5z00OGiis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--avagin.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=imPLo215; arc=none smtp.client-ip=209.85.166.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--avagin.bounces.google.com
-Received: by mail-il1-f202.google.com with SMTP id e9e14a558f8ab-43335646758so25750225ab.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Nov 2025 23:19:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1763795997; x=1764400797; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=PivCgLxrGX/2vRgbBHY2gdLcCSo4vHktstVYVlsvVDw=;
-        b=imPLo215cpACdTninTtJSNRcjk0J91VkFWvk04kc2cxGdTmYI35W7bnMbcuaYZ4gkX
-         poewnzhrqCfQCQUe7QLvSqBYyFcaTa7kNNRiuV7/EKO32zERg6lisrykWgZIAu/bYB97
-         HuBLv22BEAmRF1y/NHAqZv1Ir40feUfTRsbNLEVrqvj7HkS/F0OEJMGzISLraWgWMkvL
-         FJDkqGOxGYY6V7ust8i+ushs13tVsB04+Z+6Ltf9BCFTDcF89XMlsJztiu6389UuJSE5
-         fyA+czOhGzZfADOLZI2tG7GNBTQeqkJ6J/sVrkBYrsEnYyOrYMPot+FoNgzL8kvGk+Ee
-         gtbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763795997; x=1764400797;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PivCgLxrGX/2vRgbBHY2gdLcCSo4vHktstVYVlsvVDw=;
-        b=nEiex8zN8h9YIj3TE8ntbBuFQ7/C/bu60toWAOxUX2ZK5YqUuZY191+62sJxhU1XxQ
-         w/GOHlJn/EGosNhWnI3jGSjvBh1WaaNiW5ukkr3tpCFAsAYeHbJw3N8DNZPV2yJnKWFL
-         vfG0805LzT8CrJ3kNpsvnyCJpuZv7oguQFYMD92mLXe//LXDspeI9TtZS9Offu4JSOJ+
-         hjS5pAvW91NPOkprJG6ysLDuaDZaCQEEk9hjSdMZNssRdmM6sxpHJCLwhZoZM7U0Dk4U
-         1VEjO6c5YPD696G8NlJVst/i9R3bd5dUCzN5iI9c/1B7KASSTJ32dBTExxvFHPDe6X64
-         xGhw==
-X-Forwarded-Encrypted: i=1; AJvYcCUJqaV+AzljyRojLgaqS9jsGjJKujyjt0adI81xNkFPxfhfa/lc1Y85kEPYvotvjIJq0fdi2EIkGg+F3/rb@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1e/E9R32NWGeG3iVN3AqudmFht+VcjMd94JKyA9jVw8yU7tII
-	a5AJEU+itvXdBjKzbVOZiMXJcy1mchFCHHO0WXjL1t3VMvCs9BpKWwo16O+C8SXxsPKtqb8iQdR
-	SSAZPfQ==
-X-Google-Smtp-Source: AGHT+IGGLZtgC5FLgdkVJofZlQ6j3GuUfq8ybk+qGRvtumbpUvYwXNHZCjJQoxEkq1/TuOdrWfcXEloEIno=
-X-Received: from ilbdd1.prod.google.com ([2002:a05:6e02:3d81:b0:433:4f9d:6ee3])
- (user=avagin job=prod-delivery.src-stubby-dispatcher) by 2002:a92:b006:0:b0:434:96ea:ff48
- with SMTP id e9e14a558f8ab-435b8ec96ddmr34521605ab.33.1763795997690; Fri, 21
- Nov 2025 23:19:57 -0800 (PST)
-Date: Sat, 22 Nov 2025 07:19:53 +0000
+	s=arc-20240116; t=1763807025; c=relaxed/simple;
+	bh=So76H2NNRkV/fu/vtCVJDbtqT1j8EDwdQ8QtjmIWg9Y=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=rmnwQMMBj+dENDEzbhXbtYoS42rPow0EjavIuTwel8m+a+HfcLFlcyw8W7uGrfSpPDE2sClWzxSOBeoBtLAB71dIISugBfox9uJc0r9rN3us4NE8ajwhk7dFvAh/y7/aQdhSIxFPayQBtLEsZRTflj2gCkp5OlyqAi5B3AEdHpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=L3BeEm46; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
+	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=K3ZYCNHjYKFZNPkBE9WkmswJgAwh1WIG2xhx5q5NWD0=; b=L3BeEm46zp4j8rY38+/ayUvI7Z
+	wipaT7EHVzIfXWgngbMh/hqx7iDZgwWBdx+OgXyb//DDqkjEXa/gsSo6cB8lWk6fcQaaKo7bpVCLz
+	wJMDDbWG+PosBGZg/i87LrTio0n/X6yh4rmGiceNQem02Y+v3WlDKCUg7HcbW8A48MDZIIRy7loEI
+	OqhnhkeSiIsQyl9BbpyBOCn+oIGFPvkoLOGbLcK7n+4xfruZgdrZAgFJjJJeIz+BLRTGWfNL1ND1J
+	tnDnYDFBtbe3s+h4ssij4/WMoIuUk33n60TwrDIO/2hwmfGKv4IdQrRsCJKQO5Vrzu3Td5hLnB0xB
+	rB1hbkaA==;
+Received: from bl17-145-117.dsl.telepac.pt ([188.82.145.117] helo=localhost)
+	by fanzine2.igalia.com with utf8esmtpsa 
+	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1vMkmH-0040da-Jo; Sat, 22 Nov 2025 11:23:37 +0100
+From: Luis Henriques <luis@igalia.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Miklos Szeredi <miklos@szeredi.hu>,  linux-fsdevel@vger.kernel.org,
+  linux-kernel@vger.kernel.org,  kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH next] fuse: Uninitialized variable in fuse_epoch_work()
+In-Reply-To: <aSCkt-DZR7A8U1y7@stanley.mountain> (Dan Carpenter's message of
+	"Fri, 21 Nov 2025 20:43:19 +0300")
+References: <aSBqUPeT2JCLDsGk@stanley.mountain> <873467mqz7.fsf@wotan.olymp>
+	<aSCkt-DZR7A8U1y7@stanley.mountain>
+Date: Sat, 22 Nov 2025 10:23:31 +0000
+Message-ID: <87ms4ez7q4.fsf@wotan.olymp>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.52.0.487.g5c8c507ade-goog
-Message-ID: <20251122071953.3053755-1-avagin@google.com>
-Subject: [PATCH] fs/namespace: fix reference leak in grab_requested_mnt_ns
-From: Andrei Vagin <avagin@google.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Andrei Vagin <avagin@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-lookup_mnt_ns() already takes a reference on mnt_ns.
-grab_requested_mnt_ns() doesn't need to take an extra reference.
+On Fri, Nov 21 2025, Dan Carpenter wrote:
 
-Fixes: 78f0e33cd6c93 ("fs/namespace: correctly handle errors returned by grab_requested_mnt_ns")
-Signed-off-by: Andrei Vagin <avagin@google.com>
----
- fs/namespace.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+> On Fri, Nov 21, 2025 at 01:53:48PM +0000, Luis Henriques wrote:
+>> On Fri, Nov 21 2025, Dan Carpenter wrote:
+>>=20
+>> > The "fm" pointer is either valid or uninitialized so checking for NULL
+>> > doesn't work.  Check the "inode" pointer instead.
+>>=20
+>> Hmm?  Why do you say 'fm' isn't initialised?  That's what fuse_ilookup()
+>> is doing, isn't it?
+>>=20
+>
+> I just checked again on linux-next.  fuse_ilookup() only initializes
+> *fm on the success path.  It's either uninitialized or valid.
 
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 2bad25709b2c..4272349650b1 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -5746,6 +5746,8 @@ static struct mnt_namespace *grab_requested_mnt_ns(const struct mnt_id_req *kreq
- 
- 	if (kreq->mnt_ns_id) {
- 		mnt_ns = lookup_mnt_ns(kreq->mnt_ns_id);
-+		if (!mnt_ns)
-+			return ERR_PTR(-ENOENT);
- 	} else if (kreq->mnt_ns_fd) {
- 		struct ns_common *ns;
- 
-@@ -5761,13 +5763,12 @@ static struct mnt_namespace *grab_requested_mnt_ns(const struct mnt_id_req *kreq
- 			return ERR_PTR(-EINVAL);
- 
- 		mnt_ns = to_mnt_ns(ns);
-+		refcount_inc(&mnt_ns->passive);
- 	} else {
- 		mnt_ns = current->nsproxy->mnt_ns;
-+		refcount_inc(&mnt_ns->passive);
- 	}
--	if (!mnt_ns)
--		return ERR_PTR(-ENOENT);
- 
--	refcount_inc(&mnt_ns->passive);
- 	return mnt_ns;
- }
- 
--- 
-2.52.0.487.g5c8c507ade-goog
+Yikes! You're absolutely right, I'm sorry for replying without checking.
 
+Feel free to add my
+
+Reviewed-by: Luis Henriques <luis@igalia.com>
+
+Although I guess you're patch could also move the iput():
+
+diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+index 67e3340a443c..f2bac7b3a125 100644
+--- a/fs/fuse/dir.c
++++ b/fs/fuse/dir.c
+@@ -199,9 +199,8 @@ void fuse_epoch_work(struct work_struct *work)
+ 	down_read(&fc->killsb);
+=20
+ 	inode =3D fuse_ilookup(fc, FUSE_ROOT_ID, &fm);
+-	iput(inode);
+-
+-	if (fm) {
++	if (inode) {
++		iput(inode);
+ 		/* Remove all possible active references to cached inodes */
+ 		shrink_dcache_sb(fm->sb);
+ 	} else
+
+And thanks for your fix, Dan!
+
+Cheers,
+--=20
+Lu=C3=ADs
 
