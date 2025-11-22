@@ -1,80 +1,80 @@
-Return-Path: <linux-fsdevel+bounces-69494-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69495-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9666C7D918
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Nov 2025 23:29:37 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BEECC7D900
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Nov 2025 23:28:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BDA1D34F11F
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Nov 2025 22:28:09 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7973C4E17BA
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Nov 2025 22:28:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C79942E0412;
-	Sat, 22 Nov 2025 22:24:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50DE52E266C;
+	Sat, 22 Nov 2025 22:24:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="HScPZ3NE"
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="Oxq+Bbp9"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1C832DEA73
-	for <linux-fsdevel@vger.kernel.org>; Sat, 22 Nov 2025 22:24:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE1112DFA2F
+	for <linux-fsdevel@vger.kernel.org>; Sat, 22 Nov 2025 22:24:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763850263; cv=none; b=RDtH1xLYnzUbSdfenrLSG6jEUpftqeigJyvAbC5PD7rQUFxLmU9GcRo1Cn1muVONdevqNXe1XhNnCDahZX/8OHphqvdEIVWqzwugdCJAeVaJ9DhCID72JE/x2iLOtMyIBymI9vdMoB8UhpOp7kLMINb7eUL7L05RXDd2jH8iGuc=
+	t=1763850266; cv=none; b=mEjpX6oxLdJZeeAsBUZ4AuUPoR4yclxSVeNAejZAbUZG4HOoUuE+b0O1w6LX3RZ59KG9IezoD+PjgxMaNbe1bFxTg6xpzLfiHg8GmXrnFtcI7/AsoxdnCilWpppt9WmIwddWlPpD+kBrv8d3lP5emd/bXoCPUznT7cJX/7kntHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763850263; c=relaxed/simple;
-	bh=cV6ayUY0cd5cthn+5O2DyMdENfG+D5eByWYgHRliMyA=;
+	s=arc-20240116; t=1763850266; c=relaxed/simple;
+	bh=0xJF18qOKcU5eAzQ6HxIuG25uSo6cc+l5rprPtdnC7I=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ouyk8yHUGoboXSsNvRsuojieNM/QAQnCG6gdIaoLAzYPb+aSUfFsLSWJuobxpF6ieNVPld8QFrquRIRukwMdHpmlXJzee6MYY/RCqz6gaCihnsCPy0GGV/rEeuZfmDM0KldltFMLei61q062i0L30U21EbnZarA7ImrJxqfcLDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=HScPZ3NE; arc=none smtp.client-ip=209.85.128.175
+	 MIME-Version; b=SCfYkfmjo7GfVQclIEi4GZUpTUGOPNFiqZHrl6ARK4aeeM2iyW2usY7cXFqVLGchovvceQXsJuMH/Z4QLB+PvSC4AZFxAbky74/QXFbE2SFUqYhs5m/aLLiScHItykDew7tdRbNC0vFidTlLJtjygLb/Tm3xoIxEBflu+XMxxCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=Oxq+Bbp9; arc=none smtp.client-ip=209.85.128.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-7866bca6765so27781807b3.1
-        for <linux-fsdevel@vger.kernel.org>; Sat, 22 Nov 2025 14:24:21 -0800 (PST)
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-78a7af9ff1dso30358077b3.1
+        for <linux-fsdevel@vger.kernel.org>; Sat, 22 Nov 2025 14:24:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1763850261; x=1764455061; darn=vger.kernel.org;
+        d=soleen.com; s=google; t=1763850262; x=1764455062; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=3+3x59DbFWdBPdmdih5ENuDC3ZjNMKrWdUeGoJeNo7E=;
-        b=HScPZ3NEKZwt7blLAousjMuqCBILyYAhjd7MiMhHJgDzj1HcFn/1KoEHw8jqBuPHYY
-         Bl0XBqTl6iLCVqc7OQZoFuAR9O3rUa8aIhWzSR7Gxd/3k4SmnbvChslsJZrwXV92YnRX
-         OxKY33rox5nPfmVMvDhstWwTW7SK8BpGAOzaWThOctNUDRl+0a9rQwL+ZO3EO8ABfZyl
-         EbAgutSOFlvto3g7icuAEdFEs6d3f4Aralf7CZHf2a2qB2FpxsVC1uQpDGZ47qHiaOtS
-         Khz3ogqv+mHOAQUPQe+bInIjdoPl8bIaO/kADbyRcU0giU+CxqbH39NbEDbAO7ZgNBry
-         yyXA==
+        bh=Ff4h/Y+aeCaryuraEaQmIoWWBfglnwQ79bUWNkRIqMI=;
+        b=Oxq+Bbp9KtTJ0U0fh7o05c45t48ymLL7K4Aetlz6ihYvYy652IqvuRL73imA8k/TfN
+         yLmCsAbYBWd5fCVcrO4M5ed9fnVw99pJS59eIqUP+6BgCZ8qN6OMikeUr6m1k6iggx75
+         zdWFSKQRUpWLO549NmoT0F0Tl/e/uvsiYMHADNtrArpb1qWmFQNRNAR1u/v88X1ULU1C
+         yYbwrSF1kyq43xuq1EdFW2S29v/xXjkucAYYujW7nYPWu3RcvysIRrs6G+BCdv4l0iob
+         XKet7YlHmvQI2jJtOFgZFYfkJqTSPwW0SvAOBkdbZhv4/lLGlNPur8yaZXTVFk0x/zkn
+         QbWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763850261; x=1764455061;
+        d=1e100.net; s=20230601; t=1763850262; x=1764455062;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=3+3x59DbFWdBPdmdih5ENuDC3ZjNMKrWdUeGoJeNo7E=;
-        b=Un7PU4f+x6TDOz8OKuD0rJtN/ltegQyWl9fKLr7is8DTcrC8focLRWh9mFr1wJiMFi
-         bdM5CgXVU4Cztk0MVLvadBwMRMU2bzpQyF/RORsBdElKh0zq6GgrtxcR2od9GYJzkHD0
-         PHmYuZ1hWWKhJbxxWaiHGrZgxXq/xG8dIG3n7zLNAtpoWia0pYtWBagFKBp2q4avxJhK
-         N3cbua2QJbajzEcIjwz4UTGpI5/qze0Q4jEajBVwqThQvWRi5CFsSSH/K6GKdQ+SfgjZ
-         5uNgbUBeFScuIIHJFv3CEVxYvG8mHE6ltyDxRY4ThCIqjyrPOtNOVJOvvdPcK3cEqeXf
-         mu3g==
-X-Forwarded-Encrypted: i=1; AJvYcCWJe2tk4AAxN5v/W6zQQFuHvCCl9ess5qc6hg/omYeRGRy+Ik5V7FrG/JPnZBWdYa9gYjJQaPveIsc3f/v+@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYEwC5Aw5TIOlIheeQrwTMPkeJfPeU4xvpnDUzEYZ3cSK2ae4/
-	kgNC7PLxr7p+uAoHnw3x8ACxlbDFQiy8d7i30uTGU/CQMQd9eQbohEGH9AZOSTdtmbE=
-X-Gm-Gg: ASbGnctpVJKGVCgYiztR6+e2ShdAznIz1vPGRM2BdGSf4pMfMxtSRMsynKoyS1/DLLY
-	OhSo/opcWEJLGKKGnk5CAAGfm4HORVrh/KRLoPeFW8Jc7/rBxhu2L0ANWMrTBbkweKIugXpEIFQ
-	QYKhdZyh4QXTTwo5LDV86ol44It6Gs0ayhSXnN0uKZuhOeFrznPFfc98ICE1aJFAaYbhIRiXRHw
-	HEw3GznV5PJ8BA92h9fQJUrOUHkBOk0wXDqf/qNFMzsFXBAVEN9VoORAm+DXFQRNBPU6uDu8ku5
-	OrSB+oRRrqGZFDVxZpGRzMvoUtWFCQByGMymIpKBseLgyDFqObr/jzYfE0rE9j2LRqYrMgEx0z5
-	HilAaopC27Gi5cDKYU9T/MDp+44d1dtIoG0r37il69UDIpRiUyclVEMFh3lu1jXsACmxLvSKJZx
-	ariKzop3IPstTVrqxKC5qlO4wy/lw+rlRGYCZ0elN2+IVKg1LiA1We3Pv1YkrDS/XlZV01T+nEY
-	Xu1kZ8=
-X-Google-Smtp-Source: AGHT+IHLBVEUSrsRTAR569f2nmbBoHdToiAZD4CXjMMgQTOgrYNyCyqBuS6WcJxB+UmOJcCfJHKxnQ==
-X-Received: by 2002:a53:acd3:0:10b0:63f:55de:63cc with SMTP id 956f58d0204a3-64302ab185bmr3797706d50.31.1763850260775;
-        Sat, 22 Nov 2025 14:24:20 -0800 (PST)
+        bh=Ff4h/Y+aeCaryuraEaQmIoWWBfglnwQ79bUWNkRIqMI=;
+        b=CPDYHdSMvLYAJEkisrt4Kd7NU2vrB+opwVe4osyt/IpLGCaSwc9WXHd85ypfSOs/C0
+         Yu0LdiaMTlX6c5lbokhnM51spZ+kf+EMfSdwe7lV7Pt0GwIvbM1Et6TdprpsIDQzuBkK
+         bi1xPX0CxIiSgVpL+faim1E8nPQy8y+zVEqDdAvlcEzlRQ3ixPp3VU8CTH54I8VtuSuT
+         T1OlOkvY3i9Iru7dI6ECIEmOFzDZCpO0Zk3XmknO2Yu0oGH/QPfWG9DPVx3kxCZDe75+
+         0eVMdI6GB3E7N+/2yZEiwKXXknZSn0POugKGOXhVlcMu/fB1GDAruVVqeNXYM7Bz1Btp
+         5uLA==
+X-Forwarded-Encrypted: i=1; AJvYcCXx100hTIs6QrkaNpSa2A30uvEvM6mqeJtlCJQz7cUeG84uVhJJ6fduI5YBX6crcrpDuSgSI3v6xtBph16N@vger.kernel.org
+X-Gm-Message-State: AOJu0YyoEImxoDyQseNCj/m+/4FaTHKepQcePbBhWkXYnt1IERUXeh7l
+	WGVUMsQoaII1YNzM9Dj7yPSDjF1Ftkv+1YDyVSsaE2Vtcaj0bzoYGxw1hv6mtGl+kBQ=
+X-Gm-Gg: ASbGncsOndBkk6bqIEyOH9yEoa3YdNih324sh/W0kD8sh+FZsUJVw9U7WeCQzrI+2vr
+	+frmplNZOUF8VD/NCVpvoZYSio4HouFspQPJvO5bythISbKNG5rpFFKisSo0urXVcNEhBdy4wSF
+	lXt2Lm6IBM/qApT7onrm06l43jF8LNQmUBs84VIIuOmVxAEKMbvc3+GMbHSSLXVahBbZe8og9sT
+	Q+/KpgvqkJkUwY3wJ7hrwABUQ+lS+sm0Epn9VIW3dl90S8Hii+bcitVMAnHp7nV1LwgytDyvCi6
+	AdP8yhReTgpilWUCmMIhmmPMyFhLfnZOw6OiiIqHg72AFDDnvziwEx4WIbJNBTCM2Pg3S5ph93u
+	aNI3M4xvK/UQqfzSFwI/VQ/YA+vVUBpstv432XoGdfu8sLgOBCgn8WsiwDndbnTlcJit0iPSv1D
+	doJorCOpPNy/oAGloZ7FoQwficibDKIxV06GD5ei79tWqXbeQJibavmQJfq2THXDjdnkwqNkCnw
+	Asw7EY=
+X-Google-Smtp-Source: AGHT+IEh/qsJ9xlDDV/YCr14e57USKSEfNEr00YTzpdoNrXFY7RlW6SCMXKos9LFs3pSvdRKqhUulg==
+X-Received: by 2002:a05:690c:6282:b0:789:24a4:59dc with SMTP id 00721157ae682-78a8b54896emr60698047b3.70.1763850262632;
+        Sat, 22 Nov 2025 14:24:22 -0800 (PST)
 Received: from soleen.c.googlers.com.com (182.221.85.34.bc.googleusercontent.com. [34.85.221.182])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-78a79779a4esm28858937b3.0.2025.11.22.14.24.19
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-78a79779a4esm28858937b3.0.2025.11.22.14.24.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Nov 2025 14:24:20 -0800 (PST)
+        Sat, 22 Nov 2025 14:24:22 -0800 (PST)
 From: Pasha Tatashin <pasha.tatashin@soleen.com>
 To: pratyush@kernel.org,
 	jasonmiu@google.com,
@@ -149,9 +149,9 @@ To: pratyush@kernel.org,
 	hughd@google.com,
 	skhawaja@google.com,
 	chrisl@kernel.org
-Subject: [PATCH v7 12/22] mm: shmem: export some functions to internal.h
-Date: Sat, 22 Nov 2025 17:23:39 -0500
-Message-ID: <20251122222351.1059049-13-pasha.tatashin@soleen.com>
+Subject: [PATCH v7 13/22] liveupdate: luo_file: add private argument to store runtime state
+Date: Sat, 22 Nov 2025 17:23:40 -0500
+Message-ID: <20251122222351.1059049-14-pasha.tatashin@soleen.com>
 X-Mailer: git-send-email 2.52.0.rc2.455.g230fcf2819-goog
 In-Reply-To: <20251122222351.1059049-1-pasha.tatashin@soleen.com>
 References: <20251122222351.1059049-1-pasha.tatashin@soleen.com>
@@ -165,70 +165,110 @@ Content-Transfer-Encoding: 8bit
 
 From: Pratyush Yadav <ptyadav@amazon.de>
 
-shmem_inode_acct_blocks(), shmem_recalc_inode(), and
-shmem_add_to_page_cache() are used by shmem_alloc_and_add_folio(). This
-functionality will be used by memfd LUO integration.
+Currently file handlers only get the serialized_data field to store
+their state. This field has a pointer to the serialized state of the
+file, and it becomes a part of LUO file's serialized state.
+
+File handlers can also need some runtime state to track information that
+shouldn't make it in the serialized data.
+
+One such example is a vmalloc pointer. While kho_preserve_vmalloc()
+preserves the memory backing a vmalloc allocation, it does not store the
+original vmap pointer, since that has no use being passed to the next
+kernel. The pointer is needed to free the memory in case the file is
+unpreserved.
+
+Provide a private field in struct luo_file and pass it to all the
+callbacks. The field's can be set by preserve, and must be freed by
+unpreserve.
 
 Signed-off-by: Pratyush Yadav <ptyadav@amazon.de>
+Co-developed-by: Pasha Tatashin <pasha.tatashin@soleen.com>
 Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
 Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
 ---
- mm/internal.h |  6 ++++++
- mm/shmem.c    | 10 +++++-----
- 2 files changed, 11 insertions(+), 5 deletions(-)
+ include/linux/liveupdate.h   | 5 +++++
+ kernel/liveupdate/luo_file.c | 9 +++++++++
+ 2 files changed, 14 insertions(+)
 
-diff --git a/mm/internal.h b/mm/internal.h
-index 1561fc2ff5b8..4ba155524f80 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -1562,6 +1562,12 @@ void __meminit __init_page_from_nid(unsigned long pfn, int nid);
- unsigned long shrink_slab(gfp_t gfp_mask, int nid, struct mem_cgroup *memcg,
- 			  int priority);
- 
-+int shmem_add_to_page_cache(struct folio *folio,
-+			    struct address_space *mapping,
-+			    pgoff_t index, void *expected, gfp_t gfp);
-+int shmem_inode_acct_blocks(struct inode *inode, long pages);
-+bool shmem_recalc_inode(struct inode *inode, long alloced, long swapped);
-+
- #ifdef CONFIG_SHRINKER_DEBUG
- static inline __printf(2, 0) int shrinker_debugfs_name_alloc(
- 			struct shrinker *shrinker, const char *fmt, va_list ap)
-diff --git a/mm/shmem.c b/mm/shmem.c
-index cb74a5d202ac..b9cd7f8d50fa 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -219,7 +219,7 @@ static inline void shmem_unacct_blocks(unsigned long flags, long pages)
- 		vm_unacct_memory(pages * VM_ACCT(PAGE_SIZE));
- }
- 
--static int shmem_inode_acct_blocks(struct inode *inode, long pages)
-+int shmem_inode_acct_blocks(struct inode *inode, long pages)
- {
- 	struct shmem_inode_info *info = SHMEM_I(inode);
- 	struct shmem_sb_info *sbinfo = SHMEM_SB(inode->i_sb);
-@@ -435,7 +435,7 @@ static void shmem_free_inode(struct super_block *sb, size_t freed_ispace)
+diff --git a/include/linux/liveupdate.h b/include/linux/liveupdate.h
+index 122ad8f16ff9..a7f6ee5b6771 100644
+--- a/include/linux/liveupdate.h
++++ b/include/linux/liveupdate.h
+@@ -27,6 +27,10 @@ struct file;
+  *                    this to the file being operated on.
+  * @serialized_data:  The opaque u64 handle, preserve/prepare/freeze may update
+  *                    this field.
++ * @private_data:     Private data for the file used to hold runtime state that
++ *                    is not preserved. Set by the handler's .preserve()
++ *                    callback, and must be freed in the handler's
++ *                    .unpreserve() callback.
   *
-  * Return: true if swapped was incremented from 0, for shmem_writeout().
-  */
--static bool shmem_recalc_inode(struct inode *inode, long alloced, long swapped)
-+bool shmem_recalc_inode(struct inode *inode, long alloced, long swapped)
- {
- 	struct shmem_inode_info *info = SHMEM_I(inode);
- 	bool first_swapped = false;
-@@ -861,9 +861,9 @@ static void shmem_update_stats(struct folio *folio, int nr_pages)
- /*
-  * Somewhat like filemap_add_folio, but error if expected item has gone.
-  */
--static int shmem_add_to_page_cache(struct folio *folio,
--				   struct address_space *mapping,
--				   pgoff_t index, void *expected, gfp_t gfp)
-+int shmem_add_to_page_cache(struct folio *folio,
-+			    struct address_space *mapping,
-+			    pgoff_t index, void *expected, gfp_t gfp)
- {
- 	XA_STATE_ORDER(xas, &mapping->i_pages, index, folio_order(folio));
- 	unsigned long nr = folio_nr_pages(folio);
+  * This structure bundles all parameters for the file operation callbacks.
+  * The 'data' and 'file' fields are used for both input and output.
+@@ -36,6 +40,7 @@ struct liveupdate_file_op_args {
+ 	bool retrieved;
+ 	struct file *file;
+ 	u64 serialized_data;
++	void *private_data;
+ };
+ 
+ /**
+diff --git a/kernel/liveupdate/luo_file.c b/kernel/liveupdate/luo_file.c
+index f10d6c37328c..b235d1b562ad 100644
+--- a/kernel/liveupdate/luo_file.c
++++ b/kernel/liveupdate/luo_file.c
+@@ -129,6 +129,10 @@ static LIST_HEAD(luo_file_handler_list);
+  *                 This handle is passed back to the handler's .freeze(),
+  *                 .retrieve(), and .finish() callbacks, allowing it to track
+  *                 and update its serialized state across phases.
++ * @private_data:  Pointer to the private data for the file used to hold runtime
++ *                 state that is not preserved. Set by the handler's .preserve()
++ *                 callback, and must be freed in the handler's .unpreserve()
++ *                 callback.
+  * @retrieved:     A flag indicating whether a user/kernel in the new kernel has
+  *                 successfully called retrieve() on this file. This prevents
+  *                 multiple retrieval attempts.
+@@ -155,6 +159,7 @@ struct luo_file {
+ 	struct liveupdate_file_handler *fh;
+ 	struct file *file;
+ 	u64 serialized_data;
++	void *private_data;
+ 	bool retrieved;
+ 	struct mutex mutex;
+ 	struct list_head list;
+@@ -300,6 +305,7 @@ int luo_preserve_file(struct luo_file_set *file_set, u64 token, int fd)
+ 		goto err_kfree;
+ 
+ 	luo_file->serialized_data = args.serialized_data;
++	luo_file->private_data = args.private_data;
+ 	list_add_tail(&luo_file->list, &file_set->files_list);
+ 	file_set->count++;
+ 
+@@ -346,6 +352,7 @@ void luo_file_unpreserve_files(struct luo_file_set *file_set)
+ 		args.handler = luo_file->fh;
+ 		args.file = luo_file->file;
+ 		args.serialized_data = luo_file->serialized_data;
++		args.private_data = luo_file->private_data;
+ 		luo_file->fh->ops->unpreserve(&args);
+ 
+ 		list_del(&luo_file->list);
+@@ -372,6 +379,7 @@ static int luo_file_freeze_one(struct luo_file_set *file_set,
+ 		args.handler = luo_file->fh;
+ 		args.file = luo_file->file;
+ 		args.serialized_data = luo_file->serialized_data;
++		args.private_data = luo_file->private_data;
+ 
+ 		err = luo_file->fh->ops->freeze(&args);
+ 		if (!err)
+@@ -392,6 +400,7 @@ static void luo_file_unfreeze_one(struct luo_file_set *file_set,
+ 		args.handler = luo_file->fh;
+ 		args.file = luo_file->file;
+ 		args.serialized_data = luo_file->serialized_data;
++		args.private_data = luo_file->private_data;
+ 
+ 		luo_file->fh->ops->unfreeze(&args);
+ 	}
 -- 
 2.52.0.rc2.455.g230fcf2819-goog
 
