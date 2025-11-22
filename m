@@ -1,47 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-69478-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69479-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23928C7D556
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Nov 2025 19:17:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E2290C7D562
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Nov 2025 19:19:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E538E4E1B9B
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Nov 2025 18:17:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B6C834E32FF
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Nov 2025 18:19:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFF82267AF2;
-	Sat, 22 Nov 2025 18:17:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF9E126FDB2;
+	Sat, 22 Nov 2025 18:19:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qWp7qBzg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iJX4qxzJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BBCDF513;
-	Sat, 22 Nov 2025 18:17:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09A2C846F;
+	Sat, 22 Nov 2025 18:19:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763835440; cv=none; b=nXQKbHCV+iWFyvplalAscQpKkD3Euwp+9wNjmWddqMSRokuSl6zWWDuq7Y5YxSjrEub/TEB/H9teXr/D9f92e/+5exCL8guN1oE4bPQXNHVOByIFLyW+CwmQ5lq8lcQpzZZZSx8jSUCqIeRZSXZXxDvMLsbD3LQbjGrKUaziKJg=
+	t=1763835557; cv=none; b=me86mnIx1IJoUG5LtyBeUorYLxO58rk01hDQewvzS5UyhDIR9hk0I32HsDmxEA62alreBjfrlXM/oRaE2qNcJXLUV3Hu/3jPCk+8ZSa9pVsmwF169xinXrvpeIay276+IhLN6KqFEe5ku/rPkN+qiENkATyQB1SIYZ1dmh8uYfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763835440; c=relaxed/simple;
-	bh=we92XnUPL2GqTAE+Ck+cg8BMRawK5MC/LOnXeHskfuE=;
+	s=arc-20240116; t=1763835557; c=relaxed/simple;
+	bh=evUzKx3L4rrqlSjgN6yULWLWGPrGF5cq0KQWOKa1cCY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YZ9nJNpL4I/7xpF2dKphhD2aDd1JU3WnIeMfBqBJZNjGITdsLWCihMgPo5YhkNYvzzwOPpWG0pqa378k3dsVxzq/y40+g1dgp3hPcdMqdAfp9GhmG08aq4l8hiIgkELb+nzdwVjRMKunbsOt3eIxFH2Xki8NKpyxY1aGWZXfOKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qWp7qBzg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42B7EC4CEF5;
-	Sat, 22 Nov 2025 18:17:19 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qgwjt9AcKx17/5PkKmlxwTn3ejB6l+eTTwTdWLndV6uam78c5RrwIIHCz/KEIk4eeh1u4ikH6Bt9MUKeyR9HTeMj+o9J1idNVfVV6ahLblJCLdRNy5z+evpGMBmTroWKDLtOIzohevEX1Vn/8/IfFsOByeFKIc+L1ejkaX9vkgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iJX4qxzJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01035C4CEF5;
+	Sat, 22 Nov 2025 18:19:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763835439;
-	bh=we92XnUPL2GqTAE+Ck+cg8BMRawK5MC/LOnXeHskfuE=;
+	s=k20201202; t=1763835556;
+	bh=evUzKx3L4rrqlSjgN6yULWLWGPrGF5cq0KQWOKa1cCY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qWp7qBzgegMBBvpNUpmYHt1dSh1dwb7l1gVTIWRYlM8OTWUUWdH975ieJ/TI6cuVG
-	 OX7gdRw1zpMWaRAmRv0Pz5kTcOJ5IekC3ZeBx9szPIC3Dql/L0kmwVZ5VGp+oau6xF
-	 K+hU9omr4xma5Czu40WtwkdKJGRRqNJhRTmnradNl8hyDB2KWgpOd/2rjf7bk2qc+q
-	 WWaus1hdoFJCoreampp5V9lRtGeRWqONH5+HwEkBZ+Hp9kkUdcQG/mGDp0/fg6NZL7
-	 cbRX2Xcy/CEsx0PZZhycSzUq9SYMtwWCgvZRmqdsvJ9TD/UyPFWLyRIO1QANBTu2TY
-	 e1RjCaTvPOX5A==
-Date: Sat, 22 Nov 2025 10:17:17 -0800
+	b=iJX4qxzJDek73qTk6QjQ4ZYHTwS7FNpz23Q8XgjBF79QTyAZTdVHqQXjWzEWeGbDh
+	 N+pMJcoxquWoZAyx8a3gQeDJHyhof/pp5esTjWUInn0N3vb28YU1y9ZdA1Zxugw9c2
+	 M8/LpF24kl03DYMylnggdh3TT9k8Ho/6CZ8RAC9l+Zz82tPPcPP1bKtkwhVE6r1a6I
+	 zMqIF6CPoR7TVxbBt9t6KlT/v1LXKbOaMAQIYlb7CjQoGBSu/numimc4grxUSxKzSg
+	 28Jm6KM2/KT7MLx0tW1C4g/LbrPOs7a8N9cGyQ0N/j5cTLCyLDBrZMz72DI4zDFz/2
+	 4ID9ZGG+tetcQ==
+Date: Sat, 22 Nov 2025 10:19:14 -0800
 From: Eric Biggers <ebiggers@kernel.org>
 To: Christoph Hellwig <hch@lst.de>
 Cc: "Theodore Y. Ts'o" <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>,
@@ -51,11 +51,11 @@ Cc: "Theodore Y. Ts'o" <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>,
 	linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org,
 	linux-f2fs-devel@lists.sourceforge.net,
 	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 04/11] fscrypt: pass a byte offset to
- fscrypt_mergeable_bio
-Message-ID: <20251122181717.GA1626@quark>
+Subject: Re: [PATCH 08/11] fscrypt: return a byte offset from
+ bh_get_inode_and_lblk_num
+Message-ID: <20251122181914.GB1626@quark>
 References: <20251118062159.2358085-1-hch@lst.de>
- <20251118062159.2358085-5-hch@lst.de>
+ <20251118062159.2358085-9-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -64,22 +64,51 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251118062159.2358085-5-hch@lst.de>
+In-Reply-To: <20251118062159.2358085-9-hch@lst.de>
 
-On Tue, Nov 18, 2025 at 07:21:47AM +0100, Christoph Hellwig wrote:
+On Tue, Nov 18, 2025 at 07:21:51AM +0100, Christoph Hellwig wrote:
+> All the callers now want a byte offset into the inode, so return
+> that from bh_get_inode_and_lblk_num.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  fs/crypto/inline_crypt.c | 18 ++++++++----------
+>  1 file changed, 8 insertions(+), 10 deletions(-)
+> 
 > diff --git a/fs/crypto/inline_crypt.c b/fs/crypto/inline_crypt.c
-> index 1773dd7ea7cf..aba830e0827d 100644
+> index c069958c4819..128268adf960 100644
 > --- a/fs/crypto/inline_crypt.c
 > +++ b/fs/crypto/inline_crypt.c
-> @@ -361,7 +361,7 @@ EXPORT_SYMBOL_GPL(fscrypt_set_bio_crypt_ctx_bh);
->   * fscrypt_mergeable_bio() - test whether data can be added to a bio
->   * @bio: the bio being built up
->   * @inode: the inode for the next part of the I/O
-> - * @next_lblk: the next file logical block number in the I/O
-> + * @pos: the next file logical offset (in bytes) in the I/O
+> @@ -315,7 +315,7 @@ EXPORT_SYMBOL_GPL(fscrypt_set_bio_crypt_ctx);
+>  /* Extract the inode and logical block number from a buffer_head. */
 
-In comments, maybe call it a "file position" instead of "file logical
-offset" to match the variable name?
+inode and file position
+
+>  static bool bh_get_inode_and_lblk_num(const struct buffer_head *bh,
+>  				      const struct inode **inode_ret,
+> -				      u64 *lblk_num_ret)
+> +				      loff_t *pos_ret)
+
+Rename to bh_get_inode_and_pos()
+
+> * Same as fscrypt_set_bio_crypt_ctx(), except this takes a buffer_head instead  
+> * of an inode and block number directly.                                        
+> */                                                                              
+> void fscrypt_set_bio_crypt_ctx_bh(struct bio *bio,                               
+>                                  const struct buffer_head *first_bh,            
+>                                  gfp_t gfp_mask)                
+
+inode and file position
+
+> * Same as fscrypt_mergeable_bio(), except this takes a buffer_head instead of
+> * an inode and block number directly.
+> *
+> * Return: true iff the I/O is mergeable
+> */
+> bool fscrypt_mergeable_bio_bh(struct bio *bio,
+>                              const struct buffer_head *next_bh)
+
+inode and file position
 
 - Eric
 
