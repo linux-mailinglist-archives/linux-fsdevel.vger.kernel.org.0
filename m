@@ -1,47 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-69513-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69514-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA044C7E1A6
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Nov 2025 15:16:53 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC995C7E1B3
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Nov 2025 15:17:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30C693AB4EF
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Nov 2025 14:16:52 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7BA413417EC
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Nov 2025 14:17:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E4562D5C61;
-	Sun, 23 Nov 2025 14:16:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C69F71DFDB8;
+	Sun, 23 Nov 2025 14:17:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fnrpq6fX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YjeiOOmG"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C3C735959;
-	Sun, 23 Nov 2025 14:16:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21A7E2116F4;
+	Sun, 23 Nov 2025 14:17:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763907404; cv=none; b=eSDY9v5FE0qUdB2ZXHxCgbhmhRkOx2sXRTY2HBTXKJihGQSmYEUaYpQp4UyPiXhvp5YmiXX8zDH9unkSD5iCkBWrwj8mJ+f++Ce6jrOJ+v8COgIkBos/AMTutwaPC2kUcHiQGIYg66B4OkkWXT9gsYcmij4L3OdhFsjA/tN/wmE=
+	t=1763907433; cv=none; b=furI0jQ96tNCyUm1tsPGasqQ4RVpNLjhO37MleG461ubGH8tIuFVhK6ZdB2BWq8XL9hPjGc4md/Rkmz/+2XqgvWNXwhqcLvJTLlosBJyGxWYjkro291cY6rx/u8FeAuohPdC0VBV6SddkkBo4c/uI8BAXIMszFRwrulnox84DpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763907404; c=relaxed/simple;
-	bh=4Xz3KOznAYb3M8bxg5UGBUpO8Ca5J6a4kiLtZ6+lz2o=;
+	s=arc-20240116; t=1763907433; c=relaxed/simple;
+	bh=hlZPMSOQ4z0z/SegnqaJGdOFl8OKu7ej64VHNnxKfOU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gGaFIW0Ei4szcFm5vACpTq6evjsMX/roV1rlauK8FsEAD6rGRU+nlgC7fi4TZ08uwccmHjc9pd0S4Qkrhfrootq6FFz+AeVMLA6z0QLk5OJvM6kg1ADX/qvKdei2kY7AdcmJH5fHQJzb/dN5Zq6Pe2OVft/0amirNfgzw6mgyh4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fnrpq6fX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4957EC113D0;
-	Sun, 23 Nov 2025 14:16:23 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=ohtnC6LPjiyA0Se2Dak8g+BLi3aNjEg5iO/1VTK0bJMWYAGXJL8TtHHyHUZFFpfc3vhKADTnAbPCSbp5ttbJG+svToaoLpomOzjOmrQhUGm+46SQUhXAmIbFPwcGaDfb/IutNDC4bChxJvveDbm0NRmqk7jxodXqMK4fCoqT6ds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YjeiOOmG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2161C113D0;
+	Sun, 23 Nov 2025 14:16:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763907403;
-	bh=4Xz3KOznAYb3M8bxg5UGBUpO8Ca5J6a4kiLtZ6+lz2o=;
+	s=k20201202; t=1763907432;
+	bh=hlZPMSOQ4z0z/SegnqaJGdOFl8OKu7ej64VHNnxKfOU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fnrpq6fXUrx9QXPgz+DBX+Qxzr/8ycksAoTg+LwWybP0PSZk4FDpF6DgEmo2LweQ+
-	 9WRQNo+wYjPVEW84HwBUh6/j2fQvPZS1eYLtOuhesU/AlAoH9rCpA5u8O7ZN723wzg
-	 17RfltwDDU/LSt1+oAQljK15ipIKPcAWW9sSBlmt9LqlYSFx1yvFd5rHpqU6m+GBo0
-	 kRAAr9s8jITykV8Yvg2yjJze7/OSoExQCYaiTXAvO2qlXly5L1oNXj6uM0TmXpX4y/
-	 z4M0z8J9H5dkjewW9/VPnD4ib9jTFsbBfXNvgGsHvJ+Lk95kBH6wLcxwB4k4R6OfAq
-	 dV5bTMLRSo6Gg==
-Date: Sun, 23 Nov 2025 16:16:19 +0200
+	b=YjeiOOmGhl+vYDAP5F3PqObgaBOeH09evuz0Mon8ZYyijzYcypbmuTWlbd8UfY7Li
+	 JZxMGVMZgNCugT4C58X01ElFJQ7xeyDEkELKARcivirljBnNMlKQRg+eo4HP87DheV
+	 d6gwf1Hyzc/jM57nVWZpS0YtC9d8uBqv/keFn2kFLpgIdX+rHTQkJLC5OLqVPJwWW5
+	 tFw+JC6n5hxX0w6FpLsk3sxbPfnJ/lP2jbAlrVoDP26ZyJahCDcEO0mYRVCOKUo16l
+	 NAzmmdLtATyY2laWAECozqHTeL9Y16n+A4yLTqSpw5/pbcWrbU1j2Epmj8i6sOVzfL
+	 rWZi7jYZsMMMA==
+Date: Sun, 23 Nov 2025 16:16:48 +0200
 From: Mike Rapoport <rppt@kernel.org>
 To: Pasha Tatashin <pasha.tatashin@soleen.com>
 Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com,
@@ -71,136 +71,219 @@ Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com,
 	ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com,
 	leonro@nvidia.com, witu@nvidia.com, hughd@google.com,
 	skhawaja@google.com, chrisl@kernel.org
-Subject: Re: [PATCH v7 04/22] liveupdate: luo_session: add sessions support
-Message-ID: <aSMXM8ayzV2kx6Ws@kernel.org>
+Subject: Re: [PATCH v7 02/22] liveupdate: luo_core: integrate with KHO
+Message-ID: <aSMXUKMhroThYrlU@kernel.org>
 References: <20251122222351.1059049-1-pasha.tatashin@soleen.com>
- <20251122222351.1059049-5-pasha.tatashin@soleen.com>
+ <20251122222351.1059049-3-pasha.tatashin@soleen.com>
+ <aSLvo0uXLOaE2JW6@kernel.org>
+ <CA+CK2bCj2OAQjM-0rD+DP0t4v71j70A=HHdQ212ASxX=xoREXw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251122222351.1059049-5-pasha.tatashin@soleen.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CA+CK2bCj2OAQjM-0rD+DP0t4v71j70A=HHdQ212ASxX=xoREXw@mail.gmail.com>
 
-On Sat, Nov 22, 2025 at 05:23:31PM -0500, Pasha Tatashin wrote:
-> Introduce concept of "Live Update Sessions" within the LUO framework.
-> LUO sessions provide a mechanism to group and manage `struct file *`
-> instances (representing file descriptors) that need to be preserved
-> across a kexec-based live update.
+On Sun, Nov 23, 2025 at 07:03:19AM -0500, Pasha Tatashin wrote:
+> On Sun, Nov 23, 2025 at 6:27 AM Mike Rapoport <rppt@kernel.org> wrote:
+> >
+> > On Sat, Nov 22, 2025 at 05:23:29PM -0500, Pasha Tatashin wrote:
+> > > Integrate the LUO with the KHO framework to enable passing LUO state
+> > > across a kexec reboot.
+> > >
+> > > This patch implements the lifecycle integration with KHO:
+> > >
+> > > 1. Incoming State: During early boot (`early_initcall`), LUO checks if
+> > >    KHO is active. If so, it retrieves the "LUO" subtree, verifies the
+> > >    "luo-v1" compatibility string, and reads the `liveupdate-number` to
+> > >    track the update count.
+> > >
+> > > 2. Outgoing State: During late initialization (`late_initcall`), LUO
+> > >    allocates a new FDT for the next kernel, populates it with the basic
+> > >    header (compatible string and incremented update number), and
+> > >    registers it with KHO (`kho_add_subtree`).
+> > >
+> > > 3. Finalization: The `liveupdate_reboot()` notifier is updated to invoke
+> > >    `kho_finalize()`. This ensures that all memory segments marked for
+> > >    preservation are properly serialized before the kexec jump.
+> > >
+> > > LUO now depends on `CONFIG_KEXEC_HANDOVER`.
+> > >
+> > > Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+> > > ---
+> > >  include/linux/kho/abi/luo.h      |  54 +++++++++++
+> > >  kernel/liveupdate/luo_core.c     | 154 ++++++++++++++++++++++++++++++-
+> > >  kernel/liveupdate/luo_internal.h |  22 +++++
+> > >  3 files changed, 229 insertions(+), 1 deletion(-)
+> > >  create mode 100644 include/linux/kho/abi/luo.h
+> > >  create mode 100644 kernel/liveupdate/luo_internal.h
+> > >
+> > > diff --git a/include/linux/kho/abi/luo.h b/include/linux/kho/abi/luo.h
+> > > new file mode 100644
+> > > index 000000000000..8523b3ff82d1
+> > > --- /dev/null
+> > > +++ b/include/linux/kho/abi/luo.h
+> > > @@ -0,0 +1,54 @@
+> > > +/* SPDX-License-Identifier: GPL-2.0 */
+> > > +
+> > > +/*
+> > > + * Copyright (c) 2025, Google LLC.
+> > > + * Pasha Tatashin <pasha.tatashin@soleen.com>
+> > > + */
+> > > +
+> > > +/**
+> > > + * DOC: Live Update Orchestrator ABI
+> > > + *
+> > > + * This header defines the stable Application Binary Interface used by the
+> > > + * Live Update Orchestrator to pass state from a pre-update kernel to a
+> > > + * post-update kernel. The ABI is built upon the Kexec HandOver framework
+> > > + * and uses a Flattened Device Tree to describe the preserved data.
+> > > + *
+> > > + * This interface is a contract. Any modification to the FDT structure, node
+> > > + * properties, compatible strings, or the layout of the `__packed` serialization
+> > > + * structures defined here constitutes a breaking change. Such changes require
+> > > + * incrementing the version number in the relevant `_COMPATIBLE` string to
+> > > + * prevent a new kernel from misinterpreting data from an old kernel.
+> >
+> > From v6 thread:
+> >
+> > > > I'd add a sentence that stresses that ABI changes are possible as long they
+> > > > include changes to the FDT version.
+> > > > This is indeed implied by the last paragraph, but I think it's worth
+> > > > spelling it explicitly.
+> > > >
+> > > > Another thing that I think this should mention is that compatibility is
+> > > > only guaranteed for the kernels that use the same ABI version.
+> > >
+> > > Sure, I will add both.
+> >
+> > Looks like it fell between the cracks :/
 > 
-> Each session is identified by a unique name and acts as a container
-> for file objects whose state is critical to a userspace workload, such
-> as a virtual machine or a high-performance database, aiming to maintain
-> their functionality across a kernel transition.
+> Hm, when I was updating the patches, I included the first part, and
+> then re-read the content, and I think it covers all points:
 > 
-> This groundwork establishes the framework for preserving file-backed
-> state across kernel updates, with the actual file data preservation
-> mechanisms to be implemented in subsequent patches.
+> 1. Changes are possible
+> This interface is a contract. Any modification to the FDT structure, node
+>  * properties, compatible strings, or the layout of the `__packed` serialization
+>  * structures defined here constitutes a breaking change. Such changes require
+>  * incrementing the version number in the relevant `_COMPATIBLE` string
 > 
-> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
-> ---
->  include/linux/kho/abi/luo.h      |  71 +++++
->  include/uapi/linux/liveupdate.h  |   3 +
->  kernel/liveupdate/Makefile       |   3 +-
->  kernel/liveupdate/luo_core.c     |   9 +
->  kernel/liveupdate/luo_internal.h |  29 ++
->  kernel/liveupdate/luo_session.c  | 462 +++++++++++++++++++++++++++++++
->  6 files changed, 576 insertions(+), 1 deletion(-)
->  create mode 100644 kernel/liveupdate/luo_session.c
+> So, change as long as you update versioning number
 > 
+> 2. Breaking if version is different:
+> to prevent a new kernel from misinterpreting data from an old kernel.
+> 
+> So, the next kernel can interpret only if the version is the same.
+> 
+> Which point do you think is not covered?
 
-...
+As I said, it's covered, but it's implied. I'd prefer these stated
+explicitly.
 
-> +int __init luo_session_setup_outgoing(void *fdt_out)
-> +{
-> +	struct luo_session_header_ser *header_ser;
-> +	void *outgoing_buffer;
-> +	u64 header_ser_pa;
-> +	int err;
-> +
-> +	outgoing_buffer = kho_alloc_preserve(LUO_SESSION_PGCNT << PAGE_SHIFT);
-> +	if (IS_ERR(outgoing_buffer))
-> +		return PTR_ERR(header_ser);
+> > > +static int __init liveupdate_early_init(void)
+> > > +{
+> > > +     int err;
+> > > +
+> > > +     err = luo_early_startup();
+> > > +     if (err) {
+> > > +             luo_global.enabled = false;
+> > > +             luo_restore_fail("The incoming tree failed to initialize properly [%pe], disabling live update\n",
+> > > +                              ERR_PTR(err));
+> >
+> > What's wrong with a plain panic()?
+> 
+> Jason suggested using the luo_restore_fail() function instead of
+> inserting panic() right in code somewhere in LUOv3 or earlier. It
+> helps avoid sprinkling panics in different places, and also in case if
+> we add the maintenance mode that we have discussed in LUOv6, we could
+> update this function as a place where that mode would be switched on.
 
-Should be 
-		return PTR_ERR(outgoing_buffer);
+I'd agree if we were to have a bunch of panic()s sprinkled in the code.
+With a single one it's easier to parse panic() than lookup what
+luo_restore_fail() means.
+ 
+> > > +     }
+> > > +
+> > > +     return err;
+> > > +}
+> > > +early_initcall(liveupdate_early_init);
+> > > +
+> >
+> > ...
+> >
+> > >  int liveupdate_reboot(void)
+> > >  {
+> > > -     return 0;
+> > > +     int err;
+> > > +
+> > > +     if (!liveupdate_enabled())
+> > > +             return 0;
+> > > +
+> > > +     err = kho_finalize();
+> > > +     if (err) {
+> > > +             pr_err("kho_finalize failed %d\n", err);
+> >
+> > Nit: why not %pe?
+> 
+> I believe, before my last clean-up of KHO it could return FDT error in
+> addition to standard errno; but anyways, this code is going to be
+> removed soon with stateless KHO, keeping err instead of %pe is fine (I
+> can change this if I update this patch).
 
-Or, preferably, just drop outgoing_buffer and use header_ser everywhere.
+Nah, %d is ok.
+ 
+> > > +             /*
+> > > +              * kho_finalize() may return libfdt errors, to aboid passing to
+> > > +              * userspace unknown errors, change this to EAGAIN.
+> > > +              */
+> > > +             err = -EAGAIN;
+> > > +     }
+> > > +
+> > > +     return err;
+> > >  }
+> > >
+> > >  /**
+> > > diff --git a/kernel/liveupdate/luo_internal.h b/kernel/liveupdate/luo_internal.h
+> > > new file mode 100644
+> > > index 000000000000..8612687b2000
+> > > --- /dev/null
+> > > +++ b/kernel/liveupdate/luo_internal.h
+> > > @@ -0,0 +1,22 @@
+> > > +/* SPDX-License-Identifier: GPL-2.0 */
+> > > +
+> > > +/*
+> > > + * Copyright (c) 2025, Google LLC.
+> > > + * Pasha Tatashin <pasha.tatashin@soleen.com>
+> > > + */
+> > > +
+> > > +#ifndef _LINUX_LUO_INTERNAL_H
+> > > +#define _LINUX_LUO_INTERNAL_H
+> > > +
+> > > +#include <linux/liveupdate.h>
+> > > +
+> > > +/*
+> > > + * Handles a deserialization failure: devices and memory is in unpredictable
+> > > + * state.
+> > > + *
+> > > + * Continuing the boot process after a failure is dangerous because it could
+> > > + * lead to leaks of private data.
+> > > + */
+> > > +#define luo_restore_fail(__fmt, ...) panic(__fmt, ##__VA_ARGS__)
+> >
+> > Let's add this when we have more than a single callsite.
+> > Just use panic() in liveupdate_early_init() and add the comment there.
+> 
+> https://lore.kernel.org/all/CA+CK2bBEX6C6v63DrK-Fx2sE7fvLTZM=HX0y_j4aVDYcfrCXOg@mail.gmail.com/
+> 
+> This is the reason I added this function. I like the current approach.
 
-> +	header_ser = outgoing_buffer;
-> +	header_ser_pa = virt_to_phys(header_ser);
-> +
-> +	err = fdt_begin_node(fdt_out, LUO_FDT_SESSION_NODE_NAME);
-> +	err |= fdt_property_string(fdt_out, "compatible",
-> +				   LUO_FDT_SESSION_COMPATIBLE);
-> +	err |= fdt_property(fdt_out, LUO_FDT_SESSION_HEADER, &header_ser_pa,
-> +			    sizeof(header_ser_pa));
-> +	err |= fdt_end_node(fdt_out);
-> +
-> +	if (err)
-> +		goto err_unpreserve;
-> +
-> +	luo_session_global.outgoing.header_ser = header_ser;
-> +	luo_session_global.outgoing.ser = (void *)(header_ser + 1);
-> +	luo_session_global.outgoing.active = true;
-> +
-> +	return 0;
-> +
-> +err_unpreserve:
-> +	kho_unpreserve_free(header_ser);
-> +	return err;
-> +}
-
-...
-
-> +int luo_session_deserialize(void)
-> +{
-> +	struct luo_session_header *sh = &luo_session_global.incoming;
-> +	static bool is_deserialized;
-> +	static int err;
-> +
-> +	/* If has been deserialized, always return the same error code */
-> +	if (is_deserialized)
-> +		return err;
-
-is_deserialized and err are uninitialized here.
-
-> +
-> +	is_deserialized = true;
-> +	if (!sh->active)
-> +		return 0;
-> +
-
-...
-
-> +/**
-> + * luo_session_quiesce - Ensure no active sessions exist and lock session lists.
-> + *
-> + * Acquires exclusive write locks on both incoming and outgoing session lists.
-> + * It then validates no sessions exist in either list.
-> + *
-> + * This mechanism is used during file handler un/registration to ensure that no
-> + * sessions are currently using the handler, and no new sessions can be created
-> + * while un/registration is in progress.
-
-It makes sense to add something like this comment from luo_file.c here as well:
-
-	 * This prevents registering new handlers while sessions are active or
-	 * while deserialization is in progress.
-
-> + *
-> + * Return:
-> + * true  - System is quiescent (0 sessions) and locked.
-> + * false - Active sessions exist. The locks are released internally.
-> + */
-
-With those addressed:
-
-Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-
+v2 had way more than a single panic(), then it made sense
+ 
+> Pasha
 
 -- 
 Sincerely yours,
