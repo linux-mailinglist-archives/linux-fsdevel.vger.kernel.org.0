@@ -1,125 +1,231 @@
-Return-Path: <linux-fsdevel+bounces-69510-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69511-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B081C7E0E5
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Nov 2025 13:14:11 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 291DCC7E0F4
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Nov 2025 13:16:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 5C3B6347CC0
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Nov 2025 12:13:52 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 661EF4E1EF6
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Nov 2025 12:16:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE6692D0C95;
-	Sun, 23 Nov 2025 12:13:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 649712D47E0;
+	Sun, 23 Nov 2025 12:16:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J61glzUb"
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="d1IvU7Y4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEF6F85C4A
-	for <linux-fsdevel@vger.kernel.org>; Sun, 23 Nov 2025 12:13:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 788AD1CAA65
+	for <linux-fsdevel@vger.kernel.org>; Sun, 23 Nov 2025 12:16:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763900024; cv=none; b=iJkt/YCPjJ+zExKicyShnAO3CgjSLYX2DrAaM7yseKvLD3efytp9Zt7iUBM4ustPZU+9Hj6yfesgmcnjtl8Ws/Bw0cqp+JS/ykhHhBBQQYb5jps7Nyj/kDH2g1EvaJQjDX92mif4ke7BjhRlWtpgIkMIkmA8xUoAKv3SR00J+FM=
+	t=1763900185; cv=none; b=oFDbEtoapWjCn79eohdwQgJ6bKJ6hgKPlBUMalxxjx5JwbUtELdMwRb/0RbD0IqC5De0yQXuYR529jQltk/EbbiCdSp52cHS6LUlXoLKxxGnNpOMMWtov7ucWrPLmiGwsL2OmCf+1Uz1sWZReadW6bO5bQrcffaT2KxZyVyhgoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763900024; c=relaxed/simple;
-	bh=C31m14QTTyacaf6yZhVFxGlYz8X/OYOM4Xmwxefxn3A=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LJs7LxSDlIxVmDguwB5EVFU/D3kzJNo54dLnX2vNjIpmRTIF57+4FqEy6DSB6alqdgKbtj8BSSjRoUN+Nq4YaW0SGgkkNPz9l/Pq6mBXwOhmBHKeD1rYiHZwNumgDRzh5aV/mx17jcz3E//EzdxtkyzUtVHZEeogKDpX7qrKjlc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J61glzUb; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-340e525487eso2298051a91.3
-        for <linux-fsdevel@vger.kernel.org>; Sun, 23 Nov 2025 04:13:42 -0800 (PST)
+	s=arc-20240116; t=1763900185; c=relaxed/simple;
+	bh=UM+vF6TEu8yhAkj30JLGbyIbI4WPh5cn7qRbJB4QgGo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=slEnken0LO3idxkrcHlsUssfRULHwZb9ABnrph5aB30kOZM0tbYZY1X9rNlyxHVyJ1dZ70paUU3uL+Jl6JXlWmbW2Mzw+R2f65tJWCyX379prtFhZnu2W1SEOhplnVA7Xzdp5y0uaW1Sh4MCuNziinL6tLVZWkR6Aff5004t/+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=d1IvU7Y4; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-640aa1445c3so5258587a12.1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 23 Nov 2025 04:16:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763900022; x=1764504822; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=WyX1swaZXCFxH3YUkv+TSnEmlsdS6cyArMsiSXhLY8A=;
-        b=J61glzUbCU/rIjw1kc7vw8SYWNgg2wK+JLM8jUeVNdiZgIQvxldTsGNDZGjovVPnyR
-         Wj+0AnL264pC5qRe4E8eR+SHHxfTrfGOi09cysyf6mAs81FBtaZCIaqcVJP/MRFKv1/c
-         Uw/MD66DVA/7W6wQukBSNPTnIUa/atkWor3hFoo0JBfohHyJWsdIZaADWjGTJ5ewJduj
-         KLV4NgHP4ZA8Yo54EuPxv6fBJrSkpgk/wwCQYFoA56GSW12c0s/K/lBZ8V0pSNaealZg
-         woitTrBUDaBCljp9ru8Lbx2+E1ywU7aYMUfrZb2sxyAVgxfPOMjaZz7050HQthdxWcVM
-         kJ9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763900022; x=1764504822;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=soleen.com; s=google; t=1763900181; x=1764504981; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=WyX1swaZXCFxH3YUkv+TSnEmlsdS6cyArMsiSXhLY8A=;
-        b=TU2pfukEcfh3B8rtbM86HMGZtrXI1kv7GZYkKM4FV5489j9sA1UN+3bjr4lGTpLtan
-         tMdCMlLxBXHjQVRsAV/fcFaw2QbZsOgjlu4bMYKQuf679zknc7QCdEl2xKWPUaoCansD
-         H1VHDgXve4vMfHGFfkaDX8Wd9TGqKIsmwR3Cr6wda3vPYp4NLPvEpA/Eu369upI8d774
-         ScIbtATL986KjhqBJCmOiUqOLMO8VXX7F++A5hUbGt7emIjnnvzGMUQkFC6kwvoSovT8
-         YsY0jP+XCfdQACXWgnhgNTnJUNg57E9S6yGr2g92k5CVRzYIy38MaMSE8eNjPWREyeZ7
-         mKOw==
-X-Gm-Message-State: AOJu0YwQUI5UtsGrnr17folEpNBLwa3be1PIa6tEtLIgd+yaSI/ApUZ7
-	rfU49QScEv958D5al9MlplzBepYjotTQP6YvxTKccj0g7S+sizIGgNcl
-X-Gm-Gg: ASbGnct/A2l/p/oKv21l2HYAUzHJAfDN4aTgddNnWe0uxzXWZ1qUdYiTMqbFhnILIFZ
-	Ba33/wH6VP8rdM037OgzdlTVfysjzqMy3avXNn14JChoVjDp0HSTeJXYHqH987ovXLBC9Z1mfqy
-	SDpjTitqK5s2BFETl4ZVxh8ZgizhzadNmcZtHGlV6GC7ohU2x6z6j7kx8+P2s5O1RISm+N8egq/
-	ytwDBOw/5AGJq995lGhBqptk34mUGT+HxrPbtf+IJeeMhKcaez/SvcqMNxsIWtub8Rwkpfd9nj3
-	qvniWXVCFAT4OFcL5NiUi5V1w5SH7MY1Y5uvuKRgWvJDaDLgH5bgOIRRkRsqI7PoZMmvOk0ESWP
-	2m5X7eESllQaGhq1yixZEaHruJuNOKKNF650+gcACAVkV7t/i/wyeMgSgJi2Rx9I/cZZR4hzvuY
-	mOpAWwzHT1DSmUo+7E0da5DQ==
-X-Google-Smtp-Source: AGHT+IGkiJz43MaVKsspec2x97fyah8pulbznh0JEMfdt2JxPUnEwy2ZNySTL4iXFirGNGrPJuyjNw==
-X-Received: by 2002:a17:90b:534e:b0:341:a9e7:e5f9 with SMTP id 98e67ed59e1d1-34733d76c4dmr7119993a91.0.1763900021914;
-        Sun, 23 Nov 2025 04:13:41 -0800 (PST)
-Received: from yangwen.localdomain ([121.237.95.138])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-bd75b61c29dsm10368943a12.0.2025.11.23.04.13.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Nov 2025 04:13:41 -0800 (PST)
-From: YangWen <anmuxixixi@gmail.com>
-To: linkinjeon@kernel.org,
-	sj1557.seo@samsung.com,
-	yuezhang.mo@sony.com
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	YangWen <anmuxixixi@gmail.com>
-Subject: [PATCH] exfat: fix memory leak in exfat_fill_super
-Date: Sun, 23 Nov 2025 20:13:39 +0800
-Message-ID: <20251123121339.25501-1-anmuxixixi@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        bh=vmnwA2LRgXHvVpWEUlTYwlypqcI9gTX6hAKhklpoPjU=;
+        b=d1IvU7Y431NYcsrDpSOKfvh0SSOeI4IP4COWYsS+etxiSP7UgrMWEtc9gC6P+fTte0
+         qNMjeS0NFxqWSZtMonv3cPqRz2ZWpSOm1EZ4YmyPiOFrGg5hpWkE7fONUZ92hUAab44+
+         OkRF9vuJzSs58Tl1YFaDf/oM8Xsav811LOiZx3UFd8LyTv5iNztZvnU37XW5Uq1XzNXj
+         mpwjvn4s83+nnECY62kSsdIAf6APU+XMPfYu/jiep0+1syHVujuFsdaaCjY3iCqIrugN
+         NlglTm6yXdEywLna6NBKYOU5DsH6fScACuEZ0vH306QGXnBUyEA4t6Rgf1FtMeq4bx+Y
+         6vcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763900181; x=1764504981;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=vmnwA2LRgXHvVpWEUlTYwlypqcI9gTX6hAKhklpoPjU=;
+        b=fXUe4R3kzUXGAF0+R79B9jD4X5T21TLc+sT+14elu6FO7n1D0mTNoSDU/LeuzIP+Mo
+         L+ecW0ZJggp8BqVbpoKsLQTtP7HW3zbjrrKJTvo8aEVyHRdz4FqRL7UugK0pXblgPWos
+         WS1UtRcVgPFCDhzS9xwQrC2qhDjXEuBLdCaMN6TCvACsTfehPgIIN+6ObN/GGi7nkprb
+         kbBX35WZrvz4AfsFu3Dh0+7hahqUn4RSXzwq/64Smp8M/g+nv+5vb1FRhqCdUSXs80ub
+         patE88MqtAaFvApAwABAVz3LsF1MJdweBPL09u2mogKw6/uvCpJRAXdvGdIySlcXwtEj
+         Evfg==
+X-Forwarded-Encrypted: i=1; AJvYcCVDfsqtssJbLv24ErEPG0BsAKJNvf13iSMSsuJN2oy/ejAHF1y4h8hjrf9GZhh6BfHSXChsn0JKKJO0+CR/@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWdBJ6b19yc+DGmkxR9DQwitXr7fRdf+PLkSfmdCQ9ct064n+Q
+	ehjlU/ttABD6zalCBjTdRVG4y5/hq+MUNreYf1petxyqbiHNlbd9lb8GlOyD00rd83qmEtQ/YOG
+	HpoPMUKC+JPMncNSFebNNuu4eYpds4cixPmQqeo2xhg==
+X-Gm-Gg: ASbGnct2WxEgFpxBej3W55WggKkrO1sOZA/ohvrcgAXs3jcrjLg5s4oEQURP+mQcIZR
+	epO/bGz/txfwtxmpPgrbAlOuMFqF354e+cUjBxNV0KU+6Ubvl7xgu8wrxpeKzlrXEo0zNl73+sA
+	dES336Ly2s7R16Hi+qkRhnXrtm3WT6aa+9cchUAMET+gqiD21bsJcuD3UGTfqeO3BxVrXKqmv/k
+	z9TsKibk9Jz/zyQ0PdTiF9Tk9KtjcXuvgZZeUF8GY9hErUps8m/ERrNSVm+Bn1lZQbhzk6Gf6KX
+	FYU=
+X-Google-Smtp-Source: AGHT+IEImagg3AdF5WYifMqKzRIwHznKxuAvKL3KeryKA1i40NWKG5ne+tX3JUrb7aTNo7+cwTyqLluVcxsGwvMzoxU=
+X-Received: by 2002:a05:6402:1447:b0:643:ce6:a7e6 with SMTP id
+ 4fb4d7f45d1cf-64555d22c5bmr7096672a12.31.1763900181343; Sun, 23 Nov 2025
+ 04:16:21 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251122222351.1059049-1-pasha.tatashin@soleen.com>
+ <20251122222351.1059049-2-pasha.tatashin@soleen.com> <aSLsCxLhrnyUlcy4@kernel.org>
+In-Reply-To: <aSLsCxLhrnyUlcy4@kernel.org>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Sun, 23 Nov 2025 07:15:44 -0500
+X-Gm-Features: AWmQ_bn_xMt7b_XynypKNmLzsgZ0R3niD3BWBC1dy3KZJb4mBkKZVlkWV4PjVSU
+Message-ID: <CA+CK2bCN7x=eMwfTXF-2+vR=Gn3=41z6Xxx6wM1m7i-rxzug9w@mail.gmail.com>
+Subject: Re: [PATCH v7 01/22] liveupdate: luo_core: Live Update Orchestrator
+To: Mike Rapoport <rppt@kernel.org>
+Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com, 
+	dmatlack@google.com, rientjes@google.com, corbet@lwn.net, 
+	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, 
+	ojeda@kernel.org, aliceryhl@google.com, masahiroy@kernel.org, 
+	akpm@linux-foundation.org, tj@kernel.org, yoann.congal@smile.fr, 
+	mmaurer@google.com, roman.gushchin@linux.dev, chenridong@huawei.com, 
+	axboe@kernel.dk, mark.rutland@arm.com, jannh@google.com, 
+	vincent.guittot@linaro.org, hannes@cmpxchg.org, dan.j.williams@intel.com, 
+	david@redhat.com, joel.granados@kernel.org, rostedt@goodmis.org, 
+	anna.schumaker@oracle.com, song@kernel.org, linux@weissschuh.net, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
+	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com, 
+	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
+	rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org, 
+	cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com, 
+	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com, 
+	aleksander.lobakin@intel.com, ira.weiny@intel.com, 
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
+	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net, 
+	brauner@kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	saeedm@nvidia.com, ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com, 
+	leonro@nvidia.com, witu@nvidia.com, hughd@google.com, skhawaja@google.com, 
+	chrisl@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-If exFAT encounters errors during multiple mount operations, 'sbi' and 'nls' will not be released,
-which will cause a memory leak.
+On Sun, Nov 23, 2025 at 6:12=E2=80=AFAM Mike Rapoport <rppt@kernel.org> wro=
+te:
+>
+> On Sat, Nov 22, 2025 at 05:23:28PM -0500, Pasha Tatashin wrote:
+> > Introduce LUO, a mechanism intended to facilitate kernel updates while
+> > keeping designated devices operational across the transition (e.g., via
+> > kexec). The primary use case is updating hypervisors with minimal
+> > disruption to running virtual machines. For userspace side of hyperviso=
+r
+> > update we have copyless migration. LUO is for updating the kernel.
+> >
+> > This initial patch lays the groundwork for the LUO subsystem.
+> >
+> > Further functionality, including the implementation of state transition
+> > logic, integration with KHO, and hooks for subsystems and file
+> > descriptors, will be added in subsequent patches.
+> >
+> > Create a character device at /dev/liveupdate.
+> >
+> > A new uAPI header, <uapi/linux/liveupdate.h>, will define the necessary
+> > structures. The magic number for IOCTL is registered in
+> > Documentation/userspace-api/ioctl/ioctl-number.rst.
+> >
+> > Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+> > Reviewed-by: Pratyush Yadav <pratyush@kernel.org>
+>
+> Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
 
-Fixes: 719c1e1829166 ("exfat: add super block operations")
-Signed-off-by: YangWen <anmuxixixi@gmail.com>
----
- fs/exfat/super.c | 5 +++++
- 1 file changed, 5 insertions(+)
+Thank you
 
-diff --git a/fs/exfat/super.c b/fs/exfat/super.c
-index 74d451f732c7..db28a426206c 100644
---- a/fs/exfat/super.c
-+++ b/fs/exfat/super.c
-@@ -722,10 +722,15 @@ static int exfat_fill_super(struct super_block *sb, struct fs_context *fc)
- 	sb->s_root = NULL;
- 
- free_table:
-+	exfat_free_upcase_table(sbi);
- 	exfat_free_bitmap(sbi);
- 	brelse(sbi->boot_bh);
- 
- check_nls_io:
-+	unload_nls(sbi->nls_io);
-+	exfat_free_iocharset(sbi);
-+	sb->s_fs_info = NULL;
-+	kfree(sbi);
- 	return err;
- }
- 
--- 
-2.43.0
+>
+> with a few nits below
+>
+> > ---
+>
+> > diff --git a/kernel/liveupdate/Kconfig b/kernel/liveupdate/Kconfig
+> > index a973a54447de..90857dccb359 100644
+> > --- a/kernel/liveupdate/Kconfig
+> > +++ b/kernel/liveupdate/Kconfig
+> > @@ -1,4 +1,10 @@
+> >  # SPDX-License-Identifier: GPL-2.0-only
+> > +#
+> > +# Copyright (c) 2025, Google LLC.
+> > +# Pasha Tatashin <pasha.tatashin@soleen.com>
+> > +#
+> > +# Live Update Orchestrator
+> > +#
+>
+> If you are adding copyrights it should have Amazon and Microsoft as well.
+> I believe those from kexec_handover.c would work.
+>
+> @Alex?
 
+Sure, or I can remove all of them from Kconfig, whatever you prefer :-)
+
+>
+> >  menu "Live Update and Kexec HandOver"
+> >       depends on !DEFERRED_STRUCT_PAGE_INIT
+> > @@ -51,4 +57,25 @@ config KEXEC_HANDOVER_ENABLE_DEFAULT
+> >         The default behavior can still be overridden at boot time by
+> >         passing 'kho=3Doff'.
+> >
+> > +config LIVEUPDATE
+> > +     bool "Live Update Orchestrator"
+> > +     depends on KEXEC_HANDOVER
+> > +     help
+> > +       Enable the Live Update Orchestrator. Live Update is a mechanism=
+,
+> > +       typically based on kexec, that allows the kernel to be updated
+> > +       while keeping selected devices operational across the transitio=
+n.
+> > +       These devices are intended to be reclaimed by the new kernel an=
+d
+> > +       re-attached to their original workload without requiring a devi=
+ce
+> > +       reset.
+> > +
+> > +       Ability to handover a device from current to the next kernel de=
+pends
+> > +       on specific support within device drivers and related kernel
+> > +       subsystems.
+>
+> Sorry, somehow this slipped during v6 review.
+> These days LUO is less about devices and more about file descriptors :)
+
+Device preservation through file descriptors: memfd, iommufd, vfiofd
+are all dependencies for preserving devices.
+
+That Kconfig description is correct and essential because the core
+complexity of the LUO is the preservation of device state and I/O
+across a kernel transition, which is a harder problem than just
+preserving memory or files, for that we could have used a file system
+instead of inventing something new with logic of can_preserve() etc.
+
+Device preservation requires exactly what is stated in the description
+for this config:
+"Ability to handover a device from current to the next kernel depends
+on specific support within device drivers and related kernel
+subsystems." The only subsystem that is getting upstreamed with this
+series is MEMFD, it is a hard pre-requirement for iommufd
+preservation; the other subsystems: VFIO, PCI, IOMMU are WIP.
+
+> > +
+> > +       This feature primarily targets virtual machine hosts to quickly=
+ update
+> > +       the kernel hypervisor with minimal disruption to the running vi=
+rtual
+> > +       machines.
+> > +
+> > +       If unsure, say N.
+> > +
+> >  endmenu
+>
+> --
+> Sincerely yours,
+> Mike.
 
