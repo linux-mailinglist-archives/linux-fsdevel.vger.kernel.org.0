@@ -1,318 +1,125 @@
-Return-Path: <linux-fsdevel+bounces-69509-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69510-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F6D7C7E0D0
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Nov 2025 13:04:16 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B081C7E0E5
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Nov 2025 13:14:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2858A4E3753
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Nov 2025 12:04:10 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 5C3B6347CC0
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Nov 2025 12:13:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0875F13B7A3;
-	Sun, 23 Nov 2025 12:04:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE6692D0C95;
+	Sun, 23 Nov 2025 12:13:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="fe7vA7jG"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J61glzUb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA7472773C1
-	for <linux-fsdevel@vger.kernel.org>; Sun, 23 Nov 2025 12:03:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEF6F85C4A
+	for <linux-fsdevel@vger.kernel.org>; Sun, 23 Nov 2025 12:13:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763899441; cv=none; b=kOIbYb6VMehBtyRej2w4zAI2K0cLyhRh0Xr+YXeBQjjfZB5g4LcBsKftc1xJtNuHXBU1W8dxvrA6FdjRPEvl3hABgrFcRxw+FHGb/ERIFUlmmiVK81XC+Ak3HDDrH1XOvRMUfhIy5QoC9yzOiOFy4iNvKa08aQ0xM6PxekEcfK8=
+	t=1763900024; cv=none; b=iJkt/YCPjJ+zExKicyShnAO3CgjSLYX2DrAaM7yseKvLD3efytp9Zt7iUBM4ustPZU+9Hj6yfesgmcnjtl8Ws/Bw0cqp+JS/ykhHhBBQQYb5jps7Nyj/kDH2g1EvaJQjDX92mif4ke7BjhRlWtpgIkMIkmA8xUoAKv3SR00J+FM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763899441; c=relaxed/simple;
-	bh=oYtIosH0dW5hqrHgNrJe5OOHl1tev8dHqkLMKGUb38c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cKI59emmN06qVnH0uS6L4O5VDC+XHwIq2Mzf34IlfkB4dXFg0C+dFp+MqhMWLxMnFyHdd5HpfztUM930nuv8EAQZ0Ge0Cg8o3OUQAppyxXGVYnLvKeHI+70DXQMBAeZHDpHEy8fuIUgzIphPtwKx4iqi0TbckajaKbrFguIKwFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=fe7vA7jG; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-640860f97b5so4815199a12.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 23 Nov 2025 04:03:58 -0800 (PST)
+	s=arc-20240116; t=1763900024; c=relaxed/simple;
+	bh=C31m14QTTyacaf6yZhVFxGlYz8X/OYOM4Xmwxefxn3A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LJs7LxSDlIxVmDguwB5EVFU/D3kzJNo54dLnX2vNjIpmRTIF57+4FqEy6DSB6alqdgKbtj8BSSjRoUN+Nq4YaW0SGgkkNPz9l/Pq6mBXwOhmBHKeD1rYiHZwNumgDRzh5aV/mx17jcz3E//EzdxtkyzUtVHZEeogKDpX7qrKjlc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J61glzUb; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-340e525487eso2298051a91.3
+        for <linux-fsdevel@vger.kernel.org>; Sun, 23 Nov 2025 04:13:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1763899437; x=1764504237; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yZ6437ATus0ug/QEfcQ75ODju9BI6cshDa1KKSODRwE=;
-        b=fe7vA7jGu1Bc25+wXVAyjp5nzeAv/sLq4ifVUJ2FJ3nR1E57vusPwUPHFnys2WxIum
-         EtfIpcZOqvC31IlDfmRqkdJ2dIXwvZne+tWUVKdfM7j4JQ+UxpsAjDp7X9aGfI9Qbvc+
-         Yj1sX8yQEKmcII0jLOlMDgHiUUSGwlqzyTRSq7y/akS7dl5+ktR7O4FhHadXAspQDNCk
-         uCRYBtl2ygcc7LiApA/whb5Ms2aS0UKSoVOzpzyVK7Z8Bltojw0Dkl1+Au2LZ4A8ft+b
-         /RvwzKZJkqXQQXyGX3Y+yO1ukLU1KBD5qvRW1jJSmHAgmLzelsGWrRVVQi/PxbYLiwKo
-         TbTw==
+        d=gmail.com; s=20230601; t=1763900022; x=1764504822; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WyX1swaZXCFxH3YUkv+TSnEmlsdS6cyArMsiSXhLY8A=;
+        b=J61glzUbCU/rIjw1kc7vw8SYWNgg2wK+JLM8jUeVNdiZgIQvxldTsGNDZGjovVPnyR
+         Wj+0AnL264pC5qRe4E8eR+SHHxfTrfGOi09cysyf6mAs81FBtaZCIaqcVJP/MRFKv1/c
+         Uw/MD66DVA/7W6wQukBSNPTnIUa/atkWor3hFoo0JBfohHyJWsdIZaADWjGTJ5ewJduj
+         KLV4NgHP4ZA8Yo54EuPxv6fBJrSkpgk/wwCQYFoA56GSW12c0s/K/lBZ8V0pSNaealZg
+         woitTrBUDaBCljp9ru8Lbx2+E1ywU7aYMUfrZb2sxyAVgxfPOMjaZz7050HQthdxWcVM
+         kJ9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763899437; x=1764504237;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=yZ6437ATus0ug/QEfcQ75ODju9BI6cshDa1KKSODRwE=;
-        b=UrQZRnNg7udHmKWj2TR+Rd8dZxQlYbRfuS6O2AIQ0C9mHmK8qPP+WdkBXxzrtWpjmJ
-         If54Pr87Uo7HTPx6aO2gyKC9+A8i9OPO7qfzg/9hdkVy7td1HQww2N/NWDhUthmOd/Kf
-         lgibqdaFbL3vs0C8GcP2C3ojPRCMGsSNtFOW958+aVqtHCy7my6xYeMSrXmBYCTghEFq
-         ik5TACORwfQ3TTvBpwLQKInrSTpAB41b8jO/AKGWFw2XeKUILn6zmS4NXZ3VFTgddO1v
-         UJYOFecCRSJQ1WVzqhdM2m9CvwimgUNTUlG5rS63Ee6kePcP4hvq3EZ0/n7WKEZoQ38Q
-         Xf4w==
-X-Forwarded-Encrypted: i=1; AJvYcCULG6QwWa6kXb82Df1xVR1K/A+PKOQMHBzPdygPS5PZRUOOdblmtFuUXMDB0mzTfHBX6Da3IVwfgYPLY+Ji@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKvsJTyas2ynI8eURZgZkEm2pai7IqvnDb1A4g+/usu6TXgGHr
-	aB8jKy7Acv4ZChRrTzhUXS/OUgTu0svmIM9V1zOagy7XQNsKDTarDTQMvHUQG5bDyH6HJXLHDoj
-	Vhdz+fkkcGcV5vjkC5s0YpJgbjPACxREceOsVfeyRPA==
-X-Gm-Gg: ASbGnctyq8cjGEg2WseMsjRtJEhmvzEI4OL9nGBVjn9VOeGE5J/sfx4U1F+wZsFe1Uz
-	UpGk8057/RL/jZD1Mw6c1taAa/dFBw1kgZ1Ty8cPxCoHS1QMttcKscDX5Fsg0T2VrracSd3Ul9w
-	RwA3g/Bg8uEi02HD5OaT3y1wYPa3QB7fY4xUyoex0tnah6iczELVK25ujE8t8Ems+wMatz+Vziz
-	pMkOmJAjhY7FhO+2fBMOvd/qw961WxexZocsRJsg01u7p4sGkuDuwzkCLSJeScBzvus
-X-Google-Smtp-Source: AGHT+IHY4DpDIVQj3DszXOkjPRhgk1igiuds0AT/lVzEITdo2CXMJTFn5D87cQjW3K+5NSqSzXFewu7L010slYHUxPQ=
-X-Received: by 2002:a05:6402:1ed2:b0:640:80cc:f08e with SMTP id
- 4fb4d7f45d1cf-645546926damr7284637a12.26.1763899435959; Sun, 23 Nov 2025
- 04:03:55 -0800 (PST)
+        d=1e100.net; s=20230601; t=1763900022; x=1764504822;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WyX1swaZXCFxH3YUkv+TSnEmlsdS6cyArMsiSXhLY8A=;
+        b=TU2pfukEcfh3B8rtbM86HMGZtrXI1kv7GZYkKM4FV5489j9sA1UN+3bjr4lGTpLtan
+         tMdCMlLxBXHjQVRsAV/fcFaw2QbZsOgjlu4bMYKQuf679zknc7QCdEl2xKWPUaoCansD
+         H1VHDgXve4vMfHGFfkaDX8Wd9TGqKIsmwR3Cr6wda3vPYp4NLPvEpA/Eu369upI8d774
+         ScIbtATL986KjhqBJCmOiUqOLMO8VXX7F++A5hUbGt7emIjnnvzGMUQkFC6kwvoSovT8
+         YsY0jP+XCfdQACXWgnhgNTnJUNg57E9S6yGr2g92k5CVRzYIy38MaMSE8eNjPWREyeZ7
+         mKOw==
+X-Gm-Message-State: AOJu0YwQUI5UtsGrnr17folEpNBLwa3be1PIa6tEtLIgd+yaSI/ApUZ7
+	rfU49QScEv958D5al9MlplzBepYjotTQP6YvxTKccj0g7S+sizIGgNcl
+X-Gm-Gg: ASbGnct/A2l/p/oKv21l2HYAUzHJAfDN4aTgddNnWe0uxzXWZ1qUdYiTMqbFhnILIFZ
+	Ba33/wH6VP8rdM037OgzdlTVfysjzqMy3avXNn14JChoVjDp0HSTeJXYHqH987ovXLBC9Z1mfqy
+	SDpjTitqK5s2BFETl4ZVxh8ZgizhzadNmcZtHGlV6GC7ohU2x6z6j7kx8+P2s5O1RISm+N8egq/
+	ytwDBOw/5AGJq995lGhBqptk34mUGT+HxrPbtf+IJeeMhKcaez/SvcqMNxsIWtub8Rwkpfd9nj3
+	qvniWXVCFAT4OFcL5NiUi5V1w5SH7MY1Y5uvuKRgWvJDaDLgH5bgOIRRkRsqI7PoZMmvOk0ESWP
+	2m5X7eESllQaGhq1yixZEaHruJuNOKKNF650+gcACAVkV7t/i/wyeMgSgJi2Rx9I/cZZR4hzvuY
+	mOpAWwzHT1DSmUo+7E0da5DQ==
+X-Google-Smtp-Source: AGHT+IGkiJz43MaVKsspec2x97fyah8pulbznh0JEMfdt2JxPUnEwy2ZNySTL4iXFirGNGrPJuyjNw==
+X-Received: by 2002:a17:90b:534e:b0:341:a9e7:e5f9 with SMTP id 98e67ed59e1d1-34733d76c4dmr7119993a91.0.1763900021914;
+        Sun, 23 Nov 2025 04:13:41 -0800 (PST)
+Received: from yangwen.localdomain ([121.237.95.138])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-bd75b61c29dsm10368943a12.0.2025.11.23.04.13.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 Nov 2025 04:13:41 -0800 (PST)
+From: YangWen <anmuxixixi@gmail.com>
+To: linkinjeon@kernel.org,
+	sj1557.seo@samsung.com,
+	yuezhang.mo@sony.com
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	YangWen <anmuxixixi@gmail.com>
+Subject: [PATCH] exfat: fix memory leak in exfat_fill_super
+Date: Sun, 23 Nov 2025 20:13:39 +0800
+Message-ID: <20251123121339.25501-1-anmuxixixi@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251122222351.1059049-1-pasha.tatashin@soleen.com>
- <20251122222351.1059049-3-pasha.tatashin@soleen.com> <aSLvo0uXLOaE2JW6@kernel.org>
-In-Reply-To: <aSLvo0uXLOaE2JW6@kernel.org>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Sun, 23 Nov 2025 07:03:19 -0500
-X-Gm-Features: AWmQ_blpSM5U1pU28FozBhcwrN7bmkenjnD3bgD84GHtMLQK1GWO_h-EYfP_LEg
-Message-ID: <CA+CK2bCj2OAQjM-0rD+DP0t4v71j70A=HHdQ212ASxX=xoREXw@mail.gmail.com>
-Subject: Re: [PATCH v7 02/22] liveupdate: luo_core: integrate with KHO
-To: Mike Rapoport <rppt@kernel.org>
-Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com, 
-	dmatlack@google.com, rientjes@google.com, corbet@lwn.net, 
-	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, 
-	ojeda@kernel.org, aliceryhl@google.com, masahiroy@kernel.org, 
-	akpm@linux-foundation.org, tj@kernel.org, yoann.congal@smile.fr, 
-	mmaurer@google.com, roman.gushchin@linux.dev, chenridong@huawei.com, 
-	axboe@kernel.dk, mark.rutland@arm.com, jannh@google.com, 
-	vincent.guittot@linaro.org, hannes@cmpxchg.org, dan.j.williams@intel.com, 
-	david@redhat.com, joel.granados@kernel.org, rostedt@goodmis.org, 
-	anna.schumaker@oracle.com, song@kernel.org, linux@weissschuh.net, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
-	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com, 
-	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
-	rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org, 
-	cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com, 
-	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com, 
-	aleksander.lobakin@intel.com, ira.weiny@intel.com, 
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
-	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net, 
-	brauner@kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	saeedm@nvidia.com, ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com, 
-	leonro@nvidia.com, witu@nvidia.com, hughd@google.com, skhawaja@google.com, 
-	chrisl@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sun, Nov 23, 2025 at 6:27=E2=80=AFAM Mike Rapoport <rppt@kernel.org> wro=
-te:
->
-> On Sat, Nov 22, 2025 at 05:23:29PM -0500, Pasha Tatashin wrote:
-> > Integrate the LUO with the KHO framework to enable passing LUO state
-> > across a kexec reboot.
-> >
-> > This patch implements the lifecycle integration with KHO:
-> >
-> > 1. Incoming State: During early boot (`early_initcall`), LUO checks if
-> >    KHO is active. If so, it retrieves the "LUO" subtree, verifies the
-> >    "luo-v1" compatibility string, and reads the `liveupdate-number` to
-> >    track the update count.
-> >
-> > 2. Outgoing State: During late initialization (`late_initcall`), LUO
-> >    allocates a new FDT for the next kernel, populates it with the basic
-> >    header (compatible string and incremented update number), and
-> >    registers it with KHO (`kho_add_subtree`).
-> >
-> > 3. Finalization: The `liveupdate_reboot()` notifier is updated to invok=
-e
-> >    `kho_finalize()`. This ensures that all memory segments marked for
-> >    preservation are properly serialized before the kexec jump.
-> >
-> > LUO now depends on `CONFIG_KEXEC_HANDOVER`.
-> >
-> > Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
-> > ---
-> >  include/linux/kho/abi/luo.h      |  54 +++++++++++
-> >  kernel/liveupdate/luo_core.c     | 154 ++++++++++++++++++++++++++++++-
-> >  kernel/liveupdate/luo_internal.h |  22 +++++
-> >  3 files changed, 229 insertions(+), 1 deletion(-)
-> >  create mode 100644 include/linux/kho/abi/luo.h
-> >  create mode 100644 kernel/liveupdate/luo_internal.h
-> >
-> > diff --git a/include/linux/kho/abi/luo.h b/include/linux/kho/abi/luo.h
-> > new file mode 100644
-> > index 000000000000..8523b3ff82d1
-> > --- /dev/null
-> > +++ b/include/linux/kho/abi/luo.h
-> > @@ -0,0 +1,54 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 */
-> > +
-> > +/*
-> > + * Copyright (c) 2025, Google LLC.
-> > + * Pasha Tatashin <pasha.tatashin@soleen.com>
-> > + */
-> > +
-> > +/**
-> > + * DOC: Live Update Orchestrator ABI
-> > + *
-> > + * This header defines the stable Application Binary Interface used by=
- the
-> > + * Live Update Orchestrator to pass state from a pre-update kernel to =
-a
-> > + * post-update kernel. The ABI is built upon the Kexec HandOver framew=
-ork
-> > + * and uses a Flattened Device Tree to describe the preserved data.
-> > + *
-> > + * This interface is a contract. Any modification to the FDT structure=
-, node
-> > + * properties, compatible strings, or the layout of the `__packed` ser=
-ialization
-> > + * structures defined here constitutes a breaking change. Such changes=
- require
-> > + * incrementing the version number in the relevant `_COMPATIBLE` strin=
-g to
-> > + * prevent a new kernel from misinterpreting data from an old kernel.
->
-> From v6 thread:
->
-> > > I'd add a sentence that stresses that ABI changes are possible as lon=
-g they
-> > > include changes to the FDT version.
-> > > This is indeed implied by the last paragraph, but I think it's worth
-> > > spelling it explicitly.
-> > >
-> > > Another thing that I think this should mention is that compatibility =
-is
-> > > only guaranteed for the kernels that use the same ABI version.
-> >
-> > Sure, I will add both.
->
-> Looks like it fell between the cracks :/
+If exFAT encounters errors during multiple mount operations, 'sbi' and 'nls' will not be released,
+which will cause a memory leak.
 
-Hm, when I was updating the patches, I included the first part, and
-then re-read the content, and I think it covers all points:
+Fixes: 719c1e1829166 ("exfat: add super block operations")
+Signed-off-by: YangWen <anmuxixixi@gmail.com>
+---
+ fs/exfat/super.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-1. Changes are possible
-This interface is a contract. Any modification to the FDT structure, node
- * properties, compatible strings, or the layout of the `__packed` serializ=
-ation
- * structures defined here constitutes a breaking change. Such changes requ=
-ire
- * incrementing the version number in the relevant `_COMPATIBLE` string
+diff --git a/fs/exfat/super.c b/fs/exfat/super.c
+index 74d451f732c7..db28a426206c 100644
+--- a/fs/exfat/super.c
++++ b/fs/exfat/super.c
+@@ -722,10 +722,15 @@ static int exfat_fill_super(struct super_block *sb, struct fs_context *fc)
+ 	sb->s_root = NULL;
+ 
+ free_table:
++	exfat_free_upcase_table(sbi);
+ 	exfat_free_bitmap(sbi);
+ 	brelse(sbi->boot_bh);
+ 
+ check_nls_io:
++	unload_nls(sbi->nls_io);
++	exfat_free_iocharset(sbi);
++	sb->s_fs_info = NULL;
++	kfree(sbi);
+ 	return err;
+ }
+ 
+-- 
+2.43.0
 
-So, change as long as you update versioning number
-
-2. Breaking if version is different:
-to prevent a new kernel from misinterpreting data from an old kernel.
-
-So, the next kernel can interpret only if the version is the same.
-
-Which point do you think is not covered?
-
->
-> > +static int __init liveupdate_early_init(void)
-> > +{
-> > +     int err;
-> > +
-> > +     err =3D luo_early_startup();
-> > +     if (err) {
-> > +             luo_global.enabled =3D false;
-> > +             luo_restore_fail("The incoming tree failed to initialize =
-properly [%pe], disabling live update\n",
-> > +                              ERR_PTR(err));
->
-> What's wrong with a plain panic()?
-
-Jason suggested using the luo_restore_fail() function instead of
-inserting panic() right in code somewhere in LUOv3 or earlier. It
-helps avoid sprinkling panics in different places, and also in case if
-we add the maintenance mode that we have discussed in LUOv6, we could
-update this function as a place where that mode would be switched on.
-
-> > +     }
-> > +
-> > +     return err;
-> > +}
-> > +early_initcall(liveupdate_early_init);
-> > +
->
-> ...
->
-> >  int liveupdate_reboot(void)
-> >  {
-> > -     return 0;
-> > +     int err;
-> > +
-> > +     if (!liveupdate_enabled())
-> > +             return 0;
-> > +
-> > +     err =3D kho_finalize();
-> > +     if (err) {
-> > +             pr_err("kho_finalize failed %d\n", err);
->
-> Nit: why not %pe?
-
-I believe, before my last clean-up of KHO it could return FDT error in
-addition to standard errno; but anyways, this code is going to be
-removed soon with stateless KHO, keeping err instead of %pe is fine (I
-can change this if I update this patch).
-
-> > +             /*
-> > +              * kho_finalize() may return libfdt errors, to aboid pass=
-ing to
-> > +              * userspace unknown errors, change this to EAGAIN.
-> > +              */
-> > +             err =3D -EAGAIN;
-> > +     }
-> > +
-> > +     return err;
-> >  }
-> >
-> >  /**
-> > diff --git a/kernel/liveupdate/luo_internal.h b/kernel/liveupdate/luo_i=
-nternal.h
-> > new file mode 100644
-> > index 000000000000..8612687b2000
-> > --- /dev/null
-> > +++ b/kernel/liveupdate/luo_internal.h
-> > @@ -0,0 +1,22 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 */
-> > +
-> > +/*
-> > + * Copyright (c) 2025, Google LLC.
-> > + * Pasha Tatashin <pasha.tatashin@soleen.com>
-> > + */
-> > +
-> > +#ifndef _LINUX_LUO_INTERNAL_H
-> > +#define _LINUX_LUO_INTERNAL_H
-> > +
-> > +#include <linux/liveupdate.h>
-> > +
-> > +/*
-> > + * Handles a deserialization failure: devices and memory is in unpredi=
-ctable
-> > + * state.
-> > + *
-> > + * Continuing the boot process after a failure is dangerous because it=
- could
-> > + * lead to leaks of private data.
-> > + */
-> > +#define luo_restore_fail(__fmt, ...) panic(__fmt, ##__VA_ARGS__)
->
-> Let's add this when we have more than a single callsite.
-> Just use panic() in liveupdate_early_init() and add the comment there.
-
-https://lore.kernel.org/all/CA+CK2bBEX6C6v63DrK-Fx2sE7fvLTZM=3DHX0y_j4aVDYc=
-frCXOg@mail.gmail.com/
-
-This is the reason I added this function. I like the current approach.
-
-Pasha
 
