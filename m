@@ -1,252 +1,80 @@
-Return-Path: <linux-fsdevel+bounces-69592-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69594-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92995C7E8E7
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Nov 2025 23:55:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36DFAC7E92F
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Nov 2025 23:58:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 737BC4E1493
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Nov 2025 22:55:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2BFA3A99AA
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Nov 2025 22:56:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 310712C11D5;
-	Sun, 23 Nov 2025 22:52:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05D9727A12B;
+	Sun, 23 Nov 2025 22:53:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P4NZQWfe"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kTclnZcp"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D9452BE7C0
-	for <linux-fsdevel@vger.kernel.org>; Sun, 23 Nov 2025 22:52:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AF25238C36
+	for <linux-fsdevel@vger.kernel.org>; Sun, 23 Nov 2025 22:53:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763938328; cv=none; b=jmIO5nGmolXrgKYB7HZNZ1gikZFCdwpaRP26S8ZBpsVCUx8Vbj7KLFFs97/M0CFmBaU/ylQYgZ5wxWy+240QXz7o4pa2VmxmAr1ObCSI1p9EN7wIFD5jgG9nYSfCjLbW8ZUIoeEIouKYs87WKhvZo9jhZQnu3S/J67HnhAm/vbc=
+	t=1763938420; cv=none; b=XwxDdmrgLlMGnzyDK9SFUxpLvaRQRQGMVhGMMu5UeIQJONZtdphi3wW6JfooIZaJhG9NBbDw2pcn5i+HMgy1EMwzIrVNv4ZCNGSjEio1qxyFbmYD0DoLlKjRJg0rte0fQTcw3dWPzZkYp+upA+yvA/34F0R2S99n5TunIvBlsH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763938328; c=relaxed/simple;
-	bh=EXYOheJb4cgW5yVlz0jhAvYk6zmI9HBqPvYTaeMxyhc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WutuEjW/jx34kvs2MAxCtLFCLwr4X8kGurkPZmUgryAu7dyO+dw9wcQSNZYMB73E0y+Td6G41K+xzgckkecvIlANsziMwow2f8y3tQwLbF9c3kxZDZfQ14P4DeiyNY/4lNwwc9a/MxtSUQjuDq/ZYFPfxu6gxISpQyIFKy6YHOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P4NZQWfe; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4779cc419b2so35573195e9.3
-        for <linux-fsdevel@vger.kernel.org>; Sun, 23 Nov 2025 14:52:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763938325; x=1764543125; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IjKpkoDBMFXqwI53pRDJnxFi7xwhurS0a3ahU0JbCgI=;
-        b=P4NZQWfeyO45qY/ul+V8nOpW0TduYosMmKvc9jP8E//7n1Kuz9XEHBR4MP35H2QEL5
-         sQRRFXi6orkEra+c606COFw3gtGmyj+6yzk5qdWcWgLrcu7x0zgXa+NzdmCe1X5WBxd5
-         2TQg4+n65KIoUGwQsJv1jNvtjWulO90MfvFO+JXnPVSvGvILHUjAwEhKzhHOkaVdbdeS
-         e04WvpRe3TwvvPvNrTEMEhZNSNtaZR2OkwX3c5bhUE0WbdPku1toldN1q+KJgEb9N77S
-         PJlAGJjHMosHvFnc+GocB72N9HRjxpKmslvSu2l9TXToP1nIWZQ2KQCLN8jmO+0NsQx4
-         7bOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763938325; x=1764543125;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=IjKpkoDBMFXqwI53pRDJnxFi7xwhurS0a3ahU0JbCgI=;
-        b=Iwz18E806MW9eopsr3vzPCIhC7VZkeSoc0Yl+jgnxQEXtjFovjsXQDQMe+DeSDKQK1
-         VyfF7JgyPzJ/W6Mje55ZmiCEuZAUfYbQ6jY+/QkIH8fZk+77QAm6b8ih+Wc+XSxPwRnH
-         HB70GPGCBJbAtXRBgPWL1zrwIYe7nGyFKvTSbOsRV/ID9JQVFZt3ShrwN0738VyvDciD
-         pCj0HNjOhMg/J4uiY4hHDqI5qHz7feFWswd+1xkDaHSxV6tQYydMYmRhQTGicuIBreSZ
-         LlMemydvBY8NsOMzMNQFRxjmCu2xNv947pgOxsYPrNx22+xZWyhN4HVwQQNcn0pkGIxm
-         eWpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXiHv71Me1O+yrIIgFWYauNysUsZ4pDGZi7NjVbvgwdjme9Tet5P7YFvcwpMIHbtFsOmtKSVE18eKI4D3yB@vger.kernel.org
-X-Gm-Message-State: AOJu0YynsC7a/A7nslL5Ur5SsIR0oAXafH0MIniMHMcjCM7ybVz24U9z
-	9IEKJD5abMwPejlwhKGHep6dNCNcJUiiq410TkdFg39ARDr992X4QGgv
-X-Gm-Gg: ASbGnctRZ63DCT49ZKmz6q+ibho/4Zcaurwt0JTQJ85foZK0b0EiBcSQ7EJ/oqfPkn9
-	y/vh4h/AsbaGxmLd6KIrzoyiyV8WbnaLSPFS37eiHv3eUhGFgHiNosCAqQtb6LeySaCUBFx9Z1m
-	2yNC1o6ZAhz73acqlElM7K35gmiDRYAiFo2uW+J8fPcsM+kHFRN63iqqYgtbsds3VAPtaA7TCDW
-	aQ/smOra9njji6RWq9CC0EaxwNV+CyC71xiMHfNwiBrP5k6BGxPG2qyB9NnC0TFg7aZ8PHfYpYl
-	WdbnNvy+znsEjq8hA3h88Q+MqmvmTk6HTMiK6ex1S1cfIV1CBoTzpdb5bc+49GAQV0KapYIt0sA
-	VSnfIfzdEag98w8ix2KQywAbCY1MxEfK2vyzYydPzPeEykpYeEWqvutsZu3p4G6fCt3pXE1ww+Q
-	OH9KlDSldY1Haa4w==
-X-Google-Smtp-Source: AGHT+IG0SGMWMdVe66Rksvn6v5FBe6opsohs/EM0p8y743GggDbgal5u09Oo75v6mEVGyS+Z85JlHQ==
-X-Received: by 2002:a05:600c:8b35:b0:477:832c:86ae with SMTP id 5b1f17b1804b1-477c111b94fmr113406075e9.12.1763938324588;
-        Sun, 23 Nov 2025 14:52:04 -0800 (PST)
-Received: from 127.mynet ([2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42cb7fb9190sm24849064f8f.33.2025.11.23.14.52.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Nov 2025 14:52:03 -0800 (PST)
-From: Pavel Begunkov <asml.silence@gmail.com>
-To: linux-block@vger.kernel.org,
-	io-uring@vger.kernel.org
-Cc: Vishal Verma <vishal1.verma@intel.com>,
-	tushar.gohad@intel.com,
-	Keith Busch <kbusch@kernel.org>,
-	Jens Axboe <axboe@kernel.dk>,
-	Christoph Hellwig <hch@lst.de>,
-	Sagi Grimberg <sagi@grimberg.me>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	Pavel Begunkov <asml.silence@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	linux-nvme@lists.infradead.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linaro-mm-sig@lists.linaro.org,
-	David Wei <dw@davidwei.uk>
-Subject: [RFC v2 11/11] io_uring/rsrc: implement dmabuf regbuf import
-Date: Sun, 23 Nov 2025 22:51:31 +0000
-Message-ID: <44e4ad8c4bd72856379c368e4303090c44c9e98e.1763725388.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <cover.1763725387.git.asml.silence@gmail.com>
-References: <cover.1763725387.git.asml.silence@gmail.com>
+	s=arc-20240116; t=1763938420; c=relaxed/simple;
+	bh=gNDwyobGUGpNKmbABEaVmoCLJqXLaBtcjUrL8dRxtPU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c3SXrQu0tGmHbBxM2hVaRniy74xfVcyr1ArED2u8hIqytvGdxHajrKC6w556YX677a/Gjlk5gNf5FS+Ptw5Vj5rsPF09bxIFR1mSy7jKpYRT/lZKHCr8EyJHnhnkap1mgKZKk4eAotrRaC60FPUNR6Nr0twV9/sQw+CFtPQNJqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kTclnZcp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FBE8C113D0;
+	Sun, 23 Nov 2025 22:53:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763938419;
+	bh=gNDwyobGUGpNKmbABEaVmoCLJqXLaBtcjUrL8dRxtPU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kTclnZcpgiJl+1az1JfOO10vwLINUDLAqUZPXhzrHZEBY7yZaus8RFOnAlJolqm8E
+	 SMD6s6w+7DuzgJ6eVN46Gc8QFo8EFYk57MO5r6XpPQElccZOp4maePAuOtA5EaoP+y
+	 5xKec8JF3h0ZEr3ZCBmcCWCsUpoLU0FzQ3o9Ohau30mW/nsK9ZD36gLMbYuqA7WHL9
+	 VioudAQ9wEAgrLWxAIbUjd4bYf34AGzyCha5PHF9vP00zeQuCvRdc08C40WESVot82
+	 Oh5SFsl2QVLahHd20eeAcxoA4fW2ztiSTsv7v4haRckQrKwETUKF2FLY9V4aIBXNEa
+	 Kjpt0fIjDvC7w==
+Date: Sun, 23 Nov 2025 23:53:35 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>, 
+	Amir Goldstein <amir73il@gmail.com>, Jens Axboe <axboe@kernel.dk>
+Subject: Re: [PATCH v4 00/47] file: FD_{ADD,PREPARE}()
+Message-ID: <20251123-hochgearbeitet-kindheit-7099f6566c12@brauner>
+References: <20251123-work-fd-prepare-v4-0-b6efa1706cfd@kernel.org>
+ <CAHk-=wgLeBAXe+gOmv0zf+ZaD9a_gtL81349iLvfesXkUxYyWA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wgLeBAXe+gOmv0zf+ZaD9a_gtL81349iLvfesXkUxYyWA@mail.gmail.com>
 
-Allow importing dmabuf backed registered buffers. It's an opt-in feature
-for requests and they need to pass a flag allowing it. Furthermore,
-the import will fail if the request's file doesn't match the file for
-which the buffer for registered. This way, it's also limited to files
-that support the feature by implementing the corresponding file op.
-Enable it for read/write requests.
+On Sun, Nov 23, 2025 at 08:43:18AM -0800, Linus Torvalds wrote:
+> On Sun, 23 Nov 2025 at 08:33, Christian Brauner <brauner@kernel.org> wrote:
+> >
+> > This now removes roughly double the code that it adds.
+> 
+> .. and I think more importantly, I think the end result now is not
+> just smaller, but looks nice and straightforward too.
+> 
+> I particularly like your FD_ADD() macro. Good call.
+> 
+> So yeah, no more complaints about this from my side.
 
-Suggested-by: David Wei <dw@davidwei.uk>
-Suggested-by: Vishal Verma <vishal1.verma@intel.com>
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- io_uring/rsrc.c | 36 +++++++++++++++++++++++++++++-------
- io_uring/rsrc.h | 16 +++++++++++++++-
- io_uring/rw.c   |  4 ++--
- 3 files changed, 46 insertions(+), 10 deletions(-)
-
-diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
-index 7dfebf459dd0..a5d88dae536e 100644
---- a/io_uring/rsrc.c
-+++ b/io_uring/rsrc.c
-@@ -1201,9 +1201,27 @@ static int io_import_kbuf(int ddir, struct iov_iter *iter,
- 	return 0;
- }
- 
--static int io_import_fixed(int ddir, struct iov_iter *iter,
-+static int io_import_dmabuf(struct io_kiocb *req,
-+			   int ddir, struct iov_iter *iter,
- 			   struct io_mapped_ubuf *imu,
--			   u64 buf_addr, size_t len)
-+			   size_t len, size_t offset)
-+{
-+	struct io_regbuf_dma *db = imu->priv;
-+
-+	if (!len)
-+		return -EFAULT;
-+	if (req->file != db->target_file)
-+		return -EBADF;
-+
-+	iov_iter_dma_token(iter, ddir, db->token, offset, len);
-+	return 0;
-+}
-+
-+static int io_import_fixed(struct io_kiocb *req,
-+			   int ddir, struct iov_iter *iter,
-+			   struct io_mapped_ubuf *imu,
-+			   u64 buf_addr, size_t len,
-+			   unsigned import_flags)
- {
- 	const struct bio_vec *bvec;
- 	size_t folio_mask;
-@@ -1219,8 +1237,11 @@ static int io_import_fixed(int ddir, struct iov_iter *iter,
- 
- 	offset = buf_addr - imu->ubuf;
- 
--	if (imu->flags & IO_IMU_F_DMA)
--		return -EOPNOTSUPP;
-+	if (imu->flags & IO_IMU_F_DMA) {
-+		if (!(import_flags & IO_REGBUF_IMPORT_ALLOW_DMA))
-+			return -EFAULT;
-+		return io_import_dmabuf(req, ddir, iter, imu, len, offset);
-+	}
- 	if (imu->flags & IO_IMU_F_KBUF)
- 		return io_import_kbuf(ddir, iter, imu, len, offset);
- 
-@@ -1274,16 +1295,17 @@ inline struct io_rsrc_node *io_find_buf_node(struct io_kiocb *req,
- 	return NULL;
- }
- 
--int io_import_reg_buf(struct io_kiocb *req, struct iov_iter *iter,
-+int __io_import_reg_buf(struct io_kiocb *req, struct iov_iter *iter,
- 			u64 buf_addr, size_t len, int ddir,
--			unsigned issue_flags)
-+			unsigned issue_flags, unsigned import_flags)
- {
- 	struct io_rsrc_node *node;
- 
- 	node = io_find_buf_node(req, issue_flags);
- 	if (!node)
- 		return -EFAULT;
--	return io_import_fixed(ddir, iter, node->buf, buf_addr, len);
-+	return io_import_fixed(req, ddir, iter, node->buf, buf_addr, len,
-+				import_flags);
- }
- 
- /* Lock two rings at once. The rings must be different! */
-diff --git a/io_uring/rsrc.h b/io_uring/rsrc.h
-index 280d3988abf3..e0eafce976f3 100644
---- a/io_uring/rsrc.h
-+++ b/io_uring/rsrc.h
-@@ -33,6 +33,10 @@ enum {
- 	IO_IMU_F_DMA			= 2,
- };
- 
-+enum {
-+	IO_REGBUF_IMPORT_ALLOW_DMA		= 1,
-+};
-+
- struct io_mapped_ubuf {
- 	u64		ubuf;
- 	unsigned int	len;
-@@ -66,9 +70,19 @@ int io_rsrc_data_alloc(struct io_rsrc_data *data, unsigned nr);
- 
- struct io_rsrc_node *io_find_buf_node(struct io_kiocb *req,
- 				      unsigned issue_flags);
-+int __io_import_reg_buf(struct io_kiocb *req, struct iov_iter *iter,
-+			u64 buf_addr, size_t len, int ddir,
-+			unsigned issue_flags, unsigned import_flags);
-+
-+static inline
- int io_import_reg_buf(struct io_kiocb *req, struct iov_iter *iter,
- 			u64 buf_addr, size_t len, int ddir,
--			unsigned issue_flags);
-+			unsigned issue_flags)
-+{
-+	return __io_import_reg_buf(req, iter, buf_addr, len, ddir,
-+				   issue_flags, 0);
-+}
-+
- int io_import_reg_vec(int ddir, struct iov_iter *iter,
- 			struct io_kiocb *req, struct iou_vec *vec,
- 			unsigned nr_iovs, unsigned issue_flags);
-diff --git a/io_uring/rw.c b/io_uring/rw.c
-index a3eb4e7bf992..0d9d99695801 100644
---- a/io_uring/rw.c
-+++ b/io_uring/rw.c
-@@ -374,8 +374,8 @@ static int io_init_rw_fixed(struct io_kiocb *req, unsigned int issue_flags,
- 	if (io->bytes_done)
- 		return 0;
- 
--	ret = io_import_reg_buf(req, &io->iter, rw->addr, rw->len, ddir,
--				issue_flags);
-+	ret = __io_import_reg_buf(req, &io->iter, rw->addr, rw->len, ddir,
-+				  issue_flags, IO_REGBUF_IMPORT_ALLOW_DMA);
- 	iov_iter_save_state(&io->iter, &io->iter_state);
- 	return ret;
- }
--- 
-2.52.0
-
+Cool! This already exceeds all of the remaining direct uses to
+get_unused_fd_flags() + file + install. And there's a good chunk more
+that can easily be converted. I've got most of dma ported. Only
+special-sauce cases should be left afterwards.
 
