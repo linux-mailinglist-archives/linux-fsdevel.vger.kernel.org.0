@@ -1,160 +1,206 @@
-Return-Path: <linux-fsdevel+bounces-69574-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69575-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C00C1C7E5ED
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Nov 2025 19:53:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFE1AC7E61A
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Nov 2025 20:08:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 888FE346262
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Nov 2025 18:53:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 703243A86AF
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Nov 2025 19:08:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EACF21D5B3;
-	Sun, 23 Nov 2025 18:52:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27016223328;
+	Sun, 23 Nov 2025 19:08:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ewz4rxe5"
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="SvDIeMPe"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D3111B86C7
-	for <linux-fsdevel@vger.kernel.org>; Sun, 23 Nov 2025 18:52:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C331219E7D1
+	for <linux-fsdevel@vger.kernel.org>; Sun, 23 Nov 2025 19:08:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763923973; cv=none; b=gP6UmfDuTNcEBxduBF4ZjDROMUBpjTTk+cLgfi/GJHz88TPucB0xcBSzc2ZBVxtiV3GI7TQWLNjeUKBnWuJ9ioXmKuFungwfzs7I7WNLR2uZpHroep63VNltPEIhCahmvoSKR9aPRWCe9bDVn2zPeO3i07Rve/wwCB5NoFA9F7g=
+	t=1763924883; cv=none; b=FauiDhgtipRMEc1cD/xK9jekx84NvvoiHa68hJxfbSSrwPyfI0R/mqyuwtCgdlOSLKAWhqAEdvTDfXLq0nAIZf8COACrF5rXA5t56lXNgrJbkcHYHStN89vO0o+Rf0HG3c33p6nQmpvkCKpzJqIY7KfjH3VO8x6od/69ioTnqgU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763923973; c=relaxed/simple;
-	bh=zMI/uUxdGqoTLXglneizXg85ZqwmhQ1CImBk1AOYyEE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YxNSv6sjFIiIOjzrupV1RHZMWdmG0QnVKB/mH3Vl6VFfkz2TRpnETL+V3tbitjQ2cetfwp2h61tAOyVS+2A4zuI0AXCAh4vhzCFrFKDfFeNxuph4ljSwhKHFCiYkw1cKPIJBkbRV3fA+cRPX5OaFgHCJxJHCVC+d9mEWXDKpcZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ewz4rxe5; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1763923970;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ujJPTxD9bpRdC30uSmxe6b2EMxZkMuLoEavNYh4TQJ0=;
-	b=Ewz4rxe5FL6sKGMF8l85eZTAgY+Br3eZr03L+8sBJTTijiTvaGf2Z5OCxX2IZMKqYqCym4
-	ExQBgWqfGNODfxtRPfLbBP3jpYTN91aOw4hxh9S3zrfiNAOWZzMGLxAsq52Ut/ciiOhisW
-	uD6qlAOtG5b7yi2fTvNpyTDAunC6ePQ=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-390-bNUrHqDOMnaEBK-yTndlnQ-1; Sun,
- 23 Nov 2025 13:52:46 -0500
-X-MC-Unique: bNUrHqDOMnaEBK-yTndlnQ-1
-X-Mimecast-MFC-AGG-ID: bNUrHqDOMnaEBK-yTndlnQ_1763923962
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8F86D1800451;
-	Sun, 23 Nov 2025 18:52:39 +0000 (UTC)
-Received: from fedora (unknown [10.44.32.8])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id BD6E219560A7;
-	Sun, 23 Nov 2025 18:52:21 +0000 (UTC)
-Received: by fedora (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Sun, 23 Nov 2025 19:52:39 +0100 (CET)
-Date: Sun, 23 Nov 2025 19:52:20 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Bernd Edlinger <bernd.edlinger@hotmail.de>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Alexey Dobriyan <adobriyan@gmail.com>, Kees Cook <kees@kernel.org>,
-	Andy Lutomirski <luto@amacapital.net>,
-	Will Drewry <wad@chromium.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Michal Hocko <mhocko@suse.com>, Serge Hallyn <serge@hallyn.com>,
-	James Morris <jamorris@linux.microsoft.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Yafang Shao <laoar.shao@gmail.com>, Helge Deller <deller@gmx.de>,
-	Adrian Reber <areber@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>, Jens Axboe <axboe@kernel.dk>,
-	Alexei Starovoitov <ast@kernel.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
-	linux-security-module@vger.kernel.org,
-	tiozhang <tiozhang@didiglobal.com>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	"Paulo Alcantara (SUSE)" <pc@manguebit.com>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	YueHaibing <yuehaibing@huawei.com>,
-	Paul Moore <paul@paul-moore.com>, Aleksa Sarai <cyphar@cyphar.com>,
-	Stefan Roesch <shr@devkernel.io>, Chao Yu <chao@kernel.org>,
-	xu xin <xu.xin16@zte.com.cn>, Jeff Layton <jlayton@kernel.org>,
-	Jan Kara <jack@suse.cz>, David Hildenbrand <david@redhat.com>,
-	Dave Chinner <dchinner@redhat.com>, Shuah Khan <shuah@kernel.org>,
-	Elena Reshetova <elena.reshetova@intel.com>,
-	David Windsor <dwindsor@gmail.com>,
-	Mateusz Guzik <mjguzik@gmail.com>, Ard Biesheuvel <ardb@kernel.org>,
-	"Joel Fernandes (Google)" <joel@joelfernandes.org>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Hans Liljestrand <ishkamiel@gmail.com>,
-	Penglei Jiang <superman.xpt@gmail.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Adrian Ratiu <adrian.ratiu@collabora.com>,
-	Ingo Molnar <mingo@kernel.org>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	Cyrill Gorcunov <gorcunov@gmail.com>,
-	Eric Dumazet <edumazet@google.com>
-Subject: Re: [RFC][PATCH] exec: Move cred computation under exec_update_lock
-Message-ID: <aSNX5B9a5iSjJcM1@redhat.com>
-References: <AS8P193MB1285DF698D7524EDE22ABFA1E4A1A@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <AS8P193MB12851AC1F862B97FCE9B3F4FE4AAA@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <AS8P193MB1285FF445694F149B70B21D0E46C2@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <AS8P193MB1285937F9831CECAF2A9EEE2E4752@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <GV2PPF74270EBEEEDE0B9742310DE91E9A7E431A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
- <GV2PPF74270EBEE9EF78827D73D3D7212F7E432A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
- <GV2PPF74270EBEEE807D016A79FE7A2F463E4D6A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
- <87tsyozqdu.fsf@email.froward.int.ebiederm.org>
- <87wm3ky5n9.fsf@email.froward.int.ebiederm.org>
- <87h5uoxw06.fsf_-_@email.froward.int.ebiederm.org>
+	s=arc-20240116; t=1763924883; c=relaxed/simple;
+	bh=u1iySgEodnMhA8OEPFf3HwhjyXEF3ojGGdKR+IVaEQM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WCFDr8vqL4CkzKuYbnBXGXMCgGxwuL1AwY3vXVUw21Ggb2WXgLHNnVr2PNk7V7lRqXd8HE50DrP4TwuivNq46H4JxLBF4x3wzK3iZmLuDjcKWs0so+XEAkwER7Sc08fTHWuOvXdQ0cwv6tHyH653da/ll5RfpkAzJThcHIu2LTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=SvDIeMPe; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-645a13e2b17so1456436a12.2
+        for <linux-fsdevel@vger.kernel.org>; Sun, 23 Nov 2025 11:08:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen.com; s=google; t=1763924880; x=1764529680; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=9klKgJBevyIJ9UZxwySgKudasKfMx5MCjdCZws9FhVo=;
+        b=SvDIeMPeQGzyMVjseul3WdIer2+I99GLKw4hqo/TQr+Vyct43RFUOQi+RcfMKMI/Y0
+         VbqsTax6R5/IBmjd3SSFWiQ/0WmKnpJzJKgF53c/qxZBpFepYfUr0BRcops2C3HWG7Mo
+         kfIfQyME/9EJHZV0rdQRgp1tW61q3H+XJCm9WvARdcr+rz5CjYDiLt4VYfHUxh15twqB
+         cJlT/NVpulORdFV/APNN6PCgmvPj2U37YGJbefLb3ZIigEl0D+ykf7D+XG/5hFev/ha3
+         TRU9mowxITD+kJ68e75b50IUzbSnPuCFfme7jZdDAAOQoOyH5xFu+lsbWUUqkMgvEHhq
+         FgfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763924880; x=1764529680;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9klKgJBevyIJ9UZxwySgKudasKfMx5MCjdCZws9FhVo=;
+        b=CrDNgNXMKOfGqzFZ6DN5zrY1DLkZQL2uOhd1Oy24qj4feRr2Ou13M2BuT1ecn4G+A5
+         d9vv7Ui8IbSSVSjOssof4Zu+UMoVj+drCaNAvX/vzAf9Th1mpHblDjKNYayfDRO50HuY
+         VjyZ8NWp1HGAhZHGLYhSImRDklRjorFzBDPByJmVeAiZpNlEhPlhVJSX8RgptOgZNZ2W
+         r38fvw1Lb0NArR2t2OVYh1fowElwW1uzLnLeAbkO/u5yhPv+l4oX0k5clZX7phO+2b8r
+         RDs/ECIzAUc/Vm2krJq82ykODU/RANua82X6M/Ftd0IvewTvUZ2rJ2yz1J+qAxR91Qn7
+         A8Ug==
+X-Forwarded-Encrypted: i=1; AJvYcCV0qtF+Yod064yTlJ7CSqaJ19RupBjicY1/07CbDhFbTN3A1sDJPBeX9Lp9k6XDBpK+WGBB+dnBRe9Oyt/1@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqElsY1Ur5SJCra55TkGWiTYC7pnGU8mT8d+jjh6YbVFQT13kX
+	laJm+nVFI6D1YP7ZacQdMGbs84GZncS3K/5xQim9JwpovApSW6lGnDdczP7qcW5ST91fPOzT3J/
+	Yo+MM9kG/7asEGN+0u8oI2YjzXN8Yp7HECeMt7aKPzw==
+X-Gm-Gg: ASbGnctD4I9/PO4QSCcVHFxKcIUfsIAAuCdkZsw1Numa+gKlNMgyK21qOE/pMySTP3o
+	Ow9W2aJacm/+gH05Qs8zGJCEs52zbD2jDBevuxkydXtwMO6uhmpECK/sXBSp+WzLLBo/SsXoFp4
+	o9EuSL3xTLBMZmAeD9ZXxAlGKKmrNvY+fJteL7Db/qEAHhB8kGMLWI5wXvW2QW4ztXBG2xanjGF
+	JJJvMcf9WXofu4DuUSM1lUau5vUbC6XLAOAm1aCancdRmeiy1QCF7cyDo0wNPb/Sxwe
+X-Google-Smtp-Source: AGHT+IFOPKZqtlSeAujqMHhI3nlxfVlasLRItw5Gn5lA8EUX2qTjBZTvohylQJZ+Rg9P0N2YJ5gu38vULtGu6oqEXEk=
+X-Received: by 2002:a05:6402:27d0:b0:640:ea4b:6a87 with SMTP id
+ 4fb4d7f45d1cf-645546a47bfmr9166511a12.30.1763924879937; Sun, 23 Nov 2025
+ 11:07:59 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87h5uoxw06.fsf_-_@email.froward.int.ebiederm.org>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+References: <20251122222351.1059049-1-pasha.tatashin@soleen.com>
+ <20251122222351.1059049-5-pasha.tatashin@soleen.com> <aSMXM8ayzV2kx6Ws@kernel.org>
+In-Reply-To: <aSMXM8ayzV2kx6Ws@kernel.org>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Sun, 23 Nov 2025 14:07:24 -0500
+X-Gm-Features: AWmQ_bmHjB6aEBO9sova9XMvan8ygXuOf4QeVdvSaQktHxLRV6AQzJ8ITGz3YWc
+Message-ID: <CA+CK2bDJhdTA_3hqqZtFS2hN59YfVYrG5S2WRNKNAJws-f9-gg@mail.gmail.com>
+Subject: Re: [PATCH v7 04/22] liveupdate: luo_session: add sessions support
+To: Mike Rapoport <rppt@kernel.org>
+Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com, 
+	dmatlack@google.com, rientjes@google.com, corbet@lwn.net, 
+	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, 
+	ojeda@kernel.org, aliceryhl@google.com, masahiroy@kernel.org, 
+	akpm@linux-foundation.org, tj@kernel.org, yoann.congal@smile.fr, 
+	mmaurer@google.com, roman.gushchin@linux.dev, chenridong@huawei.com, 
+	axboe@kernel.dk, mark.rutland@arm.com, jannh@google.com, 
+	vincent.guittot@linaro.org, hannes@cmpxchg.org, dan.j.williams@intel.com, 
+	david@redhat.com, joel.granados@kernel.org, rostedt@goodmis.org, 
+	anna.schumaker@oracle.com, song@kernel.org, linux@weissschuh.net, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
+	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com, 
+	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
+	rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org, 
+	cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com, 
+	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com, 
+	aleksander.lobakin@intel.com, ira.weiny@intel.com, 
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
+	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net, 
+	brauner@kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	saeedm@nvidia.com, ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com, 
+	leonro@nvidia.com, witu@nvidia.com, hughd@google.com, skhawaja@google.com, 
+	chrisl@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Eric,
-
-sorry for delay, I am on PTO, didn't read emails this week...
-
-On 11/20, Eric W. Biederman wrote:
+> > +     outgoing_buffer = kho_alloc_preserve(LUO_SESSION_PGCNT << PAGE_SHIFT);
+> > +     if (IS_ERR(outgoing_buffer))
+> > +             return PTR_ERR(header_ser);
 >
-> Instead of computing the new cred before we pass the point of no
-> return compute the new cred just before we use it.
+> Should be
+>                 return PTR_ERR(outgoing_buffer);
+
+Thanks, fixed!
+
 >
-> This allows the removal of fs_struct->in_exec and cred_guard_mutex.
+> Or, preferably, just drop outgoing_buffer and use header_ser everywhere.
 >
-> I am not certain why we wanted to compute the cred for the new
-> executable so early.  Perhaps I missed something but I did not see any
-> common errors being signaled.   So I don't think we loose anything by
-> computing the new cred later.
+> > +     header_ser = outgoing_buffer;
+> > +     header_ser_pa = virt_to_phys(header_ser);
+> > +
+> > +     err = fdt_begin_node(fdt_out, LUO_FDT_SESSION_NODE_NAME);
+> > +     err |= fdt_property_string(fdt_out, "compatible",
+> > +                                LUO_FDT_SESSION_COMPATIBLE);
+> > +     err |= fdt_property(fdt_out, LUO_FDT_SESSION_HEADER, &header_ser_pa,
+> > +                         sizeof(header_ser_pa));
+> > +     err |= fdt_end_node(fdt_out);
+> > +
+> > +     if (err)
+> > +             goto err_unpreserve;
+> > +
+> > +     luo_session_global.outgoing.header_ser = header_ser;
+> > +     luo_session_global.outgoing.ser = (void *)(header_ser + 1);
+> > +     luo_session_global.outgoing.active = true;
+> > +
+> > +     return 0;
+> > +
+> > +err_unpreserve:
+> > +     kho_unpreserve_free(header_ser);
+> > +     return err;
+> > +}
 >
-> We gain a lot.
+> ...
+>
+> > +int luo_session_deserialize(void)
+> > +{
+> > +     struct luo_session_header *sh = &luo_session_global.incoming;
+> > +     static bool is_deserialized;
+> > +     static int err;
+> > +
+> > +     /* If has been deserialized, always return the same error code */
+> > +     if (is_deserialized)
+> > +             return err;
+>
+> is_deserialized and err are uninitialized here.
 
-Yes. I LIKE your approach after a quick glance. And I swear, I thought about
-it too ;)
+These are global local variables. They are automatically initialized
+to zero, and it is preferred in Linux source code to not set them to
+zero.
 
-But is it correct? I don't know. I'll try to actually read your patch next
-week (I am on PTO untill the end of November), but I am not sure I can
-provide a valuable feedback.
+> > +
+> > +     is_deserialized = true;
+> > +     if (!sh->active)
+> > +             return 0;
+> > +
+>
+> ...
+>
+> > +/**
+> > + * luo_session_quiesce - Ensure no active sessions exist and lock session lists.
+> > + *
+> > + * Acquires exclusive write locks on both incoming and outgoing session lists.
+> > + * It then validates no sessions exist in either list.
+> > + *
+> > + * This mechanism is used during file handler un/registration to ensure that no
+> > + * sessions are currently using the handler, and no new sessions can be created
+> > + * while un/registration is in progress.
+>
+> It makes sense to add something like this comment from luo_file.c here as well:
+>
+>          * This prevents registering new handlers while sessions are active or
+>          * while deserialization is in progress.
 
-One "obvious" problem is that, after this patch, the execing process can crash
-in a case when currently exec() returns an error...
+Done
 
-Oleg.
-
+>
+> > + *
+> > + * Return:
+> > + * true  - System is quiescent (0 sessions) and locked.
+> > + * false - Active sessions exist. The locks are released internally.
+> > + */
+>
+> With those addressed:
+>
+> Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+>
+>
+> --
+> Sincerely yours,
+> Mike.
 
