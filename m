@@ -1,210 +1,159 @@
-Return-Path: <linux-fsdevel+bounces-69596-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69597-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 967BCC7E979
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Nov 2025 00:23:13 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id F137BC7E9A0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Nov 2025 00:30:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8F333A3E59
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Nov 2025 23:23:11 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8133F4E16D7
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Nov 2025 23:30:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD4662701C4;
-	Sun, 23 Nov 2025 23:23:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C17942673B0;
+	Sun, 23 Nov 2025 23:29:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OwH2GnCJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out01.mta.xmission.com (out01.mta.xmission.com [166.70.13.231])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0B7B2A1CF;
-	Sun, 23 Nov 2025 23:23:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.231
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 411E21D0DEE
+	for <linux-fsdevel@vger.kernel.org>; Sun, 23 Nov 2025 23:29:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763940185; cv=none; b=g+WeIHXzQkVHWD7uRwKe3L5oPMKWEpQOZLU/nJQkJew7MeKPQ74MrTqUIHTcaaT2Lf3zgX7PXDgHMBtC7BDM1gnV4ORPpECMInKfVmvboyNXXfKBBsG5Gn5zEKzAVGfIcLEu4iU5NtsYsLL/azb83Dx4YR3CfV+raOEr3CPnupc=
+	t=1763940597; cv=none; b=epMOwZwFCE+VCuziQ4Fg7qgwHbhlNYI/GHCHXDjQRADPxaNfjSZVs8r7fG/SxgpG7UksWdB8lZay0APLLF3uaDv1SErYHV9i/nhyLRWNj+2vgTN9OW/Hy1RuKUP8n/1eI4PIByqYZUXt0LhunFJDL3uds2hnvmTFRP8jq37MP0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763940185; c=relaxed/simple;
-	bh=E0bJzgneMHyXjq+X02QhPnT3P8kNjgP0/PSN87NvvfI=;
-	h=From:To:Cc:In-Reply-To:References:Date:Message-ID:MIME-Version:
-	 Content-Type:Subject; b=YwQTyN9HkTaiYuwx8HK8UTVLnBW54y/VO9moDBtXOEZeaLm3wB8xV9fApi10qehxEM6gt8+WIQi1PB3aEsQZjWOaOr1cUAwMoJ2hAlOGIxjmZ/DXzjN/9m1l8Z37hAQxY0rDOCC2AiabEkXVh6bFK5cnmnjLHZpLEsUDfztTpUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.231
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
-Received: from in02.mta.xmission.com ([166.70.13.52]:44430)
-	by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1vNJPq-000Vmp-5s; Sun, 23 Nov 2025 16:22:46 -0700
-Received: from ip72-198-198-28.om.om.cox.net ([72.198.198.28]:44852 helo=email.froward.int.ebiederm.org.xmission.com)
-	by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1vNJPp-001fVL-4Z; Sun, 23 Nov 2025 16:22:45 -0700
-From: "Eric W. Biederman" <ebiederm@xmission.com>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Bernd Edlinger <bernd.edlinger@hotmail.de>,  Alexander Viro
- <viro@zeniv.linux.org.uk>,  Alexey Dobriyan <adobriyan@gmail.com>,  Kees
- Cook <kees@kernel.org>,  Andy Lutomirski <luto@amacapital.net>,  Will
- Drewry <wad@chromium.org>,  Christian Brauner <brauner@kernel.org>,
-  Andrew Morton <akpm@linux-foundation.org>,  Michal Hocko
- <mhocko@suse.com>,  Serge Hallyn <serge@hallyn.com>,  James Morris
- <jamorris@linux.microsoft.com>,  Randy Dunlap <rdunlap@infradead.org>,
-  Suren Baghdasaryan <surenb@google.com>,  Yafang Shao
- <laoar.shao@gmail.com>,  Helge Deller <deller@gmx.de>,  Adrian Reber
- <areber@redhat.com>,  Thomas Gleixner <tglx@linutronix.de>,  Jens Axboe
- <axboe@kernel.dk>,  Alexei Starovoitov <ast@kernel.org>,
-  "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-  "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-  linux-kselftest@vger.kernel.org,  linux-mm@kvack.org,
-  linux-security-module@vger.kernel.org,  tiozhang
- <tiozhang@didiglobal.com>,  Luis Chamberlain <mcgrof@kernel.org>,  "Paulo
- Alcantara (SUSE)" <pc@manguebit.com>,  Sergey Senozhatsky
- <senozhatsky@chromium.org>,  Frederic Weisbecker <frederic@kernel.org>,
-  YueHaibing <yuehaibing@huawei.com>,  Paul Moore <paul@paul-moore.com>,
-  Aleksa Sarai <cyphar@cyphar.com>,  Stefan Roesch <shr@devkernel.io>,
-  Chao Yu <chao@kernel.org>,  xu xin <xu.xin16@zte.com.cn>,  Jeff Layton
- <jlayton@kernel.org>,  Jan Kara <jack@suse.cz>,  David Hildenbrand
- <david@redhat.com>,  Dave Chinner <dchinner@redhat.com>,  Shuah Khan
- <shuah@kernel.org>,  Elena Reshetova <elena.reshetova@intel.com>,  David
- Windsor <dwindsor@gmail.com>,  Mateusz Guzik <mjguzik@gmail.com>,  Ard
- Biesheuvel <ardb@kernel.org>,  "Joel Fernandes (Google)"
- <joel@joelfernandes.org>,  "Matthew Wilcox (Oracle)"
- <willy@infradead.org>,  Hans Liljestrand <ishkamiel@gmail.com>,  Penglei
- Jiang <superman.xpt@gmail.com>,  Lorenzo Stoakes
- <lorenzo.stoakes@oracle.com>,  Adrian Ratiu <adrian.ratiu@collabora.com>,
-  Ingo Molnar <mingo@kernel.org>,  "Peter Zijlstra (Intel)"
- <peterz@infradead.org>,  Cyrill Gorcunov <gorcunov@gmail.com>,  Eric
- Dumazet <edumazet@google.com>
-In-Reply-To: <aSNX5B9a5iSjJcM1@redhat.com> (Oleg Nesterov's message of "Sun,
-	23 Nov 2025 19:52:20 +0100")
-References: <AS8P193MB1285DF698D7524EDE22ABFA1E4A1A@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
-	<AS8P193MB12851AC1F862B97FCE9B3F4FE4AAA@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
-	<AS8P193MB1285FF445694F149B70B21D0E46C2@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
-	<AS8P193MB1285937F9831CECAF2A9EEE2E4752@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
-	<GV2PPF74270EBEEEDE0B9742310DE91E9A7E431A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
-	<GV2PPF74270EBEE9EF78827D73D3D7212F7E432A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
-	<GV2PPF74270EBEEE807D016A79FE7A2F463E4D6A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
-	<87tsyozqdu.fsf@email.froward.int.ebiederm.org>
-	<87wm3ky5n9.fsf@email.froward.int.ebiederm.org>
-	<87h5uoxw06.fsf_-_@email.froward.int.ebiederm.org>
-	<aSNX5B9a5iSjJcM1@redhat.com>
-Date: Sun, 23 Nov 2025 17:22:36 -0600
-Message-ID: <87tsykuyf7.fsf@email.froward.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1763940597; c=relaxed/simple;
+	bh=onfW0KRCunkrfENCokop5oWDP52dluPbHWVAUJlTB18=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GpHG1CpKSmgVtCkUYoa2qLht/SZMHA+NyBV7vC4A0nSXPJtXwru8S+jNuvJQwBqojoXSpC2X1/PbA0lw1loh9kG9ql3cPUxVZCgA0giFV5ofOaxL8DQvZUGg4/N5wWEL+IzzAlqhc7H217hfB7ZW4RMx2TQsMfGashICpLB3wIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OwH2GnCJ; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-64180bd67b7so4870071a12.0
+        for <linux-fsdevel@vger.kernel.org>; Sun, 23 Nov 2025 15:29:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1763940594; x=1764545394; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2QCVkHe2B5C1rJZaKqIp5MAgrunRtVbuybu3HA4F0WE=;
+        b=OwH2GnCJYBg3lP5JvnfOG7CekPVFtc6+0bOKZKmH+0Op+9R8otmWSOnO5lvBF9xSmC
+         od8+7xV0HPchMpxBtnbI1iDGjbbnX0e98cpl9AvjVcG9ZBHUpH8XjBa/3PUlexLmZpEH
+         7iI/Cv2MX2eKf1B4kpRBRH5bzye57XC0pk2m09mYId1GB4fQCB6GDbZKhCZhSpNHbENB
+         HcAbkFxNyHJbTthDXTfi8rcxKWJHiR4IGfE50S/1sXZ3cHdz+5hsSJxKKCbXVkSJY9V8
+         oPiVe0+bvnS79sBIACqa5dFPiaO6Aw+4yaIIcZF5NLGM1mg5BelMu/Va4MVuEskvX9x0
+         P54g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763940594; x=1764545394;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=2QCVkHe2B5C1rJZaKqIp5MAgrunRtVbuybu3HA4F0WE=;
+        b=lVW9qchq3WkIPXYOqsYaHOAqTOGF4iEoOJ7cj/Vhys0ezxxmDMHre9kFwtNClmj1vS
+         U04sBjciyin6nZUkbqTAe7Bdsy8xbwYxZJiYpCf3p0pwCg2KjosE+EOj6ReUEQwYSMkg
+         EV1srRNgcVo/FsFQe2iMUhEr4pQwmFscDwaNDzuRM3agQIHEh8RWCBjQzEKUtC9k/X9W
+         KtBY4G6guvBq/wyDR1nLAs+wNOFhV09GYeXpukc4hzFkVhq6QNysfD6TdZA/Bspz2IFm
+         1qiG1c0bMK+E4hejmzb8vTara3lUeDj1jB9Wszl8xqQgf3nTtNF9PM6zCq6+7sFqAnkW
+         kkEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVgnGUt1oPwFV54JG3ODl4Bw1kHZN5oFb3kp9slTiv+j5zB598owCXj6KL/fIIoLlFXt25QMe3jTVW4Ix07@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6ZDGC0VmqKsoGGdYgWfV+ipHWSrN6q46nCYZKvhbAInQkKuQV
+	idVrHMndtVa42iImATfqm7Mj5u9xUvAFWgfWRwbtY5NDUB5hE9xjvCvtlEdBviO+LTclXb5yhoF
+	7cwFtw/bOQUuaEvqEyE4lpTaKJb3zL0A=
+X-Gm-Gg: ASbGncvq4aD5NRWd+T8gFcSbQADZhNunNrYg2lcxgbMt4RclVZ1k2y2QAL5TjGqoj6H
+	hJzOboQf0B/jXk6BT/3x4kZmtKoEgX4phgroL/schXJ0CulpvLKQZtlbBswfp1HSFsHXZrUcCz+
+	pbblmOjDrYEoPf6J+rZGCIXCjE2PtFXp8saQeYuGWvJRI8LHLPl4e31EZ+pMd7+IbydWEemO9tD
+	aBlrZw56QgBZ7SoiTNkw+0zsmXKm3wgrn9RODzj+vy8pPGr6u5qBqsxN5m7SD1U6NPfCZrEbYr2
+	jEnp0iy7xEcobJunu0b4//fuDPpkp/cAkEuA
+X-Google-Smtp-Source: AGHT+IGgKBAH4WW3s6pZ/k0Q+yZ542U3x27zfw+0RPx6LN8evSEWSmV/hGBLBffbW2tyfSHD/D4vHIELW+iB1aUHTZ0=
+X-Received: by 2002:a17:907:97d6:b0:b76:2d96:6c28 with SMTP id
+ a640c23a62f3a-b76715acbd4mr972617166b.24.1763940593246; Sun, 23 Nov 2025
+ 15:29:53 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1vNJPp-001fVL-4Z;;;mid=<87tsykuyf7.fsf@email.froward.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=72.198.198.28;;;frm=ebiederm@xmission.com;;;spf=pass
-X-XM-AID: U2FsdGVkX188bdynm4AjSoejNdWJaikuesUTwrwxz14=
-X-Spam-Level: *
-X-Spam-Report: 
-	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-	*  0.1 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-	*      [score: 0.5000]
-	*  1.5 TR_Symld_Words too many words that have symbols inside
-	*  0.7 XMSubLong Long Subject
-	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-	*      [sa08 1397; Body=1 Fuz1=1 Fuz2=1]
-X-Spam-DCC: XMission; sa08 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: *;Oleg Nesterov <oleg@redhat.com>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 456 ms - load_scoreonly_sql: 0.04 (0.0%),
-	signal_user_changed: 11 (2.4%), b_tie_ro: 10 (2.1%), parse: 1.00
-	(0.2%), extract_message_metadata: 3.5 (0.8%), get_uri_detail_list:
-	1.52 (0.3%), tests_pri_-2000: 2.9 (0.6%), tests_pri_-1000: 11 (2.4%),
-	tests_pri_-950: 1.34 (0.3%), tests_pri_-900: 0.99 (0.2%),
-	tests_pri_-90: 83 (18.3%), check_bayes: 82 (17.9%), b_tokenize: 18
-	(3.9%), b_tok_get_all: 14 (3.0%), b_comp_prob: 4.2 (0.9%),
-	b_tok_touch_all: 40 (8.8%), b_finish: 1.30 (0.3%), tests_pri_0: 325
-	(71.2%), check_dkim_signature: 0.52 (0.1%), check_dkim_adsp: 2.6
-	(0.6%), poll_dns_idle: 0.78 (0.2%), tests_pri_10: 1.96 (0.4%),
-	tests_pri_500: 8 (1.7%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [RFC][PATCH] exec: Move cred computation under exec_update_lock
-X-SA-Exim-Connect-IP: 166.70.13.52
-X-SA-Exim-Rcpt-To: too long (recipient list exceeded maximum allowed size of 512 bytes)
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-SA-Exim-Scanned: No (on out01.mta.xmission.com); SAEximRunCond expanded to false
+References: <69238e4d.a70a0220.d98e3.006e.GAE@google.com>
+In-Reply-To: <69238e4d.a70a0220.d98e3.006e.GAE@google.com>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Mon, 24 Nov 2025 00:29:41 +0100
+X-Gm-Features: AWmQ_blW1s24U6SJWaHPmBzqy7U6b1FmGjPf-59EW4w_5ZdHcoASFYaoUUr_f48
+Message-ID: <CAGudoHG9KjT=srh0H-fwmJDozZSAMiOph+npB938TJboatkWbA@mail.gmail.com>
+Subject: Re: [syzbot] [ntfs3?] INFO: task hung in __start_renaming
+To: syzbot <syzbot+2fefb910d2c20c0698d8@syzkaller.appspotmail.com>
+Cc: agruenba@redhat.com, almaz.alexandrovich@paragon-software.com, 
+	brauner@kernel.org, dhowells@redhat.com, gfs2@lists.linux.dev, jack@suse.cz, 
+	linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, marc.dionne@auristor.com, ntfs3@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Oleg Nesterov <oleg@redhat.com> writes:
-
-> Eric,
+On Sun, Nov 23, 2025 at 11:44=E2=80=AFPM syzbot
+<syzbot+2fefb910d2c20c0698d8@syzkaller.appspotmail.com> wrote:
+> NMI backtrace for cpu 1
+> CPU: 1 UID: 0 PID: 6107 Comm: syz.3.20 Not tainted syzkaller #0 PREEMPT(f=
+ull)
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
+oogle 10/25/2025
+> RIP: 0010:hlock_class kernel/locking/lockdep.c:234 [inline]
+> RIP: 0010:mark_lock+0x3c/0x190 kernel/locking/lockdep.c:4731
+> Code: 00 03 00 83 f9 01 bb 09 00 00 00 83 db 00 83 fa 08 0f 45 da bd 01 0=
+0 00 00 89 d9 d3 e5 25 ff 1f 00 00 48 0f a3 05 c4 46 df 11 <73> 10 48 69 c0=
+ c8 00 00 00 48 8d 88 70 f3 1e 93 eb 48 83 3d 4b d6
+> RSP: 0018:ffffc90003747518 EFLAGS: 00000007
+> RAX: 0000000000000311 RBX: 0000000000000008 RCX: 0000000000000008
+> RDX: 0000000000000008 RSI: ffff8880275f48a8 RDI: ffff8880275f3d00
+> RBP: 0000000000000100 R08: 0000000000000000 R09: ffffffff8241cc56
+> R10: dffffc0000000000 R11: ffffed100e650518 R12: 0000000000000004
+> R13: 0000000000000003 R14: ffff8880275f48a8 R15: 0000000000000000
+> FS:  00007fc3607da6c0(0000) GS:ffff888125fbc000(0000) knlGS:0000000000000=
+000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000558e8c347168 CR3: 0000000077b26000 CR4: 00000000003526f0
+> Call Trace:
+>  <TASK>
+>  mark_usage kernel/locking/lockdep.c:4674 [inline]
+>  __lock_acquire+0x6a8/0xd20 kernel/locking/lockdep.c:5191
+>  lock_acquire+0x117/0x350 kernel/locking/lockdep.c:5868
+>  __raw_spin_lock include/linux/spinlock_api_smp.h:133 [inline]
+>  _raw_spin_lock+0x2e/0x40 kernel/locking/spinlock.c:154
+>  spin_lock include/linux/spinlock.h:351 [inline]
+>  insert_inode_locked+0x336/0x5d0 fs/inode.c:1837
+>  ntfs_new_inode+0xc8/0x100 fs/ntfs3/fsntfs.c:1675
+>  ntfs_create_inode+0x606/0x32a0 fs/ntfs3/inode.c:1309
+>  ntfs_create+0x3d/0x50 fs/ntfs3/namei.c:110
+>  lookup_open fs/namei.c:4409 [inline]
+>  open_last_lookups fs/namei.c:4509 [inline]
+>  path_openat+0x190f/0x3d90 fs/namei.c:4753
+>  do_filp_open+0x1fa/0x410 fs/namei.c:4783
+>  do_sys_openat2+0x121/0x1c0 fs/open.c:1432
+>  do_sys_open fs/open.c:1447 [inline]
+>  __do_sys_openat fs/open.c:1463 [inline]
+>  __se_sys_openat fs/open.c:1458 [inline]
+>  __x64_sys_openat+0x138/0x170 fs/open.c:1458
+>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>  do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7fc35f98f749
+> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f=
+7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff=
+ ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007fc3607da038 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
+> RAX: ffffffffffffffda RBX: 00007fc35fbe5fa0 RCX: 00007fc35f98f749
+> RDX: 000000000000275a RSI: 00002000000001c0 RDI: ffffffffffffff9c
+> RBP: 00007fc35fa13f91 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> R13: 00007fc35fbe6038 R14: 00007fc35fbe5fa0 R15: 00007ffffeb34448
+>  </TASK>
 >
-> sorry for delay, I am on PTO, didn't read emails this week...
->
-> On 11/20, Eric W. Biederman wrote:
->>
->> Instead of computing the new cred before we pass the point of no
->> return compute the new cred just before we use it.
->>
->> This allows the removal of fs_struct->in_exec and cred_guard_mutex.
->>
->> I am not certain why we wanted to compute the cred for the new
->> executable so early.  Perhaps I missed something but I did not see any
->> common errors being signaled.   So I don't think we loose anything by
->> computing the new cred later.
->>
->> We gain a lot.
->
-> Yes. I LIKE your approach after a quick glance. And I swear, I thought about
-> it too ;)
->
-> But is it correct? I don't know. I'll try to actually read your patch next
-> week (I am on PTO untill the end of November), but I am not sure I can
-> provide a valuable feedback.
->
-> One "obvious" problem is that, after this patch, the execing process can crash
-> in a case when currently exec() returns an error...
 
-Yes.
+The bug is in ntfs. It calls d_instantiate instead of
+d_instantiate_new and consequently there is no wakeup to begin with.
 
-I have been testing and looking at it, and I have found a few issues,
-and I am trying to see if I can resolve them.
-
-The good news is that with the advent of AT_EXECVE_CHECK we have a
-really clear API boundary between errors that must be diagnosed
-and errors of happenstance like running out of memory.
-
-The bad news is that the implementation of AT_EXECVE_CHECK seems to been
-rather hackish especially with respect to security_bprm_creds_for_exec.
-
-What I am hoping for is to get the 3 causes of errors of brpm->unsafe
-( LSM_UNSAFE_SHARE, LSM_UNSAFE_PTRACE, and LSM_UNSAFE_NO_NEW_PRIVS )
-handled cleanly outside of the cred_guard_mutex, and simply
-retested when it is time to build the credentials of the new process.
-
-In practice that should get the same failures modes as we have now
-but it would get SIGSEGV in rare instances where things changed
-during exec.  That feels acceptable.
-
-
-
-I thought of one other approach that might be enough to put the issue to
-bed if cleaning up exec is too much work.  We could have ptrace_attach
-use a trylock and fail when it doesn't succeed.  That would solve the
-worst of the symptoms.
-
-I think this would be a complete patch:
-
-diff --git a/kernel/ptrace.c b/kernel/ptrace.c
-index 75a84efad40f..5dd2144e5789 100644
---- a/kernel/ptrace.c
-+++ b/kernel/ptrace.c
-@@ -444,7 +444,7 @@ static int ptrace_attach(struct task_struct *task, long request,
- 	 * SUID, SGID and LSM creds get determined differently
- 	 * under ptrace.
- 	 */
--	scoped_cond_guard (mutex_intr, return -ERESTARTNOINTR,
-+	scoped_cond_guard (mutex_try, return -EAGAIN,
- 			   &task->signal->cred_guard_mutex) {
- 
- 		scoped_guard (task_lock, task) {
--- 
-2.41.0
-
-
-Eric
+I'm going to chew on it a little bit, bare mininum d_instantiate
+should warn about it and maybe some other fixups are warranted.
 
