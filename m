@@ -1,232 +1,376 @@
-Return-Path: <linux-fsdevel+bounces-69578-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69579-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB40FC7E6A7
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Nov 2025 20:44:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 437E8C7E706
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Nov 2025 21:13:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7C5D3A5CFC
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Nov 2025 19:43:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB5AC3A7182
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Nov 2025 20:13:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71B4D256C9E;
-	Sun, 23 Nov 2025 19:43:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F317025CC63;
+	Sun, 23 Nov 2025 20:12:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="NPsAbqcu"
+	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="c7jMId0L";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="BJBXReGs"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fhigh-a1-smtp.messagingengine.com (fhigh-a1-smtp.messagingengine.com [103.168.172.152])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6150E258ECC
-	for <linux-fsdevel@vger.kernel.org>; Sun, 23 Nov 2025 19:43:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 063CB1A2C25;
+	Sun, 23 Nov 2025 20:12:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763927032; cv=none; b=tI1jPP/gGOef/RBrlWB7z/VSzM1poo0vp2FpEB6nabR44oFGvQhWnopGPlF67DZ2uxheeP1TQvot0QwVRxR4xarFDuUIt7PGdfQvXnDm41AKTPPY616D7wffXCf+Arc9I4bpAQ0SZXhusI8KkGYl/ic78PricS2ewvfh5NidMOM=
+	t=1763928776; cv=none; b=Qw5qT5rKh8SzmeK+9PsHz/F4vSrCeGrl0GwrPUF+Dws+Z2bHXhTi2c2WUtOwbD+eK/+UztO1+IbNBkrE+28voqnHyGHKvv68nFpwbDFJ3cmscUtRRzeI+uQy8tDWfr4HCRq8/z2HY3Lm5pEPF/cA+DwQmG4Taa/eZBmWv/vLboI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763927032; c=relaxed/simple;
-	bh=rEXUF3WcLXgrqK9Z0mp+DKx3xAVF9PI7UZEW40+RQjk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=C/aIF2k9+Nyo3oUJmLC7WytGh2eFuhx2T4Bk3BQ+BvTKel0qLD9s6F6A2IyvoeBXjcYSsPrA0mJheOy2dYgGl5MIJT+3fnLbJgR4eIrx6FMLmz4lzimv7PPwiDhf8t3KUImQyQC60hnR5mU8fRLWUr87SgnVjMnHfOVtqPNROxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=NPsAbqcu; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-644fcafdce9so5575896a12.1
-        for <linux-fsdevel@vger.kernel.org>; Sun, 23 Nov 2025 11:43:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1763927027; x=1764531827; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4t1Ki+s+9/qWluhdQjI8hbyhcgBh9iaju0gMHkm8x5A=;
-        b=NPsAbqcuvhy20tG+n/y/Vzs8SIQ1k3m9Mt6v4vBOTQQxB30LiIS8n9kj+Sc3aC0HsB
-         hqTBe8pm0nRS38sl7PUhi4DcgvTUwWrNPVCWo21hwaLAVtepLxbkB10/ghiG3i5JLYPL
-         R1ZyFN6Tu5XRy9bdtWaFE3NJK1ob3NNnpuYHcBN/qVmbNfeVTkB4RESZWwzJsm5pTgVO
-         JXl/ZWBPQ0cBIgdCnmL94p3lysV0wn86JNl02WUR+7SDS+5vcUmsXMHN6MPdCZrWZRzY
-         I+wV/UtLoxosF817ZgRuIq1h+nXoc+fOJ8m0Xm0ewlMQnezLZMo1TH1pFKewWBUSfVNf
-         3eKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763927027; x=1764531827;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=4t1Ki+s+9/qWluhdQjI8hbyhcgBh9iaju0gMHkm8x5A=;
-        b=ZnQQ7BO2Ttf7odC/xiAYgig9jxbiVK0nAVTgodebmsl5eQXRhvpXMZADRUz32uJOAs
-         jdIjfHN44q0jFFXCkomT/7MEgC98rePCRwfSw8wVl2nepkrqVN/ukaJnC7tXWv7bsYIb
-         WP4N2J3ym+VDs7kjhA9dO2o1hO7g/7ipNjiX/2LJ0W1SICbfsD8b5tl9jdVP1V+i6Wm6
-         pbqSdNMckj22F6k1COgXcfIR5uAmIo16xAnQWUMhW9uvbnZBpD4528I5Nx73agkN/8Y2
-         Ep7h3qBoJenPzOdyeHFW1nOYYdwT3CzffkkapZQZZjNiAY0U4DFkcQc+T4N512sY8YIS
-         Xvqg==
-X-Forwarded-Encrypted: i=1; AJvYcCXrYxXyZ+vj1Z12XZ4VB4c4whpeDnBg8SJXl6qrRt5k15XliGkN62WxcHY7IC/6jvSA7i3s0TG6YQPPW21+@vger.kernel.org
-X-Gm-Message-State: AOJu0YzgUO0APg58cMKoY4PjjxtnpxtRhNq0kaBRwlt3qWDW+rp5W55L
-	u7Wv/swaOZSFBhtq+saJlqAe0oNmLBn5pSChm6rFZ8FGkDxqKU0spuNdwjnbWATCr+L19yLEthj
-	qs0iIHBmFnUHNhPQpd62swhencNPCxXaq05VT7/ZCww==
-X-Gm-Gg: ASbGncuQESFV7sKF13WPijMyrUXsEOeatAq0snfEYF47T/3eZ+uq5kcJGAWXlTmpJl0
-	8YYo8ZbkoCBSj8yp69nrxBHAFGljriB0Quqmo5l6AO+7FNL/X8K2Lv3p78BABg7sf7EOglqF7mK
-	6DFKuBTmyUlkBwOojsxdq58HqSkpM8r7KUqQUqX7J5+etI3ie0e0Ng04b1I88IBW9Sb8oQQcAJE
-	Z/e6yWkSeQI0+mNfyyWCQfl8v38Fv+U+IrI+RvC3zKyYQe1om9jFtHFreS9/szP2CxF
-X-Google-Smtp-Source: AGHT+IGshkG9OIG1LcK7+ITFx82jXeFu0RCBTWszC/GeEm+iNWkEZCqMd0w54WVkq/Ok7uWsEjBmuRSK5/xDmSViJXs=
-X-Received: by 2002:a05:6402:5414:b0:63e:405d:579c with SMTP id
- 4fb4d7f45d1cf-645546946edmr8066481a12.29.1763927027448; Sun, 23 Nov 2025
- 11:43:47 -0800 (PST)
+	s=arc-20240116; t=1763928776; c=relaxed/simple;
+	bh=v8j9TanWkx75Jzk5WFMP7TF4vRiHmpj6ExzteIBFqmA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OoVHoryaUuZZqhbH+JbIm5QYDcdH1grOV3tsaVX6qwMDNRVcOWxQDGTaiYqM1tER0Su/ttZD3qDDBLPpX+GWtZGqPaMSdhmsAHvj3P++EuqFhXaTnc7LYop9rMaKePsgzJkLEyIhJJdgxiAp3qQj07Fmb+fCsFEdxaxHD7aaGqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=c7jMId0L; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=BJBXReGs; arc=none smtp.client-ip=103.168.172.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id D5D25140014D;
+	Sun, 23 Nov 2025 15:12:51 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-04.internal (MEProxy); Sun, 23 Nov 2025 15:12:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1763928771;
+	 x=1764015171; bh=5OdHDmj6V1CR4LdeD/Tbwg5FSoEN7mx8OrJ2I1TPPqQ=; b=
+	c7jMId0LzU9u5wtewhb0jOgkeZ/nFFY8NqofsBhBXBjyC+a78E3xG2PWyKSbG4T/
+	JoVfQZdsFEiZSRFWZNJRtFwrgZKGg4bEu+kIiOFXSTGc5h69XVagldPDnoRXAQW/
+	lvMz5Mt+Teuend7ubm8Z0ifuRyfzJUYGMf2QDjV3KpkmhRsP6t7P7nJRrFY06YUE
+	0H62I/3gcIH4AjmeOrLA1JOR+Quj/I32YgCl3zyxBtYnPObF/l/G2iwmJn0BgrkY
+	c8uCWFK/TVm5UjlHQv5LfrTF4CycaWZ3Hvpz3E0H7Zecq60Zrt76lemFgwSqJnf0
+	F1Om4QGntLadpAMd6NxvLw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1763928771; x=
+	1764015171; bh=5OdHDmj6V1CR4LdeD/Tbwg5FSoEN7mx8OrJ2I1TPPqQ=; b=B
+	JBXReGsNdJnBUL0ErKQEA/xJjS4BkA/t6gpkFTorHiqJRq1AVUAuUt9y2T3LtSCM
+	4SmJybqzFwhI0vY/UEGz2CTqeXjWqxCiVpSs5IReq1YaEBZ7fWENjFxfHuAkkjPm
+	nMF1OlpOQmlNR0N+GwRZ1O7/n1WQZt4biceDqHRnSI7e9CzZiVXQy3tE5DqtJxZE
+	EeAVzQQFS5Oouwqg/a/+dS8z21TWgaTIv2L2OuqnX7ThgA/XaHVSLkSgVUrnMEPh
+	0ifnc01dRoa62Y8GLJ3l9xPRTlkI9nhO7IYPf7QLtPopCgmqG1jm0yS5SWDeS22O
+	+/lVP2tDyE3Nme/2g6Z5w==
+X-ME-Sender: <xms:wmojab5jfjmsK9HugV_nexZY1doq6EFqw-DxkkrSFDNXhXjTVqH0sQ>
+    <xme:wmojaT8tCvC-0ltlKi_9THH0NKVAIXvtIVPA3WP4iH4sMjvV2-cybAAfk0gAoP3pA
+    BHtGIh8-ynH7gYlgU1tuT94Hle7VcxFkPJ94VHLB5k6HSF1GzlM>
+X-ME-Received: <xmr:wmojadG1LQ0zWWXeFagk6gG5HvjtIKJOxXxwsqBZpQuFg_ZjXYMGJKY1OjJ3J755LAECyrD53Swq-SMMtmMV7LZZb60zgcgZ3i82NQn3PEQ088AMvTmY>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvfeeiieehucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeeuvghrnhgu
+    ucfutghhuhgsvghrthcuoegsvghrnhgusegsshgsvghrnhgurdgtohhmqeenucggtffrrg
+    htthgvrhhnpedtuedvueduledtudekhfeuleduudeijedvveevveetuddvfeeuvdekffej
+    leeuueenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivg
+    eptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnugessghssggvrhhnugdrtgho
+    mhdpnhgspghrtghpthhtohepuddtpdhmohguvgepshhmthhpohhuthdprhgtphhtthhope
+    hjohgrnhhnvghlkhhoohhnghesghhmrghilhdrtghomhdprhgtphhtthhopehmihhklhho
+    shesshiivghrvgguihdrhhhupdhrtghpthhtoheprgigsghovgeskhgvrhhnvghlrdgukh
+    dprhgtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdho
+    rhhgpdhrtghpthhtohepsghstghhuhgsvghrthesuggunhdrtghomhdprhgtphhtthhope
+    grshhmlhdrshhilhgvnhgtvgesghhmrghilhdrtghomhdprhgtphhtthhopehiohdquhhr
+    ihhnghesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopeigihgrohgsihhngh
+    drlhhisehsrghmshhunhhgrdgtohhmpdhrtghpthhtoheptghsrghnuggvrhesphhurhgv
+    shhtohhrrghgvgdrtghomh
+X-ME-Proxy: <xmx:wmojaYWnfmHdWLK7PoKbOaJjgWsjulhqHDlMlWpveKbbI8FrAJeynw>
+    <xmx:wmojaZ86y6X0n5pCAl9d8us15Perdg5ztLKJY_rgQoiCVgCPm6gTaw>
+    <xmx:wmojaV7gON1K8-3LdaLRhZjmiJXRiZbPmGC3sKKu_FAsEaVjCU6j5A>
+    <xmx:wmojaSm-7i6Y4kimrOJTBT8Ib9qlShCtoJ58JI9oFf1bUDMvUl7pbA>
+    <xmx:w2ojaZSW5cnvWQiE6HPtafMZStaqDMGnljwpvfrtU8RN09-E5B862EcU>
+Feedback-ID: i5c2e48a5:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
+ 23 Nov 2025 15:12:48 -0500 (EST)
+Message-ID: <941f06eb-2429-4752-bf56-fbc413da436f@bsbernd.com>
+Date: Sun, 23 Nov 2025 21:12:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251122222351.1059049-1-pasha.tatashin@soleen.com>
- <20251122222351.1059049-12-pasha.tatashin@soleen.com> <aSMoRRtanMkHo9Tr@kernel.org>
-In-Reply-To: <aSMoRRtanMkHo9Tr@kernel.org>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Sun, 23 Nov 2025 14:43:11 -0500
-X-Gm-Features: AWmQ_bk6KdHNR7OHR5DSXBcEBpbGAclOQVNeD6WPZt65m_AQR-D_Xk2E-EHVSsU
-Message-ID: <CA+CK2bAVNed-biqAnyMySPuDkQQZPFnWp96vdm0ewVS20H2-Zw@mail.gmail.com>
-Subject: Re: [PATCH v7 11/22] mm: shmem: allow freezing inode mapping
-To: Mike Rapoport <rppt@kernel.org>
-Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com, 
-	dmatlack@google.com, rientjes@google.com, corbet@lwn.net, 
-	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, 
-	ojeda@kernel.org, aliceryhl@google.com, masahiroy@kernel.org, 
-	akpm@linux-foundation.org, tj@kernel.org, yoann.congal@smile.fr, 
-	mmaurer@google.com, roman.gushchin@linux.dev, chenridong@huawei.com, 
-	axboe@kernel.dk, mark.rutland@arm.com, jannh@google.com, 
-	vincent.guittot@linaro.org, hannes@cmpxchg.org, dan.j.williams@intel.com, 
-	david@redhat.com, joel.granados@kernel.org, rostedt@goodmis.org, 
-	anna.schumaker@oracle.com, song@kernel.org, linux@weissschuh.net, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
-	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com, 
-	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
-	rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org, 
-	cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com, 
-	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com, 
-	aleksander.lobakin@intel.com, ira.weiny@intel.com, 
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
-	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net, 
-	brauner@kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	saeedm@nvidia.com, ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com, 
-	leonro@nvidia.com, witu@nvidia.com, hughd@google.com, skhawaja@google.com, 
-	chrisl@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 8/8] fuse: support io-uring registered buffers
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: miklos@szeredi.hu, axboe@kernel.dk, linux-fsdevel@vger.kernel.org,
+ bschubert@ddn.com, asml.silence@gmail.com, io-uring@vger.kernel.org,
+ xiaobing.li@samsung.com, csander@purestorage.com, kernel-team@meta.com
+References: <20251027222808.2332692-1-joannelkoong@gmail.com>
+ <20251027222808.2332692-9-joannelkoong@gmail.com>
+ <a335fd2c-03ca-4201-abcf-74809b84c426@bsbernd.com>
+ <CAJnrk1YPEDUbOu2N0EjfrkwK3Ge2XrNeaCY0YKL+E1t7Z8Xtvg@mail.gmail.com>
+From: Bernd Schubert <bernd@bsbernd.com>
+Content-Language: en-US, de-DE, fr
+In-Reply-To: <CAJnrk1YPEDUbOu2N0EjfrkwK3Ge2XrNeaCY0YKL+E1t7Z8Xtvg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Sun, Nov 23, 2025 at 10:29=E2=80=AFAM Mike Rapoport <rppt@kernel.org> wr=
-ote:
->
-> On Sat, Nov 22, 2025 at 05:23:38PM -0500, Pasha Tatashin wrote:
-> > From: Pratyush Yadav <ptyadav@amazon.de>
-> >
-> > To prepare a shmem inode for live update, its index -> folio mappings
-> > must be serialized. Once the mappings are serialized, they cannot chang=
-e
-> > since it would cause the serialized data to become inconsistent. This
-> > can be done by pinning the folios to avoid migration, and by making sur=
-e
-> > no folios can be added to or removed from the inode.
-> >
-> > While mechanisms to pin folios already exist, the only way to stop
-> > folios being added or removed are the grow and shrink file seals. But
-> > file seals come with their own semantics, one of which is that they
-> > can't be removed. This doesn't work with liveupdate since it can be
-> > cancelled or error out, which would need the seals to be removed and th=
-e
-> > file's normal functionality to be restored.
-> >
-> > Introduce SHMEM_F_MAPPING_FROZEN to indicate this instead. It is
-> > internal to shmem and is not directly exposed to userspace. It function=
-s
-> > similar to F_SEAL_GROW | F_SEAL_SHRINK, but additionally disallows hole
-> > punching, and can be removed.
-> >
-> > Signed-off-by: Pratyush Yadav <ptyadav@amazon.de>
-> > Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
-> > ---
-> >  include/linux/shmem_fs.h | 17 +++++++++++++++++
-> >  mm/shmem.c               | 19 ++++++++++++++++---
-> >  2 files changed, 33 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/include/linux/shmem_fs.h b/include/linux/shmem_fs.h
-> > index 650874b400b5..d34a64eafe60 100644
-> > --- a/include/linux/shmem_fs.h
-> > +++ b/include/linux/shmem_fs.h
-> > @@ -24,6 +24,14 @@ struct swap_iocb;
-> >  #define SHMEM_F_NORESERVE    BIT(0)
-> >  /* Disallow swapping. */
-> >  #define SHMEM_F_LOCKED               BIT(1)
-> > +/*
-> > + * Disallow growing, shrinking, or hole punching in the inode. Combine=
-d with
-> > + * folio pinning, makes sure the inode's mapping stays fixed.
-> > + *
-> > + * In some ways similar to F_SEAL_GROW | F_SEAL_SHRINK, but can be rem=
-oved and
-> > + * isn't directly visible to userspace.
-> > + */
-> > +#define SHMEM_F_MAPPING_FROZEN       BIT(2)
-> >
-> >  struct shmem_inode_info {
-> >       spinlock_t              lock;
-> > @@ -186,6 +194,15 @@ static inline bool shmem_file(struct file *file)
-> >       return shmem_mapping(file->f_mapping);
-> >  }
-> >
-> > +/* Must be called with inode lock taken exclusive. */
-> > +static inline void shmem_freeze(struct inode *inode, bool freeze)
-> > +{
-> > +     if (freeze)
-> > +             SHMEM_I(inode)->flags |=3D SHMEM_F_MAPPING_FROZEN;
-> > +     else
-> > +             SHMEM_I(inode)->flags &=3D ~SHMEM_F_MAPPING_FROZEN;
-> > +}
-> > +
-> >  /*
-> >   * If fallocate(FALLOC_FL_KEEP_SIZE) has been used, there may be pages
-> >   * beyond i_size's notion of EOF, which fallocate has committed to res=
-erving:
-> > diff --git a/mm/shmem.c b/mm/shmem.c
-> > index 1d5036dec08a..cb74a5d202ac 100644
-> > --- a/mm/shmem.c
-> > +++ b/mm/shmem.c
-> > @@ -1292,9 +1292,13 @@ static int shmem_setattr(struct mnt_idmap *idmap=
-,
-> >               loff_t newsize =3D attr->ia_size;
-> >
-> >               /* protected by i_rwsem */
-> > -             if ((newsize < oldsize && (info->seals & F_SEAL_SHRINK)) =
-||
-> > -                 (newsize > oldsize && (info->seals & F_SEAL_GROW)))
-> > -                     return -EPERM;
-> > +             if (newsize !=3D oldsize) {
-> > +                     if (info->flags & SHMEM_F_MAPPING_FROZEN)
-> > +                             return -EPERM;
-> > +                     if ((newsize < oldsize && (info->seals & F_SEAL_S=
-HRINK)) ||
-> > +                         (newsize > oldsize && (info->seals & F_SEAL_G=
-ROW)))
-> > +                             return -EPERM;
-> > +             }
-> >
-> >               if (newsize !=3D oldsize) {
->
-> I'd stick
->
->                         if (info->flags & SHMEM_F_MAPPING_FROZEN)
->                                 return -EPERM;
->
-> here and leave the seals check alone.
 
-Done.
 
->
-> Other than than
->
-> Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+On 11/7/25 00:09, Joanne Koong wrote:
+> On Thu, Nov 6, 2025 at 11:48 AM Bernd Schubert <bernd@bsbernd.com> wrote:
+>>
+>> On 10/27/25 23:28, Joanne Koong wrote:
+>>> Add support for io-uring registered buffers for fuse daemons
+>>> communicating through the io-uring interface. Daemons may register
+>>> buffers ahead of time, which will eliminate the overhead of
+>>> pinning/unpinning user pages and translating virtual addresses for every
+>>> server-kernel interaction.
+>>>
+>>> To support page-aligned payloads, the buffer is structured such that the
+>>> payload is at the front of the buffer and the fuse_uring_req_header is
+>>> offset from the end of the buffer.
+>>>
+>>> To be backwards compatible, fuse uring still needs to support non-registered
+>>> buffers as well.
+>>>
+>>> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+>>> ---
+>>>  fs/fuse/dev_uring.c   | 200 +++++++++++++++++++++++++++++++++---------
+>>>  fs/fuse/dev_uring_i.h |  27 +++++-
+>>>  2 files changed, 183 insertions(+), 44 deletions(-)
+>>>
+>>> diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
+>>> index c6b22b14b354..f501bc81f331 100644
+>>> --- a/fs/fuse/dev_uring.c
+>>> +++ b/fs/fuse/dev_uring.c
+>>>
+>>> +/*
+>>> + * Prepare fixed buffer for access. Sets up the payload iter and kmaps the
+>>> + * header.
+>>> + *
+>>> + * Callers must call fuse_uring_unmap_buffer() in the same scope to release the
+>>> + * header mapping.
+>>> + *
+>>> + * For non-fixed buffers, this is a no-op.
+>>> + */
+>>> +static int fuse_uring_map_buffer(struct fuse_ring_ent *ent)
+>>> +{
+>>> +     size_t header_size = sizeof(struct fuse_uring_req_header);
+>>> +     struct iov_iter iter;
+>>> +     struct page *header_page;
+>>> +     size_t count, start;
+>>> +     ssize_t copied;
+>>> +     int err;
+>>> +
+>>> +     if (!ent->fixed_buffer)
+>>> +             return 0;
+>>> +
+>>> +     err = io_uring_cmd_import_fixed_full(ITER_DEST, &iter, ent->cmd, 0);
+>>
+>> This seems to be a rather expensive call, especially as it gets
+>> called twice (during submit and fetch).
+>> Wouldn't be there be a possibility to check if the user buffer changed
+>> and then keep the existing iter? I think Caleb had a similar idea
+>> in patch 1/8.
+> 
+> I think the best approach is to get rid of the call entirely by
+> returning -EBUSY to the server if it tries unregistering the buffers
+> while a connection is still alive. Then we would just have to set this
+> up once at registration time, and use that for the lifetime of the
+> connection. The discussion about this with Pavel is in [1] - I'm
+> planning to do this as a separate follow-up.
+> 
+> [1] https://lore.kernel.org/linux-fsdevel/9f0debb1-ce0e-4085-a3fe-0da7a8fd76a6@gmail.com/
+> 
+>>
+>>> +     if (err)
+>>> +             return err;
+>>> +
+>>> +     count = iov_iter_count(&iter);
+>>> +     if (count < header_size || count & (PAGE_SIZE - 1))
+>>> +             return -EINVAL;
+>>
+>> || !PAGE_ALIGNED(count)) ?
+> 
+> Nice, I didn't realize this macro existed. Thanks.
+> 
+>>
+>>> +
+>>> +     /* Adjust the payload iter to protect the header from any overwrites */
+>>> +     ent->payload_iter = iter;
+>>> +     iov_iter_truncate(&ent->payload_iter, count - header_size);
+>>> +
+>>> +     /* Set up the headers */
+>>> +     iov_iter_advance(&iter, count - header_size);
+>>> +     copied = iov_iter_get_pages2(&iter, &header_page, header_size, 1, &start);
+>>
+>> The iter is later used for the payload, but I miss a reset? iov_iter_revert()?
+> 
+> This iter is separate from the payload iter and doesn't affect the
+> payload iter's values because the "ent->payload_iter = iter;"
+> assignment above shallow copies that out first.
+> 
+>>
+>>> +     if (copied < header_size)
+>>> +             return -EFAULT;
+>>> +     ent->headers = kmap_local_page(header_page) + start;
+>>
+>> My plan for the alternative pinning patch (with io-uring) was to let the
+>> header be shared by multiple entries. Current libfuse master handles
+>> a fixed page size buffer for the payload (prepared page pinning - I
+>> didn't expect I was blocked for 9 months on other work), missing is to
+>> share it between ring entries.
+>> I think this wouldn't work with registered buffer approach - it
+>> always needs one full page?
+> 
+> I've been working on the patches for zero-copy and that has required
+> the design for registered buffers in this patch to change, namely that
+> the payload and the headers must be separated out. For v3, I have them
+> separate now.
+>>
+>> I would also like to discuss dynamic multiple payload sizes per queue.
+>> For example to have something like
+>>
+>> 256 x 4K
+>> 8 x 128K
+>> 4 x 1M
+> 
+> I think zero-copy might obviate the need for this. The way I have it
+> right now, it uses sparse buffers for payloads, which prevents the
+> server from needing to allocate the 1M buffer per ent. I'm hoping to
+> send out the patches for this as part of v3 at the end of next week or
+> next next week.
+> 
+> Thanks,
+> joanne
+> 
+>>
+>> I think there are currently two ways to do that
+>>
+>> 1) Sort entries into pools
+>> 2) Sort buffers into pools and let entries use these. Here the header
+>> would be fixed and payload would come from a pool.
+>>
+>> With the appraoch to have payload and header in one buffer we couldn't
+>> use 2). Using 1) should be fine, though.
+>>
+>>>
+>>>  /*
+>>> @@ -1249,20 +1358,29 @@ static void fuse_uring_send_in_task(struct io_uring_cmd *cmd,
+>>>  {
+>>>       struct fuse_ring_ent *ent = uring_cmd_to_ring_ent(cmd);
+>>>       struct fuse_ring_queue *queue = ent->queue;
+>>> +     bool send_ent = true;
+>>>       int err;
+>>>
+>>> -     if (!(issue_flags & IO_URING_F_TASK_DEAD)) {
+>>> -             err = fuse_uring_prepare_send(ent, ent->fuse_req);
+>>> -             if (err) {
+>>> -                     if (!fuse_uring_get_next_fuse_req(ent, queue))
+>>> -                             return;
+>>> -                     err = 0;
+>>> -             }
+>>> -     } else {
+>>> -             err = -ECANCELED;
+>>> +     if (issue_flags & IO_URING_F_TASK_DEAD) {
+>>> +             fuse_uring_send(ent, cmd, -ECANCELED, issue_flags);
+>>> +             return;
+>>> +     }
+>>> +
+>>> +     err = fuse_uring_map_buffer(ent);
+>>> +     if (err) {
+>>> +             fuse_uring_req_end(ent, ent->fuse_req, err);
+>>> +             return;
+>>
+>> I think this needs to abort the connection now. There could be multiple
+>> commands on the queue and they would be stuck now and there is no
+>> notification to fuse server either.
+> 
+> This approach makes sense to me and makes things a bit simpler. I'll
+> add this to v3.
 
-Thanks.
+This is a just heads up, while I'm testing sync FUSE_INIT I'm running
+in several issues. Part of it needs to be a re-send on -EGAIN and -EINTR
+in libfuse - had slipped through so far, but another is related to our
+page pinning. I just thought I can easy abort the connection when
+that fails, but that results in a double lock, because so far we 
+assumed IO_URING_F_UNLOCKED in teardown context. 
+I'm going to submit a patch to teardown in uring task context, so that
+we are sure about the flags.
 
->
-> --
-> Sincerely yours,
-> Mike.
+I.e. I think my suggestion to abort here would run into the same
+issue as below.
+
+
+[10375.669761] fuse: FUSE_IO_URING_CMD_REGISTER returned -4
+[10375.670632] fuse: FUSE_IO_URING_CMD_REGISTER failed err=-4
+
+[10375.671922] ============================================
+[10375.672754] WARNING: possible recursive locking detected
+[10375.673577] 6.8.12+ #6 Tainted: G        W  O      
+[10375.674377] --------------------------------------------
+[10375.675208] fuse-ring-0/7658 is trying to acquire lock:
+[10375.676022] ffff8881040910b0 (&ctx->uring_lock){+.+.}-{4:4}, at: io_uring_cmd_done+0x14f/0x210
+[10375.677335] 
+               but task is already holding lock:
+[10375.678292] ffff8881040910b0 (&ctx->uring_lock){+.+.}-{4:4}, at: __x64_sys_io_uring_enter+0x68a/0xbf0
+[10375.679678] 
+               other info that might help us debug this:
+[10375.680722]  Possible unsafe locking scenario:
+
+[10375.681692]        CPU0
+[10375.682156]        ----
+[10375.682633]   lock(&ctx->uring_lock);
+[10375.683260]   lock(&ctx->uring_lock);
+[10375.683879] 
+                *** DEADLOCK ***
+
+[10375.684916]  May be due to missing lock nesting notation
+
+[10375.685994] 1 lock held by fuse-ring-0/7658:
+[10375.686699]  #0: ffff8881040910b0 (&ctx->uring_lock){+.+.}-{4:4}, at: __x64_sys_io_uring_enter+0x68a/0xbf0
+[10375.688141] 
+               stack backtrace:
+[10375.688923] CPU: 0 PID: 7658 Comm: fuse-ring-0 Tainted: G        W  O       6.8.12+ #6
+[10375.690150] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+[10375.691534] Call Trace:
+[10375.692019]  <TASK>
+[10375.692445]  dump_stack_lvl+0x66/0x90
+[10375.695219]  __lock_acquire+0x13b8/0x25c0
+[10375.695901]  lock_acquire+0xb7/0x290
+[10375.696507]  ? io_uring_cmd_done+0x14f/0x210
+[10375.697226]  ? __lock_acquire+0x459/0x25c0
+[10375.697913]  __mutex_lock+0x7d/0xae0
+[10375.698530]  ? io_uring_cmd_done+0x14f/0x210
+[10375.699251]  ? io_uring_cmd_done+0x14f/0x210
+[10375.699967]  ? lock_acquire+0xb7/0x290
+[10375.700606]  ? fuse_uring_stop_list_entries+0x1c2/0x280 [fuse]
+[10375.701508]  ? io_uring_cmd_done+0x14f/0x210
+[10375.702210]  ? lock_release+0x24b/0x390
+[10375.702862]  io_uring_cmd_done+0x14f/0x210
+[10375.703546]  fuse_uring_stop_list_entries+0x24f/0x280 [fuse]
+[10375.704439]  fuse_uring_stop_queues+0xf7/0x240 [fuse]
+[10375.705251]  fuse_abort_conn+0x3e6/0x3f0 [fuse]
+[10375.705998]  fuse_uring_cmd+0x8de/0xf40 [fuse]
+[10375.706742]  ? lock_acquired+0xb1/0x320
+[10375.707415]  io_uring_cmd+0x6b/0x170
+[10375.708080]  io_issue_sqe+0x4e/0x460
+[10375.708705]  io_submit_sqes+0x22e/0x710
+[10375.709356]  __x64_sys_io_uring_enter+0x696/0xbf0
+[10375.710109]  do_syscall_64+0x6a/0x130
+[10375.710743]  entry_SYSCALL_64_after_hwframe+0x4b/0x53
+[10375.711541] RIP: 0033:0x7f31a073db95
+[10375.712160] Code: 00 00 00 44 89 d0 41 b9 08 00 00 00 83 c8 10 f6 87 d0 00 00 00 01 8b bf cc 00 00 00 44 0f 45 d0 45 31 c0 b8 aa 01 00 00 0f 05 <c3> 66 2e 0f 1f 84 00 00 00 00 00 41 83 e2 02 74 c2 f0 48 83 0c 24
+[10375.714772] RSP: 002b:00007f319a4f4c88 EFLAGS: 00000246 ORIG_RAX: 00000000000001aa
+[10375.715946] RAX: ffffffffffffffda RBX: 00007f31992f5060 RCX: 00007f31a073db95
+[10375.717000] RDX: 0000000000000001 RSI: 0000000000000008 RDI: 0000000000000006
+[10375.718056] RBP: 00007f319a4f4d60 R08: 0000000000000000 R09: 0000000000000008
+[10375.719113] R10: 0000000000000001 R11: 0000000000000246 R12: 00007f31992f5000
+[10375.720162] R13: 00000fe63325ea00 R14: 0000000000000000 R15: 00007f319a4f4cd0
+[10375.721223]  </TASK>
+
+
+Thanks,
+Bernd
+
 
