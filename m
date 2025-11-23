@@ -1,279 +1,229 @@
-Return-Path: <linux-fsdevel+bounces-69572-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69573-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id D414BC7E574
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Nov 2025 19:24:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F674C7E580
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Nov 2025 19:33:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 5A954345A06
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Nov 2025 18:24:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53E3C3A465E
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Nov 2025 18:33:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1C092D9EC7;
-	Sun, 23 Nov 2025 18:24:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 338202D9EF3;
+	Sun, 23 Nov 2025 18:32:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="NsJT3s1w"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YXvBT4u/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BB5C2D94B0
-	for <linux-fsdevel@vger.kernel.org>; Sun, 23 Nov 2025 18:24:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3BDD36D500
+	for <linux-fsdevel@vger.kernel.org>; Sun, 23 Nov 2025 18:32:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763922271; cv=none; b=BcananpDmhUAwPN5V/1YTumSjw78Um+UM3ZmSU15qvc1sURI9qBmlDKOSRBr58w5S/+s0STRk1TU1B9mTluQAi1Z2Ozq+HhMGeoUaZr2qTPzHxOVpaJLG5AbjHRp/abRJC3+aD2sdpVYcfE+AHGQRd5wi0Lpu/+RlSDLlNGZ6Y8=
+	t=1763922775; cv=none; b=Ow1hf/NuSqb83A/kfxEQZDMTolDp1N2ToMCuafo/FnxjiwKf7I7du5dZnglG8soxQGESTAHF3UEvlUXRsv/NvCZSrnQyBybn4MSqMSSNH45V39S3I0oy6pW2sC6EfjFx+2tIMKCfxBb5UPgFvKgdgHmY0manvHHwaujJRaCdlr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763922271; c=relaxed/simple;
-	bh=zWrmp4jm1uS219v4VOV7zl6kilkCV46yS5P9NSn4tps=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UFewe9b0sfzwsnA2G/37pt7w0z7oJHDjOq26uVTr1uQiNqlmPtFc5cUHgKfQ7R+5tAy9vDSp55ZNDG9CEM3BuaCUNkAyj0VEbC/1zT6HNcQv4ODZ3nVrkXOun2ESTBDyHuRfpdoSG1jiPuiAneTzSu8LrhTcYh1zf/BWTAWltdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=NsJT3s1w; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-640aa1445c3so5480524a12.1
-        for <linux-fsdevel@vger.kernel.org>; Sun, 23 Nov 2025 10:24:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1763922268; x=1764527068; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HFe56QyFLZ7C1O66/b75IN12Xd7/FCpS86VjcSFE1yk=;
-        b=NsJT3s1wO1dTIojVGEIrqi3FRP9sl0k5hZOPspqSFJBDzQ+zafFLheO1FjzY3nWuiw
-         m1I4FbWsxXNnk3UwWjsZn6DxvnoQHbg6Qk/VrhIVe+t65kB/MvyNaWw0tpiMf1qQPLEO
-         6gIz6ARcslWBcS4UJcA1f/DM1vYANveeEPBVfDoQ8OuR339j0kWdiROrvW9oPMWb9xx8
-         kjb1rIjELyeNtrjlEm6bguZM3Qgmcge0t1tyCV39oLqsFw0bxTc5WcGbrGyqyqizLFz3
-         AJ3oC29jiaiQdOQQ4ZnKJXPyI3XfNbGq+oqAlU0H7Z+l033p1rJuEEafAezmbm2FiHSS
-         03MQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763922268; x=1764527068;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=HFe56QyFLZ7C1O66/b75IN12Xd7/FCpS86VjcSFE1yk=;
-        b=sCMZn7hOkKes8oxVo7QwzczGXTrmLg4mIEVL4LSHBTRTd73D+KgcTIpOP4E+rdJzhl
-         idbCGKX3B4YWmgTK4FHZ6QQ2Gm5XlA3vq/zl8IyVs/4y08t/GxGXGVplF1I2XgH5O1yN
-         HM1alGN2fJUmBwAWDZV6kWZK3jM8szMouq/AAc4ZHxbBxjHboqpuKjTHOLiDL5p7cRM8
-         IIJTM4GorriLst7GwsZSaYlFI7sVddeDhVN6evHVBsFlnDqywCYPcBgLrljYyUiiERBK
-         n73vBPS8wPaSYJV9ZpqUSKP8jjEEPb9NFa9t6mr9y4J8Yom2QkmOT3jDfhJXKwymRDR4
-         B1TQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXWqVbaOkpDEH/XikdDoEnRidbVhvKl/ji7M1PRmsbvomiDDA6rGe6SSa2p1p9GkGMleKCBRuuOicTwizsR@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgxD8+J1WjYsPg9//hKG/6KEy6FTFW8nwJtVlL5KKdzh+XfvTW
-	+aN+sUQZehLByevZtwIh1vFsTDxIXV40lYm8omDd0RBSetSZtoVprgKccfMxeiPyLS9WCjIZQQs
-	CzqYgWT1+JzsB+CSeZIxoQ2gvUB0nCPX9sVJ86DZHMw==
-X-Gm-Gg: ASbGncuZDdq+9EMkGeONTjCAzV62V1lsHlBghqHTiZTUPSWti920kg8UCdXWSFFcFPU
-	sCeGpMvqQL7UYBr0EUypeNmQmRt2ZaS/5b/hMaIaRXta5xUpwDh8HEp2QKNrzQ9/YTOt2zkyg20
-	lJTJTcrJNE/DDUdgBqlJ+HDmv3rw8pZm9CL7RvYasEs9GWkXkiswYu+oBrQbSZhh0ebY3FLaH04
-	bXF4RNZnxHooDVFdLCzwl8g1Oe8u5kWYyHIhRHP2yhDcEzCevps8aEE65YTKEgbD2xE
-X-Google-Smtp-Source: AGHT+IF8Y2WxTfuU5MKgGu/HRLPR42VugdjCMxiGE2PPrS+V8RKZs1QDvf+5KSflk2e8n9lkLkfU7mQyoaO5u4Z1Zt0=
-X-Received: by 2002:a05:6402:4146:b0:645:cdc7:ed91 with SMTP id
- 4fb4d7f45d1cf-645cdc7f149mr424897a12.32.1763922267598; Sun, 23 Nov 2025
- 10:24:27 -0800 (PST)
+	s=arc-20240116; t=1763922775; c=relaxed/simple;
+	bh=q0o3WkXxgcPcxa+rbl7GKvJDyOx0UbOChtTaJCarZFI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=onU8g2Zx3h1cm/jJa28mmL3P/5YUCPTDkc/QCkQR8VIjoS0URvkZr8C0BMCKoGc4QRaoTsHfhdYuTbmgdvJg3Kg3nnkpuapXoxKbo4B03FsMduINQksUUDhOtFI7uw68vj15xJJ2mdj42IUu5Odrkaf+yfA4zacMpvMm8OJO11Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YXvBT4u/; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1763922772;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=36l7iu5Eghp8LjDFDIIU/eYWC2BgI9ey1UwqfIFE8Gg=;
+	b=YXvBT4u/76Ppxrp6JAe0dsxLlVdSIXkmtB+GwQTmZmYKVt9Xa/eDeN0aU/RiktcnO+ADIU
+	cz8jWEICN3AoTl7dkd9owcSSpUX9Ohr/XiKAQ3d28ySiea0cwHwBSNjumylWmUJdS7Fpj0
+	eYX/J9ui+jK/S9f7CNNzLExWMJ1TaNc=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-478-ZAFeV0m9P-uQ-1se1ue-Gg-1; Sun,
+ 23 Nov 2025 13:32:50 -0500
+X-MC-Unique: ZAFeV0m9P-uQ-1se1ue-Gg-1
+X-Mimecast-MFC-AGG-ID: ZAFeV0m9P-uQ-1se1ue-Gg_1763922765
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CA33419560B5;
+	Sun, 23 Nov 2025 18:32:42 +0000 (UTC)
+Received: from fedora (unknown [10.44.32.8])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id CB9B4180057F;
+	Sun, 23 Nov 2025 18:32:22 +0000 (UTC)
+Received: by fedora (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Sun, 23 Nov 2025 19:32:42 +0100 (CET)
+Date: Sun, 23 Nov 2025 19:32:21 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: Bernd Edlinger <bernd.edlinger@hotmail.de>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Alexey Dobriyan <adobriyan@gmail.com>, Kees Cook <kees@kernel.org>,
+	Andy Lutomirski <luto@amacapital.net>,
+	Will Drewry <wad@chromium.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Michal Hocko <mhocko@suse.com>, Serge Hallyn <serge@hallyn.com>,
+	James Morris <jamorris@linux.microsoft.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Yafang Shao <laoar.shao@gmail.com>, Helge Deller <deller@gmx.de>,
+	"Eric W. Biederman" <ebiederm@xmission.com>,
+	Adrian Reber <areber@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>, Jens Axboe <axboe@kernel.dk>,
+	Alexei Starovoitov <ast@kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
+	linux-security-module@vger.kernel.org,
+	tiozhang <tiozhang@didiglobal.com>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	"Paulo Alcantara (SUSE)" <pc@manguebit.com>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	YueHaibing <yuehaibing@huawei.com>,
+	Paul Moore <paul@paul-moore.com>, Aleksa Sarai <cyphar@cyphar.com>,
+	Stefan Roesch <shr@devkernel.io>, Chao Yu <chao@kernel.org>,
+	xu xin <xu.xin16@zte.com.cn>, Jeff Layton <jlayton@kernel.org>,
+	Jan Kara <jack@suse.cz>, David Hildenbrand <david@redhat.com>,
+	Dave Chinner <dchinner@redhat.com>, Shuah Khan <shuah@kernel.org>,
+	Elena Reshetova <elena.reshetova@intel.com>,
+	David Windsor <dwindsor@gmail.com>,
+	Mateusz Guzik <mjguzik@gmail.com>, Ard Biesheuvel <ardb@kernel.org>,
+	"Joel Fernandes (Google)" <joel@joelfernandes.org>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Hans Liljestrand <ishkamiel@gmail.com>,
+	Penglei Jiang <superman.xpt@gmail.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Adrian Ratiu <adrian.ratiu@collabora.com>,
+	Ingo Molnar <mingo@kernel.org>,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
+	Cyrill Gorcunov <gorcunov@gmail.com>,
+	Eric Dumazet <edumazet@google.com>
+Subject: Re: [PATCH v17] exec: Fix dead-lock in de_thread with ptrace_attach
+Message-ID: <aSNTNZxiQ0txISJx@redhat.com>
+References: <AS8P193MB12851AC1F862B97FCE9B3F4FE4AAA@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <AS8P193MB1285FF445694F149B70B21D0E46C2@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <AS8P193MB1285937F9831CECAF2A9EEE2E4752@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <GV2PPF74270EBEEEDE0B9742310DE91E9A7E431A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+ <GV2PPF74270EBEE9EF78827D73D3D7212F7E432A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+ <20251105143210.GA25535@redhat.com>
+ <20251111-ankreiden-augen-eadcf9bbdfaa@brauner>
+ <GV2PPF74270EBEE4FE6E639B899D01D8870E4C9A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+ <aRs4zYDhddBQFiXZ@redhat.com>
+ <GV2PPF74270EBEE6F59267B0E9F28F536D0E4C9A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251122222351.1059049-1-pasha.tatashin@soleen.com>
- <20251122222351.1059049-3-pasha.tatashin@soleen.com> <aSLvo0uXLOaE2JW6@kernel.org>
- <CA+CK2bCj2OAQjM-0rD+DP0t4v71j70A=HHdQ212ASxX=xoREXw@mail.gmail.com> <aSMXUKMhroThYrlU@kernel.org>
-In-Reply-To: <aSMXUKMhroThYrlU@kernel.org>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Sun, 23 Nov 2025 13:23:51 -0500
-X-Gm-Features: AWmQ_bmZE4Rym1x6vlKRuOiWr1iby3GXQ6wajNbHf1G86dfGYpyZynlDRpPIzZY
-Message-ID: <CA+CK2bABbDYfu8r4xG3n30HY4cKFe74_RJP5nYJeOtAOOj+OUQ@mail.gmail.com>
-Subject: Re: [PATCH v7 02/22] liveupdate: luo_core: integrate with KHO
-To: Mike Rapoport <rppt@kernel.org>
-Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com, 
-	dmatlack@google.com, rientjes@google.com, corbet@lwn.net, 
-	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, 
-	ojeda@kernel.org, aliceryhl@google.com, masahiroy@kernel.org, 
-	akpm@linux-foundation.org, tj@kernel.org, yoann.congal@smile.fr, 
-	mmaurer@google.com, roman.gushchin@linux.dev, chenridong@huawei.com, 
-	axboe@kernel.dk, mark.rutland@arm.com, jannh@google.com, 
-	vincent.guittot@linaro.org, hannes@cmpxchg.org, dan.j.williams@intel.com, 
-	david@redhat.com, joel.granados@kernel.org, rostedt@goodmis.org, 
-	anna.schumaker@oracle.com, song@kernel.org, linux@weissschuh.net, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
-	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com, 
-	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
-	rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org, 
-	cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com, 
-	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com, 
-	aleksander.lobakin@intel.com, ira.weiny@intel.com, 
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
-	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net, 
-	brauner@kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	saeedm@nvidia.com, ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com, 
-	leonro@nvidia.com, witu@nvidia.com, hughd@google.com, skhawaja@google.com, 
-	chrisl@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <GV2PPF74270EBEE6F59267B0E9F28F536D0E4C9A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Sun, Nov 23, 2025 at 9:17=E2=80=AFAM Mike Rapoport <rppt@kernel.org> wro=
-te:
+Hi Bernd,
+
+sorry for delay, I am on PTO, didn't read emails this week...
+
+On 11/17, Bernd Edlinger wrote:
 >
-> On Sun, Nov 23, 2025 at 07:03:19AM -0500, Pasha Tatashin wrote:
-> > On Sun, Nov 23, 2025 at 6:27=E2=80=AFAM Mike Rapoport <rppt@kernel.org>=
- wrote:
-> > >
-> > > On Sat, Nov 22, 2025 at 05:23:29PM -0500, Pasha Tatashin wrote:
-> > > > Integrate the LUO with the KHO framework to enable passing LUO stat=
-e
-> > > > across a kexec reboot.
-> > > >
-> > > > This patch implements the lifecycle integration with KHO:
-> > > >
-> > > > 1. Incoming State: During early boot (`early_initcall`), LUO checks=
- if
-> > > >    KHO is active. If so, it retrieves the "LUO" subtree, verifies t=
-he
-> > > >    "luo-v1" compatibility string, and reads the `liveupdate-number`=
- to
-> > > >    track the update count.
-> > > >
-> > > > 2. Outgoing State: During late initialization (`late_initcall`), LU=
-O
-> > > >    allocates a new FDT for the next kernel, populates it with the b=
-asic
-> > > >    header (compatible string and incremented update number), and
-> > > >    registers it with KHO (`kho_add_subtree`).
-> > > >
-> > > > 3. Finalization: The `liveupdate_reboot()` notifier is updated to i=
-nvoke
-> > > >    `kho_finalize()`. This ensures that all memory segments marked f=
-or
-> > > >    preservation are properly serialized before the kexec jump.
-> > > >
-> > > > LUO now depends on `CONFIG_KEXEC_HANDOVER`.
-> > > >
-> > > > Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
-> > > > ---
-> > > >  include/linux/kho/abi/luo.h      |  54 +++++++++++
-> > > >  kernel/liveupdate/luo_core.c     | 154 +++++++++++++++++++++++++++=
-+++-
-> > > >  kernel/liveupdate/luo_internal.h |  22 +++++
-> > > >  3 files changed, 229 insertions(+), 1 deletion(-)
-> > > >  create mode 100644 include/linux/kho/abi/luo.h
-> > > >  create mode 100644 kernel/liveupdate/luo_internal.h
-> > > >
-> > > > diff --git a/include/linux/kho/abi/luo.h b/include/linux/kho/abi/lu=
-o.h
-> > > > new file mode 100644
-> > > > index 000000000000..8523b3ff82d1
-> > > > --- /dev/null
-> > > > +++ b/include/linux/kho/abi/luo.h
-> > > > @@ -0,0 +1,54 @@
-> > > > +/* SPDX-License-Identifier: GPL-2.0 */
-> > > > +
-> > > > +/*
-> > > > + * Copyright (c) 2025, Google LLC.
-> > > > + * Pasha Tatashin <pasha.tatashin@soleen.com>
-> > > > + */
-> > > > +
-> > > > +/**
-> > > > + * DOC: Live Update Orchestrator ABI
-> > > > + *
-> > > > + * This header defines the stable Application Binary Interface use=
-d by the
-> > > > + * Live Update Orchestrator to pass state from a pre-update kernel=
- to a
-> > > > + * post-update kernel. The ABI is built upon the Kexec HandOver fr=
-amework
-> > > > + * and uses a Flattened Device Tree to describe the preserved data=
-.
-> > > > + *
-> > > > + * This interface is a contract. Any modification to the FDT struc=
-ture, node
-> > > > + * properties, compatible strings, or the layout of the `__packed`=
- serialization
-> > > > + * structures defined here constitutes a breaking change. Such cha=
-nges require
-> > > > + * incrementing the version number in the relevant `_COMPATIBLE` s=
-tring to
-> > > > + * prevent a new kernel from misinterpreting data from an old kern=
-el.
-> > >
-> > > From v6 thread:
-> > >
-> > > > > I'd add a sentence that stresses that ABI changes are possible as=
- long they
-> > > > > include changes to the FDT version.
-> > > > > This is indeed implied by the last paragraph, but I think it's wo=
-rth
-> > > > > spelling it explicitly.
-> > > > >
-> > > > > Another thing that I think this should mention is that compatibil=
-ity is
-> > > > > only guaranteed for the kernels that use the same ABI version.
-> > > >
-> > > > Sure, I will add both.
-> > >
-> > > Looks like it fell between the cracks :/
+> On 11/17/25 16:01, Oleg Nesterov wrote:
+> > On 11/17, Bernd Edlinger wrote:
+> >>
+> >> On 11/11/25 10:21, Christian Brauner wrote:
+> >>> On Wed, Nov 05, 2025 at 03:32:10PM +0100, Oleg Nesterov wrote:
+> >>
+> >>>> But this is minor. Why do we need "bool unsafe_execve_in_progress" ?
+> >>>> If this patch is correct, de_thread() can drop/reacquire cred_guard_mutex
+> >>>> unconditionally.
+> >>>>
+> >>
+> >> I would not like to drop the mutex when no absolutely necessary for performance reasons.
 > >
-> > Hm, when I was updating the patches, I included the first part, and
-> > then re-read the content, and I think it covers all points:
+> > OK, I won't insist... But I don't really understand how this can help to
+> > improve the performance. If nothing else, this adds another for_other_threads()
+> > loop.
 > >
-> > 1. Changes are possible
-> > This interface is a contract. Any modification to the FDT structure, no=
-de
-> >  * properties, compatible strings, or the layout of the `__packed` seri=
-alization
-> >  * structures defined here constitutes a breaking change. Such changes =
-require
-> >  * incrementing the version number in the relevant `_COMPATIBLE` string
-> >
-> > So, change as long as you update versioning number
-> >
-> > 2. Breaking if version is different:
-> > to prevent a new kernel from misinterpreting data from an old kernel.
-> >
-> > So, the next kernel can interpret only if the version is the same.
-> >
-> > Which point do you think is not covered?
 >
-> As I said, it's covered, but it's implied. I'd prefer these stated
-> explicitly.
+> If no dead-lock is possible it is better to complete the de_thread without
+> releasing the mutex.  For the debugger it is also the better experience,
+> no matter when the ptrace_attack happens it will succeed rather quickly either
+> before the execve or after the execve.
 
-Added, thanks.
+I still disagree, I still don't understand the "performance reasons", but since I can't
+convince you I won't really argue.
 
->
-> > > > +static int __init liveupdate_early_init(void)
-> > > > +{
-> > > > +     int err;
-> > > > +
-> > > > +     err =3D luo_early_startup();
-> > > > +     if (err) {
-> > > > +             luo_global.enabled =3D false;
-> > > > +             luo_restore_fail("The incoming tree failed to initial=
-ize properly [%pe], disabling live update\n",
-> > > > +                              ERR_PTR(err));
-> > >
-> > > What's wrong with a plain panic()?
+> >>>>> +	if (unlikely(unsafe_execve_in_progress)) {
+> >>>>> +		spin_unlock_irq(lock);
+> >>>>> +		sig->exec_bprm = bprm;
+> >>>>> +		mutex_unlock(&sig->cred_guard_mutex);
+> >>>>> +		spin_lock_irq(lock);
+> >>>>
+> >>>> I don't think spin_unlock_irq() + spin_lock_irq() makes any sense...
+> >>>>
+> >>
+> >> Since the spin lock was acquired while holding the mutex, both should be
+> >> unlocked in reverse sequence and the spin lock re-acquired after releasing
+> >> the mutex.
 > >
-> > Jason suggested using the luo_restore_fail() function instead of
-> > inserting panic() right in code somewhere in LUOv3 or earlier. It
-> > helps avoid sprinkling panics in different places, and also in case if
-> > we add the maintenance mode that we have discussed in LUOv6, we could
-> > update this function as a place where that mode would be switched on.
+> > Why?
+> >
 >
-> I'd agree if we were to have a bunch of panic()s sprinkled in the code.
-> With a single one it's easier to parse panic() than lookup what
-> luo_restore_fail() means.
+> It is generally more safe when each thread acquires its mutexes in order and
+> releases them in reverse order.
+> Consider this:
+> Thread A:
+> holds spin_lock_irq(siglock);
+> does mutes_unlock(cred_guard_mutex); with irq disabled.
+> task switch happens to Thread B which has irq enabled.
+> and is waiting for cred_guard_mutex.
+> Thrad B:
+> does mutex_lock(cred_guard_mutex);
+> but is interrupted this point and the interrupt handler I executes
+> now iterrupt handler I wants to take siglock and is blocked,
+> because the system one single CPU core.
 
-The issue is that removing luo_restore_fail() removes the only
-dependency on luo_internal.h in this patch. This would require me to
-move the introduction of that header file to a later patch in the
-series, which is difficult to handle via a simple fix-up.
+I don't follow. Do you mean PREEMPT_RT ?
 
-Additionally, I still believe the abstraction is cleaner for future
-extensibility (like the maintenance mode), even if it currently wraps
-a single panic (which is actually a good thing, I have cleaned-up
-things substantially to have  a single point  of panic since v2).
-Therefore, it is my preference to keep it as is, unless a full series
-is needed to be re-sent.
+If yes. In this case spin_lock_irq() is rt_spin_lock() which doesn't disable irqs,
+it does rt_lock_lock() (takes rt_mutex) + migrate_disable().
 
-Pasha
+I do think that spin/mutex/whatever_unlock() is always safe. In any order, and
+regardless of RT.
+
+> > And just in case... Lets look at this code
+> >
+> > 	+                               rcu_assign_pointer(task->real_cred, bprm->cred);
+> > 	+                               task->mm = bprm->mm;
+> > 	+                               retval = __ptrace_may_access(task, PTRACE_MODE_ATTACH_REALCREDS);
+> > 	+                               rcu_assign_pointer(task->real_cred, old_cred);
+> > 	+                               task->mm = old_mm;
+> >
+> > again.
+> >
+> > This is mostly theoretical, but what if begin_new_exec() fails after de_thread()
+> > and before exec_mmap() and/or commit_creds(bprm->cred) ? In this case the execing
+> > thread will report SIGSEGV to debugger which can (say) read old_mm.
+> >
+> > No?
+> >
+>
+> Yes, and that is the reason why the debugger has to prove the possession of access rights
+> to the process before the execve which are necessary in case exeve fails, yes the debugger
+> may inspect the result, and as well the debugger's access rights must be also sufficient
+> to ptrace the process after execve succeeds, moreover the debugged process shall stop
+> right at the first instruction where the new process starts.
+
+Not sure I understand... OK, I see that you sent V18, and in this version ptrace_attach()
+calls __ptrace_may_access() twice, so IIUC ptrace_attach() can only succeed if the debugger
+has rights to trace the execing thread both before and after exec...
+
+Oleg.
+
 
