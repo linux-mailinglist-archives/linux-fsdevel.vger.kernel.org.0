@@ -1,79 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-69583-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69584-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9010EC7E887
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Nov 2025 23:52:34 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 462ABC7E881
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Nov 2025 23:52:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04AA73A52DC
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Nov 2025 22:52:11 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D973D3446DE
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Nov 2025 22:52:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9C2227F171;
-	Sun, 23 Nov 2025 22:51:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8626D27FD43;
+	Sun, 23 Nov 2025 22:51:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ftiNcTx1"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WpmGMvm3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B7652641CA
-	for <linux-fsdevel@vger.kernel.org>; Sun, 23 Nov 2025 22:51:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E372327FB2A
+	for <linux-fsdevel@vger.kernel.org>; Sun, 23 Nov 2025 22:51:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763938305; cv=none; b=NKn5rpKDtp3Gh++LmraqVaQNwZURMDbVTI/6v+5JRLQ6eNYH8PsU9ShMd+nj2BObIKtcjyPu1QS+D4ZuWhkheErNsTsEi/luSytGuDY4q6GhK9EEHUiPwXQmNiwXryRP3C3OOYs+owooHhDOD1H0w4wZAJJQg97P5VXtrDYZVAU=
+	t=1763938307; cv=none; b=RJ/RIKWdG0CN6e1zATZ2WDG+zKE8CX+i8UUFfH9BMK7Y50NkGimVz0cj+aDcWO1eJWndv8LUS4Dmdz+7Se9lCoN4c7/35DKe0YjekWS7Nm8Hh7xifrbLlW4pn7ISWJLAyeQlBE92mb04wt3mESB9ZSyEfzRG5krxM2qm8KbmLCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763938305; c=relaxed/simple;
-	bh=TaA27OxA1hBFyRB5sQEZB6XkCgdFpDueoKtHtp+vFGM=;
+	s=arc-20240116; t=1763938307; c=relaxed/simple;
+	bh=biIYoLFZIunfY+RjkNduyhE0he3gpQJOgrFilhAOH4g=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GjBZDDw24ZL5cXvQlrGzEdZfA+bVSFZkJstQyg/lPX2fQkBZlEdI752gwa6KqEBwBVeGcZwGGJmeiDUHQmwufYHqT44QB8+y9DyNn+5oE7VOyxQ3VoBzdN+rTh6kbqPKae51aw8UaC6QAKewUya2KmeU5pki/E8n9Z2FZickLQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ftiNcTx1; arc=none smtp.client-ip=209.85.221.49
+	 MIME-Version; b=sD9gTcVI+gQMDhAjIswLC58sEbsfHgqE3RNdjKmUpphPgNM5dT0kQVXsc8Ai3qCg5qlcdj6HHezB28uuxtFnbLvr5HvolD+yAcWWMhj7f0O6oEgDKxs0ZHRDe0XmAIsA3ZverP5crYQth1VNeJ58U52aWGRREgZ32XQwr/q2PUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WpmGMvm3; arc=none smtp.client-ip=209.85.221.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-42bb288c219so3269564f8f.1
-        for <linux-fsdevel@vger.kernel.org>; Sun, 23 Nov 2025 14:51:42 -0800 (PST)
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-42b31507ed8so3157885f8f.1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 23 Nov 2025 14:51:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763938301; x=1764543101; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1763938304; x=1764543104; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=PR8DhyhbmfM3XR45v/DX3VtwAUQ7pza2V3aAfSC4t8o=;
-        b=ftiNcTx13YdP4WuIFjBYEQY9qh3Zw5EizPLOwUI0Oo29LmHJH65J9m5pF9tilsgK4R
-         Rahz3xxfxLMMQwK14JXW532fLPTYPEwkK3ER1iCLC6qfx/26ECwO0Rv2iU494tZ7Nj+n
-         kNNDxSdI9r705Qgcb7Msyeau1ATIy0ChwWxeIzgVQRW8cVAikB/9IKpzTRZmBmDB6vW6
-         fkxIN2vlVHGp7KWT88WoGGAU7COpoAKtaSOaDVh5PRcaok/AAmVbDQqger9TwVxKz6/X
-         Xn6IB6EtTFeqJLZ6w5szBwq5njjyzULzOsqBp2lw4WThiqTSW1xjDSUFxEnTbVJOKv58
-         oC2Q==
+        bh=Eb2Dznv7cN1HWvl69eUL3qKJ9duXd8EJVDjyGYBP64I=;
+        b=WpmGMvm3Tt0Y2XyUxUpwW2d5teUAZCtS8tXckR5X/RDdFiEfJCS4kG6UaJnYUThtom
+         hVeXn8TIJ9meTxceBvBKwkHciPinGwCqfv3wjWwIf+m88DPx3FN4hpvukifhHXo98Zgf
+         Z5WVvQboSs4e2gH8x979VuM5bzCFt6GmbE24Kvbr4tFLnXRGk/0iExyengLb2OvbRPVc
+         TDwO+nPjaWdkwTGWQsEJozk5nUZ1UUcVRUS05QTkW3lCmRFGs3QFAmSHXsGZmUKgcjnC
+         LGqCFndJS+bJKiRwz7ujKWxSlhm7A/S03RXh/ctR3jiEVpK1SkHNGZ36PnMNEchv4zDe
+         naPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763938301; x=1764543101;
+        d=1e100.net; s=20230601; t=1763938304; x=1764543104;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=PR8DhyhbmfM3XR45v/DX3VtwAUQ7pza2V3aAfSC4t8o=;
-        b=Da7n+Ey528aCSu/TF1V6UFUMss2+yuQ7+ON+aLk5x2G7FetMa6CVdk/7ujE8PI9k2K
-         4/B6ZBtg/HR0s6RX5t2a/s1CIOU6Qf42T+BSoTq5s6aqk6laI2ELe4ODtRNSgqFjKHyU
-         yvyuwrOZZfpH+2raIY4xCsx2Zw4cLmEDUrh0FT9oR3mmFSi6a4Qz2bsFuKnt9ripKlRd
-         TREPxGXy0gqc0fJVb4RBxTLCkPxS93i0kK1zQ+iM84C92ECDL8KF0RJj5cGRr06xjQjn
-         uWlN2U/+AXqaExjt/Ts1O6w1wLoOkGOFzP8VQC5A5JqK902eoK++A2mj8iLr5rYVoMYE
-         EjzA==
-X-Forwarded-Encrypted: i=1; AJvYcCW6j2VCU7gmQbroWGofFGzp/4HA8F4dpo8//ElEItDT81Zn1Hnw3ScgQqVilKKm7d9f981kE/DqgkdOla1H@vger.kernel.org
-X-Gm-Message-State: AOJu0YweXMSrbo80VI28zUMXo5vTkcLfbSn1hOIDSkgluhIQcRKUvodt
-	+oISWABQRDn890iZRX2l5+eck2ID9eMjTHDrzkkKNKCAr0b63am9uBXv
-X-Gm-Gg: ASbGncsFwxSRPnlfAtIP68/FcYMEkgi2EvCuNB1p2XZPRtUN1vqvUSlS7lDzr4j0AUp
-	kKnXhgqVBsfCDh5PdEwANoiYtBYQj9g9Z89i50iVQhBOmsHrgflesX6eLavhEL9b8M1qMEzulz3
-	4GKPSiJU005FCCBm9iOJXo1Hrk95B5PPgMKk53Z4Sgw6aB6DuDStHAkZ4qBfhERbZdMfgU5haeR
-	V/oRIOE12BP1bGknIhfLRgkTsvMHYIlps69p5tclnM+Z07/D29EUnc/uH3diJxm/JxvpudKtBwW
-	+jJKHkQIU1qcByMpoTnZaB2JRZJUk8W4HIwl58+IFsC230Yx6WY1vGLZSIQK/yokIUZbuJU6TOv
-	GgSx7L7L+eLzDI5X/sGSJWc/kpaOLix2dV4wJjOt1SNEa1yvxSC8b0+EF3FRKxg1sQpbsyDOZGx
-	9jrul9K1GY6Q6JlA==
-X-Google-Smtp-Source: AGHT+IF2fkOx1psmIiI8t6n1UVP6WxxL86e2rgF4bc5zvWBkXEsJkKhYvtgfzcrreOJ89mrZR3pH7Q==
-X-Received: by 2002:a05:6000:40da:b0:42b:47da:c316 with SMTP id ffacd0b85a97d-42cc1cc30c2mr10114899f8f.26.1763938301503;
-        Sun, 23 Nov 2025 14:51:41 -0800 (PST)
+        bh=Eb2Dznv7cN1HWvl69eUL3qKJ9duXd8EJVDjyGYBP64I=;
+        b=BxiiUyWct9m3hjcNpk5Wsq78f4rfl6BcIjrjGjF+3i8sZ2PkaqgtEqGXQK0cbgjFyA
+         j7wVSr4a90/gawUSVH2nroQsFltPmc538wR8a+DqjKr1/kj0kTISxELViO3IoKOBzo1A
+         7RDeKz2b2TDIKzNrxDkgNvR9FSpJ6FvzBxzba1mFrQZaV4w0abCN+0VoIREAcAjzFyuT
+         bXZZ17EsR1OyGWGZXyqeEWApnArZHDfCi7AX02v7wl830QVTn1CHPdiUaRDjpn30AoJd
+         b0eNEwgL/xPWycAdvcjGnJHYgpw3fLF3eOG1gvmPhGpHxHhtBBpj8exBKHEPLr4F9M0X
+         0Oww==
+X-Forwarded-Encrypted: i=1; AJvYcCXn8CxbBd2N/o0iSCfQBuaFgmUlQq+sHIfPi2uKcMAK7+KfWEnI6FLES/rLRjsiFGcBEdJ+7GecUm1bLF2M@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5BOwPeKYNpC600lez238lNnPBCcg7ozng9weFKV3O+jeVua1D
+	2RC9HJWMnvkfl8Z8h/yhMeO/iEgAr3Q9ZWh9TU3mAvsx3Ngsug3g6VHO
+X-Gm-Gg: ASbGnctmOmJNAGrtAqto25H4Vjp8rG7wD739b5rh1lcElCyXLQfezzg6qdgZsGuOmK4
+	ac+e+96aqd5Bu1NrlF+Igw/o5dPkaMPs6Mm7/eC/nTQdURYwScrN9r3hCggnRVYqJS79evubdML
+	if2q2mp9UboypVs9E12X/hfwI8c34AxFoMT8sx//V5zL1a32d0zYrzxesw+6JJTPlOgaCPUrMPq
+	ZLlA4i5RLNykWgwHP3YPTrVRJ5CRx2ZgNNxDHY7OtrKIk5qDznq8Q0wpARn0KgykE1rPkZ5du0H
+	AW+A69aUcHC67OU8zmKLfNTipHvZgSn+BWirMnf8U8NguoGSi6yx1eKLVqa3dLjsHe7pp6o0dF5
+	wGNCuJH8bziYm0E0IgkC1akxJETg4AH0YD2TtBhr05fAz0+F4lfy+2hyX8+kaChMkMY4n4l22Xs
+	471dEElZ8QiFfnWQ==
+X-Google-Smtp-Source: AGHT+IED8z7T9BZIQ3+G6TZGcukyRm9aG9PTE7rjzPMs+94mQ+eXcoj3xDrYuPfTG51yWGc4ynh5VQ==
+X-Received: by 2002:a05:6000:601:b0:42b:5592:ebd1 with SMTP id ffacd0b85a97d-42cc19f0b39mr11000772f8f.0.1763938304146;
+        Sun, 23 Nov 2025 14:51:44 -0800 (PST)
 Received: from 127.mynet ([2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42cb7fb9190sm24849064f8f.33.2025.11.23.14.51.38
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42cb7fb9190sm24849064f8f.33.2025.11.23.14.51.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Nov 2025 14:51:40 -0800 (PST)
+        Sun, 23 Nov 2025 14:51:43 -0800 (PST)
 From: Pavel Begunkov <asml.silence@gmail.com>
 To: linux-block@vger.kernel.org,
 	io-uring@vger.kernel.org
@@ -95,9 +95,9 @@ Cc: Vishal Verma <vishal1.verma@intel.com>,
 	linux-media@vger.kernel.org,
 	dri-devel@lists.freedesktop.org,
 	linaro-mm-sig@lists.linaro.org
-Subject: [RFC v2 01/11] file: add callback for pre-mapping dmabuf
-Date: Sun, 23 Nov 2025 22:51:21 +0000
-Message-ID: <74d689540fa200fe37f1a930165357a92fe9e68c.1763725387.git.asml.silence@gmail.com>
+Subject: [RFC v2 02/11] iov_iter: introduce iter type for pre-registered dma
+Date: Sun, 23 Nov 2025 22:51:22 +0000
+Message-ID: <f57269489c4d6f670ab1f9de4d0764030d8d080c.1763725387.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <cover.1763725387.git.asml.silence@gmail.com>
 References: <cover.1763725387.git.asml.silence@gmail.com>
@@ -109,86 +109,139 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add a file callback that maps a dmabuf for the given file and returns
-an opaque token of type struct dma_token representing the mapping. The
-implementation details are hidden from the caller, and the implementors
-are normally expected to extend the structure.
+Introduce a new iterator type backed by a pre mapped dmabuf represented
+by struct dma_token. The token is specific to the file for which it was
+created, and the user must avoid the token and the iterator to any other
+file. This limitation will be softened in the future.
 
-The callback callers will be able to pass the token with an IO request,
-which implemented in following patches as a new iterator type. The user
-should release the token once it's not needed by calling the provided
-release callback via appropriate helpers.
-
+Suggested-by: Keith Busch <kbusch@kernel.org>
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- include/linux/dma_token.h | 35 +++++++++++++++++++++++++++++++++++
- include/linux/fs.h        |  4 ++++
- 2 files changed, 39 insertions(+)
- create mode 100644 include/linux/dma_token.h
+ include/linux/uio.h | 10 ++++++++++
+ lib/iov_iter.c      | 30 ++++++++++++++++++++++++------
+ 2 files changed, 34 insertions(+), 6 deletions(-)
 
-diff --git a/include/linux/dma_token.h b/include/linux/dma_token.h
-new file mode 100644
-index 000000000000..9194b34282c2
---- /dev/null
-+++ b/include/linux/dma_token.h
-@@ -0,0 +1,35 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _LINUX_DMA_TOKEN_H
-+#define _LINUX_DMA_TOKEN_H
-+
-+#include <linux/dma-buf.h>
-+
-+struct dma_token_params {
-+	struct dma_buf			*dmabuf;
-+	enum dma_data_direction		dir;
-+};
-+
-+struct dma_token {
-+	void (*release)(struct dma_token *);
-+};
-+
-+static inline void dma_token_release(struct dma_token *token)
+diff --git a/include/linux/uio.h b/include/linux/uio.h
+index 5b127043a151..1b22594ca35b 100644
+--- a/include/linux/uio.h
++++ b/include/linux/uio.h
+@@ -29,6 +29,7 @@ enum iter_type {
+ 	ITER_FOLIOQ,
+ 	ITER_XARRAY,
+ 	ITER_DISCARD,
++	ITER_DMA_TOKEN,
+ };
+ 
+ #define ITER_SOURCE	1	// == WRITE
+@@ -71,6 +72,7 @@ struct iov_iter {
+ 				const struct folio_queue *folioq;
+ 				struct xarray *xarray;
+ 				void __user *ubuf;
++				struct dma_token *dma_token;
+ 			};
+ 			size_t count;
+ 		};
+@@ -155,6 +157,11 @@ static inline bool iov_iter_is_xarray(const struct iov_iter *i)
+ 	return iov_iter_type(i) == ITER_XARRAY;
+ }
+ 
++static inline bool iov_iter_is_dma_token(const struct iov_iter *i)
 +{
-+	token->release(token);
++	return iov_iter_type(i) == ITER_DMA_TOKEN;
 +}
 +
-+static inline struct dma_token *
-+dma_token_create(struct file *file, struct dma_token_params *params)
+ static inline unsigned char iov_iter_rw(const struct iov_iter *i)
+ {
+ 	return i->data_source ? WRITE : READ;
+@@ -300,6 +307,9 @@ void iov_iter_folio_queue(struct iov_iter *i, unsigned int direction,
+ 			  unsigned int first_slot, unsigned int offset, size_t count);
+ void iov_iter_xarray(struct iov_iter *i, unsigned int direction, struct xarray *xarray,
+ 		     loff_t start, size_t count);
++void iov_iter_dma_token(struct iov_iter *i, unsigned int direction,
++			struct dma_token *token,
++			loff_t off, size_t count);
+ ssize_t iov_iter_get_pages2(struct iov_iter *i, struct page **pages,
+ 			size_t maxsize, unsigned maxpages, size_t *start);
+ ssize_t iov_iter_get_pages_alloc2(struct iov_iter *i, struct page ***pages,
+diff --git a/lib/iov_iter.c b/lib/iov_iter.c
+index 2fe66a6b8789..26fa8f8f13c0 100644
+--- a/lib/iov_iter.c
++++ b/lib/iov_iter.c
+@@ -563,7 +563,8 @@ void iov_iter_advance(struct iov_iter *i, size_t size)
+ {
+ 	if (unlikely(i->count < size))
+ 		size = i->count;
+-	if (likely(iter_is_ubuf(i)) || unlikely(iov_iter_is_xarray(i))) {
++	if (likely(iter_is_ubuf(i)) || unlikely(iov_iter_is_xarray(i)) ||
++	    unlikely(iov_iter_is_dma_token(i))) {
+ 		i->iov_offset += size;
+ 		i->count -= size;
+ 	} else if (likely(iter_is_iovec(i) || iov_iter_is_kvec(i))) {
+@@ -619,7 +620,8 @@ void iov_iter_revert(struct iov_iter *i, size_t unroll)
+ 		return;
+ 	}
+ 	unroll -= i->iov_offset;
+-	if (iov_iter_is_xarray(i) || iter_is_ubuf(i)) {
++	if (iov_iter_is_xarray(i) || iter_is_ubuf(i) ||
++	    iov_iter_is_dma_token(i)) {
+ 		BUG(); /* We should never go beyond the start of the specified
+ 			* range since we might then be straying into pages that
+ 			* aren't pinned.
+@@ -763,6 +765,21 @@ void iov_iter_xarray(struct iov_iter *i, unsigned int direction,
+ }
+ EXPORT_SYMBOL(iov_iter_xarray);
+ 
++void iov_iter_dma_token(struct iov_iter *i, unsigned int direction,
++			struct dma_token *token,
++			loff_t off, size_t count)
 +{
-+	struct dma_token *res;
-+
-+	if (!file->f_op->dma_map)
-+		return ERR_PTR(-EOPNOTSUPP);
-+	res = file->f_op->dma_map(file, params);
-+
-+	WARN_ON_ONCE(!IS_ERR(res) && !res->release);
-+
-+	return res;
++	WARN_ON(direction & ~(READ | WRITE));
++	*i = (struct iov_iter){
++		.iter_type = ITER_DMA_TOKEN,
++		.data_source = direction,
++		.dma_token = token,
++		.iov_offset = 0,
++		.count = count,
++		.iov_offset = off,
++	};
 +}
 +
-+#endif
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index c895146c1444..0ce9a53fabec 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2262,6 +2262,8 @@ struct dir_context {
- struct iov_iter;
- struct io_uring_cmd;
- struct offset_ctx;
-+struct dma_token;
-+struct dma_token_params;
+ /**
+  * iov_iter_discard - Initialise an I/O iterator that discards data
+  * @i: The iterator to initialise.
+@@ -829,7 +846,7 @@ static unsigned long iov_iter_alignment_bvec(const struct iov_iter *i)
  
- typedef unsigned int __bitwise fop_flags_t;
+ unsigned long iov_iter_alignment(const struct iov_iter *i)
+ {
+-	if (likely(iter_is_ubuf(i))) {
++	if (likely(iter_is_ubuf(i)) || iov_iter_is_dma_token(i)) {
+ 		size_t size = i->count;
+ 		if (size)
+ 			return ((unsigned long)i->ubuf + i->iov_offset) | size;
+@@ -860,7 +877,7 @@ unsigned long iov_iter_gap_alignment(const struct iov_iter *i)
+ 	size_t size = i->count;
+ 	unsigned k;
  
-@@ -2309,6 +2311,8 @@ struct file_operations {
- 	int (*uring_cmd_iopoll)(struct io_uring_cmd *, struct io_comp_batch *,
- 				unsigned int poll_flags);
- 	int (*mmap_prepare)(struct vm_area_desc *);
-+	struct dma_token *(*dma_map)(struct file *,
-+				     struct dma_token_params *);
- } __randomize_layout;
+-	if (iter_is_ubuf(i))
++	if (iter_is_ubuf(i) || iov_iter_is_dma_token(i))
+ 		return 0;
  
- /* Supports async buffered reads */
+ 	if (WARN_ON(!iter_is_iovec(i)))
+@@ -1457,11 +1474,12 @@ EXPORT_SYMBOL_GPL(import_ubuf);
+ void iov_iter_restore(struct iov_iter *i, struct iov_iter_state *state)
+ {
+ 	if (WARN_ON_ONCE(!iov_iter_is_bvec(i) && !iter_is_iovec(i) &&
+-			 !iter_is_ubuf(i)) && !iov_iter_is_kvec(i))
++			 !iter_is_ubuf(i) && !iov_iter_is_kvec(i) &&
++			 !iov_iter_is_dma_token(i)))
+ 		return;
+ 	i->iov_offset = state->iov_offset;
+ 	i->count = state->count;
+-	if (iter_is_ubuf(i))
++	if (iter_is_ubuf(i) || iov_iter_is_dma_token(i))
+ 		return;
+ 	/*
+ 	 * For the *vec iters, nr_segs + iov is constant - if we increment
 -- 
 2.52.0
 
