@@ -1,50 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-69567-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69568-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFC57C7E417
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Nov 2025 17:36:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D62AAC7E41D
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Nov 2025 17:36:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BC6A3A5C7F
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Nov 2025 16:36:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 639683A6A32
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Nov 2025 16:36:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B6532D97BD;
-	Sun, 23 Nov 2025 16:35:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0627E2D7DE2;
+	Sun, 23 Nov 2025 16:35:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iJ2LMhf7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="chXKTSqR"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78DE52D4B6D
-	for <linux-fsdevel@vger.kernel.org>; Sun, 23 Nov 2025 16:35:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64677231A41
+	for <linux-fsdevel@vger.kernel.org>; Sun, 23 Nov 2025 16:35:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763915713; cv=none; b=h4TaYvueytlfVj+IdBAm4W/mzNuVvJXBbQVdaIjSnVRrcZCZIfN8BkLxHEM0xKnAiI1JPOGJRWeblFceyUOhimkt3YiTyD1j7wFis3oeGcdz6KrsglHd5OmqjM3Do/V1iBZEfUxaX9RF9N3KplKuYp5DI9u8/3WYqlu8KGBLFT0=
+	t=1763915715; cv=none; b=X5Qgmbyn3q1M6q3UtKOSB0QaWZpZe469a2cyiP3yBgAeBEtLzprF1tU9BTzQ6a3EUz9KeWCKoRx/WOrR7EOc/9K1dTsPnU9FD0Zzz3ekea5HWvKQ8X3zCUIXAtiyVHJsNljRwB7/EZoeSsDJKC1HV/1NuLPtK1NwM6CloMnsuJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763915713; c=relaxed/simple;
-	bh=SRwTI7+u/NnCve5Pm/cjwoHxbLU3bHYLwo13qncLgNk=;
+	s=arc-20240116; t=1763915715; c=relaxed/simple;
+	bh=mzzhInXE4R/aY7jNPLsb1kQP1oX/eXDHQE/UmmaTaj0=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=E+0ySI7VI+nV6ibe7WmDxddLu2xFxM6hZ5FHJvCq0mKbtO0SRPx+H9FN+mEaGUM2bphDhBe+AyTyUsWfzWF77gVkt3037EmWavuB6mqQI+DONeCVRATEy2bJERItg/LTQ+7gNfg5qVkKcwei/T5HsBcZ74noDbblZKHeKhMSae0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iJ2LMhf7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C7A1C19421;
-	Sun, 23 Nov 2025 16:35:11 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=HtRFKXTy8YZw7Vrhz1JYVxyu/UjC2ro8BTNqfv/NTk4IVUtJEF/XmuMAtuXBKIRwXlRGhazLEbWEmcqmPIPZ2Y5tsTP9mWkuXrQydvmBX52dWUjBgpNFN1HwaV7OKt5S1dn8vEWQTKNNnlYxGfqvG6XBZTVvE4Lqh8rq/xukYlw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=chXKTSqR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F1ADC116D0;
+	Sun, 23 Nov 2025 16:35:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763915713;
-	bh=SRwTI7+u/NnCve5Pm/cjwoHxbLU3bHYLwo13qncLgNk=;
+	s=k20201202; t=1763915715;
+	bh=mzzhInXE4R/aY7jNPLsb1kQP1oX/eXDHQE/UmmaTaj0=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=iJ2LMhf78ZBYtsUXb/eiaGrcmYvBk+qVY/C+JfJQ8laUu2gGUN1WZVk6qw0ktj8TK
-	 rCl8xfsbWwdMXE1EziKq8imlRs6HkkEWSDB183rly5azt3ODbB2TgZdKUPAQVJZT7p
-	 Ae6prUQWC2O0ISkGvo3Fn9oy+VmpGJt18wuEBfyis7UHiVtmioqPszwiFDIBFTRld2
-	 wmt84mO9XScPqtoXD7cFxdGAfQU9Ps2nphYHnfG6T+FnAAfu661XdTrgm3KubAL0K4
-	 SU18WO53QQO6IxXDAuyu77eGz7hZagTTc9HwuDAESm6qu0LK9KXxIUFyKIEv8SPtcc
-	 9P31PxtkcR/5Q==
+	b=chXKTSqRfwyg/asSh64XtqT6McyR1PmoyJKR2wb/xKOGbe+F3okWKhnZFAn4jVJh9
+	 7UWADIuRRUDmn1I6igGFyb3rkgOQ5p7HC/YxlDqHhdwE+0jAkfpkvzgsHcGIm6lJ1X
+	 Vz9aDKqhOZ6v1Ld5o66vmGv4FusDO5p5whZXSReoni+qPet4BOTAZDzQoGruIXbBsn
+	 jJmbup0WVIhY6HXBQakMeCgNxRdjI0y9m0VJFqbnVUp7THXwcnKmkA6W1rFWzMZ8gR
+	 tC/L4rGb1cdXsZzxRyWLan3ldxngnO4pcxDVznXZX5GAlJfcbgPCb1E6n2IJ07tByt
+	 Uy+URdo6nVN1A==
 From: Christian Brauner <brauner@kernel.org>
-Date: Sun, 23 Nov 2025 17:34:03 +0100
-Subject: [PATCH v4 45/47] io_uring: convert io_create_mock_file() to
- FD_PREPARE()
+Date: Sun, 23 Nov 2025 17:34:04 +0100
+Subject: [PATCH v4 46/47] kvm: convert kvm_arch_supports_gmem_init_shared()
+ to FD_PREPARE()
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -53,7 +53,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251123-work-fd-prepare-v4-45-b6efa1706cfd@kernel.org>
+Message-Id: <20251123-work-fd-prepare-v4-46-b6efa1706cfd@kernel.org>
 References: <20251123-work-fd-prepare-v4-0-b6efa1706cfd@kernel.org>
 In-Reply-To: <20251123-work-fd-prepare-v4-0-b6efa1706cfd@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
@@ -62,95 +62,79 @@ Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
  Amir Goldstein <amir73il@gmail.com>, Jens Axboe <axboe@kernel.dk>, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-a6db3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2453; i=brauner@kernel.org;
- h=from:subject:message-id; bh=SRwTI7+u/NnCve5Pm/cjwoHxbLU3bHYLwo13qncLgNk=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQqm0cr7Z3e4vppxXOtQI9HSu8nvrosLvKiSnfTdYP/T
- 5b/4d1h11HKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCR9M8M/9O+vuZvkBde0iyw
- M8ys7lK2qOY77VPyCtL3fryWmzrbcBkjw9Oas/xCQp+Sfwn8l69b/nvrzCNba693PrAI37mgz8f
- hIwcA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1802; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=mzzhInXE4R/aY7jNPLsb1kQP1oX/eXDHQE/UmmaTaj0=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQqm0dncf6SCRHatvHdHGlV66uSm4u2nTn8dtm0B3Hb3
+ Ar2Xs5901HKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCRm2sY/ic41647VVXFtcb3
+ 75TPFkUPwyN1zbx7W/ZW/mkNUXVeyMnwV4olf+42kYi+32smqXw4lP3YZHbDm51BiaqP/mxbGRw
+ XxwQA
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- io_uring/mock_file.c | 44 +++++++++++++++-----------------------------
- 1 file changed, 15 insertions(+), 29 deletions(-)
+ virt/kvm/guest_memfd.c | 35 +++++++++++------------------------
+ 1 file changed, 11 insertions(+), 24 deletions(-)
 
-diff --git a/io_uring/mock_file.c b/io_uring/mock_file.c
-index 45d3735b2708..a2116c79e67e 100644
---- a/io_uring/mock_file.c
-+++ b/io_uring/mock_file.c
-@@ -211,10 +211,9 @@ static int io_create_mock_file(struct io_uring_cmd *cmd, unsigned int issue_flag
- 	const struct file_operations *fops = &io_mock_fops;
- 	const struct io_uring_sqe *sqe = cmd->sqe;
- 	struct io_uring_mock_create mc, __user *uarg;
--	struct io_mock_file *mf = NULL;
--	struct file *file = NULL;
-+	struct file *file;
-+	struct io_mock_file *mf __free(kfree) = NULL;
- 	size_t uarg_size;
--	int fd = -1, ret;
- 
- 	/*
- 	 * It's a testing only driver that allows exercising edge cases
-@@ -246,10 +245,6 @@ static int io_create_mock_file(struct io_uring_cmd *cmd, unsigned int issue_flag
- 	if (!mf)
- 		return -ENOMEM;
- 
--	ret = fd = get_unused_fd_flags(O_RDWR | O_CLOEXEC);
--	if (fd < 0)
--		goto fail;
+diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
+index fbca8c0972da..1d583d0cf6b9 100644
+--- a/virt/kvm/guest_memfd.c
++++ b/virt/kvm/guest_memfd.c
+@@ -493,28 +493,20 @@ bool __weak kvm_arch_supports_gmem_init_shared(struct kvm *kvm)
+ static int __kvm_gmem_create(struct kvm *kvm, loff_t size, u64 flags)
+ {
+ 	const char *anon_name = "[kvm-gmem]";
+-	struct kvm_gmem *gmem;
++	struct kvm_gmem *gmem __free(kfree) = NULL;
+ 	struct inode *inode;
+ 	struct file *file;
+-	int fd, err;
 -
- 	init_waitqueue_head(&mf->poll_wq);
- 	mf->size = mc.file_size;
- 	mf->rw_delay_ns = mc.rw_delay_ns;
-@@ -258,33 +253,24 @@ static int io_create_mock_file(struct io_uring_cmd *cmd, unsigned int issue_flag
- 		mf->pollable = true;
- 	}
+-	fd = get_unused_fd_flags(0);
+-	if (fd < 0)
+-		return fd;
  
--	file = anon_inode_create_getfile("[io_uring_mock]", fops,
--					 mf, O_RDWR | O_CLOEXEC, NULL);
--	if (IS_ERR(file)) {
--		ret = PTR_ERR(file);
--		goto fail;
+ 	gmem = kzalloc(sizeof(*gmem), GFP_KERNEL);
+-	if (!gmem) {
+-		err = -ENOMEM;
+-		goto err_fd;
 -	}
-+	FD_PREPARE(fdf, O_RDWR | O_CLOEXEC,
-+		   anon_inode_create_getfile("[io_uring_mock]", fops, mf,
-+					     O_RDWR | O_CLOEXEC, NULL));
++	if (!gmem)
++		return -ENOMEM;
+ 
+-	file = anon_inode_create_getfile(anon_name, &kvm_gmem_fops, gmem,
+-					 O_RDWR, NULL);
+-	if (IS_ERR(file)) {
+-		err = PTR_ERR(file);
+-		goto err_gmem;
+-	}
++	FD_PREPARE(fdf, 0, anon_inode_create_getfile(anon_name, &kvm_gmem_fops,
++						     gmem, O_RDWR, NULL));
 +	if (fdf.err)
 +		return fdf.err;
  
--	file->f_mode |= FMODE_READ | FMODE_CAN_READ |
--			FMODE_WRITE | FMODE_CAN_WRITE |
--			FMODE_LSEEK;
 +	file = fd_prepare_file(fdf);
-+	file->f_mode |= FMODE_READ | FMODE_CAN_READ | FMODE_WRITE |
-+			FMODE_CAN_WRITE | FMODE_LSEEK;
- 	if (mc.flags & IORING_MOCK_CREATE_F_SUPPORT_NOWAIT)
- 		file->f_mode |= FMODE_NOWAIT;
+ 	file->f_flags |= O_LARGEFILE;
  
--	mc.out_fd = fd;
--	if (copy_to_user(uarg, &mc, uarg_size)) {
--		fput(file);
--		ret = -EFAULT;
--		goto fail;
--	}
-+	mc.out_fd = fd_prepare_fd(fdf);
-+	if (copy_to_user(uarg, &mc, uarg_size))
-+		return -EFAULT;
+ 	inode = file->f_inode;
+@@ -535,14 +527,9 @@ static int __kvm_gmem_create(struct kvm *kvm, loff_t size, u64 flags)
+ 	xa_init(&gmem->bindings);
+ 	list_add(&gmem->entry, &inode->i_mapping->i_private_list);
  
 -	fd_install(fd, file);
--	return 0;
--fail:
--	if (fd >= 0)
--		put_unused_fd(fd);
--	kfree(mf);
--	return ret;
-+	retain_and_null_ptr(mf);
+-	return fd;
+-
+-err_gmem:
+-	kfree(gmem);
+-err_fd:
+-	put_unused_fd(fd);
+-	return err;
++	/* Ownership of gmem transferred to file */
++	retain_and_null_ptr(gmem);
 +	return fd_publish(fdf);
  }
  
- static int io_probe_mock(struct io_uring_cmd *cmd)
+ int kvm_gmem_create(struct kvm *kvm, struct kvm_create_guest_memfd *args)
 
 -- 
 2.47.3
