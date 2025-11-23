@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-69544-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69545-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6CAFC7E3D8
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Nov 2025 17:34:54 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 559DAC7E3E8
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Nov 2025 17:35:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76A543A4F33
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Nov 2025 16:34:53 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2C4E2349AAB
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Nov 2025 16:34:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D48C2D97A6;
-	Sun, 23 Nov 2025 16:34:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93C2C2D94B8;
+	Sun, 23 Nov 2025 16:34:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XwIshSoB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d76M0hpC"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC5772D979C
-	for <linux-fsdevel@vger.kernel.org>; Sun, 23 Nov 2025 16:34:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9EEF2D3EDF
+	for <linux-fsdevel@vger.kernel.org>; Sun, 23 Nov 2025 16:34:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763915662; cv=none; b=Z7tui9T/claTy5yRzEw+8BOvYOvGzEF4QcrCdG/aog0NY4r3JzG5fVVSMjvwarsBjx0L+ithp/P/gnfKragDp9epmyFAkgUE15YsSglRPr2HI1T7zfzA7QyfLBVZad/BaHMJ3p8H+a8Prv7w9h+hacRtzHS5WevzIZjJxdMi9TQ=
+	t=1763915665; cv=none; b=BI5cbWZUHDkd3Zv5DYBc7wU7VfYo8YEo4xQDHZAwB2XdIRaSTj2vGR8Q22EevQeKoYKb9P7ydpzC3AJ+fVcAO6pqcDjHAX+Fsri6oiIq5aBg7jPOmeAI326vKFHrSnoC4wy7Iclh8ptnryOK70oEZaFkc01bgeOHfPUGoib4lO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763915662; c=relaxed/simple;
-	bh=EtJkXQlcmsswFlvQdnG9stLYwFahYIJoOQnJiXWV+Xo=;
+	s=arc-20240116; t=1763915665; c=relaxed/simple;
+	bh=3an5OR28DdzkReX/mfGU0thGl6FtUDULUrzcfYvqB80=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=MkYlE2UIlDvBZIWIATQWlkKnLDCaB704VcdOljlZxwQNUgBDlL+EA4kvNgTnHtn/gQ+WBa/8A11PFnwGC99BT4BjIXm3S7+NHNb9TrC+kjO1Hi9CoRDJCrAQP5/j9D6qLy+4ttRHVFzUBgBVgwV2tsWhHJE1PQX5m0PHjpIpZ+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XwIshSoB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E31ACC113D0;
-	Sun, 23 Nov 2025 16:34:20 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=dA2ILJD692/49FHAuMo+ifpi/SKWPf6K7ll+XllTeGm4pxVHoyZ7ohM6xFqVtLsbbSdw2z9ZnTAdz/BlaSa1yvY9+V+d8fNR1crNV4/sEVvXd1dTRw1MC6iNc8Mi5Kj4r0w6rhL4NF7StgqMOyvvjURO/ZJR3Z9wPUJtIEsMc18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d76M0hpC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 275C0C16AAE;
+	Sun, 23 Nov 2025 16:34:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763915662;
-	bh=EtJkXQlcmsswFlvQdnG9stLYwFahYIJoOQnJiXWV+Xo=;
+	s=k20201202; t=1763915664;
+	bh=3an5OR28DdzkReX/mfGU0thGl6FtUDULUrzcfYvqB80=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=XwIshSoB12fc+2DbzFXptlQKJ7h2slzBx4qdcPHwvMV2WWn038qoKajWVToITeuM5
-	 ug0OARVTNOrvpjBXnffLnkxyBTWrAX/osMG18ewNzX8fuNp5I5sIRb5hD/eX0nLGw2
-	 bJnd95wSQuJTSQzeNYTBIcn1lYibiG3RqsdVkhnDWavlYyxQFDiiameDDagSab5AJ/
-	 XdmDZaqqvPh7rTyHPLE5JZ66UEsjQ6aV8Cbtgxs8viimjgz6C3YHcGq5loaZBnSse5
-	 rnDrJVgi54QvE/DAt/2T++MjbuNBC40V62izo9tfciX/qTtB14iXKj2gGVlZ0QAzoY
-	 VtNvUYKphQp9Q==
+	b=d76M0hpCbluhmrqPb/Cd3cFEduXs7H053nZEotlS0lhulryRwz8r7MeU1mJSi0ohs
+	 50JDUrxmfrOw6c6KGp/U97PoFvwtsgF+UIAzfSdIS4bHdYSP1nIdu26XA9K0pW2MfY
+	 vu1qKx3Ha2kTICnR2fLDZ/ew1Cr5YTYngS2E+Q5EYzkrN1ZiWPEt+BWBD+hApk8xjg
+	 XcPFqurWYSm1yg23SuPlL1F4/hAjzk2QMytCSJHL8jdVX0W3IGtzLqG1jJ7DUrIJJ1
+	 wLxswrTX4sppI/ha+/D7jaqhvmCh6Tjrx3X/vDUhdL5JwmR8bQzamNkodquxRK9bfp
+	 k1cRIfwUwwNUA==
 From: Christian Brauner <brauner@kernel.org>
-Date: Sun, 23 Nov 2025 17:33:40 +0100
-Subject: [PATCH v4 22/47] ipc: convert do_mq_open() to FD_PREPARE()
+Date: Sun, 23 Nov 2025 17:33:41 +0100
+Subject: [PATCH v4 23/47] bpf: convert bpf_iter_new_fd() to FD_PREPARE()
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251123-work-fd-prepare-v4-22-b6efa1706cfd@kernel.org>
+Message-Id: <20251123-work-fd-prepare-v4-23-b6efa1706cfd@kernel.org>
 References: <20251123-work-fd-prepare-v4-0-b6efa1706cfd@kernel.org>
 In-Reply-To: <20251123-work-fd-prepare-v4-0-b6efa1706cfd@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
@@ -61,80 +61,70 @@ Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
  Amir Goldstein <amir73il@gmail.com>, Jens Axboe <axboe@kernel.dk>, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-a6db3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1834; i=brauner@kernel.org;
- h=from:subject:message-id; bh=EtJkXQlcmsswFlvQdnG9stLYwFahYIJoOQnJiXWV+Xo=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQqm0ex13Sabywt+1osr6N7x3zPdvMaJQk77ncnU+34m
- ZnUqpZ0lLIwiHExyIopsji0m4TLLeep2GyUqQEzh5UJZAgDF6cATKS1ieF/jfCK6uL55hoHTnrt
- Tjm7Q8fCx2XyDQ4fLc2F5w5s5yr7xPBP6eqU/AktQhvPnhT6YnXgCENml9V0ziSrez8+vVy2xiO
- dHwA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1529; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=3an5OR28DdzkReX/mfGU0thGl6FtUDULUrzcfYvqB80=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQqm0cFJC/KfP59vV32H9by1Qt0s83EZI5f4X/FGnIyr
+ 91t8fcNHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABNx2cHIsDnp26ynEu0/ox8s
+ 3vBan7+j48TFtYVmvL+XbNovnL5TeDEjw/SM3/Ob5+XvT+L/P+ea/V7n5UIh20R0D38/zpnAtu1
+ /GAMA
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- ipc/mqueue.c | 31 +++++++++----------------------
- 1 file changed, 9 insertions(+), 22 deletions(-)
+ kernel/bpf/bpf_iter.c | 29 ++++++++---------------------
+ 1 file changed, 8 insertions(+), 21 deletions(-)
 
-diff --git a/ipc/mqueue.c b/ipc/mqueue.c
-index 093551fe66a7..8b9b53db67a2 100644
---- a/ipc/mqueue.c
-+++ b/ipc/mqueue.c
-@@ -899,7 +899,7 @@ static int do_mq_open(const char __user *u_name, int oflag, umode_t mode,
- 	struct dentry *root = mnt->mnt_root;
- 	struct filename *name;
- 	struct path path;
--	int fd, error;
-+	int ret;
- 	int ro;
+diff --git a/kernel/bpf/bpf_iter.c b/kernel/bpf/bpf_iter.c
+index 6ac35430c573..eec60b57bd3d 100644
+--- a/kernel/bpf/bpf_iter.c
++++ b/kernel/bpf/bpf_iter.c
+@@ -634,37 +634,24 @@ static int prepare_seq_file(struct file *file, struct bpf_iter_link *link)
+ int bpf_iter_new_fd(struct bpf_link *link)
+ {
+ 	struct bpf_iter_link *iter_link;
+-	struct file *file;
+ 	unsigned int flags;
+-	int err, fd;
++	int err;
  
- 	audit_mq_open(oflag, mode, attr);
-@@ -908,38 +908,25 @@ static int do_mq_open(const char __user *u_name, int oflag, umode_t mode,
- 	if (IS_ERR(name))
- 		return PTR_ERR(name);
+ 	if (link->ops != &bpf_iter_link_lops)
+ 		return -EINVAL;
  
--	fd = get_unused_fd_flags(O_CLOEXEC);
+ 	flags = O_RDONLY | O_CLOEXEC;
+-	fd = get_unused_fd_flags(flags);
 -	if (fd < 0)
--		goto out_putname;
+-		return fd;
 -
- 	ro = mnt_want_write(mnt);	/* we'll drop it in any case */
- 	inode_lock(d_inode(root));
- 	path.dentry = lookup_noperm(&QSTR(name->name), root);
- 	if (IS_ERR(path.dentry)) {
--		error = PTR_ERR(path.dentry);
--		goto out_putfd;
-+		ret = PTR_ERR(path.dentry);
-+		goto out_unlock;
- 	}
- 	path.mnt = mntget(mnt);
--	error = prepare_open(path.dentry, oflag, ro, mode, name, attr);
--	if (!error) {
--		struct file *file = dentry_open(&path, oflag, current_cred());
--		if (!IS_ERR(file))
--			fd_install(fd, file);
--		else
--			error = PTR_ERR(file);
--	}
-+	ret = prepare_open(path.dentry, oflag, ro, mode, name, attr);
-+	if (!ret)
-+		ret = FD_ADD(O_CLOEXEC, dentry_open(&path, oflag, current_cred()));
- 	path_put(&path);
--out_putfd:
--	if (error) {
--		put_unused_fd(fd);
--		fd = error;
+-	file = anon_inode_getfile("bpf_iter", &bpf_iter_fops, NULL, flags);
+-	if (IS_ERR(file)) {
+-		err = PTR_ERR(file);
+-		goto free_fd;
 -	}
 +
-+out_unlock:
- 	inode_unlock(d_inode(root));
- 	if (!ro)
- 		mnt_drop_write(mnt);
--out_putname:
- 	putname(name);
++	FD_PREPARE(fdf, flags, anon_inode_getfile("bpf_iter", &bpf_iter_fops, NULL, flags));
++	if (fdf.err)
++		return fdf.err;
+ 
+ 	iter_link = container_of(link, struct bpf_iter_link, link);
+-	err = prepare_seq_file(file, iter_link);
++	err = prepare_seq_file(fd_prepare_file(fdf), iter_link);
+ 	if (err)
+-		goto free_file;
++		return err; /* Automatic cleanup handles fput */
+ 
+-	fd_install(fd, file);
 -	return fd;
-+	return ret;
+-
+-free_file:
+-	fput(file);
+-free_fd:
+-	put_unused_fd(fd);
+-	return err;
++	return fd_publish(fdf);
  }
  
- SYSCALL_DEFINE4(mq_open, const char __user *, u_name, int, oflag, umode_t, mode,
+ struct bpf_prog *bpf_iter_get_info(struct bpf_iter_meta *meta, bool in_stop)
 
 -- 
 2.47.3
