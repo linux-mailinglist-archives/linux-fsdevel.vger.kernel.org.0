@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-69540-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69541-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F266C7E3CC
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Nov 2025 17:34:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC09EC7E3D2
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Nov 2025 17:34:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 52A8D4E37BB
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Nov 2025 16:34:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AB8B3A5142
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Nov 2025 16:34:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF54423184F;
-	Sun, 23 Nov 2025 16:34:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3674D2D3EC1;
+	Sun, 23 Nov 2025 16:34:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hV3uzAHP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H4wGiFEl"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49E172D879A
-	for <linux-fsdevel@vger.kernel.org>; Sun, 23 Nov 2025 16:34:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CCBA221264
+	for <linux-fsdevel@vger.kernel.org>; Sun, 23 Nov 2025 16:34:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763915654; cv=none; b=Op5rslB+QjFm9pqZe+0q4++nkOnlR1/bKr1Sje+CZONfJRMXRjPQ4pbhKX1LDS5FRPk6GAT8TsGAFRcFnxIoV+uN4IJzhaDEVMD4imuoMETyzBbK2kgqJZsZzuwzl9YNA0KKLQZa8iLtIqTeSQgHP7Wvc2pI/jm5OlwuNb8llco=
+	t=1763915656; cv=none; b=q4MSoWHqSU8PCSwUYgjSchk81nWVuv0FicqhzLFrxBUH9eRCYo4lQ/IfVXOlmcRPMW7cPfbyrHQz+jglaFBU65OY93PUXnaFCL/un9KCplS0pR3ijLpln/cjbxYjeUPDuYC6ikrsYsRw7cbW8cSvdHMRrfYZbJ3kwAdAk1+j2+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763915654; c=relaxed/simple;
-	bh=WiVwY9zHHtohEhlA4d7MKwn6Mzt1gywM3ur52wR5s1s=;
+	s=arc-20240116; t=1763915656; c=relaxed/simple;
+	bh=fzTc1026B1GGbo4uHWRW3Q2mjbUhR7O3e9vTmKGledM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=GnkgCBu4nX5HlVODmrVN/hOaUI9QzVYRVoT3oYodqFyxPnHca4spjVTYhsT0mwUQZnBsbEc6naYrTEzbLCK2YTbGkloNwP5s1vKOUNnhKi7JqtbEWucAPrbe/ysZgtilvOxO5UQGuC9FYdAw+142TwKoMM5vETHo2t0diBOH4m8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hV3uzAHP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06D18C113D0;
-	Sun, 23 Nov 2025 16:34:11 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=ISZI4bpYBpJOagds9dcpE6wZYT+RStt4/YYfG4piOqqnNHrptsiBZS18Qu1dKAYcgt9i+UWKxQSgFH5fWyjg7KPx+OuXA/Bz92C9M1ynPGf0kzOMZeOA0mqZ7FQB/RDnpPPL7EsOBGK7KLY1HT1fJMXubRTsEcNcomWLRrRIa2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H4wGiFEl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A33FC19421;
+	Sun, 23 Nov 2025 16:34:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763915653;
-	bh=WiVwY9zHHtohEhlA4d7MKwn6Mzt1gywM3ur52wR5s1s=;
+	s=k20201202; t=1763915656;
+	bh=fzTc1026B1GGbo4uHWRW3Q2mjbUhR7O3e9vTmKGledM=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=hV3uzAHPyl7Y9IsDIKMK7+JhCWClviCnAiuZrQwq0Jl1zrS3eMMllh4vPAg72+rQd
-	 a8Vee3FPLH2B8sFpmfPSWvpKuoohQ16Ny5OBhXPyoUJpPh2JD4CJtcZ7Je5jiMObxT
-	 jmJMKhUF2pzizW2VAOt7byhH8kirb2TWbC3k4pEIlOS96cWgmkhqNK9UZu83JxrL12
-	 MqtKmzvWI801zgPZb6gJCY7nYI5BHDiBG6soTNTtZVP9kqUFQlNRtQOHYfmmbV4Foi
-	 ylwQHYUHF/knpNnff2r/KXnxtDPZy4F8G6lBjao6L5u9mzXYfek7affcPiPU0KgekE
-	 xbdPpBKF2bLSA==
+	b=H4wGiFEl8H3cz8+FWGqJoSD0GLwFdNRY9qmSyOGIWw1brc58+GhiYiARJV/2WMAh+
+	 UVwXMCV0+nyFkeSGyvzKNY6zLu/LG5Ql27ka0CjCLFz8zg6aZ8KjHHuEKscO9MlqOJ
+	 AvZvJrmWX2YITPKdOGnxTNfho34NVCIVnIlSJx5fL4F1FAwUfbbjgIFAq6BrGAM3Of
+	 UVvcDG7p7gCnsfl6AHENk5u8F6NswlwKcOMmTEDgjV1Uv4bkvT6MwyandU93+CakAQ
+	 TNw3C6mQSPMrMKt7LyMt3DmY+enXMFiZ/1MWQVJKOZJde4369vK748uwjWp52CHcU9
+	 sVM7OKjDKuqrg==
 From: Christian Brauner <brauner@kernel.org>
-Date: Sun, 23 Nov 2025 17:33:36 +0100
-Subject: [PATCH v4 18/47] dma: convert dma_buf_fd() to FD_PREPARE()
+Date: Sun, 23 Nov 2025 17:33:37 +0100
+Subject: [PATCH v4 19/47] af_unix: convert unix_file_open() to FD_PREPARE()
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251123-work-fd-prepare-v4-18-b6efa1706cfd@kernel.org>
+Message-Id: <20251123-work-fd-prepare-v4-19-b6efa1706cfd@kernel.org>
 References: <20251123-work-fd-prepare-v4-0-b6efa1706cfd@kernel.org>
 In-Reply-To: <20251123-work-fd-prepare-v4-0-b6efa1706cfd@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
@@ -61,44 +61,54 @@ Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
  Amir Goldstein <amir73il@gmail.com>, Jens Axboe <axboe@kernel.dk>, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-a6db3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=761; i=brauner@kernel.org;
- h=from:subject:message-id; bh=WiVwY9zHHtohEhlA4d7MKwn6Mzt1gywM3ur52wR5s1s=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQqm0emr37w8+qFUM456R9urZl4wv3tqzK/Twmrdhfx+
- ypYdejzd5SyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEykWZThf8FllbkyJc2XD7zm
- WpbNvpiLnfUly7zpakI8EYHJJwqjzzEyPIkV+ZIlrvvc8Z/tqtpWL4vm5pmbtn4LLmspjnx0440
- 5LwA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1085; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=fzTc1026B1GGbo4uHWRW3Q2mjbUhR7O3e9vTmKGledM=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQqm0dutr+U9ePoHNbEJzPYZ3qelTFunJr0puHvFuGow
+ 0IsjcbNHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABOpk2Rk+FV2k+/vwz37UtLD
+ SstSmXZc7TTU95o+jX26qkD0DSMPN0aGixMl3kXO3MOlIPHkheyKGQtfPlc99HXStQS3Eya3Ba5
+ GMQAA
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- drivers/dma-buf/dma-buf.c | 10 +---------
- 1 file changed, 1 insertion(+), 9 deletions(-)
+ net/unix/af_unix.c | 16 +---------------
+ 1 file changed, 1 insertion(+), 15 deletions(-)
 
-diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
-index 2bcf9ceca997..edaa9e4ee4ae 100644
---- a/drivers/dma-buf/dma-buf.c
-+++ b/drivers/dma-buf/dma-buf.c
-@@ -768,18 +768,10 @@ EXPORT_SYMBOL_NS_GPL(dma_buf_export, "DMA_BUF");
-  */
- int dma_buf_fd(struct dma_buf *dmabuf, int flags)
+diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
+index 68c94f49f7b5..6de7909182ee 100644
+--- a/net/unix/af_unix.c
++++ b/net/unix/af_unix.c
+@@ -3277,9 +3277,6 @@ EXPORT_SYMBOL_GPL(unix_outq_len);
+ 
+ static int unix_open_file(struct sock *sk)
  {
+-	struct file *f;
 -	int fd;
 -
- 	if (!dmabuf || !dmabuf->file)
- 		return -EINVAL;
+ 	if (!ns_capable(sock_net(sk)->user_ns, CAP_NET_ADMIN))
+ 		return -EPERM;
  
--	fd = get_unused_fd_flags(flags);
+@@ -3289,18 +3286,7 @@ static int unix_open_file(struct sock *sk)
+ 	if (!unix_sk(sk)->path.dentry)
+ 		return -ENOENT;
+ 
+-	fd = get_unused_fd_flags(O_CLOEXEC);
 -	if (fd < 0)
 -		return fd;
 -
--	fd_install(fd, dmabuf->file);
+-	f = dentry_open(&unix_sk(sk)->path, O_PATH, current_cred());
+-	if (IS_ERR(f)) {
+-		put_unused_fd(fd);
+-		return PTR_ERR(f);
+-	}
 -
+-	fd_install(fd, f);
 -	return fd;
-+	return FD_ADD(flags, dmabuf->file);
++	return FD_ADD(O_CLOEXEC, dentry_open(&unix_sk(sk)->path, O_PATH, current_cred()));
  }
- EXPORT_SYMBOL_NS_GPL(dma_buf_fd, "DMA_BUF");
  
+ static int unix_ioctl(struct socket *sock, unsigned int cmd, unsigned long arg)
 
 -- 
 2.47.3
