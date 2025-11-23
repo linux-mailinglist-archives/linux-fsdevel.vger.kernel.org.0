@@ -1,279 +1,210 @@
-Return-Path: <linux-fsdevel+bounces-69595-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69596-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9BC6C7E966
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Nov 2025 00:09:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 967BCC7E979
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Nov 2025 00:23:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B9AA14E0569
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Nov 2025 23:09:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8F333A3E59
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Nov 2025 23:23:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73D8B279334;
-	Sun, 23 Nov 2025 23:09:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="uqYSEsyC"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD4662701C4;
+	Sun, 23 Nov 2025 23:23:05 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from CO1PR03CU002.outbound.protection.outlook.com (mail-westus2azon11010010.outbound.protection.outlook.com [52.101.46.10])
+Received: from out01.mta.xmission.com (out01.mta.xmission.com [166.70.13.231])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5C8F72617;
-	Sun, 23 Nov 2025 23:09:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.46.10
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763939389; cv=fail; b=DuGH7L98a2CzaK2CZhkqlItdEyJHYMQ6bIbEsPX37wb0DjFM7Aj6AQbgBsS8RsgrBCvVOh8pjundUL7+vUqVxb93nP/urx4ch0tcUc+Z6sFcKfI2srwM8kXfydVCcGPQpcMGNI7roBWlci4nhRbfQMpH0nZHA3YKQHdyj0yg20U=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763939389; c=relaxed/simple;
-	bh=fKQpwbdY2MuONLSbHZg96TN24SGTROprC+rvxpuQo28=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=RAKdAD9gbW3qMgg8uBGZRTjeeZWXJgsydqAXjolTNgvfm5wee02pSxekUsXOm2a8MxF0WWtUywvg80ocY6mkE4x/65OP22AOzRHymlyDyyQ7bvWSLguiZU9kHaRYtEPATB85ZPwHR2yYiRQPfEbd3KXDS4AqgkZHKc6ceslhhjE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=uqYSEsyC; arc=fail smtp.client-ip=52.101.46.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=TPEniEux2SR9THIP6z5jF0fC7aJyS/+mqP18jhWpKDZGQkzTBHLC9CLzJB+cmS4uCs4AjLPBMx1/u7wy6aqk1JjceySQF1lv5AGVjXNuPLjSH50pLe0uw+bd4dIWQ3YiK5LoUmU32BUMh/nEgadgdiFORApuJI2Qwfb64U+aYlEqGnEuloItAYyvz/zJRUZwZNHAlX8R/39lmzQvWaoTo80aZDilKmpkUvp1MyIOVap+HIyBjdu6hKhU7gvtIF1IB7lcH1hHumfnqH2Qk9aMBRcg9v3hpOEN1AP+zYRGDa2A5puUc3Lq5bUoba23StRYBuAhxHMeeuca2xgTp9nU9w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=m5A1qpW2XzGCuzqf6WgpG0xC1gUnaMstS3VyXPt6boo=;
- b=tOBF5OM5n9YPLeFWW0UEX+9LyIvS+ZzxEAQ4E9PhZB3ViK/UznAscu22aFTFRZwljqARjgxwVn2UWD2riXeqXZqLw4h6eJ6j7sa99dFG6PxCTl5A81/uAXuRWbNf0/o8TppyCWbaZry9hJ2qH/1W2jucGbwmEqb+TMinKGFhzSGKf+lSkxBfiFbhkmuMH4tvWjq8EHMwo+A8nXvnKcEolRM/xanIRL9XNS/o7kHDt93/2Ad9CQJxUrfuJGtidT5RRVpIc3fstRVUzlYLW/KSRItc5N65aufnIryd/XvzM46IIsaYvfDx2yf2wllHNKV89rKOgg35fSt7DoD/S2FzdQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=m5A1qpW2XzGCuzqf6WgpG0xC1gUnaMstS3VyXPt6boo=;
- b=uqYSEsyCPtdpkmJMVH8Jm9Yf0sJ8jMMMTTTaCMc/n1DUZ1UTpPB9yqYGL5vAmciBjm12meYr6h0e6B1lIJc5o/8AedkOTljpPMVovyx6U7+Zuwsom/9Z/OTJ9k3f6hrBv4rc3L20NK5zhctNg8CM2LvQhMbWgRFhO+JUbKpm74qJnzHGnClm7AOKhbRpn412NNa9u9aVUmZwle88Xl9yjQ7LELlYBDOQ2Rp3d98eh+MWJgx/zU+dTfd1i6vC5XPEGbEDcPGB6LziDpJBi9SLObQsmUY0fIHJSeNuYpIGp5MN5A27D6dlTYsEnim+bmYMpNzDRlAaQz+rNqBHpLctaw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from IA0PR12MB7723.namprd12.prod.outlook.com (2603:10b6:208:431::10)
- by SA5PPF8DEAB7A29.namprd12.prod.outlook.com (2603:10b6:80f:fc04::8d4) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9343.14; Sun, 23 Nov
- 2025 23:09:43 +0000
-Received: from IA0PR12MB7723.namprd12.prod.outlook.com
- ([fe80::ef74:9335:2c5b:2bc7]) by IA0PR12MB7723.namprd12.prod.outlook.com
- ([fe80::ef74:9335:2c5b:2bc7%6]) with mapi id 15.20.9343.016; Sun, 23 Nov 2025
- 23:09:43 +0000
-Date: Mon, 24 Nov 2025 10:09:37 +1100
-From: Alistair Popple <apopple@nvidia.com>
-To: Gregory Price <gourry@gourry.net>
-Cc: linux-mm@kvack.org, kernel-team@meta.com, linux-cxl@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
-	cgroups@vger.kernel.org, dave@stgolabs.net, jonathan.cameron@huawei.com, 
-	dave.jiang@intel.com, alison.schofield@intel.com, vishal.l.verma@intel.com, 
-	ira.weiny@intel.com, dan.j.williams@intel.com, longman@redhat.com, 
-	akpm@linux-foundation.org, david@redhat.com, lorenzo.stoakes@oracle.com, 
-	Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org, surenb@google.com, 
-	mhocko@suse.com, osalvador@suse.de, ziy@nvidia.com, matthew.brost@intel.com, 
-	joshua.hahnjy@gmail.com, rakie.kim@sk.com, byungchul@sk.com, ying.huang@linux.alibaba.com, 
-	mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com, 
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org, 
-	bsegall@google.com, mgorman@suse.de, vschneid@redhat.com, tj@kernel.org, 
-	hannes@cmpxchg.org, mkoutny@suse.com, kees@kernel.org, muchun.song@linux.dev, 
-	roman.gushchin@linux.dev, shakeel.butt@linux.dev, rientjes@google.com, jackmanb@google.com, 
-	cl@gentwo.org, harry.yoo@oracle.com, axelrasmussen@google.com, 
-	yuanchu@google.com, weixugc@google.com, zhengqi.arch@bytedance.com, 
-	yosry.ahmed@linux.dev, nphamcs@gmail.com, chengming.zhou@linux.dev, 
-	fabio.m.de.francesco@linux.intel.com, rrichter@amd.com, ming.li@zohomail.com, usamaarif642@gmail.com, 
-	brauner@kernel.org, oleg@redhat.com, namcao@linutronix.de, escape@linux.alibaba.com, 
-	dongjoo.seo1@samsung.com
-Subject: Re: [RFC LPC2026 PATCH v2 00/11] Specific Purpose Memory NUMA Nodes
-Message-ID: <c5enwlaui37lm4uxlsjbuhesy6hfwwqbxzzs77zn7kmsceojv3@f6tquznpmizu>
-References: <20251112192936.2574429-1-gourry@gourry.net>
- <aktv2ivkrvtrox6nvcpxsnq6sagxnmj4yymelgkst6pazzpogo@aexnxfcklg75>
- <aSDUl7kU73LJR78g@gourry-fedora-PF4VCD3F>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aSDUl7kU73LJR78g@gourry-fedora-PF4VCD3F>
-X-ClientProxiedBy: SY5P300CA0089.AUSP300.PROD.OUTLOOK.COM
- (2603:10c6:10:248::26) To DS0PR12MB7726.namprd12.prod.outlook.com
- (2603:10b6:8:130::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0B7B2A1CF;
+	Sun, 23 Nov 2025 23:23:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.231
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1763940185; cv=none; b=g+WeIHXzQkVHWD7uRwKe3L5oPMKWEpQOZLU/nJQkJew7MeKPQ74MrTqUIHTcaaT2Lf3zgX7PXDgHMBtC7BDM1gnV4ORPpECMInKfVmvboyNXXfKBBsG5Gn5zEKzAVGfIcLEu4iU5NtsYsLL/azb83Dx4YR3CfV+raOEr3CPnupc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1763940185; c=relaxed/simple;
+	bh=E0bJzgneMHyXjq+X02QhPnT3P8kNjgP0/PSN87NvvfI=;
+	h=From:To:Cc:In-Reply-To:References:Date:Message-ID:MIME-Version:
+	 Content-Type:Subject; b=YwQTyN9HkTaiYuwx8HK8UTVLnBW54y/VO9moDBtXOEZeaLm3wB8xV9fApi10qehxEM6gt8+WIQi1PB3aEsQZjWOaOr1cUAwMoJ2hAlOGIxjmZ/DXzjN/9m1l8Z37hAQxY0rDOCC2AiabEkXVh6bFK5cnmnjLHZpLEsUDfztTpUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.231
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
+Received: from in02.mta.xmission.com ([166.70.13.52]:44430)
+	by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1vNJPq-000Vmp-5s; Sun, 23 Nov 2025 16:22:46 -0700
+Received: from ip72-198-198-28.om.om.cox.net ([72.198.198.28]:44852 helo=email.froward.int.ebiederm.org.xmission.com)
+	by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1vNJPp-001fVL-4Z; Sun, 23 Nov 2025 16:22:45 -0700
+From: "Eric W. Biederman" <ebiederm@xmission.com>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: Bernd Edlinger <bernd.edlinger@hotmail.de>,  Alexander Viro
+ <viro@zeniv.linux.org.uk>,  Alexey Dobriyan <adobriyan@gmail.com>,  Kees
+ Cook <kees@kernel.org>,  Andy Lutomirski <luto@amacapital.net>,  Will
+ Drewry <wad@chromium.org>,  Christian Brauner <brauner@kernel.org>,
+  Andrew Morton <akpm@linux-foundation.org>,  Michal Hocko
+ <mhocko@suse.com>,  Serge Hallyn <serge@hallyn.com>,  James Morris
+ <jamorris@linux.microsoft.com>,  Randy Dunlap <rdunlap@infradead.org>,
+  Suren Baghdasaryan <surenb@google.com>,  Yafang Shao
+ <laoar.shao@gmail.com>,  Helge Deller <deller@gmx.de>,  Adrian Reber
+ <areber@redhat.com>,  Thomas Gleixner <tglx@linutronix.de>,  Jens Axboe
+ <axboe@kernel.dk>,  Alexei Starovoitov <ast@kernel.org>,
+  "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+  "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+  linux-kselftest@vger.kernel.org,  linux-mm@kvack.org,
+  linux-security-module@vger.kernel.org,  tiozhang
+ <tiozhang@didiglobal.com>,  Luis Chamberlain <mcgrof@kernel.org>,  "Paulo
+ Alcantara (SUSE)" <pc@manguebit.com>,  Sergey Senozhatsky
+ <senozhatsky@chromium.org>,  Frederic Weisbecker <frederic@kernel.org>,
+  YueHaibing <yuehaibing@huawei.com>,  Paul Moore <paul@paul-moore.com>,
+  Aleksa Sarai <cyphar@cyphar.com>,  Stefan Roesch <shr@devkernel.io>,
+  Chao Yu <chao@kernel.org>,  xu xin <xu.xin16@zte.com.cn>,  Jeff Layton
+ <jlayton@kernel.org>,  Jan Kara <jack@suse.cz>,  David Hildenbrand
+ <david@redhat.com>,  Dave Chinner <dchinner@redhat.com>,  Shuah Khan
+ <shuah@kernel.org>,  Elena Reshetova <elena.reshetova@intel.com>,  David
+ Windsor <dwindsor@gmail.com>,  Mateusz Guzik <mjguzik@gmail.com>,  Ard
+ Biesheuvel <ardb@kernel.org>,  "Joel Fernandes (Google)"
+ <joel@joelfernandes.org>,  "Matthew Wilcox (Oracle)"
+ <willy@infradead.org>,  Hans Liljestrand <ishkamiel@gmail.com>,  Penglei
+ Jiang <superman.xpt@gmail.com>,  Lorenzo Stoakes
+ <lorenzo.stoakes@oracle.com>,  Adrian Ratiu <adrian.ratiu@collabora.com>,
+  Ingo Molnar <mingo@kernel.org>,  "Peter Zijlstra (Intel)"
+ <peterz@infradead.org>,  Cyrill Gorcunov <gorcunov@gmail.com>,  Eric
+ Dumazet <edumazet@google.com>
+In-Reply-To: <aSNX5B9a5iSjJcM1@redhat.com> (Oleg Nesterov's message of "Sun,
+	23 Nov 2025 19:52:20 +0100")
+References: <AS8P193MB1285DF698D7524EDE22ABFA1E4A1A@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+	<AS8P193MB12851AC1F862B97FCE9B3F4FE4AAA@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+	<AS8P193MB1285FF445694F149B70B21D0E46C2@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+	<AS8P193MB1285937F9831CECAF2A9EEE2E4752@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+	<GV2PPF74270EBEEEDE0B9742310DE91E9A7E431A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+	<GV2PPF74270EBEE9EF78827D73D3D7212F7E432A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+	<GV2PPF74270EBEEE807D016A79FE7A2F463E4D6A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+	<87tsyozqdu.fsf@email.froward.int.ebiederm.org>
+	<87wm3ky5n9.fsf@email.froward.int.ebiederm.org>
+	<87h5uoxw06.fsf_-_@email.froward.int.ebiederm.org>
+	<aSNX5B9a5iSjJcM1@redhat.com>
+Date: Sun, 23 Nov 2025 17:22:36 -0600
+Message-ID: <87tsykuyf7.fsf@email.froward.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA0PR12MB7723:EE_|SA5PPF8DEAB7A29:EE_
-X-MS-Office365-Filtering-Correlation-Id: 77d7cf29-871e-4643-39ce-08de2ae56265
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|366016|376014|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?iORcL3r4SYCpVXyAIO+dXAWVkz8qzIogXcJanMZONS8QLrDkwsibT78ShPpF?=
- =?us-ascii?Q?m2aJc1/7a3nqGoD+6hDVdXuPvSOvulEO41y+hPDGZYdtr7ukkjH0VSjtsGPB?=
- =?us-ascii?Q?v1TNt/2T2KuUy+eYI51roM1v0EVyaoXReSFcz4zqI0l5C6ozNzjU0jLemMmZ?=
- =?us-ascii?Q?syPpqixcU2HegrOoZVFmXftYlnJPC+xZytHnskwRpJeIPdgVMXejkQfT2kBZ?=
- =?us-ascii?Q?UdRvuCo+OJQb6lVdirsUFHKkZkaTEL2vJ/JLJ8tOpxEO2/suz2z5sxrfkj0E?=
- =?us-ascii?Q?LaOBSebvNND/3okAOs9T4v0GZjA15g0SOq4E2SBoK434cKA7z9GnJFRKccrg?=
- =?us-ascii?Q?sya3O4p/ykjsUQ8iQnzibYIh3x5U8aPFLMYZ9LephaoTcleE5hgT+bjr3ELY?=
- =?us-ascii?Q?ahuStpmGkVkYve8suOEHaLjw6xqfaj+Nh+/H2DevK+J1c1mRWOVGs7eX9sXX?=
- =?us-ascii?Q?agLkq/erHSiDn07VeNqPYCp8R0bg04nqX3uEptn6uu5KTuX60wnY4SkedGHz?=
- =?us-ascii?Q?9Dw9aDa95UkRh3dKi9tXTLNw0u3GUyPWNtnne8QIfc5ICBtQAuQbVTalDEyf?=
- =?us-ascii?Q?1T04Lz+lBFrmS4Cg2iw2c50yzDOfJVveBVufw3hMf7gy1rwouui0yj0coLvk?=
- =?us-ascii?Q?0IlZxyM7uh+s2+yyaO/KJoZnTwXFH1/jLW+BPos9+0Apl8u6VFpNZ4nlLB68?=
- =?us-ascii?Q?zU+hJ9ik6RL6TVTm08bjJnygA2gh5JSlyxf70/1mP/3OVnp5DIX1GI6yAgu4?=
- =?us-ascii?Q?cWA3w5vzyxgJOOfeIVBCvhSAiivjRzHqX0UJ6U5P1rLT9Ohvp1k1HEuDj5eX?=
- =?us-ascii?Q?Q4+ODByAgEem/lzMP93k8xhTuzoyendmQ+ZfL4zYsmolOOU4z7+lPYrrs1d/?=
- =?us-ascii?Q?Dn9pdeXI7J1sVr5RD8w2lT3i5qJoL1zFkL2iTwqhJO3Jk3NWDPPg5PHh0Xka?=
- =?us-ascii?Q?mFUN/xe1CH6+9L/NxuyTUwki6ubelo/CrBMtM8TnYCGqHmXsCGHJ5NjJX9gY?=
- =?us-ascii?Q?c/uZzqjXF2cJs1lSqJJLOwaCvJ8A2xuM9NLd4bFRAqHctheJJdJ8gSrjFmrl?=
- =?us-ascii?Q?Q8Y6apvJOJuVeKiLQJ8D8DfuUHsqlsf44AEdeDSghbmc7nnRFXDB9vtf0yAu?=
- =?us-ascii?Q?DfxgMD4lJhHX9GGxu+owtrq0z0mh4HLEf+INcoDjEeEfxXtd3aZysWk99CHe?=
- =?us-ascii?Q?nPZlebEy96Fz79NXSwtVKEVNDW5xAso4TxhakMZnkt7IQv4N8E2xRcdJReH5?=
- =?us-ascii?Q?l9kv+KFr6qhh1GkQg+x33+UoCLypUU382Ua5do6Qqk4GWr3CuJqnhhkpTxXF?=
- =?us-ascii?Q?gevCRhb4ZcEYws+9Nm1E8w51/jBD+A9JfKsaG+05fnRjvfwED0p/NrUqQ/S4?=
- =?us-ascii?Q?pXds4zIlHyfpkStsRQmruaZfnPfturVhbovQJrc8tb2SiyVdDUnVrm0DELjy?=
- =?us-ascii?Q?y79GeGGKL3a0lkvgNf3W7b2NahOp7sOV?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA0PR12MB7723.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(376014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?HE0Nkp4kCwacWzH/mWmywXOwvFeQQ56N1ens4/0bA+5zS8E2XWZ21gvYTAKC?=
- =?us-ascii?Q?xJmdUO6eYoMzeXluYFVzYuupRh/cAajleXeM9keBhBmDBl8s++u9X0YIYRov?=
- =?us-ascii?Q?Jdgk1G2dQbjOYv/C/zLGrPO0jeA/TKFGE1moX7noHJn7oIw4x4NO2qQ1x/pg?=
- =?us-ascii?Q?evNRhxZ1Zw2ohLayFu4W/GCgiaZyPP+/hyoQWbjUqSEstz4KMotZIz34+Tt6?=
- =?us-ascii?Q?nRpVtdK4ycA0FPZKGxYqVkIsVMTIFAxxQ/cKGHsIfn9wcoilS7HQH1/ut9IB?=
- =?us-ascii?Q?GEmyFNfhUK0TvkH3B/LsXvT1Bjqfw6skyXQ1Sowx5sPEJmrqgVaBPP4k/hzG?=
- =?us-ascii?Q?rDHp4hb30Hzj/KDX2nOJTdF4JVZlDsoHJqUBSEx6RzQaLr09weInRSgKRrf2?=
- =?us-ascii?Q?Q5pTQleaN4eh731IIN79551whPNFifah/8VqKUWmwWsT6LD+7JthB38EsLQr?=
- =?us-ascii?Q?fknnuQuYlwl4N2r8GpPj5nsv4R9uvo9V2ejVSqsRAtP2gBiV0akUfjbEDKjj?=
- =?us-ascii?Q?jSYakuwJ/CCcssOSCYVPrMdTbQS9Po0rXKjTwMWIz5ll0GVRHV41hUOt9fVC?=
- =?us-ascii?Q?CUOf8naLnDBBPQqRv5lIoUyVAwcwyljnjPRTLozIwIOkrUCzQcT1Hhfs5UTX?=
- =?us-ascii?Q?AETuWd1gulXdm8myub8jaapGJhDAKXYQVLMYC/Ng7DrPfMkJbGo4tluhHM8L?=
- =?us-ascii?Q?Sm1HkgJTGLGPVMC1j7MzpnpzsuB6i4y5zX0WIu4yGe7wk9CCmXC8mjAVnzF2?=
- =?us-ascii?Q?eY3teshaHf3/rIep2EOi7IRNJmIKOUo+dgWlRkq7MOGb4BS3uXD2Rt18SfXK?=
- =?us-ascii?Q?693GdgAayk4TjTdR1BTPinmoOU7FpTPcYHPaesh26iMKKHw1euJPoGFunYEX?=
- =?us-ascii?Q?WrQ97wpCOshnL3Ms0qiMczrRDAsrx5ZnYovPMTqyD6tRlBpJPa52ksDhMSYh?=
- =?us-ascii?Q?XzaPk5kL89HyKHqdPeMULDu+vmSGEB9arCO1wtc0xmEn2rTgRvup/SyGLhYF?=
- =?us-ascii?Q?3x9oY+QAEb+FNNbodAD0gu78v7L6lU5o14mcXi7Vtz0ltrAbSFqbaAhIfyy9?=
- =?us-ascii?Q?BNS7XB00DlQrZez/soy5a6tszsT0YW6NPiJmpLlm3JCG4zzNtBN3KYsNmDkO?=
- =?us-ascii?Q?ny+CS9Z5AXaICuePLFL/GQu+Qa/AP7qTNxMAfuidspC++Fe1E5aAcW2QUGOQ?=
- =?us-ascii?Q?XCwNdeS22BtBPEqhfg3nYRMSjAUtW1S5wzw/JLMtfOXCKGFElAu1e7XcRgJb?=
- =?us-ascii?Q?DA8i8RNmec7rTEN3s2to5TmP3Kx881jwmtVLKbpW070ae2crRTyxj+w1sW67?=
- =?us-ascii?Q?9bisjt8+6w3x5ZAcqwBii6p2w+cwMy7xjDfxJfVJ4Z1lLMx9vZQ+MGom2IU8?=
- =?us-ascii?Q?NASpy417OuaWmlTr+YK53xYSBLkVVgBiNAcDP7vzbW11BLWitKm56f2uKMW2?=
- =?us-ascii?Q?m371F8TiMbzjcD49lMOrKYZ69FNaAbvwnCd2dzpcFXXERTtbc02gQEBXtqxU?=
- =?us-ascii?Q?bEBpPDje/zI9BmQD2s0b6zXsZWQzMToAyoKAX1d9XV1qk/aTOMsKENjL2sov?=
- =?us-ascii?Q?fIChchNkraCOHK+jJIlWazUdoGXPX0EttcjBAhA6?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 77d7cf29-871e-4643-39ce-08de2ae56265
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB7726.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Nov 2025 23:09:43.5093
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: CZ071WoQEJxyGb1/I/d6TqSksSJzXfg1oiSOvdEIDolZiWXOFBuDqDCJmczEfcOjSMXDsbyiBMhObydPjSYsNg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA5PPF8DEAB7A29
+Content-Type: text/plain
+X-XM-SPF: eid=1vNJPp-001fVL-4Z;;;mid=<87tsykuyf7.fsf@email.froward.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=72.198.198.28;;;frm=ebiederm@xmission.com;;;spf=pass
+X-XM-AID: U2FsdGVkX188bdynm4AjSoejNdWJaikuesUTwrwxz14=
+X-Spam-Level: *
+X-Spam-Report: 
+	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+	*  0.1 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+	*      [score: 0.5000]
+	*  1.5 TR_Symld_Words too many words that have symbols inside
+	*  0.7 XMSubLong Long Subject
+	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+	*      [sa08 1397; Body=1 Fuz1=1 Fuz2=1]
+X-Spam-DCC: XMission; sa08 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: *;Oleg Nesterov <oleg@redhat.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 456 ms - load_scoreonly_sql: 0.04 (0.0%),
+	signal_user_changed: 11 (2.4%), b_tie_ro: 10 (2.1%), parse: 1.00
+	(0.2%), extract_message_metadata: 3.5 (0.8%), get_uri_detail_list:
+	1.52 (0.3%), tests_pri_-2000: 2.9 (0.6%), tests_pri_-1000: 11 (2.4%),
+	tests_pri_-950: 1.34 (0.3%), tests_pri_-900: 0.99 (0.2%),
+	tests_pri_-90: 83 (18.3%), check_bayes: 82 (17.9%), b_tokenize: 18
+	(3.9%), b_tok_get_all: 14 (3.0%), b_comp_prob: 4.2 (0.9%),
+	b_tok_touch_all: 40 (8.8%), b_finish: 1.30 (0.3%), tests_pri_0: 325
+	(71.2%), check_dkim_signature: 0.52 (0.1%), check_dkim_adsp: 2.6
+	(0.6%), poll_dns_idle: 0.78 (0.2%), tests_pri_10: 1.96 (0.4%),
+	tests_pri_500: 8 (1.7%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [RFC][PATCH] exec: Move cred computation under exec_update_lock
+X-SA-Exim-Connect-IP: 166.70.13.52
+X-SA-Exim-Rcpt-To: too long (recipient list exceeded maximum allowed size of 512 bytes)
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-SA-Exim-Scanned: No (on out01.mta.xmission.com); SAEximRunCond expanded to false
 
-On 2025-11-22 at 08:07 +1100, Gregory Price <gourry@gourry.net> wrote...
-> On Tue, Nov 18, 2025 at 06:02:02PM +1100, Alistair Popple wrote:
-> > 
-> > I'm interested in the contrast with zone_device, and in particular why
-> > device_coherent memory doesn't end up being a good fit for this.
-> > 
-> > > - Why mempolicy.c and cpusets as-is are insufficient
-> > > - SPM types seeking this form of interface (Accelerator, Compression)
-> > 
-> > I'm sure you can guess my interest is in GPUs which also have memory some people
-> > consider should only be used for specific purposes :-) Currently our coherent
-> > GPUs online this as a normal NUMA noode, for which we have also generally
-> > found mempolicy, cpusets, etc. inadequate as well, so it will be interesting to
-> > hear what short comings you have been running into (I'm less familiar with the
-> > Compression cases you talk about here though).
-> > 
-> 
-> after some thought, talks, and doc readings it seems like the
-> zone_device setups don't allow the CPU to map the devmem into page
-> tables, and instead depends on migrate_device logic (unless the docs are
-> out of sync with the code these days).  That's at least what's described
-> in hmm and migrate_device.  
+Oleg Nesterov <oleg@redhat.com> writes:
 
-There are multiple types here (DEVICE_PRIVATE and DEVICE_COHERENT). The former
-is mostly irrelevant for this discussion but I'm including the descriptions here
-for completeness. You are correct in saying that the only way either of these
-currently get mapped into the page tables is via explicit migration of memory
-to ZONE_DEVICE by a driver. There is also a corner case for first touch handling
-which allows drivers to establish mappings to zero pages on a device if the page
-hasn't been populated previously on the CPU.
+> Eric,
+>
+> sorry for delay, I am on PTO, didn't read emails this week...
+>
+> On 11/20, Eric W. Biederman wrote:
+>>
+>> Instead of computing the new cred before we pass the point of no
+>> return compute the new cred just before we use it.
+>>
+>> This allows the removal of fs_struct->in_exec and cred_guard_mutex.
+>>
+>> I am not certain why we wanted to compute the cred for the new
+>> executable so early.  Perhaps I missed something but I did not see any
+>> common errors being signaled.   So I don't think we loose anything by
+>> computing the new cred later.
+>>
+>> We gain a lot.
+>
+> Yes. I LIKE your approach after a quick glance. And I swear, I thought about
+> it too ;)
+>
+> But is it correct? I don't know. I'll try to actually read your patch next
+> week (I am on PTO untill the end of November), but I am not sure I can
+> provide a valuable feedback.
+>
+> One "obvious" problem is that, after this patch, the execing process can crash
+> in a case when currently exec() returns an error...
 
-These pages can, in some sense at least, be mapped on the CPU. DEVICE_COHERENT
-pages are mapped normally (ie. CPU can access these directly) where as
-DEVICE_PRIVATE pages are mapped using special swap entries so drivers can
-emulate coherence by migrating pages back. This is used by devices without
-coherent interconnects (ie. PCIe) where as the former could be used by eg. CXL.
+Yes.
 
-> Assuming this is out of date and ZONE_DEVICE memory is mappable into
-> page tables, assuming you want sparse allocation, ZONE_DEVICE seems to
-> suggest you at least have to re-implement the buddy logic (which isn't
-> that tall of an ask).
+I have been testing and looking at it, and I have found a few issues,
+and I am trying to see if I can resolve them.
 
-That's basically what happens - GPU drivers need memory allocation and therefore
-re-implement some form of memory allocator. Agree that just being able to
-reuse the buddy logic probably isn't that compelling though and isn't really of
-interest (hence some of my original questions on what this is about).
+The good news is that with the advent of AT_EXECVE_CHECK we have a
+really clear API boundary between errors that must be diagnosed
+and errors of happenstance like running out of memory.
 
-> But I could imagine an (overly simplistic) pattern with SPM Nodes:
-> 
-> fd = open("/dev/gpu_mem", ...)
-> buf = mmap(fd, ...)
-> buf[0] 
->    1) driver takes the fault
->    2) driver calls alloc_page(..., gpu_node, GFP_SPM_NODE)
->    3) driver manages any special page table masks
->       Like marking pages RO/RW to manage ownership.
+The bad news is that the implementation of AT_EXECVE_CHECK seems to been
+rather hackish especially with respect to security_bprm_creds_for_exec.
 
-Of course as an aside this needs to match the CPU PTEs logic (this what
-hmm_range_fault() is primarily used for).
+What I am hoping for is to get the 3 causes of errors of brpm->unsafe
+( LSM_UNSAFE_SHARE, LSM_UNSAFE_PTRACE, and LSM_UNSAFE_NO_NEW_PRIVS )
+handled cleanly outside of the cred_guard_mutex, and simply
+retested when it is time to build the credentials of the new process.
 
->    4) driver sends the gpu the (mapping_id, pfn, index) information
->       so that gpu can map the region in its page tables.
+In practice that should get the same failures modes as we have now
+but it would get SIGSEGV in rare instances where things changed
+during exec.  That feels acceptable.
 
-On coherent systems this often just uses HW address translation services
-(ATS), although I think the specific implementation of how page-tables are
-mirrored/shared is orthogonal to this.
 
->    5) since the memory is cache coherent, gpu and cpu are free to
->       operate directly on the pages without any additional magic
->       (except typical concurrency controls).
 
-This is roughly how things work with DEVICE_PRIVATE/COHERENT memory today,
-except in the case of DEVICE_PRIVATE in step (5) above. In that case the page is
-mapped as a non-present special swap entry that triggers a driver callback due
-to the lack of cache coherence.
+I thought of one other approach that might be enough to put the issue to
+bed if cleaning up exec is too much work.  We could have ptrace_attach
+use a trylock and fail when it doesn't succeed.  That would solve the
+worst of the symptoms.
 
-> Driver doesn't have to do much in the way of allocationg management.
-> 
-> This is probably less compelling since you don't want general purposes
-> services like reclaim, migration, compaction, tiering - etc.  
+I think this would be a complete patch:
 
-On at least some of our systems I'm told we do want this, hence my interest
-here. Currently we have systems not using DEVICE_COHERENT and instead just
-onlining everything as normal system managed memory in order to get reclaim
-and tiering. Of course then people complain that it's managed as normal system
-memory and non-GPU related things (ie. page-cache) end up in what's viewed as
-special purpose memory.
+diff --git a/kernel/ptrace.c b/kernel/ptrace.c
+index 75a84efad40f..5dd2144e5789 100644
+--- a/kernel/ptrace.c
++++ b/kernel/ptrace.c
+@@ -444,7 +444,7 @@ static int ptrace_attach(struct task_struct *task, long request,
+ 	 * SUID, SGID and LSM creds get determined differently
+ 	 * under ptrace.
+ 	 */
+-	scoped_cond_guard (mutex_intr, return -ERESTARTNOINTR,
++	scoped_cond_guard (mutex_try, return -EAGAIN,
+ 			   &task->signal->cred_guard_mutex) {
+ 
+ 		scoped_guard (task_lock, task) {
+-- 
+2.41.0
 
-> The value is clearly that you get to manage GPU memory like any other
-> memory, but without worry that other parts of the system will touch it.
-> 
-> I'm much more focused on the "I have memory that is otherwise general
-> purpose, and wants services like reclaim and compaction, but I want
-> strong controls over how things can land there in the first place".
 
-So maybe there is some overlap here - what I have is memoy that we want managed
-much like normal memory but with strong controls over what it can be used for
-(ie. just for tasks utilising the processing element on the accelerator).
-
- - Alistair
-
-> ~Gregory
-> 
+Eric
 
