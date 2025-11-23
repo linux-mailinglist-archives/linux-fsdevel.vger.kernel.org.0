@@ -1,164 +1,235 @@
-Return-Path: <linux-fsdevel+bounces-69598-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69599-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05742C7E9A9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Nov 2025 00:30:46 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BD9BC7E9E5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Nov 2025 00:53:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B69223A43CD
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Nov 2025 23:30:43 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1F4B434455A
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Nov 2025 23:53:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0190625C838;
-	Sun, 23 Nov 2025 23:30:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A86C62773D3;
+	Sun, 23 Nov 2025 23:52:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EScVcjbB"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UH+tmo/t"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B866915E8B
-	for <linux-fsdevel@vger.kernel.org>; Sun, 23 Nov 2025 23:30:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E960238C36
+	for <linux-fsdevel@vger.kernel.org>; Sun, 23 Nov 2025 23:52:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763940639; cv=none; b=taq5mbP5pVvSX9VdUo1U2a1+2X5YMBtFDpYpFOmmcJglvgMgIxAgbDiGse5+y6Hfv3ePd4Tsi7At6IItlCZ6wcHOZw8S4MegKIQafiPvw/54b9SdSthKRsMsVt6EUrzmEXJ3/rp/0Oe9na/YB36wmhz8RX4ADUeY8fXb+wkzSAg=
+	t=1763941977; cv=none; b=o+EEPIrbepARaBpqLKvGmBfgeG20iASYVVWjLLXAOT63Fz3AM+hD2w9KiTaN8QQMBYZDhDaiIV7O36o1dTdvegwzL/7E+IqcigzsHuQqDQxPuxzTE+UQNBysCqMyQcDTilwGWV/+BtliTTz8uHJTBPWz3JnxPhEXZtNqLFVi9tE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763940639; c=relaxed/simple;
-	bh=Pvy+F/m1v4duxz98B8A4THddFFHNKkG0VyGvrA1/Ghc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ij6hgc4r/idyEPoG1SnwrerIr6dZih2F/DBMxbsotqYUIiGqc9Ug+7N4mC7nvubPxWPWjojvGYpvRHiNL9v+OOlrEjf5bRdF+xVEkyRDkQbQeHb13e/G9Gd57wU1ZtdnRbfHc4es9TtIdvHgisiUaxUgAr8DAronVM7x4emUmjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EScVcjbB; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b736cd741c1so638937366b.0
-        for <linux-fsdevel@vger.kernel.org>; Sun, 23 Nov 2025 15:30:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763940636; x=1764545436; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Tv1JE5X/TS2XRlCcr9C03MtYzcReh6WHKJs1xEyd0dc=;
-        b=EScVcjbBR/G1eVZPVk4Yskvc9i7BEK/xa7Be3Hf/9eC+9jq9u55sSGJ7yuDctSs8P2
-         kkK+2FgnimPzOCRMaVFIKf/3fABrUy+aDD3lzLSSz2WQxSoxBdlJvCi4u57ImsslpDiK
-         W0WCVEJ+8vUT/FMZoOqVsC58RgbriGLcKl1ucGsGNCt1JW9hdTRz3UdKzQqDNZivlQoL
-         5mSiT5AlxHS5u5zRK7i5aDcauhr9z3bZlgoyT3tLw3pRqFXWGtclvbJcKQcuI1cKbGA4
-         kwwpswDmpuqOzRJZS8wJm2rWq7irq2NW7BxCr/S7B1dDrWL+yHjymzuUcdY105/PqEoS
-         XRcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763940636; x=1764545436;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Tv1JE5X/TS2XRlCcr9C03MtYzcReh6WHKJs1xEyd0dc=;
-        b=kJLQ2bxGkQjkw2ufJOw8K/iAaLa9uhxdXl3GqV09L9KH7qoZgNAWs73hRNeztVo7d5
-         bWXq8hb41fKQ6vNIZy1FhZ4f0gCXOn9J1BRaTefbmBWccY7EgaHany6+0ZcbUq8i6BzN
-         FeJOgH8VonbzX3HmnQbdrhgoulk1XQwKL8i1gP629GyamgmUt+R3TahNnKsELlm3GS3L
-         A3+mtB/wlRg/IdplvwhbSwV4TxCUFebpVdrM+EAjwvN8yJzMGrGL6rI571bknUFKYhig
-         EcR5EGoyI/o4py9xzOAc2Fx7T04bxKSdtwyojhg0M1/x8iXfkCerxqmu0d15Krz//U4/
-         uKMg==
-X-Forwarded-Encrypted: i=1; AJvYcCW1DNWjK8bXPGEhg162x7x0pm1r/aq7BTd89bjZJV9JWNS0kmn8JCjvYYyopBDwalxOxw331L0K+jkhiRF2@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgZRQxNk5ao26+/tTx1fEq/wMpIASah2TLgmYffZIITpRQFOK7
-	oDSwPqK/Cg3T5oODFcgDkn5sDiGEgTs3U3N3+34UDL9dSYaFZimE/DQGOSWLwHb0nt85o5hMXlz
-	2Ke/fi+hW10RY0yk7GLIujOyFPQujl3w=
-X-Gm-Gg: ASbGncuJThW98A8ZzQkQfHso2s5HUQ6MNQovXLlDAd0bu/iIdrVFm4IPZ+hCb3S6729
-	9jJLZ+efs8TeLyRxykKWlzN6UygQt4LHHoOqz5YsgRuxPXzWK1xrQPzsum0r2aZq+xUAprJRy66
-	xsM40C0dmrAq2nnXF6zP4IJJ7sl7yBt7M95vK47+3/UgwkH6nhKVElif0gpEKN7K5ZqwP6IuQQN
-	poCzLNouthbZIlU5GLNw7APdTZsbxYC0Ld7E6UmU/LyDEeon7MzAFRjB1RWpOrXcw/g/GN4IguS
-	SGCj2U8BZL8uEdMjRL/osh5O3A==
-X-Google-Smtp-Source: AGHT+IFACleFPfRJHavpCopq/JWN/8si0EbIS//Ul6+WVCK4Crm5e9hbCoTl2sh8Dc+b09tn/XsfFa3aiDUK7P/EwP0=
-X-Received: by 2002:a17:907:3f0a:b0:b76:3478:7d52 with SMTP id
- a640c23a62f3a-b76716953d5mr1131277866b.38.1763940635991; Sun, 23 Nov 2025
- 15:30:35 -0800 (PST)
+	s=arc-20240116; t=1763941977; c=relaxed/simple;
+	bh=G+396j5E3oSYlgXES0uT2w8/XhT7FnSRGJQJf3/XKTA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=F7J+IiO9iryAQqRLMnLvPCf6lNwIndCX5Iyglg7ZeJZ/D2GXcCGrPuPfphCQ3PNvJNkThq/rSv4+ZFeaxaEt+DWDNYG5oMi4GVW56rzBYR+Ze73LDOo3VA0wfhM2Wf4a1yEStzlDe1zujBb3DtA2pRzzj6zKTZIfWqv5A/c1NDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UH+tmo/t; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1763941973;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=3iwb5YW7lTHp3b6+iKLPVMv6CIYbcmnN5G/p+yPO23I=;
+	b=UH+tmo/tg8PV0A+XhA0d8Qhz2YfKk1r60lfHpxjcxlx4HZsbeUe5oGMz5s7Hu6r8DKDAOF
+	BQwOCjfBLNecHwo6BcKeE7PfK79+4gb9TzY+x2ttRfR8lnqXhzMK2fU+i2KGkP4NWIE95A
+	BwjgAgEvxGoLNLXecuV+FPJKV7CFySE=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-481-CPoFZG8nMTCII-yelFMgEg-1; Sun,
+ 23 Nov 2025 18:52:50 -0500
+X-MC-Unique: CPoFZG8nMTCII-yelFMgEg-1
+X-Mimecast-MFC-AGG-ID: CPoFZG8nMTCII-yelFMgEg_1763941968
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2B0951800447;
+	Sun, 23 Nov 2025 23:52:48 +0000 (UTC)
+Received: from warthog.procyon.org.com (unknown [10.42.28.14])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B42791955F1B;
+	Sun, 23 Nov 2025 23:52:45 +0000 (UTC)
+From: David Howells <dhowells@redhat.com>
+To: Steve French <sfrench@samba.org>
+Cc: David Howells <dhowells@redhat.com>,
+	Paulo Alcantara <pc@manguebit.org>,
+	Shyam Prasad N <sprasad@microsoft.com>,
+	Stefan Metzmacher <metze@samba.org>,
+	linux-cifs@vger.kernel.org,
+	netfs@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 00/12] cifs: Miscellaneous prep patches for rewrite of I/O layer
+Date: Sun, 23 Nov 2025 23:52:27 +0000
+Message-ID: <20251123235242.3361706-1-dhowells@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <69238e4d.a70a0220.d98e3.006e.GAE@google.com> <CAGudoHG9KjT=srh0H-fwmJDozZSAMiOph+npB938TJboatkWbA@mail.gmail.com>
-In-Reply-To: <CAGudoHG9KjT=srh0H-fwmJDozZSAMiOph+npB938TJboatkWbA@mail.gmail.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Mon, 24 Nov 2025 00:30:24 +0100
-X-Gm-Features: AWmQ_bnRjWi2l5zhUCy1mj4g00Fx_wZn7EMrRH3tB0z1DC07GbSG7TAii6GFwyg
-Message-ID: <CAGudoHHmOhtKYTEbqf4MA+1gxOPBwA0akba+sFadNdAC1uA3-Q@mail.gmail.com>
-Subject: Re: [syzbot] [ntfs3?] INFO: task hung in __start_renaming
-To: syzbot <syzbot+2fefb910d2c20c0698d8@syzkaller.appspotmail.com>
-Cc: agruenba@redhat.com, almaz.alexandrovich@paragon-software.com, 
-	brauner@kernel.org, dhowells@redhat.com, gfs2@lists.linux.dev, jack@suse.cz, 
-	linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, marc.dionne@auristor.com, ntfs3@lists.linux.dev, 
-	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Mon, Nov 24, 2025 at 12:29=E2=80=AFAM Mateusz Guzik <mjguzik@gmail.com> =
-wrote:
->
-> On Sun, Nov 23, 2025 at 11:44=E2=80=AFPM syzbot
-> <syzbot+2fefb910d2c20c0698d8@syzkaller.appspotmail.com> wrote:
-> > NMI backtrace for cpu 1
-> > CPU: 1 UID: 0 PID: 6107 Comm: syz.3.20 Not tainted syzkaller #0 PREEMPT=
-(full)
-> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS=
- Google 10/25/2025
-> > RIP: 0010:hlock_class kernel/locking/lockdep.c:234 [inline]
-> > RIP: 0010:mark_lock+0x3c/0x190 kernel/locking/lockdep.c:4731
-> > Code: 00 03 00 83 f9 01 bb 09 00 00 00 83 db 00 83 fa 08 0f 45 da bd 01=
- 00 00 00 89 d9 d3 e5 25 ff 1f 00 00 48 0f a3 05 c4 46 df 11 <73> 10 48 69 =
-c0 c8 00 00 00 48 8d 88 70 f3 1e 93 eb 48 83 3d 4b d6
-> > RSP: 0018:ffffc90003747518 EFLAGS: 00000007
-> > RAX: 0000000000000311 RBX: 0000000000000008 RCX: 0000000000000008
-> > RDX: 0000000000000008 RSI: ffff8880275f48a8 RDI: ffff8880275f3d00
-> > RBP: 0000000000000100 R08: 0000000000000000 R09: ffffffff8241cc56
-> > R10: dffffc0000000000 R11: ffffed100e650518 R12: 0000000000000004
-> > R13: 0000000000000003 R14: ffff8880275f48a8 R15: 0000000000000000
-> > FS:  00007fc3607da6c0(0000) GS:ffff888125fbc000(0000) knlGS:00000000000=
-00000
-> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > CR2: 0000558e8c347168 CR3: 0000000077b26000 CR4: 00000000003526f0
-> > Call Trace:
-> >  <TASK>
-> >  mark_usage kernel/locking/lockdep.c:4674 [inline]
-> >  __lock_acquire+0x6a8/0xd20 kernel/locking/lockdep.c:5191
-> >  lock_acquire+0x117/0x350 kernel/locking/lockdep.c:5868
-> >  __raw_spin_lock include/linux/spinlock_api_smp.h:133 [inline]
-> >  _raw_spin_lock+0x2e/0x40 kernel/locking/spinlock.c:154
-> >  spin_lock include/linux/spinlock.h:351 [inline]
-> >  insert_inode_locked+0x336/0x5d0 fs/inode.c:1837
-> >  ntfs_new_inode+0xc8/0x100 fs/ntfs3/fsntfs.c:1675
-> >  ntfs_create_inode+0x606/0x32a0 fs/ntfs3/inode.c:1309
-> >  ntfs_create+0x3d/0x50 fs/ntfs3/namei.c:110
-> >  lookup_open fs/namei.c:4409 [inline]
-> >  open_last_lookups fs/namei.c:4509 [inline]
-> >  path_openat+0x190f/0x3d90 fs/namei.c:4753
-> >  do_filp_open+0x1fa/0x410 fs/namei.c:4783
-> >  do_sys_openat2+0x121/0x1c0 fs/open.c:1432
-> >  do_sys_open fs/open.c:1447 [inline]
-> >  __do_sys_openat fs/open.c:1463 [inline]
-> >  __se_sys_openat fs/open.c:1458 [inline]
-> >  __x64_sys_openat+0x138/0x170 fs/open.c:1458
-> >  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-> >  do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
-> >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> > RIP: 0033:0x7fc35f98f749
-> > Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89=
- f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 =
-ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-> > RSP: 002b:00007fc3607da038 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
-> > RAX: ffffffffffffffda RBX: 00007fc35fbe5fa0 RCX: 00007fc35f98f749
-> > RDX: 000000000000275a RSI: 00002000000001c0 RDI: ffffffffffffff9c
-> > RBP: 00007fc35fa13f91 R08: 0000000000000000 R09: 0000000000000000
-> > R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-> > R13: 00007fc35fbe6038 R14: 00007fc35fbe5fa0 R15: 00007ffffeb34448
-> >  </TASK>
-> >
->
-> The bug is in ntfs. It calls d_instantiate instead of
-> d_instantiate_new and consequently there is no wakeup to begin with.
->
-> I'm going to chew on it a little bit, bare mininum d_instantiate
-> should warn about it and maybe some other fixups are warranted.
+Hi Steve,
 
-As in I'm about to turn in, will post patches on Monday.
+Could you take these patches extracted from my I/O layer rewrite for the
+upcoming merge window.  The performance change should be neutral, but it
+cleans up the code a bit.
+
+ (1) Do some minor cleanups so that patch 2 can be generated wholly by a
+     script.
+
+ (2) Organise the declarations in the cifs client header files, naming the
+     arguments the same as for the implementations, inserting divider
+     comments, ordering them the same as they're found in the files and
+     dividing them better between general, smb1 and smb2/3 categories.
+
+     The organisation is entirely scripted with the script in the second
+     patch's commit message.  The first patch does a bit of preparation to
+     make sure that the second patch's output will build.
+
+     By filling in the argument names, this stops checkpatch moaning about
+     unnamed arguments from search-and-replace changes in later patches.
+     (Note that it doesn't fix func pointer declarations).
+
+     smbdirect is left untouched as requested by Stefan Metzmacher.
+
+ (3) Add the smb3_read_* tracepoints to SMB1 as well as SMB2/3.
+
+ (4) Use netfs_alloc/free_folioq_buffer() rather than cifs doing its own
+     version.
+
+ (5) Rename struct mid_q_entry to smb_message.  In my rewrite, smb_message
+     will get allocated in the marshalling functions in smb2pdu.c and
+     cifssmb.c rather than in transport.c and used to hand parameters down
+     - and so I think it could be better named for that.
+
+ (6) Remove the RFC1002 header from the smb_hdr struct so that it's
+     consistent with SMB2/3.  This allows I/O routines to be simplified and
+     shared.
+
+ (7) Make SMB1's SendReceive() wrap cifs_send_recv() and thus share code
+     with SMB2/3.
+
+ (8) Clean up a bunch of extra kvec[] that were required for RFC1002
+     headers from SMB1's header struct.
+
+ (9) Replace SendReceiveBlockingLock() with SendReceive() plus flags.
+
+(10) Remove the server pointer from smb_message.  It can be passed down
+     from the caller to all places that need it.
+
+(11) Don't need state locking in smb2_get_mid_entry() as we're just doing a
+     single read inside the lock.  READ_ONCE() should suffice instead.
+
+(12) Add a tracepoint to log EIO errors and up to a couple of bits of info
+     for each to make it easier to find out why an EIO error happened when
+     the system is very busy without introducing printk delays.
+
+The patches can be found here also:
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=cifs-cleanup
+
+Thanks,
+David
+
+Changes
+=======
+ver #3)
+ - Rebased on the ksmbd-for-next branch.
+ - Add the patches to clean up the function prototypes in the headers.
+   - Don't touch smbdirect.
+   - Put prototypes into netlink.h and cached_dir.h rather than
+     centralising them.
+   - Indent the arguments in the prototypes to the opening bracket + 1.
+ - Cleaned up most other checkpatch complaints.
+ - Added the EIO tracepoint patch to the end.
+
+ver #2)
+ - Rebased on the ksmbd-for-next-next branch.
+ - Moved the patch to use netfs_alloc/free_folioq_buffer() down the stack.
+
+David Howells (12):
+  cifs: Do some preparation prior to organising the function
+    declarations
+  cifs: Clean up declarations
+  cifs: Add the smb3_read_* tracepoints to SMB1
+  cifs: Use netfs_alloc/free_folioq_buffer()
+  cifs: Rename mid_q_entry to smb_message
+  cifs: Remove the RFC1002 header from smb_hdr
+  cifs: Make smb1's SendReceive() wrap cifs_send_recv()
+  cifs: Clean up some places where an extra kvec[] was required for
+    rfc1002
+  cifs: Replace SendReceiveBlockingLock() with SendReceive() plus flags
+  cifs: Remove the server pointer from smb_message
+  cifs: Don't need state locking in smb2_get_mid_entry()
+  cifs: Add a tracepoint to log EIO errors
+
+ fs/smb/client/cached_dir.c    |    2 +-
+ fs/smb/client/cached_dir.h    |   37 +-
+ fs/smb/client/cifs_debug.c    |   51 +-
+ fs/smb/client/cifs_debug.h    |   15 +-
+ fs/smb/client/cifs_spnego.h   |    2 -
+ fs/smb/client/cifs_swn.h      |   15 +-
+ fs/smb/client/cifs_unicode.c  |    1 +
+ fs/smb/client/cifs_unicode.h  |   16 -
+ fs/smb/client/cifsacl.c       |   11 +-
+ fs/smb/client/cifsencrypt.c   |   83 +-
+ fs/smb/client/cifsfs.c        |   36 +-
+ fs/smb/client/cifsfs.h        |   64 --
+ fs/smb/client/cifsglob.h      |  219 ++----
+ fs/smb/client/cifspdu.h       |   13 +-
+ fs/smb/client/cifsproto.h     | 1340 +++++++++++++++++----------------
+ fs/smb/client/cifssmb.c       |  954 +++++++++++++----------
+ fs/smb/client/cifstransport.c |  439 ++---------
+ fs/smb/client/compress.c      |   23 +-
+ fs/smb/client/compress.h      |   20 +-
+ fs/smb/client/connect.c       |  200 ++---
+ fs/smb/client/dfs.h           |    4 -
+ fs/smb/client/dfs_cache.h     |   16 -
+ fs/smb/client/dir.c           |    9 +-
+ fs/smb/client/dns_resolve.h   |    3 -
+ fs/smb/client/file.c          |    7 +-
+ fs/smb/client/fs_context.c    |    2 +-
+ fs/smb/client/fs_context.h    |    9 -
+ fs/smb/client/fscache.h       |   13 +-
+ fs/smb/client/inode.c         |   15 +-
+ fs/smb/client/ioctl.c         |    1 +
+ fs/smb/client/link.c          |   11 +-
+ fs/smb/client/misc.c          |   53 +-
+ fs/smb/client/netlink.h       |    8 +-
+ fs/smb/client/netmisc.c       |   21 +-
+ fs/smb/client/nterr.h         |    2 -
+ fs/smb/client/ntlmssp.h       |   13 -
+ fs/smb/client/readdir.c       |    2 +-
+ fs/smb/client/reparse.c       |   53 +-
+ fs/smb/client/reparse.h       |   11 -
+ fs/smb/client/sess.c          |   17 +-
+ fs/smb/client/smb1ops.c       |  116 ++-
+ fs/smb/client/smb1proto.h     |  227 ++++++
+ fs/smb/client/smb2file.c      |    9 +-
+ fs/smb/client/smb2inode.c     |   12 +-
+ fs/smb/client/smb2maperror.c  |    3 +
+ fs/smb/client/smb2misc.c      |   11 +-
+ fs/smb/client/smb2ops.c       |  249 +++---
+ fs/smb/client/smb2pdu.c       |  228 +++---
+ fs/smb/client/smb2proto.h     |  516 ++++++-------
+ fs/smb/client/smb2transport.c |  113 ++-
+ fs/smb/client/smbdirect.c     |   18 +-
+ fs/smb/client/smbdirect.h     |    1 +
+ fs/smb/client/trace.h         |  153 ++++
+ fs/smb/client/transport.c     |  302 ++++----
+ fs/smb/client/xattr.c         |    2 +-
+ fs/smb/common/smb2pdu.h       |    3 -
+ fs/smb/common/smbglob.h       |    1 -
+ 57 files changed, 2913 insertions(+), 2862 deletions(-)
+ create mode 100644 fs/smb/client/smb1proto.h
+
 
