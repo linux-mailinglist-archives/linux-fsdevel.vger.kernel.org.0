@@ -1,50 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-69565-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69566-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE7D3C7E40E
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Nov 2025 17:36:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A0D80C7E411
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Nov 2025 17:36:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8D9994E3A17
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Nov 2025 16:36:03 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 930284E3156
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Nov 2025 16:36:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C9DE19F40A;
-	Sun, 23 Nov 2025 16:35:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B88BB2DBF45;
+	Sun, 23 Nov 2025 16:35:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QIAPNROc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z6CQZeSS"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9DA32D7DE2
-	for <linux-fsdevel@vger.kernel.org>; Sun, 23 Nov 2025 16:35:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 138372D7DE2
+	for <linux-fsdevel@vger.kernel.org>; Sun, 23 Nov 2025 16:35:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763915708; cv=none; b=A2RklF8TgXEOWN+jstL66KCFSBXGskHugGzRC1CYqJAyVdlyZc2WcdAosRpFs0O16su/4mvW3hAmG78x02ot6wSCw3/j2Zlpt1SuEgCrsV+Co+wF8ew/a9i4/niVy9/R2eY6BzTBISGeR+jt/W0p8XO89WlCgDKuZOU0Fvv+0Y4=
+	t=1763915711; cv=none; b=q8jd/hbG8CT33ko8+z19nMMRwnESVMAYjOM8s1YBwu0FJAAQBtyFbWPjr1LRA5rz6geqBjtdKSpi+R3BYSFKVqUzFhoZJYDYrhRRz/jQBF58Ks3lSJWBkD5mDxvlWKMR3oVIGOfWHO4WExl5KYFuUyRp+tMhpzaowxLR1GsNgvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763915708; c=relaxed/simple;
-	bh=ZjF7eX02ra0cqU+1/WTWxQLupNjHYOilBNfCKQyNlY0=;
+	s=arc-20240116; t=1763915711; c=relaxed/simple;
+	bh=+wPZfd7lmTHIKiTRUWfhojrF+IKhBYg0IQHn74Y6AE0=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=FvS4WHjieErW0saE18DpGT8MxpDbNzK/7XRrEZ3X+yj/Lma+LBjm9dXV11sSwAO8vJyqr8sLuidC9KXVP9eYbaZrT9IpQM6V2d/t+pUrGcKWq7KFEPISf7LRo3X6vAoUbPzIy97vQxsm9aHsunYwyGUHSyDWfo1ol9bQZAvSFMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QIAPNROc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE0CBC113D0;
-	Sun, 23 Nov 2025 16:35:06 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=K45PpWNeBVeslRRuNiIi3LK9jRO5p+qxc0XzSL/d+CPYUnthQ/Gm92geuvz737xwEsGt0rPLXlQbUtDiPOeiBeF12CBt6OQcsBzThiSuY2rFdW6BFoGIPJlDeaScOWDwFrqXpcFE/hPFjbSA9xWghRq1f8HXbeTN03KXWNljvnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z6CQZeSS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27DFAC116D0;
+	Sun, 23 Nov 2025 16:35:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763915708;
-	bh=ZjF7eX02ra0cqU+1/WTWxQLupNjHYOilBNfCKQyNlY0=;
+	s=k20201202; t=1763915710;
+	bh=+wPZfd7lmTHIKiTRUWfhojrF+IKhBYg0IQHn74Y6AE0=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=QIAPNROccFBv7hyKvLTzcmuFA2E7hbJLqA90enOefVs6fPmU2YkXJzW+XOlcmA4uI
-	 +lOSs185d2iv1SAOR6vFtK/Je3EDls6Iv8QN/hc6K38TrlA4Z1tqLN/4kJAIq2z+SU
-	 a7aYNCBUINLnAsyxEV31lxfsnBA5bOHqFRNz1wUEsIaU+gXerP/ZWFaAFKZrvf+nuS
-	 1HymcRHfKLGRiMG6Al/SuMRmN9KpZkr3HM0S7IzStYquS3+7a0iYXHPZRB50uegBLv
-	 dn8z5HQPC1mn3vrRxfxD7e0SnjronQMlIXi+OwaI6ANtvwRfwX9hLi9tRzD2MI+q5G
-	 XsdePV3gluyoA==
+	b=Z6CQZeSSdFmxa9s1bwf/+EsmMUiQBHIIdwTQ36EPobPrLVq0YzXIsVKXJ3H2FuUtX
+	 WrzBM87f50doStyjIJ6nFnKJuuXW7oRvmKtsHr6OAla3D1uN/IVdmip762NL6/c94P
+	 71rxWWqxNdCIP7FHTcsHN/Oy7OENXFAFyd4uKgsijXYl6ChiUPwPkyCtPoVFRdRcVU
+	 4O2YWbgpGdpZvbAxMBu6Xw9NcTW9dW8t0twHYkkoYdeKAfcIoxPC1Galuc/Yx0ysLr
+	 P359nTyQL9hj6/d4Yt4GWjCjFIMaGCce5mxphGxQs72mnUDEZdUt4VTAFBBqzIEJKf
+	 M+/FyYMtFnK5A==
 From: Christian Brauner <brauner@kernel.org>
-Date: Sun, 23 Nov 2025 17:34:01 +0100
-Subject: [PATCH v4 43/47] vfio: convert vfio_group_ioctl_get_device_fd() to
- FD_PREPARE()
+Date: Sun, 23 Nov 2025 17:34:02 +0100
+Subject: [PATCH v4 44/47] file: convert replace_fd() to FD_PREPARE()
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -53,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251123-work-fd-prepare-v4-43-b6efa1706cfd@kernel.org>
+Message-Id: <20251123-work-fd-prepare-v4-44-b6efa1706cfd@kernel.org>
 References: <20251123-work-fd-prepare-v4-0-b6efa1706cfd@kernel.org>
 In-Reply-To: <20251123-work-fd-prepare-v4-0-b6efa1706cfd@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
@@ -62,67 +61,61 @@ Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
  Amir Goldstein <amir73il@gmail.com>, Jens Axboe <axboe@kernel.dk>, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-a6db3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1369; i=brauner@kernel.org;
- h=from:subject:message-id; bh=ZjF7eX02ra0cqU+1/WTWxQLupNjHYOilBNfCKQyNlY0=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQqm0cv/fQzw4n91IVzQW9mLlGuCXLSuun3ge1uYtuj9
- HCrzFf/O0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACZyTYuR4fFMY1375ebdjx0z
- RTacWFRoeKbJ5cqydVNiZ6VreP4IW8/wh1vXsS7wuMsvzkc3e6v9pvzXqgsPOM949OWSH1sSt02
- U5AQA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1108; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=+wPZfd7lmTHIKiTRUWfhojrF+IKhBYg0IQHn74Y6AE0=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQqm0dPd5AVXi+qeLDD78vln9eFDXVLZYI7PSLnuqX0b
+ hBju2jbUcrCIMbFICumyOLQbhIut5ynYrNRpgbMHFYmkCEMXJwCMBFRZ4Z/ihZ2JzUWLiid3WQw
+ Kfqoz6SE40qSmWxPV/kncr2XdIq8wvBX6uGu3LVn709l15ZZ+4p1eWjD59BNnHsuLNNwWZP2wzq
+ DDQA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- drivers/vfio/group.c | 28 +++++-----------------------
- 1 file changed, 5 insertions(+), 23 deletions(-)
+ fs/file.c | 19 ++++++++-----------
+ 1 file changed, 8 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/vfio/group.c b/drivers/vfio/group.c
-index c376a6279de0..d47ffada6912 100644
---- a/drivers/vfio/group.c
-+++ b/drivers/vfio/group.c
-@@ -299,10 +299,8 @@ static int vfio_group_ioctl_get_device_fd(struct vfio_group *group,
- 					  char __user *arg)
+diff --git a/fs/file.c b/fs/file.c
+index 28743b742e3c..7ea33a617896 100644
+--- a/fs/file.c
++++ b/fs/file.c
+@@ -1357,28 +1357,25 @@ int replace_fd(unsigned fd, struct file *file, unsigned flags)
+  */
+ int receive_fd(struct file *file, int __user *ufd, unsigned int o_flags)
  {
- 	struct vfio_device *device;
--	struct file *filep;
- 	char *buf;
--	int fdno;
--	int ret;
-+	int fd;
+-	int new_fd;
+ 	int error;
  
- 	buf = strndup_user(arg, PAGE_SIZE);
- 	if (IS_ERR(buf))
-@@ -313,26 +311,10 @@ static int vfio_group_ioctl_get_device_fd(struct vfio_group *group,
- 	if (IS_ERR(device))
- 		return PTR_ERR(device);
+ 	error = security_file_receive(file);
+ 	if (error)
+ 		return error;
  
--	fdno = get_unused_fd_flags(O_CLOEXEC);
--	if (fdno < 0) {
--		ret = fdno;
--		goto err_put_device;
--	}
--
--	filep = vfio_device_open_file(device);
--	if (IS_ERR(filep)) {
--		ret = PTR_ERR(filep);
--		goto err_put_fdno;
--	}
--
--	fd_install(fdno, filep);
--	return fdno;
--
--err_put_fdno:
--	put_unused_fd(fdno);
--err_put_device:
--	vfio_device_put_registration(device);
--	return ret;
-+	fd = FD_ADD(O_CLOEXEC, vfio_device_open_file(device));
-+	if (fd < 0)
-+		vfio_device_put_registration(device);
-+	return fd;
+-	new_fd = get_unused_fd_flags(o_flags);
+-	if (new_fd < 0)
+-		return new_fd;
++	FD_PREPARE(fdf, o_flags, file);
++	if (fdf.err)
++		return fdf.err;
++	get_file(file);
+ 
+ 	if (ufd) {
+-		error = put_user(new_fd, ufd);
+-		if (error) {
+-			put_unused_fd(new_fd);
++		error = put_user(fd_prepare_fd(fdf), ufd);
++		if (error)
+ 			return error;
+-		}
+ 	}
+ 
+-	fd_install(new_fd, get_file(file));
+-	__receive_sock(file);
+-	return new_fd;
++	__receive_sock(fd_prepare_file(fdf));
++	return fd_publish(fdf);
  }
+ EXPORT_SYMBOL_GPL(receive_fd);
  
- static int vfio_group_ioctl_get_status(struct vfio_group *group,
 
 -- 
 2.47.3
