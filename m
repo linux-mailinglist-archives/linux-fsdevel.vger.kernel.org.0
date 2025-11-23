@@ -1,47 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-69520-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69521-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD1F2C7E33B
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Nov 2025 17:05:38 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1636C7E347
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Nov 2025 17:07:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C4433A759A
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Nov 2025 16:05:37 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 5A87F3481F7
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Nov 2025 16:07:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D26762D7DEE;
-	Sun, 23 Nov 2025 16:05:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA0362D8371;
+	Sun, 23 Nov 2025 16:07:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aEj7LDNR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i2mg2s8U"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DC701D5154;
-	Sun, 23 Nov 2025 16:05:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0764D27472;
+	Sun, 23 Nov 2025 16:07:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763913930; cv=none; b=dDybDrmR9myI2lGc1+zcZ6eg5T3voY2ACL5b8CkoycJDtq+Pi2BOCG8x9GbW4JAC2wdpSP6+K1D4y72R8S5Fdbmx4+witpOA+GUHsLwFoedZrVt+wRA72aH3ZCJWz/2fFF/jCKBBfAl5HWVYHgFZ5aGT75mBKgpYmCu5B7zAi78=
+	t=1763914066; cv=none; b=MjLCzJeY+nhn9shkNRMXwvAjyhuV6l/wFqpe4HvcBxQ1e8chvbyynGsSdN6zAy6mNm5xrdgIHjTwCw0y/nnpPxvrzOsUN9aUR6raBqeg0aXIj/o1PORs3RP+HJukpHbr/5PbWj4W1gG/WjOLg6G9/PIi1/bTQMmAJEvKIT+oGUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763913930; c=relaxed/simple;
-	bh=iVWayNIJ4hSH3Fqh4iv5N9nJbnfnFx1jKHx44lnHwXU=;
+	s=arc-20240116; t=1763914066; c=relaxed/simple;
+	bh=7gBCeai/PYLWlQyJ7zmnTaLwRvHr9b0Er9v8ly4gDBE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dpnEzcD3Uvs1UaA1gmY/ppmdH9hRjXgQmmdhkNrlkGzK50brVH+mrNjswhjGqat4JUgCGZ2DlGgsIJY8dDww0vJbrNm7HA+2wn89LgP52zNd0hZPhzRI6SUH67UuomjgAJJs49O19m9+UamT1gTsN9Whqxfxhd4neEq7XjzDBAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aEj7LDNR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38118C113D0;
-	Sun, 23 Nov 2025 16:05:07 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=CyXWvj8kKBRlSy9U9ZtbnEu0X5HvA6mg6ZrudhmkOAynwXFyignbobZDXvc0ZfLUePcOPdYpQkE+j46np36wynoM5EuCAtelVmGftdkjVo0SXpKxFQlxbElF28shj29lfzsWWemBzsRa7JPNn8C3rxbC3W2h6nwAZJ7Wq3d73FI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i2mg2s8U; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D0A4C113D0;
+	Sun, 23 Nov 2025 16:07:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763913929;
-	bh=iVWayNIJ4hSH3Fqh4iv5N9nJbnfnFx1jKHx44lnHwXU=;
+	s=k20201202; t=1763914065;
+	bh=7gBCeai/PYLWlQyJ7zmnTaLwRvHr9b0Er9v8ly4gDBE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aEj7LDNRFeKh3Brh5+Tnr8ys08Au6/iNifFEu4npSUjlpEkRYtPbFWkAjmIarvG8o
-	 mEzqiU89wuYLBYXVGdOOOAk8rx0Dazs0GlcpSaYsgNGo5lwL5m2Jf7CBz0vNZ+4wqz
-	 +z5CncVvHnb/uxJJcDP6+g3aw8zEFJbufD0NkRidmC1MmbAfTQHK3+qGpE2iZYHImm
-	 2SQQG4LklKSH6FB+hsmnVgb9xIEjTOlGc1BRau9nScUKdf2XVH0eOEYomBOlHHJwME
-	 Ar/tB4blesu7ifnYesL6JbhCDzsdhbiEJAcWwDtaXpVLrgYFZGAydc4FmD5GjGcEzi
-	 qrOWnGFWJObLA==
-Date: Sun, 23 Nov 2025 18:05:04 +0200
+	b=i2mg2s8U6qfDREC8jiXuiUV+BZWRjfeaUtQywQBP3iD96fEacOZ+FJboHt9MAkrvR
+	 djGJ84TvCoRsIAuf6EVYZmNGLurfJ7ecHvZl86uB4kQgXEgdVQyOP89B4TpCJVej8l
+	 HBGje5ja6ujFE7hwA7S6dGQdct+B5PSVdfJ8QkY6m7zsv0w9l+SpMgNtchkAZFhRFz
+	 UoPg1Gpovm3ehI3zg+eLlyDCqspqUjfSStZe6lK62R+oHfJyDelX/Rye0Ze656xxtz
+	 7U4L3G3sC0TPxgM+aaPvMbCO2WFtRzEIX2uvE/Oh7G/GFXvX73gbS4zBFIRx4QyOgS
+	 008nHEbqU116w==
+Date: Sun, 23 Nov 2025 18:07:21 +0200
 From: Mike Rapoport <rppt@kernel.org>
 To: Pasha Tatashin <pasha.tatashin@soleen.com>
 Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com,
@@ -71,10 +71,11 @@ Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com,
 	ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com,
 	leonro@nvidia.com, witu@nvidia.com, hughd@google.com,
 	skhawaja@google.com, chrisl@kernel.org
-Subject: Re: [PATCH v7 08/22] docs: add luo documentation
-Message-ID: <aSMwsLstAutayHbC@kernel.org>
+Subject: Re: [PATCH v7 15/22] docs: add documentation for memfd preservation
+ via LUO
+Message-ID: <aSMxOTnxKuQ4bce9@kernel.org>
 References: <20251122222351.1059049-1-pasha.tatashin@soleen.com>
- <20251122222351.1059049-9-pasha.tatashin@soleen.com>
+ <20251122222351.1059049-16-pasha.tatashin@soleen.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -83,28 +84,27 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251122222351.1059049-9-pasha.tatashin@soleen.com>
+In-Reply-To: <20251122222351.1059049-16-pasha.tatashin@soleen.com>
 
-On Sat, Nov 22, 2025 at 05:23:35PM -0500, Pasha Tatashin wrote:
-> Add the documentation files for the Live Update Orchestrator
+On Sat, Nov 22, 2025 at 05:23:42PM -0500, Pasha Tatashin wrote:
+> From: Pratyush Yadav <ptyadav@amazon.de>
 > 
+> Add the documentation under the "Preserving file descriptors" section of
+> LUO's documentation.
+> 
+> Signed-off-by: Pratyush Yadav <ptyadav@amazon.de>
+> Co-developed-by: Pasha Tatashin <pasha.tatashin@soleen.com>
 > Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
-> ---
-
-> +Public API
-> +==========
-> +.. kernel-doc:: include/linux/liveupdate.h
-> +
-> +.. kernel-doc:: include/linux/kho/abi/luo.h
-
-Please add 
-
-   :functions:
-
-here, otherwise "DOC: Live Update Orchestrator ABI" is repeated here as
-well in the generated html.
 
 Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+
+> ---
+>  Documentation/core-api/liveupdate.rst   |  7 +++++++
+>  Documentation/mm/index.rst              |  1 +
+>  Documentation/mm/memfd_preservation.rst | 23 +++++++++++++++++++++++
+>  MAINTAINERS                             |  1 +
+>  4 files changed, 32 insertions(+)
+>  create mode 100644 Documentation/mm/memfd_preservation.rst
 
 -- 
 Sincerely yours,
