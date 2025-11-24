@@ -1,218 +1,194 @@
-Return-Path: <linux-fsdevel+bounces-69620-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69621-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 581DDC7EF87
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Nov 2025 06:04:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74340C7EFB7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Nov 2025 06:08:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1247F3A464A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Nov 2025 05:04:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41FC33A3261
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Nov 2025 05:08:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75B7A2C3272;
-	Mon, 24 Nov 2025 05:04:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B00B82D0C72;
+	Mon, 24 Nov 2025 05:08:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PGWFz4wk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 683A829A309;
-	Mon, 24 Nov 2025 05:04:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0568B29D29A;
+	Mon, 24 Nov 2025 05:08:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763960655; cv=none; b=IBzBmvfF4Pjx3mZmmjTb6bicb1tlxIzr1LT1V6FUUBdPK+OvzlVEaxKMvyAlDXKLs1g/76xgMDodI3fOKUPHt1z6iaWQ7DEd0u6Pdk2eyKTRRfrouPyRTtslTbbW74M5xAqezjXjU4pkdsGhj2R8VO71NnAywdfXS2LyDcKpEUU=
+	t=1763960893; cv=none; b=PNIN7NN0a7aQZ/HCLUdhnrw6h0FvCxJACoRe2+d+U+t8RhZ82DoY872gYwUUkBHuUm9vnk8CNUY8ILjEMCsfSLFPNyWsOLUbstzJuzuFq6lpcwH41egxmY9Ob4Poq12pQEYlCEZzYDcmnrE3acfhICNQdmPpsWeVHOVDVp4hTR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763960655; c=relaxed/simple;
-	bh=XPBWlaq7pBCHqb/1hfGLypZVWpyi9bR4N/NiF+eqtT0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lK8/ZuXFiUr/D8l5CSmQWPQNN8Yk8bqEMw3vkXk4o9PMdqFiTQVI0RAD4JVjoSkyaE1K8PEGCmWi2+Kzb64leWTXOGDkUr3x5atKBPGUwItQeDAyQH/Hi/2F6AbECns1qjXUz5dzjeUsR4y1eLLL4+oum8AzlsHAFSR/3VuSkFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4dFDHF00lzzYQtvq;
-	Mon, 24 Nov 2025 13:03:20 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 011251A07BD;
-	Mon, 24 Nov 2025 13:04:08 +0800 (CST)
-Received: from [10.174.178.152] (unknown [10.174.178.152])
-	by APP2 (Coremail) with SMTP id Syh0CgB31HpF5yNpEahMBw--.13718S3;
-	Mon, 24 Nov 2025 13:04:06 +0800 (CST)
-Message-ID: <9cef3b97-083e-48e6-aced-3e250df364e3@huaweicloud.com>
-Date: Mon, 24 Nov 2025 13:04:04 +0800
+	s=arc-20240116; t=1763960893; c=relaxed/simple;
+	bh=hieoIPxIhRSooVrU3/2wVozJyRs1qMXLmzpW8xV1wzY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Rpr3vdwRU1szvrOanwMZ4JycVih+/gN0PpI7ePJFcaM915mFjtqBc5W5VhCXwa2rCy/kFtl+4qorO567NdY9uQZ3bXaupFyz306N2/LRf+djnve+Z5iysTxV1GoK6DZwjliQfO/Mbw33oXcZWhDTRGb16dvg8FGEj/zl0BfsbQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PGWFz4wk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 463A1C4CEF1;
+	Mon, 24 Nov 2025 05:07:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763960891;
+	bh=hieoIPxIhRSooVrU3/2wVozJyRs1qMXLmzpW8xV1wzY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PGWFz4wkyghWCM5P7ckMfeF1ztZvSWtS2QEwkzMCzyzCVgtFKGEkLgJqy/viT440v
+	 yaLEfYvDaQKnLSy6uR+9I+i+ZINn7SDTB+/qX8KrflY1cjgOHRmknnXDOV/u0/FvGu
+	 NNUNwqZ/xrD2U3CUlUTED32zlbalE8ApcvCTVV7fCZM+JTWXoXtS4lzsdcfGlmNLAZ
+	 /qzpXLU7vNgOw/YDtFTUPhAuvbAOle9zzBCqJRbhAWlNE1Pbz9cKm2a0gIDY1NPbmC
+	 0aQfUTilZ7Bh0ou+L5xM7SHml4e2W0OPll/Ctzpic/zP4fsRsIy5pDrE+VWMcYh228
+	 +PoEtTeYVePdw==
+Date: Mon, 24 Nov 2025 07:07:47 +0200
+From: Mike Rapoport <rppt@kernel.org>
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com,
+	dmatlack@google.com, rientjes@google.com, corbet@lwn.net,
+	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com,
+	kanie@linux.alibaba.com, ojeda@kernel.org, aliceryhl@google.com,
+	masahiroy@kernel.org, akpm@linux-foundation.org, tj@kernel.org,
+	yoann.congal@smile.fr, mmaurer@google.com, roman.gushchin@linux.dev,
+	chenridong@huawei.com, axboe@kernel.dk, mark.rutland@arm.com,
+	jannh@google.com, vincent.guittot@linaro.org, hannes@cmpxchg.org,
+	dan.j.williams@intel.com, david@redhat.com,
+	joel.granados@kernel.org, rostedt@goodmis.org,
+	anna.schumaker@oracle.com, song@kernel.org, linux@weissschuh.net,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-mm@kvack.org, gregkh@linuxfoundation.org, tglx@linutronix.de,
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+	x86@kernel.org, hpa@zytor.com, rafael@kernel.org, dakr@kernel.org,
+	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com,
+	myungjoo.ham@samsung.com, yesanishhere@gmail.com,
+	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com,
+	aleksander.lobakin@intel.com, ira.weiny@intel.com,
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de,
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com,
+	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net,
+	brauner@kernel.org, linux-api@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, saeedm@nvidia.com,
+	ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com,
+	leonro@nvidia.com, witu@nvidia.com, hughd@google.com,
+	skhawaja@google.com, chrisl@kernel.org
+Subject: Re: [PATCH v7 01/22] liveupdate: luo_core: Live Update Orchestrator
+Message-ID: <aSPoIw2keoueM2q8@kernel.org>
+References: <20251122222351.1059049-1-pasha.tatashin@soleen.com>
+ <20251122222351.1059049-2-pasha.tatashin@soleen.com>
+ <aSLsCxLhrnyUlcy4@kernel.org>
+ <CA+CK2bCN7x=eMwfTXF-2+vR=Gn3=41z6Xxx6wM1m7i-rxzug9w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 00/13] ext4: replace ext4_es_insert_extent() when
- caching on-disk extents
-To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
- jack@suse.cz, yi.zhang@huawei.com, yizhang089@gmail.com,
- libaokun1@huawei.com, yangerkun@huawei.com
-References: <20251121060811.1685783-1-yi.zhang@huaweicloud.com>
- <aSLoN-oEqS-OpLKE@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
-Content-Language: en-US
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-In-Reply-To: <aSLoN-oEqS-OpLKE@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:Syh0CgB31HpF5yNpEahMBw--.13718S3
-X-Coremail-Antispam: 1UD129KBjvJXoW3JFyfCrWfGrW5CrWrZF4fZrb_yoWxJr4fpF
-	ZIkay5Kr4UX3s7KrWfJ3Wjqr15Ww4fGr47CrySgw48ZFyUAFy2qrWkKay09F92qrWkGw1Y
-	vF4Iyrn8C3W5A3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
-	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
-	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1
-	7KsUUUUUU==
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CA+CK2bCN7x=eMwfTXF-2+vR=Gn3=41z6Xxx6wM1m7i-rxzug9w@mail.gmail.com>
 
-Hi, Ojaswin!
-
-On 11/23/2025 6:55 PM, Ojaswin Mujoo wrote:
-> On Fri, Nov 21, 2025 at 02:07:58PM +0800, Zhang Yi wrote:
->> Changes since v1:
->>  - Rebase the codes based on the latest linux-next 20251120.
->>  - Add patches 01-05, fix two stale data problems caused by
+On Sun, Nov 23, 2025 at 07:15:44AM -0500, Pasha Tatashin wrote:
+> On Sun, Nov 23, 2025 at 6:12 AM Mike Rapoport <rppt@kernel.org> wrote:
+> >
+> > On Sat, Nov 22, 2025 at 05:23:28PM -0500, Pasha Tatashin wrote:
+> > > Introduce LUO, a mechanism intended to facilitate kernel updates while
+> > > keeping designated devices operational across the transition (e.g., via
+> > > kexec). The primary use case is updating hypervisors with minimal
+> > > disruption to running virtual machines. For userspace side of hypervisor
+> > > update we have copyless migration. LUO is for updating the kernel.
+> > >
+> > > This initial patch lays the groundwork for the LUO subsystem.
+> > >
+> > > Further functionality, including the implementation of state transition
+> > > logic, integration with KHO, and hooks for subsystems and file
+> > > descriptors, will be added in subsequent patches.
+> > >
+> > > Create a character device at /dev/liveupdate.
+> > >
+> > > A new uAPI header, <uapi/linux/liveupdate.h>, will define the necessary
+> > > structures. The magic number for IOCTL is registered in
+> > > Documentation/userspace-api/ioctl/ioctl-number.rst.
+> > >
+> > > Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+> > > Reviewed-by: Pratyush Yadav <pratyush@kernel.org>
+> >
+> > Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
 > 
-> Hi Zhang, thanks for the patches.
+> Thank you
 > 
-
-Thank you for take time to look at this series.
-
-> I've always felt uncomfortable with the ZEROOUT code here because it
-> seems to have many such bugs as you pointed out in the series. Its very
-> fragile and the bugs are easy to miss behind all the data valid and
-> split flags mess. 
+> >
+> > with a few nits below
+> >
+> > > ---
+> >
+> > > diff --git a/kernel/liveupdate/Kconfig b/kernel/liveupdate/Kconfig
+> > > index a973a54447de..90857dccb359 100644
+> > > --- a/kernel/liveupdate/Kconfig
+> > > +++ b/kernel/liveupdate/Kconfig
+> > > @@ -1,4 +1,10 @@
+> > >  # SPDX-License-Identifier: GPL-2.0-only
+> > > +#
+> > > +# Copyright (c) 2025, Google LLC.
+> > > +# Pasha Tatashin <pasha.tatashin@soleen.com>
+> > > +#
+> > > +# Live Update Orchestrator
+> > > +#
+> >
+> > If you are adding copyrights it should have Amazon and Microsoft as well.
+> > I believe those from kexec_handover.c would work.
+> >
+> > @Alex?
 > 
+> Sure, or I can remove all of them from Kconfig, whatever you prefer :-)
 
-Yes, I agree with you. The implementation of EXT4_EXT_MAY_ZEROOUT has
-significantly increased the complexity of split extents and the
-potential for bugs.
+Quick grepping shows that the vast majority of Kconfigs does not have
+copyright, let's just drop it.
 
-> As per my understanding, ZEROOUT logic seems to be a special best-effort
-> try to make the split/convert operation "work" when dealing with
-> transient errors like ENOSPC etc. I was just wondering if it makes sense
-> to just get rid of the whole ZEROOUT logic completely and just reset the
-> extent to orig state if there is any error. This allows us to get rid of
-> DATA_VALID* flags as well and makes the whole ext4_split_convert_extents() 
-> slightly less messy.
+> > >  menu "Live Update and Kexec HandOver"
+> > >       depends on !DEFERRED_STRUCT_PAGE_INIT
+> > > @@ -51,4 +57,25 @@ config KEXEC_HANDOVER_ENABLE_DEFAULT
+> > >         The default behavior can still be overridden at boot time by
+> > >         passing 'kho=off'.
+> > >
+> > > +config LIVEUPDATE
+> > > +     bool "Live Update Orchestrator"
+> > > +     depends on KEXEC_HANDOVER
+> > > +     help
+> > > +       Enable the Live Update Orchestrator. Live Update is a mechanism,
+> > > +       typically based on kexec, that allows the kernel to be updated
+> > > +       while keeping selected devices operational across the transition.
+> > > +       These devices are intended to be reclaimed by the new kernel and
+> > > +       re-attached to their original workload without requiring a device
+> > > +       reset.
+> > > +
+> > > +       Ability to handover a device from current to the next kernel depends
+> > > +       on specific support within device drivers and related kernel
+> > > +       subsystems.
+> >
+> > Sorry, somehow this slipped during v6 review.
+> > These days LUO is less about devices and more about file descriptors :)
 > 
-> Maybe we can have a retry loop at the top level caller if we want to try
-> again for say ENOSPC or ENOMEM. 
+> Device preservation through file descriptors: memfd, iommufd, vfiofd
+> are all dependencies for preserving devices.
 > 
-> Would love to hear your thoughts on it.
+> That Kconfig description is correct and essential because the core
+> complexity of the LUO is the preservation of device state and I/O
+> across a kernel transition, which is a harder problem than just
+> preserving memory or files, for that we could have used a file system
+> instead of inventing something new with logic of can_preserve() etc.
 > 
+> Device preservation requires exactly what is stated in the description
+> for this config:
+> "Ability to handover a device from current to the next kernel depends
+> on specific support within device drivers and related kernel
+> subsystems." The only subsystem that is getting upstreamed with this
+> series is MEMFD, it is a hard pre-requirement for iommufd
+> preservation; the other subsystems: VFIO, PCI, IOMMU are WIP.
+ 
+Ok.
 
-I think this is a direction worth exploring. However, what I am
-currently considering is that we need to address this scenario of
-splitting extent during the I/O completion. Although the ZEROOUT logic
-is fragile and has many issues recently, it currently serves as a
-fallback solution for handling ENOSPC errors that arise when splitting
-extents during I/O completion. It ensures that I/O operations do not
-fail due to insufficient extent blocks.
-
-Please see ext4_convert_unwritten_extents_endio(). Although we have made
-our best effort to tried to split extents using
-EXT4_GET_BLOCKS_IO_CREATE_EXT before issuing I/Os, we still have not
-covered all scenarios. Moreover, after converting the buffered I/O path
-to the iomap infrastructure in the future, we may need to split extents
-during the I/O completion worker[1].
-
-In most block allocation processes, we already have a retry loop to deal
-with ENOSPC or ENOMEM, such as ext4_should_retry_alloc(). However, it
-doesn't seem appropriate to place this logic into the I/O completion
-handling process (I haven't thought this solution through deeply yet,
-but I'm afraid it could introduce potential deadlock risks due to its
-involvement with journal operations), and we can't just simply try again.
-If we remove the ZEROOUT logic, we may lose our last line of defense
-during the I/O completion.
-
-Currently, I am considering whether it is possible to completely remove
-EXT4_GET_BLOCKS_IO_CREATE_EXT so that extents are not split before
-submitting I/Os; instead, all splitting would be performed when
-converting extents to written after the I/O completes. Based on my patch,
-"ext4: use reserved metadata blocks when splitting extent on endio"[2],
-and the ZEROOUT logic, this approach appears feasible, and xfstest-bld
-shows no regressions.
-
-So I think the ZEROOUT logic remains somewhat useful until we find better
-solution(e.g., making more precise reservations for metadata). Perhaps we
-can refactor both the split extent and ZEROOUT logic to make them more
-concise.
-
-[1] https://lore.kernel.org/linux-ext4/20241022111059.2566137-18-yi.zhang@huaweicloud.com/
-[2] https://lore.kernel.org/linux-ext4/20241022111059.2566137-12-yi.zhang@huaweicloud.com/
-
-Cheers,
-Yi.
-
-> Thanks,
-> Ojaswin
-> 
->>    EXT4_EXT_MAY_ZEROOUT when splitting extent.
->>  - Add patches 06-07, fix two stale extent status entries problems also
->>    caused by splitting extent.
->>  - Modify patches 08-10, extend __es_remove_extent() and
->>    ext4_es_cache_extent() to allow them to overwrite existing extents of
->>    the same status when caching on-disk extents, while also checking
->>    extents of different stauts and raising alarms to prevent misuse.
->>  - Add patch 13 to clear the usage of ext4_es_insert_extent(), and
->>    remove the TODO comment in it.
->>
->> v1: https://lore.kernel.org/linux-ext4/20251031062905.4135909-1-yi.zhang@huaweicloud.com/
->>
->> Original Description
->>
->> This series addresses the optimization that Jan pointed out [1]
->> regarding the introduction of a sequence number to
->> ext4_es_insert_extent(). The proposal is to replace all instances where
->> the cache of on-disk extents is updated by using ext4_es_cache_extent()
->> instead of ext4_es_insert_extent(). This change can prevent excessive
->> cache invalidations caused by unnecessarily increasing the extent
->> sequence number when reading from the on-disk extent tree.
->>
->> [1] https://lore.kernel.org/linux-ext4/ympvfypw3222g2k4xzd5pba4zhkz5jihw4td67iixvrqhuu43y@wse63ntv4s6u/
->>
->> Cheers,
->> Yi.
->>
->> Zhang Yi (13):
->>   ext4: cleanup zeroout in ext4_split_extent_at()
->>   ext4: subdivide EXT4_EXT_DATA_VALID1
->>   ext4: don't zero the entire extent if EXT4_EXT_DATA_PARTIAL_VALID1
->>   ext4: don't set EXT4_GET_BLOCKS_CONVERT when splitting before
->>     submitting I/O
->>   ext4: correct the mapping status if the extent has been zeroed
->>   ext4: don't cache extent during splitting extent
->>   ext4: drop extent cache before splitting extent
->>   ext4: cleanup useless out tag in __es_remove_extent()
->>   ext4: make __es_remove_extent() check extent status
->>   ext4: make ext4_es_cache_extent() support overwrite existing extents
->>   ext4: adjust the debug info in ext4_es_cache_extent()
->>   ext4: replace ext4_es_insert_extent() when caching on-disk extents
->>   ext4: drop the TODO comment in ext4_es_insert_extent()
->>
->>  fs/ext4/extents.c        | 127 +++++++++++++++++++++++----------------
->>  fs/ext4/extents_status.c | 121 ++++++++++++++++++++++++++++---------
->>  fs/ext4/inode.c          |  18 +++---
->>  3 files changed, 176 insertions(+), 90 deletions(-)
->>
->> -- 
->> 2.46.1
->>
-
+-- 
+Sincerely yours,
+Mike.
 
