@@ -1,89 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-69627-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69628-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE13BC7F03C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Nov 2025 07:06:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C1FFC7F04B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Nov 2025 07:12:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 82EBD345DC2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Nov 2025 06:06:10 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3AFF6344293
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Nov 2025 06:12:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 294012D0C64;
-	Mon, 24 Nov 2025 06:06:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFA822C21D4;
+	Mon, 24 Nov 2025 06:12:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bsI5Eq7W"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gB0r2+qY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2C65221F39
-	for <linux-fsdevel@vger.kernel.org>; Mon, 24 Nov 2025 06:05:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BB5B217736;
+	Mon, 24 Nov 2025 06:12:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763964359; cv=none; b=ZSNA48zTDOFRLOl6BftHfCUBTQxLumnEjmUxlvgnj0bFTRYzhnExMYLperQWN9yv3ZkZ5VosAVpE7aBGGVze+k5XKYyG3ExTRxREsSUO6zT3ow0BLYdpKJ7lvQ7SakXOmvFuvXCQBcM13wvh+eiLbEEgGNdTr37SCZHjo6rK1LA=
+	t=1763964752; cv=none; b=uSYZpDvuSQ8FDCMVxjbc+Kg3IvPZcfBpGmz344yfrnLD5jMMYHVwdz9nAa1rHGknN6F2i+LK4mnSszq/wJATTqsnwcHuGH2M1Dbanikhuk93N8oKSgfLOoDnDIJedNq8UF4vjYLHdNF8V3/Itp4sPr7m+qvabnK/09Pe7gDUKzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763964359; c=relaxed/simple;
-	bh=2CbeR8ntenQ/udtVhShMbURQAzej9vCJiC0LEn5ddxo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TMpAJTh9oGEDPFby+JPq5qQy/OoC+sGxlJFYWEQ2D0roy3AfcdmA054ipB3A7hlYXgYn3CIvYHWwlW/cBO1/Wn02rS8I2MncPT92Z5sUeC53vdHW60jbXZKWXQcjoyD74duwEjSY/H66wGELQD/Zj9mx8jejKbIpg5dLLmdJCmc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bsI5Eq7W; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-42b566859ecso3473856f8f.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 23 Nov 2025 22:05:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1763964356; x=1764569156; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=rZqOLfNt4NNjM4szCLBdWh2M6zRj7620Z1ksv8HS62c=;
-        b=bsI5Eq7WM5o1MsHflC2TU+27GoNjGqfn0Eon/PYJCuPpTIZ0SnJadfXFw5+ecFqxFo
-         lzEdbaXh4/SMIUxxyKRqnW02RLlrS7u4i3GgxTqFYB+f++jS8r0n0nMHpA2RzzT1J0Qq
-         mHtANDl93/eAjZbovv8E07DKM8T6VtE+2Z2pX86cWNw/DmicO+etSkVntzJ1vSlPq/y0
-         HQ1qkKcPvygHyShiT7kPbmeyBRe2IVcqpLPFl8CpH4ZETB1jkVEkI3I0pKoh3nDOwT/5
-         htUJ3GFB42+SvhWNmw1tRWejCaPFhal3CgSwj/AhO51YJ0k+avBcSmSzfQvEfe/cuFG0
-         jFtQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763964356; x=1764569156;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rZqOLfNt4NNjM4szCLBdWh2M6zRj7620Z1ksv8HS62c=;
-        b=khgPr8Rh6guHYq8HGMF+Gi7PG0FNof+pr2E6vw7mduohT9+NbV4aPGWgf1GU4VMgPd
-         kRo26K3URLPotQA2aQ7cEgeA3euU3eaXD6KXLD0xTaVry0G6OKqAGH5/Z2zzzS3sKqEA
-         zb8X30bmVYHBPzS/LgoLlbSc5nC5P5rjQM/LYSt0UPvm3k4hOCZfurl9exHZ8RAhqhp6
-         l8WkhXWLzxdL04I6/QYhVEuHWY1+dyWNr2s9hQoBNTLFgxdcBa3qPbTqARQS/Kn1m7ix
-         oqVpmt4mYnbbUH4Gqz3dSWSc0gSKvx0/XUEq4Is6KEgFp9b42Ijm8Cbqcl82GNxrsfAl
-         BqmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV0l3kTDc5ry0MNFCyMkIDRm8HgvzbTP89kFMA/4CPvzbVA6rSVRW1kLVYS69niXrFvX0emCANPJJUey1KW@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWO/fkizRbmePCdD8A6hBiR8GE61Dl4GrhR/0c8tl4oZClyGCB
-	61sBFf/qrE9cRGkWzlpVgYBPZXVgshnKiXgUyvGMCVAlxXh+J/XETDX4PWbKtz3nmQ0=
-X-Gm-Gg: ASbGnct8SAfdWxosY9sm2S+O5opAIL4FIONeAhnmZrSA/8mAeDd/IhhyJl+84nTYiaE
-	xtXb2UEVdifNoAY+3FBpRY51smc54Cf9cVUN67kIkh2qh5ih3IOfeksjT3sRU654J4V/NK8X+LK
-	GSuMM5bCW0r4S2SwlWZugCOW/fMoZHlJ9izwYmT/cZSqjtyGYM9FiL/XJY9dRDWt/qz7r/2OiA1
-	3E8rnQnwIQREcmmaaOP/H8daig0+Gq4QK0xu4ygGddOepUpAbTdDBffnXtJEM0VJsdW44W8j9F+
-	vS7CypejkNbkcWpOk/MHwwbtP3YL97rs2wkIn6KaailmxojwEv/pjQfjxwTdDj+XoX/DqgQQAAT
-	fUxixAth0QMx2OH2uWxztz1Ks2rgOF+Nj3/x/O5+WvTMR7clUzBOnP24XSJCbyDbRlrHY9Dwsmr
-	b2Db87tt60tzcQlBMOrmNKl1DyEK8=
-X-Google-Smtp-Source: AGHT+IFTj6UXP07vA5yQa/8SUGDxXg+ZGMMepdyy1bTa4eJm35XddA65LTq5vpooyvG9kjtwauYocg==
-X-Received: by 2002:a5d:5e01:0:b0:425:742e:7823 with SMTP id ffacd0b85a97d-42cc1ac9401mr11186194f8f.12.1763964356070;
-        Sun, 23 Nov 2025 22:05:56 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-42cb7fa35c2sm25166281f8f.25.2025.11.23.22.05.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Nov 2025 22:05:55 -0800 (PST)
-Date: Mon, 24 Nov 2025 09:05:30 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Luis Henriques <luis@igalia.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] fuse: Uninitialized variable in fuse_epoch_work()
-Message-ID: <aSP1qs4SOHrDE0tO@stanley.mountain>
-References: <aSBqUPeT2JCLDsGk@stanley.mountain>
- <873467mqz7.fsf@wotan.olymp>
- <aSCkt-DZR7A8U1y7@stanley.mountain>
- <87ms4ez7q4.fsf@wotan.olymp>
+	s=arc-20240116; t=1763964752; c=relaxed/simple;
+	bh=INSVYBbb1E6CIB2V0nuUCar+mTYYmoNlpmuEOEMDuLA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=Upl47gxXZJJk/0xcbaNAI/5yNKEPtbNwPwvPMoHJN2JIqIQF9ZdKu04pYI3//Mzxk9w80EaqYS/3TcHgD8LsOis9b7EfIihxJj4WVqTwwZpUbcSrcIgrBsNwIGvNTek/jKE+/8GJb2olzWgKaiU69Iu79lDXuIb3H4saXAI+RkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=gB0r2+qY; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding
+	:Content-ID:Content-Description:References;
+	bh=Z4mpNf1BIRqsb//AvdOD24l+kOdTjNMLa/8oJp+WiNI=; b=gB0r2+qYFrX2fpYnAbAqE6haFb
+	RfJMzle8EyHBPLt39T/J1EKj29mR8d3AE1mR3n8CE3Si4nD1HAm45+idOFExtUaIlu16pBvBa86l/
+	w96yrlHj5gRKg/WnFqkqueXTXDXBtI1Sp6kB4JZqAjn9XUIv1NBIZ9xi5d1uIXWcsd8xEkVM/kOq4
+	3gOkrPC6kf11pS9aRUFka8n4YjJTtj7RiO80SCF7G+/vXP0psKiehJTFTfOt4rcVyHkb+z1uMBUlf
+	dJl52wPwBvmQhmlsOs7N6YVAnnw2E91r3cpoDF7S0WRptRczxcPfBTrqwXacK26EkY/ipETMW3YPa
+	crnVygFA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vNPoG-0000000B8JO-3nwL;
+	Mon, 24 Nov 2025 06:12:24 +0000
+Date: Sun, 23 Nov 2025 22:12:24 -0800
+From: Christoph Hellwig <hch@infradead.org>
+To: Ming Lei <ming.lei@redhat.com>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+	Mikulas Patocka <mpatocka@redhat.com>,
+	Zhaoyang Huang <zhaoyang.huang@unisoc.com>,
+	Dave Chinner <dchinner@redhat.com>, linux-fsdevel@vger.kernel.org
+Subject: calling into file systems directly from ->queue_rq, was Re: [PATCH
+ V5 0/6] loop: improve loop aio perf by IOCB_NOWAIT
+Message-ID: <aSP3SG_KaROJTBHx@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -92,36 +62,20 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87ms4ez7q4.fsf@wotan.olymp>
+In-Reply-To: <20251015110735.1361261-1-ming.lei@redhat.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Sat, Nov 22, 2025 at 10:23:31AM +0000, Luis Henriques wrote:
-> On Fri, Nov 21 2025, Dan Carpenter wrote:
-> 
-> > On Fri, Nov 21, 2025 at 01:53:48PM +0000, Luis Henriques wrote:
-> >> On Fri, Nov 21 2025, Dan Carpenter wrote:
-> >> 
-> >> > The "fm" pointer is either valid or uninitialized so checking for NULL
-> >> > doesn't work.  Check the "inode" pointer instead.
-> >> 
-> >> Hmm?  Why do you say 'fm' isn't initialised?  That's what fuse_ilookup()
-> >> is doing, isn't it?
-> >> 
-> >
-> > I just checked again on linux-next.  fuse_ilookup() only initializes
-> > *fm on the success path.  It's either uninitialized or valid.
-> 
-> Yikes! You're absolutely right, I'm sorry for replying without checking.
-> 
-> Feel free to add my
-> 
-> Reviewed-by: Luis Henriques <luis@igalia.com>
-> 
-> Although I guess you're patch could also move the iput():
-> 
+FYI, with this series I'm seeing somewhat frequent stack overflows when
+using loop on top of XFS on top of stacked block devices.
 
-Yeah.  Good point.  It's cleaner that way.  I've sent a v2.
+This seems to be because this can now issue I/O directly from ->queue_rq
+instead of breaking the stack chain, i.e. we can build much deeper call
+stacks now.
 
-regards,
-dan carpenter
+Also this now means a file systems using current->journal_info can call
+into another file system trying to use, making things blow up even worse.
+
+In other words:  I don't think issuing file system I/O from the
+submission thread in loop can work, and we should drop this again.
 
 
