@@ -1,47 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-69622-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69623-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26238C7EFD5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Nov 2025 06:20:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6224CC7EFE9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Nov 2025 06:25:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C4A4C3462C6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Nov 2025 05:20:50 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D62903444B9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Nov 2025 05:25:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE4C72D1916;
-	Mon, 24 Nov 2025 05:20:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 170C32D2387;
+	Mon, 24 Nov 2025 05:25:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pAAUK8xI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lhFRjbNJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F9F21B4138;
-	Mon, 24 Nov 2025 05:20:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C4C71B4138;
+	Mon, 24 Nov 2025 05:25:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763961642; cv=none; b=aWMXZzyTrJqdQba0jnlJi19vyQNUqykFmiwBiiGlfAJGXoQheG9YFp0QnAC4/wx0kEVnP+HeRVXnUQTnbC0+LPIyeQHZ05todZlof6lMRjhsBMUdaaEEi/LAYl/Yql/iQFiqc6BVPqqXN+V6f7XiDjki/0X6QqMbgQGQ+IFV2Kk=
+	t=1763961916; cv=none; b=bjEIBoksfcq+jSkwVDkxd+4CcAkEYAU5GO4iYvO5mehLZhwTIr4ERsm1R1R6nlelcyOstJG6lLI7JcwaX1veVOzCSRKmCMr8NRdV1geViHYQiH3Jf/oDpdotg7k4hvL/9M9wwLWWlGK53Z674SBYivodhUkTJYjAZ6zspWGdOyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763961642; c=relaxed/simple;
-	bh=orSAmTMGafLHYjEKKYaHreeHKsJFj4UJH1WnVx2XGfk=;
+	s=arc-20240116; t=1763961916; c=relaxed/simple;
+	bh=hL+WuH16BodbGdYWuFoGGzwEFzfedl2zaIxXHQ/7Fh4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=px/iCvA1aqLXWeSBYfHaiGj9G/KotqEPdOh/1OUWEcmBZDVaKyKypxWALvMYcRJCRPJTxay2Sy226YM1qDuwMKYd0lVGu8b/iQ9Cxe6GX9RNAzmHfodchvE7/VrQhaXhUicWVZomJf+HN2BbWdKtzMkU10hLg+VXTOPFyEhiMaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pAAUK8xI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE65CC4CEF1;
-	Mon, 24 Nov 2025 05:20:20 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=qh1mqKUPN8ZmpFC1C+nTIqC22KbjWoecm/n6S2UIMwLUGBTasRt4g5k2z2U0/23Bbtsnm7kz3jEJsGRCKI/gQI1dSJoD1uPbCChCb7mHdfBcowhBlkEPn5ZvUAoqV/bSgx7PIuvTJ/4BWc11EbQXufhZ+R7VqD/y8/noys2ogts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lhFRjbNJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 903C0C4CEF1;
+	Mon, 24 Nov 2025 05:24:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763961641;
-	bh=orSAmTMGafLHYjEKKYaHreeHKsJFj4UJH1WnVx2XGfk=;
+	s=k20201202; t=1763961914;
+	bh=hL+WuH16BodbGdYWuFoGGzwEFzfedl2zaIxXHQ/7Fh4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pAAUK8xIBrTLmZBWd7jWub9Eap+4labhYwFwPFXrHKfjYH58DE+TRQrdbYgYf0sG9
-	 vuXD2dHLbZhjnFdAILj2MFTo/QhcZJSZ0r25L4dIJSd3l7Ke4AwadVC2q0Z6STvsRV
-	 c7NRkaxj8qCllb3oSoQlHonVjwSzWpYNIvhIRlzujuLmsdulFw/5nVgk2qyUOSW1J4
-	 vi7BQiIv6DA4zo/yrl/jKef8QbfKTnchHJ6HEhnzrQChxJ6JTR+/7txs6cPFeS1nQc
-	 i4LZU+J2ZmQIQ7aSUaCe4g2/C1mwDfygX30A8AGOqmFyPwYkRLh1xYPiyq1JIozgTC
-	 8lNdE2YwlIBJg==
-Date: Mon, 24 Nov 2025 07:20:17 +0200
+	b=lhFRjbNJw060eoWLi2/Kwsm6uYipzROQU74BjALZaDsbs2kf8nJfYdXhoSf/DhSCy
+	 wcYfchkquawskyiHSEaSupeop0R3M6TiaUFEitaxBBw7fikyI2BjmqPX1TTWSO53t4
+	 6k+zodPUDaiYy8SL3EcWlbQ+ZB31H3c7ylAeWvi/Dfl/gW1pESvWZmStm97TVdletG
+	 tHGUH9HNWcXPe/09wKDEsH+MGWhBMfcHWA12vMSXqFifdncJOj48O/vsVhGfCxbfzn
+	 QT7U2wSN0rRcaeSeOmgtIpiTwVdi/iXHGjWjcIRH4WihsB8MqXnGOoVeqTmXI/gxPX
+	 hfQm1K4vovJWw==
+Date: Mon, 24 Nov 2025 07:24:50 +0200
 From: Mike Rapoport <rppt@kernel.org>
 To: Pasha Tatashin <pasha.tatashin@soleen.com>
 Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com,
@@ -71,11 +71,11 @@ Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com,
 	ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com,
 	leonro@nvidia.com, witu@nvidia.com, hughd@google.com,
 	skhawaja@google.com, chrisl@kernel.org
-Subject: Re: [PATCH v7 07/22] liveupdate: luo_session: Add ioctls for file
- preservation
-Message-ID: <aSPrEfxdj8aqNsyw@kernel.org>
+Subject: Re: [PATCH v7 16/22] selftests/liveupdate: Add userspace API
+ selftests
+Message-ID: <aSPsIgXuJJvD4RSk@kernel.org>
 References: <20251122222351.1059049-1-pasha.tatashin@soleen.com>
- <20251122222351.1059049-8-pasha.tatashin@soleen.com>
+ <20251122222351.1059049-17-pasha.tatashin@soleen.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -84,38 +84,58 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251122222351.1059049-8-pasha.tatashin@soleen.com>
+In-Reply-To: <20251122222351.1059049-17-pasha.tatashin@soleen.com>
 
-On Sat, Nov 22, 2025 at 05:23:34PM -0500, Pasha Tatashin wrote:
-> Introducing the userspace interface and internal logic required to
-> manage the lifecycle of file descriptors within a session. Previously, a
-> session was merely a container; this change makes it a functional
-> management unit.
+On Sat, Nov 22, 2025 at 05:23:43PM -0500, Pasha Tatashin wrote:
+> Introduce a selftest suite for LUO. These tests validate the core
+> userspace-facing API provided by the /dev/liveupdate device and its
+> associated ioctls.
 > 
-> The following capabilities are added:
+> The suite covers fundamental device behavior, session management, and
+> the file preservation mechanism using memfd as a test case. This
+> provides regression testing for the LUO uAPI.
 > 
-> A new set of ioctl commands are added, which operate on the file
-> descriptor returned by CREATE_SESSION. This allows userspace to:
-> - LIVEUPDATE_SESSION_PRESERVE_FD: Add a file descriptor to a session
->   to be preserved across the live update.
-> - LIVEUPDATE_SESSION_RETRIEVE_FD: Retrieve a preserved file in the
->   new kernel using its unique token.
-> - LIVEUPDATE_SESSION_FINISH: finish session
+> The following functionality is verified:
 > 
-> The session's .release handler is enhanced to be state-aware. When a
-> session's file descriptor is closed, it correctly unpreserves
-> the session based on its current state before freeing all
-> associated file resources.
+> Device Access:
+>     Basic open and close operations on /dev/liveupdate.
+>     Enforcement of exclusive device access (verifying EBUSY on a
+>     second open).
+> 
+> Session Management:
+>     Successful creation of sessions with unique names.
+>     Failure to create sessions with duplicate names.
+> 
+> File Preservation:
+>     Preserving a single memfd and verifying its content remains
+>     intact post-preservation.
+>     Preserving multiple memfds within a single session, each with
+>     unique data.
+>     A complex scenario involving multiple sessions, each containing
+>     a mix of empty and data-filled memfds.
+> 
+> Note: This test suite is limited to verifying the pre-kexec
+> functionality of LUO (e.g., session creation, file preservation).
+> The post-kexec restoration of resources is not covered, as the kselftest
+> framework does not currently support orchestrating a reboot and
+> continuing execution in the new kernel.
 > 
 > Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
-> Reviewed-by: Pratyush Yadav <pratyush@kernel.org>
 
 Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
 
 > ---
->  include/uapi/linux/liveupdate.h | 103 ++++++++++++++++++
->  kernel/liveupdate/luo_session.c | 187 +++++++++++++++++++++++++++++++-
->  2 files changed, 288 insertions(+), 2 deletions(-)
+>  MAINTAINERS                                   |   1 +
+>  tools/testing/selftests/Makefile              |   1 +
+>  tools/testing/selftests/liveupdate/.gitignore |   9 +
+>  tools/testing/selftests/liveupdate/Makefile   |  27 ++
+>  tools/testing/selftests/liveupdate/config     |  11 +
+>  .../testing/selftests/liveupdate/liveupdate.c | 348 ++++++++++++++++++
+>  6 files changed, 397 insertions(+)
+>  create mode 100644 tools/testing/selftests/liveupdate/.gitignore
+>  create mode 100644 tools/testing/selftests/liveupdate/Makefile
+>  create mode 100644 tools/testing/selftests/liveupdate/config
+>  create mode 100644 tools/testing/selftests/liveupdate/liveupdate.c
 
 -- 
 Sincerely yours,
