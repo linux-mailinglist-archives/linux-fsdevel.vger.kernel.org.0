@@ -1,121 +1,273 @@
-Return-Path: <linux-fsdevel+bounces-69649-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69650-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88332C7FFDF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Nov 2025 11:51:33 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 971C6C80135
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Nov 2025 12:05:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D13B3A6F30
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Nov 2025 10:51:31 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7E8374E49B2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Nov 2025 11:05:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E14C2279918;
-	Mon, 24 Nov 2025 10:51:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D3082FC881;
+	Mon, 24 Nov 2025 11:05:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="1ntrX0iG";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="yvgfZ7bU";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="1ntrX0iG";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="yvgfZ7bU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C582D2741C0
-	for <linux-fsdevel@vger.kernel.org>; Mon, 24 Nov 2025 10:51:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94E84255F28
+	for <linux-fsdevel@vger.kernel.org>; Mon, 24 Nov 2025 11:05:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763981488; cv=none; b=rVOf88Yxn4BMNjvmg+bONzmawebzhMFa0fUWZgW5Yh7w5PD4KSQ8PLHBXtMZbF50qFmwe4ep31CUA2/MIQCbdsXddgf5YpAGDV1OmzZVVR7mgb20GKOEFpyIZoZ0JBAzS2i7jvByGFryuxgGMlsahxvip7P+W3n3pGP2PjjZtPM=
+	t=1763982322; cv=none; b=QP2JLEUsy8Q9QnKo47utFOT5+9eInEphEoOcXrxlJ0Ek/2m1Y4yQdTFWDpskL0nD8Jdo3dXuQcw07vbNfxPPGpXv06GFa3AMQU70bfIE/5Is4fpMVIxhKp3VqB6WeGSx/E4MYSd5k+8DgKD3dguTA42gAvQ8rpDoNRXBVeIiRh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763981488; c=relaxed/simple;
-	bh=oOyKObgVYJ7zXXogeHlJaoCQkExYAWt7psrjkXOau3Y=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=qS7aNH5fZ8R+o5CdsUITPOQPfy09OwBBQcRUPZrI5+lSSxMBsXy42W2ij7tYcgPh17jOLisbY4xZJrCNNhAhidQNKwIN7i2d8NEmFuSBs2QjbL61xfxCsdfDL1TJ9sCOJgjLVZZ2Re+KdF7Pijvq6iPB1rUe37kc8UkLzr/6GLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 5AOApH1g032072;
-	Mon, 24 Nov 2025 19:51:17 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.10] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 5AOAorVL031980
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Mon, 24 Nov 2025 19:51:17 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <6b89bfd8-feb1-47a1-85cb-d3e16f51d9e3@I-love.SAKURA.ne.jp>
-Date: Mon, 24 Nov 2025 19:50:52 +0900
+	s=arc-20240116; t=1763982322; c=relaxed/simple;
+	bh=XJyeqKMfO7PvxWOB9KLoVnFlC5ukWtv8JvKs/92Fz7I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ncV7ocfcae2LgX3gZ+9XxQKyagjqfjUbVGVppFJXkWZHgAz/FdFQwL8ZSUANcjURsrDDtso59Nj5WJX9r9ODci6yOe3hoETHGvNtuzxmpo30KLdDonu2vueARLze4qEOd5CYvUKL/u539OwY90GhOVnHCH8ML8XZ7wVcT39T7U8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=1ntrX0iG; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=yvgfZ7bU; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=1ntrX0iG; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=yvgfZ7bU; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 99887220E8;
+	Mon, 24 Nov 2025 11:05:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1763982318; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BTiFmNst004/hKep4SmkbhL1QIIT91eaNUaKbk4k4TQ=;
+	b=1ntrX0iG0XhmSUsYVGtWMwqzFun938MPT3QwNJGRglK30Ys7/mb3uhXwEHVKTHiJ9L+cQk
+	AilTY6HifZc2PuUDuDZrDi0HKOT3FFgaHOvpJXKzCIiP/7ahGBFK1B2Zs+OgF/NFOsxmH7
+	TDfVg4mG03SwZ2CkP7Xo74FUBIZEIic=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1763982318;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BTiFmNst004/hKep4SmkbhL1QIIT91eaNUaKbk4k4TQ=;
+	b=yvgfZ7bURf6lsqrWCg21sMEMG+jeUHpjhpnl6RUyVJuZWZrHJ3k2K6MMIwC6DhX4KvgkDM
+	t1xl/BVP7HmieyAA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1763982318; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BTiFmNst004/hKep4SmkbhL1QIIT91eaNUaKbk4k4TQ=;
+	b=1ntrX0iG0XhmSUsYVGtWMwqzFun938MPT3QwNJGRglK30Ys7/mb3uhXwEHVKTHiJ9L+cQk
+	AilTY6HifZc2PuUDuDZrDi0HKOT3FFgaHOvpJXKzCIiP/7ahGBFK1B2Zs+OgF/NFOsxmH7
+	TDfVg4mG03SwZ2CkP7Xo74FUBIZEIic=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1763982318;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BTiFmNst004/hKep4SmkbhL1QIIT91eaNUaKbk4k4TQ=;
+	b=yvgfZ7bURf6lsqrWCg21sMEMG+jeUHpjhpnl6RUyVJuZWZrHJ3k2K6MMIwC6DhX4KvgkDM
+	t1xl/BVP7HmieyAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8E0073EA61;
+	Mon, 24 Nov 2025 11:05:18 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id n0OpIu47JGl0SQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 24 Nov 2025 11:05:18 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 14FC0A0A04; Mon, 24 Nov 2025 12:05:14 +0100 (CET)
+Date: Mon, 24 Nov 2025 12:05:14 +0100
+From: Jan Kara <jack@suse.cz>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Christian Brauner <brauner@kernel.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, "Darrick J. Wong" <djwong@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Jens Axboe <axboe@kernel.dk>, Avi Kivity <avi@scylladb.com>, 
+	Damien Le Moal <dlemoal@kernel.org>, Naohiro Aota <naohiro.aota@wdc.com>, 
+	Johannes Thumshirn <jth@kernel.org>, linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	io-uring@vger.kernel.org
+Subject: Re: [PATCH 3/5] iomap: rework REQ_FUA selection
+Message-ID: <saep4t5rujrszxabjiou5x5y5o26thwdyu3vr5wf6uvn6zxpf4@ybkwqxwl55d2>
+References: <20251113170633.1453259-1-hch@lst.de>
+ <20251113170633.1453259-4-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] sys/linux/filesystem: remove hpfs check=none mount option
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-To: Mikulas Patocka <mikulas@twibright.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Cc: syzkaller <syzkaller@googlegroups.com>,
-        Viacheslav Sablin <sjava1902@gmail.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Aleksandr Nogikh <nogikh@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jan Kara <jack@suse.cz>, Sasha Levin <sashal@kernel.org>
-References: <cb9e2aac-d215-42f5-a7b4-e3e463a7e57a@I-love.SAKURA.ne.jp>
- <CANp29Y70nHpDtn1FAHPx7KccMLUWD272Jztw4SF0yMG4Fs-RbQ@mail.gmail.com>
- <2cc02c92-9f5a-4193-bdc2-df958e7b35e9@I-love.SAKURA.ne.jp>
-Content-Language: en-US
-In-Reply-To: <2cc02c92-9f5a-4193-bdc2-df958e7b35e9@I-love.SAKURA.ne.jp>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Virus-Status: clean
-X-Anti-Virus-Server: fsav204.rs.sakura.ne.jp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251113170633.1453259-4-hch@lst.de>
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_COUNT_THREE(0.00)[3];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,suse.cz:email]
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
+X-Spam-Level: 
 
-Can we move this forward?
+On Thu 13-11-25 18:06:28, Christoph Hellwig wrote:
+> The way how iomap_dio_can_use_fua and the caller is structured is
+> a bit confusing, as the main guarding condition is hidden in the
+> helper, and the secondary conditions are split between caller and
+> callee.
+> 
+> Refactor the code, so that iomap_dio_bio_iter itself tracks if a write
+> might need metadata updates based on the iomap type and flags, and
+> then have a condition based on that to use the FUA flag.
+> 
+> Note that this also moves the REQ_OP_WRITE assignment to the end of
+> the branch to improve readability a bit.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-Since syzkaller is not the only fuzzer, and syz_execute_func() could still find
-check=none option, I prefer disabling dangerous behavior at the kernel config level.
-It would be nice if HPFS for check=none case is implemented using FUSE.
+Looks good. Feel free to add:
 
-On 2025/11/06 7:05, Tetsuo Handa wrote:
-> On 2025/11/06 6:16, Aleksandr Nogikh wrote:
->> Hi Tetsuo,
->>
->> Could you please share a link to the original discussion with Mikulas Patocka?
->> It would be great to know a bit more context.
-> 
-> https://lkml.kernel.org/r/889ee229-8f2f-2bd4-c870-fbd11a3c4098@twibright.com
-> https://lkml.kernel.org/r/9ca81125-1c7b-ddaf-09ea-638bc5712632@redhat.com
-> 
->>
->> On Thu, Oct 16, 2025 at 2:29 PM Tetsuo Handa
->> <penguin-kernel@i-love.sakura.ne.jp> wrote:
->>>
->>> Mikulas Patocka (the HPFS maintainer) thinks that check=none option
->>> should not be used in fuzz testing.
->>>
->>> Closes https://syzkaller.appspot.com/bug?extid=fa88eb476e42878f2844
->>> ---
->>>  sys/linux/filesystem.txt | 1 -
->>>  1 file changed, 1 deletion(-)
->>
->> FWIW
->>
->> Considering how fuzzers work, it's challenging to prevent them from
->> doing something specific. Removing the descriptions is the necessary
->> first step, but
->> 1) Mounts with check=none are already in the fuzzer corpuses, most
->> likely with multiple mutations on top.
->> 2) Even without descriptions, syzkaller might discover this mount
->> option again in the future.
-> 
-> Yes, syz_execute_func() (and other fuzzers) would find again.
-> That's why I proposed disabling in the kernel config.
-> 
->>
->> For cases like this, we unfortunately just keep on stacking the "when
->> mounting filesystem X, remove the substring Y if it's in the mount
->> options" rules in the C implementation of the syz_mount_image
->> pseudo-syscall:
->> https://github.com/google/syzkaller/blob/master/executor/common_linux.h#L3136
->>
-> 
+Reviewed-by: Jan Kara <jack@suse.cz>
 
+								Honza
+
+> ---
+>  fs/iomap/direct-io.c | 78 +++++++++++++++++++++++++++-----------------
+>  1 file changed, 48 insertions(+), 30 deletions(-)
+> 
+> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+> index 765ab6dd6637..fb2d83f640ef 100644
+> --- a/fs/iomap/direct-io.c
+> +++ b/fs/iomap/direct-io.c
+> @@ -287,23 +287,6 @@ static int iomap_dio_zero(const struct iomap_iter *iter, struct iomap_dio *dio,
+>  	return 0;
+>  }
+>  
+> -/*
+> - * Use a FUA write if we need datasync semantics and this is a pure data I/O
+> - * that doesn't require any metadata updates (including after I/O completion
+> - * such as unwritten extent conversion) and the underlying device either
+> - * doesn't have a volatile write cache or supports FUA.
+> - * This allows us to avoid cache flushes on I/O completion.
+> - */
+> -static inline bool iomap_dio_can_use_fua(const struct iomap *iomap,
+> -		struct iomap_dio *dio)
+> -{
+> -	if (iomap->flags & (IOMAP_F_SHARED | IOMAP_F_DIRTY))
+> -		return false;
+> -	if (!(dio->flags & IOMAP_DIO_WRITE_THROUGH))
+> -		return false;
+> -	return !bdev_write_cache(iomap->bdev) || bdev_fua(iomap->bdev);
+> -}
+> -
+>  static int iomap_dio_bio_iter(struct iomap_iter *iter, struct iomap_dio *dio)
+>  {
+>  	const struct iomap *iomap = &iter->iomap;
+> @@ -332,7 +315,24 @@ static int iomap_dio_bio_iter(struct iomap_iter *iter, struct iomap_dio *dio)
+>  		return -EINVAL;
+>  
+>  	if (dio->flags & IOMAP_DIO_WRITE) {
+> -		bio_opf |= REQ_OP_WRITE;
+> +		bool need_completion_work = true;
+> +
+> +		switch (iomap->type) {
+> +		case IOMAP_MAPPED:
+> +			/*
+> +			 * Directly mapped I/O does not inherently need to do
+> +			 * work at I/O completion time.  But there are various
+> +			 * cases below where this will get set again.
+> +			 */
+> +			need_completion_work = false;
+> +			break;
+> +		case IOMAP_UNWRITTEN:
+> +			dio->flags |= IOMAP_DIO_UNWRITTEN;
+> +			need_zeroout = true;
+> +			break;
+> +		default:
+> +			break;
+> +		}
+>  
+>  		if (iomap->flags & IOMAP_F_ATOMIC_BIO) {
+>  			/*
+> @@ -345,22 +345,40 @@ static int iomap_dio_bio_iter(struct iomap_iter *iter, struct iomap_dio *dio)
+>  			bio_opf |= REQ_ATOMIC;
+>  		}
+>  
+> -		if (iomap->type == IOMAP_UNWRITTEN) {
+> -			dio->flags |= IOMAP_DIO_UNWRITTEN;
+> -			need_zeroout = true;
+> -		}
+> -
+> -		if (iomap->flags & IOMAP_F_SHARED)
+> +		if (iomap->flags & IOMAP_F_SHARED) {
+> +			/*
+> +			 * Unsharing of needs to update metadata at I/O
+> +			 * completion time.
+> +			 */
+> +			need_completion_work = true;
+>  			dio->flags |= IOMAP_DIO_COW;
+> +		}
+>  
+> -		if (iomap->flags & IOMAP_F_NEW)
+> +		if (iomap->flags & IOMAP_F_NEW) {
+> +			/*
+> +			 * Newly allocated blocks might need recording in
+> +			 * metadata at I/O completion time.
+> +			 */
+> +			need_completion_work = true;
+>  			need_zeroout = true;
+> -		else if (iomap->type == IOMAP_MAPPED &&
+> -			 iomap_dio_can_use_fua(iomap, dio))
+> -			bio_opf |= REQ_FUA;
+> +		}
+>  
+> -		if (!(bio_opf & REQ_FUA))
+> -			dio->flags &= ~IOMAP_DIO_WRITE_THROUGH;
+> +		/*
+> +		 * Use a FUA write if we need datasync semantics and this is a
+> +		 * pure overwrite that doesn't require any metadata updates.
+> +		 *
+> +		 * This allows us to avoid cache flushes on I/O completion.
+> +		 */
+> +		if (dio->flags & IOMAP_DIO_WRITE_THROUGH) {
+> +			if (!need_completion_work &&
+> +			    !(iomap->flags & IOMAP_F_DIRTY) &&
+> +			    (!bdev_write_cache(iomap->bdev) ||
+> +			     bdev_fua(iomap->bdev)))
+> +				bio_opf |= REQ_FUA;
+> +			else
+> +				dio->flags &= ~IOMAP_DIO_WRITE_THROUGH;
+> +		}
+> +		bio_opf |= REQ_OP_WRITE;
+>  	} else {
+>  		bio_opf |= REQ_OP_READ;
+>  	}
+> -- 
+> 2.47.3
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
