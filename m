@@ -1,47 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-69623-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69624-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6224CC7EFE9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Nov 2025 06:25:25 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4E8EC7EFFC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Nov 2025 06:30:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D62903444B9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Nov 2025 05:25:24 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 75AE63455D5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Nov 2025 05:30:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 170C32D2387;
-	Mon, 24 Nov 2025 05:25:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90B642D2490;
+	Mon, 24 Nov 2025 05:30:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lhFRjbNJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MRnghpgd"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C4C71B4138;
-	Mon, 24 Nov 2025 05:25:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4CEA28850B;
+	Mon, 24 Nov 2025 05:29:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763961916; cv=none; b=bjEIBoksfcq+jSkwVDkxd+4CcAkEYAU5GO4iYvO5mehLZhwTIr4ERsm1R1R6nlelcyOstJG6lLI7JcwaX1veVOzCSRKmCMr8NRdV1geViHYQiH3Jf/oDpdotg7k4hvL/9M9wwLWWlGK53Z674SBYivodhUkTJYjAZ6zspWGdOyI=
+	t=1763962200; cv=none; b=KaAfIHKqxyFGsqcRPzSOz7YfpssagR++bAYbM4JKkp8qVO47SD8RYXJdth1re1QO5nlR4jpvp0q/qDSm7ZomtJ647Yt8xezdqUjtl/AK34cWSyGd+e11SCGWw0RB0qRDaoGlriY1s4XaV0WTfffPj8RvEdhvXBYsrvafNJ+hGMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763961916; c=relaxed/simple;
-	bh=hL+WuH16BodbGdYWuFoGGzwEFzfedl2zaIxXHQ/7Fh4=;
+	s=arc-20240116; t=1763962200; c=relaxed/simple;
+	bh=avcnQohM/OC7Wf4uBeH1QDfwgtHGDe/RN/kIl6nBXVY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qh1mqKUPN8ZmpFC1C+nTIqC22KbjWoecm/n6S2UIMwLUGBTasRt4g5k2z2U0/23Bbtsnm7kz3jEJsGRCKI/gQI1dSJoD1uPbCChCb7mHdfBcowhBlkEPn5ZvUAoqV/bSgx7PIuvTJ/4BWc11EbQXufhZ+R7VqD/y8/noys2ogts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lhFRjbNJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 903C0C4CEF1;
-	Mon, 24 Nov 2025 05:24:54 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=e504odXY+6wGN8ugE1X03/JuQhwpuj4M5kf3HnI7l2WOMnL/xvFLFq1OQXZEkPzUEizoaf3GoBmwwMGICk0NiViIbXCZ6qw9eRJC5AtfiC/MvFOYaAFSLWjjmY0ycIG+KGKN09BsK3xe1yg+k0IL6puYwG1jnxUElK6VIy1MfD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MRnghpgd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F0F4C4CEF1;
+	Mon, 24 Nov 2025 05:29:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763961914;
-	bh=hL+WuH16BodbGdYWuFoGGzwEFzfedl2zaIxXHQ/7Fh4=;
+	s=k20201202; t=1763962199;
+	bh=avcnQohM/OC7Wf4uBeH1QDfwgtHGDe/RN/kIl6nBXVY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lhFRjbNJw060eoWLi2/Kwsm6uYipzROQU74BjALZaDsbs2kf8nJfYdXhoSf/DhSCy
-	 wcYfchkquawskyiHSEaSupeop0R3M6TiaUFEitaxBBw7fikyI2BjmqPX1TTWSO53t4
-	 6k+zodPUDaiYy8SL3EcWlbQ+ZB31H3c7ylAeWvi/Dfl/gW1pESvWZmStm97TVdletG
-	 tHGUH9HNWcXPe/09wKDEsH+MGWhBMfcHWA12vMSXqFifdncJOj48O/vsVhGfCxbfzn
-	 QT7U2wSN0rRcaeSeOmgtIpiTwVdi/iXHGjWjcIRH4WihsB8MqXnGOoVeqTmXI/gxPX
-	 hfQm1K4vovJWw==
-Date: Mon, 24 Nov 2025 07:24:50 +0200
+	b=MRnghpgd13pRJdYK6+YcIVwuhCJU32S6SQktdN6Mq+ySxvLUOGgr0o8gnuO66HPK1
+	 h66cNv/2EeVpqH+4atks6LnJT68kY/kLaiDptOqUUY3374opwcfNE6Odr7cOpnbB4A
+	 Rc72VNiqRugdTTPVTaaseoGDWgodD4EMggXgRsIjF/yVN/7rQnDrjgdh5JHgB5SHbG
+	 hn8jjeu95Jk6G7boj0DuB5csL1KP9cPJj/Wg0VZYOJbcsWes1anOGRHHkQCCphdyE7
+	 BsJnsCsvlrKE7JtLYsf/8iLqNlQC0EHW+/SgxVNp0lrt8b9VT0FDr1FwoGvLLnVcWr
+	 FWBqSXX7nAC1A==
+Date: Mon, 24 Nov 2025 07:29:34 +0200
 From: Mike Rapoport <rppt@kernel.org>
 To: Pasha Tatashin <pasha.tatashin@soleen.com>
 Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com,
@@ -71,71 +71,78 @@ Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com,
 	ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com,
 	leonro@nvidia.com, witu@nvidia.com, hughd@google.com,
 	skhawaja@google.com, chrisl@kernel.org
-Subject: Re: [PATCH v7 16/22] selftests/liveupdate: Add userspace API
- selftests
-Message-ID: <aSPsIgXuJJvD4RSk@kernel.org>
+Subject: Re: [PATCH v7 17/22] selftests/liveupdate: Add kexec-based selftest
+ for
+Message-ID: <aSPtPuBUcVT5Rifl@kernel.org>
 References: <20251122222351.1059049-1-pasha.tatashin@soleen.com>
- <20251122222351.1059049-17-pasha.tatashin@soleen.com>
+ <20251122222351.1059049-18-pasha.tatashin@soleen.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251122222351.1059049-17-pasha.tatashin@soleen.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251122222351.1059049-18-pasha.tatashin@soleen.com>
 
-On Sat, Nov 22, 2025 at 05:23:43PM -0500, Pasha Tatashin wrote:
-> Introduce a selftest suite for LUO. These tests validate the core
-> userspace-facing API provided by the /dev/liveupdate device and its
-> associated ioctls.
+On Sat, Nov 22, 2025 at 05:23:44PM -0500, Pasha Tatashin wrote:
+> Subject: selftests/liveupdate: Add kexec-based selftest for
+
+                                                         ^ for what? ;-)
+
+> Introduce a kexec-based selftest, luo_kexec_simple, to validate the
+> end-to-end lifecycle of a Live Update Orchestrator (LUO) session across
+> a reboot.
 > 
-> The suite covers fundamental device behavior, session management, and
-> the file preservation mechanism using memfd as a test case. This
-> provides regression testing for the LUO uAPI.
+> While existing tests verify the uAPI in a pre-reboot context, this test
+> ensures that the core functionality—preserving state via Kexec Handover
+> and restoring it in a new kernel—works as expected.
 > 
-> The following functionality is verified:
+> The test operates in two stages, managing its state across the reboot by
+> preserving a dedicated "state session" containing a memfd. This
+> mechanism dogfoods the LUO feature itself for state tracking, making the
+> test self-contained.
 > 
-> Device Access:
->     Basic open and close operations on /dev/liveupdate.
->     Enforcement of exclusive device access (verifying EBUSY on a
->     second open).
+> The test validates the following sequence:
 > 
-> Session Management:
->     Successful creation of sessions with unique names.
->     Failure to create sessions with duplicate names.
+> Stage 1 (Pre-kexec):
+>  - Creates a test session (test-session).
+>  - Creates and preserves a memfd with a known data pattern into the test
+>    session.
+>  - Creates the state-tracking session to signal progression to Stage 2.
+>  - Executes a kexec reboot via a helper script.
 > 
-> File Preservation:
->     Preserving a single memfd and verifying its content remains
->     intact post-preservation.
->     Preserving multiple memfds within a single session, each with
->     unique data.
->     A complex scenario involving multiple sessions, each containing
->     a mix of empty and data-filled memfds.
+> Stage 2 (Post-kexec):
+>  - Retrieves the state-tracking session to confirm it is in the
+>    post-reboot stage.
+>  - Retrieves the preserved test session.
+>  - Restores the memfd from the test session and verifies its contents
+>    match the original data pattern written in Stage 1.
+>  - Finalizes both the test and state sessions to ensure a clean
+>    teardown.
 > 
-> Note: This test suite is limited to verifying the pre-kexec
-> functionality of LUO (e.g., session creation, file preservation).
-> The post-kexec restoration of resources is not covered, as the kselftest
-> framework does not currently support orchestrating a reboot and
-> continuing execution in the new kernel.
+> The test relies on a helper script (do_kexec.sh) to perform the reboot
+> and a shared utility library (luo_test_utils.c) for common LUO
+> operations, keeping the main test logic clean and focused.
 > 
 > Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+> Reviewed-by: Zhu Yanjun <yanjun.zhu@linux.dev>
 
 Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
 
 > ---
->  MAINTAINERS                                   |   1 +
->  tools/testing/selftests/Makefile              |   1 +
->  tools/testing/selftests/liveupdate/.gitignore |   9 +
->  tools/testing/selftests/liveupdate/Makefile   |  27 ++
->  tools/testing/selftests/liveupdate/config     |  11 +
->  .../testing/selftests/liveupdate/liveupdate.c | 348 ++++++++++++++++++
->  6 files changed, 397 insertions(+)
->  create mode 100644 tools/testing/selftests/liveupdate/.gitignore
->  create mode 100644 tools/testing/selftests/liveupdate/Makefile
->  create mode 100644 tools/testing/selftests/liveupdate/config
->  create mode 100644 tools/testing/selftests/liveupdate/liveupdate.c
+>  tools/testing/selftests/liveupdate/Makefile   |   6 +
+>  .../testing/selftests/liveupdate/do_kexec.sh  |  16 ++
+>  .../selftests/liveupdate/luo_kexec_simple.c   |  89 ++++++
+>  .../selftests/liveupdate/luo_test_utils.c     | 266 ++++++++++++++++++
+>  .../selftests/liveupdate/luo_test_utils.h     |  44 +++
+>  5 files changed, 421 insertions(+)
+>  create mode 100755 tools/testing/selftests/liveupdate/do_kexec.sh
+>  create mode 100644 tools/testing/selftests/liveupdate/luo_kexec_simple.c
+>  create mode 100644 tools/testing/selftests/liveupdate/luo_test_utils.c
+>  create mode 100644 tools/testing/selftests/liveupdate/luo_test_utils.h
 
 -- 
 Sincerely yours,
