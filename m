@@ -1,110 +1,139 @@
-Return-Path: <linux-fsdevel+bounces-69652-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69653-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39DB7C80313
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Nov 2025 12:23:26 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 620B3C8035B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Nov 2025 12:30:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECB3B3A2255
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Nov 2025 11:23:24 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E009F4E3786
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Nov 2025 11:30:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 165FB2F9DA7;
-	Mon, 24 Nov 2025 11:23:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0F372FDC3C;
+	Mon, 24 Nov 2025 11:30:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hsZ/Jn9i"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="il6R7Iw0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66FC7231827;
-	Mon, 24 Nov 2025 11:23:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10DD826ED49
+	for <linux-fsdevel@vger.kernel.org>; Mon, 24 Nov 2025 11:30:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763983399; cv=none; b=Rpj1wwL4WbXiY69sGovyziBuQD4uUJxU/0zseAIdXvkX6/UuzzPO+We61+77KP9qxOdBXs0KTG6/tJ++If7DrNAq5kmswL1UcUgZecvEKjEhVioLiR776w/FvIw7ffsODRLW+G5bh/5QqPsIpGBJHMl0nrRtqnRKxdy/sUV1dJg=
+	t=1763983811; cv=none; b=Vn376AZopRJdvpGRv0daqWh3z4ttR9fpIE/scd1fvogpJIlDYL/Zj5aAIk++HwBAwnbcV7oGCqEunmFKSE5WvAc79YE9dQzi6WSCJafqadPsV2GSeDFNWo1HUPcD0wAZg5sQU8JM/cDrYhdtJoZaabZiulEUgJ1Zd7ZXkiGqB9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763983399; c=relaxed/simple;
-	bh=ZDGxe0et8RhQ+hJ61YBgi5tr4tBcp53cd3HyYjmj27I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s+bSnlj50PsoqHGu1HUvgAGJTf9aNMIbgBeZbfkuUbsPyJgoooGMiDKIwNGkKSpDpGmovzi/L5GFdaYYloAegI945jclDFrsY7nNWPjy3sHhDPqmaJfZ3eNWnJ0fkcDkwzhtOlFXjF+DJkwlxeV9lhP8ciDJSkd2g+2U9d50oSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hsZ/Jn9i; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66511C4CEF1;
-	Mon, 24 Nov 2025 11:23:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763983398;
-	bh=ZDGxe0et8RhQ+hJ61YBgi5tr4tBcp53cd3HyYjmj27I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hsZ/Jn9it/+sh/rrHAvaw+5JOhd2SyNSDZEk4ITy+JaMhloKD7Kuud+/5CmyoqUfh
-	 MRPNDITAGuiF09RFHm9T3v7FnMNHi9qR4LZ5X8YYrwqOeFH/13S7g67pxfTzjIHOZW
-	 EnFnvVWn2w5qgIC+8NQyrtGFOwARwYvZOMRqh1N9QRnWIasp2gLVPMWUFgWDwXPWht
-	 kHL1IpCzYV6jfo7cj+nQxwOHfwf+kXRmhq2sxesUw6Ef3bqDi0uRjaeY93iVNFisUh
-	 xyNBC7pAW5fcMOyeH15v89ugbbbWzllcRFW6gn9RlmhNaPNbtANq0761aWR997plPA
-	 aA7Gy50yMKbhw==
-Date: Mon, 24 Nov 2025 11:23:14 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Andrei Vagin <avagin@gmail.com>
-Cc: Andrei Vagin <avagin@google.com>,
-	Christian Brauner <brauner@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH] fs/namespace: correctly handle errors returned by
- grab_requested_mnt_ns
-Message-ID: <d689e03e-0f20-4a33-bd74-6cf342f92485@sirena.org.uk>
-References: <20251111062815.2546189-1-avagin@google.com>
- <aSMDTEAih_QgdLBg@sirena.co.uk>
- <CANaxB-wmgGt3Mt+B3LJc4ajVUdTZEQBUaDPcJnDGStgSD0gtbQ@mail.gmail.com>
+	s=arc-20240116; t=1763983811; c=relaxed/simple;
+	bh=B6c4Rha0j7ElsnG2lldQikR/5+CIYYmoxpK8FQj5Yvc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EmqGZKEghMw9i23WlOKBDL4WGojTRPqo5zePmKwSwev49sYPaS9t10LhgSRm/dfyueAOQqpX6oe45JZP3ocOjPZo/Yc97hdnmhl9Ya91CxvguBVEO/FAjNB45gJem7eQBkKLooX93mrmA/10Hd7ftAhaigEEkxVMDNQGbZWpuPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=il6R7Iw0; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-47774d3536dso32166395e9.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Nov 2025 03:30:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1763983807; x=1764588607; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FIrNcMo3OIORc59oYq11M7V6LWyQ4cuR88/fqcwGDYI=;
+        b=il6R7Iw0Zo1ugXnoYsdVIa5PeY3EJutXCTy2qfnvp4Y7P2EQaxAPQNlUyCU0FyzPqe
+         qm1ddhlRIFGey1mqV/PAIwD9VD/1g5IEJJ2OY1y5Ed0DK1pDpmExF3t8Vn9fCCBycxe9
+         8ca3bOUEE6aoiCx9FqOnGExGunEML1XTgoh45CY63zrHfd5um4HOLxJOVeq18JLYPFoA
+         53MmubmKqyTHbsD/C9g0a1H3ddxQPmgfAxvPwj3s3UFGSJf89teXvj7IcKzYm4wPC/1K
+         DiT/AUWvhSB5yE0FY9Md+O2f0EUfipJgMj6Vp77foFQb9lizcNMx+S3hyanevFJg5kSb
+         uIeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763983807; x=1764588607;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FIrNcMo3OIORc59oYq11M7V6LWyQ4cuR88/fqcwGDYI=;
+        b=TSyIcz6KMddMlelZsJM5nPDLEi0E8UpTCQZjHpmNbEZp9mCkpxESXJMU6EfPv+GStB
+         MkWWPdAEsquAOQbgkvj4LdiBj86LlIBPi1NJ7uFebD6me1v5ZPe3iYOpwbz8hEX5Z6H9
+         w7csVSdbksvkhrFgCxEUeEcLfprMgHn5LpsmVA+dQfpNzXv34d6SfYJQI3UVUpPqTDh6
+         VApqblpViA4deoDnKs1NJM07EH23ullsJaZT9LHziet8RaRzMEEozTsWyEY3J3cJXVBG
+         1D718uOLnxjA0KccCdFmH+yPOmmtmZXGj/qrCO5yTmaRKWDGUsx8WEYOHs6B261xfSsP
+         P6rA==
+X-Forwarded-Encrypted: i=1; AJvYcCXJtnly8ky9jC4tLF2zFG4VZCAB25xK6YpX8xgZRGxSm4xp90jLKXm9/dWjINnJTSRnXGSu/Z4uB9UYugnP@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzQRJNr8NB8Gy/oU0Nx1wvnCvR14W0rTDuareulyhsQSjmick7
+	OyCwIo71kE+bwoTMisRhn1U+MNvbQyja67suKOgxxhpPslB0l84exPd7
+X-Gm-Gg: ASbGncsEzZRNYrrO7LNnY2zcMff9PcPhjT+ERs975iYOz28FXOxTlxQkhxHGkHRf25g
+	VFpORxMbTeeEJggjmC8IWArZWMAbCVFehgeZbHYU5bc64j4ksRJiZhu+IhwhUpFAqwrq2cSkptx
+	hCHBsc8phvRzuyozDk1288py3f7fnNt1zLMiy4GDiq6uOI0xemMReHBn7fprFZod8ZdurfeLEki
+	cQKLVlF7rXisWfpZbsBVEYnqgUK79t15m7hhe2OQM5uo8it5p2yhSnkPDcRz+dqM9QztyjphoWs
+	n1YMCkYvr+bQZ3ho/5HhR0imarVJIZWv/23TvwzUel5mVHJNFJkuH6IalItpw9daGwVMVwsIDpU
+	yK7+v7UmxlYNlVdsYcd62sEURM0+V1NLL0SBFSUOG6EE6QQFcvVCsAZoieuTukf5WGdKC96s4Ok
+	l4rJxor7UB70oiIT3u3L56lSHEPwuBDeX12uuq4A1/rOCTxupDwWmhvumuonNEnoR85cRyBbzo
+X-Google-Smtp-Source: AGHT+IH4rhfkRALzBtaC9gdxzf7gjncNKNUbJLJsQNk7iBQd1pjAZr0TQJP790c1nQt2gF0ktavqUA==
+X-Received: by 2002:a05:600c:1d14:b0:477:9d88:2da6 with SMTP id 5b1f17b1804b1-477c026ed62mr113061345e9.0.1763983807185;
+        Mon, 24 Nov 2025 03:30:07 -0800 (PST)
+Received: from ?IPV6:2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c? ([2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42cb7f2e432sm27351895f8f.9.2025.11.24.03.30.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Nov 2025 03:30:06 -0800 (PST)
+Message-ID: <905ff009-0e02-4a5b-aa8d-236bfc1a404e@gmail.com>
+Date: Mon, 24 Nov 2025 11:30:01 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="fkkat3RS3Jv9xTqX"
-Content-Disposition: inline
-In-Reply-To: <CANaxB-wmgGt3Mt+B3LJc4ajVUdTZEQBUaDPcJnDGStgSD0gtbQ@mail.gmail.com>
-X-Cookie: Single tasking: Just Say No.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC v2 00/11] Add dmabuf read/write via io_uring
+To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ linux-block@vger.kernel.org, io-uring@vger.kernel.org
+Cc: Vishal Verma <vishal1.verma@intel.com>, tushar.gohad@intel.com,
+ Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+ Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Sumit Semwal <sumit.semwal@linaro.org>, linux-kernel@vger.kernel.org,
+ linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+ linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linaro-mm-sig@lists.linaro.org
+References: <cover.1763725387.git.asml.silence@gmail.com>
+ <fd10fe48-f278-4ed0-b96b-c4f5a91b7f95@amd.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <fd10fe48-f278-4ed0-b96b-c4f5a91b7f95@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
+On 11/24/25 10:33, Christian König wrote:
+> On 11/23/25 23:51, Pavel Begunkov wrote:
+>> Picking up the work on supporting dmabuf in the read/write path.
+> 
+> IIRC that work was completely stopped because it violated core dma_fence and DMA-buf rules and after some private discussion was considered not doable in general.
+> 
+> Or am I mixing something up here?
 
---fkkat3RS3Jv9xTqX
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The time gap is purely due to me being busy. I wasn't CC'ed to those private
+discussions you mentioned, but the v1 feedback was to use dynamic attachments
+and avoid passing dma address arrays directly.
 
-On Sun, Nov 23, 2025 at 07:15:16AM -0800, Andrei Vagin wrote:
-> On Sun, Nov 23, 2025 at 4:51=E2=80=AFAM Mark Brown <broonie@kernel.org> w=
-rote:
+https://lore.kernel.org/all/cover.1751035820.git.asml.silence@gmail.com/
 
-> > listmount04.c:128: TFAIL: invalid mnt_id_req.spare expected EINVAL: EBA=
-DF (9)
+I'm lost on what part is not doable. Can you elaborate on the core
+dma-fence dma-buf rules?
 
-> The merged patch is slightly different from what you can see on the
-> mailing list, so it's better to look at commit 78f0e33cd6c93
-> ("fs/namespace: correctly handle errors returned by
-> grab_requested_mnt_ns") to understand what is going on here.
+> Since I don't see any dma_fence implementation at all that might actually be the case.
 
-> With this patch, the spare field can be used as the `mnt_ns_fd`. EINVAL
-> is returned if both mnt_ns_fd and mnt_ns_id are set. A non-zero
-> mnt_ns_fd (the old spare) is interpreted as a namespace file descriptor.
+See Patch 5, struct blk_mq_dma_fence. It's used in the move_notify
+callback and is signaled when all inflight IO using the current
+mapping are complete. All new IO requests will try to recreate the
+mapping, and hence potentially wait with dma_resv_wait_timeout().
 
-I can see what's happening - the question is if the test failure it
-triggers is a problem in the kernel or in the test.
+> On the other hand we have direct I/O from DMA-buf working for quite a while, just not upstream and without io_uring support.
 
---fkkat3RS3Jv9xTqX
-Content-Type: application/pgp-signature; name="signature.asc"
+Have any reference?
 
------BEGIN PGP SIGNATURE-----
+-- 
+Pavel Begunkov
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmkkQCEACgkQJNaLcl1U
-h9B7cAf8CylPT04pVxV0zP9AVsk6Weoe2abAv+Jzs82mbH19vosHaEJzZP3Z8xww
-rWvbZTvtdCAVvvn1HntEXTuHnS+i44nLkr92oLDEKq/edtejWBh5DJr7VVvVHaM7
-RnpPW8c5W855jl1otPJD8z033oAEpGGtWmNHinCtMAAGcHyRY+PVmogOSurEmrdO
-yOQg5tEtFyEixz0273clcXyOnLgWnfqM9KkpaTagdAJfc0qhKRFPIdN5+T3VQJyT
-wpxIWe8uZYP6H7P3/Hm+YaTuIk60UJHF7qXFhyvmP1i9ZxX8FdntAIIEPp8Muo2H
-NLelHSiO9jPdQdkt0DGlvSQIxYYpGA==
-=WYr4
------END PGP SIGNATURE-----
-
---fkkat3RS3Jv9xTqX--
 
