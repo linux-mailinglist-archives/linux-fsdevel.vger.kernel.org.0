@@ -1,81 +1,85 @@
-Return-Path: <linux-fsdevel+bounces-69625-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69626-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5905C7F007
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Nov 2025 06:31:24 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3D36C7F033
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Nov 2025 07:05:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 014DB3A5300
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Nov 2025 05:31:23 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id ED4E63446BF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Nov 2025 06:05:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81A07227B83;
-	Mon, 24 Nov 2025 05:31:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDA932C1586;
+	Mon, 24 Nov 2025 06:05:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N73ygbiK"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qx9Oav8k"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFFEE4A21;
-	Mon, 24 Nov 2025 05:31:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6092B221F39
+	for <linux-fsdevel@vger.kernel.org>; Mon, 24 Nov 2025 06:05:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763962274; cv=none; b=Jy5yxHaUz7xI6lIGeJFte6M9qeW3aLCKBQ1yr2wGn+F/qtHqaaXf0WL4ajfl3aOkLLN3Y/aj4e2YFXZ9FMOZFbXBDIIuMm789aCbDq8lzpZdIG4FX21T8gZ34Fm7dMbq4p8u1RJ32Qk4v10arE/f4zT+VdGEmdimdbTBvkWYxd0=
+	t=1763964304; cv=none; b=bCKS84dr49FrdB/W0RYa22IsbwTb4I8FgXzGHfQliCvQrCkDI20gTJaoiqQUpIan2p80kDqHtljAEyb/c2Z/eCKhu5amAay6X/gKrh2Ggi69avVt5T597LnZbEXcB72PiSECzHf6MRE/JDrMTrnBKYgFTZjPACZv4tN7pvHWEjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763962274; c=relaxed/simple;
-	bh=RWeJY9pJHBZ5U4aPZuJw/0Z5j5nXGO9gJXgSoHnl1Jo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ilPbX4KJmZkPoQJY2+eFCQKFrEpw8q/7SKe599paFhBcduUJ8IIu5CgZfreUOc+ykXj/7Ok4qANeA1ChfWae6kjPUfVPsrMKfULQgEyYWX5aDvOOL8ZwcJ+zanOYTVluzYkHY9hEAHYBbLJF+IEA9c+8Rf+TEOJLBoc7K2NPiYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N73ygbiK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4672EC4CEF1;
-	Mon, 24 Nov 2025 05:30:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763962274;
-	bh=RWeJY9pJHBZ5U4aPZuJw/0Z5j5nXGO9gJXgSoHnl1Jo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=N73ygbiKs2BhPqYtlO5jZRWbVaKbo+e+4T+IqZEHKKEzdE9g2qMn3x8qjg/NYZdpK
-	 RwOVa+22eRllg+5Y4ES4PXmjeHKwgi9j+fXiPfzAa7Temd8Vgh8CHpgEGbyuX990Sj
-	 HzaB7m9tXVgfRD+z9Bvkf7uqmUod3QhA/SL/AKuRI13cwf5NKDEJwQfDnQnE2+6MgP
-	 hPK2YB2ddPSiJiIDxLCU3yxjj4dNFLk2qGt/HqPcnPBgN/T01TVf7wqkN0GaozFfJ+
-	 npHKpCkjKuRjZS/cCD9GnWqf1KyMu2kc1yy5pVZkokJh6FkUyQVtDHVtOOXT32Q7eR
-	 4q7LnRP9e7lOg==
-Date: Mon, 24 Nov 2025 07:30:49 +0200
-From: Mike Rapoport <rppt@kernel.org>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com,
-	dmatlack@google.com, rientjes@google.com, corbet@lwn.net,
-	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com,
-	kanie@linux.alibaba.com, ojeda@kernel.org, aliceryhl@google.com,
-	masahiroy@kernel.org, akpm@linux-foundation.org, tj@kernel.org,
-	yoann.congal@smile.fr, mmaurer@google.com, roman.gushchin@linux.dev,
-	chenridong@huawei.com, axboe@kernel.dk, mark.rutland@arm.com,
-	jannh@google.com, vincent.guittot@linaro.org, hannes@cmpxchg.org,
-	dan.j.williams@intel.com, david@redhat.com,
-	joel.granados@kernel.org, rostedt@goodmis.org,
-	anna.schumaker@oracle.com, song@kernel.org, linux@weissschuh.net,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-mm@kvack.org, gregkh@linuxfoundation.org, tglx@linutronix.de,
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
-	x86@kernel.org, hpa@zytor.com, rafael@kernel.org, dakr@kernel.org,
-	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com,
-	myungjoo.ham@samsung.com, yesanishhere@gmail.com,
-	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com,
-	aleksander.lobakin@intel.com, ira.weiny@intel.com,
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de,
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com,
-	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net,
-	brauner@kernel.org, linux-api@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, saeedm@nvidia.com,
-	ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com,
-	leonro@nvidia.com, witu@nvidia.com, hughd@google.com,
-	skhawaja@google.com, chrisl@kernel.org
-Subject: Re: [PATCH v7 18/22] selftests/liveupdate: Add kexec test for
- multiple and empty sessions
-Message-ID: <aSPtiYSV9vkYvlBD@kernel.org>
-References: <20251122222351.1059049-1-pasha.tatashin@soleen.com>
- <20251122222351.1059049-19-pasha.tatashin@soleen.com>
+	s=arc-20240116; t=1763964304; c=relaxed/simple;
+	bh=uwW5/7qGULapL1sVMLPb1Xc+6mdWxww9p7V7V1LV88Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=EcF72KLY/0BlS4xjQOgj54r+Z+vBJ9HGuqOm0zCpRBfl9FjQW1xyGJp18OlZaMemfTzyOrp2wWa7mzLoGjwvhQVn9WBrhtb+QI/UUlXWkdHmb0dFaBYTl7lU0w6RSe7ubCoNq0mIU6L6L0ODYvIZ4l0h7osRmjNlnNdCWGT24H0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qx9Oav8k; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-477a1c28778so43123755e9.3
+        for <linux-fsdevel@vger.kernel.org>; Sun, 23 Nov 2025 22:05:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1763964301; x=1764569101; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=uH1o7GeIwYc1DYoErssPphWFX52WlisMeq9xtONgZz8=;
+        b=qx9Oav8kq/eUyg4PMAyVbAa9TYkOJfPG4CLU41YDrLYNTTZrseRzKIOrjCWVHsooYj
+         xENKfb1e8hKuWxpQmiipL1jeehc9rqnWL9prnV2IHHbyyIuByKyEmQZ8rqqzqcHs32mj
+         47/OBWOk5QONOwVeLgnnx6lSCme3Y5OhQOYlLjPC3/ROwUfloPLPSua9FhnNSAU0MIKL
+         2dcdWC72e1eEsrFc4iMtuAjM53rxbp3f/G126AE8RO9nq96S8ZYgg4w+uYYvmARlD0Gi
+         tCoF7sl2WZmKrkBSZZcx8/dVY3mzT0ih6L/1MnV+6DB9Qc+CFI7E1Q7g3NbaqBFvDVta
+         LzXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763964301; x=1764569101;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uH1o7GeIwYc1DYoErssPphWFX52WlisMeq9xtONgZz8=;
+        b=BXc2Z6AzolRrNB/zgaA72cCx53ZobQM3Ak/23kNVg75EvNlhn+e9QqGxhqPEob7cce
+         dSgfZSWdulIPdJaqNUAEDKiKs3ntBYm6n95f8DnmGFatOEUjuwhYYXVP2xZZNRjOytnA
+         MX6XhPBFyOD51FcfvTaqddo2o9mZhZKDBercAXOyhxIhSXexn4XSesj/gfJOfacHQeeh
+         2QZxXK6dvzMkUdre8wGrghmKpm+LfJq6IOtUDnYGW4HH7nUFvDMq70/MUkwAG7G2OMgi
+         unCVNtl3oTYLmVkKBDomgKwHjwwa5cGdC0wLKktp4ZN52Uqn8+h3Eg5UDkO/03YsEmRn
+         gZdg==
+X-Forwarded-Encrypted: i=1; AJvYcCVJz2nGuM+ReTNgMx5EQfoLkUMCoAoe5xMQ4fPr82fD0x3ioQ2rxYFY/V2QCOaXOkA7WkLhW4msw2BRxawZ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw35pD6qQncLo46haKq8FJFGuyBGsYqFmi2o9Fp74z5/mrgzCem
+	9prK/H8rm20yfk2atdmBxqp5QU773L9jMFmum5v1QaaPiBJLbO2EAT2uweXD1kl3Tr8=
+X-Gm-Gg: ASbGncszICv62esB52pG0GmmeJi++Z57D9dmDckgmJz99sWLzmSfqjXLeavBC49LSv7
+	620fY3JQKIimcGLNQwggL4+rNvM7LblMM0MPnOeUKcTguQvEwQxhFCqaUoUqW/GInaeHpcn6/Xo
+	o2oadS/LhgbOsB47bUPxnF/BmQIZUb8iFqeninzKd/d5kAZovrkwJcXu9dmEMifah352KKN9TPv
+	+Tr6Vg4M52l3qPldeoFZ4xSy3pZQ/q/IgedA2PldRI9fRhzu/7D9bJPEqg7F/yEzfxlD7yu0jTN
+	wKTXU77a0nCAth7jCMBoDqT4Pzc6dli75dtgN5wy32DXkYSYjpVyh3jFmhTE6R0evCenyMyL07z
+	gUnjqRB+g0fpYDy9bLIhBD4WIGHu1eUl98DsnihQF0enxsCK048G4bLLhQR73ibNAdGcHGChFvl
+	kmNiwz/LkzO0ApmG14cz4zjR7GPZU=
+X-Google-Smtp-Source: AGHT+IE/1JX/nps0nusBrJi7ArbL72409Zg8vYjuZAApbr5lk5tocgbNd/CCB5XgbxxXSuP2QUkiXg==
+X-Received: by 2002:a05:600c:1c98:b0:477:6e02:54a5 with SMTP id 5b1f17b1804b1-477c01bcf3cmr104847785e9.18.1763964300525;
+        Sun, 23 Nov 2025 22:05:00 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-42cb7ec454csm25365196f8f.0.2025.11.23.22.04.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 Nov 2025 22:05:00 -0800 (PST)
+Date: Mon, 24 Nov 2025 09:04:56 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Luis Henriques <luis@igalia.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH v2] fuse: Uninitialized variable in fuse_epoch_work()
+Message-ID: <aSP1iMPil7wTnboD@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -84,59 +88,41 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251122222351.1059049-19-pasha.tatashin@soleen.com>
+X-Mailer: git-send-email haha only kidding
 
-On Sat, Nov 22, 2025 at 05:23:45PM -0500, Pasha Tatashin wrote:
-> Introduce a new kexec-based selftest, luo_kexec_multi_session, to
-> validate the end-to-end lifecycle of a more complex LUO scenario.
-> 
-> While the existing luo_kexec_simple test covers the basic end-to-end
-> lifecycle, it is limited to a single session with one preserved file.
-> This new test significantly expands coverage by verifying LUO's ability
-> to handle a mixed workload involving multiple sessions, some of which
-> are intentionally empty. This ensures that the LUO core correctly
-> preserves and restores the state of all session types across a reboot.
-> 
-> The test validates the following sequence:
-> 
-> Stage 1 (Pre-kexec):
-> 
->   - Creates two empty test sessions (multi-test-empty-1,
->     multi-test-empty-2).
->   - Creates a session with one preserved memfd (multi-test-files-1).
->   - Creates another session with two preserved memfds
->     (multi-test-files-2), each containing unique data.
->   - Creates a state-tracking session to manage the transition to
->     Stage 2.
->   - Executes a kexec reboot via the helper script.
-> 
-> Stage 2 (Post-kexec):
-> 
->   - Retrieves the state-tracking session to confirm it is in the
->     post-reboot stage.
->   - Retrieves all four test sessions (both the empty and non-empty
->     ones).
->   - For the non-empty sessions, restores the preserved memfds and
->     verifies their contents match the original data patterns.
->   - Finalizes all test sessions and the state session to ensure a clean
->     teardown and that all associated kernel resources are correctly
->     released.
-> 
-> This test provides greater confidence in the robustness of the LUO
-> framework by validating its behavior in a more realistic, multi-faceted
-> scenario.
-> 
-> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+The fuse_ilookup() function only sets *fm on the success path so this
+"if (fm) {" NULL check doesn't work.  The "fm" pointer is either
+uninitialized or valid.  Check the "inode" pointer instead.
 
-Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+Also, while it's not necessary, it is cleaner to move the iput(inode)
+under the NULL check as well.
 
-> ---
->  tools/testing/selftests/liveupdate/Makefile   |   1 +
->  .../selftests/liveupdate/luo_multi_session.c  | 162 ++++++++++++++++++
->  2 files changed, 163 insertions(+)
->  create mode 100644 tools/testing/selftests/liveupdate/luo_multi_session.c
+Fixes: 64becd224ff9 ("fuse: new work queue to invalidate dentries from old epochs")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Reviewed-by: Luis Henriques <luis@igalia.com>
+---
+v2: Move the iput(inode) and re-word the commit message
 
+ fs/fuse/dir.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+index 761f4a14dc95..73a46b0be09d 100644
+--- a/fs/fuse/dir.c
++++ b/fs/fuse/dir.c
+@@ -199,9 +199,8 @@ void fuse_epoch_work(struct work_struct *work)
+ 	down_read(&fc->killsb);
+ 
+ 	inode = fuse_ilookup(fc, FUSE_ROOT_ID, &fm);
+-	iput(inode);
+-
+-	if (fm) {
++	if (inode) {
++		iput(inode);
+ 		/* Remove all possible active references to cached inodes */
+ 		shrink_dcache_sb(fm->sb);
+ 	} else
 -- 
-Sincerely yours,
-Mike.
+2.51.0
+
 
