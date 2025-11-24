@@ -1,134 +1,92 @@
-Return-Path: <linux-fsdevel+bounces-69637-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69638-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55AEEC7F6E8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Nov 2025 09:53:22 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52997C7F6FD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Nov 2025 09:57:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 078B83443FE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Nov 2025 08:53:21 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B9B79346572
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Nov 2025 08:57:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76FAA2EFDB2;
-	Mon, 24 Nov 2025 08:53:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="kz0fFuDb"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 482BF2EFDBF;
+	Mon, 24 Nov 2025 08:57:08 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out203-205-221-242.mail.qq.com (out203-205-221-242.mail.qq.com [203.205.221.242])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D06272631;
-	Mon, 24 Nov 2025 08:53:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.242
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D5342EFDB5
+	for <linux-fsdevel@vger.kernel.org>; Mon, 24 Nov 2025 08:57:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763974391; cv=none; b=CbP2rgF9xRLGbLdfXDUgQSpUQTi47TKdiNxt8KX3gYdH8qcsizUd82i43BEIi8zU6ClG6k9aBLpPdT9bopcFvPIlNiplsDzuNRaw1Mq9uwd5FrSiTy9mXOYWiAQyD1+3Gl/arTBE+FJnkHLYldPEcKq7qVXRvvLoAj3tss4dxd4=
+	t=1763974627; cv=none; b=Y/CSp1UaCiRGUA+3xaGtwGAEnWJfVFLOBmRLKD1lu+1sxCqJkAhFL/k8XJADrOkJwLrewi1BtDQUXZDlUxpaHtRxrJPlEYyXbGDtO9pmIjRs/WuYmCjT6rAn5k0QzB7kP7kuPEMDTq1jH2NQvOOyI9cSMZroRs+2GbqDfk7a6Rc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763974391; c=relaxed/simple;
-	bh=HOsbgCUtbNgi/B/bSlBhRujbyRv3eMz1XGxmTUW7yIo=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=Oa3TV6hpo40rxxAcAZDn4EKuyQGGzECIUVlE+HlJ1FL4YiDgDl1gnvaxj47x2x0jfwsPevzHb5vSMnzYh6tTfoDPKjj4/TGnvoHrpS1TVDzTbxMoIKfIMR4Gzn+lLL11EOh9ZkSCsb+eVKL5AoaZnpu9AM9RUuY4BOR5/c2D/k0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=kz0fFuDb; arc=none smtp.client-ip=203.205.221.242
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1763974387; bh=ZRgrDQUjLFkTslkgJ3mUpuQXWhVhwkC4qd2OoOvGUZ0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=kz0fFuDbWULH95qTIqhXqD6EQBimkFqMdL1aVVUZ9Dz2Eq9fPc37MhHq0jg6OP95q
-	 liD0Ne/aXFHucISr3X7+VK2d6beYE9x7bKehX7mYaPum/zHvzPYxKUDK8W/qiyT8TD
-	 +uqtH7W8gZArI6bE9L1JJbjJUfriuBvrYLjrFcRc=
-Received: from lxu-ped-host.. ([111.201.7.117])
-	by newxmesmtplogicsvrszc50-0.qq.com (NewEsmtp) with SMTP
-	id D439EEB3; Mon, 24 Nov 2025 16:53:03 +0800
-X-QQ-mid: xmsmtpt1763974383t047juipu
-Message-ID: <tencent_734A1B432559BAF7BBA333429E581B034B08@qq.com>
-X-QQ-XMAILINFO: NR0zW9LgXakqGqwRbOz21eTm+0oq9riIo+7iPRwuNIvdbNxRADmeFyRMi7cMKe
-	 YfvwevKPouYxv814rjCJCk9hK53Sm8P0kdFcOkc2Tkp0fTpLRuWaYgd5Y8yahm1xbYQTUZGGsuhv
-	 75acW9yJbp1rzjAWJAJlwbWs5zrGj4j4jhNjA9NAPW8/i0aEyuTiHrq49OJUXBRqPfgyzD6dRniq
-	 cZxHGYI3WZxCKUWxdQWL4bFr/jFbqYiMIsDkp/fLhSu9XO2JgsfVI9dryYPqDMoJONLvD0ZIRjwT
-	 gD+jQodVogHW75nVQQN2v4WApn1gh1sgs5Xn1eJNIbcf3FiT8/CGbnqr3N6RroGwQvYjtVMHDcNI
-	 Xh07YCShd6hIAzCkGR1uknK+q8ZN/AHZkiApskfoRhuJ23TFIHCTGEYdesTmneVlvHl8l56Dnmuy
-	 pC1i8l6NW6u2JoKv5PJBHgwL5RUoT9rTR3sNPkbLgNlPgYtbXsRSxcNfx9uRtTYzOcs6n+aGhdQj
-	 sI0R4fgXQLyHepdeKGPWSBDlys3BPBr12ZUjjyoO76MR3lv9k0vcm9WSmuZ+qyTrg68nojafQEM4
-	 yPNd2AmRFoOgGWmO+oPQ/vXwGFnw+HULcnSHy3w+0NIdgsCL6kIB0ZrwWqtc1z6YTYaPd9bi07xF
-	 BHU+cRSecJ/s9C7G3WwwlddzEMlsb90nC3XBXAfyN93iP3R+0uPG1EY2EJxYIzPK5LvgQRq+tDNU
-	 MINhFKObP4uu5GNTLA9/4sLrCBKohsaG+ww6KCs32u9g6LA5HO/PVuxU4QAGneV2dWj324+LRf/P
-	 xopFwUMKjm2fJAJsHZrKjEMipwAIrZy2b8kHd5SUu+pCmRLvQ7gbxM67iVNZhmYbxRxAmYbfnRSr
-	 sj+/CspejWusDPnTXO04VovdCvYv7VvSGCmk/BP6gzkxcVRDwswzxuE/XzyqMVfP0JjbJdMYuf6R
-	 crwAWyeq56XRNFhN1+TLeFeLKDjIl22FOEEgHbCmm8oXwIALKjlQ==
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+a2b9a4ed0d61b1efb3f5@syzkaller.appspotmail.com
-Cc: brauner@kernel.org,
-	djwong@kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-xfs@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: [PATCH Next] iomap: Add sanity check for dio done workqueue
-Date: Mon, 24 Nov 2025 16:53:04 +0800
-X-OQ-MSGID: <20251124085303.4085309-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <6923a05a.a70a0220.2ea503.0075.GAE@google.com>
-References: <6923a05a.a70a0220.2ea503.0075.GAE@google.com>
+	s=arc-20240116; t=1763974627; c=relaxed/simple;
+	bh=77x9AyTB64fyj0fw+VLfJeSJSvnY2GAQ67S5hveEqao=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=C2G0Qcl4xx+r76RVgRsB7rDw3RbyuRA8fEOS1P8d3v4mcv4sp230RSWTZE78QWb1QLgkJnfzWRlcVfuGq190vfmj3c1C4/UsmrEAo1AnAEQ0NKta/qw/yZ8ufsmS/s0H4uoYD+oe/VqIMgpXEHB7NBGhumTAR7zoqUTDB3Hspi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-435a04dace1so41404215ab.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Nov 2025 00:57:06 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763974625; x=1764579425;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hgpdXraqge1crgzutbhxY1FweyGIh99mqt/ID7C9uWY=;
+        b=qPKahc/PF7OJkcoweKWLBl9HNuzENDUNaC9e8W3NoQbQeiqXtdmxcCxgDeyne/5HxP
+         b68rxUYMjAmEhoevZHLdxt/jqoCzcrJ1wqtp/9DK0I8xRsucbvXSu9CLjUJ3nSzUlElZ
+         TxS7xXY2/5j46TMPHmTVnIVOCsEGy9r3eHN2gO5cKuHb+shs30lKwzlbzfp7l9ZGkhi/
+         /DLeqDeR027mEi/DZuHgPyIpiannEj4fNWaslTmJQ3nenX0wtyF/wi7W4ySg3NuhdPBo
+         OQyTk2WoM/ZA6Ga8prjI2QI3IBcJhSi7Aa4clhJIWgIVleaOqNHULl0gzmn5MBgC+cco
+         a9JQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXR8g1DfpW4ruLVvvBrS/U/5592pjKMwy9FS3c3+hmJysGlz93ClyNT8hzNevIiKd/w0i13+mw3rjCkMlXL@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkX2tuoHell0SBo6sJmbdylEDgE8+pT/GYxpTgWN1AbKKgH0wy
+	X5zbQQyxGAQdOwyUykJCGMyFO7sc9Fohjyxzq7ZfX0IzMvXKImzcTyE9DuyTHulbsnHzBp8nD3C
+	dUrKwUvcDtrVOLFyz9mSRXWK1iZx2ckooo2BUWliNeoQ6JQatUTylHxi7oz0=
+X-Google-Smtp-Source: AGHT+IF9rF0JDF4x3w0a1F2G7uPBAzeg5qEtEj7GcsQo4Lsq+x808f/YwHriczCx8EfwVCOiVfp0zi7ct6BY2GDotXbx7xMmDMdz
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:1a8a:b0:435:a148:d2c with SMTP id
+ e9e14a558f8ab-435b9ae62b5mr86289295ab.41.1763974625536; Mon, 24 Nov 2025
+ 00:57:05 -0800 (PST)
+Date: Mon, 24 Nov 2025 00:57:05 -0800
+In-Reply-To: <v6f6kfeeur7hhpj74za4larguj2jdhz652cwvmxu5o32ivkuso@cdpkqhx5gt7j>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <69241de1.a70a0220.d98e3.0082.GAE@google.com>
+Subject: Re: [syzbot] [ntfs3?] INFO: task hung in __start_renaming
+From: syzbot <syzbot+2fefb910d2c20c0698d8@syzkaller.appspotmail.com>
+To: agruenba@redhat.com, almaz.alexandrovich@paragon-software.com, 
+	brauner@kernel.org, dhowells@redhat.com, gfs2@lists.linux.dev, jack@suse.cz, 
+	linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, marc.dionne@auristor.com, mjguzik@gmail.com, 
+	ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com, 
+	viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 
-The s_dio_done_wq was not allocated memory, leading to the null-ptr-deref
-reported by syzbot in [1].
+Hello,
 
-As shown in [1], we are currently in a soft interrupt context, and we cannot
-use sb_init_dio_done_wq() to allocate memory for wq because it requires a
-mutex lock.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Added a check to the workqueue; if it is empty, it switches to using a
-synchronous method to end the dio.
+Reported-by: syzbot+2fefb910d2c20c0698d8@syzkaller.appspotmail.com
+Tested-by: syzbot+2fefb910d2c20c0698d8@syzkaller.appspotmail.com
 
-[1]
-KASAN: null-ptr-deref in range [0x00000000000001c0-0x00000000000001c7]
-CPU: 1 UID: 0 PID: 23 Comm: ksoftirqd/1 Not tainted syzkaller #0 PREEMPT(full)
-Call Trace:
- iomap_dio_bio_end_io+0xf4/0x1c0 fs/iomap/direct-io.c:222
- blk_update_request+0x57e/0xe60 block/blk-mq.c:1006
- blk_mq_end_request+0x3e/0x70 block/blk-mq.c:1168
- blk_complete_reqs block/blk-mq.c:1243 [inline]
- blk_done_softirq+0x10a/0x160 block/blk-mq.c:1248
- handle_softirqs+0x27d/0x880 kernel/softirq.c:626
- run_ksoftirqd+0x9b/0x100 kernel/softirq.c:1067
- smpboot_thread_fn+0x542/0xa60 kernel/smpboot.c:160
+Tested on:
 
-Reported-by: syzbot+a2b9a4ed0d61b1efb3f5@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=a2b9a4ed0d61b1efb3f5
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
----
- fs/iomap/direct-io.c | 4 ++++
- 1 file changed, 4 insertions(+)
+commit:         523ac768 Merge patch series "Create and use APIs to ce..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs-6.19.directory.locking
+console output: https://syzkaller.appspot.com/x/log.txt?x=168a38b4580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e4d8bca00359e65f
+dashboard link: https://syzkaller.appspot.com/bug?extid=2fefb910d2c20c0698d8
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
 
-diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-index d4e2e328d893..6b0ef7e0f05b 100644
---- a/fs/iomap/direct-io.c
-+++ b/fs/iomap/direct-io.c
-@@ -202,10 +202,14 @@ static void iomap_dio_done(struct iomap_dio *dio)
- 		 * filesystem metadata changes or guarantee data integrity.
- 		 */
- 		INIT_WORK(&dio->aio.work, iomap_dio_complete_work);
-+		if (!inode->i_sb->s_dio_done_wq)
-+			goto done;
-+
- 		queue_work(inode->i_sb->s_dio_done_wq, &dio->aio.work);
- 		return;
- 	}
- 
-+done:
- 	WRITE_ONCE(iocb->private, NULL);
- 	iomap_dio_complete_work(&dio->aio.work);
- }
--- 
-2.43.0
-
+Note: no patches were applied.
+Note: testing is done by a robot and is best-effort only.
 
