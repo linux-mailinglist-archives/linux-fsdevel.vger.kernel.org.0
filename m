@@ -1,134 +1,134 @@
-Return-Path: <linux-fsdevel+bounces-69711-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69712-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EC71C824D5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Nov 2025 20:25:26 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5243AC824E1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Nov 2025 20:28:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0C610348917
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Nov 2025 19:25:26 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 75BA9349958
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Nov 2025 19:28:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 852752D8390;
-	Mon, 24 Nov 2025 19:25:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D12922D7805;
+	Mon, 24 Nov 2025 19:28:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LXckLuxa"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dvkEvOoF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E1C31A9F87
-	for <linux-fsdevel@vger.kernel.org>; Mon, 24 Nov 2025 19:25:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CADD02D6E68
+	for <linux-fsdevel@vger.kernel.org>; Mon, 24 Nov 2025 19:28:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764012319; cv=none; b=f78OoRlp2lJcpg/eAlF3koWOAo1lL5iDmkgRuO0n52qPrjTxI36A1XMmDl1xJAYkREoCtYdYT1ElMBqxE5VolaJL6dqMMCQLsfxzGN2egWZNyRtJ8Fg959NOO1Nvzn4iOfpsnP1Q1j+vv7cU9Vjo0OABlocwLR9Sz/5W4gcfwHc=
+	t=1764012513; cv=none; b=q1WpuxtWJVInDy1TPaWnRXo9bjh77FLAcmbPxdOwnZvHjVjS5Jxo6PcydmN6Gw9pSbCQ2KxUomhL8VyV77OZr9GGK+eYAnY5n8LVTu4SeHQXd+Hb88X74r93Y4ljQc4BKkc/E+jGxn3cvE4mJaUVz2RhiNd717aCq4xYg4cZW14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764012319; c=relaxed/simple;
-	bh=8yAstxFCuO/xLz0Qr0ZPOrm522xtnzYWomT9NacnbJc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FyDhDUpK4Yeqq9UdttAYaj2ECG+xZKXAxGnMUihAkid4IXQNMBn+dJ8D2a8q1FJy7qdR8y3Mkv2D9RwZiV07VsglHaiadwqMx0Yu7SV+1mhnk4avN+W5T9+EHKiczVomTeV4Ugii4CMBOALXwA9xRrSO3tBQIwww5TrirJqJXvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LXckLuxa; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-64088c6b309so7796989a12.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Nov 2025 11:25:17 -0800 (PST)
+	s=arc-20240116; t=1764012513; c=relaxed/simple;
+	bh=sDew0t9fu0jnEVo8dKYpXLQpMRfJPGurqD+BiO4AuRI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=evf3P3ydR6guRs085yTPUZThIwK1ISmEvvylXFwc64uEbvNK0STkhmcGPa7XK45nOuUVkGqq/R6nB4BeaAu353tY8pgSoG4wtLol8PBdxsp+weTGRbpTdUCUWZL8ZFHIdGam/YQdsYufSxlyy+KcqQfZEiYHTx3BRXduMAl3zFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dvkEvOoF; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2980343d9d1so23135ad.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Nov 2025 11:28:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1764012316; x=1764617116; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=z9qyNmraSZxfH4EDiK1SbuyABcD2ZmeejgHMgM0Aus0=;
-        b=LXckLuxarppMaCUPl9bt3hD8q7Zivui+rm8KpVNhLdmPTZ/4cc5EPaA2YKlvpnOuKT
-         mEQOrnFp56r0t5ambXTrVhGFd80DrhKaecSeXYUP1UbgmdkkjV9A3Hj2jnmfG/YEHshu
-         F+qU2kcmfHPORbsE8IQHxKj+WG9sXf5XTAOHfAW2VCNYd3mS6EcTf05CWK/t/8zm3Pqp
-         ZME1PfujhqgOQzNBzgbr4DkrKUQQMWGHzss6c8EcsXZRBXXlZc9Tr9CyEXK4N5vhq+W/
-         LqbO1Tf34H/oLv92dF6xD9sSQ1DsnJIzJP9p0s8wA2ju7kEQ3BdM31pFCYwWk3bi7/Mv
-         nfpw==
+        d=google.com; s=20230601; t=1764012511; x=1764617311; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=LWH9q/hl3rNSInlsbdja3rL4CO9dd/czAGlikc5ijjE=;
+        b=dvkEvOoFE8dvN7Re6CCRsmwKt/+71rk1QV/BAepaErKPBDzxKj+nXIvOvf+gDzD2S9
+         mpyZ3hT9n4P4WoNBdIXWZcGQVavNu2WhY1FKD9x4xeDvamUrIEBhE3S41ZqNSytOHbvh
+         ceGH7NMYumjukBbBC3TphuqOjhQizfBI24zFSedyhlQynq4e+eo6HDLjHI4v++0BORFf
+         MxsCun/KzcYzLDWiZDp5YBWX0Iviu6sHkSDdCZqsDdeRdFMOTTJ8fHLBZw9oi7gYtydw
+         +Z0VVzHjz0Dy4Qbh3CmpPHK862vsUvgRTHWU08ih2/NTXIZdJ+eUo/vGQ/RLwPEdUuKN
+         8mZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764012316; x=1764617116;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=z9qyNmraSZxfH4EDiK1SbuyABcD2ZmeejgHMgM0Aus0=;
-        b=siAHVOt1p+qSwrh+ir5Bvv6/5bULMgcgTMWFfHZKs3UFS1xATIjetttUWLcP9FAsSQ
-         SIhcn5776eVbkdZRSKT8Wln6Lm/Uiy4SfkaO3yF7hX6se2pPV7PrTbc9JSdOOFQ5tp8Q
-         Md0ibtNXXU4kU1rNOTV2Cc0+u6mud4kcFgftGsEdsLPU/FVGxyyFS1HMu2s0sIb6upu0
-         1QoHWBgNrIjq+kfbFVWEHQzel1PoCFAaTMUJDGyeJMqXAMUdqPknkw3e715sQPqUI5ct
-         I8uVtHQh7+3I6u6e7aLFzL0L6bwPip3uvjSsToTRoXcpJdi47ihj7itJhUTkieYyXhkj
-         OIEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVnulH6DisnnLOg736BPsRu/pMsukFx1Rnme2I5X5OJh2HGHfaDXqDfq3l7jvqNVL2VmgtrLvL+LzAa0udk@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcP13lqd5BNbyRpaHdyFjuPRnavdqX+WUCfjJ8t8CEvmrjDm2Y
-	Vc1go6BwGc1TQnDtDbhN7Oovlj0kyeLRC3C560EpwlLoU9QfFgIoY5p19Qz2EwdvoS0Q8Z3p9Ir
-	jKh3HG9FYmDFi+a92Y2jQBdmZEXtdYsA=
-X-Gm-Gg: ASbGncuLxU7k3LZ642ij78njJzJR8aruQG24v292twF72pXrzp8WOWIreeNBQEA+k4y
-	xyZHBOJCBQlOj3xaEeCGGIgVN3Idh0kM0kR0K9zdZageiiCMBHGbJ7Un7xcZXf8p155NyLAiPQW
-	vEspfKpGHeRLNy/S7D7/0wGhiX0j9u2++8Dznwp/eDCgbBVnh9tXXHMg1rXXzCndbdwEAS88E+K
-	xsWcxM6AP7WC1+TAcb434C4XFeug7+Ya9uk88Nh9kaAYBwM+AOepebgOxAVtc6c3FH8GD/zXfv8
-	9G47TobfP/Cdg5It1PfS2WHFJw==
-X-Google-Smtp-Source: AGHT+IEnPxGRBNwP+fRYNNpdpxzVlaNFWJqa96znKAS5unWGRk2BSHbb2O8CSVNHkJLmswNREiziC/IElvtyhDkguXA=
-X-Received: by 2002:a17:907:7292:b0:b70:b077:b94b with SMTP id
- a640c23a62f3a-b7671a7c4a8mr1497131066b.43.1764012316404; Mon, 24 Nov 2025
- 11:25:16 -0800 (PST)
+        d=1e100.net; s=20230601; t=1764012511; x=1764617311;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LWH9q/hl3rNSInlsbdja3rL4CO9dd/czAGlikc5ijjE=;
+        b=i+2o5naAzxVQmG3Y7D/GS0o9n1x2meTtmpJfZMT4av3w8rDK5WpcAfJtt70j/fVboS
+         bI33ejyf8W9khb9f2ktq4e2Mggt0lKOrzsVK7XSRTAOyZjJA0xNqfzTXrcs5y9tjv/nW
+         ExPDfK6Fym+KWrV70guswoCBa03h9NWbpNxT2kekMM9CnzlTlT0E929o7jW20c5s2nlO
+         fPCvgHAzbNN9a1Q7lgM1eHlYKqUcxjuRnak1tSyoGrKwCM+xUPeG/t8HU5ZqFZvpIWhu
+         GeUF+yczBG2ktdJzvjgJ8dye1M0OweIMLixwdvuggCB+PvrHqKyfGGoViNC2mPSrUHMW
+         dMqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWJKLC2/E1+IQTHbL4CUo5yw0QiTtvM3OgIw+0RrxCZmSO0ZZGvu7OHOxJ6ftgK406usx6fXUJF3vo+cwcT@vger.kernel.org
+X-Gm-Message-State: AOJu0YzENps5yoc/rzsOPVuUTs2jZLnQiYzHxal7iANPWwrqpf0Vq0C0
+	u00TdEkg4YvE+riNmL/0e0zLRa0zAuqqgE4JSIzeICHK4f7IoWY7IoNbDBCgA0YroQ==
+X-Gm-Gg: ASbGncslny5/Lfj48PTDX2JfkVzyR4AknfJqv3if6tTujXk2QEhmCi5TcgwSzH+XAMx
+	zygXOLHKZDqpiN5dN2g1hWHztdGPRzJ+JZ2hzgh43WYC/UUYnAmzRXSW0GKDIxJKX5ic8w9nn7N
+	0X2aXCkkJ2EWHtrKXXDqun9SWHraa1Y5pgn6lbGez4TdQvyQ5x+SJJEkbQdzeK7lGinm8GaWZWQ
+	XAuaCx+QfN0NOERN5BqaKGgbUk2zpaYVW0xOHK4DA/tpKCM/LWFGfJ5JXDIPZKY3tjRltfcfz4c
+	L8oG/OB4oV3cN+y/kO42BnA80/78wmr6ifMlk9b8hMsEwqNsFJFFlJGVXZCfPqTdeR11qq+NIoR
+	DPlHMko/Jc8P4P9rXto3Q0dnse+UQK1h5FNAV2OpPqHyFlmsfBvVFs5XjtB/WsDF8vFr12PfD55
+	/zK8qYlGclXqIeTqeFOKM3e5rbOem94oFW0ZkZMKBZk7ekMumKzjuy9jSRvtxq7KDDJhk4lQWig
+	/XDuzgZkwZCZtJTUXfLYDAWs7tCdoHwlwRK
+X-Google-Smtp-Source: AGHT+IFLRduFAIQy3YMAggJqo/rYWmJVJJ8UtSIVVJnP/AlGBxO6wqy+SVrby3o/Ep3mplNi6XKu2w==
+X-Received: by 2002:a17:902:dac8:b0:299:c368:6b1e with SMTP id d9443c01a7336-29b7b2cba85mr4907175ad.17.1764012510779;
+        Mon, 24 Nov 2025 11:28:30 -0800 (PST)
+Received: from google.com (116.241.118.34.bc.googleusercontent.com. [34.118.241.116])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7c3f095c237sm15674809b3a.45.2025.11.24.11.28.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Nov 2025 11:28:30 -0800 (PST)
+Date: Mon, 24 Nov 2025 19:28:25 +0000
+From: Carlos Llamas <cmllamas@google.com>
+To: Andrei Vagin <avagin@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>, Andrei Vagin <avagin@google.com>,
+	Christian Brauner <brauner@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+	Andrea Cervesato <andrea.cervesato@suse.com>
+Subject: Re: [PATCH] fs/namespace: correctly handle errors returned by
+ grab_requested_mnt_ns
+Message-ID: <aSSx2YDHAbcOhgZ0@google.com>
+References: <20251111062815.2546189-1-avagin@google.com>
+ <aSMDTEAih_QgdLBg@sirena.co.uk>
+ <CANaxB-wmgGt3Mt+B3LJc4ajVUdTZEQBUaDPcJnDGStgSD0gtbQ@mail.gmail.com>
+ <d689e03e-0f20-4a33-bd74-6cf342f92485@sirena.org.uk>
+ <CANaxB-z2hJ3xT7ViA1ERkgFQMaHThgriK_+goMyoNeDtrFBpcQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251010221737.1403539-1-mjguzik@gmail.com> <20251124174742.2939610-1-agruenba@redhat.com>
-In-Reply-To: <20251124174742.2939610-1-agruenba@redhat.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Mon, 24 Nov 2025 20:25:04 +0100
-X-Gm-Features: AWmQ_blB8BCENP9pkSfZbdUMJ1NNc6fRgrXKlf8wFPSo9ThjIeR4tI_Bjwnr_pI
-Message-ID: <CAGudoHF4PNbJpc5uUDA02d=TD8gL2J4epn-+hhKhreou1dVX5g@mail.gmail.com>
-Subject: Re: [PATCH] fs: rework I_NEW handling to operate without fences
-To: Andreas Gruenbacher <agruenba@redhat.com>
-Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANaxB-z2hJ3xT7ViA1ERkgFQMaHThgriK_+goMyoNeDtrFBpcQ@mail.gmail.com>
 
-On Mon, Nov 24, 2025 at 6:47=E2=80=AFPM Andreas Gruenbacher <agruenba@redha=
-t.com> wrote:
->
-> On Sat, Oct 11, 2025 at 12:17=E2=80=AFAM Mateusz Guzik <mjguzik@gmail.com=
-> wrote:
-> > +             *isnew =3D !!(inode_state_read(inode) & I_NEW);
->
-> Nit: the not-nots here and in the other two places in this patch are not
-> doing anything.  Please avoid that kind of thing.
->
+On Mon, Nov 24, 2025 at 11:14:46AM -0800, Andrei Vagin wrote:
+> On Mon, Nov 24, 2025 at 3:23 AM Mark Brown <broonie@kernel.org> wrote:
+> >
+> > On Sun, Nov 23, 2025 at 07:15:16AM -0800, Andrei Vagin wrote:
+> > > On Sun, Nov 23, 2025 at 4:51 AM Mark Brown <broonie@kernel.org> wrote:
+> >
+> > > > listmount04.c:128: TFAIL: invalid mnt_id_req.spare expected EINVAL: EBADF (9)
+> >
+> > > The merged patch is slightly different from what you can see on the
+> > > mailing list, so it's better to look at commit 78f0e33cd6c93
+> > > ("fs/namespace: correctly handle errors returned by
+> > > grab_requested_mnt_ns") to understand what is going on here.
+> >
+> > > With this patch, the spare field can be used as the `mnt_ns_fd`. EINVAL
+> > > is returned if both mnt_ns_fd and mnt_ns_id are set. A non-zero
+> > > mnt_ns_fd (the old spare) is interpreted as a namespace file descriptor.
+> >
+> > I can see what's happening - the question is if the test failure it
+> > triggers is a problem in the kernel or in the test.
+> 
+> This is a test problem. The test has to be modified to check cases when
+> the target mount namespace is specified by mnt_fs_fd.
 
-Huh, it appears you are right. So happens I_NEW has the value of 0x1,
-so I tried out another flag:
+Cc: Andrea Cervesato <andrea.cervesato@suse.com>
 
-bool flagvar_de(struct inode *inode);
-bool flagvar_de(struct inode *inode)
-{
-        return !!(inode_state_read(inode) & I_CREATING);
-}
-EXPORT_SYMBOL(flagvar_de);
+Loop in Andrea (test owner) to possibly make the corresponding updates.
 
-bool flagvar(struct inode *inode);
-bool flagvar(struct inode *inode)
-{
-        return inode_state_read(inode) & I_CREATING;
-}
-EXPORT_SYMBOL(flagvar);
-
-    endbr64
-    call   22c9 <flagvar+0x9>
-    movzbl 0x91(%rdi),%eax
-    shr    $0x7,%al
-    jmp    22d8 <flagvar+0x18>
-
-    endbr64
-    call   699 <flagvar_de+0x9>
-    movzbl 0x91(%rdi),%eax
-    shr    $0x7,%al
-    jmp    6a8 <flagvar_de+0x18>
-
-Was that always a thing? My grep for '!!' shows plenty of hits in the
-kernel tree and I'm pretty sure this was an established pratice.
+Thanks,
+Carlos Llamas
 
