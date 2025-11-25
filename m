@@ -1,224 +1,273 @@
-Return-Path: <linux-fsdevel+bounces-69780-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69781-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05D5AC84DB4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Nov 2025 13:00:20 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id D28BFC84EF2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Nov 2025 13:14:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E5363B29BE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Nov 2025 11:59:39 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 569EA34843C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Nov 2025 12:14:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22E9C31D366;
-	Tue, 25 Nov 2025 11:58:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB2F031A801;
+	Tue, 25 Nov 2025 12:14:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="yFEapHfo"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="rNdYFT44";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="SuSkvEVx";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="rNdYFT44";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="SuSkvEVx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA09131C59F;
-	Tue, 25 Nov 2025 11:58:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 870A7221F06
+	for <linux-fsdevel@vger.kernel.org>; Tue, 25 Nov 2025 12:13:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764071899; cv=none; b=UMZLxD3epadot3NQKjs4A4X5SaDIz5OA4EJV9dxi7eg0pcF6WJ3FAR2XqDiyiiHntijZhK8oxKuIxXjHViWNKG+Y1hzHOjTnAvkAuTwFMj7bL3s/fZYYZdqM+qGYHyvufRy6UeaBlcCggKupgG30mA29CYR1LbtbrTb3Axr8K+g=
+	t=1764072841; cv=none; b=ByO3OKuinp5w4v7Ixjp8VvR0/leicEL7uMPMt59lfH5T2ww5vYXgCEMl4SAvt2iN2bssb1i/vomFwin3xZvH0QZZn/lPRPvQqr/rENXlHSzBGiCN9dLTqAfOp7oEdnFoWQaWh2EmYRrcfBOAoAh5JHlJGTkCUDhNRUcRgNpnp5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764071899; c=relaxed/simple;
-	bh=ruv0pyQoAcU1O1L/LfvFprGmTO5ZDWXsRI2wTokKDOY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FmVL5Fx3dA/ISmdhgoPDpa3kDc1QIZAwA4WqlVmJ2uCJj+5/p19kObypg3lt6VCOOh3BLfkt5YZypaTsOhV2RBafDRzSwn1BO3XnDNQPfjkOje/Nl9wq5/24ccFLiYfrZSzk0IWMmE3IPgJJxNtdZ/+tANUN2dQzyEV3ZxD35sg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=yFEapHfo; arc=none smtp.client-ip=115.124.30.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1764071890; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=1bvFSKfl5Rj4di9hKJUndsfRZIHy5bCJ/NegFEKaOjA=;
-	b=yFEapHfoIztAkefBaVHuJnT8QDs4tHuuE2u7vMboeSO8ii7g+f4TK62xRQu+xvM9hvaGOgQqm24uf+LHISruy5yqoMEz9H1EnTHtVwxCkp56Oq1WPBktaWujEI7FJG+1trNbMtaDYNnFILlNusmXdRNwhy5dRSjM/iwC5GXrHP0=
-Received: from 30.221.132.26(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WtNqcre_1764071889 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 25 Nov 2025 19:58:10 +0800
-Message-ID: <dbff8d43-3313-459b-9c9f-d431fcae0249@linux.alibaba.com>
-Date: Tue, 25 Nov 2025 19:58:09 +0800
+	s=arc-20240116; t=1764072841; c=relaxed/simple;
+	bh=uF/FOu1jS4o9rvuFCo6cCVEv4INKB6C0M4+q3uYSi1Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SlvuK6f++s4CDMdcY+9MWe2RyXJLZdkoYGCJ10z74wCvSlB9b1I/+934oRzjZx8Irl04brZ2VxDSeSoRN6jNpuBjomrn7/M9wjxPCb0Ma8yFHpXiersMBC9CJYNF7egMQiQgiZSbqvvlV8lLICe9clj+OlXxSBV+M8v+7Nydio8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=rNdYFT44; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=SuSkvEVx; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=rNdYFT44; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=SuSkvEVx; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 7023122833;
+	Tue, 25 Nov 2025 12:13:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1764072837; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5Kz8yzEj0oZuXUt/JteBW0t2Frr6zGoxVmLTC7P/clI=;
+	b=rNdYFT44sjHEAIQ4q8tBF22SeD1costZq2/iMzLAbIBVICEfP0RO5LYHr+cvmrAm3ISvJl
+	6hZj5ff9jg4hRzsREkgOCbYljf4ORz13mr79ZZ4Tpd5A/aCyM/l85maXE7LE2mp7eg8huu
+	FqW8cOe5vphPKe3CThmhGVuixnRyi/A=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1764072837;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5Kz8yzEj0oZuXUt/JteBW0t2Frr6zGoxVmLTC7P/clI=;
+	b=SuSkvEVxuB4elM+YdRvkU6A4dAgjrUDAdGkmpwcoLCjM890C4ewHeNdthwJT0Chb8EWmr7
+	Ae1ji8oxq7W6xXDw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1764072837; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5Kz8yzEj0oZuXUt/JteBW0t2Frr6zGoxVmLTC7P/clI=;
+	b=rNdYFT44sjHEAIQ4q8tBF22SeD1costZq2/iMzLAbIBVICEfP0RO5LYHr+cvmrAm3ISvJl
+	6hZj5ff9jg4hRzsREkgOCbYljf4ORz13mr79ZZ4Tpd5A/aCyM/l85maXE7LE2mp7eg8huu
+	FqW8cOe5vphPKe3CThmhGVuixnRyi/A=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1764072837;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5Kz8yzEj0oZuXUt/JteBW0t2Frr6zGoxVmLTC7P/clI=;
+	b=SuSkvEVxuB4elM+YdRvkU6A4dAgjrUDAdGkmpwcoLCjM890C4ewHeNdthwJT0Chb8EWmr7
+	Ae1ji8oxq7W6xXDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 641013EA63;
+	Tue, 25 Nov 2025 12:13:57 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id SbxgGIWdJWnqXwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 25 Nov 2025 12:13:57 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 18A12A0C7D; Tue, 25 Nov 2025 13:13:57 +0100 (CET)
+Date: Tue, 25 Nov 2025 13:13:57 +0100
+From: Jan Kara <jack@suse.cz>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
+	Jeff Layton <jlayton@kernel.org>, Amir Goldstein <amir73il@gmail.com>, 
+	Jens Axboe <axboe@kernel.dk>
+Subject: Re: [PATCH v4 08/47] fanotify: convert fanotify_init() to
+ FD_PREPARE()
+Message-ID: <nwv4dvazs2cr3qijh3wgxs6q434fhgyiabst5lxh66blacm6ex@xt7k6p3m2sck>
+References: <20251123-work-fd-prepare-v4-0-b6efa1706cfd@kernel.org>
+ <20251123-work-fd-prepare-v4-8-b6efa1706cfd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: calling into file systems directly from ->queue_rq, was Re:
- [PATCH V5 0/6] loop: improve loop aio perf by IOCB_NOWAIT
-To: Ming Lei <ming.lei@redhat.com>
-Cc: Christoph Hellwig <hch@infradead.org>, linux-block@vger.kernel.org,
- Mikulas Patocka <mpatocka@redhat.com>,
- Zhaoyang Huang <zhaoyang.huang@unisoc.com>,
- Dave Chinner <dchinner@redhat.com>, linux-fsdevel@vger.kernel.org,
- Jens Axboe <axboe@kernel.dk>
-References: <20251015110735.1361261-1-ming.lei@redhat.com>
- <aSP3SG_KaROJTBHx@infradead.org> <aSQfC2rzoCZcMfTH@fedora>
- <aSQf6gMFzn-4ohrh@infradead.org> <aSUbsDjHnQl0jZde@fedora>
- <db90b7b3-bf94-4531-8329-d9e0dbc6a997@linux.alibaba.com>
- <aSV0sDZGDoS-tLlp@fedora>
- <00bc891e-4137-4d93-83a5-e4030903ffab@linux.alibaba.com>
- <aSWHx3ynP9Z_6DeY@fedora>
- <4a5ec383-540b-461d-9e53-15593a22a61a@linux.alibaba.com>
- <aSWXeIVjArYsAbyf@fedora>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <aSWXeIVjArYsAbyf@fedora>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251123-work-fd-prepare-v4-8-b6efa1706cfd@kernel.org>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[linux-foundation.org,zeniv.linux.org.uk,suse.cz,vger.kernel.org,kernel.org,gmail.com,kernel.dk];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email,suse.cz:email]
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
 
+On Sun 23-11-25 17:33:26, Christian Brauner wrote:
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
+> ---
+>  fs/notify/fanotify/fanotify_user.c | 60 ++++++++++++++------------------------
+>  1 file changed, 22 insertions(+), 38 deletions(-)
 
+Looks good. Feel free to add:
 
-On 2025/11/25 19:48, Ming Lei wrote:
-> On Tue, Nov 25, 2025 at 06:57:15PM +0800, Gao Xiang wrote:
->>
->>
->> On 2025/11/25 18:41, Ming Lei wrote:
->>> On Tue, Nov 25, 2025 at 05:39:17PM +0800, Gao Xiang wrote:
->>>> Hi Ming,
->>>>
->>>> On 2025/11/25 17:19, Ming Lei wrote:
->>>>> On Tue, Nov 25, 2025 at 03:26:39PM +0800, Gao Xiang wrote:
->>>>>> Hi Ming and Christoph,
->>>>>>
->>>>>> On 2025/11/25 11:00, Ming Lei wrote:
->>>>>>> On Mon, Nov 24, 2025 at 01:05:46AM -0800, Christoph Hellwig wrote:
->>>>>>>> On Mon, Nov 24, 2025 at 05:02:03PM +0800, Ming Lei wrote:
->>>>>>>>> On Sun, Nov 23, 2025 at 10:12:24PM -0800, Christoph Hellwig wrote:
->>>>>>>>>> FYI, with this series I'm seeing somewhat frequent stack overflows when
->>>>>>>>>> using loop on top of XFS on top of stacked block devices.
->>>>>>>>>
->>>>>>>>> Can you share your setting?
->>>>>>>>>
->>>>>>>>> BTW, there are one followup fix:
->>>>>>>>>
->>>>>>>>> https://lore.kernel.org/linux-block/20251120160722.3623884-1-ming.lei@redhat.com/
->>>>>>>>>
->>>>>>>>> I just run 'xfstests -q quick' on loop on top of XFS on top of dm-stripe,
->>>>>>>>> not see stack overflow with the above fix against -next.
->>>>>>>>
->>>>>>>> This was with a development tree with lots of local code.  So the
->>>>>>>> messages aren't applicable (and probably a hint I need to reduce my
->>>>>>>> stack usage).  The observations is that we now stack through from block
->>>>>>>> submission context into the file system write path, which is bad for a
->>>>>>>> lot of reasons.  journal_info being the most obvious one.
->>>>>>>>
->>>>>>>>>> In other words:  I don't think issuing file system I/O from the
->>>>>>>>>> submission thread in loop can work, and we should drop this again.
->>>>>>>>>
->>>>>>>>> I don't object to drop it one more time.
->>>>>>>>>
->>>>>>>>> However, can we confirm if it is really a stack overflow because of
->>>>>>>>> calling into FS from ->queue_rq()?
->>>>>>>>
->>>>>>>> Yes.
->>>>>>>>
->>>>>>>>> If yes, it could be dead end to improve loop in this way, then I can give up.
->>>>>>>>
->>>>>>>> I think calling directly into the lower file system without a context
->>>>>>>> switch is very problematic, so IMHO yes, it is a dead end.
->>>>>> I've already explained the details in
->>>>>> https://lore.kernel.org/r/8c596737-95c1-4274-9834-1fe06558b431@linux.alibaba.com
->>>>>>
->>>>>> to zram folks why block devices act like this is very
->>>>>> risky (in brief, because virtual block devices don't
->>>>>> have any way (unlike the inner fs itself) to know enough
->>>>>> about whether the inner fs already did something without
->>>>>> context save (a.k.a side effect) so a new task context
->>>>>> is absolutely necessary for virtual block devices to
->>>>>> access backing fses for stacked usage.
->>>>>>
->>>>>> So whether a nested fs can success is intrinsic to
->>>>>> specific fses (because either they assure no complex
->>>>>> journal_info access or save all effected contexts before
->>>>>> transiting to the block layer.  But that is not bdev can
->>>>>> do since they need to do any block fs.
->>>>>
->>>>> IMO, task stack overflow could be the biggest trouble.
->>>>>
->>>>> block layer has current->blk_plug/current->bio_list, which are
->>>>> dealt with in the following patches:
->>>>>
->>>>> https://lore.kernel.org/linux-block/20251120160722.3623884-4-ming.lei@redhat.com/
->>>>> https://lore.kernel.org/linux-block/20251120160722.3623884-5-ming.lei@redhat.com/
->>>>
->>>> I think it's the simplist thing for this because the
->>>> context of "current->blk_plug/current->bio_list" is
->>>> _owned_ by the block layer, so of course the block
->>>> layer knows how to (and should) save and restore
->>>> them.
->>>
->>> Strictly speaking, all per-task context data is owned by task, instead
->>> of subsystems, otherwise, it needn't to be stored in `task_struct` except
->>> for some case just wants per-task storage.
->>>
->>> For example of current->blk_plug, it is used by many subsystems(io_uring, FS,
->>> mm, block layer, md/dm, drivers, ...).
->>>
->>>>
->>>>>
->>>>> I am curious why FS task context can't be saved/restored inside block
->>>>> layer when calling into new FS IO? Given it is just per-task info.
->>>>
->>>> The problem is a block driver don't know what the upper FS
->>>> (sorry about the terminology) did before calling into block
->>>> layer (the task_struct and journal_info side effect is just
->>>> the obvious one), because all FSes (mainly the write path)
->>>> doesn't assume the current context will be transited into
->>>> another FS context, and it could introduce any fs-specific
->>>> context before calling into the block layer.
->>>>
->>>> So it's the fs's business to save / restore contexts since
->>>> they change the context and it's none of the block layer
->>>> business to save and restore because the block device knows
->>>> nothing about the specific fs behavior, it should deal with
->>>> all block FSes.
->>>>
->>>> Let's put it into another way, thinking about generic
->>>> calling convention[1], which includes caller-saved contexts
->>>> and callee-saved contexts.  I think the problem is here
->>>> overally similiar, for loop devices, you know none of lower
->>>> or upper FS behaves (because it doesn't directly know either
->>>
->>> loop just need to know which data to save/restore.
->>
->> I've said there is no clear list of which data needs to be
->> saved/restored.
->>
->> FSes can do _anything_. Maybe something in `current` needs
->> to be saved, but anything that uses `current`/PID as
->> a mapping key also needs to be saved, e.g., arbitrary
->>
->> `hash_table[current]` or `context_table[current->pid]`.
->>
->> Again, because not all filesystems allow nesting by design:
->> Linux kernel doesn't need block filesystem to be nested.
-> 
-> OK, got it, thanks for the sharing.
-> 
-> BTW, block layer actually uses current->bio_list to avoid nested bio
-> submission.
-> 
-> The similar trick could be played on FS ->read_iter/->write_iter() over
-> `kiocb` for avoiding nested FS IO too, but not sure if there is real
-> big use case.
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-I don't think it's much similar, `current->bio_list` just deals
-with the single BIO concept, but what nested fses need to deal
-with is much complicated.
-
-Just a premature conclusion: I don't think it's feasible for
-filesystems to work like this.
-
-Thanks,
-Gao Xiang
+								Honza
 
 > 
+> diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+> index 1dadda82cae5..be0a96ad4316 100644
+> --- a/fs/notify/fanotify/fanotify_user.c
+> +++ b/fs/notify/fanotify/fanotify_user.c
+> @@ -1597,16 +1597,20 @@ static struct hlist_head *fanotify_alloc_merge_hash(void)
+>  	return hash;
+>  }
+>  
+> +DEFINE_CLASS(fsnotify_group,
+> +	      struct fsnotify_group *,
+> +	      if (_T) fsnotify_destroy_group(_T),
+> +	      fsnotify_alloc_group(ops, flags),
+> +	      const struct fsnotify_ops *ops, int flags)
+> +
+>  /* fanotify syscalls */
+>  SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
+>  {
+>  	struct user_namespace *user_ns = current_user_ns();
+> -	struct fsnotify_group *group;
+>  	int f_flags, fd;
+>  	unsigned int fid_mode = flags & FANOTIFY_FID_BITS;
+>  	unsigned int class = flags & FANOTIFY_CLASS_BITS;
+>  	unsigned int internal_flags = 0;
+> -	struct file *file;
+>  
+>  	pr_debug("%s: flags=%x event_f_flags=%x\n",
+>  		 __func__, flags, event_f_flags);
+> @@ -1690,36 +1694,29 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
+>  	if (flags & FAN_NONBLOCK)
+>  		f_flags |= O_NONBLOCK;
+>  
+> -	/* fsnotify_alloc_group takes a ref.  Dropped in fanotify_release */
+> -	group = fsnotify_alloc_group(&fanotify_fsnotify_ops,
+> +	CLASS(fsnotify_group, group)(&fanotify_fsnotify_ops,
+>  				     FSNOTIFY_GROUP_USER);
+> -	if (IS_ERR(group)) {
+> +	/* fsnotify_alloc_group takes a ref.  Dropped in fanotify_release */
+> +	if (IS_ERR(group))
+>  		return PTR_ERR(group);
+> -	}
+>  
+>  	/* Enforce groups limits per user in all containing user ns */
+>  	group->fanotify_data.ucounts = inc_ucount(user_ns, current_euid(),
+>  						  UCOUNT_FANOTIFY_GROUPS);
+> -	if (!group->fanotify_data.ucounts) {
+> -		fd = -EMFILE;
+> -		goto out_destroy_group;
+> -	}
+> +	if (!group->fanotify_data.ucounts)
+> +		return -EMFILE;
+>  
+>  	group->fanotify_data.flags = flags | internal_flags;
+>  	group->memcg = get_mem_cgroup_from_mm(current->mm);
+>  	group->user_ns = get_user_ns(user_ns);
+>  
+>  	group->fanotify_data.merge_hash = fanotify_alloc_merge_hash();
+> -	if (!group->fanotify_data.merge_hash) {
+> -		fd = -ENOMEM;
+> -		goto out_destroy_group;
+> -	}
+> +	if (!group->fanotify_data.merge_hash)
+> +		return -ENOMEM;
+>  
+>  	group->overflow_event = fanotify_alloc_overflow_event();
+> -	if (unlikely(!group->overflow_event)) {
+> -		fd = -ENOMEM;
+> -		goto out_destroy_group;
+> -	}
+> +	if (unlikely(!group->overflow_event))
+> +		return -ENOMEM;
+>  
+>  	if (force_o_largefile())
+>  		event_f_flags |= O_LARGEFILE;
+> @@ -1738,8 +1735,7 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
+>  		group->priority = FSNOTIFY_PRIO_PRE_CONTENT;
+>  		break;
+>  	default:
+> -		fd = -EINVAL;
+> -		goto out_destroy_group;
+> +		return -EINVAL;
+>  	}
+>  
+>  	BUILD_BUG_ON(!(FANOTIFY_ADMIN_INIT_FLAGS & FAN_UNLIMITED_QUEUE));
+> @@ -1750,27 +1746,15 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
+>  	}
+>  
+>  	if (flags & FAN_ENABLE_AUDIT) {
+> -		fd = -EPERM;
+>  		if (!capable(CAP_AUDIT_WRITE))
+> -			goto out_destroy_group;
+> -	}
+> -
+> -	fd = get_unused_fd_flags(f_flags);
+> -	if (fd < 0)
+> -		goto out_destroy_group;
+> -
+> -	file = anon_inode_getfile_fmode("[fanotify]", &fanotify_fops, group,
+> -					f_flags, FMODE_NONOTIFY);
+> -	if (IS_ERR(file)) {
+> -		put_unused_fd(fd);
+> -		fd = PTR_ERR(file);
+> -		goto out_destroy_group;
+> +			return -EPERM;
+>  	}
+> -	fd_install(fd, file);
+> -	return fd;
+>  
+> -out_destroy_group:
+> -	fsnotify_destroy_group(group);
+> +	fd = FD_ADD(f_flags,
+> +		    anon_inode_getfile_fmode("[fanotify]", &fanotify_fops,
+> +					     group, f_flags, FMODE_NONOTIFY));
+> +	if (fd >= 0)
+> +		retain_and_null_ptr(group);
+>  	return fd;
+>  }
+>  
 > 
-> Thanks,
-> Ming
-
+> -- 
+> 2.47.3
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
