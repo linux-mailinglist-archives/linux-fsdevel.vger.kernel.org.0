@@ -1,380 +1,243 @@
-Return-Path: <linux-fsdevel+bounces-69799-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69800-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F1B4C85B84
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Nov 2025 16:15:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BD57C85B9C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Nov 2025 16:16:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4C6A734875A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Nov 2025 15:14:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6A8A3A364B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Nov 2025 15:16:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1659326D5C;
-	Tue, 25 Nov 2025 15:13:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10D51326D5C;
+	Tue, 25 Nov 2025 15:16:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="bDQXLpLY"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="fvsvhkbr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21A793271E3
-	for <linux-fsdevel@vger.kernel.org>; Tue, 25 Nov 2025 15:13:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2518D2264D3;
+	Tue, 25 Nov 2025 15:16:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764083634; cv=none; b=G3BwXJkaX4S/Q6QctbJgAdHLaaa8JGRuhgKaFQ1XOAcib+Std6FaYrAGUy1pZ66gA+bFuiVvZYzB20jrrkf5eaBbXCnOdR0WNZ9DZIlXGKQo8DOSXRZE4d9/taNq/bdMyvujst9StbeyJ5MTyZr+XknNYmr/758CY54wo+PiwPM=
+	t=1764083792; cv=none; b=PwLKP+uUn/kEaTOmXK49QAaym+PMOWJYdrWnDUqK8Dwej9NJNZ3tQ2KQRy3cDcIGnzHB4fLoPe6G3D6QqBqfo+JbPFDWrNt7NXIz5ZSlv19Mh75OqBJLpJ7FwuzcoaBHax7V5GA3YcpaW86BN+XtHPqtC1ygHbkJVGo4PR4cNWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764083634; c=relaxed/simple;
-	bh=y44+7vWiMICS8raonC28WpYQWJl7VjfR7seHcarnwGg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=buVanuygjVcnWhSLNU7GJTOqiOVfrYar057GqAmfYPWsgpDSv/o9x0SNKLJPIAx/d4ZJhO3E3bkx5y719llasLz2YORwwQ7NmGlHTvkqc8Be5lzu7V2URWFFp/5gIj59zxtE+JynAL7YpP/GFaQqunIXdlzL5ylaQGO13hS6xYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=bDQXLpLY; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-64074f01a6eso9972771a12.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Nov 2025 07:13:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1764083630; x=1764688430; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CJAb0zqhShPXJU9IU9F3kUJv+d4qBtikcObWfuhaWDU=;
-        b=bDQXLpLYuhl/hFO4aWmQNIS1mRu7f5+RtfD3KQnDdQycs0T2aTVUSyDR7m7ZDuX8N9
-         raDuqeQelN2hAiAryxketOE9LMrnI/FwA9A0A3XhEUx+6dG050FKuZ5+fjdGKnDTNz6N
-         7ktFUf1jNaYZD7e2O5wVUJ0UJ3dIfDL/qnEuxvWYP1K7q1wcwIZDE+s58xN6gtHq1KZn
-         1toBkKYOHlSTnwWCeA73whzBXxce1dMWXrwur2mIH2ryqxHu8z0+fpYG81hygG00+LEq
-         QHQLLhHH3sMcqRkCpG9RpcsnCzwGcbXBySdhf632/8jtlntzhOW848xFj5WW+XUSbJmb
-         vYHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764083630; x=1764688430;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=CJAb0zqhShPXJU9IU9F3kUJv+d4qBtikcObWfuhaWDU=;
-        b=l6wUi1G3QsOY88MnWCCZDGj2nhfLOI+0WihSJ8v0g6V9yDZfenMVv/Wr8TdDFJNuF8
-         Y73D62R7sYZ+T8TUX0Q0KvAw1fe5/Ps8aLIZEFikoRQQCF+HAJp5ZEFujOgEdfqs4FGG
-         /3H1NCp0K7xBm1Yq5SZ8cPLS9SotSFThqMDRKH6so4pTx1MhjlAyqS+xteugICTwGpYR
-         2pR+UiIwsqURdK2F/Zuvh31ie4L8Yd/i7Q/Hedu8EOXQf9Xq+BWMg0FBkxCyeFVWY1Qy
-         EZ6hcB92c6384MNtoOFK0mvoYFXPnXi8+ZL/iLhbQ7FmmLvzdSlmDCjtEm7fUaf8mgdQ
-         +/aA==
-X-Forwarded-Encrypted: i=1; AJvYcCXcU7NUXWWMbHP7WN/0K39k6BysTbgx3LoVPPypWLhLdX90+DU2zJed17t7G57GRqR8X2cnkxQvbLZc00dq@vger.kernel.org
-X-Gm-Message-State: AOJu0YyP7KE4TZpprICnf5KLMAwKcA1VHsfot1YsF7KuUBptrHlkmPGT
-	ddZ9Ec7A4+nXHpcWrkgiuqRBZTCw5FFZw9Ankx9l9cX3uqORTyuS/rm+HfB/yLpmBLOWdjGkEr2
-	qhYDhBv9gyzGNVP2pnp2Al/rEr/pEFdfzq+LpT47j5g==
-X-Gm-Gg: ASbGncs0ZE8mAfcSN5Y3o6Kq2FUavjFartD0Ir6zBriwvMnv0KSeE3foUxAGbJsXhWL
-	hsi8HhYHE9CHWm9QERXytUSkoEoB3PHpMeMU480IQ5r46n06xYI/A5MR3RivdhiDqF4cbpVQtuL
-	0TAoVZPE9QglOlI9irFv6AbV1E/Q0AAvffqz7Sujwiyc7dbvoQVdKrPEX1wJBqtQ0ieyAQ1A7uV
-	3pqHVYVXqNrYuF19uhLaQ7lZUpTPBP/qLgyhJwujbA+1zkUQpK1exDY/WR41Uy9Hm6I
-X-Google-Smtp-Source: AGHT+IGitbk1SBZ8i6I/16DXqU5ZqIa4zUYc/a94r8AU30+VoEWiOjzICaCR39+/6YAvGwaSGnJ5T1RqczQTlRLZSFw=
-X-Received: by 2002:a05:6402:2714:b0:641:3a92:7e6f with SMTP id
- 4fb4d7f45d1cf-645559fcb28mr14017569a12.0.1764083629776; Tue, 25 Nov 2025
- 07:13:49 -0800 (PST)
+	s=arc-20240116; t=1764083792; c=relaxed/simple;
+	bh=+i1tYXUVB7TkpAzpyKckn8A/TrVqg2ix6QJyQjxRtLw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NVSnENp7ZkkrBitROQ/ZoM9UJ7khj2Q8G6yN/TAFfL5UbZVduuf9W5stm0X9uR++qVfzrREwfSHIDY7/y1YR0hWhnu9n8VsVT4ZOmNiHUwrBX3Ht8YzIukpyvreSnA8rsPpE1KU8FdDCGxKLedoOHpWB7NIvBMWsBUg7dRzc3Fw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=fvsvhkbr; arc=none smtp.client-ip=115.124.30.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1764083780; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=BchfNn9yY1ycldSYtHGeuqhCdlZ37YDfrT56bbg4YGg=;
+	b=fvsvhkbrolGlvI4pd6AihbseGnRCWmDbFLMJ8vzsQDQRdRkLMiefr/A0zVKUMGwmQKWHnl2pFetttC1sBAD0AxeGf3tPTzQg5Y0uUBbZlwjEKR7o6p1bzvVHWpYKgoOIK8EYhA2NvDkgIcBVbiEAETynsmpv+Xae2RCh8NIPayA=
+Received: from 30.170.82.147(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WtOT2S3_1764083778 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 25 Nov 2025 23:16:19 +0800
+Message-ID: <b67d59aa-bcff-4547-8fc2-5f153e826ec7@linux.alibaba.com>
+Date: Tue, 25 Nov 2025 23:16:18 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251122222351.1059049-1-pasha.tatashin@soleen.com>
- <20251122222351.1059049-7-pasha.tatashin@soleen.com> <aSQU1LlPDDsN2rUw@kernel.org>
-In-Reply-To: <aSQU1LlPDDsN2rUw@kernel.org>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Tue, 25 Nov 2025 10:13:13 -0500
-X-Gm-Features: AWmQ_bmueOySR-IcM9KD_nVWlrEwNsK-bJkIQQ6vkf5Ej_a3i1HC8W4-4CGCmcA
-Message-ID: <CA+CK2bAoZ9GhL+SCsrzWL-eG1XcRai0h9QMrL-fsZJFzSxSt6g@mail.gmail.com>
-Subject: Re: [PATCH v7 06/22] liveupdate: luo_file: implement file systems callbacks
-To: Mike Rapoport <rppt@kernel.org>
-Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com, 
-	dmatlack@google.com, rientjes@google.com, corbet@lwn.net, 
-	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, 
-	ojeda@kernel.org, aliceryhl@google.com, masahiroy@kernel.org, 
-	akpm@linux-foundation.org, tj@kernel.org, yoann.congal@smile.fr, 
-	mmaurer@google.com, roman.gushchin@linux.dev, chenridong@huawei.com, 
-	axboe@kernel.dk, mark.rutland@arm.com, jannh@google.com, 
-	vincent.guittot@linaro.org, hannes@cmpxchg.org, dan.j.williams@intel.com, 
-	david@redhat.com, joel.granados@kernel.org, rostedt@goodmis.org, 
-	anna.schumaker@oracle.com, song@kernel.org, linux@weissschuh.net, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
-	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com, 
-	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
-	rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org, 
-	cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com, 
-	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com, 
-	aleksander.lobakin@intel.com, ira.weiny@intel.com, 
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
-	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net, 
-	brauner@kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	saeedm@nvidia.com, ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com, 
-	leonro@nvidia.com, witu@nvidia.com, hughd@google.com, skhawaja@google.com, 
-	chrisl@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: calling into file systems directly from ->queue_rq, was Re:
+ [PATCH V5 0/6] loop: improve loop aio perf by IOCB_NOWAIT
+To: Ming Lei <ming.lei@redhat.com>
+Cc: Christoph Hellwig <hch@infradead.org>, linux-block@vger.kernel.org,
+ Mikulas Patocka <mpatocka@redhat.com>,
+ Zhaoyang Huang <zhaoyang.huang@unisoc.com>,
+ Dave Chinner <dchinner@redhat.com>, linux-fsdevel@vger.kernel.org,
+ Jens Axboe <axboe@kernel.dk>
+References: <aSQfC2rzoCZcMfTH@fedora> <aSQf6gMFzn-4ohrh@infradead.org>
+ <aSUbsDjHnQl0jZde@fedora>
+ <db90b7b3-bf94-4531-8329-d9e0dbc6a997@linux.alibaba.com>
+ <aSV0sDZGDoS-tLlp@fedora>
+ <00bc891e-4137-4d93-83a5-e4030903ffab@linux.alibaba.com>
+ <aSWHx3ynP9Z_6DeY@fedora>
+ <4a5ec383-540b-461d-9e53-15593a22a61a@linux.alibaba.com>
+ <aSWXeIVjArYsAbyf@fedora>
+ <dbff8d43-3313-459b-9c9f-d431fcae0249@linux.alibaba.com>
+ <aSWeq4dN69WsH2EI@fedora>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <aSWeq4dN69WsH2EI@fedora>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Nov 24, 2025 at 3:18=E2=80=AFAM Mike Rapoport <rppt@kernel.org> wro=
-te:
->
-> On Sat, Nov 22, 2025 at 05:23:33PM -0500, Pasha Tatashin wrote:
-> > This patch implements the core mechanism for managing preserved
-> > files throughout the live update lifecycle. It provides the logic to
-> > invoke the file handler callbacks (preserve, unpreserve, freeze,
-> > unfreeze, retrieve, and finish) at the appropriate stages.
-> >
-> > During the reboot phase, luo_file_freeze() serializes the final
-> > metadata for each file (handler compatible string, token, and data
-> > handle) into a memory region preserved by KHO. In the new kernel,
-> > luo_file_deserialize() reconstructs the in-memory file list from this
-> > data, preparing the session for retrieval.
-> >
-> > Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
->
-> With some comments below
-> Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
->
-> > ---
-> >  include/linux/kho/abi/luo.h      |  39 +-
-> >  include/linux/liveupdate.h       |  98 ++++
-> >  kernel/liveupdate/Makefile       |   1 +
-> >  kernel/liveupdate/luo_file.c     | 882 +++++++++++++++++++++++++++++++
-> >  kernel/liveupdate/luo_internal.h |  38 ++
-> >  5 files changed, 1057 insertions(+), 1 deletion(-)
-> >  create mode 100644 kernel/liveupdate/luo_file.c
-> >
->
-> ...
->
-> > +int luo_preserve_file(struct luo_file_set *file_set, u64 token, int fd=
-)
-> > +{
-> > +     struct liveupdate_file_op_args args =3D {0};
-> > +     struct liveupdate_file_handler *fh;
-> > +     struct luo_file *luo_file;
-> > +     struct file *file;
-> > +     int err;
-> > +
-> > +     if (luo_token_is_used(file_set, token))
-> > +             return -EEXIST;
-> > +
-> > +     file =3D fget(fd);
-> > +     if (!file)
-> > +             return -EBADF;
-> > +
-> > +     err =3D luo_alloc_files_mem(file_set);
-> > +     if (err)
-> > +             goto  err_files_mem;
-> > +
-> > +     if (file_set->count =3D=3D LUO_FILE_MAX) {
->
-> This can be checked before getting the file and allocating memory, can't =
-it?
 
-Moved up.
 
->
-> > +             err =3D -ENOSPC;
-> > +             goto err_files_mem;
->
-> The goto label should say what it does, not what the error was.
+On 2025/11/25 20:18, Ming Lei wrote:
+> On Tue, Nov 25, 2025 at 07:58:09PM +0800, Gao Xiang wrote:
+>>
+>>
+>> On 2025/11/25 19:48, Ming Lei wrote:
+>>> On Tue, Nov 25, 2025 at 06:57:15PM +0800, Gao Xiang wrote:
+>>>>
+>>>>
+>>>> On 2025/11/25 18:41, Ming Lei wrote:
+>>>>> On Tue, Nov 25, 2025 at 05:39:17PM +0800, Gao Xiang wrote:
+>>>>>> Hi Ming,
+>>>>>>
+>>>>>> On 2025/11/25 17:19, Ming Lei wrote:
+>>>>>>> On Tue, Nov 25, 2025 at 03:26:39PM +0800, Gao Xiang wrote:
+>>>>>>>> Hi Ming and Christoph,
+>>>>>>>>
+>>>>>>>> On 2025/11/25 11:00, Ming Lei wrote:
+>>>>>>>>> On Mon, Nov 24, 2025 at 01:05:46AM -0800, Christoph Hellwig wrote:
+>>>>>>>>>> On Mon, Nov 24, 2025 at 05:02:03PM +0800, Ming Lei wrote:
+>>>>>>>>>>> On Sun, Nov 23, 2025 at 10:12:24PM -0800, Christoph Hellwig wrote:
+>>>>>>>>>>>> FYI, with this series I'm seeing somewhat frequent stack overflows when
+>>>>>>>>>>>> using loop on top of XFS on top of stacked block devices.
+>>>>>>>>>>>
+>>>>>>>>>>> Can you share your setting?
+>>>>>>>>>>>
+>>>>>>>>>>> BTW, there are one followup fix:
+>>>>>>>>>>>
+>>>>>>>>>>> https://lore.kernel.org/linux-block/20251120160722.3623884-1-ming.lei@redhat.com/
+>>>>>>>>>>>
+>>>>>>>>>>> I just run 'xfstests -q quick' on loop on top of XFS on top of dm-stripe,
+>>>>>>>>>>> not see stack overflow with the above fix against -next.
+>>>>>>>>>>
+>>>>>>>>>> This was with a development tree with lots of local code.  So the
+>>>>>>>>>> messages aren't applicable (and probably a hint I need to reduce my
+>>>>>>>>>> stack usage).  The observations is that we now stack through from block
+>>>>>>>>>> submission context into the file system write path, which is bad for a
+>>>>>>>>>> lot of reasons.  journal_info being the most obvious one.
+>>>>>>>>>>
+>>>>>>>>>>>> In other words:  I don't think issuing file system I/O from the
+>>>>>>>>>>>> submission thread in loop can work, and we should drop this again.
+>>>>>>>>>>>
+>>>>>>>>>>> I don't object to drop it one more time.
+>>>>>>>>>>>
+>>>>>>>>>>> However, can we confirm if it is really a stack overflow because of
+>>>>>>>>>>> calling into FS from ->queue_rq()?
+>>>>>>>>>>
+>>>>>>>>>> Yes.
+>>>>>>>>>>
+>>>>>>>>>>> If yes, it could be dead end to improve loop in this way, then I can give up.
+>>>>>>>>>>
+>>>>>>>>>> I think calling directly into the lower file system without a context
+>>>>>>>>>> switch is very problematic, so IMHO yes, it is a dead end.
+>>>>>>>> I've already explained the details in
+>>>>>>>> https://lore.kernel.org/r/8c596737-95c1-4274-9834-1fe06558b431@linux.alibaba.com
+>>>>>>>>
+>>>>>>>> to zram folks why block devices act like this is very
+>>>>>>>> risky (in brief, because virtual block devices don't
+>>>>>>>> have any way (unlike the inner fs itself) to know enough
+>>>>>>>> about whether the inner fs already did something without
+>>>>>>>> context save (a.k.a side effect) so a new task context
+>>>>>>>> is absolutely necessary for virtual block devices to
+>>>>>>>> access backing fses for stacked usage.
+>>>>>>>>
+>>>>>>>> So whether a nested fs can success is intrinsic to
+>>>>>>>> specific fses (because either they assure no complex
+>>>>>>>> journal_info access or save all effected contexts before
+>>>>>>>> transiting to the block layer.  But that is not bdev can
+>>>>>>>> do since they need to do any block fs.
+>>>>>>>
+>>>>>>> IMO, task stack overflow could be the biggest trouble.
+>>>>>>>
+>>>>>>> block layer has current->blk_plug/current->bio_list, which are
+>>>>>>> dealt with in the following patches:
+>>>>>>>
+>>>>>>> https://lore.kernel.org/linux-block/20251120160722.3623884-4-ming.lei@redhat.com/
+>>>>>>> https://lore.kernel.org/linux-block/20251120160722.3623884-5-ming.lei@redhat.com/
+>>>>>>
+>>>>>> I think it's the simplist thing for this because the
+>>>>>> context of "current->blk_plug/current->bio_list" is
+>>>>>> _owned_ by the block layer, so of course the block
+>>>>>> layer knows how to (and should) save and restore
+>>>>>> them.
+>>>>>
+>>>>> Strictly speaking, all per-task context data is owned by task, instead
+>>>>> of subsystems, otherwise, it needn't to be stored in `task_struct` except
+>>>>> for some case just wants per-task storage.
+>>>>>
+>>>>> For example of current->blk_plug, it is used by many subsystems(io_uring, FS,
+>>>>> mm, block layer, md/dm, drivers, ...).
+>>>>>
+>>>>>>
+>>>>>>>
+>>>>>>> I am curious why FS task context can't be saved/restored inside block
+>>>>>>> layer when calling into new FS IO? Given it is just per-task info.
+>>>>>>
+>>>>>> The problem is a block driver don't know what the upper FS
+>>>>>> (sorry about the terminology) did before calling into block
+>>>>>> layer (the task_struct and journal_info side effect is just
+>>>>>> the obvious one), because all FSes (mainly the write path)
+>>>>>> doesn't assume the current context will be transited into
+>>>>>> another FS context, and it could introduce any fs-specific
+>>>>>> context before calling into the block layer.
+>>>>>>
+>>>>>> So it's the fs's business to save / restore contexts since
+>>>>>> they change the context and it's none of the block layer
+>>>>>> business to save and restore because the block device knows
+>>>>>> nothing about the specific fs behavior, it should deal with
+>>>>>> all block FSes.
+>>>>>>
+>>>>>> Let's put it into another way, thinking about generic
+>>>>>> calling convention[1], which includes caller-saved contexts
+>>>>>> and callee-saved contexts.  I think the problem is here
+>>>>>> overally similiar, for loop devices, you know none of lower
+>>>>>> or upper FS behaves (because it doesn't directly know either
+>>>>>
+>>>>> loop just need to know which data to save/restore.
+>>>>
+>>>> I've said there is no clear list of which data needs to be
+>>>> saved/restored.
+>>>>
+>>>> FSes can do _anything_. Maybe something in `current` needs
+>>>> to be saved, but anything that uses `current`/PID as
+>>>> a mapping key also needs to be saved, e.g., arbitrary
+>>>>
+>>>> `hash_table[current]` or `context_table[current->pid]`.
+>>>>
+>>>> Again, because not all filesystems allow nesting by design:
+>>>> Linux kernel doesn't need block filesystem to be nested.
+>>>
+>>> OK, got it, thanks for the sharing.
+>>>
+>>> BTW, block layer actually uses current->bio_list to avoid nested bio
+>>> submission.
+>>>
+>>> The similar trick could be played on FS ->read_iter/->write_iter() over
+>>> `kiocb` for avoiding nested FS IO too, but not sure if there is real
+>>> big use case.
+>>
+>> I don't think it's much similar, `current->bio_list` just deals
+>> with the single BIO concept, but what nested fses need to deal
+> 
+> No, it is not, it can be one tree of BIOs in case of dm/md.
+> 
+>> with is much complicated.
+> 
+> Care for sharing why/what the complicated is?
+> 
+> Anyway it is just one raw idea, and the devil is always in the details.
 
-Changed to err_free_files_mem;
+FS I/Os are more complicated, for example, you need do some metadata
+I/Os in advance to get where to find the data, and then send data
+I/Os, and data I/Os could also need to be {de,en}crypted,
+(de)compressed and then pass to upper/lower fses.
 
->
-> > +     }
-> > +
-> > +     err =3D -ENOENT;
-> > +     luo_list_for_each_private(fh, &luo_file_handler_list, list) {
-> > +             if (fh->ops->can_preserve(fh, file)) {
-> > +                     err =3D 0;
-> > +                     break;
-> > +             }
-> > +     }
-> > +
-> > +     /* err is still -ENOENT if no handler was found */
-> > +     if (err)
-> > +             goto err_files_mem;
-> > +
-> > +     luo_file =3D kzalloc(sizeof(*luo_file), GFP_KERNEL);
-> > +     if (!luo_file) {
-> > +             err =3D -ENOMEM;
-> > +             goto err_files_mem;
-> > +     }
-> > +
-> > +     luo_file->file =3D file;
-> > +     luo_file->fh =3D fh;
-> > +     luo_file->token =3D token;
-> > +     luo_file->retrieved =3D false;
-> > +     mutex_init(&luo_file->mutex);
-> > +
-> > +     args.handler =3D fh;
-> > +     args.file =3D file;
-> > +     err =3D fh->ops->preserve(&args);
-> > +     if (err)
-> > +             goto err_kfree;
-> > +
-> > +     luo_file->serialized_data =3D args.serialized_data;
-> > +     list_add_tail(&luo_file->list, &file_set->files_list);
-> > +     file_set->count++;
-> > +
-> > +     return 0;
-> > +
-> > +err_kfree:
-> > +     mutex_destroy(&luo_file->mutex);
->
-> Don't think we need this, luo_file is freed in the next line.
+All those behaviors can be in arbitary nested ways, a much
+simplified coroutine-like current->bio_list is not enough
+for such cases, anyway.  Also the programming model is
+just different, I don't think it can be a practical way.
 
-Removed.
+Thanks,
+Gao Xiang
 
->
-> > +     kfree(luo_file);
-> > +err_files_mem:
-> > +     fput(file);
-> > +     luo_free_files_mem(file_set);
->
-> I'd have the error path as
->
-> err_free_luo_file:
->         kfree(luo_file);
-> err_free_files_mem:
->         luo_free_files_mem(file_set);
-> err_put_file:
->         fput(file);
+> 
+> 
+> Thanks,
+> Ming
 
-Yeap, done like this.
-
->
-> > +
-> > +     return err;
-> > +}
->
-> ...
->
-> > +void luo_file_unpreserve_files(struct luo_file_set *file_set)
-> > +{
-> > +     struct luo_file *luo_file;
-> > +
-> > +     while (!list_empty(&file_set->files_list)) {
->
-> list_for_each_entry_safe_reverse()?
-
-In this case I prefer while(!list_empty(...))
-It emphasizes to  a reader that we are emptying the full list. _safe
-is good to use when some items are removed from a list while
-traversing.
-
->
-> > +             struct liveupdate_file_op_args args =3D {0};
-> > +
-> > +             luo_file =3D list_last_entry(&file_set->files_list,
-> > +                                        struct luo_file, list);
-> > +
-> > +             args.handler =3D luo_file->fh;
-> > +             args.file =3D luo_file->file;
-> > +             args.serialized_data =3D luo_file->serialized_data;
-> > +             luo_file->fh->ops->unpreserve(&args);
-> > +
-> > +             list_del(&luo_file->list);
-> > +             file_set->count--;
-> > +
-> > +             fput(luo_file->file);
-> > +             mutex_destroy(&luo_file->mutex);
-> > +             kfree(luo_file);
-> > +     }
-> > +
-> > +     luo_free_files_mem(file_set);
-> > +}
->
-> ...
->
-> > +int luo_file_finish(struct luo_file_set *file_set)
-> > +{
-> > +     struct list_head *files_list =3D &file_set->files_list;
-> > +     struct luo_file *luo_file;
-> > +     int err;
-> > +
-> > +     if (!file_set->count)
-> > +             return 0;
-> > +
-> > +     list_for_each_entry(luo_file, files_list, list) {
-> > +             err =3D luo_file_can_finish_one(file_set, luo_file);
-> > +             if (err)
-> > +                     return err;
-> > +     }
-> > +
-> > +     while (!list_empty(&file_set->files_list)) {
->
-> list_for_each_entry_safe_reverse()?
-
-Same
-
->
-> > +             luo_file =3D list_last_entry(&file_set->files_list,
-> > +                                        struct luo_file, list);
-> > +
-> > +             luo_file_finish_one(file_set, luo_file);
-> > +
-> > +             if (luo_file->file)
-> > +                     fput(luo_file->file);
-> > +             list_del(&luo_file->list);
-> > +             file_set->count--;
-> > +             mutex_destroy(&luo_file->mutex);
-> > +             kfree(luo_file);
-> > +     }
-> > +
->
-> ...
->
-> > diff --git a/kernel/liveupdate/luo_internal.h b/kernel/liveupdate/luo_i=
-nternal.h
-> > index 1292ac47eef8..c8973b543d1d 100644
-> > --- a/kernel/liveupdate/luo_internal.h
-> > +++ b/kernel/liveupdate/luo_internal.h
-> > @@ -40,6 +40,28 @@ static inline int luo_ucmd_respond(struct luo_ucmd *=
-ucmd,
-> >   */
-> >  #define luo_restore_fail(__fmt, ...) panic(__fmt, ##__VA_ARGS__)
-> >
-> > +/* Mimics list_for_each_entry() but for private list head entries */
-> > +#define luo_list_for_each_private(pos, head, member)                  =
-       \
-> > +     for (struct list_head *__iter =3D (head)->next;                  =
-         \
-> > +          __iter !=3D (head) &&                                       =
-         \
-> > +          ({ pos =3D container_of(__iter, typeof(*(pos)), member); 1; =
-});      \
-> > +          __iter =3D __iter->next)
->
-> Ideally something like this should go to include/linux/list.h, but it can
-> be done later to avoid bikeshedding about the name :)
-
-Exactly, I am planning to propose this as a separate change for
-list.h, but I suspect we will need to take care of other variants as
-well, reverse, cont, safe etc.
-
->
-> And you can reuse most of list_for_each_entry, just replace the line that
-> accesses __private member:
->
-> #define luo_list_for_each_private(pos, head, member)                    \
->         for (pos =3D list_first_entry(head, typeof(*pos), member);       =
- \
->              &ACCESS_PRIVATE(pos, member) !=3D head;                     =
- \
->              pos =3D list_next_entry(pos, member))
->
-
-This does not work, because list_next_entry also accesses private,
-what works is this:
-#define luo_list_for_each_private(pos, head, member) \
-for (pos =3D list_first_entry(head, typeof(*pos), member); \
-     &ACCESS_PRIVATE(pos, member) !=3D head; \
-     pos =3D list_entry(ACCESS_PRIVATE(pos, member).next, typeof(*pos), mem=
-ber))
-
-But that extra ACCESS_PRIVATE bothers me, so let's keep it as-is for
-now. And solve it once in list.h, and then update the private macro.
-
-> --
-> Sincerely yours,
-> Mike.
 
