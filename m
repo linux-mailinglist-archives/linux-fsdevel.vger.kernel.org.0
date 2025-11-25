@@ -1,91 +1,91 @@
-Return-Path: <linux-fsdevel+bounces-69763-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69765-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EC7FC8487F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Nov 2025 11:42:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B81AC8489A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Nov 2025 11:45:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B31D734DAA8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Nov 2025 10:42:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA9853AE869
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Nov 2025 10:45:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41CCF3101A7;
-	Tue, 25 Nov 2025 10:42:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA50B3115B8;
+	Tue, 25 Nov 2025 10:44:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="wMFOmfV0";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="WY7EhNEv";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="K2FYgCgP";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="J54rdR/m"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="sQpNbmEC";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="B6Ie/feE";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="pni0UpLe";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="rSwNxQHW"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD7362DAFBB
-	for <linux-fsdevel@vger.kernel.org>; Tue, 25 Nov 2025 10:42:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A127931062C
+	for <linux-fsdevel@vger.kernel.org>; Tue, 25 Nov 2025 10:44:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764067368; cv=none; b=trcLTtPLYBJhmC0HIYDZQ8PcCof2NqpTh4JFSC6j7D1US1+domrbgx8V0jYOeyELnYGSjT1DaQ/qB2duFYYfK6MddoJACE7V1ebwRB0OXl64RJNX1zwIwb8wo1Vn8SThPeqNUAz7nsdDv/TyRDeSYESc0Ovh5EbZziPwedWBPq8=
+	t=1764067493; cv=none; b=i5cvtjk+djdbZK1RBiSmm4idrKiiFsPWWbpVvRpKjHlzOcaYeCkziVYIAQN6mW1StKQyX8skRssDFJtWlHWpVEVikpAZ3OucUdBMuhM6geyYhiuj8Rmnxsnl+nqsK/jsfw1HCUJDFVkm0w/MU8HL+2kJpX9XS+a0QH8Xw4LzrRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764067368; c=relaxed/simple;
-	bh=ELiNL1d54YZbxOjKDUuShrGKcvo74xDlL5WqP4k5TUU=;
+	s=arc-20240116; t=1764067493; c=relaxed/simple;
+	bh=1Wg6A1mBhSAsxQ9/6TugeSCfRipMhDQOlhMS0vggRFQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VsojfFSVCm9Y3UgIQVhug8YV0j1vzC5gteAsjmy/GWf8JMWbeXc/v4J0Ry7JzBXb/MzZP3i4dINv21n2X6n+5a5e6YSX+u+IPZiVmewb+izBz19y566ShwCnNdX/8vKbKV4K9PqXIjUM0WqONd7hcSpqmkTpRmiIsuw+fziFufA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=wMFOmfV0; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=WY7EhNEv; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=K2FYgCgP; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=J54rdR/m; arc=none smtp.client-ip=195.135.223.130
+	 Content-Type:Content-Disposition:In-Reply-To; b=YVsOTYnYwBb+3OLZ26kw5eywJ06uzLWHQHy6ExavjKVtWHUkO/HF+QLY8Bq4PdHPfoeVU5+toMTXHW7CoGAleJ2dBGcnfQyOuHuYvBh4Oyz5Fs8cIwvybkZm8qRaK3DLW57EtbRxcYp+E+7s/zNWLn4gCXam0Z9cSY/Ee47SYgY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=sQpNbmEC; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=B6Ie/feE; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=pni0UpLe; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=rSwNxQHW; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id A054422774;
-	Tue, 25 Nov 2025 10:42:43 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id D12622252C;
+	Tue, 25 Nov 2025 10:44:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1764067364; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1764067490; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=SsYspdjC0lpi9JmCQilKQweJ66sk4zl5eE8yE81CCRs=;
-	b=wMFOmfV0+x/Yh7CMm56VlBlnQn/SjulBKf5Drv1UP5Br1KP+afi+VZLWXQNwZ/5GWjVvlV
-	W7dVeKSaoC0KFbN8OKsJ+EtWQ7E02q7VMdMgz22hebAmIstXrQ7Nn0JU0Ti4/uVqJ4LEhg
-	LHes/c62gT5AUJgvtMONKF5Uidj8YXg=
+	bh=L9l+WKaVmYFmKkau1igqnO66HrPcwewgu+mf1wm0Emc=;
+	b=sQpNbmECKgw6Pgrg/cIHjRNisNi2615W38ShQ9oCJ8EGPFTh4VSemlymJLhmSlQqdkM78i
+	JkPuk4Ju/7WsBivKl1gVj3GgeQ6ihw2OuUvZft8fn8G/DsMYhMTMtExMinBjT8L4of8nPi
+	asj2nidVPBMDr4412n7UxzByqmgZsek=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1764067364;
+	s=susede2_ed25519; t=1764067490;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=SsYspdjC0lpi9JmCQilKQweJ66sk4zl5eE8yE81CCRs=;
-	b=WY7EhNEvDwQkbNYSwBQmlI/iaBNtANR/gBR2OZQSTnZzxO2x3buhhuR/QBWLP9egatayXB
-	yl1LcGujoc+KyZBw==
+	bh=L9l+WKaVmYFmKkau1igqnO66HrPcwewgu+mf1wm0Emc=;
+	b=B6Ie/feEIHc3aLvu18o8cmUY6/0um006z88Ss2vnBxhp9CgwF0paqlSOQOppYYQwbCmJKv
+	JtGu3Ki0vB9wx0AQ==
 Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=K2FYgCgP;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="J54rdR/m"
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=pni0UpLe;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=rSwNxQHW
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1764067363; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1764067489; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=SsYspdjC0lpi9JmCQilKQweJ66sk4zl5eE8yE81CCRs=;
-	b=K2FYgCgPxSBYbK++lrRIDXKEC48MYnC2nSGgvwNpJgbuWEuFlH5kPY8z+amA/XrFIp7p7L
-	WjA4NNTce1KibnEdhSifNyHcDZ/ckDBvTY/MlB8M7qB+Qv2f/f5YjPYOefaSQu7nCe13Vg
-	VPuLPH6mxSnH211BBjqhxZncKmrDA60=
+	bh=L9l+WKaVmYFmKkau1igqnO66HrPcwewgu+mf1wm0Emc=;
+	b=pni0UpLef8iQNq0HR9r64Wkp8Cq9nhFJJ4zY4si3AjLLD1EewTEDdsotaHHqgza0PC1Eht
+	c59UdGvOVIXEJ8ICP353eEg4mnVtQ9pnq/vq6ZiLmUrHbl7ZJNJcG7B6YzsC/jYKncHYd8
+	5Dyye8QA3b7fcKbB4uHDMS1daJOv7B0=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1764067363;
+	s=susede2_ed25519; t=1764067489;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=SsYspdjC0lpi9JmCQilKQweJ66sk4zl5eE8yE81CCRs=;
-	b=J54rdR/mXqBTtJR/9i1hqqfUiUBOEZQvN2+kshns9Vlo3mnxux34iF9W5RzxDAv33orMgM
-	SxvGtELkbp3/wNDg==
+	bh=L9l+WKaVmYFmKkau1igqnO66HrPcwewgu+mf1wm0Emc=;
+	b=rSwNxQHWMHZtAmf8vLv79+41k+m9B2qwlXUZvvTZ+h6jAUFZ5Eecdp6lt2uuaPZ0g6t1Ty
+	GWHnUDb+Cli97oCw==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9DED93EA63;
-	Tue, 25 Nov 2025 10:42:39 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CE7BA3EA63;
+	Tue, 25 Nov 2025 10:44:45 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id OAlUIx+IJWlpCQAAD6G6ig
-	(envelope-from <pfalcato@suse.de>); Tue, 25 Nov 2025 10:42:39 +0000
-Date: Tue, 25 Nov 2025 10:42:37 +0000
+	id lbk1L52IJWmECwAAD6G6ig
+	(envelope-from <pfalcato@suse.de>); Tue, 25 Nov 2025 10:44:45 +0000
+Date: Tue, 25 Nov 2025 10:44:36 +0000
 From: Pedro Falcato <pfalcato@suse.de>
 To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>, 
@@ -120,10 +120,11 @@ Cc: Andrew Morton <akpm@linux-foundation.org>,
 	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
 	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
 	rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v3 1/4] mm: declare VMA flags by bit
-Message-ID: <fs6mvtx5tla556t4bo4cex6i2pf4huvdzbfwymtckqh6ughd3h@yjjpeyko3kng>
+Subject: Re: [PATCH v3 2/4] mm: simplify and rename mm flags function for
+ clarity
+Message-ID: <wpvjnzaffij4thc7djcl6uhyoo6kegjsgplplv5cyagcgw2szj@vlbnxzs4xbrl>
 References: <cover.1764064556.git.lorenzo.stoakes@oracle.com>
- <3a35e5a0bcfa00e84af24cbafc0653e74deda64a.1764064556.git.lorenzo.stoakes@oracle.com>
+ <8f0bc556e1b90eca8ea5eba41f8d5d3f9cd7c98a.1764064557.git.lorenzo.stoakes@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -132,11 +133,14 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <3a35e5a0bcfa00e84af24cbafc0653e74deda64a.1764064556.git.lorenzo.stoakes@oracle.com>
-X-Rspamd-Queue-Id: A054422774
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+In-Reply-To: <8f0bc556e1b90eca8ea5eba41f8d5d3f9cd7c98a.1764064557.git.lorenzo.stoakes@oracle.com>
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: D12622252C
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
 X-Spamd-Result: default: False [-2.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
+	BAYES_HAM(-3.00)[99.99%];
 	SUSPICIOUS_RECIPS(1.50)[];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
 	MID_RHS_NOT_FQDN(0.50)[];
@@ -155,7 +159,7 @@ X-Spamd-Result: default: False [-2.51 / 50.00];
 	RCVD_TLS_ALL(0.00)[];
 	DKIM_TRACE(0.00)[suse.de:+];
 	TO_MATCH_ENVRCPT_SOME(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
 	RCVD_COUNT_TWO(0.00)[2];
 	FROM_EQ_ENVFROM(0.00)[];
 	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
@@ -164,66 +168,27 @@ X-Spamd-Result: default: False [-2.51 / 50.00];
 	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
 	MISSING_XM_UA(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:email,suse.de:dkim]
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim,suse.de:email,suse.cz:email]
 X-Spam-Score: -2.51
-X-Spam-Level: 
 
-On Tue, Nov 25, 2025 at 10:00:59AM +0000, Lorenzo Stoakes wrote:
-> In order to lay the groundwork for VMA flags being a bitmap rather than a
-> system word in size, we need to be able to consistently refer to VMA flags
-> by bit number rather than value.
+On Tue, Nov 25, 2025 at 10:01:00AM +0000, Lorenzo Stoakes wrote:
+> The __mm_flags_set_word() function is slightly ambiguous - we use 'set' to
+> refer to setting individual bits (such as in mm_flags_set()) but here we
+> use it to refer to overwriting the value altogether.
 > 
-> Take this opportunity to do so in an enum which we which is additionally
-> useful for tooling to extract metadata from.
-> 
-> This additionally makes it very clear which bits are being used for what at
-> a glance.
-> 
-> We use the VMA_ prefix for the bit values as it is logical to do so since
-> these reference VMAs. We consistently suffix with _BIT to make it clear
-> what the values refer to.
-> 
-> We declare bit values even when the flags that use them would not be
-> enabled by config options as this is simply clearer and clearly defines
-> what bit numbers are used for what, at no additional cost.
-> 
-> We declare a sparse-bitwise type vma_flag_t which ensures that users can't
-> pass around invalid VMA flags by accident and prepares for future work
-> towards VMA flags being a bitmap where we want to ensure bit values are
-> type safe.
-> 
-> To make life easier, we declare some macro helpers - DECLARE_VMA_BIT()
-> allows us to avoid duplication in the enum bit number declarations (and
-> maintaining the sparse __bitwise attribute), and INIT_VM_FLAG() is used to
-> assist with declaration of flags.
-> 
-> Unfortunately we can't declare both in the enum, as we run into issue with
-> logic in the kernel requiring that flags are preprocessor definitions, and
-> additionally we cannot have a macro which declares another macro so we must
-> define each flag macro directly.
-> 
-> Additionally, update the VMA userland testing vma_internal.h header to
-> include these changes.
-> 
-> We also have to fix the parameters to the vma_flag_*_atomic() functions
-> since VMA_MAYBE_GUARD_BIT is now of type vma_flag_t and sparse will
-> complain otherwise.
-> 
-> We have to update some rather silly if-deffery found in mm/task_mmu.c which
-> would otherwise break.
-> 
-> Finally, we update the rust binding helper as now it cannot auto-detect the
-> flags at all.
+> Rename it to __mm_flags_overwrite_word() to eliminate this ambiguity.
+>
+                          write_word()?
+> We additionally simplify the functions, eliminating unnecessary
+> bitmap_xxx() operations (the compiler would have optimised these out but
+> it's worth being as clear as we can be here).
 > 
 > Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 > Acked-by: Vlastimil Babka <vbabka@suse.cz>
 
+Anyway:
 Reviewed-by: Pedro Falcato <pfalcato@suse.de>
 
-Scary but cromulent-looking. Thanks :)
-
---
+-- 
 Pedro
 
