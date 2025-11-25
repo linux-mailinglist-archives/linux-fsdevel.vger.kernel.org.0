@@ -1,129 +1,82 @@
-Return-Path: <linux-fsdevel+bounces-69777-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69778-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id A891BC84C1F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Nov 2025 12:35:58 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E1BCC84CCD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Nov 2025 12:48:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2AAAD350A13
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Nov 2025 11:35:51 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5F62D4E9297
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Nov 2025 11:48:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1C3F275AE8;
-	Tue, 25 Nov 2025 11:35:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE06E315D37;
+	Tue, 25 Nov 2025 11:48:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="LfO26gNv";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="F/i8315q";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="KZLlVqOD";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="7k2SPKNs"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fx59w6Yt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E0F026FD97
-	for <linux-fsdevel@vger.kernel.org>; Tue, 25 Nov 2025 11:35:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BF0B314A6A
+	for <linux-fsdevel@vger.kernel.org>; Tue, 25 Nov 2025 11:48:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764070533; cv=none; b=LFv8mIlErO+K5bE3MOfUpBCqM3pItCygPrTtyjoGZyN5avlQE4vnwnif7R+GGG+7evZOiCYY5aWL0tohgqcMb4i9SHOGue+1B6yenn8fLFJqA5Oj0suyIt4RJw7mLv2Mg3Eocn1oLKnQZ1Hh+x/XSxG+PGnEYyeONU1bnEiBDKo=
+	t=1764071312; cv=none; b=A2grFWgdh/VqTyoMrR9qrUiucOeIracfpnbk4270KSjqdwkYEN/ZA5kiy4j05TIxHc7RPyJgFZpiC6o8Y4b87IdmrCrw7FA+wPtzd6O3xDxkbSqNJnTb1+Gu0OkdvoZgtk2LcXaWcehgjdH0Zj79t9qPffzYdf3Vy/Lt2pi5Dd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764070533; c=relaxed/simple;
-	bh=oBeYUnejM45J9ek2I/sFszKCay4UVQEEKIuh9k3c15E=;
+	s=arc-20240116; t=1764071312; c=relaxed/simple;
+	bh=tHTW55j2yjSwYr7bWO1Sxxrv2Mn00N3Cu7zsD6yvqIU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D3L9bebtGrhOiSorE+5maJV2dmdCRIFTXySlBCVYW3hv5iZscXP7v2WMMEW48xk+K+STYOW0Ql+mJ6tMWb987P59huNOhUL3Q9mJjV9APQTED8DDmxP921033gnyXDhlEou3xNlaWGpkX0wONJWph0vKA5bYn0jyj/kPcGO0pjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=LfO26gNv; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=F/i8315q; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=KZLlVqOD; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=7k2SPKNs; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	 Content-Type:Content-Disposition:In-Reply-To; b=dpDtHdFoedH8nPCI7WiIdj5BBXjcLUoZ3XKeQwjdFFWXdq1074BjvvyXmteBFtiS1cv786j7A4U3vQm/6moUnbHlOiY1h8x7o0LTjcHGbdXdfuTGXFuovUEhW6mAV8Kxr11W5+4dQmm1pFhFk+JGliA8yPIo0YtW5VudWOv0PM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fx59w6Yt; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1764071309;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1nJC5qabwPwD2QegYMZqt6c9szE1Yu3gpVPZ3J7H2HU=;
+	b=fx59w6Ytc7pZx6NSWniaNtx5mcge50eR2OHtd+DCP2aWi2FJqsFm90mR5YGoFC1B1uRa//
+	vx6g+bDUxHbOR6/GlG8B8BgZzgOnRfOuxGqHbl0F/72UYTx2NWHC948Rd16ftK309K2JZI
+	19iWMhnzz5cw0hj8ngmqsdvbg82lB5Y=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-661-Ap_GQK1tOcudsjFYfpPL2A-1; Tue,
+ 25 Nov 2025 06:48:25 -0500
+X-MC-Unique: Ap_GQK1tOcudsjFYfpPL2A-1
+X-Mimecast-MFC-AGG-ID: Ap_GQK1tOcudsjFYfpPL2A_1764071304
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id E17002280A;
-	Tue, 25 Nov 2025 11:35:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1764070529; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+p6QrTPqrcjFGMk+Yo9ek0ZjatJ2Isxpx46M53PclhY=;
-	b=LfO26gNvL6i3mOBxxltDOa7Mm8VYGeVURJ/3KZq8KDwKBrG2ZfN+rQH/RaI2Xq6LVHf7AB
-	W+lultHVLM9DVlNhWfH57ujd9eGjL9RA1vK8QnAqLaWNi1eN1pCXLobZHm7wc9uRiRBzYf
-	gHviVPB3Xl4NSeomC/8dAFiG13X59wg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1764070529;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+p6QrTPqrcjFGMk+Yo9ek0ZjatJ2Isxpx46M53PclhY=;
-	b=F/i8315q3n2XsXBKkr5MMX6YasmzsZ3i5KG+4+YC9UpV4zAoZar/3IFE8WIvIb791nmF6k
-	JYqZc95yasQHUGDQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=KZLlVqOD;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=7k2SPKNs
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1764070528; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+p6QrTPqrcjFGMk+Yo9ek0ZjatJ2Isxpx46M53PclhY=;
-	b=KZLlVqODwAsFVuNlLAzLgXP+M5fclnuwVfNHpzlK2jerDk0ZIINfp/sEZRsrFAYJ+if39h
-	Uu3QS1WmbFQ8EYNLs+Vk9ZdEvujDOib/WdPuIoZNAf+zCjAmigdofRkFltvGqW25Rp/8mS
-	lIm39GnDc7lDOQm7F/DtoqxKcdTRqbQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1764070528;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+p6QrTPqrcjFGMk+Yo9ek0ZjatJ2Isxpx46M53PclhY=;
-	b=7k2SPKNseROSvP+kBu7RQTgUWctv/U+y1dfvjtbO+X9wX4AcP8UFci2JYR7NWpAo0zviP0
-	y3vgbbznHHpwxgDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D70063EA63;
-	Tue, 25 Nov 2025 11:35:24 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id yWcWMXyUJWldOwAAD6G6ig
-	(envelope-from <pfalcato@suse.de>); Tue, 25 Nov 2025 11:35:24 +0000
-Date: Tue, 25 Nov 2025 11:35:23 +0000
-From: Pedro Falcato <pfalcato@suse.de>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	Muchun Song <muchun.song@linux.dev>, Oscar Salvador <osalvador@suse.de>, 
-	David Hildenbrand <david@redhat.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, 
-	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
-	Axel Rasmussen <axelrasmussen@google.com>, Yuanchu Xie <yuanchu@google.com>, Wei Xu <weixugc@google.com>, 
-	Peter Xu <peterx@redhat.com>, Ingo Molnar <mingo@redhat.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, Kees Cook <kees@kernel.org>, 
-	Matthew Wilcox <willy@infradead.org>, Jason Gunthorpe <jgg@ziepe.ca>, 
-	John Hubbard <jhubbard@nvidia.com>, Leon Romanovsky <leon@kernel.org>, Zi Yan <ziy@nvidia.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Nico Pache <npache@redhat.com>, 
-	Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>, 
-	Lance Yang <lance.yang@linux.dev>, Xu Xin <xu.xin16@zte.com.cn>, 
-	Chengming Zhou <chengming.zhou@linux.dev>, Jann Horn <jannh@google.com>, 
-	Matthew Brost <matthew.brost@intel.com>, Joshua Hahn <joshua.hahnjy@gmail.com>, 
-	Rakie Kim <rakie.kim@sk.com>, Byungchul Park <byungchul@sk.com>, 
-	Gregory Price <gourry@gourry.net>, Ying Huang <ying.huang@linux.alibaba.com>, 
-	Alistair Popple <apopple@nvidia.com>, Shakeel Butt <shakeel.butt@linux.dev>, 
-	David Rientjes <rientjes@google.com>, Rik van Riel <riel@surriel.com>, 
-	Harry Yoo <harry.yoo@oracle.com>, Kemeng Shi <shikemeng@huaweicloud.com>, 
-	Kairui Song <kasong@tencent.com>, Nhat Pham <nphamcs@gmail.com>, Baoquan He <bhe@redhat.com>, 
-	Chris Li <chrisl@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Qi Zheng <zhengqi.arch@bytedance.com>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	Bjorn Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
-	rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v3 4/4] mm: introduce VMA flags bitmap type
-Message-ID: <brej2b4dxfyuxojzgu2ge7ybk65t234bjstfzfo63izf2woagm@dd5vwcr3d3dg>
-References: <cover.1764064556.git.lorenzo.stoakes@oracle.com>
- <bab179d7b153ac12f221b7d65caac2759282cfe9.1764064557.git.lorenzo.stoakes@oracle.com>
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9065E19560A2;
+	Tue, 25 Nov 2025 11:48:23 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.210])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4625519560B2;
+	Tue, 25 Nov 2025 11:48:17 +0000 (UTC)
+Date: Tue, 25 Nov 2025 19:48:08 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Gao Xiang <hsiangkao@linux.alibaba.com>
+Cc: Christoph Hellwig <hch@infradead.org>, linux-block@vger.kernel.org,
+	Mikulas Patocka <mpatocka@redhat.com>,
+	Zhaoyang Huang <zhaoyang.huang@unisoc.com>,
+	Dave Chinner <dchinner@redhat.com>, linux-fsdevel@vger.kernel.org,
+	Jens Axboe <axboe@kernel.dk>
+Subject: Re: calling into file systems directly from ->queue_rq, was Re:
+ [PATCH V5 0/6] loop: improve loop aio perf by IOCB_NOWAIT
+Message-ID: <aSWXeIVjArYsAbyf@fedora>
+References: <20251015110735.1361261-1-ming.lei@redhat.com>
+ <aSP3SG_KaROJTBHx@infradead.org>
+ <aSQfC2rzoCZcMfTH@fedora>
+ <aSQf6gMFzn-4ohrh@infradead.org>
+ <aSUbsDjHnQl0jZde@fedora>
+ <db90b7b3-bf94-4531-8329-d9e0dbc6a997@linux.alibaba.com>
+ <aSV0sDZGDoS-tLlp@fedora>
+ <00bc891e-4137-4d93-83a5-e4030903ffab@linux.alibaba.com>
+ <aSWHx3ynP9Z_6DeY@fedora>
+ <4a5ec383-540b-461d-9e53-15593a22a61a@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -132,111 +85,144 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <bab179d7b153ac12f221b7d65caac2759282cfe9.1764064557.git.lorenzo.stoakes@oracle.com>
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: E17002280A
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-2.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FREEMAIL_CC(0.00)[linux-foundation.org,linux.dev,suse.de,redhat.com,oracle.com,suse.cz,kernel.org,google.com,suse.com,infradead.org,linaro.org,arm.com,goodmis.org,ziepe.ca,nvidia.com,linux.alibaba.com,zte.com.cn,intel.com,gmail.com,sk.com,gourry.net,surriel.com,huaweicloud.com,tencent.com,cmpxchg.org,bytedance.com,vger.kernel.org,kvack.org,garyguo.net,protonmail.com,umich.edu];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	TO_MATCH_ENVRCPT_SOME(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_GT_50(0.00)[70];
-	TAGGED_RCPT(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim,suse.de:email]
-X-Spam-Score: -2.51
+In-Reply-To: <4a5ec383-540b-461d-9e53-15593a22a61a@linux.alibaba.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Tue, Nov 25, 2025 at 10:01:02AM +0000, Lorenzo Stoakes wrote:
-> It is useful to transition to using a bitmap for VMA flags so we can avoid
-> running out of flags, especially for 32-bit kernels which are constrained
-> to 32 flags, necessitating some features to be limited to 64-bit kernels
-> only.
+On Tue, Nov 25, 2025 at 06:57:15PM +0800, Gao Xiang wrote:
 > 
-> By doing so, we remove any constraint on the number of VMA flags moving
-> forwards no matter the platform and can decide in future to extend beyond
-> 64 if required.
 > 
-> We start by declaring an opaque types, vma_flags_t (which resembles
-> mm_struct flags of type mm_flags_t), setting it to precisely the same size
-> as vm_flags_t, and place it in union with vm_flags in the VMA declaration.
+> On 2025/11/25 18:41, Ming Lei wrote:
+> > On Tue, Nov 25, 2025 at 05:39:17PM +0800, Gao Xiang wrote:
+> > > Hi Ming,
+> > > 
+> > > On 2025/11/25 17:19, Ming Lei wrote:
+> > > > On Tue, Nov 25, 2025 at 03:26:39PM +0800, Gao Xiang wrote:
+> > > > > Hi Ming and Christoph,
+> > > > > 
+> > > > > On 2025/11/25 11:00, Ming Lei wrote:
+> > > > > > On Mon, Nov 24, 2025 at 01:05:46AM -0800, Christoph Hellwig wrote:
+> > > > > > > On Mon, Nov 24, 2025 at 05:02:03PM +0800, Ming Lei wrote:
+> > > > > > > > On Sun, Nov 23, 2025 at 10:12:24PM -0800, Christoph Hellwig wrote:
+> > > > > > > > > FYI, with this series I'm seeing somewhat frequent stack overflows when
+> > > > > > > > > using loop on top of XFS on top of stacked block devices.
+> > > > > > > > 
+> > > > > > > > Can you share your setting?
+> > > > > > > > 
+> > > > > > > > BTW, there are one followup fix:
+> > > > > > > > 
+> > > > > > > > https://lore.kernel.org/linux-block/20251120160722.3623884-1-ming.lei@redhat.com/
+> > > > > > > > 
+> > > > > > > > I just run 'xfstests -q quick' on loop on top of XFS on top of dm-stripe,
+> > > > > > > > not see stack overflow with the above fix against -next.
+> > > > > > > 
+> > > > > > > This was with a development tree with lots of local code.  So the
+> > > > > > > messages aren't applicable (and probably a hint I need to reduce my
+> > > > > > > stack usage).  The observations is that we now stack through from block
+> > > > > > > submission context into the file system write path, which is bad for a
+> > > > > > > lot of reasons.  journal_info being the most obvious one.
+> > > > > > > 
+> > > > > > > > > In other words:  I don't think issuing file system I/O from the
+> > > > > > > > > submission thread in loop can work, and we should drop this again.
+> > > > > > > > 
+> > > > > > > > I don't object to drop it one more time.
+> > > > > > > > 
+> > > > > > > > However, can we confirm if it is really a stack overflow because of
+> > > > > > > > calling into FS from ->queue_rq()?
+> > > > > > > 
+> > > > > > > Yes.
+> > > > > > > 
+> > > > > > > > If yes, it could be dead end to improve loop in this way, then I can give up.
+> > > > > > > 
+> > > > > > > I think calling directly into the lower file system without a context
+> > > > > > > switch is very problematic, so IMHO yes, it is a dead end.
+> > > > > I've already explained the details in
+> > > > > https://lore.kernel.org/r/8c596737-95c1-4274-9834-1fe06558b431@linux.alibaba.com
+> > > > > 
+> > > > > to zram folks why block devices act like this is very
+> > > > > risky (in brief, because virtual block devices don't
+> > > > > have any way (unlike the inner fs itself) to know enough
+> > > > > about whether the inner fs already did something without
+> > > > > context save (a.k.a side effect) so a new task context
+> > > > > is absolutely necessary for virtual block devices to
+> > > > > access backing fses for stacked usage.
+> > > > > 
+> > > > > So whether a nested fs can success is intrinsic to
+> > > > > specific fses (because either they assure no complex
+> > > > > journal_info access or save all effected contexts before
+> > > > > transiting to the block layer.  But that is not bdev can
+> > > > > do since they need to do any block fs.
+> > > > 
+> > > > IMO, task stack overflow could be the biggest trouble.
+> > > > 
+> > > > block layer has current->blk_plug/current->bio_list, which are
+> > > > dealt with in the following patches:
+> > > > 
+> > > > https://lore.kernel.org/linux-block/20251120160722.3623884-4-ming.lei@redhat.com/
+> > > > https://lore.kernel.org/linux-block/20251120160722.3623884-5-ming.lei@redhat.com/
+> > > 
+> > > I think it's the simplist thing for this because the
+> > > context of "current->blk_plug/current->bio_list" is
+> > > _owned_ by the block layer, so of course the block
+> > > layer knows how to (and should) save and restore
+> > > them.
+> > 
+> > Strictly speaking, all per-task context data is owned by task, instead
+> > of subsystems, otherwise, it needn't to be stored in `task_struct` except
+> > for some case just wants per-task storage.
+> > 
+> > For example of current->blk_plug, it is used by many subsystems(io_uring, FS,
+> > mm, block layer, md/dm, drivers, ...).
+> > 
+> > > 
+> > > > 
+> > > > I am curious why FS task context can't be saved/restored inside block
+> > > > layer when calling into new FS IO? Given it is just per-task info.
+> > > 
+> > > The problem is a block driver don't know what the upper FS
+> > > (sorry about the terminology) did before calling into block
+> > > layer (the task_struct and journal_info side effect is just
+> > > the obvious one), because all FSes (mainly the write path)
+> > > doesn't assume the current context will be transited into
+> > > another FS context, and it could introduce any fs-specific
+> > > context before calling into the block layer.
+> > > 
+> > > So it's the fs's business to save / restore contexts since
+> > > they change the context and it's none of the block layer
+> > > business to save and restore because the block device knows
+> > > nothing about the specific fs behavior, it should deal with
+> > > all block FSes.
+> > > 
+> > > Let's put it into another way, thinking about generic
+> > > calling convention[1], which includes caller-saved contexts
+> > > and callee-saved contexts.  I think the problem is here
+> > > overally similiar, for loop devices, you know none of lower
+> > > or upper FS behaves (because it doesn't directly know either
+> > 
+> > loop just need to know which data to save/restore.
 > 
-> We additionally update struct vm_area_desc equivalently placing the new
-> opaque type in union with vm_flags.
+> I've said there is no clear list of which data needs to be
+> saved/restored.
 > 
-> This change therefore does not impact the size of struct vm_area_struct or
-> struct vm_area_desc.
+> FSes can do _anything_. Maybe something in `current` needs
+> to be saved, but anything that uses `current`/PID as
+> a mapping key also needs to be saved, e.g., arbitrary
 > 
-> In order for the change to be iterative and to avoid impacting performance,
-> we designate VM_xxx declared bitmap flag values as those which must exist
-> in the first system word of the VMA flags bitmap.
+> `hash_table[current]` or `context_table[current->pid]`.
 > 
-> We therefore declare vma_flags_clear_all(), vma_flags_overwrite_word(),
-> vma_flags_overwrite_word(), vma_flags_overwrite_word_once(),
-> vma_flags_set_word() and vma_flags_clear_word() in order to allow us to
-> update the existing vm_flags_*() functions to utilise these helpers.
-> 
-> This is a stepping stone towards converting users to the VMA flags bitmap
-> and behaves precisely as before.
-> 
-> By doing this, we can eliminate the existing private vma->__vm_flags field
-> in the vma->vm_flags union and replace it with the newly introduced opaque
-> type vma_flags, which we call flags so we refer to the new bitmap field as
-> vma->flags.
-> 
-> We update vma_flag_[test, set]_atomic() to account for the change also.
-> 
-> We adapt vm_flags_reset_once() to only clear those bits above the first
-> system word providing write-once semantics to the first system word (which
-> it is presumed the caller requires - and in all current use cases this is
-> so).
-> 
-> As we currently only specify that the VMA flags bitmap size is equal to
-> BITS_PER_LONG number of bits, this is a noop, but is defensive in
-> preparation for a future change that increases this.
-> 
-> We additionally update the VMA userland test declarations to implement the
-> same changes there.
-> 
-> Finally, we update the rust code to reference vma->vm_flags on update
-> rather than vma->__vm_flags which has been removed. This is safe for now,
-> albeit it is implicitly performing a const cast.
-> 
-> Once we introduce flag helpers we can improve this more.
-> 
-> No functional change intended.
-> 
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> Acked-by: Vlastimil Babka <vbabka@suse.cz>
+> Again, because not all filesystems allow nesting by design:
+> Linux kernel doesn't need block filesystem to be nested.
 
-FWIW, I'm not a huge fan of this vma_flags vs vm_flags and hope we can
-get rid of this ASAP. But it's a necessary evil for now, anyway.
+OK, got it, thanks for the sharing.
 
-Reviewed-by: Pedro Falcato <pfalcato@suse.de>
+BTW, block layer actually uses current->bio_list to avoid nested bio
+submission.
 
--- 
-Pedro
+The similar trick could be played on FS ->read_iter/->write_iter() over
+`kiocb` for avoiding nested FS IO too, but not sure if there is real
+big use case.
+
+
+Thanks,
+Ming
+
 
