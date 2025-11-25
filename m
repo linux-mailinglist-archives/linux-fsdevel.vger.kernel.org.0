@@ -1,142 +1,149 @@
-Return-Path: <linux-fsdevel+bounces-69726-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69727-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC730C832B3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Nov 2025 04:01:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40D32C83480
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Nov 2025 04:56:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C59C34E3B4A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Nov 2025 03:01:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3C6C3AF139
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Nov 2025 03:56:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E8361DE894;
-	Tue, 25 Nov 2025 03:01:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4610827FD4F;
+	Tue, 25 Nov 2025 03:56:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C1ryOBvz"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="e4EYIagT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA46A78F51
-	for <linux-fsdevel@vger.kernel.org>; Tue, 25 Nov 2025 03:01:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04FBA275AFB
+	for <linux-fsdevel@vger.kernel.org>; Tue, 25 Nov 2025 03:56:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764039664; cv=none; b=dHBmk5FLMpcz6LjLfZALeQqnnnWnS0ayFCznAOsAXcXGWG4y360CwyjT3jsKmlp0HWbIv9Shdc8BJK0AP8cfeq4KdaydRIM6ttQI9tRUMxB1zSDlGIlEWq/9aks5NP9FAZcxpCk/MJVEoSoFDK92RBHEaK4XVcqxy4KJV0Lnrs4=
+	t=1764042984; cv=none; b=T7Jv9DlK7I4rslUVRahn++NiUnLvcDJ2daj9z2wK3kvx9nEBgxow6oa29ANoMSjniz+pMC60BZ+kdDC9ucvOFP67z+I5P5HQYf+a8azH/mAxSOzqKZ4wJuqTmHExjYIjgdPkOUFz+zsv3kIxZGWEmiBvpV0P6XiX+1MVSBUJ6ec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764039664; c=relaxed/simple;
-	bh=rS/uz7VfZmue9terOD3ZJ9IsGKd9ZA6yPwfJXi0bn0I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DxkbKErpQyoG32VO+jXpekHcXdzDpjzdrted75ld3pacxrYS8Ka9Tm4O/WVHhNGPe+rWIEncgo8FzicecUojrdMWVjjsoMWDkvWEcB9/qPVC6oRHMPqfd2HQAibPgAr5aubhWe7c5Y5Y4uEJ/XieYj5WHRHhI9bSGIR7TDl20Kc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C1ryOBvz; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-640a0812658so8104547a12.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Nov 2025 19:01:01 -0800 (PST)
+	s=arc-20240116; t=1764042984; c=relaxed/simple;
+	bh=uNiSx/vzXhxVXFGaP8YHmN68rkv0rpH3Vw9jpqQ4U+0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=k9To7UAzTaIsFrIA4GGzelgkBYopT8oS5UYhAFXNAWc1KRdH4UWuWtFKZ/y0W0OiIbn4ZvM/Dp9Np/5FIz/5px5F8wEaySqx8a9ocyiiebF7b1Ep+gh6pujaG/6XoSrRnTbt67y8EoZPo7DsLTknbnUl9I3+CwbrilrlwcB+Ls0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=e4EYIagT; arc=none smtp.client-ip=209.85.166.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-4330d78f935so19173745ab.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Nov 2025 19:56:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1764039660; x=1764644460; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7MFzGPrxwnkDYme57fwtkYkMi/fCPxBfM81Ih85pJRQ=;
-        b=C1ryOBvzC9uTd899FppTyrlsR0cxHaxw0kEMn2S9mpHb3k9BsnNwS1eSVWfYus83x/
-         82qzhY7t/mk2Nzr4hxWp5jf1PfKUZtqFx+UIkgI55Loc0OZCXlV0kCXBSxrkQoqPw5Jf
-         babuDjRoXLBtrlexFAJUI+N3fTK+m42Y9Rri6OVD6ySgUwE7jF9sKacNBEgoSjA4gQul
-         6gQ0mzd+EY6T98Z+iLC2WaYdcqnsbGQwaGDufu/KZ7VZa+lNG2mT7RFGEmLdad7kijLh
-         DOccMDXYYesPPrrlsN4k5kqBUG1SgJJLRD6nvovOktHEZccqaAnvADpWF2L0xZ4UUTwc
-         /klA==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1764042981; x=1764647781; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=U4Lhmszpz2G1/wsjpQ2h4VF4MYBwTW2/kXm6Xq7f3pI=;
+        b=e4EYIagTme0yavtSLnjB6sqrQOauKiMKi+DgI2idbx9pAAPMlBz1PIU/MWho3IWTMJ
+         9wRzDhyDorUoTYkzhB6X1wTeBJmaR3WjOW9cqSdkAfdjJnZfkaFA58MmgZ82xSsMusgL
+         djatTMSiTl4MbvL8FtvrQ0aKmPACJCIz97CLLEeIZsgN/0qA4e/YSeKidPCOVFlXf145
+         1WpqJjbQMTEZ0y5rIDvBJT/eETd6vuI6JO+llkB7mivCYspcsWFf7tlgq3EUvYknJRbv
+         jAQPehtqQZOteGeSnmnTXuAOxKHlsbIKeZMIYB4Qw2+UN1u5/H1XOzGABx7rUCe4HDuc
+         kt/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764039660; x=1764644460;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=7MFzGPrxwnkDYme57fwtkYkMi/fCPxBfM81Ih85pJRQ=;
-        b=qzCkBcR7cipyKQmcHFyIIzTi0dAgy7Ay2D3ecF9S35sUqOGU9RuoHVRPngdxJSZEI8
-         AstSE2vCN5tvShAtaVnIuZQjlWG4nwH/NbCcABL7T0WLrCRox6y7y9VGF/TDl/N+d/Sw
-         Ja6uherAE9wNtw/NtpJXAMlWaHJ6GSglOLZ/I+cWII92kx+g8ZmdZvDS8WuK7tTttfmc
-         LJawLZNbP87GvhAzfNNcg2k64TUKdrkh1HDn/L36wLicsHJ5J2+S5sGQzPmh6hWAUz9R
-         ObC5OUP8KiQfNR0PT+wNGaDf8kZLlNTY03HgJigxYI3tqZ370DU2XhhK0iggdt+DeaYL
-         CknQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVzUUz91ko21XzA16Sbpt/LasoT5o4Qe2sFQ7jtnLSx3H3I/vGgQ9RwusZPIZwIS1mhyzdUSsM+bQ26++Wx@vger.kernel.org
-X-Gm-Message-State: AOJu0YxghAymd+VeW1KBvGKunxAMCCesF2CIEL7+fAmC3ibO3mxjsvOa
-	mllAgqzzHvxIDeL7KYb6srH9pwUUL1bn4fLkyEFsQWyzEnxJNLNCzpmnv+BHq5i3rjslFboojK8
-	sM5nODDgWojhTRBi/juYFb8K7oU76Y3g=
-X-Gm-Gg: ASbGncvl7LHgzx7BdVYfbe0juhilp2SfaSyd8mGGbCJ0fXHSxbxkNsw7UNqEx+lpD59
-	vAwnOMlrgpo1lnSkGnc/HbUbbmj+hCzyyT4fdLgFLryQ0QZPZ1l8ngk5RuebPFvc3tQIdCVNwwR
-	O/OxbBnnKruLl1/G3q7zpATFqOC2dBkQuZyxwrP8/uDDSLeGGiN5KaT1od3hBFVQVYne03CgQXv
-	Batw/bIjDuvqJ2whagLK1RpEqju0FndexTOImzeZpJktf5I5K4cf4KnPRuvQPMNcOkGy5cFuMh6
-	wZrrKsmyyvSllpUc5o5KCphKQQ==
-X-Google-Smtp-Source: AGHT+IFesKuiXfMz446AcBDVRQditePmsXXaGd1G+9aJqSIymnGh1fakkSqtAJ7Z6dXAckA3SVdpeM7eKYs2KK8Yl18=
-X-Received: by 2002:a05:6402:146a:b0:640:b247:fede with SMTP id
- 4fb4d7f45d1cf-645eb7856f2mr1026498a12.29.1764039660004; Mon, 24 Nov 2025
- 19:01:00 -0800 (PST)
+        d=1e100.net; s=20230601; t=1764042981; x=1764647781;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=U4Lhmszpz2G1/wsjpQ2h4VF4MYBwTW2/kXm6Xq7f3pI=;
+        b=c+M004fQo5PPEBSvOZhD2LDO1X97i9ARpO+gGiFprsOYnnyDqZk5qcKEex3MabuMbp
+         RUQPaaT5VslCPSRXnyb4jL28hObA1dbjWUEISLBbW51+SEhdNlAjZ1LXIGaNJqLtzwvH
+         QM5jsJ+Y6lFPJ5f/Wsc650f4m8FbrHXGT6pReKQiK3J6d+CiUZbfjlQRV5O3xsWoWVLY
+         S0AJkWpJVocf0rBs3/LuPYxOm3ibSMglorF0r6tMVoGrfWHF+LqRb2oWkCTQK6X3QSlG
+         2Y8Czzfax/ORni8LxrcCe9YXGrnsFNpP7RiglOD4QnejL+QbuPcz47XSNp8nAxDghiWA
+         fZAw==
+X-Forwarded-Encrypted: i=1; AJvYcCUQl6dr/PXgPCCa0viBg94RzGz+F+u2OpNXbr36JkxRPb17IHuY8T9QnVGOayI2pk5iU2DO61Fqb8XHagU5@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQMMpy182ZMGL1EZWZlaNrR2Kf/ptb1C54X6CV+qMKPNP40spq
+	a26VqWsmVS9VXjQZ7EBZ67uphJKsVagtqA7vil+gKM6LWFYomhLCOIVn5VhLaNONZMg=
+X-Gm-Gg: ASbGncupW5cmdqYZ4Qvn1+C+1a8Mk5L7snMSQv1m9RLzAXU0dDNMwlI95byAyZdAJ6d
+	jlU4X2OlTdx1Zgv/CiyUfbNDqgBIYtjBBax8iOvUHzoCURmIBp7j8Y25fO0GlH6U5EGHVYKHaq/
+	fyQTEabTK0T25+sGTwi+oAgZVmeQ9wJgOo/xi3N5z4TfvICjRxDnOSyjfZKaAo37lobz1+elYwr
+	+q/DcLZsEZytKWH3GHJa3509Dy7u1wUVM3QzdHfgwDc4HgpSnnOdSBAkC+KNjS94xTrCq2Ki/1u
+	97gOc7g0zId5099Cret/xFrRzyGQWqYuxMNyKvkuSdyoFbK0EvVFLMZ3TIXFWpqJTMhEwtXlK37
+	bh3h8FV4etwWh3pD92uZ+kSrXHKuJDFoBNwefFJRzjdUcmnVMzWK1fm+DnLWy65qlBlk3501b46
+	az5TZ6Hz9T
+X-Google-Smtp-Source: AGHT+IGawpC+Z5/q6YxllckW16+unsUN3dJWW//JwKWwQ4EpRQwDXcjHj23hI6JnzFZjAqSZr/GROw==
+X-Received: by 2002:a05:6e02:2613:b0:434:96ea:ff7f with SMTP id e9e14a558f8ab-435b8e787d3mr123760145ab.39.1764042980790;
+        Mon, 24 Nov 2025 19:56:20 -0800 (PST)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5b954b48b75sm6469751173.48.2025.11.24.19.56.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Nov 2025 19:56:20 -0800 (PST)
+Message-ID: <f7af84e7-93c7-4e0a-b86b-46e69cb8b6a7@kernel.dk>
+Date: Mon, 24 Nov 2025 20:56:18 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251010221737.1403539-1-mjguzik@gmail.com> <20251124174742.2939610-1-agruenba@redhat.com>
- <CAGudoHF4PNbJpc5uUDA02d=TD8gL2J4epn-+hhKhreou1dVX5g@mail.gmail.com> <CAHc6FU5aWPsv0ZfJAjLyziGjyem9SvWY2e+ZuKDhybOWS-roYQ@mail.gmail.com>
-In-Reply-To: <CAHc6FU5aWPsv0ZfJAjLyziGjyem9SvWY2e+ZuKDhybOWS-roYQ@mail.gmail.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Tue, 25 Nov 2025 04:00:47 +0100
-X-Gm-Features: AWmQ_bmNNHWCBTr97VTF29nG26w-MvfxVWs16zEle6sDG68DzB8L4yhEKzB9HqI
-Message-ID: <CAGudoHFSFy9KDAViEU8whypxsUN5+wXAi-Po6Tc1jw-yLE5PUg@mail.gmail.com>
-Subject: Re: [PATCH] fs: rework I_NEW handling to operate without fences
-To: Andreas Gruenbacher <agruenba@redhat.com>
-Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: calling into file systems directly from ->queue_rq, was Re:
+ [PATCH V5 0/6] loop: improve loop aio perf by IOCB_NOWAIT
+To: Ming Lei <ming.lei@redhat.com>, Christoph Hellwig <hch@infradead.org>
+Cc: linux-block@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>,
+ Zhaoyang Huang <zhaoyang.huang@unisoc.com>,
+ Dave Chinner <dchinner@redhat.com>, linux-fsdevel@vger.kernel.org
+References: <20251015110735.1361261-1-ming.lei@redhat.com>
+ <aSP3SG_KaROJTBHx@infradead.org> <aSQfC2rzoCZcMfTH@fedora>
+ <aSQf6gMFzn-4ohrh@infradead.org> <aSUbsDjHnQl0jZde@fedora>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <aSUbsDjHnQl0jZde@fedora>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Nov 25, 2025 at 12:04=E2=80=AFAM Andreas Gruenbacher
-<agruenba@redhat.com> wrote:
->
-> On Mon, Nov 24, 2025 at 8:25=E2=80=AFPM Mateusz Guzik <mjguzik@gmail.com>=
- wrote:
-> > On Mon, Nov 24, 2025 at 6:47=E2=80=AFPM Andreas Gruenbacher <agruenba@r=
-edhat.com> wrote:
-> > >
-> > > On Sat, Oct 11, 2025 at 12:17=E2=80=AFAM Mateusz Guzik <mjguzik@gmail=
-.com> wrote:
-> > Was that always a thing? My grep for '!!' shows plenty of hits in the
-> > kernel tree and I'm pretty sure this was an established pratice.
->
-> It depends on the data type. The non-not "operator" converts non-0
-> values into 1. For boolean values, that conversion is implicit. For
-> example,
->
->   !!0x100 =3D=3D 1
->   (bool)0x100 =3D=3D 1
->
-> but
->
->   (char)0x100 =3D=3D 0
->
+On 11/24/25 8:00 PM, Ming Lei wrote:
+> On Mon, Nov 24, 2025 at 01:05:46AM -0800, Christoph Hellwig wrote:
+>> On Mon, Nov 24, 2025 at 05:02:03PM +0800, Ming Lei wrote:
+>>> On Sun, Nov 23, 2025 at 10:12:24PM -0800, Christoph Hellwig wrote:
+>>>> FYI, with this series I'm seeing somewhat frequent stack overflows when
+>>>> using loop on top of XFS on top of stacked block devices.
+>>>
+>>> Can you share your setting?
+>>>
+>>> BTW, there are one followup fix:
+>>>
+>>> https://lore.kernel.org/linux-block/20251120160722.3623884-1-ming.lei@redhat.com/
+>>>
+>>> I just run 'xfstests -q quick' on loop on top of XFS on top of dm-stripe,
+>>> not see stack overflow with the above fix against -next.
+>>
+>> This was with a development tree with lots of local code.  So the
+>> messages aren't applicable (and probably a hint I need to reduce my
+>> stack usage).  The observations is that we now stack through from block
+>> submission context into the file system write path, which is bad for a
+>> lot of reasons.  journal_info being the most obvious one.
+>>
+>>>> In other words:  I don't think issuing file system I/O from the
+>>>> submission thread in loop can work, and we should drop this again.
+>>>
+>>> I don't object to drop it one more time.
+>>>
+>>> However, can we confirm if it is really a stack overflow because of
+>>> calling into FS from ->queue_rq()?
+>>
+>> Yes.
+>>
+>>> If yes, it could be dead end to improve loop in this way, then I can give up.
+>>
+>> I think calling directly into the lower file system without a context
+>> switch is very problematic, so IMHO yes, it is a dead end.
+> 
+> Hi Jens,
+> 
+> Can you drop or revert the patchset of "loop: improve loop aio perf by IOCB_NOWAIT"
+> from for-6.19/block?
 
-I mean it was an established practice *specifically* for bools.
+Done
 
-Case in point from quick grep on the kernel:
-/* Internal helper functions to match cpu capability type */
-static bool
-cpucap_late_cpu_optional(const struct arm64_cpu_capabilities *cap)
-{
-        return !!(cap->type & ARM64_CPUCAP_OPTIONAL_FOR_LATE_CPU);
-}
+-- 
+Jens Axboe
 
-static bool
-cpucap_late_cpu_permitted(const struct arm64_cpu_capabilities *cap)
-{
-        return !!(cap->type & ARM64_CPUCAP_PERMITTED_FOR_LATE_CPU);
-}
-
-static bool
-cpucap_panic_on_conflict(const struct arm64_cpu_capabilities *cap)
-{
-        return !!(cap->type & ARM64_CPUCAP_PANIC_ON_CONFLICT);
-}
-
-I suspect the practice predates bool support in the C standard and
-people afterwards never found out.
 
