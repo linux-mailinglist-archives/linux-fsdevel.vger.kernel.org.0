@@ -1,118 +1,180 @@
-Return-Path: <linux-fsdevel+bounces-69747-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69748-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0839C843F6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Nov 2025 10:35:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C2B7C84423
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Nov 2025 10:39:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9C01334CF14
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Nov 2025 09:35:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AD5E3AD8AD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Nov 2025 09:39:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EDB82E265A;
-	Tue, 25 Nov 2025 09:35:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BDBA2E9ECA;
+	Tue, 25 Nov 2025 09:39:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="psP4wvU0"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="RK+QQMDP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DA1D2741AC;
-	Tue, 25 Nov 2025 09:35:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C9E21D435F;
+	Tue, 25 Nov 2025 09:39:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764063324; cv=none; b=R7Xr4Wn3PXMoSBqbDHKRQvxRXHogxeZPrnoHUxTbhwDJ6KelRab9b0bxDYJ1ch8l3Tl/a4GbMvkXFCOdIhWibSmlLULMsMZ1vSiRSDmQvpzF1TPaECIo7rzIQyhAO06Vs+XKlAYqR76xFvenfSJxDjp185TSWXmOGRWTsTNuNPk=
+	t=1764063571; cv=none; b=bG71NEP3tptx2GaABvGXg4LlIJ38PxmzkUpB8Zs7BsU09O+akuKKmPG6Z/jicS79TKf8z+Cs9wcYIsgHmliPcCqfFEaSOKYmYmzmkkORF3hxJCwQNudTg8DfgP9yogrDYxS4G/YZo8M7tshSDaxmQLOLTrKs0Sbq3mjmB0q8bJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764063324; c=relaxed/simple;
-	bh=1Wb/VpaTSKEGMRrsEIbAvD4pOzSKaJus6F2VO710JTw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FeeTFHA4nSn88jTzQhCdaNQCS/Vucjc2kWcVpvqxynuX8kQVuAI8ojM/l2P0VWS4TCGkSrmQXhVrIY7J6j1DHIOzXJm9zE1icdQbKUu09GJ+kOm0z3muJnFJ2xCDCgmATb3HiznxKD9E8e6XtofzVAKquCVortHS+ftbjbN404E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=psP4wvU0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D46C1C4CEF1;
-	Tue, 25 Nov 2025 09:35:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764063324;
-	bh=1Wb/VpaTSKEGMRrsEIbAvD4pOzSKaJus6F2VO710JTw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=psP4wvU0GiNkwuAQkqC4kr+5V42n0JGqL6hgUHlsZ3Y6/eDSc/p8evVZQRniYXlwp
-	 6+H/d1gccZZqxF0fxSW2iZWMMYA0FlcY1vv51O4IN5uScYlGygREQ9CGXV1H1hoUaE
-	 FxjSnovw8WaLr52UHgw4WS1qlg6C7W1s0SuLOJFMDbuB09GpsH45bzZGTohjCYY/eu
-	 AF2V7ar7xgNzhPG/tK+JaTwVXnQeT+jBGcqACfs1l+21weCOKU231C2tS9MZBP2wr0
-	 GuvuROVrXGt6qR7BTDw0yDuA9r2GzL4fVhrXc9/JQUYb69rqHqtjcrlVV3zjYsMtMb
-	 ssf9gePFyjEbw==
-Date: Tue, 25 Nov 2025 10:35:13 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: neil@brown.name, agruenba@redhat.com, 
-	almaz.alexandrovich@paragon-software.com, dhowells@redhat.com, gfs2@lists.linux.dev, jack@suse.cz, 
-	linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	marc.dionne@auristor.com, ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com, 
-	viro@zeniv.linux.org.uk, syzbot+2fefb910d2c20c0698d8@syzkaller.appspotmail.com
-Subject: Re: [syzbot] [ntfs3?] INFO: task hung in __start_renaming
-Message-ID: <20251125-hausdach-antrag-f3e4bcd35365@brauner>
-References: <gyt53gbtarw75afmeswazv4dmmj6mc2lzlm2bycunphazisbyq@qrjumrerwox5>
- <6924057f.a70a0220.d98e3.007b.GAE@google.com>
- <wtgy54dfpiapekffjjkonkkhpnxiktfp24wdmwdzf4gslrtact@pongm7vm3l2y>
- <CAGudoHHfGndcMwXMupOs82HM6c_ajMw8GETxPdkqzORrEq0btA@mail.gmail.com>
- <c2kpawomkbvtahjm7y5mposbhckb7wxthi3iqy5yr22ggpucrm@ufvxwy233qxo>
+	s=arc-20240116; t=1764063571; c=relaxed/simple;
+	bh=xzVLC7YXZcAG8mrmrRykLLuq9u6J5Uwcwq0VFRocBiA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WhHHrOLYQk8tNvhFP5iqzzvLwowDuRJeuaqiiIjcBTvUILW28gPPHyGg2e7V0gV0OHJYREQvydJwcq9cCFcnenI7H4o1GbnLrKhZCPc6213g4rAS0HXmN3UvV66Pws5U6rBo9WLEYA4NmfvbPkemHL7yIFFnxa3amL1bDh3rJCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=RK+QQMDP; arc=none smtp.client-ip=115.124.30.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1764063558; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=C6yMHeiTVa9zaiGXI/N10yghcNSzyHJKY9Yx3eagVDs=;
+	b=RK+QQMDPJvsUqMa7FpT9M2puA5ypsYY3Wi/760BOT3Bo0yB8VbCIAXvZuZyTr38mb7txVwB/Jrrm+cNxmoM1bC4LcWFyfd4oBao0owG4GI8TsC1o4kLhYxKB20bQ7dl4Un4vTFG+XG1bvfVPgduPrvak+Nf23NAPcEE/McUqvrA=
+Received: from 30.221.132.26(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WtNIO9f_1764063557 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 25 Nov 2025 17:39:18 +0800
+Message-ID: <00bc891e-4137-4d93-83a5-e4030903ffab@linux.alibaba.com>
+Date: Tue, 25 Nov 2025 17:39:17 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <c2kpawomkbvtahjm7y5mposbhckb7wxthi3iqy5yr22ggpucrm@ufvxwy233qxo>
+User-Agent: Mozilla Thunderbird
+Subject: Re: calling into file systems directly from ->queue_rq, was Re:
+ [PATCH V5 0/6] loop: improve loop aio perf by IOCB_NOWAIT
+To: Ming Lei <ming.lei@redhat.com>
+Cc: Christoph Hellwig <hch@infradead.org>, linux-block@vger.kernel.org,
+ Mikulas Patocka <mpatocka@redhat.com>,
+ Zhaoyang Huang <zhaoyang.huang@unisoc.com>,
+ Dave Chinner <dchinner@redhat.com>, linux-fsdevel@vger.kernel.org,
+ Jens Axboe <axboe@kernel.dk>
+References: <20251015110735.1361261-1-ming.lei@redhat.com>
+ <aSP3SG_KaROJTBHx@infradead.org> <aSQfC2rzoCZcMfTH@fedora>
+ <aSQf6gMFzn-4ohrh@infradead.org> <aSUbsDjHnQl0jZde@fedora>
+ <db90b7b3-bf94-4531-8329-d9e0dbc6a997@linux.alibaba.com>
+ <aSV0sDZGDoS-tLlp@fedora>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <aSV0sDZGDoS-tLlp@fedora>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Nov 24, 2025 at 10:21:07AM +0100, Mateusz Guzik wrote:
-> On Mon, Nov 24, 2025 at 10:01:53AM +0100, Mateusz Guzik wrote:
-> > sigh, so it *is* my patch, based on syzbot testing specifically on
-> > directory locking vs inode branches, but I don't see why.
-> > 
-> > I take it the open() codepath took the rwsem, hence the rename is
-> > sleeping. Given that all reproducers find it *on* cpu, it may be this
-> > is busy looping for some reason.
-> > 
-> > I don't have time to dig more into it right now, so I think it would
-> > be best to *drop* my patch for the time being. Once I figure it out
-> > I'll send a v2.
-> > 
-> 
-> good news, now that I gave up I found it.
-> 
-> insert_inode_locked() is looping indefinitely an inode which is no
-> longer I_NEW or I_CREATING.
-> 
-> In stock kernel:
->                 if (unlikely(!inode_unhashed(old))) {
->                         iput(old);
->                         return -EBUSY;
->                 }
->                 iput(old);
-> 
-> it returns an error
-> 
-> with my patch:
->                if (isnew) {
->                         wait_on_new_inode(old);
->                         if (unlikely(!inode_unhashed(old))) {
->                                 iput(old);
->                                 return -EBUSY;
->                         }
->                 }
->                 iput(old);
-> 
-> unhashed status is only ever check if I_NEW was spotted,
-> 
-> which can be false. Afterwards the routine is stuck in endless cycle of
-> finding the inode and iputting it.
-> 
-> Christian, I think the easiest way out is to add the fix I initially
-> posted, inlined below. It *was* successfuly tested by syzbot. It retains
-> inode_unhashed checks even when they are not necessary to avoid any more
-> surprises.
+Hi Ming,
 
-Thanks for tracking this down. Now folded.
+On 2025/11/25 17:19, Ming Lei wrote:
+> On Tue, Nov 25, 2025 at 03:26:39PM +0800, Gao Xiang wrote:
+>> Hi Ming and Christoph,
+>>
+>> On 2025/11/25 11:00, Ming Lei wrote:
+>>> On Mon, Nov 24, 2025 at 01:05:46AM -0800, Christoph Hellwig wrote:
+>>>> On Mon, Nov 24, 2025 at 05:02:03PM +0800, Ming Lei wrote:
+>>>>> On Sun, Nov 23, 2025 at 10:12:24PM -0800, Christoph Hellwig wrote:
+>>>>>> FYI, with this series I'm seeing somewhat frequent stack overflows when
+>>>>>> using loop on top of XFS on top of stacked block devices.
+>>>>>
+>>>>> Can you share your setting?
+>>>>>
+>>>>> BTW, there are one followup fix:
+>>>>>
+>>>>> https://lore.kernel.org/linux-block/20251120160722.3623884-1-ming.lei@redhat.com/
+>>>>>
+>>>>> I just run 'xfstests -q quick' on loop on top of XFS on top of dm-stripe,
+>>>>> not see stack overflow with the above fix against -next.
+>>>>
+>>>> This was with a development tree with lots of local code.  So the
+>>>> messages aren't applicable (and probably a hint I need to reduce my
+>>>> stack usage).  The observations is that we now stack through from block
+>>>> submission context into the file system write path, which is bad for a
+>>>> lot of reasons.  journal_info being the most obvious one.
+>>>>
+>>>>>> In other words:  I don't think issuing file system I/O from the
+>>>>>> submission thread in loop can work, and we should drop this again.
+>>>>>
+>>>>> I don't object to drop it one more time.
+>>>>>
+>>>>> However, can we confirm if it is really a stack overflow because of
+>>>>> calling into FS from ->queue_rq()?
+>>>>
+>>>> Yes.
+>>>>
+>>>>> If yes, it could be dead end to improve loop in this way, then I can give up.
+>>>>
+>>>> I think calling directly into the lower file system without a context
+>>>> switch is very problematic, so IMHO yes, it is a dead end.
+>> I've already explained the details in
+>> https://lore.kernel.org/r/8c596737-95c1-4274-9834-1fe06558b431@linux.alibaba.com
+>>
+>> to zram folks why block devices act like this is very
+>> risky (in brief, because virtual block devices don't
+>> have any way (unlike the inner fs itself) to know enough
+>> about whether the inner fs already did something without
+>> context save (a.k.a side effect) so a new task context
+>> is absolutely necessary for virtual block devices to
+>> access backing fses for stacked usage.
+>>
+>> So whether a nested fs can success is intrinsic to
+>> specific fses (because either they assure no complex
+>> journal_info access or save all effected contexts before
+>> transiting to the block layer.  But that is not bdev can
+>> do since they need to do any block fs.
+> 
+> IMO, task stack overflow could be the biggest trouble.
+> 
+> block layer has current->blk_plug/current->bio_list, which are
+> dealt with in the following patches:
+> 
+> https://lore.kernel.org/linux-block/20251120160722.3623884-4-ming.lei@redhat.com/
+> https://lore.kernel.org/linux-block/20251120160722.3623884-5-ming.lei@redhat.com/
+
+I think it's the simplist thing for this because the
+context of "current->blk_plug/current->bio_list" is
+_owned_ by the block layer, so of course the block
+layer knows how to (and should) save and restore
+them.
+
+> 
+> I am curious why FS task context can't be saved/restored inside block
+> layer when calling into new FS IO? Given it is just per-task info.
+
+The problem is a block driver don't know what the upper FS
+(sorry about the terminology) did before calling into block
+layer (the task_struct and journal_info side effect is just
+the obvious one), because all FSes (mainly the write path)
+doesn't assume the current context will be transited into
+another FS context, and it could introduce any fs-specific
+context before calling into the block layer.
+
+So it's the fs's business to save / restore contexts since
+they change the context and it's none of the block layer
+business to save and restore because the block device knows
+nothing about the specific fs behavior, it should deal with
+all block FSes.
+
+Let's put it into another way, thinking about generic
+calling convention[1], which includes caller-saved contexts
+and callee-saved contexts.  I think the problem is here
+overally similiar, for loop devices, you know none of lower
+or upper FS behaves (because it doesn't directly know either
+upper or lower FS contexts), so it should either expect the
+upper fs to save all the contexts, or to use a new kthread
+context (to emulate userspace requests to FS) for lower FS.
+
+[1] https://en.wikipedia.org/wiki/Calling_convention
+
+
+Thanks,
+Gao Xiang
+
+> 
+> 
+> Thanks,
+> Ming
+
 
