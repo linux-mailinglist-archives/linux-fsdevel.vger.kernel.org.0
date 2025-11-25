@@ -1,91 +1,74 @@
-Return-Path: <linux-fsdevel+bounces-69769-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69770-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 192C6C84A6C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Nov 2025 12:12:01 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DC62C84AEE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Nov 2025 12:15:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F28E3A724E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Nov 2025 11:11:58 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8AB984E9F05
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Nov 2025 11:14:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6748C314B66;
-	Tue, 25 Nov 2025 11:11:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ACETJP7t"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B53313195EC;
+	Tue, 25 Nov 2025 11:14:09 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4646B2EE5FD
-	for <linux-fsdevel@vger.kernel.org>; Tue, 25 Nov 2025 11:11:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8829C2EE607;
+	Tue, 25 Nov 2025 11:14:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764069115; cv=none; b=Rkvy07AUBrvvlyL9a7SlTS3q6FxpMRrbRmYpNrQ0E1Z/E7jb4hakFOJAAeoUQuUJsAiwwp7afDtn1fQl7BZhfICga+ts44zVJJ0zxu6Z1q88u/XCWFqJm/E4m/5724n5al3UnlRzv28psQj36tIaGwhhyFA5sjT8u7Zfzsw+8Ic=
+	t=1764069249; cv=none; b=BiviQHo4GYlV/k536VEbj8kZNwUNK4PhyklEpUP48dr4XEc1O+7PulZe1DuASrnCIWfT1L37MDpkeQ63UOgWIaGA3kMkosxO4ZLLrVnTvWdjT7d47/tFE6ryk2DDwfgi1MYE0X/k4Dw5x4feSZ71/pGuh0J/4s4rZ7HFIKnfHSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764069115; c=relaxed/simple;
-	bh=Ntf82IHEqyNamlHrPnUCIlHyHwbDqRAXXbwnFps5LPs=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=oxeFFUarMiY+62R8omvDZHf+nigDr1poPQMFnjcfjH+6M99QlJu19S+eznkXz5lWRJBDrGYL3Ve+DS7NUNpjekVfl9MRw5ZGwhdZPT057qtxLYT2qy4oEejuGGERknqOlbEY4wduuWUfXzg95mCYmvtvEYGMDDY0liEW4eMa4cY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ACETJP7t; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1764069113;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ntf82IHEqyNamlHrPnUCIlHyHwbDqRAXXbwnFps5LPs=;
-	b=ACETJP7tauTvxukBjrZXHd7u9eps/GuXYQskWdj+hEKiFNr/K/2xLQGgLWwDVQTOaphCCE
-	KJvG9/ZXRGW0wQVIwXyF2TrsqPmhMWGobmMKCWYqjIpgU1RcBoOraRV3tsRXsJFmrPXgx9
-	JNgpzVnEDDU8zJAjceX52XFd7Yit3zs=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-159-hIGinUV3OMePKQ31XrzAvA-1; Tue,
- 25 Nov 2025 06:11:47 -0500
-X-MC-Unique: hIGinUV3OMePKQ31XrzAvA-1
-X-Mimecast-MFC-AGG-ID: hIGinUV3OMePKQ31XrzAvA_1764069106
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B16BE195420C;
-	Tue, 25 Nov 2025 11:11:39 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.14])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 020CC19560B2;
-	Tue, 25 Nov 2025 11:11:36 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <b14a083e-d754-48a9-b480-1344a07479aa@samba.org>
-References: <b14a083e-d754-48a9-b480-1344a07479aa@samba.org> <ad8ef7da-db2a-4033-8701-cf2fc61b8a1d@samba.org> <7b897d50-f637-4f96-ba64-26920e314739@samba.org> <20251124124251.3565566-1-dhowells@redhat.com> <20251124124251.3565566-8-dhowells@redhat.com> <3635951.1763995018@warthog.procyon.org.uk> <3639864.1763995480@warthog.procyon.org.uk>
-To: Stefan Metzmacher <metze@samba.org>
-Cc: dhowells@redhat.com, Steve French <sfrench@samba.org>,
-    Paulo Alcantara <pc@manguebit.org>,
-    Shyam Prasad N <sprasad@microsoft.com>, linux-cifs@vger.kernel.org,
-    netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-    linux-kernel@vger.kernel.org, Tom Talpey <tom@talpey.com>
-Subject: Re: [PATCH v4 07/11] cifs: Clean up some places where an extra kvec[] was required for rfc1002
+	s=arc-20240116; t=1764069249; c=relaxed/simple;
+	bh=/69+0EJmS2X7ff7j0q4w9PZqnsVx+XZDiBTAryw5GXk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hGLD+nj5NZt7B+UERrVxY1nOGG2wLEhmeQvYbSkwErHC9ileViz+NYCZl6azLmiOw/SDAkHvJhSpdJ70ncHS2rKwh60yse9EcJKTkjugcQNzeHey4kGeMmupSOZEH29Ke4cuXD9kcEQk94lkcgaMjkqTX/Zaz0berlqYzg5nicU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 1995868C7B; Tue, 25 Nov 2025 12:14:03 +0100 (CET)
+Date: Tue, 25 Nov 2025 12:14:02 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Christoph Hellwig <hch@lst.de>, Al Viro <viro@zeniv.linux.org.uk>,
+	David Sterba <dsterba@suse.com>, Jan Kara <jack@suse.cz>,
+	Mike Marshall <hubcap@omnibond.com>,
+	Martin Brandenburg <martin@omnibond.com>,
+	Carlos Maiolino <cem@kernel.org>, Stefan Roesch <shr@fb.com>,
+	Jeff Layton <jlayton@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	gfs2@lists.linux.dev, io-uring@vger.kernel.org,
+	devel@lists.orangefs.org, linux-unionfs@vger.kernel.org,
+	linux-mtd@lists.infradead.org, linux-xfs@vger.kernel.org,
+	linux-nfs@vger.kernel.org
+Subject: Re: re-enable IOCB_NOWAIT writes to files v2
+Message-ID: <20251125111402.GB22313@lst.de>
+References: <20251120064859.2911749-1-hch@lst.de> <20251125-loten-fabuliert-c0fb6b195b53@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3677673.1764069095.1@warthog.procyon.org.uk>
-Date: Tue, 25 Nov 2025 11:11:35 +0000
-Message-ID: <3677674.1764069095@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251125-loten-fabuliert-c0fb6b195b53@brauner>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-Hi Metze,
+On Tue, Nov 25, 2025 at 10:18:32AM +0100, Christian Brauner wrote:
+> It's a bit too close to the merge window for my taste and we have about
+> 17 pull request topics for this cycle already.
+> 
+> So I'll take this for vfs-6.20.iomap. As usual I'll create that branch
+> now so that the patches don't get lost and will rebase once v6.19-rc1 is
+> out.
 
-Do you want me to repost my patches so you can associate URLs with them?
-
-David
-
+I can understand that.  Although it would be nice to get the nfsd
+and btrfs fixes in, i.e. patch 1-4 (and 5/6 are trivial and would be
+neat as well).  I'll need to resend the others anyway based on the
+(minor) review feedback, which I'll do right after -rc1.
 
