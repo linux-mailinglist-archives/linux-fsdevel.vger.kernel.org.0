@@ -1,102 +1,102 @@
-Return-Path: <linux-fsdevel+bounces-69784-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69786-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EFB2C84F0B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Nov 2025 13:19:07 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 348B8C84F2C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Nov 2025 13:21:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1397634A7B6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Nov 2025 12:19:07 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A34DD4E9679
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Nov 2025 12:20:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B711925F797;
-	Tue, 25 Nov 2025 12:19:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C4C826CE3B;
+	Tue, 25 Nov 2025 12:20:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="YpolDSY+";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="lL+YODfr";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="DTO7UpEz";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="D9Y9QVJO"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="kZgq7o7M";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="GUn7wk9c";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="kZgq7o7M";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="GUn7wk9c"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A132A1D5151
-	for <linux-fsdevel@vger.kernel.org>; Tue, 25 Nov 2025 12:19:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F12D4239E65
+	for <linux-fsdevel@vger.kernel.org>; Tue, 25 Nov 2025 12:20:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764073142; cv=none; b=ZKU+2DMN509qzVHLOUaHOvVxFeTJmQu2QLJsxZnqiEu4Jqa4rzQJcfJ9W7dMPzU+hB57ZSsOn6zoh0LXHIrEiiSGJcsaer5yomL5ChC4BqoZlkDzeNlMIil+xByzQTFzcJXdKFPb/cvIlw6VUW0gDYbtjkX5PDlteGqOza2r/mI=
+	t=1764073253; cv=none; b=m2mmp6q5biQq3TDSgNYFEBlY32GfnJ6Rlrzu5EIwf9/PkTCDThyUoLYOlFtwmZqpg7xC2IeFjx67VUCm7OkJoL412r+7D/HHX9n//WmqzlfhVPGYe/IZqZz0bQ1hi5CGlKJqeJB8gmGOsD8Uq+aiiP3IVXiH1F2JZsQRCxvmjVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764073142; c=relaxed/simple;
-	bh=SN4Hnj0be6/t8TKjfJhnytcx4ctfBiRf3F/MpGScuLQ=;
+	s=arc-20240116; t=1764073253; c=relaxed/simple;
+	bh=AvxgGe8WP16EG4Sa1iRVpa67va/1KxKuGsXUbwnrl28=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nb/RhYTf8fLvEUbK0Z3FytiHjujPfzm4CO3xKtefj4oomLL63WbFqOVrsevz4isgKUOl1tcv6HN236JJHVUTl30UnIHFrvefSNRtmhLv48sLaLTLVPQ16Ft5ccVm/SVvOG6pw90yL+oSyk0RJd5Pfgnton3mqV/s3L3jzBPY3Eg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=YpolDSY+; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=lL+YODfr; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=DTO7UpEz; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=D9Y9QVJO; arc=none smtp.client-ip=195.135.223.131
+	 Content-Type:Content-Disposition:In-Reply-To; b=WkukylFzVZx+Ztz8SHWzQTeHV6Oeg+tDtkcQDc2X3iMBd3emWf/ziRJx0hJU9OYSig+d8quJalQ+OvChK1vDfDlaPNhqqWpU4xiAl3xNXnyZu2NAFz3oAdGLBaWqa8qJGRACG9RplqOJXuxrTvIU23GQ/ywqQRGxaEbrsrm0J+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=kZgq7o7M; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=GUn7wk9c; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=kZgq7o7M; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=GUn7wk9c; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 9745E5BD82;
-	Tue, 25 Nov 2025 12:18:57 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 4FE5F2283A;
+	Tue, 25 Nov 2025 12:20:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1764073139; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1764073249; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=rzDXeVmMu5r65ZbCyUfV6a88LuFWBlKJfnyQ7NZmyn8=;
-	b=YpolDSY+Ioh7mgTsDMve8BI49BTpbw0qMbJu7F+5W7Xbid0WWWo0ILi/W3gBih/ZmAY+4/
-	vYN8nTSj4YWhMAvYHHmTRsbKYCRdJxmF1thQmcVdfzsyLeklkSvypIMXQdngwoZDo2qtJl
-	3VEPPID1xi4tMXRPXb93zNf6wLYEft0=
+	bh=udpMF7Oo7tiep9zQqqLXXKcNZ2Rk1l6T/UFsgGqDvqY=;
+	b=kZgq7o7MGOrzBToKZjKuO+jxwVavsdYcAgT1Gigq6Gkoklw63/JINyd2+8fhKcTus1840m
+	uqXk/EU91df88Dr3e5U6seHvt3H5sSahQsQU/yB3TkY/hq1w63AQqstntV4XQwJPPLWIaU
+	7FW8IgTbThVzKNCnkmFxR4WQs8v7Uek=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1764073139;
+	s=susede2_ed25519; t=1764073249;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=rzDXeVmMu5r65ZbCyUfV6a88LuFWBlKJfnyQ7NZmyn8=;
-	b=lL+YODfr9L4INQ4fnjq3Lw/6lC0Int1EFe7TRSh/9vkAFRd6v36tGpGS0nB3DJfxKRMT2G
-	+Sp6aCm4Bm60JJAQ==
-Authentication-Results: smtp-out2.suse.de;
+	bh=udpMF7Oo7tiep9zQqqLXXKcNZ2Rk1l6T/UFsgGqDvqY=;
+	b=GUn7wk9cZ6JxrHdrM3dcslHxeM7QTI7zBPQ+e01XN4+PwXCEQdU54uLfllM5etDiznpQOq
+	pRu1ZMN2VFNJ0TCQ==
+Authentication-Results: smtp-out1.suse.de;
 	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1764073137; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1764073249; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=rzDXeVmMu5r65ZbCyUfV6a88LuFWBlKJfnyQ7NZmyn8=;
-	b=DTO7UpEzKzNc0hFBEqedjg+gC1EqtmFcdEPOCHomG/Cyg46TNty1J15w4zhWxdTLej1P1A
-	xCR9IyMbfhXwrCLVoVeslxzPI6WLM88VJmAwGEjjTlzWd0B+RKAq6LOry6Oc/YIU+DXN8A
-	NJ+y0RoyVawSoKIdSS4g+yt3iocjdkY=
+	bh=udpMF7Oo7tiep9zQqqLXXKcNZ2Rk1l6T/UFsgGqDvqY=;
+	b=kZgq7o7MGOrzBToKZjKuO+jxwVavsdYcAgT1Gigq6Gkoklw63/JINyd2+8fhKcTus1840m
+	uqXk/EU91df88Dr3e5U6seHvt3H5sSahQsQU/yB3TkY/hq1w63AQqstntV4XQwJPPLWIaU
+	7FW8IgTbThVzKNCnkmFxR4WQs8v7Uek=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1764073137;
+	s=susede2_ed25519; t=1764073249;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=rzDXeVmMu5r65ZbCyUfV6a88LuFWBlKJfnyQ7NZmyn8=;
-	b=D9Y9QVJO6ptFNXKeyHYRjfOVRmUyZvGHuga4HF1nDFaVtXmf0r1LvqkaJtBfuBotMKKmtY
-	Q65sOioiSbHZJYAA==
+	bh=udpMF7Oo7tiep9zQqqLXXKcNZ2Rk1l6T/UFsgGqDvqY=;
+	b=GUn7wk9cZ6JxrHdrM3dcslHxeM7QTI7zBPQ+e01XN4+PwXCEQdU54uLfllM5etDiznpQOq
+	pRu1ZMN2VFNJ0TCQ==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8C9FE3EA63;
-	Tue, 25 Nov 2025 12:18:57 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 43F3B3EA63;
+	Tue, 25 Nov 2025 12:20:49 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 2vlRIrGeJWkiZQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 25 Nov 2025 12:18:57 +0000
+	id r76RECGfJWknZwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 25 Nov 2025 12:20:49 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 00868A0C7D; Tue, 25 Nov 2025 13:18:56 +0100 (CET)
-Date: Tue, 25 Nov 2025 13:18:56 +0100
+	id F18FEA0C7D; Tue, 25 Nov 2025 13:20:44 +0100 (CET)
+Date: Tue, 25 Nov 2025 13:20:44 +0100
 From: Jan Kara <jack@suse.cz>
 To: Christian Brauner <brauner@kernel.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
 	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
 	Jeff Layton <jlayton@kernel.org>, Amir Goldstein <amir73il@gmail.com>, 
 	Jens Axboe <axboe@kernel.dk>
-Subject: Re: [PATCH v4 03/47] eventfd: convert do_eventfd() to FD_PREPARE()
-Message-ID: <chnhnaiylmd2mivkzp7ydz3hdd27kl3wymfw7f4bfpdx2fdp2b@txucmqn53rmw>
+Subject: Re: [PATCH v4 13/47] open: convert do_sys_openat2() to FD_PREPARE()
+Message-ID: <p3vzq3hseqi6x7id6zpqgkpxzsvtlw3cxtpbwukfiio5gnrad7@7yaohax6xkwj>
 References: <20251123-work-fd-prepare-v4-0-b6efa1706cfd@kernel.org>
- <20251123-work-fd-prepare-v4-3-b6efa1706cfd@kernel.org>
+ <20251123-work-fd-prepare-v4-13-b6efa1706cfd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -105,8 +105,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251123-work-fd-prepare-v4-3-b6efa1706cfd@kernel.org>
-X-Spam-Level: 
+In-Reply-To: <20251123-work-fd-prepare-v4-13-b6efa1706cfd@kernel.org>
 X-Spamd-Result: default: False [-3.80 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
@@ -128,75 +127,59 @@ X-Spamd-Result: default: False [-3.80 / 50.00];
 	FROM_EQ_ENVFROM(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,suse.cz:email]
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email,suse.cz:email]
 X-Spam-Flag: NO
 X-Spam-Score: -3.80
+X-Spam-Level: 
 
-On Sun 23-11-25 17:33:21, Christian Brauner wrote:
+On Sun 23-11-25 17:33:31, Christian Brauner wrote:
 > Signed-off-by: Christian Brauner <brauner@kernel.org>
 
-Looks good. Feel free to add:
+Looks good (except for the subject). Feel free to add:
 
 Reviewed-by: Jan Kara <jack@suse.cz>
 
 								Honza
 
 > ---
->  fs/eventfd.c | 31 +++++++++++--------------------
->  1 file changed, 11 insertions(+), 20 deletions(-)
+>  fs/open.c | 17 +++--------------
+>  1 file changed, 3 insertions(+), 14 deletions(-)
 > 
-> diff --git a/fs/eventfd.c b/fs/eventfd.c
-> index af42b2c7d235..3219e0d596fe 100644
-> --- a/fs/eventfd.c
-> +++ b/fs/eventfd.c
-> @@ -378,9 +378,7 @@ EXPORT_SYMBOL_GPL(eventfd_ctx_fileget);
->  
->  static int do_eventfd(unsigned int count, int flags)
+> diff --git a/fs/open.c b/fs/open.c
+> index 3d64372ecc67..fa00860f4e4c 100644
+> --- a/fs/open.c
+> +++ b/fs/open.c
+> @@ -1421,8 +1421,8 @@ static int do_sys_openat2(int dfd, const char __user *filename,
+>  			  struct open_how *how)
 >  {
-> -	struct eventfd_ctx *ctx;
-> -	struct file *file;
-> -	int fd;
-> +	struct eventfd_ctx *ctx __free(kfree) = NULL;
+>  	struct open_flags op;
+> -	struct filename *tmp;
+> -	int err, fd;
+> +	struct filename *tmp __free(putname);
+> +	int err;
 >  
->  	/* Check the EFD_* constants for consistency.  */
->  	BUILD_BUG_ON(EFD_CLOEXEC != O_CLOEXEC);
-> @@ -398,26 +396,19 @@ static int do_eventfd(unsigned int count, int flags)
->  	init_waitqueue_head(&ctx->wqh);
->  	ctx->count = count;
->  	ctx->flags = flags;
-> -	ctx->id = ida_alloc(&eventfd_ida, GFP_KERNEL);
+>  	err = build_open_flags(how, &op);
+>  	if (unlikely(err))
+> @@ -1432,18 +1432,7 @@ static int do_sys_openat2(int dfd, const char __user *filename,
+>  	if (IS_ERR(tmp))
+>  		return PTR_ERR(tmp);
 >  
->  	flags &= EFD_SHARED_FCNTL_FLAGS;
->  	flags |= O_RDWR;
-> -	fd = get_unused_fd_flags(flags);
-> -	if (fd < 0)
-> -		goto err;
-> -
-> -	file = anon_inode_getfile_fmode("[eventfd]", &eventfd_fops,
-> -					ctx, flags, FMODE_NOWAIT);
-> -	if (IS_ERR(file)) {
-> -		put_unused_fd(fd);
-> -		fd = PTR_ERR(file);
-> -		goto err;
+> -	fd = get_unused_fd_flags(how->flags);
+> -	if (likely(fd >= 0)) {
+> -		struct file *f = do_filp_open(dfd, tmp, &op);
+> -		if (IS_ERR(f)) {
+> -			put_unused_fd(fd);
+> -			fd = PTR_ERR(f);
+> -		} else {
+> -			fd_install(fd, f);
+> -		}
 > -	}
-> -	fd_install(fd, file);
+> -	putname(tmp);
 > -	return fd;
-> -err:
-> -	eventfd_free_ctx(ctx);
-> -	return fd;
-> +
-> +	FD_PREPARE(fdf, flags,
-> +		   anon_inode_getfile_fmode("[eventfd]", &eventfd_fops, ctx,
-> +					    flags, FMODE_NOWAIT));
-> +	if (fdf.err)
-> +		return fdf.err;
-> +
-> +	ctx->id = ida_alloc(&eventfd_ida, GFP_KERNEL);
-> +	retain_and_null_ptr(ctx);
-> +	return fd_publish(fdf);
+> +	return FD_ADD(how->flags, do_filp_open(dfd, tmp, &op));
 >  }
 >  
->  SYSCALL_DEFINE2(eventfd2, unsigned int, count, int, flags)
+>  int do_sys_open(int dfd, const char __user *filename, int flags, umode_t mode)
 > 
 > -- 
 > 2.47.3
