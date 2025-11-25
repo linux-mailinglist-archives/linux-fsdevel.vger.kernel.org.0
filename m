@@ -1,173 +1,170 @@
-Return-Path: <linux-fsdevel+bounces-69795-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69796-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3F0AC854D6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Nov 2025 15:02:22 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0FCCC8554B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Nov 2025 15:10:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8023F351D44
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Nov 2025 14:01:37 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id EB8EE35121A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Nov 2025 14:10:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 534FD327BE6;
-	Tue, 25 Nov 2025 14:00:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84E4F324B1E;
+	Tue, 25 Nov 2025 14:09:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="UWRocTrK"
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="OMPvzKlF";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="YLka3iJJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from flow-a2-smtp.messagingengine.com (flow-a2-smtp.messagingengine.com [103.168.172.137])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58A04326D79
-	for <linux-fsdevel@vger.kernel.org>; Tue, 25 Nov 2025 14:00:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A4BF32255C;
+	Tue, 25 Nov 2025 14:09:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.137
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764079207; cv=none; b=KbBWzEKuhAlLAtttD08xyjgebVMUq96P+//dgx7giwV/65GQblUqeeKGjGw2c73Dd+1FtU+8aD9BfTjkeg+6HXVr7noLyuMOKmrConuUMJW/5m0+bVw75blJ7GfQ7phrM8/RV+5Bxyiv+mz4h06xI+28kF3Yegb0OjjGFab2fVE=
+	t=1764079788; cv=none; b=IGZqti2cFhyUDEXVIJEVh6vI/TX9IYN9o4OaBtyardgA9NRrpALQWWinPIZq4jKTgu0scH3IrtxFoFTcMuftw8q0Q82ej9tA9bygPG3Quu90XbQXHgCIAqhJ3ooVEqPlMSmqGsel5RLHiyv5G7wfonkhYK5zPJ2qG4lF9xXfPXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764079207; c=relaxed/simple;
-	bh=C8XIwA19HrNwiDIWcAp9ATXIQ3+6lATQ5Ks12sTRPrU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=b5Bfv25wzqa/9ox6FW01wcVzromLD8+pd1al7IXyWOGBkJIfDBhBrqDuQiWtMBOBZnCF6e4icoOA5DMbjniiYyZv7B1ucwQ2IZ1qbIkLl4lDWPEi2NDy5TVn0MkSazA/iItjwMFq0vQwTxR+iyB++GEStxeP+ccOIIKHhYtEpzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=UWRocTrK; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-6418b55f86dso9322115a12.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Nov 2025 06:00:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1764079203; x=1764684003; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gPADEzDInP+4EgYdCnNY22SOys+qqvVd9B9lyZm9LUs=;
-        b=UWRocTrKMri7yCN1LuVyAaLVUt6HcfVLWsWlC9rXpDVD1z1xTnlpjqW3EVtOdTRWR0
-         dklfGTyD8cgo07ZHESMoU4KIRcRvhw2U3n9YL+33L1JaxHBe3+PbyHAhekvPTOudEhIU
-         KNdnfRO++KTMV4v1Mg8Kbdpm10tMbRCP6YgrDQUeIvdVcVZS9K9MhenTAThLTsDjueSL
-         lWL5+5Vmg7X0GxC3JEumniwlqz/C1FLdWFqelgJ/5EkAAOCNbkxc2VkKFb3MVsQqv8s9
-         DWlg/9B8bqORvIXMZDhijac7T5Dd35d31eMWFlNkaLBVftZc4LTnp37xbD2betgIScR/
-         yi0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764079203; x=1764684003;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=gPADEzDInP+4EgYdCnNY22SOys+qqvVd9B9lyZm9LUs=;
-        b=tUqidWFynEdmLQLYkpR7CBR+FKdraMpnBaa4cepAg99SNVCbNX2JCp/IF90WVaEaE5
-         7Nw21DCcglbfVw8hQ6pQuopmrh6TZ/ENBASaom4yQ3n3ziJB89CF49wxNqFfSGWRuHr7
-         UV3z9aZJrz+0ro84BUsarkHM8miYGnT27Lp3ahU/LW5HVDZUX/p0WYvRRIchZlMmCKfj
-         Un6AgYcuCejXqNooOmL4Zb7Q4PVpP1m+qJE0Mpdkphk90CSj/VHjFOjzcPmFi50KjQM4
-         dy++hERJFkcLZHHSoASgRKfnCONJMCqltZvjyNq7ja31RhxNtlm/qulGH5zP85K3Td8U
-         a3Vw==
-X-Forwarded-Encrypted: i=1; AJvYcCVkqVGH2mXTIdS9+0M6Ce+GQ7HklbA1s4s9DMCZnIBXIu0Ieftmt0U2vP56DHni+IuDp8U5s4ybIsh/+Dxq@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1ek6ImngqK0NRqvT8QesOMr1U6OkOS+k5zy+45zR2CygE8pGY
-	LEMWD0tmZySNEJoetWWWS1OiYxG2oaaygRWZKzxcAlDR2MNzgZbnUOT/0GNxkm3UvnlIa9jIxtd
-	4K2E+eyG2uneU6sgmYDoXybcuzgZKq7UdEWu9DyLI4w==
-X-Gm-Gg: ASbGncsBbmdu//b7DaYIVWG53ofsoMfhMNwzMmaG+Y5bfhzwomynjF5iGhBKnDpJWED
-	0uM9tRvFBq70EenB48jv3Wv8FjuzbQTj9ZAjDDvBxNzO89xA+lyBlAB5Po5v0BNHUHBZ6DSfEae
-	v5sQvVSQEovMiqEYXzkvvOZ1MlmvDw/W36j4amDnH+xJFrqZtKIGcaugLeuzSDEcjsaDHC4FcjS
-	ivbHlreT60ZMDkwv9U6sRUgkk8kOeHUcNwaJO5IFIsbRJAbMfj/11hAvttrpn/X4shR
-X-Google-Smtp-Source: AGHT+IGQvP3sp8P5QdaHoU5hl5stQ/R78sD1t68LmqHbhIYjocvMZQNdcinW6IeCcPNYJc/WOurXaWpr8WBXOL4qx2M=
-X-Received: by 2002:a05:6402:35d5:b0:643:18c2:123b with SMTP id
- 4fb4d7f45d1cf-645544420fcmr15551385a12.3.1764079203274; Tue, 25 Nov 2025
- 06:00:03 -0800 (PST)
+	s=arc-20240116; t=1764079788; c=relaxed/simple;
+	bh=41wuBfK6KmZfFSph9AoLMj/4UnC1VKX3ed8Fm4gY7Qk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rls3yt4yCFbF/9hoYA8mXJ+oOeKK5Ca6wbD5+gZzK4Q9nKoFdqgdm5uHyzbx8WOOM9rz0HeITfzXKPmNwhczxXyt4IX6PlVWIYnphmOgGOZDSLwRmFEG+bwyfTQG84qg3mDLIgyxLMiWGGaAZ12pNcwnT/rqfBkGn+95bQnRS74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=OMPvzKlF; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=YLka3iJJ; arc=none smtp.client-ip=103.168.172.137
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailflow.phl.internal (Postfix) with ESMTP id 809B21380546;
+	Tue, 25 Nov 2025 09:09:45 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-05.internal (MEProxy); Tue, 25 Nov 2025 09:09:45 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm2; t=1764079785; x=
+	1764086985; bh=3bMvsZSIiVU3pUA1Q96vlRsnQkJ+zVUPQsOHI7GHg2U=; b=O
+	MPvzKlFHkHMEkgAvO1Uyss+96M/hGKj5YsQfHejRjOSc4qcoxmXMj4hhXg44W1Ef
+	f+2FZmek/Vp7VMAcKSWKu5vw2ELUh/4TKqh05W+XH3fqT/kg0gRDs1cSTZFEzwsY
+	lfUK/XstLQ/GgwvHNBGpiPsihS3C907bycj46mTcTPjPWBcIFuNO2mkJK87dq41v
+	nEaYF+SW/r9n3rXEn7zZvJvhaqJKngqjJVqgYKouNkyWaY7csAolp+xbmx+7XCc6
+	NTnu6vEK2LnrusXBylHkCIdYJU8Qwx8yLU37YVnlHB1bRfm2yV73RrmEmaeu/OnY
+	zVRksTDa34siBV1sEgVBg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1764079785; x=1764086985; bh=3bMvsZSIiVU3pUA1Q96vlRsnQkJ+zVUPQsO
+	HI7GHg2U=; b=YLka3iJJS4uHYf+RVmsIhTYDXpAvrL5WrL9BPBFcYF8nsukYggb
+	QHO6tT2dwT3h9TcJys0ZthsLNKdLgkuGaDv5MkN8DaRBDYOvSDFB76gBeKNn5W0/
+	CVCemM3ZxiBVvJLvrV/KsXaaVnrH/XSHm5BR36zUS10Fj/JaEk3C0JUVf4tBZhI1
+	rwv6nH1MsGZq8Rx4O9829S+HBuzkXZM4K4wcZY5iTTS7mIR4Fo1mVU9WkuJ1CMd2
+	uD6szhHUcKTSLnb6TESaW5TxAiS8SqYaev0d0D3FkzA2naE3DgHaXS1hUhvkgcn9
+	odS/eCQqz0+KbMLRtjqc8IUq4qTlSRV2bug==
+X-ME-Sender: <xms:pbglaWvKN1DJZAzYSwKMRx9-OgT3rdfcTgkjojWPEw8KNW7Cx0AEAw>
+    <xme:pbglaTXf9w3AHkCR2Fi9l8wIxJHg69s8vY_NmbLplbMAS7ZPJhAxU4ZyvP7W59tRY
+    6tYZ94S8k6_dYSWuO2CmKlawxLgNFJRUNzUYh5ghix47LoIvHqcJ3E>
+X-ME-Received: <xmr:pbglaTVq6gxwgmVLYbKwhZEo3Ue8V3Yipkq04ow2rgFUWOH-1wlLy2M77sQWTg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvgeduieejucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucenucfjughrpeffhffvvefukfhfgggtuggjsehttdfstd
+    dttddvnecuhfhrohhmpefmihhrhihlucfuhhhuthhsvghmrghuuceokhhirhhilhhlsehs
+    hhhuthgvmhhovhdrnhgrmhgvqeenucggtffrrghtthgvrhhnpeejheeufeduvdfgjeekie
+    dvjedvgeejgfefieetveffhfdtvddtleduhfeffeffudenucevlhhushhtvghrufhiiigv
+    pedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehkihhrihhllhesshhhuhhtvghmohhvrd
+    hnrghmvgdpnhgspghrtghpthhtohepudefiedpmhhouggvpehsmhhtphhouhhtpdhrtghp
+    thhtohepghhouhhrrhihsehgohhurhhrhidrnhgvthdprhgtphhtthhopehlihhnuhigqd
+    hmmheskhhvrggtkhdrohhrghdprhgtphhtthhopehkvghrnhgvlhdqthgvrghmsehmvght
+    rgdrtghomhdprhgtphhtthhopehlihhnuhigqdgtgihlsehvghgvrhdrkhgvrhhnvghlrd
+    horhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghl
+    rdhorhhgpdhrtghpthhtohepnhhvughimhhmsehlihhsthhsrdhlihhnuhigrdguvghvpd
+    hrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhr
+    ghdprhgtphhtthhopegtghhrohhuphhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtg
+    hpthhtohepuggrvhgvsehsthhgohhlrggsshdrnhgvth
+X-ME-Proxy: <xmx:pbglaW_0cXMtMthUHN5H-fE7CGn6DIwBKbPochRZeWCN8gj92pgAfQ>
+    <xmx:pbglab-e-8tK-jGoWZSTzd4htoSykssNFuRJIH-N3luEajg_qhcROg>
+    <xmx:pbglaS8xVJOZqKo-Vsq3I59doGzt7pGvGwt-1UuY4j1VdvVF-sGV3A>
+    <xmx:pbglabLAvm1PrWnHzKLnOzKQUK7tS39E5pLPz3qn6MaXu68uj2z1VA>
+    <xmx:qbglaXODIQJ_Tp6UtA9zcmakBUdCO8tVHH50Z00bPS2jBHC-6eFUxFQ4>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 25 Nov 2025 09:09:40 -0500 (EST)
+Date: Tue, 25 Nov 2025 14:09:39 +0000
+From: Kiryl Shutsemau <kirill@shutemov.name>
+To: Gregory Price <gourry@gourry.net>
+Cc: linux-mm@kvack.org, kernel-team@meta.com, linux-cxl@vger.kernel.org,
+ 	linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev,
+ linux-fsdevel@vger.kernel.org, 	cgroups@vger.kernel.org,
+ dave@stgolabs.net, jonathan.cameron@huawei.com, 	dave.jiang@intel.com,
+ alison.schofield@intel.com, vishal.l.verma@intel.com,
+ 	ira.weiny@intel.com, dan.j.williams@intel.com, longman@redhat.com,
+ 	akpm@linux-foundation.org, david@redhat.com, lorenzo.stoakes@oracle.com,
+ 	Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org,
+ surenb@google.com, 	mhocko@suse.com, osalvador@suse.de, ziy@nvidia.com,
+ matthew.brost@intel.com, 	joshua.hahnjy@gmail.com, rakie.kim@sk.com,
+ byungchul@sk.com, ying.huang@linux.alibaba.com, 	apopple@nvidia.com,
+ mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+ 	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+ rostedt@goodmis.org, 	bsegall@google.com, mgorman@suse.de,
+ vschneid@redhat.com, tj@kernel.org, 	hannes@cmpxchg.org,
+ mkoutny@suse.com, kees@kernel.org, muchun.song@linux.dev,
+ 	roman.gushchin@linux.dev, shakeel.butt@linux.dev, rientjes@google.com,
+ jackmanb@google.com, 	cl@gentwo.org, harry.yoo@oracle.com,
+ axelrasmussen@google.com, 	yuanchu@google.com, weixugc@google.com,
+ zhengqi.arch@bytedance.com, 	yosry.ahmed@linux.dev, nphamcs@gmail.com,
+ chengming.zhou@linux.dev, 	fabio.m.de.francesco@linux.intel.com,
+ rrichter@amd.com, ming.li@zohomail.com, usamaarif642@gmail.com,
+ 	brauner@kernel.org, oleg@redhat.com, namcao@linutronix.de,
+ escape@linux.alibaba.com, 	dongjoo.seo1@samsung.com
+Subject: Re: [RFC LPC2026 PATCH v2 00/11] Specific Purpose Memory NUMA Nodes
+Message-ID: <h7vt26ek4wzrls6twsveinxz7aarwqtkhydbgvihsm7xzsjiuz@yk2dltuf2eoh>
+References: <20251112192936.2574429-1-gourry@gourry.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251122222351.1059049-1-pasha.tatashin@soleen.com>
- <20251122222351.1059049-3-pasha.tatashin@soleen.com> <aSLvo0uXLOaE2JW6@kernel.org>
- <CA+CK2bCj2OAQjM-0rD+DP0t4v71j70A=HHdQ212ASxX=xoREXw@mail.gmail.com>
- <aSMXUKMhroThYrlU@kernel.org> <CA+CK2bABbDYfu8r4xG3n30HY4cKFe74_RJP5nYJeOtAOOj+OUQ@mail.gmail.com>
- <aSWqQWbeijvruDqf@kernel.org>
-In-Reply-To: <aSWqQWbeijvruDqf@kernel.org>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Tue, 25 Nov 2025 08:59:26 -0500
-X-Gm-Features: AWmQ_bkHTYlHlGxKmBiHNdm6t2thzT9HecweCk3JjWHiloeJgWPSmfHodz7nV6A
-Message-ID: <CA+CK2bC2yptSzT+FJaef_K3bvOeDmmOzZVf3VakaKn6r7qk+dQ@mail.gmail.com>
-Subject: Re: [PATCH v7 02/22] liveupdate: luo_core: integrate with KHO
-To: Mike Rapoport <rppt@kernel.org>
-Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com, 
-	dmatlack@google.com, rientjes@google.com, corbet@lwn.net, 
-	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, 
-	ojeda@kernel.org, aliceryhl@google.com, masahiroy@kernel.org, 
-	akpm@linux-foundation.org, tj@kernel.org, yoann.congal@smile.fr, 
-	mmaurer@google.com, roman.gushchin@linux.dev, chenridong@huawei.com, 
-	axboe@kernel.dk, mark.rutland@arm.com, jannh@google.com, 
-	vincent.guittot@linaro.org, hannes@cmpxchg.org, dan.j.williams@intel.com, 
-	david@redhat.com, joel.granados@kernel.org, rostedt@goodmis.org, 
-	anna.schumaker@oracle.com, song@kernel.org, linux@weissschuh.net, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
-	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com, 
-	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
-	rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org, 
-	cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com, 
-	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com, 
-	aleksander.lobakin@intel.com, ira.weiny@intel.com, 
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
-	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net, 
-	brauner@kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	saeedm@nvidia.com, ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com, 
-	leonro@nvidia.com, witu@nvidia.com, hughd@google.com, skhawaja@google.com, 
-	chrisl@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251112192936.2574429-1-gourry@gourry.net>
 
-On Tue, Nov 25, 2025 at 8:08=E2=80=AFAM Mike Rapoport <rppt@kernel.org> wro=
-te:
->
-> On Sun, Nov 23, 2025 at 01:23:51PM -0500, Pasha Tatashin wrote:
-> > On Sun, Nov 23, 2025 at 9:17=E2=80=AFAM Mike Rapoport <rppt@kernel.org>=
- wrote:
-> > > > > > +static int __init liveupdate_early_init(void)
-> > > > > > +{
-> > > > > > +     int err;
-> > > > > > +
-> > > > > > +     err =3D luo_early_startup();
-> > > > > > +     if (err) {
-> > > > > > +             luo_global.enabled =3D false;
-> > > > > > +             luo_restore_fail("The incoming tree failed to ini=
-tialize properly [%pe], disabling live update\n",
-> > > > > > +                              ERR_PTR(err));
-> > > > >
-> > > > > What's wrong with a plain panic()?
-> > > >
-> > > > Jason suggested using the luo_restore_fail() function instead of
-> > > > inserting panic() right in code somewhere in LUOv3 or earlier. It
-> > > > helps avoid sprinkling panics in different places, and also in case=
- if
-> > > > we add the maintenance mode that we have discussed in LUOv6, we cou=
-ld
-> > > > update this function as a place where that mode would be switched o=
-n.
-> > >
-> > > I'd agree if we were to have a bunch of panic()s sprinkled in the cod=
-e.
-> > > With a single one it's easier to parse panic() than lookup what
-> > > luo_restore_fail() means.
-> >
-> > The issue is that removing luo_restore_fail() removes the only
-> > dependency on luo_internal.h in this patch. This would require me to
-> > move the introduction of that header file to a later patch in the
-> > series, which is difficult to handle via a simple fix-up.
-> >
-> > Additionally, I still believe the abstraction is cleaner for future
-> > extensibility (like the maintenance mode), even if it currently wraps
-> > a single panic (which is actually a good thing, I have cleaned-up
-> > things substantially to have  a single point  of panic since v2).
-> > Therefore, it is my preference to keep it as is, unless a full series
-> > is needed to be re-sent.
->
-> Well, let's keep it. If we won't see new users or extensions to
-> luo_restore_fail() we can kill it later.
+On Wed, Nov 12, 2025 at 02:29:16PM -0500, Gregory Price wrote:
+> With this set, we aim to enable allocation of "special purpose memory"
+> with the page allocator (mm/page_alloc.c) without exposing the same
+> memory as "System RAM".  Unless a non-userland component, and does so
+> with the GFP_SPM_NODE flag, memory on these nodes cannot be allocated.
 
-SGTM.
+How special is "special purpose memory"? If the only difference is a
+latency/bandwidth discrepancy compared to "System RAM", I don't believe
+it deserves this designation.
 
->
-> > Pasha
->
-> --
-> Sincerely yours,
-> Mike.
+I am not in favor of the new GFP flag approach. To me, this indicates
+that our infrastructure surrounding nodemasks is lacking. I believe we
+would benefit more by improving it rather than simply adding a GFP flag
+on top.
+
+While I am not an expert in NUMA, it appears that the approach with
+default and opt-in NUMA nodes could be generally useful. Like,
+introduce a system-wide default NUMA nodemask that is a subset of all
+possible nodes. This way, users can request the "special" nodes by using
+a wider mask than the default.
+
+cpusets should allow to set both default and possible masks in a
+hierarchical manner where a child's default/possible mask cannot be
+wider than the parent's possible mask and default is not wider that
+own possible.
+
+> Userspace-driven allocations are restricted by the sysram_nodes mask,
+> nothing in userspace can explicitly request memory from SPM nodes.
+> 
+> Instead, the intent is to create new components which understand memory
+> features and register those nodes with those components. This abstracts
+> the hardware complexity away from userland while also not requiring new
+> memory innovations to carry entirely new allocators.
+
+I don't see how it is a positive. It seems to be negative side-effect of
+GFP being a leaky abstraction.
+
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
