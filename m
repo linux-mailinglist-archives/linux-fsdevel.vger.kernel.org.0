@@ -1,128 +1,159 @@
-Return-Path: <linux-fsdevel+bounces-69828-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69829-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7628C86958
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Nov 2025 19:24:00 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB0E8C869F7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Nov 2025 19:30:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D6123B2C27
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Nov 2025 18:23:57 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 578CD3509C5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Nov 2025 18:30:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3E2032938F;
-	Tue, 25 Nov 2025 18:23:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBF0032D0EF;
+	Tue, 25 Nov 2025 18:30:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q8d/52dm"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="b+tzixxm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF0EC3016F7
-	for <linux-fsdevel@vger.kernel.org>; Tue, 25 Nov 2025 18:23:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADEF91F8BD6;
+	Tue, 25 Nov 2025 18:30:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764095033; cv=none; b=qmw423M9juj7xU2Txj3gXD92CGwKe32g/SdF5v+5nuSrURGDho7vfIfU1Zf/7HdDjtuM06d/yFMApgjd/ycN6/1cWI7rh6X7UjRGKiRqmdRqgZvwzhAWEPMtv1kzKY9nU24R2iedavdPtPZPQeZciua07Go/ObA8jaIin7wzid0=
+	t=1764095416; cv=none; b=VCxaov+Mi4dUya9SetTPESe3W3NsJ8NXgakxcMX1CmgUYEYdJRmXTCNOfU5le7TxUt51uAo3s/67dl3eTh2nRmgQer2a/icDAJSXLZl5uTZzUozGBedQriboNiyEV7lbo007P9GIDKBJ+VqmSTo/ljRejfT6+ko8RqD2RY41dQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764095033; c=relaxed/simple;
-	bh=jbgXOzCR/GZ217muZed1zRMD+l402zZKC7omM22Etb8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kcj2Vbe/A6oW7yKBKzoGUJrv3eX5ZfZ+7V4mw3bAdmw4skTUfPXMd8+5s286LnwO3GZIwd5hxAaNup+K1fdn1ZLgQtST0Dabw5aAp7VD5aNmiNu0Z/VjL0bU3myt/lIKjTJGfHRxWjoAO7YwDvwpvxK5GxS9XMtnllEu+tFBlw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q8d/52dm; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4ed861eb98cso63042661cf.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Nov 2025 10:23:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1764095031; x=1764699831; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=T3tydmKvXCBQ5thZMPZm88UpOyDOUvzTtCssow991EE=;
-        b=Q8d/52dmVh/bep2VHxLzSChABQGx2St6fjOdrIjjZLNUKpUc9py5ka05v8sLidxoUs
-         D+Acfo0zNfe+AhB4wTxpM3WOJkTqhP2Md1SqJWGWuHOGpJ5u31tXdVsEKQbN5g2nWa2C
-         DHhR0YLmEyGPNLSIzyyA8GMxeU3zgen3/F7Q1aFG5QBfKNrSdPIX6Vr+dIskqpuXhcFS
-         K8WkmSEGqY7Z8D58h7OGfywY5kd2ZH6uZDiCFm7FFDtS7aWEgp1czdCoKq9J8O6WTtcc
-         4TXKcyQNwyNFajzkP7MNaoegso8eSN04v4+pvkvA6w/aUt8bTY+/o7dj1Gayn6T/IElb
-         qfsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764095031; x=1764699831;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=T3tydmKvXCBQ5thZMPZm88UpOyDOUvzTtCssow991EE=;
-        b=oKlrYlB86W0vy63FS9CDBbylpp1E8DdsqailcAoxA2Sgp3CKpRJQvUhOGrZWIqN20P
-         0AV4aJWA9YTZFcj09o9qkaf73M7CCw/qiMSM0SPZBnEG54G9To2QgYN3RSlRfUS+BQcc
-         EZ6/RHPMpLfQH6l6xHcB8Gbrd8vRqLQoMb8p6aX0frAx1tSWgTwgS4hwrIECIapm+SSq
-         wNZJsycUjTeGiLmCddE9dZCDN2g2BblsN8Ta/KzaJnNdYI8vJysAYuaBR5M/j7xDqy9b
-         9JCitb5x0ZL92gAPSaGPBSeCtgOUR7FB6249wCVJopzdtv9B30vbNmrCWIesrujGCpmk
-         rcfg==
-X-Forwarded-Encrypted: i=1; AJvYcCUL0dGc2kh9MsSkw1oWEinSPwVrsSbRuhX/FCEgS7CUn1GGUVBsEqcuTsGgNay8y2Zzr3Wf9a5UMiCoveXl@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywr7vJRCugSdUxDkck1egAikFoL+THJ2JAlrb9zce3PNfz54kSU
-	vLIa9hXBiQo4KH39FApoYw1wFA5ro4ogYAtOY1rN6jPqmGOpTsJR1S54Su52Ajy08zbk7PXkTXv
-	PLcILzLuPzGy0u/oV/tO4gj+7svbZrXn7UOvBX7I=
-X-Gm-Gg: ASbGncsGmZLvTlkLg9o2qgQfBew3sDIRpaE/9UNWyu8L/EzUdQPPk/osWwkjIB5Y9rH
-	eG4ubdYYYOd4xuU4HL9KfS08xLv0nmlb4fRoFTgaBBXHnuDzQC1rBHwlJQOR1auqWHsNmMW/iOd
-	7lPyPrgD4yJiFvPKdRVPknrPBA/kSVZkELxAn32Qc7VxYcaq2WFR50xG0yXhvNT6ND3LxxBO6WD
-	RieszFSiY9KcG2BPuXz47QB5ahuI/rs5XftTF2oVBJtM2WwK9Kh1eG6WcRqOF8LyV6Hcg==
-X-Google-Smtp-Source: AGHT+IHH0/yc8vNLiTt4QwUBaRrKiAt2SaoPTELn+GAa9bZbtTZ9/A/quWX5m1L/0e5r+OgdHFfixxHNNWzg+xdnI6Y=
-X-Received: by 2002:a05:622a:294:b0:4ee:19f2:9f1b with SMTP id
- d75a77b69052e-4ee58a79321mr256090841cf.37.1764095030614; Tue, 25 Nov 2025
- 10:23:50 -0800 (PST)
+	s=arc-20240116; t=1764095416; c=relaxed/simple;
+	bh=ilWEu5RxIVLfVIaXLQHAdQTbENf6mqv/Hm1iZ1MhI6w=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=XBJnQuRW8JP4OBCHdTuOMnrslkJ+ehAk9c8x+VcR+Fq0q4bHBjl2aN8JeatPUa3A9Lj57JJqHN72xJxI/Az9ujE6Kayaz/+QlJhLw2pTgqRW+i0ynya9NiTv5Oki+0xD/IXiB/023fY02ws4C5mdRYmNm40FTvEcZM1OoBIu/ks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=b+tzixxm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD2C0C4CEF1;
+	Tue, 25 Nov 2025 18:30:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1764095416;
+	bh=ilWEu5RxIVLfVIaXLQHAdQTbENf6mqv/Hm1iZ1MhI6w=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=b+tzixxmV1ZRmL/hj6nA0kkhxHaUdNXKQqWLsC+tDqtp42wPV/HVAldl2UR2lg/rT
+	 xSJtZgyEUdh9WxYrFtcKmqnPiupLOQerU+GcoaZlxAwHQ7BHUkwHOT+4MLntXo2qFU
+	 9de67fdf8StJsO22yf01YKRQiw7y3RYkO/wk+/pk=
+Date: Tue, 25 Nov 2025 10:30:12 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com,
+ rppt@kernel.org, dmatlack@google.com, rientjes@google.com, corbet@lwn.net,
+ rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com,
+ kanie@linux.alibaba.com, ojeda@kernel.org, aliceryhl@google.com,
+ masahiroy@kernel.org, tj@kernel.org, yoann.congal@smile.fr,
+ mmaurer@google.com, roman.gushchin@linux.dev, chenridong@huawei.com,
+ axboe@kernel.dk, mark.rutland@arm.com, jannh@google.com,
+ vincent.guittot@linaro.org, hannes@cmpxchg.org, dan.j.williams@intel.com,
+ david@redhat.com, joel.granados@kernel.org, rostedt@goodmis.org,
+ anna.schumaker@oracle.com, song@kernel.org, linux@weissschuh.net,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-mm@kvack.org, gregkh@linuxfoundation.org, tglx@linutronix.de,
+ mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+ x86@kernel.org, hpa@zytor.com, rafael@kernel.org, dakr@kernel.org,
+ bartosz.golaszewski@linaro.org, cw00.choi@samsung.com,
+ myungjoo.ham@samsung.com, yesanishhere@gmail.com,
+ Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com,
+ aleksander.lobakin@intel.com, ira.weiny@intel.com,
+ andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de,
+ bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com,
+ stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net,
+ brauner@kernel.org, linux-api@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, saeedm@nvidia.com, ajayachandra@nvidia.com,
+ jgg@nvidia.com, parav@nvidia.com, leonro@nvidia.com, witu@nvidia.com,
+ hughd@google.com, skhawaja@google.com, chrisl@kernel.org
+Subject: Re: [PATCH v8 00/18] Live Update Orchestrator
+Message-Id: <20251125103012.c9f0519e166b810e2e03e1b0@linux-foundation.org>
+In-Reply-To: <20251125165850.3389713-1-pasha.tatashin@soleen.com>
+References: <20251125165850.3389713-1-pasha.tatashin@soleen.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20251125181347.667883-1-joannelkoong@gmail.com>
-In-Reply-To: <20251125181347.667883-1-joannelkoong@gmail.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Tue, 25 Nov 2025 10:23:39 -0800
-X-Gm-Features: AWmQ_bkl5VDcemWfDtAk01TEc0j7nfDf_U_h9ZIrS3LFUcMxE4C9Y4oxt9ol7j0
-Message-ID: <CAJnrk1Y+QR8OfRBkZDe6a4R56m62-Evsu2cbRoKHHnK1JB+i1w@mail.gmail.com>
-Subject: Re: [PATCH] fuse: fix io-uring list corruption for terminated
- non-committed requests
-To: miklos@szeredi.hu
-Cc: bernd@bsbernd.com, linux-fsdevel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Nov 25, 2025 at 10:15=E2=80=AFAM Joanne Koong <joannelkoong@gmail.c=
-om> wrote:
->
-> When a request is terminated before it has been committed, the request
-> is not removed from the queue's list. This leaves a dangling list entry
-> that leads to list corruption and use-after-free issues.
->
-> Remove the request from the queue's list for terminated non-committed
-> requests.
->
-> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-> Fixes: c090c8abae4b ("fuse: Add io-uring sqe commit and fetch support")
+On Tue, 25 Nov 2025 11:58:30 -0500 Pasha Tatashin <pasha.tatashin@soleen.com> wrote:
 
-Sorry, forgot to add the stable tag. There should be this line:
+> Andrew: This series has been fully reviewed, and contains minimal
+> changes compared to what is currently being tested in linux-next
+> diff between v7 and v8 can be viewe, here: [8]
+> 
+> Four patches have been dropped compared to v7: and are going to be sent
+> separately.
+> 
+> This series introduces the Live Update Orchestrator, a kernel subsystem
+> designed to facilitate live kernel updates using a kexec-based reboot.
+> This capability is critical for cloud environments, allowing hypervisors
+> to be updated with minimal downtime for running virtual machines. LUO
+> achieves this by preserving the state of selected resources, such as
+> memory, devices and their dependencies, across the kernel transition.
 
-Cc: stable@vger.kernel.org
+Thanks, I updated mm.git's mm-nonmm-unstable branch to this version.
 
-> ---
->  fs/fuse/dev_uring.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
-> index 0066c9c0a5d5..7760fe4e1f9e 100644
-> --- a/fs/fuse/dev_uring.c
-> +++ b/fs/fuse/dev_uring.c
-> @@ -86,6 +86,7 @@ static void fuse_uring_req_end(struct fuse_ring_ent *en=
-t, struct fuse_req *req,
->         lockdep_assert_not_held(&queue->lock);
->         spin_lock(&queue->lock);
->         ent->fuse_req =3D NULL;
-> +       list_del_init(&req->list);
->         if (test_bit(FR_BACKGROUND, &req->flags)) {
->                 queue->active_background--;
->                 spin_lock(&fc->bg_lock);
-> --
-> 2.47.3
->
+I expect I'll move all the below material into mm-nonmm-stable in a
+couple of days.
+
+kho-make-debugfs-interface-optional.patch
+kho-drop-notifiers.patch
+kho-add-interfaces-to-unpreserve-folios-page-ranges-and-vmalloc.patch
+memblock-unpreserve-memory-in-case-of-error.patch
+memblock-unpreserve-memory-in-case-of-error-fix.patch
+test_kho-unpreserve-memory-in-case-of-error.patch
+kho-dont-unpreserve-memory-during-abort.patch
+liveupdate-kho-move-to-kernel-liveupdate.patch
+liveupdate-kho-move-to-kernel-liveupdate-fix.patch
+maintainers-update-kho-maintainers.patch
+liveupdate-kho-use-%pe-format-specifier-for-error-pointer-printing.patch
+#
+kho-fix-misleading-log-message-in-kho_populate.patch
+kho-convert-__kho_abort-to-return-void.patch
+kho-introduce-high-level-memory-allocation-api.patch
+kho-introduce-high-level-memory-allocation-api-fix.patch
+kho-preserve-fdt-folio-only-once-during-initialization.patch
+kho-verify-deserialization-status-and-fix-fdt-alignment-access.patch
+kho-always-expose-output-fdt-in-debugfs.patch
+kho-simplify-serialization-and-remove-__kho_abort.patch
+kho-remove-global-preserved_mem_map-and-store-state-in-fdt.patch
+kho-remove-abort-functionality-and-support-state-refresh.patch
+kho-update-fdt-dynamically-for-subtree-addition-removal.patch
+kho-allow-kexec-load-before-kho-finalization.patch
+kho-allow-memory-preservation-state-updates-after-finalization.patch
+kho-add-kconfig-option-to-enable-kho-by-default.patch
+#
+#
+liveupdate-luo_core-live-update-orchestrato.patch
+liveupdate-luo_core-integrate-with-kho.patch
+kexec-call-liveupdate_reboot-before-kexec.patch
+liveupdate-luo_session-add-sessions-support.patch
+liveupdate-luo_core-add-user-interface.patch
+liveupdate-luo_file-implement-file-systems-callbacks.patch
+liveupdate-luo_session-add-ioctls-for-file-preservation.patch
+docs-add-luo-documentation.patch
+maintainers-add-liveupdate-entry.patch
+mm-shmem-use-shmem_f_-flags-instead-of-vm_-flags.patch
+mm-shmem-allow-freezing-inode-mapping.patch
+mm-shmem-export-some-functions-to-internalh.patch
+liveupdate-luo_file-add-private-argument-to-store-runtime-state.patch
+mm-memfd_luo-allow-preserving-memfd.patch
+docs-add-documentation-for-memfd-preservation-via-luo.patch
+selftests-liveupdate-add-userspace-api-selftests.patch
+selftests-liveupdate-add-simple-kexec-based-selftest-for-luo.patch
+selftests-liveupdate-add-kexec-test-for-multiple-and-empty-sessions.patch
+#
+#
+kho-free-chunks-using-free_page-instead-of-kfree.patch
+#
+test_kho-always-print-restore-status.patch
+#
+kho-kho_restore_vmalloc-fix-initialization-of-pages-array.patch
+kho-fix-restoring-of-contiguous-ranges-of-order-0-pages.patch
+#
 
