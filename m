@@ -1,764 +1,337 @@
-Return-Path: <linux-fsdevel+bounces-69845-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69846-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF834C8750C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Nov 2025 23:30:49 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F9A0C8759F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Nov 2025 23:37:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83E3C3B5185
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Nov 2025 22:30:48 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 711E33450A3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Nov 2025 22:37:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B95972FFF9B;
-	Tue, 25 Nov 2025 22:30:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AACB32D0D2;
+	Tue, 25 Nov 2025 22:37:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A0Q2AeoT"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ttE3jGID"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 132BF2EBB8C
-	for <linux-fsdevel@vger.kernel.org>; Tue, 25 Nov 2025 22:30:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764109844; cv=none; b=V19N6PYPtEoKn0XOqT0LpFOxG4xuhQHSrKo/EBvGkWNGrYPqjjimGPlbgt4WXxsYVIUuGIrwwxvIlIt7zpuKEwXXHUNnagBk2sVaYbfhgTAOE0e9gKFSNJJFwpxGNaymOmUmK1KttW4FgL7Q6RXrkNaTAwkIEU4SDvUSkdGhpTk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764109844; c=relaxed/simple;
-	bh=K6LG9d1YIVjC13vzQKBziI30mFGI6z1WN+Kty2Gr7iY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UpelfRXO3FXL6aTCf1Ypf2TUHZrbc9KJpJIyEHNMBRzDBRosu4XGk7jJzMFlRru43GGv4wjsN3nns6s77UpR5CMOVlWxCu/XyDxRScIBS8p1O2hQmyjCv6YpfmB4svojnaFjGlAs1jeV74H46nz0zSm49U3Mnmt4SlhFZV0gmtc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A0Q2AeoT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07E90C4CEF1;
-	Tue, 25 Nov 2025 22:30:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764109843;
-	bh=K6LG9d1YIVjC13vzQKBziI30mFGI6z1WN+Kty2Gr7iY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=A0Q2AeoTjXQ87W8ik3qdsX3awNlRSjzbh8k2wZ96grKp6uVDENCtBcK9Y8xqeHTxZ
-	 0nABM5oRUTKhlfqkvXRhkzQokEP/2OhSK0+u7GFv01Hg5FxhgR26VIJ6+9g/y7cQ8D
-	 6rU80qwVJ/oqXj4ANro0CZfGgnyeGD+V5Q2XRSl93QRNlQaUoR8U8Z2TqFCZceLLnm
-	 Hb/segTO+DhAB9hsNUeF3SJrXP3mZnm21RdS3m4Y1hJA8lOiKnXXai7brpvTxLgNNg
-	 8Cv1ysdXIa0escyEuFyExT5AgRWPi2eR3p0iOz1qDLS9hnBWltPqtGuk+d16v15Gpp
-	 M/+exDd0JAqFA==
-Date: Tue, 25 Nov 2025 22:30:39 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
-	Amir Goldstein <amir73il@gmail.com>, Jens Axboe <axboe@kernel.dk>
-Subject: Re: [PATCH v4 22/47] ipc: convert do_mq_open() to FD_PREPARE()
-Message-ID: <c41de645-8234-465f-a3be-f0385e3a163c@sirena.org.uk>
-References: <20251123-work-fd-prepare-v4-0-b6efa1706cfd@kernel.org>
- <20251123-work-fd-prepare-v4-22-b6efa1706cfd@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E32F32ED872;
+	Tue, 25 Nov 2025 22:37:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.156.1
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1764110223; cv=fail; b=kWB8EefclqDSKCqxeOqG5pBZCM6L/3otCj4T/ckAgwv8sp1pFSSRfJW3R+KQAJP698yN/R+wcn0Dzoy3QzT7UugvG/FHNCDUSOlOn7SYmv58guNliMVDGYHUJbBffrv+xiJbJLRInluKeypriq1Xgqjz4Kjq8L5j6b5+vFFgqic=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1764110223; c=relaxed/simple;
+	bh=hyT0hmokgPg3O7604/wJ2dQIIc4UjXuT9DNK2g24Nh4=;
+	h=From:To:CC:Date:Message-ID:References:In-Reply-To:Content-Type:
+	 MIME-Version:Subject; b=qWn7LEEAxecblodDBh+/AHwM3ivTVONqJC/nt9NccYVBYDjOS5a/WWSAkWfXsappqwjxW9FdQlXGyoNpmhRtdHheJjVSr5wRMmxGL0Vkat50J6GjhkGqt/bw4LdwfUb8fHKNcYGbbLliZbl9TYlfE9oDO2sWJMMs6iu7lOlbLrw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ibm.com; spf=pass smtp.mailfrom=ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ttE3jGID; arc=fail smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5APEvbpx015710;
+	Tue, 25 Nov 2025 22:36:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-id:content-transfer-encoding:content-type:date:from
+	:in-reply-to:message-id:mime-version:references:subject:to; s=
+	pp1; bh=hyT0hmokgPg3O7604/wJ2dQIIc4UjXuT9DNK2g24Nh4=; b=ttE3jGID
+	z0tnP+GtkEe4FL6AUEafZF7Pam9j5kdtXt8XrkjfS9MfJWHw9CxXdh1KCtwP9u9A
+	fsu7zLNOWBUhqgr7ZIX6nSZRoNVfs0HdCB4x6VaVq+CKcflaJ97IlrQmpaIjjwny
+	dQBvu0McOCV0fiphbfT8cPDaGWOwrj10FcZkWxTMbjrc9d8W+ppZ4hVjYg/kqpCC
+	Q4NTYSZpyrIS2ls5Z7kN7WMcZizwcatmNOeTeqJt5CgAO955uN4vXj7cipxqw/s0
+	ETSIaNXuE0Cb85LOa5m6w8A4GBeaeJZ0J8RIL7XLlFWIHFuZJafZSk8BLORWdcGU
+	K0z98lGjNrt7PQ==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4ak4uv8f18-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Nov 2025 22:36:49 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5APMamuC020574;
+	Tue, 25 Nov 2025 22:36:48 GMT
+Received: from ph7pr06cu001.outbound.protection.outlook.com (mail-westus3azon11010005.outbound.protection.outlook.com [52.101.201.5])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4ak4uv8f14-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Nov 2025 22:36:48 +0000 (GMT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QJtKows6LRAga7GunXLOqCuQ+dn8Zam37eZ1dqq/5579FCN7557fwisrBIPo8akN3JQ/PS5Gl4UNGsgGt3ddSgqEXM+HHHQRpcne3WNBe2dBnA+RadsfhNN6rVfUfeAjDcHcgh7Net+T/uT7Fz/kKlC6JZ8t6kfJhxRZ8djqNIC45cJb3R80RbHLhDjWMKBG+9j/mnB1v8cLqG82QHQ+bYdgbiSCPJAkfZ7oynOPHp8GRYTSn62c/xiI7FDFI8CUbbJ40g+9wux7NiJy9FgNDpxu30Y/eEq9d93akBX57V36Te58StiiIvMAlpiHtBLRS/QVkGPyJ/sJFh9+okQXKA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hyT0hmokgPg3O7604/wJ2dQIIc4UjXuT9DNK2g24Nh4=;
+ b=sy1PKqtU1quryH+8145L0lK2t8YnWFIlR3nozBf40cvoCADQKWh3hxV/VELQLBDl0VGt2gACxyu7La4bWSI8IlRBx6RWsW9IRDZmftTxp6ysbOJHzXF20XGjYS3l5wWhYd+uvhsoVswSSOeVZa5t3xwc2M3W+pf4S/0I+1ziajwgiOvrBN+NNVW9M9wzd3+Z29Fp+M0CoA1f/jpDxpnN5pAs/gqG9c+P8/h5bbxcX/Gr2h/vYaxYD0HrKYPcFcQ1ZlGATAaVDkfPS96csEccy8/K6Qf4dt04umwrmtrQvC0w72pTRgCjSDrywSJO1Ygn5yYghNP3ydcKPTtxOyN4cQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=ibm.com; dmarc=pass action=none header.from=ibm.com; dkim=pass
+ header.d=ibm.com; arc=none
+Received: from SA1PR15MB5819.namprd15.prod.outlook.com (2603:10b6:806:338::8)
+ by SA1PR15MB6965.namprd15.prod.outlook.com (2603:10b6:806:4be::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9343.17; Tue, 25 Nov
+ 2025 22:36:46 +0000
+Received: from SA1PR15MB5819.namprd15.prod.outlook.com
+ ([fe80::920c:d2ba:5432:b539]) by SA1PR15MB5819.namprd15.prod.outlook.com
+ ([fe80::920c:d2ba:5432:b539%4]) with mapi id 15.20.9343.016; Tue, 25 Nov 2025
+ 22:36:46 +0000
+From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+To: "jack@suse.cz" <jack@suse.cz>,
+        "glaubitz@physik.fu-berlin.de"
+	<glaubitz@physik.fu-berlin.de>,
+        "slava@dubeyko.com" <slava@dubeyko.com>,
+        "frank.li@vivo.com" <frank.li@vivo.com>,
+        "mehdi.benhadjkhelifa@gmail.com"
+	<mehdi.benhadjkhelifa@gmail.com>,
+        "brauner@kernel.org" <brauner@kernel.org>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>
+CC: "syzbot+ad45f827c88778ff7df6@syzkaller.appspotmail.com"
+	<syzbot+ad45f827c88778ff7df6@syzkaller.appspotmail.com>,
+        "linux-kernel-mentees@lists.linuxfoundation.org"
+	<linux-kernel-mentees@lists.linuxfoundation.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "david.hunter.linux@gmail.com" <david.hunter.linux@gmail.com>,
+        "skhan@linuxfoundation.org" <skhan@linuxfoundation.org>,
+        "khalid@kernel.org"
+	<khalid@kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Thread-Topic: [EXTERNAL] Re: [PATCH v2] fs/hfs: fix s_fs_info leak on
+ setup_bdev_super() failure
+Thread-Index:
+ AQHcWxbjI2wNRsxXGEmG7hnNwSoKY7T9oaoAgAAaLgD///OkAIAAFCeA///ybQCAABMBgP//9kwAAMeFuAAAAMetAA==
+Date: Tue, 25 Nov 2025 22:36:46 +0000
+Message-ID: <6e1bb0361c7e675f971fc322b061fef6e9c7413e.camel@ibm.com>
+References: <20251119073845.18578-1-mehdi.benhadjkhelifa@gmail.com>
+	 <c19c6ebedf52f0362648a32c0eabdc823746438f.camel@ibm.com>
+	 <3ad2e91e-2c7f-488b-a119-51d62a6e95b8@gmail.com>
+	 <8727342f9a168c7e8008178e165a5a14fa7f470d.camel@ibm.com>
+	 <15d946bd-ed55-4fcc-ba35-e84f0a3a391c@gmail.com>
+	 <148f1324cd2ae50059e1dcdc811cccdee667b9ae.camel@ibm.com>
+	 <6ddd2fd3-5f62-4181-a505-38a5d37fa793@gmail.com>
+	 <960f74ac4a4b67ebb0c1c4311302798c1a9afc53.camel@ibm.com>
+	 <28fbe625-eb1b-4c7f-925c-aec4685a6cbf@gmail.com>
+	 <218c654fc2cad8f6acac1530d431094abb1bffbe.camel@ibm.com>
+	 <b2fcff21-2b5a-486a-976f-4a5ff4337d72@gmail.com>
+In-Reply-To: <b2fcff21-2b5a-486a-976f-4a5ff4337d72@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SA1PR15MB5819:EE_|SA1PR15MB6965:EE_
+x-ms-office365-filtering-correlation-id: be673c36-6d8e-452c-eb8b-08de2c731dea
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|10070799003|7416014|376014|366016|1800799024|38070700021;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?TFBPMmp2KzdVS0JvM1RtNUhTeDgwdEVicU1PTmkzYkhJQVlVSGhjZGpQQ3h1?=
+ =?utf-8?B?NUV1Nlg3U0Nqb1hDYjR1bCtPOUxJcE91Q3lSekFzLyszcTAwL0dUYkRPSzM2?=
+ =?utf-8?B?K1MyM1lJS3p3SHo1dytST3hqVmNRM215ZDkzQnI4cUxvM0I4dW1aU1laQW4v?=
+ =?utf-8?B?RFZUVWlDQ3pkZDFXcEFQRnU3Q1VmdlFqb0hwZkxZS2JLRXBubklDdmhqV1NS?=
+ =?utf-8?B?cjY3TG1hUkVyMkJNa20yZjB3OWk2Z0pMeTVNelRYM0VNTUJLcm5CdXlDTmdO?=
+ =?utf-8?B?L0NuS1krdVQxSWhJUTVBYTFPbHJMTkM0elRuclV4bDE1clpkWjVzcEJiTFp6?=
+ =?utf-8?B?V2JSQWUxQWdhREhxcmNFbkdsM1BxbkF5dDlMTzdJMzZYYVVOSXZsdktZcFJn?=
+ =?utf-8?B?MUxhcmVtZTVxKy9tUnc0amJ3YmVUbkw0cHoyZk5EWHdXc1lCaWh2Uit0TEpw?=
+ =?utf-8?B?ZUZzWlc2NEx4cGhiQklKa3A2M1l4Q2FkZk9PZEpiUjBjYzdPL1NKR1RUcVJH?=
+ =?utf-8?B?T1RXZi9nUWRJWWRkQStGd2k1UGdYeVdzMVU4cnRtN0Fwb29jQjBDbXNXWSs5?=
+ =?utf-8?B?azBRMjNqOVpHUVJTcVVsSHE5S082dUVNVG53UGMrZ0JCbm5FbVlqZE9YYXJj?=
+ =?utf-8?B?WmNWRFd5dUpHQ0NLZ013M0lXME50L0l2bklEVWx4MmFjbkhkNHhmMHU3R2lH?=
+ =?utf-8?B?WmoxNXg4ZVZJTnZXYlNURC80MDZOeVlXQ2FCZVdCV0J5RTBQZGxEUWxnbTRy?=
+ =?utf-8?B?d0xGUWs3dndJRHlHZkczOXRYV0xqWGh2Q25GZHN5aUZlZW4rMDdNSTh1NmFQ?=
+ =?utf-8?B?VGVIT2RobUczcld1OGNMMVNVZGlzd05scWV5UjNORmxJT2FmUVJnVEk3aG1D?=
+ =?utf-8?B?VFlpcXBYVXhzcmNaTE9TS0pZKzZCclpWME41T0FPcWxSVjB2RE9JUHo1WXMw?=
+ =?utf-8?B?Z0pjMmwrR0lMQTdVcThNUDlHRHJPWmJJZ290Q1ArQ3RSMzR1MmhrRlRRcE9D?=
+ =?utf-8?B?aElYckF5bUYrSDVFWGFCUFlVdFBlRTE4YnlWSzdhYXMyRXlGZFZnNDZnU2hN?=
+ =?utf-8?B?ZXpyRG9NeG9ZeTJrWVVPWWNGQ1UxeE4xSGhwRThCQjJDVk91Z3JIS0psNU9N?=
+ =?utf-8?B?Sm9TYzF6N0hFTE05Z0doMG1aZWkyYXF1NVRJRXZwNUZETkVMS0tIM2xNbUJK?=
+ =?utf-8?B?SlQydk9sVURyVkw4RUdPbmNweFlFL0dIam8zVUxPRVRpWE05YXRjRjJtWHhp?=
+ =?utf-8?B?QSs2VlRQOFJraWFXaFVISVRPMTkyZEd1ZXBTdXJ2N3ZWb25zTVFIVWpPVU1R?=
+ =?utf-8?B?Mkp2a3hMSS9pMDJmTTAxUk5jUmdQV1BYNDdBQitUQmpka3B1a3ZhdzVVRHdZ?=
+ =?utf-8?B?clRIV2ZuOTRnVk5MRmtBUzFEdUdETDl1UTBaak5nbWwyb1ZlWk9wTTlGNFZK?=
+ =?utf-8?B?cVJaR0FidHpITVN4NWR6SnpQZm9ZenI1VWpCZ05UdXN4di8wdW8wSFMrUUFi?=
+ =?utf-8?B?QlFNQ25IM01jLzVjQVFqNmdiTWQ4cG5pd2RKQkdCRGlXanRrZmpUZWJXYzZW?=
+ =?utf-8?B?eFJ4eHhzcVI3OElHVUdhWHJ1eCtPT29hdjNWT3RmSVJRcklCRnJLdzFFbVEr?=
+ =?utf-8?B?anRJelRqRWxlUW9IN2RUc29KVHlBQVVYVDlYV2ZOQ0Q2cXFXK0tpL0RzWWh6?=
+ =?utf-8?B?Q3VJU0N6YWhNSDlpb0dYTThRdSttUUgrL0xDUm5yWTBZZWJGYW5pemQvMzBX?=
+ =?utf-8?B?MXlqalF3bmlWZGtjSDlWUEVaREk4bXl0cjRpM0ZxV2RtMkwxVkVWdkdXSFo2?=
+ =?utf-8?B?WndWZUlJaXI2TzlDdlA3WVhpOHV3dmg2OGEzUVFQd3hNVXNHNGtBVFc2NW0y?=
+ =?utf-8?B?dVpLdXBPV1Uvb0NTdlNJRU5URkNqWWZBUDcwK1FQdDJSa2Y3c3BZalh3bW1T?=
+ =?utf-8?B?MlRTazlhc0dBNFZWVHQrOEYyWjVPTTVXYko4dDcxOTZRdTBRTkFJQWxZYk9y?=
+ =?utf-8?B?cUxEbjU1aUpKd3dIeU9SbnZIalczeW1ENmo4a1lyeVpBeXF2WUkrc2xjSzc1?=
+ =?utf-8?Q?xzH9eJ?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR15MB5819.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(7416014)(376014)(366016)(1800799024)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?TlFxSFJzcjBaWVpDczVSemVVRnlJaWJrNldKS0RhWWc1bG0zVmQrdHd1NTNK?=
+ =?utf-8?B?YmhDdUlhc2hMellVWFNYekVZWVNmV1RwSThpYUlCY3E0blZWWStiQW5MNkxW?=
+ =?utf-8?B?blIwQUUvMnZwTG9DaVdZT1FKOERkUWlQTFkrTmdCcVNNZmo5QmxlL29IWUlQ?=
+ =?utf-8?B?SVBadXkrQXg3TUg3MjB0NjRKdGZud3IrdmRGNGF0Zis2M0Q3VWtxV2w0Tk9Q?=
+ =?utf-8?B?aENXek5pKzFNdU92ODJaWW1ZMi84WkpPWUU4ditiR2s1UHBuRmpxSnpTRXRD?=
+ =?utf-8?B?WHpwRjRzZlNPaXBNT0EySktvK1BZUmJpZTRNaThFSG5jSVF3SFFVVjFITFBO?=
+ =?utf-8?B?UUJXeGY3MkN6L3NhWEE0T0lJVHFlUFhIQ3M5WFA3U1c1clFUaGtIVnNFV0l4?=
+ =?utf-8?B?Q0RQa2VvaWY3Z3ZjeHNoSDE5NlcybHNWaEVmRmJ1NVVML2k4VmhkZjJQYkZF?=
+ =?utf-8?B?aWd0UTZhOTBKTk1rOWZYeHJEeVhBaWFqWWQ3a3RRZ3JZbSs3ZUNKQWJYZUR6?=
+ =?utf-8?B?OWVzMWxvbHMrSzNnMFV5dXpHU0xpUTZjeUlieTdhdkFqT0dkaUxOWEJQdEtL?=
+ =?utf-8?B?WmFxd2dwTTUzMVZhMUh1N29INlJwdS9VRjNtRi90NUZZd3ZKWFM2TzZxSGhj?=
+ =?utf-8?B?YWNDMzcyV1pMZTBUd0N4VnZFb3gybC90TUlTUjJzTkNwaHBGeVNaS1M4Wi91?=
+ =?utf-8?B?QUpPbDNzOTY4MVpvNElqdkFlVU5TUjNHbXZIZ2pSbGdIL3JtTXQwaExicEt0?=
+ =?utf-8?B?TG9reGk4L2hkMlFweFFCR0NjbnIyaGQrZlFyWmFwcEJKdGVJc1dxY1lUTi9C?=
+ =?utf-8?B?UWFWbVRpUkNRU2xtZXh5V3ZRb2w2T0dvOGZmTmk0RnRIUGtaU3E1Sy9IYk9B?=
+ =?utf-8?B?OGVETDlyQk14S1JwQ21NY3lybmxkVnRHck1wZzdBVmllREFMbmI2QjIvTWpi?=
+ =?utf-8?B?OVcvTUFVTkJvSFphNlRkOU9JcCtzb3JiMTNZTklIdHczWDIwcDRRY2tqd002?=
+ =?utf-8?B?a0EyYWsxMU9JTk9BV1ZyTW41MXJiYUNkTDhEOTJmelc4MFVSemtmcG0wZGxk?=
+ =?utf-8?B?Ni9DZVgxR3RnS0JqMG1qUWx1a2VxYjhuTGd4Lythd3lCVmhIYXZYTGI2aEsy?=
+ =?utf-8?B?SDgrNTdmTm5Ga2lhdGF6UmY3UE5MTTVCSzJHVlg1bUVORFkwb0M4clc0ZnFt?=
+ =?utf-8?B?aW1mMlZCN25ha0JEZHVFVzhtcDl1S0kvMUJrR0t0citYV2dCWkNNUlFEYldt?=
+ =?utf-8?B?YmxUU0JEVnNqVUxPbTZCN056aTVzT1MwQTUzYWtncERReFNHL1EyRkFXK0xx?=
+ =?utf-8?B?akpLd01aak5uRDVoZGxUWm1nTFFOOHYwLzFDNDhyWWZoZlVXUzNtSHNBL3kz?=
+ =?utf-8?B?QzBJZk54UlVkN09HRVREaWdYRm9Lbm5ReWRnTVRXKzdCM0xicit3WXRUb01i?=
+ =?utf-8?B?OUttQlp1VzhlcHhhR0dvSStod2hmS1dQMzdTdEJ4RENCazJVbnh6RkRUZk83?=
+ =?utf-8?B?Zjg1OWtTQTZqMGNMSk10dzRCTk80dzRIbDRyUlZKc2pnOCthbk54L3Y2dllG?=
+ =?utf-8?B?T0hFOG9oQjhZd2JEVllFSFViRGJrODdIVEY3bFJkaVZiN2JtcFZBRTB5OEkv?=
+ =?utf-8?B?aExCZ1NkRTRRRTEwNXFTM0hpWVR5UE9sNHZaY0tZNTlQbDNVb0VrYkZSUTFp?=
+ =?utf-8?B?T3lHdFhFOVVVR01pOVJrYWFtbFVleFlleTFGa3pWbVJMSk1OSDNmNkpWRFR5?=
+ =?utf-8?B?TEtKQ3lmU2Zob0l1RUYvZ25DWjlldHIvNHprd0ZMZytkOElrZ251YVU2NDVC?=
+ =?utf-8?B?cDU2Smt1cThZYU5xc2hQMnFUQzVBMUc1Z0JyTEZDTXB5QVlxaVZjL1k2YnRX?=
+ =?utf-8?B?MVZWUjFXcW1GUUo1VTNvRjQ1K0V2YkpNVFVXRU9EWG53R1BFdUNwSEVGeUdx?=
+ =?utf-8?B?aHBabkxDMWFiZlJDZzZOYnJmY1VJNEFRelNmbnowOTh2cUtua3NtcW5tK2tw?=
+ =?utf-8?B?ckNtd2dTdnB4eHQ5bWd0UnR0bENWa2wwS3IybFpIM3NnVTVGcFd1TEJwZnZy?=
+ =?utf-8?B?b1lWbVRIMWpBK3lnWFZKYU9YQVNhU2wyNFpwQVhKVHpub3o5ektMVkJrSTdV?=
+ =?utf-8?B?NFVBTDdMa0ZTbnVvZ2phV1BHektwaHBSZnRtbU51K1NqMjU0N0F4RlBBWS92?=
+ =?utf-8?Q?PtL/t9fJj2NWDu49NyHqD/Y=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <9E6E2F4BD430A84C8640E49C109D8147@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="3IwkfWdB+QMMglL3"
-Content-Disposition: inline
-In-Reply-To: <20251123-work-fd-prepare-v4-22-b6efa1706cfd@kernel.org>
-X-Cookie: Stamp out philately.
+X-OriginatorOrg: ibm.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SA1PR15MB5819.namprd15.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: be673c36-6d8e-452c-eb8b-08de2c731dea
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Nov 2025 22:36:46.7371
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: fcf67057-50c9-4ad4-98f3-ffca64add9e9
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: dqTbSzRXgbv4Yiz2eaLeYxGm2Ve9geH00ts/5h8B7ULQiYC1QmDTEzsFKlGbMEYyVj1sYCMhDy/EeG4CLLLFDw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR15MB6965
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTIyMDAyMSBTYWx0ZWRfX1war1raFZ7eh
+ 1rgZmmVov5dwSTaP267aAgF59+7rKmpOV6t+k6Cxo34+jQdwicAFnlVQtCuz4fBEUIL9huhwhOo
+ B79OnK5AuNk/jsdPttspYjfU8nJyh7PLhQtWlQIWaFFqC7SHOE3pK9Tm5xGBxKiLpRu5pSv18N0
+ MZX4Es7ah3fO+0Ex6KDclwvjXvm2PcqomVtsbLvYSQ/XpEbOSm63DFoU1x4tOKGoHLRSRxeKo+I
+ egegJkcxFowTnuHo2iGKmXJZe5mg4rZ42lfKeE1WjUO7YJ0fzMC6k9WjqqVtedTm1WMfbpjtKkx
+ m0dkwgJ7YUl6U4AetQcGKDScSsvDvyUu864IZywA4jtk4z3m4vd9rxRCCM+76PGIyLgjji576Vl
+ F+ToURX5Ta/mn67xNijdEdEcQrlmng==
+X-Authority-Analysis: v=2.4 cv=PLoCOPqC c=1 sm=1 tr=0 ts=69262f81 cx=c_pps
+ a=q0do3moUNMjvKVsQ3EtoVg==:117 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=4xqPWh2aPB-PRFhOWRoA:9
+ a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: vz8kTCSqKFSsgwW5PlArqc9iOh0I-_zT
+X-Proofpoint-GUID: OJsetHLvv4_iGAjZaItEbpr2eWdPOukG
+Subject: RE: [PATCH v2] fs/hfs: fix s_fs_info leak on setup_bdev_super()
+ failure
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-25_02,2025-11-25_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 lowpriorityscore=0 spamscore=0 adultscore=0 impostorscore=0
+ priorityscore=1501 bulkscore=0 malwarescore=0 clxscore=1015 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2511220021
 
-
---3IwkfWdB+QMMglL3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Sun, Nov 23, 2025 at 05:33:40PM +0100, Christian Brauner wrote:
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
-
-I'm seeing a regression in -next in the LTP mq_open01 test which bisects
-to this commit:
-
-tst_test.c:1953: TINFO: LTP version: 20250530
-tst_test.c:1956: TINFO: Tested kernel: 6.18.0-rc7-next-20251125 #1 SMP PREE=
-MPT @1764061327 aarch64
-tst_kconfig.c:88: TINFO: Parsing kernel config '/proc/config.gz'
-tst_test.c:1774: TINFO: Overall timeout per run is 0h 05m 24s
-mq_open01.c:226: TINFO: queue name "/test_mqueue"
-mq_open01.c:255: TPASS: NORMAL returned: 4: SUCCESS (0)
-mq_open01.c:226: TINFO: queue name "/test_mqueue"
-mq_open01.c:255: TPASS: NORMAL returned: 4: SUCCESS (0)
-mq_open01.c:226: TINFO: queue name "/caaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa=
-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa=
-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa=
-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-mq_open01.c:255: TPASS: NORMAL returned: 4: SUCCESS (0)
-mq_open01.c:226: TINFO: queue name "/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa=
-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa=
-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa=
-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-mq_open01.c:272: TPASS: NORMAL returned: -1: ENAMETOOLONG (36)
-mq_open01.c:226: TINFO: queue name ""
-mq_open01.c:272: TPASS: NORMAL returned: -1: EINVAL (22)
-mq_open01.c:226: TINFO: queue name "/test_mqueue"
-mq_open01.c:272: TPASS: NORMAL returned: -1: EACCES (13)
-mq_open01.c:226: TINFO: queue name "/test_mqueue"
-mq_open01.c:272: TPASS: NORMAL returned: -1: EEXIST (17)
-mq_open01.c:226: TINFO: queue name "/test_mqueue"
-mq_open01.c:272: TPASS: NO_FILE returned: -1: EMFILE (24)
-mq_open01.c:226: TINFO: queue name "/notexist"
-mq_open01.c:272: TPASS: NORMAL returned: -1: ENOENT (2)
-mq_open01.c:226: TINFO: queue name "/test_mqueue"
-mq_open01.c:263: TFAIL: NO_SPACE expected errno: 13: EACCES (13)
-
-which bisect to this patch.  It's not clear to me if this is an overly
-sensitive test or an actual issue.
-
-BTW I do note that the subject says FD_PREPARE() but the patch uses
-FD_ADD().
-
-bisect log, including links to full logs from test jobs:
-
-# bad: [92fd6e84175befa1775e5c0ab682938eca27c0b2] Add linux-next specific f=
-iles for 20251125
-# good: [07e9a68478302d35f3372ac8c9994d679a9cfdca] Merge branch 'for-linux-=
-next-fixes' of https://gitlab.freedesktop.org/drm/misc/kernel.git
-# good: [cb99656b7c4185953c9d272bbdab63c8aa651e6e] spi: Fix potential unini=
-tialized variable in probe()
-# good: [df919994d323c7c86e32fa2745730136d58ada12] ASoC: Intel: avs: Replac=
-e snprintf() with scnprintf()
-# good: [670500b41e543c5cb09eb9f7f0e4e26c5b5fdf7e] regulator: pca9450: Fix =
-error code in probe()
-# good: [f1c668269ded16bea32a11d03f4584caa0c018c9] regulator: qcomm-labibb:=
- replace use of system_wq with system_dfl_wq
-# good: [3efee7362dbf896072af1c1aaeaf9fd6e235c591] ASoC: SDCA: Add stubs fo=
-r FDL helper functions
-# good: [43a3adb6dd39d98bf84e04569e7604be5e5c0d79] spi: spidev: add compati=
-ble for arduino spi mcu interface
-# good: [3af1815a2f9caebfc666af3912e24d030a5368d5] ASoC: SDCA: Add basic SD=
-CA function driver
-# good: [33822d795ab93067d9a65f42003c0d01c65d4a9d] ASoC: cs35l56: Use SND_S=
-OC_BYTES_E_ACC() for CAL_DATA_RB control
-# good: [d5089fffe1db04a802b028c2ef4875be1ed452a3] ASoC: tas2781: Add tas25=
-68/2574/5806m/5806md/5830 support
-# good: [12d821bd13d42e6de3ecb1c13918b1f06a3ee213] regulator: Add FP9931/JD=
-9930 driver
-# good: [3045e29d248bde2a68da425498a656093ee0df69] firmware: cs_dsp: Append=
- \n to debugfs string during read
-# good: [bdf96e9135a0cf53a853a19c30fa11131a744062] ASoC: codecs: lpass-rx-m=
-acro: fix mute_stream affecting all paths
-# good: [b871d9adffe5a64a1fd9edcb1aebbcc995b17901] regulator: make the subs=
-ystem aware of shared GPIOs
-# good: [e2c48498a93404743e0565dcac29450fec02e6a3] ASoC: soc-core: Pre-chec=
-k zero CPU/codec DAIs, handle early rtd->dais alloc failure
-# good: [7a0a87712120329c034b0aae88bdaa05bd046f10] ASoC: wsa883x: drop GPIO=
-D_FLAGS_BIT_NONEXCLUSIVE flag from GPIO lookup
-# good: [d9813cd23d5a7b254cc1b1c1ea042634d8da62e6] spi: sophgo: Fix incorre=
-ct use of bus width value macros
-# good: [e45979641a9a9dbb48fc77c5b36a5091a92e7227] ASoC: SOF: sof-client-pr=
-obes: Replace snprintf() with scnprintf()
-# good: [21e68bcb1b0c688c2d9ca0d457922febac650ac1] regulator: renesas-usb-v=
-bus-regulator: Remove unused headers
-# good: [d218ea171430e49412804efb794942dd121a8032] ASoC: mediatek: mt8189: =
-add machine driver with nau8825
-# good: [bd79452b39c21599e2cff42e9fbeb182656b6f6a] MAINTAINERS: adjust file=
- entry in RISC-V MICROCHIP SUPPORT
-# good: [96498e804cb6629e02747336a0a33e4955449732] spi: davinci: remove pla=
-tform data header
-# good: [ab61de9b78dda140573fb474af65f0e1ae13ff5b] mm/migrate, swap: drop u=
-sage of folio_index
-# good: [0a63a0e7570b9b2631dfb8d836dc572709dce39e] mm/damon/tests/vaddr-kun=
-it: handle alloc failures on damon_test_split_evenly_succ()
-# good: [4422df6782eb7aa9725a3c09d9ba3c38ecc85df4] ASoC: ux500: mop500_ab85=
-00: convert to snd_soc_dapm_xxx()
-# good: [9e510e677090bb794b46348b10e1c8038286e00a] spi: aspeed: Add support=
- for the AST2700 SPI controller
-# good: [d5c8b7902a41625ea328b52c78ebe750fbf6fef7] ASoC: Intel: avs: Honor =
-NHLT override when setting up a path
-# good: [118eb2cb97b8fc0d515bb0449495959247db58f0] spi: bcm63xx: drop wrong=
- casts in probe()
-# good: [6402ddf3027d8975f135cf2b2014d6bbeb2d3436] MAINTAINERS: refer to tr=
-ivial-codec.yaml in relevant sections
-# good: [059f545832be85d29ac9ccc416a16f647aa78485] spi: add support for mic=
-rochip "soft" spi controller
-# good: [8ff3dcb0e8a8bf6c41f23ed4aa62d066d3948a10] ASoC: codecs: lpass-rx-m=
-acro: add SM6115 compatible
-# good: [4e00135b2dd1d7924a58bffa551b6ceb3bd836f2] spi: spi-cadence: suppor=
-ts transmission with bits_per_word of 16 and 32
-# good: [8d63e85c5b50f1dbfa0ccb214bd91fe5d7e2e860] firmware: cs_dsp: fix ke=
-rnel-doc warnings in a header file
-# good: [e65b871c9b5af9265aefc5b8cd34993586d93aab] ASoC: codecs: pm4125: Re=
-move irq_chip on component unbind
-# good: [123cd174a3782307787268adf45f22de4d290128] ASoC: Intel: atom: Repla=
-ce strcpy() with strscpy()
-# good: [1d562ba0aa7df81335bf96c02be77efe8d5bab87] spi: dt-bindings: nuvoto=
-n,npcm-pspi: Convert to DT schema
-# good: [4d6e2211aeb932e096f673c88475016b1cc0f8ab] ASoC: Intel: boards: fix=
- HDMI playback lookup when HDMI-In capture used
-# good: [32172cf3cb543a04c41a1677c97a38e60cad05b6] ASoC: cs35l56: Allow res=
-toring factory calibration through ALSA control
-# good: [b3a5302484033331af37569f7277d00131694b57] ASoC: Intel: sof_rt5682:=
- Add quirk override support
-# good: [873bc94689d832878befbcadc10b6ad5bb4e0027] ASoC: Intel: sof_sdw: ad=
-d codec speaker support for the SKU
-# good: [772ada50282b0c80343c8989147db816961f571d] ASoC: cs35l56: Alter err=
-or codes for calibration routine
-# good: [6985defd1d832f1dd9d1977a6a2cc2cef7632704] regmap: sdw-mbq: Reorder=
- regmap_mbq_context struct for better packing
-# good: [fb1ebb10468da414d57153ddebaab29c38ef1a78] regulator: core: disable=
- supply if enabling main regulator fails
-# good: [6951be397ca8b8b167c9f99b5a11c541148c38cb] ASoC: codecs: pm4125: re=
-move duplicate code
-# good: [2089f086303b773e181567fd8d5df3038bd85937] regulator: mt6363: Remov=
-e unneeded semicolon
-# good: [4e92abd0a11b91af3742197a9ca962c3c00d0948] spi: imx: add i.MX51 ECS=
-PI target mode support
-# good: [abc9a349b87ac0fd3ba8787ca00971b59c2e1257] spi: fsl-qspi: support t=
-he SpacemiT K1 SoC
-# good: [55d03b5b5bdd04daf9a35ce49db18d8bb488dffb] spi: imx: remove CLK cal=
-culation and check for target mode
-# good: [1b0f3f9ee41ee2bdd206667f85ea2aa36dfe6e69] ASoC: SDCA: support Q7.8=
- volume format
-# good: [6bd1ad97eb790570c167d4de4ca59fbc9c33722a] regulator: pf9453: Fix k=
-ernel doc for mux_poll()
-# good: [3c36965df80801344850388592e95033eceea05b] regulator: Add support f=
-or MediaTek MT6363 SPMI PMIC Regulators
-# good: [655079ac8a7721ac215a0596e3f33b740e01144a] ASoC: qcom: q6asm: Use g=
-uard() for spin locks
-# good: [aa897ffc396b48cc39eee133b6b43175d0df9eb5] ASoC: dt-bindings: ti,pc=
-m1862: convert to dtschema
-# good: [2f538ef9f6f7c3d700c68536f21447dfc598f8c8] spi: aspeed: Use devm_io=
-unmap() to unmap devm_ioremap() memory
-# good: [c4e68959af66df525d71db619ffe44af9178bb22] ASoC: dt-bindings: ti,ta=
-s2781: Add TAS5822 support
-# good: [af9c8092d84244ca54ffb590435735f788e7a170] regmap: i3c: Use ARRAY_S=
-IZE()
-# good: [380fd29d57abe6679d87ec56babe65ddc5873a37] spi: tegra210-quad: Chec=
-k hardware status on timeout
-# good: [a4438f06b1db15ce3d831ce82b8767665638aa2a] PCI/TSM: Report active I=
-DE streams
-# good: [84194c66aaf78fed150edb217b9f341518b1cba2] ASoC: codecs: aw88261: p=
-ass pointer directly instead of passing the address
-# good: [252abf2d07d33b1c70a59ba1c9395ba42bbd793e] regulator: Small cleanup=
- in of_get_regulation_constraints()
-# good: [2ecc8c089802e033d2e5204d21a9f467e2517df9] regulator: pf9453: remov=
-e unused I2C_LT register
-# good: [ed5d499b5c9cc11dd3edae1a7a55db7dfa4f1bdc] regcache: maple: Split -=
->populate() from ->init()
-# good: [e73b743bfe8a6ff4e05b5657d3f7586a17ac3ba0] ASoC: soc-core: check op=
-s & auto_selectable_formats in snd_soc_dai_get_fmt() to prevent dereference=
- error
-# good: [f1dfbc1b5cf8650ae9a0d543e5f5335fc0f478ce] ASoC: max98090/91: fixin=
-g the stream index
-# good: [ecd0de438c1f0ee86cf8f6d5047965a2a181444b] spi: tle62x0: Add newlin=
-e to sysfs attribute output
-# good: [6ef8e042cdcaabe3e3c68592ba8bfbaee2fa10a3] ASoC: codec: wm8400: rep=
-lace printk() calls with dev_*() device aware logging
-# good: [cf6bf51b53252284bafc7377a4d8dbf10f048b4d] ASoC: cs4271: Add suppor=
-t for the external mclk
-# good: [20bcda681f8597e86070a4b3b12d1e4f541865d3] ASoC: codecs: va-macro: =
-fix revision checking
-# good: [8fdb030fe283c84fd8d378c97ad0f32d6cdec6ce] ASoC: qcom: sc7280: make=
- use of common helpers
-# good: [28039efa4d8e8bbf98b066133a906bd4e307d496] MAINTAINERS: remove obso=
-lete file entry in DIALOG SEMICONDUCTOR DRIVERS
-# good: [e062bdfdd6adbb2dee7751d054c1d8df63ddb8b8] regmap: warn users about=
- uninitialized flat cache
-# good: [62fb11fba0cc12ecb808fc57b16027b94bd1ba1a] arm64: dts: renesas: rzt=
-2h/rzn2h-evk: Enable ADCs
-# good: [66fecfa91deb536a12ddf3d878a99590d7900277] ASoC: spacemit: use `dep=
-ends on` instead of `select`
-# good: [f034c16a4663eaf3198dc18b201ba50533fb5b81] ASoC: spacemit: add fail=
-ure check for spacemit_i2s_init_dai()
-# good: [4a5ac6cd05a7e54f1585d7779464d6ed6272c134] ASoC: sun4i-spdif: Suppo=
-rt SPDIF output on A523 family
-# good: [4c33cef58965eb655a0ac8e243aa323581ec025f] regulator: pca9450: link=
- regulator inputs to supply groups
-# good: [ef042df96d0e1089764f39ede61bc8f140a4be00] ASoC: SDCA: Add HID butt=
-on IRQ
-# good: [4795375d8aa072e9aacb0b278e6203c6ca41816a] ASoC: cs-amp-lib-test: A=
-dd test cases for cs_amp_set_efi_calibration_data()
-# good: [d29479abaded34b2b1dab2e17efe96a65eba3d61] ASoC: renesas: fsi: Cons=
-tify struct fsi_stream_handler
-# good: [01313661b248c5ba586acae09bff57077dbec0a5] regulator: Let raspberry=
-pi drivers depend on ARM
-# good: [e973dfe9259095fb509ab12658c68d46f0e439d7] ASoC: qcom: sm8250: add =
-qrb2210-sndcard compatible string
-# good: [e7434adf0c53a84d548226304cdb41c8818da1cb] ASoC: cs530x: Add SPI bu=
-s support for cs530x parts
-# good: [77a58ba7c64ccca20616aa03599766ccb0d1a330] spi: spi-mem: Trace exec=
-_op
-# good: [c17fa4cbc546c431ccf13e9354d5d9c1cd247b7c] ASoC: sdw_utils: add nam=
-e_prefix for rt1321 part id
-# good: [2528c15f314ece50218d1273654f630d74109583] ASoC: max98090/91: addin=
-g DAPM routing for digital output for max98091
-# good: [d054cc3a2ccfb19484f3b54d69b6e416832dc8f4] regulator: rpmh-regulato=
-r: Add RPMH regulator support for PMR735D
-# good: [fd5ef3d69f8975bad16c437a337b5cb04c8217a2] spi: spi-qpic-snand: mak=
-e qcom_spi_ecc_engine_ops_pipelined const
-# good: [310bf433c01f78e0756fd5056a43118a2f77318c] ASoC: max98090/91: fixin=
-g a space
-# good: [638bae3fb225a708dc67db613af62f6d14c4eff4] ASoC: max98090/91: added=
- DAPM widget for digital output for max98091
-# good: [32200f4828de9d7e6db379909898e718747f4e18] soc: amlogic: canvas: fi=
-x device leak on lookup
-# good: [ecba655bf54a661ffe078856cd8dbc898270e4b5] ASoC: fsl_aud2htx: add I=
-EC958_SUBFRAME_LE format in supported list
-# good: [7e1906643a7374529af74b013bba35e4fa4e6ffc] ASoC: codecs: va-macro: =
-Clean up on error path in probe()
-# good: [d742ebcfe524dc54023f7c520d2ed2e4b7203c19] ASoC: soc.h: remove snd_=
-soc_kcontrol_component()
-# good: [fce217449075d59b29052b8cdac567f0f3e22641] ASoC: spacemit: add i2s =
-support for K1 SoC
-# good: [6658472a3e2de08197acfe099ba71ee0e2505ecf] ASoC: amd: amd_sdw: Prop=
-agate the PCI subsystem Vendor and Device IDs
-# good: [0cc08c8130ac8f74419f99fe707dc193b7f79d86] spi: aspeed: Fix an IS_E=
-RR() vs NULL bug in probe()
-# good: [e8fd8080e7a9c8c577e5dec5bd6d486a3f14011c] media: i2c: max96717: Us=
-e %pe format specifier
-# good: [0743acf746a81e0460a56fd5ff847d97fa7eb370] spi: airoha: buffer must=
- be 0xff-ed before writing
-# good: [1e570e77392f43a3cdab2849d1f81535f8a033e2] ASoC: mxs-saif: support =
-usage with simple-audio-card
-# good: [d77daa49085b067137d0adbe3263f75a7ee13a1b] spi: aspeed: fix spellin=
-g mistake "triming" -> "trimming"
-# good: [15afe57a874eaf104bfbb61ec598fa31627f7b19] ASoC: dt-bindings: qcom:=
- Add Kaanapali LPASS macro codecs
-# good: [fb25114cd760c13cf177d9ac37837fafcc9657b5] regulator: sy7636a: add =
-gpios and input regulator
-# good: [6621b0f118d500092f5f3d72ddddb22aeeb3c3a0] ASoC: codecs: rt5670: us=
-e SOC_VALUE_ENUM_SINGLE_DECL for DAC2 L/R MX-1B
-# good: [65efe5404d151767653c7b7dd39bd2e7ad532c2d] regulator: rpmh-regulato=
-r: Add RPMH regulator support for Glymur
-# good: [433e294c3c5b5d2020085a0e36c1cb47b694690a] regulator: core: forward=
- undervoltage events downstream by default
-# good: [0b0eb7702a9fa410755e86124b4b7cd36e7d1cb4] ASoC: replace use of sys=
-tem_wq with system_dfl_wq
-# good: [bf770d6d2097a52d87f4d9c88d0b05bd3998d7de] x86/module: Improve relo=
-cation error messages
-# good: [c2d420796a427dda71a2400909864e7f8e037fd4] elfnote: Change ELFNOTE(=
-) to use __UNIQUE_ID()
-# good: [7e7e2c6e2a1cb250f8d03bb99eed01f6d982d5dd] ASoC: sof-function-topol=
-ogy-lib: escalate the log when missing function topoplogy
-# good: [9797329220a2c6622411eb9ecf6a35b24ce09d04] ASoC: sof-function-topol=
-ogy-lib: escalate the log when missing function topoplogy
-# good: [fe8cc44dd173cde5788ab4e3730ac61f3d316d9c] spi: dw: add target mode=
- support
-# good: [4d410ba9aa275e7990a270f63ce436990ace1bea] dt-bindings: sound: Upda=
-te ADMAIF bindings for tegra264
-# good: [64d87ccfae3326a9561fe41dc6073064a083e0df] spi: aspeed: Only map ne=
-cessary address window region
-# good: [6277a486a7faaa6c87f4bf1d59a2de233a093248] regulator: dt-bindings: =
-Convert Dialog DA9211 Regulators to DT schema
-# good: [b83fb1b14c06bdd765903ac852ba20a14e24f227] spi: offload: Add offset=
- parameter
-# good: [5e537031f322d55315cd384398b726a9a0748d47] ASoC: codecs: Fix the er=
-ror of excessive semicolons
-# good: [4412ab501677606436e5c49e41151a1e6eac7ac0] spi: dt-bindings: spi-qp=
-ic-snand: Add IPQ5332 compatible
-# good: [7e1fe102c8517a402327c37685357fbe279b3278] drm/xe/guc: Track pendin=
-g-enable source in submission state
-# good: [cc7e1a9b596c9d9dc3324c056cf8162e9fca2765] drm/i915/irq: duplicate =
-HAS_FBC() for irq error mask usage
-# good: [6c177775dcc5e70a64ddf4ee842c66af498f2c7c] Merge branch 'next/drive=
-rs' into for-next
-git bisect start '92fd6e84175befa1775e5c0ab682938eca27c0b2' '07e9a68478302d=
-35f3372ac8c9994d679a9cfdca' 'cb99656b7c4185953c9d272bbdab63c8aa651e6e' 'df9=
-19994d323c7c86e32fa2745730136d58ada12' '670500b41e543c5cb09eb9f7f0e4e26c5b5=
-fdf7e' 'f1c668269ded16bea32a11d03f4584caa0c018c9' '3efee7362dbf896072af1c1a=
-aeaf9fd6e235c591' '43a3adb6dd39d98bf84e04569e7604be5e5c0d79' '3af1815a2f9ca=
-ebfc666af3912e24d030a5368d5' '33822d795ab93067d9a65f42003c0d01c65d4a9d' 'd5=
-089fffe1db04a802b028c2ef4875be1ed452a3' '12d821bd13d42e6de3ecb1c13918b1f06a=
-3ee213' '3045e29d248bde2a68da425498a656093ee0df69' 'bdf96e9135a0cf53a853a19=
-c30fa11131a744062' 'b871d9adffe5a64a1fd9edcb1aebbcc995b17901' 'e2c48498a934=
-04743e0565dcac29450fec02e6a3' '7a0a87712120329c034b0aae88bdaa05bd046f10' 'd=
-9813cd23d5a7b254cc1b1c1ea042634d8da62e6' 'e45979641a9a9dbb48fc77c5b36a5091a=
-92e7227' '21e68bcb1b0c688c2d9ca0d457922febac650ac1' 'd218ea171430e49412804e=
-fb794942dd121a8032' 'bd79452b39c21599e2cff42e9fbeb182656b6f6a' '96498e804cb=
-6629e02747336a0a33e4955449732' 'ab61de9b78dda140573fb474af65f0e1ae13ff5b' '=
-0a63a0e7570b9b2631dfb8d836dc572709dce39e' '4422df6782eb7aa9725a3c09d9ba3c38=
-ecc85df4' '9e510e677090bb794b46348b10e1c8038286e00a' 'd5c8b7902a41625ea328b=
-52c78ebe750fbf6fef7' '118eb2cb97b8fc0d515bb0449495959247db58f0' '6402ddf302=
-7d8975f135cf2b2014d6bbeb2d3436' '059f545832be85d29ac9ccc416a16f647aa78485' =
-'8ff3dcb0e8a8bf6c41f23ed4aa62d066d3948a10' '4e00135b2dd1d7924a58bffa551b6ce=
-b3bd836f2' '8d63e85c5b50f1dbfa0ccb214bd91fe5d7e2e860' 'e65b871c9b5af9265aef=
-c5b8cd34993586d93aab' '123cd174a3782307787268adf45f22de4d290128' '1d562ba0a=
-a7df81335bf96c02be77efe8d5bab87' '4d6e2211aeb932e096f673c88475016b1cc0f8ab'=
- '32172cf3cb543a04c41a1677c97a38e60cad05b6' 'b3a5302484033331af37569f7277d0=
-0131694b57' '873bc94689d832878befbcadc10b6ad5bb4e0027' '772ada50282b0c80343=
-c8989147db816961f571d' '6985defd1d832f1dd9d1977a6a2cc2cef7632704' 'fb1ebb10=
-468da414d57153ddebaab29c38ef1a78' '6951be397ca8b8b167c9f99b5a11c541148c38cb=
-' '2089f086303b773e181567fd8d5df3038bd85937' '4e92abd0a11b91af3742197a9ca96=
-2c3c00d0948' 'abc9a349b87ac0fd3ba8787ca00971b59c2e1257' '55d03b5b5bdd04daf9=
-a35ce49db18d8bb488dffb' '1b0f3f9ee41ee2bdd206667f85ea2aa36dfe6e69' '6bd1ad9=
-7eb790570c167d4de4ca59fbc9c33722a' '3c36965df80801344850388592e95033eceea05=
-b' '655079ac8a7721ac215a0596e3f33b740e01144a' 'aa897ffc396b48cc39eee133b6b4=
-3175d0df9eb5' '2f538ef9f6f7c3d700c68536f21447dfc598f8c8' 'c4e68959af66df525=
-d71db619ffe44af9178bb22' 'af9c8092d84244ca54ffb590435735f788e7a170' '380fd2=
-9d57abe6679d87ec56babe65ddc5873a37' 'a4438f06b1db15ce3d831ce82b8767665638aa=
-2a' '84194c66aaf78fed150edb217b9f341518b1cba2' '252abf2d07d33b1c70a59ba1c93=
-95ba42bbd793e' '2ecc8c089802e033d2e5204d21a9f467e2517df9' 'ed5d499b5c9cc11d=
-d3edae1a7a55db7dfa4f1bdc' 'e73b743bfe8a6ff4e05b5657d3f7586a17ac3ba0' 'f1dfb=
-c1b5cf8650ae9a0d543e5f5335fc0f478ce' 'ecd0de438c1f0ee86cf8f6d5047965a2a1814=
-44b' '6ef8e042cdcaabe3e3c68592ba8bfbaee2fa10a3' 'cf6bf51b53252284bafc7377a4=
-d8dbf10f048b4d' '20bcda681f8597e86070a4b3b12d1e4f541865d3' '8fdb030fe283c84=
-fd8d378c97ad0f32d6cdec6ce' '28039efa4d8e8bbf98b066133a906bd4e307d496' 'e062=
-bdfdd6adbb2dee7751d054c1d8df63ddb8b8' '62fb11fba0cc12ecb808fc57b16027b94bd1=
-ba1a' '66fecfa91deb536a12ddf3d878a99590d7900277' 'f034c16a4663eaf3198dc18b2=
-01ba50533fb5b81' '4a5ac6cd05a7e54f1585d7779464d6ed6272c134' '4c33cef58965eb=
-655a0ac8e243aa323581ec025f' 'ef042df96d0e1089764f39ede61bc8f140a4be00' '479=
-5375d8aa072e9aacb0b278e6203c6ca41816a' 'd29479abaded34b2b1dab2e17efe96a65eb=
-a3d61' '01313661b248c5ba586acae09bff57077dbec0a5' 'e973dfe9259095fb509ab126=
-58c68d46f0e439d7' 'e7434adf0c53a84d548226304cdb41c8818da1cb' '77a58ba7c64cc=
-ca20616aa03599766ccb0d1a330' 'c17fa4cbc546c431ccf13e9354d5d9c1cd247b7c' '25=
-28c15f314ece50218d1273654f630d74109583' 'd054cc3a2ccfb19484f3b54d69b6e41683=
-2dc8f4' 'fd5ef3d69f8975bad16c437a337b5cb04c8217a2' '310bf433c01f78e0756fd50=
-56a43118a2f77318c' '638bae3fb225a708dc67db613af62f6d14c4eff4' '32200f4828de=
-9d7e6db379909898e718747f4e18' 'ecba655bf54a661ffe078856cd8dbc898270e4b5' '7=
-e1906643a7374529af74b013bba35e4fa4e6ffc' 'd742ebcfe524dc54023f7c520d2ed2e4b=
-7203c19' 'fce217449075d59b29052b8cdac567f0f3e22641' '6658472a3e2de08197acfe=
-099ba71ee0e2505ecf' '0cc08c8130ac8f74419f99fe707dc193b7f79d86' 'e8fd8080e7a=
-9c8c577e5dec5bd6d486a3f14011c' '0743acf746a81e0460a56fd5ff847d97fa7eb370' '=
-1e570e77392f43a3cdab2849d1f81535f8a033e2' 'd77daa49085b067137d0adbe3263f75a=
-7ee13a1b' '15afe57a874eaf104bfbb61ec598fa31627f7b19' 'fb25114cd760c13cf177d=
-9ac37837fafcc9657b5' '6621b0f118d500092f5f3d72ddddb22aeeb3c3a0' '65efe5404d=
-151767653c7b7dd39bd2e7ad532c2d' '433e294c3c5b5d2020085a0e36c1cb47b694690a' =
-'0b0eb7702a9fa410755e86124b4b7cd36e7d1cb4' 'bf770d6d2097a52d87f4d9c88d0b05b=
-d3998d7de' 'c2d420796a427dda71a2400909864e7f8e037fd4' '7e7e2c6e2a1cb250f8d0=
-3bb99eed01f6d982d5dd' '9797329220a2c6622411eb9ecf6a35b24ce09d04' 'fe8cc44dd=
-173cde5788ab4e3730ac61f3d316d9c' '4d410ba9aa275e7990a270f63ce436990ace1bea'=
- '64d87ccfae3326a9561fe41dc6073064a083e0df' '6277a486a7faaa6c87f4bf1d59a2de=
-233a093248' 'b83fb1b14c06bdd765903ac852ba20a14e24f227' '5e537031f322d55315c=
-d384398b726a9a0748d47' '4412ab501677606436e5c49e41151a1e6eac7ac0' '7e1fe102=
-c8517a402327c37685357fbe279b3278' 'cc7e1a9b596c9d9dc3324c056cf8162e9fca2765=
-' '6c177775dcc5e70a64ddf4ee842c66af498f2c7c'
-# test job: [cb99656b7c4185953c9d272bbdab63c8aa651e6e] https://lava.sirena.=
-org.uk/scheduler/job/2132768
-# test job: [df919994d323c7c86e32fa2745730136d58ada12] https://lava.sirena.=
-org.uk/scheduler/job/2121675
-# test job: [670500b41e543c5cb09eb9f7f0e4e26c5b5fdf7e] https://lava.sirena.=
-org.uk/scheduler/job/2121060
-# test job: [f1c668269ded16bea32a11d03f4584caa0c018c9] https://lava.sirena.=
-org.uk/scheduler/job/2113575
-# test job: [3efee7362dbf896072af1c1aaeaf9fd6e235c591] https://lava.sirena.=
-org.uk/scheduler/job/2115151
-# test job: [43a3adb6dd39d98bf84e04569e7604be5e5c0d79] https://lava.sirena.=
-org.uk/scheduler/job/2115059
-# test job: [3af1815a2f9caebfc666af3912e24d030a5368d5] https://lava.sirena.=
-org.uk/scheduler/job/2115418
-# test job: [33822d795ab93067d9a65f42003c0d01c65d4a9d] https://lava.sirena.=
-org.uk/scheduler/job/2112462
-# test job: [d5089fffe1db04a802b028c2ef4875be1ed452a3] https://lava.sirena.=
-org.uk/scheduler/job/2111808
-# test job: [12d821bd13d42e6de3ecb1c13918b1f06a3ee213] https://lava.sirena.=
-org.uk/scheduler/job/2112910
-# test job: [3045e29d248bde2a68da425498a656093ee0df69] https://lava.sirena.=
-org.uk/scheduler/job/2111757
-# test job: [bdf96e9135a0cf53a853a19c30fa11131a744062] https://lava.sirena.=
-org.uk/scheduler/job/2109772
-# test job: [b871d9adffe5a64a1fd9edcb1aebbcc995b17901] https://lava.sirena.=
-org.uk/scheduler/job/2107869
-# test job: [e2c48498a93404743e0565dcac29450fec02e6a3] https://lava.sirena.=
-org.uk/scheduler/job/2107331
-# test job: [7a0a87712120329c034b0aae88bdaa05bd046f10] https://lava.sirena.=
-org.uk/scheduler/job/2107505
-# test job: [d9813cd23d5a7b254cc1b1c1ea042634d8da62e6] https://lava.sirena.=
-org.uk/scheduler/job/2105371
-# test job: [e45979641a9a9dbb48fc77c5b36a5091a92e7227] https://lava.sirena.=
-org.uk/scheduler/job/2104424
-# test job: [21e68bcb1b0c688c2d9ca0d457922febac650ac1] https://lava.sirena.=
-org.uk/scheduler/job/2104496
-# test job: [d218ea171430e49412804efb794942dd121a8032] https://lava.sirena.=
-org.uk/scheduler/job/2104281
-# test job: [bd79452b39c21599e2cff42e9fbeb182656b6f6a] https://lava.sirena.=
-org.uk/scheduler/job/2104080
-# test job: [96498e804cb6629e02747336a0a33e4955449732] https://lava.sirena.=
-org.uk/scheduler/job/2099775
-# test job: [ab61de9b78dda140573fb474af65f0e1ae13ff5b] https://lava.sirena.=
-org.uk/scheduler/job/2107135
-# test job: [0a63a0e7570b9b2631dfb8d836dc572709dce39e] https://lava.sirena.=
-org.uk/scheduler/job/2107227
-# test job: [4422df6782eb7aa9725a3c09d9ba3c38ecc85df4] https://lava.sirena.=
-org.uk/scheduler/job/2097769
-# test job: [9e510e677090bb794b46348b10e1c8038286e00a] https://lava.sirena.=
-org.uk/scheduler/job/2093926
-# test job: [d5c8b7902a41625ea328b52c78ebe750fbf6fef7] https://lava.sirena.=
-org.uk/scheduler/job/2092750
-# test job: [118eb2cb97b8fc0d515bb0449495959247db58f0] https://lava.sirena.=
-org.uk/scheduler/job/2092501
-# test job: [6402ddf3027d8975f135cf2b2014d6bbeb2d3436] https://lava.sirena.=
-org.uk/scheduler/job/2086626
-# test job: [059f545832be85d29ac9ccc416a16f647aa78485] https://lava.sirena.=
-org.uk/scheduler/job/2086745
-# test job: [8ff3dcb0e8a8bf6c41f23ed4aa62d066d3948a10] https://lava.sirena.=
-org.uk/scheduler/job/2083097
-# test job: [4e00135b2dd1d7924a58bffa551b6ceb3bd836f2] https://lava.sirena.=
-org.uk/scheduler/job/2082513
-# test job: [8d63e85c5b50f1dbfa0ccb214bd91fe5d7e2e860] https://lava.sirena.=
-org.uk/scheduler/job/2082647
-# test job: [e65b871c9b5af9265aefc5b8cd34993586d93aab] https://lava.sirena.=
-org.uk/scheduler/job/2083140
-# test job: [123cd174a3782307787268adf45f22de4d290128] https://lava.sirena.=
-org.uk/scheduler/job/2078931
-# test job: [1d562ba0aa7df81335bf96c02be77efe8d5bab87] https://lava.sirena.=
-org.uk/scheduler/job/2078338
-# test job: [4d6e2211aeb932e096f673c88475016b1cc0f8ab] https://lava.sirena.=
-org.uk/scheduler/job/2078005
-# test job: [32172cf3cb543a04c41a1677c97a38e60cad05b6] https://lava.sirena.=
-org.uk/scheduler/job/2075070
-# test job: [b3a5302484033331af37569f7277d00131694b57] https://lava.sirena.=
-org.uk/scheduler/job/2074541
-# test job: [873bc94689d832878befbcadc10b6ad5bb4e0027] https://lava.sirena.=
-org.uk/scheduler/job/2074811
-# test job: [772ada50282b0c80343c8989147db816961f571d] https://lava.sirena.=
-org.uk/scheduler/job/2069227
-# test job: [6985defd1d832f1dd9d1977a6a2cc2cef7632704] https://lava.sirena.=
-org.uk/scheduler/job/2059096
-# test job: [fb1ebb10468da414d57153ddebaab29c38ef1a78] https://lava.sirena.=
-org.uk/scheduler/job/2059791
-# test job: [6951be397ca8b8b167c9f99b5a11c541148c38cb] https://lava.sirena.=
-org.uk/scheduler/job/2055762
-# test job: [2089f086303b773e181567fd8d5df3038bd85937] https://lava.sirena.=
-org.uk/scheduler/job/2058088
-# test job: [4e92abd0a11b91af3742197a9ca962c3c00d0948] https://lava.sirena.=
-org.uk/scheduler/job/2055840
-# test job: [abc9a349b87ac0fd3ba8787ca00971b59c2e1257] https://lava.sirena.=
-org.uk/scheduler/job/2054599
-# test job: [55d03b5b5bdd04daf9a35ce49db18d8bb488dffb] https://lava.sirena.=
-org.uk/scheduler/job/2053852
-# test job: [1b0f3f9ee41ee2bdd206667f85ea2aa36dfe6e69] https://lava.sirena.=
-org.uk/scheduler/job/2053505
-# test job: [6bd1ad97eb790570c167d4de4ca59fbc9c33722a] https://lava.sirena.=
-org.uk/scheduler/job/2053466
-# test job: [3c36965df80801344850388592e95033eceea05b] https://lava.sirena.=
-org.uk/scheduler/job/2049477
-# test job: [655079ac8a7721ac215a0596e3f33b740e01144a] https://lava.sirena.=
-org.uk/scheduler/job/2049691
-# test job: [aa897ffc396b48cc39eee133b6b43175d0df9eb5] https://lava.sirena.=
-org.uk/scheduler/job/2048778
-# test job: [2f538ef9f6f7c3d700c68536f21447dfc598f8c8] https://lava.sirena.=
-org.uk/scheduler/job/2048662
-# test job: [c4e68959af66df525d71db619ffe44af9178bb22] https://lava.sirena.=
-org.uk/scheduler/job/2044045
-# test job: [af9c8092d84244ca54ffb590435735f788e7a170] https://lava.sirena.=
-org.uk/scheduler/job/2043672
-# test job: [380fd29d57abe6679d87ec56babe65ddc5873a37] https://lava.sirena.=
-org.uk/scheduler/job/2044567
-# test job: [a4438f06b1db15ce3d831ce82b8767665638aa2a] https://lava.sirena.=
-org.uk/scheduler/job/2081108
-# test job: [84194c66aaf78fed150edb217b9f341518b1cba2] https://lava.sirena.=
-org.uk/scheduler/job/2038363
-# test job: [252abf2d07d33b1c70a59ba1c9395ba42bbd793e] https://lava.sirena.=
-org.uk/scheduler/job/2038539
-# test job: [2ecc8c089802e033d2e5204d21a9f467e2517df9] https://lava.sirena.=
-org.uk/scheduler/job/2038647
-# test job: [ed5d499b5c9cc11dd3edae1a7a55db7dfa4f1bdc] https://lava.sirena.=
-org.uk/scheduler/job/2029010
-# test job: [e73b743bfe8a6ff4e05b5657d3f7586a17ac3ba0] https://lava.sirena.=
-org.uk/scheduler/job/2026440
-# test job: [f1dfbc1b5cf8650ae9a0d543e5f5335fc0f478ce] https://lava.sirena.=
-org.uk/scheduler/job/2025486
-# test job: [ecd0de438c1f0ee86cf8f6d5047965a2a181444b] https://lava.sirena.=
-org.uk/scheduler/job/2026128
-# test job: [6ef8e042cdcaabe3e3c68592ba8bfbaee2fa10a3] https://lava.sirena.=
-org.uk/scheduler/job/2025859
-# test job: [cf6bf51b53252284bafc7377a4d8dbf10f048b4d] https://lava.sirena.=
-org.uk/scheduler/job/2022941
-# test job: [20bcda681f8597e86070a4b3b12d1e4f541865d3] https://lava.sirena.=
-org.uk/scheduler/job/2022962
-# test job: [8fdb030fe283c84fd8d378c97ad0f32d6cdec6ce] https://lava.sirena.=
-org.uk/scheduler/job/2021463
-# test job: [28039efa4d8e8bbf98b066133a906bd4e307d496] https://lava.sirena.=
-org.uk/scheduler/job/2020286
-# test job: [e062bdfdd6adbb2dee7751d054c1d8df63ddb8b8] https://lava.sirena.=
-org.uk/scheduler/job/2020185
-# test job: [62fb11fba0cc12ecb808fc57b16027b94bd1ba1a] https://lava.sirena.=
-org.uk/scheduler/job/2106794
-# test job: [66fecfa91deb536a12ddf3d878a99590d7900277] https://lava.sirena.=
-org.uk/scheduler/job/2015341
-# test job: [f034c16a4663eaf3198dc18b201ba50533fb5b81] https://lava.sirena.=
-org.uk/scheduler/job/2015423
-# test job: [4a5ac6cd05a7e54f1585d7779464d6ed6272c134] https://lava.sirena.=
-org.uk/scheduler/job/2011278
-# test job: [4c33cef58965eb655a0ac8e243aa323581ec025f] https://lava.sirena.=
-org.uk/scheduler/job/2009453
-# test job: [ef042df96d0e1089764f39ede61bc8f140a4be00] https://lava.sirena.=
-org.uk/scheduler/job/2010152
-# test job: [4795375d8aa072e9aacb0b278e6203c6ca41816a] https://lava.sirena.=
-org.uk/scheduler/job/2009687
-# test job: [d29479abaded34b2b1dab2e17efe96a65eba3d61] https://lava.sirena.=
-org.uk/scheduler/job/2008427
-# test job: [01313661b248c5ba586acae09bff57077dbec0a5] https://lava.sirena.=
-org.uk/scheduler/job/2008854
-# test job: [e973dfe9259095fb509ab12658c68d46f0e439d7] https://lava.sirena.=
-org.uk/scheduler/job/2008111
-# test job: [e7434adf0c53a84d548226304cdb41c8818da1cb] https://lava.sirena.=
-org.uk/scheduler/job/2007797
-# test job: [77a58ba7c64ccca20616aa03599766ccb0d1a330] https://lava.sirena.=
-org.uk/scheduler/job/2007347
-# test job: [c17fa4cbc546c431ccf13e9354d5d9c1cd247b7c] https://lava.sirena.=
-org.uk/scheduler/job/2004856
-# test job: [2528c15f314ece50218d1273654f630d74109583] https://lava.sirena.=
-org.uk/scheduler/job/1997633
-# test job: [d054cc3a2ccfb19484f3b54d69b6e416832dc8f4] https://lava.sirena.=
-org.uk/scheduler/job/1995736
-# test job: [fd5ef3d69f8975bad16c437a337b5cb04c8217a2] https://lava.sirena.=
-org.uk/scheduler/job/1996130
-# test job: [310bf433c01f78e0756fd5056a43118a2f77318c] https://lava.sirena.=
-org.uk/scheduler/job/1996059
-# test job: [638bae3fb225a708dc67db613af62f6d14c4eff4] https://lava.sirena.=
-org.uk/scheduler/job/1991850
-# test job: [32200f4828de9d7e6db379909898e718747f4e18] https://lava.sirena.=
-org.uk/scheduler/job/2106716
-# test job: [ecba655bf54a661ffe078856cd8dbc898270e4b5] https://lava.sirena.=
-org.uk/scheduler/job/1985174
-# test job: [7e1906643a7374529af74b013bba35e4fa4e6ffc] https://lava.sirena.=
-org.uk/scheduler/job/1978628
-# test job: [d742ebcfe524dc54023f7c520d2ed2e4b7203c19] https://lava.sirena.=
-org.uk/scheduler/job/1975988
-# test job: [fce217449075d59b29052b8cdac567f0f3e22641] https://lava.sirena.=
-org.uk/scheduler/job/1975641
-# test job: [6658472a3e2de08197acfe099ba71ee0e2505ecf] https://lava.sirena.=
-org.uk/scheduler/job/1973472
-# test job: [0cc08c8130ac8f74419f99fe707dc193b7f79d86] https://lava.sirena.=
-org.uk/scheduler/job/1965714
-# test job: [e8fd8080e7a9c8c577e5dec5bd6d486a3f14011c] https://lava.sirena.=
-org.uk/scheduler/job/1978820
-# test job: [0743acf746a81e0460a56fd5ff847d97fa7eb370] https://lava.sirena.=
-org.uk/scheduler/job/1964870
-# test job: [1e570e77392f43a3cdab2849d1f81535f8a033e2] https://lava.sirena.=
-org.uk/scheduler/job/1962304
-# test job: [d77daa49085b067137d0adbe3263f75a7ee13a1b] https://lava.sirena.=
-org.uk/scheduler/job/1964717
-# test job: [15afe57a874eaf104bfbb61ec598fa31627f7b19] https://lava.sirena.=
-org.uk/scheduler/job/1962971
-# test job: [fb25114cd760c13cf177d9ac37837fafcc9657b5] https://lava.sirena.=
-org.uk/scheduler/job/1961714
-# test job: [6621b0f118d500092f5f3d72ddddb22aeeb3c3a0] https://lava.sirena.=
-org.uk/scheduler/job/1959760
-# test job: [65efe5404d151767653c7b7dd39bd2e7ad532c2d] https://lava.sirena.=
-org.uk/scheduler/job/1959953
-# test job: [433e294c3c5b5d2020085a0e36c1cb47b694690a] https://lava.sirena.=
-org.uk/scheduler/job/1957700
-# test job: [0b0eb7702a9fa410755e86124b4b7cd36e7d1cb4] https://lava.sirena.=
-org.uk/scheduler/job/1957382
-# test job: [bf770d6d2097a52d87f4d9c88d0b05bd3998d7de] https://lava.sirena.=
-org.uk/scheduler/job/1984502
-# test job: [c2d420796a427dda71a2400909864e7f8e037fd4] https://lava.sirena.=
-org.uk/scheduler/job/1984566
-# test job: [7e7e2c6e2a1cb250f8d03bb99eed01f6d982d5dd] https://lava.sirena.=
-org.uk/scheduler/job/1957243
-# test job: [9797329220a2c6622411eb9ecf6a35b24ce09d04] https://lava.sirena.=
-org.uk/scheduler/job/1947384
-# test job: [fe8cc44dd173cde5788ab4e3730ac61f3d316d9c] https://lava.sirena.=
-org.uk/scheduler/job/1946045
-# test job: [4d410ba9aa275e7990a270f63ce436990ace1bea] https://lava.sirena.=
-org.uk/scheduler/job/1947757
-# test job: [64d87ccfae3326a9561fe41dc6073064a083e0df] https://lava.sirena.=
-org.uk/scheduler/job/1953765
-# test job: [6277a486a7faaa6c87f4bf1d59a2de233a093248] https://lava.sirena.=
-org.uk/scheduler/job/1947001
-# test job: [b83fb1b14c06bdd765903ac852ba20a14e24f227] https://lava.sirena.=
-org.uk/scheduler/job/1946839
-# test job: [5e537031f322d55315cd384398b726a9a0748d47] https://lava.sirena.=
-org.uk/scheduler/job/1946680
-# test job: [4412ab501677606436e5c49e41151a1e6eac7ac0] https://lava.sirena.=
-org.uk/scheduler/job/1946304
-# test job: [7e1fe102c8517a402327c37685357fbe279b3278] https://lava.sirena.=
-org.uk/scheduler/job/1982084
-# test job: [cc7e1a9b596c9d9dc3324c056cf8162e9fca2765] https://lava.sirena.=
-org.uk/scheduler/job/1981487
-# test job: [6c177775dcc5e70a64ddf4ee842c66af498f2c7c] https://lava.sirena.=
-org.uk/scheduler/job/2081200
-# test job: [92fd6e84175befa1775e5c0ab682938eca27c0b2] https://lava.sirena.=
-org.uk/scheduler/job/2134785
-# bad: [92fd6e84175befa1775e5c0ab682938eca27c0b2] Add linux-next specific f=
-iles for 20251125
-git bisect bad 92fd6e84175befa1775e5c0ab682938eca27c0b2
-# test job: [bfda4f7f7c8a71d3fa9e0e062f64e3e03b401ce0] https://lava.sirena.=
-org.uk/scheduler/job/2134899
-# bad: [bfda4f7f7c8a71d3fa9e0e062f64e3e03b401ce0] Merge branch 'master' of =
-https://git.kernel.org/pub/scm/linux/kernel/git/bluetooth/bluetooth-next.git
-git bisect bad bfda4f7f7c8a71d3fa9e0e062f64e3e03b401ce0
-# test job: [614ad23e61af8a745bfdfe50b09870560e5f73f9] https://lava.sirena.=
-org.uk/scheduler/job/2135009
-# bad: [614ad23e61af8a745bfdfe50b09870560e5f73f9] Merge branch 'fs-next' of=
- linux-next
-git bisect bad 614ad23e61af8a745bfdfe50b09870560e5f73f9
-# test job: [f9b99d86d8fde5007a7c52347efac13566f8c160] https://lava.sirena.=
-org.uk/scheduler/job/2135145
-# good: [f9b99d86d8fde5007a7c52347efac13566f8c160] Merge branch 'for-next' =
-of https://git.kernel.org/pub/scm/linux/kernel/git/khilman/linux-omap.git
-git bisect good f9b99d86d8fde5007a7c52347efac13566f8c160
-# test job: [6dcee998bc550ca1f4d93ada88ddf3ddf88278b5] https://lava.sirena.=
-org.uk/scheduler/job/2135213
-# bad: [6dcee998bc550ca1f4d93ada88ddf3ddf88278b5] Merge branch 'vfs.all' of=
- https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-git bisect bad 6dcee998bc550ca1f4d93ada88ddf3ddf88278b5
-# test job: [4d8cb2518d6f29e24b1df6609ee32cab7e76aa7c] https://lava.sirena.=
-org.uk/scheduler/job/2135251
-# bad: [4d8cb2518d6f29e24b1df6609ee32cab7e76aa7c] Merge branch 'vfs-6.19.fd=
-_prepare' into vfs.all
-git bisect bad 4d8cb2518d6f29e24b1df6609ee32cab7e76aa7c
-# test job: [fbcf11d2838ae1df75ef10856e31fbbdd001baa5] https://lava.sirena.=
-org.uk/scheduler/job/2135311
-# good: [fbcf11d2838ae1df75ef10856e31fbbdd001baa5] Merge branch 'namespace-=
-6.19' into vfs.all
-git bisect good fbcf11d2838ae1df75ef10856e31fbbdd001baa5
-# test job: [5d1eb038b7d7bc0262cb153f84a6cdec4b95ba16] https://lava.sirena.=
-org.uk/scheduler/job/2135397
-# good: [5d1eb038b7d7bc0262cb153f84a6cdec4b95ba16] Merge branch 'vfs-6.19.d=
-irectory.delegations' into vfs.all
-git bisect good 5d1eb038b7d7bc0262cb153f84a6cdec4b95ba16
-# test job: [d6ef072d09b2341e606aeeaf14c3510dec329c63] https://lava.sirena.=
-org.uk/scheduler/job/2135492
-# good: [d6ef072d09b2341e606aeeaf14c3510dec329c63] ovl: reflow ovl_create_o=
-r_link()
-git bisect good d6ef072d09b2341e606aeeaf14c3510dec329c63
-# test job: [b27548e6abcc0d771eda10b8ed5aaac5d53ef421] https://lava.sirena.=
-org.uk/scheduler/job/2135565
-# bad: [b27548e6abcc0d771eda10b8ed5aaac5d53ef421] spufs: convert spufs_cont=
-ext_open() to FD_PREPARE()
-git bisect bad b27548e6abcc0d771eda10b8ed5aaac5d53ef421
-# test job: [6d6454e55b4c84edf4a7914dd0d7033a7b5d0839] https://lava.sirena.=
-org.uk/scheduler/job/2135612
-# good: [6d6454e55b4c84edf4a7914dd0d7033a7b5d0839] userfaultfd: convert new=
-_userfaultfd() to FD_PREPARE()
-git bisect good 6d6454e55b4c84edf4a7914dd0d7033a7b5d0839
-# test job: [ea66cee99ff4a3e43a9a2356e018473f5dc69872] https://lava.sirena.=
-org.uk/scheduler/job/2135809
-# bad: [ea66cee99ff4a3e43a9a2356e018473f5dc69872] bpf: convert bpf_token_cr=
-eate() to FD_PREPARE()
-git bisect bad ea66cee99ff4a3e43a9a2356e018473f5dc69872
-# test job: [d67145b51ed0f07a9f68dfe82ec1543c930f2762] https://lava.sirena.=
-org.uk/scheduler/job/2136116
-# good: [d67145b51ed0f07a9f68dfe82ec1543c930f2762] dma: convert sync_file_i=
-octl_merge() to FD_PREPARE()
-git bisect good d67145b51ed0f07a9f68dfe82ec1543c930f2762
-# test job: [a8dc46d4c3038aaa6f6fee37e7a938bda1967abf] https://lava.sirena.=
-org.uk/scheduler/job/2136588
-# bad: [a8dc46d4c3038aaa6f6fee37e7a938bda1967abf] ipc: convert do_mq_open()=
- to FD_ADD()
-git bisect bad a8dc46d4c3038aaa6f6fee37e7a938bda1967abf
-# test job: [fe3e2fc8236bff97cfd5eb8e69350c0b8567bed2] https://lava.sirena.=
-org.uk/scheduler/job/2136813
-# good: [fe3e2fc8236bff97cfd5eb8e69350c0b8567bed2] exec: convert begin_new_=
-exec() to FD_PREPARE()
-git bisect good fe3e2fc8236bff97cfd5eb8e69350c0b8567bed2
-# first bad commit: [a8dc46d4c3038aaa6f6fee37e7a938bda1967abf] ipc: convert=
- do_mq_open() to FD_ADD()
-
---3IwkfWdB+QMMglL3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmkmLg4ACgkQJNaLcl1U
-h9CHMQf/bIEqgoxmXNdVeXFlGx26IrnO7Gy3sXIfw43otiQbSglZg0IXGvHlT71c
-KPob6MsnSrwmtlCd5B3NFhhBZpqC6GDPpki8Fy12JEDImxI8evYdQgxs6ojsMV5W
-4hufC5N6CrG36CJPE4zB0rzzVr9oNk07DJZnyNu7XSwP/ZcsKjISVyH/oG6lPFj7
-2q7HFqrMRuJq/vZL8oQLHB5Qm6Pk7SAzzbWZDWTOTvisMtomp2Sdj2YP22z+SyKn
-VAfTbYdRrbx7MTxXiGvo0FW+SV9uICCV1OQrEGJdkFr1QqKlmqNTv9ULYUFD014T
-qPVDlHQpK8tdzQpBGGynOJxMVArfRg==
-=DMWX
------END PGP SIGNATURE-----
-
---3IwkfWdB+QMMglL3--
+T24gVHVlLCAyMDI1LTExLTI1IGF0IDIzOjE0ICswMTAwLCBNZWhkaSBCZW4gSGFkaiBLaGVsaWZh
+IHdyb3RlOg0KPiBPbiAxMS8yMi8yNSAxMjowMSBBTSwgVmlhY2hlc2xhdiBEdWJleWtvIHdyb3Rl
+Og0KPiA+IE9uIFNhdCwgMjAyNS0xMS0yMiBhdCAwMDozNiArMDEwMCwgTWVoZGkgQmVuIEhhZGog
+S2hlbGlmYSB3cm90ZToNCj4gPiA+IE9uIDExLzIxLzI1IDExOjI4IFBNLCBWaWFjaGVzbGF2IER1
+YmV5a28gd3JvdGU6DQo+ID4gPiA+IE9uIFNhdCwgMjAyNS0xMS0yMiBhdCAwMDoxNiArMDEwMCwg
+TWVoZGkgQmVuIEhhZGogS2hlbGlmYSB3cm90ZToNCj4gPiA+ID4gPiBPbiAxMS8yMS8yNSAxMTow
+NCBQTSwgVmlhY2hlc2xhdiBEdWJleWtvIHdyb3RlOg0KPiA+ID4gPiA+ID4gT24gRnJpLCAyMDI1
+LTExLTIxIGF0IDIzOjQ4ICswMTAwLCBNZWhkaSBCZW4gSGFkaiBLaGVsaWZhIHdyb3RlOg0KPiA+
+ID4gPiA+ID4gPiBPbiAxMS8yMS8yNSAxMDoxNSBQTSwgVmlhY2hlc2xhdiBEdWJleWtvIHdyb3Rl
+Og0KPiA+ID4gPiA+ID4gPiA+IE9uIEZyaSwgMjAyNS0xMS0yMSBhdCAyMDo0NCArMDEwMCwgTWVo
+ZGkgQmVuIEhhZGogS2hlbGlmYSB3cm90ZToNCj4gPiA+ID4gPiA+ID4gPiA+IE9uIDExLzE5LzI1
+IDg6NTggUE0sIFZpYWNoZXNsYXYgRHViZXlrbyB3cm90ZToNCj4gPiA+ID4gPiA+ID4gPiA+ID4g
+T24gV2VkLCAyMDI1LTExLTE5IGF0IDA4OjM4ICswMTAwLCBNZWhkaSBCZW4gSGFkaiBLaGVsaWZh
+IHdyb3RlOg0KPiA+ID4gPiA+ID4gPiA+ID4gPiA+IA0KPiA+IA0KPiA+IDxza2lwcGVkPg0KPiA+
+IA0KPiA+ID4gPiA+ID4gPiA+IA0KPiA+ID4gPiA+ID4gPiBJSVVDLCBoZnNfbWRiX3B1dCgpIGlz
+bid0IGNhbGxlZCBpbiB0aGUgY2FzZSBvZiBoZnNfa2lsbF9zdXBlcigpIGluDQo+ID4gPiA+ID4g
+PiA+IGNocmlzdGlhbidzIHBhdGNoIGJlY2F1c2UgZmlsbF9zdXBlcigpIChmb3IgdGhlIGVhY2gg
+c3BlY2lmaWMNCj4gPiA+ID4gPiA+ID4gZmlsZXN5c3RlbSkgaXMgcmVzcG9uc2libGUgZm9yIGNs
+ZWFuaW5nIHVwIHRoZSBzdXBlcmJsb2NrIGluIGNhc2Ugb2YNCj4gPiA+ID4gPiA+ID4gZmFpbHVy
+ZSBhbmQgeW91IGNhbiByZWZlcmVuY2UgY2hyaXN0aWFuJ3MgcGF0Y2hbMV0gd2hpY2ggaGUgZXhw
+bGFpbmVkDQo+ID4gPiA+ID4gPiA+IHRoZSByZWFzb25pbmcgZm9yIGhlcmVbMl0uQW5kIGluIHRo
+ZSBlcnJvciBwYXRoIHRoZSB3ZSBhcmUgdHJ5aW5nIHRvDQo+ID4gPiA+ID4gPiA+IGZpeCwgZmls
+bF9zdXBlcigpIGlzbid0IGV2ZW4gY2FsbGVkIHlldC4gU28gc3VjaCBwb2ludGVycyBzaG91bGRu
+J3QgYmUNCj4gPiA+ID4gPiA+ID4gcG9pbnRpbmcgdG8gYW55dGhpbmcgYWxsb2NhdGVkIHlldCBo
+ZW5jZSBvbmx5IGZyZWVpbmcgdGhlIHBvaW50ZXIgdG8gdGhlDQo+ID4gPiA+ID4gPiA+IHNiX2lu
+Zm8gaGVyZSBpcyBzdWZmaWNpZW50IEkgdGhpbmsuDQo+ID4gPiA+IA0KPiA+ID4gPiBJIHdhcyBj
+b25mdXNlZCB0aGF0IHlvdXIgY29kZSB3aXRoIGhmc19tZGJfcHV0KCkgaXMgc3RpbGwgaW4gdGhp
+cyBlbWFpbC4gU28sDQo+ID4gPiA+IHllcywgaGZzX2ZpbGxfc3VwZXIoKS9oZnNwbHVzX2ZpbGxf
+c3VwZXIoKSB0cnkgdG8gZnJlZSB0aGUgbWVtb3J5IGluIHRoZSBjYXNlIG9mDQo+ID4gPiA+IGZh
+aWx1cmUuIEl0IG1lYW5zIHRoYXQgaWYgc29tZXRoaW5nIHdhc24ndCBiZWVuIGZyZWVkLCB0aGVu
+IGl0IHdpbGwgYmUgaXNzdWUgaW4NCj4gPiA+ID4gdGhlc2UgbWV0aG9kcy4gVGhlbiwgSSBkb24n
+dCBzZWUgd2hhdCBzaG91bGQgZWxzZSBuZWVkIHRvIGJlIGFkZGVkIGhlcmUuIFNvbWUNCj4gPiA+
+ID4gZmlsZSBzeXN0ZW1zIGRvIHNiLT5zX2ZzX2luZm8gPSBOVUxMLiBCdXQgYWJzZW5jZSBvZiB0
+aGlzIHN0YXRlbWVudCBpcyBub3QNCj4gPiA+ID4gY3JpdGljYWwsIGZyb20gbXkgcG9pbnQgb2Yg
+dmlldy4NCj4gPiA+ID4gDQo+ID4gPiBUaGFua3MgZm9yIHRoZSBpbnB1dC4gSSB3aWxsIGJlIHNl
+bmRpbmcgdGhlIHNhbWUgbWVudGlvbm5lZCBwYXRjaCBhZnRlcg0KPiA+ID4gZG9pbmcgdGVzdGlu
+ZyBmb3IgaXQgYW5kIGFsc28gYWZ0ZXIgZmluaXNoaW5nIG15IHRlc3RpbmcgZm9yIHRoZSBoZnMN
+Cj4gPiA+IHBhdGNoIHRvby4NCj4gPiA+ID4gDQo+ID4gDQo+ID4gSSBhbSBndWVzc2luZy4uLiBT
+aG91bGQgd2UgY29uc2lkZXIgdG8gaW50cm9kdWNlIHNvbWUgeGZzdGVzdCwgc2VsZi10ZXN0LCBv
+cg0KPiA+IHVuaXQtdGVzdCB0byBkZXRlY3QgdGhpcyBpc3N1ZSBpbiBhbGwgTGludXgncyBmaWxl
+IHN5c3RlbXMgZmFtaWx5Pw0KPiA+IA0KPiBZZXMsIEl0IGlzbid0IHRoYXQgaGFyZCBlaXRoZXIg
+SUlVQyB5b3UganVzdCBuZWVkIHRvIGZhaWwgdGhlIA0KPiBiZGV2X2ZpbGVfb3Blbl9ieV9kZXYo
+KSBmdW5jdGlvbiBzb21laG93IHRvIHRyaWdnZXIgdGhpcyBlcnJvciBwYXRoLi4NCj4gPiBUaGFu
+a3MsDQo+ID4gU2xhdmEuDQo+IA0KPiBTbyBJIHdhbnRlZCB0byB1cGRhdGUgeW91IG9uIG15IHRl
+c3RpbmcgZm9yIHRoZSBoZnMgcGF0Y2ggYW5kIHRoZSANCj4gaGZzcGx1cyBwYXRjaC4gRm9yIHRo
+ZSB0ZXN0aW5nIEkgdXNlZCBib3RoIG15IGRlc2t0b3AgcGMgYW5kIG15IGxhcHRvcCANCj4gcGMg
+cnVubmluZyB0aGUgc2FtZSBjb25maWd1cmFpdG9ucyBhbmQgdGhlIHNhbWUgbGludXggZGlzdHJp
+YnV0aW9uIHRvIA0KPiBoYXZlIG1vcmUgYWNjdXJhdGUgdGVzdGluZy4gVGhlcmUgYXJlIHRocmVl
+IHZhcmlhbnRzIHRoYXQgSSB1c2VkIGZvciANCj4gdGVzdGluZyA6IEEgc3RhYmxlIGtlcm5lbCwg
+Ni4xOC1yYzcga2VybmVsIHdpdGggbm8gcGF0Y2gsIDYuMTgtcmM3IA0KPiBrZXJuZWwgd2l0aCBo
+ZnMgb3IgaGZzcGx1cyBwYXRjaC4NCj4gDQo+IEZpcnN0bHksIEkgY291bGRuJ3QgcnVuIHRoZSBo
+ZnMgdGVzdHMgZHVlIHRvIG1rZnMuaGZzIGJlaW5nIHVuYXZhaWxhYmxlIA0KPiBpbiBteSBzZWFy
+Y2ggZm9yIGl0LiB0aGV5IGFsbCBwb2ludCB0byBta2ZzLmhmc3BsdXMgYW5kIHlvdSBwb2ludGVk
+IG91dCANCj4gdGhhdCBta2ZzLmhmc3BsdXMgY2FuIGNyZWF0ZSBoZnMgZmlsZXN5c3RlbXMgd2l0
+aCB0aGUgLWggZmxhZyBidXQgaW4gbXkgDQo+IGNhc2UgaXQgZG9lc24ndC4gSSBwb2ludGVkIG91
+dCBsYXN0IHRpbWUgdGhhdCBJIGZvdW5kIGEgdG9vbCB0byBjcmVhdGUgDQo+IEhGUyBmaWxlc3lz
+dGVtcyB3aGljaCBpdCBkb2VzIChpdCdzIGNhbGxlZCBoZm9ybWF0KSBidXQgdGhlIHhmc3Rlc3Rz
+IA0KPiByZXF1aXJlIHRoZSBhdmFpbGFiaWxpdHkgb2YgbWtmcy5oZnMgYW5kIGZzY2suaGZzIGZv
+ciB0aGVtIHRvIHJ1bi4gTW9yZSANCj4gaGVscCBvbiB0aGlzIGlzIG5lZWRlZCBmb3IgbWUgdG8g
+cnVuIGhmcyB0ZXN0cy4gSSBhbHNvIHRlc3RlZCBleHQ0IGFzIA0KPiB5b3UgaGF2ZSBzdWdnZXN0
+ZWQgYXMgYSBiYXNlIHRvIGNvbXBhcmUgdG8uIEhlcmUgaXMgbXkgc3VtbWFyeSBvZiB0ZXN0aW5n
+Og0KPiANCj4gRm9yIFN0YWJsZSBrZXJuZWwgNi4xNy44Og0KPiANCj4gT24gZGVza3RvcDoNCj4g
+ZXh0NCB0ZXN0cyByYW4gc3VjY2Vzc2Z1bGx5Lg0KPiBoZnNwbHVzIHRlc3RzIGNyYXNoIHRoZSBw
+YyBhcm91bmQgZ2VuZXJpYyA2MzEgdGVzdC4NCj4gDQo+IE9uIExhcHRvcDoNCj4gZXh0NCBhbmQg
+aGZzcGx1cyB0ZXN0cyByYW4gc3VjY2Vzc2Z1bGx5Lg0KPiANCj4gRm9yIDYuMTgtcmM3IGtlcm5l
+bDoNCj4gDQo+IE9uIGRlc2t0b3A6DQo+IGV4dDQgdGVzdHMgcmFuIHN1Y2Nlc3NmdWxseSBzYW1l
+IHJlc3VsdHMgYXMgdGhlIHN0YWJsZSBrZXJuZWwuDQo+IGhmc3BsdXMgY3Jhc2hlcyBvbiB0ZXN0
+aW5nIHN0YXJ0dXAuRm9yIGxhdW5jaGluZyBhbnkgdGVzdC4NCj4gDQo+IE9uIExhcHRvcDoNCj4g
+ZXh0NCB0ZXN0cyByYW4gc3VjY2Vzc2Z1bGx5IHNhbWUgcmVzdWx0cyBhcyB0aGUgc3RhYmxlIGtl
+cm5lbC4NCj4gaGZzcGx1cyBjcmFzaGVzIG9uIHRlc3Rpbmcgc3RhcnR1cC5Gb3IgbGF1bmNpbmcg
+YW55IHRlc3QuDQo+IA0KPiANCj4gRm9yIHRoZSBwYXRjaGVkIDYuMTgtcmM3IGtlcm5lbC4NCj4g
+DQo+IFNhbWUgcmVzdWx0cyBmb3IgYm90aCBkZXNrdG9wIGFuZCBsYXB0b3AgcGNzIGFzIGluIHRo
+ZSA2LjE4LXJjNyBrZXJuZWwuDQo+IA0KPiANCj4gU2hvdWxkIGJlIG5vdGVkIHRoYXQgSSBoYXZl
+IHRyaWVkIG1hbnkgZGlmZmVyZW50IHNldHVwcyByZWdhcmRpbmcgdGhlIA0KPiBkZXZpY2VzIGFu
+ZCB0aGVpciBjcmVhdGlvbiBmb3IgdGhlIDYuMTgtcmM3IGtlcm5lbCBhbmQgbm9uZSBvZiB0aGVt
+IA0KPiB3b3JrZWQuU3RpbGwgSSBjYW4ndCBkZWR1Y2Ugd2hhdCBpcyBjYXVzaW5nIHRoZSBpc3N1
+ZS5JZiB0aGV5IHdvcmsgZm9yIA0KPiB5b3UsIG15IG9ubHkgYXNzdW1wdGlvbiBpcyB0aGF0IHNv
+bWUgZGVwZW5kZW5jeSBvZiB4ZnN0ZXN0cyBpcyBub3QgbWV0IA0KPiBvbiBteSBwYXJ0IGV2ZW4g
+dGhvdWdoIEkgbWFkZSBzdXJlIHRoYXQgSSBkbyBjb3ZlciB0aGVtIGFsbCBlc3BlY2lhbGx5IA0K
+PiB3aXRoIHJlcGVhdGVkbHkgZmFpbGVkIHRlc3RpbmcuLi4NCj4gDQo+IFdoYXQgY291bGQgYmUg
+dGhlIGlzc3VlIGhlcmUgb24gbXkgZW5kIGlmIHlvdSBoYXZlIGFueSBpZGVhPw0KDQpXaGljaCBw
+YXJ0aWN1bGFyIGNyYXNoIGRvIHlvdSBoYXZlPyBDb3VsZCB5b3UgcGxlYXNlIHNoYXJlIHRoZSBj
+YWxsIHRyYWNlPw0KDQpMZXQgbWUgYnVpbGQgdGhlIGxhdGVzdCBrZXJuZWwgYW5kIHJ1biB4ZnN0
+ZXN0cyBhZ2FpbiBvbiBteSBzaWRlLg0KDQo+IA0KPiBBbHNvIHNob3VsZCBJIHNlbmQgeW91IHRo
+ZSBoZnNwbHVzIHBhdGNoIGluIG9uZSBvZiBteSBlYXJsaWVyIHJlcGxpZXNbMV0gDQo+IGZvciB5
+b3UgdG8gdGVzdCB0b28gYW5kIG1heWJlIGFkZCBpdCB0byBoZnNwbHVzPw0KPiANCj4gDQoNCkxl
+dCdzIGNsYXJpZnkgYXQgZmlyc3Qgd2hhdCdzIGdvaW5nIG9uIHdpdGggeGZzdGVzdHMgb24geW91
+ciBzaWRlLg0KDQpUaGFua3MsDQpTbGF2YS4NCg==
 
