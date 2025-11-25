@@ -1,180 +1,139 @@
-Return-Path: <linux-fsdevel+bounces-69748-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69749-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C2B7C84423
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Nov 2025 10:39:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CCC41C84443
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Nov 2025 10:42:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AD5E3AD8AD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Nov 2025 09:39:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F9073AE574
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Nov 2025 09:41:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BDBA2E9ECA;
-	Tue, 25 Nov 2025 09:39:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D93D2E9759;
+	Tue, 25 Nov 2025 09:41:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="RK+QQMDP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OucKf52F"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C9E21D435F;
-	Tue, 25 Nov 2025 09:39:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CCDB2EA723;
+	Tue, 25 Nov 2025 09:41:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764063571; cv=none; b=bG71NEP3tptx2GaABvGXg4LlIJ38PxmzkUpB8Zs7BsU09O+akuKKmPG6Z/jicS79TKf8z+Cs9wcYIsgHmliPcCqfFEaSOKYmYmzmkkORF3hxJCwQNudTg8DfgP9yogrDYxS4G/YZo8M7tshSDaxmQLOLTrKs0Sbq3mjmB0q8bJk=
+	t=1764063699; cv=none; b=N0n9QMsgrjq88zjtFg+N8YOgGeQwvl7yfTrPjwr6RponUBn9gjctEm/TqpWP5ZeAOtrrUKbvlg52xYB0RzCNrOy1RhC6gNeScQiCvo5aP+DjcqdEhN1MBHZLf4D7A1sNSPaz9CVAuRh3SEjztvL0mjlDpi818G1g8uf2FWTDviI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764063571; c=relaxed/simple;
-	bh=xzVLC7YXZcAG8mrmrRykLLuq9u6J5Uwcwq0VFRocBiA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WhHHrOLYQk8tNvhFP5iqzzvLwowDuRJeuaqiiIjcBTvUILW28gPPHyGg2e7V0gV0OHJYREQvydJwcq9cCFcnenI7H4o1GbnLrKhZCPc6213g4rAS0HXmN3UvV66Pws5U6rBo9WLEYA4NmfvbPkemHL7yIFFnxa3amL1bDh3rJCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=RK+QQMDP; arc=none smtp.client-ip=115.124.30.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1764063558; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=C6yMHeiTVa9zaiGXI/N10yghcNSzyHJKY9Yx3eagVDs=;
-	b=RK+QQMDPJvsUqMa7FpT9M2puA5ypsYY3Wi/760BOT3Bo0yB8VbCIAXvZuZyTr38mb7txVwB/Jrrm+cNxmoM1bC4LcWFyfd4oBao0owG4GI8TsC1o4kLhYxKB20bQ7dl4Un4vTFG+XG1bvfVPgduPrvak+Nf23NAPcEE/McUqvrA=
-Received: from 30.221.132.26(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WtNIO9f_1764063557 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 25 Nov 2025 17:39:18 +0800
-Message-ID: <00bc891e-4137-4d93-83a5-e4030903ffab@linux.alibaba.com>
-Date: Tue, 25 Nov 2025 17:39:17 +0800
+	s=arc-20240116; t=1764063699; c=relaxed/simple;
+	bh=EZH3ZoT/h3jE1nB+7BQmZudu4IYvLpK+tSAMnJS8t8Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ioVMNMo/7KX9Q5MvQ3g18SZKDOjZAzT2rvqEvNsTi4o275iDNl1906w2JQ6/md3/zZWgBTQLZHNZdFbw7SIlx58X8iSO3I7eGJ4ZiVWhgV4umI5vgeEW0G84yJc7L3XqGdNZNAIQwBKp8jAbSm1mHXcfuJK9dfCxoHjw7dwdWPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OucKf52F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45365C4CEF1;
+	Tue, 25 Nov 2025 09:41:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1764063699;
+	bh=EZH3ZoT/h3jE1nB+7BQmZudu4IYvLpK+tSAMnJS8t8Y=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=OucKf52FhPtINc8o+rDHlyQuoWdOZ23WYUkamnBRMbBwq8b5wBELAg9Wd4kLteX2w
+	 E+PAenq6asoXSS9vtZfQWPPpg6If+O+uAodJW14BlxwNCLQF4RpeB5cfBTdj8cjh3n
+	 0BBXe3bLULjAUcCpRrHsZgNtXNnr8fY6XCeUcrIYnYYRX9FBJ+O3fV1Z9pGprv4+cJ
+	 4Wvez7nmvM61jSRX41bjw5l7VD/xKEz5kFV73RMTkjEH6eI9Amo/G4vrAVkS/sSqRq
+	 o5e/7wM1zV8+V7UAaPa8Me70HeCcc5/tm5lkmztgHFGTNCC2hI1FYzCXScOhdPU68K
+	 MQS/vhLTkkWmw==
+From: Christian Brauner <brauner@kernel.org>
+To: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Askar Safin <safinaskar@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>,
+	Christoph Hellwig <hch@lst.de>,
+	Jens Axboe <axboe@kernel.dk>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>,
+	Aleksa Sarai <cyphar@cyphar.com>,
+	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+	Julian Stecklina <julian.stecklina@cyberus-technology.de>,
+	Art Nikpal <email2tema@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Alexander Graf <graf@amazon.com>,
+	Rob Landley <rob@landley.net>,
+	Lennart Poettering <mzxreary@0pointer.de>,
+	linux-arch@vger.kernel.org,
+	linux-block@vger.kernel.org,
+	initramfs@vger.kernel.org,
+	linux-api@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	Michal Simek <monstr@monstr.eu>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Kees Cook <kees@kernel.org>,
+	Thorsten Blum <thorsten.blum@linux.dev>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Dave Young <dyoung@redhat.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Jessica Clarke <jrtc27@jrtc27.com>,
+	Nicolas Schichan <nschichan@freebox.fr>,
+	David Disseldorp <ddiss@suse.de>,
+	patches@lists.linux.dev,
+	Gao Xiang <xiang@kernel.org>
+Subject: Re: [PATCH v4 0/3] initrd: remove half of classic initrd support
+Date: Tue, 25 Nov 2025 10:41:24 +0100
+Message-ID: <20251125-kotzen-achtzehn-551ae5a8ed70@brauner>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20251119222407.3333257-1-safinaskar@gmail.com>
+References: <20251119222407.3333257-1-safinaskar@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: calling into file systems directly from ->queue_rq, was Re:
- [PATCH V5 0/6] loop: improve loop aio perf by IOCB_NOWAIT
-To: Ming Lei <ming.lei@redhat.com>
-Cc: Christoph Hellwig <hch@infradead.org>, linux-block@vger.kernel.org,
- Mikulas Patocka <mpatocka@redhat.com>,
- Zhaoyang Huang <zhaoyang.huang@unisoc.com>,
- Dave Chinner <dchinner@redhat.com>, linux-fsdevel@vger.kernel.org,
- Jens Axboe <axboe@kernel.dk>
-References: <20251015110735.1361261-1-ming.lei@redhat.com>
- <aSP3SG_KaROJTBHx@infradead.org> <aSQfC2rzoCZcMfTH@fedora>
- <aSQf6gMFzn-4ohrh@infradead.org> <aSUbsDjHnQl0jZde@fedora>
- <db90b7b3-bf94-4531-8329-d9e0dbc6a997@linux.alibaba.com>
- <aSV0sDZGDoS-tLlp@fedora>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <aSV0sDZGDoS-tLlp@fedora>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1683; i=brauner@kernel.org; h=from:subject:message-id; bh=EZH3ZoT/h3jE1nB+7BQmZudu4IYvLpK+tSAMnJS8t8Y=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSqVp5wOpontKfZfe/70xWPbcu9vFrnFNWIXimcunPlm p2ugXNWd5SyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzk6muGP/yNHN382vYp2+2N JS/4VSsWM669Ezy51uzfzqJrEp8/hzL8DzfNbzv7aL5v4O+0RcyWehO4XT7wWjL+P/xW/uVfZ1t pTgA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-Hi Ming,
-
-On 2025/11/25 17:19, Ming Lei wrote:
-> On Tue, Nov 25, 2025 at 03:26:39PM +0800, Gao Xiang wrote:
->> Hi Ming and Christoph,
->>
->> On 2025/11/25 11:00, Ming Lei wrote:
->>> On Mon, Nov 24, 2025 at 01:05:46AM -0800, Christoph Hellwig wrote:
->>>> On Mon, Nov 24, 2025 at 05:02:03PM +0800, Ming Lei wrote:
->>>>> On Sun, Nov 23, 2025 at 10:12:24PM -0800, Christoph Hellwig wrote:
->>>>>> FYI, with this series I'm seeing somewhat frequent stack overflows when
->>>>>> using loop on top of XFS on top of stacked block devices.
->>>>>
->>>>> Can you share your setting?
->>>>>
->>>>> BTW, there are one followup fix:
->>>>>
->>>>> https://lore.kernel.org/linux-block/20251120160722.3623884-1-ming.lei@redhat.com/
->>>>>
->>>>> I just run 'xfstests -q quick' on loop on top of XFS on top of dm-stripe,
->>>>> not see stack overflow with the above fix against -next.
->>>>
->>>> This was with a development tree with lots of local code.  So the
->>>> messages aren't applicable (and probably a hint I need to reduce my
->>>> stack usage).  The observations is that we now stack through from block
->>>> submission context into the file system write path, which is bad for a
->>>> lot of reasons.  journal_info being the most obvious one.
->>>>
->>>>>> In other words:  I don't think issuing file system I/O from the
->>>>>> submission thread in loop can work, and we should drop this again.
->>>>>
->>>>> I don't object to drop it one more time.
->>>>>
->>>>> However, can we confirm if it is really a stack overflow because of
->>>>> calling into FS from ->queue_rq()?
->>>>
->>>> Yes.
->>>>
->>>>> If yes, it could be dead end to improve loop in this way, then I can give up.
->>>>
->>>> I think calling directly into the lower file system without a context
->>>> switch is very problematic, so IMHO yes, it is a dead end.
->> I've already explained the details in
->> https://lore.kernel.org/r/8c596737-95c1-4274-9834-1fe06558b431@linux.alibaba.com
->>
->> to zram folks why block devices act like this is very
->> risky (in brief, because virtual block devices don't
->> have any way (unlike the inner fs itself) to know enough
->> about whether the inner fs already did something without
->> context save (a.k.a side effect) so a new task context
->> is absolutely necessary for virtual block devices to
->> access backing fses for stacked usage.
->>
->> So whether a nested fs can success is intrinsic to
->> specific fses (because either they assure no complex
->> journal_info access or save all effected contexts before
->> transiting to the block layer.  But that is not bdev can
->> do since they need to do any block fs.
+On Wed, 19 Nov 2025 22:24:04 +0000, Askar Safin wrote:
+> This patchset will not affect anyone, who showed up in these lists.
+> See [5] for details.
 > 
-> IMO, task stack overflow could be the biggest trouble.
+> Intro
+> ====
+> This patchset removes half of classic initrd (initial RAM disk) support,
+> i. e. linuxrc code path, which was deprecated in 2020.
+> Initramfs still stays, RAM disk itself (brd) still stays.
+> And other half of initrd stays, too.
+> init/do_mounts* are listed in VFS entry in
+> MAINTAINERS, so I think this patchset should go through VFS tree.
+> I tested the patchset on 8 (!!!) archs in Qemu (see details below).
+> If you still use initrd, see below for workaround.
 > 
-> block layer has current->blk_plug/current->bio_list, which are
-> dealt with in the following patches:
-> 
-> https://lore.kernel.org/linux-block/20251120160722.3623884-4-ming.lei@redhat.com/
-> https://lore.kernel.org/linux-block/20251120160722.3623884-5-ming.lei@redhat.com/
+> [...]
 
-I think it's the simplist thing for this because the
-context of "current->blk_plug/current->bio_list" is
-_owned_ by the block layer, so of course the block
-layer knows how to (and should) save and restore
-them.
+Applied to the vfs-6.20.inird branch of the vfs/vfs.git tree.
+Patches in the vfs-6.20.inird branch should appear in linux-next soon.
 
-> 
-> I am curious why FS task context can't be saved/restored inside block
-> layer when calling into new FS IO? Given it is just per-task info.
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-The problem is a block driver don't know what the upper FS
-(sorry about the terminology) did before calling into block
-layer (the task_struct and journal_info side effect is just
-the obvious one), because all FSes (mainly the write path)
-doesn't assume the current context will be transited into
-another FS context, and it could introduce any fs-specific
-context before calling into the block layer.
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-So it's the fs's business to save / restore contexts since
-they change the context and it's none of the block layer
-business to save and restore because the block device knows
-nothing about the specific fs behavior, it should deal with
-all block FSes.
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
-Let's put it into another way, thinking about generic
-calling convention[1], which includes caller-saved contexts
-and callee-saved contexts.  I think the problem is here
-overally similiar, for loop devices, you know none of lower
-or upper FS behaves (because it doesn't directly know either
-upper or lower FS contexts), so it should either expect the
-upper fs to save all the contexts, or to use a new kthread
-context (to emulate userspace requests to FS) for lower FS.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.20.inird
 
-[1] https://en.wikipedia.org/wiki/Calling_convention
-
-
-Thanks,
-Gao Xiang
-
-> 
-> 
-> Thanks,
-> Ming
-
+[1/3] init: remove deprecated "load_ramdisk" and "prompt_ramdisk" command line parameters
+      https://git.kernel.org/vfs/vfs/c/9c598c04183e
+[2/3] initrd: remove deprecated code path (linuxrc)
+      https://git.kernel.org/vfs/vfs/c/445b357b72aa
+[3/3] init: remove /proc/sys/kernel/real-root-dev
+      https://git.kernel.org/vfs/vfs/c/f84d950a0ef1
 
