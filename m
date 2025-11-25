@@ -1,113 +1,119 @@
-Return-Path: <linux-fsdevel+bounces-69826-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69827-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE3DFC862F6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Nov 2025 18:21:37 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56758C8685E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Nov 2025 19:15:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A23553AC31D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Nov 2025 17:21:36 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id F17D03528DE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Nov 2025 18:15:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32D52329E66;
-	Tue, 25 Nov 2025 17:21:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9733732D443;
+	Tue, 25 Nov 2025 18:15:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="f0+AP+ps"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UH1qniOM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7862621E0AF;
-	Tue, 25 Nov 2025 17:21:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D87D32BF42
+	for <linux-fsdevel@vger.kernel.org>; Tue, 25 Nov 2025 18:15:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764091288; cv=none; b=NbpuXN0h7dGGuPu6Cv+hyg3O5s5t3tIzwRwVQTRy/Bs9b5kklIBSYa1HoPt6A/yiUI9BuFROFvAaGRJuOTAaxIJYfj8UllUDmRzpSDu52csxsiEpcVR/sugA639Ssh1kfOyMoMgjBvTH3/aF/3baGi09ChLog52xvs2jWTWXVzc=
+	t=1764094517; cv=none; b=cDKNlZ+hYzitKL63rW9Q7MzfA7CJbVMQgRWbh2pJCZczmpFUoZZeI8Ckh7vR0+1pF/a8P2tW53rcDxPRYDY25IMncE/iJFzT07vQxTkA8LpIWdGReTuc9SkAwg+Ltuw4QpE06at5zOEwodE4Ycxh7V0cN3rWgBY4lBq3URTQjkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764091288; c=relaxed/simple;
-	bh=5V9QV7SiBzMU5nx3Mn2uqFLHCyID9A3N1YOoa6yxqY4=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=O4d5Qyn4DibshRfrK3pvDt0ciTQHiT+wbKg9Ugt6PWw/u34R9z/mBOfVVKXNhTlRD/v2Itp+2iBQ6hsct+XNxdgdJZjt1rmSaLH8CSc+TnXqTxHMfNB8PST37hkLNp4MBt7mdakvKLJwKtWfGlNGkziVdxkwn+nUzeO4vZUhCOE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=f0+AP+ps; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9F6FC4CEF1;
-	Tue, 25 Nov 2025 17:21:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1764091288;
-	bh=5V9QV7SiBzMU5nx3Mn2uqFLHCyID9A3N1YOoa6yxqY4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=f0+AP+psoLoGzXaq00ep6BDykJP5aOdtZfoQZ4KAyuamvgXUZO/UGmEJZu88bAQIq
-	 Ph+B0PjesF0Ac7gLWJ9KCv+Omr0a+hSLWs0rbzhWkIUTz4dhCv1QM8hBT4VZXdt0Tw
-	 qAckYaIks0SEUeBlWRsbMccDVtm+g6LfRTNVGc0U=
-Date: Tue, 25 Nov 2025 09:21:25 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Muchun Song <muchun.song@linux.dev>, Oscar Salvador <osalvador@suse.de>,
- David Hildenbrand <david@redhat.com>, "Liam R . Howlett"
- <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport
- <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko
- <mhocko@suse.com>, Axel Rasmussen <axelrasmussen@google.com>, Yuanchu Xie
- <yuanchu@google.com>, Wei Xu <weixugc@google.com>, Peter Xu
- <peterx@redhat.com>, Ingo Molnar <mingo@redhat.com>, Peter Zijlstra
- <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot
- <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel
- Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, Kees
- Cook <kees@kernel.org>, Matthew Wilcox <willy@infradead.org>, Jason
- Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>, Leon
- Romanovsky <leon@kernel.org>, Zi Yan <ziy@nvidia.com>, Baolin Wang
- <baolin.wang@linux.alibaba.com>, Nico Pache <npache@redhat.com>, Ryan
- Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, Barry Song
- <baohua@kernel.org>, Lance Yang <lance.yang@linux.dev>, Xu Xin
- <xu.xin16@zte.com.cn>, Chengming Zhou <chengming.zhou@linux.dev>, Jann Horn
- <jannh@google.com>, Matthew Brost <matthew.brost@intel.com>, Joshua Hahn
- <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>, Byungchul Park
- <byungchul@sk.com>, Gregory Price <gourry@gourry.net>, Ying Huang
- <ying.huang@linux.alibaba.com>, Alistair Popple <apopple@nvidia.com>, Pedro
- Falcato <pfalcato@suse.de>, Shakeel Butt <shakeel.butt@linux.dev>, David
- Rientjes <rientjes@google.com>, Rik van Riel <riel@surriel.com>, Harry Yoo
- <harry.yoo@oracle.com>, Kemeng Shi <shikemeng@huaweicloud.com>, Kairui Song
- <kasong@tencent.com>, Nhat Pham <nphamcs@gmail.com>, Baoquan He
- <bhe@redhat.com>, Chris Li <chrisl@kernel.org>, Johannes Weiner
- <hannes@cmpxchg.org>, Qi Zheng <zhengqi.arch@bytedance.com>,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor
- <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo
- <gary@garyguo.net>, Bjorn Roy Baron <bjorn3_gh@protonmail.com>, Benno
- Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, Alice
- Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo
- Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v3 0/4] initial work on making VMA flags a bitmap
-Message-Id: <20251125092125.3e425e05382642ddff2db496@linux-foundation.org>
-In-Reply-To: <cover.1764064556.git.lorenzo.stoakes@oracle.com>
-References: <cover.1764064556.git.lorenzo.stoakes@oracle.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1764094517; c=relaxed/simple;
+	bh=Pf1ccGQ8k1fvDK2lsgupkd5IdGzj7ox/VESOZPM9Rfo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CoGV5MUQSsxWKnOJTpiRAaKResxc6Ast3DpZ+bKcEPhux+U5mBFJKymUbCljr8QiuiJ9Y82OfMJnFidwUwAyUBp90kqIygobYBnTcBXQq+HNSuwQMVglQ1zHkmk6iA4llwor6mp7XPPFN0sgMcdPTrJ9oau/WWC8v3wPrKZolJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UH1qniOM; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2957850c63bso721805ad.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Nov 2025 10:15:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1764094516; x=1764699316; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=sso79OfNMvfv00Pm6bcCDda+fUEEoSaW6UDcGt5ve70=;
+        b=UH1qniOMFqWSXjOCPS4Kj1aMQCcYPrxB0WcOXtq5A+nP0EBhPRsCAb4B6AQKV7Whov
+         npLPGLVYPdkMY0C1//b5ioVT3MYM/UWPjgV6StEI53981EbLT1CfS+H1d5PsVvbcqoK8
+         EcyQKkwcDKnoQwzduafrWd7yVENMwRkfYAI0NcVwN0rXwIlwcQvN2aSSJe8Ng3/BhsfT
+         B6bFX7n9WObJFeUUukO2GnWtSWjmCvwvApVwwodQRmQvitdHlCSIFU/lI5UBOc9Z+ae3
+         ZlFI8NM5X91kRzvP7WZCZybNuavMa3CxLv5iMsaZ5expCX5GM5nFDYkkn64wLC94RT9G
+         RgFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764094516; x=1764699316;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sso79OfNMvfv00Pm6bcCDda+fUEEoSaW6UDcGt5ve70=;
+        b=CJjJX+JxS13TYjfYnDLm0OcnhFH9Iw3CCvSLbe9s9BI9uMG+7OcPyA5gW3aXYTvdqh
+         IPVnD3DvC+V9C4khMHG80hyPwXmvAnHyR4wTmA0S01CSj7j+6brPGG4wHElS4Blx43oU
+         UYZaDEaR4Y+14ksTKED3Y9kjQUGzWMMNXtzIwW6s4AyY45iXk5TmO2l4bT4yW64g4Uo5
+         koBogrbuOujv6ojM6bxbOsM7/2U3RT5HXD3o4l9hRn4znaKKqPZ5FXVdguDdCf27F0iA
+         mbPxeafxLWYBfwHmBnFMKEDBayWxkjGR7UXhJ6SBLzEwgnY3azemriYJergQRWa5ieps
+         pKhg==
+X-Forwarded-Encrypted: i=1; AJvYcCXb+DQ+5rSjI9A9hUhjUua7WTOC8M5GU8MfdZykUuJS7S9cCaxP6I0t9sXiHuVy9EGnSsm9RYGkZ/1fY2JZ@vger.kernel.org
+X-Gm-Message-State: AOJu0YxE5QtPjiqPASnK+OkJjByq5SebqopaxPAJbLh7M39d7Yf3QKqq
+	NQTy/xF7rtpCmpuQ9t4tNtt83/gm2tF0K5GWSg1kGf7SQzFgpOWNpCaz+jZm5w==
+X-Gm-Gg: ASbGncsYiO/0scpSyo/+VRhdfW9jyR7yry+ieKG4MjHwTnSplj3+Ezjq3O5EWyQwdh2
+	OMnkOXSyr1RngXEUl2PPu5sX6wt4E8NrECsAdrNO/wCR2uMil0CQDEnWTAmThGzx6T45YTSaAAF
+	ev/O4sATlxQQ7i4N99zgeiYshw5FACh96wXPhWeAkLPdhqdQBjJeE3nOeTADDXW/comB916Gqni
+	sK2I8jEM0Ng2lIiQfXrmVcOy4sX1GH0RJezGHowGmbVX3aPwTvIBxaQuwKPpAN3UF4AW1YTcdKP
+	NH+idLdcyL3co8dyJ4jQTszBvYUaYBWQWp5kGjKQe8EDHCHVYBras/UBH4r0nLnaUGyaRVgNMOV
+	uIC2C2xUkO9XXbiLN7gN2JGmVwyF7QC3xaRD/sUbOKZF4zWt6V1z7LxlG/3idoFLUUccgU7ttdB
+	bWDEA=
+X-Google-Smtp-Source: AGHT+IHhwnSH+EhbzLqopvG289UORJlZF0L/iuRleVeBYeQo/a5WAwb4633Or+wV1k8pHUs2duWVkg==
+X-Received: by 2002:a17:902:d4cc:b0:24b:270e:56d4 with SMTP id d9443c01a7336-29b6beede43mr168710035ad.4.1764094515607;
+        Tue, 25 Nov 2025 10:15:15 -0800 (PST)
+Received: from localhost ([2a03:2880:ff:4c::])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29b787406f8sm114918475ad.52.2025.11.25.10.15.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Nov 2025 10:15:14 -0800 (PST)
+From: Joanne Koong <joannelkoong@gmail.com>
+To: miklos@szeredi.hu
+Cc: bernd@bsbernd.com,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH] fuse: fix io-uring list corruption for terminated non-committed requests
+Date: Tue, 25 Nov 2025 10:13:47 -0800
+Message-ID: <20251125181347.667883-1-joannelkoong@gmail.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Tue, 25 Nov 2025 10:00:58 +0000 Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
+When a request is terminated before it has been committed, the request
+is not removed from the queue's list. This leaves a dangling list entry
+that leads to list corruption and use-after-free issues.
 
-> We are in the rather silly situation that we are running out of VMA flags
-> as they are currently limited to a system word in size.
-> 
-> This leads to absurd situations where we limit features to 64-bit
-> architectures only because we simply do not have the ability to add a flag
-> for 32-bit ones.
-> 
-> This is very constraining and leads to hacks or, in the worst case, simply
-> an inability to implement features we want for entirely arbitrary reasons.
-> 
-> This also of course gives us something of a Y2K type situation in mm where
-> we might eventually exhaust all of the VMA flags even on 64-bit systems.
-> 
-> This series lays the groundwork for getting away from this limitation by
-> establishing VMA flags as a bitmap whose size we can increase in future
-> beyond 64 bits if required.
+Remove the request from the queue's list for terminated non-committed
+requests.
 
-All added to mm-unstable, thanks.
+Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+Fixes: c090c8abae4b ("fuse: Add io-uring sqe commit and fetch support")
+---
+ fs/fuse/dev_uring.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
+index 0066c9c0a5d5..7760fe4e1f9e 100644
+--- a/fs/fuse/dev_uring.c
++++ b/fs/fuse/dev_uring.c
+@@ -86,6 +86,7 @@ static void fuse_uring_req_end(struct fuse_ring_ent *ent, struct fuse_req *req,
+ 	lockdep_assert_not_held(&queue->lock);
+ 	spin_lock(&queue->lock);
+ 	ent->fuse_req = NULL;
++	list_del_init(&req->list);
+ 	if (test_bit(FR_BACKGROUND, &req->flags)) {
+ 		queue->active_background--;
+ 		spin_lock(&fc->bg_lock);
+-- 
+2.47.3
+
 
