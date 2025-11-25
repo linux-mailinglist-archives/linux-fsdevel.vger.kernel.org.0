@@ -1,178 +1,173 @@
-Return-Path: <linux-fsdevel+bounces-69794-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69795-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7C1EC8542A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Nov 2025 14:52:53 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3F0AC854D6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Nov 2025 15:02:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5012A3AF9B1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Nov 2025 13:52:32 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8023F351D44
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Nov 2025 14:01:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB15D24C68B;
-	Tue, 25 Nov 2025 13:52:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 534FD327BE6;
+	Tue, 25 Nov 2025 14:00:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tn23i8i/"
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="UWRocTrK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F340238D22
-	for <linux-fsdevel@vger.kernel.org>; Tue, 25 Nov 2025 13:52:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58A04326D79
+	for <linux-fsdevel@vger.kernel.org>; Tue, 25 Nov 2025 14:00:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764078745; cv=none; b=uXihlmB+ZtZWkeLCG4+FNopiUhnEtYDJj67SLaNVf7mxx3s4MVR0yQE2KaGQShy3NJ2zCBhaMvxcpmssiUXBDK3SmMjbMV9yXDrMXUIUTdajwvELeZrbveY5JkkJf+Arxia/aKtY3CgjGEKZ9JpRcm0isLeKe52AVf0jHwr8HfQ=
+	t=1764079207; cv=none; b=KbBWzEKuhAlLAtttD08xyjgebVMUq96P+//dgx7giwV/65GQblUqeeKGjGw2c73Dd+1FtU+8aD9BfTjkeg+6HXVr7noLyuMOKmrConuUMJW/5m0+bVw75blJ7GfQ7phrM8/RV+5Bxyiv+mz4h06xI+28kF3Yegb0OjjGFab2fVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764078745; c=relaxed/simple;
-	bh=f14XKdRLbAIaCqZKzl7GBicWGlFYtiJZvAmLderW2+o=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=JmZCXT0FZAaF8/u4htti8coiP0OCyuj60DpzlFFPdkE/NRjEdINv+LrVAyun19moc33ZPBlztBB0XvcE8bXE7FSpCIzeWYAW2PFtZGd9VrYMzIIGNTyhitlII+gBZpwveX+6yHMwg6JWCBHq0YwR7efyzADoFgVF+OeX+Q8tldQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Tn23i8i/; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4775ae77516so53199745e9.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Nov 2025 05:52:23 -0800 (PST)
+	s=arc-20240116; t=1764079207; c=relaxed/simple;
+	bh=C8XIwA19HrNwiDIWcAp9ATXIQ3+6lATQ5Ks12sTRPrU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=b5Bfv25wzqa/9ox6FW01wcVzromLD8+pd1al7IXyWOGBkJIfDBhBrqDuQiWtMBOBZnCF6e4icoOA5DMbjniiYyZv7B1ucwQ2IZ1qbIkLl4lDWPEi2NDy5TVn0MkSazA/iItjwMFq0vQwTxR+iyB++GEStxeP+ccOIIKHhYtEpzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=UWRocTrK; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-6418b55f86dso9322115a12.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Nov 2025 06:00:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1764078741; x=1764683541; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=kHOesweq24KF358s0vEumPsOYuhj+3ibk2FmOjZUv+4=;
-        b=Tn23i8i/gAj7vqH1s1cK5d5zQm7b7yhVGSi/AE/Ivf2m+vkkXTZSCrGKTRHLTuQTa7
-         +KvNFkU/QqK+sEYwmwE2Yb0UignIKpNtSGsqpMHs/CPGxcYMG/N8qiBawIMySNh8OD9L
-         5CFkyX3nscW9U/c0Ixc1EDHO06SCrhsAKXgyg9EeZTPGrTiWs68K46R3tkvVE17xIQlY
-         0Zwxtkt7V4Jn7BDMVmlugZm3dJgJc/uiAABbZzW2rEcSjTHEnOrqyDjv+jCOU9L7FiMM
-         HA/ARVms1OdAi49sm7BTSYV6aRV0jfm40tamlOr9bgiYxozsxBCGcTL6bgfe+VIuWtOO
-         M3Gg==
+        d=soleen.com; s=google; t=1764079203; x=1764684003; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gPADEzDInP+4EgYdCnNY22SOys+qqvVd9B9lyZm9LUs=;
+        b=UWRocTrKMri7yCN1LuVyAaLVUt6HcfVLWsWlC9rXpDVD1z1xTnlpjqW3EVtOdTRWR0
+         dklfGTyD8cgo07ZHESMoU4KIRcRvhw2U3n9YL+33L1JaxHBe3+PbyHAhekvPTOudEhIU
+         KNdnfRO++KTMV4v1Mg8Kbdpm10tMbRCP6YgrDQUeIvdVcVZS9K9MhenTAThLTsDjueSL
+         lWL5+5Vmg7X0GxC3JEumniwlqz/C1FLdWFqelgJ/5EkAAOCNbkxc2VkKFb3MVsQqv8s9
+         DWlg/9B8bqORvIXMZDhijac7T5Dd35d31eMWFlNkaLBVftZc4LTnp37xbD2betgIScR/
+         yi0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764078741; x=1764683541;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kHOesweq24KF358s0vEumPsOYuhj+3ibk2FmOjZUv+4=;
-        b=lswLYPLyDrGIdN8Lb5o2WoqWZRoKk9CyLS2cWPEc+yg7kgjMXXgHeri24jTu71VzQG
-         dCEq1fzixpVhzqtPUbMay1Aw2PZA49BqW+hCRBQNbBjgZfyFhHOZnfeoY+SbhidsUNaq
-         TVePN9oDbdyOJqxJRg5UPTbpzk53fhUm6Vv9DW4UasIl9pTnjAtDBszabjp6I89exUZN
-         4TzK4UFYs9tM4669Y7dZGkzXDQ1eBa3oPgktCEtk29rVO5K19YZsStxJXhC8AANwjrS2
-         9s86/hjzCAqnHOcdensCtW3aNHZ7Asr3YL+QCde2Im6JWvI/MeR61fZsFNSftMr943o9
-         10pw==
-X-Forwarded-Encrypted: i=1; AJvYcCWH9C9hufqeseb/azwor3oufprxyjupOzhI313ueDkgZQ2/tVnkbkBRUDNK8PrXjfApsGKlmgYsQw3xX6S4@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPiNAY4gEmmYKNrb/ak2iAa1H2QvYiec6oVpXKW2yZEk1EVXZt
-	0szxrhsRImxa484Wh+UEmGxsPRutkeHgR6MpNYKLNZf1qENGNzRzSipx+wKKPQ==
-X-Gm-Gg: ASbGncuZYjYnXAiC0WITXKydQFTJjZMFwTh3+rylzGfHEHYUPEWO9UCA/3pyzGI1AL5
-	70mRbE77CVa4Zwy1OVMp5YvjY4oragEm9kwXQJ0toaddalve0K+MHhteBvKEqkTw8/W72qmcrx0
-	+st7cEDvfEi2ViwIMjIx7vr2kEph54DGLbkQJSF1HITIqtCMtDClYAkKw8t0bDNtRReWkw1+1Di
-	+6DDTdU839NnuSthDAo0p6+Ze/3BwdKl/t1fm+zVEG2JjeUoZpWdL7JFjLZS++/nf6rFcVwRdZt
-	8IpVKCfutKL0itrau9oTFrIYa9UiX6dIy0ISruIyPfKGBhY5WMtKFkfrFdQ1+NnlW3rhGUl5TTg
-	M3+0d9XCM179vII1nTFbXvapcBmvC4R5wdbyYH38fKU8T6mmodcqgecd9wEVKjvfGh3kZy5xTRZ
-	X4YqYd20NBUv0VFRF2zUrwQKQh6lpHwZ3Ftb0KBvVR5GB3gBszoNsmztB/zdjcAJi4vq1oum9v
-X-Google-Smtp-Source: AGHT+IFKl0FSWbmMlOH9ZWfAZWRSmX8BD6ohJLnDHz1PIktPZZElxLDCt4b4SkoYMkjbJJn+KqrIYg==
-X-Received: by 2002:a5d:5d81:0:b0:42b:3ded:298d with SMTP id ffacd0b85a97d-42cc1d2d5ebmr16251211f8f.32.1764078741365;
-        Tue, 25 Nov 2025 05:52:21 -0800 (PST)
-Received: from ?IPV6:2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c? ([2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42cb7fa3a81sm35280457f8f.26.2025.11.25.05.52.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Nov 2025 05:52:20 -0800 (PST)
-Message-ID: <a80a1e7d-e387-448f-8095-0aa22a07af17@gmail.com>
-Date: Tue, 25 Nov 2025 13:52:18 +0000
+        d=1e100.net; s=20230601; t=1764079203; x=1764684003;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=gPADEzDInP+4EgYdCnNY22SOys+qqvVd9B9lyZm9LUs=;
+        b=tUqidWFynEdmLQLYkpR7CBR+FKdraMpnBaa4cepAg99SNVCbNX2JCp/IF90WVaEaE5
+         7Nw21DCcglbfVw8hQ6pQuopmrh6TZ/ENBASaom4yQ3n3ziJB89CF49wxNqFfSGWRuHr7
+         UV3z9aZJrz+0ro84BUsarkHM8miYGnT27Lp3ahU/LW5HVDZUX/p0WYvRRIchZlMmCKfj
+         Un6AgYcuCejXqNooOmL4Zb7Q4PVpP1m+qJE0Mpdkphk90CSj/VHjFOjzcPmFi50KjQM4
+         dy++hERJFkcLZHHSoASgRKfnCONJMCqltZvjyNq7ja31RhxNtlm/qulGH5zP85K3Td8U
+         a3Vw==
+X-Forwarded-Encrypted: i=1; AJvYcCVkqVGH2mXTIdS9+0M6Ce+GQ7HklbA1s4s9DMCZnIBXIu0Ieftmt0U2vP56DHni+IuDp8U5s4ybIsh/+Dxq@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1ek6ImngqK0NRqvT8QesOMr1U6OkOS+k5zy+45zR2CygE8pGY
+	LEMWD0tmZySNEJoetWWWS1OiYxG2oaaygRWZKzxcAlDR2MNzgZbnUOT/0GNxkm3UvnlIa9jIxtd
+	4K2E+eyG2uneU6sgmYDoXybcuzgZKq7UdEWu9DyLI4w==
+X-Gm-Gg: ASbGncsBbmdu//b7DaYIVWG53ofsoMfhMNwzMmaG+Y5bfhzwomynjF5iGhBKnDpJWED
+	0uM9tRvFBq70EenB48jv3Wv8FjuzbQTj9ZAjDDvBxNzO89xA+lyBlAB5Po5v0BNHUHBZ6DSfEae
+	v5sQvVSQEovMiqEYXzkvvOZ1MlmvDw/W36j4amDnH+xJFrqZtKIGcaugLeuzSDEcjsaDHC4FcjS
+	ivbHlreT60ZMDkwv9U6sRUgkk8kOeHUcNwaJO5IFIsbRJAbMfj/11hAvttrpn/X4shR
+X-Google-Smtp-Source: AGHT+IGQvP3sp8P5QdaHoU5hl5stQ/R78sD1t68LmqHbhIYjocvMZQNdcinW6IeCcPNYJc/WOurXaWpr8WBXOL4qx2M=
+X-Received: by 2002:a05:6402:35d5:b0:643:18c2:123b with SMTP id
+ 4fb4d7f45d1cf-645544420fcmr15551385a12.3.1764079203274; Tue, 25 Nov 2025
+ 06:00:03 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Pavel Begunkov <asml.silence@gmail.com>
-Subject: Re: [RFC v2 00/11] Add dmabuf read/write via io_uring
-To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- linux-block@vger.kernel.org, io-uring@vger.kernel.org
-Cc: Vishal Verma <vishal1.verma@intel.com>, tushar.gohad@intel.com,
- Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
- Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- Sumit Semwal <sumit.semwal@linaro.org>, linux-kernel@vger.kernel.org,
- linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
- linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linaro-mm-sig@lists.linaro.org
-References: <cover.1763725387.git.asml.silence@gmail.com>
- <fd10fe48-f278-4ed0-b96b-c4f5a91b7f95@amd.com>
- <905ff009-0e02-4a5b-aa8d-236bfc1a404e@gmail.com>
- <53be1078-4d67-470f-b1af-1d9ac985fbe2@amd.com>
-Content-Language: en-US
-In-Reply-To: <53be1078-4d67-470f-b1af-1d9ac985fbe2@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20251122222351.1059049-1-pasha.tatashin@soleen.com>
+ <20251122222351.1059049-3-pasha.tatashin@soleen.com> <aSLvo0uXLOaE2JW6@kernel.org>
+ <CA+CK2bCj2OAQjM-0rD+DP0t4v71j70A=HHdQ212ASxX=xoREXw@mail.gmail.com>
+ <aSMXUKMhroThYrlU@kernel.org> <CA+CK2bABbDYfu8r4xG3n30HY4cKFe74_RJP5nYJeOtAOOj+OUQ@mail.gmail.com>
+ <aSWqQWbeijvruDqf@kernel.org>
+In-Reply-To: <aSWqQWbeijvruDqf@kernel.org>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Tue, 25 Nov 2025 08:59:26 -0500
+X-Gm-Features: AWmQ_bkHTYlHlGxKmBiHNdm6t2thzT9HecweCk3JjWHiloeJgWPSmfHodz7nV6A
+Message-ID: <CA+CK2bC2yptSzT+FJaef_K3bvOeDmmOzZVf3VakaKn6r7qk+dQ@mail.gmail.com>
+Subject: Re: [PATCH v7 02/22] liveupdate: luo_core: integrate with KHO
+To: Mike Rapoport <rppt@kernel.org>
+Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com, 
+	dmatlack@google.com, rientjes@google.com, corbet@lwn.net, 
+	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, 
+	ojeda@kernel.org, aliceryhl@google.com, masahiroy@kernel.org, 
+	akpm@linux-foundation.org, tj@kernel.org, yoann.congal@smile.fr, 
+	mmaurer@google.com, roman.gushchin@linux.dev, chenridong@huawei.com, 
+	axboe@kernel.dk, mark.rutland@arm.com, jannh@google.com, 
+	vincent.guittot@linaro.org, hannes@cmpxchg.org, dan.j.williams@intel.com, 
+	david@redhat.com, joel.granados@kernel.org, rostedt@goodmis.org, 
+	anna.schumaker@oracle.com, song@kernel.org, linux@weissschuh.net, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
+	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com, 
+	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
+	rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org, 
+	cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com, 
+	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com, 
+	aleksander.lobakin@intel.com, ira.weiny@intel.com, 
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
+	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net, 
+	brauner@kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	saeedm@nvidia.com, ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com, 
+	leonro@nvidia.com, witu@nvidia.com, hughd@google.com, skhawaja@google.com, 
+	chrisl@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/24/25 14:17, Christian König wrote:
-> On 11/24/25 12:30, Pavel Begunkov wrote:
->> On 11/24/25 10:33, Christian König wrote:
->>> On 11/23/25 23:51, Pavel Begunkov wrote:
->>>> Picking up the work on supporting dmabuf in the read/write path.
->>>
->>> IIRC that work was completely stopped because it violated core dma_fence and DMA-buf rules and after some private discussion was considered not doable in general.
->>>
->>> Or am I mixing something up here?
->>
->> The time gap is purely due to me being busy. I wasn't CC'ed to those private
->> discussions you mentioned, but the v1 feedback was to use dynamic attachments
->> and avoid passing dma address arrays directly.
->>
->> https://lore.kernel.org/all/cover.1751035820.git.asml.silence@gmail.com/
->>
->> I'm lost on what part is not doable. Can you elaborate on the core
->> dma-fence dma-buf rules?
-> 
-> I most likely mixed that up, in other words that was a different discussion.
-> 
-> When you use dma_fences to indicate async completion of events you need to be super duper careful that you only do this for in flight events, have the fence creation in the right order etc...
+On Tue, Nov 25, 2025 at 8:08=E2=80=AFAM Mike Rapoport <rppt@kernel.org> wro=
+te:
+>
+> On Sun, Nov 23, 2025 at 01:23:51PM -0500, Pasha Tatashin wrote:
+> > On Sun, Nov 23, 2025 at 9:17=E2=80=AFAM Mike Rapoport <rppt@kernel.org>=
+ wrote:
+> > > > > > +static int __init liveupdate_early_init(void)
+> > > > > > +{
+> > > > > > +     int err;
+> > > > > > +
+> > > > > > +     err =3D luo_early_startup();
+> > > > > > +     if (err) {
+> > > > > > +             luo_global.enabled =3D false;
+> > > > > > +             luo_restore_fail("The incoming tree failed to ini=
+tialize properly [%pe], disabling live update\n",
+> > > > > > +                              ERR_PTR(err));
+> > > > >
+> > > > > What's wrong with a plain panic()?
+> > > >
+> > > > Jason suggested using the luo_restore_fail() function instead of
+> > > > inserting panic() right in code somewhere in LUOv3 or earlier. It
+> > > > helps avoid sprinkling panics in different places, and also in case=
+ if
+> > > > we add the maintenance mode that we have discussed in LUOv6, we cou=
+ld
+> > > > update this function as a place where that mode would be switched o=
+n.
+> > >
+> > > I'd agree if we were to have a bunch of panic()s sprinkled in the cod=
+e.
+> > > With a single one it's easier to parse panic() than lookup what
+> > > luo_restore_fail() means.
+> >
+> > The issue is that removing luo_restore_fail() removes the only
+> > dependency on luo_internal.h in this patch. This would require me to
+> > move the introduction of that header file to a later patch in the
+> > series, which is difficult to handle via a simple fix-up.
+> >
+> > Additionally, I still believe the abstraction is cleaner for future
+> > extensibility (like the maintenance mode), even if it currently wraps
+> > a single panic (which is actually a good thing, I have cleaned-up
+> > things substantially to have  a single point  of panic since v2).
+> > Therefore, it is my preference to keep it as is, unless a full series
+> > is needed to be re-sent.
+>
+> Well, let's keep it. If we won't see new users or extensions to
+> luo_restore_fail() we can kill it later.
 
-I'm curious, what can happen if there is new IO using a
-move_notify()ed mapping, but let's say it's guaranteed to complete
-strictly before dma_buf_unmap_attachment() and the fence is signaled?
-Is there some loss of data or corruption that can happen?
+SGTM.
 
-sg_table = map_attach()         |
-move_notify()                   |
-   -> add_fence(fence)           |
-                                 | issue_IO(sg_table)
-                                 | // IO completed
-unmap_attachment(sg_table)      |
-signal_fence(fence)             |
-
-> For example once the fence is created you can't make any memory allocations any more, that's why we have this dance of reserving fence slots, creating the fence and then adding it.
-
-Looks I have some terminology gap here. By "memory allocations" you
-don't mean kmalloc, right? I assume it's about new users of the
-mapping.
-
->>> Since I don't see any dma_fence implementation at all that might actually be the case.
->>
->> See Patch 5, struct blk_mq_dma_fence. It's used in the move_notify
->> callback and is signaled when all inflight IO using the current
->> mapping are complete. All new IO requests will try to recreate the
->> mapping, and hence potentially wait with dma_resv_wait_timeout().
-> 
-> Without looking at the code that approach sounds more or less correct to me.
-> 
->>> On the other hand we have direct I/O from DMA-buf working for quite a while, just not upstream and without io_uring support.
->>
->> Have any reference?
-> 
-> There is a WIP feature in AMDs GPU driver package for ROCm.
-> 
-> But that can't be used as general purpose DMA-buf approach, because it makes use of internal knowledge about how the GPU driver is using the backing store.
-
-Got it
-
-> BTW when you use DMA addresses from DMA-buf always keep in mind that this memory can be written by others at the same time, e.g. you can't do things like compute a CRC first, then write to backing store and finally compare CRC.
-
-Right. The direct IO path also works with user pages, so the
-constraints are similar in this regard.
-
--- 
-Pavel Begunkov
-
+>
+> > Pasha
+>
+> --
+> Sincerely yours,
+> Mike.
 
