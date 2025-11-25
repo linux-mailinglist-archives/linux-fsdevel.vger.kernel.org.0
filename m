@@ -1,207 +1,225 @@
-Return-Path: <linux-fsdevel+bounces-69758-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69759-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBF11C84665
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Nov 2025 11:14:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 083A8C8465C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Nov 2025 11:14:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3A36A34CCA3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Nov 2025 10:14:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACAA43AB866
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Nov 2025 10:14:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 306522EE617;
-	Tue, 25 Nov 2025 10:13:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72DD2CA4E;
+	Tue, 25 Nov 2025 10:13:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="UNMXJKE/"
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="RKDGPsYn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E7662F0C49;
-	Tue, 25 Nov 2025 10:13:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CBDA2EC54A
+	for <linux-fsdevel@vger.kernel.org>; Tue, 25 Nov 2025 10:13:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764065626; cv=none; b=dHqir4tjuZvJboO2dbmIdpDG0Hy3Omnp5IgqW5tvzsmZYAD3nF1qNnjnR13NluVMVYXCP2AU6tth6CW9YE/dIrGVw7XN72ob/2g29cJ/G6NZ+lQKSJvayUyvPrUP91elMR9WGpf5h2eneY10sD04+skjXTP558AD0ItdOsEDSuA=
+	t=1764065637; cv=none; b=XW71GRwkZSq0muuKD8s0xxeQj64qoRn5op88db9+iohvbzLxc2ZCtL6yaTnY3xNM+Rrd4RPBcbiFsQCWFVbX+W01iMeu6iG/2XGO+MOxNy7RyzxqoIiVMv9pk1KFErUv8O1qToYiWEUhnmCBz8cPNBiBPibyD/V3AkEov81pJPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764065626; c=relaxed/simple;
-	bh=s2XuAC5KC3E35qt2g9Uo0PrwWLAKZuxfMW1Ta6YzoWI=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=bR0F7ch8GkRA37iGkK1mBBsnW14vZRcMTjVV/3EPTinx6GzDqltegEzsa03c3CUOQ95L86hVSXVyOETu0Vc8rjZVxfs2YzX6epvRgpo4Dg7OM9hoegH1dstDooJRQLg4PanUWEyCC7rm4YBYa+GXuz8mOdkBQrYtNdhxj/xgYWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=UNMXJKE/; arc=none smtp.client-ip=115.124.30.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1764065619; h=Message-ID:Date:MIME-Version:Subject:From:To:Content-Type;
-	bh=Cq9yC417RMtpG9jYNWXznPbgLjOjJKcodhThHSBGqMI=;
-	b=UNMXJKE/uoVOgOaDyxYJpmDPEFsqdW5tTagdrtjx8+fIQwdrzJzYGa3wG/j+JQhfBIl9hSWEHVArjFsCFsnlO+qBklYlBEO/XkYvu5oOEZzOWwpOHgFF7QwaRQGetdKvVaPb/aDOr4LYLPFoWlc15L+HNspJx1Guy4svdD0gPtg=
-Received: from 30.221.132.26(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WtNLdeW_1764065618 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 25 Nov 2025 18:13:38 +0800
-Message-ID: <85b6c0a6-9643-450c-845e-49110ff1a9eb@linux.alibaba.com>
-Date: Tue, 25 Nov 2025 18:13:37 +0800
+	s=arc-20240116; t=1764065637; c=relaxed/simple;
+	bh=FYWIni38RTzd1CvEvbvTzALDqCohw7fzt/zsirLe/pA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lOJ9g+SkiWfA0ZshHVXhFzuuQG82v18sibIhqrBGwX/ZPElL3CFyc0mJVAlQefw4zVaQ+prD3dByUqTs5v0/SSvDct8/oBn+jeKQ8FiifunDE1xXxveZFkjXBYuwwa/GmjAa6owqEgP+sVvqezU/aso7jQwBcXTb2cwgQEyoRu0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=RKDGPsYn; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-47798ded6fcso32138285e9.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Nov 2025 02:13:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1764065634; x=1764670434; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=akkccM3IvNNQmmkmFRy2a+JX92ormoEOBN5rH1qdfnI=;
+        b=RKDGPsYnUV2HWANrD3ovjKxAm31exrPuNP8AodnYQcyHx9CMwIGD9s/5gtzaH4rZiH
+         6sfH6ahy5Jn8mbeg49xiTgzld7gBrvw7ukmrAAuo+/bPY7va7o81EHRprrUknucRZMLd
+         wWxOpdtOIuNwBB3dmvtz3ziCSZCakN/Gl4ccMb7XhUl7ti5Gjskk+psVSrLZKIYiQuaN
+         lEbSrk9frgl/EX49haUN+CJWDs2JqD/Uq1SflXtVh/L3VC+8TUD4QysEZue9FREtOfxo
+         QkZe9CWc8VTrzUItjeVLlitNv7AANr/oVjtS7Lze2N9kG/Y84eMqOmNpwiT7wBcoPE4I
+         tZbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764065634; x=1764670434;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=akkccM3IvNNQmmkmFRy2a+JX92ormoEOBN5rH1qdfnI=;
+        b=kMPNbOVJAEGQkuc4urqKxqqvwwARSEo9IihwmnVvZ9+35ucPI3peCP2IIda2URvM+2
+         ghSOiW2/hLB4vgOzfDzhRMycrMMLA9VV8C0IxVK9Tc3RUoqmXzBBsRr8NkyWea/Q3nTk
+         OP5m+56/sjWAQy+LenFTpQgsRRLKI4m3jEtH6cvtTc+yZX5phLhNs0Gnx6UBfZkihztN
+         3tioyrHhnLDfFVH5Bqa9PYRo/FDcHyFtZY0Ca4DAVbz50WYIX+iFD5uwC8sJR4gaouWL
+         9WV1r8CJq86CEfjtM9Y2t2Tq3FFXSRdxJtKCvAjf/+b1guQ1GNTZBBrxdLWIXxHmWJsp
+         f1eA==
+X-Forwarded-Encrypted: i=1; AJvYcCXjJxzY7rBStjfMV27bVk1tA6XEIWdGfICxciXia7D8//szLJwLlHrl3h+Gq6+M0z8/joS1albfpLDq80k2@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzaMjl7KFTdQeNHvWW7V8uKzkISQNivAH9p9KURe+xRB3BHzmK
+	9naFB/0b7OBz/eUQXtvj8o6iFLFtB/neaNniQV5DMMud7pbKl1mfd5HMu2ZrY8xP1A==
+X-Gm-Gg: ASbGncspAlyRWVlTN0rj+Hr1T2HMhcdbE/4Fsp5b/P66oePnooj4JKqxnSyhpkyKHdX
+	UcgGss7cDb7+QWAIA21cXfCXpp9Z7z4NINIIS56Fy3ZEsvE/LOcrOmLqq+R98YFCj8qTtbG8+N7
+	ITIoFpbuN+v3WVizJvtuXFB+btcaocn7I4YTxsUOMYo4Wb83ugUTdo8sKEVEZJ8+Kc0vq7NQcxj
+	VgMyHsNyLXCJ2L30yTmX2x1FINv4tdb8co1BJQ64bFAJsbiWZdDK1/+fmreYfiJdoND8SG/rMaP
+	s690/jlXbP31jwy65wUtsWX45FOHZcpQTuCi17DFO+cBFtjERNRDv0N8LKqUGZ5yTBoiZLKG3AK
+	Eyy8CcQMrbAY51Q/dRoiEO0pEFM7fsXt+gq464VMbx4IyFRvvgsLTvFVHgHc49pxJrmqJSYzb2/
+	9oTJet86pGfJhrxjaoXYNF8AKg7+Uc
+X-Google-Smtp-Source: AGHT+IEghEzgUX7Y0DHR7Corjv/jFDgAqklVg667PjjHhJI7QMm8NG+RfxT3xnDSPr2BmlCO19kDgg==
+X-Received: by 2002:a05:600c:a08:b0:477:aed0:f401 with SMTP id 5b1f17b1804b1-477c11254damr147976645e9.23.1764065633880;
+        Tue, 25 Nov 2025 02:13:53 -0800 (PST)
+Received: from autotest-wegao.qe.prg2.suse.org ([2a07:de40:b240:0:2ad6:ed42:2ad6:ed42])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42cb7fb8ff3sm35140056f8f.29.2025.11.25.02.13.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Nov 2025 02:13:53 -0800 (PST)
+Date: Tue, 25 Nov 2025 10:13:51 +0000
+From: Wei Gao <wegao@suse.com>
+To: kernel test robot <oliver.sang@intel.com>
+Cc: Andrei Vagin <avagin@google.com>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	lkp@intel.com, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, oe-lkp@lists.linux.dev,
+	ltp@lists.linux.it
+Subject: Re: [LTP] [linus:master] [fs/namespace] 78f0e33cd6:
+ ltp.listmount04.fail
+Message-ID: <aSWBX1urcixS1Fl8@autotest-wegao.qe.prg2.suse.org>
+References: <202511251629.ccc5680d-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: calling into file systems directly from ->queue_rq, was Re:
- [PATCH V5 0/6] loop: improve loop aio perf by IOCB_NOWAIT
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-To: Ming Lei <ming.lei@redhat.com>
-Cc: Christoph Hellwig <hch@infradead.org>, linux-block@vger.kernel.org,
- Mikulas Patocka <mpatocka@redhat.com>,
- Zhaoyang Huang <zhaoyang.huang@unisoc.com>,
- Dave Chinner <dchinner@redhat.com>, linux-fsdevel@vger.kernel.org,
- Jens Axboe <axboe@kernel.dk>
-References: <20251015110735.1361261-1-ming.lei@redhat.com>
- <aSP3SG_KaROJTBHx@infradead.org> <aSQfC2rzoCZcMfTH@fedora>
- <aSQf6gMFzn-4ohrh@infradead.org> <aSUbsDjHnQl0jZde@fedora>
- <db90b7b3-bf94-4531-8329-d9e0dbc6a997@linux.alibaba.com>
- <aSV0sDZGDoS-tLlp@fedora>
- <00bc891e-4137-4d93-83a5-e4030903ffab@linux.alibaba.com>
-In-Reply-To: <00bc891e-4137-4d93-83a5-e4030903ffab@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <202511251629.ccc5680d-lkp@intel.com>
 
+On Tue, Nov 25, 2025 at 04:33:35PM +0800, kernel test robot wrote:
+>=20
+>=20
+> Hello,
+>=20
+> kernel test robot noticed "ltp.listmount04.fail" on:
+>=20
+> commit: 78f0e33cd6c939a555aa80dbed2fec6b333a7660 ("fs/namespace: correctl=
+y handle errors returned by grab_requested_mnt_ns")
+> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
+>=20
+> [test failed on      linus/master fd95357fd8c6778ac7dea6c57a19b8b182b6e91=
+f]
+> [test failed on linux-next/master d724c6f85e80a23ed46b7ebc6e38b527c09d64f=
+5]
+>=20
+> in testcase: ltp
+> version:=20
+> with following parameters:
+>=20
+> 	disk: 1SSD
+> 	fs: btrfs
+> 	test: syscalls-06/listmount04
+>=20
+>=20
+>=20
+> config: x86_64-rhel-9.4-ltp
+> compiler: gcc-14
+> test machine: 4 threads 1 sockets Intel(R) Core(TM) i3-3220 CPU @ 3.30GHz=
+ (Ivy Bridge) with 8G memory
+>=20
+> (please refer to attached dmesg/kmsg for entire log/backtrace)
+>=20
+>=20
+>=20
+> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
+ion of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <oliver.sang@intel.com>
+> | Closes: https://lore.kernel.org/oe-lkp/202511251629.ccc5680d-lkp@intel.=
+com
+>=20
+> 2025-11-20 21:35:09 export LTP_RUNTIME_MUL=3D2
+> 2025-11-20 21:35:09 export LTPROOT=3D/lkp/benchmarks/ltp
+> 2025-11-20 21:35:09 kirk -U ltp -f temp_single_test -d /fs/sdb1/tmpdir
+> Host information
+>=20
+> 	Hostname:   lkp-ivb-d04
+> 	Python:     3.13.5 (main, Jun 25 2025, 18:55:22) [GCC 14.2.0]
+> 	Directory:  /fs/sdb1/tmpdir/kirk.root/tmp9k8rfwr2
+>=20
+> Connecting to SUT: default
+>=20
+> Starting suite: temp_single_test
+> ---------------------------------
+> =1B[1;37mlistmount04: =1B[0m=1B[1;31mfail=1B[0m  (0.016s)
+>                                                                          =
+                                                      =20
+> Execution time: 0.085s
+>=20
+> 	Suite:       temp_single_test
+> 	Total runs:  1
+> 	Runtime:     0.016s
+> 	Passed:      7
+> 	Failed:      1
+> 	Skipped:     0
+> 	Broken:      0
+> 	Warnings:    0
+> 	Kernel:      Linux 6.18.0-rc1-00119-g78f0e33cd6c9 #1 SMP PREEMPT_DYNAMIC=
+ Fri Nov 21 04:59:36 CST 2025
+> 	Machine:     unknown
+> 	Arch:        x86_64
+> 	RAM:         6900660 kB
+> 	Swap:        0 kB
+> 	Distro:      debian 13
+>=20
+> Disconnecting from SUT: default
+> Session stopped
+>=20
+>=20
+>=20
+> The kernel config and materials to reproduce are available at:
+> https://download.01.org/0day-ci/archive/20251125/202511251629.ccc5680d-lk=
+p@intel.com
+>=20
+>=20
+>=20
+> --=20
+> 0-DAY CI Kernel Test Service
+> https://github.com/intel/lkp-tests/wiki
+>=20
+>=20
+> --=20
+> Mailing list info: https://lists.linux.it/listinfo/ltp
 
+I guess LTP failed message is "listmount04.c:128: TFAIL: invalid mnt_id_req=
+=2Espare expected EINVAL: EBADF (9) " ?  Since i have not find LTP failure =
+log in this email thread.
 
-On 2025/11/25 17:39, Gao Xiang wrote:
-> Hi Ming,
-> 
-> On 2025/11/25 17:19, Ming Lei wrote:
->> On Tue, Nov 25, 2025 at 03:26:39PM +0800, Gao Xiang wrote:
->>> Hi Ming and Christoph,
->>>
->>> On 2025/11/25 11:00, Ming Lei wrote:
->>>> On Mon, Nov 24, 2025 at 01:05:46AM -0800, Christoph Hellwig wrote:
->>>>> On Mon, Nov 24, 2025 at 05:02:03PM +0800, Ming Lei wrote:
->>>>>> On Sun, Nov 23, 2025 at 10:12:24PM -0800, Christoph Hellwig wrote:
->>>>>>> FYI, with this series I'm seeing somewhat frequent stack overflows when
->>>>>>> using loop on top of XFS on top of stacked block devices.
->>>>>>
->>>>>> Can you share your setting?
->>>>>>
->>>>>> BTW, there are one followup fix:
->>>>>>
->>>>>> https://lore.kernel.org/linux-block/20251120160722.3623884-1-ming.lei@redhat.com/
->>>>>>
->>>>>> I just run 'xfstests -q quick' on loop on top of XFS on top of dm-stripe,
->>>>>> not see stack overflow with the above fix against -next.
->>>>>
->>>>> This was with a development tree with lots of local code.  So the
->>>>> messages aren't applicable (and probably a hint I need to reduce my
->>>>> stack usage).  The observations is that we now stack through from block
->>>>> submission context into the file system write path, which is bad for a
->>>>> lot of reasons.  journal_info being the most obvious one.
->>>>>
->>>>>>> In other words:  I don't think issuing file system I/O from the
->>>>>>> submission thread in loop can work, and we should drop this again.
->>>>>>
->>>>>> I don't object to drop it one more time.
->>>>>>
->>>>>> However, can we confirm if it is really a stack overflow because of
->>>>>> calling into FS from ->queue_rq()?
->>>>>
->>>>> Yes.
->>>>>
->>>>>> If yes, it could be dead end to improve loop in this way, then I can give up.
->>>>>
->>>>> I think calling directly into the lower file system without a context
->>>>> switch is very problematic, so IMHO yes, it is a dead end.
->>> I've already explained the details in
->>> https://lore.kernel.org/r/8c596737-95c1-4274-9834-1fe06558b431@linux.alibaba.com
->>>
->>> to zram folks why block devices act like this is very
->>> risky (in brief, because virtual block devices don't
->>> have any way (unlike the inner fs itself) to know enough
->>> about whether the inner fs already did something without
->>> context save (a.k.a side effect) so a new task context
->>> is absolutely necessary for virtual block devices to
->>> access backing fses for stacked usage.
->>>
->>> So whether a nested fs can success is intrinsic to
->>> specific fses (because either they assure no complex
->>> journal_info access or save all effected contexts before
->>> transiting to the block layer.  But that is not bdev can
->>> do since they need to do any block fs.
->>
->> IMO, task stack overflow could be the biggest trouble.
->>
->> block layer has current->blk_plug/current->bio_list, which are
->> dealt with in the following patches:
->>
->> https://lore.kernel.org/linux-block/20251120160722.3623884-4-ming.lei@redhat.com/
->> https://lore.kernel.org/linux-block/20251120160722.3623884-5-ming.lei@redhat.com/
-> 
-> I think it's the simplist thing for this because the
-> context of "current->blk_plug/current->bio_list" is
-> _owned_ by the block layer, so of course the block
-> layer knows how to (and should) save and restore
-> them.
-> 
->>
->> I am curious why FS task context can't be saved/restored inside block
->> layer when calling into new FS IO? Given it is just per-task info.
-> 
-> The problem is a block driver don't know what the upper FS
-> (sorry about the terminology) did before calling into block
-> layer (the task_struct and journal_info side effect is just
-> the obvious one), because all FSes (mainly the write path)
-> doesn't assume the current context will be transited into
-> another FS context, and it could introduce any fs-specific
-> context before calling into the block layer.
-> 
-> So it's the fs's business to save / restore contexts since
-> they change the context and it's none of the block layer
-> business to save and restore because the block device knows
-> nothing about the specific fs behavior, it should deal with
-> all block FSes.
-> 
-> Let's put it into another way, thinking about generic
-> calling convention[1], which includes caller-saved contexts
-> and callee-saved contexts.  I think the problem is here
-> overally similiar, for loop devices, you know none of lower
-> or upper FS behaves (because it doesn't directly know either
-> upper or lower FS contexts), so it should either expect the
-> upper fs to save all the contexts, or to use a new kthread
-> context (to emulate userspace requests to FS) for lower FS.
+Base on kernel change remove spare and add new mnt_ns_fd but LTP listmount0=
+4 still set spare.
+I suppose LTP case need update base latest change of kernel?
 
-Either expect a) the upper fs to save all the changed
-contexts (because only upper fs knows what it did) so the
-current context can be reused, or b) to use a new kthread
-context (just like forking a new process -- to emulate an
-entirely clean userspace requests to FS) for lower FS
-since that's what modern multi-task OSes' magic to isolate
-all possible contexts using the task concept.
+Kernel:
+  */
+ struct mnt_id_req {
+  __u32 size;
+- __u32 spare;                                   <<<<<<<<
++ __u32 mnt_ns_fd;                          <<<<<<<<
+  __u64 mnt_id;
+  __u64 param;
+  __u64 mnt_ns_id;
 
-I'm not saying a) is impossible but it needs a formal
-contract (a strict convention [e.g. save all changed contexts
-before submit_bio()] or new save/restore hooks to call on
-demand) to let all filesystems know they now need to deal
-with nested fses, rather than just crossing the line to
-save non-block contexts in the block driver itself, because
-it cannot be exhaustive.
-
-Just my opinion on this for reference.
-
-Thanks,
-Gao Xiang
-
-> 
-> [1] https://en.wikipedia.org/wiki/Calling_convention
-> 
-> 
-> Thanks,
-> Gao Xiang
-> 
->>
->>
->> Thanks,
->> Ming
-> 
+LTP case:
+ {
+=2Ereq_usage =3D 1,
+=2Esize =3D MNT_ID_REQ_SIZE_VER0,
+=2Espare =3D -1,                                              <<<<<<<
+=2Emnt_id =3D LSMT_ROOT,
+=2Emnt_ids =3D mnt_ids,
+=2Enr_mnt_ids =3D MNT_SIZE,
+=2Eexp_errno =3D EINVAL,
+=2Emsg =3D "invalid mnt_id_req.spare",
+},
 
 
