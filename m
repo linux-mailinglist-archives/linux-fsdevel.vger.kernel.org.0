@@ -1,90 +1,90 @@
-Return-Path: <linux-fsdevel+bounces-69886-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69888-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id EADE9C89B04
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Nov 2025 13:10:37 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD87CC89C49
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Nov 2025 13:30:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4AA874E99D4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Nov 2025 12:10:04 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 605AD35125E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Nov 2025 12:30:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9099326941;
-	Wed, 26 Nov 2025 12:09:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28DE4328B5E;
+	Wed, 26 Nov 2025 12:30:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ePP8B3nD"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="i5BdkKLV"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 855A1325700;
-	Wed, 26 Nov 2025 12:09:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42AEF31E0FA;
+	Wed, 26 Nov 2025 12:30:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764158996; cv=none; b=G8xZQvFiuEo2BZ4ViTnGuNpxLXbaVqZTsoaDJbwlEBG9vtM31C0ms1OEin6a2GuYNr7m5JMyjCQns3h5lbbWZzihfGGBlVcYFbmy/l9dZdLpUwuYs0f4BmST6YtZZgFfJPgVZjN2KPKT56EDUIHoG3Q5f0DXkcGZyBbj4/xOpoU=
+	t=1764160222; cv=none; b=opUwq6mG3ihPmQCm4ZznJ5plU8bOYtWH87bwiQ/Nb2ybTJ4NexM7W6xWRYe8D1Y2a+a14kfw6DTmSjr4A9WPAYiDuioiBDgWX0h4AKYTseNhbFkI6DCh38zOhkh2H1FpSAS92L3NjGkjDIOBaCYNXJ7HrtKtQB0NsMc2q0lLI4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764158996; c=relaxed/simple;
-	bh=MoJC6yFzFLFnqYxssN4YySjFA03O/+deE4wnoVXA8xo=;
+	s=arc-20240116; t=1764160222; c=relaxed/simple;
+	bh=rBWTlq/9ES9o/3FgpX9/DDUZ1liNvZVvQTVCMFJQTrE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IEOZOUGGtioEzNjqtSI45XcjkFoGEdWwYEHcMS6/0OjZUcui8MYZswv55YarzwLfMjQsYpFsUcjlla4C8AYwpmllEv/+P5VT3kYYtjXKFv6hNPIdThs2yII58vJfrxAhYwJ3bmQjD/C/P1xyqUrgbLlgoJ9IW018h0viUDbWw2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ePP8B3nD; arc=none smtp.client-ip=148.163.156.1
+	 Content-Type:Content-Disposition:In-Reply-To; b=a4lKnJNFQdMCNED4czwZg0fBYzFHoYuHnssxTNXH8op5LUt9WxaE+4u3icnoGDwTlbiSQFyII51/OWW5+04g19AxIILMr9Px21W2ZEIL7sY/O4pGyO2OP1qFJIW0gPy3qCgOV5MpRm8iKcv1JjP9GoWUH43MHokk/dYjHLT6vuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=i5BdkKLV; arc=none smtp.client-ip=148.163.156.1
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5AQ2PXce008804;
-	Wed, 26 Nov 2025 12:04:31 GMT
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5AQ8DfE5005649;
+	Wed, 26 Nov 2025 12:24:55 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
 	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=jLLwbUfdetc16e9S7Qa1CyqcBbxf4J
-	kjY2Vk26905G0=; b=ePP8B3nDk8MN9uPxW903D7duJkjqFsp81wAPbXwxLlpnJn
-	Je+ardB+3c0U6xC5qkkcPup1ekLMYxbL/YJdSItBOqR0KCQmhs12w+XVWt9yzedX
-	fqsH5F9k8VZq7M1bdfVpqMDxoiFLS61VhDjjvNyEKiuZ+n11bJBEb/BtWUUtjzTF
-	h6TfVQvsYdXuj+TMKyHhFPJvE6SP9uJmWdRl0Fy21Qru24qAYs0MjKa71Tt8DWT4
-	nAFNAaRiHLwd5yUtxoJml48LkjKZujX9dsSuRqEV+ImcPdaHG9Fq/zIuYuV9bU14
-	mcm8w8vhjQgi5KqRn80FZpAT0aKws+vsIY4JyxqA==
+	:references:subject:to; s=pp1; bh=hEtAAnqed7FOxj61IA+IWbXOkiXhD5
+	JPYgCoARi8Bbg=; b=i5BdkKLVZa+uplsJsMrQMENsNA05heqzhh0XjBjUqKvqS7
+	yactFSzQJ+zvNeLjYqH6AFikzdVTI68NJr7S0zEhZh0mtOeblPDT0bEV8sWDNhnb
+	wuliYBx+86ytSiG085ge3FzeI1IBsYiidJdiy4gL01lWJh1Zn+3r2myCxcYnq1ri
+	RjrX5ui1wf4XruNkb5UMKOF/+2ij695TQ6PQizh8Ep8IGouUCSEM80deQ4KWid/+
+	kjlYz6hcDsNce77wjXvtrGsk3cd+e1VeQSu0R5I4NNAzynNeH/lmI1+AL+m5WPTi
+	Vkb2TkTSd/8g6ZfPMiEvyEJeXnyD9bKCjNFOSGJg==
 Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4ak4w9kx8t-1
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4ak4pj45b5-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Nov 2025 12:04:31 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5AQBu1rS011774;
-	Wed, 26 Nov 2025 12:04:30 GMT
+	Wed, 26 Nov 2025 12:24:54 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5AQC4fX1013034;
+	Wed, 26 Nov 2025 12:24:54 GMT
 Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4ak4w9kx8q-1
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4ak4pj45b0-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Nov 2025 12:04:30 +0000 (GMT)
+	Wed, 26 Nov 2025 12:24:54 +0000 (GMT)
 Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5AQAQ1HB025108;
-	Wed, 26 Nov 2025 12:04:30 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 4akt71hwbr-1
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5AQAphC4025089;
+	Wed, 26 Nov 2025 12:24:53 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 4akt71j0vn-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Nov 2025 12:04:29 +0000
+	Wed, 26 Nov 2025 12:24:53 +0000
 Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5AQC4SfQ15925726
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5AQCOpZ853543174
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 26 Nov 2025 12:04:28 GMT
+	Wed, 26 Nov 2025 12:24:51 GMT
 Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 165F520043;
-	Wed, 26 Nov 2025 12:04:28 +0000 (GMT)
+	by IMSVA (Postfix) with ESMTP id 85F6120043;
+	Wed, 26 Nov 2025 12:24:51 +0000 (GMT)
 Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6805320040;
-	Wed, 26 Nov 2025 12:04:25 +0000 (GMT)
+	by IMSVA (Postfix) with ESMTP id F104620040;
+	Wed, 26 Nov 2025 12:24:48 +0000 (GMT)
 Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.124.217.238])
 	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Wed, 26 Nov 2025 12:04:25 +0000 (GMT)
-Date: Wed, 26 Nov 2025 17:34:22 +0530
+	Wed, 26 Nov 2025 12:24:48 +0000 (GMT)
+Date: Wed, 26 Nov 2025 17:54:45 +0530
 From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
 To: Zhang Yi <yi.zhang@huaweicloud.com>
 Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
         jack@suse.cz, yi.zhang@huawei.com, yizhang089@gmail.com,
         libaokun1@huawei.com, yangerkun@huawei.com
-Subject: Re: [PATCH v2 06/13] ext4: don't cache extent during splitting extent
-Message-ID: <aSbsxpMSVGyywIIX@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+Subject: Re: [PATCH v2 07/13] ext4: drop extent cache before splitting extent
+Message-ID: <aSbxjVypU3vdOUmK@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
 References: <20251121060811.1685783-1-yi.zhang@huaweicloud.com>
- <20251121060811.1685783-7-yi.zhang@huaweicloud.com>
+ <20251121060811.1685783-8-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -93,76 +93,99 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251121060811.1685783-7-yi.zhang@huaweicloud.com>
+In-Reply-To: <20251121060811.1685783-8-yi.zhang@huaweicloud.com>
 X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTIyMDAyMSBTYWx0ZWRfX5vkFiuNajigj
- BujmsodssEtGUeJKfGUkcEDh3QEpS1dw55gL6n+HmVUJsYV75R5VNx/szc6ZZh+L3Ru6DNJ3IlR
- n+vU2KkSMFNnMZyqrqh+Z673Qw08oh9Pcdau1QnlzMX+DiUX3UWjNecJ0LxZXKk2mIQfI3OyTf5
- uBy7iipjYU1i0z88ybHuFdfWexAJj6TU6MWQIwdheZAJzF3hb2qiFhB//mmqOBGWW2xG8USdy+v
- zzwVfrW0Xbq5Iy5sAjQiT4hC79Wgx2OUESiQgG+km2aepzn9Bb+3rnakFg+92fo7zuSSZh3TsYf
- pD/FqMmHHkeFtYHHa/alrQpuwD4Gjxc9R1nRwEkA7Ok9MTcfScyEbsobb+i075y02kG4RidowdB
- 4ELPjAeFo1KNP7LlJoVa/4yw0D2KOQ==
-X-Proofpoint-ORIG-GUID: 6MFEvxKXxKjyFHqJPVlC6y5eeiNoim50
-X-Proofpoint-GUID: p4wAxt7BYiQhm37lwca9CQE7796n_3T8
-X-Authority-Analysis: v=2.4 cv=TMJIilla c=1 sm=1 tr=0 ts=6926eccf cx=c_pps
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTIyMDAxNiBTYWx0ZWRfX+k8nOuXalw9Y
+ 1YoPVSAPEImF20V8PeovQHP21RG1ky1MXTvDSneiY71mHzWmC3/Av/YZbk2+AYYEhf0Pw1vQjUP
+ DEM4dvb7hFtDcBmahMt/7NJZYBAJm6o/a1NjX5PKbuW2tg+ZePLBw8a3IPuA1rd4dsaMGgFr6Tw
+ czEO3AvgRIoFnkofItByvN0GjBMLz0ndEvO6G4rIiER/uzfefeTLoxU7yMD4Ro+51ADIgGJpOcZ
+ mjyMXgJZk28Ql2Jagji/IGEb9+v5QpGfszU+zLeYu5opySrrmPmslYgGnzDwvaykXbtB+Nkrvn9
+ zSZCH8po+xcMCr1e9gjjEtWDxQ/NyF2h2d/OAXmi84+qlNziVSuOiEsN6a9+mX5z0GRuXsz7giO
+ b5jco+y3K+Bjlul3Q3UcXB3xiNb1yw==
+X-Proofpoint-ORIG-GUID: bdR6KaGzHm6mdPOqm5LZupvnA4Gd9sOv
+X-Authority-Analysis: v=2.4 cv=CcYFJbrl c=1 sm=1 tr=0 ts=6926f197 cx=c_pps
  a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
  a=kj9zAlcOel0A:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=i0EeH86SAAAA:8 a=CnngZZmD1jlomWZp134A:9 a=CjuIK1q_8ugA:10
+ a=i0EeH86SAAAA:8 a=aLcW1nmjqn6KqM0SkAcA:9 a=CjuIK1q_8ugA:10
+X-Proofpoint-GUID: t-x7tBwFfuZeGrM5fPEJ26ArjF7RH0t_
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
  definitions=2025-11-25_02,2025-11-25_01,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 spamscore=0 phishscore=0 impostorscore=0 clxscore=1015
- adultscore=0 bulkscore=0 suspectscore=0 malwarescore=0 lowpriorityscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2511220021
+ malwarescore=0 suspectscore=0 clxscore=1015 adultscore=0 spamscore=0
+ phishscore=0 priorityscore=1501 bulkscore=0 impostorscore=0
+ lowpriorityscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510240000
+ definitions=main-2511220016
 
-On Fri, Nov 21, 2025 at 02:08:04PM +0800, Zhang Yi wrote:
+On Fri, Nov 21, 2025 at 02:08:05PM +0800, Zhang Yi wrote:
 > From: Zhang Yi <yi.zhang@huawei.com>
 > 
-> Caching extents during the splitting process is risky, as it may result
-> in stale extents remaining in the status tree. Moreover, in most cases,
-> the corresponding extent block entries are likely already cached before
-> the split happens, making caching here not particularly useful.
+> When splitting an unwritten extent in the middle and converting it to
+> initialized in ext4_split_extent() with the EXT4_EXT_MAY_ZEROOUT and
+> EXT4_EXT_DATA_VALID2 flags set, it could leave a stale unwritten extent.
 > 
-> Assume we have an unwritten extent, and then DIO writes the first half.
+> Assume we have an unwritten file and buffered write in the middle of it
+> without dioread_nolock enabled, it will allocate blocks as written
+> extent.
 > 
->   [UUUUUUUUUUUUUUUU] on-disk extent        U: unwritten extent
->   [UUUUUUUUUUUUUUUU] extent status tree
->   |<-   ->| ----> dio write this range
+>        0  A      B  N
+>        [UUUUUUUUUUUU] on-disk extent      U: unwritten extent
+>        [UUUUUUUUUUUU] extent status tree
+>        [--DDDDDDDD--]                     D: valid data
+>           |<-  ->| ----> this range needs to be initialized
 > 
-> First, when ext4_split_extent_at() splits this extent, it truncates the
-> existing extent and then inserts a new one. During this process, this
-> extent status entry may be shrunk, and calls to ext4_find_extent() and
-> ext4_cache_extents() may occur, which could potentially insert the
-> truncated range as a hole into the extent status tree. After the split
-> is completed, this hole is not replaced with the correct status.
+> ext4_split_extent() first try to split this extent at B with
+> EXT4_EXT_DATA_PARTIAL_VALID1 and EXT4_EXT_MAY_ZEROOUT flag set, but
+> ext4_split_extent_at() failed to split this extent due to temporary lack
+> of space. It zeroout B to N and leave the entire extent as unwritten.
 > 
->   [UUUUUUU|UUUUUUUU] on-disk extent        U: unwritten extent
->   [UUUUUUU|HHHHHHHH] extent status tree    H: hole
+>        0  A      B  N
+>        [UUUUUUUUUUUU] on-disk extent
+>        [UUUUUUUUUUUU] extent status tree
+>        [--DDDDDDDDZZ]                     Z: zeroed data
 > 
-> Then, the outer calling functions will not correct this remaining hole
-> extent either. Finally, if we perform a delayed buffer write on this
-> latter part, it will re-insert the delayed extent and cause an error in
-> space accounting.
+> ext4_split_extent() then try to split this extent at A with
+> EXT4_EXT_DATA_VALID2 flag set. This time, it split successfully and
+> leave
+> an written extent from A to N.
 
-Okay, makes sense. So one basic question, I see that in
-ext4_ext_insert_extent() doesnt really care about updating es unless as a
-side effect of ext4_find_extent().  For example, if we end up at goto
-has_space; we don't add the new extent and niether do we update that the
-exsisting extent has shrunk. 
+Hi Yi, 
 
-Similarly, the splitting code also doesn't seem to care about the es
-cache other than zeroout in the error handling.
+thanks for the detailed description. I'm trying to understand the
+codepath a bit and I believe you are talking about:
 
-Is there a reason for this? Do we expect the upper layers to maintain
-the es cache?
+ext4_ext_handle_unwritten_extents()
+  ext4_ext_convert_to_initialized()
+	  // Case 5: split 1 unwrit into 3 parts and convert to init
+		ext4_split_extent()
+
+in which case, after the second split succeeds
 > 
-> In adition, if the unwritten extent cache is not shrunk during the
-> splitting, ext4_cache_extents() also conflicts with existing extents
-> when caching extents. In the future, we will add checks when caching
-> extents, which will trigger a warning. Therefore, Do not cache extents
-> that are being split.
+>        0  A      B   N
+>        [UU|WWWWWWWWWW] on-disk extent     W: written extent
+>        [UU|UUUUUUUUUU] extent status tree
+
+WHen will extent status get split into 2 unwrit extents as you show
+above? I seem to be missing that call since IIUC ext4_ext_insert_extent
+itself doesn't seem to be accounting for the newly inserted extent in es.
+
+Regards,
+ojaswin
+
+>        [--|DDDDDDDDZZ]
+
+> 
+> Finally ext4_map_create_blocks() only insert extent A to B to the extent
+> status tree, and leave an stale unwritten extent in the status tree.
+> 
+>        0  A      B   N
+>        [UU|WWWWWWWWWW] on-disk extent     W: written extent
+>        [UU|WWWWWWWWUU] extent status tree
+>        [--|DDDDDDDDZZ]
+> 
+> Fix this issue by always remove cached extent status entry before
+> splitting extent.
 > 
 > Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 > ---
@@ -170,29 +193,22 @@ the es cache?
 >  1 file changed, 6 insertions(+)
 > 
 > diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
-> index 19338f488550..2b5aec3f8882 100644
+> index 2b5aec3f8882..9bb80af4b5cf 100644
 > --- a/fs/ext4/extents.c
 > +++ b/fs/ext4/extents.c
-> @@ -3199,6 +3199,9 @@ static struct ext4_ext_path *ext4_split_extent_at(handle_t *handle,
->  	BUG_ON((split_flag & EXT4_EXT_DATA_VALID1) &&
->  	       (split_flag & EXT4_EXT_DATA_VALID2));
->  
-> +	/* Do not cache extents that are in the process of being modified. */
-> +	flags |= EXT4_EX_NOCACHE;
-> +
->  	ext_debug(inode, "logical block %llu\n", (unsigned long long)split);
->  
->  	ext4_ext_show_leaf(inode, path);
-> @@ -3364,6 +3367,9 @@ static struct ext4_ext_path *ext4_split_extent(handle_t *handle,
+> @@ -3367,6 +3367,12 @@ static struct ext4_ext_path *ext4_split_extent(handle_t *handle,
 >  	ee_len = ext4_ext_get_actual_len(ex);
 >  	unwritten = ext4_ext_is_unwritten(ex);
 >  
-> +	/* Do not cache extents that are in the process of being modified. */
-> +	flags |= EXT4_EX_NOCACHE;
+> +	/*
+> +	 * Drop extent cache to prevent stale unwritten extents remaining
+> +	 * after zeroing out.
+> +	 */
+> +	ext4_es_remove_extent(inode, ee_block, ee_len);
 > +
->  	if (map->m_lblk + map->m_len < ee_block + ee_len) {
->  		split_flag1 = split_flag & EXT4_EXT_MAY_ZEROOUT;
->  		flags1 = flags | EXT4_GET_BLOCKS_PRE_IO;
+>  	/* Do not cache extents that are in the process of being modified. */
+>  	flags |= EXT4_EX_NOCACHE;
+>  
 > -- 
 > 2.46.1
 > 
