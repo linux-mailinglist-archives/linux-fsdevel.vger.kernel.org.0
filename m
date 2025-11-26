@@ -1,81 +1,81 @@
-Return-Path: <linux-fsdevel+bounces-69856-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69852-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7192DC87E23
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Nov 2025 03:56:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69EA4C87E02
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Nov 2025 03:55:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 251FE4E2A51
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Nov 2025 02:56:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42F403B00E9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Nov 2025 02:55:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E6F530DD08;
-	Wed, 26 Nov 2025 02:55:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6201A30BF68;
+	Wed, 26 Nov 2025 02:55:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T4QV7Uqe"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MN7ScNh4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A2AC30BF6B
-	for <linux-fsdevel@vger.kernel.org>; Wed, 26 Nov 2025 02:55:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 535962F60B2
+	for <linux-fsdevel@vger.kernel.org>; Wed, 26 Nov 2025 02:55:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764125738; cv=none; b=P8HFbtUq4pTFHsD82KICPn4xwzZd8PGAqV+3d73mQrE0UO0pmiBaoW1M028mFmHnnFes6JX3Oz+Oh0tfJWu399lVQXzdQe9rpmf8F1l4zKfMbFZCovfb6nmQHx1ZeurmElzsYeoNNHwnMwXvZRaAyWL0WPsUowNs+3OaLERpamY=
+	t=1764125729; cv=none; b=Ys47nuGCW7pJsNx9QqO14iN7c0hHtvygoKGQ/zgKWi4m+ra7GAcgI2V6dZse7BpEWS2/FIVf/6B5+R92hqf2KjQ5focZluQuOuYLn5affAqDiyYiU9WDtekIMbwe+xiO32qAGwG8k7TrZ7OjnwKCiEhYVsCFBgiub/ALObUvtB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764125738; c=relaxed/simple;
-	bh=flQQ+p9EPZBsRnUUjNajnPPbgxqkevBix7E0+4gZ/48=;
+	s=arc-20240116; t=1764125729; c=relaxed/simple;
+	bh=QgtDQPuNkQZCpxtgBCVizza+HY3TwWFNRo9VOhtaSPM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NyMUALNjBaAomTdPRhIRZbLAZsrX7WEQ4ZYQPhN2ffc0sBZMNvma4kiOGve8kx8F91mgioBJIWvFvfw8CwRi6Cg8KJoqUfdrcwIYUYNkI2YttFP350XkigbfO6+9NLeBC3QbTjxhiATqt4mjFr8PFTZk/pSIfyDbd7AZ+FYtgRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T4QV7Uqe; arc=none smtp.client-ip=209.85.210.176
+	 MIME-Version; b=LMnrEBiu6BgJqJxGUlv9n0GO+jrCBUN+ozI5fT/QNmV7mnXraGgHB9He+Vmp6vOt+HCpMn9xlYEqE4uJZ8V0QWFi/XVh+rwAyzziOFGF4JzNuuYRWpuvoaLzt7C4i6kMBnopW/8bp4D4C9ecHC40jAwHJUUj7RL6YfYgQZ80HRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MN7ScNh4; arc=none smtp.client-ip=209.85.216.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-7b6dd81e2d4so5702216b3a.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Nov 2025 18:55:36 -0800 (PST)
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-343806688c5so5219261a91.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Nov 2025 18:55:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1764125736; x=1764730536; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1764125727; x=1764730527; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=hOi2SSx6yNBsrEeWui+Quc5HTWSCmGH/Tx4kBkU2ROo=;
-        b=T4QV7UqeAuWhVv+m4paD7HMDCeUXgRkZQSJ2GYPTGV1f3bfTZGZWV8LFXdwPx7nHwm
-         TstgiyAnTdkF4mKe39sxM1sk7cYLW7C5h81/tKsgUxXQ1BV1Koka3z2hkWkRMVvtcufR
-         J9UFwODyZfrYuSckNGcKvR53x1Vl1I/59m5EQRoQItR40XgCoOgv0l09zq0gT1LXsteQ
-         0RDRkFIsGUifz5XGwCV7Oq2z8wiLzAQ6eANreD20J9u6x1p8cjXG/CfqBEHu1DqEhNCF
-         e4i4QFUGw7SzHzRYp7qYmXgUei8MKW/o6lSGksVJF3I21MH1SYpG9qU6cUGRB5CWW2s+
-         Zqmw==
+        bh=gQaJZMvR3LXorEoSZo1lRnZb/COwwg9HrYqvFeEyjI0=;
+        b=MN7ScNh4Wkupd3LXRVnORu3h8skikNavOulaJ+HURNHXxOJIFw2RPSIiUIjy4VcvDs
+         BfVYQJIR4U+r/pS0m/oebiZ2FzHdaQ6b5VSgXG1J16IxBfBRKsQn/PcqI9bz8vHKyjHQ
+         RyVZ8XuNa8/NqBocab6Tq81zE5S2O5EPPtOkeV0NJOGeOSrzykX61l2MADaJlwLIWZNV
+         Ku7JUlJMe1SVXbdiTgmRqntGTG8fLB6lyqYvWd+1h8ROWeBemCuMNY7dHuftz6KSGvXS
+         lB5g3F4ecuIv9TcDxHRGwbKJkFCVAo35Jndex17ICX7RGceVgsh3zRFTrY3Se37bAAeM
+         gx3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764125736; x=1764730536;
+        d=1e100.net; s=20230601; t=1764125727; x=1764730527;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=hOi2SSx6yNBsrEeWui+Quc5HTWSCmGH/Tx4kBkU2ROo=;
-        b=c+nCHsyI4UJe9hp8M4jK1CVt3cBUu2hU1lW3FKHo6GZnYi9H+zJ830ZIrJPP5nb2hJ
-         ljQICmfdeNuqD1Il2MGUX9IHWn4BrGKI1lCXAuhj3PsQDdt567AhUNCvjAHU640ES4oC
-         AuZw6Uhwlqy+KzL6+DpjFTNxsNXQhTGi+iMfRcl3rFpzI6VbVJw3FZfvVisOgDBiLb0q
-         pHMP69vdK3NNGhjmhEHxJ+u4BbChXzB9tO3TeAc0nt135bSCfZD80VkhMw8t6zHoFxmA
-         z+AvZnOEMqVFv4emEr8uZPjD4RH8za75a5ifpW9GnsZxNwbNdMpbLJSU0146fQIlcuU0
-         Gzsw==
-X-Forwarded-Encrypted: i=1; AJvYcCVvJ8hFdjXIQvHCS3B7iVkRM3qS2x5WLe2G55m3Y+4ucoyHyrwk9j+iVCBo+KJfnUTmp9OPLsyYlCF//xaU@vger.kernel.org
-X-Gm-Message-State: AOJu0YyuD67k7J+jsoqKZc2Sh/oQUe5dSu57PWcH3epb80JhyKIPDFq8
-	o8kkkDORkNkkkHtG/i037Jxj4ugEd9mc8tfwkz2LN+7+ST0RIpt8H3F0YybcbinS
-X-Gm-Gg: ASbGncskFssynb5K0PLRV32wcdzv4WEvSFx94wZcn/YY4HDzcZPF6yhuebFf05dgFkj
-	SrQiEaB+BwYZrGVHxeuNK2a9uo9G4L9HmA4/qbnJ67PTSgKGVuLsP0tLNTtDHqvoQJBSMIsVzbn
-	5EEVKl39MOMhpD/O2Usc9WBhVB0/MO8Qy/KaDwZEGQzBiJtW4M/0K7DwMXrp3Oq+p39FjOSVbis
-	TEKbc3ryfxfIzkXOfXxeaRr18VF89PbACJJ8ZYefcmLauzcZoVB6AheCMzm/BUBzPohozVNdHne
-	1mLHYV83ZhlsEgMb84wpAB6SPtyF5qjkoHhUil7Awx3EP0+qVMLa3BCtQYk1U25xJ4jk9RGFUgC
-	l3xIat0J5YzC6jzIrtu12dSwUj9zYs1QVxNuGv+Q1lvgVa2vtpaFcg4PyEjGeTuK12ZAbPEMj51
-	ViuPvDtQFsMvI=
-X-Google-Smtp-Source: AGHT+IEHBzWHbK0JtdGRu7LTkyTetWGV8Bp0c9o3CW5NTNaXLf45k4YycOLV9mqvKMkZ9DY6Jmqs4Q==
-X-Received: by 2002:a05:6a20:9186:b0:350:1a0e:7fc5 with SMTP id adf61e73a8af0-3614eeb0d8emr18539845637.60.1764125736418;
-        Tue, 25 Nov 2025 18:55:36 -0800 (PST)
+        bh=gQaJZMvR3LXorEoSZo1lRnZb/COwwg9HrYqvFeEyjI0=;
+        b=RAhUNClbPnWwM12C7L7reLf0k+tAn42hcT3C+ZShTkBMYQ/Q7ujhuURROHS9KiK1rh
+         g59DF0FO7IAxqRby/XsSyVxQ/7191MQqXyos28AZetcI1AyfHYuvpaR6gfHpI/8knAlZ
+         UAKgDI8cxLEXG1b6MtGxekGsCqXQzCHdQjrkRL+odozxLcdcYG4afPVvwfQk32AVc1M/
+         7e/GLEEvK+CO4x69WNiVERcHtXxBSnEkCtf2hsLXh51TnGzEw6vp2640Zr14WAfd4olQ
+         ESSpl5TMmR8S1pybZAv+bVgxDrTvArav66Td37r7zB164Evs4pdKSolqwuIm97uetSMi
+         UTSg==
+X-Forwarded-Encrypted: i=1; AJvYcCUHc5w4y71JQgufr4RgzTnKoIUSxJNp4qt80wo6cfyZwhi7D8qZbCEaZtSvg38VMwa0K25K3FzHKsC0BJ8I@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyj8Juc3VJsy5sKYLX8rcnyoG1RrpSk1jjBYqwBMltBxzaWhYjw
+	eqvcdVEESAM2klCeQCAGQtYlaIq7cnK5BG4k22B1XZhweWEsmxlDKc3C
+X-Gm-Gg: ASbGnct8rMRs04wo42FcPFl2QCXi6TXZ84Rv51QlZIlcRDOYtYBO0JsjxeJ1rlicfHn
+	qDpz8TKWLXfwroaTeTUWnMNk5zQ/cUZK1w7eAvSuv433p98UHs681PeamWEUIY3z1f0LG6pp01R
+	nj/GgjvBBwVFVMn0asK0BmujLM/1l0eKTa1jx5kMuRicD2iSh8iVQqtl7CRBjxcG6dS+eMywl1g
+	0AlDZhbEpy23kZXK1mNutd3QShB6ziNcHWYTwh5I45OaOtVBQd9zF/jPA5N4s4W7OVx40jCFREI
+	QN9CAXCjvMqlsX7pU85zQmc/poYWw42sq22ZtCgNzmIqwHznthRtdyNp9BgimDPhqxdRmka37+m
+	J9eqtQ1n4u8+WEGQyEg7sDXFBK7E6FB0g8rGivh7VQaIs7qCuCZu8dlePwFIOiXPr+YfCqOz/hR
+	9cGJGsUcnuaQg=
+X-Google-Smtp-Source: AGHT+IGoKsSn88yOaV8yW3ELgtKTGKK8nyHanpYEmJrEQrWciON7o6VHAzT+5lGJU1vlSoSNPWQHuQ==
+X-Received: by 2002:a17:90b:4c4f:b0:343:edb0:1012 with SMTP id 98e67ed59e1d1-3475ed508e8mr4841309a91.21.1764125727501;
+        Tue, 25 Nov 2025 18:55:27 -0800 (PST)
 Received: from archie.me ([210.87.74.117])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-bd775ccabfdsm17407798a12.29.2025.11.25.18.55.34
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3476a54a5a8sm811261a91.4.2025.11.25.18.55.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Nov 2025 18:55:34 -0800 (PST)
+        Tue, 25 Nov 2025 18:55:26 -0800 (PST)
 Received: by archie.me (Postfix, from userid 1000)
-	id A1EB6476D832; Wed, 26 Nov 2025 09:55:24 +0700 (WIB)
+	id C9684476D833; Wed, 26 Nov 2025 09:55:24 +0700 (WIB)
 From: Bagas Sanjaya <bagasdotme@gmail.com>
 To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Documentation <linux-doc@vger.kernel.org>,
@@ -92,9 +92,9 @@ Cc: David Howells <dhowells@redhat.com>,
 	Dan Williams <dan.j.williams@intel.com>,
 	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
 	Daniel Palmer <daniel.palmer@sony.com>
-Subject: [PATCH 2/5] Documentation: dax: Coalesce "See also" filesystem pointers into list
-Date: Wed, 26 Nov 2025 09:55:08 +0700
-Message-ID: <20251126025511.25188-3-bagasdotme@gmail.com>
+Subject: [PATCH 3/5] Documentation: dax: Demote "Enabling DAX on xfs and ext4" subsections
+Date: Wed, 26 Nov 2025 09:55:09 +0700
+Message-ID: <20251126025511.25188-4-bagasdotme@gmail.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20251126025511.25188-1-bagasdotme@gmail.com>
 References: <20251126025511.25188-1-bagasdotme@gmail.com>
@@ -104,48 +104,41 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1213; i=bagasdotme@gmail.com; h=from:subject; bh=flQQ+p9EPZBsRnUUjNajnPPbgxqkevBix7E0+4gZ/48=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDJlq2StvXp4xeUtVu3yxm+XhsunLZZi/K83SU/sTUfXDX q/gzfGTHaUsDGJcDLJiiiyTEvmaTu8yErnQvtYRZg4rE8gQBi5OAZhIygKGf2bGYZ9OLJZ6rnyi mCEv5of5mmu/0kte/71h41Kry7rK5Qkjw36HOxG1ez8uY7oStMN4eTHb389cjny3ry6ePCNm1ir pYi4A
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1131; i=bagasdotme@gmail.com; h=from:subject; bh=QgtDQPuNkQZCpxtgBCVizza+HY3TwWFNRo9VOhtaSPM=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDJlq2SujJomzx8ZkP3v8bfpuZsO5ErrleWvndBrMirJ6l hmisndbRykLgxgXg6yYIsukRL6m07uMRC60r3WEmcPKBDKEgYtTACayvJ3hn8XH8pzuxMzyrTpB cT/4JE4zqs30N94Y9+/RJLeoys314gz//Xh/mrb8+pviIle/3mmWvWENo9OF68evPXE9f61nZ/8 vLgA=
 X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
 Content-Transfer-Encoding: 8bit
 
-Filesystems for DAX implementation inspiration is listed in "See also"
-admonitions, one for each filesystem (ext2, ext4, and xfs). Coalesce
-them into a bullet list.
-
-While at it, also link to XFS developer documentation in
-Documentation/filesystems/xfs/ instead of user-facing counterpart in
-Docmentation/admin-guide/xfs.rst.
+Subsections of "Enabling DAX on xfs and ext4" section (both "Summary"
+and "Details") are marked up as section heading instead, which makes
+their way to filesystems toctree entry. Demote them.
 
 Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
 ---
- Documentation/filesystems/dax.rst | 14 +++-----------
- 1 file changed, 3 insertions(+), 11 deletions(-)
+ Documentation/filesystems/dax.rst | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/Documentation/filesystems/dax.rst b/Documentation/filesystems/dax.rst
-index 5b283f3d1eb113..e0631d5f6251d4 100644
+index e0631d5f6251d4..f9243d45ce1280 100644
 --- a/Documentation/filesystems/dax.rst
 +++ b/Documentation/filesystems/dax.rst
-@@ -234,17 +234,9 @@ exposure of uninitialized data through mmap.
+@@ -38,7 +38,7 @@ Enabling DAX on xfs and ext4
+ ----------------------------
  
- These filesystems may be used for inspiration:
+ Summary
+--------
++~~~~~~~
  
--.. seealso::
--
--  ext2: see Documentation/filesystems/ext2.rst
--
--.. seealso::
--
--  xfs:  see Documentation/admin-guide/xfs.rst
--
--.. seealso::
--
--  ext4: see Documentation/filesystems/ext4/
-+  * :doc:`ext2 <ext2>`
-+  * :doc:`ext4 <ext4/index>`
-+  * :doc:`xfs <xfs/index>`
+  1. There exists an in-kernel file access mode flag `S_DAX` that corresponds to
+     the statx flag `STATX_ATTR_DAX`.  See the manpage for statx(2) for details
+@@ -95,7 +95,7 @@ Summary
  
  
- Handling Media Errors
+ Details
+--------
++~~~~~~~
+ 
+ There are 2 per-file dax flags.  One is a persistent inode setting (`FS_XFLAG_DAX`)
+ and the other is a volatile flag indicating the active state of the feature
 -- 
 An old man doll... just what I always wanted! - Clara
 
