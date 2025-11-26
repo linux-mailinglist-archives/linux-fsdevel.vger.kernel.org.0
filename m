@@ -1,212 +1,186 @@
-Return-Path: <linux-fsdevel+bounces-69878-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69879-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8316AC8985F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Nov 2025 12:30:32 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56DDEC89886
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Nov 2025 12:32:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C1BF3B2973
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Nov 2025 11:30:31 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id CB7A334985F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Nov 2025 11:31:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CACC4322A21;
-	Wed, 26 Nov 2025 11:30:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 432BC322A3F;
+	Wed, 26 Nov 2025 11:31:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="NFDRdOn6"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="itENpZKh"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98737320CD6;
-	Wed, 26 Nov 2025 11:30:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE1FC322740
+	for <linux-fsdevel@vger.kernel.org>; Wed, 26 Nov 2025 11:31:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764156622; cv=none; b=O9oPIlD54F0XucgY1IBVYl6WUjR5Pvrm8/sqmuEc9adwXhTUWyDjgBFgfmmkuH7rS+El9OKQaVjCBaNM+/naFCqiuNGqsPrprZ1KHkOfR2pRpPnnf0c+OHP1YjsUlg5/BmF7uj7Mko3W8gF4Pb+GPURz8CWEVnA2IkbOgQxmSj0=
+	t=1764156697; cv=none; b=ooAfJ+/jqgqKiVhkJnV892lZ4AJOJ0PAgVSvoTDMQcey7Gt3e3ktWGg4Mi+4E4pPEDAsF73/+kpUrqTzVw7FLGBdnDf3EgWjERhJfwMxeHn5DmuGHQjChtj2E27CINJ8C/tZS8zmtUFOnCv4zQEdVE/ja7Y8vLAaK47zQ6Hwj5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764156622; c=relaxed/simple;
-	bh=lNf8ZqwigN9DZMExwmrwe/+l/hqIeeOWgDZUPTUO8jI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FMNikoondEFwcwixvXQlyBFrUWQkYcQEtlZQz4qIQfvWI5Lr/OUvChrcxJpyiQE4gtz4AOtcGpwLXSnwtOSIN10a92OekWyduzDpfnT08e4XeEbW87040SAX1T45sgyLYS6KcKfsOPBqMqr5x105waYEH0TOaMvbp8r11t8++EY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=NFDRdOn6; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5AQ5CmPC011802;
-	Wed, 26 Nov 2025 11:30:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=7VkbkMv8E76o53+Qe4SRD71rIx8trL
-	5JvgAU5C/oU9M=; b=NFDRdOn6uyqrd3U6SEu8K44rr+WSFTQZwtjP0F14ktT5lN
-	fpk14k6xk85ZCUaERaYGwqbRBJvjU8IcYj0zeWLOhG6zX3iIXpvoC5b9XnTq7mHp
-	q44sKfaGAcpv5pnDJRtYL7RELrGu+6m/UzC4Fe5rH0EWMcXTk4KSADbVAzVKI4L8
-	XZFogvzGh03xY5nTlpCHPGinX+M//lsZrZnveQHRgF4VjudeicYHfi9m/LgmTyEY
-	tJiBk03NAnuYDrmCIWKmOKpSKbdWnd2FJL3Aw/EnMnTmx+qpEw+yWWSQg4OWeMBv
-	yAub+eUk1Lj2PkSdBrZ5YlbJ2RYpf/VWX+fSe6hQ==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4ak4pj3vnq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Nov 2025 11:30:02 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5AQBU1qS006416;
-	Wed, 26 Nov 2025 11:30:01 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4ak4pj3vne-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Nov 2025 11:30:01 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5AQ99apv014527;
-	Wed, 26 Nov 2025 11:30:00 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4akrgna1u1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Nov 2025 11:30:00 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5AQBTwEc31850806
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 26 Nov 2025 11:29:58 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7168520043;
-	Wed, 26 Nov 2025 11:29:58 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9F2BD20040;
-	Wed, 26 Nov 2025 11:29:55 +0000 (GMT)
-Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.124.217.238])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Wed, 26 Nov 2025 11:29:55 +0000 (GMT)
-Date: Wed, 26 Nov 2025 16:59:53 +0530
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
-        jack@suse.cz, yi.zhang@huawei.com, yizhang089@gmail.com,
-        libaokun1@huawei.com, yangerkun@huawei.com
-Subject: Re: [PATCH v2 03/13] ext4: don't zero the entire extent if
- EXT4_EXT_DATA_PARTIAL_VALID1
-Message-ID: <aSbksRztaQ0UtHKB@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
-References: <20251121060811.1685783-1-yi.zhang@huaweicloud.com>
- <20251121060811.1685783-4-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1764156697; c=relaxed/simple;
+	bh=DYyD/p5TxHRA+6U8qmE0B4qTQBu+r7An69CEbw7jNmI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XLBhFIWfKzlx30nzkBgSj45Xg2lF3h8ciutMEvHpSYFb3l25Lzb8Ij3gJA+gkYdkKp8BDnC12SC32+19gX5Ko4riFMUv5M8pgfwUv2BOF8UJyyXPtIF/wTc4OKnxQ5guXj3bnjGe5h2JU1geHXR1HiXnadgX3IZSPe8jXej7axU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=itENpZKh; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-6418b55f86dso11148076a12.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Nov 2025 03:31:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1764156694; x=1764761494; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jxpAOZp93TQa2PO+Fjc9mRu2Wb0BTI1kTLTUwaqDySc=;
+        b=itENpZKh97QW8SElzGBmMkjZAJd4A5gzsqtOq6Y8ZTs1dlawCGlX7IQ/go/oy90sNF
+         YLJZIK54Z2Upc+RTMkr/LlNVK/3O4aQkemSN/CmN+7+0v0hgIfq/7B7XCObdzCdWi6B+
+         JnpWY3zfwTjTQvvM6I4tZRbFyr8nLjyKI8iNOhLdmI11tIjzGIo7gLZx4ueh9C027y0Q
+         mvmdR7/RFEYY1jrP/ezZQXwcX+WZ676LesoRkH/6Fg7O1LT8Hk2MZeR0P0uYQ4w6oqWv
+         OANjh4hdUfw5DlfBDvoklNodYqEfb+zVviErnVEmgql8fbQOaFMOhfDKZvA7YgSFSsi2
+         FGSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764156694; x=1764761494;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=jxpAOZp93TQa2PO+Fjc9mRu2Wb0BTI1kTLTUwaqDySc=;
+        b=D9eTifMHMSOs04redn+R2gA6IlqX8WyKACoBKEdxIUO/4u7Q7x71Z9erx8hJBL65vJ
+         a3T361Pv3zNJnlkzmP9F+OLxwWcvc8LAnvztaJJzcImseTeHswO5bYtyzq3TuvHVIu8y
+         lj8T8DUu/8+7RoMYhgFsYQcN+1Q/ouNz76XiEcekNAh7UaxLe8BFc2tPb/QlW3Ho4h9K
+         eZicVYZMcFQHVNeS3lnNl8/P2Yr5UBXSxUNXoSGCtvj0p7vRgjod62QmcGrvcqZZhK3A
+         QgRpjpv3/GjoG5VZ2j5reg5StMve65qbUHSHkwjpH1hFg+DEKO3mzfokjG3EQMoKkvst
+         F4NA==
+X-Forwarded-Encrypted: i=1; AJvYcCU7o7DJrU8z+HF42zytcYenBm3jutgTcoAHEFgEGzyL6oksUYIxbx8l6I/6e0X07c8jeD6omxtYrSdETFUy@vger.kernel.org
+X-Gm-Message-State: AOJu0YzymTAsBw5YbOKut8mctAzNUi5D9Avkyns3uMxnt0T0iCiHRMar
+	+8gRbkrr5ssCKffD/hGwwrhf4RDLEifrVhxLROZzoIcNISO0Z73aB1cz/nmBtTN//kbdVrGiKsg
+	z+o9VU2VW1+jPivUalQNjyQcq0v7hxkU=
+X-Gm-Gg: ASbGncskHj78VtFVEsTbUSAUQJ2/XTcFleIuRvd2MKtXbJmP70gLrVBqv20mWLkCjUu
+	TbwU73Lr4RoHA0cX437qCEXzxFP6vg41xpwoLfijY6P9gmNPTbzLeEaf7XmfmGun7gxnAKX4QM3
+	TTIsUxKX16k4bECEbIiwMIN2yqXE5nZvMnslFOq65qv/ysGPXZrU0sP6mOJr733wGTa/mFi9JSP
+	cqLmyAyr8ppMTTLX7t781XYPo4nlJ/UBE2OgzcOUZT/IECOSddrkqe7htzoOuXcEFHF+tAo1LQi
+	QfpusAXVJhQBPhQeBb9dE9dMGQ==
+X-Google-Smtp-Source: AGHT+IHjCnUSYipW7ZDYaodcyHWhh2tEk6wixN+zRinjYnYjuklr01SkWmXo4+9xqJXCfv3bK9rD9sZxt46t48oFCpM=
+X-Received: by 2002:a05:6402:1d50:b0:640:a03a:af98 with SMTP id
+ 4fb4d7f45d1cf-64554685738mr17095569a12.18.1764156693747; Wed, 26 Nov 2025
+ 03:31:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251121060811.1685783-4-yi.zhang@huaweicloud.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTIyMDAxNiBTYWx0ZWRfX1MeJTlL0iQ5o
- 3Ra1EbnTFR9vrdPG8NBskIvjScYkSjeJj7sztHPLQtf3tT6wNmghmA1NGsgc1d2T9mQuG4ipv+S
- 5c0g1Bco17+NkwC7sVxSCFzo/Ym1EXJbc43KqYNNUL8rCkwsDzfz4yW82dXx1rN8DvtxvV0Q5ox
- 1EuZ9CFItsZp8UlXeoG9PauQpAGKvPFAjnYtgWywRsSNGP1UjYvT6IkeOG3+ZMGhc3kkRZOdUtE
- 41UT1tCTc1liLiaaNTNHIpOSm78iRubdyixVXrjPTBqW8Go8361OmZw/yhPS4kt/qy8uDf0gj4y
- 1rJHaiRqX589GkSlPvmYMCfd4t3lrN9vjez9/q/zhTJqJKnavNJ60O6G9MS6huNhkOb3FA79gvM
- 1iRnRzVyI7q55oJb0U/uD/bPpK6P0g==
-X-Proofpoint-ORIG-GUID: kiJ_7ZL2Jpg2WKV0JzGExiNlv57yzNuT
-X-Authority-Analysis: v=2.4 cv=CcYFJbrl c=1 sm=1 tr=0 ts=6926e4ba cx=c_pps
- a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
- a=kj9zAlcOel0A:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=i0EeH86SAAAA:8 a=VnNF1IyMAAAA:8 a=JGrP17Lop6qqZo5us_kA:9 a=CjuIK1q_8ugA:10
-X-Proofpoint-GUID: NuXCZfR-Mm043OmLasAoE_M5SfRU_Nqz
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-25_02,2025-11-25_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 suspectscore=0 clxscore=1015 adultscore=0 spamscore=0
- phishscore=0 priorityscore=1501 bulkscore=0 impostorscore=0
- lowpriorityscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510240000
- definitions=main-2511220016
+References: <20251119144930.2911698-1-mjguzik@gmail.com> <20251125-punkten-jegliche-5aee8187381d@brauner>
+ <CAGudoHHzXjvMXUZhCKMvdPxzwg71MOAUT+8c6qgiKhUfS0UoNA@mail.gmail.com> <20251126-vermachen-sahne-c4f243016180@brauner>
+In-Reply-To: <20251126-vermachen-sahne-c4f243016180@brauner>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Wed, 26 Nov 2025 12:31:21 +0100
+X-Gm-Features: AWmQ_bnInxHzWcWPx1VHiPpFAVTlbM3QjIDRWLJM6bxyroCdykN-0QBxDZvJAOI
+Message-ID: <CAGudoHFLYVXTJg5332fOSBVT+zgzhU3s-nvwzZHPCpaOY6gR-g@mail.gmail.com>
+Subject: Re: [PATCH] fs: mark lookup_slow() as noinline
+To: Christian Brauner <brauner@kernel.org>
+Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 21, 2025 at 02:08:01PM +0800, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
-> 
-> When allocating initialized blocks from a large unwritten extent, or
-> when splitting an unwritten extent during end I/O and converting it to
-> initialized, there is currently a potential issue of stale data if the
-> extent needs to be split in the middle.
-> 
->        0  A      B  N
->        [UUUUUUUUUUUU]    U: unwritten extent
->        [--DDDDDDDD--]    D: valid data
->           |<-  ->| ----> this range needs to be initialized
-> 
-> ext4_split_extent() first try to split this extent at B with
-> EXT4_EXT_DATA_ENTIRE_VALID1 and EXT4_EXT_MAY_ZEROOUT flag set, but
-> ext4_split_extent_at() failed to split this extent due to temporary lack
-> of space. It zeroout B to N and mark the entire extent from 0 to N
-> as written.
-> 
->        0  A      B  N
->        [WWWWWWWWWWWW]    W: written extent
->        [SSDDDDDDDDZZ]    Z: zeroed, S: stale data
-> 
-> ext4_split_extent() then try to split this extent at A with
-> EXT4_EXT_DATA_VALID2 flag set. This time, it split successfully and left
-> a stale written extent from 0 to A.
-> 
->        0  A      B   N
->        [WW|WWWWWWWWWW]
->        [SS|DDDDDDDDZZ]
-> 
-> Fix this by pass EXT4_EXT_DATA_PARTIAL_VALID1 to ext4_split_extent_at()
-> when splitting at B, don't convert the entire extent to written and left
-> it as unwritten after zeroing out B to N. The remaining work is just
-> like the standard two-part split. ext4_split_extent() will pass the
-> EXT4_EXT_DATA_VALID2 flag when it calls ext4_split_extent_at() for the
-> second time, allowing it to properly handle the split. If the split is
-> successful, it will keep extent from 0 to A as unwritten.
-> 
-> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+On Wed, Nov 26, 2025 at 11:08=E2=80=AFAM Christian Brauner <brauner@kernel.=
+org> wrote:
+>
+> On Tue, Nov 25, 2025 at 10:54:25AM +0100, Mateusz Guzik wrote:
+> > I'm going to save a rant about benchmarking changes like these in the
+> > current kernel for another day.
+>
+> Without knocking any tooling that we currently have but I don't think we
+> have _meaningful_ performance testing - especially not automated.
 
-Hi Yi,
+so *this* is the day? ;)
 
-This patch looks good to me. I'm just wondering since this is a stale
-data exposure that might need a backport, should we add a Fixes: tag 
-and also keep these fixes before the refactor in 1/13 so backport is
-easier.
+Even if one was to pretend for a minute that excellent benchmark suite
+for vfs exists and is being used here, it would still fail to spot
+numerous pessimizations.
 
-Other than that, feel free to add:
-Reviewed-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To give you an example, legitimize_mnt has the smp_mb fence which
+makes it visible when profiling things like access(2) or stat(2)
+(something around 2% on my profiles). However, if one was to whack the
+fence just to check if it is worth writing a real patch to do it,
+access(2) perf would increase a little bit while stat(2) would remain
+virtually the same. I am not speculating here, I did it. stat for me
+is just shy of 4 mln ops/s. Patching the kernel with a tunable to
+optionally skip the smp_mb fence pushes legitimize_mnt way down, while
+*not* increasing performance -- the win is eaten by stalls elsewhere
+(perf *does* increase for access(2), which is less shafted). This is
+why the path walking benches I posted are all lifted from access()
+usage as opposed to stat btw.
 
-Regards,
-ojaswin
+Or to put it differently, stat(2) is already gimped and you can keep
+adding slowdowns without measurably altering anything, but that's only
+because the CPU is already stalled big time while executing the
+codepath.
 
-> ---
->  fs/ext4/extents.c | 11 ++++++++++-
->  1 file changed, 10 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
-> index f7aa497e5d6c..cafe66cb562f 100644
-> --- a/fs/ext4/extents.c
-> +++ b/fs/ext4/extents.c
-> @@ -3294,6 +3294,13 @@ static struct ext4_ext_path *ext4_split_extent_at(handle_t *handle,
->  		err = ext4_ext_zeroout(inode, &zero_ex);
->  		if (err)
->  			goto fix_extent_len;
-> +		/*
-> +		 * The first half contains partially valid data, the splitting
-> +		 * of this extent has not been completed, fix extent length
-> +		 * and ext4_split_extent() split will the first half again.
-> +		 */
-> +		if (split_flag & EXT4_EXT_DATA_PARTIAL_VALID1)
-> +			goto fix_extent_len;
->  
->  		/* update the extent length and mark as initialized */
->  		ex->ee_len = cpu_to_le16(ee_len);
-> @@ -3364,7 +3371,9 @@ static struct ext4_ext_path *ext4_split_extent(handle_t *handle,
->  			split_flag1 |= EXT4_EXT_MARK_UNWRIT1 |
->  				       EXT4_EXT_MARK_UNWRIT2;
->  		if (split_flag & EXT4_EXT_DATA_VALID2)
-> -			split_flag1 |= EXT4_EXT_DATA_ENTIRE_VALID1;
-> +			split_flag1 |= map->m_lblk > ee_block ?
-> +				       EXT4_EXT_DATA_PARTIAL_VALID1 :
-> +				       EXT4_EXT_DATA_ENTIRE_VALID1;
->  		path = ext4_split_extent_at(handle, inode, path,
->  				map->m_lblk + map->m_len, split_flag1, flags1);
->  		if (IS_ERR(path))
-> -- 
-> 2.46.1
-> 
+Part of the systemic problem is the pesky 'rep movsq/rep stosq' usage
+by gcc, notably emitted for stat (see vfs_getattr_nosec). It is my
+understanding that future versions of the compiler will fix it, but
+that's still years of damage to stay even if someone updates the
+kernel in their distro, so that's "nice". The good news is that clang
+does not do it, but it also optimized things differently in other
+manners, so it may not even be representative what people will see
+with gcc.
+
+Rant aside on that front aside, I don't know what would encompass a
+good test suite.
+
+I am however confident it would include real-life usage lifted from
+actual workloads for microbenchmarking purposes, like for example I
+did with access() vs gcc. Better quality bench for path lookup would
+involve all the syscalls invoked by gcc which do it, but per the above
+the current state of the kernel would downplay improvements to next to
+nothing.
+
+Inspired by this little thing:  https://lkml.org/lkml/2015/5/19/1009
+... I was screwing around with going through *all* vfs syscalls,
+ordered in a way which provides the biggest data and instruction cache
+busting potential. non-vfs code is not called specifically not be
+shafted by slodowns elsewhere. It's not ready, but definitely worth
+exploring.
+
+I know there are some big bench suites out there (AIM?) but they look
+weirdly unmaintained and I never verified if they do what they claim.
+
+The microbenchmarks like will-it-scale are missing syscall coverage
+(for example: no readlink or symlink), the syscalls which are covered
+have spotty usage (for example there is a bench for parallel rw open
+of a file, while opening *ro* is more common and has different
+scalability), and even ignoring that all the lookups are done against
+/tmp/willitscale.XXXXXX. That's not representative of most real
+lookups in that there few path components *and* one of them is
+unusually long.
+
+and so on.
+
+That rant also aside:
+1. concerning legitimize_mnt: I strongly suspect the fence can be
+avoided by guaranteeing that clearing ->mnt_ns waits for the rcu grace
+period before issuing mntput. the question is how painful it is to
+implement it
+2. concering stat: the current code boils down to going to statx and
+telling it to not fill some of the fields, getting some fields stat is
+not going to look at anyway and finally converting the result to
+userspace-compatible layout. the last bit is universal across unix
+kernels afaics, curious how that happened. anyway my idea here is to
+instead implement a ->stat inode op which would fill in 'struct stat'
+(not kstat!), avoiding most of the current work. there is the obvious
+concern of code duplication, which I think I can cover in an
+acceptable manner by implementing generic helpers for fields the
+filesystem does not want to mess with on its own.
+
+that legitimize_mnt thing has been annoying me for a long time now, i
+did not post any patches as the namespace code is barely readable for
+me and i'm trying to not dig into it
 
