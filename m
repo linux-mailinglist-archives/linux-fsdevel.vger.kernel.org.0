@@ -1,153 +1,149 @@
-Return-Path: <linux-fsdevel+bounces-69848-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69849-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A33F5C87763
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Nov 2025 00:30:50 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFB09C878CE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Nov 2025 01:05:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4766D4E873B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Nov 2025 23:30:49 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8C4C03532C7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Nov 2025 00:05:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B90032E2DEF;
-	Tue, 25 Nov 2025 23:30:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4741611E;
+	Wed, 26 Nov 2025 00:05:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="dY3jONc5";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="xZXwcRzG"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="QjUsYgev"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout-b6-smtp.messagingengine.com (fout-b6-smtp.messagingengine.com [202.12.124.149])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 487614086A
-	for <linux-fsdevel@vger.kernel.org>; Tue, 25 Nov 2025 23:30:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C6971FB1
+	for <linux-fsdevel@vger.kernel.org>; Wed, 26 Nov 2025 00:05:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764113444; cv=none; b=niXhKumhpbJcvA7G6IjIUHVyJHbFQs3+VUR5NRt9KFzL5S0NmlKrqfkeuRC7dh6h21Xz38LQyDedwPdl0THOcBVgmaDYVP4XSRNlhlaQCUy9JmAzXS2/3XQ08KvbZa3sfRGerd7tk4gksqPbtIGRYIAW2iKixPkmwjuHMQSeHOs=
+	t=1764115542; cv=none; b=Ko7+ILpmPKtOS55Zim1juMTP6iGM28FnLJgisqnneELWkHhBdSbBk3cpMyrePzOAwxZC+cHElheae/cN6ieHS19N7MHpMFL8kCptqAsfaNtY/nAJYzZvq6aoaCbDVpZPS3XxStdf1cmqLotv7cQAmzthWro/KbyoAnuuCtg8Onw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764113444; c=relaxed/simple;
-	bh=metLIQ+DKY/br7Qh8y0SHgE5n8mwg8x16xEJEA9yDzk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=r3WmNkWnLVRrpiETp2jWYF3CQtfm05N1nOq9smHeuZeR7Rhlb5p1E8yds+64a55PY4BeZkf6xtP5X3QWFMml7h8UICR9G5dlibhL9ZzSnXtEUIbecXTz3vti7THm50FkYJB64irnwBjIvfmh8otW36OOr23GzgwBkF0nrPbClck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=dY3jONc5; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=xZXwcRzG; arc=none smtp.client-ip=202.12.124.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailfout.stl.internal (Postfix) with ESMTP id 45B731D00251;
-	Tue, 25 Nov 2025 18:30:41 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-04.internal (MEProxy); Tue, 25 Nov 2025 18:30:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1764113441;
-	 x=1764199841; bh=nlyisD2DoWvfJ2JWOQuBBQto+OFD9xdhpzDO5Al9tlY=; b=
-	dY3jONc5ASFASYprEsMZutAZnZXRXoBlhPu4ecQnzKjS+Pb/O+N0/qbnNVKKk13+
-	2raDv7d+O1mfduDfKjQzROxtXxXBIS+vIsHDKMQF7VF5myNN5QDfF/uMQQkON+wS
-	IRuU4HwhwplE2icY3QTMGHrnywM+/p0Cl8WnzSAWnNjx8Ro8w0Dgeuc9ycEK4L1s
-	+rWDN2lEPjYDHu3A/RMnaxdL1WJSrFus2IMYfzvtR+2hkPUTJMQVMRt9PsSL+Mk6
-	UQwrW74f51DkJ63pJNS3mjn3lV4VGyXWPg/wXBTclZEyDP3f9Qjr+RtBFmhN+yax
-	+ffWqh4gziMU5hXhjN7b6w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1764113441; x=
-	1764199841; bh=nlyisD2DoWvfJ2JWOQuBBQto+OFD9xdhpzDO5Al9tlY=; b=x
-	ZXwcRzGpZ/gdLXidpSsURnQx4tKMMxM4VyEWs8Y+qznXFFfhiaGtpDOoB/AS4oIV
-	/T4Tcmyr2Pw8VJCU6wREGcnRYvEry20EWh9nma93ZeKL7TBaX/sP+ECpO+rdqTL9
-	HJGNljvRZ+kHoU0qpJRZhBSyca4RdXPAmf9DsTnNVopjLlB3MtKZPpHfcVOaPHeD
-	V8XvieFJFppkAFd2LM49k1JF5sAghhe6ouJe/WQ7oX3oSibrKIsQmN4Ve46r130q
-	GDNgxgTSmkp+McdmoSA0qjIE/BgcRsk8NnGcyLS830yrmUhJYIaXkGkEKmP2OkSq
-	neXpmp7NZEkNeJDqUxNwA==
-X-ME-Sender: <xms:IDwmaTl5LqkCOryXMtRQfvN424G0b9UvxjMEL9ovrk7bafxmMjJ-9g>
-    <xme:IDwmadu5axNaXDb0RQ8CXnnnEnhHMDh1zJE23reEqcSJXwxTF5smcsMCVDKObYsEm
-    eQfpEMyQXrVS4YyrZK8DP8Kr_ZaxtE5MwO2_0ofSHcL5bVjqLgf1Q>
-X-ME-Received: <xmr:IDwmaR93z_BYEt0nAjYzEVsF3XUSm6hNCm5HIGstQrYJSn4J11CUgJhdeN-tNTmJoY_I5ZQDnyLwgNEI5lSCIDImNim1o9adTocsoseAKz46zdHooU-t>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvgedvjeelucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeeuvghrnhgu
-    ucfutghhuhgsvghrthcuoegsvghrnhgusegsshgsvghrnhgurdgtohhmqeenucggtffrrg
-    htthgvrhhnpeefgeegfeffkeduudelfeehleelhefgffehudejvdfgteevvddtfeeiheef
-    lefgvdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    gsvghrnhgusegsshgsvghrnhgurdgtohhmpdhnsggprhgtphhtthhopeehpdhmohguvgep
-    shhmthhpohhuthdprhgtphhtthhopeigfigrnhhgseguughnrdgtohhmpdhrtghpthhtoh
-    epmhhikhhlohhssehsiigvrhgvughirdhhuhdprhgtphhtthhopehlihhnuhigqdhfshgu
-    vghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepsghstghhuhgsvg
-    hrthesuggunhdrtghomhdprhgtphhtthhopehgfihuseguughnrdgtohhm
-X-ME-Proxy: <xmx:IDwmaXO8kCXmFHmUr-j2yqjlCDtEXa0a_xlVHQhX9PE48FgHyMEmYQ>
-    <xmx:IDwmafFLCbGfcVDEiiFYWtoMh6gfZImpXKfm-puiJvOW3wvZ0vvFnA>
-    <xmx:IDwmaVQ1WL8LVxelalUhbGkcduL8szdU9YcuqwUqhtQoxC1j3HDXvg>
-    <xmx:IDwmact0IRBdPG-j6hTZdW4FOYGAT7WgWYob5qiV38O4FMN1R2wr-A>
-    <xmx:ITwmaT5hgHemI1mLySRHHGpzNtM2zyj9p0_zcCH4E8Bemh8ZqAo5EUJ6>
-Feedback-ID: i5c2e48a5:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 25 Nov 2025 18:30:39 -0500 (EST)
-Message-ID: <0a539736-3988-4e19-a027-873a7b219ca7@bsbernd.com>
-Date: Wed, 26 Nov 2025 00:30:38 +0100
+	s=arc-20240116; t=1764115542; c=relaxed/simple;
+	bh=IWtKHfX36Cte44sr5orebBMWVyajN1IGqiZKhGdcEyw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=osFiPJNewjsMpMdXgME/kozKK5LQdsUGdJDFkL8fT4Xy+m8wkLjEKgsKBtlMgB/CYDzLlffCyQ7LUvri32fAHEyeHRAfQrVLHJm+tIvLYMJZyLKdikOfW9N/qnmUZI1V8Yxcwk5Fp7rhnxg86wwdYobPbvn+6+i7WxbHkD6g904=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=QjUsYgev; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b728a43e410so1071214566b.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Nov 2025 16:05:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1764115538; x=1764720338; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=b5/Zp9XMM2UPva6EZS2G85cTitA/7ROGh4awJTXNrK8=;
+        b=QjUsYgevM5G7Hkr127C/TjfhpKkscaUfrbr8yTl/9daGFY8Nzcct69Urd5efa1a0RY
+         TIFqNwX2nd3UK9wWZC3/Fkjqdr+H58c05ALBp8dhDDTHZveQdkwepzYBi0+XkxR6EWIt
+         S8LoWX0b9FhvI2LoaptNbgcrSdL2SJp4Qwen4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764115538; x=1764720338;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=b5/Zp9XMM2UPva6EZS2G85cTitA/7ROGh4awJTXNrK8=;
+        b=BRfPFjDyYofr77fswZUYrXUlj4i8jXXRrF+aqAZQD01um8azPg3Mc+UO0RVknyqebE
+         HxhKxGeyxqyut+DL3TVFNvPQ2zy6xB7/CYvUeAM91um4WidpDY53KRO5cD5K5dQsm3+V
+         v8gFrSPXuqqlBoCjAQV7PlX4II6AqviUz3IUnJTfKez7b2lgW1fn4kCN37544gL3vZA+
+         iY6FT/wpmuWMdKArbpj9V0DYGbo+QcZQLHHA1QMdPdHA5c4yBRdEUIifCS2bAtgnFN8X
+         YnXt6oPRdYQ0MjZR2WoEsYkGhwJgoFsI4HmyE6XNmLBhj9yoNp8o2bMzf4fF4REO/k+C
+         csdA==
+X-Forwarded-Encrypted: i=1; AJvYcCWsqyaYjD/xkuKn7EPo+GV4aeclMDepZL7SPookndQ4qqHpcT+LnE0f6HHXjts5B6u3/DGEJfe1A2BkO/G4@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWQd7qiFGTcS11XwRQT1Wh93dVTdiHHkptpor9st7d1VffAlHs
+	oupx37VgjcJPfhriQFqfovigP8HFw33k4RJtBNZH8jbmSr8SB4U8f5tzut9t00oS3G4YK4hQ9td
+	NdYCTao7MTA==
+X-Gm-Gg: ASbGnctGmMoQKaD/32ih24J0hvjJfcl0mwwINeYC6Ot5mJi8yAxUzT9ruDAcoc6XBay
+	xjmPZo8Ie1S3G9yMLnJUqzgREnvRzZsH7UBD13rgPJLJBumYcMkA35AaFoJ/ei9P0HLAUED6Kg5
+	8L//C2UWX1Bpr8IP+EDFK2yrx0boyrioD3YbebCuyXNBqQ2DaRw8JTVo1KBfUCcXgyoIwj3gbgX
+	QL1NxiWTSVqLgm8uNsmxDez+EqnjaM4YXmR0WLm7QtcjGTjnLlWqWu9hsIGr4VamHn9ENJDBT1N
+	FoWQsACCoijWspQyGJKBSHMuHGd4DnGhuqLkkdaXCtP/ovusqBO9QzfOIGeChRJIBNoqIIL5C+i
+	h/IpojACO0kHkzHa0HJdY5QPhML7Km6iHfqojuX0/BECGq/LKsP7BeTvEvYmp5+rP+OPlLKLHSB
+	60ZbAMVPFrp+QB8/i0RWA0FPBmrwfsEOlA5MvOnHtoDmcA3k8b04lpbuBKcjpp
+X-Google-Smtp-Source: AGHT+IG9qfa5MiP26lM03PE3MEkEi5UaewEYz1CPx7RJFMmIvBXdMVteh4UJ2R4Z+RmTfvmYcHmh3A==
+X-Received: by 2002:a17:907:1b28:b0:b73:6f8c:612b with SMTP id a640c23a62f3a-b76715653d5mr1847846266b.16.1764115538217;
+        Tue, 25 Nov 2025 16:05:38 -0800 (PST)
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com. [209.85.208.42])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b7654fd4275sm1664481566b.37.2025.11.25.16.05.36
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Nov 2025 16:05:36 -0800 (PST)
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-64162c04f90so10230364a12.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Nov 2025 16:05:36 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVg7M474gGKTUjFouwKD84iHDzEpff8GSAigQiEC62JmluHgLPpSH4Ih5sQts0Ty6l37OYVzAkKuwQncI+3@vger.kernel.org
+X-Received: by 2002:a05:6402:4313:b0:645:d3fe:8c57 with SMTP id
+ 4fb4d7f45d1cf-645d3fe8d77mr7881165a12.18.1764115536011; Tue, 25 Nov 2025
+ 16:05:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fuse: Umask handling problem if FUSE_CAP_DONT_MASK is
- disabled
-To: xwang@ddn.com, Miklos Szeredi <miklos@szeredi.hu>
-Cc: linux-fsdevel@vger.kernel.org, bschubert@ddn.com, gwu@ddn.com
-References: <20251110-fuse_acl_umask-v1-1-cf1d431cae06@ddn.com>
-From: Bernd Schubert <bernd@bsbernd.com>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <20251110-fuse_acl_umask-v1-1-cf1d431cae06@ddn.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20251123-work-fd-prepare-v4-0-b6efa1706cfd@kernel.org>
+ <20251123-work-fd-prepare-v4-22-b6efa1706cfd@kernel.org> <c41de645-8234-465f-a3be-f0385e3a163c@sirena.org.uk>
+In-Reply-To: <c41de645-8234-465f-a3be-f0385e3a163c@sirena.org.uk>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 25 Nov 2025 16:05:20 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wg+So1GE7=t94ejj4kBrportn2FGzOrqETO5PHVLAzh0A@mail.gmail.com>
+X-Gm-Features: AWmQ_bkIeRFT-qxrQmWZBaCh_Rip3xXHEmn8IBKWozki_MwmDXTWaJPJ_L9Bai8
+Message-ID: <CAHk-=wg+So1GE7=t94ejj4kBrportn2FGzOrqETO5PHVLAzh0A@mail.gmail.com>
+Subject: Re: [PATCH v4 22/47] ipc: convert do_mq_open() to FD_PREPARE()
+To: Mark Brown <broonie@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>, 
+	Amir Goldstein <amir73il@gmail.com>, Jens Axboe <axboe@kernel.dk>
+Content-Type: text/plain; charset="UTF-8"
 
+On Tue, 25 Nov 2025 at 14:30, Mark Brown <broonie@kernel.org> wrote:
+>
+>
+> It's not clear to me if this is an overly
+> sensitive test or an actual issue.
 
+I think these two cases are both "error handling done in a different
+order", where the test expected to get EMFILE (or something like
+that), but now the file open is done before, so it actually gets
+EACCES.
 
-On 11/10/25 09:31, Xin Wang via B4 Relay wrote:
-> From: Xin Wang <xwang@ddn.com>
-> 
-> According to umask manpage, it should be ignored if the parent has a
-> default ACL.  But currently, if FUSE_CAP_DONT_MASK is disabled, fuse
-> always applies umask no matter if the parent has a default ACL or not.
-> This behaviior is not consistent with the behavior described in the
-> manpage.
-> 
-> Fix the problem by checking if the parent has a default ACL before
-> applying umask if FUSE_CAP_DONT_MASK is disabled.
-> 
-> ---
-> We found that there may be a problem about umask handling in fuse code.
-> According to umask manpage, it should be ignored if the parent has a
-> default ACL. But currently, if FUSE_CAP_DONT_MASK is disabled, fuse always
-> applies umask no matter if the parent has a default ACL or not. So, we
-> think this may be a problem because it is not consistent with the behavior
-> described in the manpage.
-> 
-> umask manpage:
->        Alternatively, if the parent directory has a default ACL
->        (see acl(5)), the umask is ignored, the default ACL is inherited,
->        the permission bits are set based on the inherited ACL, …
+I'm not sure it really matters, but the old code did seem to do the
+file prepare first, and the
 
-We had discussed this internally, it is better to just FUSE_DONT_MASK
-and FUSE_POSIX_ACL from fuse server.
+        path.dentry = lookup_noperm(&QSTR(name->name), root);
 
-Confusing in current fuse_fill_super_common() is
+afterwards.
 
-/* Handle umasking inside the fuse code */
-	if (sb->s_flags & SB_POSIXACL)  ===> Where is set from
-		fc->dont_mask = 1;
-	sb->s_flags |= SB_POSIXACL;
+And while I don't think the order *really* matters, I do think the old
+order was better.
 
-I.e. this assumes libfuse mount or fusermount would set MS_POSIXACL?
-Libfuse isn't doing that - maybe we should we add an "acl" mount
-option?
+And I think it can be done that way.
 
+So Christian, I think the proper solution is to not do that
+"dentry_open()" in the FD_ADD() after doing all the other prep-work:
 
-Thanks,
-Bernd
+        ret = FD_ADD(O_CLOEXEC, dentry_open(&path, oflag, current_cred()));
 
+but instead make a new proper "handle_mq_open()" helper that does the whole
+
+        path.dentry = lookup_noperm(&QSTR(name->name), root);
+...
+        ret = prepare_open(path.dentry, oflag, ro, mode, name, attr);
+...
+        return dentry_open(&path, oflag, current_cred());
+
+dance, and then do
+
+        ret = FD_ADD(O_CLOEXEC, handle_mq_open());
+
+so that this all is done in the same order as it used to be done.
+
+Hmm?
+
+I think the same thing is true for the other failed test-case.
+
+             Linus
 
