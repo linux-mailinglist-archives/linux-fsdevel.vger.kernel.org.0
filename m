@@ -1,62 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-69899-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69898-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA9D1C8A592
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Nov 2025 15:32:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D043C8A5A7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Nov 2025 15:33:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0A9374E19E8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Nov 2025 14:32:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB6753A6BD2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Nov 2025 14:32:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01A9E3043C0;
-	Wed, 26 Nov 2025 14:31:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41E4A3043BD;
+	Wed, 26 Nov 2025 14:31:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hammerspace.com header.i=@hammerspace.com header.b="c9nrXOUD"
+	dkim=pass (1024-bit key) header.d=hammerspace.com header.i=@hammerspace.com header.b="YfFYCn9m"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from PH8PR06CU001.outbound.protection.outlook.com (mail-westus3azon11022090.outbound.protection.outlook.com [40.107.209.90])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9FED303CB7;
-	Wed, 26 Nov 2025 14:31:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C269D303A21;
+	Wed, 26 Nov 2025 14:31:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.209.90
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764167511; cv=fail; b=WS6uoHNQ4On0SCjANEYiY6oDdqXNCBwpFeuSbpPEHutkss6seWM3udiFKYxQ44qeUh6+scSrNEYp3VsYHfIhtojlbl5P8zzEfnxLa1/ECNK4CnasGUn25UqdOtLdE5wTmEKvEOKpXpqLVWa4bzpCJLGfCkieeLX+fGllF1+UT48=
+	t=1764167509; cv=fail; b=Hjw2Arl5MX40kFOzZO1qvHLQhNxEB5ppiXxjTFiWydEQEuN/95GQc6zmVeCtyBzw4l39RfGGB4yyNRSqqAqP+SPm2M28QS3Pk3HFuHlgd+NEFZD/AosOvH3sIs0r8Q/frXsFP3nSA181XvRYzxzrDLq1MxHAmTKac8CI57SCVwY=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764167511; c=relaxed/simple;
-	bh=tcMk80bIwgXGhIK+0n/fjeT9iszU+KR2GjSwshe+CR0=;
+	s=arc-20240116; t=1764167509; c=relaxed/simple;
+	bh=bLLS8qIWn2WQyvID5CW5TiVylOGOlyAnVuDIoVyQcm4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=X/uWgxc2AE0KZIS73340koZwe0PqYUMAWpMHgbl5fX1YFhZNrE6sf8XDikYpoVunb8XYfL/VF6gcf7mvEhEXw2ZLjhhxqkAc0XavmS3pYHlwm0X13jUE+xzXDOuECwA7sRfd8VE2rQTXMceKnOM70vHShJO6VkifQKfccPtr3d4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hammerspace.com; spf=pass smtp.mailfrom=hammerspace.com; dkim=pass (1024-bit key) header.d=hammerspace.com header.i=@hammerspace.com header.b=c9nrXOUD; arc=fail smtp.client-ip=40.107.209.90
+	 Content-Type:MIME-Version; b=hh50PcHrH2SZEEvm11KwegWW+o2Uvxn5ZjaD8UknVN/P0PWdUEvkU+aVYVqkgF4zYM3bphZYEwhm1d4/b6DB436sv0sEp8IU/+zBHGfgYZwNR5+V6wW2ZUsGypkz2ymZ7wJ6dumxl1h1ZANmCDccEdpyWufS6c/EOqErQU8wFyM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hammerspace.com; spf=pass smtp.mailfrom=hammerspace.com; dkim=pass (1024-bit key) header.d=hammerspace.com header.i=@hammerspace.com header.b=YfFYCn9m; arc=fail smtp.client-ip=40.107.209.90
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hammerspace.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hammerspace.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jAf5TnBv0Sa+cs1iCvM01raHxaQiwoj16XvS8qj8vglwFEMuXhZGCUsggtd0JvqoQQXggcYD8ujBuHVtVxjNK+arln0B0RJV3+f9lUNRyt9fTA6D+ZXNhmPweskPU48xObOrMsYUzMOomB9w3pTpMxnq4Cx+bQU6blEQ+QXIBSUvgFkfATGdgyihd3XgbRYB6j96YAMmtjL3BIjOM4U0HTbUxmXqaHFrpkef0GA+jdpwvjTJBcV+Afe3mL5osrMvWGcdQsxGy34+zauef2Z4YWCByH12Yu4dmmh7ADBZHAsCNrMlAyJoDInYVJDARlTW353fHf2EdnYq2Md0lOXv9A==
+ b=UoT55dd2EzZjCfpzymYMijUgBbVQoZkIb22ONkvUvoQmDAvfjaD9TJiWw773jJ34a02t/6sa0uJiBFYIFLgaHWIerv19SW4WlLHY2pCAtqtXyFS734VyEuwqNqksym+ov8EURWYPvwwU5DXM3/GjunXGzI7GT9xOzEP/YAREaYgfz90+gVWDeHzvBr4pznbCLSzi6SBl61id58LHrIJ4QNFum8aLIyYp87XRV2XH5RyD0IV8ZxtR+JTfwIJxknZbYdWU5Oj6KGk0/BKungjOd6CVX8u7GzDijua+TVURMMyanE0N0OFLQaYQWxVlR6tYHuq7yrz2QADEzudK8JMZCw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=V2WUDHPIQMU1UZXDJl81Hi3Eu8QFmg+9QAVvWH2BjLU=;
- b=hwgGOZV4CrOVJgwPlcEZr2gNX11yYTpwyRRCMhXrUpGKsDTC3XN3Guej1ZKXLeqpYuDE1u/5iT6Ngkr85c/tkq73LPaLzDKdisPyGsnKZ/nEAAajpggLq0V+Hv6IQzBj6/J9QU8IHbcRlMTEaHWwyOVgSiQdYqi3N+l1a7gfaGcgvVVOpiMCJi+cOm9SUKna4l1BUzGQqDw2/JLFiA3jgezhr/uY/IOJwqWiff5wdYyUBeGHv3SfLQaT7hRxCS8f5qIoV+lI7588F7jo1GgAlduTG9/w8Z1CUUUDJJZaJw7sNlMpF/8SRUk0lu67Z4UrzjUkid9ibSBPfjK+La17OA==
+ bh=RCISu79RwJ997Da2B9M8yDgLqdjtVue2k52gsy0OZXA=;
+ b=Av+U5l2OB+6LqaQY/BxbDkYxdBxCABB0JPbhTp82J1LmzZu2MxfewkstoNpjXjJpao9z0oTv1i27aetBEpn+c0tLSui+rAog1l6Hlt2Z2wvxJukYcklfdEgb/gHmHm3Aen7g+AyBgrOvfMbH5leRhpNbsWYnb7gNRgsvCruMcg7XMEk3A/cJTESw4HEl/w29STz32OGQKqnLo61ovgwuDC4IkDEAldkSdG58w2Om9b4BS2ueDGJyuuiH9SCbtGGGDUAIARQq4f0pcz5PVjBMRX+1T45oM+aLRxGs+yjcZDHZmodkSlnNrtWkhtheXYJdyjPgLmF/jwKVTWhvO2gg6g==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=hammerspace.com; dmarc=pass action=none
  header.from=hammerspace.com; dkim=pass header.d=hammerspace.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hammerspace.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=V2WUDHPIQMU1UZXDJl81Hi3Eu8QFmg+9QAVvWH2BjLU=;
- b=c9nrXOUDM7+JiQF8/akzC5ldGwEa7/kUB2Uwf/nrd0t8J+a1lz5EmxEF52Z4zUqJxnNQvjDPLdF3BcRBfLn7nZXwYuhJHNE+dHW2EZIL2lUOA1KkXH1IsFHnCVyLSdUXOpC+6wTA7LBAnkyUKxZ+QJ6hTOiBP5N9YtPeZQOCUYc=
+ bh=RCISu79RwJ997Da2B9M8yDgLqdjtVue2k52gsy0OZXA=;
+ b=YfFYCn9mhfUfMbeDNhqh5C/v4TgQnXIrZ66SouZEvArejx8T7k7d1+Eq3iU3i74sPF6aK8w/lUlk9+0/9r8DUhMYEysqceKLLFsHHEbIyJQbs68fGQ1P6iesT4CRkNpi/vdUNCrqM9zlgmz6KRQzcKOfv4E2pAFbMiui58NWmKk=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=hammerspace.com;
 Received: from SN6PR13MB2365.namprd13.prod.outlook.com (2603:10b6:805:5a::14)
  by IA1PR13MB7519.namprd13.prod.outlook.com (2603:10b6:208:59e::19) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9366.13; Wed, 26 Nov
- 2025 14:31:43 +0000
+ 2025 14:31:45 +0000
 Received: from SN6PR13MB2365.namprd13.prod.outlook.com
  ([fe80::9127:c65a:b5c5:a9d]) by SN6PR13MB2365.namprd13.prod.outlook.com
  ([fe80::9127:c65a:b5c5:a9d%7]) with mapi id 15.20.9366.009; Wed, 26 Nov 2025
- 14:31:43 +0000
+ 14:31:45 +0000
 From: Benjamin Coddington <bcodding@hammerspace.com>
 To: Alexander Viro <viro@zeniv.linux.org.uk>,
 	Christian Brauner <brauner@kernel.org>,
@@ -72,9 +72,9 @@ To: Alexander Viro <viro@zeniv.linux.org.uk>,
 Cc: linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-nfs@vger.kernel.org
-Subject: [PATCH v3 2/3] VFS: Prepare atomic_open() for dentry_create()
-Date: Wed, 26 Nov 2025 09:31:35 -0500
-Message-ID: <e8c1d2ca28de4a972d37e78599502108148fe17d.1764167204.git.bcodding@hammerspace.com>
+Subject: [PATCH v3 3/3] VFS/knfsd: Teach dentry_create() to use atomic_open()
+Date: Wed, 26 Nov 2025 09:31:36 -0500
+Message-ID: <e8e927f72d9f28bcb91185077e0905285c307552.1764167204.git.bcodding@hammerspace.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <cover.1764167204.git.bcodding@hammerspace.com>
 References: <cover.1764167204.git.bcodding@hammerspace.com>
@@ -91,136 +91,225 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: SN6PR13MB2365:EE_|IA1PR13MB7519:EE_
-X-MS-Office365-Filtering-Correlation-Id: eacabaa8-5fe9-4f6a-f690-08de2cf8857e
+X-MS-Office365-Filtering-Correlation-Id: cb5e4f37-8fe4-42ba-b232-08de2cf886b5
 X-MS-Exchange-AtpMessageProperties: SA
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
 	BCL:0;ARA:13230040|7416014|376014|1800799024|366016|921020;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?nwuRPYU7ZwEwH3knMQ57KThGse78SpGElEVOpVy8Lx2dns7mFPE+Sfo/Lbb5?=
- =?us-ascii?Q?VQiachSjb//X+Y58aVriiPjP2CwpgTW8AOhc83fhmQmaOfYRTwqAu+/SiqDP?=
- =?us-ascii?Q?2QpxJ90OTtnqmadUzVtkAwp2cSs4+KlirS7YUK1N4ndXDmqPlDA9DMQ+XSYM?=
- =?us-ascii?Q?klbD1y9u39aTaR7LJ7a6kAU8SAqbzDV5TKWncXLop7bAZ9h1tRdeq8LNW/bG?=
- =?us-ascii?Q?Ov/jocKzudHAiwt/BM7pX4sY48ZMbVPLfzJ9VjUAySqDCDMOdYMKlHNPXSqz?=
- =?us-ascii?Q?CrNdPPLK8yp9tpC9kE/EwuZvXM/h0lP7nF/gr89jQGAqrkiVym63ZKKb55jW?=
- =?us-ascii?Q?h5juRR/If0CdvYMHUfyAUe5AKcEGdTqCNJOektgVNp3FK5GJarhAGHyORfWS?=
- =?us-ascii?Q?mS0DSPCRhMHgy65bRbbzz13Yt0ToOM3taoB0hBuIQa3lnm6Cb54rNavNMWHh?=
- =?us-ascii?Q?oi4usTdVC8MFlV35pmCdUsMtBSycQTBOBPTLEBNqxsZUHaUiVqzx7+lEhObB?=
- =?us-ascii?Q?UL4OqtWpr0pkf+IMjaJITTBu21YtXNK6dMt1B7A/ju2yuLXY7QFHs/TRbimJ?=
- =?us-ascii?Q?2o9HsIEtTUR+XdvzgtPQJiBbrGZA1QH51Dri6iVZ+hSqjyo4VZzAKic5ifKt?=
- =?us-ascii?Q?lgxjpqXm+GADH0afv9Dx5YQI+7zRf4zBlXyofOT+6xan1Mb2OPb0YfMl85o4?=
- =?us-ascii?Q?Gkq29Yrq9YCUm2PtxhlsOCXrMYxi3WzLu+Y2+OACrvqepMbjFQdoUxFCaWAx?=
- =?us-ascii?Q?84H/ZS0Jr9LsTtXok38BjxAabsQ0gD9Dx9wENkPRz5xG1mGbX+1EdiCE3lqt?=
- =?us-ascii?Q?UVrQbtwOGRmGQiQ4zwx6VxYrL1fZASRfj0JdWqOFNG0Q6P4bQfxRe6xdCs2K?=
- =?us-ascii?Q?qXs9SPGhQI3CBHTOG7AsdpGK8awxF7V2cc47emenJNeK6uPYBCHku6zVNx77?=
- =?us-ascii?Q?MVfECyIgre6jAFZkWvosdaW83joqBZoXbukhqVPCZBXrqspOo6cpVAyAoBZ2?=
- =?us-ascii?Q?LZUr03lK4AU5TZMLplZRPnpiFAigKSF3/Cz/WVBB5LIXGQg09bkcnYqxGTSM?=
- =?us-ascii?Q?qy4g5h/ut6E1AwScmI7BKnhXolT0AwX5t5CziA0Iiqji7KD3GjknboBYzxnj?=
- =?us-ascii?Q?61prIaSD1Ac6Ce9R3W6fiCMv8ycdBpegs+UY+m7EjSvIG2Gji+KMm2CzaPuD?=
- =?us-ascii?Q?HHTdY5CfUKX9nckTYVTFtOx0m2/D7Qa0li3WhK0yJuTL0eLHhd+l/KKlWkNV?=
- =?us-ascii?Q?fbflODILk/rq6Yw0ff+lBLQzPMgU+R6iPLMZqwgGjN/PZRIk+iLTxkq5e7pm?=
- =?us-ascii?Q?jV/Zwh7cOV/rTbOA15HboguLDvr57eEyK4MVoXealvyqifqqQyJi229X2fzW?=
- =?us-ascii?Q?BYhRkyV8HKx2GMko6iqRPWekQGSNPc3TL3o0u0gd2fVAiK89YQoTQ+SuMO9R?=
- =?us-ascii?Q?SUuMmV2KtO/5/WI3SvubtKlqpPUdlXziTgvtE8hkoKDv51oNzrpfzTxrBNxB?=
- =?us-ascii?Q?OpxEcuKF7WS2+yw=3D?=
+	=?us-ascii?Q?PP/GheG54MZnXg/oJyIVdsxWzDnay569lK12b6mY8C5T6myvN6nzv+/uQP/f?=
+ =?us-ascii?Q?Z2lUhCc+Jp3ZSAFU5JZh21d7jHuBXGQ8QK7mjGjhR0BmUzorIiyQ5n4LPIP3?=
+ =?us-ascii?Q?5lsKwl3ZvoFl9HGCM1cIdmYuNi0IXZO+DRs2NQiP1U3hEFxLD9ezigCPSnjN?=
+ =?us-ascii?Q?vS62iNrdr2H0vwPjpC2/1mIsk4dkBnQGAvW9/JMx6z8+SEwnZyXKokyT9KNy?=
+ =?us-ascii?Q?EJN44JxWCcyHTDtx3WQ6gomkvrmDs+iFuGqYdrh5jmlfAbMlK8NxxZ6xC/6Q?=
+ =?us-ascii?Q?xV0mel+7A8zLR5KJxD+KSiK9OzIXTCbLVo0KJePBvQRBVYUpqGJLWA4nNWOC?=
+ =?us-ascii?Q?h4T/k9Dj3vcP5mfxAaPxXPKivb4HHyMC9ylTE9JX8I2bXe3MNgBjmnYBB01J?=
+ =?us-ascii?Q?w1EfrckCBedUCPi100/qZjnRCN79XiX7tQvRaFJ1SELHuH11tNBSFynjFSoz?=
+ =?us-ascii?Q?xNJAedhS0FxgzFYKkiAhbBEQYs4KPMyYd9NJEhKVc57X5LkViK4i4r79wuUq?=
+ =?us-ascii?Q?WUIgE9uy0+4xIvW2Fu2OzLyIaxfiS3vZphSQ9l+LZ82KSiDJ/PrQPyndQF0Z?=
+ =?us-ascii?Q?78On2N3QN2ItT10IDPEiF0qWY79SBx+43bYsqOwpx5/uW2iVzROV4ZnWqmch?=
+ =?us-ascii?Q?dFQqt7cBhZGvErh9yPNVUmuWvrfPnEPCkOPTbTSUeDz/PVM3CBMfu6QWB+vt?=
+ =?us-ascii?Q?JtFF2mIt0fRVxWc3yQEbJONnCaOon9bmNzViI1BoOFOC2LjyRkLL9FPruV6Y?=
+ =?us-ascii?Q?catpNbq9vWR0j6OVTA4ITY41bZZrp9a+uXdza8sB39Cl5t2Bp2dFripFpRsC?=
+ =?us-ascii?Q?I+3ZQmEwix7Xs2FkcLRCwZIj3M/sv+kvsaXA+BRNTVysoExtRggxciX4aY/k?=
+ =?us-ascii?Q?jfdargpZ6Z33RyNiRxdV+7L4ZIiSwumohDgRf5wwXYhg9TNtwxTKenScXdWa?=
+ =?us-ascii?Q?SngRQJLCP6EHBezZU+QHGALvCBajx7MgQZjmiDggn4NDNY9Zb/a7hJOOtNtH?=
+ =?us-ascii?Q?w6zZFF6j16HlpZmhOeRNpH7FqKGfRe1mG0T6AqSt8z3BDwsW1zvzjKq7ksrr?=
+ =?us-ascii?Q?/7ohh1HlKuG51/OpS4CUdobG1u7TXRFOQ3mP9Zi3uplyriSGmwP0/72zQiRU?=
+ =?us-ascii?Q?asgHus2V21C5Z+pARpSketaZbkT9iUMzk6wCEG48eFwTEXRLQKU0haoer/Rj?=
+ =?us-ascii?Q?QwMggkwe2zcjao98yT5S5+iuDQjenf3iA7TJCFaRVUFHn4BpMRx3pYCq82kS?=
+ =?us-ascii?Q?8LLmq/5D5N6Hc4e7WNkfrxWqKIuwmCr+tbHCLhPNSu4imXV4tdGNgnXI6MCD?=
+ =?us-ascii?Q?avWfc1I5OUn/Yw4771Q9g7nylwwTpJMLjDNGZc5GfjUbpIkOQGYkU9ek6ekQ?=
+ =?us-ascii?Q?TW9EcC4UdiWc/KZCXmIDL+d6NofocryqQMoTavvfD4ccscHUO/0xrzCH/m9A?=
+ =?us-ascii?Q?4b+BW5eMzBWce73MnM+3uqE/o2BwNELe4i1QBjVSrJ+baj6p/0gSG2KQlDzH?=
+ =?us-ascii?Q?b9q6OU3sOrGG83c=3D?=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN6PR13MB2365.namprd13.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(921020);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?ByBXen6mlJVFqXgpFOLKS9Mvoh5m8W1G/a98Khg/IxWrB9Elm/uw/ZfMgDjH?=
- =?us-ascii?Q?ydDzOwHs+/N95Qn54Czx4gFDs1DuxeNyaFeXyyIaGjrubkqMJppleV6Ce4WP?=
- =?us-ascii?Q?jhGTcWbS0t/GE0AJ4t3GOmK5l/iF8PKfNly4H8QXBpXhmUoYOoc9x0s1oA2s?=
- =?us-ascii?Q?oSk17tJ1NrTWyXr23RrOcyutoT0rnUY+rEJQ2mRkN+Xp2hBfaFjoTCtalayO?=
- =?us-ascii?Q?7tvGExaPhW/ITZyaVyYSwaI1ealomqE+oAmvnXQiAn/GjQa/p3iqmhgNwuhR?=
- =?us-ascii?Q?3Dg21FjoilYxUCXkxpwaY2gpOj7mK9/uzklEZe7013yhy5RwnKVgh2A4Jkmw?=
- =?us-ascii?Q?LF5eqVjvxo+pH+pVM99yme1IKMeS5ImTDiF3vyygwh+lDJ+gMHUYNAHPyhBl?=
- =?us-ascii?Q?kxcjiTVbd1vwGZPxnrlpVRtrtnSkl9br4g7KJFnfdv/htcgwuPOKywGB69x3?=
- =?us-ascii?Q?Pafpi+HO4AdtEpqHF2/78ywbRf+6Sfkj/yRL9fiqYnBNdKp5iq3W4kUc2/JQ?=
- =?us-ascii?Q?erjx2VijB6SqzibxKM/qMmZrhnGnMVn3sPWf2Vy5N5gGQuuM6TmKn6S7B5Xx?=
- =?us-ascii?Q?TSkcAzlyrh/Wgwi+ABJKFoxqIOJq/iLqfnLRo2suorcAbO7/yWwQWrdupELM?=
- =?us-ascii?Q?DE+1bubTTQC/1lepxWYuoWoqKm/cJn3CVEkb4CPLohmY2M4Or5Is4mkDsAiz?=
- =?us-ascii?Q?lhNfVsK48GK826wZX0wonHpqnBwwCMm8yt+vHPiylVYtmm0LujtMo5WiJz1O?=
- =?us-ascii?Q?Yc9/S2MizJcYtpv9C+ws5IFW84MTFN7/2aN+DALqlnv1uaRmXnoZjeDQvJHp?=
- =?us-ascii?Q?ujS1TZPmP/VQOCP5BkJXy013KfRXyJQxutQsmFJ4lIi4kO/sDqdFtYJLS4pP?=
- =?us-ascii?Q?8++wK+u9h+APo5OnIZqH6QHGwouWU6+M4pAf1p2t23TRmvThib/0sFAFo1TQ?=
- =?us-ascii?Q?R1M1uz+PGRF2uzL7tuppBuboqZnm4hvfSfat+GpNHN//MA+9T9r5P3ubAcUv?=
- =?us-ascii?Q?LCgGd47wRVf1PaQQ8xVMG6/XY+elehWeke/YMbwVaBGLrpEUmfLww6fV8hLX?=
- =?us-ascii?Q?TQCCFoRL+OxqYaqY0Z8IJiMZphBQJPzj2SpkRCcOcMVs7NA/2SlJzs/4FEzt?=
- =?us-ascii?Q?97BfaVJeOtB3fCrWzTFZjZIEEHOBl8WMnIGfIyBYpENECyjrKMPfwtmw73Rr?=
- =?us-ascii?Q?rK076JKilYQMzk00KpA59nCQxFf1Pt8PjAcmsl9DQCRwFadoVxTYUF6sNBYs?=
- =?us-ascii?Q?piOpYY/O+d0KFopL/Toikrl7EujOERk/UbXzBG0gSHCA0QY2A8EGF1A+FIxk?=
- =?us-ascii?Q?t4IF9uoWa3C1mqmSU1P+IQxnFPFqG7vafVvwSwx7C96mLfOLvkNHYjA124en?=
- =?us-ascii?Q?5Xcmcx1JuWnsoSwfVApfyyHdTPfamfjEPjinS85uA87R0gEU0ixsePZCPbQ5?=
- =?us-ascii?Q?/aIlzaWMaFJ3xbXmhmsAR8M1q6pOaqXcjAHIYNgPttugeXC/Xu4k9Gh0nFWk?=
- =?us-ascii?Q?AzuL9Kv0NxcmIFcPS2jJf9w9HWjS4HYYMZrC2ubLVd9P+yXxQsmCo7kQv3ZP?=
- =?us-ascii?Q?FHjKx3j70LnwOR5YWutFVKtLan410Vw+tKVUY8FZtGN352r7LB/V8bH3nzGS?=
- =?us-ascii?Q?Vw=3D=3D?=
+	=?us-ascii?Q?Gt+kqvSpCjZ4KSwEyyUL2976doJQ+wOELBch8Hyazqb6xX88mVO8ST2gljXa?=
+ =?us-ascii?Q?+6QzR7yGINg80Z9UAvrQ9bJ/mt27KHArQMiyAWu+q3NjlSkMJbmT2VEVnrhp?=
+ =?us-ascii?Q?JCPBOqOMMxAl+H9wtxtHmBZPJx45xRC51loG10EWDTEsx0olUz6pLtvb+fyI?=
+ =?us-ascii?Q?GTdoAF40CCDtnSagwI0Wljgk9cTfLeoH031FaKvEGR7jWQDC1ebpZvALw0h5?=
+ =?us-ascii?Q?JMK4JbaBteFvAXY9HrKtoIlauUvHUfE06E34/3Xrn/0h4RJc4weW5gsE7mcT?=
+ =?us-ascii?Q?AAg8NiOwjkrr2iJ11jfKc8vu3/Eebo5KV0hXn6KAV8jVneW9Ze+FvobnqILf?=
+ =?us-ascii?Q?owzZ3BNCx953Hb0b8ccLx9U+IaTBR4FTzzb+o1O/WYFZNDwPAsq2WKwAHblT?=
+ =?us-ascii?Q?zcw+SyvxC47pWMC84sWFsdRY3WxBzvL5qlDO2WLMHhKqvqstnyBIBBplzV2E?=
+ =?us-ascii?Q?N1izou2xI/yDKkDj/B8bnM+GLaFsvEYFAq590c6V8STLrOE0RpikGMuhr8LZ?=
+ =?us-ascii?Q?UtoQwWXCCjlZBd4+BPlnSjWzeIwQhvd/qgdscwbpGaJZhAwJ8cTCbhiLgMXF?=
+ =?us-ascii?Q?u0noiH4Zo1FapPvrzWK5Z6/ihQK0gtMAkUw8RZHStZTvsKappya7qGf4doeC?=
+ =?us-ascii?Q?cpjp79tBYF6gj0Ki+9aB7pb/eHNsZxZYTAWsdveJnBcyA/bBLtLVr7fSVL1y?=
+ =?us-ascii?Q?qn7iZ1e4/PxTApe8SUCzQEYYKXtPYJ5QOpv6nctMaG28yJ64uFndFcWq7ZSf?=
+ =?us-ascii?Q?Npg9mqbBZUxtL+NSCgoen8hU7g6EiKnAmEyV3eYN5QIMJYh99J/euSBEzPI6?=
+ =?us-ascii?Q?KePT99lSGzfJeaZttI9LSNee5YLTmNlCvrECFO+dTOrLBQ9/YfPVFVASIrEW?=
+ =?us-ascii?Q?Kp0sprz5PSOBDdVmeq6OyFIddctDiieX4McubUQikPPLpsihVyERcrKve00G?=
+ =?us-ascii?Q?HCxG1ZBqJ2AG8NxXAaYslWW1JerZcDIidr6ecLpjzY1/xC41oR9Ka5ayPvmW?=
+ =?us-ascii?Q?6ihS4obl/mvOHqpNJ+ueoMOrNdHzlsNo3wGQ3UHQgium/NeU1B++tnhUAxa8?=
+ =?us-ascii?Q?3HL0ug8NQ7z9gwhyBVamVZ+WPu1nlao0rq1yYzb9F39UitOreRberFvsGlIU?=
+ =?us-ascii?Q?f30QqoSNta5EXlJh211LBm+8LtJwqcYHQTwt6rcr9O8bkkaBPFYVQm0XnHbk?=
+ =?us-ascii?Q?Ebe7n1QbPcG+5gcqb/BjDaQn1LTBGni/GMTkZQ+LfHkrTCxpk3sNKdCtoFtK?=
+ =?us-ascii?Q?uQNEwxPp0FhGIvD5FXTYRs3Md289b9axJyrnXV1UVYdSs7kjJKuj3p9SaArW?=
+ =?us-ascii?Q?vaFvlRkHJ8sDLcrrNyU/Bsn85tLFKHhcVGezAqsRWvJtSnhatrzSO2D9kqMv?=
+ =?us-ascii?Q?LgOjKvzcjgfir6aSJV2ySshMAmVHDK+Va4PglxS3uI/F/WI2+Y9cJUtJLLrd?=
+ =?us-ascii?Q?r+IQFM2TwuFcSEyGuPPy2bq52HZS8FcnKZedomALzhzPBf/rEBVZV0hZZrJN?=
+ =?us-ascii?Q?ExPO7ieVgi0WfeyMJPcKopq6hRBVy+w1tUqKowOtP+Jod8QQOGebWzhyNhxo?=
+ =?us-ascii?Q?/riZjDIVCYBp0fHGDY6FgJNYYpHw6NABjvHJcqGgI77KTme/OJmkT0rjVOGH?=
+ =?us-ascii?Q?IA=3D=3D?=
 X-OriginatorOrg: hammerspace.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: eacabaa8-5fe9-4f6a-f690-08de2cf8857e
+X-MS-Exchange-CrossTenant-Network-Message-Id: cb5e4f37-8fe4-42ba-b232-08de2cf886b5
 X-MS-Exchange-CrossTenant-AuthSource: SN6PR13MB2365.namprd13.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Nov 2025 14:31:43.8005
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Nov 2025 14:31:45.8197
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 0d4fed5c-3a70-46fe-9430-ece41741f59e
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: CXMEZjY+yn6RyiEmsimO+LDfENe4R6ShTAAG5w4Q135UyNtr5O6vI8lCefyqWh7SRVsHWN1ZFsx89h27iDtxD+Jki+wHtEPy+X9lAm6CfFg=
+X-MS-Exchange-CrossTenant-UserPrincipalName: fwyUULkN1Ia9xmU5N1vTSKr5OHCFTC+vucmZYaOyh4m5pFBm/WA4+J8yvvg5vJq1/BL4vmdtAHpI2AE7vjzTOO8xqo+GUu6XcPY6W9p2X8U=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR13MB7519
 
-The next patch allows dentry_create() to call atomic_open(), but it does
-not have fabricated nameidata.  Let atomic_open() take a path instead.
+While knfsd offers combined exclusive create and open results to clients,
+on some filesystems those results may not be atomic.  This behavior can be
+observed.  For example, an open O_CREAT with mode 0 will succeed in creating
+the file but unexpectedly return -EACCES from vfs_open().
 
-Since atomic_open() currently takes a nameidata of which it only uses the
-path and the flags, and flags are only used to update open_flags, then the
-flag update can happen before calling atomic_open(). Then, only the path
-needs be passed to atomic_open() rather than the whole nameidata.  This
-makes it easier for dentry_create() To call atomic_open().
+Additionally reducing the number of remote RPC calls required for O_CREAT
+on network filesystem provides a performance benefit in the open path.
+
+Teach knfsd's helper dentry_create() to use atomic_open() for filesystems
+that support it.  The previously const @path is passed up to atomic_open()
+and may be modified depending on whether an existing entry was found or if
+the atomic_open() returned an error and consumed the passed-in dentry.
 
 Signed-off-by: Benjamin Coddington <bcodding@hammerspace.com>
 Reviewed-by: Jeff Layton <jlayton@kernel.org>
+Reviewed-by: Chuck Lever <chuck.lever@oracle.com>
 ---
- fs/namei.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+ fs/namei.c         | 46 +++++++++++++++++++++++++++++++++++++++-------
+ fs/nfsd/nfs4proc.c |  8 +++++---
+ include/linux/fs.h |  2 +-
+ 3 files changed, 45 insertions(+), 11 deletions(-)
 
 diff --git a/fs/namei.c b/fs/namei.c
-index 88f82cb5f7a0..389f91a4d121 100644
+index 389f91a4d121..d70fd7362107 100644
 --- a/fs/namei.c
 +++ b/fs/namei.c
-@@ -3640,19 +3640,16 @@ static int may_o_create(struct mnt_idmap *idmap,
+@@ -4286,6 +4286,9 @@ EXPORT_SYMBOL(start_creating_user_path);
   *
-  * Returns an error code otherwise.
+  * Caller must hold the parent directory's lock, and have prepared
+  * a negative dentry, placed in @path->dentry, for the new file.
++ * If the file was looked up only or didn't need to be created,
++ * FMODE_OPENED will not be set, and @path will be updated with the
++ * new dentry.  The dentry may be negative.
+  *
+  * Caller sets @path->mnt to the vfsmount of the filesystem where
+  * the new file is to be created. The parent directory and the
+@@ -4294,21 +4297,50 @@ EXPORT_SYMBOL(start_creating_user_path);
+  * On success, returns a "struct file *". Otherwise a ERR_PTR
+  * is returned.
   */
--static struct dentry *atomic_open(struct nameidata *nd, struct dentry *dentry,
-+static struct dentry *atomic_open(const struct path *path, struct dentry *dentry,
- 				  struct file *file,
- 				  int open_flag, umode_t mode)
+-struct file *dentry_create(const struct path *path, int flags, umode_t mode,
++struct file *dentry_create(struct path *path, int flags, umode_t mode,
+ 			   const struct cred *cred)
  {
- 	struct dentry *const DENTRY_NOT_SET = (void *) -1UL;
--	struct inode *dir =  nd->path.dentry->d_inode;
-+	struct inode *dir =  path->dentry->d_inode;
- 	int error;
++	struct dentry *dentry = path->dentry;
++	struct dentry *dir = dentry->d_parent;
++	struct inode *dir_inode = d_inode(dir);
++	struct mnt_idmap *idmap;
+ 	struct file *file;
+-	int error;
++	int error, create_error;
  
--	if (nd->flags & LOOKUP_DIRECTORY)
--		open_flag |= O_DIRECTORY;
--
- 	file->__f_path.dentry = DENTRY_NOT_SET;
--	file->__f_path.mnt = nd->path.mnt;
-+	file->__f_path.mnt = path->mnt;
- 	error = dir->i_op->atomic_open(dir, dentry, file,
- 				       open_to_namei_flags(open_flag), mode);
- 	d_lookup_done(dentry);
-@@ -3764,7 +3761,9 @@ static struct dentry *lookup_open(struct nameidata *nd, struct file *file,
- 	if (create_error)
- 		open_flag &= ~O_CREAT;
- 	if (dir_inode->i_op->atomic_open) {
--		dentry = atomic_open(nd, dentry, file, open_flag, mode);
-+		if (nd->flags & LOOKUP_DIRECTORY)
-+			open_flag |= O_DIRECTORY;
-+		dentry = atomic_open(&nd->path, dentry, file, open_flag, mode);
- 		if (unlikely(create_error) && dentry == ERR_PTR(-ENOENT))
- 			dentry = ERR_PTR(create_error);
- 		return dentry;
+ 	file = alloc_empty_file(flags, cred);
+ 	if (IS_ERR(file))
+ 		return file;
+ 
+-	error = vfs_create(mnt_idmap(path->mnt),
+-			   d_inode(path->dentry->d_parent),
+-			   path->dentry, mode, true);
+-	if (!error)
+-		error = vfs_open(path, file);
++	idmap = mnt_idmap(path->mnt);
++
++	if (dir_inode->i_op->atomic_open) {
++		path->dentry = dir;
++		mode = vfs_prepare_mode(idmap, dir_inode, mode, S_IALLUGO, S_IFREG);
++
++		create_error = may_o_create(idmap, path, dentry, mode);
++		if (create_error)
++			flags &= ~O_CREAT;
++
++		dentry = atomic_open(path, dentry, file, flags, mode);
++		error = PTR_ERR_OR_ZERO(dentry);
++
++		if (unlikely(create_error) && error == -ENOENT)
++			error = create_error;
++
++		if (!error) {
++			if (file->f_mode & FMODE_CREATED)
++				fsnotify_create(dir->d_inode, dentry);
++			if (file->f_mode & FMODE_OPENED)
++				fsnotify_open(file);
++		}
++
++		path->dentry = dentry;
++
++	} else {
++		error = vfs_create(idmap, dir_inode, dentry, mode, true);
++		if (!error)
++			error = vfs_open(path, file);
++	}
+ 
+ 	if (unlikely(error)) {
+ 		fput(file);
+diff --git a/fs/nfsd/nfs4proc.c b/fs/nfsd/nfs4proc.c
+index 7f7e6bb23a90..7e39234e0649 100644
+--- a/fs/nfsd/nfs4proc.c
++++ b/fs/nfsd/nfs4proc.c
+@@ -194,7 +194,7 @@ static inline bool nfsd4_create_is_exclusive(int createmode)
+ }
+ 
+ static __be32
+-nfsd4_vfs_create(struct svc_fh *fhp, struct dentry *child,
++nfsd4_vfs_create(struct svc_fh *fhp, struct dentry **child,
+ 		 struct nfsd4_open *open)
+ {
+ 	struct file *filp;
+@@ -214,9 +214,11 @@ nfsd4_vfs_create(struct svc_fh *fhp, struct dentry *child,
+ 	}
+ 
+ 	path.mnt = fhp->fh_export->ex_path.mnt;
+-	path.dentry = child;
++	path.dentry = *child;
+ 	filp = dentry_create(&path, oflags, open->op_iattr.ia_mode,
+ 			     current_cred());
++	*child = path.dentry;
++
+ 	if (IS_ERR(filp))
+ 		return nfserrno(PTR_ERR(filp));
+ 
+@@ -353,7 +355,7 @@ nfsd4_create_file(struct svc_rqst *rqstp, struct svc_fh *fhp,
+ 	status = fh_fill_pre_attrs(fhp);
+ 	if (status != nfs_ok)
+ 		goto out;
+-	status = nfsd4_vfs_create(fhp, child, open);
++	status = nfsd4_vfs_create(fhp, &child, open);
+ 	if (status != nfs_ok)
+ 		goto out;
+ 	open->op_created = true;
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index dd3b57cfadee..2d3fcb343993 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2883,7 +2883,7 @@ struct file *dentry_open(const struct path *path, int flags,
+ 			 const struct cred *creds);
+ struct file *dentry_open_nonotify(const struct path *path, int flags,
+ 				  const struct cred *cred);
+-struct file *dentry_create(const struct path *path, int flags, umode_t mode,
++struct file *dentry_create(struct path *path, int flags, umode_t mode,
+ 			   const struct cred *cred);
+ const struct path *backing_file_user_path(const struct file *f);
+ 
 -- 
 2.50.1
 
