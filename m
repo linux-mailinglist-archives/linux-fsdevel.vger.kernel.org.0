@@ -1,73 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-69892-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69893-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46449C8A1A3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Nov 2025 14:52:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AB5ADC8A1D3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Nov 2025 14:59:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 833913B1F42
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Nov 2025 13:51:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6ABCA3B1A4D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Nov 2025 13:59:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B27E0329E49;
-	Wed, 26 Nov 2025 13:51:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E8AB32936A;
+	Wed, 26 Nov 2025 13:59:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J8iRE1/W"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AVdfdo2K"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED9E3329379;
-	Wed, 26 Nov 2025 13:51:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63EC32741DF;
+	Wed, 26 Nov 2025 13:59:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764165083; cv=none; b=GttN/x6x5txv4WMGNCEOwG0pbYPqot5Mpc1/7HfHatjshvpH8vZ0Fr4OvYZe5tayj0oagbxasnGC6j04xdsHI49aVARFgCj585/OyL6G/0p4B3K29UkeBCykme4cX1h8liF4xFP84dyz6f0XzuLfnxFHgDbdgAOkUiM84na8ruc=
+	t=1764165558; cv=none; b=VgI9cgcF8E05c3Usxq1v475a9oJ6dLwpHA9ljaqNKbn0UvgAlxf2Krpe6Ao2u0qxvPBtzVbEW0AWS5ED55h0v4n8sHGBfUjV6d0xEvVpB2nSr7MrOACagMsuKm0aXFxS2y2tpNFUTUtz7ko7cxFo1EE1Yi5Q+Aga9/jy4zZCZP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764165083; c=relaxed/simple;
-	bh=yUKYtxHtKaR+6m/xsrQsQe67bKqXRGc4JbcKnKX+a20=;
+	s=arc-20240116; t=1764165558; c=relaxed/simple;
+	bh=Wdb0W3+Xcq6qeLoeB6Jb7cHknvGwIZT7ED+LbUZDXno=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=miBPd+zx84BIYY2sJDRpPl31r9nQyIpvhZzr2TPGl63tV4UnoM5wUhLQl7EckeRYSUxL2rtH9aCL+gSsFmlTV/dfXzXf+5iNiKbGo7d8i1phYul4n7nM0J/Ad9xctin6JEmsXDFPLXtwLeC/A/+FoqogPGINHMR6LhXvruItRCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J8iRE1/W; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9ADBEC4CEF8;
-	Wed, 26 Nov 2025 13:51:17 +0000 (UTC)
+	 MIME-Version:Content-Type; b=OxHRnbQMBSb3Z6JWJX0U0p3tNgrorY2Awns2W/6xcwXmvo0cCadsC613PoObkL53hoRYeVnOdVOC711tEB/W69q81F6pf8WvLI2U2NcCHUMeEkxTsVx9H9QW4v3w3matDQhW1iQdESm7oagZyvAkrurIZlMlfi5gfvS3VjCxwnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AVdfdo2K; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B7CDC4CEF7;
+	Wed, 26 Nov 2025 13:59:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764165082;
-	bh=yUKYtxHtKaR+6m/xsrQsQe67bKqXRGc4JbcKnKX+a20=;
+	s=k20201202; t=1764165557;
+	bh=Wdb0W3+Xcq6qeLoeB6Jb7cHknvGwIZT7ED+LbUZDXno=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=J8iRE1/WnH5hQhQsb+gz1I+WE9aSLdfLQQiRWd7g4hWBfFLiJ7GeKN9MfcROfuy14
-	 Bg5ifG0mRnEDa0wLCNWcaWSef/QLNZ9iuJt146gvNW8/fk6cYnq1PxKc4hQKhLNIBA
-	 sNEXQMAYyhZpIavSfz+KkkZ7tBQo4jX83xz4wgdkgk+sAnQZiGPm4kG9cVpDUNx50f
-	 GszRnMspkE9d7aOOvEx8eAK322hwR8CBYnIQYVbVZy8dg9+z7898oFiThB1IRsH5Xr
-	 Ex3oGaOerSkIflHQPu0XSvcuPfWP3Yma6L1dTMlIVWE32f0gwXl7q8tXr7D18MuVes
-	 /vgMU+UkTu2HA==
+	b=AVdfdo2Kx0Bp364dmQ05Dasr3VetWFjvJsvgIZMVky96Xmu72zz0ZaOTSEStw1q0q
+	 wpVlw33+ouYV2rM0kh2Mt22Uhui/v1fiaaBYCb7+xpbkR4MN/sd1+2qL1r3GpAv/Ld
+	 YjFNtCFAYw+QUXNUFb0dxUoOsv5PIHMdlql0N8OyombF6hT00AFIE1GY0pkTDUR/GZ
+	 Rv6O/Ih9t5lI6R6cCmEvPJNcKri7QEePJtV6iPGCKaZOG6xWyYXeoWMhcTGZ9XskXp
+	 nz3W4jS5lZPRt9mC6HnMN3WwSCCK/SWhO69YWHI8k2tRkv/Ro1S7X44nAKxAIVS4Gf
+	 bx3VHCxN0PsKA==
 From: Christian Brauner <brauner@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
+To: Mateusz Guzik <mjguzik@gmail.com>
 Cc: Christian Brauner <brauner@kernel.org>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	David Sterba <dsterba@suse.com>,
-	Jan Kara <jack@suse.cz>,
-	Mike Marshall <hubcap@omnibond.com>,
-	Martin Brandenburg <martin@omnibond.com>,
-	Carlos Maiolino <cem@kernel.org>,
-	Stefan Roesch <shr@fb.com>,
-	Jeff Layton <jlayton@kernel.org>,
+	jack@suse.cz,
 	linux-kernel@vger.kernel.org,
-	linux-btrfs@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
-	gfs2@lists.linux.dev,
-	io-uring@vger.kernel.org,
-	devel@lists.orangefs.org,
-	linux-unionfs@vger.kernel.org,
-	linux-mtd@lists.infradead.org,
-	linux-xfs@vger.kernel.org,
-	linux-nfs@vger.kernel.org
-Subject: Re: (subset) re-enable IOCB_NOWAIT writes to files v2
-Date: Wed, 26 Nov 2025 14:51:10 +0100
-Message-ID: <20251126-freigaben-fixkosten-7f8ba6710fce@brauner>
+	viro@zeniv.linux.org.uk
+Subject: Re: [PATCH v2 1/2] fs: tidy up step_into() & friends before inlining
+Date: Wed, 26 Nov 2025 14:59:07 +0100
+Message-ID: <20251126-zumutbar-wettmachen-5f87c2c28f5b@brauner>
 X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251120064859.2911749-1-hch@lst.de>
-References: <20251120064859.2911749-1-hch@lst.de>
+In-Reply-To: <20251120003803.2979978-1-mjguzik@gmail.com>
+References: <20251120003803.2979978-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -75,17 +61,17 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1827; i=brauner@kernel.org; h=from:subject:message-id; bh=yUKYtxHtKaR+6m/xsrQsQe67bKqXRGc4JbcKnKX+a20=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSqs17kYtX3/zt7guqDZZHcotIzSu/JuZ8vW1f2x9Tzn jjvrEs8HaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABP5NJ/hfwz3tQVV/86ebZ6Q ZOX2S/x94+vvFxzsdzFb2M/tOJ9ddJzhf+6cWXKXJ/IYCjVvXXqrOyfkypPfnuY+G+fPOLtET2K HGS8A
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1210; i=brauner@kernel.org; h=from:subject:message-id; bh=Wdb0W3+Xcq6qeLoeB6Jb7cHknvGwIZT7ED+LbUZDXno=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSqs2+Iz7j//pzRo2XNC2QL9a+X+Vae1fk/9cqlrTH2p +L+u08W7ChlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZiIQQYjw5IOP4ZQkZa35aVX lt19c/jcucXVyU+TKtefZl7BGb9WfSfD/5DTy++dSRLsLN/N9Lr/TEyv1DaxiZqBMvXrLi9ks7x TxAcA
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-On Thu, 20 Nov 2025 07:47:21 +0100, Christoph Hellwig wrote:
-> commit 66fa3cedf16a ("fs: Add async write file modification handling.")
-> effectively disabled IOCB_NOWAIT writes as timestamp updates currently
-> always require blocking, and the modern timestamp resolution means we
-> always update timestamps.  This leads to a lot of context switches from
-> applications using io_uring to submit file writes, making it often worse
-> than using the legacy aio code that is not using IOCB_NOWAIT.
+On Thu, 20 Nov 2025 01:38:02 +0100, Mateusz Guzik wrote:
+> Symlink handling is already marked as unlikely and pushing out some of
+> it into pick_link() reduces register spillage on entry to step_into()
+> with gcc 14.2.
+> 
+> The compiler needed additional convincing that handle_mounts() is
+> unlikely to fail.
 > 
 > [...]
 
@@ -104,16 +90,8 @@ trailer updates or similar. If in doubt, please check the listed branch.
 tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
 branch: vfs-6.19.misc
 
-[01/16] fs: refactor file timestamp update logic
-        https://git.kernel.org/vfs/vfs/c/3cd9a42f1b5e
-[02/16] fs: lift the FMODE_NOCMTIME check into file_update_time_flags
-        https://git.kernel.org/vfs/vfs/c/7f30e7a42371
-[03/16] fs: export vfs_utimes
-        https://git.kernel.org/vfs/vfs/c/013983665227
-[04/16] btrfs: use vfs_utimes to update file timestamps
-        https://git.kernel.org/vfs/vfs/c/ded99587047c
-[05/16] btrfs: fix the comment on btrfs_update_time
-        https://git.kernel.org/vfs/vfs/c/f981264ae75e
-[06/16] orangefs: use inode_update_timestamps directly
-        https://git.kernel.org/vfs/vfs/c/eff094a58d00
+[1/2] fs: tidy up step_into() & friends before inlining
+      https://git.kernel.org/vfs/vfs/c/9d2a6211a7b9
+[2/2] fs: inline step_into() and walk_component()
+      https://git.kernel.org/vfs/vfs/c/177fdbae39ec
 
