@@ -1,128 +1,178 @@
-Return-Path: <linux-fsdevel+bounces-69867-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69865-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14F87C88E32
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Nov 2025 10:15:01 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C589C88DC7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Nov 2025 10:09:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8C7B54E305C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Nov 2025 09:14:59 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 85074352828
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Nov 2025 09:09:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 458A4314B6E;
-	Wed, 26 Nov 2025 09:14:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1C2D30E0D6;
+	Wed, 26 Nov 2025 09:09:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bIjfzYTH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE094280CF6;
-	Wed, 26 Nov 2025 09:14:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BE6A3019C8
+	for <linux-fsdevel@vger.kernel.org>; Wed, 26 Nov 2025 09:09:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764148491; cv=none; b=UbMbZqSXlYoj8wN4Rnmv8dMqSitA00SlgVfDzyOIsyTubftDjTYlvQpAm6tWXIJL9LBrk/h2d+wpclrGGkEG1b63dwFBDtf6ter4a+vDpc0FoZcRlNBD98cdO29FrpYjy7vnL4vMkABvJ2VUFjMbDstABLOXxB5z0XyRje5UQR8=
+	t=1764148146; cv=none; b=IM/016T5rEi0xpaHLjQsVbuUtfEkLVNShtc7qpdw/8G8e+5bde009CsQzNIuKsF4gWIznmYELbvk/FmNwIXTgCEnqD3cPw4HYgXs2R+dKUo74bChYqDPbYALfnqy2Cj/JI0D3ZH0SbQQKhwqcHsRZtyUQk1OZrvZxyy9RftjZj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764148491; c=relaxed/simple;
-	bh=SYrF8vtHOzZA8g/R+xrV1eMlzbnF/Fjt++a/NVV0g2s=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KC/KxnmokJBg021ZxIAu1e3bxJpRvtHmGGNO5ocLbSgF4Fz5tpxwV5rd0oUzxS/H3M4/00WzxSMt+HfsEOHHiUfhl0y4OrlK0tD3CqZv9e7bQO/BF+zp19joJXg5f1v2JULXReJiq9MC7tpdUgN5kjnvpCWJvsORF8uNuZ7Ona0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4dGYlN4ttszYQvKy;
-	Wed, 26 Nov 2025 17:13:52 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 5812B1A1897;
-	Wed, 26 Nov 2025 17:14:44 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.50.87.129])
-	by APP4 (Coremail) with SMTP id gCh0CgAXQV4DxSZpUsJHCA--.59425S4;
-	Wed, 26 Nov 2025 17:14:44 +0800 (CST)
-From: Zizhi Wo <wozizhi@huaweicloud.com>
-To: jack@suse.com,
-	brauner@kernel.org,
-	hch@lst.de,
-	akpm@linux-foundation.org,
-	linux@armlinux.org.uk
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-arm-kernel@lists.infradead.org,
-	wozizhi@huawei.com,
-	yangerkun@huawei.com,
-	wangkefeng.wang@huawei.com,
-	pangliyuan1@huawei.com,
-	xieyuanbin1@huawei.com
-Subject: [Bug report] hash_name() may cross page boundary and trigger sleep in RCU context
-Date: Wed, 26 Nov 2025 17:05:05 +0800
-Message-Id: <20251126090505.3057219-1-wozizhi@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1764148146; c=relaxed/simple;
+	bh=6w7rkWZMm2OzZs1d4tCa6J3Sjb91QF8PMCdGPkKWBoM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=rCszbxPvrwpFnGe0nC2oelOcvEJj/2pXwZvu1ha6HsNwjJGh6A7nO0OhGUsyujBN4D3r38luZA/PdEkWw3cgKnCjJLwBYUacvCcGvT50IY8SMaY0VigOeT0x0bO3d8hV+ivE4ZQmw8ywPU0Er6x6s+VZ/RoEp/CGL18LhTSpp9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bIjfzYTH; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1764148143;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QioLbPIbEdhHQpe6rbAMDZ2orQalmMmfV24sYZuRkpM=;
+	b=bIjfzYTHNy4/xpz/RILQpPAvj/3+QNQve8jy59OO27cxEWIF9nIoAonc+5jYx1Yb+xtChN
+	CTLHEzck8aoy5UbFzEs8YTd7MA36d2FoR4eprQWmvNG+IGzLZOUL3m41Xv6Zw8iH18OzIK
+	pOKp3+OpBAtxzu59tRULnzHmsFmCgXo=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-610-9NRKrjBsMOyjmcTaAx-1rg-1; Wed,
+ 26 Nov 2025 04:09:02 -0500
+X-MC-Unique: 9NRKrjBsMOyjmcTaAx-1rg-1
+X-Mimecast-MFC-AGG-ID: 9NRKrjBsMOyjmcTaAx-1rg_1764148138
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 432561956096;
+	Wed, 26 Nov 2025 09:08:57 +0000 (UTC)
+Received: from fweimer-oldenburg.csb.redhat.com (unknown [10.44.32.146])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id F32D63001E83;
+	Wed, 26 Nov 2025 09:08:46 +0000 (UTC)
+From: Florian Weimer <fweimer@redhat.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>,  Amir Goldstein <amir73il@gmail.com>,
+ linux-fsdevel@vger.kernel.org,  Josef Bacik <josef@toxicpanda.com>,
+ Jeff Layton <jlayton@kernel.org>,  Mike Yuan <me@yhndnzj.com>,
+ Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>,
+ Lennart Poettering <mzxreary@0pointer.de>,
+ Daan De Meyer <daan.j.demeyer@gmail.com>,
+ Aleksa Sarai <cyphar@cyphar.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Jens Axboe <axboe@kernel.dk>,  Tejun Heo <tj@kernel.org>,
+ Johannes Weiner <hannes@cmpxchg.org>,
+ Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>,  Eric Dumazet
+ <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>,  Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>,
+ Chuck Lever <chuck.lever@oracle.com>,  linux-nfs@vger.kernel.org,
+ linux-kselftest@vger.kernel.org,  linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org,  cgroups@vger.kernel.org,
+ netdev@vger.kernel.org, libc-alpha@sourceware.org, Dmitry V. Levin
+ <ldv@strace.io>, address-sanitizer <address-sanitizer@googlegroups.com>,
+ strace-devel@lists.strace.io
+Subject: Stability of ioctl constants in the UAPI (Re: [PATCH 01/32] pidfs:
+ validate extensible ioctls)
+In-Reply-To: <20250910-work-namespace-v1-1-4dd56e7359d8@kernel.org> (Christian
+	Brauner's message of "Wed, 10 Sep 2025 16:36:46 +0200")
+References: <20250910-work-namespace-v1-0-4dd56e7359d8@kernel.org>
+	<20250910-work-namespace-v1-1-4dd56e7359d8@kernel.org>
+Date: Wed, 26 Nov 2025 10:08:44 +0100
+Message-ID: <lhu7bvd6u03.fsf_-_@oldenburg.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAXQV4DxSZpUsJHCA--.59425S4
-X-Coremail-Antispam: 1UD129KBjvJXoW7tFW7Jr45Ww1xtF1rury5XFb_yoW5JFWrpr
-	45CryYkrZxZryrZr10ka9IgFyYyayUGr43Grs2qryUua1agF1avF48ta4Y9r9Iqr1DWa9r
-	Wrs09wn7uw1q9FUanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvab4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUAVWUtwAv7VC2z280aVAFwI0_Gr1j6F4UJwAm72CE4I
-	kC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7Cj
-	xVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2
-	IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v2
-	6r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2
-	IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv
-	67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyT
-	uYvjxUoEfOUUUUU
-X-CM-SenderInfo: pzr2x6tkl6x35dzhxuhorxvhhfrp/
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-We're running into the following issue on an ARM32 platform with the linux
-5.10 kernel:
+* Christian Brauner:
 
-[<c0300b78>] (__dabt_svc) from [<c0529cb8>] (link_path_walk.part.7+0x108/0x45c)
-[<c0529cb8>] (link_path_walk.part.7) from [<c052a948>] (path_openat+0xc4/0x10ec)
-[<c052a948>] (path_openat) from [<c052cf90>] (do_filp_open+0x9c/0x114)
-[<c052cf90>] (do_filp_open) from [<c0511e4c>] (do_sys_openat2+0x418/0x528)
-[<c0511e4c>] (do_sys_openat2) from [<c0513d98>] (do_sys_open+0x88/0xe4)
-[<c0513d98>] (do_sys_open) from [<c03000c0>] (ret_fast_syscall+0x0/0x58)
-...
-[<c0315e34>] (unwind_backtrace) from [<c030f2b0>] (show_stack+0x20/0x24)
-[<c030f2b0>] (show_stack) from [<c14239f4>] (dump_stack+0xd8/0xf8)
-[<c14239f4>] (dump_stack) from [<c038d188>] (___might_sleep+0x19c/0x1e4)
-[<c038d188>] (___might_sleep) from [<c031b6fc>] (do_page_fault+0x2f8/0x51c)
-[<c031b6fc>] (do_page_fault) from [<c031bb44>] (do_DataAbort+0x90/0x118)
-[<c031bb44>] (do_DataAbort) from [<c0300b78>] (__dabt_svc+0x58/0x80)
-...
+> Validate extensible ioctls stricter than we do now.
+>
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
+> ---
+>  fs/pidfs.c         |  2 +-
+>  include/linux/fs.h | 14 ++++++++++++++
+>  2 files changed, 15 insertions(+), 1 deletion(-)
+>
+> diff --git a/fs/pidfs.c b/fs/pidfs.c
+> index edc35522d75c..0a5083b9cce5 100644
+> --- a/fs/pidfs.c
+> +++ b/fs/pidfs.c
+> @@ -440,7 +440,7 @@ static bool pidfs_ioctl_valid(unsigned int cmd)
+>  		 * erronously mistook the file descriptor for a pidfd.
+>  		 * This is not perfect but will catch most cases.
+>  		 */
+> -		return (_IOC_TYPE(cmd) == _IOC_TYPE(PIDFD_GET_INFO));
+> +		return extensible_ioctl_valid(cmd, PIDFD_GET_INFO, PIDFD_INFO_SIZE_VER0);
+>  	}
+>  
+>  	return false;
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index d7ab4f96d705..2f2edc53bf3c 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -4023,4 +4023,18 @@ static inline bool vfs_empty_path(int dfd, const char __user *path)
+>  
+>  int generic_atomic_write_valid(struct kiocb *iocb, struct iov_iter *iter);
+>  
+> +static inline bool extensible_ioctl_valid(unsigned int cmd_a,
+> +					  unsigned int cmd_b, size_t min_size)
+> +{
+> +	if (_IOC_DIR(cmd_a) != _IOC_DIR(cmd_b))
+> +		return false;
+> +	if (_IOC_TYPE(cmd_a) != _IOC_TYPE(cmd_b))
+> +		return false;
+> +	if (_IOC_NR(cmd_a) != _IOC_NR(cmd_b))
+> +		return false;
+> +	if (_IOC_SIZE(cmd_a) < min_size)
+> +		return false;
+> +	return true;
+> +}
+> +
+>  #endif /* _LINUX_FS_H */
 
-During the execution of hash_name()->load_unaligned_zeropad(), a potential
-memory access beyond the PAGE boundary may occur. For example, when the
-filename length is near the PAGE_SIZE boundary. This triggers a page fault,
-which leads to a call to do_page_fault()->mmap_read_trylock(). If we can't
-acquire the lock, we have to fall back to the mmap_read_lock() path, which
-calls might_sleep(). This breaks RCU semantics because path lookup occurs
-under an RCU read-side critical section. In linux-mainline, arm/arm64
-do_page_fault() still has this problem:
+Is this really the right direction?  This implies that the ioctl
+constants change as the structs get extended.  At present, this impacts
+struct pidfd_info and PIDFD_GET_INFO.
 
-lock_mm_and_find_vma->get_mmap_lock_carefully->mmap_read_lock_killable.
+I think this is a deparature from the previous design, where (low-level)
+userspace did not have not worry about the internal structure of ioctl
+commands and could treat them as opaque bit patterns.  With the new
+approach, we have to dissect some of the commands in the same way
+extensible_ioctl_valid does it above.
 
-And before commit bfcfaa77bdf0 ("vfs: use 'unsigned long' accesses for
-dcache name comparison and hashing"), hash_name accessed the name byte by
-byte.
+So far, this impacts glibc ABI tests.  Looking at the strace sources, it
+doesn't look to me as if the ioctl handler is prepared to deal with this
+situation, either, because it uses the full ioctl command for lookups.
 
-To prevent load_unaligned_zeropad() from accessing beyond the valid memory
-region, we would need to intercept such cases beforehand? But doing so
-would require replicating the internal logic of load_unaligned_zeropad(),
-including handling endianness and constructing the correct value manually.
-Given that load_unaligned_zeropad() is used in many places across the
-kernel, we currently haven't found a good solution to address this cleanly.
+The sanitizers could implement generic ioctl checking with the embedded
+size information in the ioctl command, but the current code structure is
+not set up to handle this because it's indexed by the full ioctl
+command, not the type.  I think in some cases, the size is required to
+disambiguate ioctl commands because the type field is not unique across
+devices.  In some cases, the sanitizers would have to know the exact
+command (not just the size), to validate points embedded in the struct
+passed to the ioctl.  So I don't think changing ioctl constants when
+extensible structs change is obviously beneficial to the sanitizers,
+either.
 
-What would be the recommended way to handle this situation? Would
-appreciate any feedback and guidance from the community. Thanks!
+I would prefer if the ioctl commands could be frozen and decoupled from
+the structs.  As far as I understand it, there is no requirement that
+the embedded size matches what the kernel deals with.
+
+Thanks,
+Florian
 
 
