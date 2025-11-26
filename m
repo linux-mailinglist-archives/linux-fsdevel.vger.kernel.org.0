@@ -1,215 +1,343 @@
-Return-Path: <linux-fsdevel+bounces-69888-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69887-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD87CC89C49
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Nov 2025 13:30:39 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55327C89C4C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Nov 2025 13:30:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 605AD35125E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Nov 2025 12:30:37 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AC4A64EA8F0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Nov 2025 12:30:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28DE4328B5E;
-	Wed, 26 Nov 2025 12:30:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 545A2328265;
+	Wed, 26 Nov 2025 12:30:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="i5BdkKLV"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V72kk2ZO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42AEF31E0FA;
-	Wed, 26 Nov 2025 12:30:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F836327BE6
+	for <linux-fsdevel@vger.kernel.org>; Wed, 26 Nov 2025 12:30:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764160222; cv=none; b=opUwq6mG3ihPmQCm4ZznJ5plU8bOYtWH87bwiQ/Nb2ybTJ4NexM7W6xWRYe8D1Y2a+a14kfw6DTmSjr4A9WPAYiDuioiBDgWX0h4AKYTseNhbFkI6DCh38zOhkh2H1FpSAS92L3NjGkjDIOBaCYNXJ7HrtKtQB0NsMc2q0lLI4U=
+	t=1764160214; cv=none; b=Dc9JV6zu+R/45mrU8hQKSX41bD7v9RC/oHJS/n+cHcGQSiRPHhD2USeR5aGWMpBFhPEnzEgouJPkrCWofTB3hMEsxnX91g9VXSOg+ki6E/pWcbAOn1w9rPnzkw5H0yeXm8f8IwAGrswoI5p3HNBey360yCi7n5zEIbP1wThN+vM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764160222; c=relaxed/simple;
-	bh=rBWTlq/9ES9o/3FgpX9/DDUZ1liNvZVvQTVCMFJQTrE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a4lKnJNFQdMCNED4czwZg0fBYzFHoYuHnssxTNXH8op5LUt9WxaE+4u3icnoGDwTlbiSQFyII51/OWW5+04g19AxIILMr9Px21W2ZEIL7sY/O4pGyO2OP1qFJIW0gPy3qCgOV5MpRm8iKcv1JjP9GoWUH43MHokk/dYjHLT6vuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=i5BdkKLV; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5AQ8DfE5005649;
-	Wed, 26 Nov 2025 12:24:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=hEtAAnqed7FOxj61IA+IWbXOkiXhD5
-	JPYgCoARi8Bbg=; b=i5BdkKLVZa+uplsJsMrQMENsNA05heqzhh0XjBjUqKvqS7
-	yactFSzQJ+zvNeLjYqH6AFikzdVTI68NJr7S0zEhZh0mtOeblPDT0bEV8sWDNhnb
-	wuliYBx+86ytSiG085ge3FzeI1IBsYiidJdiy4gL01lWJh1Zn+3r2myCxcYnq1ri
-	RjrX5ui1wf4XruNkb5UMKOF/+2ij695TQ6PQizh8Ep8IGouUCSEM80deQ4KWid/+
-	kjlYz6hcDsNce77wjXvtrGsk3cd+e1VeQSu0R5I4NNAzynNeH/lmI1+AL+m5WPTi
-	Vkb2TkTSd/8g6ZfPMiEvyEJeXnyD9bKCjNFOSGJg==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4ak4pj45b5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Nov 2025 12:24:54 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5AQC4fX1013034;
-	Wed, 26 Nov 2025 12:24:54 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4ak4pj45b0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Nov 2025 12:24:54 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5AQAphC4025089;
-	Wed, 26 Nov 2025 12:24:53 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 4akt71j0vn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Nov 2025 12:24:53 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5AQCOpZ853543174
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 26 Nov 2025 12:24:51 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 85F6120043;
-	Wed, 26 Nov 2025 12:24:51 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id F104620040;
-	Wed, 26 Nov 2025 12:24:48 +0000 (GMT)
-Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.124.217.238])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Wed, 26 Nov 2025 12:24:48 +0000 (GMT)
-Date: Wed, 26 Nov 2025 17:54:45 +0530
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
-        jack@suse.cz, yi.zhang@huawei.com, yizhang089@gmail.com,
-        libaokun1@huawei.com, yangerkun@huawei.com
-Subject: Re: [PATCH v2 07/13] ext4: drop extent cache before splitting extent
-Message-ID: <aSbxjVypU3vdOUmK@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
-References: <20251121060811.1685783-1-yi.zhang@huaweicloud.com>
- <20251121060811.1685783-8-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1764160214; c=relaxed/simple;
+	bh=7LaKh4SKkJZP9igZfKyzHF/xQa5BBL8oladEBtlkksc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Mk9dnpN0QN0Uvzw+WddjkzaD/BRsdTmClHOuwlIaPdrWf1TDgzxPHVTx/X3+qHoGSxwXwxdsx4hLTJ3U5h33IGvjAv1dgPyD/mLq9dyEmwvFQEwp5WcGLhq2n8Uh3jgQmrlWNvNTSv1Gel6IZRlgLo1WzNhMrucc5AgsvXOOnsw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V72kk2ZO; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-64180bd67b7so8797111a12.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Nov 2025 04:30:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1764160209; x=1764765009; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MbofuyaCjblUfm2kB3vXRi6dRXYTWCLMfwZ2YrRLIBM=;
+        b=V72kk2ZOB3/4RV/MkJaZPiHrgxGHFY4PIHPdCuJTpeMeX0vVRtWtvk5DxCTbVHZTia
+         nH43d8vVOWJL+IWYcSOIU+mkFNuWLFXT75yFN8f8Fcrypd6q8aLnCmqObK8Z3EoRR8+D
+         1MPs1ZHVUN18tO/hG9tARIcRfh/OTwxOVVsF4L6lW88aD+bijNc1mIgKpa+C89Ff78/L
+         nasmyhzAq1JPgQPy127GUJuy6rnvMZQntebjtqYSG700wnKExeJfi+KXADee+v4CZOPs
+         0+Ozxxs1miPhWiystQkLquRMiAiuW24fiz7Qg/iGQilI1Lyv5d/1hPr2TiiTq4YW1miH
+         0ImQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764160209; x=1764765009;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=MbofuyaCjblUfm2kB3vXRi6dRXYTWCLMfwZ2YrRLIBM=;
+        b=joiYRFCMh29dzXYHl58nhliNtFflValVxY4znX7uOq/x752jcMi3HGKtp/zXSQ7Se/
+         QkpNpv2ZH6i+QhhTduwTbFSNn8b3rFWjSD1i17jE99fcV/b/4PGDlt67KrlPfvXaSNxq
+         EW4iQTsDEixAsuCpwfh5qkhVbIVxghm5RsIPGA9eroZDaq2nGMcmv4bHmNswjhDwcb17
+         2ZpytMYV9nxYhgT9gK1hX17R1EJGsCkHe+juqPcOY/I0ufI1x+frqhznVK6jSVj9Evir
+         A6J4gbWXQTLzZWLerMbnTu5droTLGMlj+0hrrwxiYj51Y2pCjE+FPDxQKS3SJH1hIMaK
+         GK+w==
+X-Forwarded-Encrypted: i=1; AJvYcCXLb5NaTULR7n6s5qOOVyXq+8fKj2GSed87fDFufC/Wu2JHfZf89JJrHrBJZNZx5YvmS+7laoo15i0ozq8e@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9/IGjZn5BYuuDukqGMWI15k2vq6yyqso02gmntTCX+CKSNuJO
+	BvEL3Z9Isw1wVcJ9d6ILUzaFC6RRDTQ1UGtXwl2p3E30J9UHtoWap6iZkj7uC4rGHS+c/bvTV9r
+	flR3xZwniwlH528Ii7n21WgPrb8v/9caMllA49l8=
+X-Gm-Gg: ASbGncsZp0tMIXvE0+EjfHIrm7dbjxF12+YfK5ChiS7HrgFi9nVYHyrEnyLgXg/MO3H
+	wdtVI/CEzNuhtV03EZPq5NERADzhhSNRDFiwxwIYEa1RhiR+nQ98XmXM1o3r4c1271a4+fEEvBH
+	e6Eb3lZjOeAR66BF2xiJYjLJVbgafnD17GgFwmijy2v9IWN+XACBaYrgicJxASQ3taM1sXTD03r
+	oBmTUDFnMYhy8EiG2Qi2Vj/utE/WEJeryFv1xajZaw5hh5poEbfrmo23ni2CAW2D/88ThHFe0yj
+	mreV53A0DhDvQ1oZAOsMSFbEU+Y=
+X-Google-Smtp-Source: AGHT+IHaPOWbj4IKk3WIETHSMuwnIVbDhNKab5FuLki4GfOsVz/VNX97e+bH3umTbClvXEs98FN3ZAjMRZboc4uMevE=
+X-Received: by 2002:a05:6402:4146:b0:645:cdc7:ed91 with SMTP id
+ 4fb4d7f45d1cf-645cdc7f149mr9290398a12.32.1764160209111; Wed, 26 Nov 2025
+ 04:30:09 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251121060811.1685783-8-yi.zhang@huaweicloud.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTIyMDAxNiBTYWx0ZWRfX+k8nOuXalw9Y
- 1YoPVSAPEImF20V8PeovQHP21RG1ky1MXTvDSneiY71mHzWmC3/Av/YZbk2+AYYEhf0Pw1vQjUP
- DEM4dvb7hFtDcBmahMt/7NJZYBAJm6o/a1NjX5PKbuW2tg+ZePLBw8a3IPuA1rd4dsaMGgFr6Tw
- czEO3AvgRIoFnkofItByvN0GjBMLz0ndEvO6G4rIiER/uzfefeTLoxU7yMD4Ro+51ADIgGJpOcZ
- mjyMXgJZk28Ql2Jagji/IGEb9+v5QpGfszU+zLeYu5opySrrmPmslYgGnzDwvaykXbtB+Nkrvn9
- zSZCH8po+xcMCr1e9gjjEtWDxQ/NyF2h2d/OAXmi84+qlNziVSuOiEsN6a9+mX5z0GRuXsz7giO
- b5jco+y3K+Bjlul3Q3UcXB3xiNb1yw==
-X-Proofpoint-ORIG-GUID: bdR6KaGzHm6mdPOqm5LZupvnA4Gd9sOv
-X-Authority-Analysis: v=2.4 cv=CcYFJbrl c=1 sm=1 tr=0 ts=6926f197 cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
- a=kj9zAlcOel0A:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=i0EeH86SAAAA:8 a=aLcW1nmjqn6KqM0SkAcA:9 a=CjuIK1q_8ugA:10
-X-Proofpoint-GUID: t-x7tBwFfuZeGrM5fPEJ26ArjF7RH0t_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-25_02,2025-11-25_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 suspectscore=0 clxscore=1015 adultscore=0 spamscore=0
- phishscore=0 priorityscore=1501 bulkscore=0 impostorscore=0
- lowpriorityscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510240000
- definitions=main-2511220016
+References: <202511252132.2c621407-lkp@intel.com> <20251126-beerdigen-spanplatten-d86d4e9eaaa7@brauner>
+In-Reply-To: <20251126-beerdigen-spanplatten-d86d4e9eaaa7@brauner>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Wed, 26 Nov 2025 13:29:57 +0100
+X-Gm-Features: AWmQ_bkvhTI4kRU-eyKznRsjhfGkU3m129lEzY1Ff6OHXmBAZmCBZc3kKSyZVLY
+Message-ID: <CAOQ4uxgHqKyaRfXAugnCP4sozgwiOGTGDYvx2A-XJdxfswo-Ug@mail.gmail.com>
+Subject: Re: [linux-next:master] [VFS/nfsd/cachefiles/ovl] 7ab96df840: WARNING:at_fs/dcache.c:#umount_check
+To: Christian Brauner <brauner@kernel.org>, NeilBrown <neil@brown.name>, 
+	Jeff Layton <jlayton@kernel.org>
+Cc: kernel test robot <oliver.sang@intel.com>, oe-lkp@lists.linux.dev, lkp@intel.com, 
+	netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
+	linux-nfs@vger.kernel.org, linux-unionfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 21, 2025 at 02:08:05PM +0800, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
-> 
-> When splitting an unwritten extent in the middle and converting it to
-> initialized in ext4_split_extent() with the EXT4_EXT_MAY_ZEROOUT and
-> EXT4_EXT_DATA_VALID2 flags set, it could leave a stale unwritten extent.
-> 
-> Assume we have an unwritten file and buffered write in the middle of it
-> without dioread_nolock enabled, it will allocate blocks as written
-> extent.
-> 
->        0  A      B  N
->        [UUUUUUUUUUUU] on-disk extent      U: unwritten extent
->        [UUUUUUUUUUUU] extent status tree
->        [--DDDDDDDD--]                     D: valid data
->           |<-  ->| ----> this range needs to be initialized
-> 
-> ext4_split_extent() first try to split this extent at B with
-> EXT4_EXT_DATA_PARTIAL_VALID1 and EXT4_EXT_MAY_ZEROOUT flag set, but
-> ext4_split_extent_at() failed to split this extent due to temporary lack
-> of space. It zeroout B to N and leave the entire extent as unwritten.
-> 
->        0  A      B  N
->        [UUUUUUUUUUUU] on-disk extent
->        [UUUUUUUUUUUU] extent status tree
->        [--DDDDDDDDZZ]                     Z: zeroed data
-> 
-> ext4_split_extent() then try to split this extent at A with
-> EXT4_EXT_DATA_VALID2 flag set. This time, it split successfully and
-> leave
-> an written extent from A to N.
+On Wed, Nov 26, 2025 at 11:42=E2=80=AFAM Christian Brauner <brauner@kernel.=
+org> wrote:
+>
+> On Tue, Nov 25, 2025 at 09:48:18PM +0800, kernel test robot wrote:
+> >
+> > Hello,
+> >
+> > kernel test robot noticed "WARNING:at_fs/dcache.c:#umount_check" on:
+> >
+> > commit: 7ab96df840e60eb933abfe65fc5fe44e72f16dc0 ("VFS/nfsd/cachefiles/=
+ovl: add start_creating() and end_creating()")
+> > https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
+> >
+> > [test failed on linux-next/master d724c6f85e80a23ed46b7ebc6e38b527c09d6=
+4f5]
+>
+> Neil, can you please take a look at this soon?
+> I plan on sending the batch of PRs for this cycle on Friday.
+>
+> >
+> > in testcase: filebench
+> > version: filebench-x86_64-22620e6-1_20251009
+> > with following parameters:
+> >
+> >       disk: 1SSD
+> >       fs: ext4
+> >       fs2: nfsv4
+> >       test: ratelimcopyfiles.f
+> >       cpufreq_governor: performance
+> >
 
-Hi Yi, 
+Test is copying to nfsv4 so that's the immediate suspect.
+WARN_ON is in unmount of ext4, but I suspect that nfs
+was loop mounted for the test.
 
-thanks for the detailed description. I'm trying to understand the
-codepath a bit and I believe you are talking about:
+FWIW, nfsd_proc_create() looks very suspicious.
 
-ext4_ext_handle_unwritten_extents()
-  ext4_ext_convert_to_initialized()
-	  // Case 5: split 1 unwrit into 3 parts and convert to init
-		ext4_split_extent()
+nfsd_create_locked() does end_creating() internally (internal API change)
+but nfsd_create_locked() still does end_creating() regardless.
 
-in which case, after the second split succeeds
-> 
->        0  A      B   N
->        [UU|WWWWWWWWWW] on-disk extent     W: written extent
->        [UU|UUUUUUUUUU] extent status tree
+Oliver,
 
-WHen will extent status get split into 2 unwrit extents as you show
-above? I seem to be missing that call since IIUC ext4_ext_insert_extent
-itself doesn't seem to be accounting for the newly inserted extent in es.
+Can you test this handwritten change or need a patch/branch for testing:
 
-Regards,
-ojaswin
+diff --git a/fs/nfsd/nfsproc.c b/fs/nfsd/nfsproc.c
+index 28f03a6a3cc38..35618122705db 100644
+--- a/fs/nfsd/nfsproc.c
++++ b/fs/nfsd/nfsproc.c
+@@ -407,6 +407,7 @@ nfsd_proc_create(struct svc_rqst *rqstp)
+                /* File doesn't exist. Create it and set attrs */
+                resp->status =3D nfsd_create_locked(rqstp, dirfhp, &attrs, =
+type,
+                                                  rdev, newfhp);
++               goto out_write;
+        } else if (type =3D=3D S_IFREG) {
+                dprintk("nfsd:   existing %s, valid=3D%x, size=3D%ld\n",
+                        argp->name, attr->ia_valid, (long) attr->ia_size);
 
->        [--|DDDDDDDDZZ]
 
-> 
-> Finally ext4_map_create_blocks() only insert extent A to B to the extent
-> status tree, and leave an stale unwritten extent in the status tree.
-> 
->        0  A      B   N
->        [UU|WWWWWWWWWW] on-disk extent     W: written extent
->        [UU|WWWWWWWWUU] extent status tree
->        [--|DDDDDDDDZZ]
-> 
-> Fix this issue by always remove cached extent status entry before
-> splitting extent.
-> 
-> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
-> ---
->  fs/ext4/extents.c | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
-> index 2b5aec3f8882..9bb80af4b5cf 100644
-> --- a/fs/ext4/extents.c
-> +++ b/fs/ext4/extents.c
-> @@ -3367,6 +3367,12 @@ static struct ext4_ext_path *ext4_split_extent(handle_t *handle,
->  	ee_len = ext4_ext_get_actual_len(ex);
->  	unwritten = ext4_ext_is_unwritten(ex);
->  
-> +	/*
-> +	 * Drop extent cache to prevent stale unwritten extents remaining
-> +	 * after zeroing out.
-> +	 */
-> +	ext4_es_remove_extent(inode, ee_block, ee_len);
-> +
->  	/* Do not cache extents that are in the process of being modified. */
->  	flags |= EXT4_EX_NOCACHE;
->  
-> -- 
-> 2.46.1
-> 
+Thanks,
+Amir.
+
+> >
+> >
+> > config: x86_64-rhel-9.4
+> > compiler: gcc-14
+> > test machine: 192 threads 4 sockets Intel(R) Xeon(R) Platinum 9242 CPU =
+@ 2.30GHz (Cascade Lake) with 176G memory
+> >
+> > (please refer to attached dmesg/kmsg for entire log/backtrace)
+> >
+> >
+> >
+> > If you fix the issue in a separate patch/commit (i.e. not just a new ve=
+rsion of
+> > the same patch/commit), kindly add following tags
+> > | Reported-by: kernel test robot <oliver.sang@intel.com>
+> > | Closes: https://lore.kernel.org/oe-lkp/202511252132.2c621407-lkp@inte=
+l.com
+> >
+> >
+> > Unmount[  252.448780][T17295] ------------[ cut here ]------------
+> > [  252.455068][T17295] WARNING: CPU: 114 PID: 17295 at fs/dcache.c:1590=
+ umount_check (fs/dcache.c:1590 (discriminator 1) fs/dcache.c:1580 (discrim=
+inator 1))
+> > m - /opt/rootfs.[  252.540436][T17295] CPU: 114 UID: 0 PID: 17295 Comm:=
+ umount Tainted: G S                  6.18.0-rc1-00004-g7ab96df840e6 #1 VOL=
+UNTARY
+> > [  252.553273][T17295] Tainted: [S]=3DCPU_OUT_OF_SPEC
+> > [  252.558205][T17295] Hardware name: Intel Corporation ............/S9=
+200WKBRD2, BIOS SE5C620.86B.0D.01.0552.060220191912 06/02/2019
+> > [  252.558206][T17295] RIP: 0010:umount_check (fs/dcache.c:1590 (discri=
+minator 1) fs/dcache.c:1580 (discriminator 1))
+> > [  252.575407][T17295] Code: 8d 88 a0 03 00 00 48 8b 40 28 4c 8b 08 48 =
+8b 46 30 48 85 c0 74 04 48 8b 50 40 51 48 c7 c7 88 3b ad 82 48 89 f1 e8 27 =
+07 c0 ff <0f> 0b 58 31 c0 c3 cc cc cc cc 41 83 f8 01 75 bf eb aa 0f 1f 44 0=
+0
+> > All code
+> > =3D=3D=3D=3D=3D=3D=3D=3D
+> >    0: 8d 88 a0 03 00 00       lea    0x3a0(%rax),%ecx
+> >    6: 48 8b 40 28             mov    0x28(%rax),%rax
+> >    a: 4c 8b 08                mov    (%rax),%r9
+> >    d: 48 8b 46 30             mov    0x30(%rsi),%rax
+> >   11: 48 85 c0                test   %rax,%rax
+> >   14: 74 04                   je     0x1a
+> >   16: 48 8b 50 40             mov    0x40(%rax),%rdx
+> >   1a: 51                      push   %rcx
+> >   1b: 48 c7 c7 88 3b ad 82    mov    $0xffffffff82ad3b88,%rdi
+> >   22: 48 89 f1                mov    %rsi,%rcx
+> >   25: e8 27 07 c0 ff          call   0xffffffffffc00751
+> >   2a:*        0f 0b                   ud2             <-- trapping inst=
+ruction
+> >   2c: 58                      pop    %rax
+> >   2d: 31 c0                   xor    %eax,%eax
+> >   2f: c3                      ret
+> >   30: cc                      int3
+> >   31: cc                      int3
+> >   32: cc                      int3
+> >   33: cc                      int3
+> >   34: 41 83 f8 01             cmp    $0x1,%r8d
+> >   38: 75 bf                   jne    0xfffffffffffffff9
+> >   3a: eb aa                   jmp    0xffffffffffffffe6
+> >   3c: 0f                      .byte 0xf
+> >   3d: 1f                      (bad)
+> >   3e: 44                      rex.R
+> >       ...
+> >
+> > Code starting with the faulting instruction
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >    0: 0f 0b                   ud2
+> >    2: 58                      pop    %rax
+> >    3: 31 c0                   xor    %eax,%eax
+> >    5: c3                      ret
+> >    6: cc                      int3
+> >    7: cc                      int3
+> >    8: cc                      int3
+> >    9: cc                      int3
+> >    a: 41 83 f8 01             cmp    $0x1,%r8d
+> >    e: 75 bf                   jne    0xffffffffffffffcf
+> >   10: eb aa                   jmp    0xffffffffffffffbc
+> >   12: 0f                      .byte 0xf
+> >   13: 1f                      (bad)
+> >   14: 44                      rex.R
+> >       ...
+> > [  252.575410][T17295] RSP: 0018:ffffc9003672bb88 EFLAGS: 00010282
+> > [  252.601300][T17295] RAX: 0000000000000000 RBX: ffff88ac4c0c55c0 RCX:=
+ 0000000000000027
+> > [  252.601301][T17295] RDX: ffff888c5009c1c8 RSI: 0000000000000001 RDI:=
+ ffff888c5009c1c0
+> > [  252.601303][T17295] RBP: ffff8881e925da40 R08: 0000000000000000 R09:=
+ ffffc9003672b958
+> > [  252.625337][T17295] R10: ffff88ac7fc33fa8 R11: 0000000000000003 R12:=
+ ffffffff81748d50
+> > [  252.625338][T17295] R13: ffff8881e925da40 R14: ffff88ac4c0c9200 R15:=
+ ffff88ac4c0c9280
+> > [  252.625339][T17295] FS:  00007ffff7bfb840(0000) GS:ffff888ccc272000(=
+0000) knlGS:0000000000000000
+> > [  252.625340][T17295] CS:  0010 DS: 0000 ES: 0000 CR0: 000000008005003=
+3
+> > [  252.625341][T17295] CR2: 00007ffff7ec97a0 CR3: 00000001ce11e005 CR4:=
+ 00000000007726f0
+> > [  252.625342][T17295] PKRU: 55555554
+> > [  252.625343][T17295] Call Trace:
+> > [  252.625345][T17295]  <TASK>
+> > [  252.625348][T17295]  d_walk (fs/dcache.c:1322)
+> > [  252.625353][T17295]  shrink_dcache_for_umount (include/linux/spinloc=
+k.h:351 fs/dcache.c:601 fs/dcache.c:1606 fs/dcache.c:1621)
+> > [  252.625357][T17295]  generic_shutdown_super (fs/super.c:621)
+> > [  252.689813][T17295]  kill_block_super (fs/super.c:1723)
+> > [  252.689817][T17295] ext4_kill_sb (fs/ext4/super.c:7405) ext4
+> > [  252.699584][T17295]  deactivate_locked_super (fs/super.c:434 fs/supe=
+r.c:475)
+> > Unmount[  252.704921][T17295]  cleanup_mnt (fs/namespace.c:242 fs/names=
+pace.c:1328)
+> > [  252.704926][T17295]  task_work_run (include/linux/sched.h:2092 kerne=
+l/task_work.c:229)
+> > - Legacy Locks D[  252.727385][T17295]  ? __cond_resched (kernel/sched/=
+core.c:7477)
+> > irectory /run/lo[  252.733357][T17295]  ? generic_fillattr (fs/stat.c:9=
+9)
+> > [  252.739669][T17295]  ? _copy_to_user (arch/x86/include/asm/uaccess_6=
+4.h:126 arch/x86/include/asm/uaccess_64.h:147 include/linux/uaccess.h:197 l=
+ib/usercopy.c:26)
+> > [  252.744854][T17295]  ? cp_new_stat (fs/stat.c:506 (discriminator 1))
+> > [  252.744857][T17295]  ? __do_sys_newfstatat (fs/stat.c:546 (discrimin=
+ator 1))
+> > [  252.744861][T17295]  ? do_syscall_64 (arch/x86/include/asm/jump_labe=
+l.h:36 include/linux/context_tracking_state.h:108 include/linux/context_tra=
+cking.h:41 include/linux/irq-entry-common.h:261 include/linux/entry-common.=
+h:212 arch/x86/entry/syscall_64.c:100)
+> > [  252.759380][T17295]  ? clear_bhb_loop (arch/x86/entry/entry_64.S:154=
+8)
+> > [  252.764099][T17295]  ? clear_bhb_loop (arch/x86/entry/entry_64.S:154=
+8)
+> > [  252.764101][T17295]  entry_SYSCALL_64_after_hwframe (arch/x86/entry/=
+entry_64.S:130)
+> > [  252.774744][T17295] RIP: 0033:0x7ffff7e54217
+> > [  252.779199][T17295] Code: 0d 00 f7 d8 64 89 02 b8 ff ff ff ff c3 66 =
+0f 1f 44 00 00 31 f6 e9 09 00 00 00 66 0f 1f 84 00 00 00 00 00 b8 a6 00 00 =
+00 0f 05 <48> 3d 00 f0 ff ff 77 01 c3 48 8b 15 b1 5b 0d 00 f7 d8 64 89 02 b=
+8
+> > All code
+> > =3D=3D=3D=3D=3D=3D=3D=3D
+> >    0: 0d 00 f7 d8 64          or     $0x64d8f700,%eax
+> >    5: 89 02                   mov    %eax,(%rdx)
+> >    7: b8 ff ff ff ff          mov    $0xffffffff,%eax
+> >    c: c3                      ret
+> >    d: 66 0f 1f 44 00 00       nopw   0x0(%rax,%rax,1)
+> >   13: 31 f6                   xor    %esi,%esi
+> >   15: e9 09 00 00 00          jmp    0x23
+> >   1a: 66 0f 1f 84 00 00 00    nopw   0x0(%rax,%rax,1)
+> >   21: 00 00
+> >   23: b8 a6 00 00 00          mov    $0xa6,%eax
+> >   28: 0f 05                   syscall
+> >   2a:*        48 3d 00 f0 ff ff       cmp    $0xfffffffffffff000,%rax  =
+       <-- trapping instruction
+> >   30: 77 01                   ja     0x33
+> >   32: c3                      ret
+> >   33: 48 8b 15 b1 5b 0d 00    mov    0xd5bb1(%rip),%rdx        # 0xd5be=
+b
+> >   3a: f7 d8                   neg    %eax
+> >   3c: 64 89 02                mov    %eax,%fs:(%rdx)
+> >   3f: b8                      .byte 0xb8
+> >
+> > Code starting with the faulting instruction
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >    0: 48 3d 00 f0 ff ff       cmp    $0xfffffffffffff000,%rax
+> >    6: 77 01                   ja     0x9
+> >    8: c3                      ret
+> >    9: 48 8b 15 b1 5b 0d 00    mov    0xd5bb1(%rip),%rdx        # 0xd5bc=
+1
+> >   10: f7 d8                   neg    %eax
+> >   12: 64 89 02                mov    %eax,%fs:(%rdx)
+> >   15: b8                      .byte 0xb8
+> >
+> >
+> > The kernel config and materials to reproduce are available at:
+> > https://download.01.org/0day-ci/archive/20251125/202511252132.2c621407-=
+lkp@intel.com
+> >
+> >
+> >
+> > --
+> > 0-DAY CI Kernel Test Service
+> > https://github.com/intel/lkp-tests/wiki
+> >
 
