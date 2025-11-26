@@ -1,177 +1,108 @@
-Return-Path: <linux-fsdevel+bounces-69926-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69927-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87A22C8BFBB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Nov 2025 22:13:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50C5AC8BFFA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Nov 2025 22:17:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 487214E24FD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Nov 2025 21:13:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 158B63AA279
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Nov 2025 21:17:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83916298CDE;
-	Wed, 26 Nov 2025 21:13:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40D8C2FB0B9;
+	Wed, 26 Nov 2025 21:17:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="fs5lw9CZ"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="A0j/c0Gs"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D402145BE3
-	for <linux-fsdevel@vger.kernel.org>; Wed, 26 Nov 2025 21:12:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEF7C2DAFDF
+	for <linux-fsdevel@vger.kernel.org>; Wed, 26 Nov 2025 21:17:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764191581; cv=none; b=HGWVsskNWCL7nDMANXVy3VfrKR4reh7HhJn8FjQ9iNc+6qo1zA3fSi0plJMPiO/vbDWPY0vYimYuTNnyb8fZmvxEMjYfpdzzqre0X+XbO2JUaFEJvzqGwkK3iHYRE2mj5u4IoD58DlEnAtbUB1nLOZu5mTEvBvqjgfxnvsi3ROE=
+	t=1764191839; cv=none; b=bd3dwmtNKMY5oIs3JP9TLixDytTAHIcSZYFF0DYLtHGgkzpocN+u4LlhsekLS6DPTz2SFDy79MtPbUH4hJASVyY8+pNgX5iN6QXOJdJsIasOWFFVNkN37vHMwhjxjPGuZ8LEuR6khMibWC2drospIN6BEY72tc3ZuLJR52AVpMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764191581; c=relaxed/simple;
-	bh=Q10QKezS6ud1U3pJNqkOEt0Radj10IBNvlm30dq8bgE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DGUhP0Dl7xrnnvW3qdLJulNcWNCiyMH3Y5bC9cpSzxDE36cuiS/jzMZD9Hawz3sOx7yAxvDdVZJNnZmICY02pJyYFwWtb71DGBbS7wQt7USvwFLVmNQI/hcUc5Kgjj925EC92KnO/CxwkGzeriGGWel+BULsUpUQi4/4xI/wyRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=fs5lw9CZ; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b737c6c13e1so38514066b.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Nov 2025 13:12:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1764191578; x=1764796378; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8hrjCGTokKrR0BnJSuEojRuEu2dsqESmm8qkZ4/vDpA=;
-        b=fs5lw9CZqSEoUPKMLW31Ct0O+VqXJEx5rHsp9+nVVHwjUzpfjEOVqTXE39JtliQZao
-         7w+W1fRhc1cs6AHxnVqJrBXw6yXJJ/kJDbzSiCgAN07w/NR1v0fKOD9mf4DSpQKtLEOA
-         RCOumBJHA5pdSUZff2nR3PWN8zMuYpf4kXLhU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764191578; x=1764796378;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=8hrjCGTokKrR0BnJSuEojRuEu2dsqESmm8qkZ4/vDpA=;
-        b=wK1O3tjqbtOHHGtQBFWFXkXTa19qcxA2KWwgZvb+5jXQoxmI6gsMMOo6b84b3zswId
-         q6SNC3WUfzLIw4wha1mJHHW2sE+Fxjm6E+S2IxIAaVUlqUwZ0s53UmRVWjBGSTohYRed
-         vKbL42mluwbL8jIrgzBzN2VumRIVo/V3mxPnQhUDIjAPNMlsR+X33oU+xcYCcLCSNKl/
-         57L2UAQ8RoNRkam/xcrWtKkq3ncaSNi3mqSWGctuE5NmqSY9d1c5uvn+6I3/HBILDZ1P
-         VDmaYmmwv+VTMY1uOd7uEr+5j8FbMRVzIy/DTNOWBi48Hfa1XvhARsUCG8gMJMyCAIpE
-         YCTA==
-X-Forwarded-Encrypted: i=1; AJvYcCXzbXDoOPZEx2A6BWJT+aLgzotAmebWuDlnkqIVlN4tCoE1kuouUmXSMKIcqjYJSPjUje94XG7Odh//RUTg@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHApwCeMIJXqKW6cQ98ZG2gRDkvCEhSEaAcFaHJ8Es6Ceei1Qm
-	zcN4GoXbM9Ps9ncpJZtrkE7qVnp7Zsmg/QkGKFBLO0pc4csL5e7lVn6F9IqHN/SYDr9WWJw6+u3
-	/uJGP3pc46A==
-X-Gm-Gg: ASbGncsFRyAN2cUa7yJ2j2LIKUztecs1ZcbsFAhVZTzky2X4eAKk4dbQJwqIyZH4ycH
-	//s+mbRDy1tiXpIPcsudE7RMeBH7a1fK185z7E44R1/dTQAD2gvfUtTMLXbi7oyD0U4bMiiZfuR
-	FQZWIxWSmS5eIzOdd7QpK5xPBf0t+mn2otbX2e7RW/HSD0HpYmUFXrGyjTtKwTW8viK4C7cglJe
-	UyO2Vy4r3WtJFBDKlsji1i2POes5PnEtD+e1UhOy19Z5SlKEK3spmKFci/3YBWXsPfe5oOpQvu/
-	OnQxH5Scceqvw4NiPhRmr5YWbDvaoPyPvZpxJ2wq1qFprX7bCSji+AEUtQB6/cX/kytejU5FrRY
-	lHNJ9RDu5uFAOBnmXiULIzMp+eJWL8RTgdg0aj2ky8gtWQCQ2ijcpjCj3F8UseLJMqrpeQydCsv
-	LZwBR2e5pVNAzHUz3eb+VStTw64UW1dgh4TgQCNrRbYGB/So2WIYKJCZah9FV7
-X-Google-Smtp-Source: AGHT+IFsXtX0VEbRnO7rxWSiRUOUWSiWLslvXiGCNfxSaBwLyvxmviYjiUOFZdglBCsugGtKls1pnA==
-X-Received: by 2002:a17:907:720e:b0:b73:5db4:4ffc with SMTP id a640c23a62f3a-b76c5666cc8mr974219766b.54.1764191577454;
-        Wed, 26 Nov 2025 13:12:57 -0800 (PST)
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com. [209.85.208.53])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b7654fd43b1sm1949544966b.38.2025.11.26.13.12.55
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Nov 2025 13:12:55 -0800 (PST)
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-640a0812658so461835a12.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Nov 2025 13:12:55 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVQjBcpbvmSu7J/0f8Eh2FYfkpr+r5bq2EmhzcA+4ue+S+N8CBDVXkq///7NJt2TyxePqaIHnzYOwUznkXp@vger.kernel.org
-X-Received: by 2002:a05:6402:5192:b0:640:d061:e6b1 with SMTP id
- 4fb4d7f45d1cf-645eb23b736mr8204227a12.10.1764191575057; Wed, 26 Nov 2025
- 13:12:55 -0800 (PST)
+	s=arc-20240116; t=1764191839; c=relaxed/simple;
+	bh=LeauSPWgUT1TyXCfm8K70hoF35nKv7ZGtWhbp3ycLz4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=X+b5Yt/JhfixKr9c+yQlrG/a7NpC81mCmjjW2yYs/p4hrNnnWMMDXDSG0DLqkiqA0zGIplotZyZkW3HsByJAJcF47q32fJ7qZFiUdOHt7Z9BPfcOr2s6kdRvdeYXx9xw9p15mqSD6u6GIEO1YNodYYy8OHN5sHx0F+p2QIWq7w8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=A0j/c0Gs; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1764191836;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=3x6C1wZtOSrBs0hiPev6vXIvqHeh6TE7yZaYhbRklKQ=;
+	b=A0j/c0GsMiVZId4ml+6IyxFsIdCUtYv7Tde4NQR2WuFNgeSUfGc9vIafa9iDkkSrmnJ0/R
+	Y0zYuXOjEm9rhdDbqb69EjwNRyES2xylErd2V2IEoTg8C+ju6jRe2k3fXwM1OA2XJMUiso
+	PpUwnnmQYYS34rSTCSZQuGCA9M56pZo=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-17-r6N1D3ygNzauFo32vWHhMw-1; Wed,
+ 26 Nov 2025 16:17:05 -0500
+X-MC-Unique: r6N1D3ygNzauFo32vWHhMw-1
+X-Mimecast-MFC-AGG-ID: r6N1D3ygNzauFo32vWHhMw_1764191824
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1FC971800561;
+	Wed, 26 Nov 2025 21:17:04 +0000 (UTC)
+Received: from localhost (unknown [10.2.16.34])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id ECD531800240;
+	Wed, 26 Nov 2025 21:17:02 +0000 (UTC)
+From: Stefan Hajnoczi <stefanha@redhat.com>
+To: linux-fsdevel@vger.kernel.org
+Cc: German Maglione <gmaglione@redhat.com>,
+	linux-kernel@vger.kernel.org,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
+	Vivek Goyal <vgoyal@redhat.com>,
+	virtualization@lists.linux.dev,
+	Stefan Hajnoczi <stefanha@redhat.com>
+Subject: [PATCH] MAINTAINERS: add German Maglione as virtiofs co-maintainer
+Date: Wed, 26 Nov 2025 16:15:48 -0500
+Message-ID: <20251126211548.598469-1-stefanha@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251126090505.3057219-1-wozizhi@huaweicloud.com> <33ab4aef-020e-49e7-8539-31bf78dac61a@huaweicloud.com>
-In-Reply-To: <33ab4aef-020e-49e7-8539-31bf78dac61a@huaweicloud.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 26 Nov 2025 13:12:38 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wh1Wfwt9OFB4AfBbjyeu4JVZuSWQ4A8OoT3W6x9btddfw@mail.gmail.com>
-X-Gm-Features: AWmQ_bmijlsSBxI6qiVA8VQBddyswwSNhEs1F3E3qSXMF5yTCuTDAsS8SQqTKN0
-Message-ID: <CAHk-=wh1Wfwt9OFB4AfBbjyeu4JVZuSWQ4A8OoT3W6x9btddfw@mail.gmail.com>
-Subject: Re: [Bug report] hash_name() may cross page boundary and trigger
- sleep in RCU context
-To: Zizhi Wo <wozizhi@huaweicloud.com>, Russell King <linux@armlinux.org.uk>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: jack@suse.com, brauner@kernel.org, hch@lst.de, akpm@linux-foundation.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org, 
-	yangerkun@huawei.com, wangkefeng.wang@huawei.com, pangliyuan1@huawei.com, 
-	xieyuanbin1@huawei.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Wed, 26 Nov 2025 at 02:27, Zizhi Wo <wozizhi@huaweicloud.com> wrote:
->
-> =E5=9C=A8 2025/11/26 17:05, Zizhi Wo =E5=86=99=E9=81=93:
-> > We're running into the following issue on an ARM32 platform with the li=
-nux
-> > 5.10 kernel:
-> >
-> > During the execution of hash_name()->load_unaligned_zeropad(), a potent=
-ial
-> > memory access beyond the PAGE boundary may occur.
+German Maglione is a co-maintainer of the virtiofsd userspace device
+implementation (https://gitlab.com/virtio-fs/virtiofsd) and is currently
+one of the most active virtiofs developers outside the kernel.
 
-That is correct.
+I have not worked on virtiofs except to review kernel patches for a few
+years now and would like German to take over from me gradually. It is
+healthier to have a kernel maintainer who is actively involved. I expect
+to remove myself in a few months.
 
-However:
+Signed-off-by: Stefan Hajnoczi <stefanha@redhat.com>
+---
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
 
-> >                This triggers a page fault,
-> > which leads to a call to do_page_fault()->mmap_read_trylock().
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 6df89b14b521a..99e0ff4170f00 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -27165,6 +27165,7 @@ F:	arch/s390/include/uapi/asm/virtio-ccw.h
+ F:	drivers/s390/virtio/
+ 
+ VIRTIO FILE SYSTEM
++M:	German Maglione <gmaglione@redhat.com>
+ M:	Vivek Goyal <vgoyal@redhat.com>
+ M:	Stefan Hajnoczi <stefanha@redhat.com>
+ M:	Miklos Szeredi <miklos@szeredi.hu>
+-- 
+2.52.0
 
-That should *not* happen.  For kernel addresses, mmap_read_trylock()
-should never trigger, much less the full mmap_read_lock().
-
-See for example the x86 fault handling in  handle_page_fault():
-
-        if (unlikely(fault_in_kernel_space(address))) {
-                do_kern_addr_fault(regs, error_code, address);
-
-and the kernel address case never triggers the mmap lock, because
-while faults on kernel addresses can happen for various reasons, they
-are never memory mappings.
-
-I'm seeing similar logic in the arm tree, although the check is
-different. do_translation_fault() checks for TASK_SIZE.
-
-        if (addr < TASK_SIZE)
-                return do_page_fault(addr, fsr, regs);
-
-but it appears that there are paths to do_page_fault() that do not
-have this check, ie that do_DataAbort() function does
-
-        if (!inf->fn(addr, fsr & ~FSR_LNX_PF, regs))
-                return;
-
-
-and It's not immediately obvious, but that can call do_page_fault()
-too though the fsr_info[] and ifsr_info[] arrays in
-arch/arm/mm/fsr-2level.c.
-
-The arm64 case looks like it might have similar issues, but while I'm
-more familiar with arm than I _used_ to be, I do not know the
-low-level exception handling code at all, so I'm just adding Russell,
-Catalin and Will to the participants.
-
-Catalin, Will - the arm64 case uses
-
-        if (is_ttbr0_addr(addr))
-                return do_page_fault(far, esr, regs);
-
-instead, but like the 32-bit code that is only triggered for
-do_translation_fault().  That may all be ok, because the other cases
-seem to be "there is a TLB entry, but we lack privileges", so maybe
-will never trigger for a kernel access to a kernel area because they
-either do not exist, or we have permissions?
-
-Anyway, possibly a few of those 'do_page_fault' entries should be
-'do_translation_fault'? It certainly seems that way at least on 32-bit
-arm.
-
-Over to more competent people. Russell?
-
-              Linus
 
