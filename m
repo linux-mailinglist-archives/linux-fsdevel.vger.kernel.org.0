@@ -1,95 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-69923-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69924-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71398C8BEB8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Nov 2025 21:51:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CF6DC8BF67
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Nov 2025 22:00:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7E99B358374
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Nov 2025 20:51:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB54F3A4729
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Nov 2025 20:59:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48338340DB0;
-	Wed, 26 Nov 2025 20:51:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC45D340DB0;
+	Wed, 26 Nov 2025 20:59:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="VVpB0lSc";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="vnalrjlR"
+	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="ZdTlAq2Z";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="hZynZqTH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout-b4-smtp.messagingengine.com (fout-b4-smtp.messagingengine.com [202.12.124.147])
+Received: from fhigh-b4-smtp.messagingengine.com (fhigh-b4-smtp.messagingengine.com [202.12.124.155])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 125122F83AC;
-	Wed, 26 Nov 2025 20:51:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7704F22AE7A;
+	Wed, 26 Nov 2025 20:59:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764190293; cv=none; b=l2d1VHwSmfAf6ICmdTkmAOszPsRbHYJFdliq5U7Tf+QtxFAQrPYN+/rjLGsXDqFfSkdYoHIeHo+1Ib4eSEIDV98fJtuIfFkaZ2BGKWKNVvpjWDG4BV4KJHQXQstqnIwlTBcaF8d4uL0V4AT6wjtNkI8tGIB0LKxT6j6jWOhnZgQ=
+	t=1764190781; cv=none; b=HW3xAucFajMYWesOUnX2PQ4uhzLaU/gxr+V49ZN0yACsTOyKewkxi/5k1nzwM7JnnD/CvD06dmnQXcXKo/r2sRR4BU60rkK36jgF/KVbDyRbllA+ZoXiv9h84zOrV5YZwQ7VSFTvyNXdwlsx0RQhX0zt0Cbq/RqlqN63w7vkka4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764190293; c=relaxed/simple;
-	bh=AKpy2VI1xw8KKWkaVooHuxoKcUKA0T55/4LqDmNkEBg=;
+	s=arc-20240116; t=1764190781; c=relaxed/simple;
+	bh=mDivYV8H2fKoVDRBsPbKcSOCUT+x3TVzfO4rk4UTTCY=;
 	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=H6SPdr95FCnVxXjF3aJgip4yVKWpHmxun0jgN2+zqFuxwnXNLGyLciKVhmPmeQHDrWvrcLOcgZ73HPVzard0q0DfWZeJHZZqXfF77xoWgOQTprMxLgPYT3lpf4bA5FRNf2QhOCBEckSHJ2eu1opbYtO1xmwUC0imlQJZcAVLjyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=VVpB0lSc; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=vnalrjlR; arc=none smtp.client-ip=202.12.124.147
+	 References:Date:Message-id; b=CZSctWAhZGFSAHLO28csywZ16KdZUM6cTEk6H/EnAqQNHDTWYDKiXhiMJo8A3Yn9krUuYimDHL8Fub6Sc/bCcuws7CDs6ERnZu1qIFAcregTkfuaAFsq5885qAG+fJ/vt7PtmmkuK4L2jQXZKJA+KzDY946Bzh2pF/MiKMxbSyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=ZdTlAq2Z; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=hZynZqTH; arc=none smtp.client-ip=202.12.124.155
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
-	by mailfout.stl.internal (Postfix) with ESMTP id 116781D0008E;
-	Wed, 26 Nov 2025 15:51:30 -0500 (EST)
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 6EAA07A016B;
+	Wed, 26 Nov 2025 15:59:38 -0500 (EST)
 Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-01.internal (MEProxy); Wed, 26 Nov 2025 15:51:30 -0500
+  by phl-compute-03.internal (MEProxy); Wed, 26 Nov 2025 15:59:38 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
 	cc:cc:content-transfer-encoding:content-type:content-type:date
 	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
 	:references:reply-to:reply-to:subject:subject:to:to; s=fm3; t=
-	1764190289; x=1764276689; bh=yl+eQEMN8QMEUq91pZnkP+ILRrdhioI3CRA
-	AUiLxEfM=; b=VVpB0lScxy+qrjv9V6gfyM2sQ0S+3nYKq5BIbAkyaoMCUYKUJMx
-	Lq5KpC+ERZlk6l7cGURBQZfTGXSw4udnUj5JZ5UOKNe9VsbVIsJGg2+/fy/WWSCz
-	SdjHAVNxQpPEx96awjSiQ8yxnN8ysTxN8i9wIp650idZBcaXH6jItsgnStGLrowG
-	QJez7XtGlXXLsMO/J6PX10pBb6cZrzznu6zxGkMOdMM8qqRlWQo9hgg/bxE0CctR
-	ziQvXYYCGsQhcxmywD/xsTaom8Ybdbt2Kzlkl41CHud0lF99vrHls34yXLdpuAGH
-	pUIx0H2LkzbF/G1gh5eJXUiUQquBSjRqlPQ==
+	1764190778; x=1764277178; bh=UwGoRZDEj2HkNb3Upl8B+DAm4uvFedCAdR8
+	K/+ROm9k=; b=ZdTlAq2Z6anI8UNtScC0ANlhl0/0t93CBn3Siyk5Ac4Of3HMrQx
+	wD02s/SaqBp4+m7yomyX3bkGqRvh3d26vpzVJ6NcN640NlWx3edgIOyTF3jIUPw6
+	oSJ0DDKsu03AwL/ZuQ1Lt6nu9tiF5DjJNUkr5vXMsHonQ/ymEle5BX6Qp5fV+u/a
+	d/DLlpwzT2MNKdZH6LbPCr3sUcw9koZ+9c32uO3Eu6TbqgVXTfQIQiKLP/BXsT3p
+	8qKeaSv+dgsOVRNTzteKoKXAfIb8YT+fJVavLDRy7tsL+ROTCaFIRiZrk1kCGDYq
+	pc6Ior1e5DShEieuvHjAydi15XtQAyHjxNw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:content-type:date:date:feedback-id:feedback-id
 	:from:from:in-reply-to:in-reply-to:message-id:mime-version
 	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1764190289; x=
-	1764276689; bh=yl+eQEMN8QMEUq91pZnkP+ILRrdhioI3CRAAUiLxEfM=; b=v
-	nalrjlR9nF9tPOR1PqZ7mXTBJYGT7jK7VBOodSS7XwhCul+mh7qO1F1zKWHFaVEA
-	y/iqYnPOR5cTKdHJc34lDXdJCMRhUL+B4n8xq0uP7X4fTrHyNMUzbPnnyb1lvsRV
-	SIK+pAJgZhMCLie+7MUc3Ek8FjzFnRaa6UtQlWsQ+UJ3aX09aN2kg7MnR4UaCJI9
-	vnXnbbA2aFfivd6efyZJ/ySODMFJ/FEwnqjgC6CQxfeDZY0EHGt2VY5789GWjdC5
-	qJSZfQ10CsH/C6KRfxiBIDWm3VFVmg6Cd9NSMYlDrLRGVSorOatJkkn5hAn2oEfq
-	QbFq/Cr1aV40gzvKW0Q/g==
-X-ME-Sender: <xms:UWgnaXm-qG30pr1bf-e7n_GuhlhVB2zdd8IqqdlredIwiAmubkvJwA>
-    <xme:UWgnaS-hhPzNaz5wEOvtsR8INmIlCJ4tfeSYIP9RMOD9HUwSlNL7AREq4vU7qqthZ
-    sXwyQ_5iVJhBZsM-tgduX3js5Wl6tWt4DBhZhwxnwhmbMWZ9w>
-X-ME-Received: <xmr:UWgnadLoNdBAzYTvl1LECQuXGEQda_kA3omadsadRHUczaHfNIo-EfSYzTReMfskzhSNYl3OTi06QN7LMxpEiTWuHfWoIKeNJvc5EZlRfzDd>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvgeehfeehucetufdoteggodetrf
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1764190778; x=
+	1764277178; bh=UwGoRZDEj2HkNb3Upl8B+DAm4uvFedCAdR8K/+ROm9k=; b=h
+	ZynZqTHM7DyVQp67OY4oc9scGQC3e4dOX3yp1QlUN5Z1teFIwVcGznsk8mJAHDNl
+	LvHJesP6DBuSjpj0gVLusfn5Fsi637tdd4dNYJ1gLtcii5CggZu3aLwgY1yvt5Pe
+	4VY5mKt/iPMUUDADyrbnGIIkDdcWXgaxho1VSKA6fijpaWGb72/susxcn1/233/8
+	ciC5cwMNOU/wlVgDnZEnEaKCbboZmFmf9yv4F0+ljStahYo5Ny3KCJFRSm0DB9R3
+	lw8inrOKG+CeiVooqGxD2rH2WQ+sB18LZc5ie48AWT5plaLvKdPv2M+U6Q9JlQck
+	ya152/0YX6oFpw287g1Fw==
+X-ME-Sender: <xms:OWonaawLyy8z6nAhmVnSBierYIYtunjAJ7q2oSaWREvHCVpenGNrXw>
+    <xme:OWonaQqVtTcDYw6f64jMIK7s6lq8N3nPE-lRZ7QFpry3t5NzWIz7yoiDRAecBkrqA
+    13sFgkkRMGXQZ1SlbTd7NLOGTZ6iCRT-wU4seP63KAYQwy3Yq0>
+X-ME-Received: <xmr:OWonaScRNprZecAe5pIthoTlycbO5EDEAZg2KR03kDLrPxmcWOdo9JEgdlOj9CmeNJ03Lw-RoOGIkcxgV6mdeS0XIrm1fgVdN-RGvRwlyQ57>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvgeehfeeiucetufdoteggodetrf
     dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
     rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
     gurheptgfgggfhvfevufgjfhffkfhrsehtqhertddttdejnecuhfhrohhmpefpvghilheu
     rhhofihnuceonhgvihhlsgesohifnhhmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnh
-    epvdeuteelkeejkeevteetvedtkeegleduieeftdeftefgtddtleejgfelgfevffeinecu
-    ffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurf
-    grrhgrmhepmhgrihhlfhhrohhmpehnvghilhgssehofihnmhgrihhlrdhnvghtpdhnsggp
-    rhgtphhtthhopeduuddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheplhhinhhugi
-    dquhhnihhonhhfshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhn
-    uhigqdhnfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugi
-    dqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhu
-    gidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehovg
-    dqlhhkpheslhhishhtshdrlhhinhhugidruggvvhdprhgtphhtthhopehnvghtfhhssehl
-    ihhsthhsrdhlihhnuhigrdguvghvpdhrtghpthhtohepjhhlrgihthhonheskhgvrhhnvg
-    hlrdhorhhgpdhrtghpthhtohepsghrrghunhgvrheskhgvrhhnvghlrdhorhhgpdhrtghp
-    thhtohepohhlihhvvghrrdhsrghnghesihhnthgvlhdrtghomh
-X-ME-Proxy: <xmx:UWgnafhLIyYo-qt4Ew6KgmiVuZA-bQhJG6dDfUn5Uj6v_pJD0KEtQg>
-    <xmx:UWgnaR9K2IgAvytgn9_q0VtN3YIa4sOw88anH0BElMIGrJc49URaFw>
-    <xmx:UWgnacMIsTKdiu5fb4TaB5X6rXlDAcfiCqNPxiHAP9XSnq_VUv4Wdg>
-    <xmx:UWgnadD37WkBza8NleHzBpQvjJf6k2G2e8HWzgn516kMUKlLHRg7dQ>
-    <xmx:UWgnaVTG0esH90Mvi84aoRci8-WbsHUjgp5sHliwd7s5zbZaawHb-W4G>
+    epleejtdefgeeukeeiteduveehudevfeffvedutefgteduhfegvdfgtdeigeeuudejnecu
+    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhgvihhlsg
+    esohifnhhmrghilhdrnhgvthdpnhgspghrtghpthhtohepudegpdhmohguvgepshhmthhp
+    ohhuthdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpd
+    hrtghpthhtoheplhhinhhugidqnhhfshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgt
+    phhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprh
+    gtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+    pdhrtghpthhtohepthhomhesthgrlhhpvgihrdgtohhmpdhrtghpthhtohepjhgrtghkse
+    hsuhhsvgdrtgiipdhrtghpthhtohepohhkohhrnhhivghvsehrvgguhhgrthdrtghomhdp
+    rhgtphhtthhopegthhhutghkrdhlvghvvghrsehorhgrtghlvgdrtghomhdprhgtphhtth
+    hopegurghirdhnghhosehorhgrtghlvgdrtghomh
+X-ME-Proxy: <xmx:OWonabp7yflLx3HJbj_dietehsBxdHJFjm9T0OdX1P6Mus1QdHlhfA>
+    <xmx:OWonaUnPlU8GNKTivwmxyttk5Ks0TH73iByvovkAH0hxIonsfk4rvA>
+    <xmx:OWonaURL-xMFjhcsyQD2gj-NTP17qDlkBI0_vFJIP1yDd9Z7mNo8mg>
+    <xmx:OWonaSaUMQNq6iLmJMEcuMxojB4BqQV_5BFqLRrfkoRynkS1sIet-A>
+    <xmx:OmonaacCpCa2PYvwD8boxEbKRA2QqtjStxqtM0ixhRxUx3NSA5S0QuPw>
 Feedback-ID: iab3e480c:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 26 Nov 2025 15:51:26 -0500 (EST)
+ 26 Nov 2025 15:59:33 -0500 (EST)
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
@@ -99,115 +98,72 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: NeilBrown <neilb@ownmail.net>
-To: "Amir Goldstein" <amir73il@gmail.com>
-Cc: "Christian Brauner" <brauner@kernel.org>,
- "Jeff Layton" <jlayton@kernel.org>,
- "kernel test robot" <oliver.sang@intel.com>, oe-lkp@lists.linux.dev,
- lkp@intel.com, netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
- linux-nfs@vger.kernel.org, linux-unionfs@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [linux-next:master] [VFS/nfsd/cachefiles/ovl] 7ab96df840:
- WARNING:at_fs/dcache.c:#umount_check
-In-reply-to:
- <CAOQ4uxgHqKyaRfXAugnCP4sozgwiOGTGDYvx2A-XJdxfswo-Ug@mail.gmail.com>
-References: <202511252132.2c621407-lkp@intel.com>,
- <20251126-beerdigen-spanplatten-d86d4e9eaaa7@brauner>,
- <CAOQ4uxgHqKyaRfXAugnCP4sozgwiOGTGDYvx2A-XJdxfswo-Ug@mail.gmail.com>
-Date: Thu, 27 Nov 2025 07:51:18 +1100
-Message-id: <176419027888.634289.8284458326359928729@noble.neil.brown.name>
+To: "Benjamin Coddington" <bcodding@hammerspace.com>
+Cc: "Alexander Viro" <viro@zeniv.linux.org.uk>,
+ "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>,
+ "Chuck Lever" <chuck.lever@oracle.com>, "Jeff Layton" <jlayton@kernel.org>,
+ "Olga Kornievskaia" <okorniev@redhat.com>, "Dai Ngo" <Dai.Ngo@oracle.com>,
+ "Tom Talpey" <tom@talpey.com>, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
+ "Trond Myklebust" <trondmy@kernel.org>, "Mike Snitzer" <snitzer@kernel.org>
+Subject: Re: [PATCH v1 0/3] Allow knfsd to use atomic_open()
+In-reply-to: <034A5D25-AAD3-4633-B90A-317762CED5D2@hammerspace.com>
+References: <cover.1763483341.git.bcodding@hammerspace.com>,
+ <176351538077.634289.8846523947369398554@noble.neil.brown.name>,
+ <0C9008B1-2C70-43C4-8532-52D91D6B7ED1@hammerspace.com>,
+ <176367758664.634289.10094974539440300671@noble.neil.brown.name>,
+ <034A5D25-AAD3-4633-B90A-317762CED5D2@hammerspace.com>
+Date: Thu, 27 Nov 2025 07:59:32 +1100
+Message-id: <176419077220.634289.8903814965587480932@noble.neil.brown.name>
 Reply-To: NeilBrown <neil@brown.name>
 
-On Wed, 26 Nov 2025, Amir Goldstein wrote:
-> On Wed, Nov 26, 2025 at 11:42=E2=80=AFAM Christian Brauner <brauner@kernel.=
-org> wrote:
-> >
-> > On Tue, Nov 25, 2025 at 09:48:18PM +0800, kernel test robot wrote:
-> > >
-> > > Hello,
-> > >
-> > > kernel test robot noticed "WARNING:at_fs/dcache.c:#umount_check" on:
-> > >
-> > > commit: 7ab96df840e60eb933abfe65fc5fe44e72f16dc0 ("VFS/nfsd/cachefiles/=
-ovl: add start_creating() and end_creating()")
-> > > https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
-> > >
-> > > [test failed on linux-next/master d724c6f85e80a23ed46b7ebc6e38b527c09d6=
-4f5]
-> >
-> > Neil, can you please take a look at this soon?
-> > I plan on sending the batch of PRs for this cycle on Friday.
-> >
-> > >
-> > > in testcase: filebench
-> > > version: filebench-x86_64-22620e6-1_20251009
-> > > with following parameters:
-> > >
-> > >       disk: 1SSD
-> > >       fs: ext4
-> > >       fs2: nfsv4
-> > >       test: ratelimcopyfiles.f
-> > >       cpufreq_governor: performance
-> > >
+On Fri, 21 Nov 2025, Benjamin Coddington wrote:
+> On 20 Nov 2025, at 17:26, NeilBrown wrote:
 >=20
-> Test is copying to nfsv4 so that's the immediate suspect.
-> WARN_ON is in unmount of ext4, but I suspect that nfs
-> was loop mounted for the test.
+> > On Wed, 19 Nov 2025, Benjamin Coddington wrote:
+> >
+> >> Ah, it's true.  I did not validate knfsd's behaviors, only its interface=
+ with
+> >> VFS.  IIUC knfsd gets around needing to pass O_EXCL by holding the direc=
+tory
+> >> inode lock over the create, and since it doesn't need to do lookup becau=
+se
+> >> it already has a filehandle, I think O_EXCL is moot.
+> >
+> > Holding the directory lock is sufficient for providing O_EXCL for local
+> > filesystems which will be blocked from creating while that lock is held.
+> > It is *not* sufficient for remote filesystems which are precisely those
+> > which provide ->atomic_open.
+> >
+> > The fact that you are adding support for atomic_open means that O_EXCL
+> > isn't moot.
 >=20
-> FWIW, nfsd_proc_create() looks very suspicious.
->=20
-> nfsd_create_locked() does end_creating() internally (internal API change)
-> but nfsd_create_locked() still does end_creating() regardless.
+> I mean to say: knfsd doesn't need to pass O_EXCL because its already taking
+> care to produce an exclusive open via nfsv4 semantics.
 
-Thanks for looking at this Amir.  That omission in nfsproc.c is
-certainly part of the problem but not all of it.
-By skipping the end_creating() there, we avoid a duplicate unlock, but
-also lose a dput() which we need.  Both callers of nfsd_create_locked()
-have the same problem.
-I think this should fix it.  The resulting code is a bit ugly but I can
-fix that with the nfsd team once this gets upstream.
+Huh?
 
-(FYI nfsd_proc_create() is only used for NFSv2 and as it was an nfsv4 test,
- that could wouldn't have been run)
+The interesting circumstance here is an NFS re-export of an NFS
+filesystem - is that right?
+
+The only way that an exclusive create can be achieved on the target
+filesystem is if an NFS4_CREATE_EXCLUSIVE4_1 (or similar) create request
+is sent to the ultimate sever.  There is nothing knfsd can do to
+produce exclusive open semantics on a remote NFS serve except to
+explicitly request them.
+
+>=20
+> > I don't know what you mean by "since it doesn't need to do lookup because
+> > it already has a filehandle".  What filehandle does it already have?
+>=20
+> The client has sent along the filehandle of the parent directory, and knfsd
+> has already done lookup_one() on the child name, and we pass along that
+> negative dentry thet we looked up while holding the directory's inode lock.
+
+This (holding the directory's inode lock) works perfectly well for local
+filesystems (which don't implement ->atomic_open).  It has no effect on
+remote filesystems (which is why we have ->atomic_open).
 
 Thanks,
 NeilBrown
-
-diff --git a/fs/nfsd/nfsproc.c b/fs/nfsd/nfsproc.c
-index 28f03a6a3cc3..481e789a7697 100644
---- a/fs/nfsd/nfsproc.c
-+++ b/fs/nfsd/nfsproc.c
-@@ -407,6 +407,9 @@ nfsd_proc_create(struct svc_rqst *rqstp)
- 		/* File doesn't exist. Create it and set attrs */
- 		resp->status =3D nfsd_create_locked(rqstp, dirfhp, &attrs, type,
- 						  rdev, newfhp);
-+		/* nfsd_create_locked() unlocked the parent */
-+		dput(dchild);
-+		goto out_write;
- 	} else if (type =3D=3D S_IFREG) {
- 		dprintk("nfsd:   existing %s, valid=3D%x, size=3D%ld\n",
- 			argp->name, attr->ia_valid, (long) attr->ia_size);
-diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
-index 145f1c8d124d..4688f3fd59e2 100644
---- a/fs/nfsd/vfs.c
-+++ b/fs/nfsd/vfs.c
-@@ -1633,16 +1633,14 @@ nfsd_create(struct svc_rqst *rqstp, struct svc_fh *fh=
-p,
- 		return nfserrno(host_err);
-=20
- 	err =3D fh_compose(resfhp, fhp->fh_export, dchild, fhp);
--	/*
--	 * We unconditionally drop our ref to dchild as fh_compose will have
--	 * already grabbed its own ref for it.
--	 */
- 	if (err)
- 		goto out_unlock;
- 	err =3D fh_fill_pre_attrs(fhp);
- 	if (err !=3D nfs_ok)
- 		goto out_unlock;
- 	err =3D nfsd_create_locked(rqstp, fhp, attrs, type, rdev, resfhp);
-+	/* nfsd_create_locked() unlocked the parent */
-+	dput(dchild);
- 	return err;
-=20
- out_unlock:
 
