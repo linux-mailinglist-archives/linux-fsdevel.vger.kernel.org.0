@@ -1,89 +1,130 @@
-Return-Path: <linux-fsdevel+bounces-69917-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69919-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4CCAC8BB09
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Nov 2025 20:48:35 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E589C8BB78
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Nov 2025 20:54:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBAAC3A55BF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Nov 2025 19:42:43 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 922373589A8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Nov 2025 19:53:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91AF5342503;
-	Wed, 26 Nov 2025 19:38:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF818342523;
+	Wed, 26 Nov 2025 19:52:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="FhX5JOvE"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="BHndPZwG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30499340D93
-	for <linux-fsdevel@vger.kernel.org>; Wed, 26 Nov 2025 19:38:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E167341069;
+	Wed, 26 Nov 2025 19:52:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764185925; cv=none; b=QyJ6mZ+5MDkynAWcVMSyMt54VtCqJF3C320Pvrn8QaDPZO4FH66S1710rYf3RPJFbCL/JGWoHwmYkbrUXCYTJeRp4Fey/AaDVAgh2zttzzEQq0zk3XlBw7amn+Bnh3QmHSTOEMHN2rMWcYaTklCFA+2yq2eclvOIfSg4sdiIKrs=
+	t=1764186733; cv=none; b=MZPT8FGklNMvFKmdn+mV5K/Z/2ihcQyVVrjbPjit9KTuctDaAviXTLN/EM8COsLzzN5oZCb7dDegpSyRZP4bluaNBmRR5QgBAJMvcA/KaDm8/yZ1JPlqQP1f+iLaN1+Bn4Hla3rM/JTkGZVSj9EBJ0uXVgbgTYYqpLxQTzmU6mM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764185925; c=relaxed/simple;
-	bh=pLRVMqpcsS/jMqnT7c9XLFZqoTHeqWXahPKFE7CRmR8=;
-	h=Date:From:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PABhgPI6FFhh8UAiE5UkNZ23mLFPZ78MLSW5QKs1d54o4AkH+BCoP7Uc/Y1YEvUmPu9lV6hCbAw2ZzyMvXMHxZUiTgGyZVtIhFC2dTNzWNL84pfMBlAiOX8Z1IgeonhlPcaXAnqjKKh67XW/EB8+XnqWB6xa1IW6dec7YbyMMII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=FhX5JOvE; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from macsyma.thunk.org (c-73-9-28-129.hsd1.il.comcast.net [73.9.28.129])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 5AQJcGNA014129
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Nov 2025 14:38:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1764185899; bh=kczFExVBlxlD5CEONl7ENAuYgYLUiLN5v26Tr/EFCnk=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=FhX5JOvENGJQSmyjIHNqxFGRoNZfvd8A9KgS5u1oYNISfxE2U+jR9wX1+KABUnfvi
-	 Mx3NKAuS7HiM9IWZFdk/bZU7lYDXG4yZ4kllx2YULBRM/Y6O/+MfXvYw80Ma0yIDQT
-	 w+7ZCPcHlmVBzr7Jcqq7X8cHAuWPjFnmNSYmmJmkBcwo11Px4K7+MTvQmtdYWxsEmJ
-	 Y48xR4qniodiHtJSlt8Wvp80Ok69BPeZUbAOZq5IBciCOIBPUKEYHXXx+ssfrNa98z
-	 qTWIrE43tyQP8AT75CJY6zbHth/BzgenlV2ibTmBMtqG64Dqotp4KfK9+277taRfuM
-	 q0I0co44DPWsA==
-Received: by macsyma.thunk.org (Postfix, from userid 15806)
-	id 36ED84CEF871; Wed, 26 Nov 2025 13:38:16 -0600 (CST)
-Date: Wed, 26 Nov 2025 13:38:16 -0600
-From: "Theodore Tso" <tytso@mit.edu>
-Cc: Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, yangerkun@huawei.com,
-        yi.zhang@huawei.com, libaokun1@huawei.com, chengzhihao1@huawei.com
-Subject: Re: [PATCH 2/2] ext4: improve integrity checking in __mb_check_buddy
- by enhancing order-0 validation
-Message-ID: <20251126193816.GB59583@mac.lan>
-References: <20251105074250.3517687-1-sunyongjian@huaweicloud.com>
- <20251105074250.3517687-3-sunyongjian@huaweicloud.com>
- <6mjxlmvxs4p7k3rgs2cx3ny5u3o5tuikzpxxuqepq5yv6xcxk3@nvmzrpu2ooel>
- <2d7f50d1-36f0-452c-9bbe-4baaf7da34ce@huawei.com>
- <20251125214739.GA59583@mac.lan>
- <7ebbd365-702c-4491-86c6-23c6242ba80d@huawei.com>
+	s=arc-20240116; t=1764186733; c=relaxed/simple;
+	bh=IDbiAn47mRrdNWWdJk1P+5Mok84WKTmYvTwqwFEo4kM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hA+tYuyPJx+0Fuh3KyVn24aFeWQnLbLdAqxK3JESSOaESs2QhHshY746IjoeZkhlvtz1v2kg+S4g4vErRO1P1fdRVTdonG/KFMHpdQYLZH4LaYGTxd80vfpFbC7uAKsngpJPNQ7lArEeHoOxsil/ulL2mtCNQr+8K2mdv0lxb+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=BHndPZwG; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=F9CMg7xCCCe7pvWjCkZUtW9tN5r9wm9+9Wqdv/t8aKI=; b=BHndPZwGPTrM215ddveW6SCQGS
+	w5XGshZORwCGNkF8wPex0jf0EUyPFK42vLiC8mTGhk+tO6My2wml6VI0EsCSE2x4vzP4RS3RM2FEr
+	lIWTKBpIZsjjNZedOqvW17H9D4sdzF7bEHaBbp3kIO9Fn2PrApcD17fPyx+UpKuLfsy3aPWxinpDV
+	sDejfX89mi//7BMUyjo+iWwITrIg/kt2sM2gf2XYfhdVtASKmx7bkn3q3toxJm7yAJQLqE2K8M8wi
+	7Zz8OhoN0oy5k2OZqqEPYmZInZGg4p53iAQ37QqdvZp1utXGyGhaL8SAv//OBGvF//QTmxqepp7NU
+	1/vp9G6Q==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:39804)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1vOLYU-000000004SL-1B7L;
+	Wed, 26 Nov 2025 19:51:58 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1vOLYR-000000001yH-0OLR;
+	Wed, 26 Nov 2025 19:51:55 +0000
+Date: Wed, 26 Nov 2025 19:51:54 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Xie Yuanbin <xieyuanbin1@huawei.com>, brauner@kernel.org, jack@suse.cz,
+	will@kernel.org, nico@fluxnic.net, akpm@linux-foundation.org,
+	hch@lst.de, jack@suse.com, wozizhi@huaweicloud.com,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
+	lilinjie8@huawei.com, liaohua4@huawei.com,
+	wangkefeng.wang@huawei.com, pangliyuan1@huawei.com
+Subject: Re: [RFC PATCH] vfs: Fix might sleep in load_unaligned_zeropad()
+ with rcu read lock held
+Message-ID: <aSdaWjgqP4IVivlN@shell.armlinux.org.uk>
+References: <20251126090505.3057219-1-wozizhi@huaweicloud.com>
+ <20251126101952.174467-1-xieyuanbin1@huawei.com>
+ <20251126181031.GA3538@ZenIV>
+ <20251126184820.GB3538@ZenIV>
+ <aSdPYYqPD5V7Yeh6@shell.armlinux.org.uk>
+ <20251126192640.GD3538@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7ebbd365-702c-4491-86c6-23c6242ba80d@huawei.com>
-1;95;0cTo: Sun Yongjian <sunyongjian1@huawei.com>
+In-Reply-To: <20251126192640.GD3538@ZenIV>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Wed, Nov 26, 2025 at 05:12:49PM +0800, Sun Yongjian wrote:
-> Thank you for the reminder. Yes, I've already sent the revised version with
-> the suggested changes, you might have missed this email 🙂
+On Wed, Nov 26, 2025 at 07:26:40PM +0000, Al Viro wrote:
+> On Wed, Nov 26, 2025 at 07:05:05PM +0000, Russell King (Oracle) wrote:
+> > On Wed, Nov 26, 2025 at 06:48:20PM +0000, Al Viro wrote:
+> > > It's been years since I looked at 32bit arm exception handling, so I'd need
+> > > quite a bit of (re)RTF{S,M} before I'm comfortable with poking in
+> > > arch/arm/mm/fault.c; better let ARM folks deal with that.  But arch/* is
+> > > where it should be dealt with; as for papering over that in fs/*:
+> > 
+> > Don't expect that to happen. I've not looked at it for over a decade,
+> > I do very little 32-bit ARM stuff anymore. Others have modified the
+> > fault handling, the VM has changed, I basically no longer have the
+> > knowledge. Effectively, 32-bit ARM is unmaintained now, although it
+> > still has many users.
 > 
-> https://lore.kernel.org/all/20251106060614.631382-1-sunyongjian@huaweicloud.com/
+> Joy...  For quick and dirty variant (on current tree), how about
+> adding
+> 	if (unlikely(addr > TASK_SIZE) && !user_mode(regs))
+> 		goto no_context;
+> 
+> right after
+> 
+> 	if (!ttbr0_usermode_access_allowed(regs))
+> 		goto no_context;
+> 
+> in do_page_fault() there?
+> 
+> NOTE: that might or might not break vdso; I don't think it would, but...
 
-Thanks for the pointer!  Somehow the e-mails in question aren't in my
-inbox for some reason.  But I see them in lore so I'm not sure what happened.
+I don't understand how that helps. Wasn't the report that the filename
+crosses a page boundary in userspace, but the following page is
+inaccessible which causes a fault to be taken (as it always would do).
+Thus, wouldn't "addr" be a userspace address (that the kernel is
+accessing) and thus be below TASK_SIZE ?
 
-Thanks,
+I'm also confused - if we can't take a fault and handle it while
+reading the filename from userspace, how are pages that have been
+swapped out or evicted from the page cache read back in from storage
+which invariably results in sleeping - which we can't do here because
+of the RCU context (not that I've ever understood RCU, which is why
+I've always referred those bugs to Paul.)
 
-						- Ted
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
