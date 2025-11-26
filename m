@@ -1,111 +1,119 @@
-Return-Path: <linux-fsdevel+bounces-69904-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69906-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABF0DC8AE41
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Nov 2025 17:15:17 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B882DC8B65F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Nov 2025 19:13:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF0E83A6675
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Nov 2025 16:11:27 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1AD95359EAA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Nov 2025 18:13:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2693A33C1AE;
-	Wed, 26 Nov 2025 16:11:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CB4F311C37;
+	Wed, 26 Nov 2025 18:12:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="aOOaxbgZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e4szpytc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5845A2C21C6
-	for <linux-fsdevel@vger.kernel.org>; Wed, 26 Nov 2025 16:11:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF424279DAB;
+	Wed, 26 Nov 2025 18:12:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764173468; cv=none; b=IwFqd1DdtoF//dx36tpagNUv//caVRBYwFdsRKVGmDk21nPhudFzT125J4FVp3jkLUvxGDT43JrMRXi24w44fcpncFh9F/4HicaoLHQlpGE3mk6X46bELNKuoMOQhGFEW+auG+w2pYYn1GIpQx79ASg4VFXnaGTinUoSOgSH+MQ=
+	t=1764180774; cv=none; b=u+QLUIJpbmZNn8bh64ITaAGtmN6VLL0yPR7qwoHhcYQiP3nBH41NsjSPLuABZgyt7xMaBolV47/Z/4GteX+sxymK/4zy7w2RT8Pwx4Rlb5IsrYLEbM23PtaF5pc8Fpw3eZJSqyRCQelrut4vX6QUWG9WS4fzwJOXxQhyRUc+L3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764173468; c=relaxed/simple;
-	bh=8TCt2VKJv9ZCn2N2ta8fjQhBhwbSeDmIr0s9K+x2qQE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VweAn6T1hKVhGyxOru9SvcHUjFoSSICm0yZRwUTC1jI9EMTenUDXgvDHimaryISvGPkoL5Nsgd0KM1ZFaTs6y30j6YRb9S0iXMnuFM1IbxHX8Ids0K+0KNBdZ2YyNRP75boI2JdJpq1JkQa92ZeNpr9s3JGp7OQnE/fNZqk+xVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=aOOaxbgZ; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-b7633027cb2so1229595966b.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Nov 2025 08:11:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1764173464; x=1764778264; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=etshZAUpFBhKDvUbMv6LHyDLVgU9tVy7cnW6tkUXz7Y=;
-        b=aOOaxbgZPcyFRcQlS8j8UGxEILrvkA+5nTThKs8/nk425x0GZ8iWQoolJJh3+XLFNS
-         lOLNcqx5UA5uO072t+9k7bbzo8GtPl2aGFj+ruc4YlA4qFA5QDp2NVwIa4+4S0VWadhp
-         xnlw5JyfcX1WP1rL2lrc7lIagI/1sj6tlIPn4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764173464; x=1764778264;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=etshZAUpFBhKDvUbMv6LHyDLVgU9tVy7cnW6tkUXz7Y=;
-        b=SBx3lzHtGFWx60r6AhUFbRKOIXmgKpL+pwhnh/swB38fH4V+A4P2BB8qjuaJf5/aFi
-         qeJm/kUJq5QPjxEizhIxDIJm+v08bRJ29d7bPCpdxYIOWJ7BB+I76nsOt9gRnwPyrAFh
-         OtWWPYhuf+Ra93KtGbfH071/j0LSzJqdrOU/F4qf8gL/1EIlVUta8ofKYfSMOMdPx8iS
-         VgiOS0o8a7sr7vBfRm9XXk9iQv7oaiGl4U+8nFiyMk4lnDo9Z7sd7imfzIhSLV2zgGAt
-         chvJn2/zNRykaejzMYM8v0Exi5yo6w8WKkd59TdzIT+S7c3z2JnjIfttYT3rPIG2sFwv
-         YdpA==
-X-Forwarded-Encrypted: i=1; AJvYcCWtgrmhVga3b0ZiTPJqdiqUwUWlKF0mWmT/ftUreqAKM+dRAt2WQXXEYwfGBsKgZcoY6wkNEiJJdOPiw4HS@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4KtgqPVW1kI3ZRqarFN/Hu74F2mFFECrCbBWED49oVvupoPvs
-	kCdPCTIqN7wf87dx0DYyaaEpCf9GTpE3+e/ZvAftlQUf+t92PFC6Yu56pgpndO7JjqUAaMoFnqb
-	QhEbTlajNKg==
-X-Gm-Gg: ASbGncs5rpSZzU2XFCqF1rbK8ifgwh9ZfDhJq7M+wvb4YzODqwlCOISkCEYVj1TgF3i
-	KI7/Xa6zCyY3W2ePeQ5OrxKQOa3YcwWvnhFB8HKbAb3TXw2O3gWGPDq/FGhioz8ndgKt+PH7TjV
-	ZNdcCme+SBhiZWrzhixJhks0sTzvorsRmFLlcuT2NVJqBztfI8Jhi34si86BRXEr5H0CziB5PAa
-	dUFz3X1R9RgzgRqTYcvUw76UKGD29uwykNXOqQfQk8jlkyzL1y8o9nnaQImpTT3NsncJFJXE58b
-	KBm0RGq+qVZfnxfMUuEm9oP+m0AK3Thl8uWaUKuVQHgpF0FOcCiI0KXB/jXImXYwV9/m+Pwo11t
-	0PNjyyP9c8/LLDzr9apZ5yaF118CSho/OIM+cVB5yQ1/kGMX0TeYx0mVSaj+79z+0jE/e74Rr2E
-	iGs/5NXFvxPUgT3t+ROLQGfFTfL9Rg/LscX1humQyw0D+HLcPgvtNR2OBTH+GX
-X-Google-Smtp-Source: AGHT+IHNWMXb1ahJqzcm9WkcK2m+POE5anXe+M6fSAUpd8DxrebgvVx3evvlmRea0El8NUZ8YtFM/g==
-X-Received: by 2002:a17:907:2d90:b0:b6d:6c1a:31ae with SMTP id a640c23a62f3a-b767183c1femr2086287266b.49.1764173464410;
-        Wed, 26 Nov 2025 08:11:04 -0800 (PST)
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com. [209.85.208.42])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b7654fd4e51sm1932046566b.42.2025.11.26.08.11.02
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Nov 2025 08:11:02 -0800 (PST)
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-640c6577120so12404996a12.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Nov 2025 08:11:02 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVgw6QoYWWsQ/8vkXlz0OJUMzH2YbZ1ur9PsKjaR7Hbd/kUfcBJfqO0PxW2Uod4KWpeCXFihntSBvFROzXJ@vger.kernel.org
-X-Received: by 2002:a05:6402:270b:b0:640:a356:e796 with SMTP id
- 4fb4d7f45d1cf-64554339c3emr19310501a12.5.1764173462492; Wed, 26 Nov 2025
- 08:11:02 -0800 (PST)
+	s=arc-20240116; t=1764180774; c=relaxed/simple;
+	bh=EIrTBEZNlirUyofA7nDfDrA8J4CjiUXqWkdrgiXPPp0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=MTXLdbsy7e543FrJfsSsJnCT7zPRp8AwgTq35CdkYIhk6vM41CjJ7JDvxqdvJFapDcVXT6Gr0dU/XuXj1cPvzu+5PnKNf6OALVsdsc2vWO7E5aM0PQm7Ox1LjI/mFyl4nXlREsAc3KKGVxfN6PPY9VMvsgfvzjACmd0c+gtvWuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e4szpytc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70C86C4CEF7;
+	Wed, 26 Nov 2025 18:12:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1764180773;
+	bh=EIrTBEZNlirUyofA7nDfDrA8J4CjiUXqWkdrgiXPPp0=;
+	h=From:Date:Subject:To:Cc:From;
+	b=e4szpytcIa4IhXycdOQb3Dorcu77zWAzV0kN1BqpdW0xOJzRlP1+xYSSQYHdeEJit
+	 qamERovbUJwwODRK9nqrYeCU4ZD6efGMQZD9hiwOu7tPVw6iuFn17pyH1ASfbArQzk
+	 QPqYia+hQRumS4ubhn5+jpRl/f267rOmehZ/7SgkpOULP0MiKhz9vQb4FeqI50oZYD
+	 jrQpQdAHIXX3p9S/WIGEfWydwWE4Isjdoq2cfdxuhrI9w5NWm3wGsawwPzF0bk/WB9
+	 wXPY22YSrK/VHJdFfRieNLWOowX5n1b4mbvFBHZBoXOBvaK54A60MSfQ5X5Q5c45sK
+	 LLIyYfCsnl+2g==
+From: Mark Brown <broonie@kernel.org>
+Date: Wed, 26 Nov 2025 18:07:40 +0000
+Subject: [PATCH] selftests/filesystems: Assume that TIOCGPTPEER is defined
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251123-work-fd-prepare-v4-0-b6efa1706cfd@kernel.org>
- <20251123-work-fd-prepare-v4-22-b6efa1706cfd@kernel.org> <c41de645-8234-465f-a3be-f0385e3a163c@sirena.org.uk>
- <CAHk-=wg+So1GE7=t94ejj4kBrportn2FGzOrqETO5PHVLAzh0A@mail.gmail.com> <20251126-reagenzglas-gecko-4bb05b983db2@brauner>
-In-Reply-To: <20251126-reagenzglas-gecko-4bb05b983db2@brauner>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 26 Nov 2025 08:10:46 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wj8YC-Kir=TA2dPG01ecF8xH0OXjuS1XZB--W9e_yNkvw@mail.gmail.com>
-X-Gm-Features: AWmQ_bmboWW-TlfefqyK8nlY9IUYusmAFX6P3hW0ntLPLHKTgSE57EZDv6f0G90
-Message-ID: <CAHk-=wj8YC-Kir=TA2dPG01ecF8xH0OXjuS1XZB--W9e_yNkvw@mail.gmail.com>
-Subject: Re: [PATCH v4 22/47] ipc: convert do_mq_open() to FD_PREPARE()
-To: Christian Brauner <brauner@kernel.org>
-Cc: Mark Brown <broonie@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>, 
-	Amir Goldstein <amir73il@gmail.com>, Jens Axboe <axboe@kernel.dk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251126-selftests-filesystems-devpts-tiocgptpeer-v1-1-92bd65d02981@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAOtBJ2kC/x2NwQ6CMBAFf4Xs2U1oTVX8FeNB6CtugtB0N0RC+
+ HcbjzOHmZ0URaB0b3YqWEVlmSu4U0PD+zWPYImVybc+OOcvrJiSQU05yQTd1PBRjlhzVSbLMGb
+ LQOHUx3OLcO1uoaOaywVJvv/V43kcP25qBgR6AAAA
+X-Change-ID: 20251126-selftests-filesystems-devpts-tiocgptpeer-fbd30e579859
+To: Shuah Khan <shuah@kernel.org>, Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+X-Mailer: b4 0.15-dev-88d78
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1655; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=EIrTBEZNlirUyofA7nDfDrA8J4CjiUXqWkdrgiXPPp0=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBpJ0Mjb4nhnWiL8j0wQTgbEYcQbdRlJptd+EaHF
+ MPgW2SIQDmJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCaSdDIwAKCRAk1otyXVSH
+ 0LuEB/4v7Mkhi3Gr0rir3EDE65tozl5UaXv+kViFa6i7F7oOC1+8nqXpfpIG6ACCiZ1ArMNsA7N
+ t0c2c/Oida4ZF8lFtIiZqsIwAxxN0WZnRQ7fgNw3/9Dr7z0hjPkZV3TRsU3NyshD6pI9p9ts/G/
+ BTOjwfErhxcF1WckLe5ntduF5LXKvQVHg4q8IIfdyoILSPFdZN2rnsLmOEPT1RMPMZR+qo4lrea
+ Cv69gXVXHEZYS0Y/Xd5YdNiBqNLEL4ddwGvkjY36PnYxZgXH9Nhrj4rUgD2sXBWdLE1pvY9Y0u0
+ p+p3knfCwUObfTOzl6pd2mAVTkDSSIAk0EQTdZP9Z4/f5JGD
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-On Wed, 26 Nov 2025 at 05:21, Christian Brauner <brauner@kernel.org> wrote:
->
-> Added the following which imho looks nicer as well:
+The devpts_pts selftest has an ifdef in case an architecture does not
+define TIOCGPTPEER, but the handling for this is broken since we need
+errno to be set to EINVAL in order to skip the test as we should. Given
+that this ioctl() has been defined since v4.15 we may as well just assume
+it's there rather than write handling code which will probably never get
+used.
 
-Yeah, I think that's a prettier pattern to have all the open logic in
-that function called by FD_ADD(). So LGTM,
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ tools/testing/selftests/filesystems/devpts_pts.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-           Linus
+diff --git a/tools/testing/selftests/filesystems/devpts_pts.c b/tools/testing/selftests/filesystems/devpts_pts.c
+index b1fc9b916ace..cad7da1bd7ca 100644
+--- a/tools/testing/selftests/filesystems/devpts_pts.c
++++ b/tools/testing/selftests/filesystems/devpts_pts.c
+@@ -100,7 +100,7 @@ static int resolve_procfd_symlink(int fd, char *buf, size_t buflen)
+ static int do_tiocgptpeer(char *ptmx, char *expected_procfd_contents)
+ {
+ 	int ret;
+-	int master = -1, slave = -1, fret = -1;
++	int master = -1, slave, fret = -1;
+ 
+ 	master = open(ptmx, O_RDWR | O_NOCTTY | O_CLOEXEC);
+ 	if (master < 0) {
+@@ -119,9 +119,7 @@ static int do_tiocgptpeer(char *ptmx, char *expected_procfd_contents)
+ 		goto do_cleanup;
+ 	}
+ 
+-#ifdef TIOCGPTPEER
+ 	slave = ioctl(master, TIOCGPTPEER, O_RDWR | O_NOCTTY | O_CLOEXEC);
+-#endif
+ 	if (slave < 0) {
+ 		if (errno == EINVAL) {
+ 			fprintf(stderr, "TIOCGPTPEER is not supported. "
+
+---
+base-commit: ac3fd01e4c1efce8f2c054cdeb2ddd2fc0fb150d
+change-id: 20251126-selftests-filesystems-devpts-tiocgptpeer-fbd30e579859
+
+Best regards,
+--  
+Mark Brown <broonie@kernel.org>
+
 
