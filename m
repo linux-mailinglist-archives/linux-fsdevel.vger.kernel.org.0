@@ -1,69 +1,76 @@
-Return-Path: <linux-fsdevel+bounces-69920-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69921-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5314C8BBFC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Nov 2025 21:02:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E70FC8BDDA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Nov 2025 21:32:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3C3394E4D71
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Nov 2025 20:02:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 600EB3A5D42
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Nov 2025 20:32:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0C79331A6C;
-	Wed, 26 Nov 2025 20:02:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1D1033EB04;
+	Wed, 26 Nov 2025 20:32:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="LZmCZ9Gq"
+	dkim=fail reason="unknown key version" (0-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b="Rq0UZgyj";
+	dkim=pass (2048-bit key) header.d=triplefau.lt header.i=@triplefau.lt header.b="ExHoT/Bk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from e2i340.smtp2go.com (e2i340.smtp2go.com [103.2.141.84])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B093F22AE7A;
-	Wed, 26 Nov 2025 20:02:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64FD6270ED7
+	for <linux-fsdevel@vger.kernel.org>; Wed, 26 Nov 2025 20:31:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.2.141.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764187348; cv=none; b=BN++t625Yp7NpqzYt1WRi4dNtM07fm7eKoC/FAvm/2ynqIXmHPHBIeeWXJjAYVF4HS8PlI7+IIKjjOvJizwqnIBepKfBbvC4eJQMtdw20W09p7hUYk+Jy+o2ww7F8id8Ftw8BNtDOxI5hd/7HmZZBcX06JrduVhWwgnP/qHHmh0=
+	t=1764189122; cv=none; b=iEDXDgBW1Yhq0IsGuk3C7n+WOCAfT8EwbRSHOtloWgCSzi7uaFQcIDQ2HdJ7La121BIK6spSs9MzCyxAqO7FqCdPPiZGU9HJjBJMobTpRY1rZsnlzzjvy5HQX2yYHy60mFjpQhnKyDQedZnAH+i0mzA+mPo+1KNxZSKAVq9WZh8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764187348; c=relaxed/simple;
-	bh=atPrEASswSmPsduMD6vZd9+5n8DHMWs3bHxkkUVrB1o=;
+	s=arc-20240116; t=1764189122; c=relaxed/simple;
+	bh=kt0GqCOQ8nKevzgl1DYg31XjX+YvCvRrK1pWPVUWsdc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kCeKSKs2kBGWEJaoInMZ18/8UAkpZA87TzHg44aGlOvHS8QojJfgOU6OzCAS4F6fRHRsBBbGi8/IHM0oKTcgO5CXg3tY7qW1BS50Yrrx2V4bOMwA9qjrNgMei2PYYuGhtQOeboNE1TI5tksO/a6p4tXb4xqs2LzNUtoO4sEgdpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=LZmCZ9Gq; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z9vvfYoUV7q7mA5lRo5UMUDERw4Bk8t3EHVjUGBAQAF57OXEQnrFt1rF2JdD18Dxxyg1Mugu7NJctURpBTpNyzrK3w7v550a67aH4NDt2+dROGZJb3Gs/Sn2/V04ScfWv7FaziPmF/60KsX5RsUqlfqnZPqN61Oy7sbOdmZiiFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=triplefau.lt; spf=pass smtp.mailfrom=em510616.triplefau.lt; dkim=fail (0-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b=Rq0UZgyj reason="unknown key version"; dkim=pass (2048-bit key) header.d=triplefau.lt header.i=@triplefau.lt header.b=ExHoT/Bk; arc=none smtp.client-ip=103.2.141.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=triplefau.lt
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=em510616.triplefau.lt
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=o4aSs3i8MxSsH9LQQdFXRZ1BuzBNVqWnsabFj67iIHM=; b=LZmCZ9GqC2htrAE0BVjhaPqHbm
-	INkERVhSMY1db6iQJ4Ngu9AKIvVQpb9JE8xz31dPizJduLq671DX531BBB+KJV1Sjyi/sey8w80IQ
-	YOooCFH/lLeUp17ag+6xUA8yKj8RZDwMFNUSsjcs8VJMcvgbypRlKTy66U0t99XSc8VTR1NQehinX
-	SKIa6txZRdmeT3ZKSTGrp4Wk3OXxlT1Stsz9j2rwT5sTQN4R4aAYzSJbTvsx88Wgb9TMv6xbiMhs5
-	v6200KJYAwWcQ8YmK66v/BuAUrigq0ReBXRDD+8ti0UsNN07jiln45kL/AfUkfpouHzXAAC6n4Y5x
-	st2zoTKw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.99 #2 (Red Hat Linux))
-	id 1vOLiX-00000001VKP-2ggS;
-	Wed, 26 Nov 2025 20:02:21 +0000
-Date: Wed, 26 Nov 2025 20:02:21 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: Xie Yuanbin <xieyuanbin1@huawei.com>, brauner@kernel.org, jack@suse.cz,
-	will@kernel.org, nico@fluxnic.net, akpm@linux-foundation.org,
-	hch@lst.de, jack@suse.com, wozizhi@huaweicloud.com,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
-	lilinjie8@huawei.com, liaohua4@huawei.com,
-	wangkefeng.wang@huawei.com, pangliyuan1@huawei.com
-Subject: Re: [RFC PATCH] vfs: Fix might sleep in load_unaligned_zeropad()
- with rcu read lock held
-Message-ID: <20251126200221.GE3538@ZenIV>
-References: <20251126090505.3057219-1-wozizhi@huaweicloud.com>
- <20251126101952.174467-1-xieyuanbin1@huawei.com>
- <20251126181031.GA3538@ZenIV>
- <20251126184820.GB3538@ZenIV>
- <aSdPYYqPD5V7Yeh6@shell.armlinux.org.uk>
- <20251126192640.GD3538@ZenIV>
- <aSdaWjgqP4IVivlN@shell.armlinux.org.uk>
+	d=smtpservice.net; s=maxzs0.a1-4.dyn; x=1764190019; h=Feedback-ID:
+	X-Smtpcorp-Track:Message-ID:Subject:To:From:Date:Reply-To:Sender:
+	List-Unsubscribe:List-Unsubscribe-Post;
+	bh=oo0M4ydtK5Fa6pnW+MiV3ZxPH6O6l9/HYBAD3BWh0eE=; b=Rq0UZgyjcX/l4r7pGovaAKt3kP
+	uRNCE1QQGsXYHND0F23daEnBSeA6V9FuMH1Q7pkYfVdvunhywIEZyr18MO/U0aQ4eWT4W2zQ5q+jx
+	5xnl+hycwc00lVGhg4Prj/dHlwA+YInm9FrLF555LaSGOa1VRS2KI3H+LysT1T9+3xopj0glJ+lhV
+	5ygfoQz/QcYobb8lXCQNZDCzb+Es2DYHQjOErhhJOVDFRy8kMb23HezYYysxE0x7tjdi4y7GamTpJ
+	NJLIaMRamZSiDF+eXBuR/zPfizQAd75q2YzCPdmASqhr27WT0LMzVTHl/o/ZMPmqotoDbqb60gTFs
+	yMcWKODA==;
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=triplefau.lt;
+ i=@triplefau.lt; q=dns/txt; s=s510616; t=1764189119; h=from : subject
+ : to : message-id : date;
+ bh=oo0M4ydtK5Fa6pnW+MiV3ZxPH6O6l9/HYBAD3BWh0eE=;
+ b=ExHoT/BkLG1JZWawAgkP3cEe2E2VPKko6SxS0MU+krn1rUYeY5lvcL24fS8PbT/A+X1L2
+ IqV53PyJXx7DXEP1+y46Wv2DpvNW8+X7mRxRKW4j33421jrGLrs2sYRGG6QyeqcGLh6KsNv
+ ErA/xDOVlnJe7xvDyEaNRNLoAzgwNMly/mc0TgCPpd3u0D1Hcd/aqwppwBhyv0VcvlOLSgv
+ jzYDgbI2bL/GRIVybjlaA4wUop81ntkDmbUZ9YVAJVKacUN0rW36GrzKCvU86OltYh9edpQ
+ SCTuNHRy8isj7TH6jOnU5dB+Vo5F2cmLcECj+4TH/IKCEzMhpKJ9m14BlnTA==
+Received: from [10.139.162.187] (helo=SmtpCorp) by smtpcorp.com with esmtpsa
+ (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+ (Exim 4.94.2-S2G) (envelope-from <repk@triplefau.lt>)
+ id 1vOMAr-TRk23d-DV; Wed, 26 Nov 2025 20:31:37 +0000
+Received: from [10.12.239.196] (helo=localhost) by smtpcorp.com with esmtpsa
+ (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+ (Exim 4.98.1-S2G) (envelope-from <repk@triplefau.lt>)
+ id 1vOMAq-4o5NDgrnPxr-mjHh; Wed, 26 Nov 2025 20:31:36 +0000
+Date: Wed, 26 Nov 2025 21:16:14 +0100
+From: Remi Pommarel <repk@triplefau.lt>
+To: Dominique Martinet <asmadeus@codewreck.org>
+Cc: Eric Sandeen <sandeen@redhat.com>, v9fs@lists.linux.dev,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ ericvh@kernel.org, lucho@ionkov.net, linux_oss@crudebyte.com,
+ eadavis@qq.com
+Subject: Re: [PATCH V3 4/4] 9p: convert to the new mount API
+Message-ID: <aSdgDkbVe5xAT291@pilgrim>
+References: <20251010214222.1347785-1-sandeen@redhat.com>
+ <20251010214222.1347785-5-sandeen@redhat.com>
+ <aOzT2-e8_p92WfP-@codewreck.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -72,39 +79,141 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aSdaWjgqP4IVivlN@shell.armlinux.org.uk>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <aOzT2-e8_p92WfP-@codewreck.org>
+X-Smtpcorp-Track: iINeWYempQHF.fs8ddMn41GM0.MF_58AaUv77
+Feedback-ID: 510616m:510616apGKSTK:510616sykM-zowXn
+X-Report-Abuse: Please forward a copy of this message, including all headers,
+ to <abuse-report@smtp2go.com>
 
-On Wed, Nov 26, 2025 at 07:51:54PM +0000, Russell King (Oracle) wrote:
+Hi Eric, Dominique,
 
-> I don't understand how that helps. Wasn't the report that the filename
-> crosses a page boundary in userspace, but the following page is
-> inaccessible which causes a fault to be taken (as it always would do).
-> Thus, wouldn't "addr" be a userspace address (that the kernel is
-> accessing) and thus be below TASK_SIZE ?
+On Mon, Oct 13, 2025 at 07:26:35PM +0900, Dominique Martinet wrote:
+> Hi Eric,
 > 
-> I'm also confused - if we can't take a fault and handle it while
-> reading the filename from userspace, how are pages that have been
-> swapped out or evicted from the page cache read back in from storage
-> which invariably results in sleeping - which we can't do here because
-> of the RCU context (not that I've ever understood RCU, which is why
-> I've always referred those bugs to Paul.)
+> Thanks for this V3!
+> 
+> I find it much cleaner, hopefully will be easier to debug :)
+> ... Which turned out to be needed right away, trying with qemu's 9p
+> export "mount -t 9p -o trans=virtio tmp /mnt" apparently calls
+> p9_virtio_create() with fc->source == NULL, instead of the expected
+> "tmp" string
+> (FWIW I tried '-o trans=tcp 127.0.0.1' and I got the same problem in
+> p9_fd_create_tcp(), might be easier to test with diod if that's what you
+> used)
+> 
+> Looking at other filesystems (e.g. fs/nfs/fs_context.c but others are
+> the same) it looks like they all define a fsparam_string "source" option
+> explicitly?...
+> 
+> Something like this looks like it works to do (+ probably make the error
+> more verbose? nothing in dmesg hints at why mount returns EINVAL...)
+> -----
+> diff --git a/fs/9p/v9fs.c b/fs/9p/v9fs.c
+> index 6c07635f5776..999d54a0c7d9 100644
+> --- a/fs/9p/v9fs.c
+> +++ b/fs/9p/v9fs.c
+> @@ -34,6 +34,8 @@ struct kmem_cache *v9fs_inode_cache;
+>   */
+>  
+>  enum {
+> +	/* Mount-point source */
+> +	Opt_source,
+>  	/* Options that take integer arguments */
+>  	Opt_debug, Opt_dfltuid, Opt_dfltgid, Opt_afid,
+>  	/* String options */
+> @@ -82,6 +84,7 @@ static const struct constant_table p9_cache_mode[] = {
+>   * the client, and all the transports.
+>   */
+>  const struct fs_parameter_spec v9fs_param_spec[] = {
+> +	fsparam_string  ("source",      Opt_source),
+>  	fsparam_u32hex	("debug",	Opt_debug),
+>  	fsparam_uid	("dfltuid",	Opt_dfltuid),
+>  	fsparam_gid	("dfltgid",	Opt_dfltgid),
+> @@ -210,6 +213,14 @@ int v9fs_parse_param(struct fs_context *fc, struct fs_parameter *param)
+>  	}
+>  
+>  	switch (opt) {
+> +	case Opt_source:
+> +                if (fc->source) {
+> +			pr_info("p9: multiple sources not supported\n");
+> +			return -EINVAL;
+> +		}
+> +		fc->source = param->string;
+> +		param->string = NULL;
+> +		break;
+>  	case Opt_debug:
+>  		session_opts->debug = result.uint_32;
+>  #ifdef CONFIG_NET_9P_DEBUG
+> -----
 
-No, the filename is already copied in kernel space *and* it's long enough
-to end right next to the end of page.  There's NUL before the end of page,
-at that, with '/' a couple of bytes prior.  We attempt to save on memory
-accesses, doing word-by-word fetches, starting from the beginning of
-component.  We *will* detect NUL and ignore all subsequent bytes; the
-problem is that the last 3 bytes of page might be '/', 'x' and '\0'.
-We call load_unaligned_zeropad() on page + PAGE_SIZE - 2.  And get
-a fetch that spans the end of page.
+While testing this series to mount a QEMU's 9p directory with
+trans=virtio, I encountered a few issues. The same fix as above was
+necessary, but further regressions were also observed.
 
-We don't care what's in the next page, if there is one mapped there
-to start with.  If there's nothing mapped, we want zeroes read from
-it, but all we really care about is having the bytes within *our*
-page read correctly - and no oops happening, obviously.
+Previously, using msize=2048k would silently fail to parse the option,
+but the mount would still proceed. With this series, the parsing error
+now prevents the mount entirely. While I prefer the new behavior, I know
+there is a strict rule to not break userspace, so are we not breaking
+userspace here?
 
-That fault is an extremely cold case on a fairly hot path.  We don't
-want to mess with disabling pagefaults, etc. - not for the sake
-of that.
+Another more important issue is that I was not able to successfully
+mount a 9p as rootfs with the command line below:
+ 'root=/dev/root rw rootfstype=9p rootflags=trans=virtio,cache=loose'
+
+The issue arises because init systems typically remount root as
+read-only (mount -oremount,ro /). This process retrieves the current
+mount options via v9fs_show_options(), then attempts to remount with
+those options plus ro. However, v9fs_show_options() formats the cache
+option as an integer but v9fs_parse_param() expect cache option to be
+a string (fsparam_enum) causing remount to fail. The patch below fix the
+issue for the cache option, but pretty sure all fsparam_enum options
+should be fixed.
+
+----
+diff --git a/fs/9p/v9fs.c b/fs/9p/v9fs.c
+index a58abe69ec7a..e4e8304e5934 100644
+--- a/fs/9p/v9fs.c
++++ b/fs/9p/v9fs.c
+@@ -120,6 +120,21 @@ const struct fs_parameter_spec v9fs_param_spec[] = {
+ 	{}
+ };
+ 
++static char const *p9_cache_to_str(enum p9_cache_shortcuts sc)
++{
++	char const *cache = "none";
++	int i;
++
++	for (i = 0; i < ARRAY_SIZE(p9_cache_mode); ++i) {
++		if (p9_cache_mode[i].value == sc) {
++			cache = p9_cache_mode[i].name;
++			break;
++		}
++	}
++
++	return cache;
++}
++
+ /*
+  * Display the mount options in /proc/mounts.
+  */
+@@ -144,7 +159,7 @@ int v9fs_show_options(struct seq_file *m, struct dentry *root)
+ 	if (v9ses->nodev)
+ 		seq_puts(m, ",nodevmap");
+ 	if (v9ses->cache)
+-		seq_printf(m, ",cache=%x", v9ses->cache);
++		seq_printf(m, ",cache=%s", p9_cache_to_str(v9ses->cache));
+ #ifdef CONFIG_9P_FSCACHE
+ 	if (v9ses->cachetag && (v9ses->cache & CACHE_FSCACHE))
+ 		seq_printf(m, ",cachetag=%s", v9ses->cachetag);
+----
+
+However same question as above arise with this patch. Previously cat
+/proc/mounts would format cache as an hexadecimal value while now it is
+the enum value name string. Would this be considered userspace
+breakage?
+
+Thanks,
+
+-- 
+Remi
 
