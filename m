@@ -1,61 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-69919-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69920-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E589C8BB78
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Nov 2025 20:54:28 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5314C8BBFC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Nov 2025 21:02:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 922373589A8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Nov 2025 19:53:53 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3C3394E4D71
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Nov 2025 20:02:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF818342523;
-	Wed, 26 Nov 2025 19:52:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0C79331A6C;
+	Wed, 26 Nov 2025 20:02:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="BHndPZwG"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="LZmCZ9Gq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E167341069;
-	Wed, 26 Nov 2025 19:52:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B093F22AE7A;
+	Wed, 26 Nov 2025 20:02:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764186733; cv=none; b=MZPT8FGklNMvFKmdn+mV5K/Z/2ihcQyVVrjbPjit9KTuctDaAviXTLN/EM8COsLzzN5oZCb7dDegpSyRZP4bluaNBmRR5QgBAJMvcA/KaDm8/yZ1JPlqQP1f+iLaN1+Bn4Hla3rM/JTkGZVSj9EBJ0uXVgbgTYYqpLxQTzmU6mM=
+	t=1764187348; cv=none; b=BN++t625Yp7NpqzYt1WRi4dNtM07fm7eKoC/FAvm/2ynqIXmHPHBIeeWXJjAYVF4HS8PlI7+IIKjjOvJizwqnIBepKfBbvC4eJQMtdw20W09p7hUYk+Jy+o2ww7F8id8Ftw8BNtDOxI5hd/7HmZZBcX06JrduVhWwgnP/qHHmh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764186733; c=relaxed/simple;
-	bh=IDbiAn47mRrdNWWdJk1P+5Mok84WKTmYvTwqwFEo4kM=;
+	s=arc-20240116; t=1764187348; c=relaxed/simple;
+	bh=atPrEASswSmPsduMD6vZd9+5n8DHMWs3bHxkkUVrB1o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hA+tYuyPJx+0Fuh3KyVn24aFeWQnLbLdAqxK3JESSOaESs2QhHshY746IjoeZkhlvtz1v2kg+S4g4vErRO1P1fdRVTdonG/KFMHpdQYLZH4LaYGTxd80vfpFbC7uAKsngpJPNQ7lArEeHoOxsil/ulL2mtCNQr+8K2mdv0lxb+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=BHndPZwG; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+	 Content-Type:Content-Disposition:In-Reply-To; b=kCeKSKs2kBGWEJaoInMZ18/8UAkpZA87TzHg44aGlOvHS8QojJfgOU6OzCAS4F6fRHRsBBbGi8/IHM0oKTcgO5CXg3tY7qW1BS50Yrrx2V4bOMwA9qjrNgMei2PYYuGhtQOeboNE1TI5tksO/a6p4tXb4xqs2LzNUtoO4sEgdpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=LZmCZ9Gq; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
 	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=F9CMg7xCCCe7pvWjCkZUtW9tN5r9wm9+9Wqdv/t8aKI=; b=BHndPZwGPTrM215ddveW6SCQGS
-	w5XGshZORwCGNkF8wPex0jf0EUyPFK42vLiC8mTGhk+tO6My2wml6VI0EsCSE2x4vzP4RS3RM2FEr
-	lIWTKBpIZsjjNZedOqvW17H9D4sdzF7bEHaBbp3kIO9Fn2PrApcD17fPyx+UpKuLfsy3aPWxinpDV
-	sDejfX89mi//7BMUyjo+iWwITrIg/kt2sM2gf2XYfhdVtASKmx7bkn3q3toxJm7yAJQLqE2K8M8wi
-	7Zz8OhoN0oy5k2OZqqEPYmZInZGg4p53iAQ37QqdvZp1utXGyGhaL8SAv//OBGvF//QTmxqepp7NU
-	1/vp9G6Q==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:39804)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1vOLYU-000000004SL-1B7L;
-	Wed, 26 Nov 2025 19:51:58 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1vOLYR-000000001yH-0OLR;
-	Wed, 26 Nov 2025 19:51:55 +0000
-Date: Wed, 26 Nov 2025 19:51:54 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Al Viro <viro@zeniv.linux.org.uk>
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=o4aSs3i8MxSsH9LQQdFXRZ1BuzBNVqWnsabFj67iIHM=; b=LZmCZ9GqC2htrAE0BVjhaPqHbm
+	INkERVhSMY1db6iQJ4Ngu9AKIvVQpb9JE8xz31dPizJduLq671DX531BBB+KJV1Sjyi/sey8w80IQ
+	YOooCFH/lLeUp17ag+6xUA8yKj8RZDwMFNUSsjcs8VJMcvgbypRlKTy66U0t99XSc8VTR1NQehinX
+	SKIa6txZRdmeT3ZKSTGrp4Wk3OXxlT1Stsz9j2rwT5sTQN4R4aAYzSJbTvsx88Wgb9TMv6xbiMhs5
+	v6200KJYAwWcQ8YmK66v/BuAUrigq0ReBXRDD+8ti0UsNN07jiln45kL/AfUkfpouHzXAAC6n4Y5x
+	st2zoTKw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.99 #2 (Red Hat Linux))
+	id 1vOLiX-00000001VKP-2ggS;
+	Wed, 26 Nov 2025 20:02:21 +0000
+Date: Wed, 26 Nov 2025 20:02:21 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
 Cc: Xie Yuanbin <xieyuanbin1@huawei.com>, brauner@kernel.org, jack@suse.cz,
 	will@kernel.org, nico@fluxnic.net, akpm@linux-foundation.org,
 	hch@lst.de, jack@suse.com, wozizhi@huaweicloud.com,
@@ -65,13 +56,14 @@ Cc: Xie Yuanbin <xieyuanbin1@huawei.com>, brauner@kernel.org, jack@suse.cz,
 	wangkefeng.wang@huawei.com, pangliyuan1@huawei.com
 Subject: Re: [RFC PATCH] vfs: Fix might sleep in load_unaligned_zeropad()
  with rcu read lock held
-Message-ID: <aSdaWjgqP4IVivlN@shell.armlinux.org.uk>
+Message-ID: <20251126200221.GE3538@ZenIV>
 References: <20251126090505.3057219-1-wozizhi@huaweicloud.com>
  <20251126101952.174467-1-xieyuanbin1@huawei.com>
  <20251126181031.GA3538@ZenIV>
  <20251126184820.GB3538@ZenIV>
  <aSdPYYqPD5V7Yeh6@shell.armlinux.org.uk>
  <20251126192640.GD3538@ZenIV>
+ <aSdaWjgqP4IVivlN@shell.armlinux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -80,51 +72,39 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251126192640.GD3538@ZenIV>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+In-Reply-To: <aSdaWjgqP4IVivlN@shell.armlinux.org.uk>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Wed, Nov 26, 2025 at 07:26:40PM +0000, Al Viro wrote:
-> On Wed, Nov 26, 2025 at 07:05:05PM +0000, Russell King (Oracle) wrote:
-> > On Wed, Nov 26, 2025 at 06:48:20PM +0000, Al Viro wrote:
-> > > It's been years since I looked at 32bit arm exception handling, so I'd need
-> > > quite a bit of (re)RTF{S,M} before I'm comfortable with poking in
-> > > arch/arm/mm/fault.c; better let ARM folks deal with that.  But arch/* is
-> > > where it should be dealt with; as for papering over that in fs/*:
-> > 
-> > Don't expect that to happen. I've not looked at it for over a decade,
-> > I do very little 32-bit ARM stuff anymore. Others have modified the
-> > fault handling, the VM has changed, I basically no longer have the
-> > knowledge. Effectively, 32-bit ARM is unmaintained now, although it
-> > still has many users.
-> 
-> Joy...  For quick and dirty variant (on current tree), how about
-> adding
-> 	if (unlikely(addr > TASK_SIZE) && !user_mode(regs))
-> 		goto no_context;
-> 
-> right after
-> 
-> 	if (!ttbr0_usermode_access_allowed(regs))
-> 		goto no_context;
-> 
-> in do_page_fault() there?
-> 
-> NOTE: that might or might not break vdso; I don't think it would, but...
+On Wed, Nov 26, 2025 at 07:51:54PM +0000, Russell King (Oracle) wrote:
 
-I don't understand how that helps. Wasn't the report that the filename
-crosses a page boundary in userspace, but the following page is
-inaccessible which causes a fault to be taken (as it always would do).
-Thus, wouldn't "addr" be a userspace address (that the kernel is
-accessing) and thus be below TASK_SIZE ?
+> I don't understand how that helps. Wasn't the report that the filename
+> crosses a page boundary in userspace, but the following page is
+> inaccessible which causes a fault to be taken (as it always would do).
+> Thus, wouldn't "addr" be a userspace address (that the kernel is
+> accessing) and thus be below TASK_SIZE ?
+> 
+> I'm also confused - if we can't take a fault and handle it while
+> reading the filename from userspace, how are pages that have been
+> swapped out or evicted from the page cache read back in from storage
+> which invariably results in sleeping - which we can't do here because
+> of the RCU context (not that I've ever understood RCU, which is why
+> I've always referred those bugs to Paul.)
 
-I'm also confused - if we can't take a fault and handle it while
-reading the filename from userspace, how are pages that have been
-swapped out or evicted from the page cache read back in from storage
-which invariably results in sleeping - which we can't do here because
-of the RCU context (not that I've ever understood RCU, which is why
-I've always referred those bugs to Paul.)
+No, the filename is already copied in kernel space *and* it's long enough
+to end right next to the end of page.  There's NUL before the end of page,
+at that, with '/' a couple of bytes prior.  We attempt to save on memory
+accesses, doing word-by-word fetches, starting from the beginning of
+component.  We *will* detect NUL and ignore all subsequent bytes; the
+problem is that the last 3 bytes of page might be '/', 'x' and '\0'.
+We call load_unaligned_zeropad() on page + PAGE_SIZE - 2.  And get
+a fetch that spans the end of page.
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+We don't care what's in the next page, if there is one mapped there
+to start with.  If there's nothing mapped, we want zeroes read from
+it, but all we really care about is having the bytes within *our*
+page read correctly - and no oops happening, obviously.
+
+That fault is an extremely cold case on a fairly hot path.  We don't
+want to mess with disabling pagefaults, etc. - not for the sake
+of that.
 
