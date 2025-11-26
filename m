@@ -1,220 +1,220 @@
-Return-Path: <linux-fsdevel+bounces-69875-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69876-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABE9CC89732
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Nov 2025 12:09:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D753C8982F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Nov 2025 12:27:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1082B34A0C6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Nov 2025 11:08:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AA583B38D4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Nov 2025 11:27:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B63A231ED88;
-	Wed, 26 Nov 2025 11:08:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D104B322A1F;
+	Wed, 26 Nov 2025 11:27:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FrRzVqce"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="aCDh9/52"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com [209.85.217.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4709F31C567
-	for <linux-fsdevel@vger.kernel.org>; Wed, 26 Nov 2025 11:08:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCDCC320CBC;
+	Wed, 26 Nov 2025 11:27:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764155319; cv=none; b=YFCetTkXwtjuoJeJq3SabR3qvWkBInieAjYaFV1R04EM1FspxRqv15cAfSQDgUDLHSEgrGyW9uqFtM/BPziajM8gRp+11WA6VGuF64Oy1s73v/wYrgmGjkBtsgR/YjAHrZcZgeu8VlxSOFdHqscwKC4p/Sdh21UGf7ocCqSbsh8=
+	t=1764156443; cv=none; b=rT/yVX+VHx8vgr7lwmqH57foDsYTryj5b+NQyQrdUbR9Hv3DmKqYZW1LPCFRq8iUrtw1V3bCRxeRTTy8CJuo9YjFoymXDEWWieNMqDlJ5FK4UHR4jIXTBVS/UUnDOp0sxRtFC6thrVc2B3LtMKWkDPkK3S944nxoEt1dOz14AkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764155319; c=relaxed/simple;
-	bh=9C2/NcVvxt77/Yvodh6sQQ91tjV62bpYwTZQswBcUMU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=shDpjgext0guqUrkOipILSw09Bynx5E4qI+W7dWoammHIIlYydK6wntXj/qyyokiJqL6hgFbhRL2CsoxKrh8VjjLSxpKqYeRaRknGurpKfN/uL8p6phTY5gepmrZHZg1es9O7MX+Qj3nMj396qBPEdy55GcOgHa2QRGBeR7pDZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FrRzVqce; arc=none smtp.client-ip=209.85.217.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-5e1fde1f014so1122683137.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Nov 2025 03:08:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1764155315; x=1764760115; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8AY2VIxT/dP2zuoIFV4agaRzfXW2PN18+pOYnpq4lu8=;
-        b=FrRzVqcePfu5JwvhG3ZHfWKuSCBMUoiTE1M5a61ltF6Tt5E0Agpsut92xfLdvlRCB1
-         Q9JRflN+6uRQsWArNCGVRyf43EUW4Me20mUbl+S+JrCCk+3OfpamB4S+liBzlm1JJp1Y
-         om7nhRmF1Lxxyo0bP9Ob365wwCmBF4b8rV4E89WMkH7WXmQz6eJ3w54fWY1Qq8JIFYEE
-         DmYP+YN5tISvv2JSiVCjeB+NRwXgySVgz7j9p8deX3SnMS5Ri1fDVLev45KkJXot1r3y
-         UB81ZQosinKeHS8XylSfbJ4BOGvg2tC/Q3Iopp5vQUBO8mtfVgGQO3YV646Tehd66lwy
-         zRww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764155315; x=1764760115;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=8AY2VIxT/dP2zuoIFV4agaRzfXW2PN18+pOYnpq4lu8=;
-        b=OiHBgZ3fePR9zSohAa4nCVxwAZYLzGYLBr1QiJh+rhPTjgAFvr0cKpE6aS4x8O9HjN
-         HLRXnGjohjGXKrfQwHJMArsZbRnlkeY5QSml2luN9gHW9cQnKC55RBC8k8SlIVfoM9+t
-         C0BnVEr9v4nT2o1Itf1RMUKtc2EQrSxG2ro/gBBLhiPy2i/JRphTmihD1WTFJwJGAEYH
-         eVruJz29m0vOAdkfFdaG8+1XrRuEBztuFIc5+JkRHAX46ft3BPAOeiF3jxbKGdW4yWPa
-         ERd0bJ7zh52SXIxTUcqelcthP3uXzdCjpcqQrtu01buaskJvKP6/y+8X0OuPsf7CMked
-         uTpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWUFoFte6C0wqNcldFlCpfo+6jA4+bqYpxd2XceOyfYC5W52kJvrwAOGEwuYnWixV12aYyBUacmprVulx1P@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcJvfnH7vWNji2Ky/B5I6W+zjUvWWkoTf/2/zuGgh+dkT+EUf+
-	Nsy+8S8Bt1LnnNjxIFjC6vzxbbggDkx1YWpNkHhtVwacvekyWOkp0nG9byRbXiEMrW97Jzbe9fh
-	/uNw+mAMjuJdfxXUUFuX+JZIjGgREkLw=
-X-Gm-Gg: ASbGncvIuERhuJZmoejX5w9kflfdTR2HeqLdToKCCekY3Yan0NX1zBHzOvi5/XLGnic
-	EKdiDcUy/zoksqeDRgj7wEakT3fu15FbYP98jLNII1fS5sxrXCGoSM2KOW5Gl+xyKbRKqk0wjDH
-	734T2ZbD0Duz6Qoo80LkCzJ1raH5RsVK5ywP2ATnomVTP8BH198rKOOFjSiDV1J0gqm2UxuyaF0
-	LNg/ARRt1YWkONl6Yrm98I/YmKUaJtf5uhAf0VgTmgO4YPmjc4a5EdUUg+hZskjGzkH3g==
-X-Google-Smtp-Source: AGHT+IFyeGO9PCJAArYeLtA1vX9hBXW0orN309Zq4TLy61tzphZeZ6pHB9w2iCTvgTRkhX0dfeBF1Lynujv3elQnrKg=
-X-Received: by 2002:a05:6102:a4e:b0:5db:3111:9330 with SMTP id
- ada2fe7eead31-5e1de3c0e97mr6296792137.27.1764155314876; Wed, 26 Nov 2025
- 03:08:34 -0800 (PST)
+	s=arc-20240116; t=1764156443; c=relaxed/simple;
+	bh=5jSzTBPfufCpEyNV49uirTrK7mte/qRYBZ7wq1cwWLo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LLQ7He/bpKQrPT//mW7MniwBIdtd3EJXQzUB+VOu4rcCm6OB2N9Or071Ica6x6tWepzslCkDJ4a4N3suB3eVKo2UL1Sp04/d5z6pQ6qER3/BAeIl3mju173lk/ySs+SzlpXvFh7pYOXHFkJnMdWDTBbnnELppprD7pvU93v6VGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=aCDh9/52; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5AQ3jD8H007087;
+	Wed, 26 Nov 2025 11:26:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=D6BL16U4IlNnEKVJ+sjPgQ4X0OhX+r
+	0RjandaVzh4XA=; b=aCDh9/526JUZ396CC8/MDiD8J+OrtS2I1gmpHHvATl67pK
+	brAgzxFJL/Qyc0M5gad2t67nrLLeeHiAt+8K1/SrswzterKgv4qBOFXY6E9ccJzP
+	pQDbMgPOaGqOsm+Ted6UDNvXoUojMevfLoasL3FZZj/Y8EYGVBO4flY5v6O04LkN
+	Y7WFl0jY7gKuyiEXh+bmE1NwZ3PeXJKuBjPeIUfXLTccFnEZw99NJzXhF7YDv6nU
+	xAQepiRFGcCgZOzpSW3O0cP4KkWatTGWoFmGuvCkchUuZOjQ+zQ6xoqMcp3ABxSo
+	74foV0QrsQyjdXipYMco7N6FH37UHNh66DwuqKHA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4ak4u22rh5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Nov 2025 11:26:53 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5AQApkrd017497;
+	Wed, 26 Nov 2025 11:26:53 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4ak4u22rh2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Nov 2025 11:26:53 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5AQAS51b025083;
+	Wed, 26 Nov 2025 11:26:52 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 4akt71hpta-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Nov 2025 11:26:52 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5AQBQoQF8258004
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 26 Nov 2025 11:26:50 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 875D220040;
+	Wed, 26 Nov 2025 11:26:50 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D98EA20043;
+	Wed, 26 Nov 2025 11:26:47 +0000 (GMT)
+Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.124.217.238])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Wed, 26 Nov 2025 11:26:47 +0000 (GMT)
+Date: Wed, 26 Nov 2025 16:56:45 +0530
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
+        jack@suse.cz, yi.zhang@huawei.com, yizhang089@gmail.com,
+        libaokun1@huawei.com, yangerkun@huawei.com
+Subject: Re: [PATCH v2 01/13] ext4: cleanup zeroout in ext4_split_extent_at()
+Message-ID: <aSbj9XNcW2fmE5tt@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+References: <20251121060811.1685783-1-yi.zhang@huaweicloud.com>
+ <20251121060811.1685783-2-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250910-work-namespace-v1-0-4dd56e7359d8@kernel.org>
- <20250910-work-namespace-v1-1-4dd56e7359d8@kernel.org> <lhu7bvd6u03.fsf_-_@oldenburg.str.redhat.com>
-In-Reply-To: <lhu7bvd6u03.fsf_-_@oldenburg.str.redhat.com>
-From: Eugene Syromyatnikov <evgsyr@gmail.com>
-Date: Wed, 26 Nov 2025 12:08:19 +0100
-X-Gm-Features: AWmQ_blH6F5dTImS9T2yEKSQi7mTbsqdURayo9P3HSzLI7PhinkAeFA2QqkHgpo
-Message-ID: <CACGkJdun_DfF8VRXHRazyZn+dVqiHwKD2Ys9L0Oh-Znr-2d_dQ@mail.gmail.com>
-Subject: Re: Stability of ioctl constants in the UAPI (Re: [PATCH 01/32]
- pidfs: validate extensible ioctls)
-To: strace development discussions <strace-devel@lists.strace.io>
-Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org, 
-	Josef Bacik <josef@toxicpanda.com>, Jeff Layton <jlayton@kernel.org>, Mike Yuan <me@yhndnzj.com>, 
-	=?UTF-8?Q?Zbigniew_J=C4=99drzejewski=2DSzmek?= <zbyszek@in.waw.pl>, 
-	Lennart Poettering <mzxreary@0pointer.de>, Daan De Meyer <daan.j.demeyer@gmail.com>, 
-	Aleksa Sarai <cyphar@cyphar.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	=?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Simon Horman <horms@kernel.org>, Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-block@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, netdev@vger.kernel.org, 
-	libc-alpha@sourceware.org, "Dmitry V. Levin" <ldv@strace.io>, 
-	address-sanitizer <address-sanitizer@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251121060811.1685783-2-yi.zhang@huaweicloud.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTIyMDAyMSBTYWx0ZWRfXwM71G+NkQQp9
+ K288q0wGXRDmD76Pc78STzAcfK+o/Iiz2zi7+6vfnWvSrSSKqet0wvuFYKyWdeCgAotgSpFP96f
+ OZ0dr969FLzrJEMyFE3KvGUmlPPIB+nrilOakHtvL7O1MK2NOiHm1h5P0XB4+jWqSk6xRttPYHq
+ lr7CRpIVVpBBeRFgM0wv1x3i9AYJJ4UrVXvNqPBSFyXHZ2vEB6FOo8G3wjFOTtP0jy4Orn2QyV9
+ T9emDbhIYb3myKvMsznki2ZWh9aQ7mTyU5v+XR0w8iix4uIyBLfZwDlx2VG0ui6f/UOt1ov9HfY
+ zFW69uDP1r4cidSxW2nNnVMZ4CXSr/fpLhSLWSC2y2KVljd5WUUMAkGGuIJjVAfuxSRofJfYaks
+ OOWRzk3Gj0Ck+jL2vGg+kVIkktDsLA==
+X-Authority-Analysis: v=2.4 cv=SuidKfO0 c=1 sm=1 tr=0 ts=6926e3fd cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=kj9zAlcOel0A:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=i0EeH86SAAAA:8 a=VnNF1IyMAAAA:8 a=JKi_HSNj8FsWOE7nqXQA:9 a=CjuIK1q_8ugA:10
+X-Proofpoint-ORIG-GUID: 67udsd4f6dqlxL3svCtQk_PzGXIF7fHE
+X-Proofpoint-GUID: FwHZDZ12O8HydMNb1fPj2jrsonbkEsCR
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-25_02,2025-11-25_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 lowpriorityscore=0 clxscore=1015 impostorscore=0
+ malwarescore=0 spamscore=0 suspectscore=0 phishscore=0 adultscore=0
+ bulkscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2510240000
+ definitions=main-2511220021
 
-On Wed, Nov 26, 2025 at 10:19=E2=80=AFAM Florian Weimer <fweimer@redhat.com=
-> wrote:
->
-> * Christian Brauner:
->
-> > Validate extensible ioctls stricter than we do now.
-> >
-> > Signed-off-by: Christian Brauner <brauner@kernel.org>
-> > ---
-> >  fs/pidfs.c         |  2 +-
-> >  include/linux/fs.h | 14 ++++++++++++++
-> >  2 files changed, 15 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/fs/pidfs.c b/fs/pidfs.c
-> > index edc35522d75c..0a5083b9cce5 100644
-> > --- a/fs/pidfs.c
-> > +++ b/fs/pidfs.c
-> > @@ -440,7 +440,7 @@ static bool pidfs_ioctl_valid(unsigned int cmd)
-> >                * erronously mistook the file descriptor for a pidfd.
-> >                * This is not perfect but will catch most cases.
-> >                */
-> > -             return (_IOC_TYPE(cmd) =3D=3D _IOC_TYPE(PIDFD_GET_INFO));
-> > +             return extensible_ioctl_valid(cmd, PIDFD_GET_INFO, PIDFD_=
-INFO_SIZE_VER0);
-> >       }
-> >
-> >       return false;
-> > diff --git a/include/linux/fs.h b/include/linux/fs.h
-> > index d7ab4f96d705..2f2edc53bf3c 100644
-> > --- a/include/linux/fs.h
-> > +++ b/include/linux/fs.h
-> > @@ -4023,4 +4023,18 @@ static inline bool vfs_empty_path(int dfd, const=
- char __user *path)
-> >
-> >  int generic_atomic_write_valid(struct kiocb *iocb, struct iov_iter *it=
-er);
-> >
-> > +static inline bool extensible_ioctl_valid(unsigned int cmd_a,
-> > +                                       unsigned int cmd_b, size_t min_=
-size)
-> > +{
-> > +     if (_IOC_DIR(cmd_a) !=3D _IOC_DIR(cmd_b))
-> > +             return false;
-> > +     if (_IOC_TYPE(cmd_a) !=3D _IOC_TYPE(cmd_b))
-> > +             return false;
-> > +     if (_IOC_NR(cmd_a) !=3D _IOC_NR(cmd_b))
-> > +             return false;
-> > +     if (_IOC_SIZE(cmd_a) < min_size)
-> > +             return false;
-> > +     return true;
-> > +}
-> > +
-> >  #endif /* _LINUX_FS_H */
->
-> Is this really the right direction?  This implies that the ioctl
-> constants change as the structs get extended.  At present, this impacts
-> struct pidfd_info and PIDFD_GET_INFO.
+On Fri, Nov 21, 2025 at 02:07:59PM +0800, Zhang Yi wrote:
+> From: Zhang Yi <yi.zhang@huawei.com>
+> 
+> zero_ex is a temporary variable used only for writing zeros and
+> inserting extent status entry, it will not be directly inserted into the
+> tree. Therefore, it can be assigned values from the target extent in
+> various scenarios, eliminating the need to explicitly assign values to
+> each variable individually.
+> 
+> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 
-Well, some classes of ioctls are indeed designed like that (drm comes
-to mind), but I agree that it is something that preferably should be
-decided at the initial interface design stage (including the
-constants, for example, evdev is probably a good example of handling
-them), as otherwise there will be userspace code that assumes that the
-size doesn't change.
+Looks good, feel free to add:
+Reviewed-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
 
-> I think this is a deparature from the previous design, where (low-level)
-> userspace did not have not worry about the internal structure of ioctl
-> commands and could treat them as opaque bit patterns.  With the new
-> approach, we have to dissect some of the commands in the same way
-> extensible_ioctl_valid does it above.
->
-> So far, this impacts glibc ABI tests.  Looking at the strace sources, it
-> doesn't look to me as if the ioctl handler is prepared to deal with this
-> situation, either, because it uses the full ioctl command for lookups.
+Regards,
+ojaswin
 
-strace usually handles this opportunistically, but indeed ioctls which
-don't have fixed size across kernel version require additional care in
-terms of handling, decoding, and printing.
-
-> The sanitizers could implement generic ioctl checking with the embedded
-> size information in the ioctl command, but the current code structure is
-> not set up to handle this because it's indexed by the full ioctl
-> command, not the type.  I think in some cases, the size is required to
-> disambiguate ioctl commands because the type field is not unique across
-> devices.
-
-In terms of disambiguation, one needs to look at the fd in question,
-and even that is oftentimes not enough (again, in drm, one needs to
-figure out what driver backs a specific fd in order to determine the
-ioctl semantics properly).
-
-> In some cases, the sanitizers would have to know the exact
-> command (not just the size), to validate points embedded in the struct
-> passed to the ioctl.  So I don't think changing ioctl constants when
-> extensible structs change is obviously beneficial to the sanitizers,
-> either.
->
-> I would prefer if the ioctl commands could be frozen and decoupled from
-> the structs.  As far as I understand it, there is no requirement that
-> the embedded size matches what the kernel deals with.
->
-> Thanks,
-> Florian
->
-> --
-> Strace-devel mailing list
-> Strace-devel@lists.strace.io
-> https://lists.strace.io/mailman/listinfo/strace-devel
-
-
-
---=20
-Eugene Syromyatnikov
-mailto:evgsyr@gmail.com
-xmpp:esyr@jabber.{ru|org}
+> ---
+>  fs/ext4/extents.c | 63 ++++++++++++++++++-----------------------------
+>  1 file changed, 24 insertions(+), 39 deletions(-)
+> 
+> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
+> index c7d219e6c6d8..91682966597d 100644
+> --- a/fs/ext4/extents.c
+> +++ b/fs/ext4/extents.c
+> @@ -3278,46 +3278,31 @@ static struct ext4_ext_path *ext4_split_extent_at(handle_t *handle,
+>  	ex = path[depth].p_ext;
+>  
+>  	if (EXT4_EXT_MAY_ZEROOUT & split_flag) {
+> -		if (split_flag & (EXT4_EXT_DATA_VALID1|EXT4_EXT_DATA_VALID2)) {
+> -			if (split_flag & EXT4_EXT_DATA_VALID1) {
+> -				err = ext4_ext_zeroout(inode, ex2);
+> -				zero_ex.ee_block = ex2->ee_block;
+> -				zero_ex.ee_len = cpu_to_le16(
+> -						ext4_ext_get_actual_len(ex2));
+> -				ext4_ext_store_pblock(&zero_ex,
+> -						      ext4_ext_pblock(ex2));
+> -			} else {
+> -				err = ext4_ext_zeroout(inode, ex);
+> -				zero_ex.ee_block = ex->ee_block;
+> -				zero_ex.ee_len = cpu_to_le16(
+> -						ext4_ext_get_actual_len(ex));
+> -				ext4_ext_store_pblock(&zero_ex,
+> -						      ext4_ext_pblock(ex));
+> -			}
+> -		} else {
+> -			err = ext4_ext_zeroout(inode, &orig_ex);
+> -			zero_ex.ee_block = orig_ex.ee_block;
+> -			zero_ex.ee_len = cpu_to_le16(
+> -						ext4_ext_get_actual_len(&orig_ex));
+> -			ext4_ext_store_pblock(&zero_ex,
+> -					      ext4_ext_pblock(&orig_ex));
+> -		}
+> +		if (split_flag & EXT4_EXT_DATA_VALID1)
+> +			memcpy(&zero_ex, ex2, sizeof(zero_ex));
+> +		else if (split_flag & EXT4_EXT_DATA_VALID2)
+> +			memcpy(&zero_ex, ex, sizeof(zero_ex));
+> +		else
+> +			memcpy(&zero_ex, &orig_ex, sizeof(zero_ex));
+>  
+> -		if (!err) {
+> -			/* update the extent length and mark as initialized */
+> -			ex->ee_len = cpu_to_le16(ee_len);
+> -			ext4_ext_try_to_merge(handle, inode, path, ex);
+> -			err = ext4_ext_dirty(handle, inode, path + path->p_depth);
+> -			if (!err)
+> -				/* update extent status tree */
+> -				ext4_zeroout_es(inode, &zero_ex);
+> -			/* If we failed at this point, we don't know in which
+> -			 * state the extent tree exactly is so don't try to fix
+> -			 * length of the original extent as it may do even more
+> -			 * damage.
+> -			 */
+> -			goto out;
+> -		}
+> +		err = ext4_ext_zeroout(inode, &zero_ex);
+> +		if (err)
+> +			goto fix_extent_len;
+> +
+> +		/* update the extent length and mark as initialized */
+> +		ex->ee_len = cpu_to_le16(ee_len);
+> +		ext4_ext_try_to_merge(handle, inode, path, ex);
+> +		err = ext4_ext_dirty(handle, inode, path + path->p_depth);
+> +		if (!err)
+> +			/* update extent status tree */
+> +			ext4_zeroout_es(inode, &zero_ex);
+> +		/*
+> +		 * If we failed at this point, we don't know in which
+> +		 * state the extent tree exactly is so don't try to fix
+> +		 * length of the original extent as it may do even more
+> +		 * damage.
+> +		 */
+> +		goto out;
+>  	}
+>  
+>  fix_extent_len:
+> -- 
+> 2.46.1
+> 
 
