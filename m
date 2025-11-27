@@ -1,153 +1,195 @@
-Return-Path: <linux-fsdevel+bounces-70030-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70031-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43689C8EACD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 15:03:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0414C8EB00
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 15:05:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 628A73BC362
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 13:56:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5BC23B104D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 13:58:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A38633372C;
-	Thu, 27 Nov 2025 13:55:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D565320CB2;
+	Thu, 27 Nov 2025 13:56:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EwlMZv+I"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="D/JQvHXE";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="vwSAGEnL";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="D/JQvHXE";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="vwSAGEnL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D780A3328EE
-	for <linux-fsdevel@vger.kernel.org>; Thu, 27 Nov 2025 13:55:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25667287507
+	for <linux-fsdevel@vger.kernel.org>; Thu, 27 Nov 2025 13:56:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764251736; cv=none; b=iSTuzglM8k3eWdzgJsKFx6saHn78cIRqXkdna6ZLFSPub0p9zT/psoV4n5wxLtChsGol/uEBaSyuUI79IsgKX4ITC8hLTxrRg+q8/5FapZLn7ShcngtWGXuWfZEbSid5zyFuWk3tlXk/pZkW3OA3yuAbf9Ex1ztiVHiv7CEcTvU=
+	t=1764251811; cv=none; b=Q+1w0M/+QTOtqGSmuHAcMnA6H9HNBXSpWyejqv8S2qlFGINCXrSQrfq/EqSgalKxEbjuWdb3ypWZdbww3S65eDsOuPUAg2HO4Fpy8A0q2K6yt0BbvkvPol+1p+uE83lrEB6pbWkzjr65M5RoIdtOmM6XruD+Ap2LuI8a3t0EMEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764251736; c=relaxed/simple;
-	bh=Os4Lvx6KgcZkwmRfLRjDx8vE7aV3dQ5M8wa8V/1U4gc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LpcAx2iiU38Shb9j6SzZmvJk7OB8qtMSbrIASSacV+xTzwyNS/CDjVQS0l6FhqXz0PbB67E9e3XUstolR11d4Dk36TKi6Edk6/QZ8xtWFbgfFcQlAezRkXJFAOHgbWda4tsCXkxKz/vO7c5A4KS0FZQEqElaprDqVFsoCXezC+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EwlMZv+I; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b7277324204so159873566b.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Nov 2025 05:55:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1764251733; x=1764856533; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vaMQ1trz+NYw2jMsnUtD+LyVHIPnVAIyDHdDzDFMieI=;
-        b=EwlMZv+IgqEy2k1mceoNXd9GyLab9B5snaYKziL1TILIREsfmLcLxjqf+sSODZrLiS
-         fe8ZzKv9xmWIlirl1ACvTsbVzeSYmQ2V/5i8SNZVioSAjgD43eOb0QoCPY0zRA63X9r9
-         HqZIsBlVm2pb5W1bragrmMhREoK4M01NNqi3WHOe9vbb7vknj8ItcZRh5H6oX/BvWRc9
-         vIYTKFsWd02y4MlLKED3HKyGHmJjHuGE2T6Y6ETE9JeMeo11ycVfime7qCKInS8AXBBl
-         2LmO97KNo3kBVOp0MlH1MsO2j5eADZEKr8YlSrpPgNpLBy6bKpWiA377kO8f9FNc+1UB
-         QU5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764251733; x=1764856533;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=vaMQ1trz+NYw2jMsnUtD+LyVHIPnVAIyDHdDzDFMieI=;
-        b=SHNU/N4Cd2ztckwRVZKiv3r+f7PW5lsHBOybxFHRIs5yHL0A/PvOMsKPh0U/4uX4wZ
-         KP7ENdz8Hmyh7HdRYky+ITfR+lsuTZMU8D23EFIG0/+kScomfhe55q2p9dQhubpGEHht
-         OF4eiXpN/GSSSOrG+1y7zOyjFpsJUaYsfgIv/iHrsj8MVwZhTEzdPbsRTTjh0+3kNE8D
-         hkC7Tx/JCgAlYM6VWcDrNgnCeQM3cCE8G3J8OXb/UarJAIkp/py2iLSoyN2Jac5ZdYXR
-         WhhDJCh9jlfTrjPHyoJvn7jypcaM7RteJqLV7bJxP9lkBarE50A3LoACXkC/0oaZSUWr
-         Yp5w==
-X-Forwarded-Encrypted: i=1; AJvYcCVOp81g0LASO5dsfy7sV6BGKT+URmVE3dYbwpk2GWm6g9R0mi5pwCKC4aYxScNlUluxPkm1h8DpN/+B/B16@vger.kernel.org
-X-Gm-Message-State: AOJu0YwA4TjY/++U2xE1ADz8OtDTYl1Z4cgl18/vDA7WWfipvhk3HMH1
-	2N2UPRHga+/PQsQO4Pfxr25O39FnsL9AbmQDnv3FFvJm3TV8W/vxPD5tFjiaFYkTWuu0Jd4r6T6
-	yMpFsc3l/K9fFDHzlcJHGVJcM7KZps2E=
-X-Gm-Gg: ASbGncv6OOqGY+hnOBxe6Ev6Zbpl7OTJwd2BWsjO+4/Fr6WLNxocgoAH03wsjmbtxvO
-	6JAltrepLFdigwFDg6X7YqcHbnp4tBJ5vodmZLbRdxe7Sm7tLunIELBafT9J2pFJXQBCf0BkeeD
-	RfutH2/uaJfJOIM/oXu2stYHir47MFtItUeqq3paC6KY/KwIkkTD6opCjIHqsHteV8dgZ2R44cN
-	3/QgvIMklmgUkT5lmq7Z6Sh1FFRj8VP+nLNxMiDev+2OCmVYceK2latCfAcjNabf5Qtg1RkYUiR
-	HMYCK0fnqJdoAj6hCjzDPC3u5zfz4n+ntgv7
-X-Google-Smtp-Source: AGHT+IEgfmakWZP9XCSrXpe6LTY6B9fJgPXoq+xBT1euZeQ4OEFOai+xgOwsgYzdC88hC7Yr86jezDngc4aZZDOV5e4=
-X-Received: by 2002:a17:907:9815:b0:b72:c103:88db with SMTP id
- a640c23a62f3a-b76c534e251mr1022588866b.9.1764251732911; Thu, 27 Nov 2025
- 05:55:32 -0800 (PST)
+	s=arc-20240116; t=1764251811; c=relaxed/simple;
+	bh=ZZHiB/OWiLfJothgrkeOgMA+Qm0lCjCCoS4U2E2+cAQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DcL+th3uPK3lxqoyWEDRNiVarfyFFMWRx+mqYgy9BbdMXQ3/pC1aWX/m+2WCC1xVMEmGWyhBLPUCm2geHLVYvi4AvjQ1Pyuev6EG2Fonk7XsKfG3V80MhK4w95t+UFToH7nPGsHePjbbZ6LaIdO1Z5LmA21un+soPmPJhE/Qc0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=D/JQvHXE; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=vwSAGEnL; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=D/JQvHXE; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=vwSAGEnL; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 29CB95BD3D;
+	Thu, 27 Nov 2025 13:56:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1764251808; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BuXf+TdPQ+S+htUrTSpTlEEOwx8iA2NlWWGvVRONBKg=;
+	b=D/JQvHXEcFGuTtdTwfjwDcZUQdF/HViFbx6hFBzW7BVK+XuOkLYIifwEkN07N7RlpT98vQ
+	UYyNLvHxchELQr1mgZuyDiJjvD9WFGDTgaK2P7Z+fPDZIEWoCO1mDfSVJndE+yLSGJC4TR
+	SxqZ7Rf8cRPDpeWkkpBXEOG1HqT9/8E=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1764251808;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BuXf+TdPQ+S+htUrTSpTlEEOwx8iA2NlWWGvVRONBKg=;
+	b=vwSAGEnLTr4CuQ0YuL73CCt5/neRVRRPbypxczv28YzfrBu3gMxXBTBB3jrEJUi16oV1KK
+	WffBK6lX/UekJKAQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1764251808; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BuXf+TdPQ+S+htUrTSpTlEEOwx8iA2NlWWGvVRONBKg=;
+	b=D/JQvHXEcFGuTtdTwfjwDcZUQdF/HViFbx6hFBzW7BVK+XuOkLYIifwEkN07N7RlpT98vQ
+	UYyNLvHxchELQr1mgZuyDiJjvD9WFGDTgaK2P7Z+fPDZIEWoCO1mDfSVJndE+yLSGJC4TR
+	SxqZ7Rf8cRPDpeWkkpBXEOG1HqT9/8E=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1764251808;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BuXf+TdPQ+S+htUrTSpTlEEOwx8iA2NlWWGvVRONBKg=;
+	b=vwSAGEnLTr4CuQ0YuL73CCt5/neRVRRPbypxczv28YzfrBu3gMxXBTBB3jrEJUi16oV1KK
+	WffBK6lX/UekJKAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 191FD3EA63;
+	Thu, 27 Nov 2025 13:56:48 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id qwUcBqBYKGlvaQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 27 Nov 2025 13:56:48 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 7754EA0C94; Thu, 27 Nov 2025 14:56:47 +0100 (CET)
+Date: Thu, 27 Nov 2025 14:56:47 +0100
+From: Jan Kara <jack@suse.cz>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2] dcache: touch up predicts in __d_lookup_rcu()
+Message-ID: <45aykcsznrxvbb2pvd5g65dakrz6gtzlab6zlzidssmmemgxbz@2w7qgdpgh6ac>
+References: <20251127131526.4137768-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251127122412.4131818-1-mjguzik@gmail.com> <3xwv7kza6hgxfzzsmyoolno4yygiqses4rutu3n2l2qqrf56ry@p7hs7s5yik2t>
-In-Reply-To: <3xwv7kza6hgxfzzsmyoolno4yygiqses4rutu3n2l2qqrf56ry@p7hs7s5yik2t>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Thu, 27 Nov 2025 14:55:09 +0100
-X-Gm-Features: AWmQ_bn7KIB9mlOskxBiz4lVtRNzLh1CiEPZCkwlwpLn5kRP1RRSuP9TgQKXmoQ
-Message-ID: <CAGudoHGh-=MKK0CBWosD6ikb5HHmRr0u_YxQD0bceL9dCeUYDw@mail.gmail.com>
-Subject: Re: [PATCH] dcache: predict the name matches if parent and length
- also match
-To: Jan Kara <jack@suse.cz>
-Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251127131526.4137768-1-mjguzik@gmail.com>
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_COUNT_THREE(0.00)[3];
+	RCPT_COUNT_FIVE(0.00)[6];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email,suse.cz:email]
 
-On Thu, Nov 27, 2025 at 2:52=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
->
-> On Thu 27-11-25 13:24:12, Mateusz Guzik wrote:
-> > dentry_cmp() has predicts inside, but they were not enough to convince
-> > the compiler.
-> >
-> > As for difference in asm, some of the code is reshuffled and there is
-> > one less unconditional jump to get there.
-> >
-> > Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
->
-> I've checked and on my laptop the dentry hash table has ~2 million entrie=
-s.
-> This means we'll be getting hash collisions within a directory for
-> directories on the order of thousands entries. And until we get to hundre=
-ds
-> of thousands of entries in a directory, the collisions of entries will be
-> still rare. So I guess that's rare enough. Feel free to add:
->
+On Thu 27-11-25 14:15:26, Mateusz Guzik wrote:
+> Rationale is that if the parent dentry is the same and the length is the
+> same, then you have to be unlucky for the name to not match.
+> 
+> At the same time the dentry was literally just found on the hash, so you
+> have to be even more unlucky to determine it is unhashed.
+> 
+> While here add commentary while d_unhashed() is necessary. It was
+> already removed once and brought back in:
+> 2e321806b681b192 ("Revert "vfs: remove unnecessary d_unhashed() check from __d_lookup_rcu"")
+> 
+> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
 
-collisions with the same parent are a given, but with the same length
-on top should be rare
+Looks good. Feel free to add:
 
-> Reviewed-by: Jan Kara <jack@suse.cz>
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-thanks, but see v2 :)
-https://lore.kernel.org/linux-fsdevel/20251127131526.4137768-1-mjguzik@gmai=
-l.com/T/#u
->
->                                                                 Honza
->
-> > ---
-> >
-> > i know it's late, but given the non-semantic-modifying nature of the
-> > change, i think it can still make it for 6.19
-> >
-> >  fs/dcache.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/fs/dcache.c b/fs/dcache.c
-> > index 23d1752c29e6..bc84f89156fa 100644
-> > --- a/fs/dcache.c
-> > +++ b/fs/dcache.c
-> > @@ -2346,7 +2346,7 @@ struct dentry *__d_lookup_rcu(const struct dentry=
- *parent,
-> >                       continue;
-> >               if (dentry->d_name.hash_len !=3D hashlen)
-> >                       continue;
-> > -             if (dentry_cmp(dentry, str, hashlen_len(hashlen)) !=3D 0)
-> > +             if (unlikely(dentry_cmp(dentry, str, hashlen_len(hashlen)=
-) !=3D 0))
-> >                       continue;
-> >               *seqp =3D seq;
-> >               return dentry;
-> > --
-> > 2.34.1
-> >
-> --
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
+								Honza
+
+> ---
+> 
+> - move and precit on d_unhashed as well
+> - add commentary on it
+> 
+> this obsoletes https://lore.kernel.org/linux-fsdevel/20251127122412.4131818-1-mjguzik@gmail.com/T/#u
+> 
+>  fs/dcache.c | 15 ++++++++++++---
+>  1 file changed, 12 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/dcache.c b/fs/dcache.c
+> index 23d1752c29e6..dc2fff4811d1 100644
+> --- a/fs/dcache.c
+> +++ b/fs/dcache.c
+> @@ -2342,11 +2342,20 @@ struct dentry *__d_lookup_rcu(const struct dentry *parent,
+>  		seq = raw_seqcount_begin(&dentry->d_seq);
+>  		if (dentry->d_parent != parent)
+>  			continue;
+> -		if (d_unhashed(dentry))
+> -			continue;
+>  		if (dentry->d_name.hash_len != hashlen)
+>  			continue;
+> -		if (dentry_cmp(dentry, str, hashlen_len(hashlen)) != 0)
+> +		if (unlikely(dentry_cmp(dentry, str, hashlen_len(hashlen)) != 0))
+> +			continue;
+> +		/*
+> +		 * Check for the dentry being unhashed.
+> +		 *
+> +		 * As tempting as it is, we *can't* skip it because of a race window
+> +		 * between us finding the dentry before it gets unhashed and loading
+> +		 * the sequence counter after unhashing is finished.
+> +		 *
+> +		 * We can at least predict on it.
+> +		 */
+> +		if (unlikely(d_unhashed(dentry)))
+>  			continue;
+>  		*seqp = seq;
+>  		return dentry;
+> -- 
+> 2.34.1
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
