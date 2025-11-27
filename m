@@ -1,103 +1,102 @@
-Return-Path: <linux-fsdevel+bounces-70067-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70062-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72395C8FB84
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 18:36:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0249EC8FB3D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 18:33:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 62EC14E1976
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 17:36:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AE643AD4D3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 17:31:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B97B2EF65B;
-	Thu, 27 Nov 2025 17:31:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 347BB2EB5DC;
+	Thu, 27 Nov 2025 17:30:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="crC7dUYd";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="SdWY+CQu";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="crC7dUYd";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="SdWY+CQu"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="wujLnMMD";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="oKysOTmD";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="wujLnMMD";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="oKysOTmD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 429B32EF65C
-	for <linux-fsdevel@vger.kernel.org>; Thu, 27 Nov 2025 17:31:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 099C2287507
+	for <linux-fsdevel@vger.kernel.org>; Thu, 27 Nov 2025 17:30:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764264681; cv=none; b=KqFHCMuy17k56NKKpdMYTRlacrAbu6IB/DYwqtf68cjj3ZYAVbPAL5tU/su2Zq74Ac3dbUGwQ4U64WN8UdxyK1G3BCrIuYnrRkXfAZ97RW2rxhgp6BHUsPUWvpQL2A6Lu0rcSUdryWGyT5eGXPdBPbgBvkZxtGBFItpP6S66cqc=
+	t=1764264653; cv=none; b=qYi7n6GEBTOtOZswYVtFquPmzU4ghJydUGyGP3oWIB5pHt/fnArWm7eJLo9YOcIT9bYmd6sUifrBy8d6mGg1HLCszsIU9yBGIbKPLVf9Uq2B7zKqDFjjIOvdkJx7t5a4Mz2UPps1tjYAMI1Y/bceiptdLi5B8I8pe7dS5WMyrlc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764264681; c=relaxed/simple;
-	bh=IStrUp8qazgIqNvwC5w17P/SdYdt4KGwMivE092Qh3U=;
+	s=arc-20240116; t=1764264653; c=relaxed/simple;
+	bh=hPYW0NIiHWXH4qWx3l6E6TNnpxL1rspHxO+oT1mNt9M=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AAvVeyia8W6dAPcVgFT6nSVJ/SGp9Etsf6B0ltoTMvivBQWwQ0W0DHGbO1ModWkiB9IzEIyQ26bYa6t3brc9tWhAGO3rEwKBDRaCOospBYZYG3fs1omQb5jpSn7bjxSCekaxaJLuAzkMhqP8hPiGAcRmpnr5Gr5uoDH3VpXqgC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=crC7dUYd; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=SdWY+CQu; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=crC7dUYd; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=SdWY+CQu; arc=none smtp.client-ip=195.135.223.130
+	 MIME-Version; b=DsKuIN/InmRmouAyi3SsMQrjTc+mNkWxuGSJL98fmcSlPT3/Avxcy7pVUv7jkTrOLgc9lA1zqSDWstQhGrLXarxHyUA232xzQQ5hWR0x7uwMzKZqCeokWa1CiGPgNmYVgITNbJyb8sZCg/y/LbxV/n9Xirbroi7rD7RpYG2MKik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=wujLnMMD; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=oKysOTmD; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=wujLnMMD; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=oKysOTmD; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 3E08E3369B;
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 3FA635BCD1;
 	Thu, 27 Nov 2025 17:30:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
 	t=1764264627; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=szRQiwkELnAoS0PiAlu3Npp7Vm8um9lGVuY8uzywQl8=;
-	b=crC7dUYdDo8GoDWk5JDWwRbtW72HJpZ673nqYRrYB0ZCiukP3bFv2EYGbOiV313bBSjrYD
-	Xh1tG/V5shZ1xSAA3xYMvBSIByPQihMsea4obEcogYL2E3ON5H9sifxo/bqwaL7Pc/fgWJ
-	3MG7aY9xKIy8fdz4aZH2wXq3fYjo2qs=
+	bh=hOHgufutIEIzClabAnCKsaMx30cxvhMu4zJes017tLs=;
+	b=wujLnMMDGJZ0ddnU9OSW8eT3SuSo1gH9lzEKJdN4f01Y8X3HcfLI0DNfqz+sqq1V8Byy37
+	bT4EO7yjV/LkoM1d2iuCtn2AavNgO5mj+HY8HLDCOr/XQ76dSlBJdDzAwZAU8FFNuqWMlI
+	tNtkzBD/Q6qYhzl4UC0duG63Me5fU2Q=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
 	s=susede2_ed25519; t=1764264627;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=szRQiwkELnAoS0PiAlu3Npp7Vm8um9lGVuY8uzywQl8=;
-	b=SdWY+CQubt72voPvxz4YEm9wSbYbquCzcYzsTVMLzl8LoeS3jx256J8Xd+w8uDOQE/BwsP
-	8LnmvZu95rQVhlBA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=crC7dUYd;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=SdWY+CQu
+	bh=hOHgufutIEIzClabAnCKsaMx30cxvhMu4zJes017tLs=;
+	b=oKysOTmDwl6fWQ9H0yPpIxSmdLb76vVJ44a82dqI0mtLmRVzAfEfBxVmIg54GGylGnI9aS
+	sUUF+DPQ4Mw0AjBw==
+Authentication-Results: smtp-out2.suse.de;
+	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
 	t=1764264627; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=szRQiwkELnAoS0PiAlu3Npp7Vm8um9lGVuY8uzywQl8=;
-	b=crC7dUYdDo8GoDWk5JDWwRbtW72HJpZ673nqYRrYB0ZCiukP3bFv2EYGbOiV313bBSjrYD
-	Xh1tG/V5shZ1xSAA3xYMvBSIByPQihMsea4obEcogYL2E3ON5H9sifxo/bqwaL7Pc/fgWJ
-	3MG7aY9xKIy8fdz4aZH2wXq3fYjo2qs=
+	bh=hOHgufutIEIzClabAnCKsaMx30cxvhMu4zJes017tLs=;
+	b=wujLnMMDGJZ0ddnU9OSW8eT3SuSo1gH9lzEKJdN4f01Y8X3HcfLI0DNfqz+sqq1V8Byy37
+	bT4EO7yjV/LkoM1d2iuCtn2AavNgO5mj+HY8HLDCOr/XQ76dSlBJdDzAwZAU8FFNuqWMlI
+	tNtkzBD/Q6qYhzl4UC0duG63Me5fU2Q=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
 	s=susede2_ed25519; t=1764264627;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=szRQiwkELnAoS0PiAlu3Npp7Vm8um9lGVuY8uzywQl8=;
-	b=SdWY+CQubt72voPvxz4YEm9wSbYbquCzcYzsTVMLzl8LoeS3jx256J8Xd+w8uDOQE/BwsP
-	8LnmvZu95rQVhlBA==
+	bh=hOHgufutIEIzClabAnCKsaMx30cxvhMu4zJes017tLs=;
+	b=oKysOTmDwl6fWQ9H0yPpIxSmdLb76vVJ44a82dqI0mtLmRVzAfEfBxVmIg54GGylGnI9aS
+	sUUF+DPQ4Mw0AjBw==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 75A123EA6D;
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 838343EA70;
 	Thu, 27 Nov 2025 17:30:26 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id lToaHLKKKGmTPgAAD6G6ig
+	id XGXNH7KKKGmdPgAAD6G6ig
 	(envelope-from <jack@suse.cz>); Thu, 27 Nov 2025 17:30:26 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 60966A0CB2; Thu, 27 Nov 2025 18:30:25 +0100 (CET)
+	id 680DBA0CB3; Thu, 27 Nov 2025 18:30:25 +0100 (CET)
 From: Jan Kara <jack@suse.cz>
 To: <linux-fsdevel@vger.kernel.org>
 Cc: Amir Goldstein <amir73il@gmail.com>,
 	Jan Kara <jack@suse.cz>
-Subject: [PATCH 12/13] fanotify: Don't recalculate mask when mark evictable flag changes
-Date: Thu, 27 Nov 2025 18:30:19 +0100
-Message-ID: <20251127173012.23500-25-jack@suse.cz>
+Subject: [PATCH 13/13] fsnotify: Rename FSNOTIFY_MARK_FLAG_NO_IREF
+Date: Thu, 27 Nov 2025 18:30:20 +0100
+Message-ID: <20251127173012.23500-26-jack@suse.cz>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251127170509.30139-1-jack@suse.cz>
 References: <20251127170509.30139-1-jack@suse.cz>
@@ -107,101 +106,106 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2265; i=jack@suse.cz; h=from:subject; bh=IStrUp8qazgIqNvwC5w17P/SdYdt4KGwMivE092Qh3U=; b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBpKIqtvbtHSZuc5dZfyRhpAJLK2AizfcRbOs2L3 qNqtqPLy++JATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCaSiKrQAKCRCcnaoHP2RA 2SVyB/wOqMDO+vh38tOQ1VAqrvnDI625bvDI1HQLMLAgTJGOGC1+3OuTxzpDfdfuB7T52iTQntb WkgBZM2qZ36S+m3wEd/PRVLVMG4GXh4tM5KSE4B7ptxB+GubODWAcARKGJZfqkl357kkdO0XtQt 1Lqfoq0CmKaCNnOfnOKpkElMEaQ7C5ZJBNy+0S5+CMwgTv6WrSUa3/iFs8P3W8qGfcRCFSU89al 8lvw54UThGci0J+2x4PXl+BdDoD/dBkEYdakgvtAo6pNo9t6iPSt6JdkSBEnH4lupgZxavgZecS vlLH1QU+f9N78TmNmG2IymhtZMdo5gv5gnqR0GkxMDBg8+NA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3163; i=jack@suse.cz; h=from:subject; bh=hPYW0NIiHWXH4qWx3l6E6TNnpxL1rspHxO+oT1mNt9M=; b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBpKIquybHnX66YTV9L51HCnDhuGX42wqvQW3yHP qqlQRPM1uiJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCaSiKrgAKCRCcnaoHP2RA 2bigB/9gzCez8kMd0O1Qa/FklqoucWd4FH4vESgOmz+EUMs2iCFEgqcJqXuGqKYuJvWth5rBXkv 8QsbaiY69TiVaVkmxtzM9nOzcUDaE3u1Te1i1nj8u0lYX3/mBpVIyC4vUOBAOvlL7Cuh1XYiSA+ OmZIVZQkaovQI/cMEfq0sEfOP+Ebv3Sz/KlDLzu6U/1Pa9Q6c6ZiyoL3EQbDcOa9WLbFFxt1nIt Dw0EKE4lQtrVq7/J1p7U5ciwlPy6ZtkMy0r0JSiTgJzt1+bRI/1+YN+PqduiurdNUifA28VBUoL BHR6H5W6WkdV65R2AIg4FBSTqEj68w2LRil1q8GQ1buC+wqo
 X-Developer-Key: i=jack@suse.cz; a=openpgp; fpr=93C6099A142276A28BBE35D815BC833443038D8C
 Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-3.01 / 50.00];
+X-Spamd-Result: default: False [-2.80 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
 	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	NEURAL_HAM_SHORT(-0.20)[-1.000];
 	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,suse.cz:email,suse.cz:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
+	ARC_NA(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FREEMAIL_CC(0.00)[gmail.com,suse.cz];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:mid,suse.cz:email];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_COUNT_THREE(0.00)[3];
+	RCVD_TLS_LAST(0.00)[];
+	FROM_HAS_DN(0.00)[];
 	FROM_EQ_ENVFROM(0.00)[];
 	RCPT_COUNT_THREE(0.00)[3];
-	FREEMAIL_CC(0.00)[gmail.com,suse.cz];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	FREEMAIL_ENVRCPT(0.00)[gmail.com]
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -3.01
 X-Spam-Level: 
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: 3E08E3369B
+X-Spam-Score: -2.80
+X-Spam-Flag: NO
 
-Since connectors no longer hold inode references, there's no need to
-call fsnotify_recalc_mask() only because FSNOTIFY_MARK_FLAG_NO_IREF flag
-changed.
+Since notification marks no longer hold inode references the name of
+flag FSNOTIFY_MARK_FLAG_NO_IREF doesn't make sense anymore. Rename it to
+FSNOTIFY_MARK_FLAG_EVICTABLE.
 
 Signed-off-by: Jan Kara <jack@suse.cz>
 ---
- fs/notify/fanotify/fanotify_user.c | 21 ++++++---------------
- 1 file changed, 6 insertions(+), 15 deletions(-)
+ fs/notify/fanotify/fanotify.h      | 2 +-
+ fs/notify/fanotify/fanotify_user.c | 8 ++++----
+ include/linux/fsnotify_backend.h   | 2 +-
+ 3 files changed, 6 insertions(+), 6 deletions(-)
 
+diff --git a/fs/notify/fanotify/fanotify.h b/fs/notify/fanotify/fanotify.h
+index b78308975082..1521a5bf2b9e 100644
+--- a/fs/notify/fanotify/fanotify.h
++++ b/fs/notify/fanotify/fanotify.h
+@@ -538,7 +538,7 @@ static inline unsigned int fanotify_mark_user_flags(struct fsnotify_mark *mark)
+ 
+ 	if (mark->flags & FSNOTIFY_MARK_FLAG_IGNORED_SURV_MODIFY)
+ 		mflags |= FAN_MARK_IGNORED_SURV_MODIFY;
+-	if (mark->flags & FSNOTIFY_MARK_FLAG_NO_IREF)
++	if (mark->flags & FSNOTIFY_MARK_FLAG_EVICTABLE)
+ 		mflags |= FAN_MARK_EVICTABLE;
+ 	if (mark->flags & FSNOTIFY_MARK_FLAG_HAS_IGNORE_FLAGS)
+ 		mflags |= FAN_MARK_IGNORE;
 diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-index b192ee068a7a..2c440ea96521 100644
+index 2c440ea96521..c820fe9aee20 100644
 --- a/fs/notify/fanotify/fanotify_user.c
 +++ b/fs/notify/fanotify/fanotify_user.c
-@@ -1202,9 +1202,7 @@ static int fanotify_remove_mark(struct fsnotify_group *group,
- static bool fanotify_mark_update_flags(struct fsnotify_mark *fsn_mark,
- 				       unsigned int fan_flags)
- {
--	bool want_iref = !(fan_flags & FAN_MARK_EVICTABLE);
- 	unsigned int ignore = fan_flags & FANOTIFY_MARK_IGNORE_BITS;
--	bool recalc = false;
- 
- 	/*
- 	 * When using FAN_MARK_IGNORE for the first time, mark starts using
-@@ -1215,6 +1213,10 @@ static bool fanotify_mark_update_flags(struct fsnotify_mark *fsn_mark,
+@@ -1213,9 +1213,9 @@ static bool fanotify_mark_update_flags(struct fsnotify_mark *fsn_mark,
  	if (ignore == FAN_MARK_IGNORE)
  		fsn_mark->flags |= FSNOTIFY_MARK_FLAG_HAS_IGNORE_FLAGS;
  
-+	/* NO_IREF may be removed from a mark, but not added */
-+	if (!(fan_flags & FAN_MARK_EVICTABLE))
-+		fsn_mark->flags &= ~FSNOTIFY_MARK_FLAG_NO_IREF;
-+
+-	/* NO_IREF may be removed from a mark, but not added */
++	/* EVICTABLE may be removed from a mark, but not added */
+ 	if (!(fan_flags & FAN_MARK_EVICTABLE))
+-		fsn_mark->flags &= ~FSNOTIFY_MARK_FLAG_NO_IREF;
++		fsn_mark->flags &= ~FSNOTIFY_MARK_FLAG_EVICTABLE;
+ 
  	/*
  	 * Setting FAN_MARK_IGNORED_SURV_MODIFY for the first time may lead to
- 	 * the removal of the FS_MODIFY bit in calculated mask if it was set
-@@ -1224,21 +1226,10 @@ static bool fanotify_mark_update_flags(struct fsnotify_mark *fsn_mark,
- 	    !(fsn_mark->flags & FSNOTIFY_MARK_FLAG_IGNORED_SURV_MODIFY)) {
- 		fsn_mark->flags |= FSNOTIFY_MARK_FLAG_IGNORED_SURV_MODIFY;
- 		if (!(fsn_mark->mask & FS_MODIFY))
--			recalc = true;
-+			return true;
- 	}
+@@ -1339,7 +1339,7 @@ static struct fsnotify_mark *fanotify_add_new_mark(struct fsnotify_group *group,
+ 	mark = &fan_mark->fsn_mark;
+ 	fsnotify_init_mark(mark, group);
+ 	if (fan_flags & FAN_MARK_EVICTABLE)
+-		mark->flags |= FSNOTIFY_MARK_FLAG_NO_IREF;
++		mark->flags |= FSNOTIFY_MARK_FLAG_EVICTABLE;
  
--	if (fsn_mark->connector->type != FSNOTIFY_OBJ_TYPE_INODE ||
--	    want_iref == !(fsn_mark->flags & FSNOTIFY_MARK_FLAG_NO_IREF))
--		return recalc;
--
--	/*
--	 * NO_IREF may be removed from a mark, but not added.
--	 * When removed, fsnotify_recalc_mask() will take the inode ref.
--	 */
--	WARN_ON_ONCE(!want_iref);
--	fsn_mark->flags &= ~FSNOTIFY_MARK_FLAG_NO_IREF;
--
--	return true;
-+	return false;
- }
+ 	/* Cache fsid of filesystem containing the marked object */
+ 	if (fsid) {
+@@ -1381,7 +1381,7 @@ static int fanotify_may_update_existing_mark(struct fsnotify_mark *fsn_mark,
+ 	 * Non evictable mark cannot be downgraded to evictable mark.
+ 	 */
+ 	if (fan_flags & FAN_MARK_EVICTABLE &&
+-	    !(fsn_mark->flags & FSNOTIFY_MARK_FLAG_NO_IREF))
++	    !(fsn_mark->flags & FSNOTIFY_MARK_FLAG_EVICTABLE))
+ 		return -EEXIST;
  
- static bool fanotify_mark_add_to_mask(struct fsnotify_mark *fsn_mark,
+ 	/*
+diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
+index c7ca848f576c..4b7bd48dd9aa 100644
+--- a/include/linux/fsnotify_backend.h
++++ b/include/linux/fsnotify_backend.h
+@@ -628,7 +628,7 @@ struct fsnotify_mark {
+ #define FSNOTIFY_MARK_FLAG_IN_ONESHOT		0x0020
+ 	/* fanotify mark flags */
+ #define FSNOTIFY_MARK_FLAG_IGNORED_SURV_MODIFY	0x0100
+-#define FSNOTIFY_MARK_FLAG_NO_IREF		0x0200
++#define FSNOTIFY_MARK_FLAG_EVICTABLE		0x0200
+ #define FSNOTIFY_MARK_FLAG_HAS_IGNORE_FLAGS	0x0400
+ #define FSNOTIFY_MARK_FLAG_HAS_FSID		0x0800
+ #define FSNOTIFY_MARK_FLAG_WEAK_FSID		0x1000
 -- 
 2.51.0
 
