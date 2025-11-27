@@ -1,221 +1,241 @@
-Return-Path: <linux-fsdevel+bounces-70014-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70015-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12A14C8E4AB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 13:43:34 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D3A2C8E4E7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 13:46:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1F4E3A65AE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 12:43:32 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 879523508A3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 12:46:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57EF83321B5;
-	Thu, 27 Nov 2025 12:43:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B31B91A0712;
+	Thu, 27 Nov 2025 12:46:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="QVeVaQns";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="RTUaqBD9";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="QVeVaQns";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="RTUaqBD9"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Do3Ovvgy"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ADB61F12F8
-	for <linux-fsdevel@vger.kernel.org>; Thu, 27 Nov 2025 12:43:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764247402; cv=none; b=V34fU2Q+p6QSUEcGDWpWATDChOzP2CMGl81wfFBcVjCSs2wcOI2pHw6yg82NZyGQi7lO/1MMQmKFLk118BMzgePb5KrV4GOp6MbmzjN29b0F/v1OV1GEhXZiCp0ezMUIDnqHgxzhXKV6Gn1FrlWztS+MmqL3jIn+tvjz79VFcAY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764247402; c=relaxed/simple;
-	bh=hvbwBPSDCBBVBl4U6yD99+smN7ivbEVfPtV+andSADQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ie+6hYbf4JKxeO8mkZVYyVk4SIFyA90ckTbgzTVGRxw8VatHmVuR9vpGCyvIzoIxrrtdL8zxi//KvO9fXTDcn9/T/OzaMz4Off3fLRLX1HHlrYJQbe6oYAmBwA5dzF/Cp3Zku8ahznHIIvqX7oWpgFM7HilL+uZI8IMDmxhahlQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=QVeVaQns; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=RTUaqBD9; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=QVeVaQns; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=RTUaqBD9; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 3265222BE2;
-	Thu, 27 Nov 2025 12:43:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1764247399; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AEvcDGunbC0dO604lSPOmgzO0paJIzpiiaHZmw+wwb0=;
-	b=QVeVaQns9KsL2yfSINDksFoPmEXXEr2q8n3xLalqsMHxE7x6fbuGVgW/XggLaaA5vLSmVq
-	yrHmhys3qa/3RfGX6nMM9AIGYntRXvt9g+xp4r2NzJ7IxSvalvElt7yVjxxCdQXLHT3DJD
-	luy6rXjpdHnJDaAgrpjfsmHZ12xzovI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1764247399;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AEvcDGunbC0dO604lSPOmgzO0paJIzpiiaHZmw+wwb0=;
-	b=RTUaqBD93Q+BeWo6TTFLbOjaUi8HmgzLGNGit6QlBy+VBwpzt7L1GA6EKH4Us77lag4H6y
-	4cpwRK0EQKBTd5Dw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1764247399; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AEvcDGunbC0dO604lSPOmgzO0paJIzpiiaHZmw+wwb0=;
-	b=QVeVaQns9KsL2yfSINDksFoPmEXXEr2q8n3xLalqsMHxE7x6fbuGVgW/XggLaaA5vLSmVq
-	yrHmhys3qa/3RfGX6nMM9AIGYntRXvt9g+xp4r2NzJ7IxSvalvElt7yVjxxCdQXLHT3DJD
-	luy6rXjpdHnJDaAgrpjfsmHZ12xzovI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1764247399;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AEvcDGunbC0dO604lSPOmgzO0paJIzpiiaHZmw+wwb0=;
-	b=RTUaqBD93Q+BeWo6TTFLbOjaUi8HmgzLGNGit6QlBy+VBwpzt7L1GA6EKH4Us77lag4H6y
-	4cpwRK0EQKBTd5Dw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1CD9C3EA63;
-	Thu, 27 Nov 2025 12:43:19 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id /3sGB2dHKGlFIwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 27 Nov 2025 12:43:19 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 87E2FA0C94; Thu, 27 Nov 2025 13:43:18 +0100 (CET)
-Date: Thu, 27 Nov 2025 13:43:18 +0100
-From: Jan Kara <jack@suse.cz>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz, 
-	yi.zhang@huawei.com, yizhang089@gmail.com, libaokun1@huawei.com, yangerkun@huawei.com
-Subject: Re: [PATCH v2 08/13] ext4: cleanup useless out tag in
- __es_remove_extent()
-Message-ID: <nxm5jp4iilin4evuebffrd23eptmjwfbvayvd4vq62hi37s4vz@3ldgakx4yr5v>
-References: <20251121060811.1685783-1-yi.zhang@huaweicloud.com>
- <20251121060811.1685783-9-yi.zhang@huaweicloud.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32FD017BA2
+	for <linux-fsdevel@vger.kernel.org>; Thu, 27 Nov 2025 12:46:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.9
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1764247579; cv=fail; b=KQ8bnTigSAsG5MEVzcFhrcIyD1wFtZko/M1+YpmSsJOU/d6KL+uT2U5I+pq4biXzNsSa2EAH+1LXvnQKeMyYSD0C+52G+3zrnDa8aRpXpJaLx5rmE9uKIrgOEn6rpyv2fp7LCYlivtoMZ5WcOElPVFFde2nf/8HR7CkpRGsJrmc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1764247579; c=relaxed/simple;
+	bh=S08KtKwDpSpR0FDd3AwISpaYszSMzOqbAvcv5MHb3dI=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=H7sOvWIUOK+zzib+Td3/xBLOuSyUojewyzsoXcnF2PwxAPaY82BWQs9FFh0Ysn4kDh22udExvb/K1u5T7BYK94clgeo8Wx4QQLXKvGohrr2FVP6oaYRuwh9EZfruplkDIjnBR/KCOOsAa6I2x5AkNzpwASJfmJPXyYnXcuxNPiU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Do3Ovvgy; arc=fail smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1764247577; x=1795783577;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=S08KtKwDpSpR0FDd3AwISpaYszSMzOqbAvcv5MHb3dI=;
+  b=Do3OvvgyTIxOZIiONeb/w5HWfuPKG3idwEb1RdYn9XNpVETYP99k60qg
+   Tf8l90xy3NrzN0QjFINiomFskKAjWVyu+TcHwqQemNwungCaI5yC72X52
+   /fIiqYA/a//Dl3q1MA6MIwRt2v/39AYr03XJkIzJd6b2GoaP7GI/SsJPu
+   aoCUYVFDwGfbBUJ2vLVaiT1zcAt1NWOZtLThp3EcE5TP1/3OAM73/sCHy
+   4tKnETs9ZX7EZBIR1ly61/SWttB38ABm2ztgCe5lJq2a0IkaqStKpS8mB
+   cTxJ63mja43ceyCrgaxg3S3A/Oj16yz5Pl9kq8SHvk/d61ddfhJI52KG3
+   w==;
+X-CSE-ConnectionGUID: a7XvSxwkT0uayn1xGfoMuw==
+X-CSE-MsgGUID: Gik6Wed7QjWf0CNYVrDQmg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11625"; a="88937976"
+X-IronPort-AV: E=Sophos;i="6.20,231,1758610800"; 
+   d="scan'208";a="88937976"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Nov 2025 04:46:17 -0800
+X-CSE-ConnectionGUID: qsp6G/RCSbGQ3IiSvjZbjQ==
+X-CSE-MsgGUID: 3Z04gto6TSipsz6gzGkw1g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.20,231,1758610800"; 
+   d="scan'208";a="223922489"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Nov 2025 04:46:16 -0800
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.29; Thu, 27 Nov 2025 04:46:16 -0800
+Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.29 via Frontend Transport; Thu, 27 Nov 2025 04:46:16 -0800
+Received: from BN1PR04CU002.outbound.protection.outlook.com (52.101.56.14) by
+ edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.29; Thu, 27 Nov 2025 04:46:16 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=CR01Oc/mGo8b9aMANdjVxwpgh8VjRapCryEJZUouhVYqmAW3Jmo2GDGwwPtDp9TgZi07n+XazttPnfbxufkU0NgxhAAPbmmcjuwI8j4V2J1r7/uAabf9xoyXID6lDcuC89dwavwDGZ2MFoFgIjpCknfMT6hPzk9UOI8KCByr+xTYaJEeTi3lZuFoQK1q8sQ+DqppOWRbwtMYM464sMhLiQpyb9x1VztEaFuytGtYUNXMW38W4Ji6KmQwRWEUaqgJznwoyV8Amm/SVn+9XVjKnRPhbCiHv1r4h571WEYoPBcJIawcxpzQxoaMJoRqoDNSjEvOkj4UOc2h8vJlrPLiZA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=DuWBCvCEY62K2p52rKsZLWEpbxYzBFxurV5qZj41K24=;
+ b=uVuiyMAZT0bxTQt6jfZb93jZoOyzgg6hinaTdeo88btdiM1rL6SJSXKFB4w0eSH8Y36h+nf2v/0KtUMZ7obtkHRG0H03diqVBGSlLLKxsmTl2SHTm9rx5xoeb+hkQibcG3Kb/rrkebg/5DLzP2qNtr4goqOCTTABbr5psING2wkdKfj/MEi/QHWP1bbVPmDgKH9Mc0rQYd7Vh8cQW0cHkd/PWFWxVJMuloCVm30FpTy8h5Z+9gCknybGEmpR0CQzcfR3QqCKw8+p+Q5C2HS/blsnY//TCIm4ytdfNx4+FBc75hGtIFnHl7cjTRBYSIifYhxdKqksK5vAq03XiEee4Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SJ1PR11MB6129.namprd11.prod.outlook.com (2603:10b6:a03:488::12)
+ by MW3PR11MB4588.namprd11.prod.outlook.com (2603:10b6:303:54::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9366.14; Thu, 27 Nov
+ 2025 12:46:12 +0000
+Received: from SJ1PR11MB6129.namprd11.prod.outlook.com
+ ([fe80::21c3:4b36:8cc5:b525]) by SJ1PR11MB6129.namprd11.prod.outlook.com
+ ([fe80::21c3:4b36:8cc5:b525%5]) with mapi id 15.20.9366.009; Thu, 27 Nov 2025
+ 12:46:12 +0000
+Message-ID: <78e1b97d-837f-48e9-882f-8320473ec9bb@intel.com>
+Date: Thu, 27 Nov 2025 18:16:05 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: REGRESSION on linux-next (next-20251125)
+Content-Language: en-GB
+To: Christian Brauner <brauner@kernel.org>
+CC: "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
+	"intel-xe@lists.freedesktop.org" <intel-xe@lists.freedesktop.org>, "Kurmi,
+ Suresh Kumar" <suresh.kumar.kurmi@intel.com>, "Saarinen, Jani"
+	<jani.saarinen@intel.com>, Lucas De Marchi <lucas.demarchi@intel.com>,
+	<linux-fsdevel@vger.kernel.org>
+References: <a27eb5f4-c4c9-406c-9b53-93f7888db14a@intel.com>
+ <20251127-agenda-befinden-61628473b16b@brauner>
+ <5ffeb0af-a3c9-4ccb-a752-ce7d48f475df@intel.com>
+ <20251127-kaktus-gourmet-626cff3d8314@brauner>
+From: "Borah, Chaitanya Kumar" <chaitanya.kumar.borah@intel.com>
+In-Reply-To: <20251127-kaktus-gourmet-626cff3d8314@brauner>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MA5PR01CA0062.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a01:1b8::16) To SJ1PR11MB6129.namprd11.prod.outlook.com
+ (2603:10b6:a03:488::12)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251121060811.1685783-9-yi.zhang@huaweicloud.com>
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[vger.kernel.org,mit.edu,dilger.ca,suse.cz,huawei.com,gmail.com];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:email,huawei.com:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Level: 
-X-Spam-Score: -3.80
-X-Spam-Flag: NO
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PR11MB6129:EE_|MW3PR11MB4588:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4063490b-ce8a-4552-8bee-08de2db2f216
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?VmJHY0dLRFRaVHU5LzJmUXFUc21SK2ltRGZZQlk3V0htcjdyZFcxVXdTSHE2?=
+ =?utf-8?B?WkxTZlZITm4rRFdRN3JiK2wxTy9Qakg3VFUwaHZiNmpzMCtpSnYxSXlidkhY?=
+ =?utf-8?B?MW12TWI3MElXQmlpWmQwK0JlbUZQWFFjQmN6Yy8rejhyM0tHQllaWnRYRGlv?=
+ =?utf-8?B?dUJsTHI2cWtubHhQcmVZWlZwOWpLZWtZVjdPeG5SMkx4L3dTNlg4dllieURP?=
+ =?utf-8?B?YnFiZ3BCYTVWYlBXVFdEUmFnWkEyK1E4WnpicDRCK0tjcjdrbFhkcGltQmcr?=
+ =?utf-8?B?OGhxTFZoT2dUNGk1ZXZTYVVoWWJURjBHVWdqM21zWDQ2TDI5a1RsanBRT2JD?=
+ =?utf-8?B?ZldWeTNlRmM2RmpJdWVseU1ObUtWeEcwcnhET1BYV0JZMlJuQWJKcERzeTRx?=
+ =?utf-8?B?NDlSNlQ5NE0vRVpoWEI3QUU0dkQrWDR4ZDlDOThUNUxBRm1XNU5FUlNyQ3la?=
+ =?utf-8?B?cld2SHd4MGtwOU5ROWQ0c0pHeHRHa2tIOTltNDVMbXEyS29TVzl4T0VGenM4?=
+ =?utf-8?B?TllvcXVaUlVFeVNndk5UNWFCTVk1R0gwQ2w2VDRNclFLT0dPM2swcllYSTR5?=
+ =?utf-8?B?OG04Qm02YnZFNmxDVUd4TGNSYkk0bk9nTUhSVU9iUjZlejY2QjhtZXNJb3Ew?=
+ =?utf-8?B?cDhMZkorNGVPVWdsQVdSZzFRc0w0dC9TN2Q1UWphbW1vSGtaUkZWWUpXV3R2?=
+ =?utf-8?B?UUJoQkFUMWdtd1JGbjhjN0NLZUpmQ0Y3M0hRK1JkV3BBK3NQTG1tODFFQ0hq?=
+ =?utf-8?B?YVJNakxtV3ppc0FjTFA3MlozRTlqRjZia0VrODRoMlRGeGh6VkVCc0MyZisr?=
+ =?utf-8?B?KzZVZ01QUldyUEFWOUlzRlhmZzVUbnNKUkMxS2VXWlJYa3A5ZXNlTDJEdXlh?=
+ =?utf-8?B?YWFiUTZRVFJxUVA1ZDI0TVdNTFFoaElrQ2lLcjB5cHRZL3BwZ1dlL3k5N3l0?=
+ =?utf-8?B?UlB2YnY4aUVwZkZ2WkNUMXQ0ODcrVWxlWUl2R0dGZzRwSDNqWmtSQ1BJNU0y?=
+ =?utf-8?B?YTYvUzIybTVFczhqUHVJSHlFSUNIQ3F0aG5HcHNERDJ2N0xXQnlUeENYWnFW?=
+ =?utf-8?B?dGVsSnY5ZHRRRXJNSkpXL1A4d2lEaVAvOWJDeDFxOFhHaVR6MWpSeFRMSVgr?=
+ =?utf-8?B?Z2paZTJqODMyRG5EYmZtWkNkODlDU2VOU2hpc3d1Wi9qSjJwVHFnbGlkZk9F?=
+ =?utf-8?B?NUcyR2ptaDNlMkNRSnBGRGEzbm93cUxGODRzSDVTMlFnVjZUa29RV0FDN3Fv?=
+ =?utf-8?B?MlJ0T0VwMitvWEtUL1lUbVRmc2ZjczB3bWZkSFR6dThZVlA3WHdPbVBRbEdT?=
+ =?utf-8?B?akRzUytZNW96UjJIeVIyWGRLZENCeW5NK1BlckRRMmZaYVhnM3BqMG5tMFp4?=
+ =?utf-8?B?ZStIdnBMMFBrZlhIemFPSEp1YUJSd2xBRVo4TG9zV0JucTZKTGt5NEduZkVi?=
+ =?utf-8?B?MXdEN1hZU3pNYmlTNFUrNG1MaDcxa2JHWUtjSXh2R2h1MjBnK0RlM083RFl2?=
+ =?utf-8?B?cnUwQU83Z2dNajhaSmJROTNVbE5uUWRPYXRua3dOVHlLdEY3cWRNK0lkS3la?=
+ =?utf-8?B?K0V0WFkvcGVDZFBvdFZSVWZqd1FMWW1XYzJZaGFmbE1oNnUyV29tVVBNVEkr?=
+ =?utf-8?B?NFFORWtWN1JvT0szUERDeFMxV1cza1ZXVkQ1OXRCL2I0T1A0NjAxV01aV2My?=
+ =?utf-8?B?Z0FjdnlmdHNOTHhlTEViWndNY0d2aDVXOFBxbzZ5S1g2Rlp5S1dwd0p1R0pw?=
+ =?utf-8?B?YlZoUFpnbFBRc1N1algvVzZNZjRDTDlIMVJSUkNxU1FkbWVGMlB0enZKaUlE?=
+ =?utf-8?B?SVN5NHBRVkdtMHBieVJmV2tQcW1ENERnY0QxdWVhbFp3eGc0VnpSQjlVZmpy?=
+ =?utf-8?B?TnVZZThtR0F1UWJOU3kxbDBYd1NwK0ZjaW5PUHc2NVpkYjBqSDV0aElHdmhI?=
+ =?utf-8?B?TWJsZUNZQlJsMlJWSmcxSlIySzNaZ0dNRnVDczhYeUlTUTY4bi9MMUdmM0t1?=
+ =?utf-8?B?VkVXRlpCTEd3PT0=?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ1PR11MB6129.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?dFFTNEhISFExejM2RElISndIRGNsOXBYdkVnUEgvMlZ4T09Ga3BlZGVLZ05o?=
+ =?utf-8?B?Y1I3MmhYYjh6cHY0UjA2VlNiL2RxbzZmWjhCSEc5QUVqUVNnMEg3T1ZiN3Bo?=
+ =?utf-8?B?M3NOUEdHalJRRXVZbTBpWWhEdXNVNVJjdWJXSmlBSmZEUmRwYTZkb25aak9B?=
+ =?utf-8?B?UDFHbEx5WlBjeExjS2x3dDMrUW4zdEcvUVdGcGdhdXNJOTNTdm5DZEMyTFA3?=
+ =?utf-8?B?ZVM4WGJmRnNqZnlwQ01QLzRST3hVZ1BmU3FqNElkNlRaUk5pTFhjTlVIMTVF?=
+ =?utf-8?B?dHM5ekNuMnQ2UkJnNy9leWtOS1IySEFML05ybXVGNUZXOVVEbTE4bllyTWNK?=
+ =?utf-8?B?dDhOcnRqUERGalM2R0cxcU1Fa0NzdmgrdzQ1UEJQSENMNkZEUGFhRUlyUU1M?=
+ =?utf-8?B?c0JyRkdMemxjZ1V4cGY4ZHhMbm0zWkFhamdlYUxCaGNzUlNJYk41dDAvdDJI?=
+ =?utf-8?B?NEZNaHpSQzJzandTenZBL0F4UWg3dXBzVFBsQzVPcVc3NWtyU3krKzlnRHpp?=
+ =?utf-8?B?VTZwS3NWODd1b25KNGMvOGkwR3BQMEw0eVlVMHdXL2pENngxRWNyUUU3MVBI?=
+ =?utf-8?B?c0phTXJ4c2FYNUQ5ZmVMUXBELzhTNUxiSStaYkV2R0RMNFBBcG01MXBLRkhv?=
+ =?utf-8?B?T3dvZ1FCcEJjOERjTlpscDZqdFVrVTAwRmdRZVB4aFkzMnJhMmV2T2doKzJH?=
+ =?utf-8?B?YjZSL2tjeVBXZmRKOThyUzlWcXppY1BnTkNOczRRd0tSYWQ0QWJuTVJ6Mlly?=
+ =?utf-8?B?cFJnc0hkQnJkdE51WVhDckJldzF6THg4Z1lMV0JtNnN6UUZScFVIQmVPaGRR?=
+ =?utf-8?B?ZDFQRzFvQVJnRXdIK0tOR2UzN3h6dDJZOXBEbnV1dkJNckJqelIyRWkrc0E0?=
+ =?utf-8?B?RzBIWHlHS2xUTXBjN1dyUCtrV1ZqUmFFUDl5bWhWYjVZNGtubStNcjNsS3dn?=
+ =?utf-8?B?dTJ3TFJVR2NKSUc4OHI5cEROcHU0cjZXVWhKVnlIU2NVM1E2dlE2QUZ1aHVw?=
+ =?utf-8?B?SzhXb0thamt2cWtKeGFFcHJDeSszVFhEVngvVmJwQ2dKNm5MeFR5VzZZNFhI?=
+ =?utf-8?B?UjYvdUE5R1FPM1FGYUxnTy9BMEx4MGMyVk1kWFVxaG1BcE55dkV6bHZib2k2?=
+ =?utf-8?B?dHo2cUFYQXBScjBFME1oK1RnYytFYk1DR3JFYXprc3llSXdwTFNnMUl1Nkp6?=
+ =?utf-8?B?SHlCYURwWmtmdzdVUkRIUTQ5dkw2YW92ZGxUVm93YzhyZmNteVFCaFN1OW1X?=
+ =?utf-8?B?ZjRVMGt1OFZrcFZZeUJ4OWdLR0hNcHdxSjZxQndmdDR6dU03ZUdBZVNFNFoz?=
+ =?utf-8?B?c2p3ZTBCc2lwL0pzdTVnRWx5RDBISWhwMWwxVXpuWVltMnJxa0VxUDE4eVJL?=
+ =?utf-8?B?OHNsY3VaZWNRaFNtTWViQitPOXorWkVJZWgxblBzS1l5VmJQd2ROQ3dJd3RN?=
+ =?utf-8?B?Z0c3aU90d2lzeTQ1ZU9icmhyaVBQNm1lZTMzbGJqME5LUjZ0UTJJSlNVZEhy?=
+ =?utf-8?B?UGVtM05qdFQyZ05NTHUzcnZpVnN6eWJzVkI2WDFUR3ZzUjBkdWdwUkRPUWp2?=
+ =?utf-8?B?SmZiWGlnUU80RTR3MHV5NmpTMEV6YXVMaWVkSStYczN5aXdkN2JXWjh1RzV6?=
+ =?utf-8?B?V25kV2FFMlR3Qnl0SFM5ZGYraThtK1RudkJLdGdCT1V3aHpVdHBVbkJOazRF?=
+ =?utf-8?B?UnNmbjlWM1hqeUVUQUFoN2w4MkdKVno1NkpKUWpFTjRHRytPVmpTQnRBc3Qw?=
+ =?utf-8?B?WE1obm05NUorL0l0REpsaU1NWGdnMWZoV1BYV0h2MVh0Y1RVY0U0KzAwOEZ2?=
+ =?utf-8?B?UnVIMHB3Z0VPU1VEeSsyYy9Tck9SMmxVb20yNVJycEpSREs1ZWYxZ1pPRDRK?=
+ =?utf-8?B?bEZVWGtVcDVndjJLeFM4cnBTRmpkamdmc3lGcFM4dHozblBOSkpVWUpYS1B1?=
+ =?utf-8?B?cTBObnBza2pRTVJzVlNVemFKa1orbERpeHQ4eloyZDEwS1pRUFg2a2U1dzhS?=
+ =?utf-8?B?RzJTdytZUHkxSUFXQ1luZTYrSWFZbFhGM3l3SnRoWWVYa05ZT2EzR2tEWEkw?=
+ =?utf-8?B?aTNvcnU4Ti91NDVNTFRXWmc1ZUl1ZmhsSk1YekdjS2dOZ0N4dzVLVEVZbFhm?=
+ =?utf-8?B?SHNiVlYyMHpsTFJFVk1BWjhQNk8rVTlibHRwdUt2Kzd1ZzRCbmp3WlBldmpS?=
+ =?utf-8?Q?LMLNEB3YnKHfImmjKJ/A/Pc=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4063490b-ce8a-4552-8bee-08de2db2f216
+X-MS-Exchange-CrossTenant-AuthSource: SJ1PR11MB6129.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Nov 2025 12:46:12.5759
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: sTrDlrfZnHKkYZ0egYDd7ocnPfKpgUq98Vk0hOsmtAk9mYTmYGYqJlA8fq7qObgZh6yLZOevslu4MGKrwVDgxncnO7SM3wKDzHm/NmbZuEs=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR11MB4588
+X-OriginatorOrg: intel.com
 
-On Fri 21-11-25 14:08:06, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
+
+
+On 11/27/2025 4:13 PM, Christian Brauner wrote:
+> I just pushed:
 > 
-> The out tag in __es_remove_extent() is just return err value, we can
-          ^^^ this should be 'label'
-
-> return it directly if something bad happens. Therefore, remove the
-> useless out tag and rename out_get_reserved to out.
-              ^^^ label
-
+> https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs-6.19.fd_prepare
 > 
-> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+> If you want to test that, please.
 
-Otherwise looks good. Feel free to add:
+aah! only the sync_file.c change you suggested was not fixing the issue. 
+But with [1] on top of linux-next, the issue is now resolved.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+It also solves another issue[2] we bisected (before I could report it to 
+you, which is never a bad thing)
 
-								Honza
+Thank you.
 
-> ---
->  fs/ext4/extents_status.c | 15 +++++++--------
->  1 file changed, 7 insertions(+), 8 deletions(-)
-> 
-> diff --git a/fs/ext4/extents_status.c b/fs/ext4/extents_status.c
-> index e04fbf10fe4f..04d56f8f6c0c 100644
-> --- a/fs/ext4/extents_status.c
-> +++ b/fs/ext4/extents_status.c
-> @@ -1434,7 +1434,7 @@ static int __es_remove_extent(struct inode *inode, ext4_lblk_t lblk,
->  	struct extent_status orig_es;
->  	ext4_lblk_t len1, len2;
->  	ext4_fsblk_t block;
-> -	int err = 0;
-> +	int err;
->  	bool count_reserved = true;
->  	struct rsvd_count rc;
->  
-> @@ -1443,9 +1443,9 @@ static int __es_remove_extent(struct inode *inode, ext4_lblk_t lblk,
->  
->  	es = __es_tree_search(&tree->root, lblk);
->  	if (!es)
-> -		goto out;
-> +		return 0;
->  	if (es->es_lblk > end)
-> -		goto out;
-> +		return 0;
->  
->  	/* Simply invalidate cache_es. */
->  	tree->cache_es = NULL;
-> @@ -1480,7 +1480,7 @@ static int __es_remove_extent(struct inode *inode, ext4_lblk_t lblk,
->  
->  				es->es_lblk = orig_es.es_lblk;
->  				es->es_len = orig_es.es_len;
-> -				goto out;
-> +				return err;
->  			}
->  		} else {
->  			es->es_lblk = end + 1;
-> @@ -1494,7 +1494,7 @@ static int __es_remove_extent(struct inode *inode, ext4_lblk_t lblk,
->  		if (count_reserved)
->  			count_rsvd(inode, orig_es.es_lblk + len1,
->  				   orig_es.es_len - len1 - len2, &orig_es, &rc);
-> -		goto out_get_reserved;
-> +		goto out;
->  	}
->  
->  	if (len1 > 0) {
-> @@ -1536,11 +1536,10 @@ static int __es_remove_extent(struct inode *inode, ext4_lblk_t lblk,
->  		}
->  	}
->  
-> -out_get_reserved:
-> +out:
->  	if (count_reserved)
->  		*reserved = get_rsvd(inode, end, es, &rc);
-> -out:
-> -	return err;
-> +	return 0;
->  }
->  
->  /*
-> -- 
-> 2.46.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+[1] 
+https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/commit/?h=vfs-6.19.fd_prepare&id=bf44cb6382f90fbda2eeae67065dc9401a967485
+[2] 
+https://intel-gfx-ci.01.org/tree/linux-next/next-20251125/bat-mtlp-8/igt@core_hotunplug@unbind-rebind.html
+
+==
+Chaitanya
+
+
+
+
 
