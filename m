@@ -1,100 +1,108 @@
-Return-Path: <linux-fsdevel+bounces-69988-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69989-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 403BBC8D6CF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 10:00:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D6CCC8D83A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 10:24:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2A2474E32C7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 09:00:38 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A3B9E4E6751
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 09:24:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB53F3218B2;
-	Thu, 27 Nov 2025 09:00:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 063D0253F05;
+	Thu, 27 Nov 2025 09:24:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y9tMajOn"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Gid/SW5K"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C80D19F12A;
-	Thu, 27 Nov 2025 09:00:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD99D328B7B;
+	Thu, 27 Nov 2025 09:24:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764234031; cv=none; b=oKYiqrsaHvQYfqPtrjbHC4M2LjJLEKvHo9YHcdwOnMGcFfO90gVA/N8Qqe/t0uwz3LcGisDZUMLbxYRSBFr0Jd1zB+ei8TaucSR5NTvfYPcg/DUnOkrjQRgsbYRL4MNK6PV0NjgrrsfdlbxlbED0WVupiDe+WCNXJRWrNQe2cyo=
+	t=1764235456; cv=none; b=NT/szPygN5wawt7uNStS/4h7aumFnK1R+ddd+XzonenX6A5Nu/D2oI5wmkNXg7NmmR8zhGkzxeZV3JnWqk5tCmZaKdpSB76lwlfXJgSFpPK8EyDZwNxjQG0nqfGcgWwkrxBaSHx77S9+rXErz7P5lxvSbaUjj4J4SjmPkhd/vck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764234031; c=relaxed/simple;
-	bh=bpSipelR/1YEqlqcLMWKFUqZSg9SEz1NShBJ4JR62oY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VXifd9S86WG6qsNwYUyJa4RRyJAzYqYqUax3SOEm21jTUIOzlIrSOg/IoGx0Ntsv5ugY3xmCYhl3eHqrkQwrEPdZLQbj7e79GMSQ8uiC18Wpndm64DvnDnafwWU5gjHLlw0aMDozE/P+AtOFup/6MJu1eMZk6nbOm+/l3EbIC9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y9tMajOn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EA04C4CEF8;
-	Thu, 27 Nov 2025 09:00:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764234030;
-	bh=bpSipelR/1YEqlqcLMWKFUqZSg9SEz1NShBJ4JR62oY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Y9tMajOnARIfwiayf33J9setDujAzYjAVd615z7s4Qn/JUiK7vz+uPfz+pR8q2o7j
-	 NCQ8REIZo7tBKaks8df7o8lhI/4g9pRxLm+oHwOUu/CSkKhZA4atuiUbf6prUo5U1Q
-	 4UUlQ3sgaD9oD76qFeLeYvO1Gipm4JIQsW7XFzbazPizEcN+Rv8EO2bkl/3NE5udKP
-	 +TiBjP/TZfdMHKTmmHU/fIlpI6oSH1kIWahHtu9XvnhyOOv5UhFU8hYM3y8RNGopRZ
-	 gDMFZMMPBpE8LWwfy6MwAJ7MPX980uWH1lYnyqKbWHAcpoTSGIGSIpXI8xHyWEimD3
-	 BCHdcJ5xB9unw==
-From: Christian Brauner <brauner@kernel.org>
-To: linux-fsdevel@vger.kernel.org,
-	Stefan Hajnoczi <stefanha@redhat.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	German Maglione <gmaglione@redhat.com>,
-	linux-kernel@vger.kernel.org,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
-	Vivek Goyal <vgoyal@redhat.com>,
-	virtualization@lists.linux.dev
-Subject: Re: [PATCH] MAINTAINERS: add German Maglione as virtiofs co-maintainer
-Date: Thu, 27 Nov 2025 10:00:24 +0100
-Message-ID: <20251127-neigung-sofern-3b179c7bcf5f@brauner>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251126211548.598469-1-stefanha@redhat.com>
-References: <20251126211548.598469-1-stefanha@redhat.com>
+	s=arc-20240116; t=1764235456; c=relaxed/simple;
+	bh=TGD2mBSI2Nm525yY965kECMgewcZU2Vn20LzBqfECL8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hyx4evoZgOtmZgc2lDNC3JxUMiIzdzHKWv/jjvRCFKocbwkqr4Ky0zT2naXeIYJ4Ch+EpXH6R6qHL4erGxod67DsnYt/Wv+xcf4dD9j/PTehPwrHTRJTS08DL/27P2N81sSHt13Gy7/CdM1P0pTk0nw9ccO8BhijrfHg2pZMzSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Gid/SW5K; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1764235455; x=1795771455;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=TGD2mBSI2Nm525yY965kECMgewcZU2Vn20LzBqfECL8=;
+  b=Gid/SW5K4Ahe2t3LppZIur1yOgeZOFT2/VGA1EhOrvUe3KzwZzhJErEX
+   WtaTRAbJih7idinGe3ZOMplpSUy02bGjIu85ZXbJB1L7unWveUwXFnKw0
+   b3E1uQLn0a+HpSe/NswpugE4kq2SH1RhUPRFFs9l1qWlp6XgycmNsZ/By
+   Wv8UaVcJiUfELmAM4qeYhIUMLmIMFF8H4nqsU67ujdxa4u8yavu2HE01+
+   xkzKA9PDsoCx+F9uAzr2t9NYApxxIXlY7rbImJN4Sqfvr+TitZ6dN+nVB
+   IECWMkWrN2BWjvrykB8GDPWwFIxVkXlsGsqB1V+RIUIaS/UbRoIKjr8go
+   g==;
+X-CSE-ConnectionGUID: y9ECDumcTRG7U5SLGj/6LQ==
+X-CSE-MsgGUID: KGvqSI2oQwuh1U7X2z3PUQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11625"; a="66226336"
+X-IronPort-AV: E=Sophos;i="6.20,230,1758610800"; 
+   d="scan'208";a="66226336"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Nov 2025 01:24:13 -0800
+X-CSE-ConnectionGUID: FmZim8WuRQWylPHqkM42lg==
+X-CSE-MsgGUID: Pfg9esApRR+Pu2HVOvZauQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.20,230,1758610800"; 
+   d="scan'208";a="223888045"
+Received: from jsokolow-alderlakeclientplatform.igk.intel.com ([172.28.176.71])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Nov 2025 01:24:11 -0800
+From: Jan Sokolowski <jan.sokolowski@intel.com>
+To: linux-kernel@vger.kernel.org
+Cc: Jan Sokolowski <jan.sokolowski@intel.com>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: [RFC PATCH 0/1] IDR fix for potential id mismatch
+Date: Thu, 27 Nov 2025 10:27:31 +0100
+Message-ID: <20251127092732.684959-1-jan.sokolowski@intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1337; i=brauner@kernel.org; h=from:subject:message-id; bh=bpSipelR/1YEqlqcLMWKFUqZSg9SEz1NShBJ4JR62oY=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWRqCGtylYmKH9oWkWDhZHRCzVi5O4P50M8oa9MlejcOK 37aYNPZUcrCIMbFICumyOLQbhIut5ynYrNRpgbMHFYmkCEMXJwCMJGLhowMsz/xHdYx+BVv94Rh Z+3OBSUT5vZdLLl/6N2j5evN3l08ZcjwP7DaINZzfuG1lU78Liv/Lv4gUf9xkuRykzcpi357ZUt cYQUA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On Wed, 26 Nov 2025 16:15:48 -0500, Stefan Hajnoczi wrote:
-> German Maglione is a co-maintainer of the virtiofsd userspace device
-> implementation (https://gitlab.com/virtio-fs/virtiofsd) and is currently
-> one of the most active virtiofs developers outside the kernel.
-> 
-> I have not worked on virtiofs except to review kernel patches for a few
-> years now and would like German to take over from me gradually. It is
-> healthier to have a kernel maintainer who is actively involved. I expect
-> to remove myself in a few months.
-> 
-> [...]
+When debugging an issue found in drm subsystem (link to the
+discussion in Link tag), a bug was found in idr library
+where requesting id in range would return id outside
+requested range. Didn't see in documentation that this is how
+idr should behave.
 
-Applied to the vfs-6.19.misc branch of the vfs/vfs.git tree.
-Patches in the vfs-6.19.misc branch should appear in linux-next soon.
+This is an RFC as this library is deprecated but still in use by other
+subsystems. Is this fix proper?
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+Link: https://lists.freedesktop.org/archives/dri-devel/2025-November/538294.html
+Cc: "Christian König" <christian.koenig@amd.com>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+---
+Jan Sokolowski (1):
+  idr: do not create idr if new id would be outside given range
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+ lib/idr.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.19.misc
+-- 
+2.43.0
 
-[1/1] MAINTAINERS: add German Maglione as virtiofs co-maintainer
-      https://git.kernel.org/vfs/vfs/c/ebf853897910
 
