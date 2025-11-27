@@ -1,257 +1,182 @@
-Return-Path: <linux-fsdevel+bounces-70023-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70024-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D359C8E88A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 14:42:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F3A2C8E8ED
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 14:46:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4752C4E9855
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 13:42:08 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A1EC44E7F4F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 13:46:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 607203112BB;
-	Thu, 27 Nov 2025 13:41:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D653E2417DE;
+	Thu, 27 Nov 2025 13:46:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Yg+7Sr38";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="q7Y6jXw9";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="L3NlCFbo";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="8l5kt0Cq"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="USmr4w2h";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="oWcDJG6v"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E69D828751A
-	for <linux-fsdevel@vger.kernel.org>; Thu, 27 Nov 2025 13:41:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69F901EB1A4
+	for <linux-fsdevel@vger.kernel.org>; Thu, 27 Nov 2025 13:46:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764250917; cv=none; b=b1aL7oqdEyzTR4M7BbztBjZ/AKbIrvcfeCykVNZZQkMH+B3O9MNq6jtreJxKMu6Dt/l7Atj2vBdFuJXpgah8sibfLI2iuiXZBKsdAgmMktUzSNNajPoSN5Vmkvv28ONXa6sLoQSTTcjJL/rdlmE8noSRun1OgV6ndCugt8DNMYY=
+	t=1764251201; cv=none; b=phbFY8DJM0lbJpZg7yZYJCrBos7mNZtR6138D/LFkHKkf9/laEflzJM30V1C/97nfJVFJg1YYZo+XLMBdPiL5rVW0GgH5H8wvCM6TEEaFe0rv26Z891rjLPcIYBx7Oua4bb8o/ep313smpKPj8lQ/OE+pHAsG6l8MADxZHP25xQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764250917; c=relaxed/simple;
-	bh=MV0BHOeJD1L99W9asreQpa3ve7FjZn3Vylmvo2Ruwy8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PZsHp9k/dD6PacniARuNBWfese0mmSRhO3taWg992YK5117YG9YfLgnKxmk/oBbYtNccO6mB53HCzuCpZak3Rsf+OkjBHvMlb2CaU/guT2NDXa3q6JAyxR+1CWvH5ZLN1hyJzqq6G4YgkdJhXvRyYWTcKCrhgzHSZS+dy/QC1zo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Yg+7Sr38; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=q7Y6jXw9; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=L3NlCFbo; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=8l5kt0Cq; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id DDE733375B;
-	Thu, 27 Nov 2025 13:41:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1764250913; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RWTy6t6wvXbyh+PU3U976/oTq3zWWZcLnVQY8EQMt7g=;
-	b=Yg+7Sr38INtU8YEl9cQqwWnfeGVaTEaokPG/3qBfloVpQ2IXxyFrkJ38ZxtX43dFBLxUKj
-	rwYeN/NR+bZCS/bw5hn6D4fQgqhTbdVZ5ID2rXSUDqZxyy1zmEqHjdMCXlekOlO0x7qwTl
-	FKroev8CPQZcqlH+MqvvWWMjTDr8uwk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1764250913;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RWTy6t6wvXbyh+PU3U976/oTq3zWWZcLnVQY8EQMt7g=;
-	b=q7Y6jXw9HXC3u30gFuDYLb3u1055Ub8808itChpGW3a2Kbpy36K8+jmoJr0U4nmpPo/nzJ
-	Wt0wGLqvqv1NLrBg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=L3NlCFbo;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=8l5kt0Cq
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1764250912; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RWTy6t6wvXbyh+PU3U976/oTq3zWWZcLnVQY8EQMt7g=;
-	b=L3NlCFbocKqP3h+719e5YR8TdMZg9gA+5yQ9Ymzni6zzTtQ1uLqOMtGb5jBwHUyo/zwjxD
-	lAa1jSx1BpixC5qhHOvG8XNpmTdFKFKkKDmJqiLqDAxu8luLNK3uF8pIS41BQuUHX/wf9d
-	Ns0GEroIYI8nxIQnKnLPOUau4e71XIA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1764250912;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RWTy6t6wvXbyh+PU3U976/oTq3zWWZcLnVQY8EQMt7g=;
-	b=8l5kt0CqgavzA7YL9ADXla8JR0voVMTGhAuUSd9sXH/tFIgBlNl7NkJp0xWK4NAQh+syPA
-	3naSFKOd7aSk+WBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C601A3EA63;
-	Thu, 27 Nov 2025 13:41:52 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id h+1QMCBVKGkSWwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 27 Nov 2025 13:41:52 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 33C0CA0C94; Thu, 27 Nov 2025 14:41:52 +0100 (CET)
-Date: Thu, 27 Nov 2025 14:41:52 +0100
-From: Jan Kara <jack@suse.cz>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz, 
-	yi.zhang@huawei.com, yizhang089@gmail.com, libaokun1@huawei.com, yangerkun@huawei.com
-Subject: Re: [PATCH v2 03/13] ext4: don't zero the entire extent if
- EXT4_EXT_DATA_PARTIAL_VALID1
-Message-ID: <yro4hwpttmy6e2zspvwjfdbpej6qvhlqjvlr5kp3nwffqgcnfd@z6qual55zhfq>
-References: <20251121060811.1685783-1-yi.zhang@huaweicloud.com>
- <20251121060811.1685783-4-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1764251201; c=relaxed/simple;
+	bh=5dipwLKkDiBsRMZLfhAnVuPcmN43TKBFde0jxNTHluk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jhiRGYj5U0vJ5GjheDoBgF8szI4Elt8gmNxmBdZ/1Te9gFJBBA0sPaDi54GzRUZvr0nYWB2YPPlTEUVjxIoDFK3IJ4cts9iH3yJJTmsyJ5qN5JxMpPx8c4pfZ1K6ksOmy43SRSzmNMSBYyhzsscYW6YbsEbRy0LVTtG8+W7ue7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=USmr4w2h; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=oWcDJG6v; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1764251197;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=qG4JU08EewP6ExK6olKFMFYTlaVeyVu1KHFPXyo0UwU=;
+	b=USmr4w2h9XKboM4jJq17UzoNvm3jvtgqx0T0IANMCxMAmuftuDE3U/lA2/Dlp+Kp1T3Rwt
+	sVrxBrXdop4lOpIl1FzCuyzgfnJs+m8tkypmwUCDlA3e3ZvYotiLkNpmMotTSF9548P3IV
+	kyiDYvshKQzxcH0M0arV6ERhTgaSUFk=
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
+ [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-269-7rTpmRLeMdm24hjvot0sSg-1; Thu, 27 Nov 2025 08:46:36 -0500
+X-MC-Unique: 7rTpmRLeMdm24hjvot0sSg-1
+X-Mimecast-MFC-AGG-ID: 7rTpmRLeMdm24hjvot0sSg_1764251195
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-88236279bd9so19373236d6.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Nov 2025 05:46:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1764251195; x=1764855995; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qG4JU08EewP6ExK6olKFMFYTlaVeyVu1KHFPXyo0UwU=;
+        b=oWcDJG6vQFHrTODJINMCOmXEApu3KuFGXkqw6qoVQg5bILzCJdfMWgBUrv6JO/C5Xi
+         m9/ORPElBPQwNAgyXu7+JNCMHkXyZks2Y8+PXeKDJECrgEvIWhlaTHea9MFxFbWQgfgY
+         c3iUloH9kIOkQ7SEZnp5M3Aqpzp2bAcDe5DYwf+3+L4MDp7XJJL4BOFP7qTT1O4+X464
+         TZm3KabrlBWLJkMQz2+iK+t1PyjMXfJD7OviH4isjJvddHsoh39P9voiuUqTh0kT6sth
+         LKJdF7IGfWuXsKDz68AG2y1PFzKcg4mzQ3eAZJp1ZGExARkSGuKs40v2BbAwJxfBIIpG
+         cIWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764251195; x=1764855995;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qG4JU08EewP6ExK6olKFMFYTlaVeyVu1KHFPXyo0UwU=;
+        b=pE0VEnTLMAQq9BUDBKn9IvFzToKGy2Vh3fc4H4IZMJ0x+0n0cBYRh7cGCLzlpgDzTO
+         3vhm6Vh5zqWsi/2sZDfBaZiQz43tSYLv3wlJP1YCJ+4NNKQuCL6DbtSiJkp1a0qUOPsl
+         bfJUon2+3p3OHuBsGp+0tHwg8vfreRFGfl1r5T7IcgmzGhQnECEFQklNSaAOna2ORNmI
+         CY36LnhhnnvKSOVWGkFQ7y8ExJ4C9u+s1yYasiFAOT2of033UuX0h5LQ6Ah7teDshKzk
+         b5FDWGIyPa/dayiswT4N0jU8lU3lhS+G9uPAMlZIDb3Fxl2EBg7OAGIQOxWCAuYBqJFh
+         ZyIg==
+X-Forwarded-Encrypted: i=1; AJvYcCUaIJ0+WGQ7cODUbuflrKQ/HYxmHn6oLv/LA8vmCgCDDKVNzzqSZMvMo4Qga6lOPxJAMhRobGS4AYfnnaOp@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfaC6GljOc1ALRiXELxznGkz/p7dtzqHAw6w/UBF4ez1NqcR5X
+	aVT1oYNAeHMyOHsXbwFS6eESEuSn/Q1tF6UQ8jM83qegxjsZjJi/pBIm1rd9iQx1V4b0Od/aOFq
+	8c00ghz3lmF8Rp+1ZKqHyEqcoXtJ8WwllxblJ7lkwKKxWxxsPSsoYJ8cDuTyIGyuVLrE=
+X-Gm-Gg: ASbGncsbgWGYs4PvDPheN06hTCwhVgeBwgF2aNGwYBH5C2Z6MshCLvgoKbwqfP6hI+D
+	wPiLej+Y/KrxbFpttw9Acd+x4BDzh9Nj85xG0faoeuTsLcgTyjWMAd2QadRJyIlXIXAYckGoIJo
+	QT6tbbuPkaMbE+YhByw40ht3Zb1CSD7W3YUkWavOcx7tvJHvScUlp3uhlnsupKb/246tJXb5Uv/
+	P4swDh183yOvcX5brT69eMNRtj/+4Z1Ox2DPsHU2NrrIQJPbN+71yTgWmpcMgT3Rc9gUVhHOJEb
+	yDlhKwVsIhDNJRKjrNCUVC49hFCJ/El0ea6wkDOEO4xMO9wH9msX0pVzGDpSUH60SE1tn8HMCGV
+	9aOOlu1rlLm6jDFpQ2G0Bf4K3VOn5bLhtYKPKBjRKcOM=
+X-Received: by 2002:a05:6214:4a92:b0:880:5042:e38c with SMTP id 6a1803df08f44-8847c489835mr334184136d6.2.1764251195603;
+        Thu, 27 Nov 2025 05:46:35 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHqWeHXCjb/kCGdMUdI6ewfC9LvuQ759Fj3jgY7OAEH5ltonEXOAax4cuy5Kt1MRIRZFCCJbQ==
+X-Received: by 2002:a05:6214:4a92:b0:880:5042:e38c with SMTP id 6a1803df08f44-8847c489835mr334183756d6.2.1764251195230;
+        Thu, 27 Nov 2025 05:46:35 -0800 (PST)
+Received: from cluster.. (4f.55.790d.ip4.static.sl-reverse.com. [13.121.85.79])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-886524fd33fsm9932946d6.24.2025.11.27.05.46.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Nov 2025 05:46:34 -0800 (PST)
+From: Alex Markuze <amarkuze@redhat.com>
+To: ceph-devel@vger.kernel.org
+Cc: idryomov@gmail.com,
+	linux-fsdevel@vger.kernel.org,
+	amarkuze@redhat.com,
+	vdubeyko@redhat.com
+Subject: [PATCH 0/3] ceph: add subvolume metrics reporting support
+Date: Thu, 27 Nov 2025 13:46:17 +0000
+Message-Id: <20251127134620.2035796-1-amarkuze@redhat.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251121060811.1685783-4-yi.zhang@huaweicloud.com>
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,mit.edu,dilger.ca,suse.cz,huawei.com,gmail.com];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[huawei.com:email,suse.cz:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Spam-Level: 
-X-Spam-Score: -4.01
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: DDE733375B
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
+Content-Transfer-Encoding: 8bit
 
-On Fri 21-11-25 14:08:01, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
-> 
-> When allocating initialized blocks from a large unwritten extent, or
-> when splitting an unwritten extent during end I/O and converting it to
-> initialized, there is currently a potential issue of stale data if the
-> extent needs to be split in the middle.
-> 
->        0  A      B  N
->        [UUUUUUUUUUUU]    U: unwritten extent
->        [--DDDDDDDD--]    D: valid data
->           |<-  ->| ----> this range needs to be initialized
-> 
-> ext4_split_extent() first try to split this extent at B with
-> EXT4_EXT_DATA_ENTIRE_VALID1 and EXT4_EXT_MAY_ZEROOUT flag set, but
-> ext4_split_extent_at() failed to split this extent due to temporary lack
-> of space. It zeroout B to N and mark the entire extent from 0 to N
-> as written.
-> 
->        0  A      B  N
->        [WWWWWWWWWWWW]    W: written extent
->        [SSDDDDDDDDZZ]    Z: zeroed, S: stale data
-> 
-> ext4_split_extent() then try to split this extent at A with
-> EXT4_EXT_DATA_VALID2 flag set. This time, it split successfully and left
-> a stale written extent from 0 to A.
-> 
->        0  A      B   N
->        [WW|WWWWWWWWWW]
->        [SS|DDDDDDDDZZ]
-> 
-> Fix this by pass EXT4_EXT_DATA_PARTIAL_VALID1 to ext4_split_extent_at()
-> when splitting at B, don't convert the entire extent to written and left
-> it as unwritten after zeroing out B to N. The remaining work is just
-> like the standard two-part split. ext4_split_extent() will pass the
-> EXT4_EXT_DATA_VALID2 flag when it calls ext4_split_extent_at() for the
-> second time, allowing it to properly handle the split. If the split is
-> successful, it will keep extent from 0 to A as unwritten.
-> 
-> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+This patch series adds support for per-subvolume I/O metrics collection
+and reporting to the MDS. This enables administrators to monitor I/O
+patterns at the subvolume granularity, which is useful for multi-tenant
+CephFS deployments where different subvolumes may be allocated to
+different users or applications.
 
-Good catch on the data exposure issue! First I'd like to discuss whether
-there isn't a way to fix these problems in a way that doesn't make the
-already complex code even more complex. My observation is that
-EXT4_EXT_MAY_ZEROOUT is only set in ext4_ext_convert_to_initialized() and
-in ext4_split_convert_extents() which both call ext4_split_extent(). The
-actual extent zeroing happens in ext4_split_extent_at() and in
-ext4_ext_convert_to_initialized(). I think the code would be much clearer
-if we just centralized all the zeroing in ext4_split_extent(). At that
-place the situation is actually pretty simple:
+The implementation requires protocol changes to receive the subvolume_id
+from the MDS (InodeStat v9), and introduces a new metrics type
+(CLIENT_METRIC_TYPE_SUBVOLUME_METRICS) for reporting aggregated I/O
+statistics back to the MDS.
 
-1) 'ex' is unwritten, 'map' describes part with already written data which
-we want to convert to initialized (generally IO completion situation) => we
-can zero out boundaries if they are smaller than max_zeroout or if extent
-split fails.
+Patch 1 adds forward-compatible handling for InodeStat v8. The MDS v8
+encoding added a versioned optmetadata field containing optional inode
+metadata such as charmap (for case-insensitive/case-preserving file
+systems). The kernel client does not currently support case-insensitive
+lookups, so this field is skipped rather than parsed. This ensures
+forward compatibility with newer MDS servers without requiring the
+full case-insensitivity feature implementation.
 
-2) 'ex' is unwritten, 'map' describes part we are preparing for write (IO
-submission) => the split is opportunistic here, if we cannot split due to
-ENOSPC, just go on and deal with it at IO completion time. No zeroing
-needed.
+Patch 2 adds support for parsing the subvolume_id field from InodeStat
+v9 and storing it in the inode structure for later use.
 
-3) 'ex' is written, 'map' describes part that should be converted to
-unwritten => we can zero out the 'map' part if smaller than max_zeroout or
-if extent split fails.
+Patch 3 adds the complete subvolume metrics infrastructure:
+- CEPHFS_FEATURE_SUBVOLUME_METRICS feature flag for MDS negotiation
+- Red-black tree based metrics tracker for efficient per-subvolume
+  aggregation
+- Wire format encoding matching the MDS C++ AggregatedIOMetrics struct
+- Integration with the existing CLIENT_METRICS message
+- Recording of I/O operations from file read/write and writeback paths
+- Debugfs interfaces for monitoring
 
-This should all result in a relatively straightforward code where we can
-distinguish the three cases based on 'ex' and passed flags, we should be
-able to drop the 'EXT4_EXT_DATA_VALID*' flags and logic (possibly we could
-drop the 'split_flag' argument of ext4_split_extent() altogether), and fix
-the data exposure issues at the same time. What do you think? Am I missing
-some case?
+Metrics tracked per subvolume include:
+- Read/write operation counts
+- Read/write byte counts
+- Read/write latency sums (for average calculation)
 
-								Honza
+The metrics are periodically sent to the MDS as part of the existing
+metrics reporting infrastructure when the MDS advertises support for
+the SUBVOLUME_METRICS feature.
 
-> ---
->  fs/ext4/extents.c | 11 ++++++++++-
->  1 file changed, 10 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
-> index f7aa497e5d6c..cafe66cb562f 100644
-> --- a/fs/ext4/extents.c
-> +++ b/fs/ext4/extents.c
-> @@ -3294,6 +3294,13 @@ static struct ext4_ext_path *ext4_split_extent_at(handle_t *handle,
->  		err = ext4_ext_zeroout(inode, &zero_ex);
->  		if (err)
->  			goto fix_extent_len;
-> +		/*
-> +		 * The first half contains partially valid data, the splitting
-> +		 * of this extent has not been completed, fix extent length
-> +		 * and ext4_split_extent() split will the first half again.
-> +		 */
-> +		if (split_flag & EXT4_EXT_DATA_PARTIAL_VALID1)
-> +			goto fix_extent_len;
->  
->  		/* update the extent length and mark as initialized */
->  		ex->ee_len = cpu_to_le16(ee_len);
-> @@ -3364,7 +3371,9 @@ static struct ext4_ext_path *ext4_split_extent(handle_t *handle,
->  			split_flag1 |= EXT4_EXT_MARK_UNWRIT1 |
->  				       EXT4_EXT_MARK_UNWRIT2;
->  		if (split_flag & EXT4_EXT_DATA_VALID2)
-> -			split_flag1 |= EXT4_EXT_DATA_ENTIRE_VALID1;
-> +			split_flag1 |= map->m_lblk > ee_block ?
-> +				       EXT4_EXT_DATA_PARTIAL_VALID1 :
-> +				       EXT4_EXT_DATA_ENTIRE_VALID1;
->  		path = ext4_split_extent_at(handle, inode, path,
->  				map->m_lblk + map->m_len, split_flag1, flags1);
->  		if (IS_ERR(path))
-> -- 
-> 2.46.1
-> 
+Debugfs additions in Patch 3:
+- metrics/subvolumes: displays last sent and pending subvolume metrics
+- metrics/metric_features: displays MDS session feature negotiation
+  status, showing which metric-related features are enabled (including
+  METRIC_COLLECT and SUBVOLUME_METRICS)
+
+Alex Markuze (3):
+  ceph: handle InodeStat v8 versioned field in reply parsing
+  ceph: parse subvolume_id from InodeStat v9 and store in inode
+  ceph: add subvolume metrics collection and reporting
+
+ fs/ceph/Makefile            |   2 +-
+ fs/ceph/addr.c              |  10 +
+ fs/ceph/debugfs.c           | 153 ++++++++++++++
+ fs/ceph/file.c              |  58 ++++-
+ fs/ceph/inode.c             |  19 ++
+ fs/ceph/mds_client.c        |  89 ++++++--
+ fs/ceph/mds_client.h        |  14 +-
+ fs/ceph/metric.c            | 172 ++++++++++++++-
+ fs/ceph/metric.h            |  27 ++-
+ fs/ceph/subvolume_metrics.c | 407 ++++++++++++++++++++++++++++++++++++
+ fs/ceph/subvolume_metrics.h |  68 ++++++
+ fs/ceph/super.c             |   1 +
+ fs/ceph/super.h             |   3 +
+ 13 files changed, 997 insertions(+), 26 deletions(-)
+ create mode 100644 fs/ceph/subvolume_metrics.c
+ create mode 100644 fs/ceph/subvolume_metrics.h
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.34.1
+
 
