@@ -1,182 +1,146 @@
-Return-Path: <linux-fsdevel+bounces-70017-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70018-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7C56C8E612
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 14:12:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 915DBC8E649
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 14:16:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AD27F4E638F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 13:12:20 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6D3014E88BA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 13:15:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F098C25A2C6;
-	Thu, 27 Nov 2025 13:12:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 242D5239581;
+	Thu, 27 Nov 2025 13:15:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HsbKnSTO"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ECx58Eh5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9A0422F74D
-	for <linux-fsdevel@vger.kernel.org>; Thu, 27 Nov 2025 13:12:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D197C2144C7
+	for <linux-fsdevel@vger.kernel.org>; Thu, 27 Nov 2025 13:15:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764249134; cv=none; b=hMj5cNxvjPFgKT+6OKhyMNq+2zmNAM3TVF5LiFuTiW1ETfF5VFSRIEiFndI6IAiBbPnXal0FY2zlr1vzG7CRd8US1nyBUp/QB73Bwf1s9l8wIWEgeBvlVFZ6hsm6lZ/kQg2xRaFGr+Jvec2+6WFUur3Fz8eo1BSpt96K8cnzOGg=
+	t=1764249333; cv=none; b=S9K0CXte53wL2oQTq4EYGxZlUK7vuIPrl3CPedhg6XkAD39DVriZhXPJINVmyNLbCnKlKfCR4dyD+nd1C15RZ7JWF2bV4gclr+ZU2dgvfnCeiQpZHHczQr4H1cqu8Ox4x891jKG3EBMkHGbusyjoeZ4IMqNcE6aMDk4yDuHo5Ok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764249134; c=relaxed/simple;
-	bh=lNqxHXcUth33TG9lYBjfpjY9dusk00l25lAi5+q1QCA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=G4BOM7tK4z8gGpZBWxJoSUZfeHaTLJPaLYQ3csTLQShIlPnsx7Vs3tAooMcbplN2U3iKFLbVdA9UPwDj7uO6moub1hwblU3blYITgxgeR6kTla5ocAzsvz8SQYanvW/Tsd5OwV/oDBwsGqZgbaWxD0oTzY7TSdH4FYm6OmLNASA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HsbKnSTO; arc=none smtp.client-ip=209.85.208.53
+	s=arc-20240116; t=1764249333; c=relaxed/simple;
+	bh=NhxLz/AEP33wGpx1J5GIWfydpq2C0Alpu/x1FSI4C9M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TAV858mj1h53QRctzw6Wb/bH42r+ruIwjmq18V0sUl3ZoADfrGFZiHs0fPkUIfKgPumL2syij50DdPRr0NcuoiVl+pM0XIemfNSlqkJuhcvPBq7F9/RiV7yHIguqqqu2Jv7h+oAsUFSThHXqOtA1TLWbs+pcJSQWng/jIOggso0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ECx58Eh5; arc=none smtp.client-ip=209.85.218.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-6419aaced59so1353932a12.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Nov 2025 05:12:12 -0800 (PST)
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-b7291af7190so134888566b.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Nov 2025 05:15:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1764249131; x=1764853931; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cj/XAPLEM8u0Ig+KySlVUv6bTCtgB0YfUe8Zvz1U7ZI=;
-        b=HsbKnSTOcmJf/pq5AWdOGTNzaHi54navAhf3DuO+YI+MaQOYmOSlzCxMx15M96K1q9
-         J4sBHy3n6NXvPg1nsDZNNdL68bFp1oM+YoIjkol0rFXoDcQ0e90/w4tXEnqKz7PfysIi
-         5/evKU6kA8LAVkGAy8NK57QHpy6Bg2YQMW/0/tL1m57HvZ6ZBFe5OeCDfRskCvdlGQwY
-         QjTc3WY27AacdHOtDmxFGi30qsVEdUHCwW7j0z8N3xiDehPzoJoDJ6zRmt8QQZg0lVT7
-         Ubgh62QaqRTDnOZ/3Ih1BmTz8u18jTmXxCz6SuvqbK+hCfPn32SIj0N88NV0xAgvyCJ0
-         XzJQ==
+        d=gmail.com; s=20230601; t=1764249330; x=1764854130; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tRUSB+8z0GMLMvxEZa0ALdOwVMKFqCZ7bv5e3MQ2iRw=;
+        b=ECx58Eh5wtDKUS7q3DweN0tKtuPYe0aieOwsz5hOIYSiSfqW63xq3owaTsZG6tLYcs
+         XY+hQko94evawkQ+N8mfCLpPggBC/efE/pMGwhfdkAVwp8dPC/JVJveTq6f+4I76d5ab
+         x4PQb4fpGdPv5GEDRbxCHHJ9mIAoZ7zugSZTbfWm944TXQVxv1PC8uHRiHMf8uj2dz54
+         p0r+6Nmw8sPpS+HX5H9KmquETJCoN/GS8auhcOhbG4V2txYFbda+mG/27ra63Z8Zbr9y
+         vWgT4nwEpM3s2ijRQtp/OKaGb8/Gfg+64XwsNW9UJD5EXmAhE3p/+BdzDXw/8XLCty+b
+         uWew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764249131; x=1764853931;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=cj/XAPLEM8u0Ig+KySlVUv6bTCtgB0YfUe8Zvz1U7ZI=;
-        b=HYB/FYq3Wt7AdWWw2l+5wPGJ1cRWNfOJour2FUDoOMWt1n6w8me/k8OMcYAu/1OKUo
-         99yWNMWdcboC0uBNK7Q8Qu7x2tN5wPFHe1JPuVyIne1ozQge9yxApUZCTN5ck4+ebS3P
-         UipB34OUPDPyiCNI4Fr0hp2XaJRATX3/lMdXfkDuVnPA3mt0RlSmwLwjmkNShuz/nkX8
-         RlvWbpPGHNBQmtXn1cnqgJ8Or80H0yG1gFulvnboCCiGfLM+SEfi87zDatO/uwEgJyGH
-         EOZ458z/ehco6HKocCbtQEinr9oKmwzlqYh6ibvAPms5MJl+kCpT0f5tpjNxhEqJh2tw
-         tLBg==
-X-Forwarded-Encrypted: i=1; AJvYcCU1eJEUuTpDP9KzIuMW8fIxpB+sy9RixTCuhIuuKJQIrxhghpdBLEJpi5bSDKLYbPu+ALcrcURnPTJrL8s5@vger.kernel.org
-X-Gm-Message-State: AOJu0YwStg3/btzi125g+AXToyeDhvs8BBFglaZYoaJlah01c4d0F+Mt
-	rY8lregIu5FU98BWJ1LxZrOWAIbsDbfSkcAsp0/Je3p1vikcNnzv3I0XT5rsX9nsdOLp5YZUZuz
-	KVtLrhhAcWB2bcSiM9APB8tvCJ4MDgWk=
-X-Gm-Gg: ASbGncsI5aPx9kPQZR9o3GIA5NJArBqJhnmay62t9deB85SxsGrubTbxDiF9O6gdsPJ
-	1i18kW7ST9bajwlvaOr62tli8VxuYSDpSLBLphg3a6SwfVuyR+ThTk91L09ni+xKlAGv5XKhIM2
-	CeUHBBCEc8+xP25Yrf3ZnSK49dYgnPjLIp2ucw0J1RlZthUeEtdREbphDeCzCBlrwV5PVHyUcKA
-	XydN9Yh2y9bz2mqaqeHIokttSedg2LwwzCFNR9xefrCNyBl8KM6jvUYcAoSudHZe3/cyCaSLu44
-	1cfGw6InzTMujHzsYADm+GR1TmQ=
-X-Google-Smtp-Source: AGHT+IFYkbL0VYgSHDbvuEJfOhI/obu/02EjCS++JDjYWQCsfJgIMmmYuvX6a7dMMoi99gtAL4UqUr2e+3JXMhH24wY=
-X-Received: by 2002:a05:6402:1e8a:b0:63c:690d:6a46 with SMTP id
- 4fb4d7f45d1cf-6455445989cmr21428153a12.13.1764249130405; Thu, 27 Nov 2025
- 05:12:10 -0800 (PST)
+        d=1e100.net; s=20230601; t=1764249330; x=1764854130;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tRUSB+8z0GMLMvxEZa0ALdOwVMKFqCZ7bv5e3MQ2iRw=;
+        b=R9JLZf+0ExB6y26IWQNtOW7xoHcRMh4+a7Of+dQHwRUIoLyPlnBzAat0y/sD5d59Qx
+         L+HGitJ9NSHOPQoDDra3zJ7EHcGFaQoOu5RxPmpLKU7YFEmeaoJQDxnfywSn7t9UTBjV
+         SfmoPfhqHjkKG0SM6IOc0B70Oo/i9oHWyGMFmBRn+mA6+PaRT6RrF8Ok3dEevL5JThJR
+         yCXMMRcnl2C0kim7GkH+fLOAc3/2yOTIM7fkDJe16klW+JmjAIQR+P/oO4CC0QFgh8Bg
+         LH8TPsZGY696E1e5kwwj2JtWOo/OhJBN88x3m2JsHsJnSKT1OROeAQ2HZCkQzd62qXyC
+         j2qQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUW87QzlsWP+Zsg8rbLAPDMaZ5j4LcMDMmny9gy0OMaGM/fKkl/TX+zEveRuecvizKpBSq+kj9ZpHBOcQ47@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCsJ2hiLJ9TQ4zpz5GXDsg9dY2mASf4bqP9QB4c0H/RhBHBR7+
+	yLhB2c3ziJ4tVLdBhguxoJrgBWHaBvYU0+Xm+jiB3UdQjpXhggugZwNd
+X-Gm-Gg: ASbGncuNKmF8Y+B+HfCN2EQ+DnUPsg887EOlhEVXoXnB4WH5iKCq3ty64eMD/vEOn4f
+	7kmuvM4J9uDO1yf39pWtjVUqZA8qYyx2XtW79WvDOxtefByVGJC7V3xs7TbDg13eaWimdhrjcqS
+	RcbhJxJ+C5cbipPWK6EdurlizbK4ySecJIA1k7bB32teW4qv0eemFWBO115d19eoF5NNhz75tNL
+	ZTGKmEiOFQF85f05R+jEPTCs57tLBZDyQtgpURw/F3IcAC9XH+iHRaJgXz0If0uiLOJcmI/xfCg
+	n1+nh4sv22c3vgItViAkJ/6afUPNzkwy6xI32BvxzRve1nM3yQI/TqJ0W+PxU0xknTJ2KZQ59ui
+	VMw/4wL0O10f0D7jMAMH9m5uMftO+sc/UuI2Muo1aHXACj3t9S2SHnpL1Id64BjtJR4BCeCIck8
+	JYD3XuhnhMzSGZpPx3puM+sCeUd9FchD/0NZ661jVbThNs6/hLSBX8Hi6CMXg=
+X-Google-Smtp-Source: AGHT+IHTdXZt2L4k95r0xbM3BoEPbnIX0nU85H61ECXdxu7XozaXch2P1ClAIz0ZRxfh7lXZmmJChw==
+X-Received: by 2002:a17:907:1b0c:b0:b76:3dbe:7bf0 with SMTP id a640c23a62f3a-b767150b850mr2128257366b.2.1764249329718;
+        Thu, 27 Nov 2025 05:15:29 -0800 (PST)
+Received: from f.. (cst-prg-14-82.cust.vodafone.cz. [46.135.14.82])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b76f519e2f0sm161963966b.21.2025.11.27.05.15.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Nov 2025 05:15:29 -0800 (PST)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: brauner@kernel.org
+Cc: viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH v2] dcache: touch up predicts in __d_lookup_rcu()
+Date: Thu, 27 Nov 2025 14:15:26 +0100
+Message-ID: <20251127131526.4137768-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251127045944.26009-1-linkinjeon@kernel.org> <20251127045944.26009-12-linkinjeon@kernel.org>
- <CAOQ4uxhwy1a+dtkoTkMp5LLJ5m4FzvQefJXfZ2JzrUZiZn7w0w@mail.gmail.com> <CAKYAXd99CJOeH=nZg_iLb+q5F5N+xxbZm-4Uwxas_tAR3e_xVA@mail.gmail.com>
-In-Reply-To: <CAKYAXd99CJOeH=nZg_iLb+q5F5N+xxbZm-4Uwxas_tAR3e_xVA@mail.gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 27 Nov 2025 14:11:59 +0100
-X-Gm-Features: AWmQ_blLbATxRa2HO4lHQ-O5ErLu4Mrq_RiP_h6_1kjJIrIjn_5rGUKFPDuEvt8
-Message-ID: <CAOQ4uxiGMLe=FD72BBCLnk6kmOTrqSQ5wM4mVHSshKc+TN14TQ@mail.gmail.com>
-Subject: Re: [PATCH v2 11/11] ntfsplus: add Kconfig and Makefile
-To: Namjae Jeon <linkinjeon@kernel.org>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, hch@infradead.org, hch@lst.de, 
-	tytso@mit.edu, willy@infradead.org, jack@suse.cz, djwong@kernel.org, 
-	josef@toxicpanda.com, sandeen@sandeen.net, rgoldwyn@suse.com, 
-	xiang@kernel.org, dsterba@suse.com, pali@kernel.org, ebiggers@kernel.org, 
-	neil@brown.name, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	iamjoonsoo.kim@lge.com, cheol.lee@lge.com, jay.sim@lge.com, gunho.lee@lge.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Nov 27, 2025 at 1:40=E2=80=AFPM Namjae Jeon <linkinjeon@kernel.org>=
- wrote:
->
-> On Thu, Nov 27, 2025 at 8:22=E2=80=AFPM Amir Goldstein <amir73il@gmail.co=
-m> wrote:
-> >
-> > On Thu, Nov 27, 2025 at 6:01=E2=80=AFAM Namjae Jeon <linkinjeon@kernel.=
-org> wrote:
-> > >
-> > > This adds the Kconfig and Makefile for ntfsplus.
-> > >
-> > > Signed-off-by: Namjae Jeon <linkinjeon@kernel.org>
-> > > ---
-> > >  fs/Kconfig           |  1 +
-> > >  fs/Makefile          |  1 +
-> > >  fs/ntfsplus/Kconfig  | 45 ++++++++++++++++++++++++++++++++++++++++++=
-++
-> > >  fs/ntfsplus/Makefile | 18 ++++++++++++++++++
-> > >  4 files changed, 65 insertions(+)
-> > >  create mode 100644 fs/ntfsplus/Kconfig
-> > >  create mode 100644 fs/ntfsplus/Makefile
-> > >
-> > > diff --git a/fs/Kconfig b/fs/Kconfig
-> > > index 0bfdaecaa877..70d596b99c8b 100644
-> > > --- a/fs/Kconfig
-> > > +++ b/fs/Kconfig
-> > > @@ -153,6 +153,7 @@ menu "DOS/FAT/EXFAT/NT Filesystems"
-> > >  source "fs/fat/Kconfig"
-> > >  source "fs/exfat/Kconfig"
-> > >  source "fs/ntfs3/Kconfig"
-> > > +source "fs/ntfsplus/Kconfig"
-> > >
-> > >  endmenu
-> > >  endif # BLOCK
-> > > diff --git a/fs/Makefile b/fs/Makefile
-> > > index e3523ab2e587..2e2473451508 100644
-> > > --- a/fs/Makefile
-> > > +++ b/fs/Makefile
-> > > @@ -91,6 +91,7 @@ obj-y                         +=3D unicode/
-> > >  obj-$(CONFIG_SMBFS)            +=3D smb/
-> > >  obj-$(CONFIG_HPFS_FS)          +=3D hpfs/
-> > >  obj-$(CONFIG_NTFS3_FS)         +=3D ntfs3/
-> > > +obj-$(CONFIG_NTFSPLUS_FS)      +=3D ntfsplus/
-> >
-> > I suggested in another reply to keep the original ntfs name
-> >
-> > More important is to keep your driver linked before the unmaintained
-> > ntfs3, so that it hopefully gets picked up before ntfs3 for auto mount =
-type
-> > if both drivers are built-in.
-> Okay, I will check it:)
-> >
-> > I am not sure if keeping the order here would guarantee the link/regist=
-ration
-> > order. If not, it may make sense to mutually exclude them as built-in d=
-rivers.
-> Okay, I am leaning towards the latter.
+Rationale is that if the parent dentry is the same and the length is the
+same, then you have to be unlucky for the name to not match.
 
-Well it's not this OR that.
-please add you driver as the original was before ntfs3
+At the same time the dentry was literally just found on the hash, so you
+have to be even more unlucky to determine it is unhashed.
 
-obj-$(CONFIG_NTFS_FS)      +=3D ntfs/
-obj-$(CONFIG_NTFS3_FS)         +=3D ntfs3/
+While here add commentary while d_unhashed() is necessary. It was
+already removed once and brought back in:
+2e321806b681b192 ("Revert "vfs: remove unnecessary d_unhashed() check from __d_lookup_rcu"")
 
-> If you have no objection, I will add the patch to mutually exclude the tw=
-o ntfs implementation.
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+---
 
-You should definitely allow them both if at least one is built as a module
-I think it would be valuable for testing.
+- move and precit on d_unhashed as well
+- add commentary on it
 
-Just that
-CONFIG_NTFS_FS=3Dy
-CONFIG_NTFS3_FS=3Dy
+this obsoletes https://lore.kernel.org/linux-fsdevel/20251127122412.4131818-1-mjguzik@gmail.com/T/#u
 
-I don't see the usefulness in allowing that.
-(other people may disagree)
+ fs/dcache.c | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
-I think that the way to implement it is using an auxiliary choice config va=
-r
-in fs/Kconfig (i.e. CONFIG_DEFAULT_NTFS) and select/depends statements
-to only allow the default ntfs driver to be configured as 'y',
-but couldn't find a good example to point you at.
+diff --git a/fs/dcache.c b/fs/dcache.c
+index 23d1752c29e6..dc2fff4811d1 100644
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -2342,11 +2342,20 @@ struct dentry *__d_lookup_rcu(const struct dentry *parent,
+ 		seq = raw_seqcount_begin(&dentry->d_seq);
+ 		if (dentry->d_parent != parent)
+ 			continue;
+-		if (d_unhashed(dentry))
+-			continue;
+ 		if (dentry->d_name.hash_len != hashlen)
+ 			continue;
+-		if (dentry_cmp(dentry, str, hashlen_len(hashlen)) != 0)
++		if (unlikely(dentry_cmp(dentry, str, hashlen_len(hashlen)) != 0))
++			continue;
++		/*
++		 * Check for the dentry being unhashed.
++		 *
++		 * As tempting as it is, we *can't* skip it because of a race window
++		 * between us finding the dentry before it gets unhashed and loading
++		 * the sequence counter after unhashing is finished.
++		 *
++		 * We can at least predict on it.
++		 */
++		if (unlikely(d_unhashed(dentry)))
+ 			continue;
+ 		*seqp = seq;
+ 		return dentry;
+-- 
+2.34.1
 
-Thanks,
-Amir.
 
