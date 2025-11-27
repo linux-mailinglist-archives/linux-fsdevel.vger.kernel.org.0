@@ -1,159 +1,112 @@
-Return-Path: <linux-fsdevel+bounces-70004-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70005-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 354CAC8DEA6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 12:13:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF770C8E095
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 12:25:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7321C4E73DF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 11:13:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0269F3AEB6B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 11:22:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6303732C30D;
-	Thu, 27 Nov 2025 11:13:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBB4B32E6B2;
+	Thu, 27 Nov 2025 11:21:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="sqLxV5X3";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="i2URrXxn";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="oZjKf6t0";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="BfhflpNY"
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="kzAHUMF2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from canpmsgout10.his.huawei.com (canpmsgout10.his.huawei.com [113.46.200.225])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1466932AADA
-	for <linux-fsdevel@vger.kernel.org>; Thu, 27 Nov 2025 11:13:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9794D30103A;
+	Thu, 27 Nov 2025 11:21:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.225
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764241999; cv=none; b=nKpJqhkD0mJsug5o/D0NfVp72CrO1ivFogqjgjAoU6hwev+BLfcr0wVLe9gbaeuJ1GblN3Om5UEeZWU6TbZ0BTOYld+YtWt6HEBoEcJAzqJNYojfDLAGo+m/Gzy1lMYn935Pi5B3GEYrJwNNRfA1x6IciqYxn0IOVdNgB7dmPw0=
+	t=1764242482; cv=none; b=TnQ3wrPq1yaInCOsQycd1mpD2Jso9InIyocNrW9uE+KD2To2RMpHoG6sUVJmeR4r9gZeVHfxuvDhkXX7/P0Pf3usxqX14QIVB4XKLXCDyLIkMqolwo+9Y9UKug9HJ4haPdJ1ib8hLuNpVo1T0Nft/Vf7EpZJHds6Xaqaz96NqiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764241999; c=relaxed/simple;
-	bh=TW6ZbTjgpqrTAi9FSvaBl98YISSsepU5hvHxTFQKXJA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FraC21qwbbFL4TlInJqErYQhnDoTAzfB3jYSC8rc7X8563AH+hoKXbvDJtvcQsr1vkMU6Rl+VE7IOD1BZlx/lCOtbu23rS4JEnr0Nr9sVYcN/k3PfqNErAQr3nrwJWMVGLSQzEhllGqPnlo5iGQd3slLLKHPrKZuMooXCnHciBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=sqLxV5X3; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=i2URrXxn; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=oZjKf6t0; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=BfhflpNY; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 0C4935BCCE;
-	Thu, 27 Nov 2025 11:13:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1764241996; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=keGa8aE93ohGGaBTGwK+KRBLhuQbb7wyOAKGgg/6WJQ=;
-	b=sqLxV5X3xGUsAj4sico7aux5kxDKpgYzy2a2itVD8BKhxQrUVZOF0+/HMJEivdjf9U1tos
-	xOCHVNMWNAaSGmEcjkLRysD3wWZfBV2iy6onLtYBh8pEwe4ea2aBgiZHnMxwYbaCXEAzyc
-	ICVTjBNyUoZNDbsu8hJ/j+MfdvdrvEg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1764241996;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=keGa8aE93ohGGaBTGwK+KRBLhuQbb7wyOAKGgg/6WJQ=;
-	b=i2URrXxnrB7v8gbDFDgzeKpmBHmum+t+IyiWzDRGOu8nRh4/AK/1+6v+rd9wur7YpzVp4c
-	fE5I+XBn/271/dAw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1764241995; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=keGa8aE93ohGGaBTGwK+KRBLhuQbb7wyOAKGgg/6WJQ=;
-	b=oZjKf6t0xY73FN+agE27ThcyUOVZRjeFtwyo66Xf87TVTviDiGy+kJVwO1pbg/0FZ6jNtp
-	FeZxOMmBS75XzMOQuiXNGOKs+rY7YNc6Y8C6ZgJinK19xyBQVb8eI2PTVBdG0941MuNaiz
-	rCWmJ8lRRWj6TDw4RxQA5mIqLe06MrI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1764241995;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=keGa8aE93ohGGaBTGwK+KRBLhuQbb7wyOAKGgg/6WJQ=;
-	b=BfhflpNYyT1FmR45oxKldWMuKM4Ioa0P0y4bWQMv6tN0UNQBwTQWUVAfjmmd3I8hPlLy8D
-	qHdZdSYkDvrhXQAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EE3F73EA63;
-	Thu, 27 Nov 2025 11:13:14 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id P73ZOEoyKGkcSgAAD6G6ig
-	(envelope-from <chrubis@suse.cz>); Thu, 27 Nov 2025 11:13:14 +0000
-Date: Thu, 27 Nov 2025 12:14:09 +0100
-From: Cyril Hrubis <chrubis@suse.cz>
-To: Joel Granados <joel.granados@kernel.org>
-Cc: Oliver Sang <oliver.sang@intel.com>, lkp@intel.com,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	oe-lkp@lists.linux.dev,
-	ltp@lists.linux.itccccbjfeunckknjvluceftfithdduijkhkcinjndvek
-Subject: Re: [LTP] [linux-next:master] [sysctl]  50b496351d: ltp.proc01.fail
-Message-ID: <aSgygYnVBK1MxdOT@yuki.lan>
-References: <202511251654.9c415e9b-lkp@intel.com>
- <aSWI07xSK9zGsivq@yuki.lan>
- <aSZnS2a4hcHWB6V7@xsang-OptiPlex-9020>
- <774fersjoa3ymtmorfoxs7xei3vjdf5h4dohkkjjgxo6qgpz5w@kqn6du5d62m7>
+	s=arc-20240116; t=1764242482; c=relaxed/simple;
+	bh=t9H1iFjkLCjhwXZplf2BmTwi8OOStMLFSE/UsMu8IOM=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=f2PufN9QaD0oyq9a8HjGnuN7ORHepF1lxhHv5j0rVb/ARYtXNV0FeH9+73EFuu0/GZxOKAG8Us321ttt+cN+w35CDxgE4cuS2iWf+4Nl/KTdDhbp0/l0CcxLhXv5EbDJlCgue+qlL53s0l/ODdeyQKcXIXsTkRduhRM33HnYGbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=kzAHUMF2; arc=none smtp.client-ip=113.46.200.225
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=DodGNQ4J3R60otr7WXzwptpN2trZwaXPd+16aznDXKU=;
+	b=kzAHUMF2dUX/75F2x8k4f67X3bwt94v+LeKbd6y1I+Pfnt/W9chF7FpLBH1NgTjP/L/NGfo8n
+	xvIQ0+PuPafeVGbUpzBFi9IJnhCxY1y3YnVnFQlCNNtgM7nYb04k1porCfASxHwGKtjxPIckwVs
+	1urT6Cq6FxhqN1lH2J74Qto=
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by canpmsgout10.his.huawei.com (SkyGuard) with ESMTPS id 4dHDTl6J2qz1K96R;
+	Thu, 27 Nov 2025 19:19:23 +0800 (CST)
+Received: from kwepemj100009.china.huawei.com (unknown [7.202.194.3])
+	by mail.maildlp.com (Postfix) with ESMTPS id CD7A614011F;
+	Thu, 27 Nov 2025 19:21:10 +0800 (CST)
+Received: from DESKTOP-A37P9LK.huawei.com (10.67.109.17) by
+ kwepemj100009.china.huawei.com (7.202.194.3) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 27 Nov 2025 19:21:09 +0800
+From: Xie Yuanbin <xieyuanbin1@huawei.com>
+To: <bigeasy@linutronix.de>, <viro@zeniv.linux.org.uk>,
+	<linux@armlinux.org.uk>, <will@kernel.org>, <david.laight@runbox.com>,
+	<rmk+kernel@armlinux.org.uk>
+CC: <brauner@kernel.org>, <jack@suse.cz>, <nico@fluxnic.net>,
+	<akpm@linux-foundation.org>, <hch@lst.de>, <jack@suse.com>,
+	<wozizhi@huaweicloud.com>, <linux-fsdevel@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-mm@kvack.org>, <catalin.marinas@arm.com>, <rppt@kernel.org>,
+	<vbabka@suse.cz>, <pfalcato@suse.de>, <lorenzo.stoakes@oracle.com>,
+	<kuninori.morimoto.gx@renesas.com>, <tony@atomide.com>, <arnd@arndb.de>,
+	<punitagrawal@gmail.com>, <rjw@rjwysocki.net>, <marc.zyngier@arm.com>,
+	<lilinjie8@huawei.com>, <liaohua4@huawei.com>, <wangkefeng.wang@huawei.com>,
+	<pangliyuan1@huawei.com>, Xie Yuanbin <xieyuanbin1@huawei.com>
+Subject: Re: [RFC PATCH] vfs: Fix might sleep in load_unaligned_zeropad() with rcu read lock held
+Date: Thu, 27 Nov 2025 19:20:35 +0800
+Message-ID: <20251127112035.129014-1-xieyuanbin1@huawei.com>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20251127072057.EbvhUyG4@linutronix.de>
+References: <20251127072057.EbvhUyG4@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <774fersjoa3ymtmorfoxs7xei3vjdf5h4dohkkjjgxo6qgpz5w@kqn6du5d62m7>
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:email]
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
+ kwepemj100009.china.huawei.com (7.202.194.3)
 
-Hi!
-> > > > PATH=/lkp/benchmarks/ltp:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/lkp/lkp/src/bin
-> > > > 2025-11-25 05:37:33 cd /lkp/benchmarks/ltp
-> > > > 2025-11-25 05:37:33 export LTP_RUNTIME_MUL=2
-> > > > 2025-11-25 05:37:33 export LTPROOT=/lkp/benchmarks/ltp
-> > > > 2025-11-25 05:37:33 kirk -U ltp -f fs-00
-> > > 
-> > > Oliver can you please record the test logs with '-o results.json' and
-> > > include that file in the download directory?
-> > 
-> > I attached one results.json FYI.
-> I can see the errors and I can reproduce on my side. I'll take a look.
-> thx.
-> 
-> BTW: I saw this path in the logs
-> /proc/sys/net/ipv5/neigh/default/anycast_delay
-> 
-> not sure if "ipv5" is part of the suit, but worth mentioning from my
-> side.
+On, Thu, 27 Nov 2025 08:20:57 +0100, Sebastian Andrzej Siewior wrote:
+> This all should be covered by the series here
+> 	https://lore.kernel.org/all/20251110145555.2555055-1-bigeasy@linutronix.de/
 
-The proc01 test walks over proc files and attempts to read one after
-another. It does not invent paths that are not on the system already.
+Yes, I know it.
 
+> or do I miss something.
 
--- 
-Cyril Hrubis
-chrubis@suse.cz
+We had some discussions about this bug:
+Link: https://lore.kernel.org/lkml/20251126090505.3057219-1-wozizhi@huaweicloud.com/
+
+The discussions:
+Link: https://lore.kernel.org/CAHk-=wh1Wfwt9OFB4AfBbjyeu4JVZuSWQ4A8OoT3W6x9btddfw@mail.gmail.com
+Link: https://lore.kernel.org/20251126192640.GD3538@ZenIV
+Link: https://lore.kernel.org/aSeNtFxD1WRjFaiR@shell.armlinux.org.uk
+
+According to the discussion, in do_page_fault(), when addr >= TASK_SIZE,
+we should not try to acquire the mm read lock or find vma. Instead, we
+should directly call __do_kernel_fault() or __do_user_fault(). Your
+submission just moved harden_branch_predictor() forward. I think we can
+have more discussions about the patches to fix the missing spectre.
+
+I am trying to write a new patch, I hope it will better handle these two
+bugs and be compatible with PREEMPT_RT scenarios.
+
+> Sebastian
+
+Thanks!
+
+Xie Yuanbin
 
