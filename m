@@ -1,62 +1,63 @@
-Return-Path: <linux-fsdevel+bounces-69989-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69990-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D6CCC8D83A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 10:24:54 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 610C7C8D837
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 10:24:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A3B9E4E6751
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 09:24:22 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8B0483444E3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 09:24:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 063D0253F05;
-	Thu, 27 Nov 2025 09:24:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 876A7329C6B;
+	Thu, 27 Nov 2025 09:24:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Gid/SW5K"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hXD6WbzY"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD99D328B7B;
-	Thu, 27 Nov 2025 09:24:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE93C328241;
+	Thu, 27 Nov 2025 09:24:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764235456; cv=none; b=NT/szPygN5wawt7uNStS/4h7aumFnK1R+ddd+XzonenX6A5Nu/D2oI5wmkNXg7NmmR8zhGkzxeZV3JnWqk5tCmZaKdpSB76lwlfXJgSFpPK8EyDZwNxjQG0nqfGcgWwkrxBaSHx77S9+rXErz7P5lxvSbaUjj4J4SjmPkhd/vck=
+	t=1764235458; cv=none; b=XBDW8Cbcnlklth4yPuDerOK3CGlyFDSNFAWa6BJAgnaOHS45C27X+lCWp3FQkMdh1FqaOs5wbNUHEvLg6w2KvYQTfw1W1giZdigmxZOs7/Wo2n+/jFtN3LLOonfn3vZPywB4ocXU830VdAX4quNT5r+vBVoaDpxcfKthnw6eJkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764235456; c=relaxed/simple;
-	bh=TGD2mBSI2Nm525yY965kECMgewcZU2Vn20LzBqfECL8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hyx4evoZgOtmZgc2lDNC3JxUMiIzdzHKWv/jjvRCFKocbwkqr4Ky0zT2naXeIYJ4Ch+EpXH6R6qHL4erGxod67DsnYt/Wv+xcf4dD9j/PTehPwrHTRJTS08DL/27P2N81sSHt13Gy7/CdM1P0pTk0nw9ccO8BhijrfHg2pZMzSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Gid/SW5K; arc=none smtp.client-ip=198.175.65.21
+	s=arc-20240116; t=1764235458; c=relaxed/simple;
+	bh=XlyfUYuWkICDUfkFcCQCj16yl/DMg/jjxI+jKDmBYg0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WH0tYE7AjCmmQVEdulD5YGg14IoEfUVgsXkNBQjTqMX2WZArf9RigdH+OxKcWN20UEK7bO3NvyiqtUd8qCzAR78GXykKY46HWS91DdjT64KJ2g0xIf+48wULtWuQBO2HzzEafD9vBvYO/D/vcBlVmKz3fgJ+eb0Oy5Sk5atrp90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hXD6WbzY; arc=none smtp.client-ip=198.175.65.21
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1764235455; x=1795771455;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=TGD2mBSI2Nm525yY965kECMgewcZU2Vn20LzBqfECL8=;
-  b=Gid/SW5K4Ahe2t3LppZIur1yOgeZOFT2/VGA1EhOrvUe3KzwZzhJErEX
-   WtaTRAbJih7idinGe3ZOMplpSUy02bGjIu85ZXbJB1L7unWveUwXFnKw0
-   b3E1uQLn0a+HpSe/NswpugE4kq2SH1RhUPRFFs9l1qWlp6XgycmNsZ/By
-   Wv8UaVcJiUfELmAM4qeYhIUMLmIMFF8H4nqsU67ujdxa4u8yavu2HE01+
-   xkzKA9PDsoCx+F9uAzr2t9NYApxxIXlY7rbImJN4Sqfvr+TitZ6dN+nVB
-   IECWMkWrN2BWjvrykB8GDPWwFIxVkXlsGsqB1V+RIUIaS/UbRoIKjr8go
-   g==;
-X-CSE-ConnectionGUID: y9ECDumcTRG7U5SLGj/6LQ==
-X-CSE-MsgGUID: KGvqSI2oQwuh1U7X2z3PUQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11625"; a="66226336"
+  t=1764235456; x=1795771456;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=XlyfUYuWkICDUfkFcCQCj16yl/DMg/jjxI+jKDmBYg0=;
+  b=hXD6WbzYi+eWmyuv1GPnb/YFjj+qZw6Mri0uMZd74HKO7L8novy7cK38
+   PSdFKDqyWmt04mPuqTseYEVI0JAhvrYHDqgcZxJvg1UhgFWTkrXeDi/s7
+   JFXnl2mMfoAK65dF98tUU3QyIXV/D/5krRQguo/stIHM/F6HHV4eiiD3Q
+   20KSRvFAlVXoaW46ZqL/h2AcE3ffKtFWHuHFckrQIVTznCYu3ahMnyH4L
+   RmQpwSWJK4ufK+xaLDfMoSpxJmOtjikW/YdvRRjkF/m5CLWHhEpj90eOd
+   o7voCZlP3auLSaY6AuLjvqZzJlESqnJJQi7o43x2D8FzpXuSYJq3Xhn34
+   Q==;
+X-CSE-ConnectionGUID: DmLioPkxTBKM92Z+Q/HRmw==
+X-CSE-MsgGUID: VSvjSZrIRG6fEEtMqwX6dg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11625"; a="66226343"
 X-IronPort-AV: E=Sophos;i="6.20,230,1758610800"; 
-   d="scan'208";a="66226336"
+   d="scan'208";a="66226343"
 Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Nov 2025 01:24:13 -0800
-X-CSE-ConnectionGUID: FmZim8WuRQWylPHqkM42lg==
-X-CSE-MsgGUID: Pfg9esApRR+Pu2HVOvZauQ==
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Nov 2025 01:24:16 -0800
+X-CSE-ConnectionGUID: DlvEOMD2R++DjwHq95mBvQ==
+X-CSE-MsgGUID: jGxafr28T76J8iM+e4YXaQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.20,230,1758610800"; 
-   d="scan'208";a="223888045"
+   d="scan'208";a="223888066"
 Received: from jsokolow-alderlakeclientplatform.igk.intel.com ([172.28.176.71])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Nov 2025 01:24:11 -0800
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Nov 2025 01:24:14 -0800
 From: Jan Sokolowski <jan.sokolowski@intel.com>
 To: linux-kernel@vger.kernel.org
 Cc: Jan Sokolowski <jan.sokolowski@intel.com>,
@@ -65,10 +66,12 @@ Cc: Jan Sokolowski <jan.sokolowski@intel.com>,
 	Andrew Morton <akpm@linux-foundation.org>,
 	linux-fsdevel@vger.kernel.org,
 	linux-mm@kvack.org
-Subject: [RFC PATCH 0/1] IDR fix for potential id mismatch
-Date: Thu, 27 Nov 2025 10:27:31 +0100
-Message-ID: <20251127092732.684959-1-jan.sokolowski@intel.com>
+Subject: [RFC PATCH 1/1] idr: do not create idr if new id would be outside given range
+Date: Thu, 27 Nov 2025 10:27:32 +0100
+Message-ID: <20251127092732.684959-2-jan.sokolowski@intel.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20251127092732.684959-1-jan.sokolowski@intel.com>
+References: <20251127092732.684959-1-jan.sokolowski@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -78,30 +81,67 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-When debugging an issue found in drm subsystem (link to the
-discussion in Link tag), a bug was found in idr library
-where requesting id in range would return id outside
-requested range. Didn't see in documentation that this is how
-idr should behave.
+A scenario was found where trying to add id in range 0,1
+would return an id of 2, which is outside the range and thus
+now what the user would expect.
 
-This is an RFC as this library is deprecated but still in use by other
-subsystems. Is this fix proper?
+Return -EINVAL if new id would fall outside the range.
 
-Link: https://lists.freedesktop.org/archives/dri-devel/2025-November/538294.html
+Signed-off-by: Jan Sokolowski <jan.sokolowski@intel.com>
 Cc: "Christian König" <christian.koenig@amd.com>
 Cc: Matthew Wilcox <willy@infradead.org>
 Cc: Andrew Morton <akpm@linux-foundation.org>
 Cc: linux-fsdevel@vger.kernel.org
 Cc: linux-mm@kvack.org
 Cc: linux-kernel@vger.kernel.org
-
 ---
-Jan Sokolowski (1):
-  idr: do not create idr if new id would be outside given range
+ lib/idr.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
- lib/idr.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
-
+diff --git a/lib/idr.c b/lib/idr.c
+index e2adc457abb4..8c786e50f2da 100644
+--- a/lib/idr.c
++++ b/lib/idr.c
+@@ -74,6 +74,7 @@ EXPORT_SYMBOL_GPL(idr_alloc_u32);
+  * exclude simultaneous writers.
+  *
+  * Return: The newly allocated ID, -ENOMEM if memory allocation failed,
++ * -EINVAL is start value is less than 0 or if new id would be in wrong range,
+  * or -ENOSPC if no free IDs could be found.
+  */
+ int idr_alloc(struct idr *idr, void *ptr, int start, int end, gfp_t gfp)
+@@ -88,6 +89,11 @@ int idr_alloc(struct idr *idr, void *ptr, int start, int end, gfp_t gfp)
+ 	if (ret)
+ 		return ret;
+ 
++	if (WARN_ON_ONCE(id < start || (id >= end && end != 0))) {
++		idr_remove(idr, id);
++		return -EINVAL;
++	}
++
+ 	return id;
+ }
+ EXPORT_SYMBOL_GPL(idr_alloc);
+@@ -112,6 +118,7 @@ EXPORT_SYMBOL_GPL(idr_alloc);
+  * exclude simultaneous writers.
+  *
+  * Return: The newly allocated ID, -ENOMEM if memory allocation failed,
++ * -EINVAL if new id would be in wrong range,
+  * or -ENOSPC if no free IDs could be found.
+  */
+ int idr_alloc_cyclic(struct idr *idr, void *ptr, int start, int end, gfp_t gfp)
+@@ -130,6 +137,11 @@ int idr_alloc_cyclic(struct idr *idr, void *ptr, int start, int end, gfp_t gfp)
+ 	if (err)
+ 		return err;
+ 
++	if (WARN_ON_ONCE(id < start || (id >= end && end != 0))) {
++		idr_remove(idr, id);
++		return -EINVAL;
++	}
++
+ 	idr->idr_next = id + 1;
+ 	return id;
+ }
 -- 
 2.43.0
 
