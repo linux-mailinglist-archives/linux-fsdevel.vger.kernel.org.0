@@ -1,125 +1,206 @@
-Return-Path: <linux-fsdevel+bounces-69983-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69984-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8896C8D115
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 08:21:13 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3DA0C8D175
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 08:27:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 47D9934DE3A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 07:21:13 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D6C8834E3CA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 07:27:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD2C1314A85;
-	Thu, 27 Nov 2025 07:21:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="fLInNBs8";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dk5SuCbO"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD8063195F4;
+	Thu, 27 Nov 2025 07:27:35 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45D8E136358;
-	Thu, 27 Nov 2025 07:21:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70E8931B122;
+	Thu, 27 Nov 2025 07:27:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764228065; cv=none; b=NI+koxhq2OIxQZ4TQ2WpRL5X1XeVGTiQlb6lcfdCPCd/hd7vlSLFWwMCUDIRLmpS3qum7Ro0ugnwHd3I/kNOAznK0xgLjtA2HVbJLlvWzRQcWHVBNz6rAS2NVkmuK8zO7JS3WfYNnqJA5cPirZaDnqcV+LbBnsvICf5i0wsFey0=
+	t=1764228455; cv=none; b=Mou3+CL+3iL7HP7XZiyTkDMaUVikgRphWchY8BXqZbatHmIZEWimBCid7Q5KQmKxLJEaZZhRnZScPuk9uF3CMGEdMfyziJpl2fSAWNrrDjTfEElr7cNPRoSIjhXTZxDDKnKRd6V3PlVEJ2BA5njzvuuZO07IpPu2euDR8b1Y4Aw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764228065; c=relaxed/simple;
-	bh=EjN2pyme8bcJ6nPanSFCQ/XBTZBa8sJ070ZhisLyqvw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jiwcS0CbVdg2OoGoS3baGJH3DcYFy1ij9Ep0r2tg2HIqoWBO3oOzPJVGk/gpycxLcZxMgyiCLlR3pGXh7GYN5l8Dd7ONlp0VT/E3E/2SoL+fSB+a47NM0+qxrC8U31S9UZq9Pgd0HF8EFE2QhHnyvX3suhUxYBmeoRE1Zpi0K60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=fLInNBs8; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dk5SuCbO; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 27 Nov 2025 08:20:57 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1764228059;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3Ad8ik7IFSyx7voLIMN7w0BRCBgrkaim2ypdKamKnu4=;
-	b=fLInNBs8TXqUHGtP3Sh1sI6ytVwTqfBLr12hBnrz+MA8vrF5DTVkSUXNqFbzywP456lNeB
-	ez73iUWVfEsf7FI0j6ikXXxHMfwNimMtiy7rW8tC5ZhcKUxZU29BYos4u2BXpsCC5Ald34
-	Vs0GfoQublaZnEOiSv48K7uNCrPlu07CIS0rI3lgaEBNIk8gpzEjvWrfezSP+0BW7PTEpx
-	J8wjLrzxdRXyxoQKeZi0kBumr+eR2LmUSOrGj8xPUOqnMccqZfx0+qYvS5U941NFYPFFZS
-	PrZb9p0STUdw3Zxv3qYbCkZlJXkHt0KmsNyzGv9MQX3zaLVbHr0vTtdeG4MNJw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1764228059;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3Ad8ik7IFSyx7voLIMN7w0BRCBgrkaim2ypdKamKnu4=;
-	b=dk5SuCbOQvbURXCZeKYw/C9ynGOXmOuzOVf9ofmc8gtUWPcmsiNWWOsyOjHAZ0L3i9i8YU
-	ZNHJRX1mAseyi7CQ==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Xie Yuanbin <xieyuanbin1@huawei.com>
-Cc: viro@zeniv.linux.org.uk, linux@armlinux.org.uk, will@kernel.org,
-	david.laight@runbox.com, rmk+kernel@armlinux.org.uk,
-	brauner@kernel.org, jack@suse.cz, nico@fluxnic.net,
-	akpm@linux-foundation.org, hch@lst.de, jack@suse.com,
-	wozizhi@huaweicloud.com, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mm@kvack.org, catalin.marinas@arm.com, rppt@kernel.org,
-	vbabka@suse.cz, pfalcato@suse.de, lorenzo.stoakes@oracle.com,
-	kuninori.morimoto.gx@renesas.com, tony@atomide.com, arnd@arndb.de,
-	punitagrawal@gmail.com, rjw@rjwysocki.net, marc.zyngier@arm.com,
-	lilinjie8@huawei.com, liaohua4@huawei.com,
-	wangkefeng.wang@huawei.com, pangliyuan1@huawei.com
-Subject: Re: [RFC PATCH] vfs: Fix might sleep in load_unaligned_zeropad()
- with rcu read lock held
-Message-ID: <20251127072057.EbvhUyG4@linutronix.de>
-References: <aSeNtFxD1WRjFaiR@shell.armlinux.org.uk>
- <20251127030316.8396-1-xieyuanbin1@huawei.com>
+	s=arc-20240116; t=1764228455; c=relaxed/simple;
+	bh=re38NH/FH7emZULZmonviOO0fvpwwVdERFF2VlTBOms=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sQdsRdT28IlTuwrJA8OzFRPOIitMNCKgP3FTkKLsDdHKNREweiXD8vMyriyrBVbM2mPBv+OkV690He92HEiGVYK0n6/io7Jqjc/vhCGsXCWN2emigCgxj4h3R2sND2ebSh3Ol2lzWDZXPubJqZgF/RqeZJ84vAuVNrdk+S8hMNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4dH7K72QYZzYQtgC;
+	Thu, 27 Nov 2025 15:26:35 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id 86B421A0359;
+	Thu, 27 Nov 2025 15:27:28 +0800 (CST)
+Received: from [10.174.178.152] (unknown [10.174.178.152])
+	by APP2 (Coremail) with SMTP id Syh0CgCH5Xte_Sdpk5uyCA--.20141S3;
+	Thu, 27 Nov 2025 15:27:28 +0800 (CST)
+Message-ID: <8680efcd-dc84-4b4e-ab75-216de959ec88@huaweicloud.com>
+Date: Thu, 27 Nov 2025 15:27:26 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251127030316.8396-1-xieyuanbin1@huawei.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 07/13] ext4: drop extent cache before splitting extent
+To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
+ jack@suse.cz, yi.zhang@huawei.com, yizhang089@gmail.com,
+ libaokun1@huawei.com, yangerkun@huawei.com
+References: <20251121060811.1685783-1-yi.zhang@huaweicloud.com>
+ <20251121060811.1685783-8-yi.zhang@huaweicloud.com>
+ <aSbxjVypU3vdOUmK@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+Content-Language: en-US
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+In-Reply-To: <aSbxjVypU3vdOUmK@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:Syh0CgCH5Xte_Sdpk5uyCA--.20141S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxZF1kWF1kGFW7JFWfZFyxXwb_yoWrGFWxpF
+	92ka1UGr4kA348K34xG3WDKryv9r1kGrWxArW3Gr12q3Z8trya9rn7WayUZFyIgr48ZF1Y
+	vr40ya4rGas8AFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
+	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1
+	7KsUUUUUU==
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On 2025-11-27 11:03:16 [+0800], Xie Yuanbin wrote:
-> On, Wed, 26 Nov 2025 19:26:40 +0000, Al Viro wrote:
-> > For quick and dirty variant (on current tree), how about
-> > adding
-> > 	if (unlikely(addr > TASK_SIZE) && !user_mode(regs))
-> > 		goto no_context;
-> >
-> > right after
-> >
-> > 	if (!ttbr0_usermode_access_allowed(regs))
-> > 		goto no_context;
-> >
-> > in do_page_fault() there?
+On 11/26/2025 8:24 PM, Ojaswin Mujoo wrote:
+> On Fri, Nov 21, 2025 at 02:08:05PM +0800, Zhang Yi wrote:
+>> From: Zhang Yi <yi.zhang@huawei.com>
+>>
+>> When splitting an unwritten extent in the middle and converting it to
+>> initialized in ext4_split_extent() with the EXT4_EXT_MAY_ZEROOUT and
+>> EXT4_EXT_DATA_VALID2 flags set, it could leave a stale unwritten extent.
+>>
+>> Assume we have an unwritten file and buffered write in the middle of it
+>> without dioread_nolock enabled, it will allocate blocks as written
+>> extent.
+>>
+>>        0  A      B  N
+>>        [UUUUUUUUUUUU] on-disk extent      U: unwritten extent
+>>        [UUUUUUUUUUUU] extent status tree
+>>        [--DDDDDDDD--]                     D: valid data
+>>           |<-  ->| ----> this range needs to be initialized
+>>
+>> ext4_split_extent() first try to split this extent at B with
+>> EXT4_EXT_DATA_PARTIAL_VALID1 and EXT4_EXT_MAY_ZEROOUT flag set, but
+>> ext4_split_extent_at() failed to split this extent due to temporary lack
+>> of space. It zeroout B to N and leave the entire extent as unwritten.
+>>
+>>        0  A      B  N
+>>        [UUUUUUUUUUUU] on-disk extent
+>>        [UUUUUUUUUUUU] extent status tree
+>>        [--DDDDDDDDZZ]                     Z: zeroed data
+>>
+>> ext4_split_extent() then try to split this extent at A with
+>> EXT4_EXT_DATA_VALID2 flag set. This time, it split successfully and
+>> leave
+>> an written extent from A to N.
 > 
-> On, Wed, 26 Nov 2025 23:31:00 +0000, Russell King (Oracle) wrote:
-> > Now, for 32-bit ARM, I think I am coming to the conclusion that Al's
-> > suggestion is probably the easiest solution. However, whether it has
-> > side effects, I couldn't say - the 32-bit ARM fault code has been
-> > modified by quite a few people in ways I don't yet understand, so I
-> > can't be certain at the moment whether it would cause problems.
+> Hi Yi, 
 > 
-> I think I've already submitted a very similar patch, to fix another bug:
-> On Thu, 16 Oct 2025 20:16:21 +0800, Xie Yuanbin wrote:
-> > +#ifdef CONFIG_HARDEN_BRANCH_PREDICTOR
-> > +	if (unlikely(addr > TASK_SIZE) && user_mode(regs)) {
-> > +		fault = 0;
-> > +		code = SEGV_MAPERR;
-> > +		goto bad_area;
-> > +	}
-> > +#endif
-> Link: https://lore.kernel.org/20250925025744.6807-1-xieyuanbin1@huawei.com
+> thanks for the detailed description. I'm trying to understand the
+> codepath a bit and I believe you are talking about:
 > 
-> However, the patch seems to have received no response for a very long
-> time.
+> ext4_ext_handle_unwritten_extents()
+>   ext4_ext_convert_to_initialized()
+> 	  // Case 5: split 1 unwrit into 3 parts and convert to init
+> 		ext4_split_extent()
 
-This all should be covered by the series here
-	https://lore.kernel.org/all/20251110145555.2555055-1-bigeasy@linutronix.de/
+Yes, but in fact, it should be Case 1: split the extent into three
+extents.
 
-or do I miss something.
+> 
+> in which case, after the second split succeeds
+>>
+>>        0  A      B   N
+>>        [UU|WWWWWWWWWW] on-disk extent     W: written extent
+>>        [UU|UUUUUUUUUU] extent status tree
+> 
+> WHen will extent status get split into 2 unwrit extents as you show
+> above? I seem to be missing that call since IIUC ext4_ext_insert_extent
+> itself doesn't seem to be accounting for the newly inserted extent in es.
+> 
 
-Sebastian
+Sorry for the confusion. This was drawn because I couldn't find a
+suitable symbol, so I followed the representation method used for
+on-disk extents. In fact, there is no splitting of extent status entries
+here. I have updated the last two graphs as follows(different types of
+extents are considered as different extents):
+
+           0  A      B  N
+           [UUWWWWWWWWWW] on-disk extent     W: written extent
+           [UUUUUUUUUUUU] extent status tree
+           [--DDDDDDDDZZ]
+
+           0  A      B  N
+           [UUWWWWWWWWWW] on-disk extent     W: written extent
+           [UUWWWWWWWWUU] extent status tree
+           [--DDDDDDDDZZ]
+
+Will this make it easier to understand?
+
+Cheers,
+Yi.
+
+
+> Regards,
+> ojaswin
+> 
+>>        [--|DDDDDDDDZZ]
+> 
+>>
+>> Finally ext4_map_create_blocks() only insert extent A to B to the extent
+>> status tree, and leave an stale unwritten extent in the status tree.
+>>
+>>        0  A      B   N
+>>        [UU|WWWWWWWWWW] on-disk extent     W: written extent
+>>        [UU|WWWWWWWWUU] extent status tree
+>>        [--|DDDDDDDDZZ]
+>>
+>> Fix this issue by always remove cached extent status entry before
+>> splitting extent.
+>>
+>> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+>> ---
+>>  fs/ext4/extents.c | 6 ++++++
+>>  1 file changed, 6 insertions(+)
+>>
+>> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
+>> index 2b5aec3f8882..9bb80af4b5cf 100644
+>> --- a/fs/ext4/extents.c
+>> +++ b/fs/ext4/extents.c
+>> @@ -3367,6 +3367,12 @@ static struct ext4_ext_path *ext4_split_extent(handle_t *handle,
+>>  	ee_len = ext4_ext_get_actual_len(ex);
+>>  	unwritten = ext4_ext_is_unwritten(ex);
+>>  
+>> +	/*
+>> +	 * Drop extent cache to prevent stale unwritten extents remaining
+>> +	 * after zeroing out.
+>> +	 */
+>> +	ext4_es_remove_extent(inode, ee_block, ee_len);
+>> +
+>>  	/* Do not cache extents that are in the process of being modified. */
+>>  	flags |= EXT4_EX_NOCACHE;
+>>  
+>> -- 
+>> 2.46.1
+>>
+
 
