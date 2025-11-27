@@ -1,60 +1,75 @@
-Return-Path: <linux-fsdevel+bounces-70036-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70037-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9446CC8EBC4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 15:23:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 015F6C8EDE7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 15:51:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9DB6934A07F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 14:23:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F2E13B660B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 14:49:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A75132BF44;
-	Thu, 27 Nov 2025 14:23:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E83728C5D9;
+	Thu, 27 Nov 2025 14:49:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ea0Y1G0Z"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Pliw/Hg2";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="tk/qR6wX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D52CE1FE46D
-	for <linux-fsdevel@vger.kernel.org>; Thu, 27 Nov 2025 14:23:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EF08273816;
+	Thu, 27 Nov 2025 14:49:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764253429; cv=none; b=b3Gc5g9Y4DcsRqfYlP/zi6k0spm28o9fxTGuB+j5LJjfuXDJ2ws9Z65VDy9F8jD5b9WTTyy0GJrDerkl3BWDaUcIPMsZa1FurFYJqRCQEo4DJuIRQw2y6ZKr814ZoaXYcc/7pDKPNrQfPbSClryndkkSJl81PdgVq3YbChwLVwM=
+	t=1764254958; cv=none; b=RkR9P5yJwK/e5o4kTg12rsQ/FpAe0mWDjccyyssAuB6o/0Lhao4ETg1/pJWSPZt8S3utActZc30b5h6MvzjVyeVzDTZWq2x833AcayOeFBpH/Qdzjz0deMd8Jz8dEKP2BOlPBjGIRRrMSPtXjUhhOBGiKpb1lClDWpgHM/w5ahM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764253429; c=relaxed/simple;
-	bh=r07qtYGEb7AnC6anOUPmwTrLLsNrLYAVrCgqJnbbPKI=;
+	s=arc-20240116; t=1764254958; c=relaxed/simple;
+	bh=FFjrNlZ3Qw64oHatIC7QkeWeQt2fwddh71PoWa/omkI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gFxzp5+V4DReFt3wkcJkttRXe/jIXCd7v33sxMA3enx9ZjOseQl3hyG5UvW5XW7TYp5AK+cyhpSYJ0EFjmNLRJ2SBcusTdeWG3iM3ak3Jn6aAoNcOT6MWM23NO843Rg4uJo3elJymMfov9MIk8qCYJpaJ9ppVccX+4/tJhI9IJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ea0Y1G0Z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92C07C4CEF8;
-	Thu, 27 Nov 2025 14:23:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764253429;
-	bh=r07qtYGEb7AnC6anOUPmwTrLLsNrLYAVrCgqJnbbPKI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ea0Y1G0Z9/IYHDSbEJavEbqdCjuH+PodNnjxcOx1VYe8B9FNt1npwgiWl7/1n9u+z
-	 4r+9W/9pCLq/pl9obQ9xEkONlBJx5UgCU0G3BrO+2pej+1luBmvtKE6VybD4ZK1/Oa
-	 vG0GZBHaoIB264JoVRe8F8tE0BFYqzOK0nksIan7ieNW+veVUML2UIZxMzexCAIQOZ
-	 A21J0ZFBNi3N77/h+QIK8xufyreIAkbAffPPmQWGMEiN6xEdcgyYrMuR/lOdGXXmQ8
-	 S0C98IQWCX3a6fDGRx9jkPawe9XTu/eQo1SobnfJbMlTJrGLzo5dhjtQjeU3jYPk3c
-	 MEQpa4/8DPZQQ==
-Date: Thu, 27 Nov 2025 15:23:44 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: "Borah, Chaitanya Kumar" <chaitanya.kumar.borah@intel.com>
-Cc: "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>, 
-	"intel-xe@lists.freedesktop.org" <intel-xe@lists.freedesktop.org>, "Kurmi, Suresh Kumar" <suresh.kumar.kurmi@intel.com>, 
-	"Saarinen, Jani" <jani.saarinen@intel.com>, Lucas De Marchi <lucas.demarchi@intel.com>, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re: REGRESSION on linux-next (next-20251125)
-Message-ID: <20251127-entnehmen-fokussieren-3159ffb8e98b@brauner>
-References: <a27eb5f4-c4c9-406c-9b53-93f7888db14a@intel.com>
- <20251127-agenda-befinden-61628473b16b@brauner>
- <5ffeb0af-a3c9-4ccb-a752-ce7d48f475df@intel.com>
- <20251127-kaktus-gourmet-626cff3d8314@brauner>
- <78e1b97d-837f-48e9-882f-8320473ec9bb@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gh7KipHmz6mUMkebLcX6YC4cKALeatCnXlTFjjjVPMjjYwnqQFlNY5vzVvJfFgu0hSVcAl77TjFXMaGDDcrEQ2U6VtF7+kZD0gifcJ7Qgk8JiDM2RBqstX6hr3V1yGzxBOQRCE6AKgOONVZ02ZDLh+zqyRs3xzQeTEA37ceKGJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Pliw/Hg2; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=tk/qR6wX; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 27 Nov 2025 15:49:13 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1764254955;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7NGhO3m20hNBLQgRoRe5aCNIWN6lSYGzFhhL4/I6i0M=;
+	b=Pliw/Hg2CT43fdJgplojXUFqZWA2AK9IGFihMdPAPz54Y8g0mjc85DdYd2Uo6AllcFjoiT
+	9VFWW866CG15H8AZg/JOkeXYUoDhKfKcxkPBufmmf31b+Tni2xhvwJ6vE14mXJrqCOEcP0
+	d+Jt8lZF5hv5n1mjHJ0kkReygCl30hEonK/PRRaU104CqK4tSZLtYY/ytzUKnDDAFYM56t
+	nSDG11BcPSSmZC+LG4P3Ucp1u/pEVab4lb9MPVaD/bferdR2FOke+brgUytotq5Sev6xIe
+	1uaZtYHsYuGKahn5mbDONskt7U1CBXWwRR4AMWm1Cw9C0rCqvWuWOYljP/axIA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1764254955;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7NGhO3m20hNBLQgRoRe5aCNIWN6lSYGzFhhL4/I6i0M=;
+	b=tk/qR6wXFEg1BUpfHcBHWK5zjR3/ybtkL+SBbbbMbUDbtuwWcXISYr74nD3EOKGwFa5B+2
+	Kr1OcIdXS+VWX2CQ==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Xie Yuanbin <xieyuanbin1@huawei.com>
+Cc: viro@zeniv.linux.org.uk, will@kernel.org, nico@fluxnic.net,
+	rmk+kernel@armlinux.org.uk, linux@armlinux.org.uk,
+	david.laight@runbox.com, rppt@kernel.org, vbabka@suse.cz,
+	pfalcato@suse.de, brauner@kernel.org, lorenzo.stoakes@oracle.com,
+	kuninori.morimoto.gx@renesas.com, tony@atomide.com, arnd@arndb.de,
+	akpm@linux-foundation.org, punitagrawal@gmail.com, hch@lst.de,
+	jack@suse.com, rjw@rjwysocki.net, marc.zyngier@arm.com,
+	linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	wozizhi@huaweicloud.com, liaohua4@huawei.com, lilinjie8@huawei.com,
+	pangliyuan1@huawei.com, wangkefeng.wang@huawei.com
+Subject: Re: [RFC PATCH v2 2/2] ARM/mm/fault: Enable interrupts before
+ sending signal
+Message-ID: <20251127144913.arc7keYZ@linutronix.de>
+References: <20251127140109.191657-1-xieyuanbin1@huawei.com>
+ <20251127140109.191657-2-xieyuanbin1@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -63,28 +78,28 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <78e1b97d-837f-48e9-882f-8320473ec9bb@intel.com>
+In-Reply-To: <20251127140109.191657-2-xieyuanbin1@huawei.com>
 
-On Thu, Nov 27, 2025 at 06:16:05PM +0530, Borah, Chaitanya Kumar wrote:
-> 
-> 
-> On 11/27/2025 4:13 PM, Christian Brauner wrote:
-> > I just pushed:
-> > 
-> > https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs-6.19.fd_prepare
-> > 
-> > If you want to test that, please.
-> 
-> aah! only the sync_file.c change you suggested was not fixing the issue. But
-> with [1] on top of linux-next, the issue is now resolved.
-> 
-> It also solves another issue[2] we bisected (before I could report it to
-> you, which is never a bad thing)
-> 
-> Thank you.
+On 2025-11-27 22:01:09 [+0800], Xie Yuanbin wrote:
+> --- a/arch/arm/mm/fault.c
+> +++ b/arch/arm/mm/fault.c
+> @@ -184,10 +184,13 @@ __do_user_fault(unsigned long addr, unsigned int fsr, unsigned int sig,
+>  	struct task_struct *tsk = current;
+>  
+>  	if (addr > TASK_SIZE)
+>  		harden_branch_predictor();
+>  
+> +	if (IS_ENABLED(CONFIG_PREEMPT_RT))
+> +		local_irq_enable();
 
-Yes, sorry, two pretty obvious mistakes on my side. Thanks for testing!
+This shouldn't be limited to CONFIG_PREEMPT_RT. There is nothing wrong
+with enabling it unconditionally.
 
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/commit/?h=vfs-6.19.fd_prepare&id=bf44cb6382f90fbda2eeae67065dc9401a967485
-> [2] https://intel-gfx-ci.01.org/tree/linux-next/next-20251125/bat-mtlp-8/igt@core_hotunplug@unbind-rebind.html
+>  #ifdef CONFIG_DEBUG_USER
+>  	if (((user_debug & UDBG_SEGV) && (sig == SIGSEGV)) ||
+>  	    ((user_debug & UDBG_BUS)  && (sig == SIGBUS))) {
+>  		pr_err("8<--- cut here ---\n");
+>  		pr_err("%s: unhandled page fault (%d) at 0x%08lx, code 0x%03x\n",
+
+Sebastian
 
