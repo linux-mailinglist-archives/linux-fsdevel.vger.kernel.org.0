@@ -1,139 +1,124 @@
-Return-Path: <linux-fsdevel+bounces-70077-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70078-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id C766CC90066
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 20:33:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 42C7CC900A0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 20:44:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C2B0A350182
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 19:33:49 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id DD1C334E07B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 19:43:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 540EF3054D6;
-	Thu, 27 Nov 2025 19:33:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD1983064BF;
+	Thu, 27 Nov 2025 19:43:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="C82VoaDh"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="bLoT/Fgl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F7832EBDF2;
-	Thu, 27 Nov 2025 19:33:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2533130149D;
+	Thu, 27 Nov 2025 19:43:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764272020; cv=none; b=NIZUIdHswkpM1cNkXuydMLR9e/9zkqZvnBvJ39zfnsE6sT4yDn89wcsDz/FFpaunKGc304sVmXmMbI/b1qtgJlN8YN/hyLoqrUYrPpE3zT8f/pegQk26OJC0HE5MR+loRBlTrUE266U4u1ZyAke7Lf3FW+URpZVyFPjWO1WFrZ4=
+	t=1764272609; cv=none; b=NYF+a5atBRdF7iYNsPIRZhbzAEHRWCOIQalnyXPJkcA2+btF0rV18Ec6pVEn2gxaiXOVz2cmlabQhi+WNkNaq/ydOh+K/NfHnpGl9j37ow3t7KErbGdbiz7UD3b4KqoOB7LVBdpJdI1PsLA8Za0KZlm1XU2dqNimmnCi3RXHwwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764272020; c=relaxed/simple;
-	bh=bKwbRmbrl+X8raFsxUCv3iqsRGv3g/qP8jWuzhz/5xo=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=cp9TYjzHPPVwoBljOxZ2yegluto7PD3bodLA0biw29bAn9Ed1m4xSr0s866Hd+yJnG3rmrT1W9fCfw0Tv5HY1Ukk0T9LsNiHyFatD9LkTzMCkauZyL+dvZzL0VDYBhV0qo7Vgvf0MeyYYLkmUlI/yq08feJLfjCWj+kEgLv+baA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=C82VoaDh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9F48C4CEF8;
-	Thu, 27 Nov 2025 19:33:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1764272019;
-	bh=bKwbRmbrl+X8raFsxUCv3iqsRGv3g/qP8jWuzhz/5xo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=C82VoaDhd0sLSQSLoV+c3099bDHqryfKIwdPCaSkPbMob2hxR6Mo96WsptlVjIgXk
-	 uP97+DGgersxABmCaWxwVwO/9cRncMCk679v0utJXbOe3eUAoBEmHyUK962izBaUuz
-	 ghigxFj1nYps4+6cypgfSmpBaKlAIGYwIYKpVSas=
-Date: Thu, 27 Nov 2025 11:33:37 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Christian Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank
- <frankja@linux.ibm.com>, Claudio Imbrenda <imbrenda@linux.ibm.com>, David
- Hildenbrand <david@redhat.com>, Alexander Gordeev <agordeev@linux.ibm.com>,
- Gerald Schaefer <gerald.schaefer@linux.ibm.com>, Heiko Carstens
- <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, Sven Schnelle
- <svens@linux.ibm.com>, Peter Xu <peterx@redhat.com>, Alexander Viro
- <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara
- <jack@suse.cz>, Arnd Bergmann <arnd@arndb.de>, Zi Yan <ziy@nvidia.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>, "Liam R . Howlett"
- <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>, Ryan Roberts
- <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, Barry Song
- <baohua@kernel.org>, Lance Yang <lance.yang@linux.dev>, Muchun Song
- <muchun.song@linux.dev>, Oscar Salvador <osalvador@suse.de>, Vlastimil
- Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan
- <surenb@google.com>, Michal Hocko <mhocko@suse.com>, Matthew Brost
- <matthew.brost@intel.com>, Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim
- <rakie.kim@sk.com>, Byungchul Park <byungchul@sk.com>, Gregory Price
- <gourry@gourry.net>, Ying Huang <ying.huang@linux.alibaba.com>, Alistair
- Popple <apopple@nvidia.com>, Axel Rasmussen <axelrasmussen@google.com>,
- Yuanchu Xie <yuanchu@google.com>, Wei Xu <weixugc@google.com>, Kemeng Shi
- <shikemeng@huaweicloud.com>, Kairui Song <kasong@tencent.com>, Nhat Pham
- <nphamcs@gmail.com>, Baoquan He <bhe@redhat.com>, Chris Li
- <chrisl@kernel.org>, SeongJae Park <sj@kernel.org>, Matthew Wilcox
- <willy@infradead.org>, Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky
- <leon@kernel.org>, Xu Xin <xu.xin16@zte.com.cn>, Chengming Zhou
- <chengming.zhou@linux.dev>, Jann Horn <jannh@google.com>, Miaohe Lin
- <linmiaohe@huawei.com>, Naoya Horiguchi <nao.horiguchi@gmail.com>, Pedro
- Falcato <pfalcato@suse.de>, Pasha Tatashin <pasha.tatashin@soleen.com>, Rik
- van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>, Hugh Dickins
- <hughd@google.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
- linux-s390@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linux-arch@vger.kernel.org, damon@lists.linux.dev
-Subject: Re: [PATCH v3 14/16] mm: remove is_hugetlb_entry_[migration,
- hwpoisoned]()
-Message-Id: <20251127113337.c6a897e0b786d56084d23025@linux-foundation.org>
-In-Reply-To: <66178124-ebdf-4e23-b8ca-ed3eb8030c81@lucifer.local>
-References: <cover.1762812360.git.lorenzo.stoakes@oracle.com>
-	<0e92d6924d3de88cd014ce1c53e20edc08fc152e.1762812360.git.lorenzo.stoakes@oracle.com>
-	<66178124-ebdf-4e23-b8ca-ed3eb8030c81@lucifer.local>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1764272609; c=relaxed/simple;
+	bh=OK+CU8cNMmUIZJxdbIpvYN8hYF/RDiQRU5s420ZGKQ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sjNwOb2Tu7mPd4w4Yv4RTHX9ieVYK7Aqh1BDNA6bH7qzEwD5eCPsjl2006yl+y4Yrn5spKjAa1xs5NW7s9srfDZr2lJtmMhEXmspdZtAXntA0O5RIz0NH6NlQgELh0QJZro4sC6+qaQuk1w9nv/X+YvVl1t41+NXT6OyVkpXX/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=bLoT/Fgl; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=JQe+g5ZvR6KeivPEwk1LBLbeVJ2/39tSJLB6nZ8TM10=; b=bLoT/FglVGFQTp6ZQ56Yle6fs8
+	ptqzHTWL95KXuhjuxl7XPt2gLgIOgk1wweluHsPyQ38cpDssH97HG3X9erEgS+i3X/bNy+BrSNtZX
+	0Nx+1/7AoEl05gpR3MVH+L9M0aocNk7ibz8QPD2KslaJzakC7Ok8gfVaNO2YEVazZb2xxnmCHFpPF
+	IGRfMUCoFpNAy2XF/qaFP5T/vm4M4wGNn6/Yp6Tnduny8zxbeHx1WOFYhR2vZjAP7vXkPR/loRBbS
+	yrzAGHclbg4deP4UOsDu2voNxG+3XLZD1UdKAL75EZWsX6Dwl59DS2irr+1duhO8HSc3s96oSDErT
+	Uno8xeEw==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vOhti-0000000CBWb-3MlU;
+	Thu, 27 Nov 2025 19:43:22 +0000
+Date: Thu, 27 Nov 2025 19:43:22 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Barry Song <21cnbao@gmail.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	loongarch@lists.linux.dev, linuxppc-dev@lists.ozlabs.org,
+	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC PATCH 0/2] mm: continue using per-VMA lock when retrying
+ page faults after I/O
+Message-ID: <aSip2mWX13sqPW_l@casper.infradead.org>
+References: <20251127011438.6918-1-21cnbao@gmail.com>
+ <aSfO7fA-04SBtTug@casper.infradead.org>
+ <CAGsJ_4zyZeLtxVe56OSYQx0OcjETw2ru1FjZjBOnTszMe_MW2g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGsJ_4zyZeLtxVe56OSYQx0OcjETw2ru1FjZjBOnTszMe_MW2g@mail.gmail.com>
 
-On Thu, 27 Nov 2025 17:45:17 +0000 Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
+[dropping individuals, leaving only mailing lists.  please don't send
+this kind of thing to so many people in future]
 
-> Hi Andrew,
+On Thu, Nov 27, 2025 at 12:22:16PM +0800, Barry Song wrote:
+> On Thu, Nov 27, 2025 at 12:09 PM Matthew Wilcox <willy@infradead.org> wrote:
+> >
+> > On Thu, Nov 27, 2025 at 09:14:36AM +0800, Barry Song wrote:
+> > > There is no need to always fall back to mmap_lock if the per-VMA
+> > > lock was released only to wait for pagecache or swapcache to
+> > > become ready.
+> >
+> > Something I've been wondering about is removing all the "drop the MM
+> > locks while we wait for I/O" gunk.  It's a nice amount of code removed:
 > 
-> Please apply this fix.
-> 
+> I think the point is that page fault handlers should avoid holding the VMA
+> lock or mmap_lock for too long while waiting for I/O. Otherwise, those
+> writers and readers will be stuck for a while.
 
-The offending patch is in mm-stable now, so I'll do this as a
-hey-git-made-me-add-a-bisection-hole commit.
+There's a usecase some of us have been discussing off-list for a few
+weeks that our current strategy pessimises.  It's a process with
+thousands (maybe tens of thousands) of threads.  It has much more mapped
+files than it has memory that cgroups will allow it to use.  So on a
+page fault, we drop the vma lock, allocate a page of ram, kick off the
+read, sleep waiting for the folio to come uptodate, once it is return,
+expecting the page to still be there when we reenter filemap_fault.
+But it's under so much memory pressure that it's already been reclaimed
+by the time we get back to it.  So all the threads just batter the
+storage re-reading data.
 
+If we don't drop the vma lock, we can insert the pages in the page table
+and return, maybe getting some work done before this thread is
+descheduled.
 
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Subject: fs/proc/task_mmu.c: fix make_uffd_wp_huge_pte() huge pte handling
-Date: Thu, 27 Nov 2025 17:45:17 +0000
+This use case also manages to get utterly hung-up trying to do reclaim
+today with the mmap_lock held.  SO it manifests somewhat similarly to
+your problem (everybody ends up blocked on mmap_lock) but it has a
+rather different root cause.
 
-make_uffd_wp_huge_pte() should return after handling a huge_pte_none()
-pte.
+> I agree there’s room for improvement, but merely removing the "drop the MM
+> locks while waiting for I/O" code is unlikely to improve performance.
 
-Link: https://lkml.kernel.org/r/66178124-ebdf-4e23-b8ca-ed3eb8030c81@lucifer.local
-Fixes: 03bfbc3ad6e4 ("mm: remove is_hugetlb_entry_[migration, hwpoisoned]()")
-Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Reported-by: Vlastimil Babka <vbabka@suse.cz>
-Closes: https://lkml.kernel.org/r/dc483db3-be4d-45f7-8b40-a28f5d8f5738@suse.cz
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
----
+I'm not sure it'd hurt performance.  The "drop mmap locks for I/O" code
+was written before the VMA locking code was written.  I don't know that
+it's actually helping these days.
 
- fs/proc/task_mmu.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+> The change would be much more complex, so I’d prefer to land the current
+> patchset first. At least this way, we avoid falling back to mmap_lock and
+> causing contention or priority inversion, with minimal changes.
 
---- a/fs/proc/task_mmu.c~fs-proc-task_mmuc-fix-make_uffd_wp_huge_pte-huge-pte-handling
-+++ a/fs/proc/task_mmu.c
-@@ -2500,9 +2500,11 @@ static void make_uffd_wp_huge_pte(struct
- 	const unsigned long psize = huge_page_size(hstate_vma(vma));
- 	softleaf_t entry;
- 
--	if (huge_pte_none(ptent))
-+	if (huge_pte_none(ptent)) {
- 		set_huge_pte_at(vma->vm_mm, addr, ptep,
- 				make_pte_marker(PTE_MARKER_UFFD_WP), psize);
-+		return;
-+	}
- 
- 	entry = softleaf_from_pte(ptent);
- 	if (softleaf_is_hwpoison(entry) || softleaf_is_marker(entry))
-_
-
+Uh, this is an RFC patchset.  I'm giving you my comment, which is that I
+don't think this is the right direction to go in.  Any talk of "landing"
+these patches is extremely premature.
 
