@@ -1,64 +1,64 @@
-Return-Path: <linux-fsdevel+bounces-69969-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69970-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5471C8CD3A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 06:01:20 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE68DC8CD43
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 06:01:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 84DBB4E24E2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 05:01:19 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D4F9234CBF0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 05:01:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37CC930F92D;
-	Thu, 27 Nov 2025 05:00:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF52B30FC21;
+	Thu, 27 Nov 2025 05:00:56 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1532630F921
-	for <linux-fsdevel@vger.kernel.org>; Thu, 27 Nov 2025 05:00:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9136430FC03
+	for <linux-fsdevel@vger.kernel.org>; Thu, 27 Nov 2025 05:00:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764219647; cv=none; b=Ev6RsgQyaNlnCbWa4mfaWl1+IjrxolksJfTmhS9mOgoJL+TP4RNLi8NHiDICjwBiHMRnuTqRxqob+K/rQilAV7q9E1PRuAoArbMzT1PsXSHO6YoUq6aUeeGd6hQ8nE1e/jqqObsatp4ra5UxFjFkFG9B1Wr1NN8UEVzyJr2PgrM=
+	t=1764219656; cv=none; b=BHSiaSwbPvr/wWgrkC6hyE3YK2FgjnJf+9kAPKhijhHp16j5nDbrjFW9YT+Dj1OlY6Dif5NfH3S+fDovIvYhIo17lCVNzzys2kkkG3bfgpezEpXEpD1lA4/xx0tDJI3wKy0ag0AMAHtW7s/x8LrBXUUrwdC6SNYgeUZZ+3Nwpgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764219647; c=relaxed/simple;
-	bh=TQ1MZtfdPr3ez8lxDd/dx0tztxnlc6kTwMaZLHPnY74=;
+	s=arc-20240116; t=1764219656; c=relaxed/simple;
+	bh=WvgqJ+r/HjTcRKYha7Et11rs7/EJBxvAEu52CuOp3IM=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=qrSUpO1R2UjJRiU7JLU9E0CRlOLH14DER0IyF1StAtGI6uiu4XOIgqeQog3/mC+wCA/2ZCluC9v6QCssxgSiIV/PbelJtnE0hjWmbv8QxAN9ncYk/CIQ7rRNKJOuz/CpJVJr+rNQ+ap5vDiI9DAMeJz28YmWGaZ8kr6mjLqtP3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.180
+	 MIME-Version; b=bvqTsqt+BED9Lb55jLtvXz8O8Wc1zfxZtwLqxdZisyGb5CAUhGgJ4MsmTPBTDKCvXo+jqCulRkE1q0c+KC/uvc8W7SudWhwZQSe4SRrIgjdzKJN1A74mLhO8+KG8MLSbo3nQ1THVsMY4bQ7K17rfo3DIUPeaIqI9iKlI1zfL/aU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2955623e6faso5185635ad.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Nov 2025 21:00:44 -0800 (PST)
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2956d816c10so5895145ad.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Nov 2025 21:00:52 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764219644; x=1764824444;
+        d=1e100.net; s=20230601; t=1764219652; x=1764824452;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=BGJbg29Ek8FIjpP4eBocE0E3tlcBTfp/2pGJqFaPmF8=;
-        b=fKeipW3nw4/cmhOu7c89aQyqq8erNb20KFwPM9FaPrRl70UY+A6jhLMTrlY6tHT/Jq
-         0uwJmlaOEaajqK049zzoKTT7FCtkI/UKOT4pE3QezQbxHs5vUVJhoX5eBWWR72C9cKUJ
-         TO3vC5E6by+QdT/jwM1d19TfOUZlpL+9MmBp65YK934GIeJ2yWNA9a9wmeQrfjwOINgE
-         LAIdQ+QWW/W0zxsoLugiw8i1xX0NCQvn7EwF7iXIalfIVhJt9/F7FdIorQTirTJ1lBHJ
-         3HDWVTr/h5iQWfleiOghFeLefcPutEcsIxxmnLclqXJgVE4Y1PsZyeKPZAMK0iD27gT0
-         7VfA==
-X-Gm-Message-State: AOJu0Yyyw9SQOkdTcZSO2jgTEmobw3zpMA1mTous5brpCgtmiJDBY4ge
-	CbrWeVG32SJdu6dm4p+mAYJNS6BvGfbPA5rIoht750Gr1GwJiS/C7J6O
-X-Gm-Gg: ASbGnctldWuavlHnzmEhxUXFaf9awQ+ygda+LrwJxJpCk1HwH0q2JebZVv3rMBV5IFE
-	BGJcb1JEvV1oab7Dwjp0Cn0J9ezWsvaRWD8Vyix5yp2gcKBvJNJCC0Q7qEWAMrQ2TsXSJNHeUqd
-	OQR1Gi2EE8SZ130etHlB7SfIGLYTjGdfGZC2A3S6p0ol1/paJo6w+vJNBoTQTjQ7dN+iLsvJaVv
-	pOIp7W6zcTU0KpWJxQ+1S6sud5gzrGan/KrJz58kHZ0PNOywdtcUNhYfbfbJmN+/0alqxMrm+Kc
-	8YLGGAccPq+S0GKsd3H4eKWsbf7n2Y2GKIhx9qJEFaQLfeA54jsnR9MTkwv+2VN5wv48Z/xwSy/
-	xWJiEDdFcpeFhQKYK+si8Eh1VMqg9lCgf8bQ0v9mq/vaY4WDNDCJbWTKQ0vdZbqNjgSbSX4M0Va
-	N0pKVd6CgUJjfIUYAiGJ9miN6rXA==
-X-Google-Smtp-Source: AGHT+IGl5r1uIkSd3eAo0Rmrhr0kizPMHK5dGsHrauLVbij6N5TZrpJnhI0PikdUOxsyAAkVWCiFzg==
-X-Received: by 2002:a17:903:11c7:b0:295:5972:4363 with SMTP id d9443c01a7336-29baacae71emr114866685ad.0.1764219643774;
-        Wed, 26 Nov 2025 21:00:43 -0800 (PST)
+        bh=SbvyElh7wwEzZnGerfTKPBi+NGwrOd4j/Rr31hSN/gQ=;
+        b=trUT7Wv6NB1cn7vvVx6uOKD02Eg0oml7GJDpU0/gx6+Td1bswRBq653N+gjVSy0eAQ
+         5g11Zt14R+M+Rtabp0X8hhhaHNcYeNIIicqHgs0BUUUTw27nXkBu/lJTfdb9cS+zba09
+         u0LW+sSWz0ScirAngWER+UFhzavPmNmO5AjSlATUi35Hgz1ezFDgqZpEb5lTGAtXDHCT
+         93gZ+Z5aAUHzlxj12KpqlYYt++WhIflMOo3jmWcRO4UgGDHBFcxAnCDUIiKQQoJy8Hhx
+         QiC7z6bv5PzuDYN4YzxYx6mOV0tgH65CRNR4Y9LB0AM8TOGu5j24ifXDbjy3FlImbfKM
+         n0Fg==
+X-Gm-Message-State: AOJu0YwCueINcb0t6FgCA5oaFpw+NDvz6eYeazRTshvEQIJJbvcF3Fsp
+	5q9MQd97nl3A6EUcttITdqXnHsA8wFNCMCMk6sUJImRt+bSaMxR1+oQS
+X-Gm-Gg: ASbGncvY877As+XUGtQuRd8UtBQ/GwjD2+Ubvb5YXz9rLxvBsv01hzWpM9pntZXMENk
+	2iQo107DYS//ORwpfvxVi6ieaKIZJDSKqz//Lzdp3fC/5t44nVxC1SnQvkK/58ZnH9b6CVMfD/u
+	R+qE3Woi/vAgYvEAU9nMEwIouAD+bJ53XF1Ezpsp/KmvkSlj/gWQadofpoRKgql6NFQaXzUAUea
+	2KmWuE+7c5WMajd8KJjnPMlFobYaT5RkypN2kNkJ8KFdS9EREItdKPviLgpPE/TUhVQU5qWeVUR
+	duhjJn3nT2HqrsMtnmfybana3iehdo7AUK+4GM9oN6e0YbrKdIBDkbKidQs4qhuAaEUoO5iQutL
+	tF8avFo+wwyHMgZpGfr+yi8u2+8abBIjgj94QQIlYiD9e1CV6xuRtNsy3z+73bYtXjmrL1UD06M
+	70bX8Z+bCoTsIWgJJizZCiYOcM5g==
+X-Google-Smtp-Source: AGHT+IG0VsD0yn9JHowhXxbnPXDPLEaPopFHzv8VEDaP8j840HV02P3HFhz82VCrrlgsKRrUwafxVg==
+X-Received: by 2002:a17:903:1212:b0:295:f47:75cb with SMTP id d9443c01a7336-29b6becc173mr235722825ad.23.1764219651402;
+        Wed, 26 Nov 2025 21:00:51 -0800 (PST)
 Received: from localhost.localdomain ([1.227.206.162])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29bceb54454sm2719825ad.84.2025.11.26.21.00.37
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29bceb54454sm2719825ad.84.2025.11.26.21.00.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Nov 2025 21:00:42 -0800 (PST)
+        Wed, 26 Nov 2025 21:00:50 -0800 (PST)
 From: Namjae Jeon <linkinjeon@kernel.org>
 To: viro@zeniv.linux.org.uk,
 	brauner@kernel.org,
@@ -85,9 +85,9 @@ Cc: linux-fsdevel@vger.kernel.org,
 	gunho.lee@lge.com,
 	Namjae Jeon <linkinjeon@kernel.org>,
 	Hyunchul Lee <hyc.lee@gmail.com>
-Subject: [PATCH v2 05/11] ntfsplus: add file operations
-Date: Thu, 27 Nov 2025 13:59:38 +0900
-Message-Id: <20251127045944.26009-6-linkinjeon@kernel.org>
+Subject: [PATCH v2 06/11] ntfsplus: add iomap and address space operations
+Date: Thu, 27 Nov 2025 13:59:39 +0900
+Message-Id: <20251127045944.26009-7-linkinjeon@kernel.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20251127045944.26009-1-linkinjeon@kernel.org>
 References: <20251127045944.26009-1-linkinjeon@kernel.org>
@@ -99,1163 +99,1347 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This adds the implementation of file operations for ntfsplus.
+This adds the implementation of iomap and address space operations
+for ntfsplus.
 
 Signed-off-by: Hyunchul Lee <hyc.lee@gmail.com>
 Signed-off-by: Namjae Jeon <linkinjeon@kernel.org>
 ---
- fs/ntfsplus/file.c | 1142 ++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 1142 insertions(+)
- create mode 100644 fs/ntfsplus/file.c
+ fs/ntfsplus/aops.c       | 617 ++++++++++++++++++++++++++++++++++
+ fs/ntfsplus/ntfs_iomap.c | 700 +++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 1317 insertions(+)
+ create mode 100644 fs/ntfsplus/aops.c
+ create mode 100644 fs/ntfsplus/ntfs_iomap.c
 
-diff --git a/fs/ntfsplus/file.c b/fs/ntfsplus/file.c
+diff --git a/fs/ntfsplus/aops.c b/fs/ntfsplus/aops.c
 new file mode 100644
-index 000000000000..aebc2b48b0d5
+index 000000000000..9a1b3b80a146
 --- /dev/null
-+++ b/fs/ntfsplus/file.c
-@@ -0,0 +1,1142 @@
++++ b/fs/ntfsplus/aops.c
+@@ -0,0 +1,617 @@
 +// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * NTFS kernel file operations. Part of the Linux-NTFS project.
++/**
++ * NTFS kernel address space operations and page cache handling.
 + *
-+ * Copyright (c) 2001-2015 Anton Altaparmakov and Tuxera Inc.
++ * Copyright (c) 2001-2014 Anton Altaparmakov and Tuxera Inc.
++ * Copyright (c) 2002 Richard Russon
 + * Copyright (c) 2025 LG Electronics Co., Ltd.
 + */
 +
 +#include <linux/writeback.h>
-+#include <linux/blkdev.h>
-+#include <linux/fs.h>
-+#include <linux/iomap.h>
++#include <linux/mpage.h>
 +#include <linux/uio.h>
-+#include <linux/posix_acl.h>
-+#include <linux/posix_acl_xattr.h>
-+#include <linux/compat.h>
-+#include <linux/falloc.h>
-+#include <uapi/linux/ntfs.h>
 +
-+#include "lcnalloc.h"
-+#include "ntfs.h"
 +#include "aops.h"
-+#include "reparse.h"
-+#include "ea.h"
-+#include "ntfs_iomap.h"
++#include "attrib.h"
++#include "mft.h"
++#include "ntfs.h"
 +#include "misc.h"
-+#include "bitmap.h"
++#include "ntfs_iomap.h"
++
++static s64 ntfs_convert_page_index_into_lcn(struct ntfs_volume *vol, struct ntfs_inode *ni,
++		unsigned long page_index)
++{
++	sector_t iblock;
++	s64 vcn;
++	s64 lcn;
++	unsigned char blocksize_bits = vol->sb->s_blocksize_bits;
++
++	iblock = (s64)page_index << (PAGE_SHIFT - blocksize_bits);
++	vcn = (s64)iblock << blocksize_bits >> vol->cluster_size_bits;
++
++	down_read(&ni->runlist.lock);
++	lcn = ntfs_attr_vcn_to_lcn_nolock(ni, vcn, false);
++	up_read(&ni->runlist.lock);
++
++	return lcn;
++}
++
++struct bio *ntfs_setup_bio(struct ntfs_volume *vol, blk_opf_t opf, s64 lcn,
++		unsigned int pg_ofs)
++{
++	struct bio *bio;
++
++	bio = bio_alloc(vol->sb->s_bdev, 1, opf, GFP_NOIO);
++	if (!bio)
++		return NULL;
++	bio->bi_iter.bi_sector = ((lcn << vol->cluster_size_bits) + pg_ofs) >>
++		vol->sb->s_blocksize_bits;
++
++	return bio;
++}
 +
 +/**
-+ * ntfs_file_open - called when an inode is about to be opened
-+ * @vi:		inode to be opened
-+ * @filp:	file structure describing the inode
++ * ntfs_read_folio - fill a @folio of a @file with data from the device
++ * @file:	open file to which the folio @folio belongs or NULL
++ * @folio:	page cache folio to fill with data
 + *
-+ * Limit file size to the page cache limit on architectures where unsigned long
-+ * is 32-bits. This is the most we can do for now without overflowing the page
-+ * cache page index. Doing it this way means we don't run into problems because
-+ * of existing too large files. It would be better to allow the user to read
-+ * the beginning of the file but I doubt very much anyone is going to hit this
-+ * check on a 32-bit architecture, so there is no point in adding the extra
-+ * complexity required to support this.
++ * For non-resident attributes, ntfs_read_folio() fills the @folio of the open
++ * file @file by calling the ntfs version of the generic block_read_full_folio()
++ * function, which in turn creates and reads in the buffers associated with
++ * the folio asynchronously.
 + *
-+ * On 64-bit architectures, the check is hopefully optimized away by the
-+ * compiler.
++ * For resident attributes, OTOH, ntfs_read_folio() fills @folio by copying the
++ * data from the mft record (which at this stage is most likely in memory) and
++ * fills the remainder with zeroes. Thus, in this case, I/O is synchronous, as
++ * even if the mft record is not cached at this point in time, we need to wait
++ * for it to be read in before we can do the copy.
 + *
-+ * After the check passes, just call generic_file_open() to do its work.
++ * Return 0 on success and -errno on error.
 + */
-+static int ntfs_file_open(struct inode *vi, struct file *filp)
++static int ntfs_read_folio(struct file *file, struct folio *folio)
 +{
++	loff_t i_size;
++	struct inode *vi;
++	struct ntfs_inode *ni;
++
++	vi = folio->mapping->host;
++	i_size = i_size_read(vi);
++	/* Is the page fully outside i_size? (truncate in progress) */
++	if (unlikely(folio->index >= (i_size + PAGE_SIZE - 1) >>
++			PAGE_SHIFT)) {
++		folio_zero_segment(folio, 0, PAGE_SIZE);
++		ntfs_debug("Read outside i_size - truncated?");
++		folio_mark_uptodate(folio);
++		folio_unlock(folio);
++		return 0;
++	}
++	/*
++	 * This can potentially happen because we clear PageUptodate() during
++	 * ntfs_writepage() of MstProtected() attributes.
++	 */
++	if (folio_test_uptodate(folio)) {
++		folio_unlock(folio);
++		return 0;
++	}
++	ni = NTFS_I(vi);
++
++	/*
++	 * Only $DATA attributes can be encrypted and only unnamed $DATA
++	 * attributes can be compressed.  Index root can have the flags set but
++	 * this means to create compressed/encrypted files, not that the
++	 * attribute is compressed/encrypted.  Note we need to check for
++	 * AT_INDEX_ALLOCATION since this is the type of both directory and
++	 * index inodes.
++	 */
++	if (ni->type != AT_INDEX_ALLOCATION) {
++		/* If attribute is encrypted, deny access, just like NT4. */
++		if (NInoEncrypted(ni)) {
++			folio_unlock(folio);
++			return -EACCES;
++		}
++		/* Compressed data streams are handled in compress.c. */
++		if (NInoNonResident(ni) && NInoCompressed(ni))
++			return ntfs_read_compressed_block(folio);
++	}
++
++	return iomap_read_folio(folio, &ntfs_read_iomap_ops);
++}
++
++static int ntfs_write_mft_block(struct ntfs_inode *ni, struct folio *folio,
++		struct writeback_control *wbc)
++{
++	struct inode *vi = VFS_I(ni);
++	struct ntfs_volume *vol = ni->vol;
++	u8 *kaddr;
++	struct ntfs_inode *locked_nis[PAGE_SIZE / NTFS_BLOCK_SIZE];
++	int nr_locked_nis = 0, err = 0, mft_ofs, prev_mft_ofs;
++	struct bio *bio = NULL;
++	unsigned long mft_no;
++	struct ntfs_inode *tni;
++	s64 lcn;
++	s64 vcn = (s64)folio->index << PAGE_SHIFT >> vol->cluster_size_bits;
++	s64 end_vcn = ni->allocated_size >> vol->cluster_size_bits;
++	unsigned int folio_sz;
++	struct runlist_element *rl;
++
++	ntfs_debug("Entering for inode 0x%lx, attribute type 0x%x, folio index 0x%lx.",
++			vi->i_ino, ni->type, folio->index);
++
++	lcn = ntfs_convert_page_index_into_lcn(vol, ni, folio->index);
++	if (lcn <= LCN_HOLE) {
++		folio_start_writeback(folio);
++		folio_unlock(folio);
++		folio_end_writeback(folio);
++		return -EIO;
++	}
++
++	/* Map folio so we can access its contents. */
++	kaddr = kmap_local_folio(folio, 0);
++	/* Clear the page uptodate flag whilst the mst fixups are applied. */
++	folio_clear_uptodate(folio);
++
++	for (mft_ofs = 0; mft_ofs < PAGE_SIZE && vcn < end_vcn;
++	     mft_ofs += vol->mft_record_size) {
++		/* Get the mft record number. */
++		mft_no = (((s64)folio->index << PAGE_SHIFT) + mft_ofs) >>
++			vol->mft_record_size_bits;
++		vcn = mft_no << vol->mft_record_size_bits >> vol->cluster_size_bits;
++		/* Check whether to write this mft record. */
++		tni = NULL;
++		if (ntfs_may_write_mft_record(vol, mft_no,
++					(struct mft_record *)(kaddr + mft_ofs), &tni)) {
++			unsigned int mft_record_off = 0;
++			s64 vcn_off = vcn;
++
++			/*
++			 * The record should be written.  If a locked ntfs
++			 * inode was returned, add it to the array of locked
++			 * ntfs inodes.
++			 */
++			if (tni)
++				locked_nis[nr_locked_nis++] = tni;
++
++			if (bio && (mft_ofs != prev_mft_ofs + vol->mft_record_size)) {
++flush_bio:
++				flush_dcache_folio(folio);
++				submit_bio_wait(bio);
++				bio_put(bio);
++				bio = NULL;
++			}
++
++			if (vol->cluster_size < folio_size(folio)) {
++				down_write(&ni->runlist.lock);
++				rl = ntfs_attr_vcn_to_rl(ni, vcn_off, &lcn);
++				up_write(&ni->runlist.lock);
++				if (IS_ERR(rl) || lcn < 0) {
++					err = -EIO;
++					goto unm_done;
++				}
++
++				if (bio &&
++				   (bio_end_sector(bio) >> (vol->cluster_size_bits - 9)) !=
++				    lcn) {
++					flush_dcache_folio(folio);
++					submit_bio_wait(bio);
++					bio_put(bio);
++					bio = NULL;
++				}
++			}
++
++			if (!bio) {
++				unsigned int off;
++
++				off = ((mft_no << vol->mft_record_size_bits) +
++				       mft_record_off) & vol->cluster_size_mask;
++
++				bio = ntfs_setup_bio(vol, REQ_OP_WRITE, lcn, off);
++				if (!bio) {
++					err = -ENOMEM;
++					goto unm_done;
++				}
++			}
++
++			if (vol->cluster_size == NTFS_BLOCK_SIZE &&
++			    (mft_record_off ||
++			     rl->length - (vcn_off - rl->vcn) == 1 ||
++			     mft_ofs + NTFS_BLOCK_SIZE >= PAGE_SIZE))
++				folio_sz = NTFS_BLOCK_SIZE;
++			else
++				folio_sz = vol->mft_record_size;
++			if (!bio_add_folio(bio, folio, folio_sz,
++					   mft_ofs + mft_record_off)) {
++				err = -EIO;
++				bio_put(bio);
++				goto unm_done;
++			}
++			mft_record_off += folio_sz;
++
++			if (mft_record_off != vol->mft_record_size) {
++				vcn_off++;
++				goto flush_bio;
++			}
++			prev_mft_ofs = mft_ofs;
++
++			if (mft_no < vol->mftmirr_size)
++				ntfs_sync_mft_mirror(vol, mft_no,
++						(struct mft_record *)(kaddr + mft_ofs));
++		}
++
++	}
++
++	if (bio) {
++		flush_dcache_folio(folio);
++		submit_bio_wait(bio);
++		bio_put(bio);
++	}
++	flush_dcache_folio(folio);
++unm_done:
++	folio_mark_uptodate(folio);
++	kunmap_local(kaddr);
++
++	folio_start_writeback(folio);
++	folio_unlock(folio);
++	folio_end_writeback(folio);
++
++	/* Unlock any locked inodes. */
++	while (nr_locked_nis-- > 0) {
++		struct ntfs_inode *base_tni;
++
++		tni = locked_nis[nr_locked_nis];
++		mutex_unlock(&tni->mrec_lock);
++
++		/* Get the base inode. */
++		mutex_lock(&tni->extent_lock);
++		if (tni->nr_extents >= 0)
++			base_tni = tni;
++		else
++			base_tni = tni->ext.base_ntfs_ino;
++		mutex_unlock(&tni->extent_lock);
++		ntfs_debug("Unlocking %s inode 0x%lx.",
++				tni == base_tni ? "base" : "extent",
++				tni->mft_no);
++		atomic_dec(&tni->count);
++		iput(VFS_I(base_tni));
++	}
++
++	if (unlikely(err && err != -ENOMEM))
++		NVolSetErrors(vol);
++	if (likely(!err))
++		ntfs_debug("Done.");
++	return err;
++}
++
++/**
++ * ntfs_bmap - map logical file block to physical device block
++ * @mapping:	address space mapping to which the block to be mapped belongs
++ * @block:	logical block to map to its physical device block
++ *
++ * For regular, non-resident files (i.e. not compressed and not encrypted), map
++ * the logical @block belonging to the file described by the address space
++ * mapping @mapping to its physical device block.
++ *
++ * The size of the block is equal to the @s_blocksize field of the super block
++ * of the mounted file system which is guaranteed to be smaller than or equal
++ * to the cluster size thus the block is guaranteed to fit entirely inside the
++ * cluster which means we do not need to care how many contiguous bytes are
++ * available after the beginning of the block.
++ *
++ * Return the physical device block if the mapping succeeded or 0 if the block
++ * is sparse or there was an error.
++ *
++ * Note: This is a problem if someone tries to run bmap() on $Boot system file
++ * as that really is in block zero but there is nothing we can do.  bmap() is
++ * just broken in that respect (just like it cannot distinguish sparse from
++ * not available or error).
++ */
++static sector_t ntfs_bmap(struct address_space *mapping, sector_t block)
++{
++	s64 ofs, size;
++	loff_t i_size;
++	s64 lcn;
++	unsigned long blocksize, flags;
++	struct ntfs_inode *ni = NTFS_I(mapping->host);
++	struct ntfs_volume *vol = ni->vol;
++	unsigned int delta;
++	unsigned char blocksize_bits, cluster_size_shift;
++
++	ntfs_debug("Entering for mft_no 0x%lx, logical block 0x%llx.",
++			ni->mft_no, (unsigned long long)block);
++	if (ni->type != AT_DATA || !NInoNonResident(ni) || NInoEncrypted(ni)) {
++		ntfs_error(vol->sb, "BMAP does not make sense for %s attributes, returning 0.",
++				(ni->type != AT_DATA) ? "non-data" :
++				(!NInoNonResident(ni) ? "resident" :
++				"encrypted"));
++		return 0;
++	}
++	/* None of these can happen. */
++	blocksize = vol->sb->s_blocksize;
++	blocksize_bits = vol->sb->s_blocksize_bits;
++	ofs = (s64)block << blocksize_bits;
++	read_lock_irqsave(&ni->size_lock, flags);
++	size = ni->initialized_size;
++	i_size = i_size_read(VFS_I(ni));
++	read_unlock_irqrestore(&ni->size_lock, flags);
++	/*
++	 * If the offset is outside the initialized size or the block straddles
++	 * the initialized size then pretend it is a hole unless the
++	 * initialized size equals the file size.
++	 */
++	if (unlikely(ofs >= size || (ofs + blocksize > size && size < i_size)))
++		goto hole;
++	cluster_size_shift = vol->cluster_size_bits;
++	down_read(&ni->runlist.lock);
++	lcn = ntfs_attr_vcn_to_lcn_nolock(ni, ofs >> cluster_size_shift, false);
++	up_read(&ni->runlist.lock);
++	if (unlikely(lcn < LCN_HOLE)) {
++		/*
++		 * Step down to an integer to avoid gcc doing a long long
++		 * comparision in the switch when we know @lcn is between
++		 * LCN_HOLE and LCN_EIO (i.e. -1 to -5).
++		 *
++		 * Otherwise older gcc (at least on some architectures) will
++		 * try to use __cmpdi2() which is of course not available in
++		 * the kernel.
++		 */
++		switch ((int)lcn) {
++		case LCN_ENOENT:
++			/*
++			 * If the offset is out of bounds then pretend it is a
++			 * hole.
++			 */
++			goto hole;
++		case LCN_ENOMEM:
++			ntfs_error(vol->sb,
++				"Not enough memory to complete mapping for inode 0x%lx. Returning 0.",
++				ni->mft_no);
++			break;
++		default:
++			ntfs_error(vol->sb,
++				"Failed to complete mapping for inode 0x%lx.  Run chkdsk. Returning 0.",
++				ni->mft_no);
++			break;
++		}
++		return 0;
++	}
++	if (lcn < 0) {
++		/* It is a hole. */
++hole:
++		ntfs_debug("Done (returning hole).");
++		return 0;
++	}
++	/*
++	 * The block is really allocated and fullfils all our criteria.
++	 * Convert the cluster to units of block size and return the result.
++	 */
++	delta = ofs & vol->cluster_size_mask;
++	if (unlikely(sizeof(block) < sizeof(lcn))) {
++		block = lcn = ((lcn << cluster_size_shift) + delta) >>
++				blocksize_bits;
++		/* If the block number was truncated return 0. */
++		if (unlikely(block != lcn)) {
++			ntfs_error(vol->sb,
++				"Physical block 0x%llx is too large to be returned, returning 0.",
++				(long long)lcn);
++			return 0;
++		}
++	} else
++		block = ((lcn << cluster_size_shift) + delta) >>
++				blocksize_bits;
++	ntfs_debug("Done (returning block 0x%llx).", (unsigned long long)lcn);
++	return block;
++}
++
++static void ntfs_readahead(struct readahead_control *rac)
++{
++	struct address_space *mapping = rac->mapping;
++	struct inode *inode = mapping->host;
++	struct ntfs_inode *ni = NTFS_I(inode);
++
++	if (!NInoNonResident(ni) || NInoCompressed(ni)) {
++		/* No readahead for resident and compressed. */
++		return;
++	}
++
++	if (NInoMstProtected(ni) &&
++	    (ni->mft_no == FILE_MFT || ni->mft_no == FILE_MFTMirr))
++		return;
++
++	iomap_readahead(rac, &ntfs_read_iomap_ops);
++}
++
++static int ntfs_mft_writepage(struct folio *folio, struct writeback_control *wbc)
++{
++	struct address_space *mapping = folio->mapping;
++	struct inode *vi = mapping->host;
 +	struct ntfs_inode *ni = NTFS_I(vi);
++	loff_t i_size;
++	int ret;
++
++	i_size = i_size_read(vi);
++
++	/* We have to zero every time due to mmap-at-end-of-file. */
++	if (folio->index >= (i_size >> PAGE_SHIFT)) {
++		/* The page straddles i_size. */
++		unsigned int ofs = i_size & ~PAGE_MASK;
++
++		folio_zero_segment(folio, ofs, PAGE_SIZE);
++	}
++
++	ret = ntfs_write_mft_block(ni, folio, wbc);
++	mapping_set_error(mapping, ret);
++	return ret;
++}
++
++static int ntfs_writepages(struct address_space *mapping,
++		struct writeback_control *wbc)
++{
++	struct inode *inode = mapping->host;
++	struct ntfs_inode *ni = NTFS_I(inode);
++	struct iomap_writepage_ctx wpc = {
++		.inode		= mapping->host,
++		.wbc		= wbc,
++		.ops		= &ntfs_writeback_ops,
++	};
 +
 +	if (NVolShutdown(ni->vol))
 +		return -EIO;
 +
-+	if (sizeof(unsigned long) < 8) {
-+		if (i_size_read(vi) > MAX_LFS_FILESIZE)
-+			return -EOVERFLOW;
-+	}
-+
-+	if (filp->f_flags & O_TRUNC && NInoNonResident(ni)) {
-+		int err;
-+
-+		mutex_lock(&ni->mrec_lock);
-+		down_read(&ni->runlist.lock);
-+		if (!ni->runlist.rl) {
-+			err = ntfs_attr_map_whole_runlist(ni);
-+			if (err) {
-+				up_read(&ni->runlist.lock);
-+				mutex_unlock(&ni->mrec_lock);
-+				return err;
-+			}
-+		}
-+		ni->lcn_seek_trunc = ni->runlist.rl->lcn;
-+		up_read(&ni->runlist.lock);
-+		mutex_unlock(&ni->mrec_lock);
-+	}
-+
-+	filp->f_mode |= FMODE_NOWAIT;
-+
-+	return generic_file_open(vi, filp);
-+}
-+
-+static int ntfs_file_release(struct inode *vi, struct file *filp)
-+{
-+	struct ntfs_inode *ni = NTFS_I(vi);
-+	struct ntfs_volume *vol = ni->vol;
-+	s64 aligned_data_size = round_up(ni->data_size, vol->cluster_size);
-+
-+	if (NInoCompressed(ni))
++	if (!NInoNonResident(ni))
 +		return 0;
 +
-+	inode_lock(vi);
-+	mutex_lock(&ni->mrec_lock);
-+	down_write(&ni->runlist.lock);
-+	if (aligned_data_size < ni->allocated_size) {
-+		int err;
-+		s64 vcn_ds = aligned_data_size >> vol->cluster_size_bits;
-+		s64 vcn_tr = -1;
-+		struct runlist_element *rl = ni->runlist.rl;
-+		ssize_t rc = ni->runlist.count - 2;
++	if (NInoMstProtected(ni) && ni->mft_no == FILE_MFT) {
++		struct folio *folio = NULL;
++		int error;
 +
-+		while (rc >= 0 && rl[rc].lcn == LCN_HOLE && vcn_ds <= rl[rc].vcn) {
-+			vcn_tr = rl[rc].vcn;
-+			rc--;
-+		}
-+
-+		if (vcn_tr >= 0) {
-+			err = ntfs_rl_truncate_nolock(vol, &ni->runlist, vcn_tr);
-+			if (err) {
-+				ntfs_free(ni->runlist.rl);
-+				ni->runlist.rl = NULL;
-+				ntfs_error(vol->sb, "Preallocated block rollback failed");
-+			} else {
-+				ni->allocated_size = vcn_tr << vol->cluster_size_bits;
-+				err = ntfs_attr_update_mapping_pairs(ni, 0);
-+				if (err)
-+					ntfs_error(vol->sb,
-+						   "Failed to rollback mapping pairs for prealloc");
-+			}
-+		}
++		while ((folio = writeback_iter(mapping, wbc, folio, &error)))
++			error = ntfs_mft_writepage(folio, wbc);
++		return error;
 +	}
-+	up_write(&ni->runlist.lock);
-+	mutex_unlock(&ni->mrec_lock);
-+	inode_unlock(vi);
++
++	/* If file is encrypted, deny access, just like NT4. */
++	if (NInoEncrypted(ni)) {
++		ntfs_debug("Denying write access to encrypted file.");
++		return -EACCES;
++	}
++
++	return iomap_writepages(&wpc);
++}
++
++static int ntfs_swap_activate(struct swap_info_struct *sis,
++		struct file *swap_file, sector_t *span)
++{
++	return iomap_swapfile_activate(sis, swap_file, span,
++			&ntfs_read_iomap_ops);
++}
++
++/**
++ * ntfs_normal_aops - address space operations for normal inodes and attributes
++ *
++ * Note these are not used for compressed or mst protected inodes and
++ * attributes.
++ */
++const struct address_space_operations ntfs_normal_aops = {
++	.read_folio		= ntfs_read_folio,
++	.readahead		= ntfs_readahead,
++	.writepages		= ntfs_writepages,
++	.direct_IO		= noop_direct_IO,
++	.dirty_folio		= iomap_dirty_folio,
++	.bmap			= ntfs_bmap,
++	.migrate_folio		= filemap_migrate_folio,
++	.is_partially_uptodate	= iomap_is_partially_uptodate,
++	.error_remove_folio	= generic_error_remove_folio,
++	.release_folio		= iomap_release_folio,
++	.invalidate_folio	= iomap_invalidate_folio,
++	.swap_activate          = ntfs_swap_activate,
++};
++
++/**
++ * ntfs_compressed_aops - address space operations for compressed inodes
++ */
++const struct address_space_operations ntfs_compressed_aops = {
++	.read_folio		= ntfs_read_folio,
++	.direct_IO		= noop_direct_IO,
++	.writepages		= ntfs_writepages,
++	.dirty_folio		= iomap_dirty_folio,
++	.migrate_folio		= filemap_migrate_folio,
++	.is_partially_uptodate	= iomap_is_partially_uptodate,
++	.error_remove_folio	= generic_error_remove_folio,
++	.release_folio		= iomap_release_folio,
++	.invalidate_folio	= iomap_invalidate_folio,
++};
++
++/**
++ * ntfs_mst_aops - general address space operations for mst protecteed inodes
++ *		   and attributes
++ */
++const struct address_space_operations ntfs_mst_aops = {
++	.read_folio		= ntfs_read_folio,	/* Fill page with data. */
++	.readahead		= ntfs_readahead,
++	.writepages		= ntfs_writepages,	/* Write dirty page to disk. */
++	.dirty_folio		= iomap_dirty_folio,
++	.migrate_folio		= filemap_migrate_folio,
++	.is_partially_uptodate	= iomap_is_partially_uptodate,
++	.error_remove_folio	= generic_error_remove_folio,
++	.release_folio		= iomap_release_folio,
++	.invalidate_folio	= iomap_invalidate_folio,
++};
++
++void mark_ntfs_record_dirty(struct folio *folio)
++{
++	iomap_dirty_folio(folio->mapping, folio);
++}
++
++int ntfs_dev_read(struct super_block *sb, void *buf, loff_t start, loff_t size)
++{
++	pgoff_t idx, idx_end;
++	loff_t offset, end = start + size;
++	u32 from, to, buf_off = 0;
++	struct folio *folio;
++	char *kaddr;
++
++	idx = start >> PAGE_SHIFT;
++	idx_end = end >> PAGE_SHIFT;
++	from = start & ~PAGE_MASK;
++
++	if (idx == idx_end)
++		idx_end++;
++
++	for (; idx < idx_end; idx++, from = 0) {
++		folio = ntfs_read_mapping_folio(sb->s_bdev->bd_mapping, idx);
++		if (IS_ERR(folio)) {
++			ntfs_error(sb, "Unable to read %ld page", idx);
++			return PTR_ERR(folio);
++		}
++
++		kaddr = kmap_local_folio(folio, 0);
++		offset = (loff_t)idx << PAGE_SHIFT;
++		to = min_t(u32, end - offset, PAGE_SIZE);
++
++		memcpy(buf + buf_off, kaddr + from, to);
++		buf_off += to;
++		kunmap_local(kaddr);
++		folio_put(folio);
++	}
 +
 +	return 0;
 +}
 +
-+/**
-+ * ntfs_file_fsync - sync a file to disk
-+ * @filp:	file to be synced
-+ * @start:	start offset to be synced
-+ * @end:	end offset to be synced
-+ * @datasync:	if non-zero only flush user data and not metadata
-+ *
-+ * Data integrity sync of a file to disk.  Used for fsync, fdatasync, and msync
-+ * system calls.  This function is inspired by fs/buffer.c::file_fsync().
-+ *
-+ * If @datasync is false, write the mft record and all associated extent mft
-+ * records as well as the $DATA attribute and then sync the block device.
-+ *
-+ * If @datasync is true and the attribute is non-resident, we skip the writing
-+ * of the mft record and all associated extent mft records (this might still
-+ * happen due to the write_inode_now() call).
-+ *
-+ * Also, if @datasync is true, we do not wait on the inode to be written out
-+ * but we always wait on the page cache pages to be written out.
-+ */
-+static int ntfs_file_fsync(struct file *filp, loff_t start, loff_t end,
-+			   int datasync)
++int ntfs_dev_write(struct super_block *sb, void *buf, loff_t start,
++			loff_t size, bool wait)
 +{
-+	struct inode *vi = filp->f_mapping->host;
-+	struct ntfs_inode *ni = NTFS_I(vi);
-+	struct ntfs_volume *vol = ni->vol;
-+	int err, ret = 0;
-+	struct inode *parent_vi, *ia_vi;
-+	struct ntfs_attr_search_ctx *ctx;
++	pgoff_t idx, idx_end;
++	loff_t offset, end = start + size;
++	u32 from, to, buf_off = 0;
++	struct folio *folio;
++	char *kaddr;
 +
-+	ntfs_debug("Entering for inode 0x%lx.", vi->i_ino);
++	idx = start >> PAGE_SHIFT;
++	idx_end = end >> PAGE_SHIFT;
++	from = start & ~PAGE_MASK;
 +
-+	if (NVolShutdown(vol))
-+		return -EIO;
++	if (idx == idx_end)
++		idx_end++;
 +
-+	err = file_write_and_wait_range(filp, start, end);
-+	if (err)
-+		return err;
-+
-+	if (!datasync || !NInoNonResident(NTFS_I(vi)))
-+		ret = __ntfs_write_inode(vi, 1);
-+	write_inode_now(vi, !datasync);
-+
-+	ctx = ntfs_attr_get_search_ctx(ni, NULL);
-+	if (!ctx)
-+		return -ENOMEM;
-+
-+	mutex_lock_nested(&ni->mrec_lock, NTFS_INODE_MUTEX_NORMAL_2);
-+	while (!(err = ntfs_attr_lookup(AT_UNUSED, NULL, 0, 0, 0, NULL, 0, ctx))) {
-+		if (ctx->attr->type == AT_FILE_NAME) {
-+			struct file_name_attr *fn = (struct file_name_attr *)((u8 *)ctx->attr +
-+					le16_to_cpu(ctx->attr->data.resident.value_offset));
-+
-+			parent_vi = ntfs_iget(vi->i_sb, MREF_LE(fn->parent_directory));
-+			if (IS_ERR(parent_vi))
-+				continue;
-+			mutex_lock_nested(&NTFS_I(parent_vi)->mrec_lock, NTFS_INODE_MUTEX_PARENT_2);
-+			ia_vi = ntfs_index_iget(parent_vi, I30, 4);
-+			mutex_unlock(&NTFS_I(parent_vi)->mrec_lock);
-+			if (IS_ERR(ia_vi)) {
-+				iput(parent_vi);
-+				continue;
-+			}
-+			write_inode_now(ia_vi, 1);
-+			iput(ia_vi);
-+			write_inode_now(parent_vi, 1);
-+			iput(parent_vi);
-+		} else if (ctx->attr->non_resident) {
-+			struct inode *attr_vi;
-+			__le16 *name;
-+
-+			name = (__le16 *)((u8 *)ctx->attr + le16_to_cpu(ctx->attr->name_offset));
-+			if (ctx->attr->type == AT_DATA && ctx->attr->name_length == 0)
-+				continue;
-+
-+			attr_vi = ntfs_attr_iget(vi, ctx->attr->type,
-+						 name, ctx->attr->name_length);
-+			if (IS_ERR(attr_vi))
-+				continue;
-+			spin_lock(&attr_vi->i_lock);
-+			if (attr_vi->i_state & I_DIRTY_PAGES) {
-+				spin_unlock(&attr_vi->i_lock);
-+				filemap_write_and_wait(attr_vi->i_mapping);
-+			} else
-+				spin_unlock(&attr_vi->i_lock);
-+			iput(attr_vi);
++	for (; idx < idx_end; idx++, from = 0) {
++		folio = ntfs_read_mapping_folio(sb->s_bdev->bd_mapping, idx);
++		if (IS_ERR(folio)) {
++			ntfs_error(sb, "Unable to read %ld page", idx);
++			return PTR_ERR(folio);
 +		}
++
++		kaddr = kmap_local_folio(folio, 0);
++		offset = (loff_t)idx << PAGE_SHIFT;
++		to = min_t(u32, end - offset, PAGE_SIZE);
++
++		memcpy(kaddr + from, buf + buf_off, to);
++		buf_off += to;
++		kunmap_local(kaddr);
++		folio_mark_uptodate(folio);
++		folio_mark_dirty(folio);
++		if (wait)
++			folio_wait_stable(folio);
++		folio_put(folio);
 +	}
-+	mutex_unlock(&ni->mrec_lock);
-+	ntfs_attr_put_search_ctx(ctx);
 +
-+	write_inode_now(vol->mftbmp_ino, 1);
-+	down_write(&vol->lcnbmp_lock);
-+	write_inode_now(vol->lcnbmp_ino, 1);
-+	up_write(&vol->lcnbmp_lock);
-+	write_inode_now(vol->mft_ino, 1);
-+
-+	/*
-+	 * NOTE: If we were to use mapping->private_list (see ext2 and
-+	 * fs/buffer.c) for dirty blocks then we could optimize the below to be
-+	 * sync_mapping_buffers(vi->i_mapping).
-+	 */
-+	err = sync_blockdev(vi->i_sb->s_bdev);
-+	if (unlikely(err && !ret))
-+		ret = err;
-+	if (likely(!ret))
-+		ntfs_debug("Done.");
-+	else
-+		ntfs_warning(vi->i_sb,
-+				"Failed to f%ssync inode 0x%lx.  Error %u.",
-+				datasync ? "data" : "", vi->i_ino, -ret);
-+	if (!ret)
-+		blkdev_issue_flush(vi->i_sb->s_bdev);
-+	return ret;
++	return 0;
 +}
-+
+diff --git a/fs/ntfsplus/ntfs_iomap.c b/fs/ntfsplus/ntfs_iomap.c
+new file mode 100644
+index 000000000000..c9fd999820f4
+--- /dev/null
++++ b/fs/ntfsplus/ntfs_iomap.c
+@@ -0,0 +1,700 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
 +/**
-+ * ntfsp_setattr - called from notify_change() when an attribute is being changed
-+ * @idmap:	idmap of the mount the inode was found from
-+ * @dentry:	dentry whose attributes to change
-+ * @attr:	structure describing the attributes and the changes
++ * iomap callack functions
 + *
-+ * We have to trap VFS attempts to truncate the file described by @dentry as
-+ * soon as possible, because we do not implement changes in i_size yet.  So we
-+ * abort all i_size changes here.
-+ *
-+ * We also abort all changes of user, group, and mode as we do not implement
-+ * the NTFS ACLs yet.
++ * Copyright (c) 2025 LG Electronics Co., Ltd.
 + */
-+int ntfsp_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
-+		 struct iattr *attr)
++
++#include <linux/writeback.h>
++#include <linux/mpage.h>
++#include <linux/uio.h>
++
++#include "aops.h"
++#include "attrib.h"
++#include "mft.h"
++#include "ntfs.h"
++#include "misc.h"
++#include "ntfs_iomap.h"
++
++static void ntfs_iomap_put_folio(struct inode *inode, loff_t pos,
++		unsigned int len, struct folio *folio)
 +{
-+	struct inode *vi = d_inode(dentry);
-+	int err;
-+	unsigned int ia_valid = attr->ia_valid;
-+	struct ntfs_inode *ni = NTFS_I(vi);
-+	struct ntfs_volume *vol = ni->vol;
++	struct ntfs_inode *ni = NTFS_I(inode);
++	unsigned long sector_size = 1UL << inode->i_blkbits;
++	loff_t start_down, end_up, init;
 +
-+	if (NVolShutdown(vol))
-+		return -EIO;
-+
-+	err = setattr_prepare(idmap, dentry, attr);
-+	if (err)
++	if (!NInoNonResident(ni))
 +		goto out;
 +
-+	if (!(vol->vol_flags & VOLUME_IS_DIRTY))
-+		ntfs_set_volume_flags(vol, VOLUME_IS_DIRTY);
++	start_down = round_down(pos, sector_size);
++	end_up = (pos + len - 1) | (sector_size - 1);
++	init = ni->initialized_size;
 +
-+	if (ia_valid & ATTR_SIZE) {
-+		if (NInoCompressed(ni) || NInoEncrypted(ni)) {
-+			ntfs_warning(vi->i_sb,
-+				     "Changes in inode size are not supported yet for %s files, ignoring.",
-+				     NInoCompressed(ni) ? "compressed" : "encrypted");
-+			err = -EOPNOTSUPP;
-+		} else {
-+			loff_t old_size = vi->i_size;
++	if (init >= start_down && init <= end_up) {
++		if (init < pos) {
++			loff_t offset = offset_in_folio(folio, pos + len);
 +
-+			err = inode_newsize_ok(vi, attr->ia_size);
-+			if (err)
-+				goto out;
++			if (offset == 0)
++				offset = folio_size(folio);
++			folio_zero_segments(folio,
++					    offset_in_folio(folio, init),
++					    offset_in_folio(folio, pos),
++					    offset,
++					    folio_size(folio));
 +
-+			inode_dio_wait(vi);
-+			/* Serialize against page faults */
-+			if (NInoNonResident(NTFS_I(vi)) &&
-+			    attr->ia_size < old_size) {
-+				err = iomap_truncate_page(vi, attr->ia_size, NULL,
-+							  &ntfs_read_iomap_ops,
-+							  &ntfs_iomap_folio_ops, NULL);
-+				if (err)
-+					goto out;
-+			}
++		} else  {
++			loff_t offset = max_t(loff_t, pos + len, init);
 +
-+			truncate_setsize(vi, attr->ia_size);
-+			err = ntfs_truncate_vfs(vi, attr->ia_size, old_size);
-+			if (err) {
-+				i_size_write(vi, old_size);
-+				goto out;
-+			}
-+
-+			if (NInoNonResident(ni) && attr->ia_size > old_size &&
-+				old_size % PAGE_SIZE != 0) {
-+				loff_t len = min_t(loff_t,
-+							round_up(old_size, PAGE_SIZE) - old_size,
-+							attr->ia_size - old_size);
-+				err = iomap_zero_range(vi, old_size, len,
-+						       NULL, &ntfs_read_iomap_ops,
-+						       &ntfs_iomap_folio_ops, NULL);
-+			}
++			offset = offset_in_folio(folio, offset);
++			if (offset == 0)
++				offset = folio_size(folio);
++			folio_zero_segment(folio,
++					   offset,
++					   folio_size(folio));
 +		}
-+		if (ia_valid == ATTR_SIZE)
-+			goto out;
-+		ia_valid |= ATTR_MTIME | ATTR_CTIME;
++	} else if (init <= pos) {
++		loff_t offset = 0, offset2 = offset_in_folio(folio, pos + len);
++
++		if ((init >> folio_shift(folio)) == (pos >> folio_shift(folio)))
++			offset = offset_in_folio(folio, init);
++		if (offset2 == 0)
++			offset2 = folio_size(folio);
++		folio_zero_segments(folio,
++				    offset,
++				    offset_in_folio(folio, pos),
++				    offset2,
++				    folio_size(folio));
 +	}
 +
-+	setattr_copy(idmap, vi, attr);
-+
-+	if (vol->sb->s_flags & SB_POSIXACL && !S_ISLNK(vi->i_mode)) {
-+		err = posix_acl_chmod(idmap, dentry, vi->i_mode);
-+		if (err)
-+			goto out;
-+	}
-+
-+	if (0222 & vi->i_mode)
-+		ni->flags &= ~FILE_ATTR_READONLY;
-+	else
-+		ni->flags |= FILE_ATTR_READONLY;
-+
-+	if (ia_valid & (ATTR_UID | ATTR_GID | ATTR_MODE)) {
-+		unsigned int flags = 0;
-+
-+		if (ia_valid & ATTR_UID)
-+			flags |= NTFS_EA_UID;
-+		if (ia_valid & ATTR_GID)
-+			flags |= NTFS_EA_GID;
-+		if (ia_valid & ATTR_MODE)
-+			flags |= NTFS_EA_MODE;
-+
-+		if (S_ISDIR(vi->i_mode))
-+			vi->i_mode &= ~vol->dmask;
-+		else
-+			vi->i_mode &= ~vol->fmask;
-+
-+		mutex_lock(&ni->mrec_lock);
-+		ntfs_ea_set_wsl_inode(vi, 0, NULL, flags);
-+		mutex_unlock(&ni->mrec_lock);
-+	}
-+
-+	mark_inode_dirty(vi);
 +out:
-+	return err;
++	folio_unlock(folio);
++	folio_put(folio);
 +}
 +
-+int ntfsp_getattr(struct mnt_idmap *idmap, const struct path *path,
-+		struct kstat *stat, unsigned int request_mask,
-+		unsigned int query_flags)
++const struct iomap_write_ops ntfs_iomap_folio_ops = {
++	.put_folio = ntfs_iomap_put_folio,
++};
++
++static int ntfs_read_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
++		unsigned int flags, struct iomap *iomap, struct iomap *srcmap)
 +{
-+	struct inode *inode = d_backing_inode(path->dentry);
++	struct ntfs_inode *base_ni, *ni = NTFS_I(inode);
++	struct ntfs_attr_search_ctx *ctx;
++	loff_t i_size;
++	u32 attr_len;
++	int err = 0;
++	char *kattr;
++	struct page *ipage;
 +
-+	generic_fillattr(idmap, request_mask, inode, stat);
-+
-+	stat->blksize = NTFS_SB(inode->i_sb)->cluster_size;
-+	stat->blocks = (((u64)NTFS_I(inode)->i_dealloc_clusters <<
-+			NTFS_SB(inode->i_sb)->cluster_size_bits) >> 9) + inode->i_blocks;
-+	stat->result_mask |= STATX_BTIME;
-+	stat->btime = NTFS_I(inode)->i_crtime;
-+
-+	return 0;
-+}
-+
-+static loff_t ntfs_file_llseek(struct file *file, loff_t offset, int whence)
-+{
-+	struct inode *vi = file->f_mapping->host;
-+
-+	if (whence == SEEK_DATA || whence == SEEK_HOLE) {
-+		struct ntfs_inode *ni = NTFS_I(vi);
-+		struct ntfs_volume *vol = ni->vol;
-+		struct runlist_element *rl;
++	if (NInoNonResident(ni)) {
 +		s64 vcn;
-+		unsigned int vcn_off;
-+		loff_t end_off;
-+		unsigned long flags;
-+		int i;
-+
-+		inode_lock_shared(vi);
-+
-+		if (NInoCompressed(ni) || NInoEncrypted(ni))
-+			goto error;
-+
-+		read_lock_irqsave(&ni->size_lock, flags);
-+		end_off = ni->data_size;
-+		read_unlock_irqrestore(&ni->size_lock, flags);
-+
-+		if (offset < 0 || offset >= end_off)
-+			goto error;
-+
-+		if (!NInoNonResident(ni)) {
-+			if (whence == SEEK_HOLE)
-+				offset = end_off;
-+			goto found_no_runlist_lock;
-+		}
++		s64 lcn;
++		struct runlist_element *rl;
++		struct ntfs_volume *vol = ni->vol;
++		loff_t vcn_ofs;
++		loff_t rl_length;
 +
 +		vcn = offset >> vol->cluster_size_bits;
-+		vcn_off = offset & vol->cluster_size_mask;
++		vcn_ofs = offset & vol->cluster_size_mask;
 +
-+		down_read(&ni->runlist.lock);
-+		rl = ni->runlist.rl;
-+		i = 0;
++		down_write(&ni->runlist.lock);
++		rl = ntfs_attr_vcn_to_rl(ni, vcn, &lcn);
++		if (IS_ERR(rl)) {
++			up_write(&ni->runlist.lock);
++			return PTR_ERR(rl);
++		}
 +
-+#ifdef DEBUG
-+		ntfs_debug("init:");
-+		ntfs_debug_dump_runlist(rl);
-+#endif
-+		while (1) {
-+			if (!rl || !NInoFullyMapped(ni) || rl[i].lcn == LCN_RL_NOT_MAPPED) {
-+				int ret;
-+
-+				up_read(&ni->runlist.lock);
-+				ret = ntfs_map_runlist(ni, rl ? rl[i].vcn : 0);
-+				if (ret)
-+					goto error;
-+				down_read(&ni->runlist.lock);
-+				rl = ni->runlist.rl;
-+#ifdef DEBUG
-+				ntfs_debug("mapped:");
-+				ntfs_debug_dump_runlist(ni->runlist.rl);
-+#endif
-+				continue;
-+			} else if (rl[i].lcn == LCN_ENOENT) {
-+				if (whence == SEEK_DATA) {
-+					up_read(&ni->runlist.lock);
-+					goto error;
-+				} else {
-+					offset = end_off;
-+					goto found;
-+				}
-+			} else if (rl[i + 1].vcn > vcn) {
-+				if ((whence == SEEK_DATA && (rl[i].lcn >= 0 ||
-+						rl[i].lcn == LCN_DELALLOC)) ||
-+				   (whence == SEEK_HOLE && rl[i].lcn == LCN_HOLE)) {
-+					offset = (vcn << vol->cluster_size_bits) + vcn_off;
-+					if (offset < ni->data_size)
-+						goto found;
-+				}
-+				vcn = rl[i + 1].vcn;
-+				vcn_off = 0;
++		if (flags & IOMAP_REPORT) {
++			if (lcn < LCN_HOLE) {
++				up_write(&ni->runlist.lock);
++				return -ENOENT;
 +			}
-+			i++;
++		} else if (lcn < LCN_ENOENT) {
++			up_write(&ni->runlist.lock);
++			return -EINVAL;
 +		}
-+		up_read(&ni->runlist.lock);
-+		inode_unlock_shared(vi);
-+		return -EIO;
-+found:
-+		up_read(&ni->runlist.lock);
-+found_no_runlist_lock:
-+		inode_unlock_shared(vi);
-+		return vfs_setpos(file, offset, vi->i_sb->s_maxbytes);
-+error:
-+		inode_unlock_shared(vi);
-+		return -ENXIO;
-+	} else {
-+		return generic_file_llseek_size(file, offset, whence,
-+						vi->i_sb->s_maxbytes,
-+						i_size_read(vi));
++
++		iomap->bdev = inode->i_sb->s_bdev;
++		iomap->offset = offset;
++
++		if (lcn <= LCN_DELALLOC) {
++			if (lcn == LCN_DELALLOC)
++				iomap->type = IOMAP_DELALLOC;
++			else
++				iomap->type = IOMAP_HOLE;
++			iomap->addr = IOMAP_NULL_ADDR;
++		} else {
++			if (!(flags & IOMAP_ZERO) && offset >= ni->initialized_size)
++				iomap->type = IOMAP_UNWRITTEN;
++			else
++				iomap->type = IOMAP_MAPPED;
++			iomap->addr = (lcn << vol->cluster_size_bits) + vcn_ofs;
++		}
++
++		rl_length = (rl->length - (vcn - rl->vcn)) << ni->vol->cluster_size_bits;
++
++		if (rl_length == 0 && rl->lcn > LCN_DELALLOC) {
++			ntfs_error(inode->i_sb,
++				   "runlist(vcn : %lld, length : %lld, lcn : %lld) is corrupted\n",
++				   rl->vcn, rl->length, rl->lcn);
++			up_write(&ni->runlist.lock);
++			return -EIO;
++		}
++
++		if (rl_length && length > rl_length - vcn_ofs)
++			iomap->length = rl_length - vcn_ofs;
++		else
++			iomap->length = length;
++		up_write(&ni->runlist.lock);
++
++		if (!(flags & IOMAP_ZERO) &&
++		    iomap->type == IOMAP_MAPPED &&
++		    iomap->offset < ni->initialized_size &&
++		    iomap->offset + iomap->length > ni->initialized_size) {
++			iomap->length = round_up(ni->initialized_size, 1 << inode->i_blkbits) -
++				iomap->offset;
++		}
++		iomap->flags |= IOMAP_F_MERGED;
++		return 0;
 +	}
++
++	if (NInoAttr(ni))
++		base_ni = ni->ext.base_ntfs_ino;
++	else
++		base_ni = ni;
++
++	ctx = ntfs_attr_get_search_ctx(base_ni, NULL);
++	if (!ctx) {
++		err = -ENOMEM;
++		goto out;
++	}
++
++	err = ntfs_attr_lookup(ni->type, ni->name, ni->name_len,
++			CASE_SENSITIVE, 0, NULL, 0, ctx);
++	if (unlikely(err))
++		goto out;
++
++	attr_len = le32_to_cpu(ctx->attr->data.resident.value_length);
++	if (unlikely(attr_len > ni->initialized_size))
++		attr_len = ni->initialized_size;
++	i_size = i_size_read(inode);
++
++	if (unlikely(attr_len > i_size)) {
++		/* Race with shrinking truncate. */
++		attr_len = i_size;
++	}
++
++	if (offset >= attr_len) {
++		if (flags & IOMAP_REPORT)
++			err = -ENOENT;
++		else
++			err = -EFAULT;
++		goto out;
++	}
++
++	kattr = (u8 *)ctx->attr + le16_to_cpu(ctx->attr->data.resident.value_offset);
++
++	ipage = alloc_page(__GFP_NOWARN | __GFP_IO | __GFP_ZERO);
++	if (!ipage) {
++		err = -ENOMEM;
++		goto out;
++	}
++
++	memcpy(page_address(ipage), kattr, attr_len);
++	iomap->type = IOMAP_INLINE;
++	iomap->inline_data = page_address(ipage);
++	iomap->offset = 0;
++	iomap->length = min_t(loff_t, attr_len, PAGE_SIZE);
++	iomap->private = ipage;
++
++out:
++	if (ctx)
++		ntfs_attr_put_search_ctx(ctx);
++	return err;
 +}
 +
-+static ssize_t ntfs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
++static int ntfs_read_iomap_end(struct inode *inode, loff_t pos, loff_t length,
++		ssize_t written, unsigned int flags, struct iomap *iomap)
 +{
-+	struct inode *vi = file_inode(iocb->ki_filp);
-+	struct super_block *sb = vi->i_sb;
-+	ssize_t ret;
++	if (iomap->type == IOMAP_INLINE) {
++		struct page *ipage = iomap->private;
 +
-+	if (NVolShutdown(NTFS_SB(sb)))
-+		return -EIO;
-+
-+	if (NInoCompressed(NTFS_I(vi)) && iocb->ki_flags & IOCB_DIRECT)
-+		return -EOPNOTSUPP;
-+
-+	inode_lock_shared(vi);
-+
-+	if (iocb->ki_flags & IOCB_DIRECT) {
-+		size_t count = iov_iter_count(to);
-+
-+		if ((iocb->ki_pos | count) & (sb->s_blocksize - 1)) {
-+			ret = -EINVAL;
-+			goto inode_unlock;
-+		}
-+
-+		file_accessed(iocb->ki_filp);
-+		ret = iomap_dio_rw(iocb, to, &ntfs_read_iomap_ops, NULL, IOMAP_DIO_PARTIAL,
-+				NULL, 0);
-+	} else {
-+		ret = generic_file_read_iter(iocb, to);
++		put_page(ipage);
 +	}
-+
-+inode_unlock:
-+	inode_unlock_shared(vi);
-+
-+	return ret;
++	return written;
 +}
 +
-+static int ntfs_file_write_dio_end_io(struct kiocb *iocb, ssize_t size,
-+		int error, unsigned int flags)
++const struct iomap_ops ntfs_read_iomap_ops = {
++	.iomap_begin = ntfs_read_iomap_begin,
++	.iomap_end = ntfs_read_iomap_end,
++};
++
++static int ntfs_buffered_zeroed_clusters(struct inode *vi, s64 vcn)
 +{
-+	struct inode *inode = file_inode(iocb->ki_filp);
++	struct ntfs_inode *ni = NTFS_I(vi);
++	struct ntfs_volume *vol = ni->vol;
++	struct address_space *mapping = vi->i_mapping;
++	struct folio *folio;
++	pgoff_t idx, idx_end;
++	u32 from, to;
 +
-+	if (error)
-+		return error;
++	idx = (vcn << vol->cluster_size_bits) >> PAGE_SHIFT;
++	idx_end = ((vcn + 1) << vol->cluster_size_bits) >> PAGE_SHIFT;
++	from = (vcn << vol->cluster_size_bits) & ~PAGE_MASK;
++	if (idx == idx_end)
++		idx_end++;
 +
-+	if (size) {
-+		if (i_size_read(inode) < iocb->ki_pos + size) {
-+			i_size_write(inode, iocb->ki_pos + size);
-+			mark_inode_dirty(inode);
++	to = min_t(u32, vol->cluster_size, PAGE_SIZE);
++	for (; idx < idx_end; idx++, from = 0) {
++		if (to != PAGE_SIZE) {
++			folio = ntfs_read_mapping_folio(mapping, idx);
++			if (IS_ERR(folio))
++				return PTR_ERR(folio);
++			folio_lock(folio);
++		} else {
++			folio = __filemap_get_folio(mapping, idx,
++					FGP_WRITEBEGIN | FGP_NOFS, mapping_gfp_mask(mapping));
++			if (IS_ERR(folio))
++				return PTR_ERR(folio);
 +		}
++
++		if (folio_test_uptodate(folio) ||
++		    iomap_is_partially_uptodate(folio, from, to))
++			goto next_folio;
++
++		folio_zero_segment(folio, from, from + to);
++		folio_mark_uptodate(folio);
++
++next_folio:
++		iomap_dirty_folio(mapping, folio);
++		folio_unlock(folio);
++		folio_put(folio);
++		balance_dirty_pages_ratelimited(mapping);
++		cond_resched();
 +	}
 +
 +	return 0;
 +}
 +
-+static const struct iomap_dio_ops ntfs_write_dio_ops = {
-+	.end_io			= ntfs_file_write_dio_end_io,
-+};
-+
-+static ssize_t ntfs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
++int ntfs_zeroed_clusters(struct inode *vi, s64 lcn, s64 num)
 +{
-+	struct file *file = iocb->ki_filp;
-+	struct inode *vi = file->f_mapping->host;
 +	struct ntfs_inode *ni = NTFS_I(vi);
 +	struct ntfs_volume *vol = ni->vol;
-+	ssize_t ret;
-+	ssize_t count;
-+	loff_t pos;
-+	int err;
-+	loff_t old_data_size, old_init_size;
++	u32 to;
++	struct bio *bio = NULL;
++	s64 err = 0, zero_len = num << vol->cluster_size_bits;
++	s64 loc = lcn << vol->cluster_size_bits, curr = 0;
++
++	while (zero_len > 0) {
++setup_bio:
++		if (!bio) {
++			bio = bio_alloc(vol->sb->s_bdev,
++					bio_max_segs(DIV_ROUND_UP(zero_len, PAGE_SIZE)),
++					REQ_OP_WRITE | REQ_SYNC | REQ_IDLE, GFP_NOIO);
++			if (!bio)
++				return -ENOMEM;
++			bio->bi_iter.bi_sector = (loc + curr) >> vol->sb->s_blocksize_bits;
++		}
++
++		to = min_t(u32, zero_len, PAGE_SIZE);
++		if (!bio_add_page(bio, ZERO_PAGE(0), to, 0)) {
++			err = submit_bio_wait(bio);
++			bio_put(bio);
++			bio = NULL;
++			if (err)
++				break;
++			goto setup_bio;
++		}
++		zero_len -= to;
++		curr += to;
++	}
++
++	if (bio) {
++		err = submit_bio_wait(bio);
++		bio_put(bio);
++	}
++
++	return err;
++}
++
++static int __ntfs_write_iomap_begin(struct inode *inode, loff_t offset,
++				    loff_t length, unsigned int flags,
++				    struct iomap *iomap, bool da, bool mapped)
++{
++	struct ntfs_inode *ni = NTFS_I(inode);
++	struct ntfs_volume *vol = ni->vol;
++	struct attr_record *a;
++	struct ntfs_attr_search_ctx *ctx;
++	u32 attr_len;
++	int err = 0;
++	char *kattr;
++	struct page *ipage;
 +
 +	if (NVolShutdown(vol))
 +		return -EIO;
 +
-+	if (NInoEncrypted(ni)) {
-+		ntfs_error(vi->i_sb, "Writing for %s files is not supported yet",
-+			   NInoCompressed(ni) ? "Compressed" : "Encrypted");
-+		return -EOPNOTSUPP;
-+	}
++	mutex_lock(&ni->mrec_lock);
++	if (NInoNonResident(ni)) {
++		s64 vcn;
++		loff_t vcn_ofs;
++		loff_t rl_length;
++		s64 max_clu_count =
++			round_up(length, vol->cluster_size) >> vol->cluster_size_bits;
 +
-+	if (NInoCompressed(ni) && iocb->ki_flags & IOCB_DIRECT)
-+		return -EOPNOTSUPP;
++		vcn = offset >> vol->cluster_size_bits;
++		vcn_ofs = offset & vol->cluster_size_mask;
 +
-+	if (iocb->ki_flags & IOCB_NOWAIT) {
-+		if (!inode_trylock(vi))
-+			return -EAGAIN;
-+	} else
-+		inode_lock(vi);
++		if (da) {
++			bool balloc = false;
++			s64 start_lcn, lcn_count;
++			bool update_mp;
 +
-+	ret = generic_write_checks(iocb, from);
-+	if (ret <= 0)
-+		goto out_lock;
-+
-+	if (NInoNonResident(ni) && (iocb->ki_flags & IOCB_DIRECT) &&
-+	    ((iocb->ki_pos | ret) & (vi->i_sb->s_blocksize - 1))) {
-+		ret = -EINVAL;
-+		goto out_lock;
-+	}
-+
-+	err = file_modified(iocb->ki_filp);
-+	if (err) {
-+		ret = err;
-+		goto out_lock;
-+	}
-+
-+	if (!(vol->vol_flags & VOLUME_IS_DIRTY))
-+		ntfs_set_volume_flags(vol, VOLUME_IS_DIRTY);
-+
-+	pos = iocb->ki_pos;
-+	count = ret;
-+
-+	old_data_size = ni->data_size;
-+	old_init_size = ni->initialized_size;
-+	if (iocb->ki_pos + ret > old_data_size) {
-+		mutex_lock(&ni->mrec_lock);
-+		if (!NInoCompressed(ni) && iocb->ki_pos + ret > ni->allocated_size &&
-+		    iocb->ki_pos + ret < ni->allocated_size + vol->preallocated_size)
-+			ret = ntfs_attr_expand(ni, iocb->ki_pos + ret,
-+					ni->allocated_size + vol->preallocated_size);
-+		else if (NInoCompressed(ni) && iocb->ki_pos + ret > ni->allocated_size)
-+			ret = ntfs_attr_expand(ni, iocb->ki_pos + ret,
-+				round_up(iocb->ki_pos + ret, ni->itype.compressed.block_size));
-+		else
-+			ret = ntfs_attr_expand(ni, iocb->ki_pos + ret, 0);
-+		mutex_unlock(&ni->mrec_lock);
-+		if (ret < 0)
-+			goto out;
-+	}
-+
-+	if (NInoNonResident(ni) && iocb->ki_pos + count > old_init_size) {
-+		ret = ntfs_extend_initialized_size(vi, iocb->ki_pos,
-+				iocb->ki_pos + count);
-+		if (ret < 0)
-+			goto out;
-+	}
-+
-+	if (NInoNonResident(ni) && NInoCompressed(ni)) {
-+		ret = ntfs_compress_write(ni, pos, count, from);
-+		if (ret > 0)
-+			iocb->ki_pos += ret;
-+		goto out;
-+	}
-+
-+	if (NInoNonResident(ni) && iocb->ki_flags & IOCB_DIRECT) {
-+		ret = iomap_dio_rw(iocb, from, &ntfs_dio_iomap_ops,
-+				   &ntfs_write_dio_ops, 0, NULL, 0);
-+		if (ret == -ENOTBLK)
-+			ret = 0;
-+		else if (ret < 0)
-+			goto out;
-+
-+		if (iov_iter_count(from)) {
-+			loff_t offset, end;
-+			ssize_t written;
-+			int ret2;
-+
-+			offset = iocb->ki_pos;
-+			iocb->ki_flags &= ~IOCB_DIRECT;
-+			written = iomap_file_buffered_write(iocb, from,
-+					&ntfs_write_iomap_ops, &ntfs_iomap_folio_ops,
-+					NULL);
-+			if (written < 0) {
-+				err = written;
-+				goto out;
++			update_mp = (flags & IOMAP_DIRECT) || mapped ||
++				NInoAttr(ni) || ni->mft_no < FILE_first_user;
++			down_write(&ni->runlist.lock);
++			err = ntfs_attr_map_cluster(ni, vcn, &start_lcn, &lcn_count,
++					max_clu_count, &balloc, update_mp,
++					!(flags & IOMAP_DIRECT) && !mapped);
++			up_write(&ni->runlist.lock);
++			mutex_unlock(&ni->mrec_lock);
++			if (err) {
++				ni->i_dealloc_clusters = 0;
++				return err;
 +			}
 +
-+			ret += written;
-+			end = iocb->ki_pos + written - 1;
-+			ret2 = filemap_write_and_wait_range(iocb->ki_filp->f_mapping,
-+							    offset, end);
-+			if (ret2)
-+				goto out_err;
-+			if (!ret2)
-+				invalidate_mapping_pages(iocb->ki_filp->f_mapping,
-+							 offset >> PAGE_SHIFT,
-+							 end >> PAGE_SHIFT);
++			iomap->bdev = inode->i_sb->s_bdev;
++			iomap->offset = offset;
++
++			rl_length = lcn_count << ni->vol->cluster_size_bits;
++			if (length > rl_length - vcn_ofs)
++				iomap->length = rl_length - vcn_ofs;
++			else
++				iomap->length = length;
++
++			if (start_lcn == LCN_HOLE)
++				iomap->type = IOMAP_HOLE;
++			else
++				iomap->type = IOMAP_MAPPED;
++			if (balloc == true)
++				iomap->flags = IOMAP_F_NEW;
++
++			iomap->addr = (start_lcn << vol->cluster_size_bits) + vcn_ofs;
++
++			if (balloc == true) {
++				if (flags & IOMAP_DIRECT || mapped == true) {
++					loff_t end = offset + length;
++
++					if (vcn_ofs || ((vol->cluster_size > iomap->length) &&
++							end < ni->initialized_size))
++						err = ntfs_zeroed_clusters(inode,
++								start_lcn, 1);
++					if (!err && lcn_count > 1 &&
++					    (iomap->length & vol->cluster_size_mask &&
++					     end < ni->initialized_size))
++						err = ntfs_zeroed_clusters(inode,
++								start_lcn + (lcn_count - 1), 1);
++				} else {
++					if (lcn_count > ni->i_dealloc_clusters)
++						ni->i_dealloc_clusters = 0;
++					else
++						ni->i_dealloc_clusters -= lcn_count;
++				}
++				if (err < 0)
++					return err;
++			}
++
++			if (mapped && iomap->offset + iomap->length >
++			    ni->initialized_size) {
++				err = ntfs_attr_set_initialized_size(ni, iomap->offset +
++								     iomap->length);
++				if (err)
++					return err;
++			}
++		} else {
++			struct runlist_element *rl, *rlc;
++			s64 lcn;
++			bool is_retry = false;
++
++			down_read(&ni->runlist.lock);
++			rl = ni->runlist.rl;
++			if (!rl) {
++				up_read(&ni->runlist.lock);
++				err = ntfs_map_runlist(ni, vcn);
++				if (err) {
++					mutex_unlock(&ni->mrec_lock);
++					return -ENOENT;
++				}
++				down_read(&ni->runlist.lock);
++				rl = ni->runlist.rl;
++			}
++			up_read(&ni->runlist.lock);
++
++			down_write(&ni->runlist.lock);
++remap_rl:
++			/* Seek to element containing target vcn. */
++			while (rl->length && rl[1].vcn <= vcn)
++				rl++;
++			lcn = ntfs_rl_vcn_to_lcn(rl, vcn);
++
++			if (lcn <= LCN_RL_NOT_MAPPED && is_retry == false) {
++				is_retry = true;
++				if (!ntfs_map_runlist_nolock(ni, vcn, NULL)) {
++					rl = ni->runlist.rl;
++					goto remap_rl;
++				}
++			}
++
++			max_clu_count = min(max_clu_count, rl->length - (vcn - rl->vcn));
++			if (max_clu_count == 0) {
++				ntfs_error(inode->i_sb,
++					   "runlist(vcn : %lld, length : %lld) is corrupted\n",
++					   rl->vcn, rl->length);
++				up_write(&ni->runlist.lock);
++				mutex_unlock(&ni->mrec_lock);
++				return -EIO;
++			}
++
++			iomap->bdev = inode->i_sb->s_bdev;
++			iomap->offset = offset;
++
++			if (lcn <= LCN_DELALLOC) {
++				if (lcn < LCN_DELALLOC) {
++					max_clu_count =
++						ntfs_available_clusters_count(vol, max_clu_count);
++					if (max_clu_count < 0) {
++						err = max_clu_count;
++						up_write(&ni->runlist.lock);
++						mutex_unlock(&ni->mrec_lock);
++						return err;
++					}
++				}
++
++				iomap->type = IOMAP_DELALLOC;
++				iomap->addr = IOMAP_NULL_ADDR;
++
++				if (lcn <= LCN_HOLE) {
++					size_t new_rl_count;
++
++					rlc = ntfs_malloc_nofs(sizeof(struct runlist_element) * 2);
++					if (!rlc) {
++						up_write(&ni->runlist.lock);
++						mutex_unlock(&ni->mrec_lock);
++						return -ENOMEM;
++					}
++
++					rlc->vcn = vcn;
++					rlc->lcn = LCN_DELALLOC;
++					rlc->length = max_clu_count;
++
++					rlc[1].vcn = vcn + max_clu_count;
++					rlc[1].lcn = LCN_RL_NOT_MAPPED;
++					rlc[1].length = 0;
++
++					rl = ntfs_runlists_merge(&ni->runlist, rlc, 0,
++							&new_rl_count);
++					if (IS_ERR(rl)) {
++						ntfs_error(vol->sb, "Failed to merge runlists");
++						up_write(&ni->runlist.lock);
++						mutex_unlock(&ni->mrec_lock);
++						ntfs_free(rlc);
++						return PTR_ERR(rl);
++					}
++
++					ni->runlist.rl = rl;
++					ni->runlist.count = new_rl_count;
++					ni->i_dealloc_clusters += max_clu_count;
++				}
++				up_write(&ni->runlist.lock);
++				mutex_unlock(&ni->mrec_lock);
++
++				if (lcn < LCN_DELALLOC)
++					ntfs_hold_dirty_clusters(vol, max_clu_count);
++
++				rl_length = max_clu_count << ni->vol->cluster_size_bits;
++				if (length > rl_length - vcn_ofs)
++					iomap->length = rl_length - vcn_ofs;
++				else
++					iomap->length = length;
++
++				iomap->flags = IOMAP_F_NEW;
++				if (lcn <= LCN_HOLE) {
++					loff_t end = offset + length;
++
++					if (vcn_ofs || ((vol->cluster_size > iomap->length) &&
++							end < ni->initialized_size))
++						err = ntfs_buffered_zeroed_clusters(inode, vcn);
++					if (!err && max_clu_count > 1 &&
++					    (iomap->length & vol->cluster_size_mask &&
++					     end < ni->initialized_size))
++						err = ntfs_buffered_zeroed_clusters(inode,
++								vcn + (max_clu_count - 1));
++					if (err) {
++						ntfs_release_dirty_clusters(vol, max_clu_count);
++						return err;
++					}
++				}
++			} else {
++				up_write(&ni->runlist.lock);
++				mutex_unlock(&ni->mrec_lock);
++
++				iomap->type = IOMAP_MAPPED;
++				iomap->addr = (lcn << vol->cluster_size_bits) + vcn_ofs;
++
++				rl_length = max_clu_count << ni->vol->cluster_size_bits;
++				if (length > rl_length - vcn_ofs)
++					iomap->length = rl_length - vcn_ofs;
++				else
++					iomap->length = length;
++			}
 +		}
-+	} else {
-+		ret = iomap_file_buffered_write(iocb, from, &ntfs_write_iomap_ops,
-+				&ntfs_iomap_folio_ops, NULL);
-+	}
-+out:
-+	if (ret < 0 && ret != -EIOCBQUEUED) {
-+out_err:
-+		if (ni->initialized_size != old_init_size) {
-+			mutex_lock(&ni->mrec_lock);
-+			ntfs_attr_set_initialized_size(ni, old_init_size);
-+			mutex_unlock(&ni->mrec_lock);
-+		}
-+		if (ni->data_size != old_data_size) {
-+			truncate_setsize(vi, old_data_size);
-+			ntfs_attr_truncate(ni, old_data_size);
-+		}
-+	}
-+out_lock:
-+	inode_unlock(vi);
-+	if (ret > 0)
-+		ret = generic_write_sync(iocb, ret);
-+	return ret;
-+}
 +
-+static vm_fault_t ntfs_filemap_page_mkwrite(struct vm_fault *vmf)
-+{
-+	struct inode *inode = file_inode(vmf->vma->vm_file);
-+	vm_fault_t ret;
-+
-+	if (unlikely(IS_IMMUTABLE(inode)))
-+		return VM_FAULT_SIGBUS;
-+
-+	sb_start_pagefault(inode->i_sb);
-+	file_update_time(vmf->vma->vm_file);
-+
-+	ret = iomap_page_mkwrite(vmf, &ntfs_page_mkwrite_iomap_ops, NULL);
-+	sb_end_pagefault(inode->i_sb);
-+	return ret;
-+}
-+
-+static const struct vm_operations_struct ntfs_file_vm_ops = {
-+	.fault		= filemap_fault,
-+	.map_pages	= filemap_map_pages,
-+	.page_mkwrite	= ntfs_filemap_page_mkwrite,
-+};
-+
-+static int ntfs_file_mmap_prepare(struct vm_area_desc *desc)
-+{
-+	struct file *file = desc->file;
-+	struct inode *inode = file_inode(file);
-+
-+	if (NVolShutdown(NTFS_SB(file->f_mapping->host->i_sb)))
-+		return -EIO;
-+
-+	if (NInoCompressed(NTFS_I(inode)))
-+		return -EOPNOTSUPP;
-+
-+	if (desc->vm_flags & VM_WRITE) {
-+		struct inode *inode = file_inode(file);
-+		loff_t from, to;
-+		int err;
-+
-+		from = ((loff_t)desc->pgoff << PAGE_SHIFT);
-+		to = min_t(loff_t, i_size_read(inode),
-+			   from + desc->end - desc->start);
-+
-+		if (NTFS_I(inode)->initialized_size < to) {
-+			err = ntfs_extend_initialized_size(inode, to, to);
-+			if (err)
-+				return err;
-+		}
++		return 0;
 +	}
 +
-+
-+	file_accessed(file);
-+	desc->vm_ops = &ntfs_file_vm_ops;
-+	return 0;
-+}
-+
-+static int ntfs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
-+		u64 start, u64 len)
-+{
-+	return iomap_fiemap(inode, fieinfo, start, len, &ntfs_read_iomap_ops);
-+}
-+
-+static const char *ntfs_get_link(struct dentry *dentry, struct inode *inode,
-+		struct delayed_call *done)
-+{
-+	if (!NTFS_I(inode)->target)
-+		return ERR_PTR(-EINVAL);
-+
-+	return NTFS_I(inode)->target;
-+}
-+
-+static ssize_t ntfs_file_splice_read(struct file *in, loff_t *ppos,
-+		struct pipe_inode_info *pipe, size_t len, unsigned int flags)
-+{
-+	if (NVolShutdown(NTFS_SB(in->f_mapping->host->i_sb)))
-+		return -EIO;
-+
-+	return filemap_splice_read(in, ppos, pipe, len, flags);
-+}
-+
-+static int ntfs_ioctl_shutdown(struct super_block *sb, unsigned long arg)
-+{
-+	u32 flags;
-+
-+	if (!capable(CAP_SYS_ADMIN))
-+		return -EPERM;
-+
-+	if (get_user(flags, (__u32 __user *)arg))
-+		return -EFAULT;
-+
-+	return ntfs_force_shutdown(sb, flags);
-+}
-+
-+static int ntfs_ioctl_get_volume_label(struct file *filp, unsigned long arg)
-+{
-+	struct ntfs_volume *vol = NTFS_SB(file_inode(filp)->i_sb);
-+	char __user *buf = (char __user *)arg;
-+
-+	if (!vol->volume_label) {
-+		if (copy_to_user(buf, "", 1))
-+			return -EFAULT;
-+	} else if (copy_to_user(buf, vol->volume_label,
-+				MIN(FSLABEL_MAX, strlen(vol->volume_label) + 1)))
-+		return -EFAULT;
-+	return 0;
-+}
-+
-+static int ntfs_ioctl_set_volume_label(struct file *filp, unsigned long arg)
-+{
-+	struct ntfs_volume *vol = NTFS_SB(file_inode(filp)->i_sb);
-+	char *label;
-+	int ret;
-+
-+	if (!capable(CAP_SYS_ADMIN))
-+		return -EPERM;
-+
-+	label = strndup_user((const char __user *)arg, FSLABEL_MAX);
-+	if (IS_ERR(label))
-+		return PTR_ERR(label);
-+
-+	ret = mnt_want_write_file(filp);
-+	if (ret)
-+		goto out;
-+
-+	ret = ntfs_write_volume_label(vol, label);
-+	mnt_drop_write_file(filp);
-+out:
-+	kfree(label);
-+	return ret;
-+}
-+
-+static int ntfs_ioctl_fitrim(struct ntfs_volume *vol, unsigned long arg)
-+{
-+	struct fstrim_range __user *user_range;
-+	struct fstrim_range range;
-+	struct block_device *dev;
-+	int err;
-+
-+	if (!capable(CAP_SYS_ADMIN))
-+		return -EPERM;
-+
-+	dev = vol->sb->s_bdev;
-+	if (!bdev_max_discard_sectors(dev))
-+		return -EOPNOTSUPP;
-+
-+	user_range = (struct fstrim_range __user *)arg;
-+	if (copy_from_user(&range, user_range, sizeof(range)))
-+		return -EFAULT;
-+
-+	if (range.len == 0)
-+		return -EINVAL;
-+
-+	if (range.len < vol->cluster_size)
-+		return -EINVAL;
-+
-+	range.minlen = max_t(u32, range.minlen, bdev_discard_granularity(dev));
-+
-+	err = ntfsp_trim_fs(vol, &range);
-+	if (err < 0)
-+		return err;
-+
-+	if (copy_to_user(user_range, &range, sizeof(range)))
-+		return -EFAULT;
-+
-+	return 0;
-+}
-+
-+long ntfsp_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
-+{
-+	switch (cmd) {
-+	case NTFS_IOC_SHUTDOWN:
-+		return ntfs_ioctl_shutdown(file_inode(filp)->i_sb, arg);
-+	case FS_IOC_GETFSLABEL:
-+		return ntfs_ioctl_get_volume_label(filp, arg);
-+	case FS_IOC_SETFSLABEL:
-+		return ntfs_ioctl_set_volume_label(filp, arg);
-+	case FITRIM:
-+		return ntfs_ioctl_fitrim(NTFS_SB(file_inode(filp)->i_sb), arg);
-+	default:
-+		return -ENOTTY;
-+	}
-+}
-+
-+#ifdef CONFIG_COMPAT
-+long ntfsp_compat_ioctl(struct file *filp, unsigned int cmd,
-+		unsigned long arg)
-+{
-+	return ntfsp_ioctl(filp, cmd, (unsigned long)compat_ptr(arg));
-+}
-+#endif
-+
-+static long ntfs_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
-+{
-+	struct inode *vi = file_inode(file);
-+	struct ntfs_inode *ni = NTFS_I(vi);
-+	struct ntfs_volume *vol = ni->vol;
-+	int err = 0;
-+	loff_t end_offset = offset + len;
-+	loff_t old_size, new_size;
-+	s64 start_vcn, end_vcn;
-+	bool map_locked = false;
-+
-+	if (!S_ISREG(vi->i_mode))
-+		return -EOPNOTSUPP;
-+
-+	if (mode & ~(FALLOC_FL_KEEP_SIZE | FALLOC_FL_INSERT_RANGE |
-+		     FALLOC_FL_PUNCH_HOLE | FALLOC_FL_COLLAPSE_RANGE))
-+		return -EOPNOTSUPP;
-+
-+	if (!NVolFreeClusterKnown(vol))
-+		wait_event(vol->free_waitq, NVolFreeClusterKnown(vol));
-+
-+	if ((ni->vol->mft_zone_end - ni->vol->mft_zone_start) == 0)
-+		return -ENOSPC;
-+
-+	if (NInoNonResident(ni) && !NInoFullyMapped(ni)) {
-+		down_write(&ni->runlist.lock);
-+		err = ntfs_attr_map_whole_runlist(ni);
-+		up_write(&ni->runlist.lock);
-+		if (err)
-+			return err;
-+	}
-+
-+	if (!(vol->vol_flags & VOLUME_IS_DIRTY)) {
-+		err = ntfs_set_volume_flags(vol, VOLUME_IS_DIRTY);
-+		if (err)
-+			return err;
-+	}
-+
-+	old_size = i_size_read(vi);
-+	new_size = max_t(loff_t, old_size, end_offset);
-+	start_vcn = offset >> vol->cluster_size_bits;
-+	end_vcn = ((end_offset - 1) >> vol->cluster_size_bits) + 1;
-+
-+	inode_lock(vi);
-+	if (NInoCompressed(ni) || NInoEncrypted(ni)) {
-+		err = -EOPNOTSUPP;
++	ctx = ntfs_attr_get_search_ctx(ni, NULL);
++	if (!ctx) {
++		err = -ENOMEM;
 +		goto out;
 +	}
 +
-+	inode_dio_wait(vi);
-+	if (mode & (FALLOC_FL_PUNCH_HOLE | FALLOC_FL_COLLAPSE_RANGE |
-+		    FALLOC_FL_INSERT_RANGE)) {
-+		filemap_invalidate_lock(vi->i_mapping);
-+		map_locked = true;
++	err = ntfs_attr_lookup(ni->type, ni->name, ni->name_len,
++			CASE_SENSITIVE, 0, NULL, 0, ctx);
++	if (err) {
++		if (err == -ENOENT)
++			err = -EIO;
++		goto out;
 +	}
 +
-+	if (mode & FALLOC_FL_INSERT_RANGE) {
-+		loff_t offset_down = round_down(offset,
-+						max_t(unsigned long, vol->cluster_size, PAGE_SIZE));
-+		loff_t alloc_size;
++	a = ctx->attr;
++	/* The total length of the attribute value. */
++	attr_len = le32_to_cpu(a->data.resident.value_length);
++	kattr = (u8 *)a + le16_to_cpu(a->data.resident.value_offset);
 +
-+		if (NVolDisableSparse(vol)) {
-+			err = -EOPNOTSUPP;
-+			goto out;
-+		}
-+
-+		if ((offset & vol->cluster_size_mask) ||
-+		    (len & vol->cluster_size_mask) ||
-+		    offset >= ni->allocated_size) {
-+			err = -EINVAL;
-+			goto out;
-+		}
-+
-+		new_size = old_size +
-+			((end_vcn - start_vcn) << vol->cluster_size_bits);
-+		alloc_size = ni->allocated_size +
-+			((end_vcn - start_vcn) << vol->cluster_size_bits);
-+		if (alloc_size < 0) {
-+			err = -EFBIG;
-+			goto out;
-+		}
-+		err = inode_newsize_ok(vi, alloc_size);
-+		if (err)
-+			goto out;
-+
-+		err = filemap_write_and_wait_range(vi->i_mapping,
-+						   offset_down, LLONG_MAX);
-+		if (err)
-+			goto out;
-+
-+		truncate_pagecache(vi, offset_down);
-+
-+		mutex_lock_nested(&ni->mrec_lock, NTFS_INODE_MUTEX_NORMAL);
-+		err = ntfs_non_resident_attr_insert_range(ni, start_vcn,
-+							  end_vcn - start_vcn);
-+		mutex_unlock(&ni->mrec_lock);
-+		if (err)
-+			goto out;
-+	} else if (mode & FALLOC_FL_COLLAPSE_RANGE) {
-+		loff_t offset_down = round_down(offset,
-+						max_t(unsigned long, vol->cluster_size, PAGE_SIZE));
-+
-+		if ((offset & vol->cluster_size_mask) ||
-+		    (len & vol->cluster_size_mask) ||
-+		    offset >= ni->allocated_size) {
-+			err = -EINVAL;
-+			goto out;
-+		}
-+
-+		if ((end_vcn << vol->cluster_size_bits) > ni->allocated_size)
-+			end_vcn = DIV_ROUND_UP(ni->allocated_size - 1,
-+					       vol->cluster_size) + 1;
-+		new_size = old_size -
-+			((end_vcn - start_vcn) << vol->cluster_size_bits);
-+		if (new_size < 0)
-+			new_size = 0;
-+		err = filemap_write_and_wait_range(vi->i_mapping,
-+						   offset_down, LLONG_MAX);
-+		if (err)
-+			goto out;
-+
-+		truncate_pagecache(vi, offset_down);
-+
-+		mutex_lock_nested(&ni->mrec_lock, NTFS_INODE_MUTEX_NORMAL);
-+		err = ntfs_non_resident_attr_collapse_range(ni, start_vcn,
-+							    end_vcn - start_vcn);
-+		mutex_unlock(&ni->mrec_lock);
-+		if (err)
-+			goto out;
-+	} else if (mode & FALLOC_FL_PUNCH_HOLE) {
-+		loff_t offset_down = round_down(offset, max_t(unsigned int,
-+							      vol->cluster_size, PAGE_SIZE));
-+
-+		if (NVolDisableSparse(vol)) {
-+			err = -EOPNOTSUPP;
-+			goto out;
-+		}
-+
-+		if (!(mode & FALLOC_FL_KEEP_SIZE)) {
-+			err = -EINVAL;
-+			goto out;
-+		}
-+
-+		if (offset >= ni->data_size)
-+			goto out;
-+
-+		if (offset + len > ni->data_size) {
-+			end_offset = ni->data_size;
-+			end_vcn = ((end_offset - 1) >> vol->cluster_size_bits) + 1;
-+		}
-+
-+		err = filemap_write_and_wait_range(vi->i_mapping, offset_down, LLONG_MAX);
-+		if (err)
-+			goto out;
-+		truncate_pagecache(vi, offset_down);
-+
-+		if (offset & vol->cluster_size_mask) {
-+			loff_t to;
-+
-+			to = min_t(loff_t, (start_vcn + 1) << vol->cluster_size_bits,
-+				   end_offset);
-+			err = iomap_zero_range(vi, offset, to - offset, NULL,
-+					       &ntfs_read_iomap_ops,
-+					       &ntfs_iomap_folio_ops, NULL);
-+			if (err < 0 || (end_vcn - start_vcn) == 1)
-+				goto out;
-+			start_vcn++;
-+		}
-+		if (end_offset & vol->cluster_size_mask) {
-+			loff_t from;
-+
-+			from = (end_vcn - 1) << vol->cluster_size_bits;
-+			err = iomap_zero_range(vi, from, end_offset - from, NULL,
-+					       &ntfs_read_iomap_ops,
-+					       &ntfs_iomap_folio_ops, NULL);
-+			if (err < 0 || (end_vcn - start_vcn) == 1)
-+				goto out;
-+			end_vcn--;
-+		}
-+
-+		mutex_lock_nested(&ni->mrec_lock, NTFS_INODE_MUTEX_NORMAL);
-+		err = ntfs_non_resident_attr_punch_hole(ni, start_vcn,
-+							end_vcn - start_vcn);
-+		mutex_unlock(&ni->mrec_lock);
-+		if (err)
-+			goto out;
-+	} else if (mode == 0 || mode == FALLOC_FL_KEEP_SIZE) {
-+		s64 need_space;
-+
-+		err = inode_newsize_ok(vi, new_size);
-+		if (err)
-+			goto out;
-+
-+		need_space = ni->allocated_size << vol->cluster_size_bits;
-+		if (need_space > start_vcn)
-+			need_space = end_vcn - need_space;
-+		else
-+			need_space = end_vcn - start_vcn;
-+		if (need_space > 0 &&
-+		    need_space > (atomic64_read(&vol->free_clusters) -
-+			    atomic64_read(&vol->dirty_clusters))) {
-+			err = -ENOSPC;
-+			goto out;
-+		}
-+
-+		err = ntfs_attr_fallocate(ni, offset, len,
-+					  mode & FALLOC_FL_KEEP_SIZE ? true : false);
-+		if (err)
-+			goto out;
++	ipage = alloc_page(__GFP_NOWARN | __GFP_IO | __GFP_ZERO);
++	if (!ipage) {
++		err = -ENOMEM;
++		goto out;
 +	}
++	memcpy(page_address(ipage), kattr, attr_len);
 +
-+	/* inode->i_blocks is already updated in ntfs_attr_update_mapping_pairs */
-+	if (!(mode & FALLOC_FL_KEEP_SIZE) && new_size != old_size)
-+		i_size_write(vi, ni->data_size);
++	iomap->type = IOMAP_INLINE;
++	iomap->inline_data = page_address(ipage);
++	iomap->offset = 0;
++	/* iomap requires there is only one INLINE_DATA extent */
++	iomap->length = attr_len;
++	iomap->private = ipage;
 +
 +out:
-+	if (map_locked)
-+		filemap_invalidate_unlock(vi->i_mapping);
-+	if (!err) {
-+		if (mode == 0 && NInoNonResident(ni) &&
-+		offset > old_size && old_size % PAGE_SIZE != 0) {
-+			loff_t len = min_t(loff_t,
-+					   round_up(old_size, PAGE_SIZE) - old_size,
-+					   offset - old_size);
-+			err = iomap_zero_range(vi, old_size, len, NULL,
-+					       &ntfs_read_iomap_ops,
-+					       &ntfs_iomap_folio_ops, NULL);
-+		}
-+		NInoSetFileNameDirty(ni);
-+		inode_set_mtime_to_ts(vi, inode_set_ctime_current(vi));
-+		mark_inode_dirty(vi);
-+	}
++	if (ctx)
++		ntfs_attr_put_search_ctx(ctx);
++	mutex_unlock(&ni->mrec_lock);
 +
-+	inode_unlock(vi);
 +	return err;
 +}
 +
-+const struct file_operations ntfs_file_ops = {
-+	.llseek		= ntfs_file_llseek,
-+	.read_iter	= ntfs_file_read_iter,
-+	.write_iter	= ntfs_file_write_iter,
-+	.fsync		= ntfs_file_fsync,
-+	.mmap_prepare	= ntfs_file_mmap_prepare,
-+	.open		= ntfs_file_open,
-+	.release	= ntfs_file_release,
-+	.splice_read	= ntfs_file_splice_read,
-+	.splice_write	= iter_file_splice_write,
-+	.unlocked_ioctl	= ntfsp_ioctl,
-+#ifdef CONFIG_COMPAT
-+	.compat_ioctl	= ntfsp_compat_ioctl,
-+#endif
-+	.fallocate	= ntfs_fallocate,
++static int ntfs_write_iomap_begin(struct inode *inode, loff_t offset,
++				  loff_t length, unsigned int flags,
++				  struct iomap *iomap, struct iomap *srcmap)
++{
++	return __ntfs_write_iomap_begin(inode, offset, length, flags, iomap,
++			false, false);
++}
++
++static int ntfs_write_iomap_end(struct inode *inode, loff_t pos, loff_t length,
++		ssize_t written, unsigned int flags, struct iomap *iomap)
++{
++	if (iomap->type == IOMAP_INLINE) {
++		struct page *ipage = iomap->private;
++		struct ntfs_inode *ni = NTFS_I(inode);
++		struct ntfs_attr_search_ctx *ctx;
++		u32 attr_len;
++		int err;
++		char *kattr;
++
++		mutex_lock(&ni->mrec_lock);
++		ctx = ntfs_attr_get_search_ctx(ni, NULL);
++		if (!ctx) {
++			written = -ENOMEM;
++			mutex_unlock(&ni->mrec_lock);
++			goto out;
++		}
++
++		err = ntfs_attr_lookup(ni->type, ni->name, ni->name_len,
++				CASE_SENSITIVE, 0, NULL, 0, ctx);
++		if (err) {
++			if (err == -ENOENT)
++				err = -EIO;
++			written = err;
++			goto err_out;
++		}
++
++		/* The total length of the attribute value. */
++		attr_len = le32_to_cpu(ctx->attr->data.resident.value_length);
++		if (pos >= attr_len || pos + written > attr_len)
++			goto err_out;
++
++		kattr = (u8 *)ctx->attr + le16_to_cpu(ctx->attr->data.resident.value_offset);
++		memcpy(kattr + pos, iomap_inline_data(iomap, pos), written);
++		mark_mft_record_dirty(ctx->ntfs_ino);
++err_out:
++		ntfs_attr_put_search_ctx(ctx);
++		put_page(ipage);
++		mutex_unlock(&ni->mrec_lock);
++	}
++
++out:
++	return written;
++}
++
++const struct iomap_ops ntfs_write_iomap_ops = {
++	.iomap_begin		= ntfs_write_iomap_begin,
++	.iomap_end		= ntfs_write_iomap_end,
 +};
 +
-+const struct inode_operations ntfs_file_inode_ops = {
-+	.setattr	= ntfsp_setattr,
-+	.getattr	= ntfsp_getattr,
-+	.listxattr	= ntfsp_listxattr,
-+	.get_acl	= ntfsp_get_acl,
-+	.set_acl	= ntfsp_set_acl,
-+	.fiemap		= ntfs_fiemap,
++static int ntfs_page_mkwrite_iomap_begin(struct inode *inode, loff_t offset,
++				  loff_t length, unsigned int flags,
++				  struct iomap *iomap, struct iomap *srcmap)
++{
++	return __ntfs_write_iomap_begin(inode, offset, length, flags, iomap,
++			true, true);
++}
++
++const struct iomap_ops ntfs_page_mkwrite_iomap_ops = {
++	.iomap_begin		= ntfs_page_mkwrite_iomap_begin,
++	.iomap_end		= ntfs_write_iomap_end,
 +};
 +
-+const struct inode_operations ntfs_symlink_inode_operations = {
-+	.get_link	= ntfs_get_link,
-+	.setattr	= ntfsp_setattr,
-+	.listxattr	= ntfsp_listxattr,
++static int ntfs_dio_iomap_begin(struct inode *inode, loff_t offset,
++				  loff_t length, unsigned int flags,
++				  struct iomap *iomap, struct iomap *srcmap)
++{
++	return __ntfs_write_iomap_begin(inode, offset, length, flags, iomap,
++			true, false);
++}
++
++const struct iomap_ops ntfs_dio_iomap_ops = {
++	.iomap_begin		= ntfs_dio_iomap_begin,
++	.iomap_end		= ntfs_write_iomap_end,
 +};
 +
-+const struct inode_operations ntfsp_special_inode_operations = {
-+	.setattr	= ntfsp_setattr,
-+	.getattr	= ntfsp_getattr,
-+	.listxattr	= ntfsp_listxattr,
-+	.get_acl	= ntfsp_get_acl,
-+	.set_acl	= ntfsp_set_acl,
++static ssize_t ntfs_writeback_range(struct iomap_writepage_ctx *wpc,
++		struct folio *folio, u64 offset, unsigned int len, u64 end_pos)
++{
++	if (offset < wpc->iomap.offset ||
++	    offset >= wpc->iomap.offset + wpc->iomap.length) {
++		int error;
++
++		error = __ntfs_write_iomap_begin(wpc->inode, offset,
++				NTFS_I(wpc->inode)->allocated_size - offset,
++				IOMAP_WRITE, &wpc->iomap, true, false);
++		if (error)
++			return error;
++	}
++
++	return iomap_add_to_ioend(wpc, folio, offset, end_pos, len);
++}
++
++const struct iomap_writeback_ops ntfs_writeback_ops = {
++	.writeback_range	= ntfs_writeback_range,
++	.writeback_submit	= iomap_ioend_writeback_submit,
 +};
-+
-+const struct file_operations ntfs_empty_file_ops = {};
-+
-+const struct inode_operations ntfs_empty_inode_ops = {};
 -- 
 2.25.1
 
