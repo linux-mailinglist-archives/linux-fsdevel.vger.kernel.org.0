@@ -1,64 +1,64 @@
-Return-Path: <linux-fsdevel+bounces-69973-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69974-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEB57C8CD54
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 06:02:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C2FFC8CD61
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 06:03:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6EFE534F434
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 05:02:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3AA083B4FA9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 05:03:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7094330F929;
-	Thu, 27 Nov 2025 05:01:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31E993128DF;
+	Thu, 27 Nov 2025 05:01:35 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DF532D837E
-	for <linux-fsdevel@vger.kernel.org>; Thu, 27 Nov 2025 05:01:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B829C30F55F
+	for <linux-fsdevel@vger.kernel.org>; Thu, 27 Nov 2025 05:01:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764219679; cv=none; b=K+ixiPBzpcbbYlVZx9umSHsmWUrOWPer0sw2b19xGjCkIO3O1QKyqgn2EHo0wsGXwVyorCtPkfngk10QG/F0xjQtBn77cSSW6/gdP9HhE/y14SB7SpsT8Ht/pFAV0atuE5wriN4v7S7Pmzs9H09N/Li4mJEwDbIe0K1bxdAblnQ=
+	t=1764219693; cv=none; b=o3iqcinaLT2t5Vm5wt4fNLFcKqPouXKJe9s+omqfPfZ5X2vTRDIVOUE5/eJotdlV8dYhOblPbtEWZVbR6a30cTzEZP2qyHfQH/rTaIq+YQJPLOHNxYdcsr7pqKVFK8omkeB8+JDAix+wkOLft8+xmKsAIIyfliQLi//DdWNRdQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764219679; c=relaxed/simple;
-	bh=pI+On5GdqcEs5aHYmirxT5SGTUya+MorhDzdQz3HuVw=;
+	s=arc-20240116; t=1764219693; c=relaxed/simple;
+	bh=QBiGfnw6D0AisBjt8bLbb+tUDFuhu0cw0dXg6lX0aWQ=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Ek1XF+/jayPdSjzEmtXy+jmxgQDEfzsKmIIY3iiuqqlfgeVLAh5Y53GvRrajV2JBZeWxvfcbviC7LBF/KLdXmy4sZm+RV8wOJo8FzldRNDcmku+czqs+gmZtuhhhXHcW8XYUcw4+NpadSs1xa5aZLUAMjFCILKKiRZW77dIqHaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.172
+	 MIME-Version:Content-Type; b=gFhOQua2H5i5QMr48RkexsG9B8JqD3lSrlc0yswNI0fIhrDuasB+nfKxjGSF44rcDsYS+cxUrPtS7yciYiSq6V7iRIUB9CvBL/F9CEBIhRtOAxJYOD+JAAxn0ZDPWwjxkBeE7LOWCJFDmoSjqYsxxHKZSd4Y2lKMyiN3opOksTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-298456bb53aso6078615ad.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Nov 2025 21:01:15 -0800 (PST)
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-297ef378069so4782945ad.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Nov 2025 21:01:23 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764219675; x=1764824475;
+        d=1e100.net; s=20230601; t=1764219683; x=1764824483;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=Mouh1zOCUbfadzpLEOEbIEAA0r6eO7W7vXcgNNx0w5Y=;
-        b=eKiRo+oIVe/opDbIOSm/DDU2xm9zNldzRm3/JPY+nJi+9s2Zo9LqlgPTPO5nPSkssd
-         bCFr4opHvMf95H8d4739FJF8TlS4oF9/uGar3BkjvotpxA9fcc4e5jdfcd9lo8Wngfji
-         rhXv5st3W7XVB+zK5h5AKxmzOUsJI7A1plbIXQWdwBiCjROnQplMuB6guYjBqVio++u8
-         AA3REy0gPcU01PIG9iBlaTC7Dx/y/aI8EMcIwiEPxALTbhw05VJYX5NmV4LPbcLB5VR9
-         r0hFiBR4Pie7Ydmf6acSMVTVXeirwWfJ6Wmzl8+THCeOewPAbDIPh2oJLU8kgLV23mXR
-         JeCA==
-X-Gm-Message-State: AOJu0YxIwwbn7ijxdwkUnuOGsUmcx8Doiob4m8YFcHKjbPgQBil2Vv/A
-	SlxAuIc6gwoTu73/KZeAfjkoDaX+LqMTTlkwmMFF4cTptcgCOrRjxcu2
-X-Gm-Gg: ASbGncthtucxyEL1WZbdlZtFrWW8vT+3c71iFJk10d5IpqN1NI6K8adfq2w6HdYJEXO
-	DWb6iNh3oVPoVBOnHs3onHBvb/iCS3eAZh30vW3KWgU8PdW1ewvzpvid6I8iOgmniU7HQ+w9lc3
-	8O8u3ULiYgjdeWzpODS2pZj0Pz7VSJhd6qaVmgYPcb3DgRpulKMPH1Bw6pnGi/gfHZ5gpvsTD1j
-	LKDeeEf7zlnDs54t71+l32u3fon2NiX3cSrga97b6Df4Arq3KCBiCuqfqAe0dp9kEyys00/UkHY
-	VJYmgUbRUhDBZtdADGL8p9ujZ+bxZXYgMxjjX9cFBP/nq1nwr3nPBvWD2VFrPFM55rySbf1UImc
-	IJejoGKPS7FNOwLHY3zzYGYog5gPubUy/4hCPeDAN1HvQTKnmFD2Mc/7551Hi/3hs5bnKGfwLDG
-	vPOx6I5mhD4nUA6YP7271nHuQHWK/xbcPe8qoo
-X-Google-Smtp-Source: AGHT+IHaGxRUrrwuK9dVchyFDrYPvs/urspVektlGChbF85OiYpnR3GGUFxa2CbABeDkrsltZQns+Q==
-X-Received: by 2002:a17:903:1b2b:b0:298:43f4:cc49 with SMTP id d9443c01a7336-29b6c5225f0mr270246795ad.24.1764219675055;
-        Wed, 26 Nov 2025 21:01:15 -0800 (PST)
+        bh=p37yDdAenay1YMuz8i0RhGCtbMbyJ/bdh+HdPgyeuXw=;
+        b=n6f7RYw2r5rv+YZBEy9RMtW9yewUZkgaCWO+h7xBs16xn8P4dy6iVLq83mqNiOsSVS
+         Pwg+B2/WJX9k5wmjDikrYI8UoXeCunyXUyC7oVkovqJzKHz5A5LFgiJQ6rkv0x9/eOVT
+         Mb9JvxuF3Vk/ItNV7b72UphdId1ZP+rEu0/xRBPiJd16eueCbPgiiWHI3r3ZZFY2E9Ps
+         kwSmodabt0201o1XutP7DBDrVjLTA1Oh3gfqfj+65b/q+GGAenTL0rtne11q5xd3Cm1D
+         GHyDCf6PYOBHWcDfSyMOH78f/b26HF+SAKNYGx37ZNrqmjJ19zpXo2J853UO/xodifli
+         iPYA==
+X-Gm-Message-State: AOJu0YwwW//3Fh3W1W2zeoUlMQ8N/0QXjs7gS6+EGFMfjyuRtVSVMzEt
+	YQjc+P9mdAHtg5aZF+a3SzJYFtU/1O9B0LCClFCX1YfqUhP++LvDpR2l
+X-Gm-Gg: ASbGncsq1XbnDc9wRXZf+GUpdwy+sgEKXIZWrGKcMtvaFinPbo2O1vbgiyFe3GJjzFR
+	UF8o/pVDEdB2EK7jOjFZv82uHfj2MHB9j67BVCfBwXz2+JsaGehwK/bM4L9gRQx13NcxYiVwKrN
+	5thteU0VIO2AlrNSDbqEM+irn1HQ9Py4FODHjyqlrm4HpvjSKyGZwAVVt8kY/iVh6Yfn8dDQ1gk
+	XOwMEBY91ogNovZqd0i3G6lHao3SXWQQmvUdI5Pm0yQULDr9mymbs9ZLmu7+x85nH6WqY44mMOv
+	p9m3KDkxXrLmKBcptWvmodLiqP/ywOuft71Zl6e5TPh5FvAfc0Vz+gOb5ptzIu5ljJlFoNq2mX8
+	u9Nsbhg1fBwM1uwnX1UXOxIPEqdLXsk/KMVa1snX8MILq4w7dsQE2fVc66nch0tpHBgpyCOyYkw
+	daRzcCBNKopAuuNVfRJjapnicNWw==
+X-Google-Smtp-Source: AGHT+IFBSSL1UXzegiJD1H2NtWqupcVBiE98w6OyPepRmif+i3KdMurHbwH9C9I2tqiJesT29hYEFQ==
+X-Received: by 2002:a17:902:ebca:b0:295:3f35:a312 with SMTP id d9443c01a7336-29baaf9595cmr96705545ad.20.1764219682388;
+        Wed, 26 Nov 2025 21:01:22 -0800 (PST)
 Received: from localhost.localdomain ([1.227.206.162])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29bceb54454sm2719825ad.84.2025.11.26.21.01.09
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29bceb54454sm2719825ad.84.2025.11.26.21.01.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Nov 2025 21:01:14 -0800 (PST)
+        Wed, 26 Nov 2025 21:01:21 -0800 (PST)
 From: Namjae Jeon <linkinjeon@kernel.org>
 To: viro@zeniv.linux.org.uk,
 	brauner@kernel.org,
@@ -84,9 +84,9 @@ Cc: linux-fsdevel@vger.kernel.org,
 	jay.sim@lge.com,
 	gunho.lee@lge.com,
 	Namjae Jeon <linkinjeon@kernel.org>
-Subject: [PATCH v2 09/11] ntfsplus: add reparse and ea operations
-Date: Thu, 27 Nov 2025 13:59:42 +0900
-Message-Id: <20251127045944.26009-10-linkinjeon@kernel.org>
+Subject: [PATCH v2 10/11] ntfsplus: add misc operations
+Date: Thu, 27 Nov 2025 13:59:43 +0900
+Message-Id: <20251127045944.26009-11-linkinjeon@kernel.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20251127045944.26009-1-linkinjeon@kernel.org>
 References: <20251127045944.26009-1-linkinjeon@kernel.org>
@@ -96,1510 +96,1761 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-This adds the implementation of reparse and ea operations for ntfsplus.
+This adds the implementation of misc operations for ntfsplus.
 
 Signed-off-by: Namjae Jeon <linkinjeon@kernel.org>
 ---
- fs/ntfsplus/ea.c      | 931 ++++++++++++++++++++++++++++++++++++++++++
- fs/ntfsplus/reparse.c | 550 +++++++++++++++++++++++++
- 2 files changed, 1481 insertions(+)
- create mode 100644 fs/ntfsplus/ea.c
- create mode 100644 fs/ntfsplus/reparse.c
+ fs/ntfsplus/collate.c | 178 ++++++++++
+ fs/ntfsplus/logfile.c | 770 ++++++++++++++++++++++++++++++++++++++++++
+ fs/ntfsplus/misc.c    | 213 ++++++++++++
+ fs/ntfsplus/unistr.c  | 473 ++++++++++++++++++++++++++
+ fs/ntfsplus/upcase.c  |  73 ++++
+ 5 files changed, 1707 insertions(+)
+ create mode 100644 fs/ntfsplus/collate.c
+ create mode 100644 fs/ntfsplus/logfile.c
+ create mode 100644 fs/ntfsplus/misc.c
+ create mode 100644 fs/ntfsplus/unistr.c
+ create mode 100644 fs/ntfsplus/upcase.c
 
-diff --git a/fs/ntfsplus/ea.c b/fs/ntfsplus/ea.c
+diff --git a/fs/ntfsplus/collate.c b/fs/ntfsplus/collate.c
 new file mode 100644
-index 000000000000..5658aa0e21ea
+index 000000000000..82aeab3a434c
 --- /dev/null
-+++ b/fs/ntfsplus/ea.c
-@@ -0,0 +1,931 @@
++++ b/fs/ntfsplus/collate.c
+@@ -0,0 +1,178 @@
 +// SPDX-License-Identifier: GPL-2.0-or-later
-+/**
-+ * Pocessing of EA's
++/*
++ * NTFS kernel collation handling. Part of the Linux-NTFS project.
++ *
++ * Copyright (c) 2004 Anton Altaparmakov
 + *
 + * Part of this file is based on code from the NTFS-3G project.
-+ *
-+ * Copyright (c) 2014-2021 Jean-Pierre Andre
-+ * Copyright (c) 2025 LG Electronics Co., Ltd.
++ * and is copyrighted by the respective authors below:
++ * Copyright (c) 2004 Anton Altaparmakov
++ * Copyright (c) 2005 Yura Pakhuchiy
 + */
 +
-+#include <linux/fs.h>
-+#include <linux/posix_acl.h>
-+#include <linux/posix_acl_xattr.h>
-+#include <linux/xattr.h>
-+
-+#include "layout.h"
-+#include "attrib.h"
-+#include "index.h"
-+#include "dir.h"
-+#include "ea.h"
++#include "collate.h"
 +#include "misc.h"
++#include "ntfs.h"
 +
-+static int ntfs_write_ea(struct ntfs_inode *ni, int type, char *value, s64 ea_off,
-+		s64 ea_size, bool need_truncate)
++static int ntfs_collate_binary(struct ntfs_volume *vol,
++		const void *data1, const int data1_len,
++		const void *data2, const int data2_len)
 +{
-+	struct inode *ea_vi;
-+	int err = 0;
-+	s64 written;
++	int rc;
 +
-+	ea_vi = ntfs_attr_iget(VFS_I(ni), type, AT_UNNAMED, 0);
-+	if (IS_ERR(ea_vi))
-+		return PTR_ERR(ea_vi);
++	ntfs_debug("Entering.");
++	rc = memcmp(data1, data2, min(data1_len, data2_len));
++	if (!rc && (data1_len != data2_len)) {
++		if (data1_len < data2_len)
++			rc = -1;
++		else
++			rc = 1;
++	}
++	ntfs_debug("Done, returning %i", rc);
++	return rc;
++}
 +
-+	written = ntfs_inode_attr_pwrite(ea_vi, ea_off, ea_size, value, false);
-+	if (written != ea_size)
-+		err = -EIO;
++static int ntfs_collate_ntofs_ulong(struct ntfs_volume *vol,
++		const void *data1, const int data1_len,
++		const void *data2, const int data2_len)
++{
++	int rc;
++	u32 d1, d2;
++
++	ntfs_debug("Entering.");
++
++	if (data1_len != data2_len || data1_len != 4)
++		return -EINVAL;
++
++	d1 = le32_to_cpup(data1);
++	d2 = le32_to_cpup(data2);
++	if (d1 < d2)
++		rc = -1;
 +	else {
-+		struct ntfs_inode *ea_ni = NTFS_I(ea_vi);
-+
-+		if (need_truncate && ea_ni->data_size > ea_off + ea_size)
-+			ntfs_attr_truncate(ea_ni, ea_off + ea_size);
-+		mark_mft_record_dirty(ni);
++		if (d1 == d2)
++			rc = 0;
++		else
++			rc = 1;
 +	}
-+
-+	iput(ea_vi);
-+	return err;
++	ntfs_debug("Done, returning %i", rc);
++	return rc;
 +}
 +
-+static int ntfs_ea_lookup(char *ea_buf, s64 ea_buf_size, const char *name,
-+		int name_len, s64 *ea_offset, s64 *ea_size)
++/**
++ * ntfs_collate_ntofs_ulongs - Which of two le32 arrays should be listed first
++ *
++ * Returns: -1, 0 or 1 depending of how the arrays compare
++ */
++static int ntfs_collate_ntofs_ulongs(struct ntfs_volume *vol,
++		const void *data1, const int data1_len,
++		const void *data2, const int data2_len)
 +{
-+	const struct ea_attr *p_ea;
-+	s64 offset;
-+	unsigned int next;
++	int rc;
++	int len;
++	const __le32 *p1, *p2;
++	u32 d1, d2;
 +
-+	if (ea_buf_size < sizeof(struct ea_attr))
-+		goto out;
++	ntfs_debug("Entering.");
++	if ((data1_len != data2_len) || (data1_len <= 0) || (data1_len & 3)) {
++		ntfs_error(vol->sb, "data1_len or data2_len not valid\n");
++		return -1;
++	}
 +
-+	offset = 0;
++	p1 = (const __le32 *)data1;
++	p2 = (const __le32 *)data2;
++	len = data1_len;
 +	do {
-+		p_ea = (const struct ea_attr *)&ea_buf[offset];
-+		next = le32_to_cpu(p_ea->next_entry_offset);
-+
-+		if (offset + next > ea_buf_size ||
-+		    ((1 + p_ea->ea_name_length) > (ea_buf_size - offset)))
-+			break;
-+
-+		if (p_ea->ea_name_length == name_len &&
-+		    !memcmp(p_ea->ea_name, name, name_len)) {
-+			*ea_offset = offset;
-+			if (next)
-+				*ea_size = next;
-+			else {
-+				unsigned int ea_len = 1 + p_ea->ea_name_length +
-+						le16_to_cpu(p_ea->ea_value_length);
-+
-+				if ((ea_buf_size - offset) < ea_len)
-+					goto out;
-+
-+				*ea_size = ALIGN(struct_size(p_ea, ea_name,
-+							1 + p_ea->ea_name_length +
-+							le16_to_cpu(p_ea->ea_value_length)), 4);
-+			}
-+
-+			if (ea_buf_size < *ea_offset + *ea_size)
-+				goto out;
-+
-+			return 0;
-+		}
-+		offset += next;
-+	} while (next > 0 && offset < ea_buf_size &&
-+		 sizeof(struct ea_attr) < (ea_buf_size - offset));
-+
-+out:
-+	return -ENOENT;
-+}
-+
-+/*
-+ * Return the existing EA
-+ *
-+ * The EA_INFORMATION is not examined and the consistency of the
-+ * existing EA is not checked.
-+ *
-+ * If successful, the full attribute is returned unchanged
-+ * and its size is returned.
-+ * If the designated buffer is too small, the needed size is
-+ * returned, and the buffer is left unchanged.
-+ * If there is an error, a negative value is returned and errno
-+ * is set according to the error.
-+ */
-+static int ntfs_get_ea(struct inode *inode, const char *name, size_t name_len,
-+		void *buffer, size_t size)
-+{
-+	struct ntfs_inode *ni = NTFS_I(inode);
-+	const struct ea_attr *p_ea;
-+	char *ea_buf;
-+	s64 ea_off, ea_size, all_ea_size, ea_info_size;
-+	int err;
-+	unsigned short int ea_value_len, ea_info_qlen;
-+	struct ea_information *p_ea_info;
-+
-+	if (!NInoHasEA(ni))
-+		return -ENODATA;
-+
-+	p_ea_info = ntfs_attr_readall(ni, AT_EA_INFORMATION, NULL, 0,
-+			&ea_info_size);
-+	if (!p_ea_info || ea_info_size != sizeof(struct ea_information)) {
-+		ntfs_free(p_ea_info);
-+		return -ENODATA;
-+	}
-+
-+	ea_info_qlen = le16_to_cpu(p_ea_info->ea_query_length);
-+	ntfs_free(p_ea_info);
-+
-+	ea_buf = ntfs_attr_readall(ni, AT_EA, NULL, 0, &all_ea_size);
-+	if (!ea_buf)
-+		return -ENODATA;
-+
-+	err = ntfs_ea_lookup(ea_buf, ea_info_qlen, name, name_len, &ea_off,
-+			&ea_size);
-+	if (!err) {
-+		p_ea = (struct ea_attr *)&ea_buf[ea_off];
-+		ea_value_len = le16_to_cpu(p_ea->ea_value_length);
-+		if (!buffer) {
-+			ntfs_free(ea_buf);
-+			return ea_value_len;
-+		}
-+
-+		if (ea_value_len > size) {
-+			err = -ERANGE;
-+			goto free_ea_buf;
-+		}
-+
-+		memcpy(buffer, &p_ea->ea_name[p_ea->ea_name_length + 1],
-+				ea_value_len);
-+		ntfs_free(ea_buf);
-+		return ea_value_len;
-+	}
-+
-+	err = -ENODATA;
-+free_ea_buf:
-+	ntfs_free(ea_buf);
-+	return err;
-+}
-+
-+static inline int ea_packed_size(const struct ea_attr *p_ea)
-+{
-+	/*
-+	 * 4 bytes for header (flags and lengths) + name length + 1 +
-+	 * value length.
-+	 */
-+	return 5 + p_ea->ea_name_length + le16_to_cpu(p_ea->ea_value_length);
-+}
-+
-+/*
-+ * Set a new EA, and set EA_INFORMATION accordingly
-+ *
-+ * This is roughly the same as ZwSetEaFile() on Windows, however
-+ * the "offset to next" of the last EA should not be cleared.
-+ *
-+ * Consistency of the new EA is first checked.
-+ *
-+ * EA_INFORMATION is set first, and it is restored to its former
-+ * state if setting EA fails.
-+ */
-+static int ntfs_set_ea(struct inode *inode, const char *name, size_t name_len,
-+		const void *value, size_t val_size, int flags,
-+		__le16 *packed_ea_size)
-+{
-+	struct ntfs_inode *ni = NTFS_I(inode);
-+	struct ea_information *p_ea_info = NULL;
-+	int ea_packed, err = 0;
-+	struct ea_attr *p_ea;
-+	unsigned short int ea_info_qsize;
-+	char *ea_buf = NULL;
-+	size_t new_ea_size = ALIGN(struct_size(p_ea, ea_name, 1 + name_len + val_size), 4);
-+	s64 ea_off, ea_info_size, all_ea_size, ea_size;
-+
-+	if (name_len > 255)
-+		return -ENAMETOOLONG;
-+
-+	if (ntfs_attr_exist(ni, AT_EA_INFORMATION, AT_UNNAMED, 0)) {
-+		p_ea_info = ntfs_attr_readall(ni, AT_EA_INFORMATION, NULL, 0,
-+						&ea_info_size);
-+		if (!p_ea_info || ea_info_size != sizeof(struct ea_information))
-+			goto out;
-+
-+		ea_buf = ntfs_attr_readall(ni, AT_EA, NULL, 0, &all_ea_size);
-+		if (!ea_buf) {
-+			ea_info_qsize = 0;
-+			ntfs_free(p_ea_info);
-+			goto create_ea_info;
-+		}
-+
-+		ea_info_qsize = le32_to_cpu(p_ea_info->ea_query_length);
-+	} else {
-+create_ea_info:
-+		p_ea_info = ntfs_malloc_nofs(sizeof(struct ea_information));
-+		if (!p_ea_info)
-+			return -ENOMEM;
-+
-+		ea_info_qsize = 0;
-+		err = ntfs_attr_add(ni, AT_EA_INFORMATION, AT_UNNAMED, 0,
-+				(char *)p_ea_info, sizeof(struct ea_information));
-+		if (err)
-+			goto out;
-+
-+		if (ntfs_attr_exist(ni, AT_EA, AT_UNNAMED, 0)) {
-+			err = ntfs_attr_remove(ni, AT_EA, AT_UNNAMED, 0);
-+			if (err)
-+				goto out;
-+		}
-+
-+		goto alloc_new_ea;
-+	}
-+
-+	if (ea_info_qsize > all_ea_size) {
-+		err = -EIO;
-+		goto out;
-+	}
-+
-+	err = ntfs_ea_lookup(ea_buf, ea_info_qsize, name, name_len, &ea_off,
-+			&ea_size);
-+	if (ea_info_qsize && !err) {
-+		if (flags & XATTR_CREATE) {
-+			err = -EEXIST;
-+			goto out;
-+		}
-+
-+		p_ea = (struct ea_attr *)(ea_buf + ea_off);
-+
-+		if (val_size &&
-+		    le16_to_cpu(p_ea->ea_value_length) == val_size &&
-+		    !memcmp(p_ea->ea_name + p_ea->ea_name_length + 1, value,
-+			    val_size))
-+			goto out;
-+
-+		le16_add_cpu(&p_ea_info->ea_length, 0 - ea_packed_size(p_ea));
-+
-+		if (p_ea->flags & NEED_EA)
-+			le16_add_cpu(&p_ea_info->need_ea_count, -1);
-+
-+		memmove((char *)p_ea, (char *)p_ea + ea_size, ea_info_qsize - (ea_off + ea_size));
-+		ea_info_qsize -= ea_size;
-+		p_ea_info->ea_query_length = cpu_to_le16(ea_info_qsize);
-+
-+		err = ntfs_write_ea(ni, AT_EA_INFORMATION, (char *)p_ea_info, 0,
-+				sizeof(struct ea_information), false);
-+		if (err)
-+			goto out;
-+
-+		err = ntfs_write_ea(ni, AT_EA, ea_buf, 0, ea_info_qsize, true);
-+		if (err)
-+			goto out;
-+
-+		if ((flags & XATTR_REPLACE) && !val_size) {
-+			/* Remove xattr. */
-+			goto out;
-+		}
-+	} else {
-+		if (flags & XATTR_REPLACE) {
-+			err = -ENODATA;
-+			goto out;
-+		}
-+	}
-+	ntfs_free(ea_buf);
-+
-+alloc_new_ea:
-+	ea_buf = kzalloc(new_ea_size, GFP_NOFS);
-+	if (!ea_buf) {
-+		err = -ENOMEM;
-+		goto out;
-+	}
-+
-+	/*
-+	 * EA and REPARSE_POINT compatibility not checked any more,
-+	 * required by Windows 10, but having both may lead to
-+	 * problems with earlier versions.
-+	 */
-+	p_ea = (struct ea_attr *)ea_buf;
-+	memcpy(p_ea->ea_name, name, name_len);
-+	p_ea->ea_name_length = name_len;
-+	p_ea->ea_name[name_len] = 0;
-+	memcpy(p_ea->ea_name + name_len + 1, value, val_size);
-+	p_ea->ea_value_length = cpu_to_le16(val_size);
-+	p_ea->next_entry_offset = cpu_to_le32(new_ea_size);
-+
-+	ea_packed = le16_to_cpu(p_ea_info->ea_length) + ea_packed_size(p_ea);
-+	p_ea_info->ea_length = cpu_to_le16(ea_packed);
-+	p_ea_info->ea_query_length = cpu_to_le32(ea_info_qsize + new_ea_size);
-+
-+	if (ea_packed > 0xffff ||
-+	    ntfs_attr_size_bounds_check(ni->vol, AT_EA, new_ea_size)) {
-+		err = -EFBIG;
-+		goto out;
-+	}
-+
-+	/*
-+	 * no EA or EA_INFORMATION : add them
-+	 */
-+	if (!ntfs_attr_exist(ni, AT_EA, AT_UNNAMED, 0)) {
-+		err = ntfs_attr_add(ni, AT_EA, AT_UNNAMED, 0, (char *)p_ea,
-+				new_ea_size);
-+		if (err)
-+			goto out;
-+	} else {
-+		err = ntfs_write_ea(ni, AT_EA, (char *)p_ea, ea_info_qsize,
-+				new_ea_size, false);
-+		if (err)
-+			goto out;
-+	}
-+
-+	err = ntfs_write_ea(ni, AT_EA_INFORMATION, (char *)p_ea_info, 0,
-+			sizeof(struct ea_information), false);
-+	if (err)
-+		goto out;
-+
-+	if (packed_ea_size)
-+		*packed_ea_size = p_ea_info->ea_length;
-+	mark_mft_record_dirty(ni);
-+out:
-+	if (ea_info_qsize > 0)
-+		NInoSetHasEA(ni);
-+	else
-+		NInoClearHasEA(ni);
-+
-+	ntfs_free(ea_buf);
-+	ntfs_free(p_ea_info);
-+
-+	return err;
-+}
-+
-+/*
-+ * Check for the presence of an EA "$LXDEV" (used by WSL)
-+ * and return its value as a device address
-+ */
-+int ntfs_ea_get_wsl_inode(struct inode *inode, dev_t *rdevp, unsigned int flags)
-+{
-+	int err;
-+	__le32 v;
-+
-+	if (!(flags & NTFS_VOL_UID)) {
-+		/* Load uid to lxuid EA */
-+		err = ntfs_get_ea(inode, "$LXUID", sizeof("$LXUID") - 1, &v,
-+				sizeof(v));
-+		if (err < 0)
-+			return err;
-+		i_uid_write(inode, le32_to_cpu(v));
-+	}
-+
-+	if (!(flags & NTFS_VOL_UID)) {
-+		/* Load gid to lxgid EA */
-+		err = ntfs_get_ea(inode, "$LXGID", sizeof("$LXGID") - 1, &v,
-+				sizeof(v));
-+		if (err < 0)
-+			return err;
-+		i_gid_write(inode, le32_to_cpu(v));
-+	}
-+
-+	/* Load mode to lxmod EA */
-+	err = ntfs_get_ea(inode, "$LXMOD", sizeof("$LXMOD") - 1, &v, sizeof(v));
-+	if (err > 0) {
-+		inode->i_mode = le32_to_cpu(v);
-+	} else {
-+		/* Everyone gets all permissions. */
-+		inode->i_mode |= 0777;
-+	}
-+
-+	/* Load mode to lxdev EA */
-+	err = ntfs_get_ea(inode, "$LXDEV", sizeof("$LXDEV") - 1, &v, sizeof(v));
-+	if (err > 0)
-+		*rdevp = le32_to_cpu(v);
-+	err = 0;
-+
-+	return err;
-+}
-+
-+int ntfs_ea_set_wsl_inode(struct inode *inode, dev_t rdev, __le16 *ea_size,
-+		unsigned int flags)
-+{
-+	__le32 v;
-+	int err;
-+
-+	if (flags & NTFS_EA_UID) {
-+		/* Store uid to lxuid EA */
-+		v = cpu_to_le32(i_uid_read(inode));
-+		err = ntfs_set_ea(inode, "$LXUID", sizeof("$LXUID") - 1, &v,
-+				sizeof(v), 0, ea_size);
-+		if (err)
-+			return err;
-+	}
-+
-+	if (flags & NTFS_EA_GID) {
-+		/* Store gid to lxgid EA */
-+		v = cpu_to_le32(i_gid_read(inode));
-+		err = ntfs_set_ea(inode, "$LXGID", sizeof("$LXGID") - 1, &v,
-+				sizeof(v), 0, ea_size);
-+		if (err)
-+			return err;
-+	}
-+
-+	if (flags & NTFS_EA_MODE) {
-+		/* Store mode to lxmod EA */
-+		v = cpu_to_le32(inode->i_mode);
-+		err = ntfs_set_ea(inode, "$LXMOD", sizeof("$LXMOD") - 1, &v,
-+				sizeof(v), 0, ea_size);
-+		if (err)
-+			return err;
-+	}
-+
-+	if (rdev) {
-+		v = cpu_to_le32(rdev);
-+		err = ntfs_set_ea(inode, "$LXDEV", sizeof("$LXDEV") - 1, &v, sizeof(v),
-+				0, ea_size);
-+	}
-+
-+	return err;
-+}
-+
-+ssize_t ntfsp_listxattr(struct dentry *dentry, char *buffer, size_t size)
-+{
-+	struct inode *inode = d_inode(dentry);
-+	struct ntfs_inode *ni = NTFS_I(inode);
-+	const struct ea_attr *p_ea;
-+	s64 offset, ea_buf_size, ea_info_size;
-+	int next, err = 0, ea_size;
-+	unsigned int ea_info_qsize;
-+	char *ea_buf = NULL;
-+	ssize_t ret = 0;
-+	struct ea_information *ea_info;
-+
-+	if (!NInoHasEA(ni))
-+		return 0;
-+
-+	mutex_lock(&NTFS_I(inode)->mrec_lock);
-+	ea_info = ntfs_attr_readall(ni, AT_EA_INFORMATION, NULL, 0,
-+			&ea_info_size);
-+	if (!ea_info || ea_info_size != sizeof(struct ea_information))
-+		goto out;
-+
-+	ea_info_qsize = le16_to_cpu(ea_info->ea_query_length);
-+
-+	ea_buf = ntfs_attr_readall(ni, AT_EA, NULL, 0, &ea_buf_size);
-+	if (!ea_buf)
-+		goto out;
-+
-+	if (ea_info_qsize > ea_buf_size)
-+		goto out;
-+
-+	if (ea_buf_size < sizeof(struct ea_attr))
-+		goto out;
-+
-+	offset = 0;
-+	do {
-+		p_ea = (const struct ea_attr *)&ea_buf[offset];
-+		next = le32_to_cpu(p_ea->next_entry_offset);
-+		if (next)
-+			ea_size = next;
++		d1 = le32_to_cpup(p1);
++		p1++;
++		d2 = le32_to_cpup(p2);
++		p2++;
++	} while ((d1 == d2) && ((len -= 4) > 0));
++	if (d1 < d2)
++		rc = -1;
++	else {
++		if (d1 == d2)
++			rc = 0;
 +		else
-+			ea_size = ALIGN(struct_size(p_ea, ea_name,
-+						1 + p_ea->ea_name_length +
-+						le16_to_cpu(p_ea->ea_value_length)),
-+					4);
-+		if (buffer) {
-+			if (offset + ea_size > ea_info_qsize)
-+				break;
-+
-+			if (ret + p_ea->ea_name_length + 1 > size) {
-+				err = -ERANGE;
-+				goto out;
-+			}
-+
-+			if (p_ea->ea_name_length + 1 > (ea_info_qsize - offset))
-+				break;
-+
-+			memcpy(buffer + ret, p_ea->ea_name, p_ea->ea_name_length);
-+			buffer[ret + p_ea->ea_name_length] = 0;
-+		}
-+
-+		ret += p_ea->ea_name_length + 1;
-+		offset += ea_size;
-+	} while (next > 0 && offset < ea_info_qsize &&
-+		 sizeof(struct ea_attr) < (ea_info_qsize - offset));
-+
-+out:
-+	mutex_unlock(&NTFS_I(inode)->mrec_lock);
-+	ntfs_free(ea_info);
-+	ntfs_free(ea_buf);
-+
-+	return err ? err : ret;
++			rc = 1;
++	}
++	ntfs_debug("Done, returning %i.", rc);
++	return rc;
 +}
 +
-+// clang-format off
-+#define SYSTEM_DOS_ATTRIB     "system.dos_attrib"
-+#define SYSTEM_NTFS_ATTRIB    "system.ntfs_attrib"
-+#define SYSTEM_NTFS_ATTRIB_BE "system.ntfs_attrib_be"
-+// clang-format on
-+
-+static int ntfs_getxattr(const struct xattr_handler *handler,
-+		struct dentry *unused, struct inode *inode, const char *name,
-+		void *buffer, size_t size)
++/**
++ * ntfs_collate_file_name - Which of two filenames should be listed first
++ */
++static int ntfs_collate_file_name(struct ntfs_volume *vol,
++		const void *data1, const int __always_unused data1_len,
++		const void *data2, const int __always_unused data2_len)
 +{
-+	struct ntfs_inode *ni = NTFS_I(inode);
-+	int err;
++	int rc;
 +
-+	if (NVolShutdown(ni->vol))
-+		return -EIO;
-+
-+	if (!strcmp(name, SYSTEM_DOS_ATTRIB)) {
-+		if (!buffer) {
-+			err = sizeof(u8);
-+		} else if (size < sizeof(u8)) {
-+			err = -ENODATA;
-+		} else {
-+			err = sizeof(u8);
-+			*(u8 *)buffer = ni->flags;
-+		}
-+		goto out;
-+	}
-+
-+	if (!strcmp(name, SYSTEM_NTFS_ATTRIB) ||
-+	    !strcmp(name, SYSTEM_NTFS_ATTRIB_BE)) {
-+		if (!buffer) {
-+			err = sizeof(u32);
-+		} else if (size < sizeof(u32)) {
-+			err = -ENODATA;
-+		} else {
-+			err = sizeof(u32);
-+			*(u32 *)buffer = le32_to_cpu(ni->flags);
-+			if (!strcmp(name, SYSTEM_NTFS_ATTRIB_BE))
-+				*(__be32 *)buffer = cpu_to_be32(*(u32 *)buffer);
-+		}
-+		goto out;
-+	}
-+
-+	mutex_lock(&ni->mrec_lock);
-+	err = ntfs_get_ea(inode, name, strlen(name), buffer, size);
-+	mutex_unlock(&ni->mrec_lock);
-+
-+out:
-+	return err;
++	ntfs_debug("Entering.\n");
++	rc = ntfs_file_compare_values(data1, data2, -2,
++			IGNORE_CASE, vol->upcase, vol->upcase_len);
++	if (!rc)
++		rc = ntfs_file_compare_values(data1, data2,
++			-2, CASE_SENSITIVE, vol->upcase, vol->upcase_len);
++	ntfs_debug("Done, returning %i.\n", rc);
++	return rc;
 +}
 +
-+static int ntfs_new_attr_flags(struct ntfs_inode *ni, __le32 fattr)
++typedef int (*ntfs_collate_func_t)(struct ntfs_volume *, const void *, const int,
++		const void *, const int);
++
++static ntfs_collate_func_t ntfs_do_collate0x0[3] = {
++	ntfs_collate_binary,
++	ntfs_collate_file_name,
++	NULL/*ntfs_collate_unicode_string*/,
++};
++
++static ntfs_collate_func_t ntfs_do_collate0x1[4] = {
++	ntfs_collate_ntofs_ulong,
++	NULL/*ntfs_collate_ntofs_sid*/,
++	NULL/*ntfs_collate_ntofs_security_hash*/,
++	ntfs_collate_ntofs_ulongs,
++};
++
++/**
++ * ntfs_collate - collate two data items using a specified collation rule
++ * @vol:	ntfs volume to which the data items belong
++ * @cr:		collation rule to use when comparing the items
++ * @data1:	first data item to collate
++ * @data1_len:	length in bytes of @data1
++ * @data2:	second data item to collate
++ * @data2_len:	length in bytes of @data2
++ *
++ * Collate the two data items @data1 and @data2 using the collation rule @cr
++ * and return -1, 0, ir 1 if @data1 is found, respectively, to collate before,
++ * to match, or to collate after @data2.
++ *
++ * For speed we use the collation rule @cr as an index into two tables of
++ * function pointers to call the appropriate collation function.
++ */
++int ntfs_collate(struct ntfs_volume *vol, __le32 cr,
++		const void *data1, const int data1_len,
++		const void *data2, const int data2_len)
 +{
-+	struct ntfs_attr_search_ctx *ctx;
-+	struct mft_record *m;
-+	struct attr_record *a;
-+	__le16 new_aflags;
-+	int mp_size, mp_ofs, name_ofs, arec_size, err;
++	int i;
 +
-+	m = map_mft_record(ni);
-+	if (IS_ERR(m))
-+		return PTR_ERR(m);
++	ntfs_debug("Entering.");
 +
-+	ctx = ntfs_attr_get_search_ctx(ni, m);
-+	if (!ctx) {
-+		err = -ENOMEM;
-+		goto err_out;
-+	}
++	if (cr != COLLATION_BINARY && cr != COLLATION_NTOFS_ULONG &&
++	    cr != COLLATION_FILE_NAME && cr != COLLATION_NTOFS_ULONGS)
++		return -EINVAL;
 +
-+	err = ntfs_attr_lookup(ni->type, ni->name, ni->name_len,
-+			CASE_SENSITIVE, 0, NULL, 0, ctx);
-+	if (err) {
-+		err = -EINVAL;
-+		goto err_out;
-+	}
-+
-+	a = ctx->attr;
-+	new_aflags = ctx->attr->flags;
-+
-+	if (fattr & FILE_ATTR_SPARSE_FILE)
-+		new_aflags |= ATTR_IS_SPARSE;
-+	else
-+		new_aflags &= ~ATTR_IS_SPARSE;
-+
-+	if (fattr & FILE_ATTR_COMPRESSED)
-+		new_aflags |= ATTR_IS_COMPRESSED;
-+	else
-+		new_aflags &= ~ATTR_IS_COMPRESSED;
-+
-+	if (new_aflags == a->flags)
-+		return 0;
-+
-+	if ((new_aflags & (ATTR_IS_SPARSE | ATTR_IS_COMPRESSED)) ==
-+			  (ATTR_IS_SPARSE | ATTR_IS_COMPRESSED)) {
-+		pr_err("file can't be sparsed and compressed\n");
-+		err = -EOPNOTSUPP;
-+		goto err_out;
-+	}
-+
-+	if (!a->non_resident)
-+		goto out;
-+
-+	if (a->data.non_resident.data_size) {
-+		pr_err("Can't change sparsed/compressed for non-empty file");
-+		err = -EOPNOTSUPP;
-+		goto err_out;
-+	}
-+
-+	if (new_aflags & (ATTR_IS_SPARSE | ATTR_IS_COMPRESSED))
-+		name_ofs = (offsetof(struct attr_record,
-+				     data.non_resident.compressed_size) +
-+					sizeof(a->data.non_resident.compressed_size) + 7) & ~7;
-+	else
-+		name_ofs = (offsetof(struct attr_record,
-+				     data.non_resident.compressed_size) + 7) & ~7;
-+
-+	mp_size = ntfs_get_size_for_mapping_pairs(ni->vol, ni->runlist.rl, 0, -1, -1);
-+	if (unlikely(mp_size < 0)) {
-+		err = mp_size;
-+		ntfs_debug("Failed to get size for mapping pairs array, error code %i.\n", err);
-+		goto err_out;
-+	}
-+
-+	mp_ofs = (name_ofs + a->name_length * sizeof(__le16) + 7) & ~7;
-+	arec_size = (mp_ofs + mp_size + 7) & ~7;
-+
-+	err = ntfs_attr_record_resize(m, a, arec_size);
-+	if (unlikely(err))
-+		goto err_out;
-+
-+	if (new_aflags & (ATTR_IS_SPARSE | ATTR_IS_COMPRESSED)) {
-+		a->data.non_resident.compression_unit = 0;
-+		if (new_aflags & ATTR_IS_COMPRESSED || ni->vol->major_ver < 3)
-+			a->data.non_resident.compression_unit = 4;
-+		a->data.non_resident.compressed_size = 0;
-+		ni->itype.compressed.size = 0;
-+		if (a->data.non_resident.compression_unit) {
-+			ni->itype.compressed.block_size = 1U <<
-+				(a->data.non_resident.compression_unit +
-+				 ni->vol->cluster_size_bits);
-+			ni->itype.compressed.block_size_bits =
-+					ffs(ni->itype.compressed.block_size) -
-+					1;
-+			ni->itype.compressed.block_clusters = 1U <<
-+					a->data.non_resident.compression_unit;
-+		} else {
-+			ni->itype.compressed.block_size = 0;
-+			ni->itype.compressed.block_size_bits = 0;
-+			ni->itype.compressed.block_clusters = 0;
-+		}
-+
-+		if (new_aflags & ATTR_IS_SPARSE) {
-+			NInoSetSparse(ni);
-+			ni->flags |= FILE_ATTR_SPARSE_FILE;
-+		}
-+
-+		if (new_aflags & ATTR_IS_COMPRESSED) {
-+			NInoSetCompressed(ni);
-+			ni->flags |= FILE_ATTR_COMPRESSED;
-+			VFS_I(ni)->i_mapping->a_ops = &ntfs_compressed_aops;
-+		}
-+	} else {
-+		ni->flags &= ~(FILE_ATTR_SPARSE_FILE | FILE_ATTR_COMPRESSED);
-+		a->data.non_resident.compression_unit = 0;
-+		VFS_I(ni)->i_mapping->a_ops = &ntfs_normal_aops;
-+		NInoClearSparse(ni);
-+		NInoClearCompressed(ni);
-+	}
-+
-+	a->name_offset = cpu_to_le16(name_ofs);
-+	a->data.non_resident.mapping_pairs_offset = cpu_to_le16(mp_ofs);
-+
-+out:
-+	a->flags = new_aflags;
-+	mark_mft_record_dirty(ctx->ntfs_ino);
-+err_out:
-+	ntfs_attr_put_search_ctx(ctx);
-+	unmap_mft_record(ni);
-+	return err;
++	i = le32_to_cpu(cr);
++	if (i < 0)
++		return -1;
++	if (i <= 0x02)
++		return ntfs_do_collate0x0[i](vol, data1, data1_len,
++				data2, data2_len);
++	if (i < 0x10)
++		return -1;
++	i -= 0x10;
++	if (likely(i <= 3))
++		return ntfs_do_collate0x1[i](vol, data1, data1_len,
++				data2, data2_len);
++	return 0;
 +}
+diff --git a/fs/ntfsplus/logfile.c b/fs/ntfsplus/logfile.c
+new file mode 100644
+index 000000000000..f13cf1456708
+--- /dev/null
++++ b/fs/ntfsplus/logfile.c
+@@ -0,0 +1,770 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ * NTFS kernel journal handling. Part of the Linux-NTFS project.
++ *
++ * Copyright (c) 2002-2007 Anton Altaparmakov
++ */
 +
-+static int ntfs_setxattr(const struct xattr_handler *handler,
-+		struct mnt_idmap *idmap, struct dentry *unused,
-+		struct inode *inode, const char *name, const void *value,
-+		size_t size, int flags)
++#include <linux/bio.h>
++
++#include "attrib.h"
++#include "aops.h"
++#include "logfile.h"
++#include "misc.h"
++#include "ntfs.h"
++
++/**
++ * ntfs_check_restart_page_header - check the page header for consistency
++ * @vi:		LogFile inode to which the restart page header belongs
++ * @rp:		restart page header to check
++ * @pos:	position in @vi at which the restart page header resides
++ *
++ * Check the restart page header @rp for consistency and return 'true' if it is
++ * consistent and 'false' otherwise.
++ *
++ * This function only needs NTFS_BLOCK_SIZE bytes in @rp, i.e. it does not
++ * require the full restart page.
++ */
++static bool ntfs_check_restart_page_header(struct inode *vi,
++		struct restart_page_header *rp, s64 pos)
 +{
-+	struct ntfs_inode *ni = NTFS_I(inode);
-+	int err;
-+	__le32 fattr;
++	u32 logfile_system_page_size, logfile_log_page_size;
++	u16 ra_ofs, usa_count, usa_ofs, usa_end = 0;
++	bool have_usa = true;
 +
-+	if (NVolShutdown(ni->vol))
-+		return -EIO;
-+
-+	if (!strcmp(name, SYSTEM_DOS_ATTRIB)) {
-+		if (sizeof(u8) != size)
-+			goto out;
-+		fattr = cpu_to_le32(*(u8 *)value);
-+		goto set_fattr;
++	ntfs_debug("Entering.");
++	/*
++	 * If the system or log page sizes are smaller than the ntfs block size
++	 * or either is not a power of 2 we cannot handle this log file.
++	 */
++	logfile_system_page_size = le32_to_cpu(rp->system_page_size);
++	logfile_log_page_size = le32_to_cpu(rp->log_page_size);
++	if (logfile_system_page_size < NTFS_BLOCK_SIZE ||
++			logfile_log_page_size < NTFS_BLOCK_SIZE ||
++			logfile_system_page_size &
++			(logfile_system_page_size - 1) ||
++			!is_power_of_2(logfile_log_page_size)) {
++		ntfs_error(vi->i_sb, "LogFile uses unsupported page size.");
++		return false;
 +	}
-+
-+	if (!strcmp(name, SYSTEM_NTFS_ATTRIB) ||
-+	    !strcmp(name, SYSTEM_NTFS_ATTRIB_BE)) {
-+		if (size != sizeof(u32))
-+			goto out;
-+		if (!strcmp(name, SYSTEM_NTFS_ATTRIB_BE))
-+			fattr = cpu_to_le32(be32_to_cpu(*(__be32 *)value));
-+		else
-+			fattr = cpu_to_le32(*(u32 *)value);
-+
-+		if (S_ISREG(inode->i_mode)) {
-+			mutex_lock(&ni->mrec_lock);
-+			err = ntfs_new_attr_flags(ni, fattr);
-+			mutex_unlock(&ni->mrec_lock);
-+			if (err)
-+				goto out;
-+		}
-+
-+set_fattr:
-+		if (S_ISDIR(inode->i_mode))
-+			fattr |= FILE_ATTR_DIRECTORY;
-+		else
-+			fattr &= ~FILE_ATTR_DIRECTORY;
-+
-+		if (ni->flags != fattr) {
-+			ni->flags = fattr;
-+			if (fattr & FILE_ATTR_READONLY)
-+				inode->i_mode &= ~0222;
-+			else
-+				inode->i_mode |= 0222;
-+			NInoSetFileNameDirty(ni);
-+			mark_inode_dirty(inode);
-+		}
-+		err = 0;
-+		goto out;
++	/*
++	 * We must be either at !pos (1st restart page) or at pos = system page
++	 * size (2nd restart page).
++	 */
++	if (pos && pos != logfile_system_page_size) {
++		ntfs_error(vi->i_sb, "Found restart area in incorrect position in LogFile.");
++		return false;
 +	}
-+
-+	mutex_lock(&ni->mrec_lock);
-+	err = ntfs_set_ea(inode, name, strlen(name), value, size, flags, NULL);
-+	mutex_unlock(&ni->mrec_lock);
-+
-+out:
-+	inode_set_ctime_current(inode);
-+	mark_inode_dirty(inode);
-+	return err;
-+}
-+
-+static bool ntfs_xattr_user_list(struct dentry *dentry)
-+{
++	/* We only know how to handle version 1.1. */
++	if (le16_to_cpu(rp->major_ver) != 1 ||
++	    le16_to_cpu(rp->minor_ver) != 1) {
++		ntfs_error(vi->i_sb,
++			"LogFile version %i.%i is not supported.  (This driver supports version 1.1 only.)",
++			(int)le16_to_cpu(rp->major_ver),
++			(int)le16_to_cpu(rp->minor_ver));
++		return false;
++	}
++	/*
++	 * If chkdsk has been run the restart page may not be protected by an
++	 * update sequence array.
++	 */
++	if (ntfs_is_chkd_record(rp->magic) && !le16_to_cpu(rp->usa_count)) {
++		have_usa = false;
++		goto skip_usa_checks;
++	}
++	/* Verify the size of the update sequence array. */
++	usa_count = 1 + (logfile_system_page_size >> NTFS_BLOCK_SIZE_BITS);
++	if (usa_count != le16_to_cpu(rp->usa_count)) {
++		ntfs_error(vi->i_sb,
++			"LogFile restart page specifies inconsistent update sequence array count.");
++		return false;
++	}
++	/* Verify the position of the update sequence array. */
++	usa_ofs = le16_to_cpu(rp->usa_ofs);
++	usa_end = usa_ofs + usa_count * sizeof(u16);
++	if (usa_ofs < sizeof(struct restart_page_header) ||
++			usa_end > NTFS_BLOCK_SIZE - sizeof(u16)) {
++		ntfs_error(vi->i_sb,
++			"LogFile restart page specifies inconsistent update sequence array offset.");
++		return false;
++	}
++skip_usa_checks:
++	/*
++	 * Verify the position of the restart area.  It must be:
++	 *	- aligned to 8-byte boundary,
++	 *	- after the update sequence array, and
++	 *	- within the system page size.
++	 */
++	ra_ofs = le16_to_cpu(rp->restart_area_offset);
++	if (ra_ofs & 7 || (have_usa ? ra_ofs < usa_end :
++			ra_ofs < sizeof(struct restart_page_header)) ||
++			ra_ofs > logfile_system_page_size) {
++		ntfs_error(vi->i_sb,
++			"LogFile restart page specifies inconsistent restart area offset.");
++		return false;
++	}
++	/*
++	 * Only restart pages modified by chkdsk are allowed to have chkdsk_lsn
++	 * set.
++	 */
++	if (!ntfs_is_chkd_record(rp->magic) && le64_to_cpu(rp->chkdsk_lsn)) {
++		ntfs_error(vi->i_sb,
++			"LogFile restart page is not modified by chkdsk but a chkdsk LSN is specified.");
++		return false;
++	}
++	ntfs_debug("Done.");
 +	return true;
 +}
 +
-+// clang-format off
-+static const struct xattr_handler ntfs_other_xattr_handler = {
-+	.prefix	= "",
-+	.get	= ntfs_getxattr,
-+	.set	= ntfs_setxattr,
-+	.list	= ntfs_xattr_user_list,
-+};
-+
-+const struct xattr_handler * const ntfsp_xattr_handlers[] = {
-+	&ntfs_other_xattr_handler,
-+	NULL,
-+};
-+// clang-format on
-+
-+#ifdef CONFIG_NTFSPLUS_FS_POSIX_ACL
-+struct posix_acl *ntfsp_get_acl(struct mnt_idmap *idmap, struct dentry *dentry,
-+			       int type)
++/**
++ * ntfs_check_restart_area - check the restart area for consistency
++ * @vi:		LogFile inode to which the restart page belongs
++ * @rp:		restart page whose restart area to check
++ *
++ * Check the restart area of the restart page @rp for consistency and return
++ * 'true' if it is consistent and 'false' otherwise.
++ *
++ * This function assumes that the restart page header has already been
++ * consistency checked.
++ *
++ * This function only needs NTFS_BLOCK_SIZE bytes in @rp, i.e. it does not
++ * require the full restart page.
++ */
++static bool ntfs_check_restart_area(struct inode *vi, struct restart_page_header *rp)
 +{
-+	struct inode *inode = d_inode(dentry);
-+	struct ntfs_inode *ni = NTFS_I(inode);
-+	const char *name;
-+	size_t name_len;
-+	struct posix_acl *acl;
-+	int err;
-+	void *buf;
++	u64 file_size;
++	struct restart_area *ra;
++	u16 ra_ofs, ra_len, ca_ofs;
++	u8 fs_bits;
 +
-+	/* Allocate PATH_MAX bytes. */
-+	buf = __getname();
-+	if (!buf)
-+		return ERR_PTR(-ENOMEM);
-+
-+	/* Possible values of 'type' was already checked above. */
-+	if (type == ACL_TYPE_ACCESS) {
-+		name = XATTR_NAME_POSIX_ACL_ACCESS;
-+		name_len = sizeof(XATTR_NAME_POSIX_ACL_ACCESS) - 1;
-+	} else {
-+		name = XATTR_NAME_POSIX_ACL_DEFAULT;
-+		name_len = sizeof(XATTR_NAME_POSIX_ACL_DEFAULT) - 1;
++	ntfs_debug("Entering.");
++	ra_ofs = le16_to_cpu(rp->restart_area_offset);
++	ra = (struct restart_area *)((u8 *)rp + ra_ofs);
++	/*
++	 * Everything before ra->file_size must be before the first word
++	 * protected by an update sequence number.  This ensures that it is
++	 * safe to access ra->client_array_offset.
++	 */
++	if (ra_ofs + offsetof(struct restart_area, file_size) >
++			NTFS_BLOCK_SIZE - sizeof(u16)) {
++		ntfs_error(vi->i_sb,
++			"LogFile restart area specifies inconsistent file offset.");
++		return false;
 +	}
-+
-+	mutex_lock(&ni->mrec_lock);
-+	err = ntfs_get_ea(inode, name, name_len, buf, PATH_MAX);
-+	mutex_unlock(&ni->mrec_lock);
-+
-+	/* Translate extended attribute to acl. */
-+	if (err >= 0)
-+		acl = posix_acl_from_xattr(&init_user_ns, buf, err);
-+	else if (err == -ENODATA)
-+		acl = NULL;
-+	else
-+		acl = ERR_PTR(err);
-+
-+	if (!IS_ERR(acl))
-+		set_cached_acl(inode, type, acl);
-+
-+	__putname(buf);
-+
-+	return acl;
++	/*
++	 * Now that we can access ra->client_array_offset, make sure everything
++	 * up to the log client array is before the first word protected by an
++	 * update sequence number.  This ensures we can access all of the
++	 * restart area elements safely.  Also, the client array offset must be
++	 * aligned to an 8-byte boundary.
++	 */
++	ca_ofs = le16_to_cpu(ra->client_array_offset);
++	if (((ca_ofs + 7) & ~7) != ca_ofs ||
++			ra_ofs + ca_ofs > NTFS_BLOCK_SIZE - sizeof(u16)) {
++		ntfs_error(vi->i_sb,
++			"LogFile restart area specifies inconsistent client array offset.");
++		return false;
++	}
++	/*
++	 * The restart area must end within the system page size both when
++	 * calculated manually and as specified by ra->restart_area_length.
++	 * Also, the calculated length must not exceed the specified length.
++	 */
++	ra_len = ca_ofs + le16_to_cpu(ra->log_clients) *
++			sizeof(struct log_client_record);
++	if (ra_ofs + ra_len > le32_to_cpu(rp->system_page_size) ||
++			ra_ofs + le16_to_cpu(ra->restart_area_length) >
++			le32_to_cpu(rp->system_page_size) ||
++			ra_len > le16_to_cpu(ra->restart_area_length)) {
++		ntfs_error(vi->i_sb,
++			"LogFile restart area is out of bounds of the system page size specified by the restart page header and/or the specified restart area length is inconsistent.");
++		return false;
++	}
++	/*
++	 * The ra->client_free_list and ra->client_in_use_list must be either
++	 * LOGFILE_NO_CLIENT or less than ra->log_clients or they are
++	 * overflowing the client array.
++	 */
++	if ((ra->client_free_list != LOGFILE_NO_CLIENT &&
++			le16_to_cpu(ra->client_free_list) >=
++			le16_to_cpu(ra->log_clients)) ||
++			(ra->client_in_use_list != LOGFILE_NO_CLIENT &&
++			le16_to_cpu(ra->client_in_use_list) >=
++			le16_to_cpu(ra->log_clients))) {
++		ntfs_error(vi->i_sb,
++			"LogFile restart area specifies overflowing client free and/or in use lists.");
++		return false;
++	}
++	/*
++	 * Check ra->seq_number_bits against ra->file_size for consistency.
++	 * We cannot just use ffs() because the file size is not a power of 2.
++	 */
++	file_size = le64_to_cpu(ra->file_size);
++	fs_bits = 0;
++	while (file_size) {
++		file_size >>= 1;
++		fs_bits++;
++	}
++	if (le32_to_cpu(ra->seq_number_bits) != 67 - fs_bits) {
++		ntfs_error(vi->i_sb,
++			"LogFile restart area specifies inconsistent sequence number bits.");
++		return false;
++	}
++	/* The log record header length must be a multiple of 8. */
++	if (((le16_to_cpu(ra->log_record_header_length) + 7) & ~7) !=
++			le16_to_cpu(ra->log_record_header_length)) {
++		ntfs_error(vi->i_sb,
++			"LogFile restart area specifies inconsistent log record header length.");
++		return false;
++	}
++	/* Dito for the log page data offset. */
++	if (((le16_to_cpu(ra->log_page_data_offset) + 7) & ~7) !=
++			le16_to_cpu(ra->log_page_data_offset)) {
++		ntfs_error(vi->i_sb,
++			"LogFile restart area specifies inconsistent log page data offset.");
++		return false;
++	}
++	ntfs_debug("Done.");
++	return true;
 +}
 +
-+static noinline int ntfs_set_acl_ex(struct mnt_idmap *idmap,
-+				    struct inode *inode, struct posix_acl *acl,
-+				    int type, bool init_acl)
++/**
++ * ntfs_check_log_client_array - check the log client array for consistency
++ * @vi:		LogFile inode to which the restart page belongs
++ * @rp:		restart page whose log client array to check
++ *
++ * Check the log client array of the restart page @rp for consistency and
++ * return 'true' if it is consistent and 'false' otherwise.
++ *
++ * This function assumes that the restart page header and the restart area have
++ * already been consistency checked.
++ *
++ * Unlike ntfs_check_restart_page_header() and ntfs_check_restart_area(), this
++ * function needs @rp->system_page_size bytes in @rp, i.e. it requires the full
++ * restart page and the page must be multi sector transfer deprotected.
++ */
++static bool ntfs_check_log_client_array(struct inode *vi,
++		struct restart_page_header *rp)
 +{
-+	const char *name;
-+	size_t size, name_len;
-+	void *value;
-+	int err;
-+	int flags;
-+	umode_t mode;
++	struct restart_area *ra;
++	struct log_client_record *ca, *cr;
++	u16 nr_clients, idx;
++	bool in_free_list, idx_is_first;
 +
-+	if (S_ISLNK(inode->i_mode))
-+		return -EOPNOTSUPP;
-+
-+	mode = inode->i_mode;
-+	switch (type) {
-+	case ACL_TYPE_ACCESS:
-+		/* Do not change i_mode if we are in init_acl */
-+		if (acl && !init_acl) {
-+			err = posix_acl_update_mode(idmap, inode, &mode, &acl);
-+			if (err)
-+				return err;
++	ntfs_debug("Entering.");
++	ra = (struct restart_area *)((u8 *)rp + le16_to_cpu(rp->restart_area_offset));
++	ca = (struct log_client_record *)((u8 *)ra +
++			le16_to_cpu(ra->client_array_offset));
++	/*
++	 * Check the ra->client_free_list first and then check the
++	 * ra->client_in_use_list.  Check each of the log client records in
++	 * each of the lists and check that the array does not overflow the
++	 * ra->log_clients value.  Also keep track of the number of records
++	 * visited as there cannot be more than ra->log_clients records and
++	 * that way we detect eventual loops in within a list.
++	 */
++	nr_clients = le16_to_cpu(ra->log_clients);
++	idx = le16_to_cpu(ra->client_free_list);
++	in_free_list = true;
++check_list:
++	for (idx_is_first = true; idx != LOGFILE_NO_CLIENT_CPU; nr_clients--,
++			idx = le16_to_cpu(cr->next_client)) {
++		if (!nr_clients || idx >= le16_to_cpu(ra->log_clients))
++			goto err_out;
++		/* Set @cr to the current log client record. */
++		cr = ca + idx;
++		/* The first log client record must not have a prev_client. */
++		if (idx_is_first) {
++			if (cr->prev_client != LOGFILE_NO_CLIENT)
++				goto err_out;
++			idx_is_first = false;
 +		}
-+		name = XATTR_NAME_POSIX_ACL_ACCESS;
-+		name_len = sizeof(XATTR_NAME_POSIX_ACL_ACCESS) - 1;
-+		break;
++	}
++	/* Switch to and check the in use list if we just did the free list. */
++	if (in_free_list) {
++		in_free_list = false;
++		idx = le16_to_cpu(ra->client_in_use_list);
++		goto check_list;
++	}
++	ntfs_debug("Done.");
++	return true;
++err_out:
++	ntfs_error(vi->i_sb, "LogFile log client array is corrupt.");
++	return false;
++}
 +
-+	case ACL_TYPE_DEFAULT:
-+		if (!S_ISDIR(inode->i_mode))
-+			return acl ? -EACCES : 0;
-+		name = XATTR_NAME_POSIX_ACL_DEFAULT;
-+		name_len = sizeof(XATTR_NAME_POSIX_ACL_DEFAULT) - 1;
-+		break;
++/**
++ * ntfs_check_and_load_restart_page - check the restart page for consistency
++ * @vi:		LogFile inode to which the restart page belongs
++ * @rp:		restart page to check
++ * @pos:	position in @vi at which the restart page resides
++ * @wrp:	[OUT] copy of the multi sector transfer deprotected restart page
++ * @lsn:	[OUT] set to the current logfile lsn on success
++ *
++ * Check the restart page @rp for consistency and return 0 if it is consistent
++ * and -errno otherwise.  The restart page may have been modified by chkdsk in
++ * which case its magic is CHKD instead of RSTR.
++ *
++ * This function only needs NTFS_BLOCK_SIZE bytes in @rp, i.e. it does not
++ * require the full restart page.
++ *
++ * If @wrp is not NULL, on success, *@wrp will point to a buffer containing a
++ * copy of the complete multi sector transfer deprotected page.  On failure,
++ * *@wrp is undefined.
++ *
++ * Simillarly, if @lsn is not NULL, on success *@lsn will be set to the current
++ * logfile lsn according to this restart page.  On failure, *@lsn is undefined.
++ *
++ * The following error codes are defined:
++ *	-EINVAL	- The restart page is inconsistent.
++ *	-ENOMEM	- Not enough memory to load the restart page.
++ *	-EIO	- Failed to reading from LogFile.
++ */
++static int ntfs_check_and_load_restart_page(struct inode *vi,
++		struct restart_page_header *rp, s64 pos, struct restart_page_header **wrp,
++		s64 *lsn)
++{
++	struct restart_area *ra;
++	struct restart_page_header *trp;
++	int size, err;
 +
-+	default:
++	ntfs_debug("Entering.");
++	/* Check the restart page header for consistency. */
++	if (!ntfs_check_restart_page_header(vi, rp, pos)) {
++		/* Error output already done inside the function. */
 +		return -EINVAL;
 +	}
-+
-+	if (!acl) {
-+		/* Remove xattr if it can be presented via mode. */
-+		size = 0;
-+		value = NULL;
-+		flags = XATTR_REPLACE;
++	/* Check the restart area for consistency. */
++	if (!ntfs_check_restart_area(vi, rp)) {
++		/* Error output already done inside the function. */
++		return -EINVAL;
++	}
++	ra = (struct restart_area *)((u8 *)rp + le16_to_cpu(rp->restart_area_offset));
++	/*
++	 * Allocate a buffer to store the whole restart page so we can multi
++	 * sector transfer deprotect it.
++	 */
++	trp = ntfs_malloc_nofs(le32_to_cpu(rp->system_page_size));
++	if (!trp) {
++		ntfs_error(vi->i_sb, "Failed to allocate memory for LogFile restart page buffer.");
++		return -ENOMEM;
++	}
++	/*
++	 * Read the whole of the restart page into the buffer.  If it fits
++	 * completely inside @rp, just copy it from there.  Otherwise map all
++	 * the required pages and copy the data from them.
++	 */
++	size = PAGE_SIZE - (pos & ~PAGE_MASK);
++	if (size >= le32_to_cpu(rp->system_page_size)) {
++		memcpy(trp, rp, le32_to_cpu(rp->system_page_size));
 +	} else {
-+		size = posix_acl_xattr_size(acl->a_count);
-+		value = kmalloc(size, GFP_NOFS);
-+		if (!value)
-+			return -ENOMEM;
-+		err = posix_acl_to_xattr(&init_user_ns, acl, value, size);
-+		if (err < 0)
-+			goto out;
-+		flags = 0;
++		pgoff_t idx;
++		struct folio *folio;
++		int have_read, to_read;
++
++		/* First copy what we already have in @rp. */
++		memcpy(trp, rp, size);
++		/* Copy the remaining data one page at a time. */
++		have_read = size;
++		to_read = le32_to_cpu(rp->system_page_size) - size;
++		idx = (pos + size) >> PAGE_SHIFT;
++		do {
++			folio = ntfs_read_mapping_folio(vi->i_mapping, idx);
++			if (IS_ERR(folio)) {
++				ntfs_error(vi->i_sb, "Error mapping LogFile page (index %lu).",
++						idx);
++				err = PTR_ERR(folio);
++				if (err != -EIO && err != -ENOMEM)
++					err = -EIO;
++				goto err_out;
++			}
++			size = min_t(int, to_read, PAGE_SIZE);
++			memcpy((u8 *)trp + have_read, folio_address(folio), size);
++			folio_put(folio);
++			have_read += size;
++			to_read -= size;
++			idx++;
++		} while (to_read > 0);
 +	}
-+
-+	mutex_lock(&NTFS_I(inode)->mrec_lock);
-+	err = ntfs_set_ea(inode, name, name_len, value, size, flags, NULL);
-+	mutex_unlock(&NTFS_I(inode)->mrec_lock);
-+	if (err == -ENODATA && !size)
-+		err = 0; /* Removing non existed xattr. */
-+	if (!err) {
-+		set_cached_acl(inode, type, acl);
-+		inode->i_mode = mode;
-+		inode_set_ctime_current(inode);
-+		mark_inode_dirty(inode);
++	/*
++	 * Perform the multi sector transfer deprotection on the buffer if the
++	 * restart page is protected.
++	 */
++	if ((!ntfs_is_chkd_record(trp->magic) || le16_to_cpu(trp->usa_count)) &&
++	    post_read_mst_fixup((struct ntfs_record *)trp, le32_to_cpu(rp->system_page_size))) {
++		/*
++		 * A multi sector transfer error was detected.  We only need to
++		 * abort if the restart page contents exceed the multi sector
++		 * transfer fixup of the first sector.
++		 */
++		if (le16_to_cpu(rp->restart_area_offset) +
++				le16_to_cpu(ra->restart_area_length) >
++				NTFS_BLOCK_SIZE - sizeof(u16)) {
++			ntfs_error(vi->i_sb,
++				"Multi sector transfer error detected in LogFile restart page.");
++			err = -EINVAL;
++			goto err_out;
++		}
 +	}
-+
-+out:
-+	kfree(value);
-+
++	/*
++	 * If the restart page is modified by chkdsk or there are no active
++	 * logfile clients, the logfile is consistent.  Otherwise, need to
++	 * check the log client records for consistency, too.
++	 */
++	err = 0;
++	if (ntfs_is_rstr_record(rp->magic) &&
++			ra->client_in_use_list != LOGFILE_NO_CLIENT) {
++		if (!ntfs_check_log_client_array(vi, trp)) {
++			err = -EINVAL;
++			goto err_out;
++		}
++	}
++	if (lsn) {
++		if (ntfs_is_rstr_record(rp->magic))
++			*lsn = le64_to_cpu(ra->current_lsn);
++		else /* if (ntfs_is_chkd_record(rp->magic)) */
++			*lsn = le64_to_cpu(rp->chkdsk_lsn);
++	}
++	ntfs_debug("Done.");
++	if (wrp)
++		*wrp = trp;
++	else {
++err_out:
++		ntfs_free(trp);
++	}
 +	return err;
 +}
 +
-+int ntfsp_set_acl(struct mnt_idmap *idmap, struct dentry *dentry,
-+		 struct posix_acl *acl, int type)
-+{
-+	return ntfs_set_acl_ex(idmap, d_inode(dentry), acl, type, false);
-+}
-+
-+int ntfsp_init_acl(struct mnt_idmap *idmap, struct inode *inode,
-+		  struct inode *dir)
-+{
-+	struct posix_acl *default_acl, *acl;
-+	int err;
-+
-+	err = posix_acl_create(dir, &inode->i_mode, &default_acl, &acl);
-+	if (err)
-+		return err;
-+
-+	if (default_acl) {
-+		err = ntfs_set_acl_ex(idmap, inode, default_acl,
-+				      ACL_TYPE_DEFAULT, true);
-+		posix_acl_release(default_acl);
-+	} else {
-+		inode->i_default_acl = NULL;
-+	}
-+
-+	if (acl) {
-+		if (!err)
-+			err = ntfs_set_acl_ex(idmap, inode, acl,
-+					      ACL_TYPE_ACCESS, true);
-+		posix_acl_release(acl);
-+	} else {
-+		inode->i_acl = NULL;
-+	}
-+
-+	return err;
-+}
-+#endif
-diff --git a/fs/ntfsplus/reparse.c b/fs/ntfsplus/reparse.c
-new file mode 100644
-index 000000000000..ff46ef07178a
---- /dev/null
-+++ b/fs/ntfsplus/reparse.c
-@@ -0,0 +1,550 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
 +/**
-+ * Processing of reparse points
++ * ntfs_check_logfile - check the journal for consistency
++ * @log_vi:	struct inode of loaded journal LogFile to check
++ * @rp:		[OUT] on success this is a copy of the current restart page
 + *
-+ * Part of this file is based on code from the NTFS-3G project.
++ * Check the LogFile journal for consistency and return 'true' if it is
++ * consistent and 'false' if not.  On success, the current restart page is
++ * returned in *@rp.  Caller must call ntfs_free(*@rp) when finished with it.
 + *
-+ * Copyright (c) 2008-2021 Jean-Pierre Andre
-+ * Copyright (c) 2025 LG Electronics Co., Ltd.
++ * At present we only check the two restart pages and ignore the log record
++ * pages.
++ *
++ * Note that the MstProtected flag is not set on the LogFile inode and hence
++ * when reading pages they are not deprotected.  This is because we do not know
++ * if the LogFile was created on a system with a different page size to ours
++ * yet and mst deprotection would fail if our page size is smaller.
++ */
++bool ntfs_check_logfile(struct inode *log_vi, struct restart_page_header **rp)
++{
++	s64 size, pos;
++	s64 rstr1_lsn, rstr2_lsn;
++	struct ntfs_volume *vol = NTFS_SB(log_vi->i_sb);
++	struct address_space *mapping = log_vi->i_mapping;
++	struct folio *folio = NULL;
++	u8 *kaddr = NULL;
++	struct restart_page_header *rstr1_ph = NULL;
++	struct restart_page_header *rstr2_ph = NULL;
++	int log_page_size, err;
++	bool logfile_is_empty = true;
++	u8 log_page_bits;
++
++	ntfs_debug("Entering.");
++	/* An empty LogFile must have been clean before it got emptied. */
++	if (NVolLogFileEmpty(vol))
++		goto is_empty;
++	size = i_size_read(log_vi);
++	/* Make sure the file doesn't exceed the maximum allowed size. */
++	if (size > MaxLogFileSize)
++		size = MaxLogFileSize;
++	/*
++	 * Truncate size to a multiple of the page cache size or the default
++	 * log page size if the page cache size is between the default log page
++	 * log page size if the page cache size is between the default log page
++	 * size and twice that.
++	 */
++	if (DefaultLogPageSize <= PAGE_SIZE &&
++	    DefaultLogPageSize * 2 <= PAGE_SIZE)
++		log_page_size = DefaultLogPageSize;
++	else
++		log_page_size = PAGE_SIZE;
++	/*
++	 * Use ntfs_ffs() instead of ffs() to enable the compiler to
++	 * optimize log_page_size and log_page_bits into constants.
++	 */
++	log_page_bits = ntfs_ffs(log_page_size) - 1;
++	size &= ~(s64)(log_page_size - 1);
++	/*
++	 * Ensure the log file is big enough to store at least the two restart
++	 * pages and the minimum number of log record pages.
++	 */
++	if (size < log_page_size * 2 || (size - log_page_size * 2) >>
++			log_page_bits < MinLogRecordPages) {
++		ntfs_error(vol->sb, "LogFile is too small.");
++		return false;
++	}
++	/*
++	 * Read through the file looking for a restart page.  Since the restart
++	 * page header is at the beginning of a page we only need to search at
++	 * what could be the beginning of a page (for each page size) rather
++	 * than scanning the whole file byte by byte.  If all potential places
++	 * contain empty and uninitialzed records, the log file can be assumed
++	 * to be empty.
++	 */
++	for (pos = 0; pos < size; pos <<= 1) {
++		pgoff_t idx = pos >> PAGE_SHIFT;
++
++		if (!folio || folio->index != idx) {
++			if (folio)
++				ntfs_unmap_folio(folio, kaddr);
++			folio = ntfs_read_mapping_folio(mapping, idx);
++			if (IS_ERR(folio)) {
++				ntfs_error(vol->sb, "Error mapping LogFile page (index %lu).",
++						idx);
++				goto err_out;
++			}
++		}
++		kaddr = (u8 *)kmap_local_folio(folio, 0) + (pos & ~PAGE_MASK);
++		/*
++		 * A non-empty block means the logfile is not empty while an
++		 * empty block after a non-empty block has been encountered
++		 * means we are done.
++		 */
++		if (!ntfs_is_empty_recordp((__le32 *)kaddr))
++			logfile_is_empty = false;
++		else if (!logfile_is_empty)
++			break;
++		/*
++		 * A log record page means there cannot be a restart page after
++		 * this so no need to continue searching.
++		 */
++		if (ntfs_is_rcrd_recordp((__le32 *)kaddr))
++			break;
++		/* If not a (modified by chkdsk) restart page, continue. */
++		if (!ntfs_is_rstr_recordp((__le32 *)kaddr) &&
++				!ntfs_is_chkd_recordp((__le32 *)kaddr)) {
++			if (!pos)
++				pos = NTFS_BLOCK_SIZE >> 1;
++			continue;
++		}
++		/*
++		 * Check the (modified by chkdsk) restart page for consistency
++		 * and get a copy of the complete multi sector transfer
++		 * deprotected restart page.
++		 */
++		err = ntfs_check_and_load_restart_page(log_vi,
++				(struct restart_page_header *)kaddr, pos,
++				!rstr1_ph ? &rstr1_ph : &rstr2_ph,
++				!rstr1_ph ? &rstr1_lsn : &rstr2_lsn);
++		if (!err) {
++			/*
++			 * If we have now found the first (modified by chkdsk)
++			 * restart page, continue looking for the second one.
++			 */
++			if (!pos) {
++				pos = NTFS_BLOCK_SIZE >> 1;
++				continue;
++			}
++			/*
++			 * We have now found the second (modified by chkdsk)
++			 * restart page, so we can stop looking.
++			 */
++			break;
++		}
++		/*
++		 * Error output already done inside the function.  Note, we do
++		 * not abort if the restart page was invalid as we might still
++		 * find a valid one further in the file.
++		 */
++		if (err != -EINVAL) {
++			ntfs_unmap_folio(folio, kaddr);
++			goto err_out;
++		}
++		/* Continue looking. */
++		if (!pos)
++			pos = NTFS_BLOCK_SIZE >> 1;
++	}
++	if (folio)
++		ntfs_unmap_folio(folio, kaddr);
++	if (logfile_is_empty) {
++		NVolSetLogFileEmpty(vol);
++is_empty:
++		ntfs_debug("Done.  (LogFile is empty.)");
++		return true;
++	}
++	if (!rstr1_ph) {
++		ntfs_error(vol->sb,
++			"Did not find any restart pages in LogFile and it was not empty.");
++		return false;
++	}
++	/* If both restart pages were found, use the more recent one. */
++	if (rstr2_ph) {
++		/*
++		 * If the second restart area is more recent, switch to it.
++		 * Otherwise just throw it away.
++		 */
++		if (rstr2_lsn > rstr1_lsn) {
++			ntfs_debug("Using second restart page as it is more recent.");
++			ntfs_free(rstr1_ph);
++			rstr1_ph = rstr2_ph;
++			/* rstr1_lsn = rstr2_lsn; */
++		} else {
++			ntfs_debug("Using first restart page as it is more recent.");
++			ntfs_free(rstr2_ph);
++		}
++		rstr2_ph = NULL;
++	}
++	/* All consistency checks passed. */
++	if (rp)
++		*rp = rstr1_ph;
++	else
++		ntfs_free(rstr1_ph);
++	ntfs_debug("Done.");
++	return true;
++err_out:
++	if (rstr1_ph)
++		ntfs_free(rstr1_ph);
++	return false;
++}
++
++/**
++ * ntfs_empty_logfile - empty the contents of the LogFile journal
++ * @log_vi:	struct inode of loaded journal LogFile to empty
++ *
++ * Empty the contents of the LogFile journal @log_vi and return 'true' on
++ * success and 'false' on error.
++ *
++ * This function assumes that the LogFile journal has already been consistency
++ * checked by a call to ntfs_check_logfile() and that ntfs_is_logfile_clean()
++ * has been used to ensure that the LogFile is clean.
++ */
++bool ntfs_empty_logfile(struct inode *log_vi)
++{
++	s64 vcn, end_vcn;
++	struct ntfs_inode *log_ni = NTFS_I(log_vi);
++	struct ntfs_volume *vol = log_ni->vol;
++	struct super_block *sb = vol->sb;
++	struct runlist_element *rl;
++	unsigned long flags;
++	int err;
++	bool should_wait = true;
++	char *empty_buf = NULL;
++	struct file_ra_state *ra = NULL;
++
++	ntfs_debug("Entering.");
++	if (NVolLogFileEmpty(vol)) {
++		ntfs_debug("Done.");
++		return true;
++	}
++
++	/*
++	 * We cannot use ntfs_attr_set() because we may be still in the middle
++	 * of a mount operation.  Thus we do the emptying by hand by first
++	 * zapping the page cache pages for the LogFile/DATA attribute and
++	 * then emptying each of the buffers in each of the clusters specified
++	 * by the runlist by hand.
++	 */
++	vcn = 0;
++	read_lock_irqsave(&log_ni->size_lock, flags);
++	end_vcn = (log_ni->initialized_size + vol->cluster_size_mask) >>
++			vol->cluster_size_bits;
++	read_unlock_irqrestore(&log_ni->size_lock, flags);
++	truncate_inode_pages(log_vi->i_mapping, 0);
++	down_write(&log_ni->runlist.lock);
++	rl = log_ni->runlist.rl;
++	if (unlikely(!rl || vcn < rl->vcn || !rl->length)) {
++map_vcn:
++		err = ntfs_map_runlist_nolock(log_ni, vcn, NULL);
++		if (err) {
++			ntfs_error(sb, "Failed to map runlist fragment (error %d).", -err);
++			goto err;
++		}
++		rl = log_ni->runlist.rl;
++	}
++	/* Seek to the runlist element containing @vcn. */
++	while (rl->length && vcn >= rl[1].vcn)
++		rl++;
++
++	err = -ENOMEM;
++	empty_buf = ntfs_malloc_nofs(vol->cluster_size);
++	if (!empty_buf)
++		goto err;
++
++	memset(empty_buf, 0xff, vol->cluster_size);
++
++	ra = kzalloc(sizeof(*ra), GFP_NOFS);
++	if (!ra)
++		goto err;
++
++	file_ra_state_init(ra, sb->s_bdev->bd_mapping);
++	do {
++		s64 lcn;
++		loff_t start, end;
++		s64 len;
++
++		/*
++		 * If this run is not mapped map it now and start again as the
++		 * runlist will have been updated.
++		 */
++		lcn = rl->lcn;
++		if (unlikely(lcn == LCN_RL_NOT_MAPPED)) {
++			vcn = rl->vcn;
++			ntfs_free(empty_buf);
++			goto map_vcn;
++		}
++		/* If this run is not valid abort with an error. */
++		if (unlikely(!rl->length || lcn < LCN_HOLE))
++			goto rl_err;
++		/* Skip holes. */
++		if (lcn == LCN_HOLE)
++			continue;
++		start = lcn << vol->cluster_size_bits;
++		len = rl->length;
++		if (rl[1].vcn > end_vcn)
++			len = end_vcn - rl->vcn;
++		end = (lcn + len) << vol->cluster_size_bits;
++
++		page_cache_sync_readahead(sb->s_bdev->bd_mapping, ra, NULL,
++			start >> PAGE_SHIFT, (end - start) >> PAGE_SHIFT);
++
++		do {
++			err = ntfs_dev_write(sb, empty_buf, start,
++						  vol->cluster_size, should_wait);
++			if (err) {
++				ntfs_error(sb, "ntfs_dev_write failed, err : %d\n", err);
++				goto io_err;
++			}
++
++			/*
++			 * Submit the buffer and wait for i/o to complete but
++			 * only for the first buffer so we do not miss really
++			 * serious i/o errors.  Once the first buffer has
++			 * completed ignore errors afterwards as we can assume
++			 * that if one buffer worked all of them will work.
++			 */
++			if (should_wait)
++				should_wait = false;
++			start += vol->cluster_size;
++		} while (start < end);
++	} while ((++rl)->vcn < end_vcn);
++	up_write(&log_ni->runlist.lock);
++	kfree(empty_buf);
++	kfree(ra);
++	truncate_inode_pages(log_vi->i_mapping, 0);
++	/* Set the flag so we do not have to do it again on remount. */
++	NVolSetLogFileEmpty(vol);
++	ntfs_debug("Done.");
++	return true;
++io_err:
++	ntfs_error(sb, "Failed to write buffer.  Unmount and run chkdsk.");
++	goto dirty_err;
++rl_err:
++	ntfs_error(sb, "Runlist is corrupt.  Unmount and run chkdsk.");
++dirty_err:
++	NVolSetErrors(vol);
++	err = -EIO;
++err:
++	ntfs_free(empty_buf);
++	kfree(ra);
++	up_write(&log_ni->runlist.lock);
++	ntfs_error(sb, "Failed to fill LogFile with 0xff bytes (error %d).",
++			-err);
++	return false;
++}
+diff --git a/fs/ntfsplus/misc.c b/fs/ntfsplus/misc.c
+new file mode 100644
+index 000000000000..d4d63c74db99
+--- /dev/null
++++ b/fs/ntfsplus/misc.c
+@@ -0,0 +1,213 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ * NTFS kernel debug support. Part of the Linux-NTFS project.
++ *
++ * Copyright (C) 1997 Martin von Löwis, Régis Duchesne
++ * Copyright (c) 2001-2005 Anton Altaparmakov
++ */
++
++#include <linux/module.h>
++#ifdef CONFIG_SYSCTL
++#include <linux/proc_fs.h>
++#include <linux/sysctl.h>
++#endif
++
++#include "misc.h"
++
++/**
++ * __ntfs_warning - output a warning to the syslog
++ * @function:	name of function outputting the warning
++ * @sb:		super block of mounted ntfs filesystem
++ * @fmt:	warning string containing format specifications
++ * @...:	a variable number of arguments specified in @fmt
++ *
++ * Outputs a warning to the syslog for the mounted ntfs filesystem described
++ * by @sb.
++ *
++ * @fmt and the corresponding @... is printf style format string containing
++ * the warning string and the corresponding format arguments, respectively.
++ *
++ * @function is the name of the function from which __ntfs_warning is being
++ * called.
++ *
++ * Note, you should be using debug.h::ntfs_warning(@sb, @fmt, @...) instead
++ * as this provides the @function parameter automatically.
++ */
++void __ntfs_warning(const char *function, const struct super_block *sb,
++		const char *fmt, ...)
++{
++	struct va_format vaf;
++	va_list args;
++	int flen = 0;
++
++	if (function)
++		flen = strlen(function);
++	va_start(args, fmt);
++	vaf.fmt = fmt;
++	vaf.va = &args;
++#ifndef DEBUG
++	if (sb)
++		pr_warn_ratelimited("(device %s): %s(): %pV\n",
++			sb->s_id, flen ? function : "", &vaf);
++	else
++		pr_warn_ratelimited("%s(): %pV\n", flen ? function : "", &vaf);
++#else
++	if (sb)
++		pr_warn("(device %s): %s(): %pV\n",
++			sb->s_id, flen ? function : "", &vaf);
++	else
++		pr_warn("%s(): %pV\n", flen ? function : "", &vaf);
++#endif
++	va_end(args);
++}
++
++/**
++ * __ntfs_error - output an error to the syslog
++ * @function:	name of function outputting the error
++ * @sb:		super block of mounted ntfs filesystem
++ * @fmt:	error string containing format specifications
++ * @...:	a variable number of arguments specified in @fmt
++ *
++ * Outputs an error to the syslog for the mounted ntfs filesystem described
++ * by @sb.
++ *
++ * @fmt and the corresponding @... is printf style format string containing
++ * the error string and the corresponding format arguments, respectively.
++ *
++ * @function is the name of the function from which __ntfs_error is being
++ * called.
++ *
++ * Note, you should be using debug.h::ntfs_error(@sb, @fmt, @...) instead
++ * as this provides the @function parameter automatically.
++ */
++void __ntfs_error(const char *function, struct super_block *sb,
++		const char *fmt, ...)
++{
++	struct va_format vaf;
++	va_list args;
++	int flen = 0;
++
++	if (function)
++		flen = strlen(function);
++	va_start(args, fmt);
++	vaf.fmt = fmt;
++	vaf.va = &args;
++#ifndef DEBUG
++	if (sb)
++		pr_err_ratelimited("(device %s): %s(): %pV\n",
++		       sb->s_id, flen ? function : "", &vaf);
++	else
++		pr_err_ratelimited("%s(): %pV\n", flen ? function : "", &vaf);
++#else
++	if (sb)
++		pr_err("(device %s): %s(): %pV\n",
++		       sb->s_id, flen ? function : "", &vaf);
++	else
++		pr_err("%s(): %pV\n", flen ? function : "", &vaf);
++#endif
++	va_end(args);
++
++	if (sb)
++		ntfs_handle_error(sb);
++}
++
++#ifdef DEBUG
++
++/* If 1, output debug messages, and if 0, don't. */
++int debug_msgs;
++
++void __ntfs_debug(const char *file, int line, const char *function,
++		const char *fmt, ...)
++{
++	struct va_format vaf;
++	va_list args;
++	int flen = 0;
++
++	if (!debug_msgs)
++		return;
++	if (function)
++		flen = strlen(function);
++	va_start(args, fmt);
++	vaf.fmt = fmt;
++	vaf.va = &args;
++	pr_debug("(%s, %d): %s(): %pV", file, line, flen ? function : "", &vaf);
++	va_end(args);
++}
++
++/* Dump a runlist. Caller has to provide synchronisation for @rl. */
++void ntfs_debug_dump_runlist(const struct runlist_element *rl)
++{
++	int i;
++	const char *lcn_str[5] = { "LCN_DELALLOC     ", "LCN_HOLE         ",
++				   "LCN_RL_NOT_MAPPED", "LCN_ENOENT       ",
++				   "LCN_unknown      " };
++
++	if (!debug_msgs)
++		return;
++	pr_debug("Dumping runlist (values in hex):\n");
++	if (!rl) {
++		pr_debug("Run list not present.\n");
++		return;
++	}
++	pr_debug("VCN              LCN               Run length\n");
++	for (i = 0; ; i++) {
++		s64 lcn = (rl + i)->lcn;
++
++		if (lcn < (s64)0) {
++			int index = -lcn - 1;
++
++			if (index > -LCN_ENOENT - 1)
++				index = 3;
++			pr_debug("%-16Lx %s %-16Lx%s\n",
++					(long long)(rl + i)->vcn, lcn_str[index],
++					(long long)(rl + i)->length,
++					(rl + i)->length ? "" :
++						" (runlist end)");
++		} else
++			pr_debug("%-16Lx %-16Lx  %-16Lx%s\n",
++					(long long)(rl + i)->vcn,
++					(long long)(rl + i)->lcn,
++					(long long)(rl + i)->length,
++					(rl + i)->length ? "" :
++						" (runlist end)");
++		if (!(rl + i)->length)
++			break;
++	}
++}
++
++#ifdef CONFIG_SYSCTL
++/* Definition of the ntfs sysctl. */
++static const struct ctl_table ntfs_sysctls[] = {
++	{
++		.procname	= "ntfs-debug",
++		.data		= &debug_msgs,		/* Data pointer and size. */
++		.maxlen		= sizeof(debug_msgs),
++		.mode		= 0644,			/* Mode, proc handler. */
++		.proc_handler	= proc_dointvec
++	},
++	{}
++};
++
++/* Storage for the sysctls header. */
++static struct ctl_table_header *sysctls_root_table;
++
++/**
++ * ntfs_sysctl - add or remove the debug sysctl
++ * @add:	add (1) or remove (0) the sysctl
++ *
++ * Add or remove the debug sysctl. Return 0 on success or -errno on error.
++ */
++int ntfs_sysctl(int add)
++{
++	if (add) {
++		sysctls_root_table = register_sysctl("fs", ntfs_sysctls);
++		if (!sysctls_root_table)
++			return -ENOMEM;
++	} else {
++		unregister_sysctl_table(sysctls_root_table);
++		sysctls_root_table = NULL;
++	}
++	return 0;
++}
++#endif /* CONFIG_SYSCTL */
++#endif
+diff --git a/fs/ntfsplus/unistr.c b/fs/ntfsplus/unistr.c
+new file mode 100644
+index 000000000000..810fdb2ab218
+--- /dev/null
++++ b/fs/ntfsplus/unistr.c
+@@ -0,0 +1,473 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ * NTFS Unicode string handling. Part of the Linux-NTFS project.
++ *
++ * Copyright (c) 2001-2006 Anton Altaparmakov
 + */
 +
 +#include "ntfs.h"
-+#include "layout.h"
-+#include "attrib.h"
-+#include "inode.h"
-+#include "dir.h"
-+#include "volume.h"
-+#include "mft.h"
-+#include "index.h"
-+#include "lcnalloc.h"
-+#include "reparse.h"
 +#include "misc.h"
 +
-+struct WSL_LINK_REPARSE_DATA {
-+	__le32	type;
-+	char	link[];
-+};
-+
-+struct REPARSE_INDEX {			/* index entry in $Extend/$Reparse */
-+	struct index_entry_header header;
-+	struct reparse_index_key key;
-+	__le32 filling;
-+};
-+
-+__le16 reparse_index_name[] = { cpu_to_le16('$'),
-+				  cpu_to_le16('R') };
++/*
++ * IMPORTANT
++ * =========
++ *
++ * All these routines assume that the Unicode characters are in little endian
++ * encoding inside the strings!!!
++ */
 +
 +/*
-+ * Do some sanity checks on reparse data
-+ *
-+ * Microsoft reparse points have an 8-byte header whereas
-+ * non-Microsoft reparse points have a 24-byte header.  In each case,
-+ * 'reparse_data_length' must equal the number of non-header bytes.
-+ *
-+ * If the reparse data looks like a junction point or symbolic
-+ * link, more checks can be done.
++ * This is used by the name collation functions to quickly determine what
++ * characters are (in)valid.
 + */
-+static bool valid_reparse_data(struct ntfs_inode *ni,
-+		const struct reparse_point *reparse_attr, size_t size)
-+{
-+	bool ok;
-+	const struct WSL_LINK_REPARSE_DATA *wsl_reparse_data;
++static const u8 legal_ansi_char_array[0x40] = {
++	0x00, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10,
++	0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10,
 +
-+	ok = ni && reparse_attr && (size >= sizeof(struct reparse_point)) &&
-+		(reparse_attr->reparse_tag != IO_REPARSE_TAG_RESERVED_ZERO) &&
-+		(((size_t)le16_to_cpu(reparse_attr->reparse_data_length) +
-+		  sizeof(struct reparse_point) +
-+		  ((reparse_attr->reparse_tag & IO_REPARSE_TAG_IS_MICROSOFT) ?
-+		   0 : sizeof(struct guid))) == size);
-+	if (ok) {
-+		switch (reparse_attr->reparse_tag) {
-+		case IO_REPARSE_TAG_LX_SYMLINK:
-+			wsl_reparse_data = (const struct WSL_LINK_REPARSE_DATA *)
-+						reparse_attr->reparse_data;
-+			if ((le16_to_cpu(reparse_attr->reparse_data_length) <=
-+			     sizeof(wsl_reparse_data->type)) ||
-+			    (wsl_reparse_data->type != cpu_to_le32(2)))
-+				ok = false;
-+			break;
-+		case IO_REPARSE_TAG_AF_UNIX:
-+		case IO_REPARSE_TAG_LX_FIFO:
-+		case IO_REPARSE_TAG_LX_CHR:
-+		case IO_REPARSE_TAG_LX_BLK:
-+			if (reparse_attr->reparse_data_length ||
-+			    !(ni->flags & FILE_ATTRIBUTE_RECALL_ON_OPEN))
-+				ok = false;
-+			break;
-+		default:
-+			break;
++	0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10,
++	0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10,
++
++	0x17, 0x07, 0x18, 0x17, 0x17, 0x17, 0x17, 0x17,
++	0x17, 0x17, 0x18, 0x16, 0x16, 0x17, 0x07, 0x00,
++
++	0x17, 0x17, 0x17, 0x17, 0x17, 0x17, 0x17, 0x17,
++	0x17, 0x17, 0x04, 0x16, 0x18, 0x16, 0x18, 0x18,
++};
++
++/**
++ * ntfs_are_names_equal - compare two Unicode names for equality
++ * @s1:			name to compare to @s2
++ * @s1_len:		length in Unicode characters of @s1
++ * @s2:			name to compare to @s1
++ * @s2_len:		length in Unicode characters of @s2
++ * @ic:			ignore case bool
++ * @upcase:		upcase table (only if @ic == IGNORE_CASE)
++ * @upcase_size:	length in Unicode characters of @upcase (if present)
++ *
++ * Compare the names @s1 and @s2 and return 'true' (1) if the names are
++ * identical, or 'false' (0) if they are not identical. If @ic is IGNORE_CASE,
++ * the @upcase table is used to performa a case insensitive comparison.
++ */
++bool ntfs_are_names_equal(const __le16 *s1, size_t s1_len,
++		const __le16 *s2, size_t s2_len, const u32 ic,
++		const __le16 *upcase, const u32 upcase_size)
++{
++	if (s1_len != s2_len)
++		return false;
++	if (ic == CASE_SENSITIVE)
++		return !ntfs_ucsncmp(s1, s2, s1_len);
++	return !ntfs_ucsncasecmp(s1, s2, s1_len, upcase, upcase_size);
++}
++
++/**
++ * ntfs_collate_names - collate two Unicode names
++ * @name1:	first Unicode name to compare
++ * @name1_len:	first Unicode name length
++ * @name2:	second Unicode name to compare
++ * @name2_len:	second Unicode name length
++ * @err_val:	if @name1 contains an invalid character return this value
++ * @ic:		either CASE_SENSITIVE or IGNORE_CASE
++ * @upcase:	upcase table (ignored if @ic is CASE_SENSITIVE)
++ * @upcase_len:	upcase table size (ignored if @ic is CASE_SENSITIVE)
++ *
++ * ntfs_collate_names collates two Unicode names and returns:
++ *
++ *  -1 if the first name collates before the second one,
++ *   0 if the names match,
++ *   1 if the second name collates before the first one, or
++ * @err_val if an invalid character is found in @name1 during the comparison.
++ *
++ * The following characters are considered invalid: '"', '*', '<', '>' and '?'.
++ */
++int ntfs_collate_names(const __le16 *name1, const u32 name1_len,
++		const __le16 *name2, const u32 name2_len,
++		const int err_val, const u32 ic,
++		const __le16 *upcase, const u32 upcase_len)
++{
++	u32 cnt, min_len;
++	u16 c1, c2;
++
++	min_len = name1_len;
++	if (name1_len > name2_len)
++		min_len = name2_len;
++	for (cnt = 0; cnt < min_len; ++cnt) {
++		c1 = le16_to_cpu(*name1++);
++		c2 = le16_to_cpu(*name2++);
++		if (ic) {
++			if (c1 < upcase_len)
++				c1 = le16_to_cpu(upcase[c1]);
++			if (c2 < upcase_len)
++				c2 = le16_to_cpu(upcase[c2]);
 +		}
++		if (c1 < 64 && legal_ansi_char_array[c1] & 8)
++			return err_val;
++		if (c1 < c2)
++			return -1;
++		if (c1 > c2)
++			return 1;
 +	}
-+	return ok;
++	if (name1_len < name2_len)
++		return -1;
++	if (name1_len == name2_len)
++		return 0;
++	/* name1_len > name2_len */
++	c1 = le16_to_cpu(*name1);
++	if (c1 < 64 && legal_ansi_char_array[c1] & 8)
++		return err_val;
++	return 1;
 +}
 +
-+static unsigned int ntfs_reparse_tag_mode(struct reparse_point *reparse_attr)
-+{
-+	unsigned int mode = 0;
-+
-+	switch (reparse_attr->reparse_tag) {
-+	case IO_REPARSE_TAG_SYMLINK:
-+	case IO_REPARSE_TAG_LX_SYMLINK:
-+		mode = S_IFLNK;
-+		break;
-+	case IO_REPARSE_TAG_AF_UNIX:
-+		mode = S_IFSOCK;
-+		break;
-+	case IO_REPARSE_TAG_LX_FIFO:
-+		mode = S_IFIFO;
-+		break;
-+	case IO_REPARSE_TAG_LX_CHR:
-+		mode = S_IFCHR;
-+		break;
-+	case IO_REPARSE_TAG_LX_BLK:
-+		mode = S_IFBLK;
-+	}
-+
-+	return mode;
-+}
-+
-+/*
-+ * Get the target for symbolic link
++/**
++ * ntfs_ucsncmp - compare two little endian Unicode strings
++ * @s1:		first string
++ * @s2:		second string
++ * @n:		maximum unicode characters to compare
++ *
++ * Compare the first @n characters of the Unicode strings @s1 and @s2,
++ * The strings in little endian format and appropriate le16_to_cpu()
++ * conversion is performed on non-little endian machines.
++ *
++ * The function returns an integer less than, equal to, or greater than zero
++ * if @s1 (or the first @n Unicode characters thereof) is found, respectively,
++ * to be less than, to match, or be greater than @s2.
 + */
-+unsigned int ntfs_make_symlink(struct ntfs_inode *ni)
++int ntfs_ucsncmp(const __le16 *s1, const __le16 *s2, size_t n)
 +{
-+	s64 attr_size = 0;
-+	unsigned int lth;
-+	struct reparse_point *reparse_attr;
-+	struct WSL_LINK_REPARSE_DATA *wsl_link_data;
-+	unsigned int mode = 0;
++	u16 c1, c2;
++	size_t i;
 +
-+	reparse_attr = ntfs_attr_readall(ni, AT_REPARSE_POINT, NULL, 0,
-+					 &attr_size);
-+	if (reparse_attr && attr_size &&
-+	    valid_reparse_data(ni, reparse_attr, attr_size)) {
-+		switch (reparse_attr->reparse_tag) {
-+		case IO_REPARSE_TAG_LX_SYMLINK:
-+			wsl_link_data = (struct WSL_LINK_REPARSE_DATA *)reparse_attr->reparse_data;
-+			if (wsl_link_data->type == cpu_to_le32(2)) {
-+				lth = le16_to_cpu(reparse_attr->reparse_data_length) -
-+						  sizeof(wsl_link_data->type);
-+				ni->target = ntfs_malloc_nofs(lth + 1);
-+				if (ni->target) {
-+					memcpy(ni->target, wsl_link_data->link, lth);
-+					ni->target[lth] = 0;
-+					mode = ntfs_reparse_tag_mode(reparse_attr);
++	for (i = 0; i < n; ++i) {
++		c1 = le16_to_cpu(s1[i]);
++		c2 = le16_to_cpu(s2[i]);
++		if (c1 < c2)
++			return -1;
++		if (c1 > c2)
++			return 1;
++		if (!c1)
++			break;
++	}
++	return 0;
++}
++
++/**
++ * ntfs_ucsncasecmp - compare two little endian Unicode strings, ignoring case
++ * @s1:			first string
++ * @s2:			second string
++ * @n:			maximum unicode characters to compare
++ * @upcase:		upcase table
++ * @upcase_size:	upcase table size in Unicode characters
++ *
++ * Compare the first @n characters of the Unicode strings @s1 and @s2,
++ * ignoring case. The strings in little endian format and appropriate
++ * le16_to_cpu() conversion is performed on non-little endian machines.
++ *
++ * Each character is uppercased using the @upcase table before the comparison.
++ *
++ * The function returns an integer less than, equal to, or greater than zero
++ * if @s1 (or the first @n Unicode characters thereof) is found, respectively,
++ * to be less than, to match, or be greater than @s2.
++ */
++int ntfs_ucsncasecmp(const __le16 *s1, const __le16 *s2, size_t n,
++		const __le16 *upcase, const u32 upcase_size)
++{
++	size_t i;
++	u16 c1, c2;
++
++	for (i = 0; i < n; ++i) {
++		c1 = le16_to_cpu(s1[i]);
++		if (c1 < upcase_size)
++			c1 = le16_to_cpu(upcase[c1]);
++		c2 = le16_to_cpu(s2[i]);
++		if (c2 < upcase_size)
++			c2 = le16_to_cpu(upcase[c2]);
++		if (c1 < c2)
++			return -1;
++		if (c1 > c2)
++			return 1;
++		if (!c1)
++			break;
++	}
++	return 0;
++}
++
++int ntfs_file_compare_values(const struct file_name_attr *file_name_attr1,
++		const struct file_name_attr *file_name_attr2,
++		const int err_val, const u32 ic,
++		const __le16 *upcase, const u32 upcase_len)
++{
++	return ntfs_collate_names((__le16 *)&file_name_attr1->file_name,
++			file_name_attr1->file_name_length,
++			(__le16 *)&file_name_attr2->file_name,
++			file_name_attr2->file_name_length,
++			err_val, ic, upcase, upcase_len);
++}
++
++/**
++ * ntfs_nlstoucs - convert NLS string to little endian Unicode string
++ *
++ * Convert the input string @ins, which is in whatever format the loaded NLS
++ * map dictates, into a little endian, 2-byte Unicode string.
++ *
++ * This function allocates the string and the caller is responsible for
++ * calling kmem_cache_free(ntfs_name_cache, *@outs); when finished with it.
++ *
++ * On success the function returns the number of Unicode characters written to
++ * the output string *@outs (>= 0), not counting the terminating Unicode NULL
++ * character. *@outs is set to the allocated output string buffer.
++ *
++ * On error, a negative number corresponding to the error code is returned. In
++ * that case the output string is not allocated. Both *@outs and *@outs_len
++ * are then undefined.
++ *
++ * This might look a bit odd due to fast path optimization...
++ */
++int ntfs_nlstoucs(const struct ntfs_volume *vol, const char *ins,
++		const int ins_len, __le16 **outs, int max_name_len)
++{
++	struct nls_table *nls = vol->nls_map;
++	__le16 *ucs;
++	wchar_t wc;
++	int i, o, wc_len;
++
++	/* We do not trust outside sources. */
++	if (likely(ins)) {
++		if (max_name_len > NTFS_MAX_NAME_LEN)
++			ucs = kvmalloc((max_name_len + 2) * sizeof(__le16),
++				       GFP_NOFS | __GFP_ZERO);
++		else
++			ucs = kmem_cache_alloc(ntfs_name_cache, GFP_NOFS);
++		if (likely(ucs)) {
++			if (vol->nls_utf8) {
++				o = utf8s_to_utf16s(ins, ins_len,
++						    UTF16_LITTLE_ENDIAN,
++						    ucs,
++						    max_name_len + 2);
++				if (o < 0 || o > max_name_len) {
++					wc_len = o;
++					goto name_err;
++				}
++			} else {
++				for (i = o = 0; i < ins_len; i += wc_len) {
++					wc_len = nls->char2uni(ins + i, ins_len - i,
++							&wc);
++					if (likely(wc_len >= 0 &&
++					    o < max_name_len)) {
++						if (likely(wc)) {
++							ucs[o++] = cpu_to_le16(wc);
++							continue;
++						} /* else if (!wc) */
++						break;
++					}
++
++					goto name_err;
 +				}
 +			}
-+			break;
-+		default:
-+			mode = ntfs_reparse_tag_mode(reparse_attr);
-+		}
-+	} else
-+		ni->flags &= ~FILE_ATTR_REPARSE_POINT;
-+
-+	if (reparse_attr)
-+		ntfs_free(reparse_attr);
-+
-+	return mode;
-+}
-+
-+unsigned int ntfs_reparse_tag_dt_types(struct ntfs_volume *vol, unsigned long mref)
-+{
-+	s64 attr_size = 0;
-+	struct reparse_point *reparse_attr;
-+	unsigned int dt_type = DT_UNKNOWN;
-+	struct inode *vi;
-+
-+	vi = ntfs_iget(vol->sb, mref);
-+	if (IS_ERR(vi))
-+		return PTR_ERR(vi);
-+
-+	reparse_attr = (struct reparse_point *)ntfs_attr_readall(NTFS_I(vi),
-+			AT_REPARSE_POINT, NULL, 0, &attr_size);
-+
-+	if (reparse_attr && attr_size) {
-+		switch (reparse_attr->reparse_tag) {
-+		case IO_REPARSE_TAG_SYMLINK:
-+		case IO_REPARSE_TAG_LX_SYMLINK:
-+			dt_type = DT_LNK;
-+			break;
-+		case IO_REPARSE_TAG_AF_UNIX:
-+			dt_type = DT_SOCK;
-+			break;
-+		case IO_REPARSE_TAG_LX_FIFO:
-+			dt_type = DT_FIFO;
-+			break;
-+		case IO_REPARSE_TAG_LX_CHR:
-+			dt_type = DT_CHR;
-+			break;
-+		case IO_REPARSE_TAG_LX_BLK:
-+			dt_type = DT_BLK;
-+		}
-+	}
-+
-+	if (reparse_attr)
-+		ntfs_free(reparse_attr);
-+
-+	iput(vi);
-+	return dt_type;
-+}
-+
-+/*
-+ * Set the index for new reparse data
-+ */
-+static int set_reparse_index(struct ntfs_inode *ni, struct ntfs_index_context *xr,
-+		__le32 reparse_tag)
-+{
-+	struct REPARSE_INDEX indx;
-+	u64 file_id_cpu;
-+	__le64 file_id;
-+
-+	file_id_cpu = MK_MREF(ni->mft_no, ni->seq_no);
-+	file_id = cpu_to_le64(file_id_cpu);
-+	indx.header.data.vi.data_offset =
-+		cpu_to_le16(sizeof(struct index_entry_header) + sizeof(struct reparse_index_key));
-+	indx.header.data.vi.data_length = 0;
-+	indx.header.data.vi.reservedV = 0;
-+	indx.header.length = cpu_to_le16(sizeof(struct REPARSE_INDEX));
-+	indx.header.key_length = cpu_to_le16(sizeof(struct reparse_index_key));
-+	indx.header.flags = 0;
-+	indx.header.reserved = 0;
-+	indx.key.reparse_tag = reparse_tag;
-+	/* danger on processors which require proper alignment! */
-+	memcpy(&indx.key.file_id, &file_id, 8);
-+	indx.filling = 0;
-+	ntfs_index_ctx_reinit(xr);
-+
-+	return ntfs_ie_add(xr, (struct index_entry *)&indx);
-+}
-+
-+/*
-+ * Remove a reparse data index entry if attribute present
-+ */
-+static int remove_reparse_index(struct inode *rp, struct ntfs_index_context *xr,
-+				__le32 *preparse_tag)
-+{
-+	struct reparse_index_key key;
-+	u64 file_id_cpu;
-+	__le64 file_id;
-+	s64 size;
-+	struct ntfs_inode *ni = NTFS_I(rp);
-+	int err = 0, ret = ni->data_size;
-+
-+	if (ni->data_size == 0)
-+		return 0;
-+
-+	/* read the existing reparse_tag */
-+	size = ntfs_inode_attr_pread(rp, 0, 4, (char *)preparse_tag);
-+	if (size != 4)
-+		return -ENODATA;
-+
-+	file_id_cpu = MK_MREF(ni->mft_no, ni->seq_no);
-+	file_id = cpu_to_le64(file_id_cpu);
-+	key.reparse_tag = *preparse_tag;
-+	/* danger on processors which require proper alignment! */
-+	memcpy(&key.file_id, &file_id, 8);
-+	if (!ntfs_index_lookup(&key, sizeof(struct reparse_index_key), xr)) {
-+		err = ntfs_index_rm(xr);
-+		if (err)
-+			ret = err;
-+	}
-+	return ret;
-+}
-+
-+/*
-+ * Open the $Extend/$Reparse file and its index
-+ */
-+static struct ntfs_index_context *open_reparse_index(struct ntfs_volume *vol)
-+{
-+	struct ntfs_index_context *xr = NULL;
-+	u64 mref;
-+	__le16 *uname;
-+	struct ntfs_name *name = NULL;
-+	int uname_len;
-+	struct inode *vi, *dir_vi;
-+
-+	/* do not use path_name_to inode - could reopen root */
-+	dir_vi = ntfs_iget(vol->sb, FILE_Extend);
-+	if (IS_ERR(dir_vi))
-+		return NULL;
-+
-+	uname_len = ntfs_nlstoucs(vol, "$Reparse", 8, &uname,
-+				  NTFS_MAX_NAME_LEN);
-+	if (uname_len < 0) {
-+		iput(dir_vi);
-+		return NULL;
-+	}
-+
-+	mutex_lock_nested(&NTFS_I(dir_vi)->mrec_lock, NTFS_REPARSE_MUTEX_PARENT);
-+	mref = ntfs_lookup_inode_by_name(NTFS_I(dir_vi), uname, uname_len,
-+					 &name);
-+	mutex_unlock(&NTFS_I(dir_vi)->mrec_lock);
-+	kfree(name);
-+	kmem_cache_free(ntfs_name_cache, uname);
-+	if (IS_ERR_MREF(mref))
-+		goto put_dir_vi;
-+
-+	vi = ntfs_iget(vol->sb, MREF(mref));
-+	if (IS_ERR(vi))
-+		goto put_dir_vi;
-+
-+	xr = ntfs_index_ctx_get(NTFS_I(vi), reparse_index_name, 2);
-+	if (!xr)
-+		iput(vi);
-+put_dir_vi:
-+	iput(dir_vi);
-+	return xr;
-+}
-+
-+
-+/*
-+ * Update the reparse data and index
-+ *
-+ * The reparse data attribute should have been created, and
-+ * an existing index is expected if there is an existing value.
-+ *
-+ */
-+static int update_reparse_data(struct ntfs_inode *ni, struct ntfs_index_context *xr,
-+		char *value, size_t size)
-+{
-+	struct inode *rp_inode;
-+	int err = 0;
-+	s64 written;
-+	int oldsize;
-+	__le32 reparse_tag;
-+	struct ntfs_inode *rp_ni;
-+
-+	rp_inode = ntfs_attr_iget(VFS_I(ni), AT_REPARSE_POINT, AT_UNNAMED, 0);
-+	if (IS_ERR(rp_inode))
-+		return -EINVAL;
-+	rp_ni = NTFS_I(rp_inode);
-+
-+	/* remove the existing reparse data */
-+	oldsize = remove_reparse_index(rp_inode, xr, &reparse_tag);
-+	if (oldsize < 0) {
-+		err = oldsize;
-+		goto put_rp_inode;
-+	}
-+
-+	/* overwrite value if any */
-+	written = ntfs_inode_attr_pwrite(rp_inode, 0, size, value, false);
-+	if (written != size) {
-+		ntfs_error(ni->vol->sb, "Failed to update reparse data\n");
-+		err = -EIO;
-+		goto put_rp_inode;
-+	}
-+
-+	if (set_reparse_index(ni, xr, ((const struct reparse_point *)value)->reparse_tag) &&
-+	    oldsize > 0) {
-+		/*
-+		 * If cannot index, try to remove the reparse
-+		 * data and log the error. There will be an
-+		 * inconsistency if removal fails.
-+		 */
-+		ntfs_attr_rm(rp_ni);
-+		ntfs_error(ni->vol->sb,
-+			   "Failed to index reparse data. Possible corruption.\n");
-+	}
-+
-+	mark_mft_record_dirty(ni);
-+put_rp_inode:
-+	iput(rp_inode);
-+
-+	return err;
-+}
-+
-+/*
-+ * Delete a reparse index entry
-+ */
-+int ntfs_delete_reparse_index(struct ntfs_inode *ni)
-+{
-+	struct inode *vi;
-+	struct ntfs_index_context *xr;
-+	struct ntfs_inode *xrni;
-+	__le32 reparse_tag;
-+	int err = 0;
-+
-+	if (!(ni->flags & FILE_ATTR_REPARSE_POINT))
-+		return 0;
-+
-+	vi = ntfs_attr_iget(VFS_I(ni), AT_REPARSE_POINT, AT_UNNAMED, 0);
-+	if (IS_ERR(vi))
-+		return PTR_ERR(vi);
-+
-+	/*
-+	 * read the existing reparse data (the tag is enough)
-+	 * and un-index it
-+	 */
-+	xr = open_reparse_index(ni->vol);
-+	if (xr) {
-+		xrni = xr->idx_ni;
-+		mutex_lock_nested(&xrni->mrec_lock, NTFS_REPARSE_MUTEX_PARENT);
-+		err = remove_reparse_index(vi, xr, &reparse_tag);
-+		if (err < 0) {
-+			ntfs_index_ctx_put(xr);
-+			mutex_unlock(&xrni->mrec_lock);
-+			iput(VFS_I(xrni));
-+			goto out;
-+		}
-+		mark_mft_record_dirty(xrni);
-+		ntfs_index_ctx_put(xr);
-+		mutex_unlock(&xrni->mrec_lock);
-+		iput(VFS_I(xrni));
-+	}
-+
-+	ni->flags &= ~FILE_ATTR_REPARSE_POINT;
-+	NInoSetFileNameDirty(ni);
-+	mark_mft_record_dirty(ni);
-+
-+out:
-+	iput(vi);
-+	return err;
-+}
-+
-+/*
-+ * Set the reparse data from an extended attribute
-+ */
-+static int ntfs_set_ntfs_reparse_data(struct ntfs_inode *ni, char *value, size_t size)
-+{
-+	int err = 0;
-+	struct ntfs_inode *xrni;
-+	struct ntfs_index_context *xr;
-+
-+	if (!ni)
-+		return -EINVAL;
-+
-+	/*
-+	 * reparse data compatibily with EA is not checked
-+	 * any more, it is required by Windows 10, but may
-+	 * lead to problems with earlier versions.
-+	 */
-+	if (valid_reparse_data(ni, (const struct reparse_point *)value, size) == false)
-+		return -EINVAL;
-+
-+	xr = open_reparse_index(ni->vol);
-+	if (!xr)
-+		return -EINVAL;
-+	xrni = xr->idx_ni;
-+
-+	if (!ntfs_attr_exist(ni, AT_REPARSE_POINT, AT_UNNAMED, 0)) {
-+		u8 dummy = 0;
-+
-+		/*
-+		 * no reparse data attribute : add one,
-+		 * apparently, this does not feed the new value in
-+		 * Note : NTFS version must be >= 3
-+		 */
-+		if (ni->vol->major_ver < 3) {
-+			err = -EOPNOTSUPP;
-+			ntfs_index_ctx_put(xr);
-+			goto out;
-+		}
-+
-+		err = ntfs_attr_add(ni, AT_REPARSE_POINT, AT_UNNAMED, 0, &dummy, 0);
-+		if (err) {
-+			ntfs_index_ctx_put(xr);
-+			goto out;
-+		}
-+		ni->flags |= FILE_ATTR_REPARSE_POINT;
-+		NInoSetFileNameDirty(ni);
-+		mark_mft_record_dirty(ni);
-+	}
-+
-+	/* update value and index */
-+	mutex_lock_nested(&xrni->mrec_lock, NTFS_REPARSE_MUTEX_PARENT);
-+	err = update_reparse_data(ni, xr, value, size);
-+	if (err) {
-+		ni->flags &= ~FILE_ATTR_REPARSE_POINT;
-+		NInoSetFileNameDirty(ni);
-+		mark_mft_record_dirty(ni);
-+	}
-+	ntfs_index_ctx_put(xr);
-+	mutex_unlock(&xrni->mrec_lock);
-+
-+out:
-+	if (!err)
-+		mark_mft_record_dirty(xrni);
-+	iput(VFS_I(xrni));
-+
-+	return err;
-+}
-+
-+/*
-+ * Set reparse data for a WSL type symlink
-+ */
-+int ntfs_reparse_set_wsl_symlink(struct ntfs_inode *ni,
-+		const __le16 *target, int target_len)
-+{
-+	int err = 0;
-+	int len;
-+	int reparse_len;
-+	unsigned char *utarget = NULL;
-+	struct reparse_point *reparse;
-+	struct WSL_LINK_REPARSE_DATA *data;
-+
-+	utarget = (char *)NULL;
-+	len = ntfs_ucstonls(ni->vol, target, target_len, &utarget, 0);
-+	if (len <= 0)
-+		return -EINVAL;
-+
-+	reparse_len = sizeof(struct reparse_point) + sizeof(data->type) + len;
-+	reparse = (struct reparse_point *)ntfs_malloc_nofs(reparse_len);
-+	if (!reparse) {
-+		err = -ENOMEM;
-+		ntfs_free(utarget);
-+	} else {
-+		data = (struct WSL_LINK_REPARSE_DATA *)reparse->reparse_data;
-+		reparse->reparse_tag = IO_REPARSE_TAG_LX_SYMLINK;
-+		reparse->reparse_data_length =
-+			cpu_to_le16(sizeof(data->type) + len);
-+		reparse->reserved = 0;
-+		data->type = cpu_to_le32(2);
-+		memcpy(data->link, utarget, len);
-+		err = ntfs_set_ntfs_reparse_data(ni,
-+				(char *)reparse, reparse_len);
-+		ntfs_free(reparse);
-+		if (!err)
-+			ni->target = utarget;
-+	}
-+	return err;
-+}
-+
-+/*
-+ * Set reparse data for a WSL special file other than a symlink
-+ * (socket, fifo, character or block device)
-+ */
-+int ntfs_reparse_set_wsl_not_symlink(struct ntfs_inode *ni, mode_t mode)
-+{
-+	int err;
-+	int len;
-+	int reparse_len;
-+	__le32 reparse_tag;
-+	struct reparse_point *reparse;
-+
-+	len = 0;
-+	if (S_ISSOCK(mode))
-+		reparse_tag = IO_REPARSE_TAG_AF_UNIX;
-+	else if (S_ISFIFO(mode))
-+		reparse_tag = IO_REPARSE_TAG_LX_FIFO;
-+	else if (S_ISCHR(mode))
-+		reparse_tag = IO_REPARSE_TAG_LX_CHR;
-+	else if (S_ISBLK(mode))
-+		reparse_tag = IO_REPARSE_TAG_LX_BLK;
++			ucs[o] = 0;
++			*outs = ucs;
++			return o;
++		} /* else if (!ucs) */
++		ntfs_debug("Failed to allocate buffer for converted name from ntfs_name_cache.");
++		return -ENOMEM;
++	} /* else if (!ins) */
++	ntfs_error(vol->sb, "Received NULL pointer.");
++	return -EINVAL;
++name_err:
++	if (max_name_len > NTFS_MAX_NAME_LEN)
++		kvfree(ucs);
 +	else
-+		return -EOPNOTSUPP;
-+
-+	reparse_len = sizeof(struct reparse_point) + len;
-+	reparse = (struct reparse_point *)ntfs_malloc_nofs(reparse_len);
-+	if (!reparse)
-+		err = -ENOMEM;
-+	else {
-+		reparse->reparse_tag = reparse_tag;
-+		reparse->reparse_data_length = cpu_to_le16(len);
-+		reparse->reserved = cpu_to_le16(0);
-+		err = ntfs_set_ntfs_reparse_data(ni, (char *)reparse,
-+						 reparse_len);
-+		ntfs_free(reparse);
++		kmem_cache_free(ntfs_name_cache, ucs);
++	if (wc_len < 0) {
++		ntfs_debug("Name using character set %s contains characters that cannot be converted to Unicode.",
++				nls->charset);
++		i = -EILSEQ;
++	} else {
++		ntfs_debug("Name is too long (maximum length for a name on NTFS is %d Unicode characters.",
++				max_name_len);
++		i = -ENAMETOOLONG;
 +	}
++	return i;
++}
 +
-+	return err;
++/**
++ * ntfs_ucstonls - convert little endian Unicode string to NLS string
++ * @vol:	ntfs volume which we are working with
++ * @ins:	input Unicode string buffer
++ * @ins_len:	length of input string in Unicode characters
++ * @outs:	on return contains the (allocated) output NLS string buffer
++ * @outs_len:	length of output string buffer in bytes
++ *
++ * Convert the input little endian, 2-byte Unicode string @ins, of length
++ * @ins_len into the string format dictated by the loaded NLS.
++ *
++ * If *@outs is NULL, this function allocates the string and the caller is
++ * responsible for calling kfree(*@outs); when finished with it. In this case
++ * @outs_len is ignored and can be 0.
++ *
++ * On success the function returns the number of bytes written to the output
++ * string *@outs (>= 0), not counting the terminating NULL byte. If the output
++ * string buffer was allocated, *@outs is set to it.
++ *
++ * On error, a negative number corresponding to the error code is returned. In
++ * that case the output string is not allocated. The contents of *@outs are
++ * then undefined.
++ *
++ * This might look a bit odd due to fast path optimization...
++ */
++int ntfs_ucstonls(const struct ntfs_volume *vol, const __le16 *ins,
++		const int ins_len, unsigned char **outs, int outs_len)
++{
++	struct nls_table *nls = vol->nls_map;
++	unsigned char *ns;
++	int i, o, ns_len, wc;
++
++	/* We don't trust outside sources. */
++	if (ins) {
++		ns = *outs;
++		ns_len = outs_len;
++		if (ns && !ns_len) {
++			wc = -ENAMETOOLONG;
++			goto conversion_err;
++		}
++		if (!ns) {
++			ns_len = ins_len * NLS_MAX_CHARSET_SIZE;
++			ns = kmalloc(ns_len + 1, GFP_NOFS);
++			if (!ns)
++				goto mem_err_out;
++		}
++
++		if (vol->nls_utf8) {
++			o = utf16s_to_utf8s((const wchar_t *)ins, ins_len,
++					UTF16_LITTLE_ENDIAN, ns, ns_len);
++			if (o >= ns_len) {
++				wc = -ENAMETOOLONG;
++				goto conversion_err;
++			}
++			goto done;
++		}
++
++		for (i = o = 0; i < ins_len; i++) {
++retry:
++			wc = nls->uni2char(le16_to_cpu(ins[i]), ns + o,
++					ns_len - o);
++			if (wc > 0) {
++				o += wc;
++				continue;
++			} else if (!wc)
++				break;
++			else if (wc == -ENAMETOOLONG && ns != *outs) {
++				unsigned char *tc;
++				/* Grow in multiples of 64 bytes. */
++				tc = kmalloc((ns_len + 64) &
++						~63, GFP_NOFS);
++				if (tc) {
++					memcpy(tc, ns, ns_len);
++					ns_len = ((ns_len + 64) & ~63) - 1;
++					kfree(ns);
++					ns = tc;
++					goto retry;
++				} /* No memory so goto conversion_error; */
++			} /* wc < 0, real error. */
++			goto conversion_err;
++		}
++done:
++		ns[o] = 0;
++		*outs = ns;
++		return o;
++	} /* else (!ins) */
++	ntfs_error(vol->sb, "Received NULL pointer.");
++	return -EINVAL;
++conversion_err:
++	ntfs_error(vol->sb,
++		"Unicode name contains characters that cannot be converted to character set %s.  You might want to try to use the mount option nls=utf8.",
++		nls->charset);
++	if (ns != *outs)
++		kfree(ns);
++	if (wc != -ENAMETOOLONG)
++		wc = -EILSEQ;
++	return wc;
++mem_err_out:
++	ntfs_error(vol->sb, "Failed to allocate name!");
++	return -ENOMEM;
++}
++
++/**
++ * ntfs_ucsnlen - determine the length of a little endian Unicode string
++ * @s:		pointer to Unicode string
++ * @maxlen:	maximum length of string @s
++ *
++ * Return the number of Unicode characters in the little endian Unicode
++ * string @s up to a maximum of maxlen Unicode characters, not including
++ * the terminating (__le16)'\0'. If there is no (__le16)'\0' between @s
++ * and @s + @maxlen, @maxlen is returned.
++ *
++ * This function never looks beyond @s + @maxlen.
++ */
++static u32 ntfs_ucsnlen(const __le16 *s, u32 maxlen)
++{
++	u32 i;
++
++	for (i = 0; i < maxlen; i++) {
++		if (!le16_to_cpu(s[i]))
++			break;
++	}
++	return i;
++}
++
++/**
++ * ntfs_ucsndup - duplicate little endian Unicode string
++ * @s:		pointer to Unicode string
++ * @maxlen:	maximum length of string @s
++ *
++ * Return a pointer to a new little endian Unicode string which is a duplicate
++ * of the string s.  Memory for the new string is obtained with ntfs_malloc(3),
++ * and can be freed with free(3).
++ *
++ * A maximum of @maxlen Unicode characters are copied and a terminating
++ * (__le16)'\0' little endian Unicode character is added.
++ *
++ * This function never looks beyond @s + @maxlen.
++ *
++ * Return a pointer to the new little endian Unicode string on success and NULL
++ * on failure with errno set to the error code.
++ */
++__le16 *ntfs_ucsndup(const __le16 *s, u32 maxlen)
++{
++	__le16 *dst;
++	u32 len;
++
++	len = ntfs_ucsnlen(s, maxlen);
++	dst = ntfs_malloc_nofs((len + 1) * sizeof(__le16));
++	if (dst) {
++		memcpy(dst, s, len * sizeof(__le16));
++		dst[len] = cpu_to_le16(L'\0');
++	}
++	return dst;
++}
++
++/**
++ * ntfs_names_are_equal - compare two Unicode names for equality
++ * @s1:                 name to compare to @s2
++ * @s1_len:             length in Unicode characters of @s1
++ * @s2:                 name to compare to @s1
++ * @s2_len:             length in Unicode characters of @s2
++ * @ic:                 ignore case bool
++ * @upcase:             upcase table (only if @ic == IGNORE_CASE)
++ * @upcase_size:        length in Unicode characters of @upcase (if present)
++ *
++ * Compare the names @s1 and @s2 and return TRUE (1) if the names are
++ * identical, or FALSE (0) if they are not identical. If @ic is IGNORE_CASE,
++ * the @upcase table is used to perform a case insensitive comparison.
++ */
++bool ntfs_names_are_equal(const __le16 *s1, size_t s1_len,
++		const __le16 *s2, size_t s2_len,
++		const u32 ic,
++		const __le16 *upcase, const u32 upcase_size)
++{
++	if (s1_len != s2_len)
++		return false;
++	if (!s1_len)
++		return true;
++	if (ic == CASE_SENSITIVE)
++		return ntfs_ucsncmp(s1, s2, s1_len) ? false : true;
++	return ntfs_ucsncasecmp(s1, s2, s1_len, upcase, upcase_size) ? false : true;
++}
+diff --git a/fs/ntfsplus/upcase.c b/fs/ntfsplus/upcase.c
+new file mode 100644
+index 000000000000..a2b8e56edeff
+--- /dev/null
++++ b/fs/ntfsplus/upcase.c
+@@ -0,0 +1,73 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ * Generate the full NTFS Unicode upcase table in little endian.
++ * Part of the Linux-NTFS project.
++ *
++ * Copyright (c) 2001 Richard Russon <ntfs@flatcap.org>
++ * Copyright (c) 2001-2006 Anton Altaparmakov
++ */
++
++#include "misc.h"
++#include "ntfs.h"
++
++__le16 *generate_default_upcase(void)
++{
++	static const int uc_run_table[][3] = { /* Start, End, Add */
++	{0x0061, 0x007B,  -32}, {0x0451, 0x045D, -80}, {0x1F70, 0x1F72,  74},
++	{0x00E0, 0x00F7,  -32}, {0x045E, 0x0460, -80}, {0x1F72, 0x1F76,  86},
++	{0x00F8, 0x00FF,  -32}, {0x0561, 0x0587, -48}, {0x1F76, 0x1F78, 100},
++	{0x0256, 0x0258, -205}, {0x1F00, 0x1F08,   8}, {0x1F78, 0x1F7A, 128},
++	{0x028A, 0x028C, -217}, {0x1F10, 0x1F16,   8}, {0x1F7A, 0x1F7C, 112},
++	{0x03AC, 0x03AD,  -38}, {0x1F20, 0x1F28,   8}, {0x1F7C, 0x1F7E, 126},
++	{0x03AD, 0x03B0,  -37}, {0x1F30, 0x1F38,   8}, {0x1FB0, 0x1FB2,   8},
++	{0x03B1, 0x03C2,  -32}, {0x1F40, 0x1F46,   8}, {0x1FD0, 0x1FD2,   8},
++	{0x03C2, 0x03C3,  -31}, {0x1F51, 0x1F52,   8}, {0x1FE0, 0x1FE2,   8},
++	{0x03C3, 0x03CC,  -32}, {0x1F53, 0x1F54,   8}, {0x1FE5, 0x1FE6,   7},
++	{0x03CC, 0x03CD,  -64}, {0x1F55, 0x1F56,   8}, {0x2170, 0x2180, -16},
++	{0x03CD, 0x03CF,  -63}, {0x1F57, 0x1F58,   8}, {0x24D0, 0x24EA, -26},
++	{0x0430, 0x0450,  -32}, {0x1F60, 0x1F68,   8}, {0xFF41, 0xFF5B, -32},
++	{0}
++	};
++
++	static const int uc_dup_table[][2] = { /* Start, End */
++	{0x0100, 0x012F}, {0x01A0, 0x01A6}, {0x03E2, 0x03EF}, {0x04CB, 0x04CC},
++	{0x0132, 0x0137}, {0x01B3, 0x01B7}, {0x0460, 0x0481}, {0x04D0, 0x04EB},
++	{0x0139, 0x0149}, {0x01CD, 0x01DD}, {0x0490, 0x04BF}, {0x04EE, 0x04F5},
++	{0x014A, 0x0178}, {0x01DE, 0x01EF}, {0x04BF, 0x04BF}, {0x04F8, 0x04F9},
++	{0x0179, 0x017E}, {0x01F4, 0x01F5}, {0x04C1, 0x04C4}, {0x1E00, 0x1E95},
++	{0x018B, 0x018B}, {0x01FA, 0x0218}, {0x04C7, 0x04C8}, {0x1EA0, 0x1EF9},
++	{0}
++	};
++
++	static const int uc_word_table[][2] = { /* Offset, Value */
++	{0x00FF, 0x0178}, {0x01AD, 0x01AC}, {0x01F3, 0x01F1}, {0x0269, 0x0196},
++	{0x0183, 0x0182}, {0x01B0, 0x01AF}, {0x0253, 0x0181}, {0x026F, 0x019C},
++	{0x0185, 0x0184}, {0x01B9, 0x01B8}, {0x0254, 0x0186}, {0x0272, 0x019D},
++	{0x0188, 0x0187}, {0x01BD, 0x01BC}, {0x0259, 0x018F}, {0x0275, 0x019F},
++	{0x018C, 0x018B}, {0x01C6, 0x01C4}, {0x025B, 0x0190}, {0x0283, 0x01A9},
++	{0x0192, 0x0191}, {0x01C9, 0x01C7}, {0x0260, 0x0193}, {0x0288, 0x01AE},
++	{0x0199, 0x0198}, {0x01CC, 0x01CA}, {0x0263, 0x0194}, {0x0292, 0x01B7},
++	{0x01A8, 0x01A7}, {0x01DD, 0x018E}, {0x0268, 0x0197},
++	{0}
++	};
++
++	int i, r;
++	__le16 *uc;
++
++	uc = ntfs_malloc_nofs(default_upcase_len * sizeof(__le16));
++	if (!uc)
++		return uc;
++	memset(uc, 0, default_upcase_len * sizeof(__le16));
++	/* Generate the little endian Unicode upcase table used by ntfs. */
++	for (i = 0; i < default_upcase_len; i++)
++		uc[i] = cpu_to_le16(i);
++	for (r = 0; uc_run_table[r][0]; r++)
++		for (i = uc_run_table[r][0]; i < uc_run_table[r][1]; i++)
++			le16_add_cpu(&uc[i], uc_run_table[r][2]);
++	for (r = 0; uc_dup_table[r][0]; r++)
++		for (i = uc_dup_table[r][0]; i < uc_dup_table[r][1]; i += 2)
++			le16_add_cpu(&uc[i + 1], -1);
++	for (r = 0; uc_word_table[r][0]; r++)
++		uc[uc_word_table[r][0]] = cpu_to_le16(uc_word_table[r][1]);
++	return uc;
 +}
 -- 
 2.25.1
