@@ -1,172 +1,182 @@
-Return-Path: <linux-fsdevel+bounces-70016-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70017-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 918B0C8E5B1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 13:59:37 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7C56C8E612
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 14:12:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6285B3A8326
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 12:59:33 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AD27F4E638F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 13:12:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D273E32E73F;
-	Thu, 27 Nov 2025 12:59:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F098C25A2C6;
+	Thu, 27 Nov 2025 13:12:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fI4FSWoN"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HsbKnSTO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 368F016F265;
-	Thu, 27 Nov 2025 12:59:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9A0422F74D
+	for <linux-fsdevel@vger.kernel.org>; Thu, 27 Nov 2025 13:12:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764248369; cv=none; b=XhzZk6v2BTXdsHEHc0bDfZ9JqZCIkOKY4bKWEcnbyhylrYsv35XXd4RD33BvDEMzV7RZjnVstOuNi3m+eCkJWVIC1GA7u+jt6D/EkQ0R2aydkmnWaO0cuRu5ZwptijqXjz4JHjaqfd33zHXysGk56QwaxiamLKMEyF+L+Z1xDaQ=
+	t=1764249134; cv=none; b=hMj5cNxvjPFgKT+6OKhyMNq+2zmNAM3TVF5LiFuTiW1ETfF5VFSRIEiFndI6IAiBbPnXal0FY2zlr1vzG7CRd8US1nyBUp/QB73Bwf1s9l8wIWEgeBvlVFZ6hsm6lZ/kQg2xRaFGr+Jvec2+6WFUur3Fz8eo1BSpt96K8cnzOGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764248369; c=relaxed/simple;
-	bh=9FAZ+a3Saa3K2w/qcM5YJymiW3fVjUChcc0PgFLP3kM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VyalhX2IrJJwMFbLBOfNcWq9DGTEDSw06d3z7s9fr4kJAZxnPQBOIX41RcDR2rU26eAl9PPlYK+NwWdEh0oFBn7JW0wNhPJkMoxEq7sHfXNQwDQI/0+VdaPrw2kIB9nYYW2Jl3Dfb2do920p8/Am0dan8P+PPImoXZF7VE4LrYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fI4FSWoN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F21B8C4CEF8;
-	Thu, 27 Nov 2025 12:59:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764248368;
-	bh=9FAZ+a3Saa3K2w/qcM5YJymiW3fVjUChcc0PgFLP3kM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fI4FSWoNziNxUPbDB6JkgJO1Yjnf6Bti878Qij6lf/sDn7w/gHEsxCWtwUKbfzIC7
-	 1qXgeeNkfSyJhRfPo/0VWdYXYX4XMehPWqREme+oOWuyDGHPw8cDGW7ToctKEVSehA
-	 ui5RCOiknFcesTzXJ2Ca6+7A1XjGiV6XEAGWE3VL9D8J+DKMcpJ1Z6B9X3diNElvPw
-	 qwN9QiVjiXoWMzyQg5SknYsw+Gd2nxZApTimNOLjRHI5fhnt7oOZWcydR97/QNxkz7
-	 +PgzdNbs94jarrIsGJ+qTzv5SBvS+hsNRz7eC90oioecBC1ZZaQmSWaMBECtd/ovl+
-	 GIp6SjbV/s45w==
-Date: Thu, 27 Nov 2025 12:59:22 +0000
-From: Will Deacon <will@kernel.org>
-To: Zizhi Wo <wozizhi@huaweicloud.com>
-Cc: jack@suse.com, brauner@kernel.org, hch@lst.de,
-	akpm@linux-foundation.org, linux@armlinux.org.uk,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
-	wozizhi@huawei.com, yangerkun@huawei.com,
-	wangkefeng.wang@huawei.com, pangliyuan1@huawei.com,
-	xieyuanbin1@huawei.com
-Subject: Re: [Bug report] hash_name() may cross page boundary and trigger
- sleep in RCU context
-Message-ID: <aShLKpTBr9akSuUG@willie-the-truck>
-References: <20251126090505.3057219-1-wozizhi@huaweicloud.com>
+	s=arc-20240116; t=1764249134; c=relaxed/simple;
+	bh=lNqxHXcUth33TG9lYBjfpjY9dusk00l25lAi5+q1QCA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=G4BOM7tK4z8gGpZBWxJoSUZfeHaTLJPaLYQ3csTLQShIlPnsx7Vs3tAooMcbplN2U3iKFLbVdA9UPwDj7uO6moub1hwblU3blYITgxgeR6kTla5ocAzsvz8SQYanvW/Tsd5OwV/oDBwsGqZgbaWxD0oTzY7TSdH4FYm6OmLNASA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HsbKnSTO; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-6419aaced59so1353932a12.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Nov 2025 05:12:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1764249131; x=1764853931; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cj/XAPLEM8u0Ig+KySlVUv6bTCtgB0YfUe8Zvz1U7ZI=;
+        b=HsbKnSTOcmJf/pq5AWdOGTNzaHi54navAhf3DuO+YI+MaQOYmOSlzCxMx15M96K1q9
+         J4sBHy3n6NXvPg1nsDZNNdL68bFp1oM+YoIjkol0rFXoDcQ0e90/w4tXEnqKz7PfysIi
+         5/evKU6kA8LAVkGAy8NK57QHpy6Bg2YQMW/0/tL1m57HvZ6ZBFe5OeCDfRskCvdlGQwY
+         QjTc3WY27AacdHOtDmxFGi30qsVEdUHCwW7j0z8N3xiDehPzoJoDJ6zRmt8QQZg0lVT7
+         Ubgh62QaqRTDnOZ/3Ih1BmTz8u18jTmXxCz6SuvqbK+hCfPn32SIj0N88NV0xAgvyCJ0
+         XzJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764249131; x=1764853931;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=cj/XAPLEM8u0Ig+KySlVUv6bTCtgB0YfUe8Zvz1U7ZI=;
+        b=HYB/FYq3Wt7AdWWw2l+5wPGJ1cRWNfOJour2FUDoOMWt1n6w8me/k8OMcYAu/1OKUo
+         99yWNMWdcboC0uBNK7Q8Qu7x2tN5wPFHe1JPuVyIne1ozQge9yxApUZCTN5ck4+ebS3P
+         UipB34OUPDPyiCNI4Fr0hp2XaJRATX3/lMdXfkDuVnPA3mt0RlSmwLwjmkNShuz/nkX8
+         RlvWbpPGHNBQmtXn1cnqgJ8Or80H0yG1gFulvnboCCiGfLM+SEfi87zDatO/uwEgJyGH
+         EOZ458z/ehco6HKocCbtQEinr9oKmwzlqYh6ibvAPms5MJl+kCpT0f5tpjNxhEqJh2tw
+         tLBg==
+X-Forwarded-Encrypted: i=1; AJvYcCU1eJEUuTpDP9KzIuMW8fIxpB+sy9RixTCuhIuuKJQIrxhghpdBLEJpi5bSDKLYbPu+ALcrcURnPTJrL8s5@vger.kernel.org
+X-Gm-Message-State: AOJu0YwStg3/btzi125g+AXToyeDhvs8BBFglaZYoaJlah01c4d0F+Mt
+	rY8lregIu5FU98BWJ1LxZrOWAIbsDbfSkcAsp0/Je3p1vikcNnzv3I0XT5rsX9nsdOLp5YZUZuz
+	KVtLrhhAcWB2bcSiM9APB8tvCJ4MDgWk=
+X-Gm-Gg: ASbGncsI5aPx9kPQZR9o3GIA5NJArBqJhnmay62t9deB85SxsGrubTbxDiF9O6gdsPJ
+	1i18kW7ST9bajwlvaOr62tli8VxuYSDpSLBLphg3a6SwfVuyR+ThTk91L09ni+xKlAGv5XKhIM2
+	CeUHBBCEc8+xP25Yrf3ZnSK49dYgnPjLIp2ucw0J1RlZthUeEtdREbphDeCzCBlrwV5PVHyUcKA
+	XydN9Yh2y9bz2mqaqeHIokttSedg2LwwzCFNR9xefrCNyBl8KM6jvUYcAoSudHZe3/cyCaSLu44
+	1cfGw6InzTMujHzsYADm+GR1TmQ=
+X-Google-Smtp-Source: AGHT+IFYkbL0VYgSHDbvuEJfOhI/obu/02EjCS++JDjYWQCsfJgIMmmYuvX6a7dMMoi99gtAL4UqUr2e+3JXMhH24wY=
+X-Received: by 2002:a05:6402:1e8a:b0:63c:690d:6a46 with SMTP id
+ 4fb4d7f45d1cf-6455445989cmr21428153a12.13.1764249130405; Thu, 27 Nov 2025
+ 05:12:10 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251126090505.3057219-1-wozizhi@huaweicloud.com>
+References: <20251127045944.26009-1-linkinjeon@kernel.org> <20251127045944.26009-12-linkinjeon@kernel.org>
+ <CAOQ4uxhwy1a+dtkoTkMp5LLJ5m4FzvQefJXfZ2JzrUZiZn7w0w@mail.gmail.com> <CAKYAXd99CJOeH=nZg_iLb+q5F5N+xxbZm-4Uwxas_tAR3e_xVA@mail.gmail.com>
+In-Reply-To: <CAKYAXd99CJOeH=nZg_iLb+q5F5N+xxbZm-4Uwxas_tAR3e_xVA@mail.gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Thu, 27 Nov 2025 14:11:59 +0100
+X-Gm-Features: AWmQ_blLbATxRa2HO4lHQ-O5ErLu4Mrq_RiP_h6_1kjJIrIjn_5rGUKFPDuEvt8
+Message-ID: <CAOQ4uxiGMLe=FD72BBCLnk6kmOTrqSQ5wM4mVHSshKc+TN14TQ@mail.gmail.com>
+Subject: Re: [PATCH v2 11/11] ntfsplus: add Kconfig and Makefile
+To: Namjae Jeon <linkinjeon@kernel.org>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, hch@infradead.org, hch@lst.de, 
+	tytso@mit.edu, willy@infradead.org, jack@suse.cz, djwong@kernel.org, 
+	josef@toxicpanda.com, sandeen@sandeen.net, rgoldwyn@suse.com, 
+	xiang@kernel.org, dsterba@suse.com, pali@kernel.org, ebiggers@kernel.org, 
+	neil@brown.name, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	iamjoonsoo.kim@lge.com, cheol.lee@lge.com, jay.sim@lge.com, gunho.lee@lge.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 26, 2025 at 05:05:05PM +0800, Zizhi Wo wrote:
-> We're running into the following issue on an ARM32 platform with the linux
-> 5.10 kernel:
-> 
-> [<c0300b78>] (__dabt_svc) from [<c0529cb8>] (link_path_walk.part.7+0x108/0x45c)
-> [<c0529cb8>] (link_path_walk.part.7) from [<c052a948>] (path_openat+0xc4/0x10ec)
-> [<c052a948>] (path_openat) from [<c052cf90>] (do_filp_open+0x9c/0x114)
-> [<c052cf90>] (do_filp_open) from [<c0511e4c>] (do_sys_openat2+0x418/0x528)
-> [<c0511e4c>] (do_sys_openat2) from [<c0513d98>] (do_sys_open+0x88/0xe4)
-> [<c0513d98>] (do_sys_open) from [<c03000c0>] (ret_fast_syscall+0x0/0x58)
-> ...
-> [<c0315e34>] (unwind_backtrace) from [<c030f2b0>] (show_stack+0x20/0x24)
-> [<c030f2b0>] (show_stack) from [<c14239f4>] (dump_stack+0xd8/0xf8)
-> [<c14239f4>] (dump_stack) from [<c038d188>] (___might_sleep+0x19c/0x1e4)
-> [<c038d188>] (___might_sleep) from [<c031b6fc>] (do_page_fault+0x2f8/0x51c)
-> [<c031b6fc>] (do_page_fault) from [<c031bb44>] (do_DataAbort+0x90/0x118)
-> [<c031bb44>] (do_DataAbort) from [<c0300b78>] (__dabt_svc+0x58/0x80)
-> ...
-> 
-> During the execution of hash_name()->load_unaligned_zeropad(), a potential
-> memory access beyond the PAGE boundary may occur. For example, when the
-> filename length is near the PAGE_SIZE boundary. This triggers a page fault,
-> which leads to a call to do_page_fault()->mmap_read_trylock(). If we can't
-> acquire the lock, we have to fall back to the mmap_read_lock() path, which
-> calls might_sleep(). This breaks RCU semantics because path lookup occurs
-> under an RCU read-side critical section. In linux-mainline, arm/arm64
-> do_page_fault() still has this problem:
-> 
-> lock_mm_and_find_vma->get_mmap_lock_carefully->mmap_read_lock_killable.
-> 
-> And before commit bfcfaa77bdf0 ("vfs: use 'unsigned long' accesses for
-> dcache name comparison and hashing"), hash_name accessed the name byte by
-> byte.
-> 
-> To prevent load_unaligned_zeropad() from accessing beyond the valid memory
-> region, we would need to intercept such cases beforehand? But doing so
-> would require replicating the internal logic of load_unaligned_zeropad(),
-> including handling endianness and constructing the correct value manually.
-> Given that load_unaligned_zeropad() is used in many places across the
-> kernel, we currently haven't found a good solution to address this cleanly.
-> 
-> What would be the recommended way to handle this situation? Would
-> appreciate any feedback and guidance from the community. Thanks!
+On Thu, Nov 27, 2025 at 1:40=E2=80=AFPM Namjae Jeon <linkinjeon@kernel.org>=
+ wrote:
+>
+> On Thu, Nov 27, 2025 at 8:22=E2=80=AFPM Amir Goldstein <amir73il@gmail.co=
+m> wrote:
+> >
+> > On Thu, Nov 27, 2025 at 6:01=E2=80=AFAM Namjae Jeon <linkinjeon@kernel.=
+org> wrote:
+> > >
+> > > This adds the Kconfig and Makefile for ntfsplus.
+> > >
+> > > Signed-off-by: Namjae Jeon <linkinjeon@kernel.org>
+> > > ---
+> > >  fs/Kconfig           |  1 +
+> > >  fs/Makefile          |  1 +
+> > >  fs/ntfsplus/Kconfig  | 45 ++++++++++++++++++++++++++++++++++++++++++=
+++
+> > >  fs/ntfsplus/Makefile | 18 ++++++++++++++++++
+> > >  4 files changed, 65 insertions(+)
+> > >  create mode 100644 fs/ntfsplus/Kconfig
+> > >  create mode 100644 fs/ntfsplus/Makefile
+> > >
+> > > diff --git a/fs/Kconfig b/fs/Kconfig
+> > > index 0bfdaecaa877..70d596b99c8b 100644
+> > > --- a/fs/Kconfig
+> > > +++ b/fs/Kconfig
+> > > @@ -153,6 +153,7 @@ menu "DOS/FAT/EXFAT/NT Filesystems"
+> > >  source "fs/fat/Kconfig"
+> > >  source "fs/exfat/Kconfig"
+> > >  source "fs/ntfs3/Kconfig"
+> > > +source "fs/ntfsplus/Kconfig"
+> > >
+> > >  endmenu
+> > >  endif # BLOCK
+> > > diff --git a/fs/Makefile b/fs/Makefile
+> > > index e3523ab2e587..2e2473451508 100644
+> > > --- a/fs/Makefile
+> > > +++ b/fs/Makefile
+> > > @@ -91,6 +91,7 @@ obj-y                         +=3D unicode/
+> > >  obj-$(CONFIG_SMBFS)            +=3D smb/
+> > >  obj-$(CONFIG_HPFS_FS)          +=3D hpfs/
+> > >  obj-$(CONFIG_NTFS3_FS)         +=3D ntfs3/
+> > > +obj-$(CONFIG_NTFSPLUS_FS)      +=3D ntfsplus/
+> >
+> > I suggested in another reply to keep the original ntfs name
+> >
+> > More important is to keep your driver linked before the unmaintained
+> > ntfs3, so that it hopefully gets picked up before ntfs3 for auto mount =
+type
+> > if both drivers are built-in.
+> Okay, I will check it:)
+> >
+> > I am not sure if keeping the order here would guarantee the link/regist=
+ration
+> > order. If not, it may make sense to mutually exclude them as built-in d=
+rivers.
+> Okay, I am leaning towards the latter.
 
-Does it help if you bodge the translation fault handler along the lines
-of the untested diff below?
+Well it's not this OR that.
+please add you driver as the original was before ntfs3
 
-Will
+obj-$(CONFIG_NTFS_FS)      +=3D ntfs/
+obj-$(CONFIG_NTFS3_FS)         +=3D ntfs3/
 
---->8
+> If you have no objection, I will add the patch to mutually exclude the tw=
+o ntfs implementation.
 
-diff --git a/arch/arm/mm/fault.c b/arch/arm/mm/fault.c
-index bf1577216ffa..b3c81e448798 100644
---- a/arch/arm/mm/fault.c
-+++ b/arch/arm/mm/fault.c
-@@ -407,7 +407,7 @@ do_translation_fault(unsigned long addr, unsigned int fsr,
-        if (addr < TASK_SIZE)
-                return do_page_fault(addr, fsr, regs);
- 
--       if (user_mode(regs))
-+       if (user_mode(regs) || fsr_fs(fsr) == FSR_FS_INVALID_PAGE)
-                goto bad_area;
- 
-        index = pgd_index(addr);
-diff --git a/arch/arm/mm/fault.h b/arch/arm/mm/fault.h
-index 9ecc2097a87a..8fb26f85e361 100644
---- a/arch/arm/mm/fault.h
-+++ b/arch/arm/mm/fault.h
-@@ -12,6 +12,8 @@
- #define FSR_FS3_0              (15)
- #define FSR_FS5_0              (0x3f)
- 
-+#define FSR_FS_INVALID_PAGE    7
-+
- #ifdef CONFIG_ARM_LPAE
- #define FSR_FS_AEA             17
- 
-diff --git a/arch/arm/mm/fsr-2level.c b/arch/arm/mm/fsr-2level.c
-index f2be95197265..c7060da345df 100644
---- a/arch/arm/mm/fsr-2level.c
-+++ b/arch/arm/mm/fsr-2level.c
-@@ -11,7 +11,7 @@ static struct fsr_info fsr_info[] = {
-        { do_bad,               SIGBUS,  0,             "external abort on linefetch"      },
-        { do_translation_fault, SIGSEGV, SEGV_MAPERR,   "section translation fault"        },
-        { do_bad,               SIGBUS,  0,             "external abort on linefetch"      },
--       { do_page_fault,        SIGSEGV, SEGV_MAPERR,   "page translation fault"           },
-+       { do_translation_fault, SIGSEGV, SEGV_MAPERR,   "page translation fault"           },
-        { do_bad,               SIGBUS,  0,             "external abort on non-linefetch"  },
-        { do_bad,               SIGSEGV, SEGV_ACCERR,   "section domain fault"             },
-        { do_bad,               SIGBUS,  0,             "external abort on non-linefetch"  },
-diff --git a/arch/arm/mm/fsr-3level.c b/arch/arm/mm/fsr-3level.c
-index d0ae2963656a..19df4af828bd 100644
---- a/arch/arm/mm/fsr-3level.c
-+++ b/arch/arm/mm/fsr-3level.c
-@@ -7,7 +7,7 @@ static struct fsr_info fsr_info[] = {
-        { do_bad,               SIGBUS,  0,             "reserved translation fault"    },
-        { do_translation_fault, SIGSEGV, SEGV_MAPERR,   "level 1 translation fault"     },
-        { do_translation_fault, SIGSEGV, SEGV_MAPERR,   "level 2 translation fault"     },
--       { do_page_fault,        SIGSEGV, SEGV_MAPERR,   "level 3 translation fault"     },
-+       { do_translation_fault, SIGSEGV, SEGV_MAPERR,   "level 3 translation fault"     },
-        { do_bad,               SIGBUS,  0,             "reserved access flag fault"    },
-        { do_bad,               SIGSEGV, SEGV_ACCERR,   "level 1 access flag fault"     },
-        { do_page_fault,        SIGSEGV, SEGV_ACCERR,   "level 2 access flag fault"     },
+You should definitely allow them both if at least one is built as a module
+I think it would be valuable for testing.
 
+Just that
+CONFIG_NTFS_FS=3Dy
+CONFIG_NTFS3_FS=3Dy
+
+I don't see the usefulness in allowing that.
+(other people may disagree)
+
+I think that the way to implement it is using an auxiliary choice config va=
+r
+in fs/Kconfig (i.e. CONFIG_DEFAULT_NTFS) and select/depends statements
+to only allow the default ntfs driver to be configured as 'y',
+but couldn't find a good example to point you at.
+
+Thanks,
+Amir.
 
