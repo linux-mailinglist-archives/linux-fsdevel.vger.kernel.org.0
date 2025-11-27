@@ -1,129 +1,133 @@
-Return-Path: <linux-fsdevel+bounces-69958-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69959-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id A88D5C8CB72
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 04:03:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0F0BC8CCA2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 05:10:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4FFCD34F3C0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 03:03:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E68473B12A3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 04:10:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE6A429D288;
-	Thu, 27 Nov 2025 03:03:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C11CB2D4B5A;
+	Thu, 27 Nov 2025 04:10:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="RFgcpNci"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="AP3I5dIw"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from canpmsgout08.his.huawei.com (canpmsgout08.his.huawei.com [113.46.200.223])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FF061FF1AD;
-	Thu, 27 Nov 2025 03:03:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.223
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B35624886A;
+	Thu, 27 Nov 2025 04:10:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764212616; cv=none; b=HCGIcoJh26xV5KBS7o4Ek2SWJUX+2em6FKjB3vB/JbN7u+poRN9D3i3yB201PVwka46OSQG3AT5yDAGrOvqkrYg2CLgTbiiKn9+t3XGV7Z0omFo+tqzuvNWTr/fFu2/CXSEWlV1rg3ga9u2e3DARnOYjFIVt5/Om42DSjp3wDuM=
+	t=1764216621; cv=none; b=kUuSTKik6skAh57b9AtbGw1HqIgAVs5gcUN/vSe24LDbKJRe8NuwJbu9J2FQXGdjt3JAtg116Hf9/KYDobDd2VZaWmOKm13bOkY7BnX2272gecCKtFlXRlhNlJeDpWigRQrg2AI9Q7At4lC9nRidWxg1UrDgiw3Cv9cctVAF1ss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764212616; c=relaxed/simple;
-	bh=Gp3jnDYUpRwbCSsmSuWVj27ODVCkdA8HNi1M+mu+7bU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=W1uGgnGc80+dBxhO3dPRP7Mdyh8hCCqtsp2Acn3XCgFG75BnquIOdWiU2hqpa1yMaPpvVtVQgzI6VonDzdTpEXnXDSi9f1p8IjT3UFY94Yd/z8M0dC4OBA5kW+eipfyJMV+hGBUzlgk9af2GrZhauUFoTTcQJcZKlaqCSt8Js1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=RFgcpNci; arc=none smtp.client-ip=113.46.200.223
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=/LZy+TydcqSmvcD0OxLxJaigZpJM+j3ByE+efESnjLA=;
-	b=RFgcpNciTsUxTzW0FEuArat0oaFMJJ2ugPWHX2RcAh+P3gVPQqGvig+Pft78Z9ZRMCBbBALKf
-	V9yv1Ur4Pry9lkqkiELK28rV3mOVmIfVuZK7uDYZmC/dZYQhNILrGHIyk/KOkMMDi7K9bqeRIhq
-	FZJJ4NJqQB4A9/pEEKeUV6o=
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by canpmsgout08.his.huawei.com (SkyGuard) with ESMTPS id 4dH1RV6VBszmV7N;
-	Thu, 27 Nov 2025 11:01:42 +0800 (CST)
-Received: from kwepemj100009.china.huawei.com (unknown [7.202.194.3])
-	by mail.maildlp.com (Postfix) with ESMTPS id 719521402C4;
-	Thu, 27 Nov 2025 11:03:31 +0800 (CST)
-Received: from DESKTOP-A37P9LK.huawei.com (10.67.109.17) by
- kwepemj100009.china.huawei.com (7.202.194.3) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 27 Nov 2025 11:03:30 +0800
-From: Xie Yuanbin <xieyuanbin1@huawei.com>
-To: <viro@zeniv.linux.org.uk>, <linux@armlinux.org.uk>, <will@kernel.org>,
-	<david.laight@runbox.com>, <rmk+kernel@armlinux.org.uk>
-CC: <brauner@kernel.org>, <jack@suse.cz>, <nico@fluxnic.net>,
-	<akpm@linux-foundation.org>, <hch@lst.de>, <jack@suse.com>,
-	<wozizhi@huaweicloud.com>, <linux-fsdevel@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-mm@kvack.org>, <catalin.marinas@arm.com>, <rppt@kernel.org>,
-	<vbabka@suse.cz>, <pfalcato@suse.de>, <lorenzo.stoakes@oracle.com>,
-	<kuninori.morimoto.gx@renesas.com>, <tony@atomide.com>, <arnd@arndb.de>,
-	<bigeasy@linutronix.de>, <punitagrawal@gmail.com>, <rjw@rjwysocki.net>,
-	<marc.zyngier@arm.com>, <lilinjie8@huawei.com>, <liaohua4@huawei.com>,
-	<wangkefeng.wang@huawei.com>, <pangliyuan1@huawei.com>, Xie Yuanbin
-	<xieyuanbin1@huawei.com>
-Subject: [RFC PATCH] vfs: Fix might sleep in load_unaligned_zeropad() with rcu read lock held
-Date: Thu, 27 Nov 2025 11:03:16 +0800
-Message-ID: <20251127030316.8396-1-xieyuanbin1@huawei.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <aSeNtFxD1WRjFaiR@shell.armlinux.org.uk>
-References: <aSeNtFxD1WRjFaiR@shell.armlinux.org.uk>
+	s=arc-20240116; t=1764216621; c=relaxed/simple;
+	bh=ooxdkvf2rxgsy0xRVRRnZiTwICu8IYYojYmiU6bahEI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tGYdPz6iJontL0/WjVY+AB3G+dSmKbIyjEvkBcxxOwvU/tkcMPX3zWNVkpzuUY4mhlY3uMyrucdIHwxdoxMY5cFunBmon0IJbFbfZ5RIinD5Bg5jiAGWWJXo3WAcLIB8SSPiPmmT1zkmXFpMRPD1CnukFwqV8C9nHBd79HrZDSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=AP3I5dIw; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=9UH5HZWU7w1Qz5ka8h7XjqhmojO13fL0L+YMlTFhSDA=; b=AP3I5dIw8MUlt7xSzk3qgcc3sN
+	AHu26Cs0wtwdgwSRwY+BmvEPRpHfoPjKAv6EqeaGAtEZ8MvH02yG8ScNHL7P49Rb/gM+u6ij5a6XG
+	jy4hg3/q6KDo+jTVMSPbxO9fXKm9iGjW+uF8fMcq7GPSByWP3cICDpktaeP3bee4XCg1AvMMv/Moj
+	YSEuEpY6zqKoGrYyt7uU+flpdycrYQcResJLx8oQU2IoaQaPpPfiBo/O1co/fExGrf5J1lFda0oK/
+	nNuM2+NAvUP42wEG8HkfVsWnCKASM8uniovBmROKgYy8568Nvncst6z24djS+35maVgZIA3CoAYDO
+	v2Mud80A==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vOTJl-0000000BB6Z-3S6J;
+	Thu, 27 Nov 2025 04:09:17 +0000
+Date: Thu, 27 Nov 2025 04:09:17 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Barry Song <21cnbao@gmail.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
+	Barry Song <v-songbaohua@oppo.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+	David Hildenbrand <david@kernel.org>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>, Pedro Falcato <pfalcato@suse.de>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Oscar Salvador <osalvador@suse.de>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Oven Liyang <liyangouwen1@oppo.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ada Couprie Diaz <ada.coupriediaz@arm.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Kristina =?utf-8?Q?Mart=C5=A1enko?= <kristina.martsenko@arm.com>,
+	Kevin Brodsky <kevin.brodsky@arm.com>,
+	Yeoreum Yun <yeoreum.yun@arm.com>,
+	Wentao Guan <guanwentao@uniontech.com>,
+	Thorsten Blum <thorsten.blum@linux.dev>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Yunhui Cui <cuiyunhui@bytedance.com>,
+	Nam Cao <namcao@linutronix.de>, Chris Li <chrisl@kernel.org>,
+	Kairui Song <kasong@tencent.com>,
+	Kemeng Shi <shikemeng@huaweicloud.com>,
+	Nhat Pham <nphamcs@gmail.com>, Baoquan He <bhe@redhat.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	loongarch@lists.linux.dev, linuxppc-dev@lists.ozlabs.org,
+	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC PATCH 0/2] mm: continue using per-VMA lock when retrying
+ page faults after I/O
+Message-ID: <aSfO7fA-04SBtTug@casper.infradead.org>
+References: <20251127011438.6918-1-21cnbao@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- kwepemj100009.china.huawei.com (7.202.194.3)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251127011438.6918-1-21cnbao@gmail.com>
 
-On, Wed, 26 Nov 2025 19:26:40 +0000, Al Viro wrote:
-> For quick and dirty variant (on current tree), how about
-> adding
-> 	if (unlikely(addr > TASK_SIZE) && !user_mode(regs))
-> 		goto no_context;
->
-> right after
->
-> 	if (!ttbr0_usermode_access_allowed(regs))
-> 		goto no_context;
->
-> in do_page_fault() there?
+On Thu, Nov 27, 2025 at 09:14:36AM +0800, Barry Song wrote:
+> There is no need to always fall back to mmap_lock if the per-VMA
+> lock was released only to wait for pagecache or swapcache to
+> become ready.
 
-On, Wed, 26 Nov 2025 23:31:00 +0000, Russell King (Oracle) wrote:
-> Now, for 32-bit ARM, I think I am coming to the conclusion that Al's
-> suggestion is probably the easiest solution. However, whether it has
-> side effects, I couldn't say - the 32-bit ARM fault code has been
-> modified by quite a few people in ways I don't yet understand, so I
-> can't be certain at the moment whether it would cause problems.
+Something I've been wondering about is removing all the "drop the MM
+locks while we wait for I/O" gunk.  It's a nice amount of code removed:
 
-I think I've already submitted a very similar patch, to fix another bug:
-On Thu, 16 Oct 2025 20:16:21 +0800, Xie Yuanbin wrote:
-> +#ifdef CONFIG_HARDEN_BRANCH_PREDICTOR
-> +	if (unlikely(addr > TASK_SIZE) && user_mode(regs)) {
-> +		fault = 0;
-> +		code = SEGV_MAPERR;
-> +		goto bad_area;
-> +	}
-> +#endif
-Link: https://lore.kernel.org/20250925025744.6807-1-xieyuanbin1@huawei.com
+ include/linux/pagemap.h |  8 +---
+ mm/filemap.c            | 98 ++++++++++++-------------------------------------
+ mm/internal.h           | 21 -----------
+ mm/memory.c             | 13 +------
+ mm/shmem.c              |  6 ---
+ 5 files changed, 27 insertions(+), 119 deletions(-)
 
-However, the patch seems to have received no response for a very long
-time.
-
-On Wed, 26 Nov 2025 23:31:00 +0000, Russell King wrote:
-> I think the only thing to do is to try the solution and see what
-> breaks. I'm not in a position to be able to do that as, having not
-> had reason to touch 32-bit ARM for years, I don't have a hackable
-> platform nearby. Maybe Xie Yuanbin can test it?
-
-With pleasure.
-By the way, for the config and test case shown in this patch:
-vfs: Fix might sleep in load_unaligned_zeropad() with rcu read lock held
-Link: https://lore.kernel.org/20251126101952.174467-1-xieyuanbin1@huawei.com
-the warning can be reproduced directly on QEMU.
-
-Xie Yuanbin
+and I'm not sure we still need to do it with per-VMA locks.  What I
+have here doesn't boot and I ran out of time to debug it.
 
