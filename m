@@ -1,213 +1,137 @@
-Return-Path: <linux-fsdevel+bounces-70012-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70013-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39405C8E3DC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 13:24:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CE8EC8E493
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 13:40:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6B28B34CF6B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 12:24:45 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9922B344425
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 12:40:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44E4433030D;
-	Thu, 27 Nov 2025 12:24:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C0BD330B02;
+	Thu, 27 Nov 2025 12:40:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="fQS2xmR6";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="YYh4853n";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="fQS2xmR6";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="YYh4853n"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rOJ70o8+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB91632E12C
-	for <linux-fsdevel@vger.kernel.org>; Thu, 27 Nov 2025 12:24:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A77C422256F
+	for <linux-fsdevel@vger.kernel.org>; Thu, 27 Nov 2025 12:40:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764246273; cv=none; b=M0AmNQTiHb3U2JCXH3E71xgfe0oxiYkXA0Xu3MifwutUjzRwWlrHZuFpCUirQFFEkxD+lzWaly/o13DSwt6ZazfphAc6nvuH1YXaHqNIiFRvPhJajIN1I/0mPfTzZKj0o/9XP4mrPrezPwuXFTzkmGjfy3lWx5hKPlxOl5RjlTg=
+	t=1764247220; cv=none; b=GqRx5h2AXOHCFTo6UDSOGYt2+9jj8Y8cQD89ldxiquF+DcXtnMZHtRv4GM80TFn3hXEeDk1HKZkNt5RaHzzac06eCOV7bo9j4+PDx5RuDLB9VlvzgHZ3j/guZmuAlemyI/hPLY7IESVT+6E69U1kg4yf/Ti6StLw2jhT3ByPL+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764246273; c=relaxed/simple;
-	bh=YR4ALjbQ2E76vBQJqyBiOe93M1XOepLWns7AQwXo/04=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l7/N0dSDxDmxUY5NQF55e3l0j063Xf/vmZ7xNl+vUUXGVlcftfpcWmoZmSejGetGx6wPlogY+usqz3pOxYB4SO3LxRTaCr6C40t1AYkGOfU8tqR6Ki5rs58kalx+9HYgT7+jyubb+mX0dlmH0lKzsB6/Ne1S3u2MGucZdBVt9Us=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=fQS2xmR6; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=YYh4853n; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=fQS2xmR6; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=YYh4853n; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 0AEC521247;
-	Thu, 27 Nov 2025 12:24:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1764246270; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=T+GIh1RZPB6kn4lo03uhXtfPG71KNz8R0NUyprXAeDc=;
-	b=fQS2xmR6DeLYni8TBIHt7ACgS8D9i/C7z36H3bP8TAc52ICF/4O/SSFaTOvRGTr1ejWlrK
-	aQPz/B4hx1ey1pyL7U7Yjzm4pOnj6uJBaKeoe6CAH+VazJgb3mAIYY0V7mH+RzVmx0tgf5
-	F1I32aiAc1CIbNYnaBOWxk2JzPRNbic=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1764246270;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=T+GIh1RZPB6kn4lo03uhXtfPG71KNz8R0NUyprXAeDc=;
-	b=YYh4853nANGVkh3BxSmNXsqUpLKlwNEVz0zoIfHlrPmr6Yk8lrDZFq722clc8CUVeQR/UB
-	jZil9WDPpIwfVUAg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1764246270; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=T+GIh1RZPB6kn4lo03uhXtfPG71KNz8R0NUyprXAeDc=;
-	b=fQS2xmR6DeLYni8TBIHt7ACgS8D9i/C7z36H3bP8TAc52ICF/4O/SSFaTOvRGTr1ejWlrK
-	aQPz/B4hx1ey1pyL7U7Yjzm4pOnj6uJBaKeoe6CAH+VazJgb3mAIYY0V7mH+RzVmx0tgf5
-	F1I32aiAc1CIbNYnaBOWxk2JzPRNbic=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1764246270;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=T+GIh1RZPB6kn4lo03uhXtfPG71KNz8R0NUyprXAeDc=;
-	b=YYh4853nANGVkh3BxSmNXsqUpLKlwNEVz0zoIfHlrPmr6Yk8lrDZFq722clc8CUVeQR/UB
-	jZil9WDPpIwfVUAg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E54083EA63;
-	Thu, 27 Nov 2025 12:24:29 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id P5LxN/1CKGmxEAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 27 Nov 2025 12:24:29 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 3237DA0C94; Thu, 27 Nov 2025 13:24:29 +0100 (CET)
-Date: Thu, 27 Nov 2025 13:24:29 +0100
-From: Jan Kara <jack@suse.cz>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: Ojaswin Mujoo <ojaswin@linux.ibm.com>, linux-ext4@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, tytso@mit.edu, 
-	adilger.kernel@dilger.ca, jack@suse.cz, yi.zhang@huawei.com, yizhang089@gmail.com, 
-	libaokun1@huawei.com, yangerkun@huawei.com
-Subject: Re: [PATCH v2 00/13] ext4: replace ext4_es_insert_extent() when
- caching on-disk extents
-Message-ID: <yfekmxz7biiuvairgen2pw6laccs4qvblt56uxmqenyckt2pp6@rfagttgqpdfr>
-References: <20251121060811.1685783-1-yi.zhang@huaweicloud.com>
- <aSLoN-oEqS-OpLKE@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
- <9cef3b97-083e-48e6-aced-3e250df364e3@huaweicloud.com>
+	s=arc-20240116; t=1764247220; c=relaxed/simple;
+	bh=hBULKftqR7lsAwoJC7zen7ukZUv6esNNC31L/n1mOMI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VwDzy3EhkI0CmRMfHpkLwuhDUb8QokZK5fX0Jl0E16fcuVqjzEAwH2s9NzVb+Xrzg7Eo9Sn3Be0nWgYJv/hj4zfMi6Ynx2iBILFITVCT3sdtugARB58dz16v8Ji5nT+eTd3K65LrtLz3mgBKbE4oC746QNxTfflKQ7GAO0X9SNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rOJ70o8+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33423C2BCB1
+	for <linux-fsdevel@vger.kernel.org>; Thu, 27 Nov 2025 12:40:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1764247220;
+	bh=hBULKftqR7lsAwoJC7zen7ukZUv6esNNC31L/n1mOMI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=rOJ70o8+xOoJAhwhhUmcCJyH17bFPkgNABOmD91keJhn/dxOPO6UOSOXG3DsjMxRy
+	 74yhAZDQVYgXXTv0GiZw9GHcyaHYfFZ3UhZcUBNB1b4apQgqFSSwtRZw8FD0biAdj+
+	 plq2MU6zcWq2qbrD9mAN2LUbc/YslR9VrwfWMCH9ecY9Bb4g83Eu1ziP6TljOfk7DD
+	 L+7rxYPRlj/oc2Bawbgplr5UbgR8jV90jYMKTdtfPiKdukNlwZ4UdBYzsmSlPg3xUR
+	 +xCuIFBFjOiL7/yGyg0HqvVIgOCV/3SGibBzkZlaJfFL+J3Yyk1GxeUqTjEfgW2ZTz
+	 y01IQzFZiSlpA==
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-6419b7b4b80so1304797a12.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Nov 2025 04:40:20 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXOplgyhKHyOaIgDpvRjpPTmqkLx1r2L8Yy3ndMiDOWkGkwdKgDtI3U+0OQCL9M9izFPOZoB+SZjtZLqZWV@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDd79GeG5iGHJPA5N15OnaPmIR/F6KpyWVSmzvF3CDhHOG8CtQ
+	Dks9mtspF6ubqfMQb4alGru4CoDt+KcX3PKkqOkw43AQiYUrY/10CJjSbkj3ny/b8qaUMC/m9VQ
+	qaxcgpAzU26G5q3ey81AraXLLNBFfhbc=
+X-Google-Smtp-Source: AGHT+IFaAu8mNvQwVm4qovXUaFIyIh4UsavB10t1+6QWLZ4Kj7xFYBjoN0T9ZY53uk6qWwDkYARGgzwZeceFH9cQRQY=
+X-Received: by 2002:a05:6402:26c3:b0:63c:2d72:56e3 with SMTP id
+ 4fb4d7f45d1cf-6455469be57mr18178013a12.23.1764247218679; Thu, 27 Nov 2025
+ 04:40:18 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9cef3b97-083e-48e6-aced-3e250df364e3@huaweicloud.com>
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[linux.ibm.com,vger.kernel.org,mit.edu,dilger.ca,suse.cz,huawei.com,gmail.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
+References: <20251127045944.26009-1-linkinjeon@kernel.org> <20251127045944.26009-12-linkinjeon@kernel.org>
+ <CAOQ4uxhwy1a+dtkoTkMp5LLJ5m4FzvQefJXfZ2JzrUZiZn7w0w@mail.gmail.com>
+In-Reply-To: <CAOQ4uxhwy1a+dtkoTkMp5LLJ5m4FzvQefJXfZ2JzrUZiZn7w0w@mail.gmail.com>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Thu, 27 Nov 2025 21:40:06 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd99CJOeH=nZg_iLb+q5F5N+xxbZm-4Uwxas_tAR3e_xVA@mail.gmail.com>
+X-Gm-Features: AWmQ_bkMnjkD6-ifjb7N_WOG4zjxWCP-lkyTNOH147VCeADJbEVejGpmf19bYWE
+Message-ID: <CAKYAXd99CJOeH=nZg_iLb+q5F5N+xxbZm-4Uwxas_tAR3e_xVA@mail.gmail.com>
+Subject: Re: [PATCH v2 11/11] ntfsplus: add Kconfig and Makefile
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, hch@infradead.org, hch@lst.de, 
+	tytso@mit.edu, willy@infradead.org, jack@suse.cz, djwong@kernel.org, 
+	josef@toxicpanda.com, sandeen@sandeen.net, rgoldwyn@suse.com, 
+	xiang@kernel.org, dsterba@suse.com, pali@kernel.org, ebiggers@kernel.org, 
+	neil@brown.name, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	iamjoonsoo.kim@lge.com, cheol.lee@lge.com, jay.sim@lge.com, gunho.lee@lge.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Yi!
-
-On Mon 24-11-25 13:04:04, Zhang Yi wrote:
-> On 11/23/2025 6:55 PM, Ojaswin Mujoo wrote:
-> > On Fri, Nov 21, 2025 at 02:07:58PM +0800, Zhang Yi wrote:
-> >> Changes since v1:
-> >>  - Rebase the codes based on the latest linux-next 20251120.
-> >>  - Add patches 01-05, fix two stale data problems caused by
-> > 
-> > Hi Zhang, thanks for the patches.
-> > 
-> 
-> Thank you for take time to look at this series.
-> 
-> > I've always felt uncomfortable with the ZEROOUT code here because it
-> > seems to have many such bugs as you pointed out in the series. Its very
-> > fragile and the bugs are easy to miss behind all the data valid and
-> > split flags mess. 
-> > 
-> 
-> Yes, I agree with you. The implementation of EXT4_EXT_MAY_ZEROOUT has
-> significantly increased the complexity of split extents and the
-> potential for bugs.
-
-Yep, that code is complex and prone to bugs.
-
-> > As per my understanding, ZEROOUT logic seems to be a special best-effort
-> > try to make the split/convert operation "work" when dealing with
-> > transient errors like ENOSPC etc. I was just wondering if it makes sense
-> > to just get rid of the whole ZEROOUT logic completely and just reset the
-> > extent to orig state if there is any error. This allows us to get rid of
-> > DATA_VALID* flags as well and makes the whole ext4_split_convert_extents() 
-> > slightly less messy.
-> > 
-> > Maybe we can have a retry loop at the top level caller if we want to try
-> > again for say ENOSPC or ENOMEM. 
-> > 
-> > Would love to hear your thoughts on it.
-> 
-> I think this is a direction worth exploring. However, what I am
-> currently considering is that we need to address this scenario of
-> splitting extent during the I/O completion. Although the ZEROOUT logic
-> is fragile and has many issues recently, it currently serves as a
-> fallback solution for handling ENOSPC errors that arise when splitting
-> extents during I/O completion. It ensures that I/O operations do not
-> fail due to insufficient extent blocks.
-
-Also partial extent zeroout offers a good performance win when the
-portion needing zeroout is small (we can save extent splitting). And I
-agree it is a good safety net for ENOSPC issues - otherwise there's no
-guarantee page writeback can finish without hitting ENOSPC. We do have
-reserved blocks for these cases but the pool is limited so you can still
-run out of blocks if you try hard enough.
-
-> Please see ext4_convert_unwritten_extents_endio(). Although we have made
-> our best effort to tried to split extents using
-> EXT4_GET_BLOCKS_IO_CREATE_EXT before issuing I/Os, we still have not
-> covered all scenarios. Moreover, after converting the buffered I/O path
-> to the iomap infrastructure in the future, we may need to split extents
-> during the I/O completion worker[1].
-
-Yes, this might be worth exploring. The advantage of doing extent splitting
-in advance is that on IO submission you have the opportunity of restarting
-the transaction on ENOSPC to possibly release some blocks. This is not
-easily doable e.g. on writeback completion so the pressure on the pool of
-reserved blocks is going to be more common (previously you needed reserved
-blocks only when writeback was racing with fallocate or similar, now you
-may need them each time you write in the middle of unwritten extent). So I
-think the change will need some testing whether it isn't too easy to hit
-ENOSPC conditions on IO completion without EXT4_GET_BLOCKS_IO_CREATE_EXT.
-But otherwise it's always nice to remove code :)
- 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+On Thu, Nov 27, 2025 at 8:22=E2=80=AFPM Amir Goldstein <amir73il@gmail.com>=
+ wrote:
+>
+> On Thu, Nov 27, 2025 at 6:01=E2=80=AFAM Namjae Jeon <linkinjeon@kernel.or=
+g> wrote:
+> >
+> > This adds the Kconfig and Makefile for ntfsplus.
+> >
+> > Signed-off-by: Namjae Jeon <linkinjeon@kernel.org>
+> > ---
+> >  fs/Kconfig           |  1 +
+> >  fs/Makefile          |  1 +
+> >  fs/ntfsplus/Kconfig  | 45 ++++++++++++++++++++++++++++++++++++++++++++
+> >  fs/ntfsplus/Makefile | 18 ++++++++++++++++++
+> >  4 files changed, 65 insertions(+)
+> >  create mode 100644 fs/ntfsplus/Kconfig
+> >  create mode 100644 fs/ntfsplus/Makefile
+> >
+> > diff --git a/fs/Kconfig b/fs/Kconfig
+> > index 0bfdaecaa877..70d596b99c8b 100644
+> > --- a/fs/Kconfig
+> > +++ b/fs/Kconfig
+> > @@ -153,6 +153,7 @@ menu "DOS/FAT/EXFAT/NT Filesystems"
+> >  source "fs/fat/Kconfig"
+> >  source "fs/exfat/Kconfig"
+> >  source "fs/ntfs3/Kconfig"
+> > +source "fs/ntfsplus/Kconfig"
+> >
+> >  endmenu
+> >  endif # BLOCK
+> > diff --git a/fs/Makefile b/fs/Makefile
+> > index e3523ab2e587..2e2473451508 100644
+> > --- a/fs/Makefile
+> > +++ b/fs/Makefile
+> > @@ -91,6 +91,7 @@ obj-y                         +=3D unicode/
+> >  obj-$(CONFIG_SMBFS)            +=3D smb/
+> >  obj-$(CONFIG_HPFS_FS)          +=3D hpfs/
+> >  obj-$(CONFIG_NTFS3_FS)         +=3D ntfs3/
+> > +obj-$(CONFIG_NTFSPLUS_FS)      +=3D ntfsplus/
+>
+> I suggested in another reply to keep the original ntfs name
+>
+> More important is to keep your driver linked before the unmaintained
+> ntfs3, so that it hopefully gets picked up before ntfs3 for auto mount ty=
+pe
+> if both drivers are built-in.
+Okay, I will check it:)
+>
+> I am not sure if keeping the order here would guarantee the link/registra=
+tion
+> order. If not, it may make sense to mutually exclude them as built-in dri=
+vers.
+Okay, I am leaning towards the latter. If you have no objection, I
+will add the patch to mutually excluding the two ntfs implementation.
+Thanks!
+>
+> Thanks,
+> Amir.
 
