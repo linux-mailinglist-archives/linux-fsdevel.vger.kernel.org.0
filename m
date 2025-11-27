@@ -1,441 +1,254 @@
-Return-Path: <linux-fsdevel+bounces-69950-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69951-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5E81C8C7C9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 01:51:10 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33B30C8C83C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 02:15:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 82B4C4E55DF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 00:51:09 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 85FD34E609E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 01:15:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA08226738D;
-	Thu, 27 Nov 2025 00:51:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A764E2C033C;
+	Thu, 27 Nov 2025 01:15:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gdfYHNaM"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VtXWOBz5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 389891DB551;
-	Thu, 27 Nov 2025 00:51:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB4421E86E
+	for <linux-fsdevel@vger.kernel.org>; Thu, 27 Nov 2025 01:15:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764204660; cv=none; b=PJrCwfJYB+Y3XvCBPdqCEflF/LpvCy+p0BnfgE+y6NDc/amqm11lZ4Ay92DZz9Vm/+nzqQe0AWJ25md2oxBDQhRFMRUmpoOcs8njVGOQdXF2mAw68aVYLngtsc5tCMWmVKdOwzphR2Fl4d6DOfZUJe5MYh2tRjx5zJt7gJVLSlA=
+	t=1764206110; cv=none; b=hXDFP7swZqh3E5ht5wJhrUUa6vNgJLi7ONM2dfoGrAo7GI3qZ8pSWbL62RYMxa9RP5pg8HgGjqWl7pbbTEKCJSD4FzaQVHFxWe9/vvU/z5mCXr5RK7SRn1avbPBtLe6nrww+bNsyiJbiY9P6Z6Ovnlm9WJrxznDmglhENYd0I00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764204660; c=relaxed/simple;
-	bh=qoSQa1plkMFsI2f6c/GpGmV68F+RuDQPN2OoZpdusEw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jLtwNmrX3vVFPMel8SAaq4nlHAlLmiggrABACtqIaV6OG11R5JRi6t0gjc0iNXnG2Xa2vgiu6Bqc68hHxtLFcCa7cOYzs1jWuGURtnC9OEtiTuDOghqdkWPIDM8Gd6nmenlxA2KJKE3Ka1TDWy98Tw5NDP3lukHtaAgXRKOqfw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gdfYHNaM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B7E5C4CEF7;
-	Thu, 27 Nov 2025 00:50:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764204660;
-	bh=qoSQa1plkMFsI2f6c/GpGmV68F+RuDQPN2OoZpdusEw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=gdfYHNaM4hM0sN+qVi8Y9wSn4Z8yTg2CA2d/EJrOL7rNxf5vwDXHfBuPFPqnK9fBf
-	 R3ylc/ZxBJmWTICzunKEB4TU6rWzexD2CCpEcySTORCX3xENxKTGcRRjatlL5izlGC
-	 mc4emAo5hhOYbpfYctgNOi4klLL4HXoWmpckDYak4miAYl3rOqG8asn3EJpzhWW3JW
-	 +HvBaqLEo83dZPdpbEWZAZKsWx2bc/V80jqn7jczMb7WZj3miqMbMwInC57aExRfL/
-	 MQ/klD/wBdEoe0a2q+cKM50c5jNkT2MTmebCHkqEWB7G/BtwgVwcu7pT1x3Ad2v8Hv
-	 SxmXP3n3T51aQ==
-From: Song Liu <song@kernel.org>
-To: bpf@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Cc: ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	kernel-team@meta.com,
-	viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com,
-	Song Liu <song@kernel.org>
-Subject: [PATCH bpf-next 3/3] selftests/bpf: Add tests for bpf_kern_path kfunc
-Date: Wed, 26 Nov 2025 16:50:11 -0800
-Message-ID: <20251127005011.1872209-8-song@kernel.org>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251127005011.1872209-1-song@kernel.org>
-References: <20251127005011.1872209-1-song@kernel.org>
+	s=arc-20240116; t=1764206110; c=relaxed/simple;
+	bh=jbv/5yqfSa0KJ/IeA29hXhIEAtQ59RgN8Zbg7ZWt3Bs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=FvtvvnNi5rg7OD6gkAN6CnjdPe7vjkKv+BJdY4YTCwlgO8TT7URyGgf2WMpJLpEivRfQlX6UZZzAIZOp7FU3lLwrtGt55dVtpTkAdXlhnXKd70N0/qLSdZzb6yDa1iYcAuRQzonPujI+Le3fm/hac4pnWgVrUqxOv26iH+p8B+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VtXWOBz5; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-7b9a98b751eso242793b3a.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Nov 2025 17:15:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1764206106; x=1764810906; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=YN0BTLFbTgqhPvFlS+d/VYwmsgL4p5TAnUdzEI0ntIc=;
+        b=VtXWOBz5kvhlT+HHpT42BUwUQ5eVLkegSXUfr6Q0m7BVHOLfcSyR8EWL7GHT4H9F4W
+         kxtLyRtcwtI6RABWmXedgM+SBB8mH9Jo5bC71KczP7sGnDMqRRDtH2SrpQBpT7M8UswM
+         6/ZADe6us54p9OcxEjskT0c1+hztXlYM9h3gAYooUTVwCUo+xgJF27cS9V3kRbO9dnYS
+         FngzepAHNjrKMcGH2/1ITVHRSg6q1X1sGDfX3L8M4LcULRknxhgbfM6ciCGMkqkC2ySs
+         VNNnVkQA/sv3Zc9Sd7DmAXC/3ObsZqOgT1EInbxI0B+ew+ZXKp5+lcZxxYqipJj+li6V
+         QhbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764206106; x=1764810906;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YN0BTLFbTgqhPvFlS+d/VYwmsgL4p5TAnUdzEI0ntIc=;
+        b=bw8dtpiO3rTuG3995udHT0Kt60OzkljujJOrDtxvoz1sWP9nMcc3vSK5oNjrNal6HY
+         QJMvJMKA//J54ctkerRGSAO3mdM5/48oNVpPj8s0tkFoZUmwHH1y56GSZr04zZhku+83
+         is3ysKp3YhRyXNAQJhnKdIBI2IArhag6u2Fl7GKtj6aMoBlYfO7Ja9yDlxViGBIBclFO
+         TuxaoTh29wbI6NeqssgYxbeLrkKEdz3wD3LOFEz2XrNAS+pICPrILnVYzmXGm45wE2ya
+         HfBsfY67yDQf/l8yWOeNTdUsw1QVPQWOdLK3I8zQBIQkl066ZMP86hJR40ROcd7b9A1O
+         ebRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVN+4sQXhfZkCMee0OXtqX0yCqO/Ff19wNw12L5HKDwsYH9NHpjcMDQKIP7UpIlFiszoPlmcKUxwDHX8iKu@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy22hcF6U1a547y2XEkdsbR1zFYZMaIAERnat9M7202PVyEM24Q
+	GS5ls9zlHOR4eFVkps4tGeNgdI3Nxhye1+dUHvZnVkx5JIJD3G7oANV6
+X-Gm-Gg: ASbGnctvK9eYNHFnCwhO2IcR31BWtGGlLsEyKZUEUfz7RJLixLkFlzCLB07JIGhdrb8
+	AsRYHojyheXd/CXfUlcNrrp4khbNbaXzdbjMzHCJiLPzj6QRbyRM48I5abNNjhe+ocpuF+b0H25
+	T9Q0ONw8llmaiDSSP9UZw++vU416f0cRYZACYfQmN8Nb+nb5BYI/G0/Jjn0HC8jALSdJZBRtU0O
+	30kGXFHVKGwtzz+KNdP9m3vqHCCPjmkU39GNrDXmaRh05Yg8z0m0in3eACy6gAlbrZRKz7r00Ck
+	QR9vC8XPYyRMDCw8ucrzaOLIDDFUf36FiXgcnV2SEm5UmEbUwzzeOzPFCCkS0BrXYnV3Y1jm0tC
+	r3IIlgaREIalFxRxa/qTcTylIsrJZq+5JXA2Tw6X6WFSlzaSQqNflXPKSUE9OO/dnzn7e+WArC/
+	1S6pIWr7IWKzbGfRVOBBGaVskP
+X-Google-Smtp-Source: AGHT+IFOjeQ0nHa/gitKNf1wf8IwI8ZEjtO1qVKyyQQ31rBE2Lfq+ONwSrRkJugnArpqn7KBTPKjcA==
+X-Received: by 2002:a05:6a00:114f:b0:7a4:f552:b524 with SMTP id d2e1a72fcca58-7ca8b2b16e0mr9121834b3a.28.1764206105589;
+        Wed, 26 Nov 2025 17:15:05 -0800 (PST)
+Received: from Barrys-MBP.hub ([47.72.129.29])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7c414c226f9sm22447356b3a.53.2025.11.26.17.14.44
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Wed, 26 Nov 2025 17:15:04 -0800 (PST)
+From: Barry Song <21cnbao@gmail.com>
+To: akpm@linux-foundation.org,
+	linux-mm@kvack.org
+Cc: Barry Song <v-songbaohua@oppo.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Paul Walmsley <pjw@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	x86@kernel.org,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	David Hildenbrand <david@kernel.org>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Pedro Falcato <pfalcato@suse.de>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Oscar Salvador <osalvador@suse.de>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Oven Liyang <liyangouwen1@oppo.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ada Couprie Diaz <ada.coupriediaz@arm.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	=?UTF-8?q?Kristina=20Mart=C5=A1enko?= <kristina.martsenko@arm.com>,
+	Kevin Brodsky <kevin.brodsky@arm.com>,
+	Yeoreum Yun <yeoreum.yun@arm.com>,
+	Wentao Guan <guanwentao@uniontech.com>,
+	Thorsten Blum <thorsten.blum@linux.dev>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Yunhui Cui <cuiyunhui@bytedance.com>,
+	Nam Cao <namcao@linutronix.de>,
+	Chris Li <chrisl@kernel.org>,
+	Kairui Song <kasong@tencent.com>,
+	Kemeng Shi <shikemeng@huaweicloud.com>,
+	Nhat Pham <nphamcs@gmail.com>,
+	Baoquan He <bhe@redhat.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	loongarch@lists.linux.dev,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-riscv@lists.infradead.org,
+	linux-s390@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: [RFC PATCH 0/2] mm: continue using per-VMA lock when retrying page faults after I/O
+Date: Thu, 27 Nov 2025 09:14:36 +0800
+Message-Id: <20251127011438.6918-1-21cnbao@gmail.com>
+X-Mailer: git-send-email 2.39.3 (Apple Git-146)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Add comprehensive selftests for the new bpf_kern_path and bpf_path_put
-kfuncs:
+From: Barry Song <v-songbaohua@oppo.com>
 
-1. Functional tests (prog_tests/kern_path.c, progs/test_kern_path.c):
-   - test_kern_path_basic: Tests successful path resolution using
-     /proc/self/exe and validates the resolved path with bpf_path_d_path
-   - test_kern_path_sb_mount: Tests bpf_kern_path with dynamic input
-     from LSM hook parameter (dev_name from sb_mount), demonstrating
-     real-world usage where BPF programs resolve paths from hook args
+Oven observed most mmap_lock contention and priority inversion
+come from page fault retries after waiting for I/O completion.
+Oven subsequently raised the following idea:
 
-2. Verifier success tests (progs/verifier_kern_path.c):
-   - kern_path_success: Proper acquire -> use -> release pattern
-   - kern_path_multiple_paths: Multiple concurrent path acquisitions
+There is no need to always fall back to mmap_lock if the per-VMA
+lock was released only to wait for pagecache or swapcache to
+become ready.
 
-3. Verifier failure tests (progs/verifier_kern_path_fail.c):
-   - kern_path_unreleased: Resource leak detection
-   - path_put_unacquired: Releasing unacquired path
-   - path_use_after_put: Use-after-free detection
-   - double_path_put: Double-free detection
-   - kern_path_non_lsm: Program type restrictions (LSM only)
-   - kern_path_non_const_str: reject none const string
+In this case, the retry path can continue using the per-VMA lock.
+This is a big win: it greatly reduces mmap_lock acquisitions.
 
-These tests verify both the functionality of the kfuncs and that the
-verifier properly enforces acquire/release semantics to prevent
-resource leaks.
+Oven Liyang (1):
+  mm/filemap: Retry fault by VMA lock if the lock was released for I/O
 
-Signed-off-by: Song Liu <song@kernel.org>
----
- .../testing/selftests/bpf/bpf_experimental.h  |  4 +
- .../selftests/bpf/prog_tests/kern_path.c      | 82 ++++++++++++++++
- .../selftests/bpf/progs/test_kern_path.c      | 56 +++++++++++
- .../selftests/bpf/progs/verifier_kern_path.c  | 52 ++++++++++
- .../bpf/progs/verifier_kern_path_fail.c       | 97 +++++++++++++++++++
- 5 files changed, 291 insertions(+)
- create mode 100644 tools/testing/selftests/bpf/prog_tests/kern_path.c
- create mode 100644 tools/testing/selftests/bpf/progs/test_kern_path.c
- create mode 100644 tools/testing/selftests/bpf/progs/verifier_kern_path.c
- create mode 100644 tools/testing/selftests/bpf/progs/verifier_kern_path_fail.c
+Barry Song (1):
+  mm/swapin: Retry swapin by VMA lock if the lock was released for I/O
 
-diff --git a/tools/testing/selftests/bpf/bpf_experimental.h b/tools/testing/selftests/bpf/bpf_experimental.h
-index 2cd9165c7348..c512c9a14752 100644
---- a/tools/testing/selftests/bpf/bpf_experimental.h
-+++ b/tools/testing/selftests/bpf/bpf_experimental.h
-@@ -221,6 +221,10 @@ extern void bpf_put_file(struct file *file) __ksym;
-  */
- extern int bpf_path_d_path(const struct path *path, char *buf, size_t buf__sz) __ksym;
- 
-+extern struct path *bpf_kern_path(const char *pathname, unsigned int flags) __ksym;
-+extern void bpf_path_put(struct path *path) __ksym;
-+extern int bpf_path_d_path(const struct path *path, char *buf, size_t buf__sz) __ksym;
-+
- /* This macro must be used to mark the exception callback corresponding to the
-  * main program. For example:
-  *
-diff --git a/tools/testing/selftests/bpf/prog_tests/kern_path.c b/tools/testing/selftests/bpf/prog_tests/kern_path.c
-new file mode 100644
-index 000000000000..f4cdfe202a26
---- /dev/null
-+++ b/tools/testing/selftests/bpf/prog_tests/kern_path.c
-@@ -0,0 +1,82 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2025 Meta Platforms, Inc. */
-+
-+#include <test_progs.h>
-+#include <sys/mount.h>
-+#include <fcntl.h>
-+#include <unistd.h>
-+#include <errno.h>
-+
-+#include "test_kern_path.skel.h"
-+#include "verifier_kern_path.skel.h"
-+#include "verifier_kern_path_fail.skel.h"
-+
-+static void __test_kern_path(void (*trigger)(void))
-+{
-+	struct test_kern_path *skel;
-+	int err;
-+
-+	skel = test_kern_path__open_and_load();
-+	if (!ASSERT_OK_PTR(skel, "test_kern_path__open_and_load"))
-+		return;
-+
-+	skel->bss->monitored_pid = getpid();
-+
-+	err = test_kern_path__attach(skel);
-+	if (!ASSERT_OK(err, "test_kern_path__attach"))
-+		goto cleanup;
-+
-+	trigger();
-+
-+	/* Verify the bpf_path_d_path worked */
-+	ASSERT_GT(skel->bss->path_len, 0, "path_len > 0");
-+
-+cleanup:
-+	test_kern_path__destroy(skel);
-+}
-+
-+static void trigger_file_open(void)
-+{
-+	int fd;
-+
-+	fd = open("/dev/null", O_RDONLY);
-+	if (!ASSERT_OK_FD(fd, "open /dev/null"))
-+		return;
-+	close(fd);
-+}
-+
-+static void trigger_sb_mount(void)
-+{
-+	char tmpdir[] = "/tmp/bpf_kern_path_test_XXXXXX";
-+	int err;
-+
-+	if (!ASSERT_OK_PTR(mkdtemp(tmpdir), "mkdtemp"))
-+		return;
-+
-+	err = mount("/tmp", tmpdir, NULL, MS_BIND, NULL);
-+	if (!ASSERT_OK(err, "bind mount"))
-+		goto rmdir;
-+
-+	umount(tmpdir);
-+rmdir:
-+	rmdir(tmpdir);
-+}
-+
-+void test_kern_path(void)
-+{
-+	if (test__start_subtest("file_open"))
-+		__test_kern_path(trigger_file_open);
-+
-+	if (test__start_subtest("sb_mount"))
-+		__test_kern_path(trigger_sb_mount);
-+}
-+
-+void test_verifier_kern_path(void)
-+{
-+	RUN_TESTS(verifier_kern_path);
-+}
-+
-+void test_verifier_kern_path_fail(void)
-+{
-+	RUN_TESTS(verifier_kern_path_fail);
-+}
-diff --git a/tools/testing/selftests/bpf/progs/test_kern_path.c b/tools/testing/selftests/bpf/progs/test_kern_path.c
-new file mode 100644
-index 000000000000..e9186a1aa990
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/test_kern_path.c
-@@ -0,0 +1,56 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2025 Meta Platforms, Inc. */
-+
-+#include "vmlinux.h"
-+#include <bpf/bpf_tracing.h>
-+#include "bpf_misc.h"
-+#include "bpf_experimental.h"
-+
-+#define MAX_PATH_LEN 256
-+
-+char buf[MAX_PATH_LEN];
-+int path_len = 0;
-+u32 monitored_pid = 0;
-+
-+SEC("lsm.s/file_open")
-+int BPF_PROG(test_kern_path_basic, struct file *file)
-+{
-+	struct path *p;
-+	int ret;
-+
-+	if (bpf_get_current_pid_tgid() >> 32 != monitored_pid)
-+		return 0;
-+
-+	p = bpf_kern_path("/proc/self/exe", 0);
-+	if (p) {
-+		ret = bpf_path_d_path(p, buf, MAX_PATH_LEN);
-+		if (ret > 0)
-+			path_len = ret;
-+		bpf_path_put(p);
-+	}
-+
-+	return 0;
-+}
-+
-+SEC("lsm.s/sb_mount")
-+int BPF_PROG(test_kern_path_from_sb_mount, const char *dev_name, const struct path *path,
-+	     const char *type, unsigned long flags, void *data)
-+{
-+	struct path *p;
-+	int ret;
-+
-+	if (bpf_get_current_pid_tgid() >> 32 != monitored_pid)
-+		return 0;
-+
-+	p = bpf_kern_path(dev_name, 0);
-+	if (p) {
-+		ret = bpf_path_d_path(p, buf, MAX_PATH_LEN);
-+		if (ret > 0)
-+			path_len = ret;
-+		bpf_path_put(p);
-+	}
-+
-+	return 0;
-+}
-+
-+char _license[] SEC("license") = "GPL";
-diff --git a/tools/testing/selftests/bpf/progs/verifier_kern_path.c b/tools/testing/selftests/bpf/progs/verifier_kern_path.c
-new file mode 100644
-index 000000000000..0e6ccf640b64
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/verifier_kern_path.c
-@@ -0,0 +1,52 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2025 Meta Platforms, Inc. */
-+
-+#include <vmlinux.h>
-+#include <bpf/bpf_tracing.h>
-+#include <linux/limits.h>
-+#include "bpf_misc.h"
-+#include "bpf_experimental.h"
-+
-+static char buf[PATH_MAX];
-+
-+SEC("lsm.s/file_open")
-+__success
-+int BPF_PROG(kern_path_success)
-+{
-+	struct path *p;
-+
-+	p = bpf_kern_path("/proc/self/exe", 0);
-+	if (!p)
-+		return 0;
-+
-+	bpf_path_d_path(p, buf, sizeof(buf));
-+
-+	bpf_path_put(p);
-+	return 0;
-+}
-+
-+SEC("lsm.s/file_open")
-+__success
-+int BPF_PROG(kern_path_multiple_paths)
-+{
-+	struct path *p1, *p2;
-+
-+	p1 = bpf_kern_path("/proc/self/exe", 0);
-+	if (!p1)
-+		return 0;
-+
-+	p2 = bpf_kern_path("/proc/self/cwd", 0);
-+	if (!p2) {
-+		bpf_path_put(p1);
-+		return 0;
-+	}
-+
-+	bpf_path_d_path(p1, buf, sizeof(buf));
-+	bpf_path_d_path(p2, buf, sizeof(buf));
-+
-+	bpf_path_put(p2);
-+	bpf_path_put(p1);
-+	return 0;
-+}
-+
-+char _license[] SEC("license") = "GPL";
-diff --git a/tools/testing/selftests/bpf/progs/verifier_kern_path_fail.c b/tools/testing/selftests/bpf/progs/verifier_kern_path_fail.c
-new file mode 100644
-index 000000000000..520c227af5ca
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/verifier_kern_path_fail.c
-@@ -0,0 +1,97 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2025 Meta Platforms, Inc. */
-+
-+#include <vmlinux.h>
-+#include <bpf/bpf_tracing.h>
-+#include <linux/limits.h>
-+#include "bpf_misc.h"
-+#include "bpf_experimental.h"
-+
-+static char buf[PATH_MAX];
-+
-+SEC("lsm.s/file_open")
-+__failure __msg("Unreleased reference")
-+int BPF_PROG(kern_path_unreleased)
-+{
-+	struct path *p;
-+
-+	p = bpf_kern_path("/proc/self/exe", 0);
-+	if (!p)
-+		return 0;
-+
-+	/* Acquired but never released - should fail verification */
-+	return 0;
-+}
-+
-+SEC("lsm.s/file_open")
-+__failure __msg("pointer type STRUCT path must point to scalar, or struct with scalar")
-+int BPF_PROG(path_put_unacquired)
-+{
-+	struct path p = {};
-+
-+	/* Can't release an unacquired path - should fail verification */
-+	bpf_path_put(&p);
-+	return 0;
-+}
-+
-+SEC("lsm.s/file_open")
-+__failure __msg("pointer type STRUCT path must point to scalar, or struct with scalar")
-+int BPF_PROG(path_use_after_put, struct file *file)
-+{
-+	struct path *p;
-+
-+	p = bpf_kern_path("/proc/self/exe", 0);
-+	if (!p)
-+		return 0;
-+
-+	bpf_path_put(p);
-+
-+	/* Using path after put - should fail verification */
-+	bpf_path_d_path(p, buf, sizeof(buf));
-+	return 0;
-+}
-+
-+SEC("lsm.s/file_open")
-+__failure __msg("pointer type STRUCT path must point to scalar, or struct with scalar")
-+int BPF_PROG(double_path_put)
-+{
-+	struct path *p;
-+
-+	p = bpf_kern_path("/proc/self/exe", 0);
-+	if (!p)
-+		return 0;
-+
-+	bpf_path_put(p);
-+	/* Double put - should fail verification */
-+	bpf_path_put(p);
-+	return 0;
-+}
-+
-+SEC("fentry/vfs_open")
-+__failure __msg("calling kernel function bpf_kern_path is not allowed")
-+int BPF_PROG(kern_path_non_lsm)
-+{
-+	struct path *p;
-+
-+	/* Calling bpf_kern_path() from a non-LSM BPF program isn't permitted */
-+	p = bpf_kern_path("/proc/self/exe", 0);
-+	if (p)
-+		bpf_path_put(p);
-+	return 0;
-+}
-+
-+SEC("lsm.s/sb_eat_lsm_opts")
-+__failure __msg("arg#0 doesn't point to a const string")
-+int BPF_PROG(kern_path_non_const_str, char *options, void **mnt_opts)
-+{
-+	struct path *p;
-+
-+	/* Calling bpf_kern_path() from a with non-const string isn't permitted */
-+	p = bpf_kern_path(options, 0);
-+	if (p)
-+		bpf_path_put(p);
-+	return 0;
-+}
-+
-+
-+char _license[] SEC("license") = "GPL";
+ arch/arm/mm/fault.c       |  5 +++++
+ arch/arm64/mm/fault.c     |  5 +++++
+ arch/loongarch/mm/fault.c |  4 ++++
+ arch/powerpc/mm/fault.c   |  5 ++++-
+ arch/riscv/mm/fault.c     |  4 ++++
+ arch/s390/mm/fault.c      |  4 ++++
+ arch/x86/mm/fault.c       |  4 ++++
+ include/linux/mm_types.h  |  9 +++++----
+ mm/filemap.c              |  5 ++++-
+ mm/memory.c               | 10 ++++++++--
+ 10 files changed, 47 insertions(+), 8 deletions(-)
+
+Cc: Russell King <linux@armlinux.org.uk>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will@kernel.org>
+Cc: Huacai Chen <chenhuacai@kernel.org>
+Cc: WANG Xuerui <kernel@xen0n.name>
+Cc: Madhavan Srinivasan <maddy@linux.ibm.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Nicholas Piggin <npiggin@gmail.com>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Paul Walmsley <pjw@kernel.org>
+Cc: Palmer Dabbelt <palmer@dabbelt.com>
+Cc: Albert Ou <aou@eecs.berkeley.edu>
+Cc: Alexandre Ghiti <alex@ghiti.fr>
+Cc: Alexander Gordeev <agordeev@linux.ibm.com>
+Cc: Gerald Schaefer <gerald.schaefer@linux.ibm.com>
+Cc: Heiko Carstens <hca@linux.ibm.com>
+Cc: Vasily Gorbik <gor@linux.ibm.com>
+Cc: Christian Borntraeger <borntraeger@linux.ibm.com>
+Cc: Sven Schnelle <svens@linux.ibm.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: x86@kernel.org
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: David Hildenbrand <david@kernel.org>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Liam R. Howlett <Liam.Howlett@oracle.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: Mike Rapoport <rppt@kernel.org>
+Cc: Suren Baghdasaryan <surenb@google.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Pedro Falcato <pfalcato@suse.de>
+Cc: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Oscar Salvador <osalvador@suse.de>
+Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Oven Liyang <liyangouwen1@oppo.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Ada Couprie Diaz <ada.coupriediaz@arm.com>
+Cc: Robin Murphy <robin.murphy@arm.com>
+Cc: Kristina Martšenko <kristina.martsenko@arm.com>
+Cc: Kevin Brodsky <kevin.brodsky@arm.com>
+Cc: Yeoreum Yun <yeoreum.yun@arm.com>
+Cc: Wentao Guan <guanwentao@uniontech.com>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Yunhui Cui <cuiyunhui@bytedance.com>
+Cc: Nam Cao <namcao@linutronix.de>
+Cc: Chris Li <chrisl@kernel.org>
+Cc: Kairui Song <kasong@tencent.com>
+Cc: Kemeng Shi <shikemeng@huaweicloud.com>
+Cc: Nhat Pham <nphamcs@gmail.com>
+Cc: Baoquan He <bhe@redhat.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+Cc: loongarch@lists.linux.dev
+Cc: linuxppc-dev@lists.ozlabs.org
+Cc: linux-riscv@lists.infradead.org
+Cc: linux-s390@vger.kernel.org
+Cc: linux-mm@kvack.org
+Cc: linux-fsdevel@vger.kernel.org
+
 -- 
-2.47.3
+2.39.3 (Apple Git-146)
 
 
