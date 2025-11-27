@@ -1,129 +1,226 @@
-Return-Path: <linux-fsdevel+bounces-69936-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69937-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90E34C8C633
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 00:51:44 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BBC8C8C6DF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 01:36:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5BB854E2F8F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Nov 2025 23:51:42 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 63EB934F1DF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 00:36:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9039F2FD7BE;
-	Wed, 26 Nov 2025 23:51:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FFEB225A35;
+	Thu, 27 Nov 2025 00:36:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="n1nD1sho"
+	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="dZ3oUZB+";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="XSNSgk9a"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from fout-a6-smtp.messagingengine.com (fout-a6-smtp.messagingengine.com [103.168.172.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30EF129BD85;
-	Wed, 26 Nov 2025 23:51:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF0653A8F7;
+	Thu, 27 Nov 2025 00:36:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764201097; cv=none; b=fFWVK+8oG1BW9LZHhFBt9YizgeiJWS7QvOA5IibCVXZiQry28g7HhhoG20aXULqiC/OiEgvIyC8LIzBtM0EyG6oUmawGeHzo+LMYUNZEt0QIvEEGFwAotkg8BgkxmGyTMDcqfoy8AufRHNAAKh73LnyiNh+8QWLGglzoXOmmZSQ=
+	t=1764203792; cv=none; b=tEBzw5rj2rCHG5S0MwhhM8SO1mqaHNOkr0F406Pt/SAJDJ3uAZ1IPSAa8EDPH3s8RGTgGUoKZqADR/OlhDs7+v6mZWmp/FrDxLqS19FfZCKpe0nhnL99v5gjWGnmjhWg9vDQY+q5kqYhyetYEw4Mcn1PgezmESolktttsa9sELk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764201097; c=relaxed/simple;
-	bh=ZJ0zJGR5EPjB0PMK4QnRQ1a5rXXPjLj1UEoGCWufwa8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d1tLotsijUwQAnKYTDqlHsn+bsrMchOBJ0s2f7rKV1jP+w523HyrYlyqhv9tK9d+gTEspEWLJbxG0mlLRUMjVhfDe9mx4+wrW36IT36Qk7YAu6Y+e30sU76Y/VTlslaCLm3SCiSc2CwFHNN1ttVyJMuM/pijf0wFApnivYBCqu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=n1nD1sho; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=wkC4EC2zssMx28s9No60sCNue+peZIp/avGbOKBlk10=; b=n1nD1shoa5nvuzhDtF44Purkpc
-	5bjbZrX5nCdzonSHSYJqpHMlADRQU+VwdfC5fXQJk4ojTO3bemQGJkJw4CtbUfR3/1ghTrFjzhzLX
-	xyxRHWbxXcWc/dcbMkci+w69UUeqkccHLZw+oxDejQ0dfn9XN7hKH3lGMnDlRq24PyViwiT8WzOce
-	q2moRs0tG+D5MF9A0E0YYwDfqx8PGiMrkbyZL8OzaYBxQXeFNUwufzjmsRtaWbHmJMdD6AyCQLs21
-	KjxSQ2LIwidiH62xuLMZf1PIo8EYJ2NeqssUZH5KpjxYnGZXyeoC6X9sAxibDbEo/JmThxsV/WJUM
-	r/WQtNxg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.99 #2 (Red Hat Linux))
-	id 1vOPII-00000006Ijc-3QlD;
-	Wed, 26 Nov 2025 23:51:30 +0000
-Date: Wed, 26 Nov 2025 23:51:30 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: david laight <david.laight@runbox.com>
-Cc: "Russell King (Oracle)" <linux@armlinux.org.uk>,
-	Xie Yuanbin <xieyuanbin1@huawei.com>, brauner@kernel.org,
-	jack@suse.cz, will@kernel.org, nico@fluxnic.net,
-	akpm@linux-foundation.org, hch@lst.de, jack@suse.com,
-	wozizhi@huaweicloud.com, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mm@kvack.org, lilinjie8@huawei.com, liaohua4@huawei.com,
-	wangkefeng.wang@huawei.com, pangliyuan1@huawei.com
-Subject: Re: [RFC PATCH] vfs: Fix might sleep in load_unaligned_zeropad()
- with rcu read lock held
-Message-ID: <20251126235130.GG3538@ZenIV>
-References: <20251126090505.3057219-1-wozizhi@huaweicloud.com>
- <20251126101952.174467-1-xieyuanbin1@huawei.com>
- <20251126181031.GA3538@ZenIV>
- <20251126184820.GB3538@ZenIV>
- <aSdPYYqPD5V7Yeh6@shell.armlinux.org.uk>
- <20251126192640.GD3538@ZenIV>
- <aSdaWjgqP4IVivlN@shell.armlinux.org.uk>
- <20251126200221.GE3538@ZenIV>
- <20251126222505.1638a66d@pumpkin>
+	s=arc-20240116; t=1764203792; c=relaxed/simple;
+	bh=xsuFcbAlg2HboMaO7bbDJ/KZc/wViFY/2Ba8FAZUTeg=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=BlTotGO4XtWMPdaPhriUeaTwGjm3Xq+szyHpIIU9KLqBac56vbGoIB6A/hRmG8+bDgRPEfQQSeyY3KynQTVaXc7K+WEPOs2I7WxEyxvseWF81iq9EkqahMR9fPJDx5RhwEpvUFb3G55XVtcOZfDkN2igZLajeRRxF7VUn5WDdFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=dZ3oUZB+; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=XSNSgk9a; arc=none smtp.client-ip=103.168.172.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+	by mailfout.phl.internal (Postfix) with ESMTP id D6447EC0032;
+	Wed, 26 Nov 2025 19:36:28 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-02.internal (MEProxy); Wed, 26 Nov 2025 19:36:28 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to; s=fm3; t=
+	1764203788; x=1764290188; bh=P7Cl5oo2kGuj6tjWqJ/aNffHuN9nBjPRtVO
+	qt/AXLNA=; b=dZ3oUZB+vN9SYW55tRyRF+d1BsOlZ1fE6rDXfsWgX+hru5OUWmI
+	9mCR5VtxXCHIprPTHz+DuB0fUv2Sn1/XsUpHrlKjtmVRCq3jwIhPZpFBDD+Xh3Ad
+	Fx6TpoZmaLTq+hjPjSZ+6O+/sy7NHpWc2O+j//USDWeGM//YS/1AJbv9HVCDzq0a
+	8Z1xC2YKNqJFTTbYuTOeTd9djT3uT2hMzK1dBt3npXoqR6WKlQd+DCGNAatWlcPu
+	yOi2A1I/vGbYhzCRktUyl10QSrDpTQJkOkVmsAi0jZRKKX6rJLrMTV2gP26hISIZ
+	mDwCGtVvFMGFB4Rk/3tb5IQ/AenVHmgBUWw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1764203788; x=
+	1764290188; bh=P7Cl5oo2kGuj6tjWqJ/aNffHuN9nBjPRtVOqt/AXLNA=; b=X
+	SNSgk9aw65jvcthV0WQALtb4HUptm5zN93f2RTegAXPa3oOd9ISGr9SzQ/BbO64V
+	RKFD5/gZ1oDO2fKCS/EI6bMfF5C00XdIMsJwwNrKZ9zCT31P5A+FRLhViiHOpc9f
+	PKGz8sdaMmL6X8N/w8q9EP7IzFvLeXtgE0WNVLGXHV5+F5N7V8vhUPDHZR0m9VUN
+	LneN9ggbbyKEK3N0acZHjgGwZlS/c0ztkT3zrztX/Fnh65Vlzd0sIQkyHMa8db9W
+	XJ/zk2Zi+HhGSsiBNLpAXFTRWU+jpOR/cIKyGvZ23+olzhym/SkHDtkvb1oEIevo
+	OnPv54+L8r+WUCi8/1XdQ==
+X-ME-Sender: <xms:DJ0naZmuFUdboO5grDQinB8zM6PhJacgP75g4kKod8JvVB50Max2-g>
+    <xme:DJ0nafPhWelhwuJKpOwxOv66Fc4HOdOeEcgNBChw5o2qg3CJtxrOpeKgDAUtqmTQq
+    9exj0MfK6oCDpw12I0lnsDjZ7C_rd9XOyGJdsAKVgFJpdDGdw>
+X-ME-Received: <xmr:DJ0naVwmEM9AECzzdwQLQer52s-IKpxQ55dTh7I4zQtInOOAly0AeW6ReDkvPoNth_mmstDKUlYkU-XW6eFh36SlZNRVHCE2NRbp-p_zoHLg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvgeehkedtucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurheptgfgggfhvfevufgjfhffkfhrsehtqhertddttdejnecuhfhrohhmpefpvghilheu
+    rhhofihnuceonhgvihhlsgesohifnhhmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnh
+    epleejtdefgeeukeeiteduveehudevfeffvedutefgteduhfegvdfgtdeigeeuudejnecu
+    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhgvihhlsg
+    esohifnhhmrghilhdrnhgvthdpnhgspghrtghpthhtohepudegpdhmohguvgepshhmthhp
+    ohhuthdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpd
+    hrtghpthhtoheplhhinhhugidqnhhfshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgt
+    phhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprh
+    gtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+    pdhrtghpthhtohepthhomhesthgrlhhpvgihrdgtohhmpdhrtghpthhtohepjhgrtghkse
+    hsuhhsvgdrtgiipdhrtghpthhtohepohhkohhrnhhivghvsehrvgguhhgrthdrtghomhdp
+    rhgtphhtthhopegthhhutghkrdhlvghvvghrsehorhgrtghlvgdrtghomhdprhgtphhtth
+    hopegurghirdhnghhosehorhgrtghlvgdrtghomh
+X-ME-Proxy: <xmx:DJ0naUshjuwxhK27jyugEFQEqOGn16QnyCyQ7vAdfTBX4NGFSSSdpg>
+    <xmx:DJ0naQaUvLmul-zcc8s6wSnCgOYCA3_STMu9qsBqsb8by5yuDzmdug>
+    <xmx:DJ0nab3del8lnk4_thAw4hwnWgBw8yk122anGVXVUjZkVBKM_V_ByQ>
+    <xmx:DJ0naaunp7sfseXVlMn7jTfxxlb1hHpzl1ESGRinaO4KEgcbXxkEYw>
+    <xmx:DJ0naewUMTSZCCDhjiGzlqLDY4YwQZIIl2VOEdtRF5AE5wsPx9ARWPPI>
+Feedback-ID: iab3e480c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 26 Nov 2025 19:36:24 -0500 (EST)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251126222505.1638a66d@pumpkin>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+From: NeilBrown <neilb@ownmail.net>
+To: "Benjamin Coddington" <bcodding@hammerspace.com>
+Cc: "Alexander Viro" <viro@zeniv.linux.org.uk>,
+ "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>,
+ "Chuck Lever" <chuck.lever@oracle.com>, "Jeff Layton" <jlayton@kernel.org>,
+ "Olga Kornievskaia" <okorniev@redhat.com>, "Dai Ngo" <Dai.Ngo@oracle.com>,
+ "Tom Talpey" <tom@talpey.com>, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
+ "Trond Myklebust" <trondmy@kernel.org>, "Mike Snitzer" <snitzer@kernel.org>
+Subject: Re: [PATCH v1 0/3] Allow knfsd to use atomic_open()
+In-reply-to: <9DF41F45-F6E6-4306-93BC-48BF63236BE4@hammerspace.com>
+References: <cover.1763483341.git.bcodding@hammerspace.com>,
+ <176351538077.634289.8846523947369398554@noble.neil.brown.name>,
+ <0C9008B1-2C70-43C4-8532-52D91D6B7ED1@hammerspace.com>,
+ <176367758664.634289.10094974539440300671@noble.neil.brown.name>,
+ <034A5D25-AAD3-4633-B90A-317762CED5D2@hammerspace.com>,
+ <176419077220.634289.8903814965587480932@noble.neil.brown.name>,
+ <9DF41F45-F6E6-4306-93BC-48BF63236BE4@hammerspace.com>
+Date: Thu, 27 Nov 2025 11:36:20 +1100
+Message-id: <176420378092.634289.15227073044036379500@noble.neil.brown.name>
+Reply-To: NeilBrown <neil@brown.name>
 
-On Wed, Nov 26, 2025 at 10:25:05PM +0000, david laight wrote:
+On Thu, 27 Nov 2025, Benjamin Coddington wrote:
+> On 26 Nov 2025, at 15:59, NeilBrown wrote:
+>=20
+> > On Fri, 21 Nov 2025, Benjamin Coddington wrote:
+> >> On 20 Nov 2025, at 17:26, NeilBrown wrote:
+> >>
+> >>> On Wed, 19 Nov 2025, Benjamin Coddington wrote:
+> >>>
+> >>>> Ah, it's true.  I did not validate knfsd's behaviors, only its interfa=
+ce with
+> >>>> VFS.  IIUC knfsd gets around needing to pass O_EXCL by holding the dir=
+ectory
+> >>>> inode lock over the create, and since it doesn't need to do lookup bec=
+ause
+> >>>> it already has a filehandle, I think O_EXCL is moot.
+> >>>
+> >>> Holding the directory lock is sufficient for providing O_EXCL for local
+> >>> filesystems which will be blocked from creating while that lock is held.
+> >>> It is *not* sufficient for remote filesystems which are precisely those
+> >>> which provide ->atomic_open.
+> >>>
+> >>> The fact that you are adding support for atomic_open means that O_EXCL
+> >>> isn't moot.
+> >>
+> >> I mean to say: knfsd doesn't need to pass O_EXCL because its already tak=
+ing
+> >> care to produce an exclusive open via nfsv4 semantics.
+> >
+> > Huh?
+> >
+> > The interesting circumstance here is an NFS re-export of an NFS
+> > filesystem - is that right?
+>=20
+> That's right.
+>=20
+> > The only way that an exclusive create can be achieved on the target
+> > filesystem is if an NFS4_CREATE_EXCLUSIVE4_1 (or similar) create request
+> > is sent to the ultimate sever.  There is nothing knfsd can do to
+> > produce exclusive open semantics on a remote NFS serve except to
+> > explicitly request them.
+>=20
+> True - but I haven't really been worried about that, so I think I see what
+> you're getting at now - you'd like kNFSD to start using O_EXCL when it
+> receives NFS4_CREATE_EXCLUSIVE4_1.
+>=20
+> I think that's a whole different change on its own, but not necessary
+> here because these changes are targeting a very specific problem - the
+> problem where open(O_CREAT) is done in two operations on the remote
+> filesystem.  That problem is solved by this patchset, and I don't think the
+> solution is incomplete because we're not passing O_EXCL for the
+> NFS4_CREATE_EXCLUSIVE{4_1} case.  I think that's a new enhancement - one
+> that I haven't thought through (yet) or tested.
+>=20
+> Up until now, kNFSD has not bothered fiddling with O_EXCL because of the
+> reasons I listed above - for local filesystems or remote.
+>=20
+> Do you disagree that the changes here for the open(O_CREAT) problem is
+> incomplete without new O_EXCL passing to atomic_open()?=20
 
-> Can you fix it with a flag on the exception table entry that means
-> 'don't try to fault in a page'?
-> 
-> I think the logic would be the same as 'disabling pagefaults', just
-> checking a different flag.
-> After all the fault itself happens in both cases.
+It isn't so much that the change is incomplete.  Rather, the change
+introduces a regression.
 
-The problem is getting to the point where you search the exception table
-without blocking.
+The old code was
 
-x86 #PF had been done that way from well before the point when
-load_unaligned_zeropad() had been introduced, so everything worked
-there from the very beginning.
+-	error =3D vfs_create(mnt_idmap(path->mnt),
+-			   d_inode(path->dentry->d_parent),
+-			   path->dentry, mode, true);
 
-arm and arm64, OTOH, were different - there had been logics for
-"if trylock fails, check if we are in kernel space and have no
-matching exception table entry; bugger off if so, otherwise we
-are safe to grab mmap_sem - it's something like get_user() and
-we *want* mmap_sem there", but it did exactly the wrong thing for
-this case.
 
-The only thing that prevented serious breakage from the very beginning
-was that these faults are very rare - and hard to arrange without
-KFENCE.  So it didn't blow up.  In 2017 arm64 side of problem had
-been spotted and (hopefully) fixed.  arm counterpart stayed unnoticed
-(perhaps for the lack of good reproducer) until now.
+Note the "true" at the end.  This instructs nfs_create() to pass O_EXCL
+to nfs_do_create() so an over-the-wire exclusive create is performed.
 
-Most of the faults are from userland code, obviously, so we don't
-want to search through the exception table on the common path.
-So hanging that on a flag in exception table entry is not a good
-idea - we need a cheaper predicate checked first.
+The new code is
 
-x86 starts with separating the fault on kernel address from that on
-userland; we are not going anywhere near mmap_sem (and VMAs in general)
-in the former case and that's where load_unaligned_zeropad() faults
-end up.  arm64 fix consisted of using do_translation_fault() instead
-of do_page_fault(), with the former falling back to the latter for
-userland addresses and using do_bad_area() for kernel ones.
-Assuming that the way it's hooked up covers everything, we should
-be fine there.
++		dentry =3D atomic_open(path, dentry, file, flags, mode);
 
-One potential problem _might_ be with the next PTE present, but
-write-only.  Note that it has to cope with symlink bodies as well
-and those might come from page cache rather than kmem_cache_alloc().
-I'm nowhere near being uptodate on arm64 virtual memory setup, though,
-so take that with a cartload of salt...
+Where "flags" is oflags from nfsd4_vfs_create() which is=20
+   O_CREAT| O_LARGEFILE | O_(read/write/rdwr)
+and no O_EXCL.
+(When atomic_open is called by lookup_open, "open_flag" is passed which
+might contain O_EXCL).
+
+>                                                          If so, do we also
+> need to consider passing O_EXCL when kNFSD does vfs_open() for the case when
+> the filesystem does not have atomic_open()?
+
+No as vfs_open() doesn't do the create, vfs_create() does that.
+And we do need to pass (the equivalent of) O_EXCL when calling
+vfs_create().  In fact we do - that 'true' as the large arg means
+exactly O_EXCL.
+(really we shouldn't be passing 'true' if an exclusive create wasn't
+requested, but it only makes a difference for filesystems that support
+->atomic_open, so it doesn't actually matter what we pass - and Jeff
+has a patch to remove that last arg to vfs_create()).
+
+
+>=20
+> Thanks for engaging with me,
+> Ben
+>=20
+
+Thanks,
+NeilBrown
+
 
