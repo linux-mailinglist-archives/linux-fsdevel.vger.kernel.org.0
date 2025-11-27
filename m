@@ -1,195 +1,311 @@
-Return-Path: <linux-fsdevel+bounces-70031-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70032-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0414C8EB00
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 15:05:20 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CD88C8EAB8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 15:01:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5BC23B104D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 13:58:30 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3949434424A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 14:01:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D565320CB2;
-	Thu, 27 Nov 2025 13:56:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B94433277B1;
+	Thu, 27 Nov 2025 14:01:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="D/JQvHXE";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="vwSAGEnL";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="D/JQvHXE";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="vwSAGEnL"
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="lCyyQzXj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from canpmsgout10.his.huawei.com (canpmsgout10.his.huawei.com [113.46.200.225])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25667287507
-	for <linux-fsdevel@vger.kernel.org>; Thu, 27 Nov 2025 13:56:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B3C8238149;
+	Thu, 27 Nov 2025 14:01:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.225
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764251811; cv=none; b=Q+1w0M/+QTOtqGSmuHAcMnA6H9HNBXSpWyejqv8S2qlFGINCXrSQrfq/EqSgalKxEbjuWdb3ypWZdbww3S65eDsOuPUAg2HO4Fpy8A0q2K6yt0BbvkvPol+1p+uE83lrEB6pbWkzjr65M5RoIdtOmM6XruD+Ap2LuI8a3t0EMEg=
+	t=1764252098; cv=none; b=Q2RjeNxKgt/HDQUpeuP/cP4mBX8CXU6AENP4znO3LJvWhj5Toc/9qDsrBCmWTJXiJjbrqE+kkBJSU7mHYMPjr5hx2CYl23SQsFDX7Ffo8udF+ittWmmdNzeG3yUf0za05v5RDsnogKz4KAyBR+mUkOI5S+51N5wAy8JE6J1oUdQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764251811; c=relaxed/simple;
-	bh=ZZHiB/OWiLfJothgrkeOgMA+Qm0lCjCCoS4U2E2+cAQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DcL+th3uPK3lxqoyWEDRNiVarfyFFMWRx+mqYgy9BbdMXQ3/pC1aWX/m+2WCC1xVMEmGWyhBLPUCm2geHLVYvi4AvjQ1Pyuev6EG2Fonk7XsKfG3V80MhK4w95t+UFToH7nPGsHePjbbZ6LaIdO1Z5LmA21un+soPmPJhE/Qc0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=D/JQvHXE; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=vwSAGEnL; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=D/JQvHXE; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=vwSAGEnL; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 29CB95BD3D;
-	Thu, 27 Nov 2025 13:56:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1764251808; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BuXf+TdPQ+S+htUrTSpTlEEOwx8iA2NlWWGvVRONBKg=;
-	b=D/JQvHXEcFGuTtdTwfjwDcZUQdF/HViFbx6hFBzW7BVK+XuOkLYIifwEkN07N7RlpT98vQ
-	UYyNLvHxchELQr1mgZuyDiJjvD9WFGDTgaK2P7Z+fPDZIEWoCO1mDfSVJndE+yLSGJC4TR
-	SxqZ7Rf8cRPDpeWkkpBXEOG1HqT9/8E=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1764251808;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BuXf+TdPQ+S+htUrTSpTlEEOwx8iA2NlWWGvVRONBKg=;
-	b=vwSAGEnLTr4CuQ0YuL73CCt5/neRVRRPbypxczv28YzfrBu3gMxXBTBB3jrEJUi16oV1KK
-	WffBK6lX/UekJKAQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1764251808; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BuXf+TdPQ+S+htUrTSpTlEEOwx8iA2NlWWGvVRONBKg=;
-	b=D/JQvHXEcFGuTtdTwfjwDcZUQdF/HViFbx6hFBzW7BVK+XuOkLYIifwEkN07N7RlpT98vQ
-	UYyNLvHxchELQr1mgZuyDiJjvD9WFGDTgaK2P7Z+fPDZIEWoCO1mDfSVJndE+yLSGJC4TR
-	SxqZ7Rf8cRPDpeWkkpBXEOG1HqT9/8E=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1764251808;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BuXf+TdPQ+S+htUrTSpTlEEOwx8iA2NlWWGvVRONBKg=;
-	b=vwSAGEnLTr4CuQ0YuL73CCt5/neRVRRPbypxczv28YzfrBu3gMxXBTBB3jrEJUi16oV1KK
-	WffBK6lX/UekJKAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 191FD3EA63;
-	Thu, 27 Nov 2025 13:56:48 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id qwUcBqBYKGlvaQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 27 Nov 2025 13:56:48 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 7754EA0C94; Thu, 27 Nov 2025 14:56:47 +0100 (CET)
-Date: Thu, 27 Nov 2025 14:56:47 +0100
-From: Jan Kara <jack@suse.cz>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2] dcache: touch up predicts in __d_lookup_rcu()
-Message-ID: <45aykcsznrxvbb2pvd5g65dakrz6gtzlab6zlzidssmmemgxbz@2w7qgdpgh6ac>
-References: <20251127131526.4137768-1-mjguzik@gmail.com>
+	s=arc-20240116; t=1764252098; c=relaxed/simple;
+	bh=NnGi83HPcWLGl5xhA1cmcNtvpcFzp19gB2LWyJ3L0UU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LekcyOVvvzU4/jCR5UEZBY6OmbDTG3k++Si0kDKRiU8iu0kA+sJKdz6XjrI6cxKjApqB3wTOYd8/huEpRPOqVZosL9/jbmVOojV8dmxK7p97EB+3153UibN7bDfRzJEskfIAalx93SzxVgGsb/mnneifgZYVX13101SMYeiYLrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=lCyyQzXj; arc=none smtp.client-ip=113.46.200.225
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=HrE4rUXPZp1XpbiyX6WwgbU4cqV3RKFH7cwbdgk9P1g=;
+	b=lCyyQzXjxE9WjklT4d7Hh0khMwXm87ExzrIDAJYID/dXzRDZatbnwFJAlsX+KsW8hqjPGoHmJ
+	y3tTWh7ufpuHPtsBebWigWmZYt4HtnbkvXCmBvpmOf+IvABTdDLIU1MBKXnAMACcy93EHuF8inh
+	flxzzjfU9byFcB/hveSW7TY=
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by canpmsgout10.his.huawei.com (SkyGuard) with ESMTPS id 4dHJ2k53jcz1K96R;
+	Thu, 27 Nov 2025 21:59:42 +0800 (CST)
+Received: from kwepemj100009.china.huawei.com (unknown [7.202.194.3])
+	by mail.maildlp.com (Postfix) with ESMTPS id B60CA1402C4;
+	Thu, 27 Nov 2025 22:01:29 +0800 (CST)
+Received: from DESKTOP-A37P9LK.huawei.com (10.67.109.17) by
+ kwepemj100009.china.huawei.com (7.202.194.3) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 27 Nov 2025 22:01:28 +0800
+From: Xie Yuanbin <xieyuanbin1@huawei.com>
+To: <viro@zeniv.linux.org.uk>, <will@kernel.org>, <nico@fluxnic.net>,
+	<rmk+kernel@armlinux.org.uk>, <linux@armlinux.org.uk>,
+	<david.laight@runbox.com>, <rppt@kernel.org>, <vbabka@suse.cz>,
+	<pfalcato@suse.de>, <brauner@kernel.org>, <lorenzo.stoakes@oracle.com>,
+	<kuninori.morimoto.gx@renesas.com>, <tony@atomide.com>, <arnd@arndb.de>,
+	<bigeasy@linutronix.de>, <akpm@linux-foundation.org>,
+	<punitagrawal@gmail.com>, <hch@lst.de>, <jack@suse.com>, <rjw@rjwysocki.net>,
+	<marc.zyngier@arm.com>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-mm@kvack.org>,
+	<linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+	<wozizhi@huaweicloud.com>, <liaohua4@huawei.com>, <lilinjie8@huawei.com>,
+	<xieyuanbin1@huawei.com>, <pangliyuan1@huawei.com>,
+	<wangkefeng.wang@huawei.com>
+Subject: [RFC PATCH v2 1/2] ARM/mm/fault: always goto bad_area when handling with page faults of kernel address
+Date: Thu, 27 Nov 2025 22:01:08 +0800
+Message-ID: <20251127140109.191657-1-xieyuanbin1@huawei.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251127131526.4137768-1-mjguzik@gmail.com>
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_COUNT_THREE(0.00)[3];
-	RCPT_COUNT_FIVE(0.00)[6];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email,suse.cz:email]
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
+ kwepemj100009.china.huawei.com (7.202.194.3)
 
-On Thu 27-11-25 14:15:26, Mateusz Guzik wrote:
-> Rationale is that if the parent dentry is the same and the length is the
-> same, then you have to be unlucky for the name to not match.
-> 
-> At the same time the dentry was literally just found on the hash, so you
-> have to be even more unlucky to determine it is unhashed.
-> 
-> While here add commentary while d_unhashed() is necessary. It was
-> already removed once and brought back in:
-> 2e321806b681b192 ("Revert "vfs: remove unnecessary d_unhashed() check from __d_lookup_rcu"")
-> 
-> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+Two bugs are related to this patch.
 
-Looks good. Feel free to add:
+BUG1:
+On arm32, a page fault may cause the current thread to sleep inside
+mmap_read_lock_killable(). This can happen even if the addr is a kernel
+address.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+When opening a file, if the path is initialized with LOOKUP_RCU flag in
+path_init(), the rcu read lock will be acquired. Inside the rcu critical
+section, load_unaligned_zeropad() may be called.
 
-								Honza
+According to the comments of load_unaligned_zeropad(), when loading the
+memory, a page fault may be triggered in the very unlikely case. When
+CONFIG_KFENCE=y, page faults are more likely to occur in this scenario.
 
-> ---
-> 
-> - move and precit on d_unhashed as well
-> - add commentary on it
-> 
-> this obsoletes https://lore.kernel.org/linux-fsdevel/20251127122412.4131818-1-mjguzik@gmail.com/T/#u
-> 
->  fs/dcache.c | 15 ++++++++++++---
->  1 file changed, 12 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/dcache.c b/fs/dcache.c
-> index 23d1752c29e6..dc2fff4811d1 100644
-> --- a/fs/dcache.c
-> +++ b/fs/dcache.c
-> @@ -2342,11 +2342,20 @@ struct dentry *__d_lookup_rcu(const struct dentry *parent,
->  		seq = raw_seqcount_begin(&dentry->d_seq);
->  		if (dentry->d_parent != parent)
->  			continue;
-> -		if (d_unhashed(dentry))
-> -			continue;
->  		if (dentry->d_name.hash_len != hashlen)
->  			continue;
-> -		if (dentry_cmp(dentry, str, hashlen_len(hashlen)) != 0)
-> +		if (unlikely(dentry_cmp(dentry, str, hashlen_len(hashlen)) != 0))
-> +			continue;
-> +		/*
-> +		 * Check for the dentry being unhashed.
-> +		 *
-> +		 * As tempting as it is, we *can't* skip it because of a race window
-> +		 * between us finding the dentry before it gets unhashed and loading
-> +		 * the sequence counter after unhashing is finished.
-> +		 *
-> +		 * We can at least predict on it.
-> +		 */
-> +		if (unlikely(d_unhashed(dentry)))
->  			continue;
->  		*seqp = seq;
->  		return dentry;
-> -- 
-> 2.34.1
-> 
+If CONFIG_PREEMPT_RCU=y, the following warning may be triggered:
+```log
+[   16.923630] WARNING: kernel/rcu/tree_plugin.h:332 at rcu_note_context_switch+0x408/0x610, CPU#0: test/68
+[   16.924780] Voluntary context switch within RCU read-side critical section!
+[   16.924887] Modules linked in:
+[   16.925670] CPU: 0 UID: 0 PID: 68 Comm: test Tainted: G        W           6.18.0-rc6-next-20251124 #28 PREEMPT
+[   16.926120] Tainted: [W]=WARN
+[   16.926257] Hardware name: Generic DT based system
+[   16.926474] Call trace:
+[   16.926487]  unwind_backtrace from show_stack+0x10/0x14
+[   16.926899]  show_stack from dump_stack_lvl+0x50/0x5c
+[   16.927318]  dump_stack_lvl from __warn+0xf8/0x200
+[   16.927696]  __warn from warn_slowpath_fmt+0x180/0x208
+[   16.928060]  warn_slowpath_fmt from rcu_note_context_switch+0x408/0x610
+[   16.928768]  rcu_note_context_switch from __schedule+0xe4/0xa58
+[   16.928917]  __schedule from schedule+0x70/0x124
+[   16.929197]  schedule from schedule_preempt_disabled+0x14/0x20
+[   16.929514]  schedule_preempt_disabled from rwsem_down_read_slowpath+0x26c/0x4e4
+[   16.929875]  rwsem_down_read_slowpath from down_read_killable+0x58/0x10c
+[   16.930320]  down_read_killable from mmap_read_lock_killable+0x24/0x84
+[   16.930761]  mmap_read_lock_killable from lock_mm_and_find_vma+0x164/0x18c
+[   16.931101]  lock_mm_and_find_vma from do_page_fault+0x1d4/0x4a0
+[   16.931354]  do_page_fault from do_DataAbort+0x30/0xa8
+[   16.931649]  do_DataAbort from __dabt_svc+0x44/0x60
+[   16.931862] Exception stack(0xf0b41d88 to 0xf0b41dd0)
+[   16.932063] 1d80:                   c3219088 eec5dffd f0b41ec0 00000002 c3219118 00000010
+[   16.933732] 1da0: c321913c 00000002 00007878 c2da86c0 00000000 00000002 b8009440 f0b41ddc
+[   16.934019] 1dc0: eec5dffd c0677300 60000013 ffffffff
+[   16.934294]  __dabt_svc from __d_lookup_rcu+0xc4/0x10c
+[   16.934468]  __d_lookup_rcu from lookup_fast+0xa0/0x190
+[   16.934720]  lookup_fast from path_openat+0x154/0xe18
+[   16.934953]  path_openat from do_filp_open+0x94/0x134
+[   16.935141]  do_filp_open from do_sys_openat2+0x9c/0xf0
+[   16.935384]  do_sys_openat2 from sys_openat+0x80/0xa0
+[   16.935547]  sys_openat from ret_fast_syscall+0x0/0x4c
+[   16.935799] Exception stack(0xf0b41fa8 to 0xf0b41ff0)
+[   16.936007] 1fa0:                   00000000 00000000 ffffff9c beb27d0c 00000242 000001b6
+[   16.936293] 1fc0: 00000000 00000000 000c543c 00000142 00027e85 00000002 00000002 00000000
+[   16.936624] 1fe0: beb27c20 beb27c0c 0006ea80 00072e78
+[   16.936780] ---[ end trace 0000000000000000 ]---
+```
+
+If CONFIG_DEBUG_ATOMIC_SLEEP=y, the following warning will be triggered:
+```log
+[   16.243462] BUG: sleeping function called from invalid context at kernel/locking/rwsem.c:1559
+[   16.245271] in_atomic(): 0, irqs_disabled(): 0, non_block: 0, pid: 68, name: test
+[   16.246219] preempt_count: 0, expected: 0
+[   16.246582] RCU nest depth: 1, expected: 0
+[   16.247262] CPU: 0 UID: 0 PID: 68 Comm: test Not tainted 6.18.0-rc6-next-20251124 #28 PREEMPT
+[   16.247432] Hardware name: Generic DT based system
+[   16.247549] Call trace:
+[   16.247618]  unwind_backtrace from show_stack+0x10/0x14
+[   16.248442]  show_stack from dump_stack_lvl+0x50/0x5c
+[   16.248458]  dump_stack_lvl from __might_resched+0x174/0x188
+[   16.248475]  __might_resched from down_read_killable+0x18/0x10c
+[   16.248490]  down_read_killable from mmap_read_lock_killable+0x24/0x84
+[   16.248504]  mmap_read_lock_killable from lock_mm_and_find_vma+0x164/0x18c
+[   16.248516]  lock_mm_and_find_vma from do_page_fault+0x1d4/0x4a0
+[   16.248529]  do_page_fault from do_DataAbort+0x30/0xa8
+[   16.248549]  do_DataAbort from __dabt_svc+0x44/0x60
+[   16.248597] Exception stack(0xf0b41da0 to 0xf0b41de8)
+[   16.248675] 1da0: c20b34f0 c3f23bf8 00000000 c389be50 f0b41e90 00000501 61c88647 00000000
+[   16.248698] 1dc0: 80808080 fefefeff 2f2f2f2f eec51ffd c3219088 f0b41df0 c066d3e4 c066d218
+[   16.248705] 1de0: 60000013 ffffffff
+[   16.248736]  __dabt_svc from link_path_walk+0xa8/0x444
+[   16.248752]  link_path_walk from path_openat+0xac/0xe18
+[   16.248764]  path_openat from do_filp_open+0x94/0x134
+[   16.248775]  do_filp_open from do_sys_openat2+0x9c/0xf0
+[   16.248785]  do_sys_openat2 from sys_openat+0x80/0xa0
+[   16.248806]  sys_openat from ret_fast_syscall+0x0/0x4c
+[   16.248814] Exception stack(0xf0b41fa8 to 0xf0b41ff0)
+[   16.248825] 1fa0:                   00000000 00000000 ffffff9c beb27d0c 00000242 000001b6
+[   16.248834] 1fc0: 00000000 00000000 000c543c 00000142 00027e85 00000002 00000002 00000000
+[   16.248841] 1fe0: beb27c20 beb27c0c 0006ea80 00072e78
+```
+
+BUG2:
+When a user program try to access any valid kernel address and attacks
+the kernel, it may run into the do_page_fault(). Before
+harden_branch_predictor(), the thread might be migrated to another cpu,
+which causes the mitigation meaningless.
+
+If CONFIG_PREEMPT=y, CONFIG_DEBUG_PREEMPT=y, CONFIG_ARM_LPAE=y,
+the following warning will be triggered:
+```log
+[    1.089103] BUG: using smp_processor_id() in preemptible [00000000] code: init/1
+[    1.093367] caller is __do_user_fault+0x20/0x6c
+[    1.094355] CPU: 0 UID: 0 PID: 1 Comm: init Not tainted 6.14.3 #7
+[    1.094585] Hardware name: Generic DT based system
+[    1.094706] Call trace:
+[    1.095211]  unwind_backtrace from show_stack+0x10/0x14
+[    1.095329]  show_stack from dump_stack_lvl+0x50/0x5c
+[    1.095352]  dump_stack_lvl from check_preemption_disabled+0x104/0x108
+[    1.095448]  check_preemption_disabled from __do_user_fault+0x20/0x6c
+[    1.095459]  __do_user_fault from do_page_fault+0x334/0x3dc
+[    1.095505]  do_page_fault from do_DataAbort+0x30/0xa8
+[    1.095528]  do_DataAbort from __dabt_usr+0x54/0x60
+[    1.095570] Exception stack(0xf0825fb0 to 0xf0825ff8)
+```
+
+Always goto bad_area before local_irq_enable() to handle these two
+scenarios, just like what x86 does.
+
+Fixes: b9a50f74905a ("ARM: 7450/1: dcache: select DCACHE_WORD_ACCESS for little-endian ARMv6+ CPUs")
+Fixes: f5fe12b1eaee ("ARM: spectre-v2: harden user aborts in kernel space")
+
+Closes: https://lore.kernel.org/20251126090505.3057219-1-wozizhi@huaweicloud.com
+Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
+Co-developed-by: Liyuan Pang <pangliyuan1@huawei.com>
+Signed-off-by: Liyuan Pang <pangliyuan1@huawei.com>
+Signed-off-by: Xie Yuanbin <xieyuanbin1@huawei.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+Cc: Will Deacon <will@kernel.org>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+---
+V1->V2: https://lore.kernel.org/20251126101952.174467-1-xieyuanbin1@huawei.com
+  - Fix the bug in arm/mm, instead of vfs
+  - Update git message
+  - Also fix https://lore.kernel.org/20251016121622.8957-1-xieyuanbin1@huawei.com
+
+For this patch, the only thing I'm unsure about is `if (fsr & FSR_LNX_PF)`.
+I'm not sure whether skipping this check might have some side effects.
+This patch also skips local_irq_enable() when addr >= TASK_SIZE, but I
+think it is ok, __do_kernel_fault() can be called with interrupts
+disabled, and both do_bad_area() and do_sect_fault() do this.
+
+Test cases for reproduction:
+kernel source: latest linux-next branch, use default arm32's
+multi_v7_defconfig, and setting CONFIG_PREEMPT=y, CONFIG_DEBUG_PREEMPT=y,
+CONFIG_ARM_LPAE=y, CONFIG_KFENCE=y, CONFIG_DEBUG_ATOMIC_SLEEP=y,
+CONFIG_ARM_PAN=n.
+
+BUG1:
+```c
+static void *thread(void *arg)
+{
+	while (1) {
+		void *p = mmap(NULL, 4096, PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0);
+
+		assert(p != (void *)-1);
+		__asm__ volatile ("":"+r"(p)::"memory");
+
+		munmap(p, 4096);
+	}
+}
+
+int main(void)
+{
+	pthread_t th;
+	int ret;
+	char path[4096] = "/tmp";
+
+	for (size_t i = 0; i < 2044; ++i) {
+		strcat(path, "/x");
+		ret = mkdir(path, 0755);
+		assert(ret == 0 || errno == EEXIST);
+	}
+	strcat(path, "/xx");
+
+	assert(strlen(path) == 4095);
+
+	assert(pthread_create(&th, NULL, thread, NULL) == 0);
+
+	while (1) {
+		FILE *fp = fopen(path, "wb+");
+
+		assert(fp);
+		fclose(fp);
+	}
+	return 0;
+}
+```
+
+BUG2:
+```c
+static void han(int x)
+{
+	while (1);
+}
+
+int main(void)
+{
+	signal(SIGSEGV, han);
+	/* 0xc0331fd4 is just a kernel address in kernel .text section */
+	__asm__ volatile (""::"r"(*(int *)(uintptr_t)0xc0331fd4):"memory");
+	while (1);
+	return 0;
+}
+```
+
+ arch/arm/mm/fault.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/arch/arm/mm/fault.c b/arch/arm/mm/fault.c
+index 2bc828a1940c..5c58072d8235 100644
+--- a/arch/arm/mm/fault.c
++++ b/arch/arm/mm/fault.c
+@@ -270,10 +270,15 @@ do_page_fault(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
+ 	vm_flags_t vm_flags = VM_ACCESS_FLAGS;
+ 
+ 	if (kprobe_page_fault(regs, fsr))
+ 		return 0;
+ 
++	if (unlikely(addr >= TASK_SIZE)) {
++		fault = 0;
++		code = SEGV_MAPERR;
++		goto bad_area;
++	}
+ 
+ 	/* Enable interrupts if they were enabled in the parent context. */
+ 	if (interrupts_enabled(regs))
+ 		local_irq_enable();
+ 
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.51.0
+
 
