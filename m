@@ -1,212 +1,164 @@
-Return-Path: <linux-fsdevel+bounces-69997-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69998-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1E5FC8DD76
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 11:53:06 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DAECC8DD8E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 11:54:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E03743AF9FC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 10:53:04 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C84584E56F9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 10:54:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4C3232ABC5;
-	Thu, 27 Nov 2025 10:52:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93E27315D3E;
+	Thu, 27 Nov 2025 10:54:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ebh8MeRI";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="CCShTgGL";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ebh8MeRI";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="CCShTgGL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="anYvLVKd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4544B320CC9
-	for <linux-fsdevel@vger.kernel.org>; Thu, 27 Nov 2025 10:52:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D83C917BA2;
+	Thu, 27 Nov 2025 10:54:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764240778; cv=none; b=pGx3xhSHLRuD15+AfZLFykMZK12WqxkhSXKPe6M+v+z5L5x4LF1A2wY+PlMWzomdau7/8zBjvyxM0En7sKvDnN7Vo8JVmyCKe6JpHQy07HCSYjIBHKzYKdTBZbpPdraT9oP5di5dj0qHQz36VeGpYNBsj+Ip341Qvhs3ZOfXacw=
+	t=1764240841; cv=none; b=BXgjg6nE2BYbkzONpHrunJJ0pvWFOufSN6w3tP7a9SXBD4CYH90X5gkKiLHRob+n67vzLl8KghfEUs8RLUTHugSScMuY4C8ZngIuQR5esu6yvxi6BpGWdjWsu30q3kzdG5Wn77sCWmCjIenT4jXLV7OV1IbynCCzlXIf0UPZ+oU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764240778; c=relaxed/simple;
-	bh=lmIpG/6wpMPGrn8UHtJLjo9/YEqgWiovYbOwMFrcwDI=;
+	s=arc-20240116; t=1764240841; c=relaxed/simple;
+	bh=m908laCROEU9fWyjb2BB4szGW1mRmKkvS+ErKipnKdI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t5iHb4tIgbSxXD2qwdXcl38Rz1MEbCsN08Yhcj8ekFHA+SJO4tsgMPFaHp9L1eG4EhvJVZqIwjW5AKeJpu5yIdL2OMA3CnJlKuVIja/vQT3XlyvGqnoTw+CwU2EDfBD99Hj+jFkrnMEI3jiW0XKHK50mDYi7S+CbonktF/Yw/5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ebh8MeRI; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=CCShTgGL; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ebh8MeRI; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=CCShTgGL; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 8060E5BCCE;
-	Thu, 27 Nov 2025 10:52:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1764240774; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dSkfS1PH0V2GqQ7JwCU589oUysx1YAYg5wc2qE7DJO8=;
-	b=ebh8MeRIbzXXS4nlvQHeE6b19GwtbYkg18vQvDryICee/hUE4994i2zgnpMFUBIthYG3nU
-	UBJRzc8F+GLXPmMIeEIu6lcKDO+GuS5r4t3R24vLkBwrUcZBDFHcekbZBzLjpj2fMJFncP
-	AMexocPLs/1FOCJ4ElPh9GDrDvtUkmg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1764240774;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dSkfS1PH0V2GqQ7JwCU589oUysx1YAYg5wc2qE7DJO8=;
-	b=CCShTgGLpH2iP4/uFPeSXXOQ7YG9AKQXx7Q/6PY7ZXom3Et/ho3asQQ/5oScgUFip56eSH
-	p9FRhoNDdKZxDyBw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1764240774; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dSkfS1PH0V2GqQ7JwCU589oUysx1YAYg5wc2qE7DJO8=;
-	b=ebh8MeRIbzXXS4nlvQHeE6b19GwtbYkg18vQvDryICee/hUE4994i2zgnpMFUBIthYG3nU
-	UBJRzc8F+GLXPmMIeEIu6lcKDO+GuS5r4t3R24vLkBwrUcZBDFHcekbZBzLjpj2fMJFncP
-	AMexocPLs/1FOCJ4ElPh9GDrDvtUkmg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1764240774;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dSkfS1PH0V2GqQ7JwCU589oUysx1YAYg5wc2qE7DJO8=;
-	b=CCShTgGLpH2iP4/uFPeSXXOQ7YG9AKQXx7Q/6PY7ZXom3Et/ho3asQQ/5oScgUFip56eSH
-	p9FRhoNDdKZxDyBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B0C7F3EA63;
-	Thu, 27 Nov 2025 10:52:50 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id xrDGJ4ItKGlFNgAAD6G6ig
-	(envelope-from <pfalcato@suse.de>); Thu, 27 Nov 2025 10:52:50 +0000
-Date: Thu, 27 Nov 2025 10:52:49 +0000
-From: Pedro Falcato <pfalcato@suse.de>
-To: Barry Song <21cnbao@gmail.com>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org, 
-	Oven Liyang <liyangouwen1@oppo.com>, Russell King <linux@armlinux.org.uk>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
-	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, 
-	Alexander Gordeev <agordeev@linux.ibm.com>, Gerald Schaefer <gerald.schaefer@linux.ibm.com>, 
-	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
-	Christian Borntraeger <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Andy Lutomirski <luto@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, x86@kernel.org, 
-	"H . Peter Anvin" <hpa@zytor.com>, David Hildenbrand <david@kernel.org>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, 
-	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
-	Matthew Wilcox <willy@infradead.org>, Jarkko Sakkinen <jarkko@kernel.org>, 
-	Oscar Salvador <osalvador@suse.de>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
-	Mark Rutland <mark.rutland@arm.com>, Ada Couprie Diaz <ada.coupriediaz@arm.com>, 
-	Robin Murphy <robin.murphy@arm.com>, Kristina =?utf-8?Q?Mart=C5=A1enko?= <kristina.martsenko@arm.com>, 
-	Kevin Brodsky <kevin.brodsky@arm.com>, Yeoreum Yun <yeoreum.yun@arm.com>, 
-	Wentao Guan <guanwentao@uniontech.com>, Thorsten Blum <thorsten.blum@linux.dev>, 
-	Steven Rostedt <rostedt@goodmis.org>, Yunhui Cui <cuiyunhui@bytedance.com>, 
-	Nam Cao <namcao@linutronix.de>, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev, linuxppc-dev@lists.ozlabs.org, 
-	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Chris Li <chrisl@kernel.org>, Kairui Song <kasong@tencent.com>, 
-	Kemeng Shi <shikemeng@huaweicloud.com>, Nhat Pham <nphamcs@gmail.com>, Baoquan He <bhe@redhat.com>, 
-	Barry Song <v-songbaohua@oppo.com>
-Subject: Re: [RFC PATCH 1/2] mm/filemap: Retry fault by VMA lock if the lock
- was released for I/O
-Message-ID: <5by7tko4v3kqvvpu4fdsgpw42yl5ed5qisbaz3la4an52hq4j2@v75fagey6gva>
-References: <20251127011438.6918-1-21cnbao@gmail.com>
- <20251127011438.6918-2-21cnbao@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=VHjyWYWq96++AiPfyV4ELOmrOFAyBEXWCQNQy+EZf/JrIQVpcFDGVVwoJ5nTB1hwjnBY4mUJf6+V2AqBhnCTQbtnLsMyjW5hnRU2DJPowzPBzlCp0DrzZ/G2TiGtssRE0pbccKYsK3n05fdrB3e+XMxPM8yDq9smXNV+TO/7NY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=anYvLVKd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7DA8C4CEF8;
+	Thu, 27 Nov 2025 10:53:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1764240840;
+	bh=m908laCROEU9fWyjb2BB4szGW1mRmKkvS+ErKipnKdI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=anYvLVKdnBeZh0Re0GdAB1eguMdnMme+JxIizaUmMbGqLmHOtwYgSzPlgU2a+2nOh
+	 uYCMarR8Z18I7XdVEptEIiB9ak1Kcpvn+89PMg9gnoljy+4nZ3ILlfOvo7b3jO0fUe
+	 oR9i9KqON1ts0muc6dYmBNHIujVbht5sOC13fxf6KmGZOJlmnh86fRkGhiHBEm4H/e
+	 PFBlyJoSf2CQoMiLIznE5rRu6Bs3sRmg4yV9I7Rnfk7Bz184NjFkZLbTBto2uVm6zT
+	 X/ZWjNiDAQVtZYZRfjoZYfQ54mNFQRFTxcnZZwN+gs/QR/moQQeZs17NKkOv3p+jOo
+	 UC8dww1JRPN4Q==
+Date: Thu, 27 Nov 2025 11:53:55 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: NeilBrown <neil@brown.name>
+Cc: Amir Goldstein <amir73il@gmail.com>, Jeff Layton <jlayton@kernel.org>, 
+	kernel test robot <oliver.sang@intel.com>, oe-lkp@lists.linux.dev, lkp@intel.com, netfs@lists.linux.dev, 
+	linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, linux-unionfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [linux-next:master] [VFS/nfsd/cachefiles/ovl] 7ab96df840:
+ WARNING:at_fs/dcache.c:#umount_check
+Message-ID: <20251127-engel-eschenholz-805b54630656@brauner>
+References: <202511252132.2c621407-lkp@intel.com>
+ <20251126-beerdigen-spanplatten-d86d4e9eaaa7@brauner>
+ <CAOQ4uxgHqKyaRfXAugnCP4sozgwiOGTGDYvx2A-XJdxfswo-Ug@mail.gmail.com>
+ <176419027888.634289.8284458326359928729@noble.neil.brown.name>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251127011438.6918-2-21cnbao@gmail.com>
-X-Spam-Flag: NO
-X-Spam-Score: -7.80
-X-Spam-Level: 
-X-Spamd-Result: default: False [-7.80 / 50.00];
-	REPLY(-4.00)[];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FREEMAIL_TO(0.00)[gmail.com];
-	ARC_NA(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FREEMAIL_CC(0.00)[linux-foundation.org,kvack.org,oppo.com,armlinux.org.uk,arm.com,kernel.org,xen0n.name,linux.ibm.com,ellerman.id.au,gmail.com,csgroup.eu,dabbelt.com,eecs.berkeley.edu,ghiti.fr,linux.intel.com,infradead.org,linutronix.de,redhat.com,alien8.de,zytor.com,oracle.com,suse.cz,google.com,suse.com,suse.de,renesas.com,uniontech.com,linux.dev,goodmis.org,bytedance.com,lists.infradead.org,vger.kernel.org,lists.linux.dev,lists.ozlabs.org,tencent.com,huaweicloud.com];
-	TO_MATCH_ENVRCPT_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_GT_50(0.00)[66];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[oppo.com:email,imap1.dmz-prg2.suse.org:helo]
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <176419027888.634289.8284458326359928729@noble.neil.brown.name>
 
-On Thu, Nov 27, 2025 at 09:14:37AM +0800, Barry Song wrote:
-> From: Oven Liyang <liyangouwen1@oppo.com>
+On Thu, Nov 27, 2025 at 07:51:18AM +1100, NeilBrown wrote:
+> On Wed, 26 Nov 2025, Amir Goldstein wrote:
+> > On Wed, Nov 26, 2025 at 11:42 AM Christian Brauner <brauner@kernel.org> wrote:
+> > >
+> > > On Tue, Nov 25, 2025 at 09:48:18PM +0800, kernel test robot wrote:
+> > > >
+> > > > Hello,
+> > > >
+> > > > kernel test robot noticed "WARNING:at_fs/dcache.c:#umount_check" on:
+> > > >
+> > > > commit: 7ab96df840e60eb933abfe65fc5fe44e72f16dc0 ("VFS/nfsd/cachefiles/ovl: add start_creating() and end_creating()")
+> > > > https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
+> > > >
+> > > > [test failed on linux-next/master d724c6f85e80a23ed46b7ebc6e38b527c09d64f5]
+> > >
+> > > Neil, can you please take a look at this soon?
+> > > I plan on sending the batch of PRs for this cycle on Friday.
+> > >
+> > > >
+> > > > in testcase: filebench
+> > > > version: filebench-x86_64-22620e6-1_20251009
+> > > > with following parameters:
+> > > >
+> > > >       disk: 1SSD
+> > > >       fs: ext4
+> > > >       fs2: nfsv4
+> > > >       test: ratelimcopyfiles.f
+> > > >       cpufreq_governor: performance
+> > > >
+> > 
+> > Test is copying to nfsv4 so that's the immediate suspect.
+> > WARN_ON is in unmount of ext4, but I suspect that nfs
+> > was loop mounted for the test.
+> > 
+> > FWIW, nfsd_proc_create() looks very suspicious.
+> > 
+> > nfsd_create_locked() does end_creating() internally (internal API change)
+> > but nfsd_create_locked() still does end_creating() regardless.
 > 
-> If the current page fault is using the per-VMA lock, and we only released
-> the lock to wait for I/O completion (e.g., using folio_lock()), then when
-> the fault is retried after the I/O completes, it should still qualify for
-> the per-VMA-lock path.
+> Thanks for looking at this Amir.  That omission in nfsproc.c is
+> certainly part of the problem but not all of it.
+> By skipping the end_creating() there, we avoid a duplicate unlock, but
+> also lose a dput() which we need.  Both callers of nfsd_create_locked()
+> have the same problem.
+> I think this should fix it.  The resulting code is a bit ugly but I can
+> fix that with the nfsd team once this gets upstream.
 > 
-<snip>
-> Signed-off-by: Oven Liyang <liyangouwen1@oppo.com>
-> Signed-off-by: Barry Song <v-songbaohua@oppo.com>
-> ---
->  arch/arm/mm/fault.c       | 5 +++++
->  arch/arm64/mm/fault.c     | 5 +++++
->  arch/loongarch/mm/fault.c | 4 ++++
->  arch/powerpc/mm/fault.c   | 5 ++++-
->  arch/riscv/mm/fault.c     | 4 ++++
->  arch/s390/mm/fault.c      | 4 ++++
->  arch/x86/mm/fault.c       | 4 ++++
-
-If only we could unify all these paths :(
-
->  include/linux/mm_types.h  | 9 +++++----
->  mm/filemap.c              | 5 ++++-
->  9 files changed, 39 insertions(+), 6 deletions(-)
+> (FYI nfsd_proc_create() is only used for NFSv2 and as it was an nfsv4 test,
+>  that could wouldn't have been run)
 > 
-> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-> index b71625378ce3..12b2d65ef1b9 100644
-> --- a/include/linux/mm_types.h
-> +++ b/include/linux/mm_types.h
-> @@ -1670,10 +1670,11 @@ enum vm_fault_reason {
->  	VM_FAULT_NOPAGE         = (__force vm_fault_t)0x000100,
->  	VM_FAULT_LOCKED         = (__force vm_fault_t)0x000200,
->  	VM_FAULT_RETRY          = (__force vm_fault_t)0x000400,
-> -	VM_FAULT_FALLBACK       = (__force vm_fault_t)0x000800,
-> -	VM_FAULT_DONE_COW       = (__force vm_fault_t)0x001000,
-> -	VM_FAULT_NEEDDSYNC      = (__force vm_fault_t)0x002000,
-> -	VM_FAULT_COMPLETED      = (__force vm_fault_t)0x004000,
-> +	VM_FAULT_RETRY_VMA      = (__force vm_fault_t)0x000800,
+> Thanks,
+> NeilBrown
+> 
+> diff --git a/fs/nfsd/nfsproc.c b/fs/nfsd/nfsproc.c
+> index 28f03a6a3cc3..481e789a7697 100644
+> --- a/fs/nfsd/nfsproc.c
+> +++ b/fs/nfsd/nfsproc.c
+> @@ -407,6 +407,9 @@ nfsd_proc_create(struct svc_rqst *rqstp)
+>  		/* File doesn't exist. Create it and set attrs */
+>  		resp->status = nfsd_create_locked(rqstp, dirfhp, &attrs, type,
+>  						  rdev, newfhp);
+> +		/* nfsd_create_locked() unlocked the parent */
+> +		dput(dchild);
+> +		goto out_write;
+>  	} else if (type == S_IFREG) {
+>  		dprintk("nfsd:   existing %s, valid=%x, size=%ld\n",
+>  			argp->name, attr->ia_valid, (long) attr->ia_size);
+> diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
+> index 145f1c8d124d..4688f3fd59e2 100644
+> --- a/fs/nfsd/vfs.c
+> +++ b/fs/nfsd/vfs.c
+> @@ -1633,16 +1633,14 @@ nfsd_create(struct svc_rqst *rqstp, struct svc_fh *fhp,
+>  		return nfserrno(host_err);
+>  
+>  	err = fh_compose(resfhp, fhp->fh_export, dchild, fhp);
+> -	/*
+> -	 * We unconditionally drop our ref to dchild as fh_compose will have
+> -	 * already grabbed its own ref for it.
+> -	 */
+>  	if (err)
+>  		goto out_unlock;
+>  	err = fh_fill_pre_attrs(fhp);
+>  	if (err != nfs_ok)
+>  		goto out_unlock;
+>  	err = nfsd_create_locked(rqstp, fhp, attrs, type, rdev, resfhp);
+> +	/* nfsd_create_locked() unlocked the parent */
+> +	dput(dchild);
+>  	return err;
+>  
+>  out_unlock:
 
-So, what I am wondering here is why we need one more fault flag versus
-just blindly doing this on a plain-old RETRY. Is there any particular
-reason why? I can't think of one. 
-
-I would also like to see performance numbers.
-
-The rest of the patch looks OK to me.
-
--- 
-Pedro
+Thanks for the quick fix. I've added a patch to
+vfs-6.19.directory.unlocking which I attributed to you.
+It'd be easier if you just shoot something I can apply directly next
+time. :)
 
