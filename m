@@ -1,132 +1,199 @@
-Return-Path: <linux-fsdevel+bounces-70085-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70086-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2370CC9040B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 22:53:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E750DC9052A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 00:05:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8C523A9B73
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 21:53:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 812DF3AAC93
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 23:05:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79D77318135;
-	Thu, 27 Nov 2025 21:52:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A08DE322550;
+	Thu, 27 Nov 2025 23:05:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TPwhbzWO"
+	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="b5TCGyWX";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="dTFN+/N8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fhigh-b4-smtp.messagingengine.com (fhigh-b4-smtp.messagingengine.com [202.12.124.155])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9C2E311C35
-	for <linux-fsdevel@vger.kernel.org>; Thu, 27 Nov 2025 21:52:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF2C02417F0
+	for <linux-fsdevel@vger.kernel.org>; Thu, 27 Nov 2025 23:05:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764280375; cv=none; b=EDYYBo++xWcHwB9zpepaw5kcJyDuRU0qC0VxAbnZl7jRh1YQ4RpIaHqeFJB6moGEnm6zU3HFTHWbIPSexjHogVESa2tdDlMGUjyGB+t6fucq8YawNYapNYYGywRMSWbwjhbwuNlW3P1uG1kyt9bXcCoVkWD4SIgmY3yg1XnnAR8=
+	t=1764284737; cv=none; b=sCR4pXvE5z968/Tv3TSboAdpPIFPS+fb1siRWrEDR1QncBlP3qNYKGaClRnYkb8A7YxIbKny17KMkoi2ywRfqHBmlkZkUrHRBqKwDVKP0nzb02Xlyg6aepg0SjNbHB8vuzXLT4OAPiM7J8iBqHMtvpB2XSvf5K+OlfU8LOHyEaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764280375; c=relaxed/simple;
-	bh=4Pj66Y3umMwlrabEjE1lX88865iL+KzgEAusgbBYyKU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sVXHAl1Fuuiua6BG8xGvy5Dg09YhNtHd4iMq5M+Yn6N9KvQP0m5WhEciIVUahpK9N3Vw3OygVSdMqNxnCFgnfkjYq0+MGobxL3BLSbA2buZghb2amCJNEQ1DzXSnr/g54+9/g9JQp7z9cVxfQX17/bedUqExYuMFClG+lJdWtWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TPwhbzWO; arc=none smtp.client-ip=209.85.219.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-8824ce98111so18450176d6.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Nov 2025 13:52:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1764280372; x=1764885172; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jttLJ8TWGePu+ngSo1n4o5hp2pzXFGAv2t0XowsTZMg=;
-        b=TPwhbzWOGf2/62dZBmZzJ1KK5GHczMKctFSVTSa02I984aRldpda+C8QshDpc60TDR
-         F5P72PVJXZwZshQZvo1i5TCNEE2NAPygOLOl4TOugZXYL0MAxIMuM5vPLF8RH6++Q84m
-         o0LotgaHJqtgnpDQTQ5kvmgWhv0q+H5S/LUYsZ0Fwr7mq2GqZHfy7miVERXYk1L7O14P
-         RpYHDpZysn6fHCW/+mYBMo68r6vx8ylPWwYXn/F3rVWP0Ao4FgcV7walYCt33RKgAmJO
-         DVrsqWgjtircVXIRuUIDi11fkXTasnYkejpxTk7kfHTW6OdPtC7X61KxmtfNrCMMDGbs
-         U3bQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764280372; x=1764885172;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=jttLJ8TWGePu+ngSo1n4o5hp2pzXFGAv2t0XowsTZMg=;
-        b=sR/lPr7r/y9bWsAgaNjxY+EWYUXcX8hRS3MN9u1Xgw37N7RDlyowDuHtTUZBUR/NMQ
-         2w2E4Ktfr6F9zTXyFunHr7EXlggSDZHe9a2OMVzhKcuYaQ6qZkatb3a0UKWaxrblU30m
-         nnqdWrBtCvhj3eygSVjb7jrxmZO0bhA3l77kgyoKTkzscti4sxbxEiaD+DKuUefxXSrU
-         3e4b8/DuZw13RHBSWO4DJX/+SaiJHizhPlO0LOl2VzeFOfhXmoGD3e9wZUET+7sbIbcS
-         uf5rlN0MpDtne5TZrg12K1UkFs8IfypB09bV+TB0dU/SdJWqfUGrdzWTl+Ei5x1nt8sE
-         h7uQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVQJDZV4QGXrQzeY59gyqJdkVWo/y7YYNvouNyNtCoEjorCB4xz1TmTT7ZLL31OuQ7fd1bzAPuIe9ddjvOm@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsPg1nmx6/KwgDbIo/aO3rTdX6hQPdTABk9tE2yhgzUDJDjKt1
-	KdwRb+/fFPNaOlr35YLxS8SmR7wbuoDE3sK9humlPRSBwne4aXY8tx8B/DIjq8oFVIXISnSa7aM
-	KMwstd7j6RlUyOh3fCTgYGhfnOs+UOTY=
-X-Gm-Gg: ASbGncu7D321uB3o0koZZdCIbo7nmBl8bipaBleSgFmlZRlooqAjiRd2n6Tkgt77fCx
-	tjYCt4+QVgpOgprPPczMIvGBoEufKEN4G+b7MinjC6/8Dea7Z5y7k9dTu/OaL13ZbdLJamvT7HN
-	yccZJVEtP6uTH41lL0NyXLxzjBGTl6WL4guEXCc3uiGZZXmYSQHW/dYQP+xDWkEfhYAS/HmFvoF
-	qxg5NxPzSMa68g6tETPSQTArBLAvsZucopyPgq/SkSrCdXZRJk8JLDtAXwcBatrf6jgNw==
-X-Google-Smtp-Source: AGHT+IGi53ssJfVFEVeCKpbOH4PM/Uba/gyP2VL/mpIj2xLrn6No0jDJl3wOawm61ht0VMTz1HcUV32B95MPtil1ISg=
-X-Received: by 2002:a05:6214:19c9:b0:880:49bd:e217 with SMTP id
- 6a1803df08f44-8847c486a0bmr364162506d6.10.1764280372486; Thu, 27 Nov 2025
- 13:52:52 -0800 (PST)
+	s=arc-20240116; t=1764284737; c=relaxed/simple;
+	bh=GDngtDDNaoe7glJULc/ZFM36R0SQJQMzoVUnxYdRhp0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mvF4YD5KF53r5nN76x4BVouS2NA0XdXEvRPpLovRXgSWIBZH/YB2sTCRsijOFub3iHUbSisPlONE+tH3YgzRanEIqy2UHRqUm+aZHU8kIhvtMkDNpyvYbtwDMYZi74PghkzRkOydAQpnk5EGmiqm50KFh/OfgODvqXw5TNSMsdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=b5TCGyWX; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=dTFN+/N8; arc=none smtp.client-ip=202.12.124.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id D87727A0759;
+	Thu, 27 Nov 2025 18:05:33 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-03.internal (MEProxy); Thu, 27 Nov 2025 18:05:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1764284733;
+	 x=1764371133; bh=Nx1V4gZgXQqhewVt6261Vd/BCwPZib+mHN4ZZsAsMGk=; b=
+	b5TCGyWXjQ2YgYjn2HOb9jmZqe60sYttYj4SwyDxe5kYw3Kjtdl3kUOMwaDH3AQh
+	Z5trtap+u/KbZS3IxofEH1E7Ww9oIWr2z6GpfoCH2lyVpR/WdPI86zmQt/3Psr4E
+	YWtyIlokp3rjQBqVnwbCgUHPlk+nSkiIxhrRFxQVfQrP01pJt0a9Bi6I/ypW2Cdf
+	8NPcO/+EFqQKgl5N2H2XFPRBR+2EZa92iphzGSVd0TAqjbFbA+HKXQQHorv7chbU
+	TRlatLrE6xmEQYrCE2boyxKbF8AgY9Ulr/sTHp+amsrG98TE+c213WmxPB6GW8Qa
+	Xhc6gILuR0T5hRsPYrsC+w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1764284733; x=
+	1764371133; bh=Nx1V4gZgXQqhewVt6261Vd/BCwPZib+mHN4ZZsAsMGk=; b=d
+	TFN+/N8dZWe1h2SgV8u5BrS566L44qUGVFke0TzosM832bEKyqXBYyhRjaMcymTC
+	10o+MsTNncaIeUBnDGVvim/uJl5i3TbgrmUKoXm9y9DHD1pCZFw6gqw5M5GwMU2N
+	tdAUO/PCl1kYbP0F+zXLIw9YlvsRsxKKLkvwt3yTvZJhzxjgPHJtWxRZrW1J6tnd
+	ciVOU+cD9f/Htm1KJElOhyHOIfLHFIBogE8Zvd8+nZRDBq9wtM47vUhAhaMbN8//
+	LuL1yibCBYDSbbv0mjnrozamLVuV3Z7uYB2O/juAHJlFqeC+xop8O4FlGgu28PpC
+	gHBLr4MuSQNFx2tlHMyPA==
+X-ME-Sender: <xms:PNkoaRQ9FoEd0jUcPQGHh8m9F2KCdjNEWLf9OlP5AAMfKhv2iTq-6A>
+    <xme:PNkoaRrg9LLtsBCb5eqRUga9k-1OgH1im4zTFVKIov1KVV9HEfggWokn8g37b0Q3-
+    wt6KtxHbRC_CXLgrv07YBaTcQeFT5G7xTANz8YUaH7LmyQ1lrBV>
+X-ME-Received: <xmr:PNkoafJZpfoxojEWVw63YS-hDAXx8J0Yx8C5r7sCLmzKwJ0aXjZXmV2sLhcsgcRpTpsWiMxSeTwwmjDTJZJKcY__Ku4e-IXIHYCHGihRWDwfY4cBB1mO>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvgeekgeekucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeeuvghrnhgu
+    ucfutghhuhgsvghrthcuoegsvghrnhgusegsshgsvghrnhgurdgtohhmqeenucggtffrrg
+    htthgvrhhnpeehhfejueejleehtdehteefvdfgtdelffeuudejhfehgedufedvhfehueev
+    udeugeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    gsvghrnhgusegsshgsvghrnhgurdgtohhmpdhnsggprhgtphhtthhopeehpdhmohguvgep
+    shhmthhpohhuthdprhgtphhtthhopegrsghhihhshhgvkhhmghhuphhtrgesghhoohhglh
+    gvrdgtohhmpdhrtghpthhtohepsghstghhuhgsvghrthesuggunhdrtghomhdprhgtphht
+    thhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtg
+    hpthhtohepmhhikhhlohhssehsiigvrhgvughirdhhuhdprhgtphhtthhopehsfigvthhh
+    vhesghhoohhglhgvrdgtohhm
+X-ME-Proxy: <xmx:PdkoaUri75Mt03lY1avuVOK93hqgIBCvIvHyMp7OH7rf6EjbfPjXqQ>
+    <xmx:PdkoaXySv399G7imHnegFm6kJPfZIjpJF-F4B0ZLqAHBphoaBU-Dyw>
+    <xmx:PdkoaYMgeRjrcaa1UGSxq46Zx3a-AOZb1yppPdu4M6T6wzSnkaLaGg>
+    <xmx:Pdkoac7RxSfh-rhGFW1svDweCYCpBWAs4bmJuJPUg3gHy-2ttKicdg>
+    <xmx:PdkoaSNXik_zJ5-gGqkdT5kDrpT7hIZWT7AOhTaKYC5ROBH2XkV8SbOX>
+Feedback-ID: i5c2e48a5:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 27 Nov 2025 18:05:31 -0500 (EST)
+Message-ID: <ea9193cd-dbff-4398-8f6a-2b5be89b1fa4@bsbernd.com>
+Date: Fri, 28 Nov 2025 00:05:30 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251127011438.6918-1-21cnbao@gmail.com> <aSfO7fA-04SBtTug@casper.infradead.org>
- <CAGsJ_4zyZeLtxVe56OSYQx0OcjETw2ru1FjZjBOnTszMe_MW2g@mail.gmail.com>
- <aSip2mWX13sqPW_l@casper.infradead.org> <CAGsJ_4zWGYiu1wv=D7bV5zd0h8TEHTCARhyu_9_gL36PiNvbHQ@mail.gmail.com>
-In-Reply-To: <CAGsJ_4zWGYiu1wv=D7bV5zd0h8TEHTCARhyu_9_gL36PiNvbHQ@mail.gmail.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Fri, 28 Nov 2025 05:52:40 +0800
-X-Gm-Features: AWmQ_blYpw-GPSWAvHSSwIXD1PKL1aIx4iCUo78DT2gXpdF1CZ018OhwLE5_XJY
-Message-ID: <CAGsJ_4wvaieWtTrK+koM3SFu9rDExkVHX5eUwYiEotVqP-ndEQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/2] mm: continue using per-VMA lock when retrying
- page faults after I/O
-To: Matthew Wilcox <willy@infradead.org>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	loongarch@lists.linux.dev, linuxppc-dev@lists.ozlabs.org, 
-	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: FUSE: [Regression] Fuse legacy path performance scaling lost in
+ v6.14 vs v6.8/6.11 (iodepth scaling with io_uring)
+To: Abhishek Gupta <abhishekmgupta@google.com>,
+ Bernd Schubert <bschubert@ddn.com>
+Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ "miklos@szeredi.hu" <miklos@szeredi.hu>,
+ Swetha Vadlakonda <swethv@google.com>
+References: <CAPr64AJFZVFTHnuY=AH3aMXb2-g1ypzheNbLtfu5RxyZztKFZg@mail.gmail.com>
+ <e6a41630-c2e6-4bd9-aea9-df38238f6359@ddn.com>
+ <CAPr64AJXg9nr_xG_wpy3sDtWmy2cR+HhqphCGgWSoYs2+OjQUQ@mail.gmail.com>
+From: Bernd Schubert <bernd@bsbernd.com>
+Content-Language: en-US, de-DE, fr
+In-Reply-To: <CAPr64AJXg9nr_xG_wpy3sDtWmy2cR+HhqphCGgWSoYs2+OjQUQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Nov 28, 2025 at 4:29=E2=80=AFAM Barry Song <21cnbao@gmail.com> wrot=
-e:
->
-> On Fri, Nov 28, 2025 at 3:43=E2=80=AFAM Matthew Wilcox <willy@infradead.o=
-rg> wrote:
-> >
-> > [dropping individuals, leaving only mailing lists.  please don't send
-> > this kind of thing to so many people in future]
+Hi Abhishek,
 
-Apologies, I missed this one.
+On 11/27/25 14:37, Abhishek Gupta wrote:
+> Hi Bernd,
+> 
+> Thanks for looking into this.
+> Please find below the fio output on 6.11 & 6.14 kernel versions.
+> 
+> 
+> On kernel 6.11
+> 
+> ~/gcsfuse$ uname -a
+> Linux abhishek-c4-192-west4a 6.11.0-1016-gcp #16~24.04.1-Ubuntu SMP
+> Wed May 28 02:40:52 UTC 2025 x86_64 x86_64 x86_64 GNU/Linux
+> 
+> iodepth = 1
+> :~/fio-fio-3.38$ ./fio --name=randread --rw=randread
+> --ioengine=io_uring --thread
+> --filename_format='/home/abhishekmgupta_google_com/bucket/$jobnum'
+> --filesize=1G --time_based=1 --runtime=15s --bs=4K --numjobs=1
+> --iodepth=1 --group_reporting=1 --direct=1
+> randread: (g=0): rw=randread, bs=(R) 4096B-4096B, (W) 4096B-4096B, (T)
+> 4096B-4096B, ioengine=io_uring, iodepth=1
+> fio-3.38
+> Starting 1 thread
+> ...
+> Run status group 0 (all jobs):
+>    READ: bw=3311KiB/s (3391kB/s), 3311KiB/s-3311KiB/s
+> (3391kB/s-3391kB/s), io=48.5MiB (50.9MB), run=15001-15001msec
+> 
+> iodepth=4
+> :~/fio-fio-3.38$ ./fio --name=randread --rw=randread
+> --ioengine=io_uring --thread
+> --filename_format='/home/abhishekmgupta_google_com/bucket/$jobnum'
+> --filesize=1G --time_based=1 --runtime=15s --bs=4K --numjobs=1
+> --iodepth=4 --group_reporting=1 --direct=1
+> randread: (g=0): rw=randread, bs=(R) 4096B-4096B, (W) 4096B-4096B, (T)
+> 4096B-4096B, ioengine=io_uring, iodepth=4
+> fio-3.38
+> Starting 1 thread
+> ...
+> Run status group 0 (all jobs):
+>    READ: bw=11.0MiB/s (11.6MB/s), 11.0MiB/s-11.0MiB/s
+> (11.6MB/s-11.6MB/s), io=166MiB (174MB), run=15002-15002msec
+> 
+> 
+> On kernel 6.14
+> 
+> :~$ uname -a
+> Linux abhishek-west4a-2504 6.14.0-1019-gcp #20-Ubuntu SMP Wed Oct 15
+> 00:41:12 UTC 2025 x86_64 x86_64 x86_64 GNU/Linux
+> 
+> iodepth=1
+> :~$ fio --name=randread --rw=randread --ioengine=io_uring --thread
+> --filename_format='/home/abhishekmgupta_google_com/bucket/$jobnum'
+> --filesize=1G --time_based=1 --runtime=15s --bs=4K --numjobs=1
+> --iodepth=1 --group_reporting=1 --direct=1
+> randread: (g=0): rw=randread, bs=(R) 4096B-4096B, (W) 4096B-4096B, (T)
+> 4096B-4096B, ioengine=io_uring, iodepth=1
+> fio-3.38
+> Starting 1 thread
+> ...
+> Run status group 0 (all jobs):
+>    READ: bw=3576KiB/s (3662kB/s), 3576KiB/s-3576KiB/s
+> (3662kB/s-3662kB/s), io=52.4MiB (54.9MB), run=15001-15001msec
+> 
+> iodepth=4
+> :~$ fio --name=randread --rw=randread --ioengine=io_uring --thread
+> --filename_format='/home/abhishekmgupta_google_com/bucket/$jobnum'
+> --filesize=1G --time_based=1 --runtime=15s --bs=4K --numjobs=1
+> --iodepth=4 --group_reporting=1 --direct=1
+> randread: (g=0): rw=randread, bs=(R) 4096B-4096B, (W) 4096B-4096B, (T)
+> 4096B-4096B, ioengine=io_uring, iodepth=4
+> fio-3.38
+> ...
+> Run status group 0 (all jobs):
+>    READ: bw=3863KiB/s (3956kB/s), 3863KiB/s-3863KiB/s
+> (3956kB/s-3956kB/s), io=56.6MiB (59.3MB), run=15001-15001msec
 
-The output comes from ./scripts/get_maintainer.pl. If you think the group i=
-s
-too large, I guess we should at least include Suren, Lorenzo, David, and
-a few others in the discussion?
+assuming I would find some time over the weekend and with the fact that
+I don't know anything about google cloud, how can I reproduce this?
 
-[...]
 
->
-> >
-> > This use case also manages to get utterly hung-up trying to do reclaim
-> > today with the mmap_lock held.  SO it manifests somewhat similarly to
-> > your problem (everybody ends up blocked on mmap_lock) but it has a
-> > rather different root cause.
-
-If I understand the use case correctly, I believe retrying with the per-VMA
-lock would also be very helpful. Previously, we always retried using
-mmap_lock, which can be difficult to acquire under heavy contention, leadin=
-g
-to long latency while the pages might be reclaimed. With the per-VMA lock, =
-it
-is much easier to hold and proceed with the work.
-
-Thanks
-Barry
+Thanks,
+Bernd
 
