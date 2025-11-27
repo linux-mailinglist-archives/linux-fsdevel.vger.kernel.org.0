@@ -1,96 +1,109 @@
-Return-Path: <linux-fsdevel+bounces-69942-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69943-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F091C8C757
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 01:46:03 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8FC8C8C787
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 01:50:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C13253B6371
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 00:46:01 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BE3BA4E501A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 00:50:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE5A8261B91;
-	Thu, 27 Nov 2025 00:44:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1DAB25FA29;
+	Thu, 27 Nov 2025 00:50:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gqVzMPLJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kAKG4dRo"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C88252580F9;
-	Thu, 27 Nov 2025 00:44:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EE58244671;
+	Thu, 27 Nov 2025 00:50:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764204278; cv=none; b=aWx0jjKDp9cNtw4C4XSzDnOqe/2OXTzLC4a4KtIMIMpwLBj022ZAQPSkyi9aGImeyGzGjtJOTVyHKpHziSo8PIPknjbkWAjg90QXqv2TNIeKlOjNVVL7qdMHGiZYn1fxinOFUhAUefHnu/opRxZdnNBigijtp1OuGgWWDaG/TSs=
+	t=1764204619; cv=none; b=Re/QzteKzIof09j/jbnj/NF2yChYFmMQNHK7wDZE5YjQ+OvXh1p/ZZj0wr/seQEVVy5Sx70OhHkMnFffulnr+yHNcJwjan2xIGjl0b8CDgLVNZ5NWCAQlFGsIK5k8PbruqZCzScYC1NAPPRZ5S8W5ObT/YkIfvZOc+YGJSclJ2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764204278; c=relaxed/simple;
-	bh=7z5IKQFAXUxEN+Oh/VtXe1mg6locxHxjxzSlnVKmKJU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PWBsC7ICHtwLvlqdGEoIiVsHnJeOAzUSdE+Zv0zzxnoIjatdntGPdfisa/YuKS+mxXHAKopGJ+vdkktRaed2p+DuidSKY5+w754egtaMIuXbg30u/g1W2Q1vfIh8vrFcqfL1WXalTD4I8mc9A8Q4iV0DU76riXYsdLIhqMV6bbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=gqVzMPLJ; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=bZxZLbXg0sjgaoKMLUl6ErzwogRnF1d27IW4jtEMG4k=; b=gqVzMPLJOGskPNCUreBI9UJJQQ
-	rwuff5Duv5/v5U43TiPev902xh6A8FI5n0pTKgtZk3s4Lw448TsrSt84lPGwDnUbRpdwIUeZBUJBN
-	xCNPPWIu9D3gKDS608kXbHoIxH/8L9dP+5L5tylbdXDz7b3NB+ewFpe/BDj1JFYmPqiD8Eu+6HHb8
-	DcwJvnEhKeoQR21CHwrr3syib7aMkjOpYz/tMPNHJyEGRfDA0xuwL5seg7Iti49HMyF9GjwlALCkO
-	5KwIhrfnH/FZltECT4fggChqASz0nDZue7lG+tnas0IWtMwHq/YNAQcavWVYf3ilvR+FGXKZaKT4A
-	aBPALhUQ==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vOQ7g-0000000FoXf-0Elk;
-	Thu, 27 Nov 2025 00:44:36 +0000
-Message-ID: <a2c0a723-dbcb-4a43-ba47-c1f06820099a@infradead.org>
-Date: Wed, 26 Nov 2025 16:44:35 -0800
+	s=arc-20240116; t=1764204619; c=relaxed/simple;
+	bh=DHNoe28s2mWzphn+U+HggYHkEaMFi8tpUIzDb2hR+C0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=U8llOVeMrtOZXMFZMRthMg2e1N/QCFJhX1WMNhKRTIMPiLKVNBuwLkZkoeouAiWUKH8R+fFHEdFg0B+5OyN+vt8JmjC6zzQSbYE7Gcd8RXkG5/hcuqy+uc2BZqdhKHRlQuQokfsr3E4kLnoShjthfL++POSU2ibUUqp7L3FDwRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kAKG4dRo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CC45C4CEF7;
+	Thu, 27 Nov 2025 00:50:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1764204619;
+	bh=DHNoe28s2mWzphn+U+HggYHkEaMFi8tpUIzDb2hR+C0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=kAKG4dRoeZiw7u9z/Y1v/PjNU0qNl9hxkFtZdA4QSQcJ/+VaAaCTaxAotYzsUHVBl
+	 npN7zCIHNgcOS4g9kMvCdIRdXqHLsbrxQkgT7DwL/FSly+c0yBG6fuW9wqGanMVKMZ
+	 Ars1qCnIYG+dS4wxWZetVGnknmCCVyn5XP8oD9DTEvsj0eQVlv+rXKCRpvruDXnew5
+	 Hkp6O580SQc1dWTzYpfLnu2sGeXav9/bqZGa1s5N8hb8nlLnnGJ0mhMPFNE3jDacTA
+	 xRzmZt5Gnb6T0FEWR8h44XyEiEDx1HTk8qkEWecYodfOo08HCt9IpYzUbPEN56Sokc
+	 HnjeoXVXMNVwA==
+From: Song Liu <song@kernel.org>
+To: bpf@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Cc: ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	kernel-team@meta.com,
+	viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz,
+	paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com,
+	Song Liu <song@kernel.org>
+Subject: [PATCH bpf-next 0/3] Introduce bpf_kern_path and bpf_path_put
+Date: Wed, 26 Nov 2025 16:50:04 -0800
+Message-ID: <20251127005011.1872209-1-song@kernel.org>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/5] Documentation: zonefs: Format error processing table
-To: Bagas Sanjaya <bagasdotme@gmail.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Documentation <linux-doc@vger.kernel.org>,
- Linux AFS <linux-afs@lists.infradead.org>,
- Linux Filesystems Development <linux-fsdevel@vger.kernel.org>
-Cc: David Howells <dhowells@redhat.com>,
- Marc Dionne <marc.dionne@auristor.com>, Jonathan Corbet <corbet@lwn.net>,
- Damien Le Moal <dlemoal@kernel.org>, Naohiro Aota <naohiro.aota@wdc.com>,
- Johannes Thumshirn <jth@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- Dan Williams <dan.j.williams@intel.com>,
- Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
- Daniel Palmer <daniel.palmer@sony.com>
-References: <20251126025511.25188-1-bagasdotme@gmail.com>
- <20251126025511.25188-6-bagasdotme@gmail.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20251126025511.25188-6-bagasdotme@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+Security solutions use LSM hook security_sb_mount to monitor mount
+operations. security_sb_mount takes dev_name as a string. To get a struct
+path from dev_name, in-tree LSMs use kern_path. Introduce kfuncs
+bpf_kern_path so that bpf LSM can do similar operations. bpf_kern_path
+takes a reference on the return value path. Also add kfunc bpf_path_put to
+release path returned by bpf_kern_path. Note that, bpf_kern_path only holds
+reference on the path during the duration of this bpf program. The verifier
+enforces the bpf program release this reference.
 
+Patch 1/3 prepares bpf verifier to handle const char * passed in as hook
+argument. Before this change, bpf helpers and kfuncs only consider value
+from read only map as const string.
 
-On 11/25/25 6:55 PM, Bagas Sanjaya wrote:
-> Format zonefs I/O error processing table as reST grid table.
-> 
-> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+Patch 2/3 adds the two kfuncs.
 
-Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
+Patch 3/3 add tests for the new kfuncs.
 
-> ---
->  Documentation/filesystems/zonefs.rst | 53 +++++++++++++++++-----------
->  1 file changed, 32 insertions(+), 21 deletions(-)
-> 
+Song Liu (3):
+  bpf: Allow const char * from LSM hooks as kfunc const string arguments
+  bpf: Add bpf_kern_path and bpf_path_put kfuncs
+  selftests/bpf: Add tests for bpf_kern_path kfunc
 
--- 
-~Randy
+ fs/bpf_fs_kfuncs.c                            | 58 +++++++++++
+ include/linux/btf.h                           |  1 +
+ kernel/bpf/btf.c                              | 33 +++++++
+ kernel/bpf/verifier.c                         | 51 +++++++---
+ .../testing/selftests/bpf/bpf_experimental.h  |  4 +
+ .../selftests/bpf/prog_tests/kern_path.c      | 82 ++++++++++++++++
+ .../selftests/bpf/progs/test_kern_path.c      | 56 +++++++++++
+ .../selftests/bpf/progs/verifier_kern_path.c  | 52 ++++++++++
+ .../bpf/progs/verifier_kern_path_fail.c       | 97 +++++++++++++++++++
+ 9 files changed, 422 insertions(+), 12 deletions(-)
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/kern_path.c
+ create mode 100644 tools/testing/selftests/bpf/progs/test_kern_path.c
+ create mode 100644 tools/testing/selftests/bpf/progs/verifier_kern_path.c
+ create mode 100644 tools/testing/selftests/bpf/progs/verifier_kern_path_fail.c
+
+--
+2.47.3
 
