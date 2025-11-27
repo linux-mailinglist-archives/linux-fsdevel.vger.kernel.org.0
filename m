@@ -1,95 +1,95 @@
-Return-Path: <linux-fsdevel+bounces-70053-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70054-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB0F1C8F9DD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 18:12:46 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9786EC8FB19
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 18:31:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 288123A2EF6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 17:12:44 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6840D4E9764
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 17:30:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 108882E0904;
-	Thu, 27 Nov 2025 17:12:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D88342ECD1D;
+	Thu, 27 Nov 2025 17:29:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="tcF2zkRY";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="5PP4P/Da";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="tcF2zkRY";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="5PP4P/Da"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="vmhNmePV";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="5hBYg18H";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="vmhNmePV";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="5hBYg18H"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF0407082D
-	for <linux-fsdevel@vger.kernel.org>; Thu, 27 Nov 2025 17:12:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28A022EBDF2
+	for <linux-fsdevel@vger.kernel.org>; Thu, 27 Nov 2025 17:29:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764263556; cv=none; b=lQTH7ZnMu0q+jnNgFofNY8dwK9Iao9hrg2DWoEpxIE6r4kcQLpRwhRD5RwBn75bdv24STCvjG3KfajKtg2gLYWuyeNKFDLt3fOwgqutEFBmJmBxN8kzJE+WqEDi/2h4mf/4l0SMPTeXw/UGRhjN4LHGrUChAVjamQCitD/blS5o=
+	t=1764264585; cv=none; b=EuDmdMJdXxlMVoq+mxQGUrVOG24tG1HJPT+kSePqsL5DhymwgmbTGrmNra3ZfceZuleIj39HsuY5pQlHo3//3Z6d6xCe1xY+Lw2XZ0mYUexZ6RqABqgtbvo+2wVuMPN6Mmvtya5bQnsl76wgMfTHuOa1jcfvkchDRc4ZyGCw7Sc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764263556; c=relaxed/simple;
-	bh=pc7Epk54iBlH886XDam9+xhG2ZeBCkLWW5qgOyrHYrc=;
+	s=arc-20240116; t=1764264585; c=relaxed/simple;
+	bh=OBh1Nm4V2iI7uVMwNt9vEmpFMM8qLI+6Y5ifuXNv0JA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WyPl8GRlt8E2NR5o4nKzmsuxhUWbouhNjKG+RTrtMosBBpHeLogE+9LEjxG/9F5N0BjPxIRuhLaa9sNS/7lwuB69ooX9Udy8xyECX+Kk9/PYuAZz6CafdqLITUtXANi1+kg0kuIn0gSLg1o32lAty3QL6SgHRIn0J+6/RkJ+bno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=tcF2zkRY; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=5PP4P/Da; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=tcF2zkRY; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=5PP4P/Da; arc=none smtp.client-ip=195.135.223.131
+	 In-Reply-To:Content-Type; b=MTkhgvXkg64wQjM1bdTl0XHUcykaTV5FpMo0efaA64C8jLBuPBw2/S98Tt+Z1yF64TU4EI0q7Eg+/20y5tCNbqPxNXnbibE8+Fw10sBax5gLW0Pm17Vvd4HMAaJ9mfNRcfYtlYJ4o2M3oHPhQ5FuxB0oWWDImNPLTfrEcSRW2w4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=vmhNmePV; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=5hBYg18H; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=vmhNmePV; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=5hBYg18H; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 02D2D5BCC1;
-	Thu, 27 Nov 2025 17:12:33 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 70B565BCCE;
+	Thu, 27 Nov 2025 17:29:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1764263553; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1764264580; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=muXdCPO0hjEgv1mSmTtKeYXc4kibJAl1WAR2F5e/B8M=;
-	b=tcF2zkRYl/USlxiTOLnx4ezPZm5abgALyOtNcW+Clv5TsS/mok4YlZSUOMXmxizM0phxBj
-	YRpNlgBIvwq06/RKvr8Vh+miSWk3seJtuUATyv66zM+MiintsU1zHi++wxB9iXXDv/wy21
-	Kng3/P5AnLp9b258ocpi48OfZ/+WWVU=
+	bh=FuAbPb81cybHXvZzJMFb+FayDQIoYA6mlwqg9utDL+M=;
+	b=vmhNmePV9xbNTX9Mp3pNSMixGyL6Rik3T+vb7OOdDNLUyTrMG5dBxP+3Kc9s07o70ZyYkv
+	z6ws1md1U+Z+t6cVLBZNzT2BfTTc12Zkiba8PVLb5YHj82PkWba04hSIWXlujeeYNpp6Zq
+	mmUwXUKtZpbJCTUyscDiNPcsrnmWeEc=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1764263553;
+	s=susede2_ed25519; t=1764264580;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=muXdCPO0hjEgv1mSmTtKeYXc4kibJAl1WAR2F5e/B8M=;
-	b=5PP4P/DauP7TF2V79v6nom1eiGVrP5sM5vFIkeUcBMF6xWkbRGiGAWGaECl8FLkiTD8qAv
-	nNgcZEszTaiQ0pCA==
+	bh=FuAbPb81cybHXvZzJMFb+FayDQIoYA6mlwqg9utDL+M=;
+	b=5hBYg18HxbOUUs5G9bgxiFUqCIY7Qs9l5yVfc/dQ2fnOGWBxVxep9S1fXUSMC4FIEemtUP
+	m7var8nkza/3UoAg==
 Authentication-Results: smtp-out2.suse.de;
 	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1764263553; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1764264580; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=muXdCPO0hjEgv1mSmTtKeYXc4kibJAl1WAR2F5e/B8M=;
-	b=tcF2zkRYl/USlxiTOLnx4ezPZm5abgALyOtNcW+Clv5TsS/mok4YlZSUOMXmxizM0phxBj
-	YRpNlgBIvwq06/RKvr8Vh+miSWk3seJtuUATyv66zM+MiintsU1zHi++wxB9iXXDv/wy21
-	Kng3/P5AnLp9b258ocpi48OfZ/+WWVU=
+	bh=FuAbPb81cybHXvZzJMFb+FayDQIoYA6mlwqg9utDL+M=;
+	b=vmhNmePV9xbNTX9Mp3pNSMixGyL6Rik3T+vb7OOdDNLUyTrMG5dBxP+3Kc9s07o70ZyYkv
+	z6ws1md1U+Z+t6cVLBZNzT2BfTTc12Zkiba8PVLb5YHj82PkWba04hSIWXlujeeYNpp6Zq
+	mmUwXUKtZpbJCTUyscDiNPcsrnmWeEc=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1764263553;
+	s=susede2_ed25519; t=1764264580;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=muXdCPO0hjEgv1mSmTtKeYXc4kibJAl1WAR2F5e/B8M=;
-	b=5PP4P/DauP7TF2V79v6nom1eiGVrP5sM5vFIkeUcBMF6xWkbRGiGAWGaECl8FLkiTD8qAv
-	nNgcZEszTaiQ0pCA==
+	bh=FuAbPb81cybHXvZzJMFb+FayDQIoYA6mlwqg9utDL+M=;
+	b=5hBYg18HxbOUUs5G9bgxiFUqCIY7Qs9l5yVfc/dQ2fnOGWBxVxep9S1fXUSMC4FIEemtUP
+	m7var8nkza/3UoAg==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 842B63EA63;
-	Thu, 27 Nov 2025 17:12:32 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DDFED3EA63;
+	Thu, 27 Nov 2025 17:29:39 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 9PCSHoCGKGlQLQAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Thu, 27 Nov 2025 17:12:32 +0000
-Message-ID: <73d414c1-8cdf-4d61-baa0-e4d689b3973b@suse.cz>
-Date: Thu, 27 Nov 2025 18:12:31 +0100
+	id YuV5NIOKKGmaPQAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Thu, 27 Nov 2025 17:29:39 +0000
+Message-ID: <dc483db3-be4d-45f7-8b40-a28f5d8f5738@suse.cz>
+Date: Thu, 27 Nov 2025 18:29:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -97,8 +97,8 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 13/16] mm: remove non_swap_entry() and use softleaf
- helpers instead
+Subject: Re: [PATCH v3 14/16] mm: remove is_hugetlb_entry_[migration,
+ hwpoisoned]()
 Content-Language: en-US
 To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
  Andrew Morton <akpm@linux-foundation.org>
@@ -140,7 +140,7 @@ Cc: Christian Borntraeger <borntraeger@linux.ibm.com>,
  linux-s390@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  linux-mm@kvack.org, linux-arch@vger.kernel.org, damon@lists.linux.dev
 References: <cover.1762812360.git.lorenzo.stoakes@oracle.com>
- <2562093f37f4a9cffea0447058014485eb50aaaf.1762812360.git.lorenzo.stoakes@oracle.com>
+ <0e92d6924d3de88cd014ce1c53e20edc08fc152e.1762812360.git.lorenzo.stoakes@oracle.com>
 From: Vlastimil Babka <vbabka@suse.cz>
 Autocrypt: addr=vbabka@suse.cz; keydata=
  xsFNBFZdmxYBEADsw/SiUSjB0dM+vSh95UkgcHjzEVBlby/Fg+g42O7LAEkCYXi/vvq31JTB
@@ -181,7 +181,7 @@ Autocrypt: addr=vbabka@suse.cz; keydata=
  rywqgzTUhHFKKF6/9L/lYtrNcHU8Z6Y4Ju/MLUiNYkmtrGIMnkjKCiRqlRrZE/v5YFHbayRD
  dJKXobXTtCBYpLJM4ZYRpGZXne/FAtWNe4KbNJJqxMvrTOrnIatPj8NhBVI0RSJRsbilh6TE
  m6M14QORSWTLRg==
-In-Reply-To: <2562093f37f4a9cffea0447058014485eb50aaaf.1762812360.git.lorenzo.stoakes@oracle.com>
+In-Reply-To: <0e92d6924d3de88cd014ce1c53e20edc08fc152e.1762812360.git.lorenzo.stoakes@oracle.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Spamd-Result: default: False [-2.80 / 50.00];
@@ -211,55 +211,66 @@ X-Spam-Score: -2.80
 X-Spam-Flag: NO
 
 On 11/10/25 23:21, Lorenzo Stoakes wrote:
-> There is simply no need for the hugely confusing concept of 'non-swap' swap
-> entries now we have the concept of softleaf entries and relevant
-> softleaf_xxx() helpers.
-> 
-> Adjust all callers to use these instead and remove non_swap_entry()
-> altogether.
+> We do not need to have explicit helper functions for these, it adds a level
+> of confusion and indirection when we can simply use software leaf entry
+> logic here instead and spell out the special huge_pte_none() case we must
+> consider.
 > 
 > No functional change intended.
 > 
 > Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
-Nice!
-
 Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
 
-> @@ -1430,19 +1429,20 @@ static long move_pages_ptes(struct mm_struct *mm, pmd_t *dst_pmd, pmd_t *src_pmd
->  					orig_dst_pte, orig_src_pte, dst_pmd,
->  					dst_pmdval, dst_ptl, src_ptl, &src_folio,
->  					len);
-> -	} else {
-> +	} else { /* !pte_present() */
->  		struct folio *folio = NULL;
-> +		const softleaf_t entry = softleaf_from_pte(orig_src_pte);
+But seems to me a fixup is needed:
+
+> ---
+>  fs/proc/task_mmu.c      | 19 +++++----
+>  include/linux/hugetlb.h |  2 -
+>  mm/hugetlb.c            | 91 +++++++++++++++++------------------------
+>  mm/mempolicy.c          | 17 +++++---
+>  mm/migrate.c            | 15 +++++--
+>  5 files changed, 69 insertions(+), 75 deletions(-)
+> 
+> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+> index 6cb9e1691e18..3cdefa7546db 100644
+> --- a/fs/proc/task_mmu.c
+> +++ b/fs/proc/task_mmu.c
+> @@ -2499,22 +2499,23 @@ static void make_uffd_wp_huge_pte(struct vm_area_struct *vma,
+>  				  unsigned long addr, pte_t *ptep,
+>  				  pte_t ptent)
+>  {
+> -	unsigned long psize;
+> +	const unsigned long psize = huge_page_size(hstate_vma(vma));
+> +	softleaf_t entry;
 >  
-> -		entry = pte_to_swp_entry(orig_src_pte);
-> -		if (non_swap_entry(entry)) {
-> -			if (is_migration_entry(entry)) {
-> -				pte_unmap(src_pte);
-> -				pte_unmap(dst_pte);
-> -				src_pte = dst_pte = NULL;
-> -				migration_entry_wait(mm, src_pmd, src_addr);
-> -				ret = -EAGAIN;
-> -			} else
-> -				ret = -EFAULT;
+> -	if (is_hugetlb_entry_hwpoisoned(ptent) || pte_is_marker(ptent))
+> -		return;
+> +	if (huge_pte_none(ptent))
+> +		set_huge_pte_at(vma->vm_mm, addr, ptep,
+> +				make_pte_marker(PTE_MARKER_UFFD_WP), psize);
 
-Eww, good to get rid of this.
+Shouldn't we return here? Otherwise AFAICS we'll also reach the
+huge_ptep_modify_prot_commit() below and that wasn't happening before.
 
-> +		if (softleaf_is_migration(entry)) {
-> +			pte_unmap(src_pte);
-> +			pte_unmap(dst_pte);
-> +			src_pte = dst_pte = NULL;
-> +			migration_entry_wait(mm, src_pmd, src_addr);
-> +
-> +			ret = -EAGAIN;
-> +			goto out;
-> +		} else if (!softleaf_is_swap(entry)) {
-> +			ret = -EFAULT;
->  			goto out;
->  		}
 >  
-
+> -	psize = huge_page_size(hstate_vma(vma));
+> +	entry = softleaf_from_pte(ptent);
+> +	if (softleaf_is_hwpoison(entry) || softleaf_is_marker(entry))
+> +		return;
+>  
+> -	if (is_hugetlb_entry_migration(ptent))
+> +	if (softleaf_is_migration(entry))
+>  		set_huge_pte_at(vma->vm_mm, addr, ptep,
+>  				pte_swp_mkuffd_wp(ptent), psize);
+> -	else if (!huge_pte_none(ptent))
+> +	else
+>  		huge_ptep_modify_prot_commit(vma, addr, ptep, ptent,
+>  					     huge_pte_mkuffd_wp(ptent));
+> -	else
+> -		set_huge_pte_at(vma->vm_mm, addr, ptep,
+> -				make_pte_marker(PTE_MARKER_UFFD_WP), psize);
+>  }
+>  #endif /* CONFIG_HUGETLB_PAGE */
+>  
 
