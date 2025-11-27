@@ -1,75 +1,74 @@
-Return-Path: <linux-fsdevel+bounces-69976-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69977-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F283C8CD73
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 06:04:42 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17CFBC8CDBE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 06:12:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B65054E6988
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 05:04:22 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 41B9F34DD97
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 05:12:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78702230D14;
-	Thu, 27 Nov 2025 05:03:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83B2930FC24;
+	Thu, 27 Nov 2025 05:12:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="IpMhOQmx"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="gCpcs6V6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from BL0PR03CU003.outbound.protection.outlook.com (mail-eastusazon11012060.outbound.protection.outlook.com [52.101.53.60])
+Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013066.outbound.protection.outlook.com [40.93.201.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C154630F928;
-	Thu, 27 Nov 2025 05:03:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.53.60
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 016A12C0285;
+	Thu, 27 Nov 2025 05:12:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.66
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764219817; cv=fail; b=JVQkLRsyxTzLxNH7nK3VCIfEBWcnttd0uEP2u1eovJISCUav6DWcd2U7/0gbD8x9FzvVw71XceUHnMgML3MwxocKO3ieafxfRQG6lAcQQe4dpoSKjVVEuteIOc4AQK0N41ENRUEy6w6NVdfMwqMqP6sTEBZ+9lT3cTtPDjyXZXQ=
+	t=1764220336; cv=fail; b=q7h24NN/0ivBDq3lX3SZEGwdNrYxPVIpAIKUMU/z0Y37KvEVNsJ2/Wuy0PLHTy8LEqhG2k2DYYOXAAYkqSzT4bvM0pym1lCh9oEk52oERSHoObB9Uwa9MQoE4zWKEGIZJgGp5Qi/nKKOKf/uRwrFwtUo78tGEe40634D9GYUDVw=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764219817; c=relaxed/simple;
-	bh=oc2FeBQeoYKjmLz9KkTlhKqC0j85/sFoOeupn/we3NE=;
+	s=arc-20240116; t=1764220336; c=relaxed/simple;
+	bh=b2NuSotvVQAAWCUTj/YZ9fw6IQF5lNLm1E06hxqrnw8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=rWkxKPGiwmHOLgqPDidW+/wCWxikzUDOqV/Zq4Bfr0SPGTEGSatGBMpv4aiJtrWwWfg+dWoCUy9wkqOy4X1rUk+3rpSBp63wSYJs5Jx1HkSgc6lly/urbib342fnpX5eZKz7ZjshsGadC2Q6HHeYF3TtRZdyZdxX+bFHgEpwDDo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=IpMhOQmx; arc=fail smtp.client-ip=52.101.53.60
+	 Content-Disposition:In-Reply-To:MIME-Version; b=Q3CBH7TqK4noWAmcLE5L89QE7z+8Re4TCWR1UK45EJLgSrrZOSb94mADFxFDiwpWFx84ekh04RHApvrGyefuthxZoRPKMPQn/Wr+mFMSggatfKAYNkwhhilWIcdjnCBmQDdwo5l535WmLPDf6s/wtahwn7hogfCfO195G7N5UZo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=gCpcs6V6; arc=fail smtp.client-ip=40.93.201.66
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gvEAgXWhQe56VWGUxzOdm6d12cWL8V+YKJlOcZcUI5j1ZpISG7wthDxFb3Q/DsyQGMj9IsklEwa9xprKFsFWUDrXJl+c3h4UFqbfjB1AQ5Kzzly/9wvTs1s97y5t7cVRGGE3atCrUy3FFG8EpTBcS2YLIYaQy9WRN+di/c23UVGqXX73EkBHkcmAAked5BCECy4NdldpgKjIbChd9JpqC97/mrB8z1zQCgPRiDoXAcsIR7vvV8vTgVRBGEMgUPPT8MRiPafdSlCObcCT2Zj7fobaELOHRxx6DuzXLqZm5qneTDuKCx2YFHF+RuPaaZ5+pfC7UbnHm+z8fHIDpPgrRQ==
+ b=QPuh4tr6Wh3/padRYzdWqk9dbkIkP+BGJUyaASgOYIfNyBsRlbthQR1/JctZ1V1QFEli2WvDCdH4XHP/iv8TbO0sU5qRXmon4APJ1lKkDc1JzOrM48XdPB9deU9Jw82ANkbcK8dKN9rV5MC5qfJDRiFnMEz4JyMMCgMLq352Kbhyl5njD8FYDCou7b0Ziy7zkdSDFW2g/BT8b2cJ2xuFCdI9a0XF3xUvp+r659RIGD/VLnhirG/M+GpX9Jr5I1npPS0scEBtNoVmWxc14h/ugm7vZex8Ib+4dvqk/1hgdu5+pYGvAxOVsqOgU8ZGmEXoh2O5EcZgBX5lsSnsceTOxQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=I3c0qryEvBfAAGXcWAAqCeFuQcZRFkx/fvS6B26ifKw=;
- b=bTYefnQuEoA+8KYkr0fJpX9cl6bb8axCrfiNOSBUa1F43BS/CCLuTwM3FpA4q37gDTl7tIZa2gDpjxkX+q/t1EKpkR/8dH+wH5VaXtGBkuymkcl9L2TtrsDvmsAUSpSYLv7rn9LypSzK4u2/axcF6oznWFzQd/QhHZ4xDrnPOoA9evBl+L8D+lSymejBJfAfoqWmvTduWFyYLjyAhZkci+Rh2LfwXCjwh1d8fEYAmZHk4jJXyCLBKCGwlLFR3/G5pijgsVFVTJTeFvqhqAvLTCiVm+rH27DjO2a09IKD39pkBe49iVIHxzaMjQJToDuREpsCBMd9hMNCN0Vb3itvIg==
+ bh=b3NJdCh71+BpYQszap5teUwi3VCrIHuh0lBu6VWAAsY=;
+ b=Pr5o1rJpfOzJ9aafluQQO1XoaghxpmOhpp55fuuhwYGNhQffKeusU5sZQ6pfQzH5SQRKDrF18aI1PY6+T/wplXNEyKpegWN2nfBnyAP/StadPavUEOZNm3ERqli/3L9Ln/0mQNJnt4rDJihbvJQ/D/xAy/uKL41rQscBzS7qIX05RfRSrXTjRXvkYM5sdsxjBt3PWMhIKDBIgnKvgaNv2Mpi7s5jAOQvsiB47qcFVBQX2YGdex57gGlxb2DUQWC3kcXECsfmLrdMRIv/qm/oLdtPdogxvFUo7VzUSVXJqXZv6i13n30FIMi8TlNyvBw2lBgayNVfX+uV44VkpAaXig==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=I3c0qryEvBfAAGXcWAAqCeFuQcZRFkx/fvS6B26ifKw=;
- b=IpMhOQmxYIE5yW3qG8jOVA/RrbxvppLQvLfcsh1LOM1zny0+MN4Gosr/ygbazRcdUDzko8DtRsd+t24dbeBmmwyFEt8gy+maUMpLKydYt7fAvITY/WDVZ8MEOK/FJ9P8iKV+vw+se8XRkM54vWDouk9AyjCTD821s6mK5U7h60kLIz05CDrNba9ot62Z6YS0hQXl1yI2xLHOUueHhNygmiyJWoMsAYuUQc+f0NlgktFIcN7wsntHpueDx7ztKz4JZ6BkG3CWJVqaU1ngGzF4xS4mKa8xERYY5WNzO/WnT2OXd74soZdhFnjN7yxR2GV9a0qza10Ku1dTpEtbAiXGUA==
+ bh=b3NJdCh71+BpYQszap5teUwi3VCrIHuh0lBu6VWAAsY=;
+ b=gCpcs6V6cWTPvH6MbDMMiWjACzekmK6WTwi4WMBw3FWYS9ZhfnGyZ9A16WtuMWCCfjFCfJfotJzWJDeDYDuD9YK0Rptq11thvJGtgF24N1XiaWMnjc1eXbAaTHSFmNoVKdWQOrcw6OvIVYTIGqWR7mpSX85C0FlBPdpTq0nK+pdWT4DoLPDm6rbT3IgH32Qv/NX0Ar2o5NlXhlBDhgCvsvJAZZq+q6PrAsuRqovoM7mzYVJLmAzM4luvKibatxkuMr2EBPW2LAhyecLlks8heBWNTmdyPr2mjhZaXkmvazI48s8kB3sbRuHv1RN+xJ2jqtaza0sxVQn9J5le5iKIMw==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
 Received: from DS0PR12MB7726.namprd12.prod.outlook.com (2603:10b6:8:130::6) by
- PH8PR12MB7028.namprd12.prod.outlook.com (2603:10b6:510:1bf::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9366.12; Thu, 27 Nov
- 2025 05:03:29 +0000
+ DM4PR12MB5913.namprd12.prod.outlook.com (2603:10b6:8:66::22) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9366.11; Thu, 27 Nov 2025 05:12:10 +0000
 Received: from DS0PR12MB7726.namprd12.prod.outlook.com
  ([fe80::953f:2f80:90c5:67fe]) by DS0PR12MB7726.namprd12.prod.outlook.com
  ([fe80::953f:2f80:90c5:67fe%4]) with mapi id 15.20.9366.012; Thu, 27 Nov 2025
- 05:03:29 +0000
-Date: Thu, 27 Nov 2025 16:03:24 +1100
+ 05:12:10 +0000
+Date: Thu, 27 Nov 2025 16:12:05 +1100
 From: Alistair Popple <apopple@nvidia.com>
 To: Gregory Price <gourry@gourry.net>
-Cc: linux-mm@kvack.org, kernel-team@meta.com, linux-cxl@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
-	cgroups@vger.kernel.org, dave@stgolabs.net, jonathan.cameron@huawei.com, 
-	dave.jiang@intel.com, alison.schofield@intel.com, vishal.l.verma@intel.com, 
-	ira.weiny@intel.com, dan.j.williams@intel.com, longman@redhat.com, 
-	akpm@linux-foundation.org, david@redhat.com, lorenzo.stoakes@oracle.com, 
-	Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org, surenb@google.com, 
-	mhocko@suse.com, osalvador@suse.de, ziy@nvidia.com, matthew.brost@intel.com, 
-	joshua.hahnjy@gmail.com, rakie.kim@sk.com, byungchul@sk.com, ying.huang@linux.alibaba.com, 
-	mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com, 
+Cc: Kiryl Shutsemau <kirill@shutemov.name>, linux-mm@kvack.org, 
+	kernel-team@meta.com, linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	nvdimm@lists.linux.dev, linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org, 
+	dave@stgolabs.net, jonathan.cameron@huawei.com, dave.jiang@intel.com, 
+	alison.schofield@intel.com, vishal.l.verma@intel.com, ira.weiny@intel.com, 
+	dan.j.williams@intel.com, longman@redhat.com, akpm@linux-foundation.org, david@redhat.com, 
+	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org, 
+	surenb@google.com, mhocko@suse.com, osalvador@suse.de, ziy@nvidia.com, 
+	matthew.brost@intel.com, joshua.hahnjy@gmail.com, rakie.kim@sk.com, byungchul@sk.com, 
+	ying.huang@linux.alibaba.com, mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com, 
 	vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org, 
 	bsegall@google.com, mgorman@suse.de, vschneid@redhat.com, tj@kernel.org, 
 	hannes@cmpxchg.org, mkoutny@suse.com, kees@kernel.org, muchun.song@linux.dev, 
@@ -81,17 +80,15 @@ Cc: linux-mm@kvack.org, kernel-team@meta.com, linux-cxl@vger.kernel.org,
 	brauner@kernel.org, oleg@redhat.com, namcao@linutronix.de, escape@linux.alibaba.com, 
 	dongjoo.seo1@samsung.com
 Subject: Re: [RFC LPC2026 PATCH v2 00/11] Specific Purpose Memory NUMA Nodes
-Message-ID: <ti434m4sbveft6jw4zqrzzis47ycjupgiw5csj2wxmcac74xva@xyvx3ebqoqhu>
+Message-ID: <icora3w7wfisv2vtdc5w3w4kum2wbwqx2fmnxrrjo4tp7hgvem@jmb35qkh5ylx>
 References: <20251112192936.2574429-1-gourry@gourry.net>
- <aktv2ivkrvtrox6nvcpxsnq6sagxnmj4yymelgkst6pazzpogo@aexnxfcklg75>
- <aSDUl7kU73LJR78g@gourry-fedora-PF4VCD3F>
- <c5enwlaui37lm4uxlsjbuhesy6hfwwqbxzzs77zn7kmsceojv3@f6tquznpmizu>
- <aSR5l_fuONlCws8i@gourry-fedora-PF4VCD3F>
+ <h7vt26ek4wzrls6twsveinxz7aarwqtkhydbgvihsm7xzsjiuz@yk2dltuf2eoh>
+ <aSXFseE5FMx-YzqX@gourry-fedora-PF4VCD3F>
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aSR5l_fuONlCws8i@gourry-fedora-PF4VCD3F>
-X-ClientProxiedBy: SY0PR01CA0010.ausprd01.prod.outlook.com
- (2603:10c6:10:1bb::14) To DS0PR12MB7726.namprd12.prod.outlook.com
+In-Reply-To: <aSXFseE5FMx-YzqX@gourry-fedora-PF4VCD3F>
+X-ClientProxiedBy: SY5PR01CA0074.ausprd01.prod.outlook.com
+ (2603:10c6:10:1f4::18) To DS0PR12MB7726.namprd12.prod.outlook.com
  (2603:10b6:8:130::6)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -100,242 +97,262 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR12MB7726:EE_|PH8PR12MB7028:EE_
-X-MS-Office365-Filtering-Correlation-Id: 03459c16-31b4-42ad-a768-08de2d724dbb
+X-MS-TrafficTypeDiagnostic: DS0PR12MB7726:EE_|DM4PR12MB5913:EE_
+X-MS-Office365-Filtering-Correlation-Id: a3c6c7b3-59fd-4a70-5a75-08de2d738448
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|7416014|376014|1800799024|7053199007;
+	BCL:0;ARA:13230040|366016|376014|7416014|1800799024|7053199007;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?oSsu6zZRSgUYapJa7RY0AUowKKn1CoQ3ve9IeA7C+nqYT2e4l5h3VDDemNxe?=
- =?us-ascii?Q?t0BCTPj4KJ1P5bpD54bsbeTdl9yUIBclr1GRQK86CPtdd0Kvq/fESn1NBp2q?=
- =?us-ascii?Q?P9y2222MHYdUDqkqP+DHmU/tXQVF4uscFdzsjwr/F9Ok8ZzUlYgjU+FftE51?=
- =?us-ascii?Q?duC5fMfKXzYw6FUp90QTH7bqBvPLLy5w1AQ2KLgmv6Okqa1FFqx4Qv3UQmDl?=
- =?us-ascii?Q?MUNcheXBOMvMBuQ/BOZWL5BeD/Lw2umAFXnnzuI5aS1hc8Ywx4MieWULpBBe?=
- =?us-ascii?Q?6CUZO91UOVEN8Kjpmqla3/3arseWzZhuBo9yWAx7KzbxGX0IuOBjufAL3KIh?=
- =?us-ascii?Q?npjONYgWfMvaQkzIXiVk+PguG1wP6TG7enhlv54mg+zdEfWPGwbBYHt2U4Mg?=
- =?us-ascii?Q?GJsFWnECd23dNTQnoG13F4fANM+JllLgJfU52g+83hT3y57lKkCQFhgX8VCs?=
- =?us-ascii?Q?8x1sLlfklyEdvypBmIroiScEVmjz5xctcSVvTFzWolAZysN6M0k4OIQD9kKJ?=
- =?us-ascii?Q?kN8zp6+ehgFZkuwOzN26gP/BH+cfqTAaVrL8PX/Z4Ox32tzemsI3lKb9Ex67?=
- =?us-ascii?Q?zg3qrWjcNqGi7bwaDBx19xeoRyaMM8foXft/Z25oq/4TP+LX/+Ju4ndVMUeN?=
- =?us-ascii?Q?PYe491FaxBL6iMSMt/3q4CvHpB8UwRFZWpuwsURzXgWaqHh+u2974fCnokXH?=
- =?us-ascii?Q?IIcE+CDW8scRtE0xzSrPfW/feR/NsabTEKLFaftIMv/A/lMtU3gor9kj7224?=
- =?us-ascii?Q?rH9cjR+JcKaLqcfsaJobyWDIxpJL+nj7NTtWwe+2kaeatnFodm+3EDNKhyfE?=
- =?us-ascii?Q?i4/eAhUzyjCZuaECtGdd8EuJMTum/FnLoqZOjnZpIpMbGemtb5TnXb8Mk4P2?=
- =?us-ascii?Q?ul2zPHZD/wUF81V5iKGN7BHSpFBsfMBsKaDR7qy1vxw/76pw2EFTFbrqyw3q?=
- =?us-ascii?Q?2CThU9GV+D0Afu3m4eTzrvCyGhLqRGWei16SYcAxERIBAprgrOXoYISI6IWm?=
- =?us-ascii?Q?1onGInyhiUpT9U4OiYTiLykMSy28QhO0hSv2quYBbWC7thnXBAIbkDoE69EI?=
- =?us-ascii?Q?UZvtKdvxqtVI6KfZqSIkyIjvqPFvnTMODnStJ+1L9YAB54kwIJPUruorf5oZ?=
- =?us-ascii?Q?az/rkvPlk38C0OWfdZM4PLJHpQLf2k9X5IKnZKD5FQEj585F8H+6ucvhbbCC?=
- =?us-ascii?Q?C7AnAd0S8z4+/XheqIKN7wO8s6HjuA+DxmOQi6AgqLLkDeccfguMUT7GtVtm?=
- =?us-ascii?Q?zRGWXz44NmMCtV2AcrSMPRnNJD8e5zqEP4xPFGUf/ql5iMGNcTzNqRsFeX9n?=
- =?us-ascii?Q?W45LmjsY7CcSYmsPAnj3k30A039ZnKRWOincMhd69iMxqII4zNIj4Dg+TV36?=
- =?us-ascii?Q?VcVdnbK3DWVMzFliL2OEi7rhMdRpnmjOjmPGZBOkbNASNTc44zVLHTV9pVVX?=
- =?us-ascii?Q?L9tDbcAPxLZ3DaRofWeuYvAKSFJqw3Da?=
+	=?us-ascii?Q?IJCrh40oCHc/br9w6cawfIUD4/dJqRigvFlIZfxyQSBJ4n6QJL8Ug8mLE+E9?=
+ =?us-ascii?Q?5nLnHPPdP667rCqggZP4YrjWkkTghzxI1P9IP8LEZOObAMnGHsmUuCSNhB2/?=
+ =?us-ascii?Q?vA7Ks4co2v33di92sOJGZHfKPQACDl229FQQAfO4chChw+N0R16P3JqPQRxw?=
+ =?us-ascii?Q?UnNCnd8LbshthbCPRAZzb0y7byoVnHJUGssybeDlnT0FFUGcnu12yLhqhO1d?=
+ =?us-ascii?Q?Ckd0QhPbFKY0VOC6HzaizF3ygA0uWam+PTomlvCeKKNrEV4R0/QI+JZ80EJd?=
+ =?us-ascii?Q?ij2v3BWjD1utPyKp3nwNfEqEwSMdUhHo1Qb3nNT+RpKAVtJ/J4niMTS/rtmV?=
+ =?us-ascii?Q?PVmRQltdvxFLv/UTmX4rhl2KQxKEStlrAIBUP5EZCK/9RXuF/nZepyW89fnF?=
+ =?us-ascii?Q?BtdwhhQKP2j12/u+E/ILlcr/usPzoW97w85Hqnfi0WSkx6vwPXtbCdbLT4a/?=
+ =?us-ascii?Q?/KPW9J5WdLyMVAu4tFkJKo0PIHQYGwULcTIrGU9N0FlrALLhlmM3R/jp+3Xw?=
+ =?us-ascii?Q?HskabyNoaMy09ExXpj/5ygEOMUTea0fafXr7O25RnNZI/2wDrl+JAINKUFMs?=
+ =?us-ascii?Q?kAVUIO+VIRm1W8be8rqgO2cOchsS6hseRMnaMKKBHe9kfQ9QRqRojBXpSw1e?=
+ =?us-ascii?Q?fZJrOjNRPipU8WlMy1f6B2xHR3+b7XKGE/SC/SY2YdzXCnv0FRR8CRGGqzHm?=
+ =?us-ascii?Q?sH86XNGKJejgn2hRMh0sxNMyPwFsGYpBEgW7S8fHvaXdcMliDm59Jn+QD3s1?=
+ =?us-ascii?Q?cTarpBRu5EGNemIGJ3DPz/Cr9BNqueLwxJdVfiHYsVxcAuzzeVLoXqlAkqw+?=
+ =?us-ascii?Q?QyXgEWPqjTAC0kkx0L/iadlnG7qJyZAqcLG5qZNvo7QPBTSbGnNu6TjJcYLN?=
+ =?us-ascii?Q?EdsDMzDTBRb2uFjEoey+1huxmMQMzZp7NM/oApokpMKTSUArv+aup2rcs9wr?=
+ =?us-ascii?Q?+0Fi4/jjpug040d+ZZlWOSFDW1XM1fgD4PGP44lDkTnXHCsLH6x3pG2VmWUC?=
+ =?us-ascii?Q?Q7p4FK+qIu17KyJOQWfLaW/aSwjRrn9XEFZq/gF1titpHtdAaG3SBKunlEsC?=
+ =?us-ascii?Q?rTbVL1ZAhP89aJIbnURM8LV/SoYPPcBTHE3rjF6kj6p/qUV1Gz1VtJf+QCic?=
+ =?us-ascii?Q?s7/pBSPW+ANPbYxAbl2DBRhoIbD6j9G4tf2r7nCHrSwtosLGaxC62xAxhIqC?=
+ =?us-ascii?Q?5ogBmYF8C1VZCEALC1IBmKjfEFExlZqzW4p+ogBf2QW1waD3TbT6gLt2kOsq?=
+ =?us-ascii?Q?uU6asBYLWMcwiKYurEVJek9m/eaBNivs0rWeqQq8WdIjHnikifJNKi2LeFw6?=
+ =?us-ascii?Q?WWy4WIG+lrZ4+OHrjouIM1DXRnYWYhCxwYsuLjcG3/cgwcEqEtJEv/26XgEv?=
+ =?us-ascii?Q?1r01H97B0ovoC0vqJDVclpF+S+eQXUvOmn8CfDu5NXjdHKmtLOFcYg7aeBnH?=
+ =?us-ascii?Q?dJbTSXhGuXQru75uITpCB7cBZYsAjp/h?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB7726.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB7726.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?3jP+yBg4dqF+Mye4nK2da479/OnfQgLksiiiXenWktANjWnHJmDI5EVP53Vt?=
- =?us-ascii?Q?HOTuzjXyoXYmVVHLq+8QIiWyWqOcl6mei4sOsuYbLO5W4vnuZ/eordpoiEe6?=
- =?us-ascii?Q?Aog+fVf5kQmczi54lKJmybXHGaGzFFqD7FGJnii1HVExFgk2H15iptVuTahi?=
- =?us-ascii?Q?zdQsbhV6vf6y7qv/U+eeRSytVMEoGubPjMXU/xa1qo9jF/AjLVJv/k3tcLWW?=
- =?us-ascii?Q?QjyMYweWruQCOL+epN0BmN+HlEh5RWp+uIk0sbcd1C5Yt9Ay/QLn8tT2raDo?=
- =?us-ascii?Q?CfNPDKotnaOFFRHY+MLZGlaoq5pqEMFYps93aPxEBhP7qoR483nvkXlgZh48?=
- =?us-ascii?Q?//JZfaSO2oc5JsH59l9xQh1l0rfjHJHlRuNIl+Z8Gcp5izCLfMAlIi6tcGdt?=
- =?us-ascii?Q?5CCDqn9H4fwDTGBUHGFR/7QVkSz20YDJtQuNKYViL1Is6M3jC3DGZ6BB8Qa9?=
- =?us-ascii?Q?ljrI2zgOyYjExELhLN9TEL1KKxrD62PtbhPt3ZN18ExB9T6+M9QtM5DRQ8gp?=
- =?us-ascii?Q?KoBGPh6qLcWkymH1pdzvHz514f9pflwfvKblFBtnn1519Vvexhz6SL7WXNpd?=
- =?us-ascii?Q?L8d0OuJ4K+Ta1ocxwza7BpAChJEkIZKgilKC3qw+9GKQnVtF3SON5v1PhGL2?=
- =?us-ascii?Q?K/U6Nktxo88NF0kR2+7NX7qdfs5J2azfupdRPjJv9aixveVncGMkbot/h4Pz?=
- =?us-ascii?Q?UeDSB1ynoI9ksPLcFWErYN1/1KueVsbnCrWlCyDbG9PlPPk5zTL0tqu9ijQg?=
- =?us-ascii?Q?KjmxZKUqJVYlQlt3nWgceeNaKobVuh845QllW++BdH5xvpTC4Iz597iw+upW?=
- =?us-ascii?Q?KFMnzJ5v7O/sGR0fKPKfyDwXECP8BFS5MSlQWawaPNTWaNRhzQhtamb3j9Wk?=
- =?us-ascii?Q?hrEa4gb3JOE3HzllhYzbEGxy8llCsPpvWDsnTbFVZOFZFYB8Rc4ziPNRDPn+?=
- =?us-ascii?Q?dsS6WIKgR3mqo8DM5yLYkN/uFPi43XneMcNAmorh2xas/scwphHFJuNBzo11?=
- =?us-ascii?Q?CjwwQES1OiBTmfaTUVhe/sDU2rB30TufItElB5JW7ixfM2dS9Zah34wXTZOv?=
- =?us-ascii?Q?hvPYQeBbrmtPpKi8ooljeJT6bsWbSUkxQm12trjxfymyqg6yq4SFbLA/f0Zd?=
- =?us-ascii?Q?mTId9DfjOa6PulTesS7D+7eBzVunNo7SYOJa5vRRwGd9FF1vWQ2Cqm6oSo8W?=
- =?us-ascii?Q?eo0YP681iytXa52XNOWfl+w6kX6MX5q2vOJBGoTIvIid3pltXX3N07KnJV02?=
- =?us-ascii?Q?gk/1uuXVGI4ssxiamaxDytlgGpEPuTaBoU5n2f8LCHEmPfvATLK4+wsC9L/7?=
- =?us-ascii?Q?4gFOQIYtttbKdhvMind3pAA7YhkMLcUlpDL6LsX+U8mL4+1PR76+dFJTWQgq?=
- =?us-ascii?Q?UIJvz5ndCH4nkXKycpSScMUTXwVBs1bxJ70dlkRuCOKp2rvGoGDKjFthD4dg?=
- =?us-ascii?Q?XNFf/Pfbja+9NeCFaOGpBClO4+MqT1DsiESbrdpNfAfj9VEywFBmLgda5bWG?=
- =?us-ascii?Q?ibiGLUKbLr4suRLHsRRADVrwhjM5vq8Fhs2HNehrloJA8V67QaZDJyH7aiOJ?=
- =?us-ascii?Q?Ckemqb+uFJkd1dL2Dgp2jFNF+aW5QNeKeWveugcf?=
+	=?us-ascii?Q?dX79tMZdEglL9NitfVR64IKdW6IwM1fcyhX9nbtYkk+TAD+1MJYVutC180Lr?=
+ =?us-ascii?Q?fCHLQzQTWT9Wplr/nQZsSlSXFD/jKLRFvmPLq6qtYL9GLElYE+9Evss0Oagk?=
+ =?us-ascii?Q?tCR4lwIxtjjwYS5/y1vmjHS4D1u0Fi0tXJAAcva5WLfpGM8xZyHINDWBiWco?=
+ =?us-ascii?Q?i6UqDY74l9oPR55xWvm2rhUilhFOMwsAaYJTo4CEMDIko3F8Z9AVpma55Kte?=
+ =?us-ascii?Q?SGd8plRG4F2+bw+MrTUv455oSD4KydRV81xSnJMwDF3fv/i9/IzOVexwt3IN?=
+ =?us-ascii?Q?jrPVTr9/RHz3Bx4LrOeQLWfFY3kTyIDTKjzuLIGmJkXHRNoKGIubhgOVE6PI?=
+ =?us-ascii?Q?5HUnmUo3FVL4SH80nX8LlIBgk/88HRdIppy5g7lzcn9NZjUodgytXi+sFYNC?=
+ =?us-ascii?Q?O2YVsHtM2I9eU3TldHXNJ3FHHMaz1rNo9vIg4TTnPtlM6nsJmNP3qiAghWLs?=
+ =?us-ascii?Q?tMzK+omoWJE7tyCPKzctQn9hv5+ui/Uoh6R/UsVSx//23vme4ZIGEHidxjzq?=
+ =?us-ascii?Q?ezLiaJRUByCVkJ+BBVh0ssAdnBLOmHnJMSV4ZK7omk2AaEBr/a6jUbfdT0nK?=
+ =?us-ascii?Q?ay/G6uL6F871tYYFC9DswDZ2L3E8+9TUPG0Yg0pCBGjaR4gkH9RB+CTyXPlN?=
+ =?us-ascii?Q?wbPwgvCgOYVpf5s/DhKNx58kfJ9wtFWTaxpJAP409aSDvhsNJE9hrnZGMKN+?=
+ =?us-ascii?Q?yYJnlqdcGo3JO5IR8ubLHjOLhbSL57jj0i/Ab7xQfIuEM7jXIxbV3F14UMCe?=
+ =?us-ascii?Q?S5y5f0pAXuSzQzHXt8WnaPYF7+2HVSNJ2aDaGw6GHBh8haN3KvHaiopQ6vF4?=
+ =?us-ascii?Q?xbnHh4tmKaRMYzhI1F9LyL7zN8cQ132vTAvN7nKrn/gzj72mUqdJYaJaxxDT?=
+ =?us-ascii?Q?+LCp8rpSJ8miDgwKgf3iNSh6Sth29TIkyVTNLBG4R62cYc3uTzj11ZNBadNI?=
+ =?us-ascii?Q?2f/lkBBnbpMZdhhB35VxPy6L7xME7I/9IljmiUr34x7dMkQH8woNCthlEwjX?=
+ =?us-ascii?Q?Y6c3G3VHEOCPjQLDaOkhJFVjBmGraYyIf2fF56oFDrcRxWe0nfIoTU95cNag?=
+ =?us-ascii?Q?LFwxXhXumXe13QpiiUMKd+8MW8XbRBu0LhGAFHqThda7aQXOhyZMgvXRTgxN?=
+ =?us-ascii?Q?HXp6UEvUeHIsiEAUeAIO3NBNPskwoFEiXidA6gLDfSR49IqGahpeiLpk8jWT?=
+ =?us-ascii?Q?7AkaAaPIOZi/IXQGuIlmbcXl5T/bjOyi3ZSM1QYkrJ0LnQz88AkjbdJoSilK?=
+ =?us-ascii?Q?l/DgebXsZRHJYp/WgMYAwU9P6EQlTfFDtyfhUXFzIWQUbEBd6SipmkPjRAL2?=
+ =?us-ascii?Q?8leEuTbehui1JSAYN+cSyHD6o5NJVpigDsGF9nkKI5iM4PKctWZHUuBH76Mn?=
+ =?us-ascii?Q?Lq49icxC8gxcruPVHx8KY8qMKktRKklnXW/tLocgpJgT5X23eLnzVqWLiJwU?=
+ =?us-ascii?Q?hSYAMkkMuxRGUK+WlSX1JfOSoelhZiKbleOrs88hlxGV0z1KXUqFUaZf5T/d?=
+ =?us-ascii?Q?chm1ECm77wnnH7PhX+Vveeafur5pMHLeabiUthtXeVtIKDFllyeBDralSsMh?=
+ =?us-ascii?Q?lDrR9SzXwLww99IBoM7VXjD6PD6kKUulJeOfmofG?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 03459c16-31b4-42ad-a768-08de2d724dbb
+X-MS-Exchange-CrossTenant-Network-Message-Id: a3c6c7b3-59fd-4a70-5a75-08de2d738448
 X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB7726.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Nov 2025 05:03:29.1358
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Nov 2025 05:12:09.9890
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Kil9ojEnQ5NG2RY+q/8ijuE5PVfOr0pBrPbhN55J1jpzGytsNc3WVJd4su7InqApJe0CYAA2A8OY6JF1XMT2ww==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB7028
+X-MS-Exchange-CrossTenant-UserPrincipalName: K2Ubp5458ki59Iqq6ItmzMj6ElfAFM4O1h1Wjy3mn86w7B4phZ0Bk/rZ7NxApLrY7pskQslwOdGUgELIxZE+/A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB5913
 
-On 2025-11-25 at 02:28 +1100, Gregory Price <gourry@gourry.net> wrote...
-> On Mon, Nov 24, 2025 at 10:09:37AM +1100, Alistair Popple wrote:
-> > On 2025-11-22 at 08:07 +1100, Gregory Price <gourry@gourry.net> wrote...
-> > > On Tue, Nov 18, 2025 at 06:02:02PM +1100, Alistair Popple wrote:
-> > > > 
+On 2025-11-26 at 02:05 +1100, Gregory Price <gourry@gourry.net> wrote...
+> On Tue, Nov 25, 2025 at 02:09:39PM +0000, Kiryl Shutsemau wrote:
+> > On Wed, Nov 12, 2025 at 02:29:16PM -0500, Gregory Price wrote:
+> > > With this set, we aim to enable allocation of "special purpose memory"
+> > > with the page allocator (mm/page_alloc.c) without exposing the same
+> > > memory as "System RAM".  Unless a non-userland component, and does so
+> > > with the GFP_SPM_NODE flag, memory on these nodes cannot be allocated.
 > > 
-> > There are multiple types here (DEVICE_PRIVATE and DEVICE_COHERENT). The former
-> > is mostly irrelevant for this discussion but I'm including the descriptions here
-> > for completeness.
+> > How special is "special purpose memory"? If the only difference is a
+> > latency/bandwidth discrepancy compared to "System RAM", I don't believe
+> > it deserves this designation.
 > > 
 > 
-> I appreciate you taking the time here.  I'll maybe try to look at
-> updating the docs as this evolves.
+> That is not the only discrepancy, but it can certainly be one of them.
+> 
+> I do think, at a certain latency/bandwidth level, memory becomes
+> "Specific Purpose" - because the performance implications become so
+> dramatic that you cannot allow just anything to land there.
+> 
+> In my head, I've been thinking about this list
+> 
+> 1) Plain old memory (<100ns)
+> 2) Kinda slower, but basically still memory (100-300ns)
+> 3) Slow Memory (>300ns, up to 2-3us loaded latencies)
+> 4) Types 1-3, but with a special feature (Such as compression)
+> 5) Coherent Accelerator Memory (various interconnects now exist)
+> 6) Non-coherent Shared Memory and PMEM (FAMFS, Optane, etc)
+> 
+> Originally I was considering [3,4], but with Alistar's comments I am
+> also thinking about [5] since apparently some accelerators already
+> toss their memory into the page allocator for management.
 
-I believe the DEVICE_PRIVATE bit is documented here
-https://www.kernel.org/doc/Documentation/vm/hmm.rst , but if there is anything
-there that you think needs improvement I'd be happy to look or review. I'm not
-sure if that was updated for DEVICE_COHERENT though.
+Thanks.
 
-> > > But I could imagine an (overly simplistic) pattern with SPM Nodes:
-> > > 
-> > > fd = open("/dev/gpu_mem", ...)
-> > > buf = mmap(fd, ...)
-> > > buf[0] 
-> > >    1) driver takes the fault
-> > >    2) driver calls alloc_page(..., gpu_node, GFP_SPM_NODE)
-> > >    3) driver manages any special page table masks
-> > >       Like marking pages RO/RW to manage ownership.
-> > 
-> > Of course as an aside this needs to match the CPU PTEs logic (this what
-> > hmm_range_fault() is primarily used for).
+> Re: Slow memory --
+> 
+>    Think >500-700ns cache line fetches, or 1-2us loaded.
+> 
+>    It's still "Basically just memory", but the scenarios in which
+>    you can use it transparently shrink significantly.  If you can
+>    control what and how things can land there with good policy,
+>    this can still be a boon compared to hitting I/O.
+> 
+>    But you still want things like reclaim and compaction to run
+>    on this memory, and you still want buddy-allocation of this memory.
+> 
+> Re: Compression
+> 
+>   This is a class of memory device which presents "usable memory"
+>   but which carries stipulations around its use.
+> 
+>   The compressed case is the example I use in this set.  There is an
+>   inline compression mechanism on the device.  If the compression ratio
+>   drops to low, writes can get dropped resulting in memory poison.
+> 
+>   We could solve this kind of problem only allowing allocation via
+>   demotion and hack off the Write-bit in the PTE. This provides the
+>   interposition needed to fend-off compression ratio issues.
+> 
+>   But... it's basically still "just memory" - you can even leave it
+>   mapped in the CPU page tables and allow userland to read unimpeded.
+> 
+>   In fact, we even want things like compaction and reclaim to run here.
+>   This cannot be done *unless* this memory is in the page allocator,
+>   and basically necessitates reimplementing all the core services the
+>   kernel provides.
+> 
+> Re: Accelerators
+> 
+>   Alistair has described accelerators onlining their memory as NUMA
+>   nodes being an existing pattern (apparently not in-tree as far as I
+>   can see, though).
+
+Yeah, sadly not yet :-( Hopefully "soon". Although onlining the memory doesn't
+have much driver involvement as the GPU memory all just appears in the ACPI
+tables as a CPU-less memory node anyway (which is why it ended up being easy for
+people to toss it into the page allocator).
+
+>   General consensus is "don't do this" - and it should be obvious
+>   why.  Memory pressure can cause non-workload memory to spill to
+>   these NUMA nodes as fallback allocation targets.
+
+Indeed, this is a common complaint when people have done this.
+
+>   But if we had a strong isolation mechanism, this could be supported.
+>   I'm not convinced this kind of memory actually needs core services
+>   like reclaim, so I will wait to see those arguments/data before I
+>   conclude whether the idea is sound.
+
+Sounds reasonable, I don't have strong arugments either way at the moment so
+will see if we can gather some data.
+
+> 
+> 
 > >
-> 
-> This is actually the most interesting part of series for me.  I'm using
-> a compressed memory device as a stand-in for a memory type that requires
-> special page table entries (RO) to avoid compression ratios tanking
-> (resulting, eventually, in a MCE as there's no way to slow things down).
-> 
-> You can somewhat "Get there from here" through device coherent
-> ZONE_DEVICE, but you still don't have access to basic services like
-> compaction and reclaim - which you absolutely do want for such a memory
-> type (for the same reasons we groom zswap and zram).
-> 
-> I wonder if we can even re-use the hmm interfaces for SPM nodes to make
-> managing special page table policies easier as well.  That seems
-> promising.
-
-It might depend on what exactly you're looking to do - HMM is really too parts,
-one for mirroring page tables and another for allowing special non-present PTEs
-to be setup to map a dummy ZONE_DEVICE struct page that notifies a driver when
-the CPU attempts access.
-
-> I said this during LSFMM: Without isolation, "memory policy" is really
-> just a suggestion.  What we're describing here is all predicated on
-> isolation work, and all of a sudden much clearer examples of managing
-> memory on NUMA boundaries starts to make a little more sense.
-
-I very much agree with the views of memory policy that you shared in one of the
-other threads. I don't think it is adequate for providing isolation, and agree
-the isolation (and degree of isolation) is the interesting bit of the work here,
-at least for now.
-
-> 
-> > >    4) driver sends the gpu the (mapping_id, pfn, index) information
-> > >       so that gpu can map the region in its page tables.
-> > 
-> > On coherent systems this often just uses HW address translation services
-> > (ATS), although I think the specific implementation of how page-tables are
-> > mirrored/shared is orthogonal to this.
-> >
-> 
-> Yeah this part is completely foreign to me, I just presume there's some
-> way to tell the GPU how to recontruct the virtually contiguous setup.
-> That mechanism would be entirely reusable here (I assume).
-> 
-> > This is roughly how things work with DEVICE_PRIVATE/COHERENT memory today,
-> > except in the case of DEVICE_PRIVATE in step (5) above. In that case the page is
-> > mapped as a non-present special swap entry that triggers a driver callback due
-> > to the lack of cache coherence.
+> > I am not in favor of the new GFP flag approach. To me, this indicates
+> > that our infrastructure surrounding nodemasks is lacking. I believe we
+> > would benefit more by improving it rather than simply adding a GFP flag
+> > on top.
 > > 
 > 
-> Btw, just an aside, Lorenzo is moving to rename these entries to
-> softleaf (software-leaf) entries. I think you'll find it welcome.
-> https://lore.kernel.org/linux-mm/c879383aac77d96a03e4d38f7daba893cd35fc76.1762812360.git.lorenzo.stoakes@oracle.com/
+> The core of this series is not the GFP flag, it is the splitting of
+> (cpuset.mems_allowed) into (cpuset.mems_allowed, cpuset.sysram_nodes)
 > 
-> > > Driver doesn't have to do much in the way of allocationg management.
+> That is the nodemask infrastructure improvement.  The GFP flag is one
+> mechanism of loosening the validation logic from limiting allocations
+> from (sysram_nodes) to including all nodes present in (mems_allowed).
+> 
+> > While I am not an expert in NUMA, it appears that the approach with
+> > default and opt-in NUMA nodes could be generally useful. Like,
+> > introduce a system-wide default NUMA nodemask that is a subset of all
+> > possible nodes.
+> 
+> This patch set does that (cpuset.sysram_nodes and mt_sysram_nodemask)
+> 
+> > This way, users can request the "special" nodes by using
+> > a wider mask than the default.
+> > 
+> 
+> I describe in the response to David that this is possible, but creates
+> extreme tripping hazards for a large swath of existing software.
+> 
+> snippet
+> '''
+> Simple answer:  We can choose how hard this guardrail is to break.
+> 
+> This initial attempt makes it "Hard":
+>    You cannot "accidentally" allocate SPM, the call must be explicit.
+> 
+> Removing the GFP would work, and make it "Easier" to access SPM memory.
+> 
+> This would allow a trivial 
+> 
+>    mbind(range, SPM_NODE_ID)
+> 
+> Which is great, but is also an incredible tripping hazard:
+> 
+>    numactl --interleave --all
+> 
+> and in kernel land:
+> 
+>    __alloc_pages_noprof(..., nodes[N_MEMORY])
+> 
+> These will now instantly be subject to SPM node memory.
+> '''
+> 
+> There are many places that use these patterns already.
+> 
+> But at the end of the day, it is preference: we can choose to do that.
+> 
+> > cpusets should allow to set both default and possible masks in a
+> > hierarchical manner where a child's default/possible mask cannot be
+> > wider than the parent's possible mask and default is not wider that
+> > own possible.
+> > 
+> 
+> This patch set implements exactly what you describe:
+>    sysram_nodes = default
+>    mems_allowed = possible
+> 
+> > > Userspace-driven allocations are restricted by the sysram_nodes mask,
+> > > nothing in userspace can explicitly request memory from SPM nodes.
 > > > 
-> > > This is probably less compelling since you don't want general purposes
-> > > services like reclaim, migration, compaction, tiering - etc.  
+> > > Instead, the intent is to create new components which understand memory
+> > > features and register those nodes with those components. This abstracts
+> > > the hardware complexity away from userland while also not requiring new
+> > > memory innovations to carry entirely new allocators.
 > > 
-> > On at least some of our systems I'm told we do want this, hence my interest
-> > here. Currently we have systems not using DEVICE_COHERENT and instead just
-> > onlining everything as normal system managed memory in order to get reclaim
-> > and tiering. Of course then people complain that it's managed as normal system
-> > memory and non-GPU related things (ie. page-cache) end up in what's viewed as
-> > special purpose memory.
+> > I don't see how it is a positive. It seems to be negative side-effect of
+> > GFP being a leaky abstraction.
 > > 
 > 
-> Ok, so now this gets interesting then.  I don't understand how this
-> makes sense (not saying it doesn't, I simply don't understand).
+> It's a matter of applying an isolation mechanism and then punching an
+> explicit hole in it.  As it is right now, GFP is "leaky" in that there
+> are, basically, no walls.  Reclaim even ignored cpuset controls until
+> recently, and the page_alloc code even says to ignore cpuset when 
+> in an interrupt context.
 > 
-> I would presume that under no circumstance do you want device memory to
-> just suddenly disappear without some coordination from the driver.
-> 
-> Whether it's compaction or reclaim, you have some thread that's going to
-> migrate a virtual mapping from HPA(A) to HPA(B) and HPA(B) may or may not
-> even map to the same memory device.
-> 
-> That thread may not even be called in the context of a thread which
-> accesses GPU memory (although, I think we could enforce that on top
-> of SPM nodes, but devil is in the details).
-> 
-> Maybe that "all magically works" because of the ATS described above?
-
-Pretty much - both ATS and hmm_range_fault() are, conceptually at least, just
-methods of sharing/mirroring the CPU page table to a device. So in your example
-above if a thread was to migrate a mapping from one page to another this "black
-magic" would keep everything in sync. Eg. For hmm_range_fault() the driver
-gets a mmu_notifier callback saying the virtual mapping no longer points to
-HPA(A). If it needs to find the new mapping to HPA(B) it can look it up using
-hmm_range_fault() and program it's page tables with the new mapping.
-
-At a sufficiently high level ATS is just a HW implemented equivalence of this.
-
-> I suppose this assumes you have some kind of unified memory view between
-> host and device memory?  Are there docs here you can point me at that
-> might explain this wizardry?  (Sincerely, this is fascinating)
-
-Right - it's all predicated on the host and device sharing the same view of the
-virtual address space. I'm not sure of any good docs on this, but I will be at
-LPC so would be happy to have a discussion there.
-
-> > > The value is clearly that you get to manage GPU memory like any other
-> > > memory, but without worry that other parts of the system will touch it.
-> > > 
-> > > I'm much more focused on the "I have memory that is otherwise general
-> > > purpose, and wants services like reclaim and compaction, but I want
-> > > strong controls over how things can land there in the first place".
-> > 
-> > So maybe there is some overlap here - what I have is memoy that we want managed
-> > much like normal memory but with strong controls over what it can be used for
-> > (ie. just for tasks utilising the processing element on the accelerator).
-> > 
-> 
-> I think it might be great if we could discuss this a bit more in-depth,
-> as i've already been considering very mild refactors to reclaim to
-> enable a driver to engage it with an SPM node as the only shrink target.
-
-Absolutely! Looking forward to an in-person discussion.
-
- - Alistair
-
-> This all becomes much more complicated due to per-memcg LRUs and such.
-> 
-> All that said, I'm focused on the isolation / allocation pieces first.
-> If that can't be agreed upon, the rest isn't worth exploring.
-> 
-> I do have a mild extension to mempolicy that allows mbind() to hit an
-> SPM node as an example as well.  I'll discuss this in the response to
-> David's thread, as he had some related questions about the GFP flag.
+> The core of the proposal here is to provide a strong isolation mechanism
+> and then allow punching explicit holes in it.  The GFP flag is one
+> pattern, I'm open to others.
 > 
 > ~Gregory
-> 
 
