@@ -1,98 +1,118 @@
-Return-Path: <linux-fsdevel+bounces-70125-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70127-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3350EC91740
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 10:32:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E29DC918F2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 11:03:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 887103488DC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 09:32:22 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id CFAF934CA1A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 10:02:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA25B302174;
-	Fri, 28 Nov 2025 09:32:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18279308F0F;
+	Fri, 28 Nov 2025 10:02:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aMh9zGdw"
+	dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b="Gr8jzOnZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from jpms-ob02-os7.noc.sony.co.jp (jpms-ob02-os7.noc.sony.co.jp [211.125.139.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F2781F9F47;
-	Fri, 28 Nov 2025 09:32:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 749762FD684
+	for <linux-fsdevel@vger.kernel.org>; Fri, 28 Nov 2025 10:02:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.125.139.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764322335; cv=none; b=jX8B5m0+OaNUdaGac8TDtYbuBtI/GyGhipEsH6wlaxZ7++vThAJl8ev+//DVxYWpkvELzVWBGC0a8BFGPOMuGK0+tCfQ7sB3gXYJfFhtp2gReiIjEaeW+6ADiNfgUs52fPGLtNeg13XQitu4O3ixVw6DdX1Wz/dm858pi5lJvsI=
+	t=1764324173; cv=none; b=pVNNkX0bmdkuv5mUfWebOhFkyJCAk34JVlqVj43Jsc1cPdyDlELMPRubXUxUv3ZFZiHog5+8ki29UcCNt23vR7HMto/vLRMHZNsRBUUNfCa+2ULH22VigM37na9vd3pW7jqaJP6YxpBRCWUMDx6YyZ5/MU/xWlemzmlh4UoUmbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764322335; c=relaxed/simple;
-	bh=YjUBeN2vABSl0jpHGvvyfif2KOLnq/uDzZ6pXUv2Wa0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OfwzW4G1iXwv1f+SgjH7Os1Wsc4xEUNVPx/zsXdKwr04cPDjjrRmE4xMBn+Oq1pS/BFWfJvVhq9OaLE60My4Y3tpfJ9zQDH2h2zf/c370Bm1KB3JAheUANwRoEHbstA6CRQKO+JjNt6GoeBCWCBDder+P6T4WozT11L7Wr/QRqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aMh9zGdw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 007F9C2BD00;
-	Fri, 28 Nov 2025 09:32:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764322334;
-	bh=YjUBeN2vABSl0jpHGvvyfif2KOLnq/uDzZ6pXUv2Wa0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=aMh9zGdwQyc4CMba1/aRhDCSuvGC8VvcqWKl2zVsMc14g6W/YLldRku+9JjDT+JgH
-	 dnfWIzULs+z77XbLbq58eV1irD0iUd1J6vjm4DL+SlIRAE4s5gk3d5vtsVnaBz3608
-	 QXd+lV4+WRo3dfQkhV2U72dlI3reek7+wuXAbAi5bhMNw/nKHruZroe20WTJrhLWUO
-	 NPiU6IQO7oymXVYwtHUx1yWGV1xaCrgc5VyBUPd3O4meSyNwqqO0IXCk0fQapHJ9pa
-	 XT+lOT0YCaHNyNEwWWn0aOlY8TcqmSOOYNsHNn4HFKHRb5j5ezolv0GZqf6nxHpQ2v
-	 0KPoX/nwN6UEA==
-From: Christian Brauner <brauner@kernel.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2] dcache: touch up predicts in __d_lookup_rcu()
-Date: Fri, 28 Nov 2025 10:32:09 +0100
-Message-ID: <20251128-hinblick-heimfahren-c73d29b4c5ab@brauner>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251127131526.4137768-1-mjguzik@gmail.com>
-References: <20251127131526.4137768-1-mjguzik@gmail.com>
+	s=arc-20240116; t=1764324173; c=relaxed/simple;
+	bh=Iu5gGbQWcNAu6FalDnqUIA9i6GivM224Yn6vVNxmkZ0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CwUwhc9SRZBsCOqaGR/dlczwrAkAX7UoTDzpJwWLfUu3DP/824Nw6Sd7Pl1PFukKewaY0VBayEt6o4QXNJrrGbogpI13ZAvh3EM1TpAkea9VsT/dWRfHtq8MbFp59qoSPFTsLMNTe9CmRKkGNK5fJnyuc3XxB++563A24GM73D8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com; spf=fail smtp.mailfrom=sony.com; dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b=Gr8jzOnZ; arc=none smtp.client-ip=211.125.139.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=sony.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=sony.com; s=s1jp; t=1764324170; x=1795860170;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=alXLHYehYCqTiY3lAmQA3KjWtUAF9I66bS6hQJxunI4=;
+  b=Gr8jzOnZJ+uXxdh9QYqtzNPHex60hGYP2CDx/cxDm5WxursYuPGgPWcz
+   grYHWL0n2XGVDua8dAIFwRx/EBJ0ftSFhUqd07uogJzPumSCqoa1ZRfft
+   VyJY8jO3nMebdt/S95U/t8YKx8Rt8vtObbMxpRZ4Vc4gEisHPA7L7r0Qu
+   2gbZG5riihj9RHCsE25ufIn6N/NAPeLMLbdW8zwnuop3ydP/16zGHxD8U
+   TFYy8tKqHGrst00bH/7zaXgWs03PaLFNKJjWD6/YQZHI5RtLzFSra4mjs
+   0qNFN5umAD0nSUdfuJiA7cpvL/Z/SgtMtn1XkIpnHAn/BQcq2Q89/7UET
+   Q==;
+Received: from unknown (HELO jpmta-ob01-os7.noc.sony.co.jp) ([IPv6:2001:cf8:acf:1104::6])
+  by jpms-ob02-os7.noc.sony.co.jp with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Nov 2025 18:52:40 +0900
+X-IronPort-AV: E=Sophos;i="6.20,227,1758553200"; 
+   d="scan'208";a="60293414"
+Received: from unknown (HELO cscsh-7000014390..) ([43.82.111.225])
+  by jpmta-ob01-os7.noc.sony.co.jp with ESMTP; 28 Nov 2025 18:52:40 +0900
+From: Yuezhang Mo <Yuezhang.Mo@sony.com>
+To: linkinjeon@kernel.org,
+	sj1557.seo@samsung.com
+Cc: linux-fsdevel@vger.kernel.org,
+	Yuezhang Mo <Yuezhang.Mo@sony.com>,
+	kernel test robot <oliver.sang@intel.com>
+Subject: [PATCH] exfat: fix remount failure in different process environments
+Date: Fri, 28 Nov 2025 17:51:10 +0800
+Message-ID: <20251128095109.686100-2-Yuezhang.Mo@sony.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1341; i=brauner@kernel.org; h=from:subject:message-id; bh=YjUBeN2vABSl0jpHGvvyfif2KOLnq/uDzZ6pXUv2Wa0=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWRq5khpzHhc2B4ycVahc/kXlgVvRRT3OeodeVN7ub1z0 b54+xuBHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABMRZGf471MnJXli/8qjBeWl GnLRuzj7Jcsyy8xuONX1ivoWHgrIZ/jvFPywjf+bl+6HGY1pMvk7Zhl/yvrOHPX36Pbl7Hc/VPg zAQA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-On Thu, 27 Nov 2025 14:15:26 +0100, Mateusz Guzik wrote:
-> Rationale is that if the parent dentry is the same and the length is the
-> same, then you have to be unlucky for the name to not match.
-> 
-> At the same time the dentry was literally just found on the hash, so you
-> have to be even more unlucky to determine it is unhashed.
-> 
-> While here add commentary while d_unhashed() is necessary. It was
-> already removed once and brought back in:
-> 2e321806b681b192 ("Revert "vfs: remove unnecessary d_unhashed() check from __d_lookup_rcu"")
-> 
-> [...]
+The kernel test robot reported that the exFAT remount operation
+failed. The reason for the failure was that the process's umask
+is different betweem mount and remount, causing fs_fmask and
+fs_dmask are changed.
 
-Applied to the vfs-6.19.inode branch of the vfs/vfs.git tree.
-Patches in the vfs-6.19.inode branch should appear in linux-next soon.
+Potentially, both gid and uid may also be changed. Therefore, when
+initializing fs_context for remount, inherit these mount options
+from the options used during mount.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+Signed-off-by: Yuezhang Mo <Yuezhang.Mo@sony.com>
+Reported-by: kernel test robot <oliver.sang@intel.com>
+Closes: https://lore.kernel.org/oe-lkp/202511251637.81670f5c-lkp@intel.com
+---
+ fs/exfat/super.c | 19 +++++++++++++++----
+ 1 file changed, 15 insertions(+), 4 deletions(-)
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+diff --git a/fs/exfat/super.c b/fs/exfat/super.c
+index 7f9592856bf78..4dcbd889f8b2c 100644
+--- a/fs/exfat/super.c
++++ b/fs/exfat/super.c
+@@ -810,10 +810,21 @@ static int exfat_init_fs_context(struct fs_context *fc)
+ 	ratelimit_state_init(&sbi->ratelimit, DEFAULT_RATELIMIT_INTERVAL,
+ 			DEFAULT_RATELIMIT_BURST);
+ 
+-	sbi->options.fs_uid = current_uid();
+-	sbi->options.fs_gid = current_gid();
+-	sbi->options.fs_fmask = current->fs->umask;
+-	sbi->options.fs_dmask = current->fs->umask;
++	if (fc->purpose == FS_CONTEXT_FOR_RECONFIGURE && fc->root) {
++		struct super_block *sb = fc->root->d_sb;
++		struct exfat_mount_options *cur_opts = &EXFAT_SB(sb)->options;
++
++		sbi->options.fs_uid = cur_opts->fs_uid;
++		sbi->options.fs_gid = cur_opts->fs_gid;
++		sbi->options.fs_fmask = cur_opts->fs_fmask;
++		sbi->options.fs_dmask = cur_opts->fs_dmask;
++	} else {
++		sbi->options.fs_uid = current_uid();
++		sbi->options.fs_gid = current_gid();
++		sbi->options.fs_fmask = current->fs->umask;
++		sbi->options.fs_dmask = current->fs->umask;
++	}
++
+ 	sbi->options.allow_utime = -1;
+ 	sbi->options.errors = EXFAT_ERRORS_RO;
+ 	exfat_set_iocharset(&sbi->options, exfat_default_iocharset);
+-- 
+2.43.0
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.19.inode
-
-[1/1] dcache: touch up predicts in __d_lookup_rcu()
-      https://git.kernel.org/vfs/vfs/c/ca0d620b0afa
 
