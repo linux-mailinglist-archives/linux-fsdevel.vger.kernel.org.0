@@ -1,228 +1,198 @@
-Return-Path: <linux-fsdevel+bounces-70143-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70144-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D82B3C924E0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 15:23:27 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF92BC92594
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 15:41:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 5D57334FAB6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 14:23:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 52A124E1A8C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 14:41:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE3B7263F38;
-	Fri, 28 Nov 2025 14:22:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33414329C72;
+	Fri, 28 Nov 2025 14:41:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="c/KNxYB9"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X+81eIja"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B42432367D3;
-	Fri, 28 Nov 2025 14:22:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDC0E19AD90
+	for <linux-fsdevel@vger.kernel.org>; Fri, 28 Nov 2025 14:41:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764339742; cv=none; b=g8KU4NFeRR28VePC2WxIPLGau6rUxIKLTkgw8zRzwFJ3VcOja8CRuQmsHDTsIIpeM5mR+r+4zHryBQW96QMOZIJQRtodIXfPofDv8QCaAKDWts7krHDTBzXdnGIDBFqSc3AOCRFDeGLNib/leJGtQ6GrCoVQuN5TAfNmtwEyVCY=
+	t=1764340870; cv=none; b=ml7WST8s0++lwMeZoiRlldkVs8cTaYY2FYKX0hFAiwsfAo3NMlUWVkc2OvDgY5ALdm1AvNenWgYCU2uN/eGQIUx9SjzjWmt2IUQEZGhtWQPAEB36Y/iTzHI5JUb9cg9lfu3NepYof5+PRjKpr7rTqVLeB2sC78kDeJ1pWoN3VW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764339742; c=relaxed/simple;
-	bh=3G7XstSYQy/c2S8AiC+SqV74zs98HSno+8jdQRdAV2k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tEPKSDRWMgtY3ejah0eWn0ekjGQsHHO0TQqubN1NrkG0SFVbNiqVTrMY1BmwBKEnUNEX/l+aabOZBqvHltXnZZ3KZreZWm3a/uWN3nwNyYEKVAr8C5D2fBk2EbjYiS+SvyPTnZHSwoYoRZJrou6rQ48DntU2zSZHwz9XG7AQY+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=c/KNxYB9; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5ASE0vYu017020;
-	Fri, 28 Nov 2025 14:21:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=RQLjtY8wre5SYQb0AtNtQpZXhQSfCs
-	9wmuDP3YZen2k=; b=c/KNxYB9TU+D+w1c4qRcEIH3RLqzrEnKfoADVQYQJYMTEm
-	ExjnWz+Cp0kYmj87+hfptW+QKVcWMbe0q1rhaLGEdAh1XhVgVtN7HgDsH9jNBNYX
-	+iRwHoZ5EtnlY0dTHYpQPJUvtMVsMukiiV4gId4WL54at8by+IYaxg/cyc8RMsJ2
-	rse5NIe1EB4HwzghVMVhJoEFchaLdrWP0CweF25o6volRksAtDecytiq3NoFjsz4
-	JPcC8NCsWd7IRLdxh07jep+L+07YeGDgo8VHkP5b2ikiJE1FKJND5ux7FPPDMpHb
-	GY0JUXwLP+kZ5791yYp/zRaW2Uu7XccGlJcrUx1A==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4ak4uvpsds-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 28 Nov 2025 14:21:56 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5ASELtqb019116;
-	Fri, 28 Nov 2025 14:21:55 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4ak4uvpsdp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 28 Nov 2025 14:21:55 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5ASCDQON014527;
-	Fri, 28 Nov 2025 14:21:54 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4akrgnncw6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 28 Nov 2025 14:21:54 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5ASELqkY53543320
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 28 Nov 2025 14:21:52 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6400B20043;
-	Fri, 28 Nov 2025 14:21:52 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B5A8320040;
-	Fri, 28 Nov 2025 14:21:49 +0000 (GMT)
-Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.124.219.1])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Fri, 28 Nov 2025 14:21:49 +0000 (GMT)
-Date: Fri, 28 Nov 2025 19:50:47 +0530
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: Jan Kara <jack@suse.cz>
-Cc: Zhang Yi <yi.zhang@huaweicloud.com>, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        tytso@mit.edu, adilger.kernel@dilger.ca, yi.zhang@huawei.com,
-        yizhang089@gmail.com, libaokun1@huawei.com, yangerkun@huawei.com
-Subject: Re: [PATCH v2 03/13] ext4: don't zero the entire extent if
- EXT4_EXT_DATA_PARTIAL_VALID1
-Message-ID: <aSmvoGwGKo4bX8J8@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
-References: <20251121060811.1685783-1-yi.zhang@huaweicloud.com>
- <20251121060811.1685783-4-yi.zhang@huaweicloud.com>
- <yro4hwpttmy6e2zspvwjfdbpej6qvhlqjvlr5kp3nwffqgcnfd@z6qual55zhfq>
- <aSlPFohdm8IfB7r7@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
- <i3voptrv4rm3q3by7gksrgmgy2n5flchuveugjll5cchustm4z@qvixahynpize>
+	s=arc-20240116; t=1764340870; c=relaxed/simple;
+	bh=YiCXa/gTWlwoFZYY7VWOXyNDoQMkwRyt2rAHvg9j0ck=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fWOIJlnLJYtVwmhB1NcRgIcMlXD/QE7j/vSPOmdyotki7mPpZCE7wq5QP2kI3g0kDTdjvjVggauXnpigD71pWxkPud9Y8CYrEmwQYoseK4gZ6XfWuCqxeQ484KbAlfeYhUkszLlb9owMFDUJ3oBze6k3iXtyBx1+rzEE5XqG1d4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X+81eIja; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-594330147efso1912869e87.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Nov 2025 06:41:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1764340867; x=1764945667; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=x9ZJ0WABz8zA/HIRl6+j40HXO4xcZdxgPrJAX3BYADI=;
+        b=X+81eIjamMEpCpZlBkIes5OzGFtZjBoJDKU8zdhbK06si844PWKz4hKwHtLqNe0O32
+         jR/sRe4qxLOPVjV6pmrAEvNRAuZvCBkqVjz4Intv91zyrjWM6qAGWCC5ZmnCIxMEzUCW
+         JDfKRjpkGYgTUudQz2Txam+hyuYYzVDh0za4Lp9IipmBt4+4y3CNFq/cR2dDyuQkJZ5a
+         K7lsA7wVrTquBJBOT29ZTXYxXwmsDT+8nwjolPqYPHMdVMarBqUZpKxEjLtyb5H+TlTo
+         YTtC9Azfy/fqGZEZcl6wAVUF+6cidRRWcaIFK9cxiIRB4VY1WIO+XTO5EdscNOOz4DOT
+         OmyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764340867; x=1764945667;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=x9ZJ0WABz8zA/HIRl6+j40HXO4xcZdxgPrJAX3BYADI=;
+        b=qbqHXbRYdpO2vPU+jEOznFD41UcSqDusPYeEq4raRNjPoFEskWVKQ1QCxfNI9NxKWN
+         LGLhSQqGXAg2m/qfgW4DY1zDVJSq4uDVNqvKJlw8kSHWGcLEKgM4PTaOcp4J1218ReqR
+         zfIxeXHoXxkcn0USqmzkRfkFpjUjUDI1ffszUJ2XQy9RVqyW6EPxb2X36adTDXM2IfL0
+         jty4k6ijelj5yz2wSqjgN9HF6P0rzIFQ0HJdSjtFNCr0/ZL42rupveqgwTXUkKJP6BAG
+         7sLV8iLLqPqcnOpkpKQ4TUOxPy9O1jp4xHWEHOTbQav3Pd8JsNIp7slyDuSYx/N8dAjY
+         ekiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVZm0XipoAsTZUh1ZutYeJJHLghTX9COkHTcYcBReGO6lZRWJCfBEkRpqNdPqNxhb1FhXVT/bnKP1IUZqvU@vger.kernel.org
+X-Gm-Message-State: AOJu0YwabXG3TUSSQ8QICXO5IUmCfEwp/6TR+MxPKvYLL/1W5Qs0gbgW
+	iMvVgSFQTOa0uI2C55FDj+apJ5/VtSYm3Vu+8PFmfoHtPrRfTjuVjZ2fEsCLbYK9YBhUfw==
+X-Gm-Gg: ASbGncs8ZL11xWZPlmH5i9qknMKw6OpLTjU4AFHO+2wTBqImYY3u8d8RHzqUeNqMoZz
+	B4qsB127V211lmnqw8Nkjr84VW28zOHGNMmXY0TxCYLk26zfOo7YVqaFCQtuhmoxAX5VW319Nya
+	9a6veVDQMuXllPx+GBpwr94PFRU73XuE+xMFhAGlkAyEZHcHec40J1I/RuGbyMR8veBu7DiNKsG
+	kSF7/PWPPxgSUn45IZ0jO+qlFnyJor8qyBXcSclQzxkJHeKakJaiq9VLJBQgvek1cffxeYHsjMO
+	IglXz7P+9VdY6ylC46l5bsfVB9a/HXuiLtqMyUf0xJ1yXuhk5KfnHdat7FrEgKeqLW4/LdGcwdl
+	ZgDposqpej6A9hxYx2vD8ZVgaShXETmkOxBu73L6z1YIc1Yp07gKFQumWwXec6TX7j2moEpXMUN
+	V0en2jrfaxwsyWsk9vTlB3kjDGs3xhrU6lQXbW8HxNxfNACe48r1tkhKJq
+X-Google-Smtp-Source: AGHT+IFgRxZMbnvG2mlcetIpPcII12g0inja9crdJSO7s3MSPIALUt1z3bE01YIbhTc2jfOsDHzEWg==
+X-Received: by 2002:a05:6512:3d22:b0:594:2d64:bd0f with SMTP id 2adb3069b0e04-596a3ebf31bmr10723863e87.16.1764340866523;
+        Fri, 28 Nov 2025 06:41:06 -0800 (PST)
+Received: from cherrypc.astracloud.ru (109-252-18-135.nat.spd-mgts.ru. [109.252.18.135])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-596bfa43efcsm1269527e87.63.2025.11.28.06.41.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Nov 2025 06:41:06 -0800 (PST)
+From: Nazar Kalashnikov <sivartiwe@gmail.com>
+To: stable@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Nazar Kalashnikov <sivartiwe@gmail.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org,
+	Jiufei Xue <jiufei.xue@samsung.com>,
+	Jan Kara <jack@suse.cz>,
+	Christian Brauner <brauner@kernel.org>
+Subject: [PATCH 5.10] fs: writeback: fix use-after-free in __mark_inode_dirty()
+Date: Fri, 28 Nov 2025 17:41:19 +0300
+Message-ID: <20251128144121.54603-1-sivartiwe@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <i3voptrv4rm3q3by7gksrgmgy2n5flchuveugjll5cchustm4z@qvixahynpize>
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTIyMDAyMSBTYWx0ZWRfX8cNW5JmxoUvr
- Qmz7OSAt9yvfZup2bJvE3f07Nb+APXUnV5frE6XiaH+jPb1Cxe31lgpbtzFsF3/CZ44BsnuYdBD
- Z79PrcFzvnnFhsAOi33tWMVVHAlvBPwkHgUiIYSF1dchSc+wB75rcR/0nxMv2/uP/iLyHdwkOUe
- CDEmC1HrGauxsHzlMJN5g3YZmIwFOsoJgFsIGsoSQDyrSLKvGNo+n0PvXkdRuptyLTiZooKqMb8
- Gl4r10ff/enNfVX+TmPa1UlgynwkuhfwNnCAPlkJezaFswCfxy1d1g3zn2Oi01eajdV+OsgfgHy
- 0f+ZksX9kMJzTxgZ1JqbGKqmmeACX4TRtrTgXwY38PcoG9q0Fix6D9vCzhBl4yM2oqZuUF+TVro
- qajYZ3zrb8lIafeIrYABYyUnArZjBw==
-X-Authority-Analysis: v=2.4 cv=PLoCOPqC c=1 sm=1 tr=0 ts=6929b004 cx=c_pps
- a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
- a=kj9zAlcOel0A:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=iox4zFpeAAAA:8 a=LPb-nsLoMAtkVZieMgYA:9 a=CjuIK1q_8ugA:10
- a=WzC6qhA0u3u7Ye7llzcV:22
-X-Proofpoint-ORIG-GUID: 4MqTRuSQEn5EHIXikeL4F22YurxQLPEi
-X-Proofpoint-GUID: -2_nnM-K1dgYdq8-EmwVZlSojo3lP95A
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-28_03,2025-11-27_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 lowpriorityscore=0 spamscore=0 adultscore=0 impostorscore=0
- priorityscore=1501 bulkscore=0 malwarescore=0 clxscore=1015 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2511220021
+Content-Transfer-Encoding: 8bit
 
-On Fri, Nov 28, 2025 at 12:14:56PM +0100, Jan Kara wrote:
-> On Fri 28-11-25 12:58:22, Ojaswin Mujoo wrote:
-> > On Thu, Nov 27, 2025 at 02:41:52PM +0100, Jan Kara wrote:
-> > > Good catch on the data exposure issue! First I'd like to discuss whether
-> > > there isn't a way to fix these problems in a way that doesn't make the
-> > > already complex code even more complex. My observation is that
-> > > EXT4_EXT_MAY_ZEROOUT is only set in ext4_ext_convert_to_initialized() and
-> > > in ext4_split_convert_extents() which both call ext4_split_extent(). The
-> > > actual extent zeroing happens in ext4_split_extent_at() and in
-> > > ext4_ext_convert_to_initialized(). I think the code would be much clearer
-> > > if we just centralized all the zeroing in ext4_split_extent(). At that
-> > > place the situation is actually pretty simple:
-> > 
-> > This is exactly what I was playing with in my local tree to refactor this
-> > particular part of code :). I agree that ext4_split_extent() is a much
-> > better place to do the zeroout and it looks much cleaner but I agree
-> > with Yi that it might be better to do it after fixing the stale
-> > exposures so backports are straight forward. 
-> > 
-> > Am I correct in understanding that you are suggesting to zeroout
-> > proactively if we are below max_zeroout before even trying to extent
-> > split (which seems be done in ext4_ext_convert_to_initialized() as well)?
-> 
-> Yes. I was suggesting to effectively keep the behavior from
-> ext4_ext_convert_to_initialized().
-> 
-> > In this case, I have 2 concerns:
-> > 
-> > > 
-> > > 1) 'ex' is unwritten, 'map' describes part with already written data which
-> > > we want to convert to initialized (generally IO completion situation) => we
-> > > can zero out boundaries if they are smaller than max_zeroout or if extent
-> > > split fails.
-> > 
-> > Firstly, I know you mentioned in another email that zeroout of small ranges
-> > gives us a performance win but is it really faster on average than
-> > extent manipulation?
-> 
-> I guess it depends on the storage and the details of the extent tree. But
-> it definitely does help in cases like when you have large unwritten extent
-> and then start writing randomly 4k blocks into it because this zeroout
-> logic effectively limits the fragmentation of the extent tree. Overall
-> sequentially writing a few blocks more of zeros is very cheap practically
-> with any storage while fragmenting the extent tree becomes expensive rather
-> quickly (you generally get deeper extent tree due to smaller extents etc.).
+From: Jiufei Xue <jiufei.xue@samsung.com>
 
-Got it, makes sense. This approach is definitely worth a try and then
-maybe we can run a few benchmarks and see how proactive zeroout works.
+[ Upstream commit d02d2c98d25793902f65803ab853b592c7a96b29 ]
 
-> 
-> > For example, for case 1 where both zeroout and splitting need
-> > journalling, I understand that splitting has high journal overhead in worst case,
-> > where tree might grow, but more often than not we would be manipulating
-> > within the same leaf so journalling only 1 bh (same as zeroout). In which case
-> > seems like zeroout might be slower no matter how fast the IO can be
-> > done. So proactive zeroout might be for beneficial for case 3 than case
-> > 1.
-> 
-> I agree that initially while the split extents still fit into the same leaf
-> block, zero out is likely to be somewhat slower but over the longer term
-> the gains from less extent fragmentation win.
-> 
-> > > 2) 'ex' is unwritten, 'map' describes part we are preparing for write (IO
-> > > submission) => the split is opportunistic here, if we cannot split due to
-> > > ENOSPC, just go on and deal with it at IO completion time. No zeroing
-> > > needed.
-> > > 
-> > > 3) 'ex' is written, 'map' describes part that should be converted to
-> > > unwritten => we can zero out the 'map' part if smaller than max_zeroout or
-> > > if extent split fails.
-> > 
-> > Proactive zeroout before trying split does seem benficial to help us
-> > avoid journal overhead for split. However, judging from
-> > ext4_ext_convert_to_initialized(), max zeroout comes from
-> > sbi->s_extent_max_zeroout_kb which is hardcoded to 32 irrespective of
-> > the IO device, so that means theres a chance a zeroout might be pretty
-> > slow if say we are doing it on a device than doesn't support accelerated
-> > zeroout operations. Maybe we need to be more intelligent in setting
-> > s_extent_max_zeroout_kb?
-> 
-> You can also tune the value in sysfs. I'm not 100% sure how the kernel
+An use-after-free issue occurred when __mark_inode_dirty() get the
+bdi_writeback that was in the progress of switching.
 
-Yeah but I feel the average users dont usually tune sysfs values
+CPU: 1 PID: 562 Comm: systemd-random- Not tainted 6.6.56-gb4403bd46a8e #1
+......
+pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : __mark_inode_dirty+0x124/0x418
+lr : __mark_inode_dirty+0x118/0x418
+sp : ffffffc08c9dbbc0
+........
+Call trace:
+ __mark_inode_dirty+0x124/0x418
+ generic_update_time+0x4c/0x60
+ file_modified+0xcc/0xd0
+ ext4_buffered_write_iter+0x58/0x124
+ ext4_file_write_iter+0x54/0x704
+ vfs_write+0x1c0/0x308
+ ksys_write+0x74/0x10c
+ __arm64_sys_write+0x1c/0x28
+ invoke_syscall+0x48/0x114
+ el0_svc_common.constprop.0+0xc0/0xe0
+ do_el0_svc+0x1c/0x28
+ el0_svc+0x40/0xe4
+ el0t_64_sync_handler+0x120/0x12c
+ el0t_64_sync+0x194/0x198
 
-> could do a better guess. Also I think 32k works mostly because it is small
-> enough to be cheap to write but already large enough to noticeably reduce
-> fragmentation for some pathological workloads (you can easily get 1/4 of
-> the extents than without this logic). But I'm open to ideas if you have
-> some.
+Root cause is:
 
-Yes, Im yet to check in depth about it but the block layer does advertise a
-max_write_zeroes_sectors() which might help us tune the value a better,
-and perhaps even support higher zeroout without losing performance. I'll
-look into it a bit more.
+systemd-random-seed                         kworker
+----------------------------------------------------------------------
+___mark_inode_dirty                     inode_switch_wbs_work_fn
 
-Regards,
-ojaswin
+  spin_lock(&inode->i_lock);
+  inode_attach_wb
+  locked_inode_to_wb_and_lock_list
+     get inode->i_wb
+     spin_unlock(&inode->i_lock);
+     spin_lock(&wb->list_lock)
+  spin_lock(&inode->i_lock)
+  inode_io_list_move_locked
+  spin_unlock(&wb->list_lock)
+  spin_unlock(&inode->i_lock)
+                                    spin_lock(&old_wb->list_lock)
+                                      inode_do_switch_wbs
+                                        spin_lock(&inode->i_lock)
+                                        inode->i_wb = new_wb
+                                        spin_unlock(&inode->i_lock)
+                                    spin_unlock(&old_wb->list_lock)
+                                    wb_put_many(old_wb, nr_switched)
+                                      cgwb_release
+                                      old wb released
+  wb_wakeup_delayed() accesses wb,
+  then trigger the use-after-free
+  issue
 
-> 
-> 								Honza
-> -- 
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
+Fix this race condition by holding inode spinlock until
+wb_wakeup_delayed() finished.
+
+Signed-off-by: Jiufei Xue <jiufei.xue@samsung.com>
+Link: https://lore.kernel.org/20250728100715.3863241-1-jiufei.xue@samsung.com
+Reviewed-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+Signed-off-by: Nazar Kalashnikov <sivartiwe@gmail.com>
+---
+Backport fix for CVE-2025-39866
+ fs/fs-writeback.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+index 045a3bd520ca..ba70508b405d 100644
+--- a/fs/fs-writeback.c
++++ b/fs/fs-writeback.c
+@@ -2326,9 +2326,6 @@ void __mark_inode_dirty(struct inode *inode, int flags)
+ 			wakeup_bdi = inode_io_list_move_locked(inode, wb,
+ 							       dirty_list);
+ 
+-			spin_unlock(&wb->list_lock);
+-			trace_writeback_dirty_inode_enqueue(inode);
+-
+ 			/*
+ 			 * If this is the first dirty inode for this bdi,
+ 			 * we have to wake-up the corresponding bdi thread
+@@ -2338,6 +2335,10 @@ void __mark_inode_dirty(struct inode *inode, int flags)
+ 			if (wakeup_bdi &&
+ 			    (wb->bdi->capabilities & BDI_CAP_WRITEBACK))
+ 				wb_wakeup_delayed(wb);
++
++			spin_unlock(&wb->list_lock);
++			trace_writeback_dirty_inode_enqueue(inode);
++
+ 			return;
+ 		}
+ 	}
+-- 
+2.43.0
+
 
