@@ -1,224 +1,194 @@
-Return-Path: <linux-fsdevel+bounces-70101-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70102-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92ABBC90967
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 03:09:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 06E82C909D0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 03:22:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 60A874E18BA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 02:09:06 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EAE204E4120
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 02:22:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2722926CE3F;
-	Fri, 28 Nov 2025 02:09:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HX1iF4O+"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7B8826738D;
+	Fri, 28 Nov 2025 02:22:48 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D5B32512FF
-	for <linux-fsdevel@vger.kernel.org>; Fri, 28 Nov 2025 02:08:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0B78221546;
+	Fri, 28 Nov 2025 02:22:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764295739; cv=none; b=oP1Wnq3M99vDBycXj/4RdbC2PNkpyoDh1a8JXCBPNIdurVoJbHufC1AplpE+YkXAcoZ7KQ7stZsmeciCCtbLAotpm8HDILhZMrkRfsHa0oayM4vJU2ca0Yiw8fenIdUfPzQJ9A12oaPq/zRaLleUr/woR35uX7aKGDRPXx3RkGo=
+	t=1764296568; cv=none; b=oxfYbZfC35/KQieS0XlNAmo8aCtPPoskg1DRIFaTjaxl49N6gTusP5QzDbOKTT1abww2LHLcUGb3WFZh+iPzKPcRBXM38h+FGJlMK7w/X1+tQ6bhzpMd41YaBqpxF2AAVyO0ukDri18uX/lisBxgsaA43QANblncl22UtevP0Do=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764295739; c=relaxed/simple;
-	bh=gp9oi+oPLK0MQhCfNyOguwBT84CRvL78Y9UFdTzam/k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nhbD9mq/LbzJ+RDrCs77sXOTxpXkv7R3DnwpwiiNFSm5WFLJX6zdVejeE72PeL6noLcodw+lBpBozTYJou1rng+5K9345CNnbw1f//fvsEydSTnhIDM9FazQLx/xJE3tHsITrYXX4kbf9e/nT8+LakuA756erewCQQdvotj6j0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HX1iF4O+; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-595819064cdso1858856e87.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Nov 2025 18:08:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1764295736; x=1764900536; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dvGsDzPKVnRrom5h09+zo4OXyNzeh+SyQlWvn+u0J34=;
-        b=HX1iF4O+6z1wNXc4Bkc2E4Ce1vWvT+OeHb4cLEKPC7NT09udLPQLirscBngtZJyvag
-         q8yQMOvx4b5CO9pzj64NMQmCOoqmrBWi41e2Sz6fYdH/Z1PsvQUuzamxaTRBF0f9cQuS
-         NF+abupCUCBrK10tBs6BdvA7VPrfaa2D/jTNq21xodApT4vkROWH2I1V9CMAmZ0/sdfv
-         /tg1lSYbDe56Fsd2neU9IC5CDgQgIT0xcvwfuNurCmpIGXo7d0X1957eAMbrriPHqxt0
-         CsXyB4N5qw02CkzHb0m+eLiNnNK8L53HsjTSCcpN/xPmKDWzGZPVjajAKYP/uvRO8RTc
-         7ZkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764295736; x=1764900536;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=dvGsDzPKVnRrom5h09+zo4OXyNzeh+SyQlWvn+u0J34=;
-        b=hr73qxQtkZ0Cdb2Fc7CRVMTSU/Jl4rWpkjh1KvYZ1TRbUEwh4T4Y1zz/pwQ1NkkjGK
-         l9+t/jMv/Ba5yyWxnL2me2AWTvrCYKBlKRTYhbauuVOs8LGpKa5MijVRhNTeYC005uBc
-         zaUqLFJ3GI+SA3s10ET/RjNroBwjB6tMBCtlYfhHfeqXfx3Zgwv3Iv9JqAUFhvbJ7xkW
-         O0lzAA8yxobVwruVTUvdmoOOJY8qzxc/zCgXj+gyQgP/qjLnjnjYwugAvp8lnxKbBc5s
-         apcRU+KoV+VHJ6bMFw40XB3IXqWXZMAQkzQ6eaeAouHT64XxwofofWcuAK8rBHGqUrMp
-         pcVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUOv0etptSBIGxmVjIoWkOmnB0KBbV7QABdQZy2QChDvfA86N4dnMh5E9NRf1e7BD+KKsiWzcP4CFgulzTy@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIUNphjUkPEVuZRoVxieFjsk4FiBuxwz0duYQHC8j1xCMvjnpH
-	F09dcHOB13/qChtQUldrY6iTA3UWdtykPaze7j3HLBn+rJcH7llqRQpfvrIOhe/vYC50G8h+CEM
-	KYDCP+GYLxIuMjvO6Qw94w/gfrfvfwGNbzqwbYEMx7Q==
-X-Gm-Gg: ASbGncvtTTRTOQqC6owAyD1o1KznK+DNJSaB/YwbftfAKskoOE5MjiosWDUXTNTh/W6
-	m+MmOljmZgcOOl4lStoDLOm58jdR+vMzUIVcxwdz1Gb3XPHy4p5qrvB4kmx1mJr265Cz+X578ff
-	qGwY/Vr/sdTokkUVQfpWgN9AaY5D6Q26vbXotLh4dDGAE3izINnQ6otFam3Ezty1Xf1w7JKsp41
-	6+Qb/8EdbJteiHXCXOTjPqI2nmCLqvHWWLz2zwCnjajp6cKk5HZSrT2buopGiwK6XRhv+6N
-X-Google-Smtp-Source: AGHT+IHT0PqF2SNp+NTR5QOtPCH793NebrKRdLF/Yn7dRkFaurdSKyiXiWUe249pxK0gXJtOFcEbVK+sGJCuHWH3WdE=
-X-Received: by 2002:a05:6512:31ca:b0:594:773e:7631 with SMTP id
- 2adb3069b0e04-5969e9df185mr9096365e87.7.1764295735567; Thu, 27 Nov 2025
- 18:08:55 -0800 (PST)
+	s=arc-20240116; t=1764296568; c=relaxed/simple;
+	bh=kC3oOnje8pBH0WizvFwxCNOdofUBJukRnsqJVBOTqPk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GLHr+F3hEoVkRh0Q6E8nsCEDtHe8+MuoWKYkKUreFOfEPhSUcCznVcdNutDknHemK6muA7x6hOcJrH5xENyKrMU2GTVFPSl6XgQQ6O9EhvTdzpOfWlaIQsHxNGHm0gWjYqlWHVgctAA2lB5VBEkb/Ugmj47eZrHkQu3qA+9mdVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4dHcWF370vzKHMNp;
+	Fri, 28 Nov 2025 10:22:01 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id 8F2D61A07BB;
+	Fri, 28 Nov 2025 10:22:42 +0800 (CST)
+Received: from [10.174.178.152] (unknown [10.174.178.152])
+	by APP2 (Coremail) with SMTP id Syh0CgCHMXhwBylpHC4OCQ--.55753S3;
+	Fri, 28 Nov 2025 10:22:42 +0800 (CST)
+Message-ID: <06ab1faa-ea54-400e-9f21-46a20ac04403@huaweicloud.com>
+Date: Fri, 28 Nov 2025 10:22:40 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251119101540.106441-1-zhangfei.gao@linaro.org>
- <20251126-untragbar-hanfanbau-164f0425c5e5@brauner> <CABQgh9GhoeCaoVpL7nErfzAQHHykY_Y83tqzSByx180kXno5aQ@mail.gmail.com>
-In-Reply-To: <CABQgh9GhoeCaoVpL7nErfzAQHHykY_Y83tqzSByx180kXno5aQ@mail.gmail.com>
-From: Zhangfei Gao <zhangfei.gao@linaro.org>
-Date: Fri, 28 Nov 2025 10:08:44 +0800
-X-Gm-Features: AWmQ_bm5BdY_33VdYK-Jj9cRFOzupYbQ7NUgdRY0hIo4QseBL2qhXaGy9XHeTb8
-Message-ID: <CABQgh9HuOB9Zcv277Sstdubz7q-Be8+aGeoNE5xrTfkjdz0u+A@mail.gmail.com>
-Subject: Re: [PATCH] chardev: fix consistent error handling in cdev_device_add
-To: Christian Brauner <brauner@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Wenkai Lin <linwenkai6@hisilicon.com>, Chenghai Huang <huangchenghai2@huawei.com>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 01/13] ext4: cleanup zeroout in ext4_split_extent_at()
+To: Jan Kara <jack@suse.cz>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
+ yi.zhang@huawei.com, yizhang089@gmail.com, libaokun1@huawei.com,
+ yangerkun@huawei.com
+References: <20251121060811.1685783-1-yi.zhang@huaweicloud.com>
+ <20251121060811.1685783-2-yi.zhang@huaweicloud.com>
+ <msavgjqicoxnjloi53fa6stdurfqjxho5fwka7dusyrrjrdtep@spfzuymowwdd>
+Content-Language: en-US
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+In-Reply-To: <msavgjqicoxnjloi53fa6stdurfqjxho5fwka7dusyrrjrdtep@spfzuymowwdd>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:Syh0CgCHMXhwBylpHC4OCQ--.55753S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxZrWfWr4DWr17WFW7WryrXrb_yoWrGrW8pF
+	nakF1fKr1rJa4UW3yIqFsrZF1a93WfGr1UGFWfWw1Fqa12vF93KFyfKa10qFyayFW0qayF
+	qFW8ta4DC3ZrGFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
+	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUF1
+	v3UUUUU
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-Hi, Christian
+On 11/27/2025 8:02 PM, Jan Kara wrote:
+> On Fri 21-11-25 14:07:59, Zhang Yi wrote:
+>> From: Zhang Yi <yi.zhang@huawei.com>
+>>
+>> zero_ex is a temporary variable used only for writing zeros and
+>> inserting extent status entry, it will not be directly inserted into the
+>> tree. Therefore, it can be assigned values from the target extent in
+>> various scenarios, eliminating the need to explicitly assign values to
+>> each variable individually.
+>>
+>> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+> 
+> Nice simplification. I'd just note that the new method copies also the
+> unwritten state of the original extent to zero_ex (the old method didn't do
+> this). It doesn't matter in this case but it might still be nice to add a
+> comment about it before the code doing the copying. Feel free to add:
+> 
+> Reviewed-by: Jan Kara <jack@suse.cz>
+> 
+> 								Honza
 
-On Wed, 26 Nov 2025 at 19:01, Zhangfei Gao <zhangfei.gao@linaro.org> wrote:
->
-> Hi=EF=BC=8CChristian
->
-> On Wed, 26 Nov 2025 at 18:27, Christian Brauner <brauner@kernel.org> wrot=
-e:
-> >
-> > On Wed, Nov 19, 2025 at 10:15:40AM +0000, Zhangfei Gao wrote:
-> > > Currently cdev_device_add has inconsistent error handling:
-> > >
-> > > - If device_add fails, it calls cdev_del(cdev)
-> > > - If cdev_add fails, it only returns error without cleanup
-> > >
-> > > This creates a problem because cdev_set_parent(cdev, &dev->kobj)
-> > > establishes a parent-child relationship.
-> > > When callers use cdev_del(cdev) to clean up after cdev_add failure,
-> > > it also decrements the dev's refcount due to the parent relationship,
-> > > causing refcount mismatch.
-> > >
-> > > To unify error handling:
-> > > - Set cdev->kobj.parent =3D NULL first to break the parent relationsh=
-ip
-> > > - Then call cdev_del(cdev) for cleanup
-> > >
-> > > This ensures that in both error paths,
-> > > the dev's refcount remains consistent and callers don't need
-> > > special handling for different failure scenarios.
-> > >
-> > > Signed-off-by: Zhangfei Gao <zhangfei.gao@linaro.org>
-> > > ---
-> > >  fs/char_dev.c | 5 ++++-
-> > >  1 file changed, 4 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/fs/char_dev.c b/fs/char_dev.c
-> > > index c2ddb998f3c9..fef6ee1aba66 100644
-> > > --- a/fs/char_dev.c
-> > > +++ b/fs/char_dev.c
-> > > @@ -549,8 +549,11 @@ int cdev_device_add(struct cdev *cdev, struct de=
-vice *dev)
-> > >               cdev_set_parent(cdev, &dev->kobj);
-> > >
-> > >               rc =3D cdev_add(cdev, dev->devt, 1);
-> > > -             if (rc)
-> > > +             if (rc) {
-> > > +                     cdev->kobj.parent =3D NULL;
-> > > +                     cdev_del(cdev);
-> > >                       return rc;
-> > > +             }
-> >
-> > There are callers that call cdev_del() on failure of cdev_add():
-> >
-> >         retval =3D cdev_add(&dvb_device_cdev, dev, MAX_DVB_MINORS);
-> >         if (retval !=3D 0) {
-> >                 pr_err("dvb-core: unable register character device\n");
-> >                 goto error;
-> >         }
-> >
-> > <snip>
-> >
-> > error:
-> >         cdev_del(&dvb_device_cdev);
-> >         unregister_chrdev_region(dev, MAX_DVB_MINORS);
-> >         return retval;
-> >
-> > and there are callers that don't. If you change the scheme here then al=
-l
-> > of these callers need to be adjusted as well - including the one that
-> > does a kobject_put() directly...
->
-> The situation with cdev_device_add() is different from the standalone
-> cdev_add() callers.
->
-> cdev_device_add() explicitly establishes a parent-child relationship via
-> cdev_set_parent(cdev, &dev->kobj).
-> If we simply call cdev_del() on failure here, it will drop the reference
-> count of the parent (dev), causing a refcount mismatch.
->
-> Direct callers of cdev_add() (like the DVB example) generally do not
-> set this parent relationship beforehand,
-> so they do not suffer from this specific refcount issue.
->
-> This patch aims to fix the cleanup specifically
-> within the cdev_device_add() helper.
->
+Thank you a lot for reviewing this series! It seems that calling
+ext4_ext_mark_initialized() after copying is also acceptable.
 
-More explanation
+Cheers,
+Yi.
 
-Now the code:
-int cdev_device_add(struct cdev *cdev, struct device *dev)
-{
-        int rc =3D 0;
+> 
+>> ---
+>>  fs/ext4/extents.c | 63 ++++++++++++++++++-----------------------------
+>>  1 file changed, 24 insertions(+), 39 deletions(-)
+>>
+>> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
+>> index c7d219e6c6d8..91682966597d 100644
+>> --- a/fs/ext4/extents.c
+>> +++ b/fs/ext4/extents.c
+>> @@ -3278,46 +3278,31 @@ static struct ext4_ext_path *ext4_split_extent_at(handle_t *handle,
+>>  	ex = path[depth].p_ext;
+>>  
+>>  	if (EXT4_EXT_MAY_ZEROOUT & split_flag) {
+>> -		if (split_flag & (EXT4_EXT_DATA_VALID1|EXT4_EXT_DATA_VALID2)) {
+>> -			if (split_flag & EXT4_EXT_DATA_VALID1) {
+>> -				err = ext4_ext_zeroout(inode, ex2);
+>> -				zero_ex.ee_block = ex2->ee_block;
+>> -				zero_ex.ee_len = cpu_to_le16(
+>> -						ext4_ext_get_actual_len(ex2));
+>> -				ext4_ext_store_pblock(&zero_ex,
+>> -						      ext4_ext_pblock(ex2));
+>> -			} else {
+>> -				err = ext4_ext_zeroout(inode, ex);
+>> -				zero_ex.ee_block = ex->ee_block;
+>> -				zero_ex.ee_len = cpu_to_le16(
+>> -						ext4_ext_get_actual_len(ex));
+>> -				ext4_ext_store_pblock(&zero_ex,
+>> -						      ext4_ext_pblock(ex));
+>> -			}
+>> -		} else {
+>> -			err = ext4_ext_zeroout(inode, &orig_ex);
+>> -			zero_ex.ee_block = orig_ex.ee_block;
+>> -			zero_ex.ee_len = cpu_to_le16(
+>> -						ext4_ext_get_actual_len(&orig_ex));
+>> -			ext4_ext_store_pblock(&zero_ex,
+>> -					      ext4_ext_pblock(&orig_ex));
+>> -		}
+>> +		if (split_flag & EXT4_EXT_DATA_VALID1)
+>> +			memcpy(&zero_ex, ex2, sizeof(zero_ex));
+>> +		else if (split_flag & EXT4_EXT_DATA_VALID2)
+>> +			memcpy(&zero_ex, ex, sizeof(zero_ex));
+>> +		else
+>> +			memcpy(&zero_ex, &orig_ex, sizeof(zero_ex));
+>>  
+>> -		if (!err) {
+>> -			/* update the extent length and mark as initialized */
+>> -			ex->ee_len = cpu_to_le16(ee_len);
+>> -			ext4_ext_try_to_merge(handle, inode, path, ex);
+>> -			err = ext4_ext_dirty(handle, inode, path + path->p_depth);
+>> -			if (!err)
+>> -				/* update extent status tree */
+>> -				ext4_zeroout_es(inode, &zero_ex);
+>> -			/* If we failed at this point, we don't know in which
+>> -			 * state the extent tree exactly is so don't try to fix
+>> -			 * length of the original extent as it may do even more
+>> -			 * damage.
+>> -			 */
+>> -			goto out;
+>> -		}
+>> +		err = ext4_ext_zeroout(inode, &zero_ex);
+>> +		if (err)
+>> +			goto fix_extent_len;
+>> +
+>> +		/* update the extent length and mark as initialized */
+>> +		ex->ee_len = cpu_to_le16(ee_len);
+>> +		ext4_ext_try_to_merge(handle, inode, path, ex);
+>> +		err = ext4_ext_dirty(handle, inode, path + path->p_depth);
+>> +		if (!err)
+>> +			/* update extent status tree */
+>> +			ext4_zeroout_es(inode, &zero_ex);
+>> +		/*
+>> +		 * If we failed at this point, we don't know in which
+>> +		 * state the extent tree exactly is so don't try to fix
+>> +		 * length of the original extent as it may do even more
+>> +		 * damage.
+>> +		 */
+>> +		goto out;
+>>  	}
+>>  
+>>  fix_extent_len:
+>> -- 
+>> 2.46.1
+>>
 
-        if (dev->devt) {
-                cdev_set_parent(cdev, &dev->kobj);  // here set parent
-
-                rc =3D cdev_add(cdev, dev->devt, 1);
-                if (rc)
-                        return rc; // case 1
-        }
-
-        rc =3D device_add(dev);
-        if (rc && dev->devt)
-                cdev_del(cdev);  // case 2
-
-        return rc;
-}
-
-Since the cdev_set_parent,
-cdev_add will increase parent refcount,
-and cdev_del will decrease parent refcount.
-So case 2, no problem.
-
-But case 1 has an issue,
-if cdev_add fails, it does not increase parent refcount.
-If the caller calls cdev_del to handle the error case, the parent
-refcount will be decreased
-since there is a parent relation, and finally got refcount_t:
-underflow; use-after-free.
-
-So for case 1, cdev_add fails, it does not increase parent refcount.
-needs to break the parent relation first.
-then cdev_del does not decrease parent (dev) refcount.
-
-Finally, both case 1 and case 2, calls cdev_del for error handling,
-and refcount is correct.
-It is easy for the caller, otherwise it is difficult to distinguish
-case 1 or case 2.
-
-Thanks
 
