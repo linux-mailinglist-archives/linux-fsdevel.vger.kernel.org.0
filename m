@@ -1,224 +1,235 @@
-Return-Path: <linux-fsdevel+bounces-70133-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70134-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30973C91C55
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 12:15:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D81B9C91C9E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 12:27:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 951083ADA82
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 11:15:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCE5F3AA4A8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 11:27:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57FC430DEB9;
-	Fri, 28 Nov 2025 11:15:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 531CB30CD95;
+	Fri, 28 Nov 2025 11:27:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="COknjECa";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="teTayLxp";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="COknjECa";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="teTayLxp"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K3cnNoTa"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C730B30CD9D
-	for <linux-fsdevel@vger.kernel.org>; Fri, 28 Nov 2025 11:15:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0DE617BA6
+	for <linux-fsdevel@vger.kernel.org>; Fri, 28 Nov 2025 11:27:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764328508; cv=none; b=p899yZ3w1/XtL0Y7UgAGdGYqepdY2WnfMJTpYFbQFFwASjulkgUZyCLpLWP4u+Pw1FxBUrqw7oiY2Dj6p+CXVUNubw9d0FurGi598JHOzOSjZ8Euqwo+jhMv2bwN9+UcPAniEOpmrw4L1o8nmn9Y782zr0qhnUZlS97j/UPv98c=
+	t=1764329245; cv=none; b=iW8jDx4kB1VJEMpzn9jmf15bTuu31egyTKT3nIDP5FHSXnsHdYTJtwMyaWfxX+t62kTCXAMZOtGotT0H6G6Byn1P270IgdCBohlTG197LgQWTiM2azj2CbIr0x07Rq6H38NguvchnYkaBLOKySucg4ezolD5grg/KND9LWpy6Co=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764328508; c=relaxed/simple;
-	bh=YoZ3V45j6g9Ht6vZa6SWxo5kh/Xvp6DsJmhkRbDNcW8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XGE8aBKMZkDROGEGTcK4sD1Dsxsu+mpcHkiN3CAr26tuEA8QX8XVyTuOsgk55mgPEHzuxrPM0QSxwXFf7ms9odN0nG7PxrX/kclxPKN1VLlLWbNXvxiQsPhx7YmjKhYOopJAWCDj6gFVMlHlRS3B2mdavx0ejOpNwW56pvuO5WY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=COknjECa; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=teTayLxp; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=COknjECa; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=teTayLxp; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 038595BD2E;
-	Fri, 28 Nov 2025 11:15:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1764328505; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+YjbZZKXvhot5amM6eYaTdzmGNaRHVpJZ/gN2gho08M=;
-	b=COknjECaSkXVNVGCAjzjejHz+30U+DJgOfsOaBWZeKThJPkvQg+kminFnMOAkR3ywvxG3D
-	wH5NhAHl0D2hqswZlHYne6XyEdUjvjqC7D7ASFmWvMVsttPxOpR8SwkzK3aPdnDZyzc/96
-	6GgnhzBy2RGrL9LanVtqHi/nhlR4V5g=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1764328505;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+YjbZZKXvhot5amM6eYaTdzmGNaRHVpJZ/gN2gho08M=;
-	b=teTayLxpAA9kuIhodKmj9U7EN0tXwyhdtoQY0dO/UiRJvIA/Fuk+B+Kaf0Pf34dtW8QwzV
-	bNLgD97gwnxZYzAw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1764328505; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+YjbZZKXvhot5amM6eYaTdzmGNaRHVpJZ/gN2gho08M=;
-	b=COknjECaSkXVNVGCAjzjejHz+30U+DJgOfsOaBWZeKThJPkvQg+kminFnMOAkR3ywvxG3D
-	wH5NhAHl0D2hqswZlHYne6XyEdUjvjqC7D7ASFmWvMVsttPxOpR8SwkzK3aPdnDZyzc/96
-	6GgnhzBy2RGrL9LanVtqHi/nhlR4V5g=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1764328505;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+YjbZZKXvhot5amM6eYaTdzmGNaRHVpJZ/gN2gho08M=;
-	b=teTayLxpAA9kuIhodKmj9U7EN0tXwyhdtoQY0dO/UiRJvIA/Fuk+B+Kaf0Pf34dtW8QwzV
-	bNLgD97gwnxZYzAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E3C8B3EA63;
-	Fri, 28 Nov 2025 11:15:04 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 88ORNziEKWnwJAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 28 Nov 2025 11:15:04 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 99732A08F1; Fri, 28 Nov 2025 12:14:56 +0100 (CET)
-Date: Fri, 28 Nov 2025 12:14:56 +0100
-From: Jan Kara <jack@suse.cz>
-To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-Cc: Jan Kara <jack@suse.cz>, Zhang Yi <yi.zhang@huaweicloud.com>, 
-	linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	tytso@mit.edu, adilger.kernel@dilger.ca, yi.zhang@huawei.com, 
-	yizhang089@gmail.com, libaokun1@huawei.com, yangerkun@huawei.com
-Subject: Re: [PATCH v2 03/13] ext4: don't zero the entire extent if
- EXT4_EXT_DATA_PARTIAL_VALID1
-Message-ID: <i3voptrv4rm3q3by7gksrgmgy2n5flchuveugjll5cchustm4z@qvixahynpize>
-References: <20251121060811.1685783-1-yi.zhang@huaweicloud.com>
- <20251121060811.1685783-4-yi.zhang@huaweicloud.com>
- <yro4hwpttmy6e2zspvwjfdbpej6qvhlqjvlr5kp3nwffqgcnfd@z6qual55zhfq>
- <aSlPFohdm8IfB7r7@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+	s=arc-20240116; t=1764329245; c=relaxed/simple;
+	bh=8QpAJZREAKPJM+mXh1VfTsY4k31qKcajBY174hWUMdg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SbtFFCQvvKomik0oQokRCNuxJhwo/T4Ub9cpC8mTx+7DcNp7/NzE9ckYBhPDIW9kHwSAsa798Zo5/zQokqYLeLoYYcnKOc0DZL0Jfjpq20w33TeKWovkgKEzSRWc89AILTLeI9CFBtE2HgJNx/sGyVNh4TxsjeS4+GwmKG7RkdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K3cnNoTa; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-6418738efa0so2995615a12.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Nov 2025 03:27:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1764329241; x=1764934041; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OUeyxN62EEN8hyjvBZXRBEK3BnCJ9uKwHVVyJVoGd+8=;
+        b=K3cnNoTaMVWy5ApgDuuFq9tfIs0C8UBSBTgIM3baH4ifE2xDbvS1nJTdasmdBdCCIH
+         aZzpoFaOh7a19qw4TUPKN6DBIpI3Arl1hTgkgWsBDH9j1rOJBYFhXmmYNBXFHFCzv6pJ
+         Vi3YjGd96fnyqQL07Jb8YMIH+Fy9lapn+VV6d3RLqefD4dAiRkqxkLRC8Y+tpuxusnOK
+         oU2KIusZtopnpTIjvX84hVsvcCz0JzT++O9ywlJqOCHH4N1idEqSqPz5ZfiNJv3H8Bb9
+         XSEaNUSIjolxV6uKkwsSmYBKYX8MqWoIxlr9+ai7/4FfMBGIc/Nt1P8Yj0imQlcrmzvk
+         4Vdw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764329241; x=1764934041;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=OUeyxN62EEN8hyjvBZXRBEK3BnCJ9uKwHVVyJVoGd+8=;
+        b=U8qxczGyVuceqUsoMWNQedxro1II7t0skqoyS47hYdWKYBtLdCty01TUzP0Ma/8udw
+         ZnnsNFedS5zPS3HLY97MKCCyErKz6A4CiszVIuYrXpnHphu8jX4GS4UtGXUQ1FEZNv0V
+         5J2tdnQcg6tgMz97ewzIjpWtfopuVjLSLYsBYvk4QyfLOyaePeMmedu5ITEgNrJEjifP
+         zYEIB0AvoFUlK1l7EARhxpwAoxYuuiq3G1VpUaQp1UeTMGW79LRzOy8llUH6KdQN+9qq
+         C7FI8B6VSPDzcfOW69Vl/bnAic95mQeqE/YOiB1nhI7RgQu/nu0ir1aKM7KXw56cj9ZU
+         0+Bg==
+X-Gm-Message-State: AOJu0YysX+ru5zJLanyuiG9bPiRUHJOwX57Ly/tZvljqpcju+2iq3tNB
+	m1JSg3XzVGSAv5F7OsxuXpUn3+nHSc5lVjHPbF+zi2R3WJgEwopUJjYQgIYHyTSs++GXM+/p5Ch
+	o5cy2eQ2fHGvNwc+AuLG140+GB1E4mNZowBdnntE=
+X-Gm-Gg: ASbGncvZmHTQREqFAeelAKAOgwyv6HvYkIjCHVpNLYJLftTep9o8vWrraQBYXSo/V/1
+	NlTD/LvbDQuMom1bXLR1/6L5kF7NmY36swJxGlRAevyVB8eSyMImWc7ZUruwH9sC6CsVcgiEX/u
+	H02K6ZsElpXfKJin4eP+hep6GWkEvWzK8jWm2UN0/wXicZdzeaiZn1FzE+rEJtlI+Wb0H7J09eb
+	cYCTI1pRhQgHQt7u5Ll5cR7ZnC+OJ8ItSca6/+2J28DI6DRlInFuzoOZ1G6HouU/YBfLv8IZUfs
+	7R9M81mAag19WDtYUjNepvWAshZyLA==
+X-Google-Smtp-Source: AGHT+IEzcm8i2N4Up4w7NoMzQzgWYSFjowrp/k2JYwOFbJiVZ9HeVuRLb6Ey4B4N7RM4zH8UvgB9itSy7Vfv/f14Y7k=
+X-Received: by 2002:a05:6402:4303:b0:641:8908:a558 with SMTP id
+ 4fb4d7f45d1cf-64555ce53famr24192810a12.25.1764329241153; Fri, 28 Nov 2025
+ 03:27:21 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aSlPFohdm8IfB7r7@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[suse.cz,huaweicloud.com,vger.kernel.org,mit.edu,dilger.ca,huawei.com,gmail.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Level: 
-X-Spam-Score: -3.80
-X-Spam-Flag: NO
+References: <20251127170509.30139-1-jack@suse.cz> <20251127173012.23500-20-jack@suse.cz>
+In-Reply-To: <20251127173012.23500-20-jack@suse.cz>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Fri, 28 Nov 2025 12:27:09 +0100
+X-Gm-Features: AWmQ_bmb_Dz3OsCvnFLc66piRG4-Mk83GufIfOO5unsAWkcj9ppk5aZADF9R6B8
+Message-ID: <CAOQ4uxgdhmWAxeNoQE4b7J6_f9kMOBXZf4eO6kVavTeQ7Es27w@mail.gmail.com>
+Subject: Re: [PATCH 07/13] fsnotify: Use connector hash for destroying inode marks
+To: Jan Kara <jack@suse.cz>
+Cc: linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri 28-11-25 12:58:22, Ojaswin Mujoo wrote:
-> On Thu, Nov 27, 2025 at 02:41:52PM +0100, Jan Kara wrote:
-> > Good catch on the data exposure issue! First I'd like to discuss whether
-> > there isn't a way to fix these problems in a way that doesn't make the
-> > already complex code even more complex. My observation is that
-> > EXT4_EXT_MAY_ZEROOUT is only set in ext4_ext_convert_to_initialized() and
-> > in ext4_split_convert_extents() which both call ext4_split_extent(). The
-> > actual extent zeroing happens in ext4_split_extent_at() and in
-> > ext4_ext_convert_to_initialized(). I think the code would be much clearer
-> > if we just centralized all the zeroing in ext4_split_extent(). At that
-> > place the situation is actually pretty simple:
-> 
-> This is exactly what I was playing with in my local tree to refactor this
-> particular part of code :). I agree that ext4_split_extent() is a much
-> better place to do the zeroout and it looks much cleaner but I agree
-> with Yi that it might be better to do it after fixing the stale
-> exposures so backports are straight forward. 
-> 
-> Am I correct in understanding that you are suggesting to zeroout
-> proactively if we are below max_zeroout before even trying to extent
-> split (which seems be done in ext4_ext_convert_to_initialized() as well)?
+On Thu, Nov 27, 2025 at 6:30=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+>
+> Instead of iterating all inodes belonging to a superblock to find inode
+> marks and remove them on umount, iterate all inode connectors for the
+> superblock. This may be substantially faster since there are generally
+> much less inodes with fsnotify marks than all inodes. It also removes
+> one use of sb->s_inodes list which we strive to ultimately remove.
 
-Yes. I was suggesting to effectively keep the behavior from
-ext4_ext_convert_to_initialized().
+It should be simple to iterate an sb->s_inode_connectors list
+without the need of any of the patches until this point. Right?
 
-> In this case, I have 2 concerns:
-> 
-> > 
-> > 1) 'ex' is unwritten, 'map' describes part with already written data which
-> > we want to convert to initialized (generally IO completion situation) => we
-> > can zero out boundaries if they are smaller than max_zeroout or if extent
-> > split fails.
-> 
-> Firstly, I know you mentioned in another email that zeroout of small ranges
-> gives us a performance win but is it really faster on average than
-> extent manipulation?
+Thanks,
+Amir.
 
-I guess it depends on the storage and the details of the extent tree. But
-it definitely does help in cases like when you have large unwritten extent
-and then start writing randomly 4k blocks into it because this zeroout
-logic effectively limits the fragmentation of the extent tree. Overall
-sequentially writing a few blocks more of zeros is very cheap practically
-with any storage while fragmenting the extent tree becomes expensive rather
-quickly (you generally get deeper extent tree due to smaller extents etc.).
-
-> For example, for case 1 where both zeroout and splitting need
-> journalling, I understand that splitting has high journal overhead in worst case,
-> where tree might grow, but more often than not we would be manipulating
-> within the same leaf so journalling only 1 bh (same as zeroout). In which case
-> seems like zeroout might be slower no matter how fast the IO can be
-> done. So proactive zeroout might be for beneficial for case 3 than case
-> 1.
-
-I agree that initially while the split extents still fit into the same leaf
-block, zero out is likely to be somewhat slower but over the longer term
-the gains from less extent fragmentation win.
-
-> > 2) 'ex' is unwritten, 'map' describes part we are preparing for write (IO
-> > submission) => the split is opportunistic here, if we cannot split due to
-> > ENOSPC, just go on and deal with it at IO completion time. No zeroing
-> > needed.
-> > 
-> > 3) 'ex' is written, 'map' describes part that should be converted to
-> > unwritten => we can zero out the 'map' part if smaller than max_zeroout or
-> > if extent split fails.
-> 
-> Proactive zeroout before trying split does seem benficial to help us
-> avoid journal overhead for split. However, judging from
-> ext4_ext_convert_to_initialized(), max zeroout comes from
-> sbi->s_extent_max_zeroout_kb which is hardcoded to 32 irrespective of
-> the IO device, so that means theres a chance a zeroout might be pretty
-> slow if say we are doing it on a device than doesn't support accelerated
-> zeroout operations. Maybe we need to be more intelligent in setting
-> s_extent_max_zeroout_kb?
-
-You can also tune the value in sysfs. I'm not 100% sure how the kernel
-could do a better guess. Also I think 32k works mostly because it is small
-enough to be cheap to write but already large enough to noticeably reduce
-fragmentation for some pathological workloads (you can easily get 1/4 of
-the extents than without this logic). But I'm open to ideas if you have
-some.
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+>
+> Signed-off-by: Jan Kara <jack@suse.cz>
+> ---
+>  fs/notify/fsnotify.c | 78 ++++++++++++++++++--------------------------
+>  1 file changed, 32 insertions(+), 46 deletions(-)
+>
+> diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
+> index f7f1d9ff3e38..6e4da46c10ad 100644
+> --- a/fs/notify/fsnotify.c
+> +++ b/fs/notify/fsnotify.c
+> @@ -34,62 +34,48 @@ void __fsnotify_mntns_delete(struct mnt_namespace *mn=
+tns)
+>  }
+>
+>  /**
+> - * fsnotify_unmount_inodes - an sb is unmounting.  handle any watched in=
+odes.
+> - * @sb: superblock being unmounted.
+> + * fsnotify_unmount_inodes - an sb is unmounting. Handle any watched ino=
+des.
+> + * @sbinfo: fsnotify info for superblock being unmounted.
+>   *
+> - * Called during unmount with no locks held, so needs to be safe against
+> - * concurrent modifiers. We temporarily drop sb->s_inode_list_lock and C=
+AN block.
+> + * Walk all inode connectors for the superblock and free all associated =
+marks.
+>   */
+> -static void fsnotify_unmount_inodes(struct super_block *sb)
+> +static void fsnotify_unmount_inodes(struct fsnotify_sb_info *sbinfo)
+>  {
+> -       struct inode *inode, *iput_inode =3D NULL;
+> +       int idx;
+> +       struct rhashtable_iter iter;
+> +       struct fsnotify_mark_connector *conn;
+> +       struct inode *inode;
+>
+> -       spin_lock(&sb->s_inode_list_lock);
+> -       list_for_each_entry(inode, &sb->s_inodes, i_sb_list) {
+> -               /*
+> -                * We cannot __iget() an inode in state I_FREEING,
+> -                * I_WILL_FREE, or I_NEW which is fine because by that po=
+int
+> -                * the inode cannot have any associated watches.
+> -                */
+> -               spin_lock(&inode->i_lock);
+> -               if (inode->i_state & (I_FREEING|I_WILL_FREE|I_NEW)) {
+> -                       spin_unlock(&inode->i_lock);
+> +       /*
+> +        * We hold srcu over the iteration so that returned connectors st=
+ay
+> +        * allocated until we can grab them in fsnotify_destroy_conn_mark=
+s()
+> +        */
+> +       idx =3D srcu_read_lock(&fsnotify_mark_srcu);
+> +       rhashtable_walk_enter(&sbinfo->inode_conn_hash, &iter);
+> +       rhashtable_walk_start(&iter);
+> +       while ((conn =3D rhashtable_walk_next(&iter)) !=3D NULL) {
+> +               /* Table resized - we don't care... */
+> +               if (IS_ERR(conn))
+>                         continue;
+> -               }
+> -
+> -               /*
+> -                * If i_count is zero, the inode cannot have any watches =
+and
+> -                * doing an __iget/iput with SB_ACTIVE clear would actual=
+ly
+> -                * evict all inodes with zero i_count from icache which i=
+s
+> -                * unnecessarily violent and may in fact be illegal to do=
+.
+> -                * However, we should have been called /after/ evict_inod=
+es
+> -                * removed all zero refcount inodes, in any case.  Test t=
+o
+> -                * be sure.
+> -                */
+> -               if (!atomic_read(&inode->i_count)) {
+> -                       spin_unlock(&inode->i_lock);
+> +               spin_lock(&conn->lock);
+> +               /* Connector got detached before we grabbed conn->lock? *=
+/
+> +               if (conn->type =3D=3D FSNOTIFY_OBJ_TYPE_DETACHED) {
+> +                       spin_unlock(&conn->lock);
+>                         continue;
+>                 }
+> -
+> +               inode =3D conn->obj;
+>                 __iget(inode);
+> -               spin_unlock(&inode->i_lock);
+> -               spin_unlock(&sb->s_inode_list_lock);
+> -
+> -               iput(iput_inode);
+> -
+> -               /* for each watch, send FS_UNMOUNT and then remove it */
+> +               spin_unlock(&conn->lock);
+> +               rhashtable_walk_stop(&iter);
+>                 fsnotify_inode(inode, FS_UNMOUNT);
+> -
+> -               fsnotify_inode_delete(inode);
+> -
+> -               iput_inode =3D inode;
+> -
+> +               fsnotify_destroy_marks(&inode->i_fsnotify_marks);
+> +               iput(inode);
+>                 cond_resched();
+> -               spin_lock(&sb->s_inode_list_lock);
+> +               rhashtable_walk_start(&iter);
+>         }
+> -       spin_unlock(&sb->s_inode_list_lock);
+> -
+> -       iput(iput_inode);
+> +       rhashtable_walk_stop(&iter);
+> +       rhashtable_walk_exit(&iter);
+> +       srcu_read_unlock(&fsnotify_mark_srcu, idx);
+>  }
+>
+>  void fsnotify_sb_delete(struct super_block *sb)
+> @@ -100,7 +86,7 @@ void fsnotify_sb_delete(struct super_block *sb)
+>         if (!sbinfo)
+>                 return;
+>
+> -       fsnotify_unmount_inodes(sb);
+> +       fsnotify_unmount_inodes(sbinfo);
+>         fsnotify_clear_marks_by_sb(sb);
+>         /* Wait for outstanding object references from connectors */
+>         wait_var_event(&sbinfo->connector_count,
+> --
+> 2.51.0
+>
 
