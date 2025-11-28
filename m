@@ -1,54 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-70160-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70161-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09075C92A3A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 17:53:52 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3B59C92A52
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 17:54:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id EC46B34DB9F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 16:53:28 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 28E1134641A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 16:53:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69CA82EAB6B;
-	Fri, 28 Nov 2025 16:51:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E17352EF652;
+	Fri, 28 Nov 2025 16:51:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZXC7SmAb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qNliKIwa"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE00C2E92A3;
-	Fri, 28 Nov 2025 16:51:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 456C12EC55C;
+	Fri, 28 Nov 2025 16:51:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764348686; cv=none; b=rVokbJCiWWZ6T1667YGvMh2WJ9opXIe2m0bLXR3NjqyBdFfd9D2MlsjFwxcG0llNkOo9xHDkywjjjizubEz4k7534YXfNyC+OEz4xRM8MkIx5TCTs0dVBqN9gPmccEgl6jiwVLRf+ngEdDHwSURWoC8Ozid/Kh3Jl+CbwVzb2Kc=
+	t=1764348688; cv=none; b=PA6bAQcsYS7+6dNaeA73UcEw/YZJx2SnQGmz1qtY00Zmc9TDi2C6gUjVX9hlGk0i6nsXIEHVk9Ck1pirZhmrTVK28ZzxLFkxezt8PYME0jYMhqJbhBGhqs0u56yWHpvbXtcZbQU328m1e7IMh0vzRQMQsDlzjFW/YVn22EXtGUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764348686; c=relaxed/simple;
-	bh=QNbXCptVSFM5kcaDDRT0+pRJYkeFaL3dtftBTlj6mIU=;
+	s=arc-20240116; t=1764348688; c=relaxed/simple;
+	bh=SWVvEzngi+rqHJUrahhDQk0H9f2ewg68J0eKkS5Qtfw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EE8xm0sCYsh12oftxZxacKDFftVL9wC1RqPO8wZONTRDAGKlvpsLrrpm/dqJIMEfDOtHIVCNpDM5zhLjb7nczhexNXh1/zZLU45iWCJrgoO/sgdgOLSUkAJwNqC1sX/ZlpDi8JCwwYMw35hhbMGFZOAQ5yxvq3I9B7H7eTKO8Js=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZXC7SmAb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DD2BC4CEF1;
-	Fri, 28 Nov 2025 16:51:24 +0000 (UTC)
+	 MIME-Version; b=rz5ZDUOCmaN4ojd0gsQd6qDXCA2/8hQl6TW16P2/bLl1T/sp8yo0fRwDJBeuhXYUDbDm7Rb9JiiBN27HM+VOSC0qUGomMBsi53q9U8c9qLo72JQJQ4SsA2ocD8Pee+5Fy3Q6OsImwamNrz6BwQyMLl/Db3rx8PShigjMmeKurz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qNliKIwa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B13BFC4CEFB;
+	Fri, 28 Nov 2025 16:51:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764348686;
-	bh=QNbXCptVSFM5kcaDDRT0+pRJYkeFaL3dtftBTlj6mIU=;
+	s=k20201202; t=1764348687;
+	bh=SWVvEzngi+rqHJUrahhDQk0H9f2ewg68J0eKkS5Qtfw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ZXC7SmAbC5AsVurA3Nn3MbDixMnnbfOwfZ4qRZ2Z+CkqcldYLrGVp8p4W+0QmIf40
-	 8ybRJQDZHL6j8HcM3VIOUpjrtTFGz7zEhd8NI47kRBSHI8AzD6f9UJBr6t7OEDcUL/
-	 llDM3Zhs/PDJMNQZhhn4nOYt6gyUJLI1Xac3yufl+BcOe9yoCiPMlcLU9C49SR8tS+
-	 lIHTvFn2rdUalSpfX649kaPlGzNuGIsFDf7glR4/Y/RTwOO1IBETLmbs6qsuV+cpU1
-	 myAIzgGV5XCzsllBXTkrF77aVCOyLcAlhOZdkyjcDMzjOU3oBWKkrTvoOvg7VaHWE8
-	 BqPYQ/R2xUCRg==
+	b=qNliKIwawW1kOujpUKLYsvsJmgWkSvLCPzGn5YIjM/lr2BGrTuHATEE9q3QXeEgyR
+	 uEVMpHWUbNlO4s1WzN5tW2ZU6PBTWbjG+YUqBAGQ3M3JPfCZ3TIY2EULytsytqnr71
+	 UTt3s6T+2sYl0fmlnHn8ExstXGAKhpGgyLY8rBAbPBdYMBxcrJCSykT8gL/eUh22qO
+	 PkNbeabSfB28n5PVNKyoys1D8UV/Otjw/ctZczwbKIAnmZ97ke+uGh6d9ZWOJVxrSY
+	 k0WHZTl3RZ1cE3UhBFv8S6UO9Yd9ZkJgmkgLGCrJkacIUFi4kesjdep9NHX45/lumg
+	 cSxdtN0WiQW8w==
 From: Christian Brauner <brauner@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Christian Brauner <brauner@kernel.org>,
 	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [GIT PULL 10/17 for v6.19] vfs super guards
-Date: Fri, 28 Nov 2025 17:48:21 +0100
-Message-ID: <20251128-vfs-super-guards-v619-45069c20bd0d@brauner>
+Subject: [GIT PULL 11/17 for v6.19] minix
+Date: Fri, 28 Nov 2025 17:48:22 +0100
+Message-ID: <20251128-kernel-minix-v619-c288851ff1cb@brauner>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20251128-vfs-v619-77cd88166806@brauner>
 References: <20251128-vfs-v619-77cd88166806@brauner>
@@ -58,20 +58,26 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3965; i=brauner@kernel.org; h=from:subject:message-id; bh=QNbXCptVSFM5kcaDDRT0+pRJYkeFaL3dtftBTlj6mIU=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWRqXnosyjZ9y1Tl+J8z1SJ5eLNKHovP4JGPONBYv3K9c 03KLO4THaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABPpm8TI8OCSbu/J27Fyj3zq 2DV7z1Y2zXm2aYciY3Gaf67NE4XcCEaGFzatPCytH99LTu8sDLON33Ut/UFcDPOP+c8fHJtkO2k FHwA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2082; i=brauner@kernel.org; h=from:subject:message-id; bh=SWVvEzngi+rqHJUrahhDQk0H9f2ewg68J0eKkS5Qtfw=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWRqXnqc/6PjyYNcSZPKtF9/KoXTl23vzeDI1Ux6vGhfa mnNXpm8jlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIlMyWBk2G06+cTepz8KTzLZ vWU7ZFPU8KEqxTT8c3uitb5b8sTbuYwMr/fu+ajpn3r350G+uG9P75Ts8Nn17K2e5gKta7H7DUN vsgAA
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
 Hey Linus,
 
 /* Summary */
-This starts the work of introducing guards for superblock related locks.
-Note that this branch includes the fs_header cleanups as a dependency.
+Fix two syzbot corruption bugs in the minix filesystem. Syzbot fuzzes
+filesystems by trying to mount and manipulate deliberately corrupted
+images. This should not lead to BUG_ONs and WARN_ONs for easy to detect
+corruptions.
 
-Introduce super_write_guard for scoped superblock write protection. This
-provides a guard-based alternative to the manual sb_start_write() and
-sb_end_write() pattern, allowing the compiler to automatically handle
-the cleanup.
+- Add error handling to minix filesystem for inode corruption detection,
+  enabling the filesystem to report such corruptions cleanly.
+
+- Fix a drop_nlink warning in minix_rmdir() triggered by corrupted
+  directory link counts.
+
+- Fix a drop_nlink warning in minix_rename() triggered by corrupted
+  inode link counts.
 
 /* Testing */
 
@@ -90,76 +96,37 @@ No known conflicts.
 Merge conflicts with other trees
 ================================
 
-The following changes since commit dcb6fa37fd7bc9c3d2b066329b0d27dedf8becaa:
+The following changes since commit 3a8660878839faadb4f1a6dd72c3179c1df56787:
 
-  Linux 6.18-rc3 (2025-10-26 15:59:49 -0700)
+  Linux 6.18-rc1 (2025-10-12 13:42:36 -0700)
 
 are available in the Git repository at:
 
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.19-rc1.guards
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.19-rc1.minix
 
-for you to fetch changes up to 73fd0dba0beb1d2d1695ee5452eac8dfabce3f9e:
+for you to fetch changes up to 0d534518ce87317e884dbd1485111b0f1606a194:
 
-  Merge patch series "fs: introduce super write guard" (2025-11-05 22:59:31 +0100)
+  Merge patch series "Fix two syzbot corruption bugs in minix filesystem" (2025-11-05 13:45:26 +0100)
 
-Please consider pulling these changes from the signed vfs-6.19-rc1.guards tag.
+Please consider pulling these changes from the signed vfs-6.19-rc1.minix tag.
 
 Thanks!
 Christian
 
 ----------------------------------------------------------------
-vfs-6.19-rc1.guards
+vfs-6.19-rc1.minix
 
 ----------------------------------------------------------------
-Christian Brauner (13):
-      fs: rename fs_types.h to fs_dirent.h
-      fs: add fs/super_types.h header
-      fs: add fs/super.h header
-      Merge patch series "fs: start to split up fs.h"
-      fs: add super_write_guard
-      btrfs: use super write guard in btrfs_reclaim_bgs_work()
-      btrfs: use super write guard btrfs_run_defrag_inode()
-      btrfs: use super write guard in sb_start_write()
-      ext4: use super write guard in write_mmp_block()
-      btrfs: use super write guard in relocating_repair_kthread()
-      open: use super write guard in do_ftruncate()
-      xfs: use super write guard in xfs_file_ioctl()
-      Merge patch series "fs: introduce super write guard"
+Christian Brauner (1):
+      Merge patch series "Fix two syzbot corruption bugs in minix filesystem"
 
-Mateusz Guzik (1):
-      fs: inline current_umask() and move it to fs_struct.h
+Jori Koolstra (3):
+      Add error handling to minix filesystem for inode corruption detection
+      Fix a drop_nlink warning in minix_rmdir
+      Fix a drop_nlink warning in minix_rename
 
- fs/9p/acl.c                               |   1 +
- fs/Makefile                               |   2 +-
- fs/btrfs/block-group.c                    |  10 +-
- fs/btrfs/defrag.c                         |   7 +-
- fs/btrfs/inode.c                          |   1 +
- fs/btrfs/volumes.c                        |   9 +-
- fs/ext4/mmp.c                             |   8 +-
- fs/f2fs/acl.c                             |   1 +
- fs/fat/inode.c                            |   1 +
- fs/{fs_types.c => fs_dirent.c}            |   2 +-
- fs/fs_struct.c                            |   6 -
- fs/hfsplus/options.c                      |   1 +
- fs/hpfs/super.c                           |   1 +
- fs/nilfs2/nilfs.h                         |   1 +
- fs/ntfs3/super.c                          |   1 +
- fs/ocfs2/acl.c                            |   1 +
- fs/omfs/inode.c                           |   1 +
- fs/open.c                                 |   9 +-
- fs/smb/client/file.c                      |   1 +
- fs/smb/client/inode.c                     |   1 +
- fs/smb/client/smb1ops.c                   |   1 +
- fs/xfs/xfs_ioctl.c                        |   6 +-
- include/linux/fs.h                        | 528 +-----------------------------
- include/linux/fs/super.h                  | 238 ++++++++++++++
- include/linux/fs/super_types.h            | 335 +++++++++++++++++++
- include/linux/{fs_types.h => fs_dirent.h} |  11 +-
- include/linux/fs_struct.h                 |   6 +
- include/linux/namei.h                     |   1 +
- 28 files changed, 620 insertions(+), 571 deletions(-)
- rename fs/{fs_types.c => fs_dirent.c} (98%)
- create mode 100644 include/linux/fs/super.h
- create mode 100644 include/linux/fs/super_types.h
- rename include/linux/{fs_types.h => fs_dirent.h} (92%)
+ fs/minix/inode.c | 16 ++++++++++++++++
+ fs/minix/minix.h |  9 +++++++++
+ fs/minix/namei.c | 39 ++++++++++++++++++++++++++++++++-------
+ 3 files changed, 57 insertions(+), 7 deletions(-)
 
