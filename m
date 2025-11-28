@@ -1,194 +1,140 @@
-Return-Path: <linux-fsdevel+bounces-70097-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70098-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E5C4C9086F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 02:45:44 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 830FEC90875
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 02:47:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AE5A3A2A43
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 01:45:40 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1485B34EF05
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 01:47:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3214214812;
-	Fri, 28 Nov 2025 01:45:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74630220F2C;
+	Fri, 28 Nov 2025 01:47:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="Y8KcT6Yy";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="XudhksO1"
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="BdwkTuoy"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout-a5-smtp.messagingengine.com (fout-a5-smtp.messagingengine.com [103.168.172.148])
+Received: from smtpbguseast1.qq.com (smtpbguseast1.qq.com [54.204.34.129])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D594272617;
-	Fri, 28 Nov 2025 01:45:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DA241E3DE5;
+	Fri, 28 Nov 2025 01:47:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.129
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764294336; cv=none; b=MCoaDvi+nfOE2fJwuaZpMJ4XXThrcOolaPnOwbYEhtEgRxOsMEFvuiIG5AUwvNdpfboswugdOThv3aIar9558wn9SAGgDCGFeEDKuF6BQB1leqO8SdGbod43OHBwMZafmELK4MWkjfYrWBxIu5Wk+Pr7eyKEftiKD4/T0yGZFj4=
+	t=1764294434; cv=none; b=tU0CAhF6ckAmXV8BfObGur3hHeFbipGv5RM7xUtWwg1QU2b5jh78TilsQ3xav+eJVdywv2rubJdeY6Yg26jckHnMAqpdx/rl4xGPs3rxb+Q21XP4iA18qDZSVvhQyAuw+e+sCpdjpv1isZ5mmG3Cx3UMdy7iyqPirbWncFk1JJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764294336; c=relaxed/simple;
-	bh=lijuLtfgcDwxlCSWm11f87UaINDmlryNgorh3HMGXAQ=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=AgaWKM5XS4fzbectJncBy3fvWjfuDFZUJvOdUJoF3ZuBRL4/CZxEYeDihzHWXFAfSV3gChvtj1ZrxFrIEivnpndkxA2t4PgJVH81XzmfCtPcbvuZ2pWAvShp7OFo3i4WI7rrs5WRvWJdiBcy1XZljzR65oE5520F3Jyy8igVBK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=Y8KcT6Yy; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=XudhksO1; arc=none smtp.client-ip=103.168.172.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
-Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
-	by mailfout.phl.internal (Postfix) with ESMTP id DEE43EC0560;
-	Thu, 27 Nov 2025 20:45:32 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-02.internal (MEProxy); Thu, 27 Nov 2025 20:45:32 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1764294332;
-	 x=1764380732; bh=uPJfLIfCpN3TCxk+OPR4/jJssVP1ohQvi9xNqoI+h30=; b=
-	Y8KcT6YyR0VoulOaUav6YtH5YtL9dpRu285C5/unnOWtiWyRzMHhqrF3VioUiRcr
-	6YalMPZvHpnWnXs0X2KOxItfvm5FMoRC/MG3rHiCR4Y7VxnJN1z6BXPYtWgfvWzL
-	huu6QzpRx+YK6Wn94h/0F8WmncGNemPqLJ1nHHLkds5Gjh6XQKGphYvNGQ6FVJjM
-	scdLzlsXCR381cRr08Ioa7BaKXFQbWTPCVwuxX7MHU0leh6RFHmM583P1jXLovJz
-	A2AhAKpZbFGeEjziD/g25mrKvS93Qg0Slzv2yE9haiV3ChVFpbVP1eTIuAkWebDN
-	kDGwZE7ZrTqc39rEPFldBA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1764294332; x=
-	1764380732; bh=uPJfLIfCpN3TCxk+OPR4/jJssVP1ohQvi9xNqoI+h30=; b=X
-	udhksO1Cv+cVRypvGs0dBF+v9Ez2x2qBFUUwXjue+0zsHEYbrYUnkycLFj0Nk4oS
-	TEuRA0JDtGi9qFNVp8z8nH8hcMjRVFXS6prJ8VIrjU96ieEFYuTgF4fXngqGoaQc
-	r5y2NCkKyojdUnZXiVg3645A61hlAILl6rrGK6zGJFfBkUndwfCHcBQGQhy7ctf6
-	rjQrqeUZE70Vxs5qR9U2SIuLWipFkzQYQVcuDKiQ20Ewsl5OZLe9B6cA2gwbGR25
-	0ZoxkwKn5XDakqCoewSMMReG01DLfcJPkpeP4d2K98FICkRnzVfvgZ+IYmOnrW/X
-	caudjrUjTFRm0D8IQZFcg==
-X-ME-Sender: <xms:vP4oaWIRzmid_TzBvLQAua15Caic4Ien7Ylf1l-YSiFYamXbq8Fq2w>
-    <xme:vP4oaR1meWPJsafK0eBpAfoN13usTEJHhu83_zdFJRR61-UQfPEbqS6eUOT0T3tco
-    kxGuLaXEq2cb_jicMGoPwuwq-rBmRcsy-2SMsy8XhRSEWv3KT6yubM>
-X-ME-Received: <xmr:vP4oafXVoXyKrpYedNNfTC1JZQyCijroj2EjU2z2zQMTZmPrDd7Ex9wKWI15FABqHGz_44SQN_Msut-Xmg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvgeekieehucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepkfffgggfhffuvfevfhgjtgfgsehtkeertddtvdejnecuhfhrohhmpefvihhnghhm
-    rghoucghrghnghcuoehmsehmrghofihtmhdrohhrgheqnecuggftrfgrthhtvghrnhepvd
-    egudeugfdujefgtdetffdujeejleeliedukeeujeduheetgffhgedvteevffeunecuvehl
-    uhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmhesmhgrohifth
-    hmrdhorhhgpdhnsggprhgtphhtthhopedufedpmhhouggvpehsmhhtphhouhhtpdhrtghp
-    thhtohepmhhitgesughighhikhhougdrnhgvthdprhgtphhtthhopehgnhhorggtkhesgh
-    hoohhglhgvrdgtohhmpdhrtghpthhtohepvhhirhhoseiivghnihhvrdhlihhnuhigrdho
-    rhhgrdhukhdprhgtphhtthhopegrkhhhnhgrsehgohhoghhlvgdrtghomhdprhgtphhtth
-    hopegsrhgruhhnvghrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehjrghnnhhhsehg
-    ohhoghhlvgdrtghomhdprhgtphhtthhopehjvghffhiguhesghhoohhglhgvrdgtohhmpd
-    hrtghpthhtohepuhhtihhlihhthigvmhgrlhejjeesghhmrghilhdrtghomhdprhgtphht
-    thhopehivhgrnhhovhdrmhhikhhhrghilhdusehhuhgrfigvihdqphgrrhhtnhgvrhhsrd
-    gtohhm
-X-ME-Proxy: <xmx:vP4oacx-fluN2q9mgfsuMFcbk--UrVcFa03lhcKsJHFwGjJNCSTrAA>
-    <xmx:vP4oaezMQYbopoghxJUyANxcIVeQXyWnLaw-SqVYQbkQuhmtsXUEFw>
-    <xmx:vP4oaZ2HzncPR26R6WS8JYTgbCElIjg2mFi6h4io3il5VpAxCH87Jw>
-    <xmx:vP4oaUpf_p1128nNDLyBhcZTN2SITUQUEQghasj_zOcE3XGABhVf0Q>
-    <xmx:vP4oacT5Lkhqwh5HOM-syRqc1orq3O5jvuoz-QNmdXDrRhkPUHr6Ps8v>
-Feedback-ID: i580e4893:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 27 Nov 2025 20:45:30 -0500 (EST)
-Message-ID: <adf1f57c-8f8e-45a9-922c-4e08899bf14a@maowtm.org>
-Date: Fri, 28 Nov 2025 01:45:29 +0000
+	s=arc-20240116; t=1764294434; c=relaxed/simple;
+	bh=PUrMKcVIb3gY9DX/X6vLOgRm8gYV1jy6fnBiePp0+Go=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EmiLiP/9G74Pp2+A+UFx5y/I9ZUh3+NpoRPukKVi5x2Nb1yDs575+2hqwu64PRs0eV0hR6AyCG/dJsokFnEKfA9ELJ3jJ/rTcpkVFtq36fBTYw5y2FpMxCFy1GSwPMnTJ16UCxEVp8qHLIs7F2x2EUJSiqq0u2fRwn/nAGIC28U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=BdwkTuoy; arc=none smtp.client-ip=54.204.34.129
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1764294416;
+	bh=PUrMKcVIb3gY9DX/X6vLOgRm8gYV1jy6fnBiePp0+Go=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version;
+	b=BdwkTuoyj7+csKLlMCC0PkqgoESWaWed5m0tFEjfz2NQ0OhLr4omapaars4BUsf4j
+	 x7N1JMvgnP/PTo/ciWkhXF+R6asRh4SBX/l69WF95wLonL8/2067JXHF3Ako6/NVek
+	 RpeIBAFXc3DHsALJ75dAHlIgILBepir2bU/Su/Gs=
+X-QQ-mid: zesmtpip4t1764294409td5a2973d
+X-QQ-Originating-IP: tD26oQMyu5n8Q06G8HAmuPzEBbMa+G97t2+PGk6FNBM=
+Received: from winn-pc ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Fri, 28 Nov 2025 09:46:44 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 3025559261156433474
+Date: Fri, 28 Nov 2025 09:46:44 +0800
+From: Winston Wen <wentao@uniontech.com>
+To: Namjae Jeon <linkinjeon@kernel.org>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, hch@infradead.org,
+ hch@lst.de, tytso@mit.edu, willy@infradead.org, jack@suse.cz,
+ djwong@kernel.org, josef@toxicpanda.com, sandeen@sandeen.net,
+ rgoldwyn@suse.com, xiang@kernel.org, dsterba@suse.com, pali@kernel.org,
+ ebiggers@kernel.org, neil@brown.name, amir73il@gmail.com,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ iamjoonsoo.kim@lge.com, cheol.lee@lge.com, jay.sim@lge.com,
+ gunho.lee@lge.com
+Subject: Re: [PATCH v2 00/11] ntfsplus: ntfs filesystem remake
+Message-ID: <85070A96ED55AF8F+20251128094644.060dd48e@winn-pc>
+In-Reply-To: <20251127045944.26009-1-linkinjeon@kernel.org>
+References: <20251127045944.26009-1-linkinjeon@kernel.org>
+Organization: Uniontech
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Tingmao Wang <m@maowtm.org>
-Subject: Re: [PATCH v4 1/4] landlock: Fix handling of disconnected directories
-To: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-Cc: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
- Al Viro <viro@zeniv.linux.org.uk>, Ben Scarlato <akhna@google.com>,
- Christian Brauner <brauner@kernel.org>, Jann Horn <jannh@google.com>,
- Jeff Xu <jeffxu@google.com>, Justin Suess <utilityemal77@gmail.com>,
- Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
- Paul Moore <paul@paul-moore.com>, Song Liu <song@kernel.org>,
- linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org
-References: <20251126191159.3530363-1-mic@digikod.net>
- <20251126191159.3530363-2-mic@digikod.net>
-Content-Language: en-US
-In-Reply-To: <20251126191159.3530363-2-mic@digikod.net>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz5b-0
+X-QQ-XMAILINFO: MACXe2l6e7j9622u85/Obf5Ai8b1MnNro+mcGY74dNOssyyffkCHYVQq
+	QwykNErNeF+VHQoCqZDwRMzvyplsj+IhiuCFjsn49MvBInyIe0ZISPr81Wv00hlskIRAhLt
+	+03HUptcd1aLr2+fLawP625Q3TGjXigYcjNL4r2lJltlI2btGwExFafDTYL5FWPpjhpmYzL
+	dG71kugQqJlEv9cRuRSAlP6nikP7Dp6/VF2FGW8OgkeZVp59cd/30rxrZmEBm4LaSdkIF1s
+	uDwd5mAKYGe69H11VpWt/PGv8YtDCMH0XFjgvS0CurDu5hUvMl/5c0o7NHG4gJJbk7NiLhM
+	Y23GX5QtqLjeLG0aEsy+24HjRkKcbAuoxZUp66TNN/ozLKXOaFdV7ANpNzLOpJntJgdmYfC
+	q8+cmZN5zEJbe/M5/g/i+9nvkQkNo+YNPj3iZJI/ybVr3BI/CGOlAuSGa1GVQxyXOo+ratQ
+	svYgKSLIQEVykE7KI2V9YqVtIWggrKdbIAyrGLHu/QoDnp8Ab+qDw6URmQZxAHJWVps0EA0
+	59PW+1wndNf51fOOwNrUtdLip7VThNrxCHoMRqTLlzQS5CVGJ6p7RLdA5SWgUlBtpucKPkM
+	kKNfhRg4/aeP5g9RP9JrHBjHYevh7e49ma4gMAgv6Y0+1K1gFLOuwwmbyc6A9Cp+4OVOLBb
+	J2gTD3nS7Mdo/9sxpP1zldGasFZi6tQqwTE+SN+g94hQZwhK+TgxUFHWfRXygeB06R3xsOy
+	ZUaaqyneWGHj+fAumedLcsNJ1JbGaWcmxYrPe5CUidixBSWVPV2VB5v0oH55pGRR56Zxckl
+	ACPypuAShK78lNYYmbUcrfCSEV6bDQpWG2kzDM57FGSFpI2oR6iwwvjhfPv1eFuSrFZwwMr
+	ZdbWdn8hj80YlaMs8hUdRZ50mQjl+b9+oZEy89gsNNgN+aMn9L0vMm1RUfasZ5QVbShaTcB
+	4vdYbOsDM8ZKDJGTabNsRUYSqCdhK+b0bUwzTPMIRSd/B/kndcxA0jziC
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+X-QQ-RECHKSPAM: 0
 
-Hi Mickaël,
+On Thu, 27 Nov 2025 13:59:33 +0900
+Namjae Jeon <linkinjeon@kernel.org> wrote:
 
-I think this implementation makes sense - to me this feels better than
-ignoring rules between the leaf and the mount when disconnected, given the
-interaction with domain checks.  This approach is also simpler in code.
+Hello Namjae,
 
-However, there is one caveat which, while requiring a slightly problematic
-policy to happen in the first place, might still be a bit surprising: if,
-for some reason, there are rules "hidden" in the "real" parent of a (bind)
-mounted dir, a sandboxed program that is able to cause directories to be
-disconnected (for example, because there are more bind mounts within the
-bind mount, and the program has enough rename access (but not read/write))
-may be able to "surface" those rules and "gain access" (requires the
-existance of the already questionable "hidden" rule):
+Thank you for posting this patchset. We are very interested in the
+development of ntfsplus.
 
-  root@g3ef6e4434e3a-dirty /# mkdir -p /hidden/bind1_src /bind1_dst
-  /# cd hidden
-  /hidden# mount --bind bind1_src /bind1_dst
-  /hidden# mkdir -p bind1_src/bind2_src/dir bind1_src/bind2_dst
-  /hidden# mount --bind /bind1_dst/bind2_src /bind1_dst/bind2_dst
-  /hidden# echo secret > bind1_src/bind2_src/dir/secret
-  /hidden# ls -la /bind1_dst/bind2_dst/dir/secret 
-  -rw-r--r-- 1 root root 7 Nov 28 00:49 /bind1_dst/bind2_dst/dir/secret
-  /hidden# mount -t tmpfs none /hidden
-  /hidden# ls .
-  bind1_src/
-  /hidden# ls /hidden
-  /hidden# LL_FS_RO=/usr:/bin:/lib:/etc:. LL_FS_RW= LL_FS_CREATE_DELETE_REFER=./bind1_src /sandboxer bash
-                                        ^ this attaches a read rule to a "invisible" dir
-  Executing the sandboxed command...
-  /hidden# cd /
-  /# ls /hidden
-  ls: cannot open directory '/hidden': Permission denied
-  /# cd /bind1_dst/bind2_dst/dir       
-  /bind1_dst/bind2_dst/dir# cat secret
-  cat: secret: Permission denied
-  /bind1_dst/bind2_dst/dir# mv -v /bind1_dst/bind2_src/dir /bind1_dst/outside
-  renamed '/bind1_dst/bind2_src/dir' -> '/bind1_dst/outside'
-  /bind1_dst/bind2_dst/dir# ls ..
-  ls: cannot access '..': No such file or directory
-  /bind1_dst/bind2_dst/dir# cat secret
-  secret
+In our production environment, we have been relying on the out-of-tree
+ntfs-3g driver for NTFS read-write support. However, it comes with
+several limitations regarding performance and integration. While we
+have been closely monitoring the in-kernel ntfs3 driver, we feel that
+features like full journaling support and a robust fsck utility are
+critical for our use cases, and we have been waiting for these to
+mature.
 
-Earlier I was thinking we could make domain check for rename/links
-stricter, in that it would make sure there are no rules granting more
-access on the destination than what's granted by the "visible" rules on
-the source even if those rules are "hidden" within the fs above the
-mountpoint.  This way, the application would not be able to move the
-source's parent to cause a disconnection in the first place.  However, I'm
-not sure if this is worth the complication (e.g. in the case of exchange
-rename, source is also the destination, and so this check needs to also
-check that there are no "hidden" rules on the source that grants more access
-than the "visible" rules on the destination).
+Given your proven track record with the exfat driver upstreaming and
+maintenance, we are confident in the quality and future of this
+ntfsplus initiative. We are hopeful that it will address the
+long-standing gaps we've observed.
 
-I see another approach to mitigate this - we can disallow (return with
--EXDEV probably) rename/links altogether when the destination (and also
-source if exchange) contains "hidden" rules that grants more access than
-the "visible" rules.  However this approach would break backward
-compatibility if a sandboxer or Landlock-enlightened application creates
-such problematic policies (most likely unknowingly).
+We are eagerly following the progress of ntfsplus. Once it reaches a
+stable and feature-complete state=E2=80=94especially with reliable journali=
+ng
+and fsck=E2=80=94we would seriously consider deploying it to replace ntfs-3=
+g in
+our production systems.
 
-Stepping back a bit, I also think it is reasonable to leave this issue as
-is and not mitigate it (maybe warn about it in some way in the docs),
-given that this can only happen if the policy is already weird (if the
-intention is to protect some file, setting an allow access rule on its
-parent, even if that parent is "hidden", is questionable).
+> Introduction
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>=20
+> The NTFS filesystem[1] still remains the default filesystem for
+> Windows and The well-maintained NTFS driver in the Linux kernel
+> enhances interoperability with Windows devices, making it easier for
+> Linux users to work with NTFS-formatted drives. Currently, ntfs
+> support in Linux was the long-neglected NTFS Classic (read-only),
+> which has been removed from the Linux kernel, leaving the poorly
+> maintained ntfs3. ntfs3 still has many problems and is poorly
+> maintained, so users and distributions are still using the old legacy
+> ntfs-3g.
+>=20
 
-Not sure which is best, but even with this issue this patch is probably
-still an improvement over the existing behavior (i.e. the one currently in
-mainline, where if the path is disconnected, the "hidden" rules are used
-and any "normal" rules from mnt_parent and above are ignored).
+--=20
+Thanks,
+Winston
 
-Reviewed-by: Tingmao Wang <m@maowtm.org>
-
-Kind regards,
-Tingmao
 
