@@ -1,173 +1,198 @@
-Return-Path: <linux-fsdevel+bounces-70138-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70139-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEC13C91FAE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 13:25:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 82CBDC91FC3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 13:28:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 26E74349D89
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 12:25:17 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 98B8234B2EB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 12:28:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5131328B7E;
-	Fri, 28 Nov 2025 12:25:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8F06329C40;
+	Fri, 28 Nov 2025 12:28:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EFYuo7O6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hSKeeIBH"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36BC0328267;
-	Fri, 28 Nov 2025 12:25:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD043329379
+	for <linux-fsdevel@vger.kernel.org>; Fri, 28 Nov 2025 12:28:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764332708; cv=none; b=ROfXyXO25UbO6O51ssvVIQqmVv/oz75zQ/Z5X37e8vr23JfJzl7XQT3q8gG/F2DRci5mJ5Jjs0fww8x+6kB8LCOpBe2rXIVTqTCGWVOQmmYCoiyam+Epk0GN8m2yLPEYXa+gyoJsbZZuuLw76/0GuPDRGIkPI97Q7kbbmnApaqY=
+	t=1764332918; cv=none; b=tbLWfLmztBRyW/iEYMvWbCEdS4XfjNjSqThc85f5MNGpzPPIeCescg31TCUCklNueLZ4NEeS26DK3fH3Ae30DnUy1XK5+9rq6ibjlLSit9UWZf9JSbjyRm8G+0fd8sjeAC+y9cTim6Hl6P10zxVRj+X9rN+BLmkvtu+w6DdNtbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764332708; c=relaxed/simple;
-	bh=w//MMNaJ76/6XmuFlJvBo5HIxOMDYwo1z3nrqJzcqPw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mbx9IfEc9OD9cvmGeZi005412NcJpR1eSiqMKlnHyZenz+Q+Qu0Wu0SJmum+lWpGvfQOpvgeLkbk60RNTd8LoowvZfn99+fKJAFaGKB33XykRS7VJxRN+QlW2WmYZ5RTc7MqCUZbVip7jAwkLzjzBP9AqjdL2he6o7LNQ1a2Xws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EFYuo7O6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EA2FC4CEF1;
-	Fri, 28 Nov 2025 12:25:04 +0000 (UTC)
+	s=arc-20240116; t=1764332918; c=relaxed/simple;
+	bh=fL5ESIo6c6L1WG2V6bMoBjvE9NCFb8upWn5gFw1NFSU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VJNSdnoiAeNbjo12+/ZLm9nc5QFIWdX6JASZFkb3CVCl0VARJbO1X0fqxWIW76wp0eESRIDEkHvGfKNU899vLjvbJenAahtIeNhaqxZJeg588N6LxsmLA5VfALBvmqI/OG/T8czAgmL118khlPMNxDlE7J5tR2yceWWPWGX95PQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hSKeeIBH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 773E1C19422
+	for <linux-fsdevel@vger.kernel.org>; Fri, 28 Nov 2025 12:28:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764332707;
-	bh=w//MMNaJ76/6XmuFlJvBo5HIxOMDYwo1z3nrqJzcqPw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EFYuo7O6PCmDiLmkZeeh6nVMNHkwYIYbsLmfcKYnkYNKUATjFpjfTZFq3Q+28KE7g
-	 ylt9vg//gd1+4k8VyYXowAEW5KYWTyqqH8fDxCjY7xCdp0JYC8lbiAvqFTPDSDuzVd
-	 ZZNkKSnMf7l6FLFaN4UTLygN0pK+cATxNDnYUILy8odb1QsWZhW9MIh21tT3yRxRKR
-	 pKfcxYFqWNwThsn7KLBSaNRF1fHII9S2TmQ2dqm3qTKUm2S1BIPmkAq6tPt30ayMfV
-	 tVfq4PWAJPQDJP9s/Mj6hQm3sivZGux0EL/3BnsxPBqKy22MZCFiBrON583IqSyDV9
-	 Ng7LVaqtx5vZQ==
-Date: Fri, 28 Nov 2025 12:25:01 +0000
-From: Will Deacon <will@kernel.org>
-To: Zizhi Wo <wozizhi@huaweicloud.com>
-Cc: jack@suse.com, brauner@kernel.org, hch@lst.de,
-	akpm@linux-foundation.org, linux@armlinux.org.uk,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
-	yangerkun@huawei.com, wangkefeng.wang@huawei.com,
-	pangliyuan1@huawei.com, xieyuanbin1@huawei.com
-Subject: Re: [Bug report] hash_name() may cross page boundary and trigger
- sleep in RCU context
-Message-ID: <aSmUnZZATTn3JD7m@willie-the-truck>
-References: <20251126090505.3057219-1-wozizhi@huaweicloud.com>
- <aShLKpTBr9akSuUG@willie-the-truck>
- <9ff0d134-2c64-4204-bbac-9fdf0867ac46@huaweicloud.com>
- <39d99c56-3c2f-46bd-933f-2aef69d169f3@huaweicloud.com>
- <61757d05-ffce-476d-9b07-88332e5db1b9@huaweicloud.com>
+	s=k20201202; t=1764332918;
+	bh=fL5ESIo6c6L1WG2V6bMoBjvE9NCFb8upWn5gFw1NFSU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=hSKeeIBH6PQsT3swlBhNNNSnxkKaSVdh6QKuIVDl0+WXIMv/I/2mPQISABfBYfHxX
+	 jA39UWzvuoTnHtCczjIGjbDBvyrMTeJzjes9HSYksBIx1SNCXo8LXgqTxwfDNf1REC
+	 SHTFnBjJzGrgIAqGnH98FJnnPACHw7rzQzJ2+Y0DsavK6GBT4Ukq/MSbQupR2e+yHy
+	 dL/O8ggpiLmvI7oY1Euvr569Pi3pC2T3dWnmUaxRwRP7q/gXOtlIkqYakdBvwrt0S9
+	 aNLIipt1Oqy3LIrBzyJ1hbTriD756jCBIL2xEKDElEnDJrZrPhQtQga42C0MxuLPHZ
+	 QdVnNTTeeVNKQ==
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-640aa1445c3so2885750a12.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Nov 2025 04:28:38 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXX3pZOZT7oTlc3e1oMYVKOxG2oBvik+gzEIMoh3Mp7fV0gL6xnbVc+t/ca+3LR6aaz8HcBj1pacNpDciQT@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYrHRP8YvYF71RLHs5SuRtbTbIRsNod3vlvKxL24hpB7XvLN4K
+	nV15UgZEG8PAolm8cPPQgh3PR/rUnFAccmk6N51RMh5mL9HUCV54XZcxdYCTRKzcDPM4BqFH8oE
+	bc/cAb8KYIshG0HLezHFCv0b3xHFfIHA=
+X-Google-Smtp-Source: AGHT+IFUWR/IDlUlhhaqkhcLgKgwYjhwwo7Orva9Zo+w+hmfZfIMhm4hVh1hsd7dza7jTNzngxJi0WMddD9jb2IUITw=
+X-Received: by 2002:a05:6402:4311:b0:640:c454:e9 with SMTP id
+ 4fb4d7f45d1cf-64555b86b59mr23584838a12.4.1764332916810; Fri, 28 Nov 2025
+ 04:28:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <61757d05-ffce-476d-9b07-88332e5db1b9@huaweicloud.com>
+References: <20251127045944.26009-1-linkinjeon@kernel.org> <20251127045944.26009-12-linkinjeon@kernel.org>
+ <CAOQ4uxhwy1a+dtkoTkMp5LLJ5m4FzvQefJXfZ2JzrUZiZn7w0w@mail.gmail.com>
+ <CAKYAXd99CJOeH=nZg_iLb+q5F5N+xxbZm-4Uwxas_tAR3e_xVA@mail.gmail.com>
+ <CAOQ4uxiGMLe=FD72BBCLnk6kmOTrqSQ5wM4mVHSshKc+TN14TQ@mail.gmail.com>
+ <CAKYAXd8K76CeQNtR-QOMSJ_JjuoiibuQkd4NhkPPM_CQNdNajw@mail.gmail.com> <aSl26bbeD4-Ev1ky@amir-ThinkPad-T480>
+In-Reply-To: <aSl26bbeD4-Ev1ky@amir-ThinkPad-T480>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Fri, 28 Nov 2025 21:28:24 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd8RFwBfvWb=mjg+_nq=B1E=g8JURjAiQnjt4jK+rXcXtQ@mail.gmail.com>
+X-Gm-Features: AWmQ_bnXTPg8odBgUFQvM_xtzj987rEap7QrLjf9q38icTR1sfTEmdSVwWT78UA
+Message-ID: <CAKYAXd8RFwBfvWb=mjg+_nq=B1E=g8JURjAiQnjt4jK+rXcXtQ@mail.gmail.com>
+Subject: Re: [PATCH v2 11/11] ntfsplus: add Kconfig and Makefile
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, hch@infradead.org, hch@lst.de, 
+	tytso@mit.edu, willy@infradead.org, jack@suse.cz, djwong@kernel.org, 
+	josef@toxicpanda.com, sandeen@sandeen.net, rgoldwyn@suse.com, 
+	xiang@kernel.org, dsterba@suse.com, pali@kernel.org, ebiggers@kernel.org, 
+	neil@brown.name, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	iamjoonsoo.kim@lge.com, cheol.lee@lge.com, jay.sim@lge.com, gunho.lee@lge.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Nov 28, 2025 at 09:39:45AM +0800, Zizhi Wo wrote:
-> 在 2025/11/28 9:18, Zizhi Wo 写道:
-> > 在 2025/11/28 9:17, Zizhi Wo 写道:
-> > > 在 2025/11/27 20:59, Will Deacon 写道:
-> > > > On Wed, Nov 26, 2025 at 05:05:05PM +0800, Zizhi Wo wrote:
-> > > > > We're running into the following issue on an ARM32 platform
-> > > > > with the linux
-> > > > > 5.10 kernel:
-> > > > > 
-> > > > > [<c0300b78>] (__dabt_svc) from [<c0529cb8>]
-> > > > > (link_path_walk.part.7+0x108/0x45c)
-> > > > > [<c0529cb8>] (link_path_walk.part.7) from [<c052a948>]
-> > > > > (path_openat+0xc4/0x10ec)
-> > > > > [<c052a948>] (path_openat) from [<c052cf90>] (do_filp_open+0x9c/0x114)
-> > > > > [<c052cf90>] (do_filp_open) from [<c0511e4c>]
-> > > > > (do_sys_openat2+0x418/0x528)
-> > > > > [<c0511e4c>] (do_sys_openat2) from [<c0513d98>] (do_sys_open+0x88/0xe4)
-> > > > > [<c0513d98>] (do_sys_open) from [<c03000c0>]
-> > > > > (ret_fast_syscall+0x0/0x58)
-> > > > > ...
-> > > > > [<c0315e34>] (unwind_backtrace) from [<c030f2b0>]
-> > > > > (show_stack+0x20/0x24)
-> > > > > [<c030f2b0>] (show_stack) from [<c14239f4>] (dump_stack+0xd8/0xf8)
-> > > > > [<c14239f4>] (dump_stack) from [<c038d188>]
-> > > > > (___might_sleep+0x19c/0x1e4)
-> > > > > [<c038d188>] (___might_sleep) from [<c031b6fc>]
-> > > > > (do_page_fault+0x2f8/0x51c)
-> > > > > [<c031b6fc>] (do_page_fault) from [<c031bb44>]
-> > > > > (do_DataAbort+0x90/0x118)
-> > > > > [<c031bb44>] (do_DataAbort) from [<c0300b78>] (__dabt_svc+0x58/0x80)
-> > > > > ...
-> > > > > 
-> > > > > During the execution of
-> > > > > hash_name()->load_unaligned_zeropad(), a potential
-> > > > > memory access beyond the PAGE boundary may occur. For example, when the
-> > > > > filename length is near the PAGE_SIZE boundary. This
-> > > > > triggers a page fault,
-> > > > > which leads to a call to
-> > > > > do_page_fault()->mmap_read_trylock(). If we can't
-> > > > > acquire the lock, we have to fall back to the
-> > > > > mmap_read_lock() path, which
-> > > > > calls might_sleep(). This breaks RCU semantics because path
-> > > > > lookup occurs
-> > > > > under an RCU read-side critical section. In linux-mainline, arm/arm64
-> > > > > do_page_fault() still has this problem:
-> > > > > 
-> > > > > lock_mm_and_find_vma->get_mmap_lock_carefully->mmap_read_lock_killable.
-> > > > > 
-> > > > > And before commit bfcfaa77bdf0 ("vfs: use 'unsigned long' accesses for
-> > > > > dcache name comparison and hashing"), hash_name accessed the
-> > > > > name byte by
-> > > > > byte.
-> > > > > 
-> > > > > To prevent load_unaligned_zeropad() from accessing beyond
-> > > > > the valid memory
-> > > > > region, we would need to intercept such cases beforehand? But doing so
-> > > > > would require replicating the internal logic of
-> > > > > load_unaligned_zeropad(),
-> > > > > including handling endianness and constructing the correct
-> > > > > value manually.
-> > > > > Given that load_unaligned_zeropad() is used in many places across the
-> > > > > kernel, we currently haven't found a good solution to
-> > > > > address this cleanly.
-> > > > > 
-> > > > > What would be the recommended way to handle this situation? Would
-> > > > > appreciate any feedback and guidance from the community. Thanks!
-> > > > 
-> > > > Does it help if you bodge the translation fault handler along the lines
-> > > > of the untested diff below?
-> 
-> I tried it out and it works — thank you for the solution you provided.
-
-Thanks for giving it a spin.
-
-> At the same time, since I’m a beginner in this area, I’d like to ask a
-> question.
-> 
-> The comment above do_translation_fault() says:
-> “We enter here because the first level page table doesn't contain a
-> valid entry for the address.”
-> 
-> However, after modifying the code, it seems that when encountering
-> FSR_FS_INVALID_PAGE, the kernel no longer creates a page table entry,
-> but instead directly jumps to bad_area.
-
-FSR_FS_INVALID_PAGE indicates a last level translation fault (that's the
-"page" part) so it's only applicable in the case where the other levels
-of page-table have been populated already.
-
-I wondered about checking !is_vmalloc_addr() too, but I couldn't
-convince myself that load_unaligned_zeropad() is only ever used with the
-linear map.
-
-> I'd like to ask — could this change potentially cause any other side
-> effects?
-
-There's always the possibility but I personally think it's more
-self-contained than the other patches doing the rounds. For example, I
-don't make any changes to the permission fault handling path.
-
-Will
+> > > I think that the way to implement it is using an auxiliary choice config var
+> > > in fs/Kconfig (i.e. CONFIG_DEFAULT_NTFS) and select/depends statements
+> > > to only allow the default ntfs driver to be configured as 'y',
+> > > but couldn't find a good example to point you at.
+> > Okay. Could you please check whether the attached patch matches what
+> > you described ?
+>
+> It's what I meant, but now I think it could be simpler...
+>
+> >
+> > Thanks!
+> > >
+> > > Thanks,
+> > > Amir.
+>
+> > From 11154917ff53d6cf218ac58e6776e603246587b6 Mon Sep 17 00:00:00 2001
+> > From: Namjae Jeon <linkinjeon@kernel.org>
+> > Date: Fri, 28 Nov 2025 11:44:45 +0900
+> > Subject: [PATCH] ntfs: restrict built-in NTFS seclection to one driver, allow
+> >  both as modules
+> >
+> > Signed-off-by: Namjae Jeon <linkinjeon@kernel.org>
+> > ---
+> >  fs/Kconfig          | 11 +++++++++++
+> >  fs/ntfs3/Kconfig    |  2 ++
+> >  fs/ntfsplus/Kconfig |  1 +
+> >  3 files changed, 14 insertions(+)
+> >
+> > diff --git a/fs/Kconfig b/fs/Kconfig
+> > index 70d596b99c8b..c379383cb4ff 100644
+> > --- a/fs/Kconfig
+> > +++ b/fs/Kconfig
+> > @@ -155,6 +155,17 @@ source "fs/exfat/Kconfig"
+> >  source "fs/ntfs3/Kconfig"
+> >  source "fs/ntfsplus/Kconfig"
+> >
+> > +choice
+> > +   prompt "Select built-in NTFS filesystem (only one can be built-in)"
+> Usually for choice vars there should be a default and usually
+> there should be a DEFAULT_NTFS_NONE
+Okay.
+>
+> > +   help
+> > +     Only one NTFS can be built into the kernel(y).
+> > +     Both can still be built as modules(m).
+> > +
+> > +   config DEFAULT_NTFSPLUS
+> > +       bool "NTFS+"
+> Usually, this would also 'select NTFS_FS'
+Okay.
+>
+> > +   config DEFAULT_NTFS3
+> > +       bool "NTFS3"
+> > +endchoice
+> >  endmenu
+> >  endif # BLOCK
+> >
+> > diff --git a/fs/ntfs3/Kconfig b/fs/ntfs3/Kconfig
+> > index 7bc31d69f680..18bd6c98c6eb 100644
+> > --- a/fs/ntfs3/Kconfig
+> > +++ b/fs/ntfs3/Kconfig
+> > @@ -1,6 +1,7 @@
+> >  # SPDX-License-Identifier: GPL-2.0-only
+> >  config NTFS3_FS
+> >       tristate "NTFS Read-Write file system support"
+> > +     depends on !DEFAULT_NTFSPLUS || m
+>
+> So seeing how this condition looks, instead of aux var,
+> it could be directly
+>
+>         depends on NTFS_FS != y || m
+Okay.
+>
+> >       select BUFFER_HEAD
+> >       select NLS
+> >       select LEGACY_DIRECT_IO
+> > @@ -49,6 +50,7 @@ config NTFS3_FS_POSIX_ACL
+> >
+> >  config NTFS_FS
+>
+> This alias should definitely go a way when you add back
+> the original NTFS_FS.
+>
+> Preferably revert the commit that added the alias at the
+> start of your series.
+Okay.
+>
+> >       tristate "NTFS file system support"
+> > +     depends on !DEFAULT_NTFSPLUS || m
+> >       select NTFS3_FS
+> >       select BUFFER_HEAD
+> >       select NLS
+> > diff --git a/fs/ntfsplus/Kconfig b/fs/ntfsplus/Kconfig
+> > index 78bc34840463..c8d1ab99113c 100644
+> > --- a/fs/ntfsplus/Kconfig
+> > +++ b/fs/ntfsplus/Kconfig
+> > @@ -1,6 +1,7 @@
+> >  # SPDX-License-Identifier: GPL-2.0-only
+> >  config NTFSPLUS_FS
+> >       tristate "NTFS+ file system support (EXPERIMENTAL)"
+> > +     depends on !DEFAULT_NTFS3 || m
+>
+> Likewise:
+>         depends on NTFS3_FS != y || m
+>
+> Obviously, not tested.
+>
+> If this works, I don't think there is a need for the choice variable
+>
+> As long as you keep the order in fs/Kconfig correct (ntfs before ntfs3)
+> I assume that an oldconfig with both set to y NTFS_FS will win?
+> Please verify that.
+Okay, I will check it.
+Thanks for your review!
+>
+> Thanks,
+> Amir.
 
