@@ -1,153 +1,141 @@
-Return-Path: <linux-fsdevel+bounces-70146-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70147-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6974EC927AF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 16:52:32 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2DA0C929B0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 17:46:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA0443A8515
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 15:52:29 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 82A9B4E305D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 16:46:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8F0927F16C;
-	Fri, 28 Nov 2025 15:52:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15CE4298CDC;
+	Fri, 28 Nov 2025 16:46:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZeMJqQZ/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G0lMc8xm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 892B222652D;
-	Fri, 28 Nov 2025 15:52:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4865823D7C0;
+	Fri, 28 Nov 2025 16:46:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764345143; cv=none; b=qeuh3tsCmuueO6EqYxrXD+XXjp8544I3kRL/rijc/ILoWBktRJ+3Yn3KjIYLcrpbfBDvfz900l1EOs9lNjh7ByC2MDV0PxHBlfSrpRSFNviPH/XvvA0epR2wCN3wOmQAimJKu9WYHvTdwigok9XTHF3SQZpHYvbkCH+0EFsczuo=
+	t=1764348388; cv=none; b=jhWyxziJwM5WHrcgcemuncuga+nwXIks87Ic4HZWGbzLFeoT75yj5OOLa6qGRW4j7X4dC8w5QUae86CsLPu2jOBXuJjcqafs3WGIooHKaPv50xaDEmAyypWg3cyeyqxfwrfL5nij47+/uRp0MZQCvNvfrLEWDaBCQJJTespv/mY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764345143; c=relaxed/simple;
-	bh=wJzdCrLgCFc/PZk8XNyibTPZPe/BiCeG4qVVfXwqIM8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kLY5KfOq2jvTqj0yXRnN1equ1CnnXWIBiOD96KuEtsdOo7Ss9q2so4EqcrrcCzL2xJYWTHYma3RulGz9W5u+Snj47WHupr3A4Sqng1vHfQL4JKm5Un9lsEifHf4b6ssY09Re2AwdjOTZvx9Kah7eTWvHp1w8Elrpzh8/1nKApW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ZeMJqQZ/; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=AwIfzuOMPHq6x0Po0VRTjIWxG7bx5EXE+Jc0r5XKfzo=; b=ZeMJqQZ/VV1LbFDf2VICimbXD9
-	ifBgs4nlsqh+ACjxEzEBFxWHJhgPC7NwOj5+eivXO1rdA6tTyUhVIM/Fah9CWG7v52OGmfbfH3J6x
-	FfX1x4eOWLYsN+skpfPqYdBonvAcmn1bSVtT7bhFMANfB+FPvEojTM3yKC6n4dKY1z3xHsVHzRbDR
-	zimoxfjQXang4gXfzzTA2YvryoMgrH7KXWTe7kTgVlgWxM2OMDUuZGH2HOAOB3zQJ1xjuyR+pS5pi
-	XjEzlGdO0wIzpUtltaa2nvmeKhwncRvk451mTJaMB7OlDMD/tP9k/DiSQihAZDSyDxkKX0HO3PVJ6
-	cxhMe7hg==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vP0ld-0000000DObj-0oco;
-	Fri, 28 Nov 2025 15:52:17 +0000
-Date: Fri, 28 Nov 2025 15:52:16 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: "Sokolowski, Jan" <jan.sokolowski@intel.com>
-Cc: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>
-Subject: Re: [RFC PATCH 1/1] idr: do not create idr if new id would be
- outside given range
-Message-ID: <aSnFME6-LqQXKazB@casper.infradead.org>
-References: <20251127092732.684959-1-jan.sokolowski@intel.com>
- <20251127092732.684959-2-jan.sokolowski@intel.com>
- <aShYJta2EHh1d8az@casper.infradead.org>
- <06dbd4f8-ef5f-458c-a8b4-8a8fb2a7877c@amd.com>
- <aShb9lLyR537WDNq@casper.infradead.org>
- <aShmW2gMTyRwyC6m@casper.infradead.org>
- <IA4PR11MB9251BBCF39B18A557BF08C0799DCA@IA4PR11MB9251.namprd11.prod.outlook.com>
+	s=arc-20240116; t=1764348388; c=relaxed/simple;
+	bh=gqXKPbx6bAhHFAnWvPsvCD38nqglxkiPmPlhZAWr7JA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=n6pIPGAQfGXGxda5vsIYRYfLBVKGCHD+bTmWUb+OwCjDUPP56Ig0rXdRXNaUAe8beEeiTgrerot7kAh9aQXDDLw9VVHNXC4OMUZR2FIwA7BulCST/jH96F/IXT8XNMUr5GzVY87HICgPU4dIDXJuqTsHDwm00Ae7x90mWvoYW6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G0lMc8xm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BDDAC4CEF1;
+	Fri, 28 Nov 2025 16:46:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1764348387;
+	bh=gqXKPbx6bAhHFAnWvPsvCD38nqglxkiPmPlhZAWr7JA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=G0lMc8xmkL9MLXH8+qSyXuXe/Gbn1CDSc6rOPrT7OeOIreXn8ipE2phdmhoPrNjww
+	 3hN5+oS59P85qJOTNaFblyMlxzM3iqF/9cUTxQ6DUjCOl6/UaUBvXYbBTEznXZ4EIV
+	 TPJJs0XV+3RcvzJnOxC2paRPK5slqwa4HBoEKefeBj3LO3DIAA93Rpj5l+fdPB5pbF
+	 jx+FQIfcX7kZ6pkjXAR3/lxs7qANsacH897S2mMma6YgvhwQDnP63ED1+qR1nk2WuA
+	 y69cda//H+/PkmnBQilHZrG7WQD6ot9u4WQ06aCIVK8965KuuFwTAFWHGw6VVli851
+	 u6H278nc1aOAA==
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] vfs fixes
+Date: Fri, 28 Nov 2025 17:46:06 +0100
+Message-ID: <20251128-vfs-fixes-v618-8dea546e893b@brauner>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2503; i=brauner@kernel.org; h=from:subject:message-id; bh=gqXKPbx6bAhHFAnWvPsvCD38nqglxkiPmPlhZAWr7JA=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWRqXrzZ3WbT/H3WHJdFZyuW5azmt00M4gx4cu7z/1TxS t/rT9rkO0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACbSqc3whyfL7KzYoaUmbVMX rnqzS0vit+axUplF3p8mVGxg9rgw3YHhf13t4eXSOg1qd5UT+g1yJl3vFM/hbLtaf7fGP67Dtbm JCwA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <IA4PR11MB9251BBCF39B18A557BF08C0799DCA@IA4PR11MB9251.namprd11.prod.outlook.com>
 
-On Fri, Nov 28, 2025 at 09:03:08AM +0000, Sokolowski, Jan wrote:
-> So, shall I send a V2 of that patch and add you as co-developer there?
+Hey Linus,
 
-No.  You didn't co-develop anything.  You reported the bug, badly.
+/* Summary */
+This contains some final fixes for the current cycle:
 
-What I'm trying to do right now is figure out what the syzbot report
-actually was.  In all the DRM specialness, you've lost the original
-information, so I can't add the original syzbot links.  All I can find
-is https://gitlab.freedesktop.org/drm/xe/kernel/-/issues/6449
-which doesn't link to a syzbot report, so that's a dead end.
+- afs: Fix delayed allocation of a cell's anonymous key
 
-> Regards
-> Jan
-> 
-> > -----Original Message-----
-> > From: Matthew Wilcox <willy@infradead.org>
-> > Sent: Thursday, November 27, 2025 3:55 PM
-> > To: Christian König <christian.koenig@amd.com>
-> > Cc: Sokolowski, Jan <jan.sokolowski@intel.com>; linux-
-> > kernel@vger.kernel.org; Andrew Morton <akpm@linux-foundation.org>;
-> > linux-fsdevel@vger.kernel.org; linux-mm@kvack.org
-> > Subject: Re: [RFC PATCH 1/1] idr: do not create idr if new id would be outside
-> > given range
-> > 
-> > On Thu, Nov 27, 2025 at 02:11:02PM +0000, Matthew Wilcox wrote:
-> > > Hm.  That's not what it does for me.  It gives me id == 1, which isn't
-> > > correct!  I'll look into that, but it'd be helpful to know what
-> > > combination of inputs gives us 2.
-> > 
-> > Oh, never mind, I see what's happening.
-> > 
-> > int idr_alloc(struct idr *idr, void *ptr, int start, int end, gfp_t gfp)
-> > 
-> >         ret = idr_alloc_u32(idr, ptr, &id, end > 0 ? end - 1 : INT_MAX, gfp);
-> > so it's passing 0 as 'max' to idr_alloc_u32() which does:
-> > 
-> >         slot = idr_get_free(&idr->idr_rt, &iter, gfp, max - base);
-> > 
-> > and max - base becomes -1 or rather ULONG_MAX, and so we'll literally
-> > allocate any number.  If the first slot is full, we'll get back 1
-> > and then add 'base' to it, giving 2.
-> > 
-> > Here's the new test-case:
-> > 
-> > +void idr_alloc2_test(void)
-> > +{
-> > +       int id;
-> > +       struct idr idr = IDR_INIT_BASE(idr, 1);
-> > +
-> > +       id = idr_alloc(&idr, idr_alloc2_test, 0, 1, GFP_KERNEL);
-> > +       assert(id == -ENOSPC);
-> > +
-> > +       id = idr_alloc(&idr, idr_alloc2_test, 1, 2, GFP_KERNEL);
-> > +       assert(id == 1);
-> > +
-> > +       id = idr_alloc(&idr, idr_alloc2_test, 0, 1, GFP_KERNEL);
-> > +       assert(id == -ENOSPC);
-> > +
-> > +       id = idr_alloc(&idr, idr_alloc2_test, 0, 2, GFP_KERNEL);
-> > +       assert(id == -ENOSPC);
-> > +
-> > +       idr_destroy(&idr);
-> > +}
-> > 
-> > and with this patch, it passes:
-> > 
-> > +++ b/lib/idr.c
-> > @@ -40,6 +40,8 @@ int idr_alloc_u32(struct idr *idr, void *ptr, u32 *nextid,
-> > 
-> >         if (WARN_ON_ONCE(!(idr->idr_rt.xa_flags & ROOT_IS_IDR)))
-> >                 idr->idr_rt.xa_flags |= IDR_RT_MARKER;
-> > +       if (max < base)
-> > +               return -ENOSPC;
-> > 
-> >         id = (id < base) ? 0 : id - base;
-> >         radix_tree_iter_init(&iter, id);
-> 
+  The allocation of a cell's anonymous key is done in a background thread
+  along with other cell setup such as doing a DNS upcall. The normal key
+  lookup tries to use the key description on the anonymous authentication
+  key as the reference for request_key() - but it may not yet be set,
+  causing an oops.
+
+- ovl: fail ovl_lock_rename_workdir() if either target is unhashed
+
+  As well as checking that the parent hasn't changed after getting the lock,
+  the code needs to check that the dentry hasn't been unhashed. Otherwise
+  overlayfs might try to rename something that has been removed.
+
+- namespace: fix a reference leak in grab_requested_mnt_ns
+
+  lookup_mnt_ns() already takes a reference on mnt_ns. grab_requested_mnt_ns()
+  doesn't need to take an extra reference.
+
+/* Testing */
+
+gcc (Debian 15.2.0-7) 15.2.0
+Debian clang version 19.1.7 (10)
+
+No build failures or warnings were observed.
+
+/* Conflicts */
+
+Merge conflicts with mainline
+=============================
+
+No known conflicts.
+
+Merge conflicts with other trees
+================================
+
+No known conflicts.
+
+The following changes since commit ac3fd01e4c1efce8f2c054cdeb2ddd2fc0fb150d:
+
+  Linux 6.18-rc7 (2025-11-23 14:53:16 -0800)
+
+are available in the Git repository at:
+
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.18-rc8.fixes
+
+for you to fetch changes up to d27c71257825dced46104eefe42e4d9964bd032e:
+
+  afs: Fix delayed allocation of a cell's anonymous key (2025-11-28 11:30:10 +0100)
+
+Please consider pulling these changes from the signed vfs-6.18-rc8.fixes tag.
+
+Thanks!
+Christian
+
+----------------------------------------------------------------
+vfs-6.18-rc8.fixes
+
+----------------------------------------------------------------
+Andrei Vagin (1):
+      fs/namespace: fix reference leak in grab_requested_mnt_ns
+
+David Howells (1):
+      afs: Fix delayed allocation of a cell's anonymous key
+
+NeilBrown (1):
+      ovl: fail ovl_lock_rename_workdir() if either target is unhashed
+
+ fs/afs/cell.c       | 43 ++++++++-----------------------------------
+ fs/afs/internal.h   |  1 +
+ fs/afs/security.c   | 48 ++++++++++++++++++++++++++++++++++++++++--------
+ fs/namespace.c      |  7 ++++---
+ fs/overlayfs/util.c |  4 ++--
+ 5 files changed, 55 insertions(+), 48 deletions(-)
 
