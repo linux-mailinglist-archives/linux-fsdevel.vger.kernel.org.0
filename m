@@ -1,54 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-70152-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70153-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E031DC929E9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 17:51:54 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA9D4C929EC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 17:51:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 162613AE622
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 16:51:40 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6934334D296
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 16:51:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58F382C0F79;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4D5C2C2349;
 	Fri, 28 Nov 2025 16:51:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ax0jI5TE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oFWP11ly"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D1222C027C;
-	Fri, 28 Nov 2025 16:51:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1B9B2C0F7F;
+	Fri, 28 Nov 2025 16:51:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764348674; cv=none; b=a3NeGDNoWaoKcwojfh6HdQj/EwjTHW+1B6QQ9SeYCd4qbRfzlRBJcRO7PmBsM9QxjCAAo1TfIPyJUejib2FmKxyUsx/OxQcRIYpW/1NX6iM7hWltkmoCmQdTyiYJyidu4+aCRelwfm6xmDSFtm+aJzlMo8COUSh1wnQUGITLsPw=
+	t=1764348675; cv=none; b=AAyOh5NsZf4o+4phkC+6+qfx/Cr0S5pC8RPLRgZB8ODTXArEQ/hQZfOJD+WpFHGVL1Y+RA5bJtaLwlZgy9EqVvuUPqXIB4E0k2NnZokPWR4MglFvhNdepW3p9wT561N72N3ZFZMsd4P8h4c7tnB1+I9tbSrWeItMGJ4mKfpcqtk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764348674; c=relaxed/simple;
-	bh=TxNXef8RsmyWs/+z7zCiFgLM/jtzy0B2yR4fcAtHfgw=;
+	s=arc-20240116; t=1764348675; c=relaxed/simple;
+	bh=/Uua+MwT9uT9RWCZ2Mc6uwd5dONKBm4+LNI6xV7ezQo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RVFvMVqGxPtemPNegsOuLrmHwb1Oegc2jJqFX34p9ai5XFVGwBUtJ5GZJq933mXPSESUbwBVPVPENwL34bG6l7is76YXmMqRm1XnjsgrznKYid7DnA743fNxL2P2/afL7G3XCqWTSJFua1MsyUUQPzyOWeVDQfQBb7esv4UvuG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ax0jI5TE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 157DFC4CEF1;
-	Fri, 28 Nov 2025 16:51:11 +0000 (UTC)
+	 MIME-Version; b=NQ+Qq/C7VjcW3T3Pbofw0CwVvOsnwOE3UPX6VR+rkfXO+oCRkxsTR18jXKEpm/13570gn8Wp6UbZBgIiyqwL6OLQS5yktJz0oI7pBiSoSJQpsvy3tuaz6vvjTXoVuFEWSGHRoTHJjPIDv/DwTpdEUTRK2rlBL+ERXdVIi6P4zrE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oFWP11ly; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1A25C4CEFB;
+	Fri, 28 Nov 2025 16:51:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764348673;
-	bh=TxNXef8RsmyWs/+z7zCiFgLM/jtzy0B2yR4fcAtHfgw=;
+	s=k20201202; t=1764348674;
+	bh=/Uua+MwT9uT9RWCZ2Mc6uwd5dONKBm4+LNI6xV7ezQo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Ax0jI5TEqUIupVXZDKcxvh1khL1jWC/rPjOpc7FRUJmUTfKJfmMqbK+Mk9xzKOtLa
-	 U8q+S9Z3u273aCuFALnt+aXd22Gi6wG9naj3fE8t3bxl2exTYs2k7eiAZ/K23TT3bw
-	 k+zO+Qw9b7DcImt08UeLJvF9m6pMnMvcP8tGg+QceXu7ELfgmEwZutn2uhFTr/oxQP
-	 ssJo/akJBfyOY1/Ogwo0FMuxRgg/1uoEu49egQMDEQNN3O207SGca2AMtT7RYM5eaD
-	 403ihkYawi3BSHjUuWIZiwz6i8L7cgCEXAEVYF4Xx9c4AZnOZd8A1kPm6TMMUYNOvB
-	 wLud88FTO7nIw==
+	b=oFWP11lyUJcVRFp5tGeRYSkjQ/Rc+DlucfnQSwHgsyvGfGVStlwjbUYOiHf+Gc5ZV
+	 GadkIJfMd8err3cP665i7ejLEhlpcmODmVJilL2PPEoORlFhC71s0hzk2SxDePpyAL
+	 LWFPkbBg7yFavjVhpyPOObR25HcCMUu/FDxUP+Ift0zdnL/D8cF6H3h7VlszHofxqd
+	 b1hT8FAJeqV8bm5Jjyof2rMTqrMVMhKtGm2VuD3bbd9HCjRZ4cGI7IUcGMhDAY+7xf
+	 IJ1Xp1tyqyu1VVdDqcnILvg0GApJ0ec3WmC4PZpvksAazK63ZGIhpYbz2QWyt3xiuT
+	 cwj/fBwIVrQSA==
 From: Christian Brauner <brauner@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Christian Brauner <brauner@kernel.org>,
 	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [GIT PULL 02/17 for v6.19] vfs misc
-Date: Fri, 28 Nov 2025 17:48:13 +0100
-Message-ID: <20251128-vfs-misc-v619-0a57215a07b7@brauner>
+Subject: [GIT PULL 03/17 for v6.19] vfs inode
+Date: Fri, 28 Nov 2025 17:48:14 +0100
+Message-ID: <20251128-vfs-inode-v619-730a38ce04b0@brauner>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20251128-vfs-v619-77cd88166806@brauner>
 References: <20251128-vfs-v619-77cd88166806@brauner>
@@ -58,69 +58,52 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7904; i=brauner@kernel.org; h=from:subject:message-id; bh=TxNXef8RsmyWs/+z7zCiFgLM/jtzy0B2yR4fcAtHfgw=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWRqXno48+iVGqY/X3revyt+Wp8y/eTr9nmfftWwvPf64 3P4b/VyrY5SFgYxLgZZMUUWh3aTcLnlPBWbjTI1YOawMoEMYeDiFICJhKkw/E8v7pU/7F/kZNx4 MTDh/3G14pUdmr+PqFvXTDf+pvb8xjqGP5yiKx9vTtsl7rK176Tij8//9Tu3fHVrWR/17c6mBfs S9nMDAA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=9286; i=brauner@kernel.org; h=from:subject:message-id; bh=/Uua+MwT9uT9RWCZ2Mc6uwd5dONKBm4+LNI6xV7ezQo=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWRqXnqoeEnue7m78Rqv0Ax25Ud7TFV+36wpvX27a+Olq VXCMaf8O0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACaySpfhf30db0qJnazbngLT 8oip+9lm2v1vE1zMNS91hqu1xYb5Lxj+56THsuTcYZhywUfnR19Ad8CsDYEHU7qcaiQVuk4ZVWv xAQA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
 Hey Linus,
 
 /* Summary */
-This contains the usually miscellaneous vfs changes:
-
-Note that this has the kbuild -fms-extensions support merged in as the
-pipe changes depends on it.
+This contains inode specific changes for this cycle:
 
 Features
 
-- Cheaper MAY_EXEC handling for path lookup. This elides MAY_WRITE
-  permission checks during path lookup and adds the IOP_FASTPERM_MAY_EXEC
-  flag so filesystems like btrfs can avoid expensive permission work.
+- Hide inode->i_state behind accessors. Open-coded accesses prevent
+  asserting they are done correctly. One obvious aspect is locking, but
+  significantly more can be checked. For example it can be detected when
+  the code is clearing flags which are already missing, or is setting
+  flags when it is illegal (e.g., I_FREEING when ->i_count > 0).
 
-- Hide dentry_cache behind runtime const machinery.
+- Provide accessors for ->i_state, converts all filesystems using coccinelle
+  and manual conversions (btrfs, ceph, smb, f2fs, gfs2, overlayfs, nilfs2,
+  xfs), and makes plain ->i_state access fail to compile.
 
-- Add German Maglione as virtiofs co-maintainer.
+- Rework I_NEW handling to operate without fences, simplifying the code
+  after the accessor infrastructure is in place.
 
 Cleanups
 
-- Tidy up and inline step_into() and walk_component() for improved code
-  generation.
+- Move wait_on_inode() from writeback.h to fs.h.
 
-- Re-enable IOCB_NOWAIT writes to files. This refactors file timestamp
-  update logic, fixing a layering bypass in btrfs when updating timestamps
-  on device files and improving FMODE_NOCMTIME handling in VFS now that
-  nfsd started using it.
+- Spell out fenced ->i_state accesses with explicit smp_wmb/smp_rmb
+  for clarity.
 
-- Path lookup optimizations extracting slowpaths into dedicated routines
-  and adding branch prediction hints for mntput_no_expire(), fd_install(),
-  lookup_slow(), and various other hot paths.
+- Cosmetic fixes to LRU handling.
 
-- Enable clang's -fms-extensions flag, requiring a JFS rename to avoid
-  conflicts.
+- Push list presence check into inode_io_list_del().
 
-- Remove spurious exports in fs/file_attr.c.
+- Touch up predicts in __d_lookup_rcu().
 
-- Stop duplicating union pipe_index declaration. This depends on the
-  shared kbuild branch that brings in -fms-extensions support which is
-  merged into this branch.
+- ocfs2: retire ocfs2_drop_inode() and I_WILL_FREE usage.
 
-- Use MD5 library instead of crypto_shash in ecryptfs.
+- Assert on ->i_count in iput_final().
 
-- Use largest_zero_folio() in iomap_dio_zero().
-
-- Replace simple_strtol/strtoul with kstrtoint/kstrtouint in init and
-  initrd code.
-
-- Various typo fixes.
+- Assert ->i_lock held in __iget().
 
 Fixes
 
-- Fix emergency sync for btrfs. Btrfs requires an explicit sync_fs() call
-  with wait == 1 to commit super blocks. The emergency sync path never
-  passed this, leaving btrfs data uncommitted during emergency sync.
-
-- Use local kmap in watch_queue's post_one_notification().
-
-- Add hint prints in sb_set_blocksize() for LBS dependency on THP.
+- Add missing fences to I_NEW handling.
 
 /* Testing */
 
@@ -139,136 +122,168 @@ No known conflicts.
 Merge conflicts with other trees
 ================================
 
-The following changes since commit dcb6fa37fd7bc9c3d2b066329b0d27dedf8becaa:
+The following changes since commit 3a8660878839faadb4f1a6dd72c3179c1df56787:
 
-  Linux 6.18-rc3 (2025-10-26 15:59:49 -0700)
+  Linux 6.18-rc1 (2025-10-12 13:42:36 -0700)
 
 are available in the Git repository at:
 
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.19-rc1.misc
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.19-rc1.inode
 
-for you to fetch changes up to ebf8538979101ef879742dcfaf04b684f5461e12:
+for you to fetch changes up to ca0d620b0afae20a7bcd5182606eba6860b2dbf2:
 
-  MAINTAINERS: add German Maglione as virtiofs co-maintainer (2025-11-27 10:00:09 +0100)
+  dcache: touch up predicts in __d_lookup_rcu() (2025-11-28 10:31:45 +0100)
 
-Please consider pulling these changes from the signed vfs-6.19-rc1.misc tag.
+Please consider pulling these changes from the signed vfs-6.19-rc1.inode tag.
 
 Thanks!
 Christian
 
 ----------------------------------------------------------------
-vfs-6.19-rc1.misc
+vfs-6.19-rc1.inode
 
 ----------------------------------------------------------------
-Askar Safin (2):
-      fs/splice.c: trivial fix: pipes -> pipe's
-      include/linux/fs.h: trivial fix: regualr -> regular
+Christian Brauner (1):
+      Merge patch series "hide ->i_state behind accessors"
 
-Baokun Li (1):
-      bdev: add hint prints in sb_set_blocksize() for LBS dependency on THP
+Mateusz Guzik (22):
+      fs: assert ->i_lock held in __iget()
+      fs: assert on ->i_count in iput_final()
+      ocfs2: retire ocfs2_drop_inode() and I_WILL_FREE usage
+      fs: add missing fences to I_NEW handling
+      fs: move wait_on_inode() from writeback.h to fs.h
+      fs: spell out fenced ->i_state accesses with explicit smp_wmb/smp_rmb
+      fs: provide accessors for ->i_state
+      Coccinelle-based conversion to use ->i_state accessors
+      Manual conversion to use ->i_state accessors of all places not covered by coccinelle
+      btrfs: use the new ->i_state accessors
+      ceph: use the new ->i_state accessors
+      smb: use the new ->i_state accessors
+      f2fs: use the new ->i_state accessors
+      gfs2: use the new ->i_state accessors
+      overlayfs: use the new ->i_state accessors
+      nilfs2: use the new ->i_state accessors
+      xfs: use the new ->i_state accessors
+      fs: make plain ->i_state access fail to compile
+      fs: rework I_NEW handling to operate without fences
+      fs: cosmetic fixes to lru handling
+      fs: push list presence check into inode_io_list_del()
+      dcache: touch up predicts in __d_lookup_rcu()
 
-Christian Brauner (6):
-      Merge patch series "fs: fully sync all fsese even for an emergency sync"
-      Merge patch "kbuild: Add '-fms-extensions' to areas with dedicated CFLAGS"
-      Merge branch 'kbuild-6.19.fms.extension'
-      Merge patch series "cheaper MAY_EXEC handling for path lookup"
-      Merge patch series "re-enable IOCB_NOWAIT writes to files v2"
-      Merge patch series "fs: tidy up step_into() & friends before inlining"
-
-Christoph Hellwig (7):
-      fs: remove spurious exports in fs/file_attr.c
-      fs: refactor file timestamp update logic
-      fs: lift the FMODE_NOCMTIME check into file_update_time_flags
-      fs: export vfs_utimes
-      btrfs: use vfs_utimes to update file timestamps
-      btrfs: fix the comment on btrfs_update_time
-      orangefs: use inode_update_timestamps directly
-
-Davidlohr Bueso (1):
-      watch_queue: Use local kmap in post_one_notification()
-
-Eric Biggers (1):
-      ecryptfs: Use MD5 library instead of crypto_shash
-
-Kaushlendra Kumar (1):
-      init: Replace simple_strtoul() with kstrtouint() in root_delay_setup()
-
-Mateusz Guzik (13):
-      fs: touch up predicts in putname()
-      fs: speed up path lookup with cheaper handling of MAY_EXEC
-      btrfs: utilize IOP_FASTPERM_MAY_EXEC
-      fs: retire now stale MAY_WRITE predicts in inode_permission()
-      fs: touch predicts in do_dentry_open()
-      fs: hide dentry_cache behind runtime const machinery
-      fs: move fd_install() slowpath into a dedicated routine and provide commentary
-      fs: touch up predicts in path lookup
-      fs: move mntput_no_expire() slowpath into a dedicated routine
-      fs: add predicts based on nd->depth
-      fs: mark lookup_slow() as noinline
-      fs: tidy up step_into() & friends before inlining
-      fs: inline step_into() and walk_component()
-
-Nathan Chancellor (2):
-      jfs: Rename _inline to avoid conflict with clang's '-fms-extensions'
-      kbuild: Add '-fms-extensions' to areas with dedicated CFLAGS
-
-Pankaj Raghav (1):
-      iomap: use largest_zero_folio() in iomap_dio_zero()
-
-Qu Wenruo (2):
-      fs: do not pass a parameter for sync_inodes_one_sb()
-      fs: fully sync all fses even for an emergency sync
-
-Rasmus Villemoes (2):
-      Kbuild: enable -fms-extensions
-      fs/pipe: stop duplicating union pipe_index declaration
-
-Stefan Hajnoczi (1):
-      MAINTAINERS: add German Maglione as virtiofs co-maintainer
-
-Thorsten Blum (1):
-      initrd: Replace simple_strtol with kstrtoint to improve ramdisk_start_setup
-
- MAINTAINERS                           |   1 +
- Makefile                              |   3 +
- arch/arm64/kernel/vdso32/Makefile     |   3 +-
- arch/loongarch/vdso/Makefile          |   2 +-
- arch/parisc/boot/compressed/Makefile  |   2 +-
- arch/powerpc/boot/Makefile            |   3 +-
- arch/s390/Makefile                    |   3 +-
- arch/s390/purgatory/Makefile          |   3 +-
- arch/x86/Makefile                     |   4 +-
- arch/x86/boot/compressed/Makefile     |   7 +-
- block/bdev.c                          |  19 ++++-
- drivers/firmware/efi/libstub/Makefile |   4 +-
- fs/btrfs/inode.c                      |  16 +++-
- fs/btrfs/volumes.c                    |  11 +--
- fs/dcache.c                           |   6 +-
- fs/ecryptfs/Kconfig                   |   2 +-
- fs/ecryptfs/crypto.c                  |  90 +++------------------
- fs/ecryptfs/ecryptfs_kernel.h         |  13 +---
- fs/ecryptfs/inode.c                   |   7 +-
- fs/ecryptfs/keystore.c                |  65 +++-------------
- fs/ecryptfs/main.c                    |   7 ++
- fs/ecryptfs/super.c                   |   5 +-
- fs/file.c                             |  35 +++++++--
- fs/file_attr.c                        |   4 -
- fs/inode.c                            |  58 +++++---------
- fs/iomap/direct-io.c                  |  38 ++++-----
- fs/jfs/jfs_incore.h                   |   6 +-
- fs/namei.c                            | 142 +++++++++++++++++++++++++---------
- fs/namespace.c                        |  38 +++++----
- fs/open.c                             |   6 +-
- fs/orangefs/inode.c                   |   4 +-
- fs/splice.c                           |   2 +-
- fs/sync.c                             |   7 +-
- fs/utimes.c                           |   1 +
- include/asm-generic/vmlinux.lds.h     |   3 +-
- include/linux/fs.h                    |  15 ++--
- include/linux/pipe_fs_i.h             |  23 ++----
- init/do_mounts.c                      |   3 +-
- init/do_mounts_rd.c                   |   3 +-
- kernel/watch_queue.c                  |   4 +-
- scripts/Makefile.extrawarn            |   4 +-
- 41 files changed, 329 insertions(+), 343 deletions(-)
+ Documentation/filesystems/porting.rst |   2 +-
+ block/bdev.c                          |   4 +-
+ drivers/dax/super.c                   |   2 +-
+ fs/9p/vfs_inode.c                     |   2 +-
+ fs/9p/vfs_inode_dotl.c                |   2 +-
+ fs/affs/inode.c                       |   2 +-
+ fs/afs/dir.c                          |   4 +-
+ fs/afs/dynroot.c                      |   6 +-
+ fs/afs/inode.c                        |   8 +-
+ fs/befs/linuxvfs.c                    |   2 +-
+ fs/bfs/inode.c                        |   2 +-
+ fs/btrfs/inode.c                      |  10 +-
+ fs/buffer.c                           |   4 +-
+ fs/ceph/cache.c                       |   2 +-
+ fs/ceph/crypto.c                      |   4 +-
+ fs/ceph/file.c                        |   4 +-
+ fs/ceph/inode.c                       |  28 ++--
+ fs/coda/cnode.c                       |   4 +-
+ fs/cramfs/inode.c                     |   2 +-
+ fs/crypto/keyring.c                   |   2 +-
+ fs/crypto/keysetup.c                  |   2 +-
+ fs/dcache.c                           |  29 ++--
+ fs/drop_caches.c                      |   2 +-
+ fs/ecryptfs/inode.c                   |   6 +-
+ fs/efs/inode.c                        |   2 +-
+ fs/erofs/inode.c                      |   2 +-
+ fs/ext2/inode.c                       |   2 +-
+ fs/ext4/inode.c                       |  13 +-
+ fs/ext4/orphan.c                      |   4 +-
+ fs/f2fs/data.c                        |   2 +-
+ fs/f2fs/inode.c                       |   2 +-
+ fs/f2fs/namei.c                       |   4 +-
+ fs/f2fs/super.c                       |   2 +-
+ fs/freevxfs/vxfs_inode.c              |   2 +-
+ fs/fs-writeback.c                     | 132 +++++++++---------
+ fs/fuse/inode.c                       |   4 +-
+ fs/gfs2/file.c                        |   2 +-
+ fs/gfs2/glock.c                       |   2 +-
+ fs/gfs2/glops.c                       |   2 +-
+ fs/gfs2/inode.c                       |   4 +-
+ fs/gfs2/ops_fstype.c                  |   2 +-
+ fs/hfs/btree.c                        |   2 +-
+ fs/hfs/inode.c                        |   2 +-
+ fs/hfsplus/super.c                    |   2 +-
+ fs/hostfs/hostfs_kern.c               |   2 +-
+ fs/hpfs/dir.c                         |   2 +-
+ fs/hpfs/inode.c                       |   2 +-
+ fs/inode.c                            | 247 +++++++++++++++++++---------------
+ fs/isofs/inode.c                      |   2 +-
+ fs/jffs2/fs.c                         |   4 +-
+ fs/jfs/file.c                         |   4 +-
+ fs/jfs/inode.c                        |   2 +-
+ fs/jfs/jfs_txnmgr.c                   |   2 +-
+ fs/kernfs/inode.c                     |   2 +-
+ fs/libfs.c                            |   6 +-
+ fs/minix/inode.c                      |   2 +-
+ fs/namei.c                            |   8 +-
+ fs/netfs/misc.c                       |   8 +-
+ fs/netfs/read_single.c                |   6 +-
+ fs/nfs/inode.c                        |   2 +-
+ fs/nfs/pnfs.c                         |   2 +-
+ fs/nfsd/vfs.c                         |   2 +-
+ fs/nilfs2/cpfile.c                    |   2 +-
+ fs/nilfs2/dat.c                       |   2 +-
+ fs/nilfs2/ifile.c                     |   2 +-
+ fs/nilfs2/inode.c                     |  10 +-
+ fs/nilfs2/sufile.c                    |   2 +-
+ fs/notify/fsnotify.c                  |   2 +-
+ fs/ntfs3/inode.c                      |   2 +-
+ fs/ocfs2/dlmglue.c                    |   2 +-
+ fs/ocfs2/inode.c                      |  27 +---
+ fs/ocfs2/inode.h                      |   1 -
+ fs/ocfs2/ocfs2_trace.h                |   2 -
+ fs/ocfs2/super.c                      |   2 +-
+ fs/omfs/inode.c                       |   2 +-
+ fs/openpromfs/inode.c                 |   2 +-
+ fs/orangefs/inode.c                   |   2 +-
+ fs/orangefs/orangefs-utils.c          |   6 +-
+ fs/overlayfs/dir.c                    |   2 +-
+ fs/overlayfs/inode.c                  |   6 +-
+ fs/overlayfs/util.c                   |  10 +-
+ fs/pipe.c                             |   2 +-
+ fs/qnx4/inode.c                       |   2 +-
+ fs/qnx6/inode.c                       |   2 +-
+ fs/quota/dquot.c                      |   2 +-
+ fs/romfs/super.c                      |   2 +-
+ fs/smb/client/cifsfs.c                |   2 +-
+ fs/smb/client/inode.c                 |  14 +-
+ fs/squashfs/inode.c                   |   2 +-
+ fs/sync.c                             |   2 +-
+ fs/ubifs/file.c                       |   2 +-
+ fs/ubifs/super.c                      |   2 +-
+ fs/udf/inode.c                        |   2 +-
+ fs/ufs/inode.c                        |   2 +-
+ fs/xfs/scrub/common.c                 |   2 +-
+ fs/xfs/scrub/inode_repair.c           |   2 +-
+ fs/xfs/scrub/parent.c                 |   2 +-
+ fs/xfs/xfs_bmap_util.c                |   2 +-
+ fs/xfs/xfs_health.c                   |   4 +-
+ fs/xfs/xfs_icache.c                   |   6 +-
+ fs/xfs/xfs_inode.c                    |   6 +-
+ fs/xfs/xfs_inode_item.c               |   4 +-
+ fs/xfs/xfs_iops.c                     |   2 +-
+ fs/xfs/xfs_reflink.h                  |   2 +-
+ fs/zonefs/super.c                     |   4 +-
+ include/linux/backing-dev.h           |   5 +-
+ include/linux/fs.h                    |  99 ++++++++++++--
+ include/linux/writeback.h             |   9 +-
+ include/trace/events/writeback.h      |   8 +-
+ mm/backing-dev.c                      |   2 +-
+ mm/filemap.c                          |   4 +-
+ mm/truncate.c                         |   6 +-
+ mm/vmscan.c                           |   2 +-
+ mm/workingset.c                       |   2 +-
+ security/landlock/fs.c                |   2 +-
+ 115 files changed, 514 insertions(+), 414 deletions(-)
 
