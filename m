@@ -1,54 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-70157-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70159-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3660C92A34
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 17:53:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A760C92A49
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 17:54:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49EEF3AC645
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 16:52:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67D613AE40C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 16:53:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACCBC2DCF74;
-	Fri, 28 Nov 2025 16:51:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 726D42E540B;
+	Fri, 28 Nov 2025 16:51:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZQWbl6Wj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KOwjFdpR"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1D8B2DC339;
-	Fri, 28 Nov 2025 16:51:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8F102E091C;
+	Fri, 28 Nov 2025 16:51:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764348683; cv=none; b=gJolCEoqNTeL1Wx0I/aDEsLK8mzI/iGFux2BCMNxdvT8PqtPz3DvohnbptHTEkogArWjduREE8edXPgRp4BMD1e6jsBXpOOdm81mZoMTN/OqW0YwesfawNMhnJNOwE6eMH6kF6qIAa1GoqCOK6/WqYkpPGKeBGRyN3aoWy8djGo=
+	t=1764348684; cv=none; b=kXDqMlnv89lJR2IaFBNQU561NaMP2zcSfb0s6+OFOlLF/dp8TPutzTvTHgUoKyUsPNnO1rCdE0LtFq3k9n7XKeJxeeuyX5HP38XhIeOmBgYzepQYGhlTrjHCg2yGfKVE9u7X2kZvrkcPEOleVKT/OX1U1cVorr7vK3sO2ZkZRjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764348683; c=relaxed/simple;
-	bh=mrooYwl8gy0JNi5bA0iPthDZmAr+2ccvtgX7oJU6FvE=;
+	s=arc-20240116; t=1764348684; c=relaxed/simple;
+	bh=1z+NJZSJgEYZiHMMZwwpPDAevUoIqrehRvYv8uYRK9k=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bQAWU9phBFFdyZxYr1R088vgl+Euf5WW22d9KQSiNVugi4qrpberth84ehOofA6KgBv/Z/g0QLDGUQDInkhj1TPhj38k4fykOyuRBn2VzeVoky5EYIkL7+KXNaLBED0y3e6g25aAhbFezFWmjheFJBgTOPuyAzqStVOE5YaR7Gs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZQWbl6Wj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFAC3C4CEF1;
-	Fri, 28 Nov 2025 16:51:21 +0000 (UTC)
+	 MIME-Version; b=FkQkyhJjxBbmpfa8PDYql7ZoThh7D6jSL/P1chcSsO3nLROU54JcOUUhIV4BwvzKwvqkc98TFZsFlzaOfmXm30ySfHK+yTu9ZuQ5dQIVNECdBB0E2oQ0bZbSK1nVudezh7MVKMNSDnrBMikFwObvQvbNrB+g0MFZF0fJjkxH11w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KOwjFdpR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EE27C116B1;
+	Fri, 28 Nov 2025 16:51:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764348682;
-	bh=mrooYwl8gy0JNi5bA0iPthDZmAr+2ccvtgX7oJU6FvE=;
+	s=k20201202; t=1764348684;
+	bh=1z+NJZSJgEYZiHMMZwwpPDAevUoIqrehRvYv8uYRK9k=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ZQWbl6WjTIh9PA9gYb73oaz8Dvphf2KMnJP9I5biyZO1mbGU9fj8T5eveudlNafIp
-	 3sSWZK4jgMIbQfYaC6v65qiBgaWp+pLBI22DZqPNZTvGFmCI7LTVrsg4QO9LwVzHxO
-	 cL8qX8lI3v7eqHK6F/KHkZJ3/zdRKGdX0X9sPFsyLHQEQJBnEayY4RUZxICiTOXfzP
-	 4mrmUuhZYWRv4UsE/9P89Gv4w6F+4U//0W3zEg5mXKQJ4PDJWmmw8z9pn8uST3TXZ4
-	 N/o/9vj2RoRI2vXge2SyyaBrNMj3lpPFVJ9jdgnwdUe4fyg5cNT6rTkWyVNzlpEsJT
-	 S5L5saLyjJAcg==
+	b=KOwjFdpRGrpSU/Q02LmkO7ofcw9TGEpM/oZriHKr4tgi/Pz5xaXgNFb30TKlKs5ER
+	 12FT76JYmq4rUmStGGnxmLwqlC29+ffB91OCb9v292+0MLatFmGUFMPzvs2m2Dcs+x
+	 oisU2XQ7j80SyFe8bLe4zGn0wEIIP1/aVFwEYMe6pxqAFLe/YhGoBok5us7XCacYt8
+	 BHlN3pWxYRLPcCQ4oogW+mdfbA/ydZS0/XcERBetiAFTVvwph/eaP5zKufwKSf8rnQ
+	 Zzqn7iUBKm/KvPkWxeikeIuPn5OllF2+z38yvgzDcwpdE0Qydt08OkfmKiR7yq1ADs
+	 g1vt8yiC68XUg==
 From: Christian Brauner <brauner@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Christian Brauner <brauner@kernel.org>,
 	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [GIT PULL 08/17 for v6.19] cred guards
-Date: Fri, 28 Nov 2025 17:48:19 +0100
-Message-ID: <20251128-kernel-cred-guards-v619-92c5a929779c@brauner>
+Subject: [GIT PULL 09/17 for v6.19] vfs headers
+Date: Fri, 28 Nov 2025 17:48:20 +0100
+Message-ID: <20251128-vfs-headers-v619-d2ce5e771a9d@brauner>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20251128-vfs-v619-77cd88166806@brauner>
 References: <20251128-vfs-v619-77cd88166806@brauner>
@@ -58,65 +58,44 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=12799; i=brauner@kernel.org; h=from:subject:message-id; bh=mrooYwl8gy0JNi5bA0iPthDZmAr+2ccvtgX7oJU6FvE=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWRqXnpk/Yjv3tKN8tuWTsg880/nnuP53E86QdY1fVvrK ybPfxBxuaOUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAij+8x/E857tO0tHNdhd6M HWET46eVsJ/zXXOtvtn03Uq1AJXK8n2MDMvVPnexqRhVp8ZWeTZyL1K0MNZO9BHeUj55ZdTkP6x RTAA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6165; i=brauner@kernel.org; h=from:subject:message-id; bh=1z+NJZSJgEYZiHMMZwwpPDAevUoIqrehRvYv8uYRK9k=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWRqXnqk/uXRBMMAr3X+N+TrF+04GLP4jFBZ0+wv1tUPM mMmTI162FHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCRDxKMDGuflOdMdfE8Livt n+XxqSJ24uZGM7VJUvxZC/72H5iUvp/hf/qtvUdiZok4+Cp5ieuaZixdwNFU+oxn3c9uv06Jm3b XuQE=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
 Hey Linus,
 
 /* Summary */
-This contains substantial credential infrastructure improvements adding
-euard-based credential management that simplifies code and eliminates
-manual reference counting in many subsystems.
+This contains initial work to start splitting up fs.h.
 
-Features
+Begin the long-overdue work of splitting up the monolithic fs.h header.
+The header has grown to over 3000 lines and includes types and functions
+for many different subsystems, making it difficult to navigate and
+causing excessive compilation dependencies.
 
-- Kernel Credential Guards
+This series introduces new focused headers for superblock-related code:
 
-  Add with_kernel_creds() and scoped_with_kernel_creds() guards that allow
-  using the kernel credentials without allocating and copying them. This
-  was requested by Linus after seeing repeated prepare_kernel_creds() calls
-  that duplicate the kernel credentials only to drop them again later.
+- Rename fs_types.h to fs_dirent.h to better reflect its actual content
+  (directory entry types)
 
-  The new guards completely avoid the allocation and never expose the
-  temporary variable to hold the kernel credentials anywhere in callers.
+- Add fs/super_types.h containing superblock type definitions
 
-- Generic Credential Guards
+- Add fs/super.h containing superblock function declarations
 
-  Add scoped_with_creds() guards for the common
-  override_creds()/revert_creds() pattern. This builds on earlier work
-  that made override_creds()/revert_creds() completely reference count
-  free.
-
-- Prepare Credential Guards
-
-  Add prepare credential guards for the more complex pattern of
-  preparing a new set of credentials and overriding the current
-  credentials with them:
-  (1) prepare_creds()
-  (2) modify new creds
-  (3) override_creds()
-  (4) revert_creds()
-  (5) put_cred()
+This is the first step in a longer effort to modularize the VFS headers.
 
 Cleanups
 
-- Make init_cred static since it should not be directly accessed.
+- Inode Field Layout Optimization (Mateusz Guzik)
 
-- Add kernel_cred() helper to properly access the kernel credentials.
+- Move inode fields used during fast path lookup closer together to improve
+  cache locality during path resolution.
 
-- Fix scoped_class() macro that was introduced two cycles ago.
+- current_umask() Optimization (Mateusz Guzik)
 
-- coredump: split out do_coredump() from vfs_coredump() for cleaner
-  credential handling.
-
-- coredump: move revert_cred() before coredump_cleanup().
-
-- coredump: mark struct mm_struct as const.
-
-- coredump: pass struct linux_binfmt as const.
-
-- sev-dev: use guard for path.
+- Inline current_umask() and move it to fs_struct.h. This improves
+  performance by avoiding function call overhead for this frequently-used
+  function, and places it in a more appropriate header since it operates
+  on fs_struct.
 
 /* Testing */
 
@@ -130,204 +109,60 @@ No build failures or warnings were observed.
 Merge conflicts with mainline
 =============================
 
-diff --cc fs/backing-file.c
-index 2a86bb6fcd13,ea137be16331..000000000000
---- a/fs/backing-file.c
-+++ b/fs/backing-file.c
-@@@ -227,40 -267,14 +267,8 @@@ ssize_t backing_file_write_iter(struct 
-  	    !(file->f_mode & FMODE_CAN_ODIRECT))
-  		return -EINVAL;
-  
-- 	old_cred = override_creds(ctx->cred);
-- 	if (is_sync_kiocb(iocb)) {
-- 		rwf_t rwf = iocb_to_rw_flags(flags);
-- 
-- 		ret = vfs_iter_write(file, iter, &iocb->ki_pos, rwf);
-- 		if (ctx->end_write)
-- 			ctx->end_write(iocb, ret);
-- 	} else {
-- 		struct backing_aio *aio;
-- 
-- 		ret = backing_aio_init_wq(iocb);
-- 		if (ret)
-- 			goto out;
-- 
-- 		ret = -ENOMEM;
-- 		aio = kmem_cache_zalloc(backing_aio_cachep, GFP_KERNEL);
-- 		if (!aio)
-- 			goto out;
-- 
-- 		aio->orig_iocb = iocb;
-- 		aio->end_write = ctx->end_write;
-- 		kiocb_clone(&aio->iocb, iocb, get_file(file));
-- 		aio->iocb.ki_flags = flags;
-- 		aio->iocb.ki_complete = backing_aio_queue_completion;
-- 		refcount_set(&aio->ref, 2);
-- 		ret = vfs_iocb_iter_write(file, &aio->iocb, iter);
-- 		backing_aio_put(aio);
-- 		if (ret != -EIOCBQUEUED)
-- 			backing_aio_cleanup(aio, ret);
-- 	}
-- out:
-- 	revert_creds(old_cred);
- -	/*
- -	 * Stacked filesystems don't support deferred completions, don't copy
- -	 * this property in case it is set by the issuer.
- -	 */
- -	flags &= ~IOCB_DIO_CALLER_COMP;
---
-- 	return ret;
-+ 	scoped_with_creds(ctx->cred)
-+ 		return do_backing_file_write_iter(file, iter, iocb, flags, ctx->end_write);
+diff --cc include/linux/fs.h
+index 1011b82977fc,64dc2e2c281f..000000000000
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@@ -2880,11 -2335,8 +2395,9 @@@ static inline void super_set_sysfs_name
+        va_end(args);
   }
-  EXPORT_SYMBOL_GPL(backing_file_write_iter);
-  
-diff --cc fs/nfs/localio.c
-index 656976b4f42c,0c89a9d1e089..000000000000
---- a/fs/nfs/localio.c
-+++ b/fs/nfs/localio.c
-@@@ -620,37 -595,30 +620,34 @@@ static void nfs_local_call_read(struct 
-  	struct nfs_local_kiocb *iocb =
-  		container_of(work, struct nfs_local_kiocb, work);
-  	struct file *filp = iocb->kiocb.ki_filp;
-- 	const struct cred *save_cred;
- +	bool force_done = false;
-  	ssize_t status;
- +	int n_iters;
-  
-- 	save_cred = override_creds(filp->f_cred);
-- 
-- 	n_iters = atomic_read(&iocb->n_iters);
-- 	for (int i = 0; i < n_iters ; i++) {
-- 		if (iocb->iter_is_dio_aligned[i]) {
-- 			iocb->kiocb.ki_flags |= IOCB_DIRECT;
-- 			/* Only use AIO completion if DIO-aligned segment is last */
-- 			if (i == iocb->end_iter_index) {
-- 				iocb->kiocb.ki_complete = nfs_local_read_aio_complete;
-- 				iocb->aio_complete_work = nfs_local_read_aio_complete_work;
-- 			}
-- 		} else
-- 			iocb->kiocb.ki_flags &= ~IOCB_DIRECT;
-- 
-- 		status = filp->f_op->read_iter(&iocb->kiocb, &iocb->iters[i]);
-- 		if (status != -EIOCBQUEUED) {
-- 			if (unlikely(status >= 0 && status < iocb->iters[i].count))
-- 				force_done = true; /* Partial read */
-- 			if (nfs_local_pgio_done(iocb, status, force_done)) {
-- 				nfs_local_read_iocb_done(iocb);
-- 				break;
-+ 	scoped_with_creds(filp->f_cred) {
- -		for (int i = 0; i < iocb->n_iters ; i++) {
-++		n_iters = atomic_read(&iocb->n_iters);
-++		for (int i = 0; i < n_iters ; i++) {
-+ 			if (iocb->iter_is_dio_aligned[i]) {
-+ 				iocb->kiocb.ki_flags |= IOCB_DIRECT;
- -				iocb->kiocb.ki_complete = nfs_local_read_aio_complete;
- -				iocb->aio_complete_work = nfs_local_read_aio_complete_work;
- -			}
-++				/* Only use AIO completion if DIO-aligned segment is last */
-++				if (i == iocb->end_iter_index) {
-++					iocb->kiocb.ki_complete = nfs_local_read_aio_complete;
-++					iocb->aio_complete_work = nfs_local_read_aio_complete_work;
-++				}
-++			} else
-++				iocb->kiocb.ki_flags &= ~IOCB_DIRECT;
-+ 
- -			iocb->kiocb.ki_pos = iocb->offset[i];
-+ 			status = filp->f_op->read_iter(&iocb->kiocb, &iocb->iters[i]);
-+ 			if (status != -EIOCBQUEUED) {
- -				nfs_local_pgio_done(iocb->hdr, status);
- -				if (iocb->hdr->task.tk_status)
-++				if (unlikely(status >= 0 && status < iocb->iters[i].count))
-++					force_done = true; /* Partial read */
-++				if (nfs_local_pgio_done(iocb, status, force_done)) {
-++					nfs_local_read_iocb_done(iocb);
-+ 					break;
-++				}
-  			}
-  		}
-  	}
---
-- 	revert_creds(save_cred);
- -	if (status != -EIOCBQUEUED) {
- -		nfs_local_read_done(iocb, status);
- -		nfs_local_pgio_release(iocb);
- -	}
+
+- extern int current_umask(void);
+-
+  extern void ihold(struct inode * inode);
+  extern void iput(struct inode *);
+ +void iput_not_last(struct inode *);
+  int inode_update_timestamps(struct inode *inode, int flags);
+  int generic_update_time(struct inode *, int);
+
+@@@ -3481,11 -2929,8 +2988,8 @@@ static inline void remove_inode_hash(st
   }
-  
-  static int
-@@@ -826,41 -839,20 +823,40 @@@ static void nfs_local_call_write(struc
-  		container_of(work, struct nfs_local_kiocb, work);
-  	struct file *filp = iocb->kiocb.ki_filp;
-  	unsigned long old_flags = current->flags;
-- 	const struct cred *save_cred;
- +	bool force_done = false;
-  	ssize_t status;
- +	int n_iters;
-  
-  	current->flags |= PF_LOCAL_THROTTLE | PF_MEMALLOC_NOIO;
-- 	save_cred = override_creds(filp->f_cred);
-  
- -	scoped_with_creds(filp->f_cred)
- -		status = do_nfs_local_call_write(iocb, filp);
- -
- -	current->flags = old_flags;
-++	scoped_with_creds(filp->f_cred) {
- +	file_start_write(filp);
-- 	n_iters = atomic_read(&iocb->n_iters);
-- 	for (int i = 0; i < n_iters ; i++) {
-- 		if (iocb->iter_is_dio_aligned[i]) {
-- 			iocb->kiocb.ki_flags |= IOCB_DIRECT;
-- 			/* Only use AIO completion if DIO-aligned segment is last */
-- 			if (i == iocb->end_iter_index) {
-- 				iocb->kiocb.ki_complete = nfs_local_write_aio_complete;
-- 				iocb->aio_complete_work = nfs_local_write_aio_complete_work;
-- 			}
-- 		} else
-- 			iocb->kiocb.ki_flags &= ~IOCB_DIRECT;
-- 
-- 		status = filp->f_op->write_iter(&iocb->kiocb, &iocb->iters[i]);
-- 		if (status != -EIOCBQUEUED) {
-- 			if (unlikely(status >= 0 && status < iocb->iters[i].count))
-- 				force_done = true; /* Partial write */
-- 			if (nfs_local_pgio_done(iocb, status, force_done)) {
-- 				nfs_local_write_iocb_done(iocb);
-- 				break;
-++		n_iters = atomic_read(&iocb->n_iters);
-++		for (int i = 0; i < n_iters ; i++) {
-++			if (iocb->iter_is_dio_aligned[i]) {
-++				iocb->kiocb.ki_flags |= IOCB_DIRECT;
-++				/* Only use AIO completion if DIO-aligned segment is last */
-++				if (i == iocb->end_iter_index) {
-++					iocb->kiocb.ki_complete = nfs_local_write_aio_complete;
-++					iocb->aio_complete_work = nfs_local_write_aio_complete_work;
-++				}
-++			} else
-++				iocb->kiocb.ki_flags &= ~IOCB_DIRECT;
-+ 
- -	if (status != -EIOCBQUEUED) {
- -		nfs_local_write_done(iocb, status);
- -		nfs_local_vfs_getattr(iocb);
- -		nfs_local_pgio_release(iocb);
-++			status = filp->f_op->write_iter(&iocb->kiocb, &iocb->iters[i]);
-++			if (status != -EIOCBQUEUED) {
-++				if (unlikely(status >= 0 && status < iocb->iters[i].count))
-++					force_done = true; /* Partial write */
-++				if (nfs_local_pgio_done(iocb, status, force_done)) {
-++					nfs_local_write_iocb_done(iocb);
-++					break;
-++				}
- +			}
- +		}
-++		file_end_write(filp);
-  	}
-- 	file_end_write(filp);
- +
-- 	revert_creds(save_cred);
- +	current->flags = old_flags;
-  }
-  
-  static int
+
+  extern void inode_sb_list_add(struct inode *inode);
+ -extern void inode_add_lru(struct inode *inode);
+ +extern void inode_lru_list_add(struct inode *inode);
+
+- int sb_set_blocksize(struct super_block *sb, int size);
+- int __must_check sb_min_blocksize(struct super_block *sb, int size);
+-
+  int generic_file_mmap(struct file *, struct vm_area_struct *);
+  int generic_file_mmap_prepare(struct vm_area_desc *desc);
+  int generic_file_readonly_mmap(struct file *, struct vm_area_struct *);
+diff --git a/include/linux/fs/super.h b/include/linux/fs/super.h
+index c0d22b12c1c9..69c11b28ed65 100644
+--- a/include/linux/fs/super.h
++++ b/include/linux/fs/super.h
+@@ -223,7 +223,7 @@ static inline bool sb_has_encoding(const struct super_block *sb)
+ }
+
+ int sb_set_blocksize(struct super_block *sb, int size);
+-int sb_min_blocksize(struct super_block *sb, int size);
++int __must_check sb_min_blocksize(struct super_block *sb, int size);
+
+ int freeze_super(struct super_block *super, enum freeze_holder who,
+                 const void *freeze_owner);
+diff --git a/include/linux/fs/super_types.h b/include/linux/fs/super_types.h
+index 45cfd45b9fe0..6bd3009e09b3 100644
+--- a/include/linux/fs/super_types.h
++++ b/include/linux/fs/super_types.h
+@@ -267,6 +267,7 @@ struct super_block {
+
+        spinlock_t                              s_inode_wblist_lock;
+        struct list_head                        s_inodes_wb;    /* writeback inodes */
++       long                                    s_min_writeback_pages;
+ } __randomize_layout;
+
+ /*
 
 Merge conflicts with other trees
 ================================
@@ -338,85 +173,56 @@ The following changes since commit dcb6fa37fd7bc9c3d2b066329b0d27dedf8becaa:
 
 are available in the Git repository at:
 
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/kernel-6.19-rc1.cred
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.19-rc1.fs_header
 
-for you to fetch changes up to c8e00cdc7425d5c60fd1ce6e7f71e5fb1b236991:
+for you to fetch changes up to dca3aa666fbd71118905d88bb1c353881002b647:
 
-  Merge patch series "credential guards: credential preparation" (2025-11-05 23:11:52 +0100)
+  fs: move inode fields used during fast path lookup closer together (2025-11-11 10:49:54 +0100)
 
-Please consider pulling these changes from the signed kernel-6.19-rc1.cred tag.
+Please consider pulling these changes from the signed vfs-6.19-rc1.fs_header tag.
 
 Thanks!
 Christian
 
 ----------------------------------------------------------------
-kernel-6.19-rc1.cred
+vfs-6.19-rc1.fs_header
 
 ----------------------------------------------------------------
-Christian Brauner (39):
-      cleanup: fix scoped_class()
-      cred: add kernel_cred() helper
-      cred: make init_cred static
-      cred: add scoped_with_kernel_creds()
-      firmware: don't copy kernel creds
-      nbd: don't copy kernel creds
-      target: don't copy kernel creds
-      unix: don't copy creds
-      Merge patch series "creds: add {scoped_}with_kernel_creds()"
-      cred: add scoped_with_creds() guards
-      aio: use credential guards
-      backing-file: use credential guards for reads
-      backing-file: use credential guards for writes
-      backing-file: use credential guards for splice read
-      backing-file: use credential guards for splice write
-      backing-file: use credential guards for mmap
-      binfmt_misc: use credential guards
-      erofs: use credential guards
-      nfs: use credential guards in nfs_local_call_read()
-      nfs: use credential guards in nfs_local_call_write()
-      nfs: use credential guards in nfs_idmap_get_key()
-      smb: use credential guards in cifs_get_spnego_key()
-      act: use credential guards in acct_write_process()
-      cgroup: use credential guards in cgroup_attach_permissions()
-      net/dns_resolver: use credential guards in dns_query()
-      Merge patch series "credentials guards: the easy cases"
-      cred: add prepare credential guard
-      sev-dev: use guard for path
-      sev-dev: use prepare credential guard
-      sev-dev: use override credential guards
-      coredump: move revert_cred() before coredump_cleanup()
-      coredump: pass struct linux_binfmt as const
-      coredump: mark struct mm_struct as const
-      coredump: split out do_coredump() from vfs_coredump()
-      coredump: use prepare credential guard
-      coredump: use override credential guard
-      trace: use prepare credential guard
-      trace: use override credential guard
-      Merge patch series "credential guards: credential preparation"
+Christian Brauner (4):
+      fs: rename fs_types.h to fs_dirent.h
+      fs: add fs/super_types.h header
+      fs: add fs/super.h header
+      Merge patch series "fs: start to split up fs.h"
 
- drivers/base/firmware_loader/main.c   |  59 ++++++--------
- drivers/block/nbd.c                   |  54 +++++--------
- drivers/crypto/ccp/sev-dev.c          |  17 ++--
- drivers/target/target_core_configfs.c |  14 +---
- fs/aio.c                              |   6 +-
- fs/backing-file.c                     | 147 +++++++++++++++++-----------------
- fs/binfmt_misc.c                      |   7 +-
- fs/coredump.c                         | 142 ++++++++++++++++----------------
- fs/erofs/fileio.c                     |   6 +-
- fs/nfs/localio.c                      |  59 +++++++-------
- fs/nfs/nfs4idmap.c                    |   7 +-
- fs/smb/client/cifs_spnego.c           |   6 +-
- include/linux/cleanup.h               |  15 ++--
- include/linux/cred.h                  |  22 +++++
- include/linux/init_task.h             |   1 -
- include/linux/sched/coredump.h        |   2 +-
- init/init_task.c                      |  27 +++++++
- kernel/acct.c                         |  29 +++----
- kernel/cgroup/cgroup.c                |  10 +--
- kernel/cred.c                         |  27 -------
- kernel/trace/trace_events_user.c      |  22 ++---
- net/dns_resolver/dns_query.c          |   6 +-
- net/unix/af_unix.c                    |  17 +---
- security/keys/process_keys.c          |   2 +-
- 24 files changed, 330 insertions(+), 374 deletions(-)
+Mateusz Guzik (2):
+      fs: inline current_umask() and move it to fs_struct.h
+      fs: move inode fields used during fast path lookup closer together
+
+ fs/9p/acl.c                               |   1 +
+ fs/Makefile                               |   2 +-
+ fs/btrfs/inode.c                          |   1 +
+ fs/f2fs/acl.c                             |   1 +
+ fs/fat/inode.c                            |   1 +
+ fs/{fs_types.c => fs_dirent.c}            |   2 +-
+ fs/fs_struct.c                            |   6 -
+ fs/hfsplus/options.c                      |   1 +
+ fs/hpfs/super.c                           |   1 +
+ fs/nilfs2/nilfs.h                         |   1 +
+ fs/ntfs3/super.c                          |   1 +
+ fs/ocfs2/acl.c                            |   1 +
+ fs/omfs/inode.c                           |   1 +
+ fs/smb/client/file.c                      |   1 +
+ fs/smb/client/inode.c                     |   1 +
+ fs/smb/client/smb1ops.c                   |   1 +
+ include/linux/fs.h                        | 533 +-----------------------------
+ include/linux/fs/super.h                  | 233 +++++++++++++
+ include/linux/fs/super_types.h            | 335 +++++++++++++++++++
+ include/linux/{fs_types.h => fs_dirent.h} |  11 +-
+ include/linux/fs_struct.h                 |   6 +
+ include/linux/namei.h                     |   1 +
+ 22 files changed, 600 insertions(+), 542 deletions(-)
+ rename fs/{fs_types.c => fs_dirent.c} (98%)
+ create mode 100644 include/linux/fs/super.h
+ create mode 100644 include/linux/fs/super_types.h
+ rename include/linux/{fs_types.h => fs_dirent.h} (92%)
 
