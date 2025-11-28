@@ -1,337 +1,292 @@
-Return-Path: <linux-fsdevel+bounces-70126-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70128-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A6E4C9185D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 10:52:50 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 716ABC91977
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 11:18:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id DD5D8348A10
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 09:52:45 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id EB2CA34B2BE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 10:18:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C60B3064AC;
-	Fri, 28 Nov 2025 09:52:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8103E309EFB;
+	Fri, 28 Nov 2025 10:18:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TdCHxAWP"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LLVNsf5d"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64EBF221FB4
-	for <linux-fsdevel@vger.kernel.org>; Fri, 28 Nov 2025 09:52:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 177471FF5E3
+	for <linux-fsdevel@vger.kernel.org>; Fri, 28 Nov 2025 10:18:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764323558; cv=none; b=oN0njEw0hUIZq32pYpuqA636xnn3syrvkkcVTlqTIy90/CmsNYKnHSpd6JX8bWduM9vWmDB6d3JtIXMfHCjbDM5xy5tBhM83ZsuJD+T6ioPIvapp/C2rQFzzS2OGD4ET5AM32RI003Q2r8FsYMJdEEkCKnMCCFK9sBI6zR/1B10=
+	t=1764325102; cv=none; b=nK1RIMTrkC9mGR70utOolCe8Xh2aECVaxXrbcCKnns5O1Bs7IXK2EsSnT6IifDlAQeXLRuFNCfRD1bz4W11hebfZScrBSai+9quVUHviP2FpgUz705Iu1KhLh+f6iKJe5rxBOAWGqQ3z49hd6d5nYA716/J8s963hGMs6gYBj8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764323558; c=relaxed/simple;
-	bh=J4kTjNNxY6Y4shky0mg2wSvn+bS2KTRbevV0PLyBpaU=;
-	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=ZoPvJPx0hSJ7aT6f218/HQiMYXh8tLZGFqMBZV9pSd1Ys616xqXx4Z5ljNk7BMgbDXdIL5+sokA2j1WMIs8NMnhTWCO6LVal0IDWFP/U5/RQgxeDCgUAFVg+xkHIxq7ag0QArv36vbLM8RpEelQ4mi7Q4jqYowvGowXOUP7c2FI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TdCHxAWP; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1764323555;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=yF03pCM3bRypTicMi/2SPBbC9fl0MVsqi7qJfsbA82E=;
-	b=TdCHxAWPNDwjZgjOO/tefv/VLVY84U7jjz9m2LEwemJBI58RQuqct6EtkBRLtjLEJjmNbI
-	GAjndJwL24DgQemSM/3NFSHRTUMTbuZQYO1nqPVdt1Lzlz7OxhCVyhEW5stSHUdBv+wylE
-	w8aU800UTEPbWwLoDtCGr/X3VcGXHYU=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-38-MUVTF_MNOf6wO9CRb1WFjQ-1; Fri,
- 28 Nov 2025 04:52:30 -0500
-X-MC-Unique: MUVTF_MNOf6wO9CRb1WFjQ-1
-X-Mimecast-MFC-AGG-ID: MUVTF_MNOf6wO9CRb1WFjQ_1764323549
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 80214195608F;
-	Fri, 28 Nov 2025 09:52:29 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.14])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E4AD830001A4;
-	Fri, 28 Nov 2025 09:52:26 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-To: Christian Brauner <brauner@kernel.org>
-cc: dhowells@redhat.com,
-    syzbot+41c68824eefb67cdf00c@syzkaller.appspotmail.com,
-    Marc Dionne <marc.dionne@auristor.com>,
-    linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-    linux-dhowells@vger.kernel.org
-Subject: [PATCH v2] afs: Fix delayed allocation of a cell's anonymous key
+	s=arc-20240116; t=1764325102; c=relaxed/simple;
+	bh=PjmG0xaWd42rkWi6yMwDIBbUaVkgKTX07rG2csxPtwU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sFC0c3zTF51ycHqH7SWQL3sbwgA/x6Lq8FBXfoZyCGRrTWjCNWHkhuSK8J2hgaaL+6r50NH8NJ9UJcD2Bi9RQ4UV49BxSxb0XqX3T/vk9EnmUwxXPN5A++yTfkeqmwY/AdVcnJVjM+loD8aDGvWu0waqjtj10OpKYHAxh2lSn4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LLVNsf5d; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b7633027cb2so90309966b.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Nov 2025 02:18:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1764325099; x=1764929899; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Q5klg2JAmQdVXm6DWGJJqcZOfHSZ2L1atog23dJPbA8=;
+        b=LLVNsf5dACHMY62MOInTqvfu0q/rPmDu+RG9Av2r0kFO8PCRImdavX0clWh5dtFCVi
+         sxbY/w9ALfZb1HjUJDLunZkkMfQc6ycJsa6chKv6LzUc0Gin5RF235rmYFTR6RAZZrav
+         AaCX/PidThMQG0Mx/1xc/azLYYL11I8nrNvVX+kMkss1bsGaOG8D8QcUDluXWmoUCkp9
+         x/HaDwwvj41cnusg8YNXUxVJUCN5L7ojfcV44H6D88rjNwFl0WvhxfqtapOwy0ZIXICr
+         wjk05luCNVs8frHkbFxdyjCk4q3mVG+2UcnX1ms37DG7Sjy/NO/q372+qJrAxDh7LDRz
+         qB2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764325099; x=1764929899;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q5klg2JAmQdVXm6DWGJJqcZOfHSZ2L1atog23dJPbA8=;
+        b=xOm9zIijSwIz6tqVJHfdn36fY0EvM1c5VwvCe3ETWpZBVVprjbawcOkh/p7fxor1V5
+         ervj7SDZoHzI1XpcCgy3fP9o9t4VxudIjUHT6IOa5cF/KV7B100k4APb9WYkzZB/Nory
+         pj8SdsLyLbeI/KDBmyGyHZprZmP7Isk/D7jKDgDJ4/c+tWHSKW6ceN7ebBmdgTJZJmdn
+         07/cG9A6FcGZDA6gZuALCqQ8Pg5IRpOIMGRoOCU3qqcnA7uZUFs/jd/wd/kQVt9/L07C
+         I81a77ce5QS8Q+gFWzhu79JyBPf+DpoPnmuJ4rUWNo0ZbB+6yHxe0XZsxZxlZSDLFaGd
+         FT7A==
+X-Forwarded-Encrypted: i=1; AJvYcCXqCtrJLmjTgAhy9L/6EuAQ+9mHJXfCCIAYd6mqXfpEEgm7j/8+RiF6l1aGgSeXgXDzGIDZtC/aGzcK0mm8@vger.kernel.org
+X-Gm-Message-State: AOJu0YxrQTFYw+8nOVt8Ptcad2nmAuMPTTBXK6QKQahPLKcV9JUOJmmc
+	Aem0WYENaaJ0TW51yJhegFJRXg/K9Gm5F40qNgzz1LKuMMa9QVqJonWL
+X-Gm-Gg: ASbGncvlynLcr7cpTFYulEEIcAJZ91PXbzFbtQah0I/HvM6kFbtERfiVkPDwJmoZMnV
+	xWRl9ER1R6ikw1GSHThoiVSfmkL7tQJ6Uj/cOa8hzxGoF9BaxIkCHCMZ3RFCJgJwmsl/Gx1KQxj
+	QpzMdqR4fIdGA+RqBMjlLOw1d9MjFaRHni8F4cXys4e8AzYO9AWrAd1LMaJ+BYGijfh216n69LC
+	m7HWQKx1R/RwoOMpcSXm4KPBUGlTZx9oaQpnVCgcRkRYounaUaHanKjFkq0OK8A4Y9JhMj8U5d+
+	RUbdOpKDk/mt6OOp3ewsAq5lB5OZ5VB6OurHQcIEq6UT9VEJPyQyajfLmwJH7zf2uZxUMXS69P7
+	LXae9WhFR1SmkwPmMrbOrDxgHhMyfQoa09C0a61Ln2B6qcEKXttCeAnUbN9vuli8YKbBuIPRQQO
+	H7GbMZe/NuWqcLQASVEY+e5+HgQ4iTTbRpELZr9wG/+ioepSpznFFZ46Cs0L8r4m3fjbuQPZndU
+	1Xdv27YEl01uNX+U1R/ocdXpgs=
+X-Google-Smtp-Source: AGHT+IHUyA5f1Y7RZ2PUJ+kCQxeimZ7hInc35srFX72lIU5BCzyzYVLKGQj3beoG0HJAYpFqvZuuag==
+X-Received: by 2002:a17:907:3ea1:b0:b73:8639:cd8e with SMTP id a640c23a62f3a-b767153edd9mr3000691466b.4.1764325098968;
+        Fri, 28 Nov 2025 02:18:18 -0800 (PST)
+Received: from localhost (2001-1c00-570d-ee00-496b-7a85-725c-34fb.cable.dynamic.v6.ziggo.nl. [2001:1c00:570d:ee00:496b:7a85:725c:34fb])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b76f5162c5csm420931366b.6.2025.11.28.02.18.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Nov 2025 02:18:18 -0800 (PST)
+Date: Fri, 28 Nov 2025 11:18:17 +0100
+From: Amir Goldstein <amir73il@gmail.com>
+To: Namjae Jeon <linkinjeon@kernel.org>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, hch@infradead.org,
+	hch@lst.de, tytso@mit.edu, willy@infradead.org, jack@suse.cz,
+	djwong@kernel.org, josef@toxicpanda.com, sandeen@sandeen.net,
+	rgoldwyn@suse.com, xiang@kernel.org, dsterba@suse.com,
+	pali@kernel.org, ebiggers@kernel.org, neil@brown.name,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	iamjoonsoo.kim@lge.com, cheol.lee@lge.com, jay.sim@lge.com,
+	gunho.lee@lge.com
+Subject: Re: [PATCH v2 11/11] ntfsplus: add Kconfig and Makefile
+Message-ID: <aSl26bbeD4-Ev1ky@amir-ThinkPad-T480>
+References: <20251127045944.26009-1-linkinjeon@kernel.org>
+ <20251127045944.26009-12-linkinjeon@kernel.org>
+ <CAOQ4uxhwy1a+dtkoTkMp5LLJ5m4FzvQefJXfZ2JzrUZiZn7w0w@mail.gmail.com>
+ <CAKYAXd99CJOeH=nZg_iLb+q5F5N+xxbZm-4Uwxas_tAR3e_xVA@mail.gmail.com>
+ <CAOQ4uxiGMLe=FD72BBCLnk6kmOTrqSQ5wM4mVHSshKc+TN14TQ@mail.gmail.com>
+ <CAKYAXd8K76CeQNtR-QOMSJ_JjuoiibuQkd4NhkPPM_CQNdNajw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <796404.1764323545.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 28 Nov 2025 09:52:25 +0000
-Message-ID: <796405.1764323545@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAKYAXd8K76CeQNtR-QOMSJ_JjuoiibuQkd4NhkPPM_CQNdNajw@mail.gmail.com>
 
-    =
+On Fri, Nov 28, 2025 at 12:02:25PM +0900, Namjae Jeon wrote:
+> On Thu, Nov 27, 2025 at 10:12 PM Amir Goldstein <amir73il@gmail.com> wrote:
+> >
+> > On Thu, Nov 27, 2025 at 1:40 PM Namjae Jeon <linkinjeon@kernel.org> wrote:
+> > >
+> > > On Thu, Nov 27, 2025 at 8:22 PM Amir Goldstein <amir73il@gmail.com> wrote:
+> > > >
+> > > > On Thu, Nov 27, 2025 at 6:01 AM Namjae Jeon <linkinjeon@kernel.org> wrote:
+> > > > >
+> > > > > This adds the Kconfig and Makefile for ntfsplus.
+> > > > >
+> > > > > Signed-off-by: Namjae Jeon <linkinjeon@kernel.org>
+> > > > > ---
+> > > > >  fs/Kconfig           |  1 +
+> > > > >  fs/Makefile          |  1 +
+> > > > >  fs/ntfsplus/Kconfig  | 45 ++++++++++++++++++++++++++++++++++++++++++++
+> > > > >  fs/ntfsplus/Makefile | 18 ++++++++++++++++++
+> > > > >  4 files changed, 65 insertions(+)
+> > > > >  create mode 100644 fs/ntfsplus/Kconfig
+> > > > >  create mode 100644 fs/ntfsplus/Makefile
+> > > > >
+> > > > > diff --git a/fs/Kconfig b/fs/Kconfig
+> > > > > index 0bfdaecaa877..70d596b99c8b 100644
+> > > > > --- a/fs/Kconfig
+> > > > > +++ b/fs/Kconfig
+> > > > > @@ -153,6 +153,7 @@ menu "DOS/FAT/EXFAT/NT Filesystems"
+> > > > >  source "fs/fat/Kconfig"
+> > > > >  source "fs/exfat/Kconfig"
+> > > > >  source "fs/ntfs3/Kconfig"
+> > > > > +source "fs/ntfsplus/Kconfig"
+> > > > >
+> > > > >  endmenu
+> > > > >  endif # BLOCK
+> > > > > diff --git a/fs/Makefile b/fs/Makefile
+> > > > > index e3523ab2e587..2e2473451508 100644
+> > > > > --- a/fs/Makefile
+> > > > > +++ b/fs/Makefile
+> > > > > @@ -91,6 +91,7 @@ obj-y                         += unicode/
+> > > > >  obj-$(CONFIG_SMBFS)            += smb/
+> > > > >  obj-$(CONFIG_HPFS_FS)          += hpfs/
+> > > > >  obj-$(CONFIG_NTFS3_FS)         += ntfs3/
+> > > > > +obj-$(CONFIG_NTFSPLUS_FS)      += ntfsplus/
+> > > >
+> > > > I suggested in another reply to keep the original ntfs name
+> > > >
+> > > > More important is to keep your driver linked before the unmaintained
+> > > > ntfs3, so that it hopefully gets picked up before ntfs3 for auto mount type
+> > > > if both drivers are built-in.
+> > > Okay, I will check it:)
+> > > >
+> > > > I am not sure if keeping the order here would guarantee the link/registration
+> > > > order. If not, it may make sense to mutually exclude them as built-in drivers.
+> > > Okay, I am leaning towards the latter.
+> >
+> > Well it's not this OR that.
+> > please add you driver as the original was before ntfs3
+> >
+> > obj-$(CONFIG_NTFS_FS)      += ntfs/
+> > obj-$(CONFIG_NTFS3_FS)         += ntfs3/
+> Okay.
+> >
+> > > If you have no objection, I will add the patch to mutually exclude the two ntfs implementation.
+> >
+> > You should definitely allow them both if at least one is built as a module
+> > I think it would be valuable for testing.
+> >
+> > Just that
+> > CONFIG_NTFS_FS=y
+> > CONFIG_NTFS3_FS=y
+> >
+> > I don't see the usefulness in allowing that.
+> > (other people may disagree)
+> >
+> > I think that the way to implement it is using an auxiliary choice config var
+> > in fs/Kconfig (i.e. CONFIG_DEFAULT_NTFS) and select/depends statements
+> > to only allow the default ntfs driver to be configured as 'y',
+> > but couldn't find a good example to point you at.
+> Okay. Could you please check whether the attached patch matches what
+> you described ?
 
-The allocation of a cell's anonymous key is done in a background thread
-along with other cell setup such as doing a DNS upcall.  In the reported
-bug, this is triggered by afs_parse_source() parsing the device name given
-to mount() and calling afs_lookup_cell() with the name of the cell.
+It's what I meant, but now I think it could be simpler...
 
-The normal key lookup then tries to use the key description on the
-anonymous authentication key as the reference for request_key() - but it
-may not yet be set and so an oops can happen.
+> 
+> Thanks!
+> >
+> > Thanks,
+> > Amir.
 
-This has been made more likely to happen by the fix for dynamic lookup
-failure.
+> From 11154917ff53d6cf218ac58e6776e603246587b6 Mon Sep 17 00:00:00 2001
+> From: Namjae Jeon <linkinjeon@kernel.org>
+> Date: Fri, 28 Nov 2025 11:44:45 +0900
+> Subject: [PATCH] ntfs: restrict built-in NTFS seclection to one driver, allow
+>  both as modules
+> 
+> Signed-off-by: Namjae Jeon <linkinjeon@kernel.org>
+> ---
+>  fs/Kconfig          | 11 +++++++++++
+>  fs/ntfs3/Kconfig    |  2 ++
+>  fs/ntfsplus/Kconfig |  1 +
+>  3 files changed, 14 insertions(+)
+> 
+> diff --git a/fs/Kconfig b/fs/Kconfig
+> index 70d596b99c8b..c379383cb4ff 100644
+> --- a/fs/Kconfig
+> +++ b/fs/Kconfig
+> @@ -155,6 +155,17 @@ source "fs/exfat/Kconfig"
+>  source "fs/ntfs3/Kconfig"
+>  source "fs/ntfsplus/Kconfig"
+>  
+> +choice
+> +   prompt "Select built-in NTFS filesystem (only one can be built-in)"
+Usually for choice vars there should be a default and usually
+there should be a DEFAULT_NTFS_NONE
 
-Fix this by firstly allocating a reference name and attaching it to the
-afs_cell record when the record is created.  It can share the memory
-allocation with the cell name (unfortunately it can't just overlap the cel=
-l
-name by prepending it with "afs@" as the cell name already has a '.'
-prepended for other purposes).  This reference name is then passed to
-request_key().
+> +   help
+> +     Only one NTFS can be built into the kernel(y).
+> +     Both can still be built as modules(m).
+> +
+> +   config DEFAULT_NTFSPLUS
+> +       bool "NTFS+"
+Usually, this would also 'select NTFS_FS'
 
-Secondly, the anon key is now allocated on demand at the point a key is
-requested in afs_request_key() if it is not already allocated.  A mutex is
-used to prevent multiple allocation for a cell.
+> +   config DEFAULT_NTFS3
+> +       bool "NTFS3"
+> +endchoice
+>  endmenu
+>  endif # BLOCK
+>  
+> diff --git a/fs/ntfs3/Kconfig b/fs/ntfs3/Kconfig
+> index 7bc31d69f680..18bd6c98c6eb 100644
+> --- a/fs/ntfs3/Kconfig
+> +++ b/fs/ntfs3/Kconfig
+> @@ -1,6 +1,7 @@
+>  # SPDX-License-Identifier: GPL-2.0-only
+>  config NTFS3_FS
+>  	tristate "NTFS Read-Write file system support"
+> +	depends on !DEFAULT_NTFSPLUS || m
 
-Thirdly, make afs_request_key_rcu() return NULL if the anonymous key isn't
-yet allocated (if we need it) and then the caller can return -ECHILD to
-drop out of RCU-mode and afs_request_key() can be called.
+So seeing how this condition looks, instead of aux var,
+it could be directly
 
-Note that the anonymous key is kind of necessary to make the key lookup
-cache work as that doesn't currently cache a negative lookup, but it's
-probably worth some investigation to see if NULL can be used instead.
+	depends on NTFS_FS != y || m
 
-Fixes: 330e2c514823 ("afs: Fix dynamic lookup to fail on cell lookup failu=
-re")
-Reported-by: syzbot+41c68824eefb67cdf00c@syzkaller.appspotmail.com
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Marc Dionne <marc.dionne@auristor.com>
-cc: linux-afs@lists.infradead.org
-cc: linux-fsdevel@vger.kernel.org
----
- fs/afs/cell.c     |   43 ++++++++-----------------------------------
- fs/afs/internal.h |    1 +
- fs/afs/security.c |   48 ++++++++++++++++++++++++++++++++++++++++--------
- 3 files changed, 49 insertions(+), 43 deletions(-)
+>  	select BUFFER_HEAD
+>  	select NLS
+>  	select LEGACY_DIRECT_IO
+> @@ -49,6 +50,7 @@ config NTFS3_FS_POSIX_ACL
+>  
+>  config NTFS_FS
 
-diff --git a/fs/afs/cell.c b/fs/afs/cell.c
-index d9b6fa1088b7..71c10a05cebe 100644
---- a/fs/afs/cell.c
-+++ b/fs/afs/cell.c
-@@ -140,7 +140,9 @@ static struct afs_cell *afs_alloc_cell(struct afs_net =
-*net,
- 		return ERR_PTR(-ENOMEM);
- 	}
- =
+This alias should definitely go a way when you add back
+the original NTFS_FS.
 
--	cell->name =3D kmalloc(1 + namelen + 1, GFP_KERNEL);
-+	/* Allocate the cell name and the key name in one go. */
-+	cell->name =3D kmalloc(1 + namelen + 1 +
-+			     4 + namelen + 1, GFP_KERNEL);
- 	if (!cell->name) {
- 		kfree(cell);
- 		return ERR_PTR(-ENOMEM);
-@@ -151,7 +153,11 @@ static struct afs_cell *afs_alloc_cell(struct afs_net=
- *net,
- 	cell->name_len =3D namelen;
- 	for (i =3D 0; i < namelen; i++)
- 		cell->name[i] =3D tolower(name[i]);
--	cell->name[i] =3D 0;
-+	cell->name[i++] =3D 0;
-+
-+	cell->key_desc =3D cell->name + i;
-+	memcpy(cell->key_desc, "afs@", 4);
-+	memcpy(cell->key_desc + 4, cell->name, cell->name_len + 1);
- =
+Preferably revert the commit that added the alias at the
+start of your series.
 
- 	cell->net =3D net;
- 	refcount_set(&cell->ref, 1);
-@@ -710,33 +716,6 @@ void afs_set_cell_timer(struct afs_cell *cell, unsign=
-ed int delay_secs)
- 	timer_reduce(&cell->management_timer, jiffies + delay_secs * HZ);
- }
- =
+>  	tristate "NTFS file system support"
+> +	depends on !DEFAULT_NTFSPLUS || m
+>  	select NTFS3_FS
+>  	select BUFFER_HEAD
+>  	select NLS
+> diff --git a/fs/ntfsplus/Kconfig b/fs/ntfsplus/Kconfig
+> index 78bc34840463..c8d1ab99113c 100644
+> --- a/fs/ntfsplus/Kconfig
+> +++ b/fs/ntfsplus/Kconfig
+> @@ -1,6 +1,7 @@
+>  # SPDX-License-Identifier: GPL-2.0-only
+>  config NTFSPLUS_FS
+>  	tristate "NTFS+ file system support (EXPERIMENTAL)"
+> +	depends on !DEFAULT_NTFS3 || m
 
--/*
-- * Allocate a key to use as a placeholder for anonymous user security.
-- */
--static int afs_alloc_anon_key(struct afs_cell *cell)
--{
--	struct key *key;
--	char keyname[4 + AFS_MAXCELLNAME + 1], *cp, *dp;
--
--	/* Create a key to represent an anonymous user. */
--	memcpy(keyname, "afs@", 4);
--	dp =3D keyname + 4;
--	cp =3D cell->name;
--	do {
--		*dp++ =3D tolower(*cp);
--	} while (*cp++);
--
--	key =3D rxrpc_get_null_key(keyname);
--	if (IS_ERR(key))
--		return PTR_ERR(key);
--
--	cell->anonymous_key =3D key;
--
--	_debug("anon key %p{%x}",
--	       cell->anonymous_key, key_serial(cell->anonymous_key));
--	return 0;
--}
--
- /*
-  * Activate a cell.
-  */
-@@ -746,12 +725,6 @@ static int afs_activate_cell(struct afs_net *net, str=
-uct afs_cell *cell)
- 	struct afs_cell *pcell;
- 	int ret;
- =
+Likewise:
+	depends on NTFS3_FS != y || m
 
--	if (!cell->anonymous_key) {
--		ret =3D afs_alloc_anon_key(cell);
--		if (ret < 0)
--			return ret;
--	}
--
- 	ret =3D afs_proc_cell_setup(cell);
- 	if (ret < 0)
- 		return ret;
-diff --git a/fs/afs/internal.h b/fs/afs/internal.h
-index b92f96f56767..009064b8d661 100644
---- a/fs/afs/internal.h
-+++ b/fs/afs/internal.h
-@@ -413,6 +413,7 @@ struct afs_cell {
- =
+Obviously, not tested.
 
- 	u8			name_len;	/* Length of name */
- 	char			*name;		/* Cell name, case-flattened and NUL-padded */
-+	char			*key_desc;	/* Authentication key description */
- };
- =
+If this works, I don't think there is a need for the choice variable
 
- /*
-diff --git a/fs/afs/security.c b/fs/afs/security.c
-index 6a7744c9e2a2..eafa91b56af4 100644
---- a/fs/afs/security.c
-+++ b/fs/afs/security.c
-@@ -16,6 +16,30 @@
- =
+As long as you keep the order in fs/Kconfig correct (ntfs before ntfs3)
+I assume that an oldconfig with both set to y NTFS_FS will win?
+Please verify that.
 
- static DEFINE_HASHTABLE(afs_permits_cache, 10);
- static DEFINE_SPINLOCK(afs_permits_lock);
-+static DEFINE_MUTEX(afs_key_lock);
-+
-+/*
-+ * Allocate a key to use as a placeholder for anonymous user security.
-+ */
-+static int afs_alloc_anon_key(struct afs_cell *cell)
-+{
-+	struct key *key;
-+
-+	mutex_lock(&afs_key_lock);
-+	if (!cell->anonymous_key) {
-+		key =3D rxrpc_get_null_key(cell->key_desc);
-+		if (!IS_ERR(key))
-+			cell->anonymous_key =3D key;
-+	}
-+	mutex_unlock(&afs_key_lock);
-+
-+	if (IS_ERR(key))
-+		return PTR_ERR(key);
-+
-+	kdebug("anon key %p{%x}",
-+	       cell->anonymous_key, key_serial(cell->anonymous_key));
-+	return 0;
-+}
- =
-
- /*
-  * get a key
-@@ -23,11 +47,12 @@ static DEFINE_SPINLOCK(afs_permits_lock);
- struct key *afs_request_key(struct afs_cell *cell)
- {
- 	struct key *key;
-+	int ret;
- =
-
--	_enter("{%x}", key_serial(cell->anonymous_key));
-+	_enter("{%s}", cell->key_desc);
- =
-
--	_debug("key %s", cell->anonymous_key->description);
--	key =3D request_key_net(&key_type_rxrpc, cell->anonymous_key->descriptio=
-n,
-+	_debug("key %s", cell->key_desc);
-+	key =3D request_key_net(&key_type_rxrpc, cell->key_desc,
- 			      cell->net->net, NULL);
- 	if (IS_ERR(key)) {
- 		if (PTR_ERR(key) !=3D -ENOKEY) {
-@@ -35,6 +60,12 @@ struct key *afs_request_key(struct afs_cell *cell)
- 			return key;
- 		}
- =
-
-+		if (!cell->anonymous_key) {
-+			ret =3D afs_alloc_anon_key(cell);
-+			if (ret < 0)
-+				return ERR_PTR(ret);
-+		}
-+
- 		/* act as anonymous user */
- 		_leave(" =3D {%x} [anon]", key_serial(cell->anonymous_key));
- 		return key_get(cell->anonymous_key);
-@@ -52,11 +83,10 @@ struct key *afs_request_key_rcu(struct afs_cell *cell)
- {
- 	struct key *key;
- =
-
--	_enter("{%x}", key_serial(cell->anonymous_key));
-+	_enter("{%s}", cell->key_desc);
- =
-
--	_debug("key %s", cell->anonymous_key->description);
--	key =3D request_key_net_rcu(&key_type_rxrpc,
--				  cell->anonymous_key->description,
-+	_debug("key %s", cell->key_desc);
-+	key =3D request_key_net_rcu(&key_type_rxrpc, cell->key_desc,
- 				  cell->net->net);
- 	if (IS_ERR(key)) {
- 		if (PTR_ERR(key) !=3D -ENOKEY) {
-@@ -65,6 +95,8 @@ struct key *afs_request_key_rcu(struct afs_cell *cell)
- 		}
- =
-
- 		/* act as anonymous user */
-+		if (!cell->anonymous_key)
-+			return NULL; /* Need to allocate */
- 		_leave(" =3D {%x} [anon]", key_serial(cell->anonymous_key));
- 		return key_get(cell->anonymous_key);
- 	} else {
-@@ -408,7 +440,7 @@ int afs_permission(struct mnt_idmap *idmap, struct ino=
-de *inode,
- =
-
- 	if (mask & MAY_NOT_BLOCK) {
- 		key =3D afs_request_key_rcu(vnode->volume->cell);
--		if (IS_ERR(key))
-+		if (IS_ERR_OR_NULL(key))
- 			return -ECHILD;
- =
-
- 		ret =3D -ECHILD;
-
+Thanks,
+Amir.
 
