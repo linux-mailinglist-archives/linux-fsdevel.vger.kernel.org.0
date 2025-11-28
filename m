@@ -1,45 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-70093-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70094-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44D4AC907A3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 02:19:13 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D0C0C907B5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 02:22:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAD7E3A84BC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 01:19:11 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0B1E24E1520
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 01:22:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B23B2236E9;
-	Fri, 28 Nov 2025 01:19:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5252E224B0E;
+	Fri, 28 Nov 2025 01:22:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="eIxrH2zN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA47F6A33B;
-	Fri, 28 Nov 2025 01:19:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 764942236E9
+	for <linux-fsdevel@vger.kernel.org>; Fri, 28 Nov 2025 01:22:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764292746; cv=none; b=aes1+Ab1tnIfcqyT2CewQU01kpMLf58sNWSyL1cIdmFSe4vzuLgUA+y8JNkjfOUcBF2HD9eht/kksPdq5b4OxyWZxLzGbhOoSLMqvSS9XO86bzwyOcqHrunqook+aa0D4v4/SW9BQ8JYfj4JlCVLTHYbQsPU05hQgdaIA7toa+s=
+	t=1764292934; cv=none; b=JeLERTKyvTEWmJ6gbwjU9ksMhRAiLBbS4y+TTdkm494NgVMOeUnQ/dBsD1fjAbhzZz/Mf9LBm65OcM2cgftxG3JAtnvdlN6FyBrbToY1bmrOmtS05KRywmgu4yqMnXGd1U/milbax3/1ti1Of8FCqa4hEdZTPthyiiGmNuY2OgQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764292746; c=relaxed/simple;
-	bh=E4cOv3uwkK+J6ayE4LKBMjM1+Oiq/sM7fE9SwSYlORE=;
+	s=arc-20240116; t=1764292934; c=relaxed/simple;
+	bh=BZPI4SRVS9+alTizkwRrZo81IAHx6uyydJUiRte/BWQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IZahh9B54CtxKrA3QsqStwW3s4l6ikq8aB8ab0Q1pgopahAW9sloiBX3LWgxfNz0Lg5b7i386eO7GNfaE1tmY57XrFhPQh9xhqmyeoBhdgw+9gMmXDAunTQfMuylZ5urly2hlWMLwQlMLyGYhQQ5LlHvitVU9MmLvKWGsSJk6A8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4dHb5T3Qq4zYQtF4;
-	Fri, 28 Nov 2025 09:18:05 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id E54081A018D;
-	Fri, 28 Nov 2025 09:18:59 +0800 (CST)
-Received: from [10.174.176.88] (unknown [10.174.176.88])
-	by APP2 (Coremail) with SMTP id Syh0CgCHMXiC+ChptwYJCQ--.54954S3;
-	Fri, 28 Nov 2025 09:18:59 +0800 (CST)
-Message-ID: <39d99c56-3c2f-46bd-933f-2aef69d169f3@huaweicloud.com>
-Date: Fri, 28 Nov 2025 09:18:58 +0800
+	 In-Reply-To:Content-Type; b=DgRZPPKWcDgroruRBI/a1k0qyQkdPo3a4Y7569uUi1LT8UdNFiAfNhf/MZLTbMBZwr9SKuNYCM8INgFYAV82p3Cu5OME9g1LNjFJ1Dx9lsbCq9koOTZlPDAASgNLS9N+Z0SPgCQ4qlcR7erl2mjF+6jf64uq9K74EZQj3t8RGMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=eIxrH2zN; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=92MlZniQWGNmpk8DnB4Rgd3OSLzlP91hQmY+T34Ms3w=; b=eIxrH2zNwodSSMJJwZfwSi2zlD
+	V2KKpz4eqY7mCd0mxAGgDPJdacXmVFfRArAMya2ZYjy1lKgcugEg/4UtcqXLqwRREPDyoNZeeLjmR
+	z+KedZ6/x20QXUxnuid4+N1HIumduZBzntrU9V9UNZA+a8hgYwf2HbdP4EE6Ky0MkW+1+1jz/qCbs
+	UuETZU8bnPZuGNfk0pKNyIoB7E4FIvxUEQRcdwz9mlu0An/QyhCt1iWyb4rrK5IVTvnG3im04AKkX
+	cG18Nge6nkG441M5tH5D02VX2PROAZGoj648mwzTd/WIdKz10NeqU6g9OKseBZjZKhjg2Qr3TKkn5
+	/TQ/aIZg==;
+Received: from [50.53.43.113] (helo=[192.168.254.34])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vOnBb-0000000HOHZ-1kON;
+	Fri, 28 Nov 2025 01:22:11 +0000
+Message-ID: <b59202f5-3292-4ca9-be23-c134524d0418@infradead.org>
+Date: Thu, 27 Nov 2025 17:22:11 -0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -47,201 +54,66 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [Bug report] hash_name() may cross page boundary and trigger
- sleep in RCU context
-To: Will Deacon <will@kernel.org>
-Cc: jack@suse.com, brauner@kernel.org, hch@lst.de, akpm@linux-foundation.org,
- linux@armlinux.org.uk, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- linux-arm-kernel@lists.infradead.org, yangerkun@huawei.com,
- wangkefeng.wang@huawei.com, pangliyuan1@huawei.com, xieyuanbin1@huawei.com
-References: <20251126090505.3057219-1-wozizhi@huaweicloud.com>
- <aShLKpTBr9akSuUG@willie-the-truck>
- <9ff0d134-2c64-4204-bbac-9fdf0867ac46@huaweicloud.com>
-From: Zizhi Wo <wozizhi@huaweicloud.com>
-In-Reply-To: <9ff0d134-2c64-4204-bbac-9fdf0867ac46@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgCHMXiC+ChptwYJCQ--.54954S3
-X-Coremail-Antispam: 1UD129KBjvJXoW3JFWkXryxArykAFWDKF1xXwb_yoW3Jr18pr
-	18Ca4UJFW5Wr1rA3yjqw1DJFy8J3WUJw4UWr1UtF1UZr47Xr1jqr40q3yF934UXr48Xw4U
-	Xr15Jr17Zr1UJFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
-	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
-	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IUb
-	mii3UUUUU==
-X-CM-SenderInfo: pzr2x6tkl6x35dzhxuhorxvhhfrp/
+Subject: Re: [PATCH] VFS: namei: fix __start_dirop() kernel-doc warnings
+To: NeilBrown <neil@brown.name>
+Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>,
+ Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>
+References: <20251128002841.487891-1-rdunlap@infradead.org>
+ <176429230388.634289.16874615606207992509@noble.neil.brown.name>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <176429230388.634289.16874615606207992509@noble.neil.brown.name>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
 
-在 2025/11/28 9:17, Zizhi Wo 写道:
-> 
-> 
-> 在 2025/11/27 20:59, Will Deacon 写道:
->> On Wed, Nov 26, 2025 at 05:05:05PM +0800, Zizhi Wo wrote:
->>> We're running into the following issue on an ARM32 platform with the 
->>> linux
->>> 5.10 kernel:
->>>
->>> [<c0300b78>] (__dabt_svc) from [<c0529cb8>] 
->>> (link_path_walk.part.7+0x108/0x45c)
->>> [<c0529cb8>] (link_path_walk.part.7) from [<c052a948>] 
->>> (path_openat+0xc4/0x10ec)
->>> [<c052a948>] (path_openat) from [<c052cf90>] (do_filp_open+0x9c/0x114)
->>> [<c052cf90>] (do_filp_open) from [<c0511e4c>] 
->>> (do_sys_openat2+0x418/0x528)
->>> [<c0511e4c>] (do_sys_openat2) from [<c0513d98>] (do_sys_open+0x88/0xe4)
->>> [<c0513d98>] (do_sys_open) from [<c03000c0>] (ret_fast_syscall+0x0/0x58)
->>> ...
->>> [<c0315e34>] (unwind_backtrace) from [<c030f2b0>] (show_stack+0x20/0x24)
->>> [<c030f2b0>] (show_stack) from [<c14239f4>] (dump_stack+0xd8/0xf8)
->>> [<c14239f4>] (dump_stack) from [<c038d188>] (___might_sleep+0x19c/0x1e4)
->>> [<c038d188>] (___might_sleep) from [<c031b6fc>] 
->>> (do_page_fault+0x2f8/0x51c)
->>> [<c031b6fc>] (do_page_fault) from [<c031bb44>] (do_DataAbort+0x90/0x118)
->>> [<c031bb44>] (do_DataAbort) from [<c0300b78>] (__dabt_svc+0x58/0x80)
->>> ...
->>>
->>> During the execution of hash_name()->load_unaligned_zeropad(), a 
->>> potential
->>> memory access beyond the PAGE boundary may occur. For example, when the
->>> filename length is near the PAGE_SIZE boundary. This triggers a page 
->>> fault,
->>> which leads to a call to do_page_fault()->mmap_read_trylock(). If we 
->>> can't
->>> acquire the lock, we have to fall back to the mmap_read_lock() path, 
->>> which
->>> calls might_sleep(). This breaks RCU semantics because path lookup 
->>> occurs
->>> under an RCU read-side critical section. In linux-mainline, arm/arm64
->>> do_page_fault() still has this problem:
->>>
->>> lock_mm_and_find_vma->get_mmap_lock_carefully->mmap_read_lock_killable.
->>>
->>> And before commit bfcfaa77bdf0 ("vfs: use 'unsigned long' accesses for
->>> dcache name comparison and hashing"), hash_name accessed the name 
->>> byte by
->>> byte.
->>>
->>> To prevent load_unaligned_zeropad() from accessing beyond the valid 
->>> memory
->>> region, we would need to intercept such cases beforehand? But doing so
->>> would require replicating the internal logic of 
->>> load_unaligned_zeropad(),
->>> including handling endianness and constructing the correct value 
->>> manually.
->>> Given that load_unaligned_zeropad() is used in many places across the
->>> kernel, we currently haven't found a good solution to address this 
->>> cleanly.
->>>
->>> What would be the recommended way to handle this situation? Would
->>> appreciate any feedback and guidance from the community. Thanks!
+On 11/27/25 5:11 PM, NeilBrown wrote:
+> On Fri, 28 Nov 2025, Randy Dunlap wrote:
+>> Use the correct function name and add description for the @state
+>> parameter to avoid these kernel-doc warnings:
 >>
->> Does it help if you bodge the translation fault handler along the lines
->> of the untested diff below?
-> 
-> Thank you for the solution you provided. However, I seem to have
-> encountered a bit of a problem.
-> 
+>> Warning: fs/namei.c:2853 function parameter 'state' not described
+>>  in '__start_dirop'
+>> WARNING: fs/namei.c:2853 expecting prototype for start_dirop().
+>>  Prototype was for __start_dirop() instead
 >>
->> Will
+>> Fixes: ff7c4ea11a05 ("VFS: add start_creating_killable() and start_removing_killable()")
+>> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+>> ---
+>> Cc: NeilBrown <neil@brown.name>
+>> Cc: Christian Brauner <brauner@kernel.org>
+>> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+>> Cc: Jan Kara <jack@suse.cz>
+>> ---
+>>  fs/namei.c |    3 ++-
+>>  1 file changed, 2 insertions(+), 1 deletion(-)
 >>
->> --->8
+>> --- linux-next-20251127.orig/fs/namei.c
+>> +++ linux-next-20251127/fs/namei.c
+>> @@ -2836,10 +2836,11 @@ static int filename_parentat(int dfd, st
+>>  }
+>>  
+>>  /**
+>> - * start_dirop - begin a create or remove dirop, performing locking and lookup
+>> + * __start_dirop - begin a create or remove dirop, performing locking and lookup
+>>   * @parent:       the dentry of the parent in which the operation will occur
+>>   * @name:         a qstr holding the name within that parent
+>>   * @lookup_flags: intent and other lookup flags.
+>> + * @state:        target task state
+>>   *
+>>   * The lookup is performed and necessary locks are taken so that, on success,
+>>   * the returned dentry can be operated on safely.
 >>
->> diff --git a/arch/arm/mm/fault.c b/arch/arm/mm/fault.c
->> index bf1577216ffa..b3c81e448798 100644
->> --- a/arch/arm/mm/fault.c
->> +++ b/arch/arm/mm/fault.c
->> @@ -407,7 +407,7 @@ do_translation_fault(unsigned long addr, unsigned 
->> int fsr,
->>          if (addr < TASK_SIZE)
->>                  return do_page_fault(addr, fsr, regs);
->> -       if (user_mode(regs))
->> +       if (user_mode(regs) || fsr_fs(fsr) == FSR_FS_INVALID_PAGE)
->>                  goto bad_area;
 > 
-> 
-> 
-> I'm getting an "FSR_FS_INVALID_PAGE undeclared" error during
-> compilation...
-> 
-> In which kernel or FSR version was this macro or constant defined
+> Thanks - but I would rather the doc comment were moved down to be
+> immediately before start_dirop().
 
-Sorry, I didn't see this "#define FSR_FS_INVALID_PAGE". I'll try again
-right away.
+Sounds good.
 
-Please ignore my previous reply.
-
-> 
->>          index = pgd_index(addr);
->> diff --git a/arch/arm/mm/fault.h b/arch/arm/mm/fault.h
->> index 9ecc2097a87a..8fb26f85e361 100644
->> --- a/arch/arm/mm/fault.h
->> +++ b/arch/arm/mm/fault.h
->> @@ -12,6 +12,8 @@
->>   #define FSR_FS3_0              (15)
->>   #define FSR_FS5_0              (0x3f)
->> +#define FSR_FS_INVALID_PAGE    7
->> +
->>   #ifdef CONFIG_ARM_LPAE
->>   #define FSR_FS_AEA             17
->> diff --git a/arch/arm/mm/fsr-2level.c b/arch/arm/mm/fsr-2level.c
->> index f2be95197265..c7060da345df 100644
->> --- a/arch/arm/mm/fsr-2level.c
->> +++ b/arch/arm/mm/fsr-2level.c
->> @@ -11,7 +11,7 @@ static struct fsr_info fsr_info[] = {
->>          { do_bad,               SIGBUS,  0,             "external 
->> abort on linefetch"      },
->>          { do_translation_fault, SIGSEGV, SEGV_MAPERR,   "section 
->> translation fault"        },
->>          { do_bad,               SIGBUS,  0,             "external 
->> abort on linefetch"      },
->> -       { do_page_fault,        SIGSEGV, SEGV_MAPERR,   "page 
->> translation fault"           },
->> +       { do_translation_fault, SIGSEGV, SEGV_MAPERR,   "page 
->> translation fault"           },
->>          { do_bad,               SIGBUS,  0,             "external 
->> abort on non-linefetch"  },
->>          { do_bad,               SIGSEGV, SEGV_ACCERR,   "section 
->> domain fault"             },
->>          { do_bad,               SIGBUS,  0,             "external 
->> abort on non-linefetch"  },
->> diff --git a/arch/arm/mm/fsr-3level.c b/arch/arm/mm/fsr-3level.c
->> index d0ae2963656a..19df4af828bd 100644
->> --- a/arch/arm/mm/fsr-3level.c
->> +++ b/arch/arm/mm/fsr-3level.c
->> @@ -7,7 +7,7 @@ static struct fsr_info fsr_info[] = {
->>          { do_bad,               SIGBUS,  0,             "reserved 
->> translation fault"    },
->>          { do_translation_fault, SIGSEGV, SEGV_MAPERR,   "level 1 
->> translation fault"     },
->>          { do_translation_fault, SIGSEGV, SEGV_MAPERR,   "level 2 
->> translation fault"     },
->> -       { do_page_fault,        SIGSEGV, SEGV_MAPERR,   "level 3 
->> translation fault"     },
->> +       { do_translation_fault, SIGSEGV, SEGV_MAPERR,   "level 3 
->> translation fault"     },
->>          { do_bad,               SIGBUS,  0,             "reserved 
->> access flag fault"    },
->>          { do_bad,               SIGSEGV, SEGV_ACCERR,   "level 1 
->> access flag fault"     },
->>          { do_page_fault,        SIGSEGV, SEGV_ACCERR,   "level 2 
->> access flag fault"     },
->>
->>
-> 
-> By the way, I tried Al's solution, and this problem didn't reproduce.
-> 
-> Thanks,
-> Zizhi Wo
+> If we were to document __start_dirop (as well?) we would need to
+> actually say what @state is used for.
+-- 
+~Randy
 
 
