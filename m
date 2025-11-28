@@ -1,118 +1,165 @@
-Return-Path: <linux-fsdevel+bounces-70103-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70104-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA809C90A24
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 03:28:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 51BE0C90A75
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 03:49:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8729C34323B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 02:28:19 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id F1B2A34FF3A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 02:49:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5345276058;
-	Fri, 28 Nov 2025 02:28:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27C48258CE7;
+	Fri, 28 Nov 2025 02:49:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="v2N7Xi15"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="dmvdno8j"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from canpmsgout08.his.huawei.com (canpmsgout08.his.huawei.com [113.46.200.223])
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72A3523A98E;
-	Fri, 28 Nov 2025 02:28:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.223
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA3BC8287E
+	for <linux-fsdevel@vger.kernel.org>; Fri, 28 Nov 2025 02:49:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764296893; cv=none; b=p+ml22GO3iBhoZbdn6J/m+oqmrIAz/GxeJyM6XvJfy+I1dIVzLwjIT2u3nEoQrNOgBk4wyfUSWzk89Cu3RYeX0PIuEQ2z2rjC8xdyFBTd8FLiDsYVc0NZt7Y5NJspLVAon6GLR94VqkeKespwSCMAPobPngaKIMToZALSpY+n/U=
+	t=1764298144; cv=none; b=fqw0VIAfOznsJH5ciOo6vUFGkqedxfLajkSCmfhfDRdaAfiLwGEy3g95yZQKYS/TdFhRXGSl/EwL9pgwzN6ZLpea0GDFrk3EmAr6+vrRqouhRu8+QM5KhBggEuhBOEtOHdVqI9JjFC5v3O+4Rw9czcVwT4mmrLx99p4RMQxW+O8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764296893; c=relaxed/simple;
-	bh=Y7XVbG621436+M4XfTBVil+S0xNFf9wSJPZFaP+4b/g=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SprQe3Uia2N5Wdyw6dpo5cIiMa8eS3s5YsvU4TKdZcblxSC9+cgR3SSnh5Nx126lsphBaUfAzg8zO1GbeOEpJrJ+GW0yPk23HuVFnOnwCaPMIdo8dRzog4MW/J+k3oI36aqmgLXuJnGWz26cWV0WMeDPt1XgNDmB9LPl7u94Mro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=v2N7Xi15; arc=none smtp.client-ip=113.46.200.223
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=8t+SKLfB9YSz+ESvF8MmSt0kWBtO3/8g8KlI38flHHg=;
-	b=v2N7Xi15sXplM6/c4zwcXTdDZ2HeUyMB89bLjFelMFddlcr5SnQGmd1D8l3sxpZjoYTCwEAV4
-	CQO8Hj1I6+GqeRNUeZkUdg1otg8WO5cwKOrZNH7wZtZ8gYwtw0xSlwKkysFtHoT/nlHFrdflYL9
-	fso03TKP5dqdUWTiC1vO7+w=
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by canpmsgout08.his.huawei.com (SkyGuard) with ESMTPS id 4dHcc36LWhzmV79;
-	Fri, 28 Nov 2025 10:26:11 +0800 (CST)
-Received: from kwepemj100009.china.huawei.com (unknown [7.202.194.3])
-	by mail.maildlp.com (Postfix) with ESMTPS id 0145F1A016C;
-	Fri, 28 Nov 2025 10:28:01 +0800 (CST)
-Received: from DESKTOP-A37P9LK.huawei.com (10.67.109.17) by
- kwepemj100009.china.huawei.com (7.202.194.3) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 28 Nov 2025 10:27:59 +0800
-From: Xie Yuanbin <xieyuanbin1@huawei.com>
-To: <bigeasy@linutronix.de>
-CC: <akpm@linux-foundation.org>, <arnd@arndb.de>, <brauner@kernel.org>,
-	<david.laight@runbox.com>, <hch@lst.de>, <jack@suse.com>,
-	<kuninori.morimoto.gx@renesas.com>, <liaohua4@huawei.com>,
-	<lilinjie8@huawei.com>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-mm@kvack.org>, <linux@armlinux.org.uk>, <lorenzo.stoakes@oracle.com>,
-	<marc.zyngier@arm.com>, <nico@fluxnic.net>, <pangliyuan1@huawei.com>,
-	<pfalcato@suse.de>, <punitagrawal@gmail.com>, <rjw@rjwysocki.net>,
-	<rmk+kernel@armlinux.org.uk>, <rppt@kernel.org>, <tony@atomide.com>,
-	<vbabka@suse.cz>, <viro@zeniv.linux.org.uk>, <wangkefeng.wang@huawei.com>,
-	<will@kernel.org>, <wozizhi@huaweicloud.com>, <xieyuanbin1@huawei.com>
-Subject: Re: [RFC PATCH v2 1/2] ARM/mm/fault: always goto bad_area when handling with page faults of kernel address
-Date: Fri, 28 Nov 2025 10:27:56 +0800
-Message-ID: <20251128022756.9973-1-xieyuanbin1@huawei.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251127145127.qUXs_UAE@linutronix.de>
-References: <20251127145127.qUXs_UAE@linutronix.de>
+	s=arc-20240116; t=1764298144; c=relaxed/simple;
+	bh=lNRTHU/Ua4C1NfgWsJfYOVAwl/ZkkIHkLBtxF+smni4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=ZnXY29//ENi5vNYJTwPKM3GYSYunmafsGNywkHZXcTTALa9NT+S5gplIbrtg48kzx/KZV08bTHXcVLlmx4JdT+LQFae4kW2f3eOSBJtOoyShigv60PyIM/ll3E0SR9UJB3gplozqtGfcvosB7OlLfmtn/mFBOCPo1vLC/JVZvhc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=dmvdno8j; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20251128024859epoutp013cc8200e01567dc5f1e975a592b1f537~8C8998jCi0884008840epoutp01Q
+	for <linux-fsdevel@vger.kernel.org>; Fri, 28 Nov 2025 02:48:59 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20251128024859epoutp013cc8200e01567dc5f1e975a592b1f537~8C8998jCi0884008840epoutp01Q
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1764298139;
+	bh=eXe2ZqNy29W14N4F67ywIdgm6iniQKQRV2GI2taZ0pY=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=dmvdno8j6uQxFedm/ExtO18ZC8iM08bToiD/n90qTFnITnc4ADkJkZnXncx0/yT/k
+	 bTM2KVsCihMS362/GpswzYBNZKTBCWpXuj+/KhM8IbFXM3l3uSIb87csJwEuCKuhoR
+	 o6YV6NVeeT0F66d3K82nF2zYrsdrZwlMOnQeV3nk=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas1p2.samsung.com (KnoxPortal) with ESMTPS id
+	20251128024859epcas1p2043f61cf7a67be5130c3c7c4d95ed135~8C89TAx4k0953109531epcas1p2c;
+	Fri, 28 Nov 2025 02:48:59 +0000 (GMT)
+Received: from epcas1p4.samsung.com (unknown [182.195.38.194]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4dHd6L6C5qz2SSKd; Fri, 28 Nov
+	2025 02:48:58 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20251128024858epcas1p1568808e628dde834aa5c3281bebc87ce~8C88puJY12239722397epcas1p16;
+	Fri, 28 Nov 2025 02:48:58 +0000 (GMT)
+Received: from [172.25.92.0] (unknown [10.246.9.208]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20251128024858epsmtip1b5e289814346a020f255a74a531c0987~8C88hdN541617716177epsmtip1V;
+	Fri, 28 Nov 2025 02:48:58 +0000 (GMT)
+Message-ID: <5db1b061-56ef-4013-9d1e-aac04175aa8d@samsung.com>
+Date: Fri, 28 Nov 2025 11:48:58 +0900
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
- kwepemj100009.china.huawei.com (7.202.194.3)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 7/7] exfat: get mutil-clusters in exfat_get_block
+To: Chi Zhiling <chizhiling@163.com>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner
+	<brauner@kernel.org>, Jan Kara <jack@suse.cz>, Matthew Wilcox
+	<willy@infradead.org>, Namjae Jeon <linkinjeon@kernel.org>, Yuezhang Mo
+	<yuezhang.mo@sony.com>, Chi Zhiling <chizhiling@kylinos.cn>, Sungjong Seo
+	<sj1557.seo@samsung.com>
+Content-Language: en-US
+From: Sungjong Seo <sj1557.seo@samsung.com>
+In-Reply-To: <20251118082208.1034186-8-chizhiling@163.com>
+Content-Transfer-Encoding: 7bit
+X-CMS-MailID: 20251128024858epcas1p1568808e628dde834aa5c3281bebc87ce
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+X-CPGSPASS: Y
+cpgsPolicy: CPGSC10-711,N
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20251118082625epcas1p44374f21201c10f1bb9084d2280e64e6d
+References: <20251118082208.1034186-1-chizhiling@163.com>
+	<CGME20251118082625epcas1p44374f21201c10f1bb9084d2280e64e6d@epcas1p4.samsung.com>
+	<20251118082208.1034186-8-chizhiling@163.com>
 
-On Thu, 27 Nov 2025 15:51:27 +0100, Sebastian Andrzej Siewior wrote:
-> What is with the patch I sent wrong?
 
-Hi, Sebastian Andrzej Siewior!
+Hi, Chi,
+On 25. 11. 18. 17:22, Chi Zhiling wrote:
+> From: Chi Zhiling <chizhiling@kylinos.cn>
+> 
+> mpage uses the get_block of the file system to obtain the mapping of a
+> file or allocate blocks for writes. Currently exfat only supports
+> obtaining one cluster in each get_block call.
+> 
+> Since exfat_count_contig_clusters can obtain multiple consecutive clusters,
+> it can be used to improve exfat_get_block when page size is larger than
+> cluster size.
 
-There is nothing wrong with your patches, but when you submitted
-your patches, this bug has not been reportted:
-Link: https://lore.kernel.org/20251126090505.3057219-1-wozizhi@huaweicloud.com
+I think reusing buffer_head is a good approach!
+However, for obtaining multiple clusters, it would be better to handle
+them in exfat_map_cluster.
 
-Your patches fixed the missing mitigation, but the aforementioned bug
-still exists. I think there might be a better solution that can fix both
-bugs at the same time.
+> 
+> Signed-off-by: Chi Zhiling <chizhiling@kylinos.cn>
+> ---
+>  fs/exfat/inode.c | 14 +++++++++++++-
+>  1 file changed, 13 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/exfat/inode.c b/fs/exfat/inode.c
+> index f9501c3a3666..256ba2af34eb 100644
+> --- a/fs/exfat/inode.c
+> +++ b/fs/exfat/inode.c
+> @@ -264,13 +264,14 @@ static int exfat_map_cluster(struct inode *inode, unsigned int clu_offset,
+>  static int exfat_get_block(struct inode *inode, sector_t iblock,
+>  		struct buffer_head *bh_result, int create)
+>  {
+> +	struct exfat_chain chain;
+>  	struct exfat_inode_info *ei = EXFAT_I(inode);
+>  	struct super_block *sb = inode->i_sb;
+>  	struct exfat_sb_info *sbi = EXFAT_SB(sb);
+>  	unsigned long max_blocks = bh_result->b_size >> inode->i_blkbits;
+>  	int err = 0;
+>  	unsigned long mapped_blocks = 0;
+> -	unsigned int cluster, sec_offset;
+> +	unsigned int cluster, sec_offset, count;
+>  	sector_t last_block;
+>  	sector_t phys = 0;
+>  	sector_t valid_blks;
+> @@ -301,6 +302,17 @@ static int exfat_get_block(struct inode *inode, sector_t iblock,
+>  
+>  	phys = exfat_cluster_to_sector(sbi, cluster) + sec_offset;
+>  	mapped_blocks = sbi->sect_per_clus - sec_offset;
+> +
+> +	if (max_blocks > mapped_blocks && !create) {
+> +		chain.dir = cluster;
+> +		chain.size = (max_blocks >> sbi->sect_per_clus_bits) + 1;
 
-We had some discussions about this bug:
-Link: https://lore.kernel.org/CAHk-=wh1Wfwt9OFB4AfBbjyeu4JVZuSWQ4A8OoT3W6x9btddfw@mail.gmail.com
-Link: https://lore.kernel.org/20251126192640.GD3538@ZenIV
-Link: https://lore.kernel.org/aSeNtFxD1WRjFaiR@shell.armlinux.org.uk
+There seems to be an issue where the code sets chain.size to be one greater than the actual cluster count.
 
-According to the discussion, it might be better to handle the kernel
-address fault directly, just like what x86 does, instead of finding VMA.
-Link: https://elixir.bootlin.com/linux/v6.18-rc7/source/arch/x86/mm/fault.c#L1473
-```c
-	if (unlikely(fault_in_kernel_space(address)))
-		do_kern_addr_fault(regs, error_code, address);
-	else
-		do_user_addr_fault(regs, error_code, address);
-```
+For example, assuming a 16KiB page, 512B sector, and 4KiB cluster,
+for a 16KiB file, chain.size becomes 5 instead of 4.
+Is this the intended behavior?
 
-It seems your patches hasn't been merged into the linux-next branch yet.
-This patch is based on linux-next, so it doesn't include your
-modifications. This patch might conflict with your patch:
-Link: https://lore.kernel.org/20251110145555.2555055-2-bigeasy@linutronix.de
-so I'd like to discuss it with you.
+> +		chain.flags = ei->flags;
+> +
+> +		err = exfat_count_contig_clusters(sb, &chain, &count);
+> +		if (err)
+> +			return err;
+> +		max_blocks = (count << sbi->sect_per_clus_bits) - sec_offset;
 
-Thanks!
+You already said mapped_blocks is correct.
 
-Xie Yuanbin
+> +	}
+>  	max_blocks = min(mapped_blocks, max_blocks);
+>  
+>  	map_bh(bh_result, sb, phys);
+
 
