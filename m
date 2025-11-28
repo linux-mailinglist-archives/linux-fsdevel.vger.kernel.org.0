@@ -1,235 +1,137 @@
-Return-Path: <linux-fsdevel+bounces-70107-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70108-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F50DC90CBA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 04:46:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C514C90CD8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 04:52:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 172633A8BA9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 03:46:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A78933A904A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 03:52:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05914274652;
-	Fri, 28 Nov 2025 03:46:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDF252D3220;
+	Fri, 28 Nov 2025 03:52:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jhE7ghey"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C92A91D8E01;
-	Fri, 28 Nov 2025 03:45:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AC1E270552
+	for <linux-fsdevel@vger.kernel.org>; Fri, 28 Nov 2025 03:52:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764301559; cv=none; b=h+7nJRA1fqXZKTz1cAs4xx7ZeR4dL6GWQoqPOjAyJ/X4k0WUbDCM0nX5bId5xTtyXu2dWEai4Hg5S/BJtxR3qPmme51da9lmjigKA9ITcfWBARsayB5STag+w4JVZKppwi2CMFMNHIq4rgq10z4t+knzD2oY/+t5c3NrlAKU+4g=
+	t=1764301932; cv=none; b=D44d7qeBNjAwyLF1VXpKPZmHMTafA3gQMeTX3v6RN+yQVJn2Kx6nzcqpTPwAsQ4zCwpatFwnlzkvZAggTN/9H8qpoeJGIZPRYtGISp2w3Tz8U6or8NzkFVLzlW+fm3X/146CItcnHtv45NqnJTck05P+sDcdQ35HrqdBBWn2+F4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764301559; c=relaxed/simple;
-	bh=FZUuv7H6pce1VCr95JK0HcPzQSX2WJpzLVjAhxC4E2c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ACaYbC2cEjUF5v7vMUJ8Je6JLNfn6M7kGx3lbIhBygWnXcRUy4ctbPUQmN6eX8h/0vHn0dNUwR4nVBI0gazhQ8RXtOtRbupnzrCcxwx/LdEjnPeVPtDSLUdhgD/pC3RJPs/6rstTCXQPr8LMgaQzJfseM0wKFoQjaXy47KM/mVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4dHfLy3vy4zYQtLW;
-	Fri, 28 Nov 2025 11:44:58 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 2BC411A07BB;
-	Fri, 28 Nov 2025 11:45:53 +0800 (CST)
-Received: from [10.174.178.152] (unknown [10.174.178.152])
-	by APP2 (Coremail) with SMTP id Syh0CgB31HrvGilp3eEUCQ--.36832S3;
-	Fri, 28 Nov 2025 11:45:52 +0800 (CST)
-Message-ID: <2713db6e-ff43-4583-b328-412e38f3d7bf@huaweicloud.com>
-Date: Fri, 28 Nov 2025 11:45:51 +0800
+	s=arc-20240116; t=1764301932; c=relaxed/simple;
+	bh=HCOdt9Qo99hBgbc0ASsfVOj8uWEFmoT9+DK8BnZ2g1c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pDSAQ59YfTwDCviUL6BCMLqh78ZMmTmo3zj0MnDzWA4j3Ey1QzpPKhCuQb62EiHDjvEp9SnT3snCpPhCgNm8ctrF8QF3j1+vjbaV053clyRMVgf+6lrlZuVYsHGNDwOYmjs/z9/76AVbqo+t6KJdPkPoUqUWUvmtuEoCF7sPJ/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jhE7ghey; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-7b8e49d8b35so1646339b3a.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Nov 2025 19:52:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1764301929; x=1764906729; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3CltxbTuE1mCSM75e6GOL0VL8ptzQXyj6/2m6IZdHiE=;
+        b=jhE7ghey85A4AZ8xSO4EJ3zzL4Y/7QnXmp63NlWVA5s5M0u31rJLBfHKusqBnrJ0u0
+         fYKYgBIhbr2jz9IwbthdfR4NGoFDLw/s/tHnR2WMyS3YQ92HrV3cRMgKhHxW1f+WAvDg
+         HX+s03PXVeCr3jKVehq5aFYzh4bQObcrY8Uez0TX6J1zzMAR4+pA6Ch7qySklaWqW9kd
+         XcK/k+zLVCs6W6dmrc+CBp+WMDlw9wzWzUrDJ3vdf/l+kNFLO+EwnytstlQp1TlPW7oS
+         TgEfkqB3j8Quhg/AiGpf0GfGbeW5foP/7ResqO6eir9YZroqJFfdhJEpkp8Otzs7iwSX
+         o+ww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764301929; x=1764906729;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3CltxbTuE1mCSM75e6GOL0VL8ptzQXyj6/2m6IZdHiE=;
+        b=EQARI5sM5J9/sQcxgAfp615KIzN6uDfzlmrdCRJtPEU1rxIi7DKVpqElGsbYaif6m4
+         eOrCblLUwYzvF6qdRjCzLOEDkhqIFHcU6DTIs0gY9AajGmzitjb91gZiZELyC4xy0hTA
+         9q4bDsB2I49GDRvgwpUjxLJ/2nqKvPkz6rvJis4EuAN2QJboICb6/vtmr2Oz4OPeIOZz
+         1mBndut2k9lXP79Rsjk8yZXNttcK/CBS7pLUxPK/squUkIJHSik5CLsIi3stG6S0vrUE
+         VFewq7fQLozNZHuxBmxyVO9IanAeCbfJYC/0Nq45Ph+WUHCvTuH0jbFZ3B7taN9PPSSA
+         LXHw==
+X-Gm-Message-State: AOJu0Yxa5X00yJQz6tF/SD73UND6D0o21944VmA34QAHfnyiZquTfdCV
+	KP2JoJo5H81Ty+ohl9iTyXH7YnLC+jiYLhwsIYlDEmRyvrZw+4xC/3gI
+X-Gm-Gg: ASbGncv1Xudqmm4muJtEOOZjTWLXJLZpwlTvLIu/dEBal11jKcTatEu+azRnSmmPO/I
+	lwCwpVWvtKDTbup/WpCMNwAHYcU9tUOA/Fz5qXW1uXqTxai5vHnaGYECU1ZGo360LeKUl/438kS
+	WcU+cDy/nx1ShLbrZ5lWzGCSL+xelyMb9SiNY/13lEB7Un6ShOu8ogp2wl+81B2SLeUySmzR+ds
+	36uiNwVKU62Abib53PK+NVUYbCINapkBUFV8ZbxW231guSEJhDUXPCUyU7rADtoBzJYuyf1lhQV
+	7nY/PdRip3gvheigFwaWCMj6Q3km9mPsJGVk89/GGYbzV9oZ1AfywA2kBSwBGsWwkwXEjM0Bgq6
+	oKP7BHNQ2Pl8R/2v3H4l7riA5LVazs6GQi3UV07BsaG9mbbDrtt0PJG6LzcwexKuBLIlUHLrOL2
+	MbixFPbFb6SuMeofsWmOa7qb3QPBdEVpCAbZU=
+X-Google-Smtp-Source: AGHT+IGOZUJSqSaUAsFfUtC3iidI2uyYilieUl+dVyyfoh7INnYHEIe9kYoy7b8hsG9r/zdplWPNIQ==
+X-Received: by 2002:a05:6a00:12e1:b0:7ba:2efc:7b3f with SMTP id d2e1a72fcca58-7c58beb6412mr24314905b3a.5.1764301929136;
+        Thu, 27 Nov 2025 19:52:09 -0800 (PST)
+Received: from deepanshu-kernel-hacker.. ([2405:201:682f:389d:fa57:54bd:ea3b:1d14])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7d15fd01c3csm3290008b3a.69.2025.11.27.19.51.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Nov 2025 19:52:08 -0800 (PST)
+From: Deepanshu Kartikey <kartikey406@gmail.com>
+To: viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Deepanshu Kartikey <kartikey406@gmail.com>,
+	syzbot+94048264da5715c251f9@syzkaller.appspotmail.com
+Subject: [PATCH] fs/namespace: fix mntput of ERR_PTR in fsmount error path
+Date: Fri, 28 Nov 2025 09:21:48 +0530
+Message-ID: <20251128035149.392402-1-kartikey406@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 03/13] ext4: don't zero the entire extent if
- EXT4_EXT_DATA_PARTIAL_VALID1
-To: Jan Kara <jack@suse.cz>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
- yi.zhang@huawei.com, yizhang089@gmail.com, libaokun1@huawei.com,
- yangerkun@huawei.com
-References: <20251121060811.1685783-1-yi.zhang@huaweicloud.com>
- <20251121060811.1685783-4-yi.zhang@huaweicloud.com>
- <yro4hwpttmy6e2zspvwjfdbpej6qvhlqjvlr5kp3nwffqgcnfd@z6qual55zhfq>
-Content-Language: en-US
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-In-Reply-To: <yro4hwpttmy6e2zspvwjfdbpej6qvhlqjvlr5kp3nwffqgcnfd@z6qual55zhfq>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:Syh0CgB31HrvGilp3eEUCQ--.36832S3
-X-Coremail-Antispam: 1UD129KBjvJXoW3Jw4rtw4kJr47uw18WF4DJwb_yoWxJFWrpr
-	4S93W8Kr4Dt34v934xZF4qvrn09w1rWrW7CryrGrn0ya4DWry2gFWfta1YqFyFgr48ZF1j
-	vr40yr98G3Z8uaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
-	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
-	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1
-	7KsUUUUUU==
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Transfer-Encoding: 8bit
 
-On 11/27/2025 9:41 PM, Jan Kara wrote:
-> On Fri 21-11-25 14:08:01, Zhang Yi wrote:
->> From: Zhang Yi <yi.zhang@huawei.com>
->>
->> When allocating initialized blocks from a large unwritten extent, or
->> when splitting an unwritten extent during end I/O and converting it to
->> initialized, there is currently a potential issue of stale data if the
->> extent needs to be split in the middle.
->>
->>        0  A      B  N
->>        [UUUUUUUUUUUU]    U: unwritten extent
->>        [--DDDDDDDD--]    D: valid data
->>           |<-  ->| ----> this range needs to be initialized
->>
->> ext4_split_extent() first try to split this extent at B with
->> EXT4_EXT_DATA_ENTIRE_VALID1 and EXT4_EXT_MAY_ZEROOUT flag set, but
->> ext4_split_extent_at() failed to split this extent due to temporary lack
->> of space. It zeroout B to N and mark the entire extent from 0 to N
->> as written.
->>
->>        0  A      B  N
->>        [WWWWWWWWWWWW]    W: written extent
->>        [SSDDDDDDDDZZ]    Z: zeroed, S: stale data
->>
->> ext4_split_extent() then try to split this extent at A with
->> EXT4_EXT_DATA_VALID2 flag set. This time, it split successfully and left
->> a stale written extent from 0 to A.
->>
->>        0  A      B   N
->>        [WW|WWWWWWWWWW]
->>        [SS|DDDDDDDDZZ]
->>
->> Fix this by pass EXT4_EXT_DATA_PARTIAL_VALID1 to ext4_split_extent_at()
->> when splitting at B, don't convert the entire extent to written and left
->> it as unwritten after zeroing out B to N. The remaining work is just
->> like the standard two-part split. ext4_split_extent() will pass the
->> EXT4_EXT_DATA_VALID2 flag when it calls ext4_split_extent_at() for the
->> second time, allowing it to properly handle the split. If the split is
->> successful, it will keep extent from 0 to A as unwritten.
->>
->> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
-> 
-> Good catch on the data exposure issue! First I'd like to discuss whether
-> there isn't a way to fix these problems in a way that doesn't make the
-> already complex code even more complex. My observation is that
-> EXT4_EXT_MAY_ZEROOUT is only set in ext4_ext_convert_to_initialized() and
-> in ext4_split_convert_extents() which both call ext4_split_extent(). The
-> actual extent zeroing happens in ext4_split_extent_at() and in
-> ext4_ext_convert_to_initialized().
+When vfs_create_mount() fails and returns an error pointer, the
+__free(path_put) cleanup attribute causes path_put() to be called
+on the error pointer, which then calls mntput() on an invalid
+pointer value (e.g., -ENOENT = 0xfffffffffffffff4).
 
-Yes.
+This results in a general protection fault in mntput() when KASAN
+tries to check the shadow memory for the near-null address computed
+from the error pointer offset.
 
-> I think the code would be much clearer
-> if we just centralized all the zeroing in ext4_split_extent(). At that
-> place the situation is actually pretty simple:
+Fix this by clearing newmount.mnt to NULL after extracting the error
+code, preventing the path_put cleanup from operating on the error
+pointer.
 
-Thank you for your suggestion!
+Reported-by: syzbot+94048264da5715c251f9@syzkaller.appspotmail.com
+Tested-by: syzbot+94048264da5715c251f9@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=94048264da5715c251f9
+Fixes: 67c68da01266 ("namespace: convert fsmount() to FD_PREPARE()")
+Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
+---
+ fs/namespace.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-> 
-> 1) 'ex' is unwritten, 'map' describes part with already written data which
-> we want to convert to initialized (generally IO completion situation) => we
-> can zero out boundaries if they are smaller than max_zeroout or if extent
-> split fails.
-> 
-
-Yes. Agree.
-
-> 2) 'ex' is unwritten, 'map' describes part we are preparing for write (IO
-> submission) => the split is opportunistic here, if we cannot split due to
-> ENOSPC, just go on and deal with it at IO completion time. No zeroing
-> needed.
-
-Yes. At the same time, if we can indeed move the entire split unwritten
-operation to be handled after I/O completion in the future, it would also be
-more convenient to remove this segment of logic.
-
-> 
-> 3) 'ex' is written, 'map' describes part that should be converted to
-> unwritten => we can zero out the 'map' part if smaller than max_zeroout or
-> if extent split fails.
-
-This makes sense to me! This case it originates from the fallocate with Zero
-Range operation. Currently, the zero-out operation will not be performed if
-the split operation fails, instead, it immediately returns a failure.
-
-I agree with you that we can do zero out if the 'map' part smaller than
-max_zeroout instead of split extents. However, if the 'map' part is bigger
-than max_zeroout and if extent split fails, I don't think zero out is a good
-idea, Because it might cause zero-range calls to take a long time to execute.
-Although fallocate doesn't explicitly specify how ZERO_RANGE should be
-implemented, users expect it to be very fast. Therefore, in this case, if the
-split fails, it would be better to simply return an error, leave things as
-they are. What do you think?
-
-> 
-> This should all result in a relatively straightforward code where we can
-> distinguish the three cases based on 'ex' and passed flags, we should be
-> able to drop the 'EXT4_EXT_DATA_VALID*' flags and logic (possibly we could
-> drop the 'split_flag' argument of ext4_split_extent() altogether), and fix
-> the data exposure issues at the same time. What do you think? Am I missing
-> some case?
-> 
-
-Indeed, I think the overall solution is a nice cleanup idea. :-)
-But this would involve a significant amount of refactoring and logical changes.
-Could we first merge the current set of patches(it could be more easier to
-backport to the early LTS version), and then I can start a new series to
-address this optimization?
-
-Cheers,
-Yi.
-
-> 								Honza
-> 
->> ---
->>  fs/ext4/extents.c | 11 ++++++++++-
->>  1 file changed, 10 insertions(+), 1 deletion(-)
->>
->> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
->> index f7aa497e5d6c..cafe66cb562f 100644
->> --- a/fs/ext4/extents.c
->> +++ b/fs/ext4/extents.c
->> @@ -3294,6 +3294,13 @@ static struct ext4_ext_path *ext4_split_extent_at(handle_t *handle,
->>  		err = ext4_ext_zeroout(inode, &zero_ex);
->>  		if (err)
->>  			goto fix_extent_len;
->> +		/*
->> +		 * The first half contains partially valid data, the splitting
->> +		 * of this extent has not been completed, fix extent length
->> +		 * and ext4_split_extent() split will the first half again.
->> +		 */
->> +		if (split_flag & EXT4_EXT_DATA_PARTIAL_VALID1)
->> +			goto fix_extent_len;
->>  
->>  		/* update the extent length and mark as initialized */
->>  		ex->ee_len = cpu_to_le16(ee_len);
->> @@ -3364,7 +3371,9 @@ static struct ext4_ext_path *ext4_split_extent(handle_t *handle,
->>  			split_flag1 |= EXT4_EXT_MARK_UNWRIT1 |
->>  				       EXT4_EXT_MARK_UNWRIT2;
->>  		if (split_flag & EXT4_EXT_DATA_VALID2)
->> -			split_flag1 |= EXT4_EXT_DATA_ENTIRE_VALID1;
->> +			split_flag1 |= map->m_lblk > ee_block ?
->> +				       EXT4_EXT_DATA_PARTIAL_VALID1 :
->> +				       EXT4_EXT_DATA_ENTIRE_VALID1;
->>  		path = ext4_split_extent_at(handle, inode, path,
->>  				map->m_lblk + map->m_len, split_flag1, flags1);
->>  		if (IS_ERR(path))
->> -- 
->> 2.46.1
->>
+diff --git a/fs/namespace.c b/fs/namespace.c
+index e5240df614de..236482fd503f 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -4343,8 +4343,11 @@ SYSCALL_DEFINE3(fsmount, int, fs_fd, unsigned int, flags,
+ 		warn_mandlock();
+ 
+ 	newmount.mnt = vfs_create_mount(fc);
+-	if (IS_ERR(newmount.mnt))
+-		return PTR_ERR(newmount.mnt);
++	if (IS_ERR(newmount.mnt)) {
++		ret = PTR_ERR(newmount.mnt);
++		newmount.mnt = NULL;
++		return ret;
++	}
+ 	newmount.dentry = dget(fc->root);
+ 	newmount.mnt->mnt_flags = mnt_flags;
+ 
+-- 
+2.43.0
 
 
