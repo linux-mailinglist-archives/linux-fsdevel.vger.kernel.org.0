@@ -1,99 +1,104 @@
-Return-Path: <linux-fsdevel+bounces-70088-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70089-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2115C9055B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 00:19:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30E3AC90632
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 01:08:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1B0C04E0F46
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Nov 2025 23:19:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B101D3A9652
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 00:08:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12BED31771B;
-	Thu, 27 Nov 2025 23:19:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32D3BA937;
+	Fri, 28 Nov 2025 00:08:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L8usZ8I9"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BKY8WmcH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EB1F2E2286
-	for <linux-fsdevel@vger.kernel.org>; Thu, 27 Nov 2025 23:19:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04DBD191
+	for <linux-fsdevel@vger.kernel.org>; Fri, 28 Nov 2025 00:08:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764285563; cv=none; b=ruzzWCSQ3cFsVt5KG+tYy8SwQP5yYLl0qQqnl6pDljQu0Sclh4Q+YNVzawcoD4aMj3cuPZUwPm3iVwH0ZVky7vAxiVXR8NC5VjDab0S3kw5EsTAsgydj7CinG1qDb5Xesf9gayTj2Ry0x0IlEqd0MCExtRMXtNc5wKZpqf7DmYQ=
+	t=1764288512; cv=none; b=bLPbc8ke+VQyHjDmIPUhXZ3EcQzM2fO/o41O6LKPxbRlzIF6EMsz5rGGzOq/was1iCfs349CyoDFYdffzCP0cvIEgXjmVm9OuqFZElkhbO6ST/UM0QoJZyYb9nOPIqaMw25hQwjWWwkCj39o0ZvZrGNexyoOJin3w470SlZJ6sk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764285563; c=relaxed/simple;
-	bh=2enAuMm6I7L7TJxKqakslwb8Rmxo/sfhmljwNTTXZQ4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=F6yHjhvrulHWJAn/o94TGd3bh1/EwTRJ6pRfmfu/PSD3CJB5U0W/VBTTlCgfHlyW+oLmWJ/huqy4BlUzZMjEo9s/OmOtAZmWD/LiJk8zxikSdhxq3Ru2JLRQzjkEM4JTfZcl76owHMXafNHae4hiEi8eIm2YQ830BtQNDvGc/3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L8usZ8I9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F074FC116D0
-	for <linux-fsdevel@vger.kernel.org>; Thu, 27 Nov 2025 23:19:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764285563;
-	bh=2enAuMm6I7L7TJxKqakslwb8Rmxo/sfhmljwNTTXZQ4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=L8usZ8I9sgRq9NOpmxUo/OJD/QXqPhDQx4KEtAmMWVq89nKJcQfGF8m/z36oCozSU
-	 OeTCOMTQx+I0xXf1KCdFhiqFo/UCRiX/AJHdbjBDo5E1Z72ZAn3uGFR776QTuwLpSK
-	 zkeW+43AwhkucX/NAwF7w8mIJuTSaSupCarfFoX0tz0HWlLq7lereIcY3DsX7hN3/D
-	 numtgNk77pePD8RCaii9H5nMMUgq4oCPHhyrXfiggyiAosd8A/Q7qnnydEsEiBXuF8
-	 sr7JQlYJrh83+iLDiLpXHcY59vn+rH/tVPaLxEpQaayiU7dpCU0RZ0Y+N6pci2DyMV
-	 Boydkp0tipYtA==
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-64320b9bb4bso2551942a12.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Nov 2025 15:19:22 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUDW2FOmM/8WCLOkLuhgdm4sAffiH1+dOAieySRlUpXwVFkeeYqF/b/h+pYazc8Fs3GU6J5WqdN8HECe4Wb@vger.kernel.org
-X-Gm-Message-State: AOJu0YziCFwAWkFBma9nF+0hivSCLQFN/TFG+I5qO4vzjDmSemQK5N3H
-	so3B1ETj26AczxJAK9UKiKAsO9KJZm2T0Ql+U3omaDIb7df5aSQLO0Hbhoner1fdwmDlYfh2WoI
-	TJb12D67NmHXo52tlM3Am2MB/cLg9vF8=
-X-Google-Smtp-Source: AGHT+IFIY1v0PfFQdzXB0Uvscm4hO3G0BmJgDReLkKeFDLP9ml57/+0YuHr/daJoDoLBbu4LHJzN1lczA3Mlis8MW2Q=
-X-Received: by 2002:aa7:d4ce:0:b0:640:931e:ccac with SMTP id
- 4fb4d7f45d1cf-64539658323mr20243768a12.7.1764285561563; Thu, 27 Nov 2025
- 15:19:21 -0800 (PST)
+	s=arc-20240116; t=1764288512; c=relaxed/simple;
+	bh=xRHkLL23BIyz6Zqf2D2YJUkON/oSf/omHD5jcyjrZQg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=W6DAB6O4CgYOBcEJpGpbbY/GcP1lNgv/RtRVnOqphTLjgpDKK8BRVrUWB+HL7y3qhstQ9E6mXNKKQPVkzXlqvwrDZ6Tx/7rqqny3cEBvm3YSpv+27Vw6wpO1J++m4+UcIAhY0u7BxErlJREQVoeGd3dN6zJu3lcXlXWq4KalI0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=BKY8WmcH; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=TKAhL9+XJimsYDFdfqhDeTexdoWJe+uHZuM8GE2rOTQ=; b=BKY8WmcHH3XJsZe9Ve/6VSZ+B0
+	xdsszozgUyDssD0TMqpkTzmiZKqq73K9pwm4keJ1s6zWi2lZr60oQ8J73r/oJF9xMdTyliImXX/L+
+	v2/bU0lHaLzAGhSwGAyEUyhVNuuCb4tGuk4egUTh/ovJPP78d50FL3fHSYTGRTGIQljsKsl+IUjId
+	WxOgEQJa8hjbTK81dmOX6mgcZSRtHJEKXbhl7QeawVb/ZLZko8f/mfEy6hR9o3CIYTiIWXkeFm/YP
+	MaE0by9HX8rdvdy43HEWyrkDuWMVIUaJLlxU7ICZvXSZGXswpnDPors7rv2yxw+ITMbSFj3KeQQkb
+	d71H3JJQ==;
+Received: from [50.53.43.113] (helo=bombadil.infradead.org)
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vOm2F-0000000HKVp-1RoG;
+	Fri, 28 Nov 2025 00:08:27 +0000
+From: Randy Dunlap <rdunlap@infradead.org>
+To: linux-fsdevel@vger.kernel.org
+Cc: Randy Dunlap <rdunlap@infradead.org>,
+	Jeff Layton <jlayton@kernel.org>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Alexander Aring <alex.aring@gmail.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>
+Subject: [PATCH] filelock: __fcntl_getlease: fix kernel-doc warnings
+Date: Thu, 27 Nov 2025 16:08:26 -0800
+Message-ID: <20251128000826.457120-1-rdunlap@infradead.org>
+X-Mailer: git-send-email 2.52.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251127045944.26009-1-linkinjeon@kernel.org> <CAOQ4uxhfxeUJnatFJxuXgSdqkMykOw+q7KZTpWXb8K2tNZCPGg@mail.gmail.com>
- <CAKYAXd98388-=qOwa++aNuggKrJbOf24BMQZrvm6Gnjp_7qOTQ@mail.gmail.com> <aShnFRVYMJBnh4OM@casper.infradead.org>
-In-Reply-To: <aShnFRVYMJBnh4OM@casper.infradead.org>
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Fri, 28 Nov 2025 08:19:09 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd8q=TLxOZi5qB8Xinq+-ErtPwwF13HOsw2JA4P-sx6kNw@mail.gmail.com>
-X-Gm-Features: AWmQ_bkjOpad125o09B0SU2QRXEjGVyjhCIBAFXI5Hf9C1HLal8aqDqjBNhmZ5A
-Message-ID: <CAKYAXd8q=TLxOZi5qB8Xinq+-ErtPwwF13HOsw2JA4P-sx6kNw@mail.gmail.com>
-Subject: Re: [PATCH v2 00/11] ntfsplus: ntfs filesystem remake
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Amir Goldstein <amir73il@gmail.com>, viro@zeniv.linux.org.uk, brauner@kernel.org, 
-	hch@infradead.org, hch@lst.de, tytso@mit.edu, jack@suse.cz, djwong@kernel.org, 
-	josef@toxicpanda.com, sandeen@sandeen.net, rgoldwyn@suse.com, 
-	xiang@kernel.org, dsterba@suse.com, pali@kernel.org, ebiggers@kernel.org, 
-	neil@brown.name, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	iamjoonsoo.kim@lge.com, cheol.lee@lge.com, jay.sim@lge.com, gunho.lee@lge.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Nov 27, 2025 at 11:58=E2=80=AFPM Matthew Wilcox <willy@infradead.or=
-g> wrote:
->
-> On Thu, Nov 27, 2025 at 09:17:54PM +0900, Namjae Jeon wrote:
-> > > Why is the rebranding to ntfsplus useful then?
-> > >
-> > > I can understand that you want a new name for a new ntfsprogs-plus pr=
-oject
-> > > which is a fork of ntfs-3g, but I don't think that the new name for t=
-he kernel
-> > > driver is useful or welcome.
-> > Right, I wanted to rebrand ntfsprogs-plus and ntfsplus into a paired
-> > set of names. Also, ntfs3 was already used as an alias for ntfs, so I
-> > couldn't touch ntfs3 driver without consensus from the fs maintainers.
->
-> I think you're adding more confusion than you're removing with the name
-> change.  Please, just call it ntfs.  We have hfs and hfsplus already,
-> and those refer to different filesystems.  We should just call this ntfs.
-Okay, I will change it back to the name "ntfs" in the next version.
-Thanks!
+Use the correct function name and add description for the @flavor
+parameter to avoid these kernel-doc warnings:
+
+Warning: fs/locks.c:1706 function parameter 'flavor' not described in
+ '__fcntl_getlease'
+WARNING: fs/locks.c:1706 expecting prototype for fcntl_getlease().
+ Prototype was for __fcntl_getlease() instead
+
+Fixes: 1602bad16d7d ("vfs: expose delegation support to userland")
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+---
+Feel free to correct (or tell me) a better description for @flavor.
+
+Cc: Jeff Layton <jlayton@kernel.org>
+Cc: Chuck Lever <chuck.lever@oracle.com>
+Cc: Alexander Aring <alex.aring@gmail.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>
+---
+ fs/locks.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+--- linux-next-20251127.orig/fs/locks.c
++++ linux-next-20251127/fs/locks.c
+@@ -1681,8 +1681,9 @@ void lease_get_mtime(struct inode *inode
+ EXPORT_SYMBOL(lease_get_mtime);
+ 
+ /**
+- *	fcntl_getlease - Enquire what lease is currently active
++ *	__fcntl_getlease - Enquire what lease is currently active
+  *	@filp: the file
++ *	@flavor: type of lease flags to check
+  *
+  *	The value returned by this function will be one of
+  *	(if no lease break is pending):
 
