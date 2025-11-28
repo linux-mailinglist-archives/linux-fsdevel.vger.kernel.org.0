@@ -1,302 +1,277 @@
-Return-Path: <linux-fsdevel+bounces-70183-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70184-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10FF8C930D7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 20:52:12 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFC42C930E3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 20:52:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7E286346347
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 19:52:11 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6801B348BCB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 19:52:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BDA5285C98;
-	Fri, 28 Nov 2025 19:52:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86F4F2D248D;
+	Fri, 28 Nov 2025 19:52:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=libero.it header.i=@libero.it header.b="oRkHD7GW"
+	dkim=pass (2048-bit key) header.d=dilger-ca.20230601.gappssmtp.com header.i=@dilger-ca.20230601.gappssmtp.com header.b="W+gfb5kr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from libero.it (smtp-18.italiaonline.it [213.209.10.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AF212405ED
-	for <linux-fsdevel@vger.kernel.org>; Fri, 28 Nov 2025 19:51:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.209.10.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EC5E27587E
+	for <linux-fsdevel@vger.kernel.org>; Fri, 28 Nov 2025 19:52:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764359522; cv=none; b=XDOR6IpaS6oLFn375znNp4Hxbm+PabhvAPebDkttn862x5+X3zuxlkmbnUdJRZ+SdMP18nqipQ0t49lSkaQsnATpsOh/JLtRDi3t4qY6lMaW1bNqjbCqPXCu2i2g1r4r6V5AjGO06gu1FI0Zzhdrd+dQRX0T16i3bij+EzClsrE=
+	t=1764359565; cv=none; b=PrgEorIZPB+9nuMnONdVhADgUccEzaSRVkxFwaLtIdixPAAqvGAJm5kuacVMkE4TZfezUMAmDwJ/WwUXszmd1n2Sbau1K9zQsz7wWLkaAv7GO9K4lFDmz2Xz8GyVDpaDXHs1sVsvmDxEmoLmdJc203dvaU7wpDV29NBU5lzzA0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764359522; c=relaxed/simple;
-	bh=fr+jP199sGl3igilTi+Z1y48pflhFtqO7Bl3hqEOijo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
-	 In-Reply-To:Content-Type; b=FhvFuHwWEkTnkp3OGYqLyZvlEYkES0KOiKz9+RdDO3J/D1q+1hASPIdm/FAk+O+DtcltPeKUxp4Np2JjKK7L8x8KB2+XI06a7BWhaMpWkB6Q2OI+vhHMCw92IPh7tN59NcrPHTjxfEerpcKGmXfBz8TRT+wuy/IfoIu3os5E1KI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=libero.it; spf=pass smtp.mailfrom=libero.it; dkim=pass (2048-bit key) header.d=libero.it header.i=@libero.it header.b=oRkHD7GW; arc=none smtp.client-ip=213.209.10.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=libero.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=libero.it
-Received: from [192.168.1.27] ([84.220.171.3])
-	by smtp-18.iol.local with ESMTPA
-	id P4T2vwL7JNPOjP4T2vR7Wm; Fri, 28 Nov 2025 20:49:20 +0100
-x-libjamoibt: 1601
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=libero.it; s=s2021;
-	t=1764359360; bh=/cxiBHYHSHBK4pdc/WBVYZOwI9cSyPcAiyDzJ7AgTC8=;
-	h=From;
-	b=oRkHD7GW7WqkgNljKBjLHHKw2zVITIUQDe3z3Jc05N8sDYnNyrkoDB0dhh3zwkl7g
-	 QgZ2bqWuzkVtSJaF2FqFQwSrPcWIhGuEoHI8fwnuSjMJvTv4lcszf2hFaBPaMDi1T0
-	 1tQZLLbokSGNZQzN9/sE0LCUxzEklVpmIqH/4juVQ67QEFuepyNBLiSUoClv+NWYXk
-	 amdFgh314MljwDGyBcZqFOCOyW9+12pThEeYXx6JBzyxanOMHFd1iJcvqiVw0sKmfX
-	 MHKYbo/44j0k22vn7ax7fFLNCFUivqVlYGpDDidW3t9hJ+oEzLZ6lsFrDEanCfzzPS
-	 fbFeokwRXMUmA==
-X-CNFS-Analysis: v=2.4 cv=CfUI5Krl c=1 sm=1 tr=0 ts=6929fcc0 cx=a_exe
- a=hciw9o01/L1eIHAASTHaSw==:117 a=hciw9o01/L1eIHAASTHaSw==:17
- a=IkcTkHD0fZMA:10 a=NGwE20YKNqMAeTZI74wA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-Message-ID: <f7e56d56-014f-4027-ab9d-d602c5e67137@libero.it>
-Date: Fri, 28 Nov 2025 20:49:20 +0100
+	s=arc-20240116; t=1764359565; c=relaxed/simple;
+	bh=QNjJ17325mjRtI2PfInMNmWCtgJOpJOn2fdNLzCOoto=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=CqdpjXRR/5NUGQl2BlKU2fkoZLWMu2vSQuhX7OqX38dnS1z4vzRCPS+tvi+pXNfJFnEKGWnSjRoKaTtLC5ZYMXoTD9Zn5AF8Ap6ccwNZfk8ed2FTHMpYSdiY2viMzmlJGSFeJQWxRiqiWwEg82cQG3hoXD1wR9LA4GmyTOcq3ow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dilger.ca; spf=pass smtp.mailfrom=dilger.ca; dkim=pass (2048-bit key) header.d=dilger-ca.20230601.gappssmtp.com header.i=@dilger-ca.20230601.gappssmtp.com header.b=W+gfb5kr; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dilger.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dilger.ca
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2958db8ae4fso22519965ad.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Nov 2025 11:52:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dilger-ca.20230601.gappssmtp.com; s=20230601; t=1764359562; x=1764964362; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=09OJVfJ97UKabQuKOiULFL7QBPrONfuXDR4nDJd5M38=;
+        b=W+gfb5krh4hMdy3m+E3B88JGGTNzGJixN71EAngG4UBUcDQLQMhZWvJFnyFhjkSgEH
+         zwcvdrjadTbt512WoHqsI18ye1xDxmhRwr6WLUdawdKJ+sFmvMOXTA/rpfJRjKlz1xJ9
+         g+uN5suSbpJ6r+0zQ5SV+AgWTiJbFSLYMi/MxICJ16WSx/89Ld9+g+YQywwUOTThkMXi
+         YgiuMFEAmdY1JcQGyY5fY4PYAFIixWVrZW+Giq5xr9uipfHsJtNoRyTsw50+IlFZIAMW
+         vN5f0ev8fyu5oa6u8jJge/6SZJQhkFSGQf3ckRj7DIdW1YphARJLvhAJP+m52ZWDzOpv
+         VArA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764359562; x=1764964362;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-gg:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=09OJVfJ97UKabQuKOiULFL7QBPrONfuXDR4nDJd5M38=;
+        b=Zx4BiX31MkkmkL2UPxzYQotX/SkuEzxb8wSDkkdtR51/k1BUlr36xcyekqdV8TsUKw
+         SsX42Srh/KycwXcu0zsDFNGFoegTrBCIjaQya+en6hCsq+LZvFkemTnKBYBkyd6MPAyE
+         2hiLoMSHqt+5Da5J+tlKjBg6aLMN/O35YrMufN+zuBALLFeTgZxfAOMjDFhq/18q39r/
+         QjQL6TlOvdPKvD62SOhDTeacv9ovD/x+veUWfllAy0M1NAag1t/3LqFcSTiIj1wjq25S
+         tiSrliCAfxnJrniqQAI63CJSfMf9YMkqCItmUOSLt1sBK3CoQ2E54q7c2E/jJl8hSAK/
+         hv0w==
+X-Forwarded-Encrypted: i=1; AJvYcCXfUTs/GpOzrfhh0YsnMRN4TbwOaK+cLmXuZ2qdgY8FqFn2nyMplSiS1Dn9ZXPGmhWE0Rlq3uidn4N30z3b@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5RirlZI4x+25i97l2NgE0KKm7tyagBXZ/URVcnV7ceH/ErqDz
+	V132hyjI1icT99S8D995khyzxDW+OzvlaZDSFXlBtG5Tw0gZalURyTqVmKQjxbov4ro=
+X-Gm-Gg: ASbGncukp/1/7dqOr5/Mily5XlIE8XNlMHlPTn6EVw+OS3/D2X5HWfSzzP5tAYrSgqJ
+	twabiHVmhaI/+gmtYPf7F6CSxyFTpqWrsc9jXpv19/06o7xDPmuRjXUXXYudL9beYO5TWci3xn5
+	+ZcLLXbRWWMsjkfQlc997wotGqFUOFOam552Z1PV3vKKfDfDRVnH/20kAKVFFM9boy9e3PW2/aD
+	k/nt0XVN15Ycux0/CV8+r5v403FTKvE0xYkaXjE1sOpat4rgyiDTmbtOE3kFNMghWoRrowxoVVZ
+	jbZ8eHoP4+GDDlEwgSjxUfDZSOxrOhCjbD7wI1QdFsylCT7Djhh/g6+J2MsovtwHpQnx5hU5KqP
+	eSoTu2xNVwa0wy/dUO/a3c7wx1ReQ5Y4d+HCQWgtYjpzd4+G3NeRJ6HFu40xK7MHk91OLIAv7vM
+	i8IXVrhqgJvGPOZVeM3YsrvVVl+LZoJ5/4krCFTAO2cWQys9NpYYYp84BK33OEZaHQbQ==
+X-Google-Smtp-Source: AGHT+IH+LZpGLfpZNHB94Ngyv5YvKJcnHKiQIq9ka28q7FaIcylsGWBr+RDX+PhpRHHOmWzrvQi33Q==
+X-Received: by 2002:a17:903:b4f:b0:295:5613:c19f with SMTP id d9443c01a7336-29b6c68d7dfmr342650285ad.42.1764359562244;
+        Fri, 28 Nov 2025 11:52:42 -0800 (PST)
+Received: from smtpclient.apple (S01068c763f81ca4b.cg.shawcable.net. [70.77.200.158])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29bceb40ac4sm53065025ad.77.2025.11.28.11.52.40
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 28 Nov 2025 11:52:41 -0800 (PST)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: kreijack@inwind.it
-Subject: Re: Ideas for RAIDZ-like design to solve write-holes, with larger fs
- block size
-To: Qu Wenruo <wqu@suse.com>
-References: <4c0c1d27-957c-4a6f-9397-47ca321b1805@suse.com>
-Content-Language: en-US
-From: Goffredo Baroncelli <kreijack@libero.it>
-Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- linux-btrfs <linux-btrfs@vger.kernel.org>, zfs-devel@list.zfsonlinux.org
-In-Reply-To: <4c0c1d27-957c-4a6f-9397-47ca321b1805@suse.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CMAE-Envelope: MS4xfDpanaMlEmEWynxBIBqgLFcHBhnGtHwzSaWvXylp9Zxj9Bzr8KcE9PbdTcjgEppkzUm6g8VF+DkLe1o41r1Su3ocSNwFKyBK0sJmneMz6LIkNpsRUbi+
- sEFYGvYsQb04LcwtNNakxK6iDhCFuW2aeLez4qe9b/cPIScwNNVqWdGfW20tTOjdoZxa8jKgNXXIbUtxnVHMIrV4qdEti9sWwdgSjRA1pyI+3SwOjMjTso9k
- c0A/YvxFUGiq628GBx36x/6HLfbji+3bIONZV3prRHlR6W7PsVd12dgk0vQpJ9YRFwfNJguz4ZfGr8npaHy51w==
-
-On 28/11/2025 04.07, Qu Wenruo wrote:
-> Hi,
-> 
-> With the recent bs > ps support for btrfs, I'm wondering if it's possible to experiment some RAIDZ-like solutions to solve RAID56 write-holes problems (at least for data COW cases) without traditional journal.
-
-More than a RAIDZ-like solution (== a variable stripe size), it seems that you want to use a stripe width equal to the fs block size. So you can avoid the RWM cycles inside a stripe. It is an interesting idea, with a little development cost, which may work quite well when the number of disks * ps matches the fs bs.
-
-In order to reduce some downside, I suggests to use a "per chunk" fs-bs
-
-> 
-> Currently my idea looks like this:
-> 
-> - Fixed and much smaller stripe data length
->    Currently the data stripe length is fixed for all btrfs RAID profiles,
->    64K.
-> 
->    But will change to 4K (minimal and default) for RAIDZ chunks.
-> 
-> - Force a larger than 4K fs block size (or data io size)
->    And that fs block size will determine how many devices we can use for
->    a RAIDZ chunk.
-> 
->    E.g. with 32K fs block size, and 4K stripe length, we can use 8
->    devices for data, +1 for parity.
->    But this also means, one has to have at least 9 devices to maintain
->    the this scheme with 4K stripe length.
->    (More is fine, less is not possible)
-> 
-> 
-> But there are still some uncertainty that I hope to get some feedback before starting coding on this.
-> 
-> - Conflicts with raid-stripe-tree and no zoned support
->    I know WDC is working on raid-stripe-tree feature, which will support
->    all profiles including RAID56 for data on zoned devices.
-> 
->    And the feature can be used without zoned device.
-> 
->    Although there is never RAID56 support implemented so far.
-> 
->    Would raid-stripe-tree conflicts with this new RAIDZ idea, or it's
->    better just wait for raid-stripe-tree?
-> 
-> - Performance
->    If our stripe length is 4K it means one fs block will be split into
->    4K writes into each device.
-> 
->    The initial sequential write will be split into a lot of 4K sized
->    random writes into the real disks.
-> 
->    Not sure how much performance impact it will have, maybe it can be
->    solved with proper blk plug?
-> 
-> - Larger fs block size or larger IO size
->    If the fs block size is larger than the 4K stripe length, it means
->    the data checksum is calulated for the whole fs block, and it will
->    make rebuild much harder.
-> 
->    E.g. fs block size is 16K, stripe length is 4K, and have 4 data
->    stripes and 1 parity stripe.
-> 
->    If one data stripe is corrupted, the checksum will mismatch for the
->    whole 16K, but we don't know which 4K is corrupted, thus has to try
->    4 times to get a correct rebuild result.
-> 
->    Apply this to a whole disk, then rebuild will take forever...
-
-I am not sure about that: the checksum failure should be an exception.
-A disk failure is more common. But it this case, the parity should be enough
-to rebuild correctly the data and in the most case the checksum will be correct.
-
-> 
->    But this only requires extra rebuild mechanism for RAID chunks.
-> 
-> 
->    The other solution is to introduce another size limit, maybe something
->    like data_io_size, and for example using 16K data_io_size, and still
->    4K fs block size, with the same 4K stripe length.
-> 
->    So that every writes will be aligned to that 16K (a single 4K write
->    will dirty the whole 16K range). And checksum will be calculated for
->    each 4K block.
-> 
->    Then reading the 16K we verify every 4K block, and can detect which
->    block is corrupted and just repair that block.
-> 
->    The cost will be the extra space spent saving 4x data checksum, and
->    the extra data_io_size related code.
-
-I am not sure about the assumption that the BS must be equal to 4k*(ndisk-1).
-
-This is an upper limit, but you could have different mapping. E.g. another valid
-example is having BS=4k*(ndisk/2-2). But I think that even more strange arrangement
-can be done, like:
-	ndisk = 7
-	BS=4k*3
-
-so the 2nd stripe is in two different rows:
-
-
-              D1     D2     D2     D4     D5     D6     D7
-            ------ ------ ------ ------ ------ ------ ------
-              B1     B1     B1     P1     B2     B2     B2
-              P2     B3 ....
-
-What you really need is that:
-1) bs=stripe width <= (ndisk - parity-level)* 4k
-2) each bs is never updated in the middle (which would create a new RWM cycle)
-
-> 
-> 
-> - Way more rigid device number requirement
->    Everything must be decided at mkfs time, the stripe length, fs block
->    size/data io size, and number of devices.
-
-As wrote above, I suggests to use a "per chunk" fs-bs
-
->    Sure one can still add more devices than required, but it will just
->    behave like more disks with RAID1.
->    Each RAIDZ chunk will have fixed amount of devices.
-> 
->    And furthermore, one can no longer remove devices below the minimal
->    amount required by the RAIDZ chunks.
->    If going with 16K blocksize/data io size, 4K stripe length, then it
->    will always require 5 disks for RAIDZ1.
->    Unless the end user gets rid of all RAIDZ chunks (e.g. convert
->    to regular RAID1* or even SINGLE).
-> 
-> - Larger fs block size/data io size means higher write amplification
->    That's the most obvious part, and may be less obvious higher memory
->    pressure, and btrfs is already pretty bad at write-amplification.
-> 
-
-This is true, but you avoid the RWM cycle which is also expensive.
-
->    Currently page cache is relying on larger folios to handle those
->    bs > ps cases, requiring more contigous physical memory space.
-> 
->    And this limit will not go away even the end user choose to get
->    rid of all RAIDZ chunks.
-> 
-> 
-> So any feedback is appreciated, no matter from end users, or even ZFS developers who invented RAIDZ in the first place.
-> 
-> Thanks,
-> Qu
-> 
-
-Let me to add a "my" proposal (which is completely unrelated to your one :-)
-
-
-Assumptions:
-
-- an extent is never update (true for BTRFS)
-- in the example below it is showed a raid5 case; but it can be easily extend for higher redundancy level
-
-Nomenclature:
-- N = disks count
-- stride = number of consecutive block in a disk, before jumping to other disks
-- stripe = stride * (N - 1)   # -1 is for raid5, -2 in case of raid6 ...
-
-Idea design:
-
-- the redundancy is put inside the extent (and not below). Think it like a new kind of compression.
-
-- a new chunk type is created composed by a sequence of blocks (4k ?) spread on the disks, where the 1st block is disk1 - offeset 0,  2nd block is disk2 - offset 0 .... Nth block is disk N, offset 0, (N+1)th block is placed at disk1, offset +4K.... Like raid 0 with stride 4k.
-
-- option #1 (simpler)
-
-     - when an extent is created, every (N-1) blocks a parity block is stored; if the extent is shorter than N-1, a parity block is attached at its end;
-
-              D1     D2     D2     D4	
-            ------ ------ ------ ------
-             E1,0   E1,1   P1,0   E2,0
-             E2,1   E2,2   P2,1   E2,3
-             E2,4   P2,1   E3,0   E3,1
-             E3,2   P3,0   E3,3   E3,4
-             E3,5   P3,1   E3,6   E3,7
-             E3,8   P3,2   E3,9   E3,10
-             P3,3
-
-        Dz      Disk #z
-        Ex,y	Extent x, offset y
-        Px,y    Parity, extent x, range [y*N...y*N+N-1]
-
-
-- option #2 (more complex)
-
-     - like above when an extent is created, every (N-1) blocks a parity block is stored; if the extent is shorter than N-1, a parity block is attached at its end;
-       The idea is that if an extent spans more than a rows, the logical block can be arranged so the stride may be longer (comparable with the number of the rows).
-       In this way you can write more *consecutive* 4K block a time (when enough data to write is available). In this case is crucial the delayed block allocation.
-       See E2,{0,1} and E3,{0,3},E3,{4,7}, E3,{8,10}....
-
-              D1     D2     D2     D4	
-            ------ ------ ------ ------
-             E1,0   E1,1   P1,0   E2,0
-             E2,1   E2,3   P2,1   E2,4
-             E2,2   P2,1   E3,0   E3,4
-             E3,8   P3,0   E3,1   E3,5
-             E3,9   P3,1   E3,2   E3,6
-             E3,10  P3,2   E3,3   E3,7
-             P3,3
-
-        Dz      Disk #z
-        Ex,y	Extent x, offset y
-        Px,y    Parity, extent x, range row related
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3864.100.1.1.5\))
+Subject: Re: [PATCH v2 03/13] ext4: don't zero the entire extent if
+ EXT4_EXT_DATA_PARTIAL_VALID1
+From: Andreas Dilger <adilger@dilger.ca>
+In-Reply-To: <i3voptrv4rm3q3by7gksrgmgy2n5flchuveugjll5cchustm4z@qvixahynpize>
+Date: Fri, 28 Nov 2025 12:52:30 -0700
+Cc: Ojaswin Mujoo <ojaswin@linux.ibm.com>,
+ Zhang Yi <yi.zhang@huaweicloud.com>,
+ linux-ext4@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ tytso@mit.edu,
+ yi.zhang@huawei.com,
+ yizhang089@gmail.com,
+ libaokun1@huawei.com,
+ yangerkun@huawei.com
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <DDB4CC13-C509-478E-81C3-F37240016A69@dilger.ca>
+References: <20251121060811.1685783-1-yi.zhang@huaweicloud.com>
+ <20251121060811.1685783-4-yi.zhang@huaweicloud.com>
+ <yro4hwpttmy6e2zspvwjfdbpej6qvhlqjvlr5kp3nwffqgcnfd@z6qual55zhfq>
+ <aSlPFohdm8IfB7r7@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+ <i3voptrv4rm3q3by7gksrgmgy2n5flchuveugjll5cchustm4z@qvixahynpize>
+To: Jan Kara <jack@suse.cz>
+X-Mailer: Apple Mail (2.3864.100.1.1.5)
 
 
 
-Pros:
-- no update in the middle of a stripe with so no RWM cycles anymore
-- (option 2 only), in case a large write, consecutive blocks can be arranged in the same disk
-- each block can have its checksum
-- each stripe can have different raid level
-- maximum flexibility to change the number of disks
+> On Nov 28, 2025, at 4:14=E2=80=AFAM, Jan Kara <jack@suse.cz> wrote:
+>=20
+> On Fri 28-11-25 12:58:22, Ojaswin Mujoo wrote:
+>> On Thu, Nov 27, 2025 at 02:41:52PM +0100, Jan Kara wrote:
+>>> Good catch on the data exposure issue! First I'd like to discuss =
+whether
+>>> there isn't a way to fix these problems in a way that doesn't make =
+the
+>>> already complex code even more complex. My observation is that
+>>> EXT4_EXT_MAY_ZEROOUT is only set in =
+ext4_ext_convert_to_initialized() and
+>>> in ext4_split_convert_extents() which both call ext4_split_extent(). =
+The
+>>> actual extent zeroing happens in ext4_split_extent_at() and in
+>>> ext4_ext_convert_to_initialized(). I think the code would be much =
+clearer
+>>> if we just centralized all the zeroing in ext4_split_extent(). At =
+that
+>>> place the situation is actually pretty simple:
+>>=20
+>> This is exactly what I was playing with in my local tree to refactor =
+this
+>> particular part of code :). I agree that ext4_split_extent() is a =
+much
+>> better place to do the zeroout and it looks much cleaner but I agree
+>> with Yi that it might be better to do it after fixing the stale
+>> exposures so backports are straight forward.=20
+>>=20
+>> Am I correct in understanding that you are suggesting to zeroout
+>> proactively if we are below max_zeroout before even trying to extent
+>> split (which seems be done in ext4_ext_convert_to_initialized() as =
+well)?
+>=20
+> Yes. I was suggesting to effectively keep the behavior from
+> ext4_ext_convert_to_initialized().
+>=20
+>> In this case, I have 2 concerns:
+>>=20
+>>>=20
+>>> 1) 'ex' is unwritten, 'map' describes part with already written data =
+which
+>>> we want to convert to initialized (generally IO completion =
+situation) =3D> we
+>>> can zero out boundaries if they are smaller than max_zeroout or if =
+extent
+>>> split fails.
+>>=20
+>> Firstly, I know you mentioned in another email that zeroout of small =
+ranges
+>> gives us a performance win but is it really faster on average than
+>> extent manipulation?
+>=20
+> I guess it depends on the storage and the details of the extent tree. =
+But
+> it definitely does help in cases like when you have large unwritten =
+extent
+> and then start writing randomly 4k blocks into it because this zeroout
+> logic effectively limits the fragmentation of the extent tree. Overall
+> sequentially writing a few blocks more of zeros is very cheap =
+practically
+> with any storage while fragmenting the extent tree becomes expensive =
+rather
+> quickly (you generally get deeper extent tree due to smaller extents =
+etc.).
 
-Cons:
-- the scrub logic must be totally redesigned
-- the map logical block <-> physical block in option#1 is not complex to compute. However in option#2 it will be ... funny to find a good algorithm.
-- the ratio data-blocks/parity-blocks may be very inefficient for small write.
-- moving an extent between different block groups with different number of disks, would cause to reallocate the parity blocks inside the extent
+The zeroout logic is not primarily an issue with the extent tree =
+complexity.
+I agree with Ojaswin that in the common case the extent split would not
+cause a new index block to be written, though it can become unwieldy in =
+the
+extreme case.
 
-Best
-G.Baroncelli
+As Jan wrote, the main performance win is to avoid writing a bunch of
+small discontiguous blocks.  For HDD *and* flash, the overhead of =
+writing
+several separate small blocks is much higher than writing a single 32KiB
+or 64KiB block to the storage.  Multiple separate blocks means more =
+items
+in the queue and submitted to storage, separate seeks on an HDD and/or =
+read-
+modify-write on a RAID controller, or erase blocks on a flash device.
 
--- 
-gpg @keyserver.linux.it: Goffredo Baroncelli <kreijackATinwind.it>
-Key fingerprint BBF5 1610 0B64 DAC6 5F7D  17B2 0EDA 9B37 8B82 E0B5
+It also defers the conversion of those unwritten extents to a later =
+time,
+when they would need to be processed again anyway if the blocks were =
+written.
+
+I was also considering whether the unwritten blocks would save on reads,
+but I suspect that would not be the case either.  Doing sequential reads
+would need to submit multiple small reads to the device and then zeroout
+the unwritten blocks instead of a single 32KiB or 64KiB read (which is
+basically free once the request is processed.
+
+>=20
+>> For example, for case 1 where both zeroout and splitting need
+>> journalling, I understand that splitting has high journal overhead in
+>> worst case, where tree might grow, but more often than not we would =
+be
+>> manipulating within the same leaf so journalling only 1 bh (same as
+>> zeroout). In which case seems like zeroout might be slower no matter
+>> how fast the IO can be done. So proactive zeroout might be for =
+beneficial
+>> for case 3 than case 1.
+>=20
+> I agree that initially while the split extents still fit into the same =
+leaf
+> block, zero out is likely to be somewhat slower but over the longer =
+term
+> the gains from less extent fragmentation win.
+
+I doubt that writing a single contiguous 32KiB chunk is ever going to be
+slower than writing 2 or 3 separate 4KiB chunks to the storage.  _Maybe_
+if it was NVRAM, but I don't think that would be the common case?
+
+>>> 2) 'ex' is unwritten, 'map' describes part we are preparing for =
+write (IO
+>>> submission) =3D> the split is opportunistic here, if we cannot split =
+due to
+>>> ENOSPC, just go on and deal with it at IO completion time. No =
+zeroing
+>>> needed.
+>>>=20
+>>> 3) 'ex' is written, 'map' describes part that should be converted to
+>>> unwritten =3D> we can zero out the 'map' part if smaller than =
+max_zeroout or
+>>> if extent split fails.
+>>=20
+>> Proactive zeroout before trying split does seem benficial to help us
+>> avoid journal overhead for split. However, judging from
+>> ext4_ext_convert_to_initialized(), max zeroout comes from
+>> sbi->s_extent_max_zeroout_kb which is hardcoded to 32 irrespective of
+>> the IO device, so that means theres a chance a zeroout might be =
+pretty
+>> slow if say we are doing it on a device than doesn't support =
+accelerated
+>> zeroout operations. Maybe we need to be more intelligent in setting
+>> s_extent_max_zeroout_kb?
+>=20
+> You can also tune the value in sysfs. I'm not 100% sure how the kernel
+> could do a better guess. Also I think 32k works mostly because it is =
+small
+> enough to be cheap to write but already large enough to noticeably =
+reduce
+> fragmentation for some pathological workloads (you can easily get 1/4 =
+of
+> the extents than without this logic). But I'm open to ideas if you =
+have
+> some.
+
+Aligning this size with the flash erase block size might be a win?
+It may be that 32KiB is still large enough today (I've heard of 16KiB
+sector flash devices arriving soon, and IIRC 64KiB sectors are the
+norm for HDDs if anyone still cares).  Having this tuned automatically
+by the physical device characteristics (like max(32KiB, sector size) or
+similar if the flash erase block size is available somehow in the =
+kernel)
+would future proof this as device sizes continue to grow.
+
+
+Cheers, Andreas
+
+
+
+
+
 
