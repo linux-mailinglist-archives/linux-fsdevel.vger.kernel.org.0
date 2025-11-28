@@ -1,80 +1,45 @@
-Return-Path: <linux-fsdevel+bounces-70106-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70107-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C4CAC90B30
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 04:07:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F50DC90CBA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 04:46:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68B853AACAB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 03:07:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 172633A8BA9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 03:46:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A77D29D260;
-	Fri, 28 Nov 2025 03:07:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="N1b4EZr6"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05914274652;
+	Fri, 28 Nov 2025 03:46:00 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CA9D288C08
-	for <linux-fsdevel@vger.kernel.org>; Fri, 28 Nov 2025 03:07:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C92A91D8E01;
+	Fri, 28 Nov 2025 03:45:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764299258; cv=none; b=JYTySt6R+0r5ShaYEk4wf7sNQvXlLedntm6aTcUfO/UH9uwyeGTFgb5/Jtc7eBIqsS8XAR8GAkznvHLDqQ3AYyFq7Fq4HKkJ57zz4ysKHKjdcHKeIxtacc4Q7aPhUy9u5ijETubkRTgPjh/b/W6oQFPYiriR75cjhX86UHMtAio=
+	t=1764301559; cv=none; b=h+7nJRA1fqXZKTz1cAs4xx7ZeR4dL6GWQoqPOjAyJ/X4k0WUbDCM0nX5bId5xTtyXu2dWEai4Hg5S/BJtxR3qPmme51da9lmjigKA9ITcfWBARsayB5STag+w4JVZKppwi2CMFMNHIq4rgq10z4t+knzD2oY/+t5c3NrlAKU+4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764299258; c=relaxed/simple;
-	bh=rDordQGhNOH5SttwVsuuKdo/CtICKy8hwBJCgwlGLs4=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=RuuCmy9msZXbKlq1elJG3gjuTuJvbsipiLe86teJHfVAqiNBknxolODzaxdyjpY2ZiAABNVIZwnORG8qWgkt6h8WVLL4oPEfbRQKtCQtUiGiwRjRy6dQ6bMThMSFyheI5aWkLcrFwUdhKnbHGc5o96KRWKOIMcTpssH3DJTIt4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=N1b4EZr6; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-477a1c28778so15118875e9.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Nov 2025 19:07:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1764299254; x=1764904054; darn=vger.kernel.org;
-        h=content-transfer-encoding:autocrypt:subject:from:to
-         :content-language:user-agent:mime-version:date:message-id:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mpCyz/9P22tV8fDaOVWWRCa2r5LmOB5jCS8opHK9hyc=;
-        b=N1b4EZr6U7VFQUwhlDFv2hWI8n1IYcUOhxtZ71F1HJ89xusJmAADdRxuQkSaPUlyEY
-         QQk9CJaze+IEBl/UYOkUAlFQxe8LGH28y8fNilMWXwcX8aHgnmxzoHktohmXw2IaRJii
-         oCHyKx/zBSZZOwPyYjIYt5GsBllRnh3yDiR9qrVXn6reUMeFA/gRwfzEnjn8anzILfRl
-         LOIJOsjktHyzBL0soP+HwMBcKcdOWNk5pDOVwauf6biIr9w6Dqb48hy4rdyCYV7WhE48
-         64/uH06vK3AC8kG7Q4Dbn61Kyi9iLGcZetzXW0ViA0fhif65Ct4/rjBzLf/P51KI8eJ3
-         C0PA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764299254; x=1764904054;
-        h=content-transfer-encoding:autocrypt:subject:from:to
-         :content-language:user-agent:mime-version:date:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mpCyz/9P22tV8fDaOVWWRCa2r5LmOB5jCS8opHK9hyc=;
-        b=p/jdXvhbuZ0MAlectNxT45DcrhxNVg6KVlRV4LZvnUMygtro4hF7Nuaa2FZQfH3kA2
-         aaYu8Bo75umj4rMhSj5b5Q07Zd7DmQz8dOTxnOTvne1ci22J3oYYLHEw3+iRsXDgDzMe
-         ei6fmUO6I2aaajT1bv8ESiaVWWlPq4xzMKDSUwtVYI0vvAG1qzDWc/1wsGvhkKjt3lTB
-         Zin+w3FtpgVNGKIZ+STIkWPSTnv6Pte4h6H/9dHKEHU0nF9KwQIz7HjDQNyP+eLg7DQF
-         zpV9BmptP5RBPxnELzHgjA+8BbPE8Yv3JLegQVMu6IJRRPrT0aETwrydhB0bn/fyYxW4
-         ywpw==
-X-Forwarded-Encrypted: i=1; AJvYcCUrfhBkqnxZTaTvxNapkAr1HauRGz56j8GS1iwD9a+qmuoFAUTZcWOTdIWRhvs1PwjpkG63mw9wJlPXFmdI@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3Cp1paN7BmHtOYa+ekpgnCdC2iE+3dM1aNy5g+U5njriUVEhY
-	qmptn0DP7bVQMyk7YqqS8JpMQbKO7Mag9PO0wtRoXlqEGSnH/gJI0NprD9xguiK8Pw8=
-X-Gm-Gg: ASbGncuaQppglLBfo94w89wFlciJdHbXwPighIBn1CFnvV+kgWMnU1EXpBc00qGzL+B
-	eJO/e8mMQliaWl/QxmybngTtnioQkIuLWWhIsB1Tzr3kwx55fIE3gnYPOTxXGNi3DZKQpXr7YNS
-	VSrEPESPVyNnxs5tDz6edxovPRmr1m9XT2uSdCAKb1gOEL+MFgeYSB5ytYlvq9uIHV/y3Jd8KV8
-	Z+rKbkTZAsw0n+uZ/T7pNhUzbGLfrtKxfd6SH1RStaLL64tB66LVD0XE4Ret61noqPDAya0SzLW
-	o/gMpcW6SVIbG8C02LTm2f3VKHenEjzPG7S9ioxWprFvS9fKuSNSqH5UCIvTs9RQrTb9817fbP6
-	IJOdvSioQKxPY2/ys0MgHu7JYbQpp4bJ886Vll854Km8eRtL6VkLUGIdesiPf+/zf0hPmVyLYK9
-	1WIAuUfC1aSadTwTLnGsN93TkfZGqfaZzb/FR0tgg=
-X-Google-Smtp-Source: AGHT+IHMcASB0KggOCUf9K0Lv67abZ/TFhrn/fm384fDoQ/BBMYSeRFN7Xj4SPw5JzdQLsTyeb16kw==
-X-Received: by 2002:a05:600c:6287:b0:477:54cd:200e with SMTP id 5b1f17b1804b1-47904acae83mr108347555e9.1.1764299254468;
-        Thu, 27 Nov 2025 19:07:34 -0800 (PST)
-Received: from ?IPV6:2403:580d:fda1::299? (2403-580d-fda1--299.ip6.aussiebb.net. [2403:580d:fda1::299])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29bce40ab6bsm29840775ad.21.2025.11.27.19.07.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Nov 2025 19:07:33 -0800 (PST)
-Message-ID: <4c0c1d27-957c-4a6f-9397-47ca321b1805@suse.com>
-Date: Fri, 28 Nov 2025 13:37:29 +1030
+	s=arc-20240116; t=1764301559; c=relaxed/simple;
+	bh=FZUuv7H6pce1VCr95JK0HcPzQSX2WJpzLVjAhxC4E2c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ACaYbC2cEjUF5v7vMUJ8Je6JLNfn6M7kGx3lbIhBygWnXcRUy4ctbPUQmN6eX8h/0vHn0dNUwR4nVBI0gazhQ8RXtOtRbupnzrCcxwx/LdEjnPeVPtDSLUdhgD/pC3RJPs/6rstTCXQPr8LMgaQzJfseM0wKFoQjaXy47KM/mVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4dHfLy3vy4zYQtLW;
+	Fri, 28 Nov 2025 11:44:58 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id 2BC411A07BB;
+	Fri, 28 Nov 2025 11:45:53 +0800 (CST)
+Received: from [10.174.178.152] (unknown [10.174.178.152])
+	by APP2 (Coremail) with SMTP id Syh0CgB31HrvGilp3eEUCQ--.36832S3;
+	Fri, 28 Nov 2025 11:45:52 +0800 (CST)
+Message-ID: <2713db6e-ff43-4583-b328-412e38f3d7bf@huaweicloud.com>
+Date: Fri, 28 Nov 2025 11:45:51 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -82,151 +47,189 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 03/13] ext4: don't zero the entire extent if
+ EXT4_EXT_DATA_PARTIAL_VALID1
+To: Jan Kara <jack@suse.cz>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
+ yi.zhang@huawei.com, yizhang089@gmail.com, libaokun1@huawei.com,
+ yangerkun@huawei.com
+References: <20251121060811.1685783-1-yi.zhang@huaweicloud.com>
+ <20251121060811.1685783-4-yi.zhang@huaweicloud.com>
+ <yro4hwpttmy6e2zspvwjfdbpej6qvhlqjvlr5kp3nwffqgcnfd@z6qual55zhfq>
 Content-Language: en-US
-To: linux-btrfs <linux-btrfs@vger.kernel.org>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- zfs-devel@list.zfsonlinux.org
-From: Qu Wenruo <wqu@suse.com>
-Subject: Ideas for RAIDZ-like design to solve write-holes, with larger fs
- block size
-Autocrypt: addr=wqu@suse.com; keydata=
- xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
- 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
- 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
- 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
- gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
- AAHNGFF1IFdlbnJ1byA8d3F1QHN1c2UuY29tPsLAlAQTAQgAPgIbAwULCQgHAgYVCAkKCwIE
- FgIDAQIeAQIXgBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXVgBQkQ/lqxAAoJEMI9kfOh
- Jf6o+jIH/2KhFmyOw4XWAYbnnijuYqb/obGae8HhcJO2KIGcxbsinK+KQFTSZnkFxnbsQ+VY
- fvtWBHGt8WfHcNmfjdejmy9si2jyy8smQV2jiB60a8iqQXGmsrkuR+AM2V360oEbMF3gVvim
- 2VSX2IiW9KERuhifjseNV1HLk0SHw5NnXiWh1THTqtvFFY+CwnLN2GqiMaSLF6gATW05/sEd
- V17MdI1z4+WSk7D57FlLjp50F3ow2WJtXwG8yG8d6S40dytZpH9iFuk12Sbg7lrtQxPPOIEU
- rpmZLfCNJJoZj603613w/M8EiZw6MohzikTWcFc55RLYJPBWQ+9puZtx1DopW2jOwE0EWdWB
- rwEIAKpT62HgSzL9zwGe+WIUCMB+nOEjXAfvoUPUwk+YCEDcOdfkkM5FyBoJs8TCEuPXGXBO
- Cl5P5B8OYYnkHkGWutAVlUTV8KESOIm/KJIA7jJA+Ss9VhMjtePfgWexw+P8itFRSRrrwyUf
- E+0WcAevblUi45LjWWZgpg3A80tHP0iToOZ5MbdYk7YFBE29cDSleskfV80ZKxFv6koQocq0
- vXzTfHvXNDELAuH7Ms/WJcdUzmPyBf3Oq6mKBBH8J6XZc9LjjNZwNbyvsHSrV5bgmu/THX2n
- g/3be+iqf6OggCiy3I1NSMJ5KtR0q2H2Nx2Vqb1fYPOID8McMV9Ll6rh8S8AEQEAAcLAfAQY
- AQgAJgIbDBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXWBBQkQ/lrSAAoJEMI9kfOhJf6o
- cakH+QHwDszsoYvmrNq36MFGgvAHRjdlrHRBa4A1V1kzd4kOUokongcrOOgHY9yfglcvZqlJ
- qfa4l+1oxs1BvCi29psteQTtw+memmcGruKi+YHD7793zNCMtAtYidDmQ2pWaLfqSaryjlzR
- /3tBWMyvIeWZKURnZbBzWRREB7iWxEbZ014B3gICqZPDRwwitHpH8Om3eZr7ygZck6bBa4MU
- o1XgbZcspyCGqu1xF/bMAY2iCDcq6ULKQceuKkbeQ8qxvt9hVxJC2W3lHq8dlK1pkHPDg9wO
- JoAXek8MF37R8gpLoGWl41FIUb3hFiu3zhDDvslYM4BmzI18QgQTQnotJH8=
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+In-Reply-To: <yro4hwpttmy6e2zspvwjfdbpej6qvhlqjvlr5kp3nwffqgcnfd@z6qual55zhfq>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:Syh0CgB31HrvGilp3eEUCQ--.36832S3
+X-Coremail-Antispam: 1UD129KBjvJXoW3Jw4rtw4kJr47uw18WF4DJwb_yoWxJFWrpr
+	4S93W8Kr4Dt34v934xZF4qvrn09w1rWrW7CryrGrn0ya4DWry2gFWfta1YqFyFgr48ZF1j
+	vr40yr98G3Z8uaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
+	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1
+	7KsUUUUUU==
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-Hi,
+On 11/27/2025 9:41 PM, Jan Kara wrote:
+> On Fri 21-11-25 14:08:01, Zhang Yi wrote:
+>> From: Zhang Yi <yi.zhang@huawei.com>
+>>
+>> When allocating initialized blocks from a large unwritten extent, or
+>> when splitting an unwritten extent during end I/O and converting it to
+>> initialized, there is currently a potential issue of stale data if the
+>> extent needs to be split in the middle.
+>>
+>>        0  A      B  N
+>>        [UUUUUUUUUUUU]    U: unwritten extent
+>>        [--DDDDDDDD--]    D: valid data
+>>           |<-  ->| ----> this range needs to be initialized
+>>
+>> ext4_split_extent() first try to split this extent at B with
+>> EXT4_EXT_DATA_ENTIRE_VALID1 and EXT4_EXT_MAY_ZEROOUT flag set, but
+>> ext4_split_extent_at() failed to split this extent due to temporary lack
+>> of space. It zeroout B to N and mark the entire extent from 0 to N
+>> as written.
+>>
+>>        0  A      B  N
+>>        [WWWWWWWWWWWW]    W: written extent
+>>        [SSDDDDDDDDZZ]    Z: zeroed, S: stale data
+>>
+>> ext4_split_extent() then try to split this extent at A with
+>> EXT4_EXT_DATA_VALID2 flag set. This time, it split successfully and left
+>> a stale written extent from 0 to A.
+>>
+>>        0  A      B   N
+>>        [WW|WWWWWWWWWW]
+>>        [SS|DDDDDDDDZZ]
+>>
+>> Fix this by pass EXT4_EXT_DATA_PARTIAL_VALID1 to ext4_split_extent_at()
+>> when splitting at B, don't convert the entire extent to written and left
+>> it as unwritten after zeroing out B to N. The remaining work is just
+>> like the standard two-part split. ext4_split_extent() will pass the
+>> EXT4_EXT_DATA_VALID2 flag when it calls ext4_split_extent_at() for the
+>> second time, allowing it to properly handle the split. If the split is
+>> successful, it will keep extent from 0 to A as unwritten.
+>>
+>> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+> 
+> Good catch on the data exposure issue! First I'd like to discuss whether
+> there isn't a way to fix these problems in a way that doesn't make the
+> already complex code even more complex. My observation is that
+> EXT4_EXT_MAY_ZEROOUT is only set in ext4_ext_convert_to_initialized() and
+> in ext4_split_convert_extents() which both call ext4_split_extent(). The
+> actual extent zeroing happens in ext4_split_extent_at() and in
+> ext4_ext_convert_to_initialized().
 
-With the recent bs > ps support for btrfs, I'm wondering if it's 
-possible to experiment some RAIDZ-like solutions to solve RAID56 
-write-holes problems (at least for data COW cases) without traditional 
-journal.
+Yes.
 
-Currently my idea looks like this:
+> I think the code would be much clearer
+> if we just centralized all the zeroing in ext4_split_extent(). At that
+> place the situation is actually pretty simple:
 
-- Fixed and much smaller stripe data length
-   Currently the data stripe length is fixed for all btrfs RAID profiles,
-   64K.
+Thank you for your suggestion!
 
-   But will change to 4K (minimal and default) for RAIDZ chunks.
+> 
+> 1) 'ex' is unwritten, 'map' describes part with already written data which
+> we want to convert to initialized (generally IO completion situation) => we
+> can zero out boundaries if they are smaller than max_zeroout or if extent
+> split fails.
+> 
 
-- Force a larger than 4K fs block size (or data io size)
-   And that fs block size will determine how many devices we can use for
-   a RAIDZ chunk.
+Yes. Agree.
 
-   E.g. with 32K fs block size, and 4K stripe length, we can use 8
-   devices for data, +1 for parity.
-   But this also means, one has to have at least 9 devices to maintain
-   the this scheme with 4K stripe length.
-   (More is fine, less is not possible)
+> 2) 'ex' is unwritten, 'map' describes part we are preparing for write (IO
+> submission) => the split is opportunistic here, if we cannot split due to
+> ENOSPC, just go on and deal with it at IO completion time. No zeroing
+> needed.
 
+Yes. At the same time, if we can indeed move the entire split unwritten
+operation to be handled after I/O completion in the future, it would also be
+more convenient to remove this segment of logic.
 
-But there are still some uncertainty that I hope to get some feedback 
-before starting coding on this.
+> 
+> 3) 'ex' is written, 'map' describes part that should be converted to
+> unwritten => we can zero out the 'map' part if smaller than max_zeroout or
+> if extent split fails.
 
-- Conflicts with raid-stripe-tree and no zoned support
-   I know WDC is working on raid-stripe-tree feature, which will support
-   all profiles including RAID56 for data on zoned devices.
+This makes sense to me! This case it originates from the fallocate with Zero
+Range operation. Currently, the zero-out operation will not be performed if
+the split operation fails, instead, it immediately returns a failure.
 
-   And the feature can be used without zoned device.
+I agree with you that we can do zero out if the 'map' part smaller than
+max_zeroout instead of split extents. However, if the 'map' part is bigger
+than max_zeroout and if extent split fails, I don't think zero out is a good
+idea, Because it might cause zero-range calls to take a long time to execute.
+Although fallocate doesn't explicitly specify how ZERO_RANGE should be
+implemented, users expect it to be very fast. Therefore, in this case, if the
+split fails, it would be better to simply return an error, leave things as
+they are. What do you think?
 
-   Although there is never RAID56 support implemented so far.
+> 
+> This should all result in a relatively straightforward code where we can
+> distinguish the three cases based on 'ex' and passed flags, we should be
+> able to drop the 'EXT4_EXT_DATA_VALID*' flags and logic (possibly we could
+> drop the 'split_flag' argument of ext4_split_extent() altogether), and fix
+> the data exposure issues at the same time. What do you think? Am I missing
+> some case?
+> 
 
-   Would raid-stripe-tree conflicts with this new RAIDZ idea, or it's
-   better just wait for raid-stripe-tree?
+Indeed, I think the overall solution is a nice cleanup idea. :-)
+But this would involve a significant amount of refactoring and logical changes.
+Could we first merge the current set of patches(it could be more easier to
+backport to the early LTS version), and then I can start a new series to
+address this optimization?
 
-- Performance
-   If our stripe length is 4K it means one fs block will be split into
-   4K writes into each device.
+Cheers,
+Yi.
 
-   The initial sequential write will be split into a lot of 4K sized
-   random writes into the real disks.
+> 								Honza
+> 
+>> ---
+>>  fs/ext4/extents.c | 11 ++++++++++-
+>>  1 file changed, 10 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
+>> index f7aa497e5d6c..cafe66cb562f 100644
+>> --- a/fs/ext4/extents.c
+>> +++ b/fs/ext4/extents.c
+>> @@ -3294,6 +3294,13 @@ static struct ext4_ext_path *ext4_split_extent_at(handle_t *handle,
+>>  		err = ext4_ext_zeroout(inode, &zero_ex);
+>>  		if (err)
+>>  			goto fix_extent_len;
+>> +		/*
+>> +		 * The first half contains partially valid data, the splitting
+>> +		 * of this extent has not been completed, fix extent length
+>> +		 * and ext4_split_extent() split will the first half again.
+>> +		 */
+>> +		if (split_flag & EXT4_EXT_DATA_PARTIAL_VALID1)
+>> +			goto fix_extent_len;
+>>  
+>>  		/* update the extent length and mark as initialized */
+>>  		ex->ee_len = cpu_to_le16(ee_len);
+>> @@ -3364,7 +3371,9 @@ static struct ext4_ext_path *ext4_split_extent(handle_t *handle,
+>>  			split_flag1 |= EXT4_EXT_MARK_UNWRIT1 |
+>>  				       EXT4_EXT_MARK_UNWRIT2;
+>>  		if (split_flag & EXT4_EXT_DATA_VALID2)
+>> -			split_flag1 |= EXT4_EXT_DATA_ENTIRE_VALID1;
+>> +			split_flag1 |= map->m_lblk > ee_block ?
+>> +				       EXT4_EXT_DATA_PARTIAL_VALID1 :
+>> +				       EXT4_EXT_DATA_ENTIRE_VALID1;
+>>  		path = ext4_split_extent_at(handle, inode, path,
+>>  				map->m_lblk + map->m_len, split_flag1, flags1);
+>>  		if (IS_ERR(path))
+>> -- 
+>> 2.46.1
+>>
 
-   Not sure how much performance impact it will have, maybe it can be
-   solved with proper blk plug?
-
-- Larger fs block size or larger IO size
-   If the fs block size is larger than the 4K stripe length, it means
-   the data checksum is calulated for the whole fs block, and it will
-   make rebuild much harder.
-
-   E.g. fs block size is 16K, stripe length is 4K, and have 4 data
-   stripes and 1 parity stripe.
-
-   If one data stripe is corrupted, the checksum will mismatch for the
-   whole 16K, but we don't know which 4K is corrupted, thus has to try
-   4 times to get a correct rebuild result.
-
-   Apply this to a whole disk, then rebuild will take forever...
-
-   But this only requires extra rebuild mechanism for RAID chunks.
-
-
-   The other solution is to introduce another size limit, maybe something
-   like data_io_size, and for example using 16K data_io_size, and still
-   4K fs block size, with the same 4K stripe length.
-
-   So that every writes will be aligned to that 16K (a single 4K write
-   will dirty the whole 16K range). And checksum will be calculated for
-   each 4K block.
-
-   Then reading the 16K we verify every 4K block, and can detect which
-   block is corrupted and just repair that block.
-
-   The cost will be the extra space spent saving 4x data checksum, and
-   the extra data_io_size related code.
-
-
-- Way more rigid device number requirement
-   Everything must be decided at mkfs time, the stripe length, fs block
-   size/data io size, and number of devices.
-
-   Sure one can still add more devices than required, but it will just
-   behave like more disks with RAID1.
-   Each RAIDZ chunk will have fixed amount of devices.
-
-   And furthermore, one can no longer remove devices below the minimal
-   amount required by the RAIDZ chunks.
-   If going with 16K blocksize/data io size, 4K stripe length, then it
-   will always require 5 disks for RAIDZ1.
-   Unless the end user gets rid of all RAIDZ chunks (e.g. convert
-   to regular RAID1* or even SINGLE).
-
-- Larger fs block size/data io size means higher write amplification
-   That's the most obvious part, and may be less obvious higher memory
-   pressure, and btrfs is already pretty bad at write-amplification.
-
-   Currently page cache is relying on larger folios to handle those
-   bs > ps cases, requiring more contigous physical memory space.
-
-   And this limit will not go away even the end user choose to get
-   rid of all RAIDZ chunks.
-
-
-So any feedback is appreciated, no matter from end users, or even ZFS 
-developers who invented RAIDZ in the first place.
-
-Thanks,
-Qu
 
