@@ -1,165 +1,222 @@
-Return-Path: <linux-fsdevel+bounces-70104-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70105-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51BE0C90A75
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 03:49:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB31CC90B2A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 04:03:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id F1B2A34FF3A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 02:49:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECE8E3AC7AA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 03:02:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27C48258CE7;
-	Fri, 28 Nov 2025 02:49:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C66AC28689A;
+	Fri, 28 Nov 2025 03:02:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="dmvdno8j"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="twC46c6E"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA3BC8287E
-	for <linux-fsdevel@vger.kernel.org>; Fri, 28 Nov 2025 02:49:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C4C52765DF
+	for <linux-fsdevel@vger.kernel.org>; Fri, 28 Nov 2025 03:02:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764298144; cv=none; b=fqw0VIAfOznsJH5ciOo6vUFGkqedxfLajkSCmfhfDRdaAfiLwGEy3g95yZQKYS/TdFhRXGSl/EwL9pgwzN6ZLpea0GDFrk3EmAr6+vrRqouhRu8+QM5KhBggEuhBOEtOHdVqI9JjFC5v3O+4Rw9czcVwT4mmrLx99p4RMQxW+O8=
+	t=1764298962; cv=none; b=RdBj31OQ2I3Zw/ra+0wOj10vcmvyTb/kFfUiReSyrpkAA73CLqgKZDnZYWN67O3PHvoqH0fjEvbERD3dZGKqZvXPTHfTf2u+uKKHDWpaaxiHlApBwltpa4acXFl7EHXACtAwjYKo8Y5xIJGXBfvBsx+bOulZzu+arvFyvrnNDFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764298144; c=relaxed/simple;
-	bh=lNRTHU/Ua4C1NfgWsJfYOVAwl/ZkkIHkLBtxF+smni4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=ZnXY29//ENi5vNYJTwPKM3GYSYunmafsGNywkHZXcTTALa9NT+S5gplIbrtg48kzx/KZV08bTHXcVLlmx4JdT+LQFae4kW2f3eOSBJtOoyShigv60PyIM/ll3E0SR9UJB3gplozqtGfcvosB7OlLfmtn/mFBOCPo1vLC/JVZvhc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=dmvdno8j; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20251128024859epoutp013cc8200e01567dc5f1e975a592b1f537~8C8998jCi0884008840epoutp01Q
-	for <linux-fsdevel@vger.kernel.org>; Fri, 28 Nov 2025 02:48:59 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20251128024859epoutp013cc8200e01567dc5f1e975a592b1f537~8C8998jCi0884008840epoutp01Q
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1764298139;
-	bh=eXe2ZqNy29W14N4F67ywIdgm6iniQKQRV2GI2taZ0pY=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=dmvdno8j6uQxFedm/ExtO18ZC8iM08bToiD/n90qTFnITnc4ADkJkZnXncx0/yT/k
-	 bTM2KVsCihMS362/GpswzYBNZKTBCWpXuj+/KhM8IbFXM3l3uSIb87csJwEuCKuhoR
-	 o6YV6NVeeT0F66d3K82nF2zYrsdrZwlMOnQeV3nk=
-Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
-	epcas1p2.samsung.com (KnoxPortal) with ESMTPS id
-	20251128024859epcas1p2043f61cf7a67be5130c3c7c4d95ed135~8C89TAx4k0953109531epcas1p2c;
-	Fri, 28 Nov 2025 02:48:59 +0000 (GMT)
-Received: from epcas1p4.samsung.com (unknown [182.195.38.194]) by
-	epsnrtp02.localdomain (Postfix) with ESMTP id 4dHd6L6C5qz2SSKd; Fri, 28 Nov
-	2025 02:48:58 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20251128024858epcas1p1568808e628dde834aa5c3281bebc87ce~8C88puJY12239722397epcas1p16;
-	Fri, 28 Nov 2025 02:48:58 +0000 (GMT)
-Received: from [172.25.92.0] (unknown [10.246.9.208]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20251128024858epsmtip1b5e289814346a020f255a74a531c0987~8C88hdN541617716177epsmtip1V;
-	Fri, 28 Nov 2025 02:48:58 +0000 (GMT)
-Message-ID: <5db1b061-56ef-4013-9d1e-aac04175aa8d@samsung.com>
-Date: Fri, 28 Nov 2025 11:48:58 +0900
+	s=arc-20240116; t=1764298962; c=relaxed/simple;
+	bh=MTf6BVx2wzvVxSSC85YKDXjKkofefJ/V6+3xzqS2Ze4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FRjO0Vm9pL1LcPWQohB1/mS2OqTh+ELgV5oWH2wMSwiObL6iEnIGN3bnn/0ombNK2+1JPI84B77oEnWsWLJJvxTkDyzRXDzgMyortTf2VGsOh1RD2gnftMvD9GCo/4hMBI6zY6MWjIesQVsGYg+H0KAnQrz4J6DU5wYBrYccT+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=twC46c6E; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A64A5C4AF09
+	for <linux-fsdevel@vger.kernel.org>; Fri, 28 Nov 2025 03:02:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1764298961;
+	bh=MTf6BVx2wzvVxSSC85YKDXjKkofefJ/V6+3xzqS2Ze4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=twC46c6EBUz29Lit+G5muRebp66o5nHajGxtdwkJt0NB6Z7xfwmgKHexKvjI/avLa
+	 BIqXff0IOzplFwjYxvzFotW1elkRbycX6TY48ve32Y8+0skizl3xMKGgZM+JgyWugk
+	 WkFQTudGmmS5TYVR7wHm/5l9H/p0YFi1GrEPXcdHrHoDIzqhcrdnAr8FjC+Kb2OSSL
+	 Knobsk+jMEkemok/d/vJYIMmJwg0JAuJ/aeoNM2gcicexjTxhfjcblT9Ps8bEq+WkG
+	 +A28oKx28cW4SHBFU3/AyWVbnm22iHZA7UUqqsAAl0R5zCNvr6v3YyxHMYVgaB0e11
+	 e4mmTpit+eBNw==
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-64198771a9bso2694013a12.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Nov 2025 19:02:41 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCU/c1g/83GGMRfZxqsL5+kvvXx2dWYfJ+xK3c/KNhKdMOVjSmzz5NjPR28z4O0M0ijH2veu0MNkOXJ7AByq@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPDCnKS8XvdblKzHuSHajpDuNykHENIh0b4CPEo0szgxkOmqgH
+	QhLwfCQN+iByIg3GoUppc8SMg9K5ECdbdNODSKA78orhnPltlIzL3C9q+wO8lCz7lP5SCmN1UqO
+	WpZcloutu/AOaXisN5GtjoSTiOLt1zuo=
+X-Google-Smtp-Source: AGHT+IHOQa7Xii9lYXHyLLDvvra6D7Z1/tY2Hk6U/RNRDzvx/RMeZTWI3bjyXerzG7EYKhVOrN5JDZWOXIDIs728qsY=
+X-Received: by 2002:a05:6402:5244:b0:640:f2cd:831 with SMTP id
+ 4fb4d7f45d1cf-6455443f4bemr23787151a12.10.1764298959964; Thu, 27 Nov 2025
+ 19:02:39 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 7/7] exfat: get mutil-clusters in exfat_get_block
-To: Chi Zhiling <chizhiling@163.com>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner
-	<brauner@kernel.org>, Jan Kara <jack@suse.cz>, Matthew Wilcox
-	<willy@infradead.org>, Namjae Jeon <linkinjeon@kernel.org>, Yuezhang Mo
-	<yuezhang.mo@sony.com>, Chi Zhiling <chizhiling@kylinos.cn>, Sungjong Seo
-	<sj1557.seo@samsung.com>
-Content-Language: en-US
-From: Sungjong Seo <sj1557.seo@samsung.com>
-In-Reply-To: <20251118082208.1034186-8-chizhiling@163.com>
-Content-Transfer-Encoding: 7bit
-X-CMS-MailID: 20251128024858epcas1p1568808e628dde834aa5c3281bebc87ce
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 101P
-X-CPGSPASS: Y
-cpgsPolicy: CPGSC10-711,N
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20251118082625epcas1p44374f21201c10f1bb9084d2280e64e6d
-References: <20251118082208.1034186-1-chizhiling@163.com>
-	<CGME20251118082625epcas1p44374f21201c10f1bb9084d2280e64e6d@epcas1p4.samsung.com>
-	<20251118082208.1034186-8-chizhiling@163.com>
+References: <20251127045944.26009-1-linkinjeon@kernel.org> <20251127045944.26009-12-linkinjeon@kernel.org>
+ <CAOQ4uxhwy1a+dtkoTkMp5LLJ5m4FzvQefJXfZ2JzrUZiZn7w0w@mail.gmail.com>
+ <CAKYAXd99CJOeH=nZg_iLb+q5F5N+xxbZm-4Uwxas_tAR3e_xVA@mail.gmail.com> <CAOQ4uxiGMLe=FD72BBCLnk6kmOTrqSQ5wM4mVHSshKc+TN14TQ@mail.gmail.com>
+In-Reply-To: <CAOQ4uxiGMLe=FD72BBCLnk6kmOTrqSQ5wM4mVHSshKc+TN14TQ@mail.gmail.com>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Fri, 28 Nov 2025 12:02:25 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd8K76CeQNtR-QOMSJ_JjuoiibuQkd4NhkPPM_CQNdNajw@mail.gmail.com>
+X-Gm-Features: AWmQ_bnOZt-0lc4cutB5XlQFC_OD68MX69O9aD4NFwtdxr_k8fnKFoYPRYERiv0
+Message-ID: <CAKYAXd8K76CeQNtR-QOMSJ_JjuoiibuQkd4NhkPPM_CQNdNajw@mail.gmail.com>
+Subject: Re: [PATCH v2 11/11] ntfsplus: add Kconfig and Makefile
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, hch@infradead.org, hch@lst.de, 
+	tytso@mit.edu, willy@infradead.org, jack@suse.cz, djwong@kernel.org, 
+	josef@toxicpanda.com, sandeen@sandeen.net, rgoldwyn@suse.com, 
+	xiang@kernel.org, dsterba@suse.com, pali@kernel.org, ebiggers@kernel.org, 
+	neil@brown.name, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	iamjoonsoo.kim@lge.com, cheol.lee@lge.com, jay.sim@lge.com, gunho.lee@lge.com
+Content-Type: multipart/mixed; boundary="000000000000c9a7bc06449edc18"
 
+--000000000000c9a7bc06449edc18
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi, Chi,
-On 25. 11. 18. 17:22, Chi Zhiling wrote:
-> From: Chi Zhiling <chizhiling@kylinos.cn>
-> 
-> mpage uses the get_block of the file system to obtain the mapping of a
-> file or allocate blocks for writes. Currently exfat only supports
-> obtaining one cluster in each get_block call.
-> 
-> Since exfat_count_contig_clusters can obtain multiple consecutive clusters,
-> it can be used to improve exfat_get_block when page size is larger than
-> cluster size.
+On Thu, Nov 27, 2025 at 10:12=E2=80=AFPM Amir Goldstein <amir73il@gmail.com=
+> wrote:
+>
+> On Thu, Nov 27, 2025 at 1:40=E2=80=AFPM Namjae Jeon <linkinjeon@kernel.or=
+g> wrote:
+> >
+> > On Thu, Nov 27, 2025 at 8:22=E2=80=AFPM Amir Goldstein <amir73il@gmail.=
+com> wrote:
+> > >
+> > > On Thu, Nov 27, 2025 at 6:01=E2=80=AFAM Namjae Jeon <linkinjeon@kerne=
+l.org> wrote:
+> > > >
+> > > > This adds the Kconfig and Makefile for ntfsplus.
+> > > >
+> > > > Signed-off-by: Namjae Jeon <linkinjeon@kernel.org>
+> > > > ---
+> > > >  fs/Kconfig           |  1 +
+> > > >  fs/Makefile          |  1 +
+> > > >  fs/ntfsplus/Kconfig  | 45 ++++++++++++++++++++++++++++++++++++++++=
+++++
+> > > >  fs/ntfsplus/Makefile | 18 ++++++++++++++++++
+> > > >  4 files changed, 65 insertions(+)
+> > > >  create mode 100644 fs/ntfsplus/Kconfig
+> > > >  create mode 100644 fs/ntfsplus/Makefile
+> > > >
+> > > > diff --git a/fs/Kconfig b/fs/Kconfig
+> > > > index 0bfdaecaa877..70d596b99c8b 100644
+> > > > --- a/fs/Kconfig
+> > > > +++ b/fs/Kconfig
+> > > > @@ -153,6 +153,7 @@ menu "DOS/FAT/EXFAT/NT Filesystems"
+> > > >  source "fs/fat/Kconfig"
+> > > >  source "fs/exfat/Kconfig"
+> > > >  source "fs/ntfs3/Kconfig"
+> > > > +source "fs/ntfsplus/Kconfig"
+> > > >
+> > > >  endmenu
+> > > >  endif # BLOCK
+> > > > diff --git a/fs/Makefile b/fs/Makefile
+> > > > index e3523ab2e587..2e2473451508 100644
+> > > > --- a/fs/Makefile
+> > > > +++ b/fs/Makefile
+> > > > @@ -91,6 +91,7 @@ obj-y                         +=3D unicode/
+> > > >  obj-$(CONFIG_SMBFS)            +=3D smb/
+> > > >  obj-$(CONFIG_HPFS_FS)          +=3D hpfs/
+> > > >  obj-$(CONFIG_NTFS3_FS)         +=3D ntfs3/
+> > > > +obj-$(CONFIG_NTFSPLUS_FS)      +=3D ntfsplus/
+> > >
+> > > I suggested in another reply to keep the original ntfs name
+> > >
+> > > More important is to keep your driver linked before the unmaintained
+> > > ntfs3, so that it hopefully gets picked up before ntfs3 for auto moun=
+t type
+> > > if both drivers are built-in.
+> > Okay, I will check it:)
+> > >
+> > > I am not sure if keeping the order here would guarantee the link/regi=
+stration
+> > > order. If not, it may make sense to mutually exclude them as built-in=
+ drivers.
+> > Okay, I am leaning towards the latter.
+>
+> Well it's not this OR that.
+> please add you driver as the original was before ntfs3
+>
+> obj-$(CONFIG_NTFS_FS)      +=3D ntfs/
+> obj-$(CONFIG_NTFS3_FS)         +=3D ntfs3/
+Okay.
+>
+> > If you have no objection, I will add the patch to mutually exclude the =
+two ntfs implementation.
+>
+> You should definitely allow them both if at least one is built as a modul=
+e
+> I think it would be valuable for testing.
+>
+> Just that
+> CONFIG_NTFS_FS=3Dy
+> CONFIG_NTFS3_FS=3Dy
+>
+> I don't see the usefulness in allowing that.
+> (other people may disagree)
+>
+> I think that the way to implement it is using an auxiliary choice config =
+var
+> in fs/Kconfig (i.e. CONFIG_DEFAULT_NTFS) and select/depends statements
+> to only allow the default ntfs driver to be configured as 'y',
+> but couldn't find a good example to point you at.
+Okay. Could you please check whether the attached patch matches what
+you described ?
 
-I think reusing buffer_head is a good approach!
-However, for obtaining multiple clusters, it would be better to handle
-them in exfat_map_cluster.
+Thanks!
+>
+> Thanks,
+> Amir.
 
-> 
-> Signed-off-by: Chi Zhiling <chizhiling@kylinos.cn>
-> ---
->  fs/exfat/inode.c | 14 +++++++++++++-
->  1 file changed, 13 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/exfat/inode.c b/fs/exfat/inode.c
-> index f9501c3a3666..256ba2af34eb 100644
-> --- a/fs/exfat/inode.c
-> +++ b/fs/exfat/inode.c
-> @@ -264,13 +264,14 @@ static int exfat_map_cluster(struct inode *inode, unsigned int clu_offset,
->  static int exfat_get_block(struct inode *inode, sector_t iblock,
->  		struct buffer_head *bh_result, int create)
->  {
-> +	struct exfat_chain chain;
->  	struct exfat_inode_info *ei = EXFAT_I(inode);
->  	struct super_block *sb = inode->i_sb;
->  	struct exfat_sb_info *sbi = EXFAT_SB(sb);
->  	unsigned long max_blocks = bh_result->b_size >> inode->i_blkbits;
->  	int err = 0;
->  	unsigned long mapped_blocks = 0;
-> -	unsigned int cluster, sec_offset;
-> +	unsigned int cluster, sec_offset, count;
->  	sector_t last_block;
->  	sector_t phys = 0;
->  	sector_t valid_blks;
-> @@ -301,6 +302,17 @@ static int exfat_get_block(struct inode *inode, sector_t iblock,
->  
->  	phys = exfat_cluster_to_sector(sbi, cluster) + sec_offset;
->  	mapped_blocks = sbi->sect_per_clus - sec_offset;
-> +
-> +	if (max_blocks > mapped_blocks && !create) {
-> +		chain.dir = cluster;
-> +		chain.size = (max_blocks >> sbi->sect_per_clus_bits) + 1;
+--000000000000c9a7bc06449edc18
+Content-Type: text/x-patch; charset="US-ASCII"; 
+	name="0001-ntfs-restrict-built-in-NTFS-seclection-to-one-driver.patch"
+Content-Disposition: attachment; 
+	filename="0001-ntfs-restrict-built-in-NTFS-seclection-to-one-driver.patch"
+Content-Transfer-Encoding: base64
+Content-ID: <f_mii9xtmf0>
+X-Attachment-Id: f_mii9xtmf0
 
-There seems to be an issue where the code sets chain.size to be one greater than the actual cluster count.
-
-For example, assuming a 16KiB page, 512B sector, and 4KiB cluster,
-for a 16KiB file, chain.size becomes 5 instead of 4.
-Is this the intended behavior?
-
-> +		chain.flags = ei->flags;
-> +
-> +		err = exfat_count_contig_clusters(sb, &chain, &count);
-> +		if (err)
-> +			return err;
-> +		max_blocks = (count << sbi->sect_per_clus_bits) - sec_offset;
-
-You already said mapped_blocks is correct.
-
-> +	}
->  	max_blocks = min(mapped_blocks, max_blocks);
->  
->  	map_bh(bh_result, sb, phys);
-
+RnJvbSAxMTE1NDkxN2ZmNTNkNmNmMjE4YWM1OGU2Nzc2ZTYwMzI0NjU4N2I2IE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBOYW1qYWUgSmVvbiA8bGlua2luamVvbkBrZXJuZWwub3JnPgpE
+YXRlOiBGcmksIDI4IE5vdiAyMDI1IDExOjQ0OjQ1ICswOTAwClN1YmplY3Q6IFtQQVRDSF0gbnRm
+czogcmVzdHJpY3QgYnVpbHQtaW4gTlRGUyBzZWNsZWN0aW9uIHRvIG9uZSBkcml2ZXIsIGFsbG93
+CiBib3RoIGFzIG1vZHVsZXMKClNpZ25lZC1vZmYtYnk6IE5hbWphZSBKZW9uIDxsaW5raW5qZW9u
+QGtlcm5lbC5vcmc+Ci0tLQogZnMvS2NvbmZpZyAgICAgICAgICB8IDExICsrKysrKysrKysrCiBm
+cy9udGZzMy9LY29uZmlnICAgIHwgIDIgKysKIGZzL250ZnNwbHVzL0tjb25maWcgfCAgMSArCiAz
+IGZpbGVzIGNoYW5nZWQsIDE0IGluc2VydGlvbnMoKykKCmRpZmYgLS1naXQgYS9mcy9LY29uZmln
+IGIvZnMvS2NvbmZpZwppbmRleCA3MGQ1OTZiOTljOGIuLmMzNzkzODNjYjRmZiAxMDA2NDQKLS0t
+IGEvZnMvS2NvbmZpZworKysgYi9mcy9LY29uZmlnCkBAIC0xNTUsNiArMTU1LDE3IEBAIHNvdXJj
+ZSAiZnMvZXhmYXQvS2NvbmZpZyIKIHNvdXJjZSAiZnMvbnRmczMvS2NvbmZpZyIKIHNvdXJjZSAi
+ZnMvbnRmc3BsdXMvS2NvbmZpZyIKIAorY2hvaWNlCisgICBwcm9tcHQgIlNlbGVjdCBidWlsdC1p
+biBOVEZTIGZpbGVzeXN0ZW0gKG9ubHkgb25lIGNhbiBiZSBidWlsdC1pbikiCisgICBoZWxwCisg
+ICAgIE9ubHkgb25lIE5URlMgY2FuIGJlIGJ1aWx0IGludG8gdGhlIGtlcm5lbCh5KS4KKyAgICAg
+Qm90aCBjYW4gc3RpbGwgYmUgYnVpbHQgYXMgbW9kdWxlcyhtKS4KKworICAgY29uZmlnIERFRkFV
+TFRfTlRGU1BMVVMKKyAgICAgICBib29sICJOVEZTKyIKKyAgIGNvbmZpZyBERUZBVUxUX05URlMz
+CisgICAgICAgYm9vbCAiTlRGUzMiCitlbmRjaG9pY2UKIGVuZG1lbnUKIGVuZGlmICMgQkxPQ0sK
+IApkaWZmIC0tZ2l0IGEvZnMvbnRmczMvS2NvbmZpZyBiL2ZzL250ZnMzL0tjb25maWcKaW5kZXgg
+N2JjMzFkNjlmNjgwLi4xOGJkNmM5OGM2ZWIgMTAwNjQ0Ci0tLSBhL2ZzL250ZnMzL0tjb25maWcK
+KysrIGIvZnMvbnRmczMvS2NvbmZpZwpAQCAtMSw2ICsxLDcgQEAKICMgU1BEWC1MaWNlbnNlLUlk
+ZW50aWZpZXI6IEdQTC0yLjAtb25seQogY29uZmlnIE5URlMzX0ZTCiAJdHJpc3RhdGUgIk5URlMg
+UmVhZC1Xcml0ZSBmaWxlIHN5c3RlbSBzdXBwb3J0IgorCWRlcGVuZHMgb24gIURFRkFVTFRfTlRG
+U1BMVVMgfHwgbQogCXNlbGVjdCBCVUZGRVJfSEVBRAogCXNlbGVjdCBOTFMKIAlzZWxlY3QgTEVH
+QUNZX0RJUkVDVF9JTwpAQCAtNDksNiArNTAsNyBAQCBjb25maWcgTlRGUzNfRlNfUE9TSVhfQUNM
+CiAKIGNvbmZpZyBOVEZTX0ZTCiAJdHJpc3RhdGUgIk5URlMgZmlsZSBzeXN0ZW0gc3VwcG9ydCIK
+KwlkZXBlbmRzIG9uICFERUZBVUxUX05URlNQTFVTIHx8IG0KIAlzZWxlY3QgTlRGUzNfRlMKIAlz
+ZWxlY3QgQlVGRkVSX0hFQUQKIAlzZWxlY3QgTkxTCmRpZmYgLS1naXQgYS9mcy9udGZzcGx1cy9L
+Y29uZmlnIGIvZnMvbnRmc3BsdXMvS2NvbmZpZwppbmRleCA3OGJjMzQ4NDA0NjMuLmM4ZDFhYjk5
+MTEzYyAxMDA2NDQKLS0tIGEvZnMvbnRmc3BsdXMvS2NvbmZpZworKysgYi9mcy9udGZzcGx1cy9L
+Y29uZmlnCkBAIC0xLDYgKzEsNyBAQAogIyBTUERYLUxpY2Vuc2UtSWRlbnRpZmllcjogR1BMLTIu
+MC1vbmx5CiBjb25maWcgTlRGU1BMVVNfRlMKIAl0cmlzdGF0ZSAiTlRGUysgZmlsZSBzeXN0ZW0g
+c3VwcG9ydCAoRVhQRVJJTUVOVEFMKSIKKwlkZXBlbmRzIG9uICFERUZBVUxUX05URlMzIHx8IG0K
+IAlzZWxlY3QgTkxTCiAJaGVscAogCSAgTlRGUyBpcyB0aGUgZmlsZSBzeXN0ZW0gb2YgTWljcm9z
+b2Z0IFdpbmRvd3MgTlQsIDIwMDAsIFhQIGFuZCAyMDAzLgotLSAKMi4zNC4xCgo=
+--000000000000c9a7bc06449edc18--
 
