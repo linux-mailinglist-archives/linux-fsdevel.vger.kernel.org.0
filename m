@@ -1,342 +1,214 @@
-Return-Path: <linux-fsdevel+bounces-70129-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70130-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54ECAC9198C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 11:19:31 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AB5FC91BCF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 11:59:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 23FFB4E1809
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 10:19:30 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7082C4E369E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 10:59:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8914530B521;
-	Fri, 28 Nov 2025 10:19:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE6AA30CDBE;
+	Fri, 28 Nov 2025 10:58:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="f0ZwJqf0"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="X8XMEsbO";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="K4Op5za9";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="UcrnwgZc";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="CfCpXfUn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B24BF3054D0
-	for <linux-fsdevel@vger.kernel.org>; Fri, 28 Nov 2025 10:19:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5C0D2DEA95
+	for <linux-fsdevel@vger.kernel.org>; Fri, 28 Nov 2025 10:58:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764325162; cv=none; b=kHamLUBCU8MmQne7B4/P2fkM80tj89f/iEeQXqfLWuGywNo8kPLBHjCQkwg3oEICM285BsEUEAG0vfBOAwTD9uczFxDF/P9hB/RVV4PTxUapG8AmW0BDcKGxk3ldcLr1AKAPa670jEsR43Yz3pMQGjrYI+1T0T3VnXCfO+hNwL0=
+	t=1764327534; cv=none; b=tjMS6O087MaOrtHkWLTHhq/4uvYrDgRc7SS45D/wpdc43ITnQ+r6LnilZjF4s92KVwyTglCNu0wGHGb6JWWNEX6Y/aZxU7h3zv2YLMEPeZnng/I1ok16p2j/N93/TDy4k8mYeiYEoKI46wkoAmqo+vx44sMs6TbClEvgLlhCoGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764325162; c=relaxed/simple;
-	bh=2e/mz9hWihgcZCXhOMQc0oIxaZiboXX8ZtttBgFa1Mw=;
-	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=NBhkJS4WijusJxWsh1TMH5egvnhoXW5LQ4idYYVy1Ryu0u9G2bAxeLfcHWTb9lu5OEuoaVuGLImJkMZoua5gGEc6wgjGLWteaooe54UifqizXHrPu/YNmVM2S2KRp6LH/n/XYgLbErcL9P+t2UVChteeQV+QdqqiG1owgW2eXqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=f0ZwJqf0; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1764325156;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=2fGtcgC7L/4zeQhv/UijC1VyqdSGwSQbXxRUFqOBbvA=;
-	b=f0ZwJqf0pEXJIfIThERj8xFhfpoZ38pFUbmXbGqRyaQRtWc3s3GWjnr2DquMw/wOCmDGH0
-	gn7Ov5UWEFobjKr8ylfH3NaU4tYqL52RM+mVDQSVUrdMd66wlhMmTFs8uBRnKbrm7sPn4E
-	sTUkTdn3bMID/u5iStqNGGaQf+GhnG0=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-544-dtIZIuGQPdymdxhlwXh_NQ-1; Fri,
- 28 Nov 2025 05:19:11 -0500
-X-MC-Unique: dtIZIuGQPdymdxhlwXh_NQ-1
-X-Mimecast-MFC-AGG-ID: dtIZIuGQPdymdxhlwXh_NQ_1764325149
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	s=arc-20240116; t=1764327534; c=relaxed/simple;
+	bh=SvnK5XQnMGY/Xm+9kDL5K2+BVNhGugSE82rzNQ/7pNY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DJD1bRXvujDho59XG+O45/5i+652rYoi0yENJ72ojP7RLFxcVpobjy2uPlJFx4w6vCdPMWubJIQQqyUZDj2zaGArhyC1UnisgT5ygu0YS0F/msH7zeHJsQNeTX6y+gzsa9r4ZpXZzmOGnQkW7cgJ4tfQxYUflnZf2NZAvdSBprk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=X8XMEsbO; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=K4Op5za9; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=UcrnwgZc; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=CfCpXfUn; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6B1FA1800473;
-	Fri, 28 Nov 2025 10:19:09 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.14])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 652A819560B0;
-	Fri, 28 Nov 2025 10:19:07 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-To: Christian Brauner <brauner@kernel.org>
-cc: dhowells@redhat.com,
-    syzbot+41c68824eefb67cdf00c@syzkaller.appspotmail.com,
-    Marc Dionne <marc.dionne@auristor.com>,
-    linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-    linux-kernel@vger.kernel.org
-Subject: [PATCH v3] afs: Fix delayed allocation of a cell's anonymous key
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 585CF221D3;
+	Fri, 28 Nov 2025 10:58:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1764327529; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=orTQmRLZwcrDEvwB9Xx8RqsI9hVqZBrpkc5wch7XSFo=;
+	b=X8XMEsbOn8pZbWVsi0MLN1vNosdh3FW5JQMURp9k8alaeDHkhFMWrjPmVw4K/78+dR2zn6
+	rI3wBIIyan/+lrqeq80ZJIVe5K9IUwOpi9dMwtSWj5h4OJQT3gavp2Awj8ClmGOwtl72+A
+	Q5KytCKZQ+geDoZu/4Vg0qyUa+gIzbQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1764327529;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=orTQmRLZwcrDEvwB9Xx8RqsI9hVqZBrpkc5wch7XSFo=;
+	b=K4Op5za9rhyheViAteLiWl6DoI7/+iADSDn0AZ8hBp6ruuZwH9iFr/ad4NLJbFLqNAVgHI
+	yvwqh05aAc/txFAQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=UcrnwgZc;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=CfCpXfUn
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1764327528; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=orTQmRLZwcrDEvwB9Xx8RqsI9hVqZBrpkc5wch7XSFo=;
+	b=UcrnwgZcRbLM3WcRHizVj2Q8nUpM95ZSbhImYqbuhe9lrIOHsOyN9nOvKee0zE3ZIcZ2NW
+	Dn8KJUdoWBO7KO+sZeYNGmNsv/NoIHIwoU6qJTDkx6ZRW4PRBB/4junxaeKIxjntYqDmCk
+	NTb252o7tO1nDQjADcBP03u8QtEB93k=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1764327528;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=orTQmRLZwcrDEvwB9Xx8RqsI9hVqZBrpkc5wch7XSFo=;
+	b=CfCpXfUnocWJnBQ8TxZDl/yyWC0wEyF1SLXhLxmKGkQLmGYz1uvxkHn12Ka4/otMC4IXNC
+	NUFC0thk7ZPyvyAg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 472063EA63;
+	Fri, 28 Nov 2025 10:58:48 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id PEf9EGiAKWnUFQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 28 Nov 2025 10:58:48 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id E53FDA08F1; Fri, 28 Nov 2025 11:58:47 +0100 (CET)
+Date: Fri, 28 Nov 2025 11:58:47 +0100
+From: Jan Kara <jack@suse.cz>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, tytso@mit.edu, 
+	adilger.kernel@dilger.ca, yi.zhang@huawei.com, yizhang089@gmail.com, libaokun1@huawei.com, 
+	yangerkun@huawei.com
+Subject: Re: [PATCH v2 03/13] ext4: don't zero the entire extent if
+ EXT4_EXT_DATA_PARTIAL_VALID1
+Message-ID: <ihvyl3ayookm5b2tcjz63tfhdobn64lbzudiv7w3hezs6ykzyd@p2euigrkhmxm>
+References: <20251121060811.1685783-1-yi.zhang@huaweicloud.com>
+ <20251121060811.1685783-4-yi.zhang@huaweicloud.com>
+ <yro4hwpttmy6e2zspvwjfdbpej6qvhlqjvlr5kp3nwffqgcnfd@z6qual55zhfq>
+ <2713db6e-ff43-4583-b328-412e38f3d7bf@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <800327.1764325144.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 28 Nov 2025 10:19:05 +0000
-Message-ID: <800328.1764325145@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2713db6e-ff43-4583-b328-412e38f3d7bf@huaweicloud.com>
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[suse.cz,vger.kernel.org,mit.edu,dilger.ca,huawei.com,gmail.com];
+	RCVD_COUNT_THREE(0.00)[3];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Spam-Level: 
+X-Spam-Score: -4.01
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Queue-Id: 585CF221D3
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
 
-The allocation of a cell's anonymous key is done in a background thread
-along with other cell setup such as doing a DNS upcall.  In the reported
-bug, this is triggered by afs_parse_source() parsing the device name given
-to mount() and calling afs_lookup_cell() with the name of the cell.
+On Fri 28-11-25 11:45:51, Zhang Yi wrote:
+> On 11/27/2025 9:41 PM, Jan Kara wrote:
+> > I think the code would be much clearer
+> > if we just centralized all the zeroing in ext4_split_extent(). At that
+> > place the situation is actually pretty simple:
+> 
+> Thank you for your suggestion!
+> 
+> > 
+> > 1) 'ex' is unwritten, 'map' describes part with already written data which
+> > we want to convert to initialized (generally IO completion situation) => we
+> > can zero out boundaries if they are smaller than max_zeroout or if extent
+> > split fails.
+> > 
+> 
+> Yes. Agree.
+> 
+> > 2) 'ex' is unwritten, 'map' describes part we are preparing for write (IO
+> > submission) => the split is opportunistic here, if we cannot split due to
+> > ENOSPC, just go on and deal with it at IO completion time. No zeroing
+> > needed.
+> 
+> Yes. At the same time, if we can indeed move the entire split unwritten
+> operation to be handled after I/O completion in the future, it would also be
+> more convenient to remove this segment of logic.
 
-The normal key lookup then tries to use the key description on the
-anonymous authentication key as the reference for request_key() - but it
-may not yet be set and so an oops can happen.
+Yes.
 
-This has been made more likely to happen by the fix for dynamic lookup
-failure.
+> > 3) 'ex' is written, 'map' describes part that should be converted to
+> > unwritten => we can zero out the 'map' part if smaller than max_zeroout or
+> > if extent split fails.
+> 
+> This makes sense to me! This case it originates from the fallocate with Zero
+> Range operation. Currently, the zero-out operation will not be performed if
+> the split operation fails, instead, it immediately returns a failure.
+> 
+> I agree with you that we can do zero out if the 'map' part smaller than
+> max_zeroout instead of split extents. However, if the 'map' part is bigger
+> than max_zeroout and if extent split fails, I don't think zero out is a good
+> idea, Because it might cause zero-range calls to take a long time to execute.
+> Although fallocate doesn't explicitly specify how ZERO_RANGE should be
+> implemented, users expect it to be very fast. Therefore, in this case, if the
+> split fails, it would be better to simply return an error, leave things as
+> they are. What do you think?
 
-Fix this by firstly allocating a reference name and attaching it to the
-afs_cell record when the record is created.  It can share the memory
-allocation with the cell name (unfortunately it can't just overlap the cel=
-l
-name by prepending it with "afs@" as the cell name already has a '.'
-prepended for other purposes).  This reference name is then passed to
-request_key().
+True. Just returning the error is a good option in this case.
 
-Secondly, the anon key is now allocated on demand at the point a key is
-requested in afs_request_key() if it is not already allocated.  A mutex is
-used to prevent multiple allocation for a cell.
+> > This should all result in a relatively straightforward code where we can
+> > distinguish the three cases based on 'ex' and passed flags, we should be
+> > able to drop the 'EXT4_EXT_DATA_VALID*' flags and logic (possibly we could
+> > drop the 'split_flag' argument of ext4_split_extent() altogether), and fix
+> > the data exposure issues at the same time. What do you think? Am I missing
+> > some case?
+> 
+> Indeed, I think the overall solution is a nice cleanup idea. :-)
+> But this would involve a significant amount of refactoring and logical changes.
+> Could we first merge the current set of patches(it could be more easier to
+> backport to the early LTS version), and then I can start a new series to
+> address this optimization?
 
-Thirdly, make afs_request_key_rcu() return NULL if the anonymous key isn't
-yet allocated (if we need it) and then the caller can return -ECHILD to
-drop out of RCU-mode and afs_request_key() can be called.
+I agree the changes are rather intrusive and the code is complex. Since you
+have direct fixes already written, let's merge them first and cleanup
+afterwards as you suggest.
 
-Note that the anonymous key is kind of necessary to make the key lookup
-cache work as that doesn't currently cache a negative lookup, but it's
-probably worth some investigation to see if NULL can be used instead.
-
-Fixes: 330e2c514823 ("afs: Fix dynamic lookup to fail on cell lookup failu=
-re")
-Reported-by: syzbot+41c68824eefb67cdf00c@syzkaller.appspotmail.com
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Marc Dionne <marc.dionne@auristor.com>
-cc: linux-afs@lists.infradead.org
-cc: linux-fsdevel@vger.kernel.org
----
- Changes
- =3D=3D=3D=3D=3D=3D=3D
- ver #3)
- - Deactivated debugging statement.
- ver #2)
- - Allocated the anon key on demand to avoid race.
-
- fs/afs/cell.c     |   43 ++++++++-----------------------------------
- fs/afs/internal.h |    1 +
- fs/afs/security.c |   48 ++++++++++++++++++++++++++++++++++++++++--------
- 3 files changed, 49 insertions(+), 43 deletions(-)
-
-diff --git a/fs/afs/cell.c b/fs/afs/cell.c
-index d9b6fa1088b7..71c10a05cebe 100644
---- a/fs/afs/cell.c
-+++ b/fs/afs/cell.c
-@@ -140,7 +140,9 @@ static struct afs_cell *afs_alloc_cell(struct afs_net =
-*net,
- 		return ERR_PTR(-ENOMEM);
- 	}
- =
-
--	cell->name =3D kmalloc(1 + namelen + 1, GFP_KERNEL);
-+	/* Allocate the cell name and the key name in one go. */
-+	cell->name =3D kmalloc(1 + namelen + 1 +
-+			     4 + namelen + 1, GFP_KERNEL);
- 	if (!cell->name) {
- 		kfree(cell);
- 		return ERR_PTR(-ENOMEM);
-@@ -151,7 +153,11 @@ static struct afs_cell *afs_alloc_cell(struct afs_net=
- *net,
- 	cell->name_len =3D namelen;
- 	for (i =3D 0; i < namelen; i++)
- 		cell->name[i] =3D tolower(name[i]);
--	cell->name[i] =3D 0;
-+	cell->name[i++] =3D 0;
-+
-+	cell->key_desc =3D cell->name + i;
-+	memcpy(cell->key_desc, "afs@", 4);
-+	memcpy(cell->key_desc + 4, cell->name, cell->name_len + 1);
- =
-
- 	cell->net =3D net;
- 	refcount_set(&cell->ref, 1);
-@@ -710,33 +716,6 @@ void afs_set_cell_timer(struct afs_cell *cell, unsign=
-ed int delay_secs)
- 	timer_reduce(&cell->management_timer, jiffies + delay_secs * HZ);
- }
- =
-
--/*
-- * Allocate a key to use as a placeholder for anonymous user security.
-- */
--static int afs_alloc_anon_key(struct afs_cell *cell)
--{
--	struct key *key;
--	char keyname[4 + AFS_MAXCELLNAME + 1], *cp, *dp;
--
--	/* Create a key to represent an anonymous user. */
--	memcpy(keyname, "afs@", 4);
--	dp =3D keyname + 4;
--	cp =3D cell->name;
--	do {
--		*dp++ =3D tolower(*cp);
--	} while (*cp++);
--
--	key =3D rxrpc_get_null_key(keyname);
--	if (IS_ERR(key))
--		return PTR_ERR(key);
--
--	cell->anonymous_key =3D key;
--
--	_debug("anon key %p{%x}",
--	       cell->anonymous_key, key_serial(cell->anonymous_key));
--	return 0;
--}
--
- /*
-  * Activate a cell.
-  */
-@@ -746,12 +725,6 @@ static int afs_activate_cell(struct afs_net *net, str=
-uct afs_cell *cell)
- 	struct afs_cell *pcell;
- 	int ret;
- =
-
--	if (!cell->anonymous_key) {
--		ret =3D afs_alloc_anon_key(cell);
--		if (ret < 0)
--			return ret;
--	}
--
- 	ret =3D afs_proc_cell_setup(cell);
- 	if (ret < 0)
- 		return ret;
-diff --git a/fs/afs/internal.h b/fs/afs/internal.h
-index b92f96f56767..009064b8d661 100644
---- a/fs/afs/internal.h
-+++ b/fs/afs/internal.h
-@@ -413,6 +413,7 @@ struct afs_cell {
- =
-
- 	u8			name_len;	/* Length of name */
- 	char			*name;		/* Cell name, case-flattened and NUL-padded */
-+	char			*key_desc;	/* Authentication key description */
- };
- =
-
- /*
-diff --git a/fs/afs/security.c b/fs/afs/security.c
-index 6a7744c9e2a2..ff8830e6982f 100644
---- a/fs/afs/security.c
-+++ b/fs/afs/security.c
-@@ -16,6 +16,30 @@
- =
-
- static DEFINE_HASHTABLE(afs_permits_cache, 10);
- static DEFINE_SPINLOCK(afs_permits_lock);
-+static DEFINE_MUTEX(afs_key_lock);
-+
-+/*
-+ * Allocate a key to use as a placeholder for anonymous user security.
-+ */
-+static int afs_alloc_anon_key(struct afs_cell *cell)
-+{
-+	struct key *key;
-+
-+	mutex_lock(&afs_key_lock);
-+	if (!cell->anonymous_key) {
-+		key =3D rxrpc_get_null_key(cell->key_desc);
-+		if (!IS_ERR(key))
-+			cell->anonymous_key =3D key;
-+	}
-+	mutex_unlock(&afs_key_lock);
-+
-+	if (IS_ERR(key))
-+		return PTR_ERR(key);
-+
-+	_debug("anon key %p{%x}",
-+	       cell->anonymous_key, key_serial(cell->anonymous_key));
-+	return 0;
-+}
- =
-
- /*
-  * get a key
-@@ -23,11 +47,12 @@ static DEFINE_SPINLOCK(afs_permits_lock);
- struct key *afs_request_key(struct afs_cell *cell)
- {
- 	struct key *key;
-+	int ret;
- =
-
--	_enter("{%x}", key_serial(cell->anonymous_key));
-+	_enter("{%s}", cell->key_desc);
- =
-
--	_debug("key %s", cell->anonymous_key->description);
--	key =3D request_key_net(&key_type_rxrpc, cell->anonymous_key->descriptio=
-n,
-+	_debug("key %s", cell->key_desc);
-+	key =3D request_key_net(&key_type_rxrpc, cell->key_desc,
- 			      cell->net->net, NULL);
- 	if (IS_ERR(key)) {
- 		if (PTR_ERR(key) !=3D -ENOKEY) {
-@@ -35,6 +60,12 @@ struct key *afs_request_key(struct afs_cell *cell)
- 			return key;
- 		}
- =
-
-+		if (!cell->anonymous_key) {
-+			ret =3D afs_alloc_anon_key(cell);
-+			if (ret < 0)
-+				return ERR_PTR(ret);
-+		}
-+
- 		/* act as anonymous user */
- 		_leave(" =3D {%x} [anon]", key_serial(cell->anonymous_key));
- 		return key_get(cell->anonymous_key);
-@@ -52,11 +83,10 @@ struct key *afs_request_key_rcu(struct afs_cell *cell)
- {
- 	struct key *key;
- =
-
--	_enter("{%x}", key_serial(cell->anonymous_key));
-+	_enter("{%s}", cell->key_desc);
- =
-
--	_debug("key %s", cell->anonymous_key->description);
--	key =3D request_key_net_rcu(&key_type_rxrpc,
--				  cell->anonymous_key->description,
-+	_debug("key %s", cell->key_desc);
-+	key =3D request_key_net_rcu(&key_type_rxrpc, cell->key_desc,
- 				  cell->net->net);
- 	if (IS_ERR(key)) {
- 		if (PTR_ERR(key) !=3D -ENOKEY) {
-@@ -65,6 +95,8 @@ struct key *afs_request_key_rcu(struct afs_cell *cell)
- 		}
- =
-
- 		/* act as anonymous user */
-+		if (!cell->anonymous_key)
-+			return NULL; /* Need to allocate */
- 		_leave(" =3D {%x} [anon]", key_serial(cell->anonymous_key));
- 		return key_get(cell->anonymous_key);
- 	} else {
-@@ -408,7 +440,7 @@ int afs_permission(struct mnt_idmap *idmap, struct ino=
-de *inode,
- =
-
- 	if (mask & MAY_NOT_BLOCK) {
- 		key =3D afs_request_key_rcu(vnode->volume->cell);
--		if (IS_ERR(key))
-+		if (IS_ERR_OR_NULL(key))
- 			return -ECHILD;
- =
-
- 		ret =3D -ECHILD;
-
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
