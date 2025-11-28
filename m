@@ -1,176 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-70181-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70180-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E778C92D84
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 18:51:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C0124C92D69
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 18:50:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 368DF4E5B2A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 17:51:31 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C02434E529E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 17:50:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B15E33374D;
-	Fri, 28 Nov 2025 17:51:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 703E82D594B;
+	Fri, 28 Nov 2025 17:50:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="JLkiHJgR"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="nQjuKCDT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from sender3-pp-f112.zoho.com (sender3-pp-f112.zoho.com [136.143.184.112])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 972652C030E;
-	Fri, 28 Nov 2025 17:51:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.184.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764352280; cv=pass; b=dDzVjdwowFJG5W3rI9d0LZC/GnOVY7YfSOCfNUYG3Pj7zypfUf3JlA9VpOtTLPiruyXLabs12LKmMpEEvIwgd/N0BHtN52ahTOb1HyJuW4Pz6otFVu4qcEkJbbqM+d2eR/2z+AJeLJGDbYNDB0CchKe+fgK0Cvyn1+/tm8wxx9U=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764352280; c=relaxed/simple;
-	bh=G9TaF18+b9gVs6g2UJus3J79mfgPZhN/PNb4rQNmNVQ=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=hFiAZs5LAOaoeuOhHY20hi1hbofDxZnNX3xln0Sf73Of1QcrY0tojQ5VWHsF+v+eaiyEyraqbozGKnwn/Mtv9Xd7FSC1WJqA2+l1HMXY1a844UOptGJfd1G9Hm4f7oeBWCcRDiQCmlKWJM9y7jcH0hcK9gZ4FL0/umXxAuSzGg8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=JLkiHJgR; arc=pass smtp.client-ip=136.143.184.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1764352242; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=jD1ZKYLI2d1J3n7Nn8PEelO5qXEL36eak47f/IL7PSnywyFON56Cz6XgCW6BAIRpNIh7z8XrJq41OJJmJMPAuyS7xa4B/oc8hxL4cIZy57+klHWD4IyeeRtIHckf1Eizx9HROuF9ooTM0ogOD94O51JZQjj7uM3etGKFsh/RmCU=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1764352242; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=CSvU9cF2EFsAjALyezUXtFWtkOVH0bcqxKUZhyUrvCM=; 
-	b=hlWt7Ul8JWfnS5es+gdb3ogNyD1wyqlkaLaWdMm61GW/7kBYctfSbVqSjj9RNklpyw4fYmQA4s6Iv8VAeihZgRkxkO9HkOVZopXkloqHJzRaGg9fN/jroBYneUN8K6/E3/RQVYeEv/UUkp2f5jCJ8LPncQis3ZHBpGQYbcGGvks=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1764352242;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=CSvU9cF2EFsAjALyezUXtFWtkOVH0bcqxKUZhyUrvCM=;
-	b=JLkiHJgRDZgOdpKVEbGaoTfTGM7cuUbG17mJn/6NMuYT6u06OPec0sZe6nT3/+Fo
-	lhUdjv/UJIHSKjH8Cqh4iCDSYbq56Gg4UDmparCStPUdkcm/T1803IpgjoIH0GBQaSi
-	6b4WuqAHjpec+TxDUK+qmFyq8X158V9inSAayWOk=
-Received: by mx.zohomail.com with SMTPS id 1764352240347383.8438430122677;
-	Fri, 28 Nov 2025 09:50:40 -0800 (PST)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C171B33290F;
+	Fri, 28 Nov 2025 17:50:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1764352249; cv=none; b=AncrIRzzcBh0d8rHLjuIaG8RjO/phnPJV2D5SfsjfGRNp2bD2Wtx25xKETyWclmtPoLwKntdYUNLDz6x8CMRjVhy78atqgKp6Sis8B8t7VDlbbHFfnJsGEZ8PPwb8uANTnd60VS2NTatE9SNDhLAOpsfhswN2Rk3+o5BtvczENI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1764352249; c=relaxed/simple;
+	bh=lMxGP9Y74RTNlyC4T67QqtY8O+iNeCiJvv3TFT+OFuw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JAsysUItc6eYGDamDyIZbgeuI2I+TCyQVWcZiopMHfuUlrCiPW2MSopp6ZQhk0C0WlvsJ8muIXQD0i8yIOt1o5/pQFh/OUjzkTx/4E0XCzgfwPf51mz5vkEdYLS9lZvrmgipR3aQZjfmmhG8CvuP5drdTt/G2IS19hhaiZmAt1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=nQjuKCDT; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=ISlazhlQCvrNS1N+QRuhxBA4roAuVAjOK83kV5oq3EI=; b=nQjuKCDTL1ZW2JnJee46rMuyxC
+	xO9FjOm5E1qkedtVN4/qFx7K/obuiyPkPjX0iIe8zYPBkXrcuyPvh6V8SnFLTedreigH7fSKcZ6CX
+	JHH38tt6sgOA72/2WBR2tP4xeSebgQ/zZoc3IQhPc1pyBj0KLe6aPaRZA2GyoMvTjPwe39bckygZA
+	KN5JPw/BhEcUv4N/PEaYAevBZWlsoTeaCempHddKuBGZnvDnKnAHkRayrocXlUEdg9EFB5XTVTNQi
+	CygbMkNvUKEKjxK/yCcTk/UTCmRkiIezm7cbIYY4km0PbbVHw2u/p1XRoXURdi4LsOPSj7rXgJdDV
+	qsmY327g==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vP2cE-0000000Da5F-2iR2;
+	Fri, 28 Nov 2025 17:50:42 +0000
+Date: Fri, 28 Nov 2025 17:50:42 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: "Sokolowski, Jan" <jan.sokolowski@intel.com>
+Cc: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>
+Subject: Re: [RFC PATCH 1/1] idr: do not create idr if new id would be
+ outside given range
+Message-ID: <aSng8hKuttOWQuds@casper.infradead.org>
+References: <20251127092732.684959-1-jan.sokolowski@intel.com>
+ <20251127092732.684959-2-jan.sokolowski@intel.com>
+ <aShYJta2EHh1d8az@casper.infradead.org>
+ <06dbd4f8-ef5f-458c-a8b4-8a8fb2a7877c@amd.com>
+ <aShb9lLyR537WDNq@casper.infradead.org>
+ <aShmW2gMTyRwyC6m@casper.infradead.org>
+ <IA4PR11MB9251BBCF39B18A557BF08C0799DCA@IA4PR11MB9251.namprd11.prod.outlook.com>
+ <aSnFME6-LqQXKazB@casper.infradead.org>
+ <IA4PR11MB92511BAEF257742C82ED590199DCA@IA4PR11MB9251.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [PATCH v13 3/4] rust: Add missing SAFETY documentation for `ARef`
- example
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20251117-unique-ref-v13-3-b5b243df1250@pm.me>
-Date: Fri, 28 Nov 2025 14:50:21 -0300
-Cc: Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Benno Lossin <lossin@kernel.org>,
- Danilo Krummrich <dakr@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Dave Ertman <david.m.ertman@intel.com>,
- Ira Weiny <ira.weiny@intel.com>,
- Leon Romanovsky <leon@kernel.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>,
- Jan Kara <jack@suse.cz>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Viresh Kumar <vireshk@kernel.org>,
- Nishanth Menon <nm@ti.com>,
- Stephen Boyd <sboyd@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>,
- =?utf-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- Paul Moore <paul@paul-moore.com>,
- Serge Hallyn <sergeh@kernel.org>,
- Asahi Lina <lina+kernel@asahilina.net>,
- rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- linux-block@vger.kernel.org,
- dri-devel@lists.freedesktop.org,
- linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org,
- linux-pm@vger.kernel.org,
- linux-pci@vger.kernel.org,
- linux-security-module@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <06C410F4-8534-43B4-8DE1-039F70B26E5A@collabora.com>
-References: <20251117-unique-ref-v13-0-b5b243df1250@pm.me>
- <20251117-unique-ref-v13-3-b5b243df1250@pm.me>
-To: Oliver Mangold <oliver.mangold@pm.me>
-X-Mailer: Apple Mail (2.3826.700.81)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <IA4PR11MB92511BAEF257742C82ED590199DCA@IA4PR11MB9251.namprd11.prod.outlook.com>
 
+On Fri, Nov 28, 2025 at 04:47:17PM +0000, Sokolowski, Jan wrote:
+> > No.  You didn't co-develop anything.  You reported the bug, badly.
+> > 
+> And I've sent a potential patch on how it should've been fixed. That should count for something, right?
 
+Literally everything about that patch was wrong.  If I'd used any of it,
+you'd have a point, but the entire approach was wrong.
 
-> On 17 Nov 2025, at 07:08, Oliver Mangold <oliver.mangold@pm.me> wrote:
->=20
-> SAFETY comment in rustdoc example was just 'TODO'. Fixed.
->=20
-> Signed-off-by: Oliver Mangold <oliver.mangold@pm.me>
-> Co-developed-by: Andreas Hindborg <a.hindborg@kernel.org>
-> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
-> ---
-> rust/kernel/sync/aref.rs | 10 ++++++----
-> 1 file changed, 6 insertions(+), 4 deletions(-)
->=20
-> diff --git a/rust/kernel/sync/aref.rs b/rust/kernel/sync/aref.rs
-> index 4226119d5ac9..937dcf6ed5de 100644
-> --- a/rust/kernel/sync/aref.rs
-> +++ b/rust/kernel/sync/aref.rs
-> @@ -129,12 +129,14 @@ pub unsafe fn from_raw(ptr: NonNull<T>) -> Self =
-{
->     /// # Examples
->     ///
->     /// ```
-> -    /// use core::ptr::NonNull;
-> -    /// use kernel::sync::aref::{ARef, RefCounted};
-> +    /// # use core::ptr::NonNull;
-> +    /// # use kernel::sync::aref::{ARef, RefCounted};
->     ///
->     /// struct Empty {}
->     ///
-> -    /// # // SAFETY: TODO.
-> +    /// // SAFETY: The `RefCounted` implementation for `Empty` does =
-not count references and
-> +    /// // never frees the underlying object. Thus we can act as =
-having a refcount on the object
+You _can't_allow the allocation to succeed and then undo it.  There might
+be an RCU-protected reader which would see the intermediate state.
+And that's an inconsistency we guarantee can't happen; an RCU reader
+can see the state before the lock, the state after the lock.  It must
+not see a state that never happened.
 
-nit: perhaps saying =E2=80=9Can increment on the refcount=E2=80=9D is =
-clearer?
-
-> +    /// // that we pass to the newly created `ARef`.
->     /// unsafe impl RefCounted for Empty {
->     ///     fn inc_ref(&self) {}
->     ///     unsafe fn dec_ref(_obj: NonNull<Self>) {}
-> @@ -142,7 +144,7 @@ pub unsafe fn from_raw(ptr: NonNull<T>) -> Self {
->     ///
->     /// let mut data =3D Empty {};
->     /// let ptr =3D NonNull::<Empty>::new(&mut data).unwrap();
-> -    /// # // SAFETY: TODO.
-> +    /// // SAFETY: We keep `data` around longer than the `ARef`.
->     /// let data_ref: ARef<Empty> =3D unsafe { ARef::from_raw(ptr) };
->     /// let raw_ptr: NonNull<Empty> =3D ARef::into_raw(data_ref);
->     ///
->=20
-> --=20
-> 2.51.2
->=20
->=20
->=20
-
-Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>=
+If you'd written a test case, I'd happily add a co-developed-by tag.
+But you didn't do that either.
 
