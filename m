@@ -1,222 +1,232 @@
-Return-Path: <linux-fsdevel+bounces-70105-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70106-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB31CC90B2A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 04:03:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C4CAC90B30
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 04:07:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECE8E3AC7AA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 03:02:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68B853AACAB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 03:07:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C66AC28689A;
-	Fri, 28 Nov 2025 03:02:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A77D29D260;
+	Fri, 28 Nov 2025 03:07:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="twC46c6E"
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="N1b4EZr6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C4C52765DF
-	for <linux-fsdevel@vger.kernel.org>; Fri, 28 Nov 2025 03:02:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CA9D288C08
+	for <linux-fsdevel@vger.kernel.org>; Fri, 28 Nov 2025 03:07:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764298962; cv=none; b=RdBj31OQ2I3Zw/ra+0wOj10vcmvyTb/kFfUiReSyrpkAA73CLqgKZDnZYWN67O3PHvoqH0fjEvbERD3dZGKqZvXPTHfTf2u+uKKHDWpaaxiHlApBwltpa4acXFl7EHXACtAwjYKo8Y5xIJGXBfvBsx+bOulZzu+arvFyvrnNDFM=
+	t=1764299258; cv=none; b=JYTySt6R+0r5ShaYEk4wf7sNQvXlLedntm6aTcUfO/UH9uwyeGTFgb5/Jtc7eBIqsS8XAR8GAkznvHLDqQ3AYyFq7Fq4HKkJ57zz4ysKHKjdcHKeIxtacc4Q7aPhUy9u5ijETubkRTgPjh/b/W6oQFPYiriR75cjhX86UHMtAio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764298962; c=relaxed/simple;
-	bh=MTf6BVx2wzvVxSSC85YKDXjKkofefJ/V6+3xzqS2Ze4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FRjO0Vm9pL1LcPWQohB1/mS2OqTh+ELgV5oWH2wMSwiObL6iEnIGN3bnn/0ombNK2+1JPI84B77oEnWsWLJJvxTkDyzRXDzgMyortTf2VGsOh1RD2gnftMvD9GCo/4hMBI6zY6MWjIesQVsGYg+H0KAnQrz4J6DU5wYBrYccT+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=twC46c6E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A64A5C4AF09
-	for <linux-fsdevel@vger.kernel.org>; Fri, 28 Nov 2025 03:02:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764298961;
-	bh=MTf6BVx2wzvVxSSC85YKDXjKkofefJ/V6+3xzqS2Ze4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=twC46c6EBUz29Lit+G5muRebp66o5nHajGxtdwkJt0NB6Z7xfwmgKHexKvjI/avLa
-	 BIqXff0IOzplFwjYxvzFotW1elkRbycX6TY48ve32Y8+0skizl3xMKGgZM+JgyWugk
-	 WkFQTudGmmS5TYVR7wHm/5l9H/p0YFi1GrEPXcdHrHoDIzqhcrdnAr8FjC+Kb2OSSL
-	 Knobsk+jMEkemok/d/vJYIMmJwg0JAuJ/aeoNM2gcicexjTxhfjcblT9Ps8bEq+WkG
-	 +A28oKx28cW4SHBFU3/AyWVbnm22iHZA7UUqqsAAl0R5zCNvr6v3YyxHMYVgaB0e11
-	 e4mmTpit+eBNw==
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-64198771a9bso2694013a12.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Nov 2025 19:02:41 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU/c1g/83GGMRfZxqsL5+kvvXx2dWYfJ+xK3c/KNhKdMOVjSmzz5NjPR28z4O0M0ijH2veu0MNkOXJ7AByq@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPDCnKS8XvdblKzHuSHajpDuNykHENIh0b4CPEo0szgxkOmqgH
-	QhLwfCQN+iByIg3GoUppc8SMg9K5ECdbdNODSKA78orhnPltlIzL3C9q+wO8lCz7lP5SCmN1UqO
-	WpZcloutu/AOaXisN5GtjoSTiOLt1zuo=
-X-Google-Smtp-Source: AGHT+IHOQa7Xii9lYXHyLLDvvra6D7Z1/tY2Hk6U/RNRDzvx/RMeZTWI3bjyXerzG7EYKhVOrN5JDZWOXIDIs728qsY=
-X-Received: by 2002:a05:6402:5244:b0:640:f2cd:831 with SMTP id
- 4fb4d7f45d1cf-6455443f4bemr23787151a12.10.1764298959964; Thu, 27 Nov 2025
- 19:02:39 -0800 (PST)
+	s=arc-20240116; t=1764299258; c=relaxed/simple;
+	bh=rDordQGhNOH5SttwVsuuKdo/CtICKy8hwBJCgwlGLs4=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=RuuCmy9msZXbKlq1elJG3gjuTuJvbsipiLe86teJHfVAqiNBknxolODzaxdyjpY2ZiAABNVIZwnORG8qWgkt6h8WVLL4oPEfbRQKtCQtUiGiwRjRy6dQ6bMThMSFyheI5aWkLcrFwUdhKnbHGc5o96KRWKOIMcTpssH3DJTIt4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=N1b4EZr6; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-477a1c28778so15118875e9.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Nov 2025 19:07:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1764299254; x=1764904054; darn=vger.kernel.org;
+        h=content-transfer-encoding:autocrypt:subject:from:to
+         :content-language:user-agent:mime-version:date:message-id:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mpCyz/9P22tV8fDaOVWWRCa2r5LmOB5jCS8opHK9hyc=;
+        b=N1b4EZr6U7VFQUwhlDFv2hWI8n1IYcUOhxtZ71F1HJ89xusJmAADdRxuQkSaPUlyEY
+         QQk9CJaze+IEBl/UYOkUAlFQxe8LGH28y8fNilMWXwcX8aHgnmxzoHktohmXw2IaRJii
+         oCHyKx/zBSZZOwPyYjIYt5GsBllRnh3yDiR9qrVXn6reUMeFA/gRwfzEnjn8anzILfRl
+         LOIJOsjktHyzBL0soP+HwMBcKcdOWNk5pDOVwauf6biIr9w6Dqb48hy4rdyCYV7WhE48
+         64/uH06vK3AC8kG7Q4Dbn61Kyi9iLGcZetzXW0ViA0fhif65Ct4/rjBzLf/P51KI8eJ3
+         C0PA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764299254; x=1764904054;
+        h=content-transfer-encoding:autocrypt:subject:from:to
+         :content-language:user-agent:mime-version:date:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mpCyz/9P22tV8fDaOVWWRCa2r5LmOB5jCS8opHK9hyc=;
+        b=p/jdXvhbuZ0MAlectNxT45DcrhxNVg6KVlRV4LZvnUMygtro4hF7Nuaa2FZQfH3kA2
+         aaYu8Bo75umj4rMhSj5b5Q07Zd7DmQz8dOTxnOTvne1ci22J3oYYLHEw3+iRsXDgDzMe
+         ei6fmUO6I2aaajT1bv8ESiaVWWlPq4xzMKDSUwtVYI0vvAG1qzDWc/1wsGvhkKjt3lTB
+         Zin+w3FtpgVNGKIZ+STIkWPSTnv6Pte4h6H/9dHKEHU0nF9KwQIz7HjDQNyP+eLg7DQF
+         zpV9BmptP5RBPxnELzHgjA+8BbPE8Yv3JLegQVMu6IJRRPrT0aETwrydhB0bn/fyYxW4
+         ywpw==
+X-Forwarded-Encrypted: i=1; AJvYcCUrfhBkqnxZTaTvxNapkAr1HauRGz56j8GS1iwD9a+qmuoFAUTZcWOTdIWRhvs1PwjpkG63mw9wJlPXFmdI@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3Cp1paN7BmHtOYa+ekpgnCdC2iE+3dM1aNy5g+U5njriUVEhY
+	qmptn0DP7bVQMyk7YqqS8JpMQbKO7Mag9PO0wtRoXlqEGSnH/gJI0NprD9xguiK8Pw8=
+X-Gm-Gg: ASbGncuaQppglLBfo94w89wFlciJdHbXwPighIBn1CFnvV+kgWMnU1EXpBc00qGzL+B
+	eJO/e8mMQliaWl/QxmybngTtnioQkIuLWWhIsB1Tzr3kwx55fIE3gnYPOTxXGNi3DZKQpXr7YNS
+	VSrEPESPVyNnxs5tDz6edxovPRmr1m9XT2uSdCAKb1gOEL+MFgeYSB5ytYlvq9uIHV/y3Jd8KV8
+	Z+rKbkTZAsw0n+uZ/T7pNhUzbGLfrtKxfd6SH1RStaLL64tB66LVD0XE4Ret61noqPDAya0SzLW
+	o/gMpcW6SVIbG8C02LTm2f3VKHenEjzPG7S9ioxWprFvS9fKuSNSqH5UCIvTs9RQrTb9817fbP6
+	IJOdvSioQKxPY2/ys0MgHu7JYbQpp4bJ886Vll854Km8eRtL6VkLUGIdesiPf+/zf0hPmVyLYK9
+	1WIAuUfC1aSadTwTLnGsN93TkfZGqfaZzb/FR0tgg=
+X-Google-Smtp-Source: AGHT+IHMcASB0KggOCUf9K0Lv67abZ/TFhrn/fm384fDoQ/BBMYSeRFN7Xj4SPw5JzdQLsTyeb16kw==
+X-Received: by 2002:a05:600c:6287:b0:477:54cd:200e with SMTP id 5b1f17b1804b1-47904acae83mr108347555e9.1.1764299254468;
+        Thu, 27 Nov 2025 19:07:34 -0800 (PST)
+Received: from ?IPV6:2403:580d:fda1::299? (2403-580d-fda1--299.ip6.aussiebb.net. [2403:580d:fda1::299])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29bce40ab6bsm29840775ad.21.2025.11.27.19.07.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Nov 2025 19:07:33 -0800 (PST)
+Message-ID: <4c0c1d27-957c-4a6f-9397-47ca321b1805@suse.com>
+Date: Fri, 28 Nov 2025 13:37:29 +1030
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251127045944.26009-1-linkinjeon@kernel.org> <20251127045944.26009-12-linkinjeon@kernel.org>
- <CAOQ4uxhwy1a+dtkoTkMp5LLJ5m4FzvQefJXfZ2JzrUZiZn7w0w@mail.gmail.com>
- <CAKYAXd99CJOeH=nZg_iLb+q5F5N+xxbZm-4Uwxas_tAR3e_xVA@mail.gmail.com> <CAOQ4uxiGMLe=FD72BBCLnk6kmOTrqSQ5wM4mVHSshKc+TN14TQ@mail.gmail.com>
-In-Reply-To: <CAOQ4uxiGMLe=FD72BBCLnk6kmOTrqSQ5wM4mVHSshKc+TN14TQ@mail.gmail.com>
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Fri, 28 Nov 2025 12:02:25 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd8K76CeQNtR-QOMSJ_JjuoiibuQkd4NhkPPM_CQNdNajw@mail.gmail.com>
-X-Gm-Features: AWmQ_bnOZt-0lc4cutB5XlQFC_OD68MX69O9aD4NFwtdxr_k8fnKFoYPRYERiv0
-Message-ID: <CAKYAXd8K76CeQNtR-QOMSJ_JjuoiibuQkd4NhkPPM_CQNdNajw@mail.gmail.com>
-Subject: Re: [PATCH v2 11/11] ntfsplus: add Kconfig and Makefile
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, hch@infradead.org, hch@lst.de, 
-	tytso@mit.edu, willy@infradead.org, jack@suse.cz, djwong@kernel.org, 
-	josef@toxicpanda.com, sandeen@sandeen.net, rgoldwyn@suse.com, 
-	xiang@kernel.org, dsterba@suse.com, pali@kernel.org, ebiggers@kernel.org, 
-	neil@brown.name, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	iamjoonsoo.kim@lge.com, cheol.lee@lge.com, jay.sim@lge.com, gunho.lee@lge.com
-Content-Type: multipart/mixed; boundary="000000000000c9a7bc06449edc18"
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: linux-btrfs <linux-btrfs@vger.kernel.org>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ zfs-devel@list.zfsonlinux.org
+From: Qu Wenruo <wqu@suse.com>
+Subject: Ideas for RAIDZ-like design to solve write-holes, with larger fs
+ block size
+Autocrypt: addr=wqu@suse.com; keydata=
+ xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
+ 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
+ 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
+ 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
+ gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
+ AAHNGFF1IFdlbnJ1byA8d3F1QHN1c2UuY29tPsLAlAQTAQgAPgIbAwULCQgHAgYVCAkKCwIE
+ FgIDAQIeAQIXgBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXVgBQkQ/lqxAAoJEMI9kfOh
+ Jf6o+jIH/2KhFmyOw4XWAYbnnijuYqb/obGae8HhcJO2KIGcxbsinK+KQFTSZnkFxnbsQ+VY
+ fvtWBHGt8WfHcNmfjdejmy9si2jyy8smQV2jiB60a8iqQXGmsrkuR+AM2V360oEbMF3gVvim
+ 2VSX2IiW9KERuhifjseNV1HLk0SHw5NnXiWh1THTqtvFFY+CwnLN2GqiMaSLF6gATW05/sEd
+ V17MdI1z4+WSk7D57FlLjp50F3ow2WJtXwG8yG8d6S40dytZpH9iFuk12Sbg7lrtQxPPOIEU
+ rpmZLfCNJJoZj603613w/M8EiZw6MohzikTWcFc55RLYJPBWQ+9puZtx1DopW2jOwE0EWdWB
+ rwEIAKpT62HgSzL9zwGe+WIUCMB+nOEjXAfvoUPUwk+YCEDcOdfkkM5FyBoJs8TCEuPXGXBO
+ Cl5P5B8OYYnkHkGWutAVlUTV8KESOIm/KJIA7jJA+Ss9VhMjtePfgWexw+P8itFRSRrrwyUf
+ E+0WcAevblUi45LjWWZgpg3A80tHP0iToOZ5MbdYk7YFBE29cDSleskfV80ZKxFv6koQocq0
+ vXzTfHvXNDELAuH7Ms/WJcdUzmPyBf3Oq6mKBBH8J6XZc9LjjNZwNbyvsHSrV5bgmu/THX2n
+ g/3be+iqf6OggCiy3I1NSMJ5KtR0q2H2Nx2Vqb1fYPOID8McMV9Ll6rh8S8AEQEAAcLAfAQY
+ AQgAJgIbDBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXWBBQkQ/lrSAAoJEMI9kfOhJf6o
+ cakH+QHwDszsoYvmrNq36MFGgvAHRjdlrHRBa4A1V1kzd4kOUokongcrOOgHY9yfglcvZqlJ
+ qfa4l+1oxs1BvCi29psteQTtw+memmcGruKi+YHD7793zNCMtAtYidDmQ2pWaLfqSaryjlzR
+ /3tBWMyvIeWZKURnZbBzWRREB7iWxEbZ014B3gICqZPDRwwitHpH8Om3eZr7ygZck6bBa4MU
+ o1XgbZcspyCGqu1xF/bMAY2iCDcq6ULKQceuKkbeQ8qxvt9hVxJC2W3lHq8dlK1pkHPDg9wO
+ JoAXek8MF37R8gpLoGWl41FIUb3hFiu3zhDDvslYM4BmzI18QgQTQnotJH8=
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
---000000000000c9a7bc06449edc18
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Hi,
 
-On Thu, Nov 27, 2025 at 10:12=E2=80=AFPM Amir Goldstein <amir73il@gmail.com=
-> wrote:
->
-> On Thu, Nov 27, 2025 at 1:40=E2=80=AFPM Namjae Jeon <linkinjeon@kernel.or=
-g> wrote:
-> >
-> > On Thu, Nov 27, 2025 at 8:22=E2=80=AFPM Amir Goldstein <amir73il@gmail.=
-com> wrote:
-> > >
-> > > On Thu, Nov 27, 2025 at 6:01=E2=80=AFAM Namjae Jeon <linkinjeon@kerne=
-l.org> wrote:
-> > > >
-> > > > This adds the Kconfig and Makefile for ntfsplus.
-> > > >
-> > > > Signed-off-by: Namjae Jeon <linkinjeon@kernel.org>
-> > > > ---
-> > > >  fs/Kconfig           |  1 +
-> > > >  fs/Makefile          |  1 +
-> > > >  fs/ntfsplus/Kconfig  | 45 ++++++++++++++++++++++++++++++++++++++++=
-++++
-> > > >  fs/ntfsplus/Makefile | 18 ++++++++++++++++++
-> > > >  4 files changed, 65 insertions(+)
-> > > >  create mode 100644 fs/ntfsplus/Kconfig
-> > > >  create mode 100644 fs/ntfsplus/Makefile
-> > > >
-> > > > diff --git a/fs/Kconfig b/fs/Kconfig
-> > > > index 0bfdaecaa877..70d596b99c8b 100644
-> > > > --- a/fs/Kconfig
-> > > > +++ b/fs/Kconfig
-> > > > @@ -153,6 +153,7 @@ menu "DOS/FAT/EXFAT/NT Filesystems"
-> > > >  source "fs/fat/Kconfig"
-> > > >  source "fs/exfat/Kconfig"
-> > > >  source "fs/ntfs3/Kconfig"
-> > > > +source "fs/ntfsplus/Kconfig"
-> > > >
-> > > >  endmenu
-> > > >  endif # BLOCK
-> > > > diff --git a/fs/Makefile b/fs/Makefile
-> > > > index e3523ab2e587..2e2473451508 100644
-> > > > --- a/fs/Makefile
-> > > > +++ b/fs/Makefile
-> > > > @@ -91,6 +91,7 @@ obj-y                         +=3D unicode/
-> > > >  obj-$(CONFIG_SMBFS)            +=3D smb/
-> > > >  obj-$(CONFIG_HPFS_FS)          +=3D hpfs/
-> > > >  obj-$(CONFIG_NTFS3_FS)         +=3D ntfs3/
-> > > > +obj-$(CONFIG_NTFSPLUS_FS)      +=3D ntfsplus/
-> > >
-> > > I suggested in another reply to keep the original ntfs name
-> > >
-> > > More important is to keep your driver linked before the unmaintained
-> > > ntfs3, so that it hopefully gets picked up before ntfs3 for auto moun=
-t type
-> > > if both drivers are built-in.
-> > Okay, I will check it:)
-> > >
-> > > I am not sure if keeping the order here would guarantee the link/regi=
-stration
-> > > order. If not, it may make sense to mutually exclude them as built-in=
- drivers.
-> > Okay, I am leaning towards the latter.
->
-> Well it's not this OR that.
-> please add you driver as the original was before ntfs3
->
-> obj-$(CONFIG_NTFS_FS)      +=3D ntfs/
-> obj-$(CONFIG_NTFS3_FS)         +=3D ntfs3/
-Okay.
->
-> > If you have no objection, I will add the patch to mutually exclude the =
-two ntfs implementation.
->
-> You should definitely allow them both if at least one is built as a modul=
-e
-> I think it would be valuable for testing.
->
-> Just that
-> CONFIG_NTFS_FS=3Dy
-> CONFIG_NTFS3_FS=3Dy
->
-> I don't see the usefulness in allowing that.
-> (other people may disagree)
->
-> I think that the way to implement it is using an auxiliary choice config =
-var
-> in fs/Kconfig (i.e. CONFIG_DEFAULT_NTFS) and select/depends statements
-> to only allow the default ntfs driver to be configured as 'y',
-> but couldn't find a good example to point you at.
-Okay. Could you please check whether the attached patch matches what
-you described ?
+With the recent bs > ps support for btrfs, I'm wondering if it's 
+possible to experiment some RAIDZ-like solutions to solve RAID56 
+write-holes problems (at least for data COW cases) without traditional 
+journal.
 
-Thanks!
->
-> Thanks,
-> Amir.
+Currently my idea looks like this:
 
---000000000000c9a7bc06449edc18
-Content-Type: text/x-patch; charset="US-ASCII"; 
-	name="0001-ntfs-restrict-built-in-NTFS-seclection-to-one-driver.patch"
-Content-Disposition: attachment; 
-	filename="0001-ntfs-restrict-built-in-NTFS-seclection-to-one-driver.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_mii9xtmf0>
-X-Attachment-Id: f_mii9xtmf0
+- Fixed and much smaller stripe data length
+   Currently the data stripe length is fixed for all btrfs RAID profiles,
+   64K.
 
-RnJvbSAxMTE1NDkxN2ZmNTNkNmNmMjE4YWM1OGU2Nzc2ZTYwMzI0NjU4N2I2IE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBOYW1qYWUgSmVvbiA8bGlua2luamVvbkBrZXJuZWwub3JnPgpE
-YXRlOiBGcmksIDI4IE5vdiAyMDI1IDExOjQ0OjQ1ICswOTAwClN1YmplY3Q6IFtQQVRDSF0gbnRm
-czogcmVzdHJpY3QgYnVpbHQtaW4gTlRGUyBzZWNsZWN0aW9uIHRvIG9uZSBkcml2ZXIsIGFsbG93
-CiBib3RoIGFzIG1vZHVsZXMKClNpZ25lZC1vZmYtYnk6IE5hbWphZSBKZW9uIDxsaW5raW5qZW9u
-QGtlcm5lbC5vcmc+Ci0tLQogZnMvS2NvbmZpZyAgICAgICAgICB8IDExICsrKysrKysrKysrCiBm
-cy9udGZzMy9LY29uZmlnICAgIHwgIDIgKysKIGZzL250ZnNwbHVzL0tjb25maWcgfCAgMSArCiAz
-IGZpbGVzIGNoYW5nZWQsIDE0IGluc2VydGlvbnMoKykKCmRpZmYgLS1naXQgYS9mcy9LY29uZmln
-IGIvZnMvS2NvbmZpZwppbmRleCA3MGQ1OTZiOTljOGIuLmMzNzkzODNjYjRmZiAxMDA2NDQKLS0t
-IGEvZnMvS2NvbmZpZworKysgYi9mcy9LY29uZmlnCkBAIC0xNTUsNiArMTU1LDE3IEBAIHNvdXJj
-ZSAiZnMvZXhmYXQvS2NvbmZpZyIKIHNvdXJjZSAiZnMvbnRmczMvS2NvbmZpZyIKIHNvdXJjZSAi
-ZnMvbnRmc3BsdXMvS2NvbmZpZyIKIAorY2hvaWNlCisgICBwcm9tcHQgIlNlbGVjdCBidWlsdC1p
-biBOVEZTIGZpbGVzeXN0ZW0gKG9ubHkgb25lIGNhbiBiZSBidWlsdC1pbikiCisgICBoZWxwCisg
-ICAgIE9ubHkgb25lIE5URlMgY2FuIGJlIGJ1aWx0IGludG8gdGhlIGtlcm5lbCh5KS4KKyAgICAg
-Qm90aCBjYW4gc3RpbGwgYmUgYnVpbHQgYXMgbW9kdWxlcyhtKS4KKworICAgY29uZmlnIERFRkFV
-TFRfTlRGU1BMVVMKKyAgICAgICBib29sICJOVEZTKyIKKyAgIGNvbmZpZyBERUZBVUxUX05URlMz
-CisgICAgICAgYm9vbCAiTlRGUzMiCitlbmRjaG9pY2UKIGVuZG1lbnUKIGVuZGlmICMgQkxPQ0sK
-IApkaWZmIC0tZ2l0IGEvZnMvbnRmczMvS2NvbmZpZyBiL2ZzL250ZnMzL0tjb25maWcKaW5kZXgg
-N2JjMzFkNjlmNjgwLi4xOGJkNmM5OGM2ZWIgMTAwNjQ0Ci0tLSBhL2ZzL250ZnMzL0tjb25maWcK
-KysrIGIvZnMvbnRmczMvS2NvbmZpZwpAQCAtMSw2ICsxLDcgQEAKICMgU1BEWC1MaWNlbnNlLUlk
-ZW50aWZpZXI6IEdQTC0yLjAtb25seQogY29uZmlnIE5URlMzX0ZTCiAJdHJpc3RhdGUgIk5URlMg
-UmVhZC1Xcml0ZSBmaWxlIHN5c3RlbSBzdXBwb3J0IgorCWRlcGVuZHMgb24gIURFRkFVTFRfTlRG
-U1BMVVMgfHwgbQogCXNlbGVjdCBCVUZGRVJfSEVBRAogCXNlbGVjdCBOTFMKIAlzZWxlY3QgTEVH
-QUNZX0RJUkVDVF9JTwpAQCAtNDksNiArNTAsNyBAQCBjb25maWcgTlRGUzNfRlNfUE9TSVhfQUNM
-CiAKIGNvbmZpZyBOVEZTX0ZTCiAJdHJpc3RhdGUgIk5URlMgZmlsZSBzeXN0ZW0gc3VwcG9ydCIK
-KwlkZXBlbmRzIG9uICFERUZBVUxUX05URlNQTFVTIHx8IG0KIAlzZWxlY3QgTlRGUzNfRlMKIAlz
-ZWxlY3QgQlVGRkVSX0hFQUQKIAlzZWxlY3QgTkxTCmRpZmYgLS1naXQgYS9mcy9udGZzcGx1cy9L
-Y29uZmlnIGIvZnMvbnRmc3BsdXMvS2NvbmZpZwppbmRleCA3OGJjMzQ4NDA0NjMuLmM4ZDFhYjk5
-MTEzYyAxMDA2NDQKLS0tIGEvZnMvbnRmc3BsdXMvS2NvbmZpZworKysgYi9mcy9udGZzcGx1cy9L
-Y29uZmlnCkBAIC0xLDYgKzEsNyBAQAogIyBTUERYLUxpY2Vuc2UtSWRlbnRpZmllcjogR1BMLTIu
-MC1vbmx5CiBjb25maWcgTlRGU1BMVVNfRlMKIAl0cmlzdGF0ZSAiTlRGUysgZmlsZSBzeXN0ZW0g
-c3VwcG9ydCAoRVhQRVJJTUVOVEFMKSIKKwlkZXBlbmRzIG9uICFERUZBVUxUX05URlMzIHx8IG0K
-IAlzZWxlY3QgTkxTCiAJaGVscAogCSAgTlRGUyBpcyB0aGUgZmlsZSBzeXN0ZW0gb2YgTWljcm9z
-b2Z0IFdpbmRvd3MgTlQsIDIwMDAsIFhQIGFuZCAyMDAzLgotLSAKMi4zNC4xCgo=
---000000000000c9a7bc06449edc18--
+   But will change to 4K (minimal and default) for RAIDZ chunks.
+
+- Force a larger than 4K fs block size (or data io size)
+   And that fs block size will determine how many devices we can use for
+   a RAIDZ chunk.
+
+   E.g. with 32K fs block size, and 4K stripe length, we can use 8
+   devices for data, +1 for parity.
+   But this also means, one has to have at least 9 devices to maintain
+   the this scheme with 4K stripe length.
+   (More is fine, less is not possible)
+
+
+But there are still some uncertainty that I hope to get some feedback 
+before starting coding on this.
+
+- Conflicts with raid-stripe-tree and no zoned support
+   I know WDC is working on raid-stripe-tree feature, which will support
+   all profiles including RAID56 for data on zoned devices.
+
+   And the feature can be used without zoned device.
+
+   Although there is never RAID56 support implemented so far.
+
+   Would raid-stripe-tree conflicts with this new RAIDZ idea, or it's
+   better just wait for raid-stripe-tree?
+
+- Performance
+   If our stripe length is 4K it means one fs block will be split into
+   4K writes into each device.
+
+   The initial sequential write will be split into a lot of 4K sized
+   random writes into the real disks.
+
+   Not sure how much performance impact it will have, maybe it can be
+   solved with proper blk plug?
+
+- Larger fs block size or larger IO size
+   If the fs block size is larger than the 4K stripe length, it means
+   the data checksum is calulated for the whole fs block, and it will
+   make rebuild much harder.
+
+   E.g. fs block size is 16K, stripe length is 4K, and have 4 data
+   stripes and 1 parity stripe.
+
+   If one data stripe is corrupted, the checksum will mismatch for the
+   whole 16K, but we don't know which 4K is corrupted, thus has to try
+   4 times to get a correct rebuild result.
+
+   Apply this to a whole disk, then rebuild will take forever...
+
+   But this only requires extra rebuild mechanism for RAID chunks.
+
+
+   The other solution is to introduce another size limit, maybe something
+   like data_io_size, and for example using 16K data_io_size, and still
+   4K fs block size, with the same 4K stripe length.
+
+   So that every writes will be aligned to that 16K (a single 4K write
+   will dirty the whole 16K range). And checksum will be calculated for
+   each 4K block.
+
+   Then reading the 16K we verify every 4K block, and can detect which
+   block is corrupted and just repair that block.
+
+   The cost will be the extra space spent saving 4x data checksum, and
+   the extra data_io_size related code.
+
+
+- Way more rigid device number requirement
+   Everything must be decided at mkfs time, the stripe length, fs block
+   size/data io size, and number of devices.
+
+   Sure one can still add more devices than required, but it will just
+   behave like more disks with RAID1.
+   Each RAIDZ chunk will have fixed amount of devices.
+
+   And furthermore, one can no longer remove devices below the minimal
+   amount required by the RAIDZ chunks.
+   If going with 16K blocksize/data io size, 4K stripe length, then it
+   will always require 5 disks for RAIDZ1.
+   Unless the end user gets rid of all RAIDZ chunks (e.g. convert
+   to regular RAID1* or even SINGLE).
+
+- Larger fs block size/data io size means higher write amplification
+   That's the most obvious part, and may be less obvious higher memory
+   pressure, and btrfs is already pretty bad at write-amplification.
+
+   Currently page cache is relying on larger folios to handle those
+   bs > ps cases, requiring more contigous physical memory space.
+
+   And this limit will not go away even the end user choose to get
+   rid of all RAIDZ chunks.
+
+
+So any feedback is appreciated, no matter from end users, or even ZFS 
+developers who invented RAIDZ in the first place.
+
+Thanks,
+Qu
 
