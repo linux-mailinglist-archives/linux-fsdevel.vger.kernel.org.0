@@ -1,250 +1,265 @@
-Return-Path: <linux-fsdevel+bounces-70135-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70136-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 418D8C91CA7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 12:30:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BACDEC91E33
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 12:55:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 969243489D9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 11:30:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 828DF3ADF72
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 11:55:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C63DA30F537;
-	Fri, 28 Nov 2025 11:30:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32286325727;
+	Fri, 28 Nov 2025 11:55:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="T7Fcl/yN";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="+2vBdcrj";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hW7uJfSI";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="6MYUdJFH"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E7VMLKwv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AB5B30CD93
-	for <linux-fsdevel@vger.kernel.org>; Fri, 28 Nov 2025 11:30:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B15DA316180
+	for <linux-fsdevel@vger.kernel.org>; Fri, 28 Nov 2025 11:55:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764329416; cv=none; b=RcK9CsUlWNzo81N2m3RogYf+y8RHVorHihW6ek350UePiz1McN2SQC3OPQnxTS87V0cTYBFPGFRFDY6oE1dW7FXKa5qqFIVRzrgTxJ6Qxh6IS+OIa37A2UaMmJGTJLJxwubWgCQAJMPuGQncGMyRL2mWYghc0z1DlL0q90pQQjI=
+	t=1764330945; cv=none; b=KheJNK0bD/qogadGiJZ/vR1lzqey72sAjlaKxY6dQBkOPh+aSeIPxaTUHoIvcuX22GFFBDbI7U7JOt3lUwT+sgMvxYU3S5c52IfnlqQWX3qylR0iI5bJ8e+H8SPHIAEFBxqNe1lLdEQvh/IpwaaNvU9mVdy1vYtlyMgh+6BAHic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764329416; c=relaxed/simple;
-	bh=OyRXGdJjpv2YGTxWOPPjGbMEuEXqdrLI0iSwATmCR2E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VBHJoUoqJPBBhEreBuFxiV5rzrP5U0TWLSh5/N5MrYfaeUDYin/Tb8VIl5CSWh/opBHnFhEhrdLNfieJiJmbrZyTMewwVKNkkP6LSf989ZucmvnQAdWmLPujm8ggP/7z3OFEPMYQvhrWxSvSPqyZtysRR0YFxdVbUzluWbAEIxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=T7Fcl/yN; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=+2vBdcrj; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hW7uJfSI; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=6MYUdJFH; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 78A1C33704;
-	Fri, 28 Nov 2025 11:30:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1764329412; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9oCccdBwgPDZW63qgG+gOIk2zak6WxihYzilxbcWdns=;
-	b=T7Fcl/yNVn6TisaMooll8P68G9AbQsudE8iPA6lHRGf7i/eD2XwnG4kclstzdzNeY4qzTi
-	DpUh1bI3vg4y+0R6LjfKcvyyHtMf9dVE4leQQe9MZXwiSGmnBfmkCaO8NlncDAFJm8aLiQ
-	eR1K8gdJHJ1/6ONYGoLNN1Ytcy5+Lew=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1764329412;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9oCccdBwgPDZW63qgG+gOIk2zak6WxihYzilxbcWdns=;
-	b=+2vBdcrj2HtWKslcnbuwMulBXayfS3q1il+TrSeEpCdV5HuvLl83Bx9Uk/ma9mLtSgiHT1
-	JXqJGcgzNOp3QBAw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=hW7uJfSI;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=6MYUdJFH
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1764329411; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9oCccdBwgPDZW63qgG+gOIk2zak6WxihYzilxbcWdns=;
-	b=hW7uJfSI4+SHfr47TGvtWOA/0RbQg10nkApp1EvmLu7sooDubMG3bvreqiOy/sVx1QPLrw
-	qxTRbuBtsiJDlPCcSCcafuKVf9gObvS1XuHfynXS7/2+/sPyqGfGf9EQLuaT7npViUss7w
-	NMjYPgvn63xA6AldG30l1foCnoExwsc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1764329411;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9oCccdBwgPDZW63qgG+gOIk2zak6WxihYzilxbcWdns=;
-	b=6MYUdJFHVms+/7CIlUkRPv50DFpNrC9CRtV4EzJN0rRnfDLASIk4Qjh1NxKU2FggQv2rau
-	idCc6rREId8P15CA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 68CF83EA63;
-	Fri, 28 Nov 2025 11:30:11 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id TlGFGcOHKWnpMgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 28 Nov 2025 11:30:11 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 1EEE1A08BE; Fri, 28 Nov 2025 12:30:03 +0100 (CET)
-Date: Fri, 28 Nov 2025 12:30:03 +0100
-From: Jan Kara <jack@suse.cz>
-To: Kuniyuki Iwashima <kuniyu@google.com>
-Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Amir Goldstein <amir73il@gmail.com>, Matthew Bobrowski <repnop@google.com>, 
-	Kuniyuki Iwashima <kuni1840@gmail.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzbot+321168dfa622eda99689@syzkaller.appspotmail.com
-Subject: Re: [PATCH] fanotify: Don't call fsnotify_destroy_group() when
- fsnotify_alloc_group() fails.
-Message-ID: <xlywujl6hhu6nqntnimdcdwbh2okcqxknwzlt5j3p7kqi5uuy7@x3pkdhfkpwf7>
-References: <20251127201618.2115275-1-kuniyu@google.com>
+	s=arc-20240116; t=1764330945; c=relaxed/simple;
+	bh=7McNmPYFhJWzXPpiEq0GRibRs9LFC7jSd5+BSIm+NUM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gEd5ELgsu3xui4OKmlmm9tcVofGMjK//0DAwYQGqLuSTwqvzVVL3c5I5+VzImAVAztE1dMcm54S6CMSCUJhL7ewg5ERCJ2uL5yKkWJzpXmAB5efIsqujEqNDlW09hpWvv2Tx4z23SfdblFXwpwCeD4lAnDCJR2FtEzvP2hRJYMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E7VMLKwv; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-64175dfc338so3522308a12.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Nov 2025 03:55:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1764330942; x=1764935742; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fEVnrz7krGjC1H5D6ILDm2vm3QVpwlzQoLinf6WiPD4=;
+        b=E7VMLKwvT4E7pjh3c2f8mPSfsRaYfsQkc8/GApcrK/Nfpud9Bl+Pg3Q5V521zb3jFC
+         asea1V1Q+q/eIduzlP7c/Gi/AieN30gc83aAJ8+xb26kmhukp4G0+7rYiSwYK66cE4C5
+         uASh3SXTGyAd4SFaInWi7ayM4MfQCCzGCcLe7/RrOIb3YpOWHKn8SaBTtA2Ro+8mRCI2
+         6ifOFqNtA2dAxI4dwbF18daDUtBe2Z39FOKb2hN8shakjBm/mctpGHRbH+6DCztl47ct
+         rgXIRl9lS7ruxxW9nZNM7YmAbdYApxhr7PP5H2jwK3v4V6t0GGsMwTHVnV4/MK0kzBgj
+         xGWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764330942; x=1764935742;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=fEVnrz7krGjC1H5D6ILDm2vm3QVpwlzQoLinf6WiPD4=;
+        b=LRnXGEuLRR152pkEBGX9gqJ2Lhio9GHPzE2s1nK+Ic4cDXLaZupGzO3wt4wYXGkptN
+         +9CVWPMOZznJHPRgVQhZJoiNdvBXXNgXRY44kbhtXzmGwixHhSYjr/p25cwTPQEjuXtI
+         c0+KTEHoh/Woxpb/0lTcRtsyHrzN7U/9y+PV32Ros8Ilped43Z+lzY4BQKNEXIM/6SHH
+         523rQ01esc7IpwLxidSpRVJV0fNzci+f9Fh8c9CgD7gWVNIP8sHdAGoI/YeDeYY9quFG
+         fWRvFk4zO6+Li4trIjzqHN90CFsbFVs0YkHwIPCSAYnjUJWfAgjLr2XE9ZvZdtDcGSvx
+         5lRw==
+X-Gm-Message-State: AOJu0YwMxx8ZD4pcL5Xmn1vePgJvyy2VoiKXp2UZYTq4iOmM1RSau2j8
+	s7wrjkyT5FPQj56s+5cUGqIlxumgUzZ2aBD+v+WOG0KR0YMc7wXu8r/tDWI6d5yqQVqvdDsc243
+	dUgbsSOqP8hEHZoE6gTY0Pu1uP7XmbaY=
+X-Gm-Gg: ASbGncuTSkJxUQ/9/KSPzhCCqklj0zj2spWG21i6Gdc/8gD4hI5SlH2K+Fcw8B0tl4y
+	VYFy4UaRkg0IIARigo2idCzLv06H7kFk5cS0GLWBJOS2M3awQCFrl1Q4tFs5Qy6dKaNBEgRsAgl
+	HRc3V/VbBprNU11OfITKz3RB6xK1qbSTTbkhsDqBcOl6sOMnZGvarjZcCaWvujutS89y2fg1AhB
+	vdWapGfXt8ArFZF7g13y0ies+pZrSFN5kMouB4QrvpDLmLnV53hkGnymtuazB0at9+kdy7WZ62d
+	TXsGt6VgeRoOCJvU+FDe4NtjXaW5Ur+bwQcC/JBP
+X-Google-Smtp-Source: AGHT+IF2fxsudzS3hzBgUP/dnApVQ5Gn0jK+LZvWTGz72+HWVbagZFuQ+aqLr3BEnwmssw3RCdCgRrdYweSuEBX6PV8=
+X-Received: by 2002:a05:6402:26d3:b0:643:1659:7584 with SMTP id
+ 4fb4d7f45d1cf-6455469ce5dmr24777917a12.33.1764330941882; Fri, 28 Nov 2025
+ 03:55:41 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251127201618.2115275-1-kuniyu@google.com>
-X-Spamd-Result: default: False [-2.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	TO_DN_SOME(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TAGGED_RCPT(0.00)[321168dfa622eda99689];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_CC(0.00)[kernel.org,suse.cz,gmail.com,google.com,vger.kernel.org,syzkaller.appspotmail.com];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:email,suse.cz:dkim,appspotmail.com:email,suse.com:email]
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -2.51
-X-Spam-Level: 
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: 78A1C33704
+References: <20251127170509.30139-1-jack@suse.cz> <20251127173012.23500-16-jack@suse.cz>
+In-Reply-To: <20251127173012.23500-16-jack@suse.cz>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Fri, 28 Nov 2025 12:55:30 +0100
+X-Gm-Features: AWmQ_bnH1l-IDU7kZSmAHLcahJu2alhyiidxIG46rmBYY_FJyv1eg0gkQWzPM8M
+Message-ID: <CAOQ4uxg+HngKBK3kc6wLLeLPLe4Yh_7dPyZyHGs9Bh5=zBR0TA@mail.gmail.com>
+Subject: Re: [PATCH 03/13] fsnotify: Introduce inode connector hash
+To: Jan Kara <jack@suse.cz>
+Cc: linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu 27-11-25 20:16:15, Kuniyuki Iwashima wrote:
-> syzbot reported the splat in __do_sys_fanotify_init(). [0]
-> 
-> The cited commit introduced the fsnotify_group class.
-> 
-> The constructor is fsnotify_alloc_group() and could fail,
-> so the error is handled this way:
-> 
-> 	CLASS(fsnotify_group, group)(&fanotify_fsnotify_ops,
-> 				     FSNOTIFY_GROUP_USER);
-> 	if (IS_ERR(group))
-> 		return PTR_ERR(group);
-> 
-> Even we return from the path, the destructor is triggered,
-> and the condition does not take IS_ERR() into account.
-> 
-> 	if (_T) fsnotify_destroy_group(_T),
-> 
-> Thus, fsnotify_destroy_group() could be called for ERR_PTR().
-> 
-> Let's fix the condition to !IS_ERR_OR_NULL(_T).
-> 
-> [0]:
-> Oops: general protection fault, probably for non-canonical address 0xdffffc0000000003: 0000 [#1] SMP KASAN PTI
-> KASAN: null-ptr-deref in range [0x0000000000000018-0x000000000000001f]
-> CPU: 1 UID: 0 PID: 6016 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full)
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/25/2025
-> RIP: 0010:kasan_byte_accessible+0x12/0x30 mm/kasan/generic.c:210
-> Code: 0f 1f 84 00 00 00 00 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 0f 1f 40 d6 48 c1 ef 03 48 b8 00 00 00 00 00 fc ff df <0f> b6 04 07 3c 08 0f 92 c0 e9 40 01 33 09 cc 66 66 66 66 66 66 2e
-> RSP: 0018:ffffc90003147c10 EFLAGS: 00010207
-> RAX: dffffc0000000000 RBX: ffffffff8b5a8b4e RCX: 707d8ea8101f1b00
-> RDX: 0000000000000000 RSI: ffffffff8b5a8b4e RDI: 0000000000000003
-> RBP: ffffffff824e37fd R08: 0000000000000001 R09: 0000000000000000
-> R10: dffffc0000000000 R11: fffffbfff1c0c6f3 R12: 0000000000000000
-> R13: 000000000000001c R14: 000000000000001c R15: 0000000000000001
-> FS:  000055556de07500(0000) GS:ffff888125f8b000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007f09c332b5a0 CR3: 00000000750b0000 CR4: 00000000003526f0
-> Call Trace:
->  <TASK>
->  __kasan_check_byte+0x12/0x40 mm/kasan/common.c:572
->  kasan_check_byte include/linux/kasan.h:401 [inline]
->  lock_acquire+0x84/0x340 kernel/locking/lockdep.c:5842
->  __raw_spin_lock include/linux/spinlock_api_smp.h:133 [inline]
->  _raw_spin_lock+0x2e/0x40 kernel/locking/spinlock.c:154
->  spin_lock include/linux/spinlock.h:351 [inline]
->  fsnotify_group_stop_queueing fs/notify/group.c:39 [inline]
->  fsnotify_destroy_group+0x8d/0x320 fs/notify/group.c:58
->  class_fsnotify_group_destructor fs/notify/fanotify/fanotify_user.c:1600 [inline]
->  __do_sys_fanotify_init fs/notify/fanotify/fanotify_user.c:1759 [inline]
->  __se_sys_fanotify_init+0x991/0xbc0 fs/notify/fanotify/fanotify_user.c:1607
->  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->  do_syscall_64+0xfa/0xf80 arch/x86/entry/syscall_64.c:94
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f09c338f749
-> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007ffd8b6be3e8 EFLAGS: 00000246 ORIG_RAX: 000000000000012c
-> RAX: ffffffffffffffda RBX: 00007f09c35e5fa0 RCX: 00007f09c338f749
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000f00
-> RBP: 00007ffd8b6be440 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
-> R13: 00007f09c35e5fa0 R14: 00007f09c35e5fa0 R15: 0000000000000002
->  </TASK>
-> Modules linked in:
-> 
-> Fixes: 3a6b564a6beb ("fanotify: convert fanotify_init() to FD_PREPARE()")
-> Reported-by: syzbot+321168dfa622eda99689@syzkaller.appspotmail.com
-> Closes: https://lore.kernel.org/lkml/6928b121.a70a0220.d98e3.0110.GAE@google.com/
-> Signed-off-by: Kuniyuki Iwashima <kuniyu@google.com>
-
-Thanks for fixing this! The patch looks good to me. Feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
+On Thu, Nov 27, 2025 at 6:30=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+>
+> Introduce rhashtable that will contain all inode connectors for a
+> superblock. As for some filesystems inode number is not enough to
+> identify inode, provide enough flexibility for such filesystems to
+> provide their own keys for the hash. Eventually we will use this hash
+> table to track all inode connectors (and thus marks) for the superblock
+> and also to track inode marks for inodes that were evicted from memory
+> (so that inode marks don't have to pin inodes in memory anymore).
+>
+> Signed-off-by: Jan Kara <jack@suse.cz>
 > ---
->  fs/notify/fanotify/fanotify_user.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-> index be0a96ad4316..d0b9b984002f 100644
-> --- a/fs/notify/fanotify/fanotify_user.c
-> +++ b/fs/notify/fanotify/fanotify_user.c
-> @@ -1598,10 +1598,10 @@ static struct hlist_head *fanotify_alloc_merge_hash(void)
+>  fs/notify/fsnotify.c             |  12 ++-
+>  fs/notify/fsnotify.h             |   4 +-
+>  fs/notify/mark.c                 | 176 +++++++++++++++++++++++++++----
+>  include/linux/fs.h               |   3 +
+>  include/linux/fsnotify.h         |   9 ++
+>  include/linux/fsnotify_backend.h |   6 +-
+>  6 files changed, 187 insertions(+), 23 deletions(-)
+>
+> diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
+> index 079b868552c2..46db712c83ec 100644
+> --- a/fs/notify/fsnotify.c
+> +++ b/fs/notify/fsnotify.c
+> @@ -110,9 +110,16 @@ void fsnotify_sb_delete(struct super_block *sb)
+>                                                   FSNOTIFY_PRIO_PRE_CONTE=
+NT));
 >  }
->  
->  DEFINE_CLASS(fsnotify_group,
-> -	      struct fsnotify_group *,
-> -	      if (_T) fsnotify_destroy_group(_T),
-> -	      fsnotify_alloc_group(ops, flags),
-> -	      const struct fsnotify_ops *ops, int flags)
-> +	     struct fsnotify_group *,
-> +	     if (!IS_ERR_OR_NULL(_T)) fsnotify_destroy_group(_T),
-> +	     fsnotify_alloc_group(ops, flags),
-> +	     const struct fsnotify_ops *ops, int flags)
->  
->  /* fanotify syscalls */
->  SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
-> -- 
-> 2.52.0.158.g65b55ccf14-goog
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+>
+> +void fsnotify_free_sb_info(struct fsnotify_sb_info *sbinfo)
+> +{
+> +       rhashtable_destroy(&sbinfo->inode_conn_hash);
+> +       kfree(sbinfo);
+> +}
+> +
+>  void fsnotify_sb_free(struct super_block *sb)
+>  {
+> -       kfree(sb->s_fsnotify_info);
+> +       if (sb->s_fsnotify_info)
+> +               fsnotify_free_sb_info(sb->s_fsnotify_info);
+>  }
+>
+>  /*
+> @@ -770,8 +777,7 @@ static __init int fsnotify_init(void)
+>         if (ret)
+>                 panic("initializing fsnotify_mark_srcu");
+>
+> -       fsnotify_mark_connector_cachep =3D KMEM_CACHE(fsnotify_mark_conne=
+ctor,
+> -                                                   SLAB_PANIC);
+> +       fsnotify_init_connector_caches();
+>
+>         return 0;
+>  }
+> diff --git a/fs/notify/fsnotify.h b/fs/notify/fsnotify.h
+> index 860a07ada7fd..e9160c0e1a70 100644
+> --- a/fs/notify/fsnotify.h
+> +++ b/fs/notify/fsnotify.h
+> @@ -108,6 +108,8 @@ static inline void fsnotify_clear_marks_by_mntns(stru=
+ct mnt_namespace *mntns)
+>   */
+>  extern void fsnotify_set_children_dentry_flags(struct inode *inode);
+>
+> -extern struct kmem_cache *fsnotify_mark_connector_cachep;
+> +void fsnotify_free_sb_info(struct fsnotify_sb_info *sbinfo);
+> +
+> +void fsnotify_init_connector_caches(void);
+>
+>  #endif /* __FS_NOTIFY_FSNOTIFY_H_ */
+> diff --git a/fs/notify/mark.c b/fs/notify/mark.c
+> index ecd2c3944051..fd1fe8d37c36 100644
+> --- a/fs/notify/mark.c
+> +++ b/fs/notify/mark.c
+> @@ -79,7 +79,8 @@
+>  #define FSNOTIFY_REAPER_DELAY  (1)     /* 1 jiffy */
+>
+>  struct srcu_struct fsnotify_mark_srcu;
+> -struct kmem_cache *fsnotify_mark_connector_cachep;
+> +static struct kmem_cache *fsnotify_mark_connector_cachep;
+> +static struct kmem_cache *fsnotify_inode_mark_connector_cachep;
+>
+>  static DEFINE_SPINLOCK(destroy_lock);
+>  static LIST_HEAD(destroy_list);
+> @@ -91,6 +92,8 @@ static DECLARE_DELAYED_WORK(reaper_work, fsnotify_mark_=
+destroy_workfn);
+>  static void fsnotify_connector_destroy_workfn(struct work_struct *work);
+>  static DECLARE_WORK(connector_reaper_work, fsnotify_connector_destroy_wo=
+rkfn);
+>
+> +static void fsnotify_unhash_connector(struct fsnotify_mark_connector *co=
+nn);
+> +
+>  void fsnotify_get_mark(struct fsnotify_mark *mark)
+>  {
+>         WARN_ON_ONCE(!refcount_read(&mark->refcnt));
+> @@ -323,7 +326,7 @@ static void fsnotify_connector_destroy_workfn(struct =
+work_struct *work)
+>         while (conn) {
+>                 free =3D conn;
+>                 conn =3D conn->destroy_next;
+> -               kmem_cache_free(fsnotify_mark_connector_cachep, free);
+> +               kfree(free);
+>         }
+>  }
+>
+> @@ -342,6 +345,7 @@ static void *fsnotify_detach_connector_from_object(
+>         if (conn->type =3D=3D FSNOTIFY_OBJ_TYPE_INODE) {
+>                 inode =3D fsnotify_conn_inode(conn);
+>                 inode->i_fsnotify_mask =3D 0;
+> +               fsnotify_unhash_connector(conn);
+>
+>                 /* Unpin inode when detaching from connector */
+>                 if (!(conn->flags & FSNOTIFY_CONN_FLAG_HAS_IREF))
+> @@ -384,6 +388,15 @@ static void fsnotify_drop_object(unsigned int type, =
+void *objp)
+>         fsnotify_put_inode_ref(objp);
+>  }
+>
+> +static void fsnotify_free_connector(struct fsnotify_mark_connector *conn=
+)
+> +{
+> +       spin_lock(&destroy_lock);
+> +       conn->destroy_next =3D connector_destroy_list;
+> +       connector_destroy_list =3D conn;
+> +       spin_unlock(&destroy_lock);
+> +       queue_work(system_unbound_wq, &connector_reaper_work);
+> +}
+> +
+>  void fsnotify_put_mark(struct fsnotify_mark *mark)
+>  {
+>         struct fsnotify_mark_connector *conn =3D READ_ONCE(mark->connecto=
+r);
+> @@ -421,13 +434,8 @@ void fsnotify_put_mark(struct fsnotify_mark *mark)
+>
+>         fsnotify_drop_object(type, objp);
+>
+> -       if (free_conn) {
+> -               spin_lock(&destroy_lock);
+> -               conn->destroy_next =3D connector_destroy_list;
+> -               connector_destroy_list =3D conn;
+> -               spin_unlock(&destroy_lock);
+> -               queue_work(system_unbound_wq, &connector_reaper_work);
+> -       }
+> +       if (free_conn)
+> +               fsnotify_free_connector(conn);
+>         /*
+>          * Note that we didn't update flags telling whether inode cares a=
+bout
+>          * what's happening with children. We update these flags from
+> @@ -633,22 +641,136 @@ int fsnotify_compare_groups(struct fsnotify_group =
+*a, struct fsnotify_group *b)
+>         return -1;
+>  }
+>
+> +/*
+> + * Inode connector for filesystems where inode->i_ino uniquely identifie=
+s the
+> + * inode.
+> + */
+> +struct fsnotify_inode_mark_connector {
+> +       struct fsnotify_mark_connector common;
+> +       ino_t ino;
+> +       struct rhash_head hash_list;
+> +};
+
+If only adding a list_head and no fs specific stuff,
+I don't think we will need a dedicated fsnotify_inode_mark_connector
+
+I think the whole thing could be done in a single not so complicated
+patch. I did not see any patch in the series other than the iteration
+patch and parts of this one that would be needed if we go for
+inode connectors list before going to the hash table.
+
+Thanks,
+Amir.
 
