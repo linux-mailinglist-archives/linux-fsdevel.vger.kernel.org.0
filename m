@@ -1,429 +1,302 @@
-Return-Path: <linux-fsdevel+bounces-70182-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70183-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C031BC92E20
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 19:08:36 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10FF8C930D7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 20:52:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C86754E3393
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 18:08:24 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7E286346347
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 19:52:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41389333754;
-	Fri, 28 Nov 2025 18:08:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BDA5285C98;
+	Fri, 28 Nov 2025 19:52:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="cQMWT3gX"
+	dkim=pass (2048-bit key) header.d=libero.it header.i=@libero.it header.b="oRkHD7GW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+Received: from libero.it (smtp-18.italiaonline.it [213.209.10.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ECC525487C;
-	Fri, 28 Nov 2025 18:08:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764353290; cv=pass; b=ngelhNR13B89nik0NWSzZiVeIPJ56+7kODg/TU5l8yw7T6qgw/7abTY0XXIEjjieEhKEqEWssPDBVPV60MYkoKN/EmEOw6Lu+YHJHd/xtQYk8I0GTcEMjuJHZBUSgPrTnfGXSEIbDbpVo/u1Hsygw5P85TjfpqRuVKKNogJntxE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764353290; c=relaxed/simple;
-	bh=1IOmn5zMIOoJIKH2+9kJqRMZHEuUrVDmT9SeQuZ9Qho=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=Te8C9L/pGwJ+pLcNXM2bPElfV67YOBTOu1bF8w5hEvrj3fPwuiINGwIvWJIE7XumHAHLSeQMlz/k6YqbybiGvGkq3aFq7RaV2zXWMbYk3PE6cBP0Whv+yD82CZghPm/mO1ZRxsSzCbjumpUTprlxNyACJY3TU0c+RtPC0FmLNZs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=cQMWT3gX; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1764353224; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=RtG3ndtV6UjdVmNEugxfkY/hNqTZyTalZN9NIiBwE13LjiiQGrfVvqMIlCMsp2cR2P2V3BZjxj7axPKgJYr0fDdbSPxN1GTBWASZjGJdnONZS/yezjkw7I+//rihzgbrikAiSqC0HZUafMyQak5Jd2CE5YoCDUpLUmhT/Bwk/ls=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1764353224; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=7hCtVdIpYmvpIaG2Tepwl9t2OZhg+JztbnabjHdsDXw=; 
-	b=j1uXW3P5csnn5xBO8uGG/CYg16oq3me8gSQnLQlVJw5JE02U+XwW4CcPu0JMcCgNqtIU2mo2h22ckClb0Jn1u9EElgTUDqT6AtpOVux93CVzTAVQxFiCCkw700f5K+85rR3/6OM9haHQvh01rQ+nxQr11SX9m5R4Brfuh/mGa0Q=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1764353224;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=7hCtVdIpYmvpIaG2Tepwl9t2OZhg+JztbnabjHdsDXw=;
-	b=cQMWT3gX69SgMPgVmoZ3O2F61xD0U8uLT41OSthjMpSgkT6ymH/aampfZQsduSSJ
-	Mnh+iUhoZu+90ceDRcdZMCKNINIP8yBhJvbThj8X8Y41Uz621+skz9GV68ZLyGGmayr
-	QO5jhfvm8In7Rn6Yhul0L9K3CuiAYR5Tg8wuvLZg=
-Received: by mx.zohomail.com with SMTPS id 1764353222335519.628984308173;
-	Fri, 28 Nov 2025 10:07:02 -0800 (PST)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AF212405ED
+	for <linux-fsdevel@vger.kernel.org>; Fri, 28 Nov 2025 19:51:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.209.10.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1764359522; cv=none; b=XDOR6IpaS6oLFn375znNp4Hxbm+PabhvAPebDkttn862x5+X3zuxlkmbnUdJRZ+SdMP18nqipQ0t49lSkaQsnATpsOh/JLtRDi3t4qY6lMaW1bNqjbCqPXCu2i2g1r4r6V5AjGO06gu1FI0Zzhdrd+dQRX0T16i3bij+EzClsrE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1764359522; c=relaxed/simple;
+	bh=fr+jP199sGl3igilTi+Z1y48pflhFtqO7Bl3hqEOijo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
+	 In-Reply-To:Content-Type; b=FhvFuHwWEkTnkp3OGYqLyZvlEYkES0KOiKz9+RdDO3J/D1q+1hASPIdm/FAk+O+DtcltPeKUxp4Np2JjKK7L8x8KB2+XI06a7BWhaMpWkB6Q2OI+vhHMCw92IPh7tN59NcrPHTjxfEerpcKGmXfBz8TRT+wuy/IfoIu3os5E1KI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=libero.it; spf=pass smtp.mailfrom=libero.it; dkim=pass (2048-bit key) header.d=libero.it header.i=@libero.it header.b=oRkHD7GW; arc=none smtp.client-ip=213.209.10.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=libero.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=libero.it
+Received: from [192.168.1.27] ([84.220.171.3])
+	by smtp-18.iol.local with ESMTPA
+	id P4T2vwL7JNPOjP4T2vR7Wm; Fri, 28 Nov 2025 20:49:20 +0100
+x-libjamoibt: 1601
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=libero.it; s=s2021;
+	t=1764359360; bh=/cxiBHYHSHBK4pdc/WBVYZOwI9cSyPcAiyDzJ7AgTC8=;
+	h=From;
+	b=oRkHD7GW7WqkgNljKBjLHHKw2zVITIUQDe3z3Jc05N8sDYnNyrkoDB0dhh3zwkl7g
+	 QgZ2bqWuzkVtSJaF2FqFQwSrPcWIhGuEoHI8fwnuSjMJvTv4lcszf2hFaBPaMDi1T0
+	 1tQZLLbokSGNZQzN9/sE0LCUxzEklVpmIqH/4juVQ67QEFuepyNBLiSUoClv+NWYXk
+	 amdFgh314MljwDGyBcZqFOCOyW9+12pThEeYXx6JBzyxanOMHFd1iJcvqiVw0sKmfX
+	 MHKYbo/44j0k22vn7ax7fFLNCFUivqVlYGpDDidW3t9hJ+oEzLZ6lsFrDEanCfzzPS
+	 fbFeokwRXMUmA==
+X-CNFS-Analysis: v=2.4 cv=CfUI5Krl c=1 sm=1 tr=0 ts=6929fcc0 cx=a_exe
+ a=hciw9o01/L1eIHAASTHaSw==:117 a=hciw9o01/L1eIHAASTHaSw==:17
+ a=IkcTkHD0fZMA:10 a=NGwE20YKNqMAeTZI74wA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+Message-ID: <f7e56d56-014f-4027-ab9d-d602c5e67137@libero.it>
+Date: Fri, 28 Nov 2025 20:49:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [PATCH v13 4/4] rust: Add `OwnableRefCounted`
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20251117-unique-ref-v13-4-b5b243df1250@pm.me>
-Date: Fri, 28 Nov 2025 15:06:42 -0300
-Cc: Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Benno Lossin <lossin@kernel.org>,
- Danilo Krummrich <dakr@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Dave Ertman <david.m.ertman@intel.com>,
- Ira Weiny <ira.weiny@intel.com>,
- Leon Romanovsky <leon@kernel.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>,
- Jan Kara <jack@suse.cz>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Viresh Kumar <vireshk@kernel.org>,
- Nishanth Menon <nm@ti.com>,
- Stephen Boyd <sboyd@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>,
- =?utf-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- Paul Moore <paul@paul-moore.com>,
- Serge Hallyn <sergeh@kernel.org>,
- Asahi Lina <lina+kernel@asahilina.net>,
- rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- linux-block@vger.kernel.org,
- dri-devel@lists.freedesktop.org,
- linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org,
- linux-pm@vger.kernel.org,
- linux-pci@vger.kernel.org,
- linux-security-module@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <A5A7C4C9-1504-439C-B4FF-C28482AF7444@collabora.com>
-References: <20251117-unique-ref-v13-0-b5b243df1250@pm.me>
- <20251117-unique-ref-v13-4-b5b243df1250@pm.me>
-To: Oliver Mangold <oliver.mangold@pm.me>
-X-Mailer: Apple Mail (2.3826.700.81)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Reply-To: kreijack@inwind.it
+Subject: Re: Ideas for RAIDZ-like design to solve write-holes, with larger fs
+ block size
+To: Qu Wenruo <wqu@suse.com>
+References: <4c0c1d27-957c-4a6f-9397-47ca321b1805@suse.com>
+Content-Language: en-US
+From: Goffredo Baroncelli <kreijack@libero.it>
+Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ linux-btrfs <linux-btrfs@vger.kernel.org>, zfs-devel@list.zfsonlinux.org
+In-Reply-To: <4c0c1d27-957c-4a6f-9397-47ca321b1805@suse.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CMAE-Envelope: MS4xfDpanaMlEmEWynxBIBqgLFcHBhnGtHwzSaWvXylp9Zxj9Bzr8KcE9PbdTcjgEppkzUm6g8VF+DkLe1o41r1Su3ocSNwFKyBK0sJmneMz6LIkNpsRUbi+
+ sEFYGvYsQb04LcwtNNakxK6iDhCFuW2aeLez4qe9b/cPIScwNNVqWdGfW20tTOjdoZxa8jKgNXXIbUtxnVHMIrV4qdEti9sWwdgSjRA1pyI+3SwOjMjTso9k
+ c0A/YvxFUGiq628GBx36x/6HLfbji+3bIONZV3prRHlR6W7PsVd12dgk0vQpJ9YRFwfNJguz4ZfGr8npaHy51w==
 
-Hi Oliver,
+On 28/11/2025 04.07, Qu Wenruo wrote:
+> Hi,
+> 
+> With the recent bs > ps support for btrfs, I'm wondering if it's possible to experiment some RAIDZ-like solutions to solve RAID56 write-holes problems (at least for data COW cases) without traditional journal.
 
-> On 17 Nov 2025, at 07:08, Oliver Mangold <oliver.mangold@pm.me> wrote:
->=20
-> Types implementing one of these traits can safely convert between an
-> `ARef<T>` and an `Owned<T>`.
->=20
-> This is useful for types which generally are accessed through an =
-`ARef`
-> but have methods which can only safely be called when the reference is
-> unique, like e.g. `block::mq::Request::end_ok()`.
->=20
-> Signed-off-by: Oliver Mangold <oliver.mangold@pm.me>
-> Co-developed-by: Andreas Hindborg <a.hindborg@kernel.org>
-> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
-> Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
-> ---
-> rust/kernel/owned.rs     | 138 =
-++++++++++++++++++++++++++++++++++++++++++++---
-> rust/kernel/sync/aref.rs |  11 +++-
-> rust/kernel/types.rs     |   2 +-
-> 3 files changed, 141 insertions(+), 10 deletions(-)
->=20
-> diff --git a/rust/kernel/owned.rs b/rust/kernel/owned.rs
-> index a26747cbc13b..26ab2b00ada0 100644
-> --- a/rust/kernel/owned.rs
-> +++ b/rust/kernel/owned.rs
-> @@ -5,6 +5,7 @@
-> //! These pointer types are useful for C-allocated objects which by =
-API-contract
-> //! are owned by Rust, but need to be freed through the C API.
->=20
-> +use crate::sync::aref::{ARef, RefCounted};
-> use core::{
->     mem::ManuallyDrop,
->     ops::{Deref, DerefMut},
-> @@ -14,14 +15,16 @@
->=20
-> /// Type allocated and destroyed on the C side, but owned by Rust.
-> ///
-> -/// Implementing this trait allows types to be referenced via the =
-[`Owned<Self>`] pointer type. This
-> -/// is useful when it is desirable to tie the lifetime of the =
-reference to an owned object, rather
-> -/// than pass around a bare reference. [`Ownable`] types can define =
-custom drop logic that is
-> -/// executed when the owned reference [`Owned<Self>`] pointing to the =
-object is dropped.
-> +/// Implementing this trait allows types to be referenced via the =
-[`Owned<Self>`] pointer type.
-> +///  - This is useful when it is desirable to tie the lifetime of an =
-object reference to an owned
-> +///    object, rather than pass around a bare reference.
-> +///  - [`Ownable`] types can define custom drop logic that is =
-executed when the owned reference
-> +///    of type [`Owned<_>`] pointing to the object is dropped.
-> ///
-> /// Note: The underlying object is not required to provide internal =
-reference counting, because it
-> /// represents a unique, owned reference. If reference counting (on =
-the Rust side) is required,
-> -/// [`RefCounted`](crate::types::RefCounted) should be implemented.
-> +/// [`RefCounted`] should be implemented. [`OwnableRefCounted`] =
-should be implemented if conversion
-> +/// between unique and shared (reference counted) ownership is =
-needed.
-> ///
-> /// # Safety
-> ///
-> @@ -143,9 +146,7 @@ impl<T: Ownable> Owned<T> {
->     ///   mutable reference requirements. That is, the kernel will not =
-mutate or free the underlying
->     ///   object and is okay with it being modified by Rust code.
->     pub unsafe fn from_raw(ptr: NonNull<T>) -> Self {
-> -        Self {
-> -            ptr,
-> -        }
-> +        Self { ptr }
->     }
+More than a RAIDZ-like solution (== a variable stripe size), it seems that you want to use a stripe width equal to the fs block size. So you can avoid the RWM cycles inside a stripe. It is an interesting idea, with a little development cost, which may work quite well when the number of disks * ps matches the fs bs.
 
-Unrelated change?
+In order to reduce some downside, I suggests to use a "per chunk" fs-bs
 
->=20
->     /// Consumes the [`Owned`], returning a raw pointer.
-> @@ -193,3 +194,124 @@ fn drop(&mut self) {
->         unsafe { T::release(self.ptr) };
->     }
-> }
-> +
-> +/// A trait for objects that can be wrapped in either one of the =
-reference types [`Owned`] and
-> +/// [`ARef`].
-> +///
-> +/// # Examples
-> +///
-> +/// A minimal example implementation of [`OwnableRefCounted`], =
-[`Ownable`] and its usage with
-> +/// [`ARef`] and [`Owned`] looks like this:
-> +///
-> +/// ```
-> +/// # #![expect(clippy::disallowed_names)]
-> +/// # use core::cell::Cell;
-> +/// # use core::ptr::NonNull;
-> +/// # use kernel::alloc::{flags, kbox::KBox, AllocError};
-> +/// # use kernel::sync::aref::{ARef, RefCounted};
-> +/// # use kernel::types::{Owned, Ownable, OwnableRefCounted};
-> +///
-> +/// // Example internally refcounted struct.
+> 
+> Currently my idea looks like this:
+> 
+> - Fixed and much smaller stripe data length
+>    Currently the data stripe length is fixed for all btrfs RAID profiles,
+>    64K.
+> 
+>    But will change to 4K (minimal and default) for RAIDZ chunks.
+> 
+> - Force a larger than 4K fs block size (or data io size)
+>    And that fs block size will determine how many devices we can use for
+>    a RAIDZ chunk.
+> 
+>    E.g. with 32K fs block size, and 4K stripe length, we can use 8
+>    devices for data, +1 for parity.
+>    But this also means, one has to have at least 9 devices to maintain
+>    the this scheme with 4K stripe length.
+>    (More is fine, less is not possible)
+> 
+> 
+> But there are still some uncertainty that I hope to get some feedback before starting coding on this.
+> 
+> - Conflicts with raid-stripe-tree and no zoned support
+>    I know WDC is working on raid-stripe-tree feature, which will support
+>    all profiles including RAID56 for data on zoned devices.
+> 
+>    And the feature can be used without zoned device.
+> 
+>    Although there is never RAID56 support implemented so far.
+> 
+>    Would raid-stripe-tree conflicts with this new RAIDZ idea, or it's
+>    better just wait for raid-stripe-tree?
+> 
+> - Performance
+>    If our stripe length is 4K it means one fs block will be split into
+>    4K writes into each device.
+> 
+>    The initial sequential write will be split into a lot of 4K sized
+>    random writes into the real disks.
+> 
+>    Not sure how much performance impact it will have, maybe it can be
+>    solved with proper blk plug?
+> 
+> - Larger fs block size or larger IO size
+>    If the fs block size is larger than the 4K stripe length, it means
+>    the data checksum is calulated for the whole fs block, and it will
+>    make rebuild much harder.
+> 
+>    E.g. fs block size is 16K, stripe length is 4K, and have 4 data
+>    stripes and 1 parity stripe.
+> 
+>    If one data stripe is corrupted, the checksum will mismatch for the
+>    whole 16K, but we don't know which 4K is corrupted, thus has to try
+>    4 times to get a correct rebuild result.
+> 
+>    Apply this to a whole disk, then rebuild will take forever...
 
-nit: IMHO the wording could improve ^
+I am not sure about that: the checksum failure should be an exception.
+A disk failure is more common. But it this case, the parity should be enough
+to rebuild correctly the data and in the most case the checksum will be correct.
 
-> +/// //
-> +/// // # Invariants
-> +/// //
-> +/// // - `refcount` is always non-zero for a valid object.
-> +/// // - `refcount` is >1 if there are more than 1 Rust reference to =
-it.
-> +/// //
-> +/// struct Foo {
-> +///     refcount: Cell<usize>,
-> +/// }
-> +///
-> +/// impl Foo {
-> +///     fn new() -> Result<Owned<Self>, AllocError> {
-> +///         // We are just using a `KBox` here to handle the actual =
-allocation, as our `Foo` is
-> +///         // not actually a C-allocated object.
-> +///         let result =3D KBox::new(
-> +///             Foo {
-> +///                 refcount: Cell::new(1),
-> +///             },
-> +///             flags::GFP_KERNEL,
-> +///         )?;
-> +///         let result =3D NonNull::new(KBox::into_raw(result))
-> +///             .expect("Raw pointer to newly allocation KBox is =
-null, this should never happen.");
-> +///         // SAFETY: We just allocated the `Self`, thus it is valid =
-and there cannot be any other
-> +///         // Rust references. Calling `into_raw()` makes us =
-responsible for ownership and
-> +///         // we won't use the raw pointer anymore, thus we can =
-transfer ownership to the `Owned`.
-> +///         Ok(unsafe { Owned::from_raw(result) })
-> +///     }
-> +/// }
-> +///
-> +/// // SAFETY: We increment and decrement each time the respective =
-function is called and only free
-> +/// // the `Foo` when the refcount reaches zero.
-> +/// unsafe impl RefCounted for Foo {
-> +///     fn inc_ref(&self) {
-> +///         self.refcount.replace(self.refcount.get() + 1);
-> +///     }
-> +///
-> +///     unsafe fn dec_ref(this: NonNull<Self>) {
-> +///         // SAFETY: By requirement on calling this function, the =
-refcount is non-zero,
-> +///         // implying the underlying object is valid.
-> +///         let refcount =3D unsafe { &this.as_ref().refcount };
-> +///         let new_refcount =3D refcount.get() - 1;
-> +///         if new_refcount =3D=3D 0 {
-> +///             // The `Foo` will be dropped when `KBox` goes out of =
-scope.
-> +///             // SAFETY: The [`KBox<Foo>`] is still alive as the =
-old refcount is 1. We can pass
-> +///             // ownership to the [`KBox`] as by requirement on =
-calling this function,
-> +///             // the `Self` will no longer be used by the caller.
-> +///             unsafe { KBox::from_raw(this.as_ptr()) };
-> +///         } else {
-> +///             refcount.replace(new_refcount);
-> +///         }
-> +///     }
-> +/// }
-> +///
-> +/// impl OwnableRefCounted for Foo {
-> +///     fn try_from_shared(this: ARef<Self>) -> Result<Owned<Self>, =
-ARef<Self>> {
-> +///         if this.refcount.get() =3D=3D 1 {
-> +///             // SAFETY: The `Foo` is still alive and has no other =
-Rust references as the refcount
-> +///             // is 1.
-> +///             Ok(unsafe { Owned::from_raw(ARef::into_raw(this)) })
-> +///         } else {
-> +///             Err(this)
-> +///         }
-> +///     }
-> +/// }
-> +///
+> 
+>    But this only requires extra rebuild mechanism for RAID chunks.
+> 
+> 
+>    The other solution is to introduce another size limit, maybe something
+>    like data_io_size, and for example using 16K data_io_size, and still
+>    4K fs block size, with the same 4K stripe length.
+> 
+>    So that every writes will be aligned to that 16K (a single 4K write
+>    will dirty the whole 16K range). And checksum will be calculated for
+>    each 4K block.
+> 
+>    Then reading the 16K we verify every 4K block, and can detect which
+>    block is corrupted and just repair that block.
+> 
+>    The cost will be the extra space spent saving 4x data checksum, and
+>    the extra data_io_size related code.
 
-We wouldn=E2=80=99t need this implementation if we added a =
-=E2=80=9Crefcount()=E2=80=9D
-member to this trait. This lets you abstract away this logic for all
-implementors, which has the massive upside of making sure we hardcode =
-(and thus
-enforce) the refcount =3D=3D 1 check.
+I am not sure about the assumption that the BS must be equal to 4k*(ndisk-1).
+
+This is an upper limit, but you could have different mapping. E.g. another valid
+example is having BS=4k*(ndisk/2-2). But I think that even more strange arrangement
+can be done, like:
+	ndisk = 7
+	BS=4k*3
+
+so the 2nd stripe is in two different rows:
 
 
-> +/// // SAFETY: This implementation of `release()` is safe for any =
-valid `Self`.
-> +/// unsafe impl Ownable for Foo {
-> +///     unsafe fn release(this: NonNull<Self>) {
-> +///         // SAFETY: Using `dec_ref()` from [`RefCounted`] to =
-release is okay, as the refcount is
-> +///         // always 1 for an [`Owned<Foo>`].
-> +///         unsafe{ Foo::dec_ref(this) };
-> +///     }
-> +/// }
-> +///
-> +/// let foo =3D Foo::new().expect("Failed to allocate a Foo. This =
-shouldn't happen");
+              D1     D2     D2     D4     D5     D6     D7
+            ------ ------ ------ ------ ------ ------ ------
+              B1     B1     B1     P1     B2     B2     B2
+              P2     B3 ....
 
-All these =E2=80=9Cexpects()=E2=80=9D and custom error strings would go =
-away if you
-place this behind a fictional function that returns Result.
+What you really need is that:
+1) bs=stripe width <= (ndisk - parity-level)* 4k
+2) each bs is never updated in the middle (which would create a new RWM cycle)
 
-> +/// let mut foo =3D ARef::from(foo);
-> +/// {
-> +///     let bar =3D foo.clone();
-> +///     assert!(Owned::try_from(bar).is_err());
-> +/// }
-> +/// assert!(Owned::try_from(foo).is_ok());
-> +/// ```
-> +pub trait OwnableRefCounted: RefCounted + Ownable + Sized {
-> +    /// Checks if the [`ARef`] is unique and convert it to an =
-[`Owned`] it that is that case.
-> +    /// Otherwise it returns again an [`ARef`] to the same underlying =
-object.
-> +    fn try_from_shared(this: ARef<Self>) -> Result<Owned<Self>, =
-ARef<Self>>;
+> 
+> 
+> - Way more rigid device number requirement
+>    Everything must be decided at mkfs time, the stripe length, fs block
+>    size/data io size, and number of devices.
 
-Again, this method can go way if we add a method to expose the refcount.
+As wrote above, I suggests to use a "per chunk" fs-bs
 
-> +
-> +    /// Converts the [`Owned`] into an [`ARef`].
-> +    fn into_shared(this: Owned<Self>) -> ARef<Self> {
-> +        // SAFETY: Safe by the requirements on implementing the =
-trait.
-> +        unsafe { ARef::from_raw(Owned::into_raw(this)) }
-> +    }
-> +}
-> +
-> +impl<T: OwnableRefCounted> TryFrom<ARef<T>> for Owned<T> {
-> +    type Error =3D ARef<T>;
-> +    /// Tries to convert the [`ARef`] to an [`Owned`] by calling
-> +    /// [`try_from_shared()`](OwnableRefCounted::try_from_shared). In =
-case the [`ARef`] is not
-> +    /// unique, it returns again an [`ARef`] to the same underlying =
-object.
-> +    fn try_from(b: ARef<T>) -> Result<Owned<T>, Self::Error> {
-> +        T::try_from_shared(b)
-> +    }
-> +}
-> diff --git a/rust/kernel/sync/aref.rs b/rust/kernel/sync/aref.rs
-> index 937dcf6ed5de..2dbffe2ed1b8 100644
-> --- a/rust/kernel/sync/aref.rs
-> +++ b/rust/kernel/sync/aref.rs
-> @@ -30,7 +30,10 @@
-> /// Note: Implementing this trait allows types to be wrapped in an =
-[`ARef<Self>`]. It requires an
-> /// internal reference count and provides only shared references. If =
-unique references are required
-> /// [`Ownable`](crate::types::Ownable) should be implemented which =
-allows types to be wrapped in an
-> -/// [`Owned<Self>`](crate::types::Owned).
-> +/// [`Owned<Self>`](crate::types::Owned). Implementing the trait
-> +/// [`OwnableRefCounted`](crate::types::OwnableRefCounted) allows to =
-convert between unique and
-> +/// shared references (i.e. [`Owned<Self>`](crate::types::Owned) and
-> +/// [`ARef<Self>`](crate::types::Owned)).
-> ///
-> /// # Safety
-> ///
-> @@ -180,6 +183,12 @@ fn from(b: &T) -> Self {
->     }
-> }
->=20
-> +impl<T: crate::types::OwnableRefCounted> From<crate::types::Owned<T>> =
-for ARef<T> {
-> +    fn from(b: crate::types::Owned<T>) -> Self {
-> +        T::into_shared(b)
-> +    }
-> +}
-> +
+>    Sure one can still add more devices than required, but it will just
+>    behave like more disks with RAID1.
+>    Each RAIDZ chunk will have fixed amount of devices.
+> 
+>    And furthermore, one can no longer remove devices below the minimal
+>    amount required by the RAIDZ chunks.
+>    If going with 16K blocksize/data io size, 4K stripe length, then it
+>    will always require 5 disks for RAIDZ1.
+>    Unless the end user gets rid of all RAIDZ chunks (e.g. convert
+>    to regular RAID1* or even SINGLE).
+> 
+> - Larger fs block size/data io size means higher write amplification
+>    That's the most obvious part, and may be less obvious higher memory
+>    pressure, and btrfs is already pretty bad at write-amplification.
+> 
 
-Not sure why we=E2=80=99re using fully-qualified names here if we can =
-import them, but your call.
+This is true, but you avoid the RWM cycle which is also expensive.
 
-> impl<T: RefCounted> Drop for ARef<T> {
->     fn drop(&mut self) {
->         // SAFETY: The type invariants guarantee that the `ARef` owns =
-the reference we're about to
-> diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
-> index 8ef01393352b..a9b72709d0d3 100644
-> --- a/rust/kernel/types.rs
-> +++ b/rust/kernel/types.rs
-> @@ -11,7 +11,7 @@
-> };
-> use pin_init::{PinInit, Wrapper, Zeroable};
->=20
-> -pub use crate::owned::{Ownable, Owned};
-> +pub use crate::owned::{Ownable, OwnableRefCounted, Owned};
->=20
-> pub use crate::sync::aref::{ARef, AlwaysRefCounted, RefCounted};
->=20
->=20
-> --=20
-> 2.51.2
->=20
->=20
->=20
+>    Currently page cache is relying on larger folios to handle those
+>    bs > ps cases, requiring more contigous physical memory space.
+> 
+>    And this limit will not go away even the end user choose to get
+>    rid of all RAIDZ chunks.
+> 
+> 
+> So any feedback is appreciated, no matter from end users, or even ZFS developers who invented RAIDZ in the first place.
+> 
+> Thanks,
+> Qu
+> 
 
-=E2=80=94 Daniel=
+Let me to add a "my" proposal (which is completely unrelated to your one :-)
+
+
+Assumptions:
+
+- an extent is never update (true for BTRFS)
+- in the example below it is showed a raid5 case; but it can be easily extend for higher redundancy level
+
+Nomenclature:
+- N = disks count
+- stride = number of consecutive block in a disk, before jumping to other disks
+- stripe = stride * (N - 1)   # -1 is for raid5, -2 in case of raid6 ...
+
+Idea design:
+
+- the redundancy is put inside the extent (and not below). Think it like a new kind of compression.
+
+- a new chunk type is created composed by a sequence of blocks (4k ?) spread on the disks, where the 1st block is disk1 - offeset 0,  2nd block is disk2 - offset 0 .... Nth block is disk N, offset 0, (N+1)th block is placed at disk1, offset +4K.... Like raid 0 with stride 4k.
+
+- option #1 (simpler)
+
+     - when an extent is created, every (N-1) blocks a parity block is stored; if the extent is shorter than N-1, a parity block is attached at its end;
+
+              D1     D2     D2     D4	
+            ------ ------ ------ ------
+             E1,0   E1,1   P1,0   E2,0
+             E2,1   E2,2   P2,1   E2,3
+             E2,4   P2,1   E3,0   E3,1
+             E3,2   P3,0   E3,3   E3,4
+             E3,5   P3,1   E3,6   E3,7
+             E3,8   P3,2   E3,9   E3,10
+             P3,3
+
+        Dz      Disk #z
+        Ex,y	Extent x, offset y
+        Px,y    Parity, extent x, range [y*N...y*N+N-1]
+
+
+- option #2 (more complex)
+
+     - like above when an extent is created, every (N-1) blocks a parity block is stored; if the extent is shorter than N-1, a parity block is attached at its end;
+       The idea is that if an extent spans more than a rows, the logical block can be arranged so the stride may be longer (comparable with the number of the rows).
+       In this way you can write more *consecutive* 4K block a time (when enough data to write is available). In this case is crucial the delayed block allocation.
+       See E2,{0,1} and E3,{0,3},E3,{4,7}, E3,{8,10}....
+
+              D1     D2     D2     D4	
+            ------ ------ ------ ------
+             E1,0   E1,1   P1,0   E2,0
+             E2,1   E2,3   P2,1   E2,4
+             E2,2   P2,1   E3,0   E3,4
+             E3,8   P3,0   E3,1   E3,5
+             E3,9   P3,1   E3,2   E3,6
+             E3,10  P3,2   E3,3   E3,7
+             P3,3
+
+        Dz      Disk #z
+        Ex,y	Extent x, offset y
+        Px,y    Parity, extent x, range row related
+
+
+
+Pros:
+- no update in the middle of a stripe with so no RWM cycles anymore
+- (option 2 only), in case a large write, consecutive blocks can be arranged in the same disk
+- each block can have its checksum
+- each stripe can have different raid level
+- maximum flexibility to change the number of disks
+
+Cons:
+- the scrub logic must be totally redesigned
+- the map logical block <-> physical block in option#1 is not complex to compute. However in option#2 it will be ... funny to find a good algorithm.
+- the ratio data-blocks/parity-blocks may be very inefficient for small write.
+- moving an extent between different block groups with different number of disks, would cause to reallocate the parity blocks inside the extent
+
+Best
+G.Baroncelli
+
+-- 
+gpg @keyserver.linux.it: Goffredo Baroncelli <kreijackATinwind.it>
+Key fingerprint BBF5 1610 0B64 DAC6 5F7D  17B2 0EDA 9B37 8B82 E0B5
 
