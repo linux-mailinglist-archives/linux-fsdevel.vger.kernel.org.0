@@ -1,54 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-70166-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70167-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5519BC92AAC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 17:56:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5412CC92ABE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 17:57:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF41F3B00A7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 16:54:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 501103B10DF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 16:54:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5D923081B5;
-	Fri, 28 Nov 2025 16:51:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D00E32B9A0;
+	Fri, 28 Nov 2025 16:51:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e/ogoE2Z"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A9G72h3X"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 324BF2FB968;
-	Fri, 28 Nov 2025 16:51:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6A9A32862E;
+	Fri, 28 Nov 2025 16:51:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764348696; cv=none; b=X31VPyTh+6+xWRcA6uojz2D/zUojCXYMXu3vzB9lKkPAgS9q471WgPz4mH+KYwkNfAzC7pFaWoFVnzuEBK4NsmLKGJcsybgkkBJlmrREWYh9nutTCvyI0r176S1hY4LAkF2m+3pDBNGgdbtLE3Qt9+b/iUFTEX10ORl+pS4JXqY=
+	t=1764348697; cv=none; b=chOZt94h30VyemnXy+F7Dk+3A3cP5dx0lreyuFWHg0p0PDRlpEQylEiMfGpFNa8/R5bEMvkcd7Nnk6sLApqed/T3zX0GSHYpTSQ2Tg8xSW4dKAUirNEL9PNETymXK1pko1DPzEMExY3eQzlG11tME9Hh3S0LrYwawiGdLwIdZuQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764348696; c=relaxed/simple;
-	bh=UQPRM0vbJq3sp9wXd7GaroMyYeft72bM2Mg44nk9lf0=;
+	s=arc-20240116; t=1764348697; c=relaxed/simple;
+	bh=IIGGz09f1C62+Uvaozg5Q+0CR/VnZy4PEaMf9+K9k/g=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=myplxCipC3RTdA6Zl2quDqmaJkb8biOQwG++2xPV8o3eLGHhDFrWYd8JYTdk9StYZXoAj/ZPmgEbEj4WOB9GkKfWzfMVnF7Wz7rHl9t+EQtKs2zDE700mVg0Z+BhjhUyHcz5tfjW/aQxI6nIRGjbFCBSrv0Th39E9C2fx2brSr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e/ogoE2Z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2CFFC4CEF1;
-	Fri, 28 Nov 2025 16:51:34 +0000 (UTC)
+	 MIME-Version; b=fdyeY4NjptsjrqtQdvrOmegNeayjowRlbsQ2PDqODNdJqyQCXV1BZxRV5x66rMQTJsLx0TUH3X/6HWS+KfaCOFx8JXzJDsXdwy+csGEcJYqdRGhbRkDgvKYG/cu27FCK+vbP0SDT44MmslatrtqlKbQii21u9J9kjV6I2vxG2mc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A9G72h3X; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B75AC4CEFB;
+	Fri, 28 Nov 2025 16:51:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764348696;
-	bh=UQPRM0vbJq3sp9wXd7GaroMyYeft72bM2Mg44nk9lf0=;
+	s=k20201202; t=1764348697;
+	bh=IIGGz09f1C62+Uvaozg5Q+0CR/VnZy4PEaMf9+K9k/g=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=e/ogoE2ZW71nCNFBbgabJFD19qGXNzfz5FvePvkXPUqXIb+fSUSeiUdddELtlQR3H
-	 YGQq3QhHlppg2apNXAx6MuFEeD2tNJkFH9RJlJGCk9rK+eKHgSP+rcnqbM4Ghg4VXg
-	 uMeD+5M7ngRnZ8i2kzzgs5XLB9BZ6J698YTKj9ZVtFdSg1zTh/XHDqgrOwUUz+9wCI
-	 gCuaTDlUDZhlr3z/ywaOcWBhE44JpM0TnuSuOw+6BvfFZcxSh2+4XS3ZY7+F/S1Rnc
-	 DSdLXTGc3yJWxc2JG0y6xZJb50bTwOkxAY0asKNWbtn5n/0Ekei9S7KSPsXnU3pxDW
-	 QmLOBCEegqq7g==
+	b=A9G72h3XOjUTfvTJpNn9IKUT3RrYJNAHoS5ItvJ+1LC2BBwoVeR6gAeEHlWIdStsz
+	 8vrapxKV8eNz0EdcZCmCWDE1PLOLt/QA9yxWhKAXZId/b1GYTqB/lnJ4LBlsD06G+x
+	 yC27PUMX3kAPHU1gP2HM61Rhu9Ct/1szB724ezVG7ycZ44aB50sn3lDLw/LQubdMKc
+	 fKpRXVKgHiY4/sp2KbzWN0dtdTLCPSl8U6dSednqYI3xSYOnr+pXzocV8MwwOFNMUY
+	 55Q2iPUtF5znQK9M4V0J5QBw+cxWt0q640Cln4HQ6lkh2DuQJGTl/U++yxtZpF0Mjv
+	 bGYAPQtV9aE4g==
 From: Christian Brauner <brauner@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Christian Brauner <brauner@kernel.org>,
 	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [GIT PULL 16/17 for v6.19] vfs fd prepare
-Date: Fri, 28 Nov 2025 17:48:27 +0100
-Message-ID: <20251128-vfs-fd-prepare-v619-e23be0b7a0c5@brauner>
+Subject: [GIT PULL 17/17 for v6.19] vfs fd prepare minimal
+Date: Fri, 28 Nov 2025 17:48:28 +0100
+Message-ID: <20251128-vfs-fd-prepare-minimal-v619-41df48e056e7@brauner>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20251128-vfs-v619-77cd88166806@brauner>
 References: <20251128-vfs-v619-77cd88166806@brauner>
@@ -58,26 +58,17 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=13720; i=brauner@kernel.org; h=from:subject:message-id; bh=UQPRM0vbJq3sp9wXd7GaroMyYeft72bM2Mg44nk9lf0=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWRqXnrCMk/mtOr1BdyrL6Yf8Oh8+/PnviQepSdeQtenz fi+qT9zdUcpC4MYF4OsmCKLQ7tJuNxynorNRpkaMHNYmUCGMHBxCsBEuo4xMqw75mlcpDv/cf02 1xmlDv6xezLSd0o+Sgub9Fo3XW2r8gRGhgd+P3a3nz+h6KBwqkU0/qHzF7Wm3Y/P7PthIpWhdF+ RnxsA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=12149; i=brauner@kernel.org; h=from:subject:message-id; bh=IIGGz09f1C62+Uvaozg5Q+0CR/VnZy4PEaMf9+K9k/g=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWRqXnqSnJz8nq+AVXYL28zj058VuS9mz3p3rPrVNIPfR +81Pz0u21HKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjARl1BGhmXfxLWSAlU9FtZP lluVfe6EqdlrvvQLq57x3DvRvO3mxRRGhhtNz4unW/mHGwhV2Bf9mfL/hLtTxa1nr/lqzkz1b9o kzAQA
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
 Hey Linus,
 
 /* Summary */
-Note: This work came late in the cycle but the series is quite nice and
-worth doing. It removes roughly double the code that it adds and
-eliminates a lot of convoluted cleanup logic across the kernel.
-
-An alternative pull request (vfs-6.19-rc1.fd_prepare.fs) is available
-that contains only the more simple filesystem-focused conversions in
-case you'd like to pull something more conservative.
-
-Note this branch also contains two reverts for the KVM FD_PREPARE()
-conversions as the KVM maintainers have indicated they would like to
-take those changes through the KVM tree in the next cycle. Also gets rid
-of a merge conflict. I chose a revert to not rebase the branch
-unnecessarily so close to the merge window.
+This is an alternative pull request for the FD_{ADD,PREPARE}() work containing
+only parts of the conversion. Again, this work came late in the cycle but the
+series is quite nice and worth doing. It removes roughly double the code that
+it adds and eliminates a lot of convoluted cleanup logic across the kernel.
 
 This adds the FD_ADD() and FD_PREPARE() primitive. They simplify the
 common pattern of get_unused_fd_flags() + create file + fd_install()
@@ -268,22 +259,22 @@ The following changes since commit 3a8660878839faadb4f1a6dd72c3179c1df56787:
 
 are available in the Git repository at:
 
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.19-rc1.fd_prepare
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.19-rc1.fd_prepare.fs
 
-for you to fetch changes up to 65c2c221846eeb157ab7cecf5a26f24d42faafcc:
+for you to fetch changes up to 0512bf9701f339c8fee2cc82b6fc35f0a8f6be7a:
 
-  Revert "kvm: FD_PREPARE() conversions" (2025-11-28 11:23:08 +0100)
+  Merge patch series "file: FD_{ADD,PREPARE}()" (2025-11-28 12:42:36 +0100)
 
-Please consider pulling these changes from the signed vfs-6.19-rc1.fd_prepare tag.
+Please consider pulling these changes from the signed vfs-6.19-rc1.fd_prepare.fs tag.
 
 Thanks!
 Christian
 
 ----------------------------------------------------------------
-vfs-6.19-rc1.fd_prepare
+vfs-6.19-rc1.fd_prepare.fs
 
 ----------------------------------------------------------------
-Christian Brauner (57):
+Christian Brauner (43):
       file: add FD_{ADD,PREPARE}()
       anon_inodes: convert to FD_ADD()
       eventfd: convert do_eventfd() to FD_PREPARE()
@@ -303,8 +294,7 @@ Christian Brauner (57):
       xfs: convert xfs_open_by_handle() to FD_PREPARE()
       dma: convert dma_buf_fd() to FD_ADD()
       af_unix: convert unix_file_open() to FD_ADD()
-      dma: convert sync_file_ioctl_merge() to FD_PREPARE()
-      exec: convert begin_new_exec() to FD_PREPARE()
+      exec: convert begin_new_exec() to FD_ADD()
       ipc: convert do_mq_open() to FD_ADD()
       bpf: convert bpf_iter_new_fd() to FD_PREPARE()
       bpf: convert bpf_token_create() to FD_PREPARE()
@@ -312,7 +302,6 @@ Christian Brauner (57):
       secretmem: convert memfd_secret() to FD_ADD()
       net/handshake: convert handshake_nl_accept_doit() to FD_PREPARE()
       net/kcm: convert kcm_ioctl() to FD_PREPARE()
-      net/sctp: convert sctp_getsockopt_peeloff_common() to FD_PREPARE()
       net/socket: convert sock_map_fd() to FD_ADD()
       net/socket: convert __sys_accept4_file() to FD_ADD()
       spufs: convert spufs_context_open() to FD_PREPARE()
@@ -320,7 +309,6 @@ Christian Brauner (57):
       spufs: convert spufs_gang_open() to FD_PREPARE()
       pseries: convert papr_platform_dump_create_handle() to FD_ADD()
       pseries: port papr_rtas_setup_file_interface() to FD_ADD()
-      dma: port sw_sync_ioctl_create_fence() to FD_PREPARE()
       gpio: convert linehandle_create() to FD_PREPARE()
       hv: convert mshv_ioctl_create_partition() to FD_ADD()
       media: convert media_request_alloc() to FD_PREPARE()
@@ -329,32 +317,13 @@ Christian Brauner (57):
       vfio: convert vfio_group_ioctl_get_device_fd() to FD_ADD()
       file: convert replace_fd() to FD_PREPARE()
       io_uring: convert io_create_mock_file() to FD_PREPARE()
-      kvm: convert kvm_arch_supports_gmem_init_shared() to FD_PREPARE()
-      kvm: convert kvm_vcpu_ioctl_get_stats_fd() to FD_PREPARE()
       Merge patch series "file: FD_{ADD,PREPARE}()"
-      ipc: preserve original file opening pattern
-      devpts: preserve original file opening pattern
-      dma: return zero after fd_publish()
-      exec: switch to FD_ADD()
-      handshake: return zero after fd_publish()
-      ntsync: only install fd on success
-      io_uring: return zero after fd_publish()
-      file: make struct fd_prepare a first-class citizen
-      Revert "kvm: FD_PREPARE() conversions"
-
-Deepanshu Kartikey (1):
-      namespace: fix mntput of ERR_PTR in fsmount error path
-
-Kuniyuki Iwashima (1):
-      fanotify: Don't call fsnotify_destroy_group() when fsnotify_alloc_group() fails.
 
  arch/powerpc/platforms/cell/spufs/inode.c          |  42 ++-----
  arch/powerpc/platforms/pseries/papr-hvpipe.c       |  39 ++-----
  .../powerpc/platforms/pseries/papr-platform-dump.c |  30 ++---
  arch/powerpc/platforms/pseries/papr-rtas-common.c  |  27 +----
  drivers/dma-buf/dma-buf.c                          |  10 +-
- drivers/dma-buf/sw_sync.c                          |  39 +++----
- drivers/dma-buf/sync_file.c                        |  53 +++------
  drivers/gpio/gpiolib-cdev.c                        |  66 ++++-------
  drivers/hv/mshv_root_main.c                        |  30 +----
  drivers/media/mc/mc-request.c                      |  34 ++----
@@ -386,8 +355,7 @@ Kuniyuki Iwashima (1):
  mm/secretmem.c                                     |  20 +---
  net/handshake/netlink.c                            |  38 +++----
  net/kcm/kcmsock.c                                  |  22 ++--
- net/sctp/socket.c                                  |  90 ++++-----------
  net/socket.c                                       |  34 +-----
  net/unix/af_unix.c                                 |  16 +--
- 41 files changed, 564 insertions(+), 1000 deletions(-)
+ 38 files changed, 508 insertions(+), 874 deletions(-)
 
