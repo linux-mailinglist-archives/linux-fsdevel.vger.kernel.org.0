@@ -1,89 +1,122 @@
-Return-Path: <linux-fsdevel+bounces-70203-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70204-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCB6EC937A2
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Nov 2025 04:55:15 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57692C937E1
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Nov 2025 05:08:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2682F34A41A
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Nov 2025 03:55:15 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3F23A342D42
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Nov 2025 04:08:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F2C322256F;
-	Sat, 29 Nov 2025 03:55:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D12422D7B9;
+	Sat, 29 Nov 2025 04:08:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="gif53AQX"
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="QnpmFAd6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from canpmsgout07.his.huawei.com (canpmsgout07.his.huawei.com [113.46.200.222])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08FFB1DE2BF;
-	Sat, 29 Nov 2025 03:55:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF53E1A9F97;
+	Sat, 29 Nov 2025 04:08:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.222
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764388507; cv=none; b=BxeTzm1TcG24pD/+bCdKZzCFvmjHCkTmK2bk1xFM1k7SgHsHpfWnxxx0pqUaBXlVmmkcHwgcSXgAE9jSNh+Il8beXpYEPqOA60HTRiUMos4tkQpNflXJiNPvwCGzKSH0FSKvUJv6UMDt9K8Qfg1TVH97jcON3lPBwrx7DczmZa4=
+	t=1764389317; cv=none; b=WIOZucNs3wBSmzg8bKWFWLa72wTmvq/ij/n8U8GmE1lfR9/bvZrNylgmNZBILgot75+Lbez7A3ZXvK0D9nX83jVPYkTs93Hpubk/XINwQute1KxoCTxDMIQfDY5OkKXh8a1hR/s2sU1gntUYXg8244bQWPtyIUmGbCG88/CIOBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764388507; c=relaxed/simple;
-	bh=1dCa0Yi2abB18gZnNstjxBDy+4BryzpI37joEvmB9nM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hj8Ynyzn1SGNqkPJO0rd0cVPVS7nmnpUyZmfrgTBrVOuXvpEs7Vvwr/UHYQKG7hchas+eDZBjSBzAczCQuLRe1SzfPcZ6MYchf3+rgOObjwHZkkxZOBmvS8IdHQpPuzX55Sb43/n08fP+ZgG/ggSK0+Gb8/h5v7HRPFzYQQIZno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=gif53AQX; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=1dCa0Yi2abB18gZnNstjxBDy+4BryzpI37joEvmB9nM=; b=gif53AQXc1RzHnygPbDtIU0X9L
-	pXTFfokzhGNWnuy66xDaEH/e5OK0oyUdCm4pbTUKtbbksPMcXlqSNS0VCZDb2SJIB9J/PGAbtpqbG
-	CO8OW3uSLvzVc3N7Das2tMfFe7RiY/yna+fzkylq+2CW5cGxecl6dTfKxhJgvWdBBeoPwcIyDFC2s
-	8sQLhqsD1hjniYUK2XVRqXshs+TJ0gYBdaxjzN6imMaYMF+GPISY28ftXIfPzc78DeU0qhSE93uU7
-	+1dLgV4XxZb7onQ+ybhE2DK6uXuf5i3CZdI074nrQAY1XXegzlcxto0oJi2wynNGH9zvSxytr5yAR
-	kywVSLoA==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.99 #2 (Red Hat Linux))
-	id 1vPC3C-00000000XUf-1HpY;
-	Sat, 29 Nov 2025 03:55:10 +0000
-Date: Sat, 29 Nov 2025 03:55:10 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Zizhi Wo <wozizhi@huaweicloud.com>
-Cc: Will Deacon <will@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>, jack@suse.com,
-	brauner@kernel.org, hch@lst.de, akpm@linux-foundation.org,
-	linux@armlinux.org.uk, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	linux-arm-kernel@lists.infradead.org, yangerkun@huawei.com,
-	wangkefeng.wang@huawei.com, pangliyuan1@huawei.com,
-	xieyuanbin1@huawei.com
+	s=arc-20240116; t=1764389317; c=relaxed/simple;
+	bh=5iyUx1IOkeCL5QTv7DsEEsEbgAqPgybzfX50VeBJk/4=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TAMUCs6g3guiKrO+IboFArL4k+JPUa9U9oBkzdWfbQNDWzhlNs2dqecjUXKFdk2xAD9DzZa9FvkOaWrXUgxaWbKBex0x/XNmhoJySP5FgKZ/j/RtualKC6FHylgu+2VGF49+YVpSmK22qVlA3wwVF9iJ7ZLEQu/HjfIxAroEXrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=QnpmFAd6; arc=none smtp.client-ip=113.46.200.222
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=NoGgYCD49mxEcy5U/zXcoMvWiWdPjcqwWl6NwL9nQZM=;
+	b=QnpmFAd6TlrubU6aXhvwZbdddGjGP4Ir8Af9ucYd6Zwz37RmBOpmDnZOmZTg4klJYnlqYdyFe
+	fzGUlPqKZa3gf1KhWg22d0n8/OtAkZ4T2XC19qTBcxWe12ivLLL+jYD3wtzkhSVmuprFXGhUvWQ
+	GxP75zEiFjRrAgZT3wq7nc0=
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by canpmsgout07.his.huawei.com (SkyGuard) with ESMTPS id 4dJGnT2Ln5zLlTZ;
+	Sat, 29 Nov 2025 12:06:37 +0800 (CST)
+Received: from kwepemj100009.china.huawei.com (unknown [7.202.194.3])
+	by mail.maildlp.com (Postfix) with ESMTPS id 950921A0191;
+	Sat, 29 Nov 2025 12:08:26 +0800 (CST)
+Received: from DESKTOP-A37P9LK.huawei.com (10.67.109.17) by
+ kwepemj100009.china.huawei.com (7.202.194.3) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Sat, 29 Nov 2025 12:08:25 +0800
+From: Xie Yuanbin <xieyuanbin1@huawei.com>
+To: <torvalds@linux-foundation.org>, <will@kernel.org>,
+	<linux@armlinux.org.uk>, <viro@zeniv.linux.org.uk>, <bigeasy@linutronix.de>,
+	<rmk+kernel@armlinux.org.uk>
+CC: <akpm@linux-foundation.org>, <brauner@kernel.org>,
+	<catalin.marinas@arm.com>, <hch@lst.de>, <jack@suse.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-fsdevel@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+	<pangliyuan1@huawei.com>, <wangkefeng.wang@huawei.com>,
+	<wozizhi@huaweicloud.com>, <xieyuanbin1@huawei.com>, <yangerkun@huawei.com>,
+	<lilinjie8@huawei.com>, <liaohua4@huawei.com>
 Subject: Re: [Bug report] hash_name() may cross page boundary and trigger
- sleep in RCU context
-Message-ID: <20251129035510.GI3538@ZenIV>
-References: <20251126090505.3057219-1-wozizhi@huaweicloud.com>
- <aShLKpTBr9akSuUG@willie-the-truck>
- <9ff0d134-2c64-4204-bbac-9fdf0867ac46@huaweicloud.com>
- <39d99c56-3c2f-46bd-933f-2aef69d169f3@huaweicloud.com>
- <61757d05-ffce-476d-9b07-88332e5db1b9@huaweicloud.com>
- <aSmUnZZATTn3JD7m@willie-the-truck>
- <b6e23094-f53f-4242-acb5-881bd304d707@huaweicloud.com>
+Date: Sat, 29 Nov 2025 12:08:17 +0800
+Message-ID: <20251129040817.65356-1-xieyuanbin1@huawei.com>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <CAHk-=wjA20ear0hDOvUS7g5-A=YAUifphcf-iFJ1pach0=3ubw@mail.gmail.com>
+References: <CAHk-=wjA20ear0hDOvUS7g5-A=YAUifphcf-iFJ1pach0=3ubw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b6e23094-f53f-4242-acb5-881bd304d707@huaweicloud.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
+ kwepemj100009.china.huawei.com (7.202.194.3)
 
-On Sat, Nov 29, 2025 at 09:02:27AM +0800, Zizhi Wo wrote:
+On Fri, 28 Nov 2025 17:35:37 -0800, Linus Torvalds wrote:
+> On Fri, 28 Nov 2025 at 17:01, Zizhi Wo <wozizhi@huaweicloud.com> wrote:
+>> It has an additional check to determine reg:
+>>
+>> if (unlikely(addr > TASK_SIZE) && !user_mode(regs))
+>>         goto no_context;
+>>
+>> I'd like to ask if this "regs" examination also needs to be brought
+>> along?
+>
+> That seems unnecessary.
+>
+> Yes, in this case the original problem you reported with sleeping in
+> an RCU region was triggered by a kernel access, and a user-space
+> access would never have caused any such issues.
+>
+> So checking for !user_mode(regs) isn't exactly *wrong*.
+>
+> But while it isn't wrong, I think it's also kind of pointless.
+>
+> Because regardless of whether it's a kernel or user space access, an
+> access outside TASK_SIZE shouldn't be associated with a valid user
+> space context, so the code might as well just go to the "no_context"
+> label directly.
+>
+> That said, somebody should  definitely double-check me - because I
+> think arm also did the vdso trick at high addresses that i386 used to
+> do, so there is the fake VDSO thing up there.
+>
+> But if you get a page fault on that, it's not going to be fixed up, so
+> even if user space can access it, there's no point in looking that
+> fake vm area up for page faults.
 
-> Thank you very much for the answer. For the vmalloc area, I checked the
-> call points on the vfs side, such as dentry_string_cmp() or hash_name().
-> Their "names addr" are all assigned by kmalloc(), so there should be no
-> corresponding issues. But I'm not familiar with the other calling
-> points...
+I think the `user_mode(regs)` check is necessary because the label
+no_context actually jumps to __do_kernel_fault(), whereas page fault
+from user mode should jump to `__do_user_fault()`.
 
-Pathname might be a symlink body, sitting in page cache or whatever
-->get_link() has returned...
+Alternatively, we would need to change `goto no_context` to
+`goto bad_area`. Or perhaps I misunderstood something, please point it out.
+
+Thanks very much!
+
+Xie Yuanbin
 
