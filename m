@@ -1,178 +1,212 @@
-Return-Path: <linux-fsdevel+bounces-70240-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70241-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E086C941A8
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Nov 2025 16:55:32 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E43CC94467
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Nov 2025 17:50:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 79970346FAD
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Nov 2025 15:55:29 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 312004E357F
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Nov 2025 16:47:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 775752253EB;
-	Sat, 29 Nov 2025 15:55:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB01F30E0E6;
+	Sat, 29 Nov 2025 16:47:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F9KG+5dL"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sLZGAE7v"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 461B91F8723
-	for <linux-fsdevel@vger.kernel.org>; Sat, 29 Nov 2025 15:55:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55DAF3A1CD
+	for <linux-fsdevel@vger.kernel.org>; Sat, 29 Nov 2025 16:47:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764431712; cv=none; b=aVRJyEyPUjlSFG5/2CkPBOZjsDNYmBksVKHuvvhlVV/vO1FBvmmT/VCSoa58lvkng1FxpYtfZNHU+VYICxHWqQC5wpdp6h+Li5m1xSSYgh9JdJtcof0DRqTvSw3DH8HL7fYUN1HVgvTwUTZaJS22PxvD9A0vW/3tS9anLhHAxlU=
+	t=1764434868; cv=none; b=fxT+N0qhB8RDBOumqE0M0ki73DpzJNNS1XxS+yhLlQrRO8leus7YHqF96O+GC2AgdPI74XQ9XRu6prTikYflYmwGYE8pZBH1AzRoKOo3Puyo5AhY1ito7IdF/VDU/TIjLKxz11ApomcsMbGS/pLN4r2qImaNLdo+xt115ZFyLgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764431712; c=relaxed/simple;
-	bh=gegZGqXA1lQbjgAIgRfxxClC9l/ycrOqbI88gF9ufyM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kybR4+KyHIirh131IrSoPZ3aHzGSKR47cP4mrnHoPAkJAiThq9dlkV2aIVmk92jIKDr0bvS/hkH0MR4qXhswGELGTXiSKy8e0o9M8/LUla33762Y1VOnIbouM/XGid0ErM8dAlXen5TxV01GqKIULprEk8F8xr7sWCwgDgMW920=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F9KG+5dL; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-640a3317b89so4258245a12.0
-        for <linux-fsdevel@vger.kernel.org>; Sat, 29 Nov 2025 07:55:11 -0800 (PST)
+	s=arc-20240116; t=1764434868; c=relaxed/simple;
+	bh=lfXocuAK/pWFxfOrTNg5yzIeqcc91Ezqf3NtrGk7lPo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b0Fsk4+br1D7RcZFDkOjOzAlaVLX5X1EM5sKjX5SXMbjIXmiqp8/6pc2xt8TkkQER+eoj/scaoFCGgOABY07wtsNXoPq6Tgozfv4Z/tu5vDsovkqK+LegRXbUYXcBUZiw76zLYwBk6Dyd/naaHJrkW3fdkZWqU4B/p/Ya54/ha8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sLZGAE7v; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4775ae77516so29051275e9.1
+        for <linux-fsdevel@vger.kernel.org>; Sat, 29 Nov 2025 08:47:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1764431710; x=1765036510; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jhCNIy0D0SRdxJhzjFTGAJqVSQJS+0jdQCu4h9SuzuY=;
-        b=F9KG+5dLlZWZZ7mr6u6TIzYB7xmHuljKkGGQ6+DAyUh6+Asa7OnmfMJu3Buy/8rmDb
-         3hgejF7QMuSt8V6eTpj3Y5TshLAjLXqnH8IQLSRgn1YqkksKYUcfAmtVkcB1VH70sCt5
-         MJNMPVExPzAe/sWwqvxaOLJZEhPtInrZTiWVMn1pc2n/1GGmgsxor+sn7QwYHOXRJM8i
-         A2BFAz9NZDeQ8qaBR4Z4y/tZL6h5rrweuDkT6oOKym8O43IVekEKZdLGxphej7PYi1hE
-         3cfnOgJi7xxeegPV75ibjnLd2mnye8slrPPlSpF4Tbcz8XNpHZbR53dEoYaOxEP3UrFp
-         /Rfg==
+        d=linaro.org; s=google; t=1764434865; x=1765039665; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=q3ych/iH++Burly7REfAIiFBvK9CWqovdUB/sBoH0wI=;
+        b=sLZGAE7v67LEK95/OEJzyVxH4+D0Bj0RPFWN1j3Ih6DIkB1SZT1gTchXIIr2wYAEnk
+         L0kWgu0FZ1jq0RzhLLdfk2RwCOAu0EVYo6zGqMmtaRvkajxAQB8O+KIE+sj018iDt0g2
+         Fq23960xhDHYx7o8KhhwVQ/YswI8kA1Qeq7moUpA4qJHnFWfr93JaEjDnJGmJrn+7b8e
+         emUgDglYKOjJRjf7Eb3mw6IcHp7TGxY3nniLnXLSSl0jrHh/xsUeXFTDolJm1zYdiwut
+         dGfMI+dX+LlMD3vQ0ZtX9G4eGTXm8A2jbGkEcwu8FwTuL4KFf6V1hW+F7oNaUBKU0+/x
+         KDQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764431710; x=1765036510;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=jhCNIy0D0SRdxJhzjFTGAJqVSQJS+0jdQCu4h9SuzuY=;
-        b=UdGa3hIB0NgEfCFZOXYYF0DZyGggrGGXeADb15v++fOlrmr4HASiRvDYj2LGyHNmty
-         T0JL5WCTu1y0JJZlHBUQfvh576YLPtlISoLPbq1QTy0KgWII9R+J7x2YFZlDN7EFl0FR
-         sWlOrwjkOqt1+zUoJpECb1BAdE+agRU8aeRzJl4/ToqtsTaLP6Sx/a4cy5FlkajQZwPy
-         CR/jIVLyb27hOtMzNeHWmuVnk3VSTVF1CROcX7AJKDBb9D/iAga1KxnNapl/Bho1jHm4
-         DifxreO2wp5o17912bnDEsfUDzIShTDPwhtclHdNFNT/g1wrOPfcv5PExuI8N+M2acqe
-         niiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVzV0KoIBRo7zm3wor0ofzRqF58BMiiNtHlfWuwycjDKsF2xnexwSWd3xVWZOywrUDlb5xWzGQQN8jYrITK@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLHfV1bTqzKyuRSkunlqaRqk6aFdf9zCmfakIgDoMotQc20+LN
-	/AG74qEBfaTvxJFjVoY+1vkWs1ZdS3KVaONLUvy2VrXVbiYuOcu4H7y5
-X-Gm-Gg: ASbGncuxJLCeRaa94QrNw6Bqh4/sRUAZKsFIlcgyag04GFiZrkZdLoKJRVYeyKLN1yb
-	9pMGDEYeJGNfwcy4Pvr4LKHPsfglb10OJJWooYwi595iIPy+B6ZC5MQpAcpVnLQ/9mWtOa16f72
-	/uKsh80EsQanZjQlYNLZ8BnxOaYoV8atuEri5c+LSAGsruZSUs2qak1WYjGU4yJMrdtQyN++e2P
-	73g9982bzJWIGb9OR2NjJDVIrkTY2Z0PcHUUIsxBmfUHffVf3GHA6sn3akPa8AqxA9iwtezHLiu
-	i7qVrNyw288aW49tY9bt1bxdNeBE8/eF+91oustgiR0afDD7/ZAQXQYDIndzzLdlTLFVLUs99lz
-	Wx9imXh8XFZARaUFsZ3qgHX6rCoxkNPQtl1MG2rHwjOfSuGoKxOFV9W8DiPAVbiUNtZW6wm9Jht
-	x+bLVcj9vOmoDAWXI9zcfjqJfKdmFDFzYQxgvYsJRuqAwG5HOv1H+W898m/m0Gtt6a8/+6sw==
-X-Google-Smtp-Source: AGHT+IFhLylm23z4EC9kbKlPmCLt9IYn3gMNvxGhOHgGAs6cCQq5gpcDrVIiFz69fb4dKLmwIwZ+Ig==
-X-Received: by 2002:a17:907:3c90:b0:b76:beac:ed1 with SMTP id a640c23a62f3a-b76c558b02bmr2174301066b.54.1764431709280;
-        Sat, 29 Nov 2025 07:55:09 -0800 (PST)
-Received: from f.. (cst-prg-14-82.cust.vodafone.cz. [46.135.14.82])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b76f5162c5csm746364766b.6.2025.11.29.07.55.07
+        d=1e100.net; s=20230601; t=1764434865; x=1765039665;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=q3ych/iH++Burly7REfAIiFBvK9CWqovdUB/sBoH0wI=;
+        b=aoOOAknOaCwWsB+9VdNqX4NiJFynGYdJ2+v9yGccMkEUdOH8+KU+HXZ6F3wQIS61pz
+         sDdrTFRBEqUjvsOmcSDUbdQ4zgRGeEYBMSSXrqkgTQVTOtwtA3MnE3VCvFx0pDr0TTRa
+         yIcVeUgS/2eqi0q2Gl1FdDejhtfqvJWcFbtEgsYHTPBPJGtK0TPafwsX+PQnEqz9N3LC
+         STbtE/foiu3MoU5oZLgfZoh0c1HLX2SDyF7zR5FE1bAPwbNr+eZe0+IoIJcvifMhLAI3
+         0WHM4a13cfuUlwS9O8Dik6leep+IjnX/AIuWb7SXYhDUT/4X5naJBiBWN2k5Q5L35W42
+         Q6sQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUWPg2aOQsmag3I8OGdAElCd+uTTmwsx3lQauX7s33QU+hIEig545hEzm/58fwwqF5D7YhCVKdJYtZ+fC4O@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywc4K4NHB6lLAailofBaWmtag17mZ+01YsaqBLMxu5SeSYJUfbf
+	4rxsFayUa+PMgEWs571FXuP/f2BTeuvi4fNY33tpaBWys56YLslJYIM4XdgMQTKiIT4=
+X-Gm-Gg: ASbGncuz/2HtWftI31DSYnZE/m9iFPGbdf8HkR7Qm5MOMjDiNT9803am863dmwTyN46
+	wiy1UooClO1JuTocGYdt3EaIMQO57NMnvUdT7KQTLn9HFcI0jvwXSjO/J+aWmugNqevC86A7BhN
+	ivlRvSvrToAr4pFfcJSbmcUvI+B1nLZjA1Qx9Y5s/Q1leL00d0YKkc8LOs0Nif2OXHWActdj52B
+	31C1GOh2AA86fEdk8UKQii2eJpc5iUhnCTNjU8C5qMKaJ6eFKg1gobRMbhgZPEHAbZPxQ05+5p2
+	BUFHpgpFX8wKAWEJPakWXsd+w4N5BhujGRauHxWSr06VVCOCd76l+2KJ4YhOStNcn8dC1bhcMzn
+	aEwOk0LunqcYYqhmtLGrjvlEAGODdAVvEs7AxdKbiVNaqWfJnuGJNiDvEQWnD+w268yQWUAHDnh
+	0/LzbD8j9aJ7R9pJvPVf63p09711M=
+X-Google-Smtp-Source: AGHT+IHWC/GnPcXEFcRMCb0gXQ0gjyiuDDgkjLVVLavOmK+5nIoumamUjPkBQTmCBaMvnDlVWFIUqg==
+X-Received: by 2002:a05:600c:35d1:b0:477:fcb:2267 with SMTP id 5b1f17b1804b1-477c10d6e76mr367577405e9.8.1764434864537;
+        Sat, 29 Nov 2025 08:47:44 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-479111438b9sm163292285e9.2.2025.11.29.08.47.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 29 Nov 2025 07:55:08 -0800 (PST)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: brauner@kernel.org
-Cc: viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH 2/2] fs: hide namei_cachep behind runtime const machinery
-Date: Sat, 29 Nov 2025 16:55:00 +0100
-Message-ID: <20251129155500.43116-2-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251129155500.43116-1-mjguzik@gmail.com>
-References: <20251129155500.43116-1-mjguzik@gmail.com>
+        Sat, 29 Nov 2025 08:47:43 -0800 (PST)
+Date: Sat, 29 Nov 2025 19:47:40 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Alex Markuze <amarkuze@redhat.com>
+Cc: Viacheslav Dubeyko <slava@dubeyko.com>, ceph-devel@vger.kernel.org,
+	idryomov@gmail.com, linux-fsdevel@vger.kernel.org,
+	pdonnell@redhat.com, Slava.Dubeyko@ibm.com
+Subject: Re: [PATCH] ceph: fix potential NULL dereferenced issue in
+ ceph_fill_trace()
+Message-ID: <aSsjrNnuC3hHtu8F@stanley.mountain>
+References: <20250827190122.74614-2-slava@dubeyko.com>
+ <CAO8a2Sj1QUPbhqCYftMXC1E8+Dd=Ob+BrdTULPO7477yhkk39w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAO8a2Sj1QUPbhqCYftMXC1E8+Dd=Ob+BrdTULPO7477yhkk39w@mail.gmail.com>
 
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
----
- fs/dcache.c                       |  7 ++++---
- include/asm-generic/vmlinux.lds.h |  4 +++-
- include/linux/namei.h             | 11 ++++++++++-
- 3 files changed, 17 insertions(+), 5 deletions(-)
+On Thu, Aug 28, 2025 at 12:28:15PM +0300, Alex Markuze wrote:
+> Considering we hadn't seen any related issues, I would add an unlikely
+> macro for that if.
+> 
 
-diff --git a/fs/dcache.c b/fs/dcache.c
-index 23d1752c29e6..5cdcb3d0ee3b 100644
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -3282,8 +3282,8 @@ static void __init dcache_init(void)
- }
- 
- /* SLAB cache for __getname() consumers */
--struct kmem_cache *names_cachep __ro_after_init;
--EXPORT_SYMBOL(names_cachep);
-+struct kmem_cache *__names_cachep __ro_after_init;
-+EXPORT_SYMBOL(__names_cachep);
- 
- void __init vfs_caches_init_early(void)
- {
-@@ -3298,8 +3298,9 @@ void __init vfs_caches_init_early(void)
- 
- void __init vfs_caches_init(void)
- {
--	names_cachep = kmem_cache_create_usercopy("names_cache", PATH_MAX, 0,
-+	__names_cachep = kmem_cache_create_usercopy("names_cache", PATH_MAX, 0,
- 			SLAB_HWCACHE_ALIGN|SLAB_PANIC, 0, PATH_MAX, NULL);
-+	runtime_const_init(ptr, __names_cachep);
- 
- 	dcache_init();
- 	inode_init();
-diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
-index 8ca130af301f..890250fffbe0 100644
---- a/include/asm-generic/vmlinux.lds.h
-+++ b/include/asm-generic/vmlinux.lds.h
-@@ -972,7 +972,9 @@
- #define RUNTIME_CONST_VARIABLES						\
- 		RUNTIME_CONST(shift, d_hash_shift)			\
- 		RUNTIME_CONST(ptr, dentry_hashtable)			\
--		RUNTIME_CONST(ptr, __dentry_cache)
-+		RUNTIME_CONST(ptr, __dentry_cache)			\
-+		RUNTIME_CONST(ptr, __names_cachep)
-+
- 
- /* Alignment must be consistent with (kunit_suite *) in include/kunit/test.h */
- #define KUNIT_TABLE()							\
-diff --git a/include/linux/namei.h b/include/linux/namei.h
-index bd4a7b058f97..c167f3a852e2 100644
---- a/include/linux/namei.h
-+++ b/include/linux/namei.h
-@@ -9,6 +9,10 @@
- #include <linux/errno.h>
- #include <linux/fs_struct.h>
- 
-+#ifndef MODULE
-+#include <asm/runtime-const.h>
-+#endif
-+
- enum { MAX_NESTED_LINKS = 8 };
- 
- #define MAXSYMLINKS 40
-@@ -88,7 +92,12 @@ static inline struct filename *refname(struct filename *name)
- 	return name;
- }
- 
--extern struct kmem_cache *names_cachep;
-+extern struct kmem_cache *__names_cachep;
-+#ifdef MODULE
-+#define names_cachep __names_cachep
-+#else
-+#define names_cachep runtime_const_ptr(__names_cachep)
-+#endif
- 
- #define __getname()		kmem_cache_alloc(names_cachep, GFP_KERNEL)
- #define __putname(name)		kmem_cache_free(names_cachep, (void *)(name))
--- 
-2.48.1
+Using likely/unlikely() should only be done if there is a reason to
+think it will affect benchmarking data.  Otherwise, you're just making
+the code messy for no reason.
 
+> On Wed, Aug 27, 2025 at 10:02 PM Viacheslav Dubeyko <slava@dubeyko.com> wrote:
+> >
+> > From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+> >
+> > The Coverity Scan service has detected a potential dereference of
+> > an explicit NULL value in ceph_fill_trace() [1].
+> >
+> > The variable in is declared in the beggining of
+> > ceph_fill_trace() [2]:
+> >
+> > struct inode *in = NULL;
+
+Most of the time, these sorts of NULL initializers are just there
+to silence "uninitialize variable" warnings when the code is too
+complicated for GCC to parse.
+
+> >
+> > However, the initialization of the variable is happening under
+> > condition [3]:
+> >
+> > if (rinfo->head->is_target) {
+> >     <skipped>
+> >     in = req->r_target_inode;
+> >     <skipped>
+> > }
+> >
+> > Potentially, if rinfo->head->is_target == FALSE, then
+> > in variable continues to be NULL and later the dereference of
+> > NULL value could happen in ceph_fill_trace() logic [4,5]:
+> >
+> > else if ((req->r_op == CEPH_MDS_OP_LOOKUPSNAP ||
+> >             req->r_op == CEPH_MDS_OP_MKSNAP) &&
+> >             test_bit(CEPH_MDS_R_PARENT_LOCKED, &req->r_req_flags) &&
+> >              !test_bit(CEPH_MDS_R_ABORTED, &req->r_req_flags)) {
+> > <skipped>
+> >      ihold(in);
+> >      err = splice_dentry(&req->r_dentry, in);
+> >      if (err < 0)
+> >          goto done;
+> > }
+> >
+> > This patch adds the checking of in variable for NULL value
+> > and it returns -EINVAL error code if it has NULL value.
+> >
+> > [1] https://scan5.scan.coverity.com/#/project-view/64304/10063?selectedIssue=1141197
+> > [2] https://elixir.bootlin.com/linux/v6.17-rc3/source/fs/ceph/inode.c#L1522
+> > [3] https://elixir.bootlin.com/linux/v6.17-rc3/source/fs/ceph/inode.c#L1629
+> > [4] https://elixir.bootlin.com/linux/v6.17-rc3/source/fs/ceph/inode.c#L1745
+> > [5] https://elixir.bootlin.com/linux/v6.17-rc3/source/fs/ceph/inode.c#L1777
+> >
+> > Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+
+If this is really a bug it should have a Fixes tag.
+
+> > cc: Alex Markuze <amarkuze@redhat.com>
+> > cc: Ilya Dryomov <idryomov@gmail.com>
+> > cc: Ceph Development <ceph-devel@vger.kernel.org>
+> > ---
+> >  fs/ceph/inode.c | 11 +++++++++++
+> >  1 file changed, 11 insertions(+)
+> >
+> > diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+> > index fc543075b827..dee2793d822f 100644
+> > --- a/fs/ceph/inode.c
+> > +++ b/fs/ceph/inode.c
+> > @@ -1739,6 +1739,11 @@ int ceph_fill_trace(struct super_block *sb, struct ceph_mds_request *req)
+> >                         goto done;
+> >                 }
+
+This "goto done;" is from the if (!rinfo->head->is_target) { test,
+so we know
+
+> >
+> > +               if (!in) {
+
+that this NULL check is not required.
+
+regards,
+dan carpenter
+
+> > +                       err = -EINVAL;
+> > +                       goto done;
+> > +               }
+> > +
+> >                 /* attach proper inode */
+> >                 if (d_really_is_negative(dn)) {
+> >                         ceph_dir_clear_ordered(dir);
+> > @@ -1774,6 +1779,12 @@ int ceph_fill_trace(struct super_block *sb, struct ceph_mds_request *req)
+> >                 doutc(cl, " linking snapped dir %p to dn %p\n", in,
+> >                       req->r_dentry);
+> >                 ceph_dir_clear_ordered(dir);
+> > +
+> > +               if (!in) {
+> > +                       err = -EINVAL;
+> > +                       goto done;
+> > +               }
+> > +
+> >                 ihold(in);
+> >                 err = splice_dentry(&req->r_dentry, in);
+> >                 if (err < 0)
+> > --
+> > 2.51.0
+> >
+> 
 
