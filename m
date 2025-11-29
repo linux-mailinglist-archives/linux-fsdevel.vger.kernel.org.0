@@ -1,357 +1,156 @@
-Return-Path: <linux-fsdevel+bounces-70232-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70234-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FDC8C93D2B
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Nov 2025 12:48:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 98D66C93DF3
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Nov 2025 14:05:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6C7AF347487
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Nov 2025 11:48:23 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 75F24347BFE
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Nov 2025 13:05:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 946F82798E8;
-	Sat, 29 Nov 2025 11:48:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X0XbrMGZ"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94B3930E849;
+	Sat, 29 Nov 2025 13:05:26 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 002841CFBA
-	for <linux-fsdevel@vger.kernel.org>; Sat, 29 Nov 2025 11:48:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 905F01F16B
+	for <linux-fsdevel@vger.kernel.org>; Sat, 29 Nov 2025 13:05:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764416896; cv=none; b=liyX6l4iuIJTNAr1GWGtDvrmehjysMJlPAaHlrVRTveLKnWY7a7pMFjOcGbBURd5ZjJtGL+B96NbXQONzABVChgMxacmhvl6qkFu832YfgDkIx9ycWRCH7Iq6XdlDJ5gryzp0o7sRguG0GGTw+3DaLYqT+s8/7L2nw1Kocmc5RE=
+	t=1764421526; cv=none; b=t2SlJnwoln1Ly9HB+hNopOFaJbql+/jKD290AyUmsW0CiUU6IDc9rwjuvC/sIBEuAgt/8VpWbkPJ7cbSFVENECOT9i3eV5z0Fwy5QKuQXtUzcrb8JQG/nsFjlP7xdNCT10JQS0umQXVUbHNQPUxAVTZZ4XV/F3/HVeiYekqPO4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764416896; c=relaxed/simple;
-	bh=h5+9iYl8VbZS+U2LlTL5YKcwmoyod1ZpymlsHJE1nGY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZXbp/vCbnun/Q+oufA5FeVRLheWfWEqpuOsM7uccNknTkKdttbuSnZB+PDNYEO+eVFrbHE+Stl+5vArrTvg5DVsmNhFOec4UjXA17EOgQ+QxkAv6QgIf+iRDealfVWpbIeFoQyjtwThDL7e+Y4HH8lqgh1hOQdOixiDQsCW+WtM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X0XbrMGZ; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-429cbdab700so356470f8f.1
-        for <linux-fsdevel@vger.kernel.org>; Sat, 29 Nov 2025 03:48:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1764416892; x=1765021692; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0kqJsr+zwaIWk0dOjhvACdQK6mMb8qhb4SrPekKTBzA=;
-        b=X0XbrMGZZy9iUGJyWe/Oso/GWTm9PbeRza8+NN7ErweOk/clDyq0Hu60gdzqDorMwe
-         JYByUVCQXu752OpTJ5zKhS0hT+dnSkGfh3XZ8jisdS0pL1JtbLSk/10QJxOKGz3dCKxa
-         F8aeUUVFd1VHqNA9OqaetlTauqD/bgDX6xb4H4UyYEej4r9Lj+eeO81rpwGZ5y+eUXzm
-         V0RdSOe6sEry8ar+Suod9wol+K+Ps3Xj49Cz6mAdfzVU/vXH2bMeDRkJTaU1aH6+UOIM
-         b7ozBpFIrVadt8ImanjiWKLHnR7jXamAHTvWQtpD6JSniLkVB8JDTVTfppY/8jJQo2gW
-         rfJQ==
+	s=arc-20240116; t=1764421526; c=relaxed/simple;
+	bh=5H4v58CFvKdhVBv1n7Kicc3UFongoWfkwaOYHH0HT6E=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=cYc1CwMJ9i8apBXl+wAJRklC0tTJBWw7sdVmkGM2KSyd4V+mqmuH7hGaQ/I8zzoArts0qcugrIPl1PtixLXKr5he3iMQ/jlXSGPbDrW3CUO0rtkMc8SHhHc+C3DaQIw/o90fg0SDacQYCMkNhGj78Mnje4IyIuGqiKCCoQqZNLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-435a04dace1so21129605ab.0
+        for <linux-fsdevel@vger.kernel.org>; Sat, 29 Nov 2025 05:05:24 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764416892; x=1765021692;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0kqJsr+zwaIWk0dOjhvACdQK6mMb8qhb4SrPekKTBzA=;
-        b=L81PkLDCWW3QvwZEgnIwC/S4SVZz1+eaOqhf6hojhe3ZUkk0o4LTcKl4D2tMu70J43
-         Q2cy5gtFqFcEq6V9892utV2tzD/gMyUKrVzFAhENTsNnf9soKbxZyQVucrX6LdsHRpzg
-         5MuaMAN2/SS3ARpl1g0bwSph/bh3U6eYJAGTZVeFAa/1fwOQvswPFAy5hCEct0GR8l0e
-         oKkMp7nLafpauUlRHanmhEh83+I9uwejWTLAuYIZ9ZgdQQmZFyit3b0StniMqJrrpNAW
-         m8vs6HB7mtge6mZsvhNvD57kQgr6OkjIj4IJaq02jKleJ5qMGBx9Ou/Istnc3rYdipCn
-         JG1g==
-X-Forwarded-Encrypted: i=1; AJvYcCWuVsOQN+C8hZMEYmOspNmxlCtddmIfD4UWW5XH/6PoAEoXsN12rc1kSyF2ejY0M0qcqtO7C7XESiFV+Nd0@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFPlNvc6lN3Avfhol1a8V4BYW2D1zlisM4e3j/Y2XFRe7sUZtQ
-	ah+1qrPnhDXb9Fg2A5L5T1jAcQB1fA9YX46IDklAAA/zybpnKTqThF9c
-X-Gm-Gg: ASbGncvqJbZqh+99OzBzehmdgaxU2t1lfVxuK0DoMllaz3JWfPPEPBOriib/nph1rEk
-	K/FvXb/F2MnF80xrer9udt/BaXk0f/GBoQMmQFwUMrS8katXdoVobdmq0lIMtWOop1Cwq4gAQbJ
-	2hXaJshMnwF7SQS+QluBjkIcu+EfYiItWzUgh7ri/HxCIeh/3A2DIev/twPKPcuszBLl4XLRXpA
-	tLSNQuQS7fCWbwc0f8tAYC1+L1Widbid+1+EfaVeXLnG21NfFiQXrDoDd16Jc9wwzgeI7bgsBob
-	J4hSNvENk2Ed02swKZ7cME6gfRoaA12vjyM06yxsMkHbqAj1Kp6iDJ1IwIEZ1SvLc64QA0Gvyg3
-	56srJlRl88Lt3ApkjC0ZpFRoBQH+EI0CzB20RoRipGE0rpG6N8l1+Zr1ISvdn5cwdF0VTlmkyrn
-	qAZESaoUt/hZSZbjuPBSrOOb+V0duZgg==
-X-Google-Smtp-Source: AGHT+IGDpyKVraliVE01ExVQJEk8OI7hIep8C4tPP0QdUpVLYTDCOStcQpW0M8yATHKAdJxUMJa64Q==
-X-Received: by 2002:a05:600c:a03:b0:477:7a1c:9cb5 with SMTP id 5b1f17b1804b1-477c317d347mr184062665e9.7.1764416891955;
-        Sat, 29 Nov 2025 03:48:11 -0800 (PST)
-Received: from [192.168.1.105] ([165.50.52.109])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42e1ca1a4bbsm14469835f8f.21.2025.11.29.03.48.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 29 Nov 2025 03:48:11 -0800 (PST)
-Message-ID: <59b833d7-4a97-4703-86ef-c163d70b3836@gmail.com>
-Date: Sat, 29 Nov 2025 13:48:08 +0100
+        d=1e100.net; s=20230601; t=1764421524; x=1765026324;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=p/AjsLSw3aZ/hJvRaRsmMwJng9RMGyhyWJt6uETCibQ=;
+        b=WR3I/VRpRRp2EovWw4pqrZPM1ANmLuV06vcICrxlGt6K5ECSLGV43K98R//ma8oK1d
+         LKZfjwMdM6yJuTJLEnGlad5qGdwZMCCe3yxg6vX6XiDMaMo9g7SOZvCjR7zRYczsL8Ib
+         yUQalnAlgmuM0F4UeMUJrQbxNOBhW6p/kJeTaT5s8XZQ5E99W1iOpD3oV/CyRZ/xVZKz
+         Adenie5coAPMXGcb6xBHkquCqC8wP4tmpvnjSWO4vuqweGczayj53LU1gP/MO8/DicJG
+         A252A5KEabn42m1EO2HXPrIdIYwk2r8YGGYFXRrpYVX6bSQvziqisnOICTpHYjNWEiLQ
+         +hyg==
+X-Forwarded-Encrypted: i=1; AJvYcCX+C0koS3BsIbJPxXXvlPhMKCcdHJ8ybNLtksmeYfWPfCvqVECbjUZ94q2aPcrg11vtNSqRhD9SOgwmMf7s@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2T06FrgrDsiMKDN5UURXhwkNQ6gWRNUonIzhxX1mzHPTyVyoB
+	z1yigOQjbdH6fgoVr1J/UU22H69tlJ4P0Zt2bYXztCfYluvygHosufeTt4IUOSVY2Ocz440n3KF
+	serM9MNJuQ+cg+UfPjxfV3sspguhFNWHR3m6kjxfwXquy5Us5EHJrKRgxn6Y=
+X-Google-Smtp-Source: AGHT+IFByml6kwKuEIpQl6nNAhFNnDTZqBEAngdpOCN6AS9dK/ei40xzv92OXTKBzHdMCvzMOH0j9/F/X7Yt5TQXQY+qBCBrF3WX
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] fs/hfs: fix s_fs_info leak on setup_bdev_super()
- failure
-Content-Language: en-US
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
- "brauner@kernel.org" <brauner@kernel.org>
-Cc: "jack@suse.cz" <jack@suse.cz>, "khalid@kernel.org" <khalid@kernel.org>,
- "frank.li@vivo.com" <frank.li@vivo.com>,
- "slava@dubeyko.com" <slava@dubeyko.com>,
- "david.hunter.linux@gmail.com" <david.hunter.linux@gmail.com>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-kernel-mentees@lists.linuxfoundation.org"
- <linux-kernel-mentees@lists.linuxfoundation.org>,
- "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
- "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
- "syzbot+ad45f827c88778ff7df6@syzkaller.appspotmail.com"
- <syzbot+ad45f827c88778ff7df6@syzkaller.appspotmail.com>,
- "skhan@linuxfoundation.org" <skhan@linuxfoundation.org>
-References: <20251119073845.18578-1-mehdi.benhadjkhelifa@gmail.com>
- <c19c6ebedf52f0362648a32c0eabdc823746438f.camel@ibm.com>
- <20251126-gebaggert-anpacken-d0d9fb10b9bc@brauner>
- <04d3810e-3d1b-4af2-a39b-0459cb466838@gmail.com>
- <56521c02f410d15a11076ebba1ce00e081951c3f.camel@ibm.com>
- <20251127-semmel-lastkraftwagen-9f2c7f6e16dd@brauner>
- <4bb136bae5c04bc07e75ddf108ada7e7480afacc.camel@ibm.com>
-From: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
-In-Reply-To: <4bb136bae5c04bc07e75ddf108ada7e7480afacc.camel@ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:2146:b0:433:7a5f:9439 with SMTP id
+ e9e14a558f8ab-435b98c6abbmr251866885ab.24.1764421523738; Sat, 29 Nov 2025
+ 05:05:23 -0800 (PST)
+Date: Sat, 29 Nov 2025 05:05:23 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <692aef93.a70a0220.d98e3.015b.GAE@google.com>
+Subject: [syzbot] [overlayfs?] WARNING in fast_dput
+From: syzbot <syzbot+b74150fd2ef40e716ca2@syzkaller.appspotmail.com>
+To: amir73il@gmail.com, brauner@kernel.org, jack@suse.cz, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-unionfs@vger.kernel.org, miklos@szeredi.hu, 
+	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 
-On 11/27/25 9:19 PM, Viacheslav Dubeyko wrote:
-> On Thu, 2025-11-27 at 09:59 +0100, Christian Brauner wrote:
->> On Wed, Nov 26, 2025 at 10:30:30PM +0000, Viacheslav Dubeyko wrote:
->>> On Wed, 2025-11-26 at 17:06 +0100, Mehdi Ben Hadj Khelifa wrote:
->>>> On 11/26/25 2:48 PM, Christian Brauner wrote:
->>>>> On Wed, Nov 19, 2025 at 07:58:21PM +0000, Viacheslav Dubeyko wrote:
->>>>>> On Wed, 2025-11-19 at 08:38 +0100, Mehdi Ben Hadj Khelifa wrote:
->>>>>>> The regression introduced by commit aca740cecbe5 ("fs: open block device
->>>>>>> after superblock creation") allows setup_bdev_super() to fail after a new
->>>>>>> superblock has been allocated by sget_fc(), but before hfs_fill_super()
->>>>>>> takes ownership of the filesystem-specific s_fs_info data.
->>>>>>>
->>>>>>> In that case, hfs_put_super() and the failure paths of hfs_fill_super()
->>>>>>> are never reached, leaving the HFS mdb structures attached to s->s_fs_info
->>>>>>> unreleased.The default kill_block_super() teardown also does not free
->>>>>>> HFS-specific resources, resulting in a memory leak on early mount failure.
->>>>>>>
->>>>>>> Fix this by moving all HFS-specific teardown (hfs_mdb_put()) from
->>>>>>> hfs_put_super() and the hfs_fill_super() failure path into a dedicated
->>>>>>> hfs_kill_sb() implementation. This ensures that both normal unmount and
->>>>>>> early teardown paths (including setup_bdev_super() failure) correctly
->>>>>>> release HFS metadata.
->>>>>>>
->>>>>>> This also preserves the intended layering: generic_shutdown_super()
->>>>>>> handles VFS-side cleanup, while HFS filesystem state is fully destroyed
->>>>>>> afterwards.
->>>>>>>
->>>>>>> Fixes: aca740cecbe5 ("fs: open block device after superblock creation")
->>>>>>> Reported-by: syzbot+ad45f827c88778ff7df6@syzkaller.appspotmail.com
->>>>>>> Closes: https://syzkaller.appspot.com/bug?extid=ad45f827c88778ff7df6
->>>>>>> Tested-by: syzbot+ad45f827c88778ff7df6@syzkaller.appspotmail.com
->>>>>>> Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
->>>>>>> Signed-off-by: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
->>>>>>> ---
->>>>>>> ChangeLog:
->>>>>>>
->>>>>>> Changes from v1:
->>>>>>>
->>>>>>> -Changed the patch direction to focus on hfs changes specifically as
->>>>>>> suggested by al viro
->>>>>>>
->>>>>>> Link:https://lore.kernel.org/all/20251114165255.101361-1-mehdi.benhadjkhelifa@gmail.com/
->>>>>>>
->>>>>>> Note:This patch might need some more testing as I only did run selftests
->>>>>>> with no regression, check dmesg output for no regression, run reproducer
->>>>>>> with no bug and test it with syzbot as well.
->>>>>>
->>>>>> Have you run xfstests for the patch? Unfortunately, we have multiple xfstests
->>>>>> failures for HFS now. And you can check the list of known issues here [1]. The
->>>>>> main point of such run of xfstests is to check that maybe some issue(s) could be
->>>>>> fixed by the patch. And, more important that you don't introduce new issues. ;)
->>>>>>
->>>>>>>
->>>>>>>    fs/hfs/super.c | 16 ++++++++++++----
->>>>>>>    1 file changed, 12 insertions(+), 4 deletions(-)
->>>>>>>
->>>>>>> diff --git a/fs/hfs/super.c b/fs/hfs/super.c
->>>>>>> index 47f50fa555a4..06e1c25e47dc 100644
->>>>>>> --- a/fs/hfs/super.c
->>>>>>> +++ b/fs/hfs/super.c
->>>>>>> @@ -49,8 +49,6 @@ static void hfs_put_super(struct super_block *sb)
->>>>>>>    {
->>>>>>>    	cancel_delayed_work_sync(&HFS_SB(sb)->mdb_work);
->>>>>>>    	hfs_mdb_close(sb);
->>>>>>> -	/* release the MDB's resources */
->>>>>>> -	hfs_mdb_put(sb);
->>>>>>>    }
->>>>>>>    
->>>>>>>    static void flush_mdb(struct work_struct *work)
->>>>>>> @@ -383,7 +381,6 @@ static int hfs_fill_super(struct super_block *sb, struct fs_context *fc)
->>>>>>>    bail_no_root:
->>>>>>>    	pr_err("get root inode failed\n");
->>>>>>>    bail:
->>>>>>> -	hfs_mdb_put(sb);
->>>>>>>    	return res;
->>>>>>>    }
->>>>>>>    
->>>>>>> @@ -431,10 +428,21 @@ static int hfs_init_fs_context(struct fs_context *fc)
->>>>>>>    	return 0;
->>>>>>>    }
->>>>>>>    
->>>>>>> +static void hfs_kill_sb(struct super_block *sb)
->>>>>>> +{
->>>>>>> +	generic_shutdown_super(sb);
->>>>>>> +	hfs_mdb_put(sb);
->>>>>>> +	if (sb->s_bdev) {
->>>>>>> +		sync_blockdev(sb->s_bdev);
->>>>>>> +		bdev_fput(sb->s_bdev_file);
->>>>>>> +	}
->>>>>>> +
->>>>>>> +}
->>>>>>> +
->>>>>>>    static struct file_system_type hfs_fs_type = {
->>>>>>>    	.owner		= THIS_MODULE,
->>>>>>>    	.name		= "hfs",
->>>>>>> -	.kill_sb	= kill_block_super,
->>>>>>
->>>>>> It looks like we have the same issue for the case of HFS+ [2]. Could you please
->>>>>> double check that HFS+ should be fixed too?
->>>>>
->>>>> There's no need to open-code this unless I'm missing something. All you
->>>>> need is the following two patches - untested. Both issues were
->>>>> introduced by the conversion to the new mount api.
->>>> Yes, I don't think open-code is needed here IIUC, also as I mentionned
->>>> before I went by the suggestion of Al Viro in previous replies that's my
->>>> main reason for doing it that way in the first place.
->>>>
->>>> Also me and Slava are working on testing the mentionned patches, Should
->>>> I sent them from my part to the maintainers and mailing lists once
->>>> testing has been done?
->>>>
->>>>
->>>
->>> I have run the xfstests on the latest kernel. Everything works as expected:
->>>
->>> sudo ./check -g auto
->>> FSTYP         -- hfsplus
->>> PLATFORM      -- Linux/x86_64 hfsplus-testing-0001 6.18.0-rc7 #97 SMP
->>> PREEMPT_DYNAMIC Tue Nov 25 15:12:42 PST 2025
->>> MKFS_OPTIONS  -- /dev/loop51
->>> MOUNT_OPTIONS -- /dev/loop51 /mnt/scratch
->>>
->>> generic/001 22s ...  53s
->>> generic/002 17s ...  43s
->>>
->>> <skipped>
->>>
->>> Failures: generic/003 generic/013 generic/020 generic/034 generic/037
->>> generic/039 generic/040 generic/041 generic/056 generic/057 generic/062
->>> generic/065 generic/066 generic/069 generic/070 generic/073 generic/074
->>> generic/079 generic/091 generic/097 generic/101 generic/104 generic/106
->>> generic/107 generic/113 generic/127 generic/241 generic/258 generic/263
->>> generic/285 generic/321 generic/322 generic/335 generic/336 generic/337
->>> generic/339 generic/341 generic/342 generic/343 generic/348 generic/363
->>> generic/376 generic/377 generic/405 generic/412 generic/418 generic/464
->>> generic/471 generic/475 generic/479 generic/480 generic/481 generic/489
->>> generic/490 generic/498 generic/502 generic/510 generic/523 generic/525
->>> generic/526 generic/527 generic/533 generic/534 generic/535 generic/547
->>> generic/551 generic/552 generic/557 generic/563 generic/564 generic/617
->>> generic/631 generic/637 generic/640 generic/642 generic/647 generic/650
->>> generic/690 generic/728 generic/729 generic/760 generic/764 generic/771
->>> generic/776
->>> Failed 84 of 767 tests
->>>
->>> Currently, failures are expected. But I don't see any serious crash, especially,
->>> on every single test.
->>>
->>> So, I can apply two patches that Christian shared and test it on my side.
->>>
->>> I had impression that Christian has taken the patch for HFS already in his tree.
->>> Am I wrong here? I can take both patches in HFS/HFS+ tree. Let me run xfstests
->>> with applied patches at first.
->>
->> Feel free to taken them.
-> 
-> Sounds good!
-> 
-> So, I have xfestests run results:
-> 
-> HFS without patch:
-> 
-> sudo ./check -g auto
-> FSTYP         -- hfs
-> PLATFORM      -- Linux/x86_64 hfsplus-testing-0001 6.18.0-rc7+ #98 SMP
-> PREEMPT_DYNAMIC Wed Nov 26 14:37:19 PST 2025
-> MKFS_OPTIONS  -- /dev/loop51
-> MOUNT_OPTIONS -- /dev/loop51 /mnt/scratch
-> 
-> <skipped>
-> 
-> Failed 140 of 766 tests
-> 
-> HFS with patch:
-> 
-> sudo ./check -g auto
-> FSTYP         -- hfs
-> PLATFORM      -- Linux/x86_64 hfsplus-testing-0001 6.18.0-rc7+ #98 SMP
-> PREEMPT_DYNAMIC Wed Nov 26 14:37:19 PST 2025
-> MKFS_OPTIONS  -- /dev/loop51
-> MOUNT_OPTIONS -- /dev/loop51 /mnt/scratch
-> 
-> <skipped>
-> 
-> Failed 139 of 766 tests
-> 
-> HFS+ without patch:
-> 
-> sudo ./check -g auto
-> FSTYP         -- hfsplus
-> PLATFORM      -- Linux/x86_64 hfsplus-testing-0001 6.18.0-rc7 #97 SMP
-> PREEMPT_DYNAMIC Tue Nov 25 15:12:42 PST 2025
-> MKFS_OPTIONS  -- /dev/loop51
-> MOUNT_OPTIONS -- /dev/loop51 /mnt/scratch
-> 
-> <skipped>
-> 
-> Failed 84 of 767 tests
-> 
-> HFS+ with patch:
-> 
-> sudo ./check -g
-> FSTYP         -- hfsplus
-> PLATFORM      -- Linux/x86_64 hfsplus-testing-0001 6.18.0-rc7+ #98 SMP
-> PREEMPT_DYNAMIC Wed Nov 26 14:37:19 PST 2025
-> MKFS_OPTIONS  -- /dev/loop51
-> MOUNT_OPTIONS -- /dev/loop51 /mnt/scratch
-> 
-> <skipped>
-> 
-> Failed 81 of 767 tests
-> 
-> As far as I can see, the situation is improving with the patches. I can say that
-> patches have been tested and I am ready to pick up the patches into HFS/HFS+
-> tree.
-> 
-> Mehdi, should I expect the formal patches from you? Or should I take the patches
-> as it is?
-> 
+Hello,
 
-I can send them from my part. Should I add signed-off-by tag at the end 
-appended to them?
+syzbot found the following issue on:
+
+HEAD commit:    7d31f578f323 Add linux-next specific files for 20251128
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=14db5f42580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6336d8e94a7c517d
+dashboard link: https://syzkaller.appspot.com/bug?extid=b74150fd2ef40e716ca2
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1780a112580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10f6be92580000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/6b49d8ad90de/disk-7d31f578.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/dbe2d4988ca7/vmlinux-7d31f578.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/fc0448ab2411/bzImage-7d31f578.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+b74150fd2ef40e716ca2@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+WARNING: fs/dcache.c:829 at fast_dput+0x334/0x430 fs/dcache.c:829, CPU#1: syz.0.17/6053
+Modules linked in:
+CPU: 1 UID: 0 PID: 6053 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/25/2025
+RIP: 0010:fast_dput+0x334/0x430 fs/dcache.c:829
+Code: e3 81 ff 48 b8 00 00 00 00 00 fc ff df 41 0f b6 44 05 00 84 c0 0f 85 e2 00 00 00 41 80 0e 40 e9 fd fe ff ff e8 4d e3 81 ff 90 <0f> 0b 90 e9 ef fe ff ff 44 89 e6 81 e6 00 00 04 00 31 ff e8 74 e7
+RSP: 0018:ffffc90003407cd8 EFLAGS: 00010293
+RAX: ffffffff823fcfe3 RBX: ffff88806c44ac78 RCX: ffff88802e41bd00
+RDX: 0000000000000000 RSI: 00000000ffffff80 RDI: 0000000000000001
+RBP: 00000000ffffff80 R08: 0000000000000003 R09: 0000000000000004
+R10: dffffc0000000000 R11: fffff52000680f8c R12: dffffc0000000000
+R13: 1ffff1100d889597 R14: ffff88806c44abc0 R15: ffff88806c44acb8
+FS:  00005555820e4500(0000) GS:ffff888125f4f000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000001b31b63fff CR3: 0000000072c78000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ dput+0xe8/0x1a0 fs/dcache.c:924
+ __fput+0x68e/0xa70 fs/file_table.c:476
+ task_work_run+0x1d4/0x260 kernel/task_work.c:233
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ __exit_to_user_mode_loop kernel/entry/common.c:44 [inline]
+ exit_to_user_mode_loop+0xff/0x4f0 kernel/entry/common.c:75
+ __exit_to_user_mode_prepare include/linux/irq-entry-common.h:226 [inline]
+ syscall_exit_to_user_mode_prepare include/linux/irq-entry-common.h:256 [inline]
+ syscall_exit_to_user_mode_work include/linux/entry-common.h:159 [inline]
+ syscall_exit_to_user_mode include/linux/entry-common.h:194 [inline]
+ do_syscall_64+0x2e3/0xf80 arch/x86/entry/syscall_64.c:100
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f4966f8f749
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffc01c51258 EFLAGS: 00000246 ORIG_RAX: 00000000000001b4
+RAX: 0000000000000000 RBX: 000000000001a7a1 RCX: 00007f4966f8f749
+RDX: 0000000000000000 RSI: 000000000000001e RDI: 0000000000000003
+RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000201c5154f
+R10: 0000001b30f20000 R11: 0000000000000246 R12: 00007f49671e5fac
+R13: 00007f49671e5fa0 R14: ffffffffffffffff R15: 0000000000000004
+ </TASK>
 
 
-Also, I want to give an apologies for the delayed/none reply about the 
-crash of xfstests on my part. I went back testing them 3 days earlier 
-and they started showing different results again and then I have broken 
-my finger....Which caused me to have much slower progress.I'm still 
-working on getting the same crashes as I did before where I get them 
-when running any test.Because I ran quick tests and they didn't crash. 
-only with auto around the 631 test for desktop and around 642 on my 
-laptop for both not patched and patched kernels.I'm going to update you 
-on that matter when I can have predictable behavior and cause of the 
-crash/call stack.But expect slow progress from my part here for the 
-reason I mentionned before.
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-> Thanks,
-> Slava.
-Best Regards,
-Mehdi Ben Hadj Khelifa
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
