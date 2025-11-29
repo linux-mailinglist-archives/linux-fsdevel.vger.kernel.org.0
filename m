@@ -1,212 +1,184 @@
-Return-Path: <linux-fsdevel+bounces-70241-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70242-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E43CC94467
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Nov 2025 17:50:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24F8CC9447C
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Nov 2025 17:51:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 312004E357F
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Nov 2025 16:47:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 965FC3A2A6E
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Nov 2025 16:51:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB01F30E0E6;
-	Sat, 29 Nov 2025 16:47:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 160FF286D5E;
+	Sat, 29 Nov 2025 16:51:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sLZGAE7v"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="geawaqyK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55DAF3A1CD
-	for <linux-fsdevel@vger.kernel.org>; Sat, 29 Nov 2025 16:47:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F3231C701F
+	for <linux-fsdevel@vger.kernel.org>; Sat, 29 Nov 2025 16:51:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764434868; cv=none; b=fxT+N0qhB8RDBOumqE0M0ki73DpzJNNS1XxS+yhLlQrRO8leus7YHqF96O+GC2AgdPI74XQ9XRu6prTikYflYmwGYE8pZBH1AzRoKOo3Puyo5AhY1ito7IdF/VDU/TIjLKxz11ApomcsMbGS/pLN4r2qImaNLdo+xt115ZFyLgE=
+	t=1764435108; cv=none; b=jmoGl4T5g77hFR63Rf+Nq/gDZKl+kKmUHwFryXglH4NVtCWg6cpso2Q1lLdpWfK/1p5m69QxgeD879RCNnU5bQMh+PLhji3dDTPzu/MpATFIY+ExsB0Oda5SixHE5bzyBlkDFcyRf4u7XIxxN6XXsABss6r5zZ/vjShOBB2oTlo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764434868; c=relaxed/simple;
-	bh=lfXocuAK/pWFxfOrTNg5yzIeqcc91Ezqf3NtrGk7lPo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b0Fsk4+br1D7RcZFDkOjOzAlaVLX5X1EM5sKjX5SXMbjIXmiqp8/6pc2xt8TkkQER+eoj/scaoFCGgOABY07wtsNXoPq6Tgozfv4Z/tu5vDsovkqK+LegRXbUYXcBUZiw76zLYwBk6Dyd/naaHJrkW3fdkZWqU4B/p/Ya54/ha8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sLZGAE7v; arc=none smtp.client-ip=209.85.128.41
+	s=arc-20240116; t=1764435108; c=relaxed/simple;
+	bh=/iNK4Qtd+hA3I1KKNTPu2IlUU49kyEFn0I93BpZeAb0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=GXWTwJcI7nfulo1jRBU1aeA5NF6v0/nMsEnmNR8vH6ic/BEmS8IFhHsklx0PCDszzju0m0mVGKkYoeczsa4ADzqhWSI7BlF1h3iBXhXxxxYB3aWzyjusSQ4NEfsH8ksoyUpR3kkrYAkVXHr58erF1ukWthi/Lnif+5IucRd0p50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=geawaqyK; arc=none smtp.client-ip=209.85.128.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4775ae77516so29051275e9.1
-        for <linux-fsdevel@vger.kernel.org>; Sat, 29 Nov 2025 08:47:46 -0800 (PST)
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-47798ded6fcso14586605e9.1
+        for <linux-fsdevel@vger.kernel.org>; Sat, 29 Nov 2025 08:51:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1764434865; x=1765039665; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=q3ych/iH++Burly7REfAIiFBvK9CWqovdUB/sBoH0wI=;
-        b=sLZGAE7v67LEK95/OEJzyVxH4+D0Bj0RPFWN1j3Ih6DIkB1SZT1gTchXIIr2wYAEnk
-         L0kWgu0FZ1jq0RzhLLdfk2RwCOAu0EVYo6zGqMmtaRvkajxAQB8O+KIE+sj018iDt0g2
-         Fq23960xhDHYx7o8KhhwVQ/YswI8kA1Qeq7moUpA4qJHnFWfr93JaEjDnJGmJrn+7b8e
-         emUgDglYKOjJRjf7Eb3mw6IcHp7TGxY3nniLnXLSSl0jrHh/xsUeXFTDolJm1zYdiwut
-         dGfMI+dX+LlMD3vQ0ZtX9G4eGTXm8A2jbGkEcwu8FwTuL4KFf6V1hW+F7oNaUBKU0+/x
-         KDQw==
+        d=linaro.org; s=google; t=1764435105; x=1765039905; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=eNQQ2TrZ6lIHhcgB8NrgQiNlLOxGJsp2u9drC4JaiaE=;
+        b=geawaqyKyy63s3ZT5CcBdbAfzJAvrrro0374EgQ31wTkmL560Bf5rmMaZMJxhKh+7l
+         gw49mymWwBOy7OK876N+IFcnsiUbbUjH+jXB0ltiaaHqhkGG1Dt3HkdNpAO/Rlgv47+q
+         YdHvKLJZbyghnTA38VSDoM4cw8e0zfTxGDnShcFyJhTXxD6F8yNG2wlELDhxiDihE7u2
+         5an6ipXFOeuuAusxr/uSRb1klfOFS+2D1ivB/wvg4RUSldinIxk3egdqOF0rjxyPfuYn
+         WeaaFN5WwVaCbyd8V6gk7YwODSQSC7moNeEItzdth+IDuFNp8c57Ndx31SpVXychry8l
+         ABuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764434865; x=1765039665;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=q3ych/iH++Burly7REfAIiFBvK9CWqovdUB/sBoH0wI=;
-        b=aoOOAknOaCwWsB+9VdNqX4NiJFynGYdJ2+v9yGccMkEUdOH8+KU+HXZ6F3wQIS61pz
-         sDdrTFRBEqUjvsOmcSDUbdQ4zgRGeEYBMSSXrqkgTQVTOtwtA3MnE3VCvFx0pDr0TTRa
-         yIcVeUgS/2eqi0q2Gl1FdDejhtfqvJWcFbtEgsYHTPBPJGtK0TPafwsX+PQnEqz9N3LC
-         STbtE/foiu3MoU5oZLgfZoh0c1HLX2SDyF7zR5FE1bAPwbNr+eZe0+IoIJcvifMhLAI3
-         0WHM4a13cfuUlwS9O8Dik6leep+IjnX/AIuWb7SXYhDUT/4X5naJBiBWN2k5Q5L35W42
-         Q6sQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUWPg2aOQsmag3I8OGdAElCd+uTTmwsx3lQauX7s33QU+hIEig545hEzm/58fwwqF5D7YhCVKdJYtZ+fC4O@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywc4K4NHB6lLAailofBaWmtag17mZ+01YsaqBLMxu5SeSYJUfbf
-	4rxsFayUa+PMgEWs571FXuP/f2BTeuvi4fNY33tpaBWys56YLslJYIM4XdgMQTKiIT4=
-X-Gm-Gg: ASbGncuz/2HtWftI31DSYnZE/m9iFPGbdf8HkR7Qm5MOMjDiNT9803am863dmwTyN46
-	wiy1UooClO1JuTocGYdt3EaIMQO57NMnvUdT7KQTLn9HFcI0jvwXSjO/J+aWmugNqevC86A7BhN
-	ivlRvSvrToAr4pFfcJSbmcUvI+B1nLZjA1Qx9Y5s/Q1leL00d0YKkc8LOs0Nif2OXHWActdj52B
-	31C1GOh2AA86fEdk8UKQii2eJpc5iUhnCTNjU8C5qMKaJ6eFKg1gobRMbhgZPEHAbZPxQ05+5p2
-	BUFHpgpFX8wKAWEJPakWXsd+w4N5BhujGRauHxWSr06VVCOCd76l+2KJ4YhOStNcn8dC1bhcMzn
-	aEwOk0LunqcYYqhmtLGrjvlEAGODdAVvEs7AxdKbiVNaqWfJnuGJNiDvEQWnD+w268yQWUAHDnh
-	0/LzbD8j9aJ7R9pJvPVf63p09711M=
-X-Google-Smtp-Source: AGHT+IHWC/GnPcXEFcRMCb0gXQ0gjyiuDDgkjLVVLavOmK+5nIoumamUjPkBQTmCBaMvnDlVWFIUqg==
-X-Received: by 2002:a05:600c:35d1:b0:477:fcb:2267 with SMTP id 5b1f17b1804b1-477c10d6e76mr367577405e9.8.1764434864537;
-        Sat, 29 Nov 2025 08:47:44 -0800 (PST)
+        d=1e100.net; s=20230601; t=1764435105; x=1765039905;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eNQQ2TrZ6lIHhcgB8NrgQiNlLOxGJsp2u9drC4JaiaE=;
+        b=JcNrH2onuS42NQ8uKe142ryOdpGiP42I8JH61THKU7yMN385R4Li9jVv9EkpuwjDFa
+         Q3kevFGJKgq3jU+LoPCijmJb7eWpJu4L0PcyyV80zuTW1Rqq+eUBrkYGJSUWvzSdZsYO
+         hFgXSmFe2qBkMVeQ4923barppa1JDv/66uvu077Q4K4+0cn+IMM2Gq4pxnEqx0rz6Bw2
+         DxAXKEfbNDrRgCqKWSsm/ZMMDE22YgvLSr4HhjhtUXU876sydk2bGLDqrG1p0YYL3EjD
+         q2cATBiW5aFsYxd4a1LBrRjUhnVVAfIyhiAEaf43yFSbm1+WqhKqeo4JeBr92wGc0pWN
+         v27g==
+X-Forwarded-Encrypted: i=1; AJvYcCWo13+pspLBrkL9A3WZEmZBrtZv1zVGbvCEu49qCqFpqIEP59UORdpSVMq4JEeQEtODUlbO1CTgK4TtRGaB@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQgRRX6KO2mNUsTV9dxfvXJ1QGLeQUUdipxdrNXUA2x+IIl958
+	WbuSlZzu29RMLUKkuEfJ8UP78vXvQN5cQsGtCwGLF4AZmqntr0+s5uVpCiIeak5ZBCgXKrqFbD6
+	82oCh
+X-Gm-Gg: ASbGncvM0jCb/X9DlHS6gVspEn+eIDu3p3Kv5kuog8vLqAd1RDSaut6FWfWBZ7qGvKq
+	E4QgfTYwZ1UpI5xZCLty4sXqzPvtE2DjDTr0WMJu1MzQvKn/qHFY7wOyWj23tJlU607zkoWZ33c
+	f5ZhkMkOP9+sCvT4qand4F4W48qRkPAJrWO7F8HifY6DHW8Mgy4nBY2k6SPTS3kXcpIpDyEUn13
+	FlqAB7KMukalDb6PsabyUpcnWgzXOoGoLBrhu9irVU0kJkDiOFoh3+pSuNb5QlBUed/UTZKErHE
+	SqOT8zYTIfgUVuaghHKEZ8gglQOII319YBWWc/vs1XreXs+gqf/OroPQ+lxc4iJvhp4SJMHF2Na
+	N4WzKbFkDu72o/jSKT7g1ezOFyngsAoI3gz9X9wWy74exksAchIw+exetkxCuGs+h8mWSb/w4MA
+	7MugZFve/AzihuSsyz4a/wwHMbbVk=
+X-Google-Smtp-Source: AGHT+IFQybZ8AC4gkevKQ/6HpN9EXVOyox2BHm3ICg6x870LOSGMofLFGRpseW1XP7cGo/FDwctfxQ==
+X-Received: by 2002:a05:600c:198e:b0:46e:33b2:c8da with SMTP id 5b1f17b1804b1-477c1133927mr322314755e9.32.1764435104802;
+        Sat, 29 Nov 2025 08:51:44 -0800 (PST)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-479111438b9sm163292285e9.2.2025.11.29.08.47.43
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4790b0c3a28sm217505665e9.9.2025.11.29.08.51.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 29 Nov 2025 08:47:43 -0800 (PST)
-Date: Sat, 29 Nov 2025 19:47:40 +0300
+        Sat, 29 Nov 2025 08:51:44 -0800 (PST)
+Date: Sat, 29 Nov 2025 19:51:41 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Alex Markuze <amarkuze@redhat.com>
-Cc: Viacheslav Dubeyko <slava@dubeyko.com>, ceph-devel@vger.kernel.org,
-	idryomov@gmail.com, linux-fsdevel@vger.kernel.org,
-	pdonnell@redhat.com, Slava.Dubeyko@ibm.com
-Subject: Re: [PATCH] ceph: fix potential NULL dereferenced issue in
- ceph_fill_trace()
-Message-ID: <aSsjrNnuC3hHtu8F@stanley.mountain>
-References: <20250827190122.74614-2-slava@dubeyko.com>
- <CAO8a2Sj1QUPbhqCYftMXC1E8+Dd=Ob+BrdTULPO7477yhkk39w@mail.gmail.com>
+To: oe-kbuild@lists.linux.dev, Alex Markuze <amarkuze@redhat.com>,
+	ceph-devel@vger.kernel.org
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev, idryomov@gmail.com,
+	linux-fsdevel@vger.kernel.org, amarkuze@redhat.com,
+	vdubeyko@redhat.com
+Subject: Re: [PATCH 3/3] ceph: add subvolume metrics collection and reporting
+Message-ID: <202511290541.wFDJlRdO-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAO8a2Sj1QUPbhqCYftMXC1E8+Dd=Ob+BrdTULPO7477yhkk39w@mail.gmail.com>
+In-Reply-To: <20251127134620.2035796-4-amarkuze@redhat.com>
 
-On Thu, Aug 28, 2025 at 12:28:15PM +0300, Alex Markuze wrote:
-> Considering we hadn't seen any related issues, I would add an unlikely
-> macro for that if.
-> 
+Hi Alex,
 
-Using likely/unlikely() should only be done if there is a reason to
-think it will affect benchmarking data.  Otherwise, you're just making
-the code messy for no reason.
+kernel test robot noticed the following build warnings:
 
-> On Wed, Aug 27, 2025 at 10:02 PM Viacheslav Dubeyko <slava@dubeyko.com> wrote:
-> >
-> > From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-> >
-> > The Coverity Scan service has detected a potential dereference of
-> > an explicit NULL value in ceph_fill_trace() [1].
-> >
-> > The variable in is declared in the beggining of
-> > ceph_fill_trace() [2]:
-> >
-> > struct inode *in = NULL;
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Most of the time, these sorts of NULL initializers are just there
-to silence "uninitialize variable" warnings when the code is too
-complicated for GCC to parse.
+url:    https://github.com/intel-lab-lkp/linux/commits/Alex-Markuze/ceph-handle-InodeStat-v8-versioned-field-in-reply-parsing/20251127-214928
+base:   https://github.com/ceph/ceph-client.git for-linus
+patch link:    https://lore.kernel.org/r/20251127134620.2035796-4-amarkuze%40redhat.com
+patch subject: [PATCH 3/3] ceph: add subvolume metrics collection and reporting
+config: x86_64-randconfig-r071-20251128 (https://download.01.org/0day-ci/archive/20251129/202511290541.wFDJlRdO-lkp@intel.com/config)
+compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
 
-> >
-> > However, the initialization of the variable is happening under
-> > condition [3]:
-> >
-> > if (rinfo->head->is_target) {
-> >     <skipped>
-> >     in = req->r_target_inode;
-> >     <skipped>
-> > }
-> >
-> > Potentially, if rinfo->head->is_target == FALSE, then
-> > in variable continues to be NULL and later the dereference of
-> > NULL value could happen in ceph_fill_trace() logic [4,5]:
-> >
-> > else if ((req->r_op == CEPH_MDS_OP_LOOKUPSNAP ||
-> >             req->r_op == CEPH_MDS_OP_MKSNAP) &&
-> >             test_bit(CEPH_MDS_R_PARENT_LOCKED, &req->r_req_flags) &&
-> >              !test_bit(CEPH_MDS_R_ABORTED, &req->r_req_flags)) {
-> > <skipped>
-> >      ihold(in);
-> >      err = splice_dentry(&req->r_dentry, in);
-> >      if (err < 0)
-> >          goto done;
-> > }
-> >
-> > This patch adds the checking of in variable for NULL value
-> > and it returns -EINVAL error code if it has NULL value.
-> >
-> > [1] https://scan5.scan.coverity.com/#/project-view/64304/10063?selectedIssue=1141197
-> > [2] https://elixir.bootlin.com/linux/v6.17-rc3/source/fs/ceph/inode.c#L1522
-> > [3] https://elixir.bootlin.com/linux/v6.17-rc3/source/fs/ceph/inode.c#L1629
-> > [4] https://elixir.bootlin.com/linux/v6.17-rc3/source/fs/ceph/inode.c#L1745
-> > [5] https://elixir.bootlin.com/linux/v6.17-rc3/source/fs/ceph/inode.c#L1777
-> >
-> > Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+| Closes: https://lore.kernel.org/r/202511290541.wFDJlRdO-lkp@intel.com/
 
-If this is really a bug it should have a Fixes tag.
+smatch warnings:
+fs/ceph/debugfs.c:436 subvolume_metrics_show() error: we previously assumed 'mdsc' could be null (see line 399)
 
-> > cc: Alex Markuze <amarkuze@redhat.com>
-> > cc: Ilya Dryomov <idryomov@gmail.com>
-> > cc: Ceph Development <ceph-devel@vger.kernel.org>
-> > ---
-> >  fs/ceph/inode.c | 11 +++++++++++
-> >  1 file changed, 11 insertions(+)
-> >
-> > diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-> > index fc543075b827..dee2793d822f 100644
-> > --- a/fs/ceph/inode.c
-> > +++ b/fs/ceph/inode.c
-> > @@ -1739,6 +1739,11 @@ int ceph_fill_trace(struct super_block *sb, struct ceph_mds_request *req)
-> >                         goto done;
-> >                 }
+vim +/mdsc +436 fs/ceph/debugfs.c
 
-This "goto done;" is from the if (!rinfo->head->is_target) { test,
-so we know
+d469e1da62544e7 Alex Markuze 2025-11-27  390  static int subvolume_metrics_show(struct seq_file *s, void *p)
+d469e1da62544e7 Alex Markuze 2025-11-27  391  {
+d469e1da62544e7 Alex Markuze 2025-11-27  392  	struct ceph_fs_client *fsc = s->private;
+d469e1da62544e7 Alex Markuze 2025-11-27  393  	struct ceph_mds_client *mdsc = fsc->mdsc;
+d469e1da62544e7 Alex Markuze 2025-11-27  394  	struct ceph_subvol_metric_snapshot *snapshot = NULL;
+d469e1da62544e7 Alex Markuze 2025-11-27  395  	u32 nr = 0;
+d469e1da62544e7 Alex Markuze 2025-11-27  396  	u64 total_sent = 0;
+d469e1da62544e7 Alex Markuze 2025-11-27  397  	u32 i;
+d469e1da62544e7 Alex Markuze 2025-11-27  398  
+d469e1da62544e7 Alex Markuze 2025-11-27 @399  	if (mdsc) {
 
-> >
-> > +               if (!in) {
+This assumes mdsc can be NULL
 
-that this NULL check is not required.
+d469e1da62544e7 Alex Markuze 2025-11-27  400  		mutex_lock(&mdsc->subvol_metrics_last_mutex);
+d469e1da62544e7 Alex Markuze 2025-11-27  401  		if (mdsc->subvol_metrics_last &&
+d469e1da62544e7 Alex Markuze 2025-11-27  402  		    mdsc->subvol_metrics_last_nr) {
+d469e1da62544e7 Alex Markuze 2025-11-27  403  			nr = mdsc->subvol_metrics_last_nr;
+d469e1da62544e7 Alex Markuze 2025-11-27  404  			snapshot = kmemdup(mdsc->subvol_metrics_last,
+d469e1da62544e7 Alex Markuze 2025-11-27  405  					   nr * sizeof(*snapshot),
+d469e1da62544e7 Alex Markuze 2025-11-27  406  					   GFP_KERNEL);
+d469e1da62544e7 Alex Markuze 2025-11-27  407  			if (!snapshot)
+d469e1da62544e7 Alex Markuze 2025-11-27  408  				nr = 0;
+d469e1da62544e7 Alex Markuze 2025-11-27  409  		}
+d469e1da62544e7 Alex Markuze 2025-11-27  410  		total_sent = mdsc->subvol_metrics_sent;
+d469e1da62544e7 Alex Markuze 2025-11-27  411  		mutex_unlock(&mdsc->subvol_metrics_last_mutex);
+d469e1da62544e7 Alex Markuze 2025-11-27  412  	}
+d469e1da62544e7 Alex Markuze 2025-11-27  413  
+d469e1da62544e7 Alex Markuze 2025-11-27  414  	seq_puts(s, "Last sent subvolume metrics:\n");
+d469e1da62544e7 Alex Markuze 2025-11-27  415  	if (!nr) {
+d469e1da62544e7 Alex Markuze 2025-11-27  416  		seq_puts(s, "  (none)\n");
+d469e1da62544e7 Alex Markuze 2025-11-27  417  	} else {
+d469e1da62544e7 Alex Markuze 2025-11-27  418  		seq_puts(s, "  subvol_id          rd_ops    wr_ops    rd_bytes       wr_bytes       rd_lat_us      wr_lat_us\n");
+d469e1da62544e7 Alex Markuze 2025-11-27  419  		for (i = 0; i < nr; i++) {
+d469e1da62544e7 Alex Markuze 2025-11-27  420  			const struct ceph_subvol_metric_snapshot *e = &snapshot[i];
+d469e1da62544e7 Alex Markuze 2025-11-27  421  
+d469e1da62544e7 Alex Markuze 2025-11-27  422  			seq_printf(s, "  %-18llu %-9llu %-9llu %-14llu %-14llu %-14llu %-14llu\n",
+d469e1da62544e7 Alex Markuze 2025-11-27  423  				   e->subvolume_id,
+d469e1da62544e7 Alex Markuze 2025-11-27  424  				   e->read_ops, e->write_ops,
+d469e1da62544e7 Alex Markuze 2025-11-27  425  				   e->read_bytes, e->write_bytes,
+d469e1da62544e7 Alex Markuze 2025-11-27  426  				   e->read_latency_us, e->write_latency_us);
+d469e1da62544e7 Alex Markuze 2025-11-27  427  		}
+d469e1da62544e7 Alex Markuze 2025-11-27  428  	}
+d469e1da62544e7 Alex Markuze 2025-11-27  429  	kfree(snapshot);
+d469e1da62544e7 Alex Markuze 2025-11-27  430  
+d469e1da62544e7 Alex Markuze 2025-11-27  431  	seq_puts(s, "\nStatistics:\n");
+d469e1da62544e7 Alex Markuze 2025-11-27  432  	seq_printf(s, "  entries_sent:      %llu\n", total_sent);
+d469e1da62544e7 Alex Markuze 2025-11-27  433  
+d469e1da62544e7 Alex Markuze 2025-11-27  434  	mutex_lock(&mdsc->subvol_metrics_last_mutex);
+                                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Unchecked dereference
 
-regards,
-dan carpenter
+d469e1da62544e7 Alex Markuze 2025-11-27  435  	seq_printf(s, "  non_zero_sends:    %llu\n",
+d469e1da62544e7 Alex Markuze 2025-11-27 @436  		   mdsc->subvol_metrics_nonzero_sends);
+d469e1da62544e7 Alex Markuze 2025-11-27  437  	mutex_unlock(&mdsc->subvol_metrics_last_mutex);
+d469e1da62544e7 Alex Markuze 2025-11-27  438  
+d469e1da62544e7 Alex Markuze 2025-11-27  439  	seq_puts(s, "\nPending (unsent) subvolume metrics:\n");
+d469e1da62544e7 Alex Markuze 2025-11-27  440  	ceph_subvolume_metrics_dump(&fsc->mdsc->subvol_metrics, s);
+d469e1da62544e7 Alex Markuze 2025-11-27  441  	return 0;
+d469e1da62544e7 Alex Markuze 2025-11-27  442  }
 
-> > +                       err = -EINVAL;
-> > +                       goto done;
-> > +               }
-> > +
-> >                 /* attach proper inode */
-> >                 if (d_really_is_negative(dn)) {
-> >                         ceph_dir_clear_ordered(dir);
-> > @@ -1774,6 +1779,12 @@ int ceph_fill_trace(struct super_block *sb, struct ceph_mds_request *req)
-> >                 doutc(cl, " linking snapped dir %p to dn %p\n", in,
-> >                       req->r_dentry);
-> >                 ceph_dir_clear_ordered(dir);
-> > +
-> > +               if (!in) {
-> > +                       err = -EINVAL;
-> > +                       goto done;
-> > +               }
-> > +
-> >                 ihold(in);
-> >                 err = splice_dentry(&req->r_dentry, in);
-> >                 if (err < 0)
-> > --
-> > 2.51.0
-> >
-> 
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
+
 
