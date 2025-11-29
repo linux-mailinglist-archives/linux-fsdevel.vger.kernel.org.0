@@ -1,115 +1,113 @@
-Return-Path: <linux-fsdevel+bounces-70200-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70201-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD28BC936C2
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Nov 2025 03:34:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 885B9C93745
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Nov 2025 04:37:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 58BA234419F
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Nov 2025 02:34:39 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id EF5AA349E33
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Nov 2025 03:37:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89C641DED57;
-	Sat, 29 Nov 2025 02:34:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97C6D1EEA3C;
+	Sat, 29 Nov 2025 03:37:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="PWKrg9CI"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="RM2AAmHb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from canpmsgout09.his.huawei.com (canpmsgout09.his.huawei.com [113.46.200.224])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19EC636D4FD;
-	Sat, 29 Nov 2025 02:34:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.224
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C91473B2BA;
+	Sat, 29 Nov 2025 03:37:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764383673; cv=none; b=HEMBI/+l/mC0KTUB+VmhL7fYTS/Q3EpQg5w3N+JfLw2GvjOEsNaGHx+BX49LS7Paw74PvLafPU/jKcxlUhu8VCDFLyyz53hEEWKSn67VH2hKfe6HYHzwINoZ3s06h0OKqewIKqhRwUFyJb4z+AFj/0/owilz5HSk1cGW+bQoRMk=
+	t=1764387452; cv=none; b=dPIaU8J+dM5HLLBuBlbXK8TsOtCzeu+jjWj5LR8CJL917KMjE60yRejWqgdaTWtde9hW8TMd37uFyHxf9wkFmU72/BghG/zt6QIq7nH0du5dukooRrWeIc7zQwlz3kpTE7Oi2uc4K12XlixDIfDow2B8BKwN+8dyPSJewj82h+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764383673; c=relaxed/simple;
-	bh=4WlnOtMFBNXSbsHbe0c9o/PK2XZ+5DjPw5kWfI8fwBg=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=H4Ak1GRwgkY2oiRz1YDIT3AHgWqJ71JlDocPWGX6kGcopR3JvItKEBmb6nCt5JWgUaMHR8bMcAo1NAs25+l/ki7z8hQp/gRgXbD4u/6i7onfN/FrPqB+LWnHD9JlE6jbAEzthd8LKCyMnsVkwpqYWiNYmaE610E8WyXFahRQBYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=PWKrg9CI; arc=none smtp.client-ip=113.46.200.224
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=6xJNkDPeFZ3mqQ8f1vIw6iwLF+t+AtPw3ITe29YVPNE=;
-	b=PWKrg9CIIKX20SkXni2m0WgDvyVF7rPTKkM8q3Ou9evSEb47iF2go4uoiLhBwVVwEUmGd+R3o
-	sAmidTA+oP96b6qoyCWa2bWw1iJaN9or7npTp+ATi/v2O5Oxn4KZsWal7NWsybJOWATLZia+yNY
-	f5pn9OY24M3ZZ1JMdsvYTaw=
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by canpmsgout09.his.huawei.com (SkyGuard) with ESMTPS id 4dJDj11ptjz1cyQk;
-	Sat, 29 Nov 2025 10:32:37 +0800 (CST)
-Received: from kwepemj100009.china.huawei.com (unknown [7.202.194.3])
-	by mail.maildlp.com (Postfix) with ESMTPS id 2E5421800B2;
-	Sat, 29 Nov 2025 10:34:27 +0800 (CST)
-Received: from DESKTOP-A37P9LK.huawei.com (10.67.109.17) by
- kwepemj100009.china.huawei.com (7.202.194.3) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Sat, 29 Nov 2025 10:34:26 +0800
-From: Xie Yuanbin <xieyuanbin1@huawei.com>
-To: <bigeasy@linutronix.de>
-CC: <akpm@linux-foundation.org>, <arnd@arndb.de>, <brauner@kernel.org>,
-	<david.laight@runbox.com>, <hch@lst.de>, <jack@suse.com>,
-	<kuninori.morimoto.gx@renesas.com>, <liaohua4@huawei.com>,
-	<lilinjie8@huawei.com>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-mm@kvack.org>, <linux@armlinux.org.uk>, <lorenzo.stoakes@oracle.com>,
-	<marc.zyngier@arm.com>, <nico@fluxnic.net>, <pangliyuan1@huawei.com>,
-	<pfalcato@suse.de>, <punitagrawal@gmail.com>, <rjw@rjwysocki.net>,
-	<rmk+kernel@armlinux.org.uk>, <rppt@kernel.org>, <tony@atomide.com>,
-	<vbabka@suse.cz>, <viro@zeniv.linux.org.uk>, <wangkefeng.wang@huawei.com>,
-	<will@kernel.org>, <wozizhi@huaweicloud.com>, <xieyuanbin1@huawei.com>
-Subject: Re: [RFC PATCH v2 1/2] ARM/mm/fault: always goto bad_area when handling with page faults of kernel address
-Date: Sat, 29 Nov 2025 10:33:23 +0800
-Message-ID: <20251129023323.11612-1-xieyuanbin1@huawei.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251128120359.Xc09qn1W@linutronix.de>
-References: <20251128120359.Xc09qn1W@linutronix.de>
+	s=arc-20240116; t=1764387452; c=relaxed/simple;
+	bh=MGH/wfnN8D4I5wXf8tjl2REdP/QConuZDNJYytOO5KM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e7ZkczZNfyQEHWCFsseUWdkkbivb+SWmDwo4dNWwxEkXrWZFA1S0wC6jrdIPsd02FuFy0Q4uIIxTRtGXMVH/1+5LVXy961T3/g83aPxQ/twDbFdEvZKvfDSPaWUNwNvzupBIV3vQZxQ0XHobIsBlMlbWREJspsPQlSyJmd6g9Ro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=RM2AAmHb; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
+	bh=DpznAaRjUo2w7LZxf6lAxjAHm9eksDcdz1NUq6/1gPM=; b=RM2AAmHbiWWjdBAvIAJPpFqKzC
+	w+Imm2LS97uAx/g//eMP3HpFYUydE6Y+w3JM2a8/zUe++dKTeDANZDiDhhpz9RQhopbF5FS4u59BP
+	PE1d3GCCezRATySQWYeccgXjEG2ISRJhV3jEJRAJQYUiOg1uEdQI1PcGSSQoXR3sE3gEGjYo6X1b0
+	ZZAydgZNX+ONMdWvNoVHkaZNl6k/IZqlWnoW2ttA3YJ+Rq3v6tUpaDiuCU6m1/7ylKfhX+vhWnevn
+	rwQhQ8i4Asi+235RfCe1TE0fqCW9cuyaCfk0NCspPUUaeA0kvHilMf+ySBiCfQyouT10czoJRpVrE
+	xFYsYKig==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.99 #2 (Red Hat Linux))
+	id 1vPBm4-000000008wo-3AES;
+	Sat, 29 Nov 2025 03:37:28 +0000
+Date: Sat, 29 Nov 2025 03:37:28 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Zizhi Wo <wozizhi@huaweicloud.com>
+Cc: torvalds@linux-foundation.org, jack@suse.com, brauner@kernel.org,
+	hch@lst.de, akpm@linux-foundation.org, linux@armlinux.org.uk,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
+	yangerkun@huawei.com, wangkefeng.wang@huawei.com,
+	pangliyuan1@huawei.com, xieyuanbin1@huawei.com
+Subject: Re: [Bug report] hash_name() may cross page boundary and trigger
+ sleep in RCU context
+Message-ID: <20251129033728.GH3538@ZenIV>
+References: <20251126090505.3057219-1-wozizhi@huaweicloud.com>
+ <20251126185545.GC3538@ZenIV>
+ <c375dd22-8b46-404b-b0c2-815dbd4c5ec8@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
- kwepemj100009.china.huawei.com (7.202.194.3)
+In-Reply-To: <c375dd22-8b46-404b-b0c2-815dbd4c5ec8@huaweicloud.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Fri, 28 Nov 2025 13:03:59 +0100, Sebastian Andrzej Siewior wrote:
-> what about this:
-> diff --git a/arch/arm/mm/fault.c b/arch/arm/mm/fault.c
-> index ad58c1e22a5f9..b6b3cd893c808 100644
-> --- a/arch/arm/mm/fault.c
-> +++ b/arch/arm/mm/fault.c
-> @@ -282,10 +282,10 @@ do_page_fault(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
->  	}
->
->  	/*
-> -	 * If we're in an interrupt or have no user
-> -	 * context, we must not take the fault..
-> +	 * If we're in an interrupt or have no user context, we must not take
-> +	 * the fault. Kernel addresses are handled in do_translation_fault().
-> 	 */
-> -	if (faulthandler_disabled() || !mm)
-> +	if (faulthandler_disabled() || !mm || addr >= TASK_SIZE)
->  		goto no_context;
->
->  	if (user_mode(regs))
->
-> We shouldn't be getting here. Above TASK_SIZE there are just fix
-> mappings which don't fault and the VMALLOC array which should be handled
-> by do_translation_fault(). So this should be only the exception table.
->
-> This should also not clash with the previous patches. Would that work
-> for everyone?
+On Thu, Nov 27, 2025 at 10:24:19AM +0800, Zizhi Wo wrote:
 
-When it is user_mode(), it should be goto __do_user_fault(), but
-no_context goto __do_kernel_fault(). So I think it is not ok.
+> Why does x86 have special handling in do_kern_addr_fault(), including
+> logic for vmalloc faults? For example, on CONFIG_X86_32, it still takes
+> the vmalloc_fault path. As noted in the x86 comments, "We can fault-in
+> kernel-space virtual memory on-demand"...
+> 
+> But on arm64, I don’t see similar logic — is there a specific reason
+> for this difference? Maybe x86's vmalloc area is mapped lazily, while
+> ARM maps it fully during early boot?
 
-> Sebastian
+x86 MMU uses the same register for kernel and userland top-level page
+tables; arm64 MMU has separate page tables for those - TTBR0 and TTBR1
+point to the table to be used for translation, depending upon the bit
+55 of virtual address.
 
-Xie Yuanbin
+vmalloc works with page table of init_mm (see pgd_offset_k() uses in
+there).  On arm64 that's it - TTBR1 is set to that and it stays that way,
+so access to vmalloc'ed area will do the right thing.
+
+On 32bit x86 you need to propagate the change into top-level page tables
+of every thread.  That's what arch_sync_kernel_mappings() is for; look for
+the calls in mm/vmalloc.c and see the discussion of race in the comment in
+front of x86 vmalloc_fault().  Nothing of that sort is needed of arm64,
+since all threads are using the same page table for kernel part of the
+address space.
+
+The reason why 64bit x86 doesn't need to bother is different - there we
+fill all relevant top-level page table slots in preallocate_vmalloc_pages()
+before any additional threads could be created.  The pointers in those
+slots are not going to change and they will be propagated to all subsequent
+threads by pgd_alloc(), so the page tables actually modified by vmalloc()
+are shared by all threads.
+
+AFAICS, 32bit arm is similar to 32bit x86 in that respect; propagation
+is lazier, though - there arch_sync_kernel_mappings() bumps a counter
+in init_mm and context switches use that to check if propagation needs
+to be done.  No idea how well does that work on vfree() side of things -
+hadn't looked into that rabbit hole...
 
