@@ -1,126 +1,153 @@
-Return-Path: <linux-fsdevel+bounces-70220-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70230-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D45BC93C51
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Nov 2025 11:37:58 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA6C6C93CAF
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Nov 2025 11:46:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B8A13A897A
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Nov 2025 10:37:10 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2D2374E3166
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Nov 2025 10:46:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEE4F28C2DD;
-	Sat, 29 Nov 2025 10:35:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56F922FE051;
+	Sat, 29 Nov 2025 10:46:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=runbox.com header.i=@runbox.com header.b="m+/uBwie"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+Received: from mailtransmit05.runbox.com (mailtransmit05.runbox.com [185.226.149.38])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27A10285CBC;
-	Sat, 29 Nov 2025 10:35:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8FE22FC875
+	for <linux-fsdevel@vger.kernel.org>; Sat, 29 Nov 2025 10:46:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.226.149.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764412539; cv=none; b=Aie9IW9cBFM+MGfsIoxeNlJ5bGavDLoOAHmldCx6t3H5GKxYFdjb6A78HzCvxs+dyhZejhqmI1TKQ+P1nfy+oZH+WV/VnaE/Vr1opczwtGSufW/oX9YCoipGsQKTNjpb+S9wAcAhaI2LFSEfu0Xp+bfmWOCk2x0psWxb6lal/OY=
+	t=1764413179; cv=none; b=dnPQtPPMlfv+heCga43whSNNj0Yp2f/2YW+f4WDFPwZ0XFfWq5ucyL0E3eVBBNb95wZpj2mE9r3rNp0hidB3Kvg4yLpcCdcsSBDIKKotFMTJCjGSlrR07F+FQt37ubmjlIIe/dCw72IBkikOPdl9TdTVSlsaqv0/+gGTfngzsNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764412539; c=relaxed/simple;
-	bh=9kWre2nZJcsb8KlJ5MGjDaPeHGKcZypCKa5U4lhaVMM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UzYIkCe9u/kzI0CHTT/2rG7xVobS4HUbEM24fYxzkOQ2K3WP/ikSydhBdpzrz3xTyKpYqF8gdB3W8IGXgtiQk4JNH+CQqdHJ4siw5gWZbAEFqt9nEJfUfm7jmQwq5GefEbiVH1omeIpctncXKkmc/vZoUYevcwKaPiOA6/QHiVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4dJRP645wSzYQtpm;
-	Sat, 29 Nov 2025 18:34:34 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 557981A07C0;
-	Sat, 29 Nov 2025 18:35:31 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.50.85.155])
-	by APP2 (Coremail) with SMTP id Syh0CgAnhXtfzCpp_56qCQ--.62661S18;
-	Sat, 29 Nov 2025 18:35:31 +0800 (CST)
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-To: linux-ext4@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	tytso@mit.edu,
-	adilger.kernel@dilger.ca,
-	jack@suse.cz,
-	ojaswin@linux.ibm.com,
-	yi.zhang@huawei.com,
-	yi.zhang@huaweicloud.com,
-	yizhang089@gmail.com,
-	libaokun1@huawei.com,
-	yangerkun@huawei.com
-Subject: [PATCH v3 14/14] ext4: drop the TODO comment in ext4_es_insert_extent()
-Date: Sat, 29 Nov 2025 18:32:46 +0800
-Message-ID: <20251129103247.686136-15-yi.zhang@huaweicloud.com>
-X-Mailer: git-send-email 2.46.1
-In-Reply-To: <20251129103247.686136-1-yi.zhang@huaweicloud.com>
-References: <20251129103247.686136-1-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1764413179; c=relaxed/simple;
+	bh=PLtBvgRM0n0mnbT9yMP9DnoEmUvW2pk0M2S/WquIAUM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZFKVtHdYz/fqvKSwqvhtTi3igBzZoypBiBzvIl1ElQWGlWqIMv1FInGGuxOl5EN5eEfAMU/kD8+1XYbTnMfCO2oafBX6YH42HrCZ1hkQbl86Zgr8+p1JlzzcGS+x4cepKgFHf5fCwGiu8W65POS1vVCQy0S9PiBvlHFaCVmkZpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=runbox.com; spf=pass smtp.mailfrom=runbox.com; dkim=pass (2048-bit key) header.d=runbox.com header.i=@runbox.com header.b=m+/uBwie; arc=none smtp.client-ip=185.226.149.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=runbox.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=runbox.com
+Received: from mailtransmit03.runbox ([10.9.9.163] helo=aibo.runbox.com)
+	by mailtransmit05.runbox.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.93)
+	(envelope-from <david.laight@runbox.com>)
+	id 1vPISa-0019Z2-V7; Sat, 29 Nov 2025 11:45:48 +0100
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=runbox.com;
+	 s=selector2; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
+	References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date;
+	bh=rz76Dd60dRCLEdbk6g0uD4CbDOYdGaypGdAXa1TRKaQ=; b=m+/uBwielV5XAgVggL5ooFl1dH
+	itFJp1+BXorKcECoZRk5oXzd1aG7xN+kSUQS1nk1Zwmeor28FFdDu2FbrgCdlsjsX+8aPKAgXXWjf
+	DmpfLdV3Z5l860gBJtwQ9Rd0tHcGMxQ1eoC8DclO84CXSUU/4cj0y4Hw0LCwwSXFxRtVSAvO0TXPy
+	4XodTjHH5cOefWS7PwgczvGxjTa36bKsJy8ZAcm2D1X20HEpS+DZxHaKnt/xTSZ+jPXYecLrJ59K5
+	EK9PJ1G1v76UaTphXy2CENRP02whjL9REH3czcS9Msg1dPWzNfZcDxfJb7/AA2sgIxqMiuoaQtIHF
+	r4CFeJbA==;
+Received: from [10.9.9.73] (helo=submission02.runbox)
+	by mailtransmit03.runbox with esmtp (Exim 4.86_2)
+	(envelope-from <david.laight@runbox.com>)
+	id 1vPISZ-0005kN-1q; Sat, 29 Nov 2025 11:45:47 +0100
+Received: by submission02.runbox with esmtpsa  [Authenticated ID (1493616)]  (TLS1.2:ECDHE_SECP256R1__RSA_SHA256__AES_256_GCM:256)
+	(Exim 4.93)
+	id 1vPISJ-004Clu-SN; Sat, 29 Nov 2025 11:45:32 +0100
+Date: Sat, 29 Nov 2025 10:45:28 +0000
+From: david laight <david.laight@runbox.com>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Xie Yuanbin <xieyuanbin1@huawei.com>, torvalds@linux-foundation.org,
+ will@kernel.org, linux@armlinux.org.uk, bigeasy@linutronix.de,
+ rmk+kernel@armlinux.org.uk, akpm@linux-foundation.org, brauner@kernel.org,
+ catalin.marinas@arm.com, hch@lst.de, jack@suse.com,
+ linux-arm-kernel@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, pangliyuan1@huawei.com,
+ wangkefeng.wang@huawei.com, wozizhi@huaweicloud.com, yangerkun@huawei.com,
+ lilinjie8@huawei.com, liaohua4@huawei.com
+Subject: Re: [Bug report] hash_name() may cross page boundary and trigger
+Message-ID: <20251129104528.03aca5d3@pumpkin>
+In-Reply-To: <20251129090813.GK3538@ZenIV>
+References: <CAHk-=wjA20ear0hDOvUS7g5-A=YAUifphcf-iFJ1pach0=3ubw@mail.gmail.com>
+	<20251129040817.65356-1-xieyuanbin1@huawei.com>
+	<20251129090813.GK3538@ZenIV>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgAnhXtfzCpp_56qCQ--.62661S18
-X-Coremail-Antispam: 1UD129KBjvJXoW7uF4kXw45Gr4kKF4kXw1rXrb_yoW8Jw4kpr
-	nxCw18Jr4fXa1vkayxGF4UXryfKaykGrW7GrZ7Kw1fKFW5JryS9F1qyFWYvFyfWrWxJrW5
-	ZF40kw1UWa1UJaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUmS14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
-	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
-	z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F
-	4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq
-	3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7
-	IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4U
-	M4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2
-	kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkE
-	bVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67
-	AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVW8JVW5JwCI
-	42IY6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF
-	4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBI
-	daVFxhVjvjDU0xZFpf9x0JUWMKtUUUUU=
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Zhang Yi <yi.zhang@huawei.com>
+On Sat, 29 Nov 2025 09:08:13 +0000
+Al Viro <viro@zeniv.linux.org.uk> wrote:
 
-Now we have ext4_es_cache_extent() to cache on-disk extents instead of
-ext4_es_insert_extent(), so drop the TODO comment.
+> On Sat, Nov 29, 2025 at 12:08:17PM +0800, Xie Yuanbin wrote:
+> 
+> > I think the `user_mode(regs)` check is necessary because the label
+> > no_context actually jumps to __do_kernel_fault(), whereas page fault
+> > from user mode should jump to `__do_user_fault()`.
+> > 
+> > Alternatively, we would need to change `goto no_context` to
+> > `goto bad_area`. Or perhaps I misunderstood something, please point it out.  
+> 
+> FWIW, goto bad_area has an obvious problem: uses of 'fault' value, which
+> contains garbage.
+> 
+> The cause of problem is the heuristics in get_mmap_lock_carefully():
+> 	if (regs && !user_mode(regs)) {
+> 		unsigned long ip = exception_ip(regs);
+> 		if (!search_exception_tables(ip))
+> 			return false;
+> 	}
+> trylock has failed and we are trying to decide whether it's safe to block.
+> The assumption (inherited from old logics in assorted page fault handlers)
+> is "by that point we know that fault in kernel mode is either an oops
+> or #PF on uaccess; in the latter case we should be OK with locking mm,
+> in the former we should just get to oopsing without risking deadlocks".
+> 
+> load_unaligned_zeropad() is where that assumption breaks - there is
+> an exception handler and it's not an uaccess attempt; the address is
+> not going to match any VMA and we really don't want to do anything
+> blocking.
 
-Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
-Reviewed-by: Baokun Li <libaokun1@huawei.com>
----
- fs/ext4/extents_status.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+Doesn't that also affect code that (ab)uses get_user() for kernel addresss?
+For x86 even __get_kernel_nofault() does that.
+In that case it hits a normal 'user fault' exception table entry rather
+a 'special' one that could be marked as such.
 
-diff --git a/fs/ext4/extents_status.c b/fs/ext4/extents_status.c
-index 0529c603ee88..fc83e7e2ca9e 100644
---- a/fs/ext4/extents_status.c
-+++ b/fs/ext4/extents_status.c
-@@ -898,7 +898,8 @@ static int __es_insert_extent(struct inode *inode, struct extent_status *newes,
- 
- /*
-  * ext4_es_insert_extent() adds information to an inode's extent
-- * status tree.
-+ * status tree. This interface is used for modifying extents. To cache
-+ * on-disk extents, use ext4_es_cache_extent() instead.
-  */
- void ext4_es_insert_extent(struct inode *inode, ext4_lblk_t lblk,
- 			   ext4_lblk_t len, ext4_fsblk_t pblk,
-@@ -977,10 +978,6 @@ void ext4_es_insert_extent(struct inode *inode, ext4_lblk_t lblk,
- 		}
- 		pending = err3;
- 	}
--	/*
--	 * TODO: For cache on-disk extents, there is no need to increment
--	 * the sequence counter, this requires future optimization.
--	 */
- 	ext4_es_inc_seq(inode);
- error:
- 	write_unlock(&EXT4_I(inode)->i_es_lock);
--- 
-2.46.1
+> 
+> Note that VMA lookup will return NULL there anyway - there won't be a VMA
+> for that address.  What we get is exactly the same thing we'd get from
+> do_bad_area(), whether we get a kernel or userland insn faulting.
+> 
+> The minimal fix would be something like
+> 	if (unlikely(addr >= TASK_SIZE) && !(flags & FAULT_FLAG_USER))
+> 		goto no_context;
+
+Is there an issue with TASK_SIZE being process dependant?
+Don't you want 'the bottom of kernel addresses' not 'the top of the current process'.
+
+	David
+
+> 
+> right before
+> 	if (!(flags & FAULT_FLAG_USER))
+> 		goto lock_mmap;
+> 
+> in do_page_fault().  Alternatively,
+> 	if (unlikely(addr >= TASK_SIZE)) {
+> 		do_bad_area(addr, fsr, regs);
+> 		return 0;
+> 	}
+> or
+> 	if (unlikely(addr >= TASK_SIZE)) {
+> 		fault = 0;
+> 		code = SEGV_MAPERR;
+> 		goto bad_area;
+> 	}
+> at the same place.  Incidentally, making do_bad_area() return 0 would
+> seem to make all callers happier...
+> 
 
 
