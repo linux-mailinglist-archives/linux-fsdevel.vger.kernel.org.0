@@ -1,160 +1,121 @@
-Return-Path: <linux-fsdevel+bounces-70198-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70199-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5884DC9367B
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Nov 2025 03:08:11 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3004C9368F
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Nov 2025 03:18:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C22DC3A91A2
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Nov 2025 02:08:08 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0DAA04E1C38
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Nov 2025 02:18:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 836EE1D798E;
-	Sat, 29 Nov 2025 02:08:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B4C91DF963;
+	Sat, 29 Nov 2025 02:18:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="KPB7YVm7"
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="rDScHZVC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+Received: from canpmsgout01.his.huawei.com (canpmsgout01.his.huawei.com [113.46.200.216])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 749CD8635D;
-	Sat, 29 Nov 2025 02:07:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A1E61A01C6;
+	Sat, 29 Nov 2025 02:18:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764382083; cv=none; b=Ivc1hhHngs470RqbgdgXQyXLF0jDAvabOrfcKtWZLsjNKSYAy261UxgVMxnjCfG/ws5ke4CiJt6BdLtOErI7txuM7NXCjKdg13r6qvEvzbjsnZuDA9YjuwGuNFTt6VZLgEFpfqKyoXJcVsMd3e8sGgCBdPipJEoeGkD7A2tcmXs=
+	t=1764382706; cv=none; b=ecLlx+0/kgvGa5S4HpO6OxPhiIvIA9twKUX44E2gkNlSXAV6jwVpqRLq1pv5qwNSTcITZQEkMlWJFjZrX4jHOQM53+DGrP0Oxp3NXMhMKAUsq9p4WKpBnnuuIg5r+qb7KMyN4qYfjE2uBjssgtQwZ8o87KTRQjRHbs9oach/nhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764382083; c=relaxed/simple;
-	bh=pR2RFN1A4nc/6wKMIIXxcBJY4+41gpLM4m5qw2Vk06g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V7BUZeRQkMbDdQO3mcsBry5wQtC6A8Br7GLsLuGZ9KljIpTYPW1GAv0pi+7gBxGBO4QI0NFyaUflBuuq83c2eAeJ/Oc/0zC0gfmlPck3BDtb6YwS1oPjs17b9S4CNOIi1gELRixm4UZtcEzD53FOP92G+kW4x/23uSBnhRPZTd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=KPB7YVm7; arc=none smtp.client-ip=220.197.31.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
-	Content-Type; bh=UJCc/45Qhh5tFVaQaMCYhgTyp00Zjw3eYEzVCcypDl4=;
-	b=KPB7YVm70yrRi4Gxzn6+Zj2TY+sKJ0n7tfGL5p0HZeE2XzO2smyPtgd47ISntm
-	xvPI/iMyZtJ+LKhazjxZN8GgfVKeEwxHF6MfgNNcyRtbmigq3phLdFl0uhqWmrPO
-	IoLYu2jHMBpwO3VAJe+yRklUQzl7Am+6V4lbQV7y+zoaE=
-Received: from [10.42.20.201] (unknown [])
-	by gzsmtp5 (Coremail) with SMTP id QCgvCgC3pXLhUippbGbhFg--.38326S2;
-	Sat, 29 Nov 2025 09:56:51 +0800 (CST)
-Message-ID: <6f43ef92-a9a4-4c9b-b0e0-0bfa579ad3e4@163.com>
-Date: Sat, 29 Nov 2025 09:56:49 +0800
+	s=arc-20240116; t=1764382706; c=relaxed/simple;
+	bh=kn01DPqEWVsRKnyDlfL02PwCBxz8cu2USXRLYTQgCgM=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lycPWUg26d3sbzfwgMJ/Z8t0qwL4D/V3Pa311wibQ4UkpepTEwlNnRir8eZrD6YrHiDB+9EC5uk90QFMGLPQ7smayPdhVkKRf7e2Z2d5yPlqGHMhfWdu9OzQ3PHX1Yogckf89wPkCE3Ouo71JJHjrpl6JPFIva/ZbWd+/Fl3wDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=rDScHZVC; arc=none smtp.client-ip=113.46.200.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=kn01DPqEWVsRKnyDlfL02PwCBxz8cu2USXRLYTQgCgM=;
+	b=rDScHZVCx+yxOePYn8Wcv7pT5EneAyhEXpKgyfyNlZdFO+SZjIfif2JCM3YYpKX2AogeDsnam
+	/17hK+QDSVVTcvAMpeNH1ZD5mzB3UTmEMrJEwauBJgQWVmdxVILASAgXYxRyzaIgfUZb+JMrv57
+	oTVqNBOiz4Z5xvjvvJvwaQw=
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by canpmsgout01.his.huawei.com (SkyGuard) with ESMTPS id 4dJDLT42p1z1T4Fk;
+	Sat, 29 Nov 2025 10:16:33 +0800 (CST)
+Received: from kwepemj100009.china.huawei.com (unknown [7.202.194.3])
+	by mail.maildlp.com (Postfix) with ESMTPS id 18451180B58;
+	Sat, 29 Nov 2025 10:18:20 +0800 (CST)
+Received: from DESKTOP-A37P9LK.huawei.com (10.67.109.17) by
+ kwepemj100009.china.huawei.com (7.202.194.3) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Sat, 29 Nov 2025 10:18:19 +0800
+From: Xie Yuanbin <xieyuanbin1@huawei.com>
+To: <torvalds@linux-foundation.org>, <will@kernel.org>,
+	<linux@armlinux.org.uk>, <viro@zeniv.linux.org.uk>, <bigeasy@linutronix.de>,
+	<rmk+kernel@armlinux.org.uk>
+CC: <akpm@linux-foundation.org>, <brauner@kernel.org>,
+	<catalin.marinas@arm.com>, <hch@lst.de>, <jack@suse.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-fsdevel@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+	<pangliyuan1@huawei.com>, <wangkefeng.wang@huawei.com>,
+	<wozizhi@huaweicloud.com>, <xieyuanbin1@huawei.com>, <yangerkun@huawei.com>,
+	<lilinjie8@huawei.com>, <liaohua4@huawei.com>
+Subject: Re: [Bug report] hash_name() may cross page boundary and trigger
+Date: Sat, 29 Nov 2025 10:18:15 +0800
+Message-ID: <20251129021815.9679-1-xieyuanbin1@huawei.com>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <CAHk-=wh+cFLLi2x6u61pvL07phSyHPVBTo9Lac2uuqK4eRG_=w@mail.gmail.com>
+References: <CAHk-=wh+cFLLi2x6u61pvL07phSyHPVBTo9Lac2uuqK4eRG_=w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 6/7] exfat: introduce exfat_count_contig_clusters
-To: "Yuezhang.Mo@sony.com" <Yuezhang.Mo@sony.com>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Matthew Wilcox <willy@infradead.org>, Namjae Jeon <linkinjeon@kernel.org>,
- Sungjong Seo <sj1557.seo@samsung.com>, Chi Zhiling <chizhiling@kylinos.cn>
-References: <20251118082208.1034186-1-chizhiling@163.com>
- <20251118082208.1034186-7-chizhiling@163.com>
- <PUZPR04MB6316A47C9E593BCF7EB550B881DCA@PUZPR04MB6316.apcprd04.prod.outlook.com>
-Content-Language: en-US
-From: Chi Zhiling <chizhiling@163.com>
-In-Reply-To: <PUZPR04MB6316A47C9E593BCF7EB550B881DCA@PUZPR04MB6316.apcprd04.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:QCgvCgC3pXLhUippbGbhFg--.38326S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7Ww1UJF18AF4DAF4rGF1DGFg_yoW5Jr47pF
-	48Ja15JrW8X3ZrW3W3Jr4kZF1Svwn7AFyqka43Ja43trZ0vrn5Cr98K34a9rWktw1qkF1j
-	vF1Ygr129rsxKaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zReT5LUUUUU=
-X-CM-SenderInfo: hfkl6xxlol0wi6rwjhhfrp/1tbiFAEVnWkqR27MfwAAsE
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
+ kwepemj100009.china.huawei.com (7.202.194.3)
 
-On 11/28/25 19:09, Yuezhang.Mo@sony.com wrote:
->> From: Chi Zhiling <chizhiling@kylinos.cn>
->>
->> This patch introduces exfat_count_contig_clusters to obtain batch entries,
->> which is an infrastructure used to support iomap.
->>
->> Signed-off-by: Chi Zhiling <chizhiling@kylinos.cn>
->> ---
->>   fs/exfat/exfat_fs.h |  2 ++
->>   fs/exfat/fatent.c   | 33 +++++++++++++++++++++++++++++++++
->>   2 files changed, 35 insertions(+)
->>
->> diff --git a/fs/exfat/exfat_fs.h b/fs/exfat/exfat_fs.h
->> index d52893276e9a..421dd7c61cca 100644
->> --- a/fs/exfat/exfat_fs.h
->> +++ b/fs/exfat/exfat_fs.h
->> @@ -449,6 +449,8 @@ int exfat_find_last_cluster(struct super_block *sb, struct exfat_chain *p_chain,
->>                  unsigned int *ret_clu);
->>   int exfat_count_num_clusters(struct super_block *sb,
->>                  struct exfat_chain *p_chain, unsigned int *ret_count);
->> +int exfat_count_contig_clusters(struct super_block *sb,
->> +               struct exfat_chain *p_chain, unsigned int *ret_count);
->>
->>   /* balloc.c */
->>   int exfat_load_bitmap(struct super_block *sb);
->> diff --git a/fs/exfat/fatent.c b/fs/exfat/fatent.c
->> index d980d17176c2..9dcee9524155 100644
->> --- a/fs/exfat/fatent.c
->> +++ b/fs/exfat/fatent.c
->> @@ -524,3 +524,36 @@ int exfat_count_num_clusters(struct super_block *sb,
->>
->>          return 0;
->>   }
->> +
->> +int exfat_count_contig_clusters(struct super_block *sb,
->> +               struct exfat_chain *p_chain, unsigned int *ret_count)
->> +{
->> +       struct buffer_head *bh = NULL;
->> +       unsigned int clu, next_clu;
->> +       unsigned int count;
->> +
->> +       if (!p_chain->dir || p_chain->dir == EXFAT_EOF_CLUSTER) {
->> +               *ret_count = 0;
->> +               return 0;
->> +       }
->> +
->> +       if (p_chain->flags == ALLOC_NO_FAT_CHAIN) {
->> +               *ret_count = p_chain->size;
->> +               return 0;
->> +       }
->> +
->> +       clu = p_chain->dir;
->> +       for (count = 1; count < p_chain->size; count++) {
->> +               if (exfat_ent_get(sb, clu, &next_clu, &bh))
->> +                       return -EIO;
->> +               if (++clu != next_clu)
->> +                       break;
->> +       }
->> +
->> +       /* TODO: Update p_claim to help caller read ahead the next block */
->> +
->> +       brelse(bh);
->> +       *ret_count = count;
->> +
->> +       return 0;
->> +}
-> 
-> Hi Chi,
-> 
-> The clusters traversed in exfat_get_cluster() are cached to
-> ->cache_lru, but the clusters traversed in this function are
-> not.
-> 
-> I think we can implement this functionality in exfat_get_cluster()
-> and cache the clusters.
+Hi, Linus Torvalds and Will Deacon!
 
-Agreed, I will implement it in the next version.
+We have some discussion and solutions on other threads, and it seems
+that there are somthing missing on this discussion thread. Therefore,
+I think it is necessary to synchronize some information here.
 
+1. There is a test case that can consistently reproduce the bug, which
+might be helpful for us to do the test. The test case is located after
+the '---' maker line in the following patch:
+Link: https://lore.kernel.org/20251126101952.174467-1-xieyuanbin1@huawei.com
 
-Thanks,
+2. Al Viro give a suggest on 2025-11-26 19:26:
+Link: https://lore.kernel.org/20251126192640.GD3538@ZenIV
 
-> 
->> --
->> 2.43.0
+This patch is similar to one I submitted long time ago, which was
+intended fix another bug: missing branch predictor mitigation:
+Link: https://lore.kernel.org/20250925025744.6807-1-xieyuanbin1@huawei.com
 
+My patch was not accepted, Sebastian's patch:
+Link: https://lore.kernel.org/20251110145555.2555055-2-bigeasy@linutronix.de
+fixed this bug, but Sebastian's patch has not yet been merged into the
+linux-next branch, so this bug still exists in the current linux-next
+branch.
+
+I hope there is a simple solution to fix both bugs, so I submitted this
+patch on 2025-11-27 14:49:
+Link: https://lore.kernel.org/20251127140109.191657-1-xieyuanbin1@huawei.com
+This patch is based on the linux-next branch, therefore it does not
+contain Sebastian's patch.
+
+3. On 2025-11-28 17:06, Linus Torvalds provided a solution similar to
+Al Viro's suggestion and my patch:
+Link: https://lore.kernel.org/CAHk-=wh+cFLLi2x6u61pvL07phSyHPVBTo9Lac2uuqK4eRG_=w@mail.gmail.com
+
+Currently, all solutions have been tested that can fix this one bug.
+I still hold the view that perhaps there is a simpler way to fix another
+bug at the same time, because the solutions of these two bugs are very
+similar.
+
+Thanks very much!
+
+Xie Yuanbin
 
