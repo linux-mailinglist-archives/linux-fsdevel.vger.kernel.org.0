@@ -1,42 +1,42 @@
-Return-Path: <linux-fsdevel+bounces-70215-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70224-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35B4BC93C1E
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Nov 2025 11:35:47 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8626AC93C78
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Nov 2025 11:38:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BA828347F45
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Nov 2025 10:35:45 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id DA24734AF7C
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Nov 2025 10:38:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 836D626F2AA;
-	Sat, 29 Nov 2025 10:35:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA2762BE053;
+	Sat, 29 Nov 2025 10:35:42 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A65B226C3BD;
-	Sat, 29 Nov 2025 10:35:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE69F19C540;
+	Sat, 29 Nov 2025 10:35:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764412535; cv=none; b=D2vVCoUuFAc+uV21sT5BWYpr09zqUftu609+54wHzQzsRCIJu5qiLwQwzw3yvxmMCi8/vxcdz3Fv053Rvq0C6X3CCBTbPPVGrmN8BbdXuaqu5jCk7C6er30IA6Y54DqAwLm9IIxIca18XG1KelabCXKBYgSQshpri/Jmg2G8E6o=
+	t=1764412542; cv=none; b=J3HbnYCIcc6tYKmIRkiUesNg79NIlYedqOAoBJGvRpo1KIMWvumsoFcGoLbDQvfIxxcZqNOJLvUKvrXcJnHG924wjPLRFxzvTxEt25+DssOrl9G0QGTA3hcOjH3Mw21aACyrgUs/Vue2+CsHhxMspX9hQZwOUccN8YFQjM2ym/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764412535; c=relaxed/simple;
-	bh=jw15VeROEs1sm1eOVRtur4tbrLxmnin2G0JHvis4MeM=;
+	s=arc-20240116; t=1764412542; c=relaxed/simple;
+	bh=HVBoB5IHmQ720ZdZa49JC6bOZSiel3XlOev/OUMySSE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=g33dPutNpNsSyRGgY56WhXEh2lPrMsgg3+7zKXwMzJnefo0sayb/A+dPojzzVQvMAdz/RULGreP1qDe73eSNHcrfRc/aaOCa2blLcqfUNproi94K0Ni50LMzQg0L1aPoTvAvHWX6jeZny3JbwuMGM3HZX6AqgUke+HklR3jeor0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+	 MIME-Version; b=r8yYuBM3hwv0jV4euVkhLzTDxMUeW5mWQoblGAZZ6VOIivyaj0mPUc4234uH4TuSFqcvVrsL9sTAVaJkGU/Trt50yFTHBE3InoMb7MbNRfMm8k8EGIj8lIa3tuEVrnn6XwM6fOXWVpGduEvw/TNwIGwOj9ffgPG6GGK+HxKb/oM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
 Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4dJRP55f6XzYQtnq;
-	Sat, 29 Nov 2025 18:34:33 +0800 (CST)
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4dJRPM3Lh4zKHMQS;
+	Sat, 29 Nov 2025 18:34:47 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 8FE171A14FE;
+	by mail.maildlp.com (Postfix) with ESMTP id A50DF1A1728;
 	Sat, 29 Nov 2025 18:35:30 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.50.85.155])
-	by APP2 (Coremail) with SMTP id Syh0CgAnhXtfzCpp_56qCQ--.62661S8;
+	by APP2 (Coremail) with SMTP id Syh0CgAnhXtfzCpp_56qCQ--.62661S9;
 	Sat, 29 Nov 2025 18:35:30 +0800 (CST)
 From: Zhang Yi <yi.zhang@huaweicloud.com>
 To: linux-ext4@vger.kernel.org
@@ -51,9 +51,9 @@ Cc: linux-fsdevel@vger.kernel.org,
 	yizhang089@gmail.com,
 	libaokun1@huawei.com,
 	yangerkun@huawei.com
-Subject: [PATCH v3 04/14] ext4: correct the mapping status if the extent has been zeroed
-Date: Sat, 29 Nov 2025 18:32:36 +0800
-Message-ID: <20251129103247.686136-5-yi.zhang@huaweicloud.com>
+Subject: [PATCH v3 05/14] ext4: don't cache extent during splitting extent
+Date: Sat, 29 Nov 2025 18:32:37 +0800
+Message-ID: <20251129103247.686136-6-yi.zhang@huaweicloud.com>
 X-Mailer: git-send-email 2.46.1
 In-Reply-To: <20251129103247.686136-1-yi.zhang@huaweicloud.com>
 References: <20251129103247.686136-1-yi.zhang@huaweicloud.com>
@@ -64,11 +64,11 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgAnhXtfzCpp_56qCQ--.62661S8
-X-Coremail-Antispam: 1UD129KBjvJXoW7Cr15XFW8XF1rGw15XF43ZFb_yoW8Cr18pa
-	4xAF1rGr409ayj9397uF48Zr1293WxGr47ZrWftrWY9as3Kr1Fgr15ta4FyFyrXay8uay7
-	ZFW0934UKa43C3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUmI14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+X-CM-TRANSID:Syh0CgAnhXtfzCpp_56qCQ--.62661S9
+X-Coremail-Antispam: 1UD129KBjvJXoWxAw17tF17tr1xKrW7Ww4fAFb_yoW5WF4kpF
+	ZakF1UGr4kCw1vk34xAF4kK3409w4kGrW7Ar95Gw1Y9FyUJFyagF1xtw1YvFyrWr48Za45
+	Zr40kF1UCa4DAFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUma14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
 	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
 	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
 	z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F
@@ -78,58 +78,78 @@ X-Coremail-Antispam: 1UD129KBjvJXoW7Cr15XFW8XF1rGw15XF43ZFb_yoW8Cr18pa
 	M4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2
 	kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkE
 	bVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67
-	AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI
+	AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI
 	42IY6xIIjxv20xvEc7CjxVAFwI0_Cr0_Gr1UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCw
-	CI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnI
-	WIevJa73UjIFyTuYvjfUriihUUUUU
+	CI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4UJVWxJrUvcSsG
+	vfC2KfnxnUUI43ZEXa7VU1zpBDUUUUU==
 X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
 From: Zhang Yi <yi.zhang@huawei.com>
 
-Before submitting I/O and allocating blocks with the
-EXT4_GET_BLOCKS_PRE_IO flag set, ext4_split_convert_extents() may
-convert the target extent range to initialized due to ENOSPC, ENOMEM, or
-EQUOTA errors. However, it still marks the mapping as incorrectly
-unwritten. Although this may not seem to cause any practical problems,
-it will result in an unnecessary extent conversion operation after I/O
-completion. Therefore, it's better to correct the returned mapping
-status.
+Caching extents during the splitting process is risky, as it may result
+in stale extents remaining in the status tree. Moreover, in most cases,
+the corresponding extent block entries are likely already cached before
+the split happens, making caching here not particularly useful.
+
+Assume we have an unwritten extent, and then DIO writes the first half.
+
+  [UUUUUUUUUUUUUUUU] on-disk extent        U: unwritten extent
+  [UUUUUUUUUUUUUUUU] extent status tree
+  |<-   ->| ----> dio write this range
+
+First, when ext4_split_extent_at() splits this extent, it truncates the
+existing extent and then inserts a new one. During this process, this
+extent status entry may be shrunk, and calls to ext4_find_extent() and
+ext4_cache_extents() may occur, which could potentially insert the
+truncated range as a hole into the extent status tree. After the split
+is completed, this hole is not replaced with the correct status.
+
+  [UUUUUUU|UUUUUUUU] on-disk extent        U: unwritten extent
+  [UUUUUUU|HHHHHHHH] extent status tree    H: hole
+
+Then, the outer calling functions will not correct this remaining hole
+extent either. Finally, if we perform a delayed buffer write on this
+latter part, it will re-insert the delayed extent and cause an error in
+space accounting.
+
+In adition, if the unwritten extent cache is not shrunk during the
+splitting, ext4_cache_extents() also conflicts with existing extents
+when caching extents. In the future, we will add checks when caching
+extents, which will trigger a warning. Therefore, Do not cache extents
+that are being split.
 
 Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 Reviewed-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
 Reviewed-by: Baokun Li <libaokun1@huawei.com>
+Cc: stable@kernel.org
 ---
- fs/ext4/extents.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ fs/ext4/extents.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
 diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
-index 91b56de60c90..daecf3f0b367 100644
+index daecf3f0b367..be9fd2ab8667 100644
 --- a/fs/ext4/extents.c
 +++ b/fs/ext4/extents.c
-@@ -3933,6 +3933,8 @@ ext4_ext_handle_unwritten_extents(handle_t *handle, struct inode *inode,
+@@ -3199,6 +3199,9 @@ static struct ext4_ext_path *ext4_split_extent_at(handle_t *handle,
+ 	BUG_ON((split_flag & EXT4_EXT_DATA_VALID1) &&
+ 	       (split_flag & EXT4_EXT_DATA_VALID2));
  
- 	/* get_block() before submitting IO, split the extent */
- 	if (flags & EXT4_GET_BLOCKS_SPLIT_NOMERGE) {
-+		int depth;
++	/* Do not cache extents that are in the process of being modified. */
++	flags |= EXT4_EX_NOCACHE;
 +
- 		path = ext4_split_convert_extents(handle, inode, map, path,
- 						  flags, allocated);
- 		if (IS_ERR(path))
-@@ -3948,7 +3950,13 @@ ext4_ext_handle_unwritten_extents(handle_t *handle, struct inode *inode,
- 			err = -EFSCORRUPTED;
- 			goto errout;
- 		}
--		map->m_flags |= EXT4_MAP_UNWRITTEN;
-+		/* Don't mark unwritten if the extent has been zeroed out. */
-+		path = ext4_find_extent(inode, map->m_lblk, path, flags);
-+		if (IS_ERR(path))
-+			return path;
-+		depth = ext_depth(inode);
-+		if (ext4_ext_is_unwritten(path[depth].p_ext))
-+			map->m_flags |= EXT4_MAP_UNWRITTEN;
- 		goto out;
- 	}
- 	/* IO end_io complete, convert the filled extent to written */
+ 	ext_debug(inode, "logical block %llu\n", (unsigned long long)split);
+ 
+ 	ext4_ext_show_leaf(inode, path);
+@@ -3381,6 +3384,9 @@ static struct ext4_ext_path *ext4_split_extent(handle_t *handle,
+ 	ee_len = ext4_ext_get_actual_len(ex);
+ 	unwritten = ext4_ext_is_unwritten(ex);
+ 
++	/* Do not cache extents that are in the process of being modified. */
++	flags |= EXT4_EX_NOCACHE;
++
+ 	if (map->m_lblk + map->m_len < ee_block + ee_len) {
+ 		split_flag1 = split_flag & EXT4_EXT_MAY_ZEROOUT;
+ 		flags1 = flags | EXT4_GET_BLOCKS_SPLIT_NOMERGE;
 -- 
 2.46.1
 
