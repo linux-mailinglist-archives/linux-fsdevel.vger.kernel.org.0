@@ -1,128 +1,119 @@
-Return-Path: <linux-fsdevel+bounces-70190-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70191-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C183C93389
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 23:06:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 16973C9354D
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Nov 2025 01:40:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0E1D74E1FDD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Nov 2025 22:06:42 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7B0284E23B2
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Nov 2025 00:40:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA3872E173D;
-	Fri, 28 Nov 2025 22:06:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B46918DF80;
+	Sat, 29 Nov 2025 00:40:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RaiGbSc0"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TQBQc5rq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3F962DAFB8
-	for <linux-fsdevel@vger.kernel.org>; Fri, 28 Nov 2025 22:06:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54348143C61
+	for <linux-fsdevel@vger.kernel.org>; Sat, 29 Nov 2025 00:40:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764367598; cv=none; b=UVGpSWuq9cQGTfNkaLwxwzSWDmjkF3r4LH1lIDgGrx18tVFDOwCJpSBg/T9cY5EtfbRRm9n8w29lLraD/VScYzVnUOoC/iy58yDajx5KoRUX62xReBj8P9vJiPFBtEg9Uxfwv/KSodlHh+92erN489fKFTfwL83QTdbnuMiBkjc=
+	t=1764376824; cv=none; b=ixaMXK0qY2kAsnExDrjTrw4bDZtKbdngVWprhlVaV49PfqI0770Pki0fygc285/gBQj4V8JEYBeuSg4oMI/Oe58wWLM82ka89QzqEQcLs11m6Ett9WZSOb3qgjuX0JkyzLYLzFMsxcFcGGduqRYyKLCurDjZz5X61SI0IVa/soI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764367598; c=relaxed/simple;
-	bh=Nl1asJOqF9mxpBcBeuyS88Yf3Ed/NUld+MGt5pFtQ+I=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Bb2lvTer8OVz7ugUQ2KK0JWm5onC5Z9oweU3/b46+bErSml7hLZ6f4fqeEVy1xmrll1yBigPUlh4mHPDqyDRklwCTOiVtQaIMLFrkGKcsJyE/ePIGDoJxPnNxCnzn/srj9yj/l4wtyRxiiZdcPpXl0b+T3Rh3OEgEeppsDle/q0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=RaiGbSc0; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=MpIdvKFLJCSYbEJe8nEDhQGDYRcsZm1/oDwocYvO3Xg=; b=RaiGbSc088EEMFCvQKYkJfV3OH
-	puOufpnyeP7vs3EfOZvDolCpt3XE2P9T2fCH9WbSZUWKfWxxuIRLnDgMc9t0tEAUNtiVMVZQ3hBEW
-	Gw2lotOYQyAJLpkqPJnpD51+bGeQ98RnoSBp0lriggTK3GYSwb9Sxa7DIvcW1sO3e1smvGkRri0vD
-	O0gylxYC9ZSh5UYuSx+NfObTlvvBYo2c1Y7FP6JTIMfUI6tWucYX2uEHDZ9vHT/vOEwclCaXsjZKl
-	rSb8xrSeJMZJ+DqrAhh7HQzqcY/HeF0+Odxt7L3bS47Dj2sLXS3hB1oS76UWZQ+N1rJdvQ61syNLN
-	AKMX/lnQ==;
-Received: from [50.53.43.113] (helo=bombadil.infradead.org)
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vP6bo-00000000zz2-2cvL;
-	Fri, 28 Nov 2025 22:06:33 +0000
-From: Randy Dunlap <rdunlap@infradead.org>
-To: linux-fsdevel@vger.kernel.org
-Cc: Randy Dunlap <rdunlap@infradead.org>,
-	NeilBrown <neil@brown.name>,
-	Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>
-Subject: [PATCH v2] VFS: namei: fix start_dirop() kernel-doc warnings
-Date: Fri, 28 Nov 2025 14:06:32 -0800
-Message-ID: <20251128220632.948713-1-rdunlap@infradead.org>
-X-Mailer: git-send-email 2.52.0
+	s=arc-20240116; t=1764376824; c=relaxed/simple;
+	bh=CwXUO/ECiRkJTAnPgPPBjvGkDLsmgjF30ncj9dPTggQ=;
+	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=LjoGPvyW5fFM0+Ncgp4rnh8eJVg4pkycGup1EzonX1M4Sddg6qrV8+xZ2Wul8wOfk4IdTDLXf/1PbUWkMiGuzYcTcyamBITMiBiTon9WIZ/c27d1VjEibi0xGQc/bNDwXZCtyc7LAokLnUZRFNHHGWbJMY6saS52hFEwVccJHwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TQBQc5rq; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1764376821;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=ef9v6cwLTmDFTh7X6DP1tPfCuN0JRueNpWIdSc2115Y=;
+	b=TQBQc5rqnzjK0smhh9TENbRdyKwAFhFOnSMIrL6ZYuWDVtRDIaxldQ4sZJqSRwna+33y8M
+	b9MSxejvWp55m7JgDyRHdVCIj1pr1piYmY8eAGXeaXDcq7u7p/3ySiJoGlopEB8rstdfNQ
+	SdzYxcUZ+CXZypBj/IepNhBqXb4g2Dw=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-543-aN9lw2v9OryYBO8CY7QIDg-1; Fri,
+ 28 Nov 2025 19:40:18 -0500
+X-MC-Unique: aN9lw2v9OryYBO8CY7QIDg-1
+X-Mimecast-MFC-AGG-ID: aN9lw2v9OryYBO8CY7QIDg_1764376816
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3AC881956089;
+	Sat, 29 Nov 2025 00:40:16 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.14])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B2C7518004A3;
+	Sat, 29 Nov 2025 00:40:12 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+To: Christian Brauner <brauner@kernel.org>
+cc: dhowells@redhat.com, Paulo Alcantra <pc@manguebit.org>,
+    torvalds@linux-foundation.org,
+    syzbot+41c68824eefb67cdf00c@syzkaller.appspotmail.com,
+    Marc Dionne <marc.dionne@auristor.com>,
+    linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+    linux-kernel@vger.kernel.org
+Subject: [PATCH] afs: Fix uninit var in afs_alloc_anon_key()
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1205720.1764376811.1@warthog.procyon.org.uk>
+Date: Sat, 29 Nov 2025 00:40:11 +0000
+Message-ID: <1205721.1764376811@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-Move the kernel-doc function description from just prior to __start_dirop()
-to just before start_dirop() to avoid these kernel-doc warnings:
+Fix an uninitialised variable (key) in afs_alloc_anon_key() by setting it
+to cell->anonymous_key.  Without this change, the error check may return a
+false failure with a bad error number.
 
-Warning: fs/namei.c:2853 function parameter 'state' not described
- in '__start_dirop'
-WARNING: fs/namei.c:2853 expecting prototype for start_dirop().
- Prototype was for __start_dirop() instead
+Most of the time this is unlikely to happen because the first encounter
+with afs_alloc_anon_key() will usually be from (auto)mount, for which all
+subsequent operations must wait - apart from other (auto)mounts.  Once the
+call->anonymous_key is allocated, all further calls to afs_request_key()
+will skip the call to afs_alloc_anon_key() for that cell.
 
-Fixes: ff7c4ea11a05 ("VFS: add start_creating_killable() and start_removing_killable()")
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Fixes: d27c71257825 ("afs: Fix delayed allocation of a cell's anonymous key")
+Reported-by: Paulo Alcantra <pc@manguebit.org>
+Signed-off-by: David Howells <dhowells@redhat.com>
+Reviewed-by: Paulo Alcantara <pc@manguebit.org>
+cc: Marc Dionne <marc.dionne@auristor.com>
+cc: syzbot+41c68824eefb67cdf00c@syzkaller.appspotmail.com
+cc: linux-afs@lists.infradead.org
+cc: linux-fsdevel@vger.kernel.org
 ---
-v2: move kernel-doc to start_dirop() instead of __start_dirop() [Neil]
----
-Cc: NeilBrown <neil@brown.name>
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: Jan Kara <jack@suse.cz>
----
- fs/namei.c |   25 ++++++++++++-------------
- 1 file changed, 12 insertions(+), 13 deletions(-)
+ fs/afs/security.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- linux-next-20251127.orig/fs/namei.c
-+++ linux-next-20251127/fs/namei.c
-@@ -2835,19 +2835,6 @@ static int filename_parentat(int dfd, st
- 	return __filename_parentat(dfd, name, flags, parent, last, type, NULL);
- }
+diff --git a/fs/afs/security.c b/fs/afs/security.c
+index ff8830e6982f..55ddce94af03 100644
+--- a/fs/afs/security.c
++++ b/fs/afs/security.c
+@@ -26,7 +26,8 @@ static int afs_alloc_anon_key(struct afs_cell *cell)
+ 	struct key *key;
  
--/**
-- * start_dirop - begin a create or remove dirop, performing locking and lookup
-- * @parent:       the dentry of the parent in which the operation will occur
-- * @name:         a qstr holding the name within that parent
-- * @lookup_flags: intent and other lookup flags.
-- *
-- * The lookup is performed and necessary locks are taken so that, on success,
-- * the returned dentry can be operated on safely.
-- * The qstr must already have the hash value calculated.
-- *
-- * Returns: a locked dentry, or an error.
-- *
-- */
- static struct dentry *__start_dirop(struct dentry *parent, struct qstr *name,
- 				    unsigned int lookup_flags,
- 				    unsigned int state)
-@@ -2869,6 +2856,18 @@ static struct dentry *__start_dirop(stru
- 	return dentry;
- }
- 
-+/**
-+ * start_dirop - begin a create or remove dirop, performing locking and lookup
-+ * @parent:       the dentry of the parent in which the operation will occur
-+ * @name:         a qstr holding the name within that parent
-+ * @lookup_flags: intent and other lookup flags.
-+ *
-+ * The lookup is performed and necessary locks are taken so that, on success,
-+ * the returned dentry can be operated on safely.
-+ * The qstr must already have the hash value calculated.
-+ *
-+ * Returns: a locked dentry, or an error.
-+ */
- struct dentry *start_dirop(struct dentry *parent, struct qstr *name,
- 			   unsigned int lookup_flags)
- {
+ 	mutex_lock(&afs_key_lock);
+-	if (!cell->anonymous_key) {
++	key = cell->anonymous_key;
++	if (!key) {
+ 		key = rxrpc_get_null_key(cell->key_desc);
+ 		if (!IS_ERR(key))
+ 			cell->anonymous_key = key;
+
 
