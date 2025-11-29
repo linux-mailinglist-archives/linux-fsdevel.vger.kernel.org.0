@@ -1,304 +1,460 @@
-Return-Path: <linux-fsdevel+bounces-70238-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70239-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C53A3C9406C
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Nov 2025 16:07:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83AB7C941A2
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Nov 2025 16:55:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C2EB3A67A4
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Nov 2025 15:07:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6D6F3A5C27
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Nov 2025 15:55:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2025430F534;
-	Sat, 29 Nov 2025 15:07:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83BAA1C860C;
+	Sat, 29 Nov 2025 15:55:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=HOTMAIL.DE header.i=@HOTMAIL.DE header.b="L9Veg0zn"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RFvYxQiR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazolkn19013086.outbound.protection.outlook.com [52.103.46.86])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00AA136B;
-	Sat, 29 Nov 2025 15:06:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.46.86
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764428820; cv=fail; b=aej+GrIUaekf2fh6VXK0dkdrjNOMdeQCt4zVUhUq+b2NUsLmVOuAC0kRDA5zX9QEgbHAOgzgsl+RP8eDZaGTllWLxrJEDwBC6bc20FBy2KIxuYhYtBMbqLH3dpzLfLV97pTcnFKIn07DTjmE/mlV/vj1URfjwl6zI13odsPGtG0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764428820; c=relaxed/simple;
-	bh=0JhR4Iq6n4Rw9RQo6j3qbS5Yj/dBV/F6VMhZCNKW1MA=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Swfogy662TvHOxDAAcZJs6MYUwm/LktT8wcQYI+u3n202pZPpWb79Tl27U5yrmKQP+J1cWNTd5VqehNIGHgLq9ynKg1Yg6P8/Zns/mcWrm4/FBUVUtMocEjkJ2V2/89oQtI7vIYi9X/fxuoFHTSh6RqiuvjCaWpmjrrHOUwvOjQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.de; spf=pass smtp.mailfrom=hotmail.de; dkim=pass (2048-bit key) header.d=HOTMAIL.DE header.i=@HOTMAIL.DE header.b=L9Veg0zn; arc=fail smtp.client-ip=52.103.46.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hotmail.de
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lProhl2XBLltTZbxxF8dswgCX5HjdjiBWgcygBojhbzWgtpRZ7HBaFFxPmF5e9bqkBwy7QRtdBUTM44XEVD+FnmUTsmbDQO8SNHjNlS95hC0u1aVXdCYxVKN8a9xnO/s8I/pfnzyFO2l3lFaGFE7i6kfDNdbFwhPaxOV7iY6DXiqFUJPHRah+872hc5mYUVSKw7mbnFcanLZbKBo5WHAWH0wQ6xQtkXEUrDBWGkK944P69xTvWYZDM+MALb26ZoGfj16wkskqxYKVcRG0Ju4OA0bMcEKogjwikFDdi2VcF4TfwYOnyr9+Tbyvb++PEmRrWpXW3I7RTWdBWU6y+/46Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FD/Akzqzu0nThG7Tk3GM5jB/WuJ8kjgjB5LxtcVF1Ms=;
- b=GHYUqMZX9C8GTl2Iu9ygFvXcb/ikJDSKUNwNBLJCX8rdHVefKnc/UGVy6rLoKk8q5TWLZnpeq+jGq4rg8zvt84T1hwMs0E4RK6OkJ3t/NsbMauHWHLrEGQURjn/1FeMw3/xgSRPSq9NAn0Qmfjr8sBBnGzLGUyCmJqC1arZk9ZWvGRYtu5iea/z5jX/wmLtu+vQ6kJN2e/kT0CoF6FfEXxOpNSKmFYQpBCCIKO83nY5M+iQ1ZWPNd1FXZDgHu7QCFIG4GB7JE1XdkXP8U3m1H8TPTbqPnFNkNuCjxzFOLkk4wOVnpiTkuqMhvFGVypr04hN6Fqh2CLkoWOH8FFhnPA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=HOTMAIL.DE;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FD/Akzqzu0nThG7Tk3GM5jB/WuJ8kjgjB5LxtcVF1Ms=;
- b=L9Veg0znfBf/WerHwl4oj1Ju2uxBnv53RZJIq8FRffcifTso8cccOwhXx7wliBtpdinkpInOBqtWHB/nwWv//Ty3UMtz6t4qxRobxfZAHhqwZBhrTceuFtf0R2m5UqtBEkKYe8K+nWf6sQ/WVN2io9PJs2g34mZ182caS8UENhAdcMTJm06YNBstARpq2zQMe45J2oDHAYdnYusxjcGqJ1NvFg46wXRb4cR6WXcX9XvZkL3UxC94qc8qucB8Eu8h7rSoB18Z+cKxBKT9Y5LxKnvaH1yqB3SLYnuXpqYgUNMcuwL/vq0R+P2kCVrNm8OjVMRsZhaxfOtTnBxoolwzKw==
-Received: from GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM
- (2603:10a6:158:401::8d4) by DU7PPF6D5AD81E5.EURP195.PROD.OUTLOOK.COM
- (2603:10a6:18:3::bd6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9366.17; Sat, 29 Nov
- 2025 15:06:54 +0000
-Received: from GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM
- ([fe80::dde:411d:b5f2:49]) by GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM
- ([fe80::dde:411d:b5f2:49%8]) with mapi id 15.20.9366.012; Sat, 29 Nov 2025
- 15:06:54 +0000
-Message-ID:
- <GV2PPF74270EBEEDD43083BE45C6E26F674E4DDA@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
-Date: Sat, 29 Nov 2025 16:06:57 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v17] exec: Fix dead-lock in de_thread with ptrace_attach
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Christian Brauner <brauner@kernel.org>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Alexey Dobriyan <adobriyan@gmail.com>, Kees Cook <kees@kernel.org>,
- Andy Lutomirski <luto@amacapital.net>, Will Drewry <wad@chromium.org>,
- Andrew Morton <akpm@linux-foundation.org>, Michal Hocko <mhocko@suse.com>,
- Serge Hallyn <serge@hallyn.com>, James Morris
- <jamorris@linux.microsoft.com>, Randy Dunlap <rdunlap@infradead.org>,
- Suren Baghdasaryan <surenb@google.com>, Yafang Shao <laoar.shao@gmail.com>,
- Helge Deller <deller@gmx.de>, "Eric W. Biederman" <ebiederm@xmission.com>,
- Adrian Reber <areber@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
- Jens Axboe <axboe@kernel.dk>, Alexei Starovoitov <ast@kernel.org>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
- linux-security-module@vger.kernel.org, tiozhang <tiozhang@didiglobal.com>,
- Luis Chamberlain <mcgrof@kernel.org>,
- "Paulo Alcantara (SUSE)" <pc@manguebit.com>,
- Sergey Senozhatsky <senozhatsky@chromium.org>,
- Frederic Weisbecker <frederic@kernel.org>, YueHaibing
- <yuehaibing@huawei.com>, Paul Moore <paul@paul-moore.com>,
- Aleksa Sarai <cyphar@cyphar.com>, Stefan Roesch <shr@devkernel.io>,
- Chao Yu <chao@kernel.org>, xu xin <xu.xin16@zte.com.cn>,
- Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.cz>,
- David Hildenbrand <david@redhat.com>, Dave Chinner <dchinner@redhat.com>,
- Shuah Khan <shuah@kernel.org>, Elena Reshetova <elena.reshetova@intel.com>,
- David Windsor <dwindsor@gmail.com>, Mateusz Guzik <mjguzik@gmail.com>,
- Ard Biesheuvel <ardb@kernel.org>,
- "Joel Fernandes (Google)" <joel@joelfernandes.org>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Hans Liljestrand <ishkamiel@gmail.com>,
- Penglei Jiang <superman.xpt@gmail.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Adrian Ratiu <adrian.ratiu@collabora.com>, Ingo Molnar <mingo@kernel.org>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>,
- Cyrill Gorcunov <gorcunov@gmail.com>, Eric Dumazet <edumazet@google.com>
-References: <AS8P193MB12851AC1F862B97FCE9B3F4FE4AAA@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <AS8P193MB1285FF445694F149B70B21D0E46C2@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <AS8P193MB1285937F9831CECAF2A9EEE2E4752@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <GV2PPF74270EBEEEDE0B9742310DE91E9A7E431A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
- <GV2PPF74270EBEE9EF78827D73D3D7212F7E432A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
- <20251105143210.GA25535@redhat.com>
- <20251111-ankreiden-augen-eadcf9bbdfaa@brauner>
- <GV2PPF74270EBEE4FE6E639B899D01D8870E4C9A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
- <aRs4zYDhddBQFiXZ@redhat.com>
- <GV2PPF74270EBEE6F59267B0E9F28F536D0E4C9A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
- <aSNTNZxiQ0txISJx@redhat.com>
-Content-Language: en-US
-From: Bernd Edlinger <bernd.edlinger@hotmail.de>
-In-Reply-To: <aSNTNZxiQ0txISJx@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR4P281CA0099.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:cb::17) To GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM
- (2603:10a6:158:401::8d4)
-X-Microsoft-Original-Message-ID:
- <d016b2fe-4640-4c15-8350-9eebfa067d3c@hotmail.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0BA31EE7B9
+	for <linux-fsdevel@vger.kernel.org>; Sat, 29 Nov 2025 15:55:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1764431709; cv=none; b=Sd3qeHMxebPe3oWshp3+dWUx1483FscXcPCnN8rV58vVhuHRkq/1ll+arx8X5fgCg7K61f+VEs3Gvq1ou9CCU3jJWoftBO8vMuOYgkX4uFNcOP0MvjUGsOsTdJyqIU0Azv2Mro9xMmZ10qF5v2+Zl+cio655Vr+pRoHNhskrCTM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1764431709; c=relaxed/simple;
+	bh=HvAxUzJkGXn2qFdccmTMQrW6uWMggHj8e1fpYhNC0RY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RwIyBDWd6h9ijpBp4p9mwpvNm+nzL9lhRvTLyPMM7AhXWt7biR8pzyVmonbvYdVm6K6pfHbB36veGerGGz7AlE+l9ZABQQNma/RjlFKvkF9bqJrSia8GA/ZY3p/QhA4pdbUkL43NRDh7T9IhdQCnEKDcNruElNTY6fgQQjuL2o8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RFvYxQiR; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b736d883ac4so293105666b.2
+        for <linux-fsdevel@vger.kernel.org>; Sat, 29 Nov 2025 07:55:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1764431706; x=1765036506; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=X1eC10We295VV65umPfobtygoRy82cfYMzrL4jRtdf4=;
+        b=RFvYxQiRxplSMSCCHCGcOoussVeuf2fSIZMnDBiGUi3sm8fGCvbXJuD9DoJ0xDJB95
+         aVmq4lNj5vK88M9ADeBiUWxfmdoNaT3CQcHvc2qm+3UyRF5T4XC2pc6pXSnQtHXGzOTa
+         rGMROAZwwXt/Gk260QC1rXxU+ENMGZPP8vmt83XGkWvXMrDHoHHBadTE5hXz0aHq0AaI
+         KY15GKNOeSTB2dS6j8ytGrf/muBlDAAAEXGbpdg6Yqdl+OU5uLgyfCiinsPzXCPmgbB2
+         lMAMk88OZXgv02mB8ccFYSw29/i8kYuXqvfpQApqUgJbA6P6XjP+SpLJFA9303Ux3KKZ
+         x7MA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764431706; x=1765036506;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=X1eC10We295VV65umPfobtygoRy82cfYMzrL4jRtdf4=;
+        b=sEzTxwUj/X+N9bhnfXXqOG7L10/ha0HpYYUfw6oK7EOysQkI8T0J+OCAFGdkQTxOZ8
+         KkcJTTbNCFjBYlwmdMtZ0F8BcxgnlDmn6I+D2/n28Un9uEd+ArwBnUxs8F0h3fKABoOw
+         +uo6aQykZ68A9ES7yqmOIUAppg+5H2v79K1xLSMkArxX//5OC/rlX+Ea6iZtOIPk3U1S
+         2NhyxQyVIICpAqOXdAg1gNmvecYe+mFXFf6VNZeqdfj7rRBvz0EOaTUHJEHoEzMx6S8p
+         4+aZ+nwcxdlQRVFudlFdLQI/bATbdYhzgR+Y4YXalfxJanVuPZ3k6Z5cDGT8ztC3lo+z
+         2d2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUzyjkg48ns0YUnR0D+dHHN0KJQ4/yc4xbp6WXkoN1tE52AlTToaIinNEadA1uEvk7mXUBpxJMcjTTIn7cZ@vger.kernel.org
+X-Gm-Message-State: AOJu0YzomJtDq/ErIl+viZFB+01A+H8bpxPVCK5AHDLYrbZevsWCDlwD
+	UaBAp7A/Hcwnl0yy19Fi7f6R7cVnn/F1rhUGFiHrIkubTE9YBJx22M57
+X-Gm-Gg: ASbGncuRulX9jLVS7Lq6O0UBQBA+7RlI+GhyQppcspRwsp8c/YmXSWWFBMyOJUr95+k
+	25qgxgkqteTgCA4i6DfngaZ0Bo/MJ1jI11skXzqBesN0vFbyIsnOYZBCAQhQdGp00CvMmQwdhbS
+	gLuWm4z1Ok76vCspIUYvzwk89lKAgK5E2NkSYXSfti4kosqehjT47iSV1wlX7seAOqFSgHpzsJw
+	8sIgi1y6TlW4p/mg58XUlT1F4WsKyhbJro3qdpIq3ZPDV4aeFmfGK49J/MrNlWp/HmVc0Owyxfc
+	0P9KaDcr7AHihhi+zsyQ28jyicQnGEtZ4pG4F8Yg9z7jFasoGws+Nge7aCXEjOA2PCFaOgdoxvg
+	8kKIfVv6PUBmAeWZBamNIBMvWJrbdI3QXcEN23N4Ey0EYyfWtrX5KFPwV0GJI0cjXFCH2ouxWzJ
+	XOBGCIRk+KcOfUbkHpp9jLkEMIxQ8nK63qVzS73KeteLDboRI8LT4U8x+kWqM=
+X-Google-Smtp-Source: AGHT+IElEh/cpVKjqvOyJ1pXnUpKsUtxPJQlyIWsiDMugYc0pMhFt+kg3jl0s1rlfy+4HeSOU2sZzA==
+X-Received: by 2002:a17:907:8e95:b0:b73:5958:7e6c with SMTP id a640c23a62f3a-b767153ee44mr3577062966b.3.1764431705861;
+        Sat, 29 Nov 2025 07:55:05 -0800 (PST)
+Received: from f.. (cst-prg-14-82.cust.vodafone.cz. [46.135.14.82])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b76f5162c5csm746364766b.6.2025.11.29.07.55.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 29 Nov 2025 07:55:05 -0800 (PST)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: brauner@kernel.org
+Cc: viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH 1/2] fs: move getname and putname handlers into namei.h
+Date: Sat, 29 Nov 2025 16:54:59 +0100
+Message-ID: <20251129155500.43116-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: GV2PPF74270EBEE:EE_|DU7PPF6D5AD81E5:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7aa02119-ea85-4a83-0e8b-08de2f58ee86
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|461199028|15080799012|23021999003|19110799012|8060799015|51005399006|5072599009|6090799003|40105399003|440099028|3412199025;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?U1Rhd3NxZFozclkxSkViYWJRZmEzVUR2Z2M2OUEyN3pkclVuRzdLWFhZS0RH?=
- =?utf-8?B?V2dHaFNibGZ0QVpETkdER1lINEswMk1zZWowWmR5YjZxcTVCVEIvTkYyaDJR?=
- =?utf-8?B?WkYyTFdpYjF2dFFpODlJcGp1RjlKckZFekUxU3VhZTUwUHIvM0dKbkRiZnVO?=
- =?utf-8?B?QWloakdQRjJkSkpORGp6N3VEVFltRWkyQ1VhVTlIVDVnYUlnUWV0ZFRSaXBv?=
- =?utf-8?B?bzArZ1dxZjlNWWcvQmhvajFOckhHWitFeHVjRWd4T2lTSnlFQzkyMEdjWDJF?=
- =?utf-8?B?UmdEMUxaV1ZoOVRSZnVPS0xIUWNRbnJHa1A1VGI5ajRzZDlyV205VHh6VFZR?=
- =?utf-8?B?OUlwZTQ0c1h4L1k0U1JMZDNFN1lNanZSUnNsbitFdnFPbnUrUnRIN3dWenUx?=
- =?utf-8?B?UEx0T3ladFBwZWlxRlpxVzQxWWgrRmxMNTlHZm4xOTFBM0JBMG9ySE9kM3gx?=
- =?utf-8?B?SW9yaU5kd3VtWkp6aGFteHFTdUdOdlljRHlmZkk4QTZwMGhVdTdjbFF2SUJk?=
- =?utf-8?B?WllJMGgra1I5WXdxK0MxWUVmM2MzTVFFbkh1MThGRzBLaFluMjZLVjhUVjVY?=
- =?utf-8?B?VWtSWGNGNW0zK3l1cXJKWmNwL2E2aDhYR1UvSVNlVFVVUHphZU9yOGlZOERx?=
- =?utf-8?B?OW9RQzdwTXA5UnRDRjNsazlWWVdHenk4Z2xqZGRobWJWTTBFeHdZcExOTWNN?=
- =?utf-8?B?RzZNaFBSa1dHbWJ6T2hOWVZtd3ZYS3hvV1QwZjU0Z25aNGRMbTV6YnhHeXBF?=
- =?utf-8?B?eU5uMUxsWnhxUFJSWDZpc0E5Y09CZDBOY05MRGRaOG4zS2xnZ1N6bTRCdWxL?=
- =?utf-8?B?Y1pwSER4a0lPYmhTZDErYXNjanJaamFmY2N1Rmc0SzY1UXl4ZGZvejVsZlVV?=
- =?utf-8?B?K2c0czRNempFeFQ0QnNnZWdvM3h6YUhETjc4d2xSYnBEZHZHbXNwMEVVUHFN?=
- =?utf-8?B?NVVUQlZUQW5jTmNNSXFpdGVBTG92K2g1ZHpVc3c0UmdqM25PMC85NGNtd2Fm?=
- =?utf-8?B?VTdKd2hnQllNUlZNa0tqeWpCYVJzdGZwZzJhUHhGajVlWXNxVFgxMXVXVFZV?=
- =?utf-8?B?VGlOb3lvK2hUTU1uSkVRbU1HWTVVa2tLTGl3dk9CV2s0L09Meks4WTZHS2Nl?=
- =?utf-8?B?bUNyYVkwazJRazB3WTJLdk13TExRZDN0UDU0dmtvZEd5VW1mRHFkbk9XdnBG?=
- =?utf-8?B?Q3h5MXhXdExZbURxNi8rVnFseU1IZ25uS25WcEx4bm4wN2xaK1VtZlRjYi95?=
- =?utf-8?B?STgyMHltSStQbCtqdnFja0JyVCtHRHFVWERza0RMalpSWldWWStFYzI0WVRG?=
- =?utf-8?B?TlBtRTdmM2hNQ2FVUHNhUXE5SytLVDYyT3RMSHVLS3ZmMVRCMlMvQ3hUZEpJ?=
- =?utf-8?B?bm9aYm5CS3FnV2dqbDlHWUJxTnAwY295dFkvUXIvS0RmRXdscUxLSFAvV3Ro?=
- =?utf-8?B?TUhVZXhPMUswcUovTVR4UmFEZS80OW55NTVjSG14RTE5dW5CUU4xbDIwTTk5?=
- =?utf-8?B?NitRT1VoVTNteWM5SlFqR3NhSks0UmRUaFBtMWliSXVrSUJBTXhGVno2S1Nu?=
- =?utf-8?B?Sjh2TVpLSEk1a1pSdTRSSGdjb3pqbVdSUnhHTUk0aFFKVWtsZ0RINm5sZ09h?=
- =?utf-8?B?dmlSU29ESi9veHc5V0VkUDlKbi9kWnc9PQ==?=
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dzY1RVJiMlNHWVkrRy9QOGt3WTBxNkVFcGF6cHFJa2VncWorc0VSL1llQmhW?=
- =?utf-8?B?STVFL1Ruci8yNEU4N25pSTdkTXZtei9mbmg5Y0lteHQ2UEJqOUtBQTRYcTF0?=
- =?utf-8?B?NjhDWHRGZnAzYnRoVTlTaUo0QTE0b1hTZktVQTVJQkp4Mk1nUW16VmlMNThh?=
- =?utf-8?B?dDJ5UkNPcWhkc0FhTVpqQXNrcnEvZGFMRnZPNllwVHBGVTVLRDN1WFZmTTlz?=
- =?utf-8?B?WWpnanBCR3QyZ2l4RnNyQW00UmRqL0pxMmtIa1o0QlRlVUxtYzlmMDI0K3ZX?=
- =?utf-8?B?dnJzT0JRMkZKVkszMGJQOGh3WWJSNzkrVUNjckM4eVoyODhOTDJvdUdHNVYv?=
- =?utf-8?B?K0sxS09OVmFhaGFsM1pqT1JZV0JNQTlVbVVrM0hCT1FmSUMzRm5Nb3FHZVJ2?=
- =?utf-8?B?cUVZY0xreHNjNGpSRWNlQnFlaEZSNWlsNldCaEUybnE0aFc3dHd3K1dUdmdD?=
- =?utf-8?B?dzZpSEpMT1ZzczYvMVhnNHNLRnJKa1UyVERLKzhvZG9Mc24zMlNsc250UnMv?=
- =?utf-8?B?dnpTc1BSVlJXL09sWWkycjNvRzV0d2xyR2FPOHhVL0toT1FhbmR2WnhvSGZt?=
- =?utf-8?B?U0hldnZkS2dEdHFVRnIzYmpRQ2dOVll6RHlaZ2prbmpsREltYjJIOUEzU1Jo?=
- =?utf-8?B?MWI0OGZpZ0syVk0rcXpycmlObWZlbzlkS1FXSnZsaVYyRFo3OFI4Y3R4cWp2?=
- =?utf-8?B?Y3VzK0VEQU9xZmZOeVBFK2x2eXVOaTBIaEt5azhsSFR5b2dNUFVhRlA1VE03?=
- =?utf-8?B?b29KSDJvcnI5NjZqMUhxOTR1NzFpVWg5VWhjOGlLOE5KTTR0azN2V0hOaUNE?=
- =?utf-8?B?djB0YmVBYlRUdmEvQ0NBL0Z2eUd3SmJXUW51L3EzQ0ZwZWMya0dpQ1puQkE0?=
- =?utf-8?B?cXA0YUR6em5sa0JQUHRJMHk0bWFKWjYwNG4yc28zWVd4cmhRK2NORHBJQjdL?=
- =?utf-8?B?RzlWMWgrOC9xUnlvUEVqNjNtcFVFc3BhNXNBdHNqZklRTnhRakJMQkgxTkpB?=
- =?utf-8?B?ZnZNY1M0NTFzS2NST0hyLzlqRURhUkhtZXRDNUIvTVFmNTNwSmhKSmRJblFv?=
- =?utf-8?B?RTdkNnZXMTBMVkJrQXNUYlM4ZzVPVVluVms3elViWm5iampYd2VPMWo3UGQz?=
- =?utf-8?B?K2dBQzFZQkFybTB3UUV5bFRJeWZZdHhKS3BkYUZ3cHZnNWt4NFZPMU1xUm1L?=
- =?utf-8?B?eDJ6ajF5RUtlQWFOeDVJY3ZSSi9sc2JDNXdjZDdBYWJ6a0o5T2MvK0pXSyth?=
- =?utf-8?B?cXVraEl4ODdFZ2hFVmVpV2ZDZ0RnaEtzWWtSSEt6SnBQYUhGTzB2MWM1Q2JE?=
- =?utf-8?B?eE1wZE0vNWhqSm52b2NiTEFCeVRrT3dSTkJ0TTJSTlZVLytmNGlJd29INHk3?=
- =?utf-8?B?V3ppTGxacWZrbjlyaEhDcWFDQVA3WVd0RFN5TS8yZ09yY3B6WGJIM3Z5aldj?=
- =?utf-8?B?eUw4M0dNRDBFNlE2RHp0ZW1LSWp0Wk1YVG5GamowQnBSNFZWc3hZTFl0KzhJ?=
- =?utf-8?B?TFdoU2NFY28vYUJMMlp2SUtjOWJhN01hL0RnSGhoZm9oS1hWaXAwWWk0ZVNW?=
- =?utf-8?B?ZTBLdFVRR2dKSlJHczZFcW9BaGxsUnV2aGpWZC8xSDZnaWJvTE1UR1oyanMz?=
- =?utf-8?B?RWY2UjIwcFFCRFVHVVY0MXVxNlpPNWtQb1laQmRBTFVvbUJVY0I5eHdYUFMz?=
- =?utf-8?B?dm1iRVNnOXA1angrT3UwZDVLM1dWUG1obzBOOCt6d3cxeTJZOGl1bEUrbmFV?=
- =?utf-8?Q?3Ttcpt32ll3nW8eRiOu/+7t2EmW+CRYxU6p6ka3?=
-X-OriginatorOrg: sct-15-20-8534-20-msonline-outlook-87dd8.templateTenant
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7aa02119-ea85-4a83-0e8b-08de2f58ee86
-X-MS-Exchange-CrossTenant-AuthSource: GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Nov 2025 15:06:54.2302
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU7PPF6D5AD81E5
+Content-Transfer-Encoding: 8bit
 
-On 11/23/25 19:32, Oleg Nesterov wrote:
-> Hi Bernd,
-> 
-> sorry for delay, I am on PTO, didn't read emails this week...
-> 
-> On 11/17, Bernd Edlinger wrote:
->>
->> On 11/17/25 16:01, Oleg Nesterov wrote:
->>> On 11/17, Bernd Edlinger wrote:
->>>>
->>>> On 11/11/25 10:21, Christian Brauner wrote:
->>>>> On Wed, Nov 05, 2025 at 03:32:10PM +0100, Oleg Nesterov wrote:
->>>>
->>>>>> But this is minor. Why do we need "bool unsafe_execve_in_progress" ?
->>>>>> If this patch is correct, de_thread() can drop/reacquire cred_guard_mutex
->>>>>> unconditionally.
->>>>>>
->>>>
->>>> I would not like to drop the mutex when no absolutely necessary for performance reasons.
->>>
->>> OK, I won't insist... But I don't really understand how this can help to
->>> improve the performance. If nothing else, this adds another for_other_threads()
->>> loop.
->>>
->>
->> If no dead-lock is possible it is better to complete the de_thread without
->> releasing the mutex.  For the debugger it is also the better experience,
->> no matter when the ptrace_attack happens it will succeed rather quickly either
->> before the execve or after the execve.
-> 
-> I still disagree, I still don't understand the "performance reasons", but since I can't
-> convince you I won't really argue.
-> 
->>>>>>> +	if (unlikely(unsafe_execve_in_progress)) {
->>>>>>> +		spin_unlock_irq(lock);
->>>>>>> +		sig->exec_bprm = bprm;
->>>>>>> +		mutex_unlock(&sig->cred_guard_mutex);
->>>>>>> +		spin_lock_irq(lock);
->>>>>>
->>>>>> I don't think spin_unlock_irq() + spin_lock_irq() makes any sense...
->>>>>>
->>>>
->>>> Since the spin lock was acquired while holding the mutex, both should be
->>>> unlocked in reverse sequence and the spin lock re-acquired after releasing
->>>> the mutex.
->>>
->>> Why?
->>>
->>
->> It is generally more safe when each thread acquires its mutexes in order and
->> releases them in reverse order.
->> Consider this:
->> Thread A:
->> holds spin_lock_irq(siglock);
->> does mutes_unlock(cred_guard_mutex); with irq disabled.
->> task switch happens to Thread B which has irq enabled.
->> and is waiting for cred_guard_mutex.
->> Thrad B:
->> does mutex_lock(cred_guard_mutex);
->> but is interrupted this point and the interrupt handler I executes
->> now iterrupt handler I wants to take siglock and is blocked,
->> because the system one single CPU core.
-> 
-> I don't follow. Do you mean PREEMPT_RT ?
-> 
-> If yes. In this case spin_lock_irq() is rt_spin_lock() which doesn't disable irqs,
-> it does rt_lock_lock() (takes rt_mutex) + migrate_disable().
-> 
-> I do think that spin/mutex/whatever_unlock() is always safe. In any order, and
-> regardless of RT.
-> 
+This will enable use of runtime const machinery for namei_cachep.
+Existing header spaghetti makes it impossible to use while in fs.h
 
-Well, based on my experience with other embedded real-time O/S-es, I would
-expect that something named spin_lock_irq locks the task-specific IRQ, and
-prevents task switches due to time-slicing, while something called
-mutes_unlock may cause an explicit task switch, when another task is waiting
-for the mutex.
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+---
 
-It is hard to follow how linux implements that spin_lock_irq exactly, but
-to me it looks like it is done this way:
+This may end up creating merge conflicts against the work which messed
+with audit and atomic refcounts on struct filename, but they should be
+trivially resolvable. Things just got moved fs.h -> namei.h
 
-include/linux/spinlock_api_smp.h:static inline void __raw_spin_lock_irq(raw_spinlock_t *lock)
-include/linux/spinlock_api_smp.h-{
-include/linux/spinlock_api_smp.h-       local_irq_disable();
-include/linux/spinlock_api_smp.h-       preempt_disable();
-include/linux/spinlock_api_smp.h-       spin_acquire(&lock->dep_map, 0, 0, _RET_IP_);
-include/linux/spinlock_api_smp.h-       LOCK_CONTENDED(lock, do_raw_spin_trylock, do_raw_spin_lock);
-include/linux/spinlock_api_smp.h-}
+tested with allmodconfig
 
-so an explicit task switch while locka_irq_disable looks
-very dangerous to me.  Do you know other places where such
-a code pattern is used?
+ drivers/base/firmware_loader/main.c |  1 +
+ fs/ceph/mds_client.h                |  1 +
+ fs/d_path.c                         |  1 +
+ fs/exfat/dir.c                      |  1 +
+ fs/f2fs/f2fs.h                      |  1 +
+ fs/fat/dir.c                        |  1 +
+ fs/filesystems.c                    |  1 +
+ fs/ntfs3/dir.c                      |  1 +
+ fs/ntfs3/fsntfs.c                   |  1 +
+ fs/ntfs3/namei.c                    |  1 +
+ fs/ntfs3/xattr.c                    |  1 +
+ fs/smb/client/cifsproto.h           |  1 +
+ fs/vboxsf/file.c                    |  1 +
+ include/linux/fs.h                  | 42 +----------------------------
+ include/linux/namei.h               | 41 ++++++++++++++++++++++++++++
+ io_uring/statx.c                    |  1 +
+ mm/huge_memory.c                    |  1 +
+ security/integrity/ima/ima_api.c    |  1 +
+ security/integrity/ima/ima_main.c   |  1 +
+ 19 files changed, 59 insertions(+), 41 deletions(-)
 
-I do just ask, because a close look at those might reveal
-some serious bugs, WDYT?
-
-
-Thanks
-Bernd.
+diff --git a/drivers/base/firmware_loader/main.c b/drivers/base/firmware_loader/main.c
+index 4ebdca9e4da4..ac5a86d7692f 100644
+--- a/drivers/base/firmware_loader/main.c
++++ b/drivers/base/firmware_loader/main.c
+@@ -29,6 +29,7 @@
+ #include <linux/file.h>
+ #include <linux/list.h>
+ #include <linux/fs.h>
++#include <linux/namei.h>
+ #include <linux/async.h>
+ #include <linux/pm.h>
+ #include <linux/suspend.h>
+diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
+index 0428a5eaf28c..bc0b8da9fca2 100644
+--- a/fs/ceph/mds_client.h
++++ b/fs/ceph/mds_client.h
+@@ -11,6 +11,7 @@
+ #include <linux/refcount.h>
+ #include <linux/utsname.h>
+ #include <linux/ktime.h>
++#include <linux/namei.h>
+ 
+ #include <linux/ceph/types.h>
+ #include <linux/ceph/messenger.h>
+diff --git a/fs/d_path.c b/fs/d_path.c
+index bb365511066b..19cde8b57771 100644
+--- a/fs/d_path.c
++++ b/fs/d_path.c
+@@ -4,6 +4,7 @@
+ #include <linux/uaccess.h>
+ #include <linux/fs_struct.h>
+ #include <linux/fs.h>
++#include <linux/namei.h>
+ #include <linux/slab.h>
+ #include <linux/prefetch.h>
+ #include "mount.h"
+diff --git a/fs/exfat/dir.c b/fs/exfat/dir.c
+index 3045a58e124a..9d588a64e5dd 100644
+--- a/fs/exfat/dir.c
++++ b/fs/exfat/dir.c
+@@ -7,6 +7,7 @@
+ #include <linux/compat.h>
+ #include <linux/bio.h>
+ #include <linux/buffer_head.h>
++#include <linux/namei.h>
+ 
+ #include "exfat_raw.h"
+ #include "exfat_fs.h"
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 5f104518c414..78d97ccb646e 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -24,6 +24,7 @@
+ #include <linux/quotaops.h>
+ #include <linux/part_stat.h>
+ #include <linux/rw_hint.h>
++#include <linux/namei.h>
+ 
+ #include <linux/fscrypt.h>
+ #include <linux/fsverity.h>
+diff --git a/fs/fat/dir.c b/fs/fat/dir.c
+index 92b091783966..6dd7d0f6043f 100644
+--- a/fs/fat/dir.c
++++ b/fs/fat/dir.c
+@@ -18,6 +18,7 @@
+ #include <linux/compat.h>
+ #include <linux/uaccess.h>
+ #include <linux/iversion.h>
++#include <linux/namei.h>
+ #include "fat.h"
+ 
+ /*
+diff --git a/fs/filesystems.c b/fs/filesystems.c
+index 95e5256821a5..fb0dac8aa916 100644
+--- a/fs/filesystems.c
++++ b/fs/filesystems.c
+@@ -17,6 +17,7 @@
+ #include <linux/slab.h>
+ #include <linux/uaccess.h>
+ #include <linux/fs_parser.h>
++#include <linux/namei.h>
+ 
+ /*
+  * Handling of filesystem drivers list.
+diff --git a/fs/ntfs3/dir.c b/fs/ntfs3/dir.c
+index b98e95d6b4d9..5e778cac4197 100644
+--- a/fs/ntfs3/dir.c
++++ b/fs/ntfs3/dir.c
+@@ -8,6 +8,7 @@
+  */
+ 
+ #include <linux/fs.h>
++#include <linux/namei.h>
+ #include <linux/nls.h>
+ 
+ #include "debug.h"
+diff --git a/fs/ntfs3/fsntfs.c b/fs/ntfs3/fsntfs.c
+index 5f138f715835..5099c8fbe6b2 100644
+--- a/fs/ntfs3/fsntfs.c
++++ b/fs/ntfs3/fsntfs.c
+@@ -8,6 +8,7 @@
+ #include <linux/blkdev.h>
+ #include <linux/buffer_head.h>
+ #include <linux/fs.h>
++#include <linux/namei.h>
+ #include <linux/kernel.h>
+ #include <linux/nls.h>
+ 
+diff --git a/fs/ntfs3/namei.c b/fs/ntfs3/namei.c
+index 3b24ca02de61..1251dae282bb 100644
+--- a/fs/ntfs3/namei.c
++++ b/fs/ntfs3/namei.c
+@@ -6,6 +6,7 @@
+  */
+ 
+ #include <linux/fs.h>
++#include <linux/namei.h>
+ #include <linux/nls.h>
+ #include <linux/ctype.h>
+ #include <linux/posix_acl.h>
+diff --git a/fs/ntfs3/xattr.c b/fs/ntfs3/xattr.c
+index c93df55e98d0..1211a0859000 100644
+--- a/fs/ntfs3/xattr.c
++++ b/fs/ntfs3/xattr.c
+@@ -6,6 +6,7 @@
+  */
+ 
+ #include <linux/fs.h>
++#include <linux/namei.h>
+ #include <linux/posix_acl.h>
+ #include <linux/posix_acl_xattr.h>
+ #include <linux/xattr.h>
+diff --git a/fs/smb/client/cifsproto.h b/fs/smb/client/cifsproto.h
+index 3528c365a452..6438a2dc77c3 100644
+--- a/fs/smb/client/cifsproto.h
++++ b/fs/smb/client/cifsproto.h
+@@ -9,6 +9,7 @@
+ #define _CIFSPROTO_H
+ #include <linux/nls.h>
+ #include <linux/ctype.h>
++#include <linux/namei.h>
+ #include "cifsglob.h"
+ #include "trace.h"
+ #ifdef CONFIG_CIFS_DFS_UPCALL
+diff --git a/fs/vboxsf/file.c b/fs/vboxsf/file.c
+index 4bebd947314a..bb05e99c1d24 100644
+--- a/fs/vboxsf/file.c
++++ b/fs/vboxsf/file.c
+@@ -10,6 +10,7 @@
+ #include <linux/pagemap.h>
+ #include <linux/highmem.h>
+ #include <linux/sizes.h>
++#include <linux/namei.h>
+ #include "vfsmod.h"
+ 
+ struct vboxsf_handle {
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 04ceeca12a0d..8b6f8e373ac7 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -55,6 +55,7 @@ struct bdi_writeback;
+ struct bio;
+ struct io_comp_batch;
+ struct fiemap_extent_info;
++struct filename;
+ struct hd_geometry;
+ struct iovec;
+ struct kiocb;
+@@ -2408,16 +2409,6 @@ extern struct kobject *fs_kobj;
+ #define MAX_RW_COUNT (INT_MAX & PAGE_MASK)
+ 
+ /* fs/open.c */
+-struct audit_names;
+-struct filename {
+-	const char		*name;	/* pointer to actual string */
+-	const __user char	*uptr;	/* original userland pointer */
+-	atomic_t		refcnt;
+-	struct audit_names	*aname;
+-	const char		iname[];
+-};
+-static_assert(offsetof(struct filename, iname) % sizeof(long) == 0);
+-
+ static inline struct mnt_idmap *file_mnt_idmap(const struct file *file)
+ {
+ 	return mnt_idmap(file->f_path.mnt);
+@@ -2491,32 +2482,6 @@ static inline struct file *file_clone_open(struct file *file)
+ }
+ extern int filp_close(struct file *, fl_owner_t id);
+ 
+-extern struct filename *getname_flags(const char __user *, int);
+-extern struct filename *getname_uflags(const char __user *, int);
+-static inline struct filename *getname(const char __user *name)
+-{
+-	return getname_flags(name, 0);
+-}
+-extern struct filename *getname_kernel(const char *);
+-extern struct filename *__getname_maybe_null(const char __user *);
+-static inline struct filename *getname_maybe_null(const char __user *name, int flags)
+-{
+-	if (!(flags & AT_EMPTY_PATH))
+-		return getname(name);
+-
+-	if (!name)
+-		return NULL;
+-	return __getname_maybe_null(name);
+-}
+-extern void putname(struct filename *name);
+-DEFINE_FREE(putname, struct filename *, if (!IS_ERR_OR_NULL(_T)) putname(_T))
+-
+-static inline struct filename *refname(struct filename *name)
+-{
+-	atomic_inc(&name->refcnt);
+-	return name;
+-}
+-
+ extern int finish_open(struct file *file, struct dentry *dentry,
+ 			int (*open)(struct inode *, struct file *));
+ extern int finish_no_open(struct file *file, struct dentry *dentry);
+@@ -2534,11 +2499,6 @@ static inline int finish_open_simple(struct file *file, int error)
+ extern void __init vfs_caches_init_early(void);
+ extern void __init vfs_caches_init(void);
+ 
+-extern struct kmem_cache *names_cachep;
+-
+-#define __getname()		kmem_cache_alloc(names_cachep, GFP_KERNEL)
+-#define __putname(name)		kmem_cache_free(names_cachep, (void *)(name))
+-
+ void emergency_thaw_all(void);
+ extern int sync_filesystem(struct super_block *);
+ extern const struct file_operations def_blk_fops;
+diff --git a/include/linux/namei.h b/include/linux/namei.h
+index 58600cf234bc..bd4a7b058f97 100644
+--- a/include/linux/namei.h
++++ b/include/linux/namei.h
+@@ -52,6 +52,47 @@ enum {LAST_NORM, LAST_ROOT, LAST_DOT, LAST_DOTDOT};
+ 
+ extern int path_pts(struct path *path);
+ 
++struct audit_names;
++struct filename {
++	const char		*name;	/* pointer to actual string */
++	const __user char	*uptr;	/* original userland pointer */
++	atomic_t		refcnt;
++	struct audit_names	*aname;
++	const char		iname[];
++};
++static_assert(offsetof(struct filename, iname) % sizeof(long) == 0);
++
++struct filename *getname_flags(const char __user *, int);
++struct filename *getname_uflags(const char __user *, int);
++static inline struct filename *getname(const char __user *name)
++{
++	return getname_flags(name, 0);
++}
++struct filename *getname_kernel(const char *);
++struct filename *__getname_maybe_null(const char __user *);
++static inline struct filename *getname_maybe_null(const char __user *name, int flags)
++{
++	if (!(flags & AT_EMPTY_PATH))
++		return getname(name);
++
++	if (!name)
++		return NULL;
++	return __getname_maybe_null(name);
++}
++void putname(struct filename *name);
++DEFINE_FREE(putname, struct filename *, if (!IS_ERR_OR_NULL(_T)) putname(_T))
++
++static inline struct filename *refname(struct filename *name)
++{
++	atomic_inc(&name->refcnt);
++	return name;
++}
++
++extern struct kmem_cache *names_cachep;
++
++#define __getname()		kmem_cache_alloc(names_cachep, GFP_KERNEL)
++#define __putname(name)		kmem_cache_free(names_cachep, (void *)(name))
++
+ extern int user_path_at(int, const char __user *, unsigned, struct path *);
+ 
+ struct dentry *lookup_one_qstr_excl(const struct qstr *name,
+diff --git a/io_uring/statx.c b/io_uring/statx.c
+index 5111e9befbfe..ba6442633214 100644
+--- a/io_uring/statx.c
++++ b/io_uring/statx.c
+@@ -2,6 +2,7 @@
+ #include <linux/kernel.h>
+ #include <linux/errno.h>
+ #include <linux/file.h>
++#include <linux/namei.h>
+ #include <linux/io_uring.h>
+ 
+ #include <uapi/linux/io_uring.h>
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index f7c565f11a98..69c1eee121a4 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -40,6 +40,7 @@
+ #include <linux/pgalloc.h>
+ #include <linux/pgalloc_tag.h>
+ #include <linux/pagewalk.h>
++#include <linux/namei.h>
+ 
+ #include <asm/tlb.h>
+ #include "internal.h"
+diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
+index c35ea613c9f8..7b1d73a7e7e3 100644
+--- a/security/integrity/ima/ima_api.c
++++ b/security/integrity/ima/ima_api.c
+@@ -11,6 +11,7 @@
+ #include <linux/slab.h>
+ #include <linux/file.h>
+ #include <linux/fs.h>
++#include <linux/namei.h>
+ #include <linux/xattr.h>
+ #include <linux/evm.h>
+ #include <linux/fsverity.h>
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 5770cf691912..5fd40401d89f 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -25,6 +25,7 @@
+ #include <linux/xattr.h>
+ #include <linux/ima.h>
+ #include <linux/fs.h>
++#include <linux/namei.h>
+ #include <linux/iversion.h>
+ #include <linux/evm.h>
+ #include <linux/crash_dump.h>
+-- 
+2.48.1
 
 
