@@ -1,173 +1,150 @@
-Return-Path: <linux-fsdevel+bounces-70280-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70281-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB28CC95091
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Nov 2025 16:03:50 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9860C951F4
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Nov 2025 16:51:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CB5504E050D
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Nov 2025 15:03:47 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 67E3A3423E8
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Nov 2025 15:51:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4658230BCB;
-	Sun, 30 Nov 2025 15:03:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HzhcLkA7"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3408C278753;
+	Sun, 30 Nov 2025 15:51:06 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BBAF22576E
-	for <linux-fsdevel@vger.kernel.org>; Sun, 30 Nov 2025 15:03:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2583717DE36
+	for <linux-fsdevel@vger.kernel.org>; Sun, 30 Nov 2025 15:51:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764515022; cv=none; b=Y4VuHSDXIM+uf53sREsvlABHC38WEKr5N075d+DqRYxLtWGtI/s1x2mB9Fz6kmL2fgl5sEMc6+/VmOMLo1kaVN1qSMtqaqJyTvmvE5Yf0h2qCvvl3TBrsNgAfs7oYCK+eozDTZNZ3jEPd+oAEh6mrVYaMX3WlQX0BgXW3fo6+5k=
+	t=1764517865; cv=none; b=hp8PEKX+/hrTNLEX/l8Rzte2MVIQVgxbZPrlg6m22gp1VRNUvBlFRJ66Qfn3TT9PPyUyVyQyG/WgchFYEMFYV3QnajjfuiLsVpwGJ8vWwhny1dlG9BtUqpk/pcjkwfr1q1B5Z4jC9yIR+S9cHxXR0LauknoceKZCKVBvrHYdF8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764515022; c=relaxed/simple;
-	bh=454k0NdJ//sqxnUnQcRzwDFYCemOmxV74PVkMloNpm8=;
-	h=Content-Type:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To; b=JkflXmxceVchigpdBTkkudeumPHtgjyBrmBZYjf4CnQo5jGnbXUAOBxD5PY6Ci0TIF6JFWm2YHqlwcpPbyTVeEJDZO6wgVUlKWgVNDkJrDaW7gzzCGWtBnECBySJ8Hg6AGWMBSuevjzjLZdmyv/3hrr0R9s1eiw91T6yGAtpdDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HzhcLkA7; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2955623e6faso36048825ad.1
-        for <linux-fsdevel@vger.kernel.org>; Sun, 30 Nov 2025 07:03:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1764515019; x=1765119819; darn=vger.kernel.org;
-        h=in-reply-to:from:content-language:subject:references:cc:to
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=454k0NdJ//sqxnUnQcRzwDFYCemOmxV74PVkMloNpm8=;
-        b=HzhcLkA7+MrzTq6M5R4/E5mWJd6nKoX2zTDhxQdKvTB5JLMqFwq949L0uC9P3ps5RE
-         Av13/apv/xqBEkacQ5h1qoQ7Tx3mUmzDT+VT94wd6xprpeaQd9lNWMBZbZTg+ETtUuu3
-         iAr+CFvmx8bhoLAHFU+U8Sw2vAO1kXzUotTOQQ9+qiarpU5IogtU+qjYTORhkKl4qakZ
-         /8BNlUEKax75cvxeqHWi1HQWV8xpVd8H/Vst77ssmEq3EJpxr8FdUEpDz0YsbwPOF3C3
-         WSkY9nip8dFigNk1/RlQTlqPSbUKijmCbfZTOY2W+5ufUx6vJegMWR9INaD4zUDNvq6w
-         qywg==
+	s=arc-20240116; t=1764517865; c=relaxed/simple;
+	bh=My9JtOLxj2riP84dlYpqzrWrOrBwHAdgwgzehN+isPU=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=PEo2s7ZU71fB4KcBEAtT/+tUMGSXKsCR4qQgh4m2GSm8mpXlyP6L6tT0yOw7f5c8MJ/nputXSIrse7AGGKwHfdZsM1Ib1LobYmoVryaj1RMhDTeT+Fwp/GbacuAKQwBnbXZg5SSkrlRslknevzDmEJ6ba44U6soOX/ZycuENlFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-433199c7fb4so20804005ab.3
+        for <linux-fsdevel@vger.kernel.org>; Sun, 30 Nov 2025 07:51:03 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764515019; x=1765119819;
-        h=in-reply-to:from:content-language:subject:references:cc:to
-         :user-agent:mime-version:date:message-id:x-gm-gg:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=454k0NdJ//sqxnUnQcRzwDFYCemOmxV74PVkMloNpm8=;
-        b=EgFoYbGZ9XQXZyu6eM4E2EYTOMcS2Fyvoga0f5XqJtiCzDI/PIY+umLqxQL4Sy/o1H
-         +0/fp+aEhijEB6NCcQNIOWc2HzYfipckro+Z/9+5KrZaqrJiUJnAq7ktonBrUHP4NQme
-         xdYIvZ+lnJejEn0YeAHPKcYGoSSEpr/w4Xm48etEEd+WEgXphT8KQfLjxi5A9IRP3INM
-         WE5kWnPdFs2KyaChR6gKM9jXWG9C8086GN26X6CD6W6F1S0yWnXGk4rLcui+zRVNxHI1
-         +RhRq7xguFm2Yekv7fHCQvVIR+rlllfk5UuJadBF1qX3nffTXItv5EKHP48f3xJpuSiq
-         L1bQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUNyy6s10YFavhIyp4laBSFyq1rXAD4zP4PjBwC/dITycwm67JdBKxRQOTKZwNm2vGrW9SDea8dCGpPDeQu@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxvTClHWEsjOUON9wW4InHPpiq1vXz2JM/qOLxin6trUNxhA4A
-	oSNcZBgbZFqrv0p81sWtef+ictphHo2TAYGRBDXGnQRn3Mwbl45NR9+B
-X-Gm-Gg: ASbGnctrh7y0xSfXimXhmslpZI5jGjWPKz3I1aSqz/iB8BlN1ir6TaI/X7ufnhIYnD4
-	AHjIJ4ZwnAhEnO8iq2q5hzwUYp8on06tlxUP+O6oG5GIfPv+dCF7TX5P4qG1hk1s/XyqaN+0AeZ
-	Lu09JP7PpwimvOmidk4puUUu6V9f+/DsA351kI3TK7QAEkYEi1Hem97Jj2D0fMpOlYc1KmIM008
-	cAfwyBK0eL1IbkZ4v9PVh0VbGJbdCEels5JNG63GCT7prJ7Lbf9N2Wu3+XuJ72f7H9IM0Rfu/6z
-	AWkfzx1suN9HPj3tzdbGPBLfJP+QLK1VWGWQyRiM2L+4PC5bXz6wY7hDvuWXuFZMA7zIMSNlWsi
-	0Hy8DiPjSY0stxf6ElKm3M9IosJWXjsHc1KZMwPGYoIz3nuOLkc43kbg+WEBLtySZOafVIJqz+l
-	DUrpfx0moVppcyq/72imDMSF6UHiftvVwOwptvfJEeAlF7ApYEjB5c/cQ=
-X-Google-Smtp-Source: AGHT+IGu+nWwawV5ChwOmhhJwGD5r7xlcIavX7xc1c5+WEOiPICxEOVPDqZSgI99fAXCkzUDemR2cw==
-X-Received: by 2002:a17:902:f54a:b0:295:6427:87d4 with SMTP id d9443c01a7336-29bab1db61fmr227655505ad.50.1764515019196;
-        Sun, 30 Nov 2025 07:03:39 -0800 (PST)
-Received: from ?IPV6:2405:201:31:d869:f0ca:4857:a475:749a? ([2405:201:31:d869:f0ca:4857:a475:749a])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7d15fb1486asm10660567b3a.61.2025.11.30.07.03.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 30 Nov 2025 07:03:38 -0800 (PST)
-Content-Type: multipart/mixed; boundary="------------PBFi06tPLAhiQ94kFTybRu9c"
-Message-ID: <ff6e08e2-a7c7-4ebf-8f93-03e5ece9b335@gmail.com>
-Date: Sun, 30 Nov 2025 20:33:33 +0530
+        d=1e100.net; s=20230601; t=1764517863; x=1765122663;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pZQZPvsA+b1aEfkr/eSFp6Mc7KtxI3DMkvE2WO3Y+vA=;
+        b=nnlqwknBxNo0MV2Irk0MSJFGz73ZuCFRaroXxxMBQeWTPQvPyu0EuoGjeKaGFV/iqz
+         p81XBkq2WmiYi2xJHptPDzXAfGweEhvHAcBYx9qoZ9Do6WJOxfODOXlIYk5Od0dkLilr
+         8uBTgky3zRYud0PS1CP4cktUkhV3X/cFcD5GNLTUfTcQTNlZUbFDWbjXe/A4fH8O4sGS
+         pqn3JxMWXWCY9qc7hHcQ7mckOsQWVexqu4kXQ4jRoRr1hjGShANzu40i34sdrRTezKRs
+         ydXz4VWGqEdUuQ7lFRGhd82TgyRd3D9mq94SUP3lUX+exR+MRWZcL0bvyowsJ8WFzuxf
+         rH/w==
+X-Forwarded-Encrypted: i=1; AJvYcCVrmfmjQf4shhoahIL64xOuuPFj/YaJdak4dSGpxofA8/DEQwBSIGsDu0iZ3QnVK7iSTk2WNDNIQuaCb9rD@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbixCszr9/1m0xDHxOgDrsrWed4tq/EWK7cfDeI8mtOXVFYKZY
+	YkcnE4UIvUpwWOnzrfU4FvIcKATyUff9G7jXA0nA6kqxOV7smrPq7xZo/dYc3Q018B7YSm3HmVw
+	Fzx6OIHp38MgoBlnvaoHX3nZ99Hni07Tggli/dm6gmopHw0Wg01BdfSoAURc=
+X-Google-Smtp-Source: AGHT+IEmmk9ubAf028hrGiKPi9++Nhmn7ukhITaHj6Iks3+zKps4MCqnc1j5bumu0sk4b5fswov2N05NTj/viY/CsM1CDyCYT5wU
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: syzbot+4d3cc33ef7a77041efa6@syzkaller.appspotmail.com
-Cc: akpm@linux-foundation.org, brauner@kernel.org, hare@suse.de,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, mcgrof@kernel.org, syzkaller-bugs@googlegroups.com,
- willy@infradead.org
-References: <680ae31e.050a0220.2c0118.0c72.GAE@google.com>
+X-Received: by 2002:a05:6e02:1d9c:b0:433:7abd:96d0 with SMTP id
+ e9e14a558f8ab-435b9851daemr263744155ab.3.1764517863270; Sun, 30 Nov 2025
+ 07:51:03 -0800 (PST)
+Date: Sun, 30 Nov 2025 07:51:03 -0800
+In-Reply-To: <ff6e08e2-a7c7-4ebf-8f93-03e5ece9b335@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <692c67e7.a70a0220.d98e3.0172.GAE@google.com>
 Subject: Re: [syzbot] [fs?] [mm?] kernel BUG in __filemap_add_folio
-Content-Language: en-US
-From: shaurya <ssranevjti@gmail.com>
-In-Reply-To: <680ae31e.050a0220.2c0118.0c72.GAE@google.com>
+From: syzbot <syzbot+4d3cc33ef7a77041efa6@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, brauner@kernel.org, hare@suse.de, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, mcgrof@kernel.org, ssranevjti@gmail.com, 
+	syzkaller-bugs@googlegroups.com, willy@infradead.org
+Content-Type: text/plain; charset="UTF-8"
 
-This is a multi-part message in MIME format.
---------------PBFi06tPLAhiQ94kFTybRu9c
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Hello,
 
-#syz test:
-git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+kernel BUG in mpage_readahead
 
---------------PBFi06tPLAhiQ94kFTybRu9c
-Content-Type: text/x-patch; charset=UTF-8;
- name="0001-mm-readahead-fix-race-between-page_cache_ra_order-an.patch"
-Content-Disposition: attachment;
- filename*0="0001-mm-readahead-fix-race-between-page_cache_ra_order-an.pa";
- filename*1="tch"
-Content-Transfer-Encoding: base64
+------------[ cut here ]------------
+kernel BUG at ./include/linux/pagemap.h:1408!
+Oops: invalid opcode: 0000 [#1] SMP KASAN NOPTI
+CPU: 1 UID: 0 PID: 18176 Comm: syz-executor317 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/25/2025
+RIP: 0010:__readahead_folio include/linux/pagemap.h:1408 [inline]
+RIP: 0010:readahead_folio include/linux/pagemap.h:1434 [inline]
+RIP: 0010:mpage_readahead+0x4ad/0x5a0 fs/mpage.c:367
+Code: 5e 41 5f c3 cc cc cc cc e8 b0 19 70 ff 48 89 ef e8 48 06 ad ff e9 54 fe ff ff 4c 8b 6c 24 18 e9 43 ff ff ff e8 94 19 70 ff 90 <0f> 0b e8 8c 19 70 ff 48 c7 c6 00 b6 80 8b 48 89 ef e8 1d 39 ba ff
+RSP: 0018:ffffc9000d92f620 EFLAGS: 00010293
+RAX: 0000000000000000 RBX: ffffc9000d92fae8 RCX: ffffffff824c7d14
+RDX: ffff88802fe68000 RSI: ffffffff824c809c RDI: 0000000000000004
+RBP: 0000000000000004 R08: 0000000000000004 R09: 0000000000000004
+R10: 0000000000000001 R11: 0000000000000000 R12: dffffc0000000000
+R13: fffff52001b25f61 R14: 0000000000000001 R15: 1ffff92001b25f61
+FS:  0000555564bcd380(0000) GS:ffff888124f53000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f08297b0130 CR3: 0000000030a16000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ read_pages+0x1c4/0xc70 mm/readahead.c:163
+ page_cache_ra_unbounded+0x66a/0xa10 mm/readahead.c:269
+ do_page_cache_ra mm/readahead.c:332 [inline]
+ page_cache_ra_order+0xc0b/0xf20 mm/readahead.c:542
+ do_sync_mmap_readahead mm/filemap.c:3340 [inline]
+ filemap_fault+0x1583/0x29a0 mm/filemap.c:3489
+ __do_fault+0x10d/0x490 mm/memory.c:5281
+ do_shared_fault mm/memory.c:5780 [inline]
+ do_fault mm/memory.c:5854 [inline]
+ do_pte_missing+0x1a6/0x3ba0 mm/memory.c:4362
+ handle_pte_fault mm/memory.c:6195 [inline]
+ __handle_mm_fault+0x1556/0x2aa0 mm/memory.c:6336
+ handle_mm_fault+0x589/0xd10 mm/memory.c:6505
+ do_user_addr_fault+0x60c/0x1370 arch/x86/mm/fault.c:1336
+ handle_page_fault arch/x86/mm/fault.c:1476 [inline]
+ exc_page_fault+0x64/0xc0 arch/x86/mm/fault.c:1532
+ asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:618
+RIP: 0033:0x7f082970586d
+Code: 03 00 b9 03 10 12 00 45 31 c0 48 ba 80 00 00 00 00 20 00 00 48 b8 2f 64 65 76 2f 6e 75 6c 48 c7 c6 9c ff ff ff bf 01 01 00 00 <48> 89 02 48 b8 88 00 00 00 00 20 00 00 c7 00 6c 62 30 00 31 c0 e8
+RSP: 002b:00007ffff735c180 EFLAGS: 00010246
+RAX: 6c756e2f7665642f RBX: 0000000000000000 RCX: 0000000000121003
+RDX: 0000200000000080 RSI: ffffffffffffff9c RDI: 0000000000000101
+RBP: 00000000000f4240 R08: 0000000000000000 R09: 0000000000002000
+R10: 0000000000000013 R11: 0000000000000206 R12: 0000000000079470
+R13: 00007ffff735c19c R14: 00007ffff735c1b0 R15: 00007ffff735c1a0
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:__readahead_folio include/linux/pagemap.h:1408 [inline]
+RIP: 0010:readahead_folio include/linux/pagemap.h:1434 [inline]
+RIP: 0010:mpage_readahead+0x4ad/0x5a0 fs/mpage.c:367
+Code: 5e 41 5f c3 cc cc cc cc e8 b0 19 70 ff 48 89 ef e8 48 06 ad ff e9 54 fe ff ff 4c 8b 6c 24 18 e9 43 ff ff ff e8 94 19 70 ff 90 <0f> 0b e8 8c 19 70 ff 48 c7 c6 00 b6 80 8b 48 89 ef e8 1d 39 ba ff
+RSP: 0018:ffffc9000d92f620 EFLAGS: 00010293
+RAX: 0000000000000000 RBX: ffffc9000d92fae8 RCX: ffffffff824c7d14
+RDX: ffff88802fe68000 RSI: ffffffff824c809c RDI: 0000000000000004
+RBP: 0000000000000004 R08: 0000000000000004 R09: 0000000000000004
+R10: 0000000000000001 R11: 0000000000000000 R12: dffffc0000000000
+R13: fffff52001b25f61 R14: 0000000000000001 R15: 1ffff92001b25f61
+FS:  0000555564bcd380(0000) GS:ffff888124f53000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f08297b0130 CR3: 0000000030a16000 CR4: 00000000003526f0
 
-RnJvbSBlYzdlYTlhMWYwM2YzNjY3MmNmNWFjYjIzNzYxY2ZlZjZiOTQ4ZjIxIE1vbiBTZXAg
-MTcgMDA6MDA6MDAgMjAwMQpGcm9tOiBTaGF1cnlhIFJhbmUgPHNzcmFuZV9iMjNAZWUudmp0
-aS5hYy5pbj4KRGF0ZTogU3VuLCAzMCBOb3YgMjAyNSAyMDoyNzoyNSArMDUzMApTdWJqZWN0
-OiBbUEFUQ0hdIG1tL3JlYWRhaGVhZDogZml4IHJhY2UgYmV0d2VlbiBwYWdlX2NhY2hlX3Jh
-X29yZGVyIGFuZAogc2V0X2Jsb2Nrc2l6ZQoKcGFnZV9jYWNoZV9yYV9vcmRlcigpIHJlYWRz
-IG1hcHBpbmdfbWluX2ZvbGlvX29yZGVyKCkgYmVmb3JlIGFjcXVpcmluZwp0aGUgaW52YWxp
-ZGF0ZV9sb2NrLCBjcmVhdGluZyBhIHRpbWUtb2YtY2hlY2stdGltZS1vZi11c2UgKFRPQ1RP
-VSkgcmFjZQp3aXRoIHNldF9ibG9ja3NpemUoKSB3aGljaCBjYW4gY2hhbmdlIHRoZSBtYXBw
-aW5nJ3MgbWluX2ZvbGlvX29yZGVyCndoaWxlIGhvbGRpbmcgdGhlIGludmFsaWRhdGVfbG9j
-ayBleGNsdXNpdmVseS4KCklmIHNldF9ibG9ja3NpemUoKSBpbmNyZWFzZXMgdGhlIG1hcHBp
-bmcncyBtaW5fZm9saW9fb3JkZXIgYWZ0ZXIKcGFnZV9jYWNoZV9yYV9vcmRlcigpIHJlYWRz
-IHRoZSBvbGQgdmFsdWUgYnV0IGJlZm9yZSBpdCBhZGRzIGZvbGlvcwp0byB0aGUgcGFnZSBj
-YWNoZSwgdGhlIFZNX0JVR19PTiBjaGVjayBpbiBfX2ZpbGVtYXBfYWRkX2ZvbGlvKCkgd2ls
-bAp0cmlnZ2VyOgoKICBWTV9CVUdfT05fRk9MSU8oZm9saW9fb3JkZXIoZm9saW8pIDwgbWFw
-cGluZ19taW5fZm9saW9fb3JkZXIobWFwcGluZyksCiAgICAgICAgICAgICAgICAgIGZvbGlv
-KTsKClRoaXMgY2FuIGhhcHBlbiBiZWNhdXNlIHRoZSBzdGFsZSBtaW5fb3JkZXIgaXMgdXNl
-ZCB0byBjYWxjdWxhdGUKbmV3X29yZGVyIGFuZCBjb25zdHJhaW4gdGhlIGZvbGlvIG9yZGVy
-LCBidXQgZmlsZW1hcF9hZGRfZm9saW8oKQpyZS1yZWFkcyB0aGUgKG5vdyBpbmNyZWFzZWQp
-IG1pbl9mb2xpb19vcmRlciBmcm9tIHRoZSBtYXBwaW5nLgoKRml4IHRoaXMgYnkgbW92aW5n
-IHRoZSByZWFkIG9mIG1hcHBpbmdfbWluX2ZvbGlvX29yZGVyKCkgYW5kIHRoZQpuZXdfb3Jk
-ZXIgY2FsY3VsYXRpb24gdG8gYWZ0ZXIgdGhlIGludmFsaWRhdGVfbG9jayBpcyBhY3F1aXJl
-ZCBpbgpzaGFyZWQgbW9kZS4KClJlcG9ydGVkLWJ5OiBzeXpib3QrNGQzY2MzM2VmN2E3NzA0
-MWVmYTZAc3l6a2FsbGVyLmFwcHNwb3RtYWlsLmNvbQpDbG9zZXM6IGh0dHBzOi8vc3l6a2Fs
-bGVyLmFwcHNwb3QuY29tL2J1Z1w/ZXh0aWRcPTRkM2NjMzNlZjdhNzcwNDFlZmE2CkZpeGVz
-OiA0N2RkNjc1MzIzMDMgKCJibG9jay9iZGV2OiBsaWZ0IGJsb2NrIHNpemUgcmVzdHJpY3Rp
-b25zIHRvIDY0ayIpCkNjOiBzdGFibGVAdmdlci5rZXJuZWwub3JnClNpZ25lZC1vZmYtYnk6
-IFNoYXVyeWEgUmFuZSA8c3NyYW5lX2IyM0BlZS52anRpLmFjLmluPgotLS0KIG1tL3JlYWRh
-aGVhZC5jIHwgMTUgKysrKysrKysrKystLS0tCiAxIGZpbGUgY2hhbmdlZCwgMTEgaW5zZXJ0
-aW9ucygrKSwgNCBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9tbS9yZWFkYWhlYWQuYyBi
-L21tL3JlYWRhaGVhZC5jCmluZGV4IDNhNGI1ZDU4ZWViNi4uOTU3MThmODdiZDQzIDEwMDY0
-NAotLS0gYS9tbS9yZWFkYWhlYWQuYworKysgYi9tbS9yZWFkYWhlYWQuYwpAQCAtNDY3LDcg
-KzQ2Nyw3IEBAIHZvaWQgcGFnZV9jYWNoZV9yYV9vcmRlcihzdHJ1Y3QgcmVhZGFoZWFkX2Nv
-bnRyb2wgKnJhY3RsLAogCXN0cnVjdCBhZGRyZXNzX3NwYWNlICptYXBwaW5nID0gcmFjdGwt
-Pm1hcHBpbmc7CiAJcGdvZmZfdCBzdGFydCA9IHJlYWRhaGVhZF9pbmRleChyYWN0bCk7CiAJ
-cGdvZmZfdCBpbmRleCA9IHN0YXJ0OwotCXVuc2lnbmVkIGludCBtaW5fb3JkZXIgPSBtYXBw
-aW5nX21pbl9mb2xpb19vcmRlcihtYXBwaW5nKTsKKwl1bnNpZ25lZCBpbnQgbWluX29yZGVy
-OwogCXBnb2ZmX3QgbGltaXQgPSAoaV9zaXplX3JlYWQobWFwcGluZy0+aG9zdCkgLSAxKSA+
-PiBQQUdFX1NISUZUOwogCXBnb2ZmX3QgbWFyayA9IGluZGV4ICsgcmEtPnNpemUgLSByYS0+
-YXN5bmNfc2l6ZTsKIAl1bnNpZ25lZCBpbnQgbm9mczsKQEAgLTQ4MywxNSArNDgzLDIyIEBA
-IHZvaWQgcGFnZV9jYWNoZV9yYV9vcmRlcihzdHJ1Y3QgcmVhZGFoZWFkX2NvbnRyb2wgKnJh
-Y3RsLAogCiAJbGltaXQgPSBtaW4obGltaXQsIGluZGV4ICsgcmEtPnNpemUgLSAxKTsKIAor
-CS8qIFNlZSBjb21tZW50IGluIHBhZ2VfY2FjaGVfcmFfdW5ib3VuZGVkKCkgKi8KKwlub2Zz
-ID0gbWVtYWxsb2Nfbm9mc19zYXZlKCk7CisJZmlsZW1hcF9pbnZhbGlkYXRlX2xvY2tfc2hh
-cmVkKG1hcHBpbmcpOworCisJLyoKKwkgKiBSZS1yZWFkIG1pbl9vcmRlciBhZnRlciBhY3F1
-aXJpbmcgdGhlIGludmFsaWRhdGVfbG9jayB0byBhdm9pZCBhCisJICogcmFjZSB3aXRoIHNl
-dF9ibG9ja3NpemUoKSB3aGljaCBjYW4gY2hhbmdlIHRoZSBtYXBwaW5nJ3MgbWluX29yZGVy
-CisJICogd2hpbGUgaG9sZGluZyB0aGUgaW52YWxpZGF0ZV9sb2NrIGV4Y2x1c2l2ZWx5Lgor
-CSAqLworCW1pbl9vcmRlciA9IG1hcHBpbmdfbWluX2ZvbGlvX29yZGVyKG1hcHBpbmcpOwog
-CW5ld19vcmRlciA9IG1pbihtYXBwaW5nX21heF9mb2xpb19vcmRlcihtYXBwaW5nKSwgbmV3
-X29yZGVyKTsKIAluZXdfb3JkZXIgPSBtaW5fdCh1bnNpZ25lZCBpbnQsIG5ld19vcmRlciwg
-aWxvZzIocmEtPnNpemUpKTsKIAluZXdfb3JkZXIgPSBtYXgobmV3X29yZGVyLCBtaW5fb3Jk
-ZXIpOwogCiAJcmEtPm9yZGVyID0gbmV3X29yZGVyOwogCi0JLyogU2VlIGNvbW1lbnQgaW4g
-cGFnZV9jYWNoZV9yYV91bmJvdW5kZWQoKSAqLwotCW5vZnMgPSBtZW1hbGxvY19ub2ZzX3Nh
-dmUoKTsKLQlmaWxlbWFwX2ludmFsaWRhdGVfbG9ja19zaGFyZWQobWFwcGluZyk7CiAJLyoK
-IAkgKiBJZiB0aGUgbmV3X29yZGVyIGlzIGdyZWF0ZXIgdGhhbiBtaW5fb3JkZXIgYW5kIGlu
-ZGV4IGlzCiAJICogYWxyZWFkeSBhbGlnbmVkIHRvIG5ld19vcmRlciwgdGhlbiB0aGlzIHdp
-bGwgYmUgbm9vcCBhcyBpbmRleAotLSAKMi4zNC4xCgo=
 
---------------PBFi06tPLAhiQ94kFTybRu9c--
+Tested on:
+
+commit:         6bda50f4 Merge tag 'mips-fixes_6.18_2' of git://git.ke..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11857514580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f4a1ecf59be91960
+dashboard link: https://syzkaller.appspot.com/bug?extid=4d3cc33ef7a77041efa6
+compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=10dc7cb4580000
+
 
