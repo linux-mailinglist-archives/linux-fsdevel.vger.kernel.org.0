@@ -1,150 +1,271 @@
-Return-Path: <linux-fsdevel+bounces-70281-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70282-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9860C951F4
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Nov 2025 16:51:15 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4053C95483
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Nov 2025 21:34:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 67E3A3423E8
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Nov 2025 15:51:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7EF7F4E06A3
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Nov 2025 20:34:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3408C278753;
-	Sun, 30 Nov 2025 15:51:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B0F52C21DB;
+	Sun, 30 Nov 2025 20:34:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b="Tdi5FGDo"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from ewsoutbound.kpnmail.nl (ewsoutbound.kpnmail.nl [195.121.94.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2583717DE36
-	for <linux-fsdevel@vger.kernel.org>; Sun, 30 Nov 2025 15:51:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 828532C15A6
+	for <linux-fsdevel@vger.kernel.org>; Sun, 30 Nov 2025 20:34:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.121.94.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764517865; cv=none; b=hp8PEKX+/hrTNLEX/l8Rzte2MVIQVgxbZPrlg6m22gp1VRNUvBlFRJ66Qfn3TT9PPyUyVyQyG/WgchFYEMFYV3QnajjfuiLsVpwGJ8vWwhny1dlG9BtUqpk/pcjkwfr1q1B5Z4jC9yIR+S9cHxXR0LauknoceKZCKVBvrHYdF8I=
+	t=1764534878; cv=none; b=bRqWcKdlL0MEhqRbWxyGW+TcqJNNMwxUSXB3NvycpxnNRatQBh5Cb5Zy1Bh0lehr7hgooT5iR3KVrLsZQMAGRfIyoXdQ4ApLYsEBE4SJsZ+t04pml5wT8i4xXxeKJdGRLLtmdW1yJgE5ykI0+ym5nWyPRKHVGayPeZv4MTBhOGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764517865; c=relaxed/simple;
-	bh=My9JtOLxj2riP84dlYpqzrWrOrBwHAdgwgzehN+isPU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=PEo2s7ZU71fB4KcBEAtT/+tUMGSXKsCR4qQgh4m2GSm8mpXlyP6L6tT0yOw7f5c8MJ/nputXSIrse7AGGKwHfdZsM1Ib1LobYmoVryaj1RMhDTeT+Fwp/GbacuAKQwBnbXZg5SSkrlRslknevzDmEJ6ba44U6soOX/ZycuENlFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-433199c7fb4so20804005ab.3
-        for <linux-fsdevel@vger.kernel.org>; Sun, 30 Nov 2025 07:51:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764517863; x=1765122663;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pZQZPvsA+b1aEfkr/eSFp6Mc7KtxI3DMkvE2WO3Y+vA=;
-        b=nnlqwknBxNo0MV2Irk0MSJFGz73ZuCFRaroXxxMBQeWTPQvPyu0EuoGjeKaGFV/iqz
-         p81XBkq2WmiYi2xJHptPDzXAfGweEhvHAcBYx9qoZ9Do6WJOxfODOXlIYk5Od0dkLilr
-         8uBTgky3zRYud0PS1CP4cktUkhV3X/cFcD5GNLTUfTcQTNlZUbFDWbjXe/A4fH8O4sGS
-         pqn3JxMWXWCY9qc7hHcQ7mckOsQWVexqu4kXQ4jRoRr1hjGShANzu40i34sdrRTezKRs
-         ydXz4VWGqEdUuQ7lFRGhd82TgyRd3D9mq94SUP3lUX+exR+MRWZcL0bvyowsJ8WFzuxf
-         rH/w==
-X-Forwarded-Encrypted: i=1; AJvYcCVrmfmjQf4shhoahIL64xOuuPFj/YaJdak4dSGpxofA8/DEQwBSIGsDu0iZ3QnVK7iSTk2WNDNIQuaCb9rD@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbixCszr9/1m0xDHxOgDrsrWed4tq/EWK7cfDeI8mtOXVFYKZY
-	YkcnE4UIvUpwWOnzrfU4FvIcKATyUff9G7jXA0nA6kqxOV7smrPq7xZo/dYc3Q018B7YSm3HmVw
-	Fzx6OIHp38MgoBlnvaoHX3nZ99Hni07Tggli/dm6gmopHw0Wg01BdfSoAURc=
-X-Google-Smtp-Source: AGHT+IEmmk9ubAf028hrGiKPi9++Nhmn7ukhITaHj6Iks3+zKps4MCqnc1j5bumu0sk4b5fswov2N05NTj/viY/CsM1CDyCYT5wU
+	s=arc-20240116; t=1764534878; c=relaxed/simple;
+	bh=xro5UKYy0RNzL2qpVpF3XVNttjBTY3SWgP1GzpnBxyo=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=AiHbtRkVII+cxAYCn3rSejMsBSUUQ+KLnkjImQk64eTdVBR79/FO3vafzntWxifx42Ch5j54wsZHnxZJ87BztGXKVzC/ulwhsE28yn62QvfSn3X0mwp/zcaTVW13vMSTaXXDo5Vg0GsS+Vn6QMSnPlkjC5Dy5idIcFVSPvvfTdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xs4all.nl; spf=pass smtp.mailfrom=xs4all.nl; dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b=Tdi5FGDo; arc=none smtp.client-ip=195.121.94.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xs4all.nl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xs4all.nl
+X-KPN-MessageId: 781b5565-ce2c-11f0-9e68-005056994fde
+Received: from mta.kpnmail.nl (unknown [10.31.161.191])
+	by ewsoutbound.so.kpn.org (Halon) with ESMTPS
+	id 781b5565-ce2c-11f0-9e68-005056994fde;
+	Sun, 30 Nov 2025 21:38:03 +0100 (CET)
+Received: from mtaoutbound.kpnmail.nl (unknown [10.128.135.189])
+	by mta.kpnmail.nl (Halon) with ESMTP
+	id f6ea55d5-ce2b-11f0-83ca-00505699891e;
+	Sun, 30 Nov 2025 21:34:26 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=xs4all.nl; s=xs4all01;
+	h=content-type:mime-version:subject:message-id:to:from:date;
+	bh=dpEdZTgrTK01HOPuVCxKo1agm0EEBzAi08O/K5qLJlw=;
+	b=Tdi5FGDo2+MUGWldisAQtP0ngJdzMGQDlrw71FnNbHsL3lr9LQ+PIdNjP1jg1AER45RL80UQKZ61r
+	 LGXii6+ci/PtZxvaGVD690jDcx2TjZz6LS1MJBGyHR7+wXUPhv2tZ7y/m+38QQlFuoJyO6q7d3fpIA
+	 QqJmZbZpGdHYUDgzC5EiYRy0KxVvTnTErIlxdIsga8B4TEaRwNofBscFADGJeWO2DTyOyCDRYqxjkR
+	 D5jnOd8QCW5Ik9P0Fh2ptB4lqSQOwkc+dYXDrmSrq/dX6cuBPv/zUia48ilNSa1ToA6s8nSseFFan8
+	 RKPzZiCx6bD5/d2fCRiA5MJnVW+BwVQ==
+X-KPN-MID: 33|EF+LAFmvFd0OVc24SSFECi3zav45PsBz7QHc4xahRfHqE8Zq8UJ0OIYKZ7iNd+J
+ /RuU1nvw0hKlqZV7NjPKFJxbP8hdoCQSAz7IzYHHbaCo=
+X-CMASSUN: 33|CiTcFiW5380r3pXr3ugXjKmOmyg/44DC1StAF1R6sRYDJEXewHV9PMd/ub4PiUY
+ sfd0ClA2yA4VkuXKzvulpew==
+X-KPN-VerifiedSender: Yes
+Received: from cpxoxapps-mh07 (cpxoxapps-mh07.personalcloud.so.kpn.org [10.128.135.213])
+	by mtaoutbound.kpnmail.nl (Halon) with ESMTPSA
+	id f6d98db6-ce2b-11f0-94b1-00505699eff2;
+	Sun, 30 Nov 2025 21:34:26 +0100 (CET)
+Date: Sun, 30 Nov 2025 21:34:26 +0100 (CET)
+From: Jori Koolstra <jkoolstra@xs4all.nl>
+To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
+	"frank.li@vivo.com" <frank.li@vivo.com>,
+	"slava@dubeyko.com" <slava@dubeyko.com>,
+	"skhan@linuxfoundation.org" <skhan@linuxfoundation.org>,
+	"syzbot+17cc9bb6d8d69b4139f0@syzkaller.appspotmail.com"
+ <syzbot+17cc9bb6d8d69b4139f0@syzkaller.appspotmail.com>
+Message-ID: <299926848.3375545.1764534866882@kpc.webmail.kpnmail.nl>
+In-Reply-To: <18cf065cbc331fd2f287c4baece3a33cd1447ef6.camel@ibm.com>
+References: <20251125211329.2835801-1-jkoolstra@xs4all.nl>
+ <18cf065cbc331fd2f287c4baece3a33cd1447ef6.camel@ibm.com>
+Subject: Re: [PATCH v2] hfs: replace BUG_ONs with error handling
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d9c:b0:433:7abd:96d0 with SMTP id
- e9e14a558f8ab-435b9851daemr263744155ab.3.1764517863270; Sun, 30 Nov 2025
- 07:51:03 -0800 (PST)
-Date: Sun, 30 Nov 2025 07:51:03 -0800
-In-Reply-To: <ff6e08e2-a7c7-4ebf-8f93-03e5ece9b335@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <692c67e7.a70a0220.d98e3.0172.GAE@google.com>
-Subject: Re: [syzbot] [fs?] [mm?] kernel BUG in __filemap_add_folio
-From: syzbot <syzbot+4d3cc33ef7a77041efa6@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, brauner@kernel.org, hare@suse.de, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, mcgrof@kernel.org, ssranevjti@gmail.com, 
-	syzkaller-bugs@googlegroups.com, willy@infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Priority: 3
+Importance: Normal
 
-Hello,
+Hi Viachslav,
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-kernel BUG in mpage_readahead
+Thanks for your time to write such a detailed answer. Your comments are ver=
+y useful
+to someone like me starting out in the linux kernel. I really appreciate it=
+.
 
-------------[ cut here ]------------
-kernel BUG at ./include/linux/pagemap.h:1408!
-Oops: invalid opcode: 0000 [#1] SMP KASAN NOPTI
-CPU: 1 UID: 0 PID: 18176 Comm: syz-executor317 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/25/2025
-RIP: 0010:__readahead_folio include/linux/pagemap.h:1408 [inline]
-RIP: 0010:readahead_folio include/linux/pagemap.h:1434 [inline]
-RIP: 0010:mpage_readahead+0x4ad/0x5a0 fs/mpage.c:367
-Code: 5e 41 5f c3 cc cc cc cc e8 b0 19 70 ff 48 89 ef e8 48 06 ad ff e9 54 fe ff ff 4c 8b 6c 24 18 e9 43 ff ff ff e8 94 19 70 ff 90 <0f> 0b e8 8c 19 70 ff 48 c7 c6 00 b6 80 8b 48 89 ef e8 1d 39 ba ff
-RSP: 0018:ffffc9000d92f620 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: ffffc9000d92fae8 RCX: ffffffff824c7d14
-RDX: ffff88802fe68000 RSI: ffffffff824c809c RDI: 0000000000000004
-RBP: 0000000000000004 R08: 0000000000000004 R09: 0000000000000004
-R10: 0000000000000001 R11: 0000000000000000 R12: dffffc0000000000
-R13: fffff52001b25f61 R14: 0000000000000001 R15: 1ffff92001b25f61
-FS:  0000555564bcd380(0000) GS:ffff888124f53000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f08297b0130 CR3: 0000000030a16000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- read_pages+0x1c4/0xc70 mm/readahead.c:163
- page_cache_ra_unbounded+0x66a/0xa10 mm/readahead.c:269
- do_page_cache_ra mm/readahead.c:332 [inline]
- page_cache_ra_order+0xc0b/0xf20 mm/readahead.c:542
- do_sync_mmap_readahead mm/filemap.c:3340 [inline]
- filemap_fault+0x1583/0x29a0 mm/filemap.c:3489
- __do_fault+0x10d/0x490 mm/memory.c:5281
- do_shared_fault mm/memory.c:5780 [inline]
- do_fault mm/memory.c:5854 [inline]
- do_pte_missing+0x1a6/0x3ba0 mm/memory.c:4362
- handle_pte_fault mm/memory.c:6195 [inline]
- __handle_mm_fault+0x1556/0x2aa0 mm/memory.c:6336
- handle_mm_fault+0x589/0xd10 mm/memory.c:6505
- do_user_addr_fault+0x60c/0x1370 arch/x86/mm/fault.c:1336
- handle_page_fault arch/x86/mm/fault.c:1476 [inline]
- exc_page_fault+0x64/0xc0 arch/x86/mm/fault.c:1532
- asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:618
-RIP: 0033:0x7f082970586d
-Code: 03 00 b9 03 10 12 00 45 31 c0 48 ba 80 00 00 00 00 20 00 00 48 b8 2f 64 65 76 2f 6e 75 6c 48 c7 c6 9c ff ff ff bf 01 01 00 00 <48> 89 02 48 b8 88 00 00 00 00 20 00 00 c7 00 6c 62 30 00 31 c0 e8
-RSP: 002b:00007ffff735c180 EFLAGS: 00010246
-RAX: 6c756e2f7665642f RBX: 0000000000000000 RCX: 0000000000121003
-RDX: 0000200000000080 RSI: ffffffffffffff9c RDI: 0000000000000101
-RBP: 00000000000f4240 R08: 0000000000000000 R09: 0000000000002000
-R10: 0000000000000013 R11: 0000000000000206 R12: 0000000000079470
-R13: 00007ffff735c19c R14: 00007ffff735c1b0 R15: 00007ffff735c1a0
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:__readahead_folio include/linux/pagemap.h:1408 [inline]
-RIP: 0010:readahead_folio include/linux/pagemap.h:1434 [inline]
-RIP: 0010:mpage_readahead+0x4ad/0x5a0 fs/mpage.c:367
-Code: 5e 41 5f c3 cc cc cc cc e8 b0 19 70 ff 48 89 ef e8 48 06 ad ff e9 54 fe ff ff 4c 8b 6c 24 18 e9 43 ff ff ff e8 94 19 70 ff 90 <0f> 0b e8 8c 19 70 ff 48 c7 c6 00 b6 80 8b 48 89 ef e8 1d 39 ba ff
-RSP: 0018:ffffc9000d92f620 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: ffffc9000d92fae8 RCX: ffffffff824c7d14
-RDX: ffff88802fe68000 RSI: ffffffff824c809c RDI: 0000000000000004
-RBP: 0000000000000004 R08: 0000000000000004 R09: 0000000000000004
-R10: 0000000000000001 R11: 0000000000000000 R12: dffffc0000000000
-R13: fffff52001b25f61 R14: 0000000000000001 R15: 1ffff92001b25f61
-FS:  0000555564bcd380(0000) GS:ffff888124f53000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f08297b0130 CR3: 0000000030a16000 CR4: 00000000003526f0
+> > @@ -264,9 +264,9 @@ static int hfs_remove(struct inode *dir, struct den=
+try *dentry)
+> >  =09=09return res;
+> >  =09clear_nlink(inode);
+> >  =09inode_set_ctime_current(inode);
+> > -=09hfs_delete_inode(inode);
+> > +=09res =3D hfs_delete_inode(inode);
+> >  =09mark_inode_dirty(inode);
+> > -=09return 0;
+> > +=09return res;
+>=20
+> This modification doesn't look good, frankly speaking. The hfs_delete_ino=
+de()
+> will return error code pretty at the beginning of execution. So, it doesn=
+'t make
+> sense to call mark_inode_dirty() then. However, we already did a lot of a=
+ctivity
+> before hfs_delete_inode() call:
+>=20
+> static int hfs_remove(struct inode *dir, struct dentry *dentry)
+> {
+> =09struct inode *inode =3D d_inode(dentry);
+> =09int res;
+>=20
+> =09if (S_ISDIR(inode->i_mode) && inode->i_size !=3D 2)
+> =09=09return -ENOTEMPTY;
+> =09res =3D hfs_cat_delete(inode->i_ino, dir, &dentry->d_name);
+> =09if (res)
+> =09=09return res;
+> =09clear_nlink(inode);
+> =09inode_set_ctime_current(inode);
+> =09hfs_delete_inode(inode);
+> =09mark_inode_dirty(inode);
+> =09return 0;
+> }
+>=20
+> So, not full executing of hfs_delete_inode() makes situation really bad.
+> Because, we deleted record from Catalog File but rejected of execution of
+> hfs_delete_inode() functionality.
+>=20
+> I am thinking that, maybe, better course of action is to check HFS_SB(sb)=
+-
+> >folder_count and HFS_SB(sb)->file_count at the beginning of hfs_remove()=
+:
+>=20
+> static int hfs_remove(struct inode *dir, struct dentry *dentry)
+> {
+> =09struct inode *inode =3D d_inode(dentry);
+> =09int res;
+>=20
+> =09if (S_ISDIR(inode->i_mode) && inode->i_size !=3D 2)
+> =09=09return -ENOTEMPTY;
+>=20
+> <<-- Check it here and return error
+>=20
+> =09res =3D hfs_cat_delete(inode->i_ino, dir, &dentry->d_name);
+> =09if (res)
+> =09=09return res;
+> =09clear_nlink(inode);
+> =09inode_set_ctime_current(inode);
+> =09hfs_delete_inode(inode);
+> =09mark_inode_dirty(inode);
+> =09return 0;
+> }
+>=20
 
+That sounds good. But maybe we should do the check even before the ENOTEMPT=
+Y check,
+as corruption detection is perhaps more interesting than informing that the=
+ operation
+cannot complete because of some other (less acute) reason.
 
-Tested on:
+> In such case, we reject to make the removal, to return error and no activ=
+ity
+> will happened. Let's move the check from hfs_delete_inode() to hfs_remove=
+(). We
+> can ignore hfs_create() [1] and hfs_mkdir() [2] because these methods sim=
+ply
+> processing erroneous situation.
+>=20
 
-commit:         6bda50f4 Merge tag 'mips-fixes_6.18_2' of git://git.ke..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11857514580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f4a1ecf59be91960
-dashboard link: https://syzkaller.appspot.com/bug?extid=4d3cc33ef7a77041efa6
-compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=10dc7cb4580000
+One thing we can also do is what happens in ext4. We introduce an errors=3D=
+ mount option
+which can be set to readonly, panic, or continue depending on the desired b=
+ehavior in
+case of serious error (like corruption). I already implemented this for min=
+ix fs, and
+the patch was fine. However, the people responsible for minix felt that it =
+was more
+sensible to deprecate minix and write a FUSE driver for it. [1]
 
+> > +#define EFSCORRUPTED=09EUCLEAN=09=09/* Filesystem is corrupted */
+>=20
+> I don't think that rename existing error code is good idea. Especially, b=
+ecause
+> we will not need the newly introduce error code's name. Please, see my co=
+mments
+> below.
+>=20
+
+For context, I took this from ext4.
+
+> > --- a/fs/hfs/inode.c
+> > +++ b/fs/hfs/inode.c
+> > @@ -186,16 +186,22 @@ struct inode *hfs_new_inode(struct inode *dir, co=
+nst struct qstr *name, umode_t
+> >  =09s64 next_id;
+> >  =09s64 file_count;
+> >  =09s64 folder_count;
+> > +=09int err =3D -ENOMEM;
+> > =20
+> >  =09if (!inode)
+> > -=09=09return NULL;
+> > +=09=09goto out_err;
+> > +
+> > +=09err =3D -EFSCORRUPTED;
+>=20
+> In 99% of cases, this logic will be called for file system internal logic=
+ when
+> mount was successful. So, file system volume is not corrupted. Even if we
+> suspect that volume is corrupted, then potential reason could be failed r=
+ead (-
+> EIO). It needs to run FSCK tool to be sure that volume is really corrupte=
+d.
+>=20
+
+I get your point, maybe just warn for possible corruption?
+
+> > =20
+> >  =09mutex_init(&HFS_I(inode)->extents_lock);
+> >  =09INIT_LIST_HEAD(&HFS_I(inode)->open_dir_list);
+> >  =09spin_lock_init(&HFS_I(inode)->open_dir_lock);
+> >  =09hfs_cat_build_key(sb, (btree_key *)&HFS_I(inode)->cat_key, dir->i_i=
+no, name);
+> >  =09next_id =3D atomic64_inc_return(&HFS_SB(sb)->next_id);
+> > -=09BUG_ON(next_id > U32_MAX);
+> > +=09if (next_id > U32_MAX) {
+> > +=09=09pr_err("next CNID exceeds limit =E2=80=94 filesystem corrupted. =
+It is recommended to run fsck\n");
+>=20
+> File system volume is not corrupted here. Because, it is only error of fi=
+le
+> system logic. And we will not store this not correct number to the volume=
+,
+> anyway. At minimum, we should protect the logic from doing this. And it d=
+oesn't
+> need to recommend to run FSCK tool here.
+
+What if e.g. next_id is not U32_MAX, but some other slightly smaller value,=
+ that's still
+not possible, correct? And then we find out not at mount time (at least not=
+ right now).
+Maybe we should just check at mount time and when the mdb is written if the=
+ values like
+file/folder_count and next_id make any sense. I think they indicate corrupt=
+ion even for
+much smaller values than U32_MAX, but I could not really distill that.
+
+If we have this, then the other BUG_ONs should not indicate corruption but =
+implementation
+logic issues. Correct?
+
+>=20
+> Probably, it makes sense to decrement erroneous back.
+>=20
+> Potentially, if we have such situation, maybe, it makes sense to consider=
+ to
+> make file system READ-ONLY. But I am not fully sure.
+>=20
+
+See my comment above.
+
+Thanks,
+Jori.
+
+[1] https://lkml.org/lkml/2025/10/28/1786
 
