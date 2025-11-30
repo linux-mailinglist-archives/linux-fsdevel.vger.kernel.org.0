@@ -1,100 +1,196 @@
-Return-Path: <linux-fsdevel+bounces-70273-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70274-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90FACC94B71
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Nov 2025 05:24:05 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C59EC94B7B
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Nov 2025 05:38:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0E1F54E17B9
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Nov 2025 04:24:01 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B41D834549D
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Nov 2025 04:38:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EEB823E334;
-	Sun, 30 Nov 2025 04:23:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32E0B21578D;
+	Sun, 30 Nov 2025 04:38:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="eKKTxaA2"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h0csajpk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39E2C1AAE13;
-	Sun, 30 Nov 2025 04:23:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA91B1A76BB
+	for <linux-fsdevel@vger.kernel.org>; Sun, 30 Nov 2025 04:38:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764476634; cv=none; b=omYCaLBIayAITznrB/YL7lDRoMNx3fDs2a1LfYY5HtvtdIswlmHywQGstYGsIStASSuT208gXxZeIsHReZHIQqDlRu/I+4IM6+osK/doBb9a3JZvX9znpodsb74t2vWShVj9ylUt2BTZCsvQLbJssRQQT7iV5yE0QWQdHMH7/Gc=
+	t=1764477513; cv=none; b=B790wbC23wWT+zgk/pe1WvLuVFQK4B5LXyV9aOCxVz0l2EgUy2UNFwCTujRKvVuHUMZYpKEQfmwmmXt4Q0MpyXeqqpoV7oORIjvIXM50fecm53g3Wbhh6N/4k6008CZ9epCX6LeTrTQZ/OJ+F72Tb4ZjqXwhQlkQtWVMRKCn0Co=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764476634; c=relaxed/simple;
-	bh=hnR5Dz0QikR5HczIuSiGehBOvUQvy0paTIbwbsOVlIo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iv0r3QI0C4bwNoqBSnE83zWme8/2gFDMmHeSCIULDjEFMg9ThYegRHtE+ujPDSaLyNeEoPn0/uGAuXA8/XVWU9cn8Ze0tHYs5xgTgSZsv4IBuKxOxLzAjHJUf3PPaTWSL1VNTwcAHchmJR3jT19IUshLJTPBOqmONnSALiBDgCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=eKKTxaA2; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=C90osfOQN3ODna9AT6v7fUkP7V1+3pgvvE8/tqbHiCQ=; b=eKKTxaA2+V0HCHPyaG83vtSHbs
-	08rCqXx+oZh/p7ZPjH6eSe7RZPWLY9W9fJvE5NdyW1wUbFXVUJ1qGkHHlATfdIMVDp3Vf4QAalXh5
-	mJcwm6zBMo5z0sclEoGvDjkpASAHlSc7Gx4NfNOCsTZXyWoFxtm/PMPQCnh0lyLVzyq2jtkOh3dU8
-	q7RYkg53i0NVDxyNOBAZL34gL8y8IZAx8F3xlSYCmgYCAUZS9BIGpP3hfpRiTMB9itl+995pnvS13
-	fDc0OM8+y4xwFaSs+YML1rx1RYZ2mnXvV5mDpvlSsIiMe7+xg+QVeo0awOCuW28IgaXxeGiM/YHMI
-	xa//LhQg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.99 #2 (Red Hat Linux))
-	id 1vPYyb-0000000Dy0n-1Le3;
-	Sun, 30 Nov 2025 04:23:57 +0000
-Date: Sun, 30 Nov 2025 04:23:57 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Song Liu <song@kernel.org>
-Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-security-module@vger.kernel.org, ast@kernel.org,
-	daniel@iogearbox.net, andrii@kernel.org, kernel-team@meta.com,
-	brauner@kernel.org, jack@suse.cz, paul@paul-moore.com,
-	jmorris@namei.org, serge@hallyn.com
-Subject: Re: [PATCH bpf-next 2/3] bpf: Add bpf_kern_path and bpf_path_put
- kfuncs
-Message-ID: <20251130042357.GP3538@ZenIV>
-References: <20251127005011.1872209-1-song@kernel.org>
- <20251127005011.1872209-3-song@kernel.org>
+	s=arc-20240116; t=1764477513; c=relaxed/simple;
+	bh=WQ94DebAPuz3wOX1RNLK86K8LFdn0rFvCp8UOMGIZLc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OuKyVWF2TmuBe6BwMFK0MkfaFtNLxY/Vs1N8N6CS5VXARBNrqOthEW19Wv695NfhHj1D2nAcf5YqNwtjSZ0E+VwPjKh9GdZlXJt4jQWGH8WXOZeuGD8ONbRxMpdVyYoera4CwiiVdNiavILm8AJJFZRZB9nve1szNbsid70jUvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h0csajpk; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-b735487129fso433917466b.0
+        for <linux-fsdevel@vger.kernel.org>; Sat, 29 Nov 2025 20:38:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1764477510; x=1765082310; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Wm2qs060enFDQ6DOh1yWGpw1oXM6AX8D1bOSCPnDDdI=;
+        b=h0csajpk1Xo7dlNkjPrjrTQkECKOAAMbOjM2eW7Un94pSngiL4FAIITuTXgGIXvFHX
+         hwfa8oCJkSpaLDLJmstitETOcxC8qaCpbo1zwYqYb+55fAnhTP6B8Hx5g6Nphi+2fjq/
+         9VG6U4qcJoqe8Gp2wZu1Dzvhr0tH5T/XoYLabAEMpMLl24bo8C9BbU7C+aJui4Pdw17w
+         ppTYg34CLnGY/mtWXy+NlqSbZ9+fNd8Oemd1FaQEuPVkih3fvB/4DROzpG9szFbRm2zd
+         DJZ5eLSzYXJi3DnGe8DO4VhbbejFtyuhevAKvq21q56h9wPAByDx0rOE2Sv8PExGCtlB
+         D4tg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764477510; x=1765082310;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=Wm2qs060enFDQ6DOh1yWGpw1oXM6AX8D1bOSCPnDDdI=;
+        b=we6LbSx/NOpbFn31NYKxVZRssFOBRK46kLCfIFBIHYsoEzUelEqjlz23+W2vTOXeW4
+         XLsob8E87vlq6KNiSmQWURiAmIbQc3y61a3kM51aaiGa5PggbUgsL6pQhzCt5Pbnwciz
+         xP9r6hTO2a0cUT6OCiIgRPK+47awqJfSLQk6odeaFPjgFWcwPT5mfm13y3mbhiLZimH2
+         1ps9RzYAoKv93byJ6256IKEdXk5DdIVTJU+xDHRV2c7Txhc1TuhuRpq6HAF8q1r92HBX
+         BOge5QFP24Pk7TLNELrVKY/VdPqksFz2b8fB3dDpt93i6d7cbqM8lCam5RoPJpI73sKN
+         sjBQ==
+X-Gm-Message-State: AOJu0Ywdl8BSprKpWMIGsaWTyPLtG403Q0yrvPDIqD4qODd7AH6LRGUi
+	svTB9P34yTDTVMyxg6tI0qJpAlBESDax8iRLchPAz9ZQBrfxVzcDiOQfM93PMF4PBurj4vNPHb5
+	yyFfggRhdQW5O+o1tWfm8uUtcrgXefQ0=
+X-Gm-Gg: ASbGncv7FThE0flKhu6EuTPEGRl2w8De6EEGJp5Dnu+QM8H+3mrDx2WQ1rSxiiK/YAP
+	TlQ0E6qm5q5VlPxJmVj4A3aqz20Vty/tF5e8WOZ+fUvTXj7XPy76P+gZr+Cv/1aHti6Bd/nOsHc
+	J2oRiTEF9Iyfs4rzO80EoZDhS6IuCSXwRjhhHsj/U7WCQl7k3yWZuzLSTG5nOnhg+R9zf4e3z4A
+	O04rXjX54zAaxqAlAO1dWUlKsM+chGgpStT2o3vwwh6hBZhAc9TzDtPL2rEAyw074bDf2/wpQA8
+	aNhlq+HEAG3pePpHp7kL60+oNA==
+X-Google-Smtp-Source: AGHT+IHbYJJh4P+1boLJ9Cb2u+xppWb2pzCo2jr/G5F8t7wwa3JYRi6C75RfispLRGk3OreB5sokjTdCHuJDPIxemp0=
+X-Received: by 2002:a17:907:2da8:b0:b72:d8da:7aac with SMTP id
+ a640c23a62f3a-b7671a2a2f4mr3812556666b.56.1764477510024; Sat, 29 Nov 2025
+ 20:38:30 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251127005011.1872209-3-song@kernel.org>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+References: <20251129170142.150639-1-viro@zeniv.linux.org.uk>
+ <20251129170142.150639-16-viro@zeniv.linux.org.uk> <CAGudoHFjycOW1ROqsm1_8j47AGawjXC3kVctvWURFvSDvhq2jg@mail.gmail.com>
+ <20251130040622.GO3538@ZenIV>
+In-Reply-To: <20251130040622.GO3538@ZenIV>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Sun, 30 Nov 2025 05:38:18 +0100
+X-Gm-Features: AWmQ_blWc7hF27o9Yq5vPwV7AFjbnDQnKuyJsgBujIsM5G8K8ZPMeeXZ2v6eirg
+Message-ID: <CAGudoHEMjWCOLEp+TdKLjuguHEKn9+e+aZwfKyK_sYpTZY8HRg@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 15/18] struct filename: saner handling of long names
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org, 
+	brauner@kernel.org, jack@suse.cz, paul@paul-moore.com, axboe@kernel.dk, 
+	audit@vger.kernel.org, io-uring@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 26, 2025 at 04:50:06PM -0800, Song Liu wrote:
-> Add two new kfuncs to fs/bpf_fs_kfuncs.c that wrap kern_path() for use
-> by BPF LSM programs:
-> 
-> bpf_kern_path():
-> - Resolves a pathname string to a struct path
+On Sun, Nov 30, 2025 at 5:06=E2=80=AFAM Al Viro <viro@zeniv.linux.org.uk> w=
+rote:
+>
+> On Sat, Nov 29, 2025 at 06:33:22PM +0100, Mateusz Guzik wrote:
+>
+> > This makes sizeof struct filename 152 bytes. At the same time because
+> > of the SLAB_HWCACHE_ALIGN flag, the obj is going to take 192 bytes.
+> >
+> > I don't know what would be the nice way to handle this in Linux, but
+> > as is this is just failing to take advantage of memory which is going
+> > to get allocated anyway.
+> >
+> > Perhaps the macro could be bumped to 168 and the size checked with a
+> > static assert on 64 bit platforms?
+>
+> Could be done, even though I wonder how much would that really save.
+>
 
-> These kfuncs enable BPF LSM programs to resolve pathnames provided by
-> hook arguments (e.g., dev_name from sb_mount) and validate or inspect
-> the resolved paths. The verifier enforces proper resource management
-> through acquire/release tracking.
+By any chance are you angling for that idea to keep struct filename on
+the stack and that's why the size is 128?
 
-Oh, *brilliant*.  Thank you for giving a wonderful example of the reasons
-why this is fundamentally worthless.
+With struct nameidata already on the stack and taking 240 bytes,
+adding the 152 bytes would result in 392 bytes in total. I would argue
+that's prohibitive, at the same time lowering the length to something
+like 64 already makes gcc not fit with some of its lookups.
 
-OK, your "BPF LSM" has been called and it got that dev_name.  You decide
-that you want to know what it resolves to (which, BTW, requries a really
-non-trivial amount of parsing other arguments - just to figure out whether
-it *is* a pathname of some sort).  Thanks to your shiny new kfuncs you
-can do that!  You are a proud holder of mount/dentry pair.  You stare at
-those and decide whether it's OK to go on.  Then you... drop that pair
-and let mount(2) proceed towards the point where it will (if you parsed
-the arguments correctly) repeat that pathname resolution and get a mount/dentry
-pair of its own, that may very well be different from what you've got the
-first time around.
+Anyway, I did look into something like this way back and some programs
+really liked their *long* paths (way past 128).
 
-Your primitive is a walking TOCTOU bug - it's impossible to use safely.
+Some stats I recently collected on FreeBSD while building packages:
+dtrace -n 'vfs:namei:lookup:entry { @ =3D
+lquantize(strlen(stringof(arg1)), 0, 384, 8); }'
 
-NAKed-by: Al Viro <viro@zeniv.linux.org.uk>
+ value  ------------- Distribution ------------- count
+             < 0 |                                         0
+               0 |@@@@@@@@                                 18105105
+               8 |@@@@@@@                                  16360012
+              16 |@@@@@@@@@                                21313430
+              24 |@@@@@@                                   15000426
+              32 |@@@                                      6450202
+              40 |@@                                       4209166
+              48 |@                                        2533298
+              56 |@                                        1611506
+              64 |@                                        1203825
+              72 |                                         1068207
+              80 |                                         877158
+              88 |                                         592192
+              96 |                                         489958
+             104 |                                         709757
+             112 |                                         925775
+             120 |                                         1041627
+             128 |@                                        1315123
+             136 |                                         664687
+             144 |                                         276673
+             152 |                                         150870
+             160 |                                         82661
+             168 |                                         40630
+             176 |                                         26693
+             184 |                                         15112
+             192 |                                         7276
+             200 |                                         5773
+             208 |                                         2462
+             216 |                                         1679
+             224 |                                         1150
+             232 |                                         1301
+             240 |                                         1652
+             248 |                                         659
+             256 |                                         464
+             264 |                                         0
+
+> > Or some magic based on reported
+> > cache line size.
+>
+> No comments.  At least, none suitable for polite company.
+>
+> BTW, one thing that might make sense is storing the name length in there.=
+..
+
+(gdb) ptype /o struct filename
+/* offset      |    size */  type =3D struct filename {
+/*      0      |       8 */    const char *name;
+/*      8      |       8 */    const char *uptr;
+/*     16      |       4 */    atomic_t refcnt;
+/* XXX  4-byte hole      */
+/*     24      |       8 */    struct audit_names *aname;
+/*     32      |       0 */    const char iname[];
+
+                               /* total size (bytes):   32 */
+                             }
+
+If the length start getting stored it can presumably go into the hole.
+
+Otherwise is there a reason to not rearrange this? The array could be
+only aligned to 4 bytes, on archs which are fine with misaligned
+access anyway. That's 4 extra bytes recovered.
+
+All that said, now that I look at it, assuming struct filename will
+keep being allocated from slub, why not make it 256 bytes? This gives
+232 bytes for the name buffer (covering almost all of the looups I ran
+into anyway), archs with 128 byte cacheline are sorted out and one can
+trivially unconditionally static assert on the total size being 256
+bytes, all while not having space which is never going to be used.
 
