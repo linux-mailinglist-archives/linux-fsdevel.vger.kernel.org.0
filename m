@@ -1,271 +1,223 @@
-Return-Path: <linux-fsdevel+bounces-70282-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70283-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4053C95483
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Nov 2025 21:34:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23B12C95536
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Nov 2025 23:06:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7EF7F4E06A3
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Nov 2025 20:34:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF4C83A2217
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Nov 2025 22:06:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B0F52C21DB;
-	Sun, 30 Nov 2025 20:34:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A19FE248880;
+	Sun, 30 Nov 2025 22:06:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b="Tdi5FGDo"
+	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="hy5/vAJ7";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="y272tXC1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from ewsoutbound.kpnmail.nl (ewsoutbound.kpnmail.nl [195.121.94.184])
+Received: from flow-a2-smtp.messagingengine.com (flow-a2-smtp.messagingengine.com [103.168.172.137])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 828532C15A6
-	for <linux-fsdevel@vger.kernel.org>; Sun, 30 Nov 2025 20:34:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.121.94.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3910C3B2A0;
+	Sun, 30 Nov 2025 22:06:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.137
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764534878; cv=none; b=bRqWcKdlL0MEhqRbWxyGW+TcqJNNMwxUSXB3NvycpxnNRatQBh5Cb5Zy1Bh0lehr7hgooT5iR3KVrLsZQMAGRfIyoXdQ4ApLYsEBE4SJsZ+t04pml5wT8i4xXxeKJdGRLLtmdW1yJgE5ykI0+ym5nWyPRKHVGayPeZv4MTBhOGM=
+	t=1764540402; cv=none; b=RGzH1OxeY6nbEXzPkR7hFcRZlqmnjmAdAZZIk/zPmaeKugglFqVw1mIX0LXUNIj5u7ORkDPOnOnfhwMprNwRM2S6wXzbs5mxrvtb6s6WfiumciEmXPG9xuXtPjyyc4/Qyl9eJFSsmYxN9VYq95teKLG90Fz1z7blXVRBYLHi5Gs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764534878; c=relaxed/simple;
-	bh=xro5UKYy0RNzL2qpVpF3XVNttjBTY3SWgP1GzpnBxyo=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=AiHbtRkVII+cxAYCn3rSejMsBSUUQ+KLnkjImQk64eTdVBR79/FO3vafzntWxifx42Ch5j54wsZHnxZJ87BztGXKVzC/ulwhsE28yn62QvfSn3X0mwp/zcaTVW13vMSTaXXDo5Vg0GsS+Vn6QMSnPlkjC5Dy5idIcFVSPvvfTdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xs4all.nl; spf=pass smtp.mailfrom=xs4all.nl; dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b=Tdi5FGDo; arc=none smtp.client-ip=195.121.94.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xs4all.nl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xs4all.nl
-X-KPN-MessageId: 781b5565-ce2c-11f0-9e68-005056994fde
-Received: from mta.kpnmail.nl (unknown [10.31.161.191])
-	by ewsoutbound.so.kpn.org (Halon) with ESMTPS
-	id 781b5565-ce2c-11f0-9e68-005056994fde;
-	Sun, 30 Nov 2025 21:38:03 +0100 (CET)
-Received: from mtaoutbound.kpnmail.nl (unknown [10.128.135.189])
-	by mta.kpnmail.nl (Halon) with ESMTP
-	id f6ea55d5-ce2b-11f0-83ca-00505699891e;
-	Sun, 30 Nov 2025 21:34:26 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=xs4all.nl; s=xs4all01;
-	h=content-type:mime-version:subject:message-id:to:from:date;
-	bh=dpEdZTgrTK01HOPuVCxKo1agm0EEBzAi08O/K5qLJlw=;
-	b=Tdi5FGDo2+MUGWldisAQtP0ngJdzMGQDlrw71FnNbHsL3lr9LQ+PIdNjP1jg1AER45RL80UQKZ61r
-	 LGXii6+ci/PtZxvaGVD690jDcx2TjZz6LS1MJBGyHR7+wXUPhv2tZ7y/m+38QQlFuoJyO6q7d3fpIA
-	 QqJmZbZpGdHYUDgzC5EiYRy0KxVvTnTErIlxdIsga8B4TEaRwNofBscFADGJeWO2DTyOyCDRYqxjkR
-	 D5jnOd8QCW5Ik9P0Fh2ptB4lqSQOwkc+dYXDrmSrq/dX6cuBPv/zUia48ilNSa1ToA6s8nSseFFan8
-	 RKPzZiCx6bD5/d2fCRiA5MJnVW+BwVQ==
-X-KPN-MID: 33|EF+LAFmvFd0OVc24SSFECi3zav45PsBz7QHc4xahRfHqE8Zq8UJ0OIYKZ7iNd+J
- /RuU1nvw0hKlqZV7NjPKFJxbP8hdoCQSAz7IzYHHbaCo=
-X-CMASSUN: 33|CiTcFiW5380r3pXr3ugXjKmOmyg/44DC1StAF1R6sRYDJEXewHV9PMd/ub4PiUY
- sfd0ClA2yA4VkuXKzvulpew==
-X-KPN-VerifiedSender: Yes
-Received: from cpxoxapps-mh07 (cpxoxapps-mh07.personalcloud.so.kpn.org [10.128.135.213])
-	by mtaoutbound.kpnmail.nl (Halon) with ESMTPSA
-	id f6d98db6-ce2b-11f0-94b1-00505699eff2;
-	Sun, 30 Nov 2025 21:34:26 +0100 (CET)
-Date: Sun, 30 Nov 2025 21:34:26 +0100 (CET)
-From: Jori Koolstra <jkoolstra@xs4all.nl>
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc: "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
-	"frank.li@vivo.com" <frank.li@vivo.com>,
-	"slava@dubeyko.com" <slava@dubeyko.com>,
-	"skhan@linuxfoundation.org" <skhan@linuxfoundation.org>,
-	"syzbot+17cc9bb6d8d69b4139f0@syzkaller.appspotmail.com"
- <syzbot+17cc9bb6d8d69b4139f0@syzkaller.appspotmail.com>
-Message-ID: <299926848.3375545.1764534866882@kpc.webmail.kpnmail.nl>
-In-Reply-To: <18cf065cbc331fd2f287c4baece3a33cd1447ef6.camel@ibm.com>
-References: <20251125211329.2835801-1-jkoolstra@xs4all.nl>
- <18cf065cbc331fd2f287c4baece3a33cd1447ef6.camel@ibm.com>
-Subject: Re: [PATCH v2] hfs: replace BUG_ONs with error handling
+	s=arc-20240116; t=1764540402; c=relaxed/simple;
+	bh=H286xqveeebZVFlOJOqpEwPmE65EXLOG8U9NM8Xrtdo=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=fwfqN3gFzr4Xu90ky6wvZw52VsseSGe4d290cNcfWsMnEs8Fm3/4Z7FPUD1Unv5JOdQ4OY1x72ed68j0ssGHEmoSIjA+ji/lWkOzrtzUKdjdLzsLTyo+dPzviyvc6Pz1PzTkUiJLQhNlmySI8/Cv4QHnSM/WnG43hm5oDJmY468=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=hy5/vAJ7; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=y272tXC1; arc=none smtp.client-ip=103.168.172.137
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
+Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
+	by mailflow.phl.internal (Postfix) with ESMTP id 450E51380024;
+	Sun, 30 Nov 2025 17:06:38 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-10.internal (MEProxy); Sun, 30 Nov 2025 17:06:38 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to; s=fm1; t=
+	1764540398; x=1764547598; bh=cUn5L4iU3G/E8nSDoCgXMFvcb9eqiqLJ+fQ
+	AZ+yuHdY=; b=hy5/vAJ7VDnRhPu4NAEcVVv5VsCE99D675b1O637LQNqU1hryk/
+	A/EwucRaao1fI6D4r6ZaOKqt2g6bmwWC4pZER7WFg+rFCQJU+ghwRrHn8QdyHh7U
+	wWrBMhq2Gz88NaUam/Uq4qYHiRRHRS43Kz0SBZ7JqhyEsObMvhqjQEB18G2yKbv8
+	yZo7Nck5pHkxnO0T5Eqt9hVBjZXdX2JWgv8T+9wL+ZEOTb7ZQl7RL2SWsVPnG30f
+	k31TDgRK0oxDUB7RDk6Gn1QUd+OOIrsHKSLwbo2u8ivxkF5LYs296RGBl7CItxJS
+	i7rfTNDNyp5c/ImAnGydvwA9he1U6kda60Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1764540398; x=
+	1764547598; bh=cUn5L4iU3G/E8nSDoCgXMFvcb9eqiqLJ+fQAZ+yuHdY=; b=y
+	272tXC1TzhAQ6gKrWtHDyuZvjT0XwA6swylW6W+atTM93qeEOrbVAHzYzJLoqQeC
+	4GAyjyJmLnqETLkstn0asGU2zEK6cBwQ75RawoX+ZjBG3onwhYv5SEaKOY3NEfJ/
+	D/rjR4jx39PlpAy2UFJsDkDrb08XtOsIIdBZHG8UuB3/RKc56tcM/hqKQjkmP5z+
+	y84WFGJ+dLJbBCHcjOJEFOiqpy2sCoU8Ex1CT+3+XVkc0fevdIyFWHPN4Kh5wI7/
+	Tm4Rh0LpFY6U1lvMP5w4Cq5Lev0WWHd6eNXh//JI9Y07T14zV4IqrdwpubzOXJVu
+	uBLOYqtxMytIs/omBPIBg==
+X-ME-Sender: <xms:7L8saTWcEafKZ2FpjadU01KY8PuBlI8D2__CoFf7AH7DE8vVThGARA>
+    <xme:7L8saS2Hg_Agw2b_UqsdZapIuyLwRvHe8PG9OhPVIF9JtTRGry871lIsum6vmo9Tm
+    NmTP9dpkW6ErCDzE1FP_5HkWztCLYM1_0aFREAH-RdZyk9E>
+X-ME-Received: <xmr:7L8saX9eeiVROyJDWFcHpO0l-SnDtbn3IMZ8yovZ9u11OJLcVhVEVwx3pE40OdgljGfKwHLnp8Z34cVEftMbygtc7KphNEIDVeVZ9U-Me9Og>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvheehleekucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurheptgfgggfhvfevufgjfhffkfhrsehtqhertddttdejnecuhfhrohhmpefpvghilheu
+    rhhofihnuceonhgvihhlsgesohifnhhmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnh
+    epvdeuteelkeejkeevteetvedtkeegleduieeftdeftefgtddtleejgfelgfevffeinecu
+    ffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurf
+    grrhgrmhepmhgrihhlfhhrohhmpehnvghilhgssehofihnmhgrihhlrdhnvghtpdhnsggp
+    rhgtphhtthhopeeguddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepvhhirhhose
+    iivghnihhvrdhlihhnuhigrdhorhhgrdhukhdprhgtphhtthhopehsvghlihhnuhigsehv
+    ghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqgihfshesvhhgvg
+    hrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhunhhiohhnfhhssehv
+    ghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqshgvtghurhhith
+    ihqdhmohguuhhlvgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhn
+    uhigqdhnfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugi
+    dqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhu
+    gidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlih
+    hnuhigqdgtihhfshesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:7L8sabv1hwad4uB-c2PQ4ZcwG4YZgTowtFHZGh4S1mV2rmjavl4Jow>
+    <xmx:7L8saVp4ytL8p8tJltTf_fg3sJ9L92UyFGAW_-zyaFMYURI9cMq0oQ>
+    <xmx:7L8saTBNO0Qq7t2Rk4de2_ZalprfLHw8QVmBaPJTovyRZMtUqf011w>
+    <xmx:7L8saf__QCw4QViuhSyQmGZsduckUhwXnncrojwu0fWg0rrtz3NkxQ>
+    <xmx:7r8saVuqvLl2cKFnnBlIg06ge-4Sz-lh_rIp7ez61MtsKGFAbg0Db5GS>
+Feedback-ID: iab3e480c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
+ 30 Nov 2025 17:06:26 -0500 (EST)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Priority: 3
-Importance: Normal
+From: NeilBrown <neilb@ownmail.net>
+To: "Alexander Viro" <viro@zeniv.linux.org.uk>,
+ "Christian Brauner" <brauner@kernel.org>, "Val Packett" <val@packett.cool>
+Cc: "Amir Goldstein" <amir73il@gmail.com>, "Jan Kara" <jack@suse.cz>,
+ linux-fsdevel@vger.kernel.org, "Jeff Layton" <jlayton@kernel.org>,
+ "Chris Mason" <clm@fb.com>, "David Sterba" <dsterba@suse.com>,
+ "David Howells" <dhowells@redhat.com>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ "Danilo Krummrich" <dakr@kernel.org>, "Tyler Hicks" <code@tyhicks.com>,
+ "Miklos Szeredi" <miklos@szeredi.hu>,
+ "Chuck Lever" <chuck.lever@oracle.com>,
+ "Olga Kornievskaia" <okorniev@redhat.com>,
+ "Dai Ngo" <Dai.Ngo@oracle.com>, "Namjae Jeon" <linkinjeon@kernel.org>,
+ "Steve French" <smfrench@gmail.com>,
+ "Sergey Senozhatsky" <senozhatsky@chromium.org>,
+ "Carlos Maiolino" <cem@kernel.org>,
+ "John Johansen" <john.johansen@canonical.com>,
+ "Paul Moore" <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>,
+ "Serge E. Hallyn" <serge@hallyn.com>,
+ "Stephen Smalley" <stephen.smalley.work@gmail.com>,
+ "Ondrej Mosnacek" <omosnace@redhat.com>,
+ "Mateusz Guzik" <mjguzik@gmail.com>,
+ "Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>,
+ "Stefan Berger" <stefanb@linux.ibm.com>,
+ "Darrick J. Wong" <djwong@kernel.org>, linux-kernel@vger.kernel.org,
+ netfs@lists.linux.dev, ecryptfs@vger.kernel.org,
+ linux-nfs@vger.kernel.org, linux-unionfs@vger.kernel.org,
+ linux-cifs@vger.kernel.org, linux-xfs@vger.kernel.org,
+ linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+Subject: [PATCH] fuse: fix conversion of fuse_reverse_inval_entry() to
+ start_removing()
+In-reply-to: <6713ea38-b583-4c86-b74a-bea55652851d@packett.cool>
+References: <20251113002050.676694-1-neilb@ownmail.net>,
+ <20251113002050.676694-7-neilb@ownmail.net>,
+ <6713ea38-b583-4c86-b74a-bea55652851d@packett.cool>
+Date: Mon, 01 Dec 2025 09:06:18 +1100
+Message-id: <176454037897.634289.3566631742434963788@noble.neil.brown.name>
+Reply-To: NeilBrown <neil@brown.name>
 
-Hi Viachslav,
 
-Thanks for your time to write such a detailed answer. Your comments are ver=
-y useful
-to someone like me starting out in the linux kernel. I really appreciate it=
-.
+From: NeilBrown <neil@brown.name>
 
-> > @@ -264,9 +264,9 @@ static int hfs_remove(struct inode *dir, struct den=
-try *dentry)
-> >  =09=09return res;
-> >  =09clear_nlink(inode);
-> >  =09inode_set_ctime_current(inode);
-> > -=09hfs_delete_inode(inode);
-> > +=09res =3D hfs_delete_inode(inode);
-> >  =09mark_inode_dirty(inode);
-> > -=09return 0;
-> > +=09return res;
->=20
-> This modification doesn't look good, frankly speaking. The hfs_delete_ino=
-de()
-> will return error code pretty at the beginning of execution. So, it doesn=
-'t make
-> sense to call mark_inode_dirty() then. However, we already did a lot of a=
-ctivity
-> before hfs_delete_inode() call:
->=20
-> static int hfs_remove(struct inode *dir, struct dentry *dentry)
-> {
-> =09struct inode *inode =3D d_inode(dentry);
-> =09int res;
->=20
-> =09if (S_ISDIR(inode->i_mode) && inode->i_size !=3D 2)
-> =09=09return -ENOTEMPTY;
-> =09res =3D hfs_cat_delete(inode->i_ino, dir, &dentry->d_name);
-> =09if (res)
-> =09=09return res;
-> =09clear_nlink(inode);
-> =09inode_set_ctime_current(inode);
-> =09hfs_delete_inode(inode);
-> =09mark_inode_dirty(inode);
-> =09return 0;
-> }
->=20
-> So, not full executing of hfs_delete_inode() makes situation really bad.
-> Because, we deleted record from Catalog File but rejected of execution of
-> hfs_delete_inode() functionality.
->=20
-> I am thinking that, maybe, better course of action is to check HFS_SB(sb)=
+The recent conversion of fuse_reverse_inval_entry() to use
+start_removing() was wrong.
+As Val Packett points out the original code did not call ->lookup
+while the new code does.  This can lead to a deadlock.
+
+Rather than using full_name_hash() and d_lookup() as the old code
+did, we can use try_lookup_noperm() which combines these.  Then
+the result can be given to start_removing_dentry() to get the required
+locks for removal.  We then double check that the name hasn't
+changed.
+
+As 'dir' needs to be used several times now, we load the dput() until
+the end, and initialise to NULL so dput() is always safe.
+
+Reported-by: Val Packett <val@packett.cool>
+Closes: https://lore.kernel.org/all/6713ea38-b583-4c86-b74a-bea55652851d@pack=
+ett.cool
+Fixes: c9ba789dad15 ("VFS: introduce start_creating_noperm() and start_removi=
+ng_noperm()")
+Signed-off-by: NeilBrown <neil@brown.name>
+---
+ fs/fuse/dir.c | 23 ++++++++++++++++-------
+ 1 file changed, 16 insertions(+), 7 deletions(-)
+
+diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+index a0d5b302bcc2..8384fa96cf53 100644
+--- a/fs/fuse/dir.c
++++ b/fs/fuse/dir.c
+@@ -1390,8 +1390,8 @@ int fuse_reverse_inval_entry(struct fuse_conn *fc, u64 =
+parent_nodeid,
+ {
+ 	int err =3D -ENOTDIR;
+ 	struct inode *parent;
+-	struct dentry *dir;
+-	struct dentry *entry;
++	struct dentry *dir =3D NULL;
++	struct dentry *entry =3D NULL;
+=20
+ 	parent =3D fuse_ilookup(fc, parent_nodeid, NULL);
+ 	if (!parent)
+@@ -1404,11 +1404,19 @@ int fuse_reverse_inval_entry(struct fuse_conn *fc, u6=
+4 parent_nodeid,
+ 	dir =3D d_find_alias(parent);
+ 	if (!dir)
+ 		goto put_parent;
 -
-> >folder_count and HFS_SB(sb)->file_count at the beginning of hfs_remove()=
-:
->=20
-> static int hfs_remove(struct inode *dir, struct dentry *dentry)
-> {
-> =09struct inode *inode =3D d_inode(dentry);
-> =09int res;
->=20
-> =09if (S_ISDIR(inode->i_mode) && inode->i_size !=3D 2)
-> =09=09return -ENOTEMPTY;
->=20
-> <<-- Check it here and return error
->=20
-> =09res =3D hfs_cat_delete(inode->i_ino, dir, &dentry->d_name);
-> =09if (res)
-> =09=09return res;
-> =09clear_nlink(inode);
-> =09inode_set_ctime_current(inode);
-> =09hfs_delete_inode(inode);
-> =09mark_inode_dirty(inode);
-> =09return 0;
-> }
->=20
+-	entry =3D start_removing_noperm(dir, name);
+-	dput(dir);
+-	if (IS_ERR(entry))
+-		goto put_parent;
++	while (!entry) {
++		struct dentry *child =3D try_lookup_noperm(name, dir);
++		if (!child || IS_ERR(child))
++			goto put_parent;
++		entry =3D start_removing_dentry(dir, child);
++		dput(child);
++		if (IS_ERR(entry))
++			goto put_parent;
++		if (!d_same_name(entry, dir, name)) {
++			end_removing(entry);
++			entry =3D NULL;
++		}
++	}
+=20
+ 	fuse_dir_changed(parent);
+ 	if (!(flags & FUSE_EXPIRE_ONLY))
+@@ -1446,6 +1454,7 @@ int fuse_reverse_inval_entry(struct fuse_conn *fc, u64 =
+parent_nodeid,
+=20
+ 	end_removing(entry);
+  put_parent:
++	dput(dir);
+ 	iput(parent);
+ 	return err;
+ }
+--=20
+2.50.0.107.gf914562f5916.dirty
 
-That sounds good. But maybe we should do the check even before the ENOTEMPT=
-Y check,
-as corruption detection is perhaps more interesting than informing that the=
- operation
-cannot complete because of some other (less acute) reason.
-
-> In such case, we reject to make the removal, to return error and no activ=
-ity
-> will happened. Let's move the check from hfs_delete_inode() to hfs_remove=
-(). We
-> can ignore hfs_create() [1] and hfs_mkdir() [2] because these methods sim=
-ply
-> processing erroneous situation.
->=20
-
-One thing we can also do is what happens in ext4. We introduce an errors=3D=
- mount option
-which can be set to readonly, panic, or continue depending on the desired b=
-ehavior in
-case of serious error (like corruption). I already implemented this for min=
-ix fs, and
-the patch was fine. However, the people responsible for minix felt that it =
-was more
-sensible to deprecate minix and write a FUSE driver for it. [1]
-
-> > +#define EFSCORRUPTED=09EUCLEAN=09=09/* Filesystem is corrupted */
->=20
-> I don't think that rename existing error code is good idea. Especially, b=
-ecause
-> we will not need the newly introduce error code's name. Please, see my co=
-mments
-> below.
->=20
-
-For context, I took this from ext4.
-
-> > --- a/fs/hfs/inode.c
-> > +++ b/fs/hfs/inode.c
-> > @@ -186,16 +186,22 @@ struct inode *hfs_new_inode(struct inode *dir, co=
-nst struct qstr *name, umode_t
-> >  =09s64 next_id;
-> >  =09s64 file_count;
-> >  =09s64 folder_count;
-> > +=09int err =3D -ENOMEM;
-> > =20
-> >  =09if (!inode)
-> > -=09=09return NULL;
-> > +=09=09goto out_err;
-> > +
-> > +=09err =3D -EFSCORRUPTED;
->=20
-> In 99% of cases, this logic will be called for file system internal logic=
- when
-> mount was successful. So, file system volume is not corrupted. Even if we
-> suspect that volume is corrupted, then potential reason could be failed r=
-ead (-
-> EIO). It needs to run FSCK tool to be sure that volume is really corrupte=
-d.
->=20
-
-I get your point, maybe just warn for possible corruption?
-
-> > =20
-> >  =09mutex_init(&HFS_I(inode)->extents_lock);
-> >  =09INIT_LIST_HEAD(&HFS_I(inode)->open_dir_list);
-> >  =09spin_lock_init(&HFS_I(inode)->open_dir_lock);
-> >  =09hfs_cat_build_key(sb, (btree_key *)&HFS_I(inode)->cat_key, dir->i_i=
-no, name);
-> >  =09next_id =3D atomic64_inc_return(&HFS_SB(sb)->next_id);
-> > -=09BUG_ON(next_id > U32_MAX);
-> > +=09if (next_id > U32_MAX) {
-> > +=09=09pr_err("next CNID exceeds limit =E2=80=94 filesystem corrupted. =
-It is recommended to run fsck\n");
->=20
-> File system volume is not corrupted here. Because, it is only error of fi=
-le
-> system logic. And we will not store this not correct number to the volume=
-,
-> anyway. At minimum, we should protect the logic from doing this. And it d=
-oesn't
-> need to recommend to run FSCK tool here.
-
-What if e.g. next_id is not U32_MAX, but some other slightly smaller value,=
- that's still
-not possible, correct? And then we find out not at mount time (at least not=
- right now).
-Maybe we should just check at mount time and when the mdb is written if the=
- values like
-file/folder_count and next_id make any sense. I think they indicate corrupt=
-ion even for
-much smaller values than U32_MAX, but I could not really distill that.
-
-If we have this, then the other BUG_ONs should not indicate corruption but =
-implementation
-logic issues. Correct?
-
->=20
-> Probably, it makes sense to decrement erroneous back.
->=20
-> Potentially, if we have such situation, maybe, it makes sense to consider=
- to
-> make file system READ-ONLY. But I am not fully sure.
->=20
-
-See my comment above.
-
-Thanks,
-Jori.
-
-[1] https://lkml.org/lkml/2025/10/28/1786
 
