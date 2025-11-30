@@ -1,180 +1,268 @@
-Return-Path: <linux-fsdevel+bounces-70270-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70271-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B6A9C949D1
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Nov 2025 01:57:57 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D00DCC94ADB
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Nov 2025 03:56:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D5249346F9E
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Nov 2025 00:57:54 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BFA644E10A3
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Nov 2025 02:56:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B0C3208961;
-	Sun, 30 Nov 2025 00:57:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40B8822F16E;
+	Sun, 30 Nov 2025 02:56:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a16u6zen"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eLDWJSgZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1334C29408
-	for <linux-fsdevel@vger.kernel.org>; Sun, 30 Nov 2025 00:57:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4ABE212F89
+	for <linux-fsdevel@vger.kernel.org>; Sun, 30 Nov 2025 02:56:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764464259; cv=none; b=sAXr85gPVpW7tRwZYcnqRs7XErW2AXyJnrOQM1s+Y0nI00jy9G5+wQuuM8tfRJGpsUhx87EQ/Zb+CZuYvP/fTr1pO5ACBIIR66Hfk0YN+wmT4qhYP9J8F5tHLqBBCmAmZCDvR/L0QNZEctEcK3fwfgXPpYAlnGwxX39h80OOuuM=
+	t=1764471394; cv=none; b=QqM3ItOL3m73RXVu3ebX72DDMitfLwqTgeN/bGqJIDSnYXOcpo204ZDtf8bYkUR2fP78mjNBdXY3M2KukhRaVjP7WVMpD7QoJgSxsDtKai2LkpfJr1ms1ux7CG2F0otA6dfdS1Z/ULVelGkUo7DLbTcX1AwE/DVPAxuyTNGYvAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764464259; c=relaxed/simple;
-	bh=k6FYX/RC2meRZKmLL/rdujICr6cSnEexoqs5r2vGL4g=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gPCrw9G9/hBd32+47durweFKh+gPtN0eqaQ8jZ6c5LoAlUUGzZaO27cQK0yjWxZrFH5Mp4hrRMj7ubaCQbLLN+kRGTfLxvIs9I7rWcrSChj0XHhyI15ehMn9yWSk95g/ecMdgbA1jlGhSIi3MQWDqBCalUVtTTUmRBzWk5TMAc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a16u6zen; arc=none smtp.client-ip=209.85.167.42
+	s=arc-20240116; t=1764471394; c=relaxed/simple;
+	bh=OP8eZ/M54fHVsYMy44BgHRgd3kLpjJqrEEw30IldJYw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rfCkKmM0zSxS9RNQwqYb9IJgMa2HHsSXEEzaxFbKqS+8ZUBBt8eXrMJ2Rtb6YPV1+A88Q6JKtp086tI7eKG8y6GwVog4zh1C3I/xBklpE85trzOLHm/U9kVR+q54iWvgm+eO9zeQyEYSlu9fgILypte1GwEki0vvD8F1ogWPwqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eLDWJSgZ; arc=none smtp.client-ip=209.85.219.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5957db5bdedso3444594e87.2
-        for <linux-fsdevel@vger.kernel.org>; Sat, 29 Nov 2025 16:57:36 -0800 (PST)
+Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-8824888ce97so45017356d6.2
+        for <linux-fsdevel@vger.kernel.org>; Sat, 29 Nov 2025 18:56:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1764464255; x=1765069055; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1764471392; x=1765076192; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+g49Om8KV5+AE4pKbmfS5SsSZ6jAm9G/Fr+ete77Gs0=;
-        b=a16u6zenbhA1R3HmfSHImbulDJf6qYZKuG8bfBXSkn8wqzvkPR8nGf0wYEWZWJsNNO
-         9H759adf6+ptPxWNMZGO+zLUkHqaTlQMM+WXeCoxI2cgxZI3hg48ncL26T3NE+eYenm8
-         ABWh5VH0G0O4YM7itDh2cPCoJjLKylaFhrVKkOHfCGTX0r0ObA+nwxWKONoxIuWdpi7y
-         yhJRNvWw/Vi6oxuo5zehNdEhQH4ry37dTGvM9maDSi29mqEb/NBtwmeJQNsDx9zmxTBU
-         eyB/M3usaPYNar2ACuJRiUnNnBZZIt4w51XlRTJG1s9+8IbxCzZRA1Pd+7QUOSnOZCLi
-         eQGQ==
+        bh=+XJGr14VL/NvhNbPuU96ozt3/FF8toa21mCuIzcZISc=;
+        b=eLDWJSgZMJexQJA4xxe48xh791D2AGpGLICSRQj9HylPlzF0n23K4S/5wMMWfWSbBO
+         s4yPUYq83mtVBVPTwMGM7y1gjQrReHjUlfQAGu1gpCnZcbnIk4tbWvON5F1wMTIVetJf
+         sLKNPl5c3njltBi2lwREaX/A2avQTBhqIgu/b2EoljImsdtxbIwOKQVXlVaIlntWtOMa
+         HvAQEmlt9TpROT5AgbVwIl0VBJzbRiy8Q6qNJ/fnsUJFr8QKXQwpjFwFuMVeKQf/cDn5
+         CMIuzL1wvpjTpAfcOgIs83tV1EOH7bd46emTbzis1X4KmPdXTDsXSSJJvoHn2Rc/knqh
+         irbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764464255; x=1765069055;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+        d=1e100.net; s=20230601; t=1764471392; x=1765076192;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=+g49Om8KV5+AE4pKbmfS5SsSZ6jAm9G/Fr+ete77Gs0=;
-        b=aVK9netjzXt2FxPXvHDvftcPDKaDwEG1GJ4jTlhXlaOPIE+F4FmZlXmE6S9ZyKkYn8
-         HGq8Yq98saGofN8jNN5LQQuTkgxB5dIrXwWkN1ujtfmzc81R1O/zjjjgL0bQ6rHYekLk
-         XYxT92vn/htmgSNd2apNJVfjs8HThGeBtL55ZgrUpFNlm1Cx1EAev6eGEDS1X4j6GNzZ
-         mIBDt/08CQEsae/FcE5e8+ehpGgBApFRL7X5Stqbrk6fpVyXH7BSPevvFzCblNGbnual
-         t3dtNrmGUKYBB1qCdDOUt7R2lD+HgKTtuqLngfuPbUkjKAgpnbMQ8TPoUk3zRMcHTKsd
-         vbbg==
-X-Forwarded-Encrypted: i=1; AJvYcCXw3ehwtq7b3rTt4OyxGNsa2c2XhBBv/2JSQHZlQqJFU1kJ53IdIHr5iw3vkp26PIAQOWyQmoilshY5+WEe@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxSln0EkmvwnPvTlqNiTg0lRGsW0gNFEGJIgv6YYaceFGAQDFu
-	KFjHQ+k/AGT7Ua5Brd9kD0mSJJFtEVdR/sqzlC9MpzRoAn70yHN7uz3G
-X-Gm-Gg: ASbGncvaiypxmbJb69nD0TG280/zY2yjwBPhbUK1hX96GnbatGqimrzbQ82v8VE/fYv
-	b9JdCo51TelMOvkLbq9iyI7JnydLjIPfSUoK+CbKhK2FUE+MygsWL6wS9kqVymoH98XA0lF+pjc
-	eEmgChEM54P2EjfJd/KCSEuR6TjTyaQPTdiaJW5/XqRu6N3q39vhLKpj18iMlp8OIv8biKZmPko
-	DbsBZa+Q6HJRuF7nsF3azpBoSlexMk/gG1fjdZfN7vkaEHOz1yFh/O0IAiQoGAtBbrgJUBb4jKy
-	mt0/Ea5kyU4oey27uTyHlJCz9ZWXBTesCxcxXTtR1c+fyq1Xnj3/1FZ4ACkVjIYqs+L4hvf/lL3
-	PS8tZSXU15a6HCaMM+dJE69BbDEzm67GORvajbiHpT73pWOndvCqUaTS493OU8wuTHTK5avHHgj
-	uR7wkYukg=
-X-Google-Smtp-Source: AGHT+IHqqLvvP2sfFnTWOisjSIYIhy2i6Epx2GFFCPJmKULbpNgQPdTlRmyFokY5qYTyoqCENRLjrA==
-X-Received: by 2002:a05:6512:ad0:b0:591:c3f1:474d with SMTP id 2adb3069b0e04-596a3eac18bmr9392825e87.15.1764464254932;
-        Sat, 29 Nov 2025 16:57:34 -0800 (PST)
-Received: from localhost ([194.190.17.114])
-        by smtp.gmail.com with UTF8SMTPSA id 2adb3069b0e04-596bfa440d8sm2303111e87.46.2025.11.29.16.57.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 29 Nov 2025 16:57:33 -0800 (PST)
-From: Askar Safin <safinaskar@gmail.com>
-To: mpatocka@redhat.com
-Cc: dm-devel@lists.linux.dev,
-	linux-block@vger.kernel.org,
-	linux-lvm@lists.linux.dev,
-	linux-mm@kvack.org,
-	linux-pm@vger.kernel.org,
-	linux-raid@vger.kernel.org,
-	lvm-devel@lists.linux.dev,
-	rafael@kernel.org,
-	Milan Broz <gmazyland@gmail.com>,
-	linux-fsdevel@vger.kernel.org,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Christian Brauner <brauner@kernel.org>
-Subject: Re: [RFC PATCH 2/2] swsusp: make it possible to hibernate to device mapper devices
-Date: Sun, 30 Nov 2025 03:56:56 +0300
-Message-ID: <20251130005656.3644711-1-safinaskar@gmail.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <b32d0701-4399-9c5d-ecc8-071162df97a7@redhat.com>
-References: <b32d0701-4399-9c5d-ecc8-071162df97a7@redhat.com>
+        bh=+XJGr14VL/NvhNbPuU96ozt3/FF8toa21mCuIzcZISc=;
+        b=K5FS4jq+fDwbTLT0yFiOegNKyM2JDTpd9Nu4rXEazAFJ6bykwvDfzVh1xdPp9EpPQH
+         lQ3yhju7brmfjTH4ciZhHUGwmjZ9W6pGFzQxLvrfHXuEjE73k5JCfM2TmyWnL9lBtvxp
+         v698hWOd9cvEadRIof9+yGW8ayMkNYOPTfrKvdyd0cMlrRfMhJQpBZEy0uK9CZlANS1H
+         jFyzxfD7Y0vpHfQTUq/gdCSvBjjqHc0Bmw21E1BfhvPRNsLgcNSPOk5GXaU2h68DCw0q
+         oVx7kTE2r18btFksl1eemfcROuPKe4FTXSw5FXQcZ0U9EsvKGEqRgF5R7DJsfIrhNPcp
+         CosA==
+X-Forwarded-Encrypted: i=1; AJvYcCWO1zcuaHJvRCOVM3Bs5rgCeoDJcpxyO3r0kscAwtW5YBzLJbsBe1xUwubkVO6Ycvq0jBg/D5x2tS3MCyag@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbM8ZQbLwoWboE9sumYolAw5jmG1QNZabTfY/SKWcXONKZLYOQ
+	YDrWgcYbZhPhWgxkT42enmAzRIgBB5n271WUIAlz4fHw3I+pebbBdlFouaQ5g/+3+vYrbkv8SPK
+	xvUfOIG7s/DjR9Fk7o6leiWeRqTbwR6tRDDhSPGA=
+X-Gm-Gg: ASbGncsf0g4QS+xOER1UzhwDRc/G04KHlJK/u/9C6zR2R7Tv+I4aexDpQEo6OwgochQ
+	+Fh430teBJ9lrESnJhhIWyPm1ESCwz7ESYuqXTrM8Px8OAL+esSdjopqUyVRA5/4MjhdzBOBNZp
+	E65oSxPjrM5/jDBhU4t5D5KOkX/AxC7kWP6WxMYRcj1mBGHyHwuN76mBAlvIwpIxGJ5W9gUZ884
+	fXa5cxd8NiT9D3O5NbD00oynv+3SSYmlwQgPKE0WZYaDjpgkDwl9N9H+BmOFxy3pCQhmg==
+X-Google-Smtp-Source: AGHT+IF/3KjmDnaoo/ldsvPnDlqyF1g2t85SJ38riWFY6aw2+Rx4sE2XTJgJQYrytReWz53k6ueQn63K+Iy7zP31uHo=
+X-Received: by 2002:a05:620a:4407:b0:8b2:e565:50b5 with SMTP id
+ af79cd13be357-8b33d49a212mr4299108585a.60.1764471391497; Sat, 29 Nov 2025
+ 18:56:31 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251127011438.6918-1-21cnbao@gmail.com> <aSfO7fA-04SBtTug@casper.infradead.org>
+ <CAGsJ_4zyZeLtxVe56OSYQx0OcjETw2ru1FjZjBOnTszMe_MW2g@mail.gmail.com>
+ <aSip2mWX13sqPW_l@casper.infradead.org> <CAGsJ_4zWGYiu1wv=D7bV5zd0h8TEHTCARhyu_9_gL36PiNvbHQ@mail.gmail.com>
+ <CAJuCfpFVQJtvbj5fV2fmm4APhNZDL1qPg-YExw7gO1pmngC3Rw@mail.gmail.com>
+In-Reply-To: <CAJuCfpFVQJtvbj5fV2fmm4APhNZDL1qPg-YExw7gO1pmngC3Rw@mail.gmail.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Sun, 30 Nov 2025 10:56:20 +0800
+X-Gm-Features: AWmQ_bmtzU1YmYdPvDdBUL-_Xs4w9bVsuxx9pZGnImnoxnlMuoZQMERTeIMRpa0
+Message-ID: <CAGsJ_4wnwAet4svDrxT4sTdp24sweAU-2VyYn3iNPOoaKdXxPw@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/2] mm: continue using per-VMA lock when retrying
+ page faults after I/O
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: Matthew Wilcox <willy@infradead.org>, akpm@linux-foundation.org, linux-mm@kvack.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	loongarch@lists.linux.dev, linuxppc-dev@lists.ozlabs.org, 
+	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Mikulas Patocka <mpatocka@redhat.com>:
-https://lore.kernel.org/linux-pm/b32d0701-4399-9c5d-ecc8-071162df97a7@redhat.com/ :
-> Askar Safin requires swap and hibernation on the dm-integrity device mapper
-> target because he needs to protect his data.
-> 
-> This hits two problems:
-> 1. The kernel doesn't send the flush bio to the hibernation device after
->    writing the image and before powering off - this is easy to fix
-> 2. The dm-integrity target keeps parts of the device in-memory - it keeps
->    a journal and a dm-bufio cache in memory. If we hibernate and resume,
->    the content of memory no longer matches the data on the hibernate
->    partition and that may cause spurious errors - this is hard to fix
+On Sun, Nov 30, 2025 at 8:28=E2=80=AFAM Suren Baghdasaryan <surenb@google.c=
+om> wrote:
+>
+> On Thu, Nov 27, 2025 at 2:29=E2=80=AFPM Barry Song <21cnbao@gmail.com> wr=
+ote:
+> >
+> > On Fri, Nov 28, 2025 at 3:43=E2=80=AFAM Matthew Wilcox <willy@infradead=
+.org> wrote:
+> > >
+> > > [dropping individuals, leaving only mailing lists.  please don't send
+> > > this kind of thing to so many people in future]
+> > >
+> > > On Thu, Nov 27, 2025 at 12:22:16PM +0800, Barry Song wrote:
+> > > > On Thu, Nov 27, 2025 at 12:09=E2=80=AFPM Matthew Wilcox <willy@infr=
+adead.org> wrote:
+> > > > >
+> > > > > On Thu, Nov 27, 2025 at 09:14:36AM +0800, Barry Song wrote:
+> > > > > > There is no need to always fall back to mmap_lock if the per-VM=
+A
+> > > > > > lock was released only to wait for pagecache or swapcache to
+> > > > > > become ready.
+> > > > >
+> > > > > Something I've been wondering about is removing all the "drop the=
+ MM
+> > > > > locks while we wait for I/O" gunk.  It's a nice amount of code re=
+moved:
+> > > >
+> > > > I think the point is that page fault handlers should avoid holding =
+the VMA
+> > > > lock or mmap_lock for too long while waiting for I/O. Otherwise, th=
+ose
+> > > > writers and readers will be stuck for a while.
+> > >
+> > > There's a usecase some of us have been discussing off-list for a few
+> > > weeks that our current strategy pessimises.  It's a process with
+> > > thousands (maybe tens of thousands) of threads.  It has much more map=
+ped
+> > > files than it has memory that cgroups will allow it to use.  So on a
+> > > page fault, we drop the vma lock, allocate a page of ram, kick off th=
+e
+> > > read, sleep waiting for the folio to come uptodate, once it is return=
+,
+> > > expecting the page to still be there when we reenter filemap_fault.
+> > > But it's under so much memory pressure that it's already been reclaim=
+ed
+> > > by the time we get back to it.  So all the threads just batter the
+> > > storage re-reading data.
+> >
+> > Is this entirely the fault of re-entering the page fault? Under extreme
+> > memory pressure, even if we map the pages, they can still be reclaimed
+> > quickly?
+> >
+> > >
+> > > If we don't drop the vma lock, we can insert the pages in the page ta=
+ble
+> > > and return, maybe getting some work done before this thread is
+> > > descheduled.
+> >
+> > If we need to protect the page from being reclaimed too early, the fix
+> > should reside within LRU management, not in page fault handling.
+> >
+> > Also, I gave an example where we may not drop the VMA lock if the folio=
+ is
+> > already up to date. That likely corresponds to waiting for the PTE mapp=
+ing to
+> > complete.
+> >
+> > >
+> > > This use case also manages to get utterly hung-up trying to do reclai=
+m
+> > > today with the mmap_lock held.  SO it manifests somewhat similarly to
+> > > your problem (everybody ends up blocked on mmap_lock) but it has a
+> > > rather different root cause.
+> > >
+> > > > I agree there=E2=80=99s room for improvement, but merely removing t=
+he "drop the MM
+> > > > locks while waiting for I/O" code is unlikely to improve performanc=
+e.
+> > >
+> > > I'm not sure it'd hurt performance.  The "drop mmap locks for I/O" co=
+de
+> > > was written before the VMA locking code was written.  I don't know th=
+at
+> > > it's actually helping these days.
+> >
+> > I am concerned that other write paths may still need to modify the VMA,=
+ for
+> > example during splitting. Tail latency has long been a significant issu=
+e for
+> > Android users, and we have observed it even with folio_lock, which has =
+much
+> > finer granularity than the VMA lock.
+>
+> Another corner case we need to consider is when there is a large VMA
+> covering most of the address space, so holding a VMA lock during IO
+> would resemble holding an mmap_lock, leading to the same issue that we
+> faced before "drop mmap locks for I/O". We discussed this with Matthew
+> in the context of the problem he mentioned (the page is reclaimed
+> before page fault retry happens) with no conclusion yet.
 
-Let me add some more info on this patchset.
+Suren, thank you very much for your input.
 
-First of all, I already solved the problem for me personally:
-I wrote hackish patch, which fixes the problem. My patch is tested on
-my real hardware under load. I successfully use it for 2 weeks
-(I hibernated a lot of times during this period.)
-The patch is absolutely rock solid, and I absolutely sure it is correct.
-Unfortunately, it is not generic, it is tied to my particular configuration,
-it hard codes paths (!!!), and hence is non-upstreamable.
+Right. I think we may discover more corner cases on Android in places
+where we previously saw VMA merging, such as between two native heap
+mmap areas. This can happen fairly often, and we don=E2=80=99t want long BI=
+O
+queues to block those writers.
 
-Here is this patch for your information:
-https://zerobin.net/?ad6142bd67df015a#68Az6yBUxHA3AXB7jY1+clSRnR745olFHAByxwPGM08= .
+>
+> >
+> > >
+> > > > The change would be much more complex, so I=E2=80=99d prefer to lan=
+d the current
+> > > > patchset first. At least this way, we avoid falling back to mmap_lo=
+ck and
+> > > > causing contention or priority inversion, with minimal changes.
+> > >
+> > > Uh, this is an RFC patchset.  I'm giving you my comment, which is tha=
+t I
+> > > don't think this is the right direction to go in.  Any talk of "landi=
+ng"
+> > > these patches is extremely premature.
+> >
+> > While I agree that there are other approaches worth exploring, I
+> > remain entirely unconvinced that this patchset is the wrong
+> > direction. With the current retry logic, it substantially reduces
+> > mmap_lock acquisitions and represents a clear low-hanging fruit.
+> >
+> > Also, I am not referring to landing the RFC itself, but to a subsequent=
+ formal
+> > patchset that retries using the per-VMA lock.
+>
+> I don't know if this direction is the right one but I agree with
+> Matthew that we should consider alternatives before adopting a new
+> direction. Hopefully we can find one fix for both problems rather than
+> fixing each one in isolation.
 
-Feel free to use code from it.
+As I mentioned in a follow-up reply to Matthew[1], I think the current
+approach also helps in cases where pages are reclaimed during retries.
+Previously, we required mmap_lock to retry, so any contention made it
+hard to acquire and introduced high latency. During that time, pages
+could be reclaimed before mmap_lock was obtained. Now that we only
+require the per-VMA lock, retries can proceed much more easily than
+before.
+As long as we replace a big lock with a smaller one, there is less
+chance of getting stuck in D state.
 
-So I personally is not in hurry, I already have solution, which works for me.
-(But I am still available for testing.)
+If either you or Matthew have a reproducer for this issue, I=E2=80=99d be
+happy to try it out.
 
+BTW, we also observed mmap_lock contention during MGLRU aging. TBH, the
+non-RMAP clearing of the PTE young bit does not seem helpful on arm64,
+which does not support non-leaf young bits at all. After disabling the
+feature below, we found that reclamation used less CPU and ran better.
 
-Your patch has a problem: after "notify_swap_device" call, the pages can
-still be swapped out. "pm_restrict_gfp_mask" call in "hibernation_snapshot"
-prevents further swapping. Thus "notify_swap_device" should be called
-after "pm_restrict_gfp_mask" (but read on).
+echo 1 >/sys/kernel/mm/lru_gen/enabled
 
-I attempted to create test case, which would expose this problem. And I was
-unable to do so. Still I believe this is a real problem.
+0x0002 Clearing the accessed bit in leaf page table entries in large
+       batches, when MMU sets it (e.g., on x86). This behavior can
+       theoretically worsen lock contention (mmap_lock). If it is
+       disabled, the multi-gen LRU will suffer a minor performance
+       degradation for workloads that contiguously map hot pages,
+       whose accessed bits can be otherwise cleared by fewer larger
+       batches.
 
+[1] https://lore.kernel.org/linux-mm/CAGsJ_4wvaieWtTrK+koM3SFu9rDExkVHX5eUw=
+YiEotVqP-ndEQ@mail.gmail.com/
 
-Also, our problem is very similar to reason of introducing "filesystems_freeze"
-( https://elixir.bootlin.com/linux/v6.18-rc7/source/kernel/power/hibernate.c#L824 ).
-
-See problem description here:
-https://lore.kernel.org/all/0a76e074ef262ca857c61175dd3d0dc06b67ec42.camel@HansenPartnership.com/ .
-
-See also https://lwn.net/Articles/1018341/ .
-
-(See also this huge thread
-https://lore.kernel.org/all/20250327140613.25178-1-James.Bottomley@HansenPartnership.com/ .)
-
-"filesystems_freeze" logic is already implemented in mainline. It is gated
-behind /sys/power/freeze_filesystems .
-
-As you can see, authors of "filesystems_freeze" attempted to solve similar
-problem. Thus, we should probably flush buffers in "filesystems_freeze" call.
-Ideally, flushing of dm-integrity should be correctly ordered with freezing of filesystems
-to support complex storage hierarchies (i. e. swap on dm-integrity on loop
-device on some filesystem, etc).
-
-But... call to "filesystems_freeze" happens before "pm_restrict_gfp_mask" call.
-
-So... in this point I gave up, and I don't know what to do (i. e. what the upstream
-kernel should do).
-
-
-Feel free to ask any questions.
-
-
-I changed CCs for further exposure.
-
--- 
-Askar Safin
+Thanks
+Barry
 
