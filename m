@@ -1,112 +1,115 @@
-Return-Path: <linux-fsdevel+bounces-70277-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70278-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACA8FC94BC8
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Nov 2025 07:46:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 686F4C94D54
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Nov 2025 11:08:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DA0A74E1AE2
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Nov 2025 06:46:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC8BD3A4624
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Nov 2025 10:08:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD3CC230264;
-	Sun, 30 Nov 2025 06:46:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="BSODyhYt"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68C9026FD86;
+	Sun, 30 Nov 2025 10:08:10 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 191CC36D508;
-	Sun, 30 Nov 2025 06:46:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72C6C1373;
+	Sun, 30 Nov 2025 10:08:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764485172; cv=none; b=Yvm09zVIwYWNK23ps3WCy9N+N05nnGRcOiLG94tsBr/yuCEOE/Qlf9E9tISZGROyTjLQg6XWR0SVzHhLbwRpKP70/DUzz4PkA8oPk5kSpg6CAfMDqs9bGaFQ6XOIUP6PCsT3tAWt5PZgourN2ZFivj4tgIN05f27SXHJZYxA/8k=
+	t=1764497290; cv=none; b=O+UHp7Fx3edXGE8RkbWhcxSqalVopGJrMcBIpcqkbWwM7KJdOoB8mz0HiZd56FLVuyLdUgZY9toQb4nqJCG3199y4Rznd3VbMb/oJ4v6DoTOmJh0n6gC5tXWHM+g+xKhrm2iDUCt3cHbug2BFo8y55Uh05JejYcVLoRntx1x0hY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764485172; c=relaxed/simple;
-	bh=LeY9Dynhstx6xrhZVJcp/0P0j/QNf3ZX0H2Fvwv5Bfk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bZhxRodhN0eZAFtrEOFBLPkJdEUoNuOjGe7X8hzCBxnxhcMaFFw2adwipkHva7d65tZ+PY2NPL/vieqFUCfpMWM0E9gGazkobEJJE1N9U6ckZpkEu6VZ5UFx7L1b/xLTUTFcYPJxANOmBWLrydZjJL5ppiJhj23sJI3jcnFhBeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=BSODyhYt; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=0+RutjHJF6IAz0/l+k9W8uM3IopTQJImTqgJ3gMylAk=; b=BSODyhYtOm0S0z1H257JHzpGTf
-	ns6f4ewERKLIgugIT/WI57IJoZPLZAg4IUtPyGG4SyGRz3lVEr+6GNQGOH6hZm7oWr7+R/RyGHljW
-	nlfBRCogd+AKjZ6dwdwBuNNJqbpuTl6IeL/J9Od/XYlzZNr90EbX3sTUAGfZMsxGbUM5RbqqHB54Q
-	9On347zzql5gy4mchFtI68O1obIBOiwCPiDuir2POqEql26YLkdu4BMa2U2M0GHbyA/bjK3G/PUyC
-	FLQVQBvFKE1RhGrNj0tutm49OX8fqIJf+uv8G4U1Gc2Fqu0G4+aX1EafU+2OeZOnLmwZ/otZbL3/0
-	lty6rfAA==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.99 #2 (Red Hat Linux))
-	id 1vPbCD-0000000Gdtg-11jx;
-	Sun, 30 Nov 2025 06:46:09 +0000
-Date: Sun, 30 Nov 2025 06:46:09 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Song Liu <song@kernel.org>
-Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-security-module@vger.kernel.org, ast@kernel.org,
-	daniel@iogearbox.net, andrii@kernel.org, kernel-team@meta.com,
-	brauner@kernel.org, jack@suse.cz, paul@paul-moore.com,
-	jmorris@namei.org, serge@hallyn.com,
-	Shervin Oloumi <enlightened@chromium.org>
-Subject: Re: [PATCH bpf-next 2/3] bpf: Add bpf_kern_path and bpf_path_put
- kfuncs
-Message-ID: <20251130064609.GR3538@ZenIV>
-References: <20251127005011.1872209-1-song@kernel.org>
- <20251127005011.1872209-3-song@kernel.org>
- <20251130042357.GP3538@ZenIV>
- <CAPhsuW69nUeMf+89vwsBrwo4sv3P8xOypSfhafEu12HJKqAb+w@mail.gmail.com>
+	s=arc-20240116; t=1764497290; c=relaxed/simple;
+	bh=BXFBs7UfsJ23azeDN894SfOybCJKtFZxo4EJfCmeyb4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SWpaIPFVIRFxHaWDis2uycLh7etRWwbqvK2lQ5SYrrAZ39ie7L9fMxwVtp55CqFVf2aQdOuGyr6HbBu7+0KK8kzEcf5iD3AdDL/WF+OuRA2txT9wmr598qZuMBP8ihh/ZjVA+ui/VzYKchQDlXeVYhof5abfVaZ6Kpys8+jeQZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 5AUA7CS2080474;
+	Sun, 30 Nov 2025 19:07:12 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.10] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 5AUA7CaR080471
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Sun, 30 Nov 2025 19:07:12 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <43eb85b9-4112-488b-8ea0-084a5592d03c@I-love.SAKURA.ne.jp>
+Date: Sun, 30 Nov 2025 19:07:13 +0900
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPhsuW69nUeMf+89vwsBrwo4sv3P8xOypSfhafEu12HJKqAb+w@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] hfs: Validate CNIDs in hfs_read_inode
+To: George Anthony Vernon <contact@gvernon.com>,
+        Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+Cc: "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
+        "slava@dubeyko.com" <slava@dubeyko.com>,
+        "skhan@linuxfoundation.org" <skhan@linuxfoundation.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "frank.li@vivo.com" <frank.li@vivo.com>,
+        "linux-kernel-mentees@lists.linux.dev"
+ <linux-kernel-mentees@lists.linux.dev>,
+        "syzbot+97e301b4b82ae803d21b@syzkaller.appspotmail.com"
+ <syzbot+97e301b4b82ae803d21b@syzkaller.appspotmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+References: <d2b28f73-49c8-4e30-9913-01702da4dfe4@I-love.SAKURA.ne.jp>
+ <20251104014738.131872-3-contact@gvernon.com>
+ <df9ed36b-ec8a-45e6-bff2-33a97ad3162c@I-love.SAKURA.ne.jp>
+ <a31336352b94595c3b927d7d0ba40e4273052918.camel@ibm.com>
+ <aSTuaUFnXzoQeIpv@Bertha>
+Content-Language: en-US
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <aSTuaUFnXzoQeIpv@Bertha>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Virus-Status: clean
+X-Anti-Virus-Server: fsav202.rs.sakura.ne.jp
 
-On Sat, Nov 29, 2025 at 09:57:43PM -0800, Song Liu wrote:
-
-> > Your primitive is a walking TOCTOU bug - it's impossible to use safely.
+On 2025/11/25 8:46, George Anthony Vernon wrote:
+> On Tue, Nov 11, 2025 at 10:42:09PM +0000, Viacheslav Dubeyko wrote:
+>> On Tue, 2025-11-11 at 23:39 +0900, Tetsuo Handa wrote:
+>>> On 2025/11/04 10:47, George Anthony Vernon wrote:
+>>>> +	if (!is_valid_cnid(inode->i_ino,
+>>>> +			   S_ISDIR(inode->i_mode) ? HFS_CDR_DIR : HFS_CDR_FIL))
+>>>> +		BUG();
+>>>
+>>> Is it guaranteed that hfs_write_inode() and make_bad_inode() never run in parallel?
+>>> If no, this check is racy because make_bad_inode() makes S_ISDIR(inode->i_mode) == false.
+>>>  
+>>
+>> Any inode should be completely created before any hfs_write_inode() call can
+>> happen. So, I don't see how hfs_write_inode() and make_bad_inode() could run in
+>> parallel.
+>>
 > 
-> Good point. AFAICT, the sample TOCTOU bug applies to other LSMs that
-> care about dev_name in sb_mount, namely, aa_bind_mount() for apparmor
-> and tomoyo_mount_acl() for tomoyo.
+> Could we not read the same inode a second time, during the execution of
+> hfs_write_inode()?
+> 
+> Then I believe we could hit make_bad_inode() in hfs_read_inode() once we
+> had already entered hfs_write_inode(), and so test a cnid against the
+> wrong i_mode.
+> 
 
-sb_mount needs to be taken out of its misery; it makes very little sense
-and it's certainly rife with TOCTOU issues.
+My "Is it guaranteed that hfs_write_inode() and make_bad_inode() never run in parallel?"
+question does not assume "make_bad_inode() for HFS is called from only hfs_read_inode()".
 
-What to replace it with is an interesting question, especially considering
-how easy it is to bypass the damn thing with fsopen(), open_tree() and friends.
+write_inode() already checks for !is_bad_inode(inode) before calling
+filesystem's write_inode callback
+( https://elixir.bootlin.com/linux/v6.18-rc7/source/fs/fs-writeback.c#L1558 ).
 
-It certainly won't be a single hook; multiplexing thing aside, if
-you look at e.g. loopback you'll see that there are two separate
-operations involved - one is cloning a tree (that's where dev_name is
-parsed in old API; the corresponding spot in the new one is open_tree()
-with OPEN_TREE_CLONE in flags) and another - attaching that tree to
-destination (move_mount(2) in the new API).
+If the reason for "ubifs is doing it in the ubifs_write_inode()" 
+( https://elixir.bootlin.com/linux/v6.18-rc7/source/fs/ubifs/super.c#L299 ) is
+that make_bad_inode() could be called at any moment, it is not safe for HFS to
+depend on "inode->i_mode does not change during hfs_write_inode()".
 
-The former is "what", the latter - "where".  And in open_tree()/move_mount()
-it literally could be done by different processes - there's no problem
-with open_tree() in one process, passing the resulting descriptor to
-another process that will attach it.
-
-Any checks you do sb_mount (or in your mount_loopback) would have
-to have equivalent counterparts in those, or you get an easy way to
-bypass them.
-
-That's a very unpleasant can of worms; if you want to open it, be my
-guest, but I would seriously suggest doing that after the end of merge
-window - and going over the existing LSMs to see what they are trying to
-do in that area before starting that thread.  And yes, that's an example
-of the reasons why I'm very sceptical about out-of-tree modules in
-that area - with API in that state, we have no realistic way to promise
-any kind of stability, with obvious consequences for everyone we can't
-even see.
 
