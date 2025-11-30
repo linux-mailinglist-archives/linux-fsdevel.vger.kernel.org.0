@@ -1,115 +1,127 @@
-Return-Path: <linux-fsdevel+bounces-70278-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70279-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 686F4C94D54
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Nov 2025 11:08:16 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A8E1C94F12
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Nov 2025 12:20:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC8BD3A4624
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Nov 2025 10:08:14 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1D3F33450E8
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Nov 2025 11:20:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68C9026FD86;
-	Sun, 30 Nov 2025 10:08:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22BD427703A;
+	Sun, 30 Nov 2025 11:20:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="H/O9ZzYi";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="8RrraBCZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72C6C1373;
-	Sun, 30 Nov 2025 10:08:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 831B2272E6E;
+	Sun, 30 Nov 2025 11:20:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764497290; cv=none; b=O+UHp7Fx3edXGE8RkbWhcxSqalVopGJrMcBIpcqkbWwM7KJdOoB8mz0HiZd56FLVuyLdUgZY9toQb4nqJCG3199y4Rznd3VbMb/oJ4v6DoTOmJh0n6gC5tXWHM+g+xKhrm2iDUCt3cHbug2BFo8y55Uh05JejYcVLoRntx1x0hY=
+	t=1764501614; cv=none; b=cn4W8l9JGkIrxxs2zNmQv0zZZvxBvSgwNel4nqRInZVYigpoSVUdTKDLnm7HpgHsof9BezA/qT9X4RGEMgV4quLJRlssoJdl3/cgd/ybI/wr9kq15XW9XitHkjAriEz5M+ve3yPo91XwSmgcHp/yRfUpeAAoB1yHoTwQfIDp/S4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764497290; c=relaxed/simple;
-	bh=BXFBs7UfsJ23azeDN894SfOybCJKtFZxo4EJfCmeyb4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SWpaIPFVIRFxHaWDis2uycLh7etRWwbqvK2lQ5SYrrAZ39ie7L9fMxwVtp55CqFVf2aQdOuGyr6HbBu7+0KK8kzEcf5iD3AdDL/WF+OuRA2txT9wmr598qZuMBP8ihh/ZjVA+ui/VzYKchQDlXeVYhof5abfVaZ6Kpys8+jeQZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 5AUA7CS2080474;
-	Sun, 30 Nov 2025 19:07:12 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.10] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 5AUA7CaR080471
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Sun, 30 Nov 2025 19:07:12 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <43eb85b9-4112-488b-8ea0-084a5592d03c@I-love.SAKURA.ne.jp>
-Date: Sun, 30 Nov 2025 19:07:13 +0900
+	s=arc-20240116; t=1764501614; c=relaxed/simple;
+	bh=5GukvJtRxSI4nNFN8ne4cRSKijLmtlAAoxwznQa8t3w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RQ+byOb6vidfq09hKWHGbD8HCjlMDs9xc0M81DEZKmn+vZVy2aJeB4DR8xXGaVEmUqMyvVveGX1QoWE7Q7QGrGyX7q5bfxkBng+Vzy2GmYb6WU8EKwg+18geUj5AVafNQF6wqno2Jqwnu/7xIxeEHFzQvzUYCOcn1ZO+Jl0Og8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=H/O9ZzYi; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=8RrraBCZ; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Sun, 30 Nov 2025 12:20:08 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1764501610;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gPPSeu511L0k6gL1IYpux6jfrEM3Z2mSgCdofcykt0M=;
+	b=H/O9ZzYiHw/2G2WBqoGZ3K3FPLNuLrAWvk4v/z+wfncXBs075k6aX+F8Iqp8Vgp+LcjyHC
+	z1G/MHOyvAh7TA4mK+eXChXlqCIy+EZvNiofVHBTXaCED1jIhLqVlWUxXvtoHpu1Ah9S2e
+	F9JX+agQqQ/wqp8/A44N9X3E6LhxoLVaz+GSa+Dj2DBQ++P2UMEGoJSFjvRTB6wNi21E8W
+	3esGxnfRtGW9Xy9r7VrNCc6RRigIODj87/eRuf/oAicuV8uZFco5gHUlYiB3CiXIVKxoYP
+	MZ7+6xcVMAYjC7Z8e8XAfZYx6UOUYsx3qf+zjw3RwTW8FcJLWYP9IkNoABFSNQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1764501610;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gPPSeu511L0k6gL1IYpux6jfrEM3Z2mSgCdofcykt0M=;
+	b=8RrraBCZU5plsGR6xmde28IoY0RzxSIbtXdVMZm7XVpNQnachUBhpN47q/W3YXgJIb0ERh
+	gNxYivhVx7Dx+TBw==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Xie Yuanbin <xieyuanbin1@huawei.com>, akpm@linux-foundation.org,
+	arnd@arndb.de, brauner@kernel.org, david.laight@runbox.com,
+	hch@lst.de, jack@suse.com, kuninori.morimoto.gx@renesas.com,
+	liaohua4@huawei.com, lilinjie8@huawei.com,
+	linux-arm-kernel@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	lorenzo.stoakes@oracle.com, marc.zyngier@arm.com, nico@fluxnic.net,
+	pangliyuan1@huawei.com, pfalcato@suse.de, punitagrawal@gmail.com,
+	rjw@rjwysocki.net, rppt@kernel.org, tony@atomide.com,
+	vbabka@suse.cz, viro@zeniv.linux.org.uk, wangkefeng.wang@huawei.com,
+	will@kernel.org, wozizhi@huaweicloud.com
+Subject: Re: [RFC PATCH v2 1/2] ARM/mm/fault: always goto bad_area when
+ handling with page faults of kernel address
+Message-ID: <20251130112008.DZYHlSPm@linutronix.de>
+References: <20251127145127.qUXs_UAE@linutronix.de>
+ <20251128022756.9973-1-xieyuanbin1@huawei.com>
+ <20251128120359.Xc09qn1W@linutronix.de>
+ <aSnVXrnuY9QKjTKg@shell.armlinux.org.uk>
+ <20251128172242.cCNBVf7H@linutronix.de>
+ <aSndJ1EYUnMGsUYX@shell.armlinux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] hfs: Validate CNIDs in hfs_read_inode
-To: George Anthony Vernon <contact@gvernon.com>,
-        Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-Cc: "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
-        "slava@dubeyko.com" <slava@dubeyko.com>,
-        "skhan@linuxfoundation.org" <skhan@linuxfoundation.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "frank.li@vivo.com" <frank.li@vivo.com>,
-        "linux-kernel-mentees@lists.linux.dev"
- <linux-kernel-mentees@lists.linux.dev>,
-        "syzbot+97e301b4b82ae803d21b@syzkaller.appspotmail.com"
- <syzbot+97e301b4b82ae803d21b@syzkaller.appspotmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-References: <d2b28f73-49c8-4e30-9913-01702da4dfe4@I-love.SAKURA.ne.jp>
- <20251104014738.131872-3-contact@gvernon.com>
- <df9ed36b-ec8a-45e6-bff2-33a97ad3162c@I-love.SAKURA.ne.jp>
- <a31336352b94595c3b927d7d0ba40e4273052918.camel@ibm.com>
- <aSTuaUFnXzoQeIpv@Bertha>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <aSTuaUFnXzoQeIpv@Bertha>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Virus-Status: clean
-X-Anti-Virus-Server: fsav202.rs.sakura.ne.jp
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <aSndJ1EYUnMGsUYX@shell.armlinux.org.uk>
 
-On 2025/11/25 8:46, George Anthony Vernon wrote:
-> On Tue, Nov 11, 2025 at 10:42:09PM +0000, Viacheslav Dubeyko wrote:
->> On Tue, 2025-11-11 at 23:39 +0900, Tetsuo Handa wrote:
->>> On 2025/11/04 10:47, George Anthony Vernon wrote:
->>>> +	if (!is_valid_cnid(inode->i_ino,
->>>> +			   S_ISDIR(inode->i_mode) ? HFS_CDR_DIR : HFS_CDR_FIL))
->>>> +		BUG();
->>>
->>> Is it guaranteed that hfs_write_inode() and make_bad_inode() never run in parallel?
->>> If no, this check is racy because make_bad_inode() makes S_ISDIR(inode->i_mode) == false.
->>>  
->>
->> Any inode should be completely created before any hfs_write_inode() call can
->> happen. So, I don't see how hfs_write_inode() and make_bad_inode() could run in
->> parallel.
->>
+On 2025-11-28 17:34:31 [+0000], Russell King (Oracle) wrote:
+> On Fri, Nov 28, 2025 at 06:22:42PM +0100, Sebastian Andrzej Siewior wrote:
+> > On 2025-11-28 17:01:18 [+0000], Russell King (Oracle) wrote:
+> > > > I hope Russell will add them once he gets to it. They got reviewed, I
+> > > > added them to the patch system.
+> > > 
+> > > I'm not sure which patches you're talking about, but discussion is
+> > > still ongoing, so it would be greatly premature to merge anything.
+> > 
+> > This thread
+> > 	https://lore.kernel.org/all/20251110145555.2555055-1-bigeasy@linutronix.de/
+> > 
+> > and the patches are 9459/1 to 9463/1 in your patch system. They address
+> > other issues, not this one.
 > 
-> Could we not read the same inode a second time, during the execution of
-> hfs_write_inode()?
+> Oh, the branch predictor issue. Yea, I'm not keen on changing that
+> because I'm not sure if it's correct (the knowledge for this has
+> long since evaporated.) There have been multiple attempts at fixing
+> this in the past, and I've previously pointed out problems with
+> them when I _did_ have the knowledge. Have you looked back in the
+> archives to see whether any of that feedback I've given in the past
+> is relevant?
+
+I dug up the emails from 2021, 2019 and you complained that I open the
+interrupts too early. Now I moved the invocation of hardening the branch
+predictor to happen before the interrupts are enabled. Based on that it
+should not raise to any complains.
+
+> > So Will suggested to let change the handler and handle this case. The
+> > other patch is avoiding handling addr > TASK_SIZE.
+> > Any preferences from your side?
 > 
-> Then I believe we could hit make_bad_inode() in hfs_read_inode() once we
-> had already entered hfs_write_inode(), and so test a cnid against the
-> wrong i_mode.
-> 
+> ... and now we have a new proposal from Linus. I'm not intending to
+> do anything on this new problem until the discussion calms down and
+> we stop getting new solutions.
 
-My "Is it guaranteed that hfs_write_inode() and make_bad_inode() never run in parallel?"
-question does not assume "make_bad_inode() for HFS is called from only hfs_read_inode()".
+Okay. If we could please sort out the first part then it might be easier
+to move on here once the dust settled.
 
-write_inode() already checks for !is_bad_inode(inode) before calling
-filesystem's write_inode callback
-( https://elixir.bootlin.com/linux/v6.18-rc7/source/fs/fs-writeback.c#L1558 ).
-
-If the reason for "ubifs is doing it in the ubifs_write_inode()" 
-( https://elixir.bootlin.com/linux/v6.18-rc7/source/fs/ubifs/super.c#L299 ) is
-that make_bad_inode() could be called at any moment, it is not safe for HFS to
-depend on "inode->i_mode does not change during hfs_write_inode()".
-
+Sebastian
 
