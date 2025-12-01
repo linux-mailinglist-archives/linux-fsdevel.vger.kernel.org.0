@@ -1,173 +1,125 @@
-Return-Path: <linux-fsdevel+bounces-70324-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70325-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69FD0C969F7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 01 Dec 2025 11:23:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4205AC96AF0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 01 Dec 2025 11:37:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6BB33342663
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Dec 2025 10:23:44 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E7F34341B3A
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Dec 2025 10:37:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E214521CC4F;
-	Mon,  1 Dec 2025 10:23:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E333F303A06;
+	Mon,  1 Dec 2025 10:36:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b="RpHDpQZz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="exfusfN2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-43101.protonmail.ch (mail-43101.protonmail.ch [185.70.43.101])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAB2B302CD1;
-	Mon,  1 Dec 2025 10:23:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C0122E8B81
+	for <linux-fsdevel@vger.kernel.org>; Mon,  1 Dec 2025 10:36:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764584615; cv=none; b=ORbiaZGnIzrA4FcSbzKg6TNytKLoWqKXFBbOua6Qe//0LE/iERyJTj2W3GYBHzYKONjFyb1GkPkwerLUIR6urNRgRvb1Uwf0NCTzNIkPeHPGUcmPn9Ank7IadVdwiCw/+OH6C0eb1j8ciQ/PtBl75gvzk9mlEPA1dT/R6LFUQdQ=
+	t=1764585413; cv=none; b=cEIG5bzWn/WJboUXd6BRR+MhaHrqiSl0fZdaKEMxipUvI5GGskEeuT+EUKgsng0ACEUAurwMrGnUaOIMIAznoRyugzt0we7fr2Wmh75jybMTRA99kGiEKWdUiCFfGOk82g/yL41vPTbpcdFttXRtfT99BCZodS4GkQ2Cd/5DPxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764584615; c=relaxed/simple;
-	bh=eKa/8ApbLqMOFRazYI2GV6d4odoAOzMspi5pP0Z2KQg=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VLtDBeN9Qm+7ESS/wG1zqP+Kp6gONle4no7y52hnT/SsHeyPuCF7u2m5gf6rOMC7fc3XCCuTYgquS+qMGghah/2jnjPOD47RZ7vUxBw4WK5M0mJgb1Fms3aq2uKCgA5V17OUu1zFN4QvvWV3y1i/CBsrp9sf/I7A8BsdvCBHEt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me; spf=pass smtp.mailfrom=pm.me; dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b=RpHDpQZz; arc=none smtp.client-ip=185.70.43.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
-	s=protonmail3; t=1764584606; x=1764843806;
-	bh=QnPScfECMfGXASlBfNyIG7Imc1U13Cp1f8LkX6qmIUk=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=RpHDpQZzYuktwGoF6ihhp2LS52OTDz4RVT/GsNzw44D9RYrEC1d0h/X3FKZUNWqPq
-	 C/3rllP/4P22OrASzib/QAqi2dIGjis2zjL5mY7IIcUEAcL83/qda8oBG4rRQYE1+/
-	 kQfmdU2sN54teUEA3Qy+r6rCZdCytGsRdsQdv2yax5W/NEyYn8WumNdFtVs8q3XZBX
-	 JssZh5RD7Mv63jptrzfwaQaE+KTnySpGQ86wrEoxHZPpPQxzf0D7qSwEYj0RrWvDaN
-	 yJPVjChTQiiMSStQ6r5/HBN8EE64sr0hoQ9jOrXBjmhPw1E/49oN7sFYSsdfwwpWJm
-	 vcxWADWzG0sTQ==
-Date: Mon, 01 Dec 2025 10:23:20 +0000
-To: Daniel Almeida <daniel.almeida@collabora.com>
-From: Oliver Mangold <oliver.mangold@pm.me>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Benno Lossin <lossin@kernel.org>, Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, Leon Romanovsky <leon@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, Viresh Kumar
-	<vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, =?utf-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Paul Moore <paul@paul-moore.com>, Serge Hallyn <sergeh@kernel.org>, Asahi Lina <lina+kernel@asahilina.net>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, linux-block@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-pm@vger.kernel.org, linux-pci@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v13 4/4] rust: Add `OwnableRefCounted`
-Message-ID: <aS1slBD1t-Y_K-aC@mango>
-In-Reply-To: <A5A7C4C9-1504-439C-B4FF-C28482AF7444@collabora.com>
-References: <20251117-unique-ref-v13-0-b5b243df1250@pm.me> <20251117-unique-ref-v13-4-b5b243df1250@pm.me> <A5A7C4C9-1504-439C-B4FF-C28482AF7444@collabora.com>
-Feedback-ID: 31808448:user:proton
-X-Pm-Message-ID: 4625f7cc3b95621c135f74a512f54cf7f5392afa
+	s=arc-20240116; t=1764585413; c=relaxed/simple;
+	bh=XYWQNg+vq2Qya/8SmqQOrQGyCoVBqwwRb9StzyxHKFM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Idg92E6rvgQ2uWN/1S9bro6dfxjby+0l9PzAcrr/uZyYCfVktN0WWl1Fa+jbYocHp+02j9+vF6MY3HVnVJZlBYW0rl5ZKjchOdknyb3sBOcgXIufMdMHoe7IB1P1atw+CXBDuDTArGBA+E20rqvDtOzWMcS8bAutRL0MBlYaIuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=exfusfN2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEB63C4AF0B
+	for <linux-fsdevel@vger.kernel.org>; Mon,  1 Dec 2025 10:36:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1764585412;
+	bh=XYWQNg+vq2Qya/8SmqQOrQGyCoVBqwwRb9StzyxHKFM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=exfusfN2xdMadVZUtRGvILoChtEv7S+cQIksEXkm8dCigRLoQlORk8CUy9bGFOF8I
+	 hdvVYfGsu9RD4Ospgphi09TjVtZzBq2ddRll4QW6K/ehLA07aXRjh4GPvaaZqMOmMn
+	 hbZ9ApiujSLYpkdAOcSh3Ostvt5MhE99kxvYUX5PeGWODWBwa3w8CXCQZydPjr5Dud
+	 eQGrSrjAhjCuSMRmO6ytBHlwmihRarqRXDoHmhsKuBV+/V9LVvbA9uyHZhwDB0IxlX
+	 8OWca7UwlfQoUh+R1S8R9GJlWePE0xU2nXmezwemmw6VtxYFEeDw+4K4vbT9UGff3I
+	 M9gZE8SkNsVVg==
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-64320b9bb4bso1988053a12.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Dec 2025 02:36:52 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVR2oMWk6izCuzVOTnSt017qYMYaoAlQGFtG/Upxl3xLcZChYK5NS/HoxVQz8CEDMmFne9Z6OFnnBbUTtm3@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxjf3G8hs8c9QyXmpcVDxfO6c3DSBcHeTgszHEqZJvFVv5vh21I
+	iQzj0qR4QSm/aTSGSefLWgOqBe7YOzsNBcjdnj27FNa3CVpBYsouNsVLrUgoZ5Xi/rMA7eRWyhp
+	Tq03moEElEEI+TlTeIKWMBK1qsYKwa6Q=
+X-Google-Smtp-Source: AGHT+IHE4Ai0xSYbPCkAvD4Pk/K4oBqjxe2LD7IXScb/xPKXW2lgHjPJKRVOxyFr++DU7WNPK2Qxtf2pU8DhwsOV+gI=
+X-Received: by 2002:a05:6402:1396:b0:643:eae:b1b6 with SMTP id
+ 4fb4d7f45d1cf-6453969fb83mr28904123a12.12.1764585411294; Mon, 01 Dec 2025
+ 02:36:51 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20251127045944.26009-1-linkinjeon@kernel.org> <20251127045944.26009-2-linkinjeon@kernel.org>
+ <aS1AUP_KpsJsJJ1q@infradead.org>
+In-Reply-To: <aS1AUP_KpsJsJJ1q@infradead.org>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Mon, 1 Dec 2025 19:36:37 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd-vxzkCJf7D7OOXcVxZn-AbtLFOKAvVqpKEyKyOMsTVdw@mail.gmail.com>
+X-Gm-Features: AWmQ_bk-0gW3HTKjZGL4imfqtr1UIxJ1l_fqnvdrtTsndUpX21SnELcXW_HaoNU
+Message-ID: <CAKYAXd-vxzkCJf7D7OOXcVxZn-AbtLFOKAvVqpKEyKyOMsTVdw@mail.gmail.com>
+Subject: Re: [PATCH v2 01/11] ntfsplus: in-memory, on-disk structures and headers
+To: Christoph Hellwig <hch@infradead.org>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, hch@lst.de, tytso@mit.edu, 
+	willy@infradead.org, jack@suse.cz, djwong@kernel.org, josef@toxicpanda.com, 
+	sandeen@sandeen.net, rgoldwyn@suse.com, xiang@kernel.org, dsterba@suse.com, 
+	pali@kernel.org, ebiggers@kernel.org, neil@brown.name, amir73il@gmail.com, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	iamjoonsoo.kim@lge.com, cheol.lee@lge.com, jay.sim@lge.com, gunho.lee@lge.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On 251128 1506, Daniel Almeida wrote:
-
-> > /// Type allocated and destroyed on the C side, but owned by Rust.
-> > ///
-> > -/// Implementing this trait allows types to be referenced via the [`Ow=
-ned<Self>`] pointer type. This
-> > -/// is useful when it is desirable to tie the lifetime of the referenc=
-e to an owned object, rather
-> > -/// than pass around a bare reference. [`Ownable`] types can define cu=
-stom drop logic that is
-> > -/// executed when the owned reference [`Owned<Self>`] pointing to the =
-object is dropped.
-> > +/// Implementing this trait allows types to be referenced via the [`Ow=
-ned<Self>`] pointer type.
-> > +///  - This is useful when it is desirable to tie the lifetime of an o=
-bject reference to an owned
-> > +///    object, rather than pass around a bare reference.
-> > +///  - [`Ownable`] types can define custom drop logic that is executed=
- when the owned reference
-> > +///    of type [`Owned<_>`] pointing to the object is dropped.
-> > ///
-> > /// Note: The underlying object is not required to provide internal ref=
-erence counting, because it
-> > /// represents a unique, owned reference. If reference counting (on the=
- Rust side) is required,
-> > -/// [`RefCounted`](crate::types::RefCounted) should be implemented.
-> > +/// [`RefCounted`] should be implemented. [`OwnableRefCounted`] should=
- be implemented if conversion
-> > +/// between unique and shared (reference counted) ownership is needed.
-> > ///
-> > /// # Safety
-> > ///
-> > @@ -143,9 +146,7 @@ impl<T: Ownable> Owned<T> {
-> >     ///   mutable reference requirements. That is, the kernel will not =
-mutate or free the underlying
-> >     ///   object and is okay with it being modified by Rust code.
-> >     pub unsafe fn from_raw(ptr: NonNull<T>) -> Self {
-> > -        Self {
-> > -            ptr,
-> > -        }
-> > +        Self { ptr }
-> >     }
->=20
-> Unrelated change?
-
-Ah, yes, rustfmt must I done that, and I missed it. Will fix.
-
-> > +///
-> > +/// impl OwnableRefCounted for Foo {
-> > +///     fn try_from_shared(this: ARef<Self>) -> Result<Owned<Self>, AR=
-ef<Self>> {
-> > +///         if this.refcount.get() =3D=3D 1 {
-> > +///             // SAFETY: The `Foo` is still alive and has no other R=
-ust references as the refcount
-> > +///             // is 1.
-> > +///             Ok(unsafe { Owned::from_raw(ARef::into_raw(this)) })
-> > +///         } else {
-> > +///             Err(this)
-> > +///         }
-> > +///     }
-> > +/// }
-> > +///
->=20
-> We wouldn=E2=80=99t need this implementation if we added a =E2=80=9Crefco=
-unt()=E2=80=9D
-> member to this trait. This lets you abstract away this logic for all
-> implementors, which has the massive upside of making sure we hardcode (an=
-d thus
-> enforce) the refcount =3D=3D 1 check.
-
-This wouldn't work for the block `Request` use case. There a reference can
-be acquired "out of thin air" using a `TagSet`. Thus "check for unique
-refcount" + "create an owned reference" needs to be one atomic operation.
-
-Also I think it might be generally problematic to require a refcount()
-function. The API of the underlying kernel object we want to wrap might not
-offer that, so we would need to access internal data.
-
-
-> > +/// // SAFETY: This implementation of `release()` is safe for any vali=
-d `Self`.
-> > +/// unsafe impl Ownable for Foo {
-> > +///     unsafe fn release(this: NonNull<Self>) {
-> > +///         // SAFETY: Using `dec_ref()` from [`RefCounted`] to releas=
-e is okay, as the refcount is
-> > +///         // always 1 for an [`Owned<Foo>`].
-> > +///         unsafe{ Foo::dec_ref(this) };
-> > +///     }
-> > +/// }
-> > +///
-> > +/// let foo =3D Foo::new().expect("Failed to allocate a Foo. This shou=
-ldn't happen");
->=20
-> All these =E2=80=9Cexpects()=E2=80=9D and custom error strings would go a=
-way if you
-> place this behind a fictional function that returns Result.
-
-Not sure what you mean by fictional function. Do you mean a non-existent
-function? We want to compile this code as a unit test.
-
-The rest of your suggested changes make sense, I guess. I will implement
-them.
-
-Thanks,
-
-Oliver
-
+On Mon, Dec 1, 2025 at 4:14=E2=80=AFPM Christoph Hellwig <hch@infradead.org=
+> wrote:
+>
+> On Thu, Nov 27, 2025 at 01:59:34PM +0900, Namjae Jeon wrote:
+> > This adds in-memory, on-disk structures, headers and documentation.
+>
+> So a lot of this looks very similar to the old prematurely removed
+> ntfs driver.  I think reviewing would be a lot simpler if we'd
+> find some way to bring that back, allowing to focus on the new
+> code.  I'm not sure how easy that would be as the old version
+> probably won't build, but a modified revert that doesn't wire it
+> up to Kconfig would still significantly reduce the diff.  Especially
+> with the rename back to ntfs as suggested.
+>
+> I can see that you don't want to do the rest as small incremental
+> patches, but even a very small number of larger patches ontop of that
+> base would help a lot.
+Okay, I will try it.
+>
+> > +iocharset=3Dname               Deprecated option.  Still supported but=
+ please use
+> > +                     nls=3Dname in the future.  See description for nl=
+s=3Dname.
+>
+> Is there much of a point in bringin this back?
+I will update this on the next version.
+>
+> > + * ntfs_read_mapping_folio - map a folio into accessible memory, readi=
+ng it if necessary
+>
+> The very long comment for something that is just a trivial wrapper
+> around read_mapping_folio is odd.
+These comments are from old ntfs. I will update the content or delete
+them if they are unnecessary.
+>  Also why does ntrfs need the special
+> EINTR handling that other file systems don't?
+As Matthew said, it is used to read metadata and need to be handled in
+case it is interrupted.
+>
+> > +/* sizeof()=3D 40 (0x28) bytes */
+>
+> You might want to add static_assert() calls instead of the comments
+> to enforce this.
+Okay, I will add it.
+Thanks!
+>
 
