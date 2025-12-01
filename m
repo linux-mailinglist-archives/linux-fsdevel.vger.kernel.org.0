@@ -1,176 +1,145 @@
-Return-Path: <linux-fsdevel+bounces-70359-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70360-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60F1BC9860F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 01 Dec 2025 17:55:43 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40073C986A1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 01 Dec 2025 18:08:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C37D3A3FC4
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Dec 2025 16:55:33 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 55A4634426C
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Dec 2025 17:08:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB59A335BBE;
-	Mon,  1 Dec 2025 16:55:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C30C335BBE;
+	Mon,  1 Dec 2025 17:08:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GJ9X37Tk"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="m6tHBhvO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 760C0335BB4
-	for <linux-fsdevel@vger.kernel.org>; Mon,  1 Dec 2025 16:55:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E83733468A;
+	Mon,  1 Dec 2025 17:08:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764608125; cv=none; b=vFkzPHs9L5qA92dCN3kKEx0J0T5MaPxZ5axSZwqmbctlM+75gJMrJeDU/l4fnGGeFm2hhFLWtmI7lGY0p6EjTvzr26JX7remk17FaG0yf49oV0MNUKfICi5b6L8917tqLWVRNJfJsj9jCK0HRFomokneDamy25Gc8tLNw6F/XPg=
+	t=1764608892; cv=none; b=SS83MYQ3XFL0X6sQHYxcuCmb1/FSKkLWrud0Kz2LOtjuP8s2QtxBm8x0EB1iH90ASugqFdoA6dQMf2QnsJqeTMRs/22ygTiEyV6I9a+gmDx/Y/b56W1FFTeUeuB06mkeu/7xJp+ADHl1yvlskToXWpWdcTNrN4QZFytKCMBMP7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764608125; c=relaxed/simple;
-	bh=tnBeSzBy41ElJjUNzaDGRg1rFGe4xN+4QiZQOyT4O+Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SFokcWCQ9X0CkfKkxfJJxQdkM2zGC50QaeJfpu4Bht3sSfDlWZpPnplWCvmJG144M0ckrBwxN1gaLzy4xW73ibMWSzko+n7GqYeKMVJPhkgancxyZhvKB+PEGs9Mta9SjFDJBnuwgzy83Ct5SiHjdqnHBNtXmKPIch1oX4kPomg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GJ9X37Tk; arc=none smtp.client-ip=209.85.219.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-8804ca2a730so63772896d6.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Dec 2025 08:55:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1764608121; x=1765212921; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4sEVpko+5n0PJOroaHb42D9u1KdHljQU3qjynTesipo=;
-        b=GJ9X37TkUuCxtss+oKBzZ89YJ0NLf0DpFV+EwYiunAPVlKcWGYsSV7r8Kw5Tw7XbnI
-         EhxP/95SRbLzXJowplUn553x5fgSQf7MCTLICu2VvjHVyZwSljGa0If7LLS9uj/NsbWg
-         zZ5zEsoOtrKoHj2ADWf7ONFJCN+Y0WX1fH2wl5C6VD21zUL0eHZS86SzLQ26Phks9kyI
-         7Y/KAXn4tvuFRQevd9nQyJFWjRbFwDZYF+shQLI6Zo+oEdEL4DC7lFnZIxWNgplyV3Pl
-         1Gv1Nl/FzAjtaSsyLlvnA95dRp7H5EvU0GeqCCmqFDBwpv++XUOegNRiKrHv9DDZDZU9
-         rNig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764608121; x=1765212921;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=4sEVpko+5n0PJOroaHb42D9u1KdHljQU3qjynTesipo=;
-        b=XbocnwS4Zn4pgx4nXwsdbRFgjBQmk50FlO+zvPg3NrIu/UmcpOaF0TKGhU4uam31PY
-         7fMe/c9hWowxN1mESCRHhgoNQwkg4htw8zDZjazXKhQ+KDnNVYEk1VmHRi0iKM9b8uu8
-         ZaXV1U1+NaVnk/uO7PIHYp6TnQhykhZ4kcMzJCsy0xfniKZxN3oXlX6dkLnbfIMAWgVY
-         hkgkN7muJGSu/rp4ei6CXZQ+l2S5k7Oydg1DQT1vXVuGK0HVW01YS7dw4C9NCO6NCjZm
-         0tw8J0vmBrS+/nk31Yoxq8SHohuBb626YU7JvJV97ErX7P5KFMEZSAYPfnQDxtAaiMVb
-         Zyaw==
-X-Forwarded-Encrypted: i=1; AJvYcCVwRU1y9rkwDqSgZYnH7An7Ob3G75gasUZLk9kxsp1PPK1sXIh6Mhx117zy29tk89hzMtSDxQszp9vbI+aT@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5fPyKd5ad4wtXI4bS2V1k3iPuHRtvWubxtjUW7s1f7Wmg0+Lf
-	/CquWdsNiGxvomNZyw2L1vu7PhA2VnuFjSO7a7RK0dsYv35A4WUohVD6ZD8PuWuFaz2N91+lKWS
-	gikqWjv+deaQNmqD1ut8hBOgJmh5hBgA=
-X-Gm-Gg: ASbGnculr1uJt5zIi8updR59aJVv511/8ZoojzjJdf5DcDlQ7SfE0oMoCjXYoHECsTe
-	c+RdcA3/FwYW3addB9fETT1NVFRGGRTSpKIeSjj97P1op23BLvPPylLz2+4oBWeHTy90Vxy7UwP
-	sPkASAbd5siX9v2xIjX1ayfRWLy3epJRF50QAzd4tdUO3kB1VymqEEzQr1NBS4G1qUtb/uFP3qm
-	3D6DkUHad+P9kAYio+HHiCXorx+2lSMEncrHr1Kkn4nnAD0AN4Wsc9N4XVUeLskDSDJhTXDMFHn
-	h4yI/Sbng0Hq3rNiA+n0wbw4IK3z/mcFOJwsfPSdMAjQDY9FALtzf7vbuGTh+uziNfWV2tyy44C
-	QqDga/ypc2/v1/fhyW9DkwKcOYpiwp5rzuq64bXzfnMc/XORpVoXhkIfsRnB+GnXe4Jx8KNgjtK
-	0jHvFaheg=
-X-Google-Smtp-Source: AGHT+IEG6R92jICSyFXT632ttWwgPqabGo/7YGPVecrju8YTrqTUBKLOzvnujd7HCxZ6Q3MkFdRGL2qRP8TIEVJqoic=
-X-Received: by 2002:ad4:5c6d:0:b0:880:4ec0:417f with SMTP id
- 6a1803df08f44-8847c4a3f8emr545853166d6.24.1764608121279; Mon, 01 Dec 2025
- 08:55:21 -0800 (PST)
+	s=arc-20240116; t=1764608892; c=relaxed/simple;
+	bh=c1hVLffTbOic9SRKj/Vx/1bE1OkZBkKNJY7xX1j8I3g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=POLJ7GqLU0xad/kS7ZBYwoaCtaRRMzoPMX64BPxA+oAmnqZ0ArJd8KF/WiRHAGdh9WmWzYzbuXcdGIytRXkS9IJNwvBLhU6wWpsSRAx4WJ31CJtLPlEpMFunyNQBoUAloCFrGF8eRgJ+Te5OBoK/MbwofYifLKwOk5rc+QCldP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=m6tHBhvO; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=chyrhP448TKCA7mjR+pn/4FRynfEGDb/eEOSGrjCi48=; b=m6tHBhvODjORIENDeypTobyuUz
+	dAfJPXFwkttmrEIudNiC+eJ++pHJAehlDyTlgb+ujjJWYhGYSpXw0zgCrIZdzySovjHT9cA2lZ7cz
+	jzkoihgeSwKZL/QyryX0gMwRMsHu9fIKtRAIcuexFdlw2rHqKpYf1jthXT46t235cSaPO8XhxuaTe
+	UAahQWu4SoOIcWhhn/JZl9xBFfE56iKVrlHQOW3w03FPhCGJmpbu8/gQLozFObDI4/H9EJOOIPMa2
+	/2Q76hpj/QtV0dHTpaDtoXdZQnJPZ4t9wMlA/K+oYAUz07/WLzmLSKsNCsBoZqTGtGNhzD+M8DpUC
+	vLmNTgIw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.99 #2 (Red Hat Linux))
+	id 1vQ7Nl-000000041Kz-21Ah;
+	Mon, 01 Dec 2025 17:08:13 +0000
+Date: Mon, 1 Dec 2025 17:08:13 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Amir Goldstein <amir73il@gmail.com>, NeilBrown <neil@brown.name>,
+	Christian Brauner <brauner@kernel.org>,
+	Val Packett <val@packett.cool>, Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
+	Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
+	David Howells <dhowells@redhat.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>, Tyler Hicks <code@tyhicks.com>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Olga Kornievskaia <okorniev@redhat.com>,
+	Dai Ngo <Dai.Ngo@oracle.com>, Namjae Jeon <linkinjeon@kernel.org>,
+	Steve French <smfrench@gmail.com>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Carlos Maiolino <cem@kernel.org>,
+	John Johansen <john.johansen@canonical.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Stephen Smalley <stephen.smalley.work@gmail.com>,
+	Ondrej Mosnacek <omosnace@redhat.com>,
+	Mateusz Guzik <mjguzik@gmail.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Stefan Berger <stefanb@linux.ibm.com>,
+	"Darrick J. Wong" <djwong@kernel.org>, linux-kernel@vger.kernel.org,
+	netfs@lists.linux.dev, ecryptfs@vger.kernel.org,
+	linux-nfs@vger.kernel.org, linux-unionfs@vger.kernel.org,
+	linux-cifs@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+Subject: Re: [PATCH] fuse: fix conversion of fuse_reverse_inval_entry() to
+ start_removing()
+Message-ID: <20251201170813.GH3538@ZenIV>
+References: <20251113002050.676694-1-neilb@ownmail.net>
+ <20251113002050.676694-7-neilb@ownmail.net>
+ <6713ea38-b583-4c86-b74a-bea55652851d@packett.cool>
+ <176454037897.634289.3566631742434963788@noble.neil.brown.name>
+ <CAOQ4uxjihcBxJzckbJis8hGcWO61QKhiqeGH+hDkTUkDhu23Ww@mail.gmail.com>
+ <20251201083324.GA3538@ZenIV>
+ <CAJfpegs+o01jgY76WsGnk9j41LS5V0JQSk--d6xsJJp4VjTh8Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1430101.1764595523@warthog.procyon.org.uk>
-In-Reply-To: <1430101.1764595523@warthog.procyon.org.uk>
-From: Steve French <smfrench@gmail.com>
-Date: Mon, 1 Dec 2025 10:55:08 -0600
-X-Gm-Features: AWmQ_bn6VuRsE8Iui3zMCTDCVt_cM2s03jlNDIA4eOmN3RT6hBJvlGPPfTBZm0o
-Message-ID: <CAH2r5ms9VSfTebnVe24bM7V5TVJkZgG=cOmZrxJo+RCPf1ZgtA@mail.gmail.com>
-Subject: Re: Can we sort out the prototypes within the cifs headers?
-To: David Howells <dhowells@redhat.com>
-Cc: Paulo Alcantara <pc@manguebit.org>, Enzo Matsumiya <ematsumiya@suse.de>, 
-	Steve French <sfrench@samba.org>, Shyam Prasad N <sprasad@microsoft.com>, 
-	Stefan Metzmacher <metze@samba.org>, linux-cifs@vger.kernel.org, netfs@lists.linux.dev, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJfpegs+o01jgY76WsGnk9j41LS5V0JQSk--d6xsJJp4VjTh8Q@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-> (4) Move SMB1-specific functions out to smb1proto.h.  Move SMB2/3-specifi=
-c
-     functions out to smb2proto.h.
+On Mon, Dec 01, 2025 at 03:03:08PM +0100, Miklos Szeredi wrote:
+> On Mon, 1 Dec 2025 at 09:33, Al Viro <viro@zeniv.linux.org.uk> wrote:
+> >
+> > On Mon, Dec 01, 2025 at 09:22:54AM +0100, Amir Goldstein wrote:
+> >
+> > > I don't think there is a point in optimizing parallel dir operations
+> > > with FUSE server cache invalidation, but maybe I am missing
+> > > something.
+> >
+> > The interesting part is the expected semantics of operation;
+> > d_invalidate() side definitely doesn't need any of that cruft,
+> > but I would really like to understand what that function
+> > is supposed to do.
+> >
+> > Miklos, could you post a brain dump on that?
+> 
+> This function is supposed to invalidate a dentry due to remote changes
+> (FUSE_NOTIFY_INVAL_ENTRY).  Originally it was supplied a parent ID and
+> a name and called d_invalidate() on the looked up dentry.
+> 
+> Then it grew a variant (FUSE_NOTIFY_DELETE) that was also supplied a
+> child ID, which was matched against the looked up inode.  This was
+> commit 451d0f599934 ("FUSE: Notifying the kernel of deletion."),
+> Apparently this worked around the fact that at that time
+> d_invalidate() returned -EBUSY if the target was still in use and
+> didn't unhash the dentry in that case.
+> 
+> That was later changed by commit bafc9b754f75 ("vfs: More precise
+> tests in d_invalidate") to unconditionally unhash the target, which
+> effectively made FUSE_NOTIFY_INVAL_ENTRY and FUSE_NOTIFY_DELETE
+> equivalent and the code in question unnecessary.
+> 
+> For the future, we could also introduce FUSE_NOTIFY_MOVE, that would
+> differentiate between a delete and a move, while
+> FUSE_NOTIFY_INVAL_ENTRY would continue to be the common (deleted or
+> moved) notification.
 
-I am generally in favor of those type of cleanup patches (as
-potentially higher priority) as we want to be able to turn off/remove
-SMB1 code easily and not confuse old, less secure SMB1, with modern
-dialects
+Then as far as VFS is concerned, it's an equivalent of "we'd done
+a dcache lookup and revalidate told us to bugger off", which does
+*not* need locking the parent - the same sequence can very well
+happen without touching any inode locks.
 
-On Mon, Dec 1, 2025 at 7:26=E2=80=AFAM David Howells <dhowells@redhat.com> =
-wrote:
->
-> Hi Paulo, Enzo, et al.,
->
-> You may have seen my patch:
->
->         https://lore.kernel.org/linux-cifs/20251124124251.3565566-4-dhowe=
-lls@redhat.com/T/#u
->
-> to sort out the cifs header file prototypes, which are a bit of a mess: s=
-ome
-> seem to have been placed haphazardly in the headers, some have unnamed
-> arguments and also sometimes the names in the .h and the .c don't match.
->
-> Now Steve specifically namechecked you two as this will affect the backpo=
-rting
-> of patches.  Whilst this only affects the prototypes in the headers and n=
-ot
-> the implementations in C files, it does cause chunks of the headers to mo=
-ve
-> around.
->
-> Can we agree on at least a subset of the cleanups to be made?  In order o=
-f
-> increasing conflictiveness, I have:
->
->  (1) Remove 'extern'.  cifs has a mix of externed and non-externed, but t=
-he
->      documented approach is to get rid of externs on prototypes.
->
->  (2) (Re)name the arguments in the prototypes to be the same as in the
->      implementations.
->
->  (3) Adjust the layout of each prototype to match the implementation, jus=
-t
->      with a semicolon on the end.  My script partially does this, but mov=
-es
->      the return type onto the same line as the function name.
->
->  (4) Move SMB1-specific functions out to smb1proto.h.  Move SMB2/3-specif=
-ic
->      functions out to smb2proto.h.
->
->  (5) Divide the lists of prototypes (particularly the massive one in
->      cifsproto.h) up into blocks according to which .c file contains the
->      implementation and preface each block with a comment that indicates =
-the
->      name of the relevant .c file.
->
->      The comment could then be used as a key for the script to maintain t=
-he
->      division in future.
->
->  (6) Sort each block by position in the .c file to make it easier to main=
-tain
->      them.
->
-> A hybrid approach is also possible, where we run the script to do the bas=
-ic
-> sorting and then manually correct the output.
->
-> David
->
->
+IOW, from the point of view of locking protocol changes that's not
+a removal at all.
 
-
---=20
-Thanks,
-
-Steve
+Or do you need them serialized for fuse-internal purposes?
 
