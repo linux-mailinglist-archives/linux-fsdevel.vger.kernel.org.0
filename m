@@ -1,322 +1,221 @@
-Return-Path: <linux-fsdevel+bounces-70393-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70394-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4973DC9960C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 01 Dec 2025 23:27:20 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17642C99648
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 01 Dec 2025 23:37:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBA473A449D
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Dec 2025 22:27:18 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CA6824E2037
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Dec 2025 22:37:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 427CD279DC3;
-	Mon,  1 Dec 2025 22:27:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A95A92853F8;
+	Mon,  1 Dec 2025 22:37:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VXopGXC1";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="IeLUb4Yc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11022143.outbound.protection.outlook.com [52.101.43.143])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF1D6207A0B;
-	Mon,  1 Dec 2025 22:27:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.143
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764628031; cv=fail; b=FS4uMAMree5JYSGM8nFTk0yAzPPI7zq9UBvkx2uxSqINMWLsjEnxe059VU/iNzFbO3OcuuRf005eBmEJTlJQ+8SXG+DkhHGE7un8iQgj2i4bsMZ39vA4P1upbHEyMIgxR5XVZ0q43wY24k1BfLd4IjhIEfA98xcYbV0oaoFy90c=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764628031; c=relaxed/simple;
-	bh=fO+uhjNLdmoBv7fP+SKAzcjvMxRhsYsqm4QVEJ6Sl+o=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=LUlZls9zBDbcoDMS8aO2j5S+T1nv7FJgYYE30nzWak+pNKJveEYhlWqBEe7KsJ98liS6ZtDXjRQpRqoRBloY8gfS/op05WjymSEk5vdXv+RaATCOYdF+3RDBpWR5ADOQwmLSpW4xZ3UBcWLOC3ajcRhSrskWIUr6HxG2oOKdWrE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=talpey.com; spf=pass smtp.mailfrom=talpey.com; arc=fail smtp.client-ip=52.101.43.143
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=talpey.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=talpey.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gzamJ8cFhj9fG1VFEt+ZrsFoTj6y7LWZDTpvUq93rX2scLnDAL78cWDBaOy6kfjVvi++RVALal6YV/EsNYEBsYtucwyxMc0cuWzkJW4WY3rEz72Ft+7ZUUtNueHzb8kEIEjkZXnxRHB23qGgkxO6fgKV3WVmWkYxO6xJnt1baM8E/fIR7rAiTAnXKCKCetsoiPXaEMpgI9Qi3NRGSpywH8m+iTCcnPL59iDJi6aUXfSroAlCi8/ITy8Y5d9AF4cWJegZQGfcSoPL99xGn63F2OVQSgKSaiVMUTMeycwp+CahuQ7Az4yt5Mwn9DxMB17ef30DRGVAkN6UUTRvCGNRKQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kTAebvZ2Ir1HzPRX6VC/p1GOqyb7amb2C3wK49Pk3tQ=;
- b=Mj/Q3bbF0YTCAa57WpDtSTZOepdxw2lwgoC5lZN5E1wY2zaI42iVW6d6D9A9yRET2HKjW657RA3pnrYW9Jdj/vEPnvbwSRSwXeOtcviwnOw6TRrLihB41Ndlw07JIyL+nuSmi5/JQZZGFy3GvpCLFBz6bFxiWD5Kyp+ET9OJV64q8DV9tkGW+n7EbuYnFu62l77y1D0UnNubm7bWmFSPYE+VK/GvYF7ukZ92UnfYpJD0LEo4QVKO5Hi7bw0N+NPLli0XqMTZTxFzBSHIozst6YoCXNdDewj5H6ZqN6zY38kXQk3rFr1KOQ1yXWmTlP/QO09s951fI4YsMOvWI/6CGQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=talpey.com; dmarc=pass action=none header.from=talpey.com;
- dkim=pass header.d=talpey.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=talpey.com;
-Received: from SN6PR01MB5151.prod.exchangelabs.com (2603:10b6:805:bc::32) by
- PH7PR01MB8467.prod.exchangelabs.com (2603:10b6:510:2f6::5) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9366.17; Mon, 1 Dec 2025 22:27:07 +0000
-Received: from SN6PR01MB5151.prod.exchangelabs.com
- ([fe80::9be3:7323:b360:3ce0]) by SN6PR01MB5151.prod.exchangelabs.com
- ([fe80::9be3:7323:b360:3ce0%4]) with mapi id 15.20.9366.012; Mon, 1 Dec 2025
- 22:27:07 +0000
-Message-ID: <5057d4fd-1449-4f68-b847-f8b791de2be6@talpey.com>
-Date: Mon, 1 Dec 2025 17:27:07 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 0/9] cifs: Miscellaneous prep patches for rewrite of
- I/O layer
-To: David Howells <dhowells@redhat.com>, Steve French <sfrench@samba.org>
-Cc: Paulo Alcantara <pc@manguebit.org>, Shyam Prasad N
- <sprasad@microsoft.com>, Stefan Metzmacher <metze@samba.org>,
- linux-cifs@vger.kernel.org, netfs@lists.linux.dev,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251201094916.1418415-1-dhowells@redhat.com>
-Content-Language: en-US
-From: Tom Talpey <tom@talpey.com>
-In-Reply-To: <20251201094916.1418415-1-dhowells@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BLAPR03CA0171.namprd03.prod.outlook.com
- (2603:10b6:208:32f::31) To SN6PR01MB5151.prod.exchangelabs.com
- (2603:10b6:805:bc::32)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 191A124E4C3
+	for <linux-fsdevel@vger.kernel.org>; Mon,  1 Dec 2025 22:37:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1764628626; cv=none; b=I5SaxUrq8z0OSTIHTrH7T0mWW1r24/aJq+mVXqN3kqOHsw80fC0mKuOiEAWkA7hYgDl4Y0DMuod/l3VzD07XoKC58mCwxbkTgrMDi8bFOQjFjOz8c83fUo+SOMKQQAgwr4G43QQ5rVxKiKA7gDJ1p9+ZOc/HW73+v2tSNEiWnqA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1764628626; c=relaxed/simple;
+	bh=1YTmjXiDfWT06ovBh9wfUTGqRkMz4rOaoeTg+gBuuh4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LJd3W2mEC0BR8Hz4lQuT5CoWU771QYpx+eUQVWep4ml1XC6yTH4l5AoKUVDGqp76bIY/tfm6J+P9gn2tY8nCM6cWC1AHa1+9UdEUP1WKquCjk7ArNUTCpi+/OPjbmOpGH0SBwSbIH6WLvkmYm20M8espOyO3dfDeKMb/2wEWWLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VXopGXC1; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=IeLUb4Yc; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1764628623;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=B9W8GtlmMztPOKGmNDt/1BWnxRfhcYHphKSMv+Jfars=;
+	b=VXopGXC1GLKeBlOoehIgeVKi/K/wqYdPuNCeb2TsHWMpKrY2pSDxPNsPASsDqoKEozaSnV
+	oy6CXzkbO+lf9prQ0ynI+E6UOHtjp+6WgUDivyxMEGMI8HI8+DX9dAg5hxMErWRuPzeEWA
+	lh5OWg1N3Eox7qsf8Qga/DLoFYGkHvw=
+Received: from mail-ot1-f72.google.com (mail-ot1-f72.google.com
+ [209.85.210.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-490-Sc8HUWV3N3ykIBL-Pxvf-Q-1; Mon, 01 Dec 2025 17:37:02 -0500
+X-MC-Unique: Sc8HUWV3N3ykIBL-Pxvf-Q-1
+X-Mimecast-MFC-AGG-ID: Sc8HUWV3N3ykIBL-Pxvf-Q_1764628621
+Received: by mail-ot1-f72.google.com with SMTP id 46e09a7af769-7c70546acd9so10132453a34.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Dec 2025 14:37:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1764628621; x=1765233421; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=B9W8GtlmMztPOKGmNDt/1BWnxRfhcYHphKSMv+Jfars=;
+        b=IeLUb4YcxTY2YjE9h3OyUizqPtFI1cZL5WUefYLqAG7oxYHpMaYMpgmweN9BLn4KUY
+         160csxwD8AXj6NwY8RC73hhz/mOYfHfe/m7JeS6MlgJFOF7rWNGa6RR+avP7B5eEMOX2
+         xz3/IkK6vFE5kUTEbKE6TYr7rH0RB4O4PepOb63WNO+ol3IRY55VWzGU+D0IrKnZKOSG
+         iuwqrStfZ+yAbU/92h4ssoFq4FmhDqLkbWO/c8/pob/zXjc0PAgtjchwyr8zXSV2DGD6
+         eKuO2AW77xCh8zopt3Dc4aY2mjl1333X3fE3evO7pL7oK442WrtI6frxoCV7rSqLpvJM
+         nRBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764628621; x=1765233421;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=B9W8GtlmMztPOKGmNDt/1BWnxRfhcYHphKSMv+Jfars=;
+        b=lica6D+4/p4rihIpvfXE8YD1Y+1wVDeRIvFfS6HCqduABaVoJau+Kh1gNJMntrITTr
+         d5yhf/acAxL8bp1nBSeLQClAwnDklX0EvfGo9g4vjueg9jfgD2K3Fma3d1AL7amQRI0e
+         OReAuIOY5KPycjM7qcEUfHWfTYS1LTPPPbS5ajJXnfKmA16HQhz3E/YWgUqRNsMzj0+M
+         5evPpZZGgDR6UUA7obwpActymHmZv8Qz3vZae0gaS46EUUHx2ZHXktIhi2Dx45mbusP2
+         FuLWCU/QqD2/5f7rQj/u/KGA3LwY0Gz5waV9EMaNq0QGGhhuU2ZXqno7tDSFwBE/MsRg
+         1rqA==
+X-Forwarded-Encrypted: i=1; AJvYcCU02o+XVB1izAOpFU9WW/DF3lt89pecuIiK81iTyb7G8htEr8Hxe8X60lew4oD3QwuJVqhdbW1fRvMBQwzL@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqBUgt1fauApMWjGz3+0+FeaaybOtpp5oIstNdzbUyHR6fdIJB
+	bEkXsIWG3Uroti4Vku4bn/iutJ3dtVkEd7s+4kL3OhrM6W82dLcV5+ohNN5gBOvldWjsExPqdFy
+	sMpDk+R8vHcLB1JIg0RdQBaZRLwfW4/Ak17mBAJ6/KNZTw0DQA74sjP3CaF+lEmP4e38i+SKz+v
+	o=
+X-Gm-Gg: ASbGncuXlP5EOTeSpz6fhAY8nrx+rSj3z7DG1C2hGvT/lMm9WBKVBYItY+0DoE0bT2Q
+	hGQm+tplTy03gChNQH3VnlFwQPsME61MGENogu2T1VlMjlGRQWXNhzOagILOFswrcEEsn0AcfRl
+	1oMmF1i7g4G+XuiOChT3/Mf4IQIjePPtAK3TueEMwOHVcl/jBOCKbaaR7TtkUPHHt+4aDmBETpM
+	IE4pc1mLcwRHVG4gC/5eSH8oRVbFKy2EvoXTR+beuVu3wlqpaWNH1A4usGkL1+DUs0vY8gVmom6
+	Bl6b1SBr6g+k8Ir46jGv0BCMZD0wyX28/hsCUVz0LYyMZdSlRezxj0YMM59SHrdEf2Lr2JgUzT1
+	0UnaFKNQwxh1SIxqiF7Zd68vhrO3y2YwusIYBl5/zQkkcJHJvo0A=
+X-Received: by 2002:a05:6830:4424:b0:78a:8b0d:cd54 with SMTP id 46e09a7af769-7c7c445d9dcmr15820499a34.34.1764628621156;
+        Mon, 01 Dec 2025 14:37:01 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGnZLeXtAHqL1HJaAkrrfYrqLSObw8oU2jukj6wTDOBEtDA/eVqZfK5ZNe81bHUoAj3Cj83nQ==
+X-Received: by 2002:a05:6830:4424:b0:78a:8b0d:cd54 with SMTP id 46e09a7af769-7c7c445d9dcmr15820472a34.34.1764628620708;
+        Mon, 01 Dec 2025 14:37:00 -0800 (PST)
+Received: from [10.0.0.82] (97-127-77-149.mpls.qwest.net. [97.127.77.149])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7c90fe0be23sm5341133a34.21.2025.12.01.14.36.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 01 Dec 2025 14:37:00 -0800 (PST)
+Message-ID: <b7b203c4-6e4b-4eeb-a23e-e6314342f288@redhat.com>
+Date: Mon, 1 Dec 2025 16:36:58 -0600
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN6PR01MB5151:EE_|PH7PR01MB8467:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2024785d-536f-4a2d-85a3-08de3128c2c1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?UjR4K1R6NWFFTUNyRlQ5akFUdGFUSG9ZTFUveENPRjM3YUZqbVNLVktCRTli?=
- =?utf-8?B?dEg0NE9WbFViaW1jdldjQUtHRmZLTkRScUVtRUxhYXVsNFB3N3hpQVZRNG1a?=
- =?utf-8?B?S1ppZmg5K0FHc0ZMeDBRaGxuSU9TK0huT0txa2ZsNjlVZEdGOVhnQVJTWDEv?=
- =?utf-8?B?QWpCTU9VYkQxNlVpZ3g5WHlxdExiWTZSZGFSRmoxRm5lZWxRMEZWNDd5U1Ru?=
- =?utf-8?B?RGZuUjNvdDZ6dW12R0ZaZVpSZlkzUDVRaDJsZ05FT01sM2dQVEdBeHg4SVEy?=
- =?utf-8?B?ZHdvdmhETGlpc25kODdLL1dMSU8yTXlwSGVHQjJvMEJ6eVlkWm5UcE1xWTdn?=
- =?utf-8?B?NU5KWGFCU3FKZnVXYkViWWYvcFg4NklVblI1WkJhajQ5ZStNZ2VXU3BXOUtl?=
- =?utf-8?B?d2pXQ2luVmlLcms1aUx5NFJLSkZpMXNlU1QycTFxVFFxVVVQRzhSSGRRV0tC?=
- =?utf-8?B?eWZOVmo1dDg0MHpCQUJ6ZnV3NUNvS0Y3NTluMHM4b0dmRXZ0WWFEOHF4Z1ht?=
- =?utf-8?B?emZIMHB6RTI1d29qSXlaMWJ1VGZ4UHhsTTdnRWwwVm9lNjlseHN4WktzblBU?=
- =?utf-8?B?a1d3U1M1WE5TM1A5NUxkWXhDUVUwMGkvTHlnMVpOdDdnR1Bhdjd6VHpjb1RJ?=
- =?utf-8?B?T3RxczdNUHVDWlJkNHNLV21PcnVXaCtkVHRkVmJWNU5wMDFLd3BHYUkzL1da?=
- =?utf-8?B?S1VwdEFvM0hoakNSQ2Q2N013dmtQVUV6dEJJOVlxeGd0VklkSW5QUk0vQUtu?=
- =?utf-8?B?YVg3TTlidy9kTCtsT0VIMy9QWGlna0xPSU9GS0JXcS81UlJ2WUREYTJIb3li?=
- =?utf-8?B?dklwektDd0RpK2ozTWs2YnpwZGg5YkorZFpZM3QySmN1UzFMMG5WanBseW1N?=
- =?utf-8?B?NENKRURpTTJUck5tZ09EZlZkLzczZ1JDd3ZoMFl5M0VDL2FKeVUreEF0dVBG?=
- =?utf-8?B?UE5FOUdCK0FNR2tKRkdjU3B5SGVER1g1RWFUTVJ4d3FiM3ZRYW9oNWpDTVpD?=
- =?utf-8?B?Y0xub1dkblR5R3FqNldsd1NIeSt1eUdRYlBxME90RkdmZ0hBY0lXcWZhVldL?=
- =?utf-8?B?aG5vZHVLOWEvMDJHeTN4ZFRjVGsvR3VTN0FFTUlwOWdRWTJ3SHlkdmJENVRn?=
- =?utf-8?B?RTdrUHQ5RlYwb3dpS1NaVEZVS3ZEWC9tYmFuRmNCbkNIY0xrNCtuSWcrME9K?=
- =?utf-8?B?SEVyWEI0cHd6c0E4OEp1OHlyRHJwZnFOZHpkQjhnSUdHY250NkM5TEp0Qnpv?=
- =?utf-8?B?VTNSTVViVTVRcG9RdGdnZ3R2S1dTWEp6WVp0L1NYbDFpZkUybFFDby9ENDYx?=
- =?utf-8?B?TUg4UjdQajBsd3YrQ1phQlRGWVNiVXNyaENQemozNm5zMk5naWZ5SUQ1eVBE?=
- =?utf-8?B?dklQSi9pbzFUZUF2b1dDY3lRMWVXSVRYU2VabVpnQkJuaGZ5RUtocDVlNnN6?=
- =?utf-8?B?SUt3ZlhjN2lFcGZER3BXMUIyaU1TczRUb0ZwM1FHRTEwVEIyUUZid1Zhc0tl?=
- =?utf-8?B?WjQ1aGVqT1d4QmhBWVlnbUxiTHFTamIyL2l0Vzltem5wS254L3ZZNUd2QzZO?=
- =?utf-8?B?S2FQWjh2eENVVnV3Z21rcTFPWDJRSkhhaEZjNTYwekVwOXFTcjZXaGx0MkI3?=
- =?utf-8?B?bzJTU1JEckIvaEcxMFJEWXBwL0hTY3NBL05VelRjeUdXcy9kZllreDM3TkR6?=
- =?utf-8?B?cGtVdi96eDBxcjV5QVRCYkVnWldPcDFqZ3l1em5uZ2NFbnAxT1Y4cTYxR3VY?=
- =?utf-8?B?OU03RlZQZFNjY1dBZ011THpDWU9iNXJ3WlpkWkxkY3dobmlpS3ZOdlhuU05Z?=
- =?utf-8?B?UXh2VjV3cHB4ZE1uMTlYUi9jaW4rdWV2SFQ1QUVtekRxd0gzRzNZQ29icnl3?=
- =?utf-8?B?Z1V3dUtTTUh1cW9Rd3F1dHRzKzJWTXQrTzFwMy95bVZXZng0WEswc2drVWFa?=
- =?utf-8?B?OUkva2hvYnhLYlZVUjQ2bHg4WUFuUjhnYjR2anRnRFNZR080eVZ1SnpYZG03?=
- =?utf-8?B?ZjlEWCt2blpRPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN6PR01MB5151.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?WEFtdlhONGJWT0ZEN01Oa25rdmcybFZ3TlYyMSt3R0JsRU5hMStGZjJXd3NB?=
- =?utf-8?B?anJnb3NZYyttaTZGVDJnRUdXRkw2THVIakVHYWt0VzgrMVA5RUhjRTRBdWNG?=
- =?utf-8?B?dDNZNEljVGlaRC9PdE1JZ0owcmp0OC9rODkxWXZ4NmQ3RnJVa0hRZlVHZ3VU?=
- =?utf-8?B?c2dTcjFtUTA1cTdRZ0lDOE53elprem9kcGx5MHJMTUMrVC9GbEZsYTlOb3Ey?=
- =?utf-8?B?SDZ5V3l5QnpDQ1lUSlRkUjcrT0Z5WkYxVWVxTHJBSmNsYjc5UkNkU080emR0?=
- =?utf-8?B?eGd3Vmk5aDJxK2J5R1ZJQUNqVkdvUE1TWXBleGpuK0VlRm9vb0kybjhlRnhl?=
- =?utf-8?B?VkJvZHhQd2dFQXAzbnI3Ni9HLzV4Zy9rMWd5cEx3WDRvV1MvWS82NnExbnp1?=
- =?utf-8?B?ZFkwMzNGemR1cHRCdkwwTkcvcnpkdVpvSzlNSUdFcmFKeXA1eWZsejFteGk1?=
- =?utf-8?B?eDNVeFNpcWNtWmFTZElQaU5nTmdDcjdGaVkvNDlxdmpRQzlYVDdaSk1HWFJh?=
- =?utf-8?B?OFdkbXN4cnJvTlpBVnliTWRiRUE0SUNpWnhFUkVtbVJmQjVVS0FtLytmRnla?=
- =?utf-8?B?aVpFd3pQUExYWHRXTU8yd0R5Tzhubm9aNXhoOS9RRDd0ZmFPUkVweWpwOXJ3?=
- =?utf-8?B?YmRzUzV4cTRFNnhzN3Fqb3FYd1lTOWJvWno4MUV5RmxydHdpUnpHYWpqVjBZ?=
- =?utf-8?B?RG5La3h0REZQSnVnY3VIazVkWW1TS0Z5OFIwbkNpTSthQ3NhV0hqMVNSVTBx?=
- =?utf-8?B?ZUtHMWlWeXBxVENVQ21zU2FOMVlKdVZxRTI2d285MmxvTDYwYWxDSVBPc21Z?=
- =?utf-8?B?VlZuYnNtVnJ5UU9qQms0LzluNGdGVWwvZnloaC9KZitDeFVvM3Q4MHdrQkpD?=
- =?utf-8?B?bE44TURLZlVOQ3J2Z2d1a0tTOUdoeW0yYXpoczJlUTZsaWJ3UXlQY2RkODMw?=
- =?utf-8?B?N3BvY3ZCZHNmRDhvMkxScFowU0ZuRWhGWDl0ak5FdkFCdU4wbEZTem1VY09l?=
- =?utf-8?B?R1V6YjRhSTI2ejhZREwyandabHc2R0s5ZXhUVUlDRExkRFFBUW42Q2tJeE9V?=
- =?utf-8?B?TWpIeFY1ekxFWTRuLzZWSU5uM25iRlJITmxCOHlQeFZyWTlsNERvTExMTkVz?=
- =?utf-8?B?Y2tqc2Y5RjE1NkFtRHM0UU12RTIxVmVPTDNLZkpCWVY5RW94TGNoZVJsR2pi?=
- =?utf-8?B?MmVDUWVEaFZDQ1dJckxtQ0JyWlUxOU1pMzJSVTZ3cDJTNnZJTEdLSS9RQVgr?=
- =?utf-8?B?dVlXT2dmdGJsQTI1V0VBRlhOVGZmckJ4STFHdVdPUTFHMC95cUxzKzdqemF0?=
- =?utf-8?B?cXk2Zi9lY000R2s3d1h1WGtQZ1MwM3VzbEZvMlUrd0puWnRBMmE1T1BReU8y?=
- =?utf-8?B?YzNoMFBXZW1lUGdHYXlOYjRtSlZzdkVVVUtYbU52aDM3RitYZnlKbVlGRGs5?=
- =?utf-8?B?TExNWVgzZEJBYVcwejdlU0lzQnZEZTFnREduai9zWHhoUG1FcHBrUXJMTkt4?=
- =?utf-8?B?K05Db3VnNXFXUjB5UVZ5aDFhcFJoSlcreDRqcVc1M3M1YVJQbThzV01uZXFp?=
- =?utf-8?B?NnhQR0c3QmVNaXVJdXc2WjhxdW9mOWw5S2RGWkNQc3lNYms4ZmNGTHBpa3NO?=
- =?utf-8?B?OFFXWGFBSHlXeEluY1ZydzYvK3BUQ2tDQS9qSzkyRUcrRU1kRXlFejYzTFlt?=
- =?utf-8?B?bXREMllPMy9FZlJRVk1TenI3d0VOMGI2SktOcnNVL3hFNjNMaWtvczV6dHh4?=
- =?utf-8?B?K2hKeTV4NEpmeHY1R0ZaeUJlT3A1RmtOSnpBUTdMa2dnc29hKzFlRTQwNW90?=
- =?utf-8?B?aUE3c2p6K3RSdlFnV2htUGpuSzdWcmxpaUw1ZFZ0dTNSQWdoaVVNNkhWWVls?=
- =?utf-8?B?MGxVa3AwL3hkbnhhUlUyVVpMaHJlYUZ1K2tHMFAzdU96dHVacW1mcnRON0dr?=
- =?utf-8?B?SUkvV0ZKRUdVVmlJdlB0MFh0Tm5lMDVMbFpNMzdqbis3UUgxbXpsNFFGNmwx?=
- =?utf-8?B?ZmVHMDZHdXRMMlgzYjlEcTNJazNRM0hvNUF6UVhEMGd5d1lIWWNJLy9WR2ZR?=
- =?utf-8?B?b0RpdVRMdzRETVcxeGpsQVYvS25BejQwanJzMlJJbDBxazBhVnFNREZyVTZ4?=
- =?utf-8?Q?fdovanWX1mdbflqr5l09pJFr5?=
-X-OriginatorOrg: talpey.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2024785d-536f-4a2d-85a3-08de3128c2c1
-X-MS-Exchange-CrossTenant-AuthSource: SN6PR01MB5151.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Dec 2025 22:27:07.0504
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 2b2dcae7-2555-4add-bc80-48756da031d5
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: fF5rJUzpSWhWD9sDi1542JQmD+C/NE+nW+7ZzCYMsKyNf91X1k+bTrUjNk97rcwa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR01MB8467
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3 4/4] 9p: convert to the new mount API
+To: Dominique Martinet <asmadeus@codewreck.org>,
+ Remi Pommarel <repk@triplefau.lt>
+Cc: v9fs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, ericvh@kernel.org, lucho@ionkov.net,
+ linux_oss@crudebyte.com, eadavis@qq.com
+References: <20251010214222.1347785-1-sandeen@redhat.com>
+ <20251010214222.1347785-5-sandeen@redhat.com>
+ <aOzT2-e8_p92WfP-@codewreck.org> <aSdgDkbVe5xAT291@pilgrim>
+ <aSeCdir21ZkvXJxr@codewreck.org>
+Content-Language: en-US
+From: Eric Sandeen <sandeen@redhat.com>
+In-Reply-To: <aSeCdir21ZkvXJxr@codewreck.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-I've (re)reviewed the patches and am ok with #2 (which I already gave an 
-R-B for), and additionally #4 looks especially good. These changes are 
-very appropriate for the previously missing layering.
+On 11/26/25 4:43 PM, Dominique Martinet wrote:
+> Hi Remi,
+> 
+> Remi Pommarel wrote on Wed, Nov 26, 2025 at 09:16:14PM +0100:
+>> While testing this series to mount a QEMU's 9p directory with
+>> trans=virtio, I encountered a few issues. The same fix as above was
+>> necessary, but further regressions were also observed.
+> 
+> Thanks for testing!
+> (FWIW that patch has been rolled into my 9p-next branch, so you shouldn't
+> have needed to fiddle with it if using linux-next)
+> 
+>> Previously, using msize=2048k would silently fail to parse the option,
+>> but the mount would still proceed. With this series, the parsing error
+>> now prevents the mount entirely. While I prefer the new behavior, I know
+>> there is a strict rule to not break userspace, so are we not breaking
+>> userspace here?
+> 
+> That's a good question, we had the same discussion about unknown options
+> which were causing errors in the previous version of this patch.
+> 
+> My personal opinion is that given it's easy enough to notice/fix and it
+> points at something that's obviously wrong, I think such breakage is a
+> necessary evil and are occasionally ok -- but it should be intentional,
+> so let's add some fallback for this version and we can make this break
+> at the same time as we make unknown options break
+> 
+>> Another more important issue is that I was not able to successfully
+>> mount a 9p as rootfs with the command line below:
+>>  'root=/dev/root rw rootfstype=9p rootflags=trans=virtio,cache=loose'
+>>
+>> The issue arises because init systems typically remount root as
+>> read-only (mount -oremount,ro /). This process retrieves the current
+>> mount options via v9fs_show_options(), then attempts to remount with
+>> those options plus ro. However, v9fs_show_options() formats the cache
+>> option as an integer but v9fs_parse_param() expect cache option to be
+>> a string (fsparam_enum) causing remount to fail.
 
-I like the idea of #1, but I'm a little bit on the fence on the code 
-impact of the rename. If Steve's not opposed, I'm ok with it.
+Sorry, I was out for the US holiday and just getting to this.
 
-The others are all worthy.
+So previously, for cache mode we expected a string for the mount option,
+converted that string to the numeric value via get_cache_mode(), and
+v9fs_show_options displayed that cache mode value  as hexadecimal, right?
 
-For #2 and #4: Reviewed-by: Tom Talpey <tom@talpey.com>
+        if (v9ses->cache)
+                seq_printf(m, ",cache=%x", v9ses->cache);
 
-For the others, feel free to my Acked-by.
+Oh, I see - the last "if" in get_cache_mode() accepted the bare numeric value.
 
-Tom.
+>> The patch below fix the
+>> issue for the cache option, but pretty sure all fsparam_enum options
+>> should be fixed.
+> 
+> Oww. That's a bit more annoying, yes...
+> 
+>> However same question as above arise with this patch. Previously cat
+>> /proc/mounts would format cache as an hexadecimal value while now it is
+>> the enum value name string. Would this be considered userspace
+>> breakage?
+> 
+> Now these are most likely ok, it already changed when Eric (VH) made it
+> display caches as hex a while ago, I wouldn't fuss too much about it.
+> 
+> OTOH if the old code worked I assume it parsed the hex values too, so
+> that might be what we ought to do? Or was it just ignored?
 
-On 12/1/2025 4:49 AM, David Howells wrote:
-> Hi Steve,
-> 
-> Could you take these patches extracted from my I/O layer rewrite for the
-> upcoming merge window.  The performance change should be neutral, but it
-> cleans up the code a bit.
-> 
->   (1) Rename struct mid_q_entry to smb_message.  In my rewrite, smb_message
->       will get allocated in the marshalling functions in smb2pdu.c and
->       cifssmb.c rather than in transport.c and used to hand parameters down
->       - and so I think it could be better named for that.
-> 
->   (2) Remove the RFC1002 header from the smb_hdr struct so that it's
->       consistent with SMB2/3.  This allows I/O routines to be simplified and
->       shared.
-> 
->   (3) Make SMB1's SendReceive() wrap cifs_send_recv() and thus share code
->       with SMB2/3.
-> 
->   (4) Clean up a bunch of extra kvec[] that were required for RFC1002
->       headers from SMB1's header struct.
-> 
->   (5) Replace SendReceiveBlockingLock() with SendReceive() plus flags.
-> 
->   (6) Remove the server pointer from smb_message.  It can be passed down
->       from the caller to all places that need it.
-> 
->   (7) Don't need state locking in smb2_get_mid_entry() as we're just doing a	
->       single read inside the lock.  READ_ONCE() should suffice instead.
-> 
->   (8) Add a tracepoint to log EIO errors and up to a couple of bits of info
->       for each to make it easier to find out why an EIO error happened when
->       the system is very busy without introducing printk delays.
-> 
->   (9) Make some minor code cleanups.
-> 
-> The patches will be found here also when the git server is accessible
-> again:
-> 
-> 	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=cifs-next
-> 
-> Thanks,
-> David
-> 
-> Changes
-> =======
-> ver #5)
->   - Rebased on the ksmbd-for-next branch.
->   - Drop the netfs_alloc patch as that's now taken.
->   - Added a warning check requested by Stefan Metzmacher.
->   - Switched to a branch without the header prototype cleanups.
->   - Add a patch to make some minor code cleanups.
->   - Don't do EIO changed in smbdirect.c as that interferes with Stefan's
->     changes.
-> 
-> ver #4)
->   - Rebased on the ksmbd-for-next branch.
->   - The read tracepoint patch got merged, so drop it.
->   - Move the netfs_alloc, etc. patch first.
->   - Fix a couple of prototypes that need to be conditional (may need some
->     post cleanup).
->   - Fixed another couple of headers that needed their own prototype lists.
->   - Fixed #include order in a couple of places.
-> 
-> ver #3)
->   - Rebased on the ksmbd-for-next branch.
->   - Add the patches to clean up the function prototypes in the headers.
->     - Don't touch smbdirect.
->     - Put prototypes into netlink.h and cached_dir.h rather than
->       centralising them.
->     - Indent the arguments in the prototypes to the opening bracket + 1.
->   - Cleaned up most other checkpatch complaints.
->   - Added the EIO tracepoint patch to the end.
-> 
-> ver #2)
->   - Rebased on the ksmbd-for-next-next branch.
->   - Moved the patch to use netfs_alloc/free_folioq_buffer() down the stack.
-> 
-> David Howells (9):
->    cifs: Rename mid_q_entry to smb_message
->    cifs: Remove the RFC1002 header from smb_hdr
->    cifs: Make smb1's SendReceive() wrap cifs_send_recv()
->    cifs: Clean up some places where an extra kvec[] was required for
->      rfc1002
->    cifs: Replace SendReceiveBlockingLock() with SendReceive() plus flags
->    cifs: Remove the server pointer from smb_message
->    cifs: Don't need state locking in smb2_get_mid_entry()
->    cifs: Add a tracepoint to log EIO errors
->    cifs: Do some preparation prior to organising the function
->      declarations
-> 
->   fs/smb/client/cached_dir.c    |   2 +-
->   fs/smb/client/cifs_debug.c    |  51 +-
->   fs/smb/client/cifs_debug.h    |   6 +-
->   fs/smb/client/cifs_spnego.h   |   2 -
->   fs/smb/client/cifs_unicode.h  |   3 -
->   fs/smb/client/cifsacl.c       |  10 +-
->   fs/smb/client/cifsencrypt.c   |  83 +--
->   fs/smb/client/cifsfs.c        |  36 +-
->   fs/smb/client/cifsglob.h      | 197 +++----
->   fs/smb/client/cifspdu.h       |   2 +-
->   fs/smb/client/cifsproto.h     | 200 ++++++--
->   fs/smb/client/cifssmb.c       | 931 +++++++++++++++++++---------------
->   fs/smb/client/cifstransport.c | 438 +++-------------
->   fs/smb/client/compress.c      |  23 +-
->   fs/smb/client/compress.h      |  19 +-
->   fs/smb/client/connect.c       | 199 ++++----
->   fs/smb/client/dir.c           |   8 +-
->   fs/smb/client/dns_resolve.h   |   4 -
->   fs/smb/client/file.c          |   6 +-
->   fs/smb/client/fs_context.c    |   2 +-
->   fs/smb/client/inode.c         |  14 +-
->   fs/smb/client/link.c          |  10 +-
->   fs/smb/client/misc.c          |  53 +-
->   fs/smb/client/netmisc.c       |  21 +-
->   fs/smb/client/readdir.c       |   2 +-
->   fs/smb/client/reparse.c       |  53 +-
->   fs/smb/client/sess.c          |  16 +-
->   fs/smb/client/smb1ops.c       | 114 +++--
->   fs/smb/client/smb2file.c      |   9 +-
->   fs/smb/client/smb2inode.c     |  13 +-
->   fs/smb/client/smb2maperror.c  |   6 +-
->   fs/smb/client/smb2misc.c      |  11 +-
->   fs/smb/client/smb2ops.c       | 178 +++----
->   fs/smb/client/smb2pdu.c       | 230 +++++----
->   fs/smb/client/smb2proto.h     |  18 +-
->   fs/smb/client/smb2transport.c | 113 ++---
->   fs/smb/client/trace.h         | 149 ++++++
->   fs/smb/client/transport.c     | 305 +++++------
->   fs/smb/client/xattr.c         |   2 +-
->   fs/smb/common/smb2pdu.h       |   3 -
->   fs/smb/common/smbglob.h       |   1 -
->   41 files changed, 1800 insertions(+), 1743 deletions(-)
-> 
-> 
-> 
+Looks like it accepted either the string or the hex value, so that's my
+mistake.
+
+I suppose it would be a terrible hack to just extend the enum to include
+hexadecimal "strings" like this, right.... ;)
+
++static const struct constant_table p9_cache_mode[] = {
++	{ "loose",	CACHE_SC_LOOSE },
++	{ "0b00000000",	CACHE_SC_LOOSE },
++	{ "fscache",	CACHE_SC_FSCACHE },
++	{ "0b10001111",	CACHE_SC_FSCACHE },
+...
++	{}
+
+I think the right approach would be to just reinstate get_cache_mode() to
+do open-coded parsing as before, and get rid of the enum for the cache
+option.
+
+Would you like me to send a patch 5/4, or an updated 4/4 to implement this,
+or would you rather do it yourself if you think you have a better chance
+of getting it right than I do?
+
+As for the other enum, I think we're still ok (though maybe you can confirm)
+because p9_show_client_options() still does a switch on clnt->proto_version,
+and outputs the appropriate mount option string.
+
+-Eric 
+
+> I'll try to find some time to play with this and let's send a patch
+> before the merge window coming in fast... This was due for next
+> week-ish!
 
 
