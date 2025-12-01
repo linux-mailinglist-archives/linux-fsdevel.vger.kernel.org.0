@@ -1,64 +1,65 @@
-Return-Path: <linux-fsdevel+bounces-70355-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70354-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96D85C983E2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 01 Dec 2025 17:28:37 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA278C983D0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 01 Dec 2025 17:27:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C82DE4E1E83
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Dec 2025 16:28:33 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id AA80C342B03
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Dec 2025 16:27:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A404B333727;
-	Mon,  1 Dec 2025 16:28:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25FB533344D;
+	Mon,  1 Dec 2025 16:26:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="OLhd9AtK"
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="MzMhBHbg"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C47D334C06
-	for <linux-fsdevel@vger.kernel.org>; Mon,  1 Dec 2025 16:28:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6FD0333727
+	for <linux-fsdevel@vger.kernel.org>; Mon,  1 Dec 2025 16:26:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764606511; cv=none; b=ByQ17Je9628CSUBO46Xj2fEUZ62R9ACNXkee+yrdXLqEe9oZvymoJNnwskCw5WVVmL2S/GuAaYfaIPdEnrLjdTbLCUkEVoDo5z7LOzedOJixCyK1aoY2sH9M/i68uCsDlrDE3v78HcNnesjbwqaUfzlSq6Qg1rtq4gTlPaPV82E=
+	t=1764606413; cv=none; b=nTsISkBvIJ/NX20ngIbYIU5gPOoz+qQlWj94DDPkwBlzCHMEvi/qWzNqhZzpIgHAGnLq71KUWZdD+Cz0Q+7r7D4k9ngZ5chgzezxWnZ0chdOZJqU+LRm3FUzwGuUozmGCPdVbyDgT/BthvWUety6Toe1eDrzv6KxtNqKKd353lA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764606511; c=relaxed/simple;
-	bh=buLCI8wk6RmLtGJP8jJoPXBelL/3Y29bbxzjKLxGobM=;
+	s=arc-20240116; t=1764606413; c=relaxed/simple;
+	bh=ObSa3cr42p95JZ4Lslz+xZhV2PhJEEGvSjR5Bm34fXI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=C5RHejWFG2aLSIa1kr9Fp4HlikbDNX/2YntiGMR6yEoVYZBGwGr4YbgzDUdDfD2nrnyGxSY7yeDLIs/njncdeA93eFFHYx7/vgJs8c1nL2p2J9RXLV3tb96cr7g+b5Ij7j3l3g0qvA5Dxy01CohEBtcU8n0fJm9CIBuh9MjCLGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=OLhd9AtK; arc=none smtp.client-ip=18.9.28.11
+	 MIME-Version:Content-Type; b=mGc77SFEno+vSaL0TEGh3Nf+gtcocww/BhlDi6KTJKfCX/Q/mEUd84jwEuVhWI6/L9DWeZqu5/hnKzC5/yrVBymv58QCyiXMzBRosG1Ur0OknI+L/9bHxDg3ZPweLPM9vQ9R+XLXlfT8gMuI4JZ+eFHsOwh2mRGsO4n33Cycpyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=MzMhBHbg; arc=none smtp.client-ip=18.9.28.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
 Received: from trampoline.thunk.org (pool-173-48-121-67.bstnma.fios.verizon.net [173.48.121.67])
 	(authenticated bits=0)
         (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 5B1GNsmb008174
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 5B1GNu9j008211
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 1 Dec 2025 11:23:55 -0500
+	Mon, 1 Dec 2025 11:23:57 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1764606236; bh=fQo4vd5KQhxo/ZdGnKAc55jtiATNEP6YCFuef8oibPA=;
+	t=1764606238; bh=0yVUKXTtwJEW6Qb8erb3IMpn8nAvCrMoJd1g+vTGMYE=;
 	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	b=OLhd9AtKgyOR+f0BNNOajkWzZECWQyODvKaeFFVnrBO+dNH2N/5AP7IqtA1wQZbJx
-	 BqtULqF/AJl8OkdibXmUVyyIs0rjnmKJac11utY7bjczBcmDyld2OmrpDUnFwFs0HW
-	 b3WqLhxSOQOKXTRJyUJvNDKWzpv6OCORRiYSDkpThdl6Wln/cbzV6aMWa/apjBOV3K
-	 RqMejZMUl3k+lLQSY7KgAd47f4zQ5L0xwsop8iVe2elH1FhUVu/bLwX781VHy0bc95
-	 e7dZiDqHE9nzQo65MDdPjr9EwV+/gzZ3Zz1ZcumMzR6jzc9I6hzNgWKYd+ZqBMu+GK
-	 qGxfZv3AMXhzA==
+	b=MzMhBHbgCgoQq81uxt+PM6X6toic67sGwDyCozloICR4wAE1pNCFFxyIkc7RxGY5j
+	 RSJOlDZGQZLfHK/R/hDdJfINXoeiwREktZAMyXZ6T65oCwwKz9629G7U8j/nnXlEV1
+	 yodYV5JWYL/pJWtndneRt3UjRqd87+uCA644Cqi8Fo4Vp1OKy0UDeSfLrKs0oNh2w/
+	 tyxJNSwJAplKZ2Amd30NCi+TKqpqj+G0U7QBqHL7KYOP1py4bXDbnc/SB6n+Vuh9DS
+	 pbD8zVnbSqz6xJ9XB7v5RMCR+9XFJ02v4LRKZr0hwmX39kcgXolwyUos3TrfK0xSJA
+	 5TWW41NHIi9Ww==
 Received: by trampoline.thunk.org (Postfix, from userid 15806)
-	id 042352E00DD; Mon, 01 Dec 2025 11:23:54 -0500 (EST)
+	id 0D3872E00E0; Mon, 01 Dec 2025 11:23:54 -0500 (EST)
 From: "Theodore Ts'o" <tytso@mit.edu>
-To: linux-ext4@vger.kernel.org, Yongjian Sun <sunyongjian@huaweicloud.com>
+To: linux-ext4@vger.kernel.org, Zhang Yi <yi.zhang@huaweicloud.com>
 Cc: "Theodore Ts'o" <tytso@mit.edu>, linux-fsdevel@vger.kernel.org,
-        jack@suse.cz, yangerkun@huawei.com, yi.zhang@huawei.com,
-        libaokun1@huawei.com, chengzhihao1@huawei.com, sunyongjian1@huawei.com
-Subject: Re: [PATCH v2 0/2] ext4: fixes for mb_check_buddy integrity checks
-Date: Mon,  1 Dec 2025 11:23:47 -0500
-Message-ID: <176455640539.1349182.12240095790496691411.b4-ty@mit.edu>
+        linux-kernel@vger.kernel.org, adilger.kernel@dilger.ca, jack@suse.cz,
+        ojaswin@linux.ibm.com, yi.zhang@huawei.com, yizhang089@gmail.com,
+        libaokun1@huawei.com, yangerkun@huawei.com
+Subject: Re: [PATCH v3 00/14] ext4: replace ext4_es_insert_extent() when caching on-disk extents
+Date: Mon,  1 Dec 2025 11:23:50 -0500
+Message-ID: <176455640539.1349182.13217688668593418002.b4-ty@mit.edu>
 X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251106060614.631382-1-sunyongjian@huaweicloud.com>
-References: <20251106060614.631382-1-sunyongjian@huaweicloud.com>
+In-Reply-To: <20251129103247.686136-1-yi.zhang@huaweicloud.com>
+References: <20251129103247.686136-1-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -69,27 +70,55 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Thu, 06 Nov 2025 14:06:12 +0800, Yongjian Sun wrote:
-> Link to v1:
->  - https://lore.kernel.org/all/20251105074250.3517687-1-sunyongjian@huaweicloud.com/
-> 
-> Changes in v2:
->  - Patch 2/2: the logical error in the order-0 check code has been corrected.
-> 
-> Yongjian Sun (2):
->   ext4: fix incorrect group number assertion in mb_check_buddy for
->     exhausted preallocations
->   ext4: improve integrity checking in __mb_check_buddy by enhancing
->     order-0 validation
+On Sat, 29 Nov 2025 18:32:32 +0800, Zhang Yi wrote:
+> Changes since v2:
+>  - Rebase the codes on ext4.git dev-91ef18b567da.
+>  - Move the first cleanup patch in v2 to patch 08 to facilitate easier
+>    backporting.
+>  - In patch 01, correct the mismatch comments for
+>    EXT4_EXT_DATA_ENTIRE_VALID1 and EXT4_EXT_DATA_PARTIAL_VALID1.
+>  - Modify patch 06 and add 07, cleanup the commit message to avoid
+>    confusion, and don't always drop extent cache before splitting
+>    extent, instead, do this only after PARTIAL_VALID1 zeroed out or
+>    split extent fails.
+>  - In patch 08, mark zero_ex to initialized.
+>  - In patch 09, correct the word 'tag' to 'lable' in the commit message.
+>  - In patch 11, add return value check of __es_remove_extent() in
+>    ext4_es_cache_extent().
+>  - Collecting RVB tags.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/2] ext4: fix incorrect group number assertion in mb_check_buddy for exhausted preallocations
-      commit: 3f7a79d05c692c7cfec70bf104b1b3c3d0ce6247
-[2/2] ext4: improve integrity checking in __mb_check_buddy by enhancing order-0 validation
-      commit: d9ee3ff810f1cc0e253c9f2b17b668b973cb0e06
+[01/14] ext4: subdivide EXT4_EXT_DATA_VALID1
+        commit: 0f9885eab9182118fd7bfd8cdf8bab6f71f74699
+[02/14] ext4: don't zero the entire extent if EXT4_EXT_DATA_PARTIAL_VALID1
+        commit: 1fec988b1f71c27c45d31cde6ffe3efdb10657b9
+[03/14] ext4: don't set EXT4_GET_BLOCKS_CONVERT when splitting before submitting I/O
+        commit: c42e9f199c419f11938b8d411123e3f6719941d4
+[04/14] ext4: correct the mapping status if the extent has been zeroed
+        commit: 2410e55561cc405c56b9e38d69be1b8fdb6c9722
+[05/14] ext4: don't cache extent during splitting extent
+        commit: 4b4a6ac831ff347127e46c60a516b3ec42921242
+[06/14] ext4: drop extent cache after doing PARTIAL_VALID1 zeroout
+        commit: 87d5cb059b8ab1623f5bcebcc0b53e43abd36ae7
+[07/14] ext4: drop extent cache when splitting extent fails
+        commit: 889085343ddffdf9ccb6be8402469458da6b350f
+[08/14] ext4: cleanup zeroout in ext4_split_extent_at()
+        commit: 02f8dc1707ceb87656288e6460f3ebb94200ba2c
+[09/14] ext4: cleanup useless out label in __es_remove_extent()
+        commit: 13cbc168d9ba14822de66fc085e85416cc2fda8e
+[10/14] ext4: make __es_remove_extent() check extent status
+        commit: ad02a3d000a512aada99cfad13d62c3edfb793de
+[11/14] ext4: make ext4_es_cache_extent() support overwrite existing extents
+        commit: 41a414d53bfb5c91ea5c73125181568901c74a7a
+[12/14] ext4: adjust the debug info in ext4_es_cache_extent()
+        commit: 4e84970a460d27f35f3127327c3e131476c06b03
+[13/14] ext4: replace ext4_es_insert_extent() when caching on-disk extents
+        commit: d494567091eddfeded77017bb9b4dc677046d93d
+[14/14] ext4: drop the TODO comment in ext4_es_insert_extent()
+        commit: 6fb67ac896900e60f46ee4efba97b372a80370e0
 
 Best regards,
 -- 
