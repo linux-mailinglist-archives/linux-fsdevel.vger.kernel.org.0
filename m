@@ -1,195 +1,213 @@
-Return-Path: <linux-fsdevel+bounces-70309-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70310-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83885C96590
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 01 Dec 2025 10:17:45 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 934C1C96775
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 01 Dec 2025 10:51:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E672634042D
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Dec 2025 09:17:44 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 18BDB4E2E11
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Dec 2025 09:50:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 767FA2F999A;
-	Mon,  1 Dec 2025 09:17:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B84E301464;
+	Mon,  1 Dec 2025 09:49:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iGJU2EoF"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Rg6Gb2mt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56DE81C5D72
-	for <linux-fsdevel@vger.kernel.org>; Mon,  1 Dec 2025 09:17:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 030FD2F3617
+	for <linux-fsdevel@vger.kernel.org>; Mon,  1 Dec 2025 09:49:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764580654; cv=none; b=Ws9dGx4AZ/4wCrtvlE18qLYpClMCvIJAwJjXXfJNZm1AUrc3FyxDcnFRXURq5XLrdy7Ul6nKXmOwO3d1BtIBNCryBD4ORHVl7+U+Phcxv7xKsqnSqNgV1pW+pz9XIURsSlIo3Q+ZDpySsg3RS29U7ByyOGFnH3B152qdjFu00FU=
+	t=1764582569; cv=none; b=UoL22Ve1lQu3OlvN9m+v3IiWSqRKJAkz2QQUhFpZdASt2jQ5utC2BVG6UQ/hRfbr22zgUlkijAHg0dal+0s0eK1Fvkoh+QG6x8k7Jl3EGELPm9YNfxCTQaO9vWok40nmFUF35O8f9gapzGwjwGwuDqWSAy31VLoN4EhKEtdH1lU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764580654; c=relaxed/simple;
-	bh=5IqWj9YtYS6jlDk2hqQJPeA4kSfoPwW+m9Dg1/N0voc=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=dAekndkYiaqil+vCywcPi+9PgfDybF7hS52+KyBi+byQnIdcL/WqrLoxpMY8Nh9ii5igpkf3bv4WYVtc3tdrU71A0R8OMIBQffnnjKAJOkyDq4zsQJMkX6ia1wCG9ksnuORcDTa4rkGfHlor8zDwf5aWgFo6AU5NhR5mYxsgYfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iGJU2EoF; arc=none smtp.client-ip=209.85.222.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-8b2aa1ae006so522308385a.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Dec 2025 01:17:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1764580652; x=1765185452; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=7eXqPr+gfFKGtC2pWpqEXhq+YzmjGk6aiGUEIEIYBMw=;
-        b=iGJU2EoFTjHkdaarwph7o7COM9ATsJD1vaNa54TCJ47DS3Z9aI80XxmD8VpdSOmWW7
-         v5ABbMyUiJYgrAabpa7/CiC2LVPyrRRPreSPB+EHBzDjA6+oVFmbXr9mla7SWjNaEr3I
-         iPi4j7s5Ywk1DMRQz9vKKSTAXtRpuEDQKKN+Yvuo7NBYQXHnYaF/xba+0jWxCrLvhCFo
-         7dBeLHzmv22MQOdf4zmUqUVJQ3eKtjm6ZQr0uUXM9TxBBGs3NriEiOGEEJ1xy9hPfVOu
-         /qpD9gvLnlwB3SKdswH5JUrUF7yr4TUBtcGLhx+A10sdBvUn4x2N6/hVxqb4wAH+wJJ8
-         V5Mw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764580652; x=1765185452;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7eXqPr+gfFKGtC2pWpqEXhq+YzmjGk6aiGUEIEIYBMw=;
-        b=p1FdoMsHKTTwdcFKWs7gk0UHdyipRVnLgpoufK500Pt89E/oAL2MgSA8GzIRgkhk3U
-         Fq7YD6SrVY4SZoqEhEfkCwHYi1QLtu1AnJYaMrKWEmoUVNf1BDD99AOpgplJdWVO5bqj
-         rlz/ixCnp7PwZ0JYroVvJocr7G3DFjzSPj9RLb7dBNHM7kIsBMG15/kqAmG6Uf7nk4E+
-         S94nofp2tUlw3BBc16wVOpm+UnJiHhAaw+hcJ6ueU8WoVpH3J9JeVt/IPxh4FeFbgts0
-         gXw8SJKPsJWjxNUwiuWz1nRYM+aq7ToK3M+cdfI/m2dbKJsCWYRy5qz5IWcLt7g1aCu7
-         7njQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV2IYBqgoAbvRA6ggughr8Z4oWS8pYKOweNQio/9rdYvOJIwnBiWAkvI3wDD+khnDxGde659wak+dYg3rBd@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZ+T8tUrJUPtR56k3cuCQwIb1NmcEX0brFxFqOijzd2ncSxkwb
-	jirOKiWD/W4VsyXn44Kcd0lRkgVcRUcdZi/fmybj3wTrrboGE4U95G9e3SXCBaQlA9xMnils1xB
-	55mNcCVKCCWRlrjwdEzgKwfRaSsYF/h0=
-X-Gm-Gg: ASbGnctaGECtgPpmqB6e3rCoyO46wYvre0QnzWgEh8gD5EMr3kS5k8Ph1IW0+Y04vEO
-	8utcDOKDMZ8zcsNMK788NTBsHvAPrlJUf67ilsfFMBSC4orfhlTdQ230gvbAaLTmBxzehMkirnk
-	i1dqDh61QhAXQDasKHZlGoeVH/FgMJSmIwy7bzUrSIySGDIB+NXDjuFb1t9AHBCr0ijBnEpHzkq
-	VJtWjf9fvJ2Z+ve9c3YFRF9UuGd1gx4uXwnuqFq73gnVGTMjWr5tyrmGgVdNF9utIp3Tm/vn71f
-	y1dj5TlN
-X-Google-Smtp-Source: AGHT+IHQRqJ1XTju5N0oj+IK1SZfYy4sjvyZ10lufIZ/1UFfLFvavHFA462OEgAMm4K13UXn6WCZ19+Jp/3Nl3xq4hI=
-X-Received: by 2002:a05:620a:4687:b0:8a3:87ef:9245 with SMTP id
- af79cd13be357-8b33d4c71damr5084452885a.85.1764580652139; Mon, 01 Dec 2025
- 01:17:32 -0800 (PST)
+	s=arc-20240116; t=1764582569; c=relaxed/simple;
+	bh=Pn20/CLhDsAqda23nlqiFd9Tv9dv8/FGYAEgYZxk7Qc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Yq4lP6Igo2VBw/x2DZjkeHKpAYB+xNadJHHSQmblr0gxIGiLYfvYjUmfoIDBxQ8nUnPYPz/IqwSESNd9z1c3v0hEn1rQKwh15NfgbyHP7+Dwh+l3It/jXn3k+ZLXvGBZdsN7hbNv2fCPRoeciCTzvGrAqzrPGjnyoywahkm9l5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Rg6Gb2mt; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1764582567;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=m3IPpnExHbEY9OdTLRlmHupwtztlF6AGw3VpUFP1MYo=;
+	b=Rg6Gb2mtIbySk89AOUWu8xnl6ETUk6l/IwoYRfKPD3onnVyz9u2PIkcyWU65UyGsi0bGe7
+	KYJaZ4g9jn+4+UdijFMQtnC6hZtEIlespp8G6AVF+TKrMbAso/5xeZNOmOQ9+8ROOukUMH
+	QQZS7571X5dk34+YDcJi4O3fuoDDpQU=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-631-h2oASED-MM-MeB2BSExdtQ-1; Mon,
+ 01 Dec 2025 04:49:24 -0500
+X-MC-Unique: h2oASED-MM-MeB2BSExdtQ-1
+X-Mimecast-MFC-AGG-ID: h2oASED-MM-MeB2BSExdtQ_1764582562
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id F245419560A2;
+	Mon,  1 Dec 2025 09:49:21 +0000 (UTC)
+Received: from warthog.procyon.org.com (unknown [10.42.28.14])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 44C7718002AC;
+	Mon,  1 Dec 2025 09:49:18 +0000 (UTC)
+From: David Howells <dhowells@redhat.com>
+To: Steve French <sfrench@samba.org>
+Cc: David Howells <dhowells@redhat.com>,
+	Paulo Alcantara <pc@manguebit.org>,
+	Shyam Prasad N <sprasad@microsoft.com>,
+	Stefan Metzmacher <metze@samba.org>,
+	linux-cifs@vger.kernel.org,
+	netfs@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v5 0/9] cifs: Miscellaneous prep patches for rewrite of I/O layer
+Date: Mon,  1 Dec 2025 09:49:04 +0000
+Message-ID: <20251201094916.1418415-1-dhowells@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: yao xiao <xiangyaof4free@gmail.com>
-Date: Mon, 1 Dec 2025 17:17:20 +0800
-X-Gm-Features: AWmQ_blDBYGbzf0XU5S93uV2a6bMmmKE8qZMjNoGyXS8deKYtj0PO8rs4ql7lhM
-Message-ID: <CACpam_ZrXZwb-=EKc8HTyH7VPSWhuWBUgO0n6_z3H6wv8k6r3w@mail.gmail.com>
-Subject: [PATCH v2] f2fs: add overflow/underflow checks to update_sit_entry
-To: jaegeuk@kernel.org, chao@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: multipart/mixed; boundary="000000000000f317660644e07243"
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
---000000000000f317660644e07243
-Content-Type: text/plain; charset="UTF-8"
+Hi Steve,
 
-From: Yao Xiao <xiangyaof4free@gmail.com>
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net,
-    linux-fsdevel@vger.kernel.org,
-    linux-kernel@vger.kernel.org
-Subject: [PATCH v2] f2fs: add overflow/underflow checks to update_sit_entry
+Could you take these patches extracted from my I/O layer rewrite for the
+upcoming merge window.  The performance change should be neutral, but it
+cleans up the code a bit.
 
-The update_sit_entry() function performs an arithmetic operation between
-se->valid_blocks (a 10-bit unsigned bitfield) and a signed integer 'del'.
-Under C integer promotion rules, the signed integer is converted to unsigned
-before the addition, which can lead to wraparound behavior:
+ (1) Rename struct mid_q_entry to smb_message.  In my rewrite, smb_message
+     will get allocated in the marshalling functions in smb2pdu.c and
+     cifssmb.c rather than in transport.c and used to hand parameters down
+     - and so I think it could be better named for that.
 
-  - If 'del' is negative and large, it becomes a large unsigned integer,
-    resulting in an unintended huge positive addition.
-  - If 'del' is positive and large, the result can exceed the bitfield's
-    maximum representable range.
+ (2) Remove the RFC1002 header from the smb_hdr struct so that it's
+     consistent with SMB2/3.  This allows I/O routines to be simplified and
+     shared.
 
-To avoid undefined behavior caused by performing the arithmetic first and
-validating the result afterwards, this patch adds explicit overflow/underflow
-checks before computing the new value. This ensures the operation is safe
-and prevents inconsistent SIT metadata updates.
+ (3) Make SMB1's SendReceive() wrap cifs_send_recv() and thus share code
+     with SMB2/3.
 
-This change follows the defensive overflow check style used in previous
-f2fs fixes addressing similar boundary issues.
+ (4) Clean up a bunch of extra kvec[] that were required for RFC1002
+     headers from SMB1's header struct.
 
-Signed-off-by: Yao Xiao <xiangyaof4free@gmail.com>
----
- fs/f2fs/segment.c | 28 +++++++++++++++++++++++-----
- 1 file changed, 23 insertions(+), 5 deletions(-)
+ (5) Replace SendReceiveBlockingLock() with SendReceive() plus flags.
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index b45eace879d7..05ab34600e32 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -2569,13 +2569,33 @@ static void update_sit_entry(struct
-f2fs_sb_info *sbi, block_t blkaddr, int del)
-  struct seg_entry *se;
-  unsigned int segno, offset;
-  long int new_vblocks;
-+ unsigned int max_valid;
+ (6) Remove the server pointer from smb_message.  It can be passed down
+     from the caller to all places that need it.
 
-  segno = GET_SEGNO(sbi, blkaddr);
-  if (segno == NULL_SEGNO)
-  return;
+ (7) Don't need state locking in smb2_get_mid_entry() as we're just doing a	
+     single read inside the lock.  READ_ONCE() should suffice instead.
 
-  se = get_seg_entry(sbi, segno);
-- new_vblocks = se->valid_blocks + del;
-+ max_valid = f2fs_usable_blks_in_seg(sbi, segno);
-+
-+ /* Prevent overflow/underflow before performing arithmetic. */
-+ if (del > 0) {
-+ if ((unsigned int)del > max_valid ||
-+    se->valid_blocks > max_valid - (unsigned int)del) {
-+ f2fs_bug_on(sbi, 1);
-+ return;
-+ }
-+ } else if (del < 0) {
-+ if (se->valid_blocks < (unsigned int)(-del)) {
-+ f2fs_bug_on(sbi, 1);
-+ return;
-+ }
-+ }
-+
-+ new_vblocks = (long int)se->valid_blocks + del;
-  offset = GET_BLKOFF_FROM_SEG0(sbi, blkaddr);
+ (8) Add a tracepoint to log EIO errors and up to a couple of bits of info
+     for each to make it easier to find out why an EIO error happened when
+     the system is very busy without introducing printk delays.
 
-  f2fs_bug_on(sbi, (new_vblocks < 0 ||
--- 
-2.34.1
+ (9) Make some minor code cleanups.
 
---000000000000f317660644e07243
-Content-Type: application/octet-stream; 
-	name="f2fs-fix-update_sit_entry-overflow-checks.patch"
-Content-Disposition: attachment; 
-	filename="f2fs-fix-update_sit_entry-overflow-checks.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_mimxdl8e0>
-X-Attachment-Id: f_mimxdl8e0
+The patches will be found here also when the git server is accessible
+again:
 
-RnJvbSA0YWNiMTBjNzUxN2IwYTJiZDlmZDZmMWFiMzMzN2NmYzFiOTBmOTliIE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQ0KRnJvbTogWWFvIFhpYW8gPHhpYW5neWFvZjRmcmVlQGdtYWlsLmNvbT4N
-CkRhdGU6IFdlZCwgNCBEZWMgMjAyNCAxMjowMDowMCArMDgwMA0KU3ViamVjdDogW1BBVENIIHYy
-XSBmMmZzOiBhZGQgb3ZlcmZsb3cvdW5kZXJmbG93IGNoZWNrcyB0byB1cGRhdGVfc2l0X2VudHJ5
-DQoNClNpZ25lZC1vZmYtYnk6IFlhbyBYaWFvIDx4aWFuZ3lhb2Y0ZnJlZUBnbWFpbC5jb20+DQot
-LS0NCiBmcy9mMmZzL3NlZ21lbnQuYyB8IDI4ICsrKysrKysrKysrKysrKysrKysrKysrLS0tLS0N
-CiAxIGZpbGUgY2hhbmdlZCwgMjMgaW5zZXJ0aW9ucygrKSwgNSBkZWxldGlvbnMoLSkNCg0KZGlm
-ZiAtLWdpdCBhL2ZzL2YyZnMvc2VnbWVudC5jIGIvZnMvZjJmcy9zZWdtZW50LmMNCmluZGV4IGI0
-NWVhY2U4NzlkNy4uMDVhYjM0NjAwZTMyIDEwMDY0NA0KLS0tIGEvZnMvZjJmcy9zZWdtZW50LmMN
-CisrKyBiL2ZzL2YyZnMvc2VnbWVudC5jDQpAQCAtMjU2OSwxMyArMjU2OSwzMyBAQCBzdGF0aWMg
-dm9pZCB1cGRhdGVfc2l0X2VudHJ5KHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSwgYmxvY2tfdCBi
-bGthZGRyLCBpbnQgZGVsKQ0KIAlzdHJ1Y3Qgc2VnX2VudHJ5ICpzZTsNCiAJdW5zaWduZWQgaW50
-IHNlZ25vLCBvZmZzZXQ7DQogCWxvbmcgaW50IG5ld192YmxvY2tzOw0KKwl1bnNpZ25lZCBpbnQg
-bWF4X3ZhbGlkOw0KDQogCXNlZ25vID0gR0VUX1NFR05PKHNiaSwgYmxrYWRkcik7DQogCWlmIChz
-ZWdubyA9PSBOVUxMX1NFR05PKQ0KIAkJcmV0dXJuOw0KDQogCXNlID0gZ2V0X3NlZ19lbnRyeShz
-YmksIHNlZ25vKTsNCi0JbmV3X3ZibG9ja3MgPSBzZS0+dmFsaWRfYmxvY2tzICsgZGVsOw0KKwlt
-YXhfdmFsaWQgPSBmMmZzX3VzYWJsZV9ibGtzX2luX3NlZyhzYmksIHNlZ25vKTsNCisNCisJLyog
-UHJldmVudCBvdmVyZmxvdy91bmRlcmZsb3cgYmVmb3JlIHBlcmZvcm1pbmcgYXJpdGhtZXRpYy4g
-Ki8NCisJaWYgKGRlbCA+IDApIHsNCisJCWlmICgodW5zaWduZWQgaW50KWRlbCA+IG1heF92YWxp
-ZCB8fA0KKwkJICAgIHNlLT52YWxpZF9ibG9ja3MgPiBtYXhfdmFsaWQgLSAodW5zaWduZWQgaW50
-KWRlbCkgew0KKwkJCWYyZnNfYnVnX29uKHNiaSwgMSk7DQorCQkJcmV0dXJuOw0KKwkJfQ0KKwl9
-IGVsc2UgaWYgKGRlbCA8IDApIHsNCisJCWlmIChzZS0+dmFsaWRfYmxvY2tzIDwgKHVuc2lnbmVk
-IGludCkoLWRlbCkpIHsNCisJCQlmMmZzX2J1Z19vbihzYmksIDEpOw0KKwkJCXJldHVybjsNCisJ
-CX0NCisJfQ0KKw0KKwluZXdfdmJsb2NrcyA9IChsb25nIGludClzZS0+dmFsaWRfYmxvY2tzICsg
-ZGVsOw0KIAlvZmZzZXQgPSBHRVRfQkxLT0ZGX0ZST01fU0VHMChzYmksIGJsa2FkZHIpOw0KDQog
-CWYyZnNfYnVnX29uKHNiaSwgKG5ld192YmxvY2tzIDwgMCB8fA0KLS0gDQoyLjM0LjENCg==
---000000000000f317660644e07243--
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=cifs-next
+
+Thanks,
+David
+
+Changes
+=======
+ver #5)
+ - Rebased on the ksmbd-for-next branch.
+ - Drop the netfs_alloc patch as that's now taken.
+ - Added a warning check requested by Stefan Metzmacher.
+ - Switched to a branch without the header prototype cleanups.
+ - Add a patch to make some minor code cleanups.
+ - Don't do EIO changed in smbdirect.c as that interferes with Stefan's
+   changes.
+
+ver #4)
+ - Rebased on the ksmbd-for-next branch.
+ - The read tracepoint patch got merged, so drop it.
+ - Move the netfs_alloc, etc. patch first.
+ - Fix a couple of prototypes that need to be conditional (may need some
+   post cleanup).
+ - Fixed another couple of headers that needed their own prototype lists.
+ - Fixed #include order in a couple of places.
+
+ver #3)
+ - Rebased on the ksmbd-for-next branch.
+ - Add the patches to clean up the function prototypes in the headers.
+   - Don't touch smbdirect.
+   - Put prototypes into netlink.h and cached_dir.h rather than
+     centralising them.
+   - Indent the arguments in the prototypes to the opening bracket + 1.
+ - Cleaned up most other checkpatch complaints.
+ - Added the EIO tracepoint patch to the end.
+
+ver #2)
+ - Rebased on the ksmbd-for-next-next branch.
+ - Moved the patch to use netfs_alloc/free_folioq_buffer() down the stack.
+
+David Howells (9):
+  cifs: Rename mid_q_entry to smb_message
+  cifs: Remove the RFC1002 header from smb_hdr
+  cifs: Make smb1's SendReceive() wrap cifs_send_recv()
+  cifs: Clean up some places where an extra kvec[] was required for
+    rfc1002
+  cifs: Replace SendReceiveBlockingLock() with SendReceive() plus flags
+  cifs: Remove the server pointer from smb_message
+  cifs: Don't need state locking in smb2_get_mid_entry()
+  cifs: Add a tracepoint to log EIO errors
+  cifs: Do some preparation prior to organising the function
+    declarations
+
+ fs/smb/client/cached_dir.c    |   2 +-
+ fs/smb/client/cifs_debug.c    |  51 +-
+ fs/smb/client/cifs_debug.h    |   6 +-
+ fs/smb/client/cifs_spnego.h   |   2 -
+ fs/smb/client/cifs_unicode.h  |   3 -
+ fs/smb/client/cifsacl.c       |  10 +-
+ fs/smb/client/cifsencrypt.c   |  83 +--
+ fs/smb/client/cifsfs.c        |  36 +-
+ fs/smb/client/cifsglob.h      | 197 +++----
+ fs/smb/client/cifspdu.h       |   2 +-
+ fs/smb/client/cifsproto.h     | 200 ++++++--
+ fs/smb/client/cifssmb.c       | 931 +++++++++++++++++++---------------
+ fs/smb/client/cifstransport.c | 438 +++-------------
+ fs/smb/client/compress.c      |  23 +-
+ fs/smb/client/compress.h      |  19 +-
+ fs/smb/client/connect.c       | 199 ++++----
+ fs/smb/client/dir.c           |   8 +-
+ fs/smb/client/dns_resolve.h   |   4 -
+ fs/smb/client/file.c          |   6 +-
+ fs/smb/client/fs_context.c    |   2 +-
+ fs/smb/client/inode.c         |  14 +-
+ fs/smb/client/link.c          |  10 +-
+ fs/smb/client/misc.c          |  53 +-
+ fs/smb/client/netmisc.c       |  21 +-
+ fs/smb/client/readdir.c       |   2 +-
+ fs/smb/client/reparse.c       |  53 +-
+ fs/smb/client/sess.c          |  16 +-
+ fs/smb/client/smb1ops.c       | 114 +++--
+ fs/smb/client/smb2file.c      |   9 +-
+ fs/smb/client/smb2inode.c     |  13 +-
+ fs/smb/client/smb2maperror.c  |   6 +-
+ fs/smb/client/smb2misc.c      |  11 +-
+ fs/smb/client/smb2ops.c       | 178 +++----
+ fs/smb/client/smb2pdu.c       | 230 +++++----
+ fs/smb/client/smb2proto.h     |  18 +-
+ fs/smb/client/smb2transport.c | 113 ++---
+ fs/smb/client/trace.h         | 149 ++++++
+ fs/smb/client/transport.c     | 305 +++++------
+ fs/smb/client/xattr.c         |   2 +-
+ fs/smb/common/smb2pdu.h       |   3 -
+ fs/smb/common/smbglob.h       |   1 -
+ 41 files changed, 1800 insertions(+), 1743 deletions(-)
+
 
