@@ -1,79 +1,97 @@
-Return-Path: <linux-fsdevel+bounces-70392-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70384-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3E5BC995A8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 01 Dec 2025 23:15:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CFD7C99564
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 01 Dec 2025 23:11:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id AF9AE34652D
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Dec 2025 22:14:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0BCC3A4FA7
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Dec 2025 22:11:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A18A2FFDF0;
-	Mon,  1 Dec 2025 22:11:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NtjVuDMO"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CBFA286409;
+	Mon,  1 Dec 2025 22:09:05 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oi1-f198.google.com (mail-oi1-f198.google.com [209.85.167.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0A072FFDC0;
-	Mon,  1 Dec 2025 22:11:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 398BD28642B
+	for <linux-fsdevel@vger.kernel.org>; Mon,  1 Dec 2025 22:09:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764627091; cv=none; b=CQU4rAXsgEO6zvCKnf59md93Oyjj8INPCRj+NCrmmq5LQiF+ENaz3Q/Rt+7w84oUqPdIRb6TlYKhgkRMsZQLyKWAaZd9nahbi8DWBE4+8HtWUeVcSVAqlFrZ1oOikLf7CPUewnDqYPnfgFu9S7FsA/uAVew2qGuehje8RHOsLH0=
+	t=1764626944; cv=none; b=Xq5jCP306DoWVknYzqU+C64MWdKvQmnMjHh9MhHM0pr9OClLD0F0ZlkGJ3xoF89xOhIugYYcMMEWw4ilCpjJpFXzR4UcyVfc3DaE5NsXuB2NlF+1SzwTDRmGURQC85ZvhWxzL+AVsap1TNLbWqhAWUoGd/5pBwZpj8ihnanPcKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764627091; c=relaxed/simple;
-	bh=udYSLR4cFLg1TZkjR7Kpoqb3qR0PmZRpff611LztbEw=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=p/JV7ppD50H+6O+6beuZ+D/bKbmaflrMreqXundgLraq9h9UPD4sQZ8uOX8hJX6ILtwLUiBURxu6AoDiJHlJdk0iRAd6aMVU/Wm5SrDf5H8Pjcust6H/rihXGaIYgRyxefRldgRLB4wjMiQjEghxoYoFH+gFfN7yfjzV4CW4DLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NtjVuDMO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C26ACC4CEF1;
-	Mon,  1 Dec 2025 22:11:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764627090;
-	bh=udYSLR4cFLg1TZkjR7Kpoqb3qR0PmZRpff611LztbEw=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=NtjVuDMObCGhxzOgDbAqc4M2TiwbHb0O6itwNv1mEYBtntubmJvkbXu3hRnlpOLM6
-	 Qc/piT0J1Dy+2sHoqHlipmhWgtuxMtBa9Jkt5qwlJBNGSLBdVVqwl8pBM40otcOhrE
-	 hYKTGo/2UziziTCEFsIC22YY2AScEWq7St1S6VrVG6i9Q4HQssSehzVPrXN5HfEEWF
-	 gZ6QL4icxOYCj8moyO4/CxiRjHn/knUREVjpk07YPVoe+r51W3yAFAgqJGW55OOC5m
-	 P/BvTimUpRrm6Dwc+kn9VV2Q2NcLpZtFJVAU0NG4vgGR42tBtTGnpu3DCmoTnu14A9
-	 FJYkaAwk70sTQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id F2B18381196A;
-	Mon,  1 Dec 2025 22:08:31 +0000 (UTC)
-Subject: Re: [GIT PULL 07/17 for v6.19] vfs folio
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20251128-vfs-folio-v619-e62bd8562ec0@brauner>
-References: <20251128-vfs-v619-77cd88166806@brauner> <20251128-vfs-folio-v619-e62bd8562ec0@brauner>
-X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20251128-vfs-folio-v619-e62bd8562ec0@brauner>
-X-PR-Tracked-Remote: git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.19-rc1.folio
-X-PR-Tracked-Commit-Id: 37d369fa97cc0774ea4eab726d16bcb5fbe3a104
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: f2e74ecfba1b0d407f04b671a240cc65e309e529
-Message-Id: <176462691057.2567508.5956802006125652479.pr-tracker-bot@kernel.org>
-Date: Mon, 01 Dec 2025 22:08:30 +0000
-To: Christian Brauner <brauner@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1764626944; c=relaxed/simple;
+	bh=Uw9kUV9EdAkxOYByN1jtz7gLbs5Uy6OVyl/gd7NOE5s=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Q0ecVGbZeVqbCpc0go+BZVUnxgwYXWyQRn734bu5q+kr5JiBM0axjSDNCbbX/3VFa+928BJR5epokvf9fvmC3cDsBagikqjm4rPpkrC48cvGPxAIrjHMHaKB+lNuhlBZprXqE4Y5+tmdV+AKQfOw/3RwWg2f4tY5TjfitjTDsvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.167.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-oi1-f198.google.com with SMTP id 5614622812f47-4501f50b40cso3540843b6e.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Dec 2025 14:09:02 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764626942; x=1765231742;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/vkKw1aMFMsjt7cPjue/zTtcAVsiSrnVVB8Q6f0BvOw=;
+        b=F2tzhvChQ1Df7kXJ9/u8qk1mwsDZvsIdjYwgYr6yoY+uWuLBQ6A8drmqsOjiPXZ3EQ
+         nY1qv6H7dyFCf2izGQfXvR7rMcw87WLM0raOs/8gLfvPTkxlfmi57RGRjj7jHhENZKhN
+         W3qWuLruK/cVTvrMQYdNXptV6TleayZ6Naot4+wRPJDJ9t16yOkTy3GZw4pKT9CRmM9+
+         /LtdufwmVQLdWvj/EPQVFOJuluQtYMhVXH8GnZ4yExNcyCOx2t/Vq7A0KI3S6zGWVAL3
+         2lvnq6TqQfXDWpngZyflczPEwGSrrNeOR+zrUoI1+kXSOXKQRsuHE8un5Ri+7ikCce3P
+         TC9w==
+X-Forwarded-Encrypted: i=1; AJvYcCVW8kzzR0MafSArvYbwUEaYiMRSWUW/SM6aE+SpNAo+8GN2zNFwXs4zfFR53Z6flL82rCMW6d6H/ZjXIngK@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCHHDNsYZ1kKSbOR00nZVV5JK3rzhwya4OdAV0FsAZLh0aVN50
+	4zUdGKlyiCH5K6yfMk8Ix8MCJsRHDrGFFW6+q1/CZ/LH4BiKTJzKmmFIzW8kT/7fCbZRtbnRpKl
+	lWYucP1dABf283vQrwodG9P8vg1quRfr4Lr7ptamhF8l+Z082hThzm2WgmLs=
+X-Google-Smtp-Source: AGHT+IFCVn9SmBjyBhDsZVB9FNp97B50jkWsVXck4orrLX/hYWor8khmXtZ+VRasjlQ64ebDCoYjuVDiltI/XEWnqYdManqfsXti
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-Received: by 2002:a05:6808:210c:b0:450:a9d0:b799 with SMTP id
+ 5614622812f47-45115a10e29mr18815486b6e.17.1764626942248; Mon, 01 Dec 2025
+ 14:09:02 -0800 (PST)
+Date: Mon, 01 Dec 2025 14:09:02 -0800
+In-Reply-To: <692d66d3.a70a0220.2ea503.00b2.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <692e11fe.a70a0220.d98e3.018e.GAE@google.com>
+Subject: Re: [syzbot] [fs?] kernel BUG in sctp_getsockopt_peeloff_common
+From: syzbot <syzbot+984a5c208d87765b2ee7@syzkaller.appspotmail.com>
+To: brauner@kernel.org, davem@davemloft.net, edumazet@google.com, 
+	horms@kernel.org, jack@suse.cz, kuba@kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-sctp@vger.kernel.org, lucien.xin@gmail.com, marcelo.leitner@gmail.com, 
+	mjguzik@gmail.com, netdev@vger.kernel.org, pabeni@redhat.com, 
+	syzkaller-bugs@googlegroups.com, torvalds@linux-foundation.org, 
+	viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 
-The pull request you sent on Fri, 28 Nov 2025 17:48:18 +0100:
+syzbot has bisected this issue to:
 
-> git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.19-rc1.folio
+commit 457528eb27c3a3053181939ca65998477cc39c49
+Author: Christian Brauner <brauner@kernel.org>
+Date:   Sun Nov 23 16:33:47 2025 +0000
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/f2e74ecfba1b0d407f04b671a240cc65e309e529
+    net/sctp: convert sctp_getsockopt_peeloff_common() to FD_PREPARE()
 
-Thank you!
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1136a512580000
+start commit:   7d31f578f323 Add linux-next specific files for 20251128
+git tree:       linux-next
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=1336a512580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=1536a512580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6336d8e94a7c517d
+dashboard link: https://syzkaller.appspot.com/bug?extid=984a5c208d87765b2ee7
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16a2322c580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12a3c512580000
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Reported-by: syzbot+984a5c208d87765b2ee7@syzkaller.appspotmail.com
+Fixes: 457528eb27c3 ("net/sctp: convert sctp_getsockopt_peeloff_common() to FD_PREPARE()")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
