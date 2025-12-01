@@ -1,144 +1,137 @@
-Return-Path: <linux-fsdevel+bounces-70339-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70340-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D84EC979AE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 01 Dec 2025 14:29:33 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67D3FC979BD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 01 Dec 2025 14:30:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D93013A5649
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Dec 2025 13:25:39 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 71B4D4E3090
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Dec 2025 13:28:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2762313548;
-	Mon,  1 Dec 2025 13:25:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EB2B31328D;
+	Mon,  1 Dec 2025 13:28:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aivVy0Lg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GB4PdAEQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 878DB313529
-	for <linux-fsdevel@vger.kernel.org>; Mon,  1 Dec 2025 13:25:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF8182D5930;
+	Mon,  1 Dec 2025 13:28:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764595536; cv=none; b=Unz8UCJFBaKkIH6nNDMW7KYUV2UE2+9huYeEdWdWEtQXk3bg66RGgSM6IxLp/wEAhsWU+Mh2/ausnx5AKbZbXxgoxJIRVy0pTp3xVlNGOUSl4XEAyggvjTaU7IdkE/LuRrxwlrsPlG2/dzxziHiSHeWVc/OmB8OKJe+fEuqWY3s=
+	t=1764595700; cv=none; b=Tf59LyoD4T95O5lP7A+NvCSzqcu4XyzPaSoekY/QAS8xynEsdGNe7hlzvSUukzs/JXRvSTBbH319SA+Ud6OZP+3V9I54JCvyz4Fwg8jik8qu+d2bOtbuRZ2r6mehRx4MzPRes1IWeBMwvjQU3PJ3U2VaaBaK/opIir95MJnYsVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764595536; c=relaxed/simple;
-	bh=sJExTUbJidl8r24l5M+JYo7E2xb5R4+Oqfz/PfooY8g=;
-	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=ECnaVkkKrYAjWlp5FL+vJ6P21V8tp7vrxcQKfKoI8Ay6IvNXSxtdpYdC/0lrnWlLdoPNBuEReK1ZWO9LMNpZnAyZ7i/fFOqvjFx12feujMQWFdTcDQElJ175MRrTpVeskIIyFGnFYJ9UqTK0M1xax1g9YyQp0DZ63P3LurwNBGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aivVy0Lg; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1764595533;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=1e3FaU1cDXTnLIRcihA3zwmvx0iyBQUKIPR8Yt5LULg=;
-	b=aivVy0Lg2f5FF2gSRwY7y9ODk0JJs2fmEOJ/qzpaqy4869/rB1EzXxyq75HL42BCWUuSau
-	qSEDLRodlHAbYEHa6cANpZfcNCgaZhp8LgZChllAzfGYnfR+hSBciZOX5Tn5zicJLucWZI
-	BztFESMnuEUP6wp5K7znTIK5/+IFAm8=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-516-jSU61sI5NsSf3J579WYf2A-1; Mon,
- 01 Dec 2025 08:25:30 -0500
-X-MC-Unique: jSU61sI5NsSf3J579WYf2A-1
-X-Mimecast-MFC-AGG-ID: jSU61sI5NsSf3J579WYf2A_1764595529
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A3B821800EF6;
-	Mon,  1 Dec 2025 13:25:28 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.14])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E607819560B2;
-	Mon,  1 Dec 2025 13:25:24 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-To: Paulo Alcantara <pc@manguebit.org>,
-    Enzo Matsumiya <ematsumiya@suse.de>
-cc: Steve French <sfrench@samba.org>,
-    David Howells <dhowells@redhat.com>,
-    Shyam Prasad N <sprasad@microsoft.com>,
-    Stefan Metzmacher <metze@samba.org>, linux-cifs@vger.kernel.org,
-    netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-    linux-kernel@vger.kernel.org
-Subject: Can we sort out the prototypes within the cifs headers?
+	s=arc-20240116; t=1764595700; c=relaxed/simple;
+	bh=FevHi0kLliUV5SQ+/ZO84hut8iMmC7m6mevvQPXJiHM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nXoEm55OzTkeZm1Eobj/iZAYwZD+i/YORQH6+4aR7XuptjL7+Tn8mwkH58m+z3OOBYbl44Gb9jt2vC8Kn+fkK/bNpogO2aD5imdwYwek9iuv61/xKDVMzmhC2evVCFcrSFXA4DTsz1yJh+ppol02WE/uZ1vIlBfm2YtPe5ieu5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GB4PdAEQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6A75C4CEF1;
+	Mon,  1 Dec 2025 13:28:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1764595699;
+	bh=FevHi0kLliUV5SQ+/ZO84hut8iMmC7m6mevvQPXJiHM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GB4PdAEQpQKQuhcpxGteKkjdVYH9TyuUXh91JdQuQ/4eOSaS2YGYg8q65zNG0ksj3
+	 4iUEy0Sx1XA6EcrsvEEFUEatwObl/Xb4VOs+L86Ygm1h9jfbIZJCen+EqrXkmpQq5t
+	 vzD4d1lwJZVkBXeR8YPgRBOEnuKEzhMHebtHoUi8rgbvy6z9HzRJWNsxrHMf0OOPoB
+	 QRJMGlCp7nwSLq51InSz1Ynj4rVUI69oirRNzlrghJAXSQ/uBjN8HHZrs29TWgZ9vU
+	 f74tqNqWKXSMr8kOIGEZPP3OtZP0dyeYroa1jhuGK1jujZYk05YvwT+2gsPZXN9D+G
+	 afF+kzb1yTDQw==
+Date: Mon, 1 Dec 2025 13:28:13 +0000
+From: Will Deacon <will@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "Russell King (Oracle)" <linux@armlinux.org.uk>,
+	Zizhi Wo <wozizhi@huaweicloud.com>,
+	Catalin Marinas <catalin.marinas@arm.com>, jack@suse.com,
+	brauner@kernel.org, hch@lst.de, akpm@linux-foundation.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
+	yangerkun@huawei.com, wangkefeng.wang@huawei.com,
+	pangliyuan1@huawei.com, xieyuanbin1@huawei.com
+Subject: Re: [Bug report] hash_name() may cross page boundary and trigger
+ sleep in RCU context
+Message-ID: <aS2X7cIiRnR26hyg@willie-the-truck>
+References: <20251126090505.3057219-1-wozizhi@huaweicloud.com>
+ <33ab4aef-020e-49e7-8539-31bf78dac61a@huaweicloud.com>
+ <CAHk-=wh1Wfwt9OFB4AfBbjyeu4JVZuSWQ4A8OoT3W6x9btddfw@mail.gmail.com>
+ <aSgut4QcBsbXDEo9@shell.armlinux.org.uk>
+ <CAHk-=wh+cFLLi2x6u61pvL07phSyHPVBTo9Lac2uuqK4eRG_=w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1430100.1764595523.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 01 Dec 2025 13:25:23 +0000
-Message-ID: <1430101.1764595523@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wh+cFLLi2x6u61pvL07phSyHPVBTo9Lac2uuqK4eRG_=w@mail.gmail.com>
 
-Hi Paulo, Enzo, et al.,
+On Fri, Nov 28, 2025 at 09:06:50AM -0800, Linus Torvalds wrote:
+> On Thu, 27 Nov 2025 at 02:58, Russell King (Oracle)
+> <linux@armlinux.org.uk> wrote:
+> >
+> > Ha!
+> >
+> > As said elsewhere, it looks like 32-bit ARM has been missing updates to
+> > the fault handler since pre-git history - this was modelled in the dim
+> > and distant i386 handling, and it just hasn't kept up.
+> 
+> I actually have this dim memory of having seen something along these
+> lines before, and I just had never realized how it could happen,
+> because that call to do_page_fault() in do_translation_fault()
+> visually *looks* like the only call-site, and so that
+> 
+>         if (addr < TASK_SIZE)
+>                 return do_page_fault(addr, fsr, regs);
+> 
+> looks like it does everything correctly. That "do_page_fault()"
+> function is static to the arch/arm/mm/fault.c file, and that's the
+> only place that appears to call it.
+> 
+> The operative word being "appears".
+> 
+> Becuse I had never before realized that that fault.c then also does that
+> 
+>   #include "fsr-2level.c"
+> 
+> and then that do_page_fault() function is exposed through those
+> fsr_info[] operation arrays.
+> 
+> Anyway, I don't think that the ARM fault handling is all *that* bad.
+> Sure, it might be worth double-checking, but it *has* been converted
+> to the generic accounting helpers a few years ago and to the stack
+> growing fixes.
+> 
+> I think the fix here may be as simple as this trivial patch:
+> 
+>   diff --git a/arch/arm/mm/fault.c b/arch/arm/mm/fault.c
+>   index 2bc828a1940c..27024ec2d46d 100644
+>   --- a/arch/arm/mm/fault.c
+>   +++ b/arch/arm/mm/fault.c
+>   @@ -277,6 +277,10 @@ do_page_fault(unsigned long addr, ...
+>         if (interrupts_enabled(regs))
+>                 local_irq_enable();
+> 
+>   +     /* non-user address faults never have context */
+>   +     if (addr >= TASK_SIZE)
+>   +             goto no_context;
+>   +
+>         /*
+>          * If we're in an interrupt or have no user
+>          * context, we must not take the fault..
+> 
+> but I really haven't thought much about it.
 
-You may have seen my patch:
+In the hack I posted [1], I deliberately avoided modifying
+do_page_fault() as it's used on the permission fault path. With your
+change above, I'm worried that userspace could simply try to access a
+kernel address and that would lead to a panic.
 
-	https://lore.kernel.org/linux-cifs/20251124124251.3565566-4-dhowells@redh=
-at.com/T/#u
+Will
 
-to sort out the cifs header file prototypes, which are a bit of a mess: so=
-me
-seem to have been placed haphazardly in the headers, some have unnamed
-arguments and also sometimes the names in the .h and the .c don't match.
-
-Now Steve specifically namechecked you two as this will affect the backpor=
-ting
-of patches.  Whilst this only affects the prototypes in the headers and no=
-t
-the implementations in C files, it does cause chunks of the headers to mov=
-e
-around.
-
-Can we agree on at least a subset of the cleanups to be made?  In order of
-increasing conflictiveness, I have:
-
- (1) Remove 'extern'.  cifs has a mix of externed and non-externed, but th=
-e
-     documented approach is to get rid of externs on prototypes.
-
- (2) (Re)name the arguments in the prototypes to be the same as in the
-     implementations.
-
- (3) Adjust the layout of each prototype to match the implementation, just
-     with a semicolon on the end.  My script partially does this, but move=
-s
-     the return type onto the same line as the function name.
-
- (4) Move SMB1-specific functions out to smb1proto.h.  Move SMB2/3-specifi=
-c
-     functions out to smb2proto.h.
-
- (5) Divide the lists of prototypes (particularly the massive one in
-     cifsproto.h) up into blocks according to which .c file contains the
-     implementation and preface each block with a comment that indicates t=
-he
-     name of the relevant .c file.
-
-     The comment could then be used as a key for the script to maintain th=
-e
-     division in future.
-
- (6) Sort each block by position in the .c file to make it easier to maint=
-ain
-     them.
-
-A hybrid approach is also possible, where we run the script to do the basi=
-c
-sorting and then manually correct the output.
-
-David
-
+[1] https://lore.kernel.org/all/aShLKpTBr9akSuUG@willie-the-truck/
 
