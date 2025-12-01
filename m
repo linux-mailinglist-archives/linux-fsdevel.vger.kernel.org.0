@@ -1,123 +1,144 @@
-Return-Path: <linux-fsdevel+bounces-70338-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70339-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A874C978E2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 01 Dec 2025 14:20:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D84EC979AE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 01 Dec 2025 14:29:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D99A7342205
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Dec 2025 13:20:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D93013A5649
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Dec 2025 13:25:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94C1F3128B9;
-	Mon,  1 Dec 2025 13:20:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2762313548;
+	Mon,  1 Dec 2025 13:25:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vac9EPW6"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aivVy0Lg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31DD52F39BF
-	for <linux-fsdevel@vger.kernel.org>; Mon,  1 Dec 2025 13:20:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 878DB313529
+	for <linux-fsdevel@vger.kernel.org>; Mon,  1 Dec 2025 13:25:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764595244; cv=none; b=jIFrMrLbfKYuRvLiP5Rg9nDUiOqC4SytNgkShYgARXfQlBFbG/7CJZlC6YmE8vNfl2tpiuziOT8uR5qr95Ro5J8pOd6tq/ZitOyLPm1O5dJoOrVPguX4EtKFQRM65PQ+KwWslYigRCrkRGHprrMuYjiHrQPKnxCnXNk6thSdeyU=
+	t=1764595536; cv=none; b=Unz8UCJFBaKkIH6nNDMW7KYUV2UE2+9huYeEdWdWEtQXk3bg66RGgSM6IxLp/wEAhsWU+Mh2/ausnx5AKbZbXxgoxJIRVy0pTp3xVlNGOUSl4XEAyggvjTaU7IdkE/LuRrxwlrsPlG2/dzxziHiSHeWVc/OmB8OKJe+fEuqWY3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764595244; c=relaxed/simple;
-	bh=Ba4YHewJsBeFN9HspS3uO86WLlDcBz4A9HSc0LDhyp8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DvR0SXz2KD877Fjkat8yyI/gNPpSh1pkiHjRVpagbl0+IISmmIgBdvINBTW75Y0cEZgsusfy+4R3lEsJkngEfFYoCzGdwGow+IfqsUaln+KAf4zK52MXHgCuxP61f9AWyufCZYCIH7l1JIArY3TJJQ64zCJvbUJUKhBUamp07k0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vac9EPW6; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-640aaa89697so6022984a12.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Dec 2025 05:20:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1764595241; x=1765200041; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ggs9rtQy4/FD8+ye9LTzpVHkqY70KYv0vVpjcEq/ojg=;
-        b=Vac9EPW6eq2URFJSgI928sVlFkqGSbZ5a3aQHD4hEDHS5co5h9enTq0UdWlipvztP4
-         qMqtVZfbEuRXU8cIAi7L4r3HaWoQSXE0vBDHTcOiEobUIDmtBTVxlW4pXVnHYN+ff2qQ
-         PlTfSj5gxOQZIBii5LOzBh6gZoA892gdszLLxZz8vaGhP8lgo00Rhe/9E1qMco0I9p6Y
-         cH4YKEKTYN51SVmJSh9wemdPKj0mnZsC5M9y2oqd3QVZGRKePjApDqUzFXTeBy3R+aao
-         wkwEesIHoXxyuhKfAtrOYkiWT0ixkllXVCR4jmyhmaTGNJwuwU1bErPI+iaWb/UgAMN3
-         5F1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764595241; x=1765200041;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ggs9rtQy4/FD8+ye9LTzpVHkqY70KYv0vVpjcEq/ojg=;
-        b=o8GEe8eySmfrV0Ai+/vsgIAX/OUBA9ACMfc4GVvtjIQPy0oHb0LnGjSRG9Z8xnKF/W
-         TdOOXHvvwOGZra5eP3UM3ZwTAKbt+UXKPjTb6sYI7/d2bhjtBMvwhmmzy+87wRa9BZrV
-         Dr6edRhAv8Ly0Rv6S9Us4VQZrIQ11gdBvAh7EFhoMkDU4qxD51JCP4lBw8DrT1kK2Yzd
-         UR0Eu9UD0xBNLc4clqH+or1fmAhJ7aaCltqpbYMYWlO24SGUHhM+Ye101ZDGfsrOVfAI
-         QnOGwwMcOelhcbJnkV8nnFTYxIC3O2pBN7BGOdrWEx200wE5YdZnonlq+I5qGPdTuU9u
-         yx5g==
-X-Forwarded-Encrypted: i=1; AJvYcCUucqkHRoQz8PDZTQUawJNug1KKOE7G71ecOF9pEbEhrO/KTM7eFuPJTRtYt25r4iLPWw7x9C2Y03a1WD43@vger.kernel.org
-X-Gm-Message-State: AOJu0YyiM2QKAnWQhAk2wWZxsDL2a0cBCrP9HxzXOi7dTOzuZ8vHfQbD
-	NNjS4pElYmf7W0KHuarjk4B//ltazCQADKHNoY53S3dSKcdsB8ydkgDw
-X-Gm-Gg: ASbGncsK9d95inr092/SmI33j9+EfGmWjq/QUMeVLDB/WvO/6ES+HGIHcsvrrIBjV/E
-	jZEr6FHhqVHDk1E4RjAJlkoO+e9eAe6bIiQatCozpDHdualQJPfvA7RXm4fdJyLxuh9vhKq5KsS
-	jclZts36RwsnXmxUIdWh3O73q+Ll3eMq4hh01crmvQXtxB+OvSW9SmVw8hdGCt/T7TuGj9k5qXJ
-	n4xig77IMWCLQqeuluk0RfSZGikjKPov6pFTXVtsB8S9oIL4UHf2cFiU4tqOQUTxDICrFlBPZFi
-	ZgM4avHbEpKUbAmjMlLsxIvab4pi/zsniCKrZeDJxhnwkcSdtvFg5HwE3fRJl/86PTvXwFg5l+G
-	3ts9pijhlWGnb/w6AJbzdcJodjjxPhAIY2yfM1fUSG8S5kvbd+nmxSrywAjszulXNO+xs7bFPSd
-	Km6u+KqHASr+HFEVfNFB7cVFqGQlW5RmRYgzbZl4omZiBXNfRjk73CxqohpKA=
-X-Google-Smtp-Source: AGHT+IGY6R1OszJYvwXO/NtamQfh/xgq0/Ghs/ZvXVrgOeyhXTX4FFNjJoz2R5b4i9tvDGn0MAgjEQ==
-X-Received: by 2002:a05:6402:2111:b0:640:a9fb:3464 with SMTP id 4fb4d7f45d1cf-645544421efmr33743604a12.7.1764595241256;
-        Mon, 01 Dec 2025 05:20:41 -0800 (PST)
-Received: from f.. (cst-prg-14-82.cust.vodafone.cz. [46.135.14.82])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-64751062261sm13894203a12.33.2025.12.01.05.20.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Dec 2025 05:20:40 -0800 (PST)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: brauner@kernel.org
-Cc: viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH] fs: assert on I_FREEING not being set in iput() and iput_not_last()
-Date: Mon,  1 Dec 2025 14:20:37 +0100
-Message-ID: <20251201132037.22835-1-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1764595536; c=relaxed/simple;
+	bh=sJExTUbJidl8r24l5M+JYo7E2xb5R4+Oqfz/PfooY8g=;
+	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=ECnaVkkKrYAjWlp5FL+vJ6P21V8tp7vrxcQKfKoI8Ay6IvNXSxtdpYdC/0lrnWlLdoPNBuEReK1ZWO9LMNpZnAyZ7i/fFOqvjFx12feujMQWFdTcDQElJ175MRrTpVeskIIyFGnFYJ9UqTK0M1xax1g9YyQp0DZ63P3LurwNBGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aivVy0Lg; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1764595533;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=1e3FaU1cDXTnLIRcihA3zwmvx0iyBQUKIPR8Yt5LULg=;
+	b=aivVy0Lg2f5FF2gSRwY7y9ODk0JJs2fmEOJ/qzpaqy4869/rB1EzXxyq75HL42BCWUuSau
+	qSEDLRodlHAbYEHa6cANpZfcNCgaZhp8LgZChllAzfGYnfR+hSBciZOX5Tn5zicJLucWZI
+	BztFESMnuEUP6wp5K7znTIK5/+IFAm8=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-516-jSU61sI5NsSf3J579WYf2A-1; Mon,
+ 01 Dec 2025 08:25:30 -0500
+X-MC-Unique: jSU61sI5NsSf3J579WYf2A-1
+X-Mimecast-MFC-AGG-ID: jSU61sI5NsSf3J579WYf2A_1764595529
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A3B821800EF6;
+	Mon,  1 Dec 2025 13:25:28 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.14])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E607819560B2;
+	Mon,  1 Dec 2025 13:25:24 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+To: Paulo Alcantara <pc@manguebit.org>,
+    Enzo Matsumiya <ematsumiya@suse.de>
+cc: Steve French <sfrench@samba.org>,
+    David Howells <dhowells@redhat.com>,
+    Shyam Prasad N <sprasad@microsoft.com>,
+    Stefan Metzmacher <metze@samba.org>, linux-cifs@vger.kernel.org,
+    netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+    linux-kernel@vger.kernel.org
+Subject: Can we sort out the prototypes within the cifs headers?
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1430100.1764595523.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 01 Dec 2025 13:25:23 +0000
+Message-ID: <1430101.1764595523@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
----
- fs/inode.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Hi Paulo, Enzo, et al.,
 
-diff --git a/fs/inode.c b/fs/inode.c
-index cc8265cfe80e..521383223d8a 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -1968,7 +1968,7 @@ void iput(struct inode *inode)
- 
- retry:
- 	lockdep_assert_not_held(&inode->i_lock);
--	VFS_BUG_ON_INODE(inode_state_read_once(inode) & I_CLEAR, inode);
-+	VFS_BUG_ON_INODE(inode_state_read_once(inode) & (I_FREEING | I_CLEAR), inode);
- 	/*
- 	 * Note this assert is technically racy as if the count is bogusly
- 	 * equal to one, then two CPUs racing to further drop it can both
-@@ -2010,6 +2010,7 @@ EXPORT_SYMBOL(iput);
-  */
- void iput_not_last(struct inode *inode)
- {
-+	VFS_BUG_ON_INODE(inode_state_read_once(inode) & (I_FREEING | I_CLEAR), inode);
- 	VFS_BUG_ON_INODE(atomic_read(&inode->i_count) < 2, inode);
- 
- 	WARN_ON(atomic_sub_return(1, &inode->i_count) == 0);
--- 
-2.48.1
+You may have seen my patch:
+
+	https://lore.kernel.org/linux-cifs/20251124124251.3565566-4-dhowells@redh=
+at.com/T/#u
+
+to sort out the cifs header file prototypes, which are a bit of a mess: so=
+me
+seem to have been placed haphazardly in the headers, some have unnamed
+arguments and also sometimes the names in the .h and the .c don't match.
+
+Now Steve specifically namechecked you two as this will affect the backpor=
+ting
+of patches.  Whilst this only affects the prototypes in the headers and no=
+t
+the implementations in C files, it does cause chunks of the headers to mov=
+e
+around.
+
+Can we agree on at least a subset of the cleanups to be made?  In order of
+increasing conflictiveness, I have:
+
+ (1) Remove 'extern'.  cifs has a mix of externed and non-externed, but th=
+e
+     documented approach is to get rid of externs on prototypes.
+
+ (2) (Re)name the arguments in the prototypes to be the same as in the
+     implementations.
+
+ (3) Adjust the layout of each prototype to match the implementation, just
+     with a semicolon on the end.  My script partially does this, but move=
+s
+     the return type onto the same line as the function name.
+
+ (4) Move SMB1-specific functions out to smb1proto.h.  Move SMB2/3-specifi=
+c
+     functions out to smb2proto.h.
+
+ (5) Divide the lists of prototypes (particularly the massive one in
+     cifsproto.h) up into blocks according to which .c file contains the
+     implementation and preface each block with a comment that indicates t=
+he
+     name of the relevant .c file.
+
+     The comment could then be used as a key for the script to maintain th=
+e
+     division in future.
+
+ (6) Sort each block by position in the .c file to make it easier to maint=
+ain
+     them.
+
+A hybrid approach is also possible, where we run the script to do the basi=
+c
+sorting and then manually correct the output.
+
+David
 
 
