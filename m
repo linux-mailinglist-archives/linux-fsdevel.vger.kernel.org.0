@@ -1,191 +1,179 @@
-Return-Path: <linux-fsdevel+bounces-70298-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70299-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28948C9619A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 01 Dec 2025 09:23:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67DACC962BB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 01 Dec 2025 09:32:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 08A384E15C1
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Dec 2025 08:23:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE2D23A1C6F
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Dec 2025 08:32:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E19542C0291;
-	Mon,  1 Dec 2025 08:23:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A20A82D77EA;
+	Mon,  1 Dec 2025 08:32:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jYChTdbZ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hFjKoQ82"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 073982E8B76
-	for <linux-fsdevel@vger.kernel.org>; Mon,  1 Dec 2025 08:23:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63225290DBB
+	for <linux-fsdevel@vger.kernel.org>; Mon,  1 Dec 2025 08:32:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764577391; cv=none; b=sLwphGNVQ9KvhZDTEoJ0Zgq6R6dZKw4YrVUEkLqJuM8rgX1vQe779RiWUl1rgjj3m+eVOq7inSZQvFB5zwaiCPemrm/t8EQRzqnvNHoRTnl6onRE92hawUfTfGNfXn1XzIaAl24shypcbeMPJXgJpKaEc8iExD1rTZzBe0VyStc=
+	t=1764577957; cv=none; b=upUhYBaqI7B9JCzQqUhrUq7tIXPhavuIlx8rv+7BqqGVgNDimmdMqIH2iaZs5hxKRzUV+8rhy430Ni0UuklHmfbhzo/0ccoRhh/8mYW8SfnU7tWlgY0bPx2pbbW7IYexHOWCaWG/PNA+bv8MT406TGpvonh9xy828iy2c4cjghk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764577391; c=relaxed/simple;
-	bh=TrlI8KF/qCeVsAfOA6ACvSSTJoCfx71xxH3YdpjqFy0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mw2nahuz2JP0R5Y/gWNkJfwPubCznSF4GqC2D9MXpwGOuTndL/Tnm9v8vP+23uUA3B0SY3In70jcnC0oMD9U97VSgsTB/jIV9ri6lzdcFAnUbXcVlAMS8gs315BVnLvxDyzCHME+2a0tn0Lsj95O0nwp8Sz9nnociFWm5EICfr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jYChTdbZ; arc=none smtp.client-ip=209.85.208.44
+	s=arc-20240116; t=1764577957; c=relaxed/simple;
+	bh=WouL/gXxoaw+fgKLIDXK8/ULsHp1Pa0MmL1z6JvimiA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oGryjf8fR9hLPPsMQZ9tQ9Wn3T2nrkDAwqU6ZWu7d7NhXT0tDeBywbzwqWLxPkS2VHviUbsmOAKtQkNrgz8fjVpOPO/LJr821p8OJsVowDN+mFm3Z0enpX3g0AY6crN47lmOAi7vCA2l/bU7n69ifv8qqYWhn+htNeGIbVd/80o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hFjKoQ82; arc=none smtp.client-ip=209.85.208.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-64162c04f90so7353124a12.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Dec 2025 00:23:08 -0800 (PST)
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-640a503fbe8so179167a12.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Dec 2025 00:32:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1764577387; x=1765182187; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+UDNGf4W59vxX6MyDgWfRD0V6LCN4sc0r1Qgyk2LJH4=;
-        b=jYChTdbZ5OUD1+vaubSuu+HN5tydPki6kg8b6tc8pSohrpj81F4D9Uj+76RsdVV6TO
-         cps70XcuOHZHLoQXHb+3DE5vQOdeGq2zQE5RzPvNbO0nBJbrmrOiZHjKK0Ft7k5FVzDt
-         jG0aveXq+1ZG/2DkFXvzWOia9SnlN2wVRv560vjuprSo+e4B2ugFdxbJYgY5PA7ifnit
-         sj0m0v9V+nsiySi8ujx0BxeOSGvVLhjJyYbZ5mDZT3iMbO+F7m+rnpz0yA1lnbBB3UrL
-         eoPWZcYstP/FS0S6Y+++ywzAqYXjdGm5QrqK4Zmhupc77lTvXJpREzA6b8DCIvxPwww6
-         GeLA==
+        d=gmail.com; s=20230601; t=1764577954; x=1765182754; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=agur13uatpBfTbiWy9CXQ832nKs/hmYFvcnvXcVIbzE=;
+        b=hFjKoQ82PBlRP7uARebQtTKyzrr4gIcwZhUY6riLp+1o3ZKvh3MS03G1e8FRY5Ijbb
+         q9WHhVp+ftCC+jZ97RLvcftOw1J5ckd86VZPbH2z+XHs0umjzsvwB2qFQc55AInqAHim
+         3TjnVMw9XOJeUy0KPBZuwexjPqeFcdyOTWbtlP332p02EjsjWCVlUNM/XiOXxF0Jfpii
+         QePVZDjwf7pmSOaRpVZ5HZZ/B+OcM3gfiw/hiZnAm3jaMAfV75Lye/jlDwcIXRMjzwOe
+         aRJfK5tpQpIKSyfB6X/kYX1B5I9MwiuGdWbMxA9mQmIWQAkRcl/42ccoF3PqxS4p/w+m
+         SA4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764577387; x=1765182187;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=+UDNGf4W59vxX6MyDgWfRD0V6LCN4sc0r1Qgyk2LJH4=;
-        b=RoIsyiZ24+aF0Hx4A74V0w0aIXga8v3NvzDK3zh50/gy25IAxpB0IEWOEQz5BzYHf1
-         Vcz4Akpq+VJqWZ/9453pBuDUWnVFGMQdAc/6Cd8V80MTRFku93uTg6AuhafKVWZRltgw
-         xapV3lD6XJd/UCyH8ClejdoA/fARE/ERtFC7v5ONkE53SsHC8h/p8tMqFGhwY7OMI60G
-         VxsKKpqXjJ+hOzulbEARcvcHooj0C4HdkeDKPQno+O89FQpAX49a7TMh8lQimkfooVtt
-         V7SNMQ/hVHM/pRR3WVLrDTzFjE9IgHXb7vMlo3rRDgTW+5/mWBp89Zal+hsS0ljmsii3
-         X0kA==
-X-Forwarded-Encrypted: i=1; AJvYcCVAYeuAqADgsDUUJ9cTtZPI0PdW2nxzqargtHVpRPKgTmNuj5OZ+zTCHutwgrBhz/OqMAnQKdfbQlCJkstH@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNZUySp9hpHsAUbWEJmihsSds5Comx67Oy7pfRo+ulqB65jmdY
-	BpScmyXs3s7xCOo2j23+ovosX69uaDPAcB95oZ2bcYawUKc0FiXyOKQI2keVyC4yOFOanZhL2Sr
-	/0zRP3FZ02xBObOusBIsnaEDPBqenlig=
-X-Gm-Gg: ASbGnct81rv/si+3iZJNJkpIfxoB2g6jMSSap1K2HR9ZY9f/qcf+e4o5rarbYiQshEj
-	FWetIZFdcXoyQduxr3EUgLnG8za0G6HWk6DxpExaaokV6CraKZ9WKvJ3a7Z1S1JHXMk22AsVeqj
-	jv00AYfb9/ZMBpQK5C29o7d1N/1fPVW+EFjJC7pFfo7rI6NPSyQUrZrFNjnqpyIfAPxTQCKK41O
-	Gx6tJ/OPeKGJC5Eu0h5lUgE70TL0xzJoCchiALSqGDGcrda5dyB4Navf5ueHpTq1GoAEw9auz8q
-	pBmBsyIbl+2F1noqkvN8odk03psY
-X-Google-Smtp-Source: AGHT+IHj59Fq162Q+xUifGgiokcU6h4xrAjviadpNqTh31A0WmXmIZVxJbhdYoPX7MCvx0GXwNcf5jp7tW359myAd7I=
-X-Received: by 2002:a05:6402:4388:b0:645:cd33:7db5 with SMTP id
- 4fb4d7f45d1cf-645cd337dd5mr21497896a12.24.1764577387055; Mon, 01 Dec 2025
- 00:23:07 -0800 (PST)
+        d=1e100.net; s=20230601; t=1764577954; x=1765182754;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=agur13uatpBfTbiWy9CXQ832nKs/hmYFvcnvXcVIbzE=;
+        b=QrbSu3K7xTnoDXidDZfNzZ/Y/UYoRpyNeMnYnzb/bE008M147ERU8PwcV2kfOrpJhj
+         IyKnc2Thsbm7PPR4AprYRHnO57eZcpYU+fQi40WS/W7bC6aRIsywRiE+xxi6GLOVE/Ae
+         zV1NesAIY8A8VsJXY10kdKxnDkfzIGZEUrINH2ypY6wIj66KMHeCJF/cWXwrlEkGAlj7
+         W8RaQjJUExmd7gvo/ZcFOUI22Pxh1pGyrIpPMNeqrnjjv8qAxrOEiCiktAumiAHaktMK
+         cZcUlQTrRJZX0atOW/OCUWeEJJQ5J6qfVfpCHUak3W92agbb5mfJ4XIAhAaDSqpY8Jee
+         i/yg==
+X-Forwarded-Encrypted: i=1; AJvYcCUpXveAi4a1b5nCJDblYk0NWP7wh1WJZbHEGLR59gl+gDDhKsmZdOthAnMR2emuY5AwE/k1hvGd7MQi59Pp@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTgDzaMp9CoCUV1IVDPfY56YVdXO947XfuENzlOiylRxS82tNq
+	yHie+WMnIiwvPvrCUck02nG8lV5ngAM4GuLeJKFROJkbSWTKxREdUIc0
+X-Gm-Gg: ASbGncvtCVhJ2yWNB1NMbXF0gPnWvoJtadSdvPAqzFtfpPQsusz7zsOvL0u7byCaKjZ
+	6OgQBZ4rPOUqHR+DB01D6i8Dc45RvrGLLGpZHZCebkkfkcQdbffp9DaKp1vLkwb2emfC7Gl1hrI
+	VP7JoK+lWQOlipj5dVlEu4j9kpMfB3tD8khfJpHNsKSN2OKd1aANG0O7vgW9RRbFYyygk66qLjz
+	aBRLNhdb+ZcRNYyRWhKO+/VAD02bs0D2SAnwVkEpU0TJ9ok6gZ1X6zk/jYAEAIOXWqz308tJ/+5
+	e20hTNvoY/gsKKQVj3C+rZjw2QacEifDy0Rr9IabEW+gPHpHhmNTcUTWEuvb9+L6SPfOkPMZE7v
+	Td0a9pyiMvnVhmWk4TW8hRdo5kKrOJCcTxePSTr4n8Awl6VrO17joE+accc5wQQ+HHJi1c+tagV
+	aXhaAH1uWJObzHYkCSAS8Kt5pykqxgEXswCssxSgnnwU4hhGK3Nx9OUZNxVH0=
+X-Google-Smtp-Source: AGHT+IFkO0hcC2MDPwV3l3Gu5TfNfGl5BIcxQ6u4IdLB8tg7tP4Nx4BvTYET2NVBhKoWf3cisrJZQQ==
+X-Received: by 2002:a05:6402:3594:b0:63c:3c63:75ed with SMTP id 4fb4d7f45d1cf-645eb2a83b2mr22977341a12.22.1764577953520;
+        Mon, 01 Dec 2025 00:32:33 -0800 (PST)
+Received: from f.. (cst-prg-14-82.cust.vodafone.cz. [46.135.14.82])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-64750a90d14sm11947696a12.10.2025.12.01.00.32.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Dec 2025 00:32:32 -0800 (PST)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: viro@zeniv.linux.org.uk
+Cc: brauner@kernel.org,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH v2] fs: hide names_cache behind runtime const machinery
+Date: Mon,  1 Dec 2025 09:32:26 +0100
+Message-ID: <20251201083226.268846-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251113002050.676694-1-neilb@ownmail.net> <20251113002050.676694-7-neilb@ownmail.net>
- <6713ea38-b583-4c86-b74a-bea55652851d@packett.cool> <176454037897.634289.3566631742434963788@noble.neil.brown.name>
-In-Reply-To: <176454037897.634289.3566631742434963788@noble.neil.brown.name>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Mon, 1 Dec 2025 09:22:54 +0100
-X-Gm-Features: AWmQ_bkmbCFj52T5piKawt5MYU4Qwo914sia_qtE6Q0yvLfrgb4Ycc6nfs_K2NQ
-Message-ID: <CAOQ4uxjihcBxJzckbJis8hGcWO61QKhiqeGH+hDkTUkDhu23Ww@mail.gmail.com>
-Subject: Re: [PATCH] fuse: fix conversion of fuse_reverse_inval_entry() to start_removing()
-To: NeilBrown <neil@brown.name>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	Val Packett <val@packett.cool>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
-	Jeff Layton <jlayton@kernel.org>, Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>, 
-	David Howells <dhowells@redhat.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, Tyler Hicks <code@tyhicks.com>, 
-	Miklos Szeredi <miklos@szeredi.hu>, Chuck Lever <chuck.lever@oracle.com>, 
-	Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
-	Namjae Jeon <linkinjeon@kernel.org>, Steve French <smfrench@gmail.com>, 
-	Sergey Senozhatsky <senozhatsky@chromium.org>, Carlos Maiolino <cem@kernel.org>, 
-	John Johansen <john.johansen@canonical.com>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
-	Mateusz Guzik <mjguzik@gmail.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Stefan Berger <stefanb@linux.ibm.com>, "Darrick J. Wong" <djwong@kernel.org>, linux-kernel@vger.kernel.org, 
-	netfs@lists.linux.dev, ecryptfs@vger.kernel.org, linux-nfs@vger.kernel.org, 
-	linux-unionfs@vger.kernel.org, linux-cifs@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sun, Nov 30, 2025 at 11:06=E2=80=AFPM NeilBrown <neilb@ownmail.net> wrot=
-e:
->
->
-> From: NeilBrown <neil@brown.name>
->
-> The recent conversion of fuse_reverse_inval_entry() to use
-> start_removing() was wrong.
-> As Val Packett points out the original code did not call ->lookup
-> while the new code does.  This can lead to a deadlock.
->
-> Rather than using full_name_hash() and d_lookup() as the old code
-> did, we can use try_lookup_noperm() which combines these.  Then
-> the result can be given to start_removing_dentry() to get the required
-> locks for removal.  We then double check that the name hasn't
-> changed.
->
-> As 'dir' needs to be used several times now, we load the dput() until
-> the end, and initialise to NULL so dput() is always safe.
->
-> Reported-by: Val Packett <val@packett.cool>
-> Closes: https://lore.kernel.org/all/6713ea38-b583-4c86-b74a-bea55652851d@=
-packett.cool
-> Fixes: c9ba789dad15 ("VFS: introduce start_creating_noperm() and start_re=
-moving_noperm()")
-> Signed-off-by: NeilBrown <neil@brown.name>
-> ---
->  fs/fuse/dir.c | 23 ++++++++++++++++-------
->  1 file changed, 16 insertions(+), 7 deletions(-)
->
-> diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-> index a0d5b302bcc2..8384fa96cf53 100644
-> --- a/fs/fuse/dir.c
-> +++ b/fs/fuse/dir.c
-> @@ -1390,8 +1390,8 @@ int fuse_reverse_inval_entry(struct fuse_conn *fc, =
-u64 parent_nodeid,
->  {
->         int err =3D -ENOTDIR;
->         struct inode *parent;
-> -       struct dentry *dir;
-> -       struct dentry *entry;
-> +       struct dentry *dir =3D NULL;
-> +       struct dentry *entry =3D NULL;
->
->         parent =3D fuse_ilookup(fc, parent_nodeid, NULL);
->         if (!parent)
-> @@ -1404,11 +1404,19 @@ int fuse_reverse_inval_entry(struct fuse_conn *fc=
-, u64 parent_nodeid,
->         dir =3D d_find_alias(parent);
->         if (!dir)
->                 goto put_parent;
-> -
-> -       entry =3D start_removing_noperm(dir, name);
-> -       dput(dir);
-> -       if (IS_ERR(entry))
-> -               goto put_parent;
-> +       while (!entry) {
-> +               struct dentry *child =3D try_lookup_noperm(name, dir);
-> +               if (!child || IS_ERR(child))
-> +                       goto put_parent;
-> +               entry =3D start_removing_dentry(dir, child);
-> +               dput(child);
-> +               if (IS_ERR(entry))
-> +                       goto put_parent;
-> +               if (!d_same_name(entry, dir, name)) {
-> +                       end_removing(entry);
-> +                       entry =3D NULL;
-> +               }
-> +       }
+s/names_cachep/names_cache/ for consistency with dentry cache.
 
-Can you explain why it is so important to use
-start_removing_dentry() around shrink_dcache_parent()?
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+---
 
-Is there a problem with reverting the change in this function
-instead of accomodating start_removing_dentry()?
+v2:
+- rebased on top of work.filename-refcnt
 
-I don't think there is a point in optimizing parallel dir operations
-with FUSE server cache invalidation, but maybe I am missing
-something.
+ACHTUNG: there is a change queued for 6.19 merge window which treats
+dentry cache the same way:
+commit 21b561dab1406e63740ebe240c7b69f19e1bcf58
+Author: Mateusz Guzik <mjguzik@gmail.com>
+Date:   Wed Nov 5 16:36:22 2025 +0100
 
-Thanks,
-Amir.
+    fs: hide dentry_cache behind runtime const machinery
+
+which would result in a merge conflict in vmlinux.lds.h. thus I
+cherry-picked before generating the diff to avoid the issue for later.
+
+ fs/namei.c                        | 16 ++++++++++------
+ include/asm-generic/vmlinux.lds.h |  3 ++-
+ 2 files changed, 12 insertions(+), 7 deletions(-)
+
+diff --git a/fs/namei.c b/fs/namei.c
+index d6eac90084e1..eff4cbffe241 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -41,6 +41,8 @@
+ #include <linux/init_task.h>
+ #include <linux/uaccess.h>
+ 
++#include <asm/runtime-const.h>
++
+ #include "internal.h"
+ #include "mount.h"
+ 
+@@ -124,23 +126,25 @@
+  */
+ 
+ /* SLAB cache for struct filename instances */
+-static struct kmem_cache *names_cachep __ro_after_init;
++static struct kmem_cache *__names_cache __ro_after_init;
++#define names_cache	runtime_const_ptr(__names_cache)
+ 
+ void __init filename_init(void)
+ {
+-	names_cachep = kmem_cache_create_usercopy("names_cache", sizeof(struct filename), 0,
+-			SLAB_HWCACHE_ALIGN|SLAB_PANIC, offsetof(struct filename, iname),
+-						EMBEDDED_NAME_MAX, NULL);
++	__names_cache = kmem_cache_create_usercopy("names_cache", sizeof(struct filename), 0,
++			 SLAB_HWCACHE_ALIGN|SLAB_PANIC, offsetof(struct filename, iname),
++			 EMBEDDED_NAME_MAX, NULL);
++	runtime_const_init(ptr, __names_cache);
+ }
+ 
+ static inline struct filename *alloc_filename(void)
+ {
+-	return kmem_cache_alloc(names_cachep, GFP_KERNEL);
++	return kmem_cache_alloc(names_cache, GFP_KERNEL);
+ }
+ 
+ static inline void free_filename(struct filename *p)
+ {
+-	kmem_cache_free(names_cachep, p);
++	kmem_cache_free(names_cache, p);
+ }
+ 
+ static inline void initname(struct filename *name)
+diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
+index 20939d2445e7..3abd76ac723a 100644
+--- a/include/asm-generic/vmlinux.lds.h
++++ b/include/asm-generic/vmlinux.lds.h
+@@ -956,7 +956,8 @@ defined(CONFIG_AUTOFDO_CLANG) || defined(CONFIG_PROPELLER_CLANG)
+ #define RUNTIME_CONST_VARIABLES						\
+ 		RUNTIME_CONST(shift, d_hash_shift)			\
+ 		RUNTIME_CONST(ptr, dentry_hashtable)			\
+-		RUNTIME_CONST(ptr, __dentry_cache)
++		RUNTIME_CONST(ptr, __dentry_cache)			\
++		RUNTIME_CONST(ptr, __names_cache)
+ 
+ /* Alignment must be consistent with (kunit_suite *) in include/kunit/test.h */
+ #define KUNIT_TABLE()							\
+-- 
+2.48.1
+
 
