@@ -1,519 +1,172 @@
-Return-Path: <linux-fsdevel+bounces-70318-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70320-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3803C967C1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 01 Dec 2025 10:53:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D958C9682D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 01 Dec 2025 10:58:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B79A3A1511
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Dec 2025 09:53:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC7813A13D1
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Dec 2025 09:58:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55E11301485;
-	Mon,  1 Dec 2025 09:50:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fDGB1F3t"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83A7C301034;
+	Mon,  1 Dec 2025 09:58:46 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0D6330597E
-	for <linux-fsdevel@vger.kernel.org>; Mon,  1 Dec 2025 09:50:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 862E629BDA2
+	for <linux-fsdevel@vger.kernel.org>; Mon,  1 Dec 2025 09:58:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764582611; cv=none; b=o/sq2d6sXDqfOeM5l/McrP6zTHcp4flJpFMkf9HPgr3vdD4Vap3aj+1x1qUuS7CSC/wLoSi5nyMtndx52X8X7wqPiOUjQ15CXjdn0Xy6u+xJ3uuMEfOBbRt6IfA6B1yqP7Pa4R1XY56P6SbbKX3Glc3anIUukdz4Hq/qhdK+kvw=
+	t=1764583126; cv=none; b=b3H4NTcInwGfJ4M4jR09h0FJH98tLNM6/pgL5iAQwWYN6KgDusjZwmy4wHPIu72JRxT332HTKi5cNoG58EkHRma7HGYID1LjgFofOEjqpJSVXkFwGGR3vEQcf+XR7LfCefoWFv6lgasgmT4UtGEl7wOqcbEJSKlzccyTP5wrw3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764582611; c=relaxed/simple;
-	bh=8oIFVJm5IQJZwvd4sW28+jwg41zsRvWy7SSNSpme9fo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=h4/PIvU5LCvh4Wdx1dlO00BmJRzEV2hMd0+WG+xXuuHRn8AWTLSUZLhvBWZwRVA23fzxFxQFqFKTGZIJkfTJSQt8iHXy/2ScOwfDFs9DDZ4vI4EkFcDm4A5t98pCVrNtv4puc2Ujz378SVYi688QGCKr65GgLrfCiwKbOJWjSxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fDGB1F3t; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1764582607;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SSjv67SlY6DuFaA/Bc3uvHGGQeG/sCQB6ATI9iWvyyY=;
-	b=fDGB1F3tmJ3ijQJsRmG5bA6Nkca6ln6+avvujC/lw0osZCF0pfk4V0/55Yd8+TWFTIEGCu
-	sBTpIqMFbhH1gWRJWnyxoYh6ooDhLH4HM1JZUmAfhEdcaYNzrqnrKFcANJ9ePVEbONnZB3
-	tZcg5OYWVUNNy/kPfAZjV6qvkmWrzvM=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-671-pYzPMrH_Pxm8x56iKblBKg-1; Mon,
- 01 Dec 2025 04:50:04 -0500
-X-MC-Unique: pYzPMrH_Pxm8x56iKblBKg-1
-X-Mimecast-MFC-AGG-ID: pYzPMrH_Pxm8x56iKblBKg_1764582603
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1CA2419560A7;
-	Mon,  1 Dec 2025 09:50:03 +0000 (UTC)
-Received: from warthog.procyon.org.com (unknown [10.42.28.14])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 9F69030001A4;
-	Mon,  1 Dec 2025 09:50:00 +0000 (UTC)
-From: David Howells <dhowells@redhat.com>
-To: Steve French <sfrench@samba.org>
-Cc: David Howells <dhowells@redhat.com>,
-	Paulo Alcantara <pc@manguebit.org>,
-	Shyam Prasad N <sprasad@microsoft.com>,
-	Stefan Metzmacher <metze@samba.org>,
-	linux-cifs@vger.kernel.org,
-	netfs@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v5 9/9] cifs: Do some preparation prior to organising the function declarations
-Date: Mon,  1 Dec 2025 09:49:13 +0000
-Message-ID: <20251201094916.1418415-10-dhowells@redhat.com>
-In-Reply-To: <20251201094916.1418415-1-dhowells@redhat.com>
-References: <20251201094916.1418415-1-dhowells@redhat.com>
+	s=arc-20240116; t=1764583126; c=relaxed/simple;
+	bh=0RCxbcwl9Y0JZEv33M90FTAzhBMtHAKiDKJ3SwdGe7Q=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=o3u0cNt8jTMUr8sivC62Yh4btV7HIAiVLh76Kb4kq685yDZLwcAMaa0FJ4wDbzJIh48krqpQ7gzpsJvY7R28ERNpjjgeYaCwW6s61acrNy7NPjhHusLCS8catUi6s2KEUCUpdHhDudY1SYinVAdeXBAXdLgUmIZNxDXqrTjkbHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-948fbd0745fso244451439f.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Dec 2025 01:58:44 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764583123; x=1765187923;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=rajF7Cy0iF1vJ1irYG2Bw1wOONtZpKI4LMDghDA5zGk=;
+        b=AyHBmF7hGvptTcfT4cRNrBlpCgbHHX6aVZekq7ZB308VVaJgNVUCGW3vs/7+cVFxXY
+         tSukqe/3z4K3N5Qs92R7iGR8OkPHU8tqCV18i41KAacDNUObgaAFkK6wpsAzp1L4RRv1
+         bbJPnuT/Eetuw4T+m87eZTOaOBsML8VAGiHzIZEU90Kh3lQ1YG0Gk44pRzvBBtVQSVYP
+         QfDblHGZssLacnD+LcO89m7p11OBFRRfyrDJpt7fFltLOrHDlTSraejLccY3h+08U+Fw
+         TirscG/c0a/NVmHgk+ny+NHSKYhq+imc4VD7HMi3CPMRbwvHJe5JB1KWgtkX7QhG1Bhf
+         Uf1A==
+X-Forwarded-Encrypted: i=1; AJvYcCUcwwIRiCVe/OWVPU7w4fSI/YoygZwu6CHb/OH6yhK9KJtVTBQ3ZBUL0+NIXUoSdbUoSrqWWn02cezBmFDb@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCG/Un24s2OdjXIehfPrD4OIH4YMSDR7gJ0UwOx1FPfbnwlBgA
+	XCPqwWluPDXMUHSLQpU0enHkjUZiWSYBIKyoURMZZ5EBysD28tuy7xsLVXC8kZvkCkX0cbnBVyx
+	ZkwFL69YC3CUDvkM/8w5QtKdLL4GIL/qItiEVsEWSytLFaS6dq63UE1jKOic=
+X-Google-Smtp-Source: AGHT+IF0QQrMMyFfjY633Y1IgTfqhFyVa/9zRmIWMNVyeZIwplZF0KYr4bzBy3qjs/I+T78TDmZfhAuWxy+M3atkCzFa+ErLJN5y
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+X-Received: by 2002:a05:6602:2d83:b0:945:ac8e:fcb9 with SMTP id
+ ca18e2360f4ac-949778e8a14mr1971000739f.17.1764583123686; Mon, 01 Dec 2025
+ 01:58:43 -0800 (PST)
+Date: Mon, 01 Dec 2025 01:58:43 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <692d66d3.a70a0220.2ea503.00b2.GAE@google.com>
+Subject: [syzbot] [fs?] kernel BUG in sctp_getsockopt_peeloff_common
+From: syzbot <syzbot+984a5c208d87765b2ee7@syzkaller.appspotmail.com>
+To: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 
-Make some preparatory cleanups prior to running a script to organise the
-function declarations within the fs/smb/client/ headers.  These include:
+Hello,
 
- (1) Remove "inline" from the dummy cifs_proc_init/clean() functions as
-     they are in a .c file.
+syzbot found the following issue on:
 
- (2) Move should_compress()'s kdoc comment to the .c file and remove kdoc
-     markers from the comments.
+HEAD commit:    7d31f578f323 Add linux-next specific files for 20251128
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=156402b4580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6336d8e94a7c517d
+dashboard link: https://syzkaller.appspot.com/bug?extid=984a5c208d87765b2ee7
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16a2322c580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12a3c512580000
 
- (3) Rename CIFS_ALLOW_INSECURE_LEGACY in #endif comments to have CONFIG_
-     on the front to allow the script to recognise it.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/6b49d8ad90de/disk-7d31f578.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/dbe2d4988ca7/vmlinux-7d31f578.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/fc0448ab2411/bzImage-7d31f578.xz
 
- (4) Don't let comments have bare words at the left margin as that confused
-     the simplistic function detection code in the script.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+984a5c208d87765b2ee7@syzkaller.appspotmail.com
 
- (5) Adjust some argument lists so that when and if the cleanup script is
-     run they don't end up over 100 chars.
+R10: 0000200000000340 R11: 0000000000000246 R12: 0000000000000002
+R13: 00007f49009e5fa0 R14: 00007f49009e5fa0 R15: 0000000000000005
+ </TASK>
+VFS_BUG_ON_INODE(inode_state_read_once(inode) & I_CLEAR) encountered for inode ffff88805d116e00
+fs sockfs mode 140777 opflags 0xc flags 0x0 state 0x300 count 0
+------------[ cut here ]------------
+kernel BUG at fs/inode.c:1971!
+Oops: invalid opcode: 0000 [#1] SMP KASAN PTI
+CPU: 0 UID: 0 PID: 5997 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/25/2025
+RIP: 0010:iput+0xfc9/0x1030 fs/inode.c:1971
+Code: 8b 7c 24 18 48 c7 c6 e0 f2 79 8b e8 51 f8 e6 fe 90 0f 0b e8 a9 6f 80 ff 48 8b 7c 24 18 48 c7 c6 80 f2 79 8b e8 38 f8 e6 fe 90 <0f> 0b 44 89 e9 80 e1 07 80 c1 03 38 c1 0f 8c cd fb ff ff 4c 89 ef
+RSP: 0018:ffffc90003987b18 EFLAGS: 00010282
+RAX: 000000000000009f RBX: dffffc0000000000 RCX: e99d72d115a78d00
+RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
+RBP: 1ffffffff1ed7c72 R08: ffffc900039877c7 R09: 1ffff92000730ef8
+R10: dffffc0000000000 R11: fffff52000730ef9 R12: 1ffff1100ba22e00
+R13: ffff88805d117000 R14: 0000000000000200 R15: 1ffffffff1f02c74
+FS:  000055557d588500(0000) GS:ffff888125e4f000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000200000000200 CR3: 0000000074b6e000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ sctp_getsockopt_peeloff_common+0x6b7/0x8a0 net/sctp/socket.c:5733
+ sctp_getsockopt_peeloff_flags+0x102/0x140 net/sctp/socket.c:5779
+ sctp_getsockopt+0x3a5/0xb90 net/sctp/socket.c:8111
+ do_sock_getsockopt+0x2b4/0x3d0 net/socket.c:2389
+ __sys_getsockopt net/socket.c:2418 [inline]
+ __do_sys_getsockopt net/socket.c:2425 [inline]
+ __se_sys_getsockopt net/socket.c:2422 [inline]
+ __x64_sys_getsockopt+0x1a5/0x250 net/socket.c:2422
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0xf80 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f490078f749
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffed38d1688 EFLAGS: 00000246 ORIG_RAX: 0000000000000037
+RAX: ffffffffffffffda RBX: 00007f49009e5fa0 RCX: 00007f490078f749
+RDX: 000000000000007a RSI: 0000000000000084 RDI: 0000000000000003
+RBP: 00007ffed38d16e0 R08: 0000200000000040 R09: 0000000000000000
+R10: 0000200000000340 R11: 0000000000000246 R12: 0000000000000002
+R13: 00007f49009e5fa0 R14: 00007f49009e5fa0 R15: 0000000000000005
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:iput+0xfc9/0x1030 fs/inode.c:1971
+Code: 8b 7c 24 18 48 c7 c6 e0 f2 79 8b e8 51 f8 e6 fe 90 0f 0b e8 a9 6f 80 ff 48 8b 7c 24 18 48 c7 c6 80 f2 79 8b e8 38 f8 e6 fe 90 <0f> 0b 44 89 e9 80 e1 07 80 c1 03 38 c1 0f 8c cd fb ff ff 4c 89 ef
+RSP: 0018:ffffc90003987b18 EFLAGS: 00010282
+RAX: 000000000000009f RBX: dffffc0000000000 RCX: e99d72d115a78d00
+RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
+RBP: 1ffffffff1ed7c72 R08: ffffc900039877c7 R09: 1ffff92000730ef8
+R10: dffffc0000000000 R11: fffff52000730ef9 R12: 1ffff1100ba22e00
+R13: ffff88805d117000 R14: 0000000000000200 R15: 1ffffffff1f02c74
+FS:  000055557d588500(0000) GS:ffff888125e4f000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000200000000200 CR3: 0000000074b6e000 CR4: 00000000003526f0
 
- (6) Fix a few comments to have missing '*' added or the "*/" moved to
-     their own lines so that checkpatch doesn't moan over the cleanup
-     script patch.
 
- (7) Move struct cifs_calc_sig_ctx to cifsglob.h.
-
- (8) Remove some __KERNEL__ conditionals.
-
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Steve French <sfrench@samba.org>
-cc: Paulo Alcantara <pc@manguebit.org>
-cc: linux-cifs@vger.kernel.org
 ---
- fs/smb/client/cifs_debug.c   |  4 ++--
- fs/smb/client/cifs_spnego.h  |  2 --
- fs/smb/client/cifs_unicode.h |  3 ---
- fs/smb/client/cifsfs.c       |  5 +++--
- fs/smb/client/cifsglob.h     |  8 +++++++-
- fs/smb/client/cifsproto.h    |  7 +------
- fs/smb/client/compress.c     | 21 ++++++++++++++++++---
- fs/smb/client/compress.h     | 19 ++-----------------
- fs/smb/client/dir.c          |  2 +-
- fs/smb/client/dns_resolve.h  |  4 ----
- fs/smb/client/fs_context.c   |  2 +-
- fs/smb/client/misc.c         |  1 +
- fs/smb/client/netmisc.c      |  2 +-
- fs/smb/client/smb2file.c     |  3 ++-
- fs/smb/client/smb2inode.c    |  1 -
- fs/smb/client/smb2maperror.c |  3 +--
- fs/smb/client/smb2ops.c      |  4 ++--
- fs/smb/client/smb2pdu.c      |  5 +++--
- fs/smb/client/smb2proto.h    |  2 ++
- 19 files changed, 47 insertions(+), 51 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/fs/smb/client/cifs_debug.c b/fs/smb/client/cifs_debug.c
-index efc477ba9e3c..265832b8703e 100644
---- a/fs/smb/client/cifs_debug.c
-+++ b/fs/smb/client/cifs_debug.c
-@@ -1317,11 +1317,11 @@ static const struct proc_ops cifs_mount_params_proc_ops = {
- };
- 
- #else
--inline void cifs_proc_init(void)
-+void cifs_proc_init(void)
- {
- }
- 
--inline void cifs_proc_clean(void)
-+void cifs_proc_clean(void)
- {
- }
- #endif /* PROC_FS */
-diff --git a/fs/smb/client/cifs_spnego.h b/fs/smb/client/cifs_spnego.h
-index e4d751b0c812..e70929db3611 100644
---- a/fs/smb/client/cifs_spnego.h
-+++ b/fs/smb/client/cifs_spnego.h
-@@ -27,10 +27,8 @@ struct cifs_spnego_msg {
- 	uint8_t		data[];
- };
- 
--#ifdef __KERNEL__
- extern struct key_type cifs_spnego_key_type;
- extern struct key *cifs_get_spnego_key(struct cifs_ses *sesInfo,
- 				       struct TCP_Server_Info *server);
--#endif /* KERNEL */
- 
- #endif /* _CIFS_SPNEGO_H */
-diff --git a/fs/smb/client/cifs_unicode.h b/fs/smb/client/cifs_unicode.h
-index e137a0dfbbe9..6e4b99786498 100644
---- a/fs/smb/client/cifs_unicode.h
-+++ b/fs/smb/client/cifs_unicode.h
-@@ -54,7 +54,6 @@
- #define SFM_MAP_UNI_RSVD	1
- #define SFU_MAP_UNI_RSVD	2
- 
--#ifdef __KERNEL__
- int cifs_from_utf16(char *to, const __le16 *from, int tolen, int fromlen,
- 		    const struct nls_table *cp, int map_type);
- int cifs_utf16_bytes(const __le16 *from, int maxbytes,
-@@ -69,8 +68,6 @@ extern int cifs_remap(struct cifs_sb_info *cifs_sb);
- extern __le16 *cifs_strndup_to_utf16(const char *src, const int maxlen,
- 				     int *utf16_len, const struct nls_table *cp,
- 				     int remap);
--#endif
--
- wchar_t cifs_toupper(wchar_t in);
- 
- #endif /* _CIFS_UNICODE_H */
-diff --git a/fs/smb/client/cifsfs.c b/fs/smb/client/cifsfs.c
-index 1662fe2ee30e..ab1f4bf3de92 100644
---- a/fs/smb/client/cifsfs.c
-+++ b/fs/smb/client/cifsfs.c
-@@ -28,6 +28,8 @@
- #include <linux/splice.h>
- #include <linux/uuid.h>
- #include <linux/xattr.h>
-+#include <linux/mm.h>
-+#include <linux/key-type.h>
- #include <uapi/linux/magic.h>
- #include <net/ipv6.h>
- #include "cifsfs.h"
-@@ -35,10 +37,9 @@
- #define DECLARE_GLOBALS_HERE
- #include "cifsglob.h"
- #include "cifsproto.h"
-+#include "smb2proto.h"
- #include "cifs_debug.h"
- #include "cifs_fs_sb.h"
--#include <linux/mm.h>
--#include <linux/key-type.h>
- #include "cifs_spnego.h"
- #include "fscache.h"
- #ifdef CONFIG_CIFS_DFS_UPCALL
-diff --git a/fs/smb/client/cifsglob.h b/fs/smb/client/cifsglob.h
-index af83e675fd2a..3dd25a68dd47 100644
---- a/fs/smb/client/cifsglob.h
-+++ b/fs/smb/client/cifsglob.h
-@@ -2118,7 +2118,7 @@ extern struct smb_version_operations smb1_operations;
- extern struct smb_version_values smb1_values;
- extern struct smb_version_operations smb20_operations;
- extern struct smb_version_values smb20_values;
--#endif /* CIFS_ALLOW_INSECURE_LEGACY */
-+#endif /* CONFIG_CIFS_ALLOW_INSECURE_LEGACY */
- extern struct smb_version_operations smb21_operations;
- extern struct smb_version_values smb21_values;
- extern struct smb_version_values smbdefault_values;
-@@ -2286,4 +2286,10 @@ static inline void mid_execute_callback(struct TCP_Server_Info *server,
- 	 (le32_to_cpu((tcon)->fsAttrInfo.Attributes) & \
- 	  FILE_SUPPORTS_REPARSE_POINTS))
- 
-+struct cifs_calc_sig_ctx {
-+	struct md5_ctx *md5;
-+	struct hmac_sha256_ctx *hmac;
-+	struct shash_desc *shash;
-+};
-+
- #endif	/* _CIFS_GLOB_H */
-diff --git a/fs/smb/client/cifsproto.h b/fs/smb/client/cifsproto.h
-index 3a753aa194c1..67de0d5fef6a 100644
---- a/fs/smb/client/cifsproto.h
-+++ b/fs/smb/client/cifsproto.h
-@@ -594,7 +594,7 @@ extern int cifs_do_set_acl(const unsigned int xid, struct cifs_tcon *tcon,
- 			   const struct nls_table *nls_codepage, int remap);
- extern int CIFSGetExtAttr(const unsigned int xid, struct cifs_tcon *tcon,
- 			const int netfid, __u64 *pExtAttrBits, __u64 *pMask);
--#endif /* CIFS_ALLOW_INSECURE_LEGACY */
-+#endif /* CONFIG_CIFS_ALLOW_INSECURE_LEGACY */
- extern void cifs_autodisable_serverino(struct cifs_sb_info *cifs_sb);
- extern bool couldbe_mf_symlink(const struct cifs_fattr *fattr);
- extern int check_mf_symlink(unsigned int xid, struct cifs_tcon *tcon,
-@@ -626,11 +626,6 @@ int cifs_create_mf_symlink(unsigned int xid, struct cifs_tcon *tcon,
- 			   struct cifs_sb_info *cifs_sb,
- 			   const unsigned char *path, char *pbuf,
- 			   unsigned int *pbytes_written);
--struct cifs_calc_sig_ctx {
--	struct md5_ctx *md5;
--	struct hmac_sha256_ctx *hmac;
--	struct shash_desc *shash;
--};
- int __cifs_calc_signature(struct smb_rqst *rqst, struct TCP_Server_Info *server,
- 			  char *signature, struct cifs_calc_sig_ctx *ctx);
- enum securityEnum cifs_select_sectype(struct TCP_Server_Info *,
-diff --git a/fs/smb/client/compress.c b/fs/smb/client/compress.c
-index f03dd9804427..e0c44b46080e 100644
---- a/fs/smb/client/compress.c
-+++ b/fs/smb/client/compress.c
-@@ -44,7 +44,7 @@ struct bucket {
- 	unsigned int count;
- };
- 
--/**
-+/*
-  * has_low_entropy() - Compute Shannon entropy of the sampled data.
-  * @bkt:	Bytes counts of the sample.
-  * @slen:	Size of the sample.
-@@ -82,7 +82,7 @@ static bool has_low_entropy(struct bucket *bkt, size_t slen)
- #define BYTE_DIST_BAD		0
- #define BYTE_DIST_GOOD		1
- #define BYTE_DIST_MAYBE		2
--/**
-+/*
-  * calc_byte_distribution() - Compute byte distribution on the sampled data.
-  * @bkt:	Byte counts of the sample.
-  * @slen:	Size of the sample.
-@@ -182,7 +182,7 @@ static int collect_sample(const struct iov_iter *source, ssize_t max, u8 *sample
- 	return s;
- }
- 
--/**
-+/*
-  * is_compressible() - Determines if a chunk of data is compressible.
-  * @data: Iterator containing uncompressed data.
-  *
-@@ -261,6 +261,21 @@ static bool is_compressible(const struct iov_iter *data)
- 	return ret;
- }
- 
-+/*
-+ * should_compress() - Determines if a request (write) or the response to a
-+ *		       request (read) should be compressed.
-+ * @tcon: tcon of the request is being sent to
-+ * @rqst: request to evaluate
-+ *
-+ * Return: true iff:
-+ * - compression was successfully negotiated with server
-+ * - server has enabled compression for the share
-+ * - it's a read or write request
-+ * - (write only) request length is >= SMB_COMPRESS_MIN_LEN
-+ * - (write only) is_compressible() returns 1
-+ *
-+ * Return false otherwise.
-+ */
- bool should_compress(const struct cifs_tcon *tcon, const struct smb_rqst *rq)
- {
- 	const struct smb2_hdr *shdr = rq->rq_iov->iov_base;
-diff --git a/fs/smb/client/compress.h b/fs/smb/client/compress.h
-index f3ed1d3e52fb..63aea32fbe92 100644
---- a/fs/smb/client/compress.h
-+++ b/fs/smb/client/compress.h
-@@ -29,26 +29,11 @@
- #ifdef CONFIG_CIFS_COMPRESSION
- typedef int (*compress_send_fn)(struct TCP_Server_Info *, int, struct smb_rqst *);
- 
--int smb_compress(struct TCP_Server_Info *server, struct smb_rqst *rq, compress_send_fn send_fn);
- 
--/**
-- * should_compress() - Determines if a request (write) or the response to a
-- *		       request (read) should be compressed.
-- * @tcon: tcon of the request is being sent to
-- * @rqst: request to evaluate
-- *
-- * Return: true iff:
-- * - compression was successfully negotiated with server
-- * - server has enabled compression for the share
-- * - it's a read or write request
-- * - (write only) request length is >= SMB_COMPRESS_MIN_LEN
-- * - (write only) is_compressible() returns 1
-- *
-- * Return false otherwise.
-- */
-+int smb_compress(struct TCP_Server_Info *server, struct smb_rqst *rq, compress_send_fn send_fn);
- bool should_compress(const struct cifs_tcon *tcon, const struct smb_rqst *rq);
- 
--/**
-+/*
-  * smb_compress_alg_valid() - Validate a compression algorithm.
-  * @alg: Compression algorithm to check.
-  * @valid_none: Conditional check whether NONE algorithm should be
-diff --git a/fs/smb/client/dir.c b/fs/smb/client/dir.c
-index 4ad69dc77e09..747256025e49 100644
---- a/fs/smb/client/dir.c
-+++ b/fs/smb/client/dir.c
-@@ -457,7 +457,7 @@ static int cifs_do_create(struct inode *inode, struct dentry *direntry, unsigned
- 
- int
- cifs_atomic_open(struct inode *inode, struct dentry *direntry,
--		 struct file *file, unsigned oflags, umode_t mode)
-+		 struct file *file, unsigned int oflags, umode_t mode)
- {
- 	int rc;
- 	unsigned int xid;
-diff --git a/fs/smb/client/dns_resolve.h b/fs/smb/client/dns_resolve.h
-index 0dc706f2c422..36bc4a6a55bf 100644
---- a/fs/smb/client/dns_resolve.h
-+++ b/fs/smb/client/dns_resolve.h
-@@ -15,8 +15,6 @@
- #include "cifsglob.h"
- #include "cifsproto.h"
- 
--#ifdef __KERNEL__
--
- int dns_resolve_name(const char *dom, const char *name,
- 		     size_t namelen, struct sockaddr *ip_addr);
- 
-@@ -36,6 +34,4 @@ static inline int dns_resolve_unc(const char *dom, const char *unc,
- 	return dns_resolve_name(dom, name, namelen, ip_addr);
- }
- 
--#endif /* KERNEL */
--
- #endif /* _DNS_RESOLVE_H */
-diff --git a/fs/smb/client/fs_context.c b/fs/smb/client/fs_context.c
-index 2a0d8b87bd8e..0a96bd9d0a16 100644
---- a/fs/smb/client/fs_context.c
-+++ b/fs/smb/client/fs_context.c
-@@ -505,7 +505,7 @@ cifs_parse_smb_version(struct fs_context *fc, char *value, struct smb3_fs_contex
- 	case Smb_20:
- 		cifs_errorf(fc, "vers=2.0 mount not permitted when legacy dialects disabled\n");
- 		return 1;
--#endif /* CIFS_ALLOW_INSECURE_LEGACY */
-+#endif /* CONFIG_CIFS_ALLOW_INSECURE_LEGACY */
- 	case Smb_21:
- 		ctx->ops = &smb21_operations;
- 		ctx->vals = &smb21_values;
-diff --git a/fs/smb/client/misc.c b/fs/smb/client/misc.c
-index eb7368367c14..9529fa385938 100644
---- a/fs/smb/client/misc.c
-+++ b/fs/smb/client/misc.c
-@@ -18,6 +18,7 @@
- #include "nterr.h"
- #include "cifs_unicode.h"
- #include "smb2pdu.h"
-+#include "smb2proto.h"
- #include "cifsfs.h"
- #ifdef CONFIG_CIFS_DFS_UPCALL
- #include "dns_resolve.h"
-diff --git a/fs/smb/client/netmisc.c b/fs/smb/client/netmisc.c
-index ee614e4db3b0..4a98b71288d6 100644
---- a/fs/smb/client/netmisc.c
-+++ b/fs/smb/client/netmisc.c
-@@ -200,7 +200,7 @@ cifs_set_port(struct sockaddr *addr, const unsigned short int port)
- }
- 
- /*****************************************************************************
--convert a NT status code to a dos class/code
-+ *convert a NT status code to a dos class/code
-  *****************************************************************************/
- /* NT status -> dos error map */
- static const struct {
-diff --git a/fs/smb/client/smb2file.c b/fs/smb/client/smb2file.c
-index 68d37f11f3f3..7f11ae6bb785 100644
---- a/fs/smb/client/smb2file.c
-+++ b/fs/smb/client/smb2file.c
-@@ -140,7 +140,8 @@ int smb2_parse_symlink_response(struct cifs_sb_info *cifs_sb, const struct kvec
- 					 cifs_sb);
- }
- 
--int smb2_open_file(const unsigned int xid, struct cifs_open_parms *oparms, __u32 *oplock, void *buf)
-+int smb2_open_file(const unsigned int xid, struct cifs_open_parms *oparms,
-+		   __u32 *oplock, void *buf)
- {
- 	int rc;
- 	__le16 *smb2_path;
-diff --git a/fs/smb/client/smb2inode.c b/fs/smb/client/smb2inode.c
-index 3e45e41f5713..2ded3246600c 100644
---- a/fs/smb/client/smb2inode.c
-+++ b/fs/smb/client/smb2inode.c
-@@ -21,7 +21,6 @@
- #include "cifs_unicode.h"
- #include "fscache.h"
- #include "smb2glob.h"
--#include "smb2pdu.h"
- #include "smb2proto.h"
- #include "cached_dir.h"
- #include "../common/smb2status.h"
-diff --git a/fs/smb/client/smb2maperror.c b/fs/smb/client/smb2maperror.c
-index b179d7369fba..4fc22456c39e 100644
---- a/fs/smb/client/smb2maperror.c
-+++ b/fs/smb/client/smb2maperror.c
-@@ -11,10 +11,9 @@
- #include "cifsglob.h"
- #include "cifsproto.h"
- #include "cifs_debug.h"
--#include "smb2pdu.h"
- #include "smb2proto.h"
--#include "../common/smb2status.h"
- #include "smb2glob.h"
-+#include "../common/smb2status.h"
- #include "trace.h"
- 
- struct status_to_posix_error {
-diff --git a/fs/smb/client/smb2ops.c b/fs/smb/client/smb2ops.c
-index e6cc9a6da214..9c830fff2c81 100644
---- a/fs/smb/client/smb2ops.c
-+++ b/fs/smb/client/smb2ops.c
-@@ -17,9 +17,9 @@
- #include <uapi/linux/magic.h>
- #include "cifsfs.h"
- #include "cifsglob.h"
--#include "smb2pdu.h"
--#include "smb2proto.h"
- #include "cifsproto.h"
-+#include "smb2proto.h"
-+#include "smb2pdu.h"
- #include "cifs_debug.h"
- #include "cifs_unicode.h"
- #include "../common/smb2status.h"
-diff --git a/fs/smb/client/smb2pdu.c b/fs/smb/client/smb2pdu.c
-index 329e8b334cd9..ce56237928a0 100644
---- a/fs/smb/client/smb2pdu.c
-+++ b/fs/smb/client/smb2pdu.c
-@@ -26,8 +26,8 @@
- #include <linux/netfs.h>
- #include <trace/events/netfs.h>
- #include "cifsglob.h"
--#include "cifsacl.h"
- #include "cifsproto.h"
-+#include "cifsacl.h"
- #include "smb2proto.h"
- #include "cifs_unicode.h"
- #include "cifs_debug.h"
-@@ -3949,7 +3949,8 @@ int SMB2_query_info(const unsigned int xid, struct cifs_tcon *tcon,
- /* currently unused, as now we are doing compounding instead (see smb311_posix_query_path_info) */
- int
- SMB311_posix_query_info(const unsigned int xid, struct cifs_tcon *tcon,
--		u64 persistent_fid, u64 volatile_fid, struct smb311_posix_qinfo *data, u32 *plen)
-+			u64 persistent_fid, u64 volatile_fid,
-+			struct smb311_posix_qinfo *data, u32 *plen)
- {
- 	size_t output_len = sizeof(struct smb311_posix_qinfo *) +
- 			(sizeof(struct smb_sid) * 2) + (PATH_MAX * 2);
-diff --git a/fs/smb/client/smb2proto.h b/fs/smb/client/smb2proto.h
-index 41ef55813ebb..1a5b65e0860a 100644
---- a/fs/smb/client/smb2proto.h
-+++ b/fs/smb/client/smb2proto.h
-@@ -9,8 +9,10 @@
-  */
- #ifndef _SMB2PROTO_H
- #define _SMB2PROTO_H
-+
- #include <linux/nls.h>
- #include <linux/key-type.h>
-+#include "cached_dir.h"
- 
- struct statfs;
- struct smb_rqst;
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
