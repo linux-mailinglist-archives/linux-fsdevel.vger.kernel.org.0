@@ -1,145 +1,109 @@
-Return-Path: <linux-fsdevel+bounces-70295-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70296-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC9A9C960BD
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 01 Dec 2025 08:46:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5028AC960F3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 01 Dec 2025 08:54:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id F219F342E83
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Dec 2025 07:46:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FBC13A23E2
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Dec 2025 07:54:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E55C2D738E;
-	Mon,  1 Dec 2025 07:46:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE7A22D77E6;
+	Mon,  1 Dec 2025 07:54:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mpiricsoftware.com header.i=shardul.b@mpiricsoftware.com header.b="bbY9ibHh"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="jFUYohsa"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from sender3-of-o55.zoho.com (sender3-of-o55.zoho.com [136.143.184.55])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34C0923EA88;
-	Mon,  1 Dec 2025 07:46:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.184.55
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764575180; cv=pass; b=hIjrfPYgZ/wuIBuBFuYU6rL49h1pjwIXNAfZ7kyLiWUzK/I+uTU8l4rMWRJ5Mjr4txL2pLQ2fmUznuZAvkOs6OaEjy8deFL/1j472M+O7Nf/W/u3Y9uud8VEm06wrhCNQqqXcDTDoMSu+KLA2NJo4MeEIWaCffUcUT7cQqJViZs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764575180; c=relaxed/simple;
-	bh=jbAPKfkUMIe0eMFIS8kY4GVhNBnztWreVjEp9qy4MkY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Y0muWIrhF1vLPpgccNZD6ejVNUrTXecTzhE67dY3QYJ8Rg88n+46LywCwourCwZ7wavVFm6aE/KWwXewGL8AGCr4Npaxgm3exUT83LbEobRHHgH5EZXFttWBgScq+zWBXA2sV8GWbhuwBE0HscZAVBy+D2xagZKdx3j7s3pT7hw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mpiricsoftware.com; spf=pass smtp.mailfrom=mpiricsoftware.com; dkim=pass (1024-bit key) header.d=mpiricsoftware.com header.i=shardul.b@mpiricsoftware.com header.b=bbY9ibHh; arc=pass smtp.client-ip=136.143.184.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mpiricsoftware.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mpiricsoftware.com
-ARC-Seal: i=1; a=rsa-sha256; t=1764575151; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=RM7FSSWt5ExfvBZPfoyhTHrKSp6ZrNpCaVo7QjvCe4BJHFUwLsGUKV7p+ga0W3+Yl0ht2eWId3X/uDnfV85DDT0qDnmtZOMFwekY9MkQqhyB6JbRR2mmCweIm9tarvkQwncP7M2AoZLoVxiDBgoai9wC/Shmxrv9+RBae6A7+io=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1764575151; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=7w3dSfaWrYwjp4+7lWC1VjH2NSXdXNvxA1hcZmWSbHc=; 
-	b=Lo87pcVh831pbfvXxxZR8Io9dVhXV5WAybxq9BUy0CFW33IHzLRtdKgKJ6sCbEj+OUiG0alF/Wvn8LVojq1tDpklo8STv8vFGCWy/FPZ8Nu+dOS9tQqn9XtsgR0h4HZasCIAgWuWBtUoH48sbFHqRqoPLAPHkw5rq5Iem61hm8I=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=mpiricsoftware.com;
-	spf=pass  smtp.mailfrom=shardul.b@mpiricsoftware.com;
-	dmarc=pass header.from=<shardul.b@mpiricsoftware.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1764575151;
-	s=mpiric; d=mpiricsoftware.com; i=shardul.b@mpiricsoftware.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-Id:Message-Id:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Reply-To;
-	bh=7w3dSfaWrYwjp4+7lWC1VjH2NSXdXNvxA1hcZmWSbHc=;
-	b=bbY9ibHhMS1qr1Nslgiuwwvt5NShzKJwlwUSbM+Sk+doS+yr+xCksSfvDiT44+Kx
-	hKOW0KZrdRyDbgsz3ii1sh2BxDL8yJf/FrpzgXVzLExeV6bV/i4grix3fU32b4A/qXP
-	scSKjBMWYtWleF/AbQpBRzL9zkShQXifU3+JYhEc=
-Received: by mx.zohomail.com with SMTPS id 1764575148860438.9814188033906;
-	Sun, 30 Nov 2025 23:45:48 -0800 (PST)
-From: Shardul Bankar <shardul.b@mpiricsoftware.com>
-To: willy@infradead.org,
-	linux-mm@kvack.org,
-	akpm@linux-foundation.org
-Cc: dev.jain@arm.com,
-	david@kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	shardulsb08@gmail.com,
-	janak@mpiricsoftware.com,
-	Shardul Bankar <shardul.b@mpiricsoftware.com>
-Subject: [PATCH v3] lib: xarray: free unused spare node in xas_create_range()
-Date: Mon,  1 Dec 2025 13:15:40 +0530
-Message-Id: <20251201074540.3576327-1-shardul.b@mpiricsoftware.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <7a31f01ac0d63788e5fbac15192c35229e1f980a.camel@mpiricsoftware.com>
-References: <7a31f01ac0d63788e5fbac15192c35229e1f980a.camel@mpiricsoftware.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F30D2D47E3;
+	Mon,  1 Dec 2025 07:54:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1764575673; cv=none; b=XLeCdda+lSfNgROqp4jiwrGpu2UEKxst2QKHpwm2trexHGprEp+KD+4QC0ze0byJTRPNvu+FtpRnHRZOx9cv+ymUKhv+j1+tLd7meAxis6HOhX9dpBxHxqWk1XJZDywLFF/r2kzKo2xx7D+KJ2yTQ9l9nEeD4M/3ZGJ82SV/3ws=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1764575673; c=relaxed/simple;
+	bh=CUAC5oeEDjDfjvMyU44gdFseCPIBh8LT1gYe1+sSwkc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LmtguGsSQ9+ZPkYy9Wh8FuwysyWr93Ayeo+3TMyGHD8uxknJtED5JX5t3IZwy3oavpg6YW4buVoY7xAvQ0mozSaOLoyg7tgbDMakGl2sQshyNuG2ICIRa6cIgI+NKerlO/HC8VSG/PM8+GPnWM5Zu/XIK6OtKFEOd0wdvtiMeOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=jFUYohsa; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=R/6q8DeJJMUj7Gf3WzP5dzvEK3OAmbqfRK6RdwqA/2g=; b=jFUYohsaSLVc6OmctHvdGBVIQa
+	2QtmA5Z4sXddF4e7iIW83mVnb3k2qrC97vhRoHZY/oTqEbmv5xArBpQHDOzMsQvWKO7pKF+1VK/s1
+	gtreSv4x1cUy5OiqehKMLEZYWYPmn9RQMZVlqnLsV4OcyLja9Csvo0oczoZy2IlapJmcF6U84TWiI
+	JbJ1dm4WqE/DKsOPxXVOcWDVzCkQy0DBF6NDZLyVUcwdJL5axfW4I2rGX3PzOlsrPlvqC1rlxcDIh
+	m3feyEyJgds5OHFWe5TqZ4ToHRDwGRcYZ0sJ8yawS/xl8JYMdSoDsFam7BMoldaBIJ6CL0btzWxr7
+	+f+IfAIQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.99 #2 (Red Hat Linux))
+	id 1vPyk4-0000000Av7D-2AkJ;
+	Mon, 01 Dec 2025 07:54:40 +0000
+Date: Mon, 1 Dec 2025 07:54:40 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: brauner@kernel.org, jack@suse.cz, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 1/2] fs: move getname and putname handlers into namei.h
+Message-ID: <20251201075440.GZ3538@ZenIV>
+References: <20251129155500.43116-1-mjguzik@gmail.com>
+ <CAGudoHHnzB5-OWujgJsbyvCfo71QDkbgwsvWeqOady6BCi8Fcw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGudoHHnzB5-OWujgJsbyvCfo71QDkbgwsvWeqOady6BCi8Fcw@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-xas_create_range() is typically called in a retry loop that uses
-xas_nomem() to handle -ENOMEM errors. xas_nomem() may allocate a spare
-xa_node and store it in xas->xa_alloc for use in the retry.
+On Mon, Dec 01, 2025 at 07:27:05AM +0100, Mateusz Guzik wrote:
+> self-NAK, i'm going to rebase on top of
+> https://lore.kernel.org/linux-fsdevel/20251129170142.150639-1-viro@zeniv.linux.org.uk/
+> when the time comes
 
-If the lock is dropped after xas_nomem(), another thread can expand the
-xarray tree in the meantime. On the next retry, xas_create_range() can
-then succeed without consuming the spare node stored in xas->xa_alloc.
-If the function returns without freeing this spare node, it leaks.
+	FWIW, I'm putting together struct filename-related
+branches for the next cycle (trying to figure out what's the
+best way to linearize the mess I've got).
 
-xas_create_range() calls xas_create() multiple times in a loop for
-different index ranges. A spare node that isn't needed for one range
-iteration might be needed for the next, so we cannot free it after each
-xas_create() call. We can only safely free it after xas_create_range()
-completes.
+	If you throw a patch on top of the series I've posted
+on Friday (and it should shrink a whole lot - the damn thing
+is static in fs/namei.c now, with cache initialization done
+in the same place) I would be glad to apply it.
 
-Fix this by calling xas_destroy() at the end of xas_create_range() to
-free any unused spare node. This makes the API safer by default and
-prevents callers from needing to remember cleanup.
+	Other series around struct filename for the next
+cycle:
 
-This fixes a memory leak in mm/khugepaged.c and potentially other
-callers that use xas_nomem() with xas_create_range().
+* DEFINE_CLASS(filename, struct filename *, putname(_T), getname(p), const char __user *p)
+EXTEND_CLASS(filename, _kernel, getname_kernel(p), const char *p)
+EXTEND_CLASS(filename, _flags, getname_flags(p, f), const char *p, unsigned int f)
+EXTEND_CLASS(filename, _uflags, getname_uflags(p, f), const char *p, unsigned int f)
+EXTEND_CLASS(filename, _maybe_null, getname_maybe_null(p, f), const char *p, unsigned int f)
+EXTEND_CLASS(filename, _consume, no_free_ptr(p), struct filename *p)
+and an bunch of conversions making use of that.  Generally I dislike RAII
+patterns, but uses of struct filename make a reasonably good fit.
 
-Link: https://syzkaller.appspot.com/bug?id=a274d65fc733448ed518ad15481ed575669dd98c
-Fixes: cae106dd67b9 ("mm/khugepaged: refactor collapse_file control flow")
-Signed-off-by: Shardul Bankar <shardul.b@mpiricsoftware.com>
----
- v3:
- - Move fix from collapse_file() to xas_create_range() as suggested by Matthew Wilcox
- - Fix in library function makes API safer by default, preventing callers from needing
-   to remember cleanup
- - Use shared cleanup label that both restore: and success: paths jump to
- - Clean up unused spare node on both success and error exit paths
- v2:
- - Call xas_destroy() on both success and failure
- - Explained retry semantics and xa_alloc / concurrency risk
- - Dropped cleanup_empty_nodes from previous proposal
- lib/xarray.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+* change of calling conventions for do_filp_open() - let it DTRT when
+it's given ERR_PTR() for name.  Surprising amount of error handling
+in the callers (and callers of callers, etc.) folds into that.
+One thing that is very tempting is s/do_filp_open/do_file_open/,
+while we are at it...
 
-diff --git a/lib/xarray.c b/lib/xarray.c
-index 9a8b4916540c..a924421c0c4c 100644
---- a/lib/xarray.c
-+++ b/lib/xarray.c
-@@ -744,11 +744,17 @@ void xas_create_range(struct xa_state *xas)
- 	xas->xa_shift = shift;
- 	xas->xa_sibs = sibs;
- 	xas->xa_index = index;
--	return;
-+	goto cleanup;
-+
- success:
- 	xas->xa_index = index;
- 	if (xas->xa_node)
- 		xas_set_offset(xas);
-+
-+cleanup:
-+	/* Free any unused spare node from xas_nomem() */
-+	if (xas->xa_alloc)
-+		xas_destroy(xas);
- }
- EXPORT_SYMBOL_GPL(xas_create_range);
- 
--- 
-2.34.1
+* killing pointless checks for IS_ERR() before calling filename_lookup()
+and vfs_path_parent_lookup() - those already treat ERR_PTR() for name
+as "bail out immediately".
 
+* [currently very tentative] dealing with __audit_inode().  It's
+a surprisingly convoluted series, and it's not quite finished yet.
+Not sure if that one won't end up slipping past 6.20...
+
+Linearizing that stuff into something that would not be a hell wrt
+merges is... interesting.
 
