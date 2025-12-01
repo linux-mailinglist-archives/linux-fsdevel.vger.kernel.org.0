@@ -1,76 +1,145 @@
-Return-Path: <linux-fsdevel+bounces-70294-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70295-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id C834AC96078
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 01 Dec 2025 08:37:14 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC9A9C960BD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 01 Dec 2025 08:46:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A9FB234397F
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Dec 2025 07:36:55 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id F219F342E83
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Dec 2025 07:46:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03C402BFC85;
-	Mon,  1 Dec 2025 07:36:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E55C2D738E;
+	Mon,  1 Dec 2025 07:46:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="l59r+q3d"
+	dkim=pass (1024-bit key) header.d=mpiricsoftware.com header.i=shardul.b@mpiricsoftware.com header.b="bbY9ibHh"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from sender3-of-o55.zoho.com (sender3-of-o55.zoho.com [136.143.184.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F0C32BE02B;
-	Mon,  1 Dec 2025 07:36:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764574589; cv=none; b=XnYiaYEFAx2rSXSXzZZsCAP3oXaCzCaucd+l0NRBQpVL7EOfWnl/5iKEe7uBq871qpqGCuw2aSuoM6Pi4i5jor1aWSBA5Vn+jk4pus5BDRHO7bUBwuuRWUNco2JJNiA4QgUgT18F/x2RysKcNM4CoHmRFYcfm+GROSY/b+XX3fk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764574589; c=relaxed/simple;
-	bh=IXe16+GZG4CyWLQboZ1PF01sSDo7ZtiVwyhlhIsg2Lk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=br4Yfm0cH5XN8eTAqWbI8o2+2RYMzfxbXWKdkSZE7t1RCGgRGp9pAsaizJiUJvSUTj65tUUvgKyfKcB4yJh+xEuvaV/fv9z5aWkXtIJHTiVYJd/g7/c9f7eUth0uWFjxwaGOo4W5OWZslvves05Xs3vm5kjhimeq1zts6L6yGtU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=l59r+q3d; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=IXe16+GZG4CyWLQboZ1PF01sSDo7ZtiVwyhlhIsg2Lk=; b=l59r+q3dUuG8aVq/LVD+0qvffP
-	WCu8u+H90GBbAUiE0yTbZuhNjwWZDp0vsz4AwODIpu3t+s0nKklkR1hmhLwF8XgSi/3pwVYoXzSDd
-	wQwPkyyfJmBVveudoci/JkP/WWtuIdRtdQmzows/n7H/KRCV3ssTj0O46bAlhyn0IUzTvzUkDzHG6
-	nnUxZ9gG6CCiJsgQhtmtM3J90hRgBv7+EPPipTXG0EEeY/H5vWm+RF0AZRmy/oQ+RB8MUqDNYI2D9
-	0+kIghlwfD4VJ4rtMCisD6zBNmyYrbL7UJA/to6/y5WZiJjCvvXw0afkTVQWZP4bkl/9vDjiwGpTA
-	b0JqJqcg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vPySL-0000000346a-0mYq;
-	Mon, 01 Dec 2025 07:36:21 +0000
-Date: Sun, 30 Nov 2025 23:36:21 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: Namjae Jeon <linkinjeon@kernel.org>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, hch@infradead.org,
-	hch@lst.de, tytso@mit.edu, willy@infradead.org, jack@suse.cz,
-	djwong@kernel.org, josef@toxicpanda.com, sandeen@sandeen.net,
-	rgoldwyn@suse.com, xiang@kernel.org, dsterba@suse.com,
-	pali@kernel.org, ebiggers@kernel.org, neil@brown.name,
-	amir73il@gmail.com, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, iamjoonsoo.kim@lge.com,
-	cheol.lee@lge.com, jay.sim@lge.com, gunho.lee@lge.com,
-	Hyunchul Lee <hyc.lee@gmail.com>
-Subject: Re: [PATCH v2 07/11] ntfsplus: add attrib operatrions
-Message-ID: <aS1Fdci9qsw_kDay@infradead.org>
-References: <20251127045944.26009-1-linkinjeon@kernel.org>
- <20251127045944.26009-8-linkinjeon@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34C0923EA88;
+	Mon,  1 Dec 2025 07:46:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.184.55
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1764575180; cv=pass; b=hIjrfPYgZ/wuIBuBFuYU6rL49h1pjwIXNAfZ7kyLiWUzK/I+uTU8l4rMWRJ5Mjr4txL2pLQ2fmUznuZAvkOs6OaEjy8deFL/1j472M+O7Nf/W/u3Y9uud8VEm06wrhCNQqqXcDTDoMSu+KLA2NJo4MeEIWaCffUcUT7cQqJViZs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1764575180; c=relaxed/simple;
+	bh=jbAPKfkUMIe0eMFIS8kY4GVhNBnztWreVjEp9qy4MkY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Y0muWIrhF1vLPpgccNZD6ejVNUrTXecTzhE67dY3QYJ8Rg88n+46LywCwourCwZ7wavVFm6aE/KWwXewGL8AGCr4Npaxgm3exUT83LbEobRHHgH5EZXFttWBgScq+zWBXA2sV8GWbhuwBE0HscZAVBy+D2xagZKdx3j7s3pT7hw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mpiricsoftware.com; spf=pass smtp.mailfrom=mpiricsoftware.com; dkim=pass (1024-bit key) header.d=mpiricsoftware.com header.i=shardul.b@mpiricsoftware.com header.b=bbY9ibHh; arc=pass smtp.client-ip=136.143.184.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mpiricsoftware.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mpiricsoftware.com
+ARC-Seal: i=1; a=rsa-sha256; t=1764575151; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=RM7FSSWt5ExfvBZPfoyhTHrKSp6ZrNpCaVo7QjvCe4BJHFUwLsGUKV7p+ga0W3+Yl0ht2eWId3X/uDnfV85DDT0qDnmtZOMFwekY9MkQqhyB6JbRR2mmCweIm9tarvkQwncP7M2AoZLoVxiDBgoai9wC/Shmxrv9+RBae6A7+io=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1764575151; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=7w3dSfaWrYwjp4+7lWC1VjH2NSXdXNvxA1hcZmWSbHc=; 
+	b=Lo87pcVh831pbfvXxxZR8Io9dVhXV5WAybxq9BUy0CFW33IHzLRtdKgKJ6sCbEj+OUiG0alF/Wvn8LVojq1tDpklo8STv8vFGCWy/FPZ8Nu+dOS9tQqn9XtsgR0h4HZasCIAgWuWBtUoH48sbFHqRqoPLAPHkw5rq5Iem61hm8I=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=mpiricsoftware.com;
+	spf=pass  smtp.mailfrom=shardul.b@mpiricsoftware.com;
+	dmarc=pass header.from=<shardul.b@mpiricsoftware.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1764575151;
+	s=mpiric; d=mpiricsoftware.com; i=shardul.b@mpiricsoftware.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-Id:Message-Id:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Reply-To;
+	bh=7w3dSfaWrYwjp4+7lWC1VjH2NSXdXNvxA1hcZmWSbHc=;
+	b=bbY9ibHhMS1qr1Nslgiuwwvt5NShzKJwlwUSbM+Sk+doS+yr+xCksSfvDiT44+Kx
+	hKOW0KZrdRyDbgsz3ii1sh2BxDL8yJf/FrpzgXVzLExeV6bV/i4grix3fU32b4A/qXP
+	scSKjBMWYtWleF/AbQpBRzL9zkShQXifU3+JYhEc=
+Received: by mx.zohomail.com with SMTPS id 1764575148860438.9814188033906;
+	Sun, 30 Nov 2025 23:45:48 -0800 (PST)
+From: Shardul Bankar <shardul.b@mpiricsoftware.com>
+To: willy@infradead.org,
+	linux-mm@kvack.org,
+	akpm@linux-foundation.org
+Cc: dev.jain@arm.com,
+	david@kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	shardulsb08@gmail.com,
+	janak@mpiricsoftware.com,
+	Shardul Bankar <shardul.b@mpiricsoftware.com>
+Subject: [PATCH v3] lib: xarray: free unused spare node in xas_create_range()
+Date: Mon,  1 Dec 2025 13:15:40 +0530
+Message-Id: <20251201074540.3576327-1-shardul.b@mpiricsoftware.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <7a31f01ac0d63788e5fbac15192c35229e1f980a.camel@mpiricsoftware.com>
+References: <7a31f01ac0d63788e5fbac15192c35229e1f980a.camel@mpiricsoftware.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251127045944.26009-8-linkinjeon@kernel.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-s/operatrions/operations/
+xas_create_range() is typically called in a retry loop that uses
+xas_nomem() to handle -ENOMEM errors. xas_nomem() may allocate a spare
+xa_node and store it in xas->xa_alloc for use in the retry.
+
+If the lock is dropped after xas_nomem(), another thread can expand the
+xarray tree in the meantime. On the next retry, xas_create_range() can
+then succeed without consuming the spare node stored in xas->xa_alloc.
+If the function returns without freeing this spare node, it leaks.
+
+xas_create_range() calls xas_create() multiple times in a loop for
+different index ranges. A spare node that isn't needed for one range
+iteration might be needed for the next, so we cannot free it after each
+xas_create() call. We can only safely free it after xas_create_range()
+completes.
+
+Fix this by calling xas_destroy() at the end of xas_create_range() to
+free any unused spare node. This makes the API safer by default and
+prevents callers from needing to remember cleanup.
+
+This fixes a memory leak in mm/khugepaged.c and potentially other
+callers that use xas_nomem() with xas_create_range().
+
+Link: https://syzkaller.appspot.com/bug?id=a274d65fc733448ed518ad15481ed575669dd98c
+Fixes: cae106dd67b9 ("mm/khugepaged: refactor collapse_file control flow")
+Signed-off-by: Shardul Bankar <shardul.b@mpiricsoftware.com>
+---
+ v3:
+ - Move fix from collapse_file() to xas_create_range() as suggested by Matthew Wilcox
+ - Fix in library function makes API safer by default, preventing callers from needing
+   to remember cleanup
+ - Use shared cleanup label that both restore: and success: paths jump to
+ - Clean up unused spare node on both success and error exit paths
+ v2:
+ - Call xas_destroy() on both success and failure
+ - Explained retry semantics and xa_alloc / concurrency risk
+ - Dropped cleanup_empty_nodes from previous proposal
+ lib/xarray.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/lib/xarray.c b/lib/xarray.c
+index 9a8b4916540c..a924421c0c4c 100644
+--- a/lib/xarray.c
++++ b/lib/xarray.c
+@@ -744,11 +744,17 @@ void xas_create_range(struct xa_state *xas)
+ 	xas->xa_shift = shift;
+ 	xas->xa_sibs = sibs;
+ 	xas->xa_index = index;
+-	return;
++	goto cleanup;
++
+ success:
+ 	xas->xa_index = index;
+ 	if (xas->xa_node)
+ 		xas_set_offset(xas);
++
++cleanup:
++	/* Free any unused spare node from xas_nomem() */
++	if (xas->xa_alloc)
++		xas_destroy(xas);
+ }
+ EXPORT_SYMBOL_GPL(xas_create_range);
+ 
+-- 
+2.34.1
 
 
