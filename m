@@ -1,101 +1,100 @@
-Return-Path: <linux-fsdevel+bounces-70486-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70487-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 576FAC9D371
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 02 Dec 2025 23:31:17 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AC93C9D386
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 02 Dec 2025 23:35:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E9E7934A07F
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Dec 2025 22:31:14 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8F868349FEA
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Dec 2025 22:35:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 549242F9DAB;
-	Tue,  2 Dec 2025 22:31:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 956532F7AAD;
+	Tue,  2 Dec 2025 22:34:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NgUakz7S";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZDHjK4ks"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CrqAHtd2";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="RuklMzos"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BA3A2EB5A9
-	for <linux-fsdevel@vger.kernel.org>; Tue,  2 Dec 2025 22:30:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 468232EB5A9
+	for <linux-fsdevel@vger.kernel.org>; Tue,  2 Dec 2025 22:34:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764714660; cv=none; b=mkitesKih9of/QQoAxwkTILOHJQDom4eNCLGhmGu/7vcJT/4sfI1Z1moa1zI7AGHcZ1czi8c9h08VLhG3u4aWdD9Ls5ENqivtlG9hTOpOHzzsGUT4Z25UGgxPCdY30VdzGdGv/gh/TQbcn5fAajUsAlrux9QPfCqehHP+HH1c3E=
+	t=1764714899; cv=none; b=pskKJZvsJDpqgKsfTfv78ZSiiTEf4JFXGI4Ya+eefCT3jn6ovl312ubFs206b6d2vocKvXR6rLrViBqjWn6q6+9MAAeKS09CvK4dUWp91m4yraEqCmmcrhdFfKmV5fOojycBy0Weiq/TcQo7opqwAa4Vo2VXCZtPV3Of+NiNB3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764714660; c=relaxed/simple;
-	bh=MmUh4MKXgs1k08VeXFr5wg8d4AsDjxUObXE1+1XdpG4=;
+	s=arc-20240116; t=1764714899; c=relaxed/simple;
+	bh=knGCB2QWCi7I+b7T8oml1J2JVo/fTrJd+ijEv1ZyS1U=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ayu1DTzCQIUzOvGFWOXJBQgxct86Sxvip1TXivjsNdbvERJ6gmsaJA+wHsZXtOuQKcthiJQiv24Lto+UO/FWDvWzrcBfL3uWZAYYlzEU9a3QCj2GSrcwdH8J08kHupy7EDaUq2Qijl1zkNl8MtwuZ4uJ31gVxMY4yc93FLzoKAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NgUakz7S; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZDHjK4ks; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=Sup6MfZx/Qa0OMYsqxgUvUVvMe+Nhx9rbuoMrqyu0nBQQxHsExKhUlRGjtutURwxmgkle4i8pXPoxjxHUPAT88JX9FZFlUu1WpQ5i1Pecgh9ZMDlpOXMfmGrMNGMc8BzTPROW93apsuwgNIhEBsEMQjqCOF/IxFeOK3PG2ix89k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CrqAHtd2; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=RuklMzos; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1764714658;
+	s=mimecast20190719; t=1764714895;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=9XpYvds7AGfom+0aJqkkhOOQLSOqoY1MbT24dcNg0Fo=;
-	b=NgUakz7SpJBQsuHS6EmPDbwBi/DgFIDueCOQzii24HwIxrxyF732cI+lDRdrN7P7i0Ityf
-	iG05rifkcYWUQ4VURgvmO/UdlEANipUe04pIfnfIp8nvyMWLhPZTRaKB+zTIzQm4XjzUqa
-	C5UU6EtwMtWzPxAUMzrYHD8RvdABCsA=
-Received: from mail-oo1-f70.google.com (mail-oo1-f70.google.com
- [209.85.161.70]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=I75stScld0jImIWnHzAwTuoOvKajHCPvGtn9toaW0BQ=;
+	b=CrqAHtd2aqCQ7bjFPTr/Kz8Mx5kTw89CfSUPU8duirv+hJJyenAglk2XNHKoY1fbKEwtUV
+	pQrO48rfuxBi6BFKYfotGaxPyH80REs64iLCN7obUGX9w6snGa6DX52db//uO2lkIiw8hE
+	MfT3AbDcgj5+r7mTGpUxUbMJhpPl6XI=
+Received: from mail-ot1-f69.google.com (mail-ot1-f69.google.com
+ [209.85.210.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-688-nbUP_WRpMlOUCJLhchSF1g-1; Tue, 02 Dec 2025 17:30:55 -0500
-X-MC-Unique: nbUP_WRpMlOUCJLhchSF1g-1
-X-Mimecast-MFC-AGG-ID: nbUP_WRpMlOUCJLhchSF1g_1764714655
-Received: by mail-oo1-f70.google.com with SMTP id 006d021491bc7-656bc3a7ab3so6125383eaf.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 02 Dec 2025 14:30:55 -0800 (PST)
+ us-mta-257-TfIVQ_q1O7CPkNrMAac1-w-1; Tue, 02 Dec 2025 17:34:53 -0500
+X-MC-Unique: TfIVQ_q1O7CPkNrMAac1-w-1
+X-Mimecast-MFC-AGG-ID: TfIVQ_q1O7CPkNrMAac1-w_1764714893
+Received: by mail-ot1-f69.google.com with SMTP id 46e09a7af769-7c70268301aso2920341a34.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 02 Dec 2025 14:34:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1764714655; x=1765319455; darn=vger.kernel.org;
+        d=redhat.com; s=google; t=1764714893; x=1765319693; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=9XpYvds7AGfom+0aJqkkhOOQLSOqoY1MbT24dcNg0Fo=;
-        b=ZDHjK4ksZloI7M8wupk6J+XVjkx0vXOC4IH9UP65hMZH2LhkIFswI8qxBAwtA4BLNu
-         JuofpZ0JxHgfoW83vz+b4DNxZBUtmmYxBZLV/RSClms3jGiW76TmNXE7pB22dygYYaJ8
-         4RSosrS7bqy74mdrNf/SG0Cw96GKJ33aUYxR0NOuWr0mCYfyLKj2D6CkJlf7LC2GEAk9
-         e5MVuI3gRYNowbTPizWyuJErmUWWzErX9b0aaUYlNpZgNg/PrVF1txYfw6Gmfv94HWun
-         UZQ4GXw+MBnSyRE0YF82gFXNNb9NKl0PW7y5DLIpkQXpgWIaLEgP/EBRav6x35uKqHcu
-         DzxA==
+        bh=I75stScld0jImIWnHzAwTuoOvKajHCPvGtn9toaW0BQ=;
+        b=RuklMzosmMWpFYND4EKJ/yEg3C+xck00vLSxCoHH+klZ83U28t78dX0FwUPcaUL9Wn
+         L+G4Hi6UObOEEVJuzPDocPETw5Fqfle7MT/gP+lpYEGtuxEWrpFb+vy9DwAILjOFidFg
+         aTvF6KdOIFp0oIiA9IGYq4HxeqG0+nM+O92mM++5b3ssykV5CvovTnAn6kQOqjeKuepn
+         7HyHccU6Jy7kQQ4+NokNzAwYvC0FkCuHvstzU75TiuzSiaSNkZ5nsAVZHrfBmEy+THKx
+         BH6KZbxnZ216G7vJq0z2APME5hCER4a6/N41LorYtM5C8I02n1oKyXR32bAyOoSom2+n
+         FfeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764714655; x=1765319455;
+        d=1e100.net; s=20230601; t=1764714893; x=1765319693;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=9XpYvds7AGfom+0aJqkkhOOQLSOqoY1MbT24dcNg0Fo=;
-        b=HLL0XoeEdjwnOJZbDAdoKIeo4Y2qCmd+CntLvMAj6VXf+bB7rWQJJ2jaKEGNYpKVST
-         U4YUr0aCSRkDgwMni6PyBnaCi6l2CUcYjRMDqCO4Qeq2O9fgP6OrlGSZ7i6YwdC+th8v
-         7RJspVY8g4DksfR3d0bp5jo5LFczD+4BJSJZM4wYvU3mnW5jy4SIQBYUoPr5kMF7uhQo
-         txQsJdRkTNSw37ab6+DO2bVhoYXFPMOmma0na+LrDeFFsrDirQXTg2n7ALjBrDM2WG4s
-         CFKO1WFyPVzBPIgX+0S5Zu68DARSVWejbG+ayamtfQGLE5rj1IzO+6OH4JUqFlpvyPUI
-         pRwg==
-X-Gm-Message-State: AOJu0YywmouTjUOMt9aGFjc1vY4lPnLYlMiV5iRhAdXJmlmH2kCOehu0
-	N/0FTQ099jhd2eAXiieMxg5deO/boY7cHfjj7pSFEJU3OKNI1DldjZzwzJBmdv39+xU6V48/4CV
-	B5Urnkv4ZB/R/SaY3TNIacNw0wvnhl9q6F0RreVb8IxKi8frRttoneJsLso5YbAS/a+jLbdp7nc
-	s39w==
-X-Gm-Gg: ASbGncs88gOytl8AuIByorSLbokPP9sUcchExcatuJBZXd9FRxPbuc0RPdWhtVFRtl8
-	zTS19wWLZtk7VFY5QzjKnTT/bfJjJuDnumgXffHBernn4can/i3Tosqlg6oih3cXRiDsYDIzmUz
-	KRF5gRULjsHrQX2BZw986wlBVfYqB4XUnIX7x7rvjbzSX3vBzz9YCxw4kuWBaeNStZSlqCmceao
-	uRbG9BPNQVAOEpV2nMX1nMu3cVN8xAWHkNpTa7Sg4i2dGPghpXFiBvzoPiShG3hEyL5TwP3t+yu
-	M57mPmFfjPbP52aaI1E0IpmjYWOvcHuu+mTZOGPGB7mhqDEDodlbiSgWR7ONLJ2Ayo/VLTsQCGQ
-	N0eaO4UadPu+xnHCTbFB3uy45ubeISdlS0fNR3T4pBoEo916AMbo=
-X-Received: by 2002:a05:6808:2213:b0:453:f62:de01 with SMTP id 5614622812f47-4536e43a399mr17450b6e.30.1764714655036;
-        Tue, 02 Dec 2025 14:30:55 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHy88N7ZuKZYlIvdZQmy4kg6Oeq+tbP5nzm2BGu6Vun9VEEZ04RppoINDoRk960fJq0ifc1/g==
-X-Received: by 2002:a05:6808:2213:b0:453:f62:de01 with SMTP id 5614622812f47-4536e43a399mr17434b6e.30.1764714654720;
-        Tue, 02 Dec 2025 14:30:54 -0800 (PST)
+        bh=I75stScld0jImIWnHzAwTuoOvKajHCPvGtn9toaW0BQ=;
+        b=gqwFTnYP+gRPAcrvRlClmeLJHA3tf3GmdtzOrTmZRVnhe8G73qbL3jS11L53uv6xdp
+         fqnhWriLQGbHRJEAk+xn90FJbhNpOVXIMHXTA2kez3AO8yGR/SmaXRnLp9Q6P6C8kRcU
+         pb2KZB2PY33hwvk/XTApvcUZZ30Icu4JhZe/ykP6VDwR81TKdz5crv0I4zYMKTR4PkUU
+         HFZeHgfPmmrZGZVkIcNiHSvNmYIncOeMrWMou4N2kZuG5oD+eoLwFtKRLE/A/wk6E6xW
+         mDvPMyfk9SyqXBt4cUAUZcyRkDcrmGrwqzwzQkEWq4YTCS9VXwCKI4BG6oxe5q7EyORU
+         eQwg==
+X-Gm-Message-State: AOJu0Yxx1Yef3Hdv/WqyDeTTFhiF5cTqOYIuCrQ3YAUvb5J9TiyUDYsB
+	qXU0ycrczzo1kIFzNq/kJFQAaE3pAapWrZn3ph8mjQgSGHlFFM6wPuckhvpsGpMNOnZ6ISigsxL
+	qGZp2j5DwEhhuMwXScFC684NCI0BvtwebM5rufLpLknSkGzQGzAT11/NNFgsbjVWzgeo=
+X-Gm-Gg: ASbGncvqUGFfDO9H1rtj1B9bwQqDgoprWwYucp8ZAU7vqkR1fN3SYtIhGICVPhbq3SX
+	Ta8XwYrl1+pvtAmg7RfwYIti0s/hWHOS32yin0yK6024RpIxcgeR3ytsQSuIdjQmYGgP8EhCesR
+	FHpwWA+zxc6WNZkf3IxA70XEBrF49sOZJtg8b0HZrQWQ0963/XVwgHkgNwU9ulFbAhz1xDxcEWS
+	ctnUQK+WOKSTVLKphtBWWfDTSiqs69Yrt0u71KQ7LDIaowW4ub7dCc+Pkc97TtK3zk+B1cTSOnL
+	t3ZAw2r3HWzLCba7lk3UJDuEcLVXoOiAe0VRZYWMyGjUVXFQTSFGhjq7DwXbpz0qBFcLiAYnX6f
+	jXlm/+MQ+5sVEau0+etX33UuNwDuqymmX0vGGmkoUiw6XRkPuAdI=
+X-Received: by 2002:a05:6830:310b:b0:78e:a394:ca24 with SMTP id 46e09a7af769-7c94db16322mr243461a34.8.1764714892759;
+        Tue, 02 Dec 2025 14:34:52 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGBk5xgbqxkiF0SI2w8qIvhL+LUE6hwtLWp1H8RJuryPPzCLFIrSmuLFBL1JZq1IvKtaEk8Vw==
+X-Received: by 2002:a05:6830:310b:b0:78e:a394:ca24 with SMTP id 46e09a7af769-7c94db16322mr243453a34.8.1764714892458;
+        Tue, 02 Dec 2025 14:34:52 -0800 (PST)
 Received: from [10.0.0.82] (97-127-77-149.mpls.qwest.net. [97.127.77.149])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7c90fcedce6sm7464634a34.16.2025.12.02.14.30.53
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7c90f5d7ba2sm7520115a34.5.2025.12.02.14.34.51
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Dec 2025 14:30:54 -0800 (PST)
-Message-ID: <54b93378-dcf1-4b04-922d-c8b4393da299@redhat.com>
-Date: Tue, 2 Dec 2025 16:30:53 -0600
+        Tue, 02 Dec 2025 14:34:52 -0800 (PST)
+Message-ID: <48cdeec9-5bb9-4c7a-a203-39bb8e0ef443@redhat.com>
+Date: Tue, 2 Dec 2025 16:34:51 -0600
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -103,7 +102,7 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: [PATCH V3 5/4] 9p: fix cache option printing in v9fs_show_options
+Subject: [PATCH V3 6/4] 9p: fix new mount API cache option handling
 To: v9fs@lists.linux.dev
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
  ericvh@kernel.org, lucho@ionkov.net, asmadeus@codewreck.org,
@@ -116,35 +115,100 @@ In-Reply-To: <20251010214222.1347785-5-sandeen@redhat.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-commit 4eb3117888a92 changed the cache= option to accept either string
-shortcuts or bitfield values. It also changed /proc/mounts to emit the
-option as the hexadecimal numeric value rather than the shortcut string.
+After commit 4eb3117888a92, 9p needs to be able to accept numerical
+cache= mount options as well as the string "shortcuts" because the option
+is printed numerically in /proc/mounts rather than by string. This was
+missed in the mount API conversion, which used an enum for the shortcuts
+and therefore could not handle a numeric equivalent as an argument
+to the cache option.
 
-However, by printing "cache=%x" without the leading 0x, shortcuts such
-as "cache=loose" will emit "cache=f" and 'f' is not a string that is
-parseable by kstrtoint(), so remounting may fail if a remount with
-"cache=f" is attempted.
+Fix this by removing the enum and reverting to the slightly more
+open-coded option handling for Opt_cache, with the reinstated
+get_cache_mode() helper.
 
-Fix this by adding the 0x prefix to the hexadecimal value shown in
-/proc/mounts.
-
-Fixes: 4eb3117888a92 ("fs/9p: Rework cache modes and add new options to Documentation")
 Signed-off-by: Eric Sandeen <sandeen@redhat.com>
 ---
 
+If you wanted to fold this into my original mount api conversion patch
+so there's no regression point, that would be fine with me as well,
+of course. Sorry for the error.
+
 diff --git a/fs/9p/v9fs.c b/fs/9p/v9fs.c
-index 05fc2ba3c5d4..d684cb406ed6 100644
+index d684cb406ed6..dea2c5347933 100644
 --- a/fs/9p/v9fs.c
 +++ b/fs/9p/v9fs.c
-@@ -148,7 +148,7 @@ int v9fs_show_options(struct seq_file *m, struct dentry *root)
- 	if (v9ses->nodev)
- 		seq_puts(m, ",nodevmap");
- 	if (v9ses->cache)
--		seq_printf(m, ",cache=%x", v9ses->cache);
-+		seq_printf(m, ",cache=0x%x", v9ses->cache);
- #ifdef CONFIG_9P_FSCACHE
- 	if (v9ses->cachetag && (v9ses->cache & CACHE_FSCACHE))
- 		seq_printf(m, ",cachetag=%s", v9ses->cachetag);
+@@ -72,15 +72,6 @@ static const struct constant_table p9_versions[] = {
+ 	{}
+ };
+ 
+-static const struct constant_table p9_cache_mode[] = {
+-	{ "loose",	CACHE_SC_LOOSE },
+-	{ "fscache",	CACHE_SC_FSCACHE },
+-	{ "mmap",	CACHE_SC_MMAP },
+-	{ "readahead",	CACHE_SC_READAHEAD },
+-	{ "none",	CACHE_SC_NONE },
+-	{}
+-};
+-
+ /*
+  * This structure contains all parameters used for the core code,
+  * the client, and all the transports.
+@@ -97,7 +88,7 @@ const struct fs_parameter_spec v9fs_param_spec[] = {
+ 	fsparam_flag	("noxattr",	Opt_noxattr),
+ 	fsparam_flag	("directio",	Opt_directio),
+ 	fsparam_flag	("ignoreqv",	Opt_ignoreqv),
+-	fsparam_enum	("cache",	Opt_cache, p9_cache_mode),
++	fsparam_string	("cache",	Opt_cache),
+ 	fsparam_string	("cachetag",	Opt_cachetag),
+ 	fsparam_string	("access",	Opt_access),
+ 	fsparam_flag	("posixacl",	Opt_posixacl),
+@@ -124,6 +115,33 @@ const struct fs_parameter_spec v9fs_param_spec[] = {
+ 	{}
+ };
+ 
++/* Interpret mount options for cache mode */
++static int get_cache_mode(char *s)
++{
++	int version = -EINVAL;
++
++	if (!strcmp(s, "loose")) {
++		version = CACHE_SC_LOOSE;
++		p9_debug(P9_DEBUG_9P, "Cache mode: loose\n");
++	} else if (!strcmp(s, "fscache")) {
++		version = CACHE_SC_FSCACHE;
++		p9_debug(P9_DEBUG_9P, "Cache mode: fscache\n");
++	} else if (!strcmp(s, "mmap")) {
++		version = CACHE_SC_MMAP;
++		p9_debug(P9_DEBUG_9P, "Cache mode: mmap\n");
++	} else if (!strcmp(s, "readahead")) {
++		version = CACHE_SC_READAHEAD;
++		p9_debug(P9_DEBUG_9P, "Cache mode: readahead\n");
++	} else if (!strcmp(s, "none")) {
++		version = CACHE_SC_NONE;
++		p9_debug(P9_DEBUG_9P, "Cache mode: none\n");
++	} else if (kstrtoint(s, 0, &version) != 0) {
++		version = -EINVAL;
++		pr_info("Unknown Cache mode or invalid value %s\n", s);
++	}
++	return version;
++}
++
+ /*
+  * Display the mount options in /proc/mounts.
+  */
+@@ -269,8 +287,10 @@ int v9fs_parse_param(struct fs_context *fc, struct fs_parameter *param)
+ #endif
+ 		break;
+ 	case Opt_cache:
+-		session_opts->cache = result.uint_32;
+-		p9_debug(P9_DEBUG_9P, "Cache mode: %s\n", param->string);
++		r = get_cache_mode(param->string);
++		if (r < 0)
++			return r;
++		session_opts->cache = r;
+ 		break;
+ 	case Opt_access:
+ 		s = param->string;
 
 
 
