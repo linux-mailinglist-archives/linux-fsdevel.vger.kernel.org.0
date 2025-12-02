@@ -1,70 +1,70 @@
-Return-Path: <linux-fsdevel+bounces-70476-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70477-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6667C9CCD6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 02 Dec 2025 20:42:51 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA1A7C9CCFA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 02 Dec 2025 20:45:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 247EE34AE33
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Dec 2025 19:42:31 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5AAD24E0657
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Dec 2025 19:45:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2268E2F2618;
-	Tue,  2 Dec 2025 19:38:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F6B02FBE05;
+	Tue,  2 Dec 2025 19:38:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="T2w60A/J"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YRySokJL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C617F2F12DE
-	for <linux-fsdevel@vger.kernel.org>; Tue,  2 Dec 2025 19:38:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BA242FABFE
+	for <linux-fsdevel@vger.kernel.org>; Tue,  2 Dec 2025 19:38:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764704294; cv=none; b=Y8+3H+qMmgTARmiaogcVYYNUk2eO6GBlBgPDEgrGiRxjcKAQEnK6qPRcCpvtK22e2gIDMiIEro+YUmcE3/E4jJPfG0jXn0sU1NkVZuYzttdVSf8ylzT6floBu/g9psnMBZbm9z2VzyUK8FBKV3RLnDdcK9wEeUmQ2JnSpBEvzT8=
+	t=1764704308; cv=none; b=Y+sswpgC/U/7rsGi6vtED54G2H8QmzAv2LfYq3MRN5L3tx+2U7X2NOBEGYzhZGQl3WRG7a/uYZT6IgaUtL6YZyr6q470EHXyWhejDY+TcxwIk5UMulCvhy1wuI5QIuiYkG+eNiS/NS60wlJboB3Tj8utawR+EwQunYvE+w1ZtaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764704294; c=relaxed/simple;
-	bh=nrmkOqCV7ocjGEn6QgTEPI62gVcQmYigMQiNH975fcE=;
+	s=arc-20240116; t=1764704308; c=relaxed/simple;
+	bh=ZfkP33VcqvWUNnVMxmueuVO7iCL5H6N3VM5f/NFItZo=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=BjLp7chs4Gue+e9cN1jK7lsgwFhwRnxlUA2aoSinsUS+S9qIxLvyHxKMeii1R6S+isNzXsRgzNDFPq1sQpTBXJWqMDVktsv6aWW7g6e2/5nhC0mrVzMVvADa3NwLC8st/urAqAMCg0/PNqZshYdGwRRJv/fxovYUbQC0jpyUwPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=T2w60A/J; arc=none smtp.client-ip=209.85.128.74
+	 To:Cc:Content-Type; b=MguMYQhUj5gAoTQMDcz8b6a80hXZLoT3Ij6EyYfzYFxCLvsczHGla86eCkFZQfpq6G5cbVGjEyWBmZcgnLe8LbBw4HW7OQYFbh9XzuG5SoszSzOqs26R4Pt14w0bIa0NJ8HJ/wjQOZPHNNpNHfnq/1v46cR4433YhxgB6t5QDJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YRySokJL; arc=none smtp.client-ip=209.85.221.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-47775585257so41062775e9.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 02 Dec 2025 11:38:12 -0800 (PST)
+Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-42b2c8fb84fso3561794f8f.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 02 Dec 2025 11:38:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1764704291; x=1765309091; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1764704305; x=1765309105; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+O21Y6BxBrJfbXbsXUMMfUGXrVsdmNULpo//ikWcag8=;
-        b=T2w60A/JtNYuOAKLKXUBlK31FZQ3EsuTx4DtqpW6jCFnjSbqX39tIG5+GgxZhVd7by
-         RKoTiNvqG0uXg2WhcgXiE0C4HL1vJm4XIrMu3Khc3HNkfEZ5CF4WpikRzrdUEkrwA4rU
-         zVWRbFx67VA/MLIU3jEAOnVO2BlKCGSZFzQ/9MQWaEXqPvJ/Tms7qJ2ZNogKKiYLjKfh
-         tOVa5d4h4dHPF+D3uVMerQ6vO2Ty4hDH/i70qyiRKyF5ahNSjrJSZsn3tdmFuATpkBwE
-         ynFrXLUXCdlUEOv3GOcNMIk9Lq9PQdiUActTGEIoHCe2c8kFBSQSKqGeofr5SqU5WRhy
-         SvLw==
+        bh=HH0tVHLG3ca9kBOTOLq8pgJbAOcVBVaThO/dyel0SIk=;
+        b=YRySokJLUThIPVm+gTfU9T8NE4n3c+XnKmUBCVj1A3HgLPFqRn1YK2GnYOqcBw2MfM
+         /+EaxZQgZs4q9k7DRt78Y2ioCiRbbOWYVrI1iTJp2wT6rpQAGNvcwdXtY19sqeAM+zcf
+         crODL9Brb3nNyqQTL7QtU7N6Nsw8Hbvt07RFpThR8mSpbEY9ulpfUH8vQGg5XG7bglFa
+         H2mrSsM1SYIBoHUUDtqDL88CCPjP0+kNt3KNZyc2sU5JPX8pEg7bBocLztrQ39RJI6Fx
+         itHLFzKXpnADEVCVPjnPt64Ncv+oKJ/IMx8JoHHh5cycIV4Y9RSOCo1HSt/YlVClxymc
+         dGhQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764704291; x=1765309091;
+        d=1e100.net; s=20230601; t=1764704305; x=1765309105;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+O21Y6BxBrJfbXbsXUMMfUGXrVsdmNULpo//ikWcag8=;
-        b=lUCFmV+5rGxWFJ9kGRbVQwCpecidBRSx+RtSmfWoAtsWCYvJg/67O6LU7TcdKVRDId
-         luhkP0r0RHPihTyOjIj11hOexBuUGE8P6V6Z6ib3QYNiDdnfMYlFe7PVJICHHXfJfynM
-         XHMoyINZr0kiFbacudid+vspJ4qqf+xXxPwyHEU6p1nOccYTBLIurFvSzLuqIPoVrytH
-         kcdqBLLZ/Df0CyR36LCvPs7okrJz+DN1x7UsGT9Vt7S+xlSENn68Qv3N7e+CAFvPf2UR
-         zf0O+q0kaaafBcej2JWTphqqepVjAEXae0N46alcfTgfZotGKDRFvEU+hzqlgJqDrYTf
-         Hb5A==
-X-Forwarded-Encrypted: i=1; AJvYcCW8vC0X5UCS2Xq2Gs3xApLWuu70p+Vw1b376oLZz6BVKg5GNzMneUD9d/mh0D8Ab8OyBRUsOC0BTMW2vn3T@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx39FGalTXCXxSc8JjUVlkk3nRlaMPlri4VcSLkX2AKAT6c8XAa
-	twfyuQtb8Ct4SPghIlUKBNhmkuxlIK8ewC4zu8uxk4ZopxC7tm4jfwHE0p3N5tOY/8eTkZuFVWu
-	YpCkdQuzjTqNtbblW6g==
-X-Google-Smtp-Source: AGHT+IGJhNJ6fdkKPz0fEer0RCHqcdeCiQS5QAFfJGasqEvSFa0DpvrJs94MsIvPxEzzdpQYnq2TpN3p6gEfAw8=
-X-Received: from wmco13.prod.google.com ([2002:a05:600c:a30d:b0:477:9d88:de6d])
+        bh=HH0tVHLG3ca9kBOTOLq8pgJbAOcVBVaThO/dyel0SIk=;
+        b=h9xlIPTJLYTPkivT2EMw+sxlu/a4K2wK5Nc5P2JAz2XAwbOV074KTLB4uISMgP4tWV
+         UkJxBQkaeio7I1bL41CGBYb1+iSNWoTKE6Dm1PHDxYi91ZqvxhN5UxbdtxoG66D+UwY8
+         su4R4dTABuekZZG3u5fs8rUvZzyc393AqUs1EAf3LUuyW9hz4Al8arkRYtY8DedOzaAy
+         HbyHCi+Pl+Rr6JecVKk0+xu0+WfG6lY+Cq76yAgU3LjBLS+XqNFXVElNcBNZqde2K5SF
+         lLXeNOdTQLW1fcPW2twxJzTsREtxcehHRQSnbjL/Ln0mgxXjkkYQSGf97crXtAJ1rWKn
+         ZYSw==
+X-Forwarded-Encrypted: i=1; AJvYcCUJ1e0IBphQxlnuM5CI+0aMp4vGFrNlxNfOJ4mSdG4fafVHWBE24Mootny6hfuNAOLGXvNNVPQs+gXnw13u@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGSy3dw60IXb5BU2JZYVLQq6Q5Q+paNfFRlEHvwUKG/SPjWiHy
+	/HW365ZiytS3acE9zXCKGJAwyiCTBMLI9QOxVFmaeFT0rhvdn6RwPShqa3IHeCPsUOiT99hy8Tk
+	AyQ7ZyhV2prdZJOCfKQ==
+X-Google-Smtp-Source: AGHT+IGf/V7uMCrPGDznI1ahB6Qjky/a/3TGW12QgcKWncVdeiPUB9bmFpIWoqj96g3SR7EqCpOa/x+z2oqUhrE=
+X-Received: from wrbdn6.prod.google.com ([2002:a05:6000:c06:b0:42b:2ced:aa88])
  (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:45cd:b0:477:952d:fc11 with SMTP id 5b1f17b1804b1-4792a6112c1mr8153245e9.16.1764704291267;
- Tue, 02 Dec 2025 11:38:11 -0800 (PST)
-Date: Tue, 02 Dec 2025 19:37:42 +0000
+ 2002:a05:6000:2f85:b0:42b:4247:b077 with SMTP id ffacd0b85a97d-42e0f34fa15mr34531491f8f.41.1764704305201;
+ Tue, 02 Dec 2025 11:38:25 -0800 (PST)
+Date: Tue, 02 Dec 2025 19:37:53 +0000
 In-Reply-To: <20251202-define-rust-helper-v1-0-a2e13cbc17a6@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -74,22 +74,22 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20251202-define-rust-helper-v1-0-a2e13cbc17a6@google.com>
 X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=780; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=nrmkOqCV7ocjGEn6QgTEPI62gVcQmYigMQiNH975fcE=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBpL0AIG8MtytrS+nDHlPRvfJf7YOQNDYwcAWYVB
- YM8U3hFPleJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaS9ACAAKCRAEWL7uWMY5
- Rh0JEACH8pjfDtrai2a6Zg0Alno+thLKmojRD0ODC8gNoJKM/iTpVgQ4W/BElUkBzeZ0/WVUKES
- BZv0jeYQxQfkiSwkm8SncMlXb5ZgOY2jRVzzzCEQSYMs+XWkVCf4phy58X89dPwXG7LYGuTbCv5
- rWOpTTw7rDK3fDN1krHOXHad3oXuP5cb3F2MU2wsVUJfvLjGLYGi+dfE8lVHoxQQZ+RD432p4z8
- KUcTPJGqVMmF/+/p8If+eT1idfSAHFxqe4xWnijqd+dgZaTWUiL3joE9Gn/67sg6QcDgZ2YChNa
- hzXb17CM5FihJPUNk7jelAmHv1yuV9DQeiY5gsOiqI8BUjtS4BQk1HJZzz/WK8jGmEkLtTPiMtY
- jj5C9MaKlzpOaVQ2QPY/CPnnE2kxiZgiJ/v7pfI41AUZ3a+HrlFst7IVunicvj5VG1esswCwLti
- DlpCqsemkFl0F+GAYKnNPQ9RbVgtqG/uplHdT+zZPwwNTikCPIVFMAlLc5XfOWlVLBL5sil0osv
- ryv4yBUTIJ9fzyoAHtHSt50qPyo8iiV9JV/leyRtBUoUySTy0fJi1YXJ1B4AHUmMgpnm/J2UWHH
- qMQnxZzXbZRJPpBD9LiLs+vqzb2bZA8L0WojMUcW010qkBw2mu4lHXuqwCrXlIF1MK8lLchCsi1 qZp8JqfAY/oSRAg==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=948; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=ZfkP33VcqvWUNnVMxmueuVO7iCL5H6N3VM5f/NFItZo=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBpL0AJwLCgR7mi0GsjPC1OLCINkJCKuI0xJ/WMJ
+ wKkUshrxeqJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaS9ACQAKCRAEWL7uWMY5
+ RkQIEACx0wChzM7/WLtBFZYMdf+NlCmVZYNJtDxNf6q/dKCjt4O3ZcntsoScZYgpn6VCBrxe3Vd
+ Gha703JoobNb4pQymxebJXzQnruwYEvAYYf7eoFVWkA0+2FD0EjcDL7lfjEv1XcXjGRM8CTxS+0
+ 2apvW0AmezBe3ecv3BTuLA1LrvdDiLVRlmehFar0twMSIaR8fkGorsuZhzbg2FFKFiImVs2OR49
+ ln4zIHyj3E7NbEUvkMdgyE23heKlfE36mtoGWbaPoNmlaqP7fPQFUXB8AhxWWQCycvXlqJTJoCy
+ 8w6CuL1T0A6eqc8nttjZQvizHPIWD4Pyo0Gl6itMxHhPycw1y1afYEUp59h6+K44k1J71djL6z6
+ quehTuVL8skx1J2X5zec6fFbyMCiBBOHv3h0I11IgSm5zCs9AerzHaa74UmFWa0N2QWdqjGb393
+ VQUKmH1AqdnfUGOXqZGqnO3xiOlm+N+skoGyIIgrN3e1gLrM3a+q11QZquMwXZCVqvQiVwbsEps
+ hazA/NAsJrfOfTJE29TFqXntaOTPsSp0Pg2EHpVB0H/NWd9WlXodLf0kiCcIdn24oy4qPjtcx8Q
+ RACdWdkVJSPysrZ6tWlONK6KtUNj9/huNAHGgBOtmqjkum7CzwlezILWCprgV4nVqfKKwvH7mwu 6tGg1kGezOvl9AA==
 X-Mailer: b4 0.14.2
-Message-ID: <20251202-define-rust-helper-v1-18-a2e13cbc17a6@google.com>
-Subject: [PATCH 18/46] rust: fs: add __rust_helper to helpers
+Message-ID: <20251202-define-rust-helper-v1-29-a2e13cbc17a6@google.com>
+Subject: [PATCH 29/46] rust: poll: add __rust_helper to helpers
 From: Alice Ryhl <aliceryhl@google.com>
 To: rust-for-linux@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>, 
@@ -106,21 +106,24 @@ Cc: Christian Brauner <brauner@kernel.org>
 Cc: Jan Kara <jack@suse.cz>
 Cc: linux-fsdevel@vger.kernel.org
 ---
- rust/helpers/fs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ rust/helpers/poll.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/rust/helpers/fs.c b/rust/helpers/fs.c
-index a75c9676337246ce532ef694e64ba9a7d7ad5842..789d60fb8908b99d5c50293cb7a3ec6c61e768f1 100644
---- a/rust/helpers/fs.c
-+++ b/rust/helpers/fs.c
-@@ -6,7 +6,7 @@
+diff --git a/rust/helpers/poll.c b/rust/helpers/poll.c
+index 7e5b1751c2d526f2dd467fcd61dcf49294d3c20d..78b3839b50f065a7604dd80bc0fdbb5d8c50b430 100644
+--- a/rust/helpers/poll.c
++++ b/rust/helpers/poll.c
+@@ -3,8 +3,9 @@
+ #include <linux/export.h>
+ #include <linux/poll.h>
  
- #include <linux/fs.h>
- 
--struct file *rust_helper_get_file(struct file *f)
-+__rust_helper struct file *rust_helper_get_file(struct file *f)
+-void rust_helper_poll_wait(struct file *filp, wait_queue_head_t *wait_address,
+-			   poll_table *p)
++__rust_helper void rust_helper_poll_wait(struct file *filp,
++					 wait_queue_head_t *wait_address,
++					 poll_table *p)
  {
- 	return get_file(f);
+ 	poll_wait(filp, wait_address, p);
  }
 
 -- 
