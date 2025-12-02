@@ -1,190 +1,159 @@
-Return-Path: <linux-fsdevel+bounces-70427-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70428-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30036C9A0D2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 02 Dec 2025 06:08:00 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88A3CC9A0D8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 02 Dec 2025 06:10:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11AD43A5113
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Dec 2025 05:07:58 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 025DF345BAF
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Dec 2025 05:10:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65D411DFDB8;
-	Tue,  2 Dec 2025 05:07:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 189012F657E;
+	Tue,  2 Dec 2025 05:10:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="a8mBqG/M";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="jXqhEPyG"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OR614oB+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A1FD1CD2C
-	for <linux-fsdevel@vger.kernel.org>; Tue,  2 Dec 2025 05:07:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF0521CD2C
+	for <linux-fsdevel@vger.kernel.org>; Tue,  2 Dec 2025 05:10:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764652072; cv=none; b=q6CcO4sToTO8R4CKaK/vDJODe2I/gZci3+/AWAfq3sG3qb9WApoqQ0ydBlcBCJ44B/52XYGQK+EQUMl9vjuc649QkUjYjVcn0I2hM5LvXdzbmxbjnsgMQ/JyGhPyYUY5wCdrkXs916HpO3MvP6Bu7urtxVAv8RUDi1I7Mt8elGo=
+	t=1764652251; cv=none; b=a1u0lJXtcFt0RleWKK/hNcVSJLuuxhkFZFRzlogo38iK9byYhs6NmU6ix1CNM3JZI4D9sNk7wC81gifpg5tSpgns8zEs0q/Lx64wp3/sIzvInMa+Qw9fVy3QwmzB07gytaam4vZIvRXRl0LNQiHfcpNCaTPFItLP2KF/+nRgff8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764652072; c=relaxed/simple;
-	bh=vDML9m+UxaGF5r1IhyFPtHXB15YBXn2gcIq2UL1CYfg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FKwa0k/0Fhwk8Nb7irBGQk4lKEd+SpK5BfZL1387AvjS90dC+tekuLzmwJEASA/SJ4a4jLXHoXyysd7BuYhOFuQQOybWCniq7kD6VrxNUZebepjL3VnIzKYy6bx6VGG6BvuaYjCEM5Vw7Xj6BXHG4EPtNhV1ZQKJNJWL1SIOmdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=a8mBqG/M; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=jXqhEPyG; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1764652069;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UeSHa2vVcmGoYrd3r8sFlYLUPMwEfaTwEKwTR4fP+Vo=;
-	b=a8mBqG/MFieoi+lXTgQe4yy9VuYZpiobgbh17eh9uHk8+lJcJDMTaILS+EPpbVHYbapV/U
-	QCT+Hsn1tY+z02kQXDdPFXNOkmbeBEAJOdMfC7YvYSInEORiVACu00HNs5PgWqyeVTdgOQ
-	eEPSpnqDL2lig4kl8lZu846YaD27Vcw=
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com
- [209.85.214.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-402-cPjD9pUNOv2tZ2x6y7HrJQ-1; Tue, 02 Dec 2025 00:07:48 -0500
-X-MC-Unique: cPjD9pUNOv2tZ2x6y7HrJQ-1
-X-Mimecast-MFC-AGG-ID: cPjD9pUNOv2tZ2x6y7HrJQ_1764652067
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-29848363458so93766865ad.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Dec 2025 21:07:48 -0800 (PST)
+	s=arc-20240116; t=1764652251; c=relaxed/simple;
+	bh=OOlnvxB//PY3/7GxBCPDOr4QsfmO+6hoKnoz5Dw6ifg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BFMYwW6+f7o6LIR0V5KmspWlSDimnYVw7/3LCOKDaGe9V6tdqmQdWJye1X03blRgiOAWXTwCkiJs+QMkDJH7iHd2DkKZL18KLM0s/MocpYemXbQ6O2MtzDR7v0wLh7N7FyIbNO43AJsTDKmc4hBh9ElOM7wm1HacB4Zo35lOYW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OR614oB+; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-640c6577120so8910421a12.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Dec 2025 21:10:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1764652067; x=1765256867; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=UeSHa2vVcmGoYrd3r8sFlYLUPMwEfaTwEKwTR4fP+Vo=;
-        b=jXqhEPyG2MxE+HLymS2ydoXvhJE2ZZM7gCXLpR/6u7XsVX09QmDkIAAqI4Q5FcL+kK
-         sRMsErwo2zk1XOD2wlitEv4JNlipLxCsAHvuKbmVtY4uFD9GABEU79Jkjmdk0UkHRMNT
-         UczzAhNClObnW0BuQZavp8eqS9jrzfWpZPV47dtZwQed/LclM54dXlHBMVi4A4C/dxBc
-         zWXE6WNRuk0/75fvQT37AuDTIyg7HiGxrOw8TEnbhhY9DojQReIHivlMAjC+HHsCUH0o
-         5woutfL+aOE2bKpNjEjB2+/pS0kJLuo4IC4Za84eVd4viS0y0I2Ph9au05EpnR1nlIWy
-         KvKg==
+        d=gmail.com; s=20230601; t=1764652248; x=1765257048; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2uBhanQ8KpJxSAW+O7JHC3+b6tU/9VSLrPWBsWn5J9M=;
+        b=OR614oB+nzGd7I/9sZ3F2Du3qDrtKK2qy6j2Qg8mJYSV3aOlIt4diH7XgklJEKBU6b
+         USrLpH8c1KyH2bhNQf0GtN5iQk8IsUUIwbvtAWqF6/kuSEroERv5eWxjGdp5CaRDCGg2
+         Bv3RS6MXTxX2QLAhVc6KoiNRicTCPIc6rQCwYs21YfqQ0WGX4gb7LZHBg6vv8T4xD3le
+         dtCiWMpBA+dwfdHtbcaYQ1m424JGmq6/zpa8n88Iua3gzpH50Tf5rtAKvniUjea44yRo
+         8tRyaAvRr0IfYyqrzwj3nbwvHCZ7rchIXB5tUDZKVflDW193d3QPdRmXF/nNB3NWWod+
+         mOZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764652067; x=1765256867;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UeSHa2vVcmGoYrd3r8sFlYLUPMwEfaTwEKwTR4fP+Vo=;
-        b=Bd2LOKVuCanoCJBjVnI+aPNQDefjrVGiAGQlwFeMX3J5tCLDlLx1ApE5DimzUKiOmu
-         Cp/Lrk2xyv2BCnp6/l8//lLblqQF7LvsRDyiE4Enbyjde43D7XboRfVVHfW/DFm8sMe3
-         UnpuzW/w/1ZcIWE2ZG4yxgQL1JMn560Ne6OOF0oJCWzkCdYIC6Ctrc4T468qroUvm8MI
-         Jr2TfbuXH5M6CoPCjp89krQQzZrySlQoVfFK9C/Jl738eyc6zmodBy4BsocZx7DHJGEg
-         i/V6+AyfXLyXtS1/AVJXZ8fCpj14zWhY5rWiaFtM3MXgVrqrai6Tp6iSyYC6hKHEQclG
-         cCEg==
-X-Forwarded-Encrypted: i=1; AJvYcCVNaanGRK1jtNXS3IYfVa6CMvZKKUx2h2h7in6V00BYvf3Se7J+IPKbMZBquPrPYEIFAoVN/oXpZswJLghv@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxas1YHa7j+gqRIxggX2binc2Od5KbPJASFUcaNQSxmsgb1aohP
-	Z1FR8v5oKksz1q7E9a0s/bzUfNONRwYv1tLzSCvQoApBfpirNJxZUvP1qkZCiby0psmsnerm7iC
-	Bz8Irlb0okKGAN8G7Z3SGQvzocFpMVrpK5jvRQKKgNEszwGSJO1Vs/n2+5gg6pjmTBTY=
-X-Gm-Gg: ASbGncvU9oVShTF2MqqTm+lqBAvUQsUn5dBG7knLSnLBr1tlA7KidtQ6hUzMpeqnD4Y
-	vo3j3f8XmWDPFH8IczywDZyZNiYA/6WIf+jm45VeFb1Q69XronLW4zb48ACllza/PJEQbsBlJU7
-	qsjy+joDkzzc47+1bDtBwJnNAPpMD4Ls3DJ8YB4PGUIuf99ewop77gQpnci13I6M1OmvebI//iA
-	5EoejScD4MfY9o3FTJPvCDz/dax2QurGhmePRrnQCqZD4FYMhMPe9fJqOSCT4dXUsRIixF1hYIK
-	0IXJ5GjiEhs0r5LbRC/oYvMWoq+pMEYl69rO1/4UEq+Z55XVBqotwTb22pP6KG5aHC9TO0QNNGA
-	iiwG9V4XJExhUx4DO0uSot4e+sm1CRCBt4gHJ+6YqGLcHFtU+vw==
-X-Received: by 2002:a17:903:b84:b0:290:cd9c:1229 with SMTP id d9443c01a7336-29b6bec4961mr409475575ad.19.1764652067236;
-        Mon, 01 Dec 2025 21:07:47 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFd7eTfczZwORLSJHT6qu06NI2nq5xDtGv3b8o/cmw+GmF8P8G58rrpr6KmXy+oW7FEZjWbVQ==
-X-Received: by 2002:a17:903:b84:b0:290:cd9c:1229 with SMTP id d9443c01a7336-29b6bec4961mr409475245ad.19.1764652066644;
-        Mon, 01 Dec 2025 21:07:46 -0800 (PST)
-Received: from dell-per750-06-vm-08.rhts.eng.pek2.redhat.com ([209.132.188.88])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29bce2e676esm138125475ad.0.2025.12.01.21.07.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Dec 2025 21:07:46 -0800 (PST)
-Date: Tue, 2 Dec 2025 13:07:41 +0800
-From: Zorro Lang <zlang@redhat.com>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: fstests@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH fstests v2 2/3] generic: add test for directory
- delegations
-Message-ID: <20251202050741.p6iakv5fbmnrzxmy@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
-References: <20251119-dir-deleg-v2-0-f952ba272384@kernel.org>
- <20251119-dir-deleg-v2-2-f952ba272384@kernel.org>
+        d=1e100.net; s=20230601; t=1764652248; x=1765257048;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=2uBhanQ8KpJxSAW+O7JHC3+b6tU/9VSLrPWBsWn5J9M=;
+        b=IQ4se6v8msChGWYStfYpLtzTTAi7k7Nng9872B8Qx3MgbkKQPqUDjI/OGk1108ifQl
+         KIzsEeBlTVCVZRijnr12MouqHvZuSxYwYuOAfDymt9dG66AUCBbRblM/+QobWH1N1Jc9
+         gq2SFvnpUT2qY2iWMr67/zNodwq38RyA2CEvcrElhw9wq3kJNrJwLyDeHT1sNQ39vXHr
+         mjoINOz3GVvILoZb5txhzsjwystZGK8waACnRflNY1AEafQQEc7V/S9I2NyerG3cutdJ
+         +wJgHnrbZO4yfqwEhavkryaXbbCs0pDXz3DnC+9haXlBBQIaA1KKRMpAIAplo+Ohs7oJ
+         TUYw==
+X-Forwarded-Encrypted: i=1; AJvYcCVBxUCjHtOx6eEWtbNyu/r/z276dYgO6icjLtUtcU+AhTOP3UJw2YfuIO35O+kWcU04HBBsEvfsymWE/aN4@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywd8JzSoZo/ykNQVSCkFTbGkt6jVUANra24Jx2IgHdlMD5sa6bl
+	8x1cQRV+3PPmzdkUMVzwxLnYFVqz5zBtETbF9D7w3OSQe91Ao0YWGHB94b3ksvPbDBZldbNpYQU
+	AIyXJN1MlGCKEpS//2hxjGRriRGYnOls=
+X-Gm-Gg: ASbGncutGPgkEDCz27CYMFJE2DXulk5q1k8/mr5myTKP3Ke6gTnB1m/g3wjupCKakTs
+	4UkTK6kJzM52nUESp14JVaDJaZ+nnAnip5LBA2GzcO56Ypr2IQodXvoxw0592ARMwC6B6srIySI
+	ghUOMqmOgY7fmXxmtju0qe7pcub7P2HNxpDxqpC9LTFZQDfomLpmRji71xjz5nPWWgRFniJdbht
+	CPkHALq9xt3DmnKTlHn1R34CVkNRLngSN1qUXP5xT44Tn43Dfpx8ly3zed2q82HD76uJZgCkF8r
+	6W37Dxn4s0q4eKg8k5/FR91mofZAtydsbkW0
+X-Google-Smtp-Source: AGHT+IFIf/Xj7rTWnWb+mhm0a3WMxYvrfX4MiJJiQvNY5K6hMBZniy2gIErDtqROizNqqtGWjObepk8eEYTZLq0rRgc=
+X-Received: by 2002:a05:6402:2708:b0:63c:334c:fbc7 with SMTP id
+ 4fb4d7f45d1cf-64554675419mr38455771a12.19.1764652247901; Mon, 01 Dec 2025
+ 21:10:47 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251119-dir-deleg-v2-2-f952ba272384@kernel.org>
+References: <20251201083226.268846-1-mjguzik@gmail.com> <20251201085117.GB3538@ZenIV>
+ <20251202023147.GA1712166@ZenIV>
+In-Reply-To: <20251202023147.GA1712166@ZenIV>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Tue, 2 Dec 2025 06:10:36 +0100
+X-Gm-Features: AWmQ_bkAD47ivpXrQznnvskPa4o2COXEmT2mlE9Rv9PpEuw-MLOU4Z_GIqB-RTI
+Message-ID: <CAGudoHGbYvSAq=eJySxsf-AqkQ+ne_1gzuaojidA-GH+znw2hw@mail.gmail.com>
+Subject: Re: [PATCH v2] fs: hide names_cache behind runtime const machinery
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: brauner@kernel.org, jack@suse.cz, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 19, 2025 at 10:43:04AM -0500, Jeff Layton wrote:
-> With the advent of directory delegation support coming to the kernel,
-> add support for testing them to the existing locktest.c program, and add
-> testcases for all of the different ways that they can be broken.
-> 
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
+On Tue, Dec 2, 2025 at 3:31=E2=80=AFAM Al Viro <viro@zeniv.linux.org.uk> wr=
+ote:
+>         FWIW, I wonder if we would be better off with the following trick=
+:
+> add
+>         struct kmem_cache *preallocated;
+> to struct kmem_cache_args.  Semantics: if the value is non-NULL, it must
+> point to an unitialized object of type struct kmem_cache; in that case
+> __kmem_cache_create_args() will use that object (and return its address
+> on success) instead of allocating one from kmem_cache.  kmem_cache_destro=
+y()
+> should not be called for it.
+>
+> It's very easy to do, AFAICS:
+>         1) non-NULL =3D> have __kmem_cache_create_args() skip the __kmem_=
+cache_alias()
+> path.
+>         2) non-NULL =3D> have create_cache() zero what it points to and u=
+se that pointer
+> instead of calling kmem_cache_zalloc()
+>         3) non-NULL =3D> skip kmem_cache_free() at create_cache() out_fre=
+e_cache:
+>
+> "Don't do kmem_cache_destroy() to those" might or might not be worth rela=
+xing -
+> I hadn't looked into the lifetime issues for kmem_cache instances, no ide=
+a
+> how painful would that be; for core kernel caches it's not an issue, obvi=
+ously.
+> For modules it is, but then runtime_constant machinery is not an option t=
+here
+> either.
 
-Hi Jeff,
+So IIUC whatever APIs aside, the crux of this idea is to have
+kmem_cache objs defined instead of having pointers to them, as in:
+-struct kmem_cache *names_cachep __ro_after_init;
++struct kmem_cache names_cachep __ro_after_init;
 
-Glad to get you patches to fstests again :)
+I thought about doing it that way prior to runtime const machinery,
+but given that said machinery exists I don't know if that's
+justifiable.
 
->  common/locktest       |  14 +-
->  common/rc             |  10 ++
->  src/locktest.c        | 423 ++++++++++++++++++++++++++++++++++++++++++++++++--
->  tests/generic/999     |  22 +++
->  tests/generic/999.out |   2 +
->  5 files changed, 456 insertions(+), 15 deletions(-)
-> 
+To elaborate, while it apparently was created as a hack and does not
+work for modules, it does not have to be that way and I would argue it
+should be patched up to a fully-fleshed out solution.
 
-[snip]
+Everything marked __ro_after_init is eligible for being patched up to
+avoid being accessed, including numerous kmem caches.
 
-> diff --git a/tests/generic/999 b/tests/generic/999
-> new file mode 100755
-> index 0000000000000000000000000000000000000000..1392e98c937d65d2d6402f1eb5822f22bc265342
-> --- /dev/null
-> +++ b/tests/generic/999
-> @@ -0,0 +1,22 @@
-> +#! /bin/bash
-> +# SPDX-License-Identifier: GPL-2.0
-> +# Copyright (c) 2019 Intel, Corp.  All Rights Reserved.
-> +#
-> +# FSQA Test No. XXX
+Apart from those an example frequently read var is
+percpu_counter_batch, which for vfs comes into play very time a new
+file obj is allocated. The thing is also used by some of the
+filesystems.
 
-     FS QA Test No. 999
+So if one was to pretend for a minute runtime-const *does* work for
+modules and there are no header mess issues and usage is popping up
+everywhere, is there a reason to handle kmem differently?
 
-Please don't change the format which xfstests/new generate. Other
-script (e.g. tools/mvtest) depends on that :)
+Both with your idea and the runtime thing extra changes would be
+needed. in your case the thing at hand is no longer a pointer and all
+consumers of a given cache need to get adjusted. If instead one went
+the runtime route, some macros could be added for syntactic sugar to
+provide the relevant accessor + init, which should be very easy to do
+by wrapping existing code.
 
-> +#
-> +# lease test
-> +#
-> +. ./common/preamble
-> +_begin_fstest auto quick
-> +
-> +# Import common functions.
-> +. ./common/filter
-> +. ./common/locktest
-> +
-> +_require_test
-> +_require_test_fcntl_advisory_locks
-> +_require_test_fcntl_setdeleg
-> +
-> +_run_dirleasetest
-> +
-> +exit
-
-_exit 0
-
-Oh, I guess you didn't use ./new to create this test case, you copied it from
-g/131 or g/571. I'd recommend using ./new to create a new test case :)
-
-> diff --git a/tests/generic/999.out b/tests/generic/999.out
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..c2a252d46cdcd730cf1ed2c503fa9631e9fcdd06
-> --- /dev/null
-> +++ b/tests/generic/999.out
-> @@ -0,0 +1,2 @@
-> +QA output created by 999
-> +success!
-> 
-> -- 
-> 2.51.1
-> 
-> 
-
+So I would vote against your idea, but it's the call of the mm folk.
 
