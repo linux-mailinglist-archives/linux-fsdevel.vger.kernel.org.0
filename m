@@ -1,51 +1,51 @@
-Return-Path: <linux-fsdevel+bounces-70430-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70431-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AD8AC9A1C1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 02 Dec 2025 06:41:36 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25994C9A1DC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 02 Dec 2025 06:45:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 906443A5D58
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Dec 2025 05:41:16 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C3A5F3463BB
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Dec 2025 05:45:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1DFB2F691C;
-	Tue,  2 Dec 2025 05:41:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 285692FCC01;
+	Tue,  2 Dec 2025 05:45:33 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60CC32951A7;
-	Tue,  2 Dec 2025 05:41:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF0BA2FC00D;
+	Tue,  2 Dec 2025 05:45:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764654072; cv=none; b=hXfmEGEzTEtlSI9eya/u+m3bsg0RB+z/CFT3xxgP6fmGPp70ybkrQzqLHRTDog94xlYyJXcVkXcNz4IqNgT3h7c/XyGcpnXmT4DEGb7dQyy+LTyBI0GOFXTpD1KsBtRn4UGD21JdB1ZNpp9OwdgQbu5fFU8Te0mzTpyUf3pTTMg=
+	t=1764654332; cv=none; b=Y3EiJiKhgAdLtgYPuEQ+H2nhHagN8YARrHGG6Fw710pX583w7D2T91R32S8i2veqPxZorWulN9fS2of79d1Iw2O3jZii2NVov1cXcQm4ggr2NCe36DOFRWOHfSLEEIkcYjnhOa18+ZhJgt2UdIF5zO48J42mSwXThM1Wc5tWtak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764654072; c=relaxed/simple;
-	bh=ygwkRLf7Hxrgygs5etYPgdBT/a1ZHnFxKchbjkoqSrE=;
+	s=arc-20240116; t=1764654332; c=relaxed/simple;
+	bh=+SbCOUyDBS9oScmHG8r5Ug1Ijsaw30yLFTBn3TXaVPI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Tdagto4BBDNxWd8OTSfUEiQygm2Wn8H3Mbsc6L9gsh1h/kZO9TFqisCoj7CoBhqcfC4Q5vrJq8p/soSElCbOEZazGlASBsdoraQniTAEjxVgBhdzB0qX79zJqyvcGFqsTeQZEG63Z2+bItZ1h+Ny8CRxn4SCh8dweNYGADH7ytI=
+	 Content-Type:Content-Disposition:In-Reply-To; b=Da7CzQ0Zu0QL6XfTmgyxPZsDWGEplz1nAowqqsnbbqOkPTsvzNKiRT4ZHl83tRH+5kzQ7kuHhZhmyIxUKFNnGVmu/JCpY6SlZUOFq4UkCAZAHc2EOCGtCnMPqN+EHlJ+53QKwhSO4iNJw/3IfzWm1MXQmi7taHWUA/sjXzgmsuA=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
 Received: by verein.lst.de (Postfix, from userid 2407)
-	id A291168AA6; Tue,  2 Dec 2025 06:41:05 +0100 (CET)
-Date: Tue, 2 Dec 2025 06:41:05 +0100
+	id 89BC868AA6; Tue,  2 Dec 2025 06:45:24 +0100 (CET)
+Date: Tue, 2 Dec 2025 06:45:24 +0100
 From: Christoph Hellwig <hch@lst.de>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Namjae Jeon <linkinjeon@kernel.org>, viro@zeniv.linux.org.uk,
-	brauner@kernel.org, tytso@mit.edu, jack@suse.cz, djwong@kernel.org,
+To: Namjae Jeon <linkinjeon@kernel.org>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, tytso@mit.edu,
+	willy@infradead.org, jack@suse.cz, djwong@kernel.org,
 	josef@toxicpanda.com, sandeen@sandeen.net, rgoldwyn@suse.com,
 	xiang@kernel.org, dsterba@suse.com, pali@kernel.org,
 	ebiggers@kernel.org, neil@brown.name, amir73il@gmail.com,
 	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
 	iamjoonsoo.kim@lge.com, cheol.lee@lge.com, jay.sim@lge.com,
-	gunho.lee@lge.com
-Subject: Re: [PATCH v2 01/11] ntfsplus: in-memory, on-disk structures and
- headers
-Message-ID: <20251202054105.GA15524@lst.de>
-References: <20251127045944.26009-1-linkinjeon@kernel.org> <20251127045944.26009-2-linkinjeon@kernel.org> <aS1AUP_KpsJsJJ1q@infradead.org> <aS1WGgLDIdkI4cfj@casper.infradead.org> <CAKYAXd-UO=E-AXv4QiwY6svgjdO59LsW_4T6YcmJuW9nXZJEzg@mail.gmail.com> <aS16g_mwGHqbCK5g@infradead.org> <aS2AAKmGcNYgJzx6@casper.infradead.org>
+	gunho.lee@lge.com, Hyunchul Lee <hyc.lee@gmail.com>
+Subject: Re: [PATCH v2 06/11] ntfsplus: add iomap and address space
+ operations
+Message-ID: <20251202054524.GB15524@lst.de>
+References: <20251127045944.26009-1-linkinjeon@kernel.org> <20251127045944.26009-7-linkinjeon@kernel.org> <aS1FVIfE0Ntgbr5I@infradead.org> <CAKYAXd9YW_UL2uA8anoVCw+a818y5dwtn3xAJJQc=_p32GA=Zw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -54,43 +54,44 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aS2AAKmGcNYgJzx6@casper.infradead.org>
+In-Reply-To: <CAKYAXd9YW_UL2uA8anoVCw+a818y5dwtn3xAJJQc=_p32GA=Zw@mail.gmail.com>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Mon, Dec 01, 2025 at 11:46:08AM +0000, Matthew Wilcox wrote:
-> On Mon, Dec 01, 2025 at 03:22:43AM -0800, Christoph Hellwig wrote:
-> > On Mon, Dec 01, 2025 at 07:13:49PM +0900, Namjae Jeon wrote:
-> > > CPU intensive spinning only occurs if signals are delivered extremely
-> > > frequently...
-> > > Are there any ways to improve this EINTR handling?
-> > > Thanks!
-> > 
-> > Have an option to not abort when fatal signals are pending?
-> 
-> I'd rather not add a sixth argument to do_read_cache_folio().
+On Tue, Dec 02, 2025 at 09:47:17AM +0900, Namjae Jeon wrote:
+> Nothing special reason, It was to use existing ones instead of new,
+> complex implementations. NTFS metadata is treated as a file, and
+> handling it via the folio(page) API allows the driver to easily gain
+> performance benefits, such as readahead.
 
-I can understand that, OTOH unexpected failure modes aren't nice either.
+On the one hand it does, on the other hand at least our experience
+is that the user data file algorithm for things like readahead and
+cache eviction policies worked pretty poorly for metadata in XFS.
+Of course I don't actually know if the same applies to ntfs.
 
-> And I'm not sure the right question is being asked here.  Storage can
-> disappear at any moment -- somebody unplugs the USB device, the NBD
-> device that's hosting the filesystem experiences a network outage, etc.
+> > From code in other patches is looks like ntfs never switches between
+> > compressed and non-compressed for live inodes?  In that case the
+> > separate aops should be fine, as switching between them at runtime
+> > would involve races.  Is the compression policy per-directory?
+> Non-compressed files can actually be switched to compressed files and
+> vice versa via setxattr at runtime. I will check the race handling
+> around aop switching again. And the compression policy is per-file,
+> not per-directory.
 
-Yes, and we fully need to handle that.
+In that case you probably want to use the same set of address space
+(and other operations) and do runtime switching inside the method.
 
-> So every filesystem _should_ handle fatal signals gracefully.
+> >
+> > Again curious why we need special zeroing code in the file system.
+> To prevent reading garbage data after a new cluster allocation, we
+> must zero out the cluster. The cluster size can be up to 2MB, I will
+> check if that's possible through iomap.
 
-Absolutely,
+Ouch, that's a lot of zeroing.  But yeah, now that you mention it
+XFS actually has the same issue with large RT extents.  Although we
+create them as unwritten extents, i.e. disk allocations that always
+return zeroes.  I guess ntfs doesn't have that.  For DAX access
+there actually is zeroing in the allocator, which is probably
+similar to what is done here, just always using the iomap-based
+code (check for xfs_zero_range and callers).
 
-> The task
-> must die, even if it's in the middle of reading metadata.  I know that's
-> not always the easiest thing to do, but it is the right thing to do.
-
-A few fatal_signal_pending isn't helping with that.  What is needed is
-to make sure all error completions happen in this case, preferably
-in a timely way so that all resources get unlocked and cleaned up.
-
-A strategic fatal_signal_pending() here and there can help to speed this
-up, but is has not effect on the fundamentals of file system error
-handling.  In fact in some places it will make the error handling much
-harder because you now have to handle extra corner cases.
 
