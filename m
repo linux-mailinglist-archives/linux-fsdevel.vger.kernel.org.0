@@ -1,159 +1,178 @@
-Return-Path: <linux-fsdevel+bounces-70428-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70429-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88A3CC9A0D8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 02 Dec 2025 06:10:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C510DC9A0E1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 02 Dec 2025 06:12:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 025DF345BAF
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Dec 2025 05:10:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07A9C3A511A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Dec 2025 05:12:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 189012F657E;
-	Tue,  2 Dec 2025 05:10:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 808F22F6565;
+	Tue,  2 Dec 2025 05:12:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OR614oB+"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="O0zNoxUm";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="CSOOA/u2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF0521CD2C
-	for <linux-fsdevel@vger.kernel.org>; Tue,  2 Dec 2025 05:10:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46FD81CD2C
+	for <linux-fsdevel@vger.kernel.org>; Tue,  2 Dec 2025 05:12:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764652251; cv=none; b=a1u0lJXtcFt0RleWKK/hNcVSJLuuxhkFZFRzlogo38iK9byYhs6NmU6ix1CNM3JZI4D9sNk7wC81gifpg5tSpgns8zEs0q/Lx64wp3/sIzvInMa+Qw9fVy3QwmzB07gytaam4vZIvRXRl0LNQiHfcpNCaTPFItLP2KF/+nRgff8=
+	t=1764652334; cv=none; b=YCfXYYCpNyqmJjNoM3KcD+jvqm6emQATPuY4+PmxG7gn4uUIiW42TMBw8JSDOUMIATxnWRJ2++q6x9fTnUXahmr2K+ASl7irMKPsMarnZCUkVZ3wV+Oc54n7Ed2PKS+swRAXtXCDdZnpJ4S/ive/rn8f0H4MwSLdJGEH7kWS94c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764652251; c=relaxed/simple;
-	bh=OOlnvxB//PY3/7GxBCPDOr4QsfmO+6hoKnoz5Dw6ifg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BFMYwW6+f7o6LIR0V5KmspWlSDimnYVw7/3LCOKDaGe9V6tdqmQdWJye1X03blRgiOAWXTwCkiJs+QMkDJH7iHd2DkKZL18KLM0s/MocpYemXbQ6O2MtzDR7v0wLh7N7FyIbNO43AJsTDKmc4hBh9ElOM7wm1HacB4Zo35lOYW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OR614oB+; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-640c6577120so8910421a12.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Dec 2025 21:10:49 -0800 (PST)
+	s=arc-20240116; t=1764652334; c=relaxed/simple;
+	bh=ihMRFFibkx4iZAo+T769NF0X6xtfec6KCzeaiEyNtFY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Kj2b3H74mfhxvbDMBtbEYW/Iu+cRPMw5jK2tbz6i6g1+VK5WxNe65oldFp6fMvPbUWiMoSjIN4RzYggLwiErD7gmxAO4U49GDua3Kcsscd6M3rNCpZ5MJ5UTiTUjaVJ81I8ku7jfQgOvtnXc2ElyiSAMuz4pTVkiouv/YLc1hPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=O0zNoxUm; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=CSOOA/u2; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1764652332;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Vk+CkeVt6vIORHD5FrSK0jxLpo6cDXbgc2E73tBRSUI=;
+	b=O0zNoxUmKkSIhFEzrThAfFgrb3ll6BpKe+MtoORZfoyDvPuRphnUx3pxWSY4v+T5Ske1Dy
+	jXKCi0y8CAa48isCSK89lYYvgSQBl7F3v1BBO07vniE3PIayRWyKl+itLnEDeK+rK565iZ
+	Fjt7ZcO31p+iQmZC1ifQzmwHl+NRwLg=
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
+ [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-510-bVhS-XpHM-a6S9GLSxiy1Q-1; Tue, 02 Dec 2025 00:12:10 -0500
+X-MC-Unique: bVhS-XpHM-a6S9GLSxiy1Q-1
+X-Mimecast-MFC-AGG-ID: bVhS-XpHM-a6S9GLSxiy1Q_1764652330
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-3438b1220bcso5028598a91.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Dec 2025 21:12:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1764652248; x=1765257048; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2uBhanQ8KpJxSAW+O7JHC3+b6tU/9VSLrPWBsWn5J9M=;
-        b=OR614oB+nzGd7I/9sZ3F2Du3qDrtKK2qy6j2Qg8mJYSV3aOlIt4diH7XgklJEKBU6b
-         USrLpH8c1KyH2bhNQf0GtN5iQk8IsUUIwbvtAWqF6/kuSEroERv5eWxjGdp5CaRDCGg2
-         Bv3RS6MXTxX2QLAhVc6KoiNRicTCPIc6rQCwYs21YfqQ0WGX4gb7LZHBg6vv8T4xD3le
-         dtCiWMpBA+dwfdHtbcaYQ1m424JGmq6/zpa8n88Iua3gzpH50Tf5rtAKvniUjea44yRo
-         8tRyaAvRr0IfYyqrzwj3nbwvHCZ7rchIXB5tUDZKVflDW193d3QPdRmXF/nNB3NWWod+
-         mOZA==
+        d=redhat.com; s=google; t=1764652329; x=1765257129; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Vk+CkeVt6vIORHD5FrSK0jxLpo6cDXbgc2E73tBRSUI=;
+        b=CSOOA/u2DlQ+D7YPrFrnNkfvzey/AK/swv1xixLaivSGNde71xStTioyMgyfsPuipE
+         B7tkIsVMkgEQ9c0HX6gMfL0Nv7YadmjuXqP6CWUdUGEcsoHA8ScJARzoWcfQJnqRsu4p
+         hp3ALUOkP5ulPrXVAucuWFZeX+edrR0sKwACnUf0m6Rh1XsGNZvS8oetGjYQjrNU2e55
+         2rOnIva1939iUMcZOSe1qO6TifUzCf0erLV4Tzq/ZbIlffUQ3bXr2AOCLdijWD2o8mc5
+         +bqHBdjkwaXUxgm9UDvV+aNAhb3o0PtE4HBQDQKdqShX5KOtLq2etvcwKDkU46KxB7gQ
+         Fz0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764652248; x=1765257048;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=2uBhanQ8KpJxSAW+O7JHC3+b6tU/9VSLrPWBsWn5J9M=;
-        b=IQ4se6v8msChGWYStfYpLtzTTAi7k7Nng9872B8Qx3MgbkKQPqUDjI/OGk1108ifQl
-         KIzsEeBlTVCVZRijnr12MouqHvZuSxYwYuOAfDymt9dG66AUCBbRblM/+QobWH1N1Jc9
-         gq2SFvnpUT2qY2iWMr67/zNodwq38RyA2CEvcrElhw9wq3kJNrJwLyDeHT1sNQ39vXHr
-         mjoINOz3GVvILoZb5txhzsjwystZGK8waACnRflNY1AEafQQEc7V/S9I2NyerG3cutdJ
-         +wJgHnrbZO4yfqwEhavkryaXbbCs0pDXz3DnC+9haXlBBQIaA1KKRMpAIAplo+Ohs7oJ
-         TUYw==
-X-Forwarded-Encrypted: i=1; AJvYcCVBxUCjHtOx6eEWtbNyu/r/z276dYgO6icjLtUtcU+AhTOP3UJw2YfuIO35O+kWcU04HBBsEvfsymWE/aN4@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywd8JzSoZo/ykNQVSCkFTbGkt6jVUANra24Jx2IgHdlMD5sa6bl
-	8x1cQRV+3PPmzdkUMVzwxLnYFVqz5zBtETbF9D7w3OSQe91Ao0YWGHB94b3ksvPbDBZldbNpYQU
-	AIyXJN1MlGCKEpS//2hxjGRriRGYnOls=
-X-Gm-Gg: ASbGncutGPgkEDCz27CYMFJE2DXulk5q1k8/mr5myTKP3Ke6gTnB1m/g3wjupCKakTs
-	4UkTK6kJzM52nUESp14JVaDJaZ+nnAnip5LBA2GzcO56Ypr2IQodXvoxw0592ARMwC6B6srIySI
-	ghUOMqmOgY7fmXxmtju0qe7pcub7P2HNxpDxqpC9LTFZQDfomLpmRji71xjz5nPWWgRFniJdbht
-	CPkHALq9xt3DmnKTlHn1R34CVkNRLngSN1qUXP5xT44Tn43Dfpx8ly3zed2q82HD76uJZgCkF8r
-	6W37Dxn4s0q4eKg8k5/FR91mofZAtydsbkW0
-X-Google-Smtp-Source: AGHT+IFIf/Xj7rTWnWb+mhm0a3WMxYvrfX4MiJJiQvNY5K6hMBZniy2gIErDtqROizNqqtGWjObepk8eEYTZLq0rRgc=
-X-Received: by 2002:a05:6402:2708:b0:63c:334c:fbc7 with SMTP id
- 4fb4d7f45d1cf-64554675419mr38455771a12.19.1764652247901; Mon, 01 Dec 2025
- 21:10:47 -0800 (PST)
+        d=1e100.net; s=20230601; t=1764652329; x=1765257129;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Vk+CkeVt6vIORHD5FrSK0jxLpo6cDXbgc2E73tBRSUI=;
+        b=ncr6DvAKWm+LC6OyAJcPd6Rar3V571FUa62ckwpAxTC9ftBKEsi2HYynXu6RcNASWb
+         QDL9ff8lNgqs1AheeE7mKcd0ossCdRNcF/fLfBp4x7iHqphTGCKQTGPBkwVM80EGNnwu
+         8RtaJ18F3xjqLLDsOgZ1bWQvrquEmnuM7cdC9qvoR49U23n5RqLaxL1nVpWKlyR+fQ1L
+         teScYlRVKrycRCk1Pkza3nCKvChUNQxgWLU5ZzW6hBcOAoC5WHYiVnEX0+WwvyowAvYa
+         Pqw580DzFlxByTER4n6B5aFPJ4fIOS/SL96wn1ppj1kGNeItiyQtdaoimjbqbsIpWBOw
+         Gapg==
+X-Forwarded-Encrypted: i=1; AJvYcCXARQNPhqk7jF9eM9xlkbVqN8t6HEEfSt7HLCoI6qvjtjfxNh8261Zdu8CTCXqNjBNOXgVfq1XYFjZXNQy5@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkcnKuRrjvJ7gig1aQNsm6b2zuhan9MnZoc3P7Fp5xR8ITnpKQ
+	KLkT25MWIBhhwKQrLRnqvVtBrWAcnX5E47hSX8+7taRzpQ2wt/adIE54ZxIYMliJqcGDfFFnJYR
+	E8ltbsWzrsEg+kymHnjKotyRCO/Vbv8zQ11fxe7Uwq7JEwI2L8dT6AKEW+Jo4eCcQwtE/b6p28j
+	c=
+X-Gm-Gg: ASbGncsgFmALXLl4IcIrxG8cucLGlKG/P1uJYGwPvCLzirwjA9wjMd3Wx5NzzVgRym7
+	Ppc0fXZDMxlDJRy+3d9Jtcu2FrMwGgt/FYXd0NXWmZ/Qgho80EKwy6tyPYcfDqKAnFwMzXcO5+K
+	qgatLr3fylrOIE0oZRkqlexUe818TUzwlnTA1+4NCwZNHci+YX2osBbQR4qHTTJnMEO1JJcI+u6
+	Qz/hK60edn9VsNUarJJR4NBzhJyAuTxDbQKDTF1qIiHniaQXHSy1xKrdpiTWgP+PwsLePjclrNf
+	XeU3nJNmkN/FBGgJHH+aPnDAxxfzio+AbOe86RuaeAYyFSEO+Ly0iUDi4JE/t1NsvKM7MFXZxil
+	bGVmuqhzdpIywy0rOT9kuPnyq0TfAeiJuYEb0+MF4tOA751cQ8A==
+X-Received: by 2002:a17:90b:4a4e:b0:33b:bed8:891c with SMTP id 98e67ed59e1d1-3475ed515cfmr26384116a91.23.1764652329130;
+        Mon, 01 Dec 2025 21:12:09 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHux/qd0DXAzACnKqI92pLYuMfCCxCYJaKOo2Zi7xT1CdUkxKWNgLE3HB77yVmOBRmOe+dtew==
+X-Received: by 2002:a17:90b:4a4e:b0:33b:bed8:891c with SMTP id 98e67ed59e1d1-3475ed515cfmr26384080a91.23.1764652328684;
+        Mon, 01 Dec 2025 21:12:08 -0800 (PST)
+Received: from dell-per750-06-vm-08.rhts.eng.pek2.redhat.com ([209.132.188.88])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3476a7e8b65sm18598669a91.17.2025.12.01.21.12.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Dec 2025 21:12:08 -0800 (PST)
+Date: Tue, 2 Dec 2025 13:12:04 +0800
+From: Zorro Lang <zlang@redhat.com>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: fstests@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH fstests v2 3/3] generic: add tests for file delegations
+Message-ID: <20251202051204.nm2oplwits7lfq6z@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+References: <20251119-dir-deleg-v2-0-f952ba272384@kernel.org>
+ <20251119-dir-deleg-v2-3-f952ba272384@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251201083226.268846-1-mjguzik@gmail.com> <20251201085117.GB3538@ZenIV>
- <20251202023147.GA1712166@ZenIV>
-In-Reply-To: <20251202023147.GA1712166@ZenIV>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Tue, 2 Dec 2025 06:10:36 +0100
-X-Gm-Features: AWmQ_bkAD47ivpXrQznnvskPa4o2COXEmT2mlE9Rv9PpEuw-MLOU4Z_GIqB-RTI
-Message-ID: <CAGudoHGbYvSAq=eJySxsf-AqkQ+ne_1gzuaojidA-GH+znw2hw@mail.gmail.com>
-Subject: Re: [PATCH v2] fs: hide names_cache behind runtime const machinery
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: brauner@kernel.org, jack@suse.cz, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251119-dir-deleg-v2-3-f952ba272384@kernel.org>
 
-On Tue, Dec 2, 2025 at 3:31=E2=80=AFAM Al Viro <viro@zeniv.linux.org.uk> wr=
-ote:
->         FWIW, I wonder if we would be better off with the following trick=
-:
-> add
->         struct kmem_cache *preallocated;
-> to struct kmem_cache_args.  Semantics: if the value is non-NULL, it must
-> point to an unitialized object of type struct kmem_cache; in that case
-> __kmem_cache_create_args() will use that object (and return its address
-> on success) instead of allocating one from kmem_cache.  kmem_cache_destro=
-y()
-> should not be called for it.
->
-> It's very easy to do, AFAICS:
->         1) non-NULL =3D> have __kmem_cache_create_args() skip the __kmem_=
-cache_alias()
-> path.
->         2) non-NULL =3D> have create_cache() zero what it points to and u=
-se that pointer
-> instead of calling kmem_cache_zalloc()
->         3) non-NULL =3D> skip kmem_cache_free() at create_cache() out_fre=
-e_cache:
->
-> "Don't do kmem_cache_destroy() to those" might or might not be worth rela=
-xing -
-> I hadn't looked into the lifetime issues for kmem_cache instances, no ide=
-a
-> how painful would that be; for core kernel caches it's not an issue, obvi=
-ously.
-> For modules it is, but then runtime_constant machinery is not an option t=
-here
-> either.
+On Wed, Nov 19, 2025 at 10:43:05AM -0500, Jeff Layton wrote:
+> Mostly the same ones as leases, but some additional tests to validate
+> that they are broken on metadata changes.
+> 
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>  common/locktest       |   5 ++
+>  src/locktest.c        | 202 +++++++++++++++++++++++++++++++++++++++++++++++++-
+>  tests/generic/998     |  22 ++++++
+>  tests/generic/998.out |   2 +
+>  4 files changed, 229 insertions(+), 2 deletions(-)
+> 
 
-So IIUC whatever APIs aside, the crux of this idea is to have
-kmem_cache objs defined instead of having pointers to them, as in:
--struct kmem_cache *names_cachep __ro_after_init;
-+struct kmem_cache names_cachep __ro_after_init;
+[snip]
 
-I thought about doing it that way prior to runtime const machinery,
-but given that said machinery exists I don't know if that's
-justifiable.
+> diff --git a/tests/generic/998 b/tests/generic/998
+> new file mode 100755
+> index 0000000000000000000000000000000000000000..5e7e62137ba3a52c62718f9f674094a107e3edca
+> --- /dev/null
+> +++ b/tests/generic/998
+> @@ -0,0 +1,22 @@
+> +#! /bin/bash
+> +# SPDX-License-Identifier: GPL-2.0
+> +# Copyright (c) 2019 Intel, Corp.  All Rights Reserved.
+> +#
+> +# FSQA Test No. XXX
+> +#
+> +# file delegation test
+> +#
+> +. ./common/preamble
+> +_begin_fstest auto quick
 
-To elaborate, while it apparently was created as a hack and does not
-work for modules, it does not have to be that way and I would argue it
-should be patched up to a fully-fleshed out solution.
+Same review points with patch 2/3. And I'm wondering if we these common/locktest
+related test cases should be in "locks" (refer to doc/group-names.txt) group.
 
-Everything marked __ro_after_init is eligible for being patched up to
-avoid being accessed, including numerous kmem caches.
+Thanks,
+Zorro
 
-Apart from those an example frequently read var is
-percpu_counter_batch, which for vfs comes into play very time a new
-file obj is allocated. The thing is also used by some of the
-filesystems.
+> +
+> +# Import common functions.
+> +. ./common/filter
+> +. ./common/locktest
+> +
+> +_require_test
+> +_require_test_fcntl_advisory_locks
+> +_require_test_fcntl_setdeleg
+> +
+> +_run_filedelegtest
+> +
+> +exit
+> diff --git a/tests/generic/998.out b/tests/generic/998.out
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..b65a7660fea895dc4d60cec8fabe7be1695beabe
+> --- /dev/null
+> +++ b/tests/generic/998.out
+> @@ -0,0 +1,2 @@
+> +QA output created by 998
+> +success!
+> 
+> -- 
+> 2.51.1
+> 
+> 
 
-So if one was to pretend for a minute runtime-const *does* work for
-modules and there are no header mess issues and usage is popping up
-everywhere, is there a reason to handle kmem differently?
-
-Both with your idea and the runtime thing extra changes would be
-needed. in your case the thing at hand is no longer a pointer and all
-consumers of a given cache need to get adjusted. If instead one went
-the runtime route, some macros could be added for syntactic sugar to
-provide the relevant accessor + init, which should be very easy to do
-by wrapping existing code.
-
-So I would vote against your idea, but it's the call of the mm folk.
 
