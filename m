@@ -1,151 +1,196 @@
-Return-Path: <linux-fsdevel+bounces-70463-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70464-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D1C4C9C07D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 02 Dec 2025 16:52:38 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1D94C9C0D9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 02 Dec 2025 16:58:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7FE13A4EBD
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Dec 2025 15:52:33 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0D9824E3EE0
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Dec 2025 15:58:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A40D322C89;
-	Tue,  2 Dec 2025 15:52:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB05A3242DB;
+	Tue,  2 Dec 2025 15:58:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DhmpyZ2n"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MR1mpnrN";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="gTTeoTFE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BD351EB193
-	for <linux-fsdevel@vger.kernel.org>; Tue,  2 Dec 2025 15:52:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BA05324707
+	for <linux-fsdevel@vger.kernel.org>; Tue,  2 Dec 2025 15:57:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764690750; cv=none; b=WfeU+K/iF8DlaX2/g7ktcUx3IZ61Suy7dmDN9uq/nYi4LzWFl0RuhMVEz1RG8rqNlRrKYOePZGjyNh02YiIwCRFNniQdITSagB+HafyM+lqS365fiOfZdBQUkRWwV0UIuyU0fkO80aXgvUbFXhFrCb1NnVVGg1bNyf+Lig/pDMY=
+	t=1764691080; cv=none; b=kaMoVbIzcXCxsD5r8jJ9SQf+VmHZhUsPMSGmfUZIP581lc7xcdDsKCGSGyF2DtJ0cklB1iwmG5fjrd/XPQOvWNRViorL5HlyuyUuOGriLdJaGQibfapRNHAehpq2atDYIR6FU64KBva1s64OK6+nw298ZMeSSNMSjgedyf84hOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764690750; c=relaxed/simple;
-	bh=GkBYoUW2qrN93TUysIlXM/ON6wKoM5tpeQF1AMakzqM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YvqS+o0Mk9ZFZ56Q4l48m00YKqQBYXJxU9nKFw/hzYdX5eFMTOTdci0COTPCATcqyswCZiXRDB9E8ObpUOAT1YxQ1dIK+YyRsX5pGQ0hFZ5zCONlMizUSNeAXomfLmbl4efV/SO7Vib/yJYDyo5Sk4TENSUgzVd0DZb7YIRStss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DhmpyZ2n; arc=none smtp.client-ip=209.85.210.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-7c76f65feb5so4088546a34.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 02 Dec 2025 07:52:27 -0800 (PST)
+	s=arc-20240116; t=1764691080; c=relaxed/simple;
+	bh=rX2IgrIqcF6IEM7gSm025k9RsEr644ZeRcwFDAA/X3o=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=aVKCnrNWd7li+Ze53NL5WV6s6C0jStpEfprOIpalolMbZRfmnBDp5bDG1UdckzXYVMPTBlB1PNPeXd0fqrbHdQAUuQ/C/Ro0GWHP++k88it6EvzrhIVxbRF+iidZU1BtUlCqx+zAw3nw+Nn8/tni0+w1yPwHoe7qlogstEgJoJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MR1mpnrN; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=gTTeoTFE; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1764691077;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=K+JZDDX0YSxfiuatTCZt13y1SraeSniBJJpMPYFkVF4=;
+	b=MR1mpnrNYaLuIcclrBA1ybcBbJPbwRaKTGalfSVcdJP9UJhVnfQ3fCzLrxBSg3RXnSQ+ly
+	Ey6+Wb/xtaKDo5cUXrXzkPupWaBnkf9XZntJxiEB7zbF1vUAKB1nDe/SBPLa2sAJNvVG5J
+	4cwPDBZwxawkJYalN9idSSTFT0HiqCA=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-68-FSuX9Y6xM_OwwDIPqJXJ1w-1; Tue, 02 Dec 2025 10:57:56 -0500
+X-MC-Unique: FSuX9Y6xM_OwwDIPqJXJ1w-1
+X-Mimecast-MFC-AGG-ID: FSuX9Y6xM_OwwDIPqJXJ1w_1764691075
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-b72e06680d4so752675866b.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 02 Dec 2025 07:57:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1764690747; x=1765295547; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=feKc1u+4lQENkn8pYvf0cy6PA0Ii+7sQgsN0RQiueGQ=;
-        b=DhmpyZ2n4u9nrLod70Z7T8ToHW8AXnv6nL4e2KQmxNrwtH64PeZOBQykjFZIUk3ABR
-         BifUNxw0f1wI8ZCoBCnhwPF7pzPXnvMgN57G5/LLEj/Duhe2le78AwMYMNef+6qRe7+Q
-         MXY04h6QBpiB+slSwiXcaPziRoFh0aumwqNLHbBuRLVmIQfYXUiCWpZm4zK7cN+y9E3Y
-         4dZWyCgM6q/E6xjRawgl1RxIMvq15rr54zoe/hm5+a/2Ryg6sBGUTgLgSKX3OzD4M70i
-         ZVKEr71RM13/Xb5f5PKPsvao3fYnagotlyP9bkUezgLhysdlM0HYQCrHk4XHRqcs/wsg
-         P3vw==
+        d=redhat.com; s=google; t=1764691075; x=1765295875; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=K+JZDDX0YSxfiuatTCZt13y1SraeSniBJJpMPYFkVF4=;
+        b=gTTeoTFEJwZhffMkG7/NaU5/eKG+I7H5Ns0FR66iOu3Vgsj89r66Hm8JsyEWW6N3Wj
+         FGJG7ijQ34sRzHZhY1m6T77Q+eSCKT7TCMEH93CsltO1h5VMbDdeuvtWwgi7Tjz/7GGi
+         NWJjUIMoZgjjYpQvoN/OHSz97t8br9U4+wQBTlI8rNZo+Fhvh8QgSHgrhsm1A8nb/Vi0
+         JtuvpO6axSL5KU5wVpkWUsr+/iXIcXuvTMqjk2EqopRIsUkb46phC0alVlroduXkiTgL
+         dhIZ5IkneDNg5jrVwg/ypjU//dfAnx4Kyi7SYt2aNQM0UztK4M4RPvG4gMVbLtDnFg4f
+         ujQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764690747; x=1765295547;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=feKc1u+4lQENkn8pYvf0cy6PA0Ii+7sQgsN0RQiueGQ=;
-        b=Vrp7hN0pYDsiK2sp24A5lIHw1KHkDvQqlzBpjw0Yuetp4hzOUCM1VjnDHgM4CK20Oz
-         oPoDao4TKVvGQhPV1OOg+KBjF0l3uD+3wvSbCfkrG+SF7zAcHTN7QKjDrCq4DkN8gn3U
-         B54r0fmkidKvlGRaHqIj2lslHvnW8Wm+HXfK51zK3o6C8NYMd/div6HAP8VSITD7E2zz
-         qU9vJxev8bcimIDNGVVqhYwEEq7JuSHeq0Z1ovUgybZ3RdsnMr9YkmxwuEiS7krBOz1t
-         OC04Nw9//356aQ+Ay7CrVrVhBk6xQNstefnEMe1GTyEUI3y7wg85uzWpaLBq/kZtCvFa
-         jodA==
-X-Forwarded-Encrypted: i=1; AJvYcCUxoYNcyvs1rq6Iw2OjusQDeIarRFYnGw+KkY3VXNooEnmkgasc7c2hnsiLoaxjBXrY61m2TwrdNBp4potl@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIZnb2wMtoaISUEm52VKkphHDlhpZr5mCpai2ace0v23rnbdoh
-	u9zG4brGUpX3YKUkUSKHNvaM+pph8n2e+464eHSjNvlyIEWgLAXaHJvUKMVxm5dn28OfL2hY+Qt
-	rImSPspFgpCrpi7C4es/BibvhepdGR70=
-X-Gm-Gg: ASbGncuAOlTIn81ODqiPzJ/XOQJjKw3tYWAOXGjzHJGLXTQyDNdYUT4WXUCz3DpUkd6
-	7tqn0fNxucC+gjwkTiP28iZBD31eaNkGY4NcY81UjAMkx/Ci/VdgARDIKo/Me2mj7ETrPn2nmq7
-	Fd3pVkERbYewMkl4SkXvWOrJ+aJxvK5nSmuviq2FXkH+ZdFUl+wnMeHoQDwyVxaP9smLg/2Nl9I
-	wOwnrPEdqiEEC4N1ZgOqC1u5MTIOCWcPQ0TUW8Sz7PP7PIlDu8p/bFSExF7R/DInWvAIEsF
-X-Google-Smtp-Source: AGHT+IHp6tZtEWeFByJZk/vtVUTBda0yahAChbF25/FmOCHgyPwNW8b96ReF11OQ0plce80g1whgm2I9wT8MTG/sn5o=
-X-Received: by 2002:a05:6830:440d:b0:7b2:aba7:f4e with SMTP id
- 46e09a7af769-7c798be2dbfmr26198349a34.10.1764690746975; Tue, 02 Dec 2025
- 07:52:26 -0800 (PST)
+        d=1e100.net; s=20230601; t=1764691075; x=1765295875;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=K+JZDDX0YSxfiuatTCZt13y1SraeSniBJJpMPYFkVF4=;
+        b=CjYKfSHKh4nwyMin/hGYb/j/y/8bkvAgLyE37eoiPnZuvPVd3FxRlrdLZXV+IkL780
+         bZ7kVac5YCt31nsV+agvAanHyDx1+uDKs/AtlHqUCB+lRdtE+F1OkuIYTGsPV36F1kjE
+         +yDexpad53W/8TSwmha9HmBniM5r6Oe0SU7jeDxvfbCCdhsChwMUF1pT48TM0c8axYKZ
+         nF6axM/JhNNVvPUwwLHU6EEcqLiPukLhM4vRRC1im4gebJ1nx8NyGudvHff19g9FHXR1
+         pdVetimMa0gxxvpeGVY/T5mioS9ZmgRggaG/MOTTqnCVMOmoY0pN84OxhQxppHuVshRW
+         lzVA==
+X-Forwarded-Encrypted: i=1; AJvYcCWQ5vFK3oY4vyily4mk7gW+9XorxKj6TvWRpRxhbsgdIzKKxVehl0ACeIoAEsXkTZivfnYOSuro255fwHre@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRpmuLtn4nbRKI10pjM2hJFIagagolMBYX7d4DE7n51p6nxOnU
+	hfiNQLD29fJ6Z4AXni0qa0kcJUf3zCuxE4mp7IaGERP6a3kk1tvzZ02H01uTNMjUw/i6PDz+iH2
+	3mppBv3hTjMW0g+k2unud3FjAADyp+5nKlTL4nkBSdWKLoin+gZnxll5fCVlG+opB410=
+X-Gm-Gg: ASbGncvJklT+SJTp8T4VheJnfZBd9ggmvk8ljMAg9K3O7gG3FPGJ2ShYSoLDUcEpkPJ
+	4CcchUYFYsbxv4hWCDz/DuQrQ7IT7LzjPj4sGIo53BHWmJvY2n88jpuCS9H/R0hE+IAUrY9ip+n
+	E/r7D0C2szsmVwHKxWdjQENIUfDaWc1dh+ExYzCE6ScbCqN5sNSmCByIioFUHMhm9/mAaSm2//e
+	7rqPRHjx+rRUigkHCCf43elrRBTlhNZxivbV4ooXkxxYzPOpo1IOSWVf9QUZeS4qjU1j8lWDFXL
+	hAKN3vM7hzZUgYBdkOTiOdneuLqEbUfTkGPF2InH/aSCQiOtuBiDqC7IpR7a4NA1xloWuTf1T/h
+	R68v1EhCkN2mC4G6saMkZRAKnhLdHixY+eAyBaeYklPE=
+X-Received: by 2002:a17:907:dab:b0:b73:4fbb:37a2 with SMTP id a640c23a62f3a-b7671514106mr4644535866b.5.1764691074761;
+        Tue, 02 Dec 2025 07:57:54 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IF5ff5Bo0B6oODeYs3rbb9HOcwAKRRqHzyGe5AJPxl7y2wdD/DgKiLMe7eRGyww7j929rXNTg==
+X-Received: by 2002:a17:907:dab:b0:b73:4fbb:37a2 with SMTP id a640c23a62f3a-b7671514106mr4644532866b.5.1764691074313;
+        Tue, 02 Dec 2025 07:57:54 -0800 (PST)
+Received: from cluster.. (4f.55.790d.ip4.static.sl-reverse.com. [13.121.85.79])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b76f59eb3f6sm1520702366b.55.2025.12.02.07.57.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Dec 2025 07:57:53 -0800 (PST)
+From: Alex Markuze <amarkuze@redhat.com>
+To: ceph-devel@vger.kernel.org
+Cc: idryomov@gmail.com,
+	linux-fsdevel@vger.kernel.org,
+	amarkuze@redhat.com,
+	vdubeyko@redhat.com
+Subject: [PATCH v2 0/3] ceph: add subvolume metrics reporting support
+Date: Tue,  2 Dec 2025 15:57:47 +0000
+Message-Id: <20251202155750.2565696-1-amarkuze@redhat.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251129091455.757724-1-b.sachdev1904@gmail.com> <20251129091455.757724-3-b.sachdev1904@gmail.com>
-In-Reply-To: <20251129091455.757724-3-b.sachdev1904@gmail.com>
-From: Andrei Vagin <avagin@gmail.com>
-Date: Tue, 2 Dec 2025 07:52:15 -0800
-X-Gm-Features: AWmQ_blWeFxHHcTZhTAqG8S6zqfjoT09D7pKTYe9CdzPUdirY1xoFo3obwNHy2I
-Message-ID: <CANaxB-zRh1=Azkx3fO4tmUAwzjQVE=-0=PeTN9aM1MxK1UzM+Q@mail.gmail.com>
-Subject: Re: [PATCH v7 2/3] statmount: accept fd as a parameter
-To: Bhavik Sachdev <b.sachdev1904@gmail.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	Shuah Khan <shuah@kernel.org>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	criu@lists.linux.dev, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@kernel.org>, 
-	Aleksa Sarai <cyphar@cyphar.com>, Miklos Szeredi <miklos@szeredi.hu>, 
-	Pavel Tikhomirov <ptikhomirov@virtuozzo.com>, Alexander Mikhalitsyn <alexander@mihalicyn.com>, 
-	John Hubbard <jhubbard@nvidia.com>, Amir Goldstein <amir73il@gmail.com>, 
-	"Martin K . Petersen" <martin.petersen@oracle.com>, Andrew Donnellan <ajd@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sat, Nov 29, 2025 at 1:15=E2=80=AFAM Bhavik Sachdev <b.sachdev1904@gmail=
-.com> wrote:
->
-> Extend `struct mnt_id_req` to take in a fd and introduce STATMOUNT_BY_FD
-> flag. When a valid fd is provided and STATMOUNT_BY_FD is set, statmount
-> will return mountinfo about the mount the fd is on.
->
-> This even works for "unmounted" mounts (mounts that have been umounted
-> using umount2(mnt, MNT_DETACH)), if you have access to a file descriptor
-> on that mount. These "umounted" mounts will have no mountpoint and no
-> valid mount namespace. Hence, we unset the STATMOUNT_MNT_POINT and
-> STATMOUNT_MNT_NS_ID in statmount.mask for "unmounted" mounts.
->
-> In case of STATMOUNT_BY_FD, given that we already have access to an fd
-> on the mount, accessing mount information without a capability check
-> seems fine because of the following reasons:
->
-> - All fs related information is available via fstatfs() without any
->   capability check.
-> - Mount information is also available via /proc/pid/mountinfo (without
->   any capability check).
-> - Given that we have access to a fd on the mount which tells us that we
->   had access to the mount at some point (or someone that had access gave
->   us the fd). So, we should be able to access mount info.
->
+This patch series adds support for per-subvolume I/O metrics collection
+and reporting to the MDS. This enables administrators to monitor I/O
+patterns at the subvolume granularity, which is useful for multi-tenant
+CephFS deployments where different subvolumes may be allocated to
+different users or applications.
 
-Acked-by: Andrei Vagin <avagin@gmail.com>
+The implementation requires protocol changes to receive the subvolume_id
+from the MDS (InodeStat v9), and introduces a new metrics type
+(CLIENT_METRIC_TYPE_SUBVOLUME_METRICS) for reporting aggregated I/O
+statistics back to the MDS.
 
-> Co-developed-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
-> Signed-off-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
-> Signed-off-by: Bhavik Sachdev <b.sachdev1904@gmail.com>
-> ---
->  fs/namespace.c             | 102 ++++++++++++++++++++++++-------------
->  include/uapi/linux/mount.h |  10 +++-
->  2 files changed, 76 insertions(+), 36 deletions(-)
->
-> diff --git a/fs/namespace.c b/fs/namespace.c
-> index ee36d67f1ac2..73ffa1fbdad7 100644
-> --- a/fs/namespace.c
-> +++ b/fs/namespace.c
-> @@ -5563,31 +5563,49 @@ static int grab_requested_root(struct mnt_namespa=
-ce *ns, struct path *root)
->
->  /* locks: namespace_shared */
->  static int do_statmount(struct kstatmount *s, u64 mnt_id, u64 mnt_ns_id,
-> -                       struct mnt_namespace *ns)
-> +                        struct file *mnt_file, struct mnt_namespace *ns)
+Patch 1 adds forward-compatible handling for InodeStat v8. The MDS v8
+encoding added a versioned "optmetadata" field (this is the actual field
+name in the MDS C++ code - short for "optional metadata"). This field
+contains optional inode metadata such as charmap for case-insensitive/
+case-preserving file systems. The kernel client does not currently
+support case-insensitive lookups, so this field is skipped rather than
+parsed. This ensures forward compatibility with newer MDS servers
+without requiring the full case-insensitivity feature implementation.
 
-no spaces at the start of a line, code indent should use tabs.
+Patch 2 adds support for parsing the subvolume_id field from InodeStat
+v9 and storing it in the inode structure for later use. Following the
+FUSE client convention, subvolume_id of 0 indicates unknown/unset
+(the MDS only sends non-zero subvolume IDs for inodes within subvolumes).
 
-./scripts/checkpatch.pl can help to avoid this sort of typos.
+Patch 3 adds the complete subvolume metrics infrastructure:
+- CEPHFS_FEATURE_SUBVOLUME_METRICS feature flag for MDS negotiation
+- Red-black tree based metrics tracker for efficient per-subvolume
+  aggregation
+- Wire format encoding matching the MDS C++ AggregatedIOMetrics struct
+- Integration with the existing CLIENT_METRICS message
+- Recording of I/O operations from file read/write and writeback paths
+- Debugfs interfaces for monitoring
 
-Thanks,
-Andrei
+Metrics tracked per subvolume include:
+- Read/write operation counts
+- Read/write byte counts
+- Read/write latency sums (for average calculation)
+
+The metrics are periodically sent to the MDS as part of the existing
+metrics reporting infrastructure when the MDS advertises support for
+the SUBVOLUME_METRICS feature.
+
+Debugfs additions in Patch 3:
+- metrics/subvolumes: displays last sent and pending subvolume metrics
+- metrics/metric_features: displays MDS session feature negotiation
+  status, showing which metric-related features are enabled (including
+  METRIC_COLLECT and SUBVOLUME_METRICS)
+
+Changes since v1:
+- Fixed unused variable warnings in patch 1 (v8_struct_v, v8_struct_compat)
+  reported by kernel test robot. Now uses ceph_decode_skip_8() instead of
+  ceph_decode_8_safe() since we only need to skip the versioned field header.
+- Added comprehensive comment explaining InodeStat encoding versions v1-v9.
+- Clarified that "optmetadata" is the actual field name in MDS C++ code.
+- Added comments documenting that subvolume_id of 0 means unknown/unset,
+  following the FUSE client convention.
+- Fixed smatch warning in subvolume_metrics_show() where mdsc was assumed
+  to potentially be NULL but later dereferenced unconditionally.
+
+Alex Markuze (3):
+  ceph: handle InodeStat v8 versioned field in reply parsing
+  ceph: parse subvolume_id from InodeStat v9 and store in inode
+  ceph: add subvolume metrics collection and reporting
+
+ fs/ceph/Makefile            |   2 +-
+ fs/ceph/addr.c              |  10 +
+ fs/ceph/debugfs.c           | 153 ++++++++++++++
+ fs/ceph/file.c              |  58 ++++-
+ fs/ceph/inode.c             |  23 ++
+ fs/ceph/mds_client.c        |  97 +++++++--
+ fs/ceph/mds_client.h        |  14 +-
+ fs/ceph/metric.c            | 172 ++++++++++++++-
+ fs/ceph/metric.h            |  27 ++-
+ fs/ceph/subvolume_metrics.c | 408 ++++++++++++++++++++++++++++++++++++
+ fs/ceph/subvolume_metrics.h |  68 ++++++
+ fs/ceph/super.c             |   1 +
+ fs/ceph/super.h             |   3 +
+ 13 files changed, 1010 insertions(+), 26 deletions(-)
+ create mode 100644 fs/ceph/subvolume_metrics.c
+ create mode 100644 fs/ceph/subvolume_metrics.h
+
+-- 
+2.34.1
+
 
