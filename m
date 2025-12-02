@@ -1,301 +1,270 @@
-Return-Path: <linux-fsdevel+bounces-70412-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70413-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88B9DC99AC3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 02 Dec 2025 01:47:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 36499C99B0F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 02 Dec 2025 02:03:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA1AE3A5320
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Dec 2025 00:47:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D382A3A4007
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Dec 2025 01:02:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AD1012DDA1;
-	Tue,  2 Dec 2025 00:47:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCEF5136672;
+	Tue,  2 Dec 2025 01:02:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="paoB0yff"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fTDP7Fsp"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E66731FD4
-	for <linux-fsdevel@vger.kernel.org>; Tue,  2 Dec 2025 00:47:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43A5936D50A
+	for <linux-fsdevel@vger.kernel.org>; Tue,  2 Dec 2025 01:02:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764636452; cv=none; b=t0gUT1hn6RCfXXlqAEyDX9KQQ+9yGVCINRsfxf1F8gdUHlsgjO75HcJsSrxwhdpUvHFe6YyN6GG0+MENPgp7Kfl7rbgIEuoKQvKRwNQs4ya+AAjk7t6Ji9OlKbPSXTHpQj6cvx1RqkbHxaR+6dpeDK/x7YTkB50kmEGfEPc6pqE=
+	t=1764637376; cv=none; b=Vkw2bm0wQoEYQkLlvD+Rf54qAjiThqKzOkyYHrZ+1mh3FhQdEfKLTYwCzO2SttgqmcuP6CUzpX2oppqRery72l4foaTe2H/co+h/qTmDUVjpdPztv4dPxvpe9uwuaf9Lg9/SDg3M8FC/UobI2p4XSj+kBMOU9Jnqq5lCAJFVCSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764636452; c=relaxed/simple;
-	bh=PkIuNNc2EKZIO25rdLE3EzT3RYF1FagQEdx9khsy5rw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Q53VVROBIcVaZFRRl22T7GueQseQwrFNU3MXE7g/1ggB8uIXXf0WDi2ZfafPnU+Yq3AieWOMA3lFE2Qgp6T0m6AnYVMuOajo5GdJatilMZyF/LOt44EYmAR15akJDHoP3iZkgal0IgDEDSRI6MxIM/9xYU0o0gRHGpjgo2+bG3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=paoB0yff; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65CFAC4CEF1
-	for <linux-fsdevel@vger.kernel.org>; Tue,  2 Dec 2025 00:47:31 +0000 (UTC)
+	s=arc-20240116; t=1764637376; c=relaxed/simple;
+	bh=r+jQAeRsocUxQ1t8ZGN71ctnJRA717umwq6kIzWfNiI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E9O/9SMrO9BvHaTuRpWWpu5mBsiRUdHtdUdl+SvaU7TbFHWzcsKXN+XvC+I2cBtGaYf9l3LonksVgIDIOuY/0wlw+RtV5YREFiVt42/vlSKyeIh2FvMdszMh4puo8gGdcP3jJTQ9MZuNmE0kptEuNBzq5mga2OH3Uq8NHiop5j8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fTDP7Fsp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAE61C4CEF1;
+	Tue,  2 Dec 2025 01:02:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764636451;
-	bh=PkIuNNc2EKZIO25rdLE3EzT3RYF1FagQEdx9khsy5rw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=paoB0yffxSIYxqx9bWGRTkLBp9MB3u6ajTbmzkVFC+GN3h0lnlc5s2oAaWRLf1soF
-	 A28WPpdKzWW5kALacOzJ13vuTCuMgwIYzFCgLsNFtHXKjeFk5exTkU695wYnPuvkUL
-	 a8gSrfyVrhcpNEtfjfa0YM9eTFeZ+84A38mafQfSPk5AM7lEcz8fs/H0e7WIx+NdqC
-	 Vh/2jHYqc2xnGL8JGbIiwewZcjSyilUGiuexX6w3/nP4TMhCvGjp6eoZcVVgMACrOC
-	 0gRwnMDeoNJ4sCB7Y2nzTRoujfqPoN0wc8iICvgAq5G9G/WFfaAFf8I/XwilZuYHxo
-	 wPJeDA6FLOqfw==
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-6406f3dcc66so8465408a12.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Dec 2025 16:47:31 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUXQYWFp1YnfOqQGbkHS/+juR8UiRzjBQ0OZlRTgdXBPqsJXzYkkVeoJasoQOQXD1vL7vmYhsbnDPEWrpBO@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGCSu+NBLoTPEwjlQ385BhYAiejqWccVBNiPCoOEqCNtzpJJnz
-	fD6PcHxud/mjDIJ0qWsfSOeUlFOsUn2zmHEK22lLc6TJQTyCeflCiosN9DFUQZGOL/CaBoad/wE
-	TBRJ3KnCKYeBcWN2qFqFXV/jMfIAq5Ow=
-X-Google-Smtp-Source: AGHT+IGCcsgblkTBuTj8+vKcojL9omyRyNafKJ1r+AWjcOv3EkUI3VHd7seer0OUtXWYwnoz0KUzHmubttkkJRiXxY0=
-X-Received: by 2002:a05:6402:274f:b0:645:cd64:31c5 with SMTP id
- 4fb4d7f45d1cf-645cd6431f3mr27115404a12.26.1764636449990; Mon, 01 Dec 2025
- 16:47:29 -0800 (PST)
+	s=k20201202; t=1764637375;
+	bh=r+jQAeRsocUxQ1t8ZGN71ctnJRA717umwq6kIzWfNiI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fTDP7FspSmv29pBpXdP+DbFmqx0GO8yOKI5kL9T93AI0xiD441+vCFiiAEcDU0vci
+	 OMqB20Mo5XAZw7ozM5TQY4RQ8XUmOYzEj5ehqAhcFihrHS9FKhFDt4BXXYeMe4MvD4
+	 N/UuHxNCF9WAKMlwLncpYUZ86eVDGVzCUmlr3CD0tCv67q+u5SMP/r0h9d0529BOLA
+	 WCnKuIrvYP7G5B3PN70G7A8bJoTxZnfwriXLKFEoxtiAZ74JVG8enUFWuQ4R6cHDCR
+	 SoUvVx41L9YGA3KF1f+annOB68mPGwuCBryEuNSsVIac1tTmZXlVuPhZWN9lzCCuTh
+	 Qk7CW7kO3pDow==
+Date: Mon, 1 Dec 2025 17:02:55 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Tomasz =?utf-8?B?xZpsaXdh?= <tomekmsliwa@gmail.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>,
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: fuse: fix livelock in synchronous file put from fuseblk workers
+Message-ID: <20251202010255.GC89492@frogsfrogsfrogs>
+References: <CAD8i7BTJiGxp3YRjnyO3vzjcs+eW_uUZHdvtc32phHaJ0FdcbQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251127045944.26009-1-linkinjeon@kernel.org> <20251127045944.26009-7-linkinjeon@kernel.org>
- <aS1FVIfE0Ntgbr5I@infradead.org>
-In-Reply-To: <aS1FVIfE0Ntgbr5I@infradead.org>
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Tue, 2 Dec 2025 09:47:17 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd9YW_UL2uA8anoVCw+a818y5dwtn3xAJJQc=_p32GA=Zw@mail.gmail.com>
-X-Gm-Features: AWmQ_bnp21922VrBtZetb79W5fPhgBiTSIx22FC6BnNbpB4_U978ycypfW6h1Nk
-Message-ID: <CAKYAXd9YW_UL2uA8anoVCw+a818y5dwtn3xAJJQc=_p32GA=Zw@mail.gmail.com>
-Subject: Re: [PATCH v2 06/11] ntfsplus: add iomap and address space operations
-To: Christoph Hellwig <hch@infradead.org>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, hch@lst.de, tytso@mit.edu, 
-	willy@infradead.org, jack@suse.cz, djwong@kernel.org, josef@toxicpanda.com, 
-	sandeen@sandeen.net, rgoldwyn@suse.com, xiang@kernel.org, dsterba@suse.com, 
-	pali@kernel.org, ebiggers@kernel.org, neil@brown.name, amir73il@gmail.com, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	iamjoonsoo.kim@lge.com, cheol.lee@lge.com, jay.sim@lge.com, gunho.lee@lge.com, 
-	Hyunchul Lee <hyc.lee@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAD8i7BTJiGxp3YRjnyO3vzjcs+eW_uUZHdvtc32phHaJ0FdcbQ@mail.gmail.com>
 
-On Mon, Dec 1, 2025 at 4:35=E2=80=AFPM Christoph Hellwig <hch@infradead.org=
-> wrote:
->
-> > +#include "ntfs_iomap.h"
-> > +
-> > +static s64 ntfs_convert_page_index_into_lcn(struct ntfs_volume *vol, s=
-truct ntfs_inode *ni,
-> > +             unsigned long page_index)
-> > +{
-> > +     sector_t iblock;
-> > +     s64 vcn;
-> > +     s64 lcn;
-> > +     unsigned char blocksize_bits =3D vol->sb->s_blocksize_bits;
-> > +
-> > +     iblock =3D (s64)page_index << (PAGE_SHIFT - blocksize_bits);
-> > +     vcn =3D (s64)iblock << blocksize_bits >> vol->cluster_size_bits;
->
-> I've seen this calculate in quite a few places, should there be a
-> generic helper for it?
-Okay. I will add it.
->
-> > +struct bio *ntfs_setup_bio(struct ntfs_volume *vol, blk_opf_t opf, s64=
- lcn,
-> > +             unsigned int pg_ofs)
-> > +{
-> > +     struct bio *bio;
-> > +
-> > +     bio =3D bio_alloc(vol->sb->s_bdev, 1, opf, GFP_NOIO);
-> > +     if (!bio)
-> > +             return NULL;
->
-> bio_alloc never returns NULL if it can sleep.
-Okay.
->
-> > +     bio->bi_iter.bi_sector =3D ((lcn << vol->cluster_size_bits) + pg_=
-ofs) >>
-> > +             vol->sb->s_blocksize_bits;
->
-> With a helper to calculate the sector the ntfs_setup_bio helper becomes
-> somewhat questionable.
-Okay, I will check it.
->
-> > +static int ntfs_read_folio(struct file *file, struct folio *folio)
-> > +{
-> > +     loff_t i_size;
-> > +     struct inode *vi;
-> > +     struct ntfs_inode *ni;
-> > +
-> > +     vi =3D folio->mapping->host;
-> > +     i_size =3D i_size_read(vi);
-> > +     /* Is the page fully outside i_size? (truncate in progress) */
-> > +     if (unlikely(folio->index >=3D (i_size + PAGE_SIZE - 1) >>
-> > +                     PAGE_SHIFT)) {
-> > +             folio_zero_segment(folio, 0, PAGE_SIZE);
-> > +             ntfs_debug("Read outside i_size - truncated?");
-> > +             folio_mark_uptodate(folio);
-> > +             folio_unlock(folio);
-> > +             return 0;
-> > +     }
->
-> iomap should be taking care of this, why do you need the extra
-> handling?
-This is a leftover from old ntfs, so I will remove it.
->
-> > +     /*
-> > +      * This can potentially happen because we clear PageUptodate() du=
-ring
-> > +      * ntfs_writepage() of MstProtected() attributes.
-> > +      */
-> > +     if (folio_test_uptodate(folio)) {
-> > +             folio_unlock(folio);
-> > +             return 0;
-> > +     }
->
-> Clearing the folio uptodate flag sounds fairly dangerous, why is that
-> done?
-This is a leftover from old ntfs, I will check it.
->
-> > +static int ntfs_write_mft_block(struct ntfs_inode *ni, struct folio *f=
-olio,
-> > +             struct writeback_control *wbc)
->
-> Just a very high-level comment here with no immediate action needed:
-> Is there a reall good reason to use the page cache for metadata?
-> Our experience with XFS is that a dedicated buffer cache is not only
-> much easier to use, but also allows for much better caching.
-Nothing special reason, It was to use existing ones instead of new,
-complex implementations. NTFS metadata is treated as a file, and
-handling it via the folio(page) API allows the driver to easily gain
-performance benefits, such as readahead.
->
-> > +static void ntfs_readahead(struct readahead_control *rac)
-> > +{
-> > +     struct address_space *mapping =3D rac->mapping;
-> > +     struct inode *inode =3D mapping->host;
-> > +     struct ntfs_inode *ni =3D NTFS_I(inode);
-> > +
-> > +     if (!NInoNonResident(ni) || NInoCompressed(ni)) {
-> > +             /* No readahead for resident and compressed. */
-> > +             return;
-> > +     }
-> > +
-> > +     if (NInoMstProtected(ni) &&
-> > +         (ni->mft_no =3D=3D FILE_MFT || ni->mft_no =3D=3D FILE_MFTMirr=
-))
-> > +             return;
->
-> Can you comment on why readahead is skipped here?
-Okay, I will add it.
->
-> > +/**
-> > + * ntfs_compressed_aops - address space operations for compressed inod=
-es
-> > + */
-> > +const struct address_space_operations ntfs_compressed_aops =3D {
->
-> From code in other patches is looks like ntfs never switches between
-> compressed and non-compressed for live inodes?  In that case the
-> separate aops should be fine, as switching between them at runtime
-> would involve races.  Is the compression policy per-directory?
-Non-compressed files can actually be switched to compressed files and
-vice versa via setxattr at runtime. I will check the race handling
-around aop switching again. And the compression policy is per-file,
-not per-directory.
->
-> > +             kaddr =3D kmap_local_folio(folio, 0);
-> > +             offset =3D (loff_t)idx << PAGE_SHIFT;
-> > +             to =3D min_t(u32, end - offset, PAGE_SIZE);
-> > +
-> > +             memcpy(buf + buf_off, kaddr + from, to);
-> > +             buf_off +=3D to;
-> > +             kunmap_local(kaddr);
-> > +             folio_put(folio);
-> > +     }
->
-> Would this be a candidate for memcpy_from_folio?
-Right, I will change it.
->
-> > +             kaddr =3D kmap_local_folio(folio, 0);
-> > +             offset =3D (loff_t)idx << PAGE_SHIFT;
-> > +             to =3D min_t(u32, end - offset, PAGE_SIZE);
-> > +
-> > +             memcpy(kaddr + from, buf + buf_off, to);
-> > +             buf_off +=3D to;
-> > +             kunmap_local(kaddr);
-> > +             folio_mark_uptodate(folio);
-> > +             folio_mark_dirty(folio);
->
-> And memcpy_to_folio?
-Okay, I will change it.
->
-> > +++ b/fs/ntfsplus/ntfs_iomap.c
->
-> Any reason for the ntfs_ prefix here?
-No reason, I will change it to iomap.c
->
-> > +static void ntfs_iomap_put_folio(struct inode *inode, loff_t pos,
-> > +             unsigned int len, struct folio *folio)
-> > +{
->
-> This seems to basically be entirely about extra zeroing.  Can you
-> explain why this is needed in a comment?
-Okay, I will add a comment for this.
->
-> > +static int ntfs_read_iomap_begin(struct inode *inode, loff_t offset, l=
-off_t length,
-> > +             unsigned int flags, struct iomap *iomap, struct iomap *sr=
-cmap)
-> > +{
-> > +     struct ntfs_inode *base_ni, *ni =3D NTFS_I(inode);
-> > +     struct ntfs_attr_search_ctx *ctx;
-> > +     loff_t i_size;
-> > +     u32 attr_len;
-> > +     int err =3D 0;
-> > +     char *kattr;
-> > +     struct page *ipage;
-> > +
-> > +     if (NInoNonResident(ni)) {
->
-> Can you split the resident and non-resident cases into separate
-> helpers to keep this easier to follow?
-> easier to follow?
-Okay. I will.
->
-> > +     ipage =3D alloc_page(__GFP_NOWARN | __GFP_IO | __GFP_ZERO);
-> > +     if (!ipage) {
-> > +             err =3D -ENOMEM;
-> > +             goto out;
-> > +     }
-> > +
-> > +     memcpy(page_address(ipage), kattr, attr_len);
->
-> Is there a reason for this being a page allocation vs a kmalloc
-> sized to the inline data?
-No reason, I will change it to kmalloc sized.
->
-> > +static int ntfs_buffered_zeroed_clusters(struct inode *vi, s64 vcn)
->
-> I think this should be ntfs_buffered_zero_clusters as it
-> performans the action?
-Okay. I will change it.
->
-> Also curious why this can't use the existing iomap zeroing helper?
-I will check it.
->
-> > +int ntfs_zeroed_clusters(struct inode *vi, s64 lcn, s64 num)
->
-> ntfs_zero_clusters
-Okay.
->
-> Again curious why we need special zeroing code in the file system.
-To prevent reading garbage data after a new cluster allocation, we
-must zero out the cluster. The cluster size can be up to 2MB, I will
-check if that's possible through iomap.
->
-> > +     if (NInoNonResident(ni)) {
->
-> Another case for splitting the resident/non-resident code instead
-> of having a giant conditional block that just returns.
-Okay. Thanks for your review!
->
+[Please cc the community, not a single patch author]
+
+$ ./scripts/get_maintainer.pl fs/fuse/
+Miklos Szeredi <miklos@szeredi.hu> (maintainer:FUSE: FILESYSTEM IN USERSPACE)
+linux-fsdevel@vger.kernel.org (open list:FUSE: FILESYSTEM IN USERSPACE)
+linux-kernel@vger.kernel.org (open list)
+
+On Sat, Nov 29, 2025 at 05:02:17PM +0100, Tomasz Śliwa wrote:
+> hi Darrick,
+> recently I updated kernel (6.12.41-gentoo to 6.12.58-gentoo) in my gentoo
+> WSL installation and noticed that gui applications stopped working. During
+> investigation I discovered that the last working kernel was 6.12.53 and
+> 6.12.54 stopped working, so I started looking for a cause and it looks like
+> your fix is somehow related to my issue.
+> 
+> I have attached a code that reproduces my problem when opening a
+> file openat(…, O_CREAT|O_EXCL, 0600). I reproduced this bug(?) on my WSL
+> installation using 6.12.54-gentoo kernel built from gentoo-sources with gcc
+> 14 and binutils 2.5 (Linux version 6.12.54-gentoo (root@W-PF5652ZB) (gcc
+> (Gentoo 14.3.1_p20250801 p4) 14.3.1 20250801, GNU ld (Gentoo 2.45 p3)
+> 2.45.0) #1 SMP PREEMPT_DYNAMIC Sat Nov 29 10:34:00 CET 2025)
+
+Urgh, what do the other fuse developers do about debugging Gentoo
+kernels running on WSL2?  I don't have any Windows licenses, let alone
+working Windows installs. :/
+
+Could you tell which fuse server was the one that was livelocking?  Was
+it virtiofsd, as was reported in the various wsl2 reports?
+
+It would be useful if you happen to have captured a sysrq-t from the
+livelocked system so we could tell what the kernel was doing (or not) at
+the time.  And possibly also a coredump from the virtiofsd process so
+that we could tell what it was up to.
+
+<downloads virtiofsd source>
+
+<sees that it's apparently written in rust and contains a Rust
+implementation of libfuse>
+
+/me sees src/passthrough/mod.rs:
+
+    fn destroy(&self) {
+        self.handles.write().unwrap().clear();
+        self.inodes.clear();
+        self.writeback.store(false, Ordering::Relaxed);
+        self.announce_submounts.store(false, Ordering::Relaxed);
+        self.posix_acl.store(false, Ordering::Relaxed);
+        self.sup_group_extension.store(false, Ordering::Relaxed);
+    }
+
+AFAICT this function is called as part of a response to a FUSE_DESTROY
+request.  Between self.handles and self.inodes, I think they both store
+refcounted objects, which makes me wonder if the destroy function is
+actually waiting for the refcounts on the handles to drop to zero?
+
+Hrmm.  Commit 26e5c67deb2e1f ("fuse: fix livelock in synchronous file
+put from fuseblk workers") changed the ->release behavior so that it
+always queues the resulting FUSE_RELEASE requests in the background.
+virtiofs fuse servers always set fc->destroy, so unmount will wait for
+the fuse server to reply to FUSE_DESTROY.  Previously, the FUSE_RELEASE
+requests were sent synchronously, which means there wouldn't be any in
+flight when the server receives a FUSE_DESTROY request.  But now there
+are due to the asynchronousness.  That would explain why reverting the
+26e5c67 patch fixes the problem.
+
+I can create a similar-looking hang by running fuse2fs in
+single-threaded mode on a vanilla 6.18 kernel, which does not have my
+patch to flush all pending background requests before sending
+FUSE_DESTROY but *does* have my patch to libfuse to delay FUSE_DESTROY
+until all open files have been released.
+
+Can you try the following patch to see if it fixes WSL?
+
+--D
+
+From: Darrick J. Wong <djwong@kernel.org>
+Subject: [PATCH] fuse: flush pending FUSE_RELEASE requests before sending FUSE_DESTROY
+
+generic/488 fails with fuse2fs in the following fashion:
+
+generic/488       _check_generic_filesystem: filesystem on /dev/sdf is inconsistent
+(see /var/tmp/fstests/generic/488.full for details)
+
+This test opens a large number of files, unlinks them (which really just
+renames them to fuse hidden files), closes the program, unmounts the
+filesystem, and runs fsck to check that there aren't any inconsistencies
+in the filesystem.
+
+Unfortunately, the 488.full file shows that there are a lot of hidden
+files left over in the filesystem, with incorrect link counts.  Tracing
+fuse_request_* shows that there are a large number of FUSE_RELEASE
+commands that are queued up on behalf of the unlinked files at the time
+that fuse_conn_destroy calls fuse_abort_conn.  Had the connection not
+aborted, the fuse server would have responded to the RELEASE commands by
+removing the hidden files; instead they stick around.
+
+For upper-level fuse servers that don't use fuseblk mode this isn't a
+problem because libfuse responds to the connection going down by pruning
+its inode cache and calling the fuse server's ->release for any open
+files before calling the server's ->destroy function.
+
+For fuseblk servers this is a problem, however, because the kernel sends
+FUSE_DESTROY to the fuse server, and the fuse server has to write all of
+its pending changes to the block device before replying to the DESTROY
+request because the kernel releases its O_EXCL hold on the block device.
+This means that the kernel must flush all pending FUSE_RELEASE requests
+before issuing FUSE_DESTROY.
+
+For fuse-iomap servers this will also be a problem because iomap servers
+are expected to release all exclusively-held resources before unmount
+returns from the kernel.
+
+Create a function to push all the background requests to the queue
+before sending FUSE_DESTROY.  That way, all the pending file release
+events are processed by the fuse server before it tears itself down, and
+we don't end up with a corrupt filesystem.
+
+Note that multithreaded fuse servers will need to track the number of
+open files and defer a FUSE_DESTROY request until that number reaches
+zero.  An earlier version of this patch made the kernel wait for the
+RELEASE acknowledgements before sending DESTROY, but the kernel people
+weren't comfortable with adding blocking waits to unmount.
+
+Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
+---
+ fs/fuse/fuse_i.h |    5 +++++
+ fs/fuse/dev.c    |   19 +++++++++++++++++++
+ fs/fuse/inode.c  |   12 +++++++++++-
+ 3 files changed, 35 insertions(+), 1 deletion(-)
+
+diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+index c2f2a48156d6c5..ba0d458b60fdcd 100644
+--- a/fs/fuse/fuse_i.h
++++ b/fs/fuse/fuse_i.h
+@@ -1274,6 +1274,11 @@ void fuse_request_end(struct fuse_req *req);
+ void fuse_abort_conn(struct fuse_conn *fc);
+ void fuse_wait_aborted(struct fuse_conn *fc);
+ 
++/**
++ * Flush all pending requests but do not wait for them.
++ */
++void fuse_flush_requests(struct fuse_conn *fc);
++
+ /* Check if any requests timed out */
+ void fuse_check_timeout(struct work_struct *work);
+ 
+diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+index 132f38619d7072..5fad7be3d0dc88 100644
+--- a/fs/fuse/dev.c
++++ b/fs/fuse/dev.c
+@@ -24,6 +24,7 @@
+ #include <linux/splice.h>
+ #include <linux/sched.h>
+ #include <linux/seq_file.h>
++#include <linux/nmi.h>
+ 
+ #include "fuse_trace.h"
+ 
+@@ -2430,6 +2431,24 @@ static void end_polls(struct fuse_conn *fc)
+ 	}
+ }
+ 
++/*
++ * Flush all pending requests and wait for them.  Only call this function when
++ * it is no longer possible for other threads to add requests.
++ */
++void fuse_flush_requests(struct fuse_conn *fc)
++{
++	spin_lock(&fc->lock);
++	spin_lock(&fc->bg_lock);
++	if (fc->connected) {
++		/* Push all the background requests to the queue. */
++		fc->blocked = 0;
++		fc->max_background = UINT_MAX;
++		flush_bg_queue(fc);
++	}
++	spin_unlock(&fc->bg_lock);
++	spin_unlock(&fc->lock);
++}
++
+ /*
+  * Abort all requests.
+  *
+diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+index d1babf56f25470..5ca26358062f2b 100644
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@ -2094,8 +2094,18 @@ void fuse_conn_destroy(struct fuse_mount *fm)
+ {
+ 	struct fuse_conn *fc = fm->fc;
+ 
+-	if (fc->destroy)
++	if (fc->destroy) {
++		/*
++		 * Flush all pending requests (most of which will be
++		 * FUSE_RELEASE) before sending FUSE_DESTROY, because the fuse
++		 * server must close the filesystem before replying to the
++		 * destroy message, because unmount is about to release its
++		 * O_EXCL hold on the block device.  We don't wait, so libfuse
++		 * has to do that for us.
++		 */
++		fuse_flush_requests(fc);
+ 		fuse_send_destroy(fm);
++	}
+ 
+ 	fuse_abort_conn(fc);
+ 	fuse_wait_aborted(fc);
 
