@@ -1,275 +1,173 @@
-Return-Path: <linux-fsdevel+bounces-70461-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70462-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29886C9BF2E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 02 Dec 2025 16:30:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18196C9BFD3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 02 Dec 2025 16:38:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 609654E4279
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Dec 2025 15:29:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A3E13A2E17
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Dec 2025 15:37:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69009312810;
-	Tue,  2 Dec 2025 15:29:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50FDB26CE22;
+	Tue,  2 Dec 2025 15:37:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=maven.pl header.i=@maven.pl header.b="J3HPtnLh"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A6E0266EE9
-	for <linux-fsdevel@vger.kernel.org>; Tue,  2 Dec 2025 15:29:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E799C266568
+	for <linux-fsdevel@vger.kernel.org>; Tue,  2 Dec 2025 15:37:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764689365; cv=none; b=Zy6CLZcjfvnQEcfR4xLxCFu05pg8quFOL3JyyrfEYss7SiXtjfDLw9Dt7EoCXPxDHIkrg96m3tUlnXuFOIpzeQIYixdjkttk4gD5tlxB/i1m38zMUJaXm97M9T5/uXOtAxOskcefbLfaTpcU/gUFM6RM+FPNALcMYLZlymnvass=
+	t=1764689872; cv=none; b=FlNvUm/b+qmJYD0bfLKm9qeoqQm/omCKKfjb1dHpULoro3DOJphN+caJLcTjbSN8EeswXMX5BJqz0+tK8HoHLULDaqg647OtbDjuU8BCgZGqqfK/wI0I6z+Q0RWBdCE9t6ZUxIESMqGY5C+7m88U9P8/u8JPiP83Uv6ygGqUqhM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764689365; c=relaxed/simple;
-	bh=eyYtZnjgmSj7N6JyucblyUpRgv9xinjZ9fEmb5Ogg7E=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Di4htW+a6dU/Oiy+aIanBgd4dx82K7cKcLldnNJRLB4y/oxBSlpYT7HyypPSBMG4ZDRoVAuIndd3Dl2Kdbx3SGbzGlW+9O4gNfDlW2RQCQgmf9UjEg1POFoyEvOagqrErpqQhCGq4U19L/tOp8VnhhJEherSCj/HUcqhSFchXvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-7c6da42fbd4so2345393a34.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 02 Dec 2025 07:29:24 -0800 (PST)
+	s=arc-20240116; t=1764689872; c=relaxed/simple;
+	bh=vpE5EoPl81OXEBoVcuuXCPpqAzZxp4nL17xE1XR1pcY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=oeNZfbJzOtQZkShs1/frxRv3ItlOuUhNGCnbB8pz585SULLzOTkzWGEx/E9T7sb9l6PHg0j/wIAQonjKJQN7I/KFLgQty+cL/1MgLXkZfniWLG7FO1ZID2VxO4hwoCutnb3Nf1nGzy3Rbv7VFz8cG4jvh4GCpgm+b0BVXRekSg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=maven.pl; spf=pass smtp.mailfrom=maven.pl; dkim=pass (1024-bit key) header.d=maven.pl header.i=@maven.pl header.b=J3HPtnLh; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=maven.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maven.pl
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-6419aaced59so8637049a12.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 02 Dec 2025 07:37:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=maven.pl; s=maven; t=1764689867; x=1765294667; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=ConuvD8daUO5TViY4uGMmoV/CoG7J3iCApA22ZT8ug4=;
+        b=J3HPtnLhD8dZ1NxPGy1zcba2ZrsPjGuIJJKgafRKoQG+qxKemdC8lFY0th8L59ntdb
+         V5KZiqL2h1qLej8hT9Y+em7byAnTKDt6c09WMJjdnQP61mCVX+YTn6zkZkuYJKloRZCp
+         fr2+JKS06wKPYXiu5dPlzUX9tWAnmO98pYkn8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764689363; x=1765294163;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ugK9BzfdKEv5MeXevEgE8TqgctuA+qOiYTiah6FP+Do=;
-        b=R0ZYkSQFRDV7dlOGEXm2asXIfLJY5IJH41KC5XCCae+Arbm64krrZEyPIsyM1/3Iov
-         MMfxn10dzAp2WVihxRtNV+ZoeqXEA0xyJfUW2vmk6UbBGpiDqR2yVF1pFkW3OIfvkmAr
-         wIQ3rVS8AACxk1C/CxImX5EskFDTCszBs0+oCirJxHXuu4SsA9f4R3npJfHiKOhxsSTb
-         I/XXZveOxbKQuCGfWif5M0/lxE6Ld+OpZkvcp4eU/ERr6vwb4mAM0OZCkCKA6kB7pldd
-         YGmNjTyNqahh96MunzpLhfFKx4AaB85REgDDPvLtKgR9xHL+6uvi6iZW1FH3BvNhaUnk
-         eMig==
-X-Forwarded-Encrypted: i=1; AJvYcCVdSjXb+pXm+t/N+RFshuD3dkyYX/DXjH0HvNwleobFTT3UMM4mVBXQnLJQonrC5uqKOH5yI8MT/gd3Dm44@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXQhW+MBwxePdWbtLpnCILAGj3dTvVLUJxqliOxlLc7xxhy4iz
-	ZBEzlF3rV5Gdz0z5m6jKPQgYCLAMdKYqQnVQoEIMQfLZZBlYDjfHMen3
-X-Gm-Gg: ASbGncvkLnaNvVmCn5uX/RdBU5dwF7fbUQyss6rxph9xZGh7HkUyupTy6zoJgiB6Yjn
-	KELh+vsDMd+Z0lCkR1umWV1Zsadq3QxkwFs6VU+UUrpH5gF6rVNpLUq/Cfhlnv2o2SenmZ44TF9
-	pjzImy3qwH73s7i67Zajd47NO1M4oDsQGiQrKQggrgRctOAuVxWM0ZCPTrYrLzLMc3xHjV4dEC5
-	8ci5gatFLItP1r9B+JGvWfCNSO0kv/WBqhlPE0fWlHUBGuU8IOFTp755st7imntAs8PztssBIm/
-	9Mhf4qvUJF7nSAOpZ4rXnEHYaQ4wClpD4VXbQTBegRyNDpvOUaI8GIS2VlpA+oeSqCLmrtjDxJ1
-	oo2O1SCQOQ0dkgfoRsv5cAz5GnVeBX0RvckpUkdXAjb44F2pXN18HovEX2unqwFers/HuJHHNt+
-	AUmNNBXGjpT4kXmw==
-X-Google-Smtp-Source: AGHT+IErDABErrz8eCfGq5kVn5Kh7bP3XcLtMbb4d6/GE178cI+lptwmXUf80rsCHF5p4DJECTSpvw==
-X-Received: by 2002:a05:6830:2707:b0:7c7:6cc3:c3f2 with SMTP id 46e09a7af769-7c7990754a2mr22586092a34.18.1764689363417;
-        Tue, 02 Dec 2025 07:29:23 -0800 (PST)
-Received: from localhost ([2a03:2880:10ff:44::])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-65933cc2b36sm4259177eaf.12.2025.12.02.07.29.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Dec 2025 07:29:23 -0800 (PST)
-From: Breno Leitao <leitao@debian.org>
-Date: Tue, 02 Dec 2025 07:29:02 -0800
-Subject: [PATCH RFC 2/2] netconsole: Plug to dynamic configfs item
+        d=1e100.net; s=20230601; t=1764689867; x=1765294667;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ConuvD8daUO5TViY4uGMmoV/CoG7J3iCApA22ZT8ug4=;
+        b=paISrVbrHjb58rXPAow7OU/PmN88BR2pisinJQe6gEjaEAUHnbDWJdAQv3eTStAPA8
+         R0RQoO0vv2xp/IShEFKtyGpnD+M7Z04aKOyJ/JmHDbvxDHmiMEmc2WiuZM+1oTj6Qyhd
+         AILoZsaxo9uP8nA0XaJjCAPYuNmtGHwrv+QjhwoIdV/viIACHDagRIKq1H+guvgU7p04
+         8mPV5gVkAUBKExfEkV3XGBRZ6PtxzjgnR0qwzYh3QiBqgeRHnqgiPG+daKPH/k65z2g+
+         LW4qErTkOthz7++dJc/hGSmuDXJ4/Y7Mq9fHzU8QVkUus4O0Hckke1bx/VgxW7Fvxd6R
+         +ZDg==
+X-Forwarded-Encrypted: i=1; AJvYcCWSL9v8faCy2fVBP5KMKT/jzv8gk0SiYrNZwThUHMhjK8fPq5SFJ6dniRax/SyklvGBDMH7pPK2+3WuNxmO@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRdIo8bvBmKNT5uKmUyWpHnRhxZFzS14goBT/KNiTYmL42wNme
+	VNVdTaMlaLbe1An4zmzZho4h/2D0vRjO2Iz2rY0UsxraEwTU4v8izGinwzEpvEfQkyo=
+X-Gm-Gg: ASbGncvIbmxXgDnS9vl0aoP7pYMn1G62giBodKn15hY/BpajA/009qyvd79VCc79EGi
+	PRuT8fjy3BkfBSoXR0A85qGdtn+aW6YBLbgfODx5mHBKUtk1I/O1Uh9D+QuTKxJAkc5u2E+zUNG
+	ip98jNEdjVyuEzCPnBuM5QQclCu7r1scZRvnRTQ861uCPkRqe9IpMwz2qyvctKMI2+A+9PKeqy0
+	vHL37vmgutGiAahzz0+8yn/PxoV02swXCigDN2W4YyYQOkMSUiELhk94E36rQDOoeWDRi0h19Fb
+	MxHqrQBBVb0uQVfzY0vjK/ULwvf2LxUpqwX8t2ggG+2LtrIsAyE2O1ggC+VuCXFtvyITDBFfVle
+	zn2/IU2qBqnNa6PnkBwGjaZOdfTEBvWI5NCvChim21YYbGidTwz4POS58RD5yICm1X8OTDjzJI6
+	xj++nT0t2yp59+W85ueB/FLJ1MXMRkFxcNwC9hu58VeiO0nZgdXzdwxjKVtkmglPB/QKuIkpyx
+X-Google-Smtp-Source: AGHT+IG9aOwXWKF1qA+hOvaDs1nJOECV5tbhMVAg0A7LAbBljmK4RosPZQYagf6VaHBxq+UnR/4QJw==
+X-Received: by 2002:a05:6402:42ca:b0:640:b373:205e with SMTP id 4fb4d7f45d1cf-64554469ef2mr44474663a12.15.1764689867185;
+        Tue, 02 Dec 2025 07:37:47 -0800 (PST)
+Received: from [192.168.68.100] (user-188-33-10-15.play-internet.pl. [188.33.10.15])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-647510508e1sm15924208a12.27.2025.12.02.07.37.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 Dec 2025 07:37:46 -0800 (PST)
+Message-ID: <905377ba-b2cb-4ca7-bf41-3d3382b48e1d@maven.pl>
+Date: Tue, 2 Dec 2025 16:37:45 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251202-configfs_netcon-v1-2-b4738ead8ee8@debian.org>
-References: <20251202-configfs_netcon-v1-0-b4738ead8ee8@debian.org>
-In-Reply-To: <20251202-configfs_netcon-v1-0-b4738ead8ee8@debian.org>
-To: Andreas Hindborg <a.hindborg@kernel.org>, 
- Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: Breno Leitao <leitao@debian.org>, linux-kernel@vger.kernel.org, 
- hch@infradead.org, jlbec@evilplan.org, linux-fsdevel@vger.kernel.org, 
- netdev@vger.kernel.org, gustavold@gmail.com, asantostc@gmail.com, 
- calvin@wbinvd.org, kernel-team@meta.com
-X-Mailer: b4 0.15-dev-a6db3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5215; i=leitao@debian.org;
- h=from:subject:message-id; bh=eyYtZnjgmSj7N6JyucblyUpRgv9xinjZ9fEmb5Ogg7E=;
- b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBpLwXQ3amUSE+HhXNp0GO31IVPZZ+8x+ktGazRa
- D+XVOIxXu6JAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCaS8F0AAKCRA1o5Of/Hh3
- bc5HEACRuXykG8FbGOoj3HGZt9DAr2MUb9t3kLnZdPKAfjAYgsdp7cLV9M6LiRHm5q2w3GdAOaN
- OfefGSTflmDd0anPvxBziInSd3MAESRFoUtC26/deD3EoYL6n3T4xTrVCLMOUljNrmZ5k0geVJj
- 8u2yEZkrSw+twT8Ck+d45YsyivPmnguZWpOJ3dF5u86fjSqOV5KcNDgs0rz3RaaruryLkCwIXGU
- +dyyH06fTJ+/L9aTBGwrRllN/KIsXNOZThXoBZvAbrgw0dTNwUxp6PrjqyTiuYaIQGodTZrkdCQ
- zS2SUSfvjrRU99As4PL5k+F1iPUpl52P4MhCHiI4d7jtLEJ9QZ9FRHGxaUvLOcxwsnur4eL6KXz
- Gbh7A0C/C8n7xEAeNJAxa3CvW0qK6LaAjIpquF2Ed9tZJtFSjBaCkswLgPPwGVJKOFoQx012ZPn
- 9cQlkV41sJ5ry6rllTmVkYpQbfBPu5DfLyY4NkT//YhCpJaJen3PVOPsTuKCyO2oIJH740xTaHH
- 7u7TQ0mOvEoN5qEJ+MI6dlKLoAxezqY6P0WowbXFGANzTw+vNcIJKNSf5dgC6enD3Pt+Bl3dL8D
- xuFD7RWUSH/aGaLfOmc/N2A4q+3ZI7sNeZuuIs2DuOTUab1IXggte8dUIFoEPLxOm8CE2fAPTU7
- s870h6Uat1ccKXg==
-X-Developer-Key: i=leitao@debian.org; a=openpgp;
- fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/4] libfrog: add wrappers for
+ file_getattr/file_setattr syscalls
+To: Andrey Albershteyn <aalbersh@redhat.com>, aalbersh@kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
+References: <20250827-xattrat-syscall-v2-0-82a2d2d5865b@kernel.org>
+ <20250827-xattrat-syscall-v2-1-82a2d2d5865b@kernel.org>
+Content-Language: en-US, pl
+From: =?UTF-8?Q?Arkadiusz_Mi=C5=9Bkiewicz?= <arekm@maven.pl>
+In-Reply-To: <20250827-xattrat-syscall-v2-1-82a2d2d5865b@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Convert netconsole to use the new configfs kernel-space item
-registration API for command-line configured targets.
+On 27/08/2025 17:15, Andrey Albershteyn wrote:
 
-Previously, netconsole created boot-time targets by searching for them
-when userspace tried to create an item with the a special name. This
-approach was fragile and hard for users to deal with.
+Hello.
 
-This change refactors netconsole to:
-  - Call configfs_register_item() directly from populate_configfs_item()
-    to properly register boot/module parameter targets.
+> +int
+> +xfrog_file_setattr(
+> +	const int		dfd,
+> +	const char		*path,
+> +	const struct stat	*stat,
+> +	struct file_attr	*fa,
+> +	const unsigned int	at_flags)
+> +{
+> +	int			error;
+> +	int			fd;
+> +	struct fsxattr		fsxa;
+> +
+> +#ifdef HAVE_FILE_ATTR
+> +	error = syscall(__NR_file_setattr, dfd, path, fa,
+> +			sizeof(struct file_attr), at_flags);
+> +	if (error && errno != ENOSYS)
+> +		return error;
+> +
+> +	if (!error)
+> +		return error;
+> +#endif
+> +
+> +	if (SPECIAL_FILE(stat->st_mode)) {
+> +		errno = EOPNOTSUPP;
+> +		return -1;
+> +	}
+> +
+> +	fd = open(path, O_RDONLY|O_NOCTTY);
+> +	if (fd == -1)
+> +		return fd;
+> +
+> +	file_attr_to_fsxattr(fa, &fsxa);
+> +
+> +	error = ioctl(fd, FS_IOC_FSSETXATTR, fa);
 
-  - Remove the find_cmdline_target() logic and the special handling in
-    make_netconsole_target() that intercepted userspace operations (aka
-    the ugly workaround)
+&fsxa should be passed here.
 
-This makes the management of netconsole easier, simplifies the code
-(removing ~40 lines) and properly separates kernel-created items from
-userspace-created items, making the code more maintainable and robust.
+xfsprogs 6.17.0 has broken project quota due to that
 
-Signed-off-by: Breno Leitao <leitao@debian.org>
----
- drivers/net/netconsole.c | 63 +++++++++++++++++++++------------------------------------------
- 1 file changed, 21 insertions(+), 42 deletions(-)
+# LC_ALL=C /usr/sbin/xfs_quota -x -c "project -s -p /home/xxx 389701" /home
+Setting up project 389701 (path /home/xxx)...
+xfs_quota: cannot set project on /home/xxx: Invalid argument
+Processed 1 (/etc/projects and cmdline) paths for project 389701 with 
+recursion depth infinite (-1).
 
-diff --git a/drivers/net/netconsole.c b/drivers/net/netconsole.c
-index bb6e03a92956..d3c720a2f9ef 100644
---- a/drivers/net/netconsole.c
-+++ b/drivers/net/netconsole.c
-@@ -225,8 +225,8 @@ static void netconsole_target_put(struct netconsole_target *nt)
- {
- }
- 
--static void populate_configfs_item(struct netconsole_target *nt,
--				   int cmdline_count)
-+static int populate_configfs_item(struct netconsole_target *nt,
-+				  int cmdline_count)
- {
- }
- #endif	/* CONFIG_NETCONSOLE_DYNAMIC */
-@@ -1256,23 +1256,6 @@ static void init_target_config_group(struct netconsole_target *nt,
- 	configfs_add_default_group(&nt->userdata_group, &nt->group);
- }
- 
--static struct netconsole_target *find_cmdline_target(const char *name)
--{
--	struct netconsole_target *nt, *ret = NULL;
--	unsigned long flags;
--
--	spin_lock_irqsave(&target_list_lock, flags);
--	list_for_each_entry(nt, &target_list, list) {
--		if (!strcmp(nt->group.cg_item.ci_name, name)) {
--			ret = nt;
--			break;
--		}
--	}
--	spin_unlock_irqrestore(&target_list_lock, flags);
--
--	return ret;
--}
--
- /*
-  * Group operations and type for netconsole_subsys.
-  */
-@@ -1283,19 +1266,6 @@ static struct config_group *make_netconsole_target(struct config_group *group,
- 	struct netconsole_target *nt;
- 	unsigned long flags;
- 
--	/* Checking if a target by this name was created at boot time.  If so,
--	 * attach a configfs entry to that target.  This enables dynamic
--	 * control.
--	 */
--	if (!strncmp(name, NETCONSOLE_PARAM_TARGET_PREFIX,
--		     strlen(NETCONSOLE_PARAM_TARGET_PREFIX))) {
--		nt = find_cmdline_target(name);
--		if (nt) {
--			init_target_config_group(nt, name);
--			return &nt->group;
--		}
--	}
--
- 	nt = alloc_and_init();
- 	if (!nt)
- 		return ERR_PTR(-ENOMEM);
-@@ -1351,14 +1321,20 @@ static struct configfs_subsystem netconsole_subsys = {
- 	},
- };
- 
--static void populate_configfs_item(struct netconsole_target *nt,
--				   int cmdline_count)
-+static int populate_configfs_item(struct netconsole_target *nt,
-+				  int cmdline_count)
- {
- 	char target_name[16];
-+	int ret;
- 
- 	snprintf(target_name, sizeof(target_name), "%s%d",
- 		 NETCONSOLE_PARAM_TARGET_PREFIX, cmdline_count);
-+
- 	init_target_config_group(nt, target_name);
-+
-+	ret = configfs_register_item(&netconsole_subsys.su_group,
-+				     &nt->group.cg_item);
-+	return ret;
- }
- 
- static int sysdata_append_cpu_nr(struct netconsole_target *nt, int offset)
-@@ -1899,7 +1875,9 @@ static struct netconsole_target *alloc_param_target(char *target_config,
- 	} else {
- 		nt->enabled = true;
- 	}
--	populate_configfs_item(nt, cmdline_count);
-+	err = populate_configfs_item(nt, cmdline_count);
-+	if (err)
-+		goto fail;
- 
- 	return nt;
- 
-@@ -1911,6 +1889,8 @@ static struct netconsole_target *alloc_param_target(char *target_config,
- /* Cleanup netpoll for given target (from boot/module param) and free it */
- static void free_param_target(struct netconsole_target *nt)
- {
-+	if (nt->group.cg_item.ci_dentry)
-+		configfs_unregister_item(&nt->group.cg_item);
- 	netpoll_cleanup(&nt->np);
- 	kfree(nt);
- }
-@@ -1937,6 +1917,10 @@ static int __init init_netconsole(void)
- 	char *target_config;
- 	char *input = config;
- 
-+	err = dynamic_netconsole_init();
-+	if (err)
-+		goto exit;
-+
- 	if (strnlen(input, MAX_PARAM_LENGTH)) {
- 		while ((target_config = strsep(&input, ";"))) {
- 			nt = alloc_param_target(target_config, count);
-@@ -1966,10 +1950,6 @@ static int __init init_netconsole(void)
- 	if (err)
- 		goto fail;
- 
--	err = dynamic_netconsole_init();
--	if (err)
--		goto undonotifier;
--
- 	if (console_type_needed & CONS_EXTENDED)
- 		register_console(&netconsole_ext);
- 	if (console_type_needed & CONS_BASIC)
-@@ -1978,10 +1958,8 @@ static int __init init_netconsole(void)
- 
- 	return err;
- 
--undonotifier:
--	unregister_netdevice_notifier(&netconsole_netdev_notifier);
--
- fail:
-+	dynamic_netconsole_exit();
- 	pr_err("cleaning up\n");
- 
- 	/*
-@@ -1993,6 +1971,7 @@ static int __init init_netconsole(void)
- 		list_del(&nt->list);
- 		free_param_target(nt);
- 	}
-+exit:
- 
- 	return err;
- }
 
+ioctl(5, FS_IOC_FSSETXATTR, 
+{fsx_xflags=FS_XFLAG_PROJINHERIT|FS_XFLAG_HASATTR, fsx_extsize=0, 
+fsx_projid=0, fsx_cowextsize=389701}) = -1 EINVAL (Invalid argument)
+
+
+diff --git a/libfrog/file_attr.c b/libfrog/file_attr.c
+index c2cbcb4e..6801c545 100644
+--- a/libfrog/file_attr.c
++++ b/libfrog/file_attr.c
+@@ -114,7 +114,7 @@ xfrog_file_setattr(
+
+         file_attr_to_fsxattr(fa, &fsxa);
+
+-       error = ioctl(fd, FS_IOC_FSSETXATTR, fa);
++       error = ioctl(fd, FS_IOC_FSSETXATTR, &fsxa);
+         close(fd);
+
+         return error;
+
+fixes it (confirmed here)
+
+> +	close(fd);
+> +
+> +	return error;
+> +}
 -- 
-2.47.3
-
+Arkadiusz Miśkiewicz, arekm / ( maven.pl | pld-linux.org )
 
