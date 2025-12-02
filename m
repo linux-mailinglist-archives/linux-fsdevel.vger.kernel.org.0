@@ -1,115 +1,351 @@
-Return-Path: <linux-fsdevel+bounces-70437-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70438-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DFE0C9A668
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 02 Dec 2025 08:15:49 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4488C9A696
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 02 Dec 2025 08:21:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00C9A3A5C55
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Dec 2025 07:15:46 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 793824E28E0
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Dec 2025 07:21:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69AE22FF176;
-	Tue,  2 Dec 2025 07:15:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C868F2FD7AE;
+	Tue,  2 Dec 2025 07:21:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="N8jrErAc"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="UchE0JZg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3550B220F2A
-	for <linux-fsdevel@vger.kernel.org>; Tue,  2 Dec 2025 07:15:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AEF6220F2A;
+	Tue,  2 Dec 2025 07:20:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764659740; cv=none; b=hIGRC7bxU6PwGf0yWLkf63mwe1cjlhqFBvNEN/PDk35MQ6kL017MPjfIYINayOVTvX763ebkZKsKtfXcmXbZPufxCpqdC/eY92t0l7Oe/0EDxNJVtiASyFqRzLPftuP8L+FBiY8EKHqdr6Ecqud4dTf+MwTZqPTeyS16pE+CpUY=
+	t=1764660060; cv=none; b=mui1gKPcaQP6j53Z4S8vAPmLcHbKmPM7UPt9irpyTN8gpQK266LnQZKeuri8A+veMRmCrVkZCJ3mieEGz8jh1715N8KJ/FqWZOPl5u9IPKISA0+GALKQWrdwuiJKaxFIfau3zMLhBInkI+3sT32RpcIlABQpjYzQvmr9oWiDYk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764659740; c=relaxed/simple;
-	bh=pHumqMXjkE+Vj64y57/9pD4S38sJnHL2whNM0VtC9sU=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=UUXwo4bTgBF70GjquFDGPMD51H73pDdF/YfcxKiagbKmrOLKVu4ypYzuXk/eKjPgSFcgZh/y7HLeu9wF9PpLQvaoEyDdByfFXyU6xGaVPZAQoCg2vG2ZL55aAhuV+vYFbUjaNMz0QaiO0xp6qBTK6aDNa8+qS96BssXknQBhRfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=N8jrErAc; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1764659738;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8CWvvfM17/Cvz924l3G7RhGFfI+KD2myRsJZPyFxwIc=;
-	b=N8jrErAcCLKnMqN5hrGSpjx0IYPc38jLxQ4UeqYrRJCUTEsVXUUw/EpF/8wCVk+kK4bJsX
-	Pd+4UgKDVs5fgYRiCgHoZREV46XRi8C5QRO//+9jayNo4NksNni8Fq2rl6jFmJfwwMiBAg
-	rCBvnaQbJQPUTwo/UjCf0lRQXFrUfa0=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-638-pxQjchumNKCbcJFjvx5VmA-1; Tue,
- 02 Dec 2025 02:15:34 -0500
-X-MC-Unique: pxQjchumNKCbcJFjvx5VmA-1
-X-Mimecast-MFC-AGG-ID: pxQjchumNKCbcJFjvx5VmA_1764659733
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E9A35195608E;
-	Tue,  2 Dec 2025 07:15:32 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.14])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 9D318180047F;
-	Tue,  2 Dec 2025 07:15:29 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <CAH2r5mspiEXcA2pxTfQrWrpZDLEW5YjFJCn0An4OcpEtkJ+B2A@mail.gmail.com>
-References: <CAH2r5mspiEXcA2pxTfQrWrpZDLEW5YjFJCn0An4OcpEtkJ+B2A@mail.gmail.com> <20251201225732.1520128-1-dhowells@redhat.com>
-To: Steve French <smfrench@gmail.com>
-Cc: dhowells@redhat.com, Steve French <sfrench@samba.org>,
-    Paulo Alcantara <pc@manguebit.org>,
-    Shyam Prasad N <sprasad@microsoft.com>,
-    Stefan Metzmacher <metze@samba.org>, Tom Talpey <tom@talpey.com>,
-    linux-cifs@vger.kernel.org, netfs@lists.linux.dev,
-    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 0/9] cifs: Miscellaneous prep patches for rewrite of I/O layer
+	s=arc-20240116; t=1764660060; c=relaxed/simple;
+	bh=Dlt9nWsocxHHQveNF3QmetO7kHpSln0GJPYPQ11NkUM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fTF222XAnR8eHP9z0/SRkxLElwhqFNOfaYJM/DwjMYscPAbSc3MCs/3w2+CdwCZ+LHUSLcPQ0oN8Otx7lnJaLpqfC0dOJRaHnHeotugEHS0vp+7WSntbPcOefNrKP2Cuhva1/1sQCOkqFjy0E0ECSuW0razvedqCNnDCcaCpdco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=UchE0JZg; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=E6qlhrwFwU3oa8B9oGRG4kgejN6hrKAl34jxR7zahjc=; b=UchE0JZgGLgTgyv6DPUBe2KqJo
+	hhqjc6uWk9w8MlLvDfKBramw8Gyx/TZrxOify0vvadBvm/CJNyru5QspMnsDmUGciZBA2H1q7Yc9V
+	kTOHve5qPycK4Me+RjhAFbEXyLmeUnsIYmt7HOPyBEZFtaf+VciG4L8CL4pYZUaSXBrVM0Idd6IVr
+	B8xvwP0tttAU27baMt2Rv0cGoMkPrEuEGmJfvcPqzyfD8qPt+V5ZT63PvbQ0SQjCMfG4KN7/mc7lO
+	773pNm0tPWKwrZncjaBla1/Nj5O0P9c3wPf/7aGpzswXOKv4TiFrFtdz1sCstwMvJR3NGIeUb0lcK
+	gYEXMaRw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.99 #2 (Red Hat Linux))
+	id 1vQKhB-00000004KqQ-2Wvr;
+	Tue, 02 Dec 2025 07:21:09 +0000
+Date: Tue, 2 Dec 2025 07:21:09 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: brauner@kernel.org, jack@suse.cz, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2] fs: hide names_cache behind runtime const machinery
+Message-ID: <20251202072109.GE1712166@ZenIV>
+References: <20251201083226.268846-1-mjguzik@gmail.com>
+ <20251201085117.GB3538@ZenIV>
+ <20251202023147.GA1712166@ZenIV>
+ <CAGudoHGbYvSAq=eJySxsf-AqkQ+ne_1gzuaojidA-GH+znw2hw@mail.gmail.com>
+ <20251202055258.GB1712166@ZenIV>
+ <CAGudoHFD6bWhp-8821Pb6cDAEnR9N8UFEj9qT7G-_v0FOS+_vg@mail.gmail.com>
+ <20251202063228.GD1712166@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1530644.1764659728.1@warthog.procyon.org.uk>
-Date: Tue, 02 Dec 2025 07:15:28 +0000
-Message-ID: <1530645.1764659728@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251202063228.GD1712166@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Steve French <smfrench@gmail.com> wrote:
-
-> The first seven (of the nine you sent recently) applied ok to
-> ksmbd-for-next and I can do some testing on them, as we await more
-> review and testing of the patches but patch 8 caused a few checkpatch
-> warnings (and patch 9 depends on it).  Do you want to clean it up?
->
+On Tue, Dec 02, 2025 at 06:32:28AM +0000, Al Viro wrote:
+> On Tue, Dec 02, 2025 at 07:18:16AM +0100, Mateusz Guzik wrote:
 > 
-> ./scripts/checkpatch.pl 9/0008-cifs-Add-a-tracepoint-to-log-EIO-errors.patch
-> ERROR: trailing whitespace
-> #440: FILE: fs/smb/client/cifssmb.c:1379:
-> +^Idefault: $
+> > The claim was not that your idea results in insurmountable churn. The
+> > claim was *both* your idea and runtime const require churn on per kmem
+> > cache basis. Then the question is if one is going to churn it
+> > regardless, why this way over runtime const. I do think the runtime
+> > thing is a little bit less churn and less work on the mm side to get
+> > it going, but then the runtime thing *itself* needs productizing
+> > (which I'm not signing up to do).
+> 
+> Umm...  runtime thing is lovely for shifts, but for pointers it's
+> going to be a headache on a bunch of architectures; for something
+> like dentry_hashtable it's either that or the cost of dereference,
+> but for kmem_cache I'd try it - if architecture has a good way for
+> "load a 64bit constant into a register staying within I$", I'd
+> expect the code generated for &global_variable to be not worse than
+> that, after all.
+> 
+> Churn is pretty much negligible in case of core kernel caches either
+> way.
+> 
+> As for the amount of churn in mm/*...  Turns out to be fairly minor;
+> kmem_cache_args allows to propagate it without any calling convention
+> changes.
+> 
+> I'll post when I get it to reasonable shape - so far it looks easy...
 
-I can clean this one up.
+OK, I'm going to grab some sleep; current (completely untested) delta
+below, with conversion of mnt_cache as an example of use.
 
-> ERROR: Macros with complex values should be enclosed in parentheses
-> #2069: FILE: fs/smb/client/trace.h:23:
-> +#define smb_eio_traces \
-> + EM(smb_eio_trace_compress_copy, "compress_copy") \
-> + EM(smb_eio_trace_copychunk_inv_rsp, "copychunk_inv_rsp") \
-> ...
+Uses of to_kmem_cache can be reduced with some use of _Generic
+for kmem_cache_...alloc() and kmem_cache_free().  Even as it is,
+the churn in fs/namespace.c is pretty minor...
 
-In this case, checkpatch is wrong.  This cannot be enclosed in parentheses as
-it will then fail to compile as this is used to generate an enum.  If you
-compare it to other trace headers (including your own trace.h, you'll see this
-sort of construct in a number of places).
+Anyway, this is an intermediate variant:
 
-David
-
+diff --git a/Kbuild b/Kbuild
+index 13324b4bbe23..eb985a6614eb 100644
+--- a/Kbuild
++++ b/Kbuild
+@@ -45,13 +45,24 @@ kernel/sched/rq-offsets.s: $(offsets-file)
+ $(rq-offsets-file): kernel/sched/rq-offsets.s FORCE
+ 	$(call filechk,offsets,__RQ_OFFSETS_H__)
+ 
++# generate kmem_cache_size.h
++
++kmem_cache_size-file := include/generated/kmem_cache_size.h
++
++targets += mm/kmem_cache_size.s
++
++mm/kmem_cache_size.s: $(rq-offsets-file)
++
++$(kmem_cache_size-file): mm/kmem_cache_size.s FORCE
++	$(call filechk,offsets,__KMEM_CACHE_SIZE_H__)
++
+ # Check for missing system calls
+ 
+ quiet_cmd_syscalls = CALL    $<
+       cmd_syscalls = $(CONFIG_SHELL) $< $(CC) $(c_flags) $(missing_syscalls_flags)
+ 
+ PHONY += missing-syscalls
+-missing-syscalls: scripts/checksyscalls.sh $(rq-offsets-file)
++missing-syscalls: scripts/checksyscalls.sh $(kmem_cache_size-file)
+ 	$(call cmd,syscalls)
+ 
+ # Check the manual modification of atomic headers
+diff --git a/fs/namespace.c b/fs/namespace.c
+index d766e08e0736..08c7870de413 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -34,6 +34,7 @@
+ #include <linux/mnt_idmapping.h>
+ #include <linux/pidfs.h>
+ #include <linux/nstree.h>
++#include <linux/kmem_cache_static.h>
+ 
+ #include "pnode.h"
+ #include "internal.h"
+@@ -85,7 +86,7 @@ static u64 mnt_id_ctr = MNT_UNIQUE_ID_OFFSET;
+ 
+ static struct hlist_head *mount_hashtable __ro_after_init;
+ static struct hlist_head *mountpoint_hashtable __ro_after_init;
+-static struct kmem_cache *mnt_cache __ro_after_init;
++static struct kmem_cache_store mnt_cache;
+ static DECLARE_RWSEM(namespace_sem);
+ static HLIST_HEAD(unmounted);	/* protected by namespace_sem */
+ static LIST_HEAD(ex_mountpoints); /* protected by namespace_sem */
+@@ -290,7 +291,8 @@ int mnt_get_count(struct mount *mnt)
+ 
+ static struct mount *alloc_vfsmnt(const char *name)
+ {
+-	struct mount *mnt = kmem_cache_zalloc(mnt_cache, GFP_KERNEL);
++	struct mount *mnt = kmem_cache_zalloc(to_kmem_cache(&mnt_cache),
++					      GFP_KERNEL);
+ 	if (mnt) {
+ 		int err;
+ 
+@@ -339,7 +341,7 @@ static struct mount *alloc_vfsmnt(const char *name)
+ out_free_id:
+ 	mnt_free_id(mnt);
+ out_free_cache:
+-	kmem_cache_free(mnt_cache, mnt);
++	kmem_cache_free(to_kmem_cache(&mnt_cache), mnt);
+ 	return NULL;
+ }
+ 
+@@ -734,7 +736,7 @@ static void free_vfsmnt(struct mount *mnt)
+ #ifdef CONFIG_SMP
+ 	free_percpu(mnt->mnt_pcp);
+ #endif
+-	kmem_cache_free(mnt_cache, mnt);
++	kmem_cache_free(to_kmem_cache(&mnt_cache), mnt);
+ }
+ 
+ static void delayed_free_vfsmnt(struct rcu_head *head)
+@@ -6013,8 +6015,9 @@ void __init mnt_init(void)
+ {
+ 	int err;
+ 
+-	mnt_cache = kmem_cache_create("mnt_cache", sizeof(struct mount),
+-			0, SLAB_HWCACHE_ALIGN|SLAB_PANIC|SLAB_ACCOUNT, NULL);
++	kmem_cache_setup("mnt_cache", sizeof(struct mount),
++			0, SLAB_HWCACHE_ALIGN|SLAB_PANIC|SLAB_ACCOUNT,
++			NULL, &mnt_cache);
+ 
+ 	mount_hashtable = alloc_large_system_hash("Mount-cache",
+ 				sizeof(struct hlist_head),
+diff --git a/include/linux/kmem_cache_static.h b/include/linux/kmem_cache_static.h
+new file mode 100644
+index 000000000000..f007c3bf3e88
+--- /dev/null
++++ b/include/linux/kmem_cache_static.h
+@@ -0,0 +1,36 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef __LINUX_KMEM_CACHE_STATIC_H
++#define __LINUX_KMEM_CACHE_STATIC_H
++
++#include <generated/kmem_cache_size.h>
++#include <linux/slab.h>
++
++/* same size and alignment as struct kmem_cache */
++struct kmem_cache_store {
++	unsigned char opaque[KMEM_CACHE_SIZE];
++} __attribute__((__aligned__(KMEM_CACHE_ALIGN)));
++
++struct kmem_cache;
++
++static inline struct kmem_cache *to_kmem_cache(struct kmem_cache_store *p)
++{
++	return (struct kmem_cache *)p;
++}
++
++static inline int
++kmem_cache_setup(const char *name, unsigned int size, unsigned int align,
++		 slab_flags_t flags, void (*ctor)(void *),
++		 struct kmem_cache_store *s)
++{
++	struct kmem_cache *res;
++
++	res = __kmem_cache_create_args(name, size,
++					&(struct kmem_cache_args){
++						.align	= align,
++						.ctor	= ctor,
++						.preallocated = s},
++					flags);
++	return PTR_ERR_OR_ZERO(res);
++}
++
++#endif
+diff --git a/include/linux/slab.h b/include/linux/slab.h
+index cf443f064a66..a016aa817139 100644
+--- a/include/linux/slab.h
++++ b/include/linux/slab.h
+@@ -266,6 +266,8 @@ struct mem_cgroup;
+  */
+ bool slab_is_available(void);
+ 
++struct kmem_cache_store;
++
+ /**
+  * struct kmem_cache_args - Less common arguments for kmem_cache_create()
+  *
+@@ -366,6 +368,7 @@ struct kmem_cache_args {
+ 	 * %0 means no sheaves will be created.
+ 	 */
+ 	unsigned int sheaf_capacity;
++	struct kmem_cache_store *preallocated;
+ };
+ 
+ struct kmem_cache *__kmem_cache_create_args(const char *name,
+diff --git a/mm/kmem_cache_size.c b/mm/kmem_cache_size.c
+new file mode 100644
+index 000000000000..52395b225aa1
+--- /dev/null
++++ b/mm/kmem_cache_size.c
+@@ -0,0 +1,21 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Generate definitions needed by the preprocessor.
++ * This code generates raw asm output which is post-processed
++ * to extract and format the required data.
++ */
++
++#define __GENERATING_KMEM_CACHE_SIZE_H
++/* Include headers that define the enum constants of interest */
++#include <linux/kbuild.h>
++#include "slab.h"
++
++int main(void)
++{
++	/* The enum constants to put into include/generated/bounds.h */
++	DEFINE(KMEM_CACHE_SIZE, sizeof(struct kmem_cache));
++	DEFINE(KMEM_CACHE_ALIGN, __alignof(struct kmem_cache));
++	/* End of constants */
++
++	return 0;
++}
+diff --git a/mm/slab_common.c b/mm/slab_common.c
+index 932d13ada36c..e48775475097 100644
+--- a/mm/slab_common.c
++++ b/mm/slab_common.c
+@@ -29,6 +29,7 @@
+ #include <linux/memcontrol.h>
+ #include <linux/stackdepot.h>
+ #include <trace/events/rcu.h>
++#include <linux/kmem_cache_static.h>
+ 
+ #include "../kernel/rcu/rcu.h"
+ #include "internal.h"
+@@ -224,21 +225,21 @@ static struct kmem_cache *create_cache(const char *name,
+ 				       struct kmem_cache_args *args,
+ 				       slab_flags_t flags)
+ {
+-	struct kmem_cache *s;
++	struct kmem_cache *s = to_kmem_cache(args->preallocated);
+ 	int err;
+ 
+ 	/* If a custom freelist pointer is requested make sure it's sane. */
+-	err = -EINVAL;
+ 	if (args->use_freeptr_offset &&
+ 	    (args->freeptr_offset >= object_size ||
+ 	     !(flags & SLAB_TYPESAFE_BY_RCU) ||
+ 	     !IS_ALIGNED(args->freeptr_offset, __alignof__(freeptr_t))))
+-		goto out;
++		return ERR_PTR(-EINVAL);
+ 
+-	err = -ENOMEM;
+-	s = kmem_cache_zalloc(kmem_cache, GFP_KERNEL);
+-	if (!s)
+-		goto out;
++	if (!s) {
++		s = kmem_cache_zalloc(kmem_cache, GFP_KERNEL);
++		if (!s)
++			return ERR_PTR(-ENOMEM);
++	}
+ 	err = do_kmem_cache_create(s, name, object_size, args, flags);
+ 	if (err)
+ 		goto out_free_cache;
+@@ -248,8 +249,8 @@ static struct kmem_cache *create_cache(const char *name,
+ 	return s;
+ 
+ out_free_cache:
+-	kmem_cache_free(kmem_cache, s);
+-out:
++	if (!args->preallocated)
++		kmem_cache_free(kmem_cache, s);
+ 	return ERR_PTR(err);
+ }
+ 
+@@ -324,7 +325,7 @@ struct kmem_cache *__kmem_cache_create_args(const char *name,
+ 		    object_size - args->usersize < args->useroffset))
+ 		args->usersize = args->useroffset = 0;
+ 
+-	if (!args->usersize && !args->sheaf_capacity)
++	if (!args->usersize && !args->sheaf_capacity && !args->preallocated)
+ 		s = __kmem_cache_alias(name, object_size, args->align, flags,
+ 				       args->ctor);
+ 	if (s)
 
