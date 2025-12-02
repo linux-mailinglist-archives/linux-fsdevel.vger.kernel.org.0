@@ -1,127 +1,137 @@
-Return-Path: <linux-fsdevel+bounces-70439-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70440-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B85CC9A91D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 02 Dec 2025 08:53:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6826AC9ABF5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 02 Dec 2025 09:47:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58B9C3A5DE8
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Dec 2025 07:53:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80F7F3A44B4
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Dec 2025 08:47:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 713B23043A1;
-	Tue,  2 Dec 2025 07:53:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16113307AF3;
+	Tue,  2 Dec 2025 08:46:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A9U+2+6i"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="bbbrFs6+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBF45303A0B
-	for <linux-fsdevel@vger.kernel.org>; Tue,  2 Dec 2025 07:53:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 160BE26D4DE
+	for <linux-fsdevel@vger.kernel.org>; Tue,  2 Dec 2025 08:46:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764661994; cv=none; b=LovQLoWOS5oHx3Ed27qgJj3PKwzJdRmgoKmM2PHqISSdxkYt+lebBklpgowrQWqhErfc5CHfA/9kGy5xWcaKOdBoLrofjZY8fMqPfsoRCDsnBeob/b4gD26kGCzdiSpjZT2EsppSLMNqlC9Mbb+f987OVNsNCKoabNL/jDbIr7Y=
+	t=1764665216; cv=none; b=GYOuYbXnhUKIVpnPwfccayt+y9WMD4M2thUvb9a+DyyCxk9xFrOYfWKYrI9u22rwFL2nm+03/hMTNHhsN0vROSnNG1ZJOaIGcxsTDX/uRfJrnU/8P2FpEQ/OaJFy5UH15PrCJsuc3K5yyc0g4fszO6JuF+QOtu1LJjSUm/+0sqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764661994; c=relaxed/simple;
-	bh=jtoOIsAb4N/aQPXYiDOsT0mLcSZuaW9KJU71fSWdaWY=;
+	s=arc-20240116; t=1764665216; c=relaxed/simple;
+	bh=qcpxFQirLzafdSnNIq92XhuOn+HzWCu4AcZ2SW0UjqI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VuqnaaKbOWQ1pjlx+wSheLsb5yUSHHbq6OJoRsvGphfUxWs1ArDBkfnL4Dhqg9EcrWzyb1BJB2bJiGJFEU7tEdAgHR+I3cDyqyVHUar+iVKl2MR/IbTz+AmTIgQq/Y7A83hpCvYd4HbnDmjOSmHWiFWNT365g9RDbUXc57pwgko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A9U+2+6i; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA5A3C116D0
-	for <linux-fsdevel@vger.kernel.org>; Tue,  2 Dec 2025 07:53:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764661994;
-	bh=jtoOIsAb4N/aQPXYiDOsT0mLcSZuaW9KJU71fSWdaWY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=A9U+2+6iQaXmDD9B3/CFCJ5WxKxfsbS+dXNck6qkeSI/tuRWQCpS6bBzb49WrWYIp
-	 vMjqZFbmQCgH6MbdAMD0ncSask1yhSOiT9yawg7Eho7Lhn/Wm0Xa3PPb32Pi7ojBfx
-	 +A3kepJAom2iPulz7V1irZt2HCSW7foYrlUNOr/CXcAVl8hBUl0JVLDGJVvto5DxcY
-	 pa1K3ew0uGPqjNW1W01hWgX41RiDvF1/uWDQrlY1Yz79I6xnMU30FxUocIY5KVhish
-	 gvpJ8byn0HvvE9o9toCfxowdhSHrKUGVm+cQBgoQIbTB60kcWEZOpI+nEP5zdDjWV2
-	 ch5llnCA1BRyg==
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b7373fba6d1so807104366b.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Dec 2025 23:53:14 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUR4fNsgmkDr3tph5k218yUfj6VVztge+ext2xxN0nRyBk3EqKm9MDGiZKupGssNvl8O7DJJGww60LCvsML@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2XX29gFAVkxvXFQnp8paZPmQBpQqZZhqsOx7kukqQvu/z0znV
-	JPLwDeMQ5JlrmvSSHI/5xhdTbV9+IWvBYGFxvW/bO+ENOCnyBb5It3XyXn+V0y5Dl55UfsvVhdn
-	PVWpLcAtGoZD4Ro++RSj3gOUjqumh20Q=
-X-Google-Smtp-Source: AGHT+IGaPtA3Z6AB2Jgji5GVEjzrKRXy2RpvjIBJ0Wi3BAfm592z/mltlVN6ytVUdj1A/qS1JnixBMidJPW0qyIAFtQ=
-X-Received: by 2002:a17:906:9fc9:b0:b76:4426:3a3a with SMTP id
- a640c23a62f3a-b7671b1b585mr4967887266b.58.1764661993030; Mon, 01 Dec 2025
- 23:53:13 -0800 (PST)
+	 To:Cc:Content-Type; b=t4BtovtT16OSWETXotPi2ZIS7lixpGiMSlwqLsp45WyqcvfhSweKr0cXqz/Cw49yQshYAhueM5Sx6N9flD6dD+ko2corIGOYQTfwtqL2WY5sBA95x8LXUY82BF81FL13uTKJaSWyp8AKD4J+jGSR8lpj0vlGHPZQ8WnFL/MQx4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=bbbrFs6+; arc=none smtp.client-ip=209.85.160.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4ed66b5abf7so65033881cf.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 02 Dec 2025 00:46:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1764665213; x=1765270013; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=dxvySic7ZCI3Kve7CCt8lN1Lme0d3OPvrFfTikR164w=;
+        b=bbbrFs6+5vw0v4zASrPuLyid+iafPWKvHeYf/XOZ4RlTfrAcYHZVAdk6e+pk3VUvT5
+         48D6eTBCgo/3krpFsqeWdnF8GCD9YaUPsH9bnVDmtOnvHdlmeiRQ7K1+nPucKysf1DKV
+         mmqSSKGrjMO7aaGrUT4vdZIAqeiNk+895+LjE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764665213; x=1765270013;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dxvySic7ZCI3Kve7CCt8lN1Lme0d3OPvrFfTikR164w=;
+        b=H4BBf7/BctqUuOn6tN1OJBcwF+CkA+/hLlO0V+KT7Pt47oQhJA4MyDggOu7SWQ6AZB
+         LAVfs2LquRU9IW9EqaEOqmcWEdHTdrLGl1NkbYMqRpvr6zs8s04oerABBqUOsm8rJM+S
+         lGcd/6aAqWd2gxG7iXYDdG6z1C8FDssgv504siGgPgEmtREA46AjgqcduQgy5an9IB16
+         Q2Nnx57hrbC7RbPB2s3u7TWVNuJOv90etargIsQYB9RAt9o0EMhru4X9/3wTqKIUC312
+         5MJhFCgULeSsmus+C5dqZphzj/eyIIN8XsQlcj6iB2niQabbmdCz1CtIGEuklP41WQ20
+         BarQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVspDx+1qx4tVGLRxk7riKD/63oUg4UA4V+FgAsqC8fgr1+ZaFnd6A4IPGUPdLqWcNy/eA23P3N3GgNs0+J@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCOn6EuFSOzTH9yyuB0/x76iq7QvkRsXyuYtvxpgldc7BFyeBW
+	IyMPmbmBamKQQ1rp/+KC93ep4fP2Uxp4qqeqOWGvFY1DXTYZNSSWQizn3QBd4p9F9A0oeGuHvIF
+	uqI5O1v6KFxoXuygZAibXnYrsN9A/pSzNQZRfJlTpjQ==
+X-Gm-Gg: ASbGnctIyvJM6GwEDb5r9vqRXUifNKzWJcg+QomC6S2s4Kh0U3diiZ5iEdNVJAJOrEw
+	Du9mw1OWsg7FAzQIvwcPWLPMn5Qojd8VeN2ZOQjWPcfDx3gy1PzUMcbz/FlkRQOhJlTp9JYyJs0
+	2d3xM/iwY2O/cNEbLR72hbP0Si/WcJKg5rgzJi+yHTRO5K7FtxiZUdLBguGVBhF23yv++p7hMLc
+	7gPVPi5xSC3HucbgGE+n7i72PvRrIPQB2GefrJQw7emNCO2I4UtdkMu6SG39dIxQVyHOg==
+X-Google-Smtp-Source: AGHT+IEmdgKRfEJt7lhW9JewHKYA/V5LXGRt+5HoCO1i6voev0VJmL65LKUm+BLjfUqBCpppRBhIODxs9MlwVlA6duw=
+X-Received: by 2002:ac8:7dc2:0:b0:4ee:1f69:fdeb with SMTP id
+ d75a77b69052e-4f0088dcc91mr26981181cf.11.1764665212783; Tue, 02 Dec 2025
+ 00:46:52 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251127045944.26009-1-linkinjeon@kernel.org> <20251127045944.26009-7-linkinjeon@kernel.org>
- <aS1FVIfE0Ntgbr5I@infradead.org> <CAKYAXd9YW_UL2uA8anoVCw+a818y5dwtn3xAJJQc=_p32GA=Zw@mail.gmail.com>
- <20251202054524.GB15524@lst.de>
-In-Reply-To: <20251202054524.GB15524@lst.de>
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Tue, 2 Dec 2025 16:52:59 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd-Gzk+7Gwh1GTVbeNUygNWVnmNu458F67Y5fhcpapEFBg@mail.gmail.com>
-X-Gm-Features: AWmQ_bmGJ-KfRwoEGGS2y_M3WqNq9-yp4h_I_7fTwIsF-mKDYOHzxQxEEx4MKmU
-Message-ID: <CAKYAXd-Gzk+7Gwh1GTVbeNUygNWVnmNu458F67Y5fhcpapEFBg@mail.gmail.com>
-Subject: Re: [PATCH v2 06/11] ntfsplus: add iomap and address space operations
-To: Christoph Hellwig <hch@lst.de>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, tytso@mit.edu, 
-	willy@infradead.org, jack@suse.cz, djwong@kernel.org, josef@toxicpanda.com, 
-	sandeen@sandeen.net, rgoldwyn@suse.com, xiang@kernel.org, dsterba@suse.com, 
-	pali@kernel.org, ebiggers@kernel.org, neil@brown.name, amir73il@gmail.com, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	iamjoonsoo.kim@lge.com, cheol.lee@lge.com, jay.sim@lge.com, gunho.lee@lge.com, 
-	Hyunchul Lee <hyc.lee@gmail.com>
+References: <20251113002050.676694-1-neilb@ownmail.net> <20251113002050.676694-7-neilb@ownmail.net>
+ <6713ea38-b583-4c86-b74a-bea55652851d@packett.cool> <176454037897.634289.3566631742434963788@noble.neil.brown.name>
+ <CAOQ4uxjihcBxJzckbJis8hGcWO61QKhiqeGH+hDkTUkDhu23Ww@mail.gmail.com>
+ <20251201083324.GA3538@ZenIV> <CAJfpegs+o01jgY76WsGnk9j41LS5V0JQSk--d6xsJJp4VjTh8Q@mail.gmail.com>
+ <20251201170813.GH3538@ZenIV>
+In-Reply-To: <20251201170813.GH3538@ZenIV>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Tue, 2 Dec 2025 09:46:41 +0100
+X-Gm-Features: AWmQ_blWv82I_AJ0z54S1o3oAiX82VQ2RDfse7yanE0u3ZklpA9ZzlQdeqtb1vo
+Message-ID: <CAJfpegtJDJL7T0-Uj664xOm4N2e6fyJp_XwFecHX_9e9ipUyEw@mail.gmail.com>
+Subject: Re: [PATCH] fuse: fix conversion of fuse_reverse_inval_entry() to start_removing()
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Amir Goldstein <amir73il@gmail.com>, NeilBrown <neil@brown.name>, 
+	Christian Brauner <brauner@kernel.org>, Val Packett <val@packett.cool>, Jan Kara <jack@suse.cz>, 
+	linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>, 
+	Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>, David Howells <dhowells@redhat.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Tyler Hicks <code@tyhicks.com>, Chuck Lever <chuck.lever@oracle.com>, 
+	Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
+	Namjae Jeon <linkinjeon@kernel.org>, Steve French <smfrench@gmail.com>, 
+	Sergey Senozhatsky <senozhatsky@chromium.org>, Carlos Maiolino <cem@kernel.org>, 
+	John Johansen <john.johansen@canonical.com>, Paul Moore <paul@paul-moore.com>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
+	Mateusz Guzik <mjguzik@gmail.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Stefan Berger <stefanb@linux.ibm.com>, "Darrick J. Wong" <djwong@kernel.org>, linux-kernel@vger.kernel.org, 
+	netfs@lists.linux.dev, ecryptfs@vger.kernel.org, linux-nfs@vger.kernel.org, 
+	linux-unionfs@vger.kernel.org, linux-cifs@vger.kernel.org, 
+	linux-xfs@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	selinux@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Dec 2, 2025 at 2:45=E2=80=AFPM Christoph Hellwig <hch@lst.de> wrote=
-:
+On Mon, 1 Dec 2025 at 18:08, Al Viro <viro@zeniv.linux.org.uk> wrote:
+
+> Then as far as VFS is concerned, it's an equivalent of "we'd done
+> a dcache lookup and revalidate told us to bugger off", which does
+> *not* need locking the parent - the same sequence can very well
+> happen without touching any inode locks.
+
+Okay.
+
+> IOW, from the point of view of locking protocol changes that's not
+> a removal at all.
 >
-> On Tue, Dec 02, 2025 at 09:47:17AM +0900, Namjae Jeon wrote:
-> > Nothing special reason, It was to use existing ones instead of new,
-> > complex implementations. NTFS metadata is treated as a file, and
-> > handling it via the folio(page) API allows the driver to easily gain
-> > performance benefits, such as readahead.
->
-> On the one hand it does, on the other hand at least our experience
-> is that the user data file algorithm for things like readahead and
-> cache eviction policies worked pretty poorly for metadata in XFS.
-> Of course I don't actually know if the same applies to ntfs.
-We have observed performance improvements from readahead for NTFS
-metadata since we are able to identify the continuous cluster ranges
-of metadata files.
->
-> > > From code in other patches is looks like ntfs never switches between
-> > > compressed and non-compressed for live inodes?  In that case the
-> > > separate aops should be fine, as switching between them at runtime
-> > > would involve races.  Is the compression policy per-directory?
-> > Non-compressed files can actually be switched to compressed files and
-> > vice versa via setxattr at runtime. I will check the race handling
-> > around aop switching again. And the compression policy is per-file,
-> > not per-directory.
->
-> In that case you probably want to use the same set of address space
-> (and other operations) and do runtime switching inside the method.
-Right, I will change it.
->
-> > >
-> > > Again curious why we need special zeroing code in the file system.
-> > To prevent reading garbage data after a new cluster allocation, we
-> > must zero out the cluster. The cluster size can be up to 2MB, I will
-> > check if that's possible through iomap.
->
-> Ouch, that's a lot of zeroing.  But yeah, now that you mention it
-> XFS actually has the same issue with large RT extents.  Although we
-> create them as unwritten extents, i.e. disk allocations that always
-> return zeroes.  I guess ntfs doesn't have that.  For DAX access
-> there actually is zeroing in the allocator, which is probably
-> similar to what is done here, just always using the iomap-based
-> code (check for xfs_zero_range and callers).
-Right, ntfs does not have a direct equivalent to the unwritten extent mecha=
-nism.
-I will check xfs codes. Thank you very much for the detailed review!
+> Or do you need them serialized for fuse-internal purposes?
+
+Not as far as I can see. As to any fuse filesystem being reliant on
+this behavior, I think that's unlikely, though it's sort of documented
+in the libfuse APIs as:
+
+ * To avoid a deadlock this function must not be called in the
+ * execution path of a related filesystem operation or within any code
+ * that could hold a lock that could be needed to execute such an
+ * operation. As of kernel 4.18, a "related operation" is a lookup(),
+ * symlink(), mknod(), mkdir(), unlink(), rename(), link() or create()
+ * request for the parent, and a setattr(), unlink(), rmdir(),
+ * rename(), setxattr(), removexattr(), readdir() or readdirplus()
+ * request for the inode itself.
+
+Why the locking was added in the first place?  Oversight, probably.
+
+Thanks,
+Miklos
 
