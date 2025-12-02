@@ -1,119 +1,116 @@
-Return-Path: <linux-fsdevel+bounces-70419-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70420-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA935C99C81
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 02 Dec 2025 02:37:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FF79C99E18
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 02 Dec 2025 03:31:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A00504E2347
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Dec 2025 01:37:52 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9B8724E2484
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Dec 2025 02:31:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF7CB207A09;
-	Tue,  2 Dec 2025 01:36:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72E0726E14C;
+	Tue,  2 Dec 2025 02:31:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PySEV1Yw"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="H6zUj0Rc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B55B1F91D6;
-	Tue,  2 Dec 2025 01:36:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 980BB22FDEA;
+	Tue,  2 Dec 2025 02:31:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764639411; cv=none; b=aM25RwnEEHmzGwBOFsNyY0hg1T6CghjXxfbjONFn8dgFeifbL4K24SKg35zEqRegNdqVCpC11gvDFTYFd0uexi1bKHypjKhwPCBRw5O/1hS1HEAZqzX1KknQJufb+iZ0Cbj7YhJ4qgC1k4Sm5pRtQVJ2i7/f0rJj+THLG1ZqhZI=
+	t=1764642698; cv=none; b=iqopogyBR5URPb52AsfBAeb3l5wfUzeFIijk3K+NJqEYyyS9HARxSasx17OFtbPE3Bzw3XceEfPhPS6ksWAa/HSdWeq2bMSOZiEk8dgeMSLd/LajKogq0ewBbVp7NlSb/sQAyCS8aBtm+B7PAibpaFGVG4RzM+KrNlE9/CXhHA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764639411; c=relaxed/simple;
-	bh=5lX5KpTfh5lp1TSAgoOcg20Ql5ovyjThTY5/ZiVpS1E=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jSLCNRp1U6KwGzbVwprk5DEsOSbdm67O8Hr2eWjN3gd419fHwa48NtiplqnjAWlP3LrdXApCNpVBqHhvscm0pChTnIk+1Ur8zPdjxkrkULcu72WkEkzcVZtFgeEDGAC4C017upQJYp7APC8w987CdplfuQFtL8qVo297KxkBbkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PySEV1Yw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9AA9C4CEF1;
-	Tue,  2 Dec 2025 01:36:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764639410;
-	bh=5lX5KpTfh5lp1TSAgoOcg20Ql5ovyjThTY5/ZiVpS1E=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=PySEV1YwxKJoFsqg6kncPujE1e2ZccxxkUO9FhYPMzz3DFeI+WEOLRABuunIiM4Ax
-	 hm9UN1Q80WVmIJE/ojMnxip1frr53BJhxGVIxpyf6z4a7Ly/VR8RzPR4PI5FgIeZLd
-	 xEHy16fkdfAWJU4W6f4d6IDe1Tv793k3d7BGsiouvw24q9oIbAkZDcR1iTXiuVQIXL
-	 cBn0KN74vENbIejZm0yStn2PAETxDxmXwNhAu6CgyzNccZmlfqBqyMJ8YBDg01Fj4A
-	 syrR1CoOEBAql3Io9ZXOxoQsoe/FiPE2qm7OFAfxXzCUTsiEm9Koynck/482UnUAPr
-	 eRfgTSftn7xmQ==
-From: Sasha Levin <sashal@kernel.org>
-To: sashal@kernel.org
-Cc: brauner@kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	snitzer@kernel.org,
-	torvalds@linux-foundation.org
-Subject: [PATCH] nfs/localio: make do_nfs_local_call_write() return void
-Date: Mon,  1 Dec 2025 20:36:35 -0500
-Message-ID: <20251202013635.1592252-1-sashal@kernel.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <aS5AS-rzQfFeK94L@laps>
-References: <aS5AS-rzQfFeK94L@laps>
+	s=arc-20240116; t=1764642698; c=relaxed/simple;
+	bh=OEFTQuybwSLNdOugGmTjw3APCi8uxkJFjGkqxa3iLd4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iesrn+f+aa1Y7QO1l+kRzllsRzfQvCUZLl9kIZS/rYGTND2LoZcNdYzVwE4K+WMCoqQo8P/Bv7a8NgPNHCVNz0DJGCMJMTLGpHIKGxM9QlJ2UyuKeDaGpfTbUSfJ0SYrAOuDSrUJ6sKYx1kZLdkFADsHP+WAya4e4dMqDA5Odhg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=H6zUj0Rc; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=tW1tgRvc4m15Ay6Mwri5wyNnNufCcevV2cFRhMvqU4o=; b=H6zUj0RcVeyBxIx4/yAIAvSrVI
+	OKqSQyMJIWnDBbV4g5ec6fwgS5rkHKIIKO2vBVRPrM9waoDSfnF/zzQNZMYedHmD7D3DpwFthNd1g
+	mzDj6ieUHjgcLF8/XiI3pONQGPoYUCKw7o33elolIbN3TDfBxN2vOKLOijDNcLNa5VjQfSxdfF6H1
+	SNAuA3e/YdOkm3QwDFLOMyUBRW4wrX9TYQFO8qWQbgsSZhhMpTxobyeetgWJyB8Sn+BAbQhDkgqit
+	vruZhwL81fzxMu5bbSNesnLJ1EneiYuuKH0HrFfOtriPSJCTKKLV4Rj7V59sfyWjIqWpiecagr7Mx
+	CVDdK71Q==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.99 #2 (Red Hat Linux))
+	id 1vQGB9-0000000FvgF-1ozh;
+	Tue, 02 Dec 2025 02:31:47 +0000
+Date: Tue, 2 Dec 2025 02:31:47 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: brauner@kernel.org, jack@suse.cz, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2] fs: hide names_cache behind runtime const machinery
+Message-ID: <20251202023147.GA1712166@ZenIV>
+References: <20251201083226.268846-1-mjguzik@gmail.com>
+ <20251201085117.GB3538@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251201085117.GB3538@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-do_nfs_local_call_write() does not need to return status because
-completion handling is done internally via nfs_local_pgio_done()
-and nfs_local_write_iocb_done().
+On Mon, Dec 01, 2025 at 08:51:17AM +0000, Al Viro wrote:
+> On Mon, Dec 01, 2025 at 09:32:26AM +0100, Mateusz Guzik wrote:
+> > s/names_cachep/names_cache/ for consistency with dentry cache.
+> > 
+> > Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+> > ---
+> > 
+> > v2:
+> > - rebased on top of work.filename-refcnt
+> > 
+> > ACHTUNG: there is a change queued for 6.19 merge window which treats
+> > dentry cache the same way:
+> > commit 21b561dab1406e63740ebe240c7b69f19e1bcf58
+> > Author: Mateusz Guzik <mjguzik@gmail.com>
+> > Date:   Wed Nov 5 16:36:22 2025 +0100
+> > 
+> >     fs: hide dentry_cache behind runtime const machinery
+> > 
+> > which would result in a merge conflict in vmlinux.lds.h. thus I
+> > cherry-picked before generating the diff to avoid the issue for later.
+> 
+> *shrug*
+> For now I'm working on top of v6.18; rebase to -rc1 will happen at the
+> end of window...
+> 
+> Anyway, not a problem; applied with obvious massage.  Will push tomorrow
+> once I sort the linearization out.
 
-This makes it consistent with do_nfs_local_call_read(), which
-already returns void for the same reason.
+	FWIW, I wonder if we would be better off with the following trick:
+add
+	struct kmem_cache *preallocated;
+to struct kmem_cache_args.  Semantics: if the value is non-NULL, it must
+point to an unitialized object of type struct kmem_cache; in that case
+__kmem_cache_create_args() will use that object (and return its address
+on success) instead of allocating one from kmem_cache.  kmem_cache_destroy()
+should not be called for it.
 
-Fixes: 1d18101a644e ("Merge tag 'kernel-6.19-rc1.cred' of git://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs")
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/nfs/localio.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+It's very easy to do, AFAICS:
+	1) non-NULL => have __kmem_cache_create_args() skip the __kmem_cache_alias()
+path.
+	2) non-NULL => have create_cache() zero what it points to and use that pointer
+instead of calling kmem_cache_zalloc()
+	3) non-NULL => skip kmem_cache_free() at create_cache() out_free_cache:
 
-diff --git a/fs/nfs/localio.c b/fs/nfs/localio.c
-index 49ed90c6b9f22..b45bf3fbe491c 100644
---- a/fs/nfs/localio.c
-+++ b/fs/nfs/localio.c
-@@ -822,8 +822,8 @@ static void nfs_local_write_aio_complete(struct kiocb *kiocb, long ret)
- 	nfs_local_pgio_aio_complete(iocb); /* Calls nfs_local_write_aio_complete_work */
- }
- 
--static ssize_t do_nfs_local_call_write(struct nfs_local_kiocb *iocb,
--				       struct file *filp)
-+static void do_nfs_local_call_write(struct nfs_local_kiocb *iocb,
-+				    struct file *filp)
- {
- 	bool force_done = false;
- 	ssize_t status;
-@@ -853,8 +853,6 @@ static ssize_t do_nfs_local_call_write(struct nfs_local_kiocb *iocb,
- 		}
- 	}
- 	file_end_write(filp);
--
--	return status;
- }
- 
- static void nfs_local_call_write(struct work_struct *work)
-@@ -863,12 +861,11 @@ static void nfs_local_call_write(struct work_struct *work)
- 		container_of(work, struct nfs_local_kiocb, work);
- 	struct file *filp = iocb->kiocb.ki_filp;
- 	unsigned long old_flags = current->flags;
--	ssize_t status;
- 
- 	current->flags |= PF_LOCAL_THROTTLE | PF_MEMALLOC_NOIO;
- 
- 	scoped_with_creds(filp->f_cred)
--		status = do_nfs_local_call_write(iocb, filp);
-+		do_nfs_local_call_write(iocb, filp);
- 
- 	current->flags = old_flags;
- }
--- 
-2.51.0
-
+"Don't do kmem_cache_destroy() to those" might or might not be worth relaxing -
+I hadn't looked into the lifetime issues for kmem_cache instances, no idea
+how painful would that be; for core kernel caches it's not an issue, obviously.
+For modules it is, but then runtime_constant machinery is not an option there
+either.
 
