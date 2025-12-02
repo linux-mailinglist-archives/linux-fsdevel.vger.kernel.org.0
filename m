@@ -1,137 +1,178 @@
-Return-Path: <linux-fsdevel+bounces-70471-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70472-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16D45C9C522
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 02 Dec 2025 18:01:28 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id C65AFC9C6FD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 02 Dec 2025 18:40:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 049D54E022A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Dec 2025 17:01:27 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 49AE434932C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Dec 2025 17:40:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1971B2BE655;
-	Tue,  2 Dec 2025 17:01:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55D502C159C;
+	Tue,  2 Dec 2025 17:40:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="WtTVwM5G"
+	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="wX1rIQD6";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Hg3pzsPp"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fhigh-a4-smtp.messagingengine.com (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C9D023EA90
-	for <linux-fsdevel@vger.kernel.org>; Tue,  2 Dec 2025 17:01:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E13D29AAE3
+	for <linux-fsdevel@vger.kernel.org>; Tue,  2 Dec 2025 17:40:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764694880; cv=none; b=d8Y8f+QhyZBanE0nB8xKgLykzehd5tOIKiW3fIKYB4v7pcTv3zst4HGrve2ZUdwVvrPcYxKxthIGAkFj/AikVUmmIT23SaTYtz0OTd5ZV9K8MBxyb/nu74Vfs9xdvNvgO5ZUyvyZeZVV8BTD7V9oQYNSywlYoMDMufTvqzn79pw=
+	t=1764697217; cv=none; b=l/TqF6/amaDibop1zkbDMHZf2zXY6BYjeH39rqCe6tjVvCOzWLa9aQSK7rM+speZmxy49AUbI7B+5DVGl1Guo8f7auJBQc6SoqFf2tnRln5wTU+3KaKN5xRk3EnryTDE40UldiIGOj+xUEELlHzFUzWVqIOGkz0W+NZMpt4WEZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764694880; c=relaxed/simple;
-	bh=qRcGZFXKJMaKX/yvJKRpEH3ICexfqw2LvBvIVsUdxyo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=okrjkvjwf/XHXT9y3KVKVRatswKbNFwC0MWzikIv2BsOIP4HVDEODNYlhhzB3xoR11K2EiWEbIUWlhK6yQ8izeyCEuqHmB5OpgJhI31RZznvsMuX4KBfcDYP3J9D+ywg/6y+6TzNZMjMzzcfFezydgZVck7PiaIFW3PmDBUFXiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=WtTVwM5G; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b7277324204so855401566b.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 02 Dec 2025 09:01:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1764694876; x=1765299676; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=aKw8GaNp5Rdkt/37eGWeHQsaSq+KKpAjLZM3zt8c76s=;
-        b=WtTVwM5GdJbs07nXlXBA5ImZKYtCQ4GizN8f+QBW4BojDdmwqXxR53r+CE9ZBt5kGn
-         jaFmHw8ZZq9uOuNBqwkOiwnN+5qYI9h9IqHbwgDjNqyPKC9TMFtP7RDVh9jQg61RHt47
-         jP/UD3SYyY2VX49d890N+WAj2A6JnfxRtYJIo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764694876; x=1765299676;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aKw8GaNp5Rdkt/37eGWeHQsaSq+KKpAjLZM3zt8c76s=;
-        b=IwIoCxJRamMQiPQavDOFe2m53Si+VzNhSwEXT8vbhuWql2HA5esXxboDjC1OYlbE2x
-         6oQIUxsKP0LUTVdfQuuBv1oPAEDKk5JkvMmkpQhvHWNJ8QdrlEE4BT2QyDTW98m4xJFo
-         939TXwc7/KIi+5llp0kXyfnZKjoOxe4ACJTPETVFeZxIOJISNW6dzO4OySw1fA6sEdr/
-         2s/xLZTQsGmMR/Do8EpSeINNjtTcrbHlNpDsVhNVB0l8MhtKjVBcCSAhSA7LWtptPdKQ
-         7naKCr5ywRWpBphhpRO5YahKd4x6Nwr9oCKXqWF8p10gSzRVOJRNw8my2LOSv47Jr5Lu
-         mrvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVcjxl3y4r5OkVr55H2VbPaSzKTK7ASP+/VLF9l1X69ATn/etuDpZg++MqK9NxTU6PlDTcMDwm+aBFSzjCV@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRUkX3cwdPgyfhDT59/n5hJozFtLzrtzHT03nNSNUwaC0QiIec
-	KeVbPNIzP7vqOvB4gjo1mh1D7OIbbCvN7Jfpe8gZCVomMicixWaBGyfhUWymOpG7NHpXCpCQP1d
-	8pQNYZeE=
-X-Gm-Gg: ASbGncuBecXxRcdld4uJHIeJw/ScOSTP3cP0hOWgmz3n3nI9plQ2H3XggR4KZtUQL46
-	ruk9xh5OZX5fCQMGI/z8mI5MUK53PkzStjB+h4f0MMtHNBWZxi9RcsVFGHq5Rd/3Czu6nitNWPB
-	ezu02Hsg4Mb8gV9F4F9Jt77usedS3C/qND33K75DO++xx0KJOp6PsmHsgML4GBO+JamPoaPd6Ds
-	cUPExXOuhu/f5X3BW0TtvXzCXPe2b56+4CQEODN01wbrbkWrGLywmlr1x59x2SgE1zUnEPnUQ6v
-	lZip0yfEmxRGQcNu7N35ObPjkwq/chpbbQeo1mK3oxg8xADzyiS4I08B1Vs6pek39Aj5DOEAC1Q
-	JiC9mIkCzFRG3rSCuLxy4txvtkP8GmExrp4dUX/7O1+AWI8o1CpBIhLoTziabrepMasJGUDcnV0
-	Rb1fLQ9iN33dNO86G8kzEBXHxEBi7dqSzXbiGDUqReshBE3nWSKbk2xQ5jaxlw6kCUfabmjOc=
-X-Google-Smtp-Source: AGHT+IGIF0YfPZJW/+m/iimMivKRmbLB2PvOqrxJlGia2e2ErAKqBnKPVHHX0h+7nSzAEf81aMJrYg==
-X-Received: by 2002:a17:907:9625:b0:b73:6b24:14ba with SMTP id a640c23a62f3a-b76c5352f1cmr2990851266b.8.1764694876303;
-        Tue, 02 Dec 2025 09:01:16 -0800 (PST)
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com. [209.85.208.45])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b76f5163903sm1599322466b.7.2025.12.02.09.01.15
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Dec 2025 09:01:15 -0800 (PST)
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-640a3317b89so9050145a12.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 02 Dec 2025 09:01:15 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVOzbOGYETkN67FToRPCua4SVWEN1rbMTbiNFsRev94hNmKwnxELGJc0qUiXvxmpWUnOJaIH2btplPrjU0E@vger.kernel.org
-X-Received: by 2002:a05:6402:5203:b0:643:c8b:8d61 with SMTP id
- 4fb4d7f45d1cf-645eafad307mr30539305a12.0.1764694874663; Tue, 02 Dec 2025
- 09:01:14 -0800 (PST)
+	s=arc-20240116; t=1764697217; c=relaxed/simple;
+	bh=LY8wTM30SFeaqv3Rw5OHAOykHvKbjm6BHsT5i9gnK3M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qHbwZtgBauGJiYxXTHD/pymgk0kT7g6u9RsCEw5wuZ3tUWIwGyziLtJZtZkvF7UcMcF+0pdwWN4aFwGJmDLdjskrygDO5kmq56i2lyBbqWekcnFZ5KcbSa9ANXWcSQhXGQ34iDivwS58vK0YGf9CbE/eiAaHRYWZNcGqWnjP490=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=wX1rIQD6; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Hg3pzsPp; arc=none smtp.client-ip=103.168.172.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 92A0714001BB;
+	Tue,  2 Dec 2025 12:40:13 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-02.internal (MEProxy); Tue, 02 Dec 2025 12:40:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1764697213;
+	 x=1764783613; bh=BZtOm5+1TZAchd5lHO5/FL97irLnSqsjk47mLJ5X/Rk=; b=
+	wX1rIQD6U9kqimLDJDWYhhjhvHWoDWmDrsPnGsQmGzz4kApS2+CKwF3mFYQItuue
+	wjZRDee72HstDzwqo8msQyM+6bNsLhDerbLToklNFLWCCZ8OHP9a5R/BeQc28M4A
+	s64263Oq+QOvyHJkemlzZp530hWo/3AqX2YtVVhy+937Ow4EQxusQGnGQ9JKPV6L
+	ux3nHm/q5nvPHO5tujLZleGdDflPgm8cj3Z6jzRJ5Wbxbl7nslUF4zaBCKqVB6W8
+	bZM/4z94dBw8Hj2TMJ8Oha9UbNpWjVDNL36myPxTPuNIhSsjFNrrklHuoo/b8Vqn
+	gavtMQNPxQliZ1JXEybFhA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1764697213; x=
+	1764783613; bh=BZtOm5+1TZAchd5lHO5/FL97irLnSqsjk47mLJ5X/Rk=; b=H
+	g3pzsPptfoV3KYjznLRKexgA798nkyk8GnHsWlBnAbPiRCoh9K7A6RgNvNM44H6H
+	mcUdq8+tbwfjpCBjfMTSNAdQtNulftvjwd0Cl9CNviAl88ZW6IE+rLnETodyB35X
+	UKHJc017yAWWtTx3updNwaF6myQ9KWZHA4T4exHYhprNdB795H3rCU2xToc7E7L/
+	IZ+GyKicHnfUfp8NElX9NYjl8mTq02FVQETHHsSnJNd/Wg1qNkgQ04JfCxzRxuP5
+	GtklIbKO2brYdHYwNdGTmudPtnZgIp5Kcgkd3mqCAqIimRRXyhZSBcnBb3q4/hw0
+	dq7dqIS6DVWFmrV0W7trg==
+X-ME-Sender: <xms:fCQvaaUhBiAYF47LsXPDsgDJirPt7mPhpi1F52cKj2pBz_fi-yv0dw>
+    <xme:fCQvaaTSYzawiEmTQlYhl_zlEW-OEQ7NaFjFktP88oJLjDTXkE4zKDDWeyIYLgWYA
+    kIVdUTcbFzerWLuS03rN_OhG3rczQGkTwwNJ1SBUi6-XMyJXWo>
+X-ME-Received: <xmr:fCQvaYNis4e0jR--gnx3qGle1bv57SdWGAME4qeHipcHQmEdYnXGvtLJY3md9fmsLgJ0kFgewlBWTq0wRv75PFT-agm9z8O6hzJT7G9ctkoi4487LuA0>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdejfecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegrihhl
+    ohhuthemuceftddtnecunecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvd
+    ejnecuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgusegsshgsvghr
+    nhgurdgtohhmqeenucggtffrrghtthgvrhhnpeehhfejueejleehtdehteefvdfgtdelff
+    euudejhfehgedufedvhfehueevudeugeenucevlhhushhtvghrufhiiigvpedtnecurfgr
+    rhgrmhepmhgrihhlfhhrohhmpegsvghrnhgusegsshgsvghrnhgurdgtohhmpdhnsggprh
+    gtphhtthhopeeipdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehlvghordhlihhl
+    ohhngheshhhurgifvghirdgtohhmpdhrtghpthhtohepmhhikhhlohhssehsiigvrhgvug
+    hirdhhuhdprhgtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhn
+    vghlrdhorhhgpdhrtghpthhtohepsghstghhuhgsvghrthesuggunhdrtghomhdprhgtph
+    htthhopeihrghnghgvrhhkuhhnsehhuhgrfigvihdrtghomhdprhgtphhtthhopehlohhn
+    uhiglhhirdeigeesghhmrghilhdrtghomh
+X-ME-Proxy: <xmx:fCQvaYQTlEBaSs-2jm9YVD4X7flXgqlG6NQOnJW9p_wcjHxHG3kVbQ>
+    <xmx:fCQvaWi2umTBZCsvKja9EwX_vEQq69iHc6FDhlVt-yhrIE9Sr714ww>
+    <xmx:fCQvaR85cYqzcgRM0D-pGlk0GD-HnewwOlJTkXNFnU4LrM2xOKFMHQ>
+    <xmx:fCQvadGiI0RvXayIEXKo71MKm0ZMvZyJFoLa8py6-fsd-sMTWBzz2Q>
+    <xmx:fSQvacnGrGJA4Tj4SoskXjE1Qx-xSSzEFl5Tg_3HCwwbBnRVwBZhdAYk>
+Feedback-ID: i5c2e48a5:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 2 Dec 2025 12:40:11 -0500 (EST)
+Message-ID: <71e2ccaa-325b-4dd4-b5b7-fd470924c104@bsbernd.com>
+Date: Tue, 2 Dec 2025 18:40:10 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251128-vfs-v619-77cd88166806@brauner> <20251128-kernel-namespaces-v619-28629f3fc911@brauner>
- <87ecperpid.fsf@email.froward.int.ebiederm.org>
-In-Reply-To: <87ecperpid.fsf@email.froward.int.ebiederm.org>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 2 Dec 2025 09:00:57 -0800
-X-Gmail-Original-Message-ID: <CAHk-=whPpVs67fAYWo4=SeD20cxjYoAE3d5RXgeHpXZ81uM7Lg@mail.gmail.com>
-X-Gm-Features: AWmQ_bn2o0AS6BcgpiW3CE955dcwsPRXAVZIKXQGT7yckz2eOdb4b3Geamh17dM
-Message-ID: <CAHk-=whPpVs67fAYWo4=SeD20cxjYoAE3d5RXgeHpXZ81uM7Lg@mail.gmail.com>
-Subject: Re: [GIT PULL 05/17 for v6.19] namespaces
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Linux Containers <containers@lists.linux.dev>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fuse: limit debug log output during ring teardown
+To: Long Li <leo.lilong@huawei.com>, miklos@szeredi.hu
+Cc: linux-fsdevel@vger.kernel.org, bschubert@ddn.com, yangerkun@huawei.com,
+ lonuxli.64@gmail.com
+References: <20251129110653.1881984-1-leo.lilong@huawei.com>
+From: Bernd Schubert <bernd@bsbernd.com>
+Content-Language: en-US, de-DE, fr
+In-Reply-To: <20251129110653.1881984-1-leo.lilong@huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, 1 Dec 2025 at 11:06, Eric W. Biederman <ebiederm@xmission.com> wrote:
->
-> The reason such as system call has not been introduced in the past
-> is because it introduces the namespace of namespace problem.
->
-> How have you solved the namespace of namespaces problem?
+Hi Long,
 
-So I think Christian would be better at answering this, but to a first
-approximation I think the explanation from commit 76b6f5dfb3fd
-("nstree: add listns()") gives some high-level rules:
+On 11/29/25 12:06, Long Li wrote:
+> Currently, if there are pending entries in the queue after the teardown
+> timeout, the system keeps printing entry state information at very short
+> intervals (FUSE_URING_TEARDOWN_INTERVAL). This can flood the system logs.
+> Additionally, ring->stop_debug_log is set but not used.
+> 
+> Use ring->stop_debug_log as a control flag to only print entry state
+> information once after teardown timeout, preventing excessive debug
+> output. Also add a final message when all queues have stopped.
+> 
+> Signed-off-by: Long Li <leo.lilong@huawei.com>
+> ---
+>  fs/fuse/dev_uring.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
+> index 5ceb217ced1b..d71ccdf78887 100644
+> --- a/fs/fuse/dev_uring.c
+> +++ b/fs/fuse/dev_uring.c
+> @@ -453,13 +453,15 @@ static void fuse_uring_async_stop_queues(struct work_struct *work)
+>  	 * If there are still queue references left
+>  	 */
+>  	if (atomic_read(&ring->queue_refs) > 0) {
+> -		if (time_after(jiffies,
+> +		if (!ring->stop_debug_log && time_after(jiffies,
+>  			       ring->teardown_time + FUSE_URING_TEARDOWN_TIMEOUT))
+>  			fuse_uring_log_ent_state(ring);
+>  
+>  		schedule_delayed_work(&ring->async_teardown_work,
+>  				      FUSE_URING_TEARDOWN_INTERVAL);
+>  	} else {
+> +		if (ring->stop_debug_log)
+> +			pr_info("All queues in the ring=%p have stopped\n", ring);
+>  		wake_up_all(&ring->stop_waitq);
+>  	}
+>  }
 
-    listns() respects namespace isolation and capabilities:
 
-    (1) Global listing (user_ns_id = 0):
-        - Requires CAP_SYS_ADMIN in the namespace's owning user namespace
-        - OR the namespace must be in the caller's namespace context (e.g.,
-          a namespace the caller is currently using)
-        - User namespaces additionally allow listing if the caller has
-          CAP_SYS_ADMIN in that user namespace itself
-    (2) Owner-filtered listing (user_ns_id != 0):
-        - Requires CAP_SYS_ADMIN in the specified owner user namespace
-        - OR the namespace must be in the caller's namespace context
-        - This allows unprivileged processes to enumerate namespaces they own
-    (3) Visibility:
-        - Only "active" namespaces are listed
-        - A namespace is active if it has a non-zero __ns_ref_active count
-        - This includes namespaces used by running processes, held by open
-          file descriptors, or kept active by bind mounts
-        - Inactive namespaces (kept alive only by internal kernel
-          references) are not visible via listns()
+how about like this?
 
-but it would be very nice if you were to take a closer look at the
-whole thing and make sure you're satisfied with it all.. Even just a
-"overview scan" would be lovely.
+diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
+index f6b12aebb8bb..a527e58b404a 100644
+--- a/fs/fuse/dev_uring.c
++++ b/fs/fuse/dev_uring.c
+@@ -452,9 +452,11 @@ static void fuse_uring_async_stop_queues(struct work_struct *work)
+         * If there are still queue references left
+         */
+        if (atomic_read(&ring->queue_refs) > 0) {
+-               if (time_after(jiffies,
+-                              ring->teardown_time + FUSE_URING_TEARDOWN_TIMEOUT))
++               if (time_after(jiffies, ring->teardown_time +
++                                       FUSE_URING_TEARDOWN_TIMEOUT)) {
+                        fuse_uring_log_ent_state(ring);
++                       ring->teardown_time = jiffies;
++               }
+ 
+                schedule_delayed_work(&ring->async_teardown_work,
+                                      FUSE_URING_TEARDOWN_INTERVAL);
 
-            Linus
+Most of it is formatting, it just updates  "ring->teardown_time = jiffies",
+idea is that is logs the remaining entries. If you run into it there is
+probably a bug - io-uring will also start to spill warnings.
+
+
+Thanks,
+Bernd
+
 
