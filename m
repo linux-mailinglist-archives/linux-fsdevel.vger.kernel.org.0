@@ -1,178 +1,135 @@
-Return-Path: <linux-fsdevel+bounces-70472-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70473-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id C65AFC9C6FD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 02 Dec 2025 18:40:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F95EC9C736
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 02 Dec 2025 18:46:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 49AE434932C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Dec 2025 17:40:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D04AB3A92D3
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Dec 2025 17:45:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55D502C159C;
-	Tue,  2 Dec 2025 17:40:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2A272D0C61;
+	Tue,  2 Dec 2025 17:45:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="wX1rIQD6";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Hg3pzsPp"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QKcBS+nU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh-a4-smtp.messagingengine.com (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E13D29AAE3
-	for <linux-fsdevel@vger.kernel.org>; Tue,  2 Dec 2025 17:40:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4805F2C21E7
+	for <linux-fsdevel@vger.kernel.org>; Tue,  2 Dec 2025 17:45:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764697217; cv=none; b=l/TqF6/amaDibop1zkbDMHZf2zXY6BYjeH39rqCe6tjVvCOzWLa9aQSK7rM+speZmxy49AUbI7B+5DVGl1Guo8f7auJBQc6SoqFf2tnRln5wTU+3KaKN5xRk3EnryTDE40UldiIGOj+xUEELlHzFUzWVqIOGkz0W+NZMpt4WEZw=
+	t=1764697519; cv=none; b=UrcyGwun9yCUYuIZyO4u/qB0D/Lf5bhT2rA4wwouH1d3DibRMiJzBETKh8jZXw7pJKB7YEZOedeRLljeFvc4idvghGs0Z4vg0pkwy6pc8QsCO/lNS3ukUe04l5mnsMcmUXKfZ5n4KyslcSRC9+Bgh6iFN5e6Mu2i4LHu7tGWKM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764697217; c=relaxed/simple;
-	bh=LY8wTM30SFeaqv3Rw5OHAOykHvKbjm6BHsT5i9gnK3M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qHbwZtgBauGJiYxXTHD/pymgk0kT7g6u9RsCEw5wuZ3tUWIwGyziLtJZtZkvF7UcMcF+0pdwWN4aFwGJmDLdjskrygDO5kmq56i2lyBbqWekcnFZ5KcbSa9ANXWcSQhXGQ34iDivwS58vK0YGf9CbE/eiAaHRYWZNcGqWnjP490=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=wX1rIQD6; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Hg3pzsPp; arc=none smtp.client-ip=103.168.172.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
-Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 92A0714001BB;
-	Tue,  2 Dec 2025 12:40:13 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-02.internal (MEProxy); Tue, 02 Dec 2025 12:40:13 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1764697213;
-	 x=1764783613; bh=BZtOm5+1TZAchd5lHO5/FL97irLnSqsjk47mLJ5X/Rk=; b=
-	wX1rIQD6U9kqimLDJDWYhhjhvHWoDWmDrsPnGsQmGzz4kApS2+CKwF3mFYQItuue
-	wjZRDee72HstDzwqo8msQyM+6bNsLhDerbLToklNFLWCCZ8OHP9a5R/BeQc28M4A
-	s64263Oq+QOvyHJkemlzZp530hWo/3AqX2YtVVhy+937Ow4EQxusQGnGQ9JKPV6L
-	ux3nHm/q5nvPHO5tujLZleGdDflPgm8cj3Z6jzRJ5Wbxbl7nslUF4zaBCKqVB6W8
-	bZM/4z94dBw8Hj2TMJ8Oha9UbNpWjVDNL36myPxTPuNIhSsjFNrrklHuoo/b8Vqn
-	gavtMQNPxQliZ1JXEybFhA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1764697213; x=
-	1764783613; bh=BZtOm5+1TZAchd5lHO5/FL97irLnSqsjk47mLJ5X/Rk=; b=H
-	g3pzsPptfoV3KYjznLRKexgA798nkyk8GnHsWlBnAbPiRCoh9K7A6RgNvNM44H6H
-	mcUdq8+tbwfjpCBjfMTSNAdQtNulftvjwd0Cl9CNviAl88ZW6IE+rLnETodyB35X
-	UKHJc017yAWWtTx3updNwaF6myQ9KWZHA4T4exHYhprNdB795H3rCU2xToc7E7L/
-	IZ+GyKicHnfUfp8NElX9NYjl8mTq02FVQETHHsSnJNd/Wg1qNkgQ04JfCxzRxuP5
-	GtklIbKO2brYdHYwNdGTmudPtnZgIp5Kcgkd3mqCAqIimRRXyhZSBcnBb3q4/hw0
-	dq7dqIS6DVWFmrV0W7trg==
-X-ME-Sender: <xms:fCQvaaUhBiAYF47LsXPDsgDJirPt7mPhpi1F52cKj2pBz_fi-yv0dw>
-    <xme:fCQvaaTSYzawiEmTQlYhl_zlEW-OEQ7NaFjFktP88oJLjDTXkE4zKDDWeyIYLgWYA
-    kIVdUTcbFzerWLuS03rN_OhG3rczQGkTwwNJ1SBUi6-XMyJXWo>
-X-ME-Received: <xmr:fCQvaYNis4e0jR--gnx3qGle1bv57SdWGAME4qeHipcHQmEdYnXGvtLJY3md9fmsLgJ0kFgewlBWTq0wRv75PFT-agm9z8O6hzJT7G9ctkoi4487LuA0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdejfecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegrihhl
-    ohhuthemuceftddtnecunecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvd
-    ejnecuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgusegsshgsvghr
-    nhgurdgtohhmqeenucggtffrrghtthgvrhhnpeehhfejueejleehtdehteefvdfgtdelff
-    euudejhfehgedufedvhfehueevudeugeenucevlhhushhtvghrufhiiigvpedtnecurfgr
-    rhgrmhepmhgrihhlfhhrohhmpegsvghrnhgusegsshgsvghrnhgurdgtohhmpdhnsggprh
-    gtphhtthhopeeipdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehlvghordhlihhl
-    ohhngheshhhurgifvghirdgtohhmpdhrtghpthhtohepmhhikhhlohhssehsiigvrhgvug
-    hirdhhuhdprhgtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhn
-    vghlrdhorhhgpdhrtghpthhtohepsghstghhuhgsvghrthesuggunhdrtghomhdprhgtph
-    htthhopeihrghnghgvrhhkuhhnsehhuhgrfigvihdrtghomhdprhgtphhtthhopehlohhn
-    uhiglhhirdeigeesghhmrghilhdrtghomh
-X-ME-Proxy: <xmx:fCQvaYQTlEBaSs-2jm9YVD4X7flXgqlG6NQOnJW9p_wcjHxHG3kVbQ>
-    <xmx:fCQvaWi2umTBZCsvKja9EwX_vEQq69iHc6FDhlVt-yhrIE9Sr714ww>
-    <xmx:fCQvaR85cYqzcgRM0D-pGlk0GD-HnewwOlJTkXNFnU4LrM2xOKFMHQ>
-    <xmx:fCQvadGiI0RvXayIEXKo71MKm0ZMvZyJFoLa8py6-fsd-sMTWBzz2Q>
-    <xmx:fSQvacnGrGJA4Tj4SoskXjE1Qx-xSSzEFl5Tg_3HCwwbBnRVwBZhdAYk>
-Feedback-ID: i5c2e48a5:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 2 Dec 2025 12:40:11 -0500 (EST)
-Message-ID: <71e2ccaa-325b-4dd4-b5b7-fd470924c104@bsbernd.com>
-Date: Tue, 2 Dec 2025 18:40:10 +0100
+	s=arc-20240116; t=1764697519; c=relaxed/simple;
+	bh=tamybLxNrophK48+LjH+nI7WJXO09o5rS7gtzjOP3xc=;
+	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=YBweOTdUepVc2fMkJFLGrmNwXHXTtlk1GZmjnDkz8Xne/2TpiLlCBHQU0PP0wQ79a8j96uC5IOecQiY4QHqlAn8g+P3dFAXJRf+ffsa/rShU8rFJiZIKjn3EjgfOUmEjAQqUEm8b3VmBuHcMycBXCBQ4BllW9WaOIkdWbtpN4ec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QKcBS+nU; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1764697517;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=sO3YMt7bwHXHXoImGSFPk/MGZ4Jh8BA+UgosjHsNIMw=;
+	b=QKcBS+nUZ3pdpR6CbZyztYk3NYDNUMWBmlal0W1KXoUzJlHS38S5mPehB1l2YR//lP5NpT
+	5VgSD7Fq/gLKL8EveHANEzjA1QfNIWOXlV23guQMqQ64ixo7WIyD1+DF0IiyFbYhwMR8M5
+	0n7+h/PWF4wbulg0laMqbEKLQ0HCZl4=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-530-ww52pWIROKa1BUU12KTOWQ-1; Tue,
+ 02 Dec 2025 12:45:12 -0500
+X-MC-Unique: ww52pWIROKa1BUU12KTOWQ-1
+X-Mimecast-MFC-AGG-ID: ww52pWIROKa1BUU12KTOWQ_1764697510
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0D0671801303;
+	Tue,  2 Dec 2025 17:45:10 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.14])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B0CCF30001A4;
+	Tue,  2 Dec 2025 17:45:07 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+To: Steve French <sfrench@samba.org>
+cc: dhowells@redhat.com, Paulo Alcantara <pc@manguebit.org>,
+    Shyam Prasad N <sprasad@microsoft.com>, linux-cifs@vger.kernel.org,
+    netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+    stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] cifs: Fix handling of a beyond-EOF DIO/unbuffered read over SMB1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fuse: limit debug log output during ring teardown
-To: Long Li <leo.lilong@huawei.com>, miklos@szeredi.hu
-Cc: linux-fsdevel@vger.kernel.org, bschubert@ddn.com, yangerkun@huawei.com,
- lonuxli.64@gmail.com
-References: <20251129110653.1881984-1-leo.lilong@huawei.com>
-From: Bernd Schubert <bernd@bsbernd.com>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <20251129110653.1881984-1-leo.lilong@huawei.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1597478.1764697506.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Tue, 02 Dec 2025 17:45:06 +0000
+Message-ID: <1597479.1764697506@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-Hi Long,
+    =
 
-On 11/29/25 12:06, Long Li wrote:
-> Currently, if there are pending entries in the queue after the teardown
-> timeout, the system keeps printing entry state information at very short
-> intervals (FUSE_URING_TEARDOWN_INTERVAL). This can flood the system logs.
-> Additionally, ring->stop_debug_log is set but not used.
-> 
-> Use ring->stop_debug_log as a control flag to only print entry state
-> information once after teardown timeout, preventing excessive debug
-> output. Also add a final message when all queues have stopped.
-> 
-> Signed-off-by: Long Li <leo.lilong@huawei.com>
-> ---
->  fs/fuse/dev_uring.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
-> index 5ceb217ced1b..d71ccdf78887 100644
-> --- a/fs/fuse/dev_uring.c
-> +++ b/fs/fuse/dev_uring.c
-> @@ -453,13 +453,15 @@ static void fuse_uring_async_stop_queues(struct work_struct *work)
->  	 * If there are still queue references left
->  	 */
->  	if (atomic_read(&ring->queue_refs) > 0) {
-> -		if (time_after(jiffies,
-> +		if (!ring->stop_debug_log && time_after(jiffies,
->  			       ring->teardown_time + FUSE_URING_TEARDOWN_TIMEOUT))
->  			fuse_uring_log_ent_state(ring);
->  
->  		schedule_delayed_work(&ring->async_teardown_work,
->  				      FUSE_URING_TEARDOWN_INTERVAL);
->  	} else {
-> +		if (ring->stop_debug_log)
-> +			pr_info("All queues in the ring=%p have stopped\n", ring);
->  		wake_up_all(&ring->stop_waitq);
->  	}
->  }
+If a DIO read or an unbuffered read request extends beyond the EOF, the
+server will return a short read and a status code indicating that EOF was
+hit, which gets translated to -ENODATA.  Note that the client does not cap
+the request at i_size, but asks for the amount requested in case there's a
+race on the server with a third party.
 
+Now, on the client side, the request will get split into multiple
+subrequests if rsize is smaller than the full request size.  A subrequest
+that starts before or at the EOF and returns short data up to the EOF will
+be correctly handled, with the NETFS_SREQ_HIT_EOF flag being set,
+indicating to netfslib that we can't read more.
 
-how about like this?
+If a subrequest, however, starts after the EOF and not at it, HIT_EOF will
+not be flagged, its error will be set to -ENODATA and it will be abandoned=
+.
+This will cause the request as a whole to fail with -ENODATA.
 
-diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
-index f6b12aebb8bb..a527e58b404a 100644
---- a/fs/fuse/dev_uring.c
-+++ b/fs/fuse/dev_uring.c
-@@ -452,9 +452,11 @@ static void fuse_uring_async_stop_queues(struct work_struct *work)
-         * If there are still queue references left
-         */
-        if (atomic_read(&ring->queue_refs) > 0) {
--               if (time_after(jiffies,
--                              ring->teardown_time + FUSE_URING_TEARDOWN_TIMEOUT))
-+               if (time_after(jiffies, ring->teardown_time +
-+                                       FUSE_URING_TEARDOWN_TIMEOUT)) {
-                        fuse_uring_log_ent_state(ring);
-+                       ring->teardown_time = jiffies;
-+               }
- 
-                schedule_delayed_work(&ring->async_teardown_work,
-                                      FUSE_URING_TEARDOWN_INTERVAL);
+Fix this by setting NETFS_SREQ_HIT_EOF on any subrequest that lies beyond
+the EOF marker.
 
-Most of it is formatting, it just updates  "ring->teardown_time = jiffies",
-idea is that is logs the remaining entries. If you run into it there is
-probably a bug - io-uring will also start to spill warnings.
+This can be reproduced by mounting with "cache=3Dnone,sign,vers=3D1.0" and
+doing a read of a file that's significantly bigger than the size of the
+file (e.g. attempting to read 64KiB from a 16KiB file).
 
+Fixes: a68c74865f51 ("cifs: Fix SMB1 readv/writev callback in the same way=
+ as SMB2/3")
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Steve French <sfrench@samba.org>
+cc: Paulo Alcantara <pc@manguebit.org>
+cc: Shyam Prasad N <sprasad@microsoft.com>
+cc: linux-cifs@vger.kernel.org
+cc: netfs@lists.linux.dev
+cc: linux-fsdevel@vger.kernel.org
+---
+ fs/smb/client/cifssmb.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-Bernd
+diff --git a/fs/smb/client/cifssmb.c b/fs/smb/client/cifssmb.c
+index 645831708e1b..1871d2c1a8e0 100644
+--- a/fs/smb/client/cifssmb.c
++++ b/fs/smb/client/cifssmb.c
+@@ -1395,7 +1395,7 @@ cifs_readv_callback(struct mid_q_entry *mid)
+ 	} else {
+ 		size_t trans =3D rdata->subreq.transferred + rdata->got_bytes;
+ 		if (trans < rdata->subreq.len &&
+-		    rdata->subreq.start + trans =3D=3D ictx->remote_i_size) {
++		    rdata->subreq.start + trans >=3D ictx->remote_i_size) {
+ 			rdata->result =3D 0;
+ 			__set_bit(NETFS_SREQ_HIT_EOF, &rdata->subreq.flags);
+ 		} else if (rdata->got_bytes > 0) {
 
 
